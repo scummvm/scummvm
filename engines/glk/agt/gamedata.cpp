@@ -994,9 +994,39 @@ int verb_authorsyn(word w) {
 
 	/* Check game-specific synonyms first */
 	/* Scan in reverse so later synonyms will override earlier ones */
-	for (i = TOTAL_VERB - 1; i > 0; i--)
-		for (j = synlist[i]; syntbl[j] != 0; j++)
-			if (w == syntbl[j]) return i;
+	if (aver < AGX00) {
+		for (i = MAX_SUB-1; i >= 0; i--)
+			for (j = synlist[BASE_VERB+DVERB+i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j]) return BASE_VERB+DVERB+i;
+
+		/*  In AGT the dummy verbs are laid out in memory in a non-obvious
+			order:
+			DUMMY_VERB1
+			DUMMY_VERB26
+			DUMMY_VERB2
+			DUMMY_VERB27
+			...
+			For a few games this is relevant (e.g. SIGNAL in Shades of Gray),
+			as the same synonym occurs in multiple dummy verbs, so we scan
+			the dummy verb synonyms here in the same order as original AGT. */
+		for (i = DVERB-1; i >= 0; i--) {
+			int ii = ((i % 2) == 0) ? i / 2 : (i+DVERB-1) / 2;
+			for (j = synlist[BASE_VERB+ii]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return BASE_VERB + ii;
+		}
+		for (i = BASE_VERB-1; i > 0; i--)
+			for (j = synlist[i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return i;
+
+	} else {
+		for (i = TOTAL_VERB-1; i > 0; i--)
+			for (j = synlist[i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return i;
+	}
+
 	return 0;
 }
 
