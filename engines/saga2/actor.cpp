@@ -1001,10 +1001,8 @@ void Actor::init(
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
-	memcpy(
-	    &_effectiveStats,
-	    &((ActorProto *)prototype)->baseStats,
-	    sizeof(_effectiveStats));
+	_effectiveStats = ((ActorProto *)prototype)->baseStats;
+
 	_effectiveStats.vitality = MAX<int16>(_effectiveStats.vitality, 1);
 
 	_actionCounter       = 0;
