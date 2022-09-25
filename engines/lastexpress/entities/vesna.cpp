@@ -185,16 +185,16 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 		parameters->param1++;
 		switch (parameters->param1) {
 		default:
-			strcpy((char *)&parameters->seq, "VES1015C");
+			Common::strcpy_s(parameters->seq, "VES1015C");
 			parameters->param1 = 0;
 			break;
 
 		case 1:
-			strcpy((char *)&parameters->seq, "VES1015A");
+			Common::strcpy_s(parameters->seq, "VES1015A");
 			break;
 
 		case 2:
-			strcpy((char *)&parameters->seq, "VES1015B");
+			Common::strcpy_s(parameters->seq, "VES1015B");
 			break;
 		}
 
@@ -225,7 +225,7 @@ IMPLEMENT_FUNCTION(11, Vesna, homeAlone)
 		case 1:
 		case 2:
 			setCallback(3);
-			setup_playSound((char *)&parameters->seq);
+			setup_playSound(parameters->seq);
 			break;
 
 		case 3:
@@ -538,16 +538,16 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 
 		switch (parameters->param3) {
 		default:
-			strcpy((char *)&parameters->seq, "VES1015C");
+			Common::strcpy_s(parameters->seq, "VES1015C");
 			parameters->param3 = 0;
 			break;
 
 		case 1:
-			strcpy((char *)&parameters->seq, "VES1015A");
+			Common::strcpy_s(parameters->seq, "VES1015A");
 			break;
 
 		case 2:
-			strcpy((char *)&parameters->seq, "VES1015B");
+			Common::strcpy_s(parameters->seq, "VES1015B");
 			break;
 		}
 
@@ -583,7 +583,7 @@ IMPLEMENT_FUNCTION(20, Vesna, inCompartment)
 		case 1:
 		case 2:
 			setCallback(3);
-			setup_playSound((char *)&parameters->seq);
+			setup_playSound(parameters->seq);
 			break;
 
 		case 3:
