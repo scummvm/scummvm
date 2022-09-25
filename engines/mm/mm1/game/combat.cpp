@@ -34,13 +34,15 @@ Combat::Combat() : _monsterList(g_globals->_encounters._monsterList) {
 void Combat::clear() {
 	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_arr2[0], &_arr2[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
+	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
-	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE / 2], 0);
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
+	_val8 = 0;
 	_handicap1 = _handicap2 = 0;
 	_handicap3 = _handicap4 = 0;
 	_handicap = HANDICAP_EVEN;
@@ -271,18 +273,14 @@ void Combat::proc1() {
 	}
 }
 
-void Combat::shareSplit() {
-
-}
-
-#define SHIFT_BIT (_val6 & 0x80) != 0; _val6 <<= 1
-
 void Combat::selectTreasure() {
+#define SHIFT_BIT (_val6 & 0x80) != 0; _val6 <<= 1
 	for (int i = 0; i < 5; ++i) {
 		bool flag = SHIFT_BIT;
 		if (flag && getRandomNumber(100) <= (10 + i * 10))
 			selectTreasure2(5 - i);
 	}
+#undef SHIFT_BIT
 
 	auto &treasure = g_globals->_treasure;
 	treasure[0] = 0;
@@ -328,6 +326,36 @@ void Combat::selectTreasure2(int count) {
 		treasure[3] = _val1;
 	else if (!treasure[4])
 		treasure[4] = _val1;
+}
+
+void Combat::nextRound() {
+	++_roundNum;
+	setupHandicap();
+	clearArrays();
+	g_globals->_party.updateAC();
+
+	_val8 = getRandomNumber(g_globals->_party.size());
+
+}
+
+void Combat::clearArrays() {
+	Common::fill(&_arr3[0], &_arr3[MAX_PARTY_SIZE], 0);
+	Common::fill(&_arr4[0], &_arr4[MAX_COMBAT_MONSTERS], 0);
+}
+
+void Combat::updateHighestLevel() {
+	Encounter &enc = g_globals->_encounters;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		// This looks suspect, since it doesn't find the
+		// max of the party's active characters, just ends
+		// up set to whichever last character's level
+		if (!(c._condition & (ASLEEP | BLINDED | SILENCED | DISEASED | POISONED)))
+			enc._highestLevel = c._level._base;
+	}
 }
 
 } // namespace Game

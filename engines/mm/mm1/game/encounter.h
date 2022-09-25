@@ -43,7 +43,7 @@ private:
 	int _levelIndex = 0, _levelOffset = 0;
 	int _val9 = 0;
 	int _monsterNum16 = 0;
-	int _totalLevels = 0, _highestLevel = 0;
+	int _totalLevels = 0;
 	int _monsterNum = 0;
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _monsIndexes[MAX_COMBAT_MONSTERS];
@@ -56,6 +56,7 @@ public:
 	int _alignmentsChanged = 0;
 	int _monsterImgNum = 0;
 	int _monsterIndex = 0;
+	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
 public:
