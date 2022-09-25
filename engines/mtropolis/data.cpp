@@ -1185,6 +1185,24 @@ DataReadErrorCode ColorTableModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+SoundFadeModifier::SoundFadeModifier() : unknown1{0, 0, 0, 0}, fadeToVolume(0), codedDuration{0, 0, 0, 0},
+	unknown2{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,} {
+}
+
+DataReadErrorCode SoundFadeModifier::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (!reader.readBytes(unknown1) || !enableWhen.load(reader) || !disableWhen.load(reader)
+		|| !reader.readU16(fadeToVolume) || !reader.readBytes(codedDuration) || !reader.readBytes(unknown2))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 SaveAndRestoreModifier::SaveAndRestoreModifier()
 	: unknown1{0, 0, 0, 0}, saveWhen(Event::createDefault()), restoreWhen(Event::createDefault()),
 	  unknown5{0, 0, 0, 0, 0, 0, 0, 0}, lengthOfFilePath(0), lengthOfFileName(0), lengthOfVariableName(0), lengthOfVariableString(0) {
@@ -2313,6 +2331,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kColorTableModifier:
 		dataObject = new ColorTableModifier();
+		break;
+	case DataObjectTypes::kSoundFadeModifier:
+		dataObject = new SoundFadeModifier();
 		break;
 	case DataObjectTypes::kSaveAndRestoreModifier:
 		dataObject = new SaveAndRestoreModifier();

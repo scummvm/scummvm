@@ -302,6 +302,40 @@ bool SaveAndRestoreModifier::load(ModifierLoaderContext &context, const Data::Sa
 	return true;
 }
 
+
+SoundFadeModifier::SoundFadeModifier() : _fadeToVolume(0), _durationMSec(0) {
+}
+
+bool SoundFadeModifier::load(ModifierLoaderContext &context, const Data::SoundFadeModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_enableWhen.load(data.enableWhen) || !_disableWhen.load(data.disableWhen))
+		return false;
+
+	_fadeToVolume = data.fadeToVolume;
+	_durationMSec = ((((data.codedDuration[0] * 60) + data.codedDuration[1]) * 60 + data.codedDuration[2]) * 100 + data.codedDuration[3]) * 10;
+
+	return true;
+}
+
+bool SoundFadeModifier::respondsToEvent(const Event &evt) const {
+	return evt.respondsTo(_enableWhen) || evt.respondsTo(_disableWhen);
+}
+
+VThreadState SoundFadeModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Sound fade modifier is not implemented");
+	return kVThreadReturn;
+}
+
+Common::SharedPtr<Modifier> SoundFadeModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SoundFadeModifier(*this));
+}
+
+const char *SoundFadeModifier::getDefaultName() const {
+	return "Sound Fade Modifier";
+}
+
 bool SaveAndRestoreModifier::respondsToEvent(const Event &evt) const {
 	if (_saveWhen.respondsTo(evt) || _restoreWhen.respondsTo(evt))
 		return true;

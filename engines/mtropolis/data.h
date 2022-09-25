@@ -950,6 +950,21 @@ protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
 
+struct SoundFadeModifier : public DataObject {
+	SoundFadeModifier();
+
+	TypicalModifierHeader modHeader;
+	uint8 unknown1[4];
+	Event enableWhen;
+	Event disableWhen;
+	uint16 fadeToVolume;
+	uint8 codedDuration[4];
+	uint8 unknown2[18];
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
 struct SaveAndRestoreModifier : public DataObject {
 	SaveAndRestoreModifier();
 

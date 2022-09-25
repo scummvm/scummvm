@@ -150,6 +150,33 @@ private:
 	uint32 _assetID;
 };
 
+class SoundFadeModifier : public Modifier {
+public:
+	SoundFadeModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::SoundFadeModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Sound Fade Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _enableWhen;
+	Event _disableWhen;
+
+	uint16 _fadeToVolume;
+	uint32 _durationMSec;
+};
+
 class SaveAndRestoreModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data);
