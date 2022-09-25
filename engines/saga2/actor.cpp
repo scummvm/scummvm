@@ -1141,7 +1141,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	_assignment = nullptr;
 
 	if (_prototype)
-		memcpy(&_effectiveStats, &((ActorProto *)_prototype)->baseStats, sizeof(_effectiveStats));
+		_effectiveStats = ((ActorProto *)_prototype)->baseStats;
 
 	_effectiveStats.vitality = MAX<uint16>(_effectiveStats.vitality, 1);
 
