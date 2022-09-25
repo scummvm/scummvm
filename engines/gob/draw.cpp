@@ -514,7 +514,7 @@ void Draw::oPlaytoons_sub_F_1B(uint16 id, int16 left, int16 top, int16 right, in
 		_vm->_game->_script->pop();
 	}
 
-	strcpy(paramStr, tmpStr);
+	Common::strcpy_s(paramStr, 200, tmpStr);
 
 	if (fontIndex >= kFontCount) {
 		warning("Draw::oPlaytoons_sub_F_1B(): Font %d > Count %d", fontIndex, kFontCount);
