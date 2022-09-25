@@ -310,7 +310,7 @@ void GriffonEngine::drawHud() {
 
 		sprintf(line, "Level : %i", _player.level);
 		if (_player.level == _player.maxLevel)
-			strcpy(line, "Level : MAX");
+			Common::strcpy_s(line, "Level : MAX");
 		drawString(_videoBuffer, line, sx, sy + 8, 0);
 
 		// experience

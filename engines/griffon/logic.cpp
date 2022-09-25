@@ -1637,20 +1637,20 @@ void GriffonEngine::updateSpells() {
 					}
 
 					char line[256];
-					strcpy(line, "Found... nothing...");
+					Common::strcpy_s(line, "Found... nothing...");
 
 					for (int f1 = 0; f1 < 5; f1++) {
 						if (foundel[f1] && !_player.foundSpell[f1]) {
 							_player.foundSpell[f1] = 1;
 							_player.spellCharge[f1] = 0;
 							if (f1 == 1)
-								strcpy(line, "Found... Water Essence");
+								Common::strcpy_s(line, "Found... Water Essence");
 							if (f1 == 2)
-								strcpy(line, "Found... Metal Essence");
+								Common::strcpy_s(line, "Found... Metal Essence");
 							if (f1 == 3)
-								strcpy(line, "Found... Earth Essence");
+								Common::strcpy_s(line, "Found... Earth Essence");
 							if (f1 == 4)
-								strcpy(line, "Found... Fire Essence");
+								Common::strcpy_s(line, "Found... Fire Essence");
 							break;
 						}
 					}

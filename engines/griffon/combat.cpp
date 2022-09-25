@@ -553,7 +553,7 @@ void GriffonEngine::damageNPC(int npcnum, int damage, int spell) {
 	int fcol;
 
 	if (damage == 0) {
-		strcpy(line, "miss!");
+		Common::strcpy_s(line, "miss!");
 		fcol = 2;
 	} else {
 		int ratio = 0;
@@ -1021,7 +1021,7 @@ void GriffonEngine::damagePlayer(int damage) {
 
 	sprintf(line, "-%i", damage);
 	if (damage == 0)
-		strcpy(line, "miss!");
+		Common::strcpy_s(line, "miss!");
 
 	addFloatText(line, _player.px + 12 - 4 * strlen(line), _player.py + 16, 4);
 
