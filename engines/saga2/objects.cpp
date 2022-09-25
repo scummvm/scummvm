@@ -4368,13 +4368,13 @@ APPFUNC(cmdBrain) {
 	if (ev.eventType == gEventNewValue) {
 		//WriteStatusF( 4, "Brain Attempt " );
 
-		GameObject          *container = indivCviewTop->containerObject;
+		GameObject          *container = indivCviewTop->_containerObject;
 		ContainerIterator   iter(container);
 		GameObject          *item;
 
 		openMindType = part;
 
-		assert(container == indivCviewBot->containerObject);
+		assert(container == indivCviewBot->_containerObject);
 
 		//  Get the actor's mind container
 		while (iter.next(&item) != Nothing) {
