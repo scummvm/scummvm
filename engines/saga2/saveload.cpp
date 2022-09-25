@@ -520,7 +520,7 @@ void loadGame(int16 saveNo) {
 	cleanupGameState();
 	fadeDown();
 	loadSavedGameState(saveNo);
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 	updateActiveRegions();
 	enableUserControls();

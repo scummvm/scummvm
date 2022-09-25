@@ -267,7 +267,7 @@ void processEventLoop(bool updateScreen) {
 	audioEventLoop();
 
 	debugC(1, kDebugEventLoop, "EventLoop: game mode update");
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	Common::Event event;
@@ -315,7 +315,7 @@ void displayUpdate() {
 		//debugC(1, kDebugEventLoop, "EventLoop: daytime transition update loop");
 		dayNightUpdate();
 		//debugC(1, kDebugEventLoop, "EventLoop: Game mode handle task");
-		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleTask();
+		GameMode::_modeStackPtr[GameMode::_modeStackCtr - 1]->_handleTask();
 		g_vm->_lrate->updateFrameCount();
 		loops++;
 		elapsed += (gameTime - lastGameTime);
@@ -855,7 +855,7 @@ APPFUNC(cmdWindowFunc) {
 		key = ev.value & 0xffff;
 		qual = ev.value >> 16;
 
-		GameMode::modeStackPtr[GameMode::modeStackCtr - 1]->handleKey(key, qual);
+		GameMode::_modeStackPtr[GameMode::_modeStackCtr - 1]->_handleKey(key, qual);
 		break;
 
 	default:

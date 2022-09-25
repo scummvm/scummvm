@@ -36,29 +36,29 @@ namespace Saga2 {
 
 //Initialize Static GameObject Data Members
 
-GameMode    *GameMode::currentMode = nullptr;  // pointer to current mode.
-GameMode    *GameMode::newMode = nullptr;      // next mode to run
+GameMode    *GameMode::_currentMode = nullptr;  // pointer to current mode.
+GameMode    *GameMode::_newMode = nullptr;      // next mode to run
 
-GameMode       *GameMode::modeStackPtr[Max_Modes] = { nullptr };
-GameMode       *GameMode::newmodeStackPtr[Max_Modes] = { nullptr };
-int         GameMode::modeStackCtr = 0;
-int         GameMode::newmodeStackCtr = 0;
-int         GameMode::newmodeFlag = false;
+GameMode       *GameMode::_modeStackPtr[Max_Modes] = { nullptr };
+GameMode       *GameMode::_newmodeStackPtr[Max_Modes] = { nullptr };
+int         GameMode::_modeStackCtr = 0;
+int         GameMode::_newmodeStackCtr = 0;
+int         GameMode::_newmodeFlag = false;
 
 void GameMode::modeUnStack() {
-	modeStackPtr[modeStackCtr] = nullptr;                        //Always Start Cleanup At modeStackCtr
-	modeStackPtr[modeStackCtr--]->cleanup();
+	_modeStackPtr[_modeStackCtr] = nullptr;                        //Always Start Cleanup At _modeStackCtr
+	_modeStackPtr[_modeStackCtr--]->_cleanup();
 	return;
 }
 
 void GameMode::modeUnStack(int StopHere) {
-	if (!modeStackCtr)   //If Nothing Currently On The Stack
+	if (!_modeStackCtr)   //If Nothing Currently On The Stack
 		return;
-	for (int i = modeStackCtr - 1; i >= StopHere; i--) { //Stop Here Is How Far You Want To Unstack
-		if (modeStackPtr[i] != nullptr)
-			modeStackPtr[i]->cleanup();
-		modeStackPtr[i] = nullptr;                        //Always Start Cleanup At modeStackCtr
-		modeStackCtr--;                        //Always Start Cleanup At modeStackCtr
+	for (int i = _modeStackCtr - 1; i >= StopHere; i--) { //Stop Here Is How Far You Want To Unstack
+		if (_modeStackPtr[i] != nullptr)
+			_modeStackPtr[i]->_cleanup();
+		_modeStackPtr[i] = nullptr;                        //Always Start Cleanup At _modeStackCtr
+		_modeStackCtr--;                        //Always Start Cleanup At _modeStackCtr
 	}
 	return;
 }
@@ -68,56 +68,56 @@ bool GameMode::update() {
 	int             ModeCtr = 0;
 
 
-	newmodeFlag = false;
+	_newmodeFlag = false;
 
-	for (int i = 0; i < newmodeStackCtr; i++, ModeCtr++)
-		if (newmodeStackPtr[i] != modeStackPtr[i])
+	for (int i = 0; i < _newmodeStackCtr; i++, ModeCtr++)
+		if (_newmodeStackPtr[i] != _modeStackPtr[i])
 			break;
 
 	//Now ModeCtr Equals How Deep In The Mode Is Equal
 
 	modeUnStack(ModeCtr);
 
-	for (int i = ModeCtr; i < newmodeStackCtr; i++)
-		modeStack(newmodeStackPtr[i]);
+	for (int i = ModeCtr; i < _newmodeStackCtr; i++)
+		modeStack(_newmodeStackPtr[i]);
 
 	return result;
 
 }
 
 int GameMode::getStack(GameMode **saveStackPtr) {
-	memcpy(saveStackPtr, modeStackPtr, sizeof(GameMode *) * modeStackCtr);
-	return modeStackCtr;
+	memcpy(saveStackPtr, _modeStackPtr, sizeof(GameMode *) * _modeStackCtr);
+	return _modeStackCtr;
 }
 
 void GameMode::SetStack(GameMode *modeFirst, ...) {
 	va_list Modes;
 	va_start(Modes, modeFirst); //Initialize To First Argument Even Though We Dont Use It In The Loop
-	newmodeStackCtr = 0; //reset Ctr For New Mode
+	_newmodeStackCtr = 0; //reset Ctr For New Mode
 	GameMode *thisMode = modeFirst;
 
 	//Put List In New Array Of GameMode Object Pointers
 
 	while (thisMode != nullptr) {
-		newmodeStackPtr[newmodeStackCtr] = thisMode;
-		newmodeStackCtr++;
+		_newmodeStackPtr[_newmodeStackCtr] = thisMode;
+		_newmodeStackCtr++;
 		thisMode  = va_arg(Modes, GameMode *);
 
 	}
 	va_end(Modes); //Clean Up
 
-	newmodeFlag = true;
+	_newmodeFlag = true;
 }
 
 void GameMode::SetStack(GameMode **newStack, int newStackSize) {
-	newmodeStackCtr = newStackSize;
-	memcpy(newmodeStackPtr, newStack, sizeof(GameMode *) * newStackSize);
-	newmodeFlag = true;
+	_newmodeStackCtr = newStackSize;
+	memcpy(_newmodeStackPtr, newStack, sizeof(GameMode *) * newStackSize);
+	_newmodeFlag = true;
 }
 
 void GameMode::modeStack(GameMode *AddThisMode) {
-	modeStackPtr[modeStackCtr++] = AddThisMode;
-	AddThisMode->setup();
+	_modeStackPtr[_modeStackCtr++] = AddThisMode;
+	AddThisMode->_setup();
 	return;
 }
 

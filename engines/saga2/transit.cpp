@@ -42,11 +42,11 @@ bool isModalMode() {
 	uint16  i;
 	bool    modalFlag = false;
 
-	for (i = 0; i < GameMode::modeStackCtr; i++) {
+	for (i = 0; i < GameMode::_modeStackCtr; i++) {
 		// go through each stacked mode
 		// and if modal mode is one of them,
 		// then set the modal flag
-		if (GameMode::modeStackPtr[i] == &ModalMode) {
+		if (GameMode::_modeStackPtr[i] == &ModalMode) {
 			modalFlag = true;
 		}
 	}

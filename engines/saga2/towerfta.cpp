@@ -444,7 +444,7 @@ TERMINATOR(termDynamicGameData) {
 INITIALIZER(initGameMode) {
 	GameMode *gameModes[] = {&PlayMode, &TileMode};
 	GameMode::SetStack(gameModes, 2);
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 	return true;
 }

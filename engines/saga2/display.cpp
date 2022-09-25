@@ -86,7 +86,7 @@ void niceScreenStartup() {
 		cleanupGameState();
 		loadSavedGameState(ConfMan.getInt("save_slot"));
 
-		if (GameMode::newmodeFlag)
+		if (GameMode::_newmodeFlag)
 			GameMode::update();
 		updateActiveRegions();
 	}

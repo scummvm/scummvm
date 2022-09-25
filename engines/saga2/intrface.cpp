@@ -605,8 +605,8 @@ CStatusLine::CStatusLine(gPanelList         &list,
 		lineQueue[i].text = nullptr;
 		lineQueue[i].frameTime = 0;
 	}
-	waitAlarm.basetime = waitAlarm.duration = 0;
-	minWaitAlarm.basetime = minWaitAlarm.duration = 0;
+	waitAlarm._basetime = waitAlarm._duration = 0;
+	minWaitAlarm._basetime = minWaitAlarm._duration = 0;
 }
 
 CStatusLine::~CStatusLine() {

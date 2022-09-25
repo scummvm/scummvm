@@ -75,22 +75,22 @@ struct gMouseState;
 
 class GameMode {
 public:
-	GameMode        *prev;                  // previous nested mode
-	int16           nestable;               // true if mode nests
+	GameMode        *_prev;                  // previous nested mode
+	int16           _nestable;               // true if mode nests
 
-	static  GameMode    *modeStackPtr[Max_Modes]; // Array Of Current Mode Stack Pointers to Game Objects
-	static  int         modeStackCtr;       // Counter For Array Of Mode Stack Pointers to Game Objects
-	static  GameMode    *newmodeStackPtr[Max_Modes]; // Array Of New Mode Stack Pointers to Game Objects
-	static  int         newmodeStackCtr;        // Counter For Array Of Mode Stack Pointers to Game Objects
-	static  int         newmodeFlag;        // Flag Telling EventLoop Theres A New Mode So Update
-	static GameMode *currentMode,           // pointer to current mode.
-	       *newMode;               // next mode to run
+	static  GameMode    *_modeStackPtr[Max_Modes]; // Array Of Current Mode Stack Pointers to Game Objects
+	static  int         _modeStackCtr;       // Counter For Array Of Mode Stack Pointers to Game Objects
+	static  GameMode    *_newmodeStackPtr[Max_Modes]; // Array Of New Mode Stack Pointers to Game Objects
+	static  int         _newmodeStackCtr;        // Counter For Array Of Mode Stack Pointers to Game Objects
+	static  int         _newmodeFlag;        // Flag Telling EventLoop Theres A New Mode So Update
+	static GameMode *_currentMode,           // pointer to current mode.
+	       *_newMode;               // next mode to run
 
-	void (*setup)();                     // initialize this mode
-	void (*cleanup)();               // deallocate mode resources
-	void (*handleTask)();                // "application task" for mode
-	void (*handleKey)(int16 key, int16 qual);  // handle keystroke from window
-	void (*draw)();                          // handle draw functions for window
+	void (*_setup)();                     // initialize this mode
+	void (*_cleanup)();               // deallocate mode resources
+	void (*_handleTask)();                // "application task" for mode
+	void (*_handleKey)(int16 key, int16 qual);  // handle keystroke from window
+	void (*_draw)();                          // handle draw functions for window
 
 	static  void modeUnStack();
 	static  void modeUnStack(int StopHere);
@@ -131,8 +131,8 @@ void resumeTimer();                  // resume game clock
 
 class Alarm {
 public:
-	uint32 basetime;                            // timer alarm was set
-	uint32 duration;                            // duration of alarm
+	uint32 _basetime;                            // timer alarm was set
+	uint32 _duration;                            // duration of alarm
 
 	void set(uint32 duration);
 	bool check();

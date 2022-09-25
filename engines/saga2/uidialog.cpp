@@ -722,7 +722,7 @@ int16 FileDialog(int16 fileProcess) {
 	win->userData = &rInfo;
 	win->open();
 
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	win->invalidate();
@@ -936,7 +936,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 		else {
 			loadSavedGameState(deferredLoadID);
 		}
-		if (GameMode::newmodeFlag)
+		if (GameMode::_newmodeFlag)
 			GameMode::update();
 		updateActiveRegions();
 		//displayUpdate();
