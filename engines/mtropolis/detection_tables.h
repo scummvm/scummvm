@@ -510,9 +510,9 @@ static const MTropolisGameDescription gameDescriptions[] = {
 			"albert3",
 			"",
 			{
-				{ "insel.exe",     0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
-				{ "ile_myst1.MPL", 0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
-				{ "ile_myst2.MPX", 0, "ecb1d2c8b99eb5b2ac6be55893b97f50", 283748531 },
+				{ "insel.exe",      0, "0e513dac9d2a0d7cfcdc670cab2a9bda", 757760 },
+				{ "ile_myst1.MPL",  0, "44ac2e944a61303f4028408165bafeb4", 24080377 },
+				{ "ILEMYST2.MPX",   0, "ecb1d2c8b99eb5b2ac6be55893b97f50", 283748531 },
 				// { "BASIC.X95",     0, "a1b474e90cc285bfdcfa87355f890b9e", 242688 },
 				// { "BITMAP.R95",    0, "2bf7305eca9df63dbc75f55093b84cc0", 81408 },
 				// { "CURSORS.C95",   0, "c1e2eebe7183b5ea33de7872a8ea4d2b", 87040 },
