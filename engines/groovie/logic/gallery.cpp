@@ -183,7 +183,7 @@ byte GalleryGame::galleryAI(byte *pieceStatus, int depth) {
 		}
 		if (v9 == v10)
 			return 1; // I believe 1 means this is an optimal move
-		else if (_easierAi && v9 * 3 >= v10 * 2)
+		else if (_easierAi && (v9 + 1 == v10 || v9 - 1 == v10))
 			return 1; // close enough to an optimal move?
 		else
 			return (v8 + 102 * v9) / v10;// otherwise, higher numbers are better
