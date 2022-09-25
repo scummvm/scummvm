@@ -699,7 +699,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 		}
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
-			warning("Groovie::ROQ: Skipped %d bytes", skipBytes);
+			warning("Groovie::ROQ: Skipped %ld bytes", skipBytes);
 		}
 	}
 	return true;
