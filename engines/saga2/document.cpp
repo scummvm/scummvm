@@ -141,54 +141,54 @@ CDocument::CDocument(CDocumentAppearance &dApp,
                      gFont           *font,          // font of the text
                      uint16          ident,          // control ID
                      AppFunc         *cmd)           // application command func
-	: app(dApp), ModalWindow(dApp.windowPos, ident, cmd) {
+	: _app(dApp), ModalWindow(dApp.windowPos, ident, cmd) {
 	// resource handle
 	hResContext     *decRes;
 
 	// init the resource context handle
-	decRes = resFile->newContext(app.groupID, "docimage context");
+	decRes = resFile->newContext(_app.groupID, "docimage context");
 
 	// init con pointer to NULL
-	illustrationCon = nullptr;
+	_illustrationCon = nullptr;
 
 	// set the maxium string length
-	maxSize = maxPages * maxLines * maxChars;
+	_maxSize = maxPages * maxLines * maxChars;
 
 	// get the org text size
-	textSize = clamp(0, strlen(buffer), maxSize);
+	_textSize = clamp(0, strlen(buffer), _maxSize);
 
 	// set the original text pointer
-	origText = new char[textSize + 1];
+	origText = new char[_textSize + 1];
 
 	// and fill it
-	Common::strlcpy(origText, buffer, textSize + 1);
+	Common::strlcpy(origText, buffer, _textSize + 1);
 
 	// make a working buffer
-	text = new char[textSize + 1];
+	text = new char[_textSize + 1];
 
 	// and fill it
-	Common::strlcpy(text, origText, textSize + 1);
+	Common::strlcpy(text, origText, _textSize + 1);
 
-	textFont        = font;
-	textHeight      = (textFont ? textFont->height : 0);
-	lineWidth       = dApp.pageRect[0].width;
-	pageHeight      = dApp.pageRect[0].height;
-	currentPage     = 0;
-	totalLines      = 0;
-	totalPages      = 0;
-	pageBreakSet    = true;
+	_textFont        = font;
+	_textHeight      = (_textFont ? _textFont->height : 0);
+	_lineWidth       = dApp.pageRect[0].width;
+	_pageHeight      = dApp.pageRect[0].height;
+	_currentPage     = 0;
+	_totalLines      = 0;
+	_totalPages      = 0;
+	_pageBreakSet    = true;
 
 	// null out the image pointer array
 	for (int16 i = 0; i < maxPages; i++) {
-		images[i] = nullptr;
+		_images[i] = nullptr;
 	}
 
 	makePages();
 
 	// attach the graphics for the book
-	setDecorations(app.decoList,
-	               app.numDecos,
-	               decRes, app.decoID);
+	setDecorations(_app.decoList,
+	               _app.numDecos,
+	               decRes, _app.decoID);
 
 	// remove the resource handle
 	if (decRes) resFile->disposeContext(decRes);
@@ -201,8 +201,8 @@ CDocument::~CDocument() {
 	int16   i;
 
 	for (i = 0; i < maxPages; i++) {
-		if (images[i]) {
-			free(images[i]);
+		if (_images[i]) {
+			free(_images[i]);
 		}
 	}
 
@@ -218,8 +218,8 @@ CDocument::~CDocument() {
 	}
 
 	// get rid of the resource context
-	if (illustrationCon)
-		resFile->disposeContext(illustrationCon);
+	if (_illustrationCon)
+		resFile->disposeContext(_illustrationCon);
 }
 
 void CDocument::deactivate() {
@@ -279,7 +279,7 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg.pickPos;
 
 	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
-		if (app.orientation == pageOrientVertical) {
+		if (_app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
 			if (pos.y < _extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
 			else                            setMouseImage(kMousePgDownImage, -7, -7);
@@ -306,14 +306,14 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 
 	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		gEvent ev;
-		if (app.orientation == pageOrientVertical) {
+		if (_app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
-			if (pos.y < _extent.height / 2)   cmdDocumentUp(ev); //gotoPage( currentPage - app.numPages );
-			else                            cmdDocumentDn(ev); //gotoPage( currentPage + app.numPages );
+			if (pos.y < _extent.height / 2)   cmdDocumentUp(ev); //gotoPage( _currentPage - _app.numPages );
+			else                            cmdDocumentDn(ev); //gotoPage( _currentPage + _app.numPages );
 		} else {
 			// find out which side of the book we're on
-			if (pos.x < _extent.width / 2)    cmdDocumentLt(ev); //gotoPage( currentPage - app.numPages );
-			else                            cmdDocumentRt(ev); //gotoPage( currentPage + app.numPages );
+			if (pos.x < _extent.width / 2)    cmdDocumentLt(ev); //gotoPage( _currentPage - _app.numPages );
+			else                            cmdDocumentRt(ev); //gotoPage( _currentPage + _app.numPages );
 		}
 	} else {
 		// mouse hit outside book area, close book
@@ -338,10 +338,10 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 void CDocument::gotoPage(int8 page) {
 	page = clamp(0, page, maxPages);
 
-	while (page % app.numPages) page++;
+	while (page % _app.numPages) page++;
 
-	if (page != currentPage && page < pages) {
-		currentPage = page;
+	if (page != _currentPage && page < _pages) {
+		_currentPage = page;
 		renderText();
 	}
 }
@@ -363,8 +363,8 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 		// eat the page breaks chars
 		// tie off the end
 		strIndex[0] = 0;
-		strAfter = new char[textSize];
-		Common::strlcpy(strAfter, &strIndex[3], textSize);
+		strAfter = new char[_textSize];
+		Common::strlcpy(strAfter, &strIndex[3], _textSize);
 
 		// string them together
 		strcat(&strIndex[0], strAfter);
@@ -391,7 +391,7 @@ bool CDocument::checkForImage(char      *string,
 
 
 	// if there was not just a page break
-	if (!pageBreakSet) {
+	if (!_pageBreakSet) {
 		// then the images are going to end up on the next page
 		offPageIndex++;
 	}
@@ -404,10 +404,10 @@ bool CDocument::checkForImage(char      *string,
 		char    *argv = &strIndex[2 + 1];  // array to first element
 
 		// delete context
-		if (illustrationCon) resFile->disposeContext(illustrationCon);
+		if (_illustrationCon) resFile->disposeContext(_illustrationCon);
 
 		// resource handle
-		illustrationCon = resFile->newContext(MKTAG(argv[0], argv[1], argv[2], argv[3]),
+		_illustrationCon = resFile->newContext(MKTAG(argv[0], argv[1], argv[2], argv[3]),
 		                                      "book internal resources");
 		// set image for next page
 		if (offPageIndex < maxPages) {
@@ -418,9 +418,9 @@ bool CDocument::checkForImage(char      *string,
 				uint8   num         = atoi(numSt);
 
 
-				if (!images[offPageIndex]) {
+				if (!_images[offPageIndex]) {
 					// get the image
-					images[offPageIndex] = LoadResource(illustrationCon,
+					_images[offPageIndex] = LoadResource(_illustrationCon,
 					                                      MKTAG(argv[4], argv[5], argv[6], num),
 					                                      "book internal image");
 				}
@@ -428,14 +428,14 @@ bool CDocument::checkForImage(char      *string,
 				// number of chars to eat
 				numEat = 9;
 			} else {
-				images[offPageIndex] = LoadResource(illustrationCon,
+				_images[offPageIndex] = LoadResource(_illustrationCon,
 				                                      MKTAG(argv[4], argv[5], argv[6], argv[7]),
 				                                      "book internal image");
 				numEat = 8;
 			}
 
 			// get the size of the image
-			imageSizes[offPageIndex] = ((ImageHeader *)images[offPageIndex])->size;
+			_imageSizes[offPageIndex] = ((ImageHeader *)_images[offPageIndex])->size;
 
 			// tie off the end
 			strIndex[0] = 0;
@@ -447,8 +447,8 @@ bool CDocument::checkForImage(char      *string,
 			offset = index;
 
 			// set the line offset
-			lineOffset[offPageIndex] =
-				imageSizes[offPageIndex].y / (textHeight + 1) +
+			_lineOffset[offPageIndex] =
+				_imageSizes[offPageIndex].y / (_textHeight + 1) +
 				textPictureOffset;
 		} else {
 			warning("CDocument: Document overflow");
@@ -464,14 +464,14 @@ bool CDocument::checkForImage(char      *string,
 
 void CDocument::makePages() {
 	// copy the original text back to the working buffer
-	Common::strlcpy(text, origText, textSize + 1);
+	Common::strlcpy(text, origText, _textSize + 1);
 
 
 	char    *str            = text;
 	int32   offset          = 0;
 	uint16  lineIndex       = 0;
 	uint16  pageIndex       = 0;
-	uint16  linesPerPage    = pageHeight / (textHeight + 1);
+	uint16  linesPerPage    = _pageHeight / (_textHeight + 1);
 	uint16  dummy;
 	uint16  i;
 	bool    newPage         = false;
@@ -481,7 +481,7 @@ void CDocument::makePages() {
 		while (offset >= 0 &&
 		        lineIndex < linesPerPage &&
 		        !newPage) {
-			offset = GTextWrap(textFont, str, dummy, lineWidth, 0);
+			offset = GTextWrap(_textFont, str, dummy, _lineWidth, 0);
 
 			// check for page breaks and images
 			for (i = 0; i <= offset; i++) {
@@ -490,43 +490,43 @@ void CDocument::makePages() {
 					// page break check
 					if (checkForPageBreak(str, i, offset)) {
 						// if a break did not just occur
-						if (!pageBreakSet) {
+						if (!_pageBreakSet) {
 							newPage         = true;
-							pageBreakSet    = true;
+							_pageBreakSet    = true;
 						} else {
 							// eat the newPage and
 							// reset the flag for a just set break
-							pageBreakSet = false;
+							_pageBreakSet = false;
 						}
 					}
 
 					// image check
 					if (checkForImage(str, i, pageIndex, offset)) {
 						// if a break did not just occur
-						if (!pageBreakSet) {
+						if (!_pageBreakSet) {
 							newPage         = true;
-							pageBreakSet    = true;
+							_pageBreakSet    = true;
 						} else {
 							// eat the newPage and
 							// reset the flag for a just set break
-							pageBreakSet = false;
+							_pageBreakSet = false;
 						}
 
-						lineIndex   = lineOffset[pageIndex];
+						lineIndex   = _lineOffset[pageIndex];
 					}
 				}
 
 				// we got token that was not a page break so reset the flag
-				pageBreakSet = false;
+				_pageBreakSet = false;
 			}
 
 			// set the length of this line
 			if (offset >= 0) {
 				// number of characters on this line
-				lineLen[pageIndex][lineIndex] = offset;
+				_lineLen[pageIndex][lineIndex] = offset;
 			} else {
 				// remaining number of characters in string
-				lineLen[pageIndex][lineIndex] = strlen(str);
+				_lineLen[pageIndex][lineIndex] = strlen(str);
 			}
 
 
@@ -535,14 +535,14 @@ void CDocument::makePages() {
 			lineIndex++;
 		}
 
-		numLines[pageIndex] = lineIndex;
+		_numLines[pageIndex] = lineIndex;
 		pageIndex++;
 		newPage     = false;
 
 		lineIndex = 0;
 	}
 
-	pages = pageIndex;
+	_pages = pageIndex;
 }
 
 // This function will draw the text onto the book.
@@ -551,10 +551,10 @@ void CDocument::renderText() {
 	gPort           &port = window.windowPort;
 	uint16          pageIndex;
 	uint16          lineIndex;
-	uint16          linesPerPage = pageHeight / (textHeight + 1);
+	uint16          linesPerPage = _pageHeight / (_textHeight + 1);
 	char            *str = text;
 
-	assert(textFont);
+	assert(_textFont);
 
 	Rect16  bltRect(0, 0, _extent.width, _extent.height);
 
@@ -574,59 +574,59 @@ void CDocument::renderText() {
 		            Point16(_extent.x, _extent.y),
 		            Rect16(0, 0, _extent.width, _extent.height));
 
-		tPort.setFont(textFont);         // setup the string pointer
-		for (pageIndex = 0; pageIndex < currentPage; pageIndex++) {
-			if (images[pageIndex]) {
-				lineIndex = lineOffset[pageIndex];
+		tPort.setFont(_textFont);         // setup the string pointer
+		for (pageIndex = 0; pageIndex < _currentPage; pageIndex++) {
+			if (_images[pageIndex]) {
+				lineIndex = _lineOffset[pageIndex];
 
 				assert(lineIndex < linesPerPage);
 			} else {
 				lineIndex = 0;
 			}
 
-			for (; lineIndex < numLines[pageIndex]; lineIndex++) {
-				int16   temp = lineLen[pageIndex][lineIndex];
+			for (; lineIndex < _numLines[pageIndex]; lineIndex++) {
+				int16   temp = _lineLen[pageIndex][lineIndex];
 
 				assert(pageIndex < maxPages);
 				assert(temp < 35);
 
-				str += lineLen[pageIndex][lineIndex];
+				str += _lineLen[pageIndex][lineIndex];
 			}
 		}
 
 		// draw the text onto the pages of the book
-		for (pageIndex = currentPage;
-		        pageIndex - currentPage < app.numPages && pageIndex < pages;
+		for (pageIndex = _currentPage;
+		        pageIndex - _currentPage < _app.numPages && pageIndex < _pages;
 		        pageIndex++) {
-			StaticRect *pageRect = &app.pageRect[pageIndex % app.numPages];
+			StaticRect *pageRect = &_app.pageRect[pageIndex % _app.numPages];
 
 			// if there is an image on this page
-			if (images[pageIndex]) {
+			if (_images[pageIndex]) {
 				Point16 pos;
 
-				pos.x = pageRect->x + (pageRect->width - imageSizes[pageIndex].x) / 2;
+				pos.x = pageRect->x + (pageRect->width - _imageSizes[pageIndex].x) / 2;
 				pos.y = pageRect->y;
 
-				drawCompressedImage(tPort, pos, images[pageIndex]);
+				drawCompressedImage(tPort, pos, _images[pageIndex]);
 
-				lineIndex = lineOffset[pageIndex];
+				lineIndex = _lineOffset[pageIndex];
 			} else {
 				lineIndex = 0;
 			}
 
-			for (; lineIndex < numLines[pageIndex]; lineIndex++) {
+			for (; lineIndex < _numLines[pageIndex]; lineIndex++) {
 				assert(pageIndex <= maxPages);
 
-				tPort.moveTo(pageRect->x, pageRect->y + (textHeight * lineIndex) + 1);
-				tPort.setColor(app.textColors[lineIndex]);
-				tPort.drawText(str, lineLen[pageIndex][lineIndex]);
+				tPort.moveTo(pageRect->x, pageRect->y + (_textHeight * lineIndex) + 1);
+				tPort.setColor(_app.textColors[lineIndex]);
+				tPort.drawText(str, _lineLen[pageIndex][lineIndex]);
 
 				// grab the next text offset
-				int16 temp = lineLen[pageIndex][lineIndex];
+				int16 temp = _lineLen[pageIndex][lineIndex];
 
 				assert(temp < 35);
 
-				str += lineLen[pageIndex][lineIndex];
+				str += _lineLen[pageIndex][lineIndex];
 			}
 		}
 
@@ -678,13 +678,13 @@ void CDocument::draw() {         // redraw the window
    Text buffer
  * ===================================================================== */
 
-const int       textSize = 4096;
-char            bookText[textSize] = { "" };
+const int       _textSize = 4096;
+char            bookText[_textSize] = { "" };
 
 void appendBookText(char *string) {
 	if (string) {
-		Common::strlcat(bookText, string, textSize - 1);
-		bookText[textSize - 1] = 0;
+		Common::strlcat(bookText, string, _textSize - 1);
+		bookText[_textSize - 1] = 0;
 	}
 }
 
@@ -887,19 +887,19 @@ APPFUNCV(CDocument::cmdDocumentEsc) {
 }
 
 APPFUNCV(CDocument::cmdDocumentLt) {
-	gotoPage(currentPage - app.numPages);    //draw();
+	gotoPage(_currentPage - _app.numPages);    //draw();
 }
 
 APPFUNCV(CDocument::cmdDocumentRt) {
-	gotoPage(currentPage + app.numPages);   //draw();
+	gotoPage(_currentPage + _app.numPages);   //draw();
 }
 
 APPFUNCV(CDocument::cmdDocumentUp) {
-	gotoPage(currentPage - app.numPages);   //draw();
+	gotoPage(_currentPage - _app.numPages);   //draw();
 }
 
 APPFUNCV(CDocument::cmdDocumentDn) {
-	gotoPage(currentPage + app.numPages);   //draw();
+	gotoPage(_currentPage + _app.numPages);   //draw();
 }
 
 } // end of namespace Saga2
