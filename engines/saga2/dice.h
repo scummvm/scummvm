@@ -41,19 +41,19 @@ inline int32 diceRoll(int dice, int sides, int perDieMod, int base) {
 }
 
 class RandomDice {
-	int8    dice, side;
+	int8    _dice, _side;
 public:
 	RandomDice(int8 d, int8 s) {
-		dice = d;
-		side = s;
+		_dice = d;
+		_side = s;
 	}
 	RandomDice() {
-		dice = 1;
-		side = 1;
+		_dice = 1;
+		_side = 1;
 	}
 
 	int32 roll(int32 resist = 0) {
-		return diceRoll(dice, side, resist, 0);
+		return diceRoll(_dice, _side, resist, 0);
 	}
 };
 
