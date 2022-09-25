@@ -458,7 +458,7 @@ void gWindow::close() {
 
 	//  Don't close a window that is being dragged (should never happen,
 	//  but just in case).
-	if (DragBar::dragWindow == (FloatingWindow *)this)
+	if (DragBar::_dragWindow == (FloatingWindow *)this)
 		return;
 
 	openFlag = false;

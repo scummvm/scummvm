@@ -399,7 +399,7 @@ void AutoMap::drawClipped(
 
 
 	//  For each "decorative panel" within the frame of the window
-	for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
+	for (dec = _decorations, i = 0; i < _numDecorations; i++, dec++) {
 		//  If the decorative panel overlaps the area we are
 		//  rendering
 

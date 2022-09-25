@@ -67,8 +67,8 @@ extern bool         allPlayerActorsDead;
 //  Constructor for a background window
 DecoratedWindow::DecoratedWindow(const Rect16 &r, uint16 ident, const char saveas[], AppFunc *cmd)
 	: gWindow(r, ident, saveas, cmd) {
-	decorations = nullptr;
-	numDecorations = 0;
+	_decorations = nullptr;
+	_numDecorations = 0;
 }
 
 // destructor for decorated windows
@@ -90,7 +90,7 @@ void DecoratedWindow::drawClipped(
 		if (_extent.overlap(clipRect)) {
 			//  For each "decorative panel" within the frame of the window
 
-			for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
+			for (dec = _decorations, i = 0; i < _numDecorations; i++, dec++) {
 				//  If the decorative panel overlaps the area we are
 				//  rendering
 
@@ -108,7 +108,7 @@ void DecoratedWindow::drawClipped(
 	// REM: We should also draw the scrolling tiles at this time???
 }
 
-//  Set up the decorations for the window, and load them into the
+//  Set up the _decorations for the window, and load them into the
 //  memory pool
 
 void DecoratedWindow::setDecorations(
@@ -117,22 +117,22 @@ void DecoratedWindow::setDecorations(
     hResContext     *con) {
 	int16           i;
 
-	numDecorations = count;
+	_numDecorations = count;
 
-	if (decorations)
-		delete[] decorations;
+	if (_decorations)
+		delete[] _decorations;
 
-	decorations = new WindowDecoration[numDecorations];
+	_decorations = new WindowDecoration[_numDecorations];
 
 	//  For each "decorative panel" within the frame of the window
 
-	for (i = 0; i < numDecorations; i++, dec++) {
+	for (i = 0; i < _numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
 		dec->image = g_vm->_imageCache->requestImage(con,
 		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
-		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
-		decorations[i].imageNumber = dec->imageNumber;
+		_decorations[i].extent = dec->extent;
+		_decorations[i].image = dec->image;
+		_decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
@@ -143,21 +143,21 @@ void DecoratedWindow::setDecorations(
     hResID          id_) {
 	int16           i;
 
-	numDecorations = count;
+	_numDecorations = count;
 
-	if (decorations)
-		delete[] decorations;
+	if (_decorations)
+		delete[] _decorations;
 
-	decorations = new WindowDecoration[numDecorations];
+	_decorations = new WindowDecoration[_numDecorations];
 
 	//  For each "decorative panel" within the frame of the window
 
-	for (i = 0; i < numDecorations; i++, dec++) {
+	for (i = 0; i < _numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
 		dec->image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
-		decorations[i].extent = dec->extent;
-		decorations[i].image = dec->image;
-		decorations[i].imageNumber = dec->imageNumber;
+		_decorations[i].extent = dec->extent;
+		_decorations[i].image = dec->image;
+		_decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
@@ -175,12 +175,12 @@ void DecoratedWindow::setDecorations(
     hResContext     *con) {
 	int16           i;
 
-	numDecorations = count;
+	_numDecorations = count;
 
-	if (decorations)
-		delete[] decorations;
+	if (_decorations)
+		delete[] _decorations;
 
-	decorations = new WindowDecoration[numDecorations];
+	_decorations = new WindowDecoration[_numDecorations];
 
 	if (g_vm->getGameId() == GID_DINO) {
 		warning("TODO: setDecorations() for Dino");
@@ -189,12 +189,12 @@ void DecoratedWindow::setDecorations(
 
 	//  For each "decorative panel" within the frame of the window
 
-	for (i = 0; i < numDecorations; i++, dec++) {
+	for (i = 0; i < _numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		decorations[i].extent = dec->extent;
-		decorations[i].image = g_vm->_imageCache->requestImage(con,
+		_decorations[i].extent = dec->extent;
+		_decorations[i].image = g_vm->_imageCache->requestImage(con,
 		                                     MKTAG('B', 'R', 'D', dec->imageNumber));
-		decorations[i].imageNumber = dec->imageNumber;
+		_decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
@@ -205,20 +205,20 @@ void DecoratedWindow::setDecorations(
     hResID          id_) {
 	int16           i;
 
-	numDecorations = count;
+	_numDecorations = count;
 
-	if (decorations)
-		delete[] decorations;
+	if (_decorations)
+		delete[] _decorations;
 
-	decorations = new WindowDecoration[numDecorations];
+	_decorations = new WindowDecoration[_numDecorations];
 
 	//  For each "decorative panel" within the frame of the window
 
-	for (i = 0; i < numDecorations; i++, dec++) {
+	for (i = 0; i < _numDecorations; i++, dec++) {
 		// request an image pointer from the image Cache
-		decorations[i].extent = dec->extent;
-		decorations[i].image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
-		decorations[i].imageNumber = dec->imageNumber;
+		_decorations[i].extent = dec->extent;
+		_decorations[i].image = g_vm->_imageCache->requestImage(con, id_ | MKTAG(0, 0, 0, dec->imageNumber));
+		_decorations[i].imageNumber = dec->imageNumber;
 	}
 }
 
@@ -230,26 +230,26 @@ void DecoratedWindow::setDecorations(
 	setDecorations(dec, count, con, MKTAG(a, b, c, 0));
 }
 
-//  Free the decorations from the memory pool
+//  Free the _decorations from the memory pool
 
 void DecoratedWindow::removeDecorations() {
 	WindowDecoration *dec;
 	int16           i;
 
 	// release requests made to the Image Cache
-	for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
+	for (dec = _decorations, i = 0; i < _numDecorations; i++, dec++) {
 		g_vm->_imageCache->releaseImage(dec->image);
 	}
 
-	if (decorations) {
-		delete[] decorations;
-		decorations = nullptr;
+	if (_decorations) {
+		delete[] _decorations;
+		_decorations = nullptr;
 	}
 
-	numDecorations = 0;
+	_numDecorations = 0;
 }
 
-//  Redraw all of the decorations, on the main port only...
+//  Redraw all of the _decorations, on the main port only...
 
 void DecoratedWindow::draw() {               // redraw the window
 	g_vm->_pointer->hide();
@@ -318,10 +318,10 @@ void BackWindow::toFront() {}
    DragBar class member functions
  * ===================================================================== */
 
-StaticPoint16 DragBar::dragOffset = {0, 0};
-StaticPoint16 DragBar::dragPos = {0, 0};
-bool                DragBar::update;
-FloatingWindow      *DragBar::dragWindow;
+StaticPoint16 DragBar::_dragOffset = {0, 0};
+StaticPoint16 DragBar::_dragPos = {0, 0};
+bool                DragBar::_update;
+FloatingWindow      *DragBar::_dragWindow;
 
 DragBar::DragBar(gPanelList &list, const Rect16 &r)
 	: gControl(list, r, nullptr, 0, nullptr) {
@@ -338,9 +338,9 @@ void DragBar::deactivate() {
 bool DragBar::pointerHit(gPanelMessage &msg) {
 	Rect16      wExtent = window.getExtent();
 
-	dragPos.x = wExtent.x;
-	dragPos.y = wExtent.y;
-	dragOffset.set(msg.pickAbsPos.x, msg.pickAbsPos.y);
+	_dragPos.x = wExtent.x;
+	_dragPos.y = wExtent.y;
+	_dragOffset.set(msg.pickAbsPos.x, msg.pickAbsPos.y);
 
 	return true;
 }
@@ -354,22 +354,22 @@ void DragBar::pointerDrag(gPanelMessage &msg) {
 
 	//  Calculate new window position
 
-	pos.x = msg.pickAbsPos.x + ext.x - dragOffset.x;
-	pos.y = msg.pickAbsPos.y + ext.y - dragOffset.y;
+	pos.x = msg.pickAbsPos.x + ext.x - _dragOffset.x;
+	pos.y = msg.pickAbsPos.y + ext.y - _dragOffset.y;
 
 	//  If window position has changed, then signal the drawing loop
 
-	if (pos != dragPos) {
-		dragPos.set(pos.x, pos.y);
-		update = true;
-		dragWindow = (FloatingWindow *)&window;
+	if (pos != _dragPos) {
+		_dragPos.set(pos.x, pos.y);
+		_update = true;
+		_dragWindow = (FloatingWindow *)&window;
 	}
 }
 
 void DragBar::pointerRelease(gPanelMessage &) {
 	deactivate();
-	update = false;             // just in case
-	dragWindow = nullptr;
+	_update = false;             // just in case
+	_dragWindow = nullptr;
 }
 
 
@@ -431,7 +431,7 @@ void gButton::draw() {
  * ===================================================================== */
 
 void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 &r) {
-	gPixelMap   *currentImage = selected ? selImage : deselImage;
+	gPixelMap   *currentImage = selected ? _selImage : _deselImage;
 
 	if (displayEnabled())
 		if (_extent.overlap(r))
@@ -525,10 +525,10 @@ void LabeledButton::drawClipped(
 
 FloatingWindow::FloatingWindow(const Rect16 &r, uint16 ident, const char saveas[], AppFunc *cmd)
 	: DecoratedWindow(r, ident, saveas, cmd) {
-	db = new DragBar(*this, Rect16(0, 0, r.width, r.height));
+	_db = new DragBar(*this, Rect16(0, 0, r.width, r.height));
 
-	origPos.x = r.x;
-	origPos.y = r.y;
+	_origPos.x = r.x;
+	_origPos.y = r.y;
 
 #if 0
 	decOffset.x = 0;
@@ -548,8 +548,8 @@ void FloatingWindow::drawClipped(
 
 	if (displayEnabled())
 		if (_extent.overlap(r)) {
-			// do'nt do the temp stuff if there are decorations present
-			if (numDecorations == 0) {
+			// do'nt do the temp stuff if there are _decorations present
+			if (_numDecorations == 0) {
 				rect.x -= offset.x;
 				rect.y -= offset.y;
 
@@ -561,7 +561,7 @@ void FloatingWindow::drawClipped(
 			}
 
 			//  For each "decorative panel" within the frame of the window
-			for (dec = decorations, i = 0; i < numDecorations; i++, dec++) {
+			for (dec = _decorations, i = 0; i < _numDecorations; i++, dec++) {
 				Point16 pos(dec->extent.x /* - decOffset.x */ - offset.x + _extent.x,
 				            dec->extent.y /* - decOffset.y */ - offset.y + _extent.y);
 
@@ -574,10 +574,10 @@ void FloatingWindow::drawClipped(
 
 void FloatingWindow::setExtent(const Rect16 &r) {
 	// set an offset from the original position of the window
-	// for the decorations to use in drawing themselves
+	// for the _decorations to use in drawing themselves
 #if 0
-	decOffset.x = origPos.x - r.x;
-	decOffset.y = origPos.y - r.y;
+	decOffset.x = _origPos.x - r.x;
+	decOffset.y = _origPos.y - r.y;
 #endif
 
 	// now reset the extent
@@ -587,7 +587,7 @@ void FloatingWindow::setExtent(const Rect16 &r) {
 }
 
 bool FloatingWindow::open() {
-	db->moveToBack(*this);
+	_db->moveToBack(*this);
 
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
@@ -702,21 +702,21 @@ void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip)
 	//  If a floating window is in the process of being dragged,
 	//  then things get a little more complex...
 
-	if (DragBar::update) {
+	if (DragBar::_update) {
 		Rect16          oldExtent,
 		                newExtent;
 
 		//  Calculate the new and old position of the window
 
-		oldExtent = DragBar::dragWindow->getExtent();
+		oldExtent = DragBar::_dragWindow->getExtent();
 		newExtent = oldExtent;
-		newExtent.x = DragBar::dragPos.x;
-		newExtent.y = DragBar::dragPos.y;
+		newExtent.x = DragBar::_dragPos.x;
+		newExtent.y = DragBar::_dragPos.y;
 
 		//  Move the window to the new position
 
-		DragBar::dragWindow->setExtent(newExtent);
-		DragBar::update = false;
+		DragBar::_dragWindow->setExtent(newExtent);
+		DragBar::_update = false;
 
 		if (newExtent.overlap(oldExtent)) {
 			//  If the positions overlap, update them as a single
