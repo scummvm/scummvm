@@ -116,7 +116,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 
 	// force reload of character to solve inventory
 	// bugs, but it's a good maneuver anyway
-	strcpy(_vm->_characterName1, "null");
+	Common::strcpy_s(_vm->_characterName1, "null");
 
 	char tmp[PATH_LEN];
 	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());

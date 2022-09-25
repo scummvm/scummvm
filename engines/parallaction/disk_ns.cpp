@@ -352,7 +352,7 @@ GfxObj* DosDisk_ns::loadHead(const char* name) {
 	char path[PATH_LEN];
 	sprintf(path, "%shead", name);
 	path[8] = '\0';
-	strcat(path, ".cnv");
+	Common::strcat_s(path, ".cnv");
 	return new GfxObj(0, loadCnv(path));
 }
 

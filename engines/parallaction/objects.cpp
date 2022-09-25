@@ -396,8 +396,9 @@ void Table::addData(const char* s) {
 	if (!(_used < _size))
 		error("Table overflow");
 
-	char *data = (char *)malloc(strlen(s) + 1);
-	strcpy(data, s);
+	size_t ln = strlen(s) + 1;
+	char *data = (char *)malloc(ln);
+	Common::strcpy_s(data, ln, s);
 	_data[_used++] = data;
 }
 

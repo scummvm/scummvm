@@ -118,7 +118,7 @@ Common::Error Parallaction::init() {
 
 	_screenSize = _screenWidth * _screenHeight;
 
-	strcpy(_characterName1, "null");
+	Common::strcpy_s(_characterName1, "null");
 
 	memset(_localFlags, 0, sizeof(_localFlags));
 	memset(_locationNames, 0, NUM_LOCATIONS * 32);
