@@ -194,8 +194,8 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		effects = pe;
 	else {
 		ProtoEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next) ;
-		tail->next = pe;
+		for (tail = effects; tail->_next; tail = tail->_next) ;
+		tail->_next = pe;
 	}
 }
 

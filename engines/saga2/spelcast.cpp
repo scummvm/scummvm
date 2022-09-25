@@ -119,8 +119,8 @@ void SpellStuff::addEffect(ProtoEffect *pe) {
 		effects = pe;
 	else {
 		ProtoEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next) ;
-		tail->next = pe;
+		for (tail = effects; tail->_next; tail = tail->_next) ;
+		tail->_next = pe;
 	}
 }
 
@@ -180,7 +180,7 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 	        !canTarget(spellTargCaster))
 		return;
 	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->next)
+		for (ProtoEffect *pe = effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -192,7 +192,7 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 void SpellStuff::implement(GameObject *enactor, ActiveItem *target) {
 	SpellTarget st = SpellTarget(target);
 	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->next)
+		for (ProtoEffect *pe = effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -211,7 +211,7 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 			        t->getObject()->thisID() == enactor->thisID() &&
 			        !canTarget(spellTargCaster))
 				continue;
-			for (ProtoEffect *pe = effects; pe; pe = pe->next)
+			for (ProtoEffect *pe = effects; pe; pe = pe->_next)
 				if (pe->applicable(*t))
 					pe->implement(enactor, t);
 		}

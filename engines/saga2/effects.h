@@ -350,14 +350,14 @@ class ProtoEffect {
 	//int imp;                // enchant or immediate
 
 public:
-	ProtoEffect *next;                      // pointer to additional effects
+	ProtoEffect *_next;                      // pointer to additional effects
 
 	ProtoEffect() {
-		next = NULL;
+		_next = NULL;
 	}
 	virtual ~ProtoEffect() {
-		if (next) delete next;
-		next = NULL;
+		if (_next) delete _next;
+		_next = NULL;
 	}
 	//int implementation( void ) { return imp; }
 	virtual bool applicable(SpellTarget &) {
@@ -372,24 +372,24 @@ public:
 //   This class of effects does a range of damage to the target
 
 class ProtoDamage: public ProtoEffect {
-	effectDamageTypes   type;               // damage type
-	int8                dice,               // # of dice to roll
-	                    sides,              // # of sides on dice
-	                    skillDice,          // multiply by spellcraft to get additional dice
-	                    base,               // absolute damage amount
-	                    skillBase;               // absolute damage amount
-	int8                self;               // casts at self
+	effectDamageTypes   _type;               // damage type
+	int8                _dice,               // # of dice to roll
+	                    _sides,              // # of sides on dice
+	                    _skillDice,          // multiply by spellcraft to get additional dice
+	                    _base,               // absolute damage amount
+	                    _skillBase;          // absolute damage amount
+	int8                _self;               // casts at self
 
 public:
 
 	ProtoDamage(int8 d, int8 s, int8 sd, int8 b, effectDamageTypes t, int, bool afSelf = false, int8 sb = 0) {
-		type = t;
-		dice = d;
-		sides = s;
-		skillDice = sd;
-		base = b;
-		self = afSelf;
-		skillBase = sb;
+		_type = t;
+		_dice = d;
+		_sides = s;
+		_skillDice = sd;
+		_base = b;
+		_self = afSelf;
+		_skillBase = sb;
 	}
 
 	bool applicable(SpellTarget &trg);
@@ -405,22 +405,22 @@ public:
 //   mana, money or food supply
 
 class ProtoDrainage: public ProtoEffect {
-	effectDrainsTypes   type;               // damage type
-	int8                dice,               // # of dice to roll
-	                    sides,              // # of sides on dice
-	                    skillDice,          // multiply by spellcraft to get additional dice
-	                    base;               // absolute damage amount
-	int8                self;               // casts at self
+	effectDrainsTypes   _type;               // damage type
+	int8                _dice,               // # of dice to roll
+	                    _sides,              // # of sides on dice
+	                    _skillDice,          // multiply by spellcraft to get additional dice
+	                    _base;               // absolute damage amount
+	int8                _self;               // casts at self
 
 public:
 
 	ProtoDrainage(int8 d, int8 s, int8 sd, int8 b, effectDrainsTypes t, int, bool afSelf = false) {
-		type = t;
-		dice = d;
-		sides = s;
-		skillDice = sd;
-		base = b;
-		self = afSelf;
+		_type = t;
+		_dice = d;
+		_sides = s;
+		_skillDice = sd;
+		_base = b;
+		_self = afSelf;
 	}
 
 	bool applicable(SpellTarget &trg);
@@ -437,15 +437,15 @@ public:
 //
 
 class ProtoEnchantment: public ProtoEffect {
-	uint16              enchID;
-	uint32              minEnch;
-	RandomDice          dice;               // enchantment time
+	uint16              _enchID;
+	uint32              _minEnch;
+	RandomDice          _dice;               // enchantment time
 
 public:
 	ProtoEnchantment(uint16 e, uint32 loTime, uint32 hiTime) {
-		enchID = e;
-		dice = RandomDice(1, hiTime - loTime);
-		minEnch = loTime;
+		_enchID = e;
+		_dice = RandomDice(1, hiTime - loTime);
+		_minEnch = loTime;
 	}
 
 	bool applicable(SpellTarget &trg);
@@ -453,7 +453,7 @@ public:
 	void implement(GameObject *, SpellTarget *trg, int8 deltaDamage = 0);
 
 	bool canFail() {
-		return isSaveable(enchID);
+		return isSaveable(_enchID);
 	}
 
 	static bool realSavingThrow(Actor *a);
@@ -464,15 +464,15 @@ public:
 //   this type of spell sets up spells that are used to alter tags
 
 class ProtoTAGEffect: public ProtoEffect {
-	effectTAGTypes      affectBit;
-	int16               onOff;       // lock/unlock or trigger ID
-	ObjectID            trigger;
+	effectTAGTypes      _affectBit;
+	int16               _onOff;       // lock/unlock or trigger ID
+	ObjectID            _trigger;
 
 public:
 	ProtoTAGEffect(effectTAGTypes ett, int16 v, ObjectID t) {
-		affectBit = ett;
-		onOff = v;
-		trigger = t;
+		_affectBit = ett;
+		_onOff = v;
+		_trigger = t;
 	}
 
 	bool applicable(SpellTarget &trg);
@@ -485,15 +485,15 @@ public:
 //   These effects are used only on non-actor objects.
 
 class ProtoObjectEffect: public ProtoEffect {
-	uint16              affectBit;
-	int16               onOff;
-	RandomDice          dice;               // enchantment time
+	uint16              _affectBit;
+	int16               _onOff;
+	RandomDice          _dice;               // enchantment time
 
 public:
 	ProtoObjectEffect(uint16 e, int16 v, uint32 loT, uint32 hiT) {
-		affectBit = e;
-		onOff = v;
-		dice = RandomDice(loT, hiT);
+		_affectBit = e;
+		_onOff = v;
+		_dice = RandomDice(loT, hiT);
 	}
 
 	bool applicable(SpellTarget &trg);
@@ -506,13 +506,13 @@ public:
 // is where they'll be
 
 class ProtoLocationEffect: public ProtoEffect {
-	effectLocationTypes affectBit;
-	int16               value;
+	effectLocationTypes _affectBit;
+	int16               _value;
 
 public:
 	ProtoLocationEffect(effectLocationTypes elt, int16 v) {
-		affectBit = elt;
-		value = v;
+		_affectBit = elt;
+		_value = v;
 	}
 
 	bool applicable(SpellTarget &)  {
@@ -534,13 +534,13 @@ typedef void SPELLIMPLEMENTATION(GameObject *, SpellTarget *);
 #define SPECIALSPELL(name) void name(GameObject *cst, SpellTarget *trg)
 
 class ProtoSpecialEffect: public ProtoEffect {
-	int16 routineID;
-	SPELLIMPLEMENTATION *handler;
+	int16 _routineID;
+	SPELLIMPLEMENTATION *_handler;
 
 public:
 	ProtoSpecialEffect(SPELLIMPLEMENTATION *newHandler, int16 callID = 0) {
-		handler = newHandler;
-		routineID = callID;
+		_handler = newHandler;
+		_routineID = callID;
 	}
 
 	bool applicable(SpellTarget &) {
