@@ -1613,7 +1613,7 @@ static char *voc_read_oops(voccxdef *ctx, char *oopsbuf, size_t oopsbuflen,
  *   figure out what parts of speech are associated with each
  *   word in a tokenized command list
  */
-int vocgtyp(voccxdef *ctx, char *cmd[], int types[], char *orgbuf)
+int vocgtyp(voccxdef *ctx, char *cmd[], int types[], char *orgbuf, size_t orgbuflen)
 {
 	int      cur;
 	int      t;
@@ -1800,7 +1800,7 @@ startover:
 					 *   this must be a brand new command.  Replace the
 					 *   original command with the new command.
 					 */
-					strcpy(orgbuf, oopsbuf);
+					Common::strcpy_s(orgbuf, orgbuflen, oopsbuf);
 
 					/*
 					 *   forget we had an unknown word so that we're sure
@@ -1852,7 +1852,7 @@ startover:
 				if (t & (1 << i))
 				{
 					if (cnt) *p++ = ',';
-					strcpy(p, type_names[i]);
+					Common::strcpy_s(p, sizeof(buf) - (p - buf), type_names[i]);
 					p += strlen(p);
 					++cnt;
 				}
@@ -2202,7 +2202,7 @@ static void vocaddof(voccxdef *ctx, char *buf)
 		buf[len + oldlen] = '\0';
 	}
 	else
-		strcat(buf, "of");
+		Common::strcat_s(buf, VOCBUFSIZ, "of");
 }
 
 /* ------------------------------------------------------------------------ */
@@ -2421,13 +2421,13 @@ void voc_make_obj_name(voccxdef *ctx, char *namebuf, char *cmd[],
 		if (voc_check_special(ctx, cmd[i], VOCW_OF))
 			vocaddof(ctx, namebuf);
 		else
-			strcat(namebuf, cmd[i]);
+			Common::strcat_s(namebuf, VOCBUFSIZ, cmd[i]);
 
 		if (cmd[i][strlen(cmd[i])-1] == '.' && i + 1 < lastwrd)
-			strcat(namebuf, "\\");
+			Common::strcat_s(namebuf, VOCBUFSIZ, "\\");
 
 		if (i + 1 < lastwrd)
-			strcat(namebuf, " ");
+			Common::strcat_s(namebuf, VOCBUFSIZ, " ");
 	}
 }
 
@@ -4137,7 +4137,7 @@ void voc_parse_disambig(voccxdef *ctx)
 	/* disambiguate the noun list */
 	err = vocdisambig(&ctx_copy, outlist, inlist,
 					  defprop, accprop, verprop, cmd,
-					  otherobj, actor, verb, prep, cmdbuf, silent);
+					  otherobj, actor, verb, prep, cmdbuf, VOCBUFSIZ, silent);
 
 	/*
 	 *   If the error was VOCERR(2) - unknown word - check the input list
@@ -4212,7 +4212,7 @@ void voc_parse_disambig(voccxdef *ctx)
 			ctx_copy.voccxredo = TRUE;
 
 			/* copy the response into the command buffer */
-			strcpy(cmdbuf, oopsbuf);
+			Common::strcpy_s(cmdbuf, VOCBUFSIZ, oopsbuf);
 		}
 		else
 		{
@@ -4262,7 +4262,7 @@ void voc_parse_disambig(voccxdef *ctx)
 				if (i == unk_idx)
 				{
 					/* insert the replacement text */
-					strcpy(p, rpl_text);
+					Common::strcpy_s(p, VOCBUFSIZ - (p - cmdbuf), rpl_text);
 				}
 				else if (*cmd[i] == '"')
 				{
@@ -4314,7 +4314,7 @@ void voc_parse_disambig(voccxdef *ctx)
 				else
 				{
 					/* copy this word */
-					strcpy(p, cmd[i]);
+					Common::strcpy_s(p, VOCBUFSIZ - (p - cmdbuf), cmd[i]);
 				}
 
 				/* move past this token */
@@ -4456,7 +4456,7 @@ void voc_parse_replace_cmd(voccxdef *ctx)
  *   value is nonzero, then that object is the actor.
  */
 static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
-						  int cur, int *next, char *cmdbuf)
+						  int cur, int *next, char *cmdbuf, size_t cmdlen)
 {
 	int       l;
 	vocoldef *nounlist;
@@ -4501,7 +4501,7 @@ static objnum vocgetactor(voccxdef *ctx, char *cmd[], int typelist[],
 		/* disambiguate it using the selected properties */
 		if (vocdisambig(ctx, actlist, nounlist, PRP_DODEFAULT, valprop,
 						verprop, cmd, MCMONINV, ctx->voccxme,
-						ctx->voccxvtk, MCMONINV, cmdbuf, FALSE))
+						ctx->voccxvtk, MCMONINV, cmdbuf, cmdlen, FALSE))
 		{
 			/*
 			 *   if we have an unknown word in the list, assume for the
@@ -5246,7 +5246,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 				prpnum defprop, prpnum accprop, prpnum verprop,
 				char *cmd[], objnum otherobj, objnum cmdActor,
 				objnum cmdVerb, objnum cmdPrep, char *cmdbuf,
-				int silent)
+				size_t cmdlen, int silent)
 {
 	int       inpos;
 	int       outpos;
@@ -5436,7 +5436,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 			{
 				err = vocdisambig(ctx, exclist2, exclist, defprop, accprop,
 								  verprop, cmd, otherobj, cmdActor,
-								  cmdVerb, cmdPrep, cmdbuf, silent);
+								  cmdVerb, cmdPrep, cmdbuf, cmdlen, silent);
 				if (err != 0)
 					goto done;
 
@@ -5985,17 +5985,17 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 					{
 						/* quote the space if the last word ended with '.' */
 						if (p[strlen(p)-1] == '.')
-							strcat(usrobj, "\\");
+							Common::strcat_s(usrobj, VOCBUFSIZ, "\\");
 
 						/* add the space */
-						strcat(usrobj, " ");
+						Common::strcat_s(usrobj, VOCBUFSIZ, " ");
 					}
 
 					/* add the current word, or "of" if it's "of" */
 					if (voc_check_special(ctx, p, VOCW_OF))
 						vocaddof(ctx, usrobj);
 					else
-						strcat(usrobj, p);
+						Common::strcat_s(usrobj, VOCBUFSIZ, p);
 				}
 			}
 
@@ -6676,7 +6676,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 							   (int)VOCBUFSIZ, 2) == VOCREAD_REDO)
 				{
 					/* they want to treat the input as a new command */
-					strcpy(cmdbuf, disnewbuf);
+					Common::strcpy_s(cmdbuf, cmdlen, disnewbuf);
 					ctx->voccxunknown = 0;
 					ctx->voccxredo = TRUE;
 					err = VOCERR(43);
@@ -6722,14 +6722,14 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 
 				/* tokenize the sentence */
 				diswordlist[wrdcnt] = nullptr;
-				if (vocgtyp(ctx, diswordlist, distypelist, cmdbuf)
+				if (vocgtyp(ctx, diswordlist, distypelist, cmdbuf, cmdlen)
 					|| ctx->voccxunknown != 0)
 				{
 					/*
 					 *   there's an unknown word or other problem - retry
 					 *   the input as an entirely new command
 					 */
-					strcpy(cmdbuf, disnewbuf);
+					Common::strcpy_s(cmdbuf, cmdlen, disnewbuf);
 					ctx->voccxunknown = 0;
 					ctx->voccxredo = TRUE;
 					err = VOCERR(2);
@@ -7005,7 +7005,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 										 *   replace the entire adjective
 										 *   phrase with "such"
 										 */
-										strcpy(newobj, "such");
+										Common::strcpy_s(newobj, VOCBUFSIZ, "such");
 
 										/*
 										 *   stop here - don't add any
@@ -7017,16 +7017,16 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 
 									/* add a space if we have a prior word */
 									if (newobj[0] != '\0')
-										strcat(newobj, " ");
+										Common::strcat_s(newobj, VOCBUFSIZ, " ");
 
 									/* add this word */
-									strcat(newobj, p);
+									Common::strcat_s(newobj, VOCBUFSIZ, p);
 								}
 							}
 							else
 							{
 								/* no noun phrase found */
-								strcpy(newobj, "such");
+								Common::strcpy_s(newobj, VOCBUFSIZ, "such");
 							}
 
 							/* didn't find anything - complain and give up */
@@ -7067,7 +7067,7 @@ int vocdisambig(voccxdef *ctx, vocoldef *outlist, vocoldef *inlist,
 						}
 
 						/* retry as an entire new command */
-						strcpy(cmdbuf, disnewbuf);
+						Common::strcpy_s(cmdbuf, cmdlen, disnewbuf);
 						ctx->voccxunknown = 0;
 						ctx->voccxredo = TRUE;
 						err = VOCERR(43);
@@ -7112,7 +7112,7 @@ done:
 static int vocready(voccxdef *ctx, char *cmd[], int *typelist, int cur,
 					objnum cmdActor, objnum cmdPrep, char *vverb, char *vprep,
 					vocoldef *dolist, vocoldef *iolist, int *errp,
-					char *cmdbuf, int first_word, uchar **preparse_list,
+					char *cmdbuf, size_t cmdlen, int first_word, uchar **preparse_list,
 					int *next_start)
 {
 	if (cur != -1
@@ -7130,14 +7130,14 @@ static int vocready(voccxdef *ctx, char *cmd[], int *typelist, int cur,
 
 		*errp = execmd(ctx, cmdActor, cmdPrep, vverb, vprep, dolist, iolist,
 					   &cmd[first_word], &typelist[first_word],cmdbuf,
-					   cur - first_word, preparse_list, next_start);
+					   cmdlen, cur - first_word, preparse_list, next_start);
 		return(TRUE);
 	}
 	return(FALSE);
 }
 
 /* execute a single command */
-static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
+static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf, size_t cmdlen,
 				   objnum *cmdActorp, int first)
 {
 	int       cur;
@@ -7192,7 +7192,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 	memset(typelist, 0, VOCBUFSIZ*sizeof(typelist[0]));
 
 	/* get the types of the words in the command */
-	if (vocgtyp(ctx, cmd, typelist, cmdbuf))
+	if (vocgtyp(ctx, cmd, typelist, cmdbuf, cmdlen))
 	{
 		retval = 1;
 		goto done;
@@ -7291,7 +7291,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			cmd[cnt] = nullptr;
 
 			/* generate the type list for the new list */
-			if (vocgtyp(ctx, cmd, typelist, cmdbuf))
+			if (vocgtyp(ctx, cmd, typelist, cmdbuf, cmdlen))
 			{
 				/* return an error */
 				retval = 1;
@@ -7354,7 +7354,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				preparseCmd_stat.active = FALSE;
 
 				/* get the type list for the original list again */
-				if (vocgtyp(ctx, cmd, typelist, cmdbuf))
+				if (vocgtyp(ctx, cmd, typelist, cmdbuf, cmdlen))
 				{
 					/* return the error */
 					retval = 1;
@@ -7382,7 +7382,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 
 		{
 			/* look for an explicit actor in the command */
-			if ((o = vocgetactor(ctx, cmd, typelist, cur, &next, cmdbuf))
+			if ((o = vocgetactor(ctx, cmd, typelist, cur, &next, cmdbuf, cmdlen))
 				!= MCMONINV)
 			{
 				/* skip the actor noun phrase in the input */
@@ -7432,7 +7432,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 		/* execute if the command is just a verb */
 		if (vocready(ctx, cmd, typelist, cur, cmdActor, cmdPrep,
 					 vverb, vprep, dolist, iolist, &err, cmdbuf,
-					 first_word, &preparse_list, &next_start))
+					 cmdlen, first_word, &preparse_list, &next_start))
 			continue;
 
 		/*
@@ -7447,7 +7447,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				vprep = cmd[cur++];
 				if (vocready(ctx, cmd, typelist, cur, cmdActor, cmdPrep,
 							 vverb, vprep, dolist, iolist, &err, cmdbuf,
-							 first_word, &preparse_list, &next_start))
+							 cmdlen, first_word, &preparse_list, &next_start))
 					continue;
 			}
 			else
@@ -7584,7 +7584,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					 vverb, vprep,
 					 swapObj ? iolist : dolist,
 					 swapObj ? dolist : iolist,
-					 &err, cmdbuf, first_word, &preparse_list,
+					 &err, cmdbuf, cmdlen, first_word, &preparse_list,
 					 &next_start))
 			continue;
 
@@ -7630,7 +7630,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 				if ((err = execmd(ctx, cmdActor, cmdPrep, vverb, vprep,
 								  dolist, iolist,
 								  &cmd[first_word], &typelist[first_word],
-								  cmdbuf, cur - first_word,
+								  cmdbuf, cmdlen, cur - first_word,
 								  &preparse_list, &next_start)) != 0)
 				{
 					retval = 1;
@@ -7701,7 +7701,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 
 				if (vocready(ctx, cmd, typelist, cur, cmdActor, cmdPrep,
 							 vverb, vprep, dolist, iolist, &err, cmdbuf,
-							 first_word, &preparse_list, &next_start))
+							 cmdlen, first_word, &preparse_list, &next_start))
 					continue;
 				else if ((typelist[cur] & VOCT_PREP) &&
 						 vocffw(ctx, vverb, vvlen, cmd[cur],
@@ -7711,7 +7711,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 					vprep = cmd[cur++];
 					if (vocready(ctx, cmd, typelist, cur, cmdActor,
 								 cmdPrep, vverb, vprep, dolist, iolist,
-								 &err, cmdbuf, first_word, &preparse_list,
+								 &err, cmdbuf, cmdlen, first_word, &preparse_list,
 								 &next_start))
 						continue;
 					else
@@ -7874,7 +7874,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 			err = execmd(ctx, cmdActor, cmdPrep, vverb, vprep,
 						 iolist, dolist,
 						 &cmd[first_word], &typelist[first_word], cmdbuf,
-						 cur - first_word, &preparse_list, &next_start);
+						 cmdlen, cur - first_word, &preparse_list, &next_start);
 			continue;
 		}
 		else if (cnt < 0)
@@ -7891,7 +7891,7 @@ static int voc1cmd(voccxdef *ctx, char *cmd[], char *cmdbuf,
 done:
 	/* copy back the command if we need to redo */
 	if (ctx->voccxredo && cmdbuf != origcmdbuf)
-		strcpy(origcmdbuf, cmdbuf);
+		Common::strcpy_s(origcmdbuf, cmdlen, cmdbuf);
 
 	/* return the status */
 	VOC_RETVAL(ctx, save_sp, retval);
@@ -8055,7 +8055,7 @@ int voccmd(voccxdef *ctx, char *cmd, uint cmdlen)
 		for (;;)
 		{
 			/* try processing the command */
-			if (voc1cmd(ctx, &wordlist[next], cmd, &cmdActor, first))
+			if (voc1cmd(ctx, &wordlist[next], cmd, cmdlen, &cmdActor, first))
 			{
 				/*
 				 *   If the unknown word flag is set, try the command

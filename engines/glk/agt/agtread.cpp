@@ -874,7 +874,7 @@ static void read_line(genfile fd, const char *typestr)
 		readln(fd, linebuffer, 80);
 		if (linebuffer[0] == 0 && texteof(fd)) {
 			unexpected_eof = 1;
-			strcpy(linebuffer, ">End Of File<");
+			Common::strcpy_s(linebuffer, ">End Of File<");
 		} else chop_newline(linebuffer);
 		linenum++;
 	}

@@ -176,7 +176,7 @@ void OOToposGame::afterPrompt() {
 
 	// WORKAROUND: Allow for the Apple 2 password in the DOS version
 	if (!scumm_stricmp(_inputLine, "vug957a"))
-		strcpy(_inputLine, "tse957x");
+		Common::strcpy_s(_inputLine, "tse957x");
 
 	if (_currentRoom != _currentRoomCopy)
 		_updateFlags |= UPDATE_GRAPHICS;

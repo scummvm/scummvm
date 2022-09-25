@@ -44,7 +44,7 @@ void glkio_printf(const char *, ...);
 #define LINELENGTH 80
 #define HISTORYLENGTH 20
 
-extern Boolean readline(char usrbuf[]);
+extern Boolean readline(char usrbuf[], size_t maxlen);
 
 } // End of namespace Alan2
 } // End of namespace Glk

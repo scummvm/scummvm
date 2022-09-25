@@ -863,9 +863,9 @@ static void do_it(CONTEXT) {
 				if (alt[i]->action != 0) {
 					if (trcflg) {
 						if (i == 0)
-							strcpy(trace, "GLOBAL");
+							Common::strcpy_s(trace, "GLOBAL");
 						else if (i == 1)
-							strcpy(trace, "in LOCATION");
+							Common::strcpy_s(trace, "in LOCATION");
 						else
 							sprintf(trace, "in PARAMETER %d", i - 1);
 						if (alt[i]->qual == (Aword)Q_BEFORE)
@@ -889,9 +889,9 @@ static void do_it(CONTEXT) {
 				if (!done[i] && alt[i]->action != 0) {
 					if (trcflg) {
 						if (i == 0)
-							strcpy(trace, "GLOBAL");
+							Common::strcpy_s(trace, "GLOBAL");
 						else if (i == 1)
-							strcpy(trace, "in LOCATION");
+							Common::strcpy_s(trace, "in LOCATION");
 						else
 							sprintf(trace, "in PARAMETER %d", i - 1);
 						printf("\n<VERB %d, %s, Body:>\n", cur.vrb, trace);
@@ -910,9 +910,9 @@ static void do_it(CONTEXT) {
 			if (!done[i] && alt[i]->action != 0) {
 				if (trcflg) {
 					if (i == 0)
-						strcpy(trace, "GLOBAL");
+						Common::strcpy_s(trace, "GLOBAL");
 					else if (i == 1)
-						strcpy(trace, "in LOCATION");
+						Common::strcpy_s(trace, "in LOCATION");
 					else
 						sprintf(trace, "in PARAMETER %d", i - 1);
 					printf("\n<VERB %d, %s (AFTER), Body:>\n", cur.vrb, trace);

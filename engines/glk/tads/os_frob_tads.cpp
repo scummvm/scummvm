@@ -187,7 +187,7 @@ bool os_locate(const char *fname, int flen, const char *arg0, char *buf, size_t 
 }
 
 osfildef *os_create_tempfile(const char *fname, char *buf) {
-	strcpy(buf, "tmpfile");
+	Common::strcpy_s(buf, OSFNMAX, "tmpfile");
 	return new Common::MemoryReadWriteStream(DisposeAfterUse::YES);
 }
 
@@ -197,7 +197,7 @@ int osfdel_temp(const char *fname) {
 }
 
 void os_get_tmp_path(char *buf) {
-	strcpy(buf, "");
+	buf[0] = '\0';
 }
 
 int os_gen_temp_filename(char *buf, size_t buflen) {
@@ -228,11 +228,11 @@ bool os_rmdir(const char *dir) {
 
 void os_defext(char *fname, const char *ext) {
 	if (!strchr(fname, '.'))
-		strcat(fname, ext);
+		Common::strcat_s(fname, OSFNMAX, ext);
 }
 
 void os_addext(char *fname, const char *ext) {
-	strcat(fname, ext);
+	Common::strcat_s(fname, OSFNMAX, ext);
 }
 
 void os_remext(char *fname) {
@@ -254,28 +254,28 @@ bool os_is_file_absolute(const char *fname) {
 }
 
 void os_get_path_name(char *pathbuf, size_t pathbuflen, const char *fname) {
-	strcpy(pathbuf, "");
+	pathbuf[0] = '\0';
 }
 
 void os_build_full_path(char *fullpathbuf, size_t fullpathbuflen,
 	const char *path, const char *filename) {
-	strcpy(fullpathbuf, filename);
+	Common::strcpy_s(fullpathbuf, fullpathbuflen, filename);
 }
 
 void os_combine_paths(char *fullpathbuf, size_t pathbuflen,
 	const char *path, const char *filename) {
-	strcpy(fullpathbuf, filename);
+	Common::strcpy_s(fullpathbuf, pathbuflen, filename);
 }
 
 bool os_get_abs_filename(char *result_buf, size_t result_buf_size,
 	const char *filename) {
-	strcpy(result_buf, filename);
+	Common::strcpy_s(result_buf, result_buf_size, filename);
 	return true;
 }
 
 bool os_get_rel_path(char *result_buf, size_t result_buf_size,
 	const char *basepath, const char *filename) {
-	strcpy(result_buf, filename);
+	Common::strcpy_s(result_buf, result_buf_size, filename);
 	return true;
 }
 

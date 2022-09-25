@@ -273,7 +273,7 @@ startover:
 		if (voc->voccxredo && voc->voccxredobuf[0] != '\0')
 		{
 			/* copy the redo buffer into our internal buffer */
-			strcpy(buf, voc->voccxredobuf);
+			Common::strcpy_s(buf, voc->voccxredobuf);
 
 			/* we've consumed it now, so clear it out */
 			voc->voccxredobuf[0] = '\0';

@@ -288,7 +288,7 @@ void debug() {
 			para();
 		do {
 			output("ABUG> ");
-			(void)readline(buf);
+			(void)readline(buf, sizeof(buf));
 
 			lin = 1;
 			c = buf[0];

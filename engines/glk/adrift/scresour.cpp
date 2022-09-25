@@ -149,9 +149,9 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 
 		/* Get soundfile property from the node supplied. */
 		vt_full[partial_length].string = "SoundFile";
-		strcpy(format, "S<-");
-		strcat(format, partial_format);
-		strcat(format, "s");
+		Common::strcpy_s(format, partial_length + 5, "S<-");
+		Common::strcat_s(format, partial_length + 5, partial_format);
+		Common::strcat_s(format, partial_length + 5, "s");
 		soundfile = prop_get_string(bundle, format, vt_full);
 
 		/* If a sound is defined, handle it. */
@@ -159,16 +159,16 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 			if (embedded) {
 				/* Retrieve offset and length. */
 				vt_full[partial_length].string = "SoundOffset";
-				strcpy(format, "I<-");
-				strcat(format, partial_format);
-				strcat(format, "s");
+				Common::strcpy_s(format, partial_length + 5, "I<-");
+				Common::strcat_s(format, partial_length + 5, partial_format);
+				Common::strcat_s(format, partial_length + 5, "s");
 				soundoffset = prop_get_integer(bundle, format, vt_full)
 				              + resource_start_offset;
 
 				vt_full[partial_length].string = "SoundLen";
-				strcpy(format, "I<-");
-				strcat(format, partial_format);
-				strcat(format, "s");
+				Common::strcpy_s(format, partial_length + 5, "I<-");
+				Common::strcat_s(format, partial_length + 5, partial_format);
+				Common::strcat_s(format, partial_length + 5, "s");
 				soundlen = prop_get_integer(bundle, format, vt_full);
 			} else {
 				/* Coerce offset and length to zero. */
@@ -197,9 +197,9 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 
 		/* Get graphicfile property from the node supplied. */
 		vt_full[partial_length].string = "GraphicFile";
-		strcpy(format, "S<-");
-		strcat(format, partial_format);
-		strcat(format, "s");
+		Common::strcpy_s(format, partial_length + 5, "S<-");
+		Common::strcat_s(format, partial_length + 5, partial_format);
+		Common::strcat_s(format, partial_length + 5, "s");
 		graphicfile = prop_get_string(bundle, format, vt_full);
 
 		/* If a graphic is defined, handle it. */
@@ -207,16 +207,16 @@ void res_handle_resource(sc_gameref_t game, const sc_char *partial_format,
 			if (embedded) {
 				/* Retrieve offset and length. */
 				vt_full[partial_length].string = "GraphicOffset";
-				strcpy(format, "I<-");
-				strcat(format, partial_format);
-				strcat(format, "s");
+				Common::strcpy_s(format, partial_length + 5, "I<-");
+				Common::strcat_s(format, partial_length + 5, partial_format);
+				Common::strcat_s(format, partial_length + 5, "s");
 				graphicoffset = prop_get_integer(bundle, format, vt_full)
 				                + resource_start_offset;
 
 				vt_full[partial_length].string = "GraphicLen";
-				strcpy(format, "I<-");
-				strcat(format, partial_format);
-				strcat(format, "s");
+				Common::strcpy_s(format, partial_length + 5, "I<-");
+				Common::strcat_s(format, partial_length + 5, partial_format);
+				Common::strcat_s(format, partial_length + 5, "s");
 				graphiclen = prop_get_integer(bundle, format, vt_full);
 			} else {
 				/* Coerce offset and length to zero. */
@@ -267,8 +267,9 @@ void res_sync_resources(sc_gameref_t game) {
 		name = game->requested_sound.name;
 		is_looping = !strcmp(name + strlen(name) - 2, "##");
 
-		clean_name = (sc_char *)sc_malloc(strlen(name) + 1);
-		strcpy(clean_name, name);
+		size_t ln = strlen(name) + 1;
+		clean_name = (sc_char *)sc_malloc(ln);
+		Common::strcpy_s(clean_name, ln, name);
 		if (is_looping)
 			clean_name[strlen(clean_name) - 2] = NUL;
 

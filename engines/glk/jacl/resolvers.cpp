@@ -747,10 +747,10 @@ const char *expand_function(const char *name) {
 		 * ELEMENT, SO TAKE NOTE OF THAT */
 		sprintf(function_name, "%ld", value_of(&expression[delimiter], TRUE));
 	} else {
-		strcpy(function_name, &expression[delimiter]);
+		Common::strcpy_s(function_name, 81, &expression[delimiter]);
 	}
-	strcat(function_name, "_");
-	strcat(function_name, object[index]->label);
+	Common::strcat_s(function_name, 81, "_");
+	Common::strcat_s(function_name, 81, object[index]->label);
 
 	return ((const char *) function_name);
 }
@@ -872,9 +872,10 @@ char *macro_resolve(const char *testString) {
 			return (nullptr);
 		} else {
 			if (object[index]->attributes & PLURAL) {
-				strcpy(temp_buffer, "");
+				temp_buffer[0] = '\0';
 			} else {
-				strcpy(temp_buffer, "s");
+				temp_buffer[0] = 's';
+				temp_buffer[1] = '\0';
 			}
 			return (temp_buffer);
 		}
@@ -970,11 +971,11 @@ char *macro_resolve(const char *testString) {
 			return (sentence_output(index, TRUE));
 		}
 	} else {
-		strcpy(macro_function, "+macro_");
-		strcat(macro_function, &expression[delimiter]);
-		strcat(macro_function, "<");
+		Common::strcpy_s(macro_function, "+macro_");
+		Common::strcat_s(macro_function, &expression[delimiter]);
+		Common::strcat_s(macro_function, "<");
 		sprintf(temp_buffer, "%d", index);
-		strcat(macro_function, temp_buffer);
+		Common::strcat_s(macro_function, temp_buffer);
 
 		// BUILD THE FUNCTION NAME AND PASS THE OBJECT AS
 		// THE ONLY ARGUMENT

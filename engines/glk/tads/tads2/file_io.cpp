@@ -1077,7 +1077,7 @@ void fiord(mcmcxdef *mctx, voccxdef *vctx, tokcxdef *tctx, const char *fname,
 				 *   same directory that contains the .GAM file
 				 */
 				if (base_name != nullptr)
-					strcpy(resname, base_name);
+					Common::strcpy_s(resname, base_name);
 				else
 					resname[0] = '\0';
 			}

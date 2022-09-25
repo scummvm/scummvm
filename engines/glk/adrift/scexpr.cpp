@@ -480,8 +480,9 @@ static void expr_eval_push_string(const sc_char *value) {
 		sc_fatal("expr_eval_push_string: stack overflow\n");
 
 	/* Push a copy of value. */
-	value_copy = (sc_char *)sc_malloc(strlen(value) + 1);
-	strcpy(value_copy, value);
+	size_t ln = strlen(value) + 1;
+	value_copy = (sc_char *)sc_malloc(ln);
+	Common::strcpy_s(value_copy, ln, value);
 	expr_eval_stack[expr_eval_stack_index].is_collectible = TRUE;
 	expr_eval_stack[expr_eval_stack_index++].value.mutable_string = value_copy;
 }
@@ -1023,8 +1024,9 @@ static void expr_eval_action(CONTEXT, sc_int token) {
 		 * Resize text1 to be long enough for both, and concatenate, then
 		 * free text2, and push back the concatenation.
 		 */
-		text1 = (sc_char *)sc_realloc(text1, strlen(text1) + strlen(text2) + 1);
-		strcat(text1, text2);
+		size_t ln = strlen(text1) + strlen(text2) + 1;
+		text1 = (sc_char *)sc_realloc(text1, ln);
+		Common::strcat_s(text1, ln, text2);
 		sc_free(text2);
 		expr_eval_push_alloced_string(text1);
 		break;

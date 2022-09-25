@@ -42,7 +42,7 @@ namespace TADS2 {
 /* dummy setup function */
 void supgnam(char *buf, tokthdef *tab, objnum sc)
 {
-	strcpy(buf, "???");
+	Common::strcpy_s(buf, TOKNAMMAX + 1, "???");
 }
 
 /* dummy file read functions */
@@ -571,7 +571,7 @@ static void trdmain1(errcxdef *ec, int argc, char *argv[],
 		 */
 		if (osfacc(infile))
 		{
-			strcpy(inbuf, infile);
+			Common::strcpy_s(inbuf, infile);
 			os_defext(inbuf, "gam");
 			infile = inbuf;
 		}

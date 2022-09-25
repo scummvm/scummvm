@@ -921,7 +921,7 @@ static void gsc_status_print() {
 		char score[64];
 
 		/* Make an attempt at a status line, starting with player location. */
-		strcpy(buffer, "");
+		buffer[0] = '\0';
 		gsc_status_safe_strcat(buffer, sizeof(buffer), room);
 
 		/* Get the game's status line, or if none, format score. */
@@ -943,7 +943,7 @@ static void gsc_status_print() {
 			g_vm->glk_put_string(" ]\n");
 
 			/* Save the details of the printed status buffer. */
-			strcpy(current_status, buffer);
+			Common::strcpy_s(current_status, buffer);
 		}
 	}
 }
@@ -1147,8 +1147,9 @@ static void gsc_handle_font_tag(const sc_char *argument) {
 		}
 
 		/* Copy and convert argument to all lowercase. */
-		lower = (sc_char *)gsc_malloc(strlen(argument) + 1);
-		strcpy(lower, argument);
+		size_t ln = strlen(argument) + 1;
+		lower = (sc_char *)gsc_malloc(ln);
+		Common::strcpy_s(lower, ln, argument);
 		for (index_ = 0; lower[index_] != '\0'; index_++)
 			lower[index_] = g_vm->glk_char_to_lower(lower[index_]);
 
@@ -2192,8 +2193,9 @@ static int gsc_command_escape(const char *string) {
 		return FALSE;
 
 	/* Take a copy of the string, without any leading space or introducer. */
-	string_copy = (char *)gsc_malloc(strlen(string + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string + posn + strlen("glk"));
+	size_t ln = strlen(string + posn) + 1 - 3 /*strlen("glk")*/;
+	string_copy = (char *)gsc_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn + 3 /* strlen("glk") */);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,

@@ -59,11 +59,11 @@ int check_light(int where) {
 
 char *sentence_output(int index, int capital) {
 	if (!strcmp(object[index]->article, "name")) {
-		strcpy(temp_buffer, object[index]->inventory);
+		Common::strcpy_s(temp_buffer, 1024, object[index]->inventory);
 	} else {
-		strcpy(temp_buffer, object[index]->definite);
-		strcat(temp_buffer, " ");
-		strcat(temp_buffer, object[index]->inventory);
+		Common::strcpy_s(temp_buffer, 1024, object[index]->definite);
+		Common::strcat_s(temp_buffer, 1024, " ");
+		Common::strcat_s(temp_buffer, 1024, object[index]->inventory);
 	}
 
 	if (capital)
@@ -88,18 +88,18 @@ char *is_output(int index, bool) {
 
 char *sub_output(int index, int capital) {
 	if (object[index]->attributes & PLURAL) {
-		strcpy(temp_buffer, cstring_resolve("THEY_WORD")->value);
+		Common::strcpy_s(temp_buffer, 1024, cstring_resolve("THEY_WORD")->value);
 	} else {
 		if (index == player) {
-			strcpy(temp_buffer, cstring_resolve("YOU_WORD")->value);
+			Common::strcpy_s(temp_buffer, 1024, cstring_resolve("YOU_WORD")->value);
 		} else if (object[index]->attributes & ANIMATE) {
 			if (object[index]->attributes & FEMALE) {
-				strcpy(temp_buffer, cstring_resolve("SHE_WORD")->value);
+				Common::strcpy_s(temp_buffer, 1024, cstring_resolve("SHE_WORD")->value);
 			} else {
-				strcpy(temp_buffer, cstring_resolve("HE_WORD")->value);
+				Common::strcpy_s(temp_buffer, 1024, cstring_resolve("HE_WORD")->value);
 			}
 		} else {
-			strcpy(temp_buffer, cstring_resolve("IT_WORD")->value);
+			Common::strcpy_s(temp_buffer, 1024, cstring_resolve("IT_WORD")->value);
 		}
 	}
 
@@ -111,18 +111,18 @@ char *sub_output(int index, int capital) {
 
 char *obj_output(int index, int capital) {
 	if (object[index]->attributes & PLURAL) {
-		strcpy(temp_buffer, cstring_resolve("THEM_WORD")->value);
+		Common::strcpy_s(temp_buffer, 1024, cstring_resolve("THEM_WORD")->value);
 	} else {
 		if (index == player) {
-			strcpy(temp_buffer, cstring_resolve("YOURSELF_WORD")->value);
+			Common::strcpy_s(temp_buffer, 1024, cstring_resolve("YOURSELF_WORD")->value);
 		} else if (object[index]->attributes & ANIMATE) {
 			if (object[index]->attributes & FEMALE) {
-				strcpy(temp_buffer, cstring_resolve("HER_WORD")->value);
+				Common::strcpy_s(temp_buffer, 1024, cstring_resolve("HER_WORD")->value);
 			} else {
-				strcpy(temp_buffer, cstring_resolve("HIM_WORD")->value);
+				Common::strcpy_s(temp_buffer, 1024, cstring_resolve("HIM_WORD")->value);
 			}
 		} else {
-			strcpy(temp_buffer, cstring_resolve("IT_WORD")->value);
+			Common::strcpy_s(temp_buffer, 1024, cstring_resolve("IT_WORD")->value);
 		}
 	}
 
@@ -146,9 +146,9 @@ char *it_output(int index, bool) {
 
 char *that_output(int index, int capital) {
 	if (object[index]->attributes & PLURAL) {
-		strcpy(temp_buffer, cstring_resolve("THOSE_WORD")->value);
+		Common::strcpy_s(temp_buffer, 1024, cstring_resolve("THOSE_WORD")->value);
 	} else {
-		strcpy(temp_buffer, cstring_resolve("THAT_WORD")->value);
+		Common::strcpy_s(temp_buffer, 1024, cstring_resolve("THAT_WORD")->value);
 	}
 
 	if (capital)
@@ -173,11 +173,11 @@ char *does_output(int index, bool) {
 
 char *list_output(int index, int capital) {
 	if (!strcmp(object[index]->article, "name")) {
-		strcpy(temp_buffer, object[index]->inventory);
+		Common::strcpy_s(temp_buffer, 1024, object[index]->inventory);
 	} else {
-		strcpy(temp_buffer, object[index]->article);
-		strcat(temp_buffer, " ");
-		strcat(temp_buffer, object[index]->inventory);
+		Common::strcpy_s(temp_buffer, 1024, object[index]->article);
+		Common::strcat_s(temp_buffer, 1024, " ");
+		Common::strcat_s(temp_buffer, 1024, object[index]->inventory);
 	}
 
 	if (capital)
@@ -187,7 +187,7 @@ char *list_output(int index, int capital) {
 }
 
 char *plain_output(int index, int capital) {
-	strcpy(temp_buffer, object[index]->inventory);
+	Common::strcpy_s(temp_buffer, 1024, object[index]->inventory);
 
 	if (capital)
 		temp_buffer[0] = toupper(temp_buffer[0]);
@@ -197,8 +197,8 @@ char *plain_output(int index, int capital) {
 
 char *long_output(int index) {
 	if (!strcmp(object[index]->described, "function")) {
-		strcpy(function_name, "long_");
-		strcat(function_name, object[index]->label);
+		Common::strcpy_s(function_name, 1024, "long_");
+		Common::strcat_s(function_name, 1024, object[index]->label);
 		if (execute(function_name) == FALSE) {
 			unkfunrun(function_name);
 		}
@@ -241,8 +241,8 @@ void look_around() {
 		object[HERE]->attributes &= ~1L;
 	}
 
-	strcpy(function_name, "look_");
-	strcat(function_name, object[HERE]->label);
+	Common::strcpy_s(function_name, 81, "look_");
+	Common::strcat_s(function_name, 81, object[HERE]->label);
 	execute(function_name);
 
 	/* GIVE THE LOCATION THE ATTRIBUTES 'VISITED', 'KNOWN', AND 'MAPPED' NOW
@@ -253,8 +253,8 @@ void look_around() {
 
 	execute("+object_descriptions");
 
-	strcpy(function_name, "after_look_");
-	strcat(function_name, object[HERE]->label);
+	Common::strcpy_s(function_name, 81, "after_look_");
+	Common::strcat_s(function_name, 81, object[HERE]->label);
 	execute(function_name);
 
 	execute("+after_look");

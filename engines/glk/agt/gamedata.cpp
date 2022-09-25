@@ -642,7 +642,7 @@ static word add0_dict(const char *s) {
 			dict[i] = (dict[i] - dictstr) + newstr;
 		dictstr = newstr;
 	}
-	strcpy(dictstr + dictstrptr, s); /* Copy word into memory */
+	Common::strcpy_s(dictstr + dictstrptr, dictstrsize - dictstrptr, s); /* Copy word into memory */
 	dict[dp] = dictstr + dictstrptr;
 	dictstrptr = newptr;
 
@@ -691,7 +691,7 @@ static void init0_dict(void)
 
 	dict = (char **)rmalloc(sizeof(char *));
 	dictstr = (char *)rmalloc(DICT_GRAN);
-	strcpy(dictstr, "any");
+	Common::strcpy_s(dictstr, DICT_GRAN, "any");
 	dict[0] = dictstr;
 
 	dictstrptr = 4; /* Point just after 'any' */

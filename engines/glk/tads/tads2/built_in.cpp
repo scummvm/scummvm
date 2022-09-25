@@ -52,9 +52,9 @@ void bifyon(bifcxdef *ctx, int argc)
 
 	/* load the "yes" and "no" reply patterns */
 	if (os_get_str_rsc(RESID_YORN_YES, yesbuf, sizeof(yesbuf)))
-		strcpy(yesbuf, "[Yy].*");
+		Common::strcpy_s(yesbuf, "[Yy].*");
 	if (os_get_str_rsc(RESID_YORN_NO, nobuf, sizeof(nobuf)))
-		strcpy(nobuf, "[Nn].*");
+		Common::strcpy_s(nobuf, "[Nn].*");
 
 	/* if we're in HTML mode, switch to input font */
 	if (tio_is_html_mode())
@@ -2047,27 +2047,27 @@ static int get_ext_key_name(char *namebuf, int c, int extc)
 		case 10:
 		case 13:
 			/* return '\n' for LF and CR characters */
-			strcpy(namebuf, "\\n");
+			Common::strcpy_s(namebuf, 20, "\\n");
 			return TRUE;
 
 		case 9:
 			/* return '\t' for TAB characters */
-			strcpy(namebuf, "\\t");
+			Common::strcpy_s(namebuf, 20, "\\t");
 			return TRUE;
 
 		case 8:
 			/* return '[bksp]' for backspace characters */
-			strcpy(namebuf, "[bksp]");
+			Common::strcpy_s(namebuf, 20, "[bksp]");
 			return TRUE;
 
 		case 27:
 			/* return '[esc]' for the escape key */
-			strcpy(namebuf, "[esc]");
+			Common::strcpy_s(namebuf, 20, "[esc]");
 			return TRUE;
 
 		default:
 			/* return '[ctrl-X]' for other control characters */
-			strcpy(namebuf, "[ctrl-X]");
+			Common::strcpy_s(namebuf, 20, "[ctrl-X]");
 			namebuf[6] = (char)(c + 'a' - 1);
 			return TRUE;
 		}
@@ -2086,7 +2086,7 @@ static int get_ext_key_name(char *namebuf, int c, int extc)
 		&& extc <= (int)(sizeof(ext_key_names)/sizeof(ext_key_names[0])))
 	{
 		/* use the array name */
-		strcpy(namebuf, ext_key_names[extc - 1]);
+		Common::strcpy_s(namebuf, 20, ext_key_names[extc - 1]);
 		return TRUE;
 	}
 
@@ -2094,13 +2094,13 @@ static int get_ext_key_name(char *namebuf, int c, int extc)
 	if (extc >= CMD_ALT && extc <= CMD_ALT + 25)
 	{
 		/* generate an ALT key name */
-		strcpy(namebuf, "[alt-X]");
+		Common::strcpy_s(namebuf, 20, "[alt-X]");
 		namebuf[5] = (char)(extc - CMD_ALT + 'a');
 		return TRUE;
 	}
 
 	/* it's not a valid key - use '[?]' as the name */
-	strcpy(namebuf, "[?]");
+	Common::strcpy_s(namebuf, 20, "[?]");
 	return FALSE;
 }
 
@@ -2174,7 +2174,7 @@ void bifwrd(bifcxdef *ctx, int argc)
 			*dst++ = DAT_SSTRING;
 			len = strlen((const char *)src);
 			oswp2(dst, len + 2);
-			strcpy((char *)dst + 2, (const char *)src);
+			Common::strcpy_s((char *)dst + 2, sizeof(buf) - (dst + 2 - buf), (const char *)src);
 			dst += len + 2;
 		}
 	}
@@ -2507,7 +2507,7 @@ void biffopen(bifcxdef *ctx, int argc)
 						   ctx->bifcxrun->runcxgamepath, fname);
 
 		/* replace the original filename with the full path */
-		strcpy(fname, newname);
+		Common::strcpy_s(fname, newname);
 	}
 
 	/* get the mode string */

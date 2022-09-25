@@ -95,7 +95,7 @@ int os_init(int *argc, char *argv[], const char *prompt,
 
 	g_vm->glk_set_window(mainwin);
 
-	strcpy(rbuf, "");
+	rbuf[0] = '\0';
 
 	return 0;
 }
@@ -324,7 +324,7 @@ void os_status(int stat)
 										winmethod_Above | winmethod_Fixed, 1,
 										wintype_TextGrid, 0);
 		}
-		strcpy(lbuf, "");
+		lbuf[0] = '\0';
 	}
 }
 
@@ -534,7 +534,7 @@ int os_askfile(const char *prompt, char *fname_buf, int fname_buf_len,
 	if (fileref == nullptr)
 		return OS_AFE_CANCEL;
 
-	strcpy(fname_buf, g_vm->garglk_fileref_get_name(fileref));
+	Common::strcpy_s(fname_buf, fname_buf_len, g_vm->garglk_fileref_get_name(fileref));
 
 	g_vm->glk_fileref_destroy(fileref);
 
@@ -967,7 +967,7 @@ osfildef *os_exeseek(const char *argv0, const char *typ) {
 }
 
 int os_get_str_rsc(int id, char *buf, size_t buflen) {
-	strcpy(buf, "");
+	buf[0] = '\0';
 	return 0;
 }
 
@@ -982,8 +982,9 @@ void os_dbg_vprintf(const char *fmt, va_list args) {
 int os_vasprintf(char **bufptr, const char *fmt, va_list ap) {
 	Common::String s = Common::String::vformat(fmt, ap);
 
-	*bufptr = (char *)malloc(s.size() + 1);
-	strcpy(*bufptr, s.c_str());
+	size_t ln = s.size() + 1;
+	*bufptr = (char *)malloc(ln);
+	Common::strcpy_s(*bufptr, ln, s.c_str());
 	return s.size();
 }
 
@@ -1010,12 +1011,12 @@ void os_xlat_html4(unsigned int html4_char, char *result, size_t result_len) {
 		case 132:                                      /* double back quote */
 			result[0] = '\"'; break;
 		case 153:                                             /* trade mark */
-			strcpy(result, "(tm)"); return;
+			Common::strcpy_s(result, result_len, "(tm)"); return;
 		case 140:                                            /* OE ligature */
 		case 338:                                            /* OE ligature */
-			strcpy(result, "OE"); return;
+			Common::strcpy_s(result, result_len, "OE"); return;
 		case 339:                                            /* oe ligature */
-			strcpy(result, "oe"); return;
+			Common::strcpy_s(result, result_len, "oe"); return;
 		case 159:                                                   /* Yuml */
 			result[0] = (char)255; return;
 		case 376:                                        /* Y with diaresis */
@@ -1029,7 +1030,7 @@ void os_xlat_html4(unsigned int html4_char, char *result, size_t result_len) {
 			result[0] = '-'; break;
 		case 151:                                                /* em dash */
 		case 8212:                                               /* em dash */
-			strcpy(result, "--"); return;
+			Common::strcpy_s(result, result_len, "--"); return;
 		case 145:                                      /* left single quote */
 		case 8216:                                     /* left single quote */
 			result[0] = '`'; break;
