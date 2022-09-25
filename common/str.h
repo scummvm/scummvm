@@ -375,6 +375,66 @@ String tag2string(uint32 tag, bool nonPrintable = false);
  * Copy up to size - 1 characters from src to dst and also zero terminate the
  * result. Note that src must be a zero terminated string.
  *
+ * @note This is modeled after strcpy_s from C11 but simplified by using warning
+ * instead of erroring out
+ *
+ * @param dst The destination buffer.
+ * @param size The size of the destination buffer.
+ * @param src The source string.
+ */
+void strcpy_s(char *dst, size_t size, const char *src);
+
+/**
+ * Copy up to N - 1 characters from src to dst and also zero terminate the
+ * result. Note that src must be a zero terminated string.
+ *
+ * @note This is modeled after strcpy_s from C11 but simplified by using warning
+ * instead of erroring out
+ *
+ * @param dst The destination buffer as a reference to a constant size array.
+ * @param src The source string.
+ */
+template<typename T, size_t N>
+FORCEINLINE void strcpy_s(T (&dst)[N], const char *src) {
+	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	strcpy_s((char *)dst, N, src);
+}
+
+/**
+ * Append the string src to the string dst. Note that both src and dst must be
+ * zero terminated. The result will be zero terminated. At most
+ * "size - strlen(dst) - 1" bytes will be appended.
+ *
+ * @note This is modeled after strcpy_s from C11 but simplified by using warning
+ * instead of erroring out
+ *
+ * @param dst The string the source string should be appended to.
+ * @param size The (total) size of the destination buffer.
+ * @param src The source string.
+ */
+void strcat_s(char *dst, size_t size, const char *src);
+
+/**
+ * Append the string src to the string dst. Note that both src and dst must be
+ * zero terminated. The result will be zero terminated. At most
+ * "N - strlen(dst) - 1" bytes will be appended.
+ *
+ * @note This is modeled after strcat_s from C11 but simplified by using warning
+ * instead of erroring out
+ *
+ * @param dst The string the source string should be appended to as a reference to a constant size array.
+ * @param src The source string.
+ */
+template<typename T, size_t N>
+FORCEINLINE void strcat_s(T (&dst)[N], const char *src) {
+	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	strcat_s((char *)dst, N, src);
+}
+
+/**
+ * Copy up to size - 1 characters from src to dst and also zero terminate the
+ * result. Note that src must be a zero terminated string.
+ *
  * In case size is zero this function just returns the length of the source
  * string.
  *

@@ -736,6 +736,88 @@ String tag2string(uint32 tag, bool nonPrintable) {
 
 #endif
 
+// When str.cpp is used in devtools warning is not defined
+#ifdef SCUMMVM_UTIL
+#define warning(msg, ...)
+#endif
+
+// Our simple implementation of strcpy_s and strcat_s
+// We don't check for overlapping strings and we issue warnings instead of erroring out
+void strcpy_s(char *dst, size_t size, const char *src) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return;
+	}
+	if (!src) {
+		warning("%s: src is nullptr", __func__);
+		return;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return;
+	}
+
+	if (dst == src) {
+		// Nothing to do
+		return;
+	}
+
+	// Copy over (size - 1) bytes at max.
+	while (size != 0) {
+		*dst = *src;
+		if (*dst == '\0') {
+			return;
+		}
+		++dst;
+		++src;
+		--size;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[-1] = '\0';
+}
+
+void strcat_s(char *dst, size_t size, const char *src) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return;
+	}
+	if (!src) {
+		warning("%s: src is nullptr", __func__);
+		return;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return;
+	}
+
+	// Search the end of the destination, but do not
+	// move past the terminating zero.
+	while(*dst != '\0') {
+		++dst;
+		--size;
+		if (!size) {
+			warning("%s: dst is unterminated", __func__);
+			return;
+		}
+	}
+
+	// Copy over all of the source that fits
+	// the destination buffer.
+	while (size != 0) {
+		*dst = *src;
+		if (*dst == '\0') {
+			return;
+		}
+		++dst;
+		++src;
+		--size;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[-1] = '\0';
+}
+
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
