@@ -167,6 +167,7 @@ enum asECallConvTypes
 // Object type flags
 enum asEObjTypeFlags
 {
+	asOBJ_NULL                       = 0,
 	asOBJ_REF                        = (1<<0),
 	asOBJ_VALUE                      = (1<<1),
 	asOBJ_GC                         = (1<<2),

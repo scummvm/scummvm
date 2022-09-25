@@ -417,7 +417,7 @@ asCFuncdefType::asCFuncdefType(asCScriptEngine *en, asCScriptFunction *func) : a
 
 	// A function pointer is special kind of reference type
 	// It must be possible to garbage collect, as funcdefs can form circular references if used as delegates
-	flags       = asOBJ_REF | asOBJ_GC | asOBJ_FUNCDEF | (func->IsShared() ? asOBJ_SHARED : 0);
+	flags       = asOBJ_REF | asOBJ_GC | asOBJ_FUNCDEF | (func->IsShared() ? asOBJ_SHARED : asOBJ_NULL);
 	name        = func->name;
 	nameSpace   = func->nameSpace;
 	module      = func->module;
