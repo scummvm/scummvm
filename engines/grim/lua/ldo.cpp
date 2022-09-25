@@ -8,6 +8,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_fprintf
 #define FORBIDDEN_SYMBOL_EXCEPTION_stderr
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #ifdef _MSC_VER
 #pragma warning(disable:4611)
