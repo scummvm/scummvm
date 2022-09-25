@@ -292,7 +292,7 @@ bool MacArchive::openStream(Common::SeekableReadStream *stream, uint32 startOffs
 	_resFork = new Common::MacResManager();
 	stream->seek(startOffset);
 
-	if (!_resFork->loadFromMacBinary(*stream)) {
+	if (!_resFork->loadFromMacBinary(stream)) {
 		warning("MacArchive::openStream(): Error loading Mac Binary");
 		close();
 		return false;

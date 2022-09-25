@@ -339,7 +339,7 @@ void MacFontManager::loadJapaneseFonts() {
 void MacFontManager::loadFonts(Common::SeekableReadStream *stream) {
 	Common::MacResManager fontFile;
 
-	if (!fontFile.loadFromMacBinary(*stream))
+	if (!fontFile.loadFromMacBinary(stream))
 		return;
 
 	loadFonts(&fontFile);

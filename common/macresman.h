@@ -195,7 +195,7 @@ public:
 	/**
 	 * Load from stream in MacBinary format
 	 */
-	bool loadFromMacBinary(SeekableReadStream &stream);
+	bool loadFromMacBinary(SeekableReadStream *stream);
 
 	/**
 	 * Dump contents of the archive to ./dumps directory
@@ -224,10 +224,10 @@ private:
 	SeekableReadStream *_stream;
 	Path _baseFileName;
 
-	bool load(SeekableReadStream &stream);
+	bool load(SeekableReadStream *stream);
 
-	bool loadFromRawFork(SeekableReadStream &stream);
-	bool loadFromAppleDouble(SeekableReadStream &stream);
+	bool loadFromRawFork(SeekableReadStream *stream);
+	bool loadFromAppleDouble(SeekableReadStream *stream);
 
 	static Path constructAppleDoubleName(Path name);
 	static Path disassembleAppleDoubleName(Path name, bool *isAppleDouble);
