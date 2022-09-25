@@ -547,7 +547,7 @@ void Journal::initTextField(const char *desc) {
 	_textField.posCursor = _vm->display()->textWidth(desc);
 	_textField.textCharsCount = strlen(desc);
 	memset(_textField.text, 0, sizeof(_textField.text));
-	strcpy(_textField.text, desc);
+	Common::strcpy_s(_textField.text, desc);
 }
 
 void Journal::updateTextField(uint16 ascii, int keycode) {

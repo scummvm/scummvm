@@ -127,7 +127,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		_talkString[0][0] = '\0';
 
 		if (hasTalkedTo() && head == 1)
-			strcpy(_talkString[0], _person2String);
+			Common::strcpy_s(_talkString[0], _person2String);
 		else
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 
@@ -1077,7 +1077,7 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	char option[MAX_STRING_SIZE];
-	strcpy(option, str);
+	Common::strcpy_s(option, str);
 	// option text ends at '*' char
 	char *p = strchr(option, '*');
 	if (p) {
@@ -1086,7 +1086,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	int lines;
 	memset(optionText, 0, 5 * MAX_STRING_SIZE);
 	if (_vm->resource()->getLanguage() == Common::EN_ANY || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
-		strcpy(optionText[0], option);
+		Common::strcpy_s(optionText[0], option);
 		lines = 1;
 	} else if (_vm->resource()->getLanguage() == Common::HE_ISR) {
 		lines = splitOptionHebrew(option, optionText);
@@ -1119,10 +1119,10 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 				width = wordWidth;
 				maxTextLen = MAX_TEXT_WIDTH - OPTION_TEXT_MARGIN;
 			} else {
-				strcpy(tmpString, optionText[optionLines]);
+				Common::strcpy_s(tmpString, optionText[optionLines]);
 				strncpy(optionText[optionLines], p, len);
 				optionText[optionLines][len] = '\0';
-				strcat(optionText[optionLines], tmpString);
+				Common::strcat_s(optionText[optionLines], tmpString);
 			}
 			--p;
 			len = 1;
@@ -1132,10 +1132,10 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 				if (width + _vm->display()->textWidth(p + 1, len) > maxTextLen) {
 					++optionLines;
 				}
-				strcpy(tmpString, optionText[optionLines]);
+				Common::strcpy_s(tmpString, optionText[optionLines]);
 				strncpy(optionText[optionLines], p + 1, len);
 				optionText[optionLines][len] = '\0';
-				strcat(optionText[optionLines], tmpString);
+				Common::strcat_s(optionText[optionLines], tmpString);
 			}
 			++optionLines;
 		}
@@ -1171,7 +1171,7 @@ int Talk::splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE
 				if (width + _vm->display()->textWidth(str) > maxTextLen) {
 					++optionLines;
 				}
-				strcat(optionText[optionLines], str);
+				Common::strcat_s(optionText[optionLines], str);
 			}
 			++optionLines;
 		}
