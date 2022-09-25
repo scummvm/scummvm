@@ -241,6 +241,8 @@ static int comb_verb(void)
 static rbool orig_agt_verb(word w) {
 	int i;
 	if (aver <= AGT10 && w == ext_code[wg]) return 0; /* AGT 1.0 didn't have AGAIN */
+	/* SOGGY overrides SCREAM with a dummy_verb, earlier versions too? */
+	if (aver <= AGTCOS && w == ext_code[wscream]) return 0;
 	for (i = 0; old_agt_verb[i] != -1 && old_agt_verb[i] != w; i++);
 	return (old_agt_verb[i] == w);
 }

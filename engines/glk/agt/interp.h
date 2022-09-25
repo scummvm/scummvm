@@ -276,7 +276,7 @@ typedef enum {wthe, wmy, wa, wan, wthen, wp, wsc, wand, wc, wits, wall, wundo, w
 			  wdverb, wdnoun, wdadjective, wdprep, wdobject, wdname,
 			  wstep, w_any, weither, wboth, weveryone, weverybody,
 			  whe, wshe, wit, wthey, whim, wher, wthem, wis, ware, woops,
-			  wwas, wwere,
+			  wwas, wwere, wscream,
 			  win, wout, winto, wat, wto, wacross, winside, wwith, wnear, wfor,
 			  wof, wbehind, wbeside, won, woff, wunder, wfrom, wthrough,
 			  wtoward, wtowards, wbetween, waround, wupon, wthru,
