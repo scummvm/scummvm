@@ -694,6 +694,38 @@ void ScummEngine::drawObject(int obj, int arg) {
 		numstrip++;
 	}
 
+	byte *patchedBmpPtr = nullptr;
+	// WORKAROUND bug #3208: in all 256-color versions of Indy3, the tapestry
+	// in one of the first rooms of Castle Brunwald has a strange vertical
+	// line at the bottom of its first 'strip' (purple in the DOS version,
+	// blue on the FM-TOWNS). We can't include the whole redrawn resource for
+	// copyright reasons, so we just patch the impacted bytes from a fixed OI
+	// (made with BMRP.EXE).
+	if (_game.id == GID_INDY3 && (_game.features & GF_OLD256) && _currentRoom == 135
+	    && od.obj_nr == 324 && numstrip == od.width / 8 && _enableEnhancements) {
+		// Extra safety: make sure that the OI has the expected length. Indy3
+		// should always be GF_SMALL_HEADER, but that's implicit, so do an
+		// explicit check, since we're doing some low-level byte tricks.
+		const uint32 origOILen = 6184, firstPartLen = 123, droppedPartLen = 3, patchLen = 8;
+		const int nextObjIdx = getObjectIndex(od.obj_nr + 1);
+		if ((_game.features & GF_SMALL_HEADER) && nextObjIdx != -1 &&
+		    _objs[nextObjIdx].OBIMoffset - od.OBIMoffset == origOILen && READ_LE_UINT32(ptr) == 6146) {
+			// Copy the original (compressed) OI and patch the faulty content
+			patchedBmpPtr = new byte[origOILen - 8 + patchLen - droppedPartLen];
+			memcpy(patchedBmpPtr, ptr, firstPartLen);
+			memcpy(patchedBmpPtr + firstPartLen, "\x08\xAF\xE0\xC7\x47\xB8\xF1\x11", patchLen);
+			memcpy(patchedBmpPtr + firstPartLen + patchLen, ptr + (firstPartLen + droppedPartLen),
+			    origOILen - 8 - (firstPartLen + droppedPartLen));
+
+			// Adjust the offsets for the new OI size
+			WRITE_LE_UINT32(patchedBmpPtr, READ_LE_UINT32(patchedBmpPtr) + (patchLen - droppedPartLen));
+			for (int i = 2; i <= od.width / 8; i++)
+				WRITE_LE_UINT32(patchedBmpPtr + i * 4, READ_LE_UINT32(patchedBmpPtr + i * 4) + (patchLen - droppedPartLen));
+
+			ptr = patchedBmpPtr;
+		}
+	}
+
 	if (numstrip != 0) {
 		byte flags = od.flags | Gdi::dbObjectMode;
 
@@ -710,6 +742,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 #endif
 			_gdi->drawBitmap(ptr, &_virtscr[kMainVirtScreen], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
+
+	if (patchedBmpPtr)
+		delete[] patchedBmpPtr;
 }
 
 void ScummEngine::clearRoomObjects() {
