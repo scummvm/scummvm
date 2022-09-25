@@ -1161,9 +1161,11 @@ int exec_instr(op_rec *oprec)
 int get_random(int a, int b)
 {
 	if (stable_random) {
-		static unsigned int seed = 9483;
-		seed = (8253729 * seed + 2396403);
-		return a + (seed % (b - a + 1));
+		static unsigned int rand_gen = 1234;
+
+		rand_gen = rand_gen * 214013 + 2531011;
+		unsigned int rand_num = (rand_gen >> 16) & 0xFFFF;
+		return a + (rand_num % (b - a + 1));
 	} else
 		return agt_rand(a,b);
 }
