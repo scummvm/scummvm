@@ -496,6 +496,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 			MacArchive *macArchive = new MacArchive();
 			if (!macArchive->openStream(macStream)) {
 				delete macArchive;
+				delete macStream;
 			} else {
 				g_director->getCurrentWindow()->probeMacBinary(macArchive);
 			}
