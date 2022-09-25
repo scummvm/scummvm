@@ -552,7 +552,7 @@ static const char verbdef[] =
 */
 
 /* These are alternative (that is, non-canonical) forms of verbs that
-   were present in the oringal AGT interpreters.  They have the property
+   were present in the original AGT interpreters.  They have the property
    that they have no effect if used in a dummy_verb declaration. */
 /* Their dictionary indices are stored in old_agt_verb, which is
    initialized by reinit_dict. */

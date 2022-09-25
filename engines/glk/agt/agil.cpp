@@ -124,7 +124,7 @@ static const char *ext_voc[] = {
 	"verb", "noun", "adjective", "prep", "object", "name", "step",
 	" any", "either", "both", "everyone", "everybody",
 	"he", "she", "it", "they", "him", "her", "them", "is", "are", "oops",
-	"was", "were",
+	"was", "were", "scream",
 	/* Everything between 'in' and 'about' should be a preposition */
 	"in", "out", "into", "at", "to", "across", "inside", "with", "near", "for",
 	"of", "behind", "beside", "on", "off", "under", "from", "through",
