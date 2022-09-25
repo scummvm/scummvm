@@ -9,6 +9,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      hinzugefügt.
    - Unterstützung für die TI99/4A-Versionen der GLK Scott Adams-Spiele 1-12 hinzugefügt.
    - Unterstützung für Obsidian hinzugefügt.
+   - Unterstützung für Added support for Pink Panther: Passport to Peril hinzugefügt.
+   - Unterstützung für Pink Panther: Hokus Pokus Pink hinzugefügt.
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
