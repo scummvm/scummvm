@@ -168,11 +168,12 @@ MODULE_OBJS += \
 	base/gfx/xanimation.o \
 	base/gfx/xanimation_channel.o \
 	base/gfx/xanimation_set.o \
+	base/gfx/xfile.o \
+	base/gfx/xfile_loader.o \
 	base/gfx/xframe_node.o \
 	base/gfx/xmaterial.o \
 	base/gfx/xmesh.o \
 	base/gfx/xmodel.o \
-	base/gfx/xloader.o \
 	base/gfx/opengl/base_surface_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d.o \
 	base/gfx/opengl/base_render_opengl3d_shader.o \

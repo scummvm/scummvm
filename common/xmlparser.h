@@ -100,7 +100,7 @@ public:
 	/**
 	 * Parser constructor.
 	 */
-	XMLParser() : _XMLkeys(nullptr), _stream(nullptr) {}
+	XMLParser() : _XMLkeys(nullptr), _stream(nullptr), _allowText(false), _char(0) {}
 
 	virtual ~XMLParser();
 
@@ -213,6 +213,17 @@ public:
 		return child->depth > 0 ? _activeKey[child->depth - 1] : 0;
 	}
 
+	/**
+	 * Allow text nodes (eg <tag>this is a text node</tag>) to appear in the
+	 * document.
+	 *
+	 * By default this parser does not allow text nodes and expects all data
+	 * to appear in attributes.
+	 */
+	void setAllowText() {
+		_allowText = true;
+	}
+
 protected:
 
 	/**
@@ -258,6 +269,15 @@ protected:
 	 * By default, all keys are properly closed.
 	 */
 	virtual bool closedKeyCallback(ParserNode *node) {
+		return true;
+	}
+
+	/**
+	 * Called when a text node is found.  This will only be called if
+	 * setAllowText() has been called, otherwise text nodes are considered
+	 * parse errors.
+	 */
+	virtual bool textCallback(const String &val) {
 		return true;
 	}
 
@@ -346,6 +366,7 @@ protected:
 
 private:
 	char _char;
+	bool _allowText; /** Allow text nodes in the doc (default false) */
 	SeekableReadStream *_stream;
 	String _fileName;
 

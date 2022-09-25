@@ -207,6 +207,16 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_lightningFirstSfx = 0;
 	_lightningSfxFrame = 0;
 
+	_stashSetupData = _monsterDirFlags = _monsterScaleX = _monsterScaleY = _updateSpellBookCoords = _updateSpellBookAnimData = _healShapeFrames = nullptr;
+	_sceneItemOffs = _monsterShiftOffs = nullptr;
+	_flyingItemShapes = nullptr;
+	_monsterDecorationShapes = nullptr;
+	_monsterModifiers1 = _monsterModifiers2 = _monsterModifiers3 = _monsterModifiers4 = _monsterScaleWH = _autoMapStrings = nullptr;
+	_fireBallCoords = nullptr;
+	_subMenuIndex = _numFireballShapes = _numHealShapes = _numHealiShapes = 0;
+	_currentMapLevel = _automapTopLeftX = _automapTopLeftY = 0;
+	_mapUpdateNeeded = false;
+
 	_compassTimer = 0;
 	_scriptCharacterCycle = 0;
 	_partyDamageFlags = -1;
@@ -484,7 +494,6 @@ void LoLEngine::pauseEngineIntern(bool pause) {
 
 Common::Error LoLEngine::go() {
 	int action = -1;
-
 	if (_gameToLoad == -1) {
 		action = processPrologue();
 		if (action == -1)
@@ -997,7 +1006,7 @@ void LoLEngine::update() {
 
 #pragma mark - Localization
 
-char *LoLEngine::getLangString(uint16 id) {
+const char *LoLEngine::getLangString(uint16 id) {
 	if (id == 0xFFFF)
 		return 0;
 
@@ -1852,7 +1861,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	return r ? (textEnabled() ? 1 : 0) : 1;
 }
 
-int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
 
@@ -1924,6 +1933,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 
 void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3) {
 	screen()->setScreenDim(5);
+	assert(numStr);
 
 	if (numStr == 1 && speechEnabled()) {
 		_dialogueNumButtons = 0;

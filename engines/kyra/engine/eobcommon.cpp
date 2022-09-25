@@ -139,7 +139,6 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_configHpBarGraphs = true;
 	_configMouseBtSwap = false;
 
-	memset(_dialogueLastBitmap, 0, 13);
 	_npcSequenceSub = 0;
 	_moveCounter = 0;
 	_partyResting = false;
@@ -246,6 +245,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	_levelMaps = 0;
 	_closeSpellbookAfterUse = false;
 	_wndBackgrnd = 0;
+	_ascii2SjisTables = _ascii2SjisTables2 = _mageSpellList2 = _clericSpellList2 = nullptr;
 
 	memset(_cgaMappingLevel, 0, sizeof(_cgaMappingLevel));
 	memset(_expRequirementTables, 0, sizeof(_expRequirementTables));
@@ -255,6 +255,7 @@ EoBCoreEngine::EoBCoreEngine(OSystem *system, const GameFlags &flags) : KyraRpgE
 	memset(_scriptTimers, 0, sizeof(_scriptTimers));
 	memset(_monsterBlockPosArray, 0, sizeof(_monsterBlockPosArray));
 	memset(_foundMonstersArray, 0, sizeof(_foundMonstersArray));
+	memset(_palette16c, 0, sizeof(_palette16c));
 
 #define DWM0 _dscWallMapping.push_back(0)
 #define DWM(x) _dscWallMapping.push_back(&_sceneDrawVar##x)
@@ -826,9 +827,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 		}
 	}
 
-	_thrownItemShapes = new const uint8*[_numThrownItemShapes];
-	if (_flags.gameID == GI_EOB2)
-		_spellShapes = new const uint8*[4];
+	_thrownItemShapes = new const uint8*[_numThrownItemShapes];	
 	_firebeamShapes = new const uint8*[3];
 
 	_screen->loadShapeSetBitmap("THROWN", 5, 3);
@@ -842,6 +841,7 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 				_thrownItemShapesScl[c][i] = _screen->encodeShape((i / div) << 2, (i % div) * mul + 24 + (c << 4), 3 - c, 16 - ((c >> 1) << 3), false, _cgaMappingThrown);
 		}
 	} else {
+		_spellShapes = new const uint8*[4];
 		for (int i = 0; i < 4; i++)
 			_spellShapes[i] = _screen->encodeShape(8, i << 5, 6, 32, false, _cgaMappingThrown);
 	}
@@ -869,13 +869,12 @@ void EoBCoreEngine::loadItemsAndDecorationsShapes() {
 
 	_teleporterShapes = new const uint8*[6];
 	_sparkShapes = new const uint8*[4];
-	_compassShapes = new const uint8*[12];
-	if (_flags.gameID == GI_EOB2)
-		_wallOfForceShapes = new const uint8*[6];
+	_compassShapes = new const uint8*[12];		
 
 	_screen->loadShapeSetBitmap("DECORATE", 5, 3);
 	if (_flags.gameID == GI_EOB2) {
 		_lightningColumnShape = _screen->encodeShape(18, 88, 4, 64);
+		_wallOfForceShapes = new const uint8*[6];
 		for (int i = 0; i < 6; i++)
 			_wallOfForceShapes[i] = _screen->encodeShape(_wallOfForceShapeDefs[(i << 2)], _wallOfForceShapeDefs[(i << 2) + 1], _wallOfForceShapeDefs[(i << 2) + 2], _wallOfForceShapeDefs[(i << 2) + 3]);
 	}
@@ -1563,7 +1562,7 @@ void EoBCoreEngine::initDialogueSequence() {
 	_npcSequenceSub = -1;
 	_txt->setWaitButtonMode(0);
 	_dialogueField = true;
-	_dialogueLastBitmap[0] = 0;
+	_dialogueLastBitmap.clear();
 
 	_txt->resetPageBreakString();
 	gui_updateControls();
@@ -1594,7 +1593,7 @@ void EoBCoreEngine::restoreAfterDialogueSequence() {
 	_txt->allowPageBreak(false);
 	_dialogueField = _dialogueFieldAmiga = false;
 
-	_dialogueLastBitmap[0] = 0;
+	_dialogueLastBitmap.clear();
 
 	gui_restorePlayField();
 	//_allowSkip = false;
@@ -1615,7 +1614,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 	int page = ((flags & 2) || destRect) ? 0 : 6;
 	int amigaPalIndex = (x1 ? 1 : 0) + (y1 ? 2 : 0) + 1;
 
-	if (scumm_stricmp(_dialogueLastBitmap, file)) {
+	if (!_dialogueLastBitmap.equalsIgnoreCase(file)) {
 		_screen->clearPage(2);
 		if (!destRect) {
 			if (!(flags & 1)) {
@@ -1632,7 +1631,7 @@ void EoBCoreEngine::drawSequenceBitmap(const char *file, int destRect, int x1, i
 		}
 
 		_screen->loadEoBBitmap(file, 0, 3, 3, 2);
-		strcpy(_dialogueLastBitmap, file);
+		_dialogueLastBitmap = file;
 	}
 
 	if (_flags.platform == Common::kPlatformAmiga) {

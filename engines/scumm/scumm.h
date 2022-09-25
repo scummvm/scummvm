@@ -352,6 +352,105 @@ class ResourceManager;
 #define AMIGA_NTSC_VBLANK_RATE 240.0
 
 /**
+ * Game saving/loading outcome codes
+ */
+
+#define GAME_PROPER_SAVE 201
+#define GAME_FAILED_SAVE 202
+#define GAME_PROPER_LOAD 203
+#define GAME_FAILED_LOAD 204
+
+/**
+ * GUI defines and enums.
+ */
+
+#define GUI_PAGE_MAIN 0
+#define GUI_PAGE_SAVE 1
+#define GUI_PAGE_LOAD 2
+
+#define GUI_CTRL_FIRST_SG               1
+#define GUI_CTRL_LAST_SG                9
+#define GUI_CTRL_SAVE_BUTTON            10
+#define GUI_CTRL_LOAD_BUTTON            11
+#define GUI_CTRL_PLAY_BUTTON            12
+#define GUI_CTRL_QUIT_BUTTON            13
+#define GUI_CTRL_OK_BUTTON              14
+#define GUI_CTRL_CANCEL_BUTTON          15
+#define GUI_CTRL_ARROW_UP_BUTTON        16
+#define GUI_CTRL_ARROW_DOWN_BUTTON      17
+#define GUI_CTRL_PATH_BUTTON            18
+#define GUI_CTRL_MUSIC_SLIDER           19
+#define GUI_CTRL_SPEECH_SLIDER          20
+#define GUI_CTRL_SFX_SLIDER             21
+#define GUI_CTRL_TEXT_SPEED_SLIDER      22
+#define GUI_CTRL_DISPLAY_TEXT_CHECKBOX  23
+#define GUI_CTRL_SPOOLED_MUSIC_CHECKBOX 24
+#define GUI_CTRL_OUTER_BOX              26
+#define GUI_CTRL_INNER_BOX              27
+
+
+enum GUIString {
+	gsPause = 0,
+	gsVersion = 1,
+	gsTextSpeedSlider = 2,
+	gsRestart = 3,
+	gsQuitPrompt = 4,
+	gsSave = 5,
+	gsLoad = 6,
+	gsPlay = 7,
+	gsCancel = 8,
+	gsQuit = 9,
+	gsOK = 10,
+	gsMustName = 11,
+	gsGameNotSaved = 12,
+	gsGameNotLoaded = 13,
+	gsSaving = 14,
+	gsLoading = 15,
+	gsNamePrompt = 16,
+	gsSelectLoadPrompt = 17,
+	gsReplacePrompt = 18,
+	gsYes = 20,
+	gsNo = 21,
+	gsIMuseBuffer = 22,
+	gsVoiceAndText = 23,
+	gsTextDisplayOnly = 24,
+	gsVoiceOnly = 25,
+	gsYesKey = 26,
+	gsMusicVolumeSlider = 27,
+	gsVoiceVolumeSlider = 28,
+	gsSfxVolumeSlider = 29,
+	gsHeap = 30,
+	gsSavePath = 31,
+	gsTitle = 32,
+	gsDisabled = 33,
+	gsMusic = 34,
+	gsVoice = 35,
+	gsSfx = 36,
+	gsTextSpeed = 37,
+	gsDisplayText = 38,
+	gsSpooledMusic = 39,
+	gsInsertSaveDisk = 40
+};
+
+struct InternalGUIControl {
+	int relativeCenterX;
+	int relativeCenterY;
+	int xPos;
+	int yPos;
+	int normalFillColor;
+	int topLineColor;
+	int bottomLineColor;
+	int leftLineColor;
+	int rightLineColor;
+	int normalTextColor;
+	int highlightedTextColor;
+	int highlightedFillColor;
+	bool centerText;
+	Common::String label;
+	bool doubleLinesFlag;
+};
+
+/**
  * Base class for all SCUMM engines.
  */
 class ScummEngine : public Engine, public Common::Serializable {
@@ -481,6 +580,9 @@ protected:
 	virtual void setDefaultCursor() {};
 	virtual void setCursorTransparency(int a) {};
 	virtual void resetCursors() {}
+	virtual void setCursorHotspot(int x, int y) {}
+	virtual void setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale = false) {}
+
 
 public:
 	void pauseGame();
@@ -492,11 +594,111 @@ protected:
 	Dialog *_messageDialog = nullptr;
 	Dialog *_versionDialog = nullptr;
 
-	virtual void confirmExitDialog();
+	void confirmExitDialog();
 	void confirmRestartDialog();
 	void pauseDialog();
 	void messageDialog(const Common::U32String &message);
 	void versionDialog();
+
+	// Original GUI
+	int32 _bannerColors[50]; // Colors for the original GUI
+	byte *_bannerMem = nullptr;
+	uint32 _bannerMemSize = 0;
+	bool _messageBannerActive = false;
+	bool _comiQuitMenuIsOpen = false;
+	bool _closeBannerAndQueryQuitFlag = false;
+
+	// The followings are needed for MI1 FM-Towns
+	byte *_textSurfBannerMem = nullptr;
+	uint32 _textSurfBannerMemSize = 0;
+
+	InternalGUIControl _internalGUIControls[30];
+
+	// Special GUI strings
+	const char _emptyMsg[1] = {'\0'};
+	const char _uncheckedBox[2] = {' ', '\0'};
+	const char _checkedBox[2] = {'x', '\0'};
+	const char _arrowUp[2] = {'\x18', '\0'};
+	const char _arrowDown[2] = {'\x19', '\0'};
+
+	Common::StringArray _savegameNames;
+	int _menuPage = 0;
+	int _mainMenuSavegameLabel = 1;
+	int _curDisplayedSaveSlotPage = 0;
+	int _firstSaveStateOfList = 0; // For LOOM VGA
+	bool _mainMenuIsActive = false;
+	bool _quitByGUIPrompt = false;
+	char _mainMenuMusicSlider[17];
+	char _mainMenuSpeechSlider[17];
+	char _mainMenuSfxSlider[17];
+	char _mainMenuTextSpeedSlider[17];
+	int _spooledMusicIsToBeEnabled = 1;
+	int _saveScriptParam = 0;
+	int _guiCursorAnimCounter = 0;
+	int _v5VoiceMode = 0;
+	int _internalSpeakerSoundsAreOn = 1;
+
+	Graphics::Surface _savegameThumbnail;
+	byte *_tempTextSurface = nullptr;
+	byte *_tempMainSurface = nullptr;
+	byte *_tempVerbSurface = nullptr;
+	bool _postGUICharMask = false;
+
+	// Saved cursor pre and post GUI
+	byte *_curGrabbedCursor = nullptr;
+	int8 _oldCursorState = 0;
+	int _curCursorState = 0;
+	int _curCursorWidth = 0;
+	int _curCursorHeight = 0;
+	int _curCursorHotspotX = 0;
+	int _curCursorHotspotY = 0;
+
+	void initBanners();
+	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
+	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
+	void clearBanner();
+	void setBannerColors(int bannerId, byte r, byte g, byte b);
+	virtual int getBannerColor(int bannerId);
+	void setUpInternalGUIControl(int id, int normalFillColor, int normalTextColor,
+								 int topLineColor, int bottomLineColor, int leftLineColor, int rightLineColor,
+								 int highlightedTextColor, int highlightedFillColor,
+								 int anchorPointX, int anchorPointY, int x, int y, const char *label, bool centerFlag, bool unknownFlag);
+	void drawInternalGUIControl(int id, bool highlightColor);
+	int getInternalGUIControlFromCoordinates(int x, int y);
+	virtual bool isSmushActive() { return false; }
+
+	virtual void queryQuit(bool returnToLauncher);
+	virtual void queryRestart();
+	virtual const char *getGUIString(int stringId);
+	void waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel = false);
+	virtual int getGUIStringHeight(const char *str);
+	virtual int getGUIStringWidth(const char *str);
+	virtual void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag);
+	void getSliderString(int stringId, int value, char *sliderString, int size);
+	virtual int getMusicVolume();
+	virtual int getSpeechVolume();
+	virtual int getSFXVolume();
+	virtual void setMusicVolume(int volume);
+	virtual void setSpeechVolume(int volume);
+	virtual void setSFXVolume(int volume);
+	virtual void toggleVoiceMode();
+	virtual void handleLoadDuringSmush() {}
+	virtual void setSkipVideo(int value) {}
+
+	void showMainMenu();
+	virtual void setUpMainMenuControls();
+	void drawMainMenuControls();
+	void updateMainMenuControls();
+	void drawMainMenuTitle(const char *title);
+	bool executeMainMenuOperation(int op, int mouseX, int mouseY, bool &hasLoadedState);
+	bool shouldHighlightLabelAndWait(int clickedControl);
+	void fillSavegameLabels();
+	bool canWriteGame(int slotId);
+	bool userWriteLabelRoutine(Common::KeyState &ks, bool &leftMsClicked, bool &rightMsClicked);
+	void saveCursorPreMenu();
+	void restoreCursorPostMenu();
+	void saveSurfacesPreGUI();
+	void restoreSurfacesPostGUI();
 
 public:
 	char displayMessage(const char *altButton, const char *message, ...) GCC_PRINTF(3, 4);
@@ -589,6 +791,8 @@ protected:
 
 	uint16 _mouseAndKeyboardStat = 0;
 	byte _leftBtnPressed = 0, _rightBtnPressed = 0;
+
+	int _mouseWheelFlag = 0; // For original save/load dialog only
 
 	/**
 	 * Last time runInputScript was run (measured in terms of OSystem::getMillis()).
@@ -1115,6 +1319,7 @@ public:
 
 protected:
 	bool _shakeEnabled = false;
+	bool _shakeTempSavedState = false; // For saving and restoring before and after GUI calls
 	uint _shakeFrame = 0;
 	uint32 _shakeNextTick = 0;
 	uint32 _shakeTickCounter = 0;
@@ -1177,10 +1382,9 @@ protected:
 
 	bool _haveActorSpeechMsg = false;
 	bool _useTalkAnims = false;
-	uint16 _defaultTalkDelay = 0;
+	uint16 _defaultTextSpeed = 0;
 	int _saveSound = 0;
 	bool _native_mt32 = false;
-	bool _enable_gs = false;
 	bool _copyProtection = false;
 
 	// Indy4 Amiga specific

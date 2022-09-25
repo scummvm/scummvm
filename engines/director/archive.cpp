@@ -242,6 +242,7 @@ void Archive::dumpChunk(Resource &res, Common::DumpFile &out) {
 	}
 
 	delete resStream;
+	free(data);
 }
 
 // Mac Archive code
@@ -316,9 +317,11 @@ void MacArchive::readTags() {
 		for (uint32 j = 0; j < idArray.size(); j++) {
 			// Avoid assigning invalid entries to _types, because other
 			// functions will assume they exist and are valid if listed.
-			if (_resFork->getResource(tagArray[i], idArray[j]) == nullptr) {
+			Common::SeekableReadStream *readStream = _resFork->getResource(tagArray[i], idArray[j]);
+			if (readStream == nullptr) {
 				continue;
 			}
+			delete readStream;
 
 			Resource &res = resMap[idArray[j]];
 
@@ -794,7 +797,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 
 	delete abmpStream;
 
-	// Initial load segment
+	// Handle Initial Load Segment (ILS)
 	if (!resourceMap.contains(2)) {
 		warning("RIFXArchive::readAfterburnerMap(): Map has no entry for ILS");
 		return false;

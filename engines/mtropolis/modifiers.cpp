@@ -255,6 +255,37 @@ void MiniscriptModifier::visitInternalReferences(IStructuralReferenceVisitor *vi
 	_references->visitInternalReferences(visitor);
 }
 
+ColorTableModifier::ColorTableModifier() : _assetID(0xffffffff) {
+}
+
+bool ColorTableModifier::load(ModifierLoaderContext &context, const Data::ColorTableModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_applyWhen.load(data.applyWhen))
+		return false;
+
+	_assetID = data.assetID;
+
+	return true;
+}
+
+bool ColorTableModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt);
+}
+
+VThreadState ColorTableModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+Common::SharedPtr<Modifier> ColorTableModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ColorTableModifier(*this));
+}
+
+const char *ColorTableModifier::getDefaultName() const {
+	return "Color Table Modifier";
+}
+
 bool SaveAndRestoreModifier::load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -636,48 +667,56 @@ const char *SoundEffectModifier::getDefaultName() const {
 	return "Sound Effect Modifier";
 }
 
-PathMotionModifierV2::PointDef::PointDef() : frame(0), useFrame(false) {
+PathMotionModifier::PointDef::PointDef() : frame(0), useFrame(false) {
 }
 
-PathMotionModifierV2::PathMotionModifierV2()
+PathMotionModifier::PathMotionModifier()
 	: _reverse(false), _loop(false), _alternate(false),
 	  _startAtBeginning(false), _frameDurationTimes10Million(0) {
 }
 
-bool PathMotionModifierV2::load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data) {
+bool PathMotionModifier::load(ModifierLoaderContext &context, const Data::PathMotionModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
 
 	if (!_executeWhen.load(data.executeWhen) || !_terminateWhen.load(data.terminateWhen))
 		return false;
 
-	_reverse = ((data.flags & Data::PathMotionModifierV2::kFlagReverse) != 0);
-	_loop = ((data.flags & Data::PathMotionModifierV2::kFlagLoop) != 0);
-	_alternate = ((data.flags & Data::PathMotionModifierV2::kFlagAlternate) != 0);
-	_startAtBeginning = ((data.flags & Data::PathMotionModifierV2::kFlagStartAtBeginning) != 0);
+	_reverse = ((data.flags & Data::PathMotionModifier::kFlagReverse) != 0);
+	_loop = ((data.flags & Data::PathMotionModifier::kFlagLoop) != 0);
+	_alternate = ((data.flags & Data::PathMotionModifier::kFlagAlternate) != 0);
+	_startAtBeginning = ((data.flags & Data::PathMotionModifier::kFlagStartAtBeginning) != 0);
 
 	_frameDurationTimes10Million = data.frameDurationTimes10Million;
 
 	_points.resize(data.numPoints);
 
 	for (size_t i = 0; i < _points.size(); i++) {
-		const Data::PathMotionModifierV2::PointDef &inPoint = data.points[i];
+		const Data::PathMotionModifier::PointDef &inPoint = data.points[i];
 		PointDef &outPoint = _points[i];
 
 		outPoint.frame = inPoint.frame;
-		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifierV2::PointDef::kFrameFlagPlaySequentially) != 0);
-		if (!inPoint.point.toScummVMPoint(outPoint.point) || !outPoint.sendSpec.load(inPoint.send, inPoint.messageFlags, inPoint.with, inPoint.withSource, inPoint.withString, inPoint.destination))
+		outPoint.useFrame = ((inPoint.frameFlags & Data::PathMotionModifier::PointDef::kFrameFlagPlaySequentially) != 0);
+		if (!inPoint.point.toScummVMPoint(outPoint.point))
 			return false;
+
+		if (data.havePointDefMessageSpecs) {
+			const Data::PathMotionModifier::PointDefMessageSpec &messageSpec = inPoint.messageSpec;
+			if (!outPoint.sendSpec.load(messageSpec.send, messageSpec.messageFlags, messageSpec.with, messageSpec.withSource, messageSpec.withString, messageSpec.destination))
+				return false;
+		} else {
+			outPoint.sendSpec.destination = kMessageDestNone;
+		}
 	}
 
 	return true;
 }
 
-bool PathMotionModifierV2::respondsToEvent(const Event &evt) const {
+bool PathMotionModifier::respondsToEvent(const Event &evt) const {
 	return _executeWhen.respondsTo(evt) || _terminateWhen.respondsTo(evt);
 }
 
-VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+VThreadState PathMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 		if (Debugger *debugger = runtime->debugGetDebugger())
@@ -695,20 +734,20 @@ VThreadState PathMotionModifierV2::consumeMessage(Runtime *runtime, const Common
 	return kVThreadReturn;
 }
 
-void PathMotionModifierV2::disable(Runtime *runtime) {
+void PathMotionModifier::disable(Runtime *runtime) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	if (Debugger *debugger = runtime->debugGetDebugger())
 		debugger->notify(kDebugSeverityWarning, "Path motion modifier was supposed to terminate, but this isn't implemented yet");
 #endif
 }
 
-Common::SharedPtr<Modifier> PathMotionModifierV2::shallowClone() const {
-	Common::SharedPtr<PathMotionModifierV2> clone(new PathMotionModifierV2(*this));
+Common::SharedPtr<Modifier> PathMotionModifier::shallowClone() const {
+	Common::SharedPtr<PathMotionModifier> clone(new PathMotionModifier(*this));
 	clone->_incomingData = DynamicValue();
 	return clone;
 }
 
-const char *PathMotionModifierV2::getDefaultName() const {
+const char *PathMotionModifier::getDefaultName() const {
 	return "Path Motion Modifier";
 }
 
@@ -1188,6 +1227,46 @@ void ElementTransitionModifier::setTransitionProgress(uint32 step, uint32 maxSte
 			warning("Unsupported transition type");
 		}
 	}
+}
+
+
+SharedSceneModifier::SharedSceneModifier() : _targetSectionGUID(0), _targetSubsectionGUID(0), _targetSceneGUID(0) {
+}
+
+SharedSceneModifier::~SharedSceneModifier() {
+}
+
+bool SharedSceneModifier::load(ModifierLoaderContext &context, const Data::SharedSceneModifier &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_executeWhen.load(data.executeWhen))
+		return false;
+
+	_targetSectionGUID = data.sectionGUID;
+	_targetSubsectionGUID = data.subsectionGUID;
+	_targetSceneGUID = data.sceneGUID;
+
+	return true;
+}
+
+bool SharedSceneModifier::respondsToEvent(const Event &evt) const {
+	return _executeWhen.respondsTo(evt);
+}
+
+VThreadState SharedSceneModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	return kVThreadReturn;
+}
+
+void SharedSceneModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> SharedSceneModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new SharedSceneModifier(*this));
+}
+
+const char *SharedSceneModifier::getDefaultName() const {
+	return "Shared Scene Modifier";
 }
 
 bool IfMessengerModifier::load(ModifierLoaderContext &context, const Data::IfMessengerModifier &data) {
@@ -1963,6 +2042,41 @@ Common::SharedPtr<Modifier> GraphicModifier::shallowClone() const {
 
 const char *GraphicModifier::getDefaultName() const {
 	return "Graphic Modifier";
+}
+
+ImageEffectModifier::ImageEffectModifier() : _type(kTypeUnknown), _bevelWidth(0), _toneAmount(0), _includeBorders(false) {
+}
+
+bool ImageEffectModifier::load(ModifierLoaderContext &context, const Data::ImageEffectModifier &data) {
+	if (!loadTypicalHeader(data.modHeader) || !_applyWhen.load(data.applyWhen) || !_removeWhen.load(data.removeWhen))
+		return false;
+
+	_includeBorders = ((data.flags & 0x40000000) != 0);
+	_type = static_cast<Type>(data.type);
+	_bevelWidth = data.bevelWidth;
+	_toneAmount = data.toneAmount;
+
+	return true;
+}
+
+bool ImageEffectModifier::respondsToEvent(const Event &evt) const {
+	return _applyWhen.respondsTo(evt) || _removeWhen.respondsTo(evt);
+}
+
+VThreadState ImageEffectModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	warning("Image effect modifier not implemented");
+	return kVThreadReturn;
+}
+
+void ImageEffectModifier::disable(Runtime *runtime) {
+}
+
+Common::SharedPtr<Modifier> ImageEffectModifier::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ImageEffectModifier(*this));
+}
+
+const char *ImageEffectModifier::getDefaultName() const {
+	return "Image Effect Modifier";
 }
 
 bool CompoundVariableModifier::load(ModifierLoaderContext &context, const Data::CompoundVariableModifier &data) {

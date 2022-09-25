@@ -99,25 +99,25 @@ void KyraEngine_MR::enterNewScene(uint16 sceneId, int facing, int unk1, int unk2
 	loadScenePal();
 
 	if (queryGameFlag(0x1D9)) {
-		char filename[20];
+		Common::String filename;
 		if (queryGameFlag(0x20D)) {
 			resetGameFlag(0x20D);
-			strcpy(filename, "COW1_");
+			filename = "COW1_";
 		} else if (queryGameFlag(0x20E)) {
 			resetGameFlag(0x20E);
-			strcpy(filename, "COW2_");
+			filename = "COW2_";
 		} else if (queryGameFlag(0x20F)) {
 			resetGameFlag(0x20F);
-			strcpy(filename, "COW3_");
+			filename ="COW3_";
 		} else if (queryGameFlag(0x20C)) {
 			resetGameFlag(0x20C);
-			strcpy(filename, "BOAT");
+			filename = "BOAT";
 		} else if (queryGameFlag(0x210)) {
 			resetGameFlag(0x210);
-			strcpy(filename, "JUNG");
+			filename = "JUNG";
 		}
 
-		playVQA(filename);
+		playVQA(filename.c_str());
 
 		resetGameFlag(0x1D9);
 	}
@@ -297,12 +297,9 @@ void KyraEngine_MR::freeSceneShapes() {
 }
 
 void KyraEngine_MR::loadScenePal() {
-	char filename[16];
 	_screen->copyPalette(2, 0);
-	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
-	strcat(filename, ".COL");
 
-	_screen->loadBitmap(filename, 3, 3, nullptr);
+	_screen->loadBitmap((Common::String(_sceneList[_mainCharacter.sceneId].filename1) + ".COL").c_str(), 3, 3, nullptr);
 	_screen->getPalette(2).copy(_screen->getCPagePtr(3), 0, 144);
 	_screen->getPalette(2).fill(0, 1, 0);
 
@@ -318,11 +315,9 @@ void KyraEngine_MR::loadScenePal() {
 }
 
 void KyraEngine_MR::loadSceneMsc() {
-	char filename[16];
-	strcpy(filename, _sceneList[_mainCharacter.sceneId].filename1);
-	strcat(filename, ".MSC");
+	Common::String filename = Common::String(_sceneList[_mainCharacter.sceneId].filename1) + ".MSC";
 
-	_res->exists(filename, true);
+	_res->exists(filename.c_str(), true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
 	int16 minY = 0, height = 0;
@@ -335,7 +330,7 @@ void KyraEngine_MR::loadSceneMsc() {
 
 	_screen->setShapePages(5, 3, _maskPageMinY, _maskPageMaxY);
 
-	_screen->loadBitmap(filename, 5, 5, nullptr, true);
+	_screen->loadBitmap(filename.c_str(), 5, 5, nullptr, true);
 
 	// HACK
 	uint8 *data = new uint8[320*200];
@@ -349,11 +344,9 @@ void KyraEngine_MR::loadSceneMsc() {
 void KyraEngine_MR::initSceneScript(int unk1) {
 	const SceneDesc &scene = _sceneList[_mainCharacter.sceneId];
 
-	char filename[16];
-	strcpy(filename, scene.filename1);
-	strcat(filename, ".DAT");
+	Common::String filename = Common::String(scene.filename1) + ".DAT";
 
-	_res->exists(filename, true);
+	_res->exists(filename.c_str(), true);
 	Common::SeekableReadStream *stream = _res->createReadStream(filename);
 	assert(stream);
 	stream->seek(2, SEEK_CUR);
@@ -368,9 +361,8 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 		_scaleTable[i] = (uint16(scaleTable[i]) << 8) / 100;
 
 	if (shapesCount > 0) {
-		strcpy(filename, scene.filename1);
-		strcat(filename, "9.CPS");
-		_screen->loadBitmap(filename, 3, 3, nullptr);
+		filename = Common::String(scene.filename1) + "9.CPS";
+		_screen->loadBitmap(filename.c_str(), 3, 3, nullptr);
 		int pageBackUp = _screen->_curPage;
 		_screen->_curPage = 2;
 		for (int i = 0; i < shapesCount; ++i) {
@@ -388,9 +380,8 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	delete stream;
 	stream = nullptr;
 
-	strcpy(filename, scene.filename1);
-	strcat(filename, ".CPS");
-	_screen->loadBitmap(filename, 3, 3, nullptr);
+	filename = Common::String(scene.filename1) + ".CPS";
+	_screen->loadBitmap(filename.c_str(), 3, 3, nullptr);
 
 	Common::fill(_specialSceneScriptState, ARRAYEND(_specialSceneScriptState), false);
 	_sceneEnterX1 = 160;
@@ -405,14 +396,12 @@ void KyraEngine_MR::initSceneScript(int unk1) {
 	_sceneMaxX = 319;
 
 	_emc->init(&_sceneScriptState, &_sceneScriptData);
-	strcpy(filename, scene.filename2);
-	strcat(filename, ".EMC");
-	_res->exists(filename, true);
-	_emc->load(filename, &_sceneScriptData, &_opcodes);
+	filename = Common::String(scene.filename2) + ".EMC";
+	_res->exists(filename.c_str(), true);
+	_emc->load(filename.c_str(), &_sceneScriptData, &_opcodes);
 
-	strcpy(filename, scene.filename2);
-	strcat(filename, ".");
-	loadLanguageFile(filename, _sceneStrings);
+	filename = Common::String(scene.filename2) + ".";
+	loadLanguageFile(filename.c_str(), _sceneStrings);
 
 	runSceneScript8();
 	_emc->start(&_sceneScriptState, 0);

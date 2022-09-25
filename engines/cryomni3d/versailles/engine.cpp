@@ -59,7 +59,8 @@ CryOmni3DEngine_Versailles::CryOmni3DEngine_Versailles(OSystem *syst,
 	_musicVolumeFactor(1.), _musicCurrentFile(nullptr), _omni3dSpeed(0),
 	_isPlaying(false), _isVisiting(false), _abortCommand(kAbortQuit),
 	_currentPlaceId(uint(-1)), _nextPlaceId(uint(-1)), _currentLevel(uint(-1)),
-	_countingDown(false), _countdownNextEvent(0) {
+	_countingDown(false), _countdownNextEvent(0),
+	_currentSubtitleSet(nullptr), _currentSubtitle(nullptr) {
 }
 
 CryOmni3DEngine_Versailles::~CryOmni3DEngine_Versailles() {

@@ -35,6 +35,9 @@ GUI_v1::GUI_v1(KyraEngine_v1 *kyra) : GUI(kyra), _text(kyra->text()) {
 
 	_redrawButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawButtonCallback);
 	_redrawShadedButtonFunctor = BUTTON_FUNCTOR(GUI_v1, this, &GUI_v1::redrawShadedButtonCallback);
+
+	_displayMenu = _displaySubMenu = _cancelSubMenu = false;
+	_lastScreenUpdate = 0;
 }
 
 Button *GUI_v1::addButtonToList(Button *list, Button *newButton) {
@@ -94,6 +97,8 @@ void GUI_v1::initMenu(Menu &menu) {
 		printMenuText(getMenuTitle(menu), textX, textY, menu.textColor, 0, 0);
 	}
 
+	assert (menu.numberOfItems < ARRAYSIZE(menu.item));
+
 	int x1, y1, x2, y2;
 	for (int i = 0; i < menu.numberOfItems; ++i) {
 		if (!menu.item[i].enabled)
@@ -105,20 +110,18 @@ void GUI_v1::initMenu(Menu &menu) {
 		x2 = x1 + menu.item[i].width - 1;
 		y2 = y1 + menu.item[i].height - 1;
 
-		if (i < 7) {
-			Button *menuButtonData = getButtonListData() + i;
-			menuButtonData->nextButton = nullptr;
-			menuButtonData->x = x1;
-			menuButtonData->y = y1;
-			menuButtonData->width  = menu.item[i].width - 1;
-			menuButtonData->height = menu.item[i].height - 1;
-			menuButtonData->buttonCallback = menu.item[i].callback;
-			menuButtonData->keyCode = menu.item[i].keyCode;
-			menuButtonData->keyCode2 = 0;
-			menuButtonData->arg = menu.item[i].itemId;
+		Button *menuButtonData = getButtonListData() + i;
+		menuButtonData->nextButton = nullptr;
+		menuButtonData->x = x1;
+		menuButtonData->y = y1;
+		menuButtonData->width  = menu.item[i].width - 1;
+		menuButtonData->height = menu.item[i].height - 1;
+		menuButtonData->buttonCallback = menu.item[i].callback;
+		menuButtonData->keyCode = menu.item[i].keyCode;
+		menuButtonData->keyCode2 = 0;
+		menuButtonData->arg = menu.item[i].itemId;
 
-			_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
-		}
+		_menuButtonList = addButtonToList(_menuButtonList, menuButtonData);
 
 		_screen->fillRect(x1, y1, x2, y2, menu.item[i].bkgdColor);
 		_screen->drawShadedBox(x1, y1, x2, y2, menu.item[i].color1, menu.item[i].color2);
@@ -414,6 +417,8 @@ MainMenu::MainMenu(KyraEngine_v1 *vm) : _vm(vm), _screen(nullptr) {
 	_screen = _vm->screen();
 	_nextUpdate = 0;
 	_system = g_system;
+	memset(&_static, 0, sizeof(_static));
+	memset(&_animIntern, 0, sizeof(_animIntern));
 }
 
 void MainMenu::init(StaticData data, Animation anim) {

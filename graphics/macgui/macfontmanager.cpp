@@ -140,7 +140,8 @@ Common::String cleanFontName(const Common::String fontname) {
 	return f;
 }
 
-MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode), _language(language) {
+MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode),
+	_language(language), _japaneseFontsLoaded(false) {
 	for (FontProto *font = defaultFonts; font->name; font++) {
 		if (!_fontInfo.contains(font->id)) {
 			FontInfo *info = new FontInfo;
@@ -171,7 +172,6 @@ MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(m
 	} else {
 		loadFonts();
 	}
-	_japaneseFontsLoaded = false;
 }
 
 MacFontManager::~MacFontManager() {
@@ -186,7 +186,7 @@ MacFontManager::~MacFontManager() {
 	for (auto &it: _winFontRegistry)
 		delete it._value;
 	for (auto &it: _fontFamilies)
-		delete it._value;
+		delete it;
 }
 
 void MacFontManager::setLocalizedFonts() {
@@ -427,7 +427,7 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			delete fond;
 
 			if (fontFamilyUsed)
-				_fontFamilies[familyName] = fontFamily;
+				_fontFamilies.push_back(fontFamily);
 			else
 				delete fontFamily;
 		}
@@ -440,6 +440,7 @@ void MacFontManager::loadWindowsFont(const Common::String fileName) {
 
 	if (!isLoaded) {
 		warning("MacFontManager::loadWindowsFont(): Windows Font data from file %s not loaded", fileName.c_str());
+		delete winFont;
 		return;
 	}
 

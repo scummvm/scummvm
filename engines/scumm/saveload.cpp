@@ -99,7 +99,9 @@ bool ScummEngine::canLoadGameStateCurrently() {
 	if (_game.id == GID_CMI)
 		return true;
 
-	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
+	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
+
+	return (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0) && !isOriginalMenuActive;
 }
 
 Common::Error ScummEngine::saveGameState(int slot, const Common::String &desc, bool isAutosave) {
@@ -144,9 +146,11 @@ bool ScummEngine::canSaveGameStateCurrently() {
 		return _currentRoom != 92;
 #endif
 
+	bool isOriginalMenuActive = isUsingOriginalGUI() && _mainMenuIsActive;
+
 	// SCUMM v4+ doesn't allow saving in room 0 or if
 	// VAR(VAR_MAINMENU_KEY) to set to zero.
-	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0));
+	return (VAR_MAINMENU_KEY == 0xFF || (VAR(VAR_MAINMENU_KEY) != 0 && _currentRoom != 0)) && !isOriginalMenuActive;
 }
 
 
@@ -294,7 +298,7 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 
 	if (foundInternalThumbnail) {
 		for (int i = 0; i < 256; i++) {
-			rgb = _savegameThumbnailPalette[i];
+			rgb = _savegameThumbnailV8Palette[i];
 			tmpPalette[i] = remapPaletteColor(
 				brightness * ((rgb & 0xFF)     >> 0)  / 0xFF,
 				brightness * ((rgb & 0xFF00)   >> 8)  / 0xFF,
@@ -338,7 +342,7 @@ void ScummEngine_v8::stampScreenShot(int slot, int boxX, int boxY, int boxWidth,
 			// Remember, the internal one is paletted, while the ScummVM one
 			// is blitted without going through a palette index...
 			if (foundInternalThumbnail) {
-				color = _savegameThumbnail[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
+				color = _savegameThumbnailV8[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
 				pixelColor = tmpPalette[color];
 			} else {
 				pixelColor = thumbSurface[160 * (heightSlice / boxHeight) + (widthSlice / boxWidth)];
@@ -373,12 +377,12 @@ void ScummEngine_v8::createInternalSaveStateThumbnail() {
 		}
 
 		for (int i = 0; i < 256; i++) {
-			_savegameThumbnailPalette[i] = getPackedRGBColorFromPalette(_currentPalette, i);
+			_savegameThumbnailV8Palette[i] = getPackedRGBColorFromPalette(_currentPalette, i);
 		}
 
 		for (int i = 0; i < 120; i++) {
 			for (int j = 0; j < 160; j++) {
-				_savegameThumbnail[i * 160 + j] = tempBitmap[4 * (i * _screenWidth + j)];
+				_savegameThumbnailV8[i * 160 + j] = tempBitmap[4 * (i * _screenWidth + j)];
 			}
 		}
 
@@ -425,8 +429,8 @@ bool ScummEngine_v8::fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave
 	// Now do the actual loading
 	Common::Serializer ser(in, nullptr);
 	ser.setVersion(hdr.ver);
-	ser.syncArray(_savegameThumbnail, 19200, Common::Serializer::Byte, VER(106));
-	ser.syncArray(_savegameThumbnailPalette, 256, Common::Serializer::Uint32LE, VER(106));
+	ser.syncArray(_savegameThumbnailV8, 19200, Common::Serializer::Byte, VER(106));
+	ser.syncArray(_savegameThumbnailV8Palette, 256, Common::Serializer::Uint32LE, VER(106));
 
 	delete in;
 	return true;
@@ -497,7 +501,11 @@ bool ScummEngine::saveState(Common::WriteStream *out, bool writeHeader) {
 		saveSaveGameHeader(out, hdr);
 	}
 #if !defined(__DS__) && !defined(__N64__)
-	Graphics::saveThumbnail(*out);
+	if (isUsingOriginalGUI() && _mainMenuIsActive) {
+		Graphics::saveThumbnail(*out, _savegameThumbnail);
+	} else {
+		Graphics::saveThumbnail(*out);
+	}
 #endif
 	saveInfos(out);
 
@@ -789,7 +797,7 @@ bool ScummEngine::loadState(int slot, bool compat, Common::String &filename) {
 		if (_game.version == 8)
 			_scummVars[VAR_CHARINC] = (_game.features & GF_DEMO) ? 3 : 1;
 		// Needed due to subtitle speed changes
-		_defaultTalkDelay /= 20;
+		_defaultTextSpeed /= 20;
 	}
 
 	// For a long time, we used incorrect locations for some camera related
@@ -1325,7 +1333,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_useTalkAnims, VER(8));
 
 	s.syncAsSint16LE(_talkDelay, VER(8));
-	s.syncAsSint16LE(_defaultTalkDelay, VER(8));
+	s.syncAsSint16LE(_defaultTextSpeed, VER(8));
 	s.skip(2, VER(8), VER(27)); // _numInMsgStack
 	s.syncAsByte(_sentenceNum, VER(8));
 
@@ -1932,8 +1940,8 @@ void syncWithSerializer(Common::Serializer &s, ScummEngine_v7::SubtitleText &st)
 
 void ScummEngine_v8::saveLoadWithSerializer(Common::Serializer &s) {
 	// Save/load the savegame thumbnail for COMI
-	s.syncArray(_savegameThumbnail, 19200, Common::Serializer::Byte, VER(106));
-	s.syncArray(_savegameThumbnailPalette, 256, Common::Serializer::Uint32LE, VER(106));
+	s.syncArray(_savegameThumbnailV8, 19200, Common::Serializer::Byte, VER(106));
+	s.syncArray(_savegameThumbnailV8Palette, 256, Common::Serializer::Uint32LE, VER(106));
 
 	// Also save the banner colors for the GUI
 	s.syncArray(_bannerColors, 50, Common::Serializer::Uint32LE, VER(106));

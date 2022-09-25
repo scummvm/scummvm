@@ -29,6 +29,7 @@
 
 #include "engines/wintermute/base/base_file_manager.h"
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/base_parser.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
@@ -38,113 +39,14 @@
 #include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
-#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xfile.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 #include "engines/wintermute/utils/path_util.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/wintermute.h"
 
 namespace Wintermute {
-
-static const int kCabBlockSize = 0x8000;
-static const int kCabInputmax = kCabBlockSize + 12;
-
-static byte *DecompressMsZipData(byte *buffer, uint32 inputSize, uint32 &decompressedSize) {
-#ifdef USE_ZLIB
-	bool error = false;
-
-	Common::MemoryReadStream data(buffer, inputSize);
-	byte *compressedBlock = new byte[kCabInputmax];
-	byte *decompressedBlock = new byte[kCabBlockSize];
-
-	// Read decompressed size of compressed data and minus 16 bytes of xof header
-	decompressedSize = data.readUint32LE() - 16;
-
-	uint32 remainingData = inputSize;
-	uint32 decompressedPos = 0;
-	byte *decompressedData = new byte[decompressedSize];
-	if (!decompressedData)
-		error = true;
-
-	while (!error && remainingData) {
-		uint16 uncompressedLen = data.readUint16LE();
-		uint16 compressedLen = data.readUint16LE();
-		remainingData -= 4;
-
-		if (data.err()) {
-			error = true;
-			break;
-		}
-
-		if (remainingData == 0) {
-			break;
-		}
-
-		if (compressedLen > kCabInputmax || uncompressedLen > kCabBlockSize) {
-			error = true;
-			break;
-		}
-
-		// Read the compressed block
-		if (data.read(compressedBlock, compressedLen) != compressedLen) {
-			error = true;
-			break;
-		}
-		remainingData -= compressedLen;
-
-		// Check the CK header
-		if (compressedBlock[0] != 'C' || compressedBlock[1] != 'K') {
-			error = true;
-			break;
-		}
-
-		// Decompress the block. If it isn't the first, provide the previous block as dictonary
-		byte *dict = decompressedPos ? decompressedBlock : nullptr;
-		bool decRes = Common::inflateZlibHeaderless(decompressedBlock, uncompressedLen, compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
-		if (!decRes) {
-			error = true;
-			break;
-		}
-
-		// Copy the decompressed data
-		memcpy(decompressedData + decompressedPos, decompressedBlock, uncompressedLen);
-		decompressedPos += uncompressedLen;
-	}
-	if (decompressedSize != decompressedPos)
-		error = true;
-
-	delete[] compressedBlock;
-	delete[] decompressedBlock;
-
-	if (!error)
-		return decompressedData;
-#endif
-	warning("DecompressMsZipData: Error decompressing data!");
-	decompressedSize = 0;
-	return nullptr;
-}
-
-static XFileLexer createXFileLexer(byte *&buffer, uint32 fileSize) {
-	// xof header of an .X file consists of 16 bytes
-	// bytes 9 to 12 contain a string which can be 'txt ', 'bin ', 'bzip, 'tzip', depending on the format
-	byte dataFormatBlock[5];
-	Common::copy(buffer + 8, buffer + 12, dataFormatBlock);
-	dataFormatBlock[4] = '\0';
-
-	bool textMode = (strcmp((char *)dataFormatBlock, "txt ") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0);
-
-	if (strcmp((char *)dataFormatBlock, "bzip") == 0 || strcmp((char *)dataFormatBlock, "tzip") == 0) {
-		uint32 decompressedSize;
-		// we skip the 16 bytes xof header of the file
-		byte *buf = DecompressMsZipData(buffer + 16, fileSize - 16, decompressedSize);
-		delete[] buffer;
-		buffer = buf;
-		return XFileLexer(buffer, decompressedSize, textMode);
-	} else {
-		// we skip the 16 bytes xof header of the file
-		return XFileLexer(buffer + 16, fileSize - 16, textMode);
-	}
-}
 
 IMPLEMENT_PERSISTENT(XModel, false)
 
@@ -221,98 +123,197 @@ void XModel::cleanup(bool complete) {
 bool XModel::loadFromFile(const Common::String &filename, XModel *parentModel) {
 	cleanup(false);
 
+	XFile *xfile = new XFile(_gameRef);
+	if (!xfile)
+		return false;
+
+	XFileData xobj;
+	bool resLoop = false;
+
 	_parentModel = parentModel;
 
-	uint32 fileSize = 0;
-	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
-	XFileLexer lexer = createXFileLexer(buffer, fileSize);
+	bool res = xfile->openFile(filename);
+	if (!res) {
+		delete xfile;
+		//return false;
+		error("XModel: Error loading X file: %s", filename.c_str());
+	}
 
 	_rootFrame = new FrameNode(_gameRef);
 
-	bool res = _rootFrame->loadFromXAsRoot(filename, lexer, this, _materialReferences);
-	if (res) {
-		findBones(false, parentModel);
+	uint numChildren = 0;
+	xfile->getEnum().getChildren(numChildren);
+	for (uint i = 0; i < numChildren; i++) {
+		resLoop = xfile->getEnum().getChild(i, xobj);
+		if (!resLoop)
+			break;
+
+		res = _rootFrame->loadFromXData(filename, this, &xobj, _materialReferences);
+		if (!res) {
+			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
+			break;
+		}
 	}
 
+	if (!_rootFrame->hasChildren()) {
+		BaseEngine::LOG(0, "Error getting any top level objects in '%s'", filename.c_str());
+		res = false;
+	}
+
+	if (res) {
+		res = findBones(false, parentModel);
+	}
+
+	// setup animation channels
 	for (int i = 0; i < X_NUM_ANIMATION_CHANNELS; ++i) {
 		_channels[i] = new AnimationChannel(_gameRef, this);
 	}
 
 	setFilename(filename.c_str());
 
-	delete[] buffer;
+	delete xfile;
 
 	return res;
 }
 
+//////////////////////////////////////////////////////////////////////////
 bool XModel::mergeFromFile(const Common::String &filename) {
 	if (!_rootFrame) {
+		BaseEngine::LOG(0, "Error: XModel::mergeFromFile called on an empty model");
 		return false;
 	}
 
-	uint32 fileSize = 0;
-	byte *buffer = BaseFileManager::getEngineInstance()->getEngineInstance()->readWholeFile(filename, &fileSize);
-	XFileLexer lexer = createXFileLexer(buffer, fileSize);
+	XFile *xfile = new XFile(_gameRef);
+	if (!xfile)
+		return false;
 
-	lexer.advanceToNextToken();
-	parseFrameDuringMerge(lexer, filename);
+	bool res = xfile->openFile(filename);
+	if (!res) {
+		delete xfile;
+		return false;
+	}
 
-	findBones(false, nullptr);
+	XFileData xobj;
+	bool resLoop = false;
+
+	uint numChildren = 0;
+	xfile->getEnum().getChildren(numChildren);
+	for (uint i = 0; i < numChildren; i++) {
+		resLoop = xfile->getEnum().getChild(i, xobj);
+		if (!resLoop)
+			break;
+
+		res = _rootFrame->mergeFromXData(filename, this, &xobj);
+		if (!res) {
+			BaseEngine::LOG(0, "Error loading top level object from '%s'", filename.c_str());
+			break;
+		}
+	}
+
+	if (res) {
+		res = findBones(true);
+	}
 
 	bool found = false;
-
 	for (uint i = 0; i < _mergedModels.size(); ++i) {
 		if (scumm_stricmp(_mergedModels[i], filename.c_str()) == 0) {
 			found = true;
 			break;
 		}
 	}
-
 	if (!found) {
 		char *path = new char[filename.size() + 1];
 		strcpy(path, filename.c_str());
 		_mergedModels.add(path);
 	}
 
-	delete[] buffer;
+	delete xfile;
 
 	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::loadAnimationSet(XFileLexer &lexer, const Common::String &filename) {
+bool XModel::loadAnimationSet(const Common::String &filename, XFileData *xobj) {
 	bool res = true;
 
 	AnimationSet *animSet = new AnimationSet(_gameRef, this);
-
-	if (animSet->loadFromX(lexer, filename)) {
-		_animationSets.add(animSet);
-	} else {
+	res = loadName(animSet, xobj);
+	if (!res) {
 		delete animSet;
-		res = false;
+		return res;
 	}
 
-	return res;
+	// use the filename for unnamed animation sets
+	if (animSet->_name[0] == '\0') {
+		animSet->setName(PathUtil::getFileName(filename).c_str());
+	}
+
+	XFileData xchildData;
+	XClassType objectType;
+
+	uint numChildren = 0;
+	xobj->getChildren(numChildren);
+
+	for (uint32 i = 0; i < numChildren; i++) {
+		_gameRef->miniUpdate();
+
+		res = xobj->getChild(i, xchildData);
+		if (res) {
+			res = xchildData.getType(objectType);
+			if (!res) {
+				delete animSet;
+				BaseEngine::LOG(0, "Error getting object type while loading animation set");
+				return res;
+			}
+
+			if (objectType == kXClassAnimation) {
+				res = loadAnimation(filename, &xchildData, animSet);
+				if (!res) {
+					delete animSet;
+					return res;
+				}
+			}
+		}
+	}
+
+	_animationSets.add(animSet);
+
+	return true;
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XModel::loadAnimation(const Common::String &filename, AnimationSet *parentAnimSet) {
-	// not sure if we need this here (not completely implemented anyways and also not called)
-	// are there animation objects in .X outside of an animation set?
-
+bool XModel::loadAnimation(const Common::String &filename, XFileData *xobj, AnimationSet *parentAnimSet) {
 	// if no parent anim set is specified, create one
 	bool newAnimSet = false;
 	if (parentAnimSet == nullptr) {
 		parentAnimSet = new AnimationSet(_gameRef, this);
 
 		parentAnimSet->setName(PathUtil::getFileName(filename).c_str());
+
 		newAnimSet = true;
 	}
 
 	// create the new object
-	Animation *Anim = new Animation(_gameRef);
+	Animation *anim = new Animation(_gameRef);
 
-	parentAnimSet->addAnimation(Anim);
+	uint numChildren = 0;
+	xobj->getChildren(numChildren);
+
+	for (uint32 i = 0; i < numChildren; i++) {
+		XFileData xchildData;
+		bool res = xobj->getChild(i, xchildData);
+		if (res) {
+			res = anim->load(&xchildData, parentAnimSet);
+			if (!res) {
+				delete anim;
+				if (newAnimSet) {
+					delete parentAnimSet;
+				}
+				return res;
+			}
+		}
+	}
+	parentAnimSet->addAnimation(anim);
 
 	if (newAnimSet) {
 		_animationSets.add(parentAnimSet);
@@ -340,20 +341,21 @@ bool XModel::findBones(bool animOnly, XModel *parentModel) {
 	return true;
 }
 
-void XModel::parseFrameDuringMerge(XFileLexer &lexer, const Common::String &filename) {
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("Frame")) {
-			lexer.advanceToNextToken();
-			parseFrameDuringMerge(lexer, filename);
-		} else if (lexer.tokenIsIdentifier("AnimationSet")) {
-			lexer.advanceToNextToken();
-			loadAnimationSet(lexer, filename);
-		} else if (lexer.tokenIsOfType(IDENTIFIER)) {
-			lexer.skipObject();
-		} else {
-			lexer.advanceToNextToken(); // we ignore anything else here
-		}
+//////////////////////////////////////////////////////////////////////////
+bool XModel::loadName(BaseNamedObject *obj, XFileData *data) {
+	Common::String name;
+	if (data->getName(name)) {
+		obj->_name = new char[name.size() + 1];
+		Common::strlcpy(obj->_name, name.c_str(), name.size() + 1);
+		return true;
+	} else {
+		return false;
 	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool XModel::loadName(Common::String &targetStr, XFileData *data) {
+	return data->getName(targetStr);
 }
 
 //////////////////////////////////////////////////////////////////////////

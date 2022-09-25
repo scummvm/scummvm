@@ -357,7 +357,7 @@ private:
 	void processCharacterSelection();
 	void updateSelectionAnims();
 	int selectionCharInfo(int character);
-	void selectionCharInfoIntro(char *file);
+	void selectionCharInfoIntro(Common::String &file);
 
 	int getCharSelection();
 	int selectionCharAccept();
@@ -575,7 +575,7 @@ private:
 
 	// text
 	int characterSays(int track, int charId, bool redraw);
-	int playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	int playCharacterScriptChat(int charId, int mode, int restorePortrait, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3);
 
 	TextDisplayer_LoL *_txt;
@@ -816,7 +816,7 @@ private:
 	int _lastUsedStringBuffer;
 	char _stringBuffer[5][512]; // TODO: The original used a size of 512, it looks a bit large.
 	                            // Maybe we can someday reduce the size.
-	char *getLangString(uint16 id);
+	const char *getLangString(uint16 id);
 	uint8 *getTableEntry(uint8 *buffer, uint16 id);
 	void decodeSjis(const char *src, char *dst);
 	int decodeCyrillic(const char *src, char *dst);

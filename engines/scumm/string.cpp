@@ -153,8 +153,16 @@ void ScummEngine::showMessageDialog(const byte *msg) {
 	if (_string[3].color == 0)
 		_string[3].color = 4;
 
-	InfoDialog dialog(this, Common::U32String((char *)buf));
-	VAR(VAR_KEYPRESS) = runDialog(dialog);
+	if (isUsingOriginalGUI()) {
+		if (_game.version > 4)
+			VAR(VAR_KEYPRESS) = showBannerAndPause(0, -1, (const char *)msg).ascii;
+		else
+			VAR(VAR_KEYPRESS) = showOldStyleBannerAndPause((const char *)msg, _string[3].color, -1).ascii;
+	} else {
+		InfoDialog dialog(this, Common::U32String((char *)buf));
+		VAR(VAR_KEYPRESS) = runDialog(dialog);
+	}
+
 }
 
 #pragma mark -
@@ -785,7 +793,7 @@ void ScummEngine::CHARSET_1() {
 				restoreCharsetBg();
 		_msgCount = 0;
 	} else if (_game.version <= 2) {
-		_talkDelay += _msgCount * _defaultTalkDelay;
+		_talkDelay += _msgCount * _defaultTextSpeed;
 	}
 
 	if (_game.version > 3) {
@@ -887,7 +895,7 @@ void ScummEngine::CHARSET_1() {
 			mac_drawIndy3TextBox();
 
 		if (_game.version <= 2) {
-			_talkDelay += _defaultTalkDelay;
+			_talkDelay += _defaultTextSpeed;
 			VAR(VAR_CHARCOUNT)++;
 		} else {
 			_talkDelay += (int)VAR(VAR_CHARINC);
@@ -1779,23 +1787,30 @@ void ScummEngine_v7::translateText(const byte *text, byte *trans_buff, int trans
 	if (found != NULL) {
 		Common::strlcpy((char *)trans_buff, _languageBuffer + found->offset, transBufferSize);
 
-		if ((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
-			// Replace any '%___' by the corresponding special codes in the source text
+		if (((_game.id == GID_DIG) && !(_game.features & GF_DEMO)) || _game.version == 8) {
+			// Replace any '%___' (or '%<var-name>%' for v8) by the corresponding special codes in the source text
 			const byte *src = text;
 			char *dst = (char *)trans_buff;
 
-			while ((dst = strstr(dst, "%___"))) {
+			while ((dst = (_game.version == 8 ? strchr(dst, '%') : strstr(dst, "%___")))) {
 				// Search for a special code in the message.
 				while (*src && *src != 0xFF) {
 					src++;
 				}
 
-				// Replace the %___ by the special code. Luckily, we can do
-				// that in-place.
+				// Replace the %___ (or %<var-name>%) by the special code.
+				// Luckily, we can do that in-place.
 				if (*src == 0xFF) {
-					memcpy(dst, src, 4);
-					src += 4;
-					dst += 4;
+					if (_game.version == 7) {
+						memcpy(dst, src, 4);
+						src += 4;
+						dst += 4;
+					} else {
+						memcpy(dst, src, 6);
+						src += 6;
+						dst += 6;
+						*dst = '\0';
+					}
 				} else
 					break;
 			}
@@ -2017,7 +2032,7 @@ Common::CodePage ScummEngine::getDialogCodePage() const {
 			return Common::kDos862;
 		default:
 			return Common::kWindows1255;
-		}	
+		}
 	default:
 		return (_game.version > 7) ? Common::kWindows1252 : Common::kDos850;
 	}

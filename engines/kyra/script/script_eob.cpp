@@ -520,7 +520,7 @@ int EoBInfProcessor::oeob_printMessage_v1(int8 *data) {
 	char col[5];
 	int8 *pos = data;
 
-	strcpy(col, colorConfig);
+	Common::strlcpy(col, colorConfig, sizeof(col));
 	const char *str = (const char *)pos;
 	pos += (strlen(str) + 1);
 	bool lineBreak = true;

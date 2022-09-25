@@ -353,6 +353,7 @@ AdLibDriver::AdLibDriver(Audio::Mixer *mixer, int version) : PCSoundDriver() {
 
 	_musicVolume = 0;
 	_sfxVolume = 0;
+	_sfxPriority = _sfxVelocity = 0;
 
 	_sfxPointer = nullptr;
 

@@ -26,11 +26,12 @@
  */
 
 #include "engines/wintermute/base/base_game.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/base/gfx/base_renderer3d.h"
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
-#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -97,42 +98,35 @@ void FrameNode::setTransformation(int slot, Math::Vector3d pos, Math::Vector3d s
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences) {
+bool FrameNode::loadFromXData(const Common::String &filename, XModel *model, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
 	_gameRef->miniUpdate();
 
-	bool ret = true;
+	bool res = true;
 
-	setName(lexer.tokenToString().c_str());
-	lexer.advanceToNextToken();
-	lexer.advanceOnOpenBraces();
+	// get the type of the object
+	XClassType objectType;
+	res = xobj->getType(objectType);
 
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("Frame")) {
-			lexer.advanceToNextToken();
-			FrameNode *child = new FrameNode(_gameRef);
-			if (child->loadFromX(filename, lexer, model, materialReferences)) {
-				_frames.add(child);
-			} else {
-				delete child;
-			}
-		} else if (lexer.tokenIsIdentifier("Mesh")) {
-			lexer.advanceToNextToken();
-			XMesh *mesh = _gameRef->_renderer3D->createXMesh();
-
-			if (mesh->loadFromX(filename, lexer, materialReferences)) {
-				_meshes.add(mesh);
-			} else {
-				delete mesh;
-			}
-		} else if (lexer.tokenIsIdentifier("FrameTransformMatrix")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken(); // skip optional name
-			lexer.advanceOnOpenBraces();
-
+	if (objectType == kXClassMesh) { // load a child mesh
+		XMesh *mesh = _gameRef->_renderer3D->createXMesh();
+		res = mesh->loadFromXData(filename, xobj, materialReferences);
+		if (res) {
+			_meshes.add(mesh);
+			return true;
+		} else {
+			delete mesh;
+			return false;
+		}
+	} else if (objectType == kXClassFrameTransformMatrix) { // load the transformation matrix
+		XFrameTransformMatrixObject *frameTransformMatrix = xobj->getXFrameTransformMatrixObject();
+		if (!frameTransformMatrix) {
+			BaseEngine::LOG(0, "Error loading transformation matrix");
+			return false;
+		} else {
 			// TODO: check if this is the right format
 			for (int r = 0; r < 4; ++r) {
 				for (int c = 0; c < 4; ++c) {
-					_transformationMatrix(c, r) = lexer.readFloat();
+					_transformationMatrix(c, r) = frameTransformMatrix->_frameMatrix[r * 4 + c];
 				}
 			}
 
@@ -148,84 +142,85 @@ bool FrameNode::loadFromX(const Common::String &filename, XFileLexer &lexer, XMo
 			_transformationMatrix(1, 2) *= -1.0f;
 
 			_originalMatrix = _transformationMatrix;
-
-			lexer.skipTerminator();
-			lexer.advanceToNextToken();
-
-		} else if (lexer.reachedClosedBraces()) {
-			lexer.advanceToNextToken();
-			break;
-		} else {
-			warning("FrameNode::loadFromX unexpected %i token excountered", lexer.getTypeOfToken());
-			ret = false;
-			break;
+			return true;
 		}
+	} else if (objectType == kXClassAnimationSet) { // load animation set
+		return model->loadAnimationSet(filename, xobj);
+	} else if (objectType == kXClassAnimation) { // load a single animation (shouldn't happen here)
+		return model->loadAnimation(filename, xobj);
+	} else if (objectType == kXClassFrame) { // create a new child frame
+		FrameNode *childFrame = new FrameNode(_gameRef);
+
+		// get the name of the child frame
+		res = XModel::loadName(childFrame, xobj);
+		if (!res) {
+			BaseEngine::LOG(0, "Error loading frame name");
+			delete childFrame;
+			return res;
+		}
+
+		// Enumerate child objects.
+		res = false;
+		uint numChildren = 0;
+		xobj->getChildren(numChildren);
+		for (uint32 i = 0; i < numChildren; i++) {
+			XFileData xchildData;
+			res = xobj->getChild(i, xchildData);
+			if (res)
+				res = childFrame->loadFromXData(filename, model, &xchildData, materialReferences);
+		}
+		if (res)
+			_frames.add(childFrame);
+		else
+			delete childFrame;
+		return res;
+	} else if (objectType == kXClassAnimTicksPerSecond) {
+		if (!xobj->getXAnimTicksPerSecondObject()) {
+			BaseEngine::LOG(0, "Error loading ticks per seconds info");
+			return res;
+		} else {
+			model->_ticksPerSecond = xobj->getXAnimTicksPerSecondObject()->_animTicksPerSecond;
+			return true;
+		}
+	} else if (objectType == kXClassMaterial) {
+		MaterialReference materialReference;
+		xobj->getName(materialReference._name);
+		materialReference._material = new Material(_gameRef);
+		materialReference._material->loadFromX(xobj, filename);
+		materialReferences.push_back(materialReference);
+		return true;
 	}
 
-	return ret;
+	return true;
 }
 
-bool FrameNode::loadFromXAsRoot(const Common::String &filename, XFileLexer &lexer, XModel *model, Common::Array<MaterialReference> &materialReferences) {
-	// technically, there is no root node in a .X file
-	// so we just start parsing it here
-	lexer.advanceToNextToken();
+bool FrameNode::mergeFromXData(const Common::String &filename, XModel *model, XFileData *xobj) {
+	bool res = true;
 
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("Frame")) {
-			lexer.advanceToNextToken();
-			FrameNode *child = new FrameNode(_gameRef);
-			if (child->loadFromX(filename, lexer, model, materialReferences)) {
-				_frames.add(child);
-			} else {
-				delete child;
-			}
-		} else if (lexer.tokenIsIdentifier("Mesh")) {
-			lexer.advanceToNextToken();
-			XMesh *mesh = _gameRef->_renderer3D->createXMesh();
+	// get the type of the object
+	XClassType objectType;
+	res = xobj->getType(objectType);
+	if (!res) {
+		BaseEngine::LOG(0, "Error getting object type");
+		return res;
+	} else if (objectType == kXClassAnimationSet) { // load animation set
+		return model->loadAnimationSet(filename, xobj);
+	} else if (objectType == kXClassAnimation) { // load a single animation (shouldn't happen here)
+		return model->loadAnimation(filename, xobj);
+	} else if (objectType == kXClassFrame) { // scan child frames
+		// Enumerate child objects.
+		res = false;
 
-			if (mesh->loadFromX(filename, lexer, materialReferences)) {
-				_meshes.add(mesh);
-			} else {
-				delete mesh;
-			}
-		} else if (lexer.tokenIsIdentifier("AnimTicksPerSecond")) {
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			model->_ticksPerSecond = lexer.readInt();
-			lexer.advanceToNextToken(); // skip closed braces
-		} else if (lexer.tokenIsIdentifier("AnimationSet")) {
-			lexer.advanceToNextToken();
-			model->loadAnimationSet(lexer, filename);
-		} else if (lexer.tokenIsIdentifier("template")) {
-			// we can ignore templates
-			while (!lexer.eof()) {
-				if (lexer.reachedClosedBraces()) {
-					break;
-				}
-
-				lexer.advanceToNextToken();
-			}
-
-			lexer.advanceToNextToken();
-		} else if(lexer.tokenIsIdentifier("Material")) {
-			lexer.advanceToNextToken();
-			MaterialReference materialReference;
-
-			materialReference._name = lexer.tokenToString();
-			materialReference._material = new Material(_gameRef);
-			materialReference._material->loadFromX(lexer, filename);
-
-			materialReferences.push_back(materialReference);
-		} else if (lexer.tokenIsOfType(NULL_CHAR)) {
-			// prevents some unnecessary warnings
-			lexer.advanceToNextToken();
-		} else {
-			warning("FrameNode::loadFromXAsRoot unknown token %i encountered", lexer.getTypeOfToken());
-			lexer.advanceToNextToken(); // just ignore it for the moment
+		uint numChildren = 0;
+		xobj->getChildren(numChildren);
+		for (uint32 i = 0; i < numChildren; i++) {
+			XFileData xchildData;
+			res = xobj->getChild(i, xchildData);
+			if (res)
+				res = mergeFromXData(filename, model, &xchildData);
 		}
+		return res;
 	}
-
 	return true;
 }
 

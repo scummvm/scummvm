@@ -1566,6 +1566,16 @@ void Sound::restoreAfterLoad() {
 	}
 }
 
+bool Sound::isAudioDisabled() {
+#ifdef ENABLE_SCUMM_7_8
+	if (_vm->_game.version > 6) {
+		return _vm->_imuseDigital->isEngineDisabled();
+	}
+#endif
+
+	return false;
+}
+
 #pragma mark -
 #pragma mark --- Sound resource handling ---
 #pragma mark -

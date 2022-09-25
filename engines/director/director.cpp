@@ -72,7 +72,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 	_currentPaletteLength = 0;
 	_stage = nullptr;
 	_windowList = new Datum;
@@ -135,7 +135,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _wm;
 	delete _surface;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _allOpenResFiles.begin(); it != _allOpenResFiles.end(); ++it) {
 		delete it->_value;
 	}
 
@@ -175,7 +175,7 @@ Common::Error DirectorEngine::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 
 	//        we run mac-style menus     |   and we will redraw all widgets
 	_wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;

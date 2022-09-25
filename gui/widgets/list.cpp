@@ -32,7 +32,7 @@
 
 namespace GUI {
 
-bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, Common::U32String token) {
+bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, const Common::U32String &token) {
 	return item.contains(token);
 }
 
@@ -815,7 +815,7 @@ Common::U32String ListWidget::getThemeColor(ThemeEngine::FontColor color) {
 	}
 }
 
-ThemeEngine::FontColor ListWidget::getThemeColor(Common::U32String color) {
+ThemeEngine::FontColor ListWidget::getThemeColor(const Common::U32String &color) {
 	if (color == "normal")
 		return ThemeEngine::kFontColorNormal;
 

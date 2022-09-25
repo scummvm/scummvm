@@ -220,8 +220,8 @@ bool SegaSequencePlayer::play(int id) {
 	return true;
 }
 
-void SegaSequencePlayer::pause(bool pause) {
-	if (pause)
+void SegaSequencePlayer::pause(bool togglePause) {
+	if (togglePause)
 		_pauseStart = _vm->_system->getMillis();
 	else
 		_frameTimer += (_vm->_system->getMillis() - _pauseStart);

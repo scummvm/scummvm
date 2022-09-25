@@ -85,18 +85,22 @@ static int DEBUG_BUFFERS_COUNT = 0;
 class ShStBuffer {
 public:
 	ShStBuffer(const ShStBuffer &buff) : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { if (lifes) (*lifes)++; }
+	ShStBuffer(ShStBuffer &&buff) noexcept : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { buff.lifes = nullptr; }
 	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(nullptr) { if (allocate) memcpy(crtbuf(), p, cb); }
 	ShStBuffer() : ShStBuffer(nullptr, 0) {}
 	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr) { s->read(crtbuf(), len); }
 	~ShStBuffer() { dcrlif(); }
-	void operator=(Common::SeekableReadStream *s) { operator=(ShStBuffer(s)); }
-	void operator=(const ShStBuffer &buff) {
-		dcrlif();
-		ptr = buff.ptr;
-		len = buff.len;
-		lifes = buff.lifes;
+	ShStBuffer &operator=(Common::SeekableReadStream *s) { return operator=(ShStBuffer(s)); }
+	ShStBuffer &operator=(ShStBuffer &&buff) noexcept {
+		trans(buff);
+		buff.lifes = nullptr;
+		return *this;
+	}
+	ShStBuffer &operator=(const ShStBuffer &buff) {
+		trans(buff);
 		if (lifes)
 			(*lifes)++;
+		return *this;
 	}
 	const uint8 *ptr;
 	uint32 len;
@@ -116,6 +120,12 @@ private:
 		*lifes = 1;
 		DEBUG_BUFFERS_COUNT++;
 		return tptr;
+	}
+	void trans(const ShStBuffer &buff) {
+		dcrlif();
+		ptr = buff.ptr;
+		len = buff.len;
+		lifes = buff.lifes;
 	}
 	int *lifes;
 };
@@ -171,7 +181,7 @@ public:
 	void setTempo(uint32 tempo);
 	void setTicksPerSecond(uint32 tps);
 
-	uint16 tempo() const { return _internalTempo; }
+	uint16 getTempo() const { return _internalTempo; }
 
 public:
 	int _numChanMusic;
@@ -763,7 +773,7 @@ bool HSMidiParser::nextTick(HSSong &song) {
 			s->status = 'R';
 			checkPos = false;
 		} else {
-			s->ticker -= song.tempo();
+			s->ticker -= song.getTempo();
 			if (s->ticker >= 0)
 				continue;
 		}
@@ -1114,12 +1124,14 @@ int HSLowLevelDriver::cmd_playSoundEffect(va_list &arg) {
 	if (!vc || !vc->dataPtr || !_song._numChanSfx)
 		return 0;
 
-	HSSoundChannel *chan = &_chan[_song._numChanMusic];
+	HSSoundChannel *chan = nullptr;
 	int16 lowest = 32767;
 	for (int i = _song._numChanMusic; i < _song._numChanMusic + _song._numChanSfx; ++i) {
 		HSSoundChannel *c = &_chan[i];
-		if (c->status < 0)
+		if (c->status < 0) {
+			chan = c;
 			break;
+		}
 		if (c->status < lowest) {
 			chan = c;
 			lowest = c->status;
@@ -1820,7 +1832,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		}
 	}
 
-	uint16 type = snd ? READ_BE_UINT16(snd) : 0;
+	uint16 type = READ_BE_UINT16(snd);
 	uint16 n = 0;
 	if (type == 1 || type == 2) {
 		uint16 numTypes = (type == 1) ? READ_BE_UINT16(snd + 2) : 0;

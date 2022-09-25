@@ -1053,7 +1053,7 @@ void Animation::faceAvvy(byte tripnum) {
 
 void Animation::arrowProcs(byte tripnum) {
 	AnimationType *tripSpr = _sprites[tripnum];
-	AnimationType *avvy = _sprites[tripnum];
+	AnimationType *avvy = _sprites[0];
 
 	if (tripSpr->_homing) {
 		// Arrow is still in flight.

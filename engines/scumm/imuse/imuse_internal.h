@@ -91,8 +91,8 @@ inline int transpose_clamp(int a, int b, int c) {
 //////////////////////////////////////////////////
 
 struct TimerCallbackInfo {
-	IMuseInternal *imuse;
-	MidiDriver *driver;
+	IMuseInternal *imuse = nullptr;
+	MidiDriver *driver = nullptr;
 };
 
 struct HookDatas {
@@ -221,6 +221,7 @@ protected:
 	bool _isMIDI;
 	bool _isMT32;
 	bool _isGM;
+	bool _isAdLibOrFMTowns;
 	bool _supportsPercussion;
 
 protected:
@@ -277,6 +278,7 @@ public:
 	bool isMIDI() const { return _isMIDI; }
 	bool isMT32() const { return _isMT32; }
 	bool isGM() const { return _isGM; }
+	bool isAdLibOrFMTowns() const { return _isAdLibOrFMTowns; }
 	bool jump(uint track, uint beat, uint tick);
 	void onTimer();
 	void removePart(Part *part);
@@ -352,7 +354,7 @@ struct Part : public Common::Serializable {
 	void allNotesOff();
 
 	void set_param(byte param, int value) { }
-	void init();
+	void init(bool useNativeMT32);
 	void setup(Player *player);
 	void uninit();
 	void off();
@@ -360,7 +362,7 @@ struct Part : public Common::Serializable {
 	void set_instrument(byte *data);
 	void load_global_instrument(byte b);
 
-	void set_transpose(int8 transpose);
+	void set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi);
 	void set_detune(int8 detune);
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
@@ -378,6 +380,7 @@ struct Part : public Common::Serializable {
 private:
 	void sendPitchBend();
 	void sendTranspose();
+	void sendDetune();
 	void sendPanPosition(uint8 value);
 	void sendEffectLevel(uint8 value);
 };
@@ -403,15 +406,15 @@ class IMuseInternal : public IMuse {
 #endif
 
 protected:
-	bool _native_mt32;
-	bool _enable_gs;
-	bool _isAmiga;
+	const bool _native_mt32;
+	const bool _enable_gs;
+	const MidiDriverFlags _soundType;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
 	TimerCallbackInfo _timer_info_adlib;
 	TimerCallbackInfo _timer_info_native;
 
-	uint32 _game_id;
+	const uint32 _game_id;
 
 	// Plug-in SysEx handling. Right now this only supports one
 	// custom SysEx handler for the hardcoded IMUSE_SYSEX_ID
@@ -450,13 +453,12 @@ protected:
 	Player _players[8];
 	Part _parts[32];
 
-	bool _pcSpeaker;
 	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
 
 protected:
-	IMuseInternal(Common::Mutex &mutex);
+	IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags);
 	~IMuseInternal() override;
 
 	int initialize(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
@@ -552,7 +554,7 @@ public:
 
 public:
 	// Factory function
-	static IMuseInternal *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
+	static IMuseInternal *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 initFlags);
 };
 
 } // End of namespace Scumm

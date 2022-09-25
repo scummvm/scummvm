@@ -49,8 +49,8 @@ XMeshOpenGLShader::~XMeshOpenGLShader() {
 	glDeleteBuffers(1, &_indexBuffer);
 }
 
-bool XMeshOpenGLShader::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
-	if (XMesh::loadFromX(filename, lexer, materialReferences)) {
+bool XMeshOpenGLShader::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+	if (XMesh::loadFromXData(filename, xobj, materialReferences)) {
 		glBindBuffer(GL_ARRAY_BUFFER, _vertexBuffer);
 		glBufferData(GL_ARRAY_BUFFER, 4 * kVertexComponentCount * _vertexCount, _vertexData, GL_DYNAMIC_DRAW);
 

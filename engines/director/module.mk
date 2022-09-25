@@ -52,6 +52,7 @@ MODULE_OBJS = \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/memoryxobj.o \
 	lingo/xlibs/miscx.o \
+	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
 	lingo/xlibs/movutils.o \
 	lingo/xlibs/orthoplayxobj.o \

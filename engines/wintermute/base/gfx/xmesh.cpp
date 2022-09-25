@@ -29,8 +29,9 @@
 #include "engines/wintermute/base/gfx/xmaterial.h"
 #include "engines/wintermute/base/gfx/xmesh.h"
 #include "engines/wintermute/base/gfx/xframe_node.h"
-#include "engines/wintermute/base/gfx/xloader.h"
+#include "engines/wintermute/base/gfx/xfile_loader.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
+#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/math/math_util.h"
 
 namespace Wintermute {
@@ -60,10 +61,20 @@ XMesh::~XMesh() {
 }
 
 //////////////////////////////////////////////////////////////////////////
-bool XMesh::loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) {
-	lexer.advanceToNextToken(); // skip the name
-	lexer.advanceOnOpenBraces();
-	_vertexCount = lexer.readInt();
+bool XMesh::loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) {
+	// get name
+	if (!XModel::loadName(this, xobj)) {
+		BaseEngine::LOG(0, "Error loading mesh name");
+		return false;
+	}
+
+	XMeshObject *mesh = xobj->getXMeshObject();
+	if (!mesh) {
+		BaseEngine::LOG(0, "Error loading skin mesh");
+		return false;
+	}
+
+	_vertexCount = mesh->_numVertices;
 
 	// vertex format for .X meshes will be position + normals + textures
 	_vertexData = new float[kVertexComponentCount * _vertexCount]();
@@ -72,76 +83,47 @@ bool XMesh::loadFromX(const Common::String &filename, XFileLexer &lexer, Common:
 	// TODO: might have to generate normals if file does not contain any
 	_vertexNormalData = new float[3 * _vertexCount]();
 
-	parsePositionCoords(lexer);
+	parsePositionCoords(mesh);
 
-	int faceCount = lexer.readInt();
+	int faceCount = mesh->_numFaces;
 
 	Common::Array<int> indexCountPerFace;
 
-	parseFaces(lexer, faceCount, indexCountPerFace);
+	parseFaces(mesh, faceCount, indexCountPerFace);
 
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("MeshTextureCoords")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
+	uint numChildren = 0;
+	xobj->getChildren(numChildren);
 
-			parseTextureCoords(lexer);
-		} else if (lexer.tokenIsIdentifier("MeshNormals")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
+	for (uint32 i = 0; i < numChildren; i++) {
+		XFileData xchildData;
+		XClassType objectType;
+		if (xobj->getChild(i, xchildData)) {
+			if (xchildData.getType(objectType)) {
+				if (objectType == kXClassMeshTextureCoords) {
+					parseTextureCoords(&xchildData);
+				} else if (objectType == kXClassMeshNormals) {
+					parseNormalCoords(&xchildData);
+				} else if (objectType == kXClassMeshMaterialList) {
+					parseMaterials(&xchildData, faceCount, filename, materialReferences, indexCountPerFace);
+				} else if (objectType == kXClassMaterial) {
+					Material *mat = new Material(_gameRef);
+					mat->loadFromX(&xchildData, filename);
+					_materials.add(mat);
 
-			parseNormalCoords(lexer);
-		} else if (lexer.tokenIsIdentifier("MeshMaterialList")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			parseMaterials(lexer, faceCount, filename, materialReferences, indexCountPerFace);
-		} else if (lexer.tokenIsIdentifier("Material")) {
-			lexer.advanceToNextToken();
-			Material *mat = new Material(_gameRef);
-			mat->loadFromX(lexer, filename);
-			_materials.add(mat);
-
-			// one material = one index range
-			_numAttrs = 1;
-			_indexRanges.push_back(0);
-			_indexRanges.push_back(_indexData.size());
-		} else if (lexer.tokenIsIdentifier("XSkinMeshHeader")) {
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			// if any of this is zero, we should have an unskinned mesh
-			lexer.readInt(); // max skin weights per vertex
-			lexer.readInt(); // max skin weights per face
-			int boneCount = lexer.readInt();
-
-			_skinnedMesh = boneCount > 0;
-
-			lexer.advanceToNextToken(); // skip semicolon
-		} else if (lexer.tokenIsIdentifier("SkinWeights")) {
-			// but now we certainly should have a skinned mesh
-			_skinnedMesh = true;
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			parseSkinWeights(lexer);
-		} else if (lexer.tokenIsIdentifier("DeclData")) {
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-			lexer.advanceOnOpenBraces();
-
-			parseVertexDeclaration(lexer);
-		} else if (lexer.tokenIsIdentifier()) {
-			lexer.skipObject();
-		} else if (lexer.reachedClosedBraces()) {
-			lexer.advanceToNextToken(); // skip closed braces
-			break;
-		} else {
-			warning("XMesh::loadFromX unknown token %i encountered", lexer.getTypeOfToken());
-			lexer.advanceToNextToken();
+					// one material = one index range
+					_numAttrs = 1;
+					_indexRanges.push_back(0);
+					_indexRanges.push_back(_indexData.size());
+				} else if (objectType == kXClassSkinMeshHeader) {
+					int boneCount = xchildData.getXSkinMeshHeaderObject()->_nBones;
+					_skinnedMesh = boneCount > 0;
+				} else if (objectType == kXClassSkinWeights) {
+					_skinnedMesh = true;
+					parseSkinWeights(&xchildData);
+				} else if (objectType == kXClassDeclData) {
+					parseVertexDeclaration(&xchildData);
+				}
+			}
 		}
 	}
 
@@ -468,43 +450,41 @@ bool XMesh::restoreDeviceObjects() {
 	}
 }
 
-bool XMesh::parsePositionCoords(XFileLexer &lexer) {
+bool XMesh::parsePositionCoords(XMeshObject *mesh) {
 	for (uint i = 0; i < _vertexCount; ++i) {
+		_vertexPositionData[i * 3 + 0] = mesh->_vertices[i]._x;
+		_vertexPositionData[i * 3 + 1] = mesh->_vertices[i]._y;
+		_vertexPositionData[i * 3 + 2] = mesh->_vertices[i]._z;
 		for (int j = 0; j < 3; ++j) {
-			_vertexPositionData[i * 3 + j] = lexer.readFloat();
 			_vertexData[i * kVertexComponentCount + kPositionOffset + j] = _vertexPositionData[i * 3 + j];
 		}
 
 		_vertexPositionData[i * 3 + 2] *= -1.0f;
 		_vertexData[i * kVertexComponentCount + kPositionOffset + 2] *= -1.0f;
-
-		lexer.skipTerminator(); // skip semicolon
 	}
 
 	return true;
 }
 
-bool XMesh::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& indexCountPerFace) {
+bool XMesh::parseFaces(XMeshObject *mesh, int faceCount, Common::Array<int> &indexCountPerFace) {
 	for (int i = 0; i < faceCount; ++i) {
-		int indexCount = lexer.readInt();
-
+		XMeshFace *face = &mesh->_faces[i];
+		int indexCount = face->_numFaceVertexIndices;
 		if (indexCount == 3) {
-			uint16 index1 = lexer.readInt();
-			uint16 index2 = lexer.readInt();
-			uint16 index3 = lexer.readInt();
+			uint16 index1 = face->_faceVertexIndices[0];
+			uint16 index2 = face->_faceVertexIndices[1];
+			uint16 index3 = face->_faceVertexIndices[2];
 
 			_indexData.push_back(index3);
 			_indexData.push_back(index2);
 			_indexData.push_back(index1);
 
-			lexer.skipTerminator(); // skip semicolon
-
 			indexCountPerFace.push_back(3);
 		} else if (indexCount == 4) {
-			uint16 index1 = lexer.readInt();
-			uint16 index2 = lexer.readInt();
-			uint16 index3 = lexer.readInt();
-			uint16 index4 = lexer.readInt();
+			uint16 index1 = face->_faceVertexIndices[0];
+			uint16 index2 = face->_faceVertexIndices[1];
+			uint16 index3 = face->_faceVertexIndices[2];
+			uint16 index4 = face->_faceVertexIndices[3];
 
 			_indexData.push_back(index3);
 			_indexData.push_back(index2);
@@ -513,8 +493,6 @@ bool XMesh::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& ind
 			_indexData.push_back(index4);
 			_indexData.push_back(index3);
 			_indexData.push_back(index1);
-
-			lexer.skipTerminator(); // skip semicolon
 
 			indexCountPerFace.push_back(6);
 		} else {
@@ -526,62 +504,59 @@ bool XMesh::parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int>& ind
 	return true;
 }
 
-bool XMesh::parseTextureCoords(XFileLexer &lexer) {
+bool XMesh::parseTextureCoords(XFileData *xobj) {
+	XMeshTextureCoordsObject *texCoords = xobj->getXMeshTextureCoordsObject();
+	if (!texCoords)
+		return false;
 	// should be the same as _vertexCount
-	int textureCoordCount = lexer.readInt();
+	int textureCoordCount = texCoords->_numTextureCoords;
 
 	for (int i = 0; i < textureCoordCount; ++i) {
-		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 0] = lexer.readFloat();
-		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = lexer.readFloat();
-		lexer.skipTerminator(); // skip semicolon
-	}
-
-	if (lexer.reachedClosedBraces()) {
-		lexer.advanceToNextToken();
-	} else {
-		warning("Missing } in mesh object");
+		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 0] = texCoords->_textureCoords[i]._u;
+		_vertexData[i * kVertexComponentCount + kTextureCoordOffset + 1] = texCoords->_textureCoords[i]._v;
 	}
 
 	return true;
 }
 
-bool XMesh::parseNormalCoords(XFileLexer &lexer) {
+bool XMesh::parseNormalCoords(XFileData *xobj) {
+	XMeshNormalsObject *normals = xobj->getXMeshNormalsObject();
+	if (!normals)
+		return false;
 	// should be the same as _vertex count
-	uint vertexNormalCount = lexer.readInt();
-//	assert(vertexNormalCount == _vertexCount);
+	uint vertexNormalCount = normals->_numNormals;
+	//assert(vertexNormalCount == _vertexCount);
 
 	Common::Array<float> vertexNormalData;
 	vertexNormalData.resize(3 * vertexNormalCount);
 
 	for (uint i = 0; i < vertexNormalCount; ++i) {
-		vertexNormalData[i * 3 + 0] = lexer.readFloat();
-		vertexNormalData[i * 3 + 1] = lexer.readFloat();
+		vertexNormalData[i * 3 + 0] = normals->_normals[i]._x;
+		vertexNormalData[i * 3 + 1] = normals->_normals[i]._y;
 		// mirror z coordinate to change to OpenGL coordinate system
-		vertexNormalData[i * 3 + 2] = -lexer.readFloat();
-		lexer.skipTerminator(); // skip semicolon
+		vertexNormalData[i * 3 + 2] = -normals->_normals[i]._z;
 	}
 
-	uint faceNormalCount = lexer.readInt();
+	uint faceNormalCount = normals->_numFaceNormals;
 	Common::Array<int> faceNormals;
 
 	for (uint i = 0; i < faceNormalCount; ++i) {
-		int indexCount = lexer.readInt();
+		XMeshFace *normalFace = &normals->_faceNormals[i];
+		int indexCount = normalFace->_numFaceVertexIndices;
 
 		if (indexCount == 3) {
-			uint16 index1 = lexer.readInt();
-			uint16 index2 = lexer.readInt();
-			uint16 index3 = lexer.readInt();
+			uint16 index1 = normalFace->_faceVertexIndices[0];
+			uint16 index2 = normalFace->_faceVertexIndices[1];
+			uint16 index3 = normalFace->_faceVertexIndices[2];
 
 			faceNormals.push_back(index3);
 			faceNormals.push_back(index2);
 			faceNormals.push_back(index1);
-
-			lexer.skipTerminator(); // skip semicolon
 		} else if (indexCount == 4) {
-			uint16 index1 = lexer.readInt();
-			uint16 index2 = lexer.readInt();
-			uint16 index3 = lexer.readInt();
-			uint16 index4 = lexer.readInt();
+			uint16 index1 = normalFace->_faceVertexIndices[0];
+			uint16 index2 = normalFace->_faceVertexIndices[1];
+			uint16 index3 = normalFace->_faceVertexIndices[2];
+			uint16 index4 = normalFace->_faceVertexIndices[3];
 
 			faceNormals.push_back(index3);
 			faceNormals.push_back(index2);
@@ -590,8 +565,6 @@ bool XMesh::parseNormalCoords(XFileLexer &lexer) {
 			faceNormals.push_back(index4);
 			faceNormals.push_back(index3);
 			faceNormals.push_back(index1);
-
-			lexer.skipTerminator(); // skip semicolon
 		} else {
 			warning("XMeshOpenGL::loadFromX faces with more than four vertices are not supported");
 			return false;
@@ -610,27 +583,28 @@ bool XMesh::parseNormalCoords(XFileLexer &lexer) {
 		}
 	}
 
-	lexer.advanceToNextToken(); // skip closed braces
-
 	return true;
 }
 
-bool XMesh::parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
+bool XMesh::parseMaterials(XFileData *xobj, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace) {
+	XMeshMaterialListObject *materialList = xobj->getXMeshMaterialListObject();
+	if (!materialList)
+		return false;
+
 	// there can be unused materials inside a .X file
 	// so this piece of information is probably useless
-	lexer.readInt(); // material count
 	// should be the same as faceCount
-	int faceMaterialCount = lexer.readInt();
+	int faceMaterialCount = materialList->_numFaceIndexes;
 	assert(faceMaterialCount == faceCount);
 
 	_indexRanges.push_back(0);
-	int currentMaterialIndex = lexer.readInt();
+	int currentMaterialIndex = materialList->_faceIndexes[0];
 	_materialIndices.push_back(currentMaterialIndex);
 
 	int currentIndex = indexCountPerFace[0];
 
 	for (int i = 1; i < faceMaterialCount; ++i) {
-		int currentMaterialIndexTmp = lexer.readInt();
+		int currentMaterialIndexTmp = materialList->_faceIndexes[i];
 
 		if (currentMaterialIndex != currentMaterialIndexTmp) {
 			currentMaterialIndex = currentMaterialIndexTmp;
@@ -644,82 +618,65 @@ bool XMesh::parseMaterials(XFileLexer &lexer, int faceCount, const Common::Strin
 	_indexRanges.push_back(currentIndex);
 	_numAttrs = _indexRanges.size() - 1;
 
-	// Strange Change has an extra semicolon here
-	if (lexer.tokenIsOfType(SEMICOLON)) {
-		lexer.advanceToNextToken();
-	}
+	uint numChildren = 0;
+	xobj->getChildren(numChildren);
 
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("Material")) {
-			lexer.advanceToNextToken();
-			Material *mat = new Material(_gameRef);
-			mat->loadFromX(lexer, filename);
-			_materials.add(mat);
-
-			MaterialReference materialReference;
-			materialReference._material = mat;
-			materialReferences.push_back(materialReference);
-		} else if (lexer.tokenIsIdentifier()) {
-			while (!lexer.reachedClosedBraces()) {
-				lexer.advanceToNextToken();
-			}
-
-			lexer.advanceToNextToken(); // skip closed braces
-		} else if (lexer.reachedClosedBraces()) {
-			break;
-		} else if (lexer.tokenIsOfType(OPEN_BRACES)) {
-			lexer.advanceToNextToken();
-			Common::String materialReference = lexer.tokenToString();
-
-			for (uint i = 0; i < materialReferences.size(); ++i) {
-				if (materialReferences[i]._name == materialReference) {
-					_materials.add(materialReferences[i]._material);
-					break;
+	for (uint32 i = 0; i < numChildren; i++) {
+		XFileData xchildData;
+		XClassType objectType;
+		bool res = xobj->getChild(i, xchildData);
+		if (res) {
+			res = xchildData.getType(objectType);
+			if (res) {
+				if (xchildData.isReference()) {
+					Common::String materialReference;
+					xchildData.getName(materialReference);
+					for (uint32 j = 0; j < materialReferences.size(); j++) {
+						if (materialReferences[j]._name == materialReference) {
+							_materials.add(materialReferences[j]._material);
+							break;
+						}
+					}
+				} else if (objectType == kXClassMaterial) {
+					Material *mat = new Material(_gameRef);
+					mat->loadFromX(&xchildData, filename);
+					_materials.add(mat);
+					MaterialReference materialReference;
+					materialReference._material = mat;
+					materialReferences.push_back(materialReference);
 				}
 			}
-
-			lexer.advanceToNextToken();
-			lexer.advanceToNextToken();
-		} else {
-			warning("XMeshOpenGL::loadFromX unknown token %i encountered while loading materials", lexer.getTypeOfToken());
-			break;
 		}
 	}
-
-	lexer.advanceToNextToken(); // skip closed braces
 
 	return true;
 }
 
-bool XMesh::parseSkinWeights(XFileLexer &lexer) {
+bool XMesh::parseSkinWeights(XFileData *xobj) {
+	XSkinWeightsObject *skinWeights = xobj->getXSkinWeightsObject();
+	if (!skinWeights)
+		return false;
+
 	skinWeightsList.resize(skinWeightsList.size() + 1);
 	SkinWeights &currSkinWeights = skinWeightsList.back();
 
-	currSkinWeights._boneName = lexer.readString();
+	currSkinWeights._boneName = skinWeights->_transformNodeName;
 
-	int weightCount = lexer.readInt();
+	int weightCount = skinWeights->_numWeights;
 	currSkinWeights._vertexIndices.resize(weightCount);
 	currSkinWeights._vertexWeights.resize(weightCount);
 
 	for (int i = 0; i < weightCount; ++i) {
-		currSkinWeights._vertexIndices[i] = lexer.readInt();
-	}
-
-	if (weightCount == 0 && lexer.tokenIsOfType(SEMICOLON)) {
-		lexer.advanceToNextToken();
+		currSkinWeights._vertexIndices[i] = skinWeights->_vertexIndices[i];
 	}
 
 	for (int i = 0; i < weightCount; ++i) {
-		currSkinWeights._vertexWeights[i] = lexer.readFloat();
-	}
-
-	if (weightCount == 0 && lexer.tokenIsOfType(SEMICOLON)) {
-		lexer.advanceToNextToken();
+		currSkinWeights._vertexWeights[i] = skinWeights->_weights[i];
 	}
 
 	for (int r = 0; r < 4; ++r) {
 		for (int c = 0; c < 4; ++c) {
-			currSkinWeights._offsetMatrix(c, r) = lexer.readFloat();
+			currSkinWeights._offsetMatrix(c, r) = skinWeights->_matrixOffset[r * 4 + c];
 		}
 	}
 
@@ -734,14 +691,15 @@ bool XMesh::parseSkinWeights(XFileLexer &lexer) {
 	currSkinWeights._offsetMatrix(0, 2) *= -1.0f;
 	currSkinWeights._offsetMatrix(1, 2) *= -1.0f;
 
-	lexer.skipTerminator(); // semicolon of matrix
-	lexer.advanceToNextToken(); // closed braces of skin weights object
-
 	return true;
 }
 
-bool XMesh::parseVertexDeclaration(XFileLexer &lexer) {
-	int vertexElementCount = lexer.readInt();
+bool XMesh::parseVertexDeclaration(XFileData *xobj) {
+	XDeclDataObject *declData = xobj->getXDeclDataObject();
+	if (!declData)
+		return false;
+
+	int vertexElementCount = declData->_numElements;
 
 	// size of a vertex measured in four byte blocks
 	int vertexSize = 0;
@@ -749,11 +707,10 @@ bool XMesh::parseVertexDeclaration(XFileLexer &lexer) {
 	int textureOffset = -1;
 
 	for (int i = 0; i < vertexElementCount; ++i) {
-		int type = lexer.readInt();
-		int method = lexer.readInt();
-		int usage = lexer.readInt();
-		int usageIndex = lexer.readInt();
-		lexer.skipTerminator();
+		int type = declData->_elements[i]._type;
+		int method = declData->_elements[i]._method;
+		int usage = declData->_elements[i]._usage;
+		int usageIndex = declData->_elements[i]._usageIndex;
 
 		debug("Vertex Element: Type: %i, Method: %i, Usage: %i, Usage index: %i", type, method, usage, usageIndex);
 
@@ -842,23 +799,13 @@ bool XMesh::parseVertexDeclaration(XFileLexer &lexer) {
 		}
 	}
 
-	if (lexer.tokenIsOfType(SEMICOLON)) {
-		lexer.advanceToNextToken();
-	}
-
-	int dataSize = lexer.readInt();
+	int dataSize = declData->_numData;
 	Common::Array<uint32> data;
 	data.reserve(dataSize);
 
 	for (int i = 0; i < dataSize; ++i) {
-		data.push_back(lexer.readUint32());
+		data.push_back(declData->_data[i]);
 	}
-
-	if (lexer.tokenIsOfType(SEMICOLON)) {
-		lexer.advanceToNextToken();
-	}
-
-	lexer.advanceToNextToken(); // skip closed braces
 
 	assert(dataSize % vertexSize == 0);
 	assert(dataSize / vertexSize == static_cast<int>(_vertexCount));

@@ -48,13 +48,13 @@ enum {
 /* ListWidget */
 class ListWidget : public EditableWidget {
 public:
-	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, Common::U32String token);
+	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, const Common::U32String &token);
 
 	struct ListData {
 		Common::U32String orig;
 		Common::U32String clean;
 
-		ListData(Common::U32String o, Common::U32String c) { orig = o; clean = c; }
+		ListData(const Common::U32String &o, const Common::U32String &c) { orig = o; clean = c; }
 	};
 
 	typedef Common::Array<ListData> ListDataArray;
@@ -152,7 +152,7 @@ public:
 
 	static Common::U32String getThemeColor(byte r, byte g, byte b);
 	static Common::U32String getThemeColor(ThemeEngine::FontColor color);
-	static ThemeEngine::FontColor getThemeColor(Common::U32String color);
+	static ThemeEngine::FontColor getThemeColor(const Common::U32String &color);
 	static Common::U32String stripGUIformatting(const Common::U32String &str);
 
 protected:

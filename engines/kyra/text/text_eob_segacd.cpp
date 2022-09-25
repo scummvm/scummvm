@@ -124,8 +124,9 @@ void TextDisplayer_SegaCD::displayText(char *str, ...) {
 	if (tc != -1)
 		SWAP(_textColor, tc);
 
-	for (const char *pos = str; *pos; updated = false) {
+	for (const char *pos = str; *pos; ) {
 		uint8 cmd = fetchCharacter(tmp, pos);
+		updated = false;
 
 		if (_dimTable[_curDim].h < _curPosY + _screen->getFontHeight()) {
 			_curPosY -= _screen->getFontHeight();

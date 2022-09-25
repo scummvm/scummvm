@@ -111,7 +111,7 @@ void Player_Mac::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::StackLock lock(_mutex);
 	if (s.getVersion() < VER(94)) {
 		if (_vm->_game.id == GID_MONKEY && s.isLoading()) {
-			IMuse *dummyImuse = IMuse::create(_vm->_system, nullptr, nullptr);
+			IMuse *dummyImuse = IMuse::create(_vm, nullptr, nullptr, MDT_NONE, 0);
 			dummyImuse->saveLoadIMuse(s, _vm, false);
 			delete dummyImuse;
 		}

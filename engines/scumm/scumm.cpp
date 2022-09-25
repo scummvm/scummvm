@@ -283,7 +283,9 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		break;
 
 	case Common::kRenderAmiga:
-		if (_game.platform != Common::kPlatformAmiga)
+		// Allow v2 games to be rendered in forced Amiga mode; this works, and
+		// doing this to avoid the "sunburn effect" in MM/Zak is popular.
+		if (_game.platform != Common::kPlatformAmiga && _game.version != 2)
 			_renderMode = Common::kRenderDefault;
 		break;
 
@@ -808,7 +810,9 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_textV7 = NULL;
 	_newTextRenderStyle = (_game.version == 8 || _language == Common::JA_JPN || _language == Common::KO_KOR || _language == Common::ZH_TWN);
 	_defaultTextClipRect = Common::Rect(_screenWidth, _screenHeight);
-	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10)  : Common::Rect(_screenWidth, _screenHeight);
+	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10) : Common::Rect(_screenWidth, _screenHeight);
+
+	_guiStringTransBuff = new byte[512];
 
 	_game.features |= GF_NEW_COSTUMES;
 }
@@ -821,6 +825,7 @@ ScummEngine_v7::~ScummEngine_v7() {
 
 	delete _insane;
 	delete _textV7;
+	delete[] _guiStringTransBuff;
 
 	free(_languageBuffer);
 	free(_languageIndex);
@@ -848,6 +853,10 @@ Common::Error ScummEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
+	ConfMan.registerDefault("original_gui", true);
+	if (ConfMan.hasKey("original_gui", _targetName)) {
+		_useOriginalGUI = ConfMan.getBool("original_gui");
+	}
 	_enableEnhancements = ConfMan.getBool("enable_enhancements");
 	_enableAudioOverride = ConfMan.getBool("audio_override");
 
@@ -1234,6 +1243,11 @@ Common::Error ScummEngine::init() {
 			ConfMan.setBool("subtitles", true);
 	}
 
+	// While most games set their own default talkspeed at start-up,
+	// some don't, so let's preventively set a default one.
+	if (!ConfMan.hasKey("talkspeed", _targetName))
+		setTalkSpeed(_defaultTextSpeed);
+
 	syncSoundSettings();
 
 	return Common::kNoError;
@@ -1388,11 +1402,6 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
-
-	ConfMan.registerDefault("original_gui", true);
-	if (ConfMan.hasKey("original_gui", _targetName)) {
-		_useOriginalGUI = ConfMan.getBool("original_gui");
-	}
 
 	// The object line toggle is always synchronized from the main game to
 	// our internal Game Options; at startup we do the opposite, since an user
@@ -1673,7 +1682,7 @@ void ScummEngine::resetScumm() {
 	_varwatch = -1;
 	_screenStartStrip = 0;
 
-	_defaultTalkDelay = 3;
+	_defaultTextSpeed = 6;
 	_talkDelay = 0;
 	_keepText = false;
 	_nextLeft = 0;
@@ -1945,10 +1954,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 	}
 
 	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
-	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
-		_enable_gs = false;
-	else
-		_enable_gs = ConfMan.getBool("enable_gs");
+	bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : ConfMan.getBool("enable_gs");
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
@@ -2033,7 +2039,7 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
-			_native_mt32 = _enable_gs = false;
+			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			nativeMidiDriver = MidiDriver::createMidi(dev);
@@ -2055,7 +2061,13 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			}
 		}
 
-		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		uint32 imsFlags = 0;
+		if (_native_mt32)
+			imsFlags |= IMuse::kFlagNativeMT32;
+		if (enable_gs && MidiDriver::getMusicType(dev) != MT_MT32)
+			imsFlags |= IMuse::kFlagRolandGS;
+
+		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
 
 		if (_game.platform == Common::kPlatformFMTowns) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
@@ -2069,28 +2081,26 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			_imuse->addSysexHandler
 				(/*IMUSE_SYSEX_ID*/ 0x7D,
 				 (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
-			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			if (midi != MDT_NONE) {
-				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
-					_imuse->property(IMuse::PROP_GS, _enable_gs);
-			}
 			if (_game.heversion >= 60) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (_sound->_musicType == MDT_PCSPK)
-				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
-			if (_sound->_musicType == MDT_AMIGA)
-				_imuse->property(IMuse::PROP_AMIGA, 1);
 		}
+	}
+
+	// Restore audio cd settings to defaults, since they might have been changed
+	// outside the engine (the audio cd manager is a global object). FM-Towns does
+	// these things in the sound driver, so we skip it here.
+	if (_sound->_musicType != MDT_TOWNS && (_game.features & GF_AUDIOTRACKS)) {
+		g_system->getAudioCDManager()->setVolume(Audio::Mixer::kMaxChannelVolume);
+		g_system->getAudioCDManager()->setBalance(0);
 	}
 }
 
 void ScummEngine::syncSoundSettings() {
-	if (isUsingOriginalGUI() && _game.version == 8) {
+	if (isUsingOriginalGUI() && _game.version > 6) {
 		if (ConfMan.hasKey("original_gui_text_status", _targetName)) {
 			_voiceMode = ConfMan.getInt("original_gui_text_status");
 		} else if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)){
@@ -2115,15 +2125,19 @@ void ScummEngine::syncSoundSettings() {
 				ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
 			}
 
-			_defaultTalkDelay = ConfMan.getInt("original_gui_text_speed");
+			_defaultTextSpeed = ConfMan.getInt("original_gui_text_speed");
 
-			// In the original games the talk delay is represented as text speed,
-			// so we have to invert the value:
-			// - 9 is the highest text speed possible;
-			// - 0 is the lowest text speed possible.
 			if (VAR_CHARINC != 0xFF)
-				VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
+				VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 		}
+
+#ifdef ENABLE_SCUMM_7_8
+		if (_game.version >= 7 && _imuseDigital) {
+			_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
+			_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
+			_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
+		}
+#endif
 		return;
 	}
 
@@ -2159,14 +2173,10 @@ void ScummEngine::syncSoundSettings() {
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
 	if (ConfMan.hasKey("talkspeed", _targetName)) {
-		_defaultTalkDelay = getTalkSpeed();
+		_defaultTextSpeed = getTalkSpeed();
 
-		// In the original games the talk delay is represented as text speed,
-		// so we have to invert the value:
-		// - 9 is the highest text speed possible;
-		// - 0 is the lowest text speed possible.
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = 9 - _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 	}
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
@@ -2654,21 +2664,27 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		Common::String filename;
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
-			if (!success)
+			if (!success) {
 				errMsg = _("Failed to save game to file:\n\n%s");
+				if (isUsingOriginalGUI() && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
+					VAR(VAR_GAME_LOADED) = GAME_FAILED_SAVE;
+			}
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
-				VAR(VAR_GAME_LOADED) = 201;
+				VAR(VAR_GAME_LOADED) = GAME_PROPER_SAVE;
 
 			if (!_saveTemporaryState)
 				_lastSaveTime = _system->getMillis();
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
-			if (!success)
+			if (!success) {
 				errMsg = _("Failed to load saved game from file:\n\n%s");
+				if (isUsingOriginalGUI() && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
+					VAR(VAR_GAME_LOADED) = GAME_FAILED_LOAD;
+			}
 
 			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
-				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
+				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : GAME_PROPER_LOAD;
 		}
 
 		if (!success) {
@@ -2676,7 +2692,7 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			GUI::MessageDialog dialog(buf);
 			runDialog(dialog);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState && !isUsingOriginalGUI()) {
 			// Display "Save successful" message, except for auto saves
 			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 
@@ -2862,7 +2878,7 @@ void ScummEngine_v5::scummLoop_handleSaveLoad() {
 
 		// For LOOM VGA Talkie, we restore the text glyphs on top of the note verbs
 		// and also restore the text description on top of the image of the selected
-		// object in the bottom right corner. 
+		// object in the bottom right corner.
 		// These text parts are not actually connected to the verbs (which are image
 		// verbs only). redrawVerbs() will not restore them. They require some script
 		// work. The original interpreter just sets this variable after loading.
@@ -3109,7 +3125,13 @@ void ScummEngine::restart() {
 }
 
 bool ScummEngine::isUsingOriginalGUI() {
-	if (_game.version == 8)
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
+		return false;
+
+	if (_game.heversion != 0)
+		return false;
+
+	if (_game.version > 3)
 		return _useOriginalGUI;
 
 	return false;

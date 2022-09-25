@@ -125,6 +125,31 @@ private:
 	Common::SharedPtr<MiniscriptReferences> _references;
 };
 
+class ColorTableModifier : public Modifier {
+public:
+	ColorTableModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::ColorTableModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	void disable(Runtime *runtime) override {}
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Color Table Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _applyWhen;
+
+	uint32 _assetID;
+};
+
 class SaveAndRestoreModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SaveAndRestoreModifier &data);
@@ -285,11 +310,11 @@ private:
 	Common::SharedPtr<AudioPlayer> _player;
 };
 
-class PathMotionModifierV2 : public Modifier {
+class PathMotionModifier : public Modifier {
 public:
-	PathMotionModifierV2();
+	PathMotionModifier();
 
-	bool load(ModifierLoaderContext &context, const Data::PathMotionModifierV2 &data);
+	bool load(ModifierLoaderContext &context, const Data::PathMotionModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
@@ -463,6 +488,33 @@ private:
 	uint32 _currentStep;
 
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
+};
+
+class SharedSceneModifier : public Modifier {
+public:
+	SharedSceneModifier();
+	~SharedSceneModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::SharedSceneModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Shared Scene Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _executeWhen;
+
+	uint32 _targetSectionGUID;
+	uint32 _targetSubsectionGUID;
+	uint32 _targetSceneGUID;
 };
 
 class IfMessengerModifier : public Modifier {
@@ -745,6 +797,43 @@ private:
 	Event _removeWhen;
 
 	VisualElementRenderProperties _renderProps;
+};
+
+class ImageEffectModifier : public Modifier {
+public:
+	ImageEffectModifier();
+
+	bool load(ModifierLoaderContext &context, const Data::ImageEffectModifier &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+	void disable(Runtime *runtime) override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Image Effect Modifier"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	enum Type {
+		kTypeUnknown = 0,
+
+		kTypeInvert = 1,
+		kTypeSelectedBevels,
+		kTypeDeselectedBevels,
+		kTypeToneDown,
+		kTypeToneUp,
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Event _applyWhen;
+	Event _removeWhen;
+	Type _type;
+	uint16 _bevelWidth;
+	uint16 _toneAmount;
+	bool _includeBorders;
 };
 
 // Compound variable modifiers are not true variable modifiers.

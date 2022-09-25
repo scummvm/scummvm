@@ -386,10 +386,11 @@ void EoBCoreEngine::drawBlockItems(int index) {
 			if (scaleSteps >= 0) {
 				const uint8 *shp = 0;
 				if (_flags.gameID == GI_EOB2 || scaleSteps == 0)
-					shp = _screen->scaleShape(_dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapes[_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapes[_dscItemShapeMap[itm->icon] - 15]), scaleSteps);
+					shp = _screen->scaleShape(_dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapes[_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? nullptr : _smallItemShapes[_dscItemShapeMap[itm->icon] - 15]), scaleSteps);
 				else
-					shp = _dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? 0 : _smallItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon] - 15]);
+					shp = _dscItemShapeMap[itm->icon] < _numLargeItemShapes ? _largeItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon]] : (_dscItemShapeMap[itm->icon] < 15 ? nullptr : _smallItemShapesScl[scaleSteps - 1][_dscItemShapeMap[itm->icon] - 15]);
 
+				assert(shp);
 				x = x + (itemPosFin[o & 7] << 1) - ((shp[2] << 3) >> 1);
 				y -= shp[1];
 

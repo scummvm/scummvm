@@ -1824,7 +1824,7 @@ void DynamicValueWriteObjectHelper::create(RuntimeObject *obj, DynamicValueWrite
 	proxy.pod.ptrOrOffset = 0;
 }
 
-MessengerSendSpec::MessengerSendSpec() : destination(0), _linkType(kLinkTypeNotYetLinked) {
+MessengerSendSpec::MessengerSendSpec() : destination(kMessageDestNone), _linkType(kLinkTypeNotYetLinked) {
 }
 
 bool MessengerSendSpec::load(const Data::Event &dataEvent, uint32 dataMessageFlags, const Data::InternalTypeTaggedValue &dataLocator, const Common::String &dataWithSource, const Common::String &dataWithString, uint32 dataDestination) {
@@ -6645,6 +6645,10 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 	size_t numObjectsLoaded = 0;
 	while (stream.pos() != streamDesc.size) {
+		uint64 streamPos = stream.pos();
+
+		debug(3, "Loading boot object from %x (abs %x)", static_cast<int>(streamPos), static_cast<int>(streamDesc.pos + streamPos));
+
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 

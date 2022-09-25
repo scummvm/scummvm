@@ -1,0 +1,7 @@
+set a.1 = 2
+set a1 = 3
+set a1. = 4
+
+scummvmAssert(a.1=2)
+scummvmAssert(a1=3)
+scummvmAssert(a1.=4)

@@ -90,7 +90,7 @@ int TextDisplayer::dropCRIntoString(char *str, int offs) {
 char *TextDisplayer::preprocessString(const char *str) {
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
-		strcpy(_talkBuffer, str);
+		Common::strlcpy(_talkBuffer, str, sizeof(_talkBuffer));
 	}
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN)

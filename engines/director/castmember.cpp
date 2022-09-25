@@ -732,6 +732,7 @@ bool DigitalVideoCastMember::loadVideo(Common::String path) {
 	debugC(2, kDebugLoading | kDebugImages, "Loading video %s -> %s", path.c_str(), path1.c_str());
 	bool result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	if (!result) {
+		delete _video;
 		_video = new Video::AVIDecoder();
 		result = _video->loadFile(Common::Path(path1, g_director->_dirSeparator));
 	}
@@ -1380,9 +1381,9 @@ void TextCastMember::importStxt(const Stxt *stxt) {
 	_ptext = stxt->_ptext;
 
 	// Rectifying _fontId in case of a fallback font
-	Graphics::MacFont *macFont = new Graphics::MacFont(_fontId, _fontSize, _textSlant);
-	g_director->_wm->_fontMan->getFont(macFont);
-	_fontId = macFont->getId();
+	Graphics::MacFont macFont(_fontId, _fontSize, _textSlant);
+	g_director->_wm->_fontMan->getFont(&macFont);
+	_fontId = macFont.getId();
 }
 
 Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {
@@ -1427,7 +1428,7 @@ Graphics::MacWidget *TextCastMember::createWidget(Common::Rect &bbox, Channel *c
 	case kCastButton:
 		// note that we use _initialRect for the dimensions of the button;
 		// the values provided in the sprite bounding box are ignored
-		widget = new Graphics::MacButton(Graphics::MacButtonType(buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), 0xff);
+		widget = new Graphics::MacButton(Graphics::MacButtonType(buttonType), getAlignment(), g_director->getCurrentWindow(), bbox.left, bbox.top, _initialRect.width(), _initialRect.height(), g_director->_wm, _ftext, macFont, getForeColor(), g_director->_wm->_colorWhite);
 		widget->_focusable = true;
 
 		((Graphics::MacButton *)widget)->setHilite(_hilite);

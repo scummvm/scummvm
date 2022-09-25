@@ -12,6 +12,10 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Anzahl an falsch-positiven Einträgen reduziert, wenn das Gerät nach Spielen durchsucht wird.
+   - Code der Roland MT-32-Emulation auf Munt mt32emu 2.7.0 aktualisiert.
+
+ AGI:
+   - Unterstützung der französischen Übersetzungen verbessert.
 
  AGOS:
    - Option hinzugefügt, mit der die Ausblende-Effekte bei einem Raum-Wechsel in Simon 1 und 2
@@ -20,6 +24,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Kyra:
    - Unterstützung für die koreanische Version von Legend of Kyrandia 1 hinzugefügt.
    - Unterstützung für die hebräische Version von Legend of Kyrandia 3 hinzugefügt.
+
+ Queen:
+   - Eine zusätzliche Option erlaubt die Verwendung einer verbesserten Schriftart für die hebräische Version.
 
  SCUMM:
    - Unterstützung von CGA-, CGA Composite-, CGA schwarz/weiß- und Herkules-Grafikmodi
@@ -35,9 +42,23 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      Diese ist immer dann aufgetreten, wenn der Spieler am Ende von Part II
      das Modell des Leuchtturms nicht aufhebt, bevor Captain Dread Guybrush
      zurück zu Scabb Island bringt.
-   - Unterstützung für die originale Benutzeroberfläche von COMI hinzugefügt.
+   - Einige Fehler in den Originalversionen der Spiele sowie Logik- und Continuity-Fehler
+     korrigiert (nur, wenn die Option "Verwende spiel-spezifische Verbesserungen" aktiv ist).
+   - Unterstützung für die originale Benutzeroberfläche der LucasArts-Spiele in Version v4-v8 hinzugefügt.
    - Verbesserte Dekodierung einiger westeuropäischen Zeichenketten, wenn diese über
      die ScummVM-Oberfläche dargestellt werden - beispielsweise, wenn ein Spiel pausiert wird.
+   - Der Kopf des Navigators zeigte in der ursprünglichen Version von Monkey Island 1 (ohne
+     die verbesserte Verben-Oberfläche) nicht in alle möglichen Richtungen.
+   - Leicht abweichende Text-Positionierung in den v4-Spielen sowie in Loom v3 korrigiert.
+   - Darstellung des Textes in den Spiele-Credits am Ende von Sam & Max korrigiert.
+   - Probleme mit der Lippen-Synchronisation in der finalen Szene von Freddi Fish 4 korrigiert.
+   - Die Lade-Animation des Mauszeigers in The Dig und COMI wurde nicht immer dargestellt.
+   - Genauigkeit einiger Audio-Treiber verbessert. Die Fehler haben sich merklich auf die
+     Änderung der Tonhöhe in der Intro-Musik von DOTT ausgewirkt.
+   - In COMI liest Guybrush die Uhr von Puerto Pollo nur in der englischen, italienischen
+     und der (von Fans erstellten) russischen Version des Spiels, was das Verhalten des
+     originalen Interpreters widerspiegelt (vermutlich aufgrund der schlechten Resultate
+     in den anderen Sprachen).
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie das Original.

@@ -71,8 +71,8 @@ protected:
 
 	char *_dialogueBuffer;
 
-	char *_tempString1;
-	char *_tempString2;
+	const char *_tempString1;
+	const char *_tempString2;
 	char *_currentLine;
 	char _ctrl[3];
 
@@ -85,8 +85,8 @@ protected:
 	bool _sjisTextModeLineBreak;
 	const bool _pc98TextMode;
 
-	char _pageBreakString[20];
-	char _scriptParaString[11];
+	Common::String _pageBreakString;
+	Common::String _scriptParaString;
 	int _lineCount;
 
 	bool _allowPageBreak;

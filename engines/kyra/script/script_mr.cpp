@@ -52,7 +52,7 @@ int KyraEngine_MR::o3_defineObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_defineObject(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	TalkObject &obj = _talkObjectList[stackPos(0)];
-	strcpy(obj.filename, stackPosString(1));
+	Common::strlcpy(obj.filename, stackPosString(1), sizeof(obj.filename));
 	obj.sceneAnim = stackPos(2);
 	obj.sceneScript = stackPos(3);
 	obj.x = stackPos(4);
@@ -289,7 +289,7 @@ int KyraEngine_MR::o3_makeSecondChanceSave(EMCState *script) {
 
 int KyraEngine_MR::o3_setSceneFilename(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_MR::o3_setSceneFilename(%p) (%d, '%s')", (const void *)script, stackPos(0), stackPosString(1));
-	strcpy(_sceneList[stackPos(0)].filename1, stackPosString(1));
+	Common::strlcpy(_sceneList[stackPos(0)].filename1, stackPosString(1), sizeof(_sceneList[stackPos(0)].filename1));
 	_sceneList[stackPos(0)].filename1[9] = 0;
 	return 0;
 }
@@ -882,7 +882,7 @@ int KyraEngine_MR::o3_defineSceneAnim(EMCState *script) {
 	const char *filename = stackPosString(12);
 
 	if (filename)
-		strcpy(anim.filename, filename);
+		Common::strlcpy(anim.filename, filename, sizeof(anim.filename));
 
 	if (flags & 8) {
 		_sceneAnimMovie[animId]->open(filename, 1, nullptr);
@@ -1067,7 +1067,7 @@ int KyraEngine_MR::o3_customChat(EMCState *script) {
 	if (!str)
 		return 0;
 
-	strcpy(_stringBuffer, str);
+	Common::strlcpy(_stringBuffer, str, 500);
 	_chatText = _stringBuffer;
 	_chatObject = object;
 	_chatVocHigh = _chatVocLow = -1;

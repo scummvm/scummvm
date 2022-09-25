@@ -38,17 +38,12 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getPlatform() != Common::kPlatformWindows) {
-		if (getVersion() < 400)
+	if (getVersion() < 400) {
+		if (getPlatform() != Common::kPlatformWindows)
 			return new MacArchive();
-		else
-			return new RIFXArchive();
-	} else {
-		if (getVersion() < 400)
-			return new RIFFArchive();
-		else
-			return new RIFXArchive();
+		return new RIFFArchive();
 	}
+	return new RIFXArchive();
 }
 
 Common::Error Window::loadInitialMovie() {
@@ -133,6 +128,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
+				delete vvers;
 			}
 		}
 
@@ -184,7 +180,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 		}
 	}
 	// Register the resfile so that Cursor::readFromResource can find it
-	g_director->_openResFiles.setVal(archive->getPathName(), archive);
+	g_director->_allOpenResFiles.setVal(archive->getPathName(), archive);
 }
 
 Archive *Window::openMainArchive(const Common::String movie) {
@@ -219,6 +215,7 @@ void Window::loadEXE(const Common::String movie) {
 	} else {
 		warning("No LINGO.INI");
 	}
+	delete iniStream;
 
 	Common::SeekableReadStream *exeStream = SearchMan.createReadStreamForMember(Common::Path(movie, g_director->_dirSeparator));
 	if (!exeStream)
@@ -321,10 +318,13 @@ void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 
 		_mainArchive = new RIFFArchive();
 
-		if (!_mainArchive->openStream(stream, riffOffset))
-			warning("Failed to load RIFF from EXE");
-		else
+		if (_mainArchive->openStream(stream, riffOffset))
 			return;
+
+		warning("Failed to load RIFF from EXE");
+		delete _mainArchive;
+		_mainArchive = nullptr;
+		delete stream;
 	}
 
 	openMainArchive(mmmFileName);

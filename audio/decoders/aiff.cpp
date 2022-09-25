@@ -210,7 +210,7 @@ RewindableAudioStream *AIFFHeader::makeAIFFStream(Common::SeekableReadStream *st
 		if (_codec == MKTAG('s', 'o', 'w', 't'))
 			rawFlags |= Audio::FLAG_LITTLE_ENDIAN;
 
-		return makeRawStream(_dataStream, _rate, rawFlags);
+		return makeRawStream(_dataStream, _rate, rawFlags, disposeAfterUse);
 	}
 	case MKTAG('i', 'm', 'a', '4'):
 		// TODO: Use QT IMA ADPCM
@@ -223,10 +223,10 @@ RewindableAudioStream *AIFFHeader::makeAIFFStream(Common::SeekableReadStream *st
 		break;
 	case MKTAG('A', 'D', 'P', '4'):
 		// ADP4 on 3DO
-		return make3DO_ADP4AudioStream(_dataStream, _rate, _channels == 2);
+		return make3DO_ADP4AudioStream(_dataStream, _rate, _channels == 2, NULL, disposeAfterUse);
 	case MKTAG('S', 'D', 'X', '2'):
 		// SDX2 on 3DO
-		return make3DO_SDX2AudioStream(_dataStream, _rate, _channels == 2);
+		return make3DO_SDX2AudioStream(_dataStream, _rate, _channels == 2, NULL, disposeAfterUse);
 	default:
 		warning("Unhandled AIFF-C compression tag '%s'", tag2str(_codec));
 	}
@@ -235,16 +235,15 @@ RewindableAudioStream *AIFFHeader::makeAIFFStream(Common::SeekableReadStream *st
 	return nullptr;
 }
 
-AIFFHeader::~AIFFHeader() {
-	delete _dataStream;
-}
-
 RewindableAudioStream *makeAIFFStream(Common::SeekableReadStream *stream, DisposeAfterUse::Flag disposeAfterUse) {
 	AIFFHeader *aiffHeader = AIFFHeader::readAIFFHeader(stream, disposeAfterUse);
 	if (aiffHeader == nullptr) {
 		return nullptr;
 	}
-	return aiffHeader->makeAIFFStream(stream, disposeAfterUse);
+
+	auto res = aiffHeader->makeAIFFStream(stream, disposeAfterUse);
+	delete aiffHeader;
+	return res;
 }
 
 } // End of namespace Audio

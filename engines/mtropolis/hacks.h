@@ -49,6 +49,7 @@ struct Hacks {
 	void addSaveLoadMechanismHooks(const Common::SharedPtr<SaveLoadMechanismHooks> &hooks);
 
 	bool ignoreMismatchedProjectNameInObjectLookups;
+	bool removeQuickTimeEdits;
 	uint midiVolumeScale;	// 256 = 1.0
 
 	uint32 minTransitionDuration;

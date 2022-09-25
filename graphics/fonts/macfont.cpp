@@ -729,6 +729,7 @@ MacFONTFont *MacFONTFont::scaleFont(const MacFONTFont *src, int newSize, int sla
 	}
 
 	srcSurf.free();
+	tmpSurf.free();
 	free(dstGray);
 
 	return new MacFONTFont(data);

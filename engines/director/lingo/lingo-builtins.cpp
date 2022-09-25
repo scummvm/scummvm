@@ -687,8 +687,7 @@ void LB::b_findPos(int nargs) {
 
 	int index = LC::compareArrays(LC::eqData, list, prop, true).u.i;
 	if (index > 0) {
-		d.type = INT;
-		d.u.i = index;
+		d = index;
 	}
 
 	g_lingo->push(d);
@@ -1059,14 +1058,29 @@ void LB::b_closeDA(int nargs) {
 }
 
 void LB::b_closeResFile(int nargs) {
-	if (nargs == 0) { // Close all res files
+	// closeResFile closes only resource files that were opened with openResFile.
+
+	if (nargs == 0) { // Close all open resesource files
+		for (Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator
+				it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+			// also clean up the global resource file hashmap
+			g_director->_allOpenResFiles.erase(it->_key);
+			delete it->_value;
+		}
 		g_director->_openResFiles.clear();
 		return;
 	}
+
 	Datum d = g_lingo->pop();
 	Common::String resFileName = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
 
-	g_director->_openResFiles.erase(resFileName);
+	if (g_director->_openResFiles.contains(resFileName)) {
+		auto archive = g_director->_openResFiles.getVal(resFileName);
+		delete archive;
+		g_director->_openResFiles.erase(resFileName);
+		// also clean up the global resource file hashmap
+		g_director->_allOpenResFiles.erase(resFileName);
+	}
 }
 
 void LB::b_closeXlib(int nargs) {
@@ -1141,11 +1155,15 @@ void LB::b_openResFile(int nargs) {
 		return;
 	}
 
-	if (!g_director->_openResFiles.contains(resPath)) {
+	if (!g_director->_allOpenResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
 		if (resFile->openFile(pathMakeRelative(resPath))) {
+			// Track responsibility. closeResFile may only close resource files opened by openResFile.
 			g_director->_openResFiles.setVal(resPath, resFile);
+			g_director->_allOpenResFiles.setVal(resPath, resFile);
+		} else {
+			delete resFile;
 		}
 	}
 }
@@ -1159,11 +1177,11 @@ void LB::b_openXlib(int nargs) {
 	if (g_director->getPlatform() == Common::kPlatformMacintosh) {
 		// try opening the file as a resfile
 		Common::String resPath = g_director->getCurrentWindow()->getCurrentPath() + d.asString();
-		if (!g_director->_openResFiles.contains(resPath)) {
+		if (!g_director->_allOpenResFiles.contains(resPath)) {
 			MacArchive *resFile = new MacArchive();
 
 			if (resFile->openFile(pathMakeRelative(resPath))) {
-				g_director->_openResFiles.setVal(resPath, resFile);
+				g_director->_allOpenResFiles.setVal(resPath, resFile);
 				uint32 XCOD = MKTAG('X', 'C', 'O', 'D');
 				uint32 XCMD = MKTAG('X', 'C', 'M', 'D');
 
@@ -1180,6 +1198,8 @@ void LB::b_openXlib(int nargs) {
 					g_lingo->openXLib(xlibName, kXObj);
 				}
 				return;
+			} else {
+				delete resFile;
 			}
 		}
 	}
@@ -1204,7 +1224,7 @@ void LB::b_showResFile(int nargs) {
 	if (nargs)
 		g_lingo->pop();
 	Common::String out;
-	for (auto it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); it++)
+	for (auto it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); it++)
 		out += it->_key + "\n";
 	g_debugger->debugLogFile(out, false);
 }
@@ -1219,9 +1239,8 @@ void LB::b_showXlib(int nargs) {
 }
 
 void LB::b_xFactoryList(int nargs) {
-	Datum d = g_lingo->pop();
-	d.type = STRING;
-	d.u.s = new Common::String();
+	g_lingo->pop();
+	Datum d("");
 
 	for (auto it = g_lingo->_openXLibs.begin(); it != g_lingo->_openXLibs.end(); it++)
 		*d.u.s += it->_key + "\n";
@@ -1863,9 +1882,11 @@ void LB::b_findEmpty(int nargs) {
 		return;
 	}
 
+	Datum res;
+
 	if (d.u.cast->member > c_end) {
-		d.type = INT;
-		g_lingo->push(d);
+		res = d.u.cast->member;
+		g_lingo->push(res);
 		return;
 	}
 
@@ -1875,16 +1896,14 @@ void LB::b_findEmpty(int nargs) {
 
 	for (uint16 i = c_start; i <= c_end; i++) {
 		if (!(cast->getCastMember(i) && cast->getCastMember(i)->_type != kCastTypeNull)) {
-			d.u.i = i;
-			d.type = INT;
-			g_lingo->push(d);
+			res = i;
+			g_lingo->push(res);
 			return;
 		}
 	}
 
-	d.type = INT;
-	d.u.i = (int) c_end + 1;
-	g_lingo->push(d);
+	res = (int) c_end + 1;
+	g_lingo->push(res);
 }
 
 void LB::b_importFileInto(int nargs) {
@@ -2154,9 +2173,10 @@ void LB::b_move(int nargs) {
 
 	movie->getScore()->renderFrame(frame, kRenderForceUpdate);
 
+	g_director->getCurrentMovie()->eraseCastMember(dest.asMemberID());
+	
 	CastMember *toMove = g_director->getCurrentMovie()->getCastMember(src.asMemberID());
-	CastMember *toReplace = new CastMember(*toMove);
-	toReplace->_type = kCastTypeNull;
+	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
 	g_director->getCurrentMovie()->createOrReplaceCastMember(dest.asMemberID(), toMove);
 	g_director->getCurrentMovie()->createOrReplaceCastMember(src.asMemberID(), toReplace);
 
@@ -2594,7 +2614,7 @@ void LB::b_updateStage(int nargs) {
 	movie->getWindow()->render();
 
 	// play any puppet sounds that have been queued
-	score->playSoundChannel(score->getCurrentFrame());
+	score->playSoundChannel(score->getCurrentFrame(), true);
 
 	if (score->_cursorDirty) {
 		score->renderCursor(movie->getWindow()->getMousePos());
@@ -2605,6 +2625,7 @@ void LB::b_updateStage(int nargs) {
 
 	if (debugChannelSet(-1, kDebugFewFramesOnly)) {
 		score->_framesRan++;
+			warning("LB::b_updateStage(): ran frame %0d", score->_framesRan);
 
 		if (score->_framesRan > 9) {
 			warning("b_updateStage(): exiting due to debug few frames only");
@@ -2676,8 +2697,7 @@ void LB::b_intersect(int nargs) {
 	Common::Rect rect1(r1.u.farr->arr[0].asInt(), r1.u.farr->arr[1].asInt(), r1.u.farr->arr[2].asInt(), r1.u.farr->arr[3].asInt());
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 
-	d.type = INT;
-	d.u.i = rect1.intersects(rect2);
+	d = rect1.intersects(rect2);
 
 	g_lingo->push(d);
 }
@@ -2689,8 +2709,7 @@ void LB::b_inside(int nargs) {
 	Common::Rect rect2(r2.u.farr->arr[0].asInt(), r2.u.farr->arr[1].asInt(), r2.u.farr->arr[2].asInt(), r2.u.farr->arr[3].asInt());
 	Common::Point point1(p1.u.farr->arr[0].asInt(), p1.u.farr->arr[1].asInt());
 
-	d.type = INT;
-	d.u.i = rect2.contains(point1);
+	d = rect2.contains(point1);
 
 	g_lingo->push(d);
 }

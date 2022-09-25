@@ -162,6 +162,8 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();
 
+	bool isAudioDisabled();
+
 protected:
 	void setupSfxFile();
 	bool isSfxFinished() const;

@@ -48,6 +48,8 @@
 
 namespace Director {
 
+#include "director/palette-fade.h"
+
 Score::Score(Movie *movie) {
 	_movie = movie;
 	_window = movie->getWindow();
@@ -59,6 +61,8 @@ Score::Score(Movie *movie) {
 	_puppetTempo = 0x00;
 	_puppetPalette = false;
 	_lastPalette = 0;
+	_paletteTransitionIndex = 0;
+	memset(_paletteSnapshotBuffer, 0, 768);
 
 	_labels = nullptr;
 
@@ -168,7 +172,7 @@ void Score::setStartToLabel(Common::String &label) {
 }
 
 void Score::gotoLoop() {
-	// This command has the playback head contonuously return to the first marker to to the left and then loop back.
+	// This command has the playback head continuously return to the first marker to the left and then loop back.
 	// If no marker are to the left of the playback head, the playback head continues to the right.
 	if (_labels == nullptr) {
 		_nextFrame = 1;
@@ -264,6 +268,8 @@ void Score::startPlay() {
 	}
 
 	_lastPalette = _frames[_currentFrame]->_palette.paletteId;
+	if (!_lastPalette)
+		_lastPalette = _movie->getCast()->_defaultPalette;
 	_vm->setPalette(resolvePaletteId(_lastPalette));
 
 	// All frames in the same movie have the same number of channels
@@ -407,6 +413,7 @@ void Score::update() {
 	}
 
 	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+	g_debugger->frameHook();
 
 	uint initialCallStackSize = _window->_callstack.size();
 
@@ -499,18 +506,16 @@ void Score::renderFrame(uint16 frameId, RenderMode mode) {
 	if (_window->_newMovieStarted)
 		renderCursor(_movie->getWindow()->getMousePos(), true);
 
-	if (!renderTransition(frameId))
+	if (!renderTransition(frameId)) {
+		bool skip = renderPrePaletteCycle(frameId, mode);
 		renderSprites(frameId, mode);
-
-	int currentPalette = _frames[frameId]->_palette.paletteId;
-	if (!_puppetPalette && currentPalette != _lastPalette && currentPalette) {
-		_lastPalette = currentPalette;
-		g_director->setPalette(resolvePaletteId(currentPalette));
+		_window->render();
+		if (!skip)
+			renderPaletteCycle(frameId, mode);
 	}
 
-	_window->render();
 
-	playSoundChannel(frameId);
+	playSoundChannel(frameId, false);
 	playQueuedSound(); // this is currently only used in FPlayXObj
 
 	if (_cursorDirty) {
@@ -524,13 +529,13 @@ bool Score::renderTransition(uint16 frameId) {
 	TransParams *tp = _window->_puppetTransition;
 
 	if (tp) {
-		_window->playTransition(tp->duration, tp->area, tp->chunkSize, tp->type, frameId);
+		_window->playTransition(frameId, tp->duration, tp->area, tp->chunkSize, tp->type, 0);
 
 		delete _window->_puppetTransition;
 		_window->_puppetTransition = nullptr;
 		return true;
 	} else if (currentFrame->_transType) {
-		_window->playTransition(currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, frameId);
+		_window->playTransition(frameId, currentFrame->_transDuration, currentFrame->_transArea, currentFrame->_transChunkSize, currentFrame->_transType, resolvePaletteId(currentFrame->_palette.paletteId));
 		return true;
 	} else {
 		return false;
@@ -584,6 +589,276 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 		// (because we are creating widgets and setting active state when we rendering sprites)
 		if (channel->isActiveText())
 			_movie->_currentEditableTextChannel = i;
+	}
+}
+
+bool Score::renderPrePaletteCycle(uint16 frameId, RenderMode mode) {
+	if (_puppetPalette)
+		return false;
+
+	// If the palette is defined in the frame and doesn't match
+	// the current one, set it
+	int currentPalette = _frames[frameId]->_palette.paletteId;
+	if (!currentPalette || !resolvePaletteId(currentPalette))
+		return false;
+
+	if (!_frames[frameId]->_palette.colorCycling &&
+		!_frames[frameId]->_palette.overTime) {
+
+		// Copy the current palette into the snapshot buffer
+		memset(_paletteSnapshotBuffer, 0, 768);
+		memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
+		PaletteV4 *destPal = g_director->getPalette(resolvePaletteId(currentPalette));
+
+		int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
+		int frameDelay = 1000/60;
+		int fadeFrames = fadeColorFrames[frameRate - 1];
+		byte calcPal[768];
+
+		if (_frames[frameId]->_palette.normal) {
+			// For fade palette transitions, the whole fade happens with
+			// the previous frame's layout.
+			for (int i = 0; i < fadeFrames; i++) {
+				lerpPalette(
+					calcPal,
+					_paletteSnapshotBuffer, 256,
+					destPal->palette, destPal->length,
+					i + 1,
+					fadeFrames
+				);
+				g_director->setPalette(calcPal, 256);
+				g_director->draw();
+				// On click, stop loop and reset palette
+				if (_vm->processEvents(true)) {
+					g_director->setPalette(resolvePaletteId(currentPalette));
+					return true;
+				}
+				g_system->delayMillis(frameDelay);
+			}
+
+		} else {
+			// For fade to black and fade to white palette transitions,
+			// the first half happens with the previous frame's layout.
+
+			byte *fadePal = nullptr;
+			if (_frames[frameId]->_palette.fadeToBlack) {
+				// Fade everything except color index 0 to black
+				fadePal = blackPalette;
+			} else if (_frames[frameId]->_palette.fadeToWhite) {
+				// Fade everything except color index 255 to white
+				fadePal = whitePalette;
+			} else {
+				// Shouldn't reach here
+				return false;
+			}
+
+			for (int i = 0; i < fadeFrames; i++) {
+				lerpPalette(
+					calcPal,
+					_paletteSnapshotBuffer, 256,
+					fadePal, 256,
+					i + 1,
+					fadeFrames
+				);
+				g_director->setPalette(calcPal, 256);
+				g_director->draw();
+				// On click, stop loop and reset palette
+				if (_vm->processEvents(true)) {
+					g_director->setPalette(resolvePaletteId(currentPalette));
+					return true;
+				}
+				g_system->delayMillis(frameDelay);
+			}
+		}
+	}
+	return false;
+}
+
+void Score::renderPaletteCycle(uint16 frameId, RenderMode mode) {
+	if (_puppetPalette)
+		return;
+
+	// If the palette is defined in the frame and doesn't match
+	// the current one, set it
+	int currentPalette = _frames[frameId]->_palette.paletteId;
+	if (!currentPalette || !resolvePaletteId(currentPalette))
+		return;
+
+	bool paletteChanged = currentPalette != _lastPalette && currentPalette;
+	if (paletteChanged) {
+		_lastPalette = currentPalette;
+		_paletteTransitionIndex = 0;
+	}
+
+	// For palette cycling, the only thing that is checked is if
+	// the palette ID is the same. Different cycling configs with
+	// the same palette ID will persist any mutated state.
+	// e.g. if you use overTime to cycle the palette partially
+	// through a cycle, then switch to doing a full color cycle
+	// on the same palette, it will not reset and the weird
+	// offset will remain.
+
+	// Cycle speed in FPS
+	int speed = _frames[frameId]->_palette.speed;
+	if (speed == 0)
+		return;
+	// 30 (the maximum) is actually unbounded
+	int delay = speed == 30 ? 10 : 1000 / speed;
+	// Palette indexes are in reverse order thanks to transformColor
+	if (_frames[frameId]->_palette.colorCycling) {
+		// Cycle the colors of a chosen palette
+		int firstColor = _frames[frameId]->_palette.firstColor;
+		int lastColor = _frames[frameId]->_palette.lastColor;
+
+		// If we've just chosen this palette, set it immediately
+		if (paletteChanged)
+			g_director->setPalette(resolvePaletteId(currentPalette));
+
+		if (_frames[frameId]->_palette.overTime) {
+			// Do a single color step in one frame transition
+			g_director->shiftPalette(firstColor, lastColor, false);
+			g_director->draw();
+		} else {
+			// Do a full color cycle in one frame transition
+			int steps = firstColor - lastColor + 1;
+			for (int i = 0; i < _frames[frameId]->_palette.cycleCount; i++) {
+				for (int j = 0; j < steps; j++) {
+					g_director->shiftPalette(firstColor, lastColor, false);
+					g_director->draw();
+					// On click, stop loop and reset palette
+					if (_vm->processEvents(true)) {
+						g_director->setPalette(resolvePaletteId(currentPalette));
+						return;
+					}
+					g_system->delayMillis(delay);
+				}
+				if (_frames[frameId]->_palette.autoReverse) {
+					for (int j = 0; j < steps; j++) {
+						g_director->shiftPalette(firstColor, lastColor, true);
+						g_director->draw();
+						// On click, stop loop and reset palette
+						if (_vm->processEvents(true)) {
+							g_director->setPalette(resolvePaletteId(currentPalette));
+							return;
+						}
+						g_system->delayMillis(delay);
+					}
+				}
+			}
+		}
+	} else {
+		// Transition from the current palette to a new palette
+		PaletteV4 *destPal = g_director->getPalette(resolvePaletteId(currentPalette));
+		int frameCount = _frames[frameId]->_palette.frameCount;
+		byte calcPal[768];
+
+		if (_frames[frameId]->_palette.overTime) {
+			// Transition over a series of frames
+			if (_paletteTransitionIndex == 0) {
+				// Copy the current palette into the snapshot buffer
+				memset(_paletteSnapshotBuffer, 0, 768);
+				memcpy(_paletteSnapshotBuffer, g_director->getPalette(), g_director->getPaletteColorCount() * 3);
+			}
+
+			if (_frames[frameId]->_palette.normal) {
+				// Fade the palette directly to the new palette
+				lerpPalette(
+					calcPal,
+					_paletteSnapshotBuffer, 256,
+					destPal->palette, destPal->length,
+					_paletteTransitionIndex + 1,
+					frameCount
+				);
+			} else {
+				// Fade the palette to an intermediary color (black or white),
+				// then to the new palette
+				int halfway = frameCount / 2;
+
+				byte *fadePal = nullptr;
+				if (_frames[frameId]->_palette.fadeToBlack) {
+					// Fade everything except color index 0 to black
+					fadePal = blackPalette;
+				} else if (_frames[frameId]->_palette.fadeToWhite) {
+					// Fade everything except color index 255 to white
+					fadePal = whitePalette;
+				} else {
+					// Shouldn't reach here
+					return;
+				}
+
+				if (_paletteTransitionIndex < halfway) {
+					lerpPalette(
+						calcPal,
+						_paletteSnapshotBuffer, 256,
+						fadePal, 256,
+						_paletteTransitionIndex + 1,
+						halfway
+					);
+				} else {
+					lerpPalette(
+						calcPal,
+						fadePal, 256,
+						destPal->palette, destPal->length,
+						_paletteTransitionIndex - halfway + 1,
+						frameCount - halfway
+					);
+				}
+			}
+			g_director->setPalette(calcPal, 256);
+			_paletteTransitionIndex++;
+			_paletteTransitionIndex %= frameCount;
+		} else {
+			// Do a full cycle in one frame transition
+
+			// For normal mode, we've already faded the palette in renderPrePaletteCycle
+			if (!_frames[frameId]->_palette.normal) {
+				byte *fadePal = nullptr;
+				if (_frames[frameId]->_palette.fadeToBlack) {
+					// Fade everything except color index 0 to black
+					fadePal = blackPalette;
+				} else if (_frames[frameId]->_palette.fadeToWhite) {
+					// Fade everything except color index 255 to white
+					fadePal = whitePalette;
+				} else {
+					// Shouldn't reach here
+					return;
+				}
+				int frameRate = CLIP<int>(_frames[frameId]->_palette.speed, 1, 30);
+				int frameDelay = 1000/60;
+				int fadeFrames = fadeColorFrames[frameRate - 1];
+
+				// Wait for a fixed time
+				g_director->setPalette(fadePal, 256);
+				g_director->draw();
+				for (int i = 0; i < fadeColorWait; i++) {
+					// On click, stop loop and reset palette
+					if (_vm->processEvents(true)) {
+						g_director->setPalette(resolvePaletteId(currentPalette));
+						return;
+					}
+					g_system->delayMillis(frameDelay);
+				}
+
+				for (int i = 0; i < fadeFrames; i++) {
+					lerpPalette(
+						calcPal,
+						fadePal, 256,
+						destPal->palette, destPal->length,
+						i + 1,
+						fadeFrames
+					);
+					g_director->setPalette(calcPal, 256);
+					g_director->draw();
+					// On click, stop loop and reset palette
+					if (_vm->processEvents(true)) {
+						g_director->setPalette(resolvePaletteId(currentPalette));
+						return;
+					}
+					g_system->delayMillis(frameDelay);
+				}
+
+			}
+		}
 	}
 }
 
@@ -667,6 +942,7 @@ void Score::screenShot() {
 	}
 
 	newSurface->free();
+	delete newSurface;
 }
 
 uint16 Score::getSpriteIDFromPos(Common::Point pos) {
@@ -747,7 +1023,7 @@ Channel *Score::getChannelById(uint16 id) {
 	return _channels[id];
 }
 
-void Score::playSoundChannel(uint16 frameId) {
+void Score::playSoundChannel(uint16 frameId, bool puppetOnly) {
 	Frame *frame = _frames[frameId];
 
 	debugC(5, kDebugLoading, "playSoundChannel(): Sound1 %s Sound2 %s", frame->_sound1.asString().c_str(), frame->_sound2.asString().c_str());
@@ -755,18 +1031,22 @@ void Score::playSoundChannel(uint16 frameId) {
 
 	if (sound->isChannelPuppet(1)) {
 		sound->playPuppetSound(1);
-	} else if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
-		sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
-	} else {
-		sound->playCastMember(frame->_sound1, 1);
+	} else if (!puppetOnly) {
+		if (frame->_soundType1 >= kMinSampledMenu && frame->_soundType1 <= kMaxSampledMenu) {
+			sound->playExternalSound(frame->_soundType1, frame->_sound1.member, 1);
+		} else {
+			sound->playCastMember(frame->_sound1, 1);
+		}
 	}
 
 	if (sound->isChannelPuppet(2)) {
 		sound->playPuppetSound(2);
-	} else if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
-		sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
-	} else {
-		sound->playCastMember(frame->_sound2, 2);
+	} else if (!puppetOnly) {
+		if (frame->_soundType2 >= kMinSampledMenu && frame->_soundType2 <= kMaxSampledMenu) {
+			sound->playExternalSound(frame->_soundType2, frame->_sound2.member, 2);
+		} else {
+			sound->playCastMember(frame->_sound2, 2);
+		}
 	}
 
 	// Channels above 2 are only usable by Lingo.

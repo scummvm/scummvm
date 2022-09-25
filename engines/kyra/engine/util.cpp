@@ -276,13 +276,17 @@ void Util::mergeUpdateJohabChars(uint16 &destJohabChar0, uint16 &destJohabChar1,
 Common::String Util::decodeString1(const Common::String &src) {
 	char *tmp = new char[src.size() * 2 + 2];
 	Util::decodeString1(src.c_str(), tmp);
-	return tmp;
+	Common::String reslt(tmp);
+	delete[] tmp;
+	return reslt;
 }
 
 Common::String Util::decodeString2(const Common::String &src) {
 	char *tmp = new char[src.size() * 2 + 2];
 	Util::decodeString2(src.c_str(), tmp);
-	return tmp;
+	Common::String reslt(tmp);
+	delete[] tmp;
+	return reslt;
 }
 
 Common::String Util::findMacResourceFile(const char *baseName) {

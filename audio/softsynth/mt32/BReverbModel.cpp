@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -116,7 +116,7 @@ static const BReverbSettings &getCM32L_LAPCSettings(const ReverbMode mode) {
 	static const BReverbSettings REVERB_MODE_0_SETTINGS = {MODE_0_NUMBER_OF_ALLPASSES, MODE_0_ALLPASSES, MODE_0_NUMBER_OF_COMBS, MODE_0_COMBS, MODE_0_OUTL, MODE_0_OUTR, MODE_0_COMB_FACTOR, MODE_0_COMB_FEEDBACK, MODE_0_DRY_AMP, MODE_0_WET_AMP, MODE_0_LPF_AMP};
 	static const BReverbSettings REVERB_MODE_1_SETTINGS = {MODE_1_NUMBER_OF_ALLPASSES, MODE_1_ALLPASSES, MODE_1_NUMBER_OF_COMBS, MODE_1_COMBS, MODE_1_OUTL, MODE_1_OUTR, MODE_1_COMB_FACTOR, MODE_1_COMB_FEEDBACK, MODE_1_DRY_AMP, MODE_1_WET_AMP, MODE_1_LPF_AMP};
 	static const BReverbSettings REVERB_MODE_2_SETTINGS = {MODE_2_NUMBER_OF_ALLPASSES, MODE_2_ALLPASSES, MODE_2_NUMBER_OF_COMBS, MODE_2_COMBS, MODE_2_OUTL, MODE_2_OUTR, MODE_2_COMB_FACTOR, MODE_2_COMB_FEEDBACK, MODE_2_DRY_AMP, MODE_2_WET_AMP, MODE_2_LPF_AMP};
-	static const BReverbSettings REVERB_MODE_3_SETTINGS = {MODE_3_NUMBER_OF_ALLPASSES, nullptr, MODE_3_NUMBER_OF_COMBS, MODE_3_DELAY, MODE_3_OUTL, MODE_3_OUTR, MODE_3_COMB_FACTOR, MODE_3_COMB_FEEDBACK, MODE_3_DRY_AMP, MODE_3_WET_AMP, 0};
+	static const BReverbSettings REVERB_MODE_3_SETTINGS = {MODE_3_NUMBER_OF_ALLPASSES, NULL, MODE_3_NUMBER_OF_COMBS, MODE_3_DELAY, MODE_3_OUTL, MODE_3_OUTR, MODE_3_COMB_FACTOR, MODE_3_COMB_FEEDBACK, MODE_3_DRY_AMP, MODE_3_WET_AMP, 0};
 
 	static const BReverbSettings * const REVERB_SETTINGS[] = {&REVERB_MODE_0_SETTINGS, &REVERB_MODE_1_SETTINGS, &REVERB_MODE_2_SETTINGS, &REVERB_MODE_3_SETTINGS};
 
@@ -185,7 +185,7 @@ static const BReverbSettings &getMT32Settings(const ReverbMode mode) {
 	static const BReverbSettings REVERB_MODE_0_SETTINGS = {MODE_0_NUMBER_OF_ALLPASSES, MODE_0_ALLPASSES, MODE_0_NUMBER_OF_COMBS, MODE_0_COMBS, MODE_0_OUTL, MODE_0_OUTR, MODE_0_COMB_FACTOR, MODE_0_COMB_FEEDBACK, MODE_0_DRY_AMP, MODE_0_WET_AMP, MODE_0_LPF_AMP};
 	static const BReverbSettings REVERB_MODE_1_SETTINGS = {MODE_1_NUMBER_OF_ALLPASSES, MODE_1_ALLPASSES, MODE_1_NUMBER_OF_COMBS, MODE_1_COMBS, MODE_1_OUTL, MODE_1_OUTR, MODE_1_COMB_FACTOR, MODE_1_COMB_FEEDBACK, MODE_1_DRY_AMP, MODE_1_WET_AMP, MODE_1_LPF_AMP};
 	static const BReverbSettings REVERB_MODE_2_SETTINGS = {MODE_2_NUMBER_OF_ALLPASSES, MODE_2_ALLPASSES, MODE_2_NUMBER_OF_COMBS, MODE_2_COMBS, MODE_2_OUTL, MODE_2_OUTR, MODE_2_COMB_FACTOR, MODE_2_COMB_FEEDBACK, MODE_2_DRY_AMP, MODE_2_WET_AMP, MODE_2_LPF_AMP};
-	static const BReverbSettings REVERB_MODE_3_SETTINGS = {MODE_3_NUMBER_OF_ALLPASSES, nullptr, MODE_3_NUMBER_OF_COMBS, MODE_3_DELAY, MODE_3_OUTL, MODE_3_OUTR, MODE_3_COMB_FACTOR, MODE_3_COMB_FEEDBACK, MODE_3_DRY_AMP, MODE_3_WET_AMP, 0};
+	static const BReverbSettings REVERB_MODE_3_SETTINGS = {MODE_3_NUMBER_OF_ALLPASSES, NULL, MODE_3_NUMBER_OF_COMBS, MODE_3_DELAY, MODE_3_OUTL, MODE_3_OUTR, MODE_3_COMB_FACTOR, MODE_3_COMB_FEEDBACK, MODE_3_DRY_AMP, MODE_3_WET_AMP, 0};
 
 	static const BReverbSettings * const REVERB_SETTINGS[] = {&REVERB_MODE_0_SETTINGS, &REVERB_MODE_1_SETTINGS, &REVERB_MODE_2_SETTINGS, &REVERB_MODE_3_SETTINGS};
 
@@ -289,7 +289,7 @@ public:
 
 	virtual ~RingBuffer() {
 		delete[] buffer;
-		buffer = nullptr;
+		buffer = NULL;
 	}
 
 	Sample next() {
@@ -300,7 +300,7 @@ public:
 	}
 
 	bool isEmpty() const {
-		if (buffer == nullptr) return true;
+		if (buffer == NULL) return true;
 
 		Sample *buf = buffer;
 		for (Bit32u i = 0; i < size; i++) {
@@ -446,7 +446,7 @@ public:
 	Bit8u wetLevel;
 
 	BReverbModelImpl(const ReverbMode mode, const bool mt32CompatibleModel) :
-		allpasses(nullptr), combs(nullptr),
+		allpasses(NULL), combs(NULL),
 		currentSettings(mt32CompatibleModel ? getMT32Settings(mode) : getCM32L_LAPCSettings(mode)),
 		tapDelayMode(mode == REVERB_MODE_TAP_DELAY)
 	{}
@@ -455,11 +455,11 @@ public:
 		close();
 	}
 
-	bool isOpen() const override {
-		return combs != nullptr;
+	bool isOpen() const {
+		return combs != NULL;
 	}
 
-	void open() override {
+	void open() {
 		if (isOpen()) return;
 		if (currentSettings.numberOfAllpasses > 0) {
 			allpasses = new AllpassFilter<Sample>*[currentSettings.numberOfAllpasses];
@@ -479,43 +479,43 @@ public:
 		mute();
 	}
 
-	void close() override {
-		if (allpasses != nullptr) {
+	void close() {
+		if (allpasses != NULL) {
 			for (Bit32u i = 0; i < currentSettings.numberOfAllpasses; i++) {
-				if (allpasses[i] != nullptr) {
+				if (allpasses[i] != NULL) {
 					delete allpasses[i];
-					allpasses[i] = nullptr;
+					allpasses[i] = NULL;
 				}
 			}
 			delete[] allpasses;
-			allpasses = nullptr;
+			allpasses = NULL;
 		}
-		if (combs != nullptr) {
+		if (combs != NULL) {
 			for (Bit32u i = 0; i < currentSettings.numberOfCombs; i++) {
-				if (combs[i] != nullptr) {
+				if (combs[i] != NULL) {
 					delete combs[i];
-					combs[i] = nullptr;
+					combs[i] = NULL;
 				}
 			}
 			delete[] combs;
-			combs = nullptr;
+			combs = NULL;
 		}
 	}
 
-	void mute() override {
-		if (allpasses != nullptr) {
+	void mute() {
+		if (allpasses != NULL) {
 			for (Bit32u i = 0; i < currentSettings.numberOfAllpasses; i++) {
 				allpasses[i]->mute();
 			}
 		}
-		if (combs != nullptr) {
+		if (combs != NULL) {
 			for (Bit32u i = 0; i < currentSettings.numberOfCombs; i++) {
 				combs[i]->mute();
 			}
 		}
 	}
 
-	void setParameters(Bit8u time, Bit8u level) override {
+	void setParameters(Bit8u time, Bit8u level) {
 		if (!isOpen()) return;
 		level &= 7;
 		time &= 7;
@@ -542,7 +542,7 @@ public:
 		}
 	}
 
-	bool isActive() const override {
+	bool isActive() const {
 		if (!isOpen()) return false;
 		for (Bit32u i = 0; i < currentSettings.numberOfAllpasses; i++) {
 			if (!allpasses[i]->isEmpty()) return true;
@@ -553,7 +553,7 @@ public:
 		return false;
 	}
 
-	bool isMT32Compatible(const ReverbMode mode) const override {
+	bool isMT32Compatible(const ReverbMode mode) const {
 		return &currentSettings == &getMT32Settings(mode);
 	}
 
@@ -580,10 +580,10 @@ public:
 			if (tapDelayMode) {
 				TapDelayCombFilter<Sample> *comb = static_cast<TapDelayCombFilter<Sample> *>(*combs);
 				comb->process(dry);
-				if (outLeft != nullptr) {
+				if (outLeft != NULL) {
 					*(outLeft++) = weirdMul(comb->getLeftOutput(), wetLevel, 0xFF);
 				}
-				if (outRight != nullptr) {
+				if (outRight != NULL) {
 					*(outRight++) = weirdMul(comb->getRightOutput(), wetLevel, 0xFF);
 				}
 			} else {
@@ -605,13 +605,13 @@ public:
 				combs[2]->process(link);
 				combs[3]->process(link);
 
-				if (outLeft != nullptr) {
+				if (outLeft != NULL) {
 					Sample outL2 = combs[2]->getOutputAt(currentSettings.outLPositions[1]);
 					Sample outL3 = combs[3]->getOutputAt(currentSettings.outLPositions[2]);
 					Sample outSample = mixCombs(outL1, outL2, outL3);
 					*(outLeft++) = weirdMul(outSample, wetLevel, 0xFF);
 				}
-				if (outRight != nullptr) {
+				if (outRight != NULL) {
 					Sample outR1 = combs[1]->getOutputAt(currentSettings.outRPositions[0]);
 					Sample outR2 = combs[2]->getOutputAt(currentSettings.outRPositions[1]);
 					Sample outR3 = combs[3]->getOutputAt(currentSettings.outRPositions[2]);
@@ -622,8 +622,8 @@ public:
 		} // while ((numSamples--) > 0)
 	} // produceOutput
 
-	bool process(const IntSample *inLeft, const IntSample *inRight, IntSample *outLeft, IntSample *outRight, Bit32u numSamples) override;
-	bool process(const FloatSample *inLeft, const FloatSample *inRight, FloatSample *outLeft, FloatSample *outRight, Bit32u numSamples) override;
+	bool process(const IntSample *inLeft, const IntSample *inRight, IntSample *outLeft, IntSample *outRight, Bit32u numSamples);
+	bool process(const FloatSample *inLeft, const FloatSample *inRight, FloatSample *outLeft, FloatSample *outRight, Bit32u numSamples);
 };
 
 BReverbModel *BReverbModel::createBReverbModel(const ReverbMode mode, const bool mt32CompatibleModel, const RendererType rendererType) {
@@ -636,7 +636,7 @@ BReverbModel *BReverbModel::createBReverbModel(const ReverbMode mode, const bool
 	default:
 		break;
 	}
-	return nullptr;
+	return NULL;
 }
 
 template <>

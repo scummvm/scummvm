@@ -43,11 +43,11 @@
 class MidiDriver_Sndio : public MidiDriver_MPU401 {
 public:
 	MidiDriver_Sndio();
-	int open();
-	bool isOpen() const { return hdl != NULL; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return hdl != NULL; }
+	void close() override;
 	void send(uint32 b) override;
-	void sysEx(const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	struct mio_hdl *hdl;

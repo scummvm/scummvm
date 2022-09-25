@@ -95,7 +95,7 @@ public:
 
 	void loadCastMemberData();
 	void loadStxtData(int key, TextCastMember *member);
-	void loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator p);
+	void loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p);
 	void loadFilmLoopData(FilmLoopCastMember *member);
 	void loadBitmapData(int key, BitmapCastMember *bitmapCast);
 	void loadSoundData(int key, SoundCastMember *soundCast);
@@ -121,6 +121,8 @@ public:
 
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
+
+	Common::String formatCastSummary(int castId);
 
 private:
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);

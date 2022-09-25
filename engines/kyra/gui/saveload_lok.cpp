@@ -48,13 +48,10 @@ Common::Error KyraEngine_LoK::loadGameState(int slot) {
 
 	// unloading the current voice file should fix some problems with voices
 	if (_currentRoom != 0xFFFF && _flags.isTalkie) {
-		char file[32];
 		assert(_currentRoom < _roomTableSize);
 		int tableId = _roomTable[_currentRoom].nameIndex;
 		assert(tableId < _roomFilenameTableSize);
-		strcpy(file, _roomFilenameTable[tableId]);
-		strcat(file, ".VRM");
-		_res->unloadPakFile(file);
+		_res->unloadPakFile(Common::String(_roomFilenameTable[tableId]) + ".VRM");
 	}
 
 	for (int i = 0; i < 11; i++) {

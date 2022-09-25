@@ -175,6 +175,7 @@ void EventDispatcher::ignoreSources(bool ignore) {
 void EventDispatcher::registerObserver(EventObserver *obs, uint priority, bool autoFree, bool notifyPoll) {
 	ObserverEntry newEntry;
 
+	newEntry.ignore = false;
 	newEntry.observer = obs;
 	newEntry.priority = priority;
 	newEntry.autoFree = autoFree;

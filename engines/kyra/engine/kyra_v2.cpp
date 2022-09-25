@@ -114,6 +114,12 @@ KyraEngine_v2::KyraEngine_v2(OSystem *system, const GameFlags &flags, const Engi
 		warning("unsupported language, switching back to English");
 		_lang = 0;
 	}
+
+	_animResetFrame = _animShapeWidth =	_animShapeHeight = _animShapeXAdd = _animShapeYAdd = _itemInHand = _savedMouseState = _mainCharX = _mainCharY = _charScale = _unk4 = _unk5 = 0;
+	_unkSceneScreenFlag1 = _unkHandleSceneChangeFlag = false;
+	_chatEndTime = 0;
+
+	memset(&_chatScriptData, 0, sizeof(_chatScriptData));
 }
 
 KyraEngine_v2::~KyraEngine_v2() {

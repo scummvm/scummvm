@@ -92,7 +92,8 @@ enum MidiDriverFlags {
 	MDT_MIDI        = 1 << 10,		// Real MIDI
 	MDT_PREFER_MT32 = 1 << 11,		// MT-32 output is preferred
 	MDT_PREFER_GM   = 1 << 12,		// GM output is preferred
-	MDT_PREFER_FLUID= 1 << 13		// FluidSynth driver is preferred
+	MDT_PREFER_FLUID= 1 << 13,		// FluidSynth driver is preferred
+	MDT_MACINTOSH	= 1 << 14
 };
 
 /**

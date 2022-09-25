@@ -945,9 +945,7 @@ void LC::cb_v4theentityassign() {
 }
 
 void LC::cb_zeropush() {
-	Datum d;
-	d.u.i = 0;
-	d.type = INT;
+	Datum d(0);
 	g_lingo->push(d);
 }
 
@@ -1573,27 +1571,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
-				Common::String res = Common::String::format("function %s, %d args", archive->names[nameIndex].c_str(), argCount);
-				if (argCount != 0)
-					res += ": ";
-				for (int argIndex = 0;  argIndex < argCount; argIndex++) {
-					res += (*argNames)[argIndex].c_str();
-					if (argIndex < (argCount - 1))
-						res += ", ";
-				}
-				res += "\n";
-				out.writeString(res.c_str());
-			} else {
-				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
-			}
-			uint pc = 0;
-			while (pc < _currentAssembly->size()) {
-				uint spc = pc;
-				Common::String instr = g_lingo->decodeInstruction(_currentAssembly, pc, &pc);
-				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
-			}
-			out.writeString(Common::String::format("<end code>\n\n"));
+			out.writeString(g_lingo->formatFunctionBody(sym));
 		}
 
 		_assemblyContext->_functionNames.push_back(*sym.name);

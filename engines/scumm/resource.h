@@ -180,6 +180,7 @@ public:
 	~ResourceManager();
 
 	void setHeapThreshold(int min, int max);
+	uint32 getHeapSize() { return _allocatedSize; }
 
 	void allocResTypeData(ResType type, uint32 tag, int num, ResTypeMode mode);
 	void freeResources();

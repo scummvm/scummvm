@@ -63,6 +63,14 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_winterScrollTableSize = _winterScroll1TableSize = _winterScroll2TableSize = 0;
 	_drinkAnimationTable = _brandonToWispTable = _magicAnimationTable = _brandonStoneTable = nullptr;
 	_drinkAnimationTableSize = _brandonToWispTableSize = _magicAnimationTableSize = _brandonStoneTableSize = 0;
+	_seq_Reunion = _amuleteAnim = nullptr;
+	_storyStrings = _homeString = _newGameString = _veryClever = _guiStrings = _configStrings = nullptr;
+	_storyStringsSize = _veryClever_Size = _homeString_Size = _newGameString_Size = _guiStringsSize = _configStringsSize = _roomTableSize = 0;
+
+	_currentCharacter = nullptr;
+	_buttonList = nullptr;
+	_gui = nullptr;
+
 	_specialPalettes = nullptr;
 	_sprites = nullptr;
 	_animator = nullptr;
@@ -82,6 +90,9 @@ KyraEngine_LoK::KyraEngine_LoK(OSystem *system, const GameFlags &flags)
 	_currentHeadFrameTableIndex = 0;
 	_speechPlayTime = 0;
 	_seqPlayerFlag = false;
+
+	memset(&_scriptClickData, 0, sizeof(_scriptClickData));
+	memset(&_kyragemFadingState, 0, sizeof(_kyragemFadingState));
 
 	memset(&_characterFacingZeroCount, 0, sizeof(_characterFacingZeroCount));
 	memset(&_characterFacingFourCount, 0, sizeof(_characterFacingFourCount));

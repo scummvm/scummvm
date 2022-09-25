@@ -641,10 +641,10 @@ void ScummEngine::writeVar(uint var, int value) {
 			// look at the target specific settings, assuming that any global
 			// value is likely to be bogus. See also bug #4008.
 			if (ConfMan.hasKey("talkspeed", _targetName)) {
-				value = getTalkSpeed();
+				value = 9 - getTalkSpeed();
 			} else {
 				// Save the new talkspeed value to ConfMan
-				setTalkSpeed(value);
+				setTalkSpeed(9 - value);
 			}
 		}
 
@@ -1549,7 +1549,10 @@ int ScummEngine::resStrLen(const byte *src) {
 	}
 	while ((chr = *src++) != 0) {
 		num++;
-		if (_game.heversion <= 71 && chr == 0xFF) {
+		if (_game.version == 8 && chr == 0xFF) {
+			src += 5;
+			num += 5;
+		} else if (_game.heversion <= 71 && chr == 0xFF) {
 			chr = *src++;
 			num++;
 
@@ -1560,13 +1563,8 @@ int ScummEngine::resStrLen(const byte *src) {
 			}
 
 			if (chr != 1 && chr != 2 && chr != 3 && chr != 8) {
-				if (_game.version == 8) {
-					src += 4;
-					num += 4;
-				} else {
-					src += 2;
-					num += 2;
-				}
+				src += 2;
+				num += 2;
 			}
 		}
 	}

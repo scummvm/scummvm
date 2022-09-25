@@ -436,11 +436,11 @@ void ScummEngine_v7::enqueueText(const byte *text, int x, int y, byte color, byt
 	bt.flags = flags;
 }
 
-void ScummEngine_v7::drawTextImmediately(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags) {
+void ScummEngine_v7::drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags) {
 	// This function allows for a string to be immediately
 	// drawn on the screen without having to enqueueing it.
 	byte msg[256];
-	Common::Rect rect = _defaultTextClipRect;
+	Common::Rect rect = clipRect ? *clipRect : _defaultTextClipRect;
 	int effX = x;
 	TextStyleFlags effFlags = flags;
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
@@ -448,12 +448,6 @@ void ScummEngine_v7::drawTextImmediately(const byte *text, int x, int y, byte co
 	convertMessageToString(text, msg, sizeof(msg));
 
 	_charset->setCurID(charset);
-
-	// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
-	if (_language == Common::HE_ISR && !(flags & (kStyleAlignCenter | kStyleAlignRight))) {
-		effFlags = (TextStyleFlags)(flags | kStyleAlignRight);
-		effX = _screenWidth - 1 - effX;
-	}
 
 	_textV7->drawString((const char *)msg, (byte *)vs->getPixels(0, _screenTop), rect, effX, y, vs->pitch, color, effFlags);
 
@@ -469,12 +463,6 @@ void ScummEngine_v7::drawBlastTexts() {
 		BlastText &bt = _blastTextQueue[i];
 
 		_charset->setCurID(_blastTextQueue[i].charset);
-
-		// If a Hebrew String comes up that is still marked as kStyleAlignLeft we fix it here...
-		if (_language == Common::HE_ISR && !(bt.flags & (kStyleAlignCenter | kStyleAlignRight))) {
-			bt.flags = (TextStyleFlags)(bt.flags | kStyleAlignRight);
-			bt.xpos = _screenWidth - 1 - bt.xpos;
-		}
 
 		if (bt.flags & kStyleWordWrap) {
 			bt.rect = _wrappedTextClipRect;

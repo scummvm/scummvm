@@ -259,11 +259,7 @@ int Screen_v2::getLayer(int x, int y) {
 	pixel &= 0x7F;
 	pixel >>= 3;
 
-	if (pixel < 1)
-		pixel = 1;
-	else if (pixel > 15)
-		pixel = 15;
-	return pixel;
+	return CLIP<uint8>(pixel, 1, 15);
 }
 
 int Screen_v2::getRectSize(int w, int h) {

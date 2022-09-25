@@ -106,6 +106,8 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 		return;
 
 	cancelFade(soundChannel);
+	if (_channels[soundChannel - 1].loopPtr)
+		_channels[soundChannel - 1].loopPtr = nullptr;
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
@@ -317,7 +319,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 	uint id = 0xFF;
 	Archive *archive = nullptr;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
 		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
 			if ((idList[j] & 0xFF) == type) {
@@ -523,7 +525,7 @@ void DirectorSound::playFPlaySound() {
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
 		id = it->_value->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
 			archive = it->_value;
@@ -784,7 +786,7 @@ bool SNDDecoder::hasLoopBounds() {
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
-	_macresman = nullptr;
+	_macresman = new Common::MacResManager();
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
@@ -795,7 +797,6 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	_macresman = new Common::MacResManager();
 	_macresman->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator));
 	Common::SeekableReadStream *file = _macresman->getDataFork();
 

@@ -26,8 +26,8 @@
 
 namespace Kyra {
 
-WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm)
-	: Movie(vm), _frameData(nullptr), _frameOffsTable(nullptr), _offscreenBuffer(nullptr), _deltaBuffer(nullptr) {
+WSAMovie_v1::WSAMovie_v1(KyraEngine_v1 *vm) : Movie(vm), _frameData(nullptr), _frameOffsTable(nullptr),
+	_offscreenBuffer(nullptr), _deltaBuffer(nullptr), _currentFrame(0), _numFrames(0), _width(0), _height(0), _flags(0), _deltaBufferSize(0) {
 }
 
 WSAMovie_v1::~WSAMovie_v1() {

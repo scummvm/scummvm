@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -27,14 +27,14 @@ namespace MT32Emu {
 AbstractFile::AbstractFile() : sha1DigestCalculated(false) {
 	sha1Digest[0] = 0;
 
-	reserved = nullptr;
+	reserved = NULL;
 }
 
 AbstractFile::AbstractFile(const SHA1Digest &useSHA1Digest) : sha1DigestCalculated(true) {
 	memcpy(sha1Digest, useSHA1Digest, sizeof(SHA1Digest) - 1);
 	sha1Digest[sizeof(SHA1Digest) - 1] = 0; // Ensure terminator char.
 
-	reserved = nullptr;
+	reserved = NULL;
 }
 
 const File::SHA1Digest &AbstractFile::getSHA1() {
@@ -49,7 +49,7 @@ const File::SHA1Digest &AbstractFile::getSHA1() {
 	}
 
 	const Bit8u *data = getData();
-	if (data == nullptr) {
+	if (data == NULL) {
 		return sha1Digest;
 	}
 

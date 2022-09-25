@@ -137,7 +137,7 @@ void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
 }
 
 void KyraEngine_MR::updateItemCommand(Item item, int str, uint8 c0) {
-	char buffer[100];
+	Common::String buffer;
 	char *src = (char *)getTableEntry(_itemFile, item);
 
 	if (_flags.lang != Common::HE_ISR) {
@@ -148,20 +148,18 @@ void KyraEngine_MR::updateItemCommand(Item item, int str, uint8 c0) {
 			*src = toupper(*src);
 		}
 
-		strcpy(buffer, src);
+		buffer = src;
 
 		if (_lang != 3)
-			strcat(buffer, " ");
+			buffer += " ";
 
-		strcat(buffer, (const char *)getTableEntry(_cCodeFile, str));
+		buffer += (const char *)getTableEntry(_cCodeFile, str);
 	} else {
-		strcpy(buffer, (const char *)getTableEntry(_cCodeFile, str));
-		strcat(buffer, " ");
-		strcat(buffer, src);
-		strcat(buffer, ".");
+		buffer = (const char *)getTableEntry(_cCodeFile, str);
+		buffer = buffer + " " + src + ".";
 	}
 
-	showMessage(buffer, c0, 0xF0);
+	showMessage(buffer.c_str(), c0, 0xF0);
 }
 
 void KyraEngine_MR::updateCommandLine() {
@@ -620,7 +618,7 @@ int KyraEngine_MR::buttonMoodChange(Button *button) {
 }
 
 int KyraEngine_MR::buttonShowScore(Button *button) {
-	strcpy(_stringBuffer, (const char *)getTableEntry(_cCodeFile, 18));
+	Common::strlcpy(_stringBuffer, (const char *)getTableEntry(_cCodeFile, 18), 500);
 
 	char *buffer = _stringBuffer;
 

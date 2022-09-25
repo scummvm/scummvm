@@ -46,8 +46,8 @@ protected:
 		int brightness;
 	};
 
-	int _savegameThumbnailPalette[256];
-	byte _savegameThumbnail[160 * 120]; // One fourth of the nominal 640x480 resolution
+	int _savegameThumbnailV8Palette[256];
+	byte _savegameThumbnailV8[160 * 120]; // One fourth of the nominal 640x480 resolution
 	StampShot _stampShots[20];
 	int _stampShotsInQueue = 0;
 
@@ -84,8 +84,7 @@ protected:
 	int getObjectIdFromOBIM(const byte *obim) override;
 
 	void processKeyboard(Common::KeyState lastKeyHit) override;
-	void updateCursor() override;
-	void setCursorTransparency(int a) override;
+	void setDefaultCursor() override;
 	void desaturatePalette(int hueScale, int satScale, int lightScale, int startColor, int endColor);
 
 	void stampShotEnqueue(int slot, int boxX, int boxY, int boxWidth, int boxHeight, int brightness);
@@ -94,6 +93,8 @@ protected:
 	void createInternalSaveStateThumbnail();
 	bool fetchInternalSaveStateThumbnail(int slotId, bool isHeapSave);
 	uint32 *fetchScummVMSaveStateThumbnail(int slotId, bool isHeapSave, int brightness);
+
+	const char *getGUIString(int stringId) override;
 
 	/* Version 8 script opcodes */
 	void o8_mod();

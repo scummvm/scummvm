@@ -301,7 +301,7 @@ public:
 		}
 
 		/**
-		 * Query if if a progress value is equal to the specified value.
+		 * Query if a progress value is equal to the specified value.
 		 *
 		 * Note: This is necessary because we store different types in the progress structure
 		 *       and need to test a value based on an index in Action::getCursor()

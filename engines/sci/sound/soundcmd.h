@@ -32,20 +32,11 @@ class Console;
 class SciMusic;
 class SoundCommandParser;
 class MusicEntry;
-//typedef void (SoundCommandParser::*SoundCommand)(reg_t obj, int16 value);
-
-//struct MusicEntryCommand {
-//	MusicEntryCommand(const char *d, SoundCommand c) : sndCmd(c), desc(d) {}
-//	SoundCommand sndCmd;
-//	const char *desc;
-//};
 
 class SoundCommandParser {
 public:
 	SoundCommandParser(ResourceManager *resMan, SegManager *segMan, Kernel *kernel, AudioPlayer *audio, SciVersion soundVersion);
 	~SoundCommandParser();
-
-	//reg_t parseCommand(EngineState *s, int argc, reg_t *argv);
 
 	// Functions used for game state loading
 	void clearPlayList();
@@ -91,7 +82,6 @@ public:
 
 	reg_t kDoSoundInit(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundPlay(EngineState *s, int argc, reg_t *argv);
-	reg_t kDoSoundRestore(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundMute(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundPause(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundResumeAfterRestore(EngineState *s, int argc, reg_t *argv);
@@ -106,7 +96,6 @@ public:
 	reg_t kDoSoundSendMidi(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundGlobalReverb(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundSetHold(EngineState *s, int argc, reg_t *argv);
-	reg_t kDoSoundDummy(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundGetAudioCapability(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundSetVolume(EngineState *s, int argc, reg_t *argv);
 	reg_t kDoSoundSetPriority(EngineState *s, int argc, reg_t *argv);
@@ -114,8 +103,6 @@ public:
 	reg_t kDoSoundSuspend(EngineState *s, int argc, reg_t *argv);
 
 private:
-	//typedef Common::Array<MusicEntryCommand *> SoundCommandContainer;
-	//SoundCommandContainer _soundCommands;
 	ResourceManager *_resMan;
 	SegManager *_segMan;
 	Kernel *_kernel;

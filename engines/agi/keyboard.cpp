@@ -155,6 +155,56 @@ void AgiEngine::processScummVMEvents() {
 				}
 			}
 
+			if (_game._vm->getLanguage() == Common::FR_FRA) {
+				// Convert to CP858
+				if (key >= 0x80 && key <= 0xff) {
+					switch (key) {
+					case 0xe9:
+						key = 0x82;
+						break;
+					case 0xe8:
+						key = 0x8a;
+						break;
+					case 0xe7:
+						key = 0x87;
+						break;
+					case 0xe0:
+						key = 0x85;
+						break;
+					case 0xf9:
+						key = 0x97;
+						break;
+					case 0xf4:
+						key = 0x93;
+						break;
+					case 0xee:
+						key = 0x8c;
+						break;
+					case 0xef:
+						key = 0x8b;
+						break;
+					case 0xea:
+						key = 0x88;
+						break;
+					case 0xeb:
+						key = 0x89;
+						break;
+					case 0xe2:
+						key = 0x83;
+						break;
+					case 0xe4:
+						key = 0x84;
+						break;
+					case 0xfb:
+						key = 0x96;
+						break;
+					case 0xfc:
+						key = 0x81;
+						break;
+					}
+				}
+			}
+
 			if ((key) && (key <= 0xFF)) {
 				// No special key, directly accept it
 				// Is ISO-8859-1, we need lower 128 characters only, which is plain ASCII, so no mapping required

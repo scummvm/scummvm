@@ -76,6 +76,8 @@ Window::~Window() {
 		delete _macBinary;
 		_macBinary = nullptr;
 	}
+	if (_puppetTransition)
+		delete _puppetTransition;
 }
 
 void Window::invertChannel(Channel *channel, const Common::Rect &destRect) {
@@ -203,7 +205,6 @@ Datum Window::getStageRect() {
 
 void Window::reset() {
 	resize(_composeSurface->w, _composeSurface->h, true);
-	_composeSurface->clear(_stageColor);
 	_contentIsDirty = true;
 }
 
@@ -338,10 +339,16 @@ bool Window::step() {
 				sharedCast->releaseCastMemberWidget();
 				_currentMovie->_sharedCast = sharedCast;
 			} else {
+				// clear reference in openResFile before deleting shared cast
+				if (sharedCast)
+					g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
 				delete sharedCast;
 				_currentMovie->loadSharedCastsFrom(sharedCastPath);
 			}
 		} else {
+			// clear reference in openResFile before deleting shared cast
+			if (sharedCast)
+				g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
 			delete sharedCast;
 		}
 

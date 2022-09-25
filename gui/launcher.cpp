@@ -114,8 +114,10 @@ const GroupingMode groupingModes[] = {
 
 #pragma mark -
 
-bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, Common::U32String token) {
+bool LauncherFilterMatcher(void *boss, int idx, const Common::U32String &item, const Common::U32String &token_) {
 	bool invert = false;
+	Common::U32String token(token_);
+
 	while (token.size() && token[0] == '!') {
 		token = token.substr(1);
 		invert = !invert;

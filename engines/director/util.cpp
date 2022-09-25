@@ -27,6 +27,7 @@
 #include "common/tokenizer.h"
 #include "common/zlib.h"
 
+#include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
@@ -427,9 +428,9 @@ bool testPath(Common::String &path, bool directory) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matcing name
 			if (i->getName().equalsIgnoreCase(token)) {
-				// If this is a directory, it's not a valid candidate
+				// If this the final path component, check if we're allowed to match with a directory
 				node = Common::FSNode(*i);
-				if (node.isDirectory()) {
+				if (directory_list.empty() && !directory && node.isDirectory()) {
 					continue;
 				}
 
@@ -1025,7 +1026,7 @@ Common::String utf8ToPrintable(const Common::String &str) {
 
 Common::String castTypeToString(const CastType &type) {
 	Common::String res;
-	switch(type) {
+	switch (type) {
 	case kCastBitmap:
 		res = "bitmap";
 		break;

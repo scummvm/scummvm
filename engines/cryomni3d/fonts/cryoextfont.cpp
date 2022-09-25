@@ -250,7 +250,7 @@ uint32 CryoExtFont::mapGlyph(uint32 chr) const {
 	}
 }
 
-CryoExtFont::Glyph::Glyph() : offX(0), offY(0), advance(0), bitmap(nullptr) {
+CryoExtFont::Glyph::Glyph() : h(0), w(0), offX(0), offY(0), advance(0), bitmap(nullptr) {
 }
 
 CryoExtFont::Glyph::~Glyph() {

@@ -904,6 +904,10 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 	// It isn't the current video, open it
 	if (fileref != _videoRef) {
 
+		if (_fastForwarding && !ConfMan.getBool("speedrun_mode")) {
+			resetFastForward();
+		}
+
 		// Debug bitflags
 		debugCN(1, kDebugScript, "Groovie::Script: Play video 0x%04X (bitflags:", fileref);
 		for (int i = 15; i >= 0; i--) {
@@ -946,6 +950,18 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			if (_version == kGroovieCDY && _scriptFile == "26a_graf.grv")
 				_bitflags |= 1;
 			_vm->_videoPlayer->load(_videoFile, _bitflags);
+
+			// Find correct filename
+			ResInfo info;
+			_vm->_resMan->getResInfo(fileref, info);
+
+			// Remove the extension and add ".txt"
+			info.filename.deleteLastChar();
+			info.filename.deleteLastChar();
+			info.filename.deleteLastChar();
+			info.filename += "txt";
+
+			_vm->_videoPlayer->loadSubtitles(info.filename.c_str());
 		} else {
 			error("Groovie::Script: Couldn't open file");
 			return true;
@@ -973,8 +989,14 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			// End the playback
 			return true;
 		}
-		_vm->_videoPlayer->fastForward();
-		_fastForwarding = true;
+		if (_fastForwarding && !ConfMan.getBool("speedrun_mode")) {
+			resetFastForward();
+			if (!_fastForwarding)
+				_vm->_videoPlayer->setOverrideSpeed(false);
+		} else {
+			_vm->_videoPlayer->fastForward();
+			_fastForwarding = true;
+		}
 	} else if (_fastForwarding) {
 		_vm->_videoPlayer->fastForward();
 	}

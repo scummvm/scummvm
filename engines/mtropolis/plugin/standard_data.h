@@ -33,13 +33,11 @@ namespace Standard {
 struct CursorModifier : public PlugInModifierData {
 	CursorModifier();
 
-	uint16 unknown1;
-	Event applyWhen;
-	uint16 unknown2;
-	Event removeWhen;
-	uint16 unknown3;
-	uint32 cursorID;
-	uint8 unknown4[4];
+	bool haveRemoveWhen;
+
+	PlugInTypeTaggedValue applyWhen;
+	PlugInTypeTaggedValue removeWhen;
+	PlugInTypeTaggedValue cursorIDAsLabel;
 
 protected:
 	DataReadErrorCode load(PlugIn &plugIn, const PlugInModifier &prefix, DataReader &reader) override;

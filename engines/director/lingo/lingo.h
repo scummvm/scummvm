@@ -280,7 +280,9 @@ struct LingoArchive {
 	SymbolHash functionHandlers;
 
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	ScriptContext *findScriptContext(uint16 id);
 	Common::String getName(uint16 id);
+	Common::String formatFunctionList(const char *prefix);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void removeCode(ScriptType type, uint16 id);
@@ -301,9 +303,16 @@ public:
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
+	Common::String formatStack();
 	void printStack(const char *s, uint pc);
+	Common::String formatCallStack(uint pc);
 	void printCallStack(uint pc);
+	Common::String formatFrame();
+	Common::String formatCurrentInstruction();
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeScript(ScriptData *sd);
+	Common::String formatFunctionName(Symbol &sym);
+	Common::String formatFunctionBody(Symbol &sym);
 
 	void reloadBuiltIns();
 	void initBuiltIns();
@@ -354,6 +363,7 @@ public:
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
+	Common::String formatAllVars();
 	void printAllVars();
 
 	inst readInst() { return getInst(_pc++); }

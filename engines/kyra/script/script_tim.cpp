@@ -99,6 +99,11 @@ TIMInterpreter::TIMInterpreter(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSys
 	_palDelayInc = _palDiff = _palDelayAcc = 0;
 	_abortFlag = 0;
 	_tim = nullptr;
+
+	_currentFunc = 0;
+	_finished = false;
+	_avtlChunkSize = 0;
+	_filename = nullptr;
 }
 
 TIMInterpreter::~TIMInterpreter() {
@@ -989,7 +994,7 @@ void TIMInterpreter_LoL::checkSpeechProgress() {
 	}
 }
 
-char *TIMInterpreter_LoL::getTableString(int id) {
+const char *TIMInterpreter_LoL::getTableString(int id) {
 	return _vm->getLangString(id);
 }
 

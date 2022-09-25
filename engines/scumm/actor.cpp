@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
+#include "common/scummsys.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/actor_he.h"
@@ -628,7 +629,7 @@ int Actor_v3::actorWalkStep() {
 		// The next two lines fix bug #12278 for ZAK FM-TOWNS (SCUMM3). They are alse required for SCUMM 1/2 to prevent movement while
 		// turning, but only if the character has to make a turn. The correct behavior for v1/2 can be tested by letting Zak (only v1/2
 		// versions) walk in the starting room from the torn wallpaper to the desk drawer: Zak should first turn around clockwise by
-		// 180�, then walk one step to the left, then turn clockwise 90�. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
+		// 180°, then walk one step to the left, then turn clockwise 90°. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
 		// (and a bit weird), but I have confirmed the correctness with the FM-Towns emulator, too.
 		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && (_moving & MF_TURN)))
 			return 1;
@@ -2891,6 +2892,20 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	bool stringWrap = false;
 	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
 
+	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
+	// the church clock, he'll read out the current time. However, this was
+	// disabled in some releases, possibly because of the poor results for
+	// some languages (e.g. German, French). The check was done inside the
+	// original interpreters, so we replicate their behavior.
+	if (_game.id == GID_CMI && _language != Common::EN_ANY && _language != Common::IT_ITA && _language != Common::RU_RUS) {
+		if (strncmp((const char *)msg, "/CKGT326/", 9) == 0)
+			msg = (const byte *)"/VDSO325/Whoa! Look at the time. Gotta scoot.";
+
+		// Reject every line which begins with the CKGT tag ("ClocK Guybrush Threepwood")
+		if (strncmp((const char *)msg, "/CKGT", 5) == 0)
+			return;
+	}
+
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// Play associated speech, if any
@@ -3069,7 +3084,7 @@ void ScummEngine::stopTalk() {
 				// Delay unsetting _heTalking to next sound frame. fixes bug #3533.
 				_actorShouldStopTalking = true;
 			} else {
-				((ActorHE *)a)->_heTalking = true;
+				((ActorHE *)a)->_heTalking = false;
 			}
 		}
 	}
@@ -3388,13 +3403,13 @@ void ActorHE::setHEFlag(int bit, int set) {
 	}
 }
 
-void ActorHE::setUserCondition(int slot, int set) {
+void ActorHE::setCondition(int slot, int set) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setUserCondition: Condition");
+	assertRange(1, slot, 32, "setCondition: Condition");
 	if (set == 0) {
-		_heCondMask &= ~(1 << (slot + 0xF));
+		_heCondMask &= ~(1 << (slot - 1));
 	} else {
-		_heCondMask |= 1 << (slot + 0xF);
+		_heCondMask |= 1 << (slot - 1);
 	}
 	if (_heCondMask & condMaskCode) {
 		_heCondMask &= ~1;
@@ -3403,28 +3418,33 @@ void ActorHE::setUserCondition(int slot, int set) {
 	}
 }
 
+bool ActorHE::isConditionSet(int slot) const {
+	assertRange(1, slot, 32, "isConditionSet: Condition");
+	return (_heCondMask & (1 << (slot - 1))) != 0;
+}
+
+void ActorHE::setUserCondition(int slot, int set) {
+	assertRange(1, slot, 16, "setUserCondition: Condition");
+	setCondition(slot + 16, set);
+}
+
 bool ActorHE::isUserConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isUserConditionSet: Condition");
-	return (_heCondMask & (1 << (slot + 0xF))) != 0;
+	assertRange(1, slot, 16, "isUserConditionSet: Condition");
+	return isConditionSet(slot + 16);
 }
 
 void ActorHE::setTalkCondition(int slot) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setTalkCondition: Condition");
+	assertRange(1, slot, 16, "setTalkCondition: Condition");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
-		_heCondMask |= 1 << (slot - 1);
-		if (_heCondMask & condMaskCode) {
-			_heCondMask &= ~1;
-		} else {
-			_heCondMask |= 1;
-		}
+		setCondition(slot, 1);
 	}
 }
 
 bool ActorHE::isTalkConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isTalkConditionSet: Condition");
-	return (_heCondMask & (1 << (slot - 1))) != 0;
+	assertRange(1, slot, 16, "isTalkConditionSet: Condition");
+	return isConditionSet(slot);
 }
 
 #ifdef ENABLE_HE

@@ -49,6 +49,7 @@
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
 #include "director/lingo/xlibs/miscx.h"
+#include "director/lingo/xlibs/moovxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
 #include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
@@ -143,6 +144,7 @@ static struct XLibProto {
 	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
 	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					300 },	// D3
 	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
+	{ MoovXObj::fileNames, 				MoovXObj::open, 			MoovXObj::close,			kXObj,					300 },  // D3
 	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
 	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
 	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
@@ -292,12 +294,7 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 	sym.ctx = this;
 
 	if (debugChannelSet(1, kDebugCompile)) {
-		uint pc = 0;
-		while (pc < sym.u.defn->size()) {
-			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
-			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-		}
+		debugC(1, kDebugCompile, "%s", g_lingo->formatFunctionBody(sym).c_str());
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
@@ -384,6 +381,15 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 	}
 	return false;
 }
+
+Common::String ScriptContext::formatFunctionList(const char *prefix) {
+	Common::String result;
+	for (auto it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
+		result += Common::String::format("%s%s\n", prefix, g_lingo->formatFunctionName(it->_value).c_str());
+	}
+	return result;
+}
+
 
 // Object array
 
@@ -806,8 +812,7 @@ Datum DigitalVideoCastMember::getField(int field) {
 	case kTheDuration:
 		// sometimes, we will get duration before we start video.
 		// _duration is initialized in startVideo, thus we will not get the correct number.
-		d.type = INT;
-		d.u.i = getDuration();
+		d = (int)getDuration();
 		break;
 	case kTheFrameRate:
 		d = _frameRate;
@@ -898,8 +903,7 @@ Datum BitmapCastMember::getField(int field) {
 
 	switch (field) {
 	case kTheDepth:
-		d.type = INT;
-		d.u.i = _bitsPerPixel;
+		d = _bitsPerPixel;
 		break;
 	case kTheRegPoint:
 		d.type = POINT;
@@ -998,13 +1002,13 @@ Datum TextCastMember::getField(int field) {
 		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(_fontId));
 		break;
 	case kTheTextHeight:
-		d.u.i = getTextHeight();
+		d = getTextHeight();
 		break;
 	case kTheTextSize:
-		d.u.i = getTextSize();
+		d = getTextSize();
 		break;
 	case kTheTextStyle:
-		d.u.i = _textSlant;
+		d = (int)_textSlant;
 		break;
 	default:
 		d = CastMember::getField(field);

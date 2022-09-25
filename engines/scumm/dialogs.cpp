@@ -79,11 +79,12 @@ static const ResString string_map_table_v8[] = {
 	{0, "/BT_105/Text Display Only"},
 	{0, "/BT_103/Voice Only"},
 	{0, "/SYST300/y"},
-	{0, "/BOOT.005/Are you sure you want to quit?  (Y-N)"}, // Demo strings
+	{0, "/BOOT.005/Are you sure you want to quit?  (Y-N)Y"}, // Demo strings
 	{0, "/NEW.23/Text Speed  Slow  ==========  Fast"},
 	{0, "/NEW.24/Music Volume  Low  =========  High"},
 	{0, "/NEW.25/Voice Volume  Low  =========  High"},
-	{0, "/NEW.26/Sfx Volume  Low  =========  High"}
+	{0, "/NEW.26/Sfx Volume  Low  =========  High"},
+	{0, "Heap %dK"} // Non-translatable string
 };
 
 static const ResString string_map_table_v7[] = {
@@ -106,9 +107,8 @@ static const ResString string_map_table_v7[] = {
 	{79, "/BOOT.017/Saving '%s'"},
 	{80, "/BOOT.018/Loading '%s'"},
 	{76, "/BOOT.019/Name your SAVE game"},
-	{77, "/BOOT.020/Select a game to LOAD"}
-
-	/* This is the complete string map for v7
+	{77, "/BOOT.020/Select a game to LOAD"},
+	// Original GUI strings
 	{68, "/BOOT.007/c:\\dig"},
 	{69, "/BOOT.021/The Dig"},
 	{70, "/BOOT.008/Save"},
@@ -135,13 +135,18 @@ static const ResString string_map_table_v7[] = {
 	{93, "/BOOT.025/disabled"},
 	{94, "/BOOT.026/Text speed"},
 	{95, "/BOOT.027/Display Text"},
-	{96, "The Dig v1.0"},
-	{138, "/BOOT.028/Spooled Music"),
-	{139, "/BOOT.029/Do you want to replace this saved game?  (Y/N)"},
-	{141, "Voice Only"},
-	{142, "Voice and Text"},
-	{143, "Text Display Only"}, */
-
+	{96, "game name and version"},
+	{137, "/BOOT.028/Spooled Music"},
+	{138, "/BOOT.029/Do you want to replace this saved game?  (Y/N)"},
+	{141, "/NEW.020/Voice Only"},
+	{142, "/NEW.021/Voice and Text"},
+	{143, "/NEW.022/Text Display Only"},
+	{145, "/NEW.023/Text Speed   Slow  ==========  Fast"},
+	{147, "/NEW.024/Music Volume    Low  =========  High"},
+	{149, "/NEW.025/Voice Volume    Low  =========  High"},
+	{151, "/NEW.026/SFX Volume    Low  =========  High"},
+	{144, "Heap %dK"},
+	{0, "iMuse buffer count changed to %d"} // Not in the original
 };
 
 static const ResString string_map_table_v6[] = {
@@ -165,7 +170,21 @@ static const ResString string_map_table_v6[] = {
 	{107, "Loading '%s'"},
 	{108, "Name your SAVE game"},
 	{109, "Select a game to LOAD"},
-	{117, "How may I serve you?"}
+	{117, "How may I serve you?"},
+	{80, "Text Speed"},
+	{81, "Display Text"},
+	{113, "Music"},
+	{114, "Voice"},
+	{115, "Sfx"},
+	{116, "disabled"},
+	{0, "Voice Only"},
+	{0, "Voice and Text"},
+	{0, "Text Display Only"},
+	{0, "Text Speed   Slow  ==========  Fast"},
+	{0, "Music Volume    Low  =========  High"},
+	{0, "Voice Volume    Low  =========  High"},
+	{0, "SFX Volume    Low  =========  High"},
+	{0, "Heap %dK"}
 };
 
 #pragma mark -
@@ -366,7 +385,7 @@ InfoDialog::InfoDialog(ScummEngine *scumm, int res)
 	_message = queryResString(res);
 
 	// Trim the hardcoded strings for the GUI Dialog. The extra spaces which some strings have might
-	// be needed for proper alignment within the original display, but not here... 
+	// be needed for proper alignment within the original display, but not here...
 	if (scumm->_game.version < 3)
 		_message.trim();
 
@@ -411,19 +430,36 @@ void InfoDialog::reflowLayout() {
 }
 
 const char *InfoDialog::getPlainEngineString(int stringno) {
+	const char *result;
+
 	if (stringno == 0)
 		return nullptr;
 
-	if (_vm->_game.version == 8)
-		return (const char *)string_map_table_v8[stringno - 1].string;
-	else if (_vm->_game.version == 7)
-		return (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
-	else if (_vm->_game.version == 6)
-		return (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
-	else if (_vm->_game.version >= 3)
-		return (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
-	else
-		return (const char *)(getStaticResString(_vm->_language, stringno - 1).string);
+	if (_vm->_game.version == 8) {
+		return string_map_table_v8[stringno - 1].string;
+	} else if (_vm->_game.version == 7) {
+		result = (const char *)_vm->getStringAddressVar(string_map_table_v7[stringno - 1].num);
+
+		if (!result) {
+			result = string_map_table_v7[stringno - 1].string;
+		}
+	} else if (_vm->_game.version == 6) {
+		result = (const char *)_vm->getStringAddressVar(string_map_table_v6[stringno - 1].num);
+
+		if (!result) {
+			result = string_map_table_v6[stringno - 1].string;
+		}
+	} else if (_vm->_game.version >= 3) {
+		result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
+
+		if (!result) {
+			result = getStaticResString(_vm->_language, stringno - 1).string;
+		}
+	} else {
+		result = getStaticResString(_vm->_language, stringno - 1).string;
+	}
+
+	return result;
 }
 
 void decodeV2String(Common::Language lang, Common::String &str) {
@@ -583,9 +619,11 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{6, """\x8e""r du s""\x84""ker p""\x86"" att du vill avsluta? (J/N)J"}
 		}
 	};
-	
+
 	// Added in SCUMM4. Only the numbers are used, so there
-	// is no need to provide language specific strings.
+	// is no need to provide language specific strings; there are
+	// some exceptions for which there's only an hardcoded English
+	// string.
 	static const ResString strMap2[] = {
 		{7, ("Save")},
 		{8, ("Load")},
@@ -601,12 +639,20 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{18, ("Loading '%s'")},
 		{19, ("Name your SAVE game")},
 		{20, ("Select a game to LOAD")},
-		{28, ("Game title)")}
+		{28, ("Game title)")},
+
+		// Hardcoded in English for each localized version
+		{0, "Voice Only"},
+		{0, "Voice and Text"},
+		{0, "Text Display Only"},
+		{0, "Text Speed   Slow  ==========  Fast"},
+		{0, "Roland Volume    Low  =========  High"},
+		{0, "Heap %dK"}
 	};
 
-	if (stringno >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1);
-		assert(stringno < ARRAYSIZE(strMap2));
+	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
+		stringno -= ARRAYSIZE(strMap1) - 1;
+		assert(stringno + 1 < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}
 

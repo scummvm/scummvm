@@ -59,7 +59,7 @@ int KyraEngine_HoF::o2_defineObject(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_defineObject(%p) (%d, '%s', %d, %d, %d, %d)", (const void *)script,
 			stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
 	TalkObject *object = &_talkObjectList[stackPos(0)];
-	strcpy(object->filename, stackPosString(1));
+	Common::strlcpy(object->filename, stackPosString(1), sizeof(object->filename));
 	object->scriptId = stackPos(2);
 	object->x = stackPos(3);
 	object->y = stackPos(4);
@@ -672,7 +672,7 @@ int KyraEngine_HoF::o2_getSceneExitToFacing(EMCState *script) {
 int KyraEngine_HoF::o2_setLayerFlag(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_HoF::o2_setLayerFlag(%p) (%d)", (const void *)script, stackPos(0));
 	int layer = stackPos(0);
-	if (layer >= 1 && layer <= 16)
+	if (layer >= 1 && layer <= 15)
 		_layerFlagTable[layer] = 1;
 	return 0;
 }
@@ -872,7 +872,7 @@ int KyraEngine_HoF::o2_defineSceneAnim(EMCState *script) {
 	anim.height = stackPos(7);
 	anim.specialSize = stackPos(9);
 	anim.shapeIndex = stackPos(11);
-	strcpy(anim.filename, stackPosString(12));
+	Common::strlcpy(anim.filename, stackPosString(12), sizeof(anim.filename));
 
 	if (anim.flags & 0x40) {
 		if (!_sceneAnimMovie[animId]->open(anim.filename, 1, nullptr))
@@ -1197,7 +1197,7 @@ int KyraEngine_HoF::o2_setupSceneAnimation(EMCState *script) {
 	anim.specialSize = stackPos(9);
 	anim.shapeIndex = stackPos(11);
 	if (stackPosString(12))
-		strcpy(anim.filename, stackPosString(12));
+		Common::strlcpy(anim.filename, stackPosString(12), sizeof(anim.filename));
 
 	if (flags & 0x40) {
 		_sceneAnimMovie[index]->open(stackPosString(12), 0, nullptr);

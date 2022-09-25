@@ -36,10 +36,15 @@ namespace Kyra {
 SoundTowns_Darkmoon::SoundTowns_Darkmoon(KyraEngine_v1 *vm, Audio::Mixer *mixer) : Sound(vm, mixer) {
 	_intf = new TownsAudioInterface(mixer, this);
 	_pcmData = 0;
+	_pcmDataSize = 0;
 	_pcmVol = 0;
 	_timer = 0;
 	_timerSwitch = 0;
+	_fileList = nullptr;
+	_fileListLen = 0;
+	_lastEnvChan = _lastSfxChan = 0;
 	memset(_resource, 0, sizeof(_resource));
+	memset(_soundTable, 0, sizeof(_soundTable));
 }
 
 SoundTowns_Darkmoon::~SoundTowns_Darkmoon() {

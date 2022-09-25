@@ -43,7 +43,7 @@ class Material;
 class XModel;
 class ShadowVolume;
 class VideoTheoraPlayer;
-class XFileLexer;
+struct XMeshObject;
 
 struct SkinWeights {
 	Common::String _boneName;
@@ -57,7 +57,7 @@ public:
 	XMesh(BaseGame *inGame);
 	virtual ~XMesh();
 
-	virtual bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences);
+	virtual bool loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences);
 	bool findBones(FrameNode *rootFrame);
 	virtual bool update(FrameNode *parentFrame);
 	virtual bool render(XModel *model) = 0;
@@ -84,13 +84,13 @@ protected:
 	// anything which does not fit into 16 bits would we fine
 	static const uint32 kNullIndex = 0xFFFFFFFF;
 
-	bool parsePositionCoords(XFileLexer &lexer);
-	bool parseFaces(XFileLexer &lexer, int faceCount, Common::Array<int> &indexCountPerFace);
-	bool parseTextureCoords(XFileLexer &lexer);
-	bool parseNormalCoords(XFileLexer &lexer);
-	bool parseMaterials(XFileLexer &lexer, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
-	bool parseSkinWeights(XFileLexer &lexer);
-	bool parseVertexDeclaration(XFileLexer &lexer);
+	bool parsePositionCoords(XMeshObject *mesh);
+	bool parseFaces(XMeshObject *mesh, int faceCount, Common::Array<int> &indexCountPerFace);
+	bool parseTextureCoords(XFileData *xobj);
+	bool parseNormalCoords(XFileData *xobj);
+	bool parseMaterials(XFileData *xobj, int faceCount, const Common::String &filename, Common::Array<MaterialReference> &materialReferences, const Common::Array<int> &indexCountPerFace);
+	bool parseSkinWeights(XFileData *xobj);
+	bool parseVertexDeclaration(XFileData *xobj);
 
 	void updateBoundingBox();
 

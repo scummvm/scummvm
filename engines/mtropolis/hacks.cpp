@@ -37,6 +37,7 @@ namespace MTropolis {
 
 Hacks::Hacks() {
 	ignoreMismatchedProjectNameInObjectLookups = false;
+	removeQuickTimeEdits = false;
 	midiVolumeScale = 256;
 	minTransitionDuration = 0;
 }
@@ -395,7 +396,15 @@ void ObsidianSaveScreenshotHooks::onSceneTransitionSetup(Runtime *runtime, const
 }
 
 void addObsidianQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
+	// Add screenshot hook to store savegame screenshot prior to going to the menu
 	hacks.addSceneTransitionHooks(Common::SharedPtr<SceneTransitionHooks>(new ObsidianSaveScreenshotHooks()));
+
+	// Strip edit lists from QuickTime movies to work around audio popping problem.
+	// For some reason, some vidbots (like the cube maze entry bot) have edit lists
+	// in the audio track full of half-second edits, but the edit offsets are spaced
+	// 22080 samples apart instead of 22050, which causes it to skip 30 audio samples
+	// every half-second.
+	hacks.removeQuickTimeEdits = true;
 }
 
 void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks) {

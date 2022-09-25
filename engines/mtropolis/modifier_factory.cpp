@@ -73,6 +73,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<BehaviorModifier, Data::BehaviorModifier>::getInstance();
 	case Data::DataObjectTypes::kMiniscriptModifier:
 		return ModifierFactory<MiniscriptModifier, Data::MiniscriptModifier>::getInstance();
+	case Data::DataObjectTypes::kColorTableModifier:
+		return ModifierFactory<ColorTableModifier, Data::ColorTableModifier>::getInstance();
 	case Data::DataObjectTypes::kSaveAndRestoreModifier:
 		return ModifierFactory<SaveAndRestoreModifier, Data::SaveAndRestoreModifier>::getInstance();
 	case Data::DataObjectTypes::kAliasModifier:
@@ -81,8 +83,9 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<ChangeSceneModifier, Data::ChangeSceneModifier>::getInstance();
 	case Data::DataObjectTypes::kSoundEffectModifier:
 		return ModifierFactory<SoundEffectModifier, Data::SoundEffectModifier>::getInstance();
+	case Data::DataObjectTypes::kPathMotionModifierV1:
 	case Data::DataObjectTypes::kPathMotionModifierV2:
-		return ModifierFactory<PathMotionModifierV2, Data::PathMotionModifierV2>::getInstance();
+		return ModifierFactory<PathMotionModifier, Data::PathMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kDragMotionModifier:
 		return ModifierFactory<DragMotionModifier, Data::DragMotionModifier>::getInstance();
 	case Data::DataObjectTypes::kVectorMotionModifier:
@@ -91,6 +94,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<SceneTransitionModifier, Data::SceneTransitionModifier>::getInstance();
 	case Data::DataObjectTypes::kElementTransitionModifier:
 		return ModifierFactory<ElementTransitionModifier, Data::ElementTransitionModifier>::getInstance();
+	case Data::DataObjectTypes::kSharedSceneModifier:
+		return ModifierFactory<SharedSceneModifier, Data::SharedSceneModifier>::getInstance();
 	case Data::DataObjectTypes::kIfMessengerModifier:
 		return ModifierFactory<IfMessengerModifier, Data::IfMessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kTimerMessengerModifier:
@@ -105,6 +110,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<TextStyleModifier, Data::TextStyleModifier>::getInstance();
 	case Data::DataObjectTypes::kGraphicModifier:
 		return ModifierFactory<GraphicModifier, Data::GraphicModifier>::getInstance();
+	case Data::DataObjectTypes::kImageEffectModifier:
+		return ModifierFactory<ImageEffectModifier, Data::ImageEffectModifier>::getInstance();
 	case Data::DataObjectTypes::kMessengerModifier:
 		return ModifierFactory<MessengerModifier, Data::MessengerModifier>::getInstance();
 	case Data::DataObjectTypes::kSetModifier:

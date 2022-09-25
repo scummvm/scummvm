@@ -127,6 +127,7 @@ bool isModifier(DataObjectType type) {
 	case kFloatingPointVariableModifier:
 	case kStringVariableModifier:
 	case kPlugInModifier:
+	case kSoundFadeModifier:
 	case kDebris:
 		return true;
 	default:
@@ -1170,6 +1171,20 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
+ColorTableModifier::ColorTableModifier() : applyWhen(Event::createDefault()), unknown1(0), unknown2{0, 0, 0, 0}, assetID(0) {
+}
+
+DataReadErrorCode ColorTableModifier::load(DataReader &reader) {
+	if (_revision != 1001)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !applyWhen.load(reader) || !reader.readU32(unknown1)
+		|| !reader.readBytes(unknown2) || !reader.readU32(assetID))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
 SaveAndRestoreModifier::SaveAndRestoreModifier()
 	: unknown1{0, 0, 0, 0}, saveWhen(Event::createDefault()), restoreWhen(Event::createDefault()),
 	  unknown5{0, 0, 0, 0, 0, 0, 0, 0}, lengthOfFilePath(0), lengthOfFileName(0), lengthOfVariableName(0), lengthOfVariableString(0) {
@@ -1287,11 +1302,12 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-bool PathMotionModifierV2::PointDef::load(DataReader &reader) {
-	if (!point.load(reader)
-		|| !reader.readU32(frame)
-		|| !reader.readU32(frameFlags)
-		|| !reader.readU32(messageFlags)
+PathMotionModifier::PointDefMessageSpec::PointDefMessageSpec() : messageFlags(0), send(Event::createDefault()), unknown11(0),
+	  destination(0), unknown13{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+}
+
+bool PathMotionModifier::PointDefMessageSpec::load(DataReader &reader) {
+	if (!reader.readU32(messageFlags)
 		|| !send.load(reader)
 		|| !reader.readU16(unknown11)
 		|| !reader.readU32(destination)
@@ -1306,18 +1322,27 @@ bool PathMotionModifierV2::PointDef::load(DataReader &reader) {
 	return true;
 }
 
+bool PathMotionModifier::PointDef::load(DataReader &reader, bool haveMessageSpec) {
+	if (!point.load(reader) || !reader.readU32(frame) || !reader.readU32(frameFlags))
+		return false;
 
-PathMotionModifierV2::PointDef::PointDef()
-	: point(Point::createDefault()), frame(0), frameFlags(0), messageFlags(0), send(Event::createDefault()), unknown11(0),
-	  destination(0), unknown13{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+	if (haveMessageSpec && messageSpec.load(reader))
+		return false;
+
+	return true;
 }
 
-PathMotionModifierV2::PathMotionModifierV2()
+
+PathMotionModifier::PointDef::PointDef()
+	: point(Point::createDefault()), frame(0), frameFlags(0) {
+}
+
+PathMotionModifier::PathMotionModifier(uint version)
 	: flags(0), executeWhen(Event::createDefault()), terminateWhen(Event::createDefault()), unknown2{0, 0}, numPoints(0), unknown3{0, 0, 0, 0},
-	  frameDurationTimes10Million(0), unknown5{0, 0, 0, 0}, unknown6(0) {
+	  frameDurationTimes10Million(0), unknown5{0, 0, 0, 0}, unknown6(0), havePointDefMessageSpecs(version >= 2) {
 }
 
-DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
+DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
 	if (_revision != 1001)
 		return kDataReadErrorUnsupportedRevision;
 
@@ -1336,7 +1361,7 @@ DataReadErrorCode PathMotionModifierV2::load(DataReader &reader) {
 	points.resize(numPoints);
 
 	for (size_t i = 0; i < numPoints; i++) {
-		if (!points[i].load(reader))
+		if (!points[i].load(reader, havePointDefMessageSpecs))
 			return kDataReadErrorReadFailed;
 	}
 
@@ -1438,6 +1463,22 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 		|| !reader.readU16(transitionType) || !reader.readU16(unknown3) || !reader.readU16(unknown4)
 		|| !reader.readU16(steps) || !reader.readU16(rate))
 		return kDataReadErrorNone;
+
+	return kDataReadErrorNone;
+}
+
+SharedSceneModifier::SharedSceneModifier()
+	: executeWhen(Event::createDefault()), unknown1{0, 0, 0, 0}, sectionGUID(0), subsectionGUID(0), sceneGUID(0) {
+}
+
+DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !executeWhen.load(reader)
+		|| !reader.readBytes(unknown1) || !reader.readU32(sectionGUID)
+		|| !reader.readU32(subsectionGUID) || !reader.readU32(sceneGUID))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -1616,6 +1657,20 @@ DataReadErrorCode GraphicModifier::load(DataReader &reader) {
 		if (!polyPoints[i].load(reader))
 			return kDataReadErrorReadFailed;
 	}
+
+	return kDataReadErrorNone;
+}
+
+ImageEffectModifier::ImageEffectModifier() : flags(0), type(0), bevelWidth(0), toneAmount(0), unknown2{0, 0} {
+}
+
+DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU32(flags) || !reader.readU16(type) || !applyWhen.load(reader) || !removeWhen.load(reader)
+		|| !reader.readU16(bevelWidth) || !reader.readU16(toneAmount) || !reader.readBytes(unknown2))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -2256,6 +2311,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kMiniscriptModifier:
 		dataObject = new MiniscriptModifier();
 		break;
+	case DataObjectTypes::kColorTableModifier:
+		dataObject = new ColorTableModifier();
+		break;
 	case DataObjectTypes::kSaveAndRestoreModifier:
 		dataObject = new SaveAndRestoreModifier();
 		break;
@@ -2277,8 +2335,11 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	case DataObjectTypes::kDragMotionModifier:
 		dataObject = new DragMotionModifier();
 		break;
+	case DataObjectTypes::kPathMotionModifierV1:
+		dataObject = new PathMotionModifier(1);
+		break;
 	case DataObjectTypes::kPathMotionModifierV2:
-		dataObject = new PathMotionModifierV2();
+		dataObject = new PathMotionModifier(2);
 		break;
 	case DataObjectTypes::kVectorMotionModifier:
 		dataObject = new VectorMotionModifier();
@@ -2288,6 +2349,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kElementTransitionModifier:
 		dataObject = new ElementTransitionModifier();
+		break;
+	case DataObjectTypes::kSharedSceneModifier:
+		dataObject = new SharedSceneModifier();
 		break;
 	case DataObjectTypes::kIfMessengerModifier:
 		dataObject = new IfMessengerModifier();
@@ -2339,6 +2403,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kGraphicModifier:
 		dataObject = new GraphicModifier();
+		break;
+	case DataObjectTypes::kImageEffectModifier:
+		dataObject = new ImageEffectModifier();
 		break;
 
 	case DataObjectTypes::kColorTableAsset:

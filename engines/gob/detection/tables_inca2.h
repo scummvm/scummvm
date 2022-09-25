@@ -69,6 +69,22 @@
 	0, 0, 0
 },
 
+// US floppy box version 1.0 dated 18.03.1994
+{
+	{
+		"inca2",
+		"",
+		AD_ENTRY1s("intro.stk", "48cc6e6b0b0b343f876290d2700d8eba", 804780),
+		EN_USA,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO2(GUIO_NOSUBTITLES, GUIO_NOSPEECH)
+	},
+	kGameTypeInca2,
+	kFeaturesAdLib,
+	0, 0, 0
+},
+
 // -- DOS VGA CD --
 
 {

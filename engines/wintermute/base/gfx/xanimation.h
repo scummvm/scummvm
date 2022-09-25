@@ -38,14 +38,16 @@ namespace Wintermute {
 
 class FrameNode;
 class AnimationSet;
-class XFileLexer;
+class XFileData;
+struct XAnimationKeyObject;
+struct XAnimationOptionsObject;
 
 class Animation : public BaseClass {
 public:
 	Animation(BaseGame *inGame);
 	virtual ~Animation();
 
-	bool loadFromX(XFileLexer &lexer, AnimationSet *parentAnimationSet);
+	bool load(XFileData *xobj, AnimationSet *parentAnimSet);
 
 	bool findBone(FrameNode *rootFrame);
 	bool update(int slot, uint32 localTime, float animLerpValue);
@@ -79,10 +81,8 @@ protected:
 	BaseArray<BoneScaleKey *> _scaleKeys;
 
 private:
-	bool loadRotationKeyData(XFileLexer &lexer, int count);
-	bool loadScaleKeyData(XFileLexer &lexer, int count);
-	bool loadPositionKeyData(XFileLexer &lexer, int count);
-	bool loadMatrixKeyData(XFileLexer &lexer, int count);
+	bool loadAnimationKeyData(XAnimationKeyObject *animationKey);
+	bool loadAnimationOptionData(XAnimationOptionsObject *animationSet, AnimationSet *parentAnimSet);
 };
 
 } // namespace Wintermute

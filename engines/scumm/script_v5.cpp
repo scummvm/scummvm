@@ -582,7 +582,7 @@ void ScummEngine_v5::o5_actorOps() {
 			if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine && i == 0 && j == 0) {
 				for (int k = 0; k < 32; k++)
 					a->setPalette(k, 0xFF);
-			} else {	
+			} else {
 				a->setPalette(i, j);
 			}
 			break;
@@ -641,6 +641,27 @@ void ScummEngine_v5::o5_setClass() {
 
 	while ((_opcode = fetchScriptByte()) != 0xFF) {
 		cls = getVarOrDirectWord(PARAM_1);
+
+		// WORKAROUND: In the CD versions of Monkey 1 with the full 256-color
+		// inventory, going at Stan's messes up the color of some objects, such
+		// as the "striking yellow color" of the flower from the forest, the
+		// rubber chicken, or Guybrush's trousers. The following palette fixes
+		// are taken from the Ultimate Talkie Edition.
+		if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformFMTowns &&
+		    _game.platform != Common::kPlatformSegaCD && _roomResource == 59 &&
+		    vm.slot[_currentScript].number == 10002 && obj == 915 && cls == 6 &&
+		    _currentPalette[251 * 3] == 0 && _enableEnhancements &&
+		    strcmp(_game.variant, "SE Talkie") != 0) {
+			// True as long as Guybrush isn't done with the voodoo recipe on the
+			// Sea Monkey. The Ultimate Talkie Edition probably does this as a way
+			// to limit this palette override to Part One; just copy this behavior.
+			if (_scummVars[260] < 8) {
+				setPalColor(245,  68,  68, 68); // gray
+				setPalColor(247, 252, 244,  0); // yellow
+				setPalColor(249, 112, 212,  0); // lime
+			}
+			setPalColor(251, 32, 84, 0); // green
+		}
 
 		// WORKAROUND bug #3099: Due to a script bug, the wrong opcode is
 		// used to test and set the state of various objects (e.g. the inside
@@ -883,13 +904,14 @@ void ScummEngine_v5::o5_cursorCommand() {
 			// games if needed.
 		} else {
 			getWordVararg(table);
+			// WORKAROUND bug #13735 - "Inaccurate verb rendering in Monkey 1 FM-TOWNS"
 			// MI1 FM-Towns has a bug in the original interpreter which removes the shadow color from the verbs.
 			// getWordVararg() will generate a WORD table, but then - right here - it is accessed like a DWORD
 			// table. This is actually fixed in the original interpreters for MI2 and INDY4. It could be argued
-			// if we even want that "fixed", but it does lead to bug tickets (#13735 - "Inaccurate verb rendering
-			// in Monkey 1 FM-TOWNS") and the "fix" restores the original appearance (which - as per usual - is
-			// a matter of personal taste...)
-			int m = (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY) ? 2 : 1;
+			// if we even want that "fixed", but it does lead to bug tickets in Monkey 1 FM-TOWNS") and the
+			// "fix" restores the original appearance (which - as per usual - is a matter of personal taste...).
+			// So let people make their own choice with the Enhancement setting.
+			int m = (_game.platform == Common::kPlatformFMTowns && _game.id == GID_MONKEY && !_enableEnhancements) ? 2 : 1;
 			for (i = 0; i < 16; i++)
 				_charsetColorMap[i] = _charsetData[_string[1]._default.charset][i] = (unsigned char)table[i * m];
 		}
@@ -1062,6 +1084,21 @@ void ScummEngine_v5::o5_drawObject() {
 				putState(_objs[i].obj_nr, 0);
 		} while (--i);
 		return;
+	}
+
+	// WORKAROUND: In some of the earliest 16-color releases of Loom, the
+	// staircase at the right of room 32 will glitch if Bobbin uses it to exit
+	// the room, if he entered it via the other stairs in the ground. This has
+	// been officially fixed in some '1.2' releases (e.g. French DOS/EGA) and
+	// all later versions; this smaller workaround appears to be enough.
+	if (_game.id == GID_LOOM && _game.version == 3 && !(_game.features & GF_OLD256) && _roomResource == 32 &&
+		vm.slot[_currentScript].number == 10002 && obj == 540 && state == 1 && xpos == 255 && ypos == 255 &&
+		_enableEnhancements) {
+		if (getState(541) == 1) {
+			putState(obj, state);
+			obj = 541;
+			state = 0;
+		}
 	}
 
 	idx = getObjectIndex(obj);
@@ -2715,51 +2752,24 @@ void ScummEngine_v5::o5_startScript() {
 		data[1] = 10;
 	}
 
-	// WORKAROUND bug #1025: in Loom, using the stealth draft on the
-	// shepherds would crash the game because of a missing actor number for
-	// their first reaction line ("We are the masters of stealth"...).
-	// The original interpreter would just skip the line.
-	if (_game.id == GID_LOOM && _game.version == 3 && _roomResource == 23 && script == 232 && data[0] == 0) {
-		byte shepherdActor;
-		bool buggyShepherdsEGArelease = false;
+	// WORKAROUND: in Loom v3, if one uses the stealth draft on the
+	// shepherds, their first reaction line ("We are the masters of
+	// stealth") is missing a Local[0] value for the actor number. This
+	// causes the line to be silently skipped (as in the original).
+	if (_game.id == GID_LOOM && _game.version == 3 && _roomResource == 23 && script == 232 && data[0] == 0 &&
+		vm.slot[_currentScript].number >= 422 && vm.slot[_currentScript].number <= 425 && _enableEnhancements) {
+		// Restore the missing line by attaching it to the shepherd on which the
+		// draft was used.
+		data[0] = vm.slot[_currentScript].number % 10;
 
-		switch (vm.slot[_currentScript].number) {
-		case 422:
-		case 423:
-		case 424:
-		case 425:
-			// It is assumed that the original intent was that any shepherd could
-			// say this line.
-			shepherdActor = vm.slot[_currentScript].number % 10;
-			break;
-		default:
-			// Match the behavior of the Talkie version, if necessary
-			shepherdActor = 4;
-			break;
-		}
-
-		// WORKAROUND: in some EGA releases, actor 3 may have been removed from the
-		// current room, although he's still on screen (the EGA English 1.1 release
-		// fixed this). In ScummVM, this invalid use means that you'd see no reaction
-		// at all from any shepherd when using the stealth draft on him.  In the
-		// original interpreter, the leftmost shepherd still says his own line, though.
-		// Forcing his appearance or ignoring his removal doesn't fix this bug either.
-		//
-		// Having no reaction at all is confusing for the player, so if we detect this
-		// behavior, we force the workaround, for now.
-		if (isValidActor(3) && !_actors[3]->isInCurrentRoom()) {
-			buggyShepherdsEGArelease = true;
-			if (shepherdActor == 3)
-				shepherdActor = 4;
-		}
-
-		if (isValidActor(shepherdActor) && _actors[shepherdActor]->isInCurrentRoom() && (_enableEnhancements || buggyShepherdsEGArelease)) {
-			// Restore the missing line by attaching it to its actor
-			data[0] = shepherdActor;
-		} else {
-			// Otherwise, behave as the original, and just skip this line
-			return;
-		}
+		// WORKAROUND: in some EGA releases, actor 3 may have been removed from
+		// the current room, although he's still on screen (the EGA English 1.1
+		// release fixed this), so no line can be attached to him. Forcing his
+		// appearance or ignoring his removal doesn't fix this problem, for some
+		// reason.  So, if we detect this, we default to actor 4 (since that's
+		// what the Talkie version always used), for now.
+		if (data[0] == 3 && isValidActor(3) && !_actors[3]->isInCurrentRoom())
+			data[0] = 4;
 	}
 
 	// Method used by original games to skip copy protection scheme
@@ -3345,8 +3355,14 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 			_string[textSlot].color = 0x0E;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_INDY4 && _roomResource == 23 && vm.slot[_currentScript].number == 167 &&
-			len == 24 && 0==memcmp(_scriptPointer+16, "pregod", 6)) {
-		// WORKAROUND for bug #2961.
+			len == 24 && _enableEnhancements && memcmp(_scriptPointer+16, "pregod", 6) == 0) {
+		// WORKAROUND for bug #2961: At the end of Indy4, if Ubermann is told
+		// to use 20 orichalcum beads, he'll count "pregod8" and "pregod9"
+		// instead of "18" and "19", in some releases.
+		//
+		// TODO: Check whether this issue also appears in any floppy version,
+		// because the current workaround doesn't look compatible with
+		// non-talkie releases.
 		byte tmpBuf[25];
 		memcpy(tmpBuf, _scriptPointer, 25);
 		if (tmpBuf[22] == '8')

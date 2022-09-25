@@ -137,7 +137,8 @@ public:
 	 * Similar to sprintf, except that it stores the result
 	 * in a (variably sized) string instead of a fixed-size buffer.
 	 */
-	static U32String format(U32String fmt, ...);
+	template<class... TParam>
+	static U32String format(const U32String &fmt, TParam... param);
 
 	/** @overload **/
 	static U32String format(const char *fmt, ...);
@@ -184,6 +185,8 @@ public:
 	uint16 *encodeUTF16Native(uint *len = nullptr) const;
 
 private:
+	static U32String formatInternal(const U32String *fmt, ...);
+
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);
 	void decodeWindows932(const char *src, uint32 len);
@@ -194,6 +197,11 @@ private:
 
 	friend class String;
 };
+
+template<class... TParam>
+inline U32String U32String::format(const U32String &fmt, TParam... param) {
+	return formatInternal(&fmt, param...);
+}
 
 /** Concatenate strings @p x and @p y. */
 U32String operator+(const U32String &x, const U32String &y);

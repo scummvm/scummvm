@@ -91,6 +91,22 @@ static const byte default_v6_cursor[] = {
 	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, 0x00,0x0F,0x00, 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 };
 
+#ifdef ENABLE_SCUMM_7_8
+static const byte default_v7_cursor[] = {
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x00,0x00,0x00,0x00, 0x01,0x01,0x01, 0x00,0x00,0x00,0x00,
+	0x0F,0x0F,0x0F,0x0F, 0x01,0x01,0x01, 0x0F,0x0F,0x0F,0x0F,
+	0x00,0x00,0x00,0x00, 0x01,0x01,0x01, 0x00,0x00,0x00,0x00,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x00,0x00,0x00,
+};
+
 static const byte default_v8_cursor[] = {
 	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
 	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
@@ -113,6 +129,7 @@ static const byte default_v8_cursor[] = {
 	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
 	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
 };
+#endif
 
 void ScummEngine_v5::animateCursor() {
 	if (_cursor.animate) {
@@ -189,6 +206,38 @@ void ScummEngine_v6::setDefaultCursor() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setDefaultCursor() {
 	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
+	byte cursorBuffer[124];
+	byte cursorPixel;
+	int black, white, inverseRgbIdx;
+	int rgbIdx = 0;
+
+	do {
+		black = getPaletteColorFromRGB(palette, rgbIdx, rgbIdx, rgbIdx);
+		++rgbIdx;
+	} while (black == 1 && rgbIdx != 100);
+	rgbIdx = 0;
+
+	do {
+		inverseRgbIdx = 0xFF - rgbIdx++;
+		white = getPaletteColorFromRGB(palette, inverseRgbIdx, inverseRgbIdx, inverseRgbIdx);
+	} while (white == 1 && rgbIdx != 100);
+
+	for (int i = 0; i < ARRAYSIZE(default_v7_cursor); i++) {
+		cursorPixel = default_v7_cursor[i];
+
+		if (cursorPixel == 0x0F)
+			cursorPixel = white;
+
+		cursorBuffer[i] = (byte)(cursorPixel & 0xFF);
+	}
+
+	setCursorHotspot(5, 5);
+	setCursorFromBuffer(cursorBuffer, 11, 11, 11);
+	setCursorTransparency(0x01);
+}
+
+void ScummEngine_v8::setDefaultCursor() {
+	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
 	byte cursorBuffer[400];
 	byte cursorPixel;
 	int /* black,*/ white, inverseRgbIdx;
@@ -230,20 +279,32 @@ void ScummEngine_v7::setDefaultCursor() {
 	setCursorTransparency(0xFE);
 }
 
-void ScummEngine_v8::setCursorTransparency(int a) {
+void ScummEngine_v7::setCursorTransparency(int a) {
 	int i, size;
 
 	size = _cursor.width * _cursor.height;
 
-	for (i = 0; i < size; i++)
-		if (_grabbedCursor[i] == (byte)a)
-			_grabbedCursor[i] = isSmushActive() ? 0xFE : 0xFF;
+	for (i = 0; i < size; i++) {
+		if (_grabbedCursor[i] == (byte)a) {
+			if (_game.version == 8) {
+				_grabbedCursor[i] = isSmushActive() ? 0xFE : 0xFF;
+			} else {
+				_grabbedCursor[i] = isSmushActive() ? 0x01 : 0xFF;
+			}
+		}
+	}
 
 	updateCursor();
 }
 
-void ScummEngine_v8::updateCursor() {
-	int transColor = isSmushActive() ? 0xFE : 0xFF;
+void ScummEngine_v7::updateCursor() {
+	int transColor;
+	if (_game.version == 8) {
+		transColor = isSmushActive() ? 0xFE : 0xFF;
+	} else {
+		transColor = isSmushActive() ? 0x01 : 0xFF;
+	}
+
 #ifdef USE_RGB_COLOR
 	Graphics::PixelFormat format = _system->getScreenFormat();
 	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
@@ -260,12 +321,13 @@ void ScummEngine_v8::updateCursor() {
 }
 #endif
 
-void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
+void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale) {
 	uint size;
 	byte *dst;
 
+	bool needsDithering = (_enableEGADithering && !preventScale);
 	size = width * height * _bytesPerPixel;
-	if (_enableEGADithering)
+	if (needsDithering)
 		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
@@ -274,14 +336,14 @@ void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height,
 	_cursor.height = height;
 	_cursor.animate = 0;
 
-	dst = _enableEGADithering ? _compositeBuf : _grabbedCursor;
+	dst = needsDithering ? _compositeBuf : _grabbedCursor;
 	for (; height; height--) {
 		memcpy(dst, ptr, width * _bytesPerPixel);
 		dst += width * _bytesPerPixel;
 		ptr += pitch;
 	}
 
-	if (_enableEGADithering)
+	if (needsDithering)
 		ditherCursor();
 
 	updateCursor();

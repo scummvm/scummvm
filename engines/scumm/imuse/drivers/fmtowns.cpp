@@ -132,6 +132,8 @@ public:
 	void pitchBend(int16 bend) override;
 	void controlChange(byte control, byte value) override;
 	void pitchBendFactor(byte value) override;
+	void detune(byte value) override;
+	void transpose(int8 value) override;
 	void priority(byte value) override;
 	void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
@@ -764,6 +766,19 @@ void TownsMidiInputChannel::pitchBendFactor(byte value) {
 	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
 	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
 		oc->noteOnPitchBend(oc->_note + oc->_in->_transpose, _freqLSB);
+}
+
+void TownsMidiInputChannel::detune(byte value) {
+	_detune = value;
+	_freqLSB = ((_pitchBend * _pitchBendFactor) >> 6) + _detune;
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + oc->_in->_transpose, _freqLSB);
+}
+
+void TownsMidiInputChannel::transpose(int8 value) {
+	_transpose = value;
+	for (TownsMidiOutputChannel *oc = _out; oc; oc = oc->_next)
+		oc->noteOnPitchBend(oc->_note + _transpose, _freqLSB);
 }
 
 void TownsMidiInputChannel::priority(byte value) {

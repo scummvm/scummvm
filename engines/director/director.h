@@ -58,6 +58,7 @@ class ManagedSurface;
 namespace Director {
 
 class Archive;
+class MacArchive;
 class Cast;
 class DirectorSound;
 class Lingo;
@@ -134,8 +135,13 @@ struct MacShape {
 };
 
 struct PatternTile {
-	Image::ImageDecoder *img;
+	Image::ImageDecoder *img = 0;
 	Common::Rect rect;
+
+	~PatternTile() {
+		if (img)
+			delete img;
+	}
 };
 
 const int SCALE_THRESHOLD = 0x100;
@@ -178,6 +184,7 @@ public:
 	void addPalette(int id, byte *palette, int length);
 	bool setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
+	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
 	PaletteV4 *getPalette(int id);
 	void loadDefaultPalettes();
@@ -231,8 +238,12 @@ public:
 	Common::Rect _fixStageRect;
 	Common::List<Common::String> _extraSearchPath;
 
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
+	// Opened Resource Files that were opened by OpenResFile
+	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
+
 
 protected:
 	Common::Error run() override;
@@ -246,7 +257,7 @@ public:
 	uint16 _wmHeight;
 
 private:
-	byte *_currentPalette;
+	byte _currentPalette[768];
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 	uint16 _version;

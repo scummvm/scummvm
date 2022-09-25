@@ -172,9 +172,11 @@ byte ScummEngine::getMaskFromBox(int box) {
 	if (!ptr)
 		return 0;
 
-	// WORKAROUND for bug #1315: This is a bug in the data files, as it also
-	// occurs with the original engine. We work around it here anyway.
-	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8)
+	// WORKAROUND for bug #1315: the wall sprite is drawn over Indy when he
+	// stands at a specific place near Nur-Ab-Sal's abode. This is a bug in
+	// the data files, as it also occurs with the original engine. We work
+	// around it here anyway.
+	if (_game.id == GID_INDY4 && _currentRoom == 225 && _roomResource == 94 && box == 8 && _enableEnhancements)
 		return 0;
 
 	if (_game.version == 8)

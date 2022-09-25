@@ -28,7 +28,6 @@
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/gfx/xanimation_set.h"
 #include "engines/wintermute/base/gfx/xmodel.h"
-#include "engines/wintermute/base/gfx/xloader.h"
 #include "engines/wintermute/dcgf.h"
 
 namespace Wintermute {
@@ -54,39 +53,6 @@ AnimationSet::~AnimationSet() {
 		delete _events[i];
 	}
 	_events.clear();
-}
-
-bool AnimationSet::loadFromX(XFileLexer &lexer, const Common::String &filename) {
-	if (lexer.tokenIsIdentifier()) {
-		setName(lexer.tokenToString().c_str());
-		lexer.advanceToNextToken();
-	} else {
-		Common::String name = filename + "_animation";
-		setName(name.c_str());
-	}
-
-	lexer.advanceToNextToken();
-
-	bool ret = true;
-
-	while (!lexer.eof()) {
-		if (lexer.tokenIsIdentifier("Animation")) {
-			lexer.advanceToNextToken();
-
-			Animation *animation = new Animation(_gameRef);
-			animation->loadFromX(lexer, this);
-			_animations.add(animation);
-		} else if (lexer.reachedClosedBraces()) {
-			lexer.advanceToNextToken(); // skip closed braces
-			break;
-		} else {
-			warning("AnimationSet::loadFromX unexpected token");
-			ret = false;
-			break;
-		}
-	}
-
-	return ret;
 }
 
 //////////////////////////////////////////////////////////////////////////

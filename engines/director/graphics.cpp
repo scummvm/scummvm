@@ -121,7 +121,7 @@ void DirectorEngine::loadDefaultPalettes() {
 
 PaletteV4 *DirectorEngine::getPalette(int id) {
 	if (!_loadedPalettes.contains(id)) {
-		warning("DirectorEngine::addPalette(): Palette %d not found", id);
+		warning("DirectorEngine::getPalette(): Palette %d not found", id);
 		return nullptr;
 	}
 
@@ -155,14 +155,47 @@ bool DirectorEngine::setPalette(int id) {
 }
 
 void DirectorEngine::setPalette(byte *palette, uint16 count) {
-	// Pass the palette to OSystem only for 8bpp mode
-	if (_pixelformat.bytesPerPixel == 1)
-		_system->getPaletteManager()->setPalette(palette, 0, count);
 
-	_currentPalette = palette;
+	memset(_currentPalette, 0, 768);
+	memmove(_currentPalette, palette, count * 3);
 	_currentPaletteLength = count;
 
-	_wm->passPalette(palette, count);
+	// Pass the palette to OSystem only for 8bpp mode
+	if (_pixelformat.bytesPerPixel == 1)
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+
+	_wm->passPalette(_currentPalette, _currentPaletteLength);
+}
+
+void DirectorEngine::shiftPalette(int startIndex, int endIndex, bool reverse) {
+	if (startIndex == endIndex)
+		return;
+
+	if (endIndex > startIndex)
+		return;
+
+	// Palette indexes are in reverse order thanks to transformColor
+	byte temp[3] = { 0, 0, 0 };
+	int span = startIndex - endIndex + 1;
+	if (reverse) {
+		memcpy(temp, _currentPalette + 3 * endIndex, 3);
+		memmove(_currentPalette + 3 * endIndex,
+			_currentPalette + 3 * endIndex + 3,
+			(span - 1) * 3);
+		memcpy(_currentPalette + 3 * startIndex, temp, 3);
+	} else {
+		memcpy(temp, _currentPalette + 3 * startIndex, 3);
+		memmove(_currentPalette + 3 * endIndex + 3,
+			_currentPalette + 3 * endIndex,
+			(span - 1) * 3);
+		memcpy(_currentPalette + 3 * endIndex, temp, 3);
+	}
+
+	// Pass the palette to OSystem only for 8bpp mode
+	if (_pixelformat.bytesPerPixel == 1)
+		_system->getPaletteManager()->setPalette(_currentPalette, 0, _currentPaletteLength);
+
+	_wm->passPalette(_currentPalette, _currentPaletteLength);
 }
 
 void DirectorEngine::clearPalettes() {
@@ -241,8 +274,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		double alpha = (double)p->alpha / 100.0;
 		rDst = static_cast<byte>((rSrc * alpha) + (rDst * (1.0 - alpha)));
@@ -272,10 +305,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 				byte rFor, gFor, bFor;
 				byte rBak, gBak, bBak;
 
-				wm->decomposeColor(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor(*dst, rDst, gDst, bDst);
-				wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
 				*dst = wm->findBestColor((rSrc | rFor) & (~rSrc | rBak),
 										(gSrc | gFor) & (~gSrc | gBak),
@@ -297,10 +330,10 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 				byte rFor, gFor, bFor;
 				byte rBak, gBak, bBak;
 
-				wm->decomposeColor(src, rSrc, gSrc, bSrc);
-				wm->decomposeColor(*dst, rDst, gDst, bDst);
-				wm->decomposeColor(p->foreColor, rFor, gFor, bFor);
-				wm->decomposeColor(p->backColor, rBak, gBak, bBak);
+				wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+				wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
+				wm->decomposeColor<T>(p->foreColor, rFor, gFor, bFor);
+				wm->decomposeColor<T>(p->backColor, rBak, gBak, bBak);
 
 				*dst = wm->findBestColor((~rSrc | rFor) & (rSrc | rBak),
 										(~gSrc | gFor) & (gSrc | gBak),
@@ -333,8 +366,8 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 		byte rSrc, gSrc, bSrc;
 		byte rDst, gDst, bDst;
 
-		wm->decomposeColor(src, rSrc, gSrc, bSrc);
-		wm->decomposeColor(*dst, rDst, gDst, bDst);
+		wm->decomposeColor<T>(src, rSrc, gSrc, bSrc);
+		wm->decomposeColor<T>(*dst, rDst, gDst, bDst);
 
 		switch (p->ink) {
 		case kInkTypeBlend:

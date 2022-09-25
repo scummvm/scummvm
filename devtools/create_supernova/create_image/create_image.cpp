@@ -128,7 +128,7 @@ void printHelp() {
 	std::cout << "create_image output-prefix file-number bytes-skip" << std::endl << std::endl;
 	std::cout << "	output-prefix: String the created file should begin with" << std::endl;
 	std::cout << "	file-number: Number of the created file and also name of source folder" << std::endl;
-	std::cout << "	bytes-skip: How many bytes to to skip in each .bmp file" << std::endl;
+	std::cout << "	bytes-skip: How many bytes to skip in each .bmp file" << std::endl;
 	std::cout << std::endl << "EXAMPLE:" << std::endl
 		<< "create_image ms2_data 15 1146" << std::endl
 		<< "	creates ms2_data.015 assuming there are the right files inside 015 folder" << std::endl;

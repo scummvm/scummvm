@@ -576,6 +576,8 @@ void MovieElement::activate() {
 	if (!_videoDecoder->loadStream(movieDataStream))
 		_videoDecoder.reset();
 
+	if (_runtime->getHacks().removeQuickTimeEdits)
+		qtDecoder->flattenEditLists();
 	_timeScale = qtDecoder->getTimeScale();
 
 	_unloadSignaller = project->notifyOnSegmentUnload(segmentIndex, this);

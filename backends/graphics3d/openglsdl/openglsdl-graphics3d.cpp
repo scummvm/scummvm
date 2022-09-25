@@ -390,7 +390,6 @@ void OpenGLSdlGraphics3dManager::createOrUpdateScreen() {
 	int obtainedHeight = effectiveHeight;
 #endif
 
-	initializeOpenGLContext();
 	_surfaceRenderer = OpenGL::createBestSurfaceRenderer();
 	_overlayFormat = OpenGL::TextureGL::getRGBAPixelFormat();
 
@@ -487,6 +486,8 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 5, 5, 1, 0));
 	pixelFormats.push_back(OpenGLPixelFormat(16, 5, 6, 5, 0, 0));
 
+	bool clear = false;
+
 	// Unfortunately, SDL does not provide a list of valid pixel formats
 	// for the current OpenGL implementation and hardware.
 	// SDL may not be able to create a screen with the preferred pixel format.
@@ -546,7 +547,7 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 			if (!_glContext) {
 				_glContext = SDL_GL_CreateContext(_window->getSDLWindow());
 				if (_glContext) {
-					glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+					clear = true;
 				}
 			}
 
@@ -581,7 +582,15 @@ bool OpenGLSdlGraphics3dManager::createOrUpdateGLContext(uint gameWidth, uint ga
 		        wantsAA && !gotAA ? " without AA" : "");
 	}
 
-	return it != pixelFormats.end();
+	if (it == pixelFormats.end())
+		return false;
+
+	initializeOpenGLContext();
+
+	if (clear)
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
+
+	return true;
 }
 
 bool OpenGLSdlGraphics3dManager::shouldRenderToFramebuffer() const {
