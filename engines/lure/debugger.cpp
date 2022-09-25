@@ -122,7 +122,7 @@ bool Debugger::cmd_listRooms(int argc, const char **argv) {
 		// Explictly note the second drawbridge room as "Alt"
 		if (room.roomNumber == 49) {
 			strings.getString(47, buffer);
-			strcat(buffer, " (alt)");
+			Common::strcat_s(buffer, " (alt)");
 		} else {
 			strings.getString(room.roomNumber, buffer);
 		}
@@ -244,7 +244,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 			for (i = res.activeHotspots().begin(); i != res.activeHotspots().end(); ++i) {
 				Hotspot const &hotspot = **i;
 
-				if (hotspot.nameId() == 0) strcpy(buffer, "none");
+				if (hotspot.nameId() == 0) Common::strcpy_s(buffer, "none");
 				else strings.getString(hotspot.nameId(), buffer);
 
 				debugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId(), buffer,
@@ -259,7 +259,7 @@ bool Debugger::cmd_hotspots(int argc, const char **argv) {
 				HotspotData const &hotspot = **i;
 
 				if (hotspot.roomNumber == roomNumber) {
-					if (hotspot.nameId == 0) strcpy(buffer, "none");
+					if (hotspot.nameId == 0) Common::strcpy_s(buffer, "none");
 					else strings.getString(hotspot.nameId, buffer);
 
 					debugPrintf("%4xh - %s pos=(%d,%d,%d)\n", hotspot.hotspotId, buffer,

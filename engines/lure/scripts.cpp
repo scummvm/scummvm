@@ -930,7 +930,7 @@ uint16 Script::execute(uint16 startOffset) {
 	fields.setField(SEQUENCE_RESULT, 0);
 
 	debugC(ERROR_BASIC, kLureDebugScripts, "Executing script %xh", startOffset);
-	strcpy(debugInfo, "");
+	debugInfo[0] = '\0';
 
 	while (!breakFlag) {
 		if (offset >= scriptData->size())
@@ -1102,10 +1102,10 @@ uint16 Script::execute(uint16 startOffset) {
 
 			if (gDebugLevel >= ERROR_DETAILED) {
 				// Set up the debug string for the method call
-				if (rec->methodIndex == 0xff) strcat(debugInfo, " INVALID INDEX");
-				else if (scriptMethodNames[param] == nullptr) strcat(debugInfo, " UNKNOWN METHOD");
+				if (rec->methodIndex == 0xff) Common::strcat_s(debugInfo, " INVALID INDEX");
+				else if (scriptMethodNames[param] == nullptr) Common::strcat_s(debugInfo, " UNKNOWN METHOD");
 				else {
-					strcat(debugInfo, " ");
+					Common::strcat_s(debugInfo, " ");
 					Common::strlcat(debugInfo, scriptMethodNames[param], MAX_DESC_SIZE);
 				}
 
@@ -1118,7 +1118,7 @@ uint16 Script::execute(uint16 startOffset) {
 						stack[stack.size()-1], stack[stack.size()-2]);
 				else if (stack.size() == 1)
 					sprintf(debugInfo + strlen(debugInfo), " (%d)", stack[stack.size()-1]);
-				strcat(debugInfo, ")");
+				Common::strcat_s(debugInfo, ")");
 
 				debugC(ERROR_DETAILED, kLureDebugScripts, "%s", debugInfo);
 			}
@@ -1183,7 +1183,7 @@ uint16 Script::execute(uint16 startOffset) {
 				break;
 
 			case S_OPCODE_PUSH:
-				strcat(debugInfo, " => ST");
+				Common::strcat_s(debugInfo, " => ST");
 				break;
 
 			default:
