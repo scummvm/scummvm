@@ -1565,7 +1565,7 @@ void Inter_v2::o2_loadInfogramesIns(OpGobParams &params) {
 	varName = _vm->_game->_script->readInt16();
 
 	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
-	strcat(fileName, ".INS");
+	Common::strcat_s(fileName, ".INS");
 
 	_vm->_sound->infogramesLoadInstruments(fileName);
 }
@@ -1577,7 +1577,7 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 	varName = _vm->_game->_script->readInt16();
 
 	Common::strlcpy(fileName, GET_VAR_STR(varName), 16);
-	strcat(fileName, ".DUM");
+	Common::strcat_s(fileName, ".DUM");
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();
@@ -1662,9 +1662,9 @@ int16 Inter_v2::loadSound(int16 search) {
 		Common::strlcpy(sndfile, _vm->_game->_script->readString(9), 10);
 
 		if (type == SOUND_ADL)
-			strcat(sndfile, ".ADL");
+			Common::strcat_s(sndfile, ".ADL");
 		else
-			strcat(sndfile, ".SND");
+			Common::strcat_s(sndfile, ".SND");
 
 		int32 dataSize;
 		byte *dataPtr = _vm->_dataIO->getFile(sndfile, dataSize);

@@ -85,7 +85,7 @@ void Variables::writeOffString(uint32 offset, const char *value) {
 	uint32 length = strlen(value);
 	assert((offset + length + 1) < _size);
 
-	strcpy((char *)(_vars + offset), value);
+	Common::strcpy_s((char *)(_vars + offset), _size - offset, value);
 }
 
 uint8 Variables::readVar8(uint32 var) const {

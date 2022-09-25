@@ -534,9 +534,9 @@ void Util::cleanupStr(char *str) {
 	char *start, *end;
 	char buf[300];
 
-	strcpy(buf, trStr1);
-	strcat(buf, trStr2);
-	strcat(buf, trStr3);
+	Common::strcpy_s(buf, trStr1);
+	Common::strcat_s(buf, trStr2);
+	Common::strcat_s(buf, trStr3);
 
 	// Translating "wrong" characters
 	for (size_t i = 0; i < strlen(str); i++)
@@ -620,6 +620,7 @@ void Util::deleteList(List *list) {
 	delete list;
 }
 
+#if 0
 char *Util::setExtension(char *str, const char *ext) {
 	assert(str && ext);
 
@@ -633,6 +634,7 @@ char *Util::setExtension(char *str, const char *ext) {
 	strcat(str, ext);
 	return str;
 }
+#endif
 
 Common::String Util::setExtension(const Common::String &str, const Common::String &ext) {
 	if (str.empty())
