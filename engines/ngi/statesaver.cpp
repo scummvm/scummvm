@@ -50,7 +50,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	memset(&header, 0, sizeof(header));
 
 	header.version = 48; // '0'
-	strcpy(header.magic, "FullPipe Savegame");
+	Common::strcpy_s(header.magic, "FullPipe Savegame");
 	header.updateCounter = _updateCounter;
 	header.unkField = 1;
 
@@ -128,7 +128,7 @@ bool GameLoader::writeSavegame(Scene *sc, const char *fname, const Common::Strin
 	uint headerPos = saveFile->pos();
 	FullpipeSavegameHeader header2;
 
-	strcpy(header2.id, "SVMCR");
+	Common::strcpy_s(header2.id, "SVMCR");
 	header2.version = NGI_SAVEGAME_VERSION;
 
 	TimeDate curTime;
