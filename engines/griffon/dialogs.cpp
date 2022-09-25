@@ -349,7 +349,7 @@ void GriffonEngine::configMenu() {
 				int vol = (i ==18 ? config.musicVol : config.effectsVol) * 9 / 255;
 				vol = CLIP(vol, 0, 9);
 
-				strcpy(line, "[----------]");
+				Common::strcpy_s(line, "[----------]");
 				line[vol + 1] = 'X';
 				optionValues[i] = line;
 			} else if (i > 21)
@@ -579,7 +579,7 @@ void GriffonEngine::renderSaveStates() {
 			drawString(_videoBuffer2, line, sx, sy, cc);
 
 			if (_playera.level == 22)
-				strcpy(line, "Level: MAX");
+				Common::strcpy_s(line, "Level: MAX");
 			else
 				sprintf(line, "Level: %i", _playera.level);
 
