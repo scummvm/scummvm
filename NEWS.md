@@ -9,6 +9,8 @@ For a more comprehensive changelog of the latest experimental code, see:
      Interactive Fiction games.
    - Added support for GLK Scott Adams adventures 1-12 in the TI99/4A format.
    - Added support for Obsidian.
+   - Added support for Pink Panther: Passport to Peril.
+   - Added support for Pink Panther: Hokus Pokus Pink.
 
  General:
    - Reduced amount of false positives in Mass Add.
