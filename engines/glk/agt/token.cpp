@@ -1158,11 +1158,14 @@ int exec_instr(op_rec *oprec)
 	}
 }
 
-int get_random(int a, int b)
-{
-	if (stable_random) {
-		static unsigned int rand_gen = 1234;
+static unsigned int rand_gen = 1234;
 
+void reset_random(void) {
+	rand_gen = 1234;
+}
+
+int get_random(int a, int b) {
+	if (stable_random) {
 		rand_gen = rand_gen * 214013 + 2531011;
 		unsigned int rand_num = (rand_gen >> 16) & 0xFFFF;
 		return a + (rand_num % (b - a + 1));
