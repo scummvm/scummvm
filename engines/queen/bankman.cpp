@@ -86,7 +86,7 @@ void BankManager::load(const char *bankname, uint32 bankslot) {
 	}
 
 	// mark this bank as loaded
-	strcpy(bank->name, bankname);
+	Common::strcpy_s(bank->name, bankname);
 }
 
 static void convertPlanarBitmap(uint8 *dst, int dstPitch, const uint8 *src, int w, int h, int plane) {

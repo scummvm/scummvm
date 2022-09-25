@@ -143,12 +143,11 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 			warning("Unknown/unsupported FOTAQ version");
 			return false;
 		}
-		strcpy(ver->str, gameVersion->str);
+		Common::strcpy_s(ver->str, gameVersion->str);
 		ver->compression = COMPRESSION_NONE;
 		ver->features = 0;
 		ver->queenTblVersion = gameVersion->queenTblVersion;
 		ver->queenTblOffset = gameVersion->queenTblOffset;
-		strcpy(ver->str, gameVersion->str);
 
 		// Handle game versions for which versionStr information is irrevelant
 		if (gameVersion == &_gameVersions[VER_AMI_DEMO]) { // CE101

@@ -280,13 +280,13 @@ void PCSound::setVolume(int vol) {
 
 void PCSound::playSound(const char *base, bool isSpeech) {
 	char name[13];
-	strcpy(name, base);
+	Common::strcpy_s(name, base);
 	// alter filename to add zeros and append ".SB"
 	for (int i = 0; i < 8; i++) {
 		if (name[i] == ' ')
 			name[i] = '0';
 	}
-	strcat(name, ".SB");
+	Common::strcat_s(name, ".SB");
 	if (isSpeech) {
 		// Add _vm->shouldQuit() check here, otherwise game gets stuck
 		// in an infinite loop if we try to quit while a sound is playing...
