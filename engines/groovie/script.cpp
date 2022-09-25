@@ -955,13 +955,14 @@ bool Script::playvideofromref(uint32 fileref, bool loopUntilAudioDone) {
 			ResInfo info;
 			_vm->_resMan->getResInfo(fileref, info);
 
-			// Remove the extension and add ".txt"
-			info.filename.deleteLastChar();
-			info.filename.deleteLastChar();
-			info.filename.deleteLastChar();
-			info.filename += "txt";
+			// Prepend the GJD name and remove the extension
+			Common::String subtitleName = _vm->_resMan->getGjdName(info);
+			subtitleName = subtitleName.substr(0, subtitleName.size() - 4);
+			subtitleName.toUppercase();
+			// add the filename without the extension, then add the .txt extension
+			subtitleName += "-" + info.filename.substr(0, info.filename.size() - 3) + "txt";
 
-			_vm->_videoPlayer->loadSubtitles(info.filename.c_str());
+			_vm->_videoPlayer->loadSubtitles(subtitleName.c_str());
 		} else {
 			error("Groovie::Script: Couldn't open file");
 			return true;
