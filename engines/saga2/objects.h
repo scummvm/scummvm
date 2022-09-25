@@ -169,7 +169,7 @@ protected:
 	void append(ObjectID newParent);         // adds to new list (no remove)
 	void insert(ObjectID newPrev);           // inserts after this item (no remove)
 
-	ProtoObj        *prototype;             // object that defines our behavior
+	ProtoObj        *_prototype;             // object that defines our behavior
 public:
 	ObjectData _data;
 	uint _index;
@@ -303,7 +303,7 @@ public:
 
 	//  check to see if item can be contained by this object
 	bool canContain(ObjectID item) {
-		return prototype->canContain(thisID(), item);
+		return _prototype->canContain(thisID(), item);
 	}
 
 	//  check to see if item is contained by the object
@@ -346,58 +346,58 @@ public:
 
 	//  generic actions
 	bool use(ObjectID enactor) {
-		return prototype->use(thisID(), enactor);
+		return _prototype->use(thisID(), enactor);
 	}
 	bool useOn(ObjectID enactor, ObjectID item) {
-		return prototype->useOn(thisID(), enactor, item);
+		return _prototype->useOn(thisID(), enactor, item);
 	}
 
 	bool useOn(ObjectID enactor, ActiveItem *item) {
-		return prototype->useOn(thisID(), enactor, item);
+		return _prototype->useOn(thisID(), enactor, item);
 	}
 
 	bool useOn(ObjectID enactor, Location &loc) {
-		return prototype->useOn(thisID(), enactor, loc);
+		return _prototype->useOn(thisID(), enactor, loc);
 	}
 
 	//  various verb actions that can take place
 	bool take(ObjectID enactor, int16 num = 1) {
-		return prototype->take(thisID(), enactor, num);
+		return _prototype->take(thisID(), enactor, num);
 	}
 	bool drop(ObjectID enactor, const Location &l, int16 num = 1) {
-		return prototype->drop(thisID(), enactor, l, num);
+		return _prototype->drop(thisID(), enactor, l, num);
 	}
 	//  drop an object onto another object and handle the result.
 	bool dropOn(ObjectID enactor, ObjectID target, int16 num = 1) {
-		return prototype->dropOn(thisID(), enactor, target, num);
+		return _prototype->dropOn(thisID(), enactor, target, num);
 	}
 	//  drop this object on a TAG
 	bool dropOn(ObjectID enactor, ActiveItem *target, const Location &loc, int16 num = 1) {
-		return prototype->dropOn(thisID(), enactor, target, loc, num);
+		return _prototype->dropOn(thisID(), enactor, target, loc, num);
 	}
 	bool open(ObjectID enactor) {
-		return prototype->open(thisID(), enactor);
+		return _prototype->open(thisID(), enactor);
 	}
 	bool close(ObjectID enactor) {
-		return prototype->close(thisID(), enactor);
+		return _prototype->close(thisID(), enactor);
 	}
 	bool strike(ObjectID enactor, ObjectID item) {
-		return prototype->strike(thisID(), enactor, item);
+		return _prototype->strike(thisID(), enactor, item);
 	}
 	bool damage(ObjectID enactor, ObjectID target) {
-		return prototype->damage(thisID(), enactor, target);
+		return _prototype->damage(thisID(), enactor, target);
 	}
 	bool eat(ObjectID enactor) {
-		return prototype->eat(thisID(), enactor);
+		return _prototype->eat(thisID(), enactor);
 	}
 	bool insert(ObjectID enactor, ObjectID item) {
-		return prototype->insert(thisID(), enactor, item);
+		return _prototype->insert(thisID(), enactor, item);
 	}
 	bool remove(ObjectID enactor) {
-		return prototype->remove(thisID(), enactor);
+		return _prototype->remove(thisID(), enactor);
 	}
 	bool acceptDrop(ObjectID enactor, ObjectID droppedObj, int count) {
-		return prototype->acceptDrop(thisID(), enactor, droppedObj, count);
+		return _prototype->acceptDrop(thisID(), enactor, droppedObj, count);
 	}
 	bool acceptDamage(
 	    ObjectID            enactor,
@@ -409,7 +409,7 @@ public:
 		if (_godmode)
 			return false;
 
-		return  prototype->acceptDamage(
+		return  _prototype->acceptDamage(
 		            thisID(),
 		            enactor,
 		            absDamage,
@@ -419,29 +419,29 @@ public:
 		            perDieMod);
 	}
 	bool acceptHealing(ObjectID enactor, int8 absDamage, int8 dice = 0, uint8 sides = 1, int8 perDieMod = 0) {
-		return prototype->acceptHealing(thisID(), enactor, absDamage, dice, sides, perDieMod);
+		return _prototype->acceptHealing(thisID(), enactor, absDamage, dice, sides, perDieMod);
 	}
 	bool acceptStrike(
 	    ObjectID            enactor,
 	    ObjectID            strikingObj,
 	    uint8               skillIndex) {
-		return  prototype->acceptStrike(
+		return  _prototype->acceptStrike(
 		            thisID(),
 		            enactor,
 		            strikingObj,
 		            skillIndex);
 	}
 	bool acceptLockToggle(ObjectID enactor, uint8 keyCode) {
-		return prototype->acceptLockToggle(thisID(), enactor, keyCode);
+		return _prototype->acceptLockToggle(thisID(), enactor, keyCode);
 	}
 	bool acceptMix(ObjectID enactor, ObjectID mixObj) {
-		return prototype->acceptMix(thisID(), enactor, mixObj);
+		return _prototype->acceptMix(thisID(), enactor, mixObj);
 	}
 	bool acceptInsertion(ObjectID enactor, ObjectID item, int16 count) {
-		return prototype->acceptInsertion(thisID(), enactor, item, count);
+		return _prototype->acceptInsertion(thisID(), enactor, item, count);
 	}
 	bool acceptInsertionAt(ObjectID enactor, ObjectID item, const TilePoint &where, int16 num = 1) {
-		return prototype->acceptInsertionAt(thisID(), enactor, item, where, num);
+		return _prototype->acceptInsertionAt(thisID(), enactor, item, where, num);
 	}
 
 	//  query functions:
@@ -449,7 +449,7 @@ public:
 
 	//  Access functions
 	ProtoObj *proto() {
-		return prototype;
+		return _prototype;
 	}
 	TilePoint getLocation() const {
 		return _data.location;
@@ -463,8 +463,8 @@ public:
 	const char *objName() {
 		if (_data.nameIndex > 0)
 			return nameText((int16)_data.nameIndex);
-		else if (prototype)
-			return nameText((int16)prototype->nameIndex);
+		else if (_prototype)
+			return nameText((int16)_prototype->nameIndex);
 
 		return nameText(0);
 	}
@@ -485,7 +485,7 @@ public:
 
 	//  Return the name of this type of object
 	const char *protoName() {
-		return nameText(prototype->nameIndex);
+		return nameText(_prototype->nameIndex);
 	}
 
 	//  Update the state of this object.  This function is called every
@@ -504,11 +504,11 @@ public:
 	}
 	bool isGhosted() {
 		return (_data.objectFlags & objectGhosted)
-		       || (prototype->flags & ResourceObjectPrototype::objPropGhosted);
+		       || (_prototype->flags & ResourceObjectPrototype::objPropGhosted);
 	}
 	bool isInvisible() {
 		return (_data.objectFlags & objectInvisible)
-		       || (prototype->flags & ResourceObjectPrototype::objPropHidden);
+		       || (_prototype->flags & ResourceObjectPrototype::objPropHidden);
 	}
 	bool isMoving() {
 		return (int16)(_data.objectFlags & objectMoving);
@@ -568,7 +568,7 @@ public:
 	}
 
 	bool isMissile() {
-		return prototype->isMissile();
+		return _prototype->isMissile();
 	}
 
 	// image data
@@ -581,8 +581,8 @@ public:
 	uint16 scriptClass() {
 		if (_data.script)
 			return _data.script;
-		if (prototype)
-			return prototype->script;
+		if (_prototype)
+			return _prototype->script;
 		return 0;
 	}
 
@@ -614,7 +614,7 @@ public:
 	//  Builds the color remapping for this object based on the
 	//  prototype's color map
 	void getColorTranslation(ColorTable map) {
-		prototype->getColorTranslation(map);
+		_prototype->getColorTranslation(map);
 	}
 
 	//  Functions to get and set prototype (used by scripts)
@@ -633,7 +633,7 @@ public:
 	void evalEnchantments();
 
 	bool makeSavingThrow() {
-		return prototype->makeSavingThrow();
+		return _prototype->makeSavingThrow();
 	}
 
 	//  Generic range checking function
@@ -641,11 +641,11 @@ public:
 
 	//  Generic function to test if object can be picked up
 	bool isCarryable() {
-		return prototype->mass <= 200 && prototype->bulk <= 200;
+		return _prototype->mass <= 200 && _prototype->bulk <= 200;
 	}
 
 	bool isMergeable() {
-		return (prototype->flags & ResourceObjectPrototype::objPropMergeable) != 0;
+		return (_prototype->flags & ResourceObjectPrototype::objPropMergeable) != 0;
 	}
 
 	//  A timer for this object has ticked
@@ -705,28 +705,28 @@ public:
 	bool stack(ObjectID enactor, ObjectID objToStackID);
 
 	bool canFitBulkwise(GameObject *obj) {
-		return prototype->canFitBulkwise(this, obj);
+		return _prototype->canFitBulkwise(this, obj);
 	}
 	bool canFitMasswise(GameObject *obj) {
-		return prototype->canFitMasswise(this, obj);
+		return _prototype->canFitMasswise(this, obj);
 	}
 
 	uint16 totalContainedMass();
 	uint16 totalContainedBulk();
 
 	uint16 totalMass() {
-		return      prototype->mass * (isMergeable() ? getExtra() : 1)
+		return      _prototype->mass * (isMergeable() ? getExtra() : 1)
 		            +   totalContainedMass();
 	}
 	uint16 totalBulk() {
-		return prototype->bulk * (isMergeable() ? getExtra() : 1);
+		return _prototype->bulk * (isMergeable() ? getExtra() : 1);
 	}
 
 	uint16 massCapacity() {
-		return prototype->massCapacity(this);
+		return _prototype->massCapacity(this);
 	}
 	uint16 bulkCapacity() {
-		return prototype->bulkCapacity(this);
+		return _prototype->bulkCapacity(this);
 	}
 };
 

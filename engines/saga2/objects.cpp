@@ -180,7 +180,7 @@ struct GameObjectArchive {
 //	Default constructor
 
 GameObject::GameObject() {
-	prototype   = nullptr;
+	_prototype   = nullptr;
 	_data.projectDummy = 0;
 	_data.location    = Nowhere;
 	_data.nameIndex   = 0;
@@ -207,7 +207,7 @@ GameObject::GameObject() {
 //	Constructor -- initial object construction
 
 GameObject::GameObject(const ResourceGameObject &res) {
-	prototype           = g_vm->_objectProtos[res.protoIndex];
+	_prototype           = g_vm->_objectProtos[res.protoIndex];
 	_data.projectDummy = 0;
 	_data.location            = res.location;
 	_data.nameIndex           = res.nameIndex;
@@ -217,8 +217,8 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	_data.script              = res.script;
 	_data.objectFlags         = res.objectFlags;
 	_data.hitPoints           = res.hitPoints;
-	_data.bParam              = prototype->getChargeType() ? prototype->maxCharges : 0;
-	_data.massCount           = res.misc; //prototype->getInitialItemCount();
+	_data.bParam              = _prototype->getChargeType() ? _prototype->maxCharges : 0;
+	_data.massCount           = res.misc; //_prototype->getInitialItemCount();
 	_data.missileFacing       = missileRt;
 	_data.currentTAG          = NoActiveItem;
 	_data.sightCtr            = 0;
@@ -241,7 +241,7 @@ void GameObject::read(Common::InSaveFile *in, bool expandProto) {
 	if (expandProto)
 		in->readSint16LE();
 	//  Convert the protoype index into an object proto pointer
-	prototype = pInd != -1
+	_prototype = pInd != -1
 	            ?   g_vm->_objectProtos[pInd]
 	            :   nullptr;
 
@@ -291,7 +291,7 @@ int32 GameObject::archiveSize() {
 void GameObject::write(Common::MemoryWriteStreamDynamic *out, bool expandProto) {
 	debugC(2, kDebugSaveload, "Saving object %d", thisID());
 
-	int16 pInd = prototype != nullptr ? getProtoNum() : -1;
+	int16 pInd = _prototype != nullptr ? getProtoNum() : -1;
 	out->writeSint16LE(pInd);
 	if (expandProto)
 		out->writeSint16LE(0);
@@ -385,7 +385,7 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 ProtoObj *GameObject::protoAddress(ObjectID id) {
 	GameObject      *obj = objectAddress(id);
 
-	return obj ? obj->prototype : nullptr ;
+	return obj ? obj-> _prototype : nullptr ;
 }
 
 int32 GameObject::nameIndexToID(uint16 ind) {
@@ -393,7 +393,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (objectList[i]._data.nameIndex == ind)
 			return objectList[i].thisID();
 
-		if (objectList[i].prototype && objectList[i].prototype->nameIndex == ind)
+		if (objectList[i]._prototype && objectList[i]._prototype->nameIndex == ind)
 			return objectList[i].thisID();
 	}
 
@@ -401,7 +401,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (g_vm->_act->_actorList[i]->_data.nameIndex == ind)
 			return g_vm->_act->_actorList[i]->thisID();
 
-		if (g_vm->_act->_actorList[i]->prototype && g_vm->_act->_actorList[i]->prototype->nameIndex == ind)
+		if (g_vm->_act->_actorList[i]-> _prototype && g_vm->_act->_actorList[i]->_prototype->nameIndex == ind)
 			return g_vm->_act->_actorList[i]->thisID();
 	}
 
@@ -409,7 +409,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (worldList[i]._data.nameIndex == ind)
 			return worldList[i].thisID();
 
-		if (worldList[i].prototype && worldList[i].prototype->nameIndex == ind)
+		if (worldList[i]._prototype && worldList[i]._prototype->nameIndex == ind)
 			return worldList[i].thisID();
 	}
 
@@ -446,7 +446,7 @@ Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
 
 
 uint16 GameObject::containmentSet() {
-	return  prototype->containmentSet();
+	return  _prototype->containmentSet();
 }
 
 //  Calculates the ID of an object, given it's (implicit) address
@@ -564,13 +564,13 @@ ObjectID GameObject::possessor() {
 bool GameObject::getWorldLocation(Location &loc) {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			loc = obj->_data.location;
-			loc.z += (obj->prototype->height - objHeight) / 2;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
 			loc.context = id;
 			return true;
 		} else if (id == Nothing) {
@@ -590,14 +590,14 @@ Location GameObject::notGetLocation() {
 Location GameObject::notGetWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			TilePoint       loc = obj->_data.location;
 
-			loc.z += (obj->prototype->height - objHeight) / 2;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
 			return Location(loc, obj->_data.parentID);
 		} else if (id == Nothing) return Location(Nowhere, Nothing);
 
@@ -616,10 +616,10 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
-	if (prototype->containmentSet() & ProtoObj::isTangible) {
+	if (_prototype->containmentSet() & ProtoObj::isTangible) {
 		// display charges if item is a chargeable item
-		if (prototype->chargeType != 0
-		        &&  prototype->maxCharges != Permanent
+		if (_prototype->chargeType != 0
+		        &&  _prototype->maxCharges != Permanent
 		        &&  _data.bParam != Permanent) {
 			uint16 charges = _data.bParam;
 
@@ -630,7 +630,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			}
 		}
 
-		if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 			// make a buffer that contains the name of
 			// the object and it's count
 			// add only if a mergable item
@@ -649,7 +649,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 		int16 manaCost = 0;
 
 		// figure out if it's a skill or spell
-		if (prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+		if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 			// get skill proto for this spell or skill
 			SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -698,7 +698,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 bool GameObject::isTrueSkill() {
 	// figure out if it's a skill or spell
-	if (prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+	if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 		// get skill proto for this spell or skill
 		SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -715,14 +715,14 @@ bool GameObject::isTrueSkill() {
 TilePoint GameObject::getWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			TilePoint       loc = obj->_data.location;
 
-			loc.z += (obj->prototype->height - objHeight) / 2;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
 			return loc;
 		} else if (id == Nothing) return Nowhere;
 
@@ -766,7 +766,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	}
 
 	// if this is a mergeable object
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		if (units >= spriteNumFew) {
 			value = 1;
 		}
@@ -797,8 +797,8 @@ bool GameObject::unstack() {
 	        ||  isWorld(parent())
 	        ||  IDParent() == Nothing
 	        ||  _data.location.z == 1
-	        ||  prototype == nullptr
-	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return false;
+	        ||  _prototype == nullptr
+	        || (_prototype->containmentSet() & ProtoObj::isIntangible)) return false;
 
 	ContainerIterator   iter(parent());
 
@@ -808,7 +808,7 @@ bool GameObject::unstack() {
 	while (iter.next(&item) != Nothing) {
 		if (item->_data.location.u == _data.location.u
 		        &&  item->_data.location.v == _data.location.v
-		        &&  item->prototype  == prototype) {
+		        &&  item-> _prototype  == _prototype) {
 			count++;
 			if (item->_data.location.z != 0) base = item;
 			else zero = item;
@@ -916,9 +916,9 @@ void GameObject::move(const Location &location, int16 num) {
 
 
 int16 GameObject::getChargeType() {
-	assert(prototype);
+	assert(_prototype);
 
-	return prototype->getChargeType();
+	return _prototype->getChargeType();
 }
 
 // this function recharges an object
@@ -1089,7 +1089,7 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		// get the number requested or all that's there...
 		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
@@ -1117,7 +1117,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		Location    loc(0, 0, 0, 0);
 
 		// get the number requested or all that's there...
@@ -1182,7 +1182,7 @@ ObjectID GameObject::copy(const Location &l) {
 	} else {
 		if ((newObj = newObject()) == nullptr) return Nothing;
 
-		newObj->prototype   = prototype;
+		newObj->_prototype   = _prototype;
 		newObj->_data.nameIndex   = _data.nameIndex;
 		newObj->_data.script      = _data.script;
 		newObj->_data.objectFlags = _data.objectFlags;
@@ -1210,7 +1210,7 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 		if ((newObj = newObject()) == nullptr) return Nothing;
 
 
-		newObj->prototype   = prototype;
+		newObj-> _prototype   = _prototype;
 		newObj->_data.nameIndex   = _data.nameIndex;
 		newObj->_data.script      = _data.script;
 		newObj->_data.objectFlags = _data.objectFlags;
@@ -1270,7 +1270,7 @@ GameObject *GameObject::newObject() {   // get a newly created object
 	}
 
 	obj->remove();
-	obj->prototype      = nullptr;
+	obj-> _prototype      = nullptr;
 	obj->_data.nameIndex      = 0;
 	obj->_data.script         = 0;
 	obj->_data.objectFlags    = 0;
@@ -1354,7 +1354,7 @@ void GameObject::deleteObjectRecursive() {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
-		assert((prototype->containmentSet() & ProtoObj::isTangible) != 0);
+		assert((_prototype->containmentSet() & ProtoObj::isTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
 		if (isWorld(_data.parentID))
@@ -1503,7 +1503,7 @@ void GameObject::updateState() {
 
 	tHeight = tileSlopeHeight(_data.location, this, &sti);
 
-	if (!(_data.location.z >= 0 || prototype->height > 8 - _data.location.z))
+	if (!(_data.location.z >= 0 || _prototype->height > 8 - _data.location.z))
 		drown(this);
 
 	TilePoint subTile((_data.location.u >> kSubTileShift) & kSubTileMask,
@@ -1564,8 +1564,8 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ObjectID        objID;
 	GameObject      *item = nullptr;
 	TilePoint       newLoc, temp;
-	uint16          numRows = prototype->getMaxRows(),
-	                numCols = prototype->getMaxCols();
+	uint16          numRows = _prototype->getMaxRows(),
+	                numCols = _prototype->getMaxCols();
 	ProtoObj        *mObjProto = obj->proto();
 	bool            objIsEnchantment = (mObjProto->containmentSet() & INTANGIBLE_MASK);
 	bool            isReadyCont = isActor(this);
@@ -1629,7 +1629,7 @@ bool GameObject::getAvailableSlot(
 	assert(tp != nullptr);
 	assert(!canMerge || mergeObj != nullptr);
 
-	if (prototype == nullptr) return false;
+	if (_prototype == nullptr) return false;
 
 	ProtoObj        *objProto = obj->proto();
 
@@ -1649,7 +1649,7 @@ bool GameObject::getAvailableSlot(
 
 	//  Only actors or containers may contain other objects
 	if (isActor(this)
-	        || (prototype->containmentSet() & ProtoObj::isContainer)) {
+	        || (_prototype->containmentSet() & ProtoObj::isContainer)) {
 		TilePoint       firstEmptySlot;
 
 		if (canMerge) {
@@ -1713,7 +1713,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 	int16           dist;
 	int16           mapNum = getMapNum();
 
-	dist = prototype->crossSection + obj->proto()->crossSection;
+	dist = _prototype->crossSection + obj->proto()->crossSection;
 
 	//  Iterate until the object is placed
 	for (;;) {
@@ -1779,13 +1779,13 @@ GameObject *GameObject::getIntangibleContainer(int containerType) {
 //	Generic range checking function
 
 bool GameObject::inRange(const TilePoint &tp, uint16 range) {
-	uint8       crossSection = prototype->crossSection;
+	uint8       crossSection = _prototype->crossSection;
 	TilePoint   loc = getLocation();
 
 	loc =   TilePoint(
 	            clamp(loc.u - crossSection, tp.u, loc.u + crossSection),
 	            clamp(loc.v - crossSection, tp.v, loc.v + crossSection),
-	            clamp(loc.z, tp.z, loc.z + prototype->height));
+	            clamp(loc.z, tp.z, loc.z + _prototype->height));
 
 	TilePoint   vector = tp - loc;
 
@@ -2203,12 +2203,12 @@ bool GameObject::canSenseObjectProperty(
 
 int32 GameObject::getProtoNum() {
 	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
-		if (prototype == g_vm->_actorProtos[i])
+		if (_prototype == g_vm->_actorProtos[i])
 			return i;
 	}
 
 	for (uint i = 0; i < g_vm->_objectProtos.size(); ++i) {
-		if (prototype == g_vm->_objectProtos[i])
+		if (_prototype == g_vm->_objectProtos[i])
 			return i;
 	}
 
@@ -2220,12 +2220,12 @@ int32 GameObject::getProtoNum() {
 
 void GameObject::setProtoNum(int32 nProto) {
 	if (isActor(this))
-		prototype = g_vm->_actorProtos[nProto];
+		_prototype = g_vm->_actorProtos[nProto];
 	else {
 		ObjectID    oldParentID = _data.parentID;
 		bool        wasStacked = unstack(); //  Unstack if it was in a stack
 
-		prototype = g_vm->_objectProtos[nProto];
+		_prototype = g_vm->_objectProtos[nProto];
 
 		if (wasStacked) {
 			ObjectID    pos = possessor();
@@ -2362,7 +2362,7 @@ uint16 GameObject::totalContainedMass() {
 		if (!(childObj->containmentSet() & ProtoObj::isTangible))
 			continue;
 
-		objMass = childObj->prototype->mass;
+		objMass = childObj->_prototype->mass;
 		if (childObj->isMergeable())
 			objMass *= childObj->getExtra();
 		total += objMass;
@@ -2388,7 +2388,7 @@ uint16 GameObject::totalContainedBulk() {
 		if (!(childObj->containmentSet() & ProtoObj::isTangible))
 			continue;
 
-		objBulk = childObj->prototype->bulk;
+		objBulk = childObj->_prototype->bulk;
 		if (childObj->isMergeable())
 			objBulk *= childObj->getExtra();
 		total += objBulk;
