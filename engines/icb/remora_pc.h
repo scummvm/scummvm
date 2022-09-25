@@ -147,9 +147,9 @@ inline const char *_remora::MakeRemoraGraphicsPath(const char *pcBitmapName) con
 	static char pcRemoraGraphicsPath[MAXLEN_URL];
 
 	sprintf(pcRemoraGraphicsPath, REMORA_GRAPHICS_PATH);
-	strcat(pcRemoraGraphicsPath, pcBitmapName);
-	strcat(pcRemoraGraphicsPath, ".");
-	strcat(pcRemoraGraphicsPath, PX_BITMAP_EXT);
+	Common::strcat_s(pcRemoraGraphicsPath, pcBitmapName);
+	Common::strcat_s(pcRemoraGraphicsPath, ".");
+	Common::strcat_s(pcRemoraGraphicsPath, PX_BITMAP_EXT);
 
 	return (pcRemoraGraphicsPath);
 }

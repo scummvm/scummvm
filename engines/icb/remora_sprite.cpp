@@ -41,9 +41,9 @@ void _remora_sprite::InitialiseFromBitmapName(const char *pcBitmapName, const ch
 	_pxSprite *psSprite;
 
 	// Set name.
-	strcpy(m_pcName, pcBitmapName);
+	Common::strcpy_s(m_pcName, pcBitmapName);
 	m_nNameHash = NULL_HASH;
-	strcpy(m_pcClusterName, pcClusterName);
+	Common::strcpy_s(m_pcClusterName, pcClusterName);
 	m_nClusterHash = nClusterHash;
 
 	// Get the number of frames (don't forget to check schema number is correct).
@@ -85,9 +85,9 @@ _remora_sprite::_remora_sprite(const _remora_sprite &oX) {
 	m_nFramePC = oX.m_nFramePC;
 	m_nNumFrames = oX.m_nNumFrames;
 
-	strcpy(m_pcName, oX.m_pcName);
+	Common::strcpy_s(m_pcName, oX.m_pcName);
 	m_nNameHash = oX.m_nNameHash;
-	strcpy(m_pcClusterName, oX.m_pcClusterName);
+	Common::strcpy_s(m_pcClusterName, oX.m_pcClusterName);
 	m_nClusterHash = oX.m_nClusterHash;
 }
 
@@ -95,9 +95,9 @@ const _remora_sprite &_remora_sprite::operator=(const _remora_sprite &oOpB) {
 	m_nFramePC = oOpB.m_nFramePC;
 	m_nNumFrames = oOpB.m_nNumFrames;
 
-	strcpy(m_pcName, oOpB.m_pcName);
+	Common::strcpy_s(m_pcName, oOpB.m_pcName);
 	m_nNameHash = oOpB.m_nNameHash;
-	strcpy(m_pcClusterName, oOpB.m_pcClusterName);
+	Common::strcpy_s(m_pcClusterName, oOpB.m_pcClusterName);
 	m_nClusterHash = oOpB.m_nClusterHash;
 
 	return (*this);

@@ -365,7 +365,7 @@ void _icon_menu::DrawIconMenu() {
 		}
 
 		// Get the icon name and hash for it.
-		strcpy(pcIconName, m_pIconList->GetIcon(nIconIndex));
+		Common::strcpy_s(pcIconName, m_pIconList->GetIcon(nIconIndex));
 		uint32 nHashRef = HashString(pcIconName);
 
 		// Now blit the icon itself.

@@ -133,7 +133,7 @@ int32 FxManager::Register(const int32 id, const char *name, const int32 delay, u
 	}
 
 	// Record the samples name so we know it is currently loaded in memory
-	strcpy(m_effects[id].name, name);
+	Common::strcpy_s(m_effects[id].name, name);
 
 	// Setup the delay if there is one
 	m_effects[id].delay = delay;
