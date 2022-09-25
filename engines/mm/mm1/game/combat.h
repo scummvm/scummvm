@@ -40,15 +40,17 @@ protected:
 	Monster *_monsterP;
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _arr2[MAX_COMBAT_MONSTERS];
+	int _arr3[MAX_PARTY_SIZE / 2];
+	byte _arr4[MAX_COMBAT_MONSTERS];
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
-	int _arr3[MAX_PARTY_SIZE / 2];
 	bool _treasureFlags[MAX_PARTY_SIZE];
 	int _val1;
 	int _roundNum;
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
 	byte _val6, _val7;
+	int _val8;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
@@ -122,17 +124,28 @@ protected:
 	 */
 	void combatLoop();
 
-	void defeatedMonsters();
-	void selectParty();
-	void loop1();
-	void proc1();
-	void shareSplit();
-
 	/**
 	 * Select treasure for a defeated monster
 	 */
 	void selectTreasure();
 	void selectTreasure2(int index);
+
+	/**
+	 * Moves to the next round
+	 */
+	void nextRound();
+
+	/**
+	 * Update the _highestLevel to the remaining
+	 * active members of the party
+	 */
+	void updateHighestLevel();
+
+	void defeatedMonsters();
+	void selectParty();
+	void loop1();
+	void proc1();
+	void clearArrays();
 };
 
 } // namespace Game
