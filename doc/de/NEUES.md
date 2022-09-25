@@ -50,7 +50,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Kopf des Navigators zeigte in der ursprünglichen Version von Monkey Island 1 (ohne
      die verbesserte Verben-Oberfläche) nicht in alle möglichen Richtungen.
    - Leicht abweichende Text-Positionierung in den v4-Spielen sowie in Loom v3 korrigiert.
-   - Darstellung des Textes in den Spiele-Credits am Ende von Sam & Max korrigiert.
+   - Spiele-Credits am Ende von Sam & Max können jetzt - so wie im Original -
+     mit dem Fadenkreuz-Mauszeiger abgeschossen werden.
    - Probleme mit der Lippen-Synchronisation in der finalen Szene von Freddi Fish 4 korrigiert.
    - Die Lade-Animation des Mauszeigers in The Dig und COMI wurde nicht immer dargestellt.
    - Genauigkeit einiger Audio-Treiber verbessert. Die Fehler haben sich merklich auf die
