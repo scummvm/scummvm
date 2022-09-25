@@ -940,10 +940,7 @@ void LC::c_starts() {
 
 	int res = s1.hasPrefix(s2) ? 1 : 0;
 
-	d1.type = INT;
-	d1.u.i = res;
-
-	g_lingo->push(d1);
+	g_lingo->push(Datum(res));
 }
 
 void LC::c_intersects() {
