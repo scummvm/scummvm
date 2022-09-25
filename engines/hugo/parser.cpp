@@ -260,7 +260,7 @@ void Parser::charHandler() {
 	if (gameStatus._recallFl) {
 		// Copy previous line to current cmdline
 		gameStatus._recallFl = false;
-		strcpy(_cmdLine, _vm->_line);
+		Common::strcpy_s(_cmdLine, _vm->_line);
 		_cmdLineIndex = strlen(_cmdLine);
 	}
 
