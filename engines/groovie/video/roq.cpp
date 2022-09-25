@@ -544,7 +544,7 @@ bool ROQPlayer::processBlock() {
 		_file->skip(blockHeader.size);
 	}
 
-	if (endpos != _file->pos()) {
+	if (endpos != _file->pos() && !_file->eos()) {
 		warning("Groovie::ROQ: BLOCK %04x Should have ended at %ld, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
 		_file->seek(MIN(_file->pos(), endpos));
@@ -674,7 +674,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	_motionOffY = blockHeader.param & 0xFF;
 
 	// Calculate where the block should end
-	int32 endpos =_file->pos() + blockHeader.size;
+	int64 endpos =_file->pos() + blockHeader.size;
 
 	// Reset the coding types
 	_codingTypeCount = 0;
@@ -692,8 +692,11 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	}
 
 	// HACK: Skip the remaining bytes
-	int32 skipBytes = endpos -_file->pos();
+	int64 skipBytes = endpos -_file->pos();
 	if (skipBytes > 0) {
+		if (_file->eos()) {
+			return false;
+		}
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
 			warning("Groovie::ROQ: Skipped %d bytes", skipBytes);
