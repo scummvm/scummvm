@@ -1314,7 +1314,7 @@ void SoundManager::playAmbientSound(int param) {
 
 	if (_queue->getAmbientState() & kAmbientSoundEnabled && param >= 0x45 && param <= 0x46) {
 		if (_queue->getAmbientState() & kAmbientSoundSteam) {
-			strcpy(tmp, "STEAM.SND");
+			Common::strcpy_s(tmp, "STEAM.SND");
 
 			_ambientSoundDuration = 32767;
 		} else {
