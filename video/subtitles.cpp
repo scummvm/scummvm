@@ -31,6 +31,7 @@
 #include "graphics/surface.h"
 
 #include "video/subtitles.h"
+#include "common/config-manager.h"
 
 namespace Video {
 
@@ -118,8 +119,10 @@ bool SRTParser::parseFile(const char *fname) {
 
 	cleanup();
 
-	if (!f.open(fname))
+	if (!f.open(fname)) {
+		_entries.push_back(new SRTEntry(0, 0, 99999999, fname));
 		return false;
+	}
 
 	byte buf[3];
 	f.read(buf, 3);
@@ -230,6 +233,7 @@ Common::String SRTParser::getSubtitle(uint32 timestamp) {
 
 Subtitles::Subtitles() : _loaded(false), _font(nullptr), _hPad(0), _vPad(0) {
 	_surface = new Graphics::Surface();
+	_subtitleDev = ConfMan.getBool("subtitle_dev");
 }
 
 Subtitles::~Subtitles() {
@@ -284,10 +288,19 @@ void Subtitles::setPadding(uint16 horizontal, uint16 vertical) {
 }
 
 void Subtitles::drawSubtitle(uint32 timestamp, bool force) {
-	if (!_loaded)
-		return;
-
 	Common::String subtitle = _srtParser.getSubtitle(timestamp);
+	
+	if (!_loaded) {
+		if (!_subtitleDev)
+			return;
+		uint32 hours, mins, secs, msecs;
+		secs = timestamp / 1000;
+		hours = secs / 3600;
+		mins = (secs / 60) % 60;
+		secs %= 60;
+		msecs = timestamp % 1000;
+		subtitle += " " + Common::String::format("%u:%u:%u,%u", hours, mins, secs, msecs);
+	}
 
 	if (!force && subtitle == _prevSubtitle)
 		return;
