@@ -36,15 +36,15 @@ vDisplayPage *drawPage;
 void gDisplayPort::fillRect(const Rect16 r) {
 	Rect16          sect;
 
-	sect = intersect(clip, r);           // intersect with clip rect
-	sect.x += origin.x;                     // apply origin translate
-	sect.y += origin.y;
+	sect = intersect(_clip, r);           // intersect with clip rect
+	sect.x += _origin.x;                     // apply origin translate
+	sect.y += _origin.y;
 
 	if (!sect.empty()) {                    // if result is non-empty
-		if (drawMode == drawModeComplement) // Complement drawing mode
-			protoPage.invertRect(sect, fgPen);
+		if (_drawMode == drawModeComplement) // Complement drawing mode
+			protoPage.invertRect(sect, _fgPen);
 		else
-			protoPage.fillRect(sect, fgPen);     // regular drawing mode
+			protoPage.fillRect(sect, _fgPen);     // regular drawing mode
 	}
 }
 
@@ -62,34 +62,34 @@ void gDisplayPort::bltPixels(
 	                sect;
 	uint8           *src_line;
 
-	if (clip.empty())
-		clip = Rect16(0, 0, map->size.x, map->size.y);
-	sect = intersect(clip, r);
+	if (_clip.empty())
+		_clip = Rect16(0, 0, _map->_size.x, _map->_size.y);
+	sect = intersect(_clip, r);
 
 	if (!sect.empty()) {                        // if result is non-empty
 		src_x += sect.x - r.x;
 		src_y += sect.y - r.y;
 
-		src_line = src.data + src_y * src.size.x + src_x;
+		src_line = src._data + src_y * src._size.x + src_x;
 
-		sect.x += origin.x;
-		sect.y += origin.y;
+		sect.x += _origin.x;
+		sect.y += _origin.y;
 
-		switch (drawMode) {
+		switch (_drawMode) {
 		case drawModeMatte:                     // use transparency
-			protoPage.writeTransPixels(sect, src_line, src.size.x);
+			protoPage.writeTransPixels(sect, src_line, src._size.x);
 			break;
 		case drawModeReplace:                   // don't use transparency
-			protoPage.writePixels(sect, src_line, src.size.x);
+			protoPage.writePixels(sect, src_line, src._size.x);
 			break;
 		case drawModeColor:                     // solid color, use transparency
-			protoPage.writeColorPixels(sect, src_line, src.size.x, fgPen);
+			protoPage.writeColorPixels(sect, src_line, src._size.x, _fgPen);
 			break;
 		case drawModeComplement:                // blit in complement mode
-			protoPage.writeComplementPixels(sect, src_line, src.size.x, fgPen);
+			protoPage.writeComplementPixels(sect, src_line, src._size.x, _fgPen);
 			break;
 		default:
-			error("bltPixels: Unknown drawMode: %d", drawMode);
+			error("bltPixels: Unknown drawMode: %d", _drawMode);
 		}
 	}
 }
@@ -103,15 +103,15 @@ void gDisplayPort::scrollPixels(
 	if (dx == 0 && dy == 0)        // quit of nothing to do
 		return;
 
-	sect = intersect(clip, r);           // apply cliping rect
+	sect = intersect(_clip, r);           // apply cliping rect
 
 	if (!sect.empty()) {                    // if result is non-empty
 		Rect16      srcRect,
 		            dstRect;
 		gPixelMap   tempMap;
 
-		sect.x += origin.x;
-		sect.y += origin.y;
+		sect.x += _origin.x;
+		sect.y += _origin.y;
 		srcRect = dstRect = sect;           // make copies of rect
 
 		if (dx > 0) {
@@ -137,21 +137,21 @@ void gDisplayPort::scrollPixels(
 
 		//  Allocate temp map to hold scrolled pixels
 
-		tempMap.size.x = srcRect.width;
-		tempMap.size.y = srcRect.height;
-		tempMap.data = (uint8 *)malloc(tempMap.bytes());
+		tempMap._size.x = srcRect.width;
+		tempMap._size.y = srcRect.height;
+		tempMap._data = (uint8 *)malloc(tempMap.bytes());
 #if 0
-		if (!tempMap.data) fatal("Out of memory.\n");
+		if (!tempMap._data) fatal("Out of memory.\n");
 #endif
 
 		//  Blit scrolled pixels to system ram and back to SVGA
 
-		protoPage.readPixels(srcRect, tempMap.data, tempMap.size.x);
-		protoPage.writePixels(dstRect, tempMap.data, tempMap.size.x);
+		protoPage.readPixels(srcRect, tempMap._data, tempMap._size.x);
+		protoPage.writePixels(dstRect, tempMap._data, tempMap._size.x);
 
 		//  dispose of temp pixel map
 
-		free(tempMap.data);
+		free(tempMap._data);
 	}
 }
 
@@ -205,7 +205,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 		yMove = protoPage.size.x;
 	}
 
-	if (clipNeeded) {                   // clipping versions
+	if (_clipNeeded) {                   // clipping versions
 		if (xAbs > yAbs) {
 			errTerm = yAbs - (xAbs >> 1);
 
@@ -242,7 +242,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			}
 		}
 
-		offset = (y1 + origin.y) * protoPage.size.x + x1 + origin.x;
+		offset = (y1 + _origin.y) * protoPage.size.x + x1 + _origin.x;
 		bank = offset >> 16;
 
 		protoPage.setWriteBank(bank);
@@ -258,8 +258,8 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (drawMode == drawModeComplement) {
 					svgaWriteAddr[offset]
-					    = svgaReadAddr[offset] ^ fgPen;
-				} else svgaWriteAddr[offset] = fgPen;
+					    = svgaReadAddr[offset] ^ _fgPen;
+				} else svgaWriteAddr[offset] = _fgPen;
 
 				if (errTerm >= 0) {
 					y1 += yDir;
@@ -292,8 +292,8 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 				if (drawMode == drawModeComplement) {
 					svgaWriteAddr[offset]
-					    = svgaReadAddr[offset] ^ fgPen;
-				} else svgaWriteAddr[offset] = fgPen;
+					    = svgaReadAddr[offset] ^ _fgPen;
+				} else svgaWriteAddr[offset] = _fgPen;
 
 				if (errTerm >= 0) {
 					x1 += xDir;
@@ -319,7 +319,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			}
 		}
 	} else {                            // non-clipping versions
-		offset = (y1 + origin.y) * protoPage.size.x + x1 + origin.x;
+		offset = (y1 + _origin.y) * protoPage.size.x + x1 + _origin.x;
 
 		bank = offset >> 16;
 
@@ -333,8 +333,8 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			for (i = xAbs + 1; i > 0; i--) {
 				if (drawMode == drawModeComplement) {
 					svgaWriteAddr[offset]
-					    = svgaReadAddr[offset] ^ fgPen;
-				} else svgaWriteAddr[offset] = fgPen;
+					    = svgaReadAddr[offset] ^ _fgPen;
+				} else svgaWriteAddr[offset] = _fgPen;
 
 				if (errTerm >= 0) {
 					y1 += yDir;
@@ -364,8 +364,8 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			for (i = yAbs + 1; i > 0; i--) {
 				if (drawMode == drawModeComplement) {
 					svgaWriteAddr[offset]
-					    = svgaReadAddr[offset] ^ fgPen;
-				} else svgaWriteAddr[offset] = fgPen;
+					    = svgaReadAddr[offset] ^ _fgPen;
+				} else svgaWriteAddr[offset] = _fgPen;
 
 				if (errTerm >= 0) {
 					x1 += xDir;

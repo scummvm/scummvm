@@ -134,19 +134,19 @@ hResContext         *imageRes;              // image resource handle
 //	Initialize the Play mode
 
 bool checkTileAreaPort() {
-	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data == nullptr) {
+	if (g_vm->_gameRunning && g_vm->_tileDrawMap._data == nullptr) {
 		//  Allocate back buffer for tile rendering
-		g_vm->_tileDrawMap.size.x = (kTileRectWidth + kTileWidth - 1) & ~kTileDXMask;
-		g_vm->_tileDrawMap.size.y = (kTileRectHeight + kTileWidth - 1) & ~kTileDXMask;
-		g_vm->_tileDrawMap.data = new uint8[g_vm->_tileDrawMap.bytes()]();
+		g_vm->_tileDrawMap._size.x = (kTileRectWidth + kTileWidth - 1) & ~kTileDXMask;
+		g_vm->_tileDrawMap._size.y = (kTileRectHeight + kTileWidth - 1) & ~kTileDXMask;
+		g_vm->_tileDrawMap._data = new uint8[g_vm->_tileDrawMap.bytes()]();
 	}
 
-	return g_vm->_tileDrawMap.data != nullptr;
+	return g_vm->_tileDrawMap._data != nullptr;
 }
 
 void clearTileAreaPort() {
-	if (g_vm->_gameRunning && g_vm->_tileDrawMap.data != nullptr) {
-		_FillRect(g_vm->_tileDrawMap.data, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.x, g_vm->_tileDrawMap.size.y, 0);
+	if (g_vm->_gameRunning && g_vm->_tileDrawMap._data != nullptr) {
+		_FillRect(g_vm->_tileDrawMap._data, g_vm->_tileDrawMap._size.x, g_vm->_tileDrawMap._size.x, g_vm->_tileDrawMap._size.y, 0);
 	}
 
 	Rect16 rect(0, 0, 640, 480);
@@ -268,9 +268,9 @@ void PlayModeCleanup() {
 	CleanupUserControls();
 
 	//  Deallocate back buffer for tile rendering
-	if (g_vm->_tileDrawMap.data) {
-		delete[] g_vm->_tileDrawMap.data;
-		g_vm->_tileDrawMap.data = nullptr;
+	if (g_vm->_tileDrawMap._data) {
+		delete[] g_vm->_tileDrawMap._data;
+		g_vm->_tileDrawMap._data = nullptr;
 	}
 
 	if (objPointerMap.data) {
@@ -305,26 +305,26 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	ImageHeader     *hdr = (ImageHeader *)image;
 	gPixelMap       map;
 
-	map.size = hdr->size;
+	map._size = hdr->size;
 
 	if (hdr->compress) {
-		map.data = new uint8[map.bytes()];
-		if (map.data == nullptr)
+		map._data = new uint8[map.bytes()];
+		if (map._data == nullptr)
 			return;
 
-		unpackImage(&map, map.size.x, map.size.y, hdr->data);
+		unpackImage(&map, map._size.x, map._size.y, hdr->data);
 	} else
-		map.data = (uint8 *)hdr->data;
+		map._data = (uint8 *)hdr->data;
 
 	port.setMode(drawModeMatte);
 
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
-	               map.size.x, map.size.y);
+	               map._size.x, map._size.y);
 
 
 	if (hdr->compress)
-		delete[] map.data;
+		delete[] map._data;
 }
 
 void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
@@ -333,27 +333,27 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 	uint8           *row;
 	int16           x, y;
 
-	map.size = hdr->size;
+	map._size = hdr->size;
 
-	map.data = new uint8[map.bytes()];
-	if (map.data == nullptr)
+	map._data = new uint8[map.bytes()];
+	if (map._data == nullptr)
 		return;
 
 	if (hdr->compress)
-		unpackImage(&map, map.size.x, map.size.y, hdr->data);
+		unpackImage(&map, map._size.x, map._size.y, hdr->data);
 	else
-		memcpy(map.data, hdr->data, map.bytes());
+		memcpy(map._data, hdr->data, map.bytes());
 
-	for (y = 0, row = map.data; y < map.size.y; y++, row += map.size.x) {
-		for (x = (y & 1); x < map.size.x; x += 2) row[x] = 0;
+	for (y = 0, row = map._data; y < map._size.y; y++, row += map._size.x) {
+		for (x = (y & 1); x < map._size.x; x += 2) row[x] = 0;
 	}
 
 	port.setMode(drawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
-	               map.size.x, map.size.y);
+	               map._size.x, map._size.y);
 
-	delete[] map.data;
+	delete[] map._data;
 }
 
 void drawCompressedImageToMap(gPixelMap &map, void *image) {
@@ -361,14 +361,14 @@ void drawCompressedImageToMap(gPixelMap &map, void *image) {
 	ImageHeader     *hdr = (ImageHeader *)image;
 
 	// set the buffer blit area to the image size
-	map.size = hdr->size;
+	map._size = hdr->size;
 
 	// see if it's compressed
 	if (hdr->compress) {
 		// if it is then upack it to spec'ed coords.
-		unpackImage(&map, map.size.x, map.size.y, hdr->data);
+		unpackImage(&map, map._size.x, map._size.y, hdr->data);
 	} else
-		map.data = (uint8 *)hdr->data;
+		map._data = (uint8 *)hdr->data;
 }
 
 

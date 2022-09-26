@@ -855,7 +855,7 @@ void gTextBox::handleTimerTick(int32 tick) {
 			SAVE_GPORT_STATE(port);                  // save pen color, etc.
 			g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
-			port.setPenMap(port.penMap);
+			port.setPenMap(port._penMap);
 			port.setStyle(0);
 			port.setColor(blinkState ? blinkColor0 : blinkColor1);
 			port.fillRect(editRect.x + blinkX - ((blinkWide + 1) / 2), editRect.y + 1, blinkWide, editRect.height - 1);
@@ -906,7 +906,7 @@ void gTextBox::drawContents() {
 
 		if (hilit || editing) {
 			// fill in the editing field's background color
-			editRectFill(tPort, port.penMap);
+			editRectFill(tPort, port._penMap);
 		}
 
 		if (selected) {                      // if panel is selected
@@ -974,7 +974,7 @@ void gTextBox::drawContents() {
 		//  Blit the pixelmap to the main screen
 
 		port.setMode(drawModeMatte);
-		port.bltPixels(*tPort.map, 0, 0,
+		port.bltPixels(*tPort._map, 0, 0,
 		               editRect.x + 1, editRect.y + 1,
 		               editRect.width, editRect.height);
 		blinkStart = 0;
@@ -1060,7 +1060,7 @@ void gTextBox::drawAll(gPort &port,
 			tempPort.setColor(fontColorFore);
 
 			// font
-			oldFont = tempPort.font;
+			oldFont = tempPort._font;
 
 			tempPort.setFont(textFont);
 
@@ -1091,7 +1091,7 @@ void gTextBox::drawAll(gPort &port,
 
 			port.setMode(drawModeMatte);
 
-			port.bltPixels(*tempPort.map, 0, 0,
+			port.bltPixels(*tempPort._map, 0, 0,
 			               _extent.x + 1, _extent.y + 1,
 			               bufRect.width, bufRect.height);
 

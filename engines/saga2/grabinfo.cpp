@@ -38,9 +38,9 @@ namespace Saga2 {
 
 
 GrabInfo::GrabInfo() {
-	pointerMap.size.x = 0;
-	pointerMap.size.y = 0;
-	pointerMap.data = nullptr;
+	pointerMap._size.x = 0;
+	pointerMap._size.y = 0;
+	pointerMap._data = nullptr;
 
 	// null out the "held" object
 	grabId      = Nothing;
@@ -56,8 +56,8 @@ GrabInfo::GrabInfo() {
 }
 
 GrabInfo::~GrabInfo() {
-	if (pointerMap.data != nullptr)
-		delete[] pointerMap.data;
+	if (pointerMap._data != nullptr)
+		delete[] pointerMap._data;
 }
 
 // set the move count based on val and whether the object is
@@ -173,9 +173,9 @@ uint8 GrabInfo::setIntent(uint8 in) {
 //	Make the object given into the mouse pointer
 void GrabInfo::setIcon() {
 	assert(
-	    pointerMap.size.x == 0
-	    &&  pointerMap.size.y == 0
-	    &&  pointerMap.data == nullptr);
+	    pointerMap._size.x == 0
+	    &&  pointerMap._size.y == 0
+	    &&  pointerMap._data == nullptr);
 
 	assert(grabObj != nullptr && isObject(grabObj));
 
@@ -201,8 +201,8 @@ void GrabInfo::setIcon() {
 		//  Build the current color table for the object
 		grabObj->getColorTranslation(mainColors);
 
-		pointerMap.size = spr->size;
-		pointerMap.data = mapData;
+		pointerMap._size = spr->size;
+		pointerMap._data = mapData;
 
 		pointerOffset.x = - spr->size.x / 2;
 		pointerOffset.y = - spr->size.y / 2;
@@ -216,11 +216,11 @@ void GrabInfo::setIcon() {
 void GrabInfo::clearIcon() {
 	assert(grabObj == nullptr);
 
-	if (pointerMap.data != nullptr) {
-		delete[] pointerMap.data;
-		pointerMap.size.x = 0;
-		pointerMap.size.y = 0;
-		pointerMap.data = nullptr;
+	if (pointerMap._data != nullptr) {
+		delete[] pointerMap._data;
+		pointerMap._size.x = 0;
+		pointerMap._size.y = 0;
+		pointerMap._data = nullptr;
 	}
 }
 

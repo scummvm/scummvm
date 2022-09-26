@@ -52,8 +52,8 @@ gMousePointer::gMousePointer(gDisplayPort &port) {
 }
 
 gMousePointer::~gMousePointer() {
-	if (saveMap.data)
-		free(saveMap.data);
+	if (saveMap._data)
+		free(saveMap._data);
 }
 
 //  Init & status check
@@ -167,19 +167,19 @@ void gMousePointer::setImage(
 	if (pointerImage != &img
 	        ||  x != offsetPosition.x
 	        ||  y != offsetPosition.y
-	        ||  img.size != saveMap.size) {
+	        ||  img._size != saveMap._size) {
 		offsetPosition.x = x;
 		offsetPosition.y = y;
 
 		hide();
-		if (saveMap.data)
-			free(saveMap.data);
-		saveMap.size = img.size;
-		saveMap.data = (uint8 *)malloc(img.bytes());
+		if (saveMap._data)
+			free(saveMap._data);
+		saveMap._size = img._size;
+		saveMap._data = (uint8 *)malloc(img.bytes());
 		pointerImage = &img;
 		currentPosition = pos + offsetPosition;
 
-		CursorMan.replaceCursor(img.data, img.size.x, img.size.y, -x, -y, 0);
+		CursorMan.replaceCursor(img._data, img._size.x, img._size.y, -x, -y, 0);
 		CursorMan.showMouse(true);
 		show();
 	}

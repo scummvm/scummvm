@@ -426,7 +426,7 @@ void CPlaqText::draw() {
 
 	// save pen color, etc.
 	SAVE_GPORT_STATE(port);
-	oldFont = port.font;
+	oldFont = port._font;
 
 	// setup the port
 	port.setMode(drawModeMatte);
@@ -878,8 +878,8 @@ CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
 	}
 
 	// init the save map
-	savedMap.size = Extent16(xSize, ySize);
-	savedMap.data = new uint8[savedMap.bytes()];
+	savedMap._size = Extent16(xSize, ySize);
+	savedMap._data = new uint8[savedMap.bytes()];
 }
 
 CManaIndicator::~CManaIndicator() {
@@ -892,8 +892,8 @@ CManaIndicator::~CManaIndicator() {
 	g_vm->_imageCache->releaseImage(wellImage);
 
 	// release the saved map
-	if (savedMap.data)
-		delete[] savedMap.data;
+	if (savedMap._data)
+		delete[] savedMap._data;
 }
 
 // this method provides a rect for any of the six mana regions of the control
@@ -977,21 +977,21 @@ void CManaIndicator::drawClipped(gPort &port,
 		return;
 
 	// set the blit surface to a flat black
-	memset(tempPort.map->data, 24, tempPort.map->bytes());
+	memset(tempPort._map->_data, 24, tempPort._map->bytes());
 
 	// draw the well
 	drawCompressedImage(tempPort, Point16(wellX, wellY), wellImage);
 
 	// make a mixing plane and blank it
-	mixMap.size = Extent16(xSize, ySize);
-	mixMap.data = new uint8[mixMap.bytes()]();
+	mixMap._size = Extent16(xSize, ySize);
+	mixMap._data = new uint8[mixMap.bytes()]();
 	// make a temp plane and blank it
-	tempMap.size = Extent16(xSize, ySize);
-	tempMap.data = new uint8[tempMap.bytes()]();
+	tempMap._size = Extent16(xSize, ySize);
+	tempMap._data = new uint8[tempMap.bytes()]();
 
 	// clear out the blit surfaces
-	memset(mixMap.data, 0, mixMap.bytes());
-	memset(tempMap.data, 0, tempMap.bytes());
+	memset(mixMap._data, 0, mixMap.bytes());
+	memset(tempMap._data, 0, tempMap.bytes());
 
 	// draw as glyph
 	tempPort.setMode(drawModeMatte);
@@ -1003,34 +1003,34 @@ void CManaIndicator::drawClipped(gPort &port,
 		ImageHeader *ringHdr = (ImageHeader *)ringImages[manaLines[i].ringImageIndex];
 
 		// set the buffer blit area to the image size
-		starMap.size = starHdr->size;
-		ringMap.size = ringHdr->size;
+		starMap._size = starHdr->size;
+		ringMap._size = ringHdr->size;
 
 		// see if it's compressed
 		if (starHdr->compress) {
 			// allocation of the temp buffer
-			starMap.data = new uint8[starMap.bytes()]();
+			starMap._data = new uint8[starMap.bytes()]();
 
 			// if it is then upack it to spec'ed coords.
-			unpackImage(&starMap, starMap.size.x, starMap.size.y, starHdr->data);
-		} else starMap.data = (uint8 *)starHdr->data;
+			unpackImage(&starMap, starMap._size.x, starMap._size.y, starHdr->data);
+		} else starMap._data = (uint8 *)starHdr->data;
 
 		// see if it's compressed
 		if (ringHdr->compress) {
 			// allocation of the temp buffer
-			ringMap.data = new uint8[ringMap.bytes()]();
+			ringMap._data = new uint8[ringMap.bytes()]();
 
 			// if it is then upack it to spec'ed coords.
-			unpackImage(&ringMap, ringMap.size.x, ringMap.size.y, ringHdr->data);
-		} else ringMap.data = (uint8 *)ringHdr->data;
+			unpackImage(&ringMap, ringMap._size.x, ringMap._size.y, ringHdr->data);
+		} else ringMap._data = (uint8 *)ringHdr->data;
 
 		// now blit the rings to the mixing surface
 		TBlit(&mixMap, &ringMap, manaLines[i].ringPos.x, manaLines[i].ringPos.y);
 		TBlit(&tempMap, &starMap, manaLines[i].starPos.x, manaLines[i].starPos.y);
 
 		// now do a peusdo-log additive thing to the images
-		uint8   *dst    = (uint8 *)mixMap.data;
-		uint8   *src    = (uint8 *)tempMap.data;
+		uint8   *dst    = (uint8 *)mixMap._data;
+		uint8   *src    = (uint8 *)tempMap._data;
 
 		// get the least common dinominator for size ( should be equal )
 		uint16  bufferSize  = MIN(mixMap.bytes(), tempMap.bytes());
@@ -1050,29 +1050,29 @@ void CManaIndicator::drawClipped(gPort &port,
 		// for each color index possible, match correct color value
 		// at dest buffer
 		compositePixels(
-		    tempPort.map,
+		    tempPort._map,
 		    &mixMap,
 		    0,
 		    0,
 		    manaColorMap[i]);
 
 		// clear out the mixing surfaces
-		memset(mixMap.data, 0, mixMap.bytes());
-		memset(tempMap.data, 0, tempMap.bytes());
+		memset(mixMap._data, 0, mixMap.bytes());
+		memset(tempMap._data, 0, tempMap.bytes());
 
 		// dispose the temporary gPixelMap
 		if (starHdr->compress)
-			delete[] starMap.data;
+			delete[] starMap._data;
 		if (ringHdr->compress)
-			delete[] ringMap.data;
+			delete[] ringMap._data;
 	}
 
 	// save this frame
-	TBlit(&savedMap, tempPort.map, 0, 0);
+	TBlit(&savedMap, tempPort._map, 0, 0);
 
 	//  Blit the pixelmap to the main screen
 	port.setMode(drawModeMatte);
-	port.bltPixels(*tempPort.map, 0, 0,
+	port.bltPixels(*tempPort._map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
 	               xSize, ySize);
 
@@ -1081,10 +1081,10 @@ void CManaIndicator::drawClipped(gPort &port,
 
 	// dispose of temporary pixelmap
 	DisposeTempPort(tempPort);
-	if (mixMap.data)
-		delete[] mixMap.data;
-	if (tempMap.data)
-		delete[] tempMap.data;
+	if (mixMap._data)
+		delete[] mixMap._data;
+	if (tempMap._data)
+		delete[] tempMap._data;
 
 	g_vm->_pointer->show();
 }
@@ -1346,7 +1346,7 @@ void writePlaqText(gPort            &port,
 	va_list         argptr;
 	Rect16          workRect;
 	int16 cnt;
-	gFont           *oldFont = port.font;
+	gFont           *oldFont = port._font;
 
 	va_start(argptr, msg);
 	cnt = vsprintf(lineBuf, msg, argptr);
@@ -1397,7 +1397,7 @@ void writePlaqTextPos(gPort         &port,
 	char            lineBuf[128];
 	va_list         argptr;
 	Point16         drawPos;
-	gFont           *oldFont = port.font;
+	gFont           *oldFont = port._font;
 
 	va_start(argptr, msg);
 	vsprintf(lineBuf, msg, argptr);

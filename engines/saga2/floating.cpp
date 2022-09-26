@@ -440,8 +440,8 @@ void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 
 			               0,
 			               _extent.x - offset.x,
 			               _extent.y - offset.y,
-			               currentImage->size.x,
-			               currentImage->size.y);
+			               currentImage->_size.x,
+			               currentImage->_size.y);
 }
 
 /* ===================================================================== *
@@ -621,7 +621,7 @@ void updateWindowSection(const Rect16 &r) {
 	Point16         animOffset(kTileRectX - fineScroll.x, kTileRectY);
 
 	//  Detects that program is shutting down and aborts the blit
-	if (g_vm->_tileDrawMap.data == nullptr)
+	if (g_vm->_tileDrawMap._data == nullptr)
 		return;
 
 	if (!checkTileAreaPort()) return;
@@ -633,10 +633,10 @@ void updateWindowSection(const Rect16 &r) {
 
 	//  Allocate a temporary pixel map and gPort
 
-	tempMap.size.x = clip.width;
-	tempMap.size.y = clip.height;
-	tempMap.data = new uint8[tempMap.bytes()]();
-	if (tempMap.data == nullptr)
+	tempMap._size.x = clip.width;
+	tempMap._size.y = clip.height;
+	tempMap._data = new uint8[tempMap.bytes()]();
+	if (tempMap._data == nullptr)
 		return;
 
 	tempPort.setMap(&tempMap);
@@ -693,7 +693,7 @@ void updateWindowSection(const Rect16 &r) {
 	                   clip.x, clip.y, clip.width, clip.height);
 	g_vm->_pointer->show(g_vm->_mainPort, clip);
 	g_vm->_mainPort.setMode(drawModeMatte);
-	delete[] tempMap.data;
+	delete[] tempMap._data;
 }
 
 void drawFloatingWindows(gPort &port, const Point16 &offset, const Rect16 &clip) {

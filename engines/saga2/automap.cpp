@@ -389,7 +389,7 @@ void AutoMap::drawClipped(
 	if (!_extent.overlap(clipRect)) return;
 
 	// clear out the buffer
-	memset(_tPort.map->data, 0, _sumMapArea.width * _sumMapArea.height);
+	memset(_tPort._map->_data, 0, _sumMapArea.width * _sumMapArea.height);
 
 	// draw the parts of the panel
 	WindowDecoration *dec;
@@ -419,7 +419,7 @@ void AutoMap::drawClipped(
 
 	//  Blit the pixelmap to the main screen
 	port.setMode(drawModeMatte);
-	port.bltPixels(*_tPort.map,
+	port.bltPixels(*_tPort._map,
 	               0, 0,
 	               _extent.x, _extent.y,
 	               _sumMapArea.width, _sumMapArea.height);
@@ -461,7 +461,7 @@ void AutoMap::createSmallMap() {
 	int16           tileSumWidthHalved = kTileSumWidth / 2;
 
 	//  Set up pixel map to blit summary data from
-	map.size = Point16(kTileSumWidth, kTileSumHeight);
+	map._size = Point16(kTileSumWidth, kTileSumHeight);
 
 	// optimizations done based on these numbers
 	assert(sumSize  == 64);     // opt:2
@@ -494,10 +494,10 @@ void AutoMap::createSmallMap() {
 			if (mtile & metaTileVisited)
 				if (_autoMapCheat || (mtile & metaTileVisited)) {
 					// get the tile data
-					map.data = &_summaryData[(mtile & ~metaTileVisited) << 6];
+					map._data = &_summaryData[(mtile & ~metaTileVisited) << 6];
 
 					// blit this tile onto the temp surface
-					TBlit(_tPort.map,
+					TBlit(_tPort._map,
 					      &map,
 					      x,
 					      y);

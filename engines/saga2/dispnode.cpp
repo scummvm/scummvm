@@ -793,10 +793,10 @@ void DisplayNode::drawObject() {
 		Point16     indicatorCoords;
 		gPixelMap   &indicator = *mouseCursors[kMouseCenterActorIndicatorImage];
 
-		indicatorCoords.x = _hitBox.x + fineScroll.x + (_hitBox.width - indicator.size.x) / 2;
-		indicatorCoords.y = _hitBox.y + fineScroll.y - indicator.size.y - 2;
+		indicatorCoords.x = _hitBox.x + fineScroll.x + (_hitBox.width - indicator._size.x) / 2;
+		indicatorCoords.y = _hitBox.y + fineScroll.y - indicator._size.y - 2;
 
-		TBlit(g_vm->_backPort.map, &indicator, indicatorCoords.x, indicatorCoords.y);
+		TBlit(g_vm->_backPort._map, &indicator, indicatorCoords.x, indicatorCoords.y);
 	}
 }
 

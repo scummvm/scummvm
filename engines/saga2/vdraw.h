@@ -42,7 +42,7 @@ public:
 	void fillRect(const Rect16 r);
 
 	void clear() {
-		protoPage.fillRect(clip, fgPen);
+		protoPage.fillRect(_clip, _fgPen);
 	}
 
 	//  Blitting functions

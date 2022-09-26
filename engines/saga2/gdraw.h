@@ -55,16 +55,16 @@ struct StaticPixelMap {
 
 class gPixelMap {
 public:
-	Extent16        size;                   // image size
-	uint8           *data;
+	Extent16        _size;                   // image size
+	uint8           *_data;
 
-	gPixelMap() : data(nullptr) {}
+	gPixelMap() : _data(nullptr) {}
 
-	gPixelMap(StaticPixelMap m) : size(m.size), data(m.data) {}
+	gPixelMap(StaticPixelMap m) : _size(m.size), _data(m.data) {}
 
 	//  Compute the number of bytes in the pixel map
 	int32 bytes() {
-		return size.x * size.y;
+		return _size.x * _size.y;
 	}
 };
 
@@ -75,13 +75,13 @@ public:
 	//  constructors:
 
 	gStaticImage() {
-		size.x = size.y = 0;
-		data = NULL;
+		_size.x = _size.y = 0;
+		_data = NULL;
 	}
 	gStaticImage(int w, int h, uint8 *buffer) {
-		size.x = w;
-		size.y = h;
-		data = buffer;
+		_size.x = w;
+		_size.y = h;
+		_data = buffer;
 	}
 };
 
@@ -90,16 +90,16 @@ public:
 //  remap to a new palette by calling the global remap() function.
 
 class gMappedImage : public gPixelMap {
-	static gMappedImage *head;              // first image in map chain
+	static gMappedImage *_head;              // first image in map chain
 
-	gMappedImage    *next;                  // next image to remap
-	gPixelMap       original;
+	gMappedImage    *_next;                  // next image to remap
+	gPixelMap       _original;
 
 public:
 	//  Constructor and destructor
 	gMappedImage(int w, int h, uint8 *buffer);
 	virtual ~gMappedImage() {
-		if (data) free(data);
+		if (_data) free(_data);
 	}
 	static void remap(gPen[]);
 };
@@ -177,39 +177,39 @@ enum text_positions {
 
 class gPort {
 public:
-	gPixelMap       *map;                   // pointer to map
+	gPixelMap       *_map;                   // pointer to map
 
 	//  Added by Talin to speed up rendering and allow inverted
 	//  gPorts for WinG compatibility
 
-	uint8           *baseRow;               // address of row 0
-	int16           rowMod;                 // modulus or row
+	uint8           *_baseRow;               // address of row 0
+	int16           _rowMod;                 // modulus or row
 
-	Point16         origin;                 // origin drawing point
-	Rect16          clip;                   // clip region DrawPort
-	gPen            fgPen,                  // current foregroung pen
-	                bgPen,                  // current drawing mode
-	                olPen,                  // text outline pen
-	                shPen;                  // text shadow pen
-	gPen            *penMap;                // indirect pen map
-	enum draw_modes drawMode;               // current drawing mode
-	Point16         penPos;                 // current pen position
-	gFont           *font;                  // current font
-	int16           textSpacing;            // extra space between characters
-	uint16          textStyles;             // text style bits
+	Point16         _origin;                 // origin drawing point
+	Rect16          _clip;                   // clip region DrawPort
+	gPen            _fgPen,                  // current foregroung pen
+	                _bgPen,                  // current drawing mode
+	                _olPen,                  // text outline pen
+	                _shPen;                  // text shadow pen
+	gPen            *_penMap;                // indirect pen map
+	enum draw_modes _drawMode;               // current drawing mode
+	Point16         _penPos;                 // current pen position
+	gFont           *_font;                  // current font
+	int16           _textSpacing;            // extra space between characters
+	uint16          _textStyles;             // text style bits
 
 	//  Constructor
 	gPort() {
-		map = nullptr;
-		baseRow = nullptr;
+		_map = nullptr;
+		_baseRow = nullptr;
 
-		rowMod = 0;
-		penMap = nullptr;
-		drawMode = drawModeMatte;
-		font = nullptr;
-		textSpacing = 0;
-		textStyles = 0;
-		fgPen = bgPen = olPen = shPen = 0;
+		_rowMod = 0;
+		_penMap = nullptr;
+		_drawMode = drawModeMatte;
+		_font = nullptr;
+		_textSpacing = 0;
+		_textStyles = 0;
+		_fgPen = _bgPen = _olPen = _shPen = 0;
 	}
 
 	virtual ~gPort() {}
@@ -221,43 +221,43 @@ public:
 	//  Direct colors
 
 	void setColor(gPen color)              {
-		fgPen = color;
+		_fgPen = color;
 	}
 	void setBgColor(gPen color)            {
-		bgPen = color;
+		_bgPen = color;
 	}
 	void setShadowColor(gPen color)        {
-		shPen = color;
+		_shPen = color;
 	}
 	void setOutlineColor(gPen color)       {
-		olPen = color;
+		_olPen = color;
 	}
 
 	//  Indirect colors
 
 	void setPenMap(gPen *pmap)              {
-		penMap = pmap;
+		_penMap = pmap;
 	}
 	void setIndirectColor(uint8 color) {
-		fgPen = penMap[color];
+		_fgPen = _penMap[color];
 	}
 	void setIndirectBgColor(uint8 color)   {
-		bgPen = penMap[color];
+		_bgPen = _penMap[color];
 	}
 	void setIndirectShColor(uint8 color)   {
-		shPen = penMap[color];
+		_shPen = _penMap[color];
 	}
 	void setIndirectOLColor(uint8 color)   {
-		olPen = penMap[color];
+		_olPen = _penMap[color];
 	}
 
 	//  modes & styles
 
 	void setMode(enum draw_modes mode) {
-		drawMode = mode;
+		_drawMode = mode;
 	}
 	void setStyle(int style)               {
-		textStyles = style;
+		_textStyles = style;
 	}
 
 	//  Pen states
@@ -268,41 +268,41 @@ public:
 	//  REM: calc intersection of pixel map rect...
 
 	void setClip(const Rect16 &newclip)    {
-		clip = newclip;
+		_clip = newclip;
 	}
 	void getClip(Rect16 &r)                {
-		r = clip;
+		r = _clip;
 	}
 
 	void setOrigin(Point16 pt)         {
-		origin = pt;
+		_origin = pt;
 	}
 	Point16 getOrigin()                {
-		return origin;
+		return _origin;
 	}
 
 	//  Pen position movement
 
 	void move(int16 x, int16 y)    {
-		penPos.x += x;
-		penPos.y += y;
+		_penPos.x += x;
+		_penPos.y += y;
 	}
 	void move(Vector16 v)          {
-		penPos += v;
+		_penPos += v;
 	}
 	void moveTo(int16 x, int16 y)  {
-		penPos.x = x;
-		penPos.y = y;
+		_penPos.x = x;
+		_penPos.y = y;
 	}
 	void moveTo(Point16 p)     {
-		penPos = p;
+		_penPos = p;
 	}
 
 	//  Simple drawing functions
 	//  REM: This should clip!
 
 	virtual void clear() {
-		memset(map->data, (int)fgPen, (int)map->bytes());
+		memset(_map->_data, (int)_fgPen, (int)_map->bytes());
 	}
 
 	//  Functions to set a single pixel
@@ -310,28 +310,28 @@ public:
 	//  with drawing mode?
 
 	virtual void setPixel(int16 x, int16 y, gPen color) {
-		if (x >= clip.x && x < clip.x + clip.width
-		        && y >= clip.y && y < clip.y + clip.height) {
-			baseRow[(y + origin.y) * rowMod + x + origin.x] = color;
+		if (x >= _clip.x && x < _clip.x + _clip.width
+		        && y >= _clip.y && y < _clip.y + _clip.height) {
+			_baseRow[(y + _origin.y) * _rowMod + x + _origin.x] = color;
 		}
 	}
 	void setPixel(int16 x, int16 y) {
-		setPixel(x, y, fgPen);
+		setPixel(x, y, _fgPen);
 	}
 	void setPixel(Point16 p, gPen color) {
 		setPixel(p.x, p.y, color);
 	}
 	void setPixel(Point16 p) {
-		setPixel(p.x, p.y, fgPen);
+		setPixel(p.x, p.y, _fgPen);
 	}
 
 	//  pixel query functions
 
 	virtual gPen getPixel(int16 x, int16 y) {
-		return baseRow[(y + origin.y) * rowMod + x + origin.x];
+		return _baseRow[(y + _origin.y) * _rowMod + x + _origin.x];
 	}
 	virtual gPen getPixel(Point16 p) {
-		return baseRow[(p.y + origin.y) * rowMod + p.x + origin.x];
+		return _baseRow[(p.y + _origin.y) * _rowMod + p.x + _origin.x];
 	}
 
 	//  Rectangle fill functions
@@ -359,22 +359,22 @@ public:
 		line(from.x, from.y, to.x, to.y);
 	}
 	void drawTo(int16 x, int16 y) {
-		line(penPos.x, penPos.y, x, y);
-		penPos.x = x;
-		penPos.y = y;
+		line(_penPos.x, _penPos.y, x, y);
+		_penPos.x = x;
+		_penPos.y = y;
 	}
 	void drawTo(Point16 to) {
-		line(penPos, to);
-		penPos = to;
+		line(_penPos, to);
+		_penPos = to;
 	}
 	void draw(int16 x, int16 y) {
-		line(penPos.x, penPos.y, penPos.x + x, penPos.y + y);
-		penPos.x += x;
-		penPos.y += y;
+		line(_penPos.x, _penPos.y, _penPos.x + x, _penPos.y + y);
+		_penPos.x += x;
+		_penPos.y += y;
 	}
 	void draw(Vector16 v) {
-		line(penPos, v);
-		penPos += v;
+		line(_penPos, v);
+		_penPos += v;
 	}
 
 	//  Blitting functions
@@ -395,10 +395,10 @@ public:
 	//  Text rendering functions
 
 	void setFont(gFont *newFont) {
-		font = newFont;
+		_font = newFont;
 	}
 	void setTextSpacing(int16 fs) {
-		textSpacing = fs;
+		_textSpacing = fs;
 	}
 
 private:

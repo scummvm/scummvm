@@ -37,10 +37,10 @@ gBackSave::gBackSave(const Rect16 &extent) {
 
 	//  Set up the image structure for the video page
 
-	savedPixels.size.x = savedRegion.width;
-	savedPixels.size.y = savedRegion.height;
-//	savedPixels.data = (uint8 *)malloc( savedPixels.bytes() );
-	savedPixels.data = (uint8 *)malloc(savedPixels.bytes());
+	savedPixels._size.x = savedRegion.width;
+	savedPixels._size.y = savedRegion.height;
+//	savedPixels._data = (uint8 *)malloc( savedPixels.bytes() );
+	savedPixels._data = (uint8 *)malloc(savedPixels.bytes());
 
 	//  Initialize the graphics port
 
@@ -65,7 +65,7 @@ gBackSave::gBackSave(const Rect16 &extent) {
 **********************************************************************
 */
 gBackSave::~gBackSave() {
-	free(savedPixels.data);
+	free(savedPixels._data);
 }
 
 /********* vbacksav.cpp/gBackSave::save ******************************
@@ -83,10 +83,10 @@ gBackSave::~gBackSave() {
 **********************************************************************
 */
 void gBackSave::save(gDisplayPort &port) {
-	if (!saved && savedPixels.data) {
+	if (!saved && savedPixels._data) {
 		port.protoPage.readPixels(savedRegion,
-		                             savedPixels.data,
-		                             savedPixels.size.x);
+		                             savedPixels._data,
+		                             savedPixels._size.x);
 		saved = true;
 	}
 }
@@ -106,10 +106,10 @@ void gBackSave::save(gDisplayPort &port) {
 **********************************************************************
 */
 void gBackSave::restore(gDisplayPort &port) {
-	if (saved && savedPixels.data) {
+	if (saved && savedPixels._data) {
 		port.protoPage.writePixels(savedRegion,
-		                              savedPixels.data,
-		                              savedPixels.size.x);
+		                              savedPixels._data,
+		                              savedPixels._size.x);
 		saved = false;
 	}
 }

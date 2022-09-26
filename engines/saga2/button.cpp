@@ -319,13 +319,13 @@ void GfxSpriteImage::drawClipped(gPort &port,
 	// if there's a sprite present
 	gPixelMap       map;
 
-	//map.size = Point16( extent.height, extent.width );
-	map.size = _sprPtr->size;
+	//map._size = Point16( extent.height, extent.width );
+	map._size = _sprPtr->size;
 
-	map.data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
-	if (map.data == nullptr) return;
+	map._data = (uint8 *)malloc(map.bytes() * sizeof(uint8));
+	if (map._data == nullptr) return;
 
-	memset(map.data, 0, map.bytes());
+	memset(map._data, 0, map.bytes());
 
 	//  Render the sprite into the bitmap image sequence
 	ExpandColorMappedSprite(map, _sprPtr, _objColors);
@@ -333,9 +333,9 @@ void GfxSpriteImage::drawClipped(gPort &port,
 	port.setMode(drawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
-	               map.size.x, map.size.y);
+	               map._size.x, map._size.y);
 
-	free(map.data);
+	free(map._data);
 }
 
 /* ===================================================================== *

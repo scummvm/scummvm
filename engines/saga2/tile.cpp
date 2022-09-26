@@ -2510,7 +2510,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 	int16           layerLimit;
 
 	for (;
-	        pos.x < drawMap.size.x + kMetaDX;
+	        pos.x < drawMap._size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        uOrg += kPlatformWidth,
@@ -2577,7 +2577,7 @@ inline void drawMetaRow(gPixelMap &drawMap, TilePoint coords, Point16 pos) {
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight * 2 + 64;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= drawMap.size.y)
+				        || pos.y - p->highestPixel >= drawMap._size.y)
 					continue;
 
 				*put++ = p;
@@ -2813,7 +2813,7 @@ void drawMetaTiles(gPixelMap &drawMap) {
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < drawMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < drawMap._size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
@@ -2954,8 +2954,8 @@ void maskPlatform(
     int16           vOrg) {                 // for TAG search
 	int16           u, v;
 
-	int16           right = sMap.size.x,
-	                bottom = sMap.size.y;
+	int16           right = sMap._size.x,
+	                bottom = sMap._size.y;
 
 	Point16         tilePos;
 
@@ -3087,7 +3087,7 @@ void maskMetaRow(
 	int16           layerLimit;
 
 	for (;
-	        pos.x < sMap.size.x + kMetaDX;
+	        pos.x < sMap._size.x + kMetaDX;
 	        coords.u++,
 	        coords.v--,
 	        relLoc.u += kPlatUVSize,
@@ -3156,7 +3156,7 @@ void maskMetaRow(
 				p->highestPixel = kTileHeight * (kPlatformWidth - 1) + kMaxTileHeight + 192;
 
 				if (pos.y <= 0
-				        || pos.y - p->highestPixel >= sMap.size.y)
+				        || pos.y - p->highestPixel >= sMap._size.y)
 					continue;
 
 				*put++ = p;
@@ -3221,7 +3221,7 @@ void drawTileMask(
 	//      (replace 256 constant with better value)
 
 	for (;
-	        metaPos.y < sMap.size.y + kMetaTileHeight * 4 ;
+	        metaPos.y < sMap._size.y + kMetaTileHeight * 4 ;
 	        baseCoords.u--,
 	        baseCoords.v--
 	    ) {
@@ -4415,7 +4415,7 @@ void updateMainDisplay() {
 void drawMainDisplay() {
 
 
-	// draws tiles to g_vm->_tileDrawMap.data
+	// draws tiles to g_vm->_tileDrawMap._data
 	drawMetaTiles(g_vm->_tileDrawMap);
 
 	//  Draw sprites onto back buffer
@@ -4433,10 +4433,10 @@ void drawMainDisplay() {
 	//  Blit it all onto the screen
 	drawPage->writePixels(
 	    rect,
-	    g_vm->_tileDrawMap.data
+	    g_vm->_tileDrawMap._data
 	    + fineScroll.x
-	    + fineScroll.y * g_vm->_tileDrawMap.size.x,
-	    g_vm->_tileDrawMap.size.x);
+	    + fineScroll.y * g_vm->_tileDrawMap._size.x,
+	    g_vm->_tileDrawMap._size.x);
 
 	updateFrameCount();
 }

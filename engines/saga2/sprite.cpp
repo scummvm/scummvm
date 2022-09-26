@@ -193,10 +193,10 @@ void DrawCompositeMaskedSprite(
 
 	//  Build a temporary bitmap to composite the sprite within
 
-	compMap.size.x = xMax - xMin;
-	compMap.size.y = yMax - yMin;
-	compMap.data = (uint8 *)getQuickMem(compMap.bytes());
-	memset(compMap.data, 0, compMap.bytes());
+	compMap._size.x = xMax - xMin;
+	compMap._size.y = yMax - yMin;
+	compMap._data = (uint8 *)getQuickMem(compMap.bytes());
+	memset(compMap._data, 0, compMap.bytes());
 
 	//  Calculate the offset from the upper-left corner of
 	//  our composite map to the origin point where the sprites
@@ -213,9 +213,9 @@ void DrawCompositeMaskedSprite(
 
 		//  Create a temp map for the sprite to unpack in
 
-		sprMap.size = sp->size;
-		if (sprMap.size.x <= 0 || sprMap.size.y <= 0) continue;
-		sprMap.data = (uint8 *)getQuickMem(compMap.bytes());
+		sprMap._size = sp->size;
+		if (sprMap._size.x <= 0 || sprMap._size.y <= 0) continue;
+		sprMap._data = (uint8 *)getQuickMem(compMap.bytes());
 
 		//  Unpack the sprite into the temp map
 
@@ -238,7 +238,7 @@ void DrawCompositeMaskedSprite(
 			    org.y + sc->offset.y + sp->offset.y,
 			    sc->colorTable);
 		}
-		freeQuickMem(sprMap.data);
+		freeQuickMem(sprMap._data);
 	}
 
 	//  do terrain masking
@@ -254,10 +254,10 @@ void DrawCompositeMaskedSprite(
 			                visiblePixels;
 			bool            isObscured;
 
-			tempMap.size = compMap.size;
-			tempMap.data = (uint8 *)getQuickMem(compMapBytes);
+			tempMap._size = compMap._size;
+			tempMap._data = (uint8 *)getQuickMem(compMapBytes);
 
-			memcpy(tempMap.data, compMap.data, compMapBytes);
+			memcpy(tempMap._data, compMap._data, compMapBytes);
 
 			drawTileMask(
 			    Point16(xMin, yMin),
@@ -266,7 +266,7 @@ void DrawCompositeMaskedSprite(
 
 			visiblePixels = 0;
 			for (int i = 0; i < compMapBytes; i++) {
-				if (compMap.data[i] != 0) {
+				if (compMap._data[i] != 0) {
 					visiblePixels++;
 					if (visiblePixels > 10) break;
 				}
@@ -274,24 +274,24 @@ void DrawCompositeMaskedSprite(
 
 			isObscured = visiblePixels <= 10;
 			if (isObscured) {
-				memcpy(compMap.data, tempMap.data, compMapBytes);
+				memcpy(compMap._data, tempMap._data, compMapBytes);
 				effects |= sprFXGhosted;
 			}
 
 			if (obscured != nullptr) *obscured = isObscured;
 
-			freeQuickMem(tempMap.data);
+			freeQuickMem(tempMap._data);
 		}
 	}
 
 	//  Check if location is underwater
 	if (loc.z < 0) {
-		uint8   *submergedArea = &compMap.data[(-loc.z < compMap.size.y ?
-		                                        (compMap.size.y + loc.z)
-		                                        * compMap.size.x :
+		uint8   *submergedArea = &compMap._data[(-loc.z < compMap._size.y ?
+		                                        (compMap._size.y + loc.z)
+		                                        * compMap._size.x :
 		                                        0)];
 
-		uint16  submergedSize = &compMap.data[compMap.bytes()] -
+		uint16  submergedSize = &compMap._data[compMap.bytes()] -
 		                        submergedArea;
 
 		memset(submergedArea, 0, submergedSize);
@@ -299,12 +299,12 @@ void DrawCompositeMaskedSprite(
 
 	//  Add in "ghost" effects
 	if (effects & sprFXGhosted) {
-		uint32  *dstRow = (uint32 *)compMap.data;
+		uint32  *dstRow = (uint32 *)compMap._data;
 
 		uint32  mask = (yMin & 1) ? 0xff00ff00 : 0x00ff00ff;
 
-		for (y = 0; y < compMap.size.y; y++) {
-			for (x = 0; x < compMap.size.x; x += 4) {
+		for (y = 0; y < compMap._size.y; y++) {
+			for (x = 0; x < compMap._size.x; x += 4) {
 				*dstRow++ &= mask;
 			}
 			mask = ~mask;
@@ -313,9 +313,9 @@ void DrawCompositeMaskedSprite(
 
 	//  Blit to the port
 
-	TBlit(port.map, &compMap, xMin, yMin);
+	TBlit(port._map, &compMap, xMin, yMin);
 
-	freeQuickMem(compMap.data);
+	freeQuickMem(compMap._data);
 }
 
 void DrawSprite(
@@ -325,8 +325,8 @@ void DrawSprite(
 	gPixelMap       sprMap;                 // sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
 	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
@@ -337,9 +337,9 @@ void DrawSprite(
 	               0, 0,
 	               destPoint.x + sp->offset.x,
 	               destPoint.y + sp->offset.y,
-	               sprMap.size.x, sprMap.size.y);
+	               sprMap._size.x, sprMap._size.y);
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Draw a single sprite with no masking, but with color mapping.
@@ -353,15 +353,15 @@ void DrawColorMappedSprite(
 	                sprReMap;               // remapped sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
-	sprReMap.size = sp->size;
-	sprReMap.data = (uint8 *)getQuickMem(sprReMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprReMap._size = sp->size;
+	sprReMap._data = (uint8 *)getQuickMem(sprReMap.bytes());
 
 	//  Unpack the sprite into the temp map
 	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
-	memset(sprReMap.data, 0, sprReMap.bytes());
+	memset(sprReMap._data, 0, sprReMap.bytes());
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -377,10 +377,10 @@ void DrawColorMappedSprite(
 	               0, 0,
 	               destPoint.x + sp->offset.x,
 	               destPoint.y + sp->offset.y,
-	               sprReMap.size.x, sprReMap.size.y);
+	               sprReMap._size.x, sprReMap._size.y);
 
-	freeQuickMem(sprReMap.data);
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprReMap._data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Draw a single sprite with no masking, but with color mapping.
@@ -393,8 +393,8 @@ void ExpandColorMappedSprite(
 	                sprReMap;               // remapped sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
 	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
@@ -407,7 +407,7 @@ void ExpandColorMappedSprite(
 	    0,
 	    colorTable);
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Unpacks a sprite for a moment and returns the value of a
@@ -422,20 +422,20 @@ uint8 GetSpritePixel(
 	uint8           result;
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
 	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
-		result = sprMap.data[testPoint.y * sprMap.size.x
-		                                  + sprMap.size.x - testPoint.x];
+		result = sprMap._data[testPoint.y * sprMap._size.x
+		                                  + sprMap._size.x - testPoint.x];
 	} else {
-		result = sprMap.data[testPoint.y * sprMap.size.x + testPoint.x];
+		result = sprMap._data[testPoint.y * sprMap._size.x + testPoint.x];
 	}
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 
 	return result;
 }
@@ -472,14 +472,14 @@ uint16 visiblePixelsInSprite(
 	xMax = (xMax + 31) & ~31;
 
 	//  Build a temporary bitmap to composite the sprite within
-	compMap.size.x = xMax - xMin;
-	compMap.size.y = yMax - yMin;
-	compMap.data = (uint8 *)getQuickMem(compBytes = compMap.bytes());
-	memset(compMap.data, 0, compBytes);
+	compMap._size.x = xMax - xMin;
+	compMap._size.y = yMax - yMin;
+	compMap._data = (uint8 *)getQuickMem(compBytes = compMap.bytes());
+	memset(compMap._data, 0, compBytes);
 
 	//  Build bitmap in which to unpack the sprite
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
 
@@ -512,15 +512,15 @@ uint16 visiblePixelsInSprite(
 
 	//  count the visible pixels in the composite map
 	for (i = 0, visiblePixels = 0; i < compBytes; i++)
-		if (compMap.data[i]) visiblePixels++;
+		if (compMap._data[i]) visiblePixels++;
 
 #if DEBUG*0
 	WriteStatusF(8, "Visible pixels = %u", visiblePixels);
 #endif
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 
-	freeQuickMem(compMap.data);
+	freeQuickMem(compMap._data);
 
 	return visiblePixels;
 }

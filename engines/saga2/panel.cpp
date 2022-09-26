@@ -195,8 +195,8 @@ void gPanel::drawTitle(enum text_positions placement) {
 
 	if (imageLabel) {
 		img = (const gPixelMap *)title;
-		r.width = img->size.x;
-		r.height = img->size.y;
+		r.width = img->_size.x;
+		r.height = img->_size.y;
 	} else {
 		r.width = TextWidth(mainFont, title, -1, textStyleUnderBar);
 		r.height = mainFont->height;
@@ -400,7 +400,7 @@ gWindow::gWindow(const Rect16 &box, uint16 ident, const char saveName[], AppFunc
 	//  Set up the window's gPort
 
 	windowPort.setFont(mainFont);
-	windowPort.setPenMap(globalPort->penMap);
+	windowPort.setPenMap(globalPort->_penMap);
 
 	/*  if (windowFeatures & windowBackSaved)   // backsave data under window
 	    {
@@ -500,11 +500,11 @@ void gWindow::setPos(Point16 pos) {
 
 	//  We also need to set up the window's port in a similar fashion.
 
-	windowPort.origin.x = _extent.x;
-	windowPort.origin.y = _extent.y;
+	windowPort._origin.x = _extent.x;
+	windowPort._origin.y = _extent.y;
 
 	//  set port's clip
-	newClip = intersect(_extent, g_vm->_mainPort.clip);
+	newClip = intersect(_extent, g_vm->_mainPort._clip);
 	newClip.x -= _extent.x;
 	newClip.y -= _extent.y;
 	windowPort.setClip(newClip);

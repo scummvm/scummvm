@@ -561,10 +561,10 @@ void CDocument::renderText() {
 	if (NewTempPort(tPort, bltRect.width, bltRect.height)) {
 		// clear out the text buffer
 		int16           i, k;
-		uint8           *buffer = (uint8 *)tPort.map->data;
+		uint8           *buffer = (uint8 *)tPort._map->_data;
 
-		for (i = 0; i < tPort.map->size.x; i++) {
-			for (k = 0; k < tPort.map->size.y; k++) {
+		for (i = 0; i < tPort._map->_size.x; i++) {
+			for (k = 0; k < tPort._map->_size.y; k++) {
 				*buffer++ = 0;
 			}
 		}
@@ -634,7 +634,7 @@ void CDocument::renderText() {
 
 		g_vm->_pointer->hide();
 
-		port.bltPixels(*tPort.map, 0, 0,
+		port.bltPixels(*tPort._map, 0, 0,
 		               bltRect.x, bltRect.y,
 		               bltRect.width, bltRect.height);
 
