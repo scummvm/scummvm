@@ -236,7 +236,7 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
-	TileIterator        tIter(world->mapNum, tileReg);
+	TileIterator        tIter(world->_mapNum, tileReg);
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
@@ -291,7 +291,7 @@ int16 TileTarget::where(
 	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
-	TileIterator        tIter(world->mapNum, tileReg);
+	TileIterator        tIter(world->_mapNum, tileReg);
 
 	//  Get the first tile in tile region
 	ti = tIter.first(&tileCoords, &sti);
@@ -468,12 +468,12 @@ TilePoint MetaTileTarget::where(
 	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
-	MetaTileIterator    mIter(world->mapNum, tileReg);
+	MetaTileIterator    mIter(world->_mapNum, tileReg);
 
 	//  get the first metatile in region
 	mt = mIter.first(&metaCoords);
 	while (mt != nullptr) {
-		if (isTarget(mt, world->mapNum, metaCoords)) {
+		if (isTarget(mt, world->_mapNum, metaCoords)) {
 			uint16  dist;
 
 			metaCoords.u <<= kTileUVShift;
@@ -522,12 +522,12 @@ int16 MetaTileTarget::where(
 	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
-	MetaTileIterator    mIter(world->mapNum, tileReg);
+	MetaTileIterator    mIter(world->_mapNum, tileReg);
 
 	//  Get the first metatile in tile region
 	mt = mIter.first(&metaCoords);
 	while (mt != nullptr) {
-		if (isTarget(mt, world->mapNum, metaCoords)) {
+		if (isTarget(mt, world->_mapNum, metaCoords)) {
 			uint16  dist;
 
 			metaCoords.u <<= kTileUVShift;

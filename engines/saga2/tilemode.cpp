@@ -655,7 +655,7 @@ void TileModeSetup() {
 	lastUpdateTime = gameTime;
 
 	setCurrentWorld(WorldBaseID);
-	setCurrentMap(currentWorld->mapNum);
+	setCurrentMap(currentWorld->_mapNum);
 }
 
 //-----------------------------------------------------------------------

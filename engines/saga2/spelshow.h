@@ -366,7 +366,7 @@ inline GameWorld *Effectron::world() const {
 	return parent->world;
 }
 inline int16 Effectron::getMapNum() const {
-	return parent->world->mapNum;
+	return parent->world->_mapNum;
 }
 
 inline EffectID Effectron::spellID() {

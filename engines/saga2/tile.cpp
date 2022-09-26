@@ -4317,7 +4317,7 @@ void updateMainDisplay() {
 
 	if (viewWorld != currentWorld) {
 		currentWorld = viewWorld;
-		setCurrentMap(currentWorld->mapNum);
+		setCurrentMap(currentWorld->_mapNum);
 	}
 
 	WorldMapData    *curMap = &mapList[g_vm->_currentMapNum];

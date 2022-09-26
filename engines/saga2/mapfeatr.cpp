@@ -230,7 +230,7 @@ void initMapFeatures() {
 void updateMapFeatures(int16 cWorld) {
 	extern WorldMapData         *mapList;
 	extern GameWorld            *currentWorld;
-	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
+	WorldMapData    *wMap = &mapList[currentWorld->_mapNum];
 
 	uint16          *mapData = wMap->map->mapData;
 

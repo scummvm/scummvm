@@ -192,12 +192,12 @@ void AutoMap::locateRegion() {
 	Common::SeekableReadStream *stream;
 	hResContext *areaRes;       // tile resource handle
 	int16 regionCount;
-	WorldMapData *wMap = &mapList[currentWorld->mapNum];
+	WorldMapData *wMap = &mapList[currentWorld->_mapNum];
 
 	areaRes = auxResFile->newContext(MKTAG('A', 'M', 'A', 'P'), "AreaList");
 	assert(areaRes != nullptr);
 
-	stream = loadResourceToStream(areaRes, MKTAG('Z', 'O', 'N', currentWorld->mapNum), "AreaList");
+	stream = loadResourceToStream(areaRes, MKTAG('Z', 'O', 'N', currentWorld->_mapNum), "AreaList");
 	regionCount = stream->readUint16LE();
 
 	_centerCoords = _trackPos >> (kTileUVShift + kPlatShift);
@@ -304,7 +304,7 @@ void AutoMap::pointerMove(gPanelMessage &msg) {
 		viewRegion.max.u = MIN<int16>(_localAreaRegion.max.u, _baseCoords.u + (int16)kSummaryDiameter) - 1;
 		viewRegion.min.v = MAX(_localAreaRegion.min.v, _baseCoords.v);
 		viewRegion.max.v = MIN<int16>(_localAreaRegion.max.v, _baseCoords.v + (int16)kSummaryDiameter) - 1;
-		char *mtext = getMapFeaturesText(viewRegion, currentWorld->mapNum, _baseCoords, pos) ;
+		char *mtext = getMapFeaturesText(viewRegion, currentWorld->_mapNum, _baseCoords, pos) ;
 		g_vm->_mouseInfo->setText(mtext);
 	} else {
 		notify(gEventMouseMove, 0);
@@ -441,7 +441,7 @@ void AutoMap::draw() {          // redraw the window
 
 // create a summary map on the tPort gPixelMap buffer
 void AutoMap::createSmallMap() {
-	WorldMapData    *wMap = &mapList[currentWorld->mapNum];
+	WorldMapData    *wMap = &mapList[currentWorld->_mapNum];
 
 	uint16          *mapData = wMap->map->mapData;
 	uint16          *mapRow;
@@ -505,7 +505,7 @@ void AutoMap::createSmallMap() {
 		}
 	}
 
-	drawMapFeatures(viewRegion, currentWorld->mapNum, _baseCoords, _tPort);
+	drawMapFeatures(viewRegion, currentWorld->_mapNum, _baseCoords, _tPort);
 
 
 //	if (blink)

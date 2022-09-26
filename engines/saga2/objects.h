@@ -736,16 +736,16 @@ public:
 
 class Sector {
 public:
-	uint16          activationCount;
-	ObjectID        childID;
+	uint16          _activationCount;
+	ObjectID        _childID;
 
 	Sector() :
-		activationCount(0),
-		childID(Nothing) {
+		_activationCount(0),
+		_childID(Nothing) {
 	}
 
 	bool isActivated() {
-		return activationCount != 0;
+		return _activationCount != 0;
 	}
 
 	void activate();
@@ -776,13 +776,13 @@ class GameWorld : public GameObject {
 	friend class    ObjectIterator;
 
 public:
-	TilePoint       size;                   // size of world in U/V coords
-	int16           sectorArraySize;        // size of sector array
-	Sector          *sectorArray;          // array of sectors
-	int16           mapNum;                 // map number for this world.
+	TilePoint       _size;                   // size of world in U/V coords
+	int16           _sectorArraySize;        // size of sector array
+	Sector          *_sectorArray;          // array of sectors
+	int16           _mapNum;                 // map number for this world.
 
 	//  Default constructor
-	GameWorld() : sectorArraySize(0), sectorArray(nullptr), mapNum(0) {}
+	GameWorld() : _sectorArraySize(0), _sectorArray(nullptr), _mapNum(0) {}
 
 	//  Initial constructor
 	GameWorld(int16 map);
@@ -799,22 +799,22 @@ public:
 		if (u == -1 && v == -1)
 			return nullptr;
 
-		if (v * sectorArraySize + u >= sectorArraySize * sectorArraySize ||
-		    v * sectorArraySize + u < 0) {
-			warning("Sector::getSector: Invalid sector: (%d, %d) (sectorArraySize = %d)", u, v, sectorArraySize);
+		if (v * _sectorArraySize + u >= _sectorArraySize * _sectorArraySize ||
+		    v * _sectorArraySize + u < 0) {
+			warning("Sector::getSector: Invalid sector: (%d, %d) (sectorArraySize = %d)", u, v, _sectorArraySize);
 			return nullptr;
 		}
 
-		return &(sectorArray)[v * sectorArraySize + u];
+		return &(_sectorArray)[v * _sectorArraySize + u];
 	}
 
 	TilePoint sectorSize() {         // size of map in sectors
-		return TilePoint(sectorArraySize, sectorArraySize, 0);
+		return TilePoint(_sectorArraySize, _sectorArraySize, 0);
 	}
 
 	static uint32 IDtoMapNum(ObjectID id) {
 		assert(isWorld(id));
-		return ((GameWorld *)GameObject::objectAddress(id))->mapNum;
+		return ((GameWorld *)GameObject::objectAddress(id))->_mapNum;
 	}
 };
 
@@ -831,12 +831,12 @@ extern GameWorld    *currentWorld;
 
 inline int16 GameObject::getMapNum() {
 	if (world())
-		return world()->mapNum;
+		return world()->_mapNum;
 	else if (_data.siblingID) {
 		GameObject *sibling = GameObject::objectAddress(_data.siblingID);
 		return sibling->getMapNum();
 	} else
-		return currentWorld->mapNum;
+		return currentWorld->_mapNum;
 }
 
 /* ======================================================================= *
@@ -861,10 +861,10 @@ class ActiveRegion {
 
 	friend class ActiveRegionObjectIterator;
 
-	ObjectID        anchor;     //  ID of object this region is attached to
-	TilePoint       anchorLoc;  //  Location of anchor
-	ObjectID        worldID;
-	TileRegion      region;     //  Region coords ( in sectors )
+	ObjectID        _anchor;     //  ID of object this region is attached to
+	TilePoint       _anchorLoc;  //  Location of anchor
+	ObjectID        _worldID;
+	TileRegion      _region;     //  Region coords ( in sectors )
 
 public:
 
@@ -872,7 +872,7 @@ public:
 		kActiveRegionSize = 22
 	};
 
-	ActiveRegion() : anchor(0), worldID(0) {}
+	ActiveRegion() : _anchor(0), _worldID(0) {}
 	void update();
 
 	void read(Common::InSaveFile *in);
@@ -882,10 +882,10 @@ public:
 	TileRegion getRegion() {
 		TileRegion      tReg;
 
-		tReg.min.u = region.min.u << kSectorShift;
-		tReg.min.v = region.min.v << kSectorShift;
-		tReg.max.u = region.max.u << kSectorShift;
-		tReg.max.v = region.max.v << kSectorShift;
+		tReg.min.u = _region.min.u << kSectorShift;
+		tReg.min.v = _region.min.v << kSectorShift;
+		tReg.max.u = _region.max.u << kSectorShift;
+		tReg.max.v = _region.max.v << kSectorShift;
 		tReg.min.z = tReg.max.z = 0;
 
 		return tReg;
@@ -893,7 +893,7 @@ public:
 
 	//  Return the region world
 	GameWorld *getWorld() {
-		return (GameWorld *)GameObject::objectAddress(worldID);
+		return (GameWorld *)GameObject::objectAddress(_worldID);
 	}
 };
 
@@ -933,10 +933,10 @@ public:
 
 class SectorRegionObjectIterator : public ObjectIterator {
 
-	TilePoint       minSector,
-	                maxSector,
-	                sectorCoords;
-	GameWorld       *searchWorld;
+	TilePoint       _minSector,
+	                _maxSector,
+	                _sectorCoords;
+	GameWorld       *_searchWorld;
 	GameObject      *_currentObject;
 
 public:
@@ -947,17 +947,17 @@ public:
 	SectorRegionObjectIterator(
 	    GameWorld           *world,
 	    const TileRegion    &sectorRegion) :
-		searchWorld(world),
-		minSector(sectorRegion.min),
-		maxSector(sectorRegion.max),
+		_searchWorld(world),
+		_minSector(sectorRegion.min),
+		_maxSector(sectorRegion.max),
 		_currentObject(nullptr) {
-		assert(searchWorld != NULL);
-		assert(isWorld(searchWorld));
+		assert(_searchWorld != NULL);
+		assert(isWorld(_searchWorld));
 	}
 
 protected:
 	GameWorld *getSearchWorld() {
-		return searchWorld;
+		return _searchWorld;
 	}
 
 public:
@@ -976,8 +976,8 @@ public:
 class RadialObjectIterator : public SectorRegionObjectIterator {
 private:
 
-	TilePoint       center;
-	int16           radius;
+	TilePoint       _center;
+	int16           _radius;
 
 	//  Compute the region of sectors to pass to the ObjectIterator
 	//  constructor
@@ -994,7 +994,7 @@ protected:
 
 	//  Simply return the center coordinates
 	TilePoint getCenter() {
-		return center;
+		return _center;
 	}
 
 public:
@@ -1010,8 +1010,8 @@ public:
 		        world->sectorSize(),
 		        searchCenter,
 		        distance)),
-		center(searchCenter),
-		radius(distance) {
+		_center(searchCenter),
+		_radius(distance) {
 	}
 
 	//  Return the first object found
@@ -1060,7 +1060,7 @@ public:
 class RingObjectIterator : public CircularObjectIterator {
 private:
 
-	int16 innerDist;
+	int16 _innerDist;
 
 public:
 	//  Constructor
@@ -1070,7 +1070,7 @@ public:
 	    int16           outerDistance,
 	    int16           innerDistance) :
 		CircularObjectIterator(world, searchCenter, outerDistance) {
-		innerDist = innerDistance;
+		_innerDist = innerDistance;
 	}
 
 	ObjectID first(GameObject **obj);
@@ -1222,12 +1222,12 @@ public:
 
 class ActiveRegionObjectIterator : public ObjectIterator {
 
-	int16           activeRegionIndex;
-	TilePoint       baseSectorCoords,
-	                size,
-	                sectorCoords;
-	uint8           sectorBitMask;
-	GameWorld       *currentWorld;
+	int16           _activeRegionIndex;
+	TilePoint       _baseSectorCoords,
+	                _size,
+	                _sectorCoords;
+	uint8           _sectorBitMask;
+	GameWorld       *_currentWorld;
 	GameObject      *_currentObject;
 
 	bool firstActiveRegion();
@@ -1237,7 +1237,7 @@ class ActiveRegionObjectIterator : public ObjectIterator {
 
 public:
 	//  Constructor
-	ActiveRegionObjectIterator() : activeRegionIndex(-1), sectorBitMask(0), currentWorld(nullptr), _currentObject(nullptr) {}
+	ActiveRegionObjectIterator() : _activeRegionIndex(-1), _sectorBitMask(0), _currentWorld(nullptr), _currentObject(nullptr) {}
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
@@ -1251,10 +1251,10 @@ public:
 //  This class iterates through every object within a container
 
 class ContainerIterator {
-	ObjectID         nextID;
+	ObjectID         _nextID;
 
 public:
-	GameObject      *object;
+	GameObject      *_object;
 
 	//  Constructor
 	ContainerIterator(GameObject *container);
@@ -1270,40 +1270,19 @@ public:
 //  This class iterates through every object within a container and
 //  all of the containers within the container
 
-#if 0
 class RecursiveContainerIterator {
-	ObjectID                    id;
-	RecursiveContainerIterator  *subIter;
+	ObjectID                    _id,
+	                            _root;
 
 public:
 	//  Constructor
 	RecursiveContainerIterator(GameObject *container) :
-		id(container->IDChild()),
-		subIter(NULL) {
-	}
-	~RecursiveContainerIterator();
+		_root(container->thisID()), _id(0) {}
 
 	//  Iteration functions
 	ObjectID first(GameObject **obj);
 	ObjectID next(GameObject **obj);
 };
-#else
-
-class RecursiveContainerIterator {
-	ObjectID                    id,
-	                            root;
-
-public:
-	//  Constructor
-	RecursiveContainerIterator(GameObject *container) :
-		root(container->thisID()), id(0) {}
-
-	//  Iteration functions
-	ObjectID first(GameObject **obj);
-	ObjectID next(GameObject **obj);
-};
-
-#endif
 
 /* ============================================================================ *
    Object sound effect struct
