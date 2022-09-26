@@ -1928,7 +1928,7 @@ void Actor::attack(GameObject *target) {
 //	Stop all attacks on a specified target
 
 void Actor::stopAttack(GameObject *target) {
-	if (_moveTask && _moveTask->isAttack() && _moveTask->targetObj == target)
+	if (_moveTask && _moveTask->isAttack() && _moveTask->_targetObj == target)
 		_moveTask->finishAttack();
 }
 
@@ -2509,7 +2509,7 @@ void Actor::updateState() {
 	        &&  isDead()
 	        &&  isInterruptable()
 	        && (_moveTask == nullptr
-	            ||  _moveTask->motionType != MotionTask::motionTypeDie)) {
+	            ||  _moveTask->_motionType != MotionTask::motionTypeDie)) {
 		int16       deadState = isActionAvailable(actionDead)
 		                        ?   actionDead
 		                        :   isActionAvailable(actionDie)
@@ -3115,7 +3115,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 bool Actor::pathFindState() {
 	if (_moveTask == nullptr)
 		return 0;
-	if (_moveTask->pathFindTask)
+	if (_moveTask->_pathFindTask)
 		return 1;
 	return 2;
 }

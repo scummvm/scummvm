@@ -1389,12 +1389,12 @@ PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	actor       = a;
 	smartness   = howSmart;
 	mTask       = actor->_moveTask;
-	flags       = mTask->flags & MotionTask::requestRun ? run : 0;
+	flags       = mTask->_flags & MotionTask::requestRun ? run : 0;
 
 	if (path == nullptr)
 		path = new TilePoint[kPathSize]();
 
-	mTask->pathFindTask = this;
+	mTask->_pathFindTask = this;
 }
 
 void PathRequest::initialize() {
@@ -1661,21 +1661,21 @@ void PathRequest::finish() {
 
 	pathLength = stepCount;
 
-	if (mTask->pathFindTask == this && mTask->isWalk()) {
-		memcpy(mTask->pathList, path, pathLength * sizeof path[0]);
-		mTask->pathCount = pathLength;
-		mTask->pathIndex = 0;
-		mTask->flags |= MotionTask::reset;
-		if (flags & completed) mTask->flags |= MotionTask::finalPath;
-		mTask->pathFindTask = nullptr;
+	if (mTask->_pathFindTask == this && mTask->isWalk()) {
+		memcpy(mTask->_pathList, path, pathLength * sizeof path[0]);
+		mTask->_pathCount = pathLength;
+		mTask->_pathIndex = 0;
+		mTask->_flags |= MotionTask::reset;
+		if (flags & completed) mTask->_flags |= MotionTask::finalPath;
+		mTask->_pathFindTask = nullptr;
 	}
 }
 
 void PathRequest::abortReq() {
 	debugC(4, kDebugPath, "Aborting Path Request: %p", (void *)this);
 
-	if (mTask->pathFindTask == this)
-		mTask->pathFindTask = nullptr;
+	if (mTask->_pathFindTask == this)
+		mTask->_pathFindTask = nullptr;
 }
 
 
@@ -2060,15 +2060,15 @@ bool PathRequest::timeLimitExceeded() {
 DestinationPathRequest::DestinationPathRequest(Actor *a, int16 howSmart) :
 	PathRequest(a, howSmart) {
 	//  Quantize the target destination to the nearest tile center.
-	mTask->finalTarget.u = (mTask->finalTarget.u & ~kTileUVMask) + kTileUVSize / 2;
-	mTask->finalTarget.v = (mTask->finalTarget.v & ~kTileUVMask) + kTileUVSize / 2;
-	mTask->finalTarget.z =  tileSlopeHeight(
-	                            mTask->finalTarget,
+	mTask->_finalTarget.u = (mTask->_finalTarget.u & ~kTileUVMask) + kTileUVSize / 2;
+	mTask->_finalTarget.v = (mTask->_finalTarget.v & ~kTileUVMask) + kTileUVSize / 2;
+	mTask->_finalTarget.z =  tileSlopeHeight(
+	                            mTask->_finalTarget,
 	                            a,
 	                            nullptr,
 	                            &destPlatform);
 
-	destination = mTask->finalTarget;
+	destination = mTask->_finalTarget;
 }
 
 //  Initialize the static data members
@@ -2190,12 +2190,12 @@ WanderPathRequest::WanderPathRequest(
     Actor *a,
     int16 howSmart) :
 	PathRequest(a, howSmart) {
-	if (mTask->flags & MotionTask::tethered) {
+	if (mTask->_flags & MotionTask::tethered) {
 		tethered = true;
-		tetherMinU = mTask->tetherMinU;
-		tetherMinV = mTask->tetherMinV;
-		tetherMaxU = mTask->tetherMaxU;
-		tetherMaxV = mTask->tetherMaxV;
+		tetherMinU = mTask->_tetherMinU;
+		tetherMinV = mTask->_tetherMinV;
+		tetherMaxU = mTask->_tetherMaxU;
+		tetherMaxV = mTask->_tetherMaxV;
 	} else {
 		tethered = false;
 		tetherMinU = tetherMinV = tetherMaxU = tetherMaxV = 0;
@@ -2334,7 +2334,7 @@ void addPathRequestToQueue(PathRequest *pr) {
 
 void RequestPath(MotionTask *mTask, int16 smartness) {
 	DestinationPathRequest      *pr;
-	Actor                       *a = (Actor *)mTask->object;
+	Actor                       *a = (Actor *)mTask->_object;
 
 	if ((pr = new DestinationPathRequest(a, smartness)) != nullptr)
 		addPathRequestToQueue(pr);
@@ -2342,22 +2342,22 @@ void RequestPath(MotionTask *mTask, int16 smartness) {
 
 void RequestWanderPath(MotionTask *mTask, int16 smartness) {
 	WanderPathRequest           *pr;
-	Actor                       *a = (Actor *)mTask->object;
+	Actor                       *a = (Actor *)mTask->_object;
 
 	if ((pr = new WanderPathRequest(a, smartness)) != nullptr)
 		addPathRequestToQueue(pr);
 }
 
 void abortPathFind(MotionTask *mTask) {
-	if (mTask->pathFindTask) {
-		PathRequest     *pr = mTask->pathFindTask;
+	if (mTask->_pathFindTask) {
+		PathRequest     *pr = mTask->_pathFindTask;
 
 		if (pr == currentRequest)
 			pr->requestAbort();
 		else
 			g_vm->_pathQueue.remove(pr);
 
-		mTask->pathFindTask = nullptr;
+		mTask->_pathFindTask = nullptr;
 	}
 }
 
