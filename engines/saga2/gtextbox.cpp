@@ -998,7 +998,7 @@ void gTextBox::drawClipped() {
 	}
 #endif
 
-	WriteStatusF(11, "Entry %d[%d] (%d:%d)", index, _currentLen[_index], _cursorPos, _anchorPos);
+	WriteStatusF(11, "Entry %d[%d] (%d:%d)", _index, _currentLen[_index], _cursorPos, _anchorPos);
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
