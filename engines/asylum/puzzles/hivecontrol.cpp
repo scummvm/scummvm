@@ -275,7 +275,11 @@ bool PuzzleHiveControl::mouseLeftDown(const AsylumEvent &) {
 }
 
 bool PuzzleHiveControl::mouseRightDown(const AsylumEvent &) {
-	reset();
+	if (_leverDelta) {
+		_leverDelta = 0;
+		_prevLeverPosition = _leverPosition;
+		_currentControl = kControlNone;
+	}
 
 	getSound()->stop(getWorld()->graphicResourceIds[73]);
 	getSound()->stop(getWorld()->graphicResourceIds[74]);
