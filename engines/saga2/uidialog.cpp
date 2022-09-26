@@ -1382,7 +1382,7 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		        yPos,
 		        maxY;
 
-		int16   fontHeight = buttonFont->height;
+		int16   fontHeight = _buttonFont->height;
 
 		// make a copy of the window text string
 		sprintf(titleBuf, "%s", windowText);
@@ -1402,7 +1402,7 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 				titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(buttonFont, titleStrings[i], -1, 0))
+				      TextWidth(_buttonFont, titleStrings[i], -1, 0))
 				     >> 1);
 			} else titleCount = i;
 		}
@@ -1450,9 +1450,9 @@ void CPlacardPanel::drawClipped(
 
 		writePlaqTextPos(port,
 		                 textPos,
-		                 buttonFont,
+		                 _buttonFont,
 		                 0,
-		                 textFacePal,
+		                 _textFacePal,
 		                 false,
 		                 titleStrings[i]);
 	}

@@ -4395,7 +4395,7 @@ void MotionTask::updatePositions() {
 					g_vm->_mTaskList->_nextMT = it;
 			}
 
-			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
+			CMassWeightIndicator::_bRedraw = true;   // tell the mass/weight indicators to refresh
 
 			break;
 
@@ -4431,7 +4431,7 @@ void MotionTask::updatePositions() {
 					g_vm->_mTaskList->_nextMT = it;
 			}
 
-			CMassWeightIndicator::bRedraw = true;   // tell the mass/weight indicators to refresh
+			CMassWeightIndicator::_bRedraw = true;   // tell the mass/weight indicators to refresh
 
 			break;
 
