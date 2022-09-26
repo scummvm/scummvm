@@ -87,15 +87,18 @@ void ImmortalEngine::clearScreen() {
 		useNormal();
 	}
 
+	// Make sure it takes effect right away
 	copyToScreen();
 }
 
+// These functions are not yet implemented
 void ImmortalEngine::mungeBM() {}
 void ImmortalEngine::blit() {}
 void ImmortalEngine::blit40() {}
 void ImmortalEngine::sBlit() {}
 void ImmortalEngine::scroll() {}
-void ImmortalEngine::makeMyCNM() {}									// ?
+void ImmortalEngine::makeMyCNM() {}
+// -----
 
 void ImmortalEngine::drawIcon(int img) {
 	superSprite(&_dataSprites[kObject], ((kObjectWidth / 2) + kScreenLeft) + _penX, _penY + (kObjectY + kScreenTop), img, kScreenBMW, _screenBuff, 0, 200);
@@ -150,6 +153,7 @@ void ImmortalEngine::addSprites() {
 	int tmpNum = _num2DrawItems;
 	for (int i = 0; i < kMaxSprites; i++) {
 		// If the sprite is active
+		// This is commented out for testing until the issue with the function is resolved
 		if (/*_sprites[i]._on*/0 == 1) {
 			// If sprite X is an odd number???
 			if ((_sprites[i]._X & 1) != 0) {
@@ -176,7 +180,7 @@ void ImmortalEngine::addSprites() {
 			}
 
 			DataSprite *tempD = _sprites[i]._dSprite;
-			debug("what sprite is this: %d %d %d", i, _sprites[i]._image, _sprites[i]._dSprite->_images.size());
+			//debug("what sprite is this: %d %d %d", i, _sprites[i]._image, _sprites[i]._dSprite->_images.size());
 			Image *tempImg = &(tempD->_images[_sprites[i]._image]);
 			int sx = ((_sprites[i]._X + tempImg->_deltaX) - tempD->_cenX) - _myViewPortX;
 			int sy = ((_sprites[i]._Y + tempImg->_deltaY) - tempD->_cenY) - _myViewPortY;
@@ -211,7 +215,7 @@ void ImmortalEngine::addSprites() {
 
 void ImmortalEngine::sortDrawItems() {
 	/* Just an implementation of bubble sort.
-	 * Sorting largest to smallest entry, simply
+	 * Sorting largest to smallest entry, by simply
 	 * swapping every two entries if they are not in order.
 	 */
 
@@ -333,11 +337,11 @@ void ImmortalEngine::drawItems() {
 }
 
 void ImmortalEngine::backspace() {
-	// Just moves the drawing position back by a char, and then draws an empty rect there (I think)
+	// Just moves the drawing position back by a char, and then draws an empty rect there
 	_penX -= 8;
 	//rect(_penX + 32, 40, 8, 16, 0);
 
-	// The Y is set here presumably because it's only used for the certificate
+	// The Y is hardcoded here presumably because it's only used for the certificate
 	for (int y = 0; y < 16; y++) {
 		for (int x = 0; x < 8; x++) {
 			_screenBuff[((y + 40) * kResH) + (x + (_penX + 32))] = 0;
@@ -424,7 +428,7 @@ void ImmortalEngine::printChr(char c) {
 
 	superSprite(&_dataSprites[kFont], x, y, (int) c, kScreenBMW, _screenBuff, kSuperTop, kSuperBottom);
 
-	// Single quote?
+	// Back tick quote
 	if (c == 0x27) {
 		_penX -= 2;
 	}
@@ -460,7 +464,19 @@ void ImmortalEngine::cycleFreeAll() {
 }
 
 void ImmortalEngine::loadMazeGraphics(int m) {
-	//setColors();
+	char mazeNum = m + '0';
+	loadUniv(mazeNum);
+	setColors(_palUniv);
+}
+
+void ImmortalEngine::loadUniv(char mazeNum) {
+	Common::String sCNM = "MAZE" + Common::String(mazeNum) + ".CNM";
+	Common::SeekableReadStream *mazeCNM = loadIFF(sCNM);
+	debug("Size of maze CNM: %ld", mazeCNM->size());
+
+	Common::String sUNV = "MAZE" + Common::String(mazeNum) + ".UNV";
+	Common::SeekableReadStream *mazeUNV = loadIFF(sUNV);
+	debug("Size of maze UNV: %ld", mazeUNV->size());
 }
 
 void ImmortalEngine::loadSprites() {
@@ -562,7 +578,7 @@ void ImmortalEngine::loadWindow() {
 		f.close();
 
 	} else {
-		// Should probably give an error or something here
+		// Should probably give an error here
 		debug("oh nose :(");
 	}
 }
@@ -577,7 +593,7 @@ void ImmortalEngine::loadFont() {
 		_dataSprites[kFont] = d;
 
 	} else {
-		debug("file doesn't exist?!");
+		debug("file doesn't exist!");
 	}
 
 }
@@ -726,9 +742,9 @@ void ImmortalEngine::fadePal(uint16 pal[], int count, uint16 target[]) {
 	 * kept, this is a direct translation of the bit manipulation sequence.
 	 */
 	uint16 maskPal[16] = {0xFFFF, 0x0000, 0x0000, 0x0000,
-					      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
-					      0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
-					      0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
+						  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF,
+						  0xFFFF, 0xFFFF, 0xFFFF, 0x0000,
+						  0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF};
 
 	uint16 result;
 	uint16 temp;
@@ -826,10 +842,6 @@ void ImmortalEngine::useDim() {
  *
  */
 
-void ImmortalEngine::userIO() {}
-void ImmortalEngine::pollKeys() {}
-void ImmortalEngine::noNetwork() {}
-
 void ImmortalEngine::waitKey() {
 	bool wait = true;
 	while (wait == true) {
@@ -852,14 +864,17 @@ void ImmortalEngine::waitClick() {
 	}
 }
 
+// These functions are not yet implemented
 void ImmortalEngine::blit8() {}
+void ImmortalEngine::addKeyBuffer() {}
+void ImmortalEngine::clearKeyBuff() {}
+void ImmortalEngine::userIO() {}
+void ImmortalEngine::pollKeys() {}
+void ImmortalEngine::noNetwork() {}
 bool ImmortalEngine::getInput() {
 	return true;
 }
-
-void ImmortalEngine::addKeyBuffer() {}
-void ImmortalEngine::clearKeyBuff() {}
-
+// ----
 
 /*
  *
@@ -917,18 +932,15 @@ void ImmortalEngine::musicUnPause(int sID) {}
 // ***
 
 Song ImmortalEngine::getPlaying() {
+	// Temporary value
 	return kSongMaze;
 }
 
-void ImmortalEngine::playMazeSong() {
-}
-
-void ImmortalEngine::playCombatSong() {
-}
-
-void ImmortalEngine::playTextSong() {
-	
-}
+// These functions are not yet implemented
+void ImmortalEngine::playMazeSong() {}
+void ImmortalEngine::playCombatSong() {}
+void ImmortalEngine::playTextSong() {}
+// ----
 
 void ImmortalEngine::loadSingles(Common::String songName) {
 	debug("%s", songName.c_str());
@@ -948,6 +960,7 @@ void ImmortalEngine::stopMusic() {
  *
  */
 
+// This sets the pen to a given x,y point
 void ImmortalEngine::setPen(uint16 penX, uint16 penY) {
 	_penX = penX & kMaskLow;
 	if ((penY & kMaskLow) < 200) {
@@ -963,6 +976,7 @@ void ImmortalEngine::center() {
 	_penX = ((uint16) 128) - (kObjectWidth / 2);
 }
 
+// Reset the X position and move the Y position down by 16 pixels
 void ImmortalEngine::carriageReturn() {
 	_penY += 16;
 	_penX = kTextLeft;	
