@@ -44,10 +44,10 @@ class gPixelMap;
 // Pure virtual base class for map features
 
 class CMapFeature {
-	bool        visible;
-	int16       world;
-	TilePoint   featureCoords;
-	char        name[MAX_MAP_FEATURE_NAME_LENGTH];
+	bool        _visible;
+	int16       _world;
+	TilePoint   _featureCoords;
+	char        _name[MAX_MAP_FEATURE_NAME_LENGTH];
 
 
 public:
@@ -55,21 +55,21 @@ public:
 	virtual ~CMapFeature() {}
 
 	void expose(bool canSee = true) {
-		visible = canSee;
+		_visible = canSee;
 	}
 	void draw(TileRegion tr, int16 inWorld, TilePoint bc, gPort &tport);
 	bool hitCheck(TileRegion vr, int16 inWorld, TilePoint bc, TilePoint cp);
 	int16 getWorld() {
-		return world;
+		return _world;
 	}
 	int16 getU() {
-		return featureCoords.u;
+		return _featureCoords.u;
 	}
 	int16 getV() {
-		return featureCoords.v;
+		return _featureCoords.v;
 	}
 	char *getText() {
-		return name;
+		return _name;
 	}
 
 	// The only aspect of different map features is what they look like
@@ -85,7 +85,7 @@ typedef CMapFeature *pCMapFeature;
 // class for map features with static icons
 
 class CStaticMapFeature : public CMapFeature {
-	int16 color;
+	int16 _color;
 
 public:
 	CStaticMapFeature(TilePoint where, int16 inWorld, const char *desc, int16 bColor);
@@ -99,7 +99,7 @@ public:
 // class for map features with static icons
 
 class CPictureMapFeature : public CMapFeature {
-	gPixelMap *pic;
+	gPixelMap *_pic;
 
 public:
 	CPictureMapFeature(TilePoint where, int16 inWorld, char *desc, gPixelMap *pm);
