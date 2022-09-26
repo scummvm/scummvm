@@ -100,7 +100,9 @@ void AiffXObj::m_duration(int nargs) {
 	Common::replace(filePath, "\\", ":");
 
 	Common::MacResManager macresman;
-	macresman.open(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator));
+	if (!macresman.open(Common::Path(pathMakeRelative(filePath), g_director->_dirSeparator))) {
+		error("Failed to open %s", filePath.c_str());
+	}
 	auto aiffStream = macresman.getDataFork();
 
 	auto aiffHeader = Audio::AIFFHeader::readAIFFHeader(aiffStream, DisposeAfterUse::YES);
