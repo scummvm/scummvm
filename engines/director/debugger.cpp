@@ -77,6 +77,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	_finishCounter = 0;
 	_next = false;
 	_nextCounter = 0;
+	_nextFrame = false;
+	_nextFrameCounter = 0;
 }
 
 Debugger::~Debugger() {
