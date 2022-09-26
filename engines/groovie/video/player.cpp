@@ -33,6 +33,8 @@ VideoPlayer::VideoPlayer(GroovieEngine *vm) :
 	_vm(vm), _syst(vm->_system), _file(nullptr), _audioStream(nullptr), _fps(0), _overrideSpeed(false), _flags(0),
 	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0), _frameTimeDrift(0) {
 
+	_startTime = _syst->getMillis();
+
 	int16 h = g_system->getOverlayHeight();
 
 	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
@@ -44,6 +46,7 @@ bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
+	_startTime = _syst->getMillis();
 
 	stopAudioStream();
 	_fps = loadInternal();
@@ -87,7 +90,7 @@ bool VideoPlayer::playFrame() {
 	}
 
 	uint32 currTime = _syst->getMillis();
-	_subtitles.drawSubtitle(currTime - _frameTimeDrift);
+	_subtitles.drawSubtitle(currTime - _startTime);
 
 	// The file has been completely processed
 	if (end) {
