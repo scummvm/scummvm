@@ -229,14 +229,12 @@ void Cast::loadArchive() {
 }
 
 bool Cast::loadConfig() {
-	if (!_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
+	Common::SeekableReadStreamEndian *stream = nullptr;
+	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
+	if (!stream) {
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
 		return false;
 	}
-
-	Common::SeekableReadStreamEndian *stream = nullptr;
-
-	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
 
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
