@@ -42,8 +42,8 @@ extern GameMode     ModalMode;
 
 class SimpleWindow : public gWindow {
 
-	GameMode    *prevModeStackPtr[Max_Modes];
-	int         prevModeStackCtr;
+	GameMode    *_prevModeStackPtr[Max_Modes];
+	int         _prevModeStackCtr;
 
 public:
 
@@ -69,7 +69,7 @@ public:
 };
 
 class SimpleButton : public gControl {
-	gWindow *window;
+	gWindow *_window;
 public:
 	SimpleButton(gWindow &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
 
@@ -85,12 +85,12 @@ private:
 };
 
 class ErrorWindow : public SimpleWindow {
-	static char mbChs1Text[8];
-	static char mbChs2Text[8];
-	static uint8    numBtns;
+	static char _mbChs1Text[8];
+	static char _mbChs2Text[8];
+	static uint8    _numBtns;
 public:
 
-	static requestInfo      rInfo;
+	static requestInfo      _rInfo;
 	ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMsg2);
 	~ErrorWindow();
 	int16 getResult();
