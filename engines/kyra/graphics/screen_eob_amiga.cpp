@@ -325,6 +325,7 @@ AmigaDOSFont::TextFont *AmigaDOSFont::loadContentFile(const Common::String fileN
 			errorDialog(0);
 	}
 
+	assert(str);
 	uint32 hunkId = str->readUint32();
 	// Except for some sanity checks we skip all of the Amiga hunk file magic
 	if (hunkId != 0x03f3)

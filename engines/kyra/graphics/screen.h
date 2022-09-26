@@ -798,6 +798,7 @@ protected:
 	template<bool noXor> static void wrapped_decodeFrameDeltaPage(uint8 *dst, const uint8 *src, const int pitch);
 
 	uint8 *_pagePtrs[16];
+	const uint8 *_pagePtrsBuff;
 	uint8 *_sjisOverlayPtrs[SCREEN_OVLS_NUM];
 	uint8 _pageMapping[SCREEN_PAGE_NUM];
 

@@ -61,6 +61,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	memset(_shapePages, 0, sizeof(_shapePages));
 	memset(_fonts, 0, sizeof(_fonts));
 
+	_pagePtrsBuff = nullptr;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	memset(_pageMapping, 0, sizeof(_pageMapping));
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
@@ -102,7 +103,7 @@ Screen::~Screen() {
 	for (int i = 0; i < SCREEN_OVLS_NUM; ++i)
 		delete[] _sjisOverlayPtrs[i];
 
-	delete[] _pagePtrs[0];
+	delete[] _pagePtrsBuff;
 
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f)
 		delete _fonts[f];
@@ -556,7 +557,7 @@ void Screen::setScreenDim(int dim) {
 void Screen::resetPagePtrsAndBuffers(int pageSize) {
 	_screenPageSize = pageSize;
 
-	delete[] _pagePtrs[0];
+	delete[] _pagePtrsBuff;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 
 	Common::Array<uint8> realPages;
@@ -567,15 +568,15 @@ void Screen::resetPagePtrsAndBuffers(int pageSize) {
 
 	int numPages = realPages.size();
 	uint32 bufferSize = numPages * _screenPageSize;
-
-	uint8 *pagePtr = new uint8[bufferSize]();
-	uint8 *pos = pagePtr;
+ 
+	uint8 *pos = new uint8[bufferSize]();
+	_pagePtrsBuff = pos;
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
 		if (_pagePtrs[_pageMapping[i]]) {
 			_pagePtrs[i] = _pagePtrs[_pageMapping[i]];
-		} else if (pos < &pagePtr[bufferSize]) {
+		} else if (pos < &_pagePtrsBuff[bufferSize]) {
 			_pagePtrs[i] = pos;
 			pos += _screenPageSize;
 		} else {
@@ -695,7 +696,7 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 		switch (plotFunc) {
 		case 0:
 			memcpy(dst, src, cW);
-			dst += cW; src += cW;
+			src += cW;
 			break;
 
 		case 1:
