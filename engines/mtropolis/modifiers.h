@@ -1178,6 +1178,44 @@ private:
 	Common::String _value;
 };
 
+class ObjectReferenceVariableModifierV1 : public VariableModifier {
+public:
+	bool load(ModifierLoaderContext &context, const Data::ObjectReferenceVariableModifierV1 &data);
+
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
+
+	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
+	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+
+#ifdef MTROPOLIS_DEBUG_ENABLE
+	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier V1"; }
+	SupportStatus debugGetSupportStatus() const override { return kSupportStatusNone; }
+#endif
+
+private:
+	class SaveLoad : public ModifierSaveLoad {
+	public:
+		explicit SaveLoad(ObjectReferenceVariableModifierV1 *modifier);
+
+	private:
+		void commitLoad() const override;
+		void saveInternal(Common::WriteStream *stream) const override;
+		bool loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) override;
+
+		ObjectReferenceVariableModifierV1 *_modifier;
+		Common::WeakPtr<RuntimeObject> _value;
+	};
+
+	Common::SharedPtr<Modifier> shallowClone() const override;
+	const char *getDefaultName() const override;
+
+	Common::WeakPtr<RuntimeObject> _value;
+	Event _setToSourcesParentWhen;
+};
+
 }	// End of namespace MTropolis
 
 #endif

@@ -365,16 +365,33 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 		return kVThreadError;
 	}
 
+	// There doesn't appear to be any flag for this, it just uses the file path field
+	bool isPrompt = (_filePath == "Ask User");
+
 	if (_saveWhen.respondsTo(msg->getEvent())) {
 		CompoundVarSaver saver(obj);
-		if (runtime->getSaveProvider()->promptSave(&saver, runtime->getSaveScreenshotOverride().get())) {
+
+		bool succeeded = false;
+		if (isPrompt)
+			succeeded = runtime->getSaveProvider()->promptSave(&saver, runtime->getSaveScreenshotOverride().get());
+		else
+			succeeded = runtime->getSaveProvider()->namedSave(&saver, runtime->getSaveScreenshotOverride().get(), _fileName);
+
+		if (succeeded) {
 			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
 				hooks->onSave(runtime, this, static_cast<Modifier *>(obj));
 		}
 		return kVThreadReturn;
 	} else if (_restoreWhen.respondsTo(msg->getEvent())) {
 		CompoundVarLoader loader(obj);
-		if (runtime->getLoadProvider()->promptLoad(&loader)) {
+
+		bool succeeded = false;
+		if (isPrompt)
+			runtime->getLoadProvider()->promptLoad(&loader);
+		else
+			runtime->getLoadProvider()->namedLoad(&loader, _fileName);
+
+		if (succeeded) {
 			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
 				hooks->onLoad(runtime, this, static_cast<Modifier *>(obj));
 		}
@@ -2812,6 +2829,74 @@ bool StringVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, 
 		_value = Common::String(&chars[0], size);
 	}
 
+	return true;
+}
+
+
+
+bool ObjectReferenceVariableModifierV1::load(ModifierLoaderContext &context, const Data::ObjectReferenceVariableModifierV1 &data) {
+	if (!loadTypicalHeader(data.modHeader))
+		return false;
+
+	if (!_setToSourcesParentWhen.load(data.setToSourcesParentWhen))
+		return false;
+
+	return true;
+}
+
+bool ObjectReferenceVariableModifierV1::respondsToEvent(const Event &evt) const {
+	return _setToSourcesParentWhen.respondsTo(evt);
+}
+
+VThreadState ObjectReferenceVariableModifierV1::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (msg->getEvent().respondsTo(_setToSourcesParentWhen)) {
+		warning("Set to source's parent is not implemented");
+	}
+	return kVThreadError;
+}
+
+Common::SharedPtr<ModifierSaveLoad> ObjectReferenceVariableModifierV1::getSaveLoad() {
+	return Common::SharedPtr<ModifierSaveLoad>(new SaveLoad(this));
+}
+
+bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, const DynamicValue &value) {
+	if (value.getType() == DynamicValueTypes::kNull)
+		_value.reset();
+	else if (value.getType() == DynamicValueTypes::kObject)
+		_value = value.getObject().object;
+	else
+		return false;
+
+	return true;
+}
+
+void ObjectReferenceVariableModifierV1::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+	if (_value.expired())
+		dest.clear();
+	else
+		dest.setObject(_value);
+}
+
+Common::SharedPtr<Modifier> ObjectReferenceVariableModifierV1::shallowClone() const {
+	return Common::SharedPtr<Modifier>(new ObjectReferenceVariableModifierV1(*this));
+}
+
+const char *ObjectReferenceVariableModifierV1::getDefaultName() const {
+	return "Object Reference Variable";
+}
+
+ObjectReferenceVariableModifierV1::SaveLoad::SaveLoad(ObjectReferenceVariableModifierV1 *modifier) : _modifier(modifier) {
+}
+
+void ObjectReferenceVariableModifierV1::SaveLoad::commitLoad() const {
+	_modifier->_value = _value;
+}
+
+void ObjectReferenceVariableModifierV1::SaveLoad::saveInternal(Common::WriteStream *stream) const {
+	error("Saving version 1 object reference variables is not currently supported");
+}
+
+bool ObjectReferenceVariableModifierV1::SaveLoad::loadInternal(Common::ReadStream *stream, uint32 saveFileVersion) {
 	return true;
 }
 

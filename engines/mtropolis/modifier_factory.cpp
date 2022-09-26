@@ -134,6 +134,8 @@ SIModifierFactory *getModifierFactoryForDataObjectType(const Data::DataObjectTyp
 		return ModifierFactory<FloatingPointVariableModifier, Data::FloatingPointVariableModifier>::getInstance();
 	case Data::DataObjectTypes::kStringVariableModifier:
 		return ModifierFactory<StringVariableModifier, Data::StringVariableModifier>::getInstance();
+	case Data::DataObjectTypes::kObjectReferenceVariableModifierV1:
+		return ModifierFactory<ObjectReferenceVariableModifierV1, Data::ObjectReferenceVariableModifierV1>::getInstance();
 
 	default:
 		warning("No modifier factory for type %x", static_cast<int>(dataObjectType));

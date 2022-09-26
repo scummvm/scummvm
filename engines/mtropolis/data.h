@@ -137,6 +137,7 @@ enum DataObjectType {
 	kPointVariableModifier					= 0x326,
 	kFloatingPointVariableModifier			= 0x328,
 	kStringVariableModifier					= 0x329,
+	kObjectReferenceVariableModifierV1		= 0x33e,
 	kDebris									= 0xfffffffe,	// Deleted modifier in alias list
 	kPlugInModifier							= 0xffffffff,
 
@@ -1058,6 +1059,8 @@ struct AliasModifier : public DataObject {
 
 	Common::String name;
 
+	bool haveGUID;
+
 protected:
 	DataReadErrorCode load(DataReader &reader) override;
 };
@@ -1665,6 +1668,17 @@ struct StringVariableModifier : public DataObject {
 	uint32 lengthOfString;
 	uint8 unknown1[4];
 	Common::String value;
+
+protected:
+	DataReadErrorCode load(DataReader &reader) override;
+};
+
+struct ObjectReferenceVariableModifierV1 : public DataObject {
+	ObjectReferenceVariableModifierV1();
+
+	TypicalModifierHeader modHeader;
+	uint32 unknown1;
+	Event setToSourcesParentWhen;
 
 protected:
 	DataReadErrorCode load(DataReader &reader) override;

@@ -87,6 +87,12 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *s
 		return true;
 
 	Common::String saveFileName = getSaveStateName(slot);
+
+	return save(writer, screenshotOverride, saveFileName, desc);
+}
+
+bool MTropolisEngine::save(ISaveWriter *writer, const Graphics::Surface *screenshotOverride, const Common::String &saveFileName, const Common::String &desc) {
+
 	Common::SharedPtr<Common::OutSaveFile> out(_saveFileMan->openForSaving(saveFileName, false));
 
 	ISaveWriter *oldWriter = _saveWriter;
@@ -102,6 +108,10 @@ bool MTropolisEngine::promptSave(ISaveWriter *writer, const Graphics::Surface *s
 	return true;
 }
 
+bool MTropolisEngine::namedSave(ISaveWriter *writer, const Graphics::Surface *screenshotOverride, const Common::String &fileName) {
+	return save(writer, screenshotOverride, getUnpromptedSaveFileName(fileName), fileName);
+}
+
 bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 	Common::String desc;
 	int slot;
@@ -115,7 +125,16 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 		return true;
 
 	Common::String saveFileName = getSaveStateName(slot);
+
+	return load(reader, saveFileName);
+}
+
+bool MTropolisEngine::load(ISaveReader *reader, const Common::String &saveFileName) {
 	Common::SharedPtr<Common::InSaveFile> in(_saveFileMan->openForLoading(saveFileName));
+	if (!in) {
+		warning("An error occurred while attempting to open save file '%s'", saveFileName.c_str());
+		return false;
+	}
 
 	uint32 signature = in->readUint32BE();
 	uint32 saveFileVersion = in->readUint32BE();
@@ -152,6 +171,14 @@ bool MTropolisEngine::promptLoad(ISaveReader *reader) {
 	}
 
 	return true;
+}
+
+Common::String MTropolisEngine::getUnpromptedSaveFileName(const Common::String &fileName) {
+	return _targetName + "." + toCaseInsensitive(fileName);
+}
+
+bool MTropolisEngine::namedLoad(ISaveReader *reader, const Common::String &fileName) {
+	return load(reader, getUnpromptedSaveFileName(fileName));
 }
 
 bool MTropolisEngine::autoSave(ISaveWriter *writer) {

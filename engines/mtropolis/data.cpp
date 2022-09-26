@@ -117,6 +117,7 @@ bool isModifier(DataObjectType type) {
 	case kCursorModifierV1:
 	case kGradientModifier:
 	case kColorTableModifier:
+	case kSoundFadeModifier:
 	case kSaveAndRestoreModifier:
 	case kCompoundVariableModifier:
 	case kBooleanVariableModifier:
@@ -126,8 +127,8 @@ bool isModifier(DataObjectType type) {
 	case kPointVariableModifier:
 	case kFloatingPointVariableModifier:
 	case kStringVariableModifier:
+	case kObjectReferenceVariableModifierV1:
 	case kPlugInModifier:
-	case kSoundFadeModifier:
 	case kDebris:
 		return true;
 	default:
@@ -1267,11 +1268,12 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 }
 
 AliasModifier::AliasModifier()
-	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0), lengthOfName(0), guid(0), editorLayoutPosition(Point::createDefault()) {
+	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0)
+	, lengthOfName(0), guid(0), editorLayoutPosition(Point::createDefault()), haveGUID(false) {
 }
 
 DataReadErrorCode AliasModifier::load(DataReader& reader) {
-	if (_revision != 2)
+	if (_revision > 2)
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!reader.readU32(modifierFlags)
@@ -1280,9 +1282,19 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 		|| !reader.readU32(unknown1)
 		|| !reader.readU32(unknown2)
 		|| !reader.readU16(lengthOfName)
-		|| !editorLayoutPosition.load(reader)
-		|| !reader.readU32(guid)
-		|| !reader.readTerminatedStr(name, lengthOfName))
+		|| !editorLayoutPosition.load(reader))
+		return kDataReadErrorReadFailed;
+
+	if (_revision >= 2) {
+		haveGUID = true;
+		if (!reader.readU32(guid))
+			return kDataReadErrorReadFailed;
+	} else {
+		haveGUID = false;
+		guid = 0;
+	}
+
+	if (!reader.readTerminatedStr(name, lengthOfName))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -1797,6 +1809,19 @@ DataReadErrorCode StringVariableModifier::load(DataReader &reader) {
 		return kDataReadErrorUnsupportedRevision;
 
 	if (!modHeader.load(reader) || !reader.readU32(lengthOfString) || !reader.readBytes(unknown1) || !reader.readTerminatedStr(value, lengthOfString))
+		return kDataReadErrorReadFailed;
+
+	return kDataReadErrorNone;
+}
+
+ObjectReferenceVariableModifierV1::ObjectReferenceVariableModifierV1() : unknown1(0) {
+}
+
+DataReadErrorCode ObjectReferenceVariableModifierV1::load(DataReader &reader) {
+	if (_revision != 1000)
+		return kDataReadErrorUnsupportedRevision;
+
+	if (!modHeader.load(reader) || !reader.readU32(unknown1) || !setToSourcesParentWhen.load(reader))
 		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
@@ -2400,6 +2425,9 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		break;
 	case DataObjectTypes::kStringVariableModifier:
 		dataObject = new StringVariableModifier();
+		break;
+	case DataObjectTypes::kObjectReferenceVariableModifierV1:
+		dataObject = new ObjectReferenceVariableModifierV1();
 		break;
 	case DataObjectTypes::kDebris:
 		dataObject = new Debris();
