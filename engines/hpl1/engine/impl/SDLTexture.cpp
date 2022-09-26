@@ -79,7 +79,7 @@ cSDLTexture::cSDLTexture(const tString &asName, Graphics::PixelFormat *apPxlFmt,
 	mbContainsData = false;
 
 	if (aType == eTextureType_RenderTarget) {
-		Hpl1::logError(Hpl1::kDebugGraphics, "use of render target%s", ".");
+		Hpl1::logError(Hpl1::kDebugTextures, "use of render target%s", ".");
 		// mpPBuffer = hplNew( cPBuffer, (mpLowLevelGraphics,true) );
 	}
 
@@ -147,7 +147,7 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 	}
 
 	if (avBitmaps->size() < 6) {
-		Hpl1::logError(Hpl1::kDebugOpenGL, "Only %d bitmaps supplied for creation of cube map, 6 needed.", avBitmaps->size());
+		Hpl1::logError(Hpl1::kDebugTextures, "Only %d bitmaps supplied for creation of cube map, 6 needed.", avBitmaps->size());
 		return false;
 	}
 
@@ -188,7 +188,7 @@ bool cSDLTexture::CreateCubeFromBitmapVec(tBitmap2DVec *avBitmaps) {
 		_bpp = lChannels * 8;
 
 		if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) {
-			Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
+			Hpl1::logWarning(Hpl1::kDebugTextures, "Texture '%s' does not have a pow2 size", msName.c_str());
 		}
 	}
 
@@ -244,7 +244,7 @@ bool cSDLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, co
 	_bpp = lChannels * 8;
 
 	if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width) || !cMath::IsPow2(avSize.z)) {
-		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
+		Hpl1::logWarning(Hpl1::kDebugTextures, "Texture '%s' does not have a pow2 size", msName.c_str());
 	}
 
 	if (mTarget == eTextureTarget_1D) {
@@ -513,7 +513,7 @@ bool cSDLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	_height = pBitmapSrc->getHeight();
 
 	if ((!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) && mTarget != eTextureTarget_Rect)
-		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
+		Hpl1::logWarning(Hpl1::kDebugTextures, "Texture '%s' does not have a pow2 size", msName.c_str());
 
 	int lChannels = 0;
 	GLint internalFormat = 0;

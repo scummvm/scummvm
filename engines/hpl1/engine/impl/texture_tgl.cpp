@@ -159,7 +159,7 @@ bool TGLTexture::CreateFromArray(unsigned char *apPixelData, int alChannels, con
 	_bpp = alChannels * 8;
 
 	if (!cMath::IsPow2(_height) || !cMath::IsPow2(_width) || !cMath::IsPow2(avSize.z)) {
-		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
+		Hpl1::logWarning(Hpl1::kDebugTextures, "texture '%s' does not have a pow2 size", msName.c_str());
 	}
 
 	tglTexImage2D(GLTarget, 0, format, _width, _height,
@@ -369,7 +369,7 @@ bool TGLTexture::CreateFromBitmapToHandle(Bitmap2D *pBmp, int alHandleIdx) {
 	_height = pBitmapSrc->getHeight();
 
 	if ((!cMath::IsPow2(_height) || !cMath::IsPow2(_width)) && mTarget != eTextureTarget_Rect)
-		Hpl1::logWarning(Hpl1::kDebugGraphics, "Texture '%s' does not have a pow2 size", msName.c_str());
+		Hpl1::logWarning(Hpl1::kDebugTextures, "texture '%s' does not have a pow2 size", msName.c_str());
 
 	int lChannels = 0;
 	TGLint internalFormat = 0;
