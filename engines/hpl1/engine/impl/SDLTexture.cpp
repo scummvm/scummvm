@@ -425,6 +425,8 @@ void cSDLTexture::SetWrapS(eTextureWrap aMode) {
 	if (mbContainsData) {
 		GLenum GLTarget = mpGfxSDL->GetGLTextureTargetEnum(mTarget);
 
+		Hpl1::logInfo(Hpl1::kDebugTextures, "setting texture '%s' s wrap to %d\n", msName.c_str(), aMode);
+
 		GL_CHECK(glEnable(GLTarget));
 		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
 			glBindTexture(GLTarget, mvTextureHandles[i]);
@@ -441,6 +443,8 @@ void cSDLTexture::SetWrapS(eTextureWrap aMode) {
 void cSDLTexture::SetWrapT(eTextureWrap aMode) {
 	if (mbContainsData) {
 		GLenum GLTarget = mpGfxSDL->GetGLTextureTargetEnum(mTarget);
+
+		Hpl1::logInfo(Hpl1::kDebugTextures, "setting texture '%s' t wrap to %d\n", msName.c_str(), aMode);
 
 		GL_CHECK(glEnable(GLTarget));
 		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
