@@ -638,7 +638,7 @@ bool ActorProto::acceptInsertionAtAction(
 	}
 
 	//  Determine if this object is simply being moved within this actor
-	if (oldLoc.context == dObj) {
+	if (oldLoc._context == dObj) {
 		//  Determine if and where the object is in use by this actor
 		if (a->_leftHandObject == item)
 			inUseType = heldInLeftHand;

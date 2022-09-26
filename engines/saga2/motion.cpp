@@ -4364,7 +4364,7 @@ void MotionTask::updatePositions() {
 
 		case motionTypeDropObject:
 
-			if (isWorld(mt->_targetLoc.context)) {
+			if (isWorld(mt->_targetLoc._context)) {
 				if (mt->_flags & reset) {
 					mt->_direction = (mt->_targetLoc - a->getLocation()).quickDir();
 					mt->_flags &= ~reset;

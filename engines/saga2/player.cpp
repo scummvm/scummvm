@@ -806,7 +806,7 @@ void handlePlayerActorDeath(PlayerActorID id) {
 //	to the center actor
 
 void transportCenterBand(const Location &loc) {
-	assert(isWorld(loc.context));
+	assert(isWorld(loc._context));
 
 	fadeDown();
 
@@ -836,14 +836,14 @@ void transportCenterBand(const Location &loc) {
 			TilePoint       dest;
 
 			dest =  selectNearbySite(
-			            loc.context,
+			            loc._context,
 			            loc,
 			            1,
 			            3,
 			            false);
 
 			if (dest != Nowhere) {
-				a->move(Location(dest, loc.context));
+				a->move(Location(dest, loc._context));
 				if (a->_moveTask != nullptr)
 					a->_moveTask->finishWalk();
 				player->resolveBanding();

@@ -265,7 +265,7 @@ Point32 translateLocation(Location playAt) {
 	GameObject *go = getViewCenterObject();
 	Location cal = Location(go->getWorldLocation(), go->IDParent());
 
-	if (playAt.context == cal.context) {
+	if (playAt._context == cal._context) {
 		Point32 p = Point32(playAt.u - cal.u, playAt.v - cal.v);
 		return p;
 	}

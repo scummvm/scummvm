@@ -87,7 +87,7 @@ ObjectID            viewCenterObject;       // ID of object that view tracks
 hResContext         *listRes;               // object list resource handle
 extern hResContext  *tileRes;
 
-uint8               *ProtoObj::nextAvailObj;
+uint8               *ProtoObj::_nextAvailObj;
 
 
 // trio ready container consts
@@ -571,11 +571,11 @@ bool GameObject::getWorldLocation(Location &loc) {
 		if (isWorld(id)) {
 			loc = obj->_data.location;
 			loc.z += (obj->_prototype->height - objHeight) / 2;
-			loc.context = id;
+			loc._context = id;
 			return true;
 		} else if (id == Nothing) {
 			loc = Nowhere;
-			loc.context = Nothing;
+			loc._context = Nothing;
 			return false;
 		}
 
@@ -832,13 +832,13 @@ bool GameObject::unstack() {
 
 //  Move the object to a new _data.location, and change context if needed.
 void GameObject::setLocation(const Location &l) {
-	if (l.context != _data.parentID) {
+	if (l._context != _data.parentID) {
 		unstack();                          // if it's in a stack, unstack it.
 		remove();                           // remove from old list
 		_data.location = (TilePoint)l;            // change _data.location
-		append(l.context);                  // append to new list
-	} else if (isWorld(l.context)) {
-		GameWorld   *world = (GameWorld *)objectAddress(l.context);
+		append(l._context);                  // append to new list
+	} else if (isWorld(l._context)) {
+		GameWorld   *world = (GameWorld *)objectAddress(l._context);
 		TilePoint   sectors = world->sectorSize();
 
 		int16       u0 = clamp(0, _data.location.u / kSectorSize, sectors.u - 1),
@@ -849,7 +849,7 @@ void GameObject::setLocation(const Location &l) {
 		if (u0 != u1 || v0 != v1) {         // If sector changed
 			remove();                       //  Remove from old list
 			_data.location = (TilePoint)l;        //  Set object coords
-			append(l.context);              //  append to appropriate list
+			append(l._context);              //  append to appropriate list
 		} else {
 			_data.location = (TilePoint)l;        //  Set object coords
 		}

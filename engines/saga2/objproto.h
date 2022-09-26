@@ -106,7 +106,7 @@ class Location : public TilePoint {
 public:
 	//  context = the ObjectID of containing context
 	//  (either a container or a world).
-	ObjectID        context;
+	ObjectID        _context;
 
 	/*
 	        //  Member functions to translate world coords into
@@ -126,27 +126,27 @@ public:
 		return *this;
 	}
 
-	Location() : context(0) {}
+	Location() : _context(0) {}
 
 	Location(int16 nu, int16 nv, int16 nz, ObjectID con) {
 		u = nu;
 		v = nv;
 		z = nz;
-		context = con;
+		_context = con;
 	}
 
 	Location(TilePoint p, ObjectID con = 0) {
 		u = p.u;
 		v = p.v;
 		z = p.z;
-		context = con;
+		_context = con;
 	}
 
 	Location(StaticLocation l) {
 		u = l.tile.u;
 		v = l.tile.v;
 		z = l.tile.z;
-		context = l.context;
+		_context = l.context;
 	}
 
 };
@@ -370,7 +370,7 @@ struct ResourceObjectPrototype {
 
 class ProtoObj : public ResourceObjectPrototype {
 
-	static uint8    *nextAvailObj;
+	static uint8    *_nextAvailObj;
 
 
 	// container defines

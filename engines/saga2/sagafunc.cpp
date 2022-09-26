@@ -201,7 +201,7 @@ int16 scriptActorMoveRel(int16 *args) {
 	Location        l;
 	TilePoint       tp;
 
-	l.context   = baseObj->IDParent();
+	l._context   = baseObj->IDParent();
 	tp          = baseObj->getLocation();
 
 	//  Add offset for angle and distance
@@ -1026,7 +1026,7 @@ int16 deepCopy(GameObject *src, ObjectID parentID, TilePoint tp) {
 	l.u = tp.u;
 	l.v = tp.v;
 	l.z = tp.z;
-	l.context = parentID;
+	l._context = parentID;
 
 	//  Make a copy of this object, and place it in the parent container we spec'd
 	newID = src->copy(l);
@@ -3657,7 +3657,7 @@ int16 scriptSwapRegions(int16 *args) {
 
 		tp = obj->getLocation();
 
-		loc.context = worldID2;
+		loc._context = worldID2;
 		loc.u = tp.u + region2.min.u - region1.min.u;
 		loc.v = tp.v + region2.min.v - region1.min.v;
 		loc.z = tp.z;
@@ -3673,7 +3673,7 @@ int16 scriptSwapRegions(int16 *args) {
 
 		tp = obj->getLocation();
 
-		loc.context = worldID1;
+		loc._context = worldID1;
 		loc.u = tp.u + region1.min.u - region2.min.u;
 		loc.v = tp.v + region1.min.v - region2.min.v;
 		loc.z = tp.z;

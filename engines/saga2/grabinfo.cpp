@@ -97,7 +97,7 @@ void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
 
 	// get the original location
 	_from            = _grabObj->getLocation();
-	_from.context    = _grabObj->IDParent();
+	_from._context   = _grabObj->IDParent();
 	// de-link the object
 	_grabObj->move(Location(Nowhere, Nothing));
 
@@ -139,7 +139,7 @@ void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
 	setMoveCount(count);
 
 	_from            = Nowhere;
-	_from.context    = Nothing;
+	_from._context   = Nothing;
 
 	setIcon();
 	setIntent(in);
