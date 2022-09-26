@@ -73,6 +73,7 @@ public:
 private:
 	SRTParser _srtParser;
 	bool _loaded;
+	bool _subtitleDev;
 
 	const Graphics::Font *_font;
 	int _fontHeight;
