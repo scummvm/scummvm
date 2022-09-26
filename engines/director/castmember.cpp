@@ -212,6 +212,7 @@ BitmapCastMember::BitmapCastMember(Cast *cast, uint16 castId, Image::ImageDecode
 	_regX = img->getSurface()->w / 2;
 	_flags1 = flags1;
 	_flags2 = 0;
+	_tag = 0;
 }
 
 BitmapCastMember::~BitmapCastMember() {
