@@ -3130,6 +3130,24 @@ void ScummEngine_v5::o5_walkActorTo() {
 	a = derefActor(getVarOrDirectByte(PARAM_1), "o5_walkActorTo");
 	x = getVarOrDirectWord(PARAM_2);
 	y = getVarOrDirectWord(PARAM_3);
+
+	// WORKAROUND: In MI1 CD, when the storekeeper comes back from outside,
+	// he will close the door *after* going to his counter, which looks very
+	// strange, since he's then quite far away from the door. Force calling
+	// the script which closes the door *before* he starts walking away from
+	// it, as in the other releases. Another v5 bug fixed on SegaCD, though!
+	if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformSegaCD && _currentRoom == 30 &&
+		vm.slot[_currentScript].number == 207 && a->_number == 11 && x == 232 && y == 141 &&
+		_enableEnhancements && strcmp(_game.variant, "SE Talkie") != 0) {
+		if (whereIsObject(387) == WIO_ROOM && getState(387) == 1 && getState(437) == 1) {
+			int args[NUM_SCRIPT_LOCAL];
+			memset(args, 0, sizeof(args));
+			args[0] = 387;
+			args[1] = 437;
+			runScript(26, 0, 0, args);
+		}
+	}
+
 	a->startWalkActor(x, y, -1);
 }
 
