@@ -43,7 +43,7 @@ void ImmortalEngine::levelNew(int l) {
 	levelStory(l);
 	if (kLevelToMaze[l] != _lastLevelLoaded) {
 		_lastLevelLoaded = kLevelToMaze[l];
-		//loadMazeGraphics(l);
+		loadMazeGraphics(l);
 	}
 
 	if (_level != _lastSongLoaded) {

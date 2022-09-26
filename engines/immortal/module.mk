@@ -12,8 +12,8 @@ MODULE_OBJS = \
 	misc.o \
 	cycle.o \
 	drawChr.o \
- 	level.o \
- 	story.o \
+	level.o \
+	story.o \
 	room.o \
 	flameSet.o \
 	univ.o \

@@ -226,9 +226,9 @@ public:
 	const uint16 kLCutaway    = 4;
 
 	const uint16 kChrDy[19] = {kChr0, kChrH, kChrH2, kChrH, kChrH2,
-						   	   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
-						       kChr0, kChrH2, kChrH, kChrH2, kChrH2,
-						       kChrH2, kChrH, kChrH2, kChrH2};
+							   kChrH2, kChrH, kChrH2, kChrH2, kChr0,
+							   kChr0, kChrH2, kChrH, kChrH2, kChrH2,
+							   kChrH2, kChrH, kChrH2, kChrH2};
 
 	const uint16 kChrMask[19] = {kChr0, kChr0,  kChr0,  kChr0,
 								 kChrR, kChrL,  kChr0,  kChrL,
@@ -240,8 +240,8 @@ public:
 									  0, 0, 0, 1, 1, 0,
 									  0, 0, 0, 0, 0, 0,
 									  0, 0, 0, 0, 0, 0,
-							  		  0, 0, 0, 0, 0, 0,
-							  		  0, 0, 0, 0, 0, 0};
+									  0, 0, 0, 0, 0, 0,
+									  0, 0, 0, 0, 0, 0};
 
 	// Disk offsets
 	const int kPaletteOffset    = 21205;				// This is the byte position of the palette data in the disk
@@ -347,7 +347,7 @@ public:
 	uint8 _secretDelta     = 0;
 
 	// Debug members
-	bool _singleStep	  = false;						// Flag for _singleStep mode
+	bool _singleStep = false;							// Flag for _singleStep mode
 
 	// Input members
 	int _pressedAction 	  = 0;
@@ -365,11 +365,11 @@ public:
 
 	// Music members
 	Song _playing;										// Currently playing song
-	int _themeID  		  = 0;							// Not sure yet tbh
-	int _combatID 		  = 0;
+	int _themeID  = 0;									// Not sure yet tbh
+	int _combatID = 0;
 
 	// Asset members
-		   int _numSprites = 0;							// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
+	int _numSprites = 0;								// This is more accurately actually the index within the sprite array, so _numSprites + 1 is the current number of sprites
 	DataSprite _dataSprites[kFont + 1];					// All the sprite data, indexed by SpriteName
 		Sprite _sprites[kMaxSprites];					// All the sprites shown on screen
 		 Cycle _cycles[kMaxCycles];
@@ -384,27 +384,27 @@ public:
 
 	// Screen members
 	  byte *_screenBuff;								// The final buffer that will transfer to the screen
-    uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
-    uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
-    uint16  _myModLCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
-    uint16  _columnX[kViewPortCW + 1];
-    uint16  _columnTop[kViewPortCW + 1];
-    uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
+	uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
+	uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
+	uint16  _myModLCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
+	uint16  _columnX[kViewPortCW + 1];
+	uint16  _columnTop[kViewPortCW + 1];
+	uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
 	uint16  _tIndex[kMaxDrawItems];
 	uint16  _tPriority[kMaxDrawItems];
-    uint16  _viewPortX 		= 0;
-    uint16  _viewPortY 		= 0;
-    uint16  _myViewPortX 	= 0;						// Probably mirror of viewportX
-    uint16  _myViewPortY 	= 0;
-	   int  _lastGauge 		= 0;						// Mirror for player health, used to update health gauge display
-    uint16  _lastBMW 		= 0;						// Mirrors used to determine where bitmap width needs to be re-calculated
-    uint16  _lastY 			= 0;
-    uint16  _lastPoint 		= 0;
-    uint16  _penX 			= 0;						// Basically where in the screen we are currently drawing
-    uint16  _penY 			= 0;
-    uint16  _myUnivPointX   = 0;
-    uint16  _myUnivPointY   = 0;
-	   int  _num2DrawItems  = 0;
+	uint16  _viewPortX 	   = 0;
+	uint16  _viewPortY 	   = 0;
+	uint16  _myViewPortX   = 0;							// Probably mirror of viewportX
+	uint16  _myViewPortY   = 0;
+	   int  _lastGauge 	   = 0;							// Mirror for player health, used to update health gauge display
+	uint16  _lastBMW 	   = 0;							// Mirrors used to determine where bitmap width needs to be re-calculated
+	uint16  _lastY 		   = 0;
+	uint16  _lastPoint 	   = 0;
+	uint16  _penX 		   = 0;							// Basically where in the screen we are currently drawing
+	uint16  _penY 		   = 0;
+	uint16  _myUnivPointX  = 0;
+	uint16  _myUnivPointY  = 0;
+	   int  _num2DrawItems = 0;
 	Graphics::Surface *_mainSurface;
 GenericSprite _genSprites[6];
 
@@ -412,6 +412,7 @@ GenericSprite _genSprites[6];
 	   int _dontResetColors = 0;						// Not sure yet
 	  bool _usingNormal  	= 0;						// Whether the palette is using normal
 	  bool _dim 			= 0;						// Whether the palette is dim
+	uint16 _palUniv[16];
 	uint16 _palDefault[16];
 	uint16 _palWhite[16];
 	uint16 _palBlack[16];
@@ -489,6 +490,7 @@ GenericSprite _genSprites[6];
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
 	void initStoryStatic();								// Sets up all of the global static story elements
+	void loadUniv(char mazeNum);
 	void loadMazeGraphics(int m);							// Creates a universe with a maze
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame

@@ -23,9 +23,11 @@
 
 namespace Immortal {
 
+// These functions are not yet implemented
 int ImmortalEngine::mungeCBM(int numChrs) {
 	return 0;
 }
+
 void ImmortalEngine::storeAddr() {}
 void ImmortalEngine::mungeSolid() {}
 void ImmortalEngine::mungeLRHC() {}

@@ -519,7 +519,6 @@ bool ImmortalEngine::getCertificate() {
 
 		} else {
 			// The input was a key
-
 			if (certLen != kMaxCertificate) {
 				if ((k >= 'a') && (k < '{')) {
 					k -= 0x20;
@@ -532,7 +531,6 @@ bool ImmortalEngine::getCertificate() {
 
 					else {
 						if (k < 'A') {
-							// Terrible, I know. But this seems to be the logic.
 							continue;
 						}
 
@@ -584,8 +582,7 @@ void ImmortalEngine::printCertificate() {
 	 * this one is nice and simple. You could also
 	 * just add the appropriate offset for the letters,
 	 * but grabbing it from a table is faster and doesn't
-	 * use a lot of space (especially if it's used anywhere else).
-	 * Why doesn't the game use rom table indexing like this more often?
+	 * use a lot of space (especially if it's used anywhere else)
 	 */
 	char toHex[] = {'0','1','2','3','4','5','6','7','8','9','a','b','c','d','e','f'};
 
@@ -614,7 +611,7 @@ bool ImmortalEngine::isSavedAna() {
 
 
 /*
- * Functions that don't really need to be functions
+ * These functions don't really need to be functions
  */
 
 void ImmortalEngine::setGameFlags(uint16 f) {

@@ -32,7 +32,8 @@
  * objects, and everything in the rooms.
  */
 
-/*	UNIVAT	1024,480,    1152,   464,    \-1, -1,             zip,level1Ladders,  rooma, 704/64,  544/32\
+/*	These are the UNIVAT for each Story entry
+	UNIVAT	1024,480,    1152,   464,    \-1, -1,             zip,level1Ladders,  rooma, 704/64,  544/32\
 	UNIVAT	304, 448,    472+32, 500+16, \-1, -1,             zip,level12Ladders, -1,    0,       0\
 	UNIVAT	600, 450,    560,    598,    \-1, r2.b+(16*r2.a), zip,level3Ladders,  r2.b,  640/64,  576/32\
 	UNIVAT	120, 540,    188,    584,    \-1, -1,             zip,level4Ladders,  -1,    0,       0\
@@ -149,7 +150,6 @@ void ImmortalEngine::initStoryStatic() {
 									"This room resembles part&of the map.@"};
 	_strPtrs = s;
 
-	// Scope, amirite?
 	Common::Array<int> cyc0{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
 	Common::Array<int> cyc1{15,16,17,18,19,20,21,22,-1};
 	Common::Array<int> cyc2{0,1,2,-1};
@@ -158,9 +158,9 @@ void ImmortalEngine::initStoryStatic() {
 	Common::Array<int> cyc5{11,12,13,14,15,-1};
 	Common::Array<int> cyc6{16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,-1};
 	Common::Array<int> cyc7{0,1,2,3,4,-1};
-	Common::Array<int> cyc8{5,1+5,2+5,3+5,4+5,-1};
-	Common::Array<int> cyc9{10,1+10,2+10,3+10,4+10,-1};
-	Common::Array<int> cyc10{15,1+15,2+15,3+15,4+15,-1};
+	Common::Array<int> cyc8{5,1 + 5,2 + 5,3 + 5,4 + 5,-1};
+	Common::Array<int> cyc9{10,1 + 10,2 + 10,3 + 10,4 + 10,-1};
+	Common::Array<int> cyc10{15,1 + 15,2 + 15,3 + 15,4 + 15,-1};
 	Common::Array<int> cyc11{0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,-1};
 	Common::Array<int> cyc12{0,1,2,3,4,5,6,7,8,9,-1};
 	Common::Array<int> cyc13{0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, 0,1,2,3, -1};
@@ -175,10 +175,10 @@ void ImmortalEngine::initStoryStatic() {
 	Common::Array<int> cyc22{0,17,18,19,3,-1};
 	Common::Array<int> cyc23{0,1,-1};
 	Common::Array<int> cyc24{28,28,28,28,-1};
-	Common::Array<int> cyc25{15,16,15,16,15,1+15,1+15,-1};
-	Common::Array<int> cyc26{10+15,11+15,12+15,13+15,14+15,15+15,16+15,-1};
-	Common::Array<int> cyc27{2+15,3+15,4+15,5+15,-1};
-	Common::Array<int> cyc28{6+15,7+15,8+15,9+15,-1};
+	Common::Array<int> cyc25{15,16,15,16,15,1 + 15,1 + 15,-1};
+	Common::Array<int> cyc26{10 + 15,11+ 15,12 + 15,13 + 15,14 + 15,15 + 15,16 + 15,-1};
+	Common::Array<int> cyc27{2 + 15,3 + 15,4 + 15,5 + 15,-1};
+	Common::Array<int> cyc28{6 + 15,7 + 15,8 + 15,9 + 15,-1};
 	Common::Array<int> cyc29{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,-1};
 	Common::Array<int> cyc30{0,1,2,3,3,3,3,4,5,6,-1};
 	Common::Array<int> cyc31{0,1,2,3,4,5,6,7,8,-1};
@@ -277,9 +277,9 @@ void ImmortalEngine::initStoryDynamic() {
 	/* All of the doors
 	 */
 	Common::Array<SDoor> doors{SDoor(0, 704, 224, 0, 2, false), SDoor(1, 576, 352, 4, 0, true),
-					  		   SDoor(1, 704, 96,  2, 1, false), SDoor(1, 960, 128, 7, 2, false),
-					  		   SDoor(1, 1088,160, 3, 7, false), SDoor(1, 1088,320, 6, 3, false),
-					  		   SDoor(1, 896, 416, 4, 3, false)};
+							   SDoor(1, 704, 96,  2, 1, false), SDoor(1, 960, 128, 7, 2, false),
+							   SDoor(1, 1088,160, 3, 7, false), SDoor(1, 1088,320, 6, 3, false),
+							   SDoor(1, 896, 416, 4, 3, false)};
 	_stories[0]._doors = doors;
 
 	/* All of the flames
@@ -309,23 +309,23 @@ void ImmortalEngine::initStoryDynamic() {
 
 	Common::Array<SObj> noObj{};
 	Common::Array<SObj> o5{SObj(kZip, kZip, kTypeTrap,     kNoFrame,         kObjIsRunning + kObjIsInvisible, o5Traps),
-				  		   SObj(459,  379,  kTypeCoin,     kRingFrame,       kObjNone,                        noTraps),
-				  		   SObj(446,  327,  kTypeWowCharm, kScrollFrame,     kObjNone,                        noTraps)};
+						   SObj(459,  379,  kTypeCoin,     kRingFrame,       kObjNone,                        noTraps),
+						   SObj(446,  327,  kTypeWowCharm, kScrollFrame,     kObjNone,                        noTraps)};
 	Common::Array<SObj> o7{SObj(145,  138,  kTypeTrap,     kNoFrame,         kObjIsRunning + kObjIsInvisible, o7Traps)};
 	Common::Array<SObj> o8{SObj(kZip, kZip, kTypeTrap,     kNoFrame,         kObjIsRunning + kObjIsInvisible, o8Traps)};
 	Common::Array<SObj> o9{SObj(1052, 309,  kTypeDead,     kDeadGoblinFrame, kObjIsChest + kObjIsOnGround,    noTraps),
 						   SObj(kZip, kZip, kTypeFireBall, kScrollFrame,     kObjUsesFireButton,              noTraps),
 						   SObj(128,  464,  kTypeDunRing,  kRingFrame,       0,                               noTraps),
 						   SObj(837,  421,  kTypeChest,    kChest0Frame,     kObjIsChest,                     noTraps),
-					       SObj(kZip, kZip, kTypeDeathMap, kScrollFrame,     0,                               noTraps),
-					       SObj(597,  457,  kTypeWater,    kVaseFrame,       0,                               noTraps),
-					       SObj(kZip, kZip, kTypeSpores,   kSporesFrame,     0,                               noTraps),
-					       SObj(kZip, kZip, kTypeWormFood, kNoFrame,         0,                               noTraps),
-					       SObj(205,  158,  kTypeChestKey, kKeyFrame,        0,                               noTraps)};
+						   SObj(kZip, kZip, kTypeDeathMap, kScrollFrame,     0,                               noTraps),
+						   SObj(597,  457,  kTypeWater,    kVaseFrame,       0,                               noTraps),
+						   SObj(kZip, kZip, kTypeSpores,   kSporesFrame,     0,                               noTraps),
+						   SObj(kZip, kZip, kTypeWormFood, kNoFrame,         0,                               noTraps),
+						   SObj(205,  158,  kTypeChestKey, kKeyFrame,        0,                               noTraps)};
 	Common::Array<SObj> oE{SObj(1184, 426,  kTypePhant,    kAltarFrame,      0,                               noTraps),
-				  		   SObj(145,  138,  kTypeGold,     kNoFrame,         kObjIsRunning,                   noTraps),
-				  		   SObj(671,  461,  kTypeHay,      kNoFrame,         kObjIsRunning + kObjIsInvisible, noTraps),
-				  		   SObj(780,  508,  kTypeBeam,     kNoFrame,         kObjIsRunning + kObjIsInvisible, noTraps)};
+						   SObj(145,  138,  kTypeGold,     kNoFrame,         kObjIsRunning,                   noTraps),
+						   SObj(671,  461,  kTypeHay,      kNoFrame,         kObjIsRunning + kObjIsInvisible, noTraps),
+						   SObj(780,  508,  kTypeBeam,     kNoFrame,         kObjIsRunning + kObjIsInvisible, noTraps)};
 	CArray2D<SObj> objects{o5, o7, o8, o9, noObj, noObj, oE, noObj};
 	_stories[0]._objects = objects;
 
@@ -341,14 +341,18 @@ void ImmortalEngine::initStoryDynamic() {
 
 	Common::Array<SMonster> noMonst{};
 	Common::Array<SMonster> m5{SMonster(448,  344, 12, kMonstPlayer,  kMonstA + kMonstIsEngage + kMonstIsTough, progShade,   kShadow),
-					  		   SMonster(590,  381, 12, kMonstPlayer,  kMonstA + kMonstIsEngage + kMonstIsTough, progShade,   kShadow)};
+							   SMonster(590,  381, 12, kMonstPlayer,  kMonstA + kMonstIsEngage + kMonstIsTough, progShade,   kShadow)};
 	Common::Array<SMonster> m9{SMonster(1106, 258, 3,  kMonstPlayer,  kMonstA + kMonstIsEngage,                 progEasy,    kGoblin0),
 							   SMonster(832,  364, 10, kMonstA,       kMonstB + kMonstIsPoss,                   progUlindor, kUlindor3),
-					  		   SMonster(838,  370, 15, kMonstPlayer,  kMonstA + kMonstIsEngage,                 progGoblin5, kGoblin7)};
+							   SMonster(838,  370, 15, kMonstPlayer,  kMonstA + kMonstIsEngage,                 progGoblin5, kGoblin7)};
 	Common::Array<SMonster> mE{SMonster(1136, 464, 15, kMonstMonster, kMonstPlayer + kMonstIsEngage,            progPlayer,  kWizard0)};
 	Common::Array<SMonster> mF{SMonster(1182, 116, 5,  kMonstPlayer,  kMonstA + kMonstIsEngage,                 progWill2,   kGoblin5)};
 	CArray2D<SMonster> monsters{m5, noMonst, noMonst, m9, noMonst, noMonst, mE, mF};
 	_stories[0]._monsters = monsters;
+
+	/*
+	 * ::: Level 0: Intro 2 :::
+	 */
 
 }
 

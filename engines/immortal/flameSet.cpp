@@ -47,6 +47,7 @@ void Room::flameFreeAll() {
 
 void Room::flameDrawAll(uint16 vX, uint16 vY) {
 	for (int i = 0; i < _fset.size(); i++) {
+		// For every flame in the room, add the sprite to the sprite table
 		univAddSprite(vX, vY, _fset[i]._x, _fset[i]._y, g_immortal->_cycPtrs[g_immortal->_cycles[_fset[i]._c]._cycList]._sName, cycleGetFrame(_fset[i]._c), 0);
 		if (cycleAdvance(_fset[i]._c) == true) {
 			cycleFree(_fset[i]._c);
@@ -56,7 +57,7 @@ void Room::flameDrawAll(uint16 vX, uint16 vY) {
 }
 
 bool Room::roomLighted() {
-	// Just for now, we say it's always lit
+	// For testing purposes, we say it's always lit
 	return true;
 
 	// Very simple, just checks every torch and if any of them are lit, we say the room is lit
@@ -94,7 +95,7 @@ void Room::flameSetRoom(Common::Array<SFlame> allFlames) {
 		f._x = allFlames[i]._x;
 		f._y = allFlames[i]._y;
 		f._c = flameGetCyc(&f, (0 | _candleTmp));
-		debug("made flame, cyc = %d", f._c);
+		//debug("made flame, cyc = %d", f._c);
 		_fset.push_back(f);
 	}
 	_candleTmp = 1;

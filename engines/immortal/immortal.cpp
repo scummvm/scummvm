@@ -55,16 +55,15 @@ uint16 ImmortalEngine::xba(uint16 ab) {
 	/* XBA in 65816 swaps the low and high bits of a given word in A.
 	 * This is used very frequently, so this function just makes
 	 * initial translation a little more straightforward. Eventually,
-	 * logic should be refactored to not require this.
+	 * code should be refactored to not require this.
 	 */
 	return ((ab & kMaskLow) << 8) | ((ab & kMaskHigh) >> 8);
 }
 
 uint16 ImmortalEngine::rol(uint16 ab, int n) {
-	/* Oops, another opcode that doesn't have a nice translation.
-	 * This just replicates bit rotation because apparently C
-	 * doesn't have this natively??? This assumes a 16 bit
-	 * unsigned int because that's all we need for the 65816.
+	/* This just replicates bit rotation, and it
+	 * assumes a 16 bit unsigned int because that's all
+	 * we need for the 65816.
 	 */
 	return (ab << n) | (ab >> (-n & 15));
 }
@@ -150,7 +149,7 @@ Common::Error ImmortalEngine::run() {
 		return Common::kPathDoesNotExist;
 	}
 
-	//Main:
+	// Main:
 	_zero = 0;
 	_draw = 1;
 	_usingNormal = 1;
@@ -163,7 +162,7 @@ Common::Error ImmortalEngine::run() {
 	// This is the equivalent of Main->InitGraphics->MyClearScreen in Driver
 	useNormal();							// The first palette will be the default
 	
-	loadFont();								// Load the font sprite
+	loadFont();								// Load the font sprites
 	loadWindow();							// Load the window background
 	loadSingles("Song A");					// Music
 	loadSprites();							// Get all the sprite data into memory

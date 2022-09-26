@@ -32,25 +32,25 @@ struct Image {
 	uint16 _deltaY;
 	uint16 _rectW;
 	uint16 _rectH;
-Common::Array<uint16> _scanWidth;
-Common::Array<uint16> _deltaPos;
-CArray2D<byte> _bitmap;
+	Common::Array<uint16> _scanWidth;
+	Common::Array<uint16> _deltaPos;
+	CArray2D<byte> _bitmap;
 };
 
 struct DataSprite {
 	uint16 _cenX;                      					// These are the base center positions
 	uint16 _cenY;
 	uint16 _numImages;
-Common::Array<Image> _images;
+	Common::Array<Image> _images;
 };
 
 struct Sprite {
-	   int  _image;										// Index of _dSprite._frames[]
+	   int  _image;										// Index of _dSprite._images[]
 	uint16  _X;
 	uint16  _Y;
 	uint16  _on;										// 1 = active
 	uint16  _priority;
-DataSprite *_dSprite;
+	DataSprite *_dSprite;
 };
 
 enum SpriteFrame {

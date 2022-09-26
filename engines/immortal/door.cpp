@@ -20,7 +20,6 @@
  */
 
 /* [Alternate Name: Door Processing]
- * --- What is a Door ---
  */
 
 #include "immortal/immortal.h"
@@ -28,10 +27,10 @@
 namespace Immortal {
 
 enum DoorMask {
-	kDoorXMask = 0x1f,                  // Only relevant for extracting the data from the compressed bytes in the story record
-	kDoorYMask = 0x1f,
+	kDoorXMask    = 0x1f,               // Only relevant for extracting the data from the compressed bytes in the story record
+	kDoorYMask    = 0x1f,
 	kDoorFullMask = 0x40,
-	kDoorOnMask = 0x60
+	kDoorOnMask   = 0x60
 };
 
 enum DoorIs {
@@ -50,10 +49,6 @@ enum DoorSide {
 	kDoorTopBottom   = 20
 };
 
-void ImmortalEngine::doorOpenSecret() {}
-void ImmortalEngine::doorCloseSecret() {}
-void ImmortalEngine::doorInit() {}
-void ImmortalEngine::doorClrLock() {}
 void ImmortalEngine::doorNew(SDoor door) {
 	Door d;
 	d._x = door._x;
@@ -65,32 +60,46 @@ void ImmortalEngine::doorNew(SDoor door) {
 	_doors.push_back(d);
 }
 
-void ImmortalEngine::doorDrawAll() {}
-void ImmortalEngine::doorOnDoorMat() {}
- int ImmortalEngine::findDoorTop(int x, int y) {
+
+int ImmortalEngine::findDoorTop(int x, int y) {
 	return 0;
- }
- int ImmortalEngine::findDoor(int x, int y) {
+}
+
+int ImmortalEngine::findDoor(int x, int y) {
 	return 0;
- }
+}
+
 bool ImmortalEngine::doLockStuff(int d, MonsterID m, int top) {
 	return true;
 }
+
 bool ImmortalEngine::inDoorTop(int x, int y, MonsterID m) {
 	return true;
 }
+
 bool ImmortalEngine::inDoor(int x, int y, MonsterID m) {
 	return true;
 }
- int ImmortalEngine::doorDoStep(MonsterID m, int d, int index) {
+
+int ImmortalEngine::doorDoStep(MonsterID m, int d, int index) {
 	return 0;
- }
- int ImmortalEngine::doorSetOn(int d) {
+}
+
+int ImmortalEngine::doorSetOn(int d) {
 	return 0;
- }
- int ImmortalEngine::doorComeOut(MonsterID m) {
+}
+
+int ImmortalEngine::doorComeOut(MonsterID m) {
 	return 0;
- }
+}
+
+// These functions are not yet implemented
 void ImmortalEngine::doorSetLadders(MonsterID m) {}
+void ImmortalEngine::doorDrawAll() {}
+void ImmortalEngine::doorOnDoorMat() {}
+void ImmortalEngine::doorOpenSecret() {}
+void ImmortalEngine::doorCloseSecret() {}
+void ImmortalEngine::doorInit() {}
+void ImmortalEngine::doorClrLock() {}
 
 } // namespace immortal

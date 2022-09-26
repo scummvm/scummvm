@@ -198,9 +198,7 @@ bool ImmortalEngine::textSub(Str s, FadeType f, int n) {
 		}
 		index++;
 	}
-
-	//debug("printing index: %d", index);
-
+	
 	chr = text[index];
 
 	if (f != kTextFadeIn) {

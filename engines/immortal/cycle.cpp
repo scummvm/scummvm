@@ -88,12 +88,11 @@ int Room::cycleGetFrame(int c) {
 	 * This is essentially self-modifying code, and it saves 2 bytes of DP memory over the traditional
 	 * STA DP : LDA (DP)
 	 */
-	//debug("%d", _cycPtrs[_cycles[c]._cycList]._frames[_cycles[c]._index]);
 	return g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[g_immortal->_cycles[c]._index];
  }
 
 int Room::cycleGetNumFrames(int c) {
-	// Why in the world is this not kept as a property of the cycle? We have to calculate the size of the array each time
+	// For whatever reason, this is not a property of the cycle, so it has to be re-calculated each time
 	int index = 0;
 	while (g_immortal->_cycPtrs[g_immortal->_cycles[c]._cycList]._frames[index] != -1) {
 		index++;

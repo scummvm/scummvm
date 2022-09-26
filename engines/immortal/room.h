@@ -119,20 +119,21 @@ public:
 	const uint8 kLightTorchX  = 10;
 	const uint8 kMaxFlameCycs = 16;
 
-Common::Array<SCycle>  _cycPtrs;
-Common::Array<Flame>   _fset;
-Common::Array<Monster> _monsters;
-Common::Array<Object>  _objects;
+	Common::Array<SCycle>  _cycPtrs;
+	Common::Array<Flame>   _fset;
+	Common::Array<Monster> _monsters;
+	Common::Array<Object>  _objects;
 
-   RoomFlag _flags;
-	  uint8 _xPos 	   = 0;
-	  uint8 _yPos 	   = 0;
-	  uint8 _holeRoom  = 0;
-	  uint8 _holeCellX = 0;
-	  uint8 _holeCellY = 0;
-	  uint8 _candleTmp = 0;							// Special case for candle in maze 0
-	  uint8 _numFlames = 0;
-	  uint8 _numInRoom = 0;
+	RoomFlag _flags;
+
+	uint8 _xPos 	  = 0;
+	uint8 _yPos 	  = 0;
+	uint8 _holeRoom  = 0;
+	uint8 _holeCellX = 0;
+	uint8 _holeCellY = 0;
+	uint8 _candleTmp = 0;							// Special case for candle in maze 0
+	uint8 _numFlames = 0;
+	uint8 _numInRoom = 0;
 
 	/*
 	 * --- Methods ---
@@ -171,7 +172,7 @@ Common::Array<Object>  _objects;
 	 */
 
 	// Init
-    int cycleNew(CycID id);						// Adds a cycle to the current list
+	 int cycleNew(CycID id);						// Adds a cycle to the current list
 	void cycleFree(int c);
 
 	// Getters
@@ -185,7 +186,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 
 	// Misc
 	bool cycleAdvance(int c);
-   CycID getCycList(int c);
+	CycID getCycList(int c);
 
 	/* Unneccessary cycle functions
 	void cycleInit();
@@ -204,7 +205,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	void lightTorch(uint8 x, uint8 y);
 	void flameFreeAll();
 	void flameSetRoom(Common::Array<SFlame>);
-    int flameGetCyc(Flame *f, int first);
+	 int flameGetCyc(Flame *f, int first);
 
 	/*
 	 * [bullet.cpp] Functions from Bullet.GS
@@ -221,7 +222,7 @@ DataSprite *cycleGetDataSprite(int c);			// This takes the place of getFile + ge
 	 * [Univ.cpp] Functions from Univ.GS
 	 */
 
-    void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
+	 void univAddSprite(uint16 vX, uint16 vY, uint16 x, uint16 y, SpriteName s, int img, uint16 p);
 };
 
 } // namespace immortal
