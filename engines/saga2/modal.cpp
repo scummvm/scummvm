@@ -54,14 +54,14 @@ extern void updateWindowSection(const Rect16 &r);
    Modal Window class member functions
  * ===================================================================== */
 
-ModalWindow *ModalWindow::current = nullptr;
+ModalWindow *ModalWindow::_current = nullptr;
 
 ModalWindow::ModalWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 		: DecoratedWindow(r, ident, "DialogWindow", cmd) {
-	prevModeStackCtr = 0;
+	_prevModeStackCtr = 0;
 
 	for (int i = 0; i < Max_Modes; i++)
-		prevModeStackPtr[i] = nullptr;
+		_prevModeStackPtr[i] = nullptr;
 }
 
 ModalWindow::~ModalWindow() {
@@ -81,13 +81,11 @@ bool ModalWindow::open() {
 	g_vm->_mouseInfo->setText(nullptr);
 	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
 
-	prevModeStackCtr = GameMode::getStack(prevModeStackPtr);
+	_prevModeStackCtr = GameMode::getStack(_prevModeStackPtr);
 
 	GameMode *gameModes[] = {&PlayMode, &TileMode, &ModalMode};
 	GameMode::SetStack(gameModes, 3);
-	current = this;
-
-
+	_current = this;
 
 	return gWindow::open();
 }
@@ -95,7 +93,7 @@ bool ModalWindow::open() {
 void ModalWindow::close() {
 	gWindow::close();
 
-	GameMode::SetStack(prevModeStackPtr, prevModeStackCtr);
+	GameMode::SetStack(_prevModeStackPtr, _prevModeStackCtr);
 	updateWindowSection(_extent);
 }
 
