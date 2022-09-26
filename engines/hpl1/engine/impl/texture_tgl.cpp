@@ -305,6 +305,8 @@ void TGLTexture::SetWrapS(eTextureWrap aMode) {
 	if (mbContainsData) {
 		TGLenum GLTarget = GetTGLTextureTargetEnum(mTarget);
 
+		Hpl1::logInfo(Hpl1::kDebugTextures, "setting texture '%s' s wrap to %d\n", msName.c_str(), aMode);
+
 		tglEnable(GLTarget);
 		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
 			tglBindTexture(GLTarget, mvTextureHandles[i]);
@@ -320,6 +322,8 @@ void TGLTexture::SetWrapS(eTextureWrap aMode) {
 void TGLTexture::SetWrapT(eTextureWrap aMode) {
 	if (mbContainsData) {
 		TGLenum GLTarget = GetTGLTextureTargetEnum(mTarget);
+
+		Hpl1::logInfo(Hpl1::kDebugTextures, "setting texture '%s' t wrap to %d\n", msName.c_str(), aMode);
 
 		tglEnable(GLTarget);
 		for (size_t i = 0; i < mvTextureHandles.size(); ++i) {
