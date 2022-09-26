@@ -470,27 +470,27 @@ uint8 *Thread::strAddress(int strNum) {
 //	RandomGenerator class - a random number generator class for function
 //	objects which each maintain a local seed.
 class RandomGenerator {
-	uint32  a;                      //  seed
-	static const uint32 b;          //  arbitrary constant
+	uint32  _a;                      //  seed
+	static const uint32 _b;          //  arbitrary constant
 
 public:
-	RandomGenerator() : a(1) {
+	RandomGenerator() : _a(1) {
 	}
 	RandomGenerator(uint16 seed) {
-		a = (uint32)seed << 16;
+		_a = (uint32)seed << 16;
 	}
 
 	void seed(uint16 seed) {
-		a = (uint32)seed << 16;
+		_a = (uint32)seed << 16;
 	}
 
 	uint16 operator()() {
-		a = (a * b) + 1;
-		return a >> 16;
+		_a = (_a * _b) + 1;
+		return _a >> 16;
 	}
 };
 
-const uint32 RandomGenerator::b = 31415821;
+const uint32 RandomGenerator::_b = 31415821;
 
 //-----------------------------------------------------------------------
 //	A restricted random function
