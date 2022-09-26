@@ -566,7 +566,7 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 			if (currentSprite && !currentSprite->_trails)
 				_window->addDirtyRect(channel->getBbox());
 
-			if (currentSprite->_cast && currentSprite->_cast->_erase) {
+			if (currentSprite && currentSprite->_cast && currentSprite->_cast->_erase) {
 				_movie->eraseCastMember(currentSprite->_castId);
 				currentSprite->_cast->_erase = false;
 
