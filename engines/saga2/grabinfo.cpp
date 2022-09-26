@@ -38,36 +38,36 @@ namespace Saga2 {
 
 
 GrabInfo::GrabInfo() {
-	pointerMap._size.x = 0;
-	pointerMap._size.y = 0;
-	pointerMap._data = nullptr;
+	_pointerMap._size.x = 0;
+	_pointerMap._size.y = 0;
+	_pointerMap._data = nullptr;
 
 	// null out the "held" object
-	grabId      = Nothing;
-	grabObj     = nullptr;
-	intentDoable = true;
-	intention   = WalkTo;
+	_grabId      = Nothing;
+	_grabObj     = nullptr;
+	_intentDoable = true;
+	_intention   = WalkTo;
 
-	textBuf[0] = '\0';
-	displayGauge = false;
+	_textBuf[0] = '\0';
+	_displayGauge = false;
 
-	gaugeNumerator = gaugeDenominator = 0;
-	moveCount = 1;
+	_gaugeNumerator = _gaugeDenominator = 0;
+	_moveCount = 1;
 }
 
 GrabInfo::~GrabInfo() {
-	if (pointerMap._data != nullptr)
-		delete[] pointerMap._data;
+	if (_pointerMap._data != nullptr)
+		delete[] _pointerMap._data;
 }
 
 // set the move count based on val and whether the object is
 // mergeable or not.
 void GrabInfo::setMoveCount(int16 val) {
-	if (grabObj) {
-		if (grabObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
-			moveCount = val;
+	if (_grabObj) {
+		if (_grabObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+			_moveCount = val;
 		} else {
-			moveCount = 1;
+			_moveCount = 1;
 		}
 	}
 }
@@ -89,23 +89,23 @@ void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
 	setMoveCount(count);
 
 	//  Get address of object
-	grabObj     = obj;
-	grabId      = grabObj->thisID();
+	_grabObj     = obj;
+	_grabId      = _grabObj->thisID();
 
 	// set the number of items
 	setMoveCount(count);
 
 	// get the original location
-	from            = grabObj->getLocation();
-	from.context    = grabObj->IDParent();
+	_from            = _grabObj->getLocation();
+	_from.context    = _grabObj->IDParent();
 	// de-link the object
-	grabObj->move(Location(Nowhere, Nothing));
+	_grabObj->move(Location(Nowhere, Nothing));
 
 	setIcon();
 	setIntent(in);
 
 	//  Display the name of the grabbed object under the mouse cursor
-	grabObj->objCursorText(objText, bufSize, moveCount);
+	_grabObj->objCursorText(objText, bufSize, _moveCount);
 	setMouseText(objText);
 
 	clearMouseGauge();
@@ -132,20 +132,20 @@ void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
 	setMoveCount(count);
 
 	//  Get address of object, and address of object prototype
-	grabObj     = obj;
-	grabId      = grabObj->thisID();
+	_grabObj     = obj;
+	_grabId      = _grabObj->thisID();
 
 	// set the number of items
 	setMoveCount(count);
 
-	from            = Nowhere;
-	from.context    = Nothing;
+	_from            = Nowhere;
+	_from.context    = Nothing;
 
 	setIcon();
 	setIntent(in);
 
 	//  Display the name of the grabbed object under the mouse cursor
-	grabObj->objCursorText(objText, bufSize, moveCount);
+	_grabObj->objCursorText(objText, bufSize, _moveCount);
 	setMouseText(objText);
 
 	clearMouseGauge();
@@ -155,13 +155,13 @@ void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
 //  Set a new intention.  All changes to intention must use this function.
 uint8 GrabInfo::setIntent(uint8 in) {
 	//  If intention isn't being changed, return immediately
-	if (intention != (Intent)in) {
+	if (_intention != (Intent)in) {
 		//  Intention has changed to None
-		if (in == (uint8)None && intention != None) g_vm->_pointer->hide();
+		if (in == (uint8)None && _intention != None) g_vm->_pointer->hide();
 		//  Intention has changed from None
-		else if (in != (uint8)None && intention == None) g_vm->_pointer->show();
+		else if (in != (uint8)None && _intention == None) g_vm->_pointer->show();
 
-		intention = (Intent)in;
+		_intention = (Intent)in;
 		//  Set new cursor
 		setCursor();
 	}
@@ -173,11 +173,11 @@ uint8 GrabInfo::setIntent(uint8 in) {
 //	Make the object given into the mouse pointer
 void GrabInfo::setIcon() {
 	assert(
-	    pointerMap._size.x == 0
-	    &&  pointerMap._size.y == 0
-	    &&  pointerMap._data == nullptr);
+	    _pointerMap._size.x == 0
+	    &&  _pointerMap._size.y == 0
+	    &&  _pointerMap._data == nullptr);
 
-	assert(grabObj != nullptr && isObject(grabObj));
+	assert(_grabObj != nullptr && isObject(_grabObj));
 
 	Sprite          *spr;
 	ProtoObj        *proto;
@@ -186,10 +186,10 @@ void GrabInfo::setIcon() {
 	int32           mapBytes;
 
 	//  Get address of object, and address of object prototype
-	proto = grabObj->proto();
+	proto = _grabObj->proto();
 
 	//  Get address of sprite
-	spr = proto->getSprite(grabObj, ProtoObj::objAsMousePtr, moveCount).sp;
+	spr = proto->getSprite(_grabObj, ProtoObj::objAsMousePtr, _moveCount).sp;
 	mapBytes = spr->size.x * spr->size.y;
 
 	if ((mapData
@@ -199,38 +199,38 @@ void GrabInfo::setIcon() {
 		memset(mapData, 0, mapBytes);
 
 		//  Build the current color table for the object
-		grabObj->getColorTranslation(mainColors);
+		_grabObj->getColorTranslation(mainColors);
 
-		pointerMap._size = spr->size;
-		pointerMap._data = mapData;
+		_pointerMap._size = spr->size;
+		_pointerMap._data = mapData;
 
-		pointerOffset.x = - spr->size.x / 2;
-		pointerOffset.y = - spr->size.y / 2;
+		_pointerOffset.x = - spr->size.x / 2;
+		_pointerOffset.y = - spr->size.y / 2;
 
 		//  Render the sprite into the bitmap
-		ExpandColorMappedSprite(pointerMap, spr, mainColors);
+		ExpandColorMappedSprite(_pointerMap, spr, mainColors);
 	} else
 		error("Unable to allocate mouse image buffer");
 }
 
 void GrabInfo::clearIcon() {
-	assert(grabObj == nullptr);
+	assert(_grabObj == nullptr);
 
-	if (pointerMap._data != nullptr) {
-		delete[] pointerMap._data;
-		pointerMap._size.x = 0;
-		pointerMap._size.y = 0;
-		pointerMap._data = nullptr;
+	if (_pointerMap._data != nullptr) {
+		delete[] _pointerMap._data;
+		_pointerMap._size.x = 0;
+		_pointerMap._size.y = 0;
+		_pointerMap._data = nullptr;
 	}
 }
 
 //  Changes cursor image to reflect the current state of the cursor based
-//  on the intention and intentDoable data members.
+//  on the _intention and _intentDoable data members.
 void GrabInfo::setCursor() {
-	if (intentDoable) {
-		switch (intention) {
+	if (_intentDoable) {
+		switch (_intention) {
 		case None:
-			//  If intention has been changed to none then the
+			//  If _intention has been changed to none then the
 			//  pointer has already been hidden.
 			break;
 		case WalkTo:
@@ -243,7 +243,7 @@ void GrabInfo::setCursor() {
 			setMouseImage(kMouseGrabPtrImage, -7, -7);
 			break;
 		case Drop:
-			setMouseImage(pointerMap, pointerOffset.x, pointerOffset.y);
+			setMouseImage(_pointerMap, _pointerOffset.x, _pointerOffset.y);
 			break;
 		case Use:
 			setMouseImage(kMouseUsePtrImage, -7, -7);
@@ -258,27 +258,27 @@ void GrabInfo::setCursor() {
 			break;
 		}
 	} else {
-		//  indicate current intention is not doable
+		//  indicate current _intention is not doable
 		setMouseImage(kMouseXPointerImage, -7, -7);
 	}
 }
 
 void GrabInfo::placeObject(const Location &loc) {
-	grabObj->move(loc);
+	_grabObj->move(loc);
 
 	//  Turn off state variables
-	grabObj    = nullptr;
-	grabId     = Nothing;
-	intentDoable = true;
+	_grabObj    = nullptr;
+	_grabId     = Nothing;
+	_intentDoable = true;
 	setIntent(WalkTo);
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[0] != '\0' ? textBuf : nullptr);
+	setMouseText(_textBuf[0] != '\0' ? _textBuf : nullptr);
 
 	//  Display the saved gauge data
-	if (displayGauge)
-		setMouseGauge(gaugeNumerator, gaugeDenominator);
+	if (_displayGauge)
+		setMouseGauge(_gaugeNumerator, _gaugeDenominator);
 	else
 		clearMouseGauge();
 }
@@ -286,34 +286,34 @@ void GrabInfo::placeObject(const Location &loc) {
 // this should be use to return the object to the container
 // and/or remove the object from the cursor.
 void GrabInfo::replaceObject() {
-	if (grabObj == nullptr)
+	if (_grabObj == nullptr)
 		return;
 
 	// if actually attached to cursor, replace
-	if (grabObj->IDParent() == Nothing) {
+	if (_grabObj->IDParent() == Nothing) {
 //		ContainerView *updateView;
 
-		grabObj->move(from);
+		_grabObj->move(_from);
 
 		//  Update the ContainerView from which the object came
-//		updateView = ContainerView::findPane( grabObj->parent() );
+//		updateView = ContainerView::findPane( _grabObj->parent() );
 //		if ( updateView != nullptr )
 //			( updateView->getWindow() )->update( updateView->getExtent() );
 	}
 
 	//  Turn off state variables
-	grabObj    = nullptr;
-	grabId     = Nothing;
-	intentDoable = true;
+	_grabObj    = nullptr;
+	_grabId     = Nothing;
+	_intentDoable = true;
 	setIntent(WalkTo);
 	clearIcon();
 
 	//  Display the saved text
-	setMouseText(textBuf[0] != '\0' ? textBuf : nullptr);
+	setMouseText(_textBuf[0] != '\0' ? _textBuf : nullptr);
 
 	//  Display the saved gauge data
-	if (displayGauge)
-		setMouseGauge(gaugeNumerator, gaugeDenominator);
+	if (_displayGauge)
+		setMouseGauge(_gaugeNumerator, _gaugeDenominator);
 	else
 		clearMouseGauge();
 }
@@ -324,29 +324,29 @@ void GrabInfo::replaceObject() {
 //  text pointer will simply be saved.
 void GrabInfo::setText(const char *txt) {
 	if ((txt != nullptr) && strlen(txt)) {
-		Common::strlcpy(textBuf, txt, bufSize);
-		if (grabObj == nullptr)
-			setMouseText(textBuf);
+		Common::strlcpy(_textBuf, txt, bufSize);
+		if (_grabObj == nullptr)
+			setMouseText(_textBuf);
 	} else {
-		textBuf[0] = '\0';
-		if (grabObj == nullptr)
+		_textBuf[0] = '\0';
+		if (_grabObj == nullptr)
 			setMouseText(nullptr);
 	}
 }
 
 //	request a change to the mouse gauge
 void GrabInfo::setGauge(int16 numerator, int16 denominator) {
-	displayGauge = true;
-	gaugeNumerator = numerator;
-	gaugeDenominator = denominator;
-	if (grabObj == nullptr)
-		setMouseGauge(gaugeNumerator, gaugeDenominator);
+	_displayGauge = true;
+	_gaugeNumerator = numerator;
+	_gaugeDenominator = denominator;
+	if (_grabObj == nullptr)
+		setMouseGauge(_gaugeNumerator, _gaugeDenominator);
 }
 
 //	clear the mouse gauge
 void GrabInfo::clearGauge() {
-	displayGauge = false;
-	if (grabObj == nullptr) clearMouseGauge();
+	_displayGauge = false;
+	if (_grabObj == nullptr) clearMouseGauge();
 }
 
 // FIXME: This code is specific to Dinotopia. Was disabled for some time and needs updating
