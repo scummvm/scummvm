@@ -73,6 +73,7 @@ private:
 	float _millisBetweenFrames;
 	uint32 _lastFrameTime;
 	float _frameTimeDrift;
+	uint32 _startTime;
 
 	Video::Subtitles _subtitles;
 
