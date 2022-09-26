@@ -559,6 +559,42 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Simplified Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "549dc58da95c1cca286d8a129868fd65", 10291378),
+			Common::ZH_CHN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Traditional Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "326da4a52a6dfe0c42f94dd4a9779cee", 10654256),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
 	// From Clone2727
 	{
