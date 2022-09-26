@@ -692,17 +692,17 @@ int16 FileDialog(int16 fileProcess) {
 
 	// make the quit button
 	new GfxCompButton(*win, *saveLoadButtonRects[0], pushBtnIm, numBtnImages, btnStrings[stringIndex][0], pal, 0, cmdDialogQuit);
-	//t->accelKey=0x1B;
+	//t->_accelKey=0x1B;
 
 	// make the Save/Load button
 	new GfxCompButton(*win, *saveLoadButtonRects[1], pushBtnIm, numBtnImages, btnStrings[stringIndex][1], pal, fileProcess, fileCommands[fileProcess]);
-	//t->accelKey=0x0D;
+	//t->_accelKey=0x0D;
 	// make the up arrow
 	new GfxCompButton(*win, *saveLoadButtonRects[2], arrowUpIm, numBtnImages, 0, cmdSaveDialogUp);
-	//t->accelKey=33+0x80;
+	//t->_accelKey=33+0x80;
 	// make the down arrow
 	new GfxCompButton(*win, *saveLoadButtonRects[3], arrowDnIm, numBtnImages, 0, cmdSaveDialogDown);
-	//t->accelKey=34+0x80;
+	//t->_accelKey=34+0x80;
 	// attach the title
 	new CPlaqText(*win, *saveLoadTextRects[0], textStrings[stringIndex][0], &Plate18Font, 0, pal, 0, nullptr);
 
@@ -719,7 +719,7 @@ int16 FileDialog(int16 fileProcess) {
 	                    ARRAYSIZE(saveWindowDecorations),
 	                    decRes, 'S', 'L', 'D');
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	if (GameMode::_newmodeFlag)
@@ -838,28 +838,28 @@ int16 OptionsDialog(bool disableSaveResume) {
 	if (!disableSaveResume) {
 		t = new GfxCompButton(*win, *optionsButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnStrings[0], pal, 0, cmdDialogQuit);
-		t->accelKey = 0x1B;
+		t->_accelKey = 0x1B;
 
 		t = new GfxCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnStrings[1], pal, 0, cmdOptionsSaveGame);    // make the quit button
-		t->accelKey = 'S';
+		t->_accelKey = 'S';
 	} else {
 		t = new GfxCompButton(*win, *optionsButtonRects[1],
 		                               dialogPushImag, numBtnImages, OPTN_DIALOG_BUTTON6, pal, 0, cmdOptionsNewGame);
-		t->accelKey = 'N';
+		t->_accelKey = 'N';
 	}
 
 	t = new GfxCompButton(*win, *optionsButtonRects[2],
 	                               dialogPushImag, numBtnImages, btnStrings[2], pal, 0, cmdOptionsLoadGame);    // make the quit button
-	t->accelKey = 'L';
+	t->_accelKey = 'L';
 
 	t = new GfxCompButton(*win, *optionsButtonRects[3],
 	                               dialogPushImag, numBtnImages, btnStrings[3], pal, 0, cmdQuitGame);
-	t->accelKey = 'Q';
+	t->_accelKey = 'Q';
 
 	t = new GfxCompButton(*win, *optionsButtonRects[4],
 	                               dialogPushImag, numBtnImages, btnStrings[4], pal, 0, cmdCredits);
-	t->accelKey = 'C';
+	t->_accelKey = 'C';
 
 	autoAggressBtn = new GfxOwnerSelCompButton(*win, *optionsButtonRects[5],
 	        checkImag, numBtnImages, 0, cmdAutoAggression);
@@ -901,7 +901,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                    decRes, 'O', 'P', 'T');
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	EventLoop(rInfo.running, true);
@@ -1016,7 +1016,7 @@ bool initUserDialog() {
 	                      ARRAYSIZE(messageDecorations),
 	                      udDecRes, 'M', 'E', 'S');
 
-	udWin->userData = &udrInfo;
+	udWin->_userData = &udrInfo;
 
 	if (udDecRes) resFile->disposeContext(udDecRes);
 	udDecRes = nullptr;
@@ -1191,21 +1191,21 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	if (numBtns >= 1) {
 		t = new GfxCompButton(*win, *messageButtonRects[0],
 		                               dialogPushImag, numBtnImages, btnMsg1, pal, 10, cmdDialogQuit);
-		t->accelKey = k1;
+		t->_accelKey = k1;
 	}
 
 	// button two
 	if (numBtns >= 2) {
 		t = new GfxCompButton(*win, *messageButtonRects[1],
 		                               dialogPushImag, numBtnImages, btnMsg2, pal, 11, cmdDialogQuit);
-		t->accelKey = k2;
+		t->_accelKey = k2;
 	}
 
 	// button three
 	if (numBtns >= 3) {
 		t = new GfxCompButton(*win, *messageButtonRects[2],
 		                               dialogPushImag, numBtnImages, btnMsg3, pal, 12, cmdDialogQuit);
-		t->accelKey = k3;
+		t->_accelKey = k3;
 	}
 
 	// title for the box
@@ -1219,7 +1219,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 	                    decRes, 'M', 'E', 'S');
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 
@@ -1320,11 +1320,11 @@ bool CPlacardWindow::pointerHit(gPanelMessage &) {
 	requestInfo     *ri;
 
 	win = getWindow();      // get the window pointer
-	ri = win ? (requestInfo *)win->userData : nullptr;
+	ri = win ? (requestInfo *)win->_userData : nullptr;
 
 	if (ri) {
 		ri->running = 0;
-		ri->result  = id;
+		ri->result  = _id;
 	}
 
 	//activate( gEventMouseDown );
@@ -1562,7 +1562,7 @@ void placardWindow(int8 type, char *text) {
 	}
 
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 
@@ -1600,11 +1600,11 @@ APPFUNC(cmdDialogQuit) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -1616,7 +1616,7 @@ APPFUNC(cmdFileSave) {
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		// now close the window
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
@@ -1653,7 +1653,7 @@ APPFUNC(cmdFileLoad) {
 
 			// close window
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : nullptr;
+			ri = win ? (requestInfo *)win->_userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
@@ -1696,11 +1696,11 @@ APPFUNC(cmdOptionsNewGame) {
 		gWindow         *win;
 		requestInfo     *ri;
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 			deferredLoadID = 999;
 			deferredLoadFlag = true;
 		}
@@ -1716,11 +1716,11 @@ APPFUNC(cmdOptionsLoadGame) {
 		// if the fileDialog actually did loading
 		if (FileDialog(typeLoad) == typeLoad) {
 			win = ev.panel->getWindow();        // get the window pointer
-			ri = win ? (requestInfo *)win->userData : nullptr;
+			ri = win ? (requestInfo *)win->_userData : nullptr;
 
 			if (ri) {
 				ri->running = 0;
-				ri->result = ev.panel->id;
+				ri->result = ev.panel->_id;
 			}
 		}
 	}
@@ -1732,7 +1732,7 @@ APPFUNC(cmdQuitGame) {
 
 	if (ev.panel && isUserAction(ev) && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri  = win ? (requestInfo *)win->userData : nullptr;
+		ri  = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri
 		        &&  userDialog(
@@ -1743,7 +1743,7 @@ APPFUNC(cmdQuitGame) {
 			endGame();
 
 			ri->running = false;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 

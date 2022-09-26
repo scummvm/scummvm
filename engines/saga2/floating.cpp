@@ -296,12 +296,12 @@ BackWindow::BackWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 
 void BackWindow::invalidate(Rect16 *area) {
 	if (displayEnabled())
-		window.update(*area);
+		_window.update(*area);
 }
 
 void BackWindow::invalidate(const StaticRect *area) {
 	if (displayEnabled())
-		window.update(*area);
+		_window.update(*area);
 }
 
 //  Return true if window floats above animated are
@@ -336,11 +336,11 @@ void DragBar::deactivate() {
 }
 
 bool DragBar::pointerHit(gPanelMessage &msg) {
-	Rect16      wExtent = window.getExtent();
+	Rect16      wExtent = _window.getExtent();
 
 	_dragPos.x = wExtent.x;
 	_dragPos.y = wExtent.y;
-	_dragOffset.set(msg.pickAbsPos.x, msg.pickAbsPos.y);
+	_dragOffset.set(msg._pickAbsPos.x, msg._pickAbsPos.y);
 
 	return true;
 }
@@ -349,20 +349,20 @@ bool DragBar::pointerHit(gPanelMessage &msg) {
 //  be dragged...
 
 void DragBar::pointerDrag(gPanelMessage &msg) {
-	Rect16      ext = window.getExtent();
+	Rect16      ext = _window.getExtent();
 	Point16     pos;
 
 	//  Calculate new window position
 
-	pos.x = msg.pickAbsPos.x + ext.x - _dragOffset.x;
-	pos.y = msg.pickAbsPos.y + ext.y - _dragOffset.y;
+	pos.x = msg._pickAbsPos.x + ext.x - _dragOffset.x;
+	pos.y = msg._pickAbsPos.y + ext.y - _dragOffset.y;
 
 	//  If window position has changed, then signal the drawing loop
 
 	if (pos != _dragPos) {
 		_dragPos.set(pos.x, pos.y);
 		_update = true;
-		_dragWindow = (FloatingWindow *)&window;
+		_dragWindow = (FloatingWindow *)&_window;
 	}
 }
 
@@ -378,13 +378,13 @@ void DragBar::pointerRelease(gPanelMessage &) {
  * ===================================================================== */
 
 void gButton::deactivate() {
-	selected = 0;
+	_selected = 0;
 	draw();
 	gPanel::deactivate();
 }
 
 bool gButton::activate(gEventType why) {
-	selected = 1;
+	_selected = 1;
 	draw();
 
 	if (why == gEventKeyDown) {             // momentarily depress
@@ -402,22 +402,22 @@ bool gButton::pointerHit(gPanelMessage &) {
 void gButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
 void gButton::pointerDrag(gPanelMessage &msg) {
-	if (selected != msg.inPanel) {
-		selected = msg.inPanel;
+	if (_selected != msg._inPanel) {
+		_selected = msg._inPanel;
 		draw();
 	}
 }
 
 void gButton::draw() {
-	gPort           &port = window.windowPort;
-	Rect16          rect = window.getExtent();
+	gPort           &port = _window._windowPort;
+	Rect16          rect = _window.getExtent();
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	if (displayEnabled())
@@ -431,7 +431,7 @@ void gButton::draw() {
  * ===================================================================== */
 
 void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 &r) {
-	gPixelMap   *currentImage = selected ? _selImage : _deselImage;
+	gPixelMap   *currentImage = _selected ? _selImage : _deselImage;
 
 	if (displayEnabled())
 		if (_extent.overlap(r))
@@ -450,10 +450,10 @@ void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 
 
 bool gToggleButton::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
-		selected = !selected;
+		_selected = !_selected;
 		draw();
 		gPanel::deactivate();
-		notify(gEventNewValue, selected);    // notify App of successful hit
+		notify(gEventNewValue, _selected);    // notify App of successful hit
 	}
 	return false;
 }
@@ -482,8 +482,8 @@ LabeledButton::LabeledButton(gPanelList &list,
 	             cmd) {
 	const char *underscore;
 
-	if ((underscore = strchr(title, '_')) != nullptr)
-		accelKey = toupper(underscore[1]);
+	if ((underscore = strchr(_title, '_')) != nullptr)
+		_accelKey = toupper(underscore[1]);
 }
 
 void LabeledButton::drawClipped(
@@ -508,14 +508,14 @@ void LabeledButton::drawClipped(
 	gImageButton::drawClipped(port, offset, r);
 
 	textOrigin.x = origin.x + ((_extent.width -
-	                            TextWidth(textFont, title, -1, textStyleUnderBar)) >> 1);
+	                            TextWidth(textFont, _title, -1, textStyleUnderBar)) >> 1);
 	textOrigin.y = origin.y + ((_extent.height - textFont->height) >> 1);
 
 	port.setColor(2);
 	port.moveTo(textOrigin);
 	port.setFont(textFont);
 	port.setStyle(textStyleUnderBar);
-	port.drawText(title, -1);
+	port.drawText(_title, -1);
 }
 
 

@@ -65,11 +65,11 @@ static void handleRequestEvent(gEvent &ev) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -321,12 +321,12 @@ public:
 };
 
 void ModalDisplayWindow::pointerRelease(gPanelMessage &) {
-	requestInfo     *ri = (requestInfo *)userData;
+	requestInfo     *ri = (requestInfo *)_userData;
 	if (ri) ri->running = false;
 }
 
 bool ModalDisplayWindow::keyStroke(gPanelMessage &) {
-	requestInfo     *ri = (requestInfo *)userData;
+	requestInfo     *ri = (requestInfo *)_userData;
 	if (ri) ri->running = false;
 	return true;
 }
@@ -363,7 +363,7 @@ int16 GameDialogA(
 		error("Unable to open requester window.");
 	}
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	EventLoop(rInfo.running, false);
@@ -415,7 +415,7 @@ int16 GameDisplayA(
 		error("Unable to open requester window.");
 	}
 
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	EventLoop(rInfo.running, false);

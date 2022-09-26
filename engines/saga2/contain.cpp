@@ -527,7 +527,7 @@ void ContainerView::deactivate() {
 }
 
 void ContainerView::pointerMove(gPanelMessage &msg) {
-	if (msg.pointerLeave) {
+	if (msg._pointerLeave) {
 		g_vm->_cnm->_lastPickedObjectID = Nothing;
 		g_vm->_cnm->_lastPickedObjectQuantity = -1;
 		g_vm->_mouseInfo->setText(nullptr);
@@ -557,7 +557,7 @@ void ContainerView::pointerMove(gPanelMessage &msg) {
 		}
 
 		//  Determine if mouse is pointing at a new object
-		updateMouseText(msg.pickPos);
+		updateMouseText(msg._pickPos);
 	}
 }
 
@@ -566,13 +566,13 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	GameObject  *slotObject;
 	uint16       mouseSet;
 
-	slotObject  = pickObject(msg.pickPos);
+	slotObject  = pickObject(msg._pickPos);
 	mouseObject = g_vm->_mouseInfo->getObject();
 	mouseSet    = mouseObject ? mouseObject->containmentSet() : 0;
 
 	if (!g_vm->_mouseInfo->getDoable()) return false;
 
-	if (msg.doubleClick && !g_vm->_cnm->_alreadyDone) {
+	if (msg._doubleClick && !g_vm->_cnm->_alreadyDone) {
 		dblClick(mouseObject, slotObject, msg);
 	} else { // single click
 		if (mouseObject != nullptr) {
@@ -615,7 +615,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 
 	// total the mass and bulk of all the objects in this container
 	totalObjects();
-	window.update(_extent);
+	_window.update(_extent);
 
 	return activate(gEventMouseDown);
 }
@@ -638,7 +638,7 @@ void ContainerView::timerTick(gPanelMessage &msg) {
 	// validate objToGet and make sure that the number selected for move
 	// is less then or equal to the number of items present in the merged object
 	if (g_vm->_cnm->_objToGet && g_vm->_cnm->_amountIndY != -1) {
-		int32   rate = (g_vm->_cnm->_amountIndY - msg.pickAbsPos.y);
+		int32   rate = (g_vm->_cnm->_amountIndY - msg._pickAbsPos.y);
 
 		rate = rate * ((rate > 0) ? rate : -rate);
 
@@ -732,7 +732,7 @@ void ContainerView::dropPhysical(
 	//  test to check if item is accepted by container
 	if (_containerObject->canContain(mObj->thisID())) {
 		Actor       *centerActor = getCenterActor();
-		Location    loc(pickObjectSlot(msg.pickPos),
+		Location    loc(pickObjectSlot(msg._pickPos),
 		                _containerObject->thisID());
 
 		//  check if no object in the current slot
@@ -784,7 +784,7 @@ void ContainerView::useConcept(
 			//  If there is no object already in this slot drop the
 			//  mouse object here
 
-			Location    loc(pickObjectSlot(msg.pickPos),
+			Location    loc(pickObjectSlot(msg._pickPos),
 			                _containerObject->thisID());
 
 			mObj->drop(centerActorID, loc);
@@ -1147,7 +1147,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 
 		// set the userdata such that we can extract the container object later
 		// through an appfunc.
-		this->userData = _view->_containerObject;
+		this->_userData = _view->_containerObject;
 
 		_massWeightIndicator = new CMassWeightIndicator(
 		                          this,

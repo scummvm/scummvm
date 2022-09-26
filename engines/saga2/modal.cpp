@@ -72,7 +72,7 @@ ModalWindow::~ModalWindow() {
 }
 
 bool ModalWindow::isModal() {
-	return openFlag;
+	return _openFlag;
 }
 
 bool ModalWindow::open() {

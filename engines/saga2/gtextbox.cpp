@@ -199,7 +199,7 @@ gTextBox::gTextBox(
 	_onEnter                 = cmdEnter;
 	_onEscape                = cmdEscape;
 	_isActiveCtl             = false;
-	selected                = 0;
+	_selected                = 0;
 	_parent                  = &list;
 
 	_blinkStart = 0;
@@ -231,7 +231,7 @@ gTextBox::gTextBox(
 
 gTextBox::~gTextBox() {
 	deSelect();
-	selected = 0;
+	_selected = 0;
 	if (_undoBuffer) {
 		delete[] _undoBuffer;
 	}
@@ -331,7 +331,7 @@ void gTextBox::setText(char *newText) {
 	insertText(newText, len);
 	_cursorPos = _anchorPos = 0;
 
-	if (window.isOpen()) drawContents();
+	if (_window.isOpen()) drawContents();
 }
 
 //-----------------------------------------------------------------------
@@ -348,15 +348,15 @@ void gTextBox::setEditExtent(const Rect16 &r) {
 
 bool gTextBox::activate(gEventType why) {
 	if (why == gEventAltValue) {            // momentarily depress
-		selected = 1;
+		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
 	}
 	_isActiveCtl = true;
-	if (!selected) {
+	if (!_selected) {
 		enSelect(_index);
 	}
-	selected = 1;
+	_selected = 1;
 	_fullRedraw = true;
 	draw();
 	if (why == gEventNone)
@@ -367,7 +367,7 @@ bool gTextBox::activate(gEventType why) {
 //-----------------------------------------------------------------------
 
 void gTextBox::deactivate() {
-	selected = 0;
+	_selected = 0;
 	_isActiveCtl = false;
 	draw();
 	_fullRedraw = true;
@@ -563,7 +563,7 @@ void gTextBox::scrollDown() {
 //-----------------------------------------------------------------------
 
 bool gTextBox::pointerHit(gPanelMessage &msg) {
-	Point16 pos             = msg.pickPos;
+	Point16 pos             = msg._pickPos;
 	int16 newPos;
 
 
@@ -577,11 +577,11 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 			reSelect(newIndex);
 		if (_editing) {
 			if (_textFont) {
-				newPos = WhichIChar(_textFont, (uint8 *)_fieldStrings[_index], msg.pickPos.x - 3, _currentLen[_index]);
+				newPos = WhichIChar(_textFont, (uint8 *)_fieldStrings[_index], msg._pickPos.x - 3, _currentLen[_index]);
 			} else {
-				newPos = WhichIChar(mainFont, (uint8 *)_fieldStrings[_index], msg.pickPos.x - 3, _currentLen[_index]);
+				newPos = WhichIChar(mainFont, (uint8 *)_fieldStrings[_index], msg._pickPos.x - 3, _currentLen[_index]);
 			}
-			if (msg.leftButton) {
+			if (msg._leftButton) {
 				if (_cursorPos != newPos || _anchorPos != newPos) {
 					_anchorPos = newPos;
 					_cursorPos = newPos;
@@ -605,11 +605,11 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 void gTextBox::pointerDrag(gPanelMessage &msg) {
 	int16 newPos;
 
-	if (msg.leftButton) {
+	if (msg._leftButton) {
 		if (_textFont) {
-			newPos = WhichIChar(_textFont, (uint8 *)_fieldStrings[_index], msg.pickPos.x - 3, _currentLen[_index]);
+			newPos = WhichIChar(_textFont, (uint8 *)_fieldStrings[_index], msg._pickPos.x - 3, _currentLen[_index]);
 		} else {
-			newPos = WhichIChar(mainFont, (uint8 *)_fieldStrings[_index], msg.pickPos.x - 3, _currentLen[_index]);
+			newPos = WhichIChar(mainFont, (uint8 *)_fieldStrings[_index], msg._pickPos.x - 3, _currentLen[_index]);
 		}
 		_inDrag = true;
 		if (_cursorPos != newPos) {
@@ -628,7 +628,7 @@ void gTextBox::pointerDrag(gPanelMessage &msg) {
 //  Mouse release code
 
 void gTextBox::pointerRelease(gPanelMessage &msg) {
-	if (!msg.leftButton) {
+	if (!msg._leftButton) {
 		_inDrag = false;
 		draw();
 	}
@@ -638,10 +638,10 @@ void gTextBox::pointerRelease(gPanelMessage &msg) {
 
 
 bool gTextBox::keyStroke(gPanelMessage &msg) {
-	gPort &port = window.windowPort;
+	gPort &port = _window._windowPort;
 	int16 selStart = MIN(_cursorPos, _anchorPos),
 	      selWidth = ABS(_cursorPos - _anchorPos);
-	uint16 key = msg.key;
+	uint16 key = msg._key;
 
 	//  Process the various keystrokes...
 	if (_editing && _cursorPos > _anchorPos) {
@@ -703,14 +703,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		case Common::KEYCODE_LEFT:
 			if (_anchorPos > 0)
 				_anchorPos--;
-			if (!(msg.qualifier & qualifierShift))
+			if (!(msg._qualifier & qualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 			if (_anchorPos < _currentLen[_index])
 				_anchorPos++;
-			if (!(msg.qualifier & qualifierShift))
+			if (!(msg._qualifier & qualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
@@ -725,7 +725,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			break;
 
 		case Common::KEYCODE_z: // Alt-Z
-			if (msg.qualifier & (qualifierControl | qualifierAlt)) {
+			if (msg._qualifier & (qualifierControl | qualifierAlt)) {
 				if (_undoBuffer) {
 					_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 					memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
@@ -844,14 +844,14 @@ void gTextBox::timerTick(gPanelMessage &msg) {
 
 //-----------------------------------------------------------------------
 void gTextBox::handleTimerTick(int32 tick) {
-	if (selected && !_displayOnly && _editing && !_inDrag) {
+	if (_selected && !_displayOnly && _editing && !_inDrag) {
 		if (_blinkStart == 0) {
 			_blinkState = 0;
 			_blinkStart = tick;
 			return;
 		}
 		if (tick - _blinkStart > blinkTime) {
-			gPort   &port = window.windowPort;
+			gPort   &port = _window._windowPort;
 			SAVE_GPORT_STATE(port);                  // save pen color, etc.
 			g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
@@ -885,7 +885,7 @@ void gTextBox::drawContents() {
 	assert(_textFont);
 	assert(_fontColorBack != -1);
 
-	gPort           &port = window.windowPort,
+	gPort           &port = _window._windowPort,
 	                 tPort;
 
 
@@ -909,7 +909,7 @@ void gTextBox::drawContents() {
 			editRectFill(tPort, port._penMap);
 		}
 
-		if (selected) {                      // if panel is selected
+		if (_selected) {                      // if panel is selected
 			//  Determine the pixel position of the cursor and
 			//  anchor positions.
 
@@ -987,8 +987,8 @@ void gTextBox::drawContents() {
 //-----------------------------------------------------------------------
 
 void gTextBox::drawClipped() {
-	gPort           &port = window.windowPort;
-	Rect16          rect = window.getExtent();
+	gPort           &port = _window._windowPort;
+	Rect16          rect = _window.getExtent();
 
 #if 0
 	if (!_inDrag && _cursorPos > _anchorPos) {

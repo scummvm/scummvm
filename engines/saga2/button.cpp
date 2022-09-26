@@ -110,7 +110,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void *image, con
 	_compImages[0] = image;
 	_max             = 0;
 	_numPtrAlloc     = 1;
-	title           = text;
+	_title           = text;
 	_textFont        = &Onyx10Font;  // >>> this should be dynamic
 	_textPal         = pal;
 }
@@ -143,7 +143,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const Rect16 &box, void **images,
 		_currentImage    = clamp(_min, initial, _max);
 	}
 
-	title       = text;
+	_title       = text;
 	_textFont    = &Onyx10Font;  // >>> this should be dynamic
 	_textPal     = pal;
 }
@@ -161,7 +161,7 @@ GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **image
 		_currentImage = clamp(_min, initial, _max);
 	}
 
-	title    = text;
+	_title    = text;
 	_textFont = &Onyx10Font;  // >>> this should be dynamic
 	_textPal  = pal;
 }
@@ -191,7 +191,7 @@ void GfxCompImage::pointerMove(gPanelMessage &msg) {
 	// call the superclass's pointerMove
 	gControl::pointerMove(msg);
 
-	notify(gEventMouseMove, (msg.pointerEnter ? enter : 0) | (msg.pointerLeave ? leave : 0));
+	notify(gEventMouseMove, (msg._pointerEnter ? enter : 0) | (msg._pointerLeave ? leave : 0));
 }
 
 void GfxCompImage::enable(bool abled) {
@@ -199,12 +199,12 @@ void GfxCompImage::enable(bool abled) {
 }
 
 void GfxCompImage::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void GfxCompImage::draw() {
-	gPort   &port = window.windowPort;
-	Rect16  rect = window.getExtent();
+	gPort   &port = _window._windowPort;
+	Rect16  rect = _window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -241,7 +241,7 @@ void GfxCompImage::select(uint16 val) {
 	setCurrent(val);
 
 	if (getEnabled()) {
-		window.update(_extent);
+		_window.update(_extent);
 	}
 }
 
@@ -280,12 +280,12 @@ void GfxCompImage::drawClipped(gPort &port,
 			else drawCompressedImage(port, pos, dispImage);
 
 			// this could be modified to get the current text coloring
-			if (title) {
+			if (_title) {
 				Rect16 textRect = _extent;
 				textRect.x -= offset.x;
 				textRect.y -= offset.y;
 
-				writePlaqText(port, textRect, _textFont, 0, _textPal, selected, title);
+				writePlaqText(port, textRect, _textFont, 0, _textPal, _selected, _title);
 			}
 		}
 	}
@@ -520,19 +520,19 @@ void GfxCompButton::dim(bool enableFlag) {
 			_dimmed = false;
 	}
 
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 
 void GfxCompButton::deactivate() {
-	selected = 0;
-	window.update(_extent);
+	_selected = 0;
+	_window.update(_extent);
 	gPanel::deactivate();
 }
 
 bool GfxCompButton::activate(gEventType why) {
-	selected = 1;
-	window.update(_extent);
+	_selected = 1;
+	_window.update(_extent);
 
 	if (why == gEventKeyDown) { // momentarily depress
 		deactivate();
@@ -561,16 +561,16 @@ bool GfxCompButton::pointerHit(gPanelMessage &) {
 void GfxCompButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
 void GfxCompButton::pointerDrag(gPanelMessage &msg) {
-	if (selected != msg.inPanel) {
-		selected = msg.inPanel;
-		window.update(_extent);
+	if (_selected != msg._inPanel) {
+		_selected = msg._inPanel;
+		_window.update(_extent);
 	}
 }
 
@@ -579,13 +579,13 @@ void GfxCompButton::enable(bool abled) {
 }
 
 void GfxCompButton::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 
 void GfxCompButton::draw() {
-	gPort   &port = window.windowPort;
-	Rect16  rect = window.getExtent();
+	gPort   &port = _window._windowPort;
+	Rect16  rect = _window.getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -596,7 +596,7 @@ void GfxCompButton::draw() {
 void *GfxCompButton::getCurrentCompImage() {
 	if (_dimmed) {
 		return _dimImage;
-	} else if (selected) {
+	} else if (_selected) {
 		return _resImage;
 	} else {
 		return _forImage;
@@ -618,7 +618,7 @@ bool GfxOwnerSelCompButton::activate(gEventType why) {
 //		selected = !selected;
 //		window.update( extent );
 		gPanel::deactivate();
-		notify(gEventNewValue, selected);    // notify App of successful hit
+		notify(gEventNewValue, _selected);    // notify App of successful hit
 		playMemSound(2);
 	}
 	return false;
@@ -629,12 +629,12 @@ bool GfxOwnerSelCompButton::pointerHit(gPanelMessage &) {
 }
 
 void GfxOwnerSelCompButton::select(uint16 val) {
-	selected = val;
+	_selected = val;
 
 	setCurrent(val);
 
 	if (getEnabled()) {
-		window.update(_extent);
+		_window.update(_extent);
 	}
 }
 
@@ -728,7 +728,7 @@ bool GfxMultCompButton::activate(gEventType why) {
 			if (++_current > _max) {
 				_current = 0;
 			}
-			window.update(_extent);
+			_window.update(_extent);
 		}
 
 		gPanel::deactivate();
@@ -805,7 +805,7 @@ int16 GfxSlider::getSliderLenVal() {
 }
 
 void GfxSlider::draw() {
-	gPort   &port   = window.windowPort;
+	gPort   &port   = _window._windowPort;
 	Point16 offset  = Point16(0, 0);
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
@@ -838,8 +838,8 @@ void GfxSlider::drawClipped(gPort &port,
 
 bool GfxSlider::activate(gEventType why) {
 	if (why == gEventKeyDown || why == gEventMouseDown) {
-		selected = 1;
-		window.update(_extent);
+		_selected = 1;
+		_window.update(_extent);
 		gPanel::deactivate();
 		notify(gEventNewValue, _slCurrent);   // notify App of successful hit
 	}
@@ -847,29 +847,29 @@ bool GfxSlider::activate(gEventType why) {
 }
 
 void GfxSlider::deactivate() {
-	selected = 0;
-	window.update(_extent);
+	_selected = 0;
+	_window.update(_extent);
 	gPanel::deactivate();
 }
 
 bool GfxSlider::pointerHit(gPanelMessage &msg) {
 	// update the image index
-	updateSliderIndexes(msg.pickPos);
+	updateSliderIndexes(msg._pickPos);
 
 	// redraw the control should any visual change hath occurred
-	window.update(_extent);
+	_window.update(_extent);
 
 	activate(gEventMouseDown);
 	return true;
 }
 
 void GfxSlider::pointerMove(gPanelMessage &msg) {
-	if (selected) {
+	if (_selected) {
 		// update the image index
-		updateSliderIndexes(msg.pickPos);
+		updateSliderIndexes(msg._pickPos);
 
 		// redraw the control should any visual change hath occurred
-		window.update(_extent);
+		_window.update(_extent);
 
 		notify(gEventMouseMove, _slCurrent);
 	}
@@ -877,7 +877,7 @@ void GfxSlider::pointerMove(gPanelMessage &msg) {
 
 void GfxSlider::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
 		notify(gEventNewValue, _slCurrent);       // notify App of successful hit
 	} else deactivate();
@@ -885,11 +885,11 @@ void GfxSlider::pointerRelease(gPanelMessage &) {
 
 void GfxSlider::pointerDrag(gPanelMessage &msg) {
 	// update the image index
-	updateSliderIndexes(msg.pickPos);
+	updateSliderIndexes(msg._pickPos);
 
 	notify(gEventNewValue, _slCurrent);       // notify App of successful hit
 	// redraw the control should any visual change hath occurred
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void GfxSlider::updateSliderIndexes(Point16 &pos) {

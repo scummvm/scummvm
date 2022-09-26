@@ -106,11 +106,11 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -151,7 +151,7 @@ ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMs
 		}
 	}
 
-	userData = &_rInfo;
+	_userData = &_rInfo;
 
 }
 
@@ -212,7 +212,7 @@ SimpleWindow::SimpleWindow(const Rect16 &r,
 
 	GameMode *gameModes[] = {&PlayMode, &TileMode, &SimpleMode};
 	GameMode::SetStack(gameModes, 3);
-	title = stitle;
+	_title = stitle;
 }
 
 SimpleWindow::~SimpleWindow() {
@@ -251,7 +251,7 @@ void SimpleWindow::drawClipped(
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
 	DrawOutlineFrame(port,  _extent, windowColor);
-	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, title);
+	writeWrappedPlaqText(port, box, mbButtonFont, textPos, pal, false, _title);
 
 	gWindow::drawClipped(port, p, r);
 
@@ -344,13 +344,13 @@ SimpleButton::SimpleButton(gWindow &win, const Rect16 &box, const char *title_, 
 }
 
 void SimpleButton::deactivate() {
-	selected = 0;
+	_selected = 0;
 	draw();
 	gPanel::deactivate();
 }
 
 bool SimpleButton::activate(gEventType why) {
-	selected = 1;
+	_selected = 1;
 	draw();
 
 	if (why == gEventKeyDown) {             // momentarily depress
@@ -371,21 +371,21 @@ bool SimpleButton::pointerHit(gPanelMessage &) {
 void SimpleButton::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 
-	if (selected) {
+	if (_selected) {
 		deactivate();                       // give back input focus
 		notify(gEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
 void SimpleButton::pointerDrag(gPanelMessage &msg) {
-	if (selected != msg.inPanel) {
-		selected = msg.inPanel;
+	if (_selected != msg._inPanel) {
+		_selected = msg._inPanel;
 		draw();
 	}
 }
 
 void SimpleButton::draw() {
-	gDisplayPort    &port = _window->windowPort;
+	gDisplayPort    &port = _window->_windowPort;
 	Rect16  rect = _window->getExtent();
 
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.

@@ -354,7 +354,7 @@ void setMouseText(char *text) {
 void setMouseTextF(char *format, ...) {
 	if (format == nullptr) {
 		setMouseText(nullptr);
-		g_vm->_toolBase->mouseHintSet = true;
+		g_vm->_toolBase->_mouseHintSet = true;
 	} else {
 		char        lineBuf[128];
 		va_list     argptr;
@@ -364,7 +364,7 @@ void setMouseTextF(char *format, ...) {
 		va_end(argptr);
 
 		setMouseText(lineBuf);
-		g_vm->_toolBase->mouseHintSet = true;
+		g_vm->_toolBase->_mouseHintSet = true;
 	}
 }
 

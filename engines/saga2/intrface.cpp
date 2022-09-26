@@ -416,12 +416,12 @@ void CPlaqText::enable(bool abled) {
 }
 
 void CPlaqText::invalidate(Rect16 *) {
-	window.update(_extent);
+	_window.update(_extent);
 }
 
 void CPlaqText::draw() {
-	gPort           &port = window.windowPort;
-	Rect16          rect = window.getExtent();
+	gPort           &port = _window._windowPort;
+	Rect16          rect = _window.getExtent();
 
 
 	// save pen color, etc.
@@ -450,7 +450,7 @@ void CPlaqText::drawClipped(gPort &port,
 			_textRect.y -= offset.y;
 
 
-			writePlaqText(port, _textRect, _buttonFont, _textPosition, _textFacePal, selected, _lineBuf);
+			writePlaqText(port, _textRect, _buttonFont, _textPosition, _textFacePal, _selected, _lineBuf);
 		}
 	}
 }
@@ -637,7 +637,7 @@ void CStatusLine::experationCheck() {
 	        && (_waitAlarm.check()
 	            || (_queueTail != _queueHead && _minWaitAlarm.check()))) {
 		enable(false);
-		window.update(_extent);
+		_window.update(_extent);
 
 		_lineDisplayed = false;
 	}
@@ -662,7 +662,7 @@ void CStatusLine::experationCheck() {
 		_queueTail = bump(_queueTail);
 
 		// draw the new textline
-		window.update(_extent);
+		_window.update(_extent);
 
 		_lineDisplayed = true;
 	}
@@ -670,7 +670,7 @@ void CStatusLine::experationCheck() {
 
 void CStatusLine::clear() {
 	enable(false);
-	window.update(_extent);
+	_window.update(_extent);
 	_lineDisplayed = false;
 
 	_queueHead = _queueTail = 0;
@@ -747,7 +747,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// if this is something other then the ready containers
 	if (type > 1) {
-		_containerObject = (GameObject *)panel->userData;
+		_containerObject = (GameObject *)panel->_userData;
 	} else {
 		_containerObject = nullptr;
 	}
@@ -923,7 +923,7 @@ Rect16 CManaIndicator::getManaRegionRect(int8 nRegion) {
 
 void CManaIndicator::draw() {
 
-	gPort           &port = window.windowPort;
+	gPort           &port = _window._windowPort;
 
 
 	// save pen color, etc.
@@ -2067,7 +2067,7 @@ APPFUNC(cmdPortrait) {
 	const int bufSize = 80;
 	const int stateBufSize = 60;
 
-	uint16  panID = ev.panel->id;
+	uint16  panID = ev.panel->_id;
 	GameObject      *mouseObject = g_vm->_mouseInfo->getObject();   // object being dragged
 
 	switch (ev.eventType) {
@@ -2186,7 +2186,7 @@ void toggleAgression(PlayerActorID bro, bool all) {
 }
 
 APPFUNC(cmdAggressive) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	// check for message update stuff
 	// and aggression update
@@ -2258,7 +2258,7 @@ APPFUNC(cmdArmor) {
 }
 
 APPFUNC(cmdCenter) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	if (ev.eventType == gEventNewValue) {
 		if (rightButtonState())
@@ -2287,7 +2287,7 @@ void toggleBanding(PlayerActorID bro, bool all) {
 }
 
 APPFUNC(cmdBand) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	if (ev.eventType == gEventNewValue) {
 		toggleBanding(transBroID, rightButtonState());
@@ -2323,18 +2323,18 @@ APPFUNC(cmdOptions) {
 
 APPFUNC(cmdBroChange) {
 	if (ev.eventType == gEventNewValue) {
-		if (!isBrotherDead(ev.panel->id)) {
-			setCenterBrother(ev.panel->id);
+		if (!isBrotherDead(ev.panel->_id)) {
+			setCenterBrother(ev.panel->_id);
 			// this sets up the _buttons in trio mode to the correct
 			// state ( must be called before indiv mode switchtes )
 			setTrioBtns();
-			setControlPanelsToIndividualMode(ev.panel->id);
+			setControlPanelsToIndividualMode(ev.panel->_id);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
 		const int bufSize = 80;
 		const int stateBufSize = 60;
 
-		uint16  panID = ev.panel->id;
+		uint16  panID = ev.panel->_id;
 
 		if (ev.value == GfxCompImage::enter) {
 			// working buffer
@@ -2364,7 +2364,7 @@ APPFUNC(cmdBroChange) {
 }
 
 APPFUNC(cmdHealthStar) {
-	uint16 transBroID = translatePanID(ev.panel->id);
+	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	if (ev.eventType == gEventMouseMove) {
 		if (ev.value == GfxCompImage::leave) {
@@ -2403,8 +2403,8 @@ APPFUNC(cmdMassInd) {
 			assert(win);
 
 			// is it something other than the brother's indicators?
-			if (ev.panel->id > 1) {
-				_containerObject = (GameObject *)win->userData;
+			if (ev.panel->_id > 1) {
+				_containerObject = (GameObject *)win->_userData;
 			} else {
 				_containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
@@ -2441,8 +2441,8 @@ APPFUNC(cmdBulkInd) {
 			assert(win);
 
 			// is it something other than the brother's indicators?
-			if (ev.panel->id > 1) {
-				_containerObject = (GameObject *)win->userData;
+			if (ev.panel->_id > 1) {
+				_containerObject = (GameObject *)win->_userData;
 			} else {
 				_containerObject = (GameObject *)g_vm->_playerList[getCenterActorPlayerID()]->getActor();
 			}
@@ -2654,7 +2654,7 @@ void gEnchantmentDisplay::drawClipped(gPort &port, const    Point16 &offset, con
 }
 
 void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
-	if (msg.pointerLeave) {
+	if (msg._pointerLeave) {
 		g_vm->_mouseInfo->setText(nullptr);
 	} else {
 		int16       x = _extent.width - 10;
@@ -2667,7 +2667,7 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 				Sprite      *sp = mentalSprites->sprite(i + 162);
 
 				x -= sp->size.x + 2;
-				if (msg.pickPos.x >= x) {
+				if (msg._pickPos.x >= x) {
 					// set the text in the cursor
 					char    buf[128];
 

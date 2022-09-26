@@ -235,7 +235,7 @@ void AutoMap::locateRegion() {
 // deactivation
 
 void AutoMap::deactivate() {
-	selected = 0;
+	_selected = 0;
 	gPanel::deactivate();
 }
 
@@ -244,7 +244,7 @@ void AutoMap::deactivate() {
 
 bool AutoMap::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
-		selected = 1;
+		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
 	}
@@ -253,7 +253,7 @@ bool AutoMap::activate(gEventType why) {
 
 bool AutoMap::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
-	switch (msg.key) {
+	switch (msg._key) {
 	case Common::ASCII_ESCAPE:
 		cmdAutoMapEsc(ev);
 		return true;
@@ -292,7 +292,7 @@ gPanel *AutoMap::keyTest(int16 key) {
 // ------------------------------------------------------------------------
 // mouse movement event handler
 void AutoMap::pointerMove(gPanelMessage &msg) {
-	Point16 pos     = msg.pickAbsPos;
+	Point16 pos     = msg._pickAbsPos;
 
 	if (Rect16(_extent.x, _extent.y, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
@@ -315,7 +315,7 @@ void AutoMap::pointerMove(gPanelMessage &msg) {
 // mouse click event handler
 
 bool AutoMap::pointerHit(gPanelMessage &msg) {
-	Point16 pos     = msg.pickAbsPos;
+	Point16 pos     = msg._pickAbsPos;
 
 	if (Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		// mouse hit inside autoMap
@@ -346,13 +346,13 @@ bool AutoMap::pointerHit(gPanelMessage &msg) {
 		win = getWindow();      // get the window pointer
 
 		if (win)
-			ri = (requestInfo *)win->userData;
+			ri = (requestInfo *)win->_userData;
 		else
 			ri = nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result  = id;
+			ri->result  = _id;
 		}
 	}
 
@@ -364,7 +364,7 @@ bool AutoMap::pointerHit(gPanelMessage &msg) {
 // mouse drag event handler
 
 void AutoMap::pointerDrag(gPanelMessage &) {
-	if (selected) {
+	if (_selected) {
 		notify(gEventMouseDrag, 0);
 	}
 }
@@ -373,7 +373,7 @@ void AutoMap::pointerDrag(gPanelMessage &) {
 // mouse click release event handler
 
 void AutoMap::pointerRelease(gPanelMessage &) {
-	if (selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -568,7 +568,7 @@ int16 openAutoMap() {
 	                         decRes, 'M', 'A', 'P');
 
 	// attach the structure to the book
-	pAutoMap->userData = &rInfo;
+	pAutoMap->_userData = &rInfo;
 
 	//  locate where the center actor is, and open the map
 	pAutoMap->locateRegion();
@@ -600,11 +600,11 @@ APPFUNC(cmdAutoMapQuit) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
@@ -647,7 +647,7 @@ APPFUNC(cmdAutoMapAppFunc) {
 }
 
 APPFUNCV(AutoMap::cmdAutoMapEsc) {
-	requestInfo     *ri = (requestInfo *) userData;
+	requestInfo     *ri = (requestInfo *)_userData;
 	if (ri) {
 		ri->running = 0;
 		ri->result = 0;

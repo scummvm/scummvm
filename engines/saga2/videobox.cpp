@@ -66,13 +66,13 @@ CVideoBox::~CVideoBox() {
 }
 
 void CVideoBox::deactivate() {
-	selected = 0;
+	_selected = 0;
 	gPanel::deactivate();
 }
 
 bool CVideoBox::activate(gEventType why) {
 	if (why == gEventMouseDown) {        // momentarily depress
-		selected = 1;
+		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
 	}
@@ -89,11 +89,11 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 	requestInfo     *ri;
 
 	win = getWindow();      // get the window pointer
-	ri = win ? (requestInfo *)win->userData : nullptr;
+	ri = win ? (requestInfo *)win->_userData : nullptr;
 
 	if (ri) {
 		ri->running = 0;
-		ri->result  = id;
+		ri->result  = _id;
 	}
 
 	activate(gEventMouseDown);
@@ -101,13 +101,13 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 }
 
 void CVideoBox::pointerDrag(gPanelMessage &) {
-	if (selected) {
+	if (_selected) {
 		notify(gEventMouseDrag, 0);
 	}
 }
 
 void CVideoBox::pointerRelease(gPanelMessage &) {
-	if (selected) notify(gEventMouseUp, 0);    // notify App of successful hit
+	if (_selected) notify(gEventMouseUp, 0);    // notify App of successful hit
 	deactivate();
 }
 
@@ -145,7 +145,7 @@ void CVideoBox::init() {
 	               'V', 'B', 'D');
 
 	// attach the result info struct to this window
-	userData = &rInfo;
+	_userData = &rInfo;
 }
 
 int16 CVideoBox::openVidBox(char *fileName) {

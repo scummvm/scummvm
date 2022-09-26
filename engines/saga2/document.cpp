@@ -223,13 +223,13 @@ CDocument::~CDocument() {
 }
 
 void CDocument::deactivate() {
-	selected = 0;
+	_selected = 0;
 	gPanel::deactivate();
 }
 
 bool CDocument::activate(gEventType why) {
 	if (why == gEventMouseDown) {           // momentarily depress
-		selected = 1;
+		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
 	}
@@ -238,7 +238,7 @@ bool CDocument::activate(gEventType why) {
 
 bool CDocument::keyStroke(gPanelMessage &msg) {
 	gEvent ev;
-	switch (msg.key) {
+	switch (msg._key) {
 	case Common::ASCII_ESCAPE:
 		cmdDocumentEsc(ev);
 		return true;
@@ -276,9 +276,9 @@ gPanel *CDocument::keyTest(int16 key) {
 
 //  Cursor images for turning book pages
 void CDocument::pointerMove(gPanelMessage &msg) {
-	Point16 pos     = msg.pickPos;
+	Point16 pos     = msg._pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
+	if (msg._inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		if (_app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
 			if (pos.y < _extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
@@ -288,7 +288,7 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 			if (pos.x < _extent.width / 2)    setMouseImage(kMousePgLeftImage,  -7, -7);
 			else                            setMouseImage(kMousePgRightImage, -7, -7);
 		}
-	} else if (msg.pointerLeave) {
+	} else if (msg._pointerLeave) {
 		setMouseImage(kMouseArrowImage, 0, 0);
 	}
 
@@ -296,15 +296,15 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 }
 
 void CDocument::pointerDrag(gPanelMessage &) {
-	if (selected) {
+	if (_selected) {
 		notify(gEventMouseDrag, 0);
 	}
 }
 
 bool CDocument::pointerHit(gPanelMessage &msg) {
-	Point16 pos     = msg.pickPos;
+	Point16 pos     = msg._pickPos;
 
-	if (msg.inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
+	if (msg._inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		gEvent ev;
 		if (_app.orientation == pageOrientVertical) {
 			// find out which end of the book we're on
@@ -321,11 +321,11 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 		requestInfo     *ri;
 
 		win = getWindow();      // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result  = id;
+			ri->result  = _id;
 
 			setMouseImage(kMouseArrowImage, 0, 0);
 		}
@@ -347,7 +347,7 @@ void CDocument::gotoPage(int8 page) {
 }
 
 void CDocument::pointerRelease(gPanelMessage &) {
-	if (selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -548,7 +548,7 @@ void CDocument::makePages() {
 // This function will draw the text onto the book.
 void CDocument::renderText() {
 	gPort           tPort;
-	gPort           &port = window.windowPort;
+	gPort           &port = _window._windowPort;
 	uint16          pageIndex;
 	uint16          lineIndex;
 	uint16          linesPerPage = _pageHeight / (_textHeight + 1);
@@ -748,10 +748,10 @@ int16 openScroll(uint16 textScript) {
 	// make the quit button
 	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
 
-	closeScroll->accelKey = 0x1B;
+	closeScroll->_accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	// do stuff
@@ -799,10 +799,10 @@ int16 openBook(uint16 textScript) {
 
 	// make the quit button
 	closeBook = new GfxCompButton(*win, bookAppearance.closeRect, cmdDocumentQuit);
-	closeBook->accelKey = 0x1B;
+	closeBook->_accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	// do stuff
@@ -844,10 +844,10 @@ int16 openParchment(uint16 textScript) {
 	win = new CDocument(parchAppearance, bookText, &Script10Font, 0, nullptr);
 	// make the quit button
 	closeParchment = new GfxCompButton(*win, parchAppearance.closeRect, cmdDocumentQuit);
-	closeParchment->accelKey = 0x1B;
+	closeParchment->_accelKey = 0x1B;
 
 	// attach the structure to the book, open the book
-	win->userData = &rInfo;
+	win->_userData = &rInfo;
 	win->open();
 
 	// do stuff
@@ -869,17 +869,17 @@ APPFUNC(cmdDocumentQuit) {
 
 	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
-		ri = win ? (requestInfo *)win->userData : nullptr;
+		ri = win ? (requestInfo *)win->_userData : nullptr;
 
 		if (ri) {
 			ri->running = 0;
-			ri->result = ev.panel->id;
+			ri->result = ev.panel->_id;
 		}
 	}
 }
 
 APPFUNCV(CDocument::cmdDocumentEsc) {
-	requestInfo     *ri = (requestInfo *) userData;
+	requestInfo     *ri = (requestInfo *)_userData;
 	if (ri) {
 		ri->running = 0;
 		ri->result = 0;

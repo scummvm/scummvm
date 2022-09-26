@@ -119,23 +119,23 @@ class gPanel {
 	friend class    gToolBase;
 	friend class    gWindow;
 
-	AppFunc         *command;               // application function
+	AppFunc         *_command;               // application function
 protected:
-	gWindow         &window;                // window this belongs to
+	gWindow         &_window;                // window this belongs to
 	Rect16          _extent;                 // rectangular bounds of the control
-	const char      *title;                 // title of the panel
-	byte             enabled,            // allows disabling the panel
-	                selected,           // some panels have a selected state
-	                imageLabel,         // button label is image, not text
-	                ghosted,            // button is dimmed
-	                wantMousePoll;      // send mousemoves even if mouse not moving!
+	const char      *_title;                 // title of the panel
+	byte            _enabled,            // allows disabling the panel
+	                _selected,           // some panels have a selected state
+	                _imageLabel,         // button label is image, not text
+	                _ghosted,            // button is dimmed
+	                _wantMousePoll;      // send mousemoves even if mouse not moving!
 
 	// window constructor
 	gPanel(gWindow &, const Rect16 &, AppFunc *cmd);
 
 public:
-	uint32          id;                     // panel id number
-	void            *userData;              // data for this panel
+	uint32          _id;                     // panel id number
+	void            *_userData;              // data for this panel
 
 	// constructor
 	gPanel(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
@@ -159,7 +159,7 @@ protected:
 
 	void notify(enum gEventType, int32 value);
 	void notify(gEvent &ev) {
-		if (command) command(ev);
+		if (_command) _command(ev);
 	}
 	void drawTitle(enum text_positions placement);
 
@@ -174,7 +174,7 @@ public:
 	virtual void ghost(bool ghosted);
 	virtual void invalidate(Rect16 *area = nullptr);
 	virtual void setMousePoll(bool abled) {
-		wantMousePoll = abled ? 1 : 0;
+		_wantMousePoll = abled ? 1 : 0;
 	}
 
 	//  Redraw the panel, but only a small clipped section,
@@ -186,20 +186,20 @@ public:
 
 //	void setCommand( AppFunc *func ) { command = func; }
 	gWindow *getWindow() {
-		return &window;
+		return &_window;
 	}
 	void makeActive();
 	Rect16 getExtent() {
 		return _extent;
 	}
 	bool isSelected() {
-		return selected != 0;
+		return _selected != 0;
 	}
 	bool isGhosted() {
-		return ghosted != 0;
+		return _ghosted != 0;
 	}
 	bool    getEnabled() const {
-		return (bool) enabled;
+		return (bool)_enabled;
 	}
 	void    show(bool shown = true, bool inval = true) {
 		enable(shown);
@@ -217,32 +217,32 @@ public:
 
 class gPanelMessage {
 public:
-	Point16         pickPos,                // mouse position relative to panel
-	                pickAbsPos;             // mouse position relative to display
-	byte             leftButton,         // left button state
-	                rightButton,        // right button state
-	                inPanel,            // whether mouse is currently in panel
-	                pointerEnter,       // set when pointer enters panel
-	                pointerLeave,       // set when pointer leaves panel
-	                doubleClick;        // set when double click detected
+	Point16         _pickPos,            // mouse position relative to panel
+	                _pickAbsPos;         // mouse position relative to display
+	byte            _leftButton,         // left button state
+	                _rightButton,        // right button state
+	                _inPanel,            // whether mouse is currently in panel
+	                _pointerEnter,       // set when pointer enters panel
+	                _pointerLeave,       // set when pointer leaves panel
+	                _doubleClick;        // set when double click detected
 
 	//  For keyboard input
 
-	uint16          key,                    // keystroke from keyboard
-	                qualifier;              // qualifier from keyboard
+	uint16          _key,                // keystroke from keyboard
+	                _qualifier;          // qualifier from keyboard
 
-	uint32          timeStamp;              // time of message
+	uint32          _timeStamp;          // time of message
 
 	gPanelMessage() {
-		leftButton = 0;
-		rightButton = 0;
-		inPanel = 0;
-		pointerEnter = 0;
-		pointerLeave = 0;
-		doubleClick = 0;
-		key = 0;
-		qualifier = 0;
-		timeStamp = 0;
+		_leftButton = 0;
+		_rightButton = 0;
+		_inPanel = 0;
+		_pointerEnter = 0;
+		_pointerLeave = 0;
+		_doubleClick = 0;
+		_key = 0;
+		_qualifier = 0;
+		_timeStamp = 0;
 	}
 };
 
@@ -262,7 +262,7 @@ class gPanelList : public gPanel {
 
 protected:
 
-	Common::List<gPanel *> contents;               // list of panels
+	Common::List<gPanel *> _contents;               // list of panels
 
 	gPanelList(gWindow &, const Rect16 &, char *, uint16, AppFunc *cmd = NULL);
 
@@ -288,13 +288,13 @@ public:
 };
 
 inline void gPanel::moveToFront(gPanelList &l) {
-	l.contents.remove(this);
-	l.contents.push_front(this);
+	l._contents.remove(this);
+	l._contents.push_front(this);
 }
 
 inline void gPanel::moveToBack(gPanelList &l) {
-	l.contents.remove(this);
-	l.contents.push_back(this);
+	l._contents.remove(this);
+	l._contents.push_back(this);
 }
 
 /* ===================================================================== *
@@ -319,20 +319,20 @@ class gWindow : public gPanelList {
 	friend class    gToolBase;
 
 public:
-	gDisplayPort    windowPort;
+	gDisplayPort    _windowPort;
 
 	gWindow(const Rect16 &, uint16, const char saveName[], AppFunc *cmd = NULL);
 	~gWindow();
 
 	operator gPort() {
-		return windowPort;
+		return _windowPort;
 	}
 	void postEvent(gEvent &ev) {
 		gPanel::notify(ev);
 	}
 
 protected:
-	bool            openFlag;               // true if window open.
+	bool            _openFlag;               // true if window open.
 
 	//gWindowWinInfoInINIFile saver;
 
@@ -352,9 +352,9 @@ private:
 		dragPosition
 	};
 
-	static int      dragMode;               // current dragging mode
-	static StaticRect  dragExtent;             // dragging extent
-	static StaticPoint16 dragOffset;             // offset to window origin
+	static int      _dragMode;               // current dragging mode
+	static StaticRect  _dragExtent;          // dragging extent
+	static StaticPoint16 _dragOffset;        // offset to window origin
 
 	void shadow();
 
@@ -370,7 +370,7 @@ protected:
 
 public:
 	bool isOpen() {
-		return openFlag;    // true if window is visible
+		return _openFlag;    // true if window is visible
 	}
 	void draw();                         // redraw the panel.
 	void drawClipped(
@@ -405,7 +405,7 @@ public:
 
 class gControl : public gPanel {
 public:
-	uint8               accelKey;
+	uint8       _accelKey;
 	gPanelList *_list;
 
 	gControl(gPanelList &, const Rect16 &, const char *, uint16, AppFunc *cmd = NULL);
@@ -429,14 +429,14 @@ public:
  * ===================================================================== */
 
 class gGenericControl : public gControl {
-	bool dblClickFlag;
+	bool _dblClickFlag;
 
 public:
 	gGenericControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = NULL);
 
 	//  Disable double click for next mouse click
 	void disableDblClick() {
-		dblClickFlag = true;
+		_dblClickFlag = true;
 	}
 
 	enum    controlValue {
@@ -476,50 +476,50 @@ class gToolBase {
 
 	// windows
 
-	Common::List<gWindow *> windowList;     // list of windows
-	gWindow         *mouseWindow,           // window mouse is in
-	                *activeWindow;          // current active window
-	gPanel          *mousePanel,            // panel that mouse is in
-	                *activePanel;           // panel that has input focus
-	Rect16          dragRect;               // dragging rectangle for windows
-	Point16         pickPos;                // mouse pos relative to panel
-	uint8           leftDrag,               // left-button dragging
-	                rightDrag;              // right button dragging
-	gPanelMessage   msg;                    // message that we send out
+	Common::List<gWindow *> _windowList;     // list of windows
+	gWindow         *_mouseWindow,           // window mouse is in
+	                *_activeWindow;          // current active window
+	gPanel          *_mousePanel,            // panel that mouse is in
+	                *_activePanel;           // panel that has input focus
+	Rect16          _dragRect;               // dragging rectangle for windows
+	Point16         _pickPos;                // mouse pos relative to panel
+	uint8           _leftDrag,               // left-button dragging
+	                _rightDrag;              // right button dragging
+	gPanelMessage   _msg;                    // message that we send out
 
-	int32           lastMouseMoveTime;      // time of last mouse move
+	int32           _lastMouseMoveTime;      // time of last mouse move
 
 	gMouseState _curMouseState;
 
 public:
-	bool            mouseHintSet;           // true if mouse hint is up.
+	bool            _mouseHintSet;           // true if mouse hint is up.
 
 	gToolBase() {
-		mouseWindow = nullptr;
-		activeWindow = nullptr;
-		mousePanel = nullptr;
-		activePanel = nullptr;
-		leftDrag = 0;
-		rightDrag = 0;
-		lastMouseMoveTime = 0;
+		_mouseWindow = nullptr;
+		_activeWindow = nullptr;
+		_mousePanel = nullptr;
+		_activePanel = nullptr;
+		_leftDrag = 0;
+		_rightDrag = 0;
+		_lastMouseMoveTime = 0;
 	}
 
 private:
 	void setMsgQ(gPanelMessage &msg_, gPanel *panel) {
-		if (panel == &panel->window)
-			msg_.pickPos = pickPos;
+		if (panel == &panel->_window)
+			msg_._pickPos = _pickPos;
 		else {
-			msg.pickPos.x = (int16)(pickPos.x - panel->_extent.x);
-			msg.pickPos.y = (int16)(pickPos.y - panel->_extent.y);
+			_msg._pickPos.x = (int16)(_pickPos.x - panel->_extent.x);
+			_msg._pickPos.y = (int16)(_pickPos.y - panel->_extent.y);
 		}
 	}
 
 	void setMsg(gPanelMessage &msg_, gPanel *panel) {
 		setMsgQ(msg_, panel);
-		msg.inPanel = (msg_.pickPos.x >= 0
-		               && msg_.pickPos.y >= 0
-		               && msg_.pickPos.x < panel->_extent.width
-		               && msg_.pickPos.y < panel->_extent.height);
+		_msg._inPanel = (msg_._pickPos.x >= 0
+		               && msg_._pickPos.y >= 0
+		               && msg_._pickPos.x < panel->_extent.width
+		               && msg_._pickPos.y < panel->_extent.height);
 		//          panel->extent.ptInside( pickPos );
 	}
 
@@ -531,19 +531,19 @@ public:
 	void handleKeyStroke(Common::Event &event);
 	void handleTimerTick(int32 tick);
 	Common::List<gWindow *>::iterator topWindowIterator() {
-		return windowList.end();
+		return _windowList.end();
 	}
 	Common::List<gWindow *>::iterator bottomWindowIterator() {
-		return windowList.reverse_begin();
+		return _windowList.reverse_begin();
 	}
 	gWindow *topWindow() {
-		return windowList.front();
+		return _windowList.front();
 	}
 	gWindow *bottomWindow() {
-		return windowList.back();
+		return _windowList.back();
 	}
 	bool isMousePanel(gPanel *p) {
-		return (mousePanel != NULL) ? (p == mousePanel) : (p == topWindow());
+		return (_mousePanel != NULL) ? (p == _mousePanel) : (p == topWindow());
 	}
 };
 
