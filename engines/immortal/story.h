@@ -97,33 +97,33 @@ enum SObjPickup {
 };
 
 struct Pickup {
-	//pointer to function
 	int _param;
+	// This will be a pointer to function
 };
 
-// Iirc damage is used by object types as well as enemy types
+// Damage is used by object types as well as enemy types
 enum SDamage {
 };
 
 struct Damage {
 };
 
-// Use is self explanitory, it defines the function and parameters for using an object
+// Use defines the function and parameters for using an object
 enum SObjUse {
 };
 
 struct Use {
-	//pointer to function
 	int _param;
+	// This will be a pointer to function
 };
 
 struct ObjType {
 	Str _str = kStrNull;
 	Str _desc = kStrNull;
 	int _size = 0;
- Pickup _pickup;
 	Use _use;
 	Use _run;
+	Pickup _pickup;
 };
 
 // Cycles define the animation of sprites within a level. There is a fixed total of cycles available, and they are not room dependant
@@ -138,43 +138,48 @@ struct Cycle {
  * for the moment there's no need to replicate this particular bit of space saving.
  */
 struct SCycle {
-SpriteName  _sName;
-	  bool  _repeat;
-Common::Array<int> _frames;
+	SpriteName  _sName;
+	Common::Array<int> _frames;
+	bool  _repeat;
 	   SCycle() {}
 	   SCycle(SpriteName s, bool r, Common::Array<int> f) {
-	   		_sName = s;
-	   		_repeat = r;
-	   		_frames = f;
+			_sName  = s;
+			_repeat = r;
+			_frames = f;
 	   }
 };
 
 struct SRoom {
 	uint16 _x = 0;
 	uint16 _y = 0;
- RoomFlag _flags = kRoomFlag0;
- 	SRoom() {}
- 	SRoom(uint16 x, uint16 y, RoomFlag f) {
- 			_x = x;
- 			_y = y;
- 		_flags = f;
- 	}
+
+	RoomFlag _flags = kRoomFlag0;
+	SRoom() {}
+	SRoom(uint16 x, uint16 y, RoomFlag f) {
+			_x = x;
+			_y = y;
+		_flags = f;
+	}
 };
 
 struct SDoor {
-  uint8 _dir = 0;
-	uint16 _x   = 0;
-	uint16 _y   = 0;
+	uint8 _dir = 0;
+	uint16 _x  = 0;
+	uint16 _y  = 0;
+
 	uint16 _fromRoom = 0;
 	uint16 _toRoom   = 0;
-	 bool _isLocked = false;
-	 SDoor() {}
-	 SDoor(uint8 d, uint16 x, uint16 y, uint16 f, uint16 t, bool l) {
-	 	_dir = d;
-	 	_x = x;
-	 	_y = y;
-	 	_fromRoom = f;
-	 	_toRoom = t;
+
+	bool _isLocked = false;
+	SDoor() {}
+	SDoor(uint8 d, uint16 x, uint16 y, uint16 f, uint16 t, bool l) {
+		_dir = d;
+		  _x = x;
+		  _y = y;
+
+		_fromRoom = f;
+		  _toRoom = t;
+
 		_isLocked = l;
 	 }
 };
@@ -182,68 +187,71 @@ struct SDoor {
 struct SFlame {
 	 uint16 _x = 0;
 	 uint16 _y = 0;
-FPattern _p = kFlameOff;
+
+	FPattern _p = kFlameOff;
 	SFlame() {}
- 	SFlame(uint16 x, uint16 y, FPattern p) {
- 		_x = x;
+	SFlame(uint16 x, uint16 y, FPattern p) {
+		_x = x;
 		_y = y;
- 		_p = p;
- 	}
+		_p = p;
+	}
 };
 
 struct SObj {
-	  uint16 _x = 0;
-	  uint16 _y = 0;
-   SObjType _type = kTypeTrap;
-	  uint8 _flags = 0;
-SpriteFrame _frame = kNoFrame;
-Common::Array<uint8> _traps;
+	uint16 _x = 0;
+	uint16 _y = 0;
+	uint8 _flags = 0;
+
+	SObjType _type = kTypeTrap;
+	SpriteFrame _frame = kNoFrame;
+	Common::Array<uint8> _traps;
 	SObj() {}
 	SObj(uint16 x, uint16 y, SObjType t, SpriteFrame s, uint8 f, Common::Array<uint8> traps) {
- 		    _x = x;
- 		    _y = y;
- 		 _type = t;
- 		_flags = f;
- 		_traps = traps;
- 		_frame = s;
+			_x = x;
+			_y = y;
+		 _type = t;
+		_flags = f;
+		_traps = traps;
+		_frame = s;
 	}
 };
 
 struct SMonster {
-	    uint16 _x = 0;
-	    uint16 _y = 0;
-	    uint16 _hits = 0;
-MonsterFlag _madAt = kMonstIsNone;
-	    uint8 _flags = 0;
- SpriteName _sprite = kCandle;
-Common::Array<Motive> _program;
+	uint16 _x = 0;
+	uint16 _y = 0;
+	uint16 _hits = 0;
+	uint8 _flags = 0;
+
+	MonsterFlag _madAt = kMonstIsNone;
+	SpriteName _sprite = kCandle;
+	Common::Array<Motive> _program;
 	SMonster() {}
 	SMonster(uint16 x, uint16 y, uint16 h, MonsterFlag m, uint8 f, Common::Array<Motive> p, SpriteName s) {
- 		    _x = x;
- 		    _y = y;
- 	     _hits = h;
- 	    _madAt = m;
- 	    _flags = f;
- 	  _program = p;
- 	   _sprite = s;
+			_x = x;
+			_y = y;
+		 _hits = h;
+		_madAt = m;
+		_flags = f;
+	  _program = p;
+	   _sprite = s;
 	}
 };
 
 struct Story {
-	 int _level = 0;
-	 int _part  = 1;
+	int _level = 0;
+	int _part  = 1;
 
-   uint16 _initialUnivX = 0;
-   uint16 _initialUnivY = 0;
-   uint16 _playerPointX = 0;
-   uint16 _playerPointY = 0;
+	uint16 _initialUnivX = 0;
+	uint16 _initialUnivY = 0;
+	uint16 _playerPointX = 0;
+	uint16 _playerPointY = 0;
 
-  Common::Array<int> _ladders;
-Common::Array<SRoom> _rooms;
-Common::Array<SDoor> _doors;
-    CArray2D<SFlame> _flames;
-      CArray2D<SObj> _objects;
-  CArray2D<SMonster> _monsters;
+	  Common::Array<int> _ladders;
+	Common::Array<SRoom> _rooms;
+	Common::Array<SDoor> _doors;
+	    CArray2D<SFlame> _flames;
+		  CArray2D<SObj> _objects;
+ 	  CArray2D<SMonster> _monsters;
 };
 
 } // namespace immortal

@@ -95,12 +95,12 @@ public:
 	void printInfo();
 
 private:
-				char  _name[16];
-		   uint8  _type;                     // As defined by enum FileType
-		  uint16  _blockPtr;                 // Block index in volume of index block or data
-		  uint16  _totalBlocks;
-		  uint32  _eof;                      // End Of File, used generally as size (exception being sparse files)
-Common::File *_disk;                   	 // This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
+	  char _name[16];
+	 uint8 _type;                     		// As defined by enum FileType
+	uint16 _blockPtr;                 		// Block index in volume of index block or data
+	uint16 _totalBlocks;
+	uint32 _eof;                      		// End Of File, used generally as size (exception being sparse files)
+	Common::File *_disk;                   	// This is a pointer because it is the same _disk as in ProDosDisk, passed to the file object
 };
 
 /* This class defines the entire disk volume. Upon using the open() method,
@@ -126,12 +126,12 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
-		  byte  _loader1[kBlockSize];        // There's not much reason for these to be needed, but I included them just in case
-		  byte  _loader2[kBlockSize];
-Common::String  _name;                       // Name of volume
-  Common::File  _disk;                       // The volume file itself
-		   int  _volBlocks;                  // Total blocks in volume
-		  byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
+		 byte  _loader1[kBlockSize];        // There's not much reason for these to be needed, but I included them just in case
+		 byte  _loader2[kBlockSize];
+Common::String _name;                       // Name of volume
+  Common::File _disk;                       // The volume file itself
+		  int  _volBlocks;                  // Total blocks in volume
+		 byte *_volBitmap;                  // This can determine if the volume is corrupt as it contains a bit for every block, where 0 = unused, 1 = used
 Common::HashMap<Common::String, Common::SharedPtr<ProDOSFile>> _files; // Hashmap of files in the volume, where key=Path, Value=ProDOSFile
 
 	struct Date {

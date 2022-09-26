@@ -63,7 +63,7 @@ namespace Immortal {
 
 // This function is basically setSpriteCenter + getSpriteInfo from the source
 void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d, int index, uint16 cenX, uint16 cenY) {
-	// We set the center X and Y, for some reason
+	// We set the center X and Y
 	d->_cenX = cenX;
 	d->_cenY = cenY;
 
@@ -76,7 +76,6 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 	uint16 numImages = f->readUint16LE();
 
 	d->_numImages = numImages;
-	//debug("Number of Frames: %d", numImages);
 
 	// Only here for dragon, but just in case, it's a high number so it should catch others
 	if (numImages >= 0x0200) {
@@ -91,7 +90,7 @@ void ImmortalEngine::initDataSprite(Common::SeekableReadStream *f, DataSprite *d
 		f->seek(index + (i * 2));
 		int ptrFrame = f->readUint16LE();
 		f->seek(ptrFrame);
-		newImage._deltaX = f->readUint16LE() << 1;      // the ASL might not be required, depending on whether the data is actually in bytes or pixels <-- this also might not be used in the game anyway? Lol
+		newImage._deltaX = f->readUint16LE() << 1;      // This member does not seem to be used in the actual game, and it is not clear whether it needs the << 1 or if that was fixed before release
 		newImage._deltaY = f->readUint16LE();
 		newImage._rectW  = f->readUint16LE();
 		newImage._rectH  = f->readUint16LE();
@@ -127,9 +126,10 @@ bool ImmortalEngine::clipSprite(uint16 &height, uint16 &pointIndex, uint16 &skip
 		_lastY = pointY;
 		if (pointY < kMaskNeg) {
 			// For the Apple IIGS, pointY in pixels needed to be converted to bytes. For us, it's the other way around, we need bmw in pixels
+			// This should probably use mult16() instead of *
 			_lastPoint = pointY * (bmw);
 		} else {
-			// Screen wrapping??
+			// Screen wrapping?
 			uint16 temp = (0 - pointY) + 1;
 			_lastPoint = temp * bmw;
 			_lastPoint = 0 - _lastPoint;
@@ -175,8 +175,8 @@ void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skip
 	 * that was indexed by the pixel itself, and used to find what nyble needed
 	 * to be masked. However we are using a slightly different kind of screen buffer,
 	 * and so I chose a more traditional method. Likewise, alignement was
-	 * relevant for the source, but is not relevant here (thankfully, considering
-	 * how confusing sprite drawing is when not an even position).
+	 * relevant for the source, but is not relevant here, and the sprite drawing
+	 * is not accomplished by indexed a set of code blocks.
 	 */
 	byte pixel1 = 0;
 	byte pixel2 = 0;
@@ -218,7 +218,7 @@ void ImmortalEngine::spriteAligned(DataSprite *dSprite, Image &img, uint16 &skip
 }
 
 void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 pointY, int img, uint16 bmw, byte *dst, uint16 superTop, uint16 superBottom) {
-	// Main image construction routine
+	// Main sprite image construction routine
 
 	// For the Apple IIGS, the bmw is in bytes, but for us it needs to be the reverse, in pixels
 	bmw <<= 1;
@@ -229,7 +229,7 @@ void ImmortalEngine::superSprite(DataSprite *dSprite, uint16 pointX, uint16 poin
 	uint16 height = dSprite->_images[img]._rectH;
 
 	uint16 skipY  = 0;
-	uint16 pointIndex = 0;			// This is screen and screen + 2 in the source
+	uint16 pointIndex = 0;			// This is 'screen' and 'screen + 2' in the source
 
 	pointX -= cenX;
 	pointY -= cenY;

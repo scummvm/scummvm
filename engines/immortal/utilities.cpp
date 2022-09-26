@@ -90,7 +90,9 @@ bool Utilities::insideRect(uint8 rectX, uint8 rectY, uint8 w, uint8 h, uint8 poi
 	 * This is done by grabbing the delta X,Y and
 	 * making sure it is not negative.
 	 */
-	if ((w | h) == 0) {
+
+	// The source specifically checks only for w *and* h being 0, so you could give it a rect with a width or height or 0, just not both
+	if ((w == 0) && (h == 0)) {
 		return false;
 	}
 
