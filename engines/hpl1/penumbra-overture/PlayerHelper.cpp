@@ -2173,7 +2173,9 @@ void cPlayerHidden::UpdateEnemyTooClose(float afTimeStep) {
 	if (InShadows()) // mbHidden)
 	{
 		if (mfCheckEnemyCloseCount <= 0) {
-			float fMaxDist = mbHidden ? 11.0f : 11.0f;
+			// FIXME: Change value of FMaxDist when hidden?
+			//float fMaxDist = mbHidden ? 11.0f : 11.0f;
+			float fMaxDist = 11.0f;
 			float fMaxDistSqr = fMaxDist * fMaxDist;
 
 			// Reset variables
