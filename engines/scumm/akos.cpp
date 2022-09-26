@@ -52,7 +52,7 @@ struct AkosOffset {
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
-static bool akosCompare(int a, int b, byte cmd) {
+static bool akosCompare(int a, int b, uint cmd) {
 	switch (cmd) {
 	case AKC_IfVarEQJump:
 	case AKC_IfVarEQDo:
