@@ -202,7 +202,9 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 }
 
 void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
-	assert(checkForProperHandle(soundDesc));
+	// Check if there's an actual sound to close...
+	if (!checkForProperHandle(soundDesc))
+		return;
 
 	if (soundDesc->resPtr) {
 		bool found = false;
@@ -242,7 +244,9 @@ void ImuseDigiSndMgr::scheduleSoundForDeallocation(int soundId) {
 		}
 	}
 
-	assert(checkForProperHandle(soundDesc));
+	// Check if there's an actual sound to deallocate...
+	if (!checkForProperHandle(soundDesc))
+		return;
 
 	soundDesc->scheduledForDealloc = true;
 }
