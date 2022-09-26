@@ -334,7 +334,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (_vm->_game.heversion >= 90)
 		_shadow_mode = 0;
 
-	if (code == AKC_C021 || code == AKC_C022) {
+	if (code == AKC_CondDrawMany || code == AKC_CondRelativeOffsetDrawMany) {
 		uint16 s = cost.curpos[limb] + 4;
 		uint j = 0;
 		extra = p[3];
@@ -345,13 +345,13 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		}
 		useCondMask = true;
 		p += extra + 2;
-		code = (code == AKC_C021) ? AKC_ComplexChan : AKC_ComplexChan2;
+		code = (code == AKC_CondDrawMany) ? AKC_DrawMany : AKC_RelativeOffsetDrawMany;
 	}
 
-	if (code == AKC_Return || code == AKC_EndSeq)
+	if (code == AKC_EmptyCel || code == AKC_EndSeq)
 		return 0;
 
-	if (code != AKC_ComplexChan && code != AKC_ComplexChan2) {
+	if (code != AKC_DrawMany && code != AKC_RelativeOffsetDrawMany) {
 		off = akof + (code & 0xFFF);
 
 		assert((code & 0xFFF) * 6 < READ_BE_UINT32((const byte *)akof - 4) - 8);
@@ -381,7 +381,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			error("akos_drawLimb: invalid _codec %d", _codec);
 		}
 	} else {
-		if (code == AKC_ComplexChan2)  {
+		if (code == AKC_RelativeOffsetDrawMany)  {
 			lastDx = (int16)READ_LE_UINT16(p + 2);
 			lastDy = (int16)READ_LE_UINT16(p + 4);
 			p += 4;
@@ -1312,13 +1312,13 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 	byte active;
 	uint old_curpos, curpos, end;
 	uint code;
-	bool flag_value, needRedraw;
+	bool skipNextState, needRedraw;
 	int tmp, tmp2;
 
 	active = a->_cost.active[chan];
 	end = a->_cost.end[chan];
 	old_curpos = curpos = a->_cost.curpos[chan];
-	flag_value = false;
+	skipNextState = false;
 	needRedraw = false;
 
 	do {
@@ -1331,33 +1331,33 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case 6:
 		case 8:
 			switch (code) {
-			case AKC_JumpIfSet:
+			case AKC_IfVarGoTo:
 			case AKC_AddVar:
 			case AKC_SetVar:
-			case AKC_SkipGE:
-			case AKC_SkipG:
-			case AKC_SkipLE:
-			case AKC_SkipL:
+			case AKC_IfVarGEDo:
+			case AKC_IfVarGTDo:
+			case AKC_IfVarLEDo:
+			case AKC_IfVarLTDo:
 
-			case AKC_SkipNE:
-			case AKC_SkipE:
-			case AKC_C016:
-			case AKC_C017:
-			case AKC_C018:
-			case AKC_C019:
+			case AKC_IfVarNEDo:
+			case AKC_IfVarEQDo:
+			case AKC_IfSoundInVarRunningGoTo:
+			case AKC_IfNotSoundInVarRunningGoTo:
+			case AKC_IfSoundRunningGoTo:
+			case AKC_IfNotSoundRunningGoTo:
 				curpos += 5;
 				break;
-			case AKC_JumpTable:
-			case AKC_SetActorClip:
-			case AKC_Ignore3:
-			case AKC_Ignore2:
-			case AKC_Ignore:
+			case AKC_JumpToOffsetInVar:
+			case AKC_SetActorZClipping:
+			case AKC_StartScriptVar:
+			case AKC_StartSoundVar:
+			case AKC_StartScript:
 			case AKC_StartAnim:
 			case AKC_StartVarAnim:
-			case AKC_CmdQue3:
-			case AKC_C042:
-			case AKC_C044:
-			case AKC_C0A3:
+			case AKC_StartSound:
+			case AKC_SoftSound:
+			case AKC_SoftVarSound:
+			case AKC_StartTalkieInVar:
 				curpos += 3;
 				break;
 			case AKC_SoundStuff:
@@ -1366,40 +1366,40 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 				else
 					curpos += 8;
 				break;
-			case AKC_Cmd3:
-			case AKC_SetVarInActor:
+			case AKC_StartActionOn:
+			case AKC_SetActorVar:
 			case AKC_SetDrawOffs:
 				curpos += 6;
 				break;
-			case AKC_ClearFlag:
+			case AKC_EndOfIfDo:
 			case AKC_HideActor:
 			case AKC_IncVar:
-			case AKC_CmdQue3Quick:
-			case AKC_Return:
+			case AKC_StartSound_SpecialCase:
+			case AKC_EmptyCel:
 			case AKC_EndSeq:
 				curpos += 2;
 				break;
-			case AKC_JumpGE:
-			case AKC_JumpG:
-			case AKC_JumpLE:
-			case AKC_JumpL:
-			case AKC_JumpNE:
-			case AKC_JumpE:
-			case AKC_Random:
+			case AKC_IfVarGEJump:
+			case AKC_IfVarGTJump:
+			case AKC_IfVarLEJump:
+			case AKC_IfVarLTJump:
+			case AKC_IfVarNEJump:
+			case AKC_IfVarEQJump:
+			case AKC_SetVarRandom:
 				curpos += 7;
 				break;
 			case AKC_Flip:
-			case AKC_Jump:
-			case AKC_StartAnimInActor:
-			case AKC_C0A0:
-			case AKC_C0A1:
-			case AKC_C0A2:
+			case AKC_GoToState:
+			case AKC_StartActorAnim:
+			case AKC_StartActorTalkie:
+			case AKC_IfTalkingGoTo:
+			case AKC_IfNotTalkingGoTo:
 				curpos += 4;
 				break;
-			case AKC_ComplexChan2:
+			case AKC_RelativeOffsetDrawMany:
 				curpos += 4;
 				// Fall through
-			case AKC_ComplexChan:
+			case AKC_DrawMany:
 				curpos += 3;
 				tmp = aksq[curpos - 1];
 				while (--tmp >= 0) {
@@ -1407,16 +1407,16 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 					curpos += (aksq[curpos] & 0x80) ? 2 : 1;
 				}
 				break;
-			case AKC_C021:
-			case AKC_C022:
-			case AKC_C045:
-			case AKC_C046:
-			case AKC_C047:
-			case AKC_C048:
+			case AKC_CondDrawMany:
+			case AKC_CondRelativeOffsetDrawMany:
+			case AKC_SetUserCondition:
+			case AKC_SetVarToUserCondition:
+			case AKC_SetTalkCondition:
+			case AKC_SetVarToTalkCondition:
 				needRedraw = 1;
 				curpos += aksq[curpos + 2];
 				break;
-			case AKC_C08E:
+			case AKC_DisplayAuxFrame:
 				akos_queCommand(7, a, GW(2), 0);
 				curpos += 4;
 				break;
@@ -1442,24 +1442,24 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		if (code & 0x80)
 			code = READ_BE_UINT16(aksq + curpos);
 
-		if (flag_value && code != AKC_ClearFlag)
+		if (skipNextState && code != AKC_EndOfIfDo)
 			continue;
 
 		switch (code) {
-		case AKC_StartAnimInActor:
+		case AKC_StartActorAnim:
 			akos_queCommand(4, derefActor(a->getAnimVar(GB(2)), "akos_increaseAnim:29"), a->getAnimVar(GB(3)), 0);
 			continue;
 
-		case AKC_Random:
+		case AKC_SetVarRandom:
 			a->setAnimVar(GB(6), _rnd.getRandomNumberRng(GW(2), GW(4)));
 			continue;
-		case AKC_JumpGE:
-		case AKC_JumpG:
-		case AKC_JumpLE:
-		case AKC_JumpL:
-		case AKC_JumpNE:
-		case AKC_JumpE:
-			if (akos_compare(a->getAnimVar(GB(4)), GW(5), code - AKC_JumpStart) != 0) {
+		case AKC_IfVarGEJump:
+		case AKC_IfVarGTJump:
+		case AKC_IfVarLEJump:
+		case AKC_IfVarLTJump:
+		case AKC_IfVarNEJump:
+		case AKC_IfVarEQJump:
+			if (akos_compare(a->getAnimVar(GB(4)), GW(5), code - AKC_ConditionalJumpStart) != 0) {
 				curpos = GUW(2);
 				break;
 			}
@@ -1476,7 +1476,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_Flip:
 			a->_flip = GW(2) != 0;
 			continue;
-		case AKC_CmdQue3:
+		case AKC_StartSound:
 			if (_game.heversion >= 61)
 				tmp = GB(2);
 			else
@@ -1484,7 +1484,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			if ((uint) tmp < 24)
 				akos_queCommand(3, a, a->_sound[tmp], 0);
 			continue;
-		case AKC_CmdQue3Quick:
+		case AKC_StartSound_SpecialCase:
 			akos_queCommand(3, a, a->_sound[0], 0);
 			continue;
 		case AKC_StartAnim:
@@ -1493,13 +1493,13 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_StartVarAnim:
 			akos_queCommand(4, a, a->getAnimVar(GB(2)), 0);
 			continue;
-		case AKC_SetVarInActor:
+		case AKC_SetActorVar:
 			derefActor(a->getAnimVar(GB(2)), "akos_increaseAnim:9")->setAnimVar(GB(3), GW(4));
 			continue;
 		case AKC_HideActor:
 			akos_queCommand(1, a, 0, 0);
 			continue;
-		case AKC_SetActorClip:
+		case AKC_SetActorZClipping:
 			akos_queCommand(5, a, GB(2), 0);
 			continue;
 		case AKC_SoundStuff:
@@ -1516,7 +1516,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_SetDrawOffs:
 			akos_queCommand(6, a, GW(2), GW(4));
 			continue;
-		case AKC_JumpTable:
+		case AKC_JumpToOffsetInVar:
 			if (akfo == nullptr)
 				error("akos_increaseAnim: no AKFO table");
 			tmp = a->getAnimVar(GB(2)) - 1;
@@ -1530,18 +1530,18 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 				curpos = READ_LE_UINT16(&akfo[tmp]);
 			}
 			break;
-		case AKC_JumpIfSet:
+		case AKC_IfVarGoTo:
 			if (!a->getAnimVar(GB(4)))
 				continue;
 			a->setAnimVar(GB(4), 0);
 			curpos = GUW(2);
 			break;
 
-		case AKC_ClearFlag:
-			flag_value = false;
+		case AKC_EndOfIfDo:
+			skipNextState = false;
 			continue;
 
-		case AKC_Jump:
+		case AKC_GoToState:
 			curpos = GUW(2);
 
 			// WORKAROUND bug #3813: In the German version of SPY Fox 3: Operation Ozone
@@ -1554,104 +1554,104 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			}
 			break;
 
-		case AKC_Return:
+		case AKC_EmptyCel:
 		case AKC_EndSeq:
-		case AKC_ComplexChan:
-		case AKC_C08E:
-		case AKC_ComplexChan2:
+		case AKC_DrawMany:
+		case AKC_DisplayAuxFrame:
+		case AKC_RelativeOffsetDrawMany:
 			break;
 
-		case AKC_C021:
-		case AKC_C022:
+		case AKC_CondDrawMany:
+		case AKC_CondRelativeOffsetDrawMany:
 			needRedraw = 1;
 			break;
 
-		case AKC_Cmd3:
-		case AKC_Ignore:
-		case AKC_Ignore3:
+		case AKC_StartActionOn:
+		case AKC_StartScript:
+		case AKC_StartScriptVar:
 			continue;
 
-		case AKC_Ignore2:
+		case AKC_StartSoundVar:
 			if (_game.heversion >= 71)
 				akos_queCommand(3, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
 
-		case AKC_SkipE:
-		case AKC_SkipNE:
-		case AKC_SkipL:
-		case AKC_SkipLE:
-		case AKC_SkipG:
-		case AKC_SkipGE:
-			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_SkipStart) == 0)
-				flag_value = true;
+		case AKC_IfVarEQDo:
+		case AKC_IfVarNEDo:
+		case AKC_IfVarLTDo:
+		case AKC_IfVarLEDo:
+		case AKC_IfVarGTDo:
+		case AKC_IfVarGEDo:
+			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_ConditionalDoStart) == 0)
+				skipNextState = true;
 			continue;
-		case AKC_C016:
+		case AKC_IfSoundInVarRunningGoTo:
 			if (_sound->isSoundRunning( a->_sound[a->getAnimVar(GB(4))]))  {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C017:
+		case AKC_IfNotSoundInVarRunningGoTo:
 			if (!_sound->isSoundRunning(a->_sound[a->getAnimVar(GB(4))])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C018:
+		case AKC_IfSoundRunningGoTo:
 			if (_sound->isSoundRunning(a->_sound[GB(4)])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C019:
+		case AKC_IfNotSoundRunningGoTo:
 			if (!_sound->isSoundRunning(a->_sound[GB(4)])) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C042:
+		case AKC_SoftSound:
 			akos_queCommand(9, a, a->_sound[GB(2)], 0);
 			continue;
-		case AKC_C044:
+		case AKC_SoftVarSound:
 			akos_queCommand(9, a, a->_sound[a->getAnimVar(GB(2))], 0);
 			continue;
-		case AKC_C045:
+		case AKC_SetUserCondition:
 			((ActorHE *)a)->setUserCondition(GB(3), a->getAnimVar(GB(4)));
 			continue;
-		case AKC_C046:
+		case AKC_SetVarToUserCondition:
 			a->setAnimVar(GB(4), ((ActorHE *)a)->isUserConditionSet(GB(3)));
 			continue;
-		case AKC_C047:
+		case AKC_SetTalkCondition:
 			((ActorHE *)a)->setTalkCondition(GB(3));
 			continue;
-		case AKC_C048:
+		case AKC_SetVarToTalkCondition:
 			a->setAnimVar(GB(4), ((ActorHE *)a)->isTalkConditionSet(GB(3)));
 			continue;
-		case AKC_C0A0:
+		case AKC_StartActorTalkie:
 			akos_queCommand(8, a, GB(2), 0);
 			continue;
-		case AKC_C0A1:
+		case AKC_IfTalkingGoTo:
 			if (((ActorHE *)a)->_heTalking != 0) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C0A2:
+		case AKC_IfNotTalkingGoTo:
 			if (((ActorHE *)a)->_heTalking == 0) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C0A3:
+		case AKC_StartTalkieInVar:
 			akos_queCommand(8, a, a->getAnimVar(GB(2)), 0);
 			continue;
-		case AKC_C0A4:
+		case AKC_IfAnyTalkingGoTo:
 			if (VAR(VAR_TALK_ACTOR) != 0) {
 				curpos = GUW(2);
 				break;
 			}
 			continue;
-		case AKC_C0A5:
+		case AKC_IfNotAnyTalkingGoTo:
 			if (VAR(VAR_TALK_ACTOR) == 0) {
 				curpos = GUW(2);
 				break;
@@ -1668,7 +1668,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 	if (code2 & 0x80)
 		code2 = READ_BE_UINT16(aksq + curpos);
 
-	if ((code2 & 0xC000) == 0xC000 && code2 != AKC_ComplexChan && code2 != AKC_Return && code2 != AKC_EndSeq && code2 != AKC_C08E && code2 != AKC_ComplexChan2 && code2 != AKC_C021 && code2 != AKC_C022)
+	if ((code2 & 0xC000) == 0xC000 && code2 != AKC_DrawMany && code2 != AKC_EmptyCel && code2 != AKC_EndSeq && code2 != AKC_DisplayAuxFrame && code2 != AKC_RelativeOffsetDrawMany && code2 != AKC_CondDrawMany && code2 != AKC_CondRelativeOffsetDrawMany)
 		error("Ending with undefined uSweat token %X", code2);
 
 	a->_cost.curpos[chan] = curpos;

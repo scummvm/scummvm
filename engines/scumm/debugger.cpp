@@ -565,7 +565,7 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			code = READ_BE_UINT16(aksq + curpos);
 		debugPrintf("[%04x] (%04x) ", curpos, code);
 		switch (code) {
-		case AKC_Return:
+		case AKC_EmptyCel:
 			debugPrintf("RETURN\n");
 			curpos += 2;
 			break;
@@ -573,27 +573,27 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			debugPrintf("VAR[%d] = %d\n", GB(4), GW(2));
 			curpos += 5;
 			break;
-		case AKC_CmdQue3:
+		case AKC_StartSound:
 			debugPrintf("START SOUND %d\n", GB(2));
 			curpos += 3;
 			break;
-		case AKC_C016:
+		case AKC_IfSoundInVarRunningGoTo:
 			debugPrintf("IF SOUND RUNNING VAR[%d] GOTO [%04x]\n", GB(4), GUW(2));
 			curpos += 5;
 			break;
-		case AKC_C017:
+		case AKC_IfNotSoundInVarRunningGoTo:
 			debugPrintf("IF NOT SOUND RUNNING VAR[%d] GOTO [%04x]\n", GB(4), GUW(2));
 			curpos += 5;
 			break;
-		case AKC_C018:
+		case AKC_IfSoundRunningGoTo:
 			debugPrintf("IF SOUND RUNNING %d GOTO [%04x]\n", GB(4), GUW(2));
 			curpos += 5;
 			break;
-		case AKC_C019:
+		case AKC_IfNotSoundRunningGoTo:
 			debugPrintf("IF NOT SOUND RUNNING %d GOTO [%04x]\n", GB(4), GUW(2));
 			curpos += 5;
 			break;
-		case AKC_ComplexChan:
+		case AKC_DrawMany:
 			debugPrintf("DRAW:\n");
 			curpos += 2;
 			count = GB(0);
@@ -610,7 +610,7 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 				curpos += 5;
 			}
 			break;
-		case AKC_C021:
+		case AKC_CondDrawMany:
 			debugPrintf("CONDITION MASK DRAW [%04x] [", curpos + GB(2));
 			count = GB(3);
 			for (i = 0; i < count; i++) {
@@ -635,7 +635,7 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 				curpos += 5;
 			}
 			break;
-		case AKC_C022:
+		case AKC_CondRelativeOffsetDrawMany:
 			debugPrintf("CONDITION MASK DRAW [%04x] [", curpos + GB(2));
 			count = GB(3);
 			for (i = 0; i < count; i++) {
@@ -660,7 +660,7 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 				curpos += 5;
 			}
 			break;
-		case AKC_ComplexChan2:
+		case AKC_RelativeOffsetDrawMany:
 			debugPrintf("DRAW AT OFFSET %d, %d:\n", GW(2), GW(4));
 			curpos += 6;
 			count = GB(0);
@@ -677,11 +677,11 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 				curpos += 5;
 			}
 			break;
-		case AKC_Jump:
+		case AKC_GoToState:
 			debugPrintf("GOTO [%04x]\n", GUW(2));
 			curpos += 4;
 			break;
-		case AKC_JumpIfSet:
+		case AKC_IfVarGoTo:
 			debugPrintf("IF VAR[%d] GOTO [%04x]\n", GB(4), GUW(2));
 			curpos += 5;
 			break;
@@ -689,31 +689,31 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			debugPrintf("VAR[%d] += %d\n", GB(4), GW(2));
 			curpos += 5;
 			break;
-		case AKC_C042:
+		case AKC_SoftSound:
 			debugPrintf("START SOUND %d SOFT\n", GB(2));
 			curpos += 3;
 			break;
-		case AKC_C044:
+		case AKC_SoftVarSound:
 			debugPrintf("START SOUND VAR[%d] SOFT\n", GB(2));
 			curpos += 3;
 			break;
-		case AKC_C045:
+		case AKC_SetUserCondition:
 			debugPrintf("USER CONDITION %d = VAR[%d] GOTO [%04x] \n", GB(3), GB(4), GB(2));
 			curpos += 5;
 			break;
-		case AKC_C046:
+		case AKC_SetVarToUserCondition:
 			debugPrintf("VAR[%d] = USER CONDITION %d GOTO [%04x] \n", GB(4), GB(3), GB(2));
 			curpos += 5;
 			break;
-		case AKC_C047:
+		case AKC_SetTalkCondition:
 			debugPrintf("TALK CONDITION %d SET GOTO [%04x] \n", GB(3), GB(2));
 			curpos += 4;
 			break;
-		case AKC_C048:
+		case AKC_SetVarToTalkCondition:
 			debugPrintf("VAR[%d] = TALK CONDITION %d GOTO [%04x] \n", GB(4), GB(3), GB(2));
 			curpos += 5;
 			break;
-		case AKC_Ignore:
+		case AKC_StartScript:
 			debugPrintf("IGNORE %d\n", GB(2));
 			curpos += 3;
 			break;
@@ -721,31 +721,31 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			debugPrintf("VAR[0]++\n");
 			curpos += 2;
 			break;
-		case AKC_CmdQue3Quick:
+		case AKC_StartSound_SpecialCase:
 			debugPrintf("START SOUND QUICK\n");
 			curpos += 2;
 			break;
-		case AKC_JumpE:
+		case AKC_IfVarEQJump:
 			debugPrintf("IF VAR[%d] == %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
-		case AKC_JumpNE:
+		case AKC_IfVarNEJump:
 			debugPrintf("IF VAR[%d] != %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
-		case AKC_JumpL:
+		case AKC_IfVarLTJump:
 			debugPrintf("IF VAR[%d] < %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
-		case AKC_JumpLE:
+		case AKC_IfVarLEJump:
 			debugPrintf("IF VAR[%d] <= %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
-		case AKC_JumpG:
+		case AKC_IfVarGTJump:
 			debugPrintf("IF VAR[%d] > %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
-		case AKC_JumpGE:
+		case AKC_IfVarGEJump:
 			debugPrintf("IF VAR[%d] >= %d GOTO [%04x]\n", GB(4), GW(5), GUW(2));
 			curpos += 7;
 			break;
@@ -757,19 +757,19 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			debugPrintf("START ANIMATION VAR[%d]\n", GB(2));
 			curpos += 3;
 			break;
-		case AKC_Random:
+		case AKC_SetVarRandom:
 			debugPrintf("VAR[%d] = RANDOM BETWEEN %d AND %d\n", GB(6), GW(2), GW(4));
 			curpos += 7;
 			break;
-		case AKC_SetActorClip:
+		case AKC_SetActorZClipping:
 			debugPrintf("ZCLIP %d\n", GB(2));
 			curpos += 3;
 			break;
-		case AKC_StartAnimInActor:
+		case AKC_StartActorAnim:
 			debugPrintf("START ANIMATION ACTOR VAR[%d] VAR[%d]\n", GB(2), GB(3));
 			curpos += 4;
 			break;
-		case AKC_SetVarInActor:
+		case AKC_SetActorVar:
 			debugPrintf("ACTOR VAR[%d] VAR[%d] = %d\n", GB(2), GB(3), GW(4));
 			curpos += 6;
 			break;
@@ -781,7 +781,7 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 			debugPrintf("SET DRAW OFFSETS %d %d\n", GW(2), GW(4));
 			curpos += 6;
 			break;
-		case AKC_JumpTable:
+		case AKC_JumpToOffsetInVar:
 			debugPrintf("GOTO OFFSET AT VAR[%d]\n", GB(2));
 			curpos += 3;
 			break;
@@ -789,53 +789,53 @@ bool ScummDebugger::Cmd_Cosdump(int argc, const char **argv) {
 		// 	break;
 		// case AKC_Flip:
 		// 	break;
-		// case AKC_Cmd3:
+		// case AKC_StartActionOn:
 		// 	break;
-		// case AKC_Ignore3:
+		// case AKC_StartScriptVar:
 		// 	break;
-		case AKC_Ignore2:
+		case AKC_StartSoundVar:
 			debugPrintf("START SOUND VAR[%d]\n", GB(2));
 			curpos += 3;
 			break;
-		// case AKC_C08E:
+		// case AKC_DisplayAuxFrame:
 		// 	break;
-		// case AKC_SkipE:
+		// case AKC_IfVarEQDo:
 		// 	break;
 		// case AKC_SkipNE:
 		// 	break;
-		// case AKC_SkipL:
+		// case AKC_IfVarLTDo:
 		// 	break;
-		// case AKC_SkipLE:
+		// case AKC_IfVarLEDo:
 		// 	break;
-		// case AKC_SkipG:
+		// case AKC_IfVarGTDo:
 		// 	break;
-		// case AKC_SkipGE:
+		// case AKC_IfVarGEDo:
 		// 	break;
-		// case AKC_ClearFlag:
+		// case AKC_EndOfIfDo:
 		// 	break;
-		case AKC_C0A0:
+		case AKC_StartActorTalkie:
 			debugPrintf("START TALK %d {%d}\n", GB(2), GB(3));
 			curpos += 4;
 			break;
-		case AKC_C0A1:
+		case AKC_IfTalkingGoTo:
 			debugPrintf("IF ACTOR TALKING GOTO [%04x]\n", GUW(2));
 			curpos += 4;
 			break;
-		case AKC_C0A2:
+		case AKC_IfNotTalkingGoTo:
 			debugPrintf("IF NOT ACTOR TALKING GOTO [%04x]\n", GUW(2));
 			curpos += 4;
 			break;
-		case AKC_C0A3:
+		case AKC_StartTalkieInVar:
 			debugPrintf("START TALK VAR[%d]\n", GB(2));
 			curpos += 3;
 			break;
-		// case AKC_C0A4:
+		// case AKC_IfAnyTalkingGoTo:
 		// 	break;
-		// case AKC_C0A5:
+		// case AKC_IfNotAnyTalkingGoTo:
 		// 	break;
-		// case AKC_C0A6:
+		// case AKC_IfTalkingPickGoTo:
 		// 	break;
-		// case AKC_C0A7:
+		// case AKC_IfNotTalkingPickGoTo:
 		// 	break;
 		case AKC_EndSeq:
 			debugPrintf("STOP\n");
