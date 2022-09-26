@@ -47,7 +47,6 @@
 
 namespace Saga2 {
 
-extern void writeLog(char *str);
 void PlayModeSetup();
 void initBackPanel();
 
