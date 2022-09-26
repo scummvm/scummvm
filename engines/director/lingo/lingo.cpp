@@ -815,6 +815,8 @@ Datum::Datum(const Common::Rect &rect) {
 	u.farr->arr.push_back(Datum(rect.top));
 	u.farr->arr.push_back(Datum(rect.right));
 	u.farr->arr.push_back(Datum(rect.bottom));
+	refCount = new int;
+	*refCount = 1;
 	ignoreGlobal = false;
 }
 
