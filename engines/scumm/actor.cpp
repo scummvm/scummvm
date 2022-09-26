@@ -2674,7 +2674,7 @@ void Actor_v0::limbFrameCheck(int limb) {
 	_limbFrameRepeat[limb] = _limbFrameRepeatNew[limb];
 
 	// 0x25C3
-	_cost.active[limb] = ((V0CostumeLoader *)_vm->_costumeLoader)->getFrame(this, limb);
+	_cost.animType[limb] = ((V0CostumeLoader *)_vm->_costumeLoader)->getFrame(this, limb);
 	_cost.curpos[limb] = 0;
 
 	_needRedraw = true;
@@ -2734,7 +2734,7 @@ void Actor::animateLimb(int limb, int f) {
 		size = _vm->getResourceDataSize(akfo) / 2;
 
 		while (f--) {
-			if (_cost.active[limb] != 0)
+			if (_cost.animType[limb] != AKAT_Empty)
 				((ScummEngine_v6 *)_vm)->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
 		}
 
@@ -3816,7 +3816,7 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_walkdata.point3.x, VER(42));
 	s.syncAsUint16LE(_walkdata.point3.y, VER(42));
 
-	s.syncBytes(_cost.active, 16, VER(8));
+	s.syncBytes(_cost.animType, 16, VER(8));
 	s.syncAsUint16LE(_cost.stopped, VER(8));
 	s.syncArray(_cost.curpos, 16, Common::Serializer::Uint16LE, VER(8));
 	s.syncArray(_cost.start, 16, Common::Serializer::Uint16LE, VER(8));

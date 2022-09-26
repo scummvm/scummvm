@@ -52,20 +52,28 @@ struct AkosOffset {
 #include "common/pack-end.h"	// END STRUCT PACKING
 
 
-static bool akos_compare(int a, int b, byte cmd) {
+static bool akosCompare(int a, int b, byte cmd) {
 	switch (cmd) {
-	case 0:
+	case AKC_IfVarEQJump:
+	case AKC_IfVarEQDo:
 		return a == b;
-	case 1:
+	case AKC_IfVarNEJump:
+	case AKC_IfVarNEDo:
 		return a != b;
-	case 2:
+	case AKC_IfVarLTJump:
+	case AKC_IfVarLTDo:
 		return a < b;
-	case 3:
+	case AKC_IfVarLEJump:
+	case AKC_IfVarLEDo:
 		return a <= b;
-	case 4:
+	case AKC_IfVarGTJump:
+	case AKC_IfVarGTDo:
 		return a > b;
-	default:
+	case AKC_IfVarGEJump:
+	case AKC_IfVarGEDo:
 		return a >= b;
+	default:
+		return false;
 	}
 }
 
@@ -120,15 +128,15 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 	i = 0;
 	mask = READ_LE_UINT16(r); r += 2;
 	do {
-		if (mask & 0x8000) {
+		if (mask & AKC_ExtendWordBit) {
 			const uint8 *akst = akstPtr;
 			const uint8 *aksf = aksfPtr;
 
 			code = *r++;
-			if (usemask & 0x8000) {
+			if (usemask & AKC_ExtendWordBit) {
 				switch (code) {
 				case 1:
-					a->_cost.active[i] = 0;
+					a->_cost.animType[i] = AKAT_Empty;
 					a->_cost.frame[i] = frame;
 					a->_cost.end[i] = 0;
 					a->_cost.start[i] = 0;
@@ -184,7 +192,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 						}
 					}
 
-					a->_cost.active[i] = code;
+					a->_cost.animType[i] = code;
 					a->_cost.frame[i] = frame;
 					a->_cost.end[i] = start + len;
 					a->_cost.start[i] = start;
@@ -318,17 +326,17 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (_skipLimbs)
 		return 0;
 
-	if (_vm->_game.heversion >= 70 && cost.active[limb] == 8)
+	if (_vm->_game.heversion >= 70 && cost.animType[limb] == AKAT_DeltaAnim)
 		return 0;
 
-	if (!cost.active[limb] || cost.stopped & (1 << limb))
+	if (!cost.animType[limb] || cost.stopped & (1 << limb))
 		return 0;
 
 	useCondMask = false;
 	p = aksq + cost.curpos[limb];
 
 	code = p[0];
-	if (code & 0x80)
+	if (code & AKC_ExtendBit)
 		code = READ_BE_UINT16(p);
 
 	if (_vm->_game.heversion >= 90)
@@ -368,13 +376,13 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
 
 		switch (_codec) {
-		case 1:
+		case AKOS_BYLE_RLE_CODEC:
 			result |= codec1(xmoveCur, ymoveCur);
 			break;
-		case 5:
+		case AKOS_CDAT_RLE_CODEC:
 			result |= codec5(xmoveCur, ymoveCur);
 			break;
-		case 16:
+		case AKOS_RUN_MAJMIN_CODEC:
 			result |= codec16(xmoveCur, ymoveCur);
 			break;
 		default:
@@ -393,7 +401,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 		for (i = 0; i != extra; i++) {
 			code = p[4];
-			if (code & 0x80)
+			if (code & AKC_ExtendBit)
 				code = READ_BE_UINT16(p + 4);
 			off = akof + (code & 0xFFF);
 
@@ -438,7 +446,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 				}
 			}
 
-			p += (p[4] & 0x80) ? 6 : 5;
+			p += (p[4] & AKC_ExtendBit) ? 6 : 5;
 
 			if (decflag == 0)
 				continue;
@@ -446,21 +454,21 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 			if (_vm->_game.heversion >= 90) {
 				if (_vm->_game.heversion >= 99)
 					_shadow_mode = 0;
-				if (xmap && (shadowMask & 0x8000))
+				if (xmap && (shadowMask & AKC_ExtendWordBit))
 					_shadow_mode = 3;
 			}
 
 			switch (_codec) {
-			case 1:
+			case AKOS_BYLE_RLE_CODEC:
 				result |= codec1(xmoveCur, ymoveCur);
 				break;
-			case 5:
+			case AKOS_CDAT_RLE_CODEC:
 				result |= codec5(xmoveCur, ymoveCur);
 				break;
-			case 16:
+			case AKOS_RUN_MAJMIN_CODEC:
 				result |= codec16(xmoveCur, ymoveCur);
 				break;
-			case 32:
+			case AKOS_TRLE_CODEC:
 				result |= codec32(xmoveCur, ymoveCur);
 				break;
 			default:
@@ -1291,7 +1299,6 @@ byte AkosCostumeLoader::increaseAnims(Actor *a) {
 
 bool ScummEngine_v6::akos_increaseAnims(const byte *akos, Actor *a) {
 	const byte *aksq, *akfo;
-	int i;
 	uint size;
 	bool result;
 
@@ -1301,35 +1308,35 @@ bool ScummEngine_v6::akos_increaseAnims(const byte *akos, Actor *a) {
 	size = getResourceDataSize(akfo) / 2;
 
 	result = false;
-	for (i = 0; i < 16; i++) {
-		if (a->_cost.active[i] != 0)
+	for (int i = 0; i < 16; i++) {
+		if (a->_cost.animType[i] != AKAT_Empty)
 			result |= akos_increaseAnim(a, i, aksq, (const uint16 *)akfo, size);
 	}
 	return result;
 }
 
 bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
-	byte active;
-	uint old_curpos, curpos, end;
+	byte animType;
+	uint startState, curState, endState;
 	uint code;
 	bool skipNextState, needRedraw;
-	int tmp, tmp2;
+	int counter, tmp2;
 
-	active = a->_cost.active[chan];
-	end = a->_cost.end[chan];
-	old_curpos = curpos = a->_cost.curpos[chan];
+	animType = a->_cost.animType[chan];
+	endState = a->_cost.end[chan];
+	startState = curState = a->_cost.curpos[chan];
 	skipNextState = false;
 	needRedraw = false;
 
 	do {
 
-		code = aksq[curpos];
-		if (code & 0x80)
-			code = READ_BE_UINT16(aksq + curpos);
+		code = aksq[curState];
+		if (code & AKC_ExtendBit)
+			code = READ_BE_UINT16(aksq + curState);
 
-		switch (active) {
-		case 6:
-		case 8:
+		switch (animType) {
+		case AKAT_AlwaysRun:
+		case AKAT_DeltaAnim:
 			switch (code) {
 			case AKC_IfVarGoTo:
 			case AKC_AddVar:
@@ -1345,7 +1352,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_IfNotSoundInVarRunningGoTo:
 			case AKC_IfSoundRunningGoTo:
 			case AKC_IfNotSoundRunningGoTo:
-				curpos += 5;
+				curState += 5;
 				break;
 			case AKC_JumpToOffsetInVar:
 			case AKC_SetActorZClipping:
@@ -1358,18 +1365,18 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_SoftSound:
 			case AKC_SoftVarSound:
 			case AKC_StartTalkieInVar:
-				curpos += 3;
+				curState += 3;
 				break;
 			case AKC_SoundStuff:
 				if (_game.heversion >= 61)
-					curpos += 6;
+					curState += 6;
 				else
-					curpos += 8;
+					curState += 8;
 				break;
 			case AKC_StartActionOn:
 			case AKC_SetActorVar:
 			case AKC_SetDrawOffs:
-				curpos += 6;
+				curState += 6;
 				break;
 			case AKC_EndOfIfDo:
 			case AKC_HideActor:
@@ -1377,7 +1384,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_StartSound_SpecialCase:
 			case AKC_EmptyCel:
 			case AKC_EndSeq:
-				curpos += 2;
+				curState += 2;
 				break;
 			case AKC_IfVarGEJump:
 			case AKC_IfVarGTJump:
@@ -1386,7 +1393,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_IfVarNEJump:
 			case AKC_IfVarEQJump:
 			case AKC_SetVarRandom:
-				curpos += 7;
+				curState += 7;
 				break;
 			case AKC_Flip:
 			case AKC_GoToState:
@@ -1394,17 +1401,17 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_StartActorTalkie:
 			case AKC_IfTalkingGoTo:
 			case AKC_IfNotTalkingGoTo:
-				curpos += 4;
+				curState += 4;
 				break;
 			case AKC_RelativeOffsetDrawMany:
-				curpos += 4;
+				curState += 4;
 				// Fall through
 			case AKC_DrawMany:
-				curpos += 3;
-				tmp = aksq[curpos - 1];
-				while (--tmp >= 0) {
-					curpos += 4;
-					curpos += (aksq[curpos] & 0x80) ? 2 : 1;
+				curState += 3;
+				counter = aksq[curState - 1];
+				while (--counter >= 0) {
+					curState += 4;
+					curState += (aksq[curState] & AKC_ExtendBit) ? 2 : 1;
 				}
 				break;
 			case AKC_CondDrawMany:
@@ -1413,34 +1420,37 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			case AKC_SetVarToUserCondition:
 			case AKC_SetTalkCondition:
 			case AKC_SetVarToTalkCondition:
-				needRedraw = 1;
-				curpos += aksq[curpos + 2];
+				needRedraw = true;
+				curState += aksq[curState + 2];
 				break;
 			case AKC_DisplayAuxFrame:
 				akos_queCommand(7, a, GW(2), 0);
-				curpos += 4;
+				curState += 4;
 				break;
 			default:
-				curpos += (code & 0x8000) ? 2 : 1;
+				curState += (code & AKC_ExtendWordBit) ? 2 : 1;
 				break;
 			}
 			break;
-		case 2:
-			curpos += (code & 0x8000) ? 2 : 1;
-			if (curpos > end)
-				curpos = a->_cost.start[chan];
+		case AKAT_LoopLayer:
+			curState += (code & AKC_ExtendWordBit) ? 2 : 1;
+			if (curState > endState)
+				curState = a->_cost.start[chan];
 			break;
-		case 3:
-			if (curpos != end)
-				curpos += (code & 0x8000) ? 2 : 1;
+		case AKAT_RunLayer:
+			if (curState != endState)
+				curState += (code & AKC_ExtendWordBit) ? 2 : 1;
+			break;
+		case AKAT_UserConstant:
+			// Script controlled animation: do nothing
 			break;
 		default:
 			break;
 		}
 
-		code = aksq[curpos];
-		if (code & 0x80)
-			code = READ_BE_UINT16(aksq + curpos);
+		code = aksq[curState];
+		if (code & AKC_ExtendBit)
+			code = READ_BE_UINT16(aksq + curState);
 
 		if (skipNextState && code != AKC_EndOfIfDo)
 			continue;
@@ -1459,8 +1469,8 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_IfVarLTJump:
 		case AKC_IfVarNEJump:
 		case AKC_IfVarEQJump:
-			if (akos_compare(a->getAnimVar(GB(4)), GW(5), code - AKC_ConditionalJumpStart) != 0) {
-				curpos = GUW(2);
+			if (akosCompare(a->getAnimVar(GB(4)), GW(5), code)) {
+				curState = GUW(2);
 				break;
 			}
 			continue;
@@ -1478,11 +1488,11 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			continue;
 		case AKC_StartSound:
 			if (_game.heversion >= 61)
-				tmp = GB(2);
+				counter = GB(2);
 			else
-				tmp = GB(2) - 1;
-			if ((uint) tmp < 24)
-				akos_queCommand(3, a, a->_sound[tmp], 0);
+				counter = GB(2) - 1;
+			if ((uint) counter < 24)
+				akos_queCommand(3, a, a->_sound[counter], 0);
 			continue;
 		case AKC_StartSound_SpecialCase:
 			akos_queCommand(3, a, a->_sound[0], 0);
@@ -1505,13 +1515,13 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_SoundStuff:
 			if (_game.heversion >= 61)
 				continue;
-			tmp = GB(2) - 1;
-			if (tmp >= 8)
+			counter = GB(2) - 1;
+			if (counter >= 8)
 				continue;
 			tmp2 = GB(4);
 			if (tmp2 < 1 || tmp2 > 3)
 				error("akos_increaseAnim:8 invalid code %d", tmp2);
-			akos_queCommand(tmp2 + 6, a, a->_sound[tmp], GB(6));
+			akos_queCommand(tmp2 + 6, a, a->_sound[counter], GB(6));
 			continue;
 		case AKC_SetDrawOffs:
 			akos_queCommand(6, a, GW(2), GW(4));
@@ -1519,22 +1529,22 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_JumpToOffsetInVar:
 			if (akfo == nullptr)
 				error("akos_increaseAnim: no AKFO table");
-			tmp = a->getAnimVar(GB(2)) - 1;
+			counter = a->getAnimVar(GB(2)) - 1;
 			if (_game.heversion >= 80) {
-				if (tmp < 0 || tmp > a->_cost.heJumpCountTable[chan] - 1)
-					error("akos_increaseAnim: invalid jump value %d", tmp);
-				curpos = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[chan] + tmp * 2);
+				if (counter < 0 || counter > a->_cost.heJumpCountTable[chan] - 1)
+					error("akos_increaseAnim: invalid jump value %d", counter);
+				curState = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[chan] + counter * 2);
 			} else {
-				if (tmp < 0 || tmp > numakfo - 1)
-					error("akos_increaseAnim: invalid jump value %d", tmp);
-				curpos = READ_LE_UINT16(&akfo[tmp]);
+				if (counter < 0 || counter > numakfo - 1)
+					error("akos_increaseAnim: invalid jump value %d", counter);
+				curState = READ_LE_UINT16(&akfo[counter]);
 			}
 			break;
 		case AKC_IfVarGoTo:
 			if (!a->getAnimVar(GB(4)))
 				continue;
 			a->setAnimVar(GB(4), 0);
-			curpos = GUW(2);
+			curState = GUW(2);
 			break;
 
 		case AKC_EndOfIfDo:
@@ -1542,15 +1552,15 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			continue;
 
 		case AKC_GoToState:
-			curpos = GUW(2);
+			curState = GUW(2);
 
 			// WORKAROUND bug #3813: In the German version of SPY Fox 3: Operation Ozone
 			// the wig maker room 21 contains a costume animation 352 of an LED ticker
 			// with a jump to an erroneous position 846.
 			// To prevent an undefined 'uSweat token' the animation is reset to its start.
 			if (_game.id == GID_HEGAME && _language == Common::DE_DEU && \
-			    _currentRoom == 21 && a->_costume == 352 && curpos == 846) {
-				curpos = a->_cost.start[chan];
+			    _currentRoom == 21 && a->_costume == 352 && curState == 846) {
+				curState = a->_cost.start[chan];
 			}
 			break;
 
@@ -1563,7 +1573,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 
 		case AKC_CondDrawMany:
 		case AKC_CondRelativeOffsetDrawMany:
-			needRedraw = 1;
+			needRedraw = true;
 			break;
 
 		case AKC_StartActionOn:
@@ -1582,30 +1592,30 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKC_IfVarLEDo:
 		case AKC_IfVarGTDo:
 		case AKC_IfVarGEDo:
-			if (akos_compare(a->getAnimVar(GB(4)), GW(2), code - AKC_ConditionalDoStart) == 0)
+			if (!akosCompare(a->getAnimVar(GB(4)), GW(2), code))
 				skipNextState = true;
 			continue;
 		case AKC_IfSoundInVarRunningGoTo:
 			if (_sound->isSoundRunning( a->_sound[a->getAnimVar(GB(4))]))  {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_IfNotSoundInVarRunningGoTo:
 			if (!_sound->isSoundRunning(a->_sound[a->getAnimVar(GB(4))])) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_IfSoundRunningGoTo:
 			if (_sound->isSoundRunning(a->_sound[GB(4)])) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_IfNotSoundRunningGoTo:
 			if (!_sound->isSoundRunning(a->_sound[GB(4)])) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
@@ -1632,13 +1642,13 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			continue;
 		case AKC_IfTalkingGoTo:
 			if (((ActorHE *)a)->_heTalking != 0) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_IfNotTalkingGoTo:
 			if (((ActorHE *)a)->_heTalking == 0) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
@@ -1647,36 +1657,36 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			continue;
 		case AKC_IfAnyTalkingGoTo:
 			if (VAR(VAR_TALK_ACTOR) != 0) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		case AKC_IfNotAnyTalkingGoTo:
 			if (VAR(VAR_TALK_ACTOR) == 0) {
-				curpos = GUW(2);
+				curState = GUW(2);
 				break;
 			}
 			continue;
 		default:
-			if ((code & 0xC000) == 0xC000)
+			if ((code & AKC_CommandMask) == AKC_CommandMask)
 				error("Undefined uSweat token %X", code);
 		}
 		break;
-	} while (1);
+	} while (true);
 
-	int code2 = aksq[curpos];
-	if (code2 & 0x80)
-		code2 = READ_BE_UINT16(aksq + curpos);
+	int code2 = aksq[curState];
+	if (code2 & AKC_ExtendBit)
+		code2 = READ_BE_UINT16(aksq + curState);
 
-	if ((code2 & 0xC000) == 0xC000 && code2 != AKC_DrawMany && code2 != AKC_EmptyCel && code2 != AKC_EndSeq && code2 != AKC_DisplayAuxFrame && code2 != AKC_RelativeOffsetDrawMany && code2 != AKC_CondDrawMany && code2 != AKC_CondRelativeOffsetDrawMany)
+	if ((code2 & AKC_CommandMask) == AKC_CommandMask && code2 != AKC_DrawMany && code2 != AKC_EmptyCel && code2 != AKC_EndSeq && code2 != AKC_DisplayAuxFrame && code2 != AKC_RelativeOffsetDrawMany && code2 != AKC_CondDrawMany && code2 != AKC_CondRelativeOffsetDrawMany)
 		error("Ending with undefined uSweat token %X", code2);
 
-	a->_cost.curpos[chan] = curpos;
+	a->_cost.curpos[chan] = curState;
 
 	if (needRedraw)
-		return 1;
+		return true;
 	else
-		return curpos != old_curpos;
+		return curState != startState;
 }
 
 void ScummEngine_v6::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
@@ -1703,29 +1713,29 @@ void ScummEngine_v6::akos_processQueue() {
 		Actor *a = derefActor(actor, "akos_processQueue");
 
 		switch (cmd) {
-		case 1:
+		case AKQC_PutActorInTheVoid:
 			a->putActor(0, 0, 0);
 			break;
-		case 3:
+		case AKQC_StartSound:
 			_sound->addSoundToQueue(param_1, 0, -1, 0);
 			break;
-		case 4:
+		case AKQC_StartAnimation:
 			a->startAnimActor(param_1);
 			break;
-		case 5:
+		case AKQC_SetZClipping:
 			a->_forceClip = param_1;
 			break;
-		case 6:
+		case AKQC_SetXYOffset:
 			a->_heOffsX = param_1;
 			a->_heOffsY = param_2;
 			break;
-		case 7:
+		case AKQC_DisplayAuxFrame:
 #ifdef ENABLE_HE
 			assert(_game.heversion >= 71);
 			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param_1);
 #endif
 			break;
-		case 8:
+		case AKQC_StartTalkie:
 			_actorToPrintStrFor = a->_number;
 
 			a->_talkPosX = ((ActorHE *)a)->_heTalkQueue[param_1].posX;
@@ -1737,7 +1747,7 @@ void ScummEngine_v6::akos_processQueue() {
 			actorTalk(((ActorHE *)a)->_heTalkQueue[param_1].sentence);
 
 			break;
-		case 9:
+		case AKQC_SoftStartSound:
 			_sound->addSoundToQueue(param_1, 0, -1, 4);
 			break;
 		default:
@@ -1768,41 +1778,41 @@ void ScummEngine_v7::akos_processQueue() {
 		Actor *a = derefActor(actor, "akos_processQueue");
 
 		switch (cmd) {
-		case 1:
+		case AKQC_PutActorInTheVoid:
 			a->putActor(0, 0, 0);
 			break;
-		case 3:
+		case AKQC_StartSound:
 			if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->startSfx(param_1, 63);
 				}
 			}
 			break;
-		case 4:
+		case AKQC_StartAnimation:
 			a->startAnimActor(param_1);
 			break;
-		case 5:
+		case AKQC_SetZClipping:
 			a->_forceClip = param_1;
 			break;
-		case 6:
+		case AKQC_SetXYOffset:
 			a->_heOffsX = param_1;
 			a->_heOffsY = param_2;
 			break;
-		case 7:
+		case AKQC_SetSoundVolume:
 			if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setVolume(param_1, param_2);
 				}
 			}
 			break;
-		case 8:
+		case AKQC_SetSoundPan:
 			if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setPan(param_1, param_2);
 				}
 			}
 			break;
-		case 9:
+		case AKQC_SetSoundPriority:
 			if (param_1 != 0) {
 				if (_imuseDigital) {
 					_imuseDigital->setPriority(param_1, param_2);

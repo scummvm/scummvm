@@ -1257,7 +1257,7 @@ byte V0CostumeRenderer::drawLimb(const Actor *a, int limb) {
 		return 0;
 
 	_loaded.loadCostume(a->_costume);
-	byte frame = _loaded._frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
+	byte frame = _loaded._frameOffsets[a->_cost.curpos[limb] + a->_cost.animType[limb]];
 
 	// Get the frame ptr
 	byte ptrLow = _loaded._baseptr[frame];
@@ -1426,7 +1426,7 @@ byte V0CostumeLoader::increaseAnim(Actor *a, int limb) {
 	loadCostume(a->_costume);
 
 	// 0x2543
-	byte frame = _frameOffsets[a->_cost.curpos[limb] + a->_cost.active[limb]];
+	byte frame = _frameOffsets[a->_cost.curpos[limb] + a->_cost.animType[limb]];
 
 	// Is this frame invalid?
 	if (frame == 0xFF) {

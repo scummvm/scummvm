@@ -27,7 +27,6 @@
 #include "common/serializer.h"
 #include "scumm/scumm.h"
 
-
 namespace Scumm {
 
 enum {
@@ -47,7 +46,7 @@ enum MoveFlags {
 };
 
 struct CostumeData {
-	byte active[16];
+	byte animType[16];
 	uint16 animCounter;
 	byte soundCounter;
 	byte soundPos;
@@ -65,7 +64,7 @@ struct CostumeData {
 	void reset() {
 		stopped = 0;
 		for (int i = 0; i < 16; i++) {
-			active[i] = 0;
+			animType[i] = 0; // AKAT_Empty
 			curpos[i] = start[i] = end[i] = frame[i] = 0xFFFF;
 		}
 	}
