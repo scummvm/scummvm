@@ -511,6 +511,17 @@ void ScummEngine_v7::restoreBlastTextsRects() {
 		return;
 
 	for (int i = 0; i < _blastTextRectsQueue; i++) {
+		// Did the camera X coordinate change (i.e. because of an override)?
+		// If so, adjust the rects.
+		// Please note this wasn't done on the original, but we handle things
+		// a little bit differently on our end, so we need to account for this
+		// case manually.
+		if (camera._cur.x != camera._last.x) {
+			int diff = camera._cur.x - camera._last.x;
+			_blastTextQueue[i].rect.left -= diff;
+			_blastTextQueue[i].rect.right -= diff;
+		}
+
 		restoreBackground(_blastTextQueue[i].rect);
 	}
 
