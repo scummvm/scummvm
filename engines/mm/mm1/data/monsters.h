@@ -37,6 +37,10 @@ enum MonsterStatus {
 	MON_BLINDED = 6, MON_AFRAID = 7, MON_DEAD = 8
 };
 
+enum Field1E {
+	FIELD1E_40 = 0x40
+};
+
 struct Monster {
 	Common::String _name; // char _name[15];
 	byte _count;

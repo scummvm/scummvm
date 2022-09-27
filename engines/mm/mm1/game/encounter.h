@@ -55,7 +55,7 @@ public:
 	int _bribeAlignmentCtr = 0, _bribeFleeCtr = 0;
 	int _alignmentsChanged = 0;
 	int _monsterImgNum = 0;
-	int _monsterIndex = 0;
+	int _monsterIndex = 0;	// == _monsterList.size()
 	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;

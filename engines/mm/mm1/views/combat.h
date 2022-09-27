@@ -85,6 +85,16 @@ private:
 
 	void writeDefeat();
 
+	/**
+	 * Highlight the round number indicator
+	 */
+	void highlightNextRound();
+
+protected:
+	/**
+	 * Sets a new display mode
+	 */
+	void setMode(Mode newMode) override;
 public:
 	Combat();
 	virtual ~Combat() {}

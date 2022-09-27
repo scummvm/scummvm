@@ -32,6 +32,11 @@ namespace Views {
 Combat::Combat() : TextView("Combat") {
 }
 
+void Combat::setMode(Mode newMode) {
+	_mode = newMode;
+	redraw();
+}
+
 bool Combat::msgFocus(const FocusMessage &msg) {
 	// Clear combat data
 	clear();
@@ -51,7 +56,24 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 }
 
 void Combat::draw() {
-	//Game::Encounter &enc = g_globals->_encounters;
+	switch (_mode) {
+	case NEXT_ROUND:
+		resetBottom();
+		highlightNextRound();
+		delaySeconds(1);
+		return;
+	case MONSTER_ADVANCES:
+		writeString(0, 20, _advancingMonster);
+		writeString(STRING["dialogs.combat.advances"]);
+		writeSpaces(30);
+		writeRound();
+		writeMonsters();
+		delaySeconds(2);
+		return;
+	default:
+		break;
+	}
+
 
 	clearSurface();
 	writeStaticContent();
@@ -79,6 +101,15 @@ void Combat::draw() {
 
 void Combat::timeout() {
 	switch (_mode) {
+	case NEXT_ROUND:
+		nextRound2();
+		break;
+	case MONSTER_ADVANCES:
+		nextRound3();
+		break;
+	case MONSTERS_AFFECTED:
+		combatLoop();
+		break;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_spells;
 		spells._s.bless = 0;
@@ -295,6 +326,17 @@ void Combat::writeDefeat() {
 	writeNumber(14, 6, _totalExperience);
 	_textPos.x++;
 	writeString(STRING["dialogs.combat.xp"]);
+}
+
+void Combat::highlightNextRound() {
+	Common::String s = Common::String::format("%s%d",
+		STRING["dialogs.combat.round"].c_str(),
+		_roundNum);
+	
+	for (uint i = 0; i < s.size(); ++i)
+		s.setChar(s[i] | 0x80, i);
+
+	writeString(0, 1, s);
 }
 
 } // namespace Views

@@ -42,7 +42,8 @@ void Combat::clear() {
 
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
-	_val8 = 0;
+	_val8 = _val9 = 0;
+	_advanceIndex = 0;
 	_handicap1 = _handicap2 = 0;
 	_handicap3 = _handicap4 = 0;
 	_handicap = HANDICAP_EVEN;
@@ -50,6 +51,8 @@ void Combat::clear() {
 	_monsterIndex = _currentChar = 0;
 	_attackerVal = 0;
 	_totalExperience = 0;
+	_advanceIndex = 0;
+	_monstersResistSpells = _monstersRegenerate = false;
 
 	// TODO: clear everything
 
@@ -335,7 +338,27 @@ void Combat::nextRound() {
 	g_globals->_party.updateAC();
 
 	_val8 = getRandomNumber(g_globals->_party.size());
+	updateHighestLevel();
 
+	setMode(NEXT_ROUND);
+}
+
+void Combat::nextRound2() {
+	if (moveMonsters()) {
+		// Display that a monster advanced in the view
+		setMode(MONSTER_ADVANCES);
+	} else {
+		// No advancements, so move to next part of new round
+		nextRound3();
+	}
+}
+
+void Combat::nextRound3() {
+	if (monsterChanges()) {
+		setMode(MONSTERS_AFFECTED);
+	} else {
+		combatLoop();
+	}
 }
 
 void Combat::clearArrays() {
@@ -356,6 +379,104 @@ void Combat::updateHighestLevel() {
 		if (!(c._condition & (ASLEEP | BLINDED | SILENCED | DISEASED | POISONED)))
 			enc._highestLevel = c._level._base;
 	}
+}
+
+bool Combat::moveMonsters() {
+	if (_attackerVal >= (int)_monsterList.size())
+		return false;
+
+	bool hasAdvance = false;
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		_advanceIndex = i;
+
+		if (!(_monsterStatus[i] & ~MON_MINDLESS) &&
+			_monsterList[i]._field1e & 0x80) {
+			monsterAdvances();
+			hasAdvance = true;
+		}
+	}
+
+	return hasAdvance;
+}
+
+void Combat::monsterAdvances() {
+	// TODO: Shouldn't placement changes affect the arrays
+	_monsterList.remove_at(_advanceIndex);
+	_advancingMonster = _monsterList[_advanceIndex]._name;
+}
+
+bool Combat::monsterChanges() {
+	_monstersRegenerate = _monstersResistSpells = false;
+
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		monsterSetPtr(i);
+
+		if ((_monsterP->_field1e & FIELD1E_40) &&
+			(_monsterP->_field11 != _arr1[i])) {
+			_monstersRegenerate = true;
+			int newVal = _arr1[i] + 5;
+			_arr1[i] = (byte)newVal;
+
+			if (newVal >= 256 || newVal >= _monsterP->_field11) {
+				_arr1[i] = _monsterP->_field11;
+			}
+		}
+
+		if (_monsterStatus[i]) {
+			proc2();
+
+			if (_val9) {
+				_monstersResistSpells = true;
+				byte v = _monsterStatus[i];
+
+				v &= 0x7f;
+				if (v != _monsterStatus[i]) {
+					_monsterStatus[i] = v;
+				} else {
+					v &= 0x3f;
+					if (v != _monsterStatus[i]) {
+						_monsterStatus[i] = v;
+					} else {
+						v &= 0x1f;
+						if (v != _monsterStatus[i]) {
+							_monsterStatus[i] = v;
+						} else {
+							v &= 0xf;
+							if (v != _monsterStatus[i]) {
+								_monsterStatus[i] = v;
+							} else {
+								v &= 7;
+								if (v != _monsterStatus[i]) {
+									_monsterStatus[i] = v;
+								} else {
+									v &= 3;
+									if (v != _monsterStatus[i]) {
+										_monsterStatus[i] = v;
+									} else {
+										v &= 1;
+										if (v != _monsterStatus[i])
+											_monsterStatus[i] = v;
+										else
+											_monsterStatus[i] = 0;
+									}
+								}
+							}
+						}
+					}
+				}
+
+			}
+		}
+	}
+
+	return _monstersRegenerate || _monstersResistSpells;
+}
+
+void Combat::proc2() {
+	int threshold = getMonsterIndex() * 8 + 20;
+	int val = getRandomNumber(100);
+
+	_val9 = (val != 100 && val <= threshold) ? 1 : 0;
 }
 
 } // namespace Game
