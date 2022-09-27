@@ -146,7 +146,7 @@ void ScummEngine_v4::readIndexFile() {
 			break;
 
 		default:
-			error("Bad ID %c%c found in directory", blocktype & 0xFF, blocktype >> 8);
+			error("Bad ID %04X found in index file directory", blocktype);
 		}
 	}
 	closeRoom();
