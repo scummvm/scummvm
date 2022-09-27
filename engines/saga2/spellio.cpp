@@ -73,15 +73,15 @@ SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
 // init from res file
 
 void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
-	master = (SpellID) rsi->spell;
-	display = (SpellID) rsi->spell;
-	targetableTypes = (SpellTargetingTypes) rsi->targs;
-	targetTypes = (SpellApplicationTypes) rsi->applys;
-	manaType = (SpellManaID) rsi->manaType;
-	manaUse = rsi->manaAmount;
-	shape = (effectAreas) rsi->effect;
-	size = 0;
-	sound = rsi->soundID;
+	_master = (SpellID) rsi->spell;
+	_display = (SpellID) rsi->spell;
+	_targetableTypes = (SpellTargetingTypes) rsi->targs;
+	_targetTypes = (SpellApplicationTypes) rsi->applys;
+	_manaType = (SpellManaID) rsi->manaType;
+	_manaUse = rsi->manaAmount;
+	_shape = (effectAreas) rsi->effect;
+	_size = 0;
+	_sound = rsi->soundID;
 }
 
 // ------------------------------------------------------------------
@@ -89,7 +89,7 @@ void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
 
 void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	ProtoEffect *pe = nullptr;
-	assert(rse && rse->spell == master);
+	assert(rse && rse->spell == _master);
 	switch (rse->effectGroup) {
 	case effectNone     :
 		return;
@@ -190,11 +190,11 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	if (pe == nullptr)
 		error("failed to alloc protoEffect");
 
-	if (effects == nullptr)
-		effects = pe;
+	if (_effects == nullptr)
+		_effects = pe;
 	else {
 		ProtoEffect *tail;
-		for (tail = effects; tail->_next; tail = tail->_next) ;
+		for (tail = _effects; tail->_next; tail = tail->_next) ;
 		tail->_next = pe;
 	}
 }

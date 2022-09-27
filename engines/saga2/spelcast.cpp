@@ -61,19 +61,19 @@ int32 scatterer(int32 i, int32 m, int32 s);
 //	ctor
 
 SpellStuff::SpellStuff() {
-	master = nullSpell;
-	display = nullSpell;
-	prototype = nullptr;
-	targetableTypes = spellTargNone;
-	targetTypes = spellApplyNone;
-	effects = nullptr;
-	targets = nullptr;
-	manaType = sManaIDSkill;
-	manaUse = 0;
-	shape = eAreaInvisible;
-	size = 0;
-	range = 0;
-	sound = 0;
+	_master = nullSpell;
+	_display = nullSpell;
+	_prototype = nullptr;
+	_targetableTypes = spellTargNone;
+	_targetTypes = spellApplyNone;
+	_effects = nullptr;
+	_targets = nullptr;
+	_manaType = sManaIDSkill;
+	_manaUse = 0;
+	_shape = eAreaInvisible;
+	_size = 0;
+	_range = 0;
+	_sound = 0;
 
 	_debug = false;
 }
@@ -90,7 +90,7 @@ bool SpellStuff::isOffensive() {
 //	determine whether an area spell protects the caster
 
 bool SpellStuff::safe() {
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
@@ -115,12 +115,12 @@ bool SpellStuff::safe() {
 //	add an internal effect to a spell
 
 void SpellStuff::addEffect(ProtoEffect *pe) {
-	if (effects == nullptr)
-		effects = pe;
+	if (_effects == nullptr)
+		_effects = pe;
 	else {
-		ProtoEffect *tail;
-		for (tail = effects; tail->_next; tail = tail->_next) ;
-		tail->_next = pe;
+		ProtoEffect *_tail;
+		for (_tail = _effects; _tail->_next; _tail = _tail->_next) ;
+		_tail->_next = pe;
 	}
 }
 
@@ -128,9 +128,9 @@ void SpellStuff::addEffect(ProtoEffect *pe) {
 //	play the sound associated with a spell
 
 void SpellStuff::playSound(GameObject *go) {
-	if (sound) {
+	if (_sound) {
 		Location cal = go->notGetWorldLocation(); //Location(go->getLocation(),go->IDParent());
-		Saga2::playSoundAt(MKTAG('S', 'P', 'L', sound), cal);
+		Saga2::playSoundAt(MKTAG('S', 'P', 'L', _sound), cal);
 	}
 }
 
@@ -138,10 +138,10 @@ void SpellStuff::playSound(GameObject *go) {
 //	cleanup
 
 void SpellStuff::killEffects() {
-	if (effects) {
-		delete effects;
+	if (_effects) {
+		delete _effects;
 	}
-	effects = nullptr;
+	_effects = nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -154,7 +154,7 @@ void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 		implement(enactor, Location(target->getPoint(), Nothing));
 		break;
 	case SpellTarget::spellTargetObjectPoint:
-		if (targetTypes == spellApplyObject)
+		if (_targetTypes == spellApplyObject)
 			implement(enactor, target->getObject());
 		else
 			implement(enactor, Location(target->getPoint(), Nothing));
@@ -179,8 +179,8 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 	        target->thisID() == enactor->thisID() &&
 	        !canTarget(spellTargCaster))
 		return;
-	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->_next)
+	if (_effects) {
+		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -191,8 +191,8 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 
 void SpellStuff::implement(GameObject *enactor, ActiveItem *target) {
 	SpellTarget st = SpellTarget(target);
-	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->_next)
+	if (_effects) {
+		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -204,14 +204,14 @@ void SpellStuff::implement(GameObject *enactor, ActiveItem *target) {
 void SpellStuff::implement(GameObject *enactor, Location target) {
 	SpellTarget st = SpellTarget(target);
 	buildTargetList(enactor, st);
-	if (effects && targets) {
-		for (SpellTarget *t = targets; t; t = t->_next) {
+	if (_effects && _targets) {
+		for (SpellTarget *t = _targets; t; t = t->_next) {
 			if (safe() &&
 			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
 			        !canTarget(spellTargCaster))
 				continue;
-			for (ProtoEffect *pe = effects; pe; pe = pe->_next)
+			for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 				if (pe->applicable(*t))
 					pe->implement(enactor, t);
 		}
@@ -223,17 +223,17 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 //	determine target list for a spell
 
 void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
-	int16 radius = size;
+	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
 	show(caster, trg);
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
 	case eAreaProjectile:
 	case eAreaExchange:
 	case eAreaMissle:
-		targets = &trg;
+		_targets = &trg;
 		break;
 	case eAreaSquare: {
 		tVect = trg.getPoint();
@@ -367,10 +367,10 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 //	add a target to the target list
 
 void SpellStuff::addTarget(SpellTarget *trg) {
-	if (targets == nullptr)
-		targets = trg;
+	if (_targets == nullptr)
+		_targets = trg;
 	else {
-		SpellTarget *t = targets;
+		SpellTarget *t = _targets;
 		while (t->_next) t = t->_next;
 		t->_next = trg;
 	}
@@ -380,14 +380,14 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 //	clean the target list
 
 void SpellStuff::removeTargetList() {
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
 	case eAreaProjectile:
 	case eAreaExchange:
 	case eAreaMissle:
-		targets = nullptr;
+		_targets = nullptr;
 		break;
 	case eAreaWall:
 	case eAreaCone:
@@ -396,13 +396,13 @@ void SpellStuff::removeTargetList() {
 	case eAreaBall:
 	case eAreaStorm:
 	case eAreaSquare:
-		if (targets) delete targets;
-		targets = nullptr;
+		if (_targets) delete _targets;
+		_targets = nullptr;
 		break;
 	default:
 		error("bad spell");
 	}
-	assert(targets == nullptr);
+	assert(_targets == nullptr);
 }
 
 //-----------------------------------------------------------------------
@@ -418,9 +418,9 @@ void showTarg(const TilePoint &tp) {
 void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	if (!_debug) return;
 
-	int16 radius = size;
+	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 		showTarg(trg.getPoint());
 		break;
