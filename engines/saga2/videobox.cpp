@@ -41,25 +41,25 @@ CVideoBox::CVideoBox(const Rect16 &box,
                      uint16 ident,
                      AppFunc *cmd) : ModalWindow(box, ident, cmd) {
 	// set the size of the window panes
-	vidPanRects[0] =  Rect16(x, y, xBrushSize, yBrushSize);
-	vidPanRects[1] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
+	_vidPanRects[0] =  Rect16(x, y, xBrushSize, yBrushSize);
+	_vidPanRects[1] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
 
 	// options dialog window decorations
-	vidDec[0].set(vidPanRects[0], vidPan1ResID);
-	vidDec[1].set(vidPanRects[1], vidPan2ResID);
+	_vidDec[0].set(_vidPanRects[0], vidPan1ResID);
+	_vidDec[1].set(_vidPanRects[1], vidPan2ResID);
 
-	// null out the decRes pointer
-	decRes = nullptr;
+	// null out the _decRes pointer
+	_decRes = nullptr;
 
-	rInfo.result = -1;
-	rInfo.running = false;
+	_rInfo.result = -1;
+	_rInfo.running = false;
 }
 
 CVideoBox::~CVideoBox() {
 	// remove the resource handle
-	if (decRes)
-		resFile->disposeContext(decRes);
-	decRes = nullptr;
+	if (_decRes)
+		resFile->disposeContext(_decRes);
+	_decRes = nullptr;
 
 	// stop video if not done
 	g_vm->abortVideo();
@@ -130,22 +130,22 @@ void CVideoBox::init() {
 	assert(resFile);
 
 	// set the result info to nominal startup values
-	rInfo.result    = -1;
-	rInfo.running   = true;
+	_rInfo.result    = -1;
+	_rInfo.running   = true;
 
 	// init the resource context handle
-	decRes = resFile->newContext(MKTAG('V', 'I', 'D', 'O'),
+	_decRes = resFile->newContext(MKTAG('V', 'I', 'D', 'O'),
 	                             "Video border resources");
 
 
 	// get the decorations for this window
-	setDecorations(vidDec,
-	               ARRAYSIZE(vidDec),
-	               decRes,
+	setDecorations(_vidDec,
+	               ARRAYSIZE(_vidDec),
+	               _decRes,
 	               'V', 'B', 'D');
 
 	// attach the result info struct to this window
-	_userData = &rInfo;
+	_userData = &_rInfo;
 }
 
 int16 CVideoBox::openVidBox(char *fileName) {
@@ -159,13 +159,13 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	g_vm->startVideo(fileName, x + borderWidth, y + borderWidth);
 
 	// run this modal event loop
-	//EventLoop( rInfo.running, true );
-	rInfo.running = g_vm->checkVideo();
-	while (rInfo.running)
-		rInfo.running = g_vm->checkVideo();
+	//EventLoop( _rInfo.running, true );
+	_rInfo.running = g_vm->checkVideo();
+	while (_rInfo.running)
+		_rInfo.running = g_vm->checkVideo();
 
 	// get the result
-	return rInfo.result;
+	return _rInfo.result;
 }
 
 // this opens a video box for business

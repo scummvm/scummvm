@@ -60,20 +60,20 @@ private:
 public:
 
 	// resource handle
-	hResContext     *decRes;
+	hResContext     *_decRes;
 
 	// requester info struct
-	requestInfo     rInfo;
+	requestInfo     _rInfo;
 
 	// rect for the window
-	Rect16  vidBoxRect;
+	Rect16  _vidBoxRect;
 
 	// rect for the window panes
-	Rect16  vidPanRects[numBrushes];
+	Rect16  _vidPanRects[numBrushes];
 
 public:
 	// decoration declarations
-	WindowDecoration vidDec[numBrushes];
+	WindowDecoration _vidDec[numBrushes];
 
 
 protected:
