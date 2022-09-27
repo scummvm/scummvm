@@ -50,19 +50,23 @@ protected:
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
 	byte _val6, _val7;
-	int _val8;
+	int _val8, _val9;
+	int _advanceIndex;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
 	int _attackerVal;
 	int _totalExperience;
-
+	Common::String _advancingMonster;
+	bool _monstersResistSpells;
+	bool _monstersRegenerate;
 	enum Handicap {
 		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
 		HANDICAP_MONSTER = 2
 	};
 	Handicap _handicap = HANDICAP_EVEN;
 	enum Mode {
-		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS
+		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
+		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,		
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -70,6 +74,8 @@ protected:
 	 * Constructor
 	 */
 	Combat();
+
+	virtual void setMode(Mode newMode) = 0;
 
 	/**
 	 * Clear all the combat variables
@@ -125,6 +131,13 @@ protected:
 	void combatLoop();
 
 	/**
+	 * Get the monster index
+	 */
+	int getMonsterIndex() const {
+		return _monsterIndex;
+	}
+
+	/**
 	 * Select treasure for a defeated monster
 	 */
 	void selectTreasure();
@@ -134,6 +147,8 @@ protected:
 	 * Moves to the next round
 	 */
 	void nextRound();
+	void nextRound2();
+	void nextRound3();
 
 	/**
 	 * Update the _highestLevel to the remaining
@@ -146,6 +161,10 @@ protected:
 	void loop1();
 	void proc1();
 	void clearArrays();
+	bool moveMonsters();
+	void monsterAdvances();
+	bool monsterChanges();
+	void proc2();
 };
 
 } // namespace Game
