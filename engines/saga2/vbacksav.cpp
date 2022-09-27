@@ -56,14 +56,14 @@ gBackSave::~gBackSave() {
 
 void gBackSave::save(gDisplayPort &port) {
 	if (!_saved && _savedPixels._data) {
-		port.protoPage.readPixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
+		port._protoPage.readPixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
 		_saved = true;
 	}
 }
 
 void gBackSave::restore(gDisplayPort &port) {
 	if (_saved && _savedPixels._data) {
-		port.protoPage.writePixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
+		port._protoPage.writePixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
 		_saved = false;
 	}
 }
