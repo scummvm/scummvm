@@ -48,6 +48,7 @@ class PacoDecoder : public VideoDecoder {
 public:
 	PacoDecoder();
 	virtual ~PacoDecoder();
+	void close() override;
 
 	virtual bool loadStream(Common::SeekableReadStream *stream) override;
 
@@ -93,7 +94,6 @@ protected:
 
 		int _curFrame;
 		uint32 _frameCount;
-		uint32 _frameDelay;
 		uint16 _frameRate;
 
 		Common::List<Common::Rect> _dirtyRects;
@@ -102,6 +102,7 @@ protected:
 	class PacoAudioTrack : public AudioTrack {
 	public:
 		PacoAudioTrack(int samplingRate);
+		~PacoAudioTrack();
 		void queueSound(Common::SeekableReadStream *fileStream, uint32 chunkSize);
 
 	protected:

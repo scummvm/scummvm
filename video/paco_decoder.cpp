@@ -49,11 +49,21 @@ enum frameTypes {
 	EOC = 11 // - end of chunk marker
 };
 
-PacoDecoder::PacoDecoder() {
+PacoDecoder::PacoDecoder()
+	: _fileStream(nullptr), _videoTrack(nullptr), _audioTrack(nullptr) {
 }
 
 PacoDecoder::~PacoDecoder() {
 	close();
+}
+
+void PacoDecoder::PacoDecoder::close() {
+	Video::VideoDecoder::close();
+
+	delete _fileStream;
+	_fileStream = nullptr;
+	_videoTrack = nullptr;
+	_audioTrack = nullptr;
 }
 
 bool PacoDecoder::loadStream(Common::SeekableReadStream *stream) {
@@ -549,6 +559,7 @@ void PacoDecoder::PacoVideoTrack::handleFrame(Common::SeekableReadStream *fileSt
 
 	_dirtyRects.clear();
 	_dirtyRects.push_back(Common::Rect(x, y, x + bw, y + bh));
+	delete[] fdata;
 }
 
 void PacoDecoder::PacoVideoTrack::copyDirtyRectsToBuffer(uint8 *dst, uint pitch) {
@@ -566,6 +577,10 @@ PacoDecoder::PacoAudioTrack::PacoAudioTrack(int samplingRate)
 	_samplingRate = samplingRate;
 	byte audioFlags = Audio::FLAG_UNSIGNED;
 	_packetStream = Audio::makePacketizedRawStream(samplingRate, audioFlags);
+}
+
+PacoDecoder::PacoAudioTrack::~PacoAudioTrack() {
+	delete _packetStream;
 }
 
 void PacoDecoder::PacoAudioTrack::queueSound(Common::SeekableReadStream *fileStream, uint32 chunkSize) {
