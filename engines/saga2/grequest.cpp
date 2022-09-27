@@ -348,8 +348,8 @@ int16 GameDialogA(
 	rInfo.running = true;
 
 	win = new ModalRequestWindow(
-	          Rect16((drawPage->size.x - 200) / 2,
-	                 (drawPage->size.y - 100) / 3,
+	          Rect16((drawPage->_size.x - 200) / 2,
+	                 (drawPage->_size.y - 100) / 3,
 	                 200,
 	                 100),
 	          0,
@@ -401,8 +401,8 @@ int16 GameDisplayA(
 	rInfo.running = true;
 
 	win = new ModalDisplayWindow(
-	          Rect16((drawPage->size.x - 200) / 2,
-	                 (drawPage->size.y - 100) / 3,
+	          Rect16((drawPage->_size.x - 200) / 2,
+	                 (drawPage->_size.y - 100) / 3,
 	                 200,
 	                 100),
 	          0,

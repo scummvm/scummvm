@@ -220,7 +220,7 @@ public:
 
 //  sub class for enchantment container panels
 
-class  EnchantmentContainerView : public ContainerView {
+class EnchantmentContainerView : public ContainerView {
 public:
 	EnchantmentContainerView(gPanelList &list,
 	                         ContainerNode &nd,
