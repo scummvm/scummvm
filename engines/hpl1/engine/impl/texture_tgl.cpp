@@ -475,6 +475,9 @@ void TGLTexture::PostCreation(TGLenum aGLTarget) {
 //-----------------------------------------------------------------------
 
 TGLenum TGLTexture::GetGLWrap(eTextureWrap aMode) {
+	// FIXME: enable other modes when related bugs are fixed
+	return TGL_REPEAT;
+#if 0
 	switch (aMode) {
 	case eTextureWrap_Clamp:
 		return TGL_CLAMP;
@@ -489,6 +492,7 @@ TGLenum TGLTexture::GetGLWrap(eTextureWrap aMode) {
 	}
 
 	return TGL_REPEAT;
+#endif
 }
 
 } // namespace hpl
