@@ -59,7 +59,7 @@ void deleteSensorList(SensorList *s) {
 void newSensor(Sensor *s) {
 	g_vm->_sensorList.push_back(s);
 
-	s->checkCtr = sensorCheckRate;
+	s->_checkCtr = sensorCheckRate;
 }
 
 //----------------------------------------------------------------------
@@ -68,7 +68,7 @@ void newSensor(Sensor *s) {
 void newSensor(Sensor *s, int16 ctr) {
 	newSensor(s);
 
-	s->checkCtr = ctr;
+	s->_checkCtr = ctr;
 }
 
 //----------------------------------------------------------------------
@@ -148,8 +148,8 @@ void checkSensors() {
 			continue;
 		}
 
-		if (--sensor->checkCtr <= 0) {
-			assert(sensor->checkCtr == 0);
+		if (--sensor->_checkCtr <= 0) {
+			assert(sensor->_checkCtr == 0);
 
 			SenseInfo   info;
 			GameObject  *senseobj = sensor->getObject();
@@ -166,7 +166,7 @@ void checkSensors() {
 				sensor->getObject()->senseObject(sensor->thisID(), info.sensedObject->thisID());
 			}
 
-			sensor->checkCtr = sensorCheckRate;
+			sensor->_checkCtr = sensorCheckRate;
 		}
 	}
 
@@ -260,8 +260,8 @@ void saveSensors(Common::OutSaveFile *outS) {
 			continue;
 
 		debugC(3, kDebugSaveload, "Saving Sensor %d", getSensorID(*it));
-		out->writeSint16LE((*it)->checkCtr);
-		debugC(3, kDebugSaveload, "... ctr = %d", (*it)->checkCtr);
+		out->writeSint16LE((*it)->_checkCtr);
+		debugC(3, kDebugSaveload, "... ctr = %d", (*it)->_checkCtr);
 
 		writeSensor(*it, out);
 	}
@@ -338,7 +338,7 @@ SensorList::SensorList(Common::InSaveFile *in) {
 
 	assert(isObject(id) || isActor(id));
 
-	obj = GameObject::objectAddress(id);
+	_obj = GameObject::objectAddress(id);
 
 	newSensorList(this);
 
@@ -346,9 +346,9 @@ SensorList::SensorList(Common::InSaveFile *in) {
 }
 
 void SensorList::write(Common::MemoryWriteStreamDynamic *out) {
-	out->writeUint16LE(obj->thisID());
+	out->writeUint16LE(_obj->thisID());
 
-	debugC(4, kDebugSaveload, "... objID = %d", obj->thisID());
+	debugC(4, kDebugSaveload, "... objID = %d", _obj->thisID());
 }
 
 /* ===================================================================== *
@@ -361,21 +361,21 @@ Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 	assert(isObject(objID) || isActor(objID));
 
 	//  Restore the object pointer
-	obj = GameObject::objectAddress(objID);
+	_obj = GameObject::objectAddress(objID);
 
 	//  Restore the ID
-	id = in->readSint16LE();
+	_id = in->readSint16LE();
 
-	//  Restore the range
-	range = in->readSint16LE();
+	//  Restore the _range
+	_range = in->readSint16LE();
 
 	_active = true;
 
 	newSensor(this, ctr);
 
 	debugC(4, kDebugSaveload, "... objID = %d", objID);
-	debugC(4, kDebugSaveload, "... id = %d", id);
-	debugC(4, kDebugSaveload, "... range = %d", range);
+	debugC(4, kDebugSaveload, "... id = %d", _id);
+	debugC(4, kDebugSaveload, "... range = %d", _range);
 }
 
 //----------------------------------------------------------------------
@@ -383,17 +383,17 @@ Sensor::Sensor(Common::InSaveFile *in, int16 ctr) {
 
 void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the object's ID
-	out->writeUint16LE(obj->thisID());
+	out->writeUint16LE(_obj->thisID());
 
 	//  Store the sensor ID
-	out->writeSint16LE(id);
+	out->writeSint16LE(_id);
 
-	//  Store the range
-	out->writeSint16LE(range);
+	//  Store the _range
+	out->writeSint16LE(_range);
 
-	debugC(4, kDebugSaveload, "... objID = %d", obj->thisID());
-	debugC(4, kDebugSaveload, "... id = %d", id);
-	debugC(4, kDebugSaveload, "... range = %d", range);
+	debugC(4, kDebugSaveload, "... objID = %d", _obj->thisID());
+	debugC(4, kDebugSaveload, "... id = %d", _id);
+	debugC(4, kDebugSaveload, "... _range = %d", _range);
 }
 
 /* ===================================================================== *
@@ -442,7 +442,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 				continue;
 		}
 
-		//  Skip if out of range
+		//  Skip if out of _range
 		if (getRange() != 0
 		        &&  !getObject()->inRange(protag->getLocation(), getRange()))
 			continue;
@@ -502,7 +502,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 			if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
 				continue;
 		}
-		//  Skip if object is out of range
+		//  Skip if object is out of _range
 		if (getRange() != 0
 		        &&  !getObject()->inRange(objToTest->getLocation(), getRange()))
 			continue;
@@ -541,7 +541,7 @@ SpecificObjectSensor::SpecificObjectSensor(Common::InSaveFile *in, int16 ctr) :
 	debugC(3, kDebugSaveload, "Loading SpecificObjectSensor");
 
 	//  Restore the sought object's ID
-	soughtObjID = in->readUint16LE();
+	_soughtObjID = in->readUint16LE();
 }
 
 void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
@@ -551,7 +551,7 @@ void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	ObjectSensor::write(out);
 
 	//  Store the sought object's ID
-	out->writeUint16LE(soughtObjID);
+	out->writeUint16LE(_soughtObjID);
 }
 
 //----------------------------------------------------------------------
@@ -565,10 +565,10 @@ int16 SpecificObjectSensor::getType() {
 //	Determine if the object can sense what it's looking for
 
 bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
-	assert(soughtObjID != Nothing);
-	assert(isObject(soughtObjID) || isActor(soughtObjID));
+	assert(_soughtObjID != Nothing);
+	assert(isObject(_soughtObjID) || isActor(_soughtObjID));
 
-	GameObject      *soughtObject = GameObject::objectAddress(soughtObjID);
+	GameObject      *soughtObject = GameObject::objectAddress(_soughtObjID);
 	bool            objIsActor = isActor(getObject());
 
 	if (senseFlags & (1 << actorBlind))
@@ -604,10 +604,10 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 bool SpecificObjectSensor::isObjectSought(GameObject *obj_) {
 	assert(isObject(obj_) || isActor(obj_));
-	assert(soughtObjID != Nothing);
-	assert(isObject(soughtObjID) || isActor(soughtObjID));
+	assert(_soughtObjID != Nothing);
+	assert(isObject(_soughtObjID) || isActor(_soughtObjID));
 
-	return obj_ == GameObject::objectAddress(soughtObjID);
+	return obj_ == GameObject::objectAddress(_soughtObjID);
 }
 
 /* ===================================================================== *
@@ -619,7 +619,7 @@ ObjectPropertySensor::ObjectPropertySensor(Common::InSaveFile *in, int16 ctr) :
 	debugC(3, kDebugSaveload, "Loading ObjectPropertySensor");
 
 	//  Restore the object property ID
-	objectProperty = in->readSint16LE();;
+	_objectProperty = in->readSint16LE();;
 }
 
 void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
@@ -629,7 +629,7 @@ void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 	ObjectSensor::write(out);
 
 	//  Store the object property's ID
-	out->writeSint16LE(objectProperty);
+	out->writeSint16LE(_objectProperty);
 }
 
 //----------------------------------------------------------------------
@@ -645,7 +645,7 @@ int16 ObjectPropertySensor::getType() {
 bool ObjectPropertySensor::isObjectSought(GameObject *obj_) {
 	assert(isObject(obj_) || isActor(obj_));
 
-	return obj_->hasProperty(*g_vm->_properties->getObjProp(objectProperty));
+	return obj_->hasProperty(*g_vm->_properties->getObjProp(_objectProperty));
 }
 
 /* ===================================================================== *
@@ -673,7 +673,7 @@ SpecificActorSensor::SpecificActorSensor(Common::InSaveFile *in, int16 ctr) : Ac
 	assert(isActor(actorID));
 
 	//  Restore the sought actor pointer
-	soughtActor = (Actor *)GameObject::objectAddress(actorID);
+	_soughtActor = (Actor *)GameObject::objectAddress(actorID);
 }
 
 void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
@@ -683,7 +683,7 @@ void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	ActorSensor::write(out);
 
 	//  Store the sought actor's ID
-	out->writeUint16LE(soughtActor->thisID());
+	out->writeUint16LE(_soughtActor->thisID());
 }
 
 //----------------------------------------------------------------------
@@ -697,7 +697,7 @@ int16 SpecificActorSensor::getType() {
 //	Determine if the object can sense what it's looking for
 
 bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
-	assert(isActor(soughtActor));
+	assert(isActor(_soughtActor));
 	bool        objIsActor = isActor(getObject());
 
 	if (senseFlags & (1 << actorBlind))
@@ -708,21 +708,21 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	//  is invisible.
 	if (!objIsActor
 	        ||  getObject() != getCenterActor()
-	        ||  !isPlayerActor(soughtActor)) {
-		if (!(senseFlags & actorSeeInvis) && soughtActor->hasEffect(actorInvisible))
+	        ||  !isPlayerActor(_soughtActor)) {
+		if (!(senseFlags & actorSeeInvis) && _soughtActor->hasEffect(actorInvisible))
 			return false;
 	}
 
 	if (getRange() != 0
-	        &&  !getObject()->inRange(soughtActor->getLocation(), getRange()))
+	        &&  !getObject()->inRange(_soughtActor->getLocation(), getRange()))
 		return false;
 
 	if (objIsActor
-	        && (!underSameRoof(getObject(), soughtActor)
-	            ||  !lineOfSight(getObject(), soughtActor, terrainTransparent)))
+	        && (!underSameRoof(getObject(), _soughtActor)
+	            ||  !lineOfSight(getObject(), _soughtActor, terrainTransparent)))
 		return false;
 
-	info.sensedObject = soughtActor;
+	info.sensedObject = _soughtActor;
 	return true;
 }
 
@@ -730,7 +730,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 //	Determine if an actor meets the search criteria
 
 bool SpecificActorSensor::isActorSought(Actor *a) {
-	return a == soughtActor;
+	return a == _soughtActor;
 }
 
 /* ===================================================================== *
@@ -740,7 +740,7 @@ bool SpecificActorSensor::isActorSought(Actor *a) {
 ActorPropertySensor::ActorPropertySensor(Common::InSaveFile *in, int16 ctr) : ActorSensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading ActorPropertySensor");
 	//  Restore the actor property's ID
-	actorProperty = in->readSint16LE();
+	_actorProperty = in->readSint16LE();
 }
 
 void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
@@ -750,7 +750,7 @@ void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 	ActorSensor::write(out);
 
 	//  Store the actor property's ID
-	out->writeSint16LE(actorProperty);
+	out->writeSint16LE(_actorProperty);
 }
 
 //----------------------------------------------------------------------
@@ -764,7 +764,7 @@ int16 ActorPropertySensor::getType() {
 //	Determine if an actor meets the search criteria
 
 bool ActorPropertySensor::isActorSought(Actor *a) {
-	return a->hasProperty(*g_vm->_properties->getActorProp(actorProperty));
+	return a->hasProperty(*g_vm->_properties->getActorProp(_actorProperty));
 }
 
 /* ===================================================================== *
@@ -780,13 +780,13 @@ EventSensor::EventSensor(
     int16           rng,
     int16           type) :
 	Sensor(o, sensorID, rng),
-	eventType(type) {
+	_eventType(type) {
 }
 
 EventSensor::EventSensor(Common::InSaveFile *in, int16 ctr) : Sensor(in, ctr) {
 	debugC(3, kDebugSaveload, "Loading EventSensor");
 	//  Restore the event type
-	eventType = in->readSint16LE();
+	_eventType = in->readSint16LE();
 }
 
 //----------------------------------------------------------------------
@@ -799,7 +799,7 @@ void EventSensor::write(Common::MemoryWriteStreamDynamic *out) {
 	Sensor::write(out);
 
 	//  Store the event type
-	out->writeSint16LE(eventType);
+	out->writeSint16LE(_eventType);
 }
 
 //----------------------------------------------------------------------
@@ -820,7 +820,7 @@ bool EventSensor::check(SenseInfo &, uint32) {
 //	Evaluate an event to determine if the object is waiting for it
 
 bool EventSensor::evaluateEvent(const GameEvent &event) {
-	return      event.type == eventType
+	return      event.type == _eventType
 	            &&  getObject()->world() == event.directObject->world()
 	            && (getRange() != 0
 	                ?   getObject()->inRange(
