@@ -39,8 +39,8 @@ namespace Saga2 {
 
 #define IMMED_WORD(w)   ((w = *pc++),(w |= (*pc++)<<8)); \
 	debugC(3, kDebugScripts, "IMMED_WORD(%d 0x%04x)", w, w)
-#define BRANCH(w)       pc = codeSeg + (w); \
-	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", long(pc - codeSeg), long(pc - codeSeg))
+#define BRANCH(w)       pc = _codeSeg + (w); \
+	debugC(3, kDebugScripts, "BRANCH(%ld 0x%04lx)", long(pc - _codeSeg), long(pc - _codeSeg))
 
 const uint32        sagaID      = MKTAG('S', 'A', 'G', 'A'),
                     dataSegID   = MKTAG('_', '_', 'D', 'A'),
@@ -74,7 +74,7 @@ extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
 
 void script_error(const char *msg) {
-	thisThread->flags |= Thread::aborted;
+	thisThread->_flags |= Thread::aborted;
 	WriteStatusF(0, msg);
 }
 
@@ -235,9 +235,9 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 
 	case addr_near:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: near[%d] = %d", offset, th->codeSeg[offset]);
+		debugC(3, kDebugScripts, "byteAddress: near[%d] = %d", offset, th->_codeSeg[offset]);
 		*pcPtr = pc;
-		return th->codeSeg + offset;
+		return th->_codeSeg + offset;
 
 	case addr_far:
 		IMMED_WORD(seg);
@@ -266,19 +266,19 @@ uint8 *byteAddress(Thread *th, uint8 **pcPtr) {
 
 	case addr_stack:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: stack[%d] = %d", offset, *(th->stackBase + th->framePtr + (int16)offset));
+		debugC(3, kDebugScripts, "byteAddress: stack[%d] = %d", offset, *(th->_stackBase + th->_framePtr + (int16)offset));
 		*pcPtr = pc;
-		return th->stackBase + th->framePtr + (int16)offset;
+		return th->_stackBase + th->_framePtr + (int16)offset;
 
 	case addr_thread:
 		IMMED_WORD(offset);
-		debugC(3, kDebugScripts, "byteAddress: thread[%d] = %d", offset, *((uint8 *)&th->threadArgs + offset));
+		debugC(3, kDebugScripts, "byteAddress: thread[%d] = %d", offset, *((uint8 *)&th->_threadArgs + offset));
 		*pcPtr = pc;
-		return (uint8 *)&th->threadArgs + offset;
+		return (uint8 *)&th->_threadArgs + offset;
 
 	case addr_this:
 		IMMED_WORD(offset);
-		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
+		arg = (uint16 *)(th->_stackBase + th->_framePtr + 8);
 		*pcPtr = pc;
 		if (arg[0] == dataSegIndex) {
 			debugC(3, kDebugScripts, "byteAddress: thisD[%d:%d] = %d", arg[1], offset, dataSegment[arg[1] + offset]);
@@ -350,7 +350,7 @@ uint8 *objectAddress(
 
 	case addr_this:
 		IMMED_WORD(offset);
-		arg = (uint16 *)(th->stackBase + th->framePtr + 8);
+		arg = (uint16 *)(th->_stackBase + th->_framePtr + 8);
 		seg = arg[0];
 		index = arg[1];
 		if (seg == dataSegIndex) {
@@ -410,8 +410,8 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: near[%d] = %d", offset, (*(th->codeSeg + (offset >> 3)) & *mask) != 0);
-		return th->codeSeg + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: near[%d] = %d", offset, (*(th->_codeSeg + (offset >> 3)) & *mask) != 0);
+		return th->_codeSeg + (offset >> 3);
 
 	case addr_far:
 		IMMED_WORD(seg);
@@ -435,15 +435,15 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: stack[%d] = %d", offset, (*(th->stackBase + th->framePtr + (offset >>3)) & *mask) != 0);
-		return th->stackBase + th->framePtr + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: stack[%d] = %d", offset, (*(th->_stackBase + th->_framePtr + (offset >>3)) & *mask) != 0);
+		return th->_stackBase + th->_framePtr + (offset >> 3);
 
 	case addr_thread:
 		IMMED_WORD(offset);
 		*pcPtr = pc;
 		*mask = (1 << (offset & 7));
-		debugC(3, kDebugScripts, "bitAddress: thread[%d] = %d", offset, (*((uint8 *)&th->threadArgs + (offset >> 3)) & *mask) != 0);
-		return (uint8 *)&th->threadArgs + (offset >> 3);
+		debugC(3, kDebugScripts, "bitAddress: thread[%d] = %d", offset, (*((uint8 *)&th->_threadArgs + (offset >> 3)) & *mask) != 0);
+		return (uint8 *)&th->_threadArgs + (offset >> 3);
 
 	case addr_this:
 		error("Addressing relative to 'this' not supported just yet.\n");
@@ -455,12 +455,12 @@ uint8 *bitAddress(Thread *th, uint8 **pcPtr, int16 *mask) {
 //  Returns the address of a string
 
 uint8 *Thread::strAddress(int strNum) {
-	uint16 seg    = READ_LE_INT16(codeSeg + 2);
-	uint16 offset = READ_LE_INT16(codeSeg + 4);
+	uint16 seg    = READ_LE_INT16(_codeSeg + 2);
+	uint16 offset = READ_LE_INT16(_codeSeg + 4);
 	uint8 *strSeg = segmentAddress(seg, offset);
 
 	assert(strNum >= 0);
-	assert(codeSeg);
+	assert(_codeSeg);
 	assert(strSeg);
 
 	return strSeg + (uint16)READ_LE_INT16(strSeg + 2 * strNum);
@@ -544,8 +544,8 @@ const char *objectName(int16 segNum, uint16 segOff) {
 
 #define STACK_PRINT_DEPTH 30
 
-static void print_stack(int16 *stackBase, int16 *stack) {
-	int16 *end = (int16 *)((byte *)stackBase + kStackSize - initialStackFrameSize);
+static void print_stack(int16 *_stackBase, int16 *stack) {
+	int16 *end = (int16 *)((byte *)_stackBase + kStackSize - initialStackFrameSize);
 	int size = end - stack;
 
 	if (size > STACK_PRINT_DEPTH)
@@ -560,27 +560,27 @@ static void print_stack(int16 *stackBase, int16 *stack) {
 	debugC(3, kDebugScripts, "]");
 }
 
-#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - codeSeg - 1), (pc - codeSeg - 1), #x)
-#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, *stack)
-#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *stack)
-#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - codeSeg - 1), long(pc - codeSeg - 1), #x, (void *)addr, *addr)
+#define D_OP(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s", (pc - _codeSeg - 1), (pc - _codeSeg - 1), #x)
+#define D_OP1(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, *stack)
+#define D_OP2(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] = %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *stack)
+#define D_OP3(x) debugC(1, kDebugScripts, "[%04ld 0x%04lx]: %s [%p] %d", long(pc - _codeSeg - 1), long(pc - _codeSeg - 1), #x, (void *)addr, *addr)
 
 bool Thread::interpret() {
 	uint8               *pc,
 	                    *addr;
-	int16               *stack = (int16 *)stackPtr;
+	int16               *stack = (int16 *)_stackPtr;
 	int16               instruction_count;
 	uint8               op;
 	int16               w,
 	                    n;
 	C_Call              *cfunc;
 
-	pc = (codeSeg) + programCounter.offset;
+	pc = (_codeSeg) + _programCounter.offset;
 
 	thisThread = this;                          // set current thread address
 
 	for (instruction_count = 0; instruction_count < maxTimeSlice; instruction_count++) {
-		print_stack((int16 *)stackBase, stack);
+		print_stack((int16 *)_stackBase, stack);
 
 		switch (op = *pc++) {
 		case op_dup:
@@ -678,8 +678,8 @@ bool Thread::interpret() {
 		case op_enter:
 			D_OP(op_enter);
 			print_script_name(pc - 1);
-			*--stack = framePtr;            // save old frame ptr on stack
-			framePtr = (uint8 *)stack - stackBase;  // new frame pointer
+			*--stack = _framePtr;            // save old frame ptr on stack
+			_framePtr = (uint8 *)stack - _stackBase;  // new frame pointer
 			IMMED_WORD(w);                  // pick up word after address
 			stack -= w / 2;                 // make room for the locals!
 			break;
@@ -688,33 +688,33 @@ bool Thread::interpret() {
 
 		case op_return:                     // return with value
 			D_OP(op_return);
-			returnVal = *stack++;
+			_returnVal = *stack++;
 			// fall through
 
 		case op_return_v:                   // return with void
 			D_OP(op_return_v);
-			stack = (int16 *)(stackBase + framePtr);    // pop autos
-			framePtr = *stack++;        // restore frame pointer
+			stack = (int16 *)(_stackBase + _framePtr);    // pop autos
+			_framePtr = *stack++;        // restore frame pointer
 
-			if (stack >= (int16 *)(stackBase + stackSize - initialStackFrameSize)) {
+			if (stack >= (int16 *)(_stackBase + _stackSize - initialStackFrameSize)) {
 				//  Halt the thread here, wait for death
-				programCounter.offset = (pc - (codeSeg));
-				stackPtr = (uint8 *)stack;
-				flags |= finished;
+				_programCounter.offset = (pc - (_codeSeg));
+				_stackPtr = (uint8 *)stack;
+				_flags |= finished;
 				return true;
 			} else {
-				programCounter.segment = *stack++;
-				programCounter.offset = *stack++;
+				_programCounter.segment = *stack++;
+				_programCounter.offset = *stack++;
 
-				//RUnlockHandle((RHANDLE)codeSeg);
-				codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
-				pc = (codeSeg) + programCounter.offset;
+				//RUnlockHandle((RHANDLE)_codeSeg);
+				_codeSeg = scriptRes->loadIndexResource(_programCounter.segment, "saga code segment");
+				pc = (_codeSeg) + _programCounter.offset;
 
 				n = *stack++;               // get argument count from call
 				stack += n;                 // pop that many args
 
 				if (op == op_return)        // if not void
-					*--stack = returnVal;// push return value
+					*--stack = _returnVal;// push return value
 			}
 			break;
 
@@ -723,17 +723,17 @@ bool Thread::interpret() {
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 2 - codeSeg);
+			_programCounter.offset = (pc + 2 - _codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
-			*--stack = programCounter.offset;
-			*--stack = programCounter.segment;
+			*--stack = _programCounter.offset;
+			*--stack = _programCounter.segment;
 
 			IMMED_WORD(w);               // pick up segment offset
-			programCounter.offset = w;      // store into pc
+			_programCounter.offset = w;      // store into pc
 
-			pc = codeSeg + w;              // calculate PC address
+			pc = _codeSeg + w;              // calculate PC address
 
 			print_script_name(pc);
 			break;
@@ -743,21 +743,21 @@ bool Thread::interpret() {
 
 			n = *pc++;                      // get argument count
 
-			programCounter.offset = (pc + 4 - codeSeg);
+			_programCounter.offset = (pc + 4 - _codeSeg);
 
 			*--stack = n;                   // push number of args (16 bits)
 			// push the program counter
-			*--stack = programCounter.offset;
-			*--stack = programCounter.segment;
+			*--stack = _programCounter.offset;
+			*--stack = _programCounter.segment;
 
 			IMMED_WORD(w);               // pick up segment number
-			programCounter.segment = w;     // set current segment
-			//RUnlockHandle((RHANDLE)codeSeg);
-			codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
+			_programCounter.segment = w;     // set current segment
+			//RUnlockHandle((RHANDLE)_codeSeg);
+			_codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 			IMMED_WORD(w);               // pick up segment offset
-			programCounter.offset = w;      // store into pc
+			_programCounter.offset = w;      // store into pc
 
-			pc = codeSeg + w;              // calculate PC address
+			pc = _codeSeg + w;              // calculate PC address
 			print_script_name(pc);
 			break;
 
@@ -774,18 +774,18 @@ bool Thread::interpret() {
 				error("Invalid function number");
 
 			cfunc = globalCFuncs.table[w];
-			argCount = n;
-			returnVal = cfunc(stack);        // call the function
+			_argCount = n;
+			_returnVal = cfunc(stack);        // call the function
 
 			stack += n;                     // pop args of of the stack
 
 			if (op == op_ccall) {           // push the return value
-				*--stack = returnVal;       // onto the stack
-				flags |= expectResult;      // script expecting result
-			} else flags &= ~expectResult;  // script not expecting result
+				*--stack = _returnVal;       // onto the stack
+				_flags |= expectResult;      // script expecting result
+			} else _flags &= ~expectResult;  // script not expecting result
 
 			//  if the thread is asleep, then no more instructions
-			if (flags & asleep)
+			if (_flags & asleep)
 				instruction_count = maxTimeSlice;   // break out of loop!
 
 			break;
@@ -829,7 +829,7 @@ bool Thread::interpret() {
 				if (vtable == nullptr) {
 					//  Do nothing...
 				} else if (vtableEntry[0] != 0xffff) { // It's a SAGA func
-					programCounter.offset = (pc - codeSeg);
+					_programCounter.offset = (pc - _codeSeg);
 
 					//  Push the address of the object
 					*--stack = offset;
@@ -838,28 +838,28 @@ bool Thread::interpret() {
 					*--stack = n + 2;
 
 					// push the program counter
-					*--stack = programCounter.offset;
-					*--stack = programCounter.segment;
+					*--stack = _programCounter.offset;
+					*--stack = _programCounter.segment;
 
 					//  Get the segment of the member function, and
 					//  determine it's real address (save segment number
 					//  into thread).
 					w = vtableEntry[0];
-					programCounter.segment = w;
-					//RUnlockHandle((RHANDLE)codeSeg);
-					codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
+					_programCounter.segment = w;
+					//RUnlockHandle((RHANDLE)_codeSeg);
+					_codeSeg = scriptRes->loadIndexResource(w, "saga code segment");
 
 					// store pc-offset into pc
-					programCounter.offset = vtableEntry[1];
+					_programCounter.offset = vtableEntry[1];
 
 					// calculate PC address
-					pc = (codeSeg) + programCounter.offset;
+					pc = (_codeSeg) + _programCounter.offset;
 					print_script_name(pc, objectName(seg, offset));
 
 					break;
 				} else if (vtableEntry[1] != 0xffff) { // It's a C func
 					//  Save the ID of the invoked object
-					ObjectID    saveID = threadArgs.invokedObject;
+					ObjectID    saveID = _threadArgs.invokedObject;
 
 					//  Get the function number
 					w = vtableEntry[1];
@@ -867,16 +867,16 @@ bool Thread::interpret() {
 						error("Invalid member function number");
 
 					//  Set up thread-specific vars
-					thisObject = addr;
-					argCount = n;
-					threadArgs.invokedObject = offset;
+					_thisObject = addr;
+					_argCount = n;
+					_threadArgs.invokedObject = offset;
 
 					//  Get address of function and call it.
 					cfunc = callTab->table[w];
-					returnVal = cfunc(stack);        // call the function
+					_returnVal = cfunc(stack);        // call the function
 
 					//  Restore object ID from thread args
-					threadArgs.invokedObject = saveID;
+					_threadArgs.invokedObject = saveID;
 
 					//  Pop args off of the stack
 					stack += n;
@@ -884,12 +884,12 @@ bool Thread::interpret() {
 					//  Push the return value onto the stack if it's
 					//  not a 'void' call.
 					if (op == op_call_member) {
-						*--stack = returnVal;   // onto the stack
-						flags |= expectResult;  // script expecting result
-					} else flags &= ~expectResult; // script not expecting result
+						*--stack = _returnVal;   // onto the stack
+						_flags |= expectResult;  // script expecting result
+					} else _flags &= ~expectResult; // script not expecting result
 
 					//  if the thread is asleep, then break interpret loop
-					if (flags & asleep) instruction_count = maxTimeSlice;
+					if (_flags & asleep) instruction_count = maxTimeSlice;
 					break;
 				}
 				// else it's a NULL function (i.e. pure virtual)
@@ -1157,8 +1157,8 @@ bool Thread::interpret() {
 		}
 	}
 
-	programCounter.offset = (pc - (codeSeg));
-	stackPtr = (uint8 *)stack;
+	_programCounter.offset = (pc - (_codeSeg));
+	_stackPtr = (uint8 *)stack;
 
 	return false;
 }
@@ -1428,24 +1428,24 @@ Thread *getThreadAddress(ThreadID id) {
 //	Thread constructor
 
 Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
-	codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment");
+	_codeSeg = scriptRes->loadIndexResource(segNum, "saga code segment");
 
 	//  initialize the thread
-	stackSize = kStackSize;
-	flags = 0;
-	returnVal = 0;
-	programCounter.segment = segNum;
-	programCounter.offset = segOff;
-	threadArgs = args;
-	stackBase = (byte *)malloc(stackSize);
-	stackPtr = stackBase + stackSize - initialStackFrameSize;
-	((uint16 *)stackPtr)[0] = 0;          // 0 args
-	((uint16 *)stackPtr)[1] = 0;          // dummy return address
-	((uint16 *)stackPtr)[2] = 0;          // dummy return address
-	framePtr = stackSize;
+	_stackSize = kStackSize;
+	_flags = 0;
+	_returnVal = 0;
+	_programCounter.segment = segNum;
+	_programCounter.offset = segOff;
+	_threadArgs = args;
+	_stackBase = (byte *)malloc(_stackSize);
+	_stackPtr = _stackBase + _stackSize - initialStackFrameSize;
+	((uint16 *)_stackPtr)[0] = 0;          // 0 args
+	((uint16 *)_stackPtr)[1] = 0;          // dummy return address
+	((uint16 *)_stackPtr)[2] = 0;          // dummy return address
+	_framePtr = _stackSize;
 	_valid = true;
 
-	if ((codeSeg)[programCounter.offset] != op_enter) {
+	if ((_codeSeg)[_programCounter.offset] != op_enter) {
 		//warning("SAGA failure: Invalid script entry point (export=%d) [segment=%d:%d]\n", lastExport, segNum, segOff);
 		_valid = false;
 	}
@@ -1456,30 +1456,30 @@ Thread::Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args) {
 Thread::Thread(Common::SeekableReadStream *stream, ThreadID id) {
 	int16   stackOffset;
 
-	programCounter.segment = stream->readUint16LE();
-	programCounter.offset = stream->readUint16LE();
+	_programCounter.segment = stream->readUint16LE();
+	_programCounter.offset = stream->readUint16LE();
 
-	stackSize = stream->readSint16LE();
-	flags = stream->readSint16LE();
-	framePtr = stream->readSint16LE();
-	returnVal = stream->readSint16LE();
+	_stackSize = stream->readSint16LE();
+	_flags = stream->readSint16LE();
+	_framePtr = stream->readSint16LE();
+	_returnVal = stream->readSint16LE();
 
-	waitAlarm.read(stream);
+	_waitAlarm.read(stream);
 
 	stackOffset = stream->readSint16LE();
 
-	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
-	debugC(4, kDebugSaveload, "...... flags = %d", flags);
-	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
-	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... _stackSize = %d", _stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", _flags);
+	debugC(4, kDebugSaveload, "...... _framePtr = %d", _framePtr);
+	debugC(4, kDebugSaveload, "...... _returnVal = %d", _returnVal);
 	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
 
-	codeSeg = scriptRes->loadIndexResource(programCounter.segment, "saga code segment");
+	_codeSeg = scriptRes->loadIndexResource(_programCounter.segment, "saga code segment");
 
-	stackBase = (byte *)malloc(stackSize);
-	stackPtr = stackBase + stackSize - stackOffset;
+	_stackBase = (byte *)malloc(_stackSize);
+	_stackPtr = _stackBase + _stackSize - stackOffset;
 
-	stream->read(stackPtr, stackOffset);
+	stream->read(_stackPtr, stackOffset);
 
 	newThread(this, id);
 }
@@ -1492,10 +1492,10 @@ Thread::~Thread() {
 	clearExtended();
 
 	//  Free the thread's code segment
-	//RUnlockHandle((RHANDLE)codeSeg);
+	//RUnlockHandle((RHANDLE)_codeSeg);
 
 	//  Deallocate the thread stack
-	free(stackBase);
+	free(_stackBase);
 
 	deleteThread(this);
 }
@@ -1505,39 +1505,39 @@ Thread::~Thread() {
 //	buffer
 
 int32 Thread::archiveSize() {
-	return      sizeof(programCounter)
-	            +   sizeof(stackSize)
-	            +   sizeof(flags)
-	            +   sizeof(framePtr)
-	            +   sizeof(returnVal)
-	            +   sizeof(waitAlarm)
+	return      sizeof(_programCounter)
+	            +   sizeof(_stackSize)
+	            +   sizeof(_flags)
+	            +   sizeof(_framePtr)
+	            +   sizeof(_returnVal)
+	            +   sizeof(_waitAlarm)
 	            +   sizeof(int16)                //  stack offset
-	            + (stackBase + stackSize) - stackPtr;
+	            + (_stackBase + _stackSize) - _stackPtr;
 }
 
 void Thread::write(Common::MemoryWriteStreamDynamic *out) {
 	int16   stackOffset;
 
-	out->writeUint16LE(programCounter.segment);
-	out->writeUint16LE(programCounter.offset);
+	out->writeUint16LE(_programCounter.segment);
+	out->writeUint16LE(_programCounter.offset);
 
-	out->writeSint16LE(stackSize);
-	out->writeSint16LE(flags);
-	out->writeSint16LE(framePtr);
-	out->writeSint16LE(returnVal);
+	out->writeSint16LE(_stackSize);
+	out->writeSint16LE(_flags);
+	out->writeSint16LE(_framePtr);
+	out->writeSint16LE(_returnVal);
 
-	waitAlarm.write(out);
+	_waitAlarm.write(out);
 
 	warning("STUB: Thread::write: Pointer arithmetic");
-	stackOffset = (stackBase + stackSize) - stackPtr;
+	stackOffset = (_stackBase + _stackSize) - _stackPtr;
 	out->writeSint16LE(stackOffset);
 
-	out->write(stackPtr, stackOffset);
+	out->write(_stackPtr, stackOffset);
 
-	debugC(4, kDebugSaveload, "...... stackSize = %d", stackSize);
-	debugC(4, kDebugSaveload, "...... flags = %d", flags);
-	debugC(4, kDebugSaveload, "...... framePtr = %d", framePtr);
-	debugC(4, kDebugSaveload, "...... returnVal = %d", returnVal);
+	debugC(4, kDebugSaveload, "...... _stackSize = %d", _stackSize);
+	debugC(4, kDebugSaveload, "...... flags = %d", _flags);
+	debugC(4, kDebugSaveload, "...... _framePtr = %d", _framePtr);
+	debugC(4, kDebugSaveload, "...... _returnVal = %d", _returnVal);
 	debugC(4, kDebugSaveload, "...... stackOffset = %d", stackOffset);
 }
 
@@ -1556,8 +1556,8 @@ void Thread::dispatch() {
 	                    numWaitOther = 0;
 
 	for (th = threadList.first(); th; th = threadList.next(th)) {
-		if (th->flags & waiting) {
-			switch (th->waitType) {
+		if (th->_flags & waiting) {
+			switch (th->_waitType) {
 
 			case waitDelay:
 				numWaitDelay++;
@@ -1581,32 +1581,32 @@ void Thread::dispatch() {
 	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
 
-		if (th->flags & (finished | aborted)) {
+		if (th->_flags & (finished | aborted)) {
 			delete th;
 			continue;
 		}
 
-		if (th->flags & waiting) {
-			switch (th->waitType) {
+		if (th->_flags & waiting) {
+			switch (th->_waitType) {
 
 			case waitDelay:
 
 				//  Wake up the thread!
 
-				if (th->waitAlarm.check())
-					th->flags &= ~waiting;
+				if (th->_waitAlarm.check())
+					th->_flags &= ~waiting;
 				break;
 
 			case waitFrameDelay:
 
-				if (th->waitFrameAlarm.check())
-					th->flags &= ~waiting;
+				if (th->_waitFrameAlarm.check())
+					th->_flags &= ~waiting;
 				break;
 
 			case waitTagSemaphore:
-				if (th->waitParam->isExclusive() == false) {
-					th->flags &= ~waiting;
-					th->waitParam->setExclusive(true);
+				if (th->_waitParam->isExclusive() == false) {
+					th->_flags &= ~waiting;
+					th->_waitParam->setExclusive(true);
 				}
 				break;
 			default:
@@ -1615,12 +1615,12 @@ void Thread::dispatch() {
 		}
 
 		do {
-			if (th->flags & (waiting | finished | aborted))
+			if (th->_flags & (waiting | finished | aborted))
 				break;
 
 			if (th->interpret())
 				goto break_thread_loop;
-		} while (th->flags & synchronous);
+		} while (th->_flags & synchronous);
 	}
 break_thread_loop:
 	;
@@ -1641,9 +1641,9 @@ scriptResult Thread::run() {
 
 	while (i--) {
 		//  If script stopped, then return
-		if (flags & (waiting | finished | aborted)) {
-			if (flags & finished)   return scriptResultFinished;
-			if (flags & waiting)    return scriptResultAsync;
+		if (_flags & (waiting | finished | aborted)) {
+			if (_flags & finished)   return scriptResultFinished;
+			if (_flags & waiting)    return scriptResultAsync;
 			return scriptResultAborted;
 			// can't ever fall thru here...
 		}
@@ -1658,8 +1658,8 @@ scriptResult Thread::run() {
 //	Convert to extended thread
 
 void Thread::setExtended() {
-	if (!(flags & extended)) {
-		flags |= extended;
+	if (!(_flags & extended)) {
+		_flags |= extended;
 		extendedThreadLevel++;
 	}
 }
@@ -1668,8 +1668,8 @@ void Thread::setExtended() {
 //	Convert back to regular thread
 
 void Thread::clearExtended() {
-	if (flags & extended) {
-		flags &= ~extended;
+	if (_flags & extended) {
+		_flags &= ~extended;
 		extendedThreadLevel--;
 	}
 }
@@ -1785,11 +1785,11 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 		debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
 		return scriptResultNoScript;
 	}
-	print_script_name((th->codeSeg) + th->programCounter.offset, objectName(segNum, segOff));
+	print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(segNum, segOff));
 
 	//  Run the thread to completion
 	result = th->run();
-	args.returnVal = th->returnVal;
+	args.returnVal = th->_returnVal;
 
 	//  If the thread is not still running, then delete it
 	if (result != scriptResultAsync) delete th;
@@ -1864,16 +1864,16 @@ scriptResult runMethod(
 			debugC(3, kDebugScripts, "Scripts: %d is not valid", lastExport);
 			return scriptResultNoScript;
 		}
-		print_script_name((th->codeSeg) + th->programCounter.offset, objectName(bType, index));
+		print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(bType, index));
 
 		//  Put the object segment and ID onto the dummy stack frame
-		((uint16 *)th->stackPtr)[3] = bType;
-		((uint16 *)th->stackPtr)[4] = index;
+		((uint16 *)th->_stackPtr)[3] = bType;
+		((uint16 *)th->_stackPtr)[4] = index;
 
 		//  Run the thread to completion
 		result = th->run();
-		args.returnVal = th->returnVal;
-		debugC(3, kDebugScripts, "return: %d", th->returnVal);
+		args.returnVal = th->_returnVal;
+		debugC(3, kDebugScripts, "return: %d", th->_returnVal);
 
 		if (result != scriptResultAsync) delete th;
 	}
@@ -1927,21 +1927,21 @@ void wakeUpThread(ThreadID id) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		thread->flags &= ~Thread::waiting;
+		thread->_flags &= ~Thread::waiting;
 	}
 }
 
-void wakeUpThread(ThreadID id, int16 returnVal) {
+void wakeUpThread(ThreadID id, int16 _returnVal) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		if (thread->flags & Thread::expectResult) {
-			WriteStatusF(8, "Result %d", returnVal);
-			thread->returnVal = returnVal;
-			*(int16 *)thread->stackPtr = returnVal;
+		if (thread->_flags & Thread::expectResult) {
+			WriteStatusF(8, "Result %d", _returnVal);
+			thread->_returnVal = _returnVal;
+			*(int16 *)thread->_stackPtr = _returnVal;
 		} else WriteStatusF(8, "Thread not expecting result!");
 
-		thread->flags &= ~(Thread::waiting | Thread::expectResult);
+		thread->_flags &= ~(Thread::waiting | Thread::expectResult);
 	}
 }
 
