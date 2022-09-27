@@ -114,6 +114,17 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Italian
+	{
+		"peril",
+		0,
+		AD_ENTRY1s("PPTP.ORB", "d03e38348aa33d8d25315b1acb687f66", 622766069),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// Polish
 	{
 		"peril",
