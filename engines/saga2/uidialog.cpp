@@ -1257,8 +1257,8 @@ CPlacardWindow::CPlacardWindow(
     textPallete &pal,
     gFont *font) :
 	ModalWindow(r, ident, cmd) {
-	textPal = pal;
-	textFont = font;
+	_textPal = pal;
+	_textFont = font;
 
 	positionText(windowText, Rect16(0, 0, r.width, r.height));
 }
@@ -1271,31 +1271,31 @@ void CPlacardWindow::positionText(
 		        yPos,
 		        maxY;
 
-		int16   fontHeight = textFont->height;
+		int16   fontHeight = _textFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, "%s", windowText);
+		sprintf(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');
 
 		yPos = textArea.y +
-		       ((textArea.height - titleCount * fontHeight) >> 1);
+		       ((textArea.height - _titleCount * fontHeight) >> 1);
 		yPos = MAX(yPos, textArea.y);
 
 		maxY = textArea.y + textArea.height - fontHeight;
 
-		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
+		for (i = 0; i < _titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[i].y = yPos;
-				titlePos[i].x =
+				_titlePos[i].y = yPos;
+				_titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(textFont, titleStrings[i], -1, 0))
+				      TextWidth(_textFont, _titleStrings[i], -1, 0))
 				     >> 1);
-			} else titleCount = i;
+			} else _titleCount = i;
 		}
-	} else titleCount = 0;
+	} else _titleCount = 0;
 }
 
 int16 CPlacardWindow:: SplitString(
@@ -1354,16 +1354,16 @@ void CPlacardWindow::drawClipped(
 	rect.width  = _extent.width;
 	rect.height = _extent.height;
 
-	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[i];
+	for (i = 0; i < _titleCount; i++) {
+		Point16 textPos     = origin + _titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
-		                 textFont,
+		                 _textFont,
 		                 0,
-		                 textPal,
+		                 _textPal,
 		                 false,
-		                 titleStrings[i]);
+		                 _titleStrings[i]);
 	}
 }
 
@@ -1385,28 +1385,28 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		int16   fontHeight = _buttonFont->height;
 
 		// make a copy of the window text string
-		sprintf(titleBuf, "%s", windowText);
+		sprintf(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		titleCount = SplitString(titleBuf, titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');
 
 		yPos = textArea.y +
-		       ((textArea.height - titleCount * fontHeight) >> 1);
+		       ((textArea.height - _titleCount * fontHeight) >> 1);
 		yPos = MAX(yPos, textArea.y);
 
 		maxY = textArea.y + textArea.height - fontHeight;
 
-		for (i = 0; i < titleCount; i++, yPos += fontHeight) {
+		for (i = 0; i < _titleCount; i++, yPos += fontHeight) {
 			if (yPos < maxY) {
-				titlePos[i].y = yPos;
-				titlePos[i].x =
+				_titlePos[i].y = yPos;
+				_titlePos[i].x =
 				    textArea.x +
 				    ((textArea.width -
-				      TextWidth(_buttonFont, titleStrings[i], -1, 0))
+				      TextWidth(_buttonFont, _titleStrings[i], -1, 0))
 				     >> 1);
-			} else titleCount = i;
+			} else _titleCount = i;
 		}
-	} else titleCount = 0;
+	} else _titleCount = 0;
 }
 
 int16 CPlacardPanel:: SplitString(
@@ -1445,8 +1445,8 @@ void CPlacardPanel::drawClipped(
 	rect.width  = _extent.width;
 	rect.height = _extent.height;
 
-	for (i = 0; i < titleCount; i++) {
-		Point16 textPos     = origin + titlePos[i];
+	for (i = 0; i < _titleCount; i++) {
+		Point16 textPos     = origin + _titlePos[i];
 
 		writePlaqTextPos(port,
 		                 textPos,
@@ -1454,7 +1454,7 @@ void CPlacardPanel::drawClipped(
 		                 0,
 		                 _textFacePal,
 		                 false,
-		                 titleStrings[i]);
+		                 _titleStrings[i]);
 	}
 }
 
