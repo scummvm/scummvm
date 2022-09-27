@@ -70,6 +70,10 @@ void Combat::draw() {
 		writeMonsters();
 		delaySeconds(2);
 		return;
+	case MONSTERS_AFFECTED:
+		writeMonsterEffects();
+		delaySeconds(3);
+		return;
 	default:
 		break;
 	}
@@ -337,6 +341,20 @@ void Combat::highlightNextRound() {
 		s.setChar(s[i] | 0x80, i);
 
 	writeString(0, 1, s);
+}
+
+void Combat::writeMonsterEffects() {
+	if (_monstersRegenerate)
+		writeString(0, 21, STRING["dialogs.combat.regenerate"]);
+
+	if (_monstersResistSpells) {
+		if (_textPos.y != 21)
+			_textPos.y = 20;
+
+		writeString(0, _textPos.y + 1, STRING["dialogs.combat.overcome"]);
+	}
+
+	writeMonsters();
 }
 
 } // namespace Views
