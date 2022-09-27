@@ -219,7 +219,7 @@ void DrawCompositeMaskedSprite(
 
 		//  Unpack the sprite into the temp map
 
-		unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+		unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 		//  Blit the temp map onto the composite map
 
@@ -329,7 +329,7 @@ void DrawSprite(
 	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Blit to the port
 	port.setMode(drawModeMatte);
@@ -359,7 +359,7 @@ void DrawColorMappedSprite(
 	sprReMap._data = (uint8 *)getQuickMem(sprReMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	memset(sprReMap._data, 0, sprReMap.bytes());
 
@@ -397,7 +397,7 @@ void ExpandColorMappedSprite(
 	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -426,7 +426,7 @@ uint8 GetSpritePixel(
 	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
@@ -481,7 +481,7 @@ uint16 visiblePixelsInSprite(
 	sprMap._size = sp->size;
 	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	org.x = drawPos.x - xMin;
 	org.y = drawPos.y - yMin;
@@ -560,12 +560,12 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	g_vm->_appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
-	for (bank = 0; bank < (long)ARRAYSIZE(spriteBanks); bank++) {
+	for (bank = 0; bank < (long)ARRAYSIZE(_spriteBanks); bank++) {
 		//  Load the sprite handle...
-		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
-			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, id + MKTAG(0, 0, 0, bank), "sprite bank");
+		if (_spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
+			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, _id + MKTAG(0, 0, 0, bank), "sprite bank");
 			if (stream) {
-				spriteBanks[bank] = new SpriteSet(stream);
+				_spriteBanks[bank] = new SpriteSet(stream);
 				delete stream;
 			}
 		}
@@ -652,10 +652,10 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
 	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
-		if ((*it)->id == id                    // If has same ID
-		        && (*it)->poseList != nullptr) {      // and frames not dumped
+		if ((*it)->_id == id                    // If has same ID
+		        && (*it)->_poseList != nullptr) {      // and frames not dumped
 			// then use this one!
-			(*it)->useCount++;
+			(*it)->_useCount++;
 			(*it)->loadSpriteBanks(banksNeeded);
 			return *it;
 		}
@@ -666,7 +666,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	ActorAppearance *aa = nullptr;
 	//  Search from LRU end of list.
 	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
-		if ((*it)->useCount == 0)  {	// If not in use
+		if ((*it)->_useCount == 0)  {	// If not in use
 			aa = *it;					// then use this one!
 			break;
 		}
@@ -678,35 +678,35 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	}
 
 	//  Dump the sprites being stored
-	for (bank = 0; bank < (long)ARRAYSIZE(aa->spriteBanks); bank++) {
-		if (aa->spriteBanks[bank])
-			delete aa->spriteBanks[bank];
-		aa->spriteBanks[bank] = nullptr;
+	for (bank = 0; bank < (long)ARRAYSIZE(aa->_spriteBanks); bank++) {
+		if (aa->_spriteBanks[bank])
+			delete aa->_spriteBanks[bank];
+		aa->_spriteBanks[bank] = nullptr;
 	}
 
-	if (aa->poseList) {
-		for (uint i = 0; i < aa->poseList->numPoses; i++)
-			delete aa->poseList->poses[i];
+	if (aa->_poseList) {
+		for (uint i = 0; i < aa->_poseList->numPoses; i++)
+			delete aa->_poseList->poses[i];
 
-		free(aa->poseList->poses);
+		free(aa->_poseList->poses);
 
-		for (uint i = 0; i < aa->poseList->numAnimations; i++)
-			delete aa->poseList->animations[i];
+		for (uint i = 0; i < aa->_poseList->numAnimations; i++)
+			delete aa->_poseList->animations[i];
 
-		free(aa->poseList->animations);
+		free(aa->_poseList->animations);
 
-		delete aa->poseList;
+		delete aa->_poseList;
 	}
-	aa->poseList = nullptr;
+	aa->_poseList = nullptr;
 
-	if (aa->schemeList) {
-		delete aa->schemeList;
+	if (aa->_schemeList) {
+		delete aa->_schemeList;
 	}
-	aa->schemeList = nullptr;
+	aa->_schemeList = nullptr;
 
 	//  Set ID and use count
-	aa->id = id;
-	aa->useCount = 1;
+	aa->_id = id;
+	aa->_useCount = 1;
 
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
@@ -717,7 +717,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		warning("LoadActorAppearance: Could not load pose list");
 	} else {
 		ActorAnimSet *as = new ActorAnimSet;
-		aa->poseList = as;
+		aa->_poseList = as;
 		as->numAnimations = poseStream->readUint32LE();
 		as->poseOffset = poseStream->readUint32LE();
 
@@ -756,7 +756,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 		schemeListSize = schemeRes->size(id) / colorSchemeSize;
 		stream = loadResourceToStream(schemeRes, id, "scheme list");
-		aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+		aa->_schemeList = new ColorSchemeList(schemeListSize, stream);
 
 		delete stream;
 	}
@@ -765,7 +765,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 }
 
 void ReleaseActorAppearance(ActorAppearance *aa) {
-	aa->useCount--;
+	aa->_useCount--;
 }
 
 /* ===================================================================== *
@@ -776,34 +776,34 @@ Sprite::Sprite(Common::SeekableReadStream *stream) {
 	size.load(stream);
 	offset.load(stream);
 
-	_dataSize = size.x * size.y;
-	_data = (byte *)malloc(_dataSize);
-	stream->read(_data, _dataSize);
+	dataSize = size.x * size.y;
+	data = (byte *)malloc(dataSize);
+	stream->read(data, dataSize);
 }
 
 Sprite::~Sprite() {
-	free(_data);
+	free(data);
 }
 
 SpriteSet::SpriteSet(Common::SeekableReadStream *stream) {
 	count = stream->readUint32LE();
-	_sprites = (Sprite **)malloc(count * sizeof(Sprite *));
+	sprites = (Sprite **)malloc(count * sizeof(Sprite *));
 
 	for (uint i = 0; i < count; ++i) {
 		stream->seek(4 + i * 4);
 		uint32 offset = stream->readUint32LE();
 		stream->seek(offset);
-		_sprites[i] = new Sprite(stream);
+		sprites[i] = new Sprite(stream);
 	}
 }
 
 SpriteSet::~SpriteSet() {
 	for (uint i = 0; i < count; ++i) {
-		if (_sprites[i])
-			delete _sprites[i];
+		if (sprites[i])
+			delete sprites[i];
 	}
 
-	free(_sprites);
+	free(sprites);
 }
 
 void initSprites() {
@@ -862,7 +862,7 @@ void initSprites() {
 	for (i = 0; i < ARRAYSIZE(appearanceTable); i++) {
 		ActorAppearance *aa = &appearanceTable[i];
 
-		aa->useCount = 0;
+		aa->_useCount = 0;
 		g_vm->_appearanceLRU.push_front(aa);
 	}
 }

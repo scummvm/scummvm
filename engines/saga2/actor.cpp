@@ -2022,9 +2022,9 @@ void Actor::getColorTranslation(ColorTable map) {
 	//  If actor has color table loaded, then calculate the
 	//  translation table.
 	if (_appearance
-	        &&  _appearance->schemeList) {
+	        &&  _appearance->_schemeList) {
 		buildColorTable(map,
-		                _appearance->schemeList->_schemes[_colorScheme]->bank,
+		                _appearance->_schemeList->_schemes[_colorScheme]->bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }

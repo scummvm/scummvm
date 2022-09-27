@@ -680,7 +680,7 @@ void DisplayNode::drawObject() {
 			//  REM: Locking bug...
 
 			//          ss = (SpriteSet *)RLockHandle( aa->sprites );
-			sprPtr = aa->spriteBanks[a->_poseInfo.actorFrameBank];
+			sprPtr = aa->_spriteBanks[a->_poseInfo.actorFrameBank];
 			ss = sprPtr;
 			if (ss == nullptr)
 				return;
@@ -847,7 +847,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 
 						if (aa == nullptr) continue;
 
-						sprPtr = aa->spriteBanks[a->_poseInfo.actorFrameBank];
+						sprPtr = aa->_spriteBanks[a->_poseInfo.actorFrameBank];
 						ss = sprPtr;
 						if (ss == nullptr)
 							continue;
