@@ -96,9 +96,9 @@ void InputDeviceManager::getInput(Input &input, const InputBits filter) {
 	if (_keysDown[kPegasusActionShowBiochip])
 		currentBits |= (kRawButtonDown << kRightFireButtonShift);
 
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		if (_keysDown[kPegasusActionToggleChattyAI] && !_AKeyWasDown) {
-			((PegasusEngine *)g_engine)->requestToggle();
+			g_vm->requestToggle();
 			_AKeyWasDown = true;
 		} else if (!_keysDown[kPegasusActionToggleChattyAI])
 			_AKeyWasDown = false;
@@ -155,10 +155,10 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
 		switch ((PegasusAction)event.customType) {
 		case kPegasusActionSaveGameState:
-			((PegasusEngine *)g_engine)->requestSave();
+			g_vm->requestSave();
 			break;
 		case kPegasusActionLoadGameState:
-			((PegasusEngine *)g_engine)->requestLoad();
+			g_vm->requestLoad();
 			break;
 		default:
 			// Otherwise, set the action to down if we have it
@@ -180,7 +180,7 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 }
 
 void InputDeviceManager::pumpEvents() {
-	PegasusEngine *vm = ((PegasusEngine *)g_engine);
+	PegasusEngine *vm = g_vm;
 
 	bool saveAllowed = vm->swapSaveAllowed(false);
 	bool openAllowed = vm->swapLoadAllowed(false);
@@ -233,7 +233,7 @@ void InputHandler::pollForInput() {
 }
 
 void InputHandler::getInput(Input &input, Hotspot *&cursorSpot) {
-	Cursor *cursor = ((PegasusEngine *)g_engine)->_cursor;
+	Cursor *cursor = g_vm->_cursor;
 
 	if (_inputHandler)
 		_lastFilter = _inputHandler->getInputFilter();

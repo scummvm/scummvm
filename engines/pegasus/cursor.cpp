@@ -54,7 +54,7 @@ Cursor::~Cursor() {
 }
 
 void Cursor::addCursorFrames(uint16 id) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 	Common::SeekableReadStream *cursStream = vm->_resFork->getResource(MKTAG('C', 'u', 'r', 's'), id);
 	if (!cursStream)
 		error("Could not load cursor frames set %d", id);
@@ -135,7 +135,7 @@ void Cursor::loadCursorImage(CursorInfo &cursorInfo) {
 	if (cursorInfo.surface)
 		return;
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (vm->isDVD()) {
 		// The DVD version has some higher color PICT images for its cursors

@@ -42,7 +42,7 @@ void KeyCard::toggleItemState() {
 void KeyCard::setItemState(const ItemState newState) {
 	if (newState != getItemState()) {
 		InventoryItem::setItemState(newState);
-		((PegasusEngine *)g_engine)->checkFlashlight();
+		g_vm->checkFlashlight();
 	}
 }
 

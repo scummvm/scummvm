@@ -235,7 +235,7 @@ static const int kGlobeCountdownOffset1 = 12;
 static const int kGlobeCountdownOffset2 = 20;
 
 GlobeCountdown::GlobeCountdown(const DisplayElementID id) : IdlerAnimation(id) {
-	_digits.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCountdownDigitsID);
+	_digits.getImageFromPICTResource(g_vm->_resFork, kGlobeCountdownDigitsID);
 
 	Common::Rect r;
 	_digits.getSurfaceBounds(r);
@@ -465,7 +465,7 @@ float radiansToDegrees(float angle) {
 GlobeGame::GlobeGame(Neighborhood *handler) : GameInteraction(kNoradGlobeGameInteractionID, handler),
 		_robotMovie(kGlobeRobotID), _monitorMovie(kGlobeMonitorID), _globeMovie(kGlobeMovieID),
 		_upperNamesMovie(kGlobeUpperNamesID), _lowerNamesMovie(kGlobeLowerNamesID),
-		_globeNotification(kNoradGlobeNotificationID, (PegasusEngine *)g_engine), _globeCircleLeft(kGlobeCircleLeftID),
+		_globeNotification(kNoradGlobeNotificationID, g_vm), _globeCircleLeft(kGlobeCircleLeftID),
 		_globeCircleRight(kGlobeCircleRightID), _globeCircleUp(kGlobeCircleUpID), _globeCircleDown(kGlobeCircleDownID),
 		_motionHighlightLeft(kMotionHiliteLeftID), _motionHighlightRight(kMotionHiliteRightID),
 		_motionHighlightUp(kMotionHiliteUpID), _motionHighlightDown(kMotionHiliteDownID),
@@ -481,9 +481,9 @@ void GlobeGame::setSoundFXLevel(const uint16 fxLevel) {
 }
 
 void GlobeGame::openInteraction() {
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor1");
-		_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		_robotMovie.setVolume(g_vm->getSoundFXLevel());
 		_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 		_robotMovie.setDisplayOrder(kGlobeMonitorLayer);
 		_robotMovie.startDisplaying();
@@ -496,7 +496,7 @@ void GlobeGame::openInteraction() {
 	}
 
 	_monitorMovie.initFromMovieFile("Images/Norad Delta/N79 Left Monitor");
-	_monitorMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_monitorMovie.setVolume(g_vm->getSoundFXLevel());
 	_monitorMovie.moveElementTo(kGlobeMonitorLeft, kGlobeMonitorTop);
 	_monitorMovie.setDisplayOrder(kGlobeMonitorLayer);
 	_monitorMovie.startDisplaying();
@@ -525,62 +525,62 @@ void GlobeGame::openInteraction() {
 	_globeMovie.setTime(kGlobeMovieStartTime);
 	_globeMovie.redrawMovieWorld();
 
-	_globeCircleLeft.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCircleLeftPICTID, true);
+	_globeCircleLeft.initFromPICTResource(g_vm->_resFork, kGlobeCircleLeftPICTID, true);
 	_globeCircleLeft.moveElementTo(kGlobeCircleLeftLeft, kGlobeCircleLeftTop);
 	_globeCircleLeft.setDisplayOrder(kGlobeCircleLayer);
 	_globeCircleLeft.startDisplaying();
 
-	_globeCircleRight.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCircleRightPICTID, true);
+	_globeCircleRight.initFromPICTResource(g_vm->_resFork, kGlobeCircleRightPICTID, true);
 	_globeCircleRight.moveElementTo(kGlobeCircleRightLeft, kGlobeCircleRightTop);
 	_globeCircleRight.setDisplayOrder(kGlobeCircleLayer);
 	_globeCircleRight.startDisplaying();
 
-	_globeCircleUp.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCircleUpPICTID, true);
+	_globeCircleUp.initFromPICTResource(g_vm->_resFork, kGlobeCircleUpPICTID, true);
 	_globeCircleUp.moveElementTo(kGlobeCircleUpLeft, kGlobeCircleUpTop);
 	_globeCircleUp.setDisplayOrder(kGlobeCircleLayer);
 	_globeCircleUp.startDisplaying();
 
-	_globeCircleDown.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kGlobeCircleDownPICTID, true);
+	_globeCircleDown.initFromPICTResource(g_vm->_resFork, kGlobeCircleDownPICTID, true);
 	_globeCircleDown.moveElementTo(kGlobeCircleDownLeft, kGlobeCircleDownTop);
 	_globeCircleDown.setDisplayOrder(kGlobeCircleLayer);
 	_globeCircleDown.startDisplaying();
 
-	_motionHighlightLeft.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMotionHiliteLeftPICTID, true);
+	_motionHighlightLeft.initFromPICTResource(g_vm->_resFork, kMotionHiliteLeftPICTID, true);
 	_motionHighlightLeft.moveElementTo(kGlobeLeftMotionHiliteLeft, kGlobeLeftMotionHiliteTop);
 	_motionHighlightLeft.setDisplayOrder(kGlobeHilitesLayer);
 	_motionHighlightLeft.startDisplaying();
 
-	_motionHighlightRight.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMotionHiliteRightPICTID, true);
+	_motionHighlightRight.initFromPICTResource(g_vm->_resFork, kMotionHiliteRightPICTID, true);
 	_motionHighlightRight.moveElementTo(kGlobeRightMotionHiliteLeft, kGlobeRightMotionHiliteTop);
 	_motionHighlightRight.setDisplayOrder(kGlobeCircleLayer);
 	_motionHighlightRight.startDisplaying();
 
-	_motionHighlightUp.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMotionHiliteUpPICTID, true);
+	_motionHighlightUp.initFromPICTResource(g_vm->_resFork, kMotionHiliteUpPICTID, true);
 	_motionHighlightUp.moveElementTo(kGlobeUpMotionHiliteLeft, kGlobeUpMotionHiliteTop);
 	_motionHighlightUp.setDisplayOrder(kGlobeHilitesLayer);
 	_motionHighlightUp.startDisplaying();
 
-	_motionHighlightDown.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kMotionHiliteDownPICTID, true);
+	_motionHighlightDown.initFromPICTResource(g_vm->_resFork, kMotionHiliteDownPICTID, true);
 	_motionHighlightDown.moveElementTo(kGlobeDownMotionHiliteLeft, kGlobeDownMotionHiliteTop);
 	_motionHighlightDown.setDisplayOrder(kGlobeHilitesLayer);
 	_motionHighlightDown.startDisplaying();
 
-	_targetHighlightUpperLeft.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTargetUpperLeftPICTID, true);
+	_targetHighlightUpperLeft.initFromPICTResource(g_vm->_resFork, kTargetUpperLeftPICTID, true);
 	_targetHighlightUpperLeft.moveElementTo(kGlobeUpperLeftHiliteLeft, kGlobeUpperLeftHiliteTop);
 	_targetHighlightUpperLeft.setDisplayOrder(kGlobeHilitesLayer);
 	_targetHighlightUpperLeft.startDisplaying();
 
-	_targetHighlightUpperRight.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTargetUpperRightPICTID, true);
+	_targetHighlightUpperRight.initFromPICTResource(g_vm->_resFork, kTargetUpperRightPICTID, true);
 	_targetHighlightUpperRight.moveElementTo(kGlobeUpperRightHiliteLeft, kGlobeUpperRightHiliteTop);
 	_targetHighlightUpperRight.setDisplayOrder(kGlobeHilitesLayer);
 	_targetHighlightUpperRight.startDisplaying();
 
-	_targetHighlightLowerLeft.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTargetLowerLeftPICTID, true);
+	_targetHighlightLowerLeft.initFromPICTResource(g_vm->_resFork, kTargetLowerLeftPICTID, true);
 	_targetHighlightLowerLeft.moveElementTo(kGlobeLowerLeftHiliteLeft, kGlobeLowerLeftHiliteTop);
 	_targetHighlightLowerLeft.setDisplayOrder(kGlobeHilitesLayer);
 	_targetHighlightLowerLeft.startDisplaying();
 
-	_targetHighlightLowerRight.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kTargetLowerRightPICTID, true);
+	_targetHighlightLowerRight.initFromPICTResource(g_vm->_resFork, kTargetLowerRightPICTID, true);
 	_targetHighlightLowerRight.moveElementTo(kGlobeLowerRightHiliteLeft, kGlobeLowerRightHiliteTop);
 	_targetHighlightLowerRight.setDisplayOrder(kGlobeHilitesLayer);
 	_targetHighlightLowerRight.startDisplaying();
@@ -605,14 +605,14 @@ void GlobeGame::openInteraction() {
 }
 
 void GlobeGame::initInteraction() {
-	if (((PegasusEngine *)g_engine)->isDVD())
+	if (g_vm->isDVD())
 		_robotMovie.start();
 	_monitorMovie.start();
 	_monitorMovie.redrawMovieWorld();
 }
 
 void GlobeGame::closeInteraction() {
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_robotMovie.stop();
 		_robotMovie.stopDisplaying();
 		_robotMovie.releaseMovie();
@@ -677,7 +677,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 	if (notification == _neighborhoodNotification) {
 		switch (_gameState) {
 		case kPlayingRobotIntro:
-			if (!((PegasusEngine *)g_engine)->isDVD()) {
+			if (!g_vm->isDVD()) {
 				_monitorMovie.stop();
 				_monitorMovie.setSegment(0, _monitorMovie.getDuration());
 				_monitorMovie.setTime(kSplash2End * scale - 1);
@@ -798,7 +798,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 
 			switch (_currentSiloIndex) {
 			case 3:
-				if (!((PegasusEngine *)g_engine)->isDVD()) {
+				if (!g_vm->isDVD()) {
 					_owner->requestSpotSound(kYouCannotPossiblyIn, kYouCannotPossiblyOut,
 							kFilterNoInput, kSpotSoundCompletedFlag);
 				} else {
@@ -807,7 +807,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 					_robotMovie.releaseMovie();
 
 					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor2");
-					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.setVolume(g_vm->getSoundFXLevel());
 					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 					_robotMovie.startDisplaying();
 					_robotMovie.show();
@@ -817,7 +817,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				}
 				break;
 			case 5:
-				if (!((PegasusEngine *)g_engine)->isDVD()) {
+				if (!g_vm->isDVD()) {
 					_owner->requestSpotSound(kYouWillFailIn, kYouWillFailOut, kFilterNoInput,
 							kSpotSoundCompletedFlag);
 				} else {
@@ -826,7 +826,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 					_robotMovie.releaseMovie();
 
 					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor3");
-					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.setVolume(g_vm->getSoundFXLevel());
 					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 					_robotMovie.startDisplaying();
 					_robotMovie.show();
@@ -836,7 +836,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				}
 				break;
 			case 7:
-				if (!((PegasusEngine *)g_engine)->isDVD()) {
+				if (!g_vm->isDVD()) {
 					_owner->requestSpotSound(kGiveUpHumanIn, kGiveUpHumanOut, kFilterNoInput,
 							kSpotSoundCompletedFlag);
 				} else {
@@ -845,7 +845,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 					_robotMovie.releaseMovie();
 
 					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor4");
-					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.setVolume(g_vm->getSoundFXLevel());
 					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 					_robotMovie.startDisplaying();
 					_robotMovie.show();
@@ -855,7 +855,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				}
 				break;
 			case 9:
-				if (!((PegasusEngine *)g_engine)->isDVD()) {
+				if (!g_vm->isDVD()) {
 					_owner->requestSpotSound(kYouAreRunningIn, kYouAreRunningOut,
 							kFilterNoInput, kSpotSoundCompletedFlag);
 				} else {
@@ -864,7 +864,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 					_robotMovie.releaseMovie();
 
 					_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor5");
-					_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+					_robotMovie.setVolume(g_vm->getSoundFXLevel());
 					_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 					_robotMovie.startDisplaying();
 					_robotMovie.show();
@@ -911,7 +911,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			_monitorMovie.setSegment(kSplash1End * scale, kSplash2End * scale);
 			_monitorMovie.setFlags(kLoopTimeBase);
 			_monitorMovie.start();
-			if (!((PegasusEngine *)g_engine)->isDVD()) {
+			if (!g_vm->isDVD()) {
 				_owner->getExtraEntry(kN79BrightView, entry);
 				_owner->showViewFrame(entry.movieStart);
 				_owner->requestSpotSound(kIJustBrokeIn, kIJustBrokeOut, kFilterNoInput, 0);
@@ -920,7 +920,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			}
 			break;
 		case kGlobeRobot1Finished:
-			if (((PegasusEngine *)g_engine)->isDVD()) {
+			if (g_vm->isDVD()) {
 				_owner->getExtraEntry(kN79BrightView, entry);
 				_monitorMovie.stop();
 				_monitorMovie.setSegment(0, _monitorMovie.getDuration());
@@ -951,7 +951,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 			_monitorMovie.setSegment(0, _monitorMovie.getDuration());
 			if (g_arthurChip)
 				g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA02", kArthurNoradFinishedGlobeGame);
-			if (!((PegasusEngine *)g_engine)->isDVD()) {
+			if (!g_vm->isDVD()) {
 				_owner->requestDelay(1, 2, kFilterNoInput, 0);
 				_owner->requestSpotSound(kTheOnlyGoodHumanIn, kTheOnlyGoodHumanOut, kFilterNoInput, 0);
 				_owner->requestDelay(1, 2, kFilterNoInput, kDelayCompletedFlag);
@@ -961,7 +961,7 @@ void GlobeGame::receiveNotification(Notification *notification, const Notificati
 				_robotMovie.releaseMovie();
 
 				_robotMovie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor6");
-				_robotMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+				_robotMovie.setVolume(g_vm->getSoundFXLevel());
 				_robotMovie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 				_robotMovie.setDisplayOrder(kGlobeCountdownLayer + 1);
 				_robotMovie.startDisplaying();
@@ -985,7 +985,7 @@ void GlobeGame::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	input.getInputLocation(where);
 	Hotspot *spot = g_allHotspots.findHotspot(where);
 
-	if (((PegasusEngine *)g_engine)->_cursor->isVisible() && spot != nullptr &&
+	if (g_vm->_cursor->isVisible() && spot != nullptr &&
 			spot->getObjectID() == kNorad79SiloAreaSpotID && findClickedSilo(input) != -1) {
 		_targetHighlightUpperLeft.show();
 		_targetHighlightUpperRight.show();
@@ -1036,33 +1036,33 @@ void GlobeGame::clickGlobe(const Input &input) {
 	Movie movie(kNoDisplayElement);
 	Input movieInput;
 
-	if (((PegasusEngine *)g_engine)->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
-		((PegasusEngine *)g_engine)->_cursor->hide();
+	if (g_vm->isDVD() && JMPPPInput::isEasterEggModifierInput(input)) {
+		g_vm->_cursor->hide();
 
 		movie.initFromMovieFile("Images/Norad Delta/N79 Back Monitor7");
-		movie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		movie.setVolume(g_vm->getSoundFXLevel());
 		movie.moveElementTo(kNavAreaLeft, kNavAreaTop);
 		movie.setDisplayOrder(kGlobeCountdownLayer + 1);
 		movie.startDisplaying();
 		movie.show();
 		movie.start();
 
-		while (movie.isRunning() && !((PegasusEngine *)g_engine)->shouldQuit()) {
+		while (movie.isRunning() && !g_vm->shouldQuit()) {
 			InputDevice.getInput(movieInput, kFilterNoInput);
 
-			((PegasusEngine *)g_engine)->checkCallBacks();
-			((PegasusEngine *)g_engine)->refreshDisplay();
-			((PegasusEngine *)g_engine)->_system->delayMillis(10);
+			g_vm->checkCallBacks();
+			g_vm->refreshDisplay();
+			g_vm->_system->delayMillis(10);
 		}
 
-		if (((PegasusEngine *)g_engine)->shouldQuit())
+		if (g_vm->shouldQuit())
 			return;
 
 		movie.hide();
 		movie.stopDisplaying();
 		movie.releaseMovie();
 
-		((PegasusEngine *)g_engine)->_cursor->hideUntilMoved();
+		g_vm->_cursor->hideUntilMoved();
 	} else {
 		int16 newSilo = findClickedSilo(input);
 		if (newSilo != -1) {

@@ -64,7 +64,7 @@ void PegasusChip::setUpPegasusChip() {
 		setItemState(kPegasusTSA10);
 		break;
 	case kPrehistoricID:
-		if (((PegasusEngine *)g_engine)->playerHasItemID(kHistoricalLog))
+		if (g_vm->playerHasItemID(kHistoricalLog))
 			setItemState(kPegasusPrehistoric00);
 		else
 			setItemState(kPegasusPrehistoric10);
@@ -97,7 +97,7 @@ void PegasusChip::setUpPegasusChip() {
 void PegasusChip::setUpPegasusChipRude() {
 	switch (GameState.getCurrentNeighborhood()) {
 	case kPrehistoricID:
-		if (((PegasusEngine *)g_engine)->playerHasItemID(kHistoricalLog))
+		if (g_vm->playerHasItemID(kHistoricalLog))
 			setItemState(kPegasusPrehistoric00);
 		break;
 	case kMarsID:
@@ -124,7 +124,7 @@ void PegasusChip::activatePegasusHotspots() {
 		// WORKAROUND: Don't allow the player to recall if they don't have
 		// the historical log. Otherwise, gameplay is broken when returning
 		// to the TSA.
-		if (!((PegasusEngine *)g_engine)->playerHasItemID(kHistoricalLog))
+		if (!g_vm->playerHasItemID(kHistoricalLog))
 			return;
 		// fall through
 	case kMarsID:
@@ -139,7 +139,7 @@ void PegasusChip::activatePegasusHotspots() {
 }
 
 void PegasusChip::clickInPegasusHotspot() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	ItemState thisState = getItemState();
 	ItemState hiliteState;

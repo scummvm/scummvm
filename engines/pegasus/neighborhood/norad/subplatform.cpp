@@ -61,7 +61,7 @@ static const uint16 kSubPreppedBit = (1 << 0);
 static const uint16 kWaitingForPlayerBit = (1 << 1);
 
 SubPlatform::SubPlatform(Neighborhood *handler) : GameInteraction(kNoradSubPlatformInteractionID, handler),
-		_platformMovie(kPlatformMonitorID), _platformNotification(kNoradSubPlatformNotificationID, (PegasusEngine *)g_engine) {
+		_platformMovie(kPlatformMonitorID), _platformNotification(kNoradSubPlatformNotificationID, g_vm) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 }
 
@@ -74,7 +74,7 @@ void SubPlatform::openInteraction() {
 
 	_stateBits |= kWaitingForPlayerBit;
 	_platformMovie.initFromMovieFile("Images/Norad Alpha/Platform Monitor Movie");
-	_platformMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_platformMovie.setVolume(g_vm->getSoundFXLevel());
 	_platformMovie.moveElementTo(kNoradPlatformLeft, kNoradPlatformTop);
 	_platformScale = _platformMovie.getScale();
 	_platformMovie.setDisplayOrder(kPlatformOrder);
@@ -167,9 +167,9 @@ void SubPlatform::receiveNotification(Notification *notification, const Notifica
 		default:
 			break;
 		}
-	} else if (notification == _neighborhoodNotification && !((PegasusEngine *)g_engine)->isDVD()) {
+	} else if (notification == _neighborhoodNotification && !g_vm->isDVD()) {
 		allowInput(true);
-		((PegasusEngine *)g_engine)->jumpToNewEnvironment(kNoradSubChaseID, kNoRoomID, kNoDirection);
+		g_vm->jumpToNewEnvironment(kNoradSubChaseID, kNoRoomID, kNoDirection);
 		GameState.setScoringEnteredSub(true);
 	}
 }

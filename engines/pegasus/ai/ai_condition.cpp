@@ -230,7 +230,7 @@ AICurrentItemCondition::AICurrentItemCondition(const ItemID item) {
 }
 
 bool AICurrentItemCondition::fireCondition() {
-	InventoryItem *item = ((PegasusEngine *)g_engine)->getCurrentInventoryItem();
+	InventoryItem *item = g_vm->getCurrentInventoryItem();
 
 	if (_item == kNoItemID)
 		return item == nullptr;
@@ -243,7 +243,7 @@ AICurrentBiochipCondition::AICurrentBiochipCondition(const ItemID biochip)  {
 }
 
 bool AICurrentBiochipCondition::fireCondition() {
-	BiochipItem *biochip = ((PegasusEngine *)g_engine)->getCurrentBiochip();
+	BiochipItem *biochip = g_vm->getCurrentBiochip();
 
 	if (_biochip == kNoItemID)
 		return biochip == nullptr;

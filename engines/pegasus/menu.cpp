@@ -29,7 +29,7 @@
 
 namespace Pegasus {
 
-GameMenu::GameMenu(const uint32 id) : IDObject(id), InputHandler((InputHandler *)((PegasusEngine *)g_engine)) {
+GameMenu::GameMenu(const uint32 id) : IDObject(id), InputHandler((InputHandler *)g_vm) {
 	_previousHandler = nullptr;
 	_lastCommand = kMenuCmdNoCommand;
 }
@@ -146,15 +146,15 @@ MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButto
 		_restoreButton(0), _adventureButton(0), _walkthroughButton(0), _startButton(0),
 		_creditsButton(0), _quitButton(0), _largeSelect(0), _smallSelect(0) {
 
-	bool isDemo = ((PegasusEngine *)g_engine)->isDemo();
+	bool isDemo = g_vm->isDemo();
 
 	if (isDemo) {
-		if (((PegasusEngine *)g_engine)->isWindows())
+		if (g_vm->isWindows())
 			_menuBackground.initFromPICTFile("Images/Demo/DemoMenuPC.pict");
 		else
 			_menuBackground.initFromPICTFile("Images/Demo/DemoMenu.pict");
 	} else {
-		if (((PegasusEngine *)g_engine)->isDVD())
+		if (g_vm->isDVD())
 			_menuBackground.initFromPICTFile("Images/Main Menu/MainMenu_hq.mac");
 		else
 			_menuBackground.initFromPICTFile("Images/Main Menu/MainMenu.mac");
@@ -229,7 +229,7 @@ MainMenu::MainMenu() : GameMenu(kMainMenuID), _menuBackground(0), _overviewButto
 
 	_menuLoop.attachFader(&_menuFader);
 	_menuLoop.initFromAIFFFile("Sounds/Main Menu.aiff");
-	_menuFader.setMasterVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+	_menuFader.setMasterVolume(g_vm->getAmbienceLevel());
 
 	updateDisplay();
 }
@@ -256,7 +256,7 @@ void MainMenu::stopMainMenuLoop() {
 }
 
 void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 	bool isDemo = vm->isDemo();
 
 	if (input.upButtonDown()) {
@@ -347,7 +347,7 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 }
 
 void MainMenu::updateDisplay() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (vm->isDemo()) {
 		switch (_menuSelection) {
@@ -468,7 +468,7 @@ static const TimeValue kFrameIncrement = 120; // Three frames...
 CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _creditsMovie(0),
 		_mainMenuButton(0), _largeSelect(0), _smallSelect(0) {
 
-	if (((PegasusEngine *)g_engine)->isDVD())
+	if (g_vm->isDVD())
 		_menuBackground.initFromPICTFile("Images/Credits/CredScrnScummVM.pict");
 	else
 		_menuBackground.initFromPICTFile("Images/Credits/CredScrn.pict");
@@ -476,7 +476,7 @@ CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _cred
 	_menuBackground.startDisplaying();
 	_menuBackground.show();
 
-	if (((PegasusEngine *)g_engine)->isDVD())
+	if (g_vm->isDVD())
 		_creditsMovie.initFromMovieFile("Images/Credits/Credits_scummVM.movie");
 	else
 		_creditsMovie.initFromMovieFile("Images/Credits/Credits.movie");
@@ -505,10 +505,10 @@ CreditsMenu::CreditsMenu() : GameMenu(kCreditsMenuID), _menuBackground(0), _cred
 
 	newMenuSelection(kCreditsMenuCoreTeam);
 
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_menuLoop.attachFader(&_menuFader);
 		_menuLoop.initFromAIFFFile("Sounds/Credits.aiff");
-		_menuFader.setMasterVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+		_menuFader.setMasterVolume(g_vm->getAmbienceLevel());
 	}
 }
 
@@ -518,7 +518,7 @@ CreditsMenu::~CreditsMenu() {
 }
 
 void CreditsMenu::startCreditsMenuLoop() {
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		FaderMoveSpec spec;
 
 		_menuLoop.loopSound();
@@ -529,7 +529,7 @@ void CreditsMenu::startCreditsMenuLoop() {
 }
 
 void CreditsMenu::stopCreditsMenuLoop() {
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		FaderMoveSpec spec;
 
 		spec.makeTwoKnotFaderSpec(30, 0, 255, 30, 0);
@@ -552,14 +552,14 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 			break;
 		case kCreditsMenuOriginalTeam:
 			_smallSelect.moveElementTo(kOriginalTeamSelectLeft, kOriginalTeamSelectTop);
-			if (((PegasusEngine *)g_engine)->isDVD())
+			if (g_vm->isDVD())
 				_creditsMovie.setTime(kOriginalTeamDVDTime);
 			else
 				_creditsMovie.setTime(kOriginalTeamCDTime);
 			break;
 		case kCreditsMenuTalent:
 			_smallSelect.moveElementTo(kTalentSelectLeft, kTalentSelectTop);
-			if (((PegasusEngine *)g_engine)->isDVD())
+			if (g_vm->isDVD())
 				_creditsMovie.setTime(kTalentDVDTime);
 			else
 				_creditsMovie.setTime(kTalentCDTime);
@@ -568,7 +568,7 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 			_smallSelect.moveElementTo(kOtherTitlesSelectLeft, kOtherTitlesSelectTop);
 			_smallSelect.show();
 			_largeSelect.hide();
-			if (((PegasusEngine *)g_engine)->isDVD())
+			if (g_vm->isDVD())
 				_creditsMovie.setTime(kOtherTitlesDVDTime);
 			else
 				_creditsMovie.setTime(kOtherTitlesCDTime);
@@ -588,7 +588,7 @@ void CreditsMenu::newMenuSelection(const int newSelection) {
 
 void CreditsMenu::newMovieTime(const TimeValue newTime) {
 	// The DVD credits have an extra frame in the support team section
-	bool isDVD = ((PegasusEngine *)g_engine)->isDVD();
+	bool isDVD = g_vm->isDVD();
 
 	if (newTime < kSupportTeamTime) {
 		_smallSelect.moveElementTo(kCoreTeamSelectLeft, kCoreTeamSelectTop);
@@ -632,7 +632,7 @@ void CreditsMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	} else if (JMPPPInput::isMenuButtonPressInput(input)) {
 		if (_menuSelection == kCreditsMenuMainMenu) {
 			_mainMenuButton.show();
-			((PegasusEngine *)g_engine)->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 			_mainMenuButton.hide();
 			setLastCommand(kMenuCmdCreditsMainMenu);
 		}
@@ -691,7 +691,7 @@ enum {
 // Never set the current input handler to the DeathMenu.
 DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
 		_mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 	bool isDemo = vm->isDemo();
 
 	_playerWon = (deathReason == kPlayerWonGame);
@@ -802,7 +802,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 			_triumphSound.initFromAIFFFile("Sounds/Caldoria/Galactic Triumph.44K.aiff");
 		else
 			_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
-		_triumphSound.setVolume(((PegasusEngine *)g_engine)->getAmbienceLevel());
+		_triumphSound.setVolume(g_vm->getAmbienceLevel());
 		_triumphSound.playSound();
 	}
 
@@ -810,7 +810,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 }
 
 void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (input.upButtonDown()) {
 		if (_menuSelection > (vm->isDemo() ? kFirstDeathSelectionDemo : kFirstDeathSelection)) {
@@ -876,7 +876,7 @@ void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 }
 
 void DeathMenu::updateDisplay() {
-	if (((PegasusEngine *)g_engine)->isDemo()) {
+	if (g_vm->isDemo()) {
 		switch (_menuSelection) {
 		case kDeathScreenContinueDemo:
 			_smallSelect.moveElementTo(kContinueSelectLeft, kContinueSelectTopDemo);
@@ -1068,7 +1068,7 @@ static const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
 PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),
 		_walkthroughButton(0), _continueButton(0), _soundFXLevel(0), _ambienceLevel(0), _quitButton(0),
 		_largeSelect(0), _smallSelect(0) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_pauseBackground.initFromPICTFile("Images/Pause Screen/PausScrn.pict", true);
 
@@ -1142,7 +1142,7 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 }
 
 void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (input.upButtonDown()) {
 		if (vm->isDemo()) {
@@ -1302,7 +1302,7 @@ void PauseMenu::updateDisplay() {
 		break;
 	}
 
-	((PegasusEngine *)g_engine)->resetIntroTimer();
+	g_vm->resetIntroTimer();
 }
 
 

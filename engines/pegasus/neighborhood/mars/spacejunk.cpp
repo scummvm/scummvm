@@ -147,7 +147,7 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 	_bounceStart.x = (bounds.left + bounds.right) >> 1;
 	_bounceStart.y = (bounds.top + bounds.bottom) >> 1;
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	switch (vm->getRandomNumber(3)) {
 	case 0:
@@ -185,7 +185,7 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 void SpaceJunk::hitByEnergyBeam(Common::Point) {
 	rebound(kWeaponReboundTime);
 	setGlowing(true);
-	((PegasusEngine *)g_engine)->delayShell(1, 3);
+	g_vm->delayShell(1, 3);
 	setGlowing(false);
 }
 

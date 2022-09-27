@@ -34,14 +34,14 @@ namespace Pegasus {
 
 Interface *g_interface = nullptr;
 
-Interface::Interface() : InputHandler(nullptr), _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)((PegasusEngine *)g_engine)),
+Interface::Interface() : InputHandler(nullptr), _interfaceNotification(kInterfaceNotificationID, (NotificationManager *)g_vm),
 			_currentItemSpot(kCurrentItemSpotID), _currentBiochipSpot(kCurrentBiochipSpotID),
 			_background1(kInterface1ID), _background2(kInterface2ID), _background3(kInterface3ID),
 			_background4(kInterface4ID), _datePicture(kDateID), _inventoryPush(kInventoryPushID),
 			_inventoryLid(kInventoryLidID, kNoDisplayElement),
-			_inventoryPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getItemsInventory()),
+			_inventoryPanel(kNoDisplayElement, (InputHandler *)g_vm, (g_vm)->getItemsInventory()),
 			_biochipPush(kBiochipPushID), _biochipLid(kBiochipLidID, kNoDisplayElement),
-			_biochipPanel(kNoDisplayElement, (InputHandler *)((PegasusEngine *)g_engine), ((PegasusEngine *)g_engine)->getBiochipsInventory()) {
+			_biochipPanel(kNoDisplayElement, (InputHandler *)g_vm, (g_vm)->getBiochipsInventory()) {
 	g_energyMonitor = nullptr;
 	_previousHandler = nullptr;
 	_inventoryRaised = false;
@@ -126,7 +126,7 @@ void Interface::throwAwayDateMonitor() {
 
 void Interface::setDate(const uint16 dateResID) {
 	validateDateMonitor();
-	_datePicture.initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, dateResID);
+	_datePicture.initFromPICTResource(g_vm->_resFork, dateResID);
 	_datePicture.triggerRedraw();
 }
 
@@ -159,7 +159,7 @@ void Interface::throwAwayNotifications() {
 
 void Interface::validateAIArea() {
 	if (!g_AIArea) {
-		new AIArea((InputHandler *)((PegasusEngine *)g_engine));
+		new AIArea((InputHandler *)g_vm);
 		if (g_AIArea)
 			g_AIArea->initAIArea();
 	}
@@ -185,7 +185,7 @@ void Interface::validateInventoryPanel() {
 		_inventoryLid.setDisplayOrder(kInventoryLidOrder);
 		_inventoryLid.startDisplaying();
 
-		if (((PegasusEngine *)g_engine)->isDVD()) {
+		if (g_vm->isDVD()) {
 			_inventoryOpenSound.initFromAIFFFile("Sounds/Items/Inventory Panel Open.aif");
 			_inventoryCloseSound.initFromAIFFFile("Sounds/Items/Inventory Panel Close.aif");
 		}
@@ -235,7 +235,7 @@ void Interface::validateBiochipPanel() {
 		_biochipLid.setDisplayOrder(kBiochipLidOrder);
 		_biochipLid.startDisplaying();
 
-		if (((PegasusEngine *)g_engine)->isDVD()) {
+		if (g_vm->isDVD()) {
 			_biochipOpenSound.initFromAIFFFile("Sounds/Items/Biochip Panel Open.aif");
 			_biochipCloseSound.initFromAIFFFile("Sounds/Items/Biochip Panel Close.aif");
 		}
@@ -397,9 +397,9 @@ void Interface::raiseInventoryDrawer(const bool doCallBacks) {
 	_inventoryPush.show();
 	_inventoryLid.start();
 
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_inventoryCloseSound.stopSound();
-		_inventoryOpenSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		_inventoryOpenSound.setVolume(g_vm->getSoundFXLevel());
 		_inventoryOpenSound.playSound();
 	}
 }
@@ -417,7 +417,7 @@ void Interface::raiseInventoryDrawerForMessage() {
 
 	// The DVD version has a different image for the inventory
 	// for the end message.
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_inventoryPanel.setCommPicture();
 		_inventoryPanel.throwAwayInventoryImage();
 		_inventoryPanel.initInventoryImage(&_inventoryPush);
@@ -473,9 +473,9 @@ void Interface::lowerInventoryDrawer(const bool doCallBacks) {
 		moveSpec.makeTwoKnotFaderSpec(60, 0, 1000, 15, 0);
 		_inventoryPush.startFader(moveSpec);
 
-		if (((PegasusEngine *)g_engine)->isDVD()) {
+		if (g_vm->isDVD()) {
 			_inventoryOpenSound.stopSound();
-			_inventoryCloseSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+			_inventoryCloseSound.setVolume(g_vm->getSoundFXLevel());
 			_inventoryCloseSound.playSound();
 		}
 	}
@@ -520,9 +520,9 @@ void Interface::raiseBiochipDrawer(const bool doCallBacks) {
 	_biochipPush.show();
 	_biochipLid.start();
 
-	if (((PegasusEngine *)g_engine)->isDVD()) {
+	if (g_vm->isDVD()) {
 		_biochipCloseSound.stopSound();
-		_biochipOpenSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+		_biochipOpenSound.setVolume(g_vm->getSoundFXLevel());
 		_biochipOpenSound.playSound();
 	}
 }
@@ -560,9 +560,9 @@ void Interface::lowerBiochipDrawer(const bool doCallBacks) {
 		moveSpec.makeTwoKnotFaderSpec(60, 0, 1000, 9, 0);
 		_biochipPush.startFader(moveSpec);
 
-		if (((PegasusEngine *)g_engine)->isDVD()) {
+		if (g_vm->isDVD()) {
 			_biochipOpenSound.stopSound();
-			_biochipCloseSound.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+			_biochipCloseSound.setVolume(g_vm->getSoundFXLevel());
 			_biochipCloseSound.playSound();
 		}
 	}
@@ -597,7 +597,7 @@ void Interface::calibrateCompass() {
 
 	g_compass->startFader(compassMove);
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	while (g_compass->isFading()) {
 		vm->refreshDisplay();
@@ -613,7 +613,7 @@ void Interface::calibrateEnergyBar() {
 }
 
 void Interface::raiseInventoryDrawerSync() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	raiseInventoryDrawer(false);
 
@@ -639,7 +639,7 @@ void Interface::raiseInventoryDrawerSync() {
 }
 
 void Interface::lowerInventoryDrawerSync() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	lowerInventoryDrawer(false);
 
@@ -665,7 +665,7 @@ void Interface::lowerInventoryDrawerSync() {
 }
 
 void Interface::raiseBiochipDrawerSync() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	raiseBiochipDrawer(false);
 
@@ -691,7 +691,7 @@ void Interface::raiseBiochipDrawerSync() {
 }
 
 void Interface::lowerBiochipDrawerSync() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	lowerBiochipDrawer(false);
 

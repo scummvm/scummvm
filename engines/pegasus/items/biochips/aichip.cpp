@@ -112,7 +112,7 @@ void AIChip::takeSharedArea() {
 
 void AIChip::setUpAIChip() {
 	if (!_playingMovie) {
-		PegasusEngine *vm = (PegasusEngine *)g_engine;
+		PegasusEngine *vm = g_vm;
 
 		uint numSolves;
 		if (GameState.getWalkthroughMode()) {
@@ -131,7 +131,7 @@ void AIChip::setUpAIChip() {
 // Only does something when there are hints or solves available.
 void AIChip::setUpAIChipRude() {
 	if (!_playingMovie) {
-		PegasusEngine *vm = (PegasusEngine *)g_engine;
+		PegasusEngine *vm = g_vm;
 
 		uint numSolves;
 		if (GameState.getWalkthroughMode()) {
@@ -150,7 +150,7 @@ void AIChip::setUpAIChipRude() {
 }
 
 void AIChip::activateAIHotspots() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 	_briefingSpot.setActive();
 	_scanSpot.setActive();
 
@@ -173,7 +173,7 @@ void AIChip::activateAIHotspots() {
 }
 
 void AIChip::showBriefingClicked() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_playingMovie = true;
 
@@ -193,7 +193,7 @@ void AIChip::showBriefingClicked() {
 }
 
 void AIChip::showEnvScanClicked() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_playingMovie = true;
 
@@ -219,7 +219,7 @@ void AIChip::clearClicked() {
 }
 
 void AIChip::clickInAIHotspot(HotSpotID id) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	Common::String movieName;
 

@@ -97,7 +97,7 @@ void BlinkTimerEvent::fire() {
 }
 
 SubChase::SubChase(Neighborhood *handler) : ChaseInteraction(kNoradSubChaseInteractionID, handler,
-						kNoradSubChaseNotificationID, (PegasusEngine *)g_engine), _subMovie(kNoDisplayElement),
+						kNoradSubChaseNotificationID, g_vm), _subMovie(kNoDisplayElement),
 						_hintPict(kNoDisplayElement), _blinkPict(kNoDisplayElement), _canSteerSub(true) {
 }
 
@@ -107,7 +107,7 @@ void SubChase::setSoundFXLevel(const uint16 fxLevel) {
 
 void SubChase::openInteraction() {
 	_subMovie.initFromMovieFile("Images/Norad Alpha/Sub Chase Movie");
-	_subMovie.setVolume(((PegasusEngine *)g_engine)->getSoundFXLevel());
+	_subMovie.setVolume(g_vm->getSoundFXLevel());
 	_subMovie.moveElementTo(0, 0);
 	_subMovie.setDisplayOrder(kSubChaseOrder);
 	_subMovie.startDisplaying();
@@ -177,10 +177,10 @@ void SubChase::receiveNotification(Notification *notification, const Notificatio
 			((NoradAlpha *)_owner)->die(kDeathSubDestroyed);
 		} else {
 			_subMovie.stopDisplaying();
-			((PegasusEngine *)g_engine)->_gfx->enableErase();
-			((PegasusEngine *)g_engine)->_gfx->updateDisplay();
-			((PegasusEngine *)g_engine)->_gfx->disableErase();
-			((PegasusEngine *)g_engine)->jumpToNewEnvironment(kNoradDeltaID, kNorad41, kEast);
+			g_vm->_gfx->enableErase();
+			g_vm->_gfx->updateDisplay();
+			g_vm->_gfx->disableErase();
+			g_vm->jumpToNewEnvironment(kNoradDeltaID, kNorad41, kEast);
 		}
 	}
 	ChaseInteraction::receiveNotification(notification, flags);
@@ -367,7 +367,7 @@ void SubChase::branchRight() {
 		_subState = kSubBranch6;
 		break;
 	case kSubBranch6:
-		if (((PegasusEngine *)g_engine)->getRandomBit()) {
+		if (g_vm->getRandomBit()) {
 			branchStart = kBranch7RightStart;
 			branchEnd = kBranch7RightEnd;
 			flag = kChaseExitedBranchZone;
@@ -397,7 +397,7 @@ void SubChase::branchRight() {
 }
 
 void SubChase::dontBranch() {
-	if (((PegasusEngine *)g_engine)->getRandomBit())
+	if (g_vm->getRandomBit())
 		branchLeft();
 	else
 		branchRight();

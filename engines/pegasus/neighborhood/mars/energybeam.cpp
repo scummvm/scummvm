@@ -46,7 +46,7 @@ void EnergyBeam::draw(const Common::Rect &) {
 	static const int kBeamColorRed1 = 224;
 	static const int kBeamColorRed2 = 64;
 
-	Graphics::Surface *surface = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+	Graphics::Surface *surface = g_vm->_gfx->getWorkArea();
 
 	byte red = linearInterp(0, kEnergyBeamTime, _lastTime, kBeamColorRed1, kBeamColorRed2);
 	uint32 color = surface->format.RGBToColor(red, 0, 0);

@@ -45,7 +45,7 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 	_itemOwnerID = kNoActorID;
 	_itemState = 0;
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	Common::SeekableReadStream *info = vm->_resFork->getResource(kItemInfoResType, kItemBaseResID + id);
 	if (info) {
@@ -184,9 +184,9 @@ void Item::setItemState(const ItemState state) {
 	if (state != _itemState) {
 		_itemState = state;
 
-		if (getItemType() == kInventoryItemType && ((PegasusEngine *)g_engine)->getCurrentInventoryItem() == (InventoryItem *)this)
+		if (getItemType() == kInventoryItemType && g_vm->getCurrentInventoryItem() == (InventoryItem *)this)
 			select();
-		else if (getItemType() == kBiochipItemType && ((PegasusEngine *)g_engine)->getCurrentBiochip() == (BiochipItem *)this)
+		else if (getItemType() == kBiochipItemType && g_vm->getCurrentBiochip() == (BiochipItem *)this)
 			select();
 	}
 }
@@ -285,7 +285,7 @@ ItemStateInfo Item::readItemState(Common::SeekableReadStream *stream) {
 }
 
 Sprite *Item::getDragSprite(const DisplayElementID id) const {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 	Sprite *result = new Sprite(id);
 	SpriteFrame *frame = new SpriteFrame();
 

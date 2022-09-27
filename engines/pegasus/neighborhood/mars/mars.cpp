@@ -190,7 +190,7 @@ ArthurOxygen50Action::ArthurOxygen50Action() : AIPlayMessageAction("Images/AI/Ma
 }
 
 void ArthurOxygen50Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur())
 		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA84", kArthurMarsOxygen50Warning);
@@ -209,7 +209,7 @@ ArthurOxygen25Action::ArthurOxygen25Action() : AIPlayMessageAction("Images/AI/Ma
 }
 
 void ArthurOxygen25Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur()) {
 		if (vm->getRandomBit())
@@ -232,7 +232,7 @@ ArthurOxygen5Action::ArthurOxygen5Action() : AIPlayMessageAction("Images/AI/Mars
 }
 
 void ArthurOxygen5Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur()) {
 		if (vm->getRandomBit())
@@ -4265,7 +4265,7 @@ void Mars::checkAirMask() {
 }
 
 void Mars::airStageExpired() {
-	if (((PegasusEngine *)g_engine)->playerHasItemID(kAirMask))
+	if (g_vm->playerHasItemID(kAirMask))
 		die(kDeathNoAirInMaze);
 	else
 		die(kDeathNoMaskInMaze);

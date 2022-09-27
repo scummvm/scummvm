@@ -74,7 +74,7 @@ enum {
 EnergyMonitor *g_energyMonitor = nullptr;
 
 EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWarningLightID) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_stage = kStageNoStage;
 
@@ -162,7 +162,7 @@ int32 EnergyMonitor::getCurrentEnergy() {
 
 void EnergyMonitor::timeChanged(const TimeValue currentTime) {
 	if (currentTime == getStop()) {
-		PegasusEngine *vm = (PegasusEngine *)g_engine;
+		PegasusEngine *vm = g_vm;
 		if (vm->getEnergyDeathReason() != -1)
 			vm->die(vm->getEnergyDeathReason());
 	} else {
@@ -239,13 +239,13 @@ void EnergyMonitor::draw(const Common::Rect &r) {
 	Common::Rect r2 = r.findIntersectingRect(_levelRect);
 
 	if (!r2.isEmpty()) {
-		Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+		Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 		screen->fillRect(r2, _barColor);
 	}
 }
 
 void EnergyMonitor::calibrateEnergyBar() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_calibrating = true;
 
@@ -284,7 +284,7 @@ void EnergyMonitor::calibrateEnergyBar() {
 }
 
 void EnergyMonitor::restoreLastEnergyValue() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
+	PegasusEngine *vm = g_vm;
 
 	_dontFlash = true;
 	setEnergyValue(vm->getSavedEnergyValue());
@@ -292,7 +292,7 @@ void EnergyMonitor::restoreLastEnergyValue() {
 }
 
 void EnergyMonitor::saveCurrentEnergyValue() {
-	((PegasusEngine *)g_engine)->setLastEnergyValue(getCurrentEnergy());
+	g_vm->setLastEnergyValue(getCurrentEnergy());
 }
 
 } // End of namespace Pegasus

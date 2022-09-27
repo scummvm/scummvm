@@ -61,7 +61,7 @@ static const int kBeforePanTime = 3;
 static const int kAfterPanTime = 5;
 
 NoradAlphaECRMonitor::NoradAlphaECRMonitor(Neighborhood *nextHandler) : GameInteraction(kNoradECRMonitorInteractionID, nextHandler),
-		_ecrSlideShowNotification(kNoradECRNotificationID, (PegasusEngine *)g_engine), _ecrMovie(kECRSlideShowMovieID),
+		_ecrSlideShowNotification(kNoradECRNotificationID, g_vm), _ecrMovie(kECRSlideShowMovieID),
 		_ecrPan(kECRPanID) {
 }
 
