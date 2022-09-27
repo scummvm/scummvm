@@ -90,6 +90,11 @@ private:
 	 */
 	void highlightNextRound();
 
+	/**
+	 * Write monster changes
+	 */
+	void writeMonsterEffects();
+
 protected:
 	/**
 	 * Sets a new display mode

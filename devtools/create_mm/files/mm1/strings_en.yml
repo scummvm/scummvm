@@ -312,6 +312,8 @@
 		defeating1: "! FOR DEFEATING THE MONSTERS !"
 		defeating2: "!   EACH SURVIVOR RECEIVES   !"
 		xp: "EXPERIENCE POINTS."
+		regenerate: "SOME MONSTERS REGENERATE!"
+		overcome: "SOME MONSTERS OVERCOME SPELLS!"
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "
