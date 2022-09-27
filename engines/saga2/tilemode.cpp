@@ -56,16 +56,16 @@ namespace Saga2 {
  * ===================================================================== */
 
 class gStickyDragControl : public gGenericControl {
-	bool    sticky;
+	bool    _sticky;
 
 public:
 	gStickyDragControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = nullptr);
 
 	void setSticky(bool s) {
-		sticky = s;
+		_sticky = s;
 	}
 	bool isSticky() {
-		return sticky;
+		return _sticky;
 	}
 
 private:
@@ -1401,18 +1401,18 @@ void cheatMove(int16 key) {
 #endif
 
 /* ===================================================================== *
-   gStickyDragControl class: a gGenericControl with a sticky mouse
+   gStickyDragControl class: a gGenericControl with a _sticky mouse
  * ===================================================================== */
 
 gStickyDragControl::gStickyDragControl(gPanelList &list, const Rect16 &box,
                                        uint16 ident, AppFunc *cmd)
 	: gGenericControl(list, box, ident, cmd) {
-	sticky = false;
+	_sticky = false;
 }
 
 void gStickyDragControl::deactivate() {
-	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = false;
+	if (_sticky) setMouseImage(kMouseArrowImage, 0, 0);
+	_sticky = false;
 	gGenericControl::deactivate();
 }
 
@@ -1422,13 +1422,13 @@ void gStickyDragControl::deactivate() {
 //}
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {
-	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = false;
+	if (_sticky) setMouseImage(kMouseArrowImage, 0, 0);
+	_sticky = false;
 	return gGenericControl::pointerHit(msg);
 }
 
 void gStickyDragControl::pointerRelease(gPanelMessage &msg) {
-	if (sticky == false)
+	if (_sticky == false)
 		gGenericControl::pointerRelease(msg);
 }
 
