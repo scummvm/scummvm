@@ -45,10 +45,10 @@ public:
 
 	void loadCostume(int id) override;
 	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
-	byte increaseAnims(Actor *a) override;
+	bool increaseAnims(Actor *a) override;
 
 protected:
-	byte increaseAnim(Actor *a, int slot);
+	bool increaseAnim(Actor *a, int slot);
 };
 
 class NESCostumeLoader : public BaseCostumeLoader {
@@ -61,10 +61,10 @@ public:
 	NESCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
 	void loadCostume(int id) override;
 	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
-	byte increaseAnims(Actor *a) override;
+	bool increaseAnims(Actor *a) override;
 
 protected:
-	byte increaseAnim(Actor *a, int slot);
+	bool increaseAnim(Actor *a, int slot);
 };
 
 class V0CostumeLoader : public ClassicCostumeLoader {
@@ -72,11 +72,11 @@ public:
 	V0CostumeLoader(ScummEngine *vm) : ClassicCostumeLoader(vm) {}
 	void loadCostume(int id) override;
 	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
-	byte increaseAnims(Actor *a) override;
+	bool increaseAnims(Actor *a) override;
 	byte getFrame(Actor *a, int limb);
 
 protected:
-	byte increaseAnim(Actor *a, int limb);
+	bool increaseAnim(Actor *a, int limb);
 };
 
 class ClassicCostumeRenderer : public BaseCostumeRenderer {
@@ -97,12 +97,12 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
-	void proc3(Codec1 &v1);
-	void proc3_ami(Codec1 &v1);
+	void proc3(ByleRLEData &v1);
+	void proc3_ami(ByleRLEData &v1);
 
-	void procC64(Codec1 &v1, int actor);
+	void procC64(ByleRLEData &v1, int actor);
 
-	void procPCEngine(Codec1 &v1);
+	void procPCEngine(ByleRLEData &v1);
 
 	byte mainRoutine(int xmoveCur, int ymoveCur);
 };

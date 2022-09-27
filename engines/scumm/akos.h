@@ -43,8 +43,8 @@ public:
 	AkosCostumeLoader(ScummEngine *vm) : BaseCostumeLoader(vm) {}
 
 	void loadCostume(int id) override;
-	byte increaseAnims(Actor *a) override;
-	void costumeDecodeData(Actor *a, int frame, uint usemask) override;
+	bool increaseAnims(Actor *a) override;
+	void costumeDecodeData(Actor *a, int frame, uint useMask) override;
 
 	//void animateLimb(int limb, int f);
 	bool hasManyDirections(int id) {
@@ -65,17 +65,29 @@ protected:
 	bool _useBompPalette;
 
 	// pointer to various parts of the costume resource
-	const AkosHeader *akhd;	// header
+	const AkosHeader *_akhd; // Header
 
-	const byte *akpl;		// palette data
-	const byte *akci;		// CostumeInfo table
-	const byte *aksq;		// command sequence
-	const AkosOffset *akof;	// offsets into ci and cd table
-	const byte *akcd;		// costume data (contains the data for the codecs)
+	const byte *_akpl; // Color lookup table for the costume
+	const byte *_akci; // AKOS Cel Info block, containing:
+	                   // - Cel width;
+	                   // - Cel height;
+	                   // - Cel x coordinate;
+	                   // - Cel y coordinate;
+	                   // - Cel x relative coordinate;
+	                   // - Cel y relative coordinate.
 
-	const byte *akct;		// HE specific: condition table
-	const byte *rgbs;		// HE specific: RGB table
-	const uint8 *xmap;		// HE specific: shadow color table
+	const byte *_aksq; // Costume sequence table, containing:
+	                   // - A sequence of N bytes containing animation commands.
+
+	const AkosOffset *_akof; // Cel offset table, containing:
+	                         // - Offset starting from the cel data block to the start of cel data;
+                             // - Offset starting from the cel info block to the start of cel header.
+
+	const byte *_akcd;  // Cel data block (contains the codec specific data)
+
+	const byte *_akct;  // Sequence condition table (HE specific)
+	const byte *_rgbs;  // Raw costume RGB colors (HE specific)
+	const uint8 *_xmap; // shadow color table (HE specific)
 
 	struct {
 		bool repeatMode;
@@ -84,23 +96,23 @@ protected:
 		byte color;
 		byte shift;
 		uint16 bits;
-		byte numbits;
-		const byte *dataptr;
+		byte numBits;
+		const byte *dataPtr;
 		byte buffer[336];
-	} _akos16;
+	} _majMinData;
 
 public:
 	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
 		_useBompPalette = false;
-		akhd = 0;
-		akpl = 0;
-		akci = 0;
-		aksq = 0;
-		akof = 0;
-		akcd = 0;
-		akct = 0;
-		rgbs = 0;
-		xmap = 0;
+		_akhd = nullptr;
+		_akpl = nullptr;
+		_akci = nullptr;
+		_aksq = nullptr;
+		_akof = nullptr;
+		_akcd = nullptr;
+		_akct = nullptr;
+		_rgbs = nullptr;
+		_xmap = nullptr;
 		_actorHitMode = false;
 	}
 
@@ -115,15 +127,15 @@ public:
 protected:
 	byte drawLimb(const Actor *a, int limb) override;
 
-	byte codec1(int xmoveCur, int ymoveCur);
-	void codec1_genericDecode(Codec1 &v1);
-	byte codec5(int xmoveCur, int ymoveCur);
-	byte codec16(int xmoveCur, int ymoveCur);
-	byte codec32(int xmoveCur, int ymoveCur);
-	void akos16SetupBitReader(const byte *src);
-	void akos16SkipData(int32 numskip);
-	void akos16DecodeLine(byte *buf, int32 numbytes, int32 dir);
-	void akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf);
+	byte paintCelByleRLE(int xMoveCur, int yMoveCur);
+	void byleRLEDecode(ByleRLEData &v1);
+	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
+	byte paintCelMajMin(int xMoveCur, int yMoveCur);
+	byte paintCelTRLE(int xMoveCur, int yMoveCur);
+	void majMinCodecSetupBitReader(const byte *src);
+	void majMinCodecSkipData(int32 numSkip);
+	void majMinCodecDecodeLine(byte *buf, int32 numBytes, int32 dir);
+	void majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf);
 
 	void markRectAsDirty(Common::Rect rect);
 };
@@ -132,6 +144,7 @@ enum AkosSequenceCodes {
 	// Auxiliary uSweat tokens:
 	AKC_ExtendBit =     0x80,
 	AKC_ExtendWordBit = 0x8000,
+	AKC_CelMask =       0x0FFF,
 
 	// Opcode uSweat tokens:
 	AKC_CommandMask = 0xC000,

@@ -2366,8 +2366,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	if (!hitTestMode) {
 		// Record the vertical extent of the drawn actor
-		_top = bcr->_draw_top;
-		_bottom = bcr->_draw_bottom;
+		_top = bcr->_drawTop;
+		_bottom = bcr->_drawBottom;
 	}
 }
 
@@ -2385,9 +2385,9 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		bcr->_scaleY = _scaley;
 	}
 
-	bcr->_shadow_mode = _shadowMode;
+	bcr->_shadowMode = _shadowMode;
 	if (_vm->_game.version >= 5 && _vm->_game.heversion == 0) {
-		bcr->_shadow_table = _vm->_shadowPalette;
+		bcr->_shadowTable = _vm->_shadowPalette;
 	}
 
 	bcr->setCostume(_costume, (_vm->_game.heversion == 0) ? 0 : _heXmapNum);
@@ -2418,8 +2418,8 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 	}
 
-	bcr->_draw_top = 0x7fffffff;
-	bcr->_draw_bottom = 0;
+	bcr->_drawTop = 0x7fffffff;
+	bcr->_drawBottom = 0;
 }
 
 void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
@@ -2434,7 +2434,7 @@ void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 	bcr->_clipOverride = _clipOverride;
 
 	if (_vm->_game.heversion == 70) {
-		bcr->_shadow_table = _vm->_HEV7ActorPalette;
+		bcr->_shadowTable = _vm->_HEV7ActorPalette;
 	}
 
 	bcr->_skipLimbs = (_heSkipLimbs != 0);

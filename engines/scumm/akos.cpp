@@ -36,12 +36,12 @@ namespace Scumm {
 #include "common/pack-start.h"	// START STRUCT PACKING
 
 struct AkosHeader {
-	byte unk_1[2];
-	byte flags;
-	byte unk_2;
-	uint16 num_anims;
-	uint16 unk_3;
-	uint16 codec;
+	uint16 versionNumber;
+	uint16 costumeFlags;
+	uint16 choreCount;
+	uint16 celsCount;
+	uint16 celCompressionCodec;
+	uint16 layerCount;
 } PACKED_STRUCT;
 
 struct AkosOffset {
@@ -86,10 +86,10 @@ bool AkosCostumeLoader::hasManyDirections() {
 	const AkosHeader *akhd;
 
 	akhd = (const AkosHeader *)_vm->findResourceData(MKTAG('A','K','H','D'), _akos);
-	return (akhd->flags & 2) != 0;
+	return (akhd->costumeFlags & 2) != 0;
 }
 
-void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
+void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint useMask) {
 	uint anim;
 	const byte *r;
 	const AkosHeader *akhd;
@@ -111,7 +111,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 
 	akhd = (const AkosHeader *)_vm->findResourceData(MKTAG('A','K','H','D'), _akos);
 
-	if (anim >= READ_LE_UINT16(&akhd->num_anims))
+	if (anim >= READ_LE_UINT16(&akhd->choreCount))
 		return;
 
 	r = _vm->findResourceData(MKTAG('A','K','C','H'), _akos);
@@ -133,7 +133,7 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 			const uint8 *aksf = aksfPtr;
 
 			code = *r++;
-			if (usemask & AKC_ExtendWordBit) {
+			if (useMask & AKC_ExtendWordBit) {
 				switch (code) {
 				case 1:
 					a->_cost.animType[i] = AKAT_Empty;
@@ -224,14 +224,14 @@ void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint usemask) {
 		}
 		i++;
 		mask <<= 1;
-		usemask <<= 1;
+		useMask <<= 1;
 	} while ((uint16)mask);
 }
 
 void AkosRenderer::setPalette(uint16 *new_palette) {
 	uint size, i;
 
-	size = _vm->getResourceDataSize(akpl);
+	size = _vm->getResourceDataSize(_akpl);
 	if (size == 0)
 		return;
 
@@ -241,12 +241,12 @@ void AkosRenderer::setPalette(uint16 *new_palette) {
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		if (_paletteNum) {
 			for (i = 0; i < size; i++)
-				_palette[i] = READ_LE_UINT16(_vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768 + akpl[i] * 2);
-		} else if (rgbs) {
+				_palette[i] = READ_LE_UINT16(_vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768 + _akpl[i] * 2);
+		} else if (_rgbs) {
 			for (i = 0; i < size; i++) {
 				if (new_palette[i] == 0xFF) {
-					uint8 col = akpl[i];
-					_palette[i] = _vm->get16BitColor(rgbs[col * 3 + 0], rgbs[col * 3 + 1], rgbs[col * 3 + 2]);
+					uint8 col = _akpl[i];
+					_palette[i] = _vm->get16BitColor(_rgbs[col * 3 + 0], _rgbs[col * 3 + 1], _rgbs[col * 3 + 2]);
 				} else {
 					_palette[i] = new_palette[i];
 				}
@@ -254,10 +254,10 @@ void AkosRenderer::setPalette(uint16 *new_palette) {
 		}
 	} else if (_vm->_game.heversion >= 99 && _paletteNum) {
 		for (i = 0; i < size; i++)
-			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * _vm->_hePaletteSlot + 768 + akpl[i]];
+			_palette[i] = (byte)_vm->_hePalettes[_paletteNum * _vm->_hePaletteSlot + 768 + _akpl[i]];
 	} else {
 		for (i = 0; i < size; i++) {
-			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : akpl[i];
+			_palette[i] = new_palette[i] != 0xFF ? new_palette[i] : _akpl[i];
 		}
 	}
 
@@ -280,27 +280,27 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 	const byte *akos = _vm->getResourceAddress(rtCostume, costume);
 	assert(akos);
 
-	akhd = (const AkosHeader *) _vm->findResourceData(MKTAG('A','K','H','D'), akos);
-	akof = (const AkosOffset *) _vm->findResourceData(MKTAG('A','K','O','F'), akos);
-	akci = _vm->findResourceData(MKTAG('A','K','C','I'), akos);
-	aksq = _vm->findResourceData(MKTAG('A','K','S','Q'), akos);
-	akcd = _vm->findResourceData(MKTAG('A','K','C','D'), akos);
-	akpl = _vm->findResourceData(MKTAG('A','K','P','L'), akos);
-	_codec = READ_LE_UINT16(&akhd->codec);
-	akct = _vm->findResourceData(MKTAG('A','K','C','T'), akos);
-	rgbs = _vm->findResourceData(MKTAG('R','G','B','S'), akos);
+	_akhd = (const AkosHeader *)_vm->findResourceData(MKTAG('A','K','H','D'), akos);
+	_akof = (const AkosOffset *)_vm->findResourceData(MKTAG('A','K','O','F'), akos);
+	_akci = _vm->findResourceData(MKTAG('A','K','C','I'), akos);
+	_aksq = _vm->findResourceData(MKTAG('A','K','S','Q'), akos);
+	_akcd = _vm->findResourceData(MKTAG('A','K','C','D'), akos);
+	_akpl = _vm->findResourceData(MKTAG('A','K','P','L'), akos);
+	_codec = READ_LE_UINT16(&_akhd->celCompressionCodec);
+	_akct = _vm->findResourceData(MKTAG('A','K','C','T'), akos);
+	_rgbs = _vm->findResourceData(MKTAG('R','G','B','S'), akos);
 
-	xmap = nullptr;
+	_xmap = nullptr;
 	if (shadow) {
 		const uint8 *xmapPtr = _vm->getResourceAddress(rtImage, shadow);
 		assert(xmapPtr);
-		xmap = _vm->findResourceData(MKTAG('X','M','A','P'), xmapPtr);
-		assert(xmap);
+		_xmap = _vm->findResourceData(MKTAG('X','M','A','P'), xmapPtr);
+		assert(_xmap);
 	}
 }
 
 void AkosRenderer::setFacing(const Actor *a) {
-	_mirror = (newDirToOldDir(a->getFacing()) != 0 || akhd->flags & 1);
+	_mirror = (newDirToOldDir(a->getFacing()) != 0 || _akhd->costumeFlags & 1);
 	if (a->_flip)
 		_mirror = !_mirror;
 }
@@ -313,7 +313,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	const CostumeInfo *costumeInfo;
 	uint i, extra;
 	byte result = 0;
-	int xmoveCur, ymoveCur;
+	int xMoveCur, yMoveCur;
 	uint32 heCondMaskIndex[32];
 	bool useCondMask;
 	int lastDx, lastDy;
@@ -329,18 +329,18 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	if (_vm->_game.heversion >= 70 && cost.animType[limb] == AKAT_DeltaAnim)
 		return 0;
 
-	if (!cost.animType[limb] || cost.stopped & (1 << limb))
+	if (cost.animType[limb] == AKAT_Empty || cost.stopped & (1 << limb))
 		return 0;
 
 	useCondMask = false;
-	p = aksq + cost.curpos[limb];
+	p = _aksq + cost.curpos[limb];
 
 	code = p[0];
 	if (code & AKC_ExtendBit)
 		code = READ_BE_UINT16(p);
 
 	if (_vm->_game.heversion >= 90)
-		_shadow_mode = 0;
+		_shadowMode = 0;
 
 	if (code == AKC_CondDrawMany || code == AKC_CondRelativeOffsetDrawMany) {
 		uint16 s = cost.curpos[limb] + 4;
@@ -349,7 +349,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		uint8 n = extra;
 		assert(n <= ARRAYSIZE(heCondMaskIndex));
 		while (n--) {
-			heCondMaskIndex[j++] = aksq[s++];
+			heCondMaskIndex[j++] = _aksq[s++];
 		}
 		useCondMask = true;
 		p += extra + 2;
@@ -360,30 +360,30 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 		return 0;
 
 	if (code != AKC_DrawMany && code != AKC_RelativeOffsetDrawMany) {
-		off = akof + (code & 0xFFF);
+		off = _akof + (code & AKC_CelMask);
 
-		assert((code & 0xFFF) * 6 < READ_BE_UINT32((const byte *)akof - 4) - 8);
+		assert((code & AKC_CelMask) * 6 < READ_BE_UINT32((const byte *)_akof - 4) - 8);
 		assert((code & 0x7000) == 0);
 
-		_srcptr = akcd + READ_LE_UINT32(&off->akcd);
-		costumeInfo = (const CostumeInfo *) (akci + READ_LE_UINT16(&off->akci));
+		_srcPtr = _akcd + READ_LE_UINT32(&off->akcd);
+		costumeInfo = (const CostumeInfo *) (_akci + READ_LE_UINT16(&off->akci));
 
 		_width = READ_LE_UINT16(&costumeInfo->width);
 		_height = READ_LE_UINT16(&costumeInfo->height);
-		xmoveCur = _xmove + (int16)READ_LE_UINT16(&costumeInfo->rel_x);
-		ymoveCur = _ymove + (int16)READ_LE_UINT16(&costumeInfo->rel_y);
-		_xmove += (int16)READ_LE_UINT16(&costumeInfo->move_x);
-		_ymove -= (int16)READ_LE_UINT16(&costumeInfo->move_y);
+		xMoveCur = _xMove + (int16)READ_LE_UINT16(&costumeInfo->relX);
+		yMoveCur = _yMove + (int16)READ_LE_UINT16(&costumeInfo->relY);
+		_xMove += (int16)READ_LE_UINT16(&costumeInfo->moveX);
+		_yMove -= (int16)READ_LE_UINT16(&costumeInfo->moveY);
 
 		switch (_codec) {
 		case AKOS_BYLE_RLE_CODEC:
-			result |= codec1(xmoveCur, ymoveCur);
+			result |= paintCelByleRLE(xMoveCur, yMoveCur);
 			break;
 		case AKOS_CDAT_RLE_CODEC:
-			result |= codec5(xmoveCur, ymoveCur);
+			result |= paintCelCDATRLE(xMoveCur, yMoveCur);
 			break;
 		case AKOS_RUN_MAJMIN_CODEC:
-			result |= codec16(xmoveCur, ymoveCur);
+			result |= paintCelMajMin(xMoveCur, yMoveCur);
 			break;
 		default:
 			error("akos_drawLimb: invalid _codec %d", _codec);
@@ -397,36 +397,36 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 
 		extra = p[2];
 		p += 3;
-		uint32 decflag = heCondMaskIndex[0];
+		uint32 decFlag = heCondMaskIndex[0];
 
 		for (i = 0; i != extra; i++) {
 			code = p[4];
 			if (code & AKC_ExtendBit)
 				code = READ_BE_UINT16(p + 4);
-			off = akof + (code & 0xFFF);
+			off = _akof + (code & 0xFFF);
 
-			_srcptr = akcd + READ_LE_UINT32(&off->akcd);
-			costumeInfo = (const CostumeInfo *) (akci + READ_LE_UINT16(&off->akci));
+			_srcPtr = _akcd + READ_LE_UINT32(&off->akcd);
+			costumeInfo = (const CostumeInfo *) (_akci + READ_LE_UINT16(&off->akci));
 
 			_width = READ_LE_UINT16(&costumeInfo->width);
 			_height = READ_LE_UINT16(&costumeInfo->height);
 
-			xmoveCur = _xmove + (int16)READ_LE_UINT16(p + 0);
-			ymoveCur = _ymove + (int16)READ_LE_UINT16(p + 2);
+			xMoveCur = _xMove + (int16)READ_LE_UINT16(p + 0);
+			yMoveCur = _yMove + (int16)READ_LE_UINT16(p + 2);
 
 			if (i == extra - 1) {
-				_xmove += lastDx;
-				_ymove -= lastDy;
+				_xMove += lastDx;
+				_yMove -= lastDy;
 			}
 
 			uint16 shadowMask = 0;
 
-			if (!useCondMask || !akct) {
-				decflag = 1;
+			if (!useCondMask || !_akct) {
+				decFlag = 1;
 			} else {
-				uint32 cond = READ_LE_UINT32(akct + cost.heCondMaskTable[limb] + heCondMaskIndex[i] * 4);
+				uint32 cond = READ_LE_UINT32(_akct + cost.heCondMaskTable[limb] + heCondMaskIndex[i] * 4);
 				if (cond == 0) {
-					decflag = 1;
+					decFlag = 1;
 				} else {
 					uint32 type = cond & ~0x3FFFFFFF;
 					cond &= 0x3FFFFFFF;
@@ -435,41 +435,41 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 						cond &= ~0xE000;
 					}
 					if (_vm->_game.heversion >= 90 && cond == 0) {
-						decflag = 1;
+						decFlag = 1;
 					} else if (type == 0x40000000) { // restored_bit
-						decflag = (a->_heCondMask & cond) == cond ? 1 : 0;
+						decFlag = (a->_heCondMask & cond) == cond ? 1 : 0;
 					} else if (type == 0x80000000) { // dirty_bit
-						decflag = (a->_heCondMask & cond) ? 0 : 1;
+						decFlag = (a->_heCondMask & cond) ? 0 : 1;
 					} else {
-						decflag = (a->_heCondMask & cond) ? 1 : 0;
+						decFlag = (a->_heCondMask & cond) ? 1 : 0;
 					}
 				}
 			}
 
 			p += (p[4] & AKC_ExtendBit) ? 6 : 5;
 
-			if (decflag == 0)
+			if (decFlag == 0)
 				continue;
 
 			if (_vm->_game.heversion >= 90) {
 				if (_vm->_game.heversion >= 99)
-					_shadow_mode = 0;
-				if (xmap && (shadowMask & AKC_ExtendWordBit))
-					_shadow_mode = 3;
+					_shadowMode = 0;
+				if (_xmap && (shadowMask & AKC_ExtendWordBit))
+					_shadowMode = 3;
 			}
 
 			switch (_codec) {
 			case AKOS_BYLE_RLE_CODEC:
-				result |= codec1(xmoveCur, ymoveCur);
+				result |= paintCelByleRLE(xMoveCur, yMoveCur);
 				break;
 			case AKOS_CDAT_RLE_CODEC:
-				result |= codec5(xmoveCur, ymoveCur);
+				result |= paintCelCDATRLE(xMoveCur, yMoveCur);
 				break;
 			case AKOS_RUN_MAJMIN_CODEC:
-				result |= codec16(xmoveCur, ymoveCur);
+				result |= paintCelMajMin(xMoveCur, yMoveCur);
 				break;
 			case AKOS_TRLE_CODEC:
-				result |= codec32(xmoveCur, ymoveCur);
+				result |= paintCelTRLE(xMoveCur, yMoveCur);
 				break;
 			default:
 				error("akos_drawLimb: invalid _codec %d", _codec);
@@ -480,7 +480,7 @@ byte AkosRenderer::drawLimb(const Actor *a, int limb) {
 	return result;
 }
 
-void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
+void AkosRenderer::byleRLEDecode(ByleRLEData &dataBlock) {
 	const byte *mask, *src;
 	byte *dst;
 	byte len, maskbit;
@@ -490,55 +490,55 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 	bool masked;
 
 	lastColumnX = -1;
-	y = v1.y;
-	src = _srcptr;
-	dst = v1.destptr;
-	len = v1.replen;
-	color = v1.repcolor;
+	y = dataBlock.y;
+	src = _srcPtr;
+	dst = dataBlock.destPtr;
+	len = dataBlock.repLen;
+	color = dataBlock.repColor;
 	height = _height;
 
-	scaleytab = &v1.scaletable[v1.scaleYindex];
-	maskbit = revBitMask(v1.x & 7);
-	mask = _vm->getMaskBuffer(v1.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), v1.y, _zbuf);
+	scaleytab = &dataBlock.scaleTable[dataBlock.scaleYIndex];
+	maskbit = revBitMask(dataBlock.x & 7);
+	mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
 
 	if (len)
 		goto StartPos;
 
 	do {
 		len = *src++;
-		color = len >> v1.shr;
-		len &= v1.mask;
+		color = len >> dataBlock.shr;
+		len &= dataBlock.mask;
 		if (!len)
 			len = *src++;
 
 		do {
 			if (_scaleY == 255 || *scaleytab++ < _scaleY) {
 				if (_actorHitMode) {
-					if (color && y == _actorHitY && v1.x == _actorHitX) {
+					if (color && y == _actorHitY && dataBlock.x == _actorHitX) {
 						_actorHitResult = true;
 						return;
 					}
 				} else {
-					masked = (y < v1.boundsRect.top || y >= v1.boundsRect.bottom) || (v1.x < 0 || v1.x >= v1.boundsRect.right) || (*mask & maskbit);
+					masked = (y < dataBlock.boundsRect.top || y >= dataBlock.boundsRect.bottom) || (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right) || (*mask & maskbit);
 					bool skipColumn = false;
 
 					if (color && !masked) {
 						pcolor = _palette[color];
-						if (_shadow_mode == 1) {
+						if (_shadowMode == 1) {
 							if (pcolor == 13) {
 								// In shadow mode 1 skipColumn works more or less the same way as in shadow
 								// mode 3. It is only ever checked and applied if pcolor is 13.
-								skipColumn = (lastColumnX == v1.x);
-								pcolor = _shadow_table[*dst];
+								skipColumn = (lastColumnX == dataBlock.x);
+								pcolor = _shadowTable[*dst];
 							}
-						} else if (_shadow_mode == 2) {
-							error("codec1_spec2"); // TODO
-						} else if (_shadow_mode == 3) {
+						} else if (_shadowMode == 2) {
+							error("AkosRenderer::byleRLEDecode(): shadowMode 2 not implemented."); // TODO
+						} else if (_shadowMode == 3) {
 							if (_vm->_game.features & GF_16BIT_COLOR) {
 								// I add the column skip here, too, although I don't know whether it always
 								// applies. But this is the only way to prevent recursive shading of pixels.
 								// This might need more fine tuning...
-								skipColumn = (lastColumnX == v1.x);
+								skipColumn = (lastColumnX == dataBlock.x);
 								uint16 srcColor = (pcolor >> 1) & 0x7DEF;
 								uint16 dstColor = (READ_UINT16(dst) >> 1) & 0x7DEF;
 								pcolor = srcColor + dstColor;
@@ -546,16 +546,16 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 								// I add the column skip here, too, although I don't know whether it always
 								// applies. But this is the only way to prevent recursive shading of pixels.
 								// This might need more fine tuning...
-								skipColumn = (lastColumnX == v1.x);
+								skipColumn = (lastColumnX == dataBlock.x);
 								pcolor = (pcolor << 8) + *dst;
-								pcolor = xmap[pcolor];
-							} else if (pcolor < 8 ) {
+								pcolor = _xmap[pcolor];
+							} else if (pcolor < 8) {
 								// This mode is used in COMI. The column skip only takes place when the shading
 								// is actually applied (for pcolor < 8). The skip avoids shading of pixels that
 								// already have been shaded.
-								skipColumn = (lastColumnX == v1.x);
+								skipColumn = (lastColumnX == dataBlock.x);
 								pcolor = (pcolor << 8) + *dst;
-								pcolor = _shadow_table[pcolor];
+								pcolor = _shadowTable[pcolor];
 							}
 						}
 						if (!skipColumn) {
@@ -572,29 +572,29 @@ void AkosRenderer::codec1_genericDecode(Codec1 &v1) {
 				y++;
 			}
 			if (!--height) {
-				if (!--v1.skip_width)
+				if (!--dataBlock.skipWidth)
 					return;
 				height = _height;
-				y = v1.y;
+				y = dataBlock.y;
 
-				scaleytab = &v1.scaletable[v1.scaleYindex];
-				lastColumnX = v1.x;
+				scaleytab = &dataBlock.scaleTable[dataBlock.scaleYIndex];
+				lastColumnX = dataBlock.x;
 
-				if (_scaleX == 255 || v1.scaletable[v1.scaleXindex] < _scaleX) {
-					v1.x += v1.scaleXstep;
-					if (v1.x < 0 || v1.x >= v1.boundsRect.right)
+				if (_scaleX == 255 || dataBlock.scaleTable[dataBlock.scaleXIndex] < _scaleX) {
+					dataBlock.x += dataBlock.scaleXStep;
+					if (dataBlock.x < 0 || dataBlock.x >= dataBlock.boundsRect.right)
 						return;
-					maskbit = revBitMask(v1.x & 7);
-					v1.destptr += v1.scaleXstep * _vm->_bytesPerPixel;
+					maskbit = revBitMask(dataBlock.x & 7);
+					dataBlock.destPtr += dataBlock.scaleXStep * _vm->_bytesPerPixel;
 				}
 
-				v1.scaleXindex += v1.scaleXstep;
-				dst = v1.destptr;
-				mask = _vm->getMaskBuffer(v1.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), v1.y, _zbuf);
+				dataBlock.scaleXIndex += dataBlock.scaleXStep;
+				dst = dataBlock.destPtr;
+				mask = _vm->getMaskBuffer(dataBlock.x - (_vm->_virtscr[kMainVirtScreen].xstart & 7), dataBlock.y, _zbuf);
 			}
 		StartPos:;
 		} while (--len);
-	} while (1);
+	} while (true);
 }
 
 const byte bigCostumeScaleTable[768] = {
@@ -698,151 +698,151 @@ const byte bigCostumeScaleTable[768] = {
 	0x1F, 0x9F, 0x5F, 0xDF, 0x3F, 0xBF, 0x7F, 0xFF,
 };
 
-byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
+byte AkosRenderer::paintCelByleRLE(int xMoveCur, int yMoveCur) {
 	int num_colors;
-	bool use_scaling;
+	bool actorIsScaled;
 	int i, j;
-	int skip = 0, startScaleIndexX, startScaleIndexY;
+	int linesToSkip = 0, startScaleIndexX, startScaleIndexY;
 	Common::Rect rect;
 	int step;
 	byte drawFlag = 1;
-	Codec1 v1;
+	ByleRLEData compData;
 
 	const int scaletableSize = (_vm->_game.heversion >= 61) ? 128 : 384;
 
 	/* implement custom scale table */
 
-	v1.scaletable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTable : bigCostumeScaleTable;
+	compData.scaleTable = (_vm->_game.heversion >= 61) ? smallCostumeScaleTable : bigCostumeScaleTable;
 	if (_vm->VAR_CUSTOMSCALETABLE != 0xFF && _vm->_res->isResourceLoaded(rtString, _vm->VAR(_vm->VAR_CUSTOMSCALETABLE))) {
-		v1.scaletable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
+		compData.scaleTable = _vm->getStringAddressVar(_vm->VAR_CUSTOMSCALETABLE);
 	}
 
 	// Setup color decoding variables
-	num_colors = _vm->getResourceDataSize(akpl);
+	num_colors = _vm->getResourceDataSize(_akpl);
 	if (num_colors == 32) {
-		v1.mask = 7;
-		v1.shr = 3;
+		compData.mask = 7;
+		compData.shr = 3;
 	} else if (num_colors == 64) {
-		v1.mask = 3;
-		v1.shr = 2;
+		compData.mask = 3;
+		compData.shr = 2;
 	} else {
-		v1.mask = 15;
-		v1.shr = 4;
+		compData.mask = 15;
+		compData.shr = 4;
 	}
 
-	use_scaling = (_scaleX != 0xFF) || (_scaleY != 0xFF);
+	actorIsScaled = (_scaleX != 0xFF) || (_scaleY != 0xFF);
 
-	v1.x = _actorX;
-	v1.y = _actorY;
+	compData.x = _actorX;
+	compData.y = _actorY;
 
-	v1.boundsRect.left = 0;
-	v1.boundsRect.top = 0;
-	v1.boundsRect.right = _out.w;
-	v1.boundsRect.bottom = _out.h;
+	compData.boundsRect.left = 0;
+	compData.boundsRect.top = 0;
+	compData.boundsRect.right = _out.w;
+	compData.boundsRect.bottom = _out.h;
 
-	if (use_scaling) {
+	if (actorIsScaled) {
 
 		/* Scale direction */
-		v1.scaleXstep = -1;
-		if (xmoveCur < 0) {
-			xmoveCur = -xmoveCur;
-			v1.scaleXstep = 1;
+		compData.scaleXStep = -1;
+		if (xMoveCur < 0) {
+			xMoveCur = -xMoveCur;
+			compData.scaleXStep = 1;
 		}
 
 		if (_mirror) {
 			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize - xmoveCur;
-			for (i = 0; i < xmoveCur; i++) {
-				if (v1.scaletable[j++] < _scaleX)
-					v1.x -= v1.scaleXstep;
+			startScaleIndexX = j = scaletableSize - xMoveCur;
+			for (i = 0; i < xMoveCur; i++) {
+				if (compData.scaleTable[j++] < _scaleX)
+					compData.x -= compData.scaleXStep;
 			}
 
-			rect.left = rect.right = v1.x;
+			rect.left = rect.right = compData.x;
 
 			j = startScaleIndexX;
-			for (i = 0, skip = 0; i < _width; i++) {
+			for (i = 0, linesToSkip = 0; i < _width; i++) {
 				if (rect.right < 0) {
-					skip++;
+					linesToSkip++;
 					startScaleIndexX = j;
 				}
-				if (v1.scaletable[j++] < _scaleX)
+				if (compData.scaleTable[j++] < _scaleX)
 					rect.right++;
 			}
 		} else {
 			/* No mirror */
 			/* Adjust X position */
-			startScaleIndexX = j = scaletableSize + xmoveCur;
-			for (i = 0; i < xmoveCur; i++) {
-				if (v1.scaletable[j--] < _scaleX)
-					v1.x += v1.scaleXstep;
+			startScaleIndexX = j = scaletableSize + xMoveCur;
+			for (i = 0; i < xMoveCur; i++) {
+				if (compData.scaleTable[j--] < _scaleX)
+					compData.x += compData.scaleXStep;
 			}
 
-			rect.left = rect.right = v1.x;
+			rect.left = rect.right = compData.x;
 
 			j = startScaleIndexX;
 			for (i = 0; i < _width; i++) {
-				if (rect.left >= v1.boundsRect.right) {
+				if (rect.left >= compData.boundsRect.right) {
 					startScaleIndexX = j;
-					skip++;
+					linesToSkip++;
 				}
-				if (v1.scaletable[j--] < _scaleX)
+				if (compData.scaleTable[j--] < _scaleX)
 					rect.left--;
 			}
 		}
 
-		if (skip)
-			skip--;
+		if (linesToSkip)
+			linesToSkip--;
 
 		step = -1;
-		if (ymoveCur < 0) {
-			ymoveCur = -ymoveCur;
+		if (yMoveCur < 0) {
+			yMoveCur = -yMoveCur;
 			step = -step;
 		}
 
-		startScaleIndexY = scaletableSize - ymoveCur;
-		for (i = 0; i < ymoveCur; i++) {
-			if (v1.scaletable[startScaleIndexY++] < _scaleY)
-				v1.y -= step;
+		startScaleIndexY = scaletableSize - yMoveCur;
+		for (i = 0; i < yMoveCur; i++) {
+			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
+				compData.y -= step;
 		}
 
-		rect.top = rect.bottom = v1.y;
-		startScaleIndexY = scaletableSize - ymoveCur;
+		rect.top = rect.bottom = compData.y;
+		startScaleIndexY = scaletableSize - yMoveCur;
 		for (i = 0; i < _height; i++) {
-			if (v1.scaletable[startScaleIndexY++] < _scaleY)
+			if (compData.scaleTable[startScaleIndexY++] < _scaleY)
 				rect.bottom++;
 		}
 
-		startScaleIndexY = scaletableSize - ymoveCur;
+		startScaleIndexY = scaletableSize - yMoveCur;
 	} else {
 		if (!_mirror)
-			xmoveCur = -xmoveCur;
+			xMoveCur = -xMoveCur;
 
-		v1.x += xmoveCur;
-		v1.y += ymoveCur;
+		compData.x += xMoveCur;
+		compData.y += yMoveCur;
 
 		if (_mirror) {
-			rect.left = v1.x;
-			rect.right = v1.x + _width;
+			rect.left = compData.x;
+			rect.right = compData.x + _width;
 		} else {
-			rect.left = v1.x - _width;
-			rect.right = v1.x;
+			rect.left = compData.x - _width;
+			rect.right = compData.x;
 		}
 
-		rect.top = v1.y;
+		rect.top = compData.y;
 		rect.bottom = rect.top + _height;
 
 		startScaleIndexX = scaletableSize;
 		startScaleIndexY = scaletableSize;
 	}
 
-	v1.scaleXindex = startScaleIndexX;
-	v1.scaleYindex = startScaleIndexY;
-	v1.skip_width = _width;
-	v1.scaleXstep = _mirror ? 1 : -1;
+	compData.scaleXIndex = startScaleIndexX;
+	compData.scaleYIndex = startScaleIndexY;
+	compData.skipWidth = _width;
+	compData.scaleXStep = _mirror ? 1 : -1;
 
-	if (_vm->_game.heversion >= 71 && !use_scaling) {
+	if (_vm->_game.heversion >= 71 && !actorIsScaled) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			v1.boundsRect = _clipOverride;
+			compData.boundsRect = _clipOverride;
 		}
 	}
 
@@ -852,72 +852,72 @@ byte AkosRenderer::codec1(int xmoveCur, int ymoveCur) {
 	} else
 		markRectAsDirty(rect);
 
-	if (rect.top >= v1.boundsRect.bottom || rect.bottom <= v1.boundsRect.top)
+	if (rect.top >= compData.boundsRect.bottom || rect.bottom <= compData.boundsRect.top)
 		return 0;
 
-	if (rect.left >= v1.boundsRect.right || rect.right <= v1.boundsRect.left)
+	if (rect.left >= compData.boundsRect.right || rect.right <= compData.boundsRect.left)
 		return 0;
 
-	v1.replen = 0;
+	compData.repLen = 0;
 
 	if (_mirror) {
-		if (!use_scaling)
-			skip = v1.boundsRect.left - v1.x;
+		if (!actorIsScaled)
+			linesToSkip = compData.boundsRect.left - compData.x;
 
-		if (skip > 0) {
-			v1.skip_width -= skip;
-			codec1_ignorePakCols(v1, skip);
-			v1.x = v1.boundsRect.left;
+		if (linesToSkip > 0) {
+			compData.skipWidth -= linesToSkip;
+			skipCelLines(compData, linesToSkip);
+			compData.x = compData.boundsRect.left;
 		} else {
-			skip = rect.right - v1.boundsRect.right;
-			if (skip <= 0) {
+			linesToSkip = rect.right - compData.boundsRect.right;
+			if (linesToSkip <= 0) {
 				drawFlag = 2;
 			} else {
-				v1.skip_width -= skip;
+				compData.skipWidth -= linesToSkip;
 			}
 		}
 	} else {
-		if (!use_scaling)
-			skip = rect.right - v1.boundsRect.right + 1;
-		if (skip > 0) {
-			v1.skip_width -= skip;
-			codec1_ignorePakCols(v1, skip)	;
-			v1.x = v1.boundsRect.right - 1;
+		if (!actorIsScaled)
+			linesToSkip = rect.right - compData.boundsRect.right + 1;
+		if (linesToSkip > 0) {
+			compData.skipWidth -= linesToSkip;
+			skipCelLines(compData, linesToSkip)	;
+			compData.x = compData.boundsRect.right - 1;
 		} else {
-			skip = (v1.boundsRect.left -1) - rect.left;
+			linesToSkip = (compData.boundsRect.left -1) - rect.left;
 
-			if (skip <= 0)
+			if (linesToSkip <= 0)
 				drawFlag = 2;
 			else
-				v1.skip_width -= skip;
+				compData.skipWidth -= linesToSkip;
 		}
 	}
 
-	if (v1.skip_width <= 0 || _height <= 0)
+	if (compData.skipWidth <= 0 || _height <= 0)
 		return 0;
 
-	if (rect.left < v1.boundsRect.left)
-		rect.left = v1.boundsRect.left;
+	if (rect.left < compData.boundsRect.left)
+		rect.left = compData.boundsRect.left;
 
-	if (rect.top < v1.boundsRect.top)
-		rect.top = v1.boundsRect.top;
+	if (rect.top < compData.boundsRect.top)
+		rect.top = compData.boundsRect.top;
 
-	if (rect.top > v1.boundsRect.bottom)
-		rect.top = v1.boundsRect.bottom;
+	if (rect.top > compData.boundsRect.bottom)
+		rect.top = compData.boundsRect.bottom;
 
-	if (rect.bottom > v1.boundsRect.bottom)
-		rect.bottom = v1.boundsRect.bottom;
+	if (rect.bottom > compData.boundsRect.bottom)
+		rect.bottom = compData.boundsRect.bottom;
 
-	if (_draw_top > rect.top)
-		_draw_top = rect.top;
-	if (_draw_bottom < rect.bottom)
-		_draw_bottom = rect.bottom;
+	if (_drawTop > rect.top)
+		_drawTop = rect.top;
+	if (_drawBottom < rect.bottom)
+		_drawBottom = rect.bottom;
 
-	v1.width = _out.w;
-	v1.height = _out.h;
-	v1.destptr = (byte *)_out.getBasePtr(v1.x, v1.y);
+	compData.width = _out.w;
+	compData.height = _out.h;
+	compData.destPtr = (byte *)_out.getBasePtr(compData.x, compData.y);
 
-	codec1_genericDecode(v1);
+	byleRLEDecode(compData);
 
 	return drawFlag;
 }
@@ -928,12 +928,12 @@ void AkosRenderer::markRectAsDirty(Common::Rect rect) {
 	_vm->markRectAsDirty(kMainVirtScreen, rect, _actorID);
 }
 
-byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
+byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
 	Common::Rect clip;
 	int32 maxw, maxh;
 
 	if (_actorHitMode) {
-		error("codec5: _actorHitMode not yet implemented");
+		error("paintCelCDATRLE: _actorHitMode not yet implemented");
 		return 0;
 	}
 
@@ -956,10 +956,10 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
-	if (_draw_top > clip.top)
-		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom)
-		_draw_bottom = clip.bottom;
+	if (_drawTop > clip.top)
+		_drawTop = clip.top;
+	if (_drawBottom < clip.bottom)
+		_drawBottom = clip.bottom;
 
 	BompDrawData bdd;
 
@@ -971,7 +971,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	}
 	bdd.y = _actorY + ymoveCur;
 
-	bdd.src = _srcptr;
+	bdd.src = _srcPtr;
 	bdd.srcwidth = _width;
 	bdd.srcheight = _height;
 
@@ -981,7 +981,7 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	bdd.maskPtr = _vm->getMaskBuffer(0, 0, _zbuf);
 	bdd.numStrips = _numStrips;
 
-	bdd.shadowMode = _shadow_mode;
+	bdd.shadowMode = _shadowMode;
 	bdd.shadowPalette = _vm->_shadowPalette;
 
 	bdd.actorPalette = _useBompPalette ? _palette : nullptr;
@@ -995,241 +995,241 @@ byte AkosRenderer::codec5(int xmoveCur, int ymoveCur) {
 	return 0;
 }
 
-void AkosRenderer::akos16SetupBitReader(const byte *src) {
-	_akos16.repeatMode = false;
-	_akos16.numbits = 16;
-	_akos16.mask = (1 << *src) - 1;
-	_akos16.shift = *(src);
-	_akos16.color = *(src + 1);
-	_akos16.bits = (*(src + 2) | *(src + 3) << 8);
-	_akos16.dataptr = src + 4;
+void AkosRenderer::majMinCodecSetupBitReader(const byte *src) {
+	_majMinData.repeatMode = false;
+	_majMinData.numBits = 16;
+	_majMinData.mask = (1 << *src) - 1;
+	_majMinData.shift = *(src);
+	_majMinData.color = *(src + 1);
+	_majMinData.bits = (*(src + 2) | *(src + 3) << 8);
+	_majMinData.dataPtr = src + 4;
 }
 
-#define AKOS16_FILL_BITS()                                        \
-		if (_akos16.numbits <= 8) {                                \
-		  _akos16.bits |= (*_akos16.dataptr++) << _akos16.numbits;   \
-		  _akos16.numbits += 8;                                    \
+#define MAJMIN_FILL_BITS()                                        \
+		if (_majMinData.numBits <= 8) {                                \
+		  _majMinData.bits |= (*_majMinData.dataPtr++) << _majMinData.numBits;   \
+		  _majMinData.numBits += 8;                                    \
 		}
 
-#define AKOS16_EAT_BITS(n)                                        \
-		_akos16.numbits -= (n);                                    \
-		_akos16.bits >>= (n);
+#define MAJMIN_EAT_BITS(n)                                        \
+		_majMinData.numBits -= (n);                                    \
+		_majMinData.bits >>= (n);
 
 
-void AkosRenderer::akos16SkipData(int32 numbytes) {
-	akos16DecodeLine(nullptr, numbytes, 0);
+void AkosRenderer::majMinCodecSkipData(int32 numbytes) {
+	majMinCodecDecodeLine(nullptr, numbytes, 0);
 }
 
-void AkosRenderer::akos16DecodeLine(byte *buf, int32 numbytes, int32 dir) {
+void AkosRenderer::majMinCodecDecodeLine(byte *buf, int32 numbytes, int32 dir) {
 	uint16 bits, tmp_bits;
 
 	while (numbytes != 0) {
 		if (buf) {
-			*buf = _akos16.color;
+			*buf = _majMinData.color;
 			buf += dir;
 		}
 
-		if (!_akos16.repeatMode) {
-			AKOS16_FILL_BITS()
-			bits = _akos16.bits & 3;
+		if (!_majMinData.repeatMode) {
+			MAJMIN_FILL_BITS()
+			bits = _majMinData.bits & 3;
 			if (bits & 1) {
-				AKOS16_EAT_BITS(2)
+				MAJMIN_EAT_BITS(2)
 				if (bits & 2) {
-					tmp_bits = _akos16.bits & 7;
-					AKOS16_EAT_BITS(3)
+					tmp_bits = _majMinData.bits & 7;
+					MAJMIN_EAT_BITS(3)
 					if (tmp_bits != 4) {
 						// A color change
-						_akos16.color += (tmp_bits - 4);
+						_majMinData.color += (tmp_bits - 4);
 					} else {
 						// Color does not change, but rather identical pixels get repeated
-						_akos16.repeatMode = true;
-						AKOS16_FILL_BITS()
-						_akos16.repeatCount = (_akos16.bits & 0xff) - 1;
-						AKOS16_EAT_BITS(8)
-						AKOS16_FILL_BITS()
+						_majMinData.repeatMode = true;
+						MAJMIN_FILL_BITS()
+						_majMinData.repeatCount = (_majMinData.bits & 0xff) - 1;
+						MAJMIN_EAT_BITS(8)
+						MAJMIN_FILL_BITS()
 					}
 				} else {
-					AKOS16_FILL_BITS()
-					_akos16.color = ((byte)_akos16.bits) & _akos16.mask;
-					AKOS16_EAT_BITS(_akos16.shift)
-					AKOS16_FILL_BITS()
+					MAJMIN_FILL_BITS()
+					_majMinData.color = ((byte)_majMinData.bits) & _majMinData.mask;
+					MAJMIN_EAT_BITS(_majMinData.shift)
+					MAJMIN_FILL_BITS()
 				}
 			} else {
-				AKOS16_EAT_BITS(1);
+				MAJMIN_EAT_BITS(1);
 			}
 		} else {
-			if (--_akos16.repeatCount == 0) {
-				_akos16.repeatMode = false;
+			if (--_majMinData.repeatCount == 0) {
+				_majMinData.repeatMode = false;
 			}
 		}
 		numbytes--;
 	}
 }
 
-void AkosRenderer::akos16Decompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir,
-		int32 numskip_before, int32 numskip_after, byte transparency, int maskLeft, int maskTop, int zBuf) {
-	byte *tmp_buf = _akos16.buffer;
-	int maskpitch;
-	byte *maskptr;
-	const byte maskbit = revBitMask(maskLeft & 7);
+void AkosRenderer::majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 width, int32 height, int32 dir,
+		int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf) {
+	byte *tmpBuf = _majMinData.buffer;
+	int maskPitch;
+	byte *maskPtr;
+	const byte maskBit = revBitMask(maskLeft & 7);
 
 	if (dir < 0) {
-		dest -= (t_width - 1);
-		tmp_buf += (t_width - 1);
+		dest -= (width - 1);
+		tmpBuf += (width - 1);
 	}
 
-	akos16SetupBitReader(src);
+	majMinCodecSetupBitReader(src);
 
-	if (numskip_before != 0) {
-		akos16SkipData(numskip_before);
+	if (numSkipBefore != 0) {
+		majMinCodecSkipData(numSkipBefore);
 	}
 
-	maskpitch = _numStrips;
+	maskPitch = _numStrips;
 
-	maskptr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
+	maskPtr = _vm->getMaskBuffer(maskLeft, maskTop, zBuf);
 
-	assert(t_height > 0);
-	assert(t_width > 0);
-	while (t_height--) {
-		akos16DecodeLine(tmp_buf, t_width, dir);
-		bompApplyMask(_akos16.buffer, maskptr, maskbit, t_width, transparency);
+	assert(height > 0);
+	assert(width > 0);
+	while (height--) {
+		majMinCodecDecodeLine(tmpBuf, width, dir);
+		bompApplyMask(_majMinData.buffer, maskPtr, maskBit, width, transparency);
 		bool HE7Check = (_vm->_game.heversion == 70);
-		bompApplyShadow(_shadow_mode, _shadow_table, _akos16.buffer, dest, t_width, transparency, HE7Check);
+		bompApplyShadow(_shadowMode, _shadowTable, _majMinData.buffer, dest, width, transparency, HE7Check);
 
-		if (numskip_after != 0)	{
-			akos16SkipData(numskip_after);
+		if (numSkipAfter != 0)	{
+			majMinCodecSkipData(numSkipAfter);
 		}
 		dest += pitch;
-		maskptr += maskpitch;
+		maskPtr += maskPitch;
 	}
 }
 
-byte AkosRenderer::codec16(int xmoveCur, int ymoveCur) {
+byte AkosRenderer::paintCelMajMin(int xMoveCur, int yMoveCur) {
 	assert(_vm->_bytesPerPixel == 1);
 
 	Common::Rect clip;
-	int32 minx, miny, maxw, maxh;
-	int32 skip_x, skip_y, cur_x, cur_y;
+	int32 minX, minY, maxW, maxH;
+	int32 skipX, skipY, curX, curY;
 	byte transparency = (_vm->_game.heversion >= 61) ? _palette[0] : 255;
 
 	if (_actorHitMode) {
-		error("codec16: _actorHitMode not yet implemented");
+		error("paintCelMajMin: _actorHitMode not yet implemented");
 		return 0;
 	}
 
 	if (!_mirror) {
-		clip.left = (_actorX - xmoveCur - _width) + 1;
+		clip.left = (_actorX - xMoveCur - _width) + 1;
 	} else {
-		clip.left = _actorX + xmoveCur;
+		clip.left = _actorX + xMoveCur;
 	}
 
-	clip.top = _actorY + ymoveCur;
+	clip.top = _actorY + yMoveCur;
 	clip.right = clip.left + _width;
 	clip.bottom = clip.top + _height;
 
-	minx = miny = 0;
-	maxw = _out.w;
-	maxh = _out.h;
+	minX = minY = 0;
+	maxW = _out.w;
+	maxH = _out.h;
 
 	if (_vm->_game.heversion >= 71) {
 		if (_clipOverride.right > _clipOverride.left && _clipOverride.bottom > _clipOverride.top) {
-			minx = _clipOverride.left;
-			miny = _clipOverride.top;
-			maxw = _clipOverride.right;
-			maxh = _clipOverride.bottom;
+			minX = _clipOverride.left;
+			minY = _clipOverride.top;
+			maxW = _clipOverride.right;
+			maxH = _clipOverride.bottom;
 		}
 	}
 
 	markRectAsDirty(clip);
 
-	skip_x = 0;
-	skip_y = 0;
-	cur_x = _width - 1;
-	cur_y = _height - 1;
+	skipX = 0;
+	skipY = 0;
+	curX = _width - 1;
+	curY = _height - 1;
 
-	if (clip.left < minx) {
-		skip_x = -clip.left;
+	if (clip.left < minX) {
+		skipX = -clip.left;
 		clip.left = 0;
 	}
 
-	if (clip.right > maxw) {
-		cur_x -= clip.right - maxw;
-		clip.right = maxw;
+	if (clip.right > maxW) {
+		curX -= clip.right - maxW;
+		clip.right = maxW;
 	}
 
-	if (clip.top < miny) {
-		skip_y -= clip.top;
+	if (clip.top < minY) {
+		skipY -= clip.top;
 		clip.top = 0;
 	}
 
-	if (clip.bottom > maxh) {
-		cur_y -= clip.bottom - maxh;
-		clip.bottom = maxh;
+	if (clip.bottom > maxH) {
+		curY -= clip.bottom - maxH;
+		clip.bottom = maxH;
 	}
 
 	if ((clip.left >= clip.right) || (clip.top >= clip.bottom))
 		return 0;
 
-	if (_draw_top > clip.top)
-		_draw_top = clip.top;
-	if (_draw_bottom < clip.bottom)
-		_draw_bottom = clip.bottom;
+	if (_drawTop > clip.top)
+		_drawTop = clip.top;
+	if (_drawBottom < clip.bottom)
+		_drawBottom = clip.bottom;
 
-	int32 width_unk, height_unk;
+	int32 widthUnk, heightUnk;
 
-	height_unk = clip.top;
+	heightUnk = clip.top;
 	int32 dir;
 
 	if (!_mirror) {
 		dir = -1;
 
-		int tmp_skip_x = skip_x;
-		skip_x = _width - 1 - cur_x;
-		cur_x = _width - 1 - tmp_skip_x;
-		width_unk = clip.right - 1;
+		int tmpSkipX = skipX;
+		skipX = _width - 1 - curX;
+		curX = _width - 1 - tmpSkipX;
+		widthUnk = clip.right - 1;
 	} else {
 		dir = 1;
-		width_unk = clip.left;
+		widthUnk = clip.left;
 	}
 
-	int32 out_height;
+	int32 outHeight;
 
-	out_height = cur_y - skip_y;
-	if (out_height < 0) {
-		out_height = -out_height;
+	outHeight = curY - skipY;
+	if (outHeight < 0) {
+		outHeight = -outHeight;
 	}
-	out_height++;
+	outHeight++;
 
-	cur_x -= skip_x;
-	if (cur_x < 0) {
-		cur_x = -cur_x;
+	curX -= skipX;
+	if (curX < 0) {
+		curX = -curX;
 	}
-	cur_x++;
+	curX++;
 
-	int32 numskip_before = skip_x + (skip_y * _width);
-	int32 numskip_after = _width - cur_x;
+	int32 numSkipBefore = skipX + (skipY * _width);
+	int32 numSkipAfter = _width - curX;
 
-	byte *dst = (byte *)_out.getBasePtr(width_unk, height_unk);
+	byte *dst = (byte *)_out.getBasePtr(widthUnk, heightUnk);
 
-	akos16Decompress(dst, _out.pitch, _srcptr, cur_x, out_height, dir, numskip_before, numskip_after, transparency, clip.left, clip.top, _zbuf);
+	majMinCodecDecompress(dst, _out.pitch, _srcPtr, curX, outHeight, dir, numSkipBefore, numSkipAfter, transparency, clip.left, clip.top, _zbuf);
 	return 0;
 }
 
-byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
+byte AkosRenderer::paintCelTRLE(int xMoveCur, int yMoveCur) {
 #ifdef ENABLE_HE
 	Common::Rect src, dst;
 
 	if (!_mirror) {
-		dst.left = (_actorX - xmoveCur - _width) + 1;
+		dst.left = (_actorX - xMoveCur - _width) + 1;
 	} else {
-		dst.left = _actorX + xmoveCur;
+		dst.left = _actorX + xMoveCur;
 	}
 
 	src.top = src.left = 0;
 	src.right = _width;
 	src.bottom = _height;
 
-	dst.top = _actorY + ymoveCur;
+	dst.top = _actorY + yMoveCur;
 	dst.right = dst.left + _width;
 	dst.bottom = dst.top + _height;
 
@@ -1260,19 +1260,19 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 
 	markRectAsDirty(dst);
 
-	if (_draw_top > dst.top)
-		_draw_top = dst.top;
-	if (_draw_bottom < dst.bottom)
-		_draw_bottom = dst.bottom;
+	if (_drawTop > dst.top)
+		_drawTop = dst.top;
+	if (_drawBottom < dst.bottom)
+		_drawBottom = dst.bottom;
 
 	const uint8 *palPtr = NULL;
 	if (_vm->_game.features & GF_16BIT_COLOR) {
 		palPtr = _vm->_hePalettes + _vm->_hePaletteSlot + 768;
 		if (_paletteNum) {
 			palPtr = _vm->_hePalettes + _paletteNum * _vm->_hePaletteSlot + 768;
-		} else if (rgbs) {
+		} else if (_rgbs) {
 			for (uint i = 0; i < 256; i++)
-				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(rgbs[i * 3 + 0], rgbs[i * 3 + 1], rgbs[i * 3 + 2]));
+				WRITE_LE_UINT16(_palette + i, _vm->get16BitColor(_rgbs[i * 3 + 0], _rgbs[i * 3 + 1], _rgbs[i * 3 + 2]));
 			palPtr = (uint8 *)_palette;
 		}
 	} else if (_vm->_game.heversion >= 99) {
@@ -1280,20 +1280,20 @@ byte AkosRenderer::codec32(int xmoveCur, int ymoveCur) {
 	}
 
 	byte *dstPtr = (byte *)_out.getBasePtr(dst.left, dst.top);
-	if (_shadow_mode == 3) {
-		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, xmap, _vm->_bytesPerPixel);
+	if (_shadowMode == 3) {
+		Wiz::decompressWizImage<kWizXMap>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, palPtr, _xmap, _vm->_bytesPerPixel);
 	} else {
 		if (palPtr != NULL) {
-			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, palPtr, NULL, _vm->_bytesPerPixel);
+			Wiz::decompressWizImage<kWizRMap>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, palPtr, NULL, _vm->_bytesPerPixel);
 		} else {
-			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcptr, src, 0, NULL, NULL, _vm->_bytesPerPixel);
+			Wiz::decompressWizImage<kWizCopy>(dstPtr, _out.pitch, kDstScreen, _srcPtr, src, 0, NULL, NULL, _vm->_bytesPerPixel);
 		}
 	}
 #endif
 	return 0;
 }
 
-byte AkosCostumeLoader::increaseAnims(Actor *a) {
+bool AkosCostumeLoader::increaseAnims(Actor *a) {
 	return ((ScummEngine_v6 *)_vm)->akos_increaseAnims(_akos, a);
 }
 
@@ -1315,21 +1315,20 @@ bool ScummEngine_v6::akos_increaseAnims(const byte *akos, Actor *a) {
 	return result;
 }
 
-bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, const uint16 *akfo, int numakfo) {
+bool ScummEngine_v6::akos_increaseAnim(Actor *a, int limb, const byte *aksq, const uint16 *akfo, int numakfo) {
 	byte animType;
 	uint startState, curState, endState;
 	uint code;
 	bool skipNextState, needRedraw;
 	int counter, tmp2;
 
-	animType = a->_cost.animType[chan];
-	endState = a->_cost.end[chan];
-	startState = curState = a->_cost.curpos[chan];
+	animType = a->_cost.animType[limb];
+	endState = a->_cost.end[limb];
+	startState = curState = a->_cost.curpos[limb];
 	skipNextState = false;
 	needRedraw = false;
 
 	do {
-
 		code = aksq[curState];
 		if (code & AKC_ExtendBit)
 			code = READ_BE_UINT16(aksq + curState);
@@ -1435,7 +1434,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		case AKAT_LoopLayer:
 			curState += (code & AKC_ExtendWordBit) ? 2 : 1;
 			if (curState > endState)
-				curState = a->_cost.start[chan];
+				curState = a->_cost.start[limb];
 			break;
 		case AKAT_RunLayer:
 			if (curState != endState)
@@ -1531,9 +1530,9 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 				error("akos_increaseAnim: no AKFO table");
 			counter = a->getAnimVar(GB(2)) - 1;
 			if (_game.heversion >= 80) {
-				if (counter < 0 || counter > a->_cost.heJumpCountTable[chan] - 1)
+				if (counter < 0 || counter > a->_cost.heJumpCountTable[limb] - 1)
 					error("akos_increaseAnim: invalid jump value %d", counter);
-				curState = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[chan] + counter * 2);
+				curState = READ_LE_UINT16(akfo + a->_cost.heJumpOffsetTable[limb] + counter * 2);
 			} else {
 				if (counter < 0 || counter > numakfo - 1)
 					error("akos_increaseAnim: invalid jump value %d", counter);
@@ -1560,7 +1559,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 			// To prevent an undefined 'uSweat token' the animation is reset to its start.
 			if (_game.id == GID_HEGAME && _language == Common::DE_DEU && \
 			    _currentRoom == 21 && a->_costume == 352 && curState == 846) {
-				curState = a->_cost.start[chan];
+				curState = a->_cost.start[limb];
 			}
 			break;
 
@@ -1681,7 +1680,7 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 	if ((code2 & AKC_CommandMask) == AKC_CommandMask && code2 != AKC_DrawMany && code2 != AKC_EmptyCel && code2 != AKC_EndSeq && code2 != AKC_DisplayAuxFrame && code2 != AKC_RelativeOffsetDrawMany && code2 != AKC_CondDrawMany && code2 != AKC_CondRelativeOffsetDrawMany)
 		error("Ending with undefined uSweat token %X", code2);
 
-	a->_cost.curpos[chan] = curState;
+	a->_cost.curpos[limb] = curState;
 
 	if (needRedraw)
 		return true;
@@ -1689,25 +1688,25 @@ bool ScummEngine_v6::akos_increaseAnim(Actor *a, int chan, const byte *aksq, con
 		return curState != startState;
 }
 
-void ScummEngine_v6::akos_queCommand(byte cmd, Actor *a, int param_1, int param_2) {
+void ScummEngine_v6::akos_queCommand(byte cmd, Actor *a, int param1, int param2) {
 	_akosQueuePos++;
 	assertRange(0, _akosQueuePos, 31, "akos_queCommand: _akosQueuePos");
 
 	_akosQueue[_akosQueuePos].cmd = cmd;
 	_akosQueue[_akosQueuePos].actor = a->_number;
-	_akosQueue[_akosQueuePos].param1 = param_1;
-	_akosQueue[_akosQueuePos].param2 = param_2;
+	_akosQueue[_akosQueuePos].param1 = param1;
+	_akosQueue[_akosQueuePos].param2 = param2;
 }
 
 void ScummEngine_v6::akos_processQueue() {
 	byte cmd;
-	int actor, param_1, param_2;
+	int actor, param1, param2;
 
 	while (_akosQueuePos) {
 		cmd = _akosQueue[_akosQueuePos].cmd;
 		actor = _akosQueue[_akosQueuePos].actor;
-		param_1 = _akosQueue[_akosQueuePos].param1;
-		param_2 = _akosQueue[_akosQueuePos].param2;
+		param1 = _akosQueue[_akosQueuePos].param1;
+		param2 = _akosQueue[_akosQueuePos].param2;
 		_akosQueuePos--;
 
 		Actor *a = derefActor(actor, "akos_processQueue");
@@ -1717,41 +1716,41 @@ void ScummEngine_v6::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case AKQC_StartSound:
-			_sound->addSoundToQueue(param_1, 0, -1, 0);
+			_sound->addSoundToQueue(param1, 0, -1, 0);
 			break;
 		case AKQC_StartAnimation:
-			a->startAnimActor(param_1);
+			a->startAnimActor(param1);
 			break;
 		case AKQC_SetZClipping:
-			a->_forceClip = param_1;
+			a->_forceClip = param1;
 			break;
 		case AKQC_SetXYOffset:
-			a->_heOffsX = param_1;
-			a->_heOffsY = param_2;
+			a->_heOffsX = param1;
+			a->_heOffsY = param2;
 			break;
 		case AKQC_DisplayAuxFrame:
 #ifdef ENABLE_HE
 			assert(_game.heversion >= 71);
-			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param_1);
+			((ScummEngine_v71he *)this)->queueAuxEntry(a->_number, param1);
 #endif
 			break;
 		case AKQC_StartTalkie:
 			_actorToPrintStrFor = a->_number;
 
-			a->_talkPosX = ((ActorHE *)a)->_heTalkQueue[param_1].posX;
-			a->_talkPosY = ((ActorHE *)a)->_heTalkQueue[param_1].posY;
-			a->_talkColor = ((ActorHE *)a)->_heTalkQueue[param_1].color;
+			a->_talkPosX = ((ActorHE *)a)->_heTalkQueue[param1].posX;
+			a->_talkPosY = ((ActorHE *)a)->_heTalkQueue[param1].posY;
+			a->_talkColor = ((ActorHE *)a)->_heTalkQueue[param1].color;
 
 			_string[0].loadDefault();
 			_string[0].color = a->_talkColor;
-			actorTalk(((ActorHE *)a)->_heTalkQueue[param_1].sentence);
+			actorTalk(((ActorHE *)a)->_heTalkQueue[param1].sentence);
 
 			break;
 		case AKQC_SoftStartSound:
-			_sound->addSoundToQueue(param_1, 0, -1, 4);
+			_sound->addSoundToQueue(param1, 0, -1, 4);
 			break;
 		default:
-			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param_1, param_2);
+			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param1, param2);
 		}
 	}
 
@@ -1766,13 +1765,13 @@ void ScummEngine_v6::akos_processQueue() {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::akos_processQueue() {
 	byte cmd;
-	int actor, param_1, param_2;
+	int actor, param1, param2;
 
 	while (_akosQueuePos) {
 		cmd = _akosQueue[_akosQueuePos].cmd;
 		actor = _akosQueue[_akosQueuePos].actor;
-		param_1 = _akosQueue[_akosQueuePos].param1;
-		param_2 = _akosQueue[_akosQueuePos].param2;
+		param1 = _akosQueue[_akosQueuePos].param1;
+		param2 = _akosQueue[_akosQueuePos].param2;
 		_akosQueuePos--;
 
 		Actor *a = derefActor(actor, "akos_processQueue");
@@ -1782,45 +1781,45 @@ void ScummEngine_v7::akos_processQueue() {
 			a->putActor(0, 0, 0);
 			break;
 		case AKQC_StartSound:
-			if (param_1 != 0) {
+			if (param1 != 0) {
 				if (_imuseDigital) {
-					_imuseDigital->startSfx(param_1, 63);
+					_imuseDigital->startSfx(param1, 63);
 				}
 			}
 			break;
 		case AKQC_StartAnimation:
-			a->startAnimActor(param_1);
+			a->startAnimActor(param1);
 			break;
 		case AKQC_SetZClipping:
-			a->_forceClip = param_1;
+			a->_forceClip = param1;
 			break;
 		case AKQC_SetXYOffset:
-			a->_heOffsX = param_1;
-			a->_heOffsY = param_2;
+			a->_heOffsX = param1;
+			a->_heOffsY = param2;
 			break;
 		case AKQC_SetSoundVolume:
-			if (param_1 != 0) {
+			if (param1 != 0) {
 				if (_imuseDigital) {
-					_imuseDigital->setVolume(param_1, param_2);
+					_imuseDigital->setVolume(param1, param2);
 				}
 			}
 			break;
 		case AKQC_SetSoundPan:
-			if (param_1 != 0) {
+			if (param1 != 0) {
 				if (_imuseDigital) {
-					_imuseDigital->setPan(param_1, param_2);
+					_imuseDigital->setPan(param1, param2);
 				}
 			}
 			break;
 		case AKQC_SetSoundPriority:
-			if (param_1 != 0) {
+			if (param1 != 0) {
 				if (_imuseDigital) {
-					_imuseDigital->setPriority(param_1, param_2);
+					_imuseDigital->setPriority(param1, param2);
 				}
 			}
 			break;
 		default:
-			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param_1, param_2);
+			error("akos_queCommand(%d,%d,%d,%d)", cmd, a->_number, param1, param2);
 		}
 	}
 }
