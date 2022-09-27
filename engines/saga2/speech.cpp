@@ -128,48 +128,48 @@ inline uint32 extendID(int16 smallID) {
 
 void Speech::read(Common::InSaveFile *in) {
 	//  Restore the sample count and character count
-	sampleCount = in->readSint16LE();
-	charCount = in->readSint16LE();
+	_sampleCount = in->readSint16LE();
+	_charCount = in->readSint16LE();
 
 	//  Restore the text boundaries
-	bounds.read(in);
+	_bounds.read(in);
 
 	//  Restore the pen color and outline color
-	penColor = in->readUint16LE();
-	outlineColor = in->readUint16LE();
+	_penColor = in->readUint16LE();
+	_outlineColor = in->readUint16LE();
 
 	//  Restore the object ID
-	objID = in->readUint16LE();
+	_objID = in->readUint16LE();
 
 	//  Restore the thread ID
-	thread = in->readSint16LE();
+	_thread = in->readSint16LE();
 
 	//  Restore the flags
-	speechFlags = in->readSint16LE();
+	_speechFlags = in->readSint16LE();
 
-	debugC(4, kDebugSaveload, "...... sampleCount = %d", sampleCount);
-	debugC(4, kDebugSaveload, "...... charCount = %d", charCount);
-	debugC(4, kDebugSaveload, "...... penColor = %d", penColor);
-	debugC(4, kDebugSaveload, "...... outlineColor = %d", outlineColor);
+	debugC(4, kDebugSaveload, "...... sampleCount = %d", _sampleCount);
+	debugC(4, kDebugSaveload, "...... charCount = %d", _charCount);
+	debugC(4, kDebugSaveload, "...... penColor = %d", _penColor);
+	debugC(4, kDebugSaveload, "...... outlineColor = %d", _outlineColor);
 	debugC(4, kDebugSaveload, "...... bounds = (%d, %d, %d, %d)",
-	       bounds.x, bounds.y, bounds.width, bounds.height);
-	debugC(4, kDebugSaveload, "...... objID = %d", objID);
-	debugC(4, kDebugSaveload, "...... thread = %d", thread);
-	debugC(4, kDebugSaveload, "...... speechFlags = %d", speechFlags);
+	       _bounds.x, _bounds.y, _bounds.width, _bounds.height);
+	debugC(4, kDebugSaveload, "...... objID = %d", _objID);
+	debugC(4, kDebugSaveload, "...... thread = %d", _thread);
+	debugC(4, kDebugSaveload, "...... speechFlags = %d", _speechFlags);
 
 	//  Restore the sample ID's
-	for (int i = 0; i < sampleCount; i++) {
-		sampleID[i] = in->readUint32BE();
-		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
+	for (int i = 0; i < _sampleCount; i++) {
+		_sampleID[i] = in->readUint32BE();
+		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, _sampleID[i]);
 	}
 
 	//  Restore the text
-	in->read(speechBuffer, charCount);
-	speechBuffer[charCount] = '\0';
-	debugC(4, kDebugSaveload, "...... speechBuffer = %s", speechBuffer);
+	in->read(_speechBuffer, _charCount);
+	_speechBuffer[_charCount] = '\0';
+	debugC(4, kDebugSaveload, "...... _speechBuffer = %s", _speechBuffer);
 
 	//  Requeue the speech if needed
-	if (speechFlags & spQueued) {
+	if (_speechFlags & spQueued) {
 		//  Add to the active list
 		speechList.remove(this);
 		speechList._list.push_back(this);
@@ -180,58 +180,58 @@ void Speech::read(Common::InSaveFile *in) {
 //	Return the number of bytes needed to archive this SpeechTask
 
 int32 Speech::archiveSize() {
-	return      sizeof(sampleCount)
-	            +   sizeof(charCount)
-	            +   sizeof(bounds)
-	            +   sizeof(penColor)
-	            +   sizeof(outlineColor)
-	            +   sizeof(objID)
-	            +   sizeof(thread)
-	            +   sizeof(speechFlags)
-	            +   sizeof(uint32) * sampleCount
-	            +   sizeof(char) * charCount;
+	return      sizeof(_sampleCount)
+	            +   sizeof(_charCount)
+	            +   sizeof(_bounds)
+	            +   sizeof(_penColor)
+	            +   sizeof(_outlineColor)
+	            +   sizeof(_objID)
+	            +   sizeof(_thread)
+	            +   sizeof(_speechFlags)
+	            +   sizeof(uint32) * _sampleCount
+	            +   sizeof(char) * _charCount;
 }
 
 void Speech::write(Common::MemoryWriteStreamDynamic *out) {
 	//  Store the sample count and character count
-	out->writeSint16LE(sampleCount);
-	out->writeSint16LE(charCount);
+	out->writeSint16LE(_sampleCount);
+	out->writeSint16LE(_charCount);
 
 	//  Store the text boundaries
-	bounds.write(out);
+	_bounds.write(out);
 
 	//  Store the pen color and outline color
-	out->writeUint16LE(penColor);
-	out->writeUint16LE(outlineColor);
+	out->writeUint16LE(_penColor);
+	out->writeUint16LE(_outlineColor);
 
 	//  Store the object's ID
-	out->writeUint16LE(objID);
+	out->writeUint16LE(_objID);
 
 	//  Store the thread ID
-	out->writeSint16LE(thread);
+	out->writeSint16LE(_thread);
 
 	//  Store the flags.  NOTE:  Make sure this speech is not stored
 	//  as being active
-	out->writeSint16LE(speechFlags & ~spActive);
+	out->writeSint16LE(_speechFlags & ~spActive);
 
-	debugC(4, kDebugSaveload, "...... sampleCount = %d", sampleCount);
-	debugC(4, kDebugSaveload, "...... charCount = %d", charCount);
-	debugC(4, kDebugSaveload, "...... penColor = %d", penColor);
-	debugC(4, kDebugSaveload, "...... outlineColor = %d", outlineColor);
-	debugC(4, kDebugSaveload, "...... bounds = (%d, %d, %d, %d)",
-	       bounds.x, bounds.y, bounds.width, bounds.height);
-	debugC(4, kDebugSaveload, "...... objID = %d", objID);
-	debugC(4, kDebugSaveload, "...... thread = %d", thread);
-	debugC(4, kDebugSaveload, "...... speechFlags = %d", speechFlags);
+	debugC(4, kDebugSaveload, "...... _sampleCount = %d", _sampleCount);
+	debugC(4, kDebugSaveload, "...... _charCount = %d", _charCount);
+	debugC(4, kDebugSaveload, "...... _penColor = %d", _penColor);
+	debugC(4, kDebugSaveload, "...... _outlineColor = %d", _outlineColor);
+	debugC(4, kDebugSaveload, "...... _bounds = (%d, %d, %d, %d)",
+	       _bounds.x, _bounds.y, _bounds.width, _bounds.height);
+	debugC(4, kDebugSaveload, "...... _objID = %d", _objID);
+	debugC(4, kDebugSaveload, "...... thread = %d", _thread);
+	debugC(4, kDebugSaveload, "...... _speechFlags = %d", _speechFlags);
 
-	for (int i = 0; i < sampleCount; i++) {
-		out->writeUint32BE(sampleID[i]);
-		debugC(4, kDebugSaveload, "...... sampleID[%d] = %d", i, sampleID[i]);
+	for (int i = 0; i < _sampleCount; i++) {
+		out->writeUint32BE(_sampleID[i]);
+		debugC(4, kDebugSaveload, "...... _sampleID[%d] = %d", i, _sampleID[i]);
 	}
 
 	//  Store the text
-	out->write(speechBuffer, charCount);
-	debugC(4, kDebugSaveload, "...... speechBuffer = %s", speechBuffer);
+	out->write(_speechBuffer, _charCount);
+	debugC(4, kDebugSaveload, "...... _speechBuffer = %s", _speechBuffer);
 }
 
 //-----------------------------------------------------------------------
@@ -241,18 +241,18 @@ bool Speech::append(char *text, int32 sampID) {
 	int16           len = strlen(text);
 
 	//  Check to see if there's enough room in the character buffer
-	if (charCount + len >= (long)sizeof(speechBuffer)
-	        ||  sampleCount >= MAX_SAMPLES) return false;
+	if (_charCount + len >= (long)sizeof(_speechBuffer)
+	        ||  _sampleCount >= MAX_SAMPLES) return false;
 
 	//  Copy text to end of text in buffer, including '\0'
-	memcpy(&speechBuffer[charCount], text, len + 1);
-	charCount += len;
+	memcpy(&_speechBuffer[_charCount], text, len + 1);
+	_charCount += len;
 
 	//  Append sample ID to list of samples.
 	//  REM: We should translate sample ID's from index to resource
 	//  number here.
 	if (sampID)
-		sampleID[sampleCount++] = extendID(sampID);
+		_sampleID[_sampleCount++] = extendID(sampID);
 
 	return true;
 }
@@ -268,7 +268,7 @@ bool Speech::activate() {
 	//  Add to the active list
 	speechList._list.push_back(this);
 
-	speechFlags |= spQueued;
+	_speechFlags |= spQueued;
 
 	//  This routine can't fail
 	return true;
@@ -282,9 +282,9 @@ bool Speech::setupActive() {
 	int16           buttonNum = 0,
 	                buttonChars;
 
-	speechFlags |= spActive;
+	_speechFlags |= spActive;
 
-	speechFinished.set((charCount * 4 / 2) + ticksPerSecond);
+	speechFinished.set((_charCount * 4 / 2) + ticksPerSecond);
 
 	//Turn Actor Towards Person They Are Talking To
 //	MotionTask::turnObject( *obj, GameObject::objectAddress(32794)->getLocation());
@@ -294,9 +294,9 @@ bool Speech::setupActive() {
 
 	// Set up temp gport for blitting to bitmap
 	_textPort.setStyle(textStyleThickOutline);    // extra Thick Outline
-	_textPort.setOutlineColor(outlineColor);      // outline black
+	_textPort.setOutlineColor(_outlineColor);      // outline black
 	_textPort.setFont(&Amber13Font);              // speech font
-	_textPort.setColor(penColor);                 // color of letters
+	_textPort.setColor(_penColor);                 // color of letters
 	_textPort.setMode(drawModeMatte);             // insure transparency
 
 	setWidth();
@@ -304,38 +304,38 @@ bool Speech::setupActive() {
 	//  If speech position is off-screen, then skip
 	if (!calcPosition(initialSpeechPosition)) return false;
 
-	if (sampleCount) {
-		GameObject *go = GameObject::objectAddress(objID);
+	if (_sampleCount) {
+		GameObject *go = GameObject::objectAddress(_objID);
 		Location loc = go->notGetWorldLocation();
-		sampleID[sampleCount] = 0;
+		_sampleID[_sampleCount] = 0;
 
-		//sayVoice(sampleID);
+		//sayVoice(_sampleID);
 
 /// EO SEARCH ///
-		if (sayVoiceAt(sampleID, loc))
-			speechFlags |= spHasVoice;
+		if (sayVoiceAt(_sampleID, loc))
+			_speechFlags |= spHasVoice;
 		else
-			speechFlags &= ~spHasVoice;
+			_speechFlags &= ~spHasVoice;
 
-	} else speechFlags &= ~spHasVoice;
+	} else _speechFlags &= ~spHasVoice;
 
 	speechLineCount = buttonWrap(speechLineList,
 	                             speechButtonList,
 	                             speechButtonCount,
-	                             speechBuffer,
-	                             bounds.width,
-	                             !g_vm->_speechText && (speechFlags & spHasVoice),
+	                             _speechBuffer,
+	                             _bounds.width,
+	                             !g_vm->_speechText && (_speechFlags & spHasVoice),
 	                             _textPort);
 
 	//  Compute height of bitmap based on number of lines of text.
 	//  Include 4 for outline width
-	bounds.height =
+	_bounds.height =
 	    (speechLineCount * (_textPort._font->height + lineLeading))
 	    + outlineWidth * 2;
 
 	//  Blit to temp bitmap
-	_speechImage._size.x = bounds.width;
-	_speechImage._size.y = bounds.height;
+	_speechImage._size.x = _bounds.width;
+	_speechImage._size.y = _bounds.height;
 	_speechImage._data = new uint8[_speechImage.bytes()]();
 	_textPort.setMap(&_speechImage);
 
@@ -346,7 +346,7 @@ bool Speech::setupActive() {
 		int16       lineChars = speechLineList[i].charWidth;
 		char        *lineText = speechLineList[i].text;
 
-		x   = (bounds.width - speechLineList[i].pixelWidth) / 2
+		x   = (_bounds.width - speechLineList[i].pixelWidth) / 2
 		      + outlineWidth;
 
 		_textPort.moveTo(x, y);
@@ -403,11 +403,11 @@ bool Speech::setupActive() {
 		speechList.SetLock(false);
 	} else {
 		//  If there is a lock flag on this speech, then LockUI()
-		speechList.SetLock(speechFlags & spLock);
+		speechList.SetLock(_speechFlags & spLock);
 	}
 
-	if (!(speechFlags & spNoAnimate) && isActor(objID)) {
-		Actor   *a = (Actor *)GameObject::objectAddress(objID);
+	if (!(_speechFlags & spNoAnimate) && isActor(_objID)) {
+		Actor   *a = (Actor *)GameObject::objectAddress(_objID);
 
 		if (!a->isDead() && !a->isMoving()) MotionTask::talk(*a);
 	}
@@ -430,9 +430,9 @@ void Speech::setWidth() {
 	speechLineCount_ = buttonWrap(speechLineList_,
 	                             speechButtonList_,
 	                             speechButtonCount_,
-	                             speechBuffer,
+	                             _speechBuffer,
 	                             defaultWidth,
-	                             !g_vm->_speechText && (speechFlags & spHasVoice),
+	                             !g_vm->_speechText && (_speechFlags & spHasVoice),
 	                             _textPort);
 
 	//  If it's more than 3 lines, then use the max line width.
@@ -441,27 +441,27 @@ void Speech::setWidth() {
 		speechLineCount_ = buttonWrap(speechLineList_,
 		                             speechButtonList_,
 		                             speechButtonCount_,
-		                             speechBuffer,
+		                             _speechBuffer,
 		                             maxWidth,
-		                             !g_vm->_speechText && (speechFlags & spHasVoice),
+		                             !g_vm->_speechText && (_speechFlags & spHasVoice),
 		                             _textPort);
 	}
 
 
-	//  The actual width of the bounds is the widest of the lines.
+	//  The actual width of the _bounds is the widest of the lines.
 
-	bounds.width = 0;
+	_bounds.width = 0;
 	for (int i = 0; i < speechLineCount_; i++) {
-		bounds.width = MAX(bounds.width, speechLineList_[i].pixelWidth);
+		_bounds.width = MAX(_bounds.width, speechLineList_[i].pixelWidth);
 	}
-	bounds.width += outlineWidth * 2 + 4;       //  Some padding just in case.
+	_bounds.width += outlineWidth * 2 + 4;       //  Some padding just in case.
 }
 
 //-----------------------------------------------------------------------
 //	Calculate the position of the speech, emanating from the actor.
 
 bool Speech::calcPosition(StaticPoint16 &p) {
-	GameObject      *obj = GameObject::objectAddress(objID);
+	GameObject      *obj = GameObject::objectAddress(_objID);
 	TilePoint       tp = obj->getWorldLocation();
 
 	if (!isVisible(obj)) return false;
@@ -469,12 +469,12 @@ bool Speech::calcPosition(StaticPoint16 &p) {
 	TileToScreenCoords(tp, p);
 
 	p.x = clamp(8,
-	            p.x - bounds.width / 2,
-	            8 + maxWidth - bounds.width);
+	            p.x - _bounds.width / 2,
+	            8 + maxWidth - _bounds.width);
 
 	p.y = clamp(kTileRectY + 8,
-	            p.y - (bounds.height + actorHeight),
-	            kTileRectHeight - 50 - bounds.height);
+	            p.y - (_bounds.height + actorHeight),
+	            kTileRectHeight - 50 - _bounds.height);
 
 	return true;
 }
@@ -499,7 +499,7 @@ bool Speech::displayText() {
 	                   0, 0,
 	                   p.x + fineScroll.x,
 	                   p.y + fineScroll.y,
-	                   bounds.width, bounds.height);
+	                   _bounds.width, _bounds.height);
 
 	return true;
 }
@@ -518,7 +518,7 @@ void Speech::dispose() {
 			playVoice(0);
 		//  Wake up the thread, and return the # of the button
 		//  that was selected
-		wakeUpThread(thread, selectedButton);
+		wakeUpThread(_thread, _selectedButton);
 
 		//  De-allocate the speech data
 		delete[] _speechImage._data;
@@ -528,15 +528,15 @@ void Speech::dispose() {
 		speechLineCount = speechButtonCount = 0;
 		speakButtonControls->enable(false);
 
-		if (!(speechFlags & spNoAnimate) && isActor(objID)) {
-			Actor   *a = (Actor *)GameObject::objectAddress(objID);
+		if (!(_speechFlags & spNoAnimate) && isActor(_objID)) {
+			Actor   *a = (Actor *)GameObject::objectAddress(_objID);
 
 			if (a->_moveTask)
 				a->_moveTask->finishTalking();
 		}
-	} else wakeUpThread(thread, 0);
+	} else wakeUpThread(_thread, 0);
 
-	GameObject *obj = GameObject::objectAddress(objID);
+	GameObject *obj = GameObject::objectAddress(_objID);
 
 	debugC(1, kDebugTasks, "Speech: Disposing %p for %p (%s) (total = %d)'", (void *)this, (void *)obj, obj->objName(), speechList.speechCount());
 
@@ -552,7 +552,7 @@ void updateSpeech() {
 	//  if there is a speech object
 	if ((sp = speechList.currentActive()) != nullptr) {
 		//  If there is no bitmap, then set one up.
-		if (!(sp->speechFlags & Speech::spActive)) {
+		if (!(sp->_speechFlags & Speech::spActive)) {
 			sp->setupActive();
 
 			//  If speech failed to set up, then skip it
@@ -569,16 +569,16 @@ void updateSpeech() {
 
 
 		if (sp->longEnough() &&
-		        (speechButtonCount == 0 || sp->selectedButton != 0))
+		        (speechButtonCount == 0 || sp->_selectedButton != 0))
 			sp->dispose();
 	} else speechList.SetLock(false);
 }
 
 bool Speech::longEnough() {
-	if (speechFlags & spHasVoice)
-		return (!stillDoingVoice(sampleID));
+	if (_speechFlags & spHasVoice)
+		return (!stillDoingVoice(_sampleID));
 	else
-		return (selectedButton != 0 || speechFinished.check());
+		return (_selectedButton != 0 || speechFinished.check());
 }
 
 //  Gets rid of the current speech
@@ -586,7 +586,7 @@ bool Speech::longEnough() {
 void Speech::abortSpeech() {
 	//  Start by displaying first frame straight off, no delay
 	speechFinished.set(0);
-	if (speechFlags & spHasVoice) {
+	if (_speechFlags & spHasVoice) {
 		PlayVoice(nullptr);
 	}
 }
@@ -867,13 +867,13 @@ void SpeechTaskList::remove(Speech *p) {
 //	Initialize the SpeechTaskList
 
 SpeechTaskList::SpeechTaskList() {
-	lockFlag = false;
+	_lockFlag = false;
 }
 
 SpeechTaskList::SpeechTaskList(Common::InSaveFile *in) {
 	int16 count;
 
-	lockFlag = false;
+	_lockFlag = false;
 
 	//  Get the speech count
 	count = in->readSint16LE();
@@ -960,7 +960,7 @@ void SpeechTaskList::cleanup() {
 Speech *SpeechTaskList::findSpeech(ObjectID id) {
 	for (Common::List<Speech *>::iterator it = speechList._inactiveList.begin();
 	     it != speechList._inactiveList.end(); ++it) {
-		if ((*it)->objID == id)
+		if ((*it)->_objID == id)
 			return *it;
 	}
 
@@ -990,12 +990,12 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 
 	debugC(1, kDebugTasks, "Speech: New Task: %p for %p (%s) (flags = %d) (total = %d)", (void *)sp, (void *)obj, obj->objName(), flags, speechCount());
 
-	sp->sampleCount = sp->charCount = 0;
-	sp->objID       = id;
-	sp->speechFlags = flags & (Speech::spNoAnimate | Speech::spLock);
-	sp->outlineColor = 15 + 9;
-	sp->thread      = NoThread;
-	sp->selectedButton = 0;
+	sp->_sampleCount = sp->_charCount = 0;
+	sp->_objID       = id;
+	sp->_speechFlags = flags & (Speech::spNoAnimate | Speech::spLock);
+	sp->_outlineColor = 15 + 9;
+	sp->_thread      = NoThread;
+	sp->_selectedButton = 0;
 
 	//  Set the pen color of the speech based on the actor
 	if (isActor(id)) {
@@ -1004,14 +1004,14 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 		//  If actor has color table loaded, then get the speech
 		//  color for this particular color scheme; else use a
 		//  default color.
-		if (a == getCenterActor()) sp->penColor = 3 + 9 /* 1 */;
+		if (a == getCenterActor()) sp->_penColor = 3 + 9 /* 1 */;
 		else if (a->_appearance
 		         &&  a->_appearance->schemeList) {
-			sp->penColor =
+			sp->_penColor =
 			    a->_appearance->schemeList->_schemes[a->_colorScheme]->speechColor + 9;
-		} else sp->penColor = 4 + 9;
+		} else sp->_penColor = 4 + 9;
 	} else {
-		sp->penColor = 4 + 9;
+		sp->_penColor = 4 + 9;
 	}
 
 	_inactiveList.push_back(sp);
@@ -1019,13 +1019,13 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 }
 
 void SpeechTaskList::SetLock(int newState) {
-	if (newState && lockFlag == false) {
+	if (newState && _lockFlag == false) {
 		noStickyMap();
 		LockUI(true);
-		lockFlag = true;
-	} else if (lockFlag && newState == false) {
+		_lockFlag = true;
+	} else if (_lockFlag && newState == false) {
 		LockUI(false);
-		lockFlag = false;
+		_lockFlag = false;
 	}
 }
 
@@ -1065,7 +1065,7 @@ APPFUNC(cmdClickSpeech) {
 	case gEventMouseDown:
 
 		if ((sp = speechList.currentActive()) != nullptr) {
-			sp->selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage._size.x, sp->_textPort);
+			sp->_selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage._size.x, sp->_textPort);
 		}
 		break;
 
