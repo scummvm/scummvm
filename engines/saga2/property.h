@@ -62,13 +62,13 @@ public:
 
 template < class T >
 class SimpleProperty : public Property< T > {
-	bool (*propertyFunc)(T *);   //  The pointer to the property
+	bool (*_propertyFunc)(T *);   //  The pointer to the property
 	//  evaluation function
 
 public:
 	//  Constructor
 	SimpleProperty(bool (*func)(T *)) :
-		propertyFunc(func) {
+		_propertyFunc(func) {
 	}
 
 	bool operator()(T *obj) const;
@@ -77,7 +77,7 @@ public:
 template < class T >
 bool SimpleProperty< T >::operator()(T *obj) const {
 	//  Simply pass this call through to the property evaluation function
-	return (*propertyFunc)(obj);
+	return (*_propertyFunc)(obj);
 }
 
 /* ===================================================================== *
@@ -92,9 +92,9 @@ bool SimpleProperty< T >::operator()(T *obj) const {
 template < class T >
 class CompoundProperty : public Property< T > {
 protected:
-	Property< T >   **propertyArray;    //  A pointer to an array of pointers
+	Property< T >   **_propertyArray;    //  A pointer to an array of pointers
 	//  to Properties.
-	uint16          arraySize;          //  The number of elements in the
+	uint16          _arraySize;          //  The number of elements in the
 	//  array
 
 public:
@@ -113,19 +113,19 @@ CompoundProperty< T >::CompoundProperty(
 	uint16  arrayBytes = sizeof(Property< T > *) * size;
 
 	//  Allocate memory to copy the array.
-	propertyArray = (Property< T > **)malloc(arrayBytes);
-	assert(propertyArray);
+	_propertyArray = (Property< T > **)malloc(arrayBytes);
+	assert(_propertyArray);
 
 	//  Copy the array
-	memcpy(propertyArray, array, arrayBytes);
-	arraySize = size;
+	memcpy(_propertyArray, array, arrayBytes);
+	_arraySize = size;
 }
 
 
 template < class T >
 CompoundProperty< T >::~CompoundProperty() {
 	//  Free the array memory
-	free(propertyArray);
+	free(_propertyArray);
 }
 
 /* ===================================================================== *
@@ -296,12 +296,12 @@ public:
 
 class SimpleMetaTileProperty : public MetaTileProperty {
 	//  Pointer to the property evaluation function.
-	bool (*propertyFunc)(MetaTile *, int16, const TilePoint &);
+	bool (*_propertyFunc)(MetaTile *, int16, const TilePoint &);
 
 public:
 	//  Constructor
 	SimpleMetaTileProperty(bool (*func)(MetaTile *, int16, const TilePoint &)) :
-		propertyFunc(func) {
+		_propertyFunc(func) {
 	}
 
 	virtual ~SimpleMetaTileProperty() {}
@@ -318,9 +318,9 @@ public:
 
 class CompoundMetaTileProperty : public MetaTileProperty {
 protected:
-	MetaTileProperty    **propertyArray;    //  Array of pointers to
+	MetaTileProperty    **_propertyArray;    //  Array of pointers to
 	//  MetaTileProperty's
-	uint16              arraySize;          //  Elements in the array
+	uint16              _arraySize;          //  Elements in the array
 
 public:
 	//  Constructor
