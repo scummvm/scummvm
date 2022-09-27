@@ -1921,6 +1921,20 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		}
 	}
 
+	// WORKAROUND: MT-32 support is broken in the French VGA floppy version
+	// of MI1 (the index references an invalid DISK00.LEC file, and the
+	// 'roland' room appears to be completely missing). We can't do much about
+	// this; revert to Adlib so that users don't get confused by the error.
+	if (_game.id == GID_MONKEY_VGA && _language == Common::FR_FRA && _sound->_musicType == MDT_MIDI &&
+		memcmp(_gameMD5, "\xa0\x1f\xab\x4a\x64\xd4\x7b\x96\xe2\xe5\x8e\x6b\x0f\x82\x5c\xc7", 16) == 0) {
+		GUI::MessageDialog dialog(
+			_("This particular version of Monkey Island 1 is known to miss some\n"
+			"required resources for MT-32. Using AdLib instead."),
+			_("OK"));
+		dialog.runModal();
+		_sound->_musicType = MDT_ADLIB;
+	}
+
 	if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4)) {
 		// While the Mac versions do have ADL resources, the Mac player
 		// doesn't handle them. So if a song is missing a MAC resource,
