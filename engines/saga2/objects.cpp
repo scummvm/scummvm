@@ -4410,7 +4410,7 @@ void readyContainerSetup() {
 	indivReadyNode = CreateReadyContainerNode(0);
 
 	for (i = 0; i < kNumViews && i < kPlayerActors ; i++) {
-		g_vm->_playerList[i]->readyNode = CreateReadyContainerNode(i);
+		g_vm->_playerList[i]->_readyNode = CreateReadyContainerNode(i);
 
 		TrioCviews[i] = new ReadyContainerView(
 		                      *trioControls,
@@ -4418,7 +4418,7 @@ void readyContainerSetup() {
 		                             trioReadyContInfo[i].yPos + 8,
 		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[i].cols + iconSpacingY * (trioReadyContInfo[i].cols - 1),
 		                             iconOriginY + (iconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * iconHeight) - 23),
-		                      *g_vm->_playerList[i]->readyNode,
+		                      *g_vm->_playerList[i]->_readyNode,
 		                      backImages,
 		                      numReadyContRes,
 		                      trioReadyContInfo[i].rows,
@@ -4474,8 +4474,8 @@ void cleanupReadyContainers() {
 		delete TrioCviews[i];
 		TrioCviews[i] = nullptr;
 
-		delete g_vm->_playerList[i]->readyNode;
-		g_vm->_playerList[i]->readyNode = nullptr;
+		delete g_vm->_playerList[i]->_readyNode;
+		g_vm->_playerList[i]->_readyNode = nullptr;
 	}
 	delete indivReadyNode;
 

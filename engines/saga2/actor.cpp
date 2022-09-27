@@ -1725,7 +1725,7 @@ ActorAttributes *Actor::getBaseStats() {
 	if (_disposition < dispositionPlayer)
 		return &((ActorProto *)_prototype)->baseStats;
 	else
-		return &g_vm->_playerList[_disposition - dispositionPlayer]->baseStats;
+		return &g_vm->_playerList[_disposition - dispositionPlayer]->_baseStats;
 }
 
 //-----------------------------------------------------------------------
