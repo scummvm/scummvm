@@ -556,8 +556,9 @@ const KYRAGameDescription adGameDescs[] = {
 		{
 			"kyra1",
 			"Demo/CD",
-			AD_ENTRY2s(	"INTRO.VRM",	"e3045fb69b8c29db84b8fda3ccbdac54", 3308968,
-						"TEXT_GER.CPS", "c0aa3396593b7265c41c0acb2251a28f", 9301),
+			AD_ENTRY3s(	"INTRO.VRM",	"e3045fb69b8c29db84b8fda3ccbdac54", 3308968,
+						"TEXT_GER.CPS", "c0aa3396593b7265c41c0acb2251a28f", 9301,
+						"ALFX.DRV",		"478116a7e6698b5cd51982ab48777fe6", 6531),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_CD,
