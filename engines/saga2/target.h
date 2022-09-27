@@ -181,11 +181,11 @@ public:
  * ===================================================================== */
 
 class LocationTarget : public Target {
-	TilePoint   loc;
+	TilePoint   _loc;
 
 public:
 	//  Constructor -- initial construction
-	LocationTarget(const TilePoint &tp) : loc(tp) {}
+	LocationTarget(const TilePoint &tp) : _loc(tp) {}
 
 	LocationTarget(Common::SeekableReadStream *stream);
 
@@ -210,10 +210,10 @@ public:
 	//  Determine if the specified location target is equivalent to this
 	//  location target
 	bool operator == (const LocationTarget &lt) const {
-		return loc == lt.loc;
+		return _loc == lt._loc;
 	}
 	bool operator != (const LocationTarget &lt) const {
-		return loc != lt.loc;
+		return _loc != lt._loc;
 	}
 
 	TilePoint where(GameWorld *world, const TilePoint &tp) const;
@@ -243,11 +243,11 @@ public:
  * ===================================================================== */
 
 class SpecificTileTarget : public TileTarget {
-	TileID  tile;
+	TileID  _tile;
 
 public:
 	//  Constructor -- initial construction
-	SpecificTileTarget(TileID t) : tile(t) {}
+	SpecificTileTarget(TileID t) : _tile(t) {}
 
 	SpecificTileTarget(Common::SeekableReadStream *stream);
 
@@ -277,11 +277,11 @@ public:
  * ===================================================================== */
 
 class TilePropertyTarget : public TileTarget {
-	TilePropertyID  tileProp;
+	TilePropertyID  _tileProp;
 
 public:
 	//  Constructor -- initial construction
-	TilePropertyTarget(TilePropertyID tProp) : tileProp(tProp) {}
+	TilePropertyTarget(TilePropertyID tProp) : _tileProp(tProp) {}
 
 	TilePropertyTarget(Common::SeekableReadStream *stream);
 
@@ -329,11 +329,11 @@ public:
  * ===================================================================== */
 
 class SpecificMetaTileTarget : public MetaTileTarget {
-	MetaTileID  meta;
+	MetaTileID  _meta;
 
 public:
 	//  Constructor -- initial construction
-	SpecificMetaTileTarget(MetaTileID mt) : meta(mt) {}
+	SpecificMetaTileTarget(MetaTileID mt) : _meta(mt) {}
 
 	SpecificMetaTileTarget(Common::SeekableReadStream *stream);
 
@@ -363,12 +363,12 @@ public:
  * ===================================================================== */
 
 class MetaTilePropertyTarget : public MetaTileTarget {
-	MetaTilePropertyID  metaProp;
+	MetaTilePropertyID  _metaProp;
 
 public:
 	//  Constructor -- initial construction
 	MetaTilePropertyTarget(MetaTilePropertyID mtProp) :
-		metaProp(mtProp) {
+		_metaProp(mtProp) {
 	}
 
 	MetaTilePropertyTarget(Common::SeekableReadStream *stream);
@@ -439,17 +439,15 @@ public:
  * ===================================================================== */
 
 class SpecificObjectTarget : public ObjectTarget {
-	ObjectID    obj;
+	ObjectID    _obj;
 
 public:
 	//  Constructors -- initial construction
 	SpecificObjectTarget(ObjectID id) :
-		obj(id) {
-		assert(isObject(obj));
+		_obj(id) {
+		assert(isObject(_obj));
 	}
-	SpecificObjectTarget(GameObject *ptr) :
-		obj((assert(isObject(ptr)), ptr->thisID())) {
-	}
+	SpecificObjectTarget(GameObject *ptr) : _obj((assert(isObject(ptr)), ptr->thisID())) {}
 
 	SpecificObjectTarget(Common::SeekableReadStream *stream);
 
@@ -487,7 +485,7 @@ public:
 
 	//  Return a pointer to the target object, unconditionally
 	GameObject *getTargetObject() const {
-		return GameObject::objectAddress(obj);
+		return GameObject::objectAddress(_obj);
 	}
 };
 
@@ -496,11 +494,11 @@ public:
  * ===================================================================== */
 
 class ObjectPropertyTarget : public ObjectTarget {
-	ObjectPropertyID    objProp;
+	ObjectPropertyID    _objProp;
 
 public:
 	//  Constructor -- initial construction
-	ObjectPropertyTarget(ObjectPropertyID prop) : objProp(prop) {}
+	ObjectPropertyTarget(ObjectPropertyID prop) : _objProp(prop) {}
 
 	ObjectPropertyTarget(Common::SeekableReadStream *stream);
 
@@ -549,13 +547,11 @@ public:
  * ===================================================================== */
 
 class SpecificActorTarget : public ActorTarget {
-	Actor   *a;
+	Actor   *_a;
 
 public:
 	//  Constructor -- initial construction
-	SpecificActorTarget(Actor *actor_) :
-		a(actor_) {
-	}
+	SpecificActorTarget(Actor *actor_) : _a(actor_) {}
 
 	SpecificActorTarget(Common::SeekableReadStream *stream);
 
@@ -599,7 +595,7 @@ public:
 
 	//  Return a pointer to the target actor, unconditionally
 	Actor *getTargetActor() const {
-		return a;
+		return _a;
 	}
 };
 
@@ -608,13 +604,11 @@ public:
  * ===================================================================== */
 
 class ActorPropertyTarget : public ActorTarget {
-	ActorPropertyID     actorProp;
+	ActorPropertyID     _actorProp;
 
 public:
 	//  Constructor -- initial construction
-	ActorPropertyTarget(ActorPropertyID aProp) :
-		actorProp(aProp) {
-	}
+	ActorPropertyTarget(ActorPropertyID aProp) : _actorProp(aProp) {}
 
 	ActorPropertyTarget(Common::SeekableReadStream *stream);
 
