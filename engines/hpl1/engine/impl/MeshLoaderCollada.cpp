@@ -1911,7 +1911,7 @@ void cMeshLoaderCollada::AddSceneObjects(cColladaNode *apNode, cWorld3D *apWorld
 		if (apNode->msSource != "") {
 			// Get number of chars in prefix.
 			int lPrefixChars = 1;
-			while (lPrefixChars < apNode->msName.size() &&
+			while (lPrefixChars < (int)apNode->msName.size() &&
 				   apNode->msName[lPrefixChars] != '_' &&
 				   apNode->msName[lPrefixChars] != '\0') {
 				lPrefixChars++;
@@ -2119,9 +2119,9 @@ void cMeshLoaderCollada::AddSectorChildren(cColladaNode *apNode, tString asSecto
 
 			// Get number of digits
 			lDigits = 1;
-			while (apNode->msName.length() > lStartChar + 4 + lDigits &&
+			while ((int)apNode->msName.length() > lStartChar + 4 + lDigits &&
 				   apNode->msName[lStartChar + 4 + lDigits] != '_' &&
-				   apNode->msName.length() >= 7 + lDigits &&
+				   (int)apNode->msName.length() >= 7 + lDigits &&
 				   apNode->msName[7 + lDigits] != 0) {
 				lDigits++;
 			}

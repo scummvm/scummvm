@@ -1039,7 +1039,7 @@ void iGameEntity::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 
 	// Animations
 	if (mpMeshEntity) {
-		if (mpMeshEntity->GetAnimationStateNum() == apSaveData->mvAnimations.Size()) {
+		if (mpMeshEntity->GetAnimationStateNum() == (int)apSaveData->mvAnimations.Size()) {
 			for (int i = 0; i < mpMeshEntity->GetAnimationStateNum(); ++i) {
 				cAnimationState *pAnim = mpMeshEntity->GetAnimationState(i);
 				cGameEntityAnimation_SaveData &saveAnim = apSaveData->mvAnimations[i];
