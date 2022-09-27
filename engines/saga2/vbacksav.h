@@ -34,9 +34,9 @@ namespace Saga2 {
 //  "things that appear in fron of other things"
 
 class gBackSave : private gPort {
-	Rect16          savedRegion;        // extent of saved region
-	gPixelMap       savedPixels;        // buffer of saved pixels
-	bool            saved;              // true = saved.
+	Rect16          _savedRegion;        // extent of saved region
+	gPixelMap       _savedPixels;        // buffer of saved pixels
+	bool            _saved;              // true = saved.
 
 public:
 	gBackSave(const Rect16 &extent);
@@ -45,11 +45,11 @@ public:
 	void save(gDisplayPort &port);
 	void restore(gDisplayPort &port);
 	void setPos(Point16 pos) {
-		savedRegion.x = pos.x;
-		savedRegion.y = pos.y;
+		_savedRegion.x = pos.x;
+		_savedRegion.y = pos.y;
 	}
 	bool valid() {
-		return savedPixels._data != NULL;
+		return _savedPixels._data != NULL;
 	}
 };
 
