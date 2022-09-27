@@ -325,17 +325,17 @@ void StorageSpellInstance::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 SpellTarget::SpellTarget(StorageSpellTarget &sst) {
-	type = (SpellTarget::spellTargetType) sst.type;
-	loc = sst.loc;
-	next = nullptr;
+	_type = (SpellTarget::spellTargetType) sst.type;
+	_loc = sst.loc;
+	_next = nullptr;
 	if (sst.obj != Nothing)
-		obj = GameObject::objectAddress(sst.obj);
+		_obj = GameObject::objectAddress(sst.obj);
 	else
-		obj = nullptr;
+		_obj = nullptr;
 	if (sst.tag != NoActiveItem)
-		tag = ActiveItem::activeItemAddress(sst.tag);
+		_tag = ActiveItem::activeItemAddress(sst.tag);
 	else
-		tag = nullptr;
+		_tag = nullptr;
 }
 
 SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
@@ -468,23 +468,23 @@ StorageEffectron::StorageEffectron() {
 }
 
 StorageEffectron::StorageEffectron(Effectron &e) {
-	flags =         e.flags;
-	size =          e.size;
-	hitBox =        e.hitBox;
-	screenCoords =  e.screenCoords;
-	partno =        e.partno;
-	start =         e.start;
-	finish =        e.finish;
-	current =       e.current;
-	velocity =      e.velocity;
-	acceleration =  e.acceleration;
-	totalSteps =    e.totalSteps;
-	stepNo =        e.stepNo;
-	hgt =           e.hgt;
-	brd =           e.brd;
-	pos =           e.pos;
-	spr =           e.spr;
-	age =           e.age;
+	flags =         e._flags;
+	size =          e._size;
+	hitBox =        e._hitBox;
+	screenCoords =  e._screenCoords;
+	partno =        e._partno;
+	start =         e._start;
+	finish =        e._finish;
+	current =       e._current;
+	velocity =      e._velocity;
+	acceleration =  e._acceleration;
+	totalSteps =    e._totalSteps;
+	stepNo =        e._stepNo;
+	hgt =           e._hgt;
+	brd =           e._brd;
+	pos =           e._pos;
+	spr =           e._spr;
+	age =           e._age;
 }
 
 void StorageEffectron::read(Common::InSaveFile *in) {
@@ -528,24 +528,24 @@ void StorageEffectron::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 Effectron::Effectron(StorageEffectron &se, SpellInstance *si) {
-	flags =         se.flags;
-	size =          se.size;
-	hitBox =        se.hitBox;
-	screenCoords =  se.screenCoords;
-	partno =        se.partno;
-	start =         se.start;
-	finish =        se.finish;
-	current =       se.current;
-	velocity =      se.velocity;
-	acceleration =  se.acceleration;
-	totalSteps =    se.totalSteps;
-	stepNo =        se.stepNo;
-	hgt =           se.hgt;
-	brd =           se.brd;
-	pos =           se.pos;
-	spr =           se.spr;
-	age =           se.age;
-	parent = si;
+	_flags =         se.flags;
+	_size =          se.size;
+	_hitBox =        se.hitBox;
+	_screenCoords =  se.screenCoords;
+	_partno =        se.partno;
+	_start =         se.start;
+	_finish =        se.finish;
+	_current =       se.current;
+	_velocity =      se.velocity;
+	_acceleration =  se.acceleration;
+	_totalSteps =    se.totalSteps;
+	_stepNo =        se.stepNo;
+	_hgt =           se.hgt;
+	_brd =           se.brd;
+	_pos =           se.pos;
+	_spr =           se.spr;
+	_age =           se.age;
+	_parent = si;
 }
 
 } // end of namespace Saga2

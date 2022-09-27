@@ -129,7 +129,7 @@ DisplayNode::DisplayNode() {
 
 TilePoint DisplayNode::SpellPos() {
 	if (_efx)
-		return _efx->current;
+		return _efx->_current;
 	return Nowhere;
 }
 
@@ -909,7 +909,7 @@ void DisplayNodeList::buildEffects(bool) {
 			// make sure it knows it's not a real object
 			_displayList[i]._type = nodeTypeEffect;
 
-			_displayList[i]._sortDepth = _displayList[i]._efx->screenCoords.y + _displayList[i]._efx->current.z / 2;
+			_displayList[i]._sortDepth = _displayList[i]._efx->_screenCoords.y + _displayList[i]._efx->_current.z / 2;
 			if (dn) {
 				int32 sd = _displayList[i]._sortDepth;
 				while (dn->_nextDisplayed && dn->_nextDisplayed->_sortDepth <= sd)
@@ -959,8 +959,8 @@ void Effectron::drawEffect() {
 	if (isHidden() || isDead())
 		return;
 
-	drawPos.x = screenCoords.x + fineScroll.x;
-	drawPos.y = screenCoords.y + fineScroll.y;
+	drawPos.x = _screenCoords.x + fineScroll.x;
+	drawPos.y = _screenCoords.y + fineScroll.y;
 
 	//  Reject any sprites which fall off the edge of the screen.
 	if (drawPos.x < -32
@@ -968,19 +968,19 @@ void Effectron::drawEffect() {
 	        || drawPos.y < -32
 	        || drawPos.y > kTileRectY + kTileRectHeight + 100) {
 		//  Disable hit-test on the object's box
-		hitBox.width = -1;
-		hitBox.height = -1;
+		_hitBox.width = -1;
+		_hitBox.height = -1;
 		return;
 	}
 
-	TileToScreenCoords(objCoords, screenCoords);
+	TileToScreenCoords(objCoords, _screenCoords);
 
 	sc = &scList[0];
 	//sc->sp = (*spellSprites)->sprite( spriteID() );
 	sc->sp = spellSprites->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
 	sc->offset.x = scList->offset.y = 0;
 
-	(*g_vm->_sdpList)[parent->spell]->
+	(*g_vm->_sdpList)[_parent->spell]->
 	getColorTranslation(eColors, this);
 
 	sc->colorTable = eColors;
@@ -990,7 +990,7 @@ void Effectron::drawEffect() {
 	                                  sc->flipped,
 	                                  sc->colorTable,
 	                                  drawPos,
-	                                  current,
+	                                  _current,
 	                                  0) <= 5);
 
 	DrawCompositeMaskedSprite(

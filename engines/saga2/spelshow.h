@@ -363,14 +363,14 @@ public :
 // Some functions that require the above definitions to work
 
 inline GameWorld *Effectron::world() const {
-	return parent->world;
+	return _parent->world;
 }
 inline int16 Effectron::getMapNum() const {
-	return parent->world->_mapNum;
+	return _parent->world->_mapNum;
 }
 
 inline EffectID Effectron::spellID() {
-	return parent->spell;
+	return _parent->spell;
 }
 inline SpellDisplayPrototype *Effectron::spell() {
 	return (*g_vm->_sdpList)[(SpellID) spellID()];
@@ -379,26 +379,26 @@ inline EffectID Effectron::effectID() {
 	return spell()->effect;
 }
 inline EffectDisplayPrototype *Effectron::effect() {
-	return parent->effect;
+	return _parent->effect;
 }
 inline EffectronFlags Effectron::staCall() {
-	return parent->effect->status(this);
+	return _parent->effect->status(this);
 }
 inline TilePoint Effectron::posCall() {
-	return parent->effect->location(this);
+	return _parent->effect->location(this);
 }
 inline SpellSpritationSeed Effectron::sprCall() {
-	return parent->effect->spriteno(this);
+	return _parent->effect->spriteno(this);
 }
 inline spellHeight Effectron::hgtCall() {
-	return parent->effect->height(this);
+	return _parent->effect->height(this);
 }
 inline spellBreadth Effectron::brdCall() {
-	return parent->effect->breadth(this);
+	return _parent->effect->breadth(this);
 }
 inline void Effectron::initCall(int16 eno) {
-	partno = eno;
-	parent->effect->init(this);
+	_partno = eno;
+	_parent->effect->init(this);
 }
 
 /* ===================================================================== *

@@ -205,7 +205,7 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 	SpellTarget st = SpellTarget(target);
 	buildTargetList(enactor, st);
 	if (effects && targets) {
-		for (SpellTarget *t = targets; t; t = t->next) {
+		for (SpellTarget *t = targets; t; t = t->_next) {
 			if (safe() &&
 			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
@@ -371,8 +371,8 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 		targets = trg;
 	else {
 		SpellTarget *t = targets;
-		while (t->next) t = t->next;
-		t->next = trg;
+		while (t->_next) t = t->_next;
+		t->_next = trg;
 	}
 }
 
@@ -688,11 +688,11 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 		for (int32 i = 0; i < eList._count; i++) {
 			Effectron *e = new Effectron(0, i);
 			eList._displayList[i]._efx = e;
-			e->parent = this;
-			e->start = startpoint;
-			e->current = startpoint;
-			e->partno = i;
-			e->stepNo = 0;
+			e->_parent = this;
+			e->_start = startpoint;
+			e->_current = startpoint;
+			e->_partno = i;
+			e->_stepNo = 0;
 			e->initCall(i);
 		}
 }
@@ -776,73 +776,73 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 // default constructor
 
 Effectron::Effectron() {
-	age = 0;
-	pos = 0;
-	flags = effectronDead;
-	parent = nullptr;
-	partno = 0;
-	totalSteps = stepNo = 0;
-	hgt = 0;
-	brd = 0;
-	spr = 0;
+	_age = 0;
+	_pos = 0;
+	_flags = effectronDead;
+	_parent = nullptr;
+	_partno = 0;
+	_totalSteps = _stepNo = 0;
+	_hgt = 0;
+	_brd = 0;
+	_spr = 0;
 }
 
 //-----------------------------------------------------------------------
 // constructor with starting position / velocity
 
 Effectron::Effectron(uint16 newPos, uint16 newDir) {
-	age = 0;
-	pos = (newDir << 16) + newPos;
-	flags = 0;
-	parent = nullptr;
-	partno = 0;
-	totalSteps = stepNo = 0;
-	hgt = 0;
-	brd = 0;
-	spr = 0;
+	_age = 0;
+	_pos = (newDir << 16) + newPos;
+	_flags = 0;
+	_parent = nullptr;
+	_partno = 0;
+	_totalSteps = _stepNo = 0;
+	_hgt = 0;
+	_brd = 0;
+	_spr = 0;
 }
 
 //-----------------------------------------------------------------------
 // Effectron display update
 
 void Effectron::updateEffect(int32 deltaTime) {
-	age += deltaTime;
-	if (age > 1) {
-		age = 0;
-		pos++;
-		finish = parent->target->getPoint();
-		stepNo++;
+	_age += deltaTime;
+	if (_age > 1) {
+		_age = 0;
+		_pos++;
+		_finish = _parent->target->getPoint();
+		_stepNo++;
 
-		flags = staCall();
+		_flags = staCall();
 		if (isHidden() || isDead())
 			return;
-		spr = sprCall();
-		hgt = hgtCall();
-		brd = brdCall();
+		_spr = sprCall();
+		_hgt = hgtCall();
+		_brd = brdCall();
 		TilePoint oLoc = posCall();
 
 		// at this point we need to detect collisions
 		// between current ( or start ) and oLoc
 
-		current = collideTo(this, oLoc);
-		TileToScreenCoords(oLoc, screenCoords);
+		_current = collideTo(this, oLoc);
+		TileToScreenCoords(oLoc, _screenCoords);
 	}
 
 }
 
 //-----------------------------------------------------------------------
 void Effectron::bump() {
-	switch (parent->dProto->elasticity) {
-	case ecFlagBounce :
-		velocity = -velocity;
+	switch (_parent->dProto->elasticity) {
+	case ecFlagBounce:
+		_velocity = -_velocity;
 		break;
-	case ecFlagDie :
+	case ecFlagDie:
 		kill();
 		break;
-	case ecFlagStop :
-		velocity = TilePoint(0, 0, 0);
+	case ecFlagStop:
+		_velocity = TilePoint(0, 0, 0);
 		break;
-	case ecFlagNone :
+	case ecFlagNone:
 		break;
 	}
 }

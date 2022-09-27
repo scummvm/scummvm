@@ -39,25 +39,25 @@ namespace Saga2 {
  * ===================================================================== */
 
 // random sprite from primary range
-#define PRIMARY   (effectron->parent->dProto->primarySpriteNo?\
-                   (effectron->parent->dProto->primarySpriteID + g_vm->_rnd->getRandomNumber(effectron->parent->dProto->primarySpriteNo - 1)):\
-                   effectron->parent->dProto->primarySpriteID)
+#define PRIMARY   (effectron->_parent->dProto->primarySpriteNo?\
+                   (effectron->_parent->dProto->primarySpriteID + g_vm->_rnd->getRandomNumber(effectron->_parent->dProto->primarySpriteNo - 1)):\
+                   effectron->_parent->dProto->primarySpriteID)
 // random sprite from secondary range
-#define SECONDARY (effectron->parent->dProto->secondarySpriteNo?\
-                   (effectron->parent->dProto->secondarySpriteID + g_vm->_rnd->getRandomNumber(effectron->parent->dProto->secondarySpriteNo - 1)):\
-                   effectron->parent->dProto->secondarySpriteID)
+#define SECONDARY (effectron->_parent->dProto->secondarySpriteNo?\
+                   (effectron->_parent->dProto->secondarySpriteID + g_vm->_rnd->getRandomNumber(effectron->_parent->dProto->secondarySpriteNo - 1)):\
+                   effectron->_parent->dProto->secondarySpriteID)
 // ordered sprite from primary range
-#define SEQUENTIAL (effectron->parent->dProto->primarySpriteNo?\
-                    (effectron->parent->dProto->primarySpriteID + effectron->stepNo%effectron->parent->dProto->primarySpriteNo):\
-                    effectron->parent->dProto->primarySpriteID)
+#define SEQUENTIAL (effectron->_parent->dProto->primarySpriteNo?\
+                    (effectron->_parent->dProto->primarySpriteID + effectron->_stepNo%effectron->_parent->dProto->primarySpriteNo):\
+                    effectron->_parent->dProto->primarySpriteID)
 // ordered sprite from secondary range
-#define SECUENTIAL (effectron->parent->dProto->secondarySpriteNo?\
-                    (effectron->parent->dProto->secondarySpriteID + effectron->stepNo%effectron->parent->dProto->secondarySpriteNo):\
-                    effectron->parent->dProto->secondarySpriteID)
+#define SECUENTIAL (effectron->_parent->dProto->secondarySpriteNo?\
+                    (effectron->_parent->dProto->secondarySpriteID + effectron->_stepNo%effectron->_parent->dProto->secondarySpriteNo):\
+                    effectron->_parent->dProto->secondarySpriteID)
 // ordered sprite from primary range for exchange
-#define SEMIQUENTIAL (effectron->parent->dProto->primarySpriteNo?\
-                      (effectron->parent->dProto->primarySpriteID + (effectron->partno/2)%effectron->parent->dProto->primarySpriteNo):\
-                      effectron->parent->dProto->primarySpriteID)
+#define SEMIQUENTIAL (effectron->_parent->dProto->primarySpriteNo?\
+                      (effectron->_parent->dProto->primarySpriteID + (effectron->_partno/2)%effectron->_parent->dProto->primarySpriteNo):\
+                      effectron->_parent->dProto->primarySpriteID)
 
 /* ===================================================================== *
    Color mapping selection
@@ -80,16 +80,16 @@ int16 whichColorMap(EffectID eid, const Effectron *const effectron) {
 	case eAreaSquare:
 	case eAreaBall:
 	case eAreaStorm:
-		rval = (effectron->parent->effSeq == 0) ? 0 : 1;
+		rval = (effectron->_parent->effSeq == 0) ? 0 : 1;
 		break;
 	case eAreaBolt:
-		rval = ((effectron->partno % 3) == 1) ? 0 : 1;
+		rval = ((effectron->_partno % 3) == 1) ? 0 : 1;
 		break;
 	case eAreaCone:
-		rval = ((effectron->partno / 9) == 0) ? 0 : 1;
+		rval = ((effectron->_partno / 9) == 0) ? 0 : 1;
 		break;
 	case eAreaWave:
-		rval = ((effectron->partno / 17) == 0) ? 0 : 1;
+		rval = ((effectron->_partno / 17) == 0) ? 0 : 1;
 		break;
 	}
 	return rval;
@@ -106,7 +106,7 @@ SPELLSPRITATIONFUNCTION(invisibleSprites) {
 }
 
 SPELLSPRITATIONFUNCTION(auraSprites) {
-	if (effectron->parent->effSeq)
+	if (effectron->_parent->effSeq)
 		return SECUENTIAL;
 	return SEQUENTIAL;
 }
@@ -128,37 +128,37 @@ SPELLSPRITATIONFUNCTION(beamSprites) {
 }
 
 SPELLSPRITATIONFUNCTION(boltSprites) {
-	if ((effectron->partno % 3) == 1)
+	if ((effectron->_partno % 3) == 1)
 		return PRIMARY;
 	return SECONDARY;
 }
 
 SPELLSPRITATIONFUNCTION(coneSprites) {
-	if ((effectron->partno / 9) == 0)
+	if ((effectron->_partno / 9) == 0)
 		return PRIMARY;
 	return SECONDARY;
 }
 
 SPELLSPRITATIONFUNCTION(ballSprites) {
-	if (effectron->parent->effSeq)
+	if (effectron->_parent->effSeq)
 		return SECONDARY;
 	return PRIMARY;
 }
 
 SPELLSPRITATIONFUNCTION(squareSprites) {
-	if (effectron->parent->effSeq)
+	if (effectron->_parent->effSeq)
 		return SECONDARY;
 	return PRIMARY;
 }
 
 SPELLSPRITATIONFUNCTION(waveSprites) {
-	if ((effectron->partno / 17) == 0)
+	if ((effectron->_partno / 17) == 0)
 		return PRIMARY;
 	return SECONDARY;
 }
 
 SPELLSPRITATIONFUNCTION(stormSprites) {
-	if (effectron->parent->effSeq)
+	if (effectron->_parent->effSeq)
 		return SECONDARY;
 	return PRIMARY;
 }
