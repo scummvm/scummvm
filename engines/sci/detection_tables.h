@@ -5249,6 +5249,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// Space Quest 1 VGA Remake - "Version 2.1" fan patch
+	// VERSION file reports "2.1"
+	{"sq1sci", "SCI", {
+		{"resource.map", 0, "67a6792a8384fca77150e3b6c42a6f1e", 5991},
+		{"resource.000", 0, "a5eaa1c8cb48dced9bee23dfafaae19e", 1059308},
+		{"resource.001", 0, "15798bab768651db66819779af4185f0", 1039102},
+		{"resource.002", 0, "6827e20dc7a4a98c3c0f0e0be5f78cfe", 1169366},
+		{"resource.003", 0, "eae18632e2b70bbb688d679fb3022052", 1215951},
+		{"resource.004", 0, "252b9bda620fb47ef65b6e2cca3e73be", 1206005},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
+
 	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
 	{"sq1sci", "SCI", {
 		{"resource.map", 0, "5c6ad20407261b544238e8dce87afead", 5895},
