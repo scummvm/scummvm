@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-27 15:39+0000\n"
-"PO-Revision-Date: 2021-07-12 15:25+0000\n"
-"Last-Translator: Crane yang <1173886760@qq.com>\n"
+"PO-Revision-Date: 2022-09-28 00:37+0000\n"
+"Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
 "Language: zh\n"
@@ -22,9 +22,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(编译于：%s)"
+msgstr "(編譯於：%s，使用%s編譯)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -44,7 +44,7 @@ msgstr "显示具有隐藏属性的文件"
 
 #: gui/browser.cpp:78 gui/remotebrowser.cpp:56
 msgid "Go up"
-msgstr ""
+msgstr "上一層"
 
 #: gui/browser.cpp:78 gui/browser.cpp:80 gui/remotebrowser.cpp:56
 #: gui/remotebrowser.cpp:58
@@ -208,20 +208,20 @@ msgstr "下载速度：%s%S"
 #: gui/downloadiconsdialog.cpp:150
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "錯誤%d:%s"
 
 #: gui/downloadiconsdialog.cpp:176 gui/downloadiconsdialog.cpp:231
 msgid "Downloading icons list..."
-msgstr ""
+msgstr "正在下載圖標列表..."
 
 #: gui/downloadiconsdialog.cpp:190
 msgid "Clear Cache"
-msgstr ""
+msgstr "清除緩存"
 
 #: gui/downloadiconsdialog.cpp:241
 #, c-format
 msgid "Downloading icons list... %d entries"
-msgstr ""
+msgstr "正在下載圖標列表... %d 已完成"
 
 #: gui/downloadiconsdialog.cpp:251
 #, c-format
@@ -229,9 +229,8 @@ msgid "Detected %d new packs, %s %S"
 msgstr ""
 
 #: gui/downloadiconsdialog.cpp:253
-#, fuzzy
 msgid "Download"
-msgstr "向下"
+msgstr "下載"
 
 #: gui/downloadiconsdialog.cpp:277
 #, c-format
@@ -248,11 +247,11 @@ msgstr "关闭"
 
 #: gui/downloadiconsdialog.cpp:382 gui/downloadiconsdialog.cpp:428
 msgid "ERROR: No icons path set"
-msgstr ""
+msgstr "錯誤:沒有設置圖標路徑"
 
 #: gui/downloadiconsdialog.cpp:416
 msgid "No new icons packs available"
-msgstr ""
+msgstr "目前沒有新的圖標包"
 
 #: gui/downloadiconsdialog.cpp:452
 #, c-format
@@ -387,7 +386,7 @@ msgstr "覆盖全局着色器设置"
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:2105 engines/dialogs.cpp:295
 msgid "Audio"
-msgstr ""
+msgstr "音訊"
 
 #: gui/editgamedialog.cpp:273
 #, fuzzy
