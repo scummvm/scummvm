@@ -65,7 +65,7 @@ SPELLLOCATIONFUNCTION(glowSpellPos) {
 // sprites that surround target
 
 SPELLLOCATIONFUNCTION(wallSpellPos) {
-	return effectron->_parent->target->getPoint() + effectron->_velocity;
+	return effectron->_parent->_target->getPoint() + effectron->_velocity;
 }
 
 // ------------------------------------------------------------------

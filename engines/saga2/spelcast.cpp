@@ -582,10 +582,10 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, SpellID spellNo) {
 	assert(newCaster);
 	assert(newTarget);
-	caster = newCaster;
-	target = new SpellTarget(*newTarget);
-	world = newCaster->world();
-	spell = spellNo;
+	_caster = newCaster;
+	_target = new SpellTarget(*newTarget);
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -594,10 +594,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, Spe
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -607,10 +607,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, Spel
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, SpellID spellNo) {
 	assert(newCaster);
 	assert(newTarget);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -619,10 +619,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, Spel
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -631,38 +631,41 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, Spell
 
 
 SpellInstance::~SpellInstance() {
-	if (age < implementAge && g_vm->_gameRunning)
-		spellBook[spell].implement(caster, target);
-	for (int32 i = 0; i < eList._count; i++) {
-		if (eList._displayList[i]._efx)
-			delete eList._displayList[i]._efx;
-		eList._displayList[i]._efx = nullptr;
+	if (_age < _implementAge && g_vm->_gameRunning)
+		spellBook[_spell].implement(_caster, _target);
+	for (int32 i = 0; i < _eList._count; i++) {
+		if (_eList._displayList[i]._efx)
+			delete _eList._displayList[i]._efx;
+		_eList._displayList[i]._efx = nullptr;
 	}
-	if (target)
-		delete target;
-	target = nullptr;
+	if (_target)
+		delete _target;
+	_target = nullptr;
 }
 
 // ------------------------------------------------------------------
 // common initialization code
 
 void SpellInstance::init() {
-	dProto = (*g_vm->_sdpList)[spell];
-	ProtoObj        *proto = caster->proto();
-	TilePoint       sPoint = caster->getWorldLocation();
+	_dProto = (*g_vm->_sdpList)[_spell];
+	ProtoObj        *proto = _caster->proto();
+	TilePoint       sPoint = _caster->getWorldLocation();
 	sPoint.z += proto->height / 2;
-	age = 0;
-	implementAge = 0;
-	effSeq = 0;
-	assert(dProto);
-	if (!dProto)   return;
-	effect = (*g_vm->_edpList)[dProto->effect];
-	implementAge = dProto->implementAge;
-	maxAge = dProto->maxAge;
+	_age = 0;
+	_implementAge = 0;
+	_effSeq = 0;
+
+	assert(_dProto);
+	if (!_dProto)
+		return;
+
+	_effect = (*g_vm->_edpList)[_dProto->_effect];
+	_implementAge = _dProto->_implementAge;
+	_maxAge = _dProto->_maxAge;
 	initEffect(sPoint);
 
-	if (implementAge == 0)
-		spellBook[spell].implement(caster, target);
+	if (_implementAge == 0)
+		spellBook[_spell].implement(_caster, _target);
 
 }
 
@@ -670,11 +673,11 @@ void SpellInstance::init() {
 // common cleanup
 
 void SpellInstance::termEffect() {
-	if (eList._count)
-		for (int32 i = 0; i < eList._count; i++) {
-			if (eList._displayList[i]._efx) {
-				delete eList._displayList[i]._efx;
-				eList._displayList[i]._efx = nullptr;
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
+			if (_eList._displayList[i]._efx) {
+				delete _eList._displayList[i]._efx;
+				_eList._displayList[i]._efx = nullptr;
 			}
 		}
 }
@@ -683,11 +686,11 @@ void SpellInstance::termEffect() {
 // visual init
 
 void SpellInstance::initEffect(TilePoint startpoint) {
-	eList._count = effect->nodeCount; //sdp->effCount;
-	if (eList._count)
-		for (int32 i = 0; i < eList._count; i++) {
+	_eList._count = _effect->_nodeCount; //sdp->effCount;
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
 			Effectron *e = new Effectron(0, i);
-			eList._displayList[i]._efx = e;
+			_eList._displayList[i]._efx = e;
 			e->_parent = this;
 			e->_start = startpoint;
 			e->_current = startpoint;
@@ -701,16 +704,16 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 // visual update
 
 bool SpellInstance::buildList() {
-	if (eList.dissipated()) {
+	if (_eList.dissipated()) {
 		termEffect();
-		if (effect->next == nullptr)
+		if (_effect->_next == nullptr)
 			return false;
-		effect = effect->next;
-		effSeq++;
+		_effect = _effect->_next;
+		_effSeq++;
 		//
-		initEffect(target->getPoint());
+		initEffect(_target->getPoint());
 	}
-	eList.buildEffects(false);
+	_eList.buildEffects(false);
 	return true;
 }
 
@@ -719,13 +722,13 @@ bool SpellInstance::buildList() {
 
 bool SpellInstance::updateStates(int32 deltaTime) {
 
-	spellBook[spell].show(caster, *target);
-	age++;
-	if (age == implementAge || implementAge == continuouslyImplemented)
-		spellBook[spell].implement(caster, target);
-	if (maxAge > 0 && age > maxAge)
+	spellBook[_spell].show(_caster, *_target);
+	_age++;
+	if (_age == _implementAge || _implementAge == continuouslyImplemented)
+		spellBook[_spell].implement(_caster, _target);
+	if (_maxAge > 0 && _age > _maxAge)
 		termEffect();
-	eList.updateEStates(deltaTime);
+	_eList.updateEStates(deltaTime);
 	return true;
 }
 
@@ -810,7 +813,7 @@ void Effectron::updateEffect(int32 deltaTime) {
 	if (_age > 1) {
 		_age = 0;
 		_pos++;
-		_finish = _parent->target->getPoint();
+		_finish = _parent->_target->getPoint();
 		_stepNo++;
 
 		_flags = staCall();
@@ -832,7 +835,7 @@ void Effectron::updateEffect(int32 deltaTime) {
 
 //-----------------------------------------------------------------------
 void Effectron::bump() {
-	switch (_parent->dProto->elasticity) {
+	switch (_parent->_dProto->_elasticity) {
 	case ecFlagBounce:
 		_velocity = -_velocity;
 		break;

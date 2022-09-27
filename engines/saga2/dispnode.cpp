@@ -980,8 +980,7 @@ void Effectron::drawEffect() {
 	sc->sp = spellSprites->sprite(spriteID());   //tempSpellSpriteIDs[rand()%39] );
 	sc->offset.x = scList->offset.y = 0;
 
-	(*g_vm->_sdpList)[_parent->spell]->
-	getColorTranslation(eColors, this);
+	(*g_vm->_sdpList)[_parent->_spell]->getColorTranslation(eColors, this);
 
 	sc->colorTable = eColors;
 	sc->flipped = false;
