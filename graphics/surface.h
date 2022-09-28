@@ -46,6 +46,19 @@ namespace Graphics {
 
 struct TransformStruct;
 
+enum {
+	kDitherNaive,
+	kDitherFloyd,
+	kDitherAtkinson,
+	kDitherBurkes,
+	kDitherFalseFloyd,
+	kDitherSierra,
+	kDitherSierraTwoRow,
+	kDitherSierraLite,
+	kDitherStucki,
+	kDitherJarvis,
+};
+
 /**
  * An arbitrary graphics surface that can be the target (or source) of blit
  * operations, font rendering, etc.
@@ -341,7 +354,12 @@ public:
 	 * @param dstFormat  The desired format.
 	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
 	 */
-	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0) const;
+
+private:
+	void ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount) const;
+
+public:
 
 	/**
 	 * Draw a line.
