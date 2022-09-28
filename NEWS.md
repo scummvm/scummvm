@@ -62,6 +62,9 @@ For a more comprehensive changelog of the latest experimental code, see:
      of the original interpreters (probably because of the poor results in the
      other languages).
 
+ Toon:
+   - Made game menus behave like in the original.
+
  TwinE:
    - Fixed rendering issue with doors
    - Fixed invalid music pause in behaviour and inventory menu
@@ -74,8 +77,6 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.6.1 (2022-XX-XX)
 
- Toon:
-   - Made game menus behave like in the original.
 
 #### 2.6.0 "Insane Escapism" (2022-08-01)
 
