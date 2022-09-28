@@ -45,9 +45,7 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 	_itemOwnerID = kNoActorID;
 	_itemState = 0;
 
-	PegasusEngine *vm = g_vm;
-
-	Common::SeekableReadStream *info = vm->_resFork->getResource(kItemInfoResType, kItemBaseResID + id);
+	Common::SeekableReadStream *info = g_vm->_resFork->getResource(kItemInfoResType, kItemBaseResID + id);
 	if (info) {
 		_itemInfo.infoLeftTime = info->readUint32BE();
 		_itemInfo.infoRightStart = info->readUint32BE();
@@ -55,7 +53,7 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 		_itemInfo.dragSpriteNormalID = info->readUint16BE();
 		_itemInfo.dragSpriteUsedID = info->readUint16BE();
 
-		if (vm->isDemo()) {
+		if (g_vm->isDemo()) {
 			// Adjust info right times to account for the stuff that was chopped out of the
 			// info right movies.
 			// Assumes time scale of 600.
@@ -100,7 +98,7 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 		memset(&_itemInfo, 0, sizeof(_itemInfo));
 	}
 
-	Common::SeekableReadStream *middleAreaInfo = vm->_resFork->getResource(kMiddleAreaInfoResType, kItemBaseResID + id);
+	Common::SeekableReadStream *middleAreaInfo = g_vm->_resFork->getResource(kMiddleAreaInfoResType, kItemBaseResID + id);
 	if (middleAreaInfo) {
 		_sharedAreaInfo = readItemState(middleAreaInfo);
 		delete middleAreaInfo;
@@ -109,7 +107,7 @@ Item::Item(const ItemID id, const NeighborhoodID neighborhood, const RoomID room
 		memset(&_sharedAreaInfo, 0, sizeof(_sharedAreaInfo));
 	}
 
-	Common::SeekableReadStream *extraInfo = vm->_resFork->getResource(kItemExtraInfoResType, kItemBaseResID + id);
+	Common::SeekableReadStream *extraInfo = g_vm->_resFork->getResource(kItemExtraInfoResType, kItemBaseResID + id);
 	if (!extraInfo)
 		error("Extra info not found for item %d", id);
 
@@ -285,16 +283,15 @@ ItemStateInfo Item::readItemState(Common::SeekableReadStream *stream) {
 }
 
 Sprite *Item::getDragSprite(const DisplayElementID id) const {
-	PegasusEngine *vm = g_vm;
 	Sprite *result = new Sprite(id);
 	SpriteFrame *frame = new SpriteFrame();
 
-	frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteNormalID, true);
+	frame->initFromPICTResource(g_vm->_resFork, _itemInfo.dragSpriteNormalID, true);
 	result->addFrame(frame, 0, 0);
 
 	if (_itemInfo.dragSpriteNormalID != _itemInfo.dragSpriteUsedID) {
 		frame = new SpriteFrame();
-		frame->initFromPICTResource(vm->_resFork, _itemInfo.dragSpriteUsedID, true);
+		frame->initFromPICTResource(g_vm->_resFork, _itemInfo.dragSpriteUsedID, true);
 	}
 
 	result->addFrame(frame, 0, 0);

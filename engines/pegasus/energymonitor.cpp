@@ -74,8 +74,6 @@ enum {
 EnergyMonitor *g_energyMonitor = nullptr;
 
 EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWarningLightID) {
-	PegasusEngine *vm = g_vm;
-
 	_stage = kStageNoStage;
 
 	_calibrating = false;
@@ -87,19 +85,19 @@ EnergyMonitor::EnergyMonitor() : IdlerAnimation(kEnergyBarID), _energyLight(kWar
 	startDisplaying();
 
 	SpriteFrame *frame = new SpriteFrame();
-	frame->initFromPICTResource(vm->_resFork, kLightOffID);
+	frame->initFromPICTResource(g_vm->_resFork, kLightOffID);
 	_energyLight.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(vm->_resFork, kLightYellowID);
+	frame->initFromPICTResource(g_vm->_resFork, kLightYellowID);
 	_energyLight.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(vm->_resFork, kLightOrangeID);
+	frame->initFromPICTResource(g_vm->_resFork, kLightOrangeID);
 	_energyLight.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(vm->_resFork, kLightRedID);
+	frame->initFromPICTResource(g_vm->_resFork, kLightRedID);
 	_energyLight.addFrame(frame, 0, 0);
 
 	_energyLight.setBounds(540, 35, 600, 59);
@@ -162,9 +160,8 @@ int32 EnergyMonitor::getCurrentEnergy() {
 
 void EnergyMonitor::timeChanged(const TimeValue currentTime) {
 	if (currentTime == getStop()) {
-		PegasusEngine *vm = g_vm;
-		if (vm->getEnergyDeathReason() != -1)
-			vm->die(vm->getEnergyDeathReason());
+		if (g_vm->getEnergyDeathReason() != -1)
+			g_vm->die(g_vm->getEnergyDeathReason());
 	} else {
 		uint32 currentEnergy = kMaxJMPEnergy - currentTime;
 
@@ -245,19 +242,17 @@ void EnergyMonitor::draw(const Common::Rect &r) {
 }
 
 void EnergyMonitor::calibrateEnergyBar() {
-	PegasusEngine *vm = g_vm;
-
 	_calibrating = true;
 
-	vm->setEnergyDeathReason(-1);
+	g_vm->setEnergyDeathReason(-1);
 
 	uint32 numFrames = _energyLight.getNumFrames();
 	for (uint32 i = 1; i < numFrames; i++) {
 		_energyLight.setCurrentFrameIndex(i);
 		_energyLight.show();
-		vm->delayShell(1, 3);
+		g_vm->delayShell(1, 3);
 		_energyLight.hide();
-		vm->delayShell(1, 3);
+		g_vm->delayShell(1, 3);
 	}
 
 	_energyLight.setCurrentFrameIndex(0);
@@ -271,12 +266,12 @@ void EnergyMonitor::calibrateEnergyBar() {
 	_energyLight.hide();
 	while (getCurrentEnergy() != (int32)kMaxJMPEnergy) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	setEnergyDrainRate(0);
 	hide();
 
@@ -284,11 +279,9 @@ void EnergyMonitor::calibrateEnergyBar() {
 }
 
 void EnergyMonitor::restoreLastEnergyValue() {
-	PegasusEngine *vm = g_vm;
-
 	_dontFlash = true;
-	setEnergyValue(vm->getSavedEnergyValue());
-	vm->resetEnergyDeathReason();
+	setEnergyValue(g_vm->getSavedEnergyValue());
+	g_vm->resetEnergyDeathReason();
 }
 
 void EnergyMonitor::saveCurrentEnergyValue() {

@@ -52,7 +52,7 @@ public:
 
 typedef ItemList::iterator ItemIterator;
 
-#define g_allItems (((PegasusEngine *)g_engine)->getAllItems())
+#define g_allItems g_vm->getAllItems()
 
 } // End of namespace Pegasus
 

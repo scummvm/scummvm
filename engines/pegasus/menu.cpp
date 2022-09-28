@@ -256,8 +256,7 @@ void MainMenu::stopMainMenuLoop() {
 }
 
 void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = g_vm;
-	bool isDemo = vm->isDemo();
+	bool isDemo = g_vm->isDemo();
 
 	if (input.upButtonDown()) {
 		if (_menuSelection > (uint32)(isDemo ? kFirstSelectionDemo : kFirstSelection)) {
@@ -279,19 +278,19 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			switch (_menuSelection) {
 			case kMainMenuCreditsDemo:
 				_creditsButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_creditsButton.hide();
 				setLastCommand(kMenuCmdCredits);
 				break;
 			case kMainMenuStartDemo:
 				_startButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_startButton.hide();
 				setLastCommand(kMenuCmdStartAdventure);
 				break;
 			case kMainMenuQuitDemo:
 				_quitButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_quitButton.hide();
 				setLastCommand(kMenuCmdQuit);
 				break;
@@ -302,25 +301,25 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			switch (_menuSelection) {
 			case kMainMenuOverview:
 				_overviewButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_overviewButton.hide();
 				setLastCommand(kMenuCmdOverview);
 				break;
 			case kMainMenuRestore:
 				_restoreButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_restoreButton.hide();
 				setLastCommand(kMenuCmdRestore);
 				break;
 			case kMainMenuCredits:
 				_creditsButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_creditsButton.hide();
 				setLastCommand(kMenuCmdCredits);
 				break;
 			case kMainMenuStart:
 				_startButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_startButton.hide();
 				if (_adventureMode)
 					setLastCommand(kMenuCmdStartAdventure);
@@ -333,7 +332,7 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 				break;
 			case kMainMenuQuit:
 				_quitButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_quitButton.hide();
 				setLastCommand(kMenuCmdQuit);
 				break;
@@ -347,9 +346,7 @@ void MainMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 }
 
 void MainMenu::updateDisplay() {
-	PegasusEngine *vm = g_vm;
-
-	if (vm->isDemo()) {
+	if (g_vm->isDemo()) {
 		switch (_menuSelection) {
 		case kMainMenuStartDemo:
 			_smallSelect.moveElementTo(kStartSelectLeftDemo, kStartSelectTopDemo);
@@ -413,7 +410,7 @@ void MainMenu::updateDisplay() {
 			break;
 		}
 
-		vm->resetIntroTimer();
+		g_vm->resetIntroTimer();
 	}
 }
 
@@ -691,8 +688,7 @@ enum {
 // Never set the current input handler to the DeathMenu.
 DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _deathBackground(0), _continueButton(0),
 		_mainMenuButton(0), _quitButton(0), _restoreButton(0), _largeSelect(0), _smallSelect(0) {
-	PegasusEngine *vm = g_vm;
-	bool isDemo = vm->isDemo();
+	bool isDemo = g_vm->isDemo();
 
 	_playerWon = (deathReason == kPlayerWonGame);
 
@@ -741,9 +737,9 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 	_deathReason = deathReason;
 
 	if (!isDemo) {
-		vm->_gfx->setCurSurface(_deathBackground.getSurface());
+		g_vm->_gfx->setCurSurface(_deathBackground.getSurface());
 		drawAllScores();
-		vm->_gfx->setCurSurface(vm->_gfx->getWorkArea());
+		g_vm->_gfx->setCurSurface(g_vm->_gfx->getWorkArea());
 	}
 
 	_deathBackground.setDisplayOrder(0);
@@ -798,7 +794,7 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 		_largeSelect.setDisplayOrder(2);
 		_largeSelect.startDisplaying();
 	} else {
-		if (vm->isDVD()) // Updated file for the DVD version
+		if (g_vm->isDVD()) // Updated file for the DVD version
 			_triumphSound.initFromAIFFFile("Sounds/Caldoria/Galactic Triumph.44K.aiff");
 		else
 			_triumphSound.initFromQuickTime("Sounds/Caldoria/Galactic Triumph");
@@ -810,36 +806,34 @@ DeathMenu::DeathMenu(const DeathReason deathReason) : GameMenu(kDeathMenuID), _d
 }
 
 void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = g_vm;
-
 	if (input.upButtonDown()) {
-		if (_menuSelection > (vm->isDemo() ? kFirstDeathSelectionDemo : kFirstDeathSelection)) {
+		if (_menuSelection > (g_vm->isDemo() ? kFirstDeathSelectionDemo : kFirstDeathSelection)) {
 			_menuSelection--;
 			updateDisplay();
 		}
-	} else if (input.downButtonDown() && (vm->isDemo() || !_playerWon)) {
-		if (_menuSelection < (vm->isDemo() ? kLastDeathSelectionDemo : kLastDeathSelection)) {
+	} else if (input.downButtonDown() && (g_vm->isDemo() || !_playerWon)) {
+		if (_menuSelection < (g_vm->isDemo() ? kLastDeathSelectionDemo : kLastDeathSelection)) {
 			_menuSelection++;
 			updateDisplay();
 		}
 	} else if (JMPPPInput::isMenuButtonPressInput(input)) {
-		if (vm->isDemo()) {
+		if (g_vm->isDemo()) {
 			switch (_menuSelection) {
 			case kDeathScreenContinueDemo:
 				_continueButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_continueButton.hide();
 				setLastCommand(kMenuCmdDeathContinue);
 				break;
 			case kDeathScreenQuitDemo:
 				_quitButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_quitButton.hide();
 				setLastCommand(kMenuCmdDeathQuitDemo);
 				break;
 			case kDeathScreenMainMenuDemo:
 				_mainMenuButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_mainMenuButton.hide();
 				setLastCommand(kMenuCmdDeathMainMenuDemo);
 				break;
@@ -850,19 +844,19 @@ void DeathMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			switch (_menuSelection) {
 			case kDeathScreenContinue:
 				_continueButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_continueButton.hide();
 				setLastCommand(kMenuCmdDeathContinue);
 				break;
 			case kDeathScreenRestore:
 				_restoreButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_restoreButton.hide();
 				setLastCommand(kMenuCmdDeathRestore);
 				break;
 			case kDeathScreenMainMenu:
 				_mainMenuButton.show();
-				vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+				g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 				_mainMenuButton.hide();
 				setLastCommand(kMenuCmdDeathMainMenu);
 				break;
@@ -1068,17 +1062,15 @@ static const CoordType kPauseScoreBottom = kPauseScoreTop + 12;
 PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButton(0), _restoreButton(0),
 		_walkthroughButton(0), _continueButton(0), _soundFXLevel(0), _ambienceLevel(0), _quitButton(0),
 		_largeSelect(0), _smallSelect(0) {
-	PegasusEngine *vm = g_vm;
-
 	_pauseBackground.initFromPICTFile("Images/Pause Screen/PausScrn.pict", true);
 
-	if (!vm->isDemo()) {
+	if (!g_vm->isDemo()) {
 		Surface numbers;
 		numbers.getImageFromPICTFile("Images/Pause Screen/Numbers.pict");
-		vm->_gfx->setCurSurface(_pauseBackground.getSurface());
+		g_vm->_gfx->setCurSurface(_pauseBackground.getSurface());
 		drawScore(GameState.getTotalScore(), kMaxTotalScore,
 				Common::Rect(kPauseScoreLeft, kPauseScoreTop, kPauseScoreRight, kPauseScoreBottom), &numbers);
-		vm->_gfx->setCurSurface(vm->_gfx->getWorkArea());
+		g_vm->_gfx->setCurSurface(g_vm->_gfx->getWorkArea());
 	}
 
 	_pauseBackground.setDisplayOrder(kPauseMenuOrder);
@@ -1086,7 +1078,7 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 	_pauseBackground.startDisplaying();
 	_pauseBackground.show();
 
-	if (!vm->isDemo()) {
+	if (!g_vm->isDemo()) {
 		_saveButton.initFromPICTFile("Images/Pause Screen/SaveGame.pict");
 		_saveButton.setDisplayOrder(kSaveGameOrder);
 		_saveButton.moveElementTo(kSaveGameLeft, kSaveGameTop);
@@ -1115,13 +1107,13 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 	_soundFXLevel.setBounds(Common::Rect(kSoundFXLeft, kSoundFXTop, kSoundFXRight, kSoundFXBottom));
 	_soundFXLevel.startDisplaying();
 	_soundFXLevel.show();
-	_soundFXLevel.setSoundLevel(vm->getSoundFXLevel());
+	_soundFXLevel.setSoundLevel(g_vm->getSoundFXLevel());
 
 	_ambienceLevel.setDisplayOrder(kAmbienceOrder);
 	_ambienceLevel.setBounds(Common::Rect(kAmbienceLeft, kAmbienceTop, kAmbienceRight, kAmbienceBottom));
 	_ambienceLevel.startDisplaying();
 	_ambienceLevel.show();
-	_ambienceLevel.setSoundLevel(vm->getAmbienceLevel());
+	_ambienceLevel.setSoundLevel(g_vm->getAmbienceLevel());
 
 	_quitButton.initFromPICTFile("Images/Pause Screen/Quit2MM.pict");
 	_quitButton.setDisplayOrder(kQuitToMainMenuOrder);
@@ -1136,16 +1128,14 @@ PauseMenu::PauseMenu() : GameMenu(kPauseMenuID), _pauseBackground(0), _saveButto
 	_smallSelect.setDisplayOrder(kPauseSmallHiliteOrder);
 	_smallSelect.startDisplaying();
 
-	_menuSelection = (vm->isDemo()) ? kPauseMenuContinue : kPauseMenuSave;
+	_menuSelection = (g_vm->isDemo()) ? kPauseMenuContinue : kPauseMenuSave;
 
 	updateDisplay();
 }
 
 void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
-	PegasusEngine *vm = g_vm;
-
 	if (input.upButtonDown()) {
-		if (vm->isDemo()) {
+		if (g_vm->isDemo()) {
 			if (_menuSelection > kPauseMenuContinue) {
 				switch (_menuSelection) {
 				case kPauseMenuSoundFX:
@@ -1169,7 +1159,7 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			}
 		}
 	} else if (input.downButtonDown()) {
-		if (vm->isDemo()) {
+		if (g_vm->isDemo()) {
 			if (_menuSelection < kPauseMenuQuitToMainMenu) {
 				switch (_menuSelection) {
 				case kPauseMenuContinue:
@@ -1195,11 +1185,11 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	} else if (input.leftButtonDown()) {
 		if (_menuSelection == kPauseMenuSoundFX) {
 			_soundFXLevel.decrementLevel();
-			vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
+			g_vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
 		} else if (_menuSelection == kPauseMenuAmbience) {
 			_ambienceLevel.decrementLevel();
-			vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
-		} else if (!vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
+			g_vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
+		} else if (!g_vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
 			GameState.setWalkthroughMode(!GameState.getWalkthroughMode());
 			if (GameState.getWalkthroughMode())
 				_walkthroughButton.show();
@@ -1209,11 +1199,11 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 	} else if (input.rightButtonDown()) {
 		if (_menuSelection == kPauseMenuSoundFX) {
 			_soundFXLevel.incrementLevel();
-			vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
+			g_vm->setSoundFXLevel(_soundFXLevel.getSoundLevel());
 		} else if (_menuSelection == kPauseMenuAmbience) {
 			_ambienceLevel.incrementLevel();
-			vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
-		} else if (!vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
+			g_vm->setAmbienceLevel(_ambienceLevel.getSoundLevel());
+		} else if (!g_vm->isDemo() && _menuSelection == kPauseMenuWalkthru) {
 			GameState.setWalkthroughMode(!GameState.getWalkthroughMode());
 			if (GameState.getWalkthroughMode())
 				_walkthroughButton.show();
@@ -1224,19 +1214,19 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 		switch (_menuSelection) {
 		case kPauseMenuSave:
 			_saveButton.show();
-			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 			_saveButton.hide();
 			setLastCommand(kMenuCmdPauseSave);
 			break;
 		case kPauseMenuRestore:
 			_restoreButton.show();
-			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 			_restoreButton.hide();
 			setLastCommand(kMenuCmdPauseRestore);
 			break;
 		case kPauseMenuContinue:
 			_continueButton.show();
-			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 			_continueButton.hide();
 			setLastCommand(kMenuCmdPauseContinue);
 			break;
@@ -1249,7 +1239,7 @@ void PauseMenu::handleInput(const Input &input, const Hotspot *cursorSpot) {
 			break;
 		case kPauseMenuQuitToMainMenu:
 			_quitButton.show();
-			vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
+			g_vm->delayShell(kMenuButtonHiliteTime, kMenuButtonHiliteScale);
 			_quitButton.hide();
 			setLastCommand(kMenuCmdPauseQuit);
 			break;

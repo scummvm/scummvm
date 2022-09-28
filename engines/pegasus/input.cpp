@@ -180,18 +180,16 @@ bool InputDeviceManager::notifyEvent(const Common::Event &event) {
 }
 
 void InputDeviceManager::pumpEvents() {
-	PegasusEngine *vm = g_vm;
-
-	bool saveAllowed = vm->swapSaveAllowed(false);
-	bool openAllowed = vm->swapLoadAllowed(false);
+	bool saveAllowed = g_vm->swapSaveAllowed(false);
+	bool openAllowed = g_vm->swapLoadAllowed(false);
 
 	// Just poll for events. notifyEvent() will pick up on them.
 	Common::Event event;
 	while (g_system->getEventManager()->pollEvent(event))
 		;
 
-	vm->swapSaveAllowed(saveAllowed);
-	vm->swapLoadAllowed(openAllowed);
+	g_vm->swapSaveAllowed(saveAllowed);
+	g_vm->swapLoadAllowed(openAllowed);
 }
 
 int operator==(const Input &arg1, const Input &arg2) {

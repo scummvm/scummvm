@@ -131,18 +131,17 @@ void ArthurChip::select() {
 }
 
 void ArthurChip::setUpArthurChip() {
-	PegasusEngine *vm = g_vm;
 	ItemState state = getItemState();
 
-	if (vm->isChattyArthur()) {
-		if (g_AIArea && vm->isChattyAI()) {
+	if (g_vm->isChattyArthur()) {
+		if (g_AIArea && g_vm->isChattyAI()) {
 			if (state != kArthur002)
 				setItemState(kArthur000);
 		} else if (state != kArthur102) {
 			setItemState(kArthur100);
 		}
 	} else {
-		if (g_AIArea && vm->isChattyAI()) {
+		if (g_AIArea && g_vm->isChattyAI()) {
 			if (state != kArthur012)
 				setItemState(kArthur010);
 		} else if (state != kArthur112) {
@@ -159,7 +158,6 @@ void ArthurChip::activateArthurHotspots() {
 }
 
 void ArthurChip::clickInArthurHotspot(HotSpotID id) {
-	PegasusEngine *vm = g_vm;
 	ItemState state, newState;
 
 	if (id == kArthurHeadSpotID) {
@@ -230,10 +228,10 @@ void ArthurChip::clickInArthurHotspot(HotSpotID id) {
 						sizeof(kArthurWisdomMovies) / sizeof(const char *)) - 1)]);
 		break;
 	case kChattyArthurSpotID:
-		vm->setChattyArthur(!vm->isChattyArthur());
+		g_vm->setChattyArthur(!g_vm->isChattyArthur());
 		break;
 	case kChattyAISpotID:
-		vm->setChattyAI(!vm->isChattyAI());
+		g_vm->setChattyAI(!g_vm->isChattyAI());
 		break;
 	}
 
@@ -253,10 +251,8 @@ void ArthurChip::playArthurMovie(const Common::String &movieName) {
 }
 
 bool ArthurChip::playArthurMovieForEvent(const Common::String &movieName, ArthurEvent event) {
-	PegasusEngine *vm = g_vm;
-
-	if (vm->isDVD() && vm->playerHasItemID(kArthurBiochip) &&
-		vm->isChattyArthur() && !Arthur._arthurFlags.getFlag(event)) {
+	if (g_vm->isDVD() && g_vm->playerHasItemID(kArthurBiochip) &&
+		g_vm->isChattyArthur() && !Arthur._arthurFlags.getFlag(event)) {
 		Arthur._arthurFlags.setFlag(event, true);
 		playArthurMovie(movieName);
 		return true;

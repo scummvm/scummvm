@@ -597,14 +597,12 @@ void Interface::calibrateCompass() {
 
 	g_compass->startFader(compassMove);
 
-	PegasusEngine *vm = g_vm;
-
 	while (g_compass->isFading()) {
-		vm->refreshDisplay();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	g_compass->setFaderValue(currentValue);
 }
 
@@ -613,106 +611,98 @@ void Interface::calibrateEnergyBar() {
 }
 
 void Interface::raiseInventoryDrawerSync() {
-	PegasusEngine *vm = g_vm;
-
 	raiseInventoryDrawer(false);
 
 	while (_inventoryLid.isRunning()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	inventoryLidOpen(false);
 
 	while (_inventoryPush.isFading()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	inventoryDrawerUp();
 }
 
 void Interface::lowerInventoryDrawerSync() {
-	PegasusEngine *vm = g_vm;
-
 	lowerInventoryDrawer(false);
 
 	while (_inventoryPush.isFading()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	inventoryDrawerDown(false);
 
 	while (_inventoryLid.isRunning()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	inventoryLidClosed();
 }
 
 void Interface::raiseBiochipDrawerSync() {
-	PegasusEngine *vm = g_vm;
-
 	raiseBiochipDrawer(false);
 
 	while (_biochipLid.isRunning()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	biochipLidOpen(false);
 
 	while (_biochipPush.isFading()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	biochipDrawerUp();
 }
 
 void Interface::lowerBiochipDrawerSync() {
-	PegasusEngine *vm = g_vm;
-
 	lowerBiochipDrawer(false);
 
 	while (_biochipPush.isFading()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	biochipDrawerDown(false);
 
 	while (_biochipLid.isRunning()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
-	vm->refreshDisplay();
+	g_vm->refreshDisplay();
 	biochipLidClosed();
 }
 

@@ -322,8 +322,6 @@ void InventoryItemsPicture::setCommPicture() {
 }
 
 void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
-	PegasusEngine *vm = g_vm;
-
 	Movie endMessage(0);
 
 	_shouldDrawHighlight = false;
@@ -336,8 +334,8 @@ void InventoryItemsPicture::playEndMessage(DisplayElement *pushElement) {
 
 	while (endMessage.isRunning()) {
 		InputDevice.pumpEvents();
-		vm->checkCallBacks();
-		vm->refreshDisplay();
+		g_vm->checkCallBacks();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 

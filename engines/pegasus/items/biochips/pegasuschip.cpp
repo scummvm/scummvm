@@ -139,8 +139,6 @@ void PegasusChip::activatePegasusHotspots() {
 }
 
 void PegasusChip::clickInPegasusHotspot() {
-	PegasusEngine *vm = g_vm;
-
 	ItemState thisState = getItemState();
 	ItemState hiliteState;
 
@@ -187,7 +185,7 @@ void PegasusChip::clickInPegasusHotspot() {
 
 	uint32 time = g_system->getMillis();
 	while (g_system->getMillis() < time + 500) {
-		vm->refreshDisplay();
+		g_vm->refreshDisplay();
 		g_system->delayMillis(10);
 	}
 
@@ -200,9 +198,9 @@ void PegasusChip::clickInPegasusHotspot() {
 		g_energyMonitor->stopEnergyDraining();
 
 	if (GameState.getTSAState() == kPlayerWentToPrehistoric || GameState.allTimeZonesFinished())
-		vm->jumpToNewEnvironment(kFullTSAID, kTSA37, kNorth);
+		g_vm->jumpToNewEnvironment(kFullTSAID, kTSA37, kNorth);
 	else
-		vm->jumpToNewEnvironment(kTinyTSAID, kTinyTSA37, kNorth);
+		g_vm->jumpToNewEnvironment(kTinyTSAID, kTinyTSA37, kNorth);
 }
 
 } // End of namespace Pegasus
