@@ -84,7 +84,6 @@ Common::SeekableReadStream *ResMan::open(const ResInfo &resInfo) {
 Common::String ResMan::getGjdName(const ResInfo &resInfo) {
 	if (resInfo.gjd >= _gjds.size()) {
 		error("Groovie::Resource: Unknown GJD %d", resInfo.gjd);
-		return Common::String();
 	}
 
 	return _gjds[resInfo.gjd];
