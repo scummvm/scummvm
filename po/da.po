@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-27 15:39+0000\n"
+"POT-Creation-Date: 2022-09-28 09:30+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -720,7 +720,7 @@ msgstr "Venstre"
 msgid "Right"
 msgstr "Højre"
 
-#: gui/gui-manager.cpp:252 engines/pegasus/pegasus.cpp:2814
+#: gui/gui-manager.cpp:252 engines/pegasus/pegasus.cpp:2818
 #: engines/wintermute/keymapper_tables.h:305
 #: engines/wintermute/keymapper_tables.h:346
 #: engines/wintermute/keymapper_tables.h:381
@@ -878,7 +878,7 @@ msgid "Search:"
 msgstr "Søg:"
 
 #: gui/launcher.cpp:282 engines/dialogs.cpp:99 engines/engine.cpp:864
-#: engines/pegasus/pegasus.cpp:383 engines/trecision/saveload.cpp:253
+#: engines/pegasus/pegasus.cpp:387 engines/trecision/saveload.cpp:253
 #: engines/tsage/scenes.cpp:630 engines/wage/saveload.cpp:741
 #: engines/xeen/saves.cpp:255
 msgid "Load game:"
@@ -886,7 +886,7 @@ msgstr "Indlæs spil:"
 
 #: gui/launcher.cpp:282 engines/dialogs.cpp:99 engines/engine.cpp:864
 #: engines/parallaction/metaengine.cpp:127
-#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:383
+#: engines/parallaction/saveload.cpp:193 engines/pegasus/pegasus.cpp:387
 #: engines/trecision/saveload.cpp:253 engines/tsage/scenes.cpp:630
 #: engines/wage/saveload.cpp:741 engines/xeen/saves.cpp:255
 msgid "Load"
@@ -2516,7 +2516,7 @@ msgstr "~R~etur til oversigt"
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
-#: engines/pegasus/pegasus.cpp:402 engines/prince/saveload.cpp:54
+#: engines/pegasus/pegasus.cpp:406 engines/prince/saveload.cpp:54
 #: engines/sci/engine/guest_additions.cpp:742 engines/sci/engine/kfile.cpp:1079
 #: engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -2539,7 +2539,7 @@ msgstr "Gemt spil:"
 #: engines/mads/nebular/dialogs_nebular.cpp:349
 #: engines/mtropolis/saveload.cpp:76 engines/neverhood/menumodule.cpp:889
 #: engines/parallaction/metaengine.cpp:133
-#: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:402
+#: engines/parallaction/saveload.cpp:208 engines/pegasus/pegasus.cpp:406
 #: engines/prince/saveload.cpp:54 engines/sci/engine/guest_additions.cpp:743
 #: engines/sci/engine/kfile.cpp:1079 engines/sherlock/scalpel/scalpel.cpp:1249
 #: engines/sherlock/tattoo/widget_files.cpp:74 engines/startrek/saveload.cpp:42
@@ -2560,7 +2560,7 @@ msgstr ""
 "for grundlæggende oplysninger, og for at få instruktioner om, hvordan man "
 "får yderligere hjælp."
 
-#: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:413
+#: engines/dialogs.cpp:214 engines/pegasus/pegasus.cpp:417
 #, c-format
 msgid ""
 "Failed to save game (%s)! Please consult the README for basic information, "
@@ -4696,7 +4696,7 @@ msgstr "Museindfangning til/fra"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
-#: engines/bladerunner/metaengine.cpp:240 engines/pegasus/pegasus.cpp:2820
+#: engines/bladerunner/metaengine.cpp:240 engines/pegasus/pegasus.cpp:2824
 #, fuzzy
 msgid "Save Game"
 msgstr "Gemt spil:"
@@ -4705,7 +4705,7 @@ msgstr "Gemt spil:"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
-#: engines/bladerunner/metaengine.cpp:249 engines/pegasus/pegasus.cpp:2826
+#: engines/bladerunner/metaengine.cpp:249 engines/pegasus/pegasus.cpp:2830
 #, fuzzy
 msgid "Load Game"
 msgstr "Indlæs spil"
@@ -5530,13 +5530,13 @@ msgid "Move Right"
 msgstr "Flyt til højre"
 
 #: engines/kyra/engine/eobcommon.cpp:374 engines/kyra/engine/lol.cpp:480
-#: engines/pegasus/pegasus.cpp:2735 engines/twine/metaengine.cpp:269
+#: engines/pegasus/pegasus.cpp:2739 engines/twine/metaengine.cpp:269
 #: engines/zvision/metaengine.cpp:140
 msgid "Turn Left"
 msgstr "Drej til venstre"
 
 #: engines/kyra/engine/eobcommon.cpp:375 engines/kyra/engine/lol.cpp:481
-#: engines/pegasus/pegasus.cpp:2742 engines/twine/metaengine.cpp:262
+#: engines/pegasus/pegasus.cpp:2746 engines/twine/metaengine.cpp:262
 #: engines/zvision/metaengine.cpp:146
 msgid "Turn Right"
 msgstr "Drej til højre"
@@ -6197,7 +6197,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:744
+#: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
 msgstr "Ugyldigt filnavn til at gemme"
 
@@ -6475,39 +6475,39 @@ msgstr ""
 "\n"
 "Rapportér det venligst til teamet."
 
-#: engines/pegasus/pegasus.cpp:2719
+#: engines/pegasus/pegasus.cpp:2723
 msgid "Up/Zoom In/Move Forward/Open Doors"
 msgstr "Op/forstør/flyt fremad/åbn døre"
 
-#: engines/pegasus/pegasus.cpp:2727
+#: engines/pegasus/pegasus.cpp:2731
 msgid "Down/Zoom Out"
 msgstr "Ned/forminsk"
 
-#: engines/pegasus/pegasus.cpp:2749
+#: engines/pegasus/pegasus.cpp:2753
 msgid "Action/Select"
 msgstr "Handling/vælg"
 
-#: engines/pegasus/pegasus.cpp:2769
+#: engines/pegasus/pegasus.cpp:2773
 msgid "Display/Hide Inventory Tray"
 msgstr "Vis/skjul inventarbakke"
 
-#: engines/pegasus/pegasus.cpp:2776
+#: engines/pegasus/pegasus.cpp:2780
 msgid "Display/Hide Biochip Tray"
 msgstr "Vis/skjul Biochip bakke"
 
-#: engines/pegasus/pegasus.cpp:2784
+#: engines/pegasus/pegasus.cpp:2788
 msgid "Toggle Center Data Display"
 msgstr "Center datavisning til/fra"
 
-#: engines/pegasus/pegasus.cpp:2791
+#: engines/pegasus/pegasus.cpp:2795
 msgid "Display/Hide Info Screen"
 msgstr "Vis/skjul Info skærm"
 
-#: engines/pegasus/pegasus.cpp:2798
+#: engines/pegasus/pegasus.cpp:2802
 msgid "Display/Hide Pause Menu"
 msgstr "Vis/skjul Pause menu"
 
-#: engines/pegasus/pegasus.cpp:2805
+#: engines/pegasus/pegasus.cpp:2809
 #, fuzzy
 msgid "Toggle Chatty AI"
 msgstr "Hurtigtilstand"
