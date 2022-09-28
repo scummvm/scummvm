@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-28 15:11+0000\n"
+"POT-Creation-Date: 2022-09-28 19:59+0000\n"
 "PO-Revision-Date: 2021-11-07 02:48+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Danish <https://translations.scummvm.org/projects/scummvm/"
@@ -2511,7 +2511,7 @@ msgstr "~R~etur til oversigt"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:844
-#: engines/groovie/script.cpp:2214 engines/groovie/script.cpp:2255
+#: engines/groovie/script.cpp:2215 engines/groovie/script.cpp:2256
 #: engines/hugo/file.cpp:297 engines/illusions/menusystem.cpp:702
 #: engines/kingdom/kingdom.cpp:736 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -2532,8 +2532,8 @@ msgstr "Gemt spil:"
 #: engines/dm/loadsave.cpp:199 engines/drascula/saveload.cpp:382
 #: engines/dreamweb/saveload.cpp:261 engines/glk/streams.cpp:1432
 #: engines/gnap/menu.cpp:465 engines/groovie/script.cpp:839
-#: engines/groovie/script.cpp:844 engines/groovie/script.cpp:2214
-#: engines/groovie/script.cpp:2255 engines/hugo/file.cpp:297
+#: engines/groovie/script.cpp:844 engines/groovie/script.cpp:2215
+#: engines/groovie/script.cpp:2256 engines/hugo/file.cpp:297
 #: engines/illusions/menusystem.cpp:702 engines/kingdom/kingdom.cpp:736
 #: engines/lab/savegame.cpp:237 engines/lab/savegame.cpp:242
 #: engines/mads/nebular/dialogs_nebular.cpp:349
@@ -4260,8 +4260,8 @@ msgstr ""
 #: engines/dm/loadsave.cpp:187 engines/drascula/saveload.cpp:395
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:821
-#: engines/groovie/script.cpp:856 engines/groovie/script.cpp:2201
-#: engines/groovie/script.cpp:2271 engines/hugo/file.cpp:399
+#: engines/groovie/script.cpp:856 engines/groovie/script.cpp:2202
+#: engines/groovie/script.cpp:2272 engines/hugo/file.cpp:399
 #: engines/illusions/menusystem.cpp:679 engines/kingdom/kingdom.cpp:746
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
 #: engines/mtropolis/saveload.cpp:120 engines/neverhood/menumodule.cpp:902
@@ -4279,7 +4279,7 @@ msgstr "Gendan spil:"
 #: engines/dreamweb/saveload.cpp:169 engines/glk/streams.cpp:1441
 #: engines/gnap/menu.cpp:474 engines/groovie/script.cpp:821
 #: engines/groovie/script.cpp:839 engines/groovie/script.cpp:856
-#: engines/groovie/script.cpp:2201 engines/groovie/script.cpp:2271
+#: engines/groovie/script.cpp:2202 engines/groovie/script.cpp:2272
 #: engines/hugo/file.cpp:399 engines/illusions/menusystem.cpp:679
 #: engines/kingdom/kingdom.cpp:746 engines/lab/savegame.cpp:237
 #: engines/lab/savegame.cpp:257 engines/mads/nebular/dialogs_nebular.cpp:376
