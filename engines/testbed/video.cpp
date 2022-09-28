@@ -69,6 +69,7 @@ void TestbedEngine::videoTest() {
 				}
 				g_system->copyRectToScreen(conv->getPixels(), conv->pitch, x, y, MIN<uint16>(conv->w, 640), MIN<uint16>(conv->h, 480));
 
+				conv->free();
 				delete conv;
 			}
 
