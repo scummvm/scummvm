@@ -256,6 +256,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "downfall2016", "Downfall (2016)" },
 	{ "dreamswitchhouse","Dreams in the Witch House" },
 	{ "dustbowl", "Dustbowl" },
+	{ "excavationhb", "The Excavation at Hob's Barrow" },
 	{ "falconcity", "Falcon City" },
 	{ "feriadarles", "Feria d'Arles" },
 	{ "footballgame", "Football Game" },
@@ -3551,6 +3552,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("downfall2016", "Downfall.ags", "7c87b99ce309a46085e40ac1a2b20e75", 224024207), // Linux
 	GAME_ENTRY_EN_STEAM("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 63365026),
 	GAME_ENTRY_EN("dustbowl", "dustbowl.exe", "aa349d52fd620cf9642935cd5bdec5d8", 82185295),
+	GAME_ENTRY_EN_GOG("excavationhb", "TEOHB.exe", "f176b46bc89e227f745dae9878171676", 566320586),
 	GAME_ENTRY_STEAM("falconcity", "game.exe", "e816b31cfe3512c2ec24ac0bc6cfc605", 584191058),
 	GAME_ENTRY_EN_STEAM("feriadarles", "feria d'arles.exe", "6a3291595263debd129e1e2064baeea5", 275649462),
 	GAME_ENTRY_EN_STEAM("feriadarles", "ac2game.dat", "6a3291595263debd129e1e2064baeea5", 275640157), // Mac
