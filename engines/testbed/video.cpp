@@ -59,7 +59,7 @@ void TestbedEngine::videoTest() {
 
 			const Graphics::Surface *frame = video->decodeNextFrame();
 			if (frame) {
-				Graphics::Surface *conv = frame->convertTo(pixelformat);
+				Graphics::Surface *conv = frame->convertTo(pixelformat, 0, 0, palette, 256);
 
 				int x = 0, y = 0;
 
