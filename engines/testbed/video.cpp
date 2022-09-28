@@ -24,12 +24,21 @@
 #include "video/qt_decoder.h"
 
 #include "testbed/testbed.h"
+#include "graphics/palette.h"
 
 namespace Testbed {
 
 void TestbedEngine::videoTest() {
-	Graphics::PixelFormat pixelformat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat pixelformat = Graphics::PixelFormat::createFormatCLUT8();
+	byte palette[768];
 
+	for (int i = 0; i < 256; i++) {
+		palette[i * 3 + 0] = i;
+		palette[i * 3 + 1] = i;
+		palette[i * 3 + 2] = i;
+	}
+
+	g_system->getPaletteManager()->setPalette(palette, 0, 256);
 	initGraphics(640, 480, &pixelformat);
 
 	Common::String path = ConfMan.get("start_movie");
@@ -61,6 +70,7 @@ void TestbedEngine::videoTest() {
 				g_system->copyRectToScreen(conv->getPixels(), conv->pitch, x, y, MIN<uint16>(conv->w, 640), MIN<uint16>(conv->h, 480));
 
 				delete conv;
+				delete frame;
 			}
 
 			Common::Event event;
