@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-27 15:39+0000\n"
-"PO-Revision-Date: 2022-09-28 00:37+0000\n"
+"PO-Revision-Date: 2022-09-28 10:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -24,7 +24,7 @@ msgstr ""
 #: gui/about.cpp:103
 #, c-format
 msgid "(built on %s with %s)"
-msgstr "(編譯於：%s，使用%s編譯)"
+msgstr "(編譯於%s使用%s編譯)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -262,7 +262,7 @@ msgstr ""
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "開始執行"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:277
 msgid "Game"
@@ -374,30 +374,26 @@ msgid "Backend"
 msgstr "后端"
 
 #: gui/editgamedialog.cpp:254
-#, fuzzy
 msgid "Override global backend settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局渲染设置"
 
 #: gui/editgamedialog.cpp:256
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global backend settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局渲染设置"
 
 #: gui/editgamedialog.cpp:270 gui/options.cpp:2105 engines/dialogs.cpp:295
 msgid "Audio"
 msgstr "音訊"
 
 #: gui/editgamedialog.cpp:273
-#, fuzzy
 msgid "Override global audio settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局音頻设置"
 
 #: gui/editgamedialog.cpp:275
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global audio settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆盖全局音頻设置"
 
 #: gui/editgamedialog.cpp:284 gui/options.cpp:2110
 msgid "Volume"
@@ -409,30 +405,26 @@ msgid "Volume"
 msgstr "音量"
 
 #: gui/editgamedialog.cpp:289
-#, fuzzy
 msgid "Override global volume settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆蓋全局音量設置"
 
 #: gui/editgamedialog.cpp:291
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global volume settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆蓋全局音量設置"
 
 #: gui/editgamedialog.cpp:302 gui/options.cpp:2120
 msgid "MIDI"
 msgstr ""
 
 #: gui/editgamedialog.cpp:305
-#, fuzzy
 msgid "Override global MIDI settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆蓋全局MIDI設置"
 
 #: gui/editgamedialog.cpp:307
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global MIDI settings"
-msgstr "覆盖全局着色器设置"
+msgstr "覆蓋全局MIDI設置"
 
 #: gui/editgamedialog.cpp:317 gui/options.cpp:2126
 msgid "MT-32"
@@ -499,7 +491,7 @@ msgstr "成就"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:346
 msgid "Statistics"
-msgstr ""
+msgstr "統計"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2218
@@ -533,7 +525,7 @@ msgstr "选择游戏存档目录"
 
 #: gui/editgamedialog.cpp:622 gui/options.cpp:2924
 msgid "The chosen directory cannot be written to. Please select another one."
-msgstr ""
+msgstr "所選取的資料夾不能被寫入.請選擇另一資料夾."
 
 #: gui/editgamedialog.cpp:627
 msgid ""
@@ -736,16 +728,15 @@ msgstr "？？？"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
-#, fuzzy
 msgctxt "group"
 msgid "None"
-msgstr "无"
+msgstr "無"
 
 #. I18N: Group name for the game list, grouped by the first letter of the game title
 #: gui/launcher.cpp:101
 msgctxt "group"
 msgid "First letter"
-msgstr ""
+msgstr "首字母"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
@@ -758,20 +749,19 @@ msgstr "引擎"
 #: gui/launcher.cpp:105
 msgctxt "group"
 msgid "Series"
-msgstr ""
+msgstr "系列"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
 msgctxt "group"
 msgid "Publisher"
-msgstr ""
+msgstr "發行者"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Language"
-msgstr "语言："
+msgstr "語言"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
@@ -782,15 +772,15 @@ msgstr "平台："
 
 #: gui/launcher.cpp:215
 msgid "Select Group by"
-msgstr ""
+msgstr "以什麼類別分類"
 
 #: gui/launcher.cpp:220
 msgid "Group by: "
-msgstr ""
+msgstr "類別: "
 
 #: gui/launcher.cpp:222
 msgid "Select a criteria to group the entries"
-msgstr ""
+msgstr "選擇類別入口的特徵"
 
 #: gui/launcher.cpp:245 engines/dialogs.cpp:96
 msgid "~Q~uit"
@@ -801,28 +791,25 @@ msgid "Quit ScummVM"
 msgstr "退出 ScummVM"
 
 #: gui/launcher.cpp:247
-#, fuzzy
 msgid "A~b~out"
-msgstr "关于(B)..."
+msgstr "關於(B)"
 
 #: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "关于 ScummVM"
 
 #: gui/launcher.cpp:248
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "选项(O)..."
+msgstr "選項(O)..."
 
 #: gui/launcher.cpp:248
 msgid "Change global ScummVM options"
 msgstr "修改全局 ScummVM 设置"
 
 #: gui/launcher.cpp:248
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "选项(O)..."
+msgstr "選項(O)..."
 
 #: gui/launcher.cpp:252
 msgid "~A~dd Game..."
@@ -924,15 +911,15 @@ msgstr "选择游戏："
 
 #: gui/launcher.cpp:793
 msgid "Group by:"
-msgstr ""
+msgstr "分類方式:"
 
 #: gui/launcher.cpp:833 gui/saveload-dialog.cpp:381
 msgid "List view"
-msgstr ""
+msgstr "列表樣式"
 
 #: gui/launcher.cpp:834 gui/saveload-dialog.cpp:382
 msgid "Grid view"
-msgstr ""
+msgstr "網格樣式"
 
 #: gui/launcher.cpp:1008
 msgid "~S~tart"
@@ -955,58 +942,55 @@ msgid "Record..."
 msgstr "记录..."
 
 #: gui/launcher.cpp:1019
-#, fuzzy
 msgid "~G~ame Options..."
-msgstr "选项(O)..."
+msgstr "遊戲选项(G)..."
 
 #: gui/launcher.cpp:1019
 msgid "Change game options"
 msgstr "改变游戏设置"
 
 #: gui/launcher.cpp:1019
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "选项(O)..."
+msgstr "遊戲選項(G)..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1140 gui/launcher.cpp:1335
-#, fuzzy
 msgid "Unknown Engine"
-msgstr "未知变量"
+msgstr "…未知的引擎"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1158 gui/launcher.cpp:1367
 msgid "Unknown Publisher"
-msgstr ""
+msgstr "未知的發行者"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1353
 msgid "No Series"
-msgstr ""
+msgstr "無系列"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1191 gui/launcher.cpp:1386
 msgid "Language not detected"
-msgstr ""
+msgstr "無偵測到此語言"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1206 gui/launcher.cpp:1401
 msgid "Platform not detected"
-msgstr ""
+msgstr "無偵測到此平台"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1412 gui/widgets/groupedlist.cpp:80
 msgid "All"
-msgstr ""
+msgstr "全部"
 
 #: gui/launcher.cpp:1605
 msgid "Icons per row:"
-msgstr ""
+msgstr "每列圖標數:"
 
 #: gui/massadd.cpp:77 gui/massadd.cpp:80
 msgid "... progress ..."
@@ -1074,7 +1058,7 @@ msgstr "每30分钟"
 #. I18N: Very large GUI scale
 #: gui/options.cpp:142
 msgid "Very large"
-msgstr ""
+msgstr "非常大"
 
 #. I18N: Large GUI scale
 #: gui/options.cpp:144
@@ -1196,7 +1180,7 @@ msgstr "伸展模式："
 
 #: gui/options.cpp:1498
 msgid "Scaler:"
-msgstr ""
+msgstr "延展方式:"
 
 #: gui/options.cpp:1511 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1207,11 +1191,10 @@ msgid "V-Sync"
 msgstr ""
 
 #: gui/options.cpp:1513
-#, fuzzy
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
-msgstr "等待垂直同步来刷新3D渲染器中的屏幕"
+msgstr "等待垂直同步來刷新3D渲染器中的屏幕"
 
 #: gui/options.cpp:1516
 msgid "Game 3D Renderer:"
@@ -1873,11 +1856,12 @@ msgid ""
 msgstr ""
 
 #: gui/options.cpp:2662
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "添加游戏(A)..."
+msgstr ""
+"\n"
+"添加更多..."
 
 #: gui/options.cpp:2663 engines/engine.cpp:559
 msgid "Move"
