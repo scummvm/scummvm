@@ -74,6 +74,10 @@ void Combat::draw() {
 		writeMonsterEffects();
 		delaySeconds(3);
 		return;
+	case RUNS_AWAY:
+		writeMonsterAction();
+		break;
+
 	default:
 		break;
 	}
@@ -355,6 +359,14 @@ void Combat::writeMonsterEffects() {
 	}
 
 	writeMonsters();
+}
+
+void Combat::writeMonsterAction() {
+	writeChar(12, _monsterIndex, 0xC1);
+	resetBottom();
+	writeString(0, 20, _monsterList[_monsterIndex]._name);
+
+
 }
 
 } // namespace Views

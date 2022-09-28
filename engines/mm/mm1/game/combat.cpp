@@ -251,7 +251,30 @@ void Combat::defeatedMonsters() {
 }
 
 void Combat::loop1() {
-	// TODO
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		_monsterP = &_monsterList[i];
+		monsterIndexOf();
+
+		if (_monsterP->_field15 && _monsterP->_field15 >= _handicap3
+				&& !_arr4[i]) {
+			_arr4[i] = true;
+
+			if (_monsterStatus[i] & (MONFLAG_ASLEEP | MONFLAG_HELD |
+					MONFLAG_WEBBED | MONFLAG_PARALYZED)) {
+				checkMonsterFlees();
+				return;
+			}
+		}
+	}
+
+	if (_handicap2 == 1 && _handicap3 == 1) {
+		nextRound();
+	} else {
+		if (_handicap2 != 1)
+			--_handicap2;
+		if (_handicap3 != 1)
+			--_handicap3;
+	}
 }
 
 void Combat::proc1() {
@@ -389,8 +412,8 @@ bool Combat::moveMonsters() {
 	for (uint i = 0; i < _monsterList.size(); ++i) {
 		_advanceIndex = i;
 
-		if (!(_monsterStatus[i] & ~MON_MINDLESS) &&
-			_monsterList[i]._field1e & 0x80) {
+		if (!(_monsterStatus[i] & ~MONFLAG_SILENCED) &&
+			_monsterList[i]._field1e & FIELD1E_80) {
 			monsterAdvances();
 			hasAdvance = true;
 		}
@@ -477,6 +500,42 @@ void Combat::proc2() {
 	int val = getRandomNumber(100);
 
 	_val9 = (val != 100 && val <= threshold) ? 1 : 0;
+}
+
+void Combat::checkMonsterFlees() {
+	const Encounter &enc = g_globals->_encounters;
+	byte bitset = _monsterP->_field1e;
+	int threshold = -1;
+
+	if (!(bitset & (FIELD1E_10 | FIELD1E_20))) {
+		if (enc._highestLevel < 4) {
+		} else if (enc._highestLevel < 9) {
+			threshold = 50;
+		} else if (enc._highestLevel < 14) {
+			threshold = 75;
+		} else {
+			threshold = 0;
+		}
+	} else if (!(bitset & FIELD1E_10)) {
+		if (enc._highestLevel < 9) {
+		} else if (enc._highestLevel < 14) {
+			threshold = 50;
+		} else {
+			threshold = 75;
+		}
+	} else if (!(bitset & FIELD1E_20)) {
+		if (enc._highestLevel < 14) {
+		} else {
+			threshold = 50;
+		}
+	}
+
+	if (getRandomNumber(100) >= threshold) {
+		// TODO: More
+		setMode(RUNS_AWAY);
+	} else {
+
+	}
 }
 
 } // namespace Game

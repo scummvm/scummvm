@@ -95,6 +95,11 @@ private:
 	 */
 	void writeMonsterEffects();
 
+	/**
+	 * Handles a monster action
+	 */
+	void writeMonsterAction();
+
 protected:
 	/**
 	 * Sets a new display mode
