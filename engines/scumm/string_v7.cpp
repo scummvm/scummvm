@@ -517,9 +517,15 @@ void ScummEngine_v7::restoreBlastTextsRects() {
 		// a little bit differently on our end, so we need to account for this
 		// case manually.
 		if (camera._cur.x != camera._last.x) {
-			int diff = camera._cur.x - camera._last.x;
-			_blastTextQueue[i].rect.left -= diff;
-			_blastTextQueue[i].rect.right -= diff;
+			int rightDiff = _blastTextQueue[i].rect.right - (camera._cur.x - camera._last.x);
+			int leftDiff = _blastTextQueue[i].rect.left - (camera._cur.x - camera._last.x);
+
+			// The nominal calculations are meant to be used for camera movements
+			// inside the same room. If this is not true, we might end up with
+			// negative rect values, so in that case the worse that can happen
+			// it's just that the rect will be as large as the screen itself.
+			_blastTextQueue[i].rect.left = (leftDiff < 0) ? 0 : leftDiff;
+			_blastTextQueue[i].rect.right = (rightDiff < 0) ? _screenWidth : rightDiff;
 		}
 
 		restoreBackground(_blastTextQueue[i].rect);
