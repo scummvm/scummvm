@@ -517,7 +517,7 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	pitch = w * dstFormat.bytesPerPixel;
 }
 
-Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *srcPalette, int srcPaletteCount, const byte *dstPalette, int dstPaletteCount) const {
+Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *srcPalette, int srcPaletteCount, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const {
 	assert(pixels);
 
 	Graphics::Surface *surface = new Graphics::Surface();
@@ -545,7 +545,7 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 
 	// We are here when we are converting from a higher bpp or palettes are different
 	if (dstFormat.bytesPerPixel == 1) {
-		ditherFloyd(srcPalette, srcPaletteCount, surface, dstPalette, dstPaletteCount);
+		ditherFloyd(srcPalette, srcPaletteCount, surface, dstPalette, dstPaletteCount, method);
 		return surface;
 	}
 
@@ -719,7 +719,7 @@ static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, 
 	ptr[2] = CLIP(ptr[2] + qb * qq / qdiv, 0, 255);
 }
 
-void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount) const {
+void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const {
 	assert(dstPalette);
 
 	PaletteLookup _paletteLookup;
@@ -904,11 +904,10 @@ void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *
 			int qg = g - dstPalette[col * 3 + 1];
 			int qb = b - dstPalette[col * 3 + 2];
 
-			int algo = kDitherFloyd;
-			const DitherParams *params = algos[algo].params;
+			const DitherParams *params = algos[method].params;
 
 			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
-				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[algo].qdiv);
+				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[method].qdiv);
 
 			src += 3;
 			dst++;

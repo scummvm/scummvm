@@ -46,7 +46,7 @@ namespace Graphics {
 
 struct TransformStruct;
 
-enum {
+enum DitherMethod {
 	kDitherNaive,
 	kDitherFloyd,
 	kDitherAtkinson,
@@ -351,13 +351,17 @@ public:
 	 * The client code must call @ref free on the returned surface and then delete
 	 * it.
 	 *
-	 * @param dstFormat  The desired format.
-	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
+	 * @param dstFormat   The desired format.
+	 * @param srcPalette  The palette (in RGB888), if the source format has a bpp of 1.
+	 * @param srcPaletteCount The color count in the for the srcPalette.
+	 * @param dstPalette  The palette (in RGB888), If the destination format has a bpp of 1.
+	 * @param dstaletteCount The color count in the for the dstPalette.
+	 * @param method      The dithering method if destination format has a bpp of 1. Default is Floyd-Steinberg.
 	 */
-	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0) const;
+	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0, DitherMethod method = kDitherFloyd) const;
 
 private:
-	void ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount) const;
+	void ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const;
 
 public:
 
