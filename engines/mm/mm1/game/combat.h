@@ -66,7 +66,8 @@ protected:
 	Handicap _handicap = HANDICAP_EVEN;
 	enum Mode {
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
-		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,		
+		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
+		RUNS_AWAY
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -155,6 +156,11 @@ protected:
 	 * active members of the party
 	 */
 	void updateHighestLevel();
+
+	/**
+	 * Calculate a monster action
+	 */
+	void checkMonsterFlees();
 
 	void defeatedMonsters();
 	void selectParty();
