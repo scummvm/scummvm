@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-28 09:30+0000\n"
+"POT-Creation-Date: 2022-09-28 15:11+0000\n"
 "PO-Revision-Date: 2022-09-28 10:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -167,7 +167,7 @@ msgstr "无法创建下载目录 —— 指定的目录中有相同文件名的�
 #: gui/launcher.cpp:531 gui/launcher.cpp:535 gui/massadd.cpp:90
 #: gui/options.cpp:2195 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1224 engines/engine.cpp:506 engines/engine.cpp:529
-#: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:558
+#: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:572
 #: engines/buried/saveload.cpp:69
 #: engines/director/lingo/lingo-builtins.cpp:1696
 #: engines/drascula/saveload.cpp:48 engines/grim/inputdialog.cpp:83
@@ -4133,7 +4133,7 @@ msgid ""
 "%s"
 msgstr ""
 
-#: engines/agos/animation.cpp:557
+#: engines/agos/animation.cpp:571
 #, c-format
 msgid "Cutscene file '%s' not found!"
 msgstr ""
