@@ -70,23 +70,22 @@ void TestbedEngine::videoTest() {
 				g_system->copyRectToScreen(conv->getPixels(), conv->pitch, x, y, MIN<uint16>(conv->w, 640), MIN<uint16>(conv->h, 480));
 
 				delete conv;
-				delete frame;
 			}
 
 			Common::Event event;
 
 			while (g_system->getEventManager()->pollEvent(event)) {
 				if (Engine::shouldQuit()) {
+					video->close();
 					delete video;
 					return;
 				}
 			}
-
 			g_system->updateScreen();
 			g_system->delayMillis(10);
 		}
 	}
-
+	video->close();
 	delete video;
 }
 
