@@ -19,10 +19,57 @@
  *
  */
 
+#include "common/memstream.h"
 #include "director/director.h"
 #include "graphics/macgui/macfontmanager.h"
 
 namespace Director {
+
+class CachedArchive : public Common::Archive {
+public:
+	struct InputEntry {
+		Common::String name;
+
+		const byte *data;
+		uint32 size;
+
+		InputEntry(Common::String n, const byte *d, uint32 s) : name(n), data(d), size(s) {}
+	};
+
+	typedef Common::List<InputEntry> FileInputList;
+
+	CachedArchive(const FileInputList &files);
+	~CachedArchive() override;
+
+	bool hasFile(const Common::Path &path) const override;
+	int listMembers(Common::ArchiveMemberList &list) const override;
+	const Common::ArchiveMemberPtr getMember(const Common::Path &path) const override;
+	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
+private:
+	struct Entry {
+		const byte *data;
+		uint32 size;
+	};
+
+	typedef Common::HashMap<Common::String, Entry, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> FileMap;
+	FileMap _files;
+};
+
+struct CachedFile {
+	const char *target;
+	Common::Platform platform;
+
+	const char *fileName;
+	const byte *data;
+	int32 size;			// Specify -1 if strlen(data) is the size
+} const cachedFiles[] = {
+	{ "trektech", Common::kPlatformWindows,
+		"NCC1701D.INI",
+			(const byte *)"cdromdrive=D\n", -1
+	},
+	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
+};
+
 
 static void quirkKidsBox() {
     // Kids Box opens with a 320x150 splash screen before switching to
@@ -68,6 +115,81 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 				break;
 			}
 	}
+
+	CachedArchive::FileInputList list;
+	for (auto f = cachedFiles; f->target != nullptr; f++) {
+		if (f->platform == Common::kPlatformUnknown || f->platform == platform)
+			if (!strcmp(f->target, target)) {
+				uint32 size = f->size;
+				if (size == -1)
+					size = strlen((const char *)f->data);
+				list.push_back(CachedArchive::InputEntry(f->fileName, f->data, size));
+			}
+	}
+
+	if (!list.empty()) {
+		CachedArchive *archive = new CachedArchive(list);
+
+		SearchMan.add("cache", archive);
+	}
 }
+
+/*****************
+ * CachedArchive
+ *****************/
+
+CachedArchive::CachedArchive(const FileInputList &files)
+	: _files() {
+	for (FileInputList::const_iterator i = files.begin(); i != files.end(); ++i) {
+		Entry entry;
+
+		entry.data = i->data;
+		entry.size = i->size;
+
+		Common::String name = i->name;
+		name.toLowercase();
+		_files[name] = entry;
+	}
+}
+
+CachedArchive::~CachedArchive() {
+	for (FileMap::iterator i = _files.begin(); i != _files.end(); ++i)
+		delete[] i->_value.data;
+	_files.clear();
+}
+
+bool CachedArchive::hasFile(const Common::Path &path) const {
+	Common::String name = path.toString();
+	return (_files.find(name) != _files.end());
+}
+
+int CachedArchive::listMembers(Common::ArchiveMemberList &list) const {
+	int count = 0;
+
+	for (FileMap::const_iterator i = _files.begin(); i != _files.end(); ++i) {
+		list.push_back(Common::ArchiveMemberList::value_type(new Common::GenericArchiveMember(i->_key, this)));
+		++count;
+	}
+
+	return count;
+}
+
+const Common::ArchiveMemberPtr CachedArchive::getMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	if (!hasFile(name))
+		return Common::ArchiveMemberPtr();
+
+	return Common::ArchiveMemberPtr(new Common::GenericArchiveMember(name, this));
+}
+
+Common::SeekableReadStream *CachedArchive::createReadStreamForMember(const Common::Path &path) const {
+	Common::String name = path.toString();
+	FileMap::const_iterator fDesc = _files.find(name);
+	if (fDesc == _files.end())
+		return nullptr;
+
+	return new Common::MemoryReadStream(fDesc->_value.data, fDesc->_value.size, DisposeAfterUse::NO);
+}
+
 
 } // End of namespace Director
