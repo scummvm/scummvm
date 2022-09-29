@@ -153,8 +153,6 @@ CachedArchive::CachedArchive(const FileInputList &files)
 }
 
 CachedArchive::~CachedArchive() {
-	for (FileMap::iterator i = _files.begin(); i != _files.end(); ++i)
-		delete[] i->_value.data;
 	_files.clear();
 }
 
