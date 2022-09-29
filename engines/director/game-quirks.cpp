@@ -67,6 +67,10 @@ struct CachedFile {
 		"NCC1701D.INI",
 			(const byte *)"cdromdrive=D\n", -1
 	},
+	{ "wolfgang", Common::kPlatformUnknown,
+		"WOLFGANG.dat",	// It needs an empty file
+			(const byte *)"", 0
+	},
 	{ nullptr, Common::kPlatformUnknown, nullptr, nullptr, 0 }
 };
 
