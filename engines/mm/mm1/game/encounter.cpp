@@ -38,7 +38,8 @@ void Encounter::execute() {
 	_alignmentsChanged = 0;
 
 	if (!_flag) {
-		_levelIndex = _monsterIndex = 0;
+		_monsterList.clear();
+		_levelIndex = 0;
 	}
 
 	_totalLevels = _highestLevel = 0;
@@ -75,32 +76,32 @@ void Encounter::execute() {
 			comp = MIN(maxVal, 10);
 		}
 
-		assert(_monsterIndex < MAX_COMBAT_MONSTERS);
-		_arr1[_monsterIndex] = comp;
+		assert(_monsterCount < MAX_COMBAT_MONSTERS);
+		_arr1[_monsterCount] = comp;
 		_monsterNum16 = comp;
 		_levelIndex += comp;
 
 		_monsterNum = getRandomNumber(16);
-		_monsIndexes[_monsterIndex] = _monsterNum;
-		_monsterIndex = (_monsterIndex + 1) & 0xff;
+		_monsIndexes[_monsterCount] = _monsterNum;
+		_monsterCount = (_monsterCount + 1) & 0xff;
 
-		if (_monsterIndex < MAX_COMBAT_MONSTERS) {
-			if (_monsterIndex >= map[Maps::MAP_MAX_MONSTERS])
+		if (_monsterCount < MAX_COMBAT_MONSTERS) {
+			if (_monsterCount >= map[Maps::MAP_MAX_MONSTERS])
 				goto exit_loop;
 
 			monsterP = getMonster();
 			maxVal = getRandomNumber(monsterP->_count);
 
 			for (int i = 0; i < maxVal; ++i) {
-				assert(_monsterIndex > 0);
-				_arr1[_monsterIndex] = _arr1[_monsterIndex - 1];
-				_levelIndex += _arr1[_monsterIndex];
-				_monsIndexes[_monsterIndex] = _monsIndexes[_monsterIndex - 1];
+				assert(_monsterCount > 0);
+				_arr1[_monsterCount] = _arr1[_monsterCount - 1];
+				_levelIndex += _arr1[_monsterCount];
+				_monsIndexes[_monsterCount] = _monsIndexes[_monsterCount - 1];
 
-				if (++_monsterIndex >= MAX_COMBAT_MONSTERS)
+				if (++_monsterCount >= MAX_COMBAT_MONSTERS)
 					goto exit_loop;
 
-				if (_monsterIndex >= map[Maps::MAP_MAX_MONSTERS])
+				if (_monsterCount >= map[Maps::MAP_MAX_MONSTERS])
 					goto exit_loop;
 			}
 		} else {
@@ -111,7 +112,7 @@ void Encounter::execute() {
 exit_loop:
 	_monsterList.clear();
 
-	for (int i = 0; i < _monsterIndex; ++i) {
+	for (int i = 0; i < _monsterCount; ++i) {
 		maxVal = (_arr1[i] - 1) * 16 + _monsIndexes[i];
 		if (_arr1[i] < 1 || _arr1[i] > 12 || maxVal >= 196) {
 			_arr1[i] = 10;
