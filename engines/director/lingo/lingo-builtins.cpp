@@ -501,7 +501,7 @@ void LB::b_numToChar(int nargs) {
 	Datum d = g_lingo->pop();
 	if (g_director->getVersion() < 400) {
 		TYPECHECK(d, INT);
-	} else {
+	} else if (d.type != INT) {
 		warning("BUILDBOT: b_numToChar: Unimplemented behaviour for arg of type %s", (d).type2str());
 		return;
 	}
