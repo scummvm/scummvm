@@ -837,9 +837,8 @@ void Extra::processExtras() { // GereExtras
 			if (_engine->_collision->extraCheckObjCol(extra, -1) == 0) {
 				_engine->_sound->playSample(Samples::ItemFound, 1, extra->pos);
 
-				const IVec3 &projPos = _engine->_renderer->_projPos;
-				if (extra->info1 > 1 && !_engine->_input->isActionActive(TwinEActionType::MoveBackward)) {
-					_engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
+				if (extra->info1 > 1) {
+					const IVec3 &projPos = _engine->_renderer->projectPositionOnScreen(extra->pos - _engine->_grid->_camera);
 					const int16 fontColor = COLOR_158;
 					_engine->_redraw->addOverlay(OverlayType::koNumber, extra->info1, projPos.x, projPos.y, fontColor, OverlayPosType::koNormal, 2);
 				}
