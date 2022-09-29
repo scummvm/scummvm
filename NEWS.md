@@ -61,6 +61,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      Italian and (fan-made) Russian versions of the game, matching the behavior
      of the original interpreters (probably because of the poor results in the
      other languages).
+   - Improved support for Hebrew HE game localizations.
 
  Toon:
    - Made game menus behave like in the original.
