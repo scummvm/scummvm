@@ -78,6 +78,16 @@ TwinEConsole::TwinEConsole(TwinEEngine *engine) : _engine(engine), GUI::Debugger
 TwinEConsole::~TwinEConsole() {
 }
 
+void TwinEConsole::preEnter() {
+	_engine->_input->resetActionStates();
+	Super::preEnter();
+}
+
+void TwinEConsole::postEnter() {
+	_engine->_input->resetActionStates();
+	Super::postEnter();
+}
+
 #define TOGGLE_DEBUG(var, description)         \
 	if ((var)) {                               \
 		debugPrintf("Disabling " description); \
