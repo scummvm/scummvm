@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-29 10:20+0000\n"
+"POT-Creation-Date: 2022-09-29 14:07+0000\n"
 "PO-Revision-Date: 2022-06-03 20:16+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
@@ -180,13 +180,13 @@ msgstr ""
 #: engines/sci/engine/kgraphics.cpp:75 engines/sci/graphics/controls32.cpp:926
 #: engines/scumm/scumm.cpp:1099 engines/scumm/scumm.cpp:1125
 #: engines/scumm/scumm.cpp:1147 engines/scumm/scumm.cpp:1445
-#: engines/scumm/scumm.cpp:1918 engines/sky/compact.cpp:140
-#: engines/sword1/animation.cpp:531 engines/sword1/animation.cpp:552
-#: engines/sword1/animation.cpp:568 engines/sword1/animation.cpp:576
-#: engines/sword1/control.cpp:888 engines/sword1/logic.cpp:1634
-#: engines/sword2/animation.cpp:428 engines/sword2/animation.cpp:448
-#: engines/sword2/animation.cpp:464 engines/sword2/animation.cpp:474
-#: engines/zvision/file/save_manager.cpp:225
+#: engines/scumm/scumm.cpp:1918 engines/scumm/scumm.cpp:1933
+#: engines/sky/compact.cpp:140 engines/sword1/animation.cpp:531
+#: engines/sword1/animation.cpp:552 engines/sword1/animation.cpp:568
+#: engines/sword1/animation.cpp:576 engines/sword1/control.cpp:888
+#: engines/sword1/logic.cpp:1634 engines/sword2/animation.cpp:428
+#: engines/sword2/animation.cpp:448 engines/sword2/animation.cpp:464
+#: engines/sword2/animation.cpp:474 engines/zvision/file/save_manager.cpp:225
 msgid "OK"
 msgstr "OK"
 
@@ -4341,7 +4341,7 @@ msgstr "Gjenopprett"
 msgid "Quick load or save game isn't supported in this location"
 msgstr ""
 
-#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2681
+#: engines/agos/saveload.cpp:161 engines/scumm/scumm.cpp:2695
 #, fuzzy, c-format
 msgid ""
 "Failed to load saved game from file:\n"
@@ -4349,7 +4349,7 @@ msgid ""
 "%s"
 msgstr "Kunne ikkje laste lagra spel frå fil."
 
-#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2668
+#: engines/agos/saveload.cpp:196 engines/scumm/scumm.cpp:2682
 #, fuzzy, c-format
 msgid ""
 "Failed to save game to file:\n"
@@ -4357,7 +4357,7 @@ msgid ""
 "%s"
 msgstr "Klarte ikkje lagre speltilstand til fil."
 
-#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2697
+#: engines/agos/saveload.cpp:204 engines/scumm/scumm.cpp:2711
 #, fuzzy, c-format
 msgid ""
 "Successfully saved game in file:\n"
@@ -7611,7 +7611,13 @@ msgid ""
 "but %s is missing. Using AdLib instead."
 msgstr ""
 
-#: engines/scumm/scumm.cpp:3225
+#: engines/scumm/scumm.cpp:1931
+msgid ""
+"This particular version of Monkey Island 1 is known to miss some\n"
+"required resources for MT-32. Using AdLib instead."
+msgstr ""
+
+#: engines/scumm/scumm.cpp:3239
 msgid ""
 "Usually, Maniac Mansion would start now. But for that to work, the game "
 "files for Maniac Mansion have to be in the 'Maniac' directory inside the "
