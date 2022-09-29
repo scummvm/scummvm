@@ -473,7 +473,6 @@ void LB::b_chars(int nargs) {
 
 void LB::b_charToNum(int nargs) {
 	Datum d = g_lingo->pop();
-
 	TYPECHECK(d, STRING);
 
 	Common::U32String str = d.asString().decode(Common::kUtf8);
@@ -487,6 +486,10 @@ void LB::b_charToNum(int nargs) {
 
 void LB::b_length(int nargs) {
 	Datum d = g_lingo->pop();
+	if (d.type == INT || d.type == FLOAT) {
+		g_lingo->push(0);
+		return;
+	}
 	TYPECHECK(d, STRING);
 
 	Common::U32String src = d.asString().decode(Common::kUtf8);
@@ -495,7 +498,15 @@ void LB::b_length(int nargs) {
 }
 
 void LB::b_numToChar(int nargs) {
-	int num = g_lingo->pop().asInt();
+	Datum d = g_lingo->pop();
+	if (g_director->getVersion() < 400) {
+		TYPECHECK(d, INT);
+	} else {
+		warning("BUILDBOT: b_numToChar: Unimplemented behaviour for arg of type %s", (d).type2str());
+		return;
+	}
+
+	int num = d.asInt();
 	g_lingo->push(Common::U32String(numToChar(num)).encode(Common::kUtf8));
 }
 
