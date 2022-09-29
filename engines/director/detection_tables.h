@@ -4756,7 +4756,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Decomposed variant of the above filename
 	MACDEMO1_l("withopeneyes", "Demo", "xn--DEMO-p73cya6krlma4hwc4581n9dwl", "4577dd3eadc467a986ab172d90871b22", 502657, Common::JA_JPN, 404),
 
-	// To bypass installation check, make a blank file called "WOLFGANG.dat"
 	MACGAME1_l("wolfgang", "v1.0", "Wolfgang", "01be45e7241194dad07938e7059b88e3", 483518, Common::IT_ITA, 404),
 	WINGAME1t_l("wolfgang", "v1.0", "TOSYS/WOLFGANG.EXE", "35faee21d2aadf32cf2e68535ed3a77e", 1256449, Common::IT_ITA, 404),
 	WINGAME1t_l("wolfgang", "v2.0", "WOLF95.EXE", "f6b43329b6ad968eb4fb15436549ef85", 1305318, Common::IT_ITA, 404),
