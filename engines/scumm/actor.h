@@ -77,7 +77,7 @@ struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 
 enum {
 	kOldInvalidBox = 255,	// For small header games
-	kNewInavlidBox = 0
+	kNewInvalidBox = 0
 };
 
 class Actor : public Common::Serializable {
