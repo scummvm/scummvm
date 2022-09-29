@@ -124,7 +124,7 @@ void DirectorEngine::gameQuirks(const char *target, Common::Platform platform) {
 	for (auto f = cachedFiles; f->target != nullptr; f++) {
 		if (f->platform == Common::kPlatformUnknown || f->platform == platform)
 			if (!strcmp(f->target, target)) {
-				uint32 size = f->size;
+				int32 size = f->size;
 				if (size == -1)
 					size = strlen((const char *)f->data);
 				list.push_back(CachedArchive::InputEntry(f->fileName, f->data, size));
