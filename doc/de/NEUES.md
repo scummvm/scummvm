@@ -65,7 +65,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
 
  Toon:
-   - Die Spiel-Menüs verhalten sich nun wie das Original.
+   - Die Spiel-Menüs verhalten sich nun wie im Original.
 
  TwinE:
    - Darstellungsfehler bei Türen behoben.
