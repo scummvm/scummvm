@@ -246,9 +246,11 @@ void SpiderEngine::checkMixture(Code *code) {
 void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
 	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
+	const char alphaHE[] = "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEB\xEA\xEC\xEE\xED\xF0\xEF\xF1\xF2\xF4\xF3\xF6\xF7\xF8\xF9\xFA";
 
 	Common::Rect letterBoxES(22, 442, 554, 455);
 	Common::Rect letterBoxEN(22, 442, 535, 455);
+	Common::Rect letterBoxHE(42, 442, 555, 460);
 
 	const char solEasyES1[] = "hable cpn el svtp z talwe a";
 	const char solEasyES2[] = "masz jane";
@@ -264,6 +266,11 @@ void SpiderEngine::runNote(Code *code) {
 	char placeEasyIT[] = "????? ??? ?? ????? ? ?????";
 	char placeEasyIT2[] = "???? ????";
 
+	const char solEasyHE1[] = "\xE9\xF8\xE0\xEE \xFA\xE0 \xEC\xF6\xE4\xE5 \xE9\xF1\xE5\xF8\xE4 \xED\xF2 \xF8\xE1\xE3";
+	const char solEasyHE2[] = "\xEF\xE9\xE2";
+	char placeEasyHE[] = "???? ?? ???? ????? ?? ???";
+	char placeEasyHE2[] = "???";
+
 	const char solHardES1[] = "encvenuse a tmesdzakpw p tv";
 	const char solHardES2[] = "mvjes mpsisa";
 	char placeHardES[] = "????????? ? ?????????? ? ??";
@@ -278,6 +285,11 @@ void SpiderEngine::runNote(Code *code) {
 	const char solHardIT2[] = "moglie moure";
 	char placeHardIT[] = "????? ?????????? ? ???";
 	char placeHardIT2[] = "?????? ?????";
+
+	const char solHardHE1[] = "\xEA\xFA\xF9\xE9\xE0\xF9 \xE5\xE0 \xE1\xE5\xF7\xE9\xE3\xF8\xEE\xF1 \xFA\xE0 \xE0\xF6\xEE";
+	const char solHardHE2[] = "\xFA\xE5\xEE\xFA";
+	char placeHardHE[] = "?????? ?? ???????? ?? ???";
+	char placeHardHE2[] = "????";
 
 	changeScreenMode("640x480");
 	Common::Point mousePos;
@@ -296,19 +308,24 @@ void SpiderEngine::runNote(Code *code) {
 	Common::Rect firstSentenceBoxEasyEN(21, 140, 560, 160);
 	Common::Rect firstSentenceBoxEasyES(21, 140, 560, 160);
 	Common::Rect firstSentenceBoxEasyIT(21, 140, 540, 160);
+	Common::Rect firstSentenceBoxEasyHE(60, 140, 560, 160);
 
 	Common::Rect firstSentenceBoxHardEN(21, 140, 580, 160);
 	Common::Rect firstSentenceBoxHardES(21, 140, 560, 160);
 	Common::Rect firstSentenceBoxHardIT(21, 140, 456, 160);
+	Common::Rect firstSentenceBoxHardHE(60, 140, 560, 160);
 
 	Common::Rect secondSentenceBox;
 	Common::Rect secondSentenceBoxEasyEN(21, 140, 196, 201);
 	Common::Rect secondSentenceBoxEasyES(21, 180, 195, 195);
 	Common::Rect secondSentenceBoxEasyIT(21, 180, 195, 200);
+	Common::Rect secondSentenceBoxEasyHE(502, 180, 560, 200);
 
 	Common::Rect secondSentenceBoxHardEN(21, 180, 96, 201);
 	Common::Rect secondSentenceBoxHardES(21, 180, 260, 195);
 	Common::Rect secondSentenceBoxHardIT(21, 180, 253, 200);
+	Common::Rect secondSentenceBoxHardHE(484, 180, 560, 200);
+
 	switch (_language) {
 	case Common::EN_USA:
 	case Common::DE_DEU:
@@ -370,6 +387,27 @@ void SpiderEngine::runNote(Code *code) {
 			secondSentenceBox = secondSentenceBoxHardES;
 		}
 	break;
+
+	case Common::HE_ISR:
+		alpha = alphaHE;
+		letterBox = letterBoxHE;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyHE;
+			secondSentence = (char*) &placeEasyHE2;
+			firstSolution = solEasyHE1;
+			secondSolution = solEasyHE2;
+			firstSentenceBox = firstSentenceBoxEasyHE;
+			secondSentenceBox = secondSentenceBoxEasyHE;
+		} else { // hard
+			firstSentence = (char*) &placeHardHE;
+			secondSentence = (char*) &placeHardHE2;
+			firstSolution = solHardHE1;
+			secondSolution = solHardHE2;
+			firstSentenceBox = firstSentenceBoxHardHE;
+			secondSentenceBox = secondSentenceBoxHardHE;
+		}
+	break;
+
 	default:
 		GUI::MessageDialog dialog("The following puzzle is not fully implemented for\
 								   the current language yet, so it will be skipped");
@@ -405,11 +443,11 @@ void SpiderEngine::runNote(Code *code) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
-			uint32 o1x = 21;
-			uint32 o1y = 140;
+			uint32 o1x = firstSentenceBox.left;
+			uint32 o1y = firstSentenceBox.top;
 
-			uint32 o2x = 21;
-			uint32 o2y = 180;
+			uint32 o2x = secondSentenceBox.left;
+			uint32 o2y = secondSentenceBox.top;
 
 			// Events
 			switch (event.type) {
@@ -447,13 +485,16 @@ void SpiderEngine::runNote(Code *code) {
 					openMainMenuDialog();
 					break;
 				} else if (letterBox.contains(mousePos)) {
-					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
+					uint32 idx = (mousePos.x - letterBox.left) / (letterBox.width() / (alpha.size()-1));
+					if (_language == Common::HE_ISR) {
+						idx = alpha.size() - idx - 1;
+					}
 					selected = alpha[idx];
 					changeCursor("int_ball/letters.smk", idx, true);
 					//debug("%s", selected.c_str());
 				} else if (firstSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {
-						uint32 idx = float(mousePos.x - 21) / (firstSentenceBox.width() / firstSentenceLength);
+						uint32 idx = float(mousePos.x - firstSentenceBox.left) / (firstSentenceBox.width() / firstSentenceLength);
 						//debug("idx: %d", idx);
 						if (firstSentence[idx] != ' ') {
 							firstSentence[idx] = selected[0];
@@ -462,7 +503,7 @@ void SpiderEngine::runNote(Code *code) {
 					}
 				} else if (secondSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {
-						uint32 idx = float(mousePos.x - 21) / (secondSentenceBox.width() / secondSentenceLength);
+						uint32 idx = float(mousePos.x - secondSentenceBox.left) / (secondSentenceBox.width() / secondSentenceLength);
 						//debug("idx: %d", idx);
 						if (secondSentence[idx] != ' ') {
 							secondSentence[idx] = selected[0];
@@ -473,10 +514,7 @@ void SpiderEngine::runNote(Code *code) {
 
 				for (uint i = 0; i < strlen(firstSentence); i++) {
 					if (firstSentence[i] != '?' && firstSentence[i] != ' ') {
-						if (firstSentence[i] == '~')
-							drawImage(*letters[26], o1x, o1y, false); // ñ
-						else
-							drawImage(*letters[firstSentence[i]-97], o1x, o1y, false);
+						drawImage(*letters[alpha.find(firstSentence[i])], o1x, o1y, false);
 
 					}
 					o1x = o1x + size.x;
@@ -484,10 +522,7 @@ void SpiderEngine::runNote(Code *code) {
 
 				for (uint i = 0; i < strlen(secondSentence); i++) {
 					if (secondSentence[i] != '?' && secondSentence[i] != ' ') {
-						if (secondSentence[i] == '~')
-							drawImage(*letters[26], o2x, o2y, false); // ñ
-						else
-							drawImage(*letters[secondSentence[i]-97], o2x, o2y, false);
+						drawImage(*letters[alpha.find(secondSentence[i])], o2x, o2y, false);
 					}
 					o2x = o2x + size.x;
 				}
