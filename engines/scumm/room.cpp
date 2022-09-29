@@ -55,9 +55,8 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 	fadeOut(_switchRoomEffect2);
 	_newEffect = _switchRoomEffect;
 
-	ScriptSlot *ss = &vm.slot[_currentScript];
-
 	if (_currentScript != 0xFF) {
+		ScriptSlot *ss = &vm.slot[_currentScript];
 		if (ss->where == WIO_ROOM || ss->where == WIO_FLOBJECT) {
 			if (ss->cutsceneOverride && _game.version >= 5)
 				error("Object %d stopped with active cutscene/override in exit", ss->number);
