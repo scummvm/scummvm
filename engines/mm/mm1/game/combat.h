@@ -56,7 +56,7 @@ protected:
 	int _handicap3, _handicap4;
 	int _attackerVal;
 	int _totalExperience;
-	Common::String _advancingMonster;
+	Common::String _monsterName;
 	bool _monstersResistSpells;
 	bool _monstersRegenerate;
 	enum Handicap {
@@ -67,7 +67,7 @@ protected:
 	enum Mode {
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
-		RUNS_AWAY
+		MONSTER_FLEES
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -162,6 +162,11 @@ protected:
 	 */
 	void checkMonsterFlees();
 
+	/**
+	 * Check other monster actions
+	 */
+	void checkMonsterActions();
+
 	void defeatedMonsters();
 	void selectParty();
 	void loop1();
@@ -171,6 +176,7 @@ protected:
 	void monsterAdvances();
 	bool monsterChanges();
 	void proc2();
+	void removeMonster();
 };
 
 } // namespace Game

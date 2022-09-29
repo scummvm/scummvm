@@ -63,7 +63,7 @@ void Combat::draw() {
 		delaySeconds(1);
 		return;
 	case MONSTER_ADVANCES:
-		writeString(0, 20, _advancingMonster);
+		writeString(0, 20, _monsterName);
 		writeString(STRING["dialogs.combat.advances"]);
 		writeSpaces(30);
 		writeRound();
@@ -74,9 +74,10 @@ void Combat::draw() {
 		writeMonsterEffects();
 		delaySeconds(3);
 		return;
-	case RUNS_AWAY:
+	case MONSTER_FLEES:
 		writeMonsterAction();
-		break;
+		delaySeconds(3);
+		return;
 
 	default:
 		break;
@@ -111,13 +112,16 @@ void Combat::timeout() {
 	switch (_mode) {
 	case NEXT_ROUND:
 		nextRound2();
-		break;
+		return;
 	case MONSTER_ADVANCES:
 		nextRound3();
-		break;
+		return;
 	case MONSTERS_AFFECTED:
 		combatLoop();
-		break;
+		return;
+	case MONSTER_FLEES:
+		checkMonsterActions();
+		return;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_spells;
 		spells._s.bless = 0;
@@ -133,7 +137,7 @@ void Combat::timeout() {
 		 break;
 	}
 
-	redraw();
+//	redraw();
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
@@ -283,7 +287,7 @@ void Combat::writeMonsterStatus(int monsterNum) {
 		writeDots();
 
 		int status;
-		if (statusBits == 0xff) {
+		if (statusBits == MONFLAG_DEAD) {
 			status = MON_DEAD;
 		} else {	
 			for (status = MON_PARALYZED; !(statusBits & 0x80);
@@ -364,9 +368,8 @@ void Combat::writeMonsterEffects() {
 void Combat::writeMonsterAction() {
 	writeChar(12, _monsterIndex, 0xC1);
 	resetBottom();
-	writeString(0, 20, _monsterList[_monsterIndex]._name);
-
-
+	writeString(0, 20, _monsterName);
+	writeString(STRING["dialogs.combat.monster_flees"]);
 }
 
 } // namespace Views
