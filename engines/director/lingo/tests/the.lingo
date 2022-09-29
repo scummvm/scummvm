@@ -68,6 +68,7 @@ set h to "Hello"
 
 set gMarkerName = the length of h + 2
 
+scummvmAssertEqual(0, the length of 123)
 
 -- test the itemDelimiter
 set save = the itemDelimiter
