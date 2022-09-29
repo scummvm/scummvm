@@ -652,7 +652,7 @@ void MovieElement::render(Window *window) {
 		if (_resizeFilter) {
 			if (!_scaledFrame)
 				_scaledFrame = _resizeFilter->scaleFrame(*_displayFrame, _currentTimestamp);
-			displaySurface = _scaledFrame.get();
+			displaySurface = _scaledFrame->surfacePtr();
 		}
 
 		Graphics::ManagedSurface *target = window->getSurface().get();
@@ -1077,7 +1077,7 @@ void ImageElement::render(Window *window) {
 		if (inkMode == VisualElementRenderProperties::kInkModeInvisible)
 			return;
 
-		Common::SharedPtr<Graphics::Surface> optimized = _cachedImage->optimize(_runtime);
+		Common::SharedPtr<Graphics::ManagedSurface> optimized = _cachedImage->optimize(_runtime);
 		Common::Rect srcRect(optimized->w, optimized->h);
 		Common::Rect destRect(_cachedAbsoluteOrigin.x, _cachedAbsoluteOrigin.y, _cachedAbsoluteOrigin.x + _rect.width(), _cachedAbsoluteOrigin.y + _rect.height());
 

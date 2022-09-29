@@ -204,7 +204,7 @@ void CachedMToon::decompressFrames(const Common::Array<uint8> &data) {
 }
 
 template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::Surface &surface, bool isBottomUp) {
+bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp) {
 	assert(sizeof(TNumber) == surface.format.bytesPerPixel);
 
 	size_t size = coefsArray.size();
@@ -293,7 +293,7 @@ bool CachedMToon::decompressMToonRLE(const RleFrame &frame, const Common::Array<
 	return true;
 }
 
-void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface &surface) {
+void CachedMToon::decompressRLEFrameToImage(size_t frameIndex, Graphics::ManagedSurface &surface) {
 	assert(surface.format == _rleOptimizedFormat);
 
 	bool isBottomUp = (_metadata->imageFormat == MToonMetadata::kImageFormatWindows);
@@ -384,7 +384,7 @@ void CachedMToon::loadRLEFrames(const Common::Array<uint8> &data) {
 }
 
 void CachedMToon::decompressRLEFrame(size_t frameIndex) {
-	Common::SharedPtr<Graphics::Surface> surface(new Graphics::Surface());
+	Common::SharedPtr<Graphics::ManagedSurface> surface(new Graphics::ManagedSurface());
 
 	RleFrame &frame = _rleData[frameIndex];
 
@@ -401,7 +401,7 @@ void CachedMToon::loadUncompressedFrame(const Common::Array<uint8> &data, size_t
 
 	uint16 bpp = _metadata->bitsPerPixel;
 
-	Common::SharedPtr<Graphics::Surface> surface(new Graphics::Surface());
+	Common::SharedPtr<Graphics::ManagedSurface> surface(new Graphics::ManagedSurface());
 	Graphics::PixelFormat pixFmt;
 
 	if (bpp == 1 || bpp == 2 || bpp == 4 || bpp == 8)
@@ -495,7 +495,7 @@ void CachedMToon::decompressQuickTimeFrame(const Common::Array<uint8> &data, siz
 	}
 
 	// Clone the decompressed frame
-	_decompressedFrames[frameIndex] = Common::SharedPtr<Graphics::Surface>(new Graphics::Surface(*surface));
+	_decompressedFrames[frameIndex].reset(new Graphics::ManagedSurface(surface));
 }
 
 template<class TSrcNumber, uint32 TSrcLiteralMask, uint32 TSrcTransparentSkipMask, class TDestNumber, uint32 TDestLiteralMask, uint32 TDestTransparentSkipMask>
@@ -558,8 +558,8 @@ void CachedMToon::optimizeNonTemporal(const Graphics::PixelFormat &targetFormatR
 	_optimizedFrames.resize(_decompressedFrames.size());
 
 	for (size_t i = 0; i < _decompressedFrames.size(); i++) {
-		Common::SharedPtr<Graphics::Surface> srcSurface = _decompressedFrames[i];
-		Common::SharedPtr<Graphics::Surface> &optimizedSurfRef = _optimizedFrames[i];
+		Common::SharedPtr<Graphics::ManagedSurface> srcSurface = _decompressedFrames[i];
+		Common::SharedPtr<Graphics::ManagedSurface> &optimizedSurfRef = _optimizedFrames[i];
 
 		// FIXME: Aggregate these checks and merge into a single format field
 		if (optimizedSurfRef == nullptr || optimizedSurfRef->format != targetFormat) {
@@ -569,7 +569,7 @@ void CachedMToon::optimizeNonTemporal(const Graphics::PixelFormat &targetFormatR
 					optimizedSurfRef = srcSurface;
 				} else {
 					optimizedSurfRef.reset();
-					optimizedSurfRef.reset(srcSurface->convertTo(targetFormat));
+					optimizedSurfRef.reset(new Graphics::ManagedSurface(srcSurface->surfacePtr()->convertTo(targetFormat)));
 				}
 			} else {
 				optimizedSurfRef = srcSurface;
@@ -608,7 +608,7 @@ void CachedMToon::optimizeRLE(const Graphics::PixelFormat &targetFormatRef) {
 	_rleOptimizedFormat = targetFormat;
 }
 
-void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::Surface>& surface) const {
+void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::ManagedSurface> &surface) const {
 	if (!_isRLETemporalCompressed) {
 		surface = _optimizedFrames[targetFrame];
 	} else if (_metadata->codecID == kMToonRLECodecID) {
@@ -633,7 +633,7 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 		}
 
 		if (!surface || surface->format != _rleOptimizedFormat) {
-			surface.reset(new Graphics::Surface());
+			surface.reset(new Graphics::ManagedSurface());
 			surface->create(_metadata->rect.width(), _metadata->rect.height(), _rleOptimizedFormat);
 		}
 
@@ -787,7 +787,7 @@ const Common::Array<int> &MovieAsset::getDamagedFrames() const {
 CachedImage::CachedImage() : _colorDepth(kColorDepthModeInvalid), _isOptimized(false) {
 }
 
-void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::Surface> &surface) {
+void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::ManagedSurface> &surface) {
 	_optimizedSurface.reset();
 	_isOptimized = false;
 
@@ -795,7 +795,7 @@ void CachedImage::resetSurface(ColorDepthMode colorDepth, const Common::SharedPt
 	_surface = surface;
 }
 
-const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runtime) {
+const Common::SharedPtr<Graphics::ManagedSurface> &CachedImage::optimize(Runtime *runtime) {
 	ColorDepthMode renderDepth = runtime->getRealColorDepth();
 	const Graphics::PixelFormat &renderFmt = runtime->getRenderPixelFormat();
 
@@ -804,11 +804,11 @@ const Common::SharedPtr<Graphics::Surface> &CachedImage::optimize(Runtime *runti
 		size_t h = _surface->h;
 
 		if (renderDepth == kColorDepthMode16Bit && _colorDepth == kColorDepthMode32Bit) {
-			_optimizedSurface.reset(new Graphics::Surface());
+			_optimizedSurface.reset(new Graphics::ManagedSurface());
 			_optimizedSurface->create(w, h, renderFmt);
 			Render::convert32To16(*_optimizedSurface, *_surface);
 		} else if (renderDepth == kColorDepthMode32Bit && _colorDepth == kColorDepthMode16Bit) {
-			_optimizedSurface.reset(new Graphics::Surface());
+			_optimizedSurface.reset(new Graphics::ManagedSurface());
 			_optimizedSurface->create(w, h, renderFmt);
 			Render::convert16To32(*_optimizedSurface, *_surface);
 		} else {
@@ -969,8 +969,8 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 	bool bottomUp = (imageFormat == ImageAsset::kImageFormatWindows);
 	bool isBigEndian = (imageFormat == ImageAsset::kImageFormatMac);
 
-	Common::SharedPtr<Graphics::Surface> imageSurface;
-	imageSurface.reset(new Graphics::Surface());
+	Common::SharedPtr<Graphics::ManagedSurface> imageSurface;
+	imageSurface.reset(new Graphics::ManagedSurface());
 	imageSurface->create(width, height, pixelFmt);
 
 	for (int inRow = 0; inRow < height; inRow++) {

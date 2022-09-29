@@ -1608,8 +1608,8 @@ public:
 
 	const Common::WeakPtr<Window> &getMainWindow() const;
 
-	const Common::SharedPtr<Graphics::Surface> &getSaveScreenshotOverride() const;
-	void setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot);
+	const Common::SharedPtr<Graphics::ManagedSurface> &getSaveScreenshotOverride() const;
+	void setSaveScreenshotOverride(const Common::SharedPtr<Graphics::ManagedSurface> &screenshot);
 
 	bool isIdle() const;
 
@@ -1799,7 +1799,7 @@ private:
 
 	ISaveUIProvider *_saveProvider;
 	ILoadUIProvider *_loadProvider;
-	Common::SharedPtr<Graphics::Surface> _saveScreenshotOverride;
+	Common::SharedPtr<Graphics::ManagedSurface> _saveScreenshotOverride;
 
 	Common::SharedPtr<CursorGraphic> _lastFrameCursor;
 	Common::SharedPtr<CursorGraphic> _defaultCursor;

@@ -78,7 +78,7 @@ class MovieResizeFilter {
 public:
 	virtual ~MovieResizeFilter();
 
-	virtual Common::SharedPtr<Graphics::Surface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const = 0;
+	virtual Common::SharedPtr<Graphics::ManagedSurface> scaleFrame(const Graphics::Surface &surface, uint32 timestamp) const = 0;
 };
 
 class MovieElement : public VisualElement, public ISegmentUnloadSignalReceiver, public IPlayMediaSignalReceiver {
@@ -162,7 +162,7 @@ private:
 	IntRange _playRange;
 
 	const Graphics::Surface *_displayFrame;
-	Common::SharedPtr<Graphics::Surface> _scaledFrame;
+	Common::SharedPtr<Graphics::ManagedSurface> _scaledFrame;
 	Common::SharedPtr<MovieResizeFilter> _resizeFilter;
 
 	Common::SharedPtr<SegmentUnloadSignaller> _unloadSignaller;
@@ -283,7 +283,7 @@ private:
 	bool _isPlaying;	// Is actually rolling media, this is only set by playMedia because it needs to start after scene transition
 
 	Runtime *_runtime;
-	Common::SharedPtr<Graphics::Surface> _renderSurface;
+	Common::SharedPtr<Graphics::ManagedSurface> _renderSurface;
 	uint32 _renderedFrame;
 
 	Common::SharedPtr<MToonMetadata> _metadata;

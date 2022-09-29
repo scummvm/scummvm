@@ -107,7 +107,7 @@ public:
 
 	void optimize(Runtime *runtime);
 
-	void getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::Surface> &surface) const;
+	void getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common::SharedPtr<Graphics::ManagedSurface> &surface) const;
 	const Common::SharedPtr<MToonMetadata> &getMetadata() const;
 
 private:
@@ -131,7 +131,7 @@ private:
 	static const uint32 kMToonRLETemporalFramePrefix = 1;
 
 	void decompressFrames(const Common::Array<uint8> &data);
-	void decompressRLEFrameToImage(size_t frameIndex, Graphics::Surface &surface);
+	void decompressRLEFrameToImage(size_t frameIndex, Graphics::ManagedSurface &surface);
 	void loadRLEFrames(const Common::Array<uint8> &data);
 	void decompressRLEFrame(size_t frameIndex);
 	void loadUncompressedFrame(const Common::Array<uint8> &data, size_t frameIndex);
@@ -141,13 +141,13 @@ private:
 	void rleReformat(RleFrame &frame, const Common::Array<TSrcNumber> &srcData, const Graphics::PixelFormat &srcFormatRef, Common::Array<TDestNumber> &destData, const Graphics::PixelFormat &destFormatRef);
 
 	template<class TNumber, uint32 TLiteralMask, uint32 TTransparentRowSkipMask>
-	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::Surface &surface, bool isBottomUp);
+	static bool decompressMToonRLE(const RleFrame &frame, const Common::Array<TNumber> &coefsArray, Graphics::ManagedSurface &surface, bool isBottomUp);
 
 	Common::Array<RleFrame> _rleData;
 	bool _isRLETemporalCompressed;
 
-	Common::Array<Common::SharedPtr<Graphics::Surface> > _decompressedFrames;
-	Common::Array<Common::SharedPtr<Graphics::Surface> > _optimizedFrames;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface> > _decompressedFrames;
+	Common::Array<Common::SharedPtr<Graphics::ManagedSurface> > _optimizedFrames;
 
 	Graphics::PixelFormat _rleInternalFormat;
 	Graphics::PixelFormat _rleOptimizedFormat;
@@ -229,13 +229,13 @@ class CachedImage {
 public:
 	CachedImage();
 
-	const Common::SharedPtr<Graphics::Surface> &optimize(Runtime *runtime);
+	const Common::SharedPtr<Graphics::ManagedSurface> &optimize(Runtime *runtime);
 
-	void resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::Surface> &surface);
+	void resetSurface(ColorDepthMode colorDepth, const Common::SharedPtr<Graphics::ManagedSurface> &surface);
 
 private:
-	Common::SharedPtr<Graphics::Surface> _surface;
-	Common::SharedPtr<Graphics::Surface> _optimizedSurface;
+	Common::SharedPtr<Graphics::ManagedSurface> _surface;
+	Common::SharedPtr<Graphics::ManagedSurface> _optimizedSurface;
 
 	ColorDepthMode _colorDepth;
 	bool _isOptimized;

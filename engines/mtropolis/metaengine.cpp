@@ -26,6 +26,7 @@
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
 
+#include "graphics/managed_surface.h"
 #include "graphics/scaler.h"
 #include "graphics/surface.h"
 
@@ -113,7 +114,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 			thumbnailWidth = thumbnailHeight * savegameScreenshot->w / savegameScreenshot->h;
 		}
 
-		Common::SharedPtr<Graphics::Surface> outSurface(new Graphics::Surface());
+		Common::SharedPtr<Graphics::ManagedSurface> outSurface(new Graphics::ManagedSurface());
 		outSurface->create(savegameScreenshot->w, savegameScreenshot->h, Graphics::createPixelFormat<888>());
 
 		for (int y = 0; y < savegameScreenshot->h; y++) {
@@ -125,7 +126,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		while (outSurface->w >= thumbnailWidth * 2) {
-			Common::SharedPtr<Graphics::Surface> temp(new Graphics::Surface());
+			Common::SharedPtr<Graphics::ManagedSurface> temp(new Graphics::ManagedSurface());
 			temp->create(outSurface->w / 2, outSurface->h, Graphics::createPixelFormat<888>());
 
 			for (int y = 0; y < temp->h; y++) {
@@ -147,7 +148,7 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		while (outSurface->h >= thumbnailHeight * 2) {
-			Common::SharedPtr<Graphics::Surface> temp(new Graphics::Surface());
+			Common::SharedPtr<Graphics::ManagedSurface> temp(new Graphics::ManagedSurface());
 			temp->create(outSurface->w, outSurface->h / 2, Graphics::createPixelFormat<888>());
 
 			for (int y = 0; y < temp->h; y++) {
@@ -169,8 +170,8 @@ void MTropolisMetaEngine::getSavegameThumbnail(Graphics::Surface &thumb) {
 		}
 
 		// TODO: Fix this for weird sizes
-		Common::SharedPtr<Graphics::Surface> changeTo16Temp = outSurface;
-		outSurface.reset(new Graphics::Surface());
+		Common::SharedPtr<Graphics::ManagedSurface> changeTo16Temp = outSurface;
+		outSurface.reset(new Graphics::ManagedSurface());
 		outSurface->create(changeTo16Temp->w, changeTo16Temp->h, Graphics::createPixelFormat<565>());
 
 		for (int y = 0; y < outSurface->h; y++) {

@@ -419,7 +419,7 @@ static void runDissolveTransition(Graphics::ManagedSurface &surface, const Graph
 	}
 }
 
-static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect) {
+static void safeCopyRectToSurface(Graphics::ManagedSurface &surface, const Graphics::ManagedSurface &srcSurface, int destX, int destY, const Common::Rect subRect) {
 	if (subRect.width() == 0 || subRect.height() == 0)
 		return;
 
@@ -524,7 +524,7 @@ void renderSceneTransition(Runtime *runtime, Window *mainWindow, const SceneTran
 	}
 }
 
-void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
+void convert32To16(Graphics::ManagedSurface &destSurface, const Graphics::ManagedSurface &srcSurface) {
 	const Graphics::PixelFormat srcFmt = srcSurface.format;
 	const Graphics::PixelFormat destFmt = destSurface.format;
 
@@ -564,7 +564,7 @@ void convert32To16(Graphics::Surface &destSurface, const Graphics::Surface &srcS
 	}
 }
 
-void convert16To32(Graphics::Surface &destSurface, const Graphics::Surface &srcSurface) {
+void convert16To32(Graphics::ManagedSurface &destSurface, const Graphics::ManagedSurface &srcSurface) {
 	const Graphics::PixelFormat srcFmt = srcSurface.format;
 	const Graphics::PixelFormat destFmt = destSurface.format;
 

@@ -21,6 +21,8 @@
 
 #include "common/memstream.h"
 
+#include "graphics/managed_surface.h"
+
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"
 #include "mtropolis/miniscript.h"
@@ -371,11 +373,17 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 	if (_saveWhen.respondsTo(msg->getEvent())) {
 		CompoundVarSaver saver(obj);
 
+		const Graphics::ManagedSurface *screenshotOverrideManaged = runtime->getSaveScreenshotOverride().get();
+		const Graphics::Surface *screenshotOverride = nullptr;
+
+		if (screenshotOverrideManaged)
+			screenshotOverride = &screenshotOverrideManaged->rawSurface();
+
 		bool succeeded = false;
 		if (isPrompt)
-			succeeded = runtime->getSaveProvider()->promptSave(&saver, runtime->getSaveScreenshotOverride().get());
+			succeeded = runtime->getSaveProvider()->promptSave(&saver, screenshotOverride);
 		else
-			succeeded = runtime->getSaveProvider()->namedSave(&saver, runtime->getSaveScreenshotOverride().get(), _fileName);
+			succeeded = runtime->getSaveProvider()->namedSave(&saver, screenshotOverride, _fileName);
 
 		if (succeeded) {
 			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)

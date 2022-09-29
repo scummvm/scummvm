@@ -197,9 +197,9 @@ bool MTropolisEngine::autoSave(ISaveWriter *writer) {
 }
 
 const Graphics::Surface *MTropolisEngine::getSavegameScreenshot() const {
-	const Graphics::Surface *screenshotOverride = _runtime->getSaveScreenshotOverride().get();
+	const Graphics::ManagedSurface *screenshotOverride = _runtime->getSaveScreenshotOverride().get();
 	if (screenshotOverride)
-		return screenshotOverride;
+		return &screenshotOverride->rawSurface();
 	else {
 		Window *mainWindow = _runtime->getMainWindow().lock().get();
 		if (!mainWindow)

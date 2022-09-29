@@ -5820,11 +5820,11 @@ const Common::WeakPtr<Window> &Runtime::getMainWindow() const {
 	return _mainWindow;
 }
 
-const Common::SharedPtr<Graphics::Surface> &Runtime::getSaveScreenshotOverride() const {
+const Common::SharedPtr<Graphics::ManagedSurface> &Runtime::getSaveScreenshotOverride() const {
 	return _saveScreenshotOverride;
 }
 
-void Runtime::setSaveScreenshotOverride(const Common::SharedPtr<Graphics::Surface> &screenshot) {
+void Runtime::setSaveScreenshotOverride(const Common::SharedPtr<Graphics::ManagedSurface> &screenshot) {
 	_saveScreenshotOverride = screenshot;
 }
 
