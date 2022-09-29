@@ -425,7 +425,7 @@ bool Combat::moveMonsters() {
 void Combat::monsterAdvances() {
 	// TODO: Shouldn't placement changes affect the arrays
 	_monsterList.remove_at(_advanceIndex);
-	_advancingMonster = _monsterList[_advanceIndex]._name;
+	_monsterName = _monsterList[_advanceIndex]._name;
 }
 
 bool Combat::monsterChanges() {
@@ -506,6 +506,8 @@ void Combat::checkMonsterFlees() {
 	const Encounter &enc = g_globals->_encounters;
 	byte bitset = _monsterP->_field1e;
 	int threshold = -1;
+	_monsterName = _monsterP->_name;
+	monsterIndexOf();
 
 	if (!(bitset & (FIELD1E_10 | FIELD1E_20))) {
 		if (enc._highestLevel < 4) {
@@ -531,11 +533,38 @@ void Combat::checkMonsterFlees() {
 	}
 
 	if (getRandomNumber(100) >= threshold) {
-		// TODO: More
-		setMode(RUNS_AWAY);
-	} else {
-
+		_monsterP->_experience = 0;
+		_monsterP->_field18 = 0;
+		_arr1[_monsterIndex] = 0;
+		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
+		removeMonster();
+		setMode(MONSTER_FLEES);
 	}
+
+	checkMonsterActions();
+}
+
+void Combat::checkMonsterActions() {
+	if (_monsterList.empty()) {
+		// TODO
+	}
+
+	// TODO
+}
+
+void Combat::removeMonster() {
+	bool changed;
+	do {
+		changed = false;
+		for (uint i = 0; i < _monsterList.size(); ++i) {
+			_monsterP = &_monsterList[i];
+			if (_monsterStatus[i] == MONFLAG_DEAD) {
+				_monsterList.remove_at(i);
+				changed = true;
+				break;
+			}
+		}
+	} while (changed);
 }
 
 } // namespace Game

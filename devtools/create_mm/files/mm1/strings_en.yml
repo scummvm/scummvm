@@ -314,6 +314,7 @@
 		xp: "EXPERIENCE POINTS."
 		regenerate: "SOME MONSTERS REGENERATE!"
 		overcome: "SOME MONSTERS OVERCOME SPELLS!"
+		monster_flees: "RUNS AWAY..."
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "
