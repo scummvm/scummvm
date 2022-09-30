@@ -42,7 +42,7 @@ enum FilteringMode {
 struct ShaderTexture {
 	ShaderTexture() : id(), fileName(), filteringMode(kFilteringModeUnspecified) {}
 	ShaderTexture(const Common::String &i, const Common::String &fN, FilteringMode fM)
-	    : id(i), fileName(fN), filteringMode(fM) {}
+		: id(i), fileName(fN), filteringMode(fM) {}
 
 	Common::String id;
 	Common::String fileName;
@@ -57,9 +57,9 @@ enum ScaleType {
 };
 
 inline void applyScale(const ScaleType type,
-                       const float source, const float viewport,
-                       const float scaleFloat, const uint scaleUint,
-                       float *output) {
+					   const float source, const float viewport,
+					   const float scaleFloat, const uint scaleUint,
+					   float *output) {
 	switch (type) {
 	case kScaleTypeSource:
 		*output = source * scaleFloat;
@@ -100,8 +100,8 @@ struct ShaderPass {
 	uint scaleYUint;
 
 	void applyScale(const float sourceW, const float sourceH,
-	                const float viewportW, const float viewportH,
-	                float *outputW, float *outputH) const {
+					const float viewportW, const float viewportH,
+					float *outputW, float *outputH) const {
 		OpenGL::LibRetro::applyScale(scaleTypeX, sourceW, viewportW, scaleXFloat, scaleXUint, outputW);
 		OpenGL::LibRetro::applyScale(scaleTypeY, sourceH, viewportH, scaleYFloat, scaleYUint, outputH);
 	}

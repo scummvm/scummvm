@@ -66,8 +66,8 @@ public:
 
 	static bool isSupportedByContext() {
 		return OpenGLContext.shadersSupported
-		    && OpenGLContext.multitextureSupported
-		    && OpenGLContext.framebufferObjectSupported;
+			&& OpenGLContext.multitextureSupported
+			&& OpenGLContext.framebufferObjectSupported;
 	}
 private:
 	virtual void activateInternal();
@@ -107,11 +107,11 @@ private:
 
 	struct Pass {
 		Pass()
-		    : shaderPass(nullptr), shader(nullptr), target(nullptr),
-		      texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord() {}
+			: shaderPass(nullptr), shader(nullptr), target(nullptr),
+			  texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord() {}
 		Pass(const LibRetro::ShaderPass *sP, Shader *s, TextureTarget *t)
-		    : shaderPass(sP), shader(s), target(t), texCoords(),
-		      texSamplers(), inputTexture(nullptr), vertexCoord() {}
+			: shaderPass(sP), shader(s), target(t), texCoords(),
+			  texSamplers(), inputTexture(nullptr), vertexCoord() {}
 
 		const LibRetro::ShaderPass *shaderPass;
 		Shader *shader;
