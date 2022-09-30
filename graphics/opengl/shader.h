@@ -57,8 +57,9 @@ class Shader {
 	typedef Common::HashMap<Common::String, GLint> UniformsMap;
 
 public:
+	Shader();
 	~Shader();
-	Shader* clone() {
+	Shader *clone() {
 		return new Shader(*this);
 	}
 
@@ -169,7 +170,7 @@ public:
 	static void freeBuffer(GLuint vbo);
 
 	/**
-	 * Creates a shader object from strings
+	 * Creates a shader object from files
 	 *
 	 * For shader files (used by games), we used to require GLSL 1.20, this is the default for compatGLSLVersion.
 	 * The GLSL version is converted to GLSL ES version if needed.
@@ -203,10 +204,20 @@ public:
 	 */
 	static Shader *fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 0);
 
+	bool loadFromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 120);
+	bool loadFromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 0);
+
 	void unbind();
 
+	Common::String &getError() { return _error; }
+	bool hasError() { return !_error.empty(); }
+
 private:
-	Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes);
+	bool loadShader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes);
+
+	GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name, int compatGLSLVersion);
+	GLuint createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name);
+	GLuint loadShaderFromFile(const char *base, const char *extension, GLenum shaderType, int compatGLSLVersion);
 
 	// Since this class is cloned using the implicit copy constructor,
 	// a reference counting pointer is used to ensure deletion of the OpenGL
@@ -220,6 +231,8 @@ private:
 
 	static Shader *_previousShader;
 	static uint32 previousNumAttributes;
+
+	Common::String _error;
 };
 
 } // End of namespace OpenGL
