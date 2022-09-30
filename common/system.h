@@ -991,7 +991,8 @@ public:
 		kTransactionSizeChangeFailed = (1 << 3),        /**< Failed switching the screen dimensions (initSize) */
 		kTransactionFormatNotSupported = (1 << 4),      /**< Failed setting the color format */
 		kTransactionFilteringFailed = (1 << 5),         /**< Failed setting the filtering mode */
-		kTransactionStretchModeSwitchFailed = (1 << 6)  /**< Failed setting the stretch mode */
+		kTransactionStretchModeSwitchFailed = (1 << 6), /**< Failed setting the stretch mode */
+		kTransactionShaderChangeFailed = (1 << 7),      /**< Failed setting the shader */
 	};
 
 	/**
