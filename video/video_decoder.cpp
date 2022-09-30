@@ -96,7 +96,26 @@ bool VideoDecoder::loadFile(const Common::Path &filename) {
 }
 
 bool VideoDecoder::needsUpdate() const {
-	return hasFramesLeft() && getTimeToNextFrame() == 0;
+	bool hasVideo = false;
+	bool hasAudio = false;
+	for (auto &it : _tracks) {
+		switch (it->getTrackType()) {
+		case Track::kTrackTypeAudio:
+			hasAudio = true;
+			break;
+		case Track::kTrackTypeVideo:
+			hasVideo = true;
+			break;
+		default:
+			break;
+		}
+	}
+	if (hasVideo) {
+		return hasFramesLeft() && getTimeToNextFrame() == 0;
+	} else if (hasAudio) {
+		return !endOfVideo();
+	}
+	return false;
 }
 
 void VideoDecoder::pauseVideo(bool pause) {
