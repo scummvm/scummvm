@@ -5702,10 +5702,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t_l("smallhouse", "Demo 2", "DEMOSH.EXE",    "73246839eb7cc3acaf10e67b837a32c1", 1411908,
 								 "S_DEMO/OPEN/MAIN.Dxr", "29c1134c7ffe2e7f1d3fc271443405ea", 361806, Common::JA_JPN, 501),
 
-	// Taken from the Japanese hybrid CD release, which is untranslated.
-	// May or may not be the same as the original English CD version.
-	MACGAME1("smarty", "", "MacPPC", "d2531c0b8c0553be7c7cd5f6c6a07b78", 107863, 501),
-	WINGAME1t("smarty", "", "WIN95.EXE", "99e9564000991686652e4fed0dc5576d", 1737973, 500),
+	MACGAME1("smarty", "", "Smarty.PPC", "559818fe064f608c69bf86d4c60dee93", 107863, 501),
+	MACGAME1("smarty", "Uplink rerelease", "MacPPC", "d2531c0b8c0553be7c7cd5f6c6a07b78", 107863, 501),
+	WINGAME1t("smarty", "Uplink rerelease", "WIN95.EXE", "99e9564000991686652e4fed0dc5576d", 1737973, 500),
 
 	// Polish version (Królewna Śnieżka i siedmiu Jaśków) is from the covermount of CyberMycha 07/2002
 	WINGAME1_l("snow7han", "", "Snw7han.exe", "65ef7246e9ab04aff59fb734e9551727", 941245, Common::PL_POL, 501),
