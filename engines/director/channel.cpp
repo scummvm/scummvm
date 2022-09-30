@@ -321,7 +321,7 @@ bool Channel::isActiveVideo() {
 }
 
 void Channel::updateVideoTime() {
-	if (_sprite)
+	if (isActiveVideo())
 		_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
 }
 

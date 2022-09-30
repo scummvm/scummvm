@@ -825,10 +825,9 @@ Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Ch
 		return widget;
 	}
 
-	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 	const Graphics::Surface *frame = _video->decodeNextFrame();
 
-	_channel->_movieTime = getMovieCurrentTime();
+	debugC(1, kDebugImages, "Video time: %d  rate: %f", _channel->_movieTime, _channel->_movieRate);
 
 	if (frame) {
 		if (_lastFrame) {
