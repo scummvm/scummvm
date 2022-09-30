@@ -138,10 +138,11 @@ private:
 
 	Common::Array<Breakpoint> _breakpoints;
 	int _bpNextId;
-	bool _bpCheckFuncName;
+	bool _bpCheckFunc;
 	bool _bpCheckMoviePath;
 	bool _bpNextMovieMatch;
 	Common::String _bpMatchFuncName;
+	uint _bpMatchScriptId;
 	Common::String _bpMatchMoviePath;
 	Common::HashMap<uint, void *> _bpMatchFuncOffsets;
 	Common::HashMap<uint, void *> _bpMatchFrameOffsets;

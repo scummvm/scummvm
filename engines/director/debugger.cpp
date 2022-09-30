@@ -100,9 +100,10 @@ Debugger::Debugger(): GUI::Debugger() {
 	_nextFrame = false;
 	_nextFrameCounter = 0;
 	_bpNextId = 1;
-	_bpCheckFuncName = false;
+	_bpCheckFunc = false;
 	_bpCheckMoviePath = false;
 	_bpNextMovieMatch = false;
+	_bpMatchScriptId = 0;
 }
 
 Debugger::~Debugger() {
@@ -147,7 +148,9 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" continue / c - Continues execution\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
+	debugPrintf(" bpset / b - Creates a breakpoint at the current Lingo function and offset\n");
 	debugPrintf(" bpset / b [funcName] - Creates a breakpoint on a Lingo function matching a name\n");
+	debugPrintf(" bpset / b [offset] - Creates a breakpoint on the current Lingo function matching an offset\n");
 	debugPrintf(" bpset / b [funcName] [offset] - Creates a breakpoint on a Lingo function matching a name and offset\n");
 	debugPrintf(" bpset / b [scriptId:funcName] - Creates a breakpoint on a Lingo function matching a script ID and name\n");
 	debugPrintf(" bpset / b [scriptId:funcName] [offset] - Creates a breakpoint on a Lingo function matching a script ID, name and offset\n");
@@ -465,28 +468,71 @@ bool Debugger::cmdFinish(int argc, const char **argv) {
 }
 
 bool Debugger::cmdBpSet(int argc, const char **argv) {
-	if (argc == 2 || argc == 3) {
-		Breakpoint bp;
-		bp.id = _bpNextId;
-		_bpNextId++;
-		bp.type = kBreakpointFunction;
+	Breakpoint bp;
+	bp.id = _bpNextId;
+	bp.type = kBreakpointFunction;
+	if (argc == 1) {
+		Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+		if (callstack.size() == 0) {
+			debugPrintf("Lingo is not executing, no current function to add breakpoint to.\n");
+			return true;
+		}
+		CFrame *frame = callstack[callstack.size() - 1];
+		if (!frame->sp.ctx) {
+			debugPrintf("Unable to add breakpoint, current script context is not addressable.\n");
+			return true;
+		}
+		if (!frame->sp.name) {
+			debugPrintf("Unable to add breakpoint, current function is not addressable.\n");
+			return true;
+		}
+		bp.scriptId = frame->sp.ctx->_id;
+		bp.funcName = *frame->sp.name;
+		bp.funcOffset = g_lingo->_pc;
+	} else if (argc == 2 || argc == 3) {
 		Common::String target(argv[1]);
 		uint splitPoint = target.findFirstOf(":");
 		if (splitPoint == Common::String::npos) {
-			bp.funcName = target;
+			if (argc == 2 && atoi(argv[1]) > 0) {
+				// first and only argument is a number, use as an offset for the current function
+				Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+				if (callstack.size() == 0) {
+					debugPrintf("Lingo is not executing, no current function to add breakpoint to.\n");
+					return true;
+				}
+				CFrame *frame = callstack[callstack.size() - 1];
+				if (!frame->sp.ctx) {
+					debugPrintf("Unable to add breakpoint, current script context is not addressable.\n");
+					return true;
+				}
+				if (!frame->sp.name) {
+					debugPrintf("Unable to add breakpoint, current function is not addressable.\n");
+					return true;
+				}
+				bp.scriptId = frame->sp.ctx->_id;
+				bp.funcName = *frame->sp.name;
+				bp.funcOffset = atoi(argv[1]);
+			} else {
+				// first argument is a string, do a function name match
+				bp.funcName = target;
+			}
 		} else {
+			// first argument is n:funcname, do an exact function match
 			bp.scriptId = atoi(target.substr(0, splitPoint).c_str());
 			bp.funcName = target.substr(splitPoint + 1, Common::String::npos);
 		}
 		if (argc == 3) {
+			// if there's a second argument, use it as the function offset
 			bp.funcOffset = atoi(argv[2]);
 		}
-		_breakpoints.push_back(bp);
-		bpUpdateState();
-		debugPrintf("Added %s\n", bp.format().c_str());
 	} else {
-		debugPrintf("Must specify a function name.\n");
+		debugPrintf("Too many arguments.\n");
+		return true;
 	}
+	_breakpoints.push_back(bp);
+	bpUpdateState();
+	debugPrintf("Added %s\n", bp.format().c_str());
+	_bpNextId++;
 	return true;
 }
 
@@ -606,11 +652,12 @@ bool Debugger::cmdBpList(int argc, const char **argv) {
 }
 
 void Debugger::bpUpdateState() {
-	_bpCheckFuncName = false;
+	_bpCheckFunc = false;
 	_bpCheckMoviePath = false;
 	_bpNextMovieMatch = false;
 	_bpMatchFuncOffsets.clear();
 	_bpMatchFuncName.clear();
+	_bpMatchScriptId = 0;
 	_bpMatchMoviePath.clear();
 	_bpMatchFrameOffsets.clear();
 	Movie *movie = g_director->getCurrentMovie();
@@ -619,15 +666,25 @@ void Debugger::bpUpdateState() {
 		if (!it.enabled)
 			continue;
 		if (it.type == kBreakpointFunction) {
-			_bpCheckFuncName = true;
+			_bpCheckFunc = true;
 			if (!callstack.size())
 				continue;
 			CFrame *head = callstack[callstack.size() - 1];
 			if (!head->sp.name)
 				continue;
+			if (!head->sp.ctx)
+				continue;
 			if (it.funcName.equalsIgnoreCase(*head->sp.name)) {
-				_bpMatchFuncName = it.funcName;
-				_bpMatchFuncOffsets.setVal(it.funcOffset, nullptr);
+				if (it.scriptId) {
+					if (it.scriptId == head->sp.ctx->_id) {
+						_bpMatchScriptId = head->sp.ctx->_id;
+						_bpMatchFuncName = it.funcName;
+						_bpMatchFuncOffsets.setVal(it.funcOffset, nullptr);
+					}
+				} else {
+					_bpMatchFuncName = it.funcName;
+					_bpMatchFuncOffsets.setVal(it.funcOffset, nullptr);
+				}
 			}
 		} else if (it.type == kBreakpointMovie || it.type == kBreakpointMovieFrame) {
 			_bpCheckMoviePath = true;
@@ -645,7 +702,7 @@ void Debugger::bpTest(bool forceCheck) {
 	uint funcOffset = g_lingo->_pc;
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint frameOffset = score->getCurrentFrame();
-	if (_bpCheckFuncName) {
+	if (_bpCheckFunc) {
 		stop |= _bpMatchFuncOffsets.contains(funcOffset);
 	}
 	if (_bpCheckMoviePath) {
@@ -657,7 +714,7 @@ void Debugger::bpTest(bool forceCheck) {
 			if (!it.enabled)
 				continue;
 			if (it.type == kBreakpointFunction) {
-				if (it.funcName.equalsIgnoreCase(_bpMatchFuncName) && it.funcOffset == funcOffset)
+				if (it.funcName.equalsIgnoreCase(_bpMatchFuncName) && it.scriptId == _bpMatchScriptId && it.funcOffset == funcOffset)
 					debugPrintf("%s\n", it.format().c_str());
 			} else if (it.type == kBreakpointMovie && _bpNextMovieMatch) {
 				if (it.moviePath.equalsIgnoreCase(_bpMatchMoviePath))
@@ -757,7 +814,7 @@ void Debugger::builtinHook(const Symbol &funcSym) {
 		return;
 	bpUpdateState();
 	bool builtinMatch = false;
-	if (_bpCheckFuncName) {
+	if (_bpCheckFunc) {
 		for (auto &it : _breakpoints) {
 			if (it.type != kBreakpointFunction)
 				continue;
