@@ -388,6 +388,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "skippy",             "Skippy and the Curse of the Temple of Ock" },
 	{ "skyborg",			"SkyBorg: Into the Vortex" },
 	{ "slamdunktyping",		"Slam Dunk Typing" },
+	{ "smarty",				"Smarty" },
 	{ "smallfish",			"Small Fish" },
 	{ "smartsteps3rd",		"Smart Steps 3rd Grade" },
 	{ "snh",				"A Silly Noisy House" },
@@ -457,6 +458,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "y2lsnoopy",			"Yearn2Learn: Snoopy" },
 	{ "y2lspelling",		"Yearn2Learn: Master Snoopy's Spelling" },
 	{ "ybr1",				"Yellow Brick Road" },
+	{ "zerozero",			"Zero Zero" },
 
 	// Multimedia or reference products
 	{ "9worlds",			"Nine Worlds hosted by Patrick Stewart" },
@@ -5700,6 +5702,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO2t_l("smallhouse", "Demo 2", "DEMOSH.EXE",    "73246839eb7cc3acaf10e67b837a32c1", 1411908,
 								 "S_DEMO/OPEN/MAIN.Dxr", "29c1134c7ffe2e7f1d3fc271443405ea", 361806, Common::JA_JPN, 501),
 
+	// Taken from the Japanese hybrid CD release, which is untranslated.
+	// May or may not be the same as the original English CD version.
+	MACGAME1("smarty", "", "MacPPC", "d2531c0b8c0553be7c7cd5f6c6a07b78", 107863, 501),
+	WINGAME1t("smarty", "", "WIN95.EXE", "99e9564000991686652e4fed0dc5576d", 1737973, 500),
+
 	// Polish version (Królewna Śnieżka i siedmiu Jaśków) is from the covermount of CyberMycha 07/2002
 	WINGAME1_l("snow7han", "", "Snw7han.exe", "65ef7246e9ab04aff59fb734e9551727", 941245, Common::PL_POL, 501),
 
@@ -5856,6 +5863,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original Mac filename is 妖怪図鑑1
 	MACGAME1_l("yokai200", "", "xn--1-we0by4fq4jlr4e", "5b6db61d580e40b903a7f0797b0bdad7", 719012, Common::JA_JPN, 501),
 	WINGAME1_l("yokai200", "", "YOUKAI1.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1411170, Common::JA_JPN, 501),
+
+	MACGAME1("zerozero", "", "ZeroMac", "667b7ed544734f910bb9d9f4e47f76b1", 972761, 500),
+	WINGAME1t("zerozero", "", "ZERO95.EXE", "b81561a42d11d5533fc9e93bfa3d4cfd", 1394631, 500),
 
 //////////////////////////////////////////////////
 //
