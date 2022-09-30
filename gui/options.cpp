@@ -707,10 +707,15 @@ void OptionsDialog::apply() {
 		}
 	}
 
+	Common::U32String previousShader;
+
 	// Shader options
 	if (_shader) {
 		if (_enableShaderSettings) {
 			bool isSet;
+
+			if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
+				previousShader = ConfMan.get("shader", _domain);
 
 			Common::U32String shader(_shader->getLabel());
 			if (shader.empty() || (shader == _c("None", "shader")))
@@ -809,6 +814,19 @@ void OptionsDialog::apply() {
 				ConfMan.setBool("filtering", g_system->getFeatureState(OSystem::kFeatureFilteringMode), _domain);
 				message += Common::U32String("\n");
 				message += _("the filtering setting could not be changed");
+			}
+
+			if (gfxError & OSystem::kTransactionShaderChangeFailed) {
+				if (previousShader.empty()) {
+					ConfMan.removeKey("shader", _domain);
+					_shader->setLabel(_c("None", "shader"));
+				} else {
+					ConfMan.set("shader", previousShader.encode(), _domain);
+					_shader->setLabel(previousShader);
+				}
+
+				message += Common::U32String("\n");
+				message += _("the shader could not be changed. Reverting to the previous setting.");
 			}
 
 			// And display the error
