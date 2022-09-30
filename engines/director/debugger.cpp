@@ -136,6 +136,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
 	debugPrintf(" disasm / da [scriptId:funcName] - Lists the bytecode disassembly for a script function\n");
+	debugPrintf(" disasm / da all - Lists the bytecode disassembly for all available script functions\n");
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
@@ -329,6 +330,60 @@ bool Debugger::cmdBacktrace(int argc, const char **argv) {
 bool Debugger::cmdDisasm(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	if (argc == 2) {
+		if (!strcmp(argv[1], "all")) {
+			Movie *movie = g_director->getCurrentMovie();
+			Score *score = movie->getScore();
+			ScriptContext *csc = lingo->_currentScriptContext;
+			if (csc) {
+				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+				for (auto &it : csc->_functionHandlers) {
+					debugPrintf("%s\n\n", g_lingo->formatFunctionBody(it._value).c_str());
+				}
+			} else {
+				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
+				debugPrintf("  [empty]\n");
+			}
+			debugPrintf("\n");
+			debugPrintf("Cast functions:\n");
+			Cast *cast = movie->getCast();
+			if (cast && cast->_lingoArchive) {
+				for (int i = 0; i <= kMaxScriptType; i++) {
+					debugPrintf("  %s:\n", scriptType2str((ScriptType)i));
+					if (cast->_lingoArchive->scriptContexts[i].size() == 0)
+						debugPrintf("    [empty]\n");
+
+					for (auto &it : cast->_lingoArchive->scriptContexts[i]) {
+						for (auto &jt : it._value->_functionHandlers) {
+							debugPrintf("%s\n", g_lingo->formatFunctionBody(jt._value).c_str());
+						}
+					}
+				}
+
+			} else {
+				debugPrintf("  [empty]\n");
+			}
+			debugPrintf("\n");
+			debugPrintf("Shared cast functions:\n");
+			Cast *sharedCast = movie->getSharedCast();
+			if (sharedCast && sharedCast->_lingoArchive) {
+				for (int i = 0; i <= kMaxScriptType; i++) {
+					debugPrintf("  %s:\n", scriptType2str((ScriptType)i));
+					if (cast->_lingoArchive->scriptContexts[i].size() == 0)
+						debugPrintf("    [empty]\n");
+
+					for (auto &it : sharedCast->_lingoArchive->scriptContexts[i]) {
+						for (auto &jt : it._value->_functionHandlers) {
+							debugPrintf("%s\n", g_lingo->formatFunctionBody(jt._value).c_str());
+						}
+					}
+				}
+
+			} else {
+				debugPrintf("  [empty]\n");
+			}
+
+			return true;
+		}
 		Common::String target(argv[1]);
 		uint splitPoint = target.findFirstOf(":");
 		if (splitPoint == Common::String::npos) {
@@ -502,9 +557,9 @@ bool Debugger::cmdBpDel(int argc, const char **argv) {
 bool Debugger::cmdBpEnable(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0) {
 		bool found = false;
-		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
-			if (it->id == atoi(argv[1])) {
-				it->enabled = true;
+		for (auto &it : _breakpoints) {
+			if (it.id == atoi(argv[1])) {
+				it.enabled = true;
 				found = true;
 				bpUpdateState();
 				debugPrintf("Enabled breakpoint %s.\n", argv[1]);
@@ -522,9 +577,9 @@ bool Debugger::cmdBpEnable(int argc, const char **argv) {
 bool Debugger::cmdBpDisable(int argc, const char **argv) {
 	if (argc == 2 && atoi(argv[1]) > 0) {
 		bool found = false;
-		for (auto it = _breakpoints.begin(); it != _breakpoints.end(); ++it) {
-			if (it->id == atoi(argv[1])) {
-				it->enabled = false;
+		for (auto &it : _breakpoints) {
+			if (it.id == atoi(argv[1])) {
+				it.enabled = false;
 				found = true;
 				bpUpdateState();
 				debugPrintf("Disabled breakpoint %s.\n", argv[1]);
