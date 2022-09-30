@@ -795,7 +795,7 @@ void DigitalVideoCastMember::startVideo(Channel *channel) {
 	_duration = getMovieTotalTime();
 }
 
-void DigitalVideoCastMember::stopVideo(Channel *channel) {
+void DigitalVideoCastMember::stopVideo() {
 	if (!_video || !_video->isVideoLoaded()) {
 		warning("DigitalVideoCastMember::stopVideo: No video decoder");
 		return;
@@ -804,6 +804,17 @@ void DigitalVideoCastMember::stopVideo(Channel *channel) {
 	_video->stop();
 
 	debugC(2, kDebugImages, "STOPPING VIDEO %s", _filename.c_str());
+}
+
+void DigitalVideoCastMember::rewindVideo() {
+	if (!_video || !_video->isVideoLoaded()) {
+		warning("DigitalVideoCastMember::rewindVideo: No video decoder");
+		return;
+	}
+
+	_video->rewind();
+
+	debugC(2, kDebugImages, "REWINDING VIDEO %s", _filename.c_str());
 }
 
 Graphics::MacWidget *DigitalVideoCastMember::createWidget(Common::Rect &bbox, Channel *channel, SpriteType spriteType) {

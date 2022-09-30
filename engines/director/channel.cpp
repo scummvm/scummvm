@@ -504,6 +504,10 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		_sprite->_cast->releaseWidget();
 		newSprite = true;
 	}
+	if (_sprite->_castId != nextSprite->_castId && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
+		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
+	}
 
 	int width = _width;
 	int height = _height;
