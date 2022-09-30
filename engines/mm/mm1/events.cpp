@@ -143,6 +143,13 @@ void Events::popView() {
 	}
 }
 
+void Events::clearViews() {
+	if (!_views.empty())
+		focusedView()->msgUnfocus(UnfocusMessage());
+
+	_views.clear();
+}
+
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
