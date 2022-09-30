@@ -1897,8 +1897,8 @@ void MidiDriver_ADLIB::struct10Setup(Struct10 *s10) {
 
 void MidiDriver_ADLIB::adlibPlayNote(int channel, int note) {
 	byte old, oct, notex;
-	int note2;
-	int i;
+	uint8 note2;
+	int i; 
 
 	note2 = (note >> 7) - 4;
 	note2 = (note2 < 128) ? note2 : 0;
@@ -1927,6 +1927,7 @@ void MidiDriver_ADLIB::adlibPlayNote(int channel, int note) {
 	}
 
 	i = (notex << 3) + ((note >> 4) & 0x7);
+	assert(i < ARRAYSIZE(g_noteFrequencies));
 	adlibWrite(channel + 0xA0, g_noteFrequencies[i]);
 	adlibWrite(channel + 0xB0, oct | 0x20);
 }
