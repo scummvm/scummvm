@@ -165,7 +165,7 @@ static Common::Point closestPtOnLine(const Common::Point &lineStart, const Commo
 byte ScummEngine::getMaskFromBox(int box) {
 	// WORKAROUND for bug #791 and #897. This appears to have been a
 	// long standing bug in the original engine?
-	if (_game.version <= 3 && box == 255)
+	if (_game.version <= 3 && box == kOldInvalidBox)
 		return 1;
 
 	Box *ptr = getBoxBaseAddr(box);
@@ -453,7 +453,7 @@ byte ScummEngine::getNumBoxes() {
 
 Box *ScummEngine::getBoxBaseAddr(int box) {
 	byte *ptr = getResourceAddress(rtMatrix, 2);
-	if (!ptr || box == 255)
+	if (!ptr || box == kOldInvalidBox)
 		return nullptr;
 
 	// WORKAROUND: The NES version of Maniac Mansion attempts to set flags for boxes 2-4
