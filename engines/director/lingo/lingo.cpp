@@ -374,12 +374,16 @@ Common::String Lingo::formatCallStack(uint pc) {
 			framePc = callstack[callstack.size() - i]->retPC;
 
 		if (frame->sp.type != VOIDSYM) {
-			result += Common::String::format("#%d %s:%d\n", i,
+			result += Common::String::format("#%d ", i);
+			if (frame->sp.ctx && frame->sp.ctx->_id) {
+				result += Common::String::format("%d:", frame->sp.ctx->_id);
+			}
+			result += Common::String::format("%s at [%5d]\n",
 				frame->sp.name->c_str(),
 				framePc
 			);
 		} else {
-			result += Common::String::format("#%d [unknown]:%d\n", i,
+			result += Common::String::format("#%d [unknown] at [%5d]\n", i,
 				framePc
 			);
 		}
