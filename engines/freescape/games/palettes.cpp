@@ -57,12 +57,45 @@ void FreescapeEngine::loadColorPalette() {
 	else if (_renderMode == "cga")
 		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_CGA_palette);
 	else if (_renderMode == "amiga")
-		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_EGA_palette);
+		palette = nullptr; // palette depends on the area
 	else
 		error("Invalid render mode, no palette selected");
 
 	_gfx->_palette = palette;
 	_gfx->_colorMap = &_colorMap;
 }
+
+void FreescapeEngine::loadAmigaPalette(Common::SeekableReadStream *file, int offset) {
+	file->seek(offset);
+	int r, g, b;
+	for (int i = 0; i < int(_areaMap.size()); i++) {
+		int label = readField(file, 8);
+		auto palette = new byte[16][3];
+		debug("Label: %d", label);
+		for (int c = 0; c < 16; c++) {
+			int v = file->readUint16BE();
+			r = (v & 0xf00) >> 8;
+			r = r << 4 | r;
+			palette[c][0] = byte(r);
+			g = (v & 0xf0) >> 4;
+			g = g << 4 | g;
+			palette[c][1] = byte(g);
+			b = v & 0xf;
+			b = b << 4 | b;
+			palette[c][2] = byte(b);
+		}
+
+		assert(!_amigaPalette.contains(label));
+		_amigaPalette[label] = (byte*) palette;
+	}
+}
+
+void FreescapeEngine::swapAmigaPalette(uint16 levelID) {
+	if (_gfx->_palette)
+		delete _gfx->_palette;
+
+	_gfx->_palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, _amigaPalette[levelID]);
+}
+
 
 } // End of namespace Freescape

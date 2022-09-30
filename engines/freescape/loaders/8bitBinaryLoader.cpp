@@ -278,8 +278,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	if (skyColor == 0)
 		skyColor = 255;
 
-	ci1 = readField(file, 8) & 15;
-	ci2 = readField(file, 8) & 15;
+	ci1 = readField(file, 8);
+	ci2 = readField(file, 8);
 	ci3 = readField(file, 8);
 	ci4 = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d %d %d", ci1, ci2, ci3, ci4, skyColor, groundColor);
@@ -405,27 +405,27 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
 
 	if (isAmiga())
-		file->seek(offset + 0x16);
+		file->seek(offset + 0x14);
 	else
 		file->seek(offset + 0xa);
 
 	debugC(1, kFreescapeDebugParser, "Color map:");
 	uint8 data;
 	for (int i = 0; i < 15; i++) {
-		byte *entry = (byte*) malloc(4 * sizeof(byte));;
-		data = file->readByte();
+		byte *entry = (byte*) malloc(4 * sizeof(byte));
+		data = readField(file, 8);
 		*entry = data;
 		entry++;
 		debugC(1, kFreescapeDebugParser, "%x", data);
-		data = file->readByte();
+		data = readField(file, 8);
 		*entry = data;
 		entry++;
 		debugC(1, kFreescapeDebugParser, "%x", data);
-		data = file->readByte();
+		data = readField(file, 8);
 		*entry = data;
 		entry++;
 		debugC(1, kFreescapeDebugParser, "%x", data);
-		data = file->readByte();
+		data = readField(file, 8);
 		*entry = data;
 		debugC(1, kFreescapeDebugParser, "%x", data);
 		debugC(1, kFreescapeDebugParser, "---");

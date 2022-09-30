@@ -106,6 +106,9 @@ public:
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
 	void loadBorder();
+	void loadAmigaPalette(Common::SeekableReadStream *file, int offset);
+	void swapAmigaPalette(uint16 areaID);
+	Common::HashMap<uint16, byte*> _amigaPalette;
 	void loadColorPalette();
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);

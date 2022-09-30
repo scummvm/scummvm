@@ -123,6 +123,7 @@ public:
 
 	int _screenW;
 	int _screenH;
+	bool _isAmiga;
 
 	void computeScreenViewport();
 
