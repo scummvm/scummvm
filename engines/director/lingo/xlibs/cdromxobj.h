@@ -22,11 +22,14 @@
 #ifndef DIRECTOR_LINGO_XLIBS_CDROMXOBJ_H
 #define DIRECTOR_LINGO_XLIBS_CDROMXOBJ_H
 
+#include "backends/audiocd/audiocd.h"
+
 namespace Director {
 
 class CDROMXObject : public Object<CDROMXObject> {
 public:
 	CDROMXObject(ObjectType objType);
+    AudioCDManager::Status _cdda_status;
 };
 
 namespace CDROMXObj {
