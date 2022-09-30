@@ -76,7 +76,7 @@ struct AdjustBoxResult {	/* Result type of AdjustBox functions */
 };
 
 enum {
-	kOldInvalidBox = 255,	// For small header games
+	kOldInvalidBox = 255,	// For GF_SMALL_HEADER games
 	kNewInvalidBox = 0
 };
 

@@ -1372,16 +1372,19 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// actor is in the current room anyway.
 
 	if (!_ignoreBoxes || _vm->_game.id == GID_LOOM) {
-		specdir = _vm->_extraBoxFlags[_walkbox];
-		if (specdir) {
-			if (specdir & 0x8000) {
-				dir = specdir & 0x3FFF;
-			} else {
-				specdir = specdir & 0x3FFF;
-				if (specdir - 90 < dir && dir < specdir + 90)
-					dir = specdir;
-				else
-					dir = specdir + 180;
+		if (_walkbox != kOldInvalidBox) {
+			assert(_walkbox < ARRAYSIZE(_vm->_extraBoxFlags));
+			specdir = _vm->_extraBoxFlags[_walkbox];
+			if (specdir) {
+				if (specdir & 0x8000) {
+					dir = specdir & 0x3FFF;
+				} else {
+					specdir = specdir & 0x3FFF;
+					if (specdir - 90 < dir && dir < specdir + 90)
+						dir = specdir;
+					else
+						dir = specdir + 180;
+				}
 			}
 		}
 
