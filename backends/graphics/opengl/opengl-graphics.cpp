@@ -529,8 +529,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #if !USE_FORCED_GLES
 	// Load selected shader preset
 	if (!_currentState.shader.empty()) {
-		if (!_libretroPipeline->open(Common::FSNode(_currentState.shader)))
-			warning("Failed to load %s", _currentState.shader.c_str());
+		if (!_libretroPipeline->open(Common::FSNode(_currentState.shader))) {
+			warning("Failed to load shader %s", _currentState.shader.c_str());
+			transactionError |= OSystem::kTransactionShaderChangeFailed;
+		}
 	}
 #endif
 
