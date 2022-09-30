@@ -1963,7 +1963,7 @@ bool ObjectReferenceVariableModifier::load(const PlugInModifierLoaderContext &co
 		return false;
 
 	if (data.objectPath.type == Data::PlugInTypeTaggedValue::kString)
-		_objectPath = data.objectPath.str;
+		_objectPath = data.objectPath.value.asString;
 	else if (data.objectPath.type != Data::PlugInTypeTaggedValue::kNull)
 		return false;
 

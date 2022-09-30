@@ -216,8 +216,9 @@ private:
 };
 
 struct Rect {
+	Rect();
+
 	bool load(DataReader &reader);
-	static Rect createDefault();
 
 	bool toScummVMRect(Common::Rect &outRect) const;
 	bool toScummVMRectUnchecked(Common::Rect &outRect) const;
@@ -229,18 +230,19 @@ struct Rect {
 };
 
 struct Point {
+	Point();
+
 	bool load(DataReader &reader);
 	bool toScummVMPoint(Common::Point &outPoint) const;
-
-	static Point createDefault();
 
 	int16 x;
 	int16 y;
 };
 
 struct Event {
+	Event();
+
 	bool load(DataReader &reader);
-	static Event createDefault();
 
 	uint32 eventID;
 	uint32 eventInfo;
@@ -257,8 +259,9 @@ struct ColorRGB16 {
 };
 
 struct IntRange {
+	IntRange();
+
 	bool load(DataReader &reader);
-	static IntRange createDefault();
 
 	int32 min;
 	int32 max;
@@ -315,6 +318,8 @@ struct InternalTypeTaggedValue {
 	};
 
 	union ValueUnion {
+		ValueUnion();
+
 		uint8 asBool;
 		XPFloatPOD asFloat;
 		int32 asInteger;
@@ -322,9 +327,13 @@ struct InternalTypeTaggedValue {
 		VariableReference asVariableReference;
 		Label asLabel;
 		Point asPoint;
+
+		template<class T>
+		void constructField(T ValueUnion::*fieldPtr);
 	};
 
 	InternalTypeTaggedValue();
+	~InternalTypeTaggedValue();
 
 	uint16 type;
 	ValueUnion value;
@@ -348,6 +357,9 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 	};
 
 	union ValueUnion {
+		ValueUnion();
+		~ValueUnion();
+
 		int32 asInt;
 		Point asPoint;
 		IntRange asIntRange;
@@ -356,14 +368,21 @@ struct PlugInTypeTaggedValue : public Common::NonCopyable {
 		Event asEvent;
 		Label asLabel;
 		uint32 asVarRefGUID;
+		Common::String asString;
+
+		template<class T>
+		void constructField(T ValueUnion::*fieldPtr);
+
+		template<class T>
+		void destructField(T ValueUnion::*fieldPtr);
 	};
 
 	PlugInTypeTaggedValue();
+	~PlugInTypeTaggedValue();
 
 	uint16 type;
 	ValueUnion value;
 
-	Common::String str;
 	Common::Array<uint8> extraData;
 
 	bool load(DataReader &reader);

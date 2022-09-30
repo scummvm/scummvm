@@ -319,13 +319,7 @@ bool Rect::load(DataReader &reader) {
 		return false;
 }
 
-Rect Rect::createDefault() {
-	Rect rect;
-	rect.top = 0;
-	rect.bottom = 0;
-	rect.left = 0;
-	rect.right = 0;
-	return rect;
+Rect::Rect() : top(0), left(0), bottom(0), right(0) {
 }
 
 bool Rect::toScummVMRect(Common::Rect &outRect) const {
@@ -343,11 +337,7 @@ bool Rect::toScummVMRectUnchecked(Common::Rect &outRect) const {
 	return true;
 }
 
-Point Point::createDefault() {
-	Point pt;
-	pt.x = 0;
-	pt.y = 0;
-	return pt;
+Point::Point() : x(0), y(0) {
 }
 
 bool Point::load(DataReader &reader) {
@@ -364,11 +354,7 @@ bool Point::toScummVMPoint(Common::Point &outPoint) const {
 	return true;
 }
 
-Event Event::createDefault() {
-	Event evt;
-	evt.eventID = 0;
-	evt.eventInfo = 0;
-	return evt;
+Event::Event() : eventID(0), eventInfo(0) {
 }
 
 bool Event::load(DataReader& reader) {
@@ -400,11 +386,7 @@ bool IntRange::load(DataReader& reader) {
 	return reader.readS32(min) && reader.readS32(max);
 }
 
-IntRange IntRange::createDefault() {
-	IntRange intRange;
-	intRange.min = 0;
-	intRange.max = 0;
-	return intRange;
+IntRange::IntRange() : min(0), max(0) {
 }
 
 bool XPFloatVector::load(DataReader& reader) {
@@ -432,7 +414,9 @@ bool Label::load(DataReader &reader) {
 }
 
 InternalTypeTaggedValue::InternalTypeTaggedValue() : type(0) {
-	memset(&this->value, 0, sizeof(this->value));
+}
+
+InternalTypeTaggedValue::~InternalTypeTaggedValue() {
 }
 
 bool InternalTypeTaggedValue::load(DataReader &reader) {
@@ -455,30 +439,37 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 	case kString:	// Not a bug - string data is external!
 		break;
 	case kInteger:
+		value.constructField(&ValueUnion::asInteger);
 		if (!valueReader.readS32(value.asInteger))
 			return false;
 		break;
 	case kPoint:
+		value.constructField(&ValueUnion::asPoint);
 		if (!value.asPoint.load(valueReader))
 			return false;
 		break;
 	case kIntegerRange:
+		value.constructField(&ValueUnion::asIntegerRange);
 		if (!value.asIntegerRange.load(valueReader))
 			return false;
 		break;
 	case kFloat:
+		value.constructField(&ValueUnion::asFloat);
 		if (!value.asFloat.load(valueReader))
 			return false;
 		break;
 	case kBool:
+		value.constructField(&ValueUnion::asBool);
 		if (!valueReader.readU8(value.asBool))
 			return false;
 		break;
 	case kVariableReference:
+		value.constructField(&ValueUnion::asVariableReference);
 		if (!valueReader.readU32(value.asVariableReference.unknown) || !valueReader.readU32(value.asVariableReference.guid))
 			return false;
 		break;
 	case kLabel:
+		value.constructField(&ValueUnion::asLabel);
 		if (!value.asLabel.load(valueReader))
 			return false;
 		break;
@@ -490,10 +481,25 @@ bool InternalTypeTaggedValue::load(DataReader &reader) {
 	return true;
 }
 
+InternalTypeTaggedValue::ValueUnion::ValueUnion() {
+}
 
+template<class T>
+void InternalTypeTaggedValue::ValueUnion::constructField(T InternalTypeTaggedValue::ValueUnion:: *fieldPtr) {
+	new (&(this->*fieldPtr)) T();
+}
 
 PlugInTypeTaggedValue::PlugInTypeTaggedValue() : type(kNull) {
-	memset(&this->value, 0, sizeof(this->value));
+}
+
+PlugInTypeTaggedValue::~PlugInTypeTaggedValue() {
+	switch (type) {
+	case kString:
+		value.destructField(&ValueUnion::asString);
+		break;
+	default:
+		break;
+	}
 }
 
 bool PlugInTypeTaggedValue::load(DataReader &reader) {
@@ -505,44 +511,54 @@ bool PlugInTypeTaggedValue::load(DataReader &reader) {
 	case kIncomingData:
 		break;
 	case kPoint:
+		value.constructField(&ValueUnion::asPoint);
 		if (!value.asPoint.load(reader))
 			return false;
 		break;
 	case kInteger:
+		value.constructField(&ValueUnion::asInt);
 		if (!reader.readS32(value.asInt))
 			return false;
 		break;
 	case kIntegerRange:
+		value.constructField(&ValueUnion::asIntRange);
 		if (!value.asIntRange.load(reader))
 			return false;
 		break;
 	case kFloat:
+		value.constructField(&ValueUnion::asFloat);
 		if (!value.asFloat.load(reader))
 			return false;
 		break;
 	case kBoolean:
+		value.constructField(&ValueUnion::asBoolean);
 		if (!reader.readU16(value.asBoolean))
 			return false;
 		break;
 	case kEvent:
+		value.constructField(&ValueUnion::asEvent);
 		if (!value.asEvent.load(reader))
 			return false;
 		break;
 	case kLabel:
+		value.constructField(&ValueUnion::asLabel);
 		// This is the opposite of internal vars...
 		if (!reader.readU32(value.asLabel.labelID) || !reader.readU32(value.asLabel.superGroupID))
 			return false;
 		break;
 	case kString: {
+			value.constructField(&ValueUnion::asString);
+
 			uint32 length1;
 			uint32 length2;
 			if (!reader.readU32(length1) || !reader.readU32(length2))
 				return false;
 			// Usually length1 == length2 but sometimes not?
-			if (!reader.readTerminatedStr(this->str, length2))
+			if (!reader.readTerminatedStr(value.asString, length2))
 				return false;
 		} break;
 	case kVariableReference: {
+			value.constructField(&ValueUnion::asVarRefGUID);
 			uint32 extraDataSize;
 			if (!reader.readU32(value.asVarRefGUID) || !reader.readU32(extraDataSize))
 				return false;
@@ -559,6 +575,22 @@ bool PlugInTypeTaggedValue::load(DataReader &reader) {
 	}
 
 	return true;
+}
+
+PlugInTypeTaggedValue::ValueUnion::ValueUnion() {
+}
+
+PlugInTypeTaggedValue::ValueUnion::~ValueUnion() {
+}
+
+template<class T>
+void PlugInTypeTaggedValue::ValueUnion::constructField(T PlugInTypeTaggedValue::ValueUnion::*fieldPtr) {
+	new (&(this->*fieldPtr)) T();
+}
+
+template<class T>
+void PlugInTypeTaggedValue::ValueUnion::destructField(T PlugInTypeTaggedValue::ValueUnion::*fieldPtr) {
+	(this->*fieldPtr).~T();
 }
 
 DataObject::DataObject() : _type(DataObjectTypes::kUnknown), _revision(0) {
@@ -683,7 +715,7 @@ DataReadErrorCode ProjectHeader::load(DataReader &reader) {
 }
 
 PresentationSettings::PresentationSettings()
-	: persistFlags(0), dimensions(Point::createDefault()), sizeIncludingTag(0), unknown1{0, 0}, bitsPerPixel(0), unknown4(0) {
+	: persistFlags(0), sizeIncludingTag(0), unknown1{0, 0}, bitsPerPixel(0), unknown4(0) {
 }
 
 DataReadErrorCode PresentationSettings::load(DataReader &reader) {
@@ -808,7 +840,7 @@ DataReadErrorCode SubsectionStructuralDef::load(DataReader &reader) {
 
 GraphicElement::GraphicElement()
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
-	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), streamLocator(0), unknown11{0, 0, 0, 0} {
+	  streamLocator(0), unknown11{0, 0, 0, 0} {
 }
 
 DataReadErrorCode GraphicElement::load(DataReader& reader) {
@@ -826,7 +858,7 @@ DataReadErrorCode GraphicElement::load(DataReader& reader) {
 
 ImageElement::ImageElement()
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
-	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), imageAssetID(0), streamLocator(0), unknown7{0, 0, 0, 0} {
+	  imageAssetID(0), streamLocator(0), unknown7{0, 0, 0, 0} {
 }
 
 DataReadErrorCode ImageElement::load(DataReader &reader) {
@@ -845,7 +877,7 @@ DataReadErrorCode ImageElement::load(DataReader &reader) {
 
 TextLabelElement::TextLabelElement()
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), sectionID(0),
-	  rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), haveMacPart(false), haveWinPart(false) {
+	  assetID(0), haveMacPart(false), haveWinPart(false) {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
 
@@ -913,7 +945,7 @@ DataReadErrorCode SoundElement::load(DataReader& reader) {
 MovieElement::MovieElement()
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	  sectionID(0), unknown5{0, 0}, rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), unknown7(0), volume(0), animationFlags(0),
+	  sectionID(0), unknown5{0, 0}, assetID(0), unknown7(0), volume(0), animationFlags(0),
 	  unknown10{0, 0, 0, 0}, unknown11{0, 0, 0, 0}, streamLocator(0), unknown13{0, 0, 0, 0} {
 }
 
@@ -935,7 +967,7 @@ DataReadErrorCode MovieElement::load(DataReader &reader) {
 
 MToonElement::MToonElement()
 	: sizeIncludingTag(0), guid(0), lengthOfName(0), elementFlags(0), layer(0), animationFlags(0), unknown4{ 0, 0, 0, 0 },
-	  sectionID(0), rect1(Rect::createDefault()), rect2(Rect::createDefault()), assetID(0), rateTimes100000(0), streamLocator(0), unknown6(0) {
+	  sectionID(0), assetID(0), rateTimes100000(0), streamLocator(0), unknown6(0) {
 }
 
 DataReadErrorCode MToonElement::load(DataReader &reader) {
@@ -1064,8 +1096,7 @@ DataReadErrorCode StreamHeader::load(DataReader& reader) {
 
 BehaviorModifier::BehaviorModifier()
 	: modifierFlags(0), sizeIncludingTag(0), unknown2{0, 0}, guid(0), unknown4(0), unknown5(0), unknown6(0),
-	  editorLayoutPosition(Point::createDefault()), lengthOfName(0), numChildren(0), behaviorFlags(0),
-	  enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), unknown7{0, 0} {
+	  lengthOfName(0), numChildren(0), behaviorFlags(0), unknown7{0, 0} {
 }
 
 DataReadErrorCode BehaviorModifier::load(DataReader& reader) {
@@ -1143,7 +1174,7 @@ bool MiniscriptProgram::load(DataReader &reader) {
 }
 
 TypicalModifierHeader::TypicalModifierHeader()
-	: modifierFlags(0), sizeIncludingTag(0), guid(0), unknown3{0, 0, 0, 0, 0, 0}, unknown4(0), editorLayoutPosition(Point::createDefault()), lengthOfName(0) {
+	: modifierFlags(0), sizeIncludingTag(0), guid(0), unknown3{0, 0, 0, 0, 0, 0}, unknown4(0), lengthOfName(0) {
 }
 
 bool TypicalModifierHeader::load(DataReader& reader) {
@@ -1159,7 +1190,7 @@ bool TypicalModifierHeader::load(DataReader& reader) {
 }
 
 MiniscriptModifier::MiniscriptModifier()
-	: enableWhen(Event::createDefault()), unknown6{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown7(0) {
+	: unknown6{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown7(0) {
 }
 
 DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
@@ -1172,7 +1203,7 @@ DataReadErrorCode MiniscriptModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-ColorTableModifier::ColorTableModifier() : applyWhen(Event::createDefault()), unknown1(0), unknown2{0, 0, 0, 0}, assetID(0) {
+ColorTableModifier::ColorTableModifier() : unknown1(0), unknown2{0, 0, 0, 0}, assetID(0) {
 }
 
 DataReadErrorCode ColorTableModifier::load(DataReader &reader) {
@@ -1205,8 +1236,7 @@ DataReadErrorCode SoundFadeModifier::load(DataReader &reader) {
 }
 
 SaveAndRestoreModifier::SaveAndRestoreModifier()
-	: unknown1{0, 0, 0, 0}, saveWhen(Event::createDefault()), restoreWhen(Event::createDefault()),
-	  unknown5{0, 0, 0, 0, 0, 0, 0, 0}, lengthOfFilePath(0), lengthOfFileName(0), lengthOfVariableName(0), lengthOfVariableString(0) {
+	: unknown1{0, 0, 0, 0}, unknown5{0, 0, 0, 0, 0, 0, 0, 0}, lengthOfFilePath(0), lengthOfFileName(0), lengthOfVariableName(0), lengthOfVariableString(0) {
 }
 
 DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
@@ -1224,7 +1254,7 @@ DataReadErrorCode SaveAndRestoreModifier::load(DataReader &reader) {
 }
 
 MessengerModifier::MessengerModifier()
-	: messageFlags(0), send(Event::createDefault()), when(Event::createDefault()), unknown14(0), destination(0),
+	: messageFlags(0), unknown14(0), destination(0),
 	  unknown11{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
@@ -1247,8 +1277,8 @@ DataReadErrorCode MessengerModifier::load(DataReader &reader) {
 }
 
 SetModifier::SetModifier()
-	: unknown1{0, 0, 0, 0}, executeWhen(Event::createDefault()), unknown3(0),
-	  sourceNameLength(0), targetNameLength(0), sourceStringLength(0), targetStringLength(0), unknown4(0) {
+	: unknown1{0, 0, 0, 0}, unknown3(0), sourceNameLength(0), targetNameLength(0),
+	  sourceStringLength(0), targetStringLength(0), unknown4(0) {
 }
 
 DataReadErrorCode SetModifier::load(DataReader &reader) {
@@ -1269,7 +1299,7 @@ DataReadErrorCode SetModifier::load(DataReader &reader) {
 
 AliasModifier::AliasModifier()
 	: modifierFlags(0), sizeIncludingTag(0), aliasIndexPlusOne(0), unknown1(0), unknown2(0)
-	, lengthOfName(0), guid(0), editorLayoutPosition(Point::createDefault()), haveGUID(false) {
+	, lengthOfName(0), guid(0), haveGUID(false) {
 }
 
 DataReadErrorCode AliasModifier::load(DataReader& reader) {
@@ -1301,7 +1331,7 @@ DataReadErrorCode AliasModifier::load(DataReader& reader) {
 }
 
 ChangeSceneModifier::ChangeSceneModifier()
-	: executeWhen(Event::createDefault()), changeSceneFlags(0), targetSectionGUID(0), targetSubsectionGUID(0), targetSceneGUID(0) {
+	: changeSceneFlags(0), targetSectionGUID(0), targetSubsectionGUID(0), targetSceneGUID(0) {
 }
 
 DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
@@ -1316,8 +1346,7 @@ DataReadErrorCode ChangeSceneModifier::load(DataReader &reader) {
 }
 
 SoundEffectModifier::SoundEffectModifier()
-	: unknown1{0, 0, 0, 0}, executeWhen(Event::createDefault()), terminateWhen(Event::createDefault()),
-	  unknown2(0), unknown3{0, 0, 0, 0}, assetID(0), unknown5{0, 0, 0, 0} {
+	: unknown1{0, 0, 0, 0}, unknown2(0), unknown3{0, 0, 0, 0}, assetID(0), unknown5{0, 0, 0, 0} {
 }
 
 DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
@@ -1332,7 +1361,7 @@ DataReadErrorCode SoundEffectModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-PathMotionModifier::PointDefMessageSpec::PointDefMessageSpec() : messageFlags(0), send(Event::createDefault()), unknown11(0),
+PathMotionModifier::PointDefMessageSpec::PointDefMessageSpec() : messageFlags(0), unknown11(0),
 	  destination(0), unknown13{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
@@ -1364,11 +1393,11 @@ bool PathMotionModifier::PointDef::load(DataReader &reader, bool haveMessageSpec
 
 
 PathMotionModifier::PointDef::PointDef()
-	: point(Point::createDefault()), frame(0), frameFlags(0) {
+	: frame(0), frameFlags(0) {
 }
 
 PathMotionModifier::PathMotionModifier(uint version)
-	: flags(0), executeWhen(Event::createDefault()), terminateWhen(Event::createDefault()), unknown2{0, 0}, numPoints(0), unknown3{0, 0, 0, 0},
+	: flags(0), unknown2{0, 0}, numPoints(0), unknown3{0, 0, 0, 0},
 	  frameDurationTimes10Million(0), unknown5{0, 0, 0, 0}, unknown6(0), havePointDefMessageSpecs(version >= 2) {
 }
 
@@ -1399,8 +1428,7 @@ DataReadErrorCode PathMotionModifier::load(DataReader &reader) {
 }
 
 DragMotionModifier::DragMotionModifier()
-	: enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), haveMacPart(false), haveWinPart(false),
-	  constraintMargin(Rect::createDefault()), unknown1(0) {
+	: haveMacPart(false), haveWinPart(false), unknown1(0) {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
 
@@ -1438,7 +1466,7 @@ DataReadErrorCode DragMotionModifier::load(DataReader &reader) {
 }
 
 VectorMotionModifier::VectorMotionModifier()
-	: enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), unknown1(0), vecSourceLength(0), vecStringLength(0) {
+	: unknown1(0), vecSourceLength(0), vecStringLength(0) {
 }
 
 DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
@@ -1458,8 +1486,7 @@ DataReadErrorCode VectorMotionModifier::load(DataReader &reader) {
 }
 
 SceneTransitionModifier::SceneTransitionModifier()
-	: enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), transitionType(0), direction(0),
-	  unknown3(0), steps(0), duration(0), unknown5{0, 0} {
+	: transitionType(0), direction(0), unknown3(0), steps(0), duration(0), unknown5{0, 0} {
 }
 
 DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
@@ -1478,7 +1505,7 @@ DataReadErrorCode SceneTransitionModifier::load(DataReader &reader) {
 }
 
 ElementTransitionModifier::ElementTransitionModifier()
-	: enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), revealType(0), transitionType(0),
+	: revealType(0), transitionType(0),
 	  unknown3(0), unknown4(0), steps(0), rate(0) {
 }
 
@@ -1498,7 +1525,7 @@ DataReadErrorCode ElementTransitionModifier::load(DataReader &reader) {
 }
 
 SharedSceneModifier::SharedSceneModifier()
-	: executeWhen(Event::createDefault()), unknown1{0, 0, 0, 0}, sectionGUID(0), subsectionGUID(0), sceneGUID(0) {
+	: unknown1{0, 0, 0, 0}, sectionGUID(0), subsectionGUID(0), sceneGUID(0) {
 }
 
 DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
@@ -1514,7 +1541,7 @@ DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
 }
 
 IfMessengerModifier::IfMessengerModifier()
-	: messageFlags(0), send(Event::createDefault()), when(Event::createDefault()), unknown6(0), destination(0),
+	: messageFlags(0), unknown6(0), destination(0),
 	  unknown7{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown9{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
@@ -1537,9 +1564,8 @@ DataReadErrorCode IfMessengerModifier::load(DataReader &reader) {
 }
 
 TimerMessengerModifier::TimerMessengerModifier()
-	: messageAndTimerFlags(0), executeWhen(Event::createDefault()), send(Event::createDefault()), terminateWhen(Event::createDefault()),
-	  unknown2(0), destination(0), unknown4{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown5(0), minutes(0), seconds(0), hundredthsOfSeconds(0),
-	  unknown6(0), unknown7(0), unknown8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+	: messageAndTimerFlags(0), unknown2(0), destination(0), unknown4{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, unknown5(0),
+	  minutes(0), seconds(0), hundredthsOfSeconds(0), unknown6(0), unknown7(0), unknown8{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
 DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
@@ -1562,8 +1588,7 @@ DataReadErrorCode TimerMessengerModifier::load(DataReader &reader) {
 }
 
 BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
-	: messageFlagsHigh(0), enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), send(Event::createDefault()),
-	  unknown2(0), destination(0), unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+	: messageFlagsHigh(0), unknown2(0), destination(0), unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
 DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
@@ -1583,8 +1608,8 @@ DataReadErrorCode BoundaryDetectionMessengerModifier::load(DataReader &reader) {
 }
 
 CollisionDetectionMessengerModifier::CollisionDetectionMessengerModifier()
-	: messageAndModifierFlags(0), enableWhen(Event::createDefault()), disableWhen(Event::createDefault()), send(Event::createDefault()),
-	  unknown2(0), destination(0), unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
+	: messageAndModifierFlags(0), unknown2(0), destination(0),
+	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, withSourceLength(0), withStringLength(0) {
 }
 
 DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) {
@@ -1605,7 +1630,7 @@ DataReadErrorCode CollisionDetectionMessengerModifier::load(DataReader &reader) 
 
 KeyboardMessengerModifier::KeyboardMessengerModifier()
 	: messageFlagsAndKeyStates(0), unknown2(0), keyModifiers(0), keycode(0), unknown4{0, 0, 0, 0},
-	  message(Event::createDefault()), unknown7(0), destination(0), unknown9{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+	  unknown7(0), destination(0), unknown9{0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
 	  withSourceLength(0), withStringLength(0) {
 }
 
@@ -1627,8 +1652,7 @@ DataReadErrorCode KeyboardMessengerModifier::load(DataReader &reader) {
 }
 
 TextStyleModifier::TextStyleModifier()
-	: unknown1{0, 0, 0, 0}, macFontID(0), flags(0), unknown2(0), size(0), alignment(0), unknown3(0),
-	  applyWhen(Event::createDefault()), removeWhen(Event::createDefault()), lengthOfFontFamilyName(0) {
+	: unknown1{0, 0, 0, 0}, macFontID(0), flags(0), unknown2(0), size(0), alignment(0), unknown3(0), lengthOfFontFamilyName(0) {
 }
 
 DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
@@ -1646,7 +1670,7 @@ DataReadErrorCode TextStyleModifier::load(DataReader &reader) {
 }
 
 GraphicModifier::GraphicModifier()
-	: unknown1(0), applyWhen(Event::createDefault()), removeWhen(Event::createDefault()), unknown2{0, 0}, inkMode(0), shape(0),
+	: unknown1(0), unknown2{0, 0}, inkMode(0), shape(0),
 	  haveMacPart(false), haveWinPart(false), borderSize(0), shadowSize(0), numPolygonPoints(0), unknown6{0, 0, 0, 0, 0, 0, 0, 0} {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
@@ -1707,7 +1731,7 @@ DataReadErrorCode ImageEffectModifier::load(DataReader &reader) {
 
 CompoundVariableModifier::CompoundVariableModifier()
 	: modifierFlags(0), sizeIncludingTag(0), unknown1{0, 0}, guid(0), unknown4{0, 0, 0, 0, 0, 0}, unknown5(0),
-	  editorLayoutPosition(Point::createDefault()), lengthOfName(0), numChildren(0), unknown7{0, 0, 0, 0} {
+	  lengthOfName(0), numChildren(0), unknown7{0, 0, 0, 0} {
 }
 
 DataReadErrorCode CompoundVariableModifier::load(DataReader &reader) {
@@ -1749,7 +1773,7 @@ DataReadErrorCode IntegerVariableModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-IntegerRangeVariableModifier::IntegerRangeVariableModifier() : unknown1{0, 0, 0, 0}, range(IntRange::createDefault()) {
+IntegerRangeVariableModifier::IntegerRangeVariableModifier() : unknown1{0, 0, 0, 0} {
 }
 
 DataReadErrorCode IntegerRangeVariableModifier::load(DataReader &reader) {
@@ -1775,7 +1799,7 @@ DataReadErrorCode VectorVariableModifier::load(DataReader &reader) {
 	return kDataReadErrorNone;
 }
 
-PointVariableModifier::PointVariableModifier() : unknown5{0, 0, 0, 0}, value(Point::createDefault()) {
+PointVariableModifier::PointVariableModifier() : unknown5{0, 0, 0, 0} {
 }
 
 DataReadErrorCode PointVariableModifier::load(DataReader &reader) {
@@ -1832,7 +1856,7 @@ PlugInModifierData::~PlugInModifierData() {
 
 PlugInModifier::PlugInModifier()
 	: modifierFlags(0), codedSize(0), modifierName{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-	  guid(0), unknown2{0, 0, 0, 0, 0, 0}, plugInRevision(0), unknown4(0), editorLayoutPosition(Point::createDefault()),
+	  guid(0), unknown2{0, 0, 0, 0, 0, 0}, plugInRevision(0), unknown4(0),
 	  lengthOfName(0), subObjectSize(0) {
 }
 
@@ -2047,9 +2071,9 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 }
 
 ImageAsset::ImageAsset()
-	: persistFlags(0), unknown1(0), unknown2{0, 0, 0, 0}, assetID(0), unknown3(0), rect1(Rect::createDefault()),
+	: persistFlags(0), unknown1(0), unknown2{0, 0, 0, 0}, assetID(0), unknown3(0),
 	  hdpiFixed(0), vdpiFixed(0), bitsPerPixel(0), unknown4{0, 0}, unknown5{0, 0, 0, 0}, unknown6{0, 0, 0, 0, 0, 0, 0, 0},
-	  rect2(Rect::createDefault()), filePosition(0), size(0), haveMacPart(false), haveWinPart(false) {
+	  filePosition(0), size(0), haveMacPart(false), haveWinPart(false) {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
 
@@ -2084,8 +2108,8 @@ DataReadErrorCode ImageAsset::load(DataReader &reader) {
 }
 
 MToonAsset::FrameDef::FrameDef()
-	: unknown12{0, 0, 0, 0}, rect1(Rect::createDefault()), dataOffset(0), unknown13{0, 0}, compressedSize(0), unknown14(0),
-	  keyframeFlag(0), platformBit(0), unknown15(0), rect2(Rect::createDefault()), hdpiFixed(0), vdpiFixed(0), bitsPerPixel(0),
+	: unknown12{0, 0, 0, 0}, dataOffset(0), unknown13{0, 0}, compressedSize(0), unknown14(0),
+	  keyframeFlag(0), platformBit(0), unknown15(0), hdpiFixed(0), vdpiFixed(0), bitsPerPixel(0),
 	  unknown16(0), decompressedBytesPerRow(0), decompressedSize(0) {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
@@ -2099,7 +2123,7 @@ MToonAsset::FrameRangePart::FrameRangePart() : tag(0), sizeIncludingTag(0), numF
 
 MToonAsset::MToonAsset()
 	: marker(0), unknown1{0, 0, 0, 0, 0, 0, 0, 0}, assetID(0), haveMacPart(false), haveWinPart(false), frameDataPosition(0), sizeOfFrameData(0),
-	  mtoonHeader{0, 0}, version(0), unknown2{0, 0, 0, 0}, encodingFlags(0), rect(Rect::createDefault()), numFrames(0),
+	  mtoonHeader{0, 0}, version(0), unknown2{0, 0, 0, 0}, encodingFlags(0), numFrames(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, bitsPerPixel(0), codecID(0), unknown4_1{0, 0, 0, 0, 0, 0, 0, 0},
 	  codecDataSize(0), unknown4_2{0, 0, 0, 0} {
 	memset(&this->platform, 0, sizeof(this->platform));
@@ -2195,7 +2219,7 @@ DataReadErrorCode MToonAsset::load(DataReader &reader) {
 }
 
 TextAsset::TextAsset()
-	: persistFlags(0), sizeIncludingTag(0), unknown1(0), assetID(0), unknown2(0), bitmapRect(Rect::createDefault()),
+	: persistFlags(0), sizeIncludingTag(0), unknown1(0), assetID(0), unknown2(0),
 	  hdpi(0), vdpi(0), unknown5(0), pitchBigEndian{0, 0}, unknown6(0), bitmapSize(0),
 	  unknown7{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, textSize(0),
 	  unknown8{0, 0, 0, 0, 0, 0, 0, 0}, alignment(0), isBitmap(0), haveMacPart(false), haveWinPart(false), isBottomUp(false) {

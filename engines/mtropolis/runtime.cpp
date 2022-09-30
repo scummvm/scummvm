@@ -1268,7 +1268,7 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 		break;
 	case Data::PlugInTypeTaggedValue::kString:
 		_type = DynamicValueTypes::kString;
-		_value.construct<Common::String, &ValueUnion::asString>(data.str);
+		_value.construct<Common::String, &ValueUnion::asString>(data.value.asString);
 		break;
 	case Data::PlugInTypeTaggedValue::kVariableReference:
 		_type = DynamicValueTypes::kVariableReference;

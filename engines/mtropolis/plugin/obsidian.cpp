@@ -490,7 +490,7 @@ bool DictionaryModifier::load(const PlugInModifierLoaderContext &context, const 
 	if (data.str.type != Data::PlugInTypeTaggedValue::kString)
 		return false;
 
-	_str = data.str.str;
+	_str = data.str.value.asString;
 
 	if (data.index.type != Data::PlugInTypeTaggedValue::kInteger)
 		return false;

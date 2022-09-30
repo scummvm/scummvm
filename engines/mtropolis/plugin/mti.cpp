@@ -124,7 +124,8 @@ bool PrintModifier::load(const PlugInModifierLoaderContext &context, const Data:
 	if (data.filePath.type != Data::PlugInTypeTaggedValue::kString)
 		return false;
 
-	_filePath = data.executeWhen.str;
+	_filePath = data.filePath.value.asString;
+
 	if (!_executeWhen.load(data.executeWhen.value.asEvent))
 		return false;
 
