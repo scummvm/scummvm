@@ -1289,8 +1289,10 @@ void ScummEngine_v5::o5_getActorRoom() {
 	getResultPos();
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND bug #832: Invalid actor in o5_getActorRoom().
+	// Sometimes this function is called with an invalid actor argument.
+	// An example of that is INDY4 bug #832, in which (quoting dwatteau):
 	//
+	// ---
 	// Script 94-206 is started by script 94-200 this way:
 	//
 	// Var[442] = getObjectOwner(586)  (the metal rod)
@@ -1299,10 +1301,17 @@ void ScummEngine_v5::o5_getActorRoom() {
 	//
 	// Script 201 gets to run first, and it changes the value of Var[442],
 	// so by the time script 206 is invoked, it gets a bad value as param.
-	// This is a really odd bug in either the script or in our script
-	// engine. Might be a good idea to investigate this further by e.g.
-	// looking at the FOA engine a bit closer. The original doesn't crash.
-	if (_game.id == GID_INDY4 && _roomResource == 94 && vm.slot[_currentScript].number == 206 && !isValidActor(act)) {
+	// ---
+	//
+	// The original doesn't use a structure for actors' data, and instead uses
+	// several scattered arrays (one for each parameter, e.g. x, y, room,
+	// elevation, etc.), each one with as many max elements as the max number
+	// of actors allowed in the engine. Whenever an edge case like this happens,
+	// _actorRoom[<invalid-idx>] basically yields whichever value is found in
+	// memory after the bounds of the array, so it's pretty much undefined behavior.
+	//
+	// We certainly can't allow that in our code, so we just set the result to 0.
+	if (!isValidActor(act)) {
 		setResult(0);
 		return;
 	}
