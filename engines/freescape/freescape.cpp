@@ -247,6 +247,7 @@ void FreescapeEngine::shoot() {
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics
 	_gfx = createRenderer(_system, _screenW, _screenH);
+	_gfx->_isAmiga = isAmiga();
 	_gfx->init();
 	_gfx->clear();
 

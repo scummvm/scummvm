@@ -44,6 +44,7 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH)
 	_keyColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
+	_isAmiga = false;
 }
 
 Renderer::~Renderer() {}
@@ -63,6 +64,11 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 
 	if (index == 0) {
 		_palette->getRGBAt(0, r, g, b);
+		return true;
+	}
+
+	if (_isAmiga) {
+		_palette->getRGBAt(index, r, g, b);
 		return true;
 	}
 

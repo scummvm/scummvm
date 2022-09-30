@@ -99,6 +99,9 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 0;
 	else
 		_gfx->_keyColor = 255;
+
+	if (isAmiga())
+		swapAmigaPalette(areaID);
 }
 
 void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
@@ -169,6 +172,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitArea(file, 16);*/
 
 		load8bitBinary(file, 0x29c16, 16);
+		loadAmigaPalette(file, 0x297d4);
 	} else if (_renderMode == "ega") {
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
