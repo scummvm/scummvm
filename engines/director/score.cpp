@@ -915,6 +915,8 @@ void Score::updateWidgets(bool hasVideoPlayback) {
 	for (uint16 i = 0; i < _channels.size(); i++) {
 		Channel *channel = _channels[i];
 		CastMember *cast = channel->_sprite->_cast;
+		if (hasVideoPlayback)
+			channel->updateVideoTime();
 		if (cast && (cast->_type != kCastDigitalVideo || hasVideoPlayback) && cast->isModified()) {
 			channel->replaceWidget();
 			_window->addDirtyRect(channel->getBbox());
