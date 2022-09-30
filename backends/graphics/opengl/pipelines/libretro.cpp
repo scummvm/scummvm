@@ -59,11 +59,11 @@ static Graphics::Surface *loadViaImageDecoder(const Common::FSNode &fileNode) {
 
 	return decoder.getSurface()->convertTo(
 #ifdef SCUMM_LITTLE_ENDIAN
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
+										   Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24),
 #else
-	                                       Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
+										   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 #endif
-	                                       decoder.getPalette());
+										   decoder.getPalette());
 }
 
 struct ImageLoader {
@@ -83,15 +83,15 @@ const char *const g_libretroShaderAttributes[] = {
 };
 
 LibRetroPipeline::LibRetroPipeline()
-    : ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
-      _shaderPreset(nullptr), _applyProjectionChanges(false),
-      _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
+	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
+	  _shaderPreset(nullptr), _applyProjectionChanges(false),
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
 }
 
 LibRetroPipeline::LibRetroPipeline(const Common::FSNode &shaderPreset)
-    : ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
-      _shaderPreset(nullptr), _applyProjectionChanges(false),
-      _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
+	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
+	  _shaderPreset(nullptr), _applyProjectionChanges(false),
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
 	open(shaderPreset);
 }
 
@@ -111,8 +111,8 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	// In case texture dimensions or viewport dimensions changed, we need to
 	// update the pipeline's state.
 	if (   texture.getLogicalWidth() != _inputWidth
-	    || texture.getLogicalHeight() != _inputHeight
-	    || _outputSizeChanged) {
+		|| texture.getLogicalHeight() != _inputHeight
+		|| _outputSizeChanged) {
 		_outputSizeChanged = false;
 		_inputWidth  = texture.getLogicalWidth();
 		_inputHeight = texture.getLogicalHeight();
@@ -204,8 +204,8 @@ static Common::FSNode getChildRecursive(const Common::FSNode &basePath, const Co
 
 bool LibRetroPipeline::loadTextures() {
 	for (LibRetro::ShaderPreset::TextureArray::const_iterator
-	     i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
-	     i != end; ++i) {
+		 i = _shaderPreset->textures.begin(), end = _shaderPreset->textures.end();
+		 i != end; ++i) {
 		Texture texture = loadTexture(getChildRecursive( _shaderPreset->basePath, i->fileName));
 		texture.id = i->id;
 
@@ -221,8 +221,8 @@ bool LibRetroPipeline::loadTextures() {
 
 bool LibRetroPipeline::loadPasses() {
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
-	     i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
-	     i != end; ++i) {
+		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
+		 i != end; ++i) {
 		Common::FSNode fileNode(getChildRecursive(_shaderPreset->basePath, i->fileName));
 
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
@@ -256,9 +256,9 @@ bool LibRetroPipeline::loadPasses() {
 		// TODO: Handle alias defines
 
 		Shader *shader = Shader::fromStrings(fileNode.getName(),
-		                                     ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
-		                                     ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
-		                                     g_libretroShaderAttributes, shaderFileVersion);
+											 ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
+											 ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
+											 g_libretroShaderAttributes, shaderFileVersion);
 
 		// Set uniforms with fixed value throughout lifetime.
 		// We do not support rewinding, thus fix 'forward'.
@@ -470,7 +470,7 @@ void LibRetroPipeline::renderPassSetupCoordinates(const Pass &pass) {
 	pass.shader->enableVertexAttribute("VertexCoord", 2, GL_FLOAT, GL_FALSE, 0, pass.vertexCoord);
 
 	for (Pass::TexCoordAttributeArray::const_iterator i = pass.texCoords.begin(), end = pass.texCoords.end();
-	     i != end; ++i) {
+		 i != end; ++i) {
 		const GLfloat *texCoords = nullptr;
 
 		switch (i->type) {
@@ -507,7 +507,7 @@ void LibRetroPipeline::renderPassSetupTextures(const Pass &pass) {
 	}
 
 	for (Pass::TextureSamplerArray::const_iterator i = pass.texSamplers.begin(), end = pass.texSamplers.end();
-	     i != end; ++i) {
+		 i != end; ++i) {
 		const GLTexture *texture = nullptr;
 
 		switch (i->type) {
