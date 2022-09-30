@@ -255,10 +255,14 @@ bool LibRetroPipeline::loadPasses() {
 
 		// TODO: Handle alias defines
 
-		Shader *shader = Shader::fromStrings(fileNode.getName(),
-											 ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
-											 ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
-											 g_libretroShaderAttributes, shaderFileVersion);
+		Shader *shader = new Shader;
+
+		if (!shader->loadFromStrings(fileNode.getName(),
+				 ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
+				 ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
+				 g_libretroShaderAttributes, shaderFileVersion)) {
+			return false;
+		}
 
 		// Set uniforms with fixed value throughout lifetime.
 		// We do not support rewinding, thus fix 'forward'.
