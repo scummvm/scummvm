@@ -116,7 +116,7 @@ static const GLchar *readFile(const Common::String &filename) {
 	return shaderSource;
 }
 
-static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
+GLuint Shader::createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
 	GLuint shader;
 	GL_ASSIGN(shader, glCreateShader(shaderType));
 	GL_CALL(glShaderSource(shader, 1, &shaderSource, NULL));
@@ -129,13 +129,16 @@ static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, co
 		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
 		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
-		error("Could not compile shader %s: %s", name.c_str(), log);
+
+		_error = Common::String::format("Could not compile shader %s: %s", name.c_str(), log);
+		warning("Shader::createDirectShader(): %s", _error.c_str());
+		return 0;
 	}
 
 	return shader;
 }
 
-static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name, int compatGLSLVersion) {
+GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name, int compatGLSLVersion) {
 	GLchar versionSource[20];
 	if (OpenGLContext.type == kContextGLES2) {
 		switch(compatGLSLVersion) {
@@ -146,7 +149,9 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 				compatGLSLVersion = 100;
 				break;
 			default:
-				error("Invalid GLSL version %d", compatGLSLVersion);
+				_error = Common::String::format("Invalid GLSL version %d", compatGLSLVersion);
+				warning("Shader: createCompatShader(): %s", _error.c_str());
+				return 0;
 		}
 	} else {
 		switch(compatGLSLVersion) {
@@ -155,12 +160,17 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 			case 120:
 				break;
 			default:
-				error("Invalid GLSL version %d", compatGLSLVersion);
+				_error = Common::String::format("Invalid GLSL version %d", compatGLSLVersion);
+				warning("Shader: createCompatShader(): %s", _error.c_str());
+				return 0;
 		}
 	}
 
 	if (OpenGLContext.glslVersion < compatGLSLVersion) {
-		error("Required GLSL version %d is not supported (%d maximum)", compatGLSLVersion, OpenGLContext.glslVersion);
+		_error = Common::String::format("Required GLSL version %d is not supported (%d maximum)", compatGLSLVersion, OpenGLContext.glslVersion);
+
+		warning("Shader: createCompatShader(): %s", _error.c_str());
+		return 0;
 	}
 
 	sprintf(versionSource, "#version %d\n", compatGLSLVersion);
@@ -186,13 +196,16 @@ static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, co
 		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
 		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
-		error("Could not compile shader %s: %s", name.c_str(), log);
+
+		_error = Common::String::format("Could not compile shader %s: %s", name.c_str(), log);
+		warning("Shader: createCompatShader(): %s", _error.c_str());
+		return 0;
 	}
 
 	return shader;
 }
 
-static GLuint loadShaderFromFile(const char *base, const char *extension, GLenum shaderType, int compatGLSLVersion) {
+GLuint Shader::loadShaderFromFile(const char *base, const char *extension, GLenum shaderType, int compatGLSLVersion) {
 	const Common::String filename = Common::String(base) + "." + extension;
 	const GLchar *shaderSource = readFile(filename);
 
@@ -223,10 +236,14 @@ struct SharedPtrProgramDeleter {
 Shader *Shader::_previousShader = nullptr;
 uint32 Shader::previousNumAttributes = 0;
 
+Shader::Shader() {
+}
 
-Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes)
-	: _name(name) {
+bool Shader::loadShader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes) {
 	assert(attributes);
+
+	_name = name;
+
 	GLuint shaderProgram;
 	GL_ASSIGN(shaderProgram, glCreateProgram());
 	GL_CALL(glAttachShader(shaderProgram, vertexShader));
@@ -245,7 +262,10 @@ Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentS
 		GL_CALL(glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
 		GL_CALL(glGetProgramInfoLog(shaderProgram, logSize, nullptr, log));
-		error("Could not link shader %s: %s", name.c_str(), log);
+
+		_error = Common::String::format("Could not link shader %s: %s", name.c_str(), log);
+		warning("Shader:Shader(): %s", _error.c_str());
+		return false;
 	}
 
 	GL_CALL(glDetachShader(shaderProgram, vertexShader));
@@ -256,27 +276,71 @@ Shader::Shader(const Common::String &name, GLuint vertexShader, GLuint fragmentS
 
 	_shaderNo = Common::SharedPtr<GLuint>(new GLuint(shaderProgram), SharedPtrProgramDeleter());
 	_uniforms = Common::SharedPtr<UniformsMap>(new UniformsMap());
+
+	return true;
 }
 
 Shader *Shader::fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	Shader *shader = new Shader;
+
+	shader->loadFromStrings(name, vertex, fragment, attributes, compatGLSLVersion);
+
+	if (shader->hasError())
+		error("%s", shader->getError().c_str());
+
+	return shader;
+}
+
+bool Shader::loadFromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
 	GLuint vertexShader, fragmentShader;
 
 	if (compatGLSLVersion) {
 		vertexShader = createCompatShader(vertex, GL_VERTEX_SHADER, name + ".vertex", compatGLSLVersion);
+
+		if (!vertexShader)
+			return false;
+
 		fragmentShader = createCompatShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment", compatGLSLVersion);
 	} else {
 		vertexShader = createDirectShader(vertex, GL_VERTEX_SHADER, name + ".vertex");
+
+		if (!vertexShader)
+			return false;
+
 		fragmentShader = createDirectShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment");
 	}
-	return new Shader(name, vertexShader, fragmentShader, attributes);
+
+	if (!fragmentShader)
+		return false;
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
 }
 
 Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	Shader *shader = new Shader;
+
+	shader->loadFromFiles(vertex, fragment, attributes, compatGLSLVersion);
+
+	if (shader->hasError())
+		error("%s", shader->getError().c_str());
+
+	return shader;
+}
+
+bool Shader::loadFromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
 	GLuint vertexShader = loadShaderFromFile(vertex, "vertex", GL_VERTEX_SHADER, compatGLSLVersion);
+
+	if (!vertexShader)
+		return false;
+
 	GLuint fragmentShader = loadShaderFromFile(fragment, "fragment", GL_FRAGMENT_SHADER, compatGLSLVersion);
 
+	if (!fragmentShader)
+		return false;
+
 	Common::String name = Common::String::format("%s/%s", vertex, fragment);
-	return new Shader(name, vertexShader, fragmentShader, attributes);
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
 }
 
 void Shader::use(bool forceReload) {
@@ -356,7 +420,9 @@ VertexAttrib &Shader::getAttribute(const char *attrib) {
 	for (uint32 i = 0; i < _attributes.size(); ++i)
 		if (_attributes[i]._name.equals(attrib))
 			return _attributes[i];
-	error("Could not find attribute %s in shader %s", attrib, _name.c_str());
+
+	_error = Common::String::format("Could not find attribute %s in shader %s", attrib, _name.c_str());
+	warning("Shader: getAttribute(): %s", _error.c_str());
 	return _attributes[0];
 }
 
