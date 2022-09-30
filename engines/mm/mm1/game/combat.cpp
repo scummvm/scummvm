@@ -42,7 +42,7 @@ void Combat::clear() {
 
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
-	_val8 = _val9 = 0;
+	_val8 = _val9 = _val10 = 0;
 	_advanceIndex = 0;
 	_handicap1 = _handicap2 = 0;
 	_handicap3 = _handicap4 = 0;
@@ -539,15 +539,38 @@ void Combat::checkMonsterFlees() {
 		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
 		removeMonster();
 		setMode(MONSTER_FLEES);
+	} else {
+		checkMonsterSpells();
+	}
+}
+
+void Combat::checkMonsterSpells() {
+	if (_monsterList.empty()) {
+		setMode(DEFEATED_MONSTERS);
+		return;
 	}
 
-	checkMonsterActions();
+	if (_monsterStatus[_monsterIndex] & MONFLAG_MINDLESS) {
+		setMode(MONSTER_WANDERS);
+	} else {
+		if (!_monsterP->_field1c || (_monsterP->_field1c & 0x80) ||
+			(getRandomNumber(100) >= _monsterP->_field1d) ||
+			!(_monsterP->_field1e & 0xf))
+			checkMonsterActions();
+		else {
+			_monsterP->_field1e--;
+			if (!_monsterP->_field1c || _monsterP->_field1c >= 33) {
+				checkMonsterActions();
+			} else {
+				// TODO: Monsters spell casting?
+			}
+		}
+	}
 }
 
 void Combat::checkMonsterActions() {
-	if (_monsterList.empty()) {
-		// TODO
-	}
+
+
 
 	// TODO
 }
@@ -565,6 +588,24 @@ void Combat::removeMonster() {
 			}
 		}
 	} while (changed);
+}
+
+void Combat::checkParty() {
+	_val10 = 0;
+
+	bool partyAlive = false;
+	for (auto &c : g_globals->_party) {
+		if (!(c._condition & (DEAD | BAD_CONDITION)))
+			partyAlive = true;
+	}
+
+	if (!partyAlive) {
+		g_events->clearViews();
+		g_events->replaceView("Dead");
+		return;
+	}
+
+
 }
 
 } // namespace Game

@@ -282,6 +282,11 @@ public:
 	void addView(const Common::String &name);
 
 	/**
+	 * Clears the view list
+	 */
+	void clearViews();
+
+	/**
 	 * Pops a view from the view stack
 	 */
 	void popView();

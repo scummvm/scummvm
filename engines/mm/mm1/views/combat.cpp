@@ -75,10 +75,10 @@ void Combat::draw() {
 		delaySeconds(3);
 		return;
 	case MONSTER_FLEES:
+	case MONSTER_WANDERS:
 		writeMonsterAction();
 		delaySeconds(3);
 		return;
-
 	default:
 		break;
 	}
@@ -120,7 +120,12 @@ void Combat::timeout() {
 		combatLoop();
 		return;
 	case MONSTER_FLEES:
-		checkMonsterActions();
+		checkMonsterSpells();
+		return;
+	case MONSTER_WANDERS:
+		writeParty();
+		writeMonsters();
+		checkParty();
 		return;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_spells;

@@ -50,7 +50,7 @@ protected:
 	int _monsterIndex, _currentChar;
 	char _val2, _val3, _val4, _val5;
 	byte _val6, _val7;
-	int _val8, _val9;
+	int _val8, _val9, _val10;
 	int _advanceIndex;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
@@ -67,7 +67,7 @@ protected:
 	enum Mode {
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
-		MONSTER_FLEES
+		MONSTER_FLEES, MONSTER_WANDERS
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -163,6 +163,11 @@ protected:
 	void checkMonsterFlees();
 
 	/**
+	 * Check if monster is mindless and wandering
+	 */
+	void checkMonsterSpells();
+
+	/**
 	 * Check other monster actions
 	 */
 	void checkMonsterActions();
@@ -177,6 +182,7 @@ protected:
 	bool monsterChanges();
 	void proc2();
 	void removeMonster();
+	void checkParty();
 };
 
 } // namespace Game
