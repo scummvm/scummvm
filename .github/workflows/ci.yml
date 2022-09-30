@@ -112,6 +112,10 @@ jobs:
     env:
       BUILDCACHE_MAX_CACHE_SIZE: 2000000000
       BUILDCACHE_HARD_LINKS: true
+    defaults:
+      run:
+        # Must be explicit for proper pipefail support
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -140,7 +144,7 @@ jobs:
           cache_key: ${{ matrix.platform }}
       - name: Build scummvm
         run: |
-          set -o pipefail && xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
+          xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
           ls
   ubuntu:
     name: Ubuntu
@@ -159,6 +163,10 @@ jobs:
             aptPackages: 'g++-4.8 libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
     env:
       SDL_CONFIG: ${{ matrix.sdlConfig }}
+    defaults:
+      run:
+        # Must be explicit for proper pipefail support
+        shell: bash
     steps:
       - name: Checkout
         uses: actions/checkout@v2
