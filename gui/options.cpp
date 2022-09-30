@@ -381,8 +381,8 @@ void OptionsDialog::build() {
 		// Fullscreen setting
 		if (g_system->hasFeature(OSystem::kFeatureFullscreenMode)) {
 			_fullscreenCheckbox->setState(ConfMan.getBool("fullscreen", _domain));
-			if (ConfMan.isKeyTemporary("fullscreen")) 
-				_fullscreenCheckbox->setOverride(true); 
+			if (ConfMan.isKeyTemporary("fullscreen"))
+				_fullscreenCheckbox->setOverride(true);
 		} else {
 			_fullscreenCheckbox->setState(true);
 			_fullscreenCheckbox->setEnabled(false);
@@ -392,7 +392,7 @@ void OptionsDialog::build() {
 		if (g_system->hasFeature(OSystem::kFeatureFilteringMode)) {
 			_filteringCheckbox->setState(ConfMan.getBool("filtering", _domain));
 			if (ConfMan.isKeyTemporary("filtering"))
-				_filteringCheckbox->setOverride(true); 
+				_filteringCheckbox->setOverride(true);
 		} else {
 			_filteringCheckbox->setState(false);
 			_filteringCheckbox->setEnabled(false);
@@ -457,7 +457,7 @@ void OptionsDialog::build() {
 		// Multi midi setting
 		_multiMidiCheckbox->setState(ConfMan.getBool("multi_midi", _domain));
 		if (ConfMan.isKeyTemporary("multi_midi"))
-			_multiMidiCheckbox->setOverride(true); 
+			_multiMidiCheckbox->setOverride(true);
 
 		Common::String soundFont(ConfMan.get("soundfont", _domain));
 		if (ConfMan.isKeyTemporary("soundfont")) {
@@ -475,7 +475,7 @@ void OptionsDialog::build() {
 		_midiGainSlider->setValue(ConfMan.getInt("midi_gain", _domain));
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		if (ConfMan.isKeyTemporary("midi_gain"))
-			_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+			_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	}
 
 	// MT-32 options
@@ -486,12 +486,12 @@ void OptionsDialog::build() {
 		// Native mt32 setting
 		_mt32Checkbox->setState(ConfMan.getBool("native_mt32", _domain));
 		if (ConfMan.isKeyTemporary("native_mt32"))
-			_mt32Checkbox->setOverride(true); 
+			_mt32Checkbox->setOverride(true);
 
 		// GS extensions setting
 		_enableGSCheckbox->setState(ConfMan.getBool("enable_gs", _domain));
 		if (ConfMan.isKeyTemporary("enable_gs"))
-			_enableGSCheckbox->setOverride(true); 
+			_enableGSCheckbox->setOverride(true);
 	}
 
 	// Volume options
@@ -575,12 +575,12 @@ void OptionsDialog::apply() {
 			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState()) {
 				graphicsModeChanged = true;
 				ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
-				_filteringCheckbox->setOverride(false); 
+				_filteringCheckbox->setOverride(false);
 			}
 			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState()) {
 				graphicsModeChanged = true;
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
-				_fullscreenCheckbox->setOverride(false); 
+				_fullscreenCheckbox->setOverride(false);
 			}
 			if (ConfMan.getBool("aspect_ratio", _domain) != _aspectCheckbox->getState())
 				graphicsModeChanged = true;
@@ -598,7 +598,7 @@ void OptionsDialog::apply() {
 				while (gm->name) {
 					if (gm->id == (int)_gfxPopUp->getSelectedTag()) {
 						if (ConfMan.get("gfx_mode", _domain) != gm->name) {
-							_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
+							_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 							graphicsModeChanged = true;
 							ConfMan.set("gfx_mode", gm->name, _domain);
 						}
@@ -609,17 +609,17 @@ void OptionsDialog::apply() {
 				}
 			}
 			if (!isSet) {
-				_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 							
+				_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				ConfMan.removeKey("gfx_mode", _domain);
 				if (g_system->getGraphicsMode() != g_system->getDefaultGraphicsMode())
 					graphicsModeChanged = true;
 			}
 
 			if ((int32)_renderModePopUp->getSelectedTag() >= 0) {
-				Common::String renderModeCode = Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag()); 
+				Common::String renderModeCode = Common::getRenderModeCode((Common::RenderMode)_renderModePopUp->getSelectedTag());
 				if (_renderModePopUp->getSelectedTag() == 0 || ConfMan.get("render_mode", _domain) != renderModeCode) {
 					ConfMan.set("render_mode", renderModeCode, _domain);
-					_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 				
+					_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				}
 			}
 
@@ -632,7 +632,7 @@ void OptionsDialog::apply() {
 						if (ConfMan.get("stretch_mode", _domain) != sm->name) {
 							graphicsModeChanged = true;
 							ConfMan.set("stretch_mode", sm->name, _domain);
-							_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+							_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 						}
 						isSet = true;
 						break;
@@ -641,7 +641,7 @@ void OptionsDialog::apply() {
 				}
 			}
 			if (!isSet) {
-				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				ConfMan.removeKey("stretch_mode", _domain);
 				if (g_system->getStretchMode() != g_system->getDefaultStretchMode())
 					graphicsModeChanged = true;
@@ -654,21 +654,21 @@ void OptionsDialog::apply() {
 				if (ConfMan.get("scaler", _domain) != name) {
 					graphicsModeChanged = true;
 					ConfMan.set("scaler", name, _domain);
-					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);  
+					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				}
 
 				int factor = _scaleFactorPopUp->getSelectedTag();
 				if (ConfMan.getInt("scale_factor", _domain) != factor) {
 					ConfMan.setInt("scale_factor", factor, _domain);
 					graphicsModeChanged = true;
-					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+					_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				}
 				isSet = true;
 			}
 			if (!isSet) {
 				ConfMan.removeKey("scaler", _domain);
 				ConfMan.removeKey("scale_factor", _domain);
-				_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);  
+				_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 
 				uint defaultScaler = g_system->getDefaultScaler();
 				uint defaultScaleFactor = g_system->getDefaultScaleFactor();
@@ -879,14 +879,14 @@ void OptionsDialog::apply() {
 			const OPL::Config::EmulatorDescription *ed = OPL::Config::findDriver(_oplPopUp->getSelectedTag());
 
 			if ((ed && ConfMan.get("opl_driver", _domain) != ed->name) || !ed) {
-				_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
-				if (ed) 
+				_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+				if (ed)
 					ConfMan.set("opl_driver", ed->name, _domain);
 				else
 					ConfMan.removeKey("opl_driver", _domain);
 			}
 		} else {
-			_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			ConfMan.removeKey("opl_driver", _domain);
 		}
 	}
@@ -898,29 +898,29 @@ void OptionsDialog::apply() {
 
 			if (_multiMidiCheckbox->getState() != ConfMan.getBool("multi_midi", _domain)) {
 				ConfMan.setBool("multi_midi", _multiMidiCheckbox->getState(), _domain);
-				_multiMidiCheckbox->setOverride(false); 
+				_multiMidiCheckbox->setOverride(false);
 			}
 			if (_midiGainSlider->getValue() != ConfMan.getInt("midi_gain", _domain)) {
 				ConfMan.setInt("midi_gain", _midiGainSlider->getValue(), _domain);
-				_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			}
 
 			Common::U32String soundFont(_soundFont->getLabel());
 			if (soundFont != ConfMan.get("soundfont", _domain)) {
-				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				if (soundFont.empty() || (soundFont == _c("None", "soundfont")))
 					ConfMan.removeKey("soundfont", _domain);
-				else 
-					ConfMan.set("soundfont", soundFont.encode(), _domain); 
-			} 
+				else
+					ConfMan.set("soundfont", soundFont.encode(), _domain);
+			}
 		} else {
 			ConfMan.removeKey("gm_device", _domain);
 			ConfMan.removeKey("multi_midi", _domain);
-			_multiMidiCheckbox->setOverride(false); 
+			_multiMidiCheckbox->setOverride(false);
 			ConfMan.removeKey("midi_gain", _domain);
 			_midiGainDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			ConfMan.removeKey("soundfont", _domain);
-			_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			_soundFont->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		}
 	}
 
@@ -931,18 +931,18 @@ void OptionsDialog::apply() {
 			ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
 			if (ConfMan.getBool("native_mt32", _domain) != _mt32Checkbox->getState()) {
 				ConfMan.setBool("native_mt32", _mt32Checkbox->getState(), _domain);
-				_mt32Checkbox->setOverride(false); 
+				_mt32Checkbox->setOverride(false);
 			}
 			if (ConfMan.getBool("enable_gs", _domain) != _enableGSCheckbox->getState()) {
 				ConfMan.setBool("enable_gs", _enableGSCheckbox->getState(), _domain);
-				_enableGSCheckbox->setOverride(false); 
+				_enableGSCheckbox->setOverride(false);
 			}
 		} else {
 			ConfMan.removeKey("mt32_device", _domain);
 			ConfMan.removeKey("native_mt32", _domain);
-			_mt32Checkbox->setOverride(false); 
+			_mt32Checkbox->setOverride(false);
 			ConfMan.removeKey("enable_gs", _domain);
-			_enableGSCheckbox->setOverride(false); 
+			_enableGSCheckbox->setOverride(false);
 		}
 	}
 
@@ -967,12 +967,12 @@ void OptionsDialog::apply() {
 
 				if (subtitles != ConfMan.getBool("subtitles", _domain)) {
 					ConfMan.setBool("subtitles", subtitles, _domain);
-					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+					_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				}
 				ConfMan.setBool("speech_mute", speech_mute, _domain);
 			} else if (!_domain.empty()) {
 				ConfMan.removeKey("subtitles", _domain);
-				_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 				ConfMan.removeKey("speech_mute", _domain);
 			}
 
@@ -982,12 +982,12 @@ void OptionsDialog::apply() {
 			int talkspeed = (_subSpeedSlider->getValue() * 255 + sliderMaxValue / 2) / sliderMaxValue;
 			if (talkspeed != ConfMan.getInt("talkspeed", _domain)) {
 				ConfMan.setInt("talkspeed", talkspeed, _domain);
-				_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+				_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			}
 		} else {
 			ConfMan.removeKey("subtitles", _domain);
 			ConfMan.removeKey("talkspeed", _domain);
-			_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			ConfMan.removeKey("speech_mute", _domain);
 		}
 	}
@@ -1026,7 +1026,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 				updateSpeechVolume(newValue);
 			}
 		}
-		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		break;
 	}
 	case kSfxVolumeChanged: {
@@ -1041,7 +1041,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		if (_guioptions.contains(GUIO_LINKSPEECHTOSFX)) {
 			updateSpeechVolume(newValue);
 		}
-		_sfxVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+		_sfxVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		break;
 	}
 	case kSpeechVolumeChanged: {
@@ -1056,7 +1056,7 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 				updateMusicVolume(newValue);
 			}
 		}
-		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		break;
 	}
 	case kMuteAllChanged:
@@ -1455,7 +1455,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	// The GFX mode popup
 	_gfxPopUpDesc = new StaticTextWidget(boss, prefix + "grModePopupDesc", _("Graphics mode:"));
 	if (ConfMan.isKeyTemporary("gfx_mode"))
-		_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_gfxPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_gfxPopUp = new PopUpWidget(boss, prefix + "grModePopup");
 
 	_gfxPopUp->appendEntry(_("<default>"));
@@ -1471,7 +1471,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_renderModePopUpDesc = new StaticTextWidget(boss, prefix + "grRenderPopupDesc", _("Render mode:"), _("Special dithering modes supported by some games"));
 	if (ConfMan.isKeyTemporary("render_mode"))
-		_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_renderModePopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_renderModePopUp = new PopUpWidget(boss, prefix + "grRenderPopup", _("Special dithering modes supported by some games"));
 	_renderModePopUp->appendEntry(_("<default>"), Common::kRenderDefault);
 	_renderModePopUp->appendEntry(Common::U32String());
@@ -1486,7 +1486,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	const OSystem::GraphicsMode *sm = g_system->getSupportedStretchModes();
 	_stretchPopUpDesc = new StaticTextWidget(boss, prefix + "grStretchModePopupDesc", _("Stretch mode:"));
 	if (ConfMan.isKeyTemporary("stretch_mode"))
-		_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_stretchPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_stretchPopUp = new PopUpWidget(boss, prefix + "grStretchModePopup");
 
 	_stretchPopUp->appendEntry(_("<default>"));
@@ -1591,7 +1591,7 @@ void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &pref
 	// The OPL emulator popup & a label
 	_oplPopUpDesc = new StaticTextWidget(boss, prefix + "auOPLPopupDesc", _("AdLib emulator:"), _("AdLib is used for music in many games"));
 	if (ConfMan.isKeyTemporary("opl_driver"))
-		_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_oplPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_oplPopUp = new PopUpWidget(boss, prefix + "auOPLPopup", _("AdLib is used for music in many games"));
 
 	// Populate it
@@ -1726,11 +1726,11 @@ void OptionsDialog::addSubtitleControls(GuiObject *boss, const Common::String &p
 
 		_subSpeedDesc = new StaticTextWidget(boss, prefix + "subSubtitleSpeedDesc", _c("Subtitle speed:", "lowres"));
 	}
-	
+
 	if (ConfMan.isKeyTemporary("talkspeed"))
-		_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_subSpeedDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	if (ConfMan.isKeyTemporary("subtitles"))
-		_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_subToggleDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
 	// Subtitle speed
 	_subSpeedSlider = new SliderWidget(boss, prefix + "subSubtitleSpeedSlider", Common::U32String(), kSubtitleSpeedChanged);
@@ -1749,8 +1749,8 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _("Music volume:"));
 	else
 		_musicVolumeDesc = new StaticTextWidget(boss, prefix + "vcMusicText", _c("Music volume:", "lowres"));
-	if (ConfMan.isKeyTemporary("music_volume")) 
-		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+	if (ConfMan.isKeyTemporary("music_volume"))
+		_musicVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_musicVolumeSlider = new SliderWidget(boss, prefix + "vcMusicSlider", Common::U32String(), kMusicVolumeChanged);
 	_musicVolumeLabel = new StaticTextWidget(boss, prefix + "vcMusicLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_musicVolumeSlider->setMinValue(0);
@@ -1776,7 +1776,7 @@ void OptionsDialog::addVolumeControls(GuiObject *boss, const Common::String &pre
 	else
 		_speechVolumeDesc = new StaticTextWidget(boss, prefix + "vcSpeechText" , _c("Speech volume:", "lowres"));
 	if (ConfMan.isKeyTemporary("speech_volume"))
-		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_speechVolumeDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 	_speechVolumeSlider = new SliderWidget(boss, prefix + "vcSpeechSlider", Common::U32String(), kSpeechVolumeChanged);
 	_speechVolumeLabel = new StaticTextWidget(boss, prefix + "vcSpeechLabel", Common::U32String("100%"), Common::U32String(), ThemeEngine::kFontStyleBold, Common::UNK_LANG, false);
 	_speechVolumeSlider->setMinValue(0);
@@ -1902,7 +1902,7 @@ void OptionsDialog::setupGraphicsTab() {
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setVisible(true);
 		if (ConfMan.isKeyTemporary("scaler") || ConfMan.isKeyTemporary("scale_factor"))
-			_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+			_scalerPopUpDesc->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 		_scalerPopUp->setVisible(true);
 		_scaleFactorPopUp->setVisible(true);
 	} else {
@@ -2204,9 +2204,9 @@ void GlobalOptionsDialog::build() {
 	OptionsDialog::build();
 
 #if !defined(__DC__)
-	const auto setPath = 
+	const auto setPath =
 	[&](GUI::StaticTextWidget *const widget, const Common::String &pathType, const Common::U32String &defaultLabel) {
-		Common::String path(ConfMan.get(pathType)); 
+		Common::String path(ConfMan.get(pathType));
 		if (ConfMan.isKeyTemporary(pathType)) {
 			widget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 		}
@@ -2217,7 +2217,7 @@ void GlobalOptionsDialog::build() {
 		}
 	};
 
-	setPath(_savePath, "savepath", _("Default")); 
+	setPath(_savePath, "savepath", _("Default"));
 	setPath(_themePath, "themepath", _c("None", "path"));
 	setPath(_iconPath, "iconspath", _("Default"));
 	setPath(_extraPath, "extrapath", _c("None", "path"));
@@ -2335,8 +2335,8 @@ void GlobalOptionsDialog::addPathsControls(GuiObject *boss, const Common::String
 		confPath = g_system->getDefaultConfigFileName();
 	StaticTextWidget* configPathWidget = new StaticTextWidget(boss, prefix + "ConfigPath", _("ScummVM config path: ") + confPath, confPath);
 	if (ConfMan.isKeyTemporary("config"))
-		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
- 
+		configPathWidget->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
+
 
 	Common::U32String browserPath = _("<default>");
 	if (ConfMan.hasKey("browser_lastpath"))
@@ -2351,7 +2351,7 @@ void GlobalOptionsDialog::addMiscControls(GuiObject *boss, const Common::String 
 	new ButtonWidget(boss, prefix + "ThemeButton", _("Theme:"), Common::U32String(), kChooseThemeCmd);
 	_curTheme = new StaticTextWidget(boss, prefix + "CurTheme", g_gui.theme()->getThemeName());
 	if (ConfMan.isKeyTemporary("gui_theme"))
-		_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorOverride); 
+		_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 
 	_guiBasePopUpDesc = new StaticTextWidget(boss, prefix + "GUIBasePopupDesc", _("GUI scale:"));
 	_guiBasePopUp = new PopUpWidget(boss, prefix + "GUIBasePopup");
@@ -2698,22 +2698,22 @@ void GlobalOptionsDialog::apply() {
 
 	bool isRebuildNeeded = false;
 
-	const auto changePath = 
+	const auto changePath =
 	[&](GUI::StaticTextWidget *const widget, const Common::String &pathType, const Common::U32String &defaultLabel) {
 		Common::U32String label(widget->getLabel());
 		if (label != ConfMan.get(pathType)) {
-			widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			widget->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 			if (label.empty() || (label == defaultLabel))
-				ConfMan.removeKey(pathType, _domain); 
-			else 
-				ConfMan.set(pathType, label.encode(), _domain); 
-		} 
-	}; 
+				ConfMan.removeKey(pathType, _domain);
+			else
+				ConfMan.set(pathType, label.encode(), _domain);
+		}
+	};
 
-	changePath(_savePath, "savepath", _("Default")); 
-	changePath(_themePath, "themepath", _c("None", "path")); 
+	changePath(_savePath, "savepath", _("Default"));
+	changePath(_themePath, "themepath", _c("None", "path"));
 	changePath(_iconPath, "iconspath", _("Default"));
-	changePath(_extraPath, "extrapath", _c("None", "path")); 
+	changePath(_extraPath, "extrapath", _c("None", "path"));
 
 #ifdef DYNAMIC_MODULES
 	Common::U32String pluginsPath(_pluginsPath->getLabel());
@@ -3069,7 +3069,7 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 			// User made his choice...
 			_newTheme = browser.getSelected();
 			_curTheme->setLabel(browser.getSelectedName());
-			_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorNormal); 
+			_curTheme->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 		}
 		break;
 	}
