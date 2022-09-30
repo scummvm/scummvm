@@ -1591,7 +1591,9 @@ msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
 "same language as the game."
-msgstr "當開啟遊戲的時候切換ScummVM的介面語言. 這樣的話, 如果遊戲使用 ScummVM 儲存與讀取, 它就會與遊戲中語言保持一致."
+msgstr ""
+"當開啟遊戲的時候切換ScummVM的介面語言. 這樣的話, 如果遊戲使用 ScummVM 儲存與"
+"讀取, 它就會與遊戲中語言保持一致."
 
 #: gui/options.cpp:2448
 msgid "Use native system file browser"
