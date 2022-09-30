@@ -269,6 +269,8 @@ protected:
 	 */
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
+	bool loadShader(const Common::String &fileName);
+
 	/**
 	 * Refresh the screen contents.
 	 */
