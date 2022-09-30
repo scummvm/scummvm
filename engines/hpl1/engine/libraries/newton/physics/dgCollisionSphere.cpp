@@ -98,19 +98,19 @@ void dgCollisionSphere::Init(dgFloat32 radius, dgMemoryAllocator *allocator) {
 													  sizeof(dgVector), 3 * sizeof(dgFloat32), 0, count, indexList, 0.001f);
 
 		_ASSERTE(vertexCount == DG_SPHERE_VERTEX_COUNT);
-		for (dgInt32 i = 0; i < vertexCount; i++) {
-			m_unitSphere[i] = tmpVectex[i];
+		for (dgInt32 j = 0; j < vertexCount; j++) {
+			m_unitSphere[j] = tmpVectex[j];
 		}
 		dgPolyhedra polyhedra(m_allocator);
 
 		polyhedra.BeginFace();
-		for (dgInt32 i = 0; i < count; i += 3) {
+		for (dgInt32 j = 0; j < count; j += 3) {
 #ifdef _DEBUG
-			dgEdge *const edge = polyhedra.AddFace(indexList[i], indexList[i + 1],
-												   indexList[i + 2]);
+			dgEdge *const edge = polyhedra.AddFace(indexList[j], indexList[j + 1],
+												   indexList[j + 2]);
 			_ASSERTE(edge);
 #else
-			polyhedra.AddFace(indexList[i], indexList[i + 1], indexList[i + 2]);
+			polyhedra.AddFace(indexList[j], indexList[j + 1], indexList[j + 2]);
 #endif
 		}
 		polyhedra.EndFace();
