@@ -169,6 +169,14 @@ void CDROMXObj::close(int type) {
 
 CDROMXObject::CDROMXObject(ObjectType ObjectType) :Object<CDROMXObject>("AppleAudioCD") {
 	_objType = ObjectType;
+    // Initialize _cdda_status
+    _cdda_status.playing = false;
+    _cdda_status.track = 0;
+    _cdda_status.start = 0;
+    _cdda_status.duration = 0;
+    _cdda_status.numLoops = 0;
+    _cdda_status.volume = Audio::Mixer::kMaxChannelVolume;
+    _cdda_status.balance = 0;
 }
 
 void CDROMXObj::m_new(int nargs) {
@@ -184,23 +192,29 @@ void CDROMXObj::m_name(int nargs) {
 }
 
 void CDROMXObj::m_play(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     // This is a request to play the current track from the start,
     // which we can't do if there's no track information.
-    if (g_director->_cdda_status.track == 0)
+    if (me->_cdda_status.track == 0)
         return;
 
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, 0, 0);
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playTrack(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     int track = g_lingo->pop().asInt();
     g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 // Name format is "TRACK NN", with one-digit tracks padded with a leading space
 void CDROMXObj::m_playName(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
 	Common::String track = g_lingo->pop().asString();
     if (track.size() < 8) {
         warning("CDROMXObj::m_playName: specified name has an invalid format (provided string was %s)", track.c_str());
@@ -217,7 +231,7 @@ void CDROMXObj::m_playName(int nargs) {
     }
 
     g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playAbsTime(int nargs) {
@@ -250,41 +264,53 @@ void CDROMXObj::m_askPlay(int nargs) {
 }
 
 void CDROMXObj::m_stepFwd(int nargs) {
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track + 1, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
+    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track + 1, -1, 0, 0);
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stepBwd(int nargs) {
-    int track = g_director->_cdda_status.track - 1;
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
+    int track = me->_cdda_status.track - 1;
     if (track < 1)
         track = 1;
 
     g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_pause(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     // Leaves a trace of the current position so we can resume from it
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
-    g_director->_cdda_status.playing = false;
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status.playing = false;
     g_director->_system->getAudioCDManager()->stop();
 }
 
 void CDROMXObj::m_continue(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     // Can only resume if there's data to resume from
-    if (g_director->_cdda_status.track == 0)
+    if (me->_cdda_status.track == 0)
         return;
 
-    g_director->_system->getAudioCDManager()->play(g_director->_cdda_status.track, -1, g_director->_cdda_status.start, 0);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, me->_cdda_status.start, 0);
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stop(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     g_director->_system->getAudioCDManager()->stop();
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopTrack(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     Datum track = g_lingo->pop();
     AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
@@ -295,7 +321,7 @@ void CDROMXObj::m_stopTrack(int nargs) {
     // This play command ensures we continue from here and end with this
     // track, regardless of previous commands.
     g_director->_system->getAudioCDManager()->play(status.track, 1, status.start, status.start + status.duration);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopAbsTime(int nargs) {
@@ -310,6 +336,8 @@ void CDROMXObj::m_stopAbsTime(int nargs) {
 }
 
 void CDROMXObj::m_removeStop(int nargs) {
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
     Datum track = g_lingo->pop();
     AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
@@ -317,7 +345,7 @@ void CDROMXObj::m_removeStop(int nargs) {
         return;
 
     g_director->_system->getAudioCDManager()->play(status.track, -1, status.start, status.start + status.duration);
-    g_director->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_eject(int nargs) {
@@ -380,7 +408,9 @@ void CDROMXObj::m_currentFormat(int nargs) {
 }
 
 void CDROMXObj::m_currentTrack(int nargs) {
-	g_lingo->push(Datum(g_director->_cdda_status.track));
+    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+
+	g_lingo->push(Datum(me->_cdda_status.track));
 }
 
 void CDROMXObj::m_currentTime(int nargs) {
