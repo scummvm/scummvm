@@ -362,6 +362,20 @@ bool OpenGLGraphicsManager::setShader(const Common::String &fileName) {
 }
 #endif
 
+bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
+#if !USE_FORCED_GLES
+	// Load selected shader preset
+	if (!fileName.empty()) {
+		if (!_libretroPipeline->open(Common::FSNode(fileName))) {
+			warning("Failed to load shader %s", fileName.c_str());
+			return false;
+		}
+	}
+#endif
+
+	return true;
+}
+
 void OpenGLGraphicsManager::beginGFXTransaction() {
 	assert(_transactionMode == kTransactionNone);
 
@@ -414,6 +428,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		                   Graphics::PixelFormat::createFormatCLUT8()
 #endif
 		                  )
+			|| !loadShader(_currentState.shader)
 		   // HACK: This is really nasty but we don't have any guarantees of
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
@@ -453,6 +468,11 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 					}
 #endif
 
+#if !USE_FORCED_GLES
+					if (_oldState.shader != _currentState.shader) {
+						transactionError |= OSystem::kTransactionShaderChangeFailed;
+					}
+#endif
 					// Roll back to the old state.
 					_currentState = _oldState;
 					_transactionMode = kTransactionRollback;
@@ -525,16 +545,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 #endif
 	}
-
-#if !USE_FORCED_GLES
-	// Load selected shader preset
-	if (!_currentState.shader.empty()) {
-		if (!_libretroPipeline->open(Common::FSNode(_currentState.shader))) {
-			warning("Failed to load shader %s", _currentState.shader.c_str());
-			transactionError |= OSystem::kTransactionShaderChangeFailed;
-		}
-	}
-#endif
 
 	// Update our display area and cursor scaling. This makes sure we pick up
 	// aspect ratio correction and game screen changes correctly.
