@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-09-29 14:07+0000\n"
+"POT-Creation-Date: 2022-09-30 01:07+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -2792,7 +2792,7 @@ msgctxt "lowres"
 msgid "OpenGL with shaders"
 msgstr "OpenGL з шэйдэрамі"
 
-#: audio/adlib.cpp:2303
+#: audio/adlib.cpp:2304
 msgid "AdLib emulator"
 msgstr "Эмулятар AdLib"
 
