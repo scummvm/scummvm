@@ -3639,55 +3639,26 @@ void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse respons
 
 /****************************
  * Shader test screen
+ *
+ * Based on Testcard project (https://sourceforge.net/projects/testcard/)
+ *
+ * Testpattern is a simple monitor test pattern generator
+ * Copyright 2003 Jason Giglio <jgiglio@netmar.com>
+ *
+ * Licensed under GPLv2+
  ****************************/
 
 enum {
-	BLACK = 0,
-	WHITE,
-	RED,
-	GREEN,
-	BLUE,
-	CYAN,
-	MAGENTA,
-	YELLOW,
-	GRAY1,
-	GREEN1,
-	GREEN2,
-	RED1,
-	BLUE1,
-	BLUE2,
-	YELLOW1,
-	RED2,
-	GRAY2,
-	GRAY3,
-	GRAY4,
-	GRAY5,
-	GRAY6,
+	BLACK = 0, WHITE, RED, GREEN, BLUE, CYAN, MAGENTA,
+	YELLOW, GRAY1, GREEN1, GREEN2, RED1, BLUE1, BLUE2,
+	YELLOW1, RED2, GRAY2, GRAY3, GRAY4, GRAY5, GRAY6,
 	TRANSCOLOR,
 };
 
 const uint32 paletteSrc[] = {
-	0x000000,
-	0xffffff,
-	0xFF0000,
-	0x00FF00,
-	0x0000FF,
-	0x00FFFF,
-	0xFF00FF,
-	0xFFFF00,
-	0x7F7F7F,
-	0x00C896,
-	0x649632,
-	0xC83264,
-	0x6464FF,
-	0x6496FF,
-	0xC86400,
-	0xE10000,
-	0x333333,
-	0x666666,
-	0x999999,
-	0xCCCCCC,
-	0xBFBFBF,
+	0x000000, 0xffffff, 0xFF0000, 0x00FF00, 0x0000FF, 0x00FFFF, 0xFF00FF,
+	0xFFFF00, 0x7F7F7F, 0x00C896, 0x649632, 0xC83264, 0x6464FF, 0x6496FF,
+	0xC86400, 0xE10000, 0x333333, 0x666666, 0x999999, 0xCCCCCC, 0xBFBFBF,
 	0xFE00FE,
 };
 
@@ -3716,11 +3687,9 @@ static void frame(Graphics::Surface &surface, int x1, int y1, int x2, int y2, in
 }
 
 static void drawRow(Graphics::Surface &surface, int offsety, int colors[], int numColors, int gap, int vsize, int xres, int offsetx) {
-	int boxsize;
-	int x;
-	boxsize = (xres - (numColors + 1) * gap) / numColors;   //-gaps between boxes
+	int boxsize = (xres - (numColors + 1) * gap) / numColors;   //-gaps between boxes
 	offsetx += gap + 1;
-	for (x = 0; x < numColors; x++) {
+	for (int x = 0; x < numColors; x++) {
 		boxColor(surface, offsetx, offsety, offsetx + boxsize - 1, offsety + vsize - 1, colors[x]);
 		offsetx += (boxsize + gap);
 	}
