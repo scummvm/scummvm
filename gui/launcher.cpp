@@ -1150,8 +1150,9 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 	}
 	case kGroupByCompany: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
-			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
+			Common::String gameid = metadata[i]->getVal("gameid");
+			Common::String engineid = metadata[i]->getVal("engineid");
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(engineid, gameid)].company_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no pubisher is specified
@@ -1168,8 +1169,9 @@ void LauncherSimple::groupEntries(const Common::Array<const Common::ConfigManage
 	}
 	case kGroupBySeries: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
-			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
+			Common::String gameid = metadata[i]->getVal("gameid");
+			Common::String engineid = metadata[i]->getVal("engineid");
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(engineid, gameid)].series_id);
 		}
 		_list->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List group when no game series is specified
@@ -1345,8 +1347,9 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 	}
 	case kGroupBySeries: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
-			attrs.push_back(_metadataParser._gameInfo[gameid].series_id);
+			Common::String gameid = metadata[i]->getVal("gameid");
+			Common::String engineid = metadata[i]->getVal("engineid");
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(engineid, gameid)].series_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List grouping when no game series is specified
@@ -1359,8 +1362,9 @@ void LauncherGrid::groupEntries(const Common::Array<const Common::ConfigManager:
 	}
 	case kGroupByCompany: {
 		for (uint i = 0; i < metadata.size(); ++i) {
-			Common::U32String gameid = metadata[i]->getVal(Common::String("gameid"));
-			attrs.push_back(_metadataParser._gameInfo[gameid].company_id);
+			Common::String gameid = metadata[i]->getVal("gameid");
+			Common::String engineid = metadata[i]->getVal("engineid");
+			attrs.push_back(_metadataParser._gameInfo[buildQualifiedGameName(engineid, gameid)].company_id);
 		}
 		_grid->setGroupHeaderFormat(Common::U32String(""), Common::U32String(""));
 		// I18N: List group when no publisher is specified
