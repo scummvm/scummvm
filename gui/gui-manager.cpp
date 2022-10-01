@@ -400,7 +400,9 @@ void GuiManager::redraw() {
 				previousDialog->drawDialog(kDrawLayerForeground);
 			}
 
-			_theme->applyScreenShading(shading);
+			if (!_displayTopDialogOnly)
+				_theme->applyScreenShading(shading);
+
 			_dialogStack.top()->drawDialog(kDrawLayerBackground);
 
 			_theme->drawToScreen();
