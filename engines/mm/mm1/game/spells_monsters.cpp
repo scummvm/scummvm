@@ -111,22 +111,55 @@ void SpellsMonsters::spell04_blindness() {
 		++_mmVal2;
 		_newCondition = 2;
 
-		add(':');
+		handlePartyEffects();
+	}
+}
 
-		for (uint i = 0; i < g_globals->_party.size(); ++i) {
-			g_globals->_currCharacter = &g_globals->_party[i];
+void SpellsMonsters::spell05_sprayPoison() {
+	add(STRING["monster_spells.sprays_poison"]);
+	++_mmVal2;
+	_resistanceType = RESISTANCE_POISON;
+	_newCondition = POISONED;
+	handlePartyEffects();
+}
+
+void SpellsMonsters::spell06_sprayAcid() {
+	add(STRING["monster_spells.sprays_acid"]);
+	++_mmVal2;
+	_resistanceType = RESISTANCE_ACID;
+	_newCondition = getRandomNumber((int)POISONED);
+	add(':');
+
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell07_sleep() {
+	if (casts()) {
+		add(STRING["monster_spells.sleep"]);
+		++_mmVal1;
+		++_mmVal2;
+		_resistanceType = RESISTANCE_PSYCHIC;
+		_newCondition = ASLEEP;
+		handlePartyEffects();
+	}
+}
+
+void SpellsMonsters::spell08_paralyze() {
+	if (casts()) {
+		add(STRING["monster_spells.paralyze"]);
+		++_mmVal1;
+		++_mmVal2;
+		_resistanceType = RESISTANCE_FEAR;
+		_newCondition = PARALYZED;
+
+		if (g_globals->_encounters._arr1[getMonsterIndex()] >= 5) {
+			handlePartyEffects();
+		} else {
+			chooseCharacter();
 			writeConditionEffect();
 		}
 	}
 }
-
-void SpellsMonsters::spell05_sprayPoison() {}
-
-void SpellsMonsters::spell06_sprayAcid() {}
-
-void SpellsMonsters::spell07_sleep() {}
-
-void SpellsMonsters::spell08_paralyze() {}
 
 void SpellsMonsters::spell09_dispell() {}
 
@@ -435,6 +468,26 @@ void SpellsMonsters::setCondition(byte newCondition) {
 	} else if (newCondition & BAD_CONDITION) {
 		c._condition = newCondition;
 	}
+}
+
+void SpellsMonsters::handlePartyEffects() {
+	add(':');
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		g_globals->_currCharacter = &g_globals->_party[i];
+		writeConditionEffect();
+	}
+}
+
+void SpellsMonsters::handlePartyDamage() {
+	Character *tmp = g_globals->_currCharacter;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		g_globals->_currCharacter = &g_globals->_party[i];
+		handleDamage();
+	}
+
+	g_globals->_currCharacter = tmp;
 }
 
 } // namespace Game
