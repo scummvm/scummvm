@@ -20,6 +20,7 @@
  */
 
 #include "freescape/freescape.h"
+#include "audio/mods/paula.h"
 
 namespace Freescape {
 
@@ -32,6 +33,11 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	//	_mixer->stopHandle(_handle);
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
+	if (isAmiga()) {
+		playPaulaSound(index, sync);
+		return;
+	}
+
 	switch (index) {
 		case 1:
 			if (_usePrerecordedSounds) {
@@ -313,6 +319,38 @@ void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
 			fBase -= fInc;
 			stepCycle = 0;
 		}
+	}
+}
+
+class AudioPaula : public Audio::Paula {
+	void interrupt() override;
+};
+
+void AudioPaula::interrupt() {}
+
+void FreescapeEngine::playPaulaSound(int index, bool sync) {
+	AudioPaula *paula = new AudioPaula();
+	paula->setInterruptFreq(0x168);
+	paula->readBuffer((int16*)_amigaSoundsBuffer[index], _amigaSoundsSize[index] / 2);
+	paula->startPlay();
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, paula);
+	if (sync) {
+		//_system->delayMillis(duration);
+	}
+}
+
+void FreescapeEngine::loadAmigaSounds(Common::SeekableReadStream *file, int offset, int number) {
+	file->seek(offset);
+	for (int i = 1; i < number+1; i++) {
+		int size = file->readUint16BE();
+		assert(size == 0);
+		size = file->readUint16BE();
+		debug("Loading sound: %d (size: %d)", i, size);
+		size = size + 2;
+		byte *palette = (byte*) malloc(size * sizeof(byte));
+		file->read(palette, size);
+		_amigaSoundsBuffer[i] = (byte*) palette;
+		_amigaSoundsSize[i] = size;
 	}
 }
 
