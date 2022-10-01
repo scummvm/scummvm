@@ -454,6 +454,8 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c, 
 			error("Could not find material %s", filename.c_str());
 		}
 	}
+	if (!stream)
+		error("Couldn't open %s", fname.c_str());
 
 	Material *result = new Material(fname, stream, c, clamp);
 	delete stream;
