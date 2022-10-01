@@ -78,6 +78,8 @@ void LuaObjects::add(const char *str) {
 void LuaObjects::addNil() {
 	Obj obj;
 	obj._type = Obj::Nil;
+	// Just set a value to avoid having uninitialized fields.
+	obj._value.object = nullptr;
 	_objects.push_back(obj);
 }
 
