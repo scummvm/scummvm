@@ -64,6 +64,8 @@
 #endif
 #endif
 
+#include "base/version.h"
+#include "graphics/fonts/amigafont.h"
 #include "graphics/palette.h"
 #include "graphics/renderer.h"
 #include "graphics/scalerplugin.h"
@@ -3661,6 +3663,7 @@ enum {
 	GRAY4,
 	GRAY5,
 	GRAY6,
+	TRANSCOLOR,
 };
 
 const uint32 paletteSrc[] = {
@@ -3685,27 +3688,31 @@ const uint32 paletteSrc[] = {
 	0x999999,
 	0xCCCCCC,
 	0xBFBFBF,
+	0xFE00FE,
 };
 
+static void boxColor(Graphics::Surface &surface, int x1, int y1, int x2, int y2, int color) {
+	surface.fillRect(Common::Rect(x1, y1, x2 + 1, y2 + 1), color);
+}
 
 static void squaremesh(Graphics::Surface &surface, int xres, int yres, int width, int height, int gapsize, int meshcolor, int squarecolor) {
     int centerx = xres / 2;
     int centery = yres / 2;
 
-    surface.fillRect(Common::Rect(0, 0, xres, yres), squarecolor);
+    boxColor(surface, 0, 0, xres, yres, squarecolor);
     for (int x = centerx % (width + gapsize) + width / 2 - (width + gapsize); x < xres; x += gapsize + width) {
-        surface.fillRect(Common::Rect(x, 0, x + gapsize - 1, yres - 1), meshcolor);
+        boxColor(surface, x, 0, x + gapsize - 1, yres - 1, meshcolor);
     }
     for (int y = centery % (height + gapsize) + height / 2 - (height + gapsize); y < yres; y += gapsize + height) {
-        surface.fillRect(Common::Rect(0, y, xres - 1, y + gapsize - 1), meshcolor);
+        boxColor(surface, 0, y, xres - 1, y + gapsize - 1, meshcolor);
     }
 }
 
 static void frame(Graphics::Surface &surface, int x1, int y1, int x2, int y2, int x3, int y3, int x4, int y4, int color) {
-    surface.fillRect(Common::Rect(x1, y1, x2, y3), color);   //top
-    surface.fillRect(Common::Rect(x1, y4, x2, y2), color);   //bottom
-    surface.fillRect(Common::Rect(x1, y1, x3, y2), color);   //left
-    surface.fillRect(Common::Rect(x4, y1, x2, y2), color);   //right
+    boxColor(surface, x1, y1, x2, y3, color);   //top
+    boxColor(surface, x1, y4, x2, y2, color);   //bottom
+    boxColor(surface, x1, y1, x3, y2, color);   //left
+    boxColor(surface, x4, y1, x2, y2, color);   //right
 }
 
 static void drawRow(Graphics::Surface &surface, int offsety, int colors[], int numColors, int gap, int vsize, int xres, int offsetx) {
@@ -3714,7 +3721,7 @@ static void drawRow(Graphics::Surface &surface, int offsety, int colors[], int n
     boxsize = (xres - (numColors + 1) * gap) / numColors;   //-gaps between boxes
     offsetx += gap + 1;
     for (x = 0; x < numColors; x++) {
-        surface.fillRect(Common::Rect(offsetx, offsety, offsetx + boxsize - 1, offsety + vsize - 1), colors[x]);
+        boxColor(surface, offsetx, offsety, offsetx + boxsize - 1, offsety + vsize - 1, colors[x]);
         offsetx += (boxsize + gap);
     }
 }
@@ -3732,18 +3739,18 @@ static void circleColorNoblend(Graphics::Surface &surface, double x, double y, d
             surface.vLine(sx, (int)ceil(y - h), (int)floor(y + h), color);
     }
     if (invert && sx < surface.w)
-        surface.fillRect(Common::Rect(sx, 0, surface.w - 1, surface.h - 1), color);
+        boxColor(surface, sx, 0, surface.w - 1, surface.h - 1, color);
     if (invert && (int)round(x - r) > 0)
-        surface.fillRect(Common::Rect(0, 0, -1 + (int)round(x - r), surface.h - 1), color);
+        boxColor(surface, 0, 0, -1 + (int)round(x - r), surface.h - 1, color);
 }
 
 static void blacksquareinwhitecircle(Graphics::Surface &surface, int x1, int y1, int gapsize, int rwidth, int rheight) {
     double c1y = y1 - (gapsize + 1.0) / 2.0;
     double c1x = x1 - (gapsize + 1.0) / 2.0;
     circleColorNoblend(surface, c1x, c1y, rwidth * 1.5, WHITE, false);
-    surface.fillRect(Common::Rect(x1 - rwidth - gapsize, y1 - rheight - gapsize, x1 + rwidth - 1, y1 + rheight - 1), BLACK);
-    surface.fillRect(Common::Rect(x1 - rwidth - gapsize, y1 - gapsize, x1 + rwidth - 1, y1 - 1), WHITE);
-    surface.fillRect(Common::Rect(x1 - gapsize, y1 - rheight - gapsize, x1 - 1, y1 + rheight - 1), WHITE);
+    boxColor(surface, x1 - rwidth - gapsize, y1 - rheight - gapsize, x1 + rwidth - 1, y1 + rheight - 1, BLACK);
+    boxColor(surface, x1 - rwidth - gapsize, y1 - gapsize, x1 + rwidth - 1, y1 - 1, WHITE);
+    boxColor(surface, x1 - gapsize, y1 - rheight - gapsize, x1 - 1, y1 + rheight - 1, WHITE);
     circleColorNoblend(surface, c1x, c1y, gapsize + 1, WHITE, false);
 }
 
@@ -3768,7 +3775,6 @@ static void drawTestScreen() {
 
 	surface.create(xres, yres, Graphics::PixelFormat::createFormatCLUT8());
 	surface.fillRect(Common::Rect(0, 0, xres, yres), 0);
-
 
     int squaresize = 8;
     int gapsize = 2;
@@ -3815,15 +3821,15 @@ static void drawTestScreen() {
 
     for (i = 0; i < ysquares * 2 + 1; i++) {
         if (i % 2 == 0) {
-            surface.fillRect(Common::Rect(0, starty + gapsize + i * rheight, startx - 2, starty + gapsize + (i + 1) * rheight - 1), WHITE);
-            surface.fillRect(Common::Rect(endx + 2, starty + gapsize + i * rheight, xres - 1, starty + gapsize + (i + 1) * rheight - 1), WHITE);
+            boxColor(surface, 0, starty + gapsize + i * rheight, startx - 2, starty + gapsize + (i + 1) * rheight - 1, WHITE);
+            boxColor(surface, endx + 2, starty + gapsize + i * rheight, xres - 1, starty + gapsize + (i + 1) * rheight - 1, WHITE);
         }
 
     }
     for (i = 0; i < xsquares * 2 + 1; i++) {
         if (i % 2 == 0) {
-            surface.fillRect(Common::Rect(startx + gapsize + i * rwidth, 0, startx + gapsize + (i + 1) * rwidth - 1, starty - 2), WHITE);
-            surface.fillRect(Common::Rect(startx + gapsize + i * rwidth, endy + 2, startx + gapsize + (i + 1) * rwidth - 1, yres - 1), WHITE);
+            boxColor(surface, startx + gapsize + i * rwidth, 0, startx + gapsize + (i + 1) * rwidth - 1, starty - 2, WHITE);
+            boxColor(surface, startx + gapsize + i * rwidth, endy + 2, startx + gapsize + (i + 1) * rwidth - 1, yres - 1, WHITE);
         }
 
     }
@@ -3835,15 +3841,15 @@ static void drawTestScreen() {
     int y2 = y1 + (monosize * 2 - 1) * rheight - gapsize - 1;   //bottom
 
     if (xsquares - 1 > monosize) {
-        surface.fillRect(Common::Rect(x1, y1, x1 + width - 1, yres / 2), GREEN1);    //up left
-        surface.fillRect(Common::Rect(x2 - width + 1, y1, x2, yres / 2), GREEN2);    //up right
-        surface.fillRect(Common::Rect(x1, yres / 2 + yres % 2, x1 + width - 1, y2), RED1); //bottom left
-        surface.fillRect(Common::Rect(x2 - width + 1, yres / 2 + yres % 2, x2, y2), BLUE1); //bottom right
+        boxColor(surface, x1, y1, x1 + width - 1, yres / 2, GREEN1);    //up left
+        boxColor(surface, x2 - width + 1, y1, x2, yres / 2, GREEN2);    //up right
+        boxColor(surface, x1, yres / 2 + yres % 2, x1 + width - 1, y2, RED1); //bottom left
+        boxColor(surface, x2 - width + 1, yres / 2 + yres % 2, x2, y2, BLUE1); //bottom right
         if (monosize > 2) {
-            surface.fillRect(Common::Rect(x1 + width, y1, x1 + rwidth + width - 1, y1 + 2 * rheight - gapsize - 1), BLUE2); //up left small
-            surface.fillRect(Common::Rect(x1 + width, y2 - rheight * 2 + gapsize + 1, x1 + rwidth + width - 1, y2), YELLOW1); //bottom left small
-            surface.fillRect(Common::Rect(x2 - rwidth - width + 1, y1, x2 - width, y1 + 2 * rheight - gapsize - 1), BLUE2); //up right small
-            surface.fillRect(Common::Rect(x2 - rwidth - width + 1, y2 - rheight * 2 + gapsize + 1, x2 - width, y2), YELLOW1); //bottom right small
+            boxColor(surface, x1 + width, y1, x1 + rwidth + width - 1, y1 + 2 * rheight - gapsize - 1, BLUE2); //up left small
+            boxColor(surface, x1 + width, y2 - rheight * 2 + gapsize + 1, x1 + rwidth + width - 1, y2, YELLOW1); //bottom left small
+            boxColor(surface, x2 - rwidth - width + 1, y1, x2 - width, y1 + 2 * rheight - gapsize - 1, BLUE2); //up right small
+            boxColor(surface, x2 - rwidth - width + 1, y2 - rheight * 2 + gapsize + 1, x2 - width, y2, YELLOW1); //bottom right small
         }
     }
 
@@ -3855,37 +3861,39 @@ static void drawTestScreen() {
     }
 
     int monoradius = monosize * rwidth + gapsize;
+	Graphics::Surface monoscope;
+	monoscope.create(xres, yres, Graphics::PixelFormat::createFormatCLUT8());
 
     // two bottom rows
-    surface.fillRect(Common::Rect(x1, y2 - rheight + gapsize / 2 + 1, x2, y2 + rheight + gapsize / 2 + 1), YELLOW);
-    surface.fillRect(Common::Rect(xcenter - rwidth / 2, y2 - rheight + gapsize / 2 + 1, xcenter - rwidth / 2 + rwidth, y2 + rheight + gapsize / 2 + 1), RED2);
+    boxColor(monoscope, x1, y2 - rheight + gapsize / 2 + 1, x2, y2 + rheight + gapsize / 2 + 1, YELLOW);
+    boxColor(monoscope, xcenter - rwidth / 2, y2 - rheight + gapsize / 2 + 1, xcenter - rwidth / 2 + rwidth, y2 + rheight + gapsize / 2 + 1, RED2);
 
-    surface.fillRect(Common::Rect(x1, y2 - 2 * rheight + gapsize / 2 + 1, x2, y2 - rheight + gapsize / 2), WHITE);
-    surface.fillRect(Common::Rect(xres / 2 - rwidth * 3, y2 - 2 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight + gapsize / 2), BLACK);
+    boxColor(monoscope, x1, y2 - 2 * rheight + gapsize / 2 + 1, x2, y2 - rheight + gapsize / 2, WHITE);
+    boxColor(monoscope, xres / 2 - rwidth * 3, y2 - 2 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight + gapsize / 2, BLACK);
 
     // two top rows
-    surface.fillRect(Common::Rect(x1, y2 - 12 * rheight + gapsize / 2 + 1, x2, y2 - rheight * 10 + gapsize / 2), WHITE);
-    surface.fillRect(Common::Rect(xres / 2 - rwidth * 2, y2 - 11 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 2, y2 - rheight * 10 + gapsize / 2), BLACK);
+    boxColor(monoscope, x1, y2 - 12 * rheight + gapsize / 2 + 1, x2, y2 - rheight * 10 + gapsize / 2, WHITE);
+    boxColor(monoscope, xres / 2 - rwidth * 2, y2 - 11 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 2, y2 - rheight * 10 + gapsize / 2, BLACK);
 
-    surface.fillRect(Common::Rect(x1, y2 - 10 * rheight + gapsize / 2 + 1, x2, y2 - rheight * 9 + gapsize / 2), BLACK);
-    surface.fillRect(Common::Rect(xres / 2 - rwidth * 3, y2 - 10 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight * 9 + gapsize / 2), WHITE);
+    boxColor(monoscope, x1, y2 - 10 * rheight + gapsize / 2 + 1, x2, y2 - rheight * 9 + gapsize / 2, BLACK);
+    boxColor(monoscope, xres / 2 - rwidth * 3, y2 - 10 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight * 9 + gapsize / 2, WHITE);
 
     // color (gray) bars
     int greyColors[] = { BLACK, GRAY2, GRAY3, GRAY4, GRAY5, WHITE};
-    drawRow(surface, y2 - 3 * rheight + gapsize / 2 + 1, greyColors, 6, 0, rheight, monosize * (rwidth * 2) + 6, xres / 2 - rwidth * monosize - 4);
+    drawRow(monoscope, y2 - 3 * rheight + gapsize / 2 + 1, greyColors, 6, 0, rheight, monosize * (rwidth * 2) + 6, xres / 2 - rwidth * monosize - 4);
 
-    surface.fillRect(Common::Rect(x1, y2 - 6 * rheight + gapsize / 2 + 1, x2, y2 - 3 * rheight + gapsize / 2), BLACK);
+    boxColor(monoscope, x1, y2 - 6 * rheight + gapsize / 2 + 1, x2, y2 - 3 * rheight + gapsize / 2, BLACK);
 
     int topColors[] = { YELLOW, CYAN, GREEN, MAGENTA, RED, BLUE };
-    drawRow(surface, y2 - 8 * rheight + gapsize / 2 + 1, topColors, 6, 0, 2 * rheight, monosize * (rwidth * 2) + 6, xres / 2 - rwidth * monosize - 4);
+    drawRow(monoscope, y2 - 8 * rheight + gapsize / 2 + 1, topColors, 6, 0, 2 * rheight, monosize * (rwidth * 2) + 6, xres / 2 - rwidth * monosize - 4);
 
     // periodic gray and white
     int periodsize = monosize * (rwidth * 2) * 11 / 16 / 6;
     int blacksize = periodsize * 6 / 11;
-    surface.fillRect(Common::Rect(x1, y2 - 9 * rheight + gapsize / 2 + 1, x2, y2 - 8 * rheight + gapsize / 2), GRAY6);
+    boxColor(monoscope, x1, y2 - 9 * rheight + gapsize / 2 + 1, x2, y2 - 8 * rheight + gapsize / 2, GRAY6);
     for (i = 0; i < 5; i++) {
-        surface.fillRect(Common::Rect(xres / 2 + i * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 + i * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2), BLACK);
-        surface.fillRect(Common::Rect(xres / 2 - (i + 1) * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 - (i + 1) * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2), BLACK);
+        boxColor(monoscope, xres / 2 + i * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 + i * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2, BLACK);
+        boxColor(monoscope, xres / 2 - (i + 1) * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 - (i + 1) * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2, BLACK);
     }
 
     // small lines
@@ -3896,36 +3904,55 @@ static void drawTestScreen() {
     int blackorwhite = 0;
     for (i = xmin; i < xmax; i++) {
         step = 6 * (xmax - i - 1) / (xmax - xmin) + 1;
-        surface.fillRect(Common::Rect(i, y2 - 5 * rheight + gapsize / 2 + 1, i + step - 1, y2 - 3 * rheight + gapsize / 2), alternatingColors[blackorwhite++ % 2]);
+        boxColor(monoscope, i, y2 - 5 * rheight + gapsize / 2 + 1, i + step - 1, y2 - 3 * rheight + gapsize / 2, alternatingColors[blackorwhite++ % 2]);
         i += step - 1;
     }
 
     // horizontal middle part
-    surface.fillRect(Common::Rect(xcenter - rwidth / 2, y2 - 7 * rheight + gapsize / 2 + 1, xres / 2 + xres % 2 + rwidth / 2 - 1, y2 - 4 * rheight + gapsize / 2), BLACK);
-    surface.fillRect(Common::Rect(xres / 2 + xres % 2 - 1, y2 - 7 * rheight + gapsize / 2 + 1, xres / 2, y2 - 4 * rheight + gapsize / 2), WHITE);
-    surface.fillRect(Common::Rect(x1, yres / 2 + yres % 2 - 1, x2, yres / 2), WHITE);
+    boxColor(monoscope, xcenter - rwidth / 2, y2 - 7 * rheight + gapsize / 2 + 1, xres / 2 + xres % 2 + rwidth / 2 - 1, y2 - 4 * rheight + gapsize / 2, BLACK);
+    boxColor(monoscope, xres / 2 + xres % 2 - 1, y2 - 7 * rheight + gapsize / 2 + 1, xres / 2, y2 - 4 * rheight + gapsize / 2, WHITE);
+    boxColor(monoscope, x1, yres / 2 + yres % 2 - 1, x2, yres / 2, WHITE);
 
     // vertical lines in the middle
     for (i = x1 - gapsize; i < x2 + gapsize; i += rwidth) {
-        surface.fillRect(Common::Rect(i, y2 - 6 * rheight + gapsize / 2 + 1, i + gapsize - 1, y2 - 5 * rheight + gapsize / 2), WHITE);
+        boxColor(monoscope, i, y2 - 6 * rheight + gapsize / 2 + 1, i + gapsize - 1, y2 - 5 * rheight + gapsize / 2, WHITE);
     }
 
-    circleColorNoblend(surface, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, 3, WHITE, false);
-    circleColorNoblend(surface, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, monoradius, BLACK, true);
+    circleColorNoblend(monoscope, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, 3, WHITE, false);
+    circleColorNoblend(monoscope, (xres - 1.0) / 2.0, (yres - 1.0) / 2.0, monoradius, TRANSCOLOR, true);
 
-    //stringtobox(surface, xres / 2 - rwidth * 2, y2 - 11 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 2, y2 - rheight * 10 + gapsize / 2, settings.text_top, WHITE);
-    //stringtobox(surface, xres / 2 - rwidth * 3, y2 - 2 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight + gapsize / 2, settings.text_bottom, WHITE);
+	for (int y = 0; y < yres; y++) {
+		byte *src = (byte *)monoscope.getBasePtr(0, y);
+		byte *dst = (byte *)surface.getBasePtr(0, y);
+
+		for (int x = 0; x < xres; x++) {
+			if (*src != TRANSCOLOR)
+				*dst = *src;
+
+			dst++, src++;
+		}
+	}
+
+	monoscope.free();
+
+	Graphics::AmigaFont font;
+
+	y2 += (rheight - font.getFontHeight()) / 2;
+
+    font.drawString(&surface, "ScummVM", xres / 2 - rwidth * 2, y2 - 11 * rheight + gapsize / 2 + 1, rwidth * 4, WHITE, Graphics::kTextAlignCenter);
+    font.drawString(&surface, gScummVMVersion, xres / 2 - rwidth * 3, y2 - 2 * rheight + gapsize / 2 + 1, rwidth * 6, WHITE);
 
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, xres, yres);
-
 	g_system->updateScreen();
+
+	surface.free();
 }
 
 bool OptionsDialog::testGraphicsSettings() {
 	drawTestScreen();
 
 	// And display the error
-	GUI::CountdownMessageDialog dialog(_("Your shader scaler setting has been changed. Do you want to keep these settings?"),
+	GUI::CountdownMessageDialog dialog(_("Your shader scaler setting has been changed. A test screen must be visible now. Do you want to keep these settings?"),
 				10000,
 				_("Yes"), _("No"), Graphics::kTextAlignCenter,
 				_("Reverting in %d seconds"));
@@ -3935,6 +3962,10 @@ bool OptionsDialog::testGraphicsSettings() {
 	bool retval = (dialog.runModal() == GUI::kMessageOK);
 
 	g_gui.displayTopDialogOnly(false);
+
+	// Clear screen so we do not see any artefacts
+	g_system->fillScreen(BLACK);
+	g_system->updateScreen();
 
 	return retval;
 }
