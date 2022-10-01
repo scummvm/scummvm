@@ -124,6 +124,7 @@ public:
 	int _screenW;
 	int _screenH;
 	bool _isAmiga;
+	bool _isAtariST;
 
 	void computeScreenViewport();
 
