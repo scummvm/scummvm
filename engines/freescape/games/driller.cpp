@@ -145,6 +145,7 @@ void DrillerEngine::loadAssetsDemo() {
 		load8bitArea(file, 16);*/
 
 		load8bitBinary(file, 0x442, 16);
+		loadAmigaPalette(file, 0x0);
 	} else
 		error("Unsupported demo for Driller");
 }
