@@ -826,12 +826,34 @@ void OptionsDialog::apply() {
 				}
 
 				message += Common::U32String("\n");
-				message += _("the shader could not be changed. Reverting to the previous setting.");
+				message += _("the shader could not be changed");
 			}
 
 			// And display the error
 			GUI::MessageDialog dialog(message);
 			dialog.runModal();
+		} else {
+			// Successful transaction. Check if we need to show test screen
+			Common::String shader;
+			if (ConfMan.hasKey("shader", _domain))
+				shader = ConfMan.get("shader", _domain);
+
+			// If shader was change, show the test dialog
+			if (previousShader != shader) {
+				if (!testGraphicsSettings()) {
+					if (previousShader.empty()) {
+						ConfMan.removeKey("shader", _domain);
+						_shader->setLabel(_c("None", "shader"));
+					} else {
+						ConfMan.set("shader", previousShader.encode(), _domain);
+						_shader->setLabel(previousShader);
+					}
+
+					g_system->beginGFXTransaction();
+					g_system->setShader(ConfMan.get("shader", _domain));
+					g_system->endGFXTransaction();
+				}
+			}
 		}
 	}
 
@@ -3611,5 +3633,14 @@ void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse respons
 }
 #endif // USE_LIBCURL
 #endif // USE_CLOUD
+
+bool OptionsDialog::testGraphicsSettings() {
+	// And display the error
+	GUI::MessageDialog dialog(_("Your shader scaler setting has been changed. Do you want to keep these settings?"),
+				_("Yes"), _("No"));
+
+	// Reverting X seconds
+	return (dialog.runModal() == GUI::kMessageOK);
+}
 
 } // End of namespace GUI
