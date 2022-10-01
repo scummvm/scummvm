@@ -3636,10 +3636,11 @@ void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse respons
 
 bool OptionsDialog::testGraphicsSettings() {
 	// And display the error
-	GUI::MessageDialog dialog(_("Your shader scaler setting has been changed. Do you want to keep these settings?"),
-				_("Yes"), _("No"));
+	GUI::CountdownMessageDialog dialog(_("Your shader scaler setting has been changed. Do you want to keep these settings?"),
+				10000,
+				_("Yes"), _("No"), Graphics::kTextAlignCenter,
+				_("Reverting in %d seconds"));
 
-	// Reverting X seconds
 	return (dialog.runModal() == GUI::kMessageOK);
 }
 
