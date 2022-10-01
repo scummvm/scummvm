@@ -158,9 +158,19 @@ private:
 	bool damageType7();
 
 	/**
-	 * Writes different spell effects
+	 * Adds different spell effects to the lines
 	 */
 	void writeConditionEffect();
+
+	/**
+	 * Adds text for condition effects on the party
+	 */
+	void handlePartyEffects();
+
+	/**
+	 * Adds text for damage effects on the party
+	 */
+	void handlePartyDamage();
 
 	void setCondition(byte newCondition);
 	void proc9();
