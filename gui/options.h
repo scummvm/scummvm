@@ -90,7 +90,7 @@ protected:
 	virtual void build();
 	virtual void clean();
 	void rebuild();
-
+	bool testGraphicsSettings();
 
 	void addControlControls(GuiObject *boss, const Common::String &prefix);
 	void addKeyMapperControls(GuiObject *boss, const Common::String &prefix, const Common::Array<Common::Keymap *> &keymaps, const Common::String &domain);
