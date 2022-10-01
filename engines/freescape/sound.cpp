@@ -36,7 +36,11 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	if (isAmiga()) {
 		playPaulaSound(index, sync);
 		return;
+	} else if (isAtariST()) {
+		// TODO
+		return;
 	}
+
 
 	switch (index) {
 		case 1:
