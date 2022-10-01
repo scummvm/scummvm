@@ -139,7 +139,7 @@ protected:
 	/**
 	 * Get the monster index
 	 */
-	int getMonsterIndex() const {
+	int getMonsterIndex() const override {
 		return _monsterIndex;
 	}
 

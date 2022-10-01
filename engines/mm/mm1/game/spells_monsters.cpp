@@ -64,7 +64,8 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 };
 
 void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
-	_mmVal1 = _mmVal2 = _resistanceType = _mmVal4 = 0;
+	_mmVal1 = _mmVal2 = _newCondition = 0;
+	_resistanceType = RESISTANCE_MAGIC;
 
 	// All spell messages start with the monster who casts it
 	_lines.clear();
@@ -85,14 +86,39 @@ void SpellsMonsters::spell02_energyBlast() {
 	if (casts()) {		
 		add(STRING["monster_spells.energy_blast"]);
 		++_mmVal1;
-		_mmVal4 = getRandomNumber(16) + 4;
+		_newCondition = getRandomNumber(16) + 4;
 		damageRandomChar();
 	}
 }
 
-void SpellsMonsters::spell03_fire() {}
+void SpellsMonsters::spell03_fire() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.fire"].c_str()));
+	++_mmVal2;
+	_resistanceType = RESISTANCE_FIRE;
 
-void SpellsMonsters::spell04_blindness() {}
+	int count = g_globals->_encounters._arr1[getMonsterIndex()];
+	_newCondition += count * 6;
+
+	damageRandomChar();
+}
+
+void SpellsMonsters::spell04_blindness() {
+	if (casts()) {
+		add(STRING["monster_spells.blindness"]);
+		++_mmVal1;
+		++_mmVal2;
+		_newCondition = 2;
+
+		add(':');
+
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			g_globals->_currCharacter = &g_globals->_party[i];
+			writeConditionEffect();
+		}
+	}
+}
 
 void SpellsMonsters::spell05_sprayPoison() {}
 
@@ -192,7 +218,7 @@ bool SpellsMonsters::isCharAffected() const {
 
 void SpellsMonsters::handleDamage() {
 	_mmVal5 = 1;
-	_damage = _mmVal4;
+	_damage = _newCondition;
 
 	if (charAffected()) {
 		if (isEffective()) {
@@ -367,6 +393,47 @@ bool SpellsMonsters::damageType7() {
 	} else {
 		int threshold = g_globals->_currCharacter->_resistances._s._psychic;
 		return randomThreshold(threshold);
+	}
+}
+
+void SpellsMonsters::writeConditionEffect() {
+	_mmVal5 = 0;
+	int effectNum;
+
+	if (!charAffected() || !isEffective() || !testElementalResistance())
+		return;
+
+	if (_newCondition == 0) {
+		effectNum = 10;
+	} else if (_newCondition & BAD_CONDITION) {
+		if (!(_newCondition & (BAD_CONDITION | DEAD)))
+			effectNum = 7;
+		else if (!(_newCondition & (BAD_CONDITION | STONE)))
+			effectNum = 8;
+		else if (_newCondition == ERADICATED)
+			effectNum = 9;
+		else
+			effectNum = 10;
+	} else {
+		effectNum = 0;
+
+		for (byte bitset = _newCondition; bitset & 1;
+			++effectNum, bitset >>= 1) {
+		}
+	}
+
+	add(STRING[Common::String::format("monster_spells.effects.%d",
+		effectNum)]);
+	add('!');
+}
+
+void SpellsMonsters::setCondition(byte newCondition) {
+	Character &c = *g_globals->_currCharacter;
+
+	if (!(c._condition & BAD_CONDITION)) {
+		c._condition |= newCondition;
+	} else if (newCondition & BAD_CONDITION) {
+		c._condition = newCondition;
 	}
 }
 

@@ -45,7 +45,6 @@ private:
 	int _monsterNum16 = 0;
 	int _totalLevels = 0;
 	int _monsterNum = 0;
-	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _monsIndexes[MAX_COMBAT_MONSTERS];
 
 	void randomAdjust();
@@ -59,6 +58,8 @@ public:
 	int _highestLevel = 0;
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
+	byte _arr1[MAX_COMBAT_MONSTERS];
+
 public:
 	/**
 	 * Start an encounter
