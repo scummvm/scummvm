@@ -212,6 +212,11 @@ public:
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
 
+	void playPaulaSound(int index, bool sync);
+	void loadAmigaSounds(Common::SeekableReadStream *file, int offset, int number);
+	Common::HashMap<uint16, byte*> _amigaSoundsBuffer;
+	Common::HashMap<uint16, int> _amigaSoundsSize;
+
 	// Rendering
 	int _screenW, _screenH;
 	Renderer *_gfx;

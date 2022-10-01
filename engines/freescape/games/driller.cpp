@@ -167,9 +167,13 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadGlobalObjects(file, 0xbd62);
 			load8bitBinary(file, 0x29c16, 16);
 			loadAmigaPalette(file, 0x297d4);
+			loadAmigaSounds(file, 0x30e80, 25);
 		} else if (_variant == "Kixx") {
 			load8bitBinary(file, 0x21a3e, 16);
 			loadAmigaPalette(file, 0x215fc);
+
+			file = gameDir.createReadStreamForMember("soundfx");
+			loadAmigaSounds(file, 0, 25);
 		}
 	} else if (_renderMode == "ega") {
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
