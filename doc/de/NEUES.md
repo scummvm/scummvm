@@ -1,6 +1,12 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
+#### 2.6.1 (XX.XX.2022)
+
+ Allgemein:
+   - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
+
+
 #### 2.6.0 "Insane Escapism" (01.08.2022)
 
  Neue Spiele:
