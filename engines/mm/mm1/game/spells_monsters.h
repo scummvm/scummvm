@@ -55,7 +55,7 @@ private:
 	void spell06_sprayAcid();
 	void spell07_sleep();
 	void spell08_paralyze();
-	void spell09_dispell();
+	void spell09_dispel();
 	void spell10_lightningBolt();
 	void spell11_strangeGas();
 	void spell12_explode();
@@ -178,6 +178,7 @@ private:
 protected:
 	virtual bool canMonsterCast() const = 0;
 	virtual int getMonsterIndex() const = 0;
+	virtual void dispelParty() = 0;
 
 public:
 	/**

@@ -416,7 +416,7 @@ void Character::updateSP() {
 	_sp = newSP;
 }
 
-void Character::update58() {
+void Character::updateResistances() {
 	for (int i = 0; i < 8; ++i)
 		_resistances._arr[i]._current = _resistances._arr[i]._base;
 }
@@ -472,7 +472,7 @@ void Character::rest() {
 	updateSP();
 	updateAttributes();
 	updateAC();
-	update58();
+	updateResistances();
 
 	_condition &= ~(ASLEEP | BLINDED | SILENCED |
 		PARALYZED | UNCONSCIOUS);
