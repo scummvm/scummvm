@@ -78,6 +78,8 @@ For a more comprehensive changelog of the latest experimental code, see:
 
 #### 2.6.1 (2022-XX-XX)
 
+ General:
+   - Various improvements to the icon-based grid view in the ScummVM launcher.
 
 #### 2.6.0 "Insane Escapism" (2022-08-01)
 

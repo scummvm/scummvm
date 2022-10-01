@@ -78,6 +78,11 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
 
 
+#### 2.6.1 (XX.XX.2022)
+
+ Allgemein:
+   - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
+
 #### 2.6.0 "Insane Escapism" (2022-08-01)
 
  Neue Spiele:
