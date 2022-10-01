@@ -23,6 +23,7 @@
 #define MM1_GAME_SPELLS_MONSTERS
 
 #include "mm/mm1/game/game_logic.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/messages.h"
 #include "common/str.h"
 
@@ -40,9 +41,11 @@ private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
 	LineArray _lines;
 	int _mmVal1 = 0, _mmVal2 = 0;
-	int _resistanceType = 0, _mmVal4 = 0;
-	int _mmVal5 = 0, _damage = 0;
+	byte _newCondition = 0;
+	int _mmVal5 = 0;
 	int _mmVal7 = 0;
+	Resistance _resistanceType = RESISTANCE_MAGIC;
+	int _damage = 0;
 
 	void spell01_curse();
 	void spell02_energyBlast();
@@ -142,8 +145,10 @@ private:
 	void subtractDamage();
 
 	bool testElementalResistance();
-	void proc9();
 
+	/**
+	 * Test whether character resists different damage types
+	 */
 	bool damageType1();
 	bool damageType2();
 	bool damageType3();
@@ -152,8 +157,17 @@ private:
 	bool damageType6();
 	bool damageType7();
 
+	/**
+	 * Writes different spell effects
+	 */
+	void writeConditionEffect();
+
+	void setCondition(byte newCondition);
+	void proc9();
+
 protected:
 	virtual bool canMonsterCast() const = 0;
+	virtual int getMonsterIndex() const = 0;
 
 public:
 	/**
