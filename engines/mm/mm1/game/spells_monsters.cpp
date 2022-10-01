@@ -37,7 +37,7 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 	&SpellsMonsters::spell06_sprayAcid,
 	&SpellsMonsters::spell07_sleep,
 	&SpellsMonsters::spell08_paralyze,
-	&SpellsMonsters::spell09_dispell,
+	&SpellsMonsters::spell09_dispel,
 	&SpellsMonsters::spell10_lightningBolt,
 	&SpellsMonsters::spell11_strangeGas,
 	&SpellsMonsters::spell12_explode,
@@ -161,13 +161,48 @@ void SpellsMonsters::spell08_paralyze() {
 	}
 }
 
-void SpellsMonsters::spell09_dispell() {}
+void SpellsMonsters::spell09_dispel() {
+	if (casts()) {
+		add(STRING["monster_spells.dispel"]);
+		dispelParty();
+	}
+}
 
-void SpellsMonsters::spell10_lightningBolt() {}
+void SpellsMonsters::spell10_lightningBolt() {
+	if (casts()) {
+		add(STRING["monster_spells.lightning_bolt"]);
+		++_mmVal1;
+		++_mmVal2;
+		_resistanceType = RESISTANCE_ELECTRICITY;
+		_newCondition = getRandomNumber(37) + 5;
+		damageRandomChar();
+	}
+}
 
-void SpellsMonsters::spell11_strangeGas() {}
+void SpellsMonsters::spell11_strangeGas() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.strange_gas"].c_str()));
+	++_mmVal2;
+	_resistanceType = RESISTANCE_POISON;
+	_newCondition = BAD_CONDITION | STONE;
 
-void SpellsMonsters::spell12_explode() {}
+	handlePartyEffects();
+}
+
+void SpellsMonsters::spell12_explode() {
+	/*
+	add(STRING["monster_spells.explode"]);
+	++_mmVal2;
+	_resistanceType = RESISTANCE_POISON;
+	_newCondition = getRandomNumber(_arr1[getMonsterIndex()]);
+	_arr1[getMonsterIndex()] = 0;
+	removeMonster();
+
+	add(':');
+	handlePartyDamage();
+	*/
+}
 
 void SpellsMonsters::spell13_fireball() {}
 

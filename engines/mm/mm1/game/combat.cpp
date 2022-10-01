@@ -196,6 +196,32 @@ bool Combat::canMonsterCast() const {
 		!(_monsterStatus[_monsterIndex] & (MONFLAG_BLIND | MONFLAG_SILENCED));
 }
 
+void Combat::dispelParty() {
+	g_globals->_spells.clear();
+	Character *tmpC = g_globals->_currCharacter;
+	Monster *tmpM = _monsterP;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+		c.updateAttributes();
+		c.updateAC();
+		c.updateResistances();
+
+		if (!(c._condition & BAD_CONDITION))
+			c._condition &= ~(BLINDED | SILENCED);
+	}
+
+	g_globals->_currCharacter = tmpC;
+
+	for (uint i = 0; i < _monsterList.size(); ++i) {
+		monsterSetPtr(i);
+		_monsterStatus[i] = 0;
+	}
+
+	_monsterP = tmpM;
+}
+
 void Combat::combatLoop() {
 	if (_monsterIndex != 0) {
 		selectParty();

@@ -84,7 +84,7 @@ void Party::combatDone() {
 	for (uint i = 0; i < size(); ++i) {
 		Character &c = (*this)[i];
 		c.updateAttributes();
-		c.update58();
+		c.updateResistances();
 
 		if (!(c._condition & BAD_CONDITION))
 			c._condition &= ~(ASLEEP | SILENCED);

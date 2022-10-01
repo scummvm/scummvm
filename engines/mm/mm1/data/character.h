@@ -308,7 +308,7 @@ struct Character {
 	 */
 	void updateSP();
 
-	void update58();
+	void updateResistances();
 
 	/**
 	 * Gets a character's condition string

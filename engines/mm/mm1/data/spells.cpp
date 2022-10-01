@@ -33,6 +33,10 @@
 namespace MM {
 namespace MM1 {
 
+void ActiveSpells::clear() {
+	Common::fill(&_arr[0], &_arr[ACTIVE_SPELLS_COUNT], 0);
+}
+
 Spells::SpellFn Spells::SPELLS[SPELLS_COUNT] = {
 	// Cleric spells
 	placeholder,

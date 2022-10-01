@@ -127,7 +127,22 @@ protected:
 
 	/*------- Inherited virtual methods ------*/
 
+	/**
+	 * Get the monster index
+	 */
+	int getMonsterIndex() const override {
+		return _monsterIndex;
+	}
+
+	/**
+	 * Returns true if a monster can cast certain spells
+	 */
 	bool canMonsterCast() const override;
+
+	/**
+	 * Dispels any effects on the party
+	 */
+	void dispelParty() override;
 
 	/*------- combat execution ------*/
 
@@ -135,13 +150,6 @@ protected:
 	 * Start of the main combat loop
 	 */
 	void combatLoop();
-
-	/**
-	 * Get the monster index
-	 */
-	int getMonsterIndex() const override {
-		return _monsterIndex;
-	}
 
 	/**
 	 * Select treasure for a defeated monster

@@ -64,6 +64,9 @@ struct ActiveSpellsStruct {
 union ActiveSpells {
 	ActiveSpellsStruct _s;
 	byte _arr[ACTIVE_SPELLS_COUNT];
+
+	ActiveSpells() { clear(); }
+	void clear();
 };
 
 class Spells {
