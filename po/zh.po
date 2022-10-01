@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-30 01:07+0000\n"
-"PO-Revision-Date: 2022-09-30 10:37+0000\n"
+"PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/zh/>\n"
@@ -1479,7 +1479,7 @@ msgstr "FluidSynth设置"
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
-msgstr ""
+msgstr "標註您的存檔會存在什麼位置.紅色表示這數值為暫時的將不會被保存"
 
 #: gui/options.cpp:2296
 msgid "Theme Path:"
@@ -1623,71 +1623,71 @@ msgstr "更新圖標"
 
 #: gui/options.cpp:2482
 msgid "Active storage:"
-msgstr ""
+msgstr "啟用儲存空間:"
 
 #: gui/options.cpp:2482
 msgid "Active cloud storage"
-msgstr ""
+msgstr "啟用雲端儲存空間"
 
 #: gui/options.cpp:2491
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
 
 #: gui/options.cpp:2493
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
-msgstr ""
+msgstr "4. 儲存空間尚未啟用. 驗證使用者名稱來啟用它:"
 
 #: gui/options.cpp:2494
 msgid "Enable storage"
-msgstr ""
+msgstr "啟用儲存空間"
 
 #: gui/options.cpp:2494
 msgid "Confirm you want to use this account for this storage"
-msgstr ""
+msgstr "確認是否要在這個儲存空間中使用這個使用者名稱"
 
 #: gui/options.cpp:2496 backends/platform/wii/options.cpp:113
 msgid "Username:"
-msgstr ""
+msgstr "使用者名稱:"
 
 #: gui/options.cpp:2496
 msgid "Username used by this storage"
-msgstr ""
+msgstr "儲存空間使用的使用者名稱"
 
 #: gui/options.cpp:2497
 msgid "<none>"
-msgstr ""
+msgstr "<無>"
 
 #: gui/options.cpp:2499
 msgid "Used space:"
-msgstr ""
+msgstr "已使用容量:"
 
 #: gui/options.cpp:2499
 msgid "Space used by ScummVM's saved games on this storage"
-msgstr ""
+msgstr "在這空間中已用於保存ScummVM遊戲存檔的容量"
 
 #: gui/options.cpp:2502
 msgid "Last sync:"
-msgstr ""
+msgstr "上一次同步:"
 
 #: gui/options.cpp:2502
 msgid "When was the last time saved games were synced with this storage"
-msgstr ""
+msgstr "上一次同步遊戲存檔到空間中的時間"
 
 #: gui/options.cpp:2503 gui/options.cpp:3378
 msgid "<never>"
-msgstr ""
+msgstr "<永遠不要>"
 
 #: gui/options.cpp:2505
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "運行,讀取或儲存前自動同步遊戲存檔."
 
 #: gui/options.cpp:2507
 msgid "Saved games sync automatically on launch, after saving and on loading."
-msgstr ""
+msgstr "運行,讀取或儲存前自動同步遊戲存檔."
 
 #: gui/options.cpp:2508
 msgid "Sync now"
