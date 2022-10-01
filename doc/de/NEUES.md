@@ -77,13 +77,12 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Der Bildschirm wird nun nicht mehr zentriert, wenn ein Inventar-Item aktiviert wird.
    - Wenn man W drückt, um mit Leuten zu sprechen, springt man nicht mehr automatisch.
 
-
 #### 2.6.1 (XX.XX.2022)
 
  Allgemein:
    - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
 
-#### 2.6.0 "Insane Escapism" (2022-08-01)
+#### 2.6.0 "Insane Escapism" (01.08.2022)
 
  Neue Spiele:
    - Unterstützung für Sanitarium hinzugefügt.
