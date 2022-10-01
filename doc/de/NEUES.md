@@ -6,7 +6,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  Allgemein:
    - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
 
-
 #### 2.6.0 "Insane Escapism" (01.08.2022)
 
  Neue Spiele:
@@ -189,7 +188,6 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Nintendo DS-Portierung:
    - Der Bildschirm wird nun in Lade- und Speicher-Dialogen korrekt gescrollt.
-
 
 #### 2.5.1 (02.01.2022)
 
