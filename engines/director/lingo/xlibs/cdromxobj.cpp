@@ -162,25 +162,25 @@ void CDROMXObj::close(int type) {
 	if (type == kXObj) {
 		CDROMXObject::cleanupMethods();
 		g_lingo->_globalvars[xlibName] = Datum();
-        g_director->_system->getAudioCDManager()->close();
+		g_director->_system->getAudioCDManager()->close();
 	}
 }
 
 
 CDROMXObject::CDROMXObject(ObjectType ObjectType) :Object<CDROMXObject>("AppleAudioCD") {
 	_objType = ObjectType;
-    // Initialize _cdda_status
-    _cdda_status.playing = false;
-    _cdda_status.track = 0;
-    _cdda_status.start = 0;
-    _cdda_status.duration = 0;
-    _cdda_status.numLoops = 0;
-    _cdda_status.volume = Audio::Mixer::kMaxChannelVolume;
-    _cdda_status.balance = 0;
+	// Initialize _cdda_status
+	_cdda_status.playing = false;
+	_cdda_status.track = 0;
+	_cdda_status.start = 0;
+	_cdda_status.duration = 0;
+	_cdda_status.numLoops = 0;
+	_cdda_status.volume = Audio::Mixer::kMaxChannelVolume;
+	_cdda_status.balance = 0;
 }
 
 void CDROMXObj::m_new(int nargs) {
-    g_director->_system->getAudioCDManager()->open();
+	g_director->_system->getAudioCDManager()->open();
 	g_lingo->printSTUBWithArglist("CDROMXObj::m_new", nargs);
 	g_lingo->dropStack(nargs);
 	g_lingo->push(g_lingo->_currentMe);
@@ -192,67 +192,67 @@ void CDROMXObj::m_name(int nargs) {
 }
 
 void CDROMXObj::m_play(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    // This is a request to play the current track from the start,
-    // which we can't do if there's no track information.
-    if (me->_cdda_status.track == 0)
-        return;
+	// This is a request to play the current track from the start,
+	// which we can't do if there's no track information.
+	if (me->_cdda_status.track == 0)
+		return;
 
-    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, 0, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playTrack(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    int track = g_lingo->pop().asInt();
-    g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	int track = g_lingo->pop().asInt();
+	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 // Name format is "TRACK NN", with one-digit tracks padded with a leading space
 void CDROMXObj::m_playName(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
 	Common::String track = g_lingo->pop().asString();
-    if (track.size() < 8) {
-        warning("CDROMXObj::m_playName: specified name has an invalid format (provided string was %s)", track.c_str());
-        return;
-    }
-    Common::String trackNum = track.substr(6, 2);
-    // Remove the leading string as needed
-    if (trackNum.substr(0, 1) == " ")
-        trackNum = trackNum.substr(1, 1);
+	if (track.size() < 8) {
+		warning("CDROMXObj::m_playName: specified name has an invalid format (provided string was %s)", track.c_str());
+		return;
+	}
+	Common::String trackNum = track.substr(6, 2);
+	// Remove the leading string as needed
+	if (trackNum.substr(0, 1) == " ")
+		trackNum = trackNum.substr(1, 1);
 
-    int trackNumI = atoi(trackNum.c_str());
-    if (trackNumI < 1) {
-        warning("CDROMXObj::m_playName: track number failed to parse (provided string was %s)", track.c_str());
-    }
+	int trackNumI = atoi(trackNum.c_str());
+	if (trackNumI < 1) {
+		warning("CDROMXObj::m_playName: track number failed to parse (provided string was %s)", track.c_str());
+	}
 
-    g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(trackNumI, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_playAbsTime(int nargs) {
 	Datum min = g_lingo->pop();
-    Datum sec = g_lingo->pop();
-    Datum frac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
-    debug(5, "STUB: CDROMXObj::m_playAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
+	Datum sec = g_lingo->pop();
+	Datum frac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
+	debug(5, "STUB: CDROMXObj::m_playAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
 	g_lingo->push(Datum());
 }
 
 void CDROMXObj::m_playSegment(int nargs) {
-    Datum startMin = g_lingo->pop();
-    Datum startSec = g_lingo->pop();
-    Datum startFrac = g_lingo->pop();
-    Datum endMin = g_lingo->pop();
-    Datum endSec = g_lingo->pop();
-    Datum endFrac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
+	Datum startMin = g_lingo->pop();
+	Datum startSec = g_lingo->pop();
+	Datum startFrac = g_lingo->pop();
+	Datum endMin = g_lingo->pop();
+	Datum endSec = g_lingo->pop();
+	Datum endFrac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
 	debug(5, "STUB: CDROMXObj::m_playSegment Request to play starting at %i:%i.%i and ending at %i:%i.%i", startMin.asInt(), startSec.asInt(), startFrac.asInt(), endMin.asInt(), endSec.asInt(), endFrac.asInt());
 	g_lingo->push(Datum());
 }
@@ -264,92 +264,92 @@ void CDROMXObj::m_askPlay(int nargs) {
 }
 
 void CDROMXObj::m_stepFwd(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track + 1, -1, 0, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track + 1, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stepBwd(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    int track = me->_cdda_status.track - 1;
-    if (track < 1)
-        track = 1;
+	int track = me->_cdda_status.track - 1;
+	if (track < 1)
+		track = 1;
 
-    g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_pause(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    // Leaves a trace of the current position so we can resume from it
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
-    me->_cdda_status.playing = false;
-    g_director->_system->getAudioCDManager()->stop();
+	// Leaves a trace of the current position so we can resume from it
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	me->_cdda_status.playing = false;
+	g_director->_system->getAudioCDManager()->stop();
 }
 
 void CDROMXObj::m_continue(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    // Can only resume if there's data to resume from
-    if (me->_cdda_status.track == 0)
-        return;
+	// Can only resume if there's data to resume from
+	if (me->_cdda_status.track == 0)
+		return;
 
-    g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, me->_cdda_status.start, 0);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track, -1, me->_cdda_status.start, 0);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stop(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    g_director->_system->getAudioCDManager()->stop();
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->stop();
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopTrack(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    Datum track = g_lingo->pop();
-    AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
+	Datum track = g_lingo->pop();
+	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
-    if (!status.playing)
-        return;
+	if (!status.playing)
+		return;
 
-    // stopTrack isn't "stop now", but "stop after this track".
-    // This play command ensures we continue from here and end with this
-    // track, regardless of previous commands.
-    g_director->_system->getAudioCDManager()->play(status.track, 1, status.start, status.start + status.duration);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	// stopTrack isn't "stop now", but "stop after this track".
+	// This play command ensures we continue from here and end with this
+	// track, regardless of previous commands.
+	g_director->_system->getAudioCDManager()->play(status.track, 1, status.start, status.start + status.duration);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopAbsTime(int nargs) {
-    Datum min = g_lingo->pop();
-    Datum sec = g_lingo->pop();
-    Datum frac = g_lingo->pop();
-    // Can't implement this without implementing a full CD TOC, since
-    // it doesn't interact with songs at the "track" level.
-    debug(5, "STUB: CDROMXObj::m_stopAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
+	Datum min = g_lingo->pop();
+	Datum sec = g_lingo->pop();
+	Datum frac = g_lingo->pop();
+	// Can't implement this without implementing a full CD TOC, since
+	// it doesn't interact with songs at the "track" level.
+	debug(5, "STUB: CDROMXObj::m_stopAbsTime Request to play starting at %i:%i.%i", min.asInt(), sec.asInt(), frac.asInt());
 	g_lingo->dropStack(nargs);
 	g_lingo->push(Datum());
 }
 
 void CDROMXObj::m_removeStop(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
-    Datum track = g_lingo->pop();
-    AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
+	Datum track = g_lingo->pop();
+	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
 
-    if (!status.playing)
-        return;
+	if (!status.playing)
+		return;
 
-    g_director->_system->getAudioCDManager()->play(status.track, -1, status.start, status.start + status.duration);
-    me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
+	g_director->_system->getAudioCDManager()->play(status.track, -1, status.start, status.start + status.duration);
+	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_eject(int nargs) {
-    warning("If you had had a CD drive, it would have ejected just now.");
+	warning("If you had had a CD drive, it would have ejected just now.");
 }
 
 // Valid strings are:
@@ -360,12 +360,12 @@ void CDROMXObj::m_eject(int nargs) {
 // "Error occurred during audio play"
 // "Not currently playing"
 void CDROMXObj::m_status(int nargs) {
-    // A fuller implementation could also track data to return the
-    // "pause" and "completed" states.
-    if (g_director->_system->getAudioCDManager()->isPlaying())
-        g_lingo->push(Datum("Audio play in progress"));
-    else
-        g_lingo->push(Datum("Not currently playing"));
+	// A fuller implementation could also track data to return the
+	// "pause" and "completed" states.
+	if (g_director->_system->getAudioCDManager()->isPlaying())
+		g_lingo->push(Datum("Audio play in progress"));
+	else
+		g_lingo->push(Datum("Not currently playing"));
 }
 
 // Valid strings are:
@@ -394,8 +394,8 @@ void CDROMXObj::m_status(int nargs) {
 // "Left and right channels through"
 // "both left channel and right channel (Mono)"
 void CDROMXObj::m_playMode(int nargs) {
-    // For now, nothing to change modes is implemented, so just return
-    // a default
+	// For now, nothing to change modes is implemented, so just return
+	// a default
 	g_lingo->push(Datum("Right channel through right channel (Stereo)"));
 }
 
@@ -403,12 +403,12 @@ void CDROMXObj::m_playMode(int nargs) {
 // "audio channels without preemphasis"
 // "audio channels with preemphasis"
 void CDROMXObj::m_currentFormat(int nargs) {
-    // Preemphasis not implemented, so just return this
+	// Preemphasis not implemented, so just return this
 	g_lingo->push(Datum("audio channels without preemphasis"));
 }
 
 void CDROMXObj::m_currentTrack(int nargs) {
-    CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
 
 	g_lingo->push(Datum(me->_cdda_status.track));
 }
