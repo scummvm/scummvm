@@ -27,12 +27,13 @@
 #include "mm/mm1/data/party.h"
 #include "mm/mm1/game/game_logic.h"
 #include "mm/mm1/game/encounter.h"
+#include "mm/mm1/game/spells_monsters.h"
 
 namespace MM {
 namespace MM1 {
 namespace Game {
 
-class Combat : public GameLogic {
+class Combat : public GameLogic, public SpellsMonsters {
 protected:
 	Common::Array<Monster> &_monsterList;
 	int _monstersCount = 0;
@@ -123,6 +124,10 @@ protected:
 	 * Sets up the handicap for the encounter
 	 */
 	void setupHandicap();
+
+	/*------- Inherited virtual methods ------*/
+
+	bool canMonsterCast() const override;
 
 	/*------- combat execution ------*/
 
