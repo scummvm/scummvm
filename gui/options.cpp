@@ -3641,7 +3641,13 @@ bool OptionsDialog::testGraphicsSettings() {
 				_("Yes"), _("No"), Graphics::kTextAlignCenter,
 				_("Reverting in %d seconds"));
 
-	return (dialog.runModal() == GUI::kMessageOK);
+	g_gui.displayTopDialogOnly(true);
+
+	bool retval = (dialog.runModal() == GUI::kMessageOK);
+
+	g_gui.displayTopDialogOnly(false);
+
+	return retval;
 }
 
 } // End of namespace GUI
