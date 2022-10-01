@@ -53,6 +53,11 @@ namespace Scumm {
 #define DIMUSE_BUFFER_MUSIC   2
 #define DIMUSE_BUFFER_SMUSH   3
 
+#define DIMUSE_TIMER_BASE_RATE_HZ       50
+#define DIMUSE_TIMER_BASE_RATE_USEC     20000  // 1000000 / 50Hz
+#define DIMUSE_TIMER_GAIN_RED_RATE_USEC 100000 // 1000000 / 10Hz
+#define DIMUSE_TIMER_FADES_RATE_USEC    16667  // 1000000 / 60Hz
+
 // Parameters IDs
 #define DIMUSE_P_BOGUS_ID       0x0
 #define DIMUSE_P_SND_TRACK_NUM  0x100
@@ -69,6 +74,55 @@ namespace Scumm {
 #define DIMUSE_P_SND_HAS_STREAM 0x1800
 #define DIMUSE_P_STREAM_BUFID   0x1900
 #define DIMUSE_P_SND_POS_IN_MS  0x1A00
+
+// Soundkludge command IDs
+#define DIMUSE_C_KLUDGE_SET_STATE        0x1000
+#define DIMUSE_C_KLUDGE_SET_SEQUENCE     0x1001
+#define DIMUSE_C_KLUDGE_SET_CUE_POINT    0x1002
+#define DIMUSE_C_KLUDGE_SET_ATTRIBUTE    0x1003
+#define DIMUSE_C_KLUDGE_SET_SFX_VOLUME   0x2000
+#define DIMUSE_C_KLUDGE_SET_VOICE_VOLUME 0x2001
+#define DIMUSE_C_KLUDGE_SET_MUSIC_VOLUME 0x2002
+#define DIMUSE_C_KLUDGE_STOP_ALL_SNDS    10
+#define DIMUSE_C_KLUDGE_SET_PARAM        12
+#define DIMUSE_C_KLUDGE_FADE_PARAM       14
+#define DIMUSE_C_KLUDGE_START_STREAM     25
+#define DIMUSE_C_KLUDGE_SWITCH_STREAM    26
+
+// Script command IDs
+#define DIMUSE_C_SCRIPT_INIT          0
+#define DIMUSE_C_SCRIPT_TERMINATE     1
+#define DIMUSE_C_SCRIPT_SAVE          2
+#define DIMUSE_C_SCRIPT_RESTORE       3
+#define DIMUSE_C_SCRIPT_REFRESH       4
+#define DIMUSE_C_SCRIPT_SET_STATE     5
+#define DIMUSE_C_SCRIPT_SET_SEQUENCE  6
+#define DIMUSE_C_SCRIPT_CUE_POINT     7
+#define DIMUSE_C_SCRIPT_SET_ATTRIBUTE 8
+
+// Internal command IDs
+#define DIMUSE_C_INIT             0
+#define DIMUSE_C_PAUSE            3
+#define DIMUSE_C_RESUME           4
+#define DIMUSE_C_SET_GRP_VOL      7
+#define DIMUSE_C_START_SND        8
+#define DIMUSE_C_STOP_SND         9
+#define DIMUSE_C_STOP_ALL_SNDS    10
+#define DIMUSE_C_GET_NEXT_SND     11
+#define DIMUSE_C_SET_PARAM        12
+#define DIMUSE_C_GET_PARAM        13
+#define DIMUSE_C_FADE_PARAM       14
+#define DIMUSE_C_SET_HOOK         15
+#define DIMUSE_C_GET_HOOK         16
+#define DIMUSE_C_SET_TRIGGER      17
+#define DIMUSE_C_CHECK_TRIGGER    18
+#define DIMUSE_C_CLEAR_TRIGGER    19
+#define DIMUSE_C_DEFER_CMD        20
+#define DIMUSE_C_GET_MARKER_SYNCS 21
+#define DIMUSE_C_START_STREAM     25
+#define DIMUSE_C_SWITCH_STREAM    26
+#define DIMUSE_C_PROCESS_STREAMS  27
+#define DIMUSE_C_FEED_STREAM      29
 
 struct IMuseDigiDispatch;
 struct IMuseDigiTrack;
