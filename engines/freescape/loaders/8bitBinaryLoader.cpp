@@ -511,6 +511,7 @@ void FreescapeEngine::loadBorder() {
 	else
 		borderFilename = _targetName + "_" + _renderMode + ".bmp";
 
+	Common::replace(borderFilename, "-demo", "");
 	if (_dataBundle->hasFile(borderFilename)) {
 		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
 		decoder.loadStream(*borderFile);
