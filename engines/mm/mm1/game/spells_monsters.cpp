@@ -64,7 +64,7 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 };
 
 void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
-	_mmVal1 = _mmVal2 = _mmVal3 = _mmVal4 = 0;
+	_mmVal1 = _mmVal2 = _resistanceType = _mmVal4 = 0;
 
 	// All spell messages start with the monster who casts it
 	_lines.clear();
@@ -86,7 +86,7 @@ void SpellsMonsters::spell02_energyBlast() {
 		add(STRING["monster_spells.energy_blast"]);
 		++_mmVal1;
 		_mmVal4 = getRandomNumber(16) + 4;
-		proc1();
+		damageRandomChar();
 	}
 }
 
@@ -160,7 +160,7 @@ bool SpellsMonsters::casts() {
 	}
 }
 
-void SpellsMonsters::proc1() {
+void SpellsMonsters::damageRandomChar() {
 	chooseCharacter();
 	handleDamage();
 }
@@ -185,7 +185,7 @@ void SpellsMonsters::chooseCharacter() {
 }
 
 bool SpellsMonsters::isCharAffected() const {
-	int val = g_globals->_currCharacter->_arr58._s._v58 +
+	int val = g_globals->_currCharacter->_resistances._s._magic._current +
 		g_globals->_spells._s.magic;
 	return randomThreshold(val);
 }
@@ -196,13 +196,13 @@ void SpellsMonsters::handleDamage() {
 
 	if (charAffected()) {
 		if (isEffective()) {
-			proc6();
+			if (testElementalResistance()) {
+				if (g_globals->_spells._s.power_shield)
+					_damage = 1;
 
-			if (g_globals->_spells._s.power_shield)
-				_damage = 1;
-
-			writeDamage();
-			subtractDamage();
+				writeDamage();
+				subtractDamage();
+			}
 		}
 	}
 }
@@ -236,8 +236,38 @@ bool SpellsMonsters::isEffective() {
 	return true;
 }
 
-void SpellsMonsters::proc6() {
+bool SpellsMonsters::testElementalResistance() {
+	bool result = false;
 
+	switch (_resistanceType) {
+	case RESISTANCE_FIRE:
+		result = damageType1(); break;
+	case RESISTANCE_COLD:
+		result = damageType2(); break;
+	case RESISTANCE_ELECTRICITY:
+		result = damageType3(); break;
+	case RESISTANCE_ACID:
+		result = damageType4(); break;
+	case RESISTANCE_FEAR:
+		result = damageType5(); break;
+	case RESISTANCE_POISON:
+		result = damageType6(); break;
+	case RESISTANCE_PSYCHIC:
+		result = damageType7(); break;
+	default:
+		break;
+	}
+
+	if (!result) {
+		if (_mmVal5) {
+			_damage >>= 2;
+		} else {
+			add(STRING["monster_spells.not_affected"]);
+			return false;
+		}
+	}
+
+	return true;
 }
 
 void SpellsMonsters::writeDamage() {
@@ -289,6 +319,55 @@ void SpellsMonsters::proc9() {
 
 	int randVal = getRandomNumber(100);
 	_mmVal7 = randVal < 99 && randVal <= val ? 1 : 0;
+}
+
+bool SpellsMonsters::damageType1() {
+	int threshold = g_globals->_currCharacter->_resistances._s._fire +
+		g_globals->_spells._s.fire;
+	return randomThreshold(threshold);
+}
+
+bool SpellsMonsters::damageType2() {
+	int threshold = g_globals->_currCharacter->_resistances._s._cold +
+		g_globals->_spells._s.cold;
+	return randomThreshold(threshold);
+}
+
+bool SpellsMonsters::damageType3() {
+	int threshold = g_globals->_currCharacter->_resistances._s._electricity +
+		g_globals->_spells._s.electricity;
+	return randomThreshold(threshold);
+}
+
+bool SpellsMonsters::damageType4() {
+	int threshold = g_globals->_currCharacter->_resistances._s._acid +
+		g_globals->_spells._s.acid;
+	return randomThreshold(threshold);
+}
+
+bool SpellsMonsters::damageType5() {
+	if (g_globals->_spells._s.psychic_protection) {
+		return false;
+	} else {
+		int threshold = g_globals->_currCharacter->_resistances._s._fear +
+			g_globals->_spells._s.fear;
+		return randomThreshold(threshold);
+	}
+}
+
+bool SpellsMonsters::damageType6() {
+	int threshold = g_globals->_currCharacter->_resistances._s._poison +
+		g_globals->_spells._s.poison;
+	return randomThreshold(threshold);
+}
+
+bool SpellsMonsters::damageType7() {
+	if (g_globals->_spells._s.psychic_protection) {
+		return false;
+	} else {
+		int threshold = g_globals->_currCharacter->_resistances._s._psychic;
+		return randomThreshold(threshold);
+	}
 }
 
 } // namespace Game

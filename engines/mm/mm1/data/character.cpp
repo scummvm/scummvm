@@ -30,7 +30,7 @@ static const int CLASS_HP_PER_LEVEL[6] = {
 	12, 10, 10, 8, 6, 8
 };
 
-Arr58::Arr58() {
+Resistances::Resistances() {
 	for (int i = 0; i < 8; ++i)
 		_arr[i].clear();
 }
@@ -178,10 +178,10 @@ void Character::clear() {
 
 	_alignmentInitial = GOOD;
 	_alignment = GOOD;
-	_arr58._s._v58.clear();
-	_arr58._s._v62.clear();
-	_arr58._s._v64.clear();
-	_arr58._s._v66.clear();
+	_resistances._s._magic.clear();
+	_resistances._s._fear.clear();
+	_resistances._s._poison.clear();
+	_resistances._s._psychic.clear();
 	_v6c = _alignmentCtr = 0;
 }
 
@@ -418,7 +418,7 @@ void Character::updateSP() {
 
 void Character::update58() {
 	for (int i = 0; i < 8; ++i)
-		_arr58._arr[i]._current = _arr58._arr[i]._base;
+		_resistances._arr[i]._current = _resistances._arr[i]._base;
 }
 
 Common::String Character::getConditionString() const {

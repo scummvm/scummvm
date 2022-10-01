@@ -56,6 +56,13 @@ enum Condition {
 	DISEASED = 8,  SILENCED = 4, BLINDED = 2, ASLEEP = 1
 };
 
+enum Resistance {
+	RESISTANCE_MAGIC = 0, RESISTANCE_FIRE = 1, RESISTANCE_COLD = 2,
+	RESISTANCE_ELECTRICITY = 3, RESISTANCE_ACID = 4,
+	RESISTANCE_FEAR = 5, RESISTANCE_POISON = 6,
+	RESISTANCE_PSYCHIC = 7
+};
+
 class Inventory {
 public:
 	struct Entry {
@@ -184,22 +191,22 @@ struct AttributePair16 {
 	}
 };
 
-struct Arr58Fields {
-	AttributePair _v58;
-	AttributePair _v5a;
-	AttributePair _v5c;
-	AttributePair _v5e;
-	AttributePair _v60;
-	AttributePair _v62;
-	AttributePair _v64;
-	AttributePair _v66;
+struct ResistanceFields {
+	AttributePair _magic;
+	AttributePair _fire;
+	AttributePair _cold;
+	AttributePair _electricity;
+	AttributePair _acid;
+	AttributePair _fear;
+	AttributePair _poison;
+	AttributePair _psychic;
 };
 
-union Arr58 {
-	Arr58Fields _s;
+union Resistances {
+	ResistanceFields _s;
 	AttributePair _arr[8];
 
-	Arr58();
+	Resistances();
 };
 
 struct Character {
@@ -232,9 +239,9 @@ struct Character {
 	uint8 _condition = 0;
 	Inventory _equipped;
 	Inventory _backpack;
+	Resistances _resistances;
 
 	// TODO: Figure out what these are
-	Arr58 _arr58;
 	int _v68, _v69, _v6a, _v6b, _v6c, _v6e, _alignmentCtr;
 
 	byte _quest = 0;
