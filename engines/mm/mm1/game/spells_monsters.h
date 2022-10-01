@@ -40,7 +40,7 @@ private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
 	LineArray _lines;
 	int _mmVal1 = 0, _mmVal2 = 0;
-	int _mmVal3 = 0, _mmVal4 = 0;
+	int _resistanceType = 0, _mmVal4 = 0;
 	int _mmVal5 = 0, _damage = 0;
 	int _mmVal7 = 0;
 
@@ -93,6 +93,11 @@ private:
 	}
 
 	/**
+	 * Selects a random character and applies the damage to them
+	 */
+	void damageRandomChar();
+
+	/**
 	 * Randomly chooses a character in the party
 	 */
 	void chooseCharacter();
@@ -130,10 +135,22 @@ private:
 	 */
 	void writeDamage();
 
-	void proc1();
-	void proc6();
+	/**
+	 * Subtracts the damage from the character, making
+	 * them unconscious or die if needed
+	 */
 	void subtractDamage();
+
+	bool testElementalResistance();
 	void proc9();
+
+	bool damageType1();
+	bool damageType2();
+	bool damageType3();
+	bool damageType4();
+	bool damageType5();
+	bool damageType6();
+	bool damageType7();
 
 protected:
 	virtual bool canMonsterCast() const = 0;
