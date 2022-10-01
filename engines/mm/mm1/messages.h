@@ -78,19 +78,24 @@ struct GameMessage : public Message {
 		_name(name) {}
 };
 
+struct Line : public Common::Point {
+	Common::String _text;
+
+	Line() {
+	}
+	Line(const Common::String &text) :
+		Common::Point(-1, -1), _text(text) {
+	}
+	Line(int x1, int y1, const Common::String &text) :
+		Common::Point(x1, y1), _text(text) {
+	}
+};
+typedef Common::Array<Line> LineArray;
+
 typedef void (*YNCallback)();
 typedef void (*KeyCallback)(const Common::KeyState &keyState);
 struct InfoMessage : public Message {
-	struct Line : public Common::Point {
-		Common::String _text;
-
-		Line() {}
-		Line(const Common::String &text) :
-			Common::Point(-1, -1), _text(text) {}
-		Line(int x1, int y1, const Common::String &text) :
-			Common::Point(x1, y1), _text(text) {}
-	};
-	Common::Array<Line> _lines;
+	LineArray _lines;
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
 	bool _largeMessage = false;

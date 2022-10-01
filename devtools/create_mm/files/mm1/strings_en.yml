@@ -732,6 +732,13 @@ spells:
 monster_spells:
 	casts: "CASTS "
 	fails_to_cast: "FAILS TO CAST A SPELL"
+	not_affected: "IS NOT AFFECTED!"
+	takes: "TAKES "
+	point: "POINT"
+	points: "POINTS"
+	of_damage: "OF DAMAGE!"
+	goes_down: "GOES DOWN!!!"
+	dies: "DIES!"
 	a_curse: "A CURSE"
 	energy_blast: "ENERGY BLAST"
 	blindles: "BLINDNESS"

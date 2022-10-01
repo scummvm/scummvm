@@ -23,6 +23,7 @@
 #define MM1_GAME_SPELLS_MONSTERS
 
 #include "mm/mm1/game/game_logic.h"
+#include "mm/mm1/messages.h"
 #include "common/str.h"
 
 namespace MM {
@@ -37,10 +38,11 @@ typedef void (SpellsMonsters::*SpellMonstersSpell)();
 class SpellsMonsters : public GameLogic {
 private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
-	Common::String _monsterSpellMessage;
+	LineArray _lines;
 	int _mmVal1 = 0, _mmVal2 = 0;
 	int _mmVal3 = 0, _mmVal4 = 0;
-	int _mmVal5 = 0, _mmVal6 = 0;
+	int _mmVal5 = 0, _damage = 0;
+	int _mmVal7 = 0;
 
 	void spell01_curse();
 	void spell02_energyBlast();
@@ -75,15 +77,63 @@ private:
 	void spell31_energy();
 	void spell32_swarm();
 
+	/**
+	 * Called to determine whether the spell can be cast
+	 */
 	bool casts();
-	void proc1();
+
+	/**
+	 * Adds text to the current line
+	 */
+	void add(const Common::String &msg) {
+		_lines.back()._text += msg;
+	}
+	void add(char c) {
+		_lines.back()._text += c;
+	}
+
+	/**
+	 * Randomly chooses a character in the party
+	 */
 	void chooseCharacter();
-	void proc3();
-	void proc4();
-	void proc5();
+
+	/**
+	 * Checks whether the character is affected by the spell,
+	 * and if so writes out the damage and whether the
+	 * character is knocked unconscious or dies
+	 */
+	void handleDamage();
+
+	/**
+	 * Checks if character is affected by spell,
+	 * and adds to the message if not
+	 */
+	bool charAffected();
+
+	/**
+	 * Returns true if character is affected so spell
+	 */
+	bool isCharAffected() const;
+
+	/**
+	 * Checks random range
+	 */
+	bool randomThreshold(int threshold) const {
+		int v = getRandomNumber(120);
+		return v < 3 || v >= threshold;
+	}
+
+	bool isEffective();
+
+	/**
+	 * Writes out how much damage the character suffers
+	 */
+	void writeDamage();
+
+	void proc1();
 	void proc6();
-	void proc7();
-	void proc8();
+	void subtractDamage();
+	void proc9();
 
 protected:
 	virtual bool canMonsterCast() const = 0;
@@ -92,13 +142,13 @@ public:
 	/**
 	 * Monster casts a spell
 	 */
-	void castMonsterSpell(int spellNum);
+	void castMonsterSpell(const Common::String &monsterName, int spellNum);
 
 	/**
 	 * Gets a spell message
 	 */
-	Common::String getMonsterSpellMessage() const {
-		return _monsterSpellMessage;
+	const LineArray &getMonsterSpellMessage() const {
+		return _lines;
 	}
 };
 
