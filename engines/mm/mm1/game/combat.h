@@ -33,7 +33,7 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
-class Combat : public GameLogic, public SpellsMonsters {
+class Combat : public SpellsMonsters {
 protected:
 	Common::Array<Monster> &_monsterList;
 	int _monstersCount = 0;

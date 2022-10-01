@@ -22,6 +22,7 @@
 #ifndef MM1_GAME_SPELLS_MONSTERS
 #define MM1_GAME_SPELLS_MONSTERS
 
+#include "mm/mm1/game/game_logic.h"
 #include "common/str.h"
 
 namespace MM {
@@ -33,12 +34,13 @@ namespace Game {
 class SpellsMonsters;
 typedef void (SpellsMonsters::*SpellMonstersSpell)();
 
-class SpellsMonsters {
+class SpellsMonsters : public GameLogic {
 private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
 	Common::String _monsterSpellMessage;
 	int _mmVal1 = 0, _mmVal2 = 0;
 	int _mmVal3 = 0, _mmVal4 = 0;
+	int _mmVal5 = 0, _mmVal6 = 0;
 
 	void spell01_curse();
 	void spell02_energyBlast();
@@ -74,6 +76,14 @@ private:
 	void spell32_swarm();
 
 	bool casts();
+	void proc1();
+	void chooseCharacter();
+	void proc3();
+	void proc4();
+	void proc5();
+	void proc6();
+	void proc7();
+	void proc8();
 
 protected:
 	virtual bool canMonsterCast() const = 0;

@@ -69,14 +69,21 @@ void SpellsMonsters::castMonsterSpell(int spellNum) {
 }
 
 void SpellsMonsters::spell01_curse() {
-	if (casts())
+	if (casts()) {
+		_monsterSpellMessage += STRING["monster_spells.a_curse"];
 		g_globals->_spells._s.cursed = MIN(255,
 			(int)g_globals->_spells._s.cursed + 1);
-
-	_monsterSpellMessage += STRING["monster_spells.a_curse"];
+	}
 }
 
-void SpellsMonsters::spell02_energyBlast() {}
+void SpellsMonsters::spell02_energyBlast() {
+	if (casts()) {		
+		_monsterSpellMessage += STRING["monster_spells.energy_blast"];
+		++_mmVal1;
+		_mmVal4 = getRandomNumber(16) + 4;
+		proc1();
+	}
+}
 
 void SpellsMonsters::spell03_fire() {}
 
@@ -146,6 +153,64 @@ bool SpellsMonsters::casts() {
 		_monsterSpellMessage += STRING["monster_spells.fails_to_cast"];
 		return false;
 	}
+}
+
+void SpellsMonsters::proc1() {
+	chooseCharacter();
+	proc3();
+}
+
+void SpellsMonsters::chooseCharacter() {
+	_monsterSpellMessage += ':';
+
+	// Choose a random character
+	g_globals->_currCharacter = &g_globals->_party[
+		getRandomNumber(g_globals->_party.size()) - 1
+	];
+
+	if (g_globals->_currCharacter->_condition & (BAD_CONDITION | UNCONSCIOUS)) {
+		// Can't use character, so sequently scan party
+		// to find a character that can be used
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			g_globals->_currCharacter = &g_globals->_party[i];
+			if (g_globals->_currCharacter->_condition & (BAD_CONDITION | UNCONSCIOUS))
+				break;
+		}
+	}
+}
+
+void SpellsMonsters::proc3() {
+	_mmVal5 = 1;
+	_mmVal6 = _mmVal4;
+	proc4();
+	proc5();
+	proc6();
+
+	if (g_globals->_spells._s.power_shield)
+		_mmVal6 = 1;
+
+	proc7();
+	proc8();
+}
+
+void SpellsMonsters::proc4() {
+
+}
+
+void SpellsMonsters::proc5() {
+
+}
+
+void SpellsMonsters::proc6() {
+
+}
+
+void SpellsMonsters::proc7() {
+
+}
+
+void SpellsMonsters::proc8() {
+
 }
 
 } // namespace Game
