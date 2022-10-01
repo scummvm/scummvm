@@ -50,6 +50,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		_screenH = 200;
 	}
 
+	if (gd->extra)
+		_variant = gd->extra;
+	else
+		_variant = "FullGame";
+
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");
 

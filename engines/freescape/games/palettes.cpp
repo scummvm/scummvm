@@ -71,7 +71,7 @@ void FreescapeEngine::loadAmigaPalette(Common::SeekableReadStream *file, int off
 	for (int i = 0; i < int(_areaMap.size()); i++) {
 		int label = readField(file, 8);
 		auto palette = new byte[16][3];
-		debug("Label: %d", label);
+		debug("Loading palette for area: %d", label);
 		for (int c = 0; c < 16; c++) {
 			int v = file->readUint16BE();
 			r = (v & 0xf00) >> 8;

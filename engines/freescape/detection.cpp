@@ -105,10 +105,21 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_NO_FLAGS,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 	{"driller",
-	 "Driller",
+	 "Retail",
 	 {
 		{"driller", 0, "13dab2e10d8e8b9a364c94a660e0d42a", 282384},
 		{"title.seq", 0, "4dd1b3b45110b24e8240a6132241c973", 185296},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAmiga,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"driller",
+	 "Kixx",
+	 {
+		{"driller", 0, "db1afe151d999f369ae9153d8eeaf254", 175236},
+		{"soundfx", 0, "cd91061a1330aef8fcd6b7dc6fa35cf9", 78680},
 		AD_LISTEND
 	 },
 	 Common::EN_ANY,

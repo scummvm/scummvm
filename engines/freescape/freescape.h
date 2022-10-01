@@ -82,11 +82,12 @@ public:
 	bool isDemo() const;
 
 	// Game selection
+	Common::String _variant;
 	bool isDriller() { return _targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion"); }
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
-	bool isAmiga() { return _targetName.hasSuffix("-amiga"); }
+	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str() ,"*-amiga-#"); }
 
 	Common::Error run() override;
 
