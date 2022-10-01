@@ -3921,10 +3921,10 @@ bool OptionsDialog::testGraphicsSettings() {
 	drawTestScreen();
 
 	// And display the error
-	GUI::CountdownMessageDialog dialog(_("Your shader scaler setting has been changed. A test screen must be visible now. Do you want to keep these settings?"),
+	GUI::CountdownMessageDialog dialog(_("A test screen should be displayed. Do you want to keep these shader scalar settings?"),
 				10000,
 				_("Yes"), _("No"), Graphics::kTextAlignCenter,
-				_("Reverting in %d seconds"));
+				_("Reverting automatically in %d seconds"));
 
 	g_gui.displayTopDialogOnly(true);
 
