@@ -64,6 +64,7 @@
 #endif
 #endif
 
+#include "graphics/palette.h"
 #include "graphics/renderer.h"
 #include "graphics/scalerplugin.h"
 
@@ -3634,7 +3635,33 @@ void GlobalOptionsDialog::storageErrorCallback(Networking::ErrorResponse respons
 #endif // USE_LIBCURL
 #endif // USE_CLOUD
 
+static void drawTestScreen() {
+	int xres = 640, yres = 480;
+
+	g_system->beginGFXTransaction();
+	g_system->initSize(xres, yres);
+	g_system->endGFXTransaction();
+
+	const byte palette[] = {
+		0,       0,    0,
+		0xff, 0xff, 0xff,
+	};
+
+	g_system->getPaletteManager()->setPalette(palette, 0, ARRAYSIZE(palette) / 3);
+
+	Graphics::Surface surf;
+
+	surf.create(xres, yres, Graphics::PixelFormat::createFormatCLUT8());
+	surf.fillRect(Common::Rect(0, 0, xres, yres), 1);
+
+	g_system->copyRectToScreen(surf.getPixels(), surf.pitch, 0, 0, xres, yres);
+
+	g_system->updateScreen();
+}
+
 bool OptionsDialog::testGraphicsSettings() {
+	drawTestScreen();
+
 	// And display the error
 	GUI::CountdownMessageDialog dialog(_("Your shader scaler setting has been changed. Do you want to keep these settings?"),
 				10000,
