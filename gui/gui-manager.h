@@ -140,6 +140,8 @@ public:
 
 	void initIconsSet();
 
+	void displayTopDialogOnly(bool mode);
+
 protected:
 	enum RedrawStatus {
 		kRedrawDisabled = 0,
@@ -168,6 +170,8 @@ protected:
 
 	int			_topDialogLeftPadding;
 	int			_topDialogRightPadding;
+
+	bool		_displayTopDialogOnly;
 
 	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
