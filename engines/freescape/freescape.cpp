@@ -41,13 +41,15 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	else
 		_renderMode = ConfMan.get("render_mode");
 
+	_screenW = 320;
+	_screenH = 200;
+
 	if (isAmiga()) {
 		_screenW = 640;
 		_screenH = 480;
 		_renderMode = "amiga";
-	} else {
-		_screenW = 320;
-		_screenH = 200;
+	} else if (isAtariST()) {
+		_renderMode = "atari";
 	}
 
 	if (gd->extra)
@@ -253,6 +255,7 @@ Common::Error FreescapeEngine::run() {
 	// Initialize graphics
 	_gfx = createRenderer(_system, _screenW, _screenH);
 	_gfx->_isAmiga = isAmiga();
+	_gfx->_isAtariST = isAtariST();
 	_gfx->init();
 	_gfx->clear();
 

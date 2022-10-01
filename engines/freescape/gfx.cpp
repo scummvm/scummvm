@@ -45,6 +45,7 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH)
 	_palette = nullptr;
 	_colorMap = nullptr;
 	_isAmiga = false;
+	_isAtariST = false;
 }
 
 Renderer::~Renderer() {}
@@ -67,7 +68,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		return true;
 	}
 
-	if (_isAmiga) {
+	if (_isAmiga || _isAtariST) {
 		_palette->getRGBAt(index, r, g, b);
 		return true;
 	}

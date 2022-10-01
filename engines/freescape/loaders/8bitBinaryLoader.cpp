@@ -33,7 +33,7 @@ namespace Freescape {
 uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 	uint16 value;
 	assert(bits == 8 || bits == 16);
-	if (isAmiga()) {
+	if (isAmiga() || isAtariST()) {
 		if (bits == 16) {
 			uint16 lo = file->readUint16BE();
 			assert(lo < 256);
@@ -404,7 +404,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 startEntrance = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Entrace area: %d", startEntrance);
 
-	if (isAmiga())
+	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x14);
 	else
 		file->seek(offset + 0xa);
@@ -432,7 +432,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		_colorMap.push_back(entry - 3);
 	}
 
-	if (isAmiga())
+	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x8a);
 	else
 		file->seek(offset + 0x46); // 0x46
@@ -448,7 +448,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	file->seek(offset + globalByteCodeTable);
 	uint8 numConditions = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "%d global conditions", numConditions);
-	while (!isAmiga() && numConditions--) { // TODO: read global conditions in Amiga
+	while (!isAmiga() && !isAtariST() && numConditions--) { // TODO: read global conditions in Amiga
 		FCLInstructionVector instructions;
 		// get the length
 		uint32 lengthOfCondition = readField(file, 8);
@@ -462,7 +462,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 
-	if (isAmiga())
+	if (isAmiga() || isAtariST())
 		file->seek(offset + 0x190);
 	else
 		file->seek(offset + 0xc8);

@@ -138,6 +138,22 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformAmiga,
 	 ADGF_NO_FLAGS | ADGF_DEMO,
 	 GUIO1(GUIO_NOMIDI)},
+
+	{"driller",
+	 "Rolling Demo",
+	 {
+		{"x.prg", 0, "cf96e25a11bee1b57258c2fc0b315699", 157143},
+		{"data", 0, "0b056286d2d91f302499c97aca235462", 24220},
+		{"demo.cmd", 0, "7b90427c5c3c4bbb42d14076af994d50", 4096},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAtariST,
+	 ADGF_NO_FLAGS | ADGF_DEMO,
+	 GUIO1(GUIO_NOMIDI)},
+
+
+
 	{"darkside",
 	 "Dark Side",
 	 {

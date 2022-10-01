@@ -100,7 +100,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 	else
 		_gfx->_keyColor = 255;
 
-	if (isAmiga())
+	if (isAmiga() || isAtariST())
 		swapAmigaPalette(areaID);
 }
 
@@ -146,7 +146,22 @@ void DrillerEngine::loadAssetsDemo() {
 
 		load8bitBinary(file, 0x442, 16);
 		loadAmigaPalette(file, 0x0);
-	} else
+	} else if (isAtariST()) {
+		file = gameDir.createReadStreamForMember("data");
+
+		if (file == nullptr)
+			error("Failed to open 'data' file");
+
+		//loadGlobalObjects(file, 0xbd62);
+		/*file->seek(0x29efe);
+		load8bitArea(file, 16);
+		file->seek(0x2a450);
+		load8bitArea(file, 16);*/
+
+		load8bitBinary(file, 0x442, 16);
+		loadAmigaPalette(file, 0x0);
+	}
+	else
 		error("Unsupported demo for Driller");
 }
 

@@ -88,6 +88,7 @@ public:
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
 	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str() ,"*-amiga-#"); }
+	bool isAtariST() { return _targetName.hasSuffix("-st") || Common::matchString(_targetName.c_str() ,"*-st-#"); }
 
 	Common::Error run() override;
 

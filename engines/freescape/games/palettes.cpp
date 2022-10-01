@@ -56,7 +56,7 @@ void FreescapeEngine::loadColorPalette() {
 		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_EGA_palette);
 	else if (_renderMode == "cga")
 		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_CGA_palette);
-	else if (_renderMode == "amiga")
+	else if (_renderMode == "amiga" || _renderMode == "atari")
 		palette = nullptr; // palette depends on the area
 	else
 		error("Invalid render mode, no palette selected");
