@@ -2328,6 +2328,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "rockburgerstreehouses", "Rock Burgers & Tree Houses" },
 	{ "rockpaperscissors2", "Rock, Paper, Scissors! Reboot" },
 	{ "rockrockrock", "Rock Rock Rock" },
+	{ "rocktravis", "Rock Travis - Camilla's case" },
 	{ "rockyroams", "Rocky roams" },
 	{ "rodequest2", "Rode Quest 2: The Sweet Smell of Stenchie" },
 	{ "rogered", "Rogered" },
@@ -2441,6 +2442,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "simshogwarts", "Sims Hogwarts" },
 	{ "sinbad", "Sinbad - The Island of Korkus" },
 	{ "sinking", "Sinking" },
+	{ "siren", "Siren" },
 	{ "sisterhelper", "Sister's Little Helper" },
 	{ "sisyphus", "Sisyphus Reborn" },
 	{ "skippysavestheday", "Skippy Saves The Day" },
@@ -2810,6 +2812,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "thespiderweb", "The Spider's Web" },
 	{ "thespoons", "The Spoons" },
 	{ "thestarryskyaboveme", "The Starry Sky Above Me" },
+	{ "thestinker", "The Stinker" },
 	{ "thesummoned", "The Summoned" },
 	{ "thesundownmystery", "The Sundown mystery" },
 	{ "thesurvivors", "The Survivors / Les Survivants" },
@@ -2907,6 +2910,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "underworld", "The Underworld" },
 	{ "unexpectedguest", "Unexpected Guest" },
 	{ "unexpectedquest", "Unexpected Quest" },
+	{ "unfair", "Unfair" },
 	{ "unfinished", "Unfinished" },
 	{ "unfinishedbusiness", "Unfinished Business" },
 	{ "unfinishedtales", "Unfinished Tales / Cuentos Inconclusos" },
@@ -6477,6 +6481,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("rockburgerstreehouses", "RBTH.exe", "88cf59aad15ca331ab0f854e16c84df3", 1876674),
 	GAME_ENTRY_EN("rockpaperscissors2", "Rock, Paper, Scissors 2.exe", "89a94326c8afd9e0234e269bd7330130", 2926218),
 	GAME_ENTRY_EN("rockrockrock", "rrr.exe", "7dd36aa863ed40ede1b09ae505e478cc", 9362761),
+	GAME_ENTRY_EN("rocktravis", "rock travis - camilla's case.exe", "17009da9820f5aa86d0588023d497db8", 126975468),
 	GAME_ENTRY_EN("rockyroams", "Rocky.exe", "a01a9639ce30bdcd5bf82e528b51fa06", 16978200),
 	GAME_ENTRY_EN("rodequest2", "RQ2.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
 	GAME_ENTRY_EN("rodequest2", "RQ2b.exe", "12c03a3c782237821acd590fd91af4c5", 4192097),
@@ -6610,6 +6615,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("simshogwarts", "Sims Hogwarts.exe", "615e73fc1874e92d60a1996c2330ea36", 20016887),  // En-Fr
 	GAME_ENTRY_EN("sinbad", "SINBAD.exe", "afe40dc1416dd51e896ee0444d799f07", 40143412),
 	GAME_ENTRY_EN("sinking", "OROW_Sinking.exe", "615e73fc1874e92d60a1996c2330ea36", 13781179),
+	GAME_ENTRY_EN("siren", "Siren.exe", "0564de07d3fd5c16e6947a647061913c", 10015441),
 	GAME_ENTRY_EN("sisterhelper", "Little Helper.exe", "615e73fc1874e92d60a1996c2330ea36", 8922861),
 	GAME_ENTRY_EN("sisyphus", "Sisyphus.exe", "c6496a18d39036c853da42b5888456d3", 98454819),  // itch.io 1.0 Win/Mac
 	GAME_ENTRY_EN("sisyphus", "Sisyphus Reborn.exe", "059f968398cb58cb40908b217f406863", 98804803),  // itch.io 1.0.1 Win
@@ -7070,6 +7076,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("thespoons", "Spoons.exe", "f3a13b2d6c2e0fe04c6f466062920e23", 3652176),
 	GAME_ENTRY_EN("thestarryskyaboveme", "The Starry Sky Above Me.exe", "618d7dce9631229b4579340b964c6810", 14082659),
 	GAME_ENTRY_EN("thestarryskyaboveme", "The Starry Sky Above Me.ags", "0761ef29f813294a6babdae64d122f84", 23949709),
+	GAME_ENTRY_EN("thestinker", "The Stinker.exe", "be13cb758d3568b0532695081ab64683", 51481517),
 	GAME_ENTRY_EN("thesummoned", "The Summoned.exe", "22d2d13d88310758fc76ff9d6e4f23b8", 15309757),
 	GAME_ENTRY_EN("thesundownmystery", "Sundown.exe", "a08ab253c4d2f255b9139f2aa5fe7006", 31839270),
 	GAME_ENTRY("thesurvivors", "Les_Survivants.exe", "c5d2c54c20cb606519b86d3890ee7fc0", 265445972),  //En-Fr
@@ -7192,6 +7199,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("underworld", "Underworld.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 5147661),
 	GAME_ENTRY_EN("unexpectedguest", "unexpectedGuest.exe", "5e1d1fbbaadb46b5cfd5474d71080c9d", 4541793),
 	GAME_ENTRY_EN("unexpectedquest", "UQ.exe", "f120690b506dd63cd7d1112ea6af2f77", 1837663),
+	GAME_ENTRY_EN("unfair", "Unfair.exe", "8d1ff95c16500befbdc72260d461d73f", 5203436),
 	GAME_ENTRY_EN("unfinished", "mags.exe", "0710e2ec71042617f565c01824f0cf3c", 12092514),
 	GAME_ENTRY_EN("unfinishedbusiness", "business.exe", "089fab88e6e1075a2f5b271f6f5b3c57", 2202413),
 	GAME_ENTRY("unfinishedtales", "shst.exe", "28f82e420b82d07651b68114f90223c8", 1013809),  // Eng-Esp
