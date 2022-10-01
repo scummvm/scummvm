@@ -22,6 +22,7 @@
 #include "mm/mm1/game/spells_monsters.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -62,15 +63,19 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 	&SpellsMonsters::spell32_swarm
 };
 
-void SpellsMonsters::castMonsterSpell(int spellNum) {
+void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
 	_mmVal1 = _mmVal2 = _mmVal3 = _mmVal4 = 0;
-	_monsterSpellMessage = "";
+
+	// All spell messages start with the monster who casts it
+	_lines.clear();
+	_lines.push_back(Line(monsterName));
+
 	(this->*SPELLS[spellNum - 1])();
 }
 
 void SpellsMonsters::spell01_curse() {
 	if (casts()) {
-		_monsterSpellMessage += STRING["monster_spells.a_curse"];
+		add(STRING["monster_spells.a_curse"]);
 		g_globals->_spells._s.cursed = MIN(255,
 			(int)g_globals->_spells._s.cursed + 1);
 	}
@@ -78,7 +83,7 @@ void SpellsMonsters::spell01_curse() {
 
 void SpellsMonsters::spell02_energyBlast() {
 	if (casts()) {		
-		_monsterSpellMessage += STRING["monster_spells.energy_blast"];
+		add(STRING["monster_spells.energy_blast"]);
 		++_mmVal1;
 		_mmVal4 = getRandomNumber(16) + 4;
 		proc1();
@@ -147,21 +152,21 @@ void SpellsMonsters::spell32_swarm() {}
 
 bool SpellsMonsters::casts() {
 	if (canMonsterCast()) {
-		_monsterSpellMessage += STRING["monster_spells.casts"];
+		add(STRING["monster_spells.casts"]);
 		return true;
 	} else {
-		_monsterSpellMessage += STRING["monster_spells.fails_to_cast"];
+		add(STRING["monster_spells.fails_to_cast"]);
 		return false;
 	}
 }
 
 void SpellsMonsters::proc1() {
 	chooseCharacter();
-	proc3();
+	handleDamage();
 }
 
 void SpellsMonsters::chooseCharacter() {
-	_monsterSpellMessage += ':';
+	add(':');
 
 	// Choose a random character
 	g_globals->_currCharacter = &g_globals->_party[
@@ -179,38 +184,111 @@ void SpellsMonsters::chooseCharacter() {
 	}
 }
 
-void SpellsMonsters::proc3() {
+bool SpellsMonsters::isCharAffected() const {
+	int val = g_globals->_currCharacter->_arr58._s._v58 +
+		g_globals->_spells._s.magic;
+	return randomThreshold(val);
+}
+
+void SpellsMonsters::handleDamage() {
 	_mmVal5 = 1;
-	_mmVal6 = _mmVal4;
-	proc4();
-	proc5();
-	proc6();
+	_damage = _mmVal4;
 
-	if (g_globals->_spells._s.power_shield)
-		_mmVal6 = 1;
+	if (charAffected()) {
+		if (isEffective()) {
+			proc6();
 
-	proc7();
-	proc8();
+			if (g_globals->_spells._s.power_shield)
+				_damage = 1;
+
+			writeDamage();
+			subtractDamage();
+		}
+	}
 }
 
-void SpellsMonsters::proc4() {
+bool SpellsMonsters::charAffected() {
+	_lines.push_back(Line(0, 2, Common::String::format("%s ",
+		g_globals->_currCharacter->_name)));
 
+	if (_mmVal1 && !isCharAffected()) {
+		_lines.back()._text += STRING["monster_spells.not_affected"];
+		return false;
+	}
+
+	return true;
 }
 
-void SpellsMonsters::proc5() {
+bool SpellsMonsters::isEffective() {
+	if (_mmVal2) {
+		proc9();
 
+		if (_mmVal7) {
+			if (_mmVal5) {
+				_damage >>= 1;
+			} else {
+				_lines.back()._text += STRING["monster_spells.not_affected"];
+				return false;
+			}
+		}
+	}
+
+	return true;
 }
 
 void SpellsMonsters::proc6() {
 
 }
 
-void SpellsMonsters::proc7() {
+void SpellsMonsters::writeDamage() {
+	add(STRING["monster_spells.takes"]);
+	add(Common::String::format("%d ", _damage));
+	add(STRING[_damage > 1 ? "monster_spells.points" : "monster_spells.point"]);
+	add(' ');
 
+	if (_lines.back()._text.size() >= 30)
+		add('!');
+	else
+		add(STRING["monster_spells.of_damage"]);
 }
 
-void SpellsMonsters::proc8() {
+void SpellsMonsters::subtractDamage() {
+	Character &c = *g_globals->_currCharacter;
+	int newHp = c._hpBase - _damage;
 
+	if (newHp > 0) {
+		c._hpBase = newHp;
+
+	} else {
+		c._hpBase = 0;
+
+		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
+			c._condition |= UNCONSCIOUS;
+			add(c._name);
+			add(' ');
+			add(STRING["monster_spells.goes_down"]);
+			Sound::sound2(SOUND_8);
+
+		} else {
+			if (c._condition & BAD_CONDITION)
+				c._condition = BAD_CONDITION | DEAD;
+
+			_lines.push_back(Line(0, _lines.back().y + 1,
+				Common::String::format("%s %s",
+					c._name, STRING["monster_spells.dies"].c_str())));
+			Sound::sound2(SOUND_8);
+		}
+	}
+}
+
+void SpellsMonsters::proc9() {
+	const Character &c = *g_globals->_currCharacter;
+	int val = c._level._current * 4 + c._luck._current;
+	if (c._class == PALADIN)
+		val += 20;
+
+	int randVal = getRandomNumber(100);
+	_mmVal7 = randVal < 99 && randVal <= val ? 1 : 0;
 }
 
 } // namespace Game

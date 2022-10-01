@@ -31,7 +31,7 @@ namespace Views {
 
 class GameMessages : public TextView {
 private:
-	Common::Array<InfoMessage::Line> _lines;
+	Common::Array<Line> _lines;
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
 public:
