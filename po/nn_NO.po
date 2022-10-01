@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-30 01:07+0000\n"
-"PO-Revision-Date: 2022-06-03 20:16+0000\n"
+"PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Norwegian Nynorsk <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nn/>\n"
@@ -107,7 +107,7 @@ msgstr "Frå: "
 
 #: gui/downloaddialog.cpp:52 gui/downloaddialog.cpp:227
 msgid "To: "
-msgstr ""
+msgstr "Til: "
 
 #: gui/downloaddialog.cpp:63 gui/downloadiconsdialog.cpp:188
 #: gui/downloadiconsdialog.cpp:232 gui/downloadiconsdialog.cpp:242
@@ -210,7 +210,7 @@ msgstr "Søk fullført!"
 #: gui/downloadiconsdialog.cpp:150
 #, c-format
 msgid "ERROR %d: %s"
-msgstr ""
+msgstr "FEIL %d: %s"
 
 #: gui/downloadiconsdialog.cpp:176 gui/downloadiconsdialog.cpp:231
 #, fuzzy
@@ -233,9 +233,8 @@ msgid "Detected %d new packs, %s %S"
 msgstr ""
 
 #: gui/downloadiconsdialog.cpp:253
-#, fuzzy
 msgid "Download"
-msgstr "Ned"
+msgstr "Last ned"
 
 #: gui/downloadiconsdialog.cpp:277
 #, c-format
@@ -267,7 +266,7 @@ msgstr ""
 
 #: gui/downloadiconsdialog.cpp:452 gui/updates-dialog.cpp:115
 msgid "Proceed"
-msgstr ""
+msgstr "Fortsett"
 
 #: gui/editgamedialog.cpp:141 engines/dialogs.cpp:277
 msgid "Game"
@@ -362,18 +361,16 @@ msgstr "Overstyr globale grafikkinstillingar"
 
 #: gui/editgamedialog.cpp:225 gui/options.cpp:2052
 msgid "Shader"
-msgstr ""
+msgstr "Shader"
 
 #: gui/editgamedialog.cpp:228
-#, fuzzy
 msgid "Override global shader settings"
-msgstr "Overstyr globale lydinstillingar"
+msgstr "Overstyr globale shader-instillingar"
 
 #: gui/editgamedialog.cpp:230
-#, fuzzy
 msgctxt "lowres"
 msgid "Override global shader settings"
-msgstr "Overstyr globale lydinstillingar"
+msgstr "Overstyr globale shader-instillingar"
 
 #: gui/editgamedialog.cpp:244 gui/options.cpp:2084 engines/dialogs.cpp:320
 #, fuzzy
@@ -381,8 +378,9 @@ msgid "Keymaps"
 msgstr "Tastkopling:"
 
 #: gui/editgamedialog.cpp:251 gui/options.cpp:2091 engines/dialogs.cpp:327
+#, fuzzy
 msgid "Backend"
-msgstr ""
+msgstr "Backend"
 
 #: gui/editgamedialog.cpp:254
 #, fuzzy
@@ -500,11 +498,11 @@ msgstr "Lagringssti:"
 
 #: gui/editgamedialog.cpp:370 engines/dialogs.cpp:342
 msgid "Achievements"
-msgstr ""
+msgstr "Prestasjonar"
 
 #: gui/editgamedialog.cpp:374 engines/dialogs.cpp:346
 msgid "Statistics"
-msgstr ""
+msgstr "Statistikk"
 
 #: gui/editgamedialog.cpp:398 gui/editgamedialog.cpp:504
 #: gui/editgamedialog.cpp:570 gui/editgamedialog.cpp:637 gui/options.cpp:2218
@@ -584,7 +582,7 @@ msgstr "Rom:"
 
 #: gui/fluidsynth-dialog.cpp:79
 msgid "Damp:"
-msgstr ""
+msgstr "Demp:"
 
 #: gui/fluidsynth-dialog.cpp:86
 msgid "Width:"
@@ -738,11 +736,10 @@ msgstr "Høgre"
 #: engines/wintermute/keymapper_tables.h:1867
 #: engines/wintermute/keymapper_tables.h:1925
 msgid "???"
-msgstr ""
+msgstr "???"
 
 #. I18N: Group name for the game list
 #: gui/launcher.cpp:99
-#, fuzzy
 msgctxt "group"
 msgid "None"
 msgstr "Ingen"
@@ -756,7 +753,6 @@ msgstr "Neste"
 
 #. I18N: Group name for the game list, grouped by game engine
 #: gui/launcher.cpp:103
-#, fuzzy
 msgctxt "group"
 msgid "Engine"
 msgstr "Motor"
@@ -765,28 +761,25 @@ msgstr "Motor"
 #: gui/launcher.cpp:105
 msgctxt "group"
 msgid "Series"
-msgstr ""
+msgstr "Serie"
 
 #. I18N: Group name for the game list, grouped by game publisher
 #: gui/launcher.cpp:107
-#, fuzzy
 msgctxt "group"
 msgid "Publisher"
-msgstr "Ukjend Forfattar"
+msgstr "Utgivar"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Language"
-msgstr "Språk:"
+msgstr "Språk"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
 msgctxt "group"
 msgid "Platform"
-msgstr "Plattform:"
+msgstr "Plattform"
 
 #: gui/launcher.cpp:215
 msgid "Select Group by"
@@ -809,28 +802,25 @@ msgid "Quit ScummVM"
 msgstr "Avslutt ScummVM"
 
 #: gui/launcher.cpp:247
-#, fuzzy
 msgid "A~b~out"
-msgstr "~O~m..."
+msgstr "~O~m"
 
 #: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
 msgstr "Om ScummVM"
 
 #: gui/launcher.cpp:248
-#, fuzzy
 msgid "Global ~O~ptions..."
-msgstr "~V~al..."
+msgstr "Globale ~i~nnstillingar..."
 
 #: gui/launcher.cpp:248
 msgid "Change global ScummVM options"
 msgstr "Endre globale ScummVM-instillingar"
 
 #: gui/launcher.cpp:248
-#, fuzzy
 msgctxt "lowres"
 msgid "Global ~O~pts..."
-msgstr "~V~al..."
+msgstr "Globale ~i~nnst..."
 
 #: gui/launcher.cpp:252
 msgid "~A~dd Game..."
@@ -924,9 +914,8 @@ msgstr "ScummVM kunne ikkje finne noko spel i den velde mappa!"
 
 #. I18N: Unknown game variant
 #: gui/launcher.cpp:612
-#, fuzzy
 msgid "Unknown variant"
-msgstr "Ukjend feil"
+msgstr "Ukjend variant"
 
 #: gui/launcher.cpp:618
 msgid "Pick the game:"
@@ -962,7 +951,7 @@ msgstr "Åpne eit lagra spel for the velde spelet"
 
 #: gui/launcher.cpp:1013
 msgid "Record..."
-msgstr ""
+msgstr "Opptak..."
 
 #: gui/launcher.cpp:1019
 msgid "~G~ame Options..."
@@ -973,47 +962,43 @@ msgid "Change game options"
 msgstr "Endre spelinstillingar"
 
 #: gui/launcher.cpp:1019
-#, fuzzy
 msgctxt "lowres"
 msgid "~G~ame Opts..."
-msgstr "~V~al..."
+msgstr "Spel~i~nnst..."
 
 #. I18N: List grouping when no engine is specified
 #. I18N: List grouping when no enginr is specified
 #: gui/launcher.cpp:1140 gui/launcher.cpp:1335
-#, fuzzy
 msgid "Unknown Engine"
-msgstr "Ukjend feil"
+msgstr "Ukjend motor"
 
 #. I18N: List grouping when no pubisher is specified
 #. I18N: List group when no publisher is specified
 #: gui/launcher.cpp:1158 gui/launcher.cpp:1367
-#, fuzzy
 msgid "Unknown Publisher"
-msgstr "Ukjend Forfattar"
+msgstr "Ukjend utgivar"
 
 #. I18N: List group when no game series is specified
 #. I18N: List grouping when no game series is specified
 #: gui/launcher.cpp:1176 gui/launcher.cpp:1353
 msgid "No Series"
-msgstr ""
+msgstr "Ingen serie"
 
 #. I18N: List group when no languageis specified
 #. I18N: List group when no language is specified
 #: gui/launcher.cpp:1191 gui/launcher.cpp:1386
 msgid "Language not detected"
-msgstr ""
+msgstr "Språk ikkje oppdaga"
 
 #. I18N: List group when no platform is specified
 #: gui/launcher.cpp:1206 gui/launcher.cpp:1401
 msgid "Platform not detected"
-msgstr ""
+msgstr "Plattform ikkje oppdaga"
 
 #. I18N: Group for All items
 #: gui/launcher.cpp:1412 gui/widgets/groupedlist.cpp:80
-#, fuzzy
 msgid "All"
-msgstr "Alt"
+msgstr "Alle"
 
 #: gui/launcher.cpp:1605
 msgid "Icons per row:"
@@ -1028,10 +1013,10 @@ msgid "Scan complete!"
 msgstr "Søk fullført!"
 
 #: gui/massadd.cpp:261
-#, fuzzy, c-format
+#, c-format
 msgid "Discovered %d new games, ignored %d previously added games."
 msgstr ""
-"Oppdaga %d nye spel, ignorerte %d spel som har vorte lagt til tidlegare..."
+"Oppdaga %d nye spel, ignorerte %d spel som har vorte lagt til tidlegare."
 
 #: gui/massadd.cpp:265
 #, c-format
@@ -1045,9 +1030,8 @@ msgstr ""
 "Oppdaga %d nye spel, ignorerte %d spel som har vorte lagt til tidlegare..."
 
 #: gui/message.cpp:173 gui/message.cpp:177 gui/options.cpp:2527
-#, fuzzy
 msgid "Open URL"
-msgstr "OpenGL"
+msgstr "Åpne URL"
 
 #: gui/onscreendialog.cpp:100 gui/onscreendialog.cpp:102
 msgid "Stop"
