@@ -41,6 +41,10 @@ enum DirMask {
 	DIRMASK_S = 0xC, DIRMASK_W = 3
 };
 
+enum StateFlag {
+	SFLAG_DISABLE_MONSTER_SPELLS = 2
+};
+
 /**
  * Container for all the game maps
  */

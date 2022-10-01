@@ -191,6 +191,10 @@ void Combat::setupHandicap() {
 	_handicap4 = 0;
 }
 
+bool Combat::canMonsterCast() const {
+	return !(g_maps->_currentState & Maps::SFLAG_DISABLE_MONSTER_SPELLS) &&
+		!(_monsterStatus[_monsterIndex] & (MONFLAG_BLIND | MONFLAG_SILENCED));
+}
 
 void Combat::combatLoop() {
 	if (_monsterIndex != 0) {

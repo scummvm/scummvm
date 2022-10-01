@@ -729,6 +729,11 @@ spells:
 	enter_to_cast: "'ENTER' TO CAST"
 	cast_on: "CAST ON: '1'-'%d'?"
 	which_town: "WHICH TOWN (1-5)?"
+monster_spells:
+	casts: "CASTS "
+	fails_to_cast: "FAILS TO CAST A SPELL"
+	a_curse: "A CURSE"
+
 maps:
 	map00:
 		sign: "A SIGN ABOVE THE DOOR READS: "
