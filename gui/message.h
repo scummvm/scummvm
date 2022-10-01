@@ -29,6 +29,7 @@
 namespace GUI {
 
 class CommandSender;
+class StaticTextWidget;
 
 enum {
 	kMessageOK = 0,
@@ -45,7 +46,8 @@ public:
 				  const Common::U32String &defaultButton = Common::U32String("OK"),
 				  const Common::U32String &altButton = Common::U32String(),
 				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
-				  const char *url = nullptr);
+				  const char *url = nullptr,
+				  const Common::U32String &extraMessage = Common::U32String());
 	MessageDialog(const Common::String &message,
 				  const Common::String &defaultButton = "OK",
 				  const Common::String &altButton = Common::String(),
@@ -63,7 +65,11 @@ private:
 			  const Common::U32String &defaultButton,
 			  const Common::U32StringArray &altButtons,
 			  Graphics::TextAlign alignment,
-			  const char *url);
+			  const char *url,
+			  const Common::U32String &extraMessage);
+
+protected:
+	StaticTextWidget *_extraMessage;
 };
 
 /**
@@ -77,6 +83,28 @@ public:
 
 protected:
 	uint32 _timer;
+};
+
+/**
+ * Timed message dialog: displays a message with a countdown.
+ */
+class CountdownMessageDialog : public MessageDialog {
+public:
+	CountdownMessageDialog(const Common::U32String &message,
+				  uint32 duration,
+				  const Common::U32String &defaultButton = Common::U32String("OK"),
+				  const Common::U32String &altButton = Common::U32String(),
+				  Graphics::TextAlign alignment = Graphics::kTextAlignCenter,
+				  const Common::U32String &countdownMessage = Common::U32String(""));
+
+	void handleTickle() override;
+
+protected:
+	void updateCountdown();
+
+	uint32 _timer;
+	uint32 _startTime;
+	Common::U32String _countdownMessage;
 };
 
 /**
