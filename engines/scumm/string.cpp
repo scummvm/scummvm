@@ -574,7 +574,7 @@ bool ScummEngine::newLine() {
 }
 
 #ifdef ENABLE_HE
-void ScummEngine_v72he::fakeBidiString(byte *ltext, bool ignoreVerb) const {
+void ScummEngine_v72he::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const {
 	if (*ltext == 0x7F) {
 		ltext++;
 		while (*(ltext++) != 0x7F);
@@ -587,7 +587,7 @@ void ScummEngine_v72he::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 		}
 		tmp = *loc;
 		*loc = 0;
-		strcpy((char *)ltext, Common::convertBiDiString((const char *)ltext, Common::kWindows1255).c_str());
+		Common::strcpy_s(reinterpret_cast<char *>(ltext), ltextSize, Common::convertBiDiString((const char *)ltext, Common::kWindows1255).c_str());
 		*loc = tmp;
 		loc++;
 		ltext = loc;
@@ -598,7 +598,7 @@ void ScummEngine_v72he::fakeBidiString(byte *ltext, bool ignoreVerb) const {
 }
 #endif
 
-void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb) const {
+void ScummEngine::fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const {
 	// Provides custom made BiDi mechanism.
 	// Reverses texts on each line marked by control characters (considering different control characters used in verbs panel)
 	// While preserving original order of numbers (also negative numbers and comma separated)
@@ -850,7 +850,7 @@ void ScummEngine::CHARSET_1() {
 	int c = 0;
 
 	if (_isRTL)
-		fakeBidiString(_charsetBuffer + _charsetBufPos, true);
+		fakeBidiString(_charsetBuffer + _charsetBufPos, true, sizeof(_charsetBuffer) - _charsetBufPos);
 
 	bool createTextBox = (_macScreen && _game.id == GID_INDY3);
 	bool drawTextBox = false;
@@ -948,7 +948,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	convertMessageToString(msg, buf, sizeof(buf));
 
 	if (_isRTL)
-		fakeBidiString(buf, false);
+		fakeBidiString(buf, false, sizeof(buf));
 
 	_charset->_top = _string[a].ypos + _screenTop;
 	_charset->_startLeft = _charset->_left = _string[a].xpos;
@@ -2036,7 +2036,7 @@ bool ScummEngine::reverseIfNeeded(const byte *text, byte *reverseBuf, int revers
 	if (_game.id != GID_LOOM && _game.id != GID_ZAK)
 		return false;
 	Common::strlcpy(reinterpret_cast<char *>(reverseBuf), reinterpret_cast<const char *>(text), reverseBufSize);
-	fakeBidiString(reverseBuf, true);
+	fakeBidiString(reverseBuf, true, reverseBufSize);
 	return true;
 }
 
