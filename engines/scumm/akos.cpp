@@ -995,80 +995,11 @@ byte AkosRenderer::paintCelCDATRLE(int xmoveCur, int ymoveCur) {
 	return 0;
 }
 
-void AkosRenderer::majMinCodecSetupBitReader(const byte *src) {
-	_majMinData.repeatMode = false;
-	_majMinData.numBits = 16;
-	_majMinData.mask = (1 << *src) - 1;
-	_majMinData.shift = *(src);
-	_majMinData.color = *(src + 1);
-	_majMinData.bits = (*(src + 2) | *(src + 3) << 8);
-	_majMinData.dataPtr = src + 4;
-}
-
-#define MAJMIN_FILL_BITS()                                        \
-		if (_majMinData.numBits <= 8) {                                \
-		  _majMinData.bits |= (*_majMinData.dataPtr++) << _majMinData.numBits;   \
-		  _majMinData.numBits += 8;                                    \
-		}
-
-#define MAJMIN_EAT_BITS(n)                                        \
-		_majMinData.numBits -= (n);                                    \
-		_majMinData.bits >>= (n);
-
-
-void AkosRenderer::majMinCodecSkipData(int32 numbytes) {
-	majMinCodecDecodeLine(nullptr, numbytes, 0);
-}
-
-void AkosRenderer::majMinCodecDecodeLine(byte *buf, int32 numbytes, int32 dir) {
-	uint16 bits, tmp_bits;
-
-	while (numbytes != 0) {
-		if (buf) {
-			*buf = _majMinData.color;
-			buf += dir;
-		}
-
-		if (!_majMinData.repeatMode) {
-			MAJMIN_FILL_BITS()
-			bits = _majMinData.bits & 3;
-			if (bits & 1) {
-				MAJMIN_EAT_BITS(2)
-				if (bits & 2) {
-					tmp_bits = _majMinData.bits & 7;
-					MAJMIN_EAT_BITS(3)
-					if (tmp_bits != 4) {
-						// A color change
-						_majMinData.color += (tmp_bits - 4);
-					} else {
-						// Color does not change, but rather identical pixels get repeated
-						_majMinData.repeatMode = true;
-						MAJMIN_FILL_BITS()
-						_majMinData.repeatCount = (_majMinData.bits & 0xff) - 1;
-						MAJMIN_EAT_BITS(8)
-						MAJMIN_FILL_BITS()
-					}
-				} else {
-					MAJMIN_FILL_BITS()
-					_majMinData.color = ((byte)_majMinData.bits) & _majMinData.mask;
-					MAJMIN_EAT_BITS(_majMinData.shift)
-					MAJMIN_FILL_BITS()
-				}
-			} else {
-				MAJMIN_EAT_BITS(1);
-			}
-		} else {
-			if (--_majMinData.repeatCount == 0) {
-				_majMinData.repeatMode = false;
-			}
-		}
-		numbytes--;
-	}
-}
-
 void AkosRenderer::majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 width, int32 height, int32 dir,
 		int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf) {
-	byte *tmpBuf = _majMinData.buffer;
+
+	MajMinCodec majMin;
+	byte *tmpBuf = majMin._majMinData.buffer;
 	int maskPitch;
 	byte *maskPtr;
 	const byte maskBit = revBitMask(maskLeft & 7);
@@ -1078,10 +1009,10 @@ void AkosRenderer::majMinCodecDecompress(byte *dest, int32 pitch, const byte *sr
 		tmpBuf += (width - 1);
 	}
 
-	majMinCodecSetupBitReader(src);
+	majMin.setupBitReader(*src, src + 1);
 
 	if (numSkipBefore != 0) {
-		majMinCodecSkipData(numSkipBefore);
+		majMin.skipData(numSkipBefore);
 	}
 
 	maskPitch = _numStrips;
@@ -1091,13 +1022,13 @@ void AkosRenderer::majMinCodecDecompress(byte *dest, int32 pitch, const byte *sr
 	assert(height > 0);
 	assert(width > 0);
 	while (height--) {
-		majMinCodecDecodeLine(tmpBuf, width, dir);
-		bompApplyMask(_majMinData.buffer, maskPtr, maskBit, width, transparency);
+		majMin.decodeLine(tmpBuf, width, dir);
+		bompApplyMask(majMin._majMinData.buffer, maskPtr, maskBit, width, transparency);
 		bool HE7Check = (_vm->_game.heversion == 70);
-		bompApplyShadow(_shadowMode, _shadowTable, _majMinData.buffer, dest, width, transparency, HE7Check);
+		bompApplyShadow(_shadowMode, _shadowTable, majMin._majMinData.buffer, dest, width, transparency, HE7Check);
 
 		if (numSkipAfter != 0)	{
-			majMinCodecSkipData(numSkipAfter);
+			majMin.skipData(numSkipAfter);
 		}
 		dest += pitch;
 		maskPtr += maskPitch;

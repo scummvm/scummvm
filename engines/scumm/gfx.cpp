@@ -3783,55 +3783,24 @@ void Gdi::drawStrip3DO(byte *dst, int dstPitch, const byte *src, int height, con
 	} while (0)
 
 void Gdi::drawStripComplex(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
-	byte color = *src++;
-	uint bits = *src++;
-	byte cl = 8;
-	byte bit;
-	byte incm, reps;
+	byte color;
+	MajMinCodec majMin;
 
-	do {
-		int x = 8;
-		do {
-			FILL_BITS;
+	majMin.setupBitReader(_decomp_shr, src);
+
+	byte lineBuffer[8];
+	memset(lineBuffer, 0, 8);
+
+	while (height--) {
+		majMin.decodeLine(lineBuffer, 8, 1);
+		for (byte i = 0; i < 8; i ++) {
+			color = lineBuffer[i];
 			if (!transpCheck || color != _transparentColor)
 				writeRoomColor(dst, color);
 			dst += _vm->_bytesPerPixel;
-
-		againPos:
-			if (!READ_BIT) {
-			} else if (!READ_BIT) {
-				FILL_BITS;
-				color = bits & _decomp_mask;
-				bits >>= _decomp_shr;
-				cl -= _decomp_shr;
-			} else {
-				incm = (bits & 7) - 4;
-				cl -= 3;
-				bits >>= 3;
-				if (incm) {
-					color += incm;
-				} else {
-					FILL_BITS;
-					reps = bits & 0xFF;
-					do {
-						if (!--x) {
-							x = 8;
-							dst += dstPitch - 8 * _vm->_bytesPerPixel;
-							if (!--height)
-								return;
-						}
-						if (!transpCheck || color != _transparentColor)
-							writeRoomColor(dst, color);
-						dst += _vm->_bytesPerPixel;
-					} while (--reps);
-					bits >>= 8;
-					bits |= (*src++) << (cl - 8);
-					goto againPos;
-				}
-			}
-		} while (--x);
+		}
 		dst += dstPitch - 8 * _vm->_bytesPerPixel;
-	} while (--height);
+	}
 }
 
 void Gdi::drawStripBasicH(byte *dst, int dstPitch, const byte *src, int height, const bool transpCheck) const {
@@ -4628,6 +4597,77 @@ void ScummEngine::updateScreenShakeEffect() {
 		_shakeTickCounter += ((1000000 / _shakeTimerRate) * 8);
 		_shakeNextTick += (_shakeTickCounter / 1000);
 		_shakeTickCounter %= 1000;
+	}
+}
+
+void MajMinCodec::setupBitReader(byte shift, const byte *src) {
+	_majMinData.repeatMode = false;
+	_majMinData.numBits = 16;
+	_majMinData.mask = (1 << shift) - 1;
+	_majMinData.shift = shift;
+	_majMinData.color = *src;
+	_majMinData.bits = (*(src + 1) | *(src + 2) << 8);
+	_majMinData.dataPtr = src + 3;
+}
+
+#define MAJMIN_FILL_BITS()                                        \
+		if (_majMinData.numBits <= 8) {                                \
+		  _majMinData.bits |= (*_majMinData.dataPtr++) << _majMinData.numBits;   \
+		  _majMinData.numBits += 8;                                    \
+		}
+
+#define MAJMIN_EAT_BITS(n)                                        \
+		_majMinData.numBits -= (n);                                    \
+		_majMinData.bits >>= (n);
+
+
+void MajMinCodec::skipData(int32 numbytes) {
+	decodeLine(nullptr, numbytes, 0);
+}
+
+void MajMinCodec::decodeLine(byte *buf, int32 numbytes, int32 dir) {
+	uint16 bits, tmp_bits;
+
+	while (numbytes != 0) {
+		if (buf) {
+			*buf = _majMinData.color;
+			buf += dir;
+		}
+
+		if (!_majMinData.repeatMode) {
+			MAJMIN_FILL_BITS()
+			bits = _majMinData.bits & 3;
+			if (bits & 1) {
+				MAJMIN_EAT_BITS(2)
+				if (bits & 2) {
+					tmp_bits = _majMinData.bits & 7;
+					MAJMIN_EAT_BITS(3)
+					if (tmp_bits != 4) {
+						// A color change
+						_majMinData.color += (tmp_bits - 4);
+					} else {
+						// Color does not change, but rather identical pixels get repeated
+						_majMinData.repeatMode = true;
+						MAJMIN_FILL_BITS()
+						_majMinData.repeatCount = (_majMinData.bits & 0xff) - 1;
+						MAJMIN_EAT_BITS(8)
+						MAJMIN_FILL_BITS()
+					}
+				} else {
+					MAJMIN_FILL_BITS()
+					_majMinData.color = ((byte)_majMinData.bits) & _majMinData.mask;
+					MAJMIN_EAT_BITS(_majMinData.shift)
+					MAJMIN_FILL_BITS()
+				}
+			} else {
+				MAJMIN_EAT_BITS(1);
+			}
+		} else {
+			if (--_majMinData.repeatCount == 0) {
+				_majMinData.repeatMode = false;
+			}
+		}
+		numbytes--;
 	}
 }
 
