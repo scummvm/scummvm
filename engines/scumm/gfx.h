@@ -543,6 +543,26 @@ private:
 };
 #endif // DISABLE_TOWNS_DUAL_LAYER_MODE
 
+class MajMinCodec {
+public:
+
+	struct {
+		bool repeatMode;
+		int repeatCount;
+		byte mask;
+		byte color;
+		byte shift;
+		uint16 bits;
+		byte numBits;
+		const byte *dataPtr;
+		byte buffer[336];
+	} _majMinData;
+
+	void setupBitReader(byte shift, const byte *src);
+	void skipData(int32 numSkip);
+	void decodeLine(byte *buf, int32 numBytes, int32 dir);
+};
+
 } // End of namespace Scumm
 
 #endif

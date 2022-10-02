@@ -89,17 +89,6 @@ protected:
 	const byte *_rgbs;  // Raw costume RGB colors (HE specific)
 	const uint8 *_xmap; // shadow color table (HE specific)
 
-	struct {
-		bool repeatMode;
-		int repeatCount;
-		byte mask;
-		byte color;
-		byte shift;
-		uint16 bits;
-		byte numBits;
-		const byte *dataPtr;
-		byte buffer[336];
-	} _majMinData;
 
 public:
 	AkosRenderer(ScummEngine *scumm) : BaseCostumeRenderer(scumm) {
@@ -132,9 +121,6 @@ protected:
 	byte paintCelCDATRLE(int xMoveCur, int yMoveCur);
 	byte paintCelMajMin(int xMoveCur, int yMoveCur);
 	byte paintCelTRLE(int xMoveCur, int yMoveCur);
-	void majMinCodecSetupBitReader(const byte *src);
-	void majMinCodecSkipData(int32 numSkip);
-	void majMinCodecDecodeLine(byte *buf, int32 numBytes, int32 dir);
 	void majMinCodecDecompress(byte *dest, int32 pitch, const byte *src, int32 t_width, int32 t_height, int32 dir, int32 numSkipBefore, int32 numSkipAfter, byte transparency, int maskLeft, int maskTop, int zBuf);
 
 	void markRectAsDirty(Common::Rect rect);
