@@ -292,7 +292,7 @@ void GfxControls16::kernelTexteditChange(reg_t controlObject, reg_t eventObject)
 		texteditCursorDraw(rect, text.c_str(), cursorPos);
 		_text16->SetFont(oldFontId);
 		// Write back string
-		_segMan->strcpy(textReference, text.c_str());
+		_segMan->strcpy_(textReference, text.c_str());
 	} else {
 		if (g_system->getMillis() >= _texteditBlinkTime) {
 			_paint16->invertRect(_texteditCursorRect);

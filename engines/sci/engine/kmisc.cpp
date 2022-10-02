@@ -434,26 +434,26 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 	setting.toLowercase();
 
 	if (setting == "videospeed") {
-		s->_segMan->strcpy(data, "500");
+		s->_segMan->strcpy_(data, "500");
 	} else if (setting == "cpu") {
 		// We always return the fastest CPU setting that CPUID can detect
 		// (i.e. 586).
-		s->_segMan->strcpy(data, "586");
+		s->_segMan->strcpy_(data, "586");
 	} else if (setting == "cpuspeed") {
-		s->_segMan->strcpy(data, "500");
+		s->_segMan->strcpy_(data, "500");
 	} else if (setting == "language") {
 		Common::String languageId = Common::String::format("%d", g_sci->getSciLanguage());
-		s->_segMan->strcpy(data, languageId.c_str());
+		s->_segMan->strcpy_(data, languageId.c_str());
 	} else if (setting == "torindebug") {
 		// Used to enable the debug mode in Torin's Passage (French).
 		// If true, the debug mode is enabled.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "leakdump") {
 		// An unknown setting in LSL7. Likely used for debugging.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "startroom") {
 		// Debug setting in LSL7, specifies the room to start from.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "game") {
 		// Hoyle 5 startup, specifies the number of the game to start.
 		if (g_sci->getGameId() == GID_HOYLE5 &&
@@ -461,25 +461,25 @@ reg_t kGetConfig(EngineState *s, int argc, reg_t *argv) {
 			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
 			// Special case for Hoyle 5 Bridge: only one game is included (Bridge),
 			// so mimic the setting in 700.cfg and set the starting room number to 700.
-			s->_segMan->strcpy(data, "700");
+			s->_segMan->strcpy_(data, "700");
 		} else {
-			s->_segMan->strcpy(data, "");
+			s->_segMan->strcpy_(data, "");
 		}
 	} else if (setting == "laptop") {
 		// Hoyle 5 startup.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "jumpto") {
 		// Hoyle 5 startup.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "klonchtsee") {
 		// Hoyle 5 - starting Solitaire.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "klonchtarr") {
 		// Hoyle 5 - starting Solitaire.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else if (setting == "deflang") {
 		// MGDX 4-language startup.
-		s->_segMan->strcpy(data, "");
+		s->_segMan->strcpy_(data, "");
 	} else {
 		error("GetConfig: Unknown configuration setting %s", setting.c_str());
 	}

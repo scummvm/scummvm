@@ -710,7 +710,7 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 	if (src.isNull()) {
 		// Clear target string instead.
 		if (n > 0)
-			strcpy(dest, "");
+			strcpy_(dest, "");
 
 		return;	// empty text
 	}
@@ -722,7 +722,7 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 
 		// Clear target string instead.
 		if (n > 0)
-			strcpy(dest, "");
+			strcpy_(dest, "");
 		return;
 	}
 
@@ -754,11 +754,11 @@ void SegManager::strncpy(reg_t dest, reg_t src, size_t n) {
 	}
 }
 
-void SegManager::strcpy(reg_t dest, const char* src) {
+void SegManager::strcpy_(reg_t dest, const char* src) {
 	strncpy(dest, src, 0xFFFFFFFFU);
 }
 
-void SegManager::strcpy(reg_t dest, reg_t src) {
+void SegManager::strcpy_(reg_t dest, reg_t src) {
 	strncpy(dest, src, 0xFFFFFFFFU);
 }
 

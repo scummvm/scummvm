@@ -316,14 +316,14 @@ public:
 	 * src and dest can point to raw and non-raw segments.
 	 * Conversion is performed as required.
 	 */
-	void strcpy(reg_t dest, reg_t src);
+	void strcpy_(reg_t dest, reg_t src);
 
 	/**
 	 * Copies a string from src to dest.
 	 * dest can point to a raw or non-raw segment.
 	 * Conversion is performed as required.
 	 */
-	void strcpy(reg_t dest, const char *src);
+	void strcpy_(reg_t dest, const char *src);
 
 	/**
 	 * Copies a string from src to dest.
