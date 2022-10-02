@@ -338,7 +338,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 				}
 
-				strcpy(target, tempsource.c_str());
+				Common::strcpy_s(target, sizeof(targetbuf) - (target - targetbuf), tempsource.c_str());
 				target += slen;
 
 				switch (align) {
