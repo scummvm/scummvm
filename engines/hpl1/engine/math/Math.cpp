@@ -46,7 +46,7 @@ static char mpTempChar[1024];
 //-----------------------------------------------------------------------
 
 int cMath::RandRectl(int alMin, int alMax) {
-	return Hpl1::g_engine->getRandomNumber(alMax - alMin + 1) + alMin;
+	return Hpl1::g_engine->getRandomNumber(alMax - alMin) + alMin;
 }
 
 //-----------------------------------------------------------------------
