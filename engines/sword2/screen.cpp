@@ -85,8 +85,8 @@ Screen::Screen(Sword2Engine *vm, int16 width, int16 height) {
 	_largestLayerArea = 0;
 	_largestSpriteArea = 0;
 
-	strcpy(_largestLayerInfo,  "largest layer:  none registered");
-	strcpy(_largestSpriteInfo, "largest sprite: none registered");
+	Common::strcpy_s(_largestLayerInfo,  "largest layer:  none registered");
+	Common::strcpy_s(_largestSpriteInfo, "largest sprite: none registered");
 
 	_fadeStatus = RDFADE_NONE;
 	_renderAverageTime = 60;

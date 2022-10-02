@@ -1343,7 +1343,7 @@ void SaveRestoreDialog::onAction(Widget *widget, int result) {
 			else
 				_firstPos = 4;
 
-			strcpy((char *)_editBuffer, (char *)slot->getText());
+			Common::strcpy_s(_editBuffer, (char *)slot->getText());
 			_editPos = strlen((char *)_editBuffer);
 			_cursorTick = 0;
 			_editBuffer[_editPos] = '_';
