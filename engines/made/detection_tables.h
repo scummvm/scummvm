@@ -505,6 +505,23 @@ static const MadeGameDescription gameDescriptions[] = {
 	},
 
 	{
+		// The Manhole
+		{
+			"manhole",
+			"",
+			AD_ENTRY1s("manhole.dat", "2f14b5d87a862aad25701514dc282475", 119667),
+			Common::JA_JPN,
+			Common::kPlatformFMTowns,
+			ADGF_CD | ADGF_UNSTABLE,
+			GUIO1(GUIO_NOSPEECH)
+		},
+		GID_MANHOLE,
+		0,
+		GF_CD,
+		3,
+	},
+
+	{
 		// Leather Goddesses of Phobos 2 (English)
 		{
 			"lgop2",
