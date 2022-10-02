@@ -97,6 +97,11 @@ private:
 	}
 
 	/**
+	 * Adds current character's name
+	 */
+	void addCharName();
+
+	/**
 	 * Selects a random character and applies the damage to them
 	 */
 	void damageRandomChar();

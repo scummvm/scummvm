@@ -34,6 +34,11 @@ Combat::Combat() : TextView("Combat") {
 
 void Combat::setMode(Mode newMode) {
 	_mode = newMode;
+
+	if (_mode == MONSTER_SPELL)
+		// Make a copy of monster spell 
+		_monsterSpellLines = getMonsterSpellMessage();
+
 	redraw();
 }
 
@@ -78,6 +83,10 @@ void Combat::draw() {
 	case MONSTER_WANDERS:
 		writeMonsterAction();
 		delaySeconds(3);
+		return;
+	case MONSTER_SPELL:
+		writeMonsterSpell();
+		delaySeconds(2);
 		return;
 	default:
 		break;
@@ -126,6 +135,9 @@ void Combat::timeout() {
 		writeParty();
 		writeMonsters();
 		checkParty();
+		return;
+	case MONSTER_SPELL:
+		checkMonsterSpellDone();
 		return;
 	case DEFEATED_MONSTERS: {
 		auto &spells = g_globals->_spells;
@@ -376,6 +388,37 @@ void Combat::writeMonsterAction() {
 	writeString(0, 20, _monsterName);
 	writeString(STRING["dialogs.combat.monster_flees"]);
 }
+
+void Combat::writeMonsterSpell() {
+	resetBottom();
+
+	for (int i = 0, y = 0; i < _monsterSpellLines.size() &&
+		_monsterSpellLines[i].y > y;
+		y = _monsterSpellLines[i].y, ++i) {
+		Common::String text = _monsterSpellLines[i]._text;
+		size_t idx;
+		while ((idx = text.findFirstOf(' ')) != Common::String::npos)
+			text.deleteChar(idx);
+
+		writeString(0, _monsterSpellLines[i].y, text);
+	}
+}
+
+void Combat::checkMonsterSpellDone() {
+	for (uint i = 0; i < _monsterSpellLines.size(); ++i) {
+		if (i > 0 && _monsterSpellLines[i].y ==
+				_monsterSpellLines[i - 1].y) {
+			// Remove the message line just displayed, and redraw
+			// so the next one can be shown
+			_monsterSpellLines.remove_at(i - 1);
+			redraw();
+			return;
+		}
+	}
+
+	checkParty();
+}
+
 
 } // namespace Views
 } // namespace MM1

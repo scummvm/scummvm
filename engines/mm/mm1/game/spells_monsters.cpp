@@ -444,6 +444,14 @@ bool SpellsMonsters::casts() {
 	}
 }
 
+void SpellsMonsters::addCharName() {
+	// Wrap name in special characters so that characters
+	// with multiple word names will capitalize each word
+	// of the name
+	add(Common::String("|%s|",
+		g_globals->_currCharacter->_name));
+}
+
 void SpellsMonsters::damageRandomChar() {
 	chooseCharacter();
 	handleDamage();
@@ -492,8 +500,9 @@ void SpellsMonsters::handleDamage() {
 }
 
 bool SpellsMonsters::charAffected() {
-	_lines.push_back(Line(0, 2, Common::String::format("%s ",
-		g_globals->_currCharacter->_name)));
+	_lines.push_back(Line(0, 2, ""));
+	addCharName();
+	add(' ');
 
 	if (_mmVal1 && !isCharAffected()) {
 		_lines.back()._text += STRING["monster_spells.not_affected"];
@@ -578,7 +587,7 @@ void SpellsMonsters::subtractDamage() {
 
 		if (!(c._condition & (BAD_CONDITION | UNCONSCIOUS))) {
 			c._condition |= UNCONSCIOUS;
-			add(c._name);
+			addCharName();
 			add(' ');
 			add(STRING["monster_spells.goes_down"]);
 			Sound::sound2(SOUND_8);
@@ -587,9 +596,10 @@ void SpellsMonsters::subtractDamage() {
 			if (c._condition & BAD_CONDITION)
 				c._condition = BAD_CONDITION | DEAD;
 
-			_lines.push_back(Line(0, _lines.back().y + 1,
-				Common::String::format("%s %s",
-					c._name, STRING["monster_spells.dies"].c_str())));
+			_lines.push_back(Line(0, 3, ""));
+			addCharName();
+			add(' ');
+			add(STRING["monster_spells.dies"]);
 			Sound::sound2(SOUND_8);
 		}
 	}

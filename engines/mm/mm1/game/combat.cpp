@@ -592,8 +592,11 @@ void Combat::checkMonsterSpells() {
 			if (!_monsterP->_field1c || _monsterP->_field1c >= 33) {
 				checkMonsterActions();
 			} else {
-				// TODO: Monsters spell casting?
+				castMonsterSpell(_monsterList[_monsterIndex]._name,
+					_monsterP->_field1c);
+				setMode(MONSTER_SPELL);
 			}
+			return;
 		}
 	}
 }
@@ -635,7 +638,14 @@ void Combat::checkParty() {
 		return;
 	}
 
+	// Update the array for the party
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if ((c._condition & BAD_CONDITION) || !c._hpBase)
+			_arr3[i] = 1;
+	}
 
+	loop1();
 }
 
 } // namespace Game
