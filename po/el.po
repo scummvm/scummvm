@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-09-30 01:07+0000\n"
-"PO-Revision-Date: 2022-09-22 16:47+0000\n"
+"PO-Revision-Date: 2022-10-02 09:57+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -7815,14 +7815,17 @@ msgid ""
 "Native MIDI support requires the Roland Upgrade from LucasArts,\n"
 "but %s is missing. Using AdLib instead."
 msgstr ""
-"Η υποστήριξη native MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
-"αλλά το %s λείπει. Γίνεται χρήση AdLib αντ 'αυτού."
+"Η υποστήριξη εγγενούς MIDI απαιτεί την Αναβάθμιση Roland από τη LucasArts,\n"
+"αλλά το %s λείπει. Αντ' αυτού θα γίνει χρήση AdLib."
 
 #: engines/scumm/scumm.cpp:1931
 msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"Από την συγκεκριμένη έκδοση του Monkey Island 1 λείπουν κάποια από τα "
+"απαραίτητα\n"
+"δεδομένα για την υποστήριξη του MT-32. Αντ' αυτού θα γίνει χρήση AdLib."
 
 #: engines/scumm/scumm.cpp:3239
 msgid ""
@@ -7903,11 +7906,13 @@ msgstr "Το αρχείο δεδομένων παιχνιδιού \"sky.cpt\" έ
 
 #: engines/sky/detection.cpp:36
 msgid "Floppy intro"
-msgstr "Εισαγωγή έκδοσης δισκέτας"
+msgstr "Εισαγωγή από έκδοση με δισκέτες"
 
 #: engines/sky/detection.cpp:37
 msgid "Use the floppy version's intro (CD version only)"
-msgstr "Χρήση της εισαγωγής από την έκδοση δισκέτας (έκδοση CD μόνο)"
+msgstr ""
+"Χρήση της εισαγωγής από την έκδοση με δισκέτες (έχει νόημα μόνο για την "
+"έκδοση CD)"
 
 #: engines/sky/metaengine.cpp:85
 msgid "Walk / Look / Talk"
