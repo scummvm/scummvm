@@ -448,20 +448,16 @@ void ScValue::setString(const Common::String &val) {
 
 //////////////////////////////////////////////////////////////////////////
 void ScValue::setStringVal(const char *val) {
-	if (_valString) {
-		delete[] _valString;
-		_valString = nullptr;
-	}
+	delete[] _valString;
+	_valString = nullptr;
 
 	if (val == nullptr) {
-		_valString = nullptr;
 		return;
 	}
 
-	_valString = new char [strlen(val) + 1];
-	if (_valString) {
-		strcpy(_valString, val);
-	}
+	size_t valSize = strlen(val) + 1;
+	_valString = new char[valSize];
+	Common::strcpy_s(_valString, valSize, val);
 }
 
 

@@ -1228,8 +1228,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ExpandString") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		char *str = new char[strlen(val->getString()) + 1];
-		strcpy(str, val->getString());
+		size_t strSize = strlen(val->getString()) + 1;
+		char *str = new char[strSize];
+		Common::strcpy_s(str, strSize, val->getString());
 		expandStringByStringTable(&str);
 		stack->pushString(str);
 		delete[] str;
@@ -1460,8 +1461,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *xdesc = stack->pop()->getString();
 		bool quick = stack->pop()->getBool(false);
 
-		char *desc = new char[strlen(xdesc) + 1];
-		strcpy(desc, xdesc);
+		size_t descSize = strlen(xdesc) + 1;
+		char *desc = new char[descSize];
+		Common::strcpy_s(desc, descSize, xdesc);
 		stack->pushBool(true);
 		if (DID_FAIL(saveGame(slot, desc, quick))) {
 			stack->pop();
@@ -3633,8 +3635,9 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ToString") == 0) {
 		stack->correctParams(1);
 		const char *str = stack->pop()->getString();
-		char *str2 = new char[strlen(str) + 1];
-		strcpy(str2, str);
+		size_t strSize = strlen(str) + 1;
+		char *str2 = new char[strSize];
+		Common::strcpy_s(str2, strSize, str);
 		stack->pushString(str2);
 		delete[] str2;
 	}
@@ -3703,7 +3706,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		// Let's make copies before modifying stack
 		char *copy = new char[size];
-		strcpy(copy, str);
+		Common::strcpy_s(copy, size, str);
 
 		// There is no way to makeSXArray() with exactly 1 given element
 		// That's why we are creating empty Array and SXArray::push() later
@@ -3737,8 +3740,9 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Trim") == 0 || strcmp(name, "lTrim") == 0 || strcmp(name, "rTrim") == 0) {
 		stack->correctParams(1);
 		const char *str = stack->pop()->getString();
-		char *copy = new char[strlen(str) + 1];
-		strcpy(copy, str);
+		size_t copySize = strlen(str) + 1;
+		char *copy = new char[copySize];
+		Common::strcpy_s(copy, copySize, str);
 
 		char *ptr = copy;
 		if (strcmp(name, "rTrim") != 0) {

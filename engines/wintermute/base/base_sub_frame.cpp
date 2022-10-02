@@ -685,7 +685,7 @@ bool BaseSubFrame::setSurface(const Common::String &filename, bool defaultCK, by
 	_surface = _gameRef->_surfaceStorage->addSurface(filename, defaultCK, ckRed, ckGreen, ckBlue, lifeTime, keepLoaded);
 	if (_surface) {
 		_surfaceFilename = new char[filename.size() + 1];
-		strcpy(_surfaceFilename, filename.c_str());
+		Common::strcpy_s(_surfaceFilename, filename.size() + 1, filename.c_str());
 
 		_cKDefault = defaultCK;
 		_cKRed = ckRed;
