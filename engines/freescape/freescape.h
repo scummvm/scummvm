@@ -99,6 +99,8 @@ public:
 	void convertBorder();
 	void drawBorder();
 	virtual void drawUI();
+	Graphics::Surface *_border;
+	Graphics::Surface *_title;
 	Texture *_borderTexture;
 	Texture *_uiTexture;
 
@@ -107,7 +109,8 @@ public:
 	virtual void loadAssets();
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
-	void loadBorder();
+	void loadBundledImages();
+	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset);
 	void loadAmigaPalette(Common::SeekableReadStream *file, int offset);
 	void swapAmigaPalette(uint16 areaID);
 	Common::HashMap<uint16, byte*> _amigaPalette;
@@ -229,7 +232,6 @@ public:
 	Math::Vector3d _scaleVector;
 	float _nearClipPlane;
 	float _farClipPlane;
-	Graphics::Surface *_border;
 
 	// Text messages and Fonts
 	Common::StringArray _messagesList;

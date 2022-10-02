@@ -26,11 +26,6 @@
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
 
-/**
- * Based on the PCX specs:
- *
- */
-
 namespace Image {
 
 NeoDecoder::NeoDecoder() {
