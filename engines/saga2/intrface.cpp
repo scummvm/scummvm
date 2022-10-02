@@ -398,8 +398,8 @@ CPlaqText::CPlaqText(gPanelList     &list,
                      int16         ident,
                      AppFunc       *cmd)
 	: gControl(list, box, msg, ident, cmd) {
-	if (strlen(msg) <= bufSize) {
-		strcpy(_lineBuf, msg);
+	if (strlen(msg) < bufSize) {
+		Common::strcpy_s(_lineBuf, msg);
 	} else {
 		*_lineBuf = '\0';
 	}
@@ -624,11 +624,10 @@ void CStatusLine::setLine(char *msg, uint32 frameTime) { // frametime def
 	if (newHead != _queueTail) {
 		size_t      msgLen = strlen(msg);
 
-		if ((_lineQueue[_queueHead].text = new char[msgLen + 1]()) !=  nullptr) {
-			strcpy(_lineQueue[_queueHead].text, msg);
-			_lineQueue[_queueHead].frameTime = frameTime;
-			_queueHead = newHead;
-		}
+		_lineQueue[_queueHead].text = new char[msgLen + 1];
+		Common::strcpy_s(_lineQueue[_queueHead].text, msgLen + 1, msg);
+		_lineQueue[_queueHead].frameTime = frameTime;
+		_queueHead = newHead;
 	}
 }
 
