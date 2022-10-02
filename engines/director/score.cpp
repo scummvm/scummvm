@@ -71,7 +71,9 @@ Score::Score(Movie *movie) {
 	_nextFrame = 0;
 	_currentLabel = 0;
 	_nextFrameTime = 0;
+	_lastTempo = 0;
 	_waitForChannel = 0;
+	_waitForVideoChannel = 0;
 	_cursorDirty = false;
 	_waitForClick = false;
 	_waitForClickCursor = false;
@@ -336,6 +338,13 @@ void Score::update() {
 				_nextFrameTime = g_system->getMillis();
 			}
 			keepWaiting = true;
+		} else if (_waitForVideoChannel) {
+			Channel *movieChannel = _channels[_waitForVideoChannel];
+			if (movieChannel->isActiveVideo() && movieChannel->_movieRate != 0.0) {
+				keepWaiting = true;
+			} else {
+				_waitForVideoChannel = 0;
+			}
 		} else if (g_system->getMillis() < _nextFrameTime && !_nextFrame) {
 			keepWaiting = true;
 		}
@@ -462,15 +471,18 @@ void Score::update() {
 		}
 	}
 
-	byte tempo = _frames[_currentFrame]->_tempo;
-	if (tempo) {
+	byte tempo = _frames[_currentFrame]->_scoreCachedTempo;
+	// puppetTempo is overridden by changes in score tempo
+	if (_frames[_currentFrame]->_tempo || tempo != _lastTempo) {
 		_puppetTempo = 0;
 	} else if (_puppetTempo) {
 		tempo = _puppetTempo;
 	}
 
 	if (tempo) {
-		if (tempo > 161) {
+		const bool waitForClickOnly = _vm->getVersion() < 300;
+		const int maxDelay = _vm->getVersion() < 400 ? 120 : 60;
+		if (tempo >= 256 - maxDelay) {
 			// Delay
 			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
 		} else if (tempo <= 120) {
@@ -482,20 +494,25 @@ void Score::update() {
 				_waitForClick = true;
 				_waitForClickCursor = false;
 				renderCursor(_movie->getWindow()->getMousePos());
-			} else if (tempo == 135) {
+			} else if (!waitForClickOnly && tempo == 135) {
 				// Wait for sound channel 1
 				_waitForChannel = 1;
-			} else if (tempo == 134) {
+			} else if (!waitForClickOnly && tempo == 134) {
 				// Wait for sound channel 2
 				_waitForChannel = 2;
+
+			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
+				// Wait for a digital video in a channel to finish playing
+				_waitForVideoChannel = tempo - 135;
 			} else {
-				warning("STUB: tempo %d", tempo);
+				warning("Unhandled tempo instruction: %d", tempo);
 			}
 			_nextFrameTime = g_system->getMillis();
 		}
 	} else {
 		_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
 	}
+	_lastTempo = tempo;
 
 	if (debugChannelSet(-1, kDebugSlow))
 		_nextFrameTime += 1000;
@@ -1146,6 +1163,8 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 	byte channelData[kChannelDataSize];
 	memset(channelData, 0, kChannelDataSize);
 
+	uint8 currentTempo = 0;
+
 	while (size != 0 && !stream.eos()) {
 		uint16 frameSize = stream.readUint16();
 		debugC(3, kDebugLoading, "++++++++++ score frame %d (frameSize %d) size %d", _frames.size(), frameSize, size);
@@ -1175,6 +1194,12 @@ void Score::loadFrames(Common::SeekableReadStreamEndian &stream, uint16 version)
 			// str->hexdump(str->size(), 32);
 			frame->readChannels(str, version);
 			delete str;
+			// Precache the current FPS tempo, as this carries forward to frames to the right
+			// of the instruction.
+			// Delay type tempos (e.g. wait commands, delays) apply to only a single frame, and are ignored here.
+			if (frame->_tempo && frame->_tempo <= 120)
+				currentTempo = frame->_tempo;
+			frame->_scoreCachedTempo = frame->_tempo ? frame->_tempo : currentTempo;
 
 			debugC(8, kDebugLoading, "Score::loadFrames(): Frame %d actionId: %s", _frames.size(), frame->_actionId.asString().c_str());
 

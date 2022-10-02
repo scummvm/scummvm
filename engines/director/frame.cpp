@@ -38,6 +38,7 @@ Frame::Frame(Score *score, int numChannels) {
 	_transArea = 0;
 	_transChunkSize = 0;
 	_tempo = 0;
+	_scoreCachedTempo = 0;
 
 	_numChannels = numChannels;
 
@@ -73,6 +74,7 @@ Frame::Frame(const Frame &frame) {
 	_transType = frame._transType;
 	_transChunkSize = frame._transChunkSize;
 	_tempo = frame._tempo;
+	_scoreCachedTempo = frame._scoreCachedTempo;
 	_sound1 = frame._sound1;
 	_sound2 = frame._sound2;
 	_soundType1 = frame._soundType1;

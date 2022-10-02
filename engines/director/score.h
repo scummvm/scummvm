@@ -145,7 +145,9 @@ public:
 
 	PlayState _playState;
 	uint32 _nextFrameTime;
+	int _lastTempo;
 	int _waitForChannel;
+	int _waitForVideoChannel;
 	bool _waitForClick;
 	bool _waitForClickCursor;
 	bool _cursorDirty;
