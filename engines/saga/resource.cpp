@@ -193,7 +193,7 @@ bool Resource::createContexts() {
 		for (SoundFileInfo *curSoundFile = sfxFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 			if (curSoundFile->gameId != _vm->getGameId()) continue;
 			if (!Common::File::exists(curSoundFile->fileName)) continue;
-			strcpy(_soundFileName, curSoundFile->fileName);
+			Common::strcpy_s(_soundFileName, curSoundFile->fileName);
 			uint32 flags = GAME_SOUNDFILE;
 
 			if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)
@@ -230,7 +230,7 @@ bool Resource::createContexts() {
 		if (curSoundFile->gameId != _vm->getGameId()) continue;
 		if (!Common::File::exists(curSoundFile->fileName)) continue;
 
-		strcpy(_voicesFileName[0], curSoundFile->fileName);
+		Common::strcpy_s(_voicesFileName[0], curSoundFile->fileName);
 		addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
 
 		// Special cases
@@ -283,7 +283,7 @@ bool Resource::createContexts() {
 	for (SoundFileInfo *curSoundFile = musicFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 		if (curSoundFile->gameId != _vm->getGameId()) continue;
 		if (!Common::File::exists(curSoundFile->fileName)) continue;
-		strcpy(_musicFileName, curSoundFile->fileName);
+		Common::strcpy_s(_musicFileName, curSoundFile->fileName);
 		uint32 flags = GAME_DIGITALMUSICFILE;
 
 		if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)
