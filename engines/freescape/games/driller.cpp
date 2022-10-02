@@ -203,7 +203,13 @@ void DrillerEngine::loadAssetsFullGame() {
 				error("Failed to open 'driller' executable for Amiga");
 
 			_border = loadAndConvertNeoImage(file, 0x137f4);
-			_title = loadAndConvertNeoImage(file, 0x1b572);
+			byte *palette = (byte*) malloc(16 * 3);
+			for (int i = 0; i < 16; i++) { // gray scale palette
+				palette[i * 3 + 0] = i * (255 / 16);
+				palette[i * 3 + 1] = i * (255 / 16);
+				palette[i * 3 + 2] = i * (255 / 16);
+			}
+			_title = loadAndConvertNeoImage(file, 0x10, palette);
 
 			loadMessagesFixedSize(file, 0xc66e, 14, 20);
 			loadGlobalObjects(file, 0xbd62);

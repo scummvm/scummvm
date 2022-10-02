@@ -112,7 +112,8 @@ public:
 	Common::Archive *_dataBundle;
 	void loadDataBundle();
 	void loadBundledImages();
-	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset);
+	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
+	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte* palette = nullptr);
 	void loadAmigaPalette(Common::SeekableReadStream *file, int offset);
 	void swapAmigaPalette(uint16 areaID);
 	Common::HashMap<uint16, byte*> _amigaPalette;
