@@ -1921,10 +1921,11 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		}
 	}
 
-	// WORKAROUND: MT-32 support is broken in the French VGA floppy version
-	// of MI1 (the index references an invalid DISK00.LEC file, and the
+	// WORKAROUND: MT-32 support is broken in the 8-disk French VGA floppy
+	// version of MI1 (the index references an invalid DISK00.LEC file, and the
 	// 'roland' room appears to be completely missing). We can't do much about
-	// this; revert to Adlib so that users don't get confused by the error.
+	// this; revert to Adlib so that users don't get confused by the fatal
+	// error about DISK00.LEC.
 	if (_game.id == GID_MONKEY_VGA && _language == Common::FR_FRA && _sound->_musicType == MDT_MIDI &&
 		memcmp(_gameMD5, "\xa0\x1f\xab\x4a\x64\xd4\x7b\x96\xe2\xe5\x8e\x6b\x0f\x82\x5c\xc7", 16) == 0) {
 		GUI::MessageDialog dialog(
