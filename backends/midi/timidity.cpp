@@ -331,7 +331,7 @@ char *MidiDriver_TIMIDITY::timidity_ctl_command(const char *fmt, ...) {
 	while (1) {
 		/* read reply */
 		if (fdgets(buff, sizeof(buff)) <= 0) {
-			strcpy(buff, "Read error\n");
+			Common::strcpy_s(buff, "Read error\n");
 			break;
 		}
 
