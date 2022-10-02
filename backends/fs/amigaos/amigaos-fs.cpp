@@ -314,9 +314,10 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
 
 			// Volume name + '\0'
-			char *volName = new char [strlen(buffer) + 1];
-			strcpy(volName, buffer);
-			strcat(buffer, ":");
+			size_t volNameSize = strlen(buffer) + 1;
+			char *volName = new char [volNameSize];
+			Common::strcpy_s(volName, volNameSize, buffer);
+			Common::strcat_s(buffer, ":");
 
 			BPTR volumeLock = IDOS->Lock((STRPTR)buffer, SHARED_LOCK);
 			if (volumeLock) {
