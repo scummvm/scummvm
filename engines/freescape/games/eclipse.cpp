@@ -108,6 +108,7 @@ void EclipseEngine::loadAssets() {
 
 	Common::File exe;
 	if (_renderMode == "ega") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("TOTEE.EXE");
 
 		if (file == nullptr)
@@ -119,6 +120,7 @@ void EclipseEngine::loadAssets() {
 			iterator->_value->addStructure(_areaMap[255]);
 
 	} else if (_renderMode == "cga") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("TOTEC.EXE");
 
 		if (file == nullptr)

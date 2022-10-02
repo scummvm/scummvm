@@ -28,13 +28,14 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/neo.h"
 
 namespace Freescape {
 
 FreescapeEngine *g_freescape = NULL;
 
 FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
-	: Engine(syst), _gameDescription(gd), _border(nullptr), _gfx(nullptr) {
+	: Engine(syst), _gameDescription(gd), _gfx(nullptr) {
 	g_freescape = this;
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
 		_renderMode = "ega";
@@ -72,6 +73,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
+
+	_border = nullptr;
+	_title = nullptr;
 	_borderTexture = nullptr;
 	_uiTexture = nullptr;
 	_fontLoaded = false;
@@ -261,7 +265,6 @@ Common::Error FreescapeEngine::run() {
 
 	// Load game data and init game state
 	loadDataBundle();
-	loadBorder();
 	loadAssets();
 	initGameState();
 	loadColorPalette();
@@ -463,5 +466,16 @@ void FreescapeEngine::loadDataBundle() {
 			error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
 	}
 }
+
+Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset) {
+	stream->seek(offset);
+	Image::NeoDecoder decoder;
+	decoder.loadStream(*stream);
+	Graphics::Surface *surface = new Graphics::Surface();
+	surface->copyFrom(*decoder.getSurface());
+	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
+	return surface;
+}
+
 
 } // namespace Freescape

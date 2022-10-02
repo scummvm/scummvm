@@ -506,33 +506,16 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	_binaryBits = 8;
 }
 
-void FreescapeEngine::loadBorder() {
-	if (isAmiga() || isAtariST()) {
-		Image::NeoDecoder decoder;
-		Common::File borderFile;
-		borderFile.open("console.neo");
-		decoder.loadStream(borderFile);
-		_border = new Graphics::Surface();
-		_border->copyFrom(*decoder.getSurface());
-		_border->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
-		return;
-	}
-
+void FreescapeEngine::loadBundledImages() {
 	Image::BitmapDecoder decoder;
-	Common::String borderFilename;
-	if (isAmiga())
-		borderFilename = _targetName + ".bmp";
-	else
-		borderFilename = _targetName + "_" + _renderMode + ".bmp";
-
-	Common::replace(borderFilename, "-demo", "");
+	Common::String borderFilename = _targetName + "_" + _renderMode + ".bmp";
 	if (_dataBundle->hasFile(borderFilename)) {
 		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
 		decoder.loadStream(*borderFile);
 		_border = new Graphics::Surface();
 		_border->copyFrom(*decoder.getSurface());
 	} else
-		debugC(1, kFreescapeDebugParser, "Missing border file '%s' in data bundle", borderFilename.c_str());
+		error("Missing border file '%s' in data bundle", borderFilename.c_str());
 }
 
 void FreescapeEngine::loadFonts(Common::SeekableReadStream *file, int offset) {

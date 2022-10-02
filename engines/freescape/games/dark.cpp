@@ -46,6 +46,7 @@ void DarkEngine::loadAssets() {
 
 	Common::File exe;
 	if (_renderMode == "ega") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("DSIDEE.EXE");
 
 		if (file == nullptr)
@@ -54,6 +55,7 @@ void DarkEngine::loadAssets() {
 		loadFonts(file, 0xa113);
 		load8bitBinary(file, 0xa280, 16);
 	} else if (_renderMode == "cga") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("DSIDEC.EXE");
 
 		if (file == nullptr)

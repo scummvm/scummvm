@@ -25,7 +25,6 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
-#include "freescape/neo.h"
 
 namespace Freescape {
 
@@ -134,8 +133,19 @@ void DrillerEngine::loadAssetsDemo() {
 
 	Common::File exe;
 	if (isAmiga()) {
-		file = gameDir.createReadStreamForMember("data");
+		file = gameDir.createReadStreamForMember("lift.neo");
+		if (file == nullptr)
+			error("Failed to open 'lift.neo' file");
 
+		_title = loadAndConvertNeoImage(file, 0);
+
+		if (file == nullptr)
+			error("Failed to open 'console.neo' file");
+
+		file = gameDir.createReadStreamForMember("console.neo");
+		_border = loadAndConvertNeoImage(file, 0);
+
+		file = gameDir.createReadStreamForMember("data");
 		if (file == nullptr)
 			error("Failed to open 'data' file");
 
@@ -148,6 +158,18 @@ void DrillerEngine::loadAssetsDemo() {
 		load8bitBinary(file, 0x442, 16);
 		loadAmigaPalette(file, 0x0);
 	} else if (isAtariST()) {
+		file = gameDir.createReadStreamForMember("lift.neo");
+		if (file == nullptr)
+			error("Failed to open 'lift.neo' file");
+
+		_title = loadAndConvertNeoImage(file, 0);
+
+		if (file == nullptr)
+			error("Failed to open 'console.neo' file");
+
+		file = gameDir.createReadStreamForMember("console.neo");
+		_border = loadAndConvertNeoImage(file, 0);
+
 		file = gameDir.createReadStreamForMember("data");
 
 		if (file == nullptr)
@@ -192,6 +214,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadAmigaSounds(file, 0, 25);
 		}
 	} else if (_renderMode == "ega") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 		if (file == nullptr)
@@ -202,6 +225,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadGlobalObjects(file, 0x3b42);
 		load8bitBinary(file, 0x9b40, 16);
 	} else if (_renderMode == "cga") {
+		loadBundledImages();
 		file = gameDir.createReadStreamForMember("DRILLC.EXE");
 
 		if (file == nullptr)
