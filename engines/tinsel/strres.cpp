@@ -234,7 +234,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 	byte *pText = FindStringBase(id);
 
 	if (pText == NULL) {
-		strcpy(pBuffer, "!! HIGH STRING !!");
+		Common::strcpy_s(pBuffer, bufferMax, "!! HIGH STRING !!");
 		return 0;
 	}
 
@@ -310,7 +310,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 	}
 
 	// TEMPORARY DIRTY BODGE
-	strcpy(pBuffer, "!! NULL STRING !!");
+	Common::strcpy_s(pBuffer, bufferMax, "!! NULL STRING !!");
 
 	// string does not exist
 	return 0;
