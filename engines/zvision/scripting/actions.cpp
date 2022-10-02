@@ -462,7 +462,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 	char volumeBuffer[15];
 
 	// Volume is optional. If it doesn't appear, assume full volume
-	strcpy(volumeBuffer, "100");
+	Common::strcpy_s(volumeBuffer, "100");
 
 	sscanf(line.c_str(), "%u %24s %u %14s", &type, fileNameBuffer, &loop, volumeBuffer);
 
@@ -485,7 +485,7 @@ ActionMusic::ActionMusic(ZVision *engine, int32 slotKey, const Common::String &l
 			// I thought I saw a case like this in Zork Nemesis, so
 			// let's guard against it.
 			warning("ActionMusic: Adjusting volume for %s from %s to 100", _fileName.c_str(), volumeBuffer);
-			strcpy(volumeBuffer, "100");
+			Common::strcpy_s(volumeBuffer, "100");
 		}
 		_volume = new ValueSlot(_scriptManager, volumeBuffer);
 	}
