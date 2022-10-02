@@ -2125,9 +2125,9 @@ int32 Logic::fnPlaySequence(int32 *params) {
 
 	// add the appropriate file extension & play it
 
-	strcpy(filename, (const char *)decodePtr(params[0]));
+	Common::strcpy_s(filename, (const char *)decodePtr(params[0]));
 	if (Sword2Engine::isPsx() && readVar(DEMO) && strcmp(filename, "enddemo") == 0) {
-		strcpy(filename, "rdemo");
+		Common::strcpy_s(filename, "rdemo");
 	}
 
 	// Write to walkthrough file (zebug0.txt)
