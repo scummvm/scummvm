@@ -415,7 +415,7 @@ int dlclose(void *handle)
 {
   DLObject *obj = (DLObject *)handle;
   if (obj == NULL) {
-	strcpy(dlerr, "Handle is NULL.");
+	Common::strcpy_s(dlerr, "Handle is NULL.");
 	return -1;
   }
   if (obj->close()) {
@@ -428,7 +428,7 @@ int dlclose(void *handle)
 void *dlsym(void *handle, const char *symbol)
 {
   if (handle == NULL) {
-	strcpy(dlerr, "Handle is NULL.");
+	Common::strcpy_s(dlerr, "Handle is NULL.");
 	return NULL;
   }
   return ((DLObject *)handle)->symbol(symbol);
