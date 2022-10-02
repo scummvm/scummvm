@@ -42,7 +42,7 @@ FpsCounter::FpsCounter(Game *g) : GUI_Widget(NULL) {
 
 	Init(NULL, x_off + 280, y_off, 40, 10);
 
-	strcpy(fps_string, "000.00");
+	Common::strcpy_s(fps_string, "000.00");
 }
 
 FpsCounter::~FpsCounter() {
