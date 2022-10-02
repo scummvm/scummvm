@@ -1423,7 +1423,7 @@ uint16 Control::parseSaveData(uint8 *srcBuf) {
 			uint16 numElems;
 			uint16 type;
 			char name[128];
-			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name);
+			uint16 *rawCpt = (uint16 *)_skyCompact->fetchCptInfo(_skyCompact->_saveIds[cnt], &numElems, &type, name, sizeof(name));
 			if (type == COMPACT) {
 				importOldCompact((Compact *)rawCpt, &srcPos, numElems, type, name);
 			} else if (type == ROUTEBUF) {

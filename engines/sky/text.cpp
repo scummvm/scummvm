@@ -246,14 +246,16 @@ DisplayedText Text::displayText(char *textPtr, uint8 *dest, bool center, uint16 
 	// work around bug #1080 (line width exceeded)
 	char *tmpPtr = strstr(textPtr, "MUND-BEATMUNG!");
 	if (tmpPtr)
-		strcpy(tmpPtr, "MUND BEATMUNG!");
+		// We are sure there is at least this space and we replace it by something of same length
+		Common::strcpy_s(tmpPtr, sizeof("MUND-BEATMUNG!"), "MUND BEATMUNG!");
 
 	// work around bug #1940 (line width exceeded when talking to gardener using spanish text)
 	// This text apparently only is broken in the floppy versions, the CD versions contain
 	// the correct string "MANIFESTACION - ARTISTICA.", which doesn't break the algorithm/game.
 	tmpPtr = strstr(textPtr, "MANIFESTACION-ARTISTICA.");
 	if (tmpPtr)
-		strcpy(tmpPtr, "MANIFESTACION ARTISTICA.");
+		// We are sure there is at least this space and we replace it by something of same length
+		Common::strcpy_s(tmpPtr, sizeof("MANIFESTACION-ARTISTICA."), "MANIFESTACION ARTISTICA.");
 
 	char *curPos = textPtr;
 	char *lastSpace = textPtr;
@@ -455,7 +457,7 @@ bool Text::patchMessage(uint32 textNum) {
 	uint16 patchNum = _patchLangNum[SkyEngine::_systemVars->language];
 	for (uint16 cnt = 0; cnt < patchNum; cnt++) {
 		if (_patchedMessages[cnt + patchIdx].textNr == textNum) {
-			strcpy(_textBuffer, _patchedMessages[cnt + patchIdx].text);
+			Common::strcpy_s(_textBuffer, _patchedMessages[cnt + patchIdx].text);
 			return true;
 		}
 	}
