@@ -318,8 +318,8 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 			CONST_STRPTR devName = (CONST_STRPTR)((struct Task *)dosList->dol_Task->mp_SigTask)->tc_Node.ln_Name;
 			BPTR volumeLock;
 
-			strcpy(buffer, volName);
-			strcat(buffer, ":");
+			Common::strcpy_s(buffer, volName);
+			Common::strcat_s(buffer, ":");
 
 			volumeLock = Lock(buffer, SHARED_LOCK);
 			if (volumeLock) {
