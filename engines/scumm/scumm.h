@@ -1480,7 +1480,7 @@ protected:
 	virtual void CHARSET_1();
 	bool newLine();
 	void drawString(int a, const byte *msg);
-	virtual void fakeBidiString(byte *ltext, bool ignoreVerb) const;
+	virtual void fakeBidiString(byte *ltext, bool ignoreVerb, int ltextSize) const;
 	void debugMessage(const byte *msg);
 	virtual void showMessageDialog(const byte *msg);
 
