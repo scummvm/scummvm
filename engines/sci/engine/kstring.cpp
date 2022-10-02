@@ -53,7 +53,7 @@ reg_t kStrCat(EngineState *s, int argc, reg_t *argv) {
 	}
 
 	s1 += s2;
-	s->_segMan->strcpy(argv[0], s1.c_str());
+	s->_segMan->strcpy_(argv[0], s1.c_str());
 	return argv[0];
 }
 
@@ -77,7 +77,7 @@ reg_t kStrCpy(EngineState *s, int argc, reg_t *argv) {
 		else
 			s->_segMan->memcpy(argv[0], argv[1], -length);
 	} else {
-		s->_segMan->strcpy(argv[0], argv[1]);
+		s->_segMan->strcpy_(argv[0], argv[1]);
 	}
 
 	return argv[0];
@@ -430,7 +430,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 
 	*target = 0; /* Terminate string */
 
-	s->_segMan->strcpy(dest, targetbuf);
+	s->_segMan->strcpy_(dest, targetbuf);
 
 	return dest; /* Return target addr */
 }
@@ -451,7 +451,7 @@ reg_t kGetFarText(EngineState *s, int argc, reg_t *argv) {
 	if (argv[2] == NULL_REG)
 		s->_segMan->allocDynmem(text.size() + 1, "Mac FarText", &argv[2]);
 
-	s->_segMan->strcpy(argv[2], text.c_str()); // Copy the string and get return value
+	s->_segMan->strcpy_(argv[2], text.c_str()); // Copy the string and get return value
 	return argv[2];
 }
 
@@ -603,7 +603,7 @@ reg_t kStrSplit(EngineState *s, int argc, reg_t *argv) {
 						PRINT_REG(argv[0]), str.size() + 1, str.c_str());
 		return NULL_REG;
 	}
-	s->_segMan->strcpy(argv[0], str.c_str());
+	s->_segMan->strcpy_(argv[0], str.c_str());
 	return argv[0];
 }
 
@@ -819,14 +819,14 @@ reg_t kStringTrim(EngineState *s, int argc, reg_t *argv) {
 reg_t kStringToUpperCase(EngineState *s, int argc, reg_t *argv) {
 	Common::String string = s->_segMan->getString(argv[0]);
 	string.toUppercase();
-	s->_segMan->strcpy(argv[0], string.c_str());
+	s->_segMan->strcpy_(argv[0], string.c_str());
 	return argv[0];
 }
 
 reg_t kStringToLowerCase(EngineState *s, int argc, reg_t *argv) {
 	Common::String string = s->_segMan->getString(argv[0]);
 	string.toLowercase();
-	s->_segMan->strcpy(argv[0], string.c_str());
+	s->_segMan->strcpy_(argv[0], string.c_str());
 	return argv[0];
 }
 

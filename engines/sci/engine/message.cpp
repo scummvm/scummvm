@@ -498,7 +498,7 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 		SegmentRef buffer_r = _segMan->dereference(buf);
 
 		if ((unsigned)buffer_r.maxSize >= str.size() + 1) {
-			_segMan->strcpy(buf, str.c_str());
+			_segMan->strcpy_(buf, str.c_str());
 		} else {
 			// LSL6 sets an exit text here, but the buffer size allocated
 			// is too small. Don't display a warning in this case, as we
@@ -511,7 +511,7 @@ void MessageState::outputString(reg_t buf, const Common::String &str) {
 
 			// Set buffer to empty string if possible
 			if (buffer_r.maxSize > 0)
-				_segMan->strcpy(buf, "");
+				_segMan->strcpy_(buf, "");
 		}
 #ifdef ENABLE_SCI32
 	}
