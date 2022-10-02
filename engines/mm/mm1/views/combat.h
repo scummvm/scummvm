@@ -31,6 +31,8 @@ namespace Views {
 
 class Combat : public TextView, public Game::Combat {
 private:
+	LineArray _monsterSpellLines;
+
 	void writeOptions();
 	void writeAttackOptions();
 	void writeCastOption();
@@ -99,6 +101,16 @@ private:
 	 * Handles a monster action
 	 */
 	void writeMonsterAction();
+
+	/**
+	 * Write out message from a monster casting a spell
+	 */
+	void writeMonsterSpell();
+
+	/**
+	 * Whether there's messages remaining
+	 */
+	void checkMonsterSpellDone();
 
 protected:
 	/**
