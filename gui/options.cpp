@@ -823,9 +823,11 @@ void OptionsDialog::apply() {
 				if (previousShader.empty()) {
 					ConfMan.removeKey("shader", _domain);
 					_shader->setLabel(_c("None", "shader"));
+					_shaderClearButton->setEnabled(false);
 				} else {
 					ConfMan.set("shader", previousShader.encode(), _domain);
 					_shader->setLabel(previousShader);
+					_shaderClearButton->setEnabled(true);
 				}
 
 				message += Common::U32String("\n");
@@ -841,15 +843,17 @@ void OptionsDialog::apply() {
 			if (ConfMan.hasKey("shader", _domain))
 				shader = ConfMan.get("shader", _domain);
 
-			// If shader was change, show the test dialog
+			// If shader was changed, show the test dialog
 			if (previousShader != shader && !shader.empty()) {
 				if (!testGraphicsSettings()) {
 					if (previousShader.empty()) {
 						ConfMan.removeKey("shader", _domain);
 						_shader->setLabel(_c("None", "shader"));
+						_shaderClearButton->setEnabled(false);
 					} else {
 						ConfMan.set("shader", previousShader.encode(), _domain);
 						_shader->setLabel(previousShader);
+						_shaderClearButton->setEnabled(true);
 					}
 
 					g_system->beginGFXTransaction();
