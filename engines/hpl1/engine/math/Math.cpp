@@ -32,7 +32,8 @@
 #include <map>
 #include <math.h>
 #include <stdlib.h>
-//#include <time.h>
+#include <limits>
+#include "hpl1/hpl1.h"
 
 namespace hpl {
 
@@ -45,13 +46,14 @@ static char mpTempChar[1024];
 //-----------------------------------------------------------------------
 
 int cMath::RandRectl(int alMin, int alMax) {
-	return (rand() % (alMax - alMin + 1)) + alMin;
+	return Hpl1::g_engine->getRandomNumber(alMax - alMin + 1) + alMin;
 }
 
 //-----------------------------------------------------------------------
 
 float cMath::RandRectf(float afMin, float afMax) {
-	float fRand = (float)rand() / (float)RAND_MAX;
+	float fRand =  static_cast<float>(Hpl1::g_engine->getRandomNumber(std::numeric_limits<uint32>::max()))
+		/ static_cast<float>(std::numeric_limits<uint32>::max());
 
 	return afMin + fRand * (afMax - afMin);
 }
