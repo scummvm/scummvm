@@ -28,9 +28,10 @@
 
 namespace Image {
 
-NeoDecoder::NeoDecoder() {
-	_surface = 0;
-	_palette = 0;
+NeoDecoder::NeoDecoder(byte *palette) {
+	_surface = nullptr;
+	_paletteDestroy = palette ? false : true;
+	_palette = palette;
 	_paletteColorCount = 0;
 }
 
@@ -42,35 +43,40 @@ void NeoDecoder::destroy() {
 	if (_surface) {
 		_surface->free();
 		delete _surface;
-		_surface = 0;
+		_surface = nullptr;
 	}
 
-	delete[] _palette;
-	_palette = 0;
+	if (_paletteDestroy) {
+		delete[] _palette;
+		_palette = nullptr;
+	}
 	_paletteColorCount = 0;
 }
 
 bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
-	int start = stream.pos();
 
-	if (stream.readUint16LE() != 0x00)
-		return false;
+	if (!_palette) {
+		int start = stream.pos();
 
-	if (stream.readUint16LE() != 0x00)
-		return false;
+		if (stream.readUint16LE() != 0x00)
+			warning("Header check failed for reading neo image");
 
-	_palette = new byte[16 * 3];
-	for (int i = 0; i < 16; ++i) {
-		byte v1 = stream.readByte();
-		byte v2 = stream.readByte();
+		if (stream.readUint16LE() != 0x00)
+			warning("Header check failed for reading neo image");
 
-		_palette[i * 3 + 0] = floor((v1 & 0x07) * 255.0 / 7.0);
-		_palette[i * 3 + 1] = floor((v2 & 0x70) * 255.0 / 7.0 / 16.0);
-		_palette[i * 3 + 2] = floor((v2 & 0x07) * 255.0 / 7.0);
+		_palette = new byte[16 * 3];
+		for (int i = 0; i < 16; ++i) {
+			byte v1 = stream.readByte();
+			byte v2 = stream.readByte();
+
+			_palette[i * 3 + 0] = floor((v1 & 0x07) * 255.0 / 7.0);
+			_palette[i * 3 + 1] = floor((v2 & 0x70) * 255.0 / 7.0 / 16.0);
+			_palette[i * 3 + 2] = floor((v2 & 0x07) * 255.0 / 7.0);
+		}
+
+		stream.seek(start + 128);
 	}
-
-	stream.seek(start + 128);
 
 	int width = 320;
 	int height = 200;

@@ -38,7 +38,7 @@ namespace Image {
 
 class NeoDecoder : public ImageDecoder {
 public:
-	NeoDecoder();
+	NeoDecoder(byte *palette = nullptr);
 	virtual ~NeoDecoder();
 
 	// ImageDecoder API
@@ -50,6 +50,7 @@ public:
 
 private:
 	Graphics::Surface *_surface;
+	bool _paletteDestroy;
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
