@@ -121,7 +121,7 @@ POSIXFilesystemNode::POSIXFilesystemNode(const Common::String &p) {
 	if (!_path.hasPrefix("/")) {
 		char buf[MAXPATHLEN+1];
 		getcwd(buf, MAXPATHLEN);
-		strcat(buf, "/");
+		Common::strcat_s(buf, "/");
 		_path = buf + _path;
 	}
 #endif
