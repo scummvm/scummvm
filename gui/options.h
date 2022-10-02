@@ -79,10 +79,6 @@ protected:
 	/** Config domain this dialog is used to edit. */
 	Common::String _domain;
 
-	ButtonWidget *_shaderButton;
-	StaticTextWidget *_shader;
-	ButtonWidget *_shaderClearButton;
-
 	ButtonWidget *_soundFontButton;
 	StaticTextWidget *_soundFont;
 	ButtonWidget *_soundFontClearButton;
@@ -97,7 +93,6 @@ protected:
 	void addAchievementsControls(GuiObject *boss, const Common::String &prefix);
 	void addStatisticsControls(GuiObject *boss, const Common::String &prefix);
 	void addGraphicControls(GuiObject *boss, const Common::String &prefix);
-	void addShaderControls(GuiObject *boss, const Common::String &prefix);
 	void addAudioControls(GuiObject *boss, const Common::String &prefix);
 	void addMIDIControls(GuiObject *boss, const Common::String &prefix);
 	void addMT32Controls(GuiObject *boss, const Common::String &prefix);
@@ -120,11 +115,15 @@ protected:
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
+	void setScalerControls();
+
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
-	int _shaderTabId;
 	int _midiTabId;
 	int _pathsTabId;
+
+	StaticTextWidget *_shader;
+	ButtonWidget *_shaderClearButton;
 
 private:
 
@@ -155,8 +154,12 @@ private:
 	PopUpWidget *_gfxPopUp;
 	StaticTextWidget *_stretchPopUpDesc;
 	PopUpWidget *_stretchPopUp;
+	RadiobuttonGroup *_scalerToggleGroup;
+	RadiobuttonWidget *_scalerToggleScalers;
+	RadiobuttonWidget *_scalerToggleShaders;
 	StaticTextWidget *_scalerPopUpDesc;
 	PopUpWidget *_scalerPopUp, *_scaleFactorPopUp;
+	ButtonWidget *_shaderButton;
 	CheckboxWidget *_fullscreenCheckbox;
 	CheckboxWidget *_filteringCheckbox;
 	CheckboxWidget *_aspectCheckbox;
