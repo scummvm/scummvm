@@ -527,7 +527,7 @@ char *Debugger::readlineComplete(const char *input, int state) {
 	for (; iter != _cmds.end(); ++iter) {
 		if (iter->_key.hasPrefix(input)) {
 			char *ret = (char *)malloc(iter->_key.size() + 1);
-			strcpy(ret, iter->_key.c_str());
+			Common::strcpy_s(ret, iter->_key.size() + 1, iter->_key.c_str());
 			return ret;
 		}
 	}
