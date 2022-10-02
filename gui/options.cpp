@@ -3723,8 +3723,8 @@ static void blacksquareinwhitecircle(Graphics::Surface &surface, int x1, int y1,
 	circleColorNoblend(surface, c1x, c1y, gapsize + 1, WHITE, false);
 }
 
-static void drawTestScreen() {
-	int xres = 640, yres = 480;
+static void drawTestPattern() {
+	int xres = 320, yres = 240;
 
 	g_system->beginGFXTransaction();
 	g_system->initSize(xres, yres);
@@ -3918,10 +3918,10 @@ static void drawTestScreen() {
 }
 
 bool OptionsDialog::testGraphicsSettings() {
-	drawTestScreen();
+	drawTestPattern();
 
 	// And display the error
-	GUI::CountdownMessageDialog dialog(_("A test screen should be displayed. Do you want to keep these shader scalar settings?"),
+	GUI::CountdownMessageDialog dialog(_("A test pattern should be displayed.\nDo you want to keep these shader scalar settings?"),
 				10000,
 				_("Yes"), _("No"), Graphics::kTextAlignCenter,
 				_("Reverting automatically in %d seconds"));
