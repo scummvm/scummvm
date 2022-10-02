@@ -367,6 +367,7 @@ struct Part : public Common::Serializable {
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
 
+	void set_sm17(int8 val);
 	void set_onoff(bool on);
 	void fix_after_load();
 
@@ -481,9 +482,6 @@ protected:
 	void handle_marker(uint id, byte data);
 	int get_channel_volume(uint a);
 	void initMidiDriver(TimerCallbackInfo *info);
-	void initGS(MidiDriver *midi);
-	void initMT32(MidiDriver *midi);
-	void initGM();
 	void init_players();
 	void init_parts();
 	void init_queue();

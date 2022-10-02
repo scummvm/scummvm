@@ -942,7 +942,6 @@ public:
 	uint32 getBaseTempo() override { return 1000000 / OPL::OPL::kDefaultCallbackFrequency; }
 
 	void setPitchBendRange(byte channel, uint range) override;
-	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
 	MidiChannel *allocateChannel() override;
 	MidiChannel *getPercussionChannel() override { return &_percussion; } // Percussion partially supported
@@ -1583,10 +1582,6 @@ void MidiDriver_ADLIB::setPitchBendRange(byte channel, uint range) {
 		}
 #endif
 	}
-}
-
-void MidiDriver_ADLIB::sysEx_customInstrument(byte channel, uint32 type, const byte *instr) {
-	_parts[channel].sysEx_customInstrument(type, instr);
 }
 
 MidiChannel *MidiDriver_ADLIB::allocateChannel() {

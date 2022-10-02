@@ -27,19 +27,18 @@
 
 namespace Scumm {
 
-class PcSpkDriver : public MidiDriver_Emulated {
+class IMuseDriver_PCSpk : public MidiDriver_Emulated {
 public:
-	PcSpkDriver(Audio::Mixer *mixer);
-	~PcSpkDriver() override;
+	IMuseDriver_PCSpk(Audio::Mixer *mixer);
+	~IMuseDriver_PCSpk() override;
 
 	int open() override;
 	void close() override;
 
 	void send(uint32 d) override;
-	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
 	MidiChannel *allocateChannel() override;
-	MidiChannel *getPercussionChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 
 	bool isStereo() const override { return _pcSpk.isStereo(); }
 	int getRate() const override { return _pcSpk.getRate(); }
@@ -103,9 +102,11 @@ private:
 		int16 unk60;
 	};
 
-	struct MidiChannel_PcSpk : public MidiChannel {
-		MidiDriver *device() override;
-		byte getNumber() override;
+	class MidiChannel_PcSpk: public MidiChannel {
+	public:
+		MidiChannel_PcSpk(IMuseDriver_PCSpk *owner, byte number);
+		MidiDriver *device() override { return _owner; }
+		byte getNumber() override { return _number; }
 		void release() override;
 
 		void send(uint32 b) override;
@@ -118,22 +119,23 @@ private:
 		void priority(byte value) override;
 		void sysEx_customInstrument(uint32 type, const byte *instr) override;
 
-		void init(PcSpkDriver *owner, byte channel);
 		bool allocate();
 
-		PcSpkDriver *_owner;
 		bool _allocated;
-		byte _channel;
-
 		OutputChannel _out;
 		uint8 _instrument[23];
-		uint8 _programNr;
 		uint8 _priority;
 		uint8 _tl;
 		uint8 _modWheel;
+		int16 _pitchBend;
+
+	private:
+		IMuseDriver_PCSpk *_owner;
+		const byte _number;
+		uint8 _programNr;
 		uint8 _sustain;
 		uint8 _pitchBendFactor;
-		int16 _pitchBend;
+		
 	};
 
 	void setupEffects(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def, byte flags, const byte *data);
@@ -142,7 +144,7 @@ private:
 	void updateEffectGenerator(MidiChannel_PcSpk &chan, EffectEnvelope &env, EffectDefinition &def);
 	uint8 advanceEffectEnvelope(EffectEnvelope &env, EffectDefinition &def);
 
-	MidiChannel_PcSpk _channels[6];
+	MidiChannel_PcSpk *_channels[6];
 	MidiChannel_PcSpk *_activeChannel;
 
 	MidiChannel_PcSpk *_lastActiveChannel;

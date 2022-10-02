@@ -223,7 +223,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 }
 
 void Player::loadStartParameters(int sound) {
-	_priority = 0x80;
+	_priority = (_se->_game_id != GID_SAMNMAX) ? 0x80 : 0;
 	_volume = 0x7F;
 	_vol_chan = 0xFFFF;
 	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;
@@ -319,10 +319,15 @@ void Player::send(uint32 b) {
 			part->pitchBendFactor(param2);
 			break;
 		case 17: // GP Slider 2
-			part->set_detune(param2 - 0x40);
+			if (_se->_game_id == GID_SAMNMAX)
+				part->set_sm17(param2);
+			else
+				part->set_detune(param2 - 0x40);
 			break;
 		case 18: // GP Slider 3
-			part->set_pri(param2 - 0x40);
+			if (_se->_game_id != GID_SAMNMAX)
+				param2 -= 0x40;
+			part->set_pri(param2);
 			_se->reallocateMidiChannels(_midi);
 			break;
 		case 64: // Sustain Pedal
@@ -401,9 +406,6 @@ void Player::sysEx(const byte *p, uint16 len) {
 						part->_instrument.send(part->_mc);
 				}
 			}
-		} else if (a == YM2612_SYSEX_ID) {
-			// FM-TOWNS custom instrument definition
-			_midi->sysEx_customInstrument(p[0], 'EUP ', p + 1);
 		} else {
 			// SysEx manufacturer 0x97 has been spotted in the
 			// Monkey Island 2 AdLib music, so don't make this a

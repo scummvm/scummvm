@@ -24,8 +24,8 @@
 #include "common/debug.h"
 #include "common/textconsole.h"
 #include "common/util.h"
-#include "scumm/imuse/imuse_internal.h"
 #include "scumm/scumm.h"
+#include "scumm/imuse/imuse_internal.h"
 
 namespace Scumm {
 
@@ -144,6 +144,10 @@ void Part::set_pri(int8 pri) {
 void Part::set_pan(int8 pan) {
 	_pan_eff = clamp((_pan = pan) + _player->getPan(), -64, 63);
 	sendPanPosition(_pan_eff + 0x40);
+}
+
+void Part::set_sm17(int8 val) {
+
 }
 
 void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {

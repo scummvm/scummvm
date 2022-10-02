@@ -499,8 +499,6 @@ public:
 	 */
 	void sendGMReset();
 
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
-
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;
 
