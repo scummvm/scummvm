@@ -338,7 +338,6 @@ int32 Extra::addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int3
 void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 xRotPoint, int32 extraAngle) {
 	int32 ballSprite = -1;
 	int32 ballStrength = 0;
-	int32 extraIdx = -1;
 
 	switch (_engine->_gameState->_magicLevelIdx) {
 	case 0:
@@ -365,7 +364,7 @@ void Extra::addExtraThrowMagicball(int32 x, int32 y, int32 z, int32 xAngle, int3
 		_engine->_gameState->_magicBallNumBounce = 0;
 	}
 
-	extraIdx = findExtraKey();
+	const int32 extraIdx = findExtraKey();
 	if (extraIdx != -1) { // there is a key to aim
 		_engine->_gameState->_magicBallNumBounce = 5;
 	}
