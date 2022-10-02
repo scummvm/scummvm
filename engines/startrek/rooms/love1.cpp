@@ -359,22 +359,22 @@ void Room::love1Tick1() {
 
 	switch (_awayMission->love.bottleInNozzle) {
 	case BOTTLETYPE_N2O:
-		strcpy(_roomVar.love.bottleAnimation, "btle1");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle1");
 		_roomVar.love.itemInNozzle = OBJECT_IN2O;
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
 		break;
 	case BOTTLETYPE_NH3:
-		strcpy(_roomVar.love.bottleAnimation, "btle2");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle2");
 		_roomVar.love.itemInNozzle = OBJECT_INH3;
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
 		break;
 	case BOTTLETYPE_H2O:
-		strcpy(_roomVar.love.bottleAnimation, "btle3");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle3");
 		_roomVar.love.itemInNozzle = OBJECT_IH2O;
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
 		break;
 	case BOTTLETYPE_RLG:
-		strcpy(_roomVar.love.bottleAnimation, "btle4");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle4");
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
 		loadActorAnim(OBJECT_BOTTLE, _roomVar.love.bottleAnimation, 0xa3, 0x72, 0);
 		break;
@@ -662,7 +662,7 @@ void Room::love1KirkGotBottleFromNozzle() {
 void Room::love1UseN2OOnNozzle() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
 		_roomVar.love.itemInNozzle = OBJECT_IN2O;
-		strcpy(_roomVar.love.bottleAnimation, "btle1");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle1");
 		_awayMission->love.bottleInNozzle = BOTTLETYPE_N2O;
 		walkCrewman(OBJECT_KIRK, 0xa6, 0x90, 3);
 	}
@@ -671,7 +671,7 @@ void Room::love1UseN2OOnNozzle() {
 void Room::love1UseH2OOnNozzle() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
 		_roomVar.love.itemInNozzle = OBJECT_IH2O;
-		strcpy(_roomVar.love.bottleAnimation, "btle3");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle3");
 		_awayMission->love.bottleInNozzle = BOTTLETYPE_H2O;
 		walkCrewman(OBJECT_KIRK, 0xa6, 0x90, 3);
 	}
@@ -680,7 +680,7 @@ void Room::love1UseH2OOnNozzle() {
 void Room::love1UseNH3OnNozzle() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
 		_roomVar.love.itemInNozzle = OBJECT_INH3;
-		strcpy(_roomVar.love.bottleAnimation, "btle2");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle2");
 		_awayMission->love.bottleInNozzle = BOTTLETYPE_NH3;
 		walkCrewman(OBJECT_KIRK, 0xa6, 0x90, 3);
 	}
@@ -689,7 +689,7 @@ void Room::love1UseNH3OnNozzle() {
 void Room::love1UseRLGOnNozzle() {
 	if (_awayMission->love.bottleInNozzle == BOTTLETYPE_NONE) {
 		_roomVar.love.itemInNozzle = OBJECT_IRLG;
-		strcpy(_roomVar.love.bottleAnimation, "btle4");
+		Common::strcpy_s(_roomVar.love.bottleAnimation, "btle4");
 		_awayMission->love.bottleInNozzle = BOTTLETYPE_RLG;
 		walkCrewman(OBJECT_KIRK, 0xa6, 0x90, 3);
 	}

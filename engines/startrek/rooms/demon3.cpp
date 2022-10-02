@@ -399,7 +399,7 @@ void Room::demon3UsePhaserOnBoulder1() {
 	_awayMission->demon.numBouldersGone++;
 	_roomVar.demon.boulderBeingShot = 1;
 	_roomVar.demon.boulder1Shot = true;
-	strcpy(_roomVar.demon.boulderAnim, "s0r3s2");
+	Common::strcpy_s(_roomVar.demon.boulderAnim, "s0r3s2");
 	demon3BoulderCommon();
 }
 
@@ -409,7 +409,7 @@ void Room::demon3UsePhaserOnBoulder2() {
 	_awayMission->demon.boulder2Gone = true;
 	_awayMission->demon.numBouldersGone++;
 	_roomVar.demon.boulderBeingShot = 2;
-	strcpy(_roomVar.demon.boulderAnim, "s0r3s3");
+	Common::strcpy_s(_roomVar.demon.boulderAnim, "s0r3s3");
 	demon3BoulderCommon();
 }
 
@@ -420,7 +420,7 @@ void Room::demon3UsePhaserOnBoulder3() {
 		_awayMission->demon.boulder3Gone = true;
 		_awayMission->demon.numBouldersGone++;
 		_roomVar.demon.boulderBeingShot = 3;
-		strcpy(_roomVar.demon.boulderAnim, "s0r3s1");
+		Common::strcpy_s(_roomVar.demon.boulderAnim, "s0r3s1");
 		demon3BoulderCommon();
 	} else {
 		showText(TX_SPEAKER_SPOCK, TX_DEM3_006);
@@ -434,7 +434,7 @@ void Room::demon3UsePhaserOnBoulder4() {
 		_awayMission->demon.boulder4Gone = true;
 		_awayMission->demon.numBouldersGone++;
 		_roomVar.demon.boulderBeingShot = 4;
-		strcpy(_roomVar.demon.boulderAnim, "s0r3s4");
+		Common::strcpy_s(_roomVar.demon.boulderAnim, "s0r3s4");
 		_awayMission->demon.foundMiner = true;
 		demon3BoulderCommon();
 	} else {
