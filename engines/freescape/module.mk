@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	language/16bitDetokeniser.o \
 	language/instruction.o \
 	movement.o \
+	neo.o \
 	sound.o
 
 

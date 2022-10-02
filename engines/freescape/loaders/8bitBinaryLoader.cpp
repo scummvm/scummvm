@@ -27,6 +27,7 @@
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
 #include "freescape/objects/sensor.h"
+#include "freescape/neo.h"
 
 namespace Freescape {
 
@@ -506,6 +507,17 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 }
 
 void FreescapeEngine::loadBorder() {
+	if (isAmiga() || isAtariST()) {
+		Image::NeoDecoder decoder;
+		Common::File borderFile;
+		borderFile.open("console.neo");
+		decoder.loadStream(borderFile);
+		_border = new Graphics::Surface();
+		_border->copyFrom(*decoder.getSurface());
+		_border->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
+		return;
+	}
+
 	Image::BitmapDecoder decoder;
 	Common::String borderFilename;
 	if (isAmiga())

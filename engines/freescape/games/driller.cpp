@@ -25,14 +25,15 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/neo.h"
 
 namespace Freescape {
 
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	if (isAmiga())
-		_viewArea = Common::Rect(72, 66, 567, 269);
-	else
-		_viewArea = Common::Rect(40, 16, 279, 116);
+	//if (isAmiga())
+	//	_viewArea = Common::Rect(72, 66, 567, 269);
+	//else
+	_viewArea = Common::Rect(40, 16, 279, 116);
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
 	_playerHeights.push_back(48);
