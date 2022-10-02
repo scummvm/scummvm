@@ -21,6 +21,9 @@
 
 #if defined(WIN32) && !defined(DISABLE_DEFAULT_SAVEFILEMANAGER)
 
+// For _tcscat
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <tchar.h>
