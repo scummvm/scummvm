@@ -114,7 +114,7 @@ SaveStateList StarTrekMetaEngine::listSaves(const char *target) const {
 						break;
 				}
 				if (descriptionPos >= sizeof(meta.description)) {
-					strcpy(meta.description, "[broken saved game]");
+					Common::strcpy_s(meta.description, "[broken saved game]");
 				}
 
 				saveList.push_back(SaveStateDescriptor(this, slotNr, meta.description));
