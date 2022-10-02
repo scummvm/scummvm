@@ -43,7 +43,6 @@ protected:
 	byte _arr2[MAX_COMBAT_MONSTERS];
 	int _arr3[MAX_PARTY_SIZE / 2];
 	byte _arr4[MAX_COMBAT_MONSTERS];
-	byte _monsterStatus[MAX_COMBAT_MONSTERS];
 	bool _canAttack[MAX_PARTY_SIZE];
 	bool _treasureFlags[MAX_PARTY_SIZE];
 	int _val1;
@@ -144,6 +143,8 @@ protected:
 	 */
 	void dispelParty() override;
 
+	void removeMonster() override;
+
 	/*------- combat execution ------*/
 
 	/**
@@ -194,7 +195,6 @@ protected:
 	void monsterAdvances();
 	bool monsterChanges();
 	void proc2();
-	void removeMonster();
 	void checkParty();
 };
 

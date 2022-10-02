@@ -42,7 +42,7 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 	&SpellsMonsters::spell11_strangeGas,
 	&SpellsMonsters::spell12_explode,
 	&SpellsMonsters::spell13_fireball,
-	&SpellsMonsters::spell14_fire2,
+	&SpellsMonsters::spell14_fireBreath,
 	&SpellsMonsters::spell15_gazes,
 	&SpellsMonsters::spell16_acidArrow,
 	&SpellsMonsters::spell17_elements,
@@ -62,6 +62,11 @@ const SpellMonstersSpell SpellsMonsters::SPELLS[MONSTER_SPELLS_COUNT] = {
 	&SpellsMonsters::spell31_energy,
 	&SpellsMonsters::spell32_swarm
 };
+
+SpellsMonsters::SpellsMonsters() {
+	Common::fill(&_arr1[0], &_arr1[MAX_COMBAT_MONSTERS], 0);
+	Common::fill(&_monsterStatus[0], &_monsterStatus[MAX_COMBAT_MONSTERS], 0);
+}
 
 void SpellsMonsters::castMonsterSpell(const Common::String &monsterName, int spellNum) {
 	_mmVal1 = _mmVal2 = _newCondition = 0;
@@ -191,58 +196,243 @@ void SpellsMonsters::spell11_strangeGas() {
 }
 
 void SpellsMonsters::spell12_explode() {
-	/*
 	add(STRING["monster_spells.explode"]);
 	++_mmVal2;
 	_resistanceType = RESISTANCE_POISON;
 	_newCondition = getRandomNumber(_arr1[getMonsterIndex()]);
 	_arr1[getMonsterIndex()] = 0;
+	_monsterStatus[getMonsterIndex()] = MONFLAG_DEAD;
 	removeMonster();
 
 	add(':');
 	handlePartyDamage();
-	*/
 }
 
-void SpellsMonsters::spell13_fireball() {}
+void SpellsMonsters::spell13_fireball() {
+	if (casts()) {
+		add(STRING["monster_spells.fireball"]);
+		++_mmVal1;
+		++_mmVal2;
+		_resistanceType = RESISTANCE_FIRE;
 
-void SpellsMonsters::spell14_fire2() {}
+		// This whole condition choice makes no sense
+		_newCondition += 6 *
+			g_globals->_encounters._arr1[getMonsterIndex()];
+		_newCondition = getRandomNumber(_newCondition) + 4;
 
-void SpellsMonsters::spell15_gazes() {}
+		add(':');
+		handlePartyDamage();
+	}
+}
 
-void SpellsMonsters::spell16_acidArrow() {}
+void SpellsMonsters::spell14_fireBreath() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.fire"].c_str()));
+	++_mmVal2;
+	_resistanceType = RESISTANCE_FIRE;
 
-void SpellsMonsters::spell17_elements() {}
+	// This whole condition choice makes no sense
+	_newCondition += 8 *
+		g_globals->_encounters._arr1[getMonsterIndex()];
+	_newCondition = getRandomNumber(_newCondition);
 
-void SpellsMonsters::spell18_coldBeam() {}
+	add(':');
+	handlePartyDamage();
+}
 
-void SpellsMonsters::spell19_dancingSword() {}
+void SpellsMonsters::spell15_gazes() {
+	add(STRING["monster_spells.gazes"]);
+	++_mmVal2;
+	_newCondition = BAD_CONDITION | STONE;
 
-void SpellsMonsters::spell20_magicDrain() {}
+	chooseCharacter();
+	writeConditionEffect();
+}
 
-void SpellsMonsters::spell21_fingerOfDeath() {}
+void SpellsMonsters::spell16_acidArrow() {
+	add(STRING["monster_spells.acid_arrow"]);
+	++_mmVal1;
+	++_mmVal2;
+	_resistanceType = RESISTANCE_ACID;
+	_newCondition = getRandomNumber(31) + 9;
 
-void SpellsMonsters::spell22_sunRay() {}
+	damageRandomChar();
+}
 
-void SpellsMonsters::spell23_disintegration() {}
+void SpellsMonsters::spell17_elements() {
+	add(STRING["monster_spells.call_elements"]);
+	++_mmVal2;
+	_newCondition = getRandomNumber(21) + 39;
 
-void SpellsMonsters::spell24_commandsEnergy() {}
+	damageRandomChar();
+}
 
-void SpellsMonsters::spell25_poison() {}
+void SpellsMonsters::spell18_coldBeam() {
+	if (casts()) {
+		add(STRING["monster_spells.cold_beam"]);
+		++_mmVal1;
+		++_mmVal2;
+		_resistanceType = RESISTANCE_COLD;
+		_newCondition = getRandomNumber(41) + 9;
 
-void SpellsMonsters::spell26_lightning() {}
+		damageRandomChar();
+	}
+}
 
-void SpellsMonsters::spell27_frost() {}
+void SpellsMonsters::spell19_dancingSword() {
+	if (casts()) {
+		add(STRING["monster_spells.dancing_sword"]);
+		++_mmVal1;
+		_newCondition = getRandomNumber(14) + 16;
 
-void SpellsMonsters::spell28_spikes() {}
+		add(':');
+		handlePartyDamage();
+	}
+}
 
-void SpellsMonsters::spell29_acid() {}
+void SpellsMonsters::spell20_magicDrain() {
+	add(STRING["monster_spells.magic_drain"]);
 
-void SpellsMonsters::spell30_fire() {}
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+		c._sp._current = 0;
+	}
 
-void SpellsMonsters::spell31_energy() {}
+	dispelParty();
+}
 
-void SpellsMonsters::spell32_swarm() {}
+void SpellsMonsters::spell21_fingerOfDeath() {
+	if (casts()) {
+		add(STRING["monster_spells.finger_of_death"]);
+		++_mmVal1;
+		++_mmVal2;
+		_newCondition = BAD_CONDITION | DEAD;
+
+		chooseCharacter();
+		writeConditionEffect();
+	}
+}
+
+void SpellsMonsters::spell22_sunRay() {
+	if (casts()) {
+		add(STRING["monster_spells.sun_ray"]);
+		++_mmVal1;
+		++_mmVal2;
+		_newCondition = getRandomNumber(51) + 49;
+
+		damageRandomChar();
+	}
+}
+
+void SpellsMonsters::spell23_disintegration() {
+	if (casts()) {
+		add(STRING["monster_spells.disintegration"]);
+		++_mmVal1;
+		++_mmVal2;
+		_newCondition = ERADICATED;
+
+		chooseCharacter();
+		writeConditionEffect();
+	}
+}
+
+void SpellsMonsters::spell24_commandsEnergy() {
+	add(STRING["monster_spells.commands_energy"]);
+	_newCondition = SILENCED | PARALYZED | UNCONSCIOUS;
+	damageRandomChar();
+}
+
+void SpellsMonsters::spell25_poison() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.poison"].c_str()));
+	_resistanceType = RESISTANCE_POISON;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell26_lightning() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.lightning"].c_str()));
+	_resistanceType = RESISTANCE_ELECTRICITY;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell27_frost() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.frost"].c_str()));
+	_resistanceType = RESISTANCE_COLD;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell28_spikes() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.spikes"].c_str()));
+	_resistanceType = RESISTANCE_ELECTRICITY;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell29_acid() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.acid"].c_str()));
+	_resistanceType = RESISTANCE_ACID;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell30_fire() {
+	add(Common::String::format("%s %s",
+		STRING["monster_spells.breathes"].c_str(),
+		STRING["monster_spells.fire"].c_str()));
+	_resistanceType = RESISTANCE_FIRE;
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell31_energy() {
+	add(STRING["monster_spells.energy"]);
+	_newCondition = _arr1[getMonsterIndex()];
+	++_mmVal2;
+
+	add(':');
+	handlePartyDamage();
+}
+
+void SpellsMonsters::spell32_swarm() {
+	add(STRING["monster_spells.swarm"]);
+	++_mmVal2;
+	_newCondition = getRandomNumber(12);
+
+	add(':');
+	handlePartyDamage();
+}
 
 bool SpellsMonsters::casts() {
 	if (canMonsterCast()) {

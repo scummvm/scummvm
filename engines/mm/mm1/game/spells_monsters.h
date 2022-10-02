@@ -31,6 +31,7 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+#define MAX_COMBAT_MONSTERS 15
 #define MONSTER_SPELLS_COUNT 32
 
 class SpellsMonsters;
@@ -60,7 +61,7 @@ private:
 	void spell11_strangeGas();
 	void spell12_explode();
 	void spell13_fireball();
-	void spell14_fire2();
+	void spell14_fireBreath();
 	void spell15_gazes();
 	void spell16_acidArrow();
 	void spell17_elements();
@@ -176,11 +177,17 @@ private:
 	void proc9();
 
 protected:
+	byte _arr1[MAX_COMBAT_MONSTERS];
+	byte _monsterStatus[MAX_COMBAT_MONSTERS];
+
 	virtual bool canMonsterCast() const = 0;
 	virtual int getMonsterIndex() const = 0;
 	virtual void dispelParty() = 0;
+	virtual void removeMonster() = 0;
 
 public:
+	SpellsMonsters();
+
 	/**
 	 * Monster casts a spell
 	 */
