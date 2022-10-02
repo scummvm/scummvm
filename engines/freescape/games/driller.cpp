@@ -196,21 +196,44 @@ void DrillerEngine::loadAssetsFullGame() {
 
 	Common::File exe;
 	if (isAmiga()) {
-		file = gameDir.createReadStreamForMember("driller");
-		if (file == nullptr)
-			error("Failed to open 'driller' executable for Amiga");
-
 		if (_variant == "Retail") {
+			file = gameDir.createReadStreamForMember("driller");
+
+			if (file == nullptr)
+				error("Failed to open 'driller' executable for Amiga");
+
+			_border = loadAndConvertNeoImage(file, 0x137f4);
+			_title = loadAndConvertNeoImage(file, 0x1b572);
+
 			loadMessagesFixedSize(file, 0xc66e, 14, 20);
 			loadGlobalObjects(file, 0xbd62);
 			load8bitBinary(file, 0x29c16, 16);
 			loadAmigaPalette(file, 0x297d4);
 			loadAmigaSounds(file, 0x30e80, 25);
 		} else if (_variant == "Kixx") {
+			file = gameDir.createReadStreamForMember("lift.neo");
+			if (file == nullptr)
+				error("Failed to open 'lift.neo' file");
+
+			_title = loadAndConvertNeoImage(file, 0);
+
+			file = gameDir.createReadStreamForMember("console.neo");
+			if (file == nullptr)
+				error("Failed to open 'console.neo' file");
+
+			_border = loadAndConvertNeoImage(file, 0);
+
+			file = gameDir.createReadStreamForMember("driller");
+			if (file == nullptr)
+				error("Failed to open 'driller' executable for Amiga");
+
 			load8bitBinary(file, 0x21a3e, 16);
 			loadAmigaPalette(file, 0x215fc);
 
 			file = gameDir.createReadStreamForMember("soundfx");
+			if (file == nullptr)
+				error("Failed to open 'soundfx' executable for Amiga");
+
 			loadAmigaSounds(file, 0, 25);
 		}
 	} else if (_renderMode == "ega") {

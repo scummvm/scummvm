@@ -76,6 +76,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 	_border = nullptr;
 	_title = nullptr;
+	_titleTexture = nullptr;
 	_borderTexture = nullptr;
 	_uiTexture = nullptr;
 	_fontLoaded = false;
@@ -102,6 +103,17 @@ void FreescapeEngine::drawBorder() {
 	if (!_borderTexture)
 		_borderTexture = _gfx->createTexture(_border);
 	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _borderTexture);
+	_gfx->setViewport(_viewArea);
+}
+
+void FreescapeEngine::drawTitle() {
+	if (!_title)
+		return;
+
+	_gfx->setViewport(_fullscreenViewArea);
+	if (!_titleTexture)
+		_titleTexture = _gfx->createTexture(_title);
+	_gfx->drawTexturedRect2D(_fullscreenViewArea, _fullscreenViewArea, _titleTexture);
 	_gfx->setViewport(_viewArea);
 }
 
@@ -286,14 +298,16 @@ Common::Error FreescapeEngine::run() {
 	}
 	int saveSlot = ConfMan.getInt("save_slot");
 
-	if (_border) {
+	if (_title) {
 		if (saveSlot == -1) {
-			drawBorder();
+			drawTitle();
 			_gfx->flipBuffer();
 			g_system->updateScreen();
-			if (isDriller())
-				g_system->delayMillis(1000);
+			g_system->delayMillis(3000);
 		}
+	}
+
+	if (_border) {
 
 		_borderTexture = nullptr;
 		_border->fillRect(_viewArea, 0xA0A0A0FF);

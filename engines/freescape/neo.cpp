@@ -52,6 +52,7 @@ void NeoDecoder::destroy() {
 
 bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 	destroy();
+	int start = stream.pos();
 
 	if (stream.readUint16LE() != 0x00)
 		return false;
@@ -69,7 +70,7 @@ bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 		_palette[i * 3 + 2] = floor((v2 & 0x07) * 255.0 / 7.0);
 	}
 
-	stream.seek(128);
+	stream.seek(start + 128);
 
 	int width = 320;
 	int height = 200;

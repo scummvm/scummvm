@@ -98,10 +98,12 @@ public:
 
 	void convertBorder();
 	void drawBorder();
+	void drawTitle();
 	virtual void drawUI();
 	Graphics::Surface *_border;
 	Graphics::Surface *_title;
 	Texture *_borderTexture;
+	Texture *_titleTexture;
 	Texture *_uiTexture;
 
 	// Parsing assets
