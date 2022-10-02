@@ -75,19 +75,19 @@ SXArray::~SXArray() {
 //////////////////////////////////////////////////////////////////////////
 const char *SXArray::scToString() {
 	char dummy[32768];
-	strcpy(dummy, "");
+	dummy[0] = '\0';
 	char propName[20];
 	for (int i = 0; i < _length; i++) {
 		sprintf(propName, "%d", i);
 		ScValue *val = _values->getProp(propName);
 		if (val) {
 			if (strlen(dummy) + strlen(val->getString()) < 32768) {
-				strcat(dummy, val->getString());
+				Common::strcat_s(dummy, val->getString());
 			}
 		}
 
 		if (i < _length - 1 && strlen(dummy) + 1 < 32768) {
-			strcat(dummy, ",");
+			Common::strcat_s(dummy, ",");
 		}
 	}
 	_strRep = dummy;

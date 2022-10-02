@@ -281,10 +281,9 @@ bool BaseSprite::loadBuffer(char *buffer, bool complete, int lifeTime, TSpriteCa
 		case TOKEN_EDITOR_BG_FILE:
 			if (_gameRef->_editorMode) {
 				delete[] _editorBgFile;
-				_editorBgFile = new char[strlen(params) + 1];
-				if (_editorBgFile) {
-					strcpy(_editorBgFile, params);
-				}
+				size_t editorBgFileSize = strlen(params) + 1;
+				_editorBgFile = new char[editorBgFileSize];
+				Common::strcpy_s(_editorBgFile, editorBgFileSize, params);
 			}
 			break;
 

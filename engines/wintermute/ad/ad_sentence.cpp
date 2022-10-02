@@ -91,26 +91,20 @@ AdSentence::~AdSentence() {
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setText(const char *text) {
-	if (_text) {
-		delete[] _text;
-	}
-	_text = new char[strlen(text) + 1];
-	if (_text) {
-		strcpy(_text, text);
-	}
+	delete[] _text;
+	size_t textSize = strlen(text) + 1;
+	_text = new char[textSize];
+	Common::strcpy_s(_text, textSize, text);
 }
 
 
 //////////////////////////////////////////////////////////////////////////
 void AdSentence::setStances(const char *stances) {
-	if (_stances) {
-		delete[] _stances;
-	}
+	delete[] _stances;
 	if (stances) {
-		_stances = new char[strlen(stances) + 1];
-		if (_stances) {
-			strcpy(_stances, stances);
-		}
+		size_t stancesSize = strlen(stances) + 1;
+		_stances = new char[stancesSize];
+		Common::strcpy_s(_stances, stancesSize, stances);
 	} else {
 		_stances = nullptr;
 	}

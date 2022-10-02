@@ -76,10 +76,9 @@ void BaseScriptHolder::setFilename(const char *filename) {
 	if (filename == nullptr) {
 		return;
 	}
-	_filename = new char [strlen(filename) + 1];
-	if (_filename != nullptr) {
-		strcpy(_filename, filename);
-	}
+	size_t filenameSize = strlen(filename) + 1;
+	_filename = new char [filenameSize];
+	Common::strcpy_s(_filename, filenameSize, filename);
 }
 
 
@@ -316,8 +315,9 @@ bool BaseScriptHolder::addScript(const char *filename) {
 #else
 			scr = new ScScript(_gameRef,  _gameRef->_scEngine);
 #endif
-			scr->_filename = new char[strlen(filename) + 1];
-			strcpy(scr->_filename, filename);
+			size_t filenameSize = strlen(filename) + 1;
+			scr->_filename = new char[filenameSize];
+			Common::strcpy_s(scr->_filename, filenameSize, filename);
 			scr->_state = SCRIPT_ERROR;
 			scr->_owner = this;
 			_scripts.add(scr);
@@ -397,26 +397,20 @@ bool BaseScriptHolder::parseProperty(char *buffer, bool complete) {
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
-		case TOKEN_NAME:
+		case TOKEN_NAME: {
 			delete[] propName;
-			propName = new char[strlen(params) + 1];
-			if (propName) {
-				strcpy(propName, params);
-			} else {
-				cmd = PARSERR_GENERIC;
-			}
+			size_t propNameSize = strlen(params) + 1;
+			propName = new char[propNameSize];
+			Common::strcpy_s(propName, propNameSize, params);
 			break;
-
-		case TOKEN_VALUE:
+		}
+		case TOKEN_VALUE: {
 			delete[] propValue;
-			propValue = new char[strlen(params) + 1];
-			if (propValue) {
-				strcpy(propValue, params);
-			} else {
-				cmd = PARSERR_GENERIC;
-			}
+			size_t propValueSize = strlen(params) + 1;
+			propValue = new char[propValueSize];
+			Common::strcpy_s(propValue, propValueSize, params);
 			break;
-
+		}
 		default:
 			break;
 		}
@@ -494,14 +488,14 @@ ScScript *BaseScriptHolder::invokeMethodThread(const char *methodName) {
 
 //////////////////////////////////////////////////////////////////////////
 void BaseScriptHolder::scDebuggerDesc(char *buf, int bufSize) {
-	strcpy(buf, scToString());
+	Common::strcpy_s(buf, bufSize, scToString());
 	if (getName() && strcmp(getName(), "<unnamed>") != 0) {
-		strcat(buf, "  Name: ");
-		strcat(buf, getName());
+		Common::strcat_s(buf, bufSize, "  Name: ");
+		Common::strcat_s(buf, bufSize, getName());
 	}
 	if (_filename) {
-		strcat(buf, "  File: ");
-		strcat(buf, _filename);
+		Common::strcat_s(buf, bufSize, "  File: ");
+		Common::strcat_s(buf, bufSize, _filename);
 	}
 }
 

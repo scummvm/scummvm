@@ -1559,10 +1559,9 @@ void AdGame::setPrevSceneName(const char *name) {
 	delete[] _prevSceneName;
 	_prevSceneName = nullptr;
 	if (name) {
-		_prevSceneName = new char[strlen(name) + 1];
-		if (_prevSceneName) {
-			strcpy(_prevSceneName, name);
-		}
+		size_t nameSize = strlen(name) + 1;
+		_prevSceneName = new char[nameSize];
+		Common::strcpy_s(_prevSceneName, nameSize, name);
 	}
 }
 
@@ -1572,10 +1571,9 @@ void AdGame::setPrevSceneFilename(const char *name) {
 	delete[] _prevSceneFilename;
 	_prevSceneFilename = nullptr;
 	if (name) {
-		_prevSceneFilename = new char[strlen(name) + 1];
-		if (_prevSceneFilename) {
-			strcpy(_prevSceneFilename, name);
-		}
+		size_t nameSize = strlen(name) + 1;
+		_prevSceneFilename = new char[nameSize];
+		Common::strcpy_s(_prevSceneFilename, nameSize, name);
 	}
 }
 
@@ -1588,8 +1586,9 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 	if (_scene && !_scene->_initialized) {
 		return changeScene(filename, fadeIn);
 	} else {
-		_scheduledScene = new char [strlen(filename) + 1];
-		strcpy(_scheduledScene, filename);
+		size_t filenameSize = strlen(filename) + 1;
+		_scheduledScene = new char [filenameSize];
+		Common::strcpy_s(_scheduledScene, filenameSize, filename);
 
 		_scheduledFadeIn = fadeIn;
 
@@ -1736,8 +1735,9 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 
 	bool ret;
 
-	//_filename = new char [strlen(filename)+1];
-	//strcpy(_filename, filename);
+	//size_t filenameSize = strlen(filename) + 1;
+	//_filename = new char [filenameSize];
+	//Common::strcpy_s(_filename, filenameSize, filename);
 
 	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) {
 		_gameRef->LOG(0, "Error parsing ITEMS file '%s'", filename);
@@ -1807,8 +1807,9 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
-	char *filenameCor = new char[strlen(filename) + 1];
-	strcpy(filenameCor, filename);
+	size_t filenameSize = strlen(filename) + 1;
+	char *filenameCor = new char[filenameSize];
+	Common::strcpy_s(filenameCor, filenameSize, filename);
 	for (uint32 i = 0; i < strlen(filenameCor); i++) {
 		if (filenameCor[i] == '/') {
 			filenameCor[i] = '\\';
@@ -2274,10 +2275,11 @@ bool AdGame::addSpeechDir(const char *dir) {
 		return STATUS_FAILED;
 	}
 
-	char *temp = new char[strlen(dir) + 2];
-	strcpy(temp, dir);
-	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/') {
-		strcat(temp, "\\");
+	size_t dirSize = strlen(dir) + 2;
+	char *temp = new char[dirSize];
+	Common::strcpy_s(temp, dirSize, dir);
+	if (temp[dirSize - 2 - 1] != '\\' && temp[dirSize - 2 - 1] != '/') {
+		Common::strcat_s(temp, dirSize, "\\");
 	}
 
 	for (uint32 i = 0; i < _speechDirs.size(); i++) {
@@ -2298,10 +2300,11 @@ bool AdGame::removeSpeechDir(const char *dir) {
 		return STATUS_FAILED;
 	}
 
-	char *temp = new char[strlen(dir) + 2];
-	strcpy(temp, dir);
-	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/') {
-		strcat(temp, "\\");
+	size_t dirSize = strlen(dir) + 2;
+	char *temp = new char[dirSize];
+	Common::strcpy_s(temp, dirSize, dir);
+	if (temp[dirSize - 2 - 1] != '\\' && temp[dirSize - 2 - 1] != '/') {
+		Common::strcat_s(temp, dirSize, "\\");
 	}
 
 	bool found = false;
