@@ -32,8 +32,14 @@ namespace Views {
 class Combat : public TextView, public Game::Combat {
 private:
 	LineArray _monsterSpellLines;
+	// Combat options that have sub-option selection
+	enum SelectedOption {
+		OPTION_NONE, OPTION_ATTACK
+	};
+	SelectedOption _option = OPTION_NONE;
 
 	void writeOptions();
+	void writeAllOptions();
 	void writeAttackOptions();
 	void writeCastOption();
 	void writeShootOption();
@@ -112,6 +118,46 @@ private:
 	 */
 	void checkMonsterSpellDone();
 
+	/**
+	 * Attack option
+	 */
+	void attack();
+
+	/**
+	 * Block option
+	 */
+	void block();
+
+	/**
+	 * Cast option
+	 */
+	void cast();
+
+	/**
+	 * Exchange option
+	 */
+	void exchange();
+
+	/**
+	 * Fight option
+	 */
+	void fight();
+
+	/**
+	 * Retreat option
+	 */
+	void retreat();
+
+	/**
+	 * Shoot option
+	 */
+	void shoot();
+
+	/**
+	 * Use option
+	 */
+	void use();
+
 protected:
 	/**
 	 * Sets a new display mode
@@ -125,6 +171,11 @@ public:
 	 * Called when the view is focused
 	 */
 	bool msgFocus(const FocusMessage &msg) override;
+
+	/**
+	 * Called when the view is unfocused
+	 */
+	bool msgUnfocus(const UnfocusMessage &msg) override;
 
 	/**
 	 * Draw the Combat details overlayed on
@@ -141,6 +192,11 @@ public:
 	 * Handles keypresses
 	 */
 	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * Key binder actions
+	 */
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Views

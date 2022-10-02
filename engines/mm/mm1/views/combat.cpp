@@ -46,6 +46,8 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 	// Clear combat data
 	clear();
 
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
+
 	_monstersCount = _monsterList.size();
 	_party.clear();
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
@@ -58,6 +60,11 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 	combatLoop();
 
 	return true;
+}
+
+bool Combat::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return TextView::msgUnfocus(msg);
 }
 
 void Combat::draw() {
@@ -91,7 +98,6 @@ void Combat::draw() {
 	default:
 		break;
 	}
-
 
 	clearSurface();
 	writeStaticContent();
@@ -161,8 +167,53 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 	return true;
 }
 
+bool Combat::msgAction(const ActionMessage &msg) {
+	if (_mode != SELECT_OPTION || _option != OPTION_NONE)
+		return false;
+
+	switch (msg._action) {
+	case KEYBIND_COMBAT_ATTACK:
+		attack();
+		break;
+	case KEYBIND_COMBAT_BLOCK:
+		block();
+		break;
+	case KEYBIND_COMBAT_CAST:
+		cast();
+		break;
+	case KEYBIND_COMBAT_EXCHANGE:
+		exchange();
+		break;
+	case KEYBIND_COMBAT_FIGHT:
+		fight();
+		break;
+	case KEYBIND_COMBAT_RETREAT:
+		retreat();
+		break;
+	case KEYBIND_COMBAT_SHOOT:
+		shoot();
+		break;
+	case KEYBIND_COMBAT_USE:
+		use();
+		break;
+	default:
+		break;
+	}
+}
+
 void Combat::writeOptions() {
 	resetBottom();
+
+	switch (_option) {
+	case OPTION_NONE:
+		writeAllOptions();
+		break;
+	default:
+		break;
+	}
+}
+
+void Combat::writeAllOptions() {
 	writeString(0, 20, STRING["dialogs.combat.options_for"]);
 	writeString(0, 22, g_globals->_currCharacter->_name);
 
@@ -198,7 +249,7 @@ void Combat::writeOptions() {
 		// Archers can always attack
 		canAttack = g_globals->_currCharacter->_class == ARCHER;
 	}
-	if (canAttack && g_globals->_currCharacter->_v6a) {
+	if (canAttack && g_globals->_currCharacter->_missileAttr) {
 		_val3 = 'S';
 		writeShootOption();
 	}
@@ -392,7 +443,7 @@ void Combat::writeMonsterAction() {
 void Combat::writeMonsterSpell() {
 	resetBottom();
 
-	for (int i = 0, y = 0; i < _monsterSpellLines.size() &&
+	for (uint i = 0, y = 0; i < _monsterSpellLines.size() &&
 		_monsterSpellLines[i].y > y;
 		y = _monsterSpellLines[i].y, ++i) {
 		Common::String text = _monsterSpellLines[i]._text;
@@ -419,6 +470,33 @@ void Combat::checkMonsterSpellDone() {
 	checkParty();
 }
 
+void Combat::attack() {
+	if (_val5 == 32)
+		return;
+
+	attackMonster(0);
+}
+
+void Combat::block() {
+}
+
+void Combat::cast() {
+}
+
+void Combat::exchange() {
+}
+
+void Combat::fight() {
+}
+
+void Combat::retreat() {
+}
+
+void Combat::shoot() {
+}
+
+void Combat::use() {
+}
 
 } // namespace Views
 } // namespace MM1

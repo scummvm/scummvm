@@ -242,7 +242,8 @@ struct Character {
 	Resistances _resistances;
 
 	// TODO: Figure out what these are
-	int _v68, _v69, _v6a, _v6b, _v6c, _v6e, _alignmentCtr;
+	AttributePair _physicalAttr, _missileAttr;
+	int _v6c, _v6e, _alignmentCtr;
 
 	byte _quest = 0;
 

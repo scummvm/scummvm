@@ -51,6 +51,18 @@ static const KeybindingRecord PARTY_KEYS[] = {
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
+static const KeybindingRecord COMBAT_KEYS[] = {
+	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", "Attack", "A", nullptr },
+	{ KEYBIND_COMBAT_BLOCK, "COMBAT_BLOCK", "Block", "B", nullptr },
+	{ KEYBIND_COMBAT_CAST, "COMBAT_CAST", "Cast", "C", nullptr },
+	{ KEYBIND_COMBAT_EXCHANGE, "COMBAT_EXCHANGE", "Exchange", "E", nullptr },
+	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", "Fight", "F", nullptr },
+	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", "Retreat", "R", nullptr },
+	{ KEYBIND_COMBAT_SHOOT, "COMBAT_SHOOT", "Shoot", "S", nullptr },
+	{ KEYBIND_COMBAT_USE, "COMBAT_USE", "Use", "U", nullptr },
+	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
+};
+
 static const KeybindingRecord NORMAL_KEYS[] = {
 	{ KEYBIND_FORWARDS, "FORWARDS", "Forwards", "UP", nullptr },
 	{ KEYBIND_BACKWARDS, "BACKWARDS", "Backwards", "DOWN", nullptr },
@@ -93,6 +105,12 @@ static const KeysRecord PARTY_MENU_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
+static const KeysRecord COMBAT_MENU_RECORDS[] = {
+	{ "mm1_combat", "Might and Magic 1 - Combat", COMBAT_KEYS },
+	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
+	{ nullptr, nullptr, nullptr }
+};
+
 static const KeysRecord NORMAL_RECORDS[] = {
 	{ "mm1", "Might and Magic 1", NORMAL_KEYS },
 	{ "mm1_party", "Might and Magic 1 - Party", PARTY_KEYS },
@@ -100,9 +118,10 @@ static const KeysRecord NORMAL_RECORDS[] = {
 	{ nullptr, nullptr, nullptr }
 };
 
-static const KeysRecord *MODE_RECORDS[4] = {
+static const KeysRecord *MODE_RECORDS[5] = {
 	MENU_RECORDS,
 	PARTY_MENU_RECORDS,
+	COMBAT_MENU_RECORDS,
 	NORMAL_RECORDS,
 	nullptr		// TODO: combat keybindings
 };

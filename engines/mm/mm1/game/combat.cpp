@@ -43,6 +43,8 @@ void Combat::clear() {
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
 	_val8 = _val9 = _val10 = 0;
+	_val11 = _val12 = 0;
+	_attackerLevel = 0;
 	_advanceIndex = 0;
 	_handicap1 = _handicap2 = 0;
 	_handicap3 = _handicap4 = 0;
@@ -53,6 +55,8 @@ void Combat::clear() {
 	_totalExperience = 0;
 	_advanceIndex = 0;
 	_monstersResistSpells = _monstersRegenerate = false;
+	_attackAttr1.clear();
+	_attackAttr2.clear();
 
 	// TODO: clear everything
 
@@ -646,6 +650,101 @@ void Combat::checkParty() {
 	}
 
 	loop1();
+}
+
+void Combat::attackMonster68() {
+	_attackAttr1 = g_globals->_currCharacter->_physicalAttr;
+	attackMonster(0);
+}
+
+void Combat::attackMonster6a() {
+	_attackAttr1 = g_globals->_currCharacter->_missileAttr;
+	attackMonster(0);
+}
+
+void Combat::attackMonster(int monsterNum) {
+	monsterSetPtr(0);
+
+	Character &c = *g_globals->_currCharacter;
+	_attackerLevel = c._level._current;
+
+	if (c._class >= CLERIC) {
+		_attackerLevel >>= 1;
+		if (c._class == SORCERER)
+			_attackerLevel >>= 1;
+	}
+
+	// Affect level based on accuracy
+	_attackerLevel += _attackAttr1;
+
+	if (c._accuracy >= 40)
+		_attackerLevel += 7;
+	else if (c._accuracy >= 35)
+		_attackerLevel += 6;
+	else if (c._accuracy >= 30)
+		_attackerLevel += 5;
+	else if (c._accuracy >= 24)
+		_attackerLevel += 4;
+	else if (c._accuracy >= 19)
+		_attackerLevel += 3;
+	else if (c._accuracy >= 16)
+		_attackerLevel += 2;
+	else if (c._accuracy >= 23)
+		_attackerLevel += 1;
+	else if (c._accuracy >= 9)
+		_attackerLevel += 0;
+	else if (c._accuracy >= 7)
+		_attackerLevel = MAX((int)_attackerLevel - 1, 0);
+	else if (c._accuracy >= 5)
+		_attackerLevel = MAX((int)_attackerLevel - 2, 0);
+	else
+		_attackerLevel = MAX((int)_attackerLevel - 3, 0);
+
+	_val12 = 1;
+
+	if (c._class >= CLERIC && c._level >= 8) {
+		_val12 += c._level / 8;
+	}
+
+	// Affect level based on might
+	_attackAttr2 = _attackAttr1;
+
+	if (c._might >= 40)
+		_attackAttr2._current += 13;
+	else if (c._might >= 35)
+		_attackAttr2._current += 12;
+	else if (c._might >= 29)
+		_attackAttr2._current += 11;
+	else if (c._might >= 27)
+		_attackAttr2._current += 10;
+	else if (c._might >= 25)
+		_attackAttr2._current += 9;
+	else if (c._might >= 23)
+		_attackAttr2._current += 8;
+	else if (c._might >= 21)
+		_attackAttr2._current += 7;
+	else if (c._might >= 19)
+		_attackAttr2._current += 6;
+	else if (c._might >= 18)
+		_attackAttr2._current += 5;
+	else if (c._might >= 17)
+		_attackAttr2._current += 4;
+	else if (c._might >= 16)
+		_attackAttr2._current += 3;
+	else if (c._might >= 15)
+		_attackAttr2._current += 2;
+	else if (c._might >= 13)
+		_attackAttr2._current += 1;
+	else if (c._might >= 9)
+		_attackAttr2._current += 0;
+	else if (c._might >= 7)
+		_attackAttr2._current = MAX((int)_attackAttr2._current - 1, 0);
+	else if (c._might >= 5)
+		_attackAttr2._current = MAX((int)_attackAttr2._current - 2, 0);
+	else
+		_attackAttr2._current = MAX((int)_attackAttr2._current - 3, 0);
+
+	// TODO: attack message and further stuff
 }
 
 } // namespace Game
