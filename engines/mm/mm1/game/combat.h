@@ -51,6 +51,8 @@ protected:
 	char _val2, _val3, _val4, _val5;
 	byte _val6, _val7;
 	int _val8, _val9, _val10;
+	int _val11, _val12;
+	int _attackerLevel;
 	int _advanceIndex;
 	int _handicap1, _handicap2;
 	int _handicap3, _handicap4;
@@ -59,6 +61,7 @@ protected:
 	Common::String _monsterName;
 	bool _monstersResistSpells;
 	bool _monstersRegenerate;
+	AttributePair _attackAttr1, _attackAttr2;
 	enum Handicap {
 		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
 		HANDICAP_MONSTER = 2
@@ -196,6 +199,13 @@ protected:
 	bool monsterChanges();
 	void proc2();
 	void checkParty();
+
+	/**
+	 * Attack a monster
+	 */
+	void attackMonster68();
+	void attackMonster6a();
+	void attackMonster(int monsterNum);
 };
 
 } // namespace Game

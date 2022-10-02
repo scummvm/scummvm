@@ -355,15 +355,12 @@ void CharacterInfo::equipItem(uint index) {
 		switch (getItemCategory(itemId)) {
 		case ITEMCAT_WEAPON:
 		case ITEMCAT_TWO_HANDED:
-			c._v68 = item._val16;
-			c._v69 = item._val17;
+			c._physicalAttr._base = item._val16;
+			c._physicalAttr._current = item._val17;
 			break;
 		case ITEMCAT_MISSILE:
-			c._v6a = item._val16;
-			c._v6b = item._val17;
-			break;
-			c._v68 = item._val16;
-			c._v69 = item._val17;
+			c._missileAttr._base = item._val16;
+			c._missileAttr._current = item._val17;
 			break;
 		case ITEMCAT_ARMOR:
 		case ITEMCAT_SHIELD:
@@ -432,10 +429,10 @@ void CharacterInfo::removeItem(uint index) {
 	switch (getItemCategory(itemId)) {
 	case ITEMCAT_WEAPON:
 	case ITEMCAT_TWO_HANDED:
-		c._v68 = c._v69 = 0;
+		c._physicalAttr.clear();
 		break;
 	case ITEMCAT_MISSILE:
-		c._v6a = c._v6b = 0;
+		c._missileAttr.clear();
 		break;
 	case ITEMCAT_ARMOR:
 	case ITEMCAT_SHIELD:
