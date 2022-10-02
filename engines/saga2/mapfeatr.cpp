@@ -338,7 +338,7 @@ void CMapFeature::draw(TileRegion viewRegion,
 	else {
 		char msg[256];
 		sprintf(msg, "Hide: ");
-		if (!visible) strcat(msg, "not visible");
+		if (!visible) Common::strcat_s(msg, "not visible");
 		if (!(fCoords.u >= viewRegion.min.u)) sprintf(msg + strlen(msg), "U lo %d,%d ", fCoords.u, viewRegion.min.u);
 		if (!(fCoords.u <= viewRegion.max.u)) sprintf(msg + strlen(msg), "U hi %d,%d ", fCoords.u, viewRegion.max.u);
 		if (!(fCoords.v >= viewRegion.min.v)) sprintf(msg + strlen(msg), "V lo %d,%d ", fCoords.v, viewRegion.min.v);

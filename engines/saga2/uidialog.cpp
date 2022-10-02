@@ -967,16 +967,16 @@ int16 OptionsDialog(bool disableSaveResume) {
    message dialog box
  * ===================================================================== */
 
-char stripAccel(char *t, const char *s) {
+static char stripAccel(char (&t)[32], const char *s) {
 	char accel = '\0';
 	char    *underscore;
 
-	if (t == nullptr || s == nullptr) return accel;
-	strcpy(t, s);
+	if (s == nullptr) return accel;
+	Common::strcpy_s(t, s);
 
 	if ((underscore = strchr(t, '_')) != nullptr) {
 		accel = toupper(underscore[1]);
-		strcpy(underscore, s + (underscore - t) + 1);
+		Common::strcpy_s(underscore, sizeof(t) - (underscore - t), s + (underscore - t) + 1);
 	}
 	return accel;
 }
@@ -1634,7 +1634,7 @@ APPFUNC(cmdFileSave) {
 #else
 		deferredLoadID = saveIndex;
 		deferredSaveFlag = true;
-		strcpy(deferredSaveName, textBox->getLine(saveIndex));
+		Common::strcpy_s(deferredSaveName, textBox->getLine(saveIndex));
 #endif
 	}
 }

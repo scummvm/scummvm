@@ -354,8 +354,7 @@ void CDocument::pointerRelease(gPanelMessage &) {
 bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 
 	// get the current index into the string
-	char    *strIndex       = string + index;
-	char *strAfter;
+	char *strIndex = string + index;
 
 	// page break detected
 	if (strIndex[1] == dPageBreak[0] &&
@@ -363,18 +362,16 @@ bool CDocument::checkForPageBreak(char *string, uint16 index, int32 &offset) {
 		// eat the page breaks chars
 		// tie off the end
 		strIndex[0] = 0;
-		strAfter = new char[_textSize];
-		Common::strlcpy(strAfter, &strIndex[3], _textSize);
+
+		size_t txtlen = strlen(&strIndex[3]);
 
 		// string them together
-		strcat(&strIndex[0], strAfter);
+		memmove(&strIndex[0], &strIndex[3], txtlen);
 
 		// take the offset to the end of this line
 		offset = index;
 
 		// and set the new page flag
-
-		delete[] strAfter;
 		return true;
 	}
 
@@ -441,7 +438,8 @@ bool CDocument::checkForImage(char      *string,
 			strIndex[0] = 0;
 
 			// and string them together
-			strcat(&strIndex[0], &strIndex[2 + 1 + numEat]);
+			// strIndex is inside text buffer
+			Common::strcat_s(&strIndex[0], _textSize + 1 - (&strIndex[0] - text), &strIndex[2 + 1 + numEat]);
 
 			// set new line length
 			offset = index;
