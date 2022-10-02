@@ -82,7 +82,6 @@ protected:
 	PopUpWidget *_platformPopUp;
 
 	CheckboxWidget *_globalGraphicsOverride;
-	CheckboxWidget *_globalShaderOverride;
 	CheckboxWidget *_globalBackendOverride;
 	CheckboxWidget *_globalAudioOverride;
 	CheckboxWidget *_globalMIDIOverride;

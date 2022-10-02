@@ -102,13 +102,19 @@ enum {
 	kJoystickDeadzoneChanged= 'jodc',
 	kGraphicsTabContainerReflowCmd = 'gtcr',
 	kScalerPopUpCmd			= 'scPU',
-	kFullscreenToggled		= 'oful'
+	kFullscreenToggled		= 'oful',
+	kScalerToggle			= 'sctg',
 };
 
 enum {
 	kSubtitlesSpeech,
 	kSubtitlesSubs,
-	kSubtitlesBoth
+	kSubtitlesBoth,
+};
+
+enum {
+	kScalerScaler,
+	kScalerShader,
 };
 
 #ifdef USE_FLUIDSYNTH
@@ -160,12 +166,12 @@ static const int guiBaseValues[] = { 150, 125, 100, 75, -1 };
 static const char *kbdMouseSpeedLabels[] = { "3", "5", "8", "10", "13", "15", "18", "20", nullptr };
 
 OptionsDialog::OptionsDialog(const Common::String &domain, int x, int y, int w, int h)
-	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _shaderTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(x, y, w, h), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
 OptionsDialog::OptionsDialog(const Common::String &domain, const Common::String &name)
-	: Dialog(name), _domain(domain), _graphicsTabId(-1), _shaderTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
+	: Dialog(name), _domain(domain), _graphicsTabId(-1), _midiTabId(-1), _pathsTabId(-1), _tabWidget(nullptr) {
 	init();
 }
 
@@ -1057,6 +1063,9 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_shaderClearButton->setEnabled(false);
 		g_gui.scheduleTopDialogRedraw();
 		break;
+	case kScalerToggle:
+		setScalerControls();
+		break;
 	case kMidiGainChanged:
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->markAsDirty();
@@ -1480,19 +1489,6 @@ void OptionsDialog::addStatisticsControls(GuiObject *boss, const Common::String 
 	}
 }
 
-void OptionsDialog::addShaderControls(GuiObject *boss, const Common::String &prefix) {
-	// Shader selector
-	if (g_system->getOverlayWidth() > 320)
-		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader Path:"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderCmd);
-	else
-		_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shaders used for scaling ScummVM"), kChooseShaderCmd);
-	_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shaders used for scaling ScummVM"));
-
-	_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
-
-	_enableShaderSettings = true;
-}
-
 void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &prefix) {
 	const OSystem::GraphicsMode *gm = g_system->getSupportedGraphicsModes();
 	Common::String context;
@@ -1543,9 +1539,15 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		sm++;
 	}
 
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_scalerToggleGroup = new RadiobuttonGroup(boss, kScalerToggle);
+
+		_scalerToggleScalers = new RadiobuttonWidget(boss, prefix + "grScalerRadioButton", _scalerToggleGroup, kScalerScaler, Common::U32String(""));
+	}
+
 	// The Scaler popup
 	const PluginList &scalerPlugins = ScalerMan.getPlugins();
-	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Scaler:"));
+	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Use scaler:"));
 	_scalerPopUp = new PopUpWidget(boss, prefix + "grScalerPopup", Common::U32String(), kScalerPopUpCmd);
 
 	_scalerPopUp->appendEntry(_("<default>"));
@@ -1556,6 +1558,20 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 
 	_scaleFactorPopUp = new PopUpWidget(boss, prefix + "grScaleFactorPopup");
 	updateScaleFactors(_scalerPopUp->getSelectedTag());
+
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_scalerToggleShaders = new RadiobuttonWidget(boss, prefix + "grShaderRadioButton", _scalerToggleGroup, kScalerShader, Common::U32String(""));
+
+		if (g_system->getOverlayWidth() > 320)
+			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Use Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
+		else
+			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
+		_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shader used for scaling the game screen"));
+
+		_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
+
+		_enableShaderSettings = true;
+	}
 
 	// Fullscreen checkbox
 	_fullscreenCheckbox = new CheckboxWidget(boss, prefix + "grFullscreenCheckbox", _("Fullscreen mode"), Common::U32String(), kFullscreenToggled);
@@ -1602,6 +1618,26 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
 
 	_enableGraphicSettings = true;
+}
+
+void OptionsDialog::setScalerControls() {
+	bool scalers, shaders;
+
+	if (_scalerToggleGroup->getValue() == kScalerScaler) {
+		scalers = true;
+		shaders = false;
+	} else {
+		scalers = false;
+		shaders = true;
+	}
+
+	_scalerPopUpDesc->setEnabled(scalers);
+	_scalerPopUp->setEnabled(scalers);
+	_scaleFactorPopUp->setEnabled(scalers);
+
+	_shaderButton->setEnabled(shaders);
+	_shader->setEnabled(shaders);
+	_shaderClearButton->setEnabled(shaders);
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
@@ -1946,6 +1982,9 @@ void OptionsDialog::setupGraphicsTab() {
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
 
+	_scalerToggleGroup->setValue(kScalerScaler);
+	setScalerControls();
+
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setVisible(true);
 		if (ConfMan.isKeyTemporary("scaler") || ConfMan.isKeyTemporary("scale_factor"))
@@ -2093,15 +2132,6 @@ void GlobalOptionsDialog::build() {
 	graphicsContainer->setTarget(this);
 	graphicsContainer->setBackgroundType(ThemeEngine::kWidgetBackgroundNo);
 	addGraphicControls(graphicsContainer, "GlobalOptions_Graphics_Container.");
-
-	//
-	// The shader tab, visibility checking by features
-	//
-
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_shaderTabId = tab->addTab(_("Shader"), "GlobalOptions_Shader");
-		addShaderControls(tab, "GlobalOptions_Shader.");
-	}
 
 	//
 	// The control tab (currently visible only for SDL and Vita platform, visibility checking by features
@@ -3328,17 +3358,6 @@ void GlobalOptionsDialog::handleTickle() {
 void GlobalOptionsDialog::reflowLayout() {
 	int firstVisible = _tabWidget->getFirstVisible();
 	int activeTab = _tabWidget->getActiveTab();
-
-	if (_shaderTabId != -1) {
-		_tabWidget->setActiveTab(_shaderTabId);
-
-		bool enabled = _shaderClearButton->isEnabled();
-		_tabWidget->removeWidget(_shaderClearButton);
-		_shaderClearButton->setNext(nullptr);
-		delete _shaderClearButton;
-		_shaderClearButton = addClearButton(_tabWidget, "GlobalOptions_Shader.grShaderClearButton", kClearShaderCmd);
-		_shaderClearButton->setEnabled(enabled);
-	}
 
 	if (_midiTabId != -1) {
 		_tabWidget->setActiveTab(_midiTabId);
