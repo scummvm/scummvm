@@ -51,6 +51,7 @@ VideoEntry::~VideoEntry() {
 }
 
 void VideoEntry::close() {
+	g_system->hideOverlay();
 	delete _video;
 	_video = nullptr;
 }
@@ -194,13 +195,12 @@ VideoEntryPtr VideoManager::playMovie(uint16 id) {
 bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
-	g_system->showOverlay();
-	g_system->clearOverlay();
-
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
+		g_system->showOverlay();
+		g_system->clearOverlay();
+
 		// Check of the video has reached the end
 		if ((*it)->endOfVideo()) {
-			g_system->hideOverlay();
 			if ((*it)->isLooping()) {
 				// Seek back if looping
 				(*it)->seek((*it)->getStart());
