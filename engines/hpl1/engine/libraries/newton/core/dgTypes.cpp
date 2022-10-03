@@ -433,14 +433,14 @@ static dgInt32 SortVertices(dgFloat64* const vertexList, dgInt32 stride,
     if (index == dgInt32(0xffffffff))
     {
       dgFloat64 swept = vertexList[m + firstSortAxis] + sweptWindow;
-      dgInt32 k = i * stride + stride;
+      dgInt32 q = i * stride + stride;
       for (dgInt32 i1 = i + 1; i1 < vertexCount; i1++)
       {
 
-        index = dgInt32(vertexList[k + 0]);
+        index = dgInt32(vertexList[q + 0]);
         if (index == dgInt32(0xffffffff))
         {
-          dgFloat64 val = vertexList[k + firstSortAxis];
+          dgFloat64 val = vertexList[q + firstSortAxis];
           if (val >= swept)
           {
             break;
@@ -448,15 +448,15 @@ static dgInt32 SortVertices(dgFloat64* const vertexList, dgInt32 stride,
           bool test = true;
           for (dgInt32 t = 0; test && (t < compareCount); t++)
           {
-            dgFloat64 val = fabs(vertexList[m + t + 2] - vertexList[k + t + 2]);
-            test = test && (val <= tol);
+            dgFloat64 v = fabs(vertexList[m + t + 2] - vertexList[k + t + 2]);
+            test = test && (v <= tol);
           }
           if (test)
           {
-            vertexList[k + 0] = dgFloat64(count);
+            vertexList[q + 0] = dgFloat64(count);
           }
         }
-        k += stride;
+        q += stride;
       }
 
       memcpy(&vertexList[count * stride + 2], &vertexList[m + 2],
