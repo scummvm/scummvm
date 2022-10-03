@@ -157,6 +157,12 @@ void DrillerEngine::loadAssetsDemo() {
 
 		load8bitBinary(file, 0x442, 16);
 		loadAmigaPalette(file, 0x0);
+
+		file = gameDir.createReadStreamForMember("driller");
+		if (file == nullptr)
+			error("Failed to open 'driller' file");
+		loadMessagesFixedSize(file, 0x3960, 14, 20);
+
 	} else if (isAtariST()) {
 		file = gameDir.createReadStreamForMember("lift.neo");
 		if (file == nullptr)
@@ -183,6 +189,11 @@ void DrillerEngine::loadAssetsDemo() {
 
 		load8bitBinary(file, 0x442, 16);
 		loadAmigaPalette(file, 0x0);
+
+		file = gameDir.createReadStreamForMember("x.prg");
+		if (file == nullptr)
+			error("Failed to open 'x.prg' file");
+		loadMessagesFixedSize(file, 0x3b90, 14, 20);
 	}
 	else
 		error("Unsupported demo for Driller");
