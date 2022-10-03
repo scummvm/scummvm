@@ -296,9 +296,9 @@ void dgBody::UpdateCollisionMatrix(dgFloat32 timestep, dgInt32 threadIndex) {
 			dgVector &box1Min = compoundCollision->m_root->m_p0;
 			dgVector &box1Max = compoundCollision->m_root->m_p1;
 
-			dgVector boxSize((box1Max - box1Min).Scale(dgFloat32(0.25f)));
+			dgVector boxSizeC((box1Max - box1Min).Scale(dgFloat32(0.25f)));
 			for (dgInt32 j = 0; j < 3; j++) {
-				if (dgAbsf(step[j]) > boxSize[j]) {
+				if (dgAbsf(step[j]) > boxSizeC[j]) {
 					if (step[j] > dgFloat32(0.0f)) {
 						box1Max[j] += step[j];
 					} else {
@@ -720,10 +720,10 @@ dgConstraint *dgBody::GetNextJoint(dgConstraint *joint) const {
 
 	if (node->GetInfo().m_joint == joint) {
 		for (node = node->GetNext(); node; node = node->GetNext()) {
-			dgConstraint *joint;
-			joint = node->GetInfo().m_joint;
-			if (joint->GetId() >= dgUnknownConstraintId) {
-				return joint;
+			dgConstraint *jointT;
+			jointT = node->GetInfo().m_joint;
+			if (jointT->GetId() >= dgUnknownConstraintId) {
+				return jointT;
 			}
 		}
 	}
@@ -754,10 +754,10 @@ dgConstraint *dgBody::GetNextContact(dgConstraint *joint) const {
 
 	if (node->GetInfo().m_joint == joint) {
 		for (node = node->GetNext(); node; node = node->GetNext()) {
-			dgConstraint *joint;
-			joint = node->GetInfo().m_joint;
-			if (joint->GetId() == dgContactConstraintId) {
-				return joint;
+			dgConstraint *jointT;
+			jointT = node->GetInfo().m_joint;
+			if (jointT->GetId() == dgContactConstraintId) {
+				return jointT;
 			}
 		}
 	}
