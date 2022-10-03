@@ -161,11 +161,22 @@ char *ObjectMan::lockText(uint32 textId, uint8 lang) {
 	}
 	uint32 offset = _resMan->readUint32(addr + ((textId & ITM_ID) + 1) * 4);
 	if (offset == 0) {
+		switch(textId) {
 		// Workaround bug for missing sentence in some languages in Syria (see bug #3753).
 		// We use the hardcoded text in this case.
-		if (textId == 2950145)
+		case 2950145:
 			return const_cast<char *>(_translationId2950145[lang]);
 
+		// Workaround for some strings in spanish demo
+		case 6488080:
+			return const_cast<char *>(_translationId6488080[lang]);
+		case 6488081:
+			return const_cast<char *>(_translationId6488081[lang]);
+		case 6488082:
+			return const_cast<char *>(_translationId6488082[lang]);
+		case 6488083:
+			return const_cast<char *>(_translationId6488083[lang]);
+		}
 		warning("ObjectMan::lockText(%d): text number has no text lines", textId);
 		return NULL;
 	}
