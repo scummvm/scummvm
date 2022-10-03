@@ -62,6 +62,10 @@ void Combat::clear() {
 	// TODO: clear everything
 
 	_roundNum = 1;
+	_monstersCount = _monsterList.size();
+	_party.clear();
+	for (uint i = 0; i < g_globals->_party.size(); ++i)
+		_party.push_back(&g_globals->_party[i]);
 }
 
 void Combat::loadArrays() {
@@ -102,7 +106,7 @@ void Combat::setupCanAttacks() {
 
 	if ((int8)map[Maps::MAP_ID] < 0) {
 		if (enc._encounterType != FORCE_SURPRISED) {
-			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			for (uint i = 0; i < _party.size(); ++i) {
 				if (i < (MAX_PARTY_SIZE - 1)) {
 					_canAttack[i] = true;
 				} else {
@@ -117,17 +121,17 @@ void Combat::setupCanAttacks() {
 	} else {
 		if (enc._encounterType != FORCE_SURPRISED) {
 			_canAttack[0] = true;
-			if (g_globals->_party.size() > 1)
+			if (_party.size() > 1)
 				_canAttack[1] = true;
-			if (g_globals->_party.size() > 2)
+			if (_party.size() > 2)
 				checkLeftWall();
-			if (g_globals->_party.size() > 3)
+			if (_party.size() > 3)
 				checkRightWall();
-			if (g_globals->_party.size() > 4) {
+			if (_party.size() > 4) {
 				if (_canAttack[2] && getRandomNumber(100) <= 5)
 					_canAttack[4] = true;
 			}
-			if (g_globals->_party.size() > 5) {
+			if (_party.size() > 5) {
 				if (_canAttack[3] && getRandomNumber(100) <= 5)
 					_canAttack[5] = true;
 			}
@@ -140,13 +144,13 @@ void Combat::setupCanAttacks() {
 	// Entire party is allowed to attack, I guess
 	// because the monsters are surrounding the party,
 	// placing them within reach
-	Common::fill(&_canAttack[0], &_canAttack[g_globals->_party.size()], true);
+	Common::fill(&_canAttack[0], &_canAttack[_party.size()], true);
 	setupAttackerVal();
 }
 
 void Combat::setupAttackerVal() {
 	_attackerVal = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+	for (uint i = 0; i < _party.size(); ++i) {
 		if (_canAttack[i])
 			++_attackerVal;
 	}
@@ -206,8 +210,8 @@ void Combat::dispelParty() {
 	Character *tmpC = g_globals->_currCharacter;
 	Monster *tmpM = _monsterP;
 
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
+	for (uint i = 0; i < _party.size(); ++i) {
+		Character &c = *_party[i];
 		g_globals->_currCharacter = &c;
 		c.updateAttributes();
 		c.updateAC();
@@ -236,8 +240,8 @@ void Combat::combatLoop() {
 }
 
 void Combat::selectParty() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
+	for (uint i = 0; i < _party.size(); ++i) {
+		Character &c = *_party[i];
 		g_globals->_currCharacter = &c;
 
 		int speed = c._speed._current;
@@ -267,16 +271,16 @@ void Combat::defeatedMonsters() {
 	}
 
 	// Count number of active characters
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
+	for (uint i = 0; i < _party.size(); ++i) {
+		if (!(_party[i]->_condition & BAD_CONDITION))
 			++activeCharCount;
 	}
 
 	// Split the experience between the active characters
 	_totalExperience /= activeCharCount;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		if (!(g_globals->_party[i]._condition & BAD_CONDITION))
-			g_globals->_party[i]._exp += _totalExperience;
+	for (uint i = 0; i < _party.size(); ++i) {
+		if (!(_party[i]->_condition & BAD_CONDITION))
+			_party[i]->_exp += _totalExperience;
 	}
 
 	// Update the party's characters
@@ -395,7 +399,7 @@ void Combat::nextRound() {
 	clearArrays();
 	g_globals->_party.updateAC();
 
-	_val8 = getRandomNumber(g_globals->_party.size());
+	_val8 = getRandomNumber(_party.size());
 	updateHighestLevel();
 
 	setMode(NEXT_ROUND);
@@ -427,7 +431,7 @@ void Combat::clearArrays() {
 void Combat::updateHighestLevel() {
 	Encounter &enc = g_globals->_encounters;
 
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+	for (uint i = 0; i < _party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 		g_globals->_currCharacter = &c;
 
@@ -632,8 +636,8 @@ void Combat::checkParty() {
 	_val10 = 0;
 
 	bool partyAlive = false;
-	for (auto &c : g_globals->_party) {
-		if (!(c._condition & (DEAD | BAD_CONDITION)))
+	for (auto &c : _party) {
+		if (!(c->_condition & (DEAD | BAD_CONDITION)))
 			partyAlive = true;
 	}
 
@@ -644,8 +648,8 @@ void Combat::checkParty() {
 	}
 
 	// Update the array for the party
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
+	for (uint i = 0; i < _party.size(); ++i) {
+		Character &c = *_party[i];
 		if ((c._condition & BAD_CONDITION) || !c._hpBase)
 			_arr3[i] = 1;
 	}
