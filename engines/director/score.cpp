@@ -580,7 +580,15 @@ void Score::renderSprites(uint16 frameId, RenderMode mode) {
 				_movie->_videoPlayback = true;
 
 			_window->addDirtyRect(channel->getBbox());
-			debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d castId: %s [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %s]", i, currentSprite->_castId.asString().c_str(), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible, PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor, currentSprite->_scriptId.asString().c_str());
+			if (currentSprite) {
+				debugC(2, kDebugImages,
+					"Score::renderSprites(): CH: %-3d castId: %s [ink: %d, puppet: %d, moveable: %d, visible: %d] [bbox: %d,%d,%d,%d] [type: %d fg: %d bg: %d] [script: %s]",
+					i, currentSprite->_castId.asString().c_str(), currentSprite->_ink, currentSprite->_puppet, currentSprite->_moveable, channel->_visible,
+					PRINT_RECT(channel->getBbox()), currentSprite->_spriteType, currentSprite->_foreColor, currentSprite->_backColor,
+					currentSprite->_scriptId.asString().c_str());
+			} else {
+				debugC(2, kDebugImages, "Score::renderSprites(): CH: %-3d: No sprite", i);
+			}
 		} else {
 			channel->setClean(nextSprite, i, true);
 		}
