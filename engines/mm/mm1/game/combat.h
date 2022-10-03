@@ -52,7 +52,7 @@ protected:
 	char _val2, _val3, _val4, _val5;
 	byte _val6, _val7;
 	int _val8, _val9, _val10;
-	int _val11, _val12;
+	int _val11, _numberOfTimes;
 	int _attackerLevel;
 	int _advanceIndex;
 	int _handicap1, _handicap2;
@@ -63,6 +63,7 @@ protected:
 	bool _monstersResistSpells;
 	bool _monstersRegenerate;
 	AttributePair _attackAttr1, _attackAttr2;
+	int _timesHit;
 	bool _isShooting;
 	Common::String _attackMessage;
 	enum Handicap {
@@ -214,7 +215,7 @@ protected:
 	/**
 	 * Adds attack damage message for character hitting monster
 	 */
-	void writeAttackDamage();
+	void addAttackDamage();
 
 	/**
 	 * Updates a monster's status

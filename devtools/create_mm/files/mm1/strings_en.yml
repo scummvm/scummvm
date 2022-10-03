@@ -318,6 +318,16 @@
 		attacks: "ATTACKS"
 		shoots: "SHOOTS"
 		weapon_no_effect: "WEAPON HAS NO EFFECT!"
+		once: "ONCE"
+		times: "TIMES"
+		and: "AND"
+		hit: "HIT"
+		misses: "MISSES"
+		for: "FOR"
+		point: "POINT"
+		points: "POINTS"
+		of_damage: "OF DAMAGE!"
+
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "
