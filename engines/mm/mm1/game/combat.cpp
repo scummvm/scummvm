@@ -43,7 +43,7 @@ void Combat::clear() {
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
 	_val8 = _val9 = _val10 = 0;
-	_val11 = _val12 = 0;
+	_val11 = _numberOfTimes = 0;
 	_attackerLevel = 0;
 	_advanceIndex = 0;
 	_handicap1 = _handicap2 = 0;
@@ -57,6 +57,7 @@ void Combat::clear() {
 	_monstersResistSpells = _monstersRegenerate = false;
 	_attackAttr1.clear();
 	_attackAttr2.clear();
+	_timesHit = 0;
 	_isShooting = false;
 
 	// TODO: clear everything
@@ -707,10 +708,10 @@ void Combat::attackMonster(int monsterNum) {
 	else
 		_attackerLevel = MAX((int)_attackerLevel - 3, 0);
 
-	_val12 = 1;
+	_numberOfTimes = 1;
 
 	if (c._class >= CLERIC && c._level >= 8) {
-		_val12 += c._level / 8;
+		_numberOfTimes += c._level / 8;
 	}
 
 	// Affect level based on might
@@ -751,17 +752,8 @@ void Combat::attackMonster(int monsterNum) {
 	else
 		_attackAttr2._current = MAX((int)_attackAttr2._current - 3, 0);
 
-	_message.clear();
-	_message.push_back(Line(0, 0, Common::String::format("%s %s %s",
-		g_globals->_currCharacter->_name,
-		STRING[_isShooting ? "dialogs.combat.shoots" :
-			"dialogs.combat.attacks"].c_str(),
-		_monsterP->_name.c_str()
-	)));
-
 	if (_isShooting && c._class == ARCHER)
 		_attackAttr2._current += (c._level + 1) / 2;
-	_isShooting = false;
 
 	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
 		if (_monsterStatus[_monsterIndex] & (MONFLAG_ASLEEP |
@@ -778,7 +770,7 @@ void Combat::attackMonster(int monsterNum) {
 				_val11 = 200;
 		}
 
-		writeAttackDamage();
+		addAttackDamage();
 		if (_damage)
 			updateMonsterStatus();
 	} else {
@@ -789,8 +781,19 @@ void Combat::attackMonster(int monsterNum) {
 	setMode(CHAR_ATTACKS);
 }
 
-void Combat::writeAttackDamage() {
-	// TODO: Implement
+void Combat::addAttackDamage() {
+	_damage = 0;
+	_timesHit = 0;
+	_val11 += 10;
+
+	for (int i = 0; i < _numberOfTimes; ++i) {
+		int val = getRandomNumber(20);
+		if (val == 20 || (val != 1 && (val + _attackerLevel) >= _val11)) {
+			_damage = MAX(_damage + (int)_attackAttr2._current +
+				getRandomNumber(_attackAttr2._base), 255);
+			++_timesHit;
+		}
+	}
 }
 
 void Combat::updateMonsterStatus() {

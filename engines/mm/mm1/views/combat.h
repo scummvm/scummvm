@@ -159,6 +159,11 @@ private:
 	void use();
 
 	/**
+	 * Write message for characters attacking monsters
+	 */
+	void writeCharAttackDamage();
+
+	/**
 	 * Writes out a message
 	 */
 	void writeMessage();
