@@ -357,6 +357,15 @@ void OptionsDialog::build() {
 		_scalerPopUp->setSelected(0);
 		_scaleFactorPopUp->setSelected(0);
 
+		// Set the scaler checkbox value
+		int scalerVal = kScalerScaler;
+
+		if (ConfMan.hasKey("usehaders", _domain) && ConfMan.get("usehaders", _domain) == "shaders")
+			scalerVal = kScalerShader;
+
+		_scalerToggleGroup->setValue(scalerVal);
+		setScalerControls();
+
 		if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 			if (ConfMan.hasKey("scaler", _domain)) {
 				const PluginList &scalerPlugins = ScalerMan.getPlugins();
@@ -598,6 +607,13 @@ void OptionsDialog::apply() {
 
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
+
+			Common::String useshader = "scalers";
+
+			if (_scalerToggleGroup->getValue() == kScalerShader)
+				useshader = "shaders";
+
+			ConfMan.set("usehaders", useshader, _domain);
 
 			bool isSet = false;
 
@@ -1982,7 +1998,6 @@ void OptionsDialog::setupGraphicsTab() {
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
 
-	_scalerToggleGroup->setValue(kScalerScaler);
 	setScalerControls();
 
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
