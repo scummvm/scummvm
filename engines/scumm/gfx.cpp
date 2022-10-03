@@ -4603,7 +4603,6 @@ void ScummEngine::updateScreenShakeEffect() {
 void MajMinCodec::setupBitReader(byte shift, const byte *src) {
 	_majMinData.repeatMode = false;
 	_majMinData.numBits = 16;
-	_majMinData.mask = (1 << shift) - 1;
 	_majMinData.shift = shift;
 	_majMinData.color = *src;
 	_majMinData.bits = (*(src + 1) | *(src + 2) << 8);
@@ -4620,13 +4619,19 @@ void MajMinCodec::setupBitReader(byte shift, const byte *src) {
 		_majMinData.numBits -= (n);                                    \
 		_majMinData.bits >>= (n);
 
+byte MajMinCodec::readBits(byte n) {
+	MAJMIN_FILL_BITS();
+	byte _value = _majMinData.bits & ((1 << n) - 1);
+	MAJMIN_EAT_BITS(n);
+	return _value;   
+}
 
 void MajMinCodec::skipData(int32 numbytes) {
 	decodeLine(nullptr, numbytes, 0);
 }
 
 void MajMinCodec::decodeLine(byte *buf, int32 numbytes, int32 dir) {
-	uint16 bits, tmp_bits;
+	byte diff;
 
 	while (numbytes != 0) {
 		if (buf) {
@@ -4635,32 +4640,20 @@ void MajMinCodec::decodeLine(byte *buf, int32 numbytes, int32 dir) {
 		}
 
 		if (!_majMinData.repeatMode) {
-			MAJMIN_FILL_BITS()
-			bits = _majMinData.bits & 3;
-			if (bits & 1) {
-				MAJMIN_EAT_BITS(2)
-				if (bits & 2) {
-					tmp_bits = _majMinData.bits & 7;
-					MAJMIN_EAT_BITS(3)
-					if (tmp_bits != 4) {
+			if (readBits(1)) {
+				if (readBits(1)) {
+					diff = readBits(3) - 4;
+					if (diff) {
 						// A color change
-						_majMinData.color += (tmp_bits - 4);
+						_majMinData.color += diff;
 					} else {
 						// Color does not change, but rather identical pixels get repeated
 						_majMinData.repeatMode = true;
-						MAJMIN_FILL_BITS()
-						_majMinData.repeatCount = (_majMinData.bits & 0xff) - 1;
-						MAJMIN_EAT_BITS(8)
-						MAJMIN_FILL_BITS()
+						_majMinData.repeatCount = readBits(8) - 1;
 					}
 				} else {
-					MAJMIN_FILL_BITS()
-					_majMinData.color = ((byte)_majMinData.bits) & _majMinData.mask;
-					MAJMIN_EAT_BITS(_majMinData.shift)
-					MAJMIN_FILL_BITS()
+					_majMinData.color = readBits(_majMinData.shift);
 				}
-			} else {
-				MAJMIN_EAT_BITS(1);
 			}
 		} else {
 			if (--_majMinData.repeatCount == 0) {

@@ -551,7 +551,6 @@ public:
 	struct {
 		bool repeatMode;
 		int repeatCount;
-		byte mask;
 		byte color;
 		byte shift;
 		uint16 bits;
@@ -563,6 +562,7 @@ public:
 	void setupBitReader(byte shift, const byte *src);
 	void skipData(int32 numSkip);
 	void decodeLine(byte *buf, int32 numBytes, int32 dir);
+	inline byte readBits(byte n);
 };
 
 } // End of namespace Scumm
