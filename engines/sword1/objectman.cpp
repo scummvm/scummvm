@@ -426,7 +426,7 @@ const char *const ObjectMan::_translationId6488082[7] = {
 	"...mais avant de m'en rendre compte je me retrouvais happ\351 dans une course effr\351n\351e entre deux ennemis impitoyables.",       // French
 	"... doch bevor ich mich versah, war ich inmitten eines Wettlaufs von zwei r\374cksichtslosen Feinden.",                               // German
 	"... ma prima che me ne rendessi conto, fui trascinato in una corsa disperata con due spietati nemici.",                               // Italian
-	"... pero antes de que me diera tiempo a pensarlo, me encontr\351 metido en una carrera desesperada entre dos enemigos sin piedad..",  // Spanish
+	"... pero antes de que me diera tiempo a pensarlo, me encontr\351 metido en una carrera desesperada entre dos enemigos sin piedad.",   // Spanish
 	NULL,                                                                                                                                  // Czech
 	NULL                                                                                                                                   // Portuguese
 };
