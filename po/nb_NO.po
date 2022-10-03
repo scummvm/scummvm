@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-02 19:09+0000\n"
-"PO-Revision-Date: 2022-10-02 04:37+0000\n"
-"Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
+"PO-Revision-Date: 2022-10-03 20:37+0000\n"
+"Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
 "Language: nb_NO\n"
@@ -9075,7 +9075,7 @@ msgstr "Aktiver Venus"
 
 #: engines/zvision/detection_tables.h:75
 msgid "Enable the Venus help system"
-msgstr "Aktiver Venus hjelpesystemet"
+msgstr "Aktiver Venus-hjelpesystemet"
 
 #: engines/zvision/detection_tables.h:86
 msgid "Disable animation while turning"
