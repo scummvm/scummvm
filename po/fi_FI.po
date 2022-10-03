@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-02 19:09+0000\n"
-"PO-Revision-Date: 2022-08-22 23:14+0000\n"
-"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
+"PO-Revision-Date: 2022-10-03 20:37+0000\n"
+"Last-Translator: LINUX-SAUNA <linuxsauna@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -5198,14 +5198,12 @@ msgid ""
 msgstr "Soita laulu 'The Final Hour' MIDI-musiikin sijaan lopputeksteissä"
 
 #: engines/groovie/detection.cpp:332
-#, fuzzy
-#| msgid "Hover Mode"
 msgid "Speedrun Mode"
-msgstr "Leijutila"
+msgstr "Pikapeluutila"
 
 #: engines/groovie/detection.cpp:333
 msgid "Affects the controls for fast forwarding the game"
-msgstr ""
+msgstr "Vaikuttaa ohjaukseen pelin eteenpäinpelaamiseen pikakelauksella"
 
 #: engines/groovie/metaengine.cpp:52
 msgid "GroovieV2 support is not compiled in"
@@ -6450,14 +6448,12 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Käytä vaihtoehtoista pelin introa (vain CD versiossa)"
 
 #: engines/queen/detection.cpp:56
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Improved font"
-msgstr "Parannettu tila"
+msgstr "Paranneltu kirjasin"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an easier to read custom font"
-msgstr ""
+msgstr "Käytä helppolukuisempaa räätälöityä kirjasinmallia"
 
 #. I18N: Inherit the Earth had a "trial" version which is a full game with a simple check
 #: engines/saga/detection_tables.h:813
@@ -7626,6 +7622,9 @@ msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"Tästä kyseisestä Monkey Island 1:n versiosta tiedetään uupuvan joitakin\n"
+"vaadittuja käytön mahdollistavia osasia MT-32:lle. Otetaan sen sijasta "
+"käyttöön AdLib."
 
 #: engines/scumm/scumm.cpp:3240
 msgid ""
