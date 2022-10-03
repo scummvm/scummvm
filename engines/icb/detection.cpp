@@ -65,6 +65,21 @@ static const IcbGameDescription gameDescriptions[] = {
 	{
 		{
 			// In Cold Blood
+			// Spanish (Revolution 25th Anniversary Collection)
+			"icb",
+			"",
+			AD_ENTRY2s("g/speech.clu", "84444660e4fd6104c88bc13b9db74b98", 7432352, "g/g", "3ee009f3319ec3148fb2861043794235", 67356),
+			Common::ES_ESP,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NONE)
+		},
+		GType_ICB
+	},
+
+	{
+		{
+			// In Cold Blood
 			// English Demo
 			"icb",
 			"Demo",
