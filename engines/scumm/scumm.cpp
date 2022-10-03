@@ -2596,7 +2596,8 @@ load_game:
 
 	_res->increaseExpireCounter();
 
-	animateCursor();
+	if (!isUsingOriginalGUI() || ((_game.version >= 3) || !isPaused()))
+		animateCursor();
 
 	/* show or hide mouse */
 	CursorMan.showMouse(_cursor.state > 0);
@@ -3146,7 +3147,7 @@ bool ScummEngine::isUsingOriginalGUI() {
 	if (_game.heversion != 0)
 		return false;
 
-	if (_game.version > 3)
+	if (_game.version >= 0)
 		return _useOriginalGUI;
 
 	return false;
