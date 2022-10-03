@@ -749,7 +749,7 @@ void cMapHandler::AddSaveData(cSavedWorld *apSavedWorld) {
 void cMapHandler::LoadSaveData(cSavedWorld *apSavedWorld) {
 	cWorld3D *pWorld = mpInit->mpGame->GetScene()->GetWorld3D();
 	iPhysicsWorld *pPhysicsWorld = pWorld->GetPhysicsWorld();
-	std::list<iGameEntity *> lstEntities;
+	Common::List<iGameEntity *> lstEntities;
 
 	/////////////////////////
 	// Properties
@@ -953,7 +953,7 @@ void cMapHandler::LoadSaveData(cSavedWorld *apSavedWorld) {
 
 	////////////////////////////////
 	// Setup Entities
-	std::list<iGameEntity *>::iterator entIt = lstEntities.begin();
+	Common::List<iGameEntity *>::iterator entIt = lstEntities.begin();
 	for (; entIt != lstEntities.end(); ++entIt) {
 		iGameEntity *pEntity = *entIt;
 

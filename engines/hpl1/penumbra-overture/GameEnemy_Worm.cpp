@@ -589,7 +589,7 @@ void cVector3Smoother::Add(const cVector3f &avVec) {
 
 cVector3f cVector3Smoother::GetAverage() {
 	cVector3f vAverage = 0;
-	std::list<cVector3f>::iterator it = mlstVecs.begin();
+	Common::List<cVector3f>::iterator it = mlstVecs.begin();
 	for (; it != mlstVecs.end(); ++it) {
 		vAverage += *it;
 	}
@@ -681,7 +681,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 
 	// Get smooth position
 	mvRootPosition = 0;
-	std::list<cVector3f>::iterator posIt = mlstRootPositions.begin();
+	Common::List<cVector3f>::iterator posIt = mlstRootPositions.begin();
 	for (; posIt != mlstRootPositions.end(); ++posIt) {
 		mvRootPosition += *posIt;
 	}
@@ -746,7 +746,7 @@ void cGameEnemy_Worm::OnUpdate(float afTimeStep) {
 			pSegment->mlstPositions.pop_front();
 		}
 		pSegment->mvPostion = 0;
-		std::list<cVector3f>::iterator posIt2 = pSegment->mlstPositions.begin();
+		Common::List<cVector3f>::iterator posIt2 = pSegment->mlstPositions.begin();
 		for (; posIt2 != pSegment->mlstPositions.end(); ++posIt2) {
 			pSegment->mvPostion += *posIt2;
 		}

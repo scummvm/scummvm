@@ -28,7 +28,7 @@
 #ifndef HPL_BINTREE_H
 #define HPL_BINTREE_H
 
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -169,7 +169,7 @@ public:
 		return mlNumOfNodes;
 	}
 
-	const std::list<BinTreeNode<T> *> &GetLeafList() {
+	const Common::List<BinTreeNode<T> *> &GetLeafList() {
 		mlstNodes.clear();
 		PopulateLeafList(mFirstNode);
 		return mlstNodes;
@@ -179,7 +179,7 @@ public:
 	 * Get a list of all the nodes in the tree
 	 * \return
 	 */
-	const std::list<BinTreeNode<T> *> &GetNodeList() {
+	const Common::List<BinTreeNode<T> *> &GetNodeList() {
 		mlstNodes.clear();
 		PopulateNodeList(mFirstNode);
 		return mlstNodes;
@@ -190,7 +190,7 @@ private:
 	BinTreeNode<T> *mFirstNode;
 	int mlNum;
 
-	std::list<BinTreeNode<T> *> mlstNodes;
+	Common::List<BinTreeNode<T> *> mlstNodes;
 
 	void DeleteNode(BinTreeNode<T> *aNode) {
 		if (aNode == NULL)

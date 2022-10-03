@@ -71,7 +71,7 @@ private:
 	int mlNum;
 };
 
-typedef std::list<cNumericalButton *> tNumericalButtonList;
+typedef Common::List<cNumericalButton *> tNumericalButtonList;
 typedef tNumericalButtonList::iterator tNumericalButtonListIt;
 
 //---------------------------------------------

@@ -28,17 +28,17 @@
 #ifndef HPL_UPDATER_H
 #define HPL_UPDATER_H
 
-#include <list>
 #include <map>
 
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 
 class iUpdateable;
 class LowLevelSystem;
 
-typedef std::list<iUpdateable *> tUpdateableList;
+typedef Common::List<iUpdateable *> tUpdateableList;
 typedef tUpdateableList::iterator tUpdateableListIt;
 
 typedef std::map<tString, tUpdateableList> tUpdateContainerMap;

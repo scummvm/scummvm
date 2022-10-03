@@ -28,10 +28,11 @@
 #ifndef HPL_WIDGET_WINDOW_H
 #define HPL_WIDGET_WINDOW_H
 
-#include <list>
 #include <vector>
 
 #include "hpl1/engine/gui/Widget.h"
+#include "common/list.h"
+
 
 namespace hpl {
 

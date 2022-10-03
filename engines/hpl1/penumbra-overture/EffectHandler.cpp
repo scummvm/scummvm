@@ -121,7 +121,7 @@ void cEffect_ShakeScreen::Start(float afAmount, float afTime, float afFadeInTime
 void cEffect_ShakeScreen::Update(float afTimeStep) {
 	float fLargest = 0;
 
-	std::list<cEffect_ShakeScreen_Shake>::iterator it = mlstShakes.begin();
+	Common::List<cEffect_ShakeScreen_Shake>::iterator it = mlstShakes.begin();
 	for (; it != mlstShakes.end();) {
 		cEffect_ShakeScreen_Shake &shake = *it;
 

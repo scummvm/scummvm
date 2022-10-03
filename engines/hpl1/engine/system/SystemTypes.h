@@ -28,13 +28,13 @@
 #ifndef HPL_SYSTEM_TYPES_H
 #define HPL_SYSTEM_TYPES_H
 
-#include <list>
 #include <set>
 #include <stdio.h>
 #include <string>
 #include <vector>
 
 #include "hpl1/engine/system/Container.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -77,7 +77,7 @@ typedef unsigned int tFlag;
 
 typedef std::string tString;
 
-typedef std::list<tString> tStringList;
+typedef Common::List<tString> tStringList;
 typedef tStringList::iterator tStringListIt;
 
 typedef std::vector<tString> tStringVec;
@@ -89,7 +89,7 @@ typedef tStringSet::iterator tStringSetIt;
 //--------------------------------------------------------
 
 typedef std::wstring tWString;
-typedef std::list<tWString> tWStringList;
+typedef Common::List<tWString> tWStringList;
 typedef tWStringList::iterator tWStringListIt;
 
 typedef std::vector<tWString> tWStringVec;
@@ -118,10 +118,10 @@ typedef tFloatVec::iterator tFloatVecIt;
 typedef std::vector<float *> tFloatPtrVec;
 typedef tFloatPtrVec::iterator tFloatPtrVecIt;
 
-typedef std::list<float *> tFloatPtrList;
+typedef Common::List<float *> tFloatPtrList;
 typedef tFloatPtrList::iterator tFloatPtrListIt;
 
-typedef std::list<unsigned int> tUIntList;
+typedef Common::List<unsigned int> tUIntList;
 typedef tUIntList::iterator tUIntListIt;
 
 typedef enum {

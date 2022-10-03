@@ -32,13 +32,13 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Entity.h"
 #include "hpl1/engine/system/Container.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
 class iNode;
 
-typedef std::list<iNode *> tNodeList;
+typedef Common::List<iNode *> tNodeList;
 typedef tNodeList::iterator tNodeListIt;
 
 typedef cSTLIterator<iNode *, tNodeList, tNodeListIt> cNodeIterator;

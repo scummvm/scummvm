@@ -46,8 +46,12 @@ Bitmap2D *LowLevelResources::loadBitmap2D(const tString &filepath) {
 }
 
 void LowLevelResources::getSupportedImageFormats(tStringList &formats) {
-	formats.insert(formats.end(), {
-		"BMP","GIF","JPEG","PNG","JPG","TGA"}); 
+	formats.push_back("BMP");
+	formats.push_back("GIF");
+	formats.push_back("JPEG");
+	formats.push_back("PNG");
+	formats.push_back("JPG");
+	formats.push_back("TGA");
 }
 
 void LowLevelResources::addMeshLoaders(cMeshLoaderHandler *ml) {

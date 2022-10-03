@@ -67,7 +67,7 @@ public:
 	tString msTextEntry;
 };
 
-typedef std::list<cNotebook_Note *> tNotebook_NoteList;
+typedef Common::List<cNotebook_Note *> tNotebook_NoteList;
 typedef tNotebook_NoteList::iterator tNotebook_NoteListIt;
 
 typedef cSTLIterator<cNotebook_Note *, tNotebook_NoteList, tNotebook_NoteListIt> tNotebook_NoteList_Iterator;
@@ -253,7 +253,7 @@ public:
 	tWString msText;
 };
 
-typedef std::list<cNotebook_BookTask *> tNotebook_BookTaskList;
+typedef Common::List<cNotebook_BookTask *> tNotebook_BookTaskList;
 typedef tNotebook_BookTaskList::iterator tNotebook_BookTaskListIt;
 
 typedef cSTLIterator<cNotebook_BookTask *, tNotebook_BookTaskList, tNotebook_BookTaskListIt> tNotebook_BookTaskList_Iterator;

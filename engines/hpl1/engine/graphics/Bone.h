@@ -33,13 +33,14 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 
 class cSkeleton;
 class cBone;
 
-typedef std::list<cBone *> tBoneList;
+typedef Common::List<cBone *> tBoneList;
 typedef tBoneList::iterator tBoneListIt;
 
 typedef cSTLIterator<cBone *, tBoneList, tBoneListIt> cBoneIterator;

@@ -54,22 +54,22 @@ class iPhysicsController;
 class cWorld3D;
 class cBoundingVolume;
 
-typedef std::list<iCollideShape *> tCollideShapeList;
+typedef Common::List<iCollideShape *> tCollideShapeList;
 typedef tCollideShapeList::iterator tCollideShapeListIt;
 
 typedef std::vector<iCollideShape *> tCollideShapeVec;
 typedef tCollideShapeVec::iterator tCollideShapeVecIt;
 
-typedef std::list<iPhysicsBody *> tPhysicsBodyList;
+typedef Common::List<iPhysicsBody *> tPhysicsBodyList;
 typedef tPhysicsBodyList::iterator tPhysicsBodyListIt;
 
-typedef std::list<iPhysicsJoint *> tPhysicsJointList;
+typedef Common::List<iPhysicsJoint *> tPhysicsJointList;
 typedef tPhysicsJointList::iterator tPhysicsJointListIt;
 
-typedef std::list<iPhysicsController *> tPhysicsControllerList;
+typedef Common::List<iPhysicsController *> tPhysicsControllerList;
 typedef tPhysicsControllerList::iterator tPhysicsControllerListIt;
 
-typedef std::list<iCharacterBody *> tCharacterBodyList;
+typedef Common::List<iCharacterBody *> tCharacterBodyList;
 typedef tCharacterBodyList::iterator tCharacterBodyListIt;
 
 typedef std::map<tString, iPhysicsMaterial *> tPhysicsMaterialMap;

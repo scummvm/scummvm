@@ -72,7 +72,7 @@ protected:
 	float mfZ;
 };
 
-typedef std::list<iInventoryWidget *> tInventoryWidgetList;
+typedef Common::List<iInventoryWidget *> tInventoryWidgetList;
 typedef tInventoryWidgetList::iterator tInventoryWidgetListIt;
 
 //-----------------------------------------
@@ -114,7 +114,7 @@ private:
 	FontData *mpFont;
 };
 
-typedef std::list<cInventorySlot *> tInventorySlotList;
+typedef Common::List<cInventorySlot *> tInventorySlotList;
 typedef tInventorySlotList::iterator tInventorySlotListIt;
 
 //-----------------------------------------

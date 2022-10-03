@@ -34,8 +34,8 @@
 #include "hpl1/engine/system/SystemTypes.h"
 #include <cmath>
 #include <cstdlib>
-#include <list>
 #include <vector>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -262,7 +262,7 @@ public:
 
 typedef cRect2<float> cRect2f;
 typedef cRect2<int> cRect2l;
-typedef std::list<cRect2f> tRect2lList;
+typedef Common::List<cRect2f> tRect2lList;
 typedef tRect2lList tRect2lListIt;
 
 //-------------------------------------------
@@ -275,16 +275,16 @@ typedef cMatrix<float> cMatrixf;
 typedef std::vector<cMatrixf> tMatrixfVec;
 typedef tMatrixfVec::iterator tMatrixfVecIt;
 
-typedef std::list<cMatrixf> tMatrixfList;
+typedef Common::List<cMatrixf> tMatrixfList;
 typedef tMatrixfList::iterator tMatrixfListIt;
 
-typedef std::list<cVector2f> tVector2fList;
+typedef Common::List<cVector2f> tVector2fList;
 typedef tVector2fList::iterator tVector2fListIt;
 
 typedef cVector3<float> cVector3f;
 typedef cVector3<int> cVector3l;
 
-typedef std::list<cVector3f> tVector3fList;
+typedef Common::List<cVector3f> tVector3fList;
 typedef tVector3fList::iterator tVector3fListIt;
 
 typedef std::vector<cVector2f> tVector2fVec;

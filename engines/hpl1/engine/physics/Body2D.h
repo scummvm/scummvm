@@ -32,6 +32,7 @@
 
 #include "hpl1/engine/scene/Entity2D.h"
 #include <map>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -42,7 +43,7 @@ class cCollisionMesh2D;
 
 class cBody2D;
 
-typedef std::list<cBody2D *> tBody2DList;
+typedef Common::List<cBody2D *> tBody2DList;
 typedef tBody2DList::iterator tBody2DListIt;
 
 class cBody2D : public iEntity2D {

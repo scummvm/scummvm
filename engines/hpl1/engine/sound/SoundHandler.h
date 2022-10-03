@@ -31,7 +31,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/physics/PhysicsWorld.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -99,7 +99,7 @@ public:
 	eSoundDest mEffectType;
 };
 
-typedef std::list<cSoundEntry> tSoundEntryList;
+typedef Common::List<cSoundEntry> tSoundEntryList;
 typedef tSoundEntryList::iterator tSoundEntryListIt;
 
 typedef cSTLIterator<cSoundEntry, tSoundEntryList, tSoundEntryListIt> tSoundEntryIterator;

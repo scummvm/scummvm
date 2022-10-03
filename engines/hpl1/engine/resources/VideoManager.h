@@ -39,12 +39,12 @@ class iVideoStreamLoader;
 
 //----------------------------------------------------
 
-typedef std::list<iVideoStreamLoader *> tVideoStreamLoaderList;
+typedef Common::List<iVideoStreamLoader *> tVideoStreamLoaderList;
 typedef tVideoStreamLoaderList::iterator tVideoStreamLoaderListIt;
 
 //----------------------------------------------------
 
-typedef std::list<iVideoStream *> tVideoStreamList;
+typedef Common::List<iVideoStream *> tVideoStreamList;
 typedef tVideoStreamList::iterator tVideoStreamListIt;
 
 //----------------------------------------------------

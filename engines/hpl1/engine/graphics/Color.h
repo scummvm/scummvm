@@ -28,10 +28,10 @@
 #ifndef HPL_COLOR_H
 #define HPL_COLOR_H
 
-#include <list>
 #include <vector>
 
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -62,7 +62,7 @@ public:
 	void FromVec(float *apV);
 };
 
-typedef std::list<cColor> tColorList;
+typedef Common::List<cColor> tColorList;
 typedef tColorList::iterator tColorListIt;
 
 typedef std::vector<cColor> tColorVec;

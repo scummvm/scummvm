@@ -39,7 +39,7 @@ class cFrameBitmap;
 class iLowLevelGraphics;
 class Bitmap2D;
 
-typedef std::list<cFrameBitmap *> tFrameBitmapList;
+typedef Common::List<cFrameBitmap *> tFrameBitmapList;
 typedef tFrameBitmapList::iterator tFrameBitmapListIt;
 
 typedef std::map<int, cFrameTexture *> tFrameTextureMap;

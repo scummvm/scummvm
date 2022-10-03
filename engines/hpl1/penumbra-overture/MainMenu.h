@@ -331,7 +331,7 @@ public:
 
 //---------------------------------------------
 
-typedef std::list<cMainMenuWidget *> tMainMenuWidgetList;
+typedef Common::List<cMainMenuWidget *> tMainMenuWidgetList;
 typedef tMainMenuWidgetList::iterator tMainMenuWidgetListIt;
 
 //---------------------------------------------

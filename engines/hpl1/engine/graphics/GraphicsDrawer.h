@@ -30,6 +30,7 @@
 
 #include "hpl1/engine/graphics/BackgroundImage.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
+#include "common/list.h"
 #include <vector>
 
 namespace hpl {
@@ -69,7 +70,7 @@ typedef tGfxBufferSet::iterator tGfxBufferSetIt;
 
 class cResources;
 
-typedef std::list<cGfxObject *> tGfxObjectList;
+typedef Common::List<cGfxObject *> tGfxObjectList;
 typedef tGfxObjectList::iterator tGfxObjectListIt;
 
 class cGraphicsDrawer {

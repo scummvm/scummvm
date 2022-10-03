@@ -477,7 +477,7 @@ void cHapticGameCamera::UpdateHand(float afTimeStep)
 	if(mlstProxyPos.size() > 8) mlstProxyPos.pop_front();
 
 	vProxyPos =0;
-	std::list<cVector3f>::iterator it = mlstProxyPos.begin();
+	Common::List<cVector3f>::iterator it = mlstProxyPos.begin();
 	for(; it != mlstProxyPos.end(); ++it)
 	{
 		vProxyPos += *it;

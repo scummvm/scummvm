@@ -159,7 +159,7 @@ private:
 	float mfStuckCounter;
 	float mfStuckLimit;
 
-	std::list<float> mlstNodeDistances;
+	Common::List<float> mlstNodeDistances;
 	int mlMaxNodeDistances;
 	float mfNodeDistAvg;
 

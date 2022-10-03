@@ -39,7 +39,7 @@ class iSoundData;
 class iSoundEnvironment;
 // class iSoundFilter;
 
-typedef std::list<iSoundEnvironment *> tSoundEnvList;
+typedef Common::List<iSoundEnvironment *> tSoundEnvList;
 typedef tSoundEnvList::iterator tSoundEnvListIt;
 
 class iLowLevelSound {

@@ -135,7 +135,7 @@ public:
 		mpChildSegment = NULL;
 	}
 
-	std::list<cVector3f> mlstPositions;
+	Common::List<cVector3f> mlstPositions;
 	cVector3f mvPostion;
 
 	cVector3f mvGoalForward;
@@ -180,7 +180,7 @@ public:
 
 private:
 	int mlMaxVecs;
-	std::list<cVector3f> mlstVecs;
+	Common::List<cVector3f> mlstVecs;
 };
 
 //-----------------------------------------
@@ -247,7 +247,7 @@ private:
 	iCollideShape *mpAttackShape;
 
 	cBoneState *mpRootBone;
-	std::list<cVector3f> mlstRootPositions;
+	Common::List<cVector3f> mlstRootPositions;
 	cVector3Smoother mRootForwards;
 	cVector3f mvRootPosition;
 	cVector3f mvRootGoalForward;

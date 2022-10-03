@@ -28,8 +28,6 @@
 #ifndef HPL_SCENE_H
 #define HPL_SCENE_H
 
-#include <list>
-
 #include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
@@ -37,6 +35,7 @@
 #include "hpl1/engine/scene/Camera3D.h"
 
 #include "hpl1/engine/resources/MeshLoader.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -54,10 +53,10 @@ class cUpdater;
 class cWorld3D;
 class cWorld2D;
 
-typedef std::list<iCamera *> tCameraList;
+typedef Common::List<iCamera *> tCameraList;
 typedef tCameraList::iterator tCameraListIt;
 
-typedef std::list<cWorld3D *> tWorld3DList;
+typedef Common::List<cWorld3D *> tWorld3DList;
 typedef tWorld3DList::iterator tWorld3DListIt;
 
 class cScene : public iUpdateable {

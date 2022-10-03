@@ -41,7 +41,7 @@
 #include "hpl1/penumbra-overture/GameEntity.h"
 #include "hpl1/penumbra-overture/MapHandler.h"
 
-#include <list>
+#include "common/list.h"
 
 //////////////////////////////////////////////////////////////////////////
 // THROW STATE
@@ -291,7 +291,7 @@ cPlayerState_WeaponMeleeHaptX::cPlayerState_WeaponMeleeHaptX(cInit *apInit, cPla
 static cVector3f gvPrevPos;
 static bool gbFirstTime = true;
 
-static std::list<cVector3f> glsVelList;
+static Common::List<cVector3f> glsVelList;
 
 void cPlayerState_WeaponMeleeHaptX::OnUpdate(float afTimeStep) {
 	/////////////////////////////////////
@@ -330,7 +330,7 @@ void cPlayerState_WeaponMeleeHaptX::OnUpdate(float afTimeStep) {
 		glsVelList.pop_front();
 
 	cVector3f vAvg(0);
-	for (std::list<cVector3f>::iterator it = glsVelList.begin(); it != glsVelList.end(); ++it) {
+	for (Common::List<cVector3f>::iterator it = glsVelList.begin(); it != glsVelList.end(); ++it) {
 		vAvg += *it;
 	}
 	vAvg = vAvg / (float)glsVelList.size();

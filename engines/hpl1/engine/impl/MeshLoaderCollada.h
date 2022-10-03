@@ -33,6 +33,7 @@
 #include "hpl1/engine/physics/PhysicsJoint.h"
 #include "hpl1/engine/resources/MeshLoader.h"
 #include "hpl1/engine/system/MemoryManager.h"
+#include "common/list.h"
 
 class TiXmlElement;
 
@@ -157,7 +158,7 @@ public:
 	}
 };
 
-typedef std::list<cColladaExtraVtx> tColladaExtraVtxList;
+typedef Common::List<cColladaExtraVtx> tColladaExtraVtxList;
 typedef tColladaExtraVtxList::iterator tColladaExtraVtxListIt;
 
 typedef std::vector<tColladaExtraVtxList> tColladaExtraVtxListVec;
@@ -219,7 +220,7 @@ public:
 	int mlWeight;
 };
 
-typedef std::list<cColladaJointPair> tColladaJointPairList;
+typedef Common::List<cColladaJointPair> tColladaJointPairList;
 typedef tColladaJointPairList::iterator tColladaJointPairListIt;
 
 typedef std::vector<tColladaJointPairList> tColladaJointPairListVec;
@@ -308,11 +309,11 @@ public:
 	tFloatVec mvValues;
 };
 
-typedef std::list<cColladaTransform> tColladaTransformList;
+typedef Common::List<cColladaTransform> tColladaTransformList;
 typedef tColladaTransformList::iterator tColladaTransformListIt;
 
 class cColladaNode;
-typedef std::list<cColladaNode *> tColladaNodeList;
+typedef Common::List<cColladaNode *> tColladaNodeList;
 typedef tColladaNodeList::iterator tColladaNodeListIt;
 
 class cColladaNode {

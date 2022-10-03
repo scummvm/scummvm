@@ -32,7 +32,7 @@
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 #include <map>
 #include <vector>
 
@@ -191,7 +191,7 @@ protected:
 	cParticle *CreateParticle();
 };
 
-typedef std::list<iParticleEmitter *> tParticleEmitterList;
+typedef Common::List<iParticleEmitter *> tParticleEmitterList;
 typedef tParticleEmitterList::iterator tParticleEmitterListIt;
 
 //////////////////////////////////////////////////////

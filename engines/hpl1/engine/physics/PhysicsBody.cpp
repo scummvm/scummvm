@@ -45,6 +45,7 @@
 #include "hpl1/engine/scene/Node3D.h"
 
 #include "hpl1/engine/math/Math.h"
+#include "common/algorithm.h"
 
 namespace hpl {
 
@@ -342,7 +343,7 @@ void iPhysicsBody::AddAttachedCharacter(iCharacterBody *apChar) {
 }
 
 void iPhysicsBody::RemoveAttachedCharacter(iCharacterBody *apChar) {
-	std::list<iCharacterBody *>::iterator it = mlstAttachedCharacters.begin();
+	Common::List<iCharacterBody *>::iterator it = mlstAttachedCharacters.begin();
 	for (; it != mlstAttachedCharacters.end(); ++it) {
 		if (apChar == *it) {
 			mlstAttachedCharacters.erase(it);

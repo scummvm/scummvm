@@ -93,7 +93,7 @@ private:
 
 	iHapticForce *mpForce;
 
-	std::list<cEffect_ShakeScreen_Shake> mlstShakes;
+	Common::List<cEffect_ShakeScreen_Shake> mlstShakes;
 };
 
 //-----------------------------------------
@@ -214,7 +214,7 @@ public:
 	bool mbActive;
 };
 
-typedef std::list<cSubTitle> tSubTitleList;
+typedef Common::List<cSubTitle> tSubTitleList;
 typedef tSubTitleList::iterator tSubTitleListIt;
 
 class cEffect_SubTitle {

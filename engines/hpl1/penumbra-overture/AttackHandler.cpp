@@ -200,14 +200,14 @@ bool cAttackHandler::CreateShapeAttack(iCollideShape *apShape, const cMatrixf &a
 	iPhysicsWorld *pPhysicsWorld = pWorld->GetPhysicsWorld();
 
 	// Get bodies and add to list, this incase the portal contaniner gets changed.
-	std::list<iPhysicsBody *> lstTempBodies;
+	Common::List<iPhysicsBody *> lstTempBodies;
 	cPhysicsBodyIterator bodyIt = pPhysicsWorld->GetBodyIterator();
 	while (bodyIt.HasNext()) {
 		iPhysicsBody *pBody = static_cast<iPhysicsBody *>(bodyIt.Next());
 		lstTempBodies.push_back(pBody);
 	}
 
-	std::list<iPhysicsBody *>::iterator it = lstTempBodies.begin();
+	Common::List<iPhysicsBody *>::iterator it = lstTempBodies.begin();
 	for (; it != lstTempBodies.end(); ++it) {
 		iPhysicsBody *pBody = *it;
 		/*float fMass = */pBody->GetMass();
@@ -438,7 +438,7 @@ void cAttackHandler::CreateSplashDamage(const cVector3f &avCenter, float afRadiu
 	if (aTarget & eAttackTargetFlag_Bodies) {
 		iPhysicsWorld *pWorld = mpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
 
-		std::list<iPhysicsBody *> lstBodies;
+		Common::List<iPhysicsBody *> lstBodies;
 		cPhysicsBodyIterator bodyIt = pWorld->GetBodyIterator();
 		while (bodyIt.HasNext()) {
 			lstBodies.push_back(bodyIt.Next());
@@ -446,7 +446,7 @@ void cAttackHandler::CreateSplashDamage(const cVector3f &avCenter, float afRadiu
 
 		//////////////////////////
 		// Damage Iteration
-		std::list<iPhysicsBody *>::iterator it = lstBodies.begin();
+		Common::List<iPhysicsBody *>::iterator it = lstBodies.begin();
 		for (; it != lstBodies.end(); ++it) {
 			iPhysicsBody *pBody = *it;
 

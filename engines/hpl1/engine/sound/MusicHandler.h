@@ -29,7 +29,7 @@
 #define HPL_MUSICHANDLER_H
 
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -66,7 +66,7 @@ public:
 	bool mbLoop;
 };
 
-typedef std::list<cMusicEntry *> tMusicEntryList;
+typedef Common::List<cMusicEntry *> tMusicEntryList;
 typedef tMusicEntryList::iterator tMusicEntryListIt;
 
 ////////////////////////////////////////////////////

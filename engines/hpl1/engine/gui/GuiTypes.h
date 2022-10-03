@@ -31,6 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/input/InputTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -311,14 +312,14 @@ typedef bool (*tGuiCallbackFunc)(void *, iWidget *, cGuiMessageData &);
 
 //--------------------------------
 
-typedef std::list<iWidget *> tWidgetList;
+typedef Common::List<iWidget *> tWidgetList;
 typedef tWidgetList::iterator tWidgetListIt;
 
 //--------------------------------
 
 class cGuiGfxElement;
 
-typedef std::list<cGuiGfxElement *> tGuiGfxElementList;
+typedef Common::List<cGuiGfxElement *> tGuiGfxElementList;
 typedef tGuiGfxElementList::iterator tGuiGfxElementListIt;
 
 //--------------------------------

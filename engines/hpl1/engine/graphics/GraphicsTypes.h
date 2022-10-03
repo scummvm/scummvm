@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/graphics/Color.h"
 #include "hpl1/engine/math/MathTypes.h"
-#include <list>
+#include "common/list.h"
 #include <vector>
 
 namespace hpl {
@@ -155,7 +155,7 @@ public:
 	cColor col;
 };
 
-typedef std::list<cVertex> tVertexList;
+typedef Common::List<cVertex> tVertexList;
 typedef tVertexList::iterator tVertexListIt;
 
 typedef std::vector<cVertex> tVertexVec;

@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include <list>
+#include "common/list.h"
 #include <vector>
 
 namespace hpl {
@@ -57,7 +57,7 @@ struct cWidgetCallback {
 	tGuiCallbackFunc mpFunc;
 };
 
-typedef std::list<cWidgetCallback> tWidgetCallbackList;
+typedef Common::List<cWidgetCallback> tWidgetCallbackList;
 typedef tWidgetCallbackList::iterator tWidgetCallbackListIt;
 
 //--------------------------------

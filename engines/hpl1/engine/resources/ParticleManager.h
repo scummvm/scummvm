@@ -76,7 +76,7 @@ private:
 	cGraphics *mpGraphics;
 	cResources *mpResources;
 
-	std::list<cParticleSystem3D *> mlstSystems;
+	Common::List<cParticleSystem3D *> mlstSystems;
 
 	// tParticleSystemData3DMap m_mapData3D;
 };

@@ -44,7 +44,7 @@ typedef tResourceHandleMap::iterator tResourceHandleMapIt;
 typedef std::map<tString, iResourceBase *> tResourceNameMap;
 typedef tResourceNameMap::iterator tResourceNameMapIt;
 
-typedef std::list<iResourceBase *> tResourceBaseList;
+typedef Common::List<iResourceBase *> tResourceBaseList;
 typedef tResourceBaseList::iterator tResourceBaseListIt;
 
 typedef cSTLMapIterator<iResourceBase *, tResourceNameMap, tResourceNameMapIt> cResourceBaseIterator;
