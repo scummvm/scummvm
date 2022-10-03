@@ -31,8 +31,7 @@
 #include "hpl1/engine/engine.h"
 
 #include "hpl1/penumbra-overture/GameTypes.h"
-
-#include <list>
+#include "common/list.h"
 
 using namespace hpl;
 
@@ -140,7 +139,7 @@ private:
 
 	iGpuProgram *mpVtxProgram;
 
-	std::list<cVector3f> mlstProxyPos;
+	Common::List<cVector3f> mlstProxyPos;
 };
 //----------------------------------------
 

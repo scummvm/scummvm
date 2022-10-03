@@ -51,7 +51,7 @@ enum eBVCollision {
 	eBVCollision_LastEnum
 };
 
-typedef std::list<cBVTempArray> tBVTempArrayList;
+typedef Common::List<cBVTempArray> tBVTempArrayList;
 typedef tBVTempArrayList::iterator tBVTempArrayListIt;
 
 class cShadowVolumeBV {

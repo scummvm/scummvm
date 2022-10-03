@@ -32,7 +32,7 @@
 #include "hpl1/engine/haptic/HapticTypes.h"
 #include "hpl1/engine/physics/PhysicsMaterial.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 #include <map>
 
 namespace hpl {
@@ -47,7 +47,7 @@ class cHaptic;
 
 //------------------------------------------------
 
-typedef std::list<iPhysicsWorld *> tPhysicsWorldList;
+typedef Common::List<iPhysicsWorld *> tPhysicsWorldList;
 typedef tPhysicsWorldList::iterator tPhysicsWorldListIt;
 
 typedef std::map<tString, cSurfaceData *> tSurfaceDataMap;
@@ -62,7 +62,7 @@ public:
 	float mfCount;
 };
 
-typedef std::list<cPhysicsImpactCount> tPhysicsImpactCountList;
+typedef Common::List<cPhysicsImpactCount> tPhysicsImpactCountList;
 typedef tPhysicsImpactCountList::iterator tPhysicsImpactCountListIt;
 
 //------------------------------------------------

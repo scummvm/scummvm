@@ -55,7 +55,7 @@ public:
 						   cPhysicsContactData *apContactData) = 0;
 };
 
-typedef std::list<iPhysicsBodyCallback *> tPhysicsBodyCallbackList;
+typedef Common::List<iPhysicsBodyCallback *> tPhysicsBodyCallbackList;
 typedef tPhysicsBodyCallbackList::iterator tPhysicsBodyCallbackListIt;
 
 //------------------------------------------
@@ -294,7 +294,7 @@ protected:
 
 	std::vector<iPhysicsJoint *> mvJoints;
 
-	std::list<iCharacterBody *> mlstAttachedCharacters;
+	Common::List<iCharacterBody *> mlstAttachedCharacters;
 
 	iPhysicsBody *mpScrapeBody;
 	cSoundEntity *mpScrapeSoundEntity;

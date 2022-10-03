@@ -32,7 +32,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/TileData.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -72,7 +72,7 @@ private:
 						  // 4: flip horisontally.  5: flip vertically.  6: flip both.
 };
 
-typedef std::list<cTile *> tTileList;
+typedef Common::List<cTile *> tTileList;
 typedef tTileList::iterator tTileListIt;
 
 }     // namespace hpl

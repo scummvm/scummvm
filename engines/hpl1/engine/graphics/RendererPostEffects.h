@@ -28,12 +28,12 @@
 #ifndef HPL_RENDERER_POST_EFFECTS_H
 #define HPL_RENDERER_POST_EFFECTS_H
 
-#include <list>
 #include <math.h>
 #include <set>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 

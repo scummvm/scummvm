@@ -53,7 +53,7 @@ public:
 	cGameMessageHandler *mpMessHandler;
 };
 
-typedef std::list<cGameMessage *> tGameMessageList;
+typedef Common::List<cGameMessage *> tGameMessageList;
 typedef tGameMessageList::iterator tGameMessageListIt;
 
 //---------------------------------------

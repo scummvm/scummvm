@@ -53,7 +53,7 @@ public:
 
 typedef BinTree<cFBitmapRect> tRectTree;
 typedef BinTreeNode<cFBitmapRect> tRectTreeNode;
-typedef std::list<tRectTreeNode *> tRectTreeNodeList;
+typedef Common::List<tRectTreeNode *> tRectTreeNodeList;
 typedef tRectTreeNodeList::iterator tRectTreeNodeListIt;
 
 class cFrameBitmap : public iFrameBase {

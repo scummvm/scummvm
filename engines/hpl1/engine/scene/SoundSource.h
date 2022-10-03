@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 
 class TiXmlElement;
 
@@ -88,7 +88,7 @@ private:
 	void Play();
 };
 
-typedef std::list<cSoundSource *> tSoundSourceList;
+typedef Common::List<cSoundSource *> tSoundSourceList;
 typedef tSoundSourceList::iterator tSoundSourceListIt;
 
 }     // namespace hpl

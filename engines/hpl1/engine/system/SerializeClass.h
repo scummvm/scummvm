@@ -302,7 +302,7 @@ private:
 typedef std::map<tString, cSerializeSavedClass> tSerializeSavedClassMap;
 typedef tSerializeSavedClassMap::iterator tSerializeSavedClassMapIt;
 
-typedef std::list<cSerializeSavedClass *> tSerializeSavedClassList;
+typedef Common::List<cSerializeSavedClass *> tSerializeSavedClassList;
 typedef tSerializeSavedClassList::iterator tSerializeSavedClassListIt;
 
 class cSerializeClass {

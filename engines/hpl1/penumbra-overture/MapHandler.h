@@ -50,13 +50,13 @@ typedef tGameEntityMap::iterator tGameEntityMapIt;
 typedef std::vector<iGameEntity *> tGameEntityVec;
 typedef tGameEntityVec::iterator tGameEntityVecIt;
 
-typedef std::list<iGameEnemy *> tGameEnemyList;
+typedef Common::List<iGameEnemy *> tGameEnemyList;
 typedef tGameEnemyList::iterator tGameEnemyListIt;
 
-typedef std::list<cGameItem *> tGameItemList;
+typedef Common::List<cGameItem *> tGameItemList;
 typedef tGameItemList::iterator tGameItemListIt;
 
-typedef std::list<cGameStickArea *> tGameStickAreaList;
+typedef Common::List<cGameStickArea *> tGameStickAreaList;
 typedef tGameStickAreaList::iterator tGameStickAreaListIt;
 
 typedef cSTLIterator<iGameEnemy *, tGameEnemyList, tGameEnemyListIt> tGameEnemyIterator;
@@ -108,7 +108,7 @@ public:
 
 //-----------------------------------------
 
-typedef std::list<cGameTimer *> tGameTimerList;
+typedef Common::List<cGameTimer *> tGameTimerList;
 typedef tGameTimerList::iterator tGameTimerListIt;
 
 //-----------------------------------------
@@ -135,7 +135,7 @@ private:
 	bool mbDead;
 };
 
-typedef std::list<cEffectLightFlash *> tEffectLightFlashList;
+typedef Common::List<cEffectLightFlash *> tEffectLightFlashList;
 typedef tEffectLightFlashList::iterator tEffectLightFlashListIt;
 
 //-----------------------------------------

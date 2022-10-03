@@ -74,7 +74,7 @@ protected:
 	cRect2f mBoundingBox;
 };
 
-typedef std::list<iEntity2D *> tEntity2DList;
+typedef Common::List<iEntity2D *> tEntity2DList;
 typedef tEntity2DList::iterator tEntity2DListIt;
 
 }     // namespace hpl

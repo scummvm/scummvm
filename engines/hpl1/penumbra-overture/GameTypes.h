@@ -264,7 +264,7 @@ class cInventoryCombineCallback : public iSerializable {
 	bool bKillMe;
 };
 
-typedef std::list<cInventoryCombineCallback *> tInventoryCombineCallbackList;
+typedef Common::List<cInventoryCombineCallback *> tInventoryCombineCallbackList;
 typedef tInventoryCombineCallbackList::iterator tInventoryCombineCallbackListIt;
 
 //---------------------------------

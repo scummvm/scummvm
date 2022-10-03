@@ -28,7 +28,6 @@
 #ifndef HPL_RENDERER2D_H
 #define HPL_RENDERER2D_H
 
-#include <list>
 #include <math.h>
 #include <set>
 
@@ -37,6 +36,7 @@
 #include "hpl1/engine/graphics/Mesh2d.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Light2D.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -71,7 +71,7 @@ typedef tRenderObjectSet::iterator tRenderObjectSetIt;
 typedef std::multiset<cRenderObject2D, cRenderTransObjectCompare> tRenderTransObjectSet;
 typedef tRenderTransObjectSet::iterator tRenderTransObjectSetIt;
 
-typedef std::list<cRenderObject2D> tRenderObjectList;
+typedef Common::List<cRenderObject2D> tRenderObjectList;
 typedef tRenderObjectList::iterator tRenderObjectListIt;
 
 class cResources;

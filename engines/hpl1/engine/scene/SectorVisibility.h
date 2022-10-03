@@ -122,7 +122,7 @@ typedef tSectorVisibilityMap::iterator tSectorVisibilityMapIt;
 
 //----------------------------------------------------
 
-typedef std::list<cPortalVisibilitySet *> tPortalVisibilitySetList;
+typedef Common::List<cPortalVisibilitySet *> tPortalVisibilitySetList;
 typedef tPortalVisibilitySetList::iterator tPortalVisibilitySetListIt;
 
 typedef std::set<cSector *> tSectorSet;

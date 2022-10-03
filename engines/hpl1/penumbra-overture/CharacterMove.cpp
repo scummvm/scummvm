@@ -242,7 +242,7 @@ void cCharacterMove::Update(float afTimeStep) {
 			mlstNodeDistances.pop_front();
 			mfNodeDistAvg = 0;
 
-			std::list<float>::iterator it = mlstNodeDistances.begin();
+			Common::List<float>::iterator it = mlstNodeDistances.begin();
 			float fPreviousDistance = *it;
 			++it;
 			for (; it != mlstNodeDistances.end(); ++it) {

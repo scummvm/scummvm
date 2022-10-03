@@ -31,6 +31,7 @@
 #include "hpl1/engine/game/GameTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -44,7 +45,7 @@ typedef tAINodeSet::iterator tAINodeSetIt;
 
 //--------------------------------------
 
-typedef std::list<cAINode *> tAINodeList;
+typedef Common::List<cAINode *> tAINodeList;
 typedef tAINodeList::iterator tAINodeListIt;
 
 //--------------------------------------

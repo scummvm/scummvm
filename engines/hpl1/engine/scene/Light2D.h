@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/scene/Entity2D.h"
 #include "hpl1/engine/scene/Light.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -56,7 +56,7 @@ public:
 protected:
 };
 
-typedef std::list<iLight2D *> tLightList;
+typedef Common::List<iLight2D *> tLightList;
 typedef tLightList::iterator tLightListIt;
 
 }     // namespace hpl

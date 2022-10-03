@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Node.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 

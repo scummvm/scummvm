@@ -127,7 +127,7 @@ void cGameDamageArea::Update(float afTimeStep) {
 		collideData.SetMaxSize(1);
 
 		// Get bodies and add to list, this incase the portal contaniner gets changed.
-		std::list<iPhysicsBody *> lstBodies;
+		Common::List<iPhysicsBody *> lstBodies;
 		cPortalContainerEntityIterator bodyIt = pWorld->GetPortalContainer()->GetEntityIterator(
 			pAreaBody->GetBoundingVolume());
 		while (bodyIt.HasNext()) {
@@ -137,7 +137,7 @@ void cGameDamageArea::Update(float afTimeStep) {
 
 		////////////////////////////////////////////////////////
 		// Iterate all bodies in world and check for intersection
-		std::list<iPhysicsBody *>::iterator it = lstBodies.begin();
+		Common::List<iPhysicsBody *>::iterator it = lstBodies.begin();
 		for (; it != lstBodies.end(); ++it) {
 			iPhysicsBody *pBody = *it;
 			iGameEntity *pEntity = (iGameEntity *)pBody->GetUserData();

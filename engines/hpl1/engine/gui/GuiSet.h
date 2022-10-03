@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/gui/GuiTypes.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -62,7 +62,7 @@ class cWidgetComboBox;
 
 //---------------------------------------------
 
-typedef std::list<iGuiPopUp *> tGuiPopUpList;
+typedef Common::List<iGuiPopUp *> tGuiPopUpList;
 typedef tGuiPopUpList::iterator tGuiPopUpListIt;
 
 //---------------------------------------------
@@ -88,7 +88,7 @@ typedef tGuiRenderObjectSet::iterator tGuiRenderObjectSetIt;
 
 //-----------------------------------------------
 
-typedef std::list<cGuiClipRegion *> tGuiClipRegionList;
+typedef Common::List<cGuiClipRegion *> tGuiClipRegionList;
 typedef tGuiClipRegionList::iterator tGuiClipRegionListIt;
 
 class cGuiClipRegion {

@@ -92,7 +92,7 @@ public:
 
 //---------------------------------------------
 
-typedef std::list<cDeathMenuButton *> tDeathMenuButtonList;
+typedef Common::List<cDeathMenuButton *> tDeathMenuButtonList;
 typedef tDeathMenuButtonList::iterator tDeathMenuButtonListIt;
 
 //---------------------------------------------

@@ -32,7 +32,7 @@
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/Light.h"
-#include <list>
+#include "common/list.h"
 #include <set>
 
 class TiXmlElement;
@@ -220,7 +220,7 @@ protected:
 	unsigned int *mpIndexArray;
 };
 
-typedef std::list<iLight3D *> tLight3DList;
+typedef Common::List<iLight3D *> tLight3DList;
 typedef tLight3DList::iterator tLight3DListIt;
 
 }     // namespace hpl

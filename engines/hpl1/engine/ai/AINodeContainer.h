@@ -32,6 +32,7 @@
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/physics/PhysicsWorld.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -87,7 +88,7 @@ private:
 typedef std::vector<cAINode *> tAINodeVec;
 typedef tAINodeVec::iterator tAINodeVecIt;
 
-typedef std::list<cAINode *> tAINodeList;
+typedef Common::List<cAINode *> tAINodeList;
 typedef tAINodeList::iterator tAINodeListIt;
 
 typedef std::map<tString, cAINode *> tAINodeMap;

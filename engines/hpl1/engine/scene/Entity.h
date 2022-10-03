@@ -86,7 +86,7 @@ protected:
 	bool mbIsActive;
 };
 
-typedef std::list<iEntity *> tEntityList;
+typedef Common::List<iEntity *> tEntityList;
 typedef tEntityList::iterator tEntityListIt;
 
 typedef cSTLIterator<iEntity *, tEntityList, tEntityListIt> cEntityIterator;

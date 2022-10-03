@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/Renderable.h"
 #include "hpl1/engine/math/BoundingVolume.h"
 #include "hpl1/engine/scene/RenderableContainer.h"
-#include <list>
+#include "common/list.h"
 #include <map>
 #include <set>
 
@@ -40,8 +40,8 @@ namespace hpl {
 class iLight3D;
 class cSectorVisibilityContainer;
 
-typedef std::list<iRenderable *> tRenderableList;
-typedef std::list<iRenderable *>::iterator tRenderableListIt;
+typedef Common::List<iRenderable *> tRenderableList;
+typedef Common::List<iRenderable *>::iterator tRenderableListIt;
 
 typedef std::set<iRenderable *> tRenderableSet;
 typedef std::set<iRenderable *>::iterator tRenderableSetIt;
@@ -119,8 +119,8 @@ class cPortal;
 typedef std::map<int, cPortal *> tPortalMap;
 typedef std::map<int, cPortal *>::iterator tPortalMapIt;
 
-typedef std::list<cPortal *> tPortalList;
-typedef std::list<cPortal *>::iterator tPortalListIt;
+typedef Common::List<cPortal *> tPortalList;
+typedef Common::List<cPortal *>::iterator tPortalListIt;
 
 class cPortal {
 	friend class cSector;

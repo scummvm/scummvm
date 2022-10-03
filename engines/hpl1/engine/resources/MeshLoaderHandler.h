@@ -28,13 +28,12 @@
 #ifndef HPL_MESH_LOADER_HANDLER_H
 #define HPL_MESH_LOADER_HANDLER_H
 
-#include <list>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
 
 #include "hpl1/engine/resources/MeshLoader.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -45,7 +44,7 @@ class cWorld3D;
 class cScene;
 class cAnimation;
 
-typedef std::list<iMeshLoader *> tMeshLoaderList;
+typedef Common::List<iMeshLoader *> tMeshLoaderList;
 typedef tMeshLoaderList::iterator tMeshLoaderListIt;
 
 class cMeshLoaderHandler {

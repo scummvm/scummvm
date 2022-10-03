@@ -78,7 +78,7 @@ public:
 	virtual void OnStart(cSoundEntity *apSoundEntity) = 0;
 };
 
-typedef std::list<iSoundEntityGlobalCallback *> tSoundEntityGlobalCallbackList;
+typedef Common::List<iSoundEntityGlobalCallback *> tSoundEntityGlobalCallbackList;
 typedef tSoundEntityGlobalCallbackList::iterator tSoundEntityGlobalCallbackListIt;
 
 //------------------------------------------

@@ -48,7 +48,7 @@ public:
 	iSoundChannel *mpChannel;
 };
 
-typedef std::list<cRadioMessage *> tRadioMessageList;
+typedef Common::List<cRadioMessage *> tRadioMessageList;
 typedef tRadioMessageList::iterator tRadioMessageListIt;
 
 //---------------------------------------

@@ -76,32 +76,32 @@ class cAINodeContainer;
 class cAStarHandler;
 class cAINodeGeneratorParams;
 
-typedef std::list<iLight3D *> tLight3DList;
-typedef std::list<iLight3D *>::iterator tLight3DListIt;
+typedef Common::List<iLight3D *> tLight3DList;
+typedef Common::List<iLight3D *>::iterator tLight3DListIt;
 
-typedef std::list<cMeshEntity *> tMeshEntityList;
-typedef std::list<cMeshEntity *>::iterator tMeshEntityListIt;
+typedef Common::List<cMeshEntity *> tMeshEntityList;
+typedef Common::List<cMeshEntity *>::iterator tMeshEntityListIt;
 
-typedef std::list<cBillboard *> tBillboardList;
-typedef std::list<cBillboard *>::iterator tBillboardListIt;
+typedef Common::List<cBillboard *> tBillboardList;
+typedef Common::List<cBillboard *>::iterator tBillboardListIt;
 
-typedef std::list<cBeam *> tBeamList;
-typedef std::list<cBeam *>::iterator tBeamListIt;
+typedef Common::List<cBeam *> tBeamList;
+typedef Common::List<cBeam *>::iterator tBeamListIt;
 
-typedef std::list<cParticleSystem3D *> tParticleSystem3DList;
+typedef Common::List<cParticleSystem3D *> tParticleSystem3DList;
 typedef tParticleSystem3DList::iterator tParticleSystem3DListIt;
 
-typedef std::list<cColliderEntity *> tColliderEntityList;
-typedef std::list<cColliderEntity *>::iterator tColliderEntityListIt;
+typedef Common::List<cColliderEntity *> tColliderEntityList;
+typedef Common::List<cColliderEntity *>::iterator tColliderEntityListIt;
 
-typedef std::list<cSoundEntity *> tSoundEntityList;
-typedef std::list<cSoundEntity *>::iterator tSoundEntityListIt;
+typedef Common::List<cSoundEntity *> tSoundEntityList;
+typedef Common::List<cSoundEntity *>::iterator tSoundEntityListIt;
 
-typedef std::list<cAINodeContainer *> tAINodeContainerList;
-typedef std::list<cAINodeContainer *>::iterator tAINodeContainerListIt;
+typedef Common::List<cAINodeContainer *> tAINodeContainerList;
+typedef Common::List<cAINodeContainer *>::iterator tAINodeContainerListIt;
 
-typedef std::list<cAStarHandler *> tAStarHandlerList;
-typedef std::list<cAStarHandler *>::iterator tAStarHandlerIt;
+typedef Common::List<cAStarHandler *> tAStarHandlerList;
+typedef Common::List<cAStarHandler *>::iterator tAStarHandlerIt;
 
 //-------------------------------------------------------------------
 
@@ -121,8 +121,8 @@ public:
 	tString msName;
 };
 
-typedef std::list<cTempAiNode> tTempAiNodeList;
-typedef std::list<cTempAiNode>::iterator tTempAiNodeListIt;
+typedef Common::List<cTempAiNode> tTempAiNodeList;
+typedef Common::List<cTempAiNode>::iterator tTempAiNodeListIt;
 
 class cTempNodeContainer {
 public:
@@ -161,8 +161,8 @@ class cStartPosEntity : public iSerializable {
 	tString msName;
 };
 
-typedef std::list<cStartPosEntity *> tStartPosEntityList;
-typedef std::list<cStartPosEntity *>::iterator tStartPosEntityListIt;
+typedef Common::List<cStartPosEntity *> tStartPosEntityList;
+typedef Common::List<cStartPosEntity *>::iterator tStartPosEntityListIt;
 
 //------------------------------------------
 

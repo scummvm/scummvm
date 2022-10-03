@@ -34,6 +34,7 @@
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/resources/ResourceImage.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/list.h"
 #include <vector>
 
 class TiXmlElement;
@@ -194,7 +195,7 @@ public:
 	eMaterialTexture mType;
 };
 
-typedef std::list<cTextureType> tTextureTypeList;
+typedef Common::List<cTextureType> tTextureTypeList;
 typedef tTextureTypeList::iterator tTextureTypeListIt;
 
 //---------------------------------------------------
@@ -396,7 +397,7 @@ public:
 							  eMaterialPicture aPicture, cRenderer3D *apRenderer3D) = 0;
 };
 
-typedef std::list<iMaterialType *> tMaterialTypeList;
+typedef Common::List<iMaterialType *> tMaterialTypeList;
 typedef tMaterialTypeList::iterator tMaterialTypeListIt;
 
 }     // namespace hpl

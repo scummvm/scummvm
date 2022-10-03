@@ -32,7 +32,7 @@
 #include "hpl1/engine/physics/Body2D.h"
 #include "hpl1/engine/scene/Tile.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
+#include "common/list.h"
 
 namespace hpl {
 
@@ -43,7 +43,7 @@ public:
 	int mlLayer;
 };
 
-typedef std::list<cCollidedTile> tCollidedTileList;
+typedef Common::List<cCollidedTile> tCollidedTileList;
 typedef tCollidedTileList::iterator tCollidedTileListIt;
 
 class cCollideData2D {

@@ -32,9 +32,9 @@
 #include "hpl1/engine/scene/Entity.h"
 #include "hpl1/engine/system/Container.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <list>
 
 #include "hpl1/engine/math/BoundingVolume.h"
+#include "common/list.h"
 
 namespace hpl {
 
@@ -47,7 +47,7 @@ public:
 	virtual void OnTransformUpdate(iEntity3D *apEntity) = 0;
 };
 
-typedef std::list<iEntityCallback *> tEntityCallbackList;
+typedef Common::List<iEntityCallback *> tEntityCallbackList;
 typedef tEntityCallbackList::iterator tEntityCallbackListIt;
 
 //------------------------------------
@@ -57,7 +57,7 @@ typedef tEntityCallbackList::iterator tEntityCallbackListIt;
 class iRenderContainerData {
 };
 
-typedef std::list<iRenderContainerData *> tRenderContainerDataList;
+typedef Common::List<iRenderContainerData *> tRenderContainerDataList;
 typedef tRenderContainerDataList::iterator tRenderContainerDataListIt;
 
 //------------------------------------
@@ -75,7 +75,7 @@ kSaveData_ChildClass(iEntity, iEntity3D) {
 
 class iEntity3D;
 
-typedef std::list<iEntity3D *> tEntity3DList;
+typedef Common::List<iEntity3D *> tEntity3DList;
 typedef tEntity3DList::iterator tEntity3DListIt;
 
 class iEntity3D : public iEntity {

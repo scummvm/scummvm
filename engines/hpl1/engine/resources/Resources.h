@@ -152,7 +152,7 @@ typedef tArea3DLoaderMap::iterator tArea3DLoaderMapIt;
 // GetManager(tString) when getting a manager?
 // This way you would be able to add your own resource types
 // easily.
-typedef std::list<iResourceManager *> tResourceManagerList;
+typedef Common::List<iResourceManager *> tResourceManagerList;
 typedef tResourceManagerList::iterator tResourceManagerListIt;
 
 //-------------------------------------------------------
