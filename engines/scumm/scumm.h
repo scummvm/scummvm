@@ -653,9 +653,13 @@ protected:
 	int _curCursorHotspotX = 0;
 	int _curCursorHotspotY = 0;
 
+	virtual void setSnailCursor() {}
+
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
 	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
+	Common::KeyState printMessageAndPause(const char *msg, int32 waitTime, bool drawOnSentenceLine);
+
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);
 	virtual int getBannerColor(int bannerId);
@@ -1201,6 +1205,8 @@ protected:
 	bool _doEffect = false;
 
 	bool _snapScroll = false;
+
+	virtual void setBuiltinCursor(int index) {}
 public:
 	bool isLightOn() const;
 
@@ -1478,6 +1484,7 @@ protected:
 	virtual void printString(int m, const byte *msg);
 
 	virtual bool handleNextCharsetCode(Actor *a, int *c);
+	virtual void drawSentence() {}
 	virtual void CHARSET_1();
 	bool newLine();
 	void drawString(int a, const byte *msg);

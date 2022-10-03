@@ -408,12 +408,14 @@ void ScummEngine_v4::o4_saveLoadGame() {
 		}
 		break;
 	case 0x40: // load
+		_lastLoadedRoom = -1;
 		if (loadState(slot, false))
 			result = 3; // sucess
 		else
 			result = 5; // failed to load
 		break;
 	case 0x80: // save
+		_lastLoadedRoom = -1;
 		if (_game.version <= 3) {
 			char name[32];
 			if (_game.version <= 2) {

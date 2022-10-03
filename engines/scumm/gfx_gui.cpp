@@ -20,6 +20,7 @@
  */
 
 #include "scumm/scumm.h"
+#include "scumm/scumm_v2.h"
 #include "scumm/scumm_v4.h"
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
@@ -261,6 +262,91 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	return ks;
 }
 
+Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int32 waitTime, bool drawOnSentenceLine) {
+	Common::Rect sentenceline;
+
+	// Pause the engine
+	PauseToken pt = pauseEngine();
+
+	if (drawOnSentenceLine) {
+		setSnailCursor();
+
+		_string[2].charset = 1;
+		_string[2].ypos = _virtscr[kVerbVirtScreen].topline;
+		_string[2].xpos = 0;
+		_string[2].right = _virtscr[kVerbVirtScreen].w - 1;
+		if (_game.platform == Common::kPlatformNES) {
+			_string[2].xpos = 16;
+			_string[2].color = 0;
+		} else if (_game.platform == Common::kPlatformC64) {
+			_string[2].color = 16;
+		} else {
+			_string[2].color = 13;
+		}
+
+		byte string[80];
+		const char *ptr = msg;
+		int i = 0, len = 0;
+
+		// Maximum length of printable characters
+		int maxChars = (_game.platform == Common::kPlatformNES) ? 60 : 40;
+		while (*ptr) {
+			if (*ptr != '@')
+				len++;
+			if (len > maxChars) {
+				break;
+			}
+
+			string[i++] = *ptr++;
+
+			if (_game.platform == Common::kPlatformNES && len == 30) {
+				string[i++] = 0xFF;
+				string[i++] = 8;
+			}
+		}
+		string[i] = 0;
+
+		if (_game.platform == Common::kPlatformNES) {
+			sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 16;
+			sentenceline.left = 16;
+			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		} else {
+			sentenceline.top = _virtscr[kVerbVirtScreen].topline;
+			sentenceline.bottom = _virtscr[kVerbVirtScreen].topline + 8;
+			sentenceline.left = 0;
+			sentenceline.right = _virtscr[kVerbVirtScreen].w - 1;
+		}
+		restoreBackground(sentenceline);
+		drawString(2, (byte *)string);
+		drawDirtyScreenParts();
+	} else {
+
+	}
+
+	// Wait until the engine receives a new Keyboard or Mouse input,
+	// unless we have specified a positive waitTime: in that case, the banner
+	// will stay on screen until an input has been received or until the time-out.
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+	bool leftBtnPressed = false, rightBtnPressed = false;
+	if (waitTime) {
+		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
+	}
+	setBuiltinCursor(0);
+	restoreBackground(sentenceline);
+
+	// Restore the sentence which was being displayed before
+	// (MANIAC v1 doesn't do this)
+	if (!(_game.id == GID_MANIAC && _game.version <= 1))
+		drawSentence();
+
+	// Finally, resume the engine, clear the input state, and restore the charset.
+	pt.clear();
+	clearClickedStatus();;
+
+	return ks;
+}
+
 Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime) {
 	// LOOM VGA uses the new style GUI
 	if (_game.version == 4 && _game.id == GID_LOOM) {
@@ -291,10 +377,9 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Pause the engine
 	PauseToken pt = pauseEngine();
 
-	// Backup the current charsetId, since we're going to switch
-	// to charsetId == 1...
+	// Backup the current charsetId...
 	int oldId = _charset->getCurID();
-	_charset->setCurID(1);
+	_charset->setCurID(_game.version > 3 ? 1 : 0);
 
 	// Take all the necessary measurements for the box which
 	// will contain the string...
@@ -304,14 +389,35 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		bannerMsgWidth = 100;
 
 	startingPointY = 80;
-	bannerSaveYStart = startingPointY - 2;
-
+	bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
 
 	// Save the pixels which will be overwritten by the banner,
 	// so that we can restore them later...
 	if (!_bannerMem) {
-		int rowSize = _screenWidth + 8;
-		_bannerMemSize = (bannerMsgHeight + 2) * (_screenWidth + 8);
+		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
+
+		// FM-Towns games draw the banner on the text surface, so let's save that
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
+			rowSize *= _textSurfaceMultiplier;
+			bannerSaveYStart *= _textSurfaceMultiplier;
+			_textSurfBannerMemSize = bannerMsgHeight * rowSize * _textSurfaceMultiplier;
+			_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
+			if (_textSurfBannerMem) {
+				memcpy(
+					_textSurfBannerMem,
+					&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * bannerSaveYStart],
+					_textSurfBannerMemSize);
+			}
+
+			// We're going to use these same values for saving the
+			// virtual screen surface, so let's un-multiply them...
+			rowSize /= _textSurfaceMultiplier;
+			bannerSaveYStart /= _textSurfaceMultiplier;
+		}
+#endif
+
+		_bannerMemSize = (bannerMsgHeight + 2) * (rowSize);
 		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
 		if (_bannerMem) {
 			memcpy(
@@ -362,7 +468,7 @@ void ScummEngine::clearBanner() {
 	// Restore the GFX content which was under the banner,
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
-		int rowSize = _screenWidth + 8;
+		int rowSize = _screenWidth + (_game.version >= 4 ? 8 : 0);
 		// Don't manually clear the banner if a SMUSH movie is playing,
 		// as that will cause some rare small glitches. The SMUSH player
 		// will take care of that for us automatically when updating the
@@ -371,12 +477,14 @@ void ScummEngine::clearBanner() {
 			int startingPointY;
 			if (_game.version == 8) {
 				startingPointY = _screenHeight / 2 - 10;
+			} else if (_game.version < 4) {
+				startingPointY = 80;
 			} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 				startingPointY = 78;
 			} else {
 				startingPointY = ((_game.version < 7) ? 80 - 2 : _screenHeight / 2 - 10);
 			}
-
+			startingPointY -= (_game.version >= 4 ? 0 : _virtscr[kMainVirtScreen].topline);
 			// FM-Towns games draw the banners on the text surface, so restore both surfaces...
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns && _textSurfBannerMem) {
@@ -393,6 +501,7 @@ void ScummEngine::clearBanner() {
 				startingPointY /= _textSurfaceMultiplier;
 			}
 #endif
+
 			memcpy(
 				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * startingPointY],
 				_bannerMem,
@@ -1138,7 +1247,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 	// so the last line is being drawn on the verb surface; to address this, we
 	// save and restore that too.
 
-	if (_game.version < 4 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6)
 		return;
 
 	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * sizeof(byte));
@@ -1181,7 +1290,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 
 void ScummEngine::restoreSurfacesPostGUI() {
 
-	if (_game.version < 4 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6)
 		return;
 
 	if (_tempTextSurface) {
@@ -1282,10 +1391,13 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 
 		// "Are you sure you want to quit?  (Y/N)"
 		Common::KeyState ks;
-		if (_game.version > 4)
+		if (_game.version > 4) {
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		else
+		} else if (_game.version == 4) {
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+		} else {
+			ks = printMessageAndPause(msgLabelPtr, -1, true);
+		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
@@ -2999,7 +3111,7 @@ void ScummEngine::drawGUIText(const char *buttonString, Common::Rect *clipRect, 
 	_string[5].right = clipRect ? clipRect->right : _screenWidth - 1;
 	_string[5].center = centerFlag;
 	_string[5].color = textColor;
-	_string[5].charset = 1;
+	_string[5].charset = _game.version > 3 ? 1 : 0;
 
 	drawString(5, (const byte *)buttonString);
 	_string[5].right = tmpRight;
@@ -3222,7 +3334,7 @@ const char *ScummEngine::getGUIString(int stringId) {
 	}
 
 	if (resStringId > 0)
-		return d.getPlainEngineString(resStringId);
+		return d.getPlainEngineString(resStringId, (_game.id == GID_INDY3) && stringId == gsQuitPrompt);
 	else
 		return _emptyMsg;
 }

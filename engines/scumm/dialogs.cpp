@@ -429,8 +429,8 @@ void InfoDialog::reflowLayout() {
 	_text->setSize(_w, _h);
 }
 
-const char *InfoDialog::getPlainEngineString(int stringno) {
-	const char *result;
+const char *InfoDialog::getPlainEngineString(int stringno, bool forceHardcodedString) {
+	const char *result = nullptr;
 
 	if (stringno == 0)
 		return nullptr;
@@ -450,7 +450,8 @@ const char *InfoDialog::getPlainEngineString(int stringno) {
 			result = string_map_table_v6[stringno - 1].string;
 		}
 	} else if (_vm->_game.version >= 3) {
-		result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
+		if (!forceHardcodedString)
+			result = (const char *)_vm->getStringAddress(getStaticResString(_vm->_language, stringno - 1).num);
 
 		if (!result) {
 			result = getStaticResString(_vm->_language, stringno - 1).string;
@@ -587,12 +588,12 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{6, "Wollen Sie wirklich beenden? (j/n)j"}				// (matching the previous sentence)
 		},
 		{	// Italian
-			{1, "Inserisci il disco %c e premi un pulsante per continuare."},
-			{2, "Impossibile trovare %s, (%c%d) Premere un pulsante."},
-			{3, "Errore nella lettura del disco %c, (%c%d) Premere un pulsante."},
-			{4, "Gioco in pausa. Premi SPAZIO per continuare."},
-			{5, "Sei sicuro di voler ricominciare?  (S/N)S"},
-			{6, "Sei sicuro di voler uscire?  (S/N)S"}
+			{1, "Inserisci il Disk n. Premi ENTER."},			// Original DOS Italian v2
+			{2, "Non trovato il file nn.lfl. Premi ENTER."},	// Original DOS Italian v2
+			{3, "ERROR READING %d type %d"},					// As found on the Italian v2 executable...
+			{4, "PAUSA - Premere SPAZIO per continuare."},		// Original DOS Italian v2
+			{5, "Sei sicuro di voler ricominciare? (s/n)s"},	// Original DOS Italian v2
+			{6, "Sei sicuro di voler uscire?  (s/n)s"}			// Original DOS Italian v2
 		},
 		{	// Spanish
 			{1, "Introduce el disco %c y pulsa un bot""\xa2""n para continuar."},

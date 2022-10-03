@@ -121,7 +121,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_fastMode ^= 1;
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_g) {
 			_fastMode ^= 2;
-		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_s) {
+		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_s) {
 			_res->resourceStats();
 		} else if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_x) {
 			if (_game.version < 8) {
@@ -195,6 +195,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 			_leftBtnPressed |= msClicked|msDown;
 		else if (event.type == Common::EVENT_RBUTTONDOWN)
 			_rightBtnPressed |= msClicked|msDown;
+
 		_mouse.x = event.mouse.x;
 		_mouse.y = event.mouse.y;
 
@@ -582,7 +583,7 @@ void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool 
 		while (!validKey && !leftBtnClicked && !rightBtnClicked && !(handeleMouseWheel && _mouseWheelFlag)) {
 			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
 
-			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
+			if (_game.version > 2 && _game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
 				_guiCursorAnimCounter = 0;
 				animateCursor();
 			}
@@ -794,6 +795,18 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		if (lastKeyHit.keycode == Common::KEYCODE_F5) {
+			prepareSavegame();
+			if (_game.id == GID_MANIAC && _game.version == 0) {
+				runScript(2, 0, 0, nullptr);
+			}
+			if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
+				runScript(163, 0, 0, nullptr);
+			}
+		}
+	}
+
 	// RETURN is used to skip cutscenes in the Commodore 64 version of Zak McKracken
 	if (_game.id == GID_ZAK &&_game.platform == Common::kPlatformC64 && lastKeyHit.keycode == Common::KEYCODE_RETURN && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
@@ -823,13 +836,15 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 	ScummEngine::processKeyboard(lastKeyHit);
 
 	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-		prepareSavegame();
-		if (_game.id == GID_MANIAC && _game.version == 0) {
-			runScript(2, 0, 0, nullptr);
-		}
-		if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformNES) {
-			runScript(163, 0, 0, nullptr);
+	if (!isUsingOriginalGUI()) {
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+			prepareSavegame();
+			if (_game.id == GID_MANIAC && _game.version == 0) {
+				runScript(2, 0, 0, nullptr);
+			}
+			if (_game.id == GID_MANIAC && _game.platform == Common::kPlatformNES) {
+				runScript(163, 0, 0, nullptr);
+			}
 		}
 	}
 
@@ -844,25 +859,33 @@ void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		if (lastKeyHit.keycode == Common::KEYCODE_F5) {
+			prepareSavegame();
+		}
+	}
+
 	// Fall back to default behavior
 	ScummEngine::processKeyboard(lastKeyHit);
 
-	// On Alt-F5 prepare savegame for the original save/load dialog.
-	if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-		prepareSavegame();
-	}
+	if (!isUsingOriginalGUI()) {
+		// On Alt-F5 prepare savegame for the original save/load dialog.
+		if (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
+			prepareSavegame();
+		}
 
-	// 'i' brings up an IQ dialog in Indy3 (disabled in save/load dialog for input)
-	if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3 && _currentRoom != 14) {
-		// SCUMM var 244 is the episode score
-		// and var 245 is the series score
-		char text[50];
+		// 'i' brings up an IQ dialog in Indy3 (disabled in save/load dialog for input)
+		if (lastKeyHit.ascii == 'i' && _game.id == GID_INDY3 && _currentRoom != 14) {
+			// SCUMM var 244 is the episode score
+			// and var 245 is the series score
+			char text[50];
 
-		updateIQPoints();
+			updateIQPoints();
 
-		Common::sprintf_s(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
-		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
-		runDialog(indy3IQPointsDialog);
+			Common::sprintf_s(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
+			Indy3IQPointsDialog indy3IQPointsDialog(this, text);
+			runDialog(indy3IQPointsDialog);
+		}
 	}
 }
 
@@ -897,6 +920,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				showOldStyleBannerAndPause(getGUIString(gsPause), 12, -1);
 
 			_cursor.state = oldCursorState;
+			return;
+		} else if (_game.version <= 2 && lastKeyHit.keycode == Common::KEYCODE_SPACE) {
+			printMessageAndPause(getGUIString(gsPause), -1, true);
 			return;
 		}
 
@@ -1013,18 +1039,22 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0))
-			&& _game.platform != Common::kPlatformFMTowns) {
+			&& _game.platform != Common::kPlatformFMTowns && _game.version > 3) {
 			showMainMenu();
 			return;
 		}
 
-		if (_game.version == 4) {
-			if (lastKeyHit.keycode == Common::KEYCODE_r && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+		if (snapScrollKeyEnabled) {
+			if ((_game.version <= 3 && lastKeyHit.keycode == Common::KEYCODE_i && lastKeyHit.hasFlags(Common::KBD_ALT)) ||
+				(_game.version == 4 && lastKeyHit.keycode == Common::KEYCODE_r && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+				const char *msgSnap = _game.version == 4 ? "Horizontal Screen Snap" : "Screen reposition instantly";
+				const char *msgScroll = _game.version == 4 ? "Horizontal Screen Scroll" : "Screen reposition by Scrolling";
+
 				_snapScroll ^= 1;
 				if (_snapScroll) {
-					showOldStyleBannerAndPause("Horizontal Screen Snap", 9, 90);
+					showOldStyleBannerAndPause(msgSnap, 9, 90);
 				} else {
-					showOldStyleBannerAndPause("Horizontal Screen Scroll", 9, 90);
+					showOldStyleBannerAndPause(msgScroll, 9, 90);
 				}
 
 				if (VAR_CAMERA_FAST_X != 0xFF)
@@ -1066,7 +1096,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 	if (_game.id == GID_CMI)
 		mainmenuKeyEnabled = true;
 
-	if (mainmenuKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
+	if (mainmenuKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(0))) {
 		if (VAR_SAVELOAD_SCRIPT != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
@@ -1078,10 +1108,10 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
 
-	} else if (restartKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
+	} else if (restartKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 		confirmRestartDialog();
 
-	} else if (pauseKeyEnabled && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.hasFlags(0))) {
+	} else if (pauseKeyEnabled && !isUsingOriginalGUI() && (lastKeyHit.keycode == Common::KEYCODE_SPACE && lastKeyHit.hasFlags(0))) {
 		pauseGame();
 
 	} else if (talkstopKeyEnabled && lastKeyHit.ascii == '.') {
@@ -1095,7 +1125,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		// VAR_CUTSCENEEXIT_KEY doesn't exist in SCUMM0
 		if (VAR_CUTSCENEEXIT_KEY != 0xFF)
 			_mouseAndKeyboardStat = VAR(VAR_CUTSCENEEXIT_KEY);
-	} else if (snapScrollKeyEnabled && lastKeyHit.keycode == Common::KEYCODE_r &&
+	} else if (snapScrollKeyEnabled && !isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_r &&
 		lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		_snapScroll ^= 1;
 		if (_snapScroll) {
