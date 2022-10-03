@@ -46,7 +46,6 @@ private:
 	int _mmVal5 = 0;
 	int _mmVal7 = 0;
 	Resistance _resistanceType = RESISTANCE_MAGIC;
-	int _damage = 0;
 
 	void spell01_curse();
 	void spell02_energyBlast();
@@ -184,6 +183,7 @@ private:
 protected:
 	byte _arr1[MAX_COMBAT_MONSTERS];
 	byte _monsterStatus[MAX_COMBAT_MONSTERS];
+	int _damage = 0;
 
 	virtual bool canMonsterCast() const = 0;
 	virtual int getMonsterIndex() const = 0;

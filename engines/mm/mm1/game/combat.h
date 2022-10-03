@@ -36,6 +36,7 @@ namespace Game {
 class Combat : public SpellsMonsters {
 protected:
 	Common::Array<Monster> &_monsterList;
+	Common::Array<Line> _message;
 	int _monstersCount = 0;
 	Common::Array<Character *> _party;
 	Monster *_monsterP;
@@ -72,7 +73,8 @@ protected:
 	enum Mode {
 		SELECT_OPTION, FIGHT_WHICH, DEFEATED_MONSTERS,
 		NEXT_ROUND, MONSTER_ADVANCES, MONSTERS_AFFECTED,
-		MONSTER_FLEES, MONSTER_WANDERS, MONSTER_SPELL
+		MONSTER_FLEES, MONSTER_WANDERS, MONSTER_SPELL,
+		CHAR_ATTACKS
 	};
 	Mode _mode = SELECT_OPTION;
 
@@ -208,6 +210,16 @@ protected:
 	void attackMonsterPhysical();
 	void attackMonsterShooting();
 	void attackMonster(int monsterNum);
+
+	/**
+	 * Adds attack damage message for character hitting monster
+	 */
+	void writeAttackDamage();
+
+	/**
+	 * Updates a monster's status
+	 */
+	void updateMonsterStatus();
 };
 
 } // namespace Game
