@@ -43,6 +43,10 @@ enum MonsterStatusFlag {
 	MONFLAG_PARALYZED = 0x80, MONFLAG_DEAD = 0xff
 };
 
+enum Fiedl1A {
+	FIELD1A_80 = 0x80
+};
+
 enum Field1E {
 	FIELD1E_10 = 0x10, FIELD1E_20 = 0x20,
 	FIELD1E_40 = 0x40, FIELD1E_80 = 0x80

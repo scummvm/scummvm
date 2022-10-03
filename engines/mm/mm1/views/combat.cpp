@@ -90,6 +90,11 @@ void Combat::draw() {
 		writeMonsterSpell();
 		delaySeconds(2);
 		return;
+	case CHAR_ATTACKS:
+		writeMonsters();
+		writeMessage();
+		delaySeconds(3);
+		return;
 	default:
 		break;
 	}
@@ -127,6 +132,7 @@ void Combat::timeout() {
 		nextRound3();
 		return;
 	case MONSTERS_AFFECTED:
+	case CHAR_ATTACKS:
 		combatLoop();
 		return;
 	case MONSTER_FLEES:
@@ -194,6 +200,8 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	default:
 		break;
 	}
+
+	return true;
 }
 
 void Combat::writeOptions() {
@@ -438,7 +446,7 @@ void Combat::writeMonsterAction() {
 void Combat::writeMonsterSpell() {
 	resetBottom();
 
-	for (uint i = 0, y = 0; i < _monsterSpellLines.size() &&
+	for (int i = 0, y = 0; i < (int)_monsterSpellLines.size() &&
 		_monsterSpellLines[i].y > y;
 		y = _monsterSpellLines[i].y, ++i) {
 		Common::String text = _monsterSpellLines[i]._text;
@@ -491,6 +499,19 @@ void Combat::shoot() {
 }
 
 void Combat::use() {
+}
+
+void Combat::writeMessage() {
+	size_t idx;
+
+	resetBottom();
+	for (const auto &line : _message) {
+		Common::String text = line._text;
+		while ((idx = text.findFirstOf('|')) != Common::String::npos)
+			text.deleteChar(idx);
+
+		writeString(line.x, line.y, text);
+	}
 }
 
 } // namespace Views

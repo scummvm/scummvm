@@ -751,7 +751,57 @@ void Combat::attackMonster(int monsterNum) {
 	else
 		_attackAttr2._current = MAX((int)_attackAttr2._current - 3, 0);
 
-	// TODO: attack message and further stuff
+	_message.clear();
+	_message.push_back(Line(0, 0, Common::String::format("%s %s %s",
+		g_globals->_currCharacter->_name,
+		STRING[_isShooting ? "dialogs.combat.shoots" :
+			"dialogs.combat.attacks"].c_str(),
+		_monsterP->_name.c_str()
+	)));
+
+	if (_isShooting && c._class == ARCHER)
+		_attackAttr2._current += (c._level + 1) / 2;
+	_isShooting = false;
+
+	if (_attackAttr1._current || !(_monsterP->_field1a & FIELD1A_80)) {
+		if (_monsterStatus[_monsterIndex] & (MONFLAG_ASLEEP |
+				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
+			++_attackerLevel;
+
+		if (g_globals->_spells._s.bless) {
+			_attackerLevel++;
+			_attackAttr2._current++;
+		}
+
+		if (g_globals->_spells._s.cursed) {
+			if (++_val11 > 255)
+				_val11 = 200;
+		}
+
+		writeAttackDamage();
+		if (_damage)
+			updateMonsterStatus();
+	} else {
+		_message.push_back(Line(0, 1, STRING["dialogs.combat.weapon_no_effect"]));
+	}
+
+	_arr3[_currentChar] = 1;
+	setMode(CHAR_ATTACKS);
+}
+
+void Combat::writeAttackDamage() {
+	// TODO: Implement
+}
+
+void Combat::updateMonsterStatus() {
+	int val = _arr1[_monsterIndex] - _damage;
+	if (val <= 0) {
+		_arr1[_monsterIndex] = 0;
+		_monsterStatus[_monsterIndex] = MONFLAG_DEAD;
+	} else {
+		_arr1[_monsterIndex] = val;
+		_monsterStatus[_monsterIndex] &= ~(MONFLAG_ASLEEP | MONFLAG_HELD);
+	}
 }
 
 } // namespace Game

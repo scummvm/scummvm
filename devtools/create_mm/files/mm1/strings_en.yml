@@ -315,6 +315,9 @@
 		regenerate: "SOME MONSTERS REGENERATE!"
 		overcome: "SOME MONSTERS OVERCOME SPELLS!"
 		monster_flees: "RUNS AWAY..."
+		attacks: "ATTACKS"
+		shoots: "SHOOTS"
+		weapon_no_effect: "WEAPON HAS NO EFFECT!"
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "

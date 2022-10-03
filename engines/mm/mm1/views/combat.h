@@ -158,6 +158,11 @@ private:
 	 */
 	void use();
 
+	/**
+	 * Writes out a message
+	 */
+	void writeMessage();
+
 protected:
 	/**
 	 * Sets a new display mode
