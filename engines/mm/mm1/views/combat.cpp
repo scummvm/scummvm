@@ -48,11 +48,6 @@ bool Combat::msgFocus(const FocusMessage &msg) {
 
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
 
-	_monstersCount = _monsterList.size();
-	_party.clear();
-	for (uint i = 0; i < g_globals->_party.size(); ++i)
-		_party.push_back(&g_globals->_party[i]);
-
 	loadArrays();
 	setupCanAttacks();
 	setupHandicap();
