@@ -62,6 +62,8 @@ protected:
 	bool _monstersResistSpells;
 	bool _monstersRegenerate;
 	AttributePair _attackAttr1, _attackAttr2;
+	bool _isShooting;
+	Common::String _attackMessage;
 	enum Handicap {
 		HANDICAP_EVEN = 0, HANDICAP_PARTY = 1,
 		HANDICAP_MONSTER = 2
@@ -203,8 +205,8 @@ protected:
 	/**
 	 * Attack a monster
 	 */
-	void attackMonster68();
-	void attackMonster6a();
+	void attackMonsterPhysical();
+	void attackMonsterShooting();
 	void attackMonster(int monsterNum);
 };
 

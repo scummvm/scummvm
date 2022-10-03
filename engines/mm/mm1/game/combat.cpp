@@ -57,6 +57,7 @@ void Combat::clear() {
 	_monstersResistSpells = _monstersRegenerate = false;
 	_attackAttr1.clear();
 	_attackAttr2.clear();
+	_isShooting = false;
 
 	// TODO: clear everything
 
@@ -652,13 +653,15 @@ void Combat::checkParty() {
 	loop1();
 }
 
-void Combat::attackMonster68() {
+void Combat::attackMonsterPhysical() {
 	_attackAttr1 = g_globals->_currCharacter->_physicalAttr;
+	_isShooting = false;
 	attackMonster(0);
 }
 
-void Combat::attackMonster6a() {
+void Combat::attackMonsterShooting() {
 	_attackAttr1 = g_globals->_currCharacter->_missileAttr;
+	_isShooting = true;
 	attackMonster(0);
 }
 
