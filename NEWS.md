@@ -5,6 +5,38 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  General:
    - Various improvements to the icon-based grid view in the ScummVM launcher.
+   - Fixed possible graphics corruptions when using the OpenGL renderer.
+
+ AGS:
+   - Fixed a crash in kq1agdi (and possibly others) on big-endian systems.
+
+ AGOS:
+   - Fixed various bugs that lead to crashes in the demo versions of The Feeble Files
+     and Personal Nightmare and in the full version of Waxworks.
+
+ Asylum:
+   - Fixed the Keyboard Config screen.
+   - Added support for the keymapper feature to the dialog screen.
+   - The in-game menu is now accessible via a keyboard shortcut.
+   - Fixed a bug that caused the controls to be reset when leaving the Hive puzzle.
+
+ Ultima:
+   - Fix rendering issue when moving the minimap off the screen.
+   - Fix possible crash when using the autosave function.
+
+ SCI:
+   - Fixed various bugs and script issues in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG4 and SQ5.
+   - Numerous improvements to various parts of the engine code.
+
+ SCUMM:
+   - Fix potential lockups in v7-v8 games.
+   - Prevent crashs caused by missing .SOU/.BUN files.
+
+ Android port:
+   - Properly convert mouse coordinates between screen coordinates and virtual ones.
+
+ Windows port:
+   - Clearing the icons cache created a duplicate ScummVM folder in the APPDATA directory. Fixed.
 
 #### 2.6.0 "Insane Escapism" (2022-08-01)
 
