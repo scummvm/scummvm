@@ -521,7 +521,8 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 	// be able to see some of those updates (i.e. the loading cursors in
 	// The Dig and The Curse of Monkey Island). This forced screen update
 	// addresses that.
-	_system->updateScreen();
+	if (_game.version > 6)
+		_system->updateScreen();
 }
 
 void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
