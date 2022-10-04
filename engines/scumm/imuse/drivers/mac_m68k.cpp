@@ -422,11 +422,12 @@ void IMuseDriver_MacM68k::MidiChannel_MacM68k::priority(byte value) {
 	_priority = value;
 }
 
-void IMuseDriver_MacM68k::MidiChannel_MacM68k::sysEx_customInstrument(uint32 type, const byte *instr) {
+void IMuseDriver_MacM68k::MidiChannel_MacM68k::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
 	assert(instr);
-	if (type == 'MAC ') {
+	if (type == 'MAC ' && dataSize == sizeof(byte)) 
 		_instrument = _owner->getInstrument(*instr + kSysExBase);
-	}
+	else if (type != 'MAC ')
+		warning("MidiChannel_MacM68k: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 }
 
 bool IMuseDriver_MacM68k::MidiChannel_MacM68k::allocate() {

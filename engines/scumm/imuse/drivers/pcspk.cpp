@@ -336,8 +336,11 @@ void IMuseDriver_PCSpk::MidiChannel_PcSpk::priority(byte value) {
 	_priority = value;
 }
 
-void IMuseDriver_PCSpk::MidiChannel_PcSpk::sysEx_customInstrument(uint32 type, const byte *instr) {
-	memcpy(_instrument, instr, sizeof(_instrument));
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
+	if (type == 'SPK ' && instr && dataSize == sizeof(_instrument))
+		memcpy(_instrument, instr, sizeof(_instrument));
+	else if (type != 'SPK ')
+		warning("MidiChannel_PcSpk: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 }
 
 uint8 IMuseDriver_PCSpk::getEffectModifier(uint16 level) {

@@ -141,7 +141,7 @@ private:
 		void controlChange(byte control, byte value) override;
 		void pitchBendFactor(byte value) override;
 		void priority(byte value) override;
-		void sysEx_customInstrument(uint32 type, const byte *instr) override;
+		void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 
 		bool allocate();
 

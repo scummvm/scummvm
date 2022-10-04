@@ -63,7 +63,7 @@ public:
 	void effectLevel(byte value) override;
 	void chorusLevel(byte value) override {}
 	void allNotesOff() override;
-	void sysEx_customInstrument(uint32 type, const byte *instr) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 
 	void setOutput(MT32RealChan *out) { _out = out; }
 
@@ -109,6 +109,10 @@ private:
 	const byte *_programsMapping;
 	const uint32 _sysexPatchAddrBase;
 	const uint32 _sysexTimbreAddrBase;
+
+	enum SysexMessageSize {
+		kSysexLengthTimbre = 254
+	};
 };
 
 class MT32Chan {
@@ -363,24 +367,36 @@ void IMuseChannel_MT32::allNotesOff() {
 	}
 }
 
-void IMuseChannel_MT32::sysEx_customInstrument(uint32 type, const byte *instr)  {
-	if (*instr++ != 0x41) {
-		warning("IMuseChannel_MT32::sysEx_customInstrument(): Invalid (non-Roland) sysex message received");
+void IMuseChannel_MT32::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize)  {
+	if (type != 'ROL ') {
+		warning("IMuseChannel_MT32: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
+		return;
+	}
+
+	if (*instr++ != 0x41 || dataSize < 6) {
+		warning("IMuseChannel_MT32::sysEx_customInstrument(): Invalid sysex message received");
 		return;
 	}
 
 	byte partNo = *instr;
 	uint32 addr = (instr[3] << 14) | (instr[4] << 7) | instr[5];
 
-	if (!(addr & 0xFFFF) || partNo < 16) {
-		sendSysexTimbreData(instr + 6, 246);
-		_timbre = 0xFF;
-		byte msg[2] = { 0x02, _program };
-		sendSysexPatchData(0, msg, sizeof(msg));
-		if (_out)
-			sendMidi(0xC0 | _out->_number, _program, 0);
+	if (dataSize == kSysexLengthTimbre) {
+		if (!(addr & 0xFFFF) || partNo < 16) {
+			sendSysexTimbreData(instr + 6, 246);
+			_timbre = 0xFF;
+			byte msg[2] = { 0x02, _program };
+			sendSysexPatchData(0, msg, sizeof(msg));
+			if (_out)
+				sendMidi(0xC0 | _out->_number, _program, 0);
+		} else {
+			_drv->sendMT32Sysex(0x22000 + (partNo << 8), instr + 6, 246);
+		}
 	} else {
-		_drv->sendMT32Sysex(0x22000 + (partNo << 8), instr + 6, 246);
+		// We cannot arrive here, since our imuse code calls this function only for instruments.
+		// So this is just a reminder that the original driver handles more things than we do,
+		// (but these things are apparently never used and thus not needed).
+		warning("IMuseChannel_MT32::sysEx_customInstrument(): Unsupported sysex message received");
 	}
 }
 

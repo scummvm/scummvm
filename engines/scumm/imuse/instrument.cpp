@@ -442,7 +442,7 @@ void Instrument_AdLib::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Instrument_AdLib::send(MidiChannel *mc) {
-	mc->sysEx_customInstrument('ADL ', (byte *)&_instrument);
+	mc->sysEx_customInstrument('ADL ', (byte *)&_instrument, sizeof(_instrument));
 }
 
 ////////////////////////////////////////
@@ -483,7 +483,7 @@ void Instrument_Roland::saveLoadWithSerializer(Common::Serializer &s) {
 
 void Instrument_Roland::send(MidiChannel *mc) {
 	if (_nativeMT32Device) {
-		mc->sysEx_customInstrument(0, (byte *)&_instrument);
+		mc->sysEx_customInstrument('ROL ', (byte *)&_instrument, sizeof(_instrument));
 	} else {
 		// Convert to a GM program change.
 		byte program = getEquivalentGM();
@@ -523,7 +523,7 @@ void Instrument_PcSpk::saveLoadWithSerializer(Common::Serializer &s) {
 }
 
 void Instrument_PcSpk::send(MidiChannel *mc) {
-	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument);
+	mc->sysEx_customInstrument('SPK ', (byte *)&_instrument, sizeof(_instrument));
 }
 
 ////////////////////////////////////////
@@ -554,6 +554,6 @@ void Instrument_MacSfx::send(MidiChannel *mc) {
 	if (_program > 127) {
 		return;
 	}
-	mc->sysEx_customInstrument('MAC ', &_program);
+	mc->sysEx_customInstrument('MAC ', &_program, sizeof(_program));
 }
 } // End of namespace Scumm

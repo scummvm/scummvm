@@ -138,7 +138,7 @@ public:
 	void detune(byte value) override;
 	void transpose(int8 value) override;
 	void priority(byte value) override;
-	void sysEx_customInstrument(uint32 type, const byte *instr) override;
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 
 private:
 	void controlModulationWheel(byte value);
@@ -788,8 +788,12 @@ void TownsMidiInputChannel::priority(byte value) {
 	_priority = value;
 }
 
-void TownsMidiInputChannel::sysEx_customInstrument(uint32 type, const byte *instr) {
-	memcpy(_instrument, instr, 30);
+void TownsMidiInputChannel::sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) {
+	const uint8 instrSize = 30;
+	if (instr && dataSize == instrSize)
+		memcpy(_instrument, instr, instrSize);
+	else if (type != 'ADL ') // FM-Towns is actually supposed to get ADL type data.
+		warning("TownsMidiInputChannel: Receiving '%c%c%c%c' instrument data. Probably loading a savegame with that sound setting", (type >> 24) & 0xFF, (type >> 16) & 0xFF, (type >> 8) & 0xFF, type & 0xFF);
 }
 
 void TownsMidiInputChannel::controlModulationWheel(byte value) {

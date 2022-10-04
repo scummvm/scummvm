@@ -149,7 +149,7 @@ public:
 	void transpose(int8 value) override;
 
 	void priority(byte value) override;
-	void sysEx_customInstrument(uint32 type, const byte *instr) override {}
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override {}
 
 	int getPriority() const { return _priority; }
 	SoundChannel_Amiga *getChannel() const { return _out; }
