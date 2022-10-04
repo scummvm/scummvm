@@ -1289,6 +1289,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "blaster",			"Blaster Series Demo" },
 	{ "bpmc",				"Byron Preiss Multimedia Catalog" },
 	{ "cmc",				"Creative Multimedia Catalog" },
+	{ "compuserve",			"CompuServe Demo" },
 	{ "coreltour",			"Corel Product Tour" },
 	{ "davidsonpp",			"Davidson Product Previews" },
 	{ "davidsonps",			"Davidson Product Sampler" },
@@ -1913,6 +1914,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("clarisworks", "Demo", "ClarisWorks SRD Projector", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 353743, 300),
 
 	MACGAME1("cmc", "1993", "xn--Other Products...-", "1ae45c23586b41997ba52e2e7c771c4c", 5748468, 310),
+
+	WINGAME1t("compuserve", "", "CSDEMO.EXE", "df9fd39763c4cc922e2cdad28d086a4c", 5331595, 404),
 
 	// Found on CD-ROM Today, #4
 	WINGAME1t("coreltour", "", "PRODTOUR.EXE", "296661dda59fcc1a4980e72797aac158", 375291, 300),
