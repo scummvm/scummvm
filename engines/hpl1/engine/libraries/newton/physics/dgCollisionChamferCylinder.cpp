@@ -90,14 +90,14 @@ void dgCollisionChamferCylinder::Init(dgFloat32 radius, dgFloat32 height) {
 	dgFloat32 breakStep = dgPI2 / DG_CHAMFERCYLINDER_BRAKES;
 
 	dgMatrix rot(dgPitchMatrix(breakStep));
-	dgInt32 index = 0;
+	dgInt32 k = 0;
 	for (dgInt32 j = 0; j <= DG_CHAMFERCYLINDER_SLICES; j++) {
 		dgVector p0(-m_height * dgCos(sliceAngle), dgFloat32(0.0f),
 					m_radius + m_height * dgSin(sliceAngle), dgFloat32(1.0f));
 		sliceAngle += sliceStep;
 		for (dgInt32 i = 0; i < DG_CHAMFERCYLINDER_BRAKES; i++) {
-			m_vertex[index] = p0;
-			index++;
+			m_vertex[k] = p0;
+			k++;
 			p0 = rot.UnrotateVector(p0);
 		}
 	}
@@ -467,12 +467,12 @@ dgInt32 dgCollisionChamferCylinder::CalculatePlaneIntersection(
 			}
 
 			if (count < 2) {
-				dgVector dp(m_silhuette[3] - m_silhuette[2]);
-				den = normal1 % dp;
+				dgVector dpp(m_silhuette[3] - m_silhuette[2]);
+				den = normal1 % dpp;
 				_ASSERTE(dgAbsf(den) > dgFloat32(0.0f));
 				test0 = -plane.Evalue(m_silhuette[2]) / den;
 				if ((test0 <= dgFloat32(1.0)) && (test0 >= dgFloat32(0.0f))) {
-					contactsOut[count] = m_silhuette[2] + dp.Scale(test0);
+					contactsOut[count] = m_silhuette[2] + dpp.Scale(test0);
 					count++;
 				}
 			}

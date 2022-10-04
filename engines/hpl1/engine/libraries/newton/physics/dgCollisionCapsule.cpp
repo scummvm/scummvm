@@ -417,9 +417,9 @@ dgFloat32 dgCollisionCapsule::RayCast(const dgVector &q0, const dgVector &q1, dg
 			dgVector dqp0(q0 - h);
 			dgFloat32 a = dq % dq;
 			dgFloat32 b = dgFloat32(2.0f) * (dqp0 % dq);
-			dgFloat32 c = dqp0 % dqp0 - radius * radius;
-			if (c > dgFloat32(0.0f)) {
-				dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
+			dgFloat32 d = dqp0 % dqp0 - radius * radius;
+			if (d > dgFloat32(0.0f)) {
+				dgFloat32 desc = b * b - dgFloat32(4.0f) * a * d;
 				if (desc > dgFloat32(1.0e-8f)) {
 					dgFloat32 t1;
 					desc = dgSqrt(desc);
@@ -440,9 +440,9 @@ dgFloat32 dgCollisionCapsule::RayCast(const dgVector &q0, const dgVector &q1, dg
 			dgVector dqp0(q0 - h);
 			dgFloat32 a = dq % dq;
 			dgFloat32 b = dgFloat32(2.0f) * (dqp0 % dq);
-			dgFloat32 c = dqp0 % dqp0 - radius * radius;
-			if (c > dgFloat32(0.0f)) {
-				dgFloat32 desc = b * b - dgFloat32(4.0f) * a * c;
+			dgFloat32 d = dqp0 % dqp0 - radius * radius;
+			if (d > dgFloat32(0.0f)) {
+				dgFloat32 desc = b * b - dgFloat32(4.0f) * a * d;
 				if (desc > dgFloat32(1.0e-8f)) {
 					dgFloat32 t1;
 					desc = dgSqrt(desc);
@@ -619,12 +619,12 @@ dgInt32 dgCollisionCapsule::CalculatePlaneIntersection(const dgVector &normal,
 			}
 
 			if (count < 2) {
-				dgVector dp(m_silhuette[3] - m_silhuette[2]);
-				den = normal1 % dp;
+				dgVector dpp(m_silhuette[3] - m_silhuette[2]);
+				den = normal1 % dpp;
 				if (dgAbsf(den) > dgFloat32(0.0f)) {
 					test0 = -plane.Evalue(m_silhuette[2]) / den;
 					if ((test0 <= dgFloat32(1.0)) && (test0 >= dgFloat32(0.0f))) {
-						contactsOut[count] = m_silhuette[2] + dp.Scale(test0);
+						contactsOut[count] = m_silhuette[2] + dpp.Scale(test0);
 						count++;
 					}
 				}

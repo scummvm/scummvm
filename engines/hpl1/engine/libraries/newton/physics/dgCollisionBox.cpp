@@ -443,14 +443,16 @@ dgInt32 dgCollisionBox::CalculatePlaneIntersection(const dgVector &normal,
 	dgPlane plane(normal, -(normal % point));
 
 	dgConvexSimplexEdge *edge = NULL;
-	dgFloat32 side1 = dgFloat32(1.0e20f);
-	for (dgInt32 i = 0; i < 8; i++) {
-		dgFloat32 side0 = plane.Evalue(m_vertex[i]);
-		test[i] = side0;
-		if (side0 > dgFloat32(0.0f)) {
-			if (side0 < side1) {
-				side1 = side0;
-				edge = m_supportVertexStarCuadrant[i];
+	{
+		dgFloat32 side1 = dgFloat32(1.0e20f);
+		for (dgInt32 i = 0; i < 8; i++) {
+			dgFloat32 side0 = plane.Evalue(m_vertex[i]);
+			test[i] = side0;
+			if (side0 > dgFloat32(0.0f)) {
+				if (side0 < side1) {
+					side1 = side0;
+					edge = m_supportVertexStarCuadrant[i];
+				}
 			}
 		}
 	}
