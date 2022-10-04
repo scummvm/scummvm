@@ -1970,9 +1970,6 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		_sound->_musicType = MDT_MIDI;
 	}
 
-	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
-	bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : ConfMan.getBool("enable_gs");
-
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
 	if (!_mixer->isReady()) {
@@ -2046,11 +2043,9 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
 		bool useOnlyNative = false;
 
-		uint32 imsFlags = 0;
-		if (_native_mt32)
-			imsFlags |= IMuse::kFlagNativeMT32;
-		if (enable_gs && MidiDriver::getMusicType(dev) != MT_MT32)
-			imsFlags |= IMuse::kFlagRolandGS;
+		// DOTT + SAM use General MIDI, so they shouldn't use GS settings
+		bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : (ConfMan.getBool("enable_gs") && MidiDriver::getMusicType(dev) != MT_MT32);
+		bool newSystem = (_game.id == GID_SAMNMAX);
 
 		if (isMacM68kIMuse()) {
 			// We setup this driver as native MIDI driver to avoid playback
@@ -2066,9 +2061,9 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
 			if (_native_mt32)
-				nativeMidiDriver = new IMuseDriver_MT32(dev, _game.id == GID_SAMNMAX);
+				nativeMidiDriver = new IMuseDriver_MT32(dev, newSystem);
 			else
-				nativeMidiDriver = new IMuseDriver_GMidi(dev, imsFlags & IMuse::kFlagRolandGS, _game.id == GID_SAMNMAX);
+				nativeMidiDriver = new IMuseDriver_GMidi(dev, enable_gs, newSystem);
 		}
 
 		if (!useOnlyNative) {
@@ -2083,6 +2078,12 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 				adlibMidiDriver = new IMuseDriver_PCSpk(_mixer);
 			}
 		}
+
+		uint32 imsFlags =  newSystem ? IMuse::kFlagNewSystem : 0;
+		if (_native_mt32)
+			imsFlags |= IMuse::kFlagNativeMT32;
+		if (enable_gs)
+			imsFlags |= IMuse::kFlagRolandGS;
 
 		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
 

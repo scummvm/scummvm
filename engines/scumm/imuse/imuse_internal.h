@@ -323,6 +323,7 @@ struct Part : public Common::Serializable {
 	byte _vol, _vol_eff;
 	int8 _detune, _detune_eff;
 	int8 _pan, _pan_eff;
+	byte _polyphony;
 	bool _on;
 	byte _modwheel;
 	bool _pedal;
@@ -367,7 +368,7 @@ struct Part : public Common::Serializable {
 	void set_pri(int8 pri);
 	void set_pan(int8 pan);
 
-	void set_sm17(int8 val);
+	void set_polyphony(byte val);
 	void set_onoff(bool on);
 	void fix_after_load();
 
@@ -384,6 +385,7 @@ private:
 	void sendDetune();
 	void sendPanPosition(uint8 value);
 	void sendEffectLevel(uint8 value);
+	void sendPolyphony();
 };
 
 
@@ -409,6 +411,7 @@ class IMuseInternal : public IMuse {
 protected:
 	const bool _native_mt32;
 	const bool _enable_gs;
+	const bool _newSystem;
 	const MidiDriverFlags _soundType;
 	MidiDriver *_midi_adlib;
 	MidiDriver *_midi_native;
@@ -457,6 +460,15 @@ protected:
 	Instrument _global_instruments[32];
 	CommandQueue _cmd_queue[64];
 	DeferredCommand _deferredCommands[4];
+
+	// These are basically static vars in the original drivers
+	struct RhyState {
+		RhyState() : RhyState(127, 1, 0) {}
+		RhyState(byte volume, byte polyphony, byte priority) : vol(volume), poly(polyphony), prio(priority) {}
+		byte vol;
+		byte poly;
+		byte prio;
+	} _rhyState;
 
 protected:
 	IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags);

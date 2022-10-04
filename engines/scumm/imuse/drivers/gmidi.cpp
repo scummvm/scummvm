@@ -39,6 +39,8 @@ int IMuseDriver_GMidi::open() {
 		return MERR_CANNOT_CONNECT;
 
 	int res = _drv->open();
+	if (res)
+		return res;
 
 	if (_gsMode)
 		initDeviceAsRolandGS();
@@ -48,15 +50,30 @@ int IMuseDriver_GMidi::open() {
 	return res;
 }
 
+void IMuseDriver_GMidi::close() {
+	if (isOpen() && _drv)
+		_drv->close();
+
+	//releaseChannels();
+}
+
 MidiChannel *IMuseDriver_GMidi::allocateChannel() {
-	if (!_newSystem)
+	if (!isOpen())
+		return nullptr;
+
+	// Pass through everything for now.
+	//if (!_newSystem)
 		return _drv->allocateChannel();
 
 	return nullptr;
 }
 
 MidiChannel *IMuseDriver_GMidi::getPercussionChannel() {
-	if (!_newSystem)
+	if (!isOpen())
+		return nullptr;
+
+	// Pass through everything for now.
+	//if (!_newSystem)
 		return _drv->getPercussionChannel();
 
 	return nullptr;
@@ -93,7 +110,7 @@ void IMuseDriver_GMidi::initDeviceAsRolandGS() {
 	// General MIDI System On message
 	// Resets all GM devices to default settings
 	memcpy(&buffer[0], "\x7E\x7F\x09\x01", 4);
-	_drv->sysEx(buffer, 4);
+	sysEx(buffer, 4);
 	debug(2, "GM SysEx: GM System On");
 	g_system->delayMillis(200);
 
@@ -109,13 +126,13 @@ void IMuseDriver_GMidi::initDeviceAsRolandGS() {
 
 	// GS Reset
 	memcpy(&buffer[4], "\x40\x00\x7F\x00\x41", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: GS Reset");
 	g_system->delayMillis(200);
 
 	// Set global Master Tune to 442.0kHz, as on the MT-32
 	memcpy(&buffer[4], "\x40\x00\x00\x00\x04\x04\x0F\x29", 8);
-	_drv->sysEx(buffer, 12);
+	sysEx(buffer, 12);
 	debug(2, "GS SysEx: Master Tune set to 442.0kHz");
 
 	// Note: All Roland GS devices support CM-64/32L maps
@@ -132,24 +149,24 @@ void IMuseDriver_GMidi::initDeviceAsRolandGS() {
 	// Switch Drum Map to CM-64/32L (MT-32 Compatible Drums)
 	getPercussionChannel()->controlChange(0, 0);
 	getPercussionChannel()->controlChange(32, 1);
-	_drv->send(127 << 8 | 0xC0 | 9);
+	send(127 << 8 | 0xC0 | 9);
 	debug(2, "GS Program Change: Drum Map is CM-64/32L");
 
 	// Set Master Chorus to 0. The MT-32 has no chorus capability.
 	memcpy(&buffer[4], "\x40\x01\x3A\x00\x05", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: Master Chorus Level is 0");
 
 	// Set Channels 1-16 Reverb to 64, which is the
 	// equivalent of MT-32 default Reverb Level 5
 	for (i = 0; i < 16; ++i)
-		_drv->send((64 << 16) | (91 << 8) | (0xB0 | i));
+		send((64 << 16) | (91 << 8) | (0xB0 | i));
 	debug(2, "GM Controller 91 Change: Channels 1-16 Reverb Level is 64");
 
 	// Set Channels 1-16 Pitch Bend Sensitivity to
 	// 12 semitones; then lock the RPN by setting null.
 	for (i = 0; i < 16; ++i)
-		_drv->setPitchBendRange(i, 12);
+		setPitchBendRange(i, 12);
 	debug(2, "GM Controller 6 Change: Channels 1-16 Pitch Bend Sensitivity is 12 semitones");
 
 	// Set channels 1-16 Mod. LFO1 Pitch Depth to 4
@@ -157,7 +174,7 @@ void IMuseDriver_GMidi::initDeviceAsRolandGS() {
 	for (i = 0; i < 16; ++i) {
 		buffer[5] = 0x20 + i;
 		buffer[8] = 0x18 - i;
-		_drv->sysEx(buffer, 9);
+		sysEx(buffer, 9);
 	}
 
 	debug(2, "GS SysEx: Channels 1-16 Mod. LFO1 Pitch Depth Level is 4");
@@ -170,25 +187,25 @@ void IMuseDriver_GMidi::initDeviceAsRolandGS() {
 	// Expression cannot be modified. I don't know why, but
 	// Roland does it this way.
 	memcpy(&buffer[4], "\x40\x10\x0E\x00\x22", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: Percussion Channel Rx. Expression is OFF");
 
 	// Change Reverb Character to 0. I don't think this
 	// sounds most like MT-32, but apparently Roland does.
 	memcpy(&buffer[4], "\x40\x01\x31\x00\x0E", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: Reverb Character is 0");
 
 	// Change Reverb Pre-LF to 4, which is similar to
 	// what MT-32 reverb does.
 	memcpy(&buffer[4], "\x40\x01\x32\x04\x09", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: Reverb Pre-LF is 4");
 
 	// Change Reverb Time to 106; the decay on Hall 2
 	// Reverb is too fast compared to the MT-32's
 	memcpy(&buffer[4], "\x40\x01\x34\x6A\x21", 5);
-	_drv->sysEx(buffer, 9);
+	sysEx(buffer, 9);
 	debug(2, "GS SysEx: Reverb Time is 106");
 }
 

@@ -51,6 +51,7 @@ Part::Part() {
 	_detune_eff = 0;
 	_pan = 0;
 	_pan_eff = 0;
+	_polyphony = 0;
 	_on = false;
 	_modwheel = 0;
 	_pedal = false;
@@ -108,20 +109,15 @@ void Part::set_detune(int8 detune) {
 	// Sam&Max does not have detune, so we just ignore this here. We still get
 	// this called, since Sam&Max uses the same controller for a different
 	// purpose.
-	if (_se->_game_id == GID_SAMNMAX) {
-#if 0
-		if (_mc) {
-			_mc->controlChange(17, detune + 0x40);
-		}
-#endif
-	} else {
-		_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-		// Some drivers handle the transpose and the detune in pitchBend()...
-		if (_player->isAdLibOrFMTowns())
-			sendDetune();
-		else
-			sendPitchBend();
-	}
+	if (_se->_newSystem)
+		return;
+
+	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
+	// Some drivers handle the transpose and the detune in pitchBend()...
+	if (_player->isAdLibOrFMTowns())
+		sendDetune();
+	else
+		sendPitchBend();
 }
 
 void Part::pitchBend(int16 value) {
@@ -146,8 +142,12 @@ void Part::set_pan(int8 pan) {
 	sendPanPosition(_pan_eff + 0x40);
 }
 
-void Part::set_sm17(int8 val) {
-
+void Part::set_polyphony(byte val) {
+	if (!_se->_newSystem)
+		return;
+	_polyphony = val;
+	if (_mc)
+		_mc->controlChange(17, val);
 }
 
 void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
@@ -255,19 +255,20 @@ void Part::noteOn(byte note, byte velocity) {
 		if (!mc)
 			return;
 
-		// FIXME: The following is evil, EVIL!!! Either prev_vol_eff is
-		// actually meant to be a member of the Part class (i.e. each
-		// instance of Part keeps a separate copy of it); or it really
-		// is supposed to be shared by all Part instances -- but then it
-		// should be implemented as a class static var. As it is, using
-		// a function level static var in most cases is arcane and evil.
-		static byte prev_vol_eff = 128;
-		if (_vol_eff != prev_vol_eff) {
+		if (_vol_eff != _se->_rhyState.vol)
 			mc->volume(_vol_eff);
-			prev_vol_eff = _vol_eff;
-		}
-		if ((note < 35) && (!_player->_se->isNativeMT32()))
+
+		if (_se->_newSystem) {
+			if (_pri_eff != _se->_rhyState.prio)
+				mc->priority(_pri_eff);
+			if (_polyphony != _se->_rhyState.poly)
+				mc->controlChange(17, _polyphony);
+
+		} else if ((note < 35) && (!_player->_se->isNativeMT32())) {
 			note = Instrument::_gmRhythmMap[note];
+		}
+
+		_se->_rhyState = IMuseInternal::RhyState(_vol_eff, _polyphony, _pri_eff);
 
 		mc->noteOn(note, velocity);
 	}
@@ -358,6 +359,7 @@ void Part::sendAll() {
 	_mc->sustain(_pedal);
 	_mc->modulationWheel(_modwheel);
 	sendPanPosition(_pan_eff + 0x40);
+	sendPolyphony();
 
 	if (_instrument.isValid())
 		_instrument.send(_mc);
@@ -483,29 +485,13 @@ void Part::sendPanPosition(uint8 value) {
 void Part::sendEffectLevel(uint8 value) {
 	if (!_mc)
 		return;
+	_mc->effectLevel(value);
+}
 
-	// As described in bug report #1849 "MI2: Minor problems in native MT-32 mode"
-	// for the MT-32 one has to use a sysEx event to change the effect level (rather
-	// the reverb setting).
-	if (_player->_se->isNativeMT32()) {
-		if (value != 127 && value != 0) {
-			warning("Trying to use unsupported effect level value %d in native MT-32 mode.", value);
-
-			if (value >= 64)
-				value = 127;
-			else
-				value = 0;
-		}
-
-		byte message[9];
-		memcpy(message, "\x41\x00\x16\x12\x00\x00\x06\x00\x00", 9);
-		message[1] = _mc->getNumber();
-		message[7] = (value == 127) ? 1 : 0;
-		message[8] = 128 - (6 + message[7]);
-		_player->getMidiDriver()->sysEx(message, 9);
-	} else {
-		_mc->effectLevel(value);
-	}
+void Part::sendPolyphony() {
+	if (!_mc || !_se->_newSystem)
+		return;
+	_mc->controlChange(17, _polyphony);
 }
 
 } // End of namespace Scumm

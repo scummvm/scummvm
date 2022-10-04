@@ -46,6 +46,7 @@ namespace Scumm {
 IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 initFlags) :
 	_native_mt32((initFlags & kFlagNativeMT32) || (initFlags & kFlagRolandGS)), // GS Mode emulates MT-32 on a GS device, so _native_mt32 should always be true
 	_enable_gs(initFlags & kFlagRolandGS),
+	_newSystem(initFlags & kFlagNewSystem),
 	_midi_adlib(nullptr),
 	_midi_native(nullptr),
 	_sysex(nullptr),
@@ -90,12 +91,6 @@ IMuseInternal::~IMuseInternal() {
 	}
 
 	if (_midi_native) {
-		if (_native_mt32) {
-			// Reset the MT-32
-			_midi_native->sysEx((const byte *) "\x41\x10\x16\x12\x7f\x00\x00\x01\x00", 9);
-			_system->delayMillis(250);
-		}
-
 		_midi_native->close();
 		delete _midi_native;
 		_midi_native = nullptr;

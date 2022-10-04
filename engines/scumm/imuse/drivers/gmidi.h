@@ -32,10 +32,10 @@ public:
 	~IMuseDriver_GMidi() override;
 
 	int open() override;
+	void close() override;
 
 	// Just pass these through...
 	bool isOpen() const override { return _drv ? _drv->isOpen() : false; }
-	void close() override { if (_drv) _drv->close(); }
 	uint32 property(int prop, uint32 param) override { return _drv ? _drv->property(prop, param) : 0; }
 	void setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) override { if (_drv) _drv->setTimerCallback(timerParam, timerProc); }
 	uint32 getBaseTempo() override { return _drv ? _drv->getBaseTempo() : 0; }
