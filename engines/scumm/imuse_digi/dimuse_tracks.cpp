@@ -282,22 +282,42 @@ int IMuseDigital::tracksGetNextSound(int soundId) {
 	return foundSoundId;
 }
 
-void IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
-	if (!_trackList)
+int IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	if (!_trackList) {
 		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: empty trackList, ignoring call...");
+		return isFTSoundEngine() ? 0 : -1;
+	}
 
 	IMuseDigiTrack *track = _trackList;
-	do {
-		if (track->soundId) {
-			if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
-				streamerQueryStream(track->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
-				return;
-			}
-		}
-		track = track->next;
-	} while (track);
+	if (isFTSoundEngine()) {
+		IMuseDigiTrack *chosenTrack = nullptr;
 
-	debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+		do {
+			if (track->soundId > soundId && (!chosenTrack || track->soundId < chosenTrack->soundId)) {
+				if (track->dispatchPtr->streamPtr)
+					chosenTrack = track;
+			}
+			track = track->next;
+		} while (track);
+
+		if (!chosenTrack)
+			return 0;
+		streamerQueryStream(chosenTrack->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
+		return chosenTrack->soundId;
+	} else {
+		do {
+			if (track->soundId) {
+				if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
+					streamerQueryStream(track->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
+					return 0;
+				}
+			}
+			track = track->next;
+		} while (track);
+
+		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+		return -1;
+	}
 }
 
 int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {

@@ -188,6 +188,8 @@ int IMuseDigital::startVoice(int soundId, const char *soundName, byte speakingAc
 		if (fileDoesNotExist)
 			return 1;
 
+		fillStreamsWhileMusicCritical(5);
+
 		// WORKAROUND for this particular sound file not playing (this is a bug in the original):
 		// this is happening because the sound buffer responsible for speech
 		// is still busy with the previous speech file playing during the SAN
@@ -336,6 +338,10 @@ void IMuseDigital::saveLoadEarly(Common::Serializer &s) {
 			diMUSESetVoiceGroupVol(diMUSEGetVoiceGroupVol());
 			diMUSESetSFXGroupVol(diMUSEGetSFXGroupVol());
 		}
+	}
+
+	if (_vm->_game.id == GID_CMI && s.isLoading()) {
+		fillStreamsWhileMusicCritical(10);
 	}
 }
 
@@ -678,6 +684,67 @@ void IMuseDigital::receiveAudioFromSMUSH(uint8 *srcBuf, int32 inFrameCount, int3
 	_internalMixer->mix(srcBuf, inFrameCount, 8, 1, feedSize, mixBufStartIndex, volume, pan, is11025Hz);
 }
 
+void IMuseDigital::floodMusicBuffer() {
+	while (!isMusicStreamIdle()) {
+		diMUSEProcessStreams();
+	}
+}
+
+void IMuseDigital::fillStreamsWhileMusicCritical(int fillTimesAfter) {
+	if (!isFTSoundEngine()) {
+		while (isMusicCritical()) {
+			diMUSEProcessStreams();
+		}
+	}
+
+	for (int i = 0; i < fillTimesAfter; i++) {
+		diMUSEProcessStreams();
+	}
+}
+
+bool IMuseDigital::isMusicStreamIdle() {
+	int bufSize, criticalSize, freeSpace, paused;
+	IMuseDigiSndBuffer *bufInfo = _filesHandler->getBufInfo(DIMUSE_BUFFER_MUSIC);
+
+	if (!queryNextSoundFile(bufSize, criticalSize, freeSpace, paused))
+		return true;
+	return paused || (bufSize - bufInfo->loadSize < freeSpace);
+}
+
+bool IMuseDigital::isMusicCritical() {
+	int bufSize, criticalSize, freeSpace, paused;
+
+	if (!queryNextSoundFile(bufSize, criticalSize, freeSpace, paused))
+		return false;
+	return !paused && freeSpace <= criticalSize;
+}
+
+bool IMuseDigital::queryNextSoundFile(int &bufSize, int &criticalSize, int &freeSpace, int &paused) {
+	int soundId;
+	if (isFTSoundEngine()) {
+		soundId = diMUSEQueryStream(0, bufSize, criticalSize, freeSpace, paused);
+		if (soundId) {
+			while (freeSpace >= criticalSize) {
+				soundId = diMUSEQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+				if (!soundId)
+					return false;
+			}
+			return true;
+		}
+	} else {
+		soundId = diMUSEGetNextSound(0);
+		while (soundId) {
+			if (diMUSEGetParam(soundId, DIMUSE_P_SND_HAS_STREAM) &&
+				(diMUSEGetParam(soundId, DIMUSE_P_GROUP) == DIMUSE_GROUP_MUSIC || diMUSEGetParam(soundId, DIMUSE_P_GROUP) == DIMUSE_GROUP_MUSICEFF)) {
+				diMUSEQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+				return true;
+			}
+			soundId = diMUSEGetNextSound(soundId);
+		}
+	}
+	return false;
+}
+
 void IMuseDigital::parseScriptCmds(int cmd, int soundId, int sub_cmd, int d, int e, int f, int g, int h, int i, int j, int k, int l, int m, int n, int o, int p) {
 	int b = soundId;
 	int c = sub_cmd;
@@ -829,8 +896,8 @@ int IMuseDigital::diMUSEProcessStreams() {
 	return cmdsHandleCmd(DIMUSE_C_PROCESS_STREAMS);
 }
 
-void IMuseDigital::diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
-	waveQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+int IMuseDigital::diMUSEQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	return waveQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
 }
 
 int IMuseDigital::diMUSEFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {

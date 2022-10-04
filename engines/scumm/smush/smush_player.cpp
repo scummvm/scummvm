@@ -1194,6 +1194,15 @@ void SmushPlayer::play(const char *filename, int32 speed, int32 offset, int32 st
 
 	_pauseTime = 0;
 
+	// This piece of code is used to ensure there are
+	// no audio hiccups while loading the SMUSH video;
+	// Each version of the engine does it in its own way.
+	if (_imuseDigital->isFTSoundEngine()) {
+		_imuseDigital->fillStreamsWhileMusicCritical(20);
+	} else {
+		_imuseDigital->floodMusicBuffer();
+	}
+
 	int skipped = 0;
 
 	for (;;) {

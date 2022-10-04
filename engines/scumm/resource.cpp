@@ -593,6 +593,8 @@ void ScummEngine::nukeCharset(int i) {
 }
 
 void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
+	Common::StackLock lock(_resourceAccessMutex);
+
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", nameOfResType(type), idx);
 
 	if ((type == rtRoom) && idx > 0x7F && _game.version < 7 && _game.heversion <= 71) {
@@ -615,6 +617,21 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 
 	if (idx <= _res->_types[type].size() && _res->_types[type][idx]._address)
 		return;
+
+	#ifdef ENABLE_SCUMM_7_8
+	_resourceAccessMutex.unlock();
+
+	if (_imuseDigital) {
+		int bufSize, criticalSize, freeSpace, paused;
+		if (_imuseDigital->isFTSoundEngine() && _imuseDigital->queryNextSoundFile(bufSize, criticalSize, freeSpace, paused)) {
+			_imuseDigital->fillStreamsWhileMusicCritical(5);
+		} else {
+			_imuseDigital->fillStreamsWhileMusicCritical(_game.id == GID_DIG ? 30 : 20);
+		}
+	}
+
+	_resourceAccessMutex.lock();
+#endif
 
 	loadResource(type, idx);
 
