@@ -658,15 +658,15 @@ dgInt32 dgBroadPhaseCollision::ConvexCast(dgCollision *const shape,
 			for (dgInt32 i = 0; i < totalCount; i++) {
 				//				dgFloat32 t;
 				dgContactPoint contact;
-				dgVector p0(info[i].m_point[0], info[i].m_point[1], info[i].m_point[2],
+				dgVector pv0(info[i].m_point[0], info[i].m_point[1], info[i].m_point[2],
 							dgFloat32(0.0f));
-				dgVector p1(p0 + dir);
-				p0 -= dir;
+				dgVector pv1(pv0 + dir);
+				pv0 -= dir;
 
 				const dgMatrix &matrix = info[i].m_hitBody->m_matrix;
 
-				dgVector l0(matrix.UntransformVector(p0));
-				dgVector l1(matrix.UntransformVector(p1));
+				dgVector l0(matrix.UntransformVector(pv0));
+				dgVector l1(matrix.UntransformVector(pv1));
 				info[i].m_normalOnHitPoint[0] = info[i].m_normal[0];
 
 				// bug fixed by thedmd
