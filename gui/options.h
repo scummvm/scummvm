@@ -115,7 +115,7 @@ protected:
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
 
-	void setScalerControls();
+	void setScalerControls(bool enabled = true);
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;

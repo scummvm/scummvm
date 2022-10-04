@@ -396,6 +396,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("stretch_mode", _domain) ||
 		ConfMan.hasKey("scaler", _domain) ||
 		ConfMan.hasKey("scale_factor", _domain) ||
+		ConfMan.hasKey("shader", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain) ||
 		ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("vsync", _domain) ||
