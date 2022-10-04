@@ -327,7 +327,8 @@
 		point: "POINT"
 		points: "POINTS"
 		of_damage: "OF DAMAGE!"
-
+		fight_which: "FIGHT WHICH 'A'-'%d'?"
+		shoot_which: "SHOOT WHICH 'A'-'%d'?"
 		status:
 			0: "(PARALYZE)"
 			1: "(WEBBED)  "

@@ -90,7 +90,7 @@ protected:
 	/**
 	 * Prints a message 'ESC' to go back
 	 */
-	void escToGoBack(int x = 12);
+	void escToGoBack(int x = 12, int y = -1);
 
 	/**
 	 * Called when an active timeout countdown expired

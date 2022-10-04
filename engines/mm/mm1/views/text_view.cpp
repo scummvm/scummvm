@@ -128,9 +128,11 @@ void TextView::drawTextBorder() {
 	}
 }
 
-void TextView::escToGoBack(int x) {
-	writeString(x, (_bounds.height() / FONT_SIZE) - 1,
-		STRING["dialogs.misc.go_back"]);
+void TextView::escToGoBack(int x, int y) {
+	if (y == -1)
+		y = (_bounds.height() / FONT_SIZE) - 1;
+
+	writeString(x, y, STRING["dialogs.misc.go_back"]);
 }
 
 void TextView::timeout() {
