@@ -703,23 +703,25 @@ void IMuseDigital::fillStreamsWhileMusicCritical(int fillTimesAfter) {
 }
 
 bool IMuseDigital::isMusicStreamIdle() {
-	int bufSize, criticalSize, freeSpace, paused;
+	int32 bufSize, criticalSize, freeSpace;
+	int paused;
 	IMuseDigiSndBuffer *bufInfo = _filesHandler->getBufInfo(DIMUSE_BUFFER_MUSIC);
 
 	if (!queryNextSoundFile(bufSize, criticalSize, freeSpace, paused))
 		return true;
-	return paused || (bufSize - bufInfo->loadSize < freeSpace);
+	return (paused > 0) || (bufSize - bufInfo->loadSize < freeSpace);
 }
 
 bool IMuseDigital::isMusicCritical() {
-	int bufSize, criticalSize, freeSpace, paused;
+	int32 bufSize, criticalSize, freeSpace;
+	int paused;
 
 	if (!queryNextSoundFile(bufSize, criticalSize, freeSpace, paused))
 		return false;
-	return !paused && freeSpace <= criticalSize;
+	return (paused == 0) && freeSpace <= criticalSize;
 }
 
-bool IMuseDigital::queryNextSoundFile(int &bufSize, int &criticalSize, int &freeSpace, int &paused) {
+bool IMuseDigital::queryNextSoundFile(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
 	int soundId;
 	if (isFTSoundEngine()) {
 		soundId = diMUSEQueryStream(0, bufSize, criticalSize, freeSpace, paused);

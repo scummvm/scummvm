@@ -622,7 +622,8 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 	_resourceAccessMutex.unlock();
 
 	if (_imuseDigital) {
-		int bufSize, criticalSize, freeSpace, paused;
+		int32 bufSize, criticalSize, freeSpace;
+		int paused;
 		if (_imuseDigital->isFTSoundEngine() && _imuseDigital->queryNextSoundFile(bufSize, criticalSize, freeSpace, paused)) {
 			_imuseDigital->fillStreamsWhileMusicCritical(5);
 		} else {

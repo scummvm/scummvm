@@ -339,7 +339,7 @@ public:
 	void setSmushPlayer(SmushPlayer *splayer);
 	void floodMusicBuffer();
 	void fillStreamsWhileMusicCritical(int fillTimesAfter);
-	bool queryNextSoundFile(int &bufSize, int &criticalSize, int &freeSpace, int &paused);
+	bool queryNextSoundFile(int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused);
 
 	bool isFTSoundEngine(); // Used in the handlers to check if we're using the FT version of the engine
 
