@@ -1217,15 +1217,36 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_stretchPopUp->setEnabled(false);
 	}
 
+	bool scalerToggle = false;
+
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setEnabled(enabled);
 		_scalerPopUp->setEnabled(enabled);
 		_scaleFactorPopUp->setEnabled(enabled);
+
+		scalerToggle = true;
 	} else {
 		_scalerPopUpDesc->setEnabled(false);
 		_scalerPopUp->setEnabled(false);
 		_scaleFactorPopUp->setEnabled(false);
 	}
+
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_shaderButton->setEnabled(enabled);
+		_shader->setEnabled(enabled);
+		_shaderClearButton->setEnabled(enabled);
+
+		scalerToggle = true;
+	} else {
+		_scalerPopUpDesc->setEnabled(false);
+		_scalerPopUp->setEnabled(false);
+		_scaleFactorPopUp->setEnabled(false);
+	}
+
+	_scalerToggleGroup->setEnabled(scalerToggle);
+
+	// Toggle setting based on the radiobutton state
+	setScalerControls(enabled);
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setEnabled(enabled);
@@ -1636,7 +1657,7 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_enableGraphicSettings = true;
 }
 
-void OptionsDialog::setScalerControls() {
+void OptionsDialog::setScalerControls(bool enabled) {
 	bool scalers, shaders;
 
 	if (_scalerToggleGroup->getValue() == kScalerScaler) {
@@ -1645,6 +1666,10 @@ void OptionsDialog::setScalerControls() {
 	} else {
 		scalers = false;
 		shaders = true;
+	}
+
+	if (!enabled) {
+		scalers = shaders = false;
 	}
 
 	_scalerPopUpDesc->setEnabled(scalers);
