@@ -635,6 +635,7 @@ void GridWidget::reloadThumbnails() {
 			continue;
 
 		if (!_loadedSurfaces.contains(entry->thumbPath)) {
+			_loadedSurfaces[entry->thumbPath] = nullptr;
 			Common::String path = Common::String::format("icons/%s-%s.png", entry->engineid.c_str(), entry->gameid.c_str());
 			Graphics::ManagedSurface *surf = loadSurfaceFromFile(path);
 			if (!surf) {
@@ -642,9 +643,9 @@ void GridWidget::reloadThumbnails() {
 				if (!_loadedSurfaces.contains(path)) {
 					surf = loadSurfaceFromFile(path);
 				} else {
-					continue;
+					const Graphics::ManagedSurface *scSurf = _loadedSurfaces[path];
+					_loadedSurfaces[entry->thumbPath] = new Graphics::ManagedSurface(*scSurf);
 				}
-
 			}
 
 			if (surf) {
@@ -659,8 +660,6 @@ void GridWidget::reloadThumbnails() {
 					surf->free();
 					delete surf;
 				}
-			} else {
-				_loadedSurfaces[entry->thumbPath] = nullptr;
 			}
 		}
 	}
