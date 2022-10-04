@@ -208,6 +208,8 @@ protected:
 	/**
 	 * Attack a monster
 	 */
+	void fightMonster(int monsterNum);
+	void shootMonster(int monsterNum);
 	void attackMonsterPhysical();
 	void attackMonsterShooting();
 	void attackMonster(int monsterNum);

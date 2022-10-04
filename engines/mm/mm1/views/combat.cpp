@@ -35,6 +35,13 @@ Combat::Combat() : TextView("Combat") {
 void Combat::setMode(Mode newMode) {
 	_mode = newMode;
 
+	if (newMode == SELECT_OPTION) {
+		_option = OPTION_NONE;
+		MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_COMBAT);
+	} else {
+		MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	}
+
 	if (_mode == MONSTER_SPELL)
 		// Make a copy of monster spell 
 		_monsterSpellLines = getMonsterSpellMessage();
@@ -165,6 +172,18 @@ void Combat::timeout() {
 }
 
 bool Combat::msgKeypress(const KeypressMessage &msg) {
+	if (_mode == SELECT_OPTION && _option != OPTION_NONE) {
+		if (msg.keycode == Common::KEYCODE_ESCAPE) {
+			combatLoop();
+		} else if (msg.keycode >= Common::KEYCODE_a &&
+				msg.keycode < (int)(Common::KEYCODE_a + _fightCount)) {
+			if (_option == OPTION_FIGHT)
+				fightMonster(msg.keycode - Common::KEYCODE_a);
+			else
+				shootMonster(msg.keycode - Common::KEYCODE_a);
+		}
+	}
+
 	return true;
 }
 
@@ -210,6 +229,12 @@ void Combat::writeOptions() {
 	switch (_option) {
 	case OPTION_NONE:
 		writeAllOptions();
+		break;
+	case OPTION_FIGHT:
+		writeFightSelect();
+		break;
+	case OPTION_SHOOT:
+		writeShootSelect();
 		break;
 	default:
 		break;
@@ -264,6 +289,22 @@ void Combat::writeAllOptions() {
 
 	writeString(16, 22, STRING["dialogs.combat.exchange_use"]);
 	writeString(16, 23, STRING["dialogs.combat.retreat_block"]);
+}
+
+void Combat::writeFightSelect() {
+	_fightCount = MIN(_attackerVal, (int)_monsterList.size());
+
+	writeString(10, 0, Common::String::format(
+		STRING["dialogs.combat.fight_which"].c_str(), '@' + _fightCount));
+	escToGoBack(12, 3);
+}
+
+void Combat::writeShootSelect() {
+	_fightCount = MIN(_attackerVal, (int)_monsterList.size());
+
+	writeString(10, 0, Common::String::format(
+		STRING["dialogs.combat.shoot_which"].c_str(), '@' + _fightCount));
+	escToGoBack(12, 3);
 }
 
 void Combat::writeAttackOptions() {
@@ -474,10 +515,8 @@ void Combat::checkMonsterSpellDone() {
 }
 
 void Combat::attack() {
-	if (_val5 == 32)
-		return;
-
-	attackMonster(0);
+	if (_val5 != 32)
+		attackMonsterPhysical();
 }
 
 void Combat::block() {
@@ -490,12 +529,26 @@ void Combat::exchange() {
 }
 
 void Combat::fight() {
+	if (_val2 != 32) {
+		if (_monsterList.size() < 2) {
+			attackMonsterPhysical();
+		} else {
+			setOption(OPTION_FIGHT);
+		}
+	}
 }
 
 void Combat::retreat() {
 }
 
 void Combat::shoot() {
+	if (_val3 != 32) {
+		if (_monsterList.size() < 2) {
+			attackMonsterPhysical();
+		} else {
+			setOption(OPTION_SHOOT);
+		}
+	}
 }
 
 void Combat::use() {
@@ -561,6 +614,11 @@ void Combat::writeCharAttackDamage() {
 	}
 
 	writeString(0, 1, line1);
+}
+
+void Combat::setOption(SelectedOption option) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	_option = option;
 }
 
 } // namespace Views

@@ -43,7 +43,8 @@ void Combat::clear() {
 	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
 	_val6 = _val7 = 0;
 	_val8 = _val9 = _val10 = 0;
-	_val11 = _numberOfTimes = 0;
+	_val11 = 0;
+	_numberOfTimes = 0;
 	_attackerLevel = 0;
 	_advanceIndex = 0;
 	_handicap1 = _handicap2 = 0;
@@ -656,6 +657,18 @@ void Combat::checkParty() {
 	}
 
 	loop1();
+}
+
+void Combat::fightMonster(int monsterNum) {
+	_attackAttr1 = g_globals->_currCharacter->_physicalAttr;
+	_isShooting = false;
+	attackMonster(monsterNum);
+}
+
+void Combat::shootMonster(int monsterNum) {
+	_attackAttr1 = g_globals->_currCharacter->_missileAttr;
+	_isShooting = true;
+	attackMonster(monsterNum);
 }
 
 void Combat::attackMonsterPhysical() {

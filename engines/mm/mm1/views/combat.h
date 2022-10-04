@@ -32,11 +32,17 @@ namespace Views {
 class Combat : public TextView, public Game::Combat {
 private:
 	LineArray _monsterSpellLines;
+	uint _fightCount = 0;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
-		OPTION_NONE, OPTION_ATTACK
+		OPTION_NONE, OPTION_FIGHT, OPTION_SHOOT
 	};
 	SelectedOption _option = OPTION_NONE;
+
+	/**
+	 * Selects a combat option that requires a selection
+	 */
+	void setOption(SelectedOption option);
 
 	void writeOptions();
 	void writeAllOptions();
@@ -167,6 +173,16 @@ private:
 	 * Writes out a message
 	 */
 	void writeMessage();
+
+	/**
+	 * Having selected to fight, selects monster to attack
+	 */
+	void writeFightSelect();
+
+	/**
+	 * Having selected to shoot, selects monster to attack
+	 */
+	void writeShootSelect();
 
 protected:
 	/**
