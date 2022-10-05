@@ -76,7 +76,8 @@ bool Alan2::initialize() {
 		return false;
 	}
 
-	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
+	uint32 version = _gameFile.readUint32BE();
+	if (version != MKTAG(2, 8, 1, 0) && version != MKTAG(2, 6, 0, 0)) {
 		GUIErrorMessage(_("This is not a valid Alan2 file."));
 		return false;
 	}

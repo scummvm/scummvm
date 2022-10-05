@@ -57,7 +57,10 @@ bool Alan2MetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 
 		// Open up the file and calculate the md5
 		Common::File gameFile;
-		if (!gameFile.open(*file) || gameFile.readUint32BE() != MKTAG(2, 8, 1, 0))
+		if (!gameFile.open(*file))
+			continue;
+		uint32 version = gameFile.readUint32BE();
+		if (version != MKTAG(2, 8, 1, 0) && version != MKTAG(2, 6, 0, 0))
 			continue;
 
 		gameFile.seek(0);
