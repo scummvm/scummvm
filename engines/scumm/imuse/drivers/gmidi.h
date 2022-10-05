@@ -26,7 +26,11 @@
 
 namespace Scumm {
 
+class IMuseChannel_GMidi;
+class GMidiControlChan;
+
 class IMuseDriver_GMidi : public MidiDriver {
+	friend class IMuseChannel_GMidi;
 public:
 	IMuseDriver_GMidi(MidiDriver::DeviceHandle dev, bool rolandGSMode, bool newSystem);
 	~IMuseDriver_GMidi() override;
@@ -41,6 +45,7 @@ public:
 	uint32 getBaseTempo() override { return _drv ? _drv->getBaseTempo() : 0; }
 	void send(uint32 b) override { if (_drv) _drv->send(b); };
 	void sysEx(const byte *msg, uint16 length) override { if (_drv) _drv->sysEx(msg, length); } 
+	void setPitchBendRange(byte channel, uint range) override { if (_drv) _drv->setPitchBendRange(channel, range); }
 
 	// Channel allocation functions
 	MidiChannel *allocateChannel() override;
@@ -49,10 +54,29 @@ public:
 private:
 	void initDevice();
 	void initDeviceAsRolandGS();
+	void createChannels();
+	void releaseChannels();
+
+	void setNoteFlag(byte chan, byte note) { if (_notesPlaying && chan < 16 && note < 128) _notesPlaying[note] |= (1 << chan); }
+	void clearNoteFlag(byte chan, byte note) { if (_notesPlaying && chan < 16 && note < 128) _notesPlaying[note] &= ~(1 << chan); }
+	bool queryNoteFlag(byte chan, byte note) const { return (_notesPlaying && chan < 16 && note < 128) ? _notesPlaying[note] & (1 << chan) : false; }
+	void setSustainFlag(byte chan, byte note) { if (_notesSustained && chan < 16 && note < 128) _notesSustained[note] |= (1 << chan); }
+	void clearSustainFlag(byte chan, byte note) { if (_notesSustained && chan < 16 && note < 128) _notesSustained[note] &= ~(1 << chan); }
+	bool querySustainFlag(byte chan, byte note) const { return (_notesSustained && chan < 16 && note < 128) ? _notesSustained[note] & (1 << chan) : false; }
 
 	MidiDriver *_drv;
-	const bool _gsMode;
 	const bool _newSystem;
+	const bool _gsMode;
+	const byte _numChannels;
+
+	IMuseChannel_GMidi **_imsParts;
+	GMidiControlChan **_controlChan;
+
+	GMidiControlChan *_idleChain;
+	GMidiControlChan *_activeChain;
+
+	uint16 *_notesPlaying;
+	uint16 *_notesSustained;
 };
 
 } // End of namespace Scumm
