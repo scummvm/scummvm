@@ -268,19 +268,19 @@ bool dgCollisionConvexHull::RemoveCoplanarEdge(dgPolyhedra &polyhedra,
 						dgFloat64 projection = n1 % normal0;
 						if (projection >= DG_MAX_EDGE_ANGLE) {
 
-							dgBigVector e1(
+							dgBigVector ee1(
 								hullVertexArray[edge0->m_next->m_next->m_incidentVertex] - hullVertexArray[edge0->m_twin->m_incidentVertex]);
-							dgBigVector e0(
+							dgBigVector ee0(
 								hullVertexArray[edge0->m_twin->m_incidentVertex] - hullVertexArray[edge0->m_twin->m_prev->m_incidentVertex]);
-							_ASSERTE((e0 % e0) >= dgFloat64(0.0f));
-							_ASSERTE((e1 % e1) >= dgFloat64(0.0f));
-							// e0 = e0.Scale (dgRsqrt (e0 % e0));
-							// e1 = e1.Scale (dgRsqrt (e1 % e1));
-							e0 = e0.Scale(dgFloat64(1.0f) / sqrt(e0 % e0));
-							e1 = e1.Scale(dgFloat64(1.0f) / sqrt(e1 % e1));
+							_ASSERTE((ee0 % ee0) >= dgFloat64(0.0f));
+							_ASSERTE((ee1 % ee1) >= dgFloat64(0.0f));
+							// ee0 = ee0.Scale (dgRsqrt (ee0 % ee0));
+							// ee1 = ee1.Scale (dgRsqrt (ee1 % ee1));
+							ee0 = ee0.Scale(dgFloat64(1.0f) / sqrt(ee0 % ee0));
+							ee1 = ee1.Scale(dgFloat64(1.0f) / sqrt(ee1 % ee1));
 
-							dgBigVector n1(e0 * e1);
-							projection = n1 % normal0;
+							dgBigVector nn1(ee0 * ee1);
+							projection = nn1 % normal0;
 							if (projection >= DG_MAX_EDGE_ANGLE) {
 								_ASSERTE(&(*iter) != edge0);
 								_ASSERTE(&(*iter) != edge0->m_twin);
@@ -413,19 +413,19 @@ bool dgCollisionConvexHull::Create(dgInt32 count, dgInt32 strideInBytes,
 			}
 		}
 		if (!success) {
-			dgInt32 count = 0;
+			dgInt32 cnt = 0;
 			dgInt32 vertexCount = convexHull->GetVertexCount();
 			for (dgInt32 i = 0; i < vertexCount; i++) {
 				if (mask[i]) {
-					buffer[count * 3 + 0] = hullVertexArray[i].m_x;
-					buffer[count * 3 + 1] = hullVertexArray[i].m_y;
-					buffer[count * 3 + 2] = hullVertexArray[i].m_z;
-					count++;
+					buffer[cnt * 3 + 0] = hullVertexArray[i].m_x;
+					buffer[cnt * 3 + 1] = hullVertexArray[i].m_y;
+					buffer[cnt * 3 + 2] = hullVertexArray[i].m_z;
+					cnt++;
 				}
 			}
 			delete convexHull;
 			convexHull = new (GetAllocator()) dgConvexHull3d(GetAllocator(),
-															 &buffer[0], 3 * sizeof(dgFloat64), count, tolerance);
+															 &buffer[0], 3 * sizeof(dgFloat64), cnt, tolerance);
 		}
 	}
 

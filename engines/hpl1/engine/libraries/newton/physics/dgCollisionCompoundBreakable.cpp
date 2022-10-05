@@ -389,16 +389,16 @@ dgCollisionCompoundBreakable::dgDebriGraph::dgDebriGraph(
 	dgMemoryAllocator *const allocator, dgDeserialize callback,
 	void *const userData) : dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>(allocator) {
 	dgInt32 count;
-	dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *node;
+	dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *n;
 
 	callback(userData, &count, dgInt32(sizeof(dgInt32)));
 	dgStack<dgListNode *> nodesMap(count);
 
-	node = dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::AddNode();
-	dgDebriNodeInfo &data = GetFirst()->GetInfo().m_nodeData;
-	callback(userData, &data.m_commonData, sizeof(data.m_commonData));
+	n = dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::AddNode();
+	dgDebriNodeInfo &dataN = GetFirst()->GetInfo().m_nodeData;
+	callback(userData, &dataN.m_commonData, sizeof(dataN.m_commonData));
 
-	nodesMap[0] = node;
+	nodesMap[0] = n;
 	for (dgInt32 i = 1; i < count; i++) {
 		dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *node;
 
@@ -440,12 +440,12 @@ dgCollisionCompoundBreakable::dgDebriGraph::dgDebriGraph(
 	{
 		newNode = dgGraph<dgDebriNodeInfo, dgSharedNodeMesh>::AddNode();
 
-		dgDebriNodeInfo &srcData = node->GetInfo().m_nodeData;
-		dgDebriNodeInfo &data = newNode->GetInfo().m_nodeData;
+		dgDebriNodeInfo &sourceData = node->GetInfo().m_nodeData;
+		dgDebriNodeInfo &destData = newNode->GetInfo().m_nodeData;
 
-		data.m_commonData = srcData.m_commonData;
-		data.m_mesh = srcData.m_mesh;
-		data.m_mesh->AddRef();
+		destData.m_commonData = sourceData.m_commonData;
+		destData.m_mesh = sourceData.m_mesh;
+		destData.m_mesh->AddRef();
 
 		filter.Insert(newNode, node);
 	}
@@ -482,23 +482,23 @@ void dgCollisionCompoundBreakable::dgDebriGraph::Serialize(dgSerialize callback,
 	enumerator.Insert(0, GetFirst());
 
 	for (dgListNode *node = GetFirst()->GetNext(); node; node = node->GetNext()) {
-		dgDebriNodeInfo &data = node->GetInfo().m_nodeData;
-		dgDebriNodeInfo::PackedSaveData packedData(data.m_commonData);
-		packedData.m_lru = 0;
-		callback(userData, &packedData, sizeof(packedData));
+		dgDebriNodeInfo &dataN = node->GetInfo().m_nodeData;
+		dgDebriNodeInfo::PackedSaveData packedDataN(dataN.m_commonData);
+		packedDataN.m_lru = 0;
+		callback(userData, &packedDataN, sizeof(packedDataN));
 
-		data.m_mesh->Serialize(callback, userData);
+		dataN.m_mesh->Serialize(callback, userData);
 		enumerator.Insert(index, node);
 		index++;
 	}
 
 	for (dgListNode *node = GetFirst(); node != GetLast(); node = node->GetNext()) {
-		dgInt32 count;
+		dgInt32 countN;
 
 		index = 0;
-		count = node->GetInfo().GetCount();
-		callback(userData, &count, dgInt32(sizeof(dgInt32)));
-		dgStack<dgInt32> buffer(count);
+		countN = node->GetInfo().GetCount();
+		callback(userData, &countN, dgInt32(sizeof(dgInt32)));
+		dgStack<dgInt32> buffer(countN);
 		dgInt32 *const pool = &buffer[0];
 		for (dgGraphNode<dgDebriNodeInfo, dgSharedNodeMesh>::dgListNode *edgeNode =
 				 node->GetInfo().GetFirst();
@@ -506,7 +506,7 @@ void dgCollisionCompoundBreakable::dgDebriGraph::Serialize(dgSerialize callback,
 			pool[index] = enumerator.Find(edgeNode->GetInfo().m_node)->GetInfo();
 			index++;
 		}
-		callback(userData, &pool[0], size_t(count * sizeof(dgInt32)));
+		callback(userData, &pool[0], size_t(countN * sizeof(dgInt32)));
 	}
 }
 
@@ -727,12 +727,12 @@ dgCollisionCompoundBreakable::dgCollisionCompoundBreakable(dgInt32 count,
 		 node != m_conectivity.GetLast(); node = node->GetNext()) {
 		dgDebriNodeInfo &data = node->GetInfo().m_nodeData;
 
-		for (dgMesh::dgListNode *node = data.m_mesh->GetFirst(); node;
-			 node = node->GetNext()) {
+		for (dgMesh::dgListNode *nodeF = data.m_mesh->GetFirst(); nodeF;
+			 nodeF = nodeF->GetNext()) {
 			dgInt8 visbility;
 			dgInt32 rootIndexCount;
 
-			dgSubMesh &segment = node->GetInfo();
+			dgSubMesh &segment = nodeF->GetInfo();
 			dgSubMesh &rootSegment = *mainSegmenst[segment.m_material];
 
 			visbility = dgInt8(segment.m_visibleFaces);
