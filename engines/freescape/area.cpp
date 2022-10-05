@@ -21,6 +21,7 @@
 
 // Based on Phantasma code by Thomas Harte (2013)
 
+#include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/entrance.h"
@@ -102,12 +103,12 @@ Area::~Area() {
 }
 
 void Area::show() {
-	debug("Area name: %s", name.c_str());
+	debugC(1, kFreescapeDebugMove, "Area name: %s", name.c_str());
 	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); it++)
-		debug("objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
+		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
 
 	for (ObjectMap::iterator it = entrancesByID->begin(); it != entrancesByID->end(); it++)
-		debug("objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
+		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
 }
 
 void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
@@ -165,7 +166,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 		  && drawableObjects[i]->boundingBox.isValid()
 		  && ray.intersectAABB(drawableObjects[i]->boundingBox)
 		  && size >= objSize) {
-			debug("shot obj id: %d", drawableObjects[i]->getObjectID());
+			debugC(1, kFreescapeDebugMove, "shot obj id: %d", drawableObjects[i]->getObjectID());
 			collided = drawableObjects[i];
 			size = objSize;
 		}
@@ -192,7 +193,7 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 void Area::addObject(Object *obj) {
 	assert(obj);
 	int id = obj->getObjectID();
-	debug("Adding object %d to room %d", id, areaID);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room %d", id, areaID);
 	assert(!objectsByID->contains(id));
 	(*objectsByID)[id] = obj;
 	if (obj->isDrawable())
@@ -211,7 +212,7 @@ void Area::removeObject(int16 id) {
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
-	debug("Adding object %d to room structure", id);
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
 	Object *obj = global->objectWithID(id);
 	if (!obj) {
 		assert(global->entranceWithID(id));
