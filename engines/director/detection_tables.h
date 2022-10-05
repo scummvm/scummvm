@@ -43,7 +43,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "abcpalsafety",		"Safety Scavenger Hunt" }, // Alphabet Pals
 	{ "abductthis",			"Abduct This!" },
 	{ "afiles",				"The A-Files" },
-	{ "agapito",			"Agapito's Crazy Adventure" },
+	{ "agapito",			"Agapito's Crazy Adventure" },   // Not director?
 	{ "alice",				"Alice: An Interactive Museum" },
 	{ "alphabet",			"The Interactive Alphabet" },
 	{ "amandastories",		"AmandaStories" },
@@ -248,7 +248,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "keroppi",			"Keroppi Day Hopper" },
 	{ "kidsmathsquest",		"Kid's Maths Quest" },
 	{ "kingandi",			"The King and I: Animated Thinking Adventure" },
-	{ "korkydragons",		"Dragons" },
+	{ "korkydragons",		"Dragons!" },
 	{ "kothhoot",			"King of the Hill: Hootenany" },
 	{ "koththunt",			"King of the Hill: Texas Hunting" },
 	{ "kyoto",				"Cosmology of Kyoto" },
@@ -1980,6 +1980,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINDEMO1("elroycostume", "Demo", "elroy.exe", "9d18c6a224dd0e5be4ad03a05c74254b", 854349, 311),
 
 	MACDEMO1("emigre", "Demo", "play cheese", "7c80091b84d4d5d48f7c773b30b10598", 990669, 310),
+
+	MACGAME1("encarta94", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385727, 313),
 
 	MACGAME1("encarta95", "", "Encarta Projector", "7f443f2e63fd497a9ad85b10dc880a91", 385729, 313),
 	WINDEMO1("encarta95", "Demo", "ENDEM95.EXE", "61d63911d437806fd473ffc31ddfc53d", 12109799, 311),
@@ -3846,6 +3848,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From Star Trek: Klingon (Disc 3)
 	MACGAME1("klingonlab", "", "Klingon Language Lab/Klingon Language Lab", "b797956eb3a4dabcc15bfadf6fc66591", 481226, 404),
 	WINGAME1("klingonlab", "", "TREK_WIN.EXE", "204417e63c0a2df18cf42d780b97ed58", 1425763, 400),
+
+	MACGAME1("korkydragons", "", "Dragons!", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486726, 404),
+	WINGAME1t("korkydragons", "", "DRAGONS!.EXE", "4d35a9f14ea5b012e552cd6b3a7e7452", 698833, 404),
 
 	MACGAME1("kyoto", "v2.0", "Cosmology of KYOTO", "8719de9c083aca942fc0e5c0a127b6dc", 484370, 400),
 	WINGAME1("kyoto", "", "PLAY_E.EXE", "84cc8880f8c46b4da121b4c9f184418a", 691269, 400),
