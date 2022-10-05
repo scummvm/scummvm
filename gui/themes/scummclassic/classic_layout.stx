@@ -341,6 +341,10 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grScalerRadioButton'
+						type = 'Radiobutton'
+						width = '20'
+				/>
 				<widget name = 'grScalerPopupDesc'
 						type = 'OptionsLabel'
 				/>
@@ -349,6 +353,22 @@
 				/>
 				<widget name = 'grScaleFactorPopup'
 						type = 'PopUp'
+				/>
+			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grShaderRadioButton'
+						type = 'Radiobutton'
+						width = '20'
+				/>
+				<widget name = 'grShaderButton'
+						type = 'Button'
+				/>
+				<widget name = 'grShader'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'grShaderClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
 				/>
 			</layout>
 			<widget name = 'grAspectCheckbox'
@@ -377,23 +397,6 @@
 				/>
 				<widget name = 'grAntiAliasPopup'
 						type = 'PopUp'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalOptions_Shader' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<widget name = 'grShaderButton'
-						type = 'Button'
-				/>
-				<widget name = 'grShader'
-						height = 'Globals.Line.Height'
-				/>
-				<widget name = 'grShaderClearButton'
-						height = 'Globals.Line.Height'
-						width = 'Globals.Line.Height'
 				/>
 			</layout>
 		</layout>
@@ -1132,15 +1135,6 @@
 					type = 'Checkbox'
 			/>
 			<import layout = 'Dialog.GlobalOptions_Graphics_Container' />
-		</layout>
-	</dialog>
-
-	<dialog name = 'GameOptions_Shader' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'EnableTabCheckbox'
-					type = 'Checkbox'
-			/>
-			<import layout = 'Dialog.GlobalOptions_Shader' />
 		</layout>
 	</dialog>
 
