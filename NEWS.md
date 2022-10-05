@@ -83,7 +83,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed possible graphics corruptions when using the OpenGL renderer.
 
  AGS:
-   - Fixed a crash in kq1agdi (and possibly others) on big-endian systems.
+   - Fixed a crash in AGDI's KQ1 remake (and some other games), on big-endian systems.
 
  AGOS:
    - Fixed various bugs that lead to crashes in the demo versions of The Feeble Files
@@ -96,16 +96,23 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed a bug that caused the controls to be reset when leaving the Hive puzzle.
 
  Ultima:
-   - Fix rendering issue when moving the minimap off the screen.
-   - Fix possible crash when using the autosave function.
+   - Fixed rendering issue when moving the minimap off the screen.
+   - Fixed possible crash when using the autosave function.
 
  SCI:
    - Fixed various bugs and script issues in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG4 and SQ5.
    - Numerous improvements to various parts of the engine code.
 
  SCUMM:
-   - Fix potential lockups in v7-v8 games.
-   - Prevent crashs caused by missing .SOU/.BUN files.
+   - Fixed potential lockups in games using iMuse.
+   - Prevented crashes caused by missing .SOU/.BUN files.
+   - Fixed crashes in v7-v8 games on strict-alignment platforms.
+
+ Toltecs:
+   - Fixed crashes on some strict-alignment platforms.
+
+ Toon:
+   - Fixed music and SFX being muted by default when adding the Toonstruck game.
 
  Android port:
    - Properly convert mouse coordinates between screen coordinates and virtual ones.
