@@ -156,11 +156,6 @@ private:
 	void fight();
 
 	/**
-	 * Protect option
-	 */
-	void protect();
-
-	/**
 	 * Retreat option
 	 */
 	void retreat();

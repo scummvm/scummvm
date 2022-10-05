@@ -220,7 +220,7 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_CAST:
 		cast();
 		break;
-	case KEYBIND_COMBAT_DELAY:
+	case KEYBIND_DELAY:
 		delay();
 		break;
 	case KEYBIND_COMBAT_EXCHANGE:
@@ -229,8 +229,11 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_FIGHT:
 		fight();
 		break;
-	case KEYBIND_COMBAT_PROTECT:
-		protect();
+	case KEYBIND_PROTECT:
+		addView("Protect");
+		break;
+	case KEYBIND_QUICKREF:
+		addView("QuickRef");
 		break;
 	case KEYBIND_COMBAT_RETREAT:
 		retreat();
@@ -578,9 +581,6 @@ void Combat::fight() {
 			setOption(OPTION_FIGHT);
 		}
 	}
-}
-
-void Combat::protect() {
 }
 
 void Combat::retreat() {
