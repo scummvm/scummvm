@@ -65,7 +65,7 @@ void FreescapeEngine::loadColorPalette() {
 	_gfx->_colorMap = &_colorMap;
 }
 
-void FreescapeEngine::loadAmigaPalette(Common::SeekableReadStream *file, int offset) {
+void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int r, g, b;
 	for (int i = 0; i < int(_areaMap.size()); i++) {
@@ -85,16 +85,16 @@ void FreescapeEngine::loadAmigaPalette(Common::SeekableReadStream *file, int off
 			palette[c][2] = byte(b);
 		}
 
-		assert(!_amigaPalette.contains(label));
-		_amigaPalette[label] = (byte*) palette;
+		assert(!_paletteByArea.contains(label));
+		_paletteByArea[label] = (byte*) palette;
 	}
 }
 
-void FreescapeEngine::swapAmigaPalette(uint16 levelID) {
+void FreescapeEngine::swapPalette(uint16 levelID) {
 	if (_gfx->_palette)
 		delete _gfx->_palette;
 
-	_gfx->_palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, _amigaPalette[levelID]);
+	_gfx->_palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, _paletteByArea[levelID]);
 }
 
 

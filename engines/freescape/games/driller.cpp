@@ -101,7 +101,7 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 
 	if (isAmiga() || isAtariST())
-		swapAmigaPalette(areaID);
+		swapPalette(areaID);
 }
 
 void DrillerEngine::loadGlobalObjects(Common::SeekableReadStream *file, int offset) {
@@ -162,7 +162,7 @@ void DrillerEngine::loadAssetsDemo() {
 		load8bitArea(file, 16);*/
 
 		load8bitBinary(file, 0x442, 16);
-		loadAmigaPalette(file, 0x0);
+		loadPalettes(file, 0x0);
 
 		file = gameDir.createReadStreamForMember("driller");
 		if (file == nullptr)
@@ -199,7 +199,7 @@ void DrillerEngine::loadAssetsDemo() {
 		load8bitArea(file, 16);*/
 
 		load8bitBinary(file, 0x442, 16);
-		loadAmigaPalette(file, 0x0);
+		loadPalettes(file, 0x0);
 
 		file = gameDir.createReadStreamForMember("x.prg");
 		if (file == nullptr)
@@ -236,7 +236,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadMessagesFixedSize(file, 0xc66e, 14, 20);
 			loadGlobalObjects(file, 0xbd62);
 			load8bitBinary(file, 0x29c16, 16);
-			loadAmigaPalette(file, 0x297d4);
+			loadPalettes(file, 0x297d4);
 			loadSoundsFx(file, 0x30e80, 25);
 		} else if (_variant == "Kixx") {
 			file = gameDir.createReadStreamForMember("lift.neo");
@@ -256,7 +256,7 @@ void DrillerEngine::loadAssetsFullGame() {
 				error("Failed to open 'driller' executable for Amiga");
 
 			load8bitBinary(file, 0x21a3e, 16);
-			loadAmigaPalette(file, 0x215fc);
+			loadPalettes(file, 0x215fc);
 
 			file = gameDir.createReadStreamForMember("soundfx");
 			if (file == nullptr)
