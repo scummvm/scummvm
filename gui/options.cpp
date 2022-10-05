@@ -360,7 +360,7 @@ void OptionsDialog::build() {
 		// Set the scaler checkbox value
 		int scalerVal = kScalerScaler;
 
-		if (ConfMan.hasKey("usehaders", _domain) && ConfMan.get("usehaders", _domain) == "shaders")
+		if (ConfMan.hasKey("useshaders", _domain) && ConfMan.get("useshaders", _domain) == "shaders")
 			scalerVal = kScalerShader;
 
 		_scalerToggleGroup->setValue(scalerVal);
@@ -608,12 +608,15 @@ void OptionsDialog::apply() {
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
 
-			Common::String useshader = "scalers";
+			Common::String useshaders = "scalers";
 
 			if (_scalerToggleGroup->getValue() == kScalerShader)
-				useshader = "shaders";
+				useshaders = "shaders";
 
-			ConfMan.set("usehaders", useshader, _domain);
+			if (ConfMan.get("useshaders", _domain) != useshaders)
+				graphicsModeChanged = true;
+
+			ConfMan.set("useshaders", useshaders, _domain);
 
 			bool isSet = false;
 
@@ -769,8 +772,16 @@ void OptionsDialog::apply() {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
-		g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
-		g_system->setShader(ConfMan.get("shader", _domain));
+
+		if (ConfMan.hasKey("useshaders", _domain) && ConfMan.get("useshaders", _domain) == "shaders") {
+			g_system->setScaler(g_system->getDefaultScaler(), g_system->getDefaultScaleFactor());
+			g_system->setShader(ConfMan.get("shader", _domain));
+		} else {
+			// THis should stay in the fallback section for allowing more values to the toggle group
+
+			g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
+			g_system->setShader("");
+		}
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
