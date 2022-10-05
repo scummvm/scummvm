@@ -580,6 +580,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sk8board",			"RIDE: An Interactive Skateboarding Experience" },
 	{ "skieurope96",		"Ski Europe '96" },
 	{ "smithamerica",		"Smithsonian's America" },
+	{ "sourcesfaith",		"Sources of Faith: An Interactive Guide to Seven World Faiths" },
 	{ "supersonic",			"Supersonic: A Multimedia Guide to Modern Military Aircraft" },
 	{ "survive",			"How Would You Survive?" },
 	{ "take5",				"Take Five: Relaxation at Your Finger Tips" },
@@ -637,6 +638,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "broadwayyb",			"The 2000-2001 Broadway Series Interactive Yearbook" },
 	{ "catseyeview",		"Cat's Eye View" },
 	{ "childishgambino",	"Capturing Donald Glover's Motion" },
+	{ "chuckaduck",			"Chuck-A-Duck" },
 	{ "colormind",			"ColorMind" },
 	{ "crybaby",			"Crying, Screaming Baby" },
 	{ "dfireworks",			"The Digital Fireworks Stand" },
@@ -669,6 +671,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "simpsontrivia",		"The Simpsons Trivia" },
 	{ "sonysampler",		"Sony Music Sampler" },
 	{ "sorgato",			"Sylvain Sorgato's Drawings in variable color" },
+	{ "ssmorphclock",		"Morph Clock Screensaver" },
 	{ "summertime",			"Summertime" },
 	{ "thematrix",			"The Matrix: Cinemas Everywhere June 11" },
 	{ "timeline",			"TimeLine Animation" },
@@ -723,9 +726,10 @@ static const PlainGameDescriptor directorGames[] = {
 	// Danish titles
 	{ "bamse1",				"Bamses allerskoreste spille-rom" },
 	{ "bamse2",				"Bamse: Min egen spille-rom" },
+	{ "bellini3",			"Bellinis Bikini" },  						// Ep 3 of Bellini series
 	{ "billetrille1",		"Bille & Trille: Da fantasien slap løs" },
 	{ "billetrille2",		"Bille & Trille: Helt ude i skoven" },
-	{ "brspel",			"BR spel" },
+	{ "brspel",				"BR spel" },
 
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
@@ -1341,7 +1345,8 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "bcsinkfloat",		"Blue's Clues: Sink and Float" },
 	{ "blockbuster2",		"Blockbuster Guide to Movies & Videos, 2nd Edition" },
 	{ "bobteam",			"Bob the Builder: Teamwork" },
-	{ "bookshelf94",		"Microsoft Bookshelf 1994" },
+	{ "bookshelf94",		"Microsoft Bookshelf '94" },
+	{ "bookshelf95",		"Microsoft Bookshelf '95" },
 	{ "c64pack",			"Activision's Commodore 64 15-Pack for Windows" },
 	{ "cfdemo",				"The ClueFinders Demo" },
 	{ "cinemania94",		"Microsoft Cinemania 94" },
