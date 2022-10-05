@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-05 03:32+0000\n"
-"PO-Revision-Date: 2022-10-03 20:37+0000\n"
+"PO-Revision-Date: 2022-10-05 16:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -1109,7 +1109,7 @@ msgstr "strekkmodusen kunne ikke bli endret"
 
 #: gui/options.cpp:799
 msgid "the aspect ratio setting could not be changed"
-msgstr "aspektrate-innstillingen kunne ikke endres"
+msgstr "Kunne ikke endre bildeformatsinnstillinger"
 
 #: gui/options.cpp:805
 msgid "the fullscreen setting could not be changed"
@@ -1239,7 +1239,7 @@ msgstr "Bruk lineær filtrering ved grafikkskalering"
 
 #: gui/options.cpp:1552
 msgid "Aspect ratio correction"
-msgstr "Aspekt-rate korrigering"
+msgstr "Bildeformatskorrigering"
 
 #: gui/options.cpp:1552
 msgid "Correct aspect ratio for games"
@@ -1558,11 +1558,11 @@ msgstr "Tema:"
 
 #: gui/options.cpp:2353
 msgid "GUI scale:"
-msgstr "Grensesnittstørrelse:"
+msgstr "Menyskalering:"
 
 #: gui/options.cpp:2360
 msgid "GUI renderer:"
-msgstr "Grensesnittgjengivelse:"
+msgstr "Menygjengivelse:"
 
 #: gui/options.cpp:2372
 msgid "Autosave:"
@@ -1571,7 +1571,7 @@ msgstr "Autolagre:"
 #: gui/options.cpp:2374
 msgctxt "lowres"
 msgid "Autosave:"
-msgstr "Autolagre:"
+msgstr "Automatisk lagring:"
 
 #: gui/options.cpp:2383
 msgid "Always return to the launcher when leaving a game"
@@ -1636,7 +1636,7 @@ msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
 msgstr ""
-"Bruk systemets opprinnelige filutforskeren fremfor den i ScummVM når du skal "
+"Bruk systemets opprinnelige filutforsker fremfor den i ScummVM når du skal "
 "velge en fil eller mappe."
 
 #: gui/options.cpp:2457 gui/updates-dialog.cpp:85
@@ -2123,7 +2123,7 @@ msgstr "Ingen spilltid lagret"
 
 #: gui/saveload-dialog.cpp:527
 msgid "Do you really want to delete this saved game?"
-msgstr "Vil du virkelig slette dette lagrede spillet?"
+msgstr "Er du sikker på at du vil slette dette lagrede spillet?"
 
 #: gui/saveload-dialog.cpp:659 gui/saveload-dialog.cpp:1174
 msgid "Date: "
@@ -2590,7 +2590,7 @@ msgstr "Kunne ikke endre til strekkmodus '%s'."
 
 #: engines/engine.cpp:370
 msgid "Could not apply aspect ratio setting."
-msgstr "Kunne ikke aktivere aspektrate-innstilling."
+msgstr "Kunne ikke endre bildeformatsinnstillinger."
 
 #: engines/engine.cpp:375
 msgid "Could not apply fullscreen setting."
@@ -3123,12 +3123,12 @@ msgstr "Oppløsning: %dx%d"
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
-msgstr "Aspekt-rate korrigering aktivert"
+msgstr "Bildeformatskorrigering aktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
-msgstr "Aspekt-rate korrigering deaktivert"
+msgstr "Bildeformatskorrigering deaktivert"
 
 #: backends/graphics/openglsdl/openglsdl-graphics.cpp:754
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
@@ -3355,7 +3355,7 @@ msgstr "Høyre styrespak Y"
 #: backends/keymapper/remap-widget.cpp:289
 #: backends/keymapper/remap-widget.cpp:319
 msgid "Reset to defaults"
-msgstr "Tilbakestill til standardinnstillinger"
+msgstr "Tilbakestill"
 
 #: backends/keymapper/remap-widget.cpp:290
 msgid "Clear mapping"
@@ -4748,7 +4748,7 @@ msgstr ""
 
 #: engines/cine/metaengine.cpp:133
 msgid "Unnamed autosave"
-msgstr "Autolagring uten navn"
+msgstr "Automatisk lagring uten navn"
 
 #: engines/cine/metaengine.cpp:135 engines/cine/metaengine.cpp:207
 msgid "Unnamed savegame"
@@ -4756,7 +4756,7 @@ msgstr "Lagret spill uten navn"
 
 #: engines/cine/metaengine.cpp:152 engines/cine/metaengine.cpp:215
 msgid "Empty autosave"
-msgstr "Ledig autolagring"
+msgstr "Ledig automatisk lagring"
 
 #: engines/cine/saveload.cpp:860
 msgid ""
@@ -6267,7 +6267,8 @@ msgid ""
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
 "Aktiver Second Chance-funksjonen, som automatisk lagrer ved spesifikke "
-"scener. Aktivering av denne funksjonen skrur av tidsbasert autolagring."
+"scener. Aktivering av denne funksjonen skrur av tidsbasert automatisk "
+"lagring."
 
 #: engines/nancy/dialogs.cpp:47
 msgid "Speech Options"
@@ -6669,7 +6670,7 @@ msgstr ""
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
-msgstr "(Autolagring)"
+msgstr "(Automatisk lagring)"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
@@ -7166,7 +7167,7 @@ msgstr "Øk / Minsk skaleringsfaktor"
 
 #: engines/scumm/help.cpp:101
 msgid "Toggle aspect-ratio correction"
-msgstr "Veksle aspekt-rate korrigering"
+msgstr "Endre bildeformatskorrigering"
 
 #: engines/scumm/help.cpp:106
 msgid "* Note that using ctrl-f and"
@@ -7785,8 +7786,8 @@ msgstr "Skru veldig rask modus av/på"
 #: engines/sky/metaengine.cpp:202
 msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
-"ADVARSEL: Sletting av lagringssporet for autolagring støttes ikke av denne "
-"spillmotoren"
+"ADVARSEL: Sletting av lagringssporet for automatisk lagring støttes ikke av "
+"denne spillmotoren"
 
 #: engines/stark/detection.cpp:387
 msgid "Load modded assets"
@@ -8051,7 +8052,8 @@ msgstr "Skru av lagringsmeny"
 #: engines/twine/detection.cpp:1027
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr "Originalen hadde kun autolagring. Dette lar deg lagre når du vil."
+msgstr ""
+"Originalen hadde kun automatisk lagring. Dette lar deg lagre når du vil."
 
 #: engines/twine/detection.cpp:1037
 msgid "Enable debug mode"
