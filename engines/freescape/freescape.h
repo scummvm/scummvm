@@ -69,6 +69,12 @@ struct entrancesTableEntry {
 	int position[3];
 };
 
+struct soundFx {
+	int size;
+	int sampleRate;
+	byte *data;
+};
+
 class FreescapeEngine : public Engine {
 private:
 	// We need random numbers
@@ -223,10 +229,9 @@ public:
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
 
-	void playPaulaSound(int index, bool sync);
-	void loadAmigaSounds(Common::SeekableReadStream *file, int offset, int number);
-	Common::HashMap<uint16, byte*> _amigaSoundsBuffer;
-	Common::HashMap<uint16, int> _amigaSoundsSize;
+	void playSoundFx(int index, bool sync);
+	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
+	Common::HashMap<uint16, soundFx*> _soundsFx;
 
 	// Rendering
 	int _screenW, _screenH;

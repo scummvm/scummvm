@@ -20,7 +20,7 @@
  */
 
 #include "freescape/freescape.h"
-#include "audio/mods/paula.h"
+#include "audio/decoders/raw.h"
 
 namespace Freescape {
 
@@ -33,14 +33,10 @@ void FreescapeEngine::playSound(int index, bool sync) {
 	//	_mixer->stopHandle(_handle);
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
-	if (isAmiga()) {
-		playPaulaSound(index, sync);
-		return;
-	} else if (isAtariST()) {
-		// TODO
+	if (isAmiga() || isAtariST()) {
+		playSoundFx(index, sync);
 		return;
 	}
-
 
 	switch (index) {
 		case 1:
@@ -230,6 +226,23 @@ void FreescapeEngine::playWav(const Common::String filename) {
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
 }
 
+void FreescapeEngine::playSoundFx(int index, bool sync) {
+	int size = _soundsFx[index]->size;
+	int sampleRate = _soundsFx[index]->sampleRate;
+	byte *data = _soundsFx[index]->data;
+	int loops = 1;
+
+	if (index == 10)
+		loops = 5;
+	else if (index == 15)
+		loops = 50;
+
+	if (size > 4) {
+		Audio::SeekableAudioStream *s = Audio::makeRawStream(data, size, sampleRate, Audio::FLAG_16BITS, DisposeAfterUse::NO);
+		Audio::AudioStream *stream = new Audio::LoopingAudioStream(s, loops);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
+	}
+}
 
 void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
@@ -326,35 +339,23 @@ void FreescapeEngine::playTeleporter(int totalIters, bool sync) {
 	}
 }
 
-class AudioPaula : public Audio::Paula {
-	void interrupt() override;
-};
-
-void AudioPaula::interrupt() {}
-
-void FreescapeEngine::playPaulaSound(int index, bool sync) {
-	AudioPaula *paula = new AudioPaula();
-	paula->setInterruptFreq(0x168);
-	paula->readBuffer((int16*)_amigaSoundsBuffer[index], _amigaSoundsSize[index] / 2);
-	paula->startPlay();
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, paula);
-	if (sync) {
-		//_system->delayMillis(duration);
-	}
-}
-
-void FreescapeEngine::loadAmigaSounds(Common::SeekableReadStream *file, int offset, int number) {
+void FreescapeEngine::loadSoundsFx(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
-	for (int i = 1; i < number+1; i++) {
+	soundFx *sound = nullptr;
+	_soundsFx[0] = sound;
+	for (int i = 1; i < number + 1; i++) {
+		sound = (soundFx*) malloc(sizeof(soundFx));
+		int zero = file->readUint16BE();
+		assert(zero == 0);
 		int size = file->readUint16BE();
-		assert(size == 0);
-		size = file->readUint16BE();
-		debug("Loading sound: %d (size: %d)", i, size);
-		size = size + 2;
-		byte *palette = (byte*) malloc(size * sizeof(byte));
-		file->read(palette, size);
-		_amigaSoundsBuffer[i] = (byte*) palette;
-		_amigaSoundsSize[i] = size;
+		int sampleRate = file->readUint16BE();
+		debug("Loading sound: %d (size: %d, sample rate: %d)", i, size, sampleRate);
+		byte *data = (byte*) malloc(size * sizeof(byte));
+		file->read(data, size);
+		sound->sampleRate = sampleRate;
+		sound->size = size;
+		sound->data = (byte*) data;
+		_soundsFx[i] = sound;
 	}
 }
 

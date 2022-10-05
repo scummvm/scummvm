@@ -169,6 +169,11 @@ void DrillerEngine::loadAssetsDemo() {
 			error("Failed to open 'driller' file");
 		loadMessagesFixedSize(file, 0x3960, 14, 20);
 
+		file = gameDir.createReadStreamForMember("soundfx");
+		if (file == nullptr)
+			error("Failed to open 'soundfx' executable for Amiga");
+
+		loadSoundsFx(file, 0, 25);
 	} else if (isAtariST()) {
 		file = gameDir.createReadStreamForMember("lift.neo");
 		if (file == nullptr)
@@ -232,7 +237,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			loadGlobalObjects(file, 0xbd62);
 			load8bitBinary(file, 0x29c16, 16);
 			loadAmigaPalette(file, 0x297d4);
-			loadAmigaSounds(file, 0x30e80, 25);
+			loadSoundsFx(file, 0x30e80, 25);
 		} else if (_variant == "Kixx") {
 			file = gameDir.createReadStreamForMember("lift.neo");
 			if (file == nullptr)
@@ -257,7 +262,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			if (file == nullptr)
 				error("Failed to open 'soundfx' executable for Amiga");
 
-			loadAmigaSounds(file, 0, 25);
+			loadSoundsFx(file, 0, 25);
 		}
 	} else if (_renderMode == "ega") {
 		loadBundledImages();
