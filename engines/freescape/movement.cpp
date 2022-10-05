@@ -48,6 +48,25 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 	_position.setValue(1, _position.y() + scale * _playerHeight);
 }
 
+void FreescapeEngine::shoot() {
+	playSound(1, true);
+	_mixer->stopAll();
+	_gfx->renderShoot(0);
+	Math::Vector3d direction = directionToVector(_pitch, _yaw);
+	Math::Ray ray(_position, direction);
+	Object *shot = _currentArea->shootRay(ray);
+	if (shot) {
+		GeometricObject *gobj = (GeometricObject*) shot;
+		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
+
+		if (gobj->conditionSource != nullptr)
+			debugC(1, kFreescapeDebugMove, "Must use shot = true when executing: %s", gobj->conditionSource->c_str());
+
+		executeObjectConditions(gobj, true, false);
+	}
+	executeLocalGlobalConditions(true, false); // Only execute "on shot" room/global conditions
+}
+
 void FreescapeEngine::changePlayerHeight(int index) {
 	int scale = _currentArea->getScale();
 	_position.setValue(1, _position.y() - scale * _playerHeight);
