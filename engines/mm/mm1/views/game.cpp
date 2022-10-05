@@ -53,6 +53,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 //		g_events->send("Game", GameMessage("ORDER"));
 		addView("Order");
 		return true;
+	case KEYBIND_PROTECT:
+		addView("Protect");
+		return true;
 	case KEYBIND_QUICKREF:
 		addView("QuickRef");
 		return true;
