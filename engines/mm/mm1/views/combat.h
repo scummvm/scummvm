@@ -35,7 +35,8 @@ private:
 	uint _fightCount = 0;
 	// Combat options that have sub-option selection
 	enum SelectedOption {
-		OPTION_NONE, OPTION_FIGHT, OPTION_SHOOT
+		OPTION_NONE, OPTION_DELAY, OPTION_FIGHT,
+		OPTION_SHOOT
 	};
 	SelectedOption _option = OPTION_NONE;
 
@@ -140,6 +141,11 @@ private:
 	void cast();
 
 	/**
+	 * Delay option
+	 */
+	void delay();
+
+	/**
 	 * Exchange option
 	 */
 	void exchange();
@@ -148,6 +154,11 @@ private:
 	 * Fight option
 	 */
 	void fight();
+
+	/**
+	 * Protect option
+	 */
+	void protect();
 
 	/**
 	 * Retreat option
@@ -173,6 +184,11 @@ private:
 	 * Writes out a message
 	 */
 	void writeMessage();
+
+	/**
+	 * Writes text for delay number selection
+	 */
+	void writeDelaySelect();
 
 	/**
 	 * Having selected to fight, selects monster to attack

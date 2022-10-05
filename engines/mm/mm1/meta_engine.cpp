@@ -52,14 +52,17 @@ static const KeybindingRecord PARTY_KEYS[] = {
 };
 
 static const KeybindingRecord COMBAT_KEYS[] = {
-	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", "Attack", "A", nullptr },
-	{ KEYBIND_COMBAT_BLOCK, "COMBAT_BLOCK", "Block", "B", nullptr },
-	{ KEYBIND_COMBAT_CAST, "COMBAT_CAST", "Cast", "C", nullptr },
-	{ KEYBIND_COMBAT_EXCHANGE, "COMBAT_EXCHANGE", "Exchange", "E", nullptr },
-	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", "Fight", "F", nullptr },
-	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", "Retreat", "R", nullptr },
-	{ KEYBIND_COMBAT_SHOOT, "COMBAT_SHOOT", "Shoot", "S", nullptr },
-	{ KEYBIND_COMBAT_USE, "COMBAT_USE", "Use", "U", nullptr },
+	{ KEYBIND_COMBAT_ATTACK, "COMBAT_ATTACK", "Attack", "a", nullptr },
+	{ KEYBIND_COMBAT_BLOCK, "COMBAT_BLOCK", "Block", "b", nullptr },
+	{ KEYBIND_COMBAT_CAST, "COMBAT_CAST", "Cast", "c", nullptr },
+	{ KEYBIND_QUICKREF, "DELAY", "Delay", "d", nullptr },
+	{ KEYBIND_COMBAT_EXCHANGE, "COMBAT_EXCHANGE", "Exchange", "e", nullptr },
+	{ KEYBIND_COMBAT_FIGHT, "COMBAT_FIGHT", "Fight", "f", nullptr },
+	{ KEYBIND_QUICKREF, "PROTECT", "Protect", "p", nullptr },
+	{ KEYBIND_QUICKREF, "QUICKREF", "Quick Reference", "q", nullptr },
+	{ KEYBIND_COMBAT_RETREAT, "COMBAT_RETREAT", "Retreat", "r", nullptr },
+	{ KEYBIND_COMBAT_SHOOT, "COMBAT_SHOOT", "Shoot", "s", nullptr },
+	{ KEYBIND_COMBAT_USE, "COMBAT_USE", "Use", "u", nullptr },
 	{ KEYBIND_NONE, nullptr, nullptr, nullptr, nullptr }
 };
 
