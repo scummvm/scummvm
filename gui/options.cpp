@@ -1224,7 +1224,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_scalerPopUp->setEnabled(enabled);
 		_scaleFactorPopUp->setEnabled(enabled);
 
-		scalerToggle = true;
+		scalerToggle = enabled;
 	} else {
 		_scalerPopUpDesc->setEnabled(false);
 		_scalerPopUp->setEnabled(false);
@@ -1236,7 +1236,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
 
-		scalerToggle = true;
+		scalerToggle = enabled;
 	} else {
 		_scalerPopUpDesc->setEnabled(false);
 		_scalerPopUp->setEnabled(false);
