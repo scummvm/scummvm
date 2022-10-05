@@ -298,12 +298,12 @@ bool dgCollisionConvex::SanityCheck(dgPolyhedra &hull) const {
 
 		ptr = edge;
 		do {
-			dgVector p0(m_vertex[ptr->m_twin->m_incidentVertex]);
+			dgVector pp0(m_vertex[ptr->m_twin->m_incidentVertex]);
 			for (dgEdge *neiborg = ptr->m_twin->m_next->m_next;
 				 neiborg != ptr->m_twin; neiborg = neiborg->m_next) {
-				dgVector p1(m_vertex[neiborg->m_incidentVertex]);
-				dgVector dp(p1 - p0);
-				dgFloat32 project = dp % n0;
+				dgVector pp1(m_vertex[neiborg->m_incidentVertex]);
+				dgVector dpp(pp1 - pp0);
+				dgFloat32 project = dpp % n0;
 				if (project > dgFloat32(0.0f)) {
 					return false;
 				}
@@ -1007,8 +1007,8 @@ bool dgCollisionConvex::SanityCheck(dgInt32 count, const dgVector &normal,
 			j = count - 1;
 			for (dgInt32 i = 0; i < count; i++) {
 				dgVector e1(contactsOut[i] - contactsOut[j]);
-				dgVector n(e0 * e1);
-				dgFloat32 error = n % normal;
+				dgVector nx(e0 * e1);
+				dgFloat32 error = nx % normal;
 				_ASSERTE(error >= dgFloat32(-1.0e-4f));
 				if (error < dgFloat32(-1.0e-4f)) {
 					return false;
@@ -1050,22 +1050,22 @@ dgInt32 dgCollisionConvex::SimplifyClipPolygon(dgInt32 count,
 
 		dgInt32 removeCount = count - DG_MAX_VERTEX_CLIP_FACE;
 		while (sortHeap.GetCount() && removeCount) {
-			dgInt32 i1 = sortHeap[0];
+			dgInt32 ii1 = sortHeap[0];
 			sortHeap.Pop();
 
-			dgInt32 i0 = (i1 - 1) >= 0 ? i1 - 1 : count - 1;
-			dgInt32 i2 = (i1 + 1) < count ? i1 + 1 : 0;
+			dgInt32 ii0 = (ii1 - 1) >= 0 ? ii1 - 1 : count - 1;
+			dgInt32 ii2 = (ii1 + 1) < count ? ii1 + 1 : 0;
 
-			if (!(mark[i0] || mark[i2])) {
-				mark[i1] = 1;
+			if (!(mark[ii0] || mark[ii2])) {
+				mark[ii1] = 1;
 				removeCount--;
 			}
 		}
 
 		i0 = 0;
-		for (dgInt32 i1 = 0; i1 < count; i1++) {
-			if (!mark[i1]) {
-				polygon[i0] = polygon[i1];
+		for (dgInt32 ii1 = 0; ii1 < count; ii1++) {
+			if (!mark[ii1]) {
+				polygon[i0] = polygon[ii1];
 				i0++;
 			}
 		}
@@ -1765,8 +1765,8 @@ dgFloat32 dgCollisionConvex::RayCast(const dgVector &localP0,
 						const dgVector &p1 = tetrahedrum[i1];
 						const dgVector &p2 = tetrahedrum[i2];
 						dgVector e0(p1 - p0);
-						dgVector e1(p2 - p0);
-						normal = e0 * e1;
+						dgVector ee1(p2 - p0);
+						normal = e0 * ee1;
 
 						face = -1;
 						error2 = dgFloat32(1.0e10f);
