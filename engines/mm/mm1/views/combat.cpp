@@ -175,12 +175,31 @@ bool Combat::msgKeypress(const KeypressMessage &msg) {
 	if (_mode == SELECT_OPTION && _option != OPTION_NONE) {
 		if (msg.keycode == Common::KEYCODE_ESCAPE) {
 			combatLoop();
-		} else if (msg.keycode >= Common::KEYCODE_a &&
+			return true;
+		}
+
+		switch (_option) {
+		case OPTION_FIGHT:
+		case OPTION_SHOOT:
+			if (msg.keycode >= Common::KEYCODE_a &&
 				msg.keycode < (int)(Common::KEYCODE_a + _fightCount)) {
-			if (_option == OPTION_FIGHT)
-				fightMonster(msg.keycode - Common::KEYCODE_a);
-			else
-				shootMonster(msg.keycode - Common::KEYCODE_a);
+				if (_option == OPTION_FIGHT)
+					fightMonster(msg.keycode - Common::KEYCODE_a);
+				else
+					shootMonster(msg.keycode - Common::KEYCODE_a);
+			}
+			break;
+
+		case OPTION_DELAY:
+			if (msg.keycode >= Common::KEYCODE_0 &&
+				msg.keycode <= Common::KEYCODE_9) {
+				g_globals->_delay = msg.keycode - Common::KEYCODE_0;
+				combatLoop();
+			}
+			break;
+
+		default:
+			break;
 		}
 	}
 
@@ -201,11 +220,17 @@ bool Combat::msgAction(const ActionMessage &msg) {
 	case KEYBIND_COMBAT_CAST:
 		cast();
 		break;
+	case KEYBIND_COMBAT_DELAY:
+		delay();
+		break;
 	case KEYBIND_COMBAT_EXCHANGE:
 		exchange();
 		break;
 	case KEYBIND_COMBAT_FIGHT:
 		fight();
+		break;
+	case KEYBIND_COMBAT_PROTECT:
+		protect();
 		break;
 	case KEYBIND_COMBAT_RETREAT:
 		retreat();
@@ -217,6 +242,7 @@ bool Combat::msgAction(const ActionMessage &msg) {
 		use();
 		break;
 	default:
+		// TODO: Character and quickref views
 		break;
 	}
 
@@ -229,6 +255,9 @@ void Combat::writeOptions() {
 	switch (_option) {
 	case OPTION_NONE:
 		writeAllOptions();
+		break;
+	case OPTION_DELAY:
+		writeDelaySelect();
 		break;
 	case OPTION_FIGHT:
 		writeFightSelect();
@@ -289,6 +318,15 @@ void Combat::writeAllOptions() {
 
 	writeString(16, 22, STRING["dialogs.combat.exchange_use"]);
 	writeString(16, 23, STRING["dialogs.combat.retreat_block"]);
+}
+
+void Combat::writeDelaySelect() {
+	resetBottom();
+	writeString(0, 0, STRING["dialogs.combat.set_delay"]);
+	writeString(0, 26, Common::String::format(
+		STRING["dialogs.combat.delay_currently"].c_str(),
+		g_globals->_delay));
+	escToGoBack(0, 3);
 }
 
 void Combat::writeFightSelect() {
@@ -525,6 +563,10 @@ void Combat::block() {
 void Combat::cast() {
 }
 
+void Combat::delay() {
+	setOption(OPTION_DELAY);
+}
+
 void Combat::exchange() {
 }
 
@@ -536,6 +578,9 @@ void Combat::fight() {
 			setOption(OPTION_FIGHT);
 		}
 	}
+}
+
+void Combat::protect() {
 }
 
 void Combat::retreat() {
