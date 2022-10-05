@@ -70,6 +70,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
+	_demoMode = false;
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
@@ -170,6 +171,19 @@ void FreescapeEngine::drawFrame() {
 
 void FreescapeEngine::pressedKey(const int keycode) {}
 
+void FreescapeEngine::generateInput() {
+	Common::Event event;
+	event.type = Common::EVENT_KEYDOWN;
+	event.kbd.keycode = Common::KEYCODE_UP;
+	event.customType = 0xde00;
+	g_system->getEventManager()->pushEvent(event);
+
+	event.type = Common::EVENT_KEYDOWN;
+	g_system->getEventManager()->pushEvent(event);
+
+	g_system->delayMillis(500);
+}
+
 void FreescapeEngine::processInput() {
 	float currentFrame = g_system->getMillis();
 	float deltaTime = 20.0;
@@ -180,6 +194,10 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
+			if (_demoMode && event.customType != 0xde00) {
+				continue;
+			}
+
 			if (event.kbd.keycode == Common::KEYCODE_o || event.kbd.keycode == Common::KEYCODE_UP)
 				move(FORWARD, _scaleVector.x(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
@@ -322,6 +340,9 @@ Common::Error FreescapeEngine::run() {
 	bool endGame = false;
 	while (!shouldQuit() && !endGame) {
 		drawFrame();
+		if (_demoMode)
+			generateInput();
+
 		processInput();
 		_gfx->flipBuffer();
 		g_system->updateScreen();

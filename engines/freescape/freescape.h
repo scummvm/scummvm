@@ -118,6 +118,8 @@ public:
 	void swapAmigaPalette(uint16 areaID);
 	Common::HashMap<uint16, byte*> _amigaPalette;
 	void loadColorPalette();
+	Common::Array<byte> _demoData;
+	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
 	Common::Array<uint8> readArray(Common::SeekableReadStream *file, int size);
@@ -141,9 +143,11 @@ public:
 	Common::HashMap<int, const struct entrancesTableEntry*> _entranceTable;
 
 	// Input
+	bool _demoMode;
 	bool _flyMode;
 	bool _noClipMode;
 	void processInput();
+	void generateInput();
 	virtual void pressedKey(const int keycode);
 	void move(CameraMovement direction, uint8 scale, float deltaTime);
 	void changePlayerHeight(int delta);

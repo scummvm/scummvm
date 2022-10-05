@@ -543,6 +543,16 @@ void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, in
 	}
 }
 
+void FreescapeEngine::loadDemoData(Common::SeekableReadStream *file, int offset, int size) {
+	file->seek(offset);
+	debugC(1, kFreescapeDebugParser, "Reading demo data");
+	for (int i = 0; i < size; i++) {
+		byte b = file->readByte();
+		_demoData.push_back(b);
+		debugC(1, kFreescapeDebugParser, "%x", b);
+	}
+}
+
 void FreescapeEngine::loadMessagesVariableSize(Common::SeekableReadStream *file, int offset, int number) {
 	file->seek(offset);
 	debugC(1, kFreescapeDebugParser, "String table:");
