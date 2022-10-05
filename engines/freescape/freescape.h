@@ -120,9 +120,9 @@ public:
 	void loadBundledImages();
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
 	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte* palette = nullptr);
-	void loadAmigaPalette(Common::SeekableReadStream *file, int offset);
-	void swapAmigaPalette(uint16 areaID);
-	Common::HashMap<uint16, byte*> _amigaPalette;
+	void loadPalettes(Common::SeekableReadStream *file, int offset);
+	void swapPalette(uint16 areaID);
+	Common::HashMap<uint16, byte*> _paletteByArea;
 	void loadColorPalette();
 	Common::Array<byte> _demoData;
 	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
