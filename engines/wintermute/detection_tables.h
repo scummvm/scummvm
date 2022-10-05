@@ -327,6 +327,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	WME_WINENTRY("alphapolaris", "",
 		WME_ENTRY1s("data.dcp", "6d5d2264a3135dae3a9a74de50b4ea68", 706780438), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
 
+	// Alpha Polaris (English, UK CD release)
+	WME_WINENTRY("alphapolaris", "",
+		WME_ENTRY1s("data.dcp", "1df8eb749676752c3e0ab6e24d31971c", 748056178), Common::EN_ANY, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
+
 	// Alpha Polaris (Polish)
 	WME_WINENTRY("alphapolaris", "",
 		WME_ENTRY1s("data.dcp", "24ebca07b7cf0bd94ec994f26bdccf83", 710319064), Common::PL_POL, ADGF_UNSTABLE | GF_3D, WME_1_9_1),
