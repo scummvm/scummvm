@@ -266,25 +266,6 @@ void FreescapeEngine::processInput() {
 	}
 }
 
-void FreescapeEngine::shoot() {
-	playSound(1, true);
-	_mixer->stopAll();
-	_gfx->renderShoot(0);
-	Math::Vector3d direction = directionToVector(_pitch, _yaw);
-	Math::Ray ray(_position, direction);
-	Object *shot = _currentArea->shootRay(ray);
-	if (shot) {
-		GeometricObject *gobj = (GeometricObject*) shot;
-		debug("Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
-
-		if (gobj->conditionSource != nullptr)
-			debug("Must use shot = true when executing: %s", gobj->conditionSource->c_str());
-
-		executeObjectConditions(gobj, true, false);
-	}
-	executeLocalGlobalConditions(true, false); // Only execute "on shot" room/global conditions
-}
-
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics
 	_gfx = createRenderer(_system, _screenW, _screenH);
