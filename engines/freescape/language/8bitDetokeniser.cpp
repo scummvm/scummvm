@@ -23,7 +23,9 @@
 // John Elliott's 2001 reverse engineering of Driller; see http://www.seasip.demon.co.uk/ZX/Driller/
 
 #include "common/debug.h"
-#include "8bitDetokeniser.h"
+
+#include "freescape/freescape.h"
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -89,7 +91,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		// figure out how many argument bytes we're going to need,
 		// check we have enough bytes left to read
 		if (opcode > 48) {
-			debug("%s", detokenisedStream.c_str());
+			debugC(1, kFreescapeDebugParser, "%s", detokenisedStream.c_str());
 			if (opcode != 0x3f)
 				error("ERROR: failed to read opcode: %x", opcode);
 			break;
