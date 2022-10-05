@@ -263,7 +263,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
@@ -280,7 +280,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
@@ -359,7 +359,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
