@@ -109,7 +109,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
-	case OSystem::kFeatureFilteringMode:
+	//case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
 #ifdef USE_SCALERS
 	case OSystem::kFeatureScalers:
@@ -134,6 +134,7 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		_currentState.aspectRatioCorrection = enable;
 		break;
 
+#if 0
 	case OSystem::kFeatureFilteringMode:
 		assert(_transactionMode != kTransactionNone);
 		_currentState.filtering = enable;
@@ -154,6 +155,7 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		}
 
 		break;
+#endif
 
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteEnabled = enable;
