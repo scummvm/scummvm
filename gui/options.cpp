@@ -395,9 +395,6 @@ void OptionsDialog::build() {
 			_filteringCheckbox->setState(ConfMan.getBool("filtering", _domain));
 			if (ConfMan.isKeyTemporary("filtering"))
 				_filteringCheckbox->setOverride(true);
-		} else {
-			_filteringCheckbox->setState(false);
-			_filteringCheckbox->setEnabled(false);
 		}
 
 		// Aspect ratio setting
@@ -574,11 +571,12 @@ void OptionsDialog::apply() {
 	// Graphic options
 	if (_fullscreenCheckbox) {
 		if (_enableGraphicSettings) {
-			if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState()) {
-				graphicsModeChanged = true;
-				ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
-				_filteringCheckbox->setOverride(false);
-			}
+			if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+				if (ConfMan.getBool("filtering", _domain) != _filteringCheckbox->getState()) {
+					graphicsModeChanged = true;
+					ConfMan.setBool("filtering", _filteringCheckbox->getState(), _domain);
+					_filteringCheckbox->setOverride(false);
+				}
 			if (ConfMan.getBool("fullscreen", _domain) != _fullscreenCheckbox->getState()) {
 				graphicsModeChanged = true;
 				ConfMan.setBool("fullscreen", _fullscreenCheckbox->getState(), _domain);
@@ -1205,8 +1203,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setEnabled(enabled);
-	else
-		_filteringCheckbox->setEnabled(false);
 
 	if (g_system->hasFeature(OSystem::kFeatureFullscreenMode))
 		_fullscreenCheckbox->setEnabled(enabled);
@@ -1579,7 +1575,8 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	}
 
 	// Filtering checkbox
-	_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
+	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
+		_filteringCheckbox = new CheckboxWidget(boss, prefix + "grFilteringCheckbox", _("Filter graphics"), _("Use linear filtering when scaling graphics"));
 
 	// Aspect ratio checkbox
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
@@ -1923,8 +1920,7 @@ void OptionsDialog::setupGraphicsTab() {
 	_fullscreenCheckbox->setVisible(true);
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setVisible(true);
-	else
-		_filteringCheckbox->setVisible(false);
+
 	_aspectCheckbox->setVisible(true);
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
