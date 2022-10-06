@@ -730,6 +730,16 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "billetrille1",		"Bille & Trille: Da fantasien slap løs" },
 	{ "billetrille2",		"Bille & Trille: Helt ude i skoven" },
 	{ "brspel",				"BR spel" },
+	{ "pixeline1",			"Pixeline: Syng, leg og lær" },
+	{ "pixeline2",			"Pixeline: og hulen i træet" },
+	{ "pixeline3",			"Pixeline: på bedstemors loft" },
+	{ "pixeline4",			"Pixeline: og huset i eventyrskoven" },
+	{ "pixeline5",			"Pixeline: i sommerhuset" },
+	{ "pixeline6",			"Pixeline: for fulde sejl" },
+	{ "pixeline7",			"Pixeline: fuld af fis og ballade" },
+	{ "pixeline8",			"Pixeline: og Kong Gulerod" },
+	{ "pixeline9",			"Pixeline: I det Vilde Westen" },
+	{ "pixelineskolevik",	"Pixeline Skolehjælp: Lær om Vikingerne - Kongekampen" },
 
 	// Dutch titles
 	{ "beestenboel",		"Beestenboel Zoölogic" },
@@ -7294,6 +7304,30 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("phonicsquest", "Demo", "Phonics Quest Demo.exe", "0c81c84ca4966313ad27d47daba44537", 2202074, 851),
 
+	// Original name is "Syng, lær og leg"
+	MACGAME1_l("pixeline1", "", "xn--syng, lr og leg-3lb",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),
+	WINGAME1_l("pixeline1", "", "xn--syng, lr og leg.exe-rxb", 	"0c81c84ca4966313ad27d47daba44537", 3797528, Common::DA_DNK, 851),
+
+	// Original name is "Hulen i træet"
+	MACGAME1_l("pixeline2", "", "xn--hulen i tret-gdb",	 	"08c9ea94f6469e71ae0c71987bbf6323", 157809, Common::DA_DNK, 850),
+	WINGAME1_l("pixeline2", "", "xn--hulen i tret.exe-3ob", "c163f36141579ee374f7b4b2bddee95a", 2747781, Common::DA_DNK, 850),
+
+	// Original name is "På bedstemors loft"
+	MACGAME1_l("pixeline3", "", "xn--p bedstemors loft-8qb",	 "08c9ea94f6469e71ae0c71987bbf6323", 157809, Common::DA_DNK, 850),
+	WINGAME1_l("pixeline3", "", "xn--p bedstemors loft.exe-s2b", "c163f36141579ee374f7b4b2bddee95a", 2772479, Common::DA_DNK, 850),
+
+	MACGAME1_l("pixeline4", "", "I eventyrskoven",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),
+	WINGAME1_l("pixeline4", "", "I eventyrskoven.exe",	"0c81c84ca4966313ad27d47daba44537", 2814073, Common::DA_DNK, 851),
+
+	MACGAME1_l("pixeline5", "", "I sommerhuset",		"08c9ea94f6469e71ae0c71987bbf6323", 157809, Common::DA_DNK, 850),
+	WINGAME1_l("pixeline5", "", "I sommerhuset.exe",	"c163f36141579ee374f7b4b2bddee95a", 2712537, Common::DA_DNK, 850),
+
+	MACGAME1_l("pixeline6", "", "For fulde sejl",		"a44511b8ff0e46b4f9c85dd1cb58d458", 157815, Common::DA_DNK, 851),
+	WINGAME1_l("pixeline6", "", "For fulde sejl.exe",	"0c81c84ca4966313ad27d47daba44537", 2739895, Common::DA_DNK, 851),
+
+	MACGAME1_l("pixeline7", "", "Pixeline-fuld af fis og ballade",  "7d4c726f1ddb1b7c3c2828717a4b80b5", 160038, Common::DA_DNK, 850),
+	WINGAME1_l("pixeline7", "", "Pixeline 7.exe", 					"c163f36141579ee374f7b4b2bddee95a", 2485646, Common::DA_DNK, 850),
+
 	WINGAME2_l("plcd", "Nº4 2001", "Start.exe",		  "e24d4bab978b1a5c2326d2c56cf4d781", 2247370,
 								   "PL_2001_#04.exe", "e24d4bab978b1a5c2326d2c56cf4d781", 3842928, Common::RU_RUS, 800),
 
@@ -7525,6 +7559,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("pettson4", "", "Spokmaskinen (OS X)", "d483e955df901222145267d2ad729ea2", 284153, Common::SE_SWE, 900),
 	WINGAME1_l("pettson4", "", "Spokmaskinen.exe", "627d23c658a36a3b6d0053a6dcda1a37", 2330628, Common::SE_SWE, 900),
 
+	MACGAME1_l("pixeline9", "", "Pixeline - I Det Vilde Westen", "bb6be483050bd1524c5440229b595f7a", 236019, Common::DA_DNK, 900),
+	MACGAME1_l("pixeline9", "OS X", "Pixeline - Mac OS X", 		 "4a522e1da5d5b8570e3ab625945b19cf", 234733, Common::DA_DNK, 900),
+	WINGAME1_l("pixeline9", "", "Pixeline 9 DK.exe",			 "c612aa43e7ef55aa4fd2e1085fb1ef7a", 2816536, Common::DA_DNK, 900),
+
 	WINGAME1("sajaklucky", "Deluxe", "LuckyLettersDeluxe.exe", "001d65a360a61861118f3cfa92c68ef3", 14018695, 900),
 
 	// Classic Mac OS and Windows executables are D8
@@ -7670,6 +7708,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	//  {"data2.cab", "123bd61e8e5ddcc18a1c9893a064ccd2", 2849027},
 	WINGAME1t_l("pingu2", "", "Pingu.exe", "363d974c5fb230311628ea3f36fbdead", 2765844, Common::NL_NLD, 1010),
 
+	MACGAME1_l("pixeline8", "Classic", "Pixeline (Classic)",	"9f46cf3fafcf6bfe5ec9a04303cabf3c", 211958, Common::DA_DNK, 1010),
+	MACGAME1_l("pixeline8", "", "Pixeline og Kong Gulerod", 	"b5d3018832a36c7314a8daeebc5f16b0", 281297, Common::DA_DNK, 1010),
+	WINGAME1_l("pixeline8", "", "Pixeline og Kong Gulerod.exe",	"2f4cf44dd0b636a83c93997a620069b7", 3062430, Common::DA_DNK, 1010),
+
 	// Found on AOL 9.0 trial CD
 	WINGAME1("seinfeldondvd", "", "SEINFELD.EXE", "827e5af88f4c096652a1523dc28c9bf4", 3572626, 1000),
 
@@ -7691,6 +7733,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 //////////////////////////////////////////////////
 
 	WINGAME1("mentalmaths", "", "Mental Maths.exe", "b162d633891f0ab2e2fc6ba6164df337", 5017068, 1100),
+
+	WINGAME1_l("pixelineskolevik", "", "Pixeline - Vikingerne.exe",	"5a8596277cab40345b3266dce3b54c1a", 2816536, Common::DA_DNK, 1100),
+	WINGAME1_l("pixelineskolevik", "", "Pixeline - Vikingerne.exe",	"b162d633891f0ab2e2fc6ba6164df337", 5909524, Common::DA_DNK, 1100),
+	// Win executable on Mac partition
+	WINGAME1t_l("pixelineskolevik", "", "Pixeline - Vikingerne.exe", "52d593de1aae5db1f2ef1c503af20833", 7568472, Common::DA_DNK, 1100),
 
 
 //////////////////////////////////////////////////
