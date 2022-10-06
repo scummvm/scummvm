@@ -2443,6 +2443,24 @@ void ScummEngine_v6::o6_talkActor() {
 			return;
 		}
 	}
+
+	// WORKAROUND bug #4410: Restore a missing subtitle when Low is inside the
+	// tomb and he finds the purpose of the crypt ("/TOMB.022/Now that I know
+	// what I'm looking for"...). Also happens in the original interpreters.
+	// We used to do this in actorTalk(), but then Low's proper walking
+	// animation was lost and he would just glide over the floor. Having him
+	// wait before he moves is less disturbing, since that's something he
+	// already does in the game.
+	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
+		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
+		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
+		&& _scummVars[269] == 3 && getState(388) == 2 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
+
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 }
 
