@@ -120,6 +120,16 @@ private:
 		// don't do anything with i
 	};
 
+#ifndef DONT_TEST_STRING_LITERAL_INIT
+	// ----------------------------------
+	// Char arrays initialized by a string literal
+	// * note - not properly implemented before GCC 5.1 (GCC Bug #43453)
+	// ----------------------------------
+	char _emptyMsg[1] = "";
+#else
+	char _emptyMsg[1] = { '\0' };
+#endif
+
 #ifndef DONT_TEST_FINAL_FUNCTION
 	// ----------------------------------
 	// Non-Overridable Member Functions (final)
