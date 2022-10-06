@@ -380,6 +380,9 @@ void Object::update() {
 				BYTE1(flags) = (BYTE1(flags) & 0xFB) | kObjectFlag2;
 			}
 		}
+
+		_tickCount = _vm->getTick();
+		doPlaySounds = true;
 	}
 
 	if (flags & kObjectFlag40000) {
