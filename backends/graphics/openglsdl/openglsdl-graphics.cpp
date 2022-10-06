@@ -38,7 +38,7 @@ OpenGLSdlGraphicsManager::OpenGLSdlGraphicsManager(SdlEventSource *eventSource, 
 #else
 	  _lastVideoModeLoad(0),
 #endif
-	  _graphicsScale(2), _ignoreLoadVideoMode(false), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
+	  _graphicsScale(2), _gotResize(false), _wantsFullScreen(false), _ignoreResizeEvents(0),
 	  _desiredFullscreenWidth(0), _desiredFullscreenHeight(0) {
 	// Setup OpenGL attributes for SDL
 	SDL_GL_SetAttribute(SDL_GL_RED_SIZE, 8);
@@ -330,13 +330,6 @@ void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
 }
 
 bool OpenGLSdlGraphicsManager::loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) {
-	// In some cases we might not want to load the requested video mode. This
-	// will assure that the window size is not altered.
-	if (_ignoreLoadVideoMode) {
-		_ignoreLoadVideoMode = false;
-		return true;
-	}
-
 	// This function should never be called from notifyResize thus we know
 	// that the requested size came from somewhere else.
 	_gotResize = false;
@@ -713,18 +706,10 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 	}
 
 	case kActionToggleAspectRatioCorrection:
-		// In case the user changed the window size manually we will
-		// not change the window size again here.
-		_ignoreLoadVideoMode = _gotResize;
-
 		// Toggles the aspect ratio correction state.
 		beginGFXTransaction();
 			setFeatureState(OSystem::kFeatureAspectRatioCorrection, !getFeatureState(OSystem::kFeatureAspectRatioCorrection));
 		endGFXTransaction();
-
-		// Make sure we do not ignore the next resize. This
-		// effectively checks whether loadVideoMode has been called.
-		assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
 		if (getFeatureState(OSystem::kFeatureAspectRatioCorrection))
@@ -736,18 +721,10 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return true;
 
 	case kActionToggleFilteredScaling:
-		// Never ever try to resize the window when we simply want to enable or disable filtering.
-		// This assures that the window size does not change.
-		_ignoreLoadVideoMode = true;
-
 		// Ctrl+Alt+f toggles filtering on/off
 		beginGFXTransaction();
 			setFeatureState(OSystem::kFeatureFilteringMode, !getFeatureState(OSystem::kFeatureFilteringMode));
 		endGFXTransaction();
-
-		// Make sure we do not ignore the next resize. This
-		// effectively checks whether loadVideoMode has been called.
-		assert(!_ignoreLoadVideoMode);
 
 #ifdef USE_OSD
 		if (getFeatureState(OSystem::kFeatureFilteringMode)) {
@@ -760,9 +737,6 @@ bool OpenGLSdlGraphicsManager::notifyEvent(const Common::Event &event) {
 		return true;
 
 	case kActionCycleStretchMode: {
-		// Never try to resize the window when changing the scaling mode.
-		_ignoreLoadVideoMode = true;
-
 		// Ctrl+Alt+s cycles through stretch mode
 		int index = 0;
 		const OSystem::GraphicsMode *stretchModes = getSupportedStretchModes();
