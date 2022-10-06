@@ -44,7 +44,8 @@ endif
 TEST_FLAGS   := --runner=StdioPrinter --no-std --no-eh
 TEST_CFLAGS  := $(CFLAGS) -I$(srcdir)/test/cxxtest
 TEST_LDFLAGS := $(LDFLAGS) $(LIBS)
-TEST_CXXFLAGS := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
+TEST_CXXFLAGS  := $(filter-out -Wglobal-constructors,$(CXXFLAGS))
+TEST_CXXFLAGS += -Wno-self-assign-overloaded
 
 ifdef WIN32
 TEST_LDFLAGS := $(filter-out -mwindows,$(TEST_LDFLAGS))
