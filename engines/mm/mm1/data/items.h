@@ -55,7 +55,7 @@ struct ItemData {
 	byte _disablements;
 	EquipMode _equipMode;
 	byte _val10;
-	byte _val11;
+	byte _effectId;
 	byte _spellId;
 	byte _maxCharges;
 	uint16 _cost;
