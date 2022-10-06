@@ -322,6 +322,8 @@ protected:
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
 
+	void updateLinearFiltering();
+
 	/**
 	 * The default pixel format of the backend.
 	 */
