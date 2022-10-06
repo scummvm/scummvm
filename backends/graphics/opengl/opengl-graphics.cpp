@@ -109,6 +109,7 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
+	case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
 #ifdef USE_SCALERS
 	case OSystem::kFeatureScalers:
@@ -117,10 +118,6 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 
 	case OSystem::kFeatureShaders:
 		return LibRetroPipeline::isSupportedByContext();
-
-	case OSystem::kFeatureFilteringMode:
-		// Filtering is supported only in cases when shaders are not present
-		return !LibRetroPipeline::isSupportedByContext();
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
 		return _defaultFormatAlpha.aBits() > 3;
@@ -138,28 +135,8 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		break;
 
 	case OSystem::kFeatureFilteringMode:
-		// Filtering is supported only in cases when shaders are not present
-		if (!LibRetroPipeline::isSupportedByContext())
-			return;
-
 		assert(_transactionMode != kTransactionNone);
 		_currentState.filtering = enable;
-
-		if (_gameScreen) {
-			_gameScreen->enableLinearFiltering(enable);
-		}
-
-		if (_cursor) {
-			_cursor->enableLinearFiltering(enable);
-		}
-
-		// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).
-		// Thus, when overlay filtering is disabled, scaling in OPENGL is done with GL_NEAREST (nearest neighbor scaling).
-		// It may look crude, but it should be crispier and it's left to user choice to enable filtering.
-		if (_overlay) {
-			_overlay->enableLinearFiltering(enable);
-		}
-
 		break;
 
 	case OSystem::kFeatureCursorPalette:
@@ -532,7 +509,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 #endif
 
 		_gameScreen->allocate(_currentState.gameWidth, _currentState.gameHeight);
-		_gameScreen->enableLinearFiltering(_currentState.filtering);
 		// We fill the screen to all black or index 0 for CLUT8.
 #ifdef USE_RGB_COLOR
 		if (_currentState.gameFormat.bytesPerPixel == 1) {
@@ -557,6 +533,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 	// aspect ratio correction and game screen changes correctly.
 	recalculateDisplayAreas();
 	recalculateCursorScaling();
+	updateLinearFiltering();
 
 	// Something changed, so update the screen change ID.
 	++_screenChangeID;
@@ -903,7 +880,7 @@ void OpenGLGraphicsManager::setMouseCursor(const void *buf, uint w, uint h, int 
 		}
 		_cursor = createSurface(textureFormat, true, wantScaler);
 		assert(_cursor);
-		_cursor->enableLinearFiltering(_currentState.filtering);
+		updateLinearFiltering();
 #ifdef USE_SCALERS
 		if (wantScaler) {
 			_cursor->setScaler(_currentState.scalerIndex, _currentState.scaleFactor);
@@ -1140,21 +1117,14 @@ void OpenGLGraphicsManager::handleResizeImpl(const int width, const int height) 
 
 		_overlay = createSurface(_defaultFormatAlpha);
 		assert(_overlay);
-		// We should NOT always filter the overlay with GL_LINEAR.
-		// In previous versions we always did use GL_LINEAR to assure the UI
-		// would be readable in case it needed to be scaled -- it would not affect it otherwise.
-		// However in modern devices due to larger screen size the UI display looks blurry
-		// when using the linear filtering scaling, and we got bug report(s) for it.
-		//   eg. https://bugs.scummvm.org/ticket/11742
-		// So, we now respect the choice for "Filter Graphics" made via ScummVM GUI (under Graphics Tab)
-		_overlay->enableLinearFiltering(_currentState.filtering);
 	}
 	_overlay->allocate(overlayWidth, overlayHeight);
 	_overlay->fill(0);
 
-	// Re-setup the scaling for the screen and cursor
+	// Re-setup the scaling and filtering for the screen and cursor
 	recalculateDisplayAreas();
 	recalculateCursorScaling();
+	updateLinearFiltering();
 
 	// Something changed, so update the screen change ID.
 	++_screenChangeID;
@@ -1536,6 +1506,38 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 		_cursorHotspotYScaled = fracToInt(_cursorHotspotYScaled * screenScaleFactorY);
 		_cursorHeightScaled   = fracToInt(_cursorHeightScaled   * screenScaleFactorY);
 	}
+}
+
+void OpenGLGraphicsManager::updateLinearFiltering() {
+#if !USE_FORCED_GLES
+	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
+		// Filtering clashes with LibRetro shaders, so it's explicitly disabled here.
+		if (_gameScreen) {
+			_gameScreen->enableLinearFiltering(false);
+		}
+
+		if (_cursor) {
+			_cursor->enableLinearFiltering(_currentState.filtering && _overlayVisible);
+		}
+	} else
+#endif
+	{
+		if (_gameScreen) {
+			_gameScreen->enableLinearFiltering(_currentState.filtering);
+		}
+
+		if (_cursor) {
+			_cursor->enableLinearFiltering(_currentState.filtering);
+		}
+	}
+
+	// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).
+	// Thus, when overlay filtering is disabled, scaling in OPENGL is done with GL_NEAREST (nearest neighbor scaling).
+	// It may look crude, but it should be crispier and it's left to user choice to enable filtering.
+	if (_overlay) {
+		_overlay->enableLinearFiltering(_currentState.filtering);
+	}
+
 }
 
 #ifdef USE_OSD
