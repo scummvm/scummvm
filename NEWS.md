@@ -15,6 +15,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  General:
    - Reduced amount of false positives in Mass Add.
    - Updated the Roland MT-32 emulation code to Munt mt32emu 2.7.0.
+   - Added support for shader-based scalers.
 
  AGI:
    - Improved support for French translations.
