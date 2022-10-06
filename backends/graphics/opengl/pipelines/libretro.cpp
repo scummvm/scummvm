@@ -226,7 +226,7 @@ bool LibRetroPipeline::loadPasses() {
 
 		Common::SeekableReadStream *stream = fileNode.createReadStream();
 		if (!stream) {
-			warning("LibRetroPipeline::loadPasses: Could not open file '%s'", fileNode.getName().c_str());
+			warning("LibRetroPipeline::loadPasses: Could not open file '%s'", fileNode.isReadable() ? fileNode.getName().c_str() : i->fileName.c_str());
 			return false;
 		}
 
