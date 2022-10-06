@@ -113,14 +113,14 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 #ifdef USE_SCALERS
 	case OSystem::kFeatureScalers:
 #endif
-#if !USE_FORCED_GLES
-	case OSystem::kFeatureShaders:
-#endif
 		return true;
+
+	case OSystem::kFeatureShaders:
+		return LibRetroPipeline::isSupportedByContext();
 
 	case OSystem::kFeatureFilteringMode:
 		// Filtering is supported only in cases when shaders are not present
-		return (g_system->getOpenGLType() == OpenGL::kContextGLES);
+		return !LibRetroPipeline::isSupportedByContext();
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
 		return _defaultFormatAlpha.aBits() > 3;
@@ -139,7 +139,7 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 
 	case OSystem::kFeatureFilteringMode:
 		// Filtering is supported only in cases when shaders are not present
-		if (g_system->getOpenGLType() != OpenGL::kContextGLES)
+		if (!LibRetroPipeline::isSupportedByContext())
 			return;
 
 		assert(_transactionMode != kTransactionNone);
