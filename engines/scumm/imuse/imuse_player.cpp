@@ -223,7 +223,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 }
 
 void Player::loadStartParameters(int sound) {
-	_priority = _se->_newSystem ? 0 : 0x80;
+	_priority = 0x80;
 	_volume = 0x7F;
 	_vol_chan = 0xFFFF;
 	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;

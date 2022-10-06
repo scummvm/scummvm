@@ -310,7 +310,8 @@ void Part::setup(Player *player) {
 	_transpose = 0;
 	_detune = 0;
 	_detune_eff = player->getDetune();
-	_pitchbend_factor = 2;
+	_pitchbend_factor = _se->_newSystem ? 0 : 2;
+	_polyphony = 1;
 	_pitchbend = 0;
 	_effect_level = player->_se->isNativeMT32() ? 127 : 64;
 	_instrument.clear();
@@ -350,8 +351,7 @@ void Part::sendAll() {
 	if (!clearToTransmit())
 		return;
 
-	if (!_player->isGM())
-		_mc->pitchBendFactor(_pitchbend_factor);
+	_mc->pitchBendFactor(_pitchbend_factor);
 	sendTranspose();
 	sendDetune();
 	sendPitchBend();
