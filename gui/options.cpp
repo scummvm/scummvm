@@ -1201,10 +1201,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shaderButton->setEnabled(enabled);
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
-	} else {
-		_scalerPopUpDesc->setEnabled(false);
-		_scalerPopUp->setEnabled(false);
-		_scaleFactorPopUp->setEnabled(false);
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
@@ -1949,10 +1945,6 @@ void OptionsDialog::setupGraphicsTab() {
 		_shaderButton->setVisible(true);
 		_shader->setVisible(true);
 		_shaderClearButton->setVisible(true);
-	} else {
-		_shaderButton->setVisible(false);
-		_shader->setVisible(false);
-		_shaderClearButton->setVisible(false);
 	}
 }
 
