@@ -141,7 +141,7 @@ else
 manual:
 endif
 
-distclean: clean clean-devtools
+distclean: clean clean-devtools clean-test
 	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h "ScummVM Manual"*.pdf
 
 clean: clean-toplevel
