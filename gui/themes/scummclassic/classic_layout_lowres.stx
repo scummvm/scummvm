@@ -342,10 +342,6 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
-				<widget name = 'grScalerRadioButton'
-						type = 'Radiobutton'
-						width = '10'
-				/>
 				<widget name = 'grScalerPopupDesc'
 						type = 'OptionsLabel'
 				/>
@@ -357,10 +353,6 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '6' align = 'center'>
-				<widget name = 'grShaderRadioButton'
-						type = 'Radiobutton'
-						width = '10'
-				/>
 				<widget name = 'grShaderButton'
 						type = 'Button'
 				/>

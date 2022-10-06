@@ -215,17 +215,11 @@ void initCommonGFX() {
 		if (gameDomain->contains("stretch_mode"))
 			g_system->setStretchMode(ConfMan.get("stretch_mode").c_str());
 
-		if (ConfMan.hasKey("useshaders") && ConfMan.get("useshaders") == "shaders") {
-			if (gameDomain->contains("shader")) {
-				g_system->setScaler(g_system->getDefaultScaler(), g_system->getDefaultScaleFactor());
-				g_system->setShader(ConfMan.get("shader"));
-			}
-		} else {
-			if (gameDomain->contains("scaler") || gameDomain->contains("scale_factor")) {
-				g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
-				g_system->setShader("");
-			}
-		}
+		if (gameDomain->contains("scaler") || gameDomain->contains("scale_factor"))
+			g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
+
+		if (gameDomain->contains("shader"))
+			g_system->setShader(ConfMan.get("shader"));
 	}
 }
 

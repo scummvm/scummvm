@@ -103,18 +103,12 @@ enum {
 	kGraphicsTabContainerReflowCmd = 'gtcr',
 	kScalerPopUpCmd			= 'scPU',
 	kFullscreenToggled		= 'oful',
-	kScalerToggle			= 'sctg',
 };
 
 enum {
 	kSubtitlesSpeech,
 	kSubtitlesSubs,
 	kSubtitlesBoth,
-};
-
-enum {
-	kScalerScaler,
-	kScalerShader,
 };
 
 #ifdef USE_FLUIDSYNTH
@@ -203,7 +197,6 @@ void OptionsDialog::init() {
 	_fullscreenCheckbox = nullptr;
 	_filteringCheckbox = nullptr;
 	_aspectCheckbox = nullptr;
-	_enableShaderSettings = false;
 	_shader = nullptr;
 	_shaderButton = nullptr;
 	_shaderClearButton = nullptr;
@@ -356,15 +349,6 @@ void OptionsDialog::build() {
 
 		_scalerPopUp->setSelected(0);
 		_scaleFactorPopUp->setSelected(0);
-
-		// Set the scaler checkbox value
-		int scalerVal = kScalerScaler;
-
-		if (ConfMan.hasKey("useshaders", _domain) && ConfMan.get("useshaders", _domain) == "shaders")
-			scalerVal = kScalerShader;
-
-		_scalerToggleGroup->setValue(scalerVal);
-		setScalerControls();
 
 		if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 			if (ConfMan.hasKey("scaler", _domain)) {
@@ -608,16 +592,6 @@ void OptionsDialog::apply() {
 			ConfMan.setBool("aspect_ratio", _aspectCheckbox->getState(), _domain);
 			ConfMan.setBool("vsync", _vsyncCheckbox->getState(), _domain);
 
-			Common::String useshaders = "scalers";
-
-			if (_scalerToggleGroup->getValue() == kScalerShader)
-				useshaders = "shaders";
-
-			if (ConfMan.get("useshaders", _domain) != useshaders)
-				graphicsModeChanged = true;
-
-			ConfMan.set("useshaders", useshaders, _domain);
-
 			bool isSet = false;
 
 			if ((int32)_gfxPopUp->getSelectedTag() >= 0) {
@@ -739,32 +713,28 @@ void OptionsDialog::apply() {
 
 	// Shader options
 	if (_shader) {
-		if (_enableShaderSettings) {
-			bool isSet;
+		bool isSet;
 
-			if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
-				previousShader = ConfMan.get("shader", _domain);
+		if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
+			previousShader = ConfMan.get("shader", _domain);
 
-			Common::U32String shader(_shader->getLabel());
-			if (shader.empty() || (shader == _c("None", "shader")))
-				isSet = false;
-			else
-				isSet = true;
+		Common::U32String shader(_shader->getLabel());
+		if (shader.empty() || (shader == _c("None", "shader")))
+			isSet = false;
+		else
+			isSet = true;
 
-			if (isSet) {
-				if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
-					graphicsModeChanged = true;
-				ConfMan.set("shader", shader.encode(), _domain);
-			} else {
-				if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
-					graphicsModeChanged = true;
-				ConfMan.removeKey("shader", _domain);
-			}
-
-			_shader->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
+		if (isSet) {
+			if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
+				graphicsModeChanged = true;
+			ConfMan.set("shader", shader.encode(), _domain);
 		} else {
+			if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
+				graphicsModeChanged = true;
 			ConfMan.removeKey("shader", _domain);
 		}
+
+		_shader->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 	}
 
 	// Setup graphics again if needed
@@ -772,16 +742,8 @@ void OptionsDialog::apply() {
 		g_system->beginGFXTransaction();
 		g_system->setGraphicsMode(ConfMan.get("gfx_mode", _domain).c_str());
 		g_system->setStretchMode(ConfMan.get("stretch_mode", _domain).c_str());
-
-		if (ConfMan.hasKey("useshaders", _domain) && ConfMan.get("useshaders", _domain) == "shaders") {
-			g_system->setScaler(g_system->getDefaultScaler(), g_system->getDefaultScaleFactor());
-			g_system->setShader(ConfMan.get("shader", _domain));
-		} else {
-			// THis should stay in the fallback section for allowing more values to the toggle group
-
-			g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
-			g_system->setShader("");
-		}
+		g_system->setScaler(ConfMan.get("scaler", _domain).c_str(), ConfMan.getInt("scale_factor", _domain));
+		g_system->setShader(ConfMan.get("shader", _domain));
 
 		if (ConfMan.hasKey("aspect_ratio"))
 			g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio", _domain));
@@ -1090,9 +1052,6 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		_shaderClearButton->setEnabled(false);
 		g_gui.scheduleTopDialogRedraw();
 		break;
-	case kScalerToggle:
-		setScalerControls();
-		break;
 	case kMidiGainChanged:
 		_midiGainLabel->setLabel(Common::String::format("%.2f", (double)_midiGainSlider->getValue() / 100.0));
 		_midiGainLabel->markAsDirty();
@@ -1228,14 +1187,10 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_stretchPopUp->setEnabled(false);
 	}
 
-	bool scalerToggle = false;
-
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setEnabled(enabled);
 		_scalerPopUp->setEnabled(enabled);
 		_scaleFactorPopUp->setEnabled(enabled);
-
-		scalerToggle = enabled;
 	} else {
 		_scalerPopUpDesc->setEnabled(false);
 		_scalerPopUp->setEnabled(false);
@@ -1246,18 +1201,11 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shaderButton->setEnabled(enabled);
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
-
-		scalerToggle = enabled;
 	} else {
 		_scalerPopUpDesc->setEnabled(false);
 		_scalerPopUp->setEnabled(false);
 		_scaleFactorPopUp->setEnabled(false);
 	}
-
-	_scalerToggleGroup->setEnabled(scalerToggle);
-
-	// Toggle setting based on the radiobutton state
-	setScalerControls(enabled);
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
 		_filteringCheckbox->setEnabled(enabled);
@@ -1273,21 +1221,6 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_aspectCheckbox->setEnabled(false);
 	else
 		_aspectCheckbox->setEnabled(enabled);
-}
-
-void OptionsDialog::setShaderSettingsState(bool enabled) {
-	_enableShaderSettings = enabled;
-
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_shader->setEnabled(enabled);
-		_shaderButton->setEnabled(enabled);
-		_shaderClearButton->setEnabled(enabled);
-
-		if (enabled && !_shader->getLabel().empty() && (_shader->getLabel() != _c("None", "shader")))
-			_shaderClearButton->setEnabled(enabled);
-		else
-			_shaderClearButton->setEnabled(false);
-	}
 }
 
 void OptionsDialog::setAudioSettingsState(bool enabled) {
@@ -1587,15 +1520,9 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 		sm++;
 	}
 
-	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_scalerToggleGroup = new RadiobuttonGroup(boss, kScalerToggle);
-
-		_scalerToggleScalers = new RadiobuttonWidget(boss, prefix + "grScalerRadioButton", _scalerToggleGroup, kScalerScaler, Common::U32String(""));
-	}
-
 	// The Scaler popup
 	const PluginList &scalerPlugins = ScalerMan.getPlugins();
-	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Use scaler:"));
+	_scalerPopUpDesc = new StaticTextWidget(boss, prefix + "grScalerPopupDesc", _("Scaler:"));
 	_scalerPopUp = new PopUpWidget(boss, prefix + "grScalerPopup", Common::U32String(), kScalerPopUpCmd);
 
 	_scalerPopUp->appendEntry(_("<default>"));
@@ -1608,17 +1535,13 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	updateScaleFactors(_scalerPopUp->getSelectedTag());
 
 	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
-		_scalerToggleShaders = new RadiobuttonWidget(boss, prefix + "grShaderRadioButton", _scalerToggleGroup, kScalerShader, Common::U32String(""));
-
 		if (g_system->getOverlayWidth() > 320)
-			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Use Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
+			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _("Shader:"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
 		else
 			_shaderButton = new ButtonWidget(boss, prefix + "grShaderButton", _c("Shader Path:", "lowres"), _("Specifies path to the shader used for scaling the game screen"), kChooseShaderCmd);
 		_shader = new StaticTextWidget(boss, prefix + "grShader", _c("None", "shader"), _("Specifies path to the shader used for scaling the game screen"));
 
 		_shaderClearButton = addClearButton(boss, prefix + "grShaderClearButton", kClearShaderCmd);
-
-		_enableShaderSettings = true;
 	}
 
 	// Fullscreen checkbox
@@ -1666,30 +1589,6 @@ void OptionsDialog::addGraphicControls(GuiObject *boss, const Common::String &pr
 	_aspectCheckbox = new CheckboxWidget(boss, prefix + "grAspectCheckbox", _("Aspect ratio correction"), _("Correct aspect ratio for games"));
 
 	_enableGraphicSettings = true;
-}
-
-void OptionsDialog::setScalerControls(bool enabled) {
-	bool scalers, shaders;
-
-	if (_scalerToggleGroup->getValue() == kScalerScaler) {
-		scalers = true;
-		shaders = false;
-	} else {
-		scalers = false;
-		shaders = true;
-	}
-
-	if (!enabled) {
-		scalers = shaders = false;
-	}
-
-	_scalerPopUpDesc->setEnabled(scalers);
-	_scalerPopUp->setEnabled(scalers);
-	_scaleFactorPopUp->setEnabled(scalers);
-
-	_shaderButton->setEnabled(shaders);
-	_shader->setEnabled(shaders);
-	_shaderClearButton->setEnabled(shaders);
 }
 
 void OptionsDialog::addAudioControls(GuiObject *boss, const Common::String &prefix) {
@@ -2034,8 +1933,6 @@ void OptionsDialog::setupGraphicsTab() {
 	_renderModePopUpDesc->setVisible(true);
 	_renderModePopUp->setVisible(true);
 
-	setScalerControls();
-
 	if (g_system->hasFeature(OSystem::kFeatureScalers)) {
 		_scalerPopUpDesc->setVisible(true);
 		if (ConfMan.isKeyTemporary("scaler") || ConfMan.isKeyTemporary("scale_factor"))
@@ -2046,6 +1943,16 @@ void OptionsDialog::setupGraphicsTab() {
 		_scalerPopUpDesc->setVisible(false);
 		_scalerPopUp->setVisible(false);
 		_scaleFactorPopUp->setVisible(false);
+	}
+
+	if (g_system->hasFeature(OSystem::kFeatureShaders)) {
+		_shaderButton->setVisible(true);
+		_shader->setVisible(true);
+		_shaderClearButton->setVisible(true);
+	} else {
+		_shaderButton->setVisible(false);
+		_shader->setVisible(false);
+		_shaderClearButton->setVisible(false);
 	}
 }
 
