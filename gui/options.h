@@ -102,7 +102,6 @@ protected:
 	void addSubtitleControls(GuiObject *boss, const Common::String &prefix, int maxSliderVal = 255);
 
 	void setGraphicSettingsState(bool enabled);
-	void setShaderSettingsState(bool enabled);
 	void setAudioSettingsState(bool enabled);
 	void setMIDISettingsState(bool enabled);
 	void setMT32SettingsState(bool enabled);
@@ -114,8 +113,6 @@ protected:
 
 	bool loadMusicDeviceSetting(PopUpWidget *popup, Common::String setting, MusicType preferredType = MT_AUTO);
 	void saveMusicDeviceSetting(PopUpWidget *popup, Common::String setting);
-
-	void setScalerControls(bool enabled = true);
 
 	TabWidget *_tabWidget;
 	int _graphicsTabId;
@@ -154,9 +151,6 @@ private:
 	PopUpWidget *_gfxPopUp;
 	StaticTextWidget *_stretchPopUpDesc;
 	PopUpWidget *_stretchPopUp;
-	RadiobuttonGroup *_scalerToggleGroup;
-	RadiobuttonWidget *_scalerToggleScalers;
-	RadiobuttonWidget *_scalerToggleShaders;
 	StaticTextWidget *_scalerPopUpDesc;
 	PopUpWidget *_scalerPopUp, *_scaleFactorPopUp;
 	ButtonWidget *_shaderButton;
@@ -170,11 +164,6 @@ private:
 	PopUpWidget *_antiAliasPopUp;
 	StaticTextWidget *_renderModePopUpDesc;
 	PopUpWidget *_renderModePopUp;
-
-	//
-	// Shader controls
-	//
-	bool _enableShaderSettings;
 
 	//
 	// Audio controls
