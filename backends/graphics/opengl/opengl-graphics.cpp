@@ -109,7 +109,6 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	switch (f) {
 	case OSystem::kFeatureAspectRatioCorrection:
 	case OSystem::kFeatureCursorPalette:
-	//case OSystem::kFeatureFilteringMode:
 	case OSystem::kFeatureStretchMode:
 #ifdef USE_SCALERS
 	case OSystem::kFeatureScalers:
@@ -118,6 +117,10 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 	case OSystem::kFeatureShaders:
 #endif
 		return true;
+
+	case OSystem::kFeatureFilteringMode:
+		// Filtering is supported only in cases when shaders are not present
+		return (g_system->getOpenGLType() == OpenGL::kContextGLES);
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
 		return _defaultFormatAlpha.aBits() > 3;
@@ -134,8 +137,11 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		_currentState.aspectRatioCorrection = enable;
 		break;
 
-#if 0
 	case OSystem::kFeatureFilteringMode:
+		// Filtering is supported only in cases when shaders are not present
+		if (g_system->getOpenGLType() != OpenGL::kContextGLES)
+			return;
+
 		assert(_transactionMode != kTransactionNone);
 		_currentState.filtering = enable;
 
@@ -155,7 +161,6 @@ void OpenGLGraphicsManager::setFeatureState(OSystem::Feature f, bool enable) {
 		}
 
 		break;
-#endif
 
 	case OSystem::kFeatureCursorPalette:
 		_cursorPaletteEnabled = enable;
