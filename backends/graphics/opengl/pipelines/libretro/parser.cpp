@@ -113,6 +113,20 @@ bool PresetParser::parsePreset(Common::SeekableReadStream &stream) {
 			continue;
 		}
 
+		bool empty = true;
+		for (int i = 0; i < line.size(); i++) {
+			if (line[i] == '#')
+				break;
+
+			if (!Common::isSpace(line[i])) {
+				empty = false;
+				break;
+			}
+		}
+
+		if (empty)
+			continue;
+
 		// Split line into key, value pair.
 		// TODO: Files can contain comments starting with '#', we need to
 		// handle this.
