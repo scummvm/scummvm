@@ -12,7 +12,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(!inifile.hasSection("abc"));
 
 		Common::INIFile::SectionList sections = inifile.getSections();
-		TS_ASSERT_EQUALS(sections.size(), 0);
+		TS_ASSERT_EQUALS(sections.size(), 0U);
 	}
 
 	void test_simple_ini_file() {
@@ -23,7 +23,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(result);
 
 		Common::INIFile::SectionList sections = inifile.getSections();
-		TS_ASSERT_EQUALS(sections.size(), 1);
+		TS_ASSERT_EQUALS(sections.size(), 1U);
 
 		TS_ASSERT(inifile.hasSection("s"));
 		TS_ASSERT(inifile.hasKey("abc", "s"));
@@ -46,7 +46,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(result);
 
 		Common::INIFile::SectionList sections = inifile.getSections();
-		TS_ASSERT_EQUALS(sections.size(), 3);
+		TS_ASSERT_EQUALS(sections.size(), 3U);
 
 		TS_ASSERT(inifile.hasSection("s"));
 		TS_ASSERT(inifile.hasSection("empty"));
@@ -62,7 +62,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 
 		inifile.clear();
 		sections = inifile.getSections();
-		TS_ASSERT_EQUALS(sections.size(), 0);
+		TS_ASSERT_EQUALS(sections.size(), 0U);
 		TS_ASSERT(!inifile.hasSection("s"));
 	}
 
@@ -104,7 +104,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 		TS_ASSERT(inifile.hasSection("sEcT10N -_..Name:"));
 
 		const char invalids[] = "!\"#$%&'()=~[]()+?<>\r\t\n";
-		for (int i = 0; i < sizeof(invalids) - 1; i++) {
+		for (uint i = 0; i < sizeof(invalids) - 1; i++) {
 			char c = invalids[i];
 			const Common::String s(c);
 			inifile.addSection(s);
@@ -113,7 +113,7 @@ class IniFileTestSuite : public CxxTest::TestSuite {
 
 		inifile.clear();
 		inifile.allowNonEnglishCharacters();
-		for (int i = 0; i < sizeof(invalids) - 1; i++) {
+		for (uint i = 0; i < sizeof(invalids) - 1; i++) {
 			char c = invalids[i];
 			if (c == '[' || c == ']' || c == '#' || c == '=' || c == '\r' || c == '\n')
 				continue;
