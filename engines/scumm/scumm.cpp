@@ -81,8 +81,7 @@
 #include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
 #include "scumm/imuse/drivers/fmtowns.h"
-#include "scumm/imuse/drivers/gmidi.h"
-#include "scumm/imuse/drivers/mt32.h"
+#include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
 
 #include "backends/audiocd/audiocd.h"

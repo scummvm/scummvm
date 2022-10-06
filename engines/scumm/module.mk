@@ -33,9 +33,8 @@ MODULE_OBJS := \
 	imuse/sysex_scumm.o \
 	imuse/drivers/amiga.o \
 	imuse/drivers/fmtowns.o \
-	imuse/drivers/gmidi.o \
+	imuse/drivers/midi.o \
 	imuse/drivers/mac_m68k.o \
-	imuse/drivers/mt32.o \
 	imuse/drivers/pcspk.o \
 	input.o \
 	ks_check.o \
