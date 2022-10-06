@@ -92,6 +92,11 @@ void CharacterInfo::draw() {
 		escToGoBack(0);
 		break;
 
+	case USE:
+		writeString(7, 20, STRING["dialogs.character.use_what"]);
+		escToGoBack(0);
+		break;
+
 	default:
 		break;
 	}
@@ -138,6 +143,10 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			break;
 		case Common::KEYCODE_t:
 			_state = TRADE_WITH;
+			redraw();
+			break;
+		case Common::KEYCODE_u:
+			_state = USE;
 			redraw();
 			break;
 		default:
@@ -207,6 +216,38 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 		}
 		break;
 
+	case USE: {
+		Character &c = *g_globals->_currCharacter;
+		const Inventory::Entry *invEntry;
+		Item *item;
+		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_6 &&
+			(msg.keycode - Common::KEYCODE_1) < (int)c._equipped.size()) {
+			invEntry = &c._equipped[msg.keycode - Common::KEYCODE_1];
+		} else if (msg.keycode >= Common::KEYCODE_a && msg.keycode <= Common::KEYCODE_f &&
+				(msg.keycode - Common::KEYCODE_a) < (int)c._backpack.size()) {
+			invEntry = &c._backpack[msg.keycode - Common::KEYCODE_a];
+		} else {
+			break;
+		}
+
+		item = getItem(invEntry->_id);
+
+		clearLines(20, 24);
+		if (!item->_effectId) {
+			writeString(8, 21, STRING["dialogs.character.no_special_power"]);
+			delaySeconds(3);
+		} else if (item->_equipMode == NOT_EQUIPPABLE ||
+				msg.keycode >= Common::KEYCODE_a) {
+			if (invEntry->_charges) {
+				// TODO: Handle charges
+
+			} else {
+				writeString(8, 21, STRING["dialogs.character.no_charges_left"]);
+				delaySeconds(3);
+			}
+		}
+		break;
+	}
 	default:
 		break;
 	}

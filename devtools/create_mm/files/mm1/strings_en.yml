@@ -43,6 +43,7 @@
 		gather_all: "GATHER ALL:"
 		trade_with: "TRADE WITH: '1'-'%d'"
 		trade_which: "TRADE WHICH:"
+		use_what: "USE WHICH 'A'-'F','1'-'6'?"
 		gems: "1) GEMS"
 		gold: "2) GOLD"
 		food: "3) FOOD"
@@ -50,6 +51,9 @@
 		how_much: "HOW MUCH:"
 		cast_spell: "CAST SPELL:  LEVEL="
 		number: "NUMBER="
+		use_no_special_power: "NO SPECIAL POWER"
+		use_not_equipped: "NOT EQUIPPED"
+		no_charges_left: "NO CHARGES LEFT"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="

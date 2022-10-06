@@ -363,7 +363,7 @@ void Combat::writeShootOption() {
 
 void Combat::resetBottom() {
 	clearLines(20, 24);
-	_val2 = _val3 = _val4 = _val5 = ' ';
+	_val2 = _val3 = _val4 = _val5 = 32;
 }
 
 void Combat::writeStaticContent() {
