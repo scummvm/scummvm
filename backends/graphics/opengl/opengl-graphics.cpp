@@ -116,8 +116,10 @@ bool OpenGLGraphicsManager::hasFeature(OSystem::Feature f) const {
 #endif
 		return true;
 
+#if !USE_FORCED_GLES
 	case OSystem::kFeatureShaders:
 		return LibRetroPipeline::isSupportedByContext();
+#endif
 
 	case OSystem::kFeatureOverlaySupportsAlpha:
 		return _defaultFormatAlpha.aBits() > 3;
