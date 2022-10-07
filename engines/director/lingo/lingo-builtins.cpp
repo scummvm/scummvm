@@ -1445,8 +1445,7 @@ void LB::b_framesToHMS(int nargs) {
 	int fps = g_lingo->pop().asInt();
 	int frames = g_lingo->pop().asInt();
 
-	if (fps <= 0)
-		fps = -fps;
+	fps = MAX(1, fps);
 
 	bool negative = frames < 0;
 	if (negative)
