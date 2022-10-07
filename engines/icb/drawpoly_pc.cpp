@@ -671,7 +671,7 @@ void drawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 				if (selFace == i)
 					setRGB0(poly, selPRed, selPGreen, selPBlue);
 				else
-					setRGB0(poly, rgbIn->r, rgbIn->b, rgbIn->b);
+					setRGB0(poly, rgbIn->r, rgbIn->g, rgbIn->b);
 
 				// Put it into the global ot at the correct place
 				myAddPrimClip(avgz, drawpacket);
