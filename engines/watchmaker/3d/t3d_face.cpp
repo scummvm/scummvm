@@ -32,14 +32,8 @@ t3dFACE::t3dFACE(t3dBODY *b, Common::SeekableReadStream &stream) {
 
 	this->n = b->NList[stream.readSint16LE()];                                  // Legge puntatore a normale
 
-	uint16 materialIndex = stream.readSint16LE();                                                                    // Legge indice materiale
-	if (materialIndex >= b->NumMaterials())
-		warning("Material index wrong: current index: %d; Max material index %d", materialIndex, b->NumMaterials());
-	else {
-		mat = b->MatTable[materialIndex];                                   // Make the pointer to the material
-		if (mat->addNumFaces(1/*f2*/) == false)      // Add face space to the material
-			warning("Can't realloc material faces");
-	}
+	_materialIndex = stream.readSint16LE();                                                                    // Legge indice materiale
+	_body = b;
 }
 
 bool t3dFACE::isVisible() const {
@@ -50,5 +44,23 @@ bool t3dFACE::isVisible() const {
 
 	return true;
 }
+
+MaterialPtr t3dFACE::getMaterial() {
+	if (_mat) {
+		return _mat;
+	} else {
+		_mat = _body->MatTable[_materialIndex];
+		return _mat;
+	}
+}
+
+const gMaterial* t3dFACE::getMaterial() const {
+	if (_mat) {
+		return _mat.get();
+	} else {
+		assert(0);
+	}
+}
+
 
 } // End of namespace Watchmaker

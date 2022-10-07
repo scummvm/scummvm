@@ -36,6 +36,7 @@
 #ifdef USE_OPENGL_GAME
 
 #include "graphics/opengl/system_headers.h"
+#include "watchmaker/file_utils.h"
 #include "watchmaker/tga_util.h"
 
 #define MAXTEXTURES     2000
@@ -954,31 +955,26 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 }
 
 
-MaterialPtr Renderer::addMaterial(MaterialPtr MList, const Common::String &name, int NumFaces, unsigned int LoaderFlags) {
-	MaterialPtr Material = MList;
+bool Renderer::addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int LoaderFlags) {
 	bool            AlreadyLoaded = FALSE;
-	int             len = name.size();
-
 	//warning("AddMaterial(%s)", name.c_str());
-	if (((name[len - 1 - 0] == 'i') || (name[len - 1 - 0] == 'I')) &&
-	        ((name[len - 1 - 1] == 'v') || (name[len - 1 - 1] == 'V')) &&
-	        ((name[len - 1 - 2] == 'a') || (name[len - 1 - 2] == 'A'))) {
-		if ((Material->Movie = gLoadMovie(*_workDirs, name.c_str())) == nullptr)
-			return nullptr;
-		if ((Material->Texture = gUserTexture(64,
+	if (hasFileExtension(name, "avi")) {
+		if ((material.Movie = gLoadMovie(*_workDirs, name.c_str())) == nullptr)
+			return false;
+		if ((material.Texture = gUserTexture(64,
 		                                      128)) == nullptr)
 //		if( (Material->Texture=gUserTexture(    Material->Movie->g_psiStreamInfo.rcFrame.right,
 //										Material->Movie->g_psiStreamInfo.rcFrame.bottom)) == NULL )
-			return nullptr;
-		Material->addProperty(T3D_MATERIAL_MOVIE);
+			return false;
+		material.addProperty(T3D_MATERIAL_MOVIE);
 	} else {
-		if ((Material->Texture = gLoadTexture(*_workDirs, name.c_str(), LoaderFlags)) == nullptr)
-			return nullptr;
+		if ((material.Texture = gLoadTexture(*_workDirs, name.c_str(), LoaderFlags)) == nullptr)
+			return false;
 	}
 
 //f
-	Material->addProperty(T3D_MATERIAL_NOLIGHTMAP);
-	return Material;
+	material.addProperty(T3D_MATERIAL_NOLIGHTMAP);
+	return true;
 }
 
 } // End of namespace Watchmaker

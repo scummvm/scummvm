@@ -45,7 +45,7 @@ class Renderer {
 public:
 	Rect _viewport;
 	Renderer(WorkDirs *workDirs, sdl_wrapper *wrapper) : sdl(wrapper), _workDirs(workDirs) {}
-	MaterialPtr addMaterial(MaterialPtr MList, const Common::String &name, int NumFaces, unsigned int LoaderFlags);
+	bool addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int LoaderFlags);
 
 	void initGL();
 

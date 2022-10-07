@@ -2335,31 +2335,34 @@ void t3dMoveTexture(gVertex *gv, uint32 NumVerts, t3dF32 XInc, t3dF32 YInc) {
 	}
 }
 
+void t3dSetFaceVisibilityPortal(t3dMESH *mesh) {
+	if (bOrigRoom && !bDisableMirrors && (!(mesh->Flags & T3D_MESH_NOPORTALCHECK)) && (mesh->PortalList)) {
+		for (uint32 pl = 0; pl < t3dNumPortals; pl++)
+			if (t3dPortalList[pl] == mesh)
+				return;
+		t3dPortalList[t3dNumPortals++] = mesh;                                              // aggiunge a lista portali
+	}
+}
+
+void t3dSetFaceVisibilityMirror(t3dMESH *mesh) {
+	if (bOrigRoom && !bDisableMirrors)
+		if ((t3dNumGlobalMirrors + 1) < MAX_MIRRORS)
+			t3dGlobalMirrorList[t3dNumGlobalMirrors++] = mesh;                              // aggiunge alla lista
+}
+
 /* -----------------10/06/99 15.44-------------------
  *                  t3dSetFaceVisibility
  * --------------------------------------------------*/
 void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
-	uint32      pl;
-	int32      j;
-	int16      LastT1, LastT2, T1, T2;
-
 	if (mesh->Flags & T3D_MESH_PORTAL) {                                                         // se e' un portale
-		if (bOrigRoom && !bDisableMirrors && (!(mesh->Flags & T3D_MESH_NOPORTALCHECK)) && (mesh->PortalList)) {
-			for (pl = 0; pl < t3dNumPortals; pl++)
-				if (t3dPortalList[pl] == mesh)
-					return;
-			t3dPortalList[t3dNumPortals++] = mesh;                                              // aggiunge a lista portali
-		}
-		return ;                                                                                // ed esce
-	}
-
-	if (mesh->Flags & T3D_MESH_MIRROR) {                                                         // se e' uno specchio
-		if (bOrigRoom && !bDisableMirrors)
-			if ((t3dNumGlobalMirrors + 1) < MAX_MIRRORS)
-				t3dGlobalMirrorList[t3dNumGlobalMirrors++] = mesh;                              // aggiunge alla lista
+		t3dSetFaceVisibilityPortal(mesh);
+		return;                                                                                // ed esce
+	} else if (mesh->Flags & T3D_MESH_MIRROR) {                                                         // se e' uno specchio
+		t3dSetFaceVisibilityMirror(mesh);
 		return;                                                                                 // ed esce
 	}
 
+	int16 LastT1, LastT2, T1, T2;
 	LastT1 = LastT2 = -2;
 	T1 = T2 = -1;
 
@@ -2367,9 +2370,11 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 	int targetIndex = 0;
 	for (uint32 i = 0; i < mesh->NumFaces(); i++) {
 		t3dFACE &f = mesh->FList[i];
+
 		if (!f.getMaterial() || !(f.flags & T3D_FACE_VISIBLE))
 			continue;
 
+		f.checkVertices();
 		MaterialPtr Material = f.getMaterial();
 		T1 = Material->Texture->ID;
 
@@ -2379,31 +2384,21 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 			T2 = -1;
 
 		if (Material->hasFlag(T3D_MATERIAL_ENVIROMENT)) {                                        // se ha l'enviroment
-			t3dV3F  v;
-			t3dV3F  *n;
-			gVertex *gv;
 			t3dM3X3F    m;
-
 			t3dMatMul(&m, &mesh->Matrix, &t3dCurViewMatrix);
 
 			if (!(mesh->VBptr = mesh->VertexBuffer))
 				continue;
 
-			gv = &mesh->VBptr[f.VertexIndex[0]];
-			n = &mesh->NList[f.VertexIndex[0]]->n;
-			t3dVectTransform(&v, n, &m);
-			gv->u1 = (v.x);
-			gv->v1 = (v.y);
-			gv = &mesh->VBptr[f.VertexIndex[1]];
-			n = &mesh->NList[f.VertexIndex[1]]->n;
-			t3dVectTransform(&v, n, &m);
-			gv->u1 = (v.x);
-			gv->v1 = (v.y);
-			gv = &mesh->VBptr[f.VertexIndex[2]];
-			n = &mesh->NList[f.VertexIndex[2]]->n;
-			t3dVectTransform(&v, n, &m);
-			gv->u1 = (v.x);
-			gv->v1 = (v.y);
+			for (int i = 0; i < 3; i++) {
+				t3dV3F  v;
+				gVertex *gv = &mesh->VBptr[f.VertexIndex[i]];
+				t3dV3F *n = &mesh->NList[f.VertexIndex[i]]->n;
+				t3dVectTransform(&v, n, &m);
+				gv->u1 = (v.x);
+				gv->v1 = (v.y);
+			}
+
 			mesh->VBptr = nullptr;
 			mesh->Flags |= T3D_MESH_UPDATEVB;
 		}
@@ -2412,6 +2407,7 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 			if (T2 > 0) {
 				if (!Material->NumAddictionalMaterial)
 					DebugLogWindow("Error no Sub Material found in %s!", mesh->name.c_str());
+				int32 j = -1;
 				for (j = 0; j < Material->NumAddictionalMaterial; j++)
 					if (Material->AddictionalMaterial[j]->Texture->ID == T2)
 						break;
@@ -2435,7 +2431,7 @@ void t3dSetFaceVisibility(t3dMESH *mesh, t3dCAMERA *cam) {
 		// Something is wrong here, as the original game seems to be just writing to NumFaces + 0,1,2, as if there
 		// was space allocated there.
 		for (int v = 0; v < 3; v++) {
-			target->addFace(f.MatVertexIndex[v]);
+			target->addFace(f.getMatVertexIndex(v));
 		}
 
 		StatNumTris++;

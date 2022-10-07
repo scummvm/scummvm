@@ -679,14 +679,7 @@ gBatchBlock *rNewBatchBlock(signed short int T1, unsigned int F1, signed short i
 
 	if (!bb) return nullptr;
 
-	*bb = gBatchBlock();
-	bb->Texture1 = T1;
-	bb->Texture2 = T2;
-	bb->Flags1 = F1;
-	bb->Flags2 = F2;
-	bb->NumFaces = 0;
-	bb->NumVerts = 0;
-	bb->FacesList.clear();
+	*bb = gBatchBlock(T1, T2, F1, F2);
 	return bb;
 }
 

@@ -270,7 +270,7 @@ struct t3dLIGHT {
 	t3dV3F      SolarColor[4];              // Ambient color value for solar movement
 	t3dV3F      SolarPos[4];                // Position movements due to solar movement
 public:
-	t3dLIGHT(t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &stream);
+	t3dLIGHT(WGame &game, t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &stream);
 private:
 	void setupVisibleVerticesFromLight(t3dBODY *b);
 	void SetVisibleFromLight(gVertex *v);

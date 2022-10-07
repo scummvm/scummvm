@@ -39,10 +39,10 @@ namespace Watchmaker {
 #define CAMFILEVERSION  2
 #define BNDFILEVERSION  2
 
-void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &stream) {
+void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &stream, int numMaterials) {
 	int16 loader_numtextures = 0;
 	WorkDirs &workdirs = game.workDirs;
-	for (uint16  material = 0; material < b->NumMaterials(); material++) {                    // Legge Materiali
+	for (uint16 material = 0; material < numMaterials; material++) {                    // Legge Materiali
 		char    Name[100] = {}, Appo[100] = {};
 		unsigned int        Flags = 0, flag = 0;
 #ifndef WMGEN
@@ -81,10 +81,12 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 
 		if (LoaderFlags & T3D_HALFTEXTURESIZE) flag = rSURFACEHALF;                             // Se deve scalare le textures
 		else flag = 0;
-		MaterialPtr mat = b->MatTable[material];
+		MaterialPtr mat(new gMaterial());
+		assert(b->MatTable.size() == material);
+		b->MatTable.push_back(mat);
 		//warning("Loading material %d", material);
 #ifndef WMGEN
-		if (!(game._renderer->addMaterial(mat, Appo,/*f1*/0, flag))) {                                            // Carica e scala texture
+		if (!(game._renderer->addMaterial(*mat, Appo,/*f1*/0, flag))) {                                            // Carica e scala texture
 			warning("Material file %s not found, ", Appo);                                               // Se non trova la texture
 			mat->Texture = nullptr;
 			assert(0);
@@ -98,6 +100,7 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 			mat->addColor((uint8)b->AmbientLight.x, (uint8)b->AmbientLight.y, (uint8)b->AmbientLight.z);
 			loader_numtextures++;
 		}
+		assert(mat->Texture);
 	}//__for_material
 }
 
@@ -507,11 +510,11 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 	this->initNormals(stream);
 
 //-------------------LOADING MATERIALS--------------------------------------
-	t3dLoadMaterials(game, this, stream);
+	t3dLoadMaterials(game, this, stream, numMaterials);
 //-------------------LOADING LIGHTS--------------------------------------
 	this->LightTable.reserve(numLights); // Alloca spazio per le luci globali
 	for (light = 0; light < numLights; light++) {
-		this->LightTable.push_back(t3dLIGHT(this, workdirs, stream)); // Azzera luce
+		this->LightTable.push_back(t3dLIGHT(game, this, workdirs, stream)); // Azzera luce
 	}//__for_light
 //-------------------END OF LOADING LIGHTS-------------------------------
 
