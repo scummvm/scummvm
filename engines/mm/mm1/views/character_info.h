@@ -26,6 +26,7 @@
 #include "mm/mm1/views/character_base.h"
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/items.h"
+#include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/views/text_entry.h"
 
 namespace MM {
@@ -35,7 +36,7 @@ namespace Views {
 /**
  * In-game character dialog
  */
-class CharacterInfo : public CharacterBase {
+class CharacterInfo : public CharacterBase, MM1::Game::SpellCasting {
 private:
 	enum ViewState {
 		DISPLAY, EQUIP, GATHER, REMOVE, SHARE,
@@ -70,12 +71,12 @@ private:
 	/**
 	 * Using an item during combat
 	 */
-	void combatUseItem(Inventory::Entry &invEntry, bool isBackpack);
+	void combatUseItem(Inventory::Entry &invEntry, bool isEquipped);
 
 	/**
 	 * Using an item outside of combat
 	 */
-	void nonCombatUseItem(Inventory::Entry &invEntry, bool isBackpack);
+	void nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped);
 
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}

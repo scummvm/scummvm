@@ -321,7 +321,7 @@ void CharacterInfo::equipItem(uint index) {
 	}
 
 	if (equipError.empty()) {
-		if (item._equipMode == NOT_EQUIPPABLE) {
+		if (item._equipMode == IS_EQUIPPABLE) {
 			equipError = STRING["dialogs.character.not_equipped"];
 			_textPos.x = 10;
 		}
@@ -371,7 +371,7 @@ void CharacterInfo::equipItem(uint index) {
 		uint freeIndex = c._equipped.add(itemId, item14);
 
 		if (item._equipMode != EQUIPMODE_0) {
-			if (item._equipMode == NOT_EQUIPPABLE) {
+			if (item._equipMode == IS_EQUIPPABLE) {
 				equipError = STRING["dialogs.character.not_equipped"];
 				_textPos.x = 10;
 			} else if (item._equipMode == EQUIP_CURSED) {
@@ -540,26 +540,60 @@ void CharacterInfo::tradeHowMuch() {
 	);
 }
 
-void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isBackpack) {
+void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 	Item *item = getItem(invEntry._id);
+	Common::String msg;
 
-	clearLines(20, 24);
 	if (!item->_effectId) {
-		writeString(8, 21, STRING["dialogs.character.no_special_power"]);
-		delaySeconds(3);
-	} else if (item->_equipMode == NOT_EQUIPPABLE || isBackpack) {
+		msg = STRING["dialogs.character.use_combat.no_special_power"];
+
+	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
 			// TODO: Handle charges
 
 		} else {
-			writeString(8, 21, STRING["dialogs.character.no_charges_left"]);
-			delaySeconds(3);
+			msg = STRING["dialogs.character.use_combat.no_charges_left"];
 		}
+	} else {
+		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
 	}
+
+	clearLines(20, 24);
+	static_cast<Views::Combat *>(g_events->priorView())->disableAttacks();
+
+	writeString(8, 21, msg);
+	delaySeconds(3);
 }
 
-void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isBackpack) {
+void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
+	Item *item = getItem(invEntry._id);
+	Common::String msg;
 
+	if (!item->_effectId) {
+		msg = STRING["dialogs.character.use_noncombat.no_special_power"];
+
+	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
+		if (invEntry._charges) {
+			g_globals->_nonCombatEffectCtr++;
+			if (item->_effectId == 0xff) {
+				setSpell(item->_spellId, 0, 0);
+				Spells::cast(_spellIndex, g_globals->_currCharacter);
+
+			} else {
+
+			}
+		} else {
+			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
+		}
+	} else {
+		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
+	}
+
+	clearLines(20, 24);
+	static_cast<Views::Combat *>(g_events->priorView())->disableAttacks();
+
+	writeString(9, 21, msg);
+	delaySeconds(3);
 }
 
 } // namespace ViewsEnh
