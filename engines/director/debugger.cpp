@@ -371,7 +371,7 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 			if (sharedCast && sharedCast->_lingoArchive) {
 				for (int i = 0; i <= kMaxScriptType; i++) {
 					debugPrintf("  %s:\n", scriptType2str((ScriptType)i));
-					if (cast->_lingoArchive->scriptContexts[i].size() == 0)
+					if (sharedCast->_lingoArchive->scriptContexts[i].size() == 0)
 						debugPrintf("    [empty]\n");
 
 					for (auto &it : sharedCast->_lingoArchive->scriptContexts[i]) {
