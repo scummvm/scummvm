@@ -832,7 +832,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		stream = nullptr;
 	} else { // TGA
 		auto stream = workDirs.resolveFile(TextName);
-		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0), 0); // TODO Flags
+		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), 0); // TODO Flags
 		createTextureFromSurface(*image, GL_RGBA);
 #if 0
 		//warning("TODO: Handle TGA");

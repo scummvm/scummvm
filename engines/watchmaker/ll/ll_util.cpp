@@ -571,7 +571,7 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
 						}
 					}
 				}
-				memset(&Character[i]->Walk, 0, sizeof(Character[i]->Walk));
+				Character[i]->Walk = t3dWALK();
 			}
 		}
 
