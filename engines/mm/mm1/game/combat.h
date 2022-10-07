@@ -49,7 +49,7 @@ protected:
 	int _val1;
 	int _roundNum;
 	int _monsterIndex, _currentChar;
-	char _val2, _val3, _val4, _val5;
+	bool _allowFight, _allowShoot, _allowCast, _allowAttack;
 	byte _val6, _val7;
 	int _val8, _val9, _val10;
 	int _val11, _numberOfTimes;

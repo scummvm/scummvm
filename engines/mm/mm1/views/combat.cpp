@@ -49,6 +49,13 @@ void Combat::setMode(Mode newMode) {
 	redraw();
 }
 
+void Combat::disableAttacks() {
+	_allowFight = false;
+	_allowShoot = false;
+	_allowCast = false;
+	_allowAttack = false;
+}
+
 bool Combat::msgFocus(const FocusMessage &msg) {
 	// Clear combat data
 	clear();
@@ -303,20 +310,20 @@ void Combat::writeAllOptions() {
 	bool canAttack = _canAttack[_currentChar];
 	if (canAttack) {
 		writeAttackOptions();
-		_val5 = 'A';
-		_val2 = 'F';
+		_allowAttack = true;
+		_allowFight = true;
 
 		// Archers can always attack
 		canAttack = g_globals->_currCharacter->_class == ARCHER;
 	}
 	if (canAttack && g_globals->_currCharacter->_missileAttr) {
-		_val3 = 'S';
+		_allowShoot = true;
 		writeShootOption();
 	}
 
 	if (g_globals->_currCharacter->_sp._current) {
 		writeCastOption();
-		_val4 = 'C';
+		_allowCast = true;
 	}
 
 	writeString(16, 22, STRING["dialogs.combat.exchange_use"]);
@@ -363,7 +370,8 @@ void Combat::writeShootOption() {
 
 void Combat::resetBottom() {
 	clearLines(20, 24);
-	_val2 = _val3 = _val4 = _val5 = 32;
+	_allowFight = _allowShoot = false;
+	_allowCast = _allowAttack = false;
 }
 
 void Combat::writeStaticContent() {
@@ -556,7 +564,7 @@ void Combat::checkMonsterSpellDone() {
 }
 
 void Combat::attack() {
-	if (_val5 != 32)
+	if (_allowAttack)
 		attackMonsterPhysical();
 }
 
@@ -574,7 +582,7 @@ void Combat::exchange() {
 }
 
 void Combat::fight() {
-	if (_val2 != 32) {
+	if (_allowFight) {
 		if (_monsterList.size() < 2) {
 			attackMonsterPhysical();
 		} else {
@@ -587,7 +595,7 @@ void Combat::retreat() {
 }
 
 void Combat::shoot() {
-	if (_val3 != 32) {
+	if (_allowShoot) {
 		if (_monsterList.size() < 2) {
 			attackMonsterPhysical();
 		} else {

@@ -205,6 +205,12 @@ public:
 	virtual ~Combat() {}
 
 	/**
+	 * Disable the flags for allowing attacks for
+	 * the current character
+	 */
+	void disableAttacks();
+
+	/**
 	 * Called when the view is focused
 	 */
 	bool msgFocus(const FocusMessage &msg) override;

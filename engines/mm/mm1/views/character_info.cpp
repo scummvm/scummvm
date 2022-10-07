@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/character_info.h"
+#include "mm/mm1/views/combat.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -218,8 +219,7 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 
 	case USE: {
 		Character &c = *g_globals->_currCharacter;
-		const Inventory::Entry *invEntry;
-		Item *item;
+		Inventory::Entry *invEntry;
 		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_6 &&
 			(msg.keycode - Common::KEYCODE_1) < (int)c._equipped.size()) {
 			invEntry = &c._equipped[msg.keycode - Common::KEYCODE_1];
@@ -230,22 +230,10 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 			break;
 		}
 
-		item = getItem(invEntry->_id);
-
-		clearLines(20, 24);
-		if (!item->_effectId) {
-			writeString(8, 21, STRING["dialogs.character.no_special_power"]);
-			delaySeconds(3);
-		} else if (item->_equipMode == NOT_EQUIPPABLE ||
-				msg.keycode >= Common::KEYCODE_a) {
-			if (invEntry->_charges) {
-				// TODO: Handle charges
-
-			} else {
-				writeString(8, 21, STRING["dialogs.character.no_charges_left"]);
-				delaySeconds(3);
-			}
-		}
+		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr)
+			combatUseItem(*invEntry, msg.keycode >= Common::KEYCODE_a);
+		else
+			nonCombatUseItem(*invEntry, msg.keycode >= Common::KEYCODE_a);
 		break;
 	}
 	default:
@@ -552,6 +540,27 @@ void CharacterInfo::tradeHowMuch() {
 	);
 }
 
+void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isBackpack) {
+	Item *item = getItem(invEntry._id);
+
+	clearLines(20, 24);
+	if (!item->_effectId) {
+		writeString(8, 21, STRING["dialogs.character.no_special_power"]);
+		delaySeconds(3);
+	} else if (item->_equipMode == NOT_EQUIPPABLE || isBackpack) {
+		if (invEntry._charges) {
+			// TODO: Handle charges
+
+		} else {
+			writeString(8, 21, STRING["dialogs.character.no_charges_left"]);
+			delaySeconds(3);
+		}
+	}
+}
+
+void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isBackpack) {
+
+}
 
 } // namespace ViewsEnh
 } // namespace MM1

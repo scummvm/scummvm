@@ -298,6 +298,14 @@ public:
 		return _views.empty() ? nullptr : _views.top();
 	}
 
+	/**
+	 * Returns the view prior to the current view, if any
+	 */
+	UIElement *priorView() const {
+		return _views.size() < 2 ? nullptr :
+			_views[_views.size() - 2];
+	}
+
 	Graphics::Screen *getScreen() const {
 		return _screen;
 	}
