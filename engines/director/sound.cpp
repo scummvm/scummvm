@@ -797,8 +797,12 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	_macresman->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator));
-	Common::SeekableReadStream *file = _macresman->getDataFork();
+	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
+	Common::SeekableReadStream *file = nullptr;
+
+	if (_macresman->open(filePath)) {
+		file = _macresman->getDataFork();
+	}
 
 	if (file == nullptr) {
 		warning("Failed to open %s", _path.c_str());
