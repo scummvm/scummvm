@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-07 15:44+0000\n"
+"POT-Creation-Date: 2022-10-07 21:44+0000\n"
 "PO-Revision-Date: 2022-10-03 20:37+0000\n"
 "Last-Translator: LINUX-SAUNA <linuxsauna@protonmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
@@ -4118,7 +4118,7 @@ msgstr "Poista NTSC-häiriövärien emulointi tekstille"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
-#: engines/groovie/detection.cpp:296 engines/neverhood/detection.cpp:139
+#: engines/groovie/detection.cpp:309 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
 #: engines/ultima/detection.cpp:55 engines/zvision/detection_tables.h:50
@@ -4127,7 +4127,7 @@ msgstr "Käytä alkuperäisiä tallenna/lataa valikkoja"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
-#: engines/groovie/detection.cpp:297 engines/neverhood/detection.cpp:140
+#: engines/groovie/detection.cpp:310 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
 #: engines/ultima/detection.cpp:56 engines/zvision/detection_tables.h:51
@@ -4517,7 +4517,7 @@ msgstr ""
 
 #: engines/bladerunner/detection_tables.h:129 engines/cge/detection.cpp:56
 #: engines/cge/detection.cpp:62 engines/cge/detection.cpp:68
-#: engines/groovie/detection.cpp:105 engines/kyra/detection_tables.h:302
+#: engines/groovie/detection.cpp:118 engines/kyra/detection_tables.h:302
 #: engines/lure/detection.cpp:251 engines/mohawk/detection_tables.h:1024
 #: engines/mohawk/detection_tables.h:1130
 #: engines/mohawk/detection_tables.h:1145
@@ -5172,36 +5172,36 @@ msgstr ""
 "Voit myös käyttää pelin Steam- tai GOG-versioita, joissa tiedostot on "
 "yhdistetty"
 
-#: engines/groovie/detection.cpp:284
+#: engines/groovie/detection.cpp:297
 msgid "Fast movie speed"
 msgstr "Nopea videontoisto"
 
-#: engines/groovie/detection.cpp:285
+#: engines/groovie/detection.cpp:298
 msgid "Play movies at an increased speed"
 msgstr "Toista videot nopeampana"
 
-#: engines/groovie/detection.cpp:308
+#: engines/groovie/detection.cpp:321
 msgid "Easier AI"
 msgstr "Helpompi AI"
 
-#: engines/groovie/detection.cpp:309
+#: engines/groovie/detection.cpp:322
 msgid "Decrease the difficulty of AI puzzles"
 msgstr "Madalla AI-pulmien vaikeustasoa"
 
-#: engines/groovie/detection.cpp:320
+#: engines/groovie/detection.cpp:333
 msgid "Updated Credits Music"
 msgstr "Päivitetty lopputekstimusiikki"
 
-#: engines/groovie/detection.cpp:321
+#: engines/groovie/detection.cpp:334
 msgid ""
 "Play the song The Final Hour during the credits instead of reusing MIDI songs"
 msgstr "Soita laulu 'The Final Hour' MIDI-musiikin sijaan lopputeksteissä"
 
-#: engines/groovie/detection.cpp:332
+#: engines/groovie/detection.cpp:345
 msgid "Speedrun Mode"
 msgstr "Pikapeluutila"
 
-#: engines/groovie/detection.cpp:333
+#: engines/groovie/detection.cpp:346
 msgid "Affects the controls for fast forwarding the game"
 msgstr "Vaikuttaa ohjaukseen pelin eteenpäinpelaamiseen pikakelauksella"
 
