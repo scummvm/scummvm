@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef SCUMM_IMUSE_DRV_GMIDI_H
-#define SCUMM_IMUSE_DRV_GMIDI_H
+#ifndef SCUMM_IMUSE_DRV_MIDI_H
+#define SCUMM_IMUSE_DRV_MIDI_H
 
 #include "audio/mididrv.h"
 

@@ -38,7 +38,7 @@ struct ChannelNode;
 class IMuseChannel_Midi : public MidiChannel {
 public:
 	IMuseChannel_Midi(IMuseDriver_GMidi *drv, int number);
-	~IMuseChannel_Midi() override {}
+	virtual ~IMuseChannel_Midi() override {}
 
 	MidiDriver *device() override { return _drv; }
 	byte getNumber() override {	return _number; }
@@ -56,9 +56,9 @@ public:
 	void pitchBend(int16 bend) override;
 
 	// Control Change and SCUMM specific functions
-	void pitchBendFactor(byte value) override { _pitchBendSensitivity = value; }
-	void transpose(int8 value) override { _transpose = value; }
-	void detune(byte value) override { _detune = value; }
+	void pitchBendFactor(byte value) override { pitchBend(0); _pitchBendSensitivity = value; }
+	void transpose(int8 value) override { _transpose = (int8)value; pitchBend(_pitchBendTemp); }
+	void detune(byte value) override { _detune = (int8)value; pitchBend(_pitchBendTemp); }
 	void priority(byte value) override { _prio = value; }
 	void sustain(bool value) override;
 	void allNotesOff() override;
@@ -152,11 +152,9 @@ void disconnect(ChannelNode *&chain, ChannelNode *node) {
 }
 
 IMuseChannel_Midi::IMuseChannel_Midi(IMuseDriver_GMidi *drv, int number) :MidiChannel(), _drv(drv), _number(number), _allocated(false), _sustain(false),
-	_pitchBend(0x2000), _polyphony(1), _channelUsage(0), _exhaust(false), _prio(0x80), _detune(0), _transpose(0), _pitchBendTemp(0), _pitchBendSensitivity(0),
+	_pitchBend(0x2000), _polyphony(1), _channelUsage(0), _exhaust(false), _prio(0x80), _detune(0), _transpose(0), _pitchBendTemp(0), _pitchBendSensitivity(2),
 	_activeChain(drv ? _drv->_activeChain : _dummyNode), _idleChain(drv ? _drv->_idleChain : _dummyNode), _newSystem(drv ? drv->_newSystem : false) {
 	assert(_drv);
-	if (!_newSystem)
-		_pitchBendSensitivity = 2;
 }
 
 bool IMuseChannel_Midi::allocate() {
@@ -251,6 +249,16 @@ void IMuseChannel_Midi::programChange(byte program)  {
 }
 
 void IMuseChannel_Midi::pitchBend(int16 bend)  {
+	_pitchBendTemp = bend;
+
+	if (_newSystem) {
+		// SAMNMAX formula (same for Roland MT-32 and GM)
+		bend = (((bend * _pitchBendSensitivity) >> 5) + _detune + (_transpose << 8)) << 1;
+	} else {
+		// DOTT, INDY4 and MI2 formula (same for Roland MT-32 and GM)
+		bend = CLIP<int>(((bend * _pitchBendSensitivity) >> 6) + _detune + (_transpose << 7), -2048, 2047) << 2;
+	}
+
 	_pitchBend = bend + 0x2000;
 	sendMidi(0xE0, _pitchBend & 0x7F, (_pitchBend >> 7) & 0x7F);
 }

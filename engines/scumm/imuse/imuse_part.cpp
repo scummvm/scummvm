@@ -114,10 +114,10 @@ void Part::set_detune(int8 detune) {
 
 	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
 	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_player->isAdLibOrFMTowns())
-		sendDetune();
-	else
+	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		sendPitchBend();
+	else
+		sendDetune();
 }
 
 void Part::pitchBend(int16 value) {
@@ -159,10 +159,10 @@ void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
 	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
 	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
 	_transpose_eff = (_se->_soundType != MDT_AMIGA && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
-	if (_player->isAdLibOrFMTowns() || _se->_soundType == MDT_AMIGA)
-		sendTranspose();
-	else
+	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		sendPitchBend();
+	else
+		sendTranspose();
 }
 
 void Part::sustain(bool value) {
@@ -203,7 +203,7 @@ void Part::pitchBendFactor(byte value) {
 		return;
 	pitchBend(0);
 	_pitchbend_factor = value;
-	if (_mc && !(_player->isGM()))
+	if (_mc)
 		_mc->pitchBendFactor(value);
 }
 
@@ -310,7 +310,7 @@ void Part::setup(Player *player) {
 	_transpose = 0;
 	_detune = 0;
 	_detune_eff = player->getDetune();
-	_pitchbend_factor = _se->_newSystem ? 0 : 2;
+	_pitchbend_factor = 2;
 	_polyphony = 1;
 	_pitchbend = 0;
 	_effect_level = player->_se->isNativeMT32() ? 127 : 64;
@@ -377,40 +377,9 @@ void Part::sendPitchBend() {
 		return;
 
 	int16 bend = _pitchbend;
-	int8 transpose = _transpose_eff;
-	int8 detune = _detune_eff;
 
-	// For Amiga, AdLib and FM-Towns we send some values separately due to the way the drivers have
-	// been implemented (it must be avoided that the pitchbend factor gets applied on top). So we
-	// neutralize them here for the pitch bend calculation.
-	if (_se->_soundType == MDT_AMIGA) {
-		transpose = 0;
-	} else if (_player->isAdLibOrFMTowns()) {
-		transpose = detune = 0;
-	}
-
-	bool oldPitchBendFormula = true;
-
-	if (_player->isGM() || _player->_se->isNativeMT32()) {
-		if (_se->_game_id == GID_SAMNMAX) {
-			// SAMNMAX formula (same for Roland MT-32 and GM)
-			bend = _pitchbend_factor ? (bend * _pitchbend_factor) >> 5 : bend >> 6;
-			bend = (bend + detune + (transpose << 8)) << 1;
-			oldPitchBendFormula = false;
-		} else if (_se->_game_id == GID_TENTACLE || _se->_game_id == GID_INDY4 || _se->_game_id == GID_MONKEY2) {
-			// DOTT, INDY4 and MI2 formula (same for Roland MT-32 and GM)
-			bend = clamp(((bend * _pitchbend_factor) >> 6) + detune + (transpose << 7), -2048, 2047) << 2;
-			oldPitchBendFormula = false;
-		} else if (_se->isNativeMT32()) {
-			// RPN-based pitchbend range doesn't work for the MT32, so we'll do the scaling ourselves.
-			// athrxx: I haven't yet seen any evidence of this in any original driver. But I still
-			// haven't checked absolutely everything, so let's keep it around until we know better...
-			bend = bend * _pitchbend_factor / 12;
-		}
-	}
-
-	if (oldPitchBendFormula)
-		bend = clamp(bend + (detune * 64 / 12) + (transpose * 8192 / 12), -8192, 8191);
+	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
+		bend = clamp(bend + (_detune_eff * 64 / 12) + (_transpose_eff * 8192 / 12), -8192, 8191);
 
 	_mc->pitchBend(bend);
 }
@@ -420,7 +389,7 @@ void Part::sendTranspose() {
 		return;
 
 	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_se->_soundType != MDT_AMIGA && !_player->isAdLibOrFMTowns())
+	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		return;
 
 	_mc->transpose(_transpose_eff);
@@ -431,7 +400,7 @@ void Part::sendDetune() {
 		return;
 
 	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (!_player->isAdLibOrFMTowns())
+	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		return;
 
 	_mc->detune(_detune_eff);
