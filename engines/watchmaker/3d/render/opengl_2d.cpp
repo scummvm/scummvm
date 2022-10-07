@@ -260,7 +260,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 		return -1;
 	}
 
-	Graphics::PixelFormat RGBA8888(4, 8, 8, 8, 8, 24, 16, 8, 0);
+	Graphics::PixelFormat RGBA8888(4, 8, 8, 8, 8, 0, 8, 16, 24);
 
 	unsigned int pos = gGetBitmapListPosition();
 	if (pos == 0) {

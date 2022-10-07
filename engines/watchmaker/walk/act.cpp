@@ -360,7 +360,10 @@ void BuildStepList(int32 oc, uint8 dp, uint8 back) {
 
 	if (!Ch || !w) return;
 
-	memset(&w->WalkSteps[0], 0, T3D_MAX_WALKSTEPS * sizeof(t3dSTEPS));
+	for (int step = 0; step < T3D_MAX_WALKSTEPS; step++) {
+		w->WalkSteps[step] = t3dSTEPS();
+	}
+
 	if (w->NumPathNodes < 2) {
 		w->NumSteps = 0;
 		w->CurrentStep = 0;

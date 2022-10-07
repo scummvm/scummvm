@@ -56,9 +56,9 @@ struct t3dLOADBONE {
 
 struct t3dLOADANIM {
 	Common::String name;
-	uint32 NumFrames, NumBones, HiBone, LastTime;
-	t3dF32 *Dist;
-	t3dLOADBONE Bone[MAX_BONES];
+	uint32 NumFrames = 0, NumBones = 0, HiBone = 0, LastTime = 0;
+	t3dF32 *Dist = nullptr;
+	t3dLOADBONE Bone[MAX_BONES] = {};
 };
 
 t3dLOADANIM PreloadedAnim[MAX_PRELOADED_ANIMS];
@@ -191,7 +191,7 @@ int8 t3dLoadAnimation(WGame &game, const char *s, t3dMESH *mesh, uint16 Flag) {
 				t3dFree(PreloadedAnim[j].Bone[i].Euler);
 			}
 			t3dFree(PreloadedAnim[j].Dist);
-			memset(&PreloadedAnim[j], 0, sizeof(t3dLOADANIM));
+			PreloadedAnim[j] = t3dLOADANIM();
 		}
 //t     else
 //t         DebugFile( "Precarico animazione %s nello slot libero %d", s, CurPreloadedAnim );
@@ -698,7 +698,7 @@ void ReleasePreloadedAnims() {
 			t3dFree(PreloadedAnim[j].Bone[i].Euler);
 		}
 		t3dFree(PreloadedAnim[j].Dist);
-		memset(&PreloadedAnim[j], 0, sizeof(t3dLOADANIM));
+		PreloadedAnim[j] = t3dLOADANIM();
 	}
 }
 

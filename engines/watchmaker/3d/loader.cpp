@@ -278,7 +278,7 @@ t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint1
 		} else
 			body = r = t3dLoadSingleRoom(game, l->pname, b, NumBody, l->LoaderFlags);
 
-		memset(l, 0, sizeof(struct _t3dLOADLIST));
+		*l = _t3dLOADLIST();
 	}
 
 	if (!(LoaderFlags & T3D_NORECURSION)) {
