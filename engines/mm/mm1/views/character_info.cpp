@@ -94,6 +94,8 @@ void CharacterInfo::draw() {
 		break;
 
 	case USE:
+		g_globals->_combatEffectCtr = 0;
+		g_globals->_nonCombatEffectCtr = 0;
 		writeString(7, 20, STRING["dialogs.character.use_what"]);
 		escToGoBack(0);
 		break;
@@ -549,13 +551,30 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 
 	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
-			// TODO: Handle charges
+			g_globals->_combatEffectCtr++;
+			if (item->_effectId == 0xff) {
+				setSpell(item->_spellId, 0, 0);
+				Spells::cast(_spellIndex, g_globals->_currCharacter);
 
+			} else {
+				error("TODO: _effectId used as a character offset to increase attribute?");
+
+				if (g_globals->_combatEffectCtr)
+					(isEquipped ? &g_globals->_currCharacter->_equipped :
+						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
+
+				clearLines(20, 24);
+				writeString(14, 22, STRING["dialogs.character.use_combat.done"]);
+				Sound::sound(SOUND_2);
+				g_globals->_party.updateAC();
+				delaySeconds(2);
+				return;
+			}
 		} else {
 			msg = STRING["dialogs.character.use_combat.no_charges_left"];
 		}
 	} else {
-		msg = STRING["dialogs.character.use_noncombat.not_equipped"];
+		msg = STRING["dialogs.character.use_combat.not_equipped"];
 	}
 
 	clearLines(20, 24);
@@ -580,7 +599,18 @@ void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped
 				Spells::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
+				error("TODO: _effectId used as a character offset to increase attribute?");
 
+				if (g_globals->_nonCombatEffectCtr)
+					(isEquipped ? &g_globals->_currCharacter->_equipped :
+						&g_globals->_currCharacter->_backpack)->removeCharge(&invEntry);
+
+				clearLines(20, 24);
+				writeString(14, 22, STRING["spells.done"]);
+				Sound::sound(SOUND_2);
+				g_globals->_party.updateAC();
+				delaySeconds(2);
+				return;
 			}
 		} else {
 			msg = STRING["dialogs.character.use_noncombat.no_charges_left"];
