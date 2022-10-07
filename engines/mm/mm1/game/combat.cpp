@@ -40,7 +40,8 @@ void Combat::clear() {
 	Common::fill(&_canAttack[0], &_canAttack[6], false);
 	Common::fill(&_treasureFlags[0], &_treasureFlags[MAX_PARTY_SIZE], false);
 
-	_val1 = _val2 = _val3 = _val4 = _val5 = 0;
+	_allowFight = _allowShoot = _allowCast = _allowAttack = false;
+	_val1 = 0;
 	_val6 = _val7 = 0;
 	_val8 = _val9 = _val10 = 0;
 	_val11 = 0;
@@ -382,9 +383,9 @@ void Combat::selectTreasure2(int count) {
 	val2 = TREASURES_ARR2[idx];
 
 	for (idx = 0; idx < count; ++idx)
-		_val1 += _val2;
+		_val1 += _allowFight;
 
-	_val1 += getRandomNumber(_val2) - 1;
+	_val1 += getRandomNumber(_allowFight) - 1;
 
 	auto &treasure = g_globals->_treasure;
 	if (!treasure[2])

@@ -24,6 +24,7 @@
 
 #include "common/array.h"
 #include "mm/mm1/views/character_base.h"
+#include "mm/mm1/data/character.h"
 #include "mm/mm1/data/items.h"
 #include "mm/mm1/views/text_entry.h"
 
@@ -66,6 +67,15 @@ private:
 	 */
 	void tradeHowMuch();
 
+	/**
+	 * Using an item during combat
+	 */
+	void combatUseItem(Inventory::Entry &invEntry, bool isBackpack);
+
+	/**
+	 * Using an item outside of combat
+	 */
+	void nonCombatUseItem(Inventory::Entry &invEntry, bool isBackpack);
 
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}
