@@ -53,6 +53,7 @@ static const PlainGameDescriptor groovieGames[] = {
 	// Games
 	{"t7g", "The 7th Guest"},
 	{"11h", "The 11th Hour: The Sequel to The 7th Guest"},
+	{"11hsu", "The 11th Hour: Souped Up"},
 	{"making11h", "The Making of The 11th Hour"},
 	{"clandestiny", "Clandestiny"},
 	{"unclehenry", "Uncle Henry's Playhouse"},
@@ -63,14 +64,25 @@ static const PlainGameDescriptor groovieGames[] = {
 const int BASE_FLAGS = ADGF_NO_FLAGS;
 
 #define GROOVIEGAME(id, extra, f1, x1, s1, f2, x2, s2, language, platform, flags, guiOptions, version) \
-	{																							\
-		{																				\
-			id, extra,																	\
-			AD_ENTRY2s(f1, x1, s1, f2, x2, s2),											\
-			language, platform, (flags),												\
-			(guiOptions)																\
-		},																				\
-		version																			\
+	{                                                                                                  \
+		{                                                                                              \
+			id, extra,                                                                                 \
+			AD_ENTRY2s(f1, x1, s1, f2, x2, s2),                                                        \
+			language, platform, (flags),                                                               \
+			(guiOptions)                                                                               \
+		},                                                                                             \
+			version                                                                                    \
+	}
+
+#define T11HSUENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags, guiOptions, version)     \
+	{                                                                                                  \
+		{                                                                                              \
+			"11hsu", extra,                                                                            \
+			AD_ENTRY3s("suscript.grv", NULL, -1, f1, x1, s1, f2, x2, s2),                              \
+			language, platform, (flags),                                                               \
+			(guiOptions)                                                                               \
+		},                                                                                             \
+			version                                                                                    \
 	}
 
 
@@ -81,7 +93,8 @@ const int BASE_FLAGS = ADGF_NO_FLAGS;
 	GROOVIEGAME("t7g", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, (GUIO_NOMIDI GUIO_NOASPECT GUIO_NOSFX GAMEOPTION_T7G_FAST_MOVIE_SPEED GAMEOPTION_SPEEDRUN guiOptions), kGroovieT7G)
 
 #define T11HENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags) \
-	GROOVIEGAME("11h", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR, GAMEOPTION_SPEEDRUN), kGroovieT11H)
+	GROOVIEGAME("11h", extra, f1, x1, s1, f2, x2, s2, language, platform, flags, GUIO7(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_FINAL_HOUR, GAMEOPTION_SPEEDRUN), kGroovieT11H), \
+	T11HSUENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags, GUIO6(GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM GUIO_NOASPECT, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_EASIER_AI, GAMEOPTION_SPEEDRUN), kGroovieT11H)
 
 #define T11HDEMOENTRY(extra, f1, x1, s1, f2, x2, s2, language, platform, flags) \
 	GROOVIEGAME("11h", extra, f1, x1, s1, f2, x2, s2, language, platform, flags | ADGF_DEMO, GUIO6(GUIO_NOLAUNCHLOAD, GUIO_MIDIADLIB, GUIO_MIDIMT32, GUIO_MIDIGM, GUIO_NOASPECT, GAMEOPTION_SPEEDRUN), kGroovieT11H)
