@@ -340,7 +340,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "perdido",			"Lost in the Amazon" },
 	{ "peterrabbit",		"The Adventures of Peter Rabbit and Benjamin Bunny" },
 	{ "pennyhorse",			"Penny Horse" },
-	{ "physicus",			"Physicus: Save the World with Science!" },
 	{ "phonicsquest",		"Disney Phonics Quest" },
 	{ "physicus",			"Physicus: Save the World with Science!" },
 	{ "pingu1",				"Pingu: A Barrel of Fun!" },
@@ -6884,6 +6883,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("pettsonjs", "", "Julstart.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2610931, Common::SE_SWE, 702),
 
 	MACGAME1_l("physicus", "", "Physikus", "5d3f89e052320f8ce140451c730e232b", 114645, Common::FR_FRA, 702),
+
+	WINGAME1t_l("physicus", "", "Physikus.exe", "89be052460986358d7e4724ebc940af6", 1816828, Common::DE_DEU, 702),
 
 	WINDEMO1("planetstrass", "Demo", "Planet.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 15434606, 702),
 
