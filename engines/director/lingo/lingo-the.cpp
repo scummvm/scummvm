@@ -380,7 +380,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_lingo->_actorList;
 		break;
 	case kTheBeepOn:
-		d = (int)g_director->getCurrentMovie()->_isBeepOn;
+		d = (int)movie->_isBeepOn;
 		break;
 	case kTheButtonStyle:
 		d = (int)(g_director->_wm->_mode & Graphics::kWMModeButtonDialogStyle);
@@ -395,10 +395,10 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = g_director->_centerStage;
 		break;
 	case kTheCheckBoxAccess:
-		d = g_director->getCurrentMovie()->_checkBoxAccess;
+		d = movie->_checkBoxAccess;
 		break;
 	case kTheCheckBoxType:
-		d = g_director->getCurrentMovie()->_checkBoxType;
+		d = movie->_checkBoxType;
 		break;
 	case kTheChunk:
 		d = getTheChunk(id, field);
@@ -845,19 +845,19 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		d = getTheTime(field);
 		break;
 	case kTheTimeoutKeyDown:
-		d= g_director->getCurrentMovie()->_timeOutKeyDown;
+		d= movie->_timeOutKeyDown;
 		break;
 	case kTheTimeoutLapsed:
-		d = (int)(_vm->getMacTicks() - g_director->getCurrentMovie()->_lastTimeOut);
+		d = (int)(_vm->getMacTicks() - movie->_lastTimeOut);
 		break;
 	case kTheTimeoutLength:
-		d = (int)g_director->getCurrentMovie()->_timeOutLength;
+		d = (int)movie->_timeOutLength;
 		break;
 	case kTheTimeoutMouse:
-		d = g_director->getCurrentMovie()->_timeOutMouse;
+		d = movie->_timeOutMouse;
 		break;
 	case kTheTimeoutPlay:
-		d = g_director->getCurrentMovie()->_timeOutPlay;
+		d = movie->_timeOutPlay;
 		break;
 	case kTheTimeoutScript:
 		d.type = STRING;
@@ -917,7 +917,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_lingo->_actorList = d;
 		break;
 	case kTheBeepOn:
-		g_director->getCurrentMovie()->_isBeepOn = (bool)d.u.i;
+		movie->_isBeepOn = (bool)d.u.i;
 		break;
 	case kTheButtonStyle:
 		if (d.asInt())
@@ -932,10 +932,10 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		g_director->_centerStage = d.asInt();
 		break;
 	case kTheCheckBoxAccess:
-		g_director->getCurrentMovie()->_checkBoxAccess = d.asInt();
+		movie->_checkBoxAccess = d.asInt();
 		break;
 	case kTheCheckBoxType:
-		g_director->getCurrentMovie()->_checkBoxType = d.asInt();
+		movie->_checkBoxType = d.asInt();
 		break;
 	case kTheChunk:
 		setTheChunk(id, field, d);
@@ -952,7 +952,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	case kTheFixStageSize:
 		g_director->_fixStageSize = (bool)d.u.i;
 		if (d.u.i) {
-			g_director->_fixStageRect = g_director->getCurrentMovie()->_movieRect;
+			g_director->_fixStageRect = movie->_movieRect;
 		}
 		break;
 	case kTheField:
@@ -1033,7 +1033,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 			break;
 		case kTheScript:
 		{
-			LingoArchive *mainArchive = g_director->getCurrentMovie()->getMainLingoArch();
+			LingoArchive *mainArchive = movie->getMainLingoArch();
 			int commandId = 100;
 			while (mainArchive->getScriptContext(kEventScript, commandId))
 				commandId++;
@@ -1078,7 +1078,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		warning("BUILDBOT: Trying to set SearchCurrentFolder lingo property");
 		break;
 	case kTheSelEnd:
-		g_director->getCurrentMovie()->_selEnd = d.asInt();
+		movie->_selEnd = d.asInt();
 		if (movie->_currentEditableTextChannel != 0) {
 			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
@@ -1087,7 +1087,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		}
 		break;
 	case kTheSelStart:
-		g_director->getCurrentMovie()->_selStart = d.asInt();
+		movie->_selStart = d.asInt();
 		if (movie->_currentEditableTextChannel != 0) {
 			Channel *channel = score->getChannelById(movie->_currentEditableTextChannel);
 
@@ -1136,7 +1136,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		setTheEntitySTUB(kTheSwitchColorDepth);
 		break;
 	case kTheTimeoutKeyDown:
-		g_director->getCurrentMovie()->_timeOutKeyDown = d.asInt();
+		movie->_timeOutKeyDown = d.asInt();
 		break;
 	case kTheTimeoutLapsed:
 		// timeOutLapsed can be set in D4, but can't in D3. see D3.1 interactivity manual p312 and D4 dictionary p296.
@@ -1148,13 +1148,13 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 		}
 		break;
 	case kTheTimeoutLength:
-		g_director->getCurrentMovie()->_timeOutLength = d.asInt();
+		movie->_timeOutLength = d.asInt();
 		break;
 	case kTheTimeoutMouse:
-		g_director->getCurrentMovie()->_timeOutMouse = d.asInt();
+		movie->_timeOutMouse = d.asInt();
 		break;
 	case kTheTimeoutPlay:
-		g_director->getCurrentMovie()->_timeOutPlay = d.asInt();
+		movie->_timeOutPlay = d.asInt();
 		break;
 	case kTheTimeoutScript:
 		movie->setPrimaryEventHandler(kEventTimeout, d.asString());
@@ -1385,7 +1385,8 @@ Datum Lingo::getTheSprite(Datum &id1, int field) {
 
 void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	int id = id1.asInt();
-	Score *score = _vm->getCurrentMovie()->getScore();
+	Movie *movie = _vm->getCurrentMovie();
+	Score *score = movie->getScore();
 
 	if (!score) {
 		warning("Lingo::setTheSprite(): The sprite %d field \"%s\" setting over non-active score", id, field2str(field));
@@ -1422,7 +1423,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheCastNum:
 		{
 			CastMemberID castId = d.asMemberID();
-			CastMember *castMember = g_director->getCurrentMovie()->getCastMember(castId);
+			CastMember *castMember = movie->getCastMember(castId);
 
 			if (castMember && castMember->_type == kCastDigitalVideo) {
 				Common::String path = castMember->getCast()->getVideoPath(castId.member);
@@ -1432,13 +1433,13 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 					// b_updateStage needs to have _videoPlayback set to render video
 					// in the regular case Score::renderSprites sets it.
 					// However Score::renderSprites is not in the current code path.
-					g_director->getCurrentMovie()->_videoPlayback = true;
+					movie->_videoPlayback = true;
 				}
 			}
 
 			if (castId != sprite->_castId) {
 				if (!sprite->_trails) {
-					g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+					movie->getWindow()->addDirtyRect(channel->getBbox());
 					channel->_dirty = true;
 				}
 				channel->setCast(castId);
@@ -1512,7 +1513,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		break;
 	case kTheLoc:
 		if (channel->_currentPoint.x != d.asPoint().x || channel->_currentPoint.y != d.asPoint().y) {
-			g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+			movie->getWindow()->addDirtyRect(channel->getBbox());
 			channel->_dirty = true;
 		}
 
@@ -1524,7 +1525,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 			// adding the dirtyRect only when the trails is false. Other changes which will add dirtyRect may also apply this patch
 			// this is for fixing the bug in jman-win. Currently, i've only patched the LocH, LocV and castNum since those are the only ones used in jman
 			if (!channel->_sprite->_trails) {
-				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
 			channel->_currentPoint.x = d.asInt();
@@ -1533,7 +1534,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 	case kTheLocV:
 		if (d.asInt() != channel->_currentPoint.y) {
 			if (!channel->_sprite->_trails) {
-				g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+				movie->getWindow()->addDirtyRect(channel->getBbox());
 				channel->_dirty = true;
 			}
 			channel->_currentPoint.y = d.asInt();
@@ -1634,8 +1635,8 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
 
-	if (channel->_dirty && g_director->getCurrentMovie())
-		g_director->getCurrentMovie()->getWindow()->addDirtyRect(channel->getBbox());
+	if (channel->_dirty && movie)
+		movie->getWindow()->addDirtyRect(channel->getBbox());
 }
 
 Datum Lingo::getTheCast(Datum &id1, int field) {

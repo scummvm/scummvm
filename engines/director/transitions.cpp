@@ -190,9 +190,10 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 	Graphics::ManagedSurface nextFrame(Graphics::ManagedSurface(_composeSurface->w, _composeSurface->h, g_director->_pixelformat));
 
 	Common::Rect clipRect;
+	Score *score = g_director->getCurrentMovie()->getScore();
 	if (t.area) {
 		// Changed area transition
-		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame);
+		score->renderSprites(t.frame);
 
 		if (_dirtyRects.size() == 0)
 			return;
@@ -218,7 +219,7 @@ void Window::playTransition(uint frame, uint16 transDuration, uint8 transArea, u
 		render(false, &nextFrame);
 	} else {
 		// Full stage transition
-		g_director->getCurrentMovie()->getScore()->renderSprites(t.frame, kRenderForceUpdate);
+		score->renderSprites(t.frame, kRenderForceUpdate);
 		render(true, &nextFrame);
 
 		clipRect = _innerDims;
