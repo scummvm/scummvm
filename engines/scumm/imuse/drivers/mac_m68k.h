@@ -128,7 +128,8 @@ private:
 	class MidiChannel_MacM68k : public MidiChannel {
 		friend class IMuseDriver_MacM68k;
 	public:
-		MidiChannel_MacM68k(IMuseDriver_MacM68k *driver, byte number) : MidiChannel(), _owner(driver), _number(number), _allocated(false) {}
+		MidiChannel_MacM68k(IMuseDriver_MacM68k *driver, byte number) : MidiChannel(), _owner(driver), _number(number), _allocated(false),
+			_priority(0), _sustain(0), _pitchBend(0), _pitchBendFactor(2), _transpose(0), _detune(0), _volume(0) {}
 		MidiDriver *device() override { return _owner; }
 		byte getNumber() override { return _number; }
 		void release() override;
@@ -140,6 +141,8 @@ private:
 		void pitchBend(int16 bend) override;
 		void controlChange(byte control, byte value) override;
 		void pitchBendFactor(byte value) override;
+		void transpose(int8 value) override;
+		void detune(byte value) override;
 		void priority(byte value) override;
 		void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 
@@ -158,6 +161,8 @@ private:
 		Instrument _instrument;
 		int _pitchBend;
 		int _pitchBendFactor;
+		int8 _detune;
+		int8 _transpose;
 		int _volume;
 	};
 

@@ -171,8 +171,10 @@ void IMuseDriver_PCSpk::output(uint16 out) {
 	}
 }
 
-IMuseDriver_PCSpk::MidiChannel_PcSpk::MidiChannel_PcSpk(IMuseDriver_PCSpk *owner, byte number) : MidiChannel(), _owner(owner), _number(number), _allocated(false) {
+IMuseDriver_PCSpk::MidiChannel_PcSpk::MidiChannel_PcSpk(IMuseDriver_PCSpk *owner, byte number) : MidiChannel(), _owner(owner), _number(number), _allocated(false),
+	_priority(0), _tl(0), _modWheel(0), _pitchBend(0), _programNr(0), _sustain(0), _pitchBendFactor(2), _pitchBendTmp(0), _transpose(0), _detune(0) {
 	memset(&_out, 0, sizeof(_out));
+	memset(_instrument, 0, sizeof(_instrument));
 }
 
 bool IMuseDriver_PCSpk::MidiChannel_PcSpk::allocate() {
@@ -285,7 +287,8 @@ void IMuseDriver_PCSpk::MidiChannel_PcSpk::programChange(byte program) {
 }
 
 void IMuseDriver_PCSpk::MidiChannel_PcSpk::pitchBend(int16 bend) {
-	_pitchBend = (bend * _pitchBendFactor) >> 6;
+	_pitchBendTmp = bend;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
 }
 
 void IMuseDriver_PCSpk::MidiChannel_PcSpk::controlChange(byte control, byte value) {
@@ -330,6 +333,16 @@ void IMuseDriver_PCSpk::MidiChannel_PcSpk::controlChange(byte control, byte valu
 
 void IMuseDriver_PCSpk::MidiChannel_PcSpk::pitchBendFactor(byte value) {
 	_pitchBendFactor = value;
+}
+
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::transpose(int8 value) {
+	_transpose = value;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
+}
+
+void IMuseDriver_PCSpk::MidiChannel_PcSpk::detune(byte value) {
+	_detune = (int8)value;
+	_pitchBend = (_transpose << 7) + ((_pitchBendTmp * _pitchBendFactor) >> 6) + _detune;
 }
 
 void IMuseDriver_PCSpk::MidiChannel_PcSpk::priority(byte value) {

@@ -114,11 +114,7 @@ void Part::set_detune(int8 detune) {
 		return;
 
 	_detune_eff = clamp((_detune = detune) + _player->getDetune(), -128, 127);
-	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
-		sendPitchBend();
-	else
-		sendDetune();
+	sendDetune();
 }
 
 void Part::pitchBend(int16 value) {
@@ -159,10 +155,7 @@ void Part::set_transpose(int8 transpose, int8 clipRangeLow, int8 clipRangeHi)  {
 	// a value of 128 with a signed int8 (a signed int8 can never be 128). The playback depends on this being implemented exactly
 	// like in the original driver. I found this bug with the WinUAE debugger. The DOS versions do not have that bug.
 	_transpose_eff = (_se->_soundType != MDT_AMIGA && _transpose == -128) ? 0 : transpose_clamp(_transpose + _player->getTranspose(), clipRangeLow, clipRangeHi);
-	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
-		sendPitchBend();
-	else
-		sendTranspose();
+	sendTranspose();
 }
 
 void Part::sustain(bool value) {
@@ -382,12 +375,7 @@ void Part::sendPitchBend() {
 		return;
 	}
 
-	int16 bend = _pitchbend;
-
-	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
-		bend = clamp(bend + (_detune_eff * 64 / 12) + (_transpose_eff * 8192 / 12), -8192, 8191);
-
-	_mc->pitchBend(bend);
+	_mc->pitchBend(_pitchbend);
 }
 
 void Part::sendVolume(int8 fadeModifier) {
@@ -414,19 +402,11 @@ void Part::sendTranspose() {
 	if (!_mc)
 		return;
 
-	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
-		return;
-
 	_mc->transpose(_transpose_eff);
 }
 
 void Part::sendDetune() {
 	if (!_mc)
-		return;
-
-	// Some drivers handle the transpose and the detune in pitchBend()...
-	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		return;
 
 	_mc->detune(_detune_eff);

@@ -361,7 +361,7 @@ void IMuseDriver_MacM68k::MidiChannel_MacM68k::noteOn(byte note, byte velocity) 
 	voice->out.end   = voice->out.loopEnd;
 
 	// Set up the pitch
-	_owner->setPitch(&voice->out, (note << 7) + _pitchBend);
+	_owner->setPitch(&voice->out, ((note + _transpose) << 7) + ((_pitchBend * _pitchBendFactor) >> 6) + _detune);
 
 	// Set up the sample position
 	voice->out.instrument = voice->out.soundStart;
@@ -373,9 +373,9 @@ void IMuseDriver_MacM68k::MidiChannel_MacM68k::programChange(byte program) {
 }
 
 void IMuseDriver_MacM68k::MidiChannel_MacM68k::pitchBend(int16 bend) {
-	_pitchBend = (bend * _pitchBendFactor) >> 6;
+	_pitchBend = bend;
 	for (VoiceChannel *i = _voice; i; i = i->next) {
-		_owner->setPitch(&i->out, (i->note << 7) + _pitchBend);
+		_owner->setPitch(&i->out, ((i->note + _transpose) << 7) + ((_pitchBend * _pitchBendFactor) >> 6) + _detune);
 	}
 }
 
@@ -418,6 +418,21 @@ void IMuseDriver_MacM68k::MidiChannel_MacM68k::pitchBendFactor(byte value) {
 	_pitchBendFactor = value;
 }
 
+
+void IMuseDriver_MacM68k::MidiChannel_MacM68k::transpose(int8 value) {
+	_transpose = value;
+	for (VoiceChannel *i = _voice; i; i = i->next) {
+		_owner->setPitch(&i->out, ((i->note + _transpose) << 7) + ((_pitchBend * _pitchBendFactor) >> 6) + _detune);
+	}
+}
+
+void IMuseDriver_MacM68k::MidiChannel_MacM68k::detune(uint8 value) {
+	_detune = (int8)value;
+	for (VoiceChannel *i = _voice; i; i = i->next) {
+		_owner->setPitch(&i->out, ((i->note + _transpose) << 7) + ((_pitchBend * _pitchBendFactor) >> 6) + _detune);
+	}
+};
+
 void IMuseDriver_MacM68k::MidiChannel_MacM68k::priority(byte value) {
 	_priority = value;
 }
@@ -440,7 +455,7 @@ bool IMuseDriver_MacM68k::MidiChannel_MacM68k::allocate() {
 	_priority = 0;
 	memset(&_instrument, 0, sizeof(_instrument));
 	_pitchBend = 0;
-	_pitchBendFactor = 0;
+	_pitchBendFactor = 2;
 	_volume = 0;
 	return true;
 }
