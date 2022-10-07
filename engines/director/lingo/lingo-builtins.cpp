@@ -2142,10 +2142,9 @@ void LB::b_move(int nargs) {
 	Datum src, dest;
 
 	if (nargs == 1) {
-		Datum d;
-		d.type = CASTREF;
-		d.u.cast = new CastMemberID();
-		d.u.cast->member = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		int id = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
+		CastMemberID *castId = new CastMemberID(id, 0);
+		Datum d = Datum(*castId);
 		g_lingo->push(d);
 		b_findEmpty(1);
 		dest = g_lingo->pop();
