@@ -38,16 +38,16 @@
 namespace Graphics {
 
 enum {
-	BLACK = 0, WHITE, RED, GREEN, BLUE, CYAN, MAGENTA,
-	YELLOW, GRAY1, GREEN1, GREEN2, RED1, BLUE1, BLUE2,
-	YELLOW1, RED2, GRAY2, GRAY3, GRAY4, GRAY5, GRAY6,
+	BLACK = 0, WHITE, RED, GREEN, BLUE, CYAN, MAGENTA, YELLOW,
+	COLOR270, COLOR180, COLOR90, COLOR0, COLOR326, COLOR146, RED88,
+	GRAY20, GRAY40, GRAY50, GRAY60, GRAY80, GRAY75,
 	TRANSCOLOR,
 };
 
 const uint32 paletteSrc[] = {
-	0x000000, 0xffffff, 0xFF0000, 0x00FF00, 0x0000FF, 0x00FFFF, 0xFF00FF,
-	0xFFFF00, 0x7F7F7F, 0x00C896, 0x649632, 0xC83264, 0x6464FF, 0x6496FF,
-	0xC86400, 0xE10000, 0x333333, 0x666666, 0x999999, 0xCCCCCC, 0xBFBFBF,
+	0x000000, 0xffffff, 0xFF0000, 0x00FF00, 0x0000FF, 0x00FFFF, 0xFF00FF, 0xFFFF00,
+	0x00C896, 0x649632, 0xC83264, 0x6464FF, 0x6496FF, 0xC86400, 0xE10000,
+	0x333333, 0x666666, 0x7F7F7F, 0x999999, 0xCCCCCC, 0xBFBFBF,
 	0xFE00FE,
 };
 
@@ -157,7 +157,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 
 	}
 
-	squaremesh(surface, xres, yres, width, height, gapsize, WHITE, GRAY1);
+	squaremesh(surface, xres, yres, width, height, gapsize, WHITE, GRAY50);
 
 	int startx = xres / 2 - width / 2 - width % 2 - xsquares * rwidth - gapsize - 1;
 	int starty = yres / 2 - height / 2 - height % 2 - ysquares * rheight - gapsize - 1;
@@ -190,15 +190,15 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 	int y2 = y1 + (monosize * 2 - 1) * rheight - gapsize - 1;   //bottom
 
 	if (xsquares - 1 > monosize) {
-		boxColor(surface, x1, y1, x1 + width - 1, yres / 2, GREEN1);	//up left
-		boxColor(surface, x2 - width + 1, y1, x2, yres / 2, GREEN2);	//up right
-		boxColor(surface, x1, yres / 2 + yres % 2, x1 + width - 1, y2, RED1); //bottom left
-		boxColor(surface, x2 - width + 1, yres / 2 + yres % 2, x2, y2, BLUE1); //bottom right
+		boxColor(surface, x1, y1, x1 + width - 1, yres / 2, COLOR270);	//up left
+		boxColor(surface, x2 - width + 1, y1, x2, yres / 2, COLOR180);	//up right
+		boxColor(surface, x1, yres / 2 + yres % 2, x1 + width - 1, y2, COLOR90); //bottom left
+		boxColor(surface, x2 - width + 1, yres / 2 + yres % 2, x2, y2, COLOR0); //bottom right
 		if (monosize > 2) {
-			boxColor(surface, x1 + width, y1, x1 + rwidth + width - 1, y1 + 2 * rheight - gapsize - 1, BLUE2); //up left small
-			boxColor(surface, x1 + width, y2 - rheight * 2 + gapsize + 1, x1 + rwidth + width - 1, y2, YELLOW1); //bottom left small
-			boxColor(surface, x2 - rwidth - width + 1, y1, x2 - width, y1 + 2 * rheight - gapsize - 1, BLUE2); //up right small
-			boxColor(surface, x2 - rwidth - width + 1, y2 - rheight * 2 + gapsize + 1, x2 - width, y2, YELLOW1); //bottom right small
+			boxColor(surface, x1 + width, y1, x1 + rwidth + width - 1, y1 + 2 * rheight - gapsize - 1, COLOR326); //up left small
+			boxColor(surface, x1 + width, y2 - rheight * 2 + gapsize + 1, x1 + rwidth + width - 1, y2, COLOR146); //bottom left small
+			boxColor(surface, x2 - rwidth - width + 1, y1, x2 - width, y1 + 2 * rheight - gapsize - 1, COLOR326); //up right small
+			boxColor(surface, x2 - rwidth - width + 1, y2 - rheight * 2 + gapsize + 1, x2 - width, y2, COLOR146); //bottom right small
 		}
 	}
 
@@ -214,7 +214,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 
 	// two bottom rows
 	boxColor(monoscope, x1, y2 - rheight + gapsize / 2 + 1, x2, y2 + rheight + gapsize / 2 + 1, YELLOW);
-	boxColor(monoscope, xcenter - rwidth / 2, y2 - rheight + gapsize / 2 + 1, xcenter - rwidth / 2 + rwidth, y2 + rheight + gapsize / 2 + 1, RED2);
+	boxColor(monoscope, xcenter - rwidth / 2, y2 - rheight + gapsize / 2 + 1, xcenter - rwidth / 2 + rwidth, y2 + rheight + gapsize / 2 + 1, RED88);
 
 	boxColor(monoscope, x1, y2 - 2 * rheight + gapsize / 2 + 1, x2, y2 - rheight + gapsize / 2, WHITE);
 	boxColor(monoscope, xres / 2 - rwidth * 3, y2 - 2 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight + gapsize / 2, BLACK);
@@ -227,7 +227,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 	boxColor(monoscope, xres / 2 - rwidth * 3, y2 - 10 * rheight + gapsize / 2 + 1, xres / 2 + rwidth * 3, y2 - rheight * 9 + gapsize / 2, WHITE);
 
 	// color (gray) bars
-	int greyColors[] = { BLACK, GRAY2, GRAY3, GRAY4, GRAY5, WHITE};
+	int greyColors[] = { BLACK, GRAY20, GRAY40, GRAY60, GRAY80, WHITE};
 	drawRow(monoscope, y2 - 3 * rheight + gapsize / 2 + 1, greyColors, 6, 0, rheight, monosize * (rwidth * 2) + 6, xres / 2 - rwidth * monosize - 4);
 
 	boxColor(monoscope, x1, y2 - 6 * rheight + gapsize / 2 + 1, x2, y2 - 3 * rheight + gapsize / 2, BLACK);
@@ -238,7 +238,7 @@ ManagedSurface *renderPM5544(int xres, int yres) {
 	// periodic gray and white
 	int periodsize = monosize * (rwidth * 2) * 11 / 16 / 6;
 	int blacksize = periodsize * 6 / 11;
-	boxColor(monoscope, x1, y2 - 9 * rheight + gapsize / 2 + 1, x2, y2 - 8 * rheight + gapsize / 2, GRAY6);
+	boxColor(monoscope, x1, y2 - 9 * rheight + gapsize / 2 + 1, x2, y2 - 8 * rheight + gapsize / 2, GRAY75);
 	for (i = 0; i < 5; i++) {
 		boxColor(monoscope, xres / 2 + i * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 + i * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2, BLACK);
 		boxColor(monoscope, xres / 2 - (i + 1) * periodsize, y2 - 9 * rheight + gapsize / 2 + 1, xres / 2 - (i + 1) * periodsize + blacksize - 1, y2 - 8 * rheight + gapsize / 2, BLACK);
