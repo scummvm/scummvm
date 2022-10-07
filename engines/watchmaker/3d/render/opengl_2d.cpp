@@ -324,6 +324,37 @@ void rSetLoaderFlags(unsigned int NewLoaderFlags) {
 	CurLoaderFlags = NewLoaderFlags;
 }
 
+bool gUpdateMovie(gMaterial &mat) {
+	WORD newFrame = 0;
+	DWORD curTime;
+
+	if (mat.Flags & T3D_MATERIAL_MOVIEPAUSED)
+		return TRUE;
+
+	auto mv = mat.Movie;
+
+	if ((mv->curFrame == 0xFFFF) || (!mv->startTime)) {
+		mv->startTime = timeGetTime();
+		newFrame = 0;
+	} else {
+		// Use the time to find which frame we should be drawing
+		curTime = timeGetTime();
+		DWORD elapsedTime = curTime - mv->startTime;
+		newFrame = (WORD)((float)elapsedTime / (1000.f / (float)mv->frameRate));
+
+		if (newFrame >= mv->numFrames) {
+			mv->startTime = curTime;
+			newFrame = 0;
+		}
+	}
+#if 0
+	bool retv=gMovie_SetFrame(mat,newFrame);
+
+	return(retv);
+#endif
+	return true;
+}
+
 } // End of namespace Watchmaker
 
 #endif // USE_OPENGL_GAME

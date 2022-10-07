@@ -43,6 +43,8 @@ extern int          NumLogosMaterials;
 
 extern unsigned int CurLoaderFlags;
 
+bool gUpdateMovie(gMaterial &mat);
+
 } // End of namespace Watchmaker
 
 #endif // WATCHMAKER_OPENGL2D_H
