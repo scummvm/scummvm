@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-07 21:44+0000\n"
+"POT-Creation-Date: 2022-10-07 22:28+0000\n"
 "PO-Revision-Date: 2022-09-29 17:54+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -7766,7 +7766,7 @@ msgstr ""
 "im Startmenü von ScummVM und wählen das Verzeichnis \"Maniac\" im "
 "Verzeichnis dieses Spiels aus."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:652
+#: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -7775,7 +7775,7 @@ msgstr ""
 "Datei(en):\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:657
+#: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"

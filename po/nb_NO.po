@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-07 21:44+0000\n"
+"POT-Creation-Date: 2022-10-07 22:28+0000\n"
 "PO-Revision-Date: 2022-10-05 16:10+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -7687,7 +7687,7 @@ msgstr ""
 "må Maniac Mansion-filene ligge i «Maniac» mappa inni Tentacle-spillmappa, og "
 "spillet må være lagt til i ScummVM."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:652
+#: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -7695,7 +7695,7 @@ msgstr ""
 "Denne AMIGA-versjonen mangler (i det minste) følgende fil(er):\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:657
+#: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"

@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-07 21:44+0000\n"
+"POT-Creation-Date: 2022-10-07 22:28+0000\n"
 "PO-Revision-Date: 2022-10-02 09:57+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -7838,7 +7838,7 @@ msgstr ""
 "φάκελο 'Maniac' μέσα στο φάκελο παιχνιδιού του Tentacle, και το παιχνίδι "
 "πρέπει να προστεθεί στο ScummVM."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:652
+#: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -7846,7 +7846,7 @@ msgstr ""
 "Από αυτή την έκδοση για AMIGA λείπουν (τουλάχιστον) τα ακόλουθα αρχεία:\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:657
+#: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-07 21:44+0000\n"
+"POT-Creation-Date: 2022-10-07 22:28+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7606,7 +7606,7 @@ msgstr ""
 "Mansion의 게임 파일이 Tentacle 게임 디렉토리 하위의 Maniac 디렉토리에 있어야 "
 "하며, ScummVM에도 추가되어야 합니다."
 
-#: engines/scumm/imuse/drivers/amiga.cpp:652
+#: engines/scumm/imuse/drivers/amiga.cpp:660
 msgid ""
 "This AMIGA version is missing (at least) the following file(s):\n"
 "\n"
@@ -7614,7 +7614,7 @@ msgstr ""
 "이 AMIGA 버전에는 (최소한) 다음 파일들이 빠져 있습니다.\n"
 "\n"
 
-#: engines/scumm/imuse/drivers/amiga.cpp:657
+#: engines/scumm/imuse/drivers/amiga.cpp:665
 msgid ""
 "\n"
 "Please copy these file(s) into the game data directory.\n"
