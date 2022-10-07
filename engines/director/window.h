@@ -144,6 +144,8 @@ public:
 	void updateBorderType();
 
 	bool step();
+	bool loadNextMovie();
+	void loadNewSharedCast(Cast *previousSharedCast);
 
 	Common::String getSharedCastPath();
 

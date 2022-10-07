@@ -279,6 +279,64 @@ void Window::updateBorderType() {
 	}
 }
 
+void Window::loadNewSharedCast(Cast *previousSharedCast) {
+	Common::String previousSharedCastPath;
+	Common::String newSharedCastPath = getSharedCastPath();
+	if (previousSharedCast && previousSharedCast->getArchive()) {
+		previousSharedCastPath = previousSharedCast->getArchive()->getPathName();
+	}
+
+	// Check if previous and new sharedCasts are the same
+	if (!previousSharedCastPath.empty() && previousSharedCastPath.equalsIgnoreCase(newSharedCastPath)) {
+		// Clear those previous widget pointers
+		previousSharedCast->releaseCastMemberWidget();
+		_currentMovie->_sharedCast = previousSharedCast;
+		return;
+	}
+
+	// Clean up the previous sharedCast
+	if (!previousSharedCastPath.empty()) {
+		g_director->_allOpenResFiles.erase(previousSharedCastPath);
+		delete previousSharedCast;
+	}
+
+	// Load the new sharedCast
+	if (!newSharedCastPath.empty()) {
+		_currentMovie->loadSharedCastsFrom(newSharedCastPath);
+	}
+}
+
+bool Window::loadNextMovie() {
+	_soundManager->changingMovie();
+	_newMovieStarted = true;
+	_currentPath = getPath(_nextMovie.movie, _currentPath);
+
+	Cast *previousSharedCast = nullptr;
+	if (_currentMovie) {
+		previousSharedCast = _currentMovie->getSharedCast();
+		_currentMovie->_sharedCast = nullptr;
+	}
+
+	delete _currentMovie;
+	_currentMovie = nullptr;
+
+	Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
+
+	if (!mov)
+		return false;
+
+	_currentMovie = new Movie(this);
+	_currentMovie->setArchive(mov);
+
+	debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
+	debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
+	debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
+
+	g_lingo->resetLingo();
+	loadNewSharedCast(previousSharedCast);
+	return true;
+}
+
 bool Window::step() {
 	// finish last movie
 	if (_currentMovie && _currentMovie->getScore()->_playState == kPlayStopped) {
@@ -296,62 +354,8 @@ bool Window::step() {
 
 	// prepare next movie
 	if (!_nextMovie.movie.empty()) {
-		_soundManager->changingMovie();
-
-		_newMovieStarted = true;
-
-		_currentPath = getPath(_nextMovie.movie, _currentPath);
-
-		Cast *sharedCast = nullptr;
-		if (_currentMovie) {
-			sharedCast = _currentMovie->getSharedCast();
-			_currentMovie->_sharedCast = nullptr;
-		}
-
-		delete _currentMovie;
-		_currentMovie = nullptr;
-
-		Archive *mov = openMainArchive(_currentPath + Common::lastPathComponent(_nextMovie.movie, g_director->_dirSeparator));
-
-		if (!mov) {
-			warning("nextMovie: No movie is loaded");
-
-			if (_vm->getGameGID() == GID_TESTALL) {
-				return true;
-			}
-
-			return false;
-		}
-
-		_currentMovie = new Movie(this);
-		_currentMovie->setArchive(mov);
-
-		debug(0, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
-		debug(0, "@@@@   Switching to movie '%s' in '%s'", utf8ToPrintable(_currentMovie->getMacName()).c_str(), _currentPath.c_str());
-		debug(0, "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@\n");
-
-		g_lingo->resetLingo();
-		Common::String sharedCastPath = getSharedCastPath();
-		if (!sharedCastPath.empty()) {
-			if (sharedCast && sharedCast->_castArchive
-					&& sharedCast->_castArchive->getPathName().equalsIgnoreCase(sharedCastPath)) {
-				// if we are not deleting shared cast, then we need to clear those previous widget pointer
-				sharedCast->releaseCastMemberWidget();
-				_currentMovie->_sharedCast = sharedCast;
-			} else {
-				// clear reference in openResFile before deleting shared cast
-				if (sharedCast)
-					g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
-				delete sharedCast;
-				_currentMovie->loadSharedCastsFrom(sharedCastPath);
-			}
-		} else {
-			// clear reference in openResFile before deleting shared cast
-			if (sharedCast)
-				g_director->_allOpenResFiles.erase(sharedCast->getArchive()->getPathName());
-			delete sharedCast;
-		}
-
+		if (!loadNextMovie())
+			return (_vm->getGameGID() == GID_TESTALL);
 		_nextMovie.movie.clear();
 	}
 
