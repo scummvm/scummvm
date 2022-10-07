@@ -19,29 +19,30 @@
  *
  */
 
-#include "watchmaker/game.h"
 #include "watchmaker/classes/do_keyboard.h"
-#include "watchmaker/globvar.h"
-#include "watchmaker/define.h"
+#include "common/keyboard.h"
+#include "watchmaker/3d/animation.h"
+#include "watchmaker/3d/geometry.h"
 #include "watchmaker/3d/math/llmath.h"
 #include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/ll/ll_util.h"
-#include "watchmaker/walk/act.h"
-#include "watchmaker/walk/walkutil.h"
-#include "watchmaker/utils.h"
-#include "watchmaker/3d/geometry.h"
-#include "watchmaker/schedule.h"
-#include "watchmaker/classes/do_dialog.h"
-#include "watchmaker/t2d/t2d.h"
-#include "watchmaker/main.h"
-#include "watchmaker/ll/ll_diary.h"
-#include "watchmaker/ll/ll_anim.h"
-#include "watchmaker/classes/do_player.h"
 #include "watchmaker/classes/do_camera.h"
-#include "watchmaker/3d/animation.h"
-#include "watchmaker/walk/walk.h"
-#include "watchmaker/ll/ll_mouse.h"
+#include "watchmaker/classes/do_dialog.h"
+#include "watchmaker/classes/do_player.h"
+#include "watchmaker/define.h"
+#include "watchmaker/game.h"
+#include "watchmaker/globvar.h"
+#include "watchmaker/ll/ll_anim.h"
+#include "watchmaker/ll/ll_diary.h"
 #include "watchmaker/ll/ll_mesh.h"
+#include "watchmaker/ll/ll_mouse.h"
+#include "watchmaker/ll/ll_util.h"
+#include "watchmaker/main.h"
+#include "watchmaker/schedule.h"
+#include "watchmaker/t2d/t2d.h"
+#include "watchmaker/utils.h"
+#include "watchmaker/walk/act.h"
+#include "watchmaker/walk/walk.h"
+#include "watchmaker/walk/walkutil.h"
 
 namespace Watchmaker {
 
@@ -143,11 +144,9 @@ void HandleFirstPersonView( void )
 	t3dF32 dist;
 	t3dV3F d,n;
 
-	error("TODO: HandleFirstPersonView");
-#if 0
 	if( ( !Player ) || ( !t3dCurCamera ) || ( bLockCamera ) ) return;
 
-	if( KeyDown(SDL_SCANCODE_A) )			// Alza testa
+	if( KeyDown(Common::KEYCODE_a) )			// Alza testa
 	{
 		if( ( dist = CurFloorY+MAX_HEIGHT - ( t3dCurCamera->Source.y + 10*SCALEFACTOR ) ) > 0 )
 		{
@@ -156,7 +155,7 @@ void HandleFirstPersonView( void )
 			t3dMoveAndCheck1stCamera( t3dCurRoom, t3dCurCamera, &d );
 		}
 	}
-	else if( KeyDown(SDL_SCANCODE_Z) )		// Abbassa Testa
+	else if( KeyDown(Common::KEYCODE_z) )		// Abbassa Testa
 	{
 		if( ( dist = CurFloorY+KNEE_HEIGHT - ( t3dCurCamera->Source.y - 10*SCALEFACTOR ) ) < 0 )
 		{
@@ -167,16 +166,16 @@ void HandleFirstPersonView( void )
 	}
 
 //	Se tengo premuto lo shift o un tasto del mouse
-	if( KeyDown(SDL_SCANCODE_LSHIFT) || KeyDown(SDL_SCANCODE_RSHIFT) || ( ( bLPressed || bRPressed ) && (mMove>10) ) )
+	if( KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT) || ( ( bLPressed || bRPressed ) && (mMove>10) ) )
 	{
 		t3dVectSub( &d, &t3dCurCamera->Target, &t3dCurCamera->Source );d.y = 0.0f;
 		t3dVectNormalize( &d );
 		n.x = -d.z;n.y = 0.0f;n.z = d.x;
 
 		dist = (t3dF32)( (t3dF32)mMoveY / (t3dF32)( MainDy/2 ) )*100.0f;
-		if( KeyDown(SDL_SCANCODE_UP) )
+		if( KeyDown(Common::KEYCODE_UP) )
 			d *= (5*SCALEFACTOR );
-		else if( KeyDown(SDL_SCANCODE_DOWN) )
+		else if( KeyDown(Common::KEYCODE_DOWN) )
 			d *= (-5*SCALEFACTOR );
 		else if( ( (bLPressed) || (bRPressed) ) && (mMoveY) && !bClock33 )
 			d *= (-dist*SCALEFACTOR );
@@ -184,9 +183,9 @@ void HandleFirstPersonView( void )
 			t3dVectFill( &d, 0.0f );
 
 		dist = (t3dF32)( (t3dF32)mMoveX / (t3dF32)( MainDx/2 ) )*100.0f;
-		if( KeyDown(SDL_SCANCODE_LEFT) )
+		if( KeyDown(Common::KEYCODE_LEFT) )
 			n *= (5*SCALEFACTOR );
-		else if( KeyDown(SDL_SCANCODE_RIGHT) )
+		else if( KeyDown(Common::KEYCODE_RIGHT) )
 			n *= (-5*SCALEFACTOR );
 		else if( ( (bLPressed) || (bRPressed) ) && (mMoveX) && !bClock33 )
 			n *= (-dist*SCALEFACTOR );
@@ -202,13 +201,13 @@ void HandleFirstPersonView( void )
 		x = 0;
 		y = 0;
 
-		if( KeyDown(SDL_SCANCODE_UP) )
+		if( KeyDown(Common::KEYCODE_UP) )
 			y = -10;
-		else if( KeyDown(SDL_SCANCODE_DOWN) )
+		else if( KeyDown(Common::KEYCODE_DOWN) )
 			y = MainDy+10;
-		if( KeyDown(SDL_SCANCODE_LEFT) )
+		if( KeyDown(Common::KEYCODE_LEFT) )
 			x = -10;
-		else if( KeyDown(SDL_SCANCODE_RIGHT) )
+		else if( KeyDown(Common::KEYCODE_RIGHT) )
 			x = MainDx+10;
 
 		if( x || y )
@@ -239,7 +238,6 @@ void HandleFirstPersonView( void )
 		t3dVectAdd( &t3dCurCamera->Source, &t3dCurCamera->Source, &d );
 		t3dVectAdd( &t3dCurCamera->Target, &t3dCurCamera->Target, &d );
 	}
-#endif
 }
 
 
@@ -273,9 +271,8 @@ void ProcessKeyboard(WGame &game) {
 
 	if (bIngnoreDIKeyboard)
 		return ;
-	error("TODO: Convert to OSystem");
-#if 0
-	if (KeyUp(SDL_SCANCODE_ESCAPE)) {
+
+	if (KeyUp(Common::KEYCODE_ESCAPE)) {
 		if (LoaderFlags & T3D_DEBUGMODE) {
 			CloseSys(game); // Quitta il gioco
 		} else {
@@ -297,12 +294,12 @@ void ProcessKeyboard(WGame &game) {
 			if (bTitoliCodaScrolling || bTitoliCodaStatic)
 				game.CleanUpAndPostQuit();
 		}
-	}// SDL_SCANCODE_ESCAPE
+	}// Common::KEYCODE_ESCAPE
 
 	//se ci sono i crediti ritorna (controlla solo l'ESC)
 	if (bTitoliCodaStatic || bTitoliCodaScrolling)  return;
 
-	if (KeyDown(SDL_SCANCODE_LSHIFT) && KeyUp(SDL_SCANCODE_D))
+	if (KeyDown(Common::KEYCODE_LSHIFT) && KeyUp(Common::KEYCODE_d))
 		bForceDebug ^= 1;
 
 	/*  if( KeyDown(SDL_SCANCODE_LSHIFT) )           // Bomba il gioco
@@ -312,10 +309,12 @@ void ProcessKeyboard(WGame &game) {
 	            t3dFree(t3dCurRoom->CameraTable);
 	        }
 	*/
-	if (KeyUp(SDL_SCANCODE_I))                    // Escono Informazioni
+	if (KeyUp(Common::KEYCODE_i))                    // Escono Informazioni
 		bShowInfo ^= 1;
 
-	if (KeyUp(SDL_SCANCODE_G)) {
+	if (KeyUp(Common::KEYCODE_g)) {
+		error("TODO: Screenshot support");
+#if 0
 		FILE *fh;
 		char str[32];
 		int i;
@@ -327,20 +326,21 @@ void ProcessKeyboard(WGame &game) {
 				fclose(fh);
 		}
 		rGrabVideo(str, 0);
+#endif
 	}
 
-	if (KeyUp(SDL_SCANCODE_END)) {
+	if (KeyUp(Common::KEYCODE_END)) {
 		if (!bFirstPerson)
 			StartAnim(game, aGIRO);
 	}
 
 	if ((LoaderFlags & T3D_DEBUGMODE) || bForceDebug) {
-		if (KeyUp(SDL_SCANCODE_F5))
+		if (KeyUp(Common::KEYCODE_F5))
 			DataSave("Prova Save", 0);
-		if (KeyUp(SDL_SCANCODE_F6))
+		if (KeyUp(Common::KEYCODE_F6))
 			DataLoad(game, "", 0);
 
-		if (KeyUp(SDL_SCANCODE_W)) {                  // Modalita' wireframe
+		if (KeyUp(Common::KEYCODE_w)) {                  // Modalita' wireframe
 			bForceWire ^= 1;
 			if (bForceWire)
 				rSetRenderMode(rWIREFRAMEMODE);
@@ -348,22 +348,22 @@ void ProcessKeyboard(WGame &game) {
 				rSetRenderMode(rSOLIDMODE);
 		}
 
-		if (KeyUp(SDL_SCANCODE_B))                    // Escono BoundingBox
+		if (KeyUp(Common::KEYCODE_b))                    // Escono BoundingBox
 			bShowBoundingBox ^= 1;
 
-		if (KeyUp(SDL_SCANCODE_BACKSPACE))                 // Fa andare le animazioni piu' veloci
+		if (KeyUp(Common::KEYCODE_BACKSPACE))                 // Fa andare le animazioni piu' veloci
 			bFastAnim ^= 1;
 
-		if (KeyUp(SDL_SCANCODE_S))
+		if (KeyUp(Common::KEYCODE_s))
 			bSkipTalk = TRUE;
 
-		if (KeyUp(SDL_SCANCODE_H))
+		if (KeyUp(Common::KEYCODE_h))
 			Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_DEFAULT, dPROVA, 0, 0, NULL, NULL, NULL);
 
-		if (KeyUp(SDL_SCANCODE_E))
+		if (KeyUp(Common::KEYCODE_e))
 			StartAnim(game, aFOX);
 
-		if (KeyUp(SDL_SCANCODE_J)) {
+		if (KeyUp(Common::KEYCODE_j)) {
 			if (Player && Player->Mesh) {
 				ct = Player->Dir * HALF_STEP * 5.0f;
 				t3dVectAdd(&Player->Mesh->Trasl, &Player->Mesh->Trasl, &ct);
@@ -371,8 +371,8 @@ void ProcessKeyboard(WGame &game) {
 			}
 		}
 
-		if (KeyUp(SDL_SCANCODE_P)) {
-			if (KeyDown(SDL_SCANCODE_LSHIFT) || KeyDown(SDL_SCANCODE_RSHIFT)) {
+		if (KeyUp(Common::KEYCODE_p)) {
+			if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT)) {
 				if (++bnd_lev > 5) bnd_lev = 0;
 				SetBndLevel(game.init, NULL, bnd_lev);
 				DebugLogWindow("BndLev %d", bnd_lev);
@@ -382,71 +382,71 @@ void ProcessKeyboard(WGame &game) {
 		}
 
 		if (!tasti_per_sfx1) {
-			if (KeyUp(SDL_SCANCODE_M)) {
-				if (KeyDown(SDL_SCANCODE_LSHIFT))
+			if (KeyUp(Common::KEYCODE_m)) {
+				if (KeyDown(Common::KEYCODE_LSHIFT))
 					DInputNonExclusiveMouse();
-				else if (KeyDown(SDL_SCANCODE_RSHIFT))
+				else if (KeyDown(Common::KEYCODE_RSHIFT))
 					DInputExclusiveMouse();
 
 			}
 
-			if (KeyUp(SDL_SCANCODE_O))
+			if (KeyUp(Common::KEYCODE_o))
 				bShowExtraLocalizationStrings ^= 1;
 		} else {
-			if (KeyUp(SDL_SCANCODE_K)) {
+			if (KeyUp(Common::KEYCODE_k)) {
 				PlayAnim --;
-				if (KeyDown(SDL_SCANCODE_LCTRL) || KeyDown(SDL_SCANCODE_RCTRL))
+				if (KeyDown(Common::KEYCODE_LCTRL) || KeyDown(Common::KEYCODE_RCTRL))
 					PlayAnim -= 19;
-				if (KeyDown(SDL_SCANCODE_LSHIFT) || KeyDown(SDL_SCANCODE_RSHIFT))
+				if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT))
 					PlayAnim -= 30;
-				printf("PlayAnim %d '%s'\n", PlayAnim, game.init.Anim[PlayAnim].name[0].rawArray()); // TODO DebugString
+				warning("PlayAnim %d '%s'\n", PlayAnim, game.init.Anim[PlayAnim].name[0].rawArray()); // TODO DebugString
 			}
-			if (KeyUp(SDL_SCANCODE_L)) {
+			if (KeyUp(Common::KEYCODE_l)) {
 				PlayAnim ++;
-				if (KeyDown(SDL_SCANCODE_LCTRL) || KeyDown(SDL_SCANCODE_RCTRL))
+				if (KeyDown(Common::KEYCODE_LCTRL) || KeyDown(Common::KEYCODE_RCTRL))
 					PlayAnim += 19;
-				if (KeyDown(SDL_SCANCODE_LSHIFT) || KeyDown(SDL_SCANCODE_RSHIFT))
+				if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT))
 					PlayAnim += 30;
-				printf("PlayAnim %d '%s'\n", PlayAnim, game.init.Anim[PlayAnim].name[0].rawArray()); // TODO DebugString
+				warning("PlayAnim %d '%s'\n", PlayAnim, game.init.Anim[PlayAnim].name[0].rawArray()); // TODO DebugString
 			}
-			if (KeyUp(SDL_SCANCODE_M))
+			if (KeyUp(Common::KEYCODE_m))
 				StartAnim(game, PlayAnim);
 		}
 
 
-		if (KeyDown(SDL_SCANCODE_LSHIFT)) {
+		if (KeyDown(Common::KEYCODE_LSHIFT)) {
 			void t3dLoadOutdoorLights(const char *pname, t3dBODY * b, int32 ora);
-			if (KeyUp(SDL_SCANCODE_F1)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1030);
-			if (KeyUp(SDL_SCANCODE_F2)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1530);
-			if (KeyUp(SDL_SCANCODE_F3)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1930);
-			if (KeyUp(SDL_SCANCODE_F4)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 2230);
+			if (KeyUp(Common::KEYCODE_F1)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1030);
+			if (KeyUp(Common::KEYCODE_F2)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1530);
+			if (KeyUp(Common::KEYCODE_F3)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 1930);
+			if (KeyUp(Common::KEYCODE_F4)) t3dLoadOutdoorLights("c:\\wm\\LMaps\\rxt.t3d", t3dRxt, 2230);
 		}
 
-		if (KeyUp(SDL_SCANCODE_F11)) IncCurTime(game, 5);
-		if (KeyUp(SDL_SCANCODE_F12)) IncCurTime(game, 100);
+		if (KeyUp(Common::KEYCODE_F11)) IncCurTime(game, 5);
+		if (KeyUp(Common::KEYCODE_F12)) IncCurTime(game, 100);
 
-		if (KeyUp(SDL_SCANCODE_1)) CharSetPosition(ocCURPLAYER, 1, NULL);
-		if (KeyUp(SDL_SCANCODE_2)) CharSetPosition(ocCURPLAYER, 2, NULL);
-		if (KeyUp(SDL_SCANCODE_3)) CharSetPosition(ocCURPLAYER, 3, NULL);
-		if (KeyUp(SDL_SCANCODE_4)) CharSetPosition(ocCURPLAYER, 4, NULL);
-		if (KeyUp(SDL_SCANCODE_5)) CharSetPosition(ocCURPLAYER, 5, NULL);
-		if (KeyUp(SDL_SCANCODE_6)) CharSetPosition(ocCURPLAYER, 6, NULL);
-		if (KeyUp(SDL_SCANCODE_7)) CharSetPosition(ocCURPLAYER, 7, NULL);
-		if (KeyUp(SDL_SCANCODE_8)) CharSetPosition(ocCURPLAYER, 8, NULL);
-		if (KeyUp(SDL_SCANCODE_9)) CharSetPosition(ocCURPLAYER, 9, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_0)) CharSetPosition(ocCURPLAYER, 10, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_1)) CharSetPosition(ocCURPLAYER, 11, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_2)) CharSetPosition(ocCURPLAYER, 12, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_3)) CharSetPosition(ocCURPLAYER, 13, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_4)) CharSetPosition(ocCURPLAYER, 14, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_5)) CharSetPosition(ocCURPLAYER, 15, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_6)) CharSetPosition(ocCURPLAYER, 16, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_7)) CharSetPosition(ocCURPLAYER, 17, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_8)) CharSetPosition(ocCURPLAYER, 18, NULL);
-		if (KeyUp(SDL_SCANCODE_KP_9)) CharSetPosition(ocCURPLAYER, 19, NULL);
+		if (KeyUp(Common::KEYCODE_1)) CharSetPosition(ocCURPLAYER, 1, NULL);
+		if (KeyUp(Common::KEYCODE_2)) CharSetPosition(ocCURPLAYER, 2, NULL);
+		if (KeyUp(Common::KEYCODE_3)) CharSetPosition(ocCURPLAYER, 3, NULL);
+		if (KeyUp(Common::KEYCODE_4)) CharSetPosition(ocCURPLAYER, 4, NULL);
+		if (KeyUp(Common::KEYCODE_5)) CharSetPosition(ocCURPLAYER, 5, NULL);
+		if (KeyUp(Common::KEYCODE_6)) CharSetPosition(ocCURPLAYER, 6, NULL);
+		if (KeyUp(Common::KEYCODE_7)) CharSetPosition(ocCURPLAYER, 7, NULL);
+		if (KeyUp(Common::KEYCODE_8)) CharSetPosition(ocCURPLAYER, 8, NULL);
+		if (KeyUp(Common::KEYCODE_9)) CharSetPosition(ocCURPLAYER, 9, NULL);
+		if (KeyUp(Common::KEYCODE_KP0)) CharSetPosition(ocCURPLAYER, 10, NULL);
+		if (KeyUp(Common::KEYCODE_KP1)) CharSetPosition(ocCURPLAYER, 11, NULL);
+		if (KeyUp(Common::KEYCODE_KP2)) CharSetPosition(ocCURPLAYER, 12, NULL);
+		if (KeyUp(Common::KEYCODE_KP3)) CharSetPosition(ocCURPLAYER, 13, NULL);
+		if (KeyUp(Common::KEYCODE_KP4)) CharSetPosition(ocCURPLAYER, 14, NULL);
+		if (KeyUp(Common::KEYCODE_KP5)) CharSetPosition(ocCURPLAYER, 15, NULL);
+		if (KeyUp(Common::KEYCODE_KP6)) CharSetPosition(ocCURPLAYER, 16, NULL);
+		if (KeyUp(Common::KEYCODE_KP7)) CharSetPosition(ocCURPLAYER, 17, NULL);
+		if (KeyUp(Common::KEYCODE_KP8)) CharSetPosition(ocCURPLAYER, 18, NULL);
+		if (KeyUp(Common::KEYCODE_KP9)) CharSetPosition(ocCURPLAYER, 19, NULL);
 
-		if (KeyDown(SDL_SCANCODE_LSHIFT))
-			if (KeyUp(SDL_SCANCODE_X)) {
+		if (KeyDown(Common::KEYCODE_LSHIFT))
+			if (KeyUp(Common::KEYCODE_x)) {
 				tasti_per_sfx1 ^= 1;
 			}
 
@@ -540,20 +540,20 @@ void ProcessKeyboard(WGame &game) {
 		*/
 	}// fine tasti di debug
 	else {
-		if (KeyUp(SDL_SCANCODE_D))
+		if (KeyUp(Common::KEYCODE_d))
 			bShowRoomDescriptions ^= 1;
 
-		if (KeyUp(SDL_SCANCODE_E))
+		if (KeyUp(Common::KEYCODE_e))
 			bShowExtraLocalizationStrings ^= 1;
 
-		if (KeyUp(SDL_SCANCODE_P))
+		if (KeyUp(Common::KEYCODE_p))
 			Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, 0, 0, tPDA, NULL, NULL, NULL);
 	}
 
-	if (KeyUp(SDL_SCANCODE_F8) && PlayerCanSwitch(game._gameVars, 1) && !(InvStatus & INV_ON))
+	if (KeyUp(Common::KEYCODE_F8) && PlayerCanSwitch(game._gameVars, 1) && !(InvStatus & INV_ON))
 //		&& (  (InvStatus & (INV_ON|INV_MODE2)) != (INV_ON|INV_MODE2)  ) )
 	{
-		KeyClear(SDL_SCANCODE_F8);
+		KeyClear(Common::KEYCODE_F8);
 		if (CurPlayer == DARRELL) a = ocVICTORIA;
 		else a = ocDARRELL;
 		if (a == (ocDARRELL + CurPlayer)) return ;
@@ -565,35 +565,35 @@ void ProcessKeyboard(WGame &game) {
 	}
 
 	if ((bPlayerInAnim) || (bNotSkippableWalk) || (bDialogActive)) {
-		KeyClear(SDL_SCANCODE_F1);
-		KeyClear(SDL_SCANCODE_F2);
-		KeyClear(SDL_SCANCODE_F3);
-		KeyClear(SDL_SCANCODE_TAB);
-		KeyClear(SDL_SCANCODE_SPACE);
-		KeyClear(SDL_SCANCODE_LCTRL);
-		KeyClear(SDL_SCANCODE_RCTRL);
-		KeyClear(SDL_SCANCODE_END);
+		KeyClear(Common::KEYCODE_F1);
+		KeyClear(Common::KEYCODE_F2);
+		KeyClear(Common::KEYCODE_F3);
+		KeyClear(Common::KEYCODE_TAB);
+		KeyClear(Common::KEYCODE_SPACE);
+		KeyClear(Common::KEYCODE_LCTRL);
+		KeyClear(Common::KEYCODE_RCTRL);
+		KeyClear(Common::KEYCODE_END);
 		return;
 	}
 
-	if (KeyUp(SDL_SCANCODE_F1) && !(InvStatus & INV_ON) && (bT2DActive == tNULL) && PlayerCanSave()) {
+	if (KeyUp(Common::KEYCODE_F1) && !(InvStatus & INV_ON) && (bT2DActive == tNULL) && PlayerCanSave()) {
 		rGrabVideo("temp.tmp", 1);
 		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_SAVE, 0, tOPTIONS, NULL, NULL, NULL);
 	}
-	if (KeyUp(SDL_SCANCODE_F2) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
+	if (KeyUp(Common::KEYCODE_F2) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
 		rGrabVideo("temp.tmp", 1);
 		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_LOAD, 0, tOPTIONS, NULL, NULL, NULL);
 	}
-	if (KeyUp(SDL_SCANCODE_F3) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
+	if (KeyUp(Common::KEYCODE_F3) && !(InvStatus & INV_ON) && (bT2DActive == tNULL)) {
 		rGrabVideo("temp.tmp", 1);
 		Event(EventClass::MC_T2D, ME_T2DSTART, MP_DEFAULT, MPX_START_T2D_OPTIONS, 0, tOPTIONS, NULL, NULL, NULL);
 	}
 
 
 //	Se Premo Control e sono vicino ad una porta o ad una scala
-	if ((Player) && ((KeyUp(SDL_SCANCODE_LCTRL)) || (KeyUp(SDL_SCANCODE_RCTRL)))) {
-		KeyClear(SDL_SCANCODE_LCTRL);
-		KeyClear(SDL_SCANCODE_RCTRL);
+	if ((Player) && ((KeyUp(Common::KEYCODE_LCTRL)) || (KeyUp(Common::KEYCODE_RCTRL)))) {
+		KeyClear(Common::KEYCODE_LCTRL);
+		KeyClear(Common::KEYCODE_RCTRL);
 		if (bSomeOneSpeak) bSkipTalk = TRUE;
 
 		GetRealCharPos(game.init, &ct, ocCURPLAYER, 0);
@@ -616,7 +616,7 @@ void ProcessKeyboard(WGame &game) {
 		}
 	}
 
-	if (KeyUp(SDL_SCANCODE_SPACE) && (!IsPlayerInPool())) {               // Cambia tra 3a e 1a persona
+	if (KeyUp(Common::KEYCODE_SPACE) && (!IsPlayerInPool())) {               // Cambia tra 3a e 1a persona
 		if (bSomeOneSpeak) bSkipTalk = TRUE;
 
 		if ((bFirstPerson == 0) && (!bMovingCamera) && (!bNoFirstPersonSwitch)/* && !( InvStatus & INV_ON )*/)
@@ -625,10 +625,10 @@ void ProcessKeyboard(WGame &game) {
 			Event(EventClass::MC_CAMERA, ME_CAMERA1TO3, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	}
 
-	if (KeyUp(SDL_SCANCODE_TAB) && !bLockCamera)              // Fa uscire l'inventario
+	if (KeyUp(Common::KEYCODE_TAB) && !bLockCamera)              // Fa uscire l'inventario
 		Event(EventClass::MC_INVENTORY, ME_INVSWITCH, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 
-	if (KeyDown(SDL_SCANCODE_LEFT) && !(InvStatus & INV_ON) && !(bFirstPerson)) {      // Ruota a Destra
+	if (KeyDown(Common::KEYCODE_LEFT) && !(InvStatus & INV_ON) && !(bFirstPerson)) {      // Ruota a Destra
 		AngleY = (-1) * TurnSpeed / 180.0f * T3D_PI;
 		if ((Player->Walk.CurAction <= aSTAND) || (Player->Walk.CurAction == aROT_DX)) {
 			PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
@@ -644,7 +644,7 @@ void ProcessKeyboard(WGame &game) {
 				Player->Walk.CurFrame = ActionStart[Player->Walk.CurAction];
 			Player->Mesh->CurFrame = Player->Walk.CurFrame;
 		}
-	} else if (KeyDown(SDL_SCANCODE_RIGHT) && !(InvStatus & INV_ON) && !(bFirstPerson)) { // Ruota a Sinistra
+	} else if (KeyDown(Common::KEYCODE_RIGHT) && !(InvStatus & INV_ON) && !(bFirstPerson)) { // Ruota a Sinistra
 		AngleY = TurnSpeed / 180.0f * T3D_PI;
 		if ((Player->Walk.CurAction <= aSTAND) || (Player->Walk.CurAction == aROT_SX)) {
 			PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
@@ -662,13 +662,13 @@ void ProcessKeyboard(WGame &game) {
 		}
 	}
 
-	if (KeyDown(SDL_SCANCODE_UP) && !(InvStatus & INV_ON) && !(bFirstPerson)) {
+	if (KeyDown(Common::KEYCODE_UP) && !(InvStatus & INV_ON) && !(bFirstPerson)) {
 		AngleSpeed = 20.0f;
-	} else if (KeyDown(SDL_SCANCODE_DOWN) && !(InvStatus & INV_ON) && !(bFirstPerson)) {
+	} else if (KeyDown(Common::KEYCODE_DOWN) && !(InvStatus & INV_ON) && !(bFirstPerson)) {
 		AngleSpeed = -20.0f;
 	}
 
-	if (KeyDown(SDL_SCANCODE_LSHIFT) || KeyDown(SDL_SCANCODE_RSHIFT)) // || (GetKeyState(SDL_SCANCODE_CAPSLOCK) & 0x1)) TODO: Allow for Caps-lock for fast walk
+	if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT)) // || (GetKeyState(Common::KEYCODE_CAPSLOCK) & 0x1)) TODO: Allow for Caps-lock for fast walk
 		bFastWalk = TRUE;
 	else
 		bFastWalk = FALSE;
@@ -687,7 +687,6 @@ void ProcessKeyboard(WGame &game) {
 		UpdateChar(game, ocCURPLAYER, AngleSpeed * Speed, AngleY);
 		AngleX = AngleY = AngleSpeed = 0.0f;
 	}
-#endif
 }
 
 /* -----------------28/09/98 17.18-------------------
