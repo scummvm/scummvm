@@ -112,6 +112,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "crusader",			"Crusader: A Conspiracy in the Kingdom of Jerusalem" },
 	{ "crusader2000",		"Crusader: Edition 2000" },
 	{ "crystalskull",		"The Crystal Skull" },
+	{ "csimiami",			"CSI: Miami" },
 	{ "daedalus",			"The Daedalus Encounter" },
 	{ "darkeye",			"The Dark Eye" },
 	{ "dazzeloids",			"Dazzeloids" },
@@ -7508,6 +7509,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("casino5p" ,"", "Slot City/Slot City (OSX)", "d483e955df901222145267d2ad729ea2", 230407, 900),
 	// Disc 2
 	MACGAME1("casino5p" ,"", "Slots 200 Plus (OSX)", "d483e955df901222145267d2ad729ea2", 291178, 900),
+
+	WINGAME1t("csimiami", "", "CSI-Miami.exe", "18c375549db93a8b7a09ee94ff24b891", 3521217, 900),
 
 	WINGAME2_l("eso", "", "START.EXE",	"c612aa43e7ef55aa4fd2e1085fb1ef7a", 3752491,
 						  "ESO_D1.DXR", "6d39a8ef9a8060e21616f23872c581b6", 2075636, Common::ES_ESP, 900),
