@@ -105,7 +105,7 @@ uint8_t *readDictionary(GameInfo info, uint8_t **pointer, int loud) {
 	int nv = info._numberOfVerbs;
 	int nn = info._numberOfNouns;
 
-	for (int i = 0; i <= MAX(nn, nw) - nv; i++) {
+	for (int i = 0; i <= MAX(nv, nw) - nv; i++) {
 		_G(_verbs)[nv + i] = ".\0";
 	}
 
