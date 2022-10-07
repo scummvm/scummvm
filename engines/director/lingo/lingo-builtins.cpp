@@ -2168,15 +2168,16 @@ void LB::b_move(int nargs) {
 		return;
 	}
 
-	Movie *movie = g_director->getCurrentMovie();
-
-	if (!movie->getCastMember(*src.u.cast)) {
-		warning("b_move: Source CastMember doesn't exist");
-		return;
-	}
-
 	if (src.u.cast->castLib != 0) {
 		warning("b_move: wrong castLib '%d' in src CastMemberID", src.u.cast->castLib);
+	}
+
+	Movie *movie = g_director->getCurrentMovie();
+	CastMember *toMove = movie->getCastMember(src.asMemberID());
+
+	if (!toMove) {
+		warning("b_move: Source CastMember doesn't exist");
+		return;
 	}
 
 	g_lingo->push(dest);
@@ -2186,12 +2187,10 @@ void LB::b_move(int nargs) {
 	Frame *currentFrame = score->_frames[frame];
 	auto channels = score->_channels;
 
-
 	score->renderFrame(frame, kRenderForceUpdate);
 
 	movie->eraseCastMember(dest.asMemberID());
 
-	CastMember *toMove = movie->getCastMember(src.asMemberID());
 	CastMember *toReplace = new CastMember(toMove->getCast(), src.asMemberID().member);
 	movie->createOrReplaceCastMember(dest.asMemberID(), toMove);
 	movie->createOrReplaceCastMember(src.asMemberID(), toReplace);
