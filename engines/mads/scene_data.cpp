@@ -261,7 +261,7 @@ void SceneInfo::load(int sceneId, int variant, const Common::String &resName,
 		loadPalette(_sceneId, _artFileNum, resName, flags, bgSurface);
 	} else {
 		loadMadsV2Background(_sceneId, resName, flags, bgSurface);
-		loadPalette(_sceneId, _sceneId, resName, flags, bgSurface);
+		loadPalette(_sceneId, _artFileNum, resName, flags, bgSurface);
 	}
 
 	Common::Array<SpriteAsset *> spriteSets;
