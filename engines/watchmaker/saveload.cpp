@@ -405,7 +405,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 		init.Obj[i].pos = stream->readByte();
 	}
 	// HACK? (Something is off between 0.92 and the saves in the retail, leading to a slight skew.
-	stream->seek(SEEK_CUR, 92);
+	stream->seek(92, SEEK_CUR);
 	for (int i = 0; i < MAX_ICONS; i++) {
 		init.InvObj[i].name = stream->readUint16LE();
 		init.InvObj[i].examine.loadFromStream(*stream);
