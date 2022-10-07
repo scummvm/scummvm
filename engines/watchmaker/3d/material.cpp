@@ -19,8 +19,9 @@
 *
 */
 
-#include "common/util.h"
 #include "watchmaker/3d/material.h"
+#include "common/util.h"
+#include "watchmaker/3d/render/opengl_2d.h"
 #include "watchmaker/render.h"
 
 namespace Watchmaker {
@@ -242,10 +243,10 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 #if 0
 	if (!mat)
 		return;
-
+#endif
 	if ((mat.Flags & T3D_MATERIAL_MOVIE))
 		gUpdateMovie(mat);
-#endif
+
 	if ((mat.NumFaces() >= 3) && (mat.VBO)) {
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, 0, 0);
 		bb->ViewMatrixNum = ViewMatrixNum;
