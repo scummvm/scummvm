@@ -473,20 +473,41 @@ void t3dOptimizeMaterialList(t3dBODY *b) {
 
 			if (Mat->Texture->name.equalsIgnoreCase(CurMat->Texture->name)) {                      // Se ha lo setsso nome di texture
 				//warning("TODO: Implement Material-merging");
-#if 0
 				// This is currently broken.
-				Mat = rMergeMaterial(Mat, CurMat);                                          // Unisce i due materiali
 
-				t3dMESH *m = b->MeshTable;
-				for (int k = 0; k < b->NumMeshes; k++, m++) {                                       // Aggiorna in tutte le mesh id materiale
-					t3dFACE *f = m->FList;
-					for (int q = 0; q < m->NumFaces; q++, f++) {
-						if (f->mat == CurMat)
-							f->mat = Mat;
+				Mat = rMergeMaterial(Mat, CurMat);                                          // Unisce i due materiali
+				for (int k = 0; k < b->NumMeshes(); k++) {                                       // Aggiorna in tutte le mesh id materiale
+					auto &m = b->MeshTable[k];
+					for (int q = 0; q < m.NumFaces(); q++) {
+						auto &f = m.FList[q];
+						if (f.getMaterialIndex() == j)
+							f.setMaterialIndex(i);
 					}
 				}
-#endif
+				warning("Deduplicating: %s (%d v %d", Mat->Texture->name.c_str(), i, j);
+				b->MatTable[j] = nullptr; // TODO: This should probably happen in rMergeMaterial
 			}
+		}
+	}
+
+	// TODO: The optimization leaves a bunch of materials as nullptr, we need to update all the
+	// references to them. Currently we do this by subtracting 1 from all references that were above
+	// a removed material. This works, but isn't really optimal.
+	int subtract = 0;
+	for (int i = 0; i < b->NumMaterials(); i++) {
+		if (!b->MatTable[i]) {
+			b->MatTable.remove_at(i);
+			subtract++;
+			for (int k = 0; k < b->NumMeshes(); k++) {
+				auto &m = b->MeshTable[k];
+				for (int q = 0; q < m.NumFaces(); q++) {
+					auto &f = m.FList[q];
+					if (f.getMaterialIndex() >= i) {
+						f.setMaterialIndex(f.getMaterialIndex() - 1);
+					}
+				}
+			}
+			i--;
 		}
 	}
 }
@@ -542,7 +563,7 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 					Mat->VertsList.push_back(&Mesh.VBptr[Face.VertexIndex[h]]);
 				}
 				assert(k < Mat->VertsList.size());
-				Face.MatVertexIndex[h] = (int16)k;
+				Face.setMatVertexIndex(h, k);
 			}
 
 		}
@@ -551,10 +572,11 @@ void t3dFinalizeMaterialList(t3dBODY *b) {
 #endif
 	}
 
-	warning("Partially stubbed t3dFinalizeMaterialList");
-
 	for (int i = 0; i < b->NumMaterials(); i++) {
 		auto &Mat = b->MatTable[i];
+		if (!Mat) {
+			warning("nullptr");
+		}
 		Mat->VBO = b->addVertexBuffer(); // t3dAddVertexBuffer(b, Mat->NumAllocatedVerts);
 		for (int j = 0; j < (uint32)Mat->NumAddictionalMaterial; j++)
 			Mat->AddictionalMaterial[j]->VBO = t3dAddVertexBuffer(b, Mat->AddictionalMaterial[j]->NumAllocatedVerts());

@@ -31,23 +31,40 @@ struct t3dBODY;
 struct t3dFACE {
 	uint32      flags = 0;                 // face status                                  4
 	NormalPtr   n;                         // pointer to the face normal                   4
-	int16      VertexIndex[3] = {};       // Vertices indices in mesh                     6
-	int16      MatVertexIndex[3] = {};    // Vertices indices in material                 6
-
 private:
-	MaterialPtr mat;                       // pointer to material                          4
+	int16      MatVertexIndex[3] = {};    // Vertices indices in material                 6
+	uint16 _materialIndex = 0;
+	MaterialPtr _mat = nullptr;                       // pointer to material                          4
+	t3dBODY *_body = nullptr;
+public:
+	int16      VertexIndex[3] = {};       // Vertices indices in mesh                     6
+
+	void setMatVertexIndex(int index, int16 value) {
+		MatVertexIndex[index] = value;
+	}
+	uint16 getMatVertexIndex(int index) {
+		return MatVertexIndex[index];
+	}
 public:
 	MaterialPtr lightmap;                  // pointer to lightmap (or 2nd material)        4
 
 	t3dFACE(t3dBODY *b, Common::SeekableReadStream &stream);
 
-	bool hasMaterialFlag(uint32 flag) { return mat->hasFlag(flag); }
-	MaterialPtr getMaterial() { return mat; }
-	const gMaterial* getMaterial() const { return mat.get(); }
+	bool hasMaterialFlag(uint32 flag) { return getMaterial()->hasFlag(flag); }
+	MaterialPtr getMaterial();
+	const gMaterial* getMaterial() const;
+	uint16 getMaterialIndex() const {
+		return _materialIndex;
+	}
+	void setMaterialIndex(uint32 index) {
+		_materialIndex = index;
+		_mat = nullptr;
+		getMaterial();
+	}
 
 	void checkVertices() {
 		for (int i = 0; i < 3; i++) {
-			assert(mat->VertsList.size() > MatVertexIndex[i]);
+			assert(getMaterial()->VertsList.size() > MatVertexIndex[i]);
 		}
 	}
 

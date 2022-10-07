@@ -111,14 +111,17 @@ struct SHADOWBOX {
 };
 
 struct gBatchBlock {
-	signed short int        Texture1, Texture2;         // texture ID
-	unsigned int            Flags1, Flags2;             // flags
-	signed short int        ViewMatrixNum;              // view matrix num
-	unsigned short int      NumFaces;                   // faces number
-	unsigned short int      NumVerts;                   // verts number
+	signed short int        Texture1 = 0, Texture2 = 0; // texture ID
+	unsigned int            Flags1 = 0, Flags2 = 0;     // flags
+	signed short int        ViewMatrixNum = 0;              // view matrix num
+	unsigned short int      NumFaces() { return FacesList.size(); } // faces number
+	unsigned short int      NumVerts() { if (VBO) return VBO->_buffer.size(); else return 0; }                   // verts number
 	Common::Array<uint16>     FacesList;                 // pointer to faces list
 	Common::SharedPtr<VertexBuffer> VBO = nullptr;
 //	LPDIRECT3DVERTEXBUFFER7  VB;                         // block VB
+
+	gBatchBlock() {}
+	gBatchBlock(signed short int texture1, signed short int texture2, unsigned int flags1, unsigned int flags2) : Texture1(texture1), Texture2(texture2), Flags1(flags1), Flags2(flags2) {}
 };
 
 class WorkDirs;

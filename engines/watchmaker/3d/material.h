@@ -52,7 +52,7 @@ private:
 	Common::Array<uint16>     FacesList;                  // list of verts indices
 public:
 	Common::Array<gVertex*> VertsList;                  // pointers to pointers to verts
-	int                     NumAllocatedVerts() { return this->VertsList.size(); };      // number of allocated vertex in mat VB
+	int NumAllocatedVerts() { return this->VertsList.size(); };      // number of allocated vertex in mat VB
 	Common::SharedPtr<VertexBuffer> VBO = nullptr;
 //	LPDIRECT3DVERTEXBUFFER7 VB;                         // mat VB struct
 	int                     NumAllocatedMesh = 0;       // num mesh to check for modifications

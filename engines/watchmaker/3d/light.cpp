@@ -23,14 +23,17 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 
 #include "watchmaker/3d/light.h"
-#include "watchmaker/3d/loader.h"
-#include "watchmaker/types.h"
-#include "watchmaker/t3d.h"
 #include "watchmaker/3d/geometry.h"
+#include "watchmaker/3d/loader.h"
+#include "watchmaker/3d/math/llmath.h"
 #include "watchmaker/3d/t3d_body.h"
 #include "watchmaker/3d/t3d_mesh.h"
-#include "watchmaker/3d/math/llmath.h"
+#include "watchmaker/file_utils.h"
+#include "watchmaker/game.h"
 #include "watchmaker/ll/ll_system.h"
+#include "watchmaker/renderer.h"
+#include "watchmaker/t3d.h"
+#include "watchmaker/types.h"
 #include "watchmaker/utils.h"
 
 namespace Watchmaker {
@@ -324,7 +327,7 @@ void GetBoundaries(t3dBODY *b, t3dF32 *minx, t3dF32 *miny, t3dF32 *minz, t3dF32 
 	}
 }
 
-t3dLIGHT::t3dLIGHT(t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &stream) {
+t3dLIGHT::t3dLIGHT(WGame &game, t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &stream) {
 	Type = stream.readUint32LE();                                                        // Legge tipo
 	//		DebugFile("%d: SPOT %X ATTEN %X SHAD %X",light,Light[light].Type&T3D_LIGHT_SPOTLIGHT,Light[light].Type&T3D_LIGHT_ATTENUATION,Light[light].Type&T3D_LIGHT_CASTSHADOWS);
 	Source = t3dV3F(stream) * SCALEFACTOR;                                    // Legge Source
@@ -352,35 +355,25 @@ t3dLIGHT::t3dLIGHT(t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &s
 	}
 
 	if (Type & T3D_LIGHT_FLARE) {                                              // Se ha una flare
-		char Name[T3D_NAMELEN], Appo[T3D_NAMELEN];
-#ifndef WMGEN
-		int len;
-#endif
 //f         Light[light].Type&=~T3D_LIGHT_LIGHTON;                                              // La spegne
 		FlareSize = stream.readFloatLE() * SCALEFACTOR;                               // Legge il size della flare
 
-		for (int i = 0; i < T3D_NAMELEN; i++) {                                                  // Legge nome dellaq texture
-			Name[i] = stream.readByte();
-		}
-
+		Common::String name = readT3dString(stream); // Legge nome dellaq texture
+		Common::String appo;
 #ifndef WMGEN
-		len = strlen(Name);
-		if (((Name[len - 1] == 'i') || (Name[len - 1] == 'I')) &&
-			((Name[len - 2] == 'v') || (Name[len - 2] == 'V')) &&
-			((Name[len - 3] == 'a') || (Name[len - 3] == 'A'))) {
-			strcpy(Appo, workDirs._moviesDir.c_str());                                                              // altrimenti prende quello di default
+		if (hasFileExtension(name, "avi")) {
+			appo = workDirs._moviesDir + name;                                                              // altrimenti prende quello di default
 		} else {
-			strcpy(Appo, workDirs._mapsDir.c_str());                                                            // altrimenti prende quello di default
+			appo = workDirs._mapsDir + name;;                                                            // altrimenti prende quello di default
 		}
-		strcat(Appo, Name);                                                                     // Attacca nome Immagine
 #else
 		strcpy(Appo, WmMapsDir);
 			strcat(Appo, Name);
 #endif
 
 #ifndef WMGEN
-		if (!(rAddMaterial(Material[0], Appo, 15, 0))) {                      // Aggiunge il materiale
-			warning("File %s not found", Appo);
+		if (!(game._renderer->addMaterial(Material[0], appo, 15, 0))) {      // Aggiunge il materiale
+			warning("File %s not found", appo.c_str());
 			Material[0].Texture = nullptr;
 			assert(false);
 		}

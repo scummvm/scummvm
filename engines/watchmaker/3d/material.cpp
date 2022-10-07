@@ -249,11 +249,17 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 	if ((mat.NumFaces() >= 3) && (mat.VBO)) {
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, 0, 0);
 		bb->ViewMatrixNum = ViewMatrixNum;
-		bb->NumFaces = (unsigned short int) mat.NumFaces();
 		bb->FacesList = mat.getFacesList();
 		bb->VBO = mat.VBO;
-		bb->NumVerts = (unsigned short int) mat.NumAllocatedVerts();
-		mat.clearFaceList();
+		for (int f = 0; f < bb->FacesList.size(); f++) {
+			if (bb->FacesList[f] >= bb->VBO->_buffer.size()) {
+				for (int o = 0; o < bb->FacesList.size(); o++) {
+					warning("%d", bb->FacesList[o]);
+				}
+				warning("%d > %d (%d)", bb->FacesList[f],bb->VBO->_buffer.size(), bb->NumVerts());
+			}
+		}
+		mat.emptyFacesList(); // We may want to keep the reservation to avoid the extra reallocs here.
 //		if ( bb->VB == g_lpD3DUserVertexBuffer )
 //			DebugLogFile("User VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
 #if 0
@@ -272,20 +278,18 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 		if (cm->VBO == NULL) continue;
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, cm->Texture->ID, cm->Flags);
 		bb->ViewMatrixNum = ViewMatrixNum;
-		bb->NumFaces = (unsigned short int) cm->NumFaces();
 		bb->FacesList = cm->getFacesList();
 		bb->VBO = cm->VBO;
-		bb->NumVerts = (unsigned short int) cm->NumAllocatedVerts();
 		cm->emptyFacesList();
-		if (bb->NumVerts == 0) {
 #if 0
+		if (bb->NumVerts == 0) {
 			if (bb->VBO->GetVertexBufferDesc(&VBDesc) != D3D_OK)
 				DebugLogFile("Can't get VB information for %s", mat->Texture->Name);
 			else
 				bb->NumVerts = (unsigned short int) VBDesc.dwNumVertices;
 //			DebugLogFile("Saving VB %s with %d verts",mat->Texture->Name,bb->NumVerts);
-#endif
 		}
+#endif
 	}
 }
 
