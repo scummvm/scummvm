@@ -25,6 +25,7 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "common/system.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/ll/ll_system.h"
 #include "math/glmath.h"
@@ -116,10 +117,7 @@ void Renderer::setCurCameraViewport(t3dF32 fov, uint8 sup) {
 }
 
 void Renderer::showFrame() {
-	error("TODO: showFrame");
-#if 0
-	SDL_GL_SwapWindow(sdl->window);
-#endif
+	g_system->updateScreen();
 }
 
 int Renderer::rFitX(int x) {

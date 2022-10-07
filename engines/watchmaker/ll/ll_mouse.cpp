@@ -19,7 +19,6 @@
  *
  */
 
-#include <SDL_mouse.h>
 #include "watchmaker/ll/ll_mouse.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/message.h"
@@ -149,9 +148,6 @@ void HandleMouseChanges()
 	// Mouse movement will have been accumulated prior to calling this function.
 	// Button flags may also have been changed, this function then applies the button changes.
 	int curX, curY;
-	Uint32 buttonState = SDL_GetMouseState(&curX, &curY);
-	bLPressed = buttonState & SDL_BUTTON_LMASK;
-	bRPressed = buttonState & SDL_BUTTON_RMASK;
 
 	//warning("L: %d %d R: %d %d", bLPressed, bLPressedPrev, bRPressed, bRPressedPrev);
 	// Button 0 pressed or released
