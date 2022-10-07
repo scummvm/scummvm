@@ -43,6 +43,7 @@ Part::Part() {
 	_player = nullptr;
 	_pitchbend = 0;
 	_pitchbend_factor = 0;
+	_volControlSensitivity = 127;
 	_transpose = 0;
 	_transpose_eff = 0;
 	_vol = 0;
@@ -126,9 +127,8 @@ void Part::pitchBend(int16 value) {
 }
 
 void Part::volume(byte value) {
-	_vol_eff = ((_vol = value) + 1) * _player->getEffectiveVolume() >> 7;
-	if (_mc)
-		_mc->volume(_vol_eff);
+	_vol = value;
+	sendVolume(0);
 }
 
 void Part::set_pri(int8 pri) {
@@ -311,6 +311,7 @@ void Part::setup(Player *player) {
 	_detune = 0;
 	_detune_eff = player->getDetune();
 	_pitchbend_factor = 2;
+	_volControlSensitivity = 127;
 	_polyphony = 1;
 	_pitchbend = 0;
 	_effect_level = player->_se->isNativeMT32() ? 127 : 64;
@@ -376,12 +377,37 @@ void Part::sendPitchBend() {
 	if (!_mc)
 		return;
 
+	if (_se->_newSystem && !_pitchbend_factor) {
+		sendVolumeFade();
+		return;
+	}
+
 	int16 bend = _pitchbend;
 
 	if (_se->_soundType == MDT_PCSPK || _se->_soundType == MDT_MACINTOSH)
 		bend = clamp(bend + (_detune_eff * 64 / 12) + (_transpose_eff * 8192 / 12), -8192, 8191);
 
 	_mc->pitchBend(bend);
+}
+
+void Part::sendVolume(int8 fadeModifier) {
+	if (!_mc)
+		return;
+
+	uint16 vol = (_vol + fadeModifier + 1) * _player->getEffectiveVolume();
+
+	if (_se->_newSystem)
+		vol = (vol * (_volControlSensitivity + 1)) >> 7;
+
+	_vol_eff = vol >> 7;
+
+	if (_mc)
+		_mc->volume(_vol_eff);
+}
+
+void Part::sendVolumeFade() {
+	int16 fadeModifier = ((((_pitchbend >= 0) ? 127 - _vol : _vol) + 1) * _pitchbend) >> 7;
+	sendVolume(fadeModifier);
 }
 
 void Part::sendTranspose() {

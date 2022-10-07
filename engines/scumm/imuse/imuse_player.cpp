@@ -360,7 +360,7 @@ void Player::send(uint32 b) {
 		}
 		break;
 
-	case 0xE: // Pitch Bend
+	case 0xE: // Pitch Bend (or also volume fade for Samnmax)
 		part = getPart(chan);
 		if (part)
 			part->pitchBend(((param2 << 7) | param1) - 0x2000);

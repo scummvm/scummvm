@@ -315,6 +315,7 @@ struct Part : public Common::Serializable {
 	Player *_player;
 	int16 _pitchbend;
 	byte _pitchbend_factor;
+	byte _volControlSensitivity;
 	int8 _transpose, _transpose_eff;
 	byte _vol, _vol_eff;
 	int8 _detune, _detune_eff;
@@ -377,6 +378,8 @@ struct Part : public Common::Serializable {
 
 private:
 	void sendPitchBend();
+	void sendVolume(int8 fadeModifier);
+	void sendVolumeFade();
 	void sendTranspose();
 	void sendDetune();
 	void sendPanPosition(uint8 value);
