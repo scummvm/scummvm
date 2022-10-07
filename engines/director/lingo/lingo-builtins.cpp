@@ -2236,10 +2236,16 @@ void LB::b_pasteClipBoardInto(int nargs) {
 	}
 
 	Movie *movie = g_director->getCurrentMovie();
+
+	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
+	if (!castMember) {
+		warning("LB:B_pasteClipBoardInto(): castMember not found");
+		return;
+	}
+
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrame();
 	Frame *currentFrame = score->_frames[frame];
-	CastMember *castMember = movie->getCastMember(*g_director->_clipBoard);
 	auto channels = score->_channels;
 
 	castMember->setModified(true);
