@@ -2502,6 +2502,10 @@ void t3dCalcHalos(t3dBODY *b) {
 	//uint16      *fp;
 	t3dV3F      v0, v1, v2, v3, tmp;
 
+	// The userVertexBuffer stuff is not ready yet, giving us nullptr writes.
+	warning("TODO: t3dCalcHalos");
+	return;
+
 	for (i = 0; i < b->NumLights(); i++) {
 		t3dLIGHT &l = b->LightTable[i];
 		if (!(l.Type & T3D_LIGHT_LIGHTON)) continue;
