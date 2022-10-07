@@ -135,6 +135,22 @@ public:
 	void removeAt(uint idx);
 
 	/**
+	 * Remove an entry from the inventory
+	 */
+	void remove(Entry *e);
+
+	/**
+	 * Returns the index of a given entry
+	 */
+	int indexOf(Entry *e);
+
+	/**
+	 * Decreases the charge on a magic item, and removes
+	 * it if the charges have run out
+	 */
+	void removeCharge(Entry *e);
+
+	/**
 	 * The following methods return true if any of
 	 * the contained items are of the given category
 	 */

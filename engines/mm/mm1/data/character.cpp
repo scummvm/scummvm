@@ -93,6 +93,21 @@ void Inventory::removeAt(uint idx) {
 	_items.push_back(Entry());
 }
 
+void Inventory::remove(Entry *e) {
+	int index = indexOf(e);
+	assert(index >= 0);
+	removeAt(index);
+}
+
+int Inventory::indexOf(Entry *e) {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (e == &_items[i])
+			return i;
+	}
+
+	return -1;
+}
+
 bool Inventory::hasCategory(CategoryFn fn) const {
 	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
 		if (fn(_items[i]._id))
@@ -100,6 +115,14 @@ bool Inventory::hasCategory(CategoryFn fn) const {
 	}
 	return false;
 }
+
+void Inventory::removeCharge(Entry *e) {
+	if (e->_charges) {
+		if (--e->_charges == 0)
+			remove(e);
+	}
+}
+
 
 /*------------------------------------------------------------------------*/
 

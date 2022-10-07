@@ -55,10 +55,12 @@
 			use_no_special_power: "NO SPECIAL POWER"
 			use_not_equipped: "NOT EQUIPPED"
 			no_charges_left: "NO CHARGES LEFT"
+			done: "DONE"
 		use_noncombat:
 			no_special_power: "*** NO SPECIAL POWER ***"
 			not_equipped: "*** NOT EQUIPPED ***"
 			no_charges_left: "*** NO CHARGES LEFT ***"
+			done: "*** DONE ***"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
