@@ -2279,8 +2279,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 									"MSI C-S",   "224006f035e5f5fc0dd0133fbc5c6b89", 142729, Common::JA_JPN, 311),
 
 	// Original Mac filename is Maniac Sports™
-	MACGAME1("maniacsports", "", "Maniac Sports", "2ce360c9ea2da80a2c6d1040b0ad92dd", 421218, 311),
-	WINGAME1("maniacsports", "", "MANIAC.EXE", "65d06b5fef155a2473434571aff5bc29", 371274, 311),
+	MACGAME1("maniacsports", "", "xn--maniac sports-8q9g", "2ce360c9ea2da80a2c6d1040b0ad92dd", 421218, 311),
+	MACGAME1("maniacsports", "", "xn--maniac sports-8q9g", "2ce360c9ea2da80a2c6d1040b0ad92dd", 420962, 311),
+	WINGAME2("maniacsports", "", "MANIAC.EXE", "65d06b5fef155a2473434571aff5bc29", 371274,
+								 "SUPPORT/MSWORLD.MMM", "e9cdd7f30fb3386e7b67c6769147f60a", 218378, 311),
 
 	MACDEMO1_l("marinefantasy", "Demo", "MarineFantasy", "276bee761e48a6fd709df77d5c2f60dd", 395226, Common::JA_JPN, 313),
 
