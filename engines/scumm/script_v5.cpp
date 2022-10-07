@@ -3437,7 +3437,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// releases (except for the SegaCD one with the smaller palette).
 		// Fix this while making sure that it doesn't apply to Elaine saying
 		// "I heard that!" offscreen.
-		_string[textSlot].color = 0xF9;
+		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0A : 0xF9;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformSegaCD &&
 			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
@@ -3450,7 +3450,7 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// options may also look wrong in that scene, but we don't fix that, as
 		// this font in displayed in green, white or purple between the
 		// different releases and scenes, so we don't know the original intent.
-		_string[textSlot].color = 0xEA;
+		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0C : 0xEA;
 		printString(textSlot, _scriptPointer);
 	} else if (_game.id == GID_MONKEY && _roomResource == 25 && vm.slot[_currentScript].number == 205) {
 		printPatchedMI1CannibalString(textSlot, _scriptPointer);
