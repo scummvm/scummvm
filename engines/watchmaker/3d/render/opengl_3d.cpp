@@ -572,9 +572,18 @@ int createTextureFromData(int width, int height, int dataSize, void *data, int t
 	}
 
 	if (compressed) {
-		glCompressedTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, dataSize, data);
+		glCompressedTexImage2D(GL_TEXTURE_2D, // target
+							   0, // level
+							   texFormat, // internalFormat
+							   width, // width
+							   height, // height
+							   0, // border
+							   dataSize,
+							   data
+							   );
+		checkGlError("glCompressedTexImage");
 	} else {
-		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, dataSize, GL_UNSIGNED_BYTE, data);
+		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
 	}
 
 	return texId;
