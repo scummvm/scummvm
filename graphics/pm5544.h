@@ -23,6 +23,15 @@ namespace Graphics {
 
 class ManagedSurface;
 
+/**
+ * Renders a Philips PM5544 test pattern on a surface with given dimensions
+ *
+ * @param width  Width of the surface
+ * @param height Height of the surface
+ *
+ * @return Returns ManagedSurface in CLUT8 format with a palette
+ */
+
 ManagedSurface *renderPM5544(int width, int height);
 
 }  // End of namespace Graphics
