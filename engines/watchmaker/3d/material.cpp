@@ -315,9 +315,6 @@ void rBuildMaterialList(MaterialTable &MatList, unsigned int NumMat, signed shor
 MaterialTable rCreateMaterialList(int num) {
 	MaterialTable list;
 	list.reserve(num);
-	for (int i = 0; i < num; i++) {
-		list.push_back(Common::SharedPtr<gMaterial>(new gMaterial()));
-	}
 	return list;
 }
 
