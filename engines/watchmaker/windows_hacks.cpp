@@ -19,8 +19,8 @@
  *
  */
 
-#include <SDL_timer.h>
 #include "watchmaker/windows_hacks.h"
+#include "common/system.h"
 #include "watchmaker/types.h"
 
 namespace Watchmaker {
@@ -30,7 +30,7 @@ void ResetDIKbd(void) {
 }
 
 uint32 timeGetTime() {
-	return SDL_GetTicks();
+	return g_system->getMillis();
 }
 
 void GetLocalTime(SYSTEMTIME *) {

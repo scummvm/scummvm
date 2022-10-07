@@ -21,6 +21,7 @@
 
 #include "watchmaker/watchmaker.h"
 #include "watchmaker/console.h"
+#include "engines/util.h"
 
 namespace Watchmaker {
 
@@ -36,6 +37,7 @@ WatchmakerGame::~WatchmakerGame() {
 int WMakerMain();
 
 Common::Error WatchmakerGame::run() {
+	initGraphics3d(800, 600);
 	WMakerMain();
 	return Common::kNoError;
 }

@@ -21,16 +21,14 @@
 
 #include "watchmaker/sdl_wrapper.h"
 #include "watchmaker/classes/do_keyboard.h"
+#include "common/events.h"
+#include "common/system.h"
 
 namespace Watchmaker {
 
 void sdl_wrapper::getWindowSize(unsigned int &width, unsigned int &height) {
-#if 0
-	int w, h;
-	SDL_GetWindowSize(window, &w, &h);
-	width = w;
-	height = h;
-#endif
+	width = g_system->getWidth();
+	height = g_system->getHeight();
 }
 
 int sdl_wrapper::getBitDepth() const {
@@ -44,6 +42,33 @@ int sdl_wrapper::getBitDepth() const {
 }
 
 void sdl_wrapper::pollSDL() {
+	// Process events
+	Common::Event event;
+	while (g_system->getEventManager()->pollEvent(event)) {
+		switch (event.type) {
+		case Common::EVENT_MOUSEMOVE:
+			mMove += abs(event.relMouse.x);
+			mMove += abs(event.relMouse.y);
+			mMoveX += event.relMouse.x;
+			mMoveY += event.relMouse.y;
+			mPosx = event.mouse.x;
+			mPosy = event.mouse.y;
+			break;
+		case Common::EVENT_LBUTTONDOWN:
+			bLPressed = true;
+			break;
+		case Common::EVENT_LBUTTONUP:
+			bLPressed = false;
+			break;
+		case Common::EVENT_KEYUP:
+			KeyTable[event.kbd.keycode] = 0x10;
+			break;
+		case Common::EVENT_QUIT:
+			shouldQuit = true;
+		default:
+			warning("Unhandled event: %d", event.type);
+		}
+	}
 #if 0
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
@@ -51,14 +76,6 @@ void sdl_wrapper::pollSDL() {
 			case SDL_QUIT:
 				shouldQuit = true;
 				break;
-			case SDL_MOUSEMOTION:
-				mMove += abs(event.motion.xrel);
-				mMove += abs(event.motion.yrel);
-				mMoveX += event.motion.xrel;
-				mMoveY += event.motion.yrel;
-				mPosx = event.motion.x;
-				mPosy = event.motion.y;
-				break;/*
 			case SDL_MOUSEBUTTONDOWN:
 				switch (event.button.button) {
 					case SDL_BUTTON_LEFT:
