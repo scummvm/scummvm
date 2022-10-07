@@ -1820,6 +1820,10 @@ void LB::b_duplicate(int nargs) {
 
 	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
 	CastMember *castMember = movie->getCastMember(from.asMemberID());
+	if (!castMember) {
+		warning("LB::b_duplicate: source cast member doesn't exist");
+		return;
+	}
 	auto channels = score->_channels;
 
 	castMember->setModified(true);
