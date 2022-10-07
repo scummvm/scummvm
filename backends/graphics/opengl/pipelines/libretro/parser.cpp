@@ -128,8 +128,6 @@ bool PresetParser::parsePreset(Common::SeekableReadStream &stream) {
 			continue;
 
 		// Split line into key, value pair.
-		// TODO: Files can contain comments starting with '#', we need to
-		// handle this.
 		Common::String::const_iterator equalIter = Common::find(line.begin(), line.end(), '=');
 		if (equalIter == line.end()) {
 			_errorDesc = "Could not find '=' in line '" + line + '\'';
