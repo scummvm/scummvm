@@ -353,6 +353,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "poohp",				"Winnie the Pooh Preschool" },
 	{ "pooht",				"Winnie the Pooh Toddler" },
 	{ "princessfashion",	"Disney's Princess Fashion Boutique" },
+	{ "puppetmotel",		"Puppet Motel" },
 	{ "pyst",				"Pyst" },
 	{ "pyst2",				"Driven: The Sequel to Pyst" },
 	{ "pystmake",			"The Making of Pyst" },
@@ -663,6 +664,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "prangers1",			"PowerRangers Part 1" },
 	{ "prangers2",			"PowerRangers Part 2" },
 	{ "psych",				"Psych: An Interactive Stress Buster!" },
+	{ "revdemo",			"Macromedia Director 4.0 Revolution" },  // from CD-ROM Now issue #7 '94
 	{ "saspurs2001",		"San Antonio Spurs 2001 Broadcast Screensaver" }, // Not a screensaver
 	{ "saspurs2005",		"San Antonio Spurs Internet Hot-links" }, // Not a screensaver
 	{ "scanmon",			"ScanMon" },
@@ -1300,6 +1302,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "applestore",			"Apple Company Store" },
 	{ "aptesampler",		"APTE Product Sampler" },
 	{ "arcmedia",			"Arc Media Demos" },
+	{ "bestservice",		"Best Service Soundware Company Presentation" },  // from CD-ROM Now issue #7 '94
 	{ "blaster",			"Blaster Series Demo" },
 	{ "bpmc",				"Byron Preiss Multimedia Catalog" },
 	{ "cmc",				"Creative Multimedia Catalog" },
@@ -1319,6 +1322,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "gusbuds",			"Gus and the CyberBuds Learning Adventure Series" },
 	{ "headbone",			"Headbone CD-ROM Sampler" },
 	{ "hoffman",			"H+a Collection" },
+	{ "housejam",			"HouseJam - An excerpt from Meet MediaBand" },  // from CD-ROM Now issue #7 '94
 	{ "ilearn",				"iLearn" },
 	{ "imagineers",			"The Imagineers" },
 	{ "imaginopolis",		"Microsoft Imaginopolis" },
@@ -1841,6 +1845,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Also on the disk is the executable and resources for the 12" monitor version
 	// "BELZERION 12", "f5277c53bacd27936158dd3867e587e2", 392623, 311
 	MACGAME1_l("belzerion", "", "BELZERION 13", "f5277c53bacd27936158dd3867e587e2", 392619, Common::JA_JPN, 311),
+
+	WINGAME1t("bestservice", "", "BESTDEMO.EXE", "437d0bc26a89a5f8cda3bef31db23897", 370015, 310),
 
 	MACGAME1("beyondthewall", "", "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
 	WINGAME1("beyondthewall", "", "WALL.EXE", "5c6862a40a48881913ee7c50d25cd984", 225253, 300),
@@ -3644,6 +3650,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("horrortour2", "", "ZEDDAS PowerPC", "da7d3f1d85bdb99518b586c40d2a673e", 60013, Common::JA_JPN, 400),
 	WINGAME1_l("horrortour2", "", "HT2.EXE", "499d8545ee2325b18d3f09fb2c0fc26e", 698029, Common::JA_JPN, 400),
 
+	WINGAME1t("housejam", "", "HOUSEJAM.EXE", "f00912d1c03213bb002d3062cbd1d123", 12034983, 404),
+
 	// Full game is supported in SCI engine
 	WINDEMO1t("hoyle5", "Demo", "HOYLE5.EXE", "499760334d09425e80c69e9a1b178ec5", 6287863, 404),
 
@@ -4388,6 +4396,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("psych", "v1.0.5", "psych", "85dfccc89072ba781bc90783998c3937", 284622, 403),
 	MACGAME1("psych", "v2.0.1", "psych", "1e0f16853ec1652a51ade41823405440", 406450, 403),
 
+	// 1995 Mac only release
+	MACGAME1("puppetmotel", "", "Puppet Motel", "8719de9c083aca942fc0e5c0a127b6dc", 641110, 404),
+
 	// Original filename is '除虫菊Vol.1 Demo(PPC)'
 	MACDEMO1_l("pyrethrum1", "Demo", "xn--Vol.1 Demo(PPC)-u825b41x5o6e", "422270206b9bd6aff43bbe95047f6ce9", 60665, Common::JA_JPN, 404),
 	WINDEMO1t_l("pyrethrum1", "Demo", "VOL1DEMO.EXE", "bbe7ddbe439266f2ed57b9723f8a5c6c", 746843, Common::JA_JPN, 404),
@@ -4413,6 +4424,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1_l("renderorgan", "", "RenderOrgan", "0c7bbb4b24823e5ab871cb4c1d6f3710", 505374, Common::JA_JPN, 404),
 	WINGAME1_l("renderorgan", "", "743.EXE", "7a59a30b6b2db921f6d354cd74faf09a", 697963, Common::JA_JPN, 404),
+
+	WINGAME2t("revdemo", "", "START.EXE", "6a008daf08422d013321e4ebe756efae", 690985,
+							 "REVOLUTN.DIR",  "445271a8e88f63db033c51a46278b177", 73893456, 404),
 
 	// Original filename is ラインの黄金CD
 	MACDEMO1_l("rheingold", "Demo", "Das Rheingold CD", "b7e69c37b7355022d400c14aa97c5d54", 484351, Common::JA_JPN, 404),
@@ -5576,6 +5590,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("previewreprise", "", "Prhs/Autorun.exe", "0c75190ea7b2730322cefd0916c2e7f6", 3049965, Common::JA_JPN, 501),
 
 	WINGAME1("princetonsat98", "", "sat98_32.exe", "1a7acbba10a7246ba58c1d53fc7203f5", 1446775, 501),
+
+	// 1998 PC/Mac re-release
+	MACGAME1("puppetmotel", "", "Puppet Motel", "4ab012350c6e1c39eda772e33df30cea", 812398, 501),
+	WINGAME1t("puppetmotel", "", "PUPPET.EXE", "c43660296f937be289ffaa593b47b4a1", 1434927, 501),
 
 	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
