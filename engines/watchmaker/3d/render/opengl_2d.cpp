@@ -126,7 +126,6 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	checkGlError("rBlitter Start");
 
 	glEnable(GL_TEXTURE_2D);
-	glDisable(GL_ALPHA_TEST);
 	int dwWidth, dwHeight;
 
 	dwWidth = game._renderer->_viewport.width();
@@ -200,8 +199,9 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 		}
 		glClearColor(0,0,1,0);
 		glEnable(GL_TEXTURE_2D);
-		glDisable(GL_ALPHA_TEST);
-		glDisable(GL_BLEND);
+		glEnable(GL_ALPHA_TEST);
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glBindTexture(GL_TEXTURE_2D, bitmap.texId);
 		glLoadIdentity();
 		glTranslatef(0, 0, -1.0);
@@ -246,6 +246,31 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 //#endif
 }
 
+// Straight from Wintermute:
+void applyColorKey(Graphics::Surface &surf, byte ckRed, byte ckGreen, byte ckBlue, bool replaceAlpha) {
+	// this is taken from Graphics::TransparentSurface
+	// only difference is that we set the pixel
+	// color to transparent black, like D3DX,
+	// if it matches the color key
+	for (int y = 0; y < surf.h; y++) {
+		for (int x = 0; x < surf.w; x++) {
+			uint32 pix = ((uint32 *)surf.getPixels())[y * surf.w + x];
+			uint8 r, g, b, a;
+			surf.format.colorToARGB(pix, a, r, g, b);
+			if (r == ckRed && g == ckGreen && b == ckBlue) {
+				a = 0;
+				r = 0;
+				g = 0;
+				b = 0;
+				((uint32 *)surf.getPixels())[y * surf.w + x] = surf.format.ARGBToColor(a, r, g, b);
+			} else if (replaceAlpha) {
+				a = 255;
+				((uint32 *)surf.getPixels())[y * surf.w + x] = surf.format.ARGBToColor(a, r, g, b);
+			}
+		}
+	}
+}
+
 int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	WorkDirs &workDirs = game.workDirs;
 	if (flags & rTEXTURESURFACE) {
@@ -271,6 +296,7 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
 	Texture->surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
+	applyColorKey(*Texture->surface, 0, 0, 0, false);
 	Texture->texId = createTextureFromSurface(*Texture->surface, GL_RGBA);
 	Texture->name = TextName;
 
