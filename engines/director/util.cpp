@@ -421,7 +421,9 @@ bool testPath(Common::String &path, bool directory) {
 		if (directory_list.empty() && !directory) {
 			mode = Common::FSNode::kListAll;
 		}
-		d.getChildren(fslist, mode);
+		bool hasChildren = d.getChildren(fslist, mode);
+		if (!hasChildren)
+			continue;
 
 		bool exists = false;
 		for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
