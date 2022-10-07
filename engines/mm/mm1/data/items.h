@@ -42,7 +42,7 @@ enum ItemCategory {
 };
 
 enum EquipMode {
-	EQUIPMODE_0 = 0, NOT_EQUIPPABLE = 1,
+	EQUIPMODE_0 = 0, IS_EQUIPPABLE = 1,
 	EQUIP_CURSED = 0xff
 };
 

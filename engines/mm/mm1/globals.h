@@ -52,6 +52,7 @@ public:
 	Monsters _monsters;
 	byte _treasure[TREASURE_COUNT];
 	byte _delay = 5;
+	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;

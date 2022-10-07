@@ -51,9 +51,14 @@
 		how_much: "HOW MUCH:"
 		cast_spell: "CAST SPELL:  LEVEL="
 		number: "NUMBER="
-		use_no_special_power: "NO SPECIAL POWER"
-		use_not_equipped: "NOT EQUIPPED"
-		no_charges_left: "NO CHARGES LEFT"
+		use_combat:
+			use_no_special_power: "NO SPECIAL POWER"
+			use_not_equipped: "NOT EQUIPPED"
+			no_charges_left: "NO CHARGES LEFT"
+		use_noncombat:
+			no_special_power: "*** NO SPECIAL POWER ***"
+			not_equipped: "*** NOT EQUIPPED ***"
+			no_charges_left: "*** NO CHARGES LEFT ***"
 	create_characters:
 		title: "CREATE NEW CHARACTERS"
 		intellect: "INTELLECT...="
