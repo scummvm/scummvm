@@ -306,6 +306,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "myfavmonster",		"My Favourite Monster" },
 	{ "myfirstwords",		"My First Reading & Spelling Words" },
 	{ "mylk",				"Mylk" },
+	{ "myworld",			"Me & My World" },
 	{ "necrobius",			"Necrobius" },
 	{ "necromancer",		"Necromancer" },
 	{ "nightcafe",			"Night Café" },
@@ -4127,6 +4128,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1_l("mysteriousegypt", "", "EGYPTI.EXE",				   "8bdf5baaa1fd82daf59fe0a96d356530", 1295295, Common::FI_FIN, 404),
 	MACDEMO1_l("mysteriousegypt", "Demo", "Egypti demo", "337c94c66b435e075a2d7f94b3cffc49", 483746, Common::FI_FIN, 404),
 	WINDEMO1_l("mysteriousegypt", "Demo", "EGYPTI.EXE",	 "2e8cba31e473bd1567476f57d6aeb4d6", 5574413, Common::FI_FIN, 404),
+
+	MACGAME1("myworld", "", "Me & My World", "bda8fd92e5483a1fa311e9fc68e355fe", 295773, 404),
+	WINGAME1t("myworld", "", "MYWORLD.EXE", "c1be044a34660346d843cf51faca4604", 2138764, 404),
 
 	// Windows demo is from PC Gamer (US) demo disc #10 - Sep 1995
 	MACGAME1("necrobius", "Beta", "MAC_APPS/NCROBIUS.PPC", "345463782e71ed33885925d258fe566f", 60096, 404),
