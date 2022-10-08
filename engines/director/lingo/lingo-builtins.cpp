@@ -2148,6 +2148,7 @@ void LB::b_move(int nargs) {
 		int id = (int) g_director->getCurrentMovie()->getCast()->_castArrayStart;
 		CastMemberID *castId = new CastMemberID(id, 0);
 		Datum d = Datum(*castId);
+		delete castId;
 		g_lingo->push(d);
 		b_findEmpty(1);
 		dest = g_lingo->pop();
