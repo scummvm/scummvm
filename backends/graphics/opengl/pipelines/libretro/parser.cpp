@@ -114,7 +114,7 @@ bool PresetParser::parsePreset(Common::SeekableReadStream &stream) {
 		}
 
 		bool empty = true;
-		for (int i = 0; i < line.size(); i++) {
+		for (uint i = 0; i < line.size(); i++) {
 			if (line[i] == '#')
 				break;
 

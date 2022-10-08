@@ -243,23 +243,48 @@ bool LibRetroPipeline::loadPasses() {
 		}
 
 		char *shaderFileStart = shaderFileContents.begin();
-		unsigned long shaderFileVersion = 0;
+		char version[32] = { '\0' };
 
 		// If the shader contains a version directive, it needs to be parsed and stripped out so that the VERTEX
 		// and FRAGMENT defines can be prepended to it.
 		const char *existing_version = strstr(shaderFileStart, "#version");
 		if (existing_version) {
-			shaderFileVersion = strtoul(existing_version + 8, &shaderFileStart, 10);
+			const char *shaderFileVersionExtra = "";
+			unsigned long shaderFileVersion = strtoul(existing_version + 8, &shaderFileStart, 10);
+			if (OpenGLContext.type == kContextGLES2) {
+				if (shaderFileVersion < 130) {
+					shaderFileVersion = 100;
+				} else {
+					shaderFileVersionExtra = " es";
+					shaderFileVersion = 300;
+				}
+			}
+			snprintf(version, sizeof(version), "#version %lu%s\n",
+					shaderFileVersion, shaderFileVersionExtra);
 		}
 
 		// TODO: Handle alias defines
 
 		Shader *shader = new Shader;
 
-		if (!shader->loadFromStrings(fileNode.getName(),
-				 ("#define VERTEX\n" + Common::String(shaderFileStart)).c_str(),
-				 ("#define FRAGMENT\n" + Common::String(shaderFileStart)).c_str(),
-				 g_libretroShaderAttributes, shaderFileVersion)) {
+		const char *const vertexSources[] = {
+			version,
+			"#define VERTEX\n", // "#define PARAMETER_UNIFORM\n",
+			// TODO: alias defines
+			shaderFileStart,
+		};
+		const char *const fragmentSources[] = {
+			version,
+			"#define FRAGMENT\n", // "#define PARAMETER_UNIFORM\n",
+			// TODO: alias defines
+			shaderFileStart,
+		};
+
+
+		if (!shader->loadFromStringsArray(fileNode.getName(),
+				 ARRAYSIZE(vertexSources), vertexSources,
+				 ARRAYSIZE(fragmentSources), fragmentSources,
+				 g_libretroShaderAttributes)) {
 			return false;
 		}
 
