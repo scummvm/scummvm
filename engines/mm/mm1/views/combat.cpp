@@ -605,6 +605,8 @@ void Combat::shoot() {
 }
 
 void Combat::use() {
+	// Show the character info view in USE mode
+	g_events->send("CharacterInfo", GameMessage("USE"));
 }
 
 void Combat::writeMessage() {

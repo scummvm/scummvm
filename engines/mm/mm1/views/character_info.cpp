@@ -105,6 +105,18 @@ void CharacterInfo::draw() {
 	}
 }
 
+void CharacterInfo::timeout() {
+	switch (_state) {
+	case USE:
+		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr) {
+			close();
+		}
+		break;
+	default:
+		break;
+	}
+}
+
 bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode == Common::KEYCODE_ESCAPE) {
 		if (_state != DISPLAY) {
@@ -260,6 +272,17 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 			return true;
 		}
 	}
+	return false;
+}
+
+bool CharacterInfo::msgGame(const GameMessage &msg) {
+	if (msg._name == "USE") {
+		addView();
+		_state = USE;
+		redraw();
+		return true;
+	}
+
 	return false;
 }
 
