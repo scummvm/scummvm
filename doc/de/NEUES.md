@@ -63,6 +63,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
      originalen Interpreters widerspiegelt (vermutlich aufgrund der schlechten Resultate
      in den anderen Sprachen).
    - Verbesserte Unterstützung der hebräischen Versionen der Spiele von Humongous Entertainment.
+   - Unterstützung für Roland MT-32 in Sam & Max korrigiert.
 
  Toon:
    - Die Spiel-Menüs verhalten sich nun wie im Original.
