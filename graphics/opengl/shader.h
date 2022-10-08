@@ -207,6 +207,25 @@ public:
 	bool loadFromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 120);
 	bool loadFromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion = 0);
 
+	/**
+	 * Creates a shader object from strings arrays
+	 *
+	 * Everything is loaded directly without any preprocessing.
+	 *
+	 * @param name The name of the shader for errors messages
+	 * @param vertexCount The number of vertex shader code parts
+	 * @param vertex The vertex shader code parts
+	 * @param fragmentCount The number of fragment shader code parts
+	 * @param fragment The fragment shader code parts
+	 * @param attributes The vertex attributes names for indexing
+	 *
+	 * @return the loading status
+	 */
+	bool loadFromStringsArray(const Common::String &name,
+			size_t vertexCount, const char *const *vertex,
+			size_t fragmentCount, const char *const *fragment,
+			const char *const *attributes);
+
 	void unbind();
 
 	Common::String &getError() { return _error; }
@@ -216,7 +235,7 @@ private:
 	bool loadShader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes);
 
 	GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name, int compatGLSLVersion);
-	GLuint createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name);
+	GLuint createDirectShader(size_t shaderSourcesCount, const char *const *shaderSources, GLenum shaderType, const Common::String &name);
 	GLuint loadShaderFromFile(const char *base, const char *extension, GLenum shaderType, int compatGLSLVersion);
 
 	// Since this class is cloned using the implicit copy constructor,
