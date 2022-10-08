@@ -65,6 +65,7 @@ static const byte SPELL_FLAGS[47 * 2] = {
 
 enum SpellFlag {
 	SF_COMBAT_ONLY = 1,
+	SF_NONCOMBAT_ONLY = 2,
 	SF_CAST_ON = 4,
 	SF_OUTDOORS_ONLY = 0x10
 };
@@ -115,8 +116,10 @@ void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {
 
 	Maps::Map &map = *g_maps->_currentMap;
 
-	if (SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
+	if (!g_globals->_inCombat && SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
 		_spellState = SS_COMBAT_ONLY;
+	else if (g_globals->_inCombat && SPELL_FLAGS[spellIndex] & SF_NONCOMBAT_ONLY)
+		_spellState = SS_NONCOMBAT_ONLY;
 	else if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) &&
 			!(map[Maps::MAP_ID] & 0x80))
 		_spellState = SS_OUTDOORS_ONLY;
