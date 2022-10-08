@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-08 21:39+0000\n"
-"PO-Revision-Date: 2022-09-29 17:54+0000\n"
+"PO-Revision-Date: 2022-10-08 21:51+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/de/>\n"
@@ -1086,8 +1086,6 @@ msgstr "Klein"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1533
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Nichts"
@@ -1123,10 +1121,8 @@ msgid "the filtering setting could not be changed"
 msgstr "Die Filtereinstellung konnte nicht geändert werden"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "der Skaliermodus konnte nicht geändert werden"
+msgstr "der Shader konnte nicht geändert werden"
 
 #: gui/options.cpp:1328
 msgid "Touchpad mouse mode"
@@ -1189,23 +1185,18 @@ msgid "Scaler:"
 msgstr "Skalierung:"
 
 #: gui/options.cpp:1530
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1530 gui/options.cpp:1532 gui/options.cpp:1533
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Legt das Verzeichnis für zusätzliche Spieldateien fest"
+msgstr ""
+"Legt das Verzeichnis für Shader zur Skalierung des Spiel-Bildschirms fest"
 
 #: gui/options.cpp:1532
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Spielstände:"
+msgstr "Shader-Pfad:"
 
 #: gui/options.cpp:1539 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1982,10 +1973,8 @@ msgstr ""
 "Wählen Sie das Verzeichnis aus, welches als Stammverzeichnis ('root') dient"
 
 #: gui/options.cpp:3056
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Theme auswählen"
+msgstr "Shader auswählen"
 
 #: gui/options.cpp:3149
 msgid ""
@@ -2050,11 +2039,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scalar settings?"
 msgstr ""
+"Ein Testbild sollte nun angezeigt werden.\n"
+"Möchtest Du diese Shader-Einstellungen beibehalten?"
 
 #: gui/options.cpp:3637
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Einstellungen werden in %d Sekunden rückgängig gemacht"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
