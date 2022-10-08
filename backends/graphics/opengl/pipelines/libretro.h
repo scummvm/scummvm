@@ -76,7 +76,7 @@ private:
 	bool loadPasses();
 
 	void setPipelineState();
-	void setupFBOs();
+	bool setupFBOs();
 	void setupPassUniforms(const uint id);
 	void setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture);
 
