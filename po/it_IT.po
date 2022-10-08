@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-08 21:39+0000\n"
-"PO-Revision-Date: 2022-10-01 19:59+0000\n"
+"PO-Revision-Date: 2022-10-08 22:45+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1083,8 +1083,6 @@ msgstr "Piccola"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1533
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Nessuno"
@@ -1122,12 +1120,8 @@ msgid "the filtering setting could not be changed"
 msgstr "non è stato possibile modificare le impostazioni del filtro video"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr ""
-"non è stato possibile modificare la modalità di ridimensionamento "
-"dell'immagine"
+msgstr "non è stato possibile cambiare lo shader"
 
 #: gui/options.cpp:1328
 msgid "Touchpad mouse mode"
@@ -1190,10 +1184,8 @@ msgid "Scaler:"
 msgstr "Scaler:"
 
 #: gui/options.cpp:1530
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1530 gui/options.cpp:1532 gui/options.cpp:1533
 #, fuzzy
