@@ -26,7 +26,7 @@ namespace MM {
 namespace MM1 {
 
 GameState::GameState() {
-	Common::fill(&_spells._arr[0], &_spells._arr[ACTIVE_SPELLS_COUNT], 0);
+	Common::fill(&_activeSpells._arr[0], &_activeSpells._arr[ACTIVE_SPELLS_COUNT], 0);
 }
 
 } // namespace MM1

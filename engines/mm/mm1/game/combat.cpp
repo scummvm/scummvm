@@ -209,7 +209,7 @@ bool Combat::canMonsterCast() const {
 }
 
 void Combat::dispelParty() {
-	g_globals->_spells.clear();
+	g_globals->_activeSpells.clear();
 	Character *tmpC = g_globals->_currCharacter;
 	Monster *tmpM = _monsterP;
 
@@ -774,12 +774,12 @@ void Combat::attackMonster(int monsterNum) {
 				MONFLAG_HELD | MONFLAG_WEBBED | MONFLAG_PARALYZED))
 			++_attackerLevel;
 
-		if (g_globals->_spells._s.bless) {
+		if (g_globals->_activeSpells._s.bless) {
 			_attackerLevel++;
 			_attackAttr2._current++;
 		}
 
-		if (g_globals->_spells._s.cursed) {
+		if (g_globals->_activeSpells._s.cursed) {
 			if (++_val11 > 255)
 				_val11 = 200;
 		}

@@ -51,10 +51,16 @@ private:
 	 * Increases light duration
 	 */
 	static void addLight(int amount);
+
+	static void iterateMonsters();
+
 private:
 	static SpellResult placeholder(Character *chr) {
 		return SR_FAILED;
 	}
+	static SpellResult cleric11_awaken(Character *chr);
+	static SpellResult cleric12_bless(Character *chr);
+	static SpellResult cleric13_blind(Character *chr);
 	static SpellResult cleric14_firstAid(Character *chr);
 	static SpellResult cleric15_light(Character *chr);
 	static SpellResult cleric16_powerCure(Character *chr);

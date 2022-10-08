@@ -35,7 +35,7 @@ void Protect::draw() {
 	_textPos.x = 0;
 	_textPos.y = 2;
 	for (int i = 0; i < 7; ++i) {
-		if (g_globals->_spells._arr[i]) {
+		if (g_globals->_activeSpells._arr[i]) {
 			printProtectionFrom();
 			writeString(STRING[Common::String::format(
 				"dialogs.protect.%d", i + 1)]);
@@ -44,9 +44,9 @@ void Protect::draw() {
 	}
 
 	// Light spell
-	if (g_globals->_spells._arr[7]) {
+	if (g_globals->_activeSpells._arr[7]) {
 		writeString(STRING["dialogs.protect.8"]);
-		writeNumber(g_globals->_spells._arr[7]);
+		writeNumber(g_globals->_activeSpells._arr[7]);
 		writeChar(')');
 		newLine();
 	}
@@ -56,7 +56,7 @@ void Protect::draw() {
 		if (i == 13)
 			newLine();
 
-		if (g_globals->_spells._arr[i]) {
+		if (g_globals->_activeSpells._arr[i]) {
 			writeString(STRING[Common::String::format(
 				"dialogs.protect.%d", i + 1)]);
 			newLine();
@@ -66,8 +66,8 @@ void Protect::draw() {
 	--_textPos.y;
 	_textPos.x = 13;
 
-	if (g_globals->_spells._arr[17]) {
-		writeNumber(g_globals->_spells._arr[17]);
+	if (g_globals->_activeSpells._arr[17]) {
+		writeNumber(g_globals->_activeSpells._arr[17]);
 		_textPos.x++;
 		writeString(STRING["dialogs.protect.to_attacks"]);
 	}
@@ -83,7 +83,7 @@ void Protect::printProtectionLevel(uint protectIndex) {
 	_textPos.x = 24;
 	writeChar('+');
 	_textPos.x++;
-	writeNumber(g_globals->_spells._arr[protectIndex]);
+	writeNumber(g_globals->_activeSpells._arr[protectIndex]);
 	writeChar('%');
 	newLine();
 }

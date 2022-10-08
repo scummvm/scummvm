@@ -41,11 +41,6 @@ class SpellsMonsters : public GameLogic {
 private:
 	static const SpellMonstersSpell SPELLS[MONSTER_SPELLS_COUNT];
 	LineArray _lines;
-	int _mmVal1 = 0, _mmVal2 = 0;
-	byte _newCondition = 0;
-	int _mmVal5 = 0;
-	int _mmVal7 = 0;
-	Resistance _resistanceType = RESISTANCE_MAGIC;
 
 	void spell01_curse();
 	void spell02_energyBlast();

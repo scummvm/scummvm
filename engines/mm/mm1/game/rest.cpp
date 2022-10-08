@@ -53,8 +53,8 @@ void Rest::check() {
 
 void Rest::execute() {
 	// Reset active spells
-	Common::fill(&g_globals->_spells._arr[0],
-		&g_globals->_spells._arr[ACTIVE_SPELLS_COUNT], 0);
+	Common::fill(&g_globals->_activeSpells._arr[0],
+		&g_globals->_activeSpells._arr[ACTIVE_SPELLS_COUNT], 0);
 
 	// Rest the characters of the party
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {

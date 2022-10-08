@@ -164,7 +164,7 @@ void Encounter::timeout() {
 			/* ENCOUNTER_OPTIONS */
 			g_engine->getRandomNumber(100) > map[Maps::MAP_21]) {
 			// Potentially surprised. Check for guard dog spell
-			if (g_globals->_spells._s.guard_dog ||
+			if (g_globals->_activeSpells._s.guard_dog ||
 				g_engine->getRandomNumber(100) > map[Maps::MAP_20])
 				_mode = ENCOUNTER_OPTIONS;
 			else

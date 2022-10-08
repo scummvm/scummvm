@@ -303,13 +303,13 @@ void Map00::special22() {
 void Map00::special23() {
 	Sound::sound(SOUND_2);
 	Common::String msg = STRING["maps.map00.trapdoor"];
-	if (g_globals->_spells._s.levitate)
+	if (g_globals->_activeSpells._s.levitate)
 		msg += STRING["maps.map00.levitate"];
 
 	send(InfoMessage(msg,
 		[](const Common::KeyState &keyState) {
 			g_events->focusedView()->close();
-			if (!g_globals->_spells._s.levitate)
+			if (!g_globals->_activeSpells._s.levitate)
 				g_maps->changeMap(0xa11, 1);
 		}
 	));
