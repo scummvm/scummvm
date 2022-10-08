@@ -86,7 +86,7 @@ bool AkosCostumeLoader::hasManyDirections() {
 	const AkosHeader *akhd;
 
 	akhd = (const AkosHeader *)_vm->findResourceData(MKTAG('A','K','H','D'), _akos);
-	return (akhd->costumeFlags & 2) != 0;
+	return (READ_LE_UINT16(&akhd->costumeFlags) & 2) != 0;
 }
 
 void AkosCostumeLoader::costumeDecodeData(Actor *a, int frame, uint useMask) {
@@ -300,7 +300,7 @@ void AkosRenderer::setCostume(int costume, int shadow) {
 }
 
 void AkosRenderer::setFacing(const Actor *a) {
-	_mirror = (newDirToOldDir(a->getFacing()) != 0 || _akhd->costumeFlags & 1);
+	_mirror = (newDirToOldDir(a->getFacing()) != 0 || READ_LE_UINT16(&_akhd->costumeFlags) & 1);
 	if (a->_flip)
 		_mirror = !_mirror;
 }
