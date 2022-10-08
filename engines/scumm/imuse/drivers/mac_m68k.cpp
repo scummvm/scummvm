@@ -431,7 +431,7 @@ void IMuseDriver_MacM68k::MidiChannel_MacM68k::detune(uint8 value) {
 	for (VoiceChannel *i = _voice; i; i = i->next) {
 		_owner->setPitch(&i->out, ((i->note + _transpose) << 7) + ((_pitchBend * _pitchBendFactor) >> 6) + _detune);
 	}
-};
+}
 
 void IMuseDriver_MacM68k::MidiChannel_MacM68k::priority(byte value) {
 	_priority = value;
