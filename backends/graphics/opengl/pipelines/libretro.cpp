@@ -77,9 +77,38 @@ static const ImageLoader s_imageLoaders[] = {
 	{ nullptr, nullptr }
 };
 
-const char *const g_libretroShaderAttributes[] = {
+static const char *const g_libretroShaderAttributes[] = {
 	"VertexCoord", nullptr
 };
+
+// some libretro shaders use texture without checking version
+static const char *g_compatVertex =
+	"#if defined(GL_ES)\n"
+		"#if !defined(HAS_ROUND)\n"
+			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#endif\n"
+	"#elif __VERSION__ < 130\n"
+		"#if !defined(HAS_ROUND)\n"
+			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#endif\n"
+	"#endif\n";
+
+static const char *g_compatFragment =
+	"#if defined(GL_ES)\n"
+		"#if !defined(HAS_ROUND)\n"
+			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#endif\n"
+		"#if !defined(HAS_TEXTURE)\n"
+			"#define texture texture2D\n"
+		"#endif\n"
+	"#elif __VERSION__ < 130\n"
+		"#if !defined(HAS_ROUND)\n"
+			"#define round(x) (sign(x) * floor(abs(x) + .5))\n"
+		"#endif\n"
+		"#if !defined(HAS_TEXTURE)\n"
+			"#define texture texture2D\n"
+		"#endif\n"
+	"#endif\n";
 
 LibRetroPipeline::LibRetroPipeline()
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
@@ -289,6 +318,16 @@ bool LibRetroPipeline::loadPasses() {
 		UniformsMap uniformParams;
 		stripShaderParameters(shaderFileStart, uniformParams);
 
+		Common::String shimsDetected;
+		if (strstr(shaderFileStart, "#define texture(")) {
+			shimsDetected += "#define HAS_TEXTURE\n";
+		} else if (strstr(shaderFileStart, "#define texture ")) {
+			shimsDetected += "#define HAS_TEXTURE\n";
+		}
+		if (strstr(shaderFileStart, "#define round(")) {
+			shimsDetected += "#define HAS_ROUND\n";
+		}
+
 		// TODO: Handle alias defines
 
 		Shader *shader = new Shader;
@@ -296,12 +335,16 @@ bool LibRetroPipeline::loadPasses() {
 		const char *const vertexSources[] = {
 			version,
 			"#define VERTEX\n#define PARAMETER_UNIFORM\n",
+			shimsDetected.c_str(),
+			g_compatVertex,
 			// TODO: alias defines
 			shaderFileStart,
 		};
 		const char *const fragmentSources[] = {
 			version,
 			"#define FRAGMENT\n#define PARAMETER_UNIFORM\n",
+			shimsDetected.c_str(),
+			g_compatFragment,
 			// TODO: alias defines
 			shaderFileStart,
 		};
