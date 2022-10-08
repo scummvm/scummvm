@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-08 21:39+0000\n"
-"PO-Revision-Date: 2022-10-08 22:45+0000\n"
+"PO-Revision-Date: 2022-10-08 22:57+0000\n"
 "Last-Translator: Walter Agazzi <walter.agazzi@protonmail.com>\n"
 "Language-Team: Italian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/it/>\n"
@@ -1188,17 +1188,14 @@ msgid "Shader:"
 msgstr "Shader:"
 
 #: gui/options.cpp:1530 gui/options.cpp:1532 gui/options.cpp:1533
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Specifica il percorso di ulteriori dati usati dal gioco"
+msgstr ""
+"Specifica il percorso degli shader utilizzati per ridimensionare lo schermo"
 
 #: gui/options.cpp:1532
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Salvataggi:"
+msgstr "Shader:"
 
 #: gui/options.cpp:1539 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1978,10 +1975,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Seleziona la cartella di partenza del File Manager"
 
 #: gui/options.cpp:3056
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Seleziona un tema"
+msgstr "Seleziona uno shader"
 
 #: gui/options.cpp:3149
 msgid ""
@@ -2044,11 +2039,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scalar settings?"
 msgstr ""
+"Lo schermo dovrebbe mostrare una schermata di prova.\n"
+"Desideri mantenere queste impostazioni per lo shader?"
 
 #: gui/options.cpp:3637
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Ripristino impostazioni precedenti in %d secondi"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
