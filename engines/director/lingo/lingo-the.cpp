@@ -1635,7 +1635,7 @@ void Lingo::setTheSprite(Datum &id1, int field, Datum &d) {
 		warning("Lingo::setTheSprite(): Unprocessed setting field \"%s\" of sprite", field2str(field));
 	}
 
-	if (channel->_dirty && movie)
+	if (channel->_dirty)
 		movie->getWindow()->addDirtyRect(channel->getBbox());
 }
 
