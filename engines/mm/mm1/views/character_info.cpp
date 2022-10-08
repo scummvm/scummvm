@@ -110,10 +110,13 @@ void CharacterInfo::timeout() {
 	case USE:
 		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr) {
 			close();
+		} else {
+			_state = DISPLAY;
+			redraw();
 		}
 		break;
 	default:
-		break;
+		return CharacterBase::timeout();
 	}
 }
 
