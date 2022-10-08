@@ -750,6 +750,7 @@ spells:
 	not_enough_sp: "NOT ENOUGH SPELL POINTS"
 	done: "DONE"
 	combat_only: "COMBAT ONLY"
+	noncombat_only: "NON COMBAT ONLY"
 	magic_doesnt_work: "MAGIC DOESN'T WORK HERE"
 	outdoors_only: "OUTDOOR ONLY"
 	failed: "SPELL FAILED"
