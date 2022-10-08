@@ -131,18 +131,23 @@ bool SpellCasting::isMagicAllowed() const {
 }
 
 Common::String SpellCasting::getSpellError() const {
+	Common::String msg;
 	switch (_spellState) {
 	case SS_NOT_ENOUGH_SP:
-		return STRING["spells.not_enough_sp"];
+		msg = STRING["spells.not_enough_sp"];
 	case SS_NOT_ENOUGH_GEMS:
-		return STRING["spells.not_enough_gems"];
+		msg = STRING["spells.not_enough_gems"];
 	case SS_COMBAT_ONLY:
-		return STRING["spells.combat_only"];
+		msg = STRING["spells.combat_only"];
 	case SS_OUTDOORS_ONLY:
-		return STRING["spells.outdoors_only"];
+		msg = STRING["spells.outdoors_only"];
 	default:
-		return STRING["spells.done"];
+		msg = STRING["spells.done"];
 	}
+
+	if (!g_globals->_inCombat)
+		msg = Common::String::format("*** %s ***", msg.c_str());
+	return msg;
 }
 
 } // namespace Game

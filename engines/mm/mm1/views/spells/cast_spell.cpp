@@ -214,15 +214,15 @@ void CastSpell::performSpell(Character *chr) {
 
 void CastSpell::spellDone() {
 	Common::String msg = getSpellError();
-	int xp = 5;
-
+	int xp = 20 - (msg.size() / 2);
+/*
 	switch (getSpellState()) {
 	case Game::SS_NOT_ENOUGH_GEMS: xp = 9; break;
 	case Game::SS_COMBAT_ONLY: xp = 10; break;
 	case Game::SS_OUTDOORS_ONLY: xp = 10; break;
 	default: break;
 	}
-
+	*/
 	spellDone(msg, xp);
 }
 
