@@ -109,15 +109,18 @@ bool PresetParser::parsePreset(Common::SeekableReadStream &stream) {
 			return false;
 		}
 
+		size_t sharpPos = line.findFirstOf('#');
+		if (sharpPos != line.npos) {
+			// Remove the end of line
+			line.erase(sharpPos);
+		}
+
 		if (line.empty()) {
 			continue;
 		}
 
 		bool empty = true;
 		for (uint i = 0; i < line.size(); i++) {
-			if (line[i] == '#')
-				break;
-
 			if (!Common::isSpace(line[i])) {
 				empty = false;
 				break;
