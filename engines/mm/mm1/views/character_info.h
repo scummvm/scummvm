@@ -83,8 +83,10 @@ public:
 	virtual ~CharacterInfo() {}
 
 	void draw() override;
+	void timeout() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 	bool msgAction(const ActionMessage &msg) override;
+	bool msgGame(const GameMessage &msg) override;
 
 	/**
 	 * How much entry aborted
