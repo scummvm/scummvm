@@ -62,7 +62,7 @@ For a more comprehensive changelog of the latest experimental code, see:
      of the original interpreters (probably because of the poor results in the
      other languages).
    - Improved support for Hebrew HE game localizations.
-   - Fixed Roland MT-32 support in Sam & Max
+   - Fixed Roland MT-32 support in Sam & Max.
 
  Toon:
    - Made game menus behave like in the original.
