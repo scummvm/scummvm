@@ -212,7 +212,7 @@ void Temple::donate() {
 
 		if (g_engine->getRandomNumber(15) == 10) {
 			for (int i = 0; i < 13; ++i)
-				g_globals->_spells._arr[i] = 75;
+				g_globals->_activeSpells._arr[i] = 75;
 
 			Sound::sound(SOUND_3);
 			displayMessage(STRING["dialogs.temple.protected"]);

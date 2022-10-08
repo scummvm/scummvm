@@ -43,14 +43,14 @@ void ViewBase::update() {
 	_isDark = false;
 
 	if (maps._currentState & Maps::CELL_DARK) {
-		if (g_globals->_spells._s.light) {
-			g_globals->_spells._s.light--;
+		if (g_globals->_activeSpells._s.light) {
+			g_globals->_activeSpells._s.light--;
 		} else {
 			goto darkness;
 		}
 	}
 
-	if ((map[Maps::MAP_FLAGS] & 1) && !g_globals->_spells._s.light) {
+	if ((map[Maps::MAP_FLAGS] & 1) && !g_globals->_activeSpells._s.light) {
 darkness:
 		// TODO
 		_isDark = true;
@@ -165,7 +165,7 @@ void ViewBase::forward(KeybindingAction action) {
 				offset = 0;
 
 			if (map.dataByte(Maps::MAP_30 + offset) == 4 &&
-				!g_globals->_spells._s.walk_on_water) {
+				!g_globals->_activeSpells._s.walk_on_water) {
 				Sound::sound(SOUND_1);
 				_dialogMessage = STRING["movement.obstructed.cant_swim"];
 				redraw();

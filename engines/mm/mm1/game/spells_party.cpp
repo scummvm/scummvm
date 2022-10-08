@@ -166,6 +166,32 @@ SpellResult Spells::cast(int spell, Character *chr) {
 	return SPELLS[spell](chr);
 }
 
+SpellResult Spells::cleric11_awaken(Character *chr) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._condition & BAD_CONDITION))
+			c._condition &= ~ASLEEP;
+	}
+
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult Spells::cleric12_bless(Character *chr) {
+	g_globals->_activeSpells._s.bless++;
+	return SR_SUCCESS_DONE;
+}
+
+SpellResult Spells::cleric13_blind(Character *chr) {
+	SpellsState &s = g_globals->_spellsState;
+	s._mmVal1++;
+	s._mmVal2 = 7;
+	s._newCondition = BLINDED;
+	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
+
+	iterateMonsters();
+	return SR_SUCCESS_DONE;
+}
+
 SpellResult Spells::cleric14_firstAid(Character *chr) {
 	restoreHp(chr, 8);
 	return SR_SUCCESS_DONE;
@@ -186,7 +212,7 @@ SpellResult Spells::cleric16_powerCure(Character *chr) {
 }
 
 SpellResult Spells::cleric17_protectionFromFear(Character *chr) {
-	g_globals->_spells._s.fear =
+	g_globals->_activeSpells._s.fear =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
@@ -197,19 +223,19 @@ SpellResult Spells::cleric21_cureWounds(Character *chr) {
 }
 
 SpellResult Spells::cleric24_protectionFromCold(Character *chr) {
-	g_globals->_spells._s.cold =
+	g_globals->_activeSpells._s.cold =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::cleric25_protectionFromIce(Character *chr) {
-	g_globals->_spells._s.fire =
+	g_globals->_activeSpells._s.fire =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::cleric26_protectionFromPoison(Character *chr) {
-	g_globals->_spells._s.poison =
+	g_globals->_activeSpells._s.poison =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
@@ -253,8 +279,8 @@ SpellResult Spells::cleric37_removeQuest(Character *chr) {
 }
 
 SpellResult Spells::cleric38_walkOnWater(Character *chr) {
-	g_globals->_spells._s.walk_on_water = MIN(
-		(int)g_globals->_spells._s.walk_on_water + 1, 255);
+	g_globals->_activeSpells._s.walk_on_water = MIN(
+		(int)g_globals->_activeSpells._s.walk_on_water + 1, 255);
 	return SR_SUCCESS_DONE;
 }
 
@@ -277,13 +303,13 @@ SpellResult Spells::cleric42_neutralizePoison(Character *chr) {
 }
 
 SpellResult Spells::cleric43_protectionFromAcid(Character *chr) {
-	g_globals->_spells._s.acid =
+	g_globals->_activeSpells._s.acid =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::cleric44_protectionFromElectricity(Character *chr) {
-	g_globals->_spells._s.electricity =
+	g_globals->_activeSpells._s.electricity =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
@@ -311,8 +337,8 @@ SpellResult Spells::cleric48_surface(Character *chr) {
 SpellResult Spells::cleric52_dispelMagic(Character *chr) {
 	Maps::Map &map = *g_maps->_currentMap;
 	if (g_engine->getRandomNumber(100) >= map[Maps::MAP_DISPEL_THRESHOLD]) {
-		Common::fill(&g_globals->_spells._arr[0],
-			&g_globals->_spells._arr[18], 0);
+		Common::fill(&g_globals->_activeSpells._arr[0],
+			&g_globals->_activeSpells._arr[18], 0);
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
@@ -446,7 +472,7 @@ SpellResult Spells::cleric73_protectionFromElements(Character *chr) {
 	int amount = g_globals->_currCharacter->_level._current + 25;
 
 	for (int i = 0; i < 6; ++i)
-		g_globals->_spells._arr[i] = amount;
+		g_globals->_activeSpells._arr[i] = amount;
 
 	return SR_SUCCESS_DONE;
 }
@@ -474,7 +500,7 @@ SpellResult Spells::wizard12_detectMagic(Character *chr) {
 }
 
 SpellResult Spells::wizard15_leatherSkin(Character *chr) {
-	g_globals->_spells._s.leather_skin = g_globals->_currCharacter->_level._current;
+	g_globals->_activeSpells._s.leather_skin = g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
@@ -517,7 +543,7 @@ SpellResult Spells::wizard24_jump(Character *chr) {
 }
 
 SpellResult Spells::wizard25_levitate(Character *chr) {
-	g_globals->_spells._s.levitate =
+	g_globals->_activeSpells._s.levitate =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
@@ -540,13 +566,13 @@ SpellResult Spells::wizard32_fly(Character *chr) {
 }
 
 SpellResult Spells::wizard45_guardDog(Character *chr) {
-	g_globals->_spells._s.guard_dog =
+	g_globals->_activeSpells._s.guard_dog =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
 SpellResult Spells::wizard46_psychicProtection(Character *chr) {
-	g_globals->_spells._s.psychic_protection =
+	g_globals->_activeSpells._s.psychic_protection =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
@@ -573,7 +599,7 @@ SpellResult Spells::wizard63_etherialize(Character *chr) {
 }
 
 SpellResult Spells::wizard64_protectionFromMagic(Character *chr) {
-	g_globals->_spells._s.magic =
+	g_globals->_activeSpells._s.magic =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
@@ -600,8 +626,12 @@ void Spells::restoreHp(Character *chr, uint16 hp) {
 }
 
 void Spells::addLight(int amount) {
-	g_globals->_spells._s.light = MIN((int)g_globals->_spells._s.light + amount, 255);
+	g_globals->_activeSpells._s.light = MIN((int)g_globals->_activeSpells._s.light + amount, 255);
 	g_events->send("Game", GameMessage("UPDATE"));
+}
+
+void Spells::iterateMonsters() {
+	
 }
 
 } // namespace Game

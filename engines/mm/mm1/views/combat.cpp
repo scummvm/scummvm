@@ -161,7 +161,7 @@ void Combat::timeout() {
 		checkMonsterSpellDone();
 		return;
 	case DEFEATED_MONSTERS: {
-		auto &spells = g_globals->_spells;
+		auto &spells = g_globals->_activeSpells;
 		spells._s.bless = 0;
 		spells._s.invisbility = 0;
 		spells._s.shield = 0;

@@ -28,6 +28,7 @@
 #include "mm/mm1/data/character.h"
 #include "mm/mm1/data/party.h"
 #include "mm/mm1/data/active_spells.h"
+#include "mm/mm1/data/spells_state.h"
 
 namespace MM {
 namespace MM1 {
@@ -38,7 +39,8 @@ namespace MM1 {
  */
 struct GameState {
 	Party _party;
-	ActiveSpells _spells;
+	ActiveSpells _activeSpells;
+	SpellsState _spellsState;
 
 	GameState();
 };
