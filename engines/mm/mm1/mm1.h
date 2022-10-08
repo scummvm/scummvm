@@ -66,6 +66,18 @@ public:
 	Common::String getTargetName() const {
 		return _targetName;
 	}
+
+	/**
+	 * Returns true if a game can be saved
+	 */
+	bool canSaveGameStateCurrently() override;
+
+	/**
+	 * Returns true if a savegame can be loaded
+	 */
+	bool canLoadGameStateCurrently() override;
+
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 };
 
 extern MM1Engine *g_engine;

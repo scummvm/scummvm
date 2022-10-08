@@ -53,6 +53,7 @@ public:
 	byte _treasure[TREASURE_COUNT];
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
+	bool _inCombat = false;
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;
