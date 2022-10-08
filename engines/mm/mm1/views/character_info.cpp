@@ -21,6 +21,7 @@
 
 #include "mm/mm1/views/character_info.h"
 #include "mm/mm1/views/combat.h"
+#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/utils/strings.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
@@ -580,7 +581,7 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 			g_globals->_combatEffectCtr++;
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Spells::cast(_spellIndex, g_globals->_currCharacter);
+				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				error("TODO: _effectId used as a character offset to increase attribute?");
@@ -622,7 +623,7 @@ void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped
 			g_globals->_nonCombatEffectCtr++;
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
-				Spells::cast(_spellIndex, g_globals->_currCharacter);
+				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
 				error("TODO: _effectId used as a character offset to increase attribute?");

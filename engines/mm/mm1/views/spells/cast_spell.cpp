@@ -20,6 +20,7 @@
  */
 
 #include "mm/mm1/views/spells/cast_spell.h"
+#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -194,13 +195,13 @@ void CastSpell::performSpell(Character *chr) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
 		// Cast the spell
-		switch (MM1::Spells::cast(_spellIndex, chr)) {
-		case SR_FAILED:
+		switch (Game::Spells::cast(_spellIndex, chr)) {
+		case Game::SR_FAILED:
 			// Spell failed
 			spellFailed();
 			break;
 
-		case SR_SUCCESS_DONE:
+		case Game::SR_SUCCESS_DONE:
 			// Display spell done
 			spellDone();
 			break;

@@ -26,6 +26,7 @@
 #include "mm/mm1/console.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/events.h"
+#include "mm/mm1/game/spells_party.h"
 
 namespace MM {
 namespace MM1 {
@@ -262,7 +263,7 @@ bool Console::cmdCast(int argc, const char **argv) {
 
 		int spellIndex = getSpellIndex(c, strToInt(argv[1]), strToInt(argv[2]));
 		setSpell(spellIndex, 0, 0);
-		Spells::cast(_spellIndex, c);
+		Game::Spells::cast(_spellIndex, c);
 		return false;
 	}
 }
