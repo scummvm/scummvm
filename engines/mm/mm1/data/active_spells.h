@@ -19,28 +19,43 @@
  *
  */
 
-#ifndef MM1_DATA_GAME_STATE_H
-#define MM1_DATA_GAME_STATE_H
+#ifndef MM1_DATA_ACTIVE_SPELLS_H
+#define MM1_DATA_ACTIVE_SPELLS_H
 
-#include "common/array.h"
-#include "common/rect.h"
-#include "common/serializer.h"
 #include "mm/mm1/data/character.h"
-#include "mm/mm1/data/party.h"
-#include "mm/mm1/data/active_spells.h"
 
 namespace MM {
 namespace MM1 {
 
-/**
- * This acts as a container for everything in the game
- * that is persisted to savegames
- */
-struct GameState {
-	Party _party;
-	ActiveSpells _spells;
+#define ACTIVE_SPELLS_COUNT 18
 
-	GameState();
+struct ActiveSpellsStruct {
+	byte fear;
+	byte cold;
+	byte fire;
+	byte poison;
+	byte acid;
+	byte electricity;
+	byte magic;
+	byte light;
+	byte leather_skin;
+	byte levitate;
+	byte walk_on_water;
+	byte guard_dog;
+	byte psychic_protection;
+	byte bless;
+	byte invisbility;
+	byte shield;
+	byte power_shield;
+	byte cursed;
+};
+
+union ActiveSpells {
+	ActiveSpellsStruct _s;
+	byte _arr[ACTIVE_SPELLS_COUNT];
+
+	ActiveSpells() { clear(); }
+	void clear();
 };
 
 } // namespace MM1

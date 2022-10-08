@@ -19,9 +19,9 @@
  *
  */
 
-#include "mm/mm1/data/spells.h"
-#include "mm/mm1/data/locations.h"
+#include "mm/mm1/game/spells_party.h"
 #include "mm/mm1/game/rest.h"
+#include "mm/mm1/data/locations.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/sound.h"
@@ -32,10 +32,7 @@
 
 namespace MM {
 namespace MM1 {
-
-void ActiveSpells::clear() {
-	Common::fill(&_arr[0], &_arr[ACTIVE_SPELLS_COUNT], 0);
-}
+namespace Game {
 
 Spells::SpellFn Spells::SPELLS[SPELLS_COUNT] = {
 	// Cleric spells
@@ -360,7 +357,7 @@ SpellResult Spells::cleric55_restoreEnergy(Character *chr) {
 SpellResult Spells::cleric62_raiseDead(Character *chr) {
 	if ((chr->_condition == ERADICATED) ||
 		(chr->_condition & (BAD_CONDITION | DEAD)) ==
-			(BAD_CONDITION | DEAD))
+		(BAD_CONDITION | DEAD))
 		return SR_FAILED;
 	int rnd = g_engine->getRandomNumber(100);
 	if (rnd == 100) {
@@ -420,7 +417,8 @@ SpellResult Spells::cleric65_townPortal(Character *chr) {
 			case Common::KEYCODE_2:
 			case Common::KEYCODE_3:
 			case Common::KEYCODE_4:
-			case Common::KEYCODE_5: {
+			case Common::KEYCODE_5:
+			{
 				Maps::Maps &maps = *g_maps;
 				int townIndex = keyState.keycode - Common::KEYCODE_1;
 
@@ -494,10 +492,10 @@ SpellResult Spells::wizard24_jump(Character *chr) {
 	if ((map._states[maps._mapOffset] & maps._forwardMask & 0x55) != 0)
 		return SR_FAILED;
 	if ((map._walls[maps._mapOffset + maps._forwardOffset] &
-			maps._forwardMask) != 0)
+		maps._forwardMask) != 0)
 		return SR_FAILED;
 	if ((map._states[maps._mapOffset + maps._forwardOffset]
-			& maps._forwardMask & 0x55) != 0)
+		& maps._forwardMask & 0x55) != 0)
 		return SR_FAILED;
 
 	// The delta will be two steps in the facing direction.
@@ -606,5 +604,6 @@ void Spells::addLight(int amount) {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
+} // namespace Game
 } // namespace MM1
 } // namespace MM

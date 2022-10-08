@@ -14,6 +14,7 @@ MODULE_OBJS := \
 	mm1/meta_engine.o \
 	mm1/mm1.o \
 	mm1/sound.o \
+	mm1/data/active_spells.o \
 	mm1/data/character.o \
 	mm1/data/game_state.o \
 	mm1/data/items.o \
@@ -21,13 +22,13 @@ MODULE_OBJS := \
 	mm1/data/monsters.o \
 	mm1/data/party.o \
 	mm1/data/roster.o \
-	mm1/data/spells.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \
 	mm1/game/rest.o \
 	mm1/game/search.o \
 	mm1/game/spell_casting.o \
+	mm1/game/spells_party.o \
 	mm1/game/spells_monsters.o \
 	mm1/game/view_base.o \
 	mm1/gfx/dta.o \
