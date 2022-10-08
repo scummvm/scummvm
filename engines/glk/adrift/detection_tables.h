@@ -430,6 +430,7 @@ const GlkDetectionEntry ADRIFT_GAMES[] = {
 	DT_ENTRY0("vendetta", "1d84bb4a60e7c559774133f6aff48bbb", 104909),
 	DT_ENTRY0("veteranknowledge", "409d3d59cb767dc8b812e16db78b2e47", 52248),
 	DT_ENTRY0("waxworx", "a10a1e404ae77fd968b4427a13bd7034", 38414),
+	DT_ENTRY0("waxworx", "97e5e0c7206a062f8892ba91fa721f59", 37541),
 	DT_ENTRY0("campwindylake", "33ea1f1fea9998472e9c352ea6e1c1d8", 114698),
 	DT_ENTRY0("woodsaredark", "4acae86746292076b90fa6fa73ea76d0", 71216),
 	DT_ENTRY0("worstgame", "8789e209419529ac22d2be4774620c78", 9858),
