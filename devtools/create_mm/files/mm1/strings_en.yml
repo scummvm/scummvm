@@ -262,9 +262,6 @@
 		go_back: "'ESC' TO GO BACK"
 		no_characters: "NO AVAILABLE CHARACTERS"
 		some_characters: "AVAILABLE CHARACTERS"
-		not_enough_gold: "*** NOT ENOUGH GOLD ***"
-		not_enough_gems: "*** NOT ENOUGH GEMS ***"
-		not_enough_sp: "*** NOT ENOUGH SPELL POINTS ***"
 		full: "*** BACKPACK FULL ***"
 	spells:
 		detect_charges: "MAGIC (CHARGES)"
@@ -748,11 +745,15 @@ movement:
 view:
 	darkness: "  DARKNESS"
 spells:
-	combat_only: "*** COMBAT ONLY ***"
-	magic_doesnt_work: "*** MAGIC DOESN'T WORK HERE ***"
-	outdoors_only: "*** OUTDOOR ONLY ***"
-	failed: "*** SPELL FAILED ***"
-	done: "*** DONE ***"
+	not_enough_gold: "NOT ENOUGH GOLD"
+	not_enough_gems: "NOT ENOUGH GEMS"
+	not_enough_sp: "NOT ENOUGH SPELL POINTS"
+	done: "DONE"
+	combat_only: "COMBAT ONLY"
+	magic_doesnt_work: "MAGIC DOESN'T WORK HERE"
+	outdoors_only: "OUTDOOR ONLY"
+	failed: "SPELL FAILED"
+
 	enter_to_cast: "'ENTER' TO CAST"
 	cast_on: "CAST ON: '1'-'%d'?"
 	which_town: "WHICH TOWN (1-5)?"

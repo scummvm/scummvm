@@ -168,6 +168,7 @@ void Combat::timeout() {
 		spells._s.power_shield = 0;
 
 		close();
+		g_globals->_inCombat = false;
 		g_events->send("Game", GameMessage("UPDATE"));
 		return;
 	}

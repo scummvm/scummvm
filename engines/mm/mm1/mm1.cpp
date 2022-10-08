@@ -125,5 +125,19 @@ bool MM1Engine::hasFeature(EngineFeature f) const {
 		(f == kSupportsSavingDuringRuntime);
 }
 
+bool MM1Engine::canSaveGameStateCurrently() {
+	return !g_globals->_inCombat;
+}
+
+bool MM1Engine::canLoadGameStateCurrently() {
+	return true;
+}
+
+Common::Error MM1Engine::loadGameStream(Common::SeekableReadStream *stream) {
+	// TODO: Loading savegames
+	g_globals->_inCombat = false;
+	return Common::kNoError;
+}
+
 } // namespace MM1
 } // namespace MM
