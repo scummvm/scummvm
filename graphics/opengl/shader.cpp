@@ -116,10 +116,10 @@ static const GLchar *readFile(const Common::String &filename) {
 	return shaderSource;
 }
 
-GLuint Shader::createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
+GLuint Shader::createDirectShader(size_t shaderSourcesCount, const char *const *shaderSources, GLenum shaderType, const Common::String &name) {
 	GLuint shader;
 	GL_ASSIGN(shader, glCreateShader(shaderType));
-	GL_CALL(glShaderSource(shader, 1, &shaderSource, NULL));
+	GL_CALL(glShaderSource(shader, shaderSourcesCount, shaderSources, NULL));
 	GL_CALL(glCompileShader(shader));
 
 	GLint status;
@@ -213,7 +213,7 @@ GLuint Shader::loadShaderFromFile(const char *base, const char *extension, GLenu
 	if (compatGLSLVersion) {
 		shader = createCompatShader(shaderSource, shaderType, filename, compatGLSLVersion);
 	} else {
-		shader = createDirectShader(shaderSource, shaderType, filename);
+		shader = createDirectShader(1, &shaderSource, shaderType, filename);
 	}
 
 	delete[] shaderSource;
@@ -302,13 +302,32 @@ bool Shader::loadFromStrings(const Common::String &name, const char *vertex, con
 
 		fragmentShader = createCompatShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment", compatGLSLVersion);
 	} else {
-		vertexShader = createDirectShader(vertex, GL_VERTEX_SHADER, name + ".vertex");
+		vertexShader = createDirectShader(1, &vertex, GL_VERTEX_SHADER, name + ".vertex");
 
 		if (!vertexShader)
 			return false;
 
-		fragmentShader = createDirectShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment");
+		fragmentShader = createDirectShader(1, &fragment, GL_FRAGMENT_SHADER, name + ".fragment");
 	}
+
+	if (!fragmentShader)
+		return false;
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
+}
+
+bool Shader::loadFromStringsArray(const Common::String &name,
+			size_t vertexCount, const char *const *vertex,
+			size_t fragmentCount, const char *const *fragment,
+			const char *const *attributes) {
+	GLuint vertexShader, fragmentShader;
+
+	vertexShader = createDirectShader(vertexCount, vertex, GL_VERTEX_SHADER, name + ".vertex");
+
+	if (!vertexShader)
+		return false;
+
+	fragmentShader = createDirectShader(fragmentCount, fragment, GL_FRAGMENT_SHADER, name + ".fragment");
 
 	if (!fragmentShader)
 		return false;
