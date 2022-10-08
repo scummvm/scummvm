@@ -218,6 +218,29 @@ bool LibRetroPipeline::loadTextures() {
 	return true;
 }
 
+typedef Common::HashMap<Common::String, float, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> UniformsMap;
+
+static void stripShaderParameters(char *source, UniformsMap &uniforms) {
+	char uniformId[64], desc[64];
+	float initial, minimum, maximum, step;
+
+	char *s = strstr(source, "#pragma parameter");
+
+	while (s) {
+		int ret;
+		if ((ret = sscanf(s, "#pragma parameter %63s \"%63[^\"]\" %f %f %f %f",
+                  uniformId, desc, &initial, &minimum, &maximum, &step)) >= 5) {
+			uniforms[uniformId] = initial;
+		}
+
+		// strip parameter to avoid syntax errors in GLSL parser
+		while (*s != '\0' && *s != '\n') {
+			*s++ = ' ';
+		}
+		s = strstr(s, "#pragma parameter");
+	}
+}
+
 bool LibRetroPipeline::loadPasses() {
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
@@ -263,19 +286,22 @@ bool LibRetroPipeline::loadPasses() {
 					shaderFileVersion, shaderFileVersionExtra);
 		}
 
+		UniformsMap uniformParams;
+		stripShaderParameters(shaderFileStart, uniformParams);
+
 		// TODO: Handle alias defines
 
 		Shader *shader = new Shader;
 
 		const char *const vertexSources[] = {
 			version,
-			"#define VERTEX\n", // "#define PARAMETER_UNIFORM\n",
+			"#define VERTEX\n#define PARAMETER_UNIFORM\n",
 			// TODO: alias defines
 			shaderFileStart,
 		};
 		const char *const fragmentSources[] = {
 			version,
-			"#define FRAGMENT\n", // "#define PARAMETER_UNIFORM\n",
+			"#define FRAGMENT\n#define PARAMETER_UNIFORM\n",
 			// TODO: alias defines
 			shaderFileStart,
 		};
@@ -293,6 +319,10 @@ bool LibRetroPipeline::loadPasses() {
 		shader->setUniform("FrameDirection", 1);
 		// Input texture is always bound at sampler 0.
 		shader->setUniform("Texture", 0);
+
+		for(UniformsMap::iterator it = uniformParams.begin(); it != uniformParams.end(); it++) {
+			shader->setUniform1f(it->_key, it->_value);
+		}
 
 		TextureTarget *target = nullptr;
 		// TODO: float and sRGB FBO handling.
