@@ -1330,6 +1330,9 @@ void ScummEngine::queryRestart() {
 			if (_game.version < 5)
 				restoreCharsetBg();
 
+			if (_game.id == GID_SAMNMAX)
+				fadeOut(134);
+
 			restart();
 		}
 	}
