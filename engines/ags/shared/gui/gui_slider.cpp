@@ -82,10 +82,8 @@ void GUISlider::UpdateMetrics() {
 	if (MinValue >= MaxValue)
 		MaxValue = MinValue + 1;
 	Value = Math::Clamp(Value, MinValue, MaxValue);
-	// Test if sprite is available
-	// TODO: react to sprites initialization/deletion instead!
-	if (_GP(spriteset)[HandleImage] == nullptr)
-		HandleImage = 0;
+	// Test if sprite is available; // TODO: return a placeholder from spriteset instead!
+	const int handle_im = _GP(spriteset)[HandleImage] ? HandleImage : 0;
 
 	// Depending on slider's orientation, thickness is either Height or Width
 	const int thickness = IsHorizontal() ? Height : Width;
@@ -96,10 +94,10 @@ void GUISlider::UpdateMetrics() {
 
 	// Calculate handle size
 	Size handle_sz;
-	if (HandleImage > 0) // handle is a sprite
+	if (handle_im > 0) // handle is a sprite
 	{
-		handle_sz = Size(get_adjusted_spritewidth(HandleImage),
-			get_adjusted_spriteheight(HandleImage));
+		handle_sz = Size(get_adjusted_spritewidth(handle_im),
+			get_adjusted_spriteheight(handle_im));
 	} else // handle is a drawn rectangle
 	{
 		if (IsHorizontal())
@@ -180,9 +178,11 @@ void GUISlider::Draw(Bitmap *ds, int x, int y) {
 		ds->DrawLine(Line(bar.Left, bar.Bottom, bar.Right, bar.Bottom), draw_color);
 	}
 
-	if (HandleImage > 0) // handle is a sprite
+	// Test if sprite is available; // TODO: return a placeholder from spriteset instead!
+	const int handle_im = _GP(spriteset)[HandleImage] ? HandleImage : 0;
+	if (handle_im > 0) // handle is a sprite
 	{
-		draw_gui_sprite(ds, HandleImage, handle.Left, handle.Top, true);
+		draw_gui_sprite(ds, handle_im, handle.Left, handle.Top, true);
 	} else // handle is a drawn rectangle
 	{
 		// normal grey tracker handle
