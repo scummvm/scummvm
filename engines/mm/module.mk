@@ -94,6 +94,60 @@ MODULE_OBJS := \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
 	mm1/maps/map00.o \
+	mm1/maps/map01.o \
+	mm1/maps/map02.o \
+	mm1/maps/map03.o \
+	mm1/maps/map04.o \
+	mm1/maps/map05.o \
+	mm1/maps/map06.o \
+	mm1/maps/map07.o \
+	mm1/maps/map08.o \
+	mm1/maps/map09.o \
+	mm1/maps/map10.o \
+	mm1/maps/map11.o \
+	mm1/maps/map12.o \
+	mm1/maps/map13.o \
+	mm1/maps/map14.o \
+	mm1/maps/map15.o \
+	mm1/maps/map16.o \
+	mm1/maps/map17.o \
+	mm1/maps/map18.o \
+	mm1/maps/map19.o \
+	mm1/maps/map20.o \
+	mm1/maps/map21.o \
+	mm1/maps/map22.o \
+	mm1/maps/map23.o \
+	mm1/maps/map24.o \
+	mm1/maps/map25.o \
+	mm1/maps/map26.o \
+	mm1/maps/map27.o \
+	mm1/maps/map28.o \
+	mm1/maps/map29.o \
+	mm1/maps/map30.o \
+	mm1/maps/map31.o \
+	mm1/maps/map32.o \
+	mm1/maps/map33.o \
+	mm1/maps/map34.o \
+	mm1/maps/map35.o \
+	mm1/maps/map36.o \
+	mm1/maps/map37.o \
+	mm1/maps/map38.o \
+	mm1/maps/map39.o \
+	mm1/maps/map40.o \
+	mm1/maps/map41.o \
+	mm1/maps/map42.o \
+	mm1/maps/map43.o \
+	mm1/maps/map44.o \
+	mm1/maps/map45.o \
+	mm1/maps/map46.o \
+	mm1/maps/map47.o \
+	mm1/maps/map48.o \
+	mm1/maps/map49.o \
+	mm1/maps/map50.o \
+	mm1/maps/map51.o \
+	mm1/maps/map52.o \
+	mm1/maps/map53.o \
+	mm1/maps/map54.o \
 	xeen/worldofxeen/clouds_cutscenes.o \
 	xeen/worldofxeen/darkside_cutscenes.o \
 	xeen/worldofxeen/worldofxeen_cutscenes.o \
