@@ -422,9 +422,9 @@ VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Comm
 
 		bool succeeded = false;
 		if (isPrompt)
-			runtime->getLoadProvider()->promptLoad(&loader);
+			succeeded = runtime->getLoadProvider()->promptLoad(&loader);
 		else
-			runtime->getLoadProvider()->namedLoad(&loader, _fileName);
+			succeeded = runtime->getLoadProvider()->namedLoad(&loader, _fileName);
 
 		if (succeeded) {
 			for (const Common::SharedPtr<SaveLoadHooks> &hooks : runtime->getHacks().saveLoadHooks)
