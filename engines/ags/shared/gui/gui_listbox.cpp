@@ -383,6 +383,8 @@ void GUIListBox::ReadFromFile(Stream *in, GuiVersion gui_version) {
 
 	if (TextColor == 0)
 		TextColor = 16;
+
+	UpdateMetrics();
 }
 
 void GUIListBox::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
@@ -415,6 +417,8 @@ void GUIListBox::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
 			SavedGameIndex[i] = in->ReadInt16();
 	TopItem = in->ReadInt32();
 	SelectedItem = in->ReadInt32();
+
+	UpdateMetrics();
 }
 
 void GUIListBox::WriteToSavegame(Stream *out) const {
