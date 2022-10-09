@@ -643,7 +643,7 @@ void SetMultitasking(int mode) {
 	if ((mode < 0) | (mode > 1))
 		quit("!SetMultitasking: invalid mode parameter");
 	// Save requested setting
-	_GP(usetup).multitasking = mode;
+	_GP(usetup).multitasking = mode != 0;
 
 	// Account for the override config option (must be checked first!)
 	if ((_GP(usetup).override_multitasking >= 0) && (mode != _GP(usetup).override_multitasking)) {
