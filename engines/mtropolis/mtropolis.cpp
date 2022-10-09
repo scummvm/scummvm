@@ -33,6 +33,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/maccursor.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/pixelformat.h"
 #include "graphics/wincursor.h"
@@ -135,6 +136,12 @@ Common::Error MTropolisEngine::run() {
 			preferredHeight = 360;
 			HackSuites::addObsidianImprovedWidescreen(*_gameDescription, _runtime->getHacks());
 		}
+	}
+
+	if (_gameDescription->gameID == GID_MTI) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode8Bit;
 	}
 
 	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
