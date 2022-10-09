@@ -72,6 +72,7 @@ private:
 	bool parsePass(const uint id, const bool isLast);
 	bool parsePassScaleType(const uint id, const bool isLast, ShaderPass *pass);
 	bool parsePassScale(const uint id, ShaderPass *pass);
+	bool computeDefaultScale(const Common::String &key, float *floatValue, uint *uintValue, const ScaleType scaleType);
 
 	typedef Common::HashMap<Common::String, Common::String> StringMap;
 	StringMap _entries;
@@ -264,26 +265,6 @@ bool PresetParser::lookUpValue(const Common::String &key, ScaleType *value, cons
 }
 
 bool PresetParser::lookUpValueScale(const Common::String &key, float *floatValue, uint *uintValue, const ScaleType scaleType) {
-	if (!_entries.contains(key)) {
-		switch (scaleType) {
-		case kScaleTypeSource:
-		case kScaleTypeViewport:
-			*floatValue = 1.0f;
-			return true;
-
-		case kScaleTypeAbsolute:
-			_errorDesc = "No value specified for scale '" + key + '\'';
-			return false;
-
-		case kScaleTypeFull:
-			return true;
-
-		default:
-			_errorDesc = "Internal Error: Invalid scale type";
-			return false;
-		}
-	}
-
 	switch (scaleType) {
 	case kScaleTypeSource:
 	case kScaleTypeViewport:
@@ -441,10 +422,18 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 		if (!lookUpValueScale(passKey("scale_x"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
 			return false;
 		}
+	} else {
+		if (!computeDefaultScale(passKey("scale_x"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
+			return false;
+		}
 	}
 
 	if (_entries.contains(passKey("scale_y"))) {
 		if (!lookUpValueScale(passKey("scale_y"), &pass->scaleYFloat, &pass->scaleYUint, pass->scaleTypeY)) {
+			return false;
+		}
+	} else {
+		if (!computeDefaultScale(passKey("scale_y"), &pass->scaleYFloat, &pass->scaleYUint, pass->scaleTypeY)) {
 			return false;
 		}
 	}
@@ -452,6 +441,26 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 	return true;
 }
 #undef passKey
+
+bool PresetParser::computeDefaultScale(const Common::String &key, float *floatValue, uint *uintValue, const ScaleType scaleType) {
+	switch (scaleType) {
+		case kScaleTypeSource:
+		case kScaleTypeViewport:
+			*floatValue = 1.0f;
+			return true;
+
+		case kScaleTypeAbsolute:
+			_errorDesc = "No value specified for scale '" + key + '\'';
+			return false;
+
+		case kScaleTypeFull:
+			return true;
+
+		default:
+			_errorDesc = "Internal Error: Invalid scale type";
+			return false;
+	}
+}
 
 ShaderPreset *parsePreset(const Common::FSNode &shaderPreset) {
 	if (!shaderPreset.exists() || !shaderPreset.isReadable() || shaderPreset.isDirectory()) {
