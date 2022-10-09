@@ -26,6 +26,7 @@
 #include "ags/lib/std/queue.h"
 #include "ags/lib/std/map.h"
 
+#include "ags/shared/core/platform.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"   // ICCDynamicObject
 
@@ -104,7 +105,7 @@ public:
 	const char *disableDisposeForObject{ nullptr };
 };
 
-#ifdef DEBUG_MANAGED_OBJECTS
+#if DEBUG_MANAGED_OBJECTS
 #define ManagedObjectLog(...) Debug::Printf(kDbgGroup_ManObj, kDbgMsg_Debug, __VA_ARGS__)
 #else
 #define ManagedObjectLog(...)

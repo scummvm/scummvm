@@ -26,6 +26,7 @@
 //=============================================================================
 
 #include "common/system.h"
+#include "ags/shared/core/platform.h"
 #include "ags/shared/util/stream.h"
 #include "ags/lib/std/algorithm.h"
 #include "ags/shared/ac/sprite_cache.h"
@@ -112,7 +113,7 @@ void SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite) {
 	_spriteData[index].Image = sprite;
 	_spriteData[index].Flags = SPRCACHEFLAG_LOCKED; // NOT from asset file
 	_spriteData[index].Size = 0;
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "SetSprite: (external) %d", index);
 #endif
 }
@@ -133,7 +134,7 @@ void SpriteCache::SubstituteBitmap(sprkey_t index, Bitmap *sprite) {
 		return;
 	}
 	_spriteData[index].Image = sprite;
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "SubstituteBitmap: %d", index);
 #endif
 }
@@ -142,7 +143,7 @@ void SpriteCache::RemoveSprite(sprkey_t index, bool freeMemory) {
 	if (freeMemory)
 		delete _spriteData[index].Image;
 	InitNullSpriteParams(index);
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "RemoveSprite: %d", index);
 #endif
 }
@@ -247,7 +248,7 @@ void SpriteCache::DisposeOldest() {
 		_cacheSize -= _spriteData[sprnum].Size;
 		delete _spriteData[*it].Image;
 		_spriteData[sprnum].Image = nullptr;
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "DisposeOldest: disposed %d, size now %d KB", sprnum, _cacheSize / 1024);
 #endif
 	}
@@ -294,7 +295,7 @@ void SpriteCache::Precache(sprkey_t index) {
 	_maxCacheSize += sprSize;
 	_lockedSize += sprSize;
 	_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "Precached %d", index);
 #endif
 }
@@ -344,7 +345,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 	_spriteData[index].Size = size;
 	_cacheSize += size;
 
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "Loaded %d, size now %zu KB", index, _cacheSize / 1024);
 #endif
 
@@ -358,7 +359,7 @@ void SpriteCache::RemapSpriteToSprite0(sprkey_t index) {
 	_spriteData[index].Image = nullptr;
 	_spriteData[index].Size = _spriteData[0].Size;
 	_spriteData[index].Flags |= SPRCACHEFLAG_REMAPPED;
-#ifdef DEBUG_SPRITECACHE
+#if DEBUG_SPRITECACHE
 	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "RemapSpriteToSprite0: %d", index);
 #endif
 }
