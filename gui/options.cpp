@@ -1198,6 +1198,13 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shaderButton->setEnabled(enabled);
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
+	} else {
+		// Happens when we switch to backend that deosn't support shaders
+		if (_shader) {
+			_shaderButton->setEnabled(false);
+			_shader->setEnabled(false);
+			_shaderClearButton->setEnabled(false);
+		}
 	}
 
 	if (g_system->hasFeature(OSystem::kFeatureFilteringMode))
