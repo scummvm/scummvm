@@ -283,8 +283,9 @@ ScreenOverlay *_display_main(int xx, int yy, int wii, const char *text, int disp
 
 			update_audio_system_on_game_loop();
 			render_graphics();
-			int mbut, mwheelz;
-			if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0) {
+			eAGSMouseButton mbut;
+			int mwheelz;
+			if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone) {
 				check_skip_cutscene_mclick(mbut);
 				if (_GP(play).fast_forward)
 					break;

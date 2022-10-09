@@ -276,6 +276,17 @@ struct KeyInput {
 	KeyInput() = default;
 };
 
+// AGS own mouse button codes;
+// These correspond to MouseButton enum in script API (sans special values)
+enum eAGSMouseButton
+{
+	kMouseNone = 0,
+	kMouseLeft = 1,
+	kMouseRight = 2,
+	kMouseMiddle = 3,
+	kNumMouseButtons
+};
+
 // Converts eAGSKeyCode to script API code, for "on_key_press" and similar callbacks
 int AGSKeyToScriptKey(int keycode);
 // Converts eAGSKeyCode to ASCII text representation with the range check; returns 0 on failure

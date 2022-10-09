@@ -364,12 +364,13 @@ bool InventoryScreen::Run() {
 	if ((isonitem < 0) | (isonitem >= numitems) | (isonitem >= top_item + num_visible_items))
 		isonitem = -1;
 
-	int mclick, mwheelz;
-	if (!run_service_mb_controls(mclick, mwheelz) || _GP(play).IsIgnoringInput()) {
-		mclick = MouseNone;
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (!run_service_mb_controls(mbut, mwheelz) || _GP(play).IsIgnoringInput()) {
+		mbut = kMouseNone;
 	}
 
-	if (mclick == MouseLeft) {
+	if (mbut == kMouseLeft) {
 		if ((my < 0) | (my > windowhit) | (mx < 0) | (mx > windowwid))
 			return true; // continue inventory screen loop
 		if (my < buttonyp) {
@@ -455,7 +456,7 @@ bool InventoryScreen::Run() {
 			}
 			set_mouse_cursor(cmode);
 		}
-	} else if (mclick == MouseRight) {
+	} else if (mbut == kMouseRight) {
 		if (cmode == CURS_ARROW)
 			cmode = MODE_LOOK;
 		else

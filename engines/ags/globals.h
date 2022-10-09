@@ -27,6 +27,7 @@
 
 #include "ags/lib/std/queue.h"
 #include "ags/shared/ac/game_version.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/shared/util/stdio_compat.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
@@ -242,7 +243,8 @@ public:
 	int _mouse_accum_button_state = 0;
 	uint32 _mouse_clear_at_time = 0;
 	int _mouse_accum_relx = 0, _mouse_accum_rely = 0;
-	int _wasbutdown = 0, _wasongui = 0;
+	eAGSMouseButton _wasbutdown = kMouseNone;
+	int _wasongui = 0;
 
 	/**@}*/
 
@@ -1324,7 +1326,7 @@ public:
 	long _pl_file_handle = -1;
 	AGS::Shared::Stream *_pl_file_stream = nullptr;
 
-	int _pluginSimulatedClick = -1;
+	eAGSMouseButton _pluginSimulatedClick = kMouseNone;
 	int _mouse_z_was = 0;
 
 	/**@}*/

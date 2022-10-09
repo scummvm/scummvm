@@ -111,7 +111,8 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 		if (skip != VideoSkipNone) {
 			// Check for whether user aborted video
 			KeyInput key;
-			int mbut, mwheelz;
+			eAGSMouseButton mbut;
+			int mwheelz;
 			if (run_service_key_controls(key)) {
 				if (key.Key == 27 && skip >= VideoSkipEscape)
 					return true;
@@ -119,7 +120,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 					return true;  // skip on any key
 			}
 
-			if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && skip == VideoSkipKeyOrMouse) {
+			if (run_service_mb_controls(mbut, mwheelz) && mbut >= kMouseNone && skip == VideoSkipKeyOrMouse) {
 				return true; // skip on mouse click
 			}
 		}

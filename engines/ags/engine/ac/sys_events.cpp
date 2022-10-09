@@ -53,7 +53,9 @@ using namespace AGS::Shared;
 using namespace AGS::Engine;
 
 extern void domouse(int str);
-const int MB_ARRAY[3] = { MouseBitLeft, MouseBitRight, MouseBitMiddle };
+// Convert mouse button id to flags
+const int MouseButton2Bits[kNumMouseButtons] =
+	{ MouseBitLeft, MouseBitRight, MouseBitMiddle };
 static void(*_on_quit_callback)(void) = nullptr;
 static void(*_on_switchin_callback)(void) = nullptr;
 static void(*_on_switchout_callback)(void) = nullptr;
@@ -157,22 +159,19 @@ static void on_mouse_wheel(const Common::Event &event) {
 		_G(sys_mouse_z)--;
 }
 
-int mgetbutton() {
-	int toret = MouseNone;
-	int butis = mouse_button_poll();
+static eAGSMouseButton mgetbutton() {
+	const int butis = mouse_button_poll();
 
 	if ((butis > 0) & (_G(butwas) > 0))
-		return MouseNone;  // don't allow holding button down
+		return kMouseNone;  // don't allow holding button down
 
 	if (butis & MouseBitLeft)
-		toret = MouseLeft;
+		return kMouseLeft;
 	else if (butis & MouseBitRight)
-		toret = MouseRight;
+		return kMouseRight;
 	else if (butis & MouseBitMiddle)
-		toret = MouseMiddle;
-
-	_G(butwas) = butis;
-	return toret;
+		return kMouseMiddle;
+	return kMouseNone;
 
 	// TODO: presumably this was a hack for 1-button Mac mouse;
 	// is this still necessary?
@@ -184,23 +183,19 @@ int mgetbutton() {
 		toret = RIGHT;
 	}
 #endif
-	return 0;
 }
 
-bool ags_misbuttondown(int but) {
-	return (mouse_button_poll() & MB_ARRAY[but]) != 0;
+bool ags_misbuttondown(eAGSMouseButton but) {
+	return (mouse_button_poll() & MouseButton2Bits[but]) != 0;
 }
 
-int ags_mgetbutton() {
-	int result;
-
-	if (_G(pluginSimulatedClick) > MouseNone) {
-		result = _G(pluginSimulatedClick);
-		_G(pluginSimulatedClick) = MouseNone;
-	} else {
-		result = mgetbutton();
+eAGSMouseButton ags_mgetbutton() {
+	if (_G(pluginSimulatedClick) > kMouseNone) {
+		eAGSMouseButton mbut = _G(pluginSimulatedClick);
+		_G(pluginSimulatedClick) = kMouseNone;
+		return mbut;
 	}
-	return result;
+	return mgetbutton();;
 }
 
 void ags_mouse_get_relxy(int &x, int &y) {

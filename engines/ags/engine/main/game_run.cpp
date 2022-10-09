@@ -192,16 +192,16 @@ static void check_mouse_controls() {
 		remove_popup_interface(_G(ifacepopped));
 
 	// check mouse clicks on GUIs
-	if ((_G(wasbutdown) > 0) && (ags_misbuttondown(_G(wasbutdown) - 1))) {
+	if ((_G(wasbutdown) > kMouseNone) && (ags_misbuttondown(_G(wasbutdown)))) {
 		gui_on_mouse_hold(_G(wasongui), _G(wasbutdown));
-	} else if ((_G(wasbutdown) > 0) && (!ags_misbuttondown(_G(wasbutdown) - 1))) {
+	} else if ((_G(wasbutdown) > kMouseNone) && (!ags_misbuttondown(_G(wasbutdown)))) {
 		gui_on_mouse_up(_G(wasongui), _G(wasbutdown));
-		_G(wasbutdown) = 0;
+		_G(wasbutdown) = kMouseNone;
 	}
 
-	int mbut = MouseNone;
-	int mwheelz = 0;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0) {
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone) {
 
 		check_skip_cutscene_mclick(mbut);
 
@@ -214,17 +214,17 @@ static void check_mouse_controls() {
 				_GP(play).SetWaitSkipResult(SKIP_MOUSECLICK, mbut);
 			}
 		} else if (!IsInterfaceEnabled());  // blocking cutscene, ignore mouse
-		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut + 1)) {
+		else if (pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut)) {
 			// plugin took the click
-			debug_script_log("Plugin handled mouse button %d", mbut + 1);
+			debug_script_log("Plugin handled mouse button %d", mbut);
 		} else if (mongu >= 0) {
-			if (_G(wasbutdown) == 0) {
-				gui_on_mouse_down(mongu, mbut + 1);
+			if (_G(wasbutdown) == kMouseNone) {
+				gui_on_mouse_down(mongu, mbut);
 			}
 			_G(wasongui) = mongu;
-			_G(wasbutdown) = mbut + 1;
+			_G(wasbutdown) = mbut;
 		} else
-			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut + 1);
+			setevent(EV_TEXTSCRIPT, TS_MCLICK, mbut);
 	}
 
 	if (mwheelz < 0)
@@ -255,6 +255,8 @@ bool run_service_key_controls(KeyInput &out_key) {
 	const Common::Event key_evt = key_valid ? ags_get_next_keyevent() : Common::Event();
 	const bool is_only_mod_key = key_evt.type == Common::EVENT_KEYDOWN ?
 		is_mod_key(key_evt.kbd.keycode) : false;
+
+	out_key = KeyInput(); // reset to default
 
 	// Following section is for testing for pushed and released mod-keys.
 	// A bit of explanation: some service actions may require combination of
@@ -398,14 +400,12 @@ bool run_service_key_controls(KeyInput &out_key) {
 	return true;
 }
 
-bool run_service_mb_controls(int &mbut, int &mwheelz) {
-	int mb = ags_mgetbutton();
-	int mz = ags_check_mouse_wheel();
-	if (mb == MouseNone && mz == 0)
+bool run_service_mb_controls(eAGSMouseButton &mbut, int &mwheelz) {
+	mbut = ags_mgetbutton();
+	mwheelz = ags_check_mouse_wheel();
+	if (mbut == kMouseNone && mwheelz == 0)
 		return false;
-	lock_mouse_on_click(); // do not claim
-	mbut = mb;
-	mwheelz = mz;
+	lock_mouse_on_click();
 	return true;
 }
 

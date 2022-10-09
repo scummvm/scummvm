@@ -86,7 +86,7 @@ const int PLUGIN_API_VERSION = 25;
 // we can reuse the same handle.
 
 void PluginSimulateMouseClick(int pluginButtonID) {
-	_G(pluginSimulatedClick) = pluginButtonID - 1;
+	_G(pluginSimulatedClick) = static_cast<eAGSMouseButton>(pluginButtonID);
 }
 
 void IAGSEngine::AbortGame(const char *reason) {
@@ -342,8 +342,9 @@ void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 void IAGSEngine::PollSystem() {
 	ags_domouse();
 	update_polled_stuff_if_runtime();
-	int mbut, mwheelz;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone && !_GP(play).IsIgnoringInput())
 		pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut);
 	KeyInput kp;
 	if (run_service_key_controls(kp) && !_GP(play).IsIgnoringInput()) {
