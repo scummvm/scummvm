@@ -29,7 +29,7 @@ namespace AGS3 {
 
 class WFNFont;
 
-class WFNFontRenderer : public IAGSFontRenderer, public IAGSFontRenderer2 {
+class WFNFontRenderer : public IAGSFontRenderer, public IAGSFontRendererInternal {
 public:
 	// IAGSFontRenderer implementation
 	virtual ~WFNFontRenderer() {}
@@ -43,7 +43,7 @@ public:
 	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override;
 	void EnsureTextValidForFont(char *text, int fontNumber) override;
 
-	// IAGSFontRenderer2 implementation
+	// IAGSFontRendererInternal implementation
 	bool IsBitmapFont() override;
 	bool LoadFromDiskEx(int fontNumber, int fontSize,
 		const FontRenderParams *params, FontMetrics *metrics) override;

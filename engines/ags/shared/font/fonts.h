@@ -32,7 +32,7 @@
 namespace AGS3 {
 
 class IAGSFontRenderer;
-class IAGSFontRenderer2;
+class IAGSFontRendererInternal;
 struct FontInfo;
 struct FontRenderParams;
 
@@ -41,7 +41,7 @@ namespace Shared {
 
 struct Font {
 	IAGSFontRenderer *Renderer = nullptr;
-	IAGSFontRenderer2 *Renderer2 = nullptr;
+	IAGSFontRendererInternal *RendererInt = nullptr;
 	FontInfo            Info;
 	// Values received from the renderer and saved for the reference
 	FontMetrics       Metrics;
@@ -61,7 +61,7 @@ struct Font {
 using namespace AGS;
 
 class IAGSFontRenderer;
-class IAGSFontRenderer2;
+class IAGSFontRendererInternal;
 struct FontInfo;
 struct FontRenderParams;
 

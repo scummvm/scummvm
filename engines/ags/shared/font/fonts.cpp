@@ -107,15 +107,15 @@ IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *ren
 		return nullptr;
 	IAGSFontRenderer *oldRender = _GP(fonts)[fontNumber].Renderer;
 	_GP(fonts)[fontNumber].Renderer = renderer;
-	_GP(fonts)[fontNumber].Renderer2 = nullptr;
+	_GP(fonts)[fontNumber].RendererInt = nullptr;
 	font_post_init(fontNumber);
 	return oldRender;
 }
 
 bool is_bitmap_font(size_t fontNumber) {
-	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer2)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].RendererInt)
 		return false;
-	return _GP(fonts)[fontNumber].Renderer2->IsBitmapFont();
+	return _GP(fonts)[fontNumber].RendererInt->IsBitmapFont();
 }
 
 bool font_supports_extended_characters(size_t fontNumber) {
@@ -125,9 +125,9 @@ bool font_supports_extended_characters(size_t fontNumber) {
 }
 
 const char *get_font_name(size_t fontNumber) {
-	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer2)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].RendererInt)
 		return "";
-	const char *name = _GP(fonts)[fontNumber].Renderer2->GetName(fontNumber);
+	const char *name = _GP(fonts)[fontNumber].RendererInt->GetName(fontNumber);
 	return name ? name : "";
 }
 
@@ -404,10 +404,10 @@ bool load_font_size(size_t fontNumber, const FontInfo &font_info) {
 
 	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
-		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
+		_GP(fonts)[fontNumber].RendererInt = &_GP(ttfRenderer);
 	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
-		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
+		_GP(fonts)[fontNumber].RendererInt = &_GP(wfnRenderer);
 	}
 
 	if (!_GP(fonts)[fontNumber].Renderer)
@@ -459,8 +459,8 @@ void alloc_font_outline_buffers(size_t font_number,
 
 void adjust_fonts_for_render_mode(bool aa_mode) {
 	for (size_t i = 0; i < _GP(fonts).size(); ++i) {
-		if (_GP(fonts)[i].Renderer2 != nullptr)
-			_GP(fonts)[i].Renderer2->AdjustFontForAntiAlias(i, aa_mode);
+		if (_GP(fonts)[i].RendererInt != nullptr)
+			_GP(fonts)[i].RendererInt->AdjustFontForAntiAlias(i, aa_mode);
 	}
 }
 
