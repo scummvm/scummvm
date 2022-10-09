@@ -207,7 +207,7 @@ void IMuseChannel_Midi::noteOn(byte note, byte velocity)  {
 #else
 	if (_newSystem)
 		noteOnIntern(note, velocity);
-	else 
+	else
 		sendMidi(0x90, note, velocity);
 #endif
 }
@@ -403,7 +403,7 @@ int IMuseDriver_GMidi::open() {
 	if (_gsMode)
 		initDeviceAsRolandGS();
 	else
-		initDevice();	
+		initDevice();
 
 	return res;
 }
@@ -663,7 +663,7 @@ public:
 	void setOutput(ChannelNode *out) override { _out = out; }
 
 private:
-	bool validateTransmission(byte note) const { return _program < 128 && (!_newSystem || !(_number == 9 && note > 75)); }
+	bool validateTransmission(byte note) const override { return _program < 128 && (!_newSystem || !(_number == 9 && note > 75)); }
 
 	void sendMidi(byte stat, byte par1, byte par2) override {
 		if (_drv && (_out || _number == 9))
