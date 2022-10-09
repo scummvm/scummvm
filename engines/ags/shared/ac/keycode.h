@@ -249,18 +249,27 @@ enum eAGSKeyCode {
 	case 425: __allegro_KEY_NUMLOCK
 	case 426: __allegro_KEY_CAPSLOCK
 	*/
+
+	// Mask defines the key code position if packed in the int32;
+	// takes only 12 bits, as minimal necessary to accomodate historical codes.
+	eAGSKeyMask = 0x0FFF
 };
 
 // AGS key modifiers
 enum eAGSKeyMod {
-	eAGSModLShift = 0x0001,
-	eAGSModRShift = 0x0002,
-	eAGSModLCtrl = 0x0004,
-	eAGSModRCtrl = 0x0008,
-	eAGSModLAlt = 0x0010,
-	eAGSModRAlt = 0x0020,
-	eAGSModNum = 0x0040,
-	eAGSModCaps = 0x0080
+	eAGSModLShift = 0x00010000,
+	eAGSModRShift = 0x00020000,
+	eAGSModLCtrl  = 0x00040000,
+	eAGSModRCtrl  = 0x00080000,
+	eAGSModLAlt   = 0x00100000,
+	eAGSModRAlt   = 0x00200000,
+	eAGSModNum    = 0x00400000,
+	eAGSModCaps   = 0x00800000,
+
+	// Mask defines the key mod position if packed in the int32;
+	// the upper 8 bits are reserved for "input type" codes;
+	// potentially may take 4 bits below (4th pos), as KeyMask takes only 12.
+	eAGSModMask   = 0x00FF0000
 };
 
 // Combined key code and a textual representation in UTF-8
