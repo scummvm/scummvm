@@ -88,6 +88,7 @@ enum {
 	kDebugEndVideo		= 1 << 17,
 	kDebugLingoStrict	= 1 << 18,
 	kDebugSound			= 1 << 19,
+	kDebugConsole		= 1 << 20,
 };
 
 struct MovieReference {

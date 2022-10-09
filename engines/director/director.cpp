@@ -229,6 +229,11 @@ Common::Error DirectorEngine::run() {
 	if (err.getCode() != Common::kNoError)
 		return err;
 
+	if (debugChannelSet(-1, kDebugConsole)) {
+		g_debugger->attach();
+		g_system->updateScreen();
+	}
+
 	bool loop = true;
 
 	while (loop) {
