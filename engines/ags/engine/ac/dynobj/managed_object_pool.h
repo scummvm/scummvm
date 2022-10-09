@@ -105,6 +105,7 @@ public:
 	const char *disableDisposeForObject{ nullptr };
 };
 
+// Extreme(!!) verbosity managed memory pool log
 #if DEBUG_MANAGED_OBJECTS
 #define ManagedObjectLog(...) Debug::Printf(kDbgGroup_ManObj, kDbgMsg_Debug, __VA_ARGS__)
 #else

@@ -44,8 +44,12 @@ extern void initialize_sprite(int);
 extern void pre_save_sprite(Bitmap *image);
 extern void get_new_size_for_sprite(int, int, int, int &, int &);
 
-#define START_OF_LIST -1
-#define END_OF_LIST   -1
+// High-verbosity sprite cache log
+#if DEBUG_SPRITECACHE
+#define SprCacheLog(...) Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, __VA_ARGS__)
+#else
+#define SprCacheLog(...)
+#endif
 
 SpriteInfo::SpriteInfo()
 	: Flags(0)
@@ -113,9 +117,7 @@ void SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite) {
 	_spriteData[index].Image = sprite;
 	_spriteData[index].Flags = SPRCACHEFLAG_LOCKED; // NOT from asset file
 	_spriteData[index].Size = 0;
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "SetSprite: (external) %d", index);
-#endif
+	SprCacheLog("SetSprite: (external) %d", index);
 }
 
 void SpriteCache::SetEmptySprite(sprkey_t index, bool as_asset) {
@@ -134,18 +136,14 @@ void SpriteCache::SubstituteBitmap(sprkey_t index, Bitmap *sprite) {
 		return;
 	}
 	_spriteData[index].Image = sprite;
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "SubstituteBitmap: %d", index);
-#endif
+	SprCacheLog("SubstituteBitmap: %d", index);
 }
 
 void SpriteCache::RemoveSprite(sprkey_t index, bool freeMemory) {
 	if (freeMemory)
 		delete _spriteData[index].Image;
 	InitNullSpriteParams(index);
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "RemoveSprite: %d", index);
-#endif
+	SprCacheLog("RemoveSprite: %d", index);
 }
 
 sprkey_t SpriteCache::EnlargeTo(sprkey_t topmost) {
@@ -248,9 +246,7 @@ void SpriteCache::DisposeOldest() {
 		_cacheSize -= _spriteData[sprnum].Size;
 		delete _spriteData[*it].Image;
 		_spriteData[sprnum].Image = nullptr;
-#if DEBUG_SPRITECACHE
-		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "DisposeOldest: disposed %d, size now %d KB", sprnum, _cacheSize / 1024);
-#endif
+		SprCacheLog("DisposeOldest: disposed %d, size now %d KB", sprnum, _cacheSize / 1024);
 	}
 	// Remove from the mru list
 	_mru.erase(it);
@@ -295,9 +291,7 @@ void SpriteCache::Precache(sprkey_t index) {
 	_maxCacheSize += sprSize;
 	_lockedSize += sprSize;
 	_spriteData[index].Flags |= SPRCACHEFLAG_LOCKED;
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "Precached %d", index);
-#endif
+	SprCacheLog("Precached %d", index);
 }
 
 sprkey_t SpriteCache::GetDataIndex(sprkey_t index) {
@@ -344,11 +338,7 @@ size_t SpriteCache::LoadSprite(sprkey_t index) {
 	FreeMem(size);
 	_spriteData[index].Size = size;
 	_cacheSize += size;
-
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "Loaded %d, size now %zu KB", index, _cacheSize / 1024);
-#endif
-
+	SprCacheLog("Loaded %d, size now %zu KB", index, _cacheSize / 1024);
 	return size;
 }
 
@@ -359,9 +349,7 @@ void SpriteCache::RemapSpriteToSprite0(sprkey_t index) {
 	_spriteData[index].Image = nullptr;
 	_spriteData[index].Size = _spriteData[0].Size;
 	_spriteData[index].Flags |= SPRCACHEFLAG_REMAPPED;
-#if DEBUG_SPRITECACHE
-	Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Debug, "RemapSpriteToSprite0: %d", index);
-#endif
+	SprCacheLog("RemapSpriteToSprite0: %d", index);
 }
 
 int SpriteCache::SaveToFile(const String &filename, int store_flags, SpriteCompression compress, SpriteFileIndex &index) {
