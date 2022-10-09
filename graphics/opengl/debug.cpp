@@ -28,8 +28,6 @@
 
 #if defined(USE_OPENGL)
 
-#ifdef OPENGL_DEBUG
-
 namespace OpenGL {
 
 namespace {
@@ -62,17 +60,18 @@ void clearGLError() {
 		;
 }
 
-void checkGLError(const char *expr, const char *file, int line) {
+bool checkGLError(const char *expr, const char *file, int line) {
+	bool ret = false;
 	GLenum error;
 
 	while ((error = glGetError()) != GL_NO_ERROR) {
 		// We cannot use error here because we do not know whether we have a
 		// working screen or not.
 		warning("GL ERROR: %s on %s (%s:%d)", getGLErrStr(error).c_str(), expr, file, line);
+		ret = true;
 	}
+	return ret;
 }
 } // End of namespace OpenGL
-
-#endif
 
 #endif
