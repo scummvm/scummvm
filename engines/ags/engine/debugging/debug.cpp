@@ -398,31 +398,27 @@ int check_for_messages_from_editor() {
 			// Format:  SETBREAK $scriptname$lineNumber$
 			msgPtr += 10;
 			char scriptNameBuf[sizeof(Breakpoint::scriptName)]{};
-			size_t i = 0;
-			while (msgPtr[0] != '$') {
+			for (size_t i = 0; msgPtr[0] != '$'; ++msgPtr, ++i) {
 				if (i < sizeof(scriptNameBuf) - 1)
 					scriptNameBuf[i] = msgPtr[0];
-				msgPtr++;
-				i++;
 			}
 			msgPtr++;
 
 			int lineNumber = atoi(msgPtr);
 
 			if (isDelete) {
-				for (int j = 0; j < _G(numBreakpoints); j++) {
-					if ((_G(breakpoints)[j].lineNumber == lineNumber) &&
-					        (strcmp(_G(breakpoints)[j].scriptName, scriptNameBuf) == 0)) {
-						_G(numBreakpoints)--;
-						_G(breakpoints).erase(_G(breakpoints).begin() + j);
+				for (size_t i = 0; i < _G(breakpoints).size(); ++i) {
+					if ((_G(breakpoints)[i].lineNumber == lineNumber) &&
+					        (strcmp(_G(breakpoints)[i].scriptName, scriptNameBuf) == 0)) {
+						_G(breakpoints).erase(_G(breakpoints).begin() + i);
 						break;
 					}
 				}
 			} else {
-				_G(breakpoints).push_back(Globals::Breakpoint());
-				snprintf(_G(breakpoints)[_G(numBreakpoints)].scriptName, sizeof(Breakpoint::scriptName), "%s", scriptNameBuf);
-				_G(breakpoints)[_G(numBreakpoints)].lineNumber = lineNumber;
-				_G(numBreakpoints)++;
+				Globals::Breakpoint bp;
+				snprintf(bp.scriptName, sizeof(Breakpoint::scriptName), "%s", scriptNameBuf);
+				bp.lineNumber = lineNumber;
+				_G(breakpoints).push_back(bp);
 			}
 		} else if (strncmp(msgPtr, "RESUME", 6) == 0) {
 			_G(game_paused_in_debugger) = 0;
@@ -507,7 +503,7 @@ void scriptDebugHook(ccInstance *ccinst, int linenum) {
 
 	const char *scriptName = ccinst->runningInst->instanceof->GetSectionName(ccinst->pc);
 
-	for (int i = 0; i < _G(numBreakpoints); i++) {
+	for (size_t i = 0; i < _G(breakpoints).size(); ++i) {
 		if ((_G(breakpoints)[i].lineNumber == linenum) &&
 		        (strcmp(_G(breakpoints)[i].scriptName, scriptName) == 0)) {
 			break_into_debugger();

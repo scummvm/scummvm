@@ -491,7 +491,6 @@ public:
 	};
 
 	std::vector<Breakpoint> _breakpoints;
-	int _numBreakpoints = 0;
 
 	int _debug_flags = 0;
 
