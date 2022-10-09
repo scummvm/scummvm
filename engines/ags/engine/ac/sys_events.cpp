@@ -55,7 +55,7 @@ using namespace AGS::Engine;
 extern void domouse(int str);
 // Convert mouse button id to flags
 const int MouseButton2Bits[kNumMouseButtons] =
-	{ MouseBitLeft, MouseBitRight, MouseBitMiddle };
+	{ 0, MouseBitLeft, MouseBitRight, MouseBitMiddle };
 static void(*_on_quit_callback)(void) = nullptr;
 static void(*_on_switchin_callback)(void) = nullptr;
 static void(*_on_switchout_callback)(void) = nullptr;
