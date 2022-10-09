@@ -117,6 +117,13 @@ private:
 	void processDisposeSound(reg_t obj);
 	void processUpdateCues(reg_t obj);
 	int getSoundResourceId(reg_t obj);
+	
+	/**
+	 * Returns true if the sound is already playing and shouldn't be interrupted.
+	 * This is a workaround for known buggy scripts that accidentally rely on
+	 * the time it took Sierra's interpreter to load a sound and begin playing.
+	 */
+	bool isUninterruptableSoundPlaying(reg_t obj);
 };
 
 } // End of namespace Sci

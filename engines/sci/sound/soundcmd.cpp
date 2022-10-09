@@ -189,6 +189,12 @@ reg_t SoundCommandParser::kDoSoundPlay(EngineState *s, int argc, reg_t *argv) {
 
 void SoundCommandParser::processPlaySound(reg_t obj, bool playBed, bool restoring) {
 	MusicEntry *musicSlot = _music->getSlot(obj);
+
+	if (!restoring && isUninterruptableSoundPlaying(obj)) {
+		debugC(kDebugLevelSound, "kDoSound(play): sound %d already playing", musicSlot->resourceId);
+		return;
+	}
+
 	if (!musicSlot) {
 		warning("kDoSound(play): Slot not found (%04x:%04x), initializing it manually", PRINT_REG(obj));
 		// The sound hasn't been initialized for some reason, so initialize it
@@ -951,6 +957,53 @@ void SoundCommandParser::resetGlobalPauseCounter() {
 MusicType SoundCommandParser::getMusicType() const {
 	assert(_music);
 	return _music->soundGetMusicType();
+}
+
+bool SoundCommandParser::isUninterruptableSoundPlaying(reg_t obj) {
+#ifdef ENABLE_SCI32
+	// WORKAROUND
+	// Lighthouse has a buggy script pattern in several places that causes
+	// stuttering audio. The scripts poll game state on each game cycle and
+	// play a sound when a condition is met. Usually that's when a robot or
+	// view is on a particular frame. But since these conditions stay true for
+	// multiple cycles, each subsequent iteration plays the song again and
+	// restarts it, creating a stuttering effect. In the original, this usually
+	// worked because of the time it took the interpreter to load and begin
+	// playing a sound, but it could still occur on subsequent plays.
+	// Sierra included the necessary checks in some scripts to prevent this bug,
+	// but not all of them. Unfortunately there are too many functions to patch.
+	// Each is different and would require finding a way to add new code, so
+	// instead we detect the known sounds and ignore requests to play them if
+	// their Sound object is already playing.
+	const uint16 lighthouseSoundIds[] = {
+		// script 270
+		802, 838,      // powerLever:doit
+		813,           // trainBot:doit   (bug #10231)
+		828,           // elevLever:doit  (bug #10238)
+		911, 912,      // railProp:doit   (bug #10232)
+		913, 914, 915, // switchProp:doit (bug #10237)
+		2037,          // steam:doit
+		// script 470
+		443,                 // birdMan:doit (bug #10224)
+		44001, 44005, 44006, // birdManSmash:doit
+		// script 700
+		45905, 45906, // closeHatch:doit
+		// script 870
+		851, 852, 879, 880, 881, 882, 883 // ValveProp:doit
+	};
+	if (g_sci->getGameId() == GID_LIGHTHOUSE) {
+		const reg_t handle = readSelector(_segMan, obj, SELECTOR(handle));
+		if (handle != NULL_REG) { // handle can be an object or -1 when playing
+			const uint16 soundId = readSelectorValue(_segMan, obj, SELECTOR(number));
+			for (int i = 0; i < ARRAYSIZE(lighthouseSoundIds); ++i) {
+				if (lighthouseSoundIds[i] == soundId) {
+					return true;
+				}
+			}
+		}
+	}
+#endif
+	return false;
 }
 
 } // End of namespace Sci
