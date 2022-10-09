@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-08 21:39+0000\n"
-"PO-Revision-Date: 2022-09-30 10:37+0000\n"
+"PO-Revision-Date: 2022-10-09 08:33+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -1075,11 +1075,9 @@ msgstr "Kicsi"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1533
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
-msgstr "Semmi"
+msgstr "Nincs"
 
 #: gui/options.cpp:465 gui/options.cpp:950 gui/options.cpp:1116
 #: gui/options.cpp:1248 gui/options.cpp:1671
@@ -1112,10 +1110,8 @@ msgid "the filtering setting could not be changed"
 msgstr "a szûrési beállítást nem lehet megváltoztatni"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "a szakaszos üzemmód nem változtatható meg"
+msgstr "a shader nem változtatható"
 
 #: gui/options.cpp:1328
 msgid "Touchpad mouse mode"
@@ -1178,23 +1174,18 @@ msgid "Scaler:"
 msgstr "Méretező:"
 
 #: gui/options.cpp:1530
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Árnyaló"
+msgstr "Shader:"
 
 #: gui/options.cpp:1530 gui/options.cpp:1532 gui/options.cpp:1533
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Mappa kiválasztás a játékok kiegészítõ fájljaihoz"
+msgstr ""
+"Megadja a játék képernyőjének méretezéséhez használt shader elérési útját"
 
 #: gui/options.cpp:1532
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Mentés Mappa:"
+msgstr "Shader Mappa:"
 
 #: gui/options.cpp:1539 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1961,10 +1952,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Válassz mappát a Fájlkezelõnek /gyökér/"
 
 #: gui/options.cpp:3056
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Válassz témát"
+msgstr "Válassz Shadert"
 
 #: gui/options.cpp:3149
 msgid ""
@@ -2027,11 +2016,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scalar settings?"
 msgstr ""
+"Egy tesztminta megjelenítve.\n"
+"Megtartod ezeket a shader skaláris beállításokat?"
 
 #: gui/options.cpp:3637
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Auto visszaállítás %d másodperc múlva"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
