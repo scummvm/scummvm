@@ -86,8 +86,9 @@ public:
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
+	 * @return Whether the call was successful
 	 */
-	void setSize(uint width, uint height);
+	bool setSize(uint width, uint height);
 
 	/**
 	 * Copy image data to the texture.

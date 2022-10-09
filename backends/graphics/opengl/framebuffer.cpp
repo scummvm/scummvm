@@ -225,8 +225,10 @@ void TextureTarget::create() {
 	_needUpdate = true;
 }
 
-void TextureTarget::setSize(uint width, uint height) {
-	_texture->setSize(width, height);
+bool TextureTarget::setSize(uint width, uint height) {
+	if (!_texture->setSize(width, height)) {
+		return false;
+	}
 
 	const uint texWidth  = _texture->getWidth();
 	const uint texHeight = _texture->getHeight();
@@ -263,6 +265,7 @@ void TextureTarget::setSize(uint width, uint height) {
 		applyViewport();
 		applyProjectionMatrix();
 	}
+	return true;
 }
 #endif // !USE_FORCED_GLES
 

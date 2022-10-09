@@ -175,7 +175,7 @@ public:
 	/**
 	 * Set size of the texture target.
 	 */
-	void setSize(uint width, uint height);
+	bool setSize(uint width, uint height);
 
 	/**
 	 * Query pointer to underlying GL texture.

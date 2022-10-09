@@ -103,7 +103,7 @@ void GLTexture::bind() const {
 	GL_CALL(glBindTexture(GL_TEXTURE_2D, _glTexture));
 }
 
-void GLTexture::setSize(uint width, uint height) {
+bool GLTexture::setSize(uint width, uint height) {
 	const uint oldWidth  = _width;
 	const uint oldHeight = _height;
 
@@ -138,10 +138,15 @@ void GLTexture::setSize(uint width, uint height) {
 		// Allocate storage for OpenGL texture if necessary.
 		if (oldWidth != _width || oldHeight != _height) {
 			bind();
-			GL_CALL(glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width,
-			                     _height, 0, _glFormat, _glType, nullptr));
+			bool error;
+			GL_CALL_CHECK(error, glTexImage2D(GL_TEXTURE_2D, 0, _glIntFormat, _width, _height,
+			             0, _glFormat, _glType, nullptr));
+			if (error) {
+				return false;
+			}
 		}
 	}
+	return true;
 }
 
 void GLTexture::updateArea(const Common::Rect &area, const Graphics::Surface &src) {
