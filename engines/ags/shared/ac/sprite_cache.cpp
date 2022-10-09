@@ -105,19 +105,23 @@ void SpriteCache::Reset() {
 	_lockedSize = 0;
 }
 
-void SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite) {
+bool SpriteCache::SetSprite(sprkey_t index, Bitmap *sprite, int flags) {
 	if (index < 0 || EnlargeTo(index) != index) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: unable to use index %d", index);
-		return;
+		return false;
 	}
 	if (!sprite) {
 		Debug::Printf(kDbgGroup_SprCache, kDbgMsg_Error, "SetSprite: attempt to assign nullptr to index %d", index);
-		return;
+		return false;
 	}
 	_spriteData[index].Image = sprite;
 	_spriteData[index].Flags = SPRCACHEFLAG_LOCKED; // NOT from asset file
 	_spriteData[index].Size = 0;
+	_sprInfos[index].Flags = flags;
+	_sprInfos[index].Width = sprite->GetWidth();
+	_sprInfos[index].Height = sprite->GetHeight();
 	SprCacheLog("SetSprite: (external) %d", index);
+	return true;
 }
 
 void SpriteCache::SetEmptySprite(sprkey_t index, bool as_asset) {
