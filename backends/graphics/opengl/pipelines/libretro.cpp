@@ -35,6 +35,7 @@
 #include "graphics/surface.h"
 
 #include "image/bmp.h"
+#include "image/jpeg.h"
 #include "image/png.h"
 #include "image/tga.h"
 
@@ -62,7 +63,8 @@ static Graphics::Surface *loadViaImageDecoder(const Common::FSNode &fileNode) {
 #else
 										   Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0),
 #endif
-										   decoder.getPalette());
+										   // Use a cast to resolve ambiguities in JPEGDecoder
+										   static_cast<Image::ImageDecoder &>(decoder).getPalette());
 }
 
 struct ImageLoader {
@@ -72,6 +74,7 @@ struct ImageLoader {
 
 static const ImageLoader s_imageLoaders[] = {
 	{ "bmp", loadViaImageDecoder<Image::BitmapDecoder> },
+	{ "jpg", loadViaImageDecoder<Image::JPEGDecoder> },
 	{ "png", loadViaImageDecoder<Image::PNGDecoder> },
 	{ "tga", loadViaImageDecoder<Image::TGADecoder> },
 	{ nullptr, nullptr }
