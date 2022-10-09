@@ -22,6 +22,7 @@
 #include "common/memstream.h"
 
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 
 #include "mtropolis/assets.h"
 #include "mtropolis/audio_player.h"
@@ -277,6 +278,32 @@ bool ColorTableModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState ColorTableModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_applyWhen.respondsTo(msg->getEvent())) {
+		Common::SharedPtr<Asset> ctabAsset = runtime->getProject()->getAssetByID(_assetID).lock();
+		if (ctabAsset) {
+			if (ctabAsset->getAssetType() == kAssetTypeColorTable) {
+				const ColorRGB8 *colors = static_cast<ColorTableAsset *>(ctabAsset.get())->getColors();
+
+				byte palette[256 * 3];
+				for (int i = 0; i < 256; i++) {
+					byte *paletteColor = palette + i * 3;
+					const ColorRGB8 &clr = colors[i];
+					paletteColor[0] = clr.r;
+					paletteColor[1] = clr.g;
+					paletteColor[2] = clr.b;
+				}
+
+				g_system->getPaletteManager()->setPalette(palette, 0, 256);
+			} else {
+				error("Color table modifier applied an asset that wasn't a color table");
+			}
+		} else {
+			warning("Failed to apply color table, asset %u wasn't found", _assetID);
+		}
+
+		return kVThreadReturn;
+	}
+
 	return kVThreadReturn;
 }
 

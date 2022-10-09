@@ -4743,10 +4743,15 @@ void Runtime::loadScene(const Common::SharedPtr<Structural>& scene) {
 
 	Subsection *subsection = static_cast<Subsection *>(scene->getParent());
 
-	_project->loadSceneFromStream(scene, streamID, getHacks());
-	debug(1, "Scene loaded OK, materializing objects...");
-	scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
-	debug(1, "Scene materialized OK");
+	if (streamID == 0) {
+		debug(1, "Scene is empty");
+	} else {
+		_project->loadSceneFromStream(scene, streamID, getHacks());
+		debug(1, "Scene loaded OK, materializing objects...");
+		scene->materializeDescendents(this, subsection->getSceneLoadMaterializeScope());
+		debug(1, "Scene materialized OK");
+	}
+
 	recursiveActivateStructural(scene.get());
 	debug(1, "Structural elements activated OK");
 

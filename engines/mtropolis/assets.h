@@ -38,6 +38,8 @@ public:
 	bool load(AssetLoaderContext &context, const Data::ColorTableAsset &data);
 	AssetType getAssetType() const override;
 
+	const ColorRGB8 *getColors() const;
+
 private:
 	ColorRGB8 _colors[256];
 };

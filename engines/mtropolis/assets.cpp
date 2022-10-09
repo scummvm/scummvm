@@ -64,6 +64,9 @@ AssetType ColorTableAsset::getAssetType() const {
 	return kAssetTypeColorTable;
 }
 
+const ColorRGB8 *ColorTableAsset::getColors() const {
+	return _colors;
+}
 
 CachedAudio::CachedAudio() {
 }
