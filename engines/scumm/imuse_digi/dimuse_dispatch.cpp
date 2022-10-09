@@ -936,24 +936,37 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// within the interpreter, so I'm not going to argue with it
 
 			if (!dispatchPtr->trackPtr->syncPtr_0) {
-				dispatchPtr->trackPtr->syncPtr_0 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_0, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_0 = READ_UINT32(mapCurEvent + 4);
+				const int32 size = READ_UINT32(mapCurEvent + 4);
+				assert(size % 4 == 0);
+				dispatchPtr->trackPtr->syncSize_0 = size;
+				dispatchPtr->trackPtr->syncPtr_0 = (byte *)malloc(size);
+				for (int32 i = 0; i < size / 4; i++)
+					WRITE_LE_UINT32(&(dispatchPtr->trackPtr->syncPtr_0[i * 4]), READ_UINT32(mapCurEvent + (3 * 4) + (i * 4)));
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_1) {
-				dispatchPtr->trackPtr->syncPtr_1 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_1, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_1 = READ_UINT32(mapCurEvent + 4);
+				const int32 size = READ_UINT32(mapCurEvent + 4);
+				assert(size % 4 == 0);
+				dispatchPtr->trackPtr->syncSize_1 = size;
+				dispatchPtr->trackPtr->syncPtr_1 = (byte *)malloc(size);
+				for (int32 i = 0; i < size / 4; i++)
+					WRITE_LE_UINT32(&(dispatchPtr->trackPtr->syncPtr_1[i * 4]), READ_UINT32(mapCurEvent + (3 * 4) + (i * 4)));
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_2) {
-				dispatchPtr->trackPtr->syncPtr_2 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_2, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_2 = READ_UINT32(mapCurEvent + 4);
+				const int32 size = READ_UINT32(mapCurEvent + 4);
+				assert(size % 4 == 0);
+				dispatchPtr->trackPtr->syncSize_2 = size;
+				dispatchPtr->trackPtr->syncPtr_2 = (byte *)malloc(size);
+				for (int32 i = 0; i < size / 4; i++)
+					WRITE_LE_UINT32(&(dispatchPtr->trackPtr->syncPtr_2[i * 4]), READ_UINT32(mapCurEvent + (3 * 4) + (i * 4)));
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_3) {
-				dispatchPtr->trackPtr->syncPtr_3 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_3, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_3 = READ_UINT32(mapCurEvent + 4);
+				const int32 size = READ_UINT32(mapCurEvent + 4);
+				assert(size % 4 == 0);
+				dispatchPtr->trackPtr->syncSize_3 = size;
+				dispatchPtr->trackPtr->syncPtr_3 = (byte *)malloc(size);
+				for (int32 i = 0; i < size / 4; i++)
+					WRITE_LE_UINT32(&(dispatchPtr->trackPtr->syncPtr_3[i * 4]), READ_UINT32(mapCurEvent + (3 * 4) + (i * 4)));
+
 			}
 
 			continue;
