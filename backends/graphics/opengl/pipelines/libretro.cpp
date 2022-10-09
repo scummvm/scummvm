@@ -438,12 +438,7 @@ bool LibRetroPipeline::setupFBOs() {
 		pass.shaderPass->applyScale(sourceW, sourceH, viewportW, viewportH, &sourceW, &sourceH);
 
 		// Resize FBO to fit the output of the pass.
-		pass.target->setSize((uint)sourceW, (uint)sourceH);
-		// Make sure it has been set correctly
-		GLint width = 0, height = 0;
-		GL_CALL(glGetTexLevelParameteriv(GL_TEXTURE_2D, 0,  GL_TEXTURE_WIDTH, &width));
-		GL_CALL(glGetTexLevelParameteriv(GL_TEXTURE_2D, 0,  GL_TEXTURE_HEIGHT, &height));
-		if ((uint)width != (uint)sourceW || (uint)height != (uint)sourceH) {
+		if (!pass.target->setSize((uint)sourceW, (uint)sourceH)) {
 			return false;
 		}
 
