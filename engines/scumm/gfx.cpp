@@ -2237,12 +2237,12 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 	// version makes the text more readable by giving it a black outline.
 
 	else if (_vm->_game.id == GID_MONKEY &&
+			!(_vm->_game.features & GF_ULTIMATE_TALKIE) &&
 			_vm->_game.platform != Common::kPlatformSegaCD &&
 			_vm->_game.platform != Common::kPlatformFMTowns &&
 			_vm->_currentRoom == 36 &&
 			vs->number == kMainVirtScreen &&
 			y == 8 && x >= 7 && x <= 30 && height == 88 &&
-			strcmp(_vm->_game.variant, "SE Talkie") != 0 &&
 			_vm->_enableEnhancements) {
 		_roomPalette[47] = 15;
 
