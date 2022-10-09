@@ -1347,7 +1347,7 @@ void game_sprite_updated(int sprnum) {
 	_G(gfxDriver)->UpdateSharedDDB(sprnum, _GP(spriteset)[sprnum], (_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0, false);
 
 	// character and object draw caches
-	reset_objcache_for_sprite(sprnum);
+	reset_objcache_for_sprite(sprnum, false);
 
 	// gui backgrounds
 	for (auto &gui : _GP(guis)) {
@@ -1378,7 +1378,7 @@ void game_sprite_deleted(int sprnum) {
 	// clear from texture cache
 	_G(gfxDriver)->ClearSharedDDB(sprnum);
 	// character and object draw caches
-	reset_objcache_for_sprite(sprnum);
+	reset_objcache_for_sprite(sprnum, true);
 	// room object graphics
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
