@@ -58,7 +58,7 @@ static uint32 readTag(Common::SeekableReadStream *stream) {
 	return tag;
 }
 
-VQADecoder::VQADecoder() : _fileStream(nullptr) {
+VQADecoder::VQADecoder() : _fileStream(nullptr), _frameInfo(nullptr) {
 	memset(&_header, 0, sizeof(_header));
 }
 
