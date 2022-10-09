@@ -893,7 +893,7 @@ void IMuseDriver_MT32::initDevice() {
 
 	// Display a welcome message on MT-32 displays. Compute version string (truncated to 20 chars max.)
 	Common::String infoStr = Common::String("ScummVM ") + gScummVMVersion;
-	for (int i = (20 - infoStr.size()) >> 1; i > 0; --i)
+	for (int i = (20 - (int)infoStr.size()) >> 1; i > 0; --i)
 		infoStr = ' ' + infoStr + ' ';
 	sendMT32Sysex(0x80000, (const byte*)infoStr.c_str(), MIN<uint32>(infoStr.size(), 20));
 	g_system->delayMillis(1000);
