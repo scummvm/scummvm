@@ -784,7 +784,49 @@ void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing
 }
 
-void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing
+// The log command adds an entry to the game's log file. The log format is:
+//
+// Room <#>
+// Input line : <text>
+// <message>
+//
+// Note: If AGI encounters any file errors while trying to open or write to
+// the logfile, it just ignores the errors, and does not write the log file entry.
+//
+// This is not yet a complete implementation of log(). There
+// are two follow-up items which are planned to be addressed.
+//
+// 1. No Log Formatting
+// We just log the message literally without
+// processing. According to the docs, you can use variables in the message, like:
+//
+// log("Unknown word: %w1"); [ This should log the first word the user typed.
+//
+// Other format codes include:
+// %g<number>: the text of the message with this number from message field of logic 0 is inserted at this place.
+// %m<number>: the text of the message with the given number(in this same logic) is inserted at this place.
+// %o<number>: the name of the inventory item that has an index number equal to the value of the variable given by <number> is inserted at this place.
+// %s<number>: the text of the string with the given number is inserted at this place.
+// %v<number>: at this place the output will include a decimal value of variable with the given number.
+// %w<number>: the text of the player - entered word with the given index number is inserted at this place. (The index is 'one based'; i.e.first word is % w1, second is % w2, etc.)
+//
+// 2. Logs not written to a file.
+// At the moment we are just logging to the console. To see
+// the logs, use the following arguments to scummvm:
+//
+// --debugflags=Scripts -d 1
+//
+void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	uint16 textNr = parameter[0];
+	if (state->_curLogic->texts != nullptr && (textNr - 1) <= state->_curLogic->numTexts) {
+		byte currentRoom = vm->getVar(VM_VAR_CURRENT_ROOM);
+		const char *inputLine = (char *)vm->_text->_promptPrevious;
+		const char *message = state->_curLogic->texts[textNr - 1];
+
+		debugC(1, kDebugLevelScripts, "Room %hhu", currentRoom);
+		debugC(1, kDebugLevelScripts, "Input line : %s", inputLine);
+		debugC(1, kDebugLevelScripts, "%s", message);
+	}
 }
 
 void cmdTraceOn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing
