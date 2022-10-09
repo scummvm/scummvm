@@ -559,18 +559,10 @@ void engine_init_game_settings() {
 	if (_G(playerchar)->view >= 0)
 		precache_view(_G(playerchar)->view);
 
-	/*  dummygui.guiId = -1;
-	dummyguicontrol.guin = -1;
-	dummyguicontrol.objn = -1;*/
-
 	_G(our_eip) = -6;
-	//  _GP(game).chars[0].talkview=4;
-	//init_language_text(_GP(game).langcodes[0]);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++) {
 		_G(scrObj)[ee].id = ee;
-		// 64 bit: Using the id instead
-		// _G(scrObj)[ee].obj = NULL;
 	}
 
 	for (ee = 0; ee < _GP(game).numcharacters; ee++) {
@@ -750,6 +742,8 @@ void engine_init_game_settings() {
 
 	GUI::Options.DisabledStyle = static_cast<GuiDisableStyle>(_GP(game).options[OPT_DISABLEOFF]);
 	GUI::Options.ClipControls = _GP(game).options[OPT_CLIPGUICONTROLS] != 0;
+	// Force GUI metrics recalculation, accomodating for loaded fonts
+	GUI::MarkForFontUpdate(-1);
 
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
 	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int));

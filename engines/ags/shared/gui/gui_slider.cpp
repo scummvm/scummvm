@@ -243,6 +243,8 @@ void GUISlider::ReadFromFile(Stream *in, GuiVersion gui_version) {
 		HandleOffset = 0;
 		BgImage = 0;
 	}
+
+	UpdateMetrics();
 }
 
 void GUISlider::WriteToFile(Stream *out) const {
@@ -263,6 +265,8 @@ void GUISlider::ReadFromSavegame(Stream *in, GuiSvgVersion svg_ver) {
 	MinValue = in->ReadInt32();
 	MaxValue = in->ReadInt32();
 	Value = in->ReadInt32();
+
+	UpdateMetrics();
 }
 
 void GUISlider::WriteToSavegame(Stream *out) const {
