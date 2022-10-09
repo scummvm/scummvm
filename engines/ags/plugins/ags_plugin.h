@@ -239,18 +239,20 @@ public:
 #define AGSE_TRANSITIONOUT   0x400
 // Below are interface 12 and later
 #define AGSE_FINALSCREENDRAW 0x800
-#define AGSE_TRANSLATETEXT  0x1000
+#define AGSE_TRANSLATETEXT   0x1000
 // Below are interface 13 and later
-#define AGSE_SCRIPTDEBUG    0x2000
-#define AGSE_AUDIODECODE    0x4000 // obsolete, no longer supported
+#define AGSE_SCRIPTDEBUG     0x2000
+#define AGSE_AUDIODECODE     0x4000 // obsolete, no longer supported
 // Below are interface 18 and later
-#define AGSE_SPRITELOAD     0x8000
+#define AGSE_SPRITELOAD      0x8000
 // Below are interface 21 and later
-#define AGSE_PRERENDER     0x10000
+#define AGSE_PRERENDER       0x10000
 // Below are interface 24 and later
 #define AGSE_PRESAVEGAME     0x20000
 #define AGSE_POSTRESTOREGAME 0x40000
-#define AGSE_TOOHIGH         0x80000
+// Below are interface 26 and later
+#define AGSE_POSTROOMDRAW    0x80000
+#define AGSE_TOOHIGH         0x100000
 
 // GetFontType font types
 #define FNT_INVALID 0

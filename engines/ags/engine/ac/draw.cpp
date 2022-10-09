@@ -1756,6 +1756,9 @@ void prepare_room_sprites() {
 		add_thing_to_draw(_GP(debugRoomMaskObj).Ddb, 0, 0);
 	if ((_G(debugMoveListChar) >= 0) && _GP(debugMoveListObj).Ddb)
 		add_thing_to_draw(_GP(debugMoveListObj).Ddb, 0, 0);
+
+	if (pl_any_want_hook(AGSE_POSTROOMDRAW))
+		add_render_stage(AGSE_POSTROOMDRAW);
 }
 
 // Draws the black surface behind (or rather between) the room viewports
