@@ -194,10 +194,15 @@ bool PresetParser::lookUpValue(const Common::String &key, uint *value) {
 	if (iter != _entries.end()) {
 		char *endptr;
 		const long uintVal = strtol(iter->_value.c_str(), &endptr, 0);
-		if (*endptr != '\0' || uintVal >= UINT_MAX || uintVal < 0) {
+		// Original libretro is quite laxist with int values and only checks errno
+		// This means that as long as there is some number at start, parsing won't fail
+		if (endptr == iter->_value.c_str() || uintVal >= UINT_MAX || uintVal < 0) {
 			_errorDesc = "Invalid unsigned integer value for key '" + key + "': '" + iter->_value + '\'';
 			return false;
 		} else {
+			if (*endptr != '\0') {
+				warning("Possibly invalid unsigned integer value for key '%s': '%s'", key.c_str(), iter->_value.c_str());
+			}
 			*value = uintVal;
 			return true;
 		}
