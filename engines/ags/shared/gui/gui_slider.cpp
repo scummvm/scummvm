@@ -58,7 +58,7 @@ bool GUISlider::IsOverControl(int x, int y, int leeway) const {
 	if (GUIObject::IsOverControl(x, y, leeway))
 		return true;
 	// now check the handle too
-	return _cachedHandle.IsInside(Point(x, y));
+	return _cachedHandle.IsInside(Point(x - X, y - Y));
 }
 
 Rect GUISlider::CalcGraphicRect(bool /*clipped*/) {
