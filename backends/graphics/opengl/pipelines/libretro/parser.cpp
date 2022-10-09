@@ -410,10 +410,12 @@ bool PresetParser::parsePassScaleType(const uint id, const bool isLast, ShaderPa
 		return false;
 	}
 
-	if (!lookUpValue(passKey("scale_type"), &pass->scaleTypeX, defaultScaleType)) {
+	ScaleType scale_type;
+	// Small trick here: lookUpValue never returns kScaleTypeFull
+	if (!lookUpValue(passKey("scale_type"), &scale_type, kScaleTypeFull)) {
 		return false;
-	} else {
-		pass->scaleTypeY = pass->scaleTypeX;
+	} else if (scale_type != kScaleTypeFull) {
+		pass->scaleTypeY = pass->scaleTypeX = scale_type;
 	}
 
 	return true;
