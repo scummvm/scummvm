@@ -446,9 +446,9 @@ void ScummEngine_v5::o5_actorOps() {
 	// script describing that "the crew begins to plan their voyage" is running in order
 	// to display the flag, so we just reuse this check. The Ultimate Talkie also fixed
 	// this, but in a different way which doesn't look as portable between releases.
-	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || _game.id == GID_MONKEY) &&
+	if ((_game.id == GID_MONKEY_EGA || _game.id == GID_MONKEY_VGA || (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE))) &&
 		_roomResource == 87 && vm.slot[_currentScript].number == 10002 && act == 9 &&
-		_enableEnhancements && strcmp(_game.variant, "SE Talkie") != 0) {
+		_enableEnhancements) {
 		const int scriptNr = (_game.version == 5) ? 122 : 119;
 		if (!isScriptRunning(scriptNr)) {
 			a->putActor(0);
@@ -651,7 +651,7 @@ void ScummEngine_v5::o5_setClass() {
 		    _game.platform != Common::kPlatformSegaCD && _roomResource == 59 &&
 		    vm.slot[_currentScript].number == 10002 && obj == 915 && cls == 6 &&
 		    _currentPalette[251 * 3] == 0 && _enableEnhancements &&
-		    strcmp(_game.variant, "SE Talkie") != 0) {
+		    !(_game.features & GF_ULTIMATE_TALKIE)) {
 			// True as long as Guybrush isn't done with the voodoo recipe on the
 			// Sea Monkey. The Ultimate Talkie Edition probably does this as a way
 			// to limit this palette override to Part One; just copy this behavior.
@@ -1066,8 +1066,8 @@ void ScummEngine_v5::o5_drawObject() {
 	// face Guybrush even if he's already looking at him.  drawObject() should never
 	// be called if Bit[129] is set in that script, so if it does happen, it means
 	// the check was missing, and so we ignore the next 32 bytes of Dread's reaction.
-	if (_game.id == GID_MONKEY2 && _currentRoom == 22 && vm.slot[_currentScript].number == 201 && obj == 237 &&
-		state == 1 && readVar(0x8000 + 129) == 1 && _enableEnhancements && strcmp(_game.variant, "SE Talkie") != 0) {
+	if (_game.id == GID_MONKEY2 && !(_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 22 && vm.slot[_currentScript].number == 201 && obj == 237 &&
+		state == 1 && readVar(0x8000 + 129) == 1 && _enableEnhancements) {
 		_scriptPointer += 32;
 		return;
 	}
@@ -1535,7 +1535,7 @@ void ScummEngine_v5::o5_isEqual() {
 	//
 	// Not using `_enableEnhancements`, since this small oversight only
 	// exists in this fan-made edition which was made for enhancements.
-	if (_game.id == GID_MONKEY2 && _roomResource == 48 && vm.slot[_currentScript].number == 215 && a == vm.localvar[_currentScript][0] && strcmp(_game.variant, "SE Talkie") == 0) {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) && _roomResource == 48 && vm.slot[_currentScript].number == 215 && a == vm.localvar[_currentScript][0]) {
 		if (a == 550 && b == 530)
 			b = 550;
 		else if (a == 549 && b == 529)
@@ -1554,9 +1554,10 @@ void ScummEngine_v5::o5_isEqual() {
 	// future update or fan translation which would change this.
 	//
 	// Intentionally not using `_enableEnhancements` for this version.
-	if (_game.id == GID_MONKEY2 && _roomResource == 47 && vm.slot[_currentScript].number == 218 &&
-		var == 0x4000 + 1 && a == vm.localvar[_currentScript][1] && a == b && (b == 7 || b == 13) &&
-		strcmp(_game.variant, "SE Talkie") == 0) {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_ULTIMATE_TALKIE) &&
+		_roomResource == 47 && vm.slot[_currentScript].number == 218 &&
+		var == 0x4000 + 1 && a == vm.localvar[_currentScript][1] &&
+		a == b && (b == 7 || b == 13)) {
 		// No need to skip any line if playing in always-prefer-original-text
 		// mode (Bit[588]) where silent lines are expected, or if speech is muted.
 		if (readVar(0x8000 + 588) == 1 && !ConfMan.getBool("speech_mute")) {
@@ -1671,7 +1672,7 @@ void ScummEngine_v5::o5_notEqualZero() {
 		//
 		// Note that fixing this unveils the script error causing the possible
 		// dead-end described above.
-		if (var == 0x8000 + 70 && a == 0 && getOwner(519) == VAR(VAR_EGO) && strcmp(_game.variant, "SE Talkie") != 0 && _enableEnhancements) {
+		if (!(_game.features & GF_ULTIMATE_TALKIE) && var == 0x8000 + 70 && a == 0 && getOwner(519) == VAR(VAR_EGO) && _enableEnhancements) {
 			a = 1;
 		}
 
@@ -1920,7 +1921,7 @@ void ScummEngine_v5::o5_print() {
 	//
 	// The workaround is deliberately not marked as an enhancement, since
 	// this version makes so many changes of its own.
-	if (_game.id == GID_MONKEY && _currentRoom == 25 && vm.slot[_currentScript].number == 205 && VAR(VAR_HAVE_MSG) && strcmp(_game.variant, "SE Talkie") == 0) {
+	if (_game.id == GID_MONKEY && (_game.features & GF_ULTIMATE_TALKIE) && _currentRoom == 25 && vm.slot[_currentScript].number == 205 && VAR(VAR_HAVE_MSG)) {
 		_scriptPointer--;
 		o5_breakHere();
 		return;
@@ -3293,12 +3294,12 @@ void ScummEngine_v5::decodeParseString() {
 			// giving it a black outline.
 
 			else if (_game.id == GID_MONKEY &&
+					!(_game.features & GF_ULTIMATE_TALKIE) &&
 					_game.platform != Common::kPlatformSegaCD &&
 					_game.platform != Common::kPlatformFMTowns &&
 					_currentRoom == 36 &&
 					vm.slot[_currentScript].number == 201 &&
 					color == 2 &&
-					strcmp(_game.variant, "SE Talkie") != 0 &&
 					_enableEnhancements) {
 				color = findClosestPaletteColor(_currentPalette, 256, 0, 171, 0);
 			}
@@ -3469,12 +3470,13 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		Common::strlcpy(tmpBuf + diff, "5000", sizeof(tmpBuf) - diff);
 		Common::strlcpy(tmpBuf + diff + 4, tmp + sizeof("NCREDIT-NOTE-AMOUNT") - 1, sizeof(tmpBuf) - diff - 4);
 		printString(textSlot, (byte *)tmpBuf);
-	} else if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformSegaCD &&
+	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
+			_game.platform != Common::kPlatformSegaCD &&
 			((_roomResource == 78 && vm.slot[_currentScript].number == 201) ||
 			(_roomResource == 45 && vm.slot[_currentScript].number == 200 &&
 			isValidActor(10) && _actors[10]->isInCurrentRoom())) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color != 0x0F &&
-			strcmp(_game.variant, "SE Talkie") != 0 && _enableEnhancements) {
+			_enableEnhancements) {
 		// WORKAROUND: When Guybrush goes to the church at the end of Monkey1,
 		// the color for the ghost priest's lines is inconsistent in the v5
 		// releases (except for the SegaCD one with the smaller palette).
@@ -3482,10 +3484,11 @@ void ScummEngine_v5::decodeParseStringTextString(int textSlot) {
 		// "I heard that!" offscreen.
 		_string[textSlot].color = (_game.platform == Common::kPlatformFMTowns) ? 0x0A : 0xF9;
 		printString(textSlot, _scriptPointer);
-	} else if (_game.id == GID_MONKEY && _game.platform != Common::kPlatformSegaCD &&
+	} else if (_game.id == GID_MONKEY && !(_game.features & GF_ULTIMATE_TALKIE) &&
+			_game.platform != Common::kPlatformSegaCD &&
 			(vm.slot[_currentScript].number == 140 || vm.slot[_currentScript].number == 294) &&
 			_actorToPrintStrFor == 255 && _string[textSlot].color == 0x06 &&
-			strcmp(_game.variant, "SE Talkie") != 0 && _enableEnhancements) {
+			_enableEnhancements) {
 		// WORKAROUND: In MI1 CD, the colors when the navigator head speaks are
 		// not the intended ones (dark purple instead of brown), because the
 		// original `Color(6)` parameter was kept without adjusting it for the

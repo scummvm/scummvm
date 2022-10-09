@@ -242,7 +242,7 @@ void ScummEngine::startScene(int room, Actor *a, int objectNr) {
 			hasCopyProtectionScreen = false;
 
 		// The unofficial talkie never shows any copy protection screen.
-		if (strcmp(_game.variant, "SE Talkie") == 0)
+		if (_game.features & GF_ULTIMATE_TALKIE)
 			hasCopyProtectionScreen = false;
 
 		if (hasCopyProtectionScreen) {
