@@ -297,10 +297,10 @@ enum eAGSMouseButton
 };
 
 // Converts eAGSKeyCode to script API code, for "on_key_press" and similar callbacks
-int AGSKeyToScriptKey(int keycode);
+eAGSKeyCode AGSKeyToScriptKey(eAGSKeyCode keycode);
 // Converts eAGSKeyCode to ASCII text representation with the range check; returns 0 on failure
 // Not unicode compatible.
-char AGSKeyToText(int keycode);
+char AGSKeyToText(eAGSKeyCode keycode);
 
 } // namespace AGS3
 

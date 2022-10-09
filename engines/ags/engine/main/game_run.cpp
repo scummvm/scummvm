@@ -323,7 +323,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 	}
 
 	// Alt+X, abort (but only once game is loaded)
-	if ((_G(displayed_room) >= 0) && (_GP(play).abort_key > 0 && agskey == _GP(play).abort_key)) {
+	if ((_G(displayed_room) >= 0) && (agskey == _GP(play).abort_key)) {
 		Debug::Printf("Abort key pressed");
 		_G(check_dynamic_sprites_at_exit) = 0;
 		quit("!|");
@@ -417,9 +417,9 @@ static void check_keyboard_controls() {
 	if (!run_service_key_controls(ki)) {
 		return;
 	}
-	eAGSKeyCode kgn = ki.Key;
+	const eAGSKeyCode agskey = ki.Key;
 	// Then, check cutscene skip
-	check_skip_cutscene_keypress(kgn);
+	check_skip_cutscene_keypress(agskey);
 	if (_GP(play).fast_forward) {
 		return;
 	}
@@ -427,9 +427,9 @@ static void check_keyboard_controls() {
 		return;
 	}
 	// Now check for in-game controls
-	if (pl_run_plugin_hooks(AGSE_KEYPRESS, kgn)) {
+	if (pl_run_plugin_hooks(AGSE_KEYPRESS, agskey)) {
 		// plugin took the keypress
-		debug_script_log("Keypress code %d taken by plugin", kgn);
+		debug_script_log("Keypress code %d taken by plugin", agskey);
 		return;
 	}
 
@@ -438,9 +438,8 @@ static void check_keyboard_controls() {
 		// only allow a key to remove the overlay if the icon bar isn't up
 		if (IsGamePaused() == 0) {
 			// check if it requires a specific keypress
-			if ((_GP(play).skip_speech_specific_key > 0) &&
-				(kgn != _GP(play).skip_speech_specific_key)) {
-			} else {
+			if ((_GP(play).skip_speech_specific_key == 0) ||
+				(agskey == _GP(play).skip_speech_specific_key)) {
 				remove_screen_overlay(_GP(play).text_overlay_on);
 				_GP(play).SetWaitKeySkip(ki);
 			}
@@ -456,7 +455,7 @@ static void check_keyboard_controls() {
 
 	if (_G(inside_script)) {
 		// Don't queue up another keypress if it can't be run instantly
-		debug_script_log("Keypress %d ignored (game blocked)", kgn);
+		debug_script_log("Keypress %d ignored (game blocked)", agskey);
 		return;
 	}
 
@@ -466,8 +465,9 @@ static void check_keyboard_controls() {
 	// it should do if a displayable character (32-255) is
 	// pressed, but exclude control characters (<32) and
 	// extended keys (eg. up/down arrow; 256+)
-	if ((((kgn >= 32) && (kgn <= 255) && (kgn != '[')) || (kgn == eAGSKeyCodeReturn) || (kgn == eAGSKeyCodeBackspace))
-			&& (_G(all_buttons_disabled) < 0)) {
+	if ( (((agskey >= 32) && (agskey <= 255) && (agskey != '[')) ||
+			(agskey == eAGSKeyCodeReturn) || (agskey == eAGSKeyCodeBackspace))
+		&& (_G(all_buttons_disabled) < 0)) {
 		for (int guiIndex = 0; guiIndex < _GP(game).numgui; guiIndex++) {
 			auto &gui = _GP(guis)[guiIndex];
 
@@ -505,17 +505,17 @@ static void check_keyboard_controls() {
 	}
 
 	// Built-in key-presses
-	if (kgn == _GP(usetup).key_save_game) {
+	if (agskey == _GP(usetup).key_save_game) {
 		do_save_game_dialog();
 		return;
-	} else if (kgn == _GP(usetup).key_restore_game) {
+	} else if (agskey == _GP(usetup).key_restore_game) {
 		do_restore_game_dialog();
 		return;
 	}
 
 	if (!keywasprocessed) {
-		int sckey = AGSKeyToScriptKey(kgn);
-		int sckeymod = ki.Mod;
+		const int sckey = AGSKeyToScriptKey(ki.Key);
+		const int sckeymod = ki.Mod;
 		if (old_keyhandle || (ki.UChar == 0)) {
 			debug_script_log("Running on_key_press keycode %d, mod %d", sckey, sckeymod);
 			setevent(EV_TEXTSCRIPT, TS_KEYPRESS, sckey, sckeymod);
