@@ -67,10 +67,10 @@ GUIButton::GUIButton() {
 	Font = 0;
 	TextColor = 0;
 	TextAlignment = kAlignTopCenter;
-	ClickAction[kMouseLeft] = kGUIAction_RunScript;
-	ClickAction[kMouseRight] = kGUIAction_RunScript;
-	ClickData[kMouseLeft] = 0;
-	ClickData[kMouseRight] = 0;
+	ClickAction[kGUIClickLeft] = kGUIAction_RunScript;
+	ClickAction[kGUIClickRight] = kGUIAction_RunScript;
+	ClickData[kGUIClickLeft] = 0;
+	ClickData[kGUIClickRight] = 0;
 
 	IsPushed = false;
 	IsMouseOver = false;
@@ -248,10 +248,10 @@ void GUIButton::WriteToFile(Stream *out) const {
 	out->WriteInt32(PushedImage);
 	out->WriteInt32(Font);
 	out->WriteInt32(TextColor);
-	out->WriteInt32(ClickAction[kMouseLeft]);
-	out->WriteInt32(ClickAction[kMouseRight]);
-	out->WriteInt32(ClickData[kMouseLeft]);
-	out->WriteInt32(ClickData[kMouseRight]);
+	out->WriteInt32(ClickAction[kGUIClickLeft]);
+	out->WriteInt32(ClickAction[kGUIClickRight]);
+	out->WriteInt32(ClickData[kGUIClickLeft]);
+	out->WriteInt32(ClickData[kGUIClickRight]);
 
 	StrUtil::WriteString(_text, out);
 	out->WriteInt32(TextAlignment);
@@ -270,10 +270,10 @@ void GUIButton::ReadFromFile(Stream *in, GuiVersion gui_version) {
 	}
 	Font = in->ReadInt32();
 	TextColor = in->ReadInt32();
-	ClickAction[kMouseLeft] = (GUIClickAction)in->ReadInt32();
-	ClickAction[kMouseRight] = (GUIClickAction)in->ReadInt32();
-	ClickData[kMouseLeft] = in->ReadInt32();
-	ClickData[kMouseRight] = in->ReadInt32();
+	ClickAction[kGUIClickLeft] = (GUIClickAction)in->ReadInt32();
+	ClickAction[kGUIClickRight] = (GUIClickAction)in->ReadInt32();
+	ClickData[kGUIClickLeft] = in->ReadInt32();
+	ClickData[kGUIClickRight] = in->ReadInt32();
 	if (gui_version < kGuiVersion_350)
 		SetText(String::FromStreamCount(in, GUIBUTTON_LEGACY_TEXTLENGTH));
 	else
