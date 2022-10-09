@@ -56,24 +56,32 @@ void PlayFlic(int numb, int scr_flags) {
 		_GP(play).screen_is_faded_out = 0;
 
 	// Convert PlayFlic flags to common video flags
-	/*
-	0  player can't skip animation
-	1  player can press ESC to skip animation
-	2  player can press any key or click mouse to skip animation
-	+10 (i.e.10,11,12) do not stretch to full-screen, just play at flc size
-	+100 do not clear the screen before starting playback
+	/* NOTE: historically using decimal "flags"
+	default (0): the video will be played stretched to screen;
+		player cannot skip animation; screen will be cleared
+	1: player can press ESC to skip animation
+	2: player can press any key or click mouse to skip animation
+	10: play the video at original size
+	100: do not clear the screen before starting playback
 	*/
 	int flags = kVideo_EnableVideo;
 	VideoSkipType skip = VideoSkipNone;
+	// skip type
 	switch (scr_flags % 10) {
 	case 1: skip = VideoSkipEscape; break;
 	case 2: skip = VideoSkipKeyOrMouse; break;
-	default: break;
+	default: skip = VideoSkipNone; break;
 	}
-	if ((scr_flags % 100) < 10)
-		flags |= kVideo_Stretch;
-	if (scr_flags < 100)
-		flags |= kVideo_ClearScreen;
+	// video size
+	switch ((scr_flags % 100) / 10) {
+	case 1: /* play original size, no flag */ break;
+	default: flags |= kVideo_Stretch;
+	}
+	// clear screen
+	switch ((scr_flags % 1000) / 100) {
+	case 1: /* don't clear screen, no flag */ break;
+	default: flags |= kVideo_ClearScreen;
+	}
 
 	play_flc_video(numb, flags, skip);
 }
@@ -89,19 +97,24 @@ void PlayVideo(const char *name, int skip, int scr_flags) {
 	// Convert PlayVideo flags to common video flags
 	/* NOTE: historically using decimal "flags"
 	default (0): the video will be played at original size,
-				video's own audio is playing, game sounds muted;
+		video's own audio is playing, game sounds muted;
 	1: the video will be stretched to full screen;
 	10: keep game audio only, video's own audio muted;
 	-- since 3.6.0:
 	20: play both game audio and video's own audio
 	*/
 	int flags = kVideo_EnableVideo;
-	if ((scr_flags % 10) == 1)
-		flags |= kVideo_Stretch;
-	if ((scr_flags / 10) == 0 || (scr_flags / 10) == 2)
-		flags |= kVideo_EnableAudio;
-	if ((scr_flags / 10) > 0)
-		flags |= kVideo_KeepGameAudio;
+	// video size
+	switch (scr_flags % 10) {
+	case 1: flags |= kVideo_Stretch; break;
+	default: break;
+	}
+	// audio option
+	switch ((scr_flags % 100) / 10) {
+	case 1: flags |= kVideo_KeepGameAudio; break;
+	case 2: flags |= kVideo_EnableAudio | kVideo_KeepGameAudio; break;
+	default: flags |= kVideo_EnableAudio; break;
+	}
 
 	// if game audio is disabled, then don't play any sound on the video either
 	if (!_GP(usetup).audio_enabled)
