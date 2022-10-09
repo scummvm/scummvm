@@ -40,6 +40,8 @@ class MiniscriptThread;
 
 class BehaviorModifier : public Modifier, public IModifierContainer {
 public:
+	BehaviorModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::BehaviorModifier &data);
 
 	bool isBehavior() const override { return true; }
@@ -250,6 +252,8 @@ private:
 
 class AliasModifier : public Modifier {
 public:
+	AliasModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::AliasModifier &data);
 	uint32 getAliasID() const;
 
@@ -305,6 +309,8 @@ private:
 
 class SoundEffectModifier : public Modifier {
 public:
+	SoundEffectModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data);
 
 	bool respondsToEvent(const Event &evt) const override;
@@ -582,6 +588,7 @@ private:
 
 class TimerMessengerModifier : public Modifier {
 public:
+	TimerMessengerModifier();
 	~TimerMessengerModifier();
 
 	bool load(ModifierLoaderContext &context, const Data::TimerMessengerModifier &data);
@@ -926,6 +933,8 @@ private:
 
 class BooleanVariableModifier : public VariableModifier {
 public:
+	BooleanVariableModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data);
 
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
@@ -961,6 +970,8 @@ private:
 
 class IntegerVariableModifier : public VariableModifier {
 public:
+	IntegerVariableModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::IntegerVariableModifier &data);
 
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
@@ -1110,6 +1121,8 @@ private:
 
 class FloatingPointVariableModifier : public VariableModifier {
 public:
+	FloatingPointVariableModifier();
+
 	bool load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data);
 
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;

@@ -68,6 +68,9 @@ bool CompoundVarLoader::readSave(Common::ReadStream *stream, uint32 saveFileVers
 	return true;
 }
 
+BehaviorModifier::BehaviorModifier() : _switchable(false), _isEnabled(false) {
+}
+
 bool BehaviorModifier::load(ModifierLoaderContext &context, const Data::BehaviorModifier &data) {
 	if (data.numChildren > 0) {
 		ChildLoaderContext loaderContext;
@@ -500,6 +503,9 @@ const char *SetModifier::getDefaultName() const {
 	return "Set Modifier";
 }
 
+AliasModifier::AliasModifier() : _aliasID(0) {
+}
+
 bool AliasModifier::load(ModifierLoaderContext &context, const Data::AliasModifier &data) {
 	_guid = data.guid;
 	if (!_modifierFlags.load(data.modifierFlags))
@@ -670,6 +676,9 @@ Common::SharedPtr<Modifier> ChangeSceneModifier::shallowClone() const {
 
 const char *ChangeSceneModifier::getDefaultName() const {
 	return "Change Scene Modifier";
+}
+
+SoundEffectModifier::SoundEffectModifier() : _soundType(kSoundTypeBeep), _assetID(0) {
 }
 
 bool SoundEffectModifier::load(ModifierLoaderContext &context, const Data::SoundEffectModifier &data) {
@@ -1423,6 +1432,9 @@ VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskD
 		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData, nullptr);
 
 	return kVThreadReturn;
+}
+
+TimerMessengerModifier::TimerMessengerModifier() : _milliseconds(0), _looping(false) {
 }
 
 TimerMessengerModifier::~TimerMessengerModifier() {
@@ -2311,6 +2323,9 @@ const char *CompoundVariableModifier::getDefaultName() const {
 	return "Compound Variable";
 }
 
+BooleanVariableModifier::BooleanVariableModifier() : _value(false) {
+}
+
 bool BooleanVariableModifier::load(ModifierLoaderContext &context, const Data::BooleanVariableModifier &data) {
 	if (!loadTypicalHeader(data.modHeader))
 		return false;
@@ -2381,6 +2396,9 @@ bool BooleanVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream,
 
 	_value = (b != 0);
 	return true;
+}
+
+IntegerVariableModifier::IntegerVariableModifier() : _value(0) {
 }
 
 bool IntegerVariableModifier::load(ModifierLoaderContext& context, const Data::IntegerVariableModifier& data) {
@@ -2724,6 +2742,9 @@ bool PointVariableModifier::SaveLoad::loadInternal(Common::ReadStream *stream, u
 		return false;
 
 	return true;
+}
+
+FloatingPointVariableModifier::FloatingPointVariableModifier() : _value(0.0) {
 }
 
 bool FloatingPointVariableModifier::load(ModifierLoaderContext &context, const Data::FloatingPointVariableModifier &data) {
