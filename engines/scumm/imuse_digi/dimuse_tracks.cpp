@@ -509,23 +509,21 @@ int IMuseDigital::tracksGetParam(int soundId, int opcode) {
 }
 
 int IMuseDigital::tracksLipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height) {
-	int32 h, w;
+	int32 w, h;
 
 	byte *syncPtr = nullptr;
 	int32 syncSize = 0;
 
 	IMuseDigiTrack *curTrack;
-	uint16 msPosDiv;
-	uint16 *tmpPtr;
-	int32 loopIndex;
 	int16 val;
 
-	h = 0;
 	w = 0;
+	h = 0;
 	curTrack = _trackList;
 
 	if (msPos >= 0) {
-		msPosDiv = msPos >> 4;
+		// Check for an invalid timestamp:
+		// this has to be a suitable 2-bytes word...
 		if (((msPos >> 4) & 0xFFFF0000) != 0) {
 			return -5;
 		} else {
@@ -554,20 +552,36 @@ int IMuseDigital::tracksLipSync(int soundId, int syncId, int msPos, int32 &width
 					}
 
 					if (syncSize && syncPtr) {
-						tmpPtr = (uint16 *)(syncPtr + 2);
-						loopIndex = (syncSize >> 2) - 1;
-						if (syncSize >> 2) {
-							do {
-								if (*tmpPtr >= msPosDiv)
-									break;
-								tmpPtr += 2;
-							} while (loopIndex--);
+						// SYNC data is packed in a number of 4-bytes entries, in the following order:
+						// - Width and height values, packed as one byte each, next to each other;
+						// - The time position of said values, packed as an unsigned word (2-bytes).
+
+						// Given an input timestamp (in ms), we're going to get its representation as 60Hz
+						// increments by dividing it by 16, then we're going to search the SYNC data from
+						// the beginning to find the first entry with a timestamp being equal or greater
+						// our 60Hz timestamp.
+						uint16 inputTs = msPos >> 4;
+						int32 numOfEntries = (syncSize >> 2);
+						uint16 *syncDataWordPtr = (uint16 *)syncPtr;
+						uint16 curEntryTs = 0;
+						int idx;
+						for (idx = 0; idx < numOfEntries; idx++) {
+							curEntryTs = READ_LE_UINT16(&syncDataWordPtr[idx * 2 + 1]);
+							if (curEntryTs >= inputTs) {
+								break;
+							}
 						}
 
-						if (loopIndex < 0 || *tmpPtr > msPosDiv)
-							tmpPtr -= 2;
+						// If no relevant entry is found, or if the found entry timestamp is strictly greater
+						// than ours, then we get the previous entry. If no entry was found, this will get the
+						// last entry in our data block.
+						if (idx == numOfEntries || curEntryTs > inputTs) {
+							idx--;
+						}
 
-						val = *(tmpPtr - 1);
+						// Finally, extract width and height values and remove
+						// their signs by performing AND operations with 0x7F...
+						val = READ_LE_INT16(&syncDataWordPtr[idx * 2]);
 						w = (val >> 8) & 0x7F;
 						h = val & 0x7F;
 					}
