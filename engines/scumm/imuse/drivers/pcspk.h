@@ -134,7 +134,7 @@ private:
 	private:
 		IMuseDriver_PCSpk *_owner;
 		const byte _number;
-		uint8 _programNr;
+		//uint8 _programNr;
 		uint8 _sustain;
 		uint8 _pitchBendFactor;
 		int16 _pitchBendTmp;

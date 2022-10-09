@@ -172,7 +172,7 @@ void IMuseDriver_PCSpk::output(uint16 out) {
 }
 
 IMuseDriver_PCSpk::MidiChannel_PcSpk::MidiChannel_PcSpk(IMuseDriver_PCSpk *owner, byte number) : MidiChannel(), _owner(owner), _number(number), _allocated(false),
-	_priority(0), _tl(0), _modWheel(0), _pitchBend(0), _programNr(0), _sustain(0), _pitchBendFactor(2), _pitchBendTmp(0), _transpose(0), _detune(0) {
+	_priority(0), _tl(0), _modWheel(0), _pitchBend(0), /*_programNr(0), */_sustain(0), _pitchBendFactor(2), _pitchBendTmp(0), _transpose(0), _detune(0) {
 	memset(&_out, 0, sizeof(_out));
 	memset(_instrument, 0, sizeof(_instrument));
 }
