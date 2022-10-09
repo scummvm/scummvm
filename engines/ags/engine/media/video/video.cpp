@@ -75,10 +75,8 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags
 	bool enableVideo = (flags & kVideo_EnableVideo) != 0;
 	bool enableAudio = (flags & kVideo_EnableAudio) != 0;
 
-	// TODO: This seems back to front
-	if (enableAudio) {
-		stop_all_sound_and_music();
-	}
+	if (!enableAudio)
+		decoder->setVolume(0);
 
 	update_polled_stuff_if_runtime();
 	 

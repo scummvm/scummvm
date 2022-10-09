@@ -42,6 +42,7 @@ enum VideoFlags {
 	kVideo_ClearScreen = 0x0004,
 	kVideo_LegacyFrameSize = 0x0008,
 	kVideo_EnableAudio = 0x0010,
+	kVideo_KeepGameAudio  = 0x0020
 };
 
 enum VideoSkipType {
