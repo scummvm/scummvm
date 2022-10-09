@@ -1903,6 +1903,11 @@ void OptionsDialog::reflowLayout() {
 
 void OptionsDialog::setupGraphicsTab() {
 	if (_graphicsTabId != -1) {
+		// Since we do not create shader controls, the rebuild is required
+		// Fixes crash when switching from SDL Surface to OpenGL
+		if (!_shader && g_system->hasFeature(OSystem::kFeatureShaders)) {
+			rebuild();
+		}
 		setGraphicSettingsState(_enableGraphicSettings);
 	}
 	if (!_fullscreenCheckbox)
