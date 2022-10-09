@@ -70,7 +70,8 @@ KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle
 	ki.UChar = event.kbd.ascii;
 	ki.Key = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, old_keyhandle);
 	ki.CompatKey = ::AGS::g_events->scummvm_key_to_ags_key(event, ki.Mod, true);
-
+	if (ki.CompatKey == eAGSKeyCodeNone)
+		ki.CompatKey = ki.Key;
 	return ki;
 }
 
