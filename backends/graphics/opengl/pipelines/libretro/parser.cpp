@@ -425,35 +425,30 @@ bool PresetParser::parsePassScale(const uint id, ShaderPass *pass) {
 	// Parse actual scale value for the pass.
 	//
 	// Like for the scale type, 'scale' overrides 'scale_x'/'scale_y'.
-	// However, in case the scale types for x/y are different the usage of
-	// 'scale' leads to undefined behavior. In our case we simply reject
-	// the shader preset.
+	if (_entries.contains(passKey("scale"))) {
+		if (!lookUpValueScale(passKey("scale"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
+			return false;
+		}
 
-	if (!lookUpValueScale(passKey("scale_x"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
-		return false;
-	}
+		if (!lookUpValueScale(passKey("scale"), &pass->scaleYFloat, &pass->scaleYUint, pass->scaleTypeY)) {
+			return false;
+		}
 
-	if (!lookUpValueScale(passKey("scale_y"), &pass->scaleYFloat, &pass->scaleYUint, pass->scaleTypeY)) {
-		return false;
-	}
-
-	if (!_entries.contains(passKey("scale"))) {
 		return true;
 	}
 
-	if (pass->scaleTypeX != pass->scaleTypeY) {
-		_errorDesc = Common::String::format("Pass %u: Scale types for x/y differ but 'scale%u' defined", id, id);
-		return false;
+	if (_entries.contains(passKey("scale_x"))) {
+		if (!lookUpValueScale(passKey("scale_x"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
+			return false;
+		}
 	}
 
-	pass->scaleXFloat = 0;
-	pass->scaleXUint = 0;
-	if (!lookUpValueScale(passKey("scale"), &pass->scaleXFloat, &pass->scaleXUint, pass->scaleTypeX)) {
-		return false;
+	if (_entries.contains(passKey("scale_y"))) {
+		if (!lookUpValueScale(passKey("scale_y"), &pass->scaleYFloat, &pass->scaleYUint, pass->scaleTypeY)) {
+			return false;
+		}
 	}
 
-	pass->scaleYFloat = pass->scaleXFloat;
-	pass->scaleYUint = pass->scaleXUint;
 	return true;
 }
 #undef passKey
