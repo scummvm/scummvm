@@ -136,9 +136,9 @@ void GUIListBox::Draw(Bitmap *ds, int x, int y) {
 	color_t text_color = ds->GetCompatibleColor(TextColor);
 	color_t draw_color = ds->GetCompatibleColor(TextColor);
 	if (IsBorderShown()) {
-		ds->DrawRect(Rect(x, y, x + width + (pixel_size - 1), y + height + (pixel_size - 1)), draw_color);
+		ds->DrawRect(Rect(x, y, x + width, y + height), draw_color);
 		if (pixel_size > 1)
-			ds->DrawRect(Rect(x + 1, y + 1, x + width, y + height), draw_color);
+			ds->DrawRect(Rect(x + 1, y + 1, x + width - 1, y + height - 1), draw_color);
 	}
 
 	int right_hand_edge = (x + width) - pixel_size - 1;
