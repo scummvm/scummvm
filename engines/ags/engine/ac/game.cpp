@@ -1336,7 +1336,7 @@ bool unserialize_audio_script_object(int index, const char *objectType, Stream *
 
 void game_sprite_updated(int sprnum) {
 	// character and object draw caches
-	reset_objcache_for_sprite(sprnum);
+	reset_objcache_for_sprite(sprnum, false);
 
 	// gui backgrounds
 	for (auto &gui : _GP(guis)) {
@@ -1365,7 +1365,7 @@ void game_sprite_updated(int sprnum) {
 
 void game_sprite_deleted(int sprnum) {
 	// character and object draw caches
-	reset_objcache_for_sprite(sprnum);
+	reset_objcache_for_sprite(sprnum, true);
 	// room object graphics
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
