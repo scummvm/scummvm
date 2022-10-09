@@ -27,6 +27,60 @@
 #include "mm/mm1/gfx/screen_decoder.h"
 #include "mm/mm1/maps/maps.h"
 #include "mm/mm1/maps/map00.h"
+#include "mm/mm1/maps/map01.h"
+#include "mm/mm1/maps/map02.h"
+#include "mm/mm1/maps/map03.h"
+#include "mm/mm1/maps/map04.h"
+#include "mm/mm1/maps/map05.h"
+#include "mm/mm1/maps/map06.h"
+#include "mm/mm1/maps/map07.h"
+#include "mm/mm1/maps/map08.h"
+#include "mm/mm1/maps/map09.h"
+#include "mm/mm1/maps/map10.h"
+#include "mm/mm1/maps/map11.h"
+#include "mm/mm1/maps/map12.h"
+#include "mm/mm1/maps/map13.h"
+#include "mm/mm1/maps/map14.h"
+#include "mm/mm1/maps/map15.h"
+#include "mm/mm1/maps/map16.h"
+#include "mm/mm1/maps/map17.h"
+#include "mm/mm1/maps/map18.h"
+#include "mm/mm1/maps/map19.h"
+#include "mm/mm1/maps/map20.h"
+#include "mm/mm1/maps/map21.h"
+#include "mm/mm1/maps/map22.h"
+#include "mm/mm1/maps/map23.h"
+#include "mm/mm1/maps/map24.h"
+#include "mm/mm1/maps/map25.h"
+#include "mm/mm1/maps/map26.h"
+#include "mm/mm1/maps/map27.h"
+#include "mm/mm1/maps/map28.h"
+#include "mm/mm1/maps/map29.h"
+#include "mm/mm1/maps/map30.h"
+#include "mm/mm1/maps/map31.h"
+#include "mm/mm1/maps/map32.h"
+#include "mm/mm1/maps/map33.h"
+#include "mm/mm1/maps/map34.h"
+#include "mm/mm1/maps/map35.h"
+#include "mm/mm1/maps/map36.h"
+#include "mm/mm1/maps/map37.h"
+#include "mm/mm1/maps/map38.h"
+#include "mm/mm1/maps/map39.h"
+#include "mm/mm1/maps/map40.h"
+#include "mm/mm1/maps/map41.h"
+#include "mm/mm1/maps/map42.h"
+#include "mm/mm1/maps/map43.h"
+#include "mm/mm1/maps/map44.h"
+#include "mm/mm1/maps/map45.h"
+#include "mm/mm1/maps/map46.h"
+#include "mm/mm1/maps/map47.h"
+#include "mm/mm1/maps/map48.h"
+#include "mm/mm1/maps/map49.h"
+#include "mm/mm1/maps/map50.h"
+#include "mm/mm1/maps/map51.h"
+#include "mm/mm1/maps/map52.h"
+#include "mm/mm1/maps/map53.h"
+#include "mm/mm1/maps/map54.h"
 
 namespace MM {
 namespace MM1 {
@@ -34,74 +88,6 @@ namespace MM1 {
 Maps::Maps *g_maps;
 
 namespace Maps {
-
-/** PLACEHOLDER MAPS **/
-#define PLACEHOLDER(SUFFIX, INDEX, NAME, ID) \
-	class Map##SUFFIX : public Map { \
-	public: \
-		Map##SUFFIX() : Map(INDEX, NAME, ID) {} \
-		void special() override {} \
-		void load() override { \
-			Map::load(); \
-			warning("TODO: Map not implemented yet"); \
-		} \
-	}
-
-PLACEHOLDER(01, 1, "portsmit", 0xC03);
-PLACEHOLDER(02, 2, "algary", 0x203);
-PLACEHOLDER(03, 3, "dusk", 0x802);
-PLACEHOLDER(04, 4, "erliquin", 0x0B1A);
-PLACEHOLDER(05, 5, "cave1", 0x0A11);
-PLACEHOLDER(06, 6, "cave2", 0x1);
-PLACEHOLDER(07, 7, "cave3", 0xC01);
-PLACEHOLDER(08, 8, "cave4", 0x202);
-PLACEHOLDER(09, 9, "cave5", 0x5);
-PLACEHOLDER(10, 10, "cave6", 0x51B);
-PLACEHOLDER(11, 11, "cave7", 0x212);
-PLACEHOLDER(12, 12, "cave8", 0x601);
-PLACEHOLDER(13, 13, "cave9", 0xA00);
-PLACEHOLDER(14, 14, "areaa1", 0xF01);
-PLACEHOLDER(15, 15, "areaa2", 0x502);
-PLACEHOLDER(16, 16, "areaa3", 0xB02);
-PLACEHOLDER(17, 17, "areaa4", 0x103);
-PLACEHOLDER(18, 18, "areab1", 0xA00);
-PLACEHOLDER(19, 19, "areab2", 0x703);
-PLACEHOLDER(20, 20, "areab3", 0x101);
-PLACEHOLDER(21, 21, "areab4", 0xD03);
-PLACEHOLDER(22, 22, "areac1", 0x304);
-PLACEHOLDER(23, 23, "areac2", 0xA11);
-PLACEHOLDER(24, 24, "areac3", 0x904);
-PLACEHOLDER(25, 25, "areac4", 0xF04);
-PLACEHOLDER(26, 26, "aread1", 0x505);
-PLACEHOLDER(27, 27, "aread2", 0xB05);
-PLACEHOLDER(28, 28, "aread3", 0x106);
-PLACEHOLDER(29, 29, "aread4", 0x801);
-PLACEHOLDER(30, 30, "areae1", 0x112);
-PLACEHOLDER(31, 31, "areae2", 0x706);
-PLACEHOLDER(32, 32, "areae3", 0xB1A);
-PLACEHOLDER(33, 33, "areae4", 0x11B);
-PLACEHOLDER(34, 34, "doom", 0x706);
-PLACEHOLDER(35, 35, "blackrn", 0xF08);
-PLACEHOLDER(36, 36, "blackrs", 0x508);
-PLACEHOLDER(37, 37, "qvl1", 0xF03);
-PLACEHOLDER(38, 38, "qvl2", 0x703);
-PLACEHOLDER(39, 39, "rwl1", 0xF02);
-PLACEHOLDER(40, 40, "rwl2", 0x702);
-PLACEHOLDER(41, 41, "enf1", 0xF04);
-PLACEHOLDER(42, 42, "enf2", 0x704);
-PLACEHOLDER(43, 43, "whitew", 0xA11);
-PLACEHOLDER(44, 44, "dragad", 0x107);
-PLACEHOLDER(45, 45, "udrag1", 0xF05);
-PLACEHOLDER(46, 46, "udrag2", 0xA00);
-PLACEHOLDER(47, 47, "udrag3", 0x705);
-PLACEHOLDER(48, 48, "demon", 0x412);
-PLACEHOLDER(49, 49, "alamar", 0xB07);
-PLACEHOLDER(50, 50, "pp1", 0xF01);
-PLACEHOLDER(51, 51, "pp2", 0x701);
-PLACEHOLDER(52, 52, "pp3", 0xE00);
-PLACEHOLDER(53, 53, "pp4", 0x201);
-PLACEHOLDER(54, 54, "astral", 0xB1A);
-#undef PLACEHOLDER
 
 static const byte LOOKUPS_START[4] = { 0, 0, 14, 34 };
 static const byte COLOR_OFFSET[55] = {

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP0_H
-#define MM1_MAPS_MAP0_H
+#ifndef MM1_MAPS_MAP00_H
+#define MM1_MAPS_MAP00_H
 
 #include "mm/mm1/maps/map.h"
 
