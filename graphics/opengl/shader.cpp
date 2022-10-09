@@ -415,6 +415,8 @@ void Shader::freeBuffer(GLuint vbo) {
 }
 
 bool Shader::addAttribute(const char *attrib) {
+	// Once we are linked we can't rebind the attribute so we have to deal with its place defined by OpenGL
+	// As we store attribute at its OpenGL index, we will end up with empty attributes in the middle
 	uint32 i;
 	for (i = 0; i < _attributes.size(); ++i)
 		if (_attributes[i]._name.equals(attrib))
@@ -422,11 +424,19 @@ bool Shader::addAttribute(const char *attrib) {
 
 	GLint result = -1;
 	GL_ASSIGN(result, glGetAttribLocation(*_shaderNo, attrib));
-	if (result == -1)
+	if (result < 0)
 		return false;
 
-	GL_CALL(glBindAttribLocation(*_shaderNo, i, attrib));
-	_attributes.push_back(VertexAttrib(i, attrib));
+
+	// Make sure we can store our new attribute
+	if (_attributes.size() <= (uint)result) {
+		for(; i < (uint)result; i++) {
+			_attributes.push_back(VertexAttrib(i, ""));
+		}
+		_attributes.push_back(VertexAttrib(result, attrib));
+	}
+
+	_attributes[result] = VertexAttrib(result, attrib);
 	return true;
 }
 
