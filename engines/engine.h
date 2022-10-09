@@ -154,7 +154,7 @@ protected:
 	 */
 	Common::EventManager *_eventMan;
 	/**
-	 * The SaveFileMAnager used by the engine.
+	 * The SaveFileManager used by the engine.
 	 */
 	Common::SaveFileManager *_saveFileMan;
 
