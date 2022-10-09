@@ -442,7 +442,7 @@ static void check_keyboard_controls() {
 				(kgn != _GP(play).skip_speech_specific_key)) {
 			} else {
 				remove_screen_overlay(_GP(play).text_overlay_on);
-				_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+				_GP(play).SetWaitKeySkip(ki);
 			}
 		}
 
@@ -450,7 +450,7 @@ static void check_keyboard_controls() {
 	}
 
 	if ((_GP(play).wait_counter != 0) && (_GP(play).key_skip_wait & SKIP_KEYPRESS) != 0) {
-		_GP(play).SetWaitSkipResult(SKIP_KEYPRESS, kgn);
+		_GP(play).SetWaitKeySkip(ki);
 		return;
 	}
 

@@ -25,6 +25,7 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/character_info.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/runtime_defines.h"
 #include "ags/engine/ac/speech.h"
 #include "ags/engine/ac/timer.h"
@@ -65,7 +66,6 @@ enum GameStateSvgVersion {
 	kGSSvgVersion_350_9 = 2,
 	kGSSvgVersion_350_10 = 3,
 };
-
 
 
 // Adding to this might need to modify AGSDEFNS.SH and AGSPLUGIN.H
@@ -359,10 +359,13 @@ struct GameState {
 
 	// Set how the last blocking wait was skipped
 	void SetWaitSkipResult(int how, int data = 0);
-	// Returns the code of the latest blocking wait skip method.
-	// * positive value means a key code;
-	// * negative value means a -(mouse code + 1);
-	// * 0 means timeout.
+	void SetWaitKeySkip(const KeyInput &kp) {
+		SetWaitSkipResult(SKIP_KEYPRESS, AGSKeyToScriptKey(kp.Key) | kp.Mod);
+	}
+	// Returns the information about how the latest blocking wait was skipped.
+	// The information is packed into int32 value like this:
+	// | 0xFF       | 0xFF    | 0xF      | 0xFFF                     |
+	// | eInputType | eKeyMod | reserved | eKeyCode, MouseButton etc |
 	int GetWaitSkipResult() const;
 
 	//
