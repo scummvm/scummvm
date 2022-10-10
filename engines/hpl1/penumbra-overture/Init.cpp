@@ -248,44 +248,6 @@ static tString getStringConfig(const char *name, const tString &defaultVal) {
 bool cInit::Init(tString saveToLoad) {
 	SetWindowCaption("Penumbra Loading...");
 
-	// PERSONAL DIR /////////////////////
-	tWString sPersonalDir = GetSystemSpecialPath(eSystemPath_Personal);
-	if (cString::GetLastCharW(sPersonalDir) != _W("/") &&
-		cString::GetLastCharW(sPersonalDir) != _W("\\")) {
-		sPersonalDir += _W("/");
-	}
-
-	// CREATE NEEDED DIRS /////////////////////
-	gsUserSettingsPath = sPersonalDir + PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("settings.cfg");
-#ifndef WIN32
-	// For Mac OS X and Linux move the OLD Episode 1 folder to Penumbra/Overture and symlink to the old path
-	if (FolderExists(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra Overture/Episode1")) && !IsFileLink(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra Overture/Episode1"))) {
-		// Create the new folder
-		if (!FolderExists(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra")))
-			CreateFolder(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra"));
-		// Move the Older Episode 1 to the new Overture
-		RenameFile(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra Overture/Episode1"),
-				   sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra/Overture"));
-		// Link back the old one to the new one
-		LinkFile(sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra/Overture"),
-				 sPersonalDir + PERSONAL_RELATIVEROOT _W("Penumbra Overture/Episode1"));
-	}
-#endif
-
-	tWString vDirs[] = {PERSONAL_RELATIVEPIECES // auto includes ,
-							PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME_PARENT,
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME};
-	int lDirNum = PERSONAL_RELATIVEPIECES_COUNT + 2;
-
-	// Check if directories exist and if not create
-	for (int i = 0; i < lDirNum; ++i) {
-		tWString sDir = sPersonalDir + vDirs[i];
-		if (FolderExists(sDir))
-			continue;
-
-		CreateFolder(sDir);
-	}
-
 	// MAIN INIT /////////////////////
 
 	// Check for what settings file to use.

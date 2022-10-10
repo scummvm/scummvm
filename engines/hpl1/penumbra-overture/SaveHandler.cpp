@@ -219,52 +219,6 @@ cSaveHandler::cSaveHandler(cInit *apInit) : iUpdateable("SaveHandler") {
 	mpSavedGame = hplNew(cSavedGame, ());
 
 	Reset();
-
-	//////////////////////////////////////////////
-	// Create directories
-	msSaveDir = _W("");
-	/*LowLevelSystem *pLowLevelSystem = */mpInit->mpGame->GetSystem()->GetLowLevel();
-
-	tWString sPeronalDir = GetSystemSpecialPath(eSystemPath_Personal);
-
-	if (sPeronalDir == _W("")) {
-		Warning("Couldn't find a personal folder! Using the local folder instead!\n");
-		return;
-	}
-
-	// Put an "/" at end of needed
-	if (cString::GetLastCharW(sPeronalDir) != _W("/") &&
-		cString::GetLastCharW(sPeronalDir) != _W("\\")) {
-		sPeronalDir += _W("/");
-	}
-
-	// Set to the name of directory
-	msSaveDir = sPeronalDir + PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME;
-
-	// The directories that should be created
-	tWString vDirs[] = {PERSONAL_RELATIVEPIECES
-							PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME_PARENT,
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME,
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("save"),
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("save/auto"),
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("save/spot"),
-						PERSONAL_RELATIVEROOT PERSONAL_RELATIVEGAME _W("save/favorite")};
-	int lDirNum = PERSONAL_RELATIVEPIECES_COUNT + 6;
-
-	// Check if directories exist and if not create
-	for (int i = 0; i < lDirNum; ++i) {
-		tWString sDir = sPeronalDir + vDirs[i];
-		if (FolderExists(sDir))
-			continue;
-
-		if (CreateFolder(sDir) == false) {
-			// msSaveDir = _W("");
-			Warning("Couldn't create save folder '%s'! Saving to local\n",
-					cString::To8Char(sDir).c_str());
-			// return;
-			continue;
-		}
-	}
 }
 
 //-----------------------------------------------------------------------

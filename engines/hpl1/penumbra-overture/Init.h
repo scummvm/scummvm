@@ -61,26 +61,6 @@ class cMainMenu;
 
 #include "hpl1/penumbra-overture/GameTypes.h"
 
-#if defined(WIN32)
-#define PERSONAL_RELATIVEROOT
-#define PERSONAL_RELATIVEPIECES
-#define PERSONAL_RELATIVEPIECES_COUNT 0
-#define PERSONAL_RELATIVEGAME_PARENT _W("Penumbra Overture/")
-#define PERSONAL_RELATIVEGAME _W("Penumbra Overture/Episode1/")
-#elif defined(__linux__)
-#define PERSONAL_RELATIVEROOT _W(".frictionalgames/")
-#define PERSONAL_RELATIVEPIECES _W(".frictionalgames"),
-#define PERSONAL_RELATIVEPIECES_COUNT 1
-#define PERSONAL_RELATIVEGAME_PARENT _W("Penumbra/")
-#define PERSONAL_RELATIVEGAME _W("Penumbra/Overture/")
-#else
-#define PERSONAL_RELATIVEROOT _W("Library/Preferences/Frictional Games/")
-#define PERSONAL_RELATIVEPIECES _W("Library"), _W("Library/Preferences"), _W("Library/Preferences/Frictional Games"),
-#define PERSONAL_RELATIVEPIECES_COUNT 3
-#define PERSONAL_RELATIVEGAME_PARENT _W("Penumbra/")
-#define PERSONAL_RELATIVEGAME _W("Penumbra/Overture/")
-#endif
-
 //--------------------------------------------------------
 
 //#define DEMO_VERSION
