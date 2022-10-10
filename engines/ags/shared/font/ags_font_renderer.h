@@ -83,15 +83,18 @@ struct FontMetrics {
 
 // The strictly internal font renderer interface, not to use in plugin API.
 // Contains methods necessary for built-in font renderers.
-class IAGSFontRendererInternal {
+class IAGSFontRendererInternal : public IAGSFontRenderer2 {
 public:
 	// Tells if this is a bitmap font (otherwise it's a vector font)
 	virtual bool IsBitmapFont() = 0;
 	// Load font, applying extended font rendering parameters
 	virtual bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
 		FontMetrics *metrics) = 0;
+	// Fill FontMetrics struct; note that it may be left cleared if this is not supported
+	virtual void GetFontMetrics(int fontNumber, FontMetrics *metrics) = 0;
 	// Perform any necessary adjustments when the AA mode is toggled
 	virtual void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) = 0;
+
 protected:
 	IAGSFontRendererInternal() {}
 	~IAGSFontRendererInternal() {}

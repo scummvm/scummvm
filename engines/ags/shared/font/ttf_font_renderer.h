@@ -30,7 +30,7 @@ namespace AGS3 {
 
 struct ALFONT_FONT;
 
-class TTFFontRenderer : public IAGSFontRenderer2, public IAGSFontRendererInternal {
+class TTFFontRenderer : public IAGSFontRendererInternal {
 public:
 	virtual ~TTFFontRenderer() {}
 
@@ -57,6 +57,7 @@ public:
 	bool IsBitmapFont() override;
 	bool LoadFromDiskEx(int fontNumber, int fontSize, const FontRenderParams *params,
 		FontMetrics *metrics) override;
+	void GetFontMetrics(int fontNumber, FontMetrics *metrics) override;
 	void AdjustFontForAntiAlias(int fontNumber, bool aa_mode) override;
 
 	//
