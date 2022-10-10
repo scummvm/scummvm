@@ -123,14 +123,14 @@ void Portrait::init() {
 
 	for (bitmapNr = 0; bitmapNr < _bitmaps.size(); bitmapNr++) {
 		PortraitBitmap &curBitmap = _bitmaps[bitmapNr];
-		curBitmap.width = data.getUint16LEAt(2);
+		curBitmap.width = data.getUint16LEAt(6);
 		curBitmap.height = data.getUint16LEAt(4);
-		bytesPerLine = data.getUint16LEAt(6);
-		if (bytesPerLine < curBitmap.width)
+		bytesPerLine = data.getUint16LEAt(2);
+		if (bytesPerLine > curBitmap.width)
 			error("kPortrait: bytesPerLine larger than actual width");
-		curBitmap.extraBytesPerLine = bytesPerLine - curBitmap.width;
+		curBitmap.extraBytesPerLine = curBitmap.width - bytesPerLine;
 		curBitmap.rawBitmap = data.subspan(14, curBitmap.width * curBitmap.height);
-		data += 14 + (curBitmap.height * bytesPerLine);
+		data += 14 + (curBitmap.height * curBitmap.width);
 	}
 
 	// Offset table follows
