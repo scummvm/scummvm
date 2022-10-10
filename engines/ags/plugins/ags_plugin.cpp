@@ -80,7 +80,7 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
-const int PLUGIN_API_VERSION = 25;
+const int PLUGIN_API_VERSION = 26;
 
 // On save/restore, the Engine will provide the plugin with a handle. Because we only ever save to one file at a time,
 // we can reuse the same handle.
@@ -754,6 +754,13 @@ void IAGSEngine::GetRenderStageDesc(AGSRenderStageDesc *desc) {
 	}
 }
 
+void IAGSEngine::GetGameInfo(AGSGameInfo* ginfo) {
+	if (ginfo->Version >= 26) {
+		snprintf(ginfo->GameName, sizeof(ginfo->GameName), "%s", _GP(game).gamename);
+		snprintf(ginfo->guid, sizeof(ginfo->guid), "%s", _GP(game).guid);
+		ginfo->uniqueid = _GP(game).uniqueid;
+	}
+}
 
 // *********** General plugin implementation **********
 
