@@ -218,7 +218,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 
 	tmp = (y + x) & 1;
 	uint8 *p = getPagePtr(_curPage) + y * 320 + x;
-	uint8 s = (tmp >> 8) & 1;
+	bool oddWidth = w & 1;
 
 	w >>= 1;
 	int w2 = w;
@@ -231,7 +231,7 @@ void Screen_LoL::drawGridBox(int x, int y, int w, int h, int col) {
 			}
 		}
 
-		if (s == 1) {
+		if (oddWidth) {
 			if (tmp == 0)
 				*p = col;
 			p++;

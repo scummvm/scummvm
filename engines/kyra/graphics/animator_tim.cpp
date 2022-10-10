@@ -39,10 +39,12 @@ TimAnimator::TimAnimator(LoLEngine *engine, Screen_v2 *screen_v2, OSystem *syste
 TimAnimator::TimAnimator(KyraEngine_v1 *engine, Screen_v2 *screen_v2, OSystem *system, bool useParts) : _vm(engine), _screen(screen_v2), _system(system), _useParts(useParts) {
 #endif
 	_animations = new Animation[TIM::kWSASlots]();
+	assert(_animations);
 
 	if (_useParts) {
 		for (int i = 0; i < TIM::kWSASlots; i++) {
 			_animations[i].parts = new AnimPart[TIM::kAnimParts]();
+			assert(_animations[i].parts);
 		}
 	}
 }
@@ -70,8 +72,6 @@ void TimAnimator::init(int animIndex, Movie *wsa, int x, int y, int wsaCopyParam
 
 void TimAnimator::reset(int animIndex, bool clearStruct) {
 	Animation *anim = &_animations[animIndex];
-	if (!anim)
-		return;
 	anim->field_D = 0;
 	anim->enable = 0;
 	delete anim->wsa;
@@ -86,6 +86,7 @@ void TimAnimator::reset(int animIndex, bool clearStruct) {
 		if (_useParts) {
 			anim->parts = new AnimPart[TIM::kAnimParts];
 			memset(anim->parts, 0, TIM::kAnimParts * sizeof(AnimPart));
+			assert(anim->parts);
 		}
 	}
 }

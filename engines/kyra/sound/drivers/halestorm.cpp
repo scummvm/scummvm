@@ -88,7 +88,7 @@ public:
 	ShStBuffer(ShStBuffer &&buff) noexcept : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { buff.lifes = nullptr; }
 	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(nullptr) { if (allocate) memcpy(crtbuf(), p, cb); }
 	ShStBuffer() : ShStBuffer(nullptr, 0) {}
-	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr) { if (s) s->read(crtbuf(), len); }
+	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr), ptr(nullptr) { if (s) s->read(crtbuf(), len); }
 	~ShStBuffer() { dcrlif(); }
 	ShStBuffer &operator=(Common::SeekableReadStream *s) { return operator=(ShStBuffer(s)); }
 	ShStBuffer &operator=(ShStBuffer &&buff) noexcept {
