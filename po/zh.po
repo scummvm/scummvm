@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-10 10:06+0000\n"
+"POT-Creation-Date: 2022-10-10 11:29+0000\n"
 "PO-Revision-Date: 2022-10-01 14:37+0000\n"
 "Last-Translator: kane159 <kane12369@gmail.com>\n"
 "Language-Team: Chinese <https://translations.scummvm.org/projects/scummvm/"
@@ -1978,7 +1978,7 @@ msgstr ""
 #: gui/options.cpp:3646
 msgid ""
 "A test pattern should be displayed.\n"
-"Do you want to keep these shader scalar settings?"
+"Do you want to keep these shader scaler settings?"
 msgstr ""
 
 #: gui/options.cpp:3649
