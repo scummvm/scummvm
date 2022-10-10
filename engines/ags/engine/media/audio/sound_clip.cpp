@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/media/audio/sound_clip.h"
+#include "ags/engine/media/audio/audio_defines.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -193,12 +194,26 @@ bool SoundClipWaveBase::is_paused() {
 	return _state == SoundClipPaused;
 }
 
-void SoundClipWaveBase::seek(int offset) {
-	// TODO: for backward compatibility we need to reimplement seeking
-	// to a position which units are defined according to the sound type:
+int SoundClipWaveBase::pos_to_posms(int pos) const {
+	// The pos meaning depends on the sound type:
 	// - WAV / VOC - the sample number
 	// - OGG / MP3 - milliseconds
-	seek_ms(offset);
+	// - MOD - the pattern number
+	switch (get_sound_type()) {
+	case MUS_WAVE: // Pos is in samples
+		if (!_stream)
+			return 0;
+		return static_cast<int>((static_cast<int64_t>(pos) * 1000) / _stream->getRate());
+	case MUS_MOD:  /* TODO: reimplement */
+		// better say that it does not work than return wrong value
+		return 0;
+	default:
+		return pos;
+	}
+}
+
+void SoundClipWaveBase::seek(int pos) {
+	seek_ms(pos_to_posms(pos));
 }
 
 void SoundClipWaveBase::seek_ms(int pos_ms) {

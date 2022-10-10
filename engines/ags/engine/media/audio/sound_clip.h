@@ -208,6 +208,9 @@ protected:
 struct SoundClipWaveBase : public SOUNDCLIP {
 private:
 	Audio::Mixer::SoundType _soundType = Audio::Mixer::kPlainSoundType;
+
+	int pos_to_posms(int pos) const;
+
 public:
 	Audio::Mixer *_mixer;
 	Audio::AudioStream *_stream;
