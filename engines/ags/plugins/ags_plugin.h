@@ -581,6 +581,10 @@ public:
 	// fills the provided AGSGameInfo struct
 	// please note that plugin MUST fill the struct's Version field before passing it into the function!
 	AGSIFUNC(void)  GetGameInfo(AGSGameInfo* ginfo);
+	// install a replacement renderer (extended interface) for the specified font number
+	AGSIFUNC(IAGSFontRenderer2*) ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2* newRenderer);
+	// notify the engine that certain custom font has been updated
+	AGSIFUNC(void)  NotifyFontUpdated(int fontNumber);
 };
 
 struct EnginePlugin {

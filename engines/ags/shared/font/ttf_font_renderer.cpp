@@ -126,8 +126,12 @@ bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	return true;
 }
 
-const char *TTFFontRenderer::GetName(int fontNumber) {
+const char *TTFFontRenderer::GetFontName(int fontNumber) {
 	return alfont_get_name(_fontData[fontNumber].AlFont);
+}
+
+int TTFFontRenderer::GetFontHeight(int fontNumber) {
+	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
 }
 
 void TTFFontRenderer::AdjustFontForAntiAlias(int fontNumber, bool /*aa_mode*/) {

@@ -762,6 +762,17 @@ void IAGSEngine::GetGameInfo(AGSGameInfo* ginfo) {
 	}
 }
 
+IAGSFontRenderer2* IAGSEngine::ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2 *newRenderer) {
+	auto *old_render = font_replace_renderer(fontNumber, newRenderer);
+	GUI::MarkForFontUpdate(fontNumber);
+	return old_render;
+}
+
+void IAGSEngine::NotifyFontUpdated(int fontNumber) {
+	font_recalc_metrics(fontNumber);
+	GUI::MarkForFontUpdate(fontNumber);
+}
+
 // *********** General plugin implementation **********
 
 void pl_stop_plugins() {
