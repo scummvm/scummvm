@@ -19,6 +19,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Added support for the keymapper feature to the dialog screen.
    - The in-game menu is now accessible via a keyboard shortcut.
    - Fixed a bug that caused the controls to be reset when leaving the Hive puzzle.
+   - Fixed animation of floating bodies in Chapter 4.
 
  Ultima:
    - Fixed rendering issue when moving the minimap off the screen.
