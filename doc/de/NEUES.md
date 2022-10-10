@@ -82,6 +82,47 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
 
  Allgemein:
    - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
+   - Mögliche Grafikfehler bei der Nutzung des OpenGL-Renderers behoben.
+
+ AGS:
+   - Absturz von AGDIs KQ1-Remake (und einigen anderen Spielen) auf Big-Endian-Systemen behoben.
+
+ AGOS:
+   - Mehrere Fehler korrigiert, die zu Abstürzen in den Demo-Versionen von The Feeble Files
+     und Personal Nightmare sowie in der Vollversion von Waxworks geführt haben.
+
+ Asylum:
+   - Menü zur Tastatur-Konfiguration repariert.
+   - Unterstützung für Tastenkürzel im Dialog-Bildschirm hinzugefügt.
+   - Das Spielmenü kann nun über ein Tastenkürzel aufgerufen werden.
+   - Fehler behoben, der dazu führt, dass die Steuerung zurückgesetzt wird, wenn das Hive-Puzzle verlassen wird.
+   - Animationsfehler bei der Darstellung der schwebenden Körper in Kapitel 4 korrigiert.
+
+ Ultima:
+   - Darstellungsfehler behoben, der auftritt, wenn die Minikarte vom Spiel-Bildschirm wegbewegt wird.
+   - Möglicher Absturz bei der Nutzung der Autosave-Funktion behoben.
+
+ SCI:
+   - Mehrere Fehler und Skript-Probleme in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG4 und SQ5 behoben.
+   - Zahlreiche Verbesserungen an verschiedenen Stellen des Engine-Codes.
+
+ SCUMM:
+   - Mögliche Abstürze in Spielen, die iMUSE verwenden, korrigiert.
+   - Fehlende .SOU- und .BUN-Dateien führen nun nicht mehr zu einem Absturz.
+   - Abstürze in v7- und v8-Spielen auf Systemen mit striktem Aligment behoben.
+
+ Toltecs:
+   - Abstürze auf einigen Systemen mit striktem Aligment behoben.
+
+ Toon:
+   - Fehler behoben, der dazu führt, dass Musik und Soundeffekte standardmäßig stummgeschaltet werden,
+     wenn das Spiel Toonstruck zu ScummVM hinzugefügt wird.
+
+ Android-Portierung:
+   - Die Maus-Koordinaten werden nun korrekt zwischen den Bildschirm-Koordinaten und den virtuellen Koordinaten konvertiert.
+
+ Windows-Portierung:
+  - Fehler korrigiert, der dazu führt, dass das Löschen des Icon-Caches einen zusätzlichen ScummVM-Ordner im APPDATA-Verzeichnis anlegt.
 
 #### 2.6.0 "Insane Escapism" (01.08.2022)
 
