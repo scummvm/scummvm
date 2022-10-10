@@ -921,6 +921,7 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 
 			continue;
 		case MKTAG('S', 'Y', 'N', 'C'):
+		{
 			// SYNC block (fixed size: x bytes)
 			// - The tag 'SYNC' (4 bytes)
 			// - SYNC size in bytes (4 bytes)
@@ -935,28 +936,38 @@ int IMuseDigital::dispatchNavigateMap(IMuseDigiDispatch *dispatchPtr) {
 			// four bytes of the next block in our syncPtr; but this is exactly what happens
 			// within the interpreter, so I'm not going to argue with it
 
+			int32 targetSyncSize = READ_UINT32(mapCurEvent + 4); // As per specifications above, we fetch the size
+			uint8 *mapEventStart = mapCurEvent + 4 + 4 + 4; // We skip the 'SYNC' tag, the size, and an additional 4-bytes dword
+
+			// Allocate space for the data block and fill it, 4 bytes at a time...
+			byte *syncData = (byte *)malloc(targetSyncSize);
+			uint32 *syncDwordPtr = (uint32 *)syncData;
+			uint32 *mapEventsDwordPtr = (uint32 *)mapEventStart;
+			if (syncData) {
+				for (int i = 0; i < (targetSyncSize >> 2); i++) {
+					WRITE_LE_UINT32(&syncDwordPtr[i], mapEventsDwordPtr[i]);
+				}
+			}
+
 			if (!dispatchPtr->trackPtr->syncPtr_0) {
-				dispatchPtr->trackPtr->syncPtr_0 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_0, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_0 = READ_UINT32(mapCurEvent + 4);
+				dispatchPtr->trackPtr->syncPtr_0 = syncData;
+				dispatchPtr->trackPtr->syncSize_0 = targetSyncSize;
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_1) {
-				dispatchPtr->trackPtr->syncPtr_1 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_1, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_1 = READ_UINT32(mapCurEvent + 4);
+				dispatchPtr->trackPtr->syncPtr_1 = syncData;
+				dispatchPtr->trackPtr->syncSize_1 = targetSyncSize;
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_2) {
-				dispatchPtr->trackPtr->syncPtr_2 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_2, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_2 = READ_UINT32(mapCurEvent + 4);
+				dispatchPtr->trackPtr->syncPtr_2 = syncData;
+				dispatchPtr->trackPtr->syncSize_2 = targetSyncSize;
 
 			} else if (!dispatchPtr->trackPtr->syncPtr_3) {
-				dispatchPtr->trackPtr->syncPtr_3 = (byte *)malloc(READ_UINT32(mapCurEvent + 4));
-				memcpy(dispatchPtr->trackPtr->syncPtr_3, mapCurEvent + 3 * 4, READ_UINT32(mapCurEvent + 4));
-				dispatchPtr->trackPtr->syncSize_3 = READ_UINT32(mapCurEvent + 4);
+				dispatchPtr->trackPtr->syncPtr_3 = syncData;
+				dispatchPtr->trackPtr->syncSize_3 = targetSyncSize;
 			}
 
 			continue;
+		}
 		case MKTAG('F', 'R', 'M', 'T'):
 			// Format block (fixed size: 28 bytes)
 			// - The tag 'FRMT' (4 bytes)
