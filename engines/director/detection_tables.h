@@ -4470,7 +4470,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("sfpd", "v1.00", "Body in the Bay", "01be45e7241194dad07938e7059b88e3", 483774, 404),
 
 	// Product was published by 夢本舗株式会社 (Yumehonpo)
-	MACDEMO1_l("shadeviewer", "Operation Manual", "Manual", "8b138db44d4421cc7294a9dc792ccf1b", 502913, Common::JA_JPN, 404),
+	MACDEMO2_l("shadeviewer", "Operation Manual", "Manual", "8b138db44d4421cc7294a9dc792ccf1b", 502657,
+							"xn--n8jlpy8c5cwhn28z6jxbst0e", "07c17d30a1e0cad5ef8a865587afb5ed", 4049, Common::JA_JPN, 404),
 
 	// Full game is not Director
 	WINDEMO1("shanghai", "Demo", "SHGMDEMO.EXE", "4a8fd0d74faef305bc935e1aac94d3e8", 712817, 400),
