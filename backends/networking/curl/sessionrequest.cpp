@@ -183,6 +183,12 @@ void SessionRequest::handle() {
 		}
 
 		if (_stream->eos()) {
+			if (_stream->hasError()) {
+				ErrorResponse error(this, false, true, Common::String::format("TLS stream response code is not CURLE_OK OK: %s", _stream->getError()), _stream->getErrorCode());
+				finishError(error);
+				return;
+			}
+
 			finishSuccess();
 		}
 	}

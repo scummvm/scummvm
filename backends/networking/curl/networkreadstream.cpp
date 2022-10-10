@@ -193,19 +193,19 @@ void NetworkReadStream::setupFormMultipart(Common::HashMap<Common::String, Commo
 }
 
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::String postFields, bool uploading, bool usingPatch, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr), _errorCode(CURLE_OK) {
 	initCurl(url, headersList);
 	setupBufferContents((const byte *)postFields.c_str(), postFields.size(), uploading, usingPatch, false);
 }
 
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, Common::HashMap<Common::String, Common::String> formFields, Common::HashMap<Common::String, Common::String> formFiles, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr), _errorCode(CURLE_OK) {
 	initCurl(url, headersList);
 	setupFormMultipart(formFields, formFiles);
 }
 
 NetworkReadStream::NetworkReadStream(const char *url, curl_slist *headersList, const byte *buffer, uint32 bufferSize, bool uploading, bool usingPatch, bool post, bool keepAlive, long keepAliveIdle, long keepAliveInterval):
-		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr) {
+		_backingStream(DisposeAfterUse::YES), _keepAlive(keepAlive), _keepAliveIdle(keepAliveIdle), _keepAliveInterval(keepAliveInterval), _errorBuffer(nullptr), _errorCode(CURLE_OK) {
 	initCurl(url, headersList);
 	setupBufferContents(buffer, bufferSize, uploading, usingPatch, post);
 }
@@ -266,12 +266,21 @@ void NetworkReadStream::finished(uint32 errorCode) {
 	char *url = nullptr;
 	curl_easy_getinfo(_easy, CURLINFO_EFFECTIVE_URL, &url);
 
-	if (errorCode == CURLE_OK) {
+	_errorCode = errorCode;
+
+	if (_errorCode == CURLE_OK) {
 		debug(9, "NetworkReadStream: %s - Request succeeded", url);
 	} else {
-		warning("NetworkReadStream: %s - Request failed (%d - %s)", url, errorCode,
-		        strlen(_errorBuffer) ? _errorBuffer : curl_easy_strerror((CURLcode)errorCode));
+		warning("NetworkReadStream: %s - Request failed (%d - %s)", url, _errorCode, getError());
 	}
+}
+
+bool NetworkReadStream::hasError() const {
+	return _errorCode != CURLE_OK;
+}
+
+const char *NetworkReadStream::getError() const {
+	return strlen(_errorBuffer) ? _errorBuffer : curl_easy_strerror((CURLcode)_errorCode);
 }
 
 long NetworkReadStream::httpResponseCode() const {
