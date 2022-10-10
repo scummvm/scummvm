@@ -603,24 +603,19 @@ void mark_object_changed(int objid) {
 	_G(objcache)[objid].y = -9999;
 }
 
-void reset_objcache_for_sprite(int sprnum, bool deleted) {
-	// Check if this sprite is assigned to any game object, and mark these for update;
-	// if the sprite was deleted, also dispose shared textures
+void reset_objcache_for_sprite(int sprnum) {
+	// Check if this sprite is assigned to any game object, and update them if necessary
 	// room objects cache
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objcache)[i].sppic == sprnum)
+			if (_G(objs)[i].num == sprnum)
 				_G(objcache)[i].sppic = -1;
-			if (deleted && (_GP(actsps)[i].SpriteID == sprnum))
-				_GP(actsps)[i] = ObjTexture();
 		}
 	}
 	// character cache
 	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
 		if (_GP(charcache)[i].sppic == sprnum)
 			_GP(charcache)[i].sppic = -1;
-		if (deleted && (_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID == sprnum))
-			_GP(actsps)[i] = ObjTexture();
 	}
 }
 
