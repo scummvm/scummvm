@@ -194,11 +194,19 @@ bool SoundClipWaveBase::is_paused() {
 }
 
 void SoundClipWaveBase::seek(int offset) {
+	// TODO: for backward compatibility we need to reimplement seeking
+	// to a position which units are defined according to the sound type:
+	// - WAV / VOC - the sample number
+	// - OGG / MP3 - milliseconds
+	seek_ms(offset);
+}
+
+void SoundClipWaveBase::seek_ms(int pos_ms) {
 	Audio::SeekableAudioStream *stream =
 		dynamic_cast<Audio::SeekableAudioStream *>(_stream);
 
 	if (stream) {
-		stream->seek(Audio::Timestamp(offset));
+		stream->seek(Audio::Timestamp(pos_ms));
 	} else {
 		warning("Audio stream did not support seeking");
 	}

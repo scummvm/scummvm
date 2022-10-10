@@ -178,10 +178,17 @@ void AudioChannel_Seek(ScriptAudioChannel *channel, int newPosition) {
 		quitprintf("!AudioChannel.Seek: invalid seek position %d", newPosition);
 
 	auto *ch = AudioChans::GetChannelIfPlaying(channel->id);
-
-	if (ch) {
+	if (ch)
 		ch->seek(newPosition);
-	}
+}
+
+void AudioChannel_SeekMs(ScriptAudioChannel *channel, int newPosition) {
+	if (newPosition < 0)
+		quitprintf("!AudioChannel.SeekMs: invalid seek position %d", newPosition);
+
+	auto* ch = AudioChans::GetChannelIfPlaying(channel->id);
+	if (ch)
+		ch->seek_ms(newPosition);
 }
 
 void AudioChannel_SetRoomLocation(ScriptAudioChannel *channel, int xPos, int yPos) {
@@ -266,6 +273,10 @@ RuntimeScriptValue Sc_AudioChannel_Seek(void *self, const RuntimeScriptValue *pa
 	API_OBJCALL_VOID_PINT(ScriptAudioChannel, AudioChannel_Seek);
 }
 
+RuntimeScriptValue Sc_AudioChannel_SeekMs(void *self, const RuntimeScriptValue *params, int32_t param_count) {
+	API_OBJCALL_VOID_PINT(ScriptAudioChannel, AudioChannel_SeekMs);
+}
+
 // void | ScriptAudioChannel *channel, int xPos, int yPos
 RuntimeScriptValue Sc_AudioChannel_SetRoomLocation(void *self, const RuntimeScriptValue *params, int32_t param_count) {
 	API_OBJCALL_VOID_PINT2(ScriptAudioChannel, AudioChannel_SetRoomLocation);
@@ -295,6 +306,7 @@ void RegisterAudioChannelAPI() {
 	ccAddExternalObjectFunction("AudioChannel::Pause^0", Sc_AudioChannel_Pause);
 	ccAddExternalObjectFunction("AudioChannel::Resume^0", Sc_AudioChannel_Resume);
 	ccAddExternalObjectFunction("AudioChannel::Seek^1", Sc_AudioChannel_Seek);
+	ccAddExternalObjectFunction("AudioChannel::SeekMs^1", Sc_AudioChannel_SeekMs);
 	ccAddExternalObjectFunction("AudioChannel::SetRoomLocation^2", Sc_AudioChannel_SetRoomLocation);
 	ccAddExternalObjectFunction("AudioChannel::Stop^0", Sc_AudioChannel_Stop);
 	ccAddExternalObjectFunction("AudioChannel::get_ID", Sc_AudioChannel_GetID);
