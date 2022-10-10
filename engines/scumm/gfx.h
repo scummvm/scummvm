@@ -495,12 +495,12 @@ public:
 	bool isScrolling(int direction, int threshold = 0) const { return (direction == 0) ? _scrollRemainder != threshold : (direction == 1 ? _scrollRemainder > threshold : _scrollRemainder < threshold); }
 
 	uint8 *getLayerPixels(int layer, int x, int y) const;
-	int getLayerPitch(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].pitch : 0; }
-	int getLayerWidth(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].width : 0; }
-	int getLayerHeight(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].height : 0; }
-	int getLayerBpp(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].bpp : 0; }
-	int getLayerScaleW(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleW : 0; }
-	int getLayerScaleH(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleH : 0; }
+	int getLayerPitch(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].pitch; }
+	int getLayerWidth(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].width; }
+	int getLayerHeight(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].height; }
+	int getLayerBpp(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].bpp; }
+	int getLayerScaleW(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].scaleW; }
+	int getLayerScaleH(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].scaleH; }
 
 private:
 	struct TownsScreenLayer {
