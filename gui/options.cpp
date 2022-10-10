@@ -3643,7 +3643,7 @@ bool OptionsDialog::testGraphicsSettings() {
 	delete pm5544;
 
 	// And display the error
-	GUI::CountdownMessageDialog dialog(_("A test pattern should be displayed.\nDo you want to keep these shader scalar settings?"),
+	GUI::CountdownMessageDialog dialog(_("A test pattern should be displayed.\nDo you want to keep these shader scaler settings?"),
 				10000,
 				_("Yes"), _("No"), Graphics::kTextAlignCenter,
 				_("Reverting automatically in %d seconds"));
