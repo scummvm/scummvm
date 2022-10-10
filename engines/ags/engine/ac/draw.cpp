@@ -611,7 +611,7 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
 			if (_G(objcache)[i].sppic == sprnum)
 				_G(objcache)[i].sppic = -1;
-			if (deleted && (_GP(actsps)[i].SpriteID == sprnum))
+			if (deleted && ((int)(_GP(actsps)[i].SpriteID) == sprnum))
 				_GP(actsps)[i] = ObjTexture();
 		}
 	}
@@ -619,7 +619,7 @@ void reset_objcache_for_sprite(int sprnum, bool deleted) {
 	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
 		if (_GP(charcache)[i].sppic == sprnum)
 			_GP(charcache)[i].sppic = -1;
-		if (deleted && (_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID == sprnum))
+		if (deleted && ((int)(_GP(actsps)[ACTSP_OBJSOFF + i].SpriteID) == sprnum))
 			_GP(actsps)[i] = ObjTexture();
 	}
 }
