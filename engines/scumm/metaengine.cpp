@@ -314,10 +314,9 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	if (!findInMD5Table(res.md5.c_str())) {
 		Common::String md5Warning;
 
-		md5Warning = ("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
-		               "version (in particular, not a fan-made translation), please, report the\n"
-		               "following data to the ScummVM team along with the name of the game you tried\n"
-		               "to add and its version, language, etc.:\n");
+		md5Warning = ("Your game version appears to be unknown. Please, report the following data to the\n"
+		               "ScummVM team along with the name of the game you tried to add and its version,\n"
+					   "language, etc.:\n");
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
