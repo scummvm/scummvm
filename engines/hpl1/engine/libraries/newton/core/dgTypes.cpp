@@ -448,7 +448,7 @@ static dgInt32 SortVertices(dgFloat64* const vertexList, dgInt32 stride,
           bool test = true;
           for (dgInt32 t = 0; test && (t < compareCount); t++)
           {
-            dgFloat64 v = fabs(vertexList[m + t + 2] - vertexList[k + t + 2]);
+            dgFloat64 v = fabs(vertexList[m + t + 2] - vertexList[q + t + 2]);
             test = test && (v <= tol);
           }
           if (test)
