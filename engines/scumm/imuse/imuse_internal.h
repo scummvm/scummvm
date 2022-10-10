@@ -425,8 +425,8 @@ protected:
 	// SysEx handlers for client-specified manufacturer codes.
 	sysexfunc _sysex;
 
-	OSystem *_system;
 	Common::Mutex &_mutex;
+	Common::Mutex _dummyMutex;
 
 protected:
 	bool _paused;

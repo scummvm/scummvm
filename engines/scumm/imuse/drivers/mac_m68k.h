@@ -62,6 +62,7 @@ private:
 	int _mixBufferLength;
 
 	struct Instrument {
+		Instrument() : length(0), sampleRate(0), loopStart(0), loopEnd(0), baseFrequency(0), data(nullptr) {}
 		uint length;
 		uint sampleRate;
 		uint loopStart;
@@ -129,7 +130,7 @@ private:
 		friend class IMuseDriver_MacM68k;
 	public:
 		MidiChannel_MacM68k(IMuseDriver_MacM68k *driver, byte number) : MidiChannel(), _owner(driver), _number(number), _allocated(false),
-			_priority(0), _sustain(0), _pitchBend(0), _pitchBendFactor(2), _transpose(0), _detune(0), _volume(0) {}
+			_priority(0), _sustain(0), _pitchBend(0), _pitchBendFactor(2), _transpose(0), _detune(0), _volume(0), _voice(nullptr), _instrument() {}
 		MidiDriver *device() override { return _owner; }
 		byte getNumber() override { return _number; }
 		void release() override;

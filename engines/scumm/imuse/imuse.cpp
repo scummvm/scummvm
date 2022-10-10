@@ -66,8 +66,8 @@ IMuseInternal::IMuseInternal(ScummEngine *vm, MidiDriverFlags sndType, uint32 in
 	_trigger_count(0),
 	_snm_trigger_index(0),
 	_soundType(sndType),
-	_game_id(vm->_game.id),
-	_mutex(vm->_mixer->mutex()) {
+	_game_id(vm ? vm->_game.id : 0),
+	_mutex(vm ? vm->_mixer->mutex() : _dummyMutex) {
 	memset(_channel_volume, 0, sizeof(_channel_volume));
 	memset(_channel_volume_eff, 0, sizeof(_channel_volume_eff));
 	memset(_volchan_table, 0, sizeof(_volchan_table));
@@ -1407,7 +1407,6 @@ IMuseInternal *IMuseInternal::create(ScummEngine *vm, MidiDriver *nativeMidiDriv
 int IMuseInternal::initialize(OSystem *syst, MidiDriver *native_midi, MidiDriver *adlib_midi) {
 	int i;
 
-	_system = syst;
 	_midi_native = native_midi;
 	_midi_adlib = adlib_midi;
 	if (native_midi != nullptr) {

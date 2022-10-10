@@ -153,7 +153,7 @@ void disconnect(ChannelNode *&chain, ChannelNode *node) {
 
 IMuseChannel_Midi::IMuseChannel_Midi(IMuseDriver_GMidi *drv, int number) :MidiChannel(), _drv(drv), _number(number), _allocated(false), _sustain(false),
 	_pitchBend(0x2000), _polyphony(1), _channelUsage(0), _exhaust(false), _prio(0x80), _detune(0), _transpose(0), _pitchBendTemp(0), _pitchBendSensitivity(2),
-	_activeChain(drv ? _drv->_activeChain : _dummyNode), _idleChain(drv ? _drv->_idleChain : _dummyNode), _newSystem(drv ? drv->_newSystem : false) {
+	_activeChain(drv ? _drv->_activeChain : _dummyNode), _idleChain(drv ? _drv->_idleChain : _dummyNode), _dummyNode(nullptr), _newSystem(drv ? drv->_newSystem : false) {
 	assert(_drv);
 }
 

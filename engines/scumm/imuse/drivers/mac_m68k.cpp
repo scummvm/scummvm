@@ -28,7 +28,7 @@
 namespace Scumm {
 
 IMuseDriver_MacM68k::IMuseDriver_MacM68k(Audio::Mixer *mixer)
-	: MidiDriver_Emulated(mixer), _mixBuffer(nullptr), _mixBufferLength(0), _volumeTable(nullptr), _lastUsedVoiceChannel(0) {
+	: MidiDriver_Emulated(mixer), _mixBuffer(nullptr), _mixBufferLength(0), _volumeTable(nullptr), _lastUsedVoiceChannel(0), _defaultInstrument() {
 	memset(_channels, 0, sizeof(_channels));
 	memset(_pitchTable, 0, sizeof(_pitchTable));
 	memset(_voiceChannels, 0, sizeof(_voiceChannels));
