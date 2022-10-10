@@ -30,7 +30,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class VariableWidthSpriteFontRenderer : public IAGSFontRenderer {
+class VariableWidthSpriteFontRenderer : public IAGSFontRenderer2 {
 protected:
 	IAGSEngine *_engine;
 	std::vector<VariableWidthFont *> _fonts;
@@ -41,6 +41,12 @@ public:
 	VariableWidthSpriteFontRenderer(IAGSEngine *engine);
 	virtual ~VariableWidthSpriteFontRenderer();
 
+	void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
+	void SetSprite(int fontNum, int spriteNum);
+	void SetSpacing(int fontNum, int spacing);
+	void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
+
+	// IAGSFontRenderer implementation
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;
 	}
@@ -52,10 +58,13 @@ public:
 	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
 	void EnsureTextValidForFont(char *text, int fontNumber) override;
-	void SetGlyph(int fontNum, int charNum, int x, int y, int width, int height);
-	void SetSprite(int fontNum, int spriteNum);
-	void SetSpacing(int fontNum, int spacing);
-	void SetLineHeightAdjust(int fontNum, int LineHeight, int SpacingHeight, int SpacingOverride);
+
+	// IAGSFontRenderer2 implementation
+	int GetVersion() override { return 26; /* compatible engine API ver */ }
+	const char *GetRendererName() override { return "VariableWidthSpriteFontRenderer"; }
+	const char *GetFontName(int fontNumber) override { return ""; /* not supported */ }
+	int GetFontHeight(int fontNumber) override;
+	int GetLineSpacing(int fontNumber) override;
 };
 
 } // namespace AGSSpriteFont
