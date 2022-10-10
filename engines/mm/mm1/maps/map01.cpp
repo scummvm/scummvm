@@ -35,8 +35,7 @@ void Map01::special() {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				// TODO: Some extra message code
+			if (g_maps->_forwardMask & _data[68 + i]) {
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,11 +43,10 @@ void Map01::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map01::special00() {
