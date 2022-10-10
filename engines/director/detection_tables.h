@@ -6619,6 +6619,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("tomato", "",  "tomato2", "9c595b98af545997155f2f020ad2ec5f", 1028001, 606),
 	WINGAME1t("tomato", "", "TOMATO2.EXE", "82536fc9800cf7fabda97c74cca3ed8f", 1550097, 606),
 
+	MACGAME1("traitorsgate", "", "Traitors Gate", "65063397536553c4f6ff2a6c07194bf7", 1935940, 650),
+	MACGAME1("traitorsgate", "DVD", "Traitors Gate", "65063397536553c4f6ff2a6c07194bf7", 1933716, 650),
+	WINGAME1t("traitorsgate", "", "TGstart.exe", "4c2e7bffa671bc537ff8e93fd51d4139", 2074713, 650),
+	WINGAME1t("traitorsgate", "DVD", "TGstart.exe", "4c2e7bffa671bc537ff8e93fd51d4139", 2072959, 650),
 	WINGAME1("traitorsgate", "", "TRG001.EXE", "b762d2cc3f7db2a6446135917fe92496", 2072959, 650),
 
 	MACGAME1("trekpedia98", "", "Ency98 Player", "b0b0e36586489ca6070d20feeff52fa5", 1091806, 600),
