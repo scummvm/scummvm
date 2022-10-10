@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-09 22:17+0000\n"
+"POT-Creation-Date: 2022-10-10 10:06+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -7539,7 +7539,7 @@ msgstr "음악 볼륨: "
 msgid "Subtitle speed: "
 msgstr "자막 속도: "
 
-#: engines/scumm/metaengine.cpp:335
+#: engines/scumm/metaengine.cpp:334
 msgid ""
 "The Lite version of Putt-Putt Saves the Zoo iOS is not supported to avoid "
 "piracy.\n"
@@ -7549,11 +7549,11 @@ msgstr ""
 "니다.\n"
 "풀 버전은 iTunes Store에서 구매 가능합니다."
 
-#: engines/scumm/metaengine.cpp:432
+#: engines/scumm/metaengine.cpp:431
 msgid "HE v71+ support is not compiled in"
 msgstr "HE v71+ 지원이 컴파일 되지 않음"
 
-#: engines/scumm/metaengine.cpp:456
+#: engines/scumm/metaengine.cpp:455
 msgid "SCUMM v7-8 support is not compiled in"
 msgstr "SCUMM v7-8 지원이 컴파일 되지 않음"
 
