@@ -48,7 +48,7 @@ public:
 	public:
 		DG_CLASS_ALLOCATOR(allocator)
 
-		dgProxy(dgCollision *m_shape, const dgMatrix &matrix, dgCollisionScene *const owner);
+		dgProxy(dgCollision *shape, const dgMatrix &matrix, dgCollisionScene *const owner);
 		~dgProxy();
 
 		dgMatrix m_matrix;

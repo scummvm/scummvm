@@ -885,34 +885,34 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 		dgVector supportPoint(p - m_normal.Scale(radius));
 		dgFloat32 timeToImpact = -(m_normal % (supportPoint - m_localPoly[0])) / (m_normal % vdir);
 		dgVector point(supportPoint + vdir.Scale(timeToImpact));
-		dgVector closestPoint(point);
-		dgFloat32 minDist = dgFloat32(1.0e20f);
-		bool isEdge = true;
+		dgVector closestPointN(point);
+		dgFloat32 minDistance = dgFloat32(1.0e20f);
+		bool isEdgeFlag = true;
 		for (int i = 2; i < m_count; i++) {
 			bool tmpIsEdge;
 			const dgVector q(ClosestDistanceToTriangle(point, m_localPoly[0], m_localPoly[i - 1], m_localPoly[i], tmpIsEdge));
-			isEdge &= tmpIsEdge;
+			isEdgeFlag &= tmpIsEdge;
 			const dgVector error(q - point);
 			dgFloat32 dist = error % error;
-			if (dist < minDist) {
-				minDist = dist;
-				closestPoint = q;
+			if (dist < minDistance) {
+				minDistance = dist;
+				closestPointN = q;
 			}
 		}
 
-		if (!isEdge) {
-			_ASSERTE(minDist < dgFloat32(1.0e-3f));
+		if (!isEdgeFlag) {
+			_ASSERTE(minDistance < dgFloat32(1.0e-3f));
 			timestep = GetMax(timeToImpact, dgFloat32(0.0f));
 			contact.m_normal = m_normal;
 			contact.m_penetration = dgFloat32(0.0f);
 			contact.m_isEdgeContact = 0;
 			contact.m_point = p - m_normal.Scale(radius);
-			contact.m_point = closestPoint;
+			contact.m_point = closestPointN;
 		} else {
 
 			/*
 						_ASSERTE (isEdge);
-						dgVector dp (closestPoint - p);
+						dgVector dp (closestPointN - p);
 						// this does not really work ( goidnm back to my old method
 
 						// has I finally found the bug, when V is very large, then
@@ -935,9 +935,9 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 							if (t >= 0.0f) {
 								timestep = t;
 								contact.m_penetration = dgFloat32 (0.0f);
-								contact.m_isEdgeContact = isEdge ? 1 : 0;
-								contact.m_point = closestPoint;
-								dgVector n (p - (closestPoint - vdir.Scale (t)));
+								contact.m_isEdgeContact = isEdgeFlag ? 1 : 0;
+								contact.m_point = closestPointN;
+								dgVector n (p - (closestPointN - vdir.Scale (t)));
 								contact.m_normal = n.Scale (dgRsqrt (n % n));
 							}
 						}
@@ -952,7 +952,7 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 				if ((t > dgFloat32(0.0f)) && (t < mint)) {
 					mint = t;
 					edgefound = true;
-					closestPoint = tmp;
+					closestPointN = tmp;
 				}
 				i0 = i1;
 			}
@@ -961,8 +961,8 @@ dgFloat32 dgCollisionMesh::dgCollisionConvexPolygon::MovingPointToPolygonContact
 				timestep = mint;
 				contact.m_penetration = dgFloat32(0.0f);
 				contact.m_isEdgeContact = 1;
-				contact.m_point = closestPoint;
-				dgVector n(p - (closestPoint - vdir.Scale(mint)));
+				contact.m_point = closestPointN;
+				dgVector n(p - (closestPointN - vdir.Scale(mint)));
 				contact.m_normal = n.Scale(dgRsqrt(n % n));
 			}
 		}

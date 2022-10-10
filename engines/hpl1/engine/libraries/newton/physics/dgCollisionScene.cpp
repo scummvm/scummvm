@@ -71,11 +71,11 @@ dgCollisionScene::dgNode::~dgNode() {
 	}
 }
 
-dgCollisionScene::dgProxy::dgProxy(dgCollision *m_shape, const dgMatrix &matrix,
-								   dgCollisionScene *const owner) : dgNode(), m_matrix(m_shape->GetOffsetMatrix() * matrix), m_userData(NULL), m_shape(m_shape), m_owner(owner), m_myNode(NULL) {
+dgCollisionScene::dgProxy::dgProxy(dgCollision *shape, const dgMatrix &matrix,
+								   dgCollisionScene *const owner) : dgNode(), m_matrix(shape->GetOffsetMatrix() * matrix), m_userData(NULL), m_shape(shape), m_owner(owner), m_myNode(NULL) {
 	dgVector boxP0;
 	dgVector boxP1;
-	m_shape->CalcAABB(m_matrix, boxP0, boxP1);
+	shape->CalcAABB(m_matrix, boxP0, boxP1);
 
 	dgVector p0(
 		boxP0.CompProduct(
@@ -129,15 +129,15 @@ dgCollisionScene::dgCollisionScene(dgWorld *const world,
 	deserialization(userData, &data, sizeof(data));
 	for (dgInt32 i = 0; i < data[0]; i++) {
 		dgMatrix matrix;
-		void *data;
+		void *dataNew;
 		deserialization(userData, &matrix, sizeof(dgMatrix));
-		deserialization(userData, &data, sizeof(void *));
+		deserialization(userData, &dataNew, sizeof(void *));
 		dgCollision *const collision = m_world->CreateFromSerialization(
 			deserialization, userData);
 		dgList<dgProxy *>::dgListNode *const proxyNode =
 			(dgList<dgProxy *>::dgListNode *)AddProxy(collision, matrix);
 		dgProxy *const proxy = proxyNode->GetInfo();
-		proxy->m_userData = data;
+		proxy->m_userData = dataNew;
 		collision->Release();
 	}
 
