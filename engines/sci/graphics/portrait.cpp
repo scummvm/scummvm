@@ -119,18 +119,17 @@ void Portrait::init() {
 
 	// Read all bitmaps
 	uint16 bitmapNr;
-	uint16 bytesPerLine;
 
 	for (bitmapNr = 0; bitmapNr < _bitmaps.size(); bitmapNr++) {
 		PortraitBitmap &curBitmap = _bitmaps[bitmapNr];
-		curBitmap.width = data.getUint16LEAt(2);
+		curBitmap.width = data.getUint16LEAt(6);
 		curBitmap.height = data.getUint16LEAt(4);
-		bytesPerLine = data.getUint16LEAt(6);
-		if (bytesPerLine < curBitmap.width)
+		curBitmap.bytesPerLine = data.getUint16LEAt(2);
+		if (curBitmap.bytesPerLine > curBitmap.width)
 			error("kPortrait: bytesPerLine larger than actual width");
-		curBitmap.extraBytesPerLine = bytesPerLine - curBitmap.width;
+		curBitmap.extraBytesPerLine = curBitmap.width - curBitmap.bytesPerLine;
 		curBitmap.rawBitmap = data.subspan(14, curBitmap.width * curBitmap.height);
-		data += 14 + (curBitmap.height * bytesPerLine);
+		data += 14 + (curBitmap.height * curBitmap.width);
 	}
 
 	// Offset table follows
@@ -491,7 +490,7 @@ SciSpan<const byte> Portrait::raveGetLipSyncData(const uint16 raveID) {
 
 void Portrait::drawBitmap(uint16 bitmapNr) {
 	uint16 bitmapHeight = _bitmaps[bitmapNr].height;
-	uint16 bitmapWidth = _bitmaps[bitmapNr].width;
+	uint16 bitmapWidth = _bitmaps[bitmapNr].bytesPerLine;
 	Common::Point bitmapPosition = _position;
 
 	bitmapPosition.x += _bitmaps[bitmapNr].displaceX;

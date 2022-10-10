@@ -28,6 +28,7 @@ namespace Sci {
 
 struct PortraitBitmap {
 	int16 width, height;
+	int16 bytesPerLine;
 	int16 extraBytesPerLine;
 	uint16 displaceX, displaceY;
 	SciSpan<const byte> rawBitmap;
