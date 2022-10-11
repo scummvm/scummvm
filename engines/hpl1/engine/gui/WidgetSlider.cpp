@@ -214,8 +214,8 @@ kGuiCalllbackDeclaredFuncEnd(cWidgetSlider, ArrowButtonDown)
 	//-----------------------------------------------------------------------
 
 	void cWidgetSlider::OnInit() {
-	mvButtons[0] = mpSet->CreateWidgetButton(0, 0, _W(""), this);
-	mvButtons[1] = mpSet->CreateWidgetButton(0, 0, _W(""), this);
+	mvButtons[0] = mpSet->CreateWidgetButton(0, 0, Common::U32String(""), this);
+	mvButtons[1] = mpSet->CreateWidgetButton(0, 0, Common::U32String(""), this);
 
 	for (int i = 0; i < 2; i++) {
 		mvButtons[i]->SetImage(mvGfxArrow[i], false);

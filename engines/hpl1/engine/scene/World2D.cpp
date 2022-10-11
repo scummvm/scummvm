@@ -572,7 +572,7 @@ bool cWorld2D::CreateFromFile(tString asFile) {
 							int lColCount = 0;
 							tString sData = pTileRowElem->Attribute("Data");
 							int lDataCount = 0;
-							while (lDataCount < (int)sData.length()) {
+							while (lDataCount < (int)sData.size()) {
 								cTile *pTile = hplNew(cTile, (NULL, eTileRotation_0,
 															  cVector3f((float)lColCount * fTileSize, (float)lRowCount * fTileSize, fZ),
 															  cVector2f(fTileSize, fTileSize), NULL));

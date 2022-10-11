@@ -110,11 +110,11 @@ void cWidgetLabel::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
 		for (size_t i = 0; i < vRows.size(); ++i) {
 			bool bBreak = false;
 			if (mlMaxCharacters >= 0) {
-				if (lChars + (int)vRows[i].length() > mlMaxCharacters) {
+				if (lChars + (int)vRows[i].size() > mlMaxCharacters) {
 					vRows[i] = cString::SubW(vRows[i], 0, mlMaxCharacters - lChars);
 					bBreak = true;
 				}
-				lChars += (int)vRows[i].length();
+				lChars += (int)vRows[i].size();
 			}
 
 			if (bEnabled)
@@ -127,7 +127,7 @@ void cWidgetLabel::OnDraw(float afTimeStep, cGuiClipRegion *apClipRegion) {
 				break;
 		}
 	} else {
-		if (mlMaxCharacters >= 0 && (int)msText.length() > mlMaxCharacters) {
+		if (mlMaxCharacters >= 0 && (int)msText.size() > mlMaxCharacters) {
 			if (IsEnabled())
 				DrawDefaultText(cString::SubW(msText, 0, mlMaxCharacters), GetGlobalPosition() + vOffset, mTextAlign);
 			else

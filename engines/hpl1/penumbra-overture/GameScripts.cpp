@@ -86,18 +86,18 @@ tWString gsTempString = _W("");
 
 //-----------------------------------------------------------------------
 
-static void AddToTempString(std::string asString) {
+static void AddToTempString(tString asString) {
 	gsTempString += cString::To16Char(asString);
 }
 SCRIPT_DEFINE_FUNC_1(void, AddToTempString, string)
 
-static void AddToTempStringTrans(std::string asCat, std::string asEntry) {
+static void AddToTempStringTrans(tString asCat, tString asEntry) {
 	cInit *mpInit = gpInit;
 	gsTempString += kTranslate(asCat, asEntry);
 }
 SCRIPT_DEFINE_FUNC_2(void, AddToTempStringTrans, string, string)
 
-static void AddToTempStringAction(std::string asAction) {
+static void AddToTempStringAction(tString asAction) {
 	cInit *mpInit = gpInit;
 	iAction *pAction = gpInit->mpGame->GetInput()->GetAction(asAction);
 	if (pAction) {
@@ -145,7 +145,7 @@ SCRIPT_DEFINE_FUNC(void, ClearSavedMaps)
 
 //-----------------------------------------------------------------------
 
-static std::string GetActionKeyString(std::string asAction) {
+static tString GetActionKeyString(tString asAction) {
 	iAction *pAction = gpInit->mpGame->GetInput()->GetAction(asAction);
 	if (pAction) {
 		return pAction->GetInputName();
@@ -157,8 +157,8 @@ SCRIPT_DEFINE_FUNC_1(string, GetActionKeyString, string)
 
 //-----------------------------------------------------------------------
 
-static void AddMessageTrans(std::string asTransCat,
-									  std::string asTransName) {
+static void AddMessageTrans(tString asTransCat,
+									  tString asTransName) {
 	cInit *mpInit = gpInit;
 	gpInit->mpGameMessageHandler->Add(kTranslate(asTransCat, asTransName));
 }
@@ -166,7 +166,7 @@ SCRIPT_DEFINE_FUNC_2(void, AddMessageTrans, string, string)
 
 //-----------------------------------------------------------------------
 
-static void AddMessage(std::string asMessage) {
+static void AddMessage(tString asMessage) {
 	gpInit->mpGameMessageHandler->Add(cString::To16Char(asMessage));
 }
 SCRIPT_DEFINE_FUNC_1(void, AddMessage, string)
@@ -181,8 +181,8 @@ SCRIPT_DEFINE_FUNC(void, AddMessageTempString)
 
 //-----------------------------------------------------------------------
 
-static void AddSubTitleTrans(std::string asTransCat,
-									   std::string asTransName, float afTime) {
+static void AddSubTitleTrans(tString asTransCat,
+									   tString asTransName, float afTime) {
 	cInit *mpInit = gpInit;
 	gpInit->mpEffectHandler->GetSubTitle()->Add(kTranslate(asTransCat, asTransName), afTime, false);
 }
@@ -190,7 +190,7 @@ SCRIPT_DEFINE_FUNC_3(void, AddSubTitleTrans, string, string, float)
 
 //-----------------------------------------------------------------------
 
-static void AddSubTitle(std::string asMessage, float afTime) {
+static void AddSubTitle(tString asMessage, float afTime) {
 	gpInit->mpEffectHandler->GetSubTitle()->Add(cString::To16Char(asMessage), afTime, false);
 }
 SCRIPT_DEFINE_FUNC_2(void, AddSubTitle, string, float)
@@ -205,8 +205,8 @@ SCRIPT_DEFINE_FUNC_1(void, AddSubTitleTempString, float)
 
 //-----------------------------------------------------------------------
 
-static void AddRadioMessage(std::string asTransCat, std::string asTransName,
-									  std::string asSound) {
+static void AddRadioMessage(tString asTransCat, tString asTransName,
+									  tString asSound) {
 	cInit *mpInit = gpInit;
 	gpInit->mpRadioHandler->Add(kTranslate(asTransCat, asTransName), asSound);
 }
@@ -214,20 +214,20 @@ SCRIPT_DEFINE_FUNC_3(void, AddRadioMessage, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetRadioOnEndCallback(std::string asFunc) {
+static void SetRadioOnEndCallback(tString asFunc) {
 	gpInit->mpRadioHandler->SetOnEndCallback(asFunc);
 }
 SCRIPT_DEFINE_FUNC_1(void, SetRadioOnEndCallback, string)
 
 //-----------------------------------------------------------------------
 
-static void SetInventoryMessage(std::string asMessage) {
+static void SetInventoryMessage(tString asMessage) {
 	gpInit->mpInventory->SetMessage(cString::To16Char(asMessage));
 }
 SCRIPT_DEFINE_FUNC_1(void, SetInventoryMessage, string)
 
-static void SetInventoryMessageTrans(std::string asTransCat,
-											   std::string asTransName) {
+static void SetInventoryMessageTrans(tString asTransCat,
+											   tString asTransName) {
 	cInit *mpInit = gpInit;
 	gpInit->mpInventory->SetMessage(kTranslate(asTransCat, asTransName));
 }
@@ -235,17 +235,17 @@ SCRIPT_DEFINE_FUNC_2(void, SetInventoryMessageTrans, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetMessagesOverCallback(std::string asFunction) {
+static void SetMessagesOverCallback(tString asFunction) {
 	gpInit->mpGameMessageHandler->SetOnMessagesOverCallback(asFunction);
 }
 SCRIPT_DEFINE_FUNC_1(void, SetMessagesOverCallback, string)
 
 //-----------------------------------------------------------------------
 
-static void ChangeMap(std::string asMapFile, std::string asMapPos,
-								std::string asStartSound, std::string asStopSound,
+static void ChangeMap(tString asMapFile, tString asMapPos,
+								tString asStartSound, tString asStopSound,
 								float afFadeOutTime, float afFadeInTime,
-								std::string asLoadTextCat, std::string asLoadTextEntry) {
+								tString asLoadTextCat, tString asLoadTextEntry) {
 	// if(gpInit->mpRadioHandler->IsActive()) return;
 
 	gpInit->mpMapHandler->ChangeMap(asMapFile, asMapPos, asStartSound, asStopSound,
@@ -256,12 +256,12 @@ SCRIPT_DEFINE_FUNC_8(void, ChangeMap, string, string, string, string, float, flo
 
 //-----------------------------------------------------------------------
 
-static void SetMapGameName(std::string asName) {
+static void SetMapGameName(tString asName) {
 	gpInit->mpMapHandler->SetMapGameName(cString::To16Char(asName));
 }
 SCRIPT_DEFINE_FUNC_1(void, SetMapGameName, string)
 
-static void SetMapGameNameTrans(std::string asTransCat, std::string asTransEntry) {
+static void SetMapGameNameTrans(tString asTransCat, tString asTransEntry) {
 	cInit *mpInit = gpInit;
 	gpInit->mpMapHandler->SetMapGameName(kTranslate(asTransCat, asTransEntry));
 }
@@ -269,15 +269,15 @@ SCRIPT_DEFINE_FUNC_2(void, SetMapGameNameTrans, string, string)
 
 //-----------------------------------------------------------------------
 
-static void AddNotebookTaskText(std::string asName, std::string asText) {
+static void AddNotebookTaskText(tString asName, tString asText) {
 	gpInit->mpNotebook->AddTask(asName, cString::To16Char(asText));
 }
 SCRIPT_DEFINE_FUNC_2(void, AddNotebookTaskText, string, string)
 
 //-----------------------------------------------------------------------
 
-static void AddNotebookTask(std::string asName, std::string asTransCat,
-									  std::string asTransEntry) {
+static void AddNotebookTask(tString asName, tString asTransCat,
+									  tString asTransEntry) {
 	cInit *mpInit = gpInit;
 	gpInit->mpNotebook->AddTask(asName, kTranslate(asTransCat, asTransEntry));
 }
@@ -285,15 +285,15 @@ SCRIPT_DEFINE_FUNC_3(void, AddNotebookTask, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void RemoveNotebookTask(std::string asName) {
+static void RemoveNotebookTask(tString asName) {
 	gpInit->mpNotebook->RemoveTask(asName);
 }
 SCRIPT_DEFINE_FUNC_1(void, RemoveNotebookTask, string)
 
 //-----------------------------------------------------------------------
 
-static void AddNotebookNote(std::string asNameCat, std::string asNameEntry,
-									  std::string asTextCat, std::string asTextEntry) {
+static void AddNotebookNote(tString asNameCat, tString asNameEntry,
+									  tString asTextCat, tString asTextEntry) {
 	cInit *mpInit = gpInit;
 	gpInit->mpNotebook->AddNote(kTranslate(asNameCat, asNameEntry), asTextCat, asTextEntry);
 }
@@ -301,8 +301,8 @@ SCRIPT_DEFINE_FUNC_4(void, AddNotebookNote, string, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void StartNumericalPanel(std::string asName, int alCode1, int alCode2, int alCode3, int alCode4,
-										  float afDifficulty, std::string asCallback) {
+static void StartNumericalPanel(tString asName, int alCode1, int alCode2, int alCode3, int alCode4,
+										  float afDifficulty, tString asCallback) {
 	gpInit->mpNumericalPanel->SetActive(true);
 	tIntVec vCode;
 	vCode.resize(4);
@@ -376,7 +376,7 @@ static void SetWaveGravityActive(bool abX) {
 SCRIPT_DEFINE_FUNC_1(void, SetWaveGravityActive, bool)
 
 static void SetupWaveGravity(float afMaxAngle, float afSwingLength,
-									   float afGravitySize, std::string asAxis) {
+									   float afGravitySize, tString asAxis) {
 	int lDir = cString::ToLowerCase(asAxis) == "x" ? 0 : 1;
 
 	gpInit->mpEffectHandler->GetWaveGravity()->Setup(cMath::ToRad(afMaxAngle), afSwingLength, afGravitySize, lDir);
@@ -400,7 +400,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetupDepthOfField, float, float, float)
 
 //-----------------------------------------------------------------------
 
-static void FocusOnEntity(std::string asEntity) {
+static void FocusOnEntity(tString asEntity) {
 	GAME_ENTITY_BEGIN(asEntity);
 
 	if (pEntity->GetBodyNum() == 0) {
@@ -415,7 +415,7 @@ SCRIPT_DEFINE_FUNC_1(void, FocusOnEntity, string)
 
 //-----------------------------------------------------------------------
 
-static void SetConstantFocusOnEntity(std::string asEntity) {
+static void SetConstantFocusOnEntity(tString asEntity) {
 	if (asEntity == "") {
 		gpInit->mpEffectHandler->GetDepthOfField()->SetFocusBody(NULL);
 		return;
@@ -434,7 +434,7 @@ SCRIPT_DEFINE_FUNC_1(void, SetConstantFocusOnEntity, string)
 
 //-----------------------------------------------------------------------
 
-static void PlayGameMusic(std::string asFile, float afVolume, float afFadeStep,
+static void PlayGameMusic(tString asFile, float afVolume, float afFadeStep,
 									bool abLoop, int alPrio) {
 	gpInit->mpMusicHandler->Play(asFile, abLoop, afVolume, afFadeStep, alPrio);
 }
@@ -456,7 +456,7 @@ SCRIPT_DEFINE_FUNC_4(void, StartScreenShake, float, float, float, float)
 
 //-----------------------------------------------------------------------
 
-static void CreateLightFlashAtArea(std::string asArea, float afRadius,
+static void CreateLightFlashAtArea(tString asArea, float afRadius,
 											 float afR, float afG, float afB, float afA,
 											 float afAddTime, float afNegTime) {
 	cAreaEntity *pArea = gpInit->mpGame->GetScene()->GetWorld3D()->GetAreaEntity(asArea);
@@ -476,7 +476,7 @@ SCRIPT_DEFINE_FUNC_8(void, CreateLightFlashAtArea, string, float, float, float, 
 
 //-----------------------------------------------------------------------
 
-static void CreateSplashDamage(std::string asAreaName, float afRadius,
+static void CreateSplashDamage(tString asAreaName, float afRadius,
 										 float afMinDamage, float afMaxDamge,
 										 float afMinForce, float afMaxForce,
 										 float afMaxImpulse, int alStrength) {
@@ -504,12 +504,12 @@ SCRIPT_DEFINE_FUNC_8(void, CreateSplashDamage, string, float, float, float, floa
 
 //-----------------------------------------------------------------------
 
-static void CreateTimer(std::string asName, float afTime, std::string asCallback, bool abGlobal) {
+static void CreateTimer(tString asName, float afTime, tString asCallback, bool abGlobal) {
 	gpInit->mpMapHandler->CreateTimer(asName, afTime, asCallback, abGlobal);
 }
 SCRIPT_DEFINE_FUNC_4(void, CreateTimer, string, float, string, bool)
 
-static void DestroyTimer(std::string asName) {
+static void DestroyTimer(tString asName) {
 	cGameTimer *pTimer = gpInit->mpMapHandler->GetTimer(asName);
 	if (pTimer == NULL) {
 		Warning("Couldn't find timer '%s'\n", asName.c_str());
@@ -520,7 +520,7 @@ static void DestroyTimer(std::string asName) {
 }
 SCRIPT_DEFINE_FUNC_1(void, DestroyTimer, string)
 
-static void SetTimerPaused(std::string asName, bool abPaused) {
+static void SetTimerPaused(tString asName, bool abPaused) {
 	cGameTimer *pTimer = gpInit->mpMapHandler->GetTimer(asName);
 	if (pTimer == NULL) {
 		Warning("Couldn't find timer '%s'\n", asName.c_str());
@@ -531,7 +531,7 @@ static void SetTimerPaused(std::string asName, bool abPaused) {
 }
 SCRIPT_DEFINE_FUNC_2(void, SetTimerPaused, string, bool)
 
-static void SetTimerTime(std::string asName, float afTime) {
+static void SetTimerTime(tString asName, float afTime) {
 	cGameTimer *pTimer = gpInit->mpMapHandler->GetTimer(asName);
 	if (pTimer == NULL) {
 		Warning("Couldn't find timer '%s'\n", asName.c_str());
@@ -542,7 +542,7 @@ static void SetTimerTime(std::string asName, float afTime) {
 }
 SCRIPT_DEFINE_FUNC_2(void, SetTimerTime, string, float)
 
-static void AddTimerTime(std::string asName, float afTime) {
+static void AddTimerTime(tString asName, float afTime) {
 	cGameTimer *pTimer = gpInit->mpMapHandler->GetTimer(asName);
 	if (pTimer == NULL) {
 		Warning("Couldn't find timer '%s'\n", asName.c_str());
@@ -553,7 +553,7 @@ static void AddTimerTime(std::string asName, float afTime) {
 }
 SCRIPT_DEFINE_FUNC_2(void, AddTimerTime, string, float)
 
-static float GetTimerTime(std::string asName) {
+static float GetTimerTime(tString asName) {
 	cGameTimer *pTimer = gpInit->mpMapHandler->GetTimer(asName);
 	if (pTimer == NULL) {
 		Warning("Couldn't find timer '%s'\n", asName.c_str());
@@ -570,7 +570,7 @@ SCRIPT_DEFINE_FUNC_1(float, GetTimerTime, string)
 
 //-----------------------------------------------------------------------
 
-static void GivePlayerDamage(float afAmount, std::string asType) {
+static void GivePlayerDamage(float afAmount, tString asType) {
 	ePlayerDamageType type = ePlayerDamageType_BloodSplash;
 	tString sLowType = cString::ToLowerCase(asType);
 
@@ -599,7 +599,7 @@ SCRIPT_DEFINE_FUNC(float, GetPlayerHealth)
 
 //-----------------------------------------------------------------------
 
-static void SetPlayerPose(std::string asPose, bool abChangeDirectly) {
+static void SetPlayerPose(tString asPose, bool abChangeDirectly) {
 	tString sPose = cString::ToLowerCase(asPose);
 
 	if (sPose == "stand") {
@@ -619,7 +619,7 @@ SCRIPT_DEFINE_FUNC_1(void, SetPlayerActive, bool)
 
 //-----------------------------------------------------------------------
 
-static void StartPlayerLookAt(std::string asEntityName, float afSpeedMul, float afMaxSpeed) {
+static void StartPlayerLookAt(tString asEntityName, float afSpeedMul, float afMaxSpeed) {
 	///////////////////
 	// Get entity
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEntityName);
@@ -667,48 +667,48 @@ SCRIPT_DEFINE_FUNC_1(void, SetFlashlightDisabled, bool)
 
 //-----------------------------------------------------------------------
 
-static void AddPickupCallback(std::string asItem, std::string asFunction) {
+static void AddPickupCallback(tString asItem, tString asFunction) {
 	gpInit->mpInventory->AddPickupCallback(asItem, asFunction);
 }
 SCRIPT_DEFINE_FUNC_2(void, AddPickupCallback, string, string)
 
-static void AddUseCallback(std::string asItem, std::string asEntity, std::string asFunction) {
+static void AddUseCallback(tString asItem, tString asEntity, tString asFunction) {
 	gpInit->mpInventory->AddUseCallback(asItem, asEntity, asFunction);
 }
 SCRIPT_DEFINE_FUNC_3(void, AddUseCallback, string, string, string)
 
-static void AddCombineCallback(std::string asItem1, std::string asItem2, std::string asFunction) {
+static void AddCombineCallback(tString asItem1, tString asItem2, tString asFunction) {
 	gpInit->mpInventory->AddCombineCallback(asItem1, asItem2, asFunction);
 }
 SCRIPT_DEFINE_FUNC_3(void, AddCombineCallback, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void RemovePickupCallback(std::string asFunction) {
+static void RemovePickupCallback(tString asFunction) {
 	gpInit->mpInventory->RemovePickupCallback(asFunction);
 }
 SCRIPT_DEFINE_FUNC_1(void, RemovePickupCallback, string)
 
-static void RemoveUseCallback(std::string asFunction) {
+static void RemoveUseCallback(tString asFunction) {
 	gpInit->mpInventory->RemoveUseCallback(asFunction);
 }
 SCRIPT_DEFINE_FUNC_1(void, RemoveUseCallback, string)
 
-static void RemoveCombineCallback(std::string asFunction) {
+static void RemoveCombineCallback(tString asFunction) {
 	gpInit->mpInventory->RemoveCombineCallback(asFunction);
 }
 SCRIPT_DEFINE_FUNC_1(void, RemoveCombineCallback, string)
 
 //-----------------------------------------------------------------------
 
-static bool HasItem(std::string asName) {
+static bool HasItem(tString asName) {
 	// if(cString::ToLowerCase(asName)=="notebook") return gpInit->mpInventory->GetNoteBookActive();
 
 	return gpInit->mpInventory->GetItem(asName) != NULL;
 }
 SCRIPT_DEFINE_FUNC_1(bool, HasItem, string)
 
-static void RemoveItem(std::string asName) {
+static void RemoveItem(tString asName) {
 	cInventoryItem *pItem = gpInit->mpInventory->GetItem(asName);
 	if (pItem) {
 		gpInit->mpInventory->RemoveItem(pItem);
@@ -718,7 +718,7 @@ static void RemoveItem(std::string asName) {
 }
 SCRIPT_DEFINE_FUNC_1(void, RemoveItem, string)
 
-static void GiveItem(std::string asName, std::string asEntityFile, int alSlotIndex) {
+static void GiveItem(tString asName, tString asEntityFile, int alSlotIndex) {
 	gpInit->mpInventory->AddItemFromFile(asName, asEntityFile, alSlotIndex);
 }
 SCRIPT_DEFINE_FUNC_3(void, GiveItem, string, string, int)
@@ -729,8 +729,8 @@ SCRIPT_DEFINE_FUNC_3(void, GiveItem, string, string, int)
 
 //-----------------------------------------------------------------------
 
-static void ReplaceEntity(std::string asName, std::string asBodyName,
-									std::string asNewName, std::string asNewFile) {
+static void ReplaceEntity(tString asName, tString asBodyName,
+									tString asNewName, tString asNewFile) {
 	GAME_ENTITY_BEGIN(asName)
 
 	if (pEntity->GetBodyNum() == 0) {
@@ -768,14 +768,14 @@ SCRIPT_DEFINE_FUNC_4(void, ReplaceEntity, string, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetGameEntityActive(std::string asName, bool abX) {
+static void SetGameEntityActive(tString asName, bool abX) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->SetActive(abX);
 }
 SCRIPT_DEFINE_FUNC_2(void, SetGameEntityActive, string, bool)
 
-static bool GetGameEntityActive(std::string asName) {
+static bool GetGameEntityActive(tString asName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find game entity '%s'\n", asName.c_str());
@@ -788,28 +788,28 @@ SCRIPT_DEFINE_FUNC_1(bool, GetGameEntityActive, string)
 
 //-----------------------------------------------------------------------
 
-static void CreateGameEntityVar(std::string asEntName, std::string asVarName, int alVal) {
+static void CreateGameEntityVar(tString asEntName, tString asVarName, int alVal) {
 	GAME_ENTITY_BEGIN(asEntName);
 
 	pEntity->CreateVar(asVarName, alVal);
 }
 SCRIPT_DEFINE_FUNC_3(void, CreateGameEntityVar, string, string, int)
 
-static void SetGameEntityVar(std::string asEntName, std::string asVarName, int alVal) {
+static void SetGameEntityVar(tString asEntName, tString asVarName, int alVal) {
 	GAME_ENTITY_BEGIN(asEntName);
 
 	pEntity->SetVar(asVarName, alVal);
 }
 SCRIPT_DEFINE_FUNC_3(void, SetGameEntityVar, string, string, int)
 
-static void AddGameEntityVar(std::string asEntName, std::string asVarName, int alVal) {
+static void AddGameEntityVar(tString asEntName, tString asVarName, int alVal) {
 	GAME_ENTITY_BEGIN(asEntName);
 
 	pEntity->AddVar(asVarName, alVal);
 }
 SCRIPT_DEFINE_FUNC_3(void, AddGameEntityVar, string, string, int)
 
-static int GetGameEntityVar(std::string asEntName, std::string asVarName) {
+static int GetGameEntityVar(tString asEntName, tString asVarName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEntName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find game entity '%s'\n", asEntName.c_str());
@@ -822,14 +822,14 @@ SCRIPT_DEFINE_FUNC_2(int, GetGameEntityVar, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetGameEntityMaxExamineDist(std::string asName, float afDist) {
+static void SetGameEntityMaxExamineDist(tString asName, float afDist) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->SetMaxExamineDist(afDist);
 }
 SCRIPT_DEFINE_FUNC_2(void, SetGameEntityMaxExamineDist, string, float)
 
-static void SetGameEntityMaxInteractDist(std::string asName, float afDist) {
+static void SetGameEntityMaxInteractDist(tString asName, float afDist) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->SetMaxInteractDist(afDist);
@@ -838,9 +838,9 @@ SCRIPT_DEFINE_FUNC_2(void, SetGameEntityMaxInteractDist, string, float)
 
 //-----------------------------------------------------------------------
 
-static void SetGameEntityDescriptionTrans(std::string asName,
-													std::string asTransCat,
-													std::string asTransName) {
+static void SetGameEntityDescriptionTrans(tString asName,
+													tString asTransCat,
+													tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -851,9 +851,9 @@ SCRIPT_DEFINE_FUNC_3(void, SetGameEntityDescriptionTrans, string, string, string
 
 //-----------------------------------------------------------------------
 
-static void SetGameEntityDescriptionOnceTrans(std::string asName,
-														std::string asTransCat,
-														std::string asTransName) {
+static void SetGameEntityDescriptionOnceTrans(tString asName,
+														tString asTransCat,
+														tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -864,7 +864,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetGameEntityDescriptionOnceTrans, string, string, st
 
 //-----------------------------------------------------------------------
 
-static void SetGameEntityDescription(std::string asName, std::string asMessage) {
+static void SetGameEntityDescription(tString asName, tString asMessage) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->SetDescription(cString::To16Char(asMessage));
@@ -872,9 +872,9 @@ static void SetGameEntityDescription(std::string asName, std::string asMessage) 
 }
 SCRIPT_DEFINE_FUNC_2(void, SetGameEntityDescription, string, string)
 
-static void SetGameEntityGameNameTrans(std::string asName,
-												 std::string asTransCat,
-												 std::string asTransName) {
+static void SetGameEntityGameNameTrans(tString asName,
+												 tString asTransCat,
+												 tString asTransName) {
 	cInit *mpInit = gpInit;
 	GAME_ENTITY_BEGIN(asName)
 
@@ -884,8 +884,8 @@ SCRIPT_DEFINE_FUNC_3(void, SetGameEntityGameNameTrans, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void ChangeEntityAnimation(std::string asName,
-											std::string asAnimation,
+static void ChangeEntityAnimation(tString asName,
+											tString asAnimation,
 											bool abLoop) {
 	GAME_ENTITY_BEGIN(asName)
 
@@ -895,14 +895,14 @@ SCRIPT_DEFINE_FUNC_3(void, ChangeEntityAnimation, string, string, bool)
 
 //-----------------------------------------------------------------------
 
-static void SetEntityHealth(std::string asName, float afHealth) {
+static void SetEntityHealth(tString asName, float afHealth) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->SetHealth(afHealth);
 }
 SCRIPT_DEFINE_FUNC_2(void, SetEntityHealth, string, float)
 
-static void DamageEntity(std::string asName, float afDamage, int alStrength) {
+static void DamageEntity(tString asName, float afDamage, int alStrength) {
 	GAME_ENTITY_BEGIN(asName)
 
 	pEntity->Damage(afDamage, alStrength);
@@ -911,8 +911,8 @@ SCRIPT_DEFINE_FUNC_3(void, DamageEntity, string, float, int)
 
 //-----------------------------------------------------------------------
 
-static void SetDoorState(std::string asName,
-								   std::string asState) {
+static void SetDoorState(tString asName,
+								   tString asState) {
 	/*iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if(pEntity==NULL || pEntity->GetType() != eGameEntityType_Door)
 	{
@@ -940,7 +940,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetDoorState, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetObjectInteractMode(std::string asName, std::string asMode) {
+static void SetObjectInteractMode(tString asName, tString asMode) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Object) {
 		Warning("Couldn't find object entity '%s'\n", asName.c_str());
@@ -955,9 +955,9 @@ SCRIPT_DEFINE_FUNC_2(void, SetObjectInteractMode, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetupLink(std::string asName,
-								std::string asMapFile, std::string asMapPos,
-								std::string asStartSound, std::string asStopSound,
+static void SetupLink(tString asName,
+								tString asMapFile, tString asMapPos,
+								tString asStartSound, tString asStopSound,
 								float afFadeOutTime, float afFadeInTime) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Link) {
@@ -980,11 +980,11 @@ SCRIPT_DEFINE_FUNC_7(void, SetupLink, string, string, string, string, string, fl
 
 //-----------------------------------------------------------------------
 
-static void SetupLinkLoadText(std::string asName,
-										std::string asMapFile, std::string asMapPos,
-										std::string asStartSound, std::string asStopSound,
+static void SetupLinkLoadText(tString asName,
+										tString asMapFile, tString asMapPos,
+										tString asStartSound, tString asStopSound,
 										float afFadeOutTime, float afFadeInTime,
-										std::string asTextCat, std::string asTextEntry) {
+										tString asTextCat, tString asTextEntry) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Link) {
 		Warning("Couldn't find object entity '%s'\n", asName.c_str());
@@ -1006,7 +1006,7 @@ SCRIPT_DEFINE_FUNC_9(void, SetupLinkLoadText, string, string, string, string, st
 
 //-----------------------------------------------------------------------
 
-static void SetAreaCustomIcon(std::string asName, std::string asIcon) {
+static void SetAreaCustomIcon(tString asName, tString asIcon) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Area) {
 		Warning("Couldn't find area entity '%s'\n", asName.c_str());
@@ -1047,8 +1047,8 @@ SCRIPT_DEFINE_FUNC_2(void, SetAreaCustomIcon, string, string)
 
 //-----------------------------------------------------------------------
 
-static void AddEnemyPatrolNode(std::string asEnemy, std::string asNode, float afTime,
-										 std::string asAnimation) {
+static void AddEnemyPatrolNode(tString asEnemy, tString asNode, float afTime,
+										 tString asAnimation) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1064,7 +1064,7 @@ SCRIPT_DEFINE_FUNC_4(void, AddEnemyPatrolNode, string, string, float, string)
  * Clears all the patrol nodes for the enemy
  * \param asEnemy The Name of the enemy.
  */
-static void ClearEnemyPatrolNodes(std::string asEnemy) {
+static void ClearEnemyPatrolNodes(tString asEnemy) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1078,7 +1078,7 @@ SCRIPT_DEFINE_FUNC_1(void, ClearEnemyPatrolNodes, string)
 
 //-----------------------------------------------------------------------
 
-static void SetEnemyDeathCallback(std::string asEnemy, std::string asFunction) {
+static void SetEnemyDeathCallback(tString asEnemy, tString asFunction) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1092,7 +1092,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetEnemyDeathCallback, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetEnemyAttackCallback(std::string asEnemy, std::string asFunction) {
+static void SetEnemyAttackCallback(tString asEnemy, tString asFunction) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1106,7 +1106,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetEnemyAttackCallback, string, string)
 
 //-----------------------------------------------------------------------
 
-static float GetEnemyHealth(std::string asEnemy) {
+static float GetEnemyHealth(tString asEnemy) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1120,7 +1120,7 @@ SCRIPT_DEFINE_FUNC_1(float, GetEnemyHealth, string)
 
 //-----------------------------------------------------------------------
 
-static void SetEnemyUseTriggers(std::string asEnemy, bool abUseTriggers) {
+static void SetEnemyUseTriggers(tString asEnemy, bool abUseTriggers) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1134,7 +1134,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetEnemyUseTriggers, string, bool)
 
 //-----------------------------------------------------------------------
 
-static void ShowEnemyPlayer(std::string asEnemy) {
+static void ShowEnemyPlayer(tString asEnemy) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asEnemy);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Enemy) {
 		Warning("Couldn't find enemy entity '%s'\n", asEnemy.c_str());
@@ -1150,7 +1150,7 @@ SCRIPT_DEFINE_FUNC_1(void, ShowEnemyPlayer, string)
 
 //-----------------------------------------------------------------------
 
-static void SetDoorLocked(std::string asDoor, bool abLocked) {
+static void SetDoorLocked(tString asDoor, bool abLocked) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asDoor);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_SwingDoor) {
 		Warning("Couldn't find swing door entity '%s'\n", asDoor.c_str());
@@ -1164,12 +1164,12 @@ SCRIPT_DEFINE_FUNC_2(void, SetDoorLocked, string, bool)
 
 //-----------------------------------------------------------------------
 
-static void SetupStickArea(std::string asArea, bool abCanDeatch,
+static void SetupStickArea(tString asArea, bool abCanDeatch,
 									 bool abMoveBody, bool abRotateBody,
 									 bool abCheckCenterInArea, float afPoseTime,
-									 std::string asAttachSound, std::string asDetachSound,
-									 std::string asAttachPS, std::string asDetachPS,
-									 std::string asAttachFunc, std::string asDetachFunc) {
+									 tString asAttachSound, tString asDetachSound,
+									 tString asAttachPS, tString asDetachPS,
+									 tString asAttachFunc, tString asDetachFunc) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asArea);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_StickArea) {
 		Warning("Couldn't find stick area '%s'\n", asArea.c_str());
@@ -1207,7 +1207,7 @@ SCRIPT_DEFINE_FUNC(void, AllowAttachment)
 
 //-----------------------------------------------------------------------
 
-static void SetLampLit(std::string asName, bool abLit, bool abFade) {
+static void SetLampLit(tString asName, bool abLit, bool abFade) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Lamp) {
 		Warning("Couldn't find lamp '%s'\n", asName.c_str());
@@ -1221,7 +1221,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetLampLit, string, bool, bool)
 
 //-----------------------------------------------------------------------
 
-static void SetLampFlicker(std::string asName, bool abFlicker) {
+static void SetLampFlicker(tString asName, bool abFlicker) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Lamp) {
 		Warning("Couldn't find lamp '%s'\n", asName.c_str());
@@ -1235,7 +1235,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetLampFlicker, string, bool)
 
 //-----------------------------------------------------------------------
 
-static void SetLampLitChangeCallback(std::string asName, std::string asCallback) {
+static void SetLampLitChangeCallback(tString asName, tString asCallback) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Lamp) {
 		Warning("Couldn't find lamp '%s'\n", asName.c_str());
@@ -1249,10 +1249,10 @@ SCRIPT_DEFINE_FUNC_2(void, SetLampLitChangeCallback, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetupLadder(std::string asName,
-								  std::string asAttachSound,
-								  std::string asClimbUpSound,
-								  std::string asClimbDownSound) {
+static void SetupLadder(tString asName,
+								  tString asAttachSound,
+								  tString asClimbUpSound,
+								  tString asClimbDownSound) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_Ladder) {
 		Warning("Couldn't find ladder '%s'\n", asName.c_str());
@@ -1268,7 +1268,7 @@ SCRIPT_DEFINE_FUNC_4(void, SetupLadder, string, string, string, string)
 
 //-----------------------------------------------------------------------
 
-static void SetupDamageArea(std::string asName, float afDamage,
+static void SetupDamageArea(tString asName, float afDamage,
 									  float afUpdatesPerSec, int alStrength,
 									  bool abDisableObjects, bool abDisableEnemies) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
@@ -1288,7 +1288,7 @@ SCRIPT_DEFINE_FUNC_6(void, SetupDamageArea, string, float, float, int, bool, boo
 
 //-----------------------------------------------------------------------
 
-static void SetupForceArea(std::string asName,
+static void SetupForceArea(tString asName,
 									 float afMaxForce, float afConstant,
 									 float afDestSpeed, float afMaxMass,
 									 bool abMulWithMass, bool abForceAtPoint,
@@ -1313,10 +1313,10 @@ SCRIPT_DEFINE_FUNC_9(void, SetupForceArea, string, float, float, float, float, b
 
 //-----------------------------------------------------------------------
 
-static void SetupLiquidArea(std::string asName,
+static void SetupLiquidArea(tString asName,
 									  float afDensity, float afLinearViscosity,
 									  float afAngularViscosity,
-									  std::string asPhysicsMaterial,
+									  tString asPhysicsMaterial,
 									  float fR, float fG, float fB,
 									  bool abHasWaves) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
@@ -1340,9 +1340,9 @@ SCRIPT_DEFINE_FUNC_9(void, SetupLiquidArea, string, float, float, float, string,
 
 //-----------------------------------------------------------------------
 
-static void SetupSaveArea(std::string asName,
-									std::string asMessageCat, std::string asMessageEntry,
-									std::string asSound) {
+static void SetupSaveArea(tString asName,
+									tString asMessageCat, tString asMessageEntry,
+									tString asSound) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asName);
 	if (pEntity == NULL || pEntity->GetType() != eGameEntityType_SaveArea) {
 		Warning("Couldn't find save area '%s'\n", asName.c_str());
@@ -1379,10 +1379,10 @@ static eGameCollideScriptType GetGameCollideScriptType(const tString &asType) {
 
 //////////////////////////////
 
-static void AddEntityCollideCallback(std::string asType,
-											   std::string asDestName,
-											   std::string asEntityName,
-											   std::string asFuncName) {
+static void AddEntityCollideCallback(tString asType,
+											   tString asDestName,
+											   tString asEntityName,
+											   tString asFuncName) {
 	if (cString::ToLowerCase(asDestName) == "player") {
 		eGameCollideScriptType type = GetGameCollideScriptType(asType);
 
@@ -1405,9 +1405,9 @@ SCRIPT_DEFINE_FUNC_4(void, AddEntityCollideCallback, string, string, string, str
 
 //////////////////////////////
 
-static void RemoveEntityCollideCallback(std::string asType,
-												  std::string asDestName,
-												  std::string asEntityName) {
+static void RemoveEntityCollideCallback(tString asType,
+												  tString asDestName,
+												  tString asEntityName) {
 	if (cString::ToLowerCase(asDestName) == "player") {
 		eGameCollideScriptType type = GetGameCollideScriptType(asType);
 
@@ -1452,9 +1452,9 @@ static eGameEntityScriptType GetGameScriptType(const tString &asType) {
 
 /////////////////////
 
-static void AddEntityCallback(std::string asType,
-										std::string asDestName,
-										std::string asFuncName) {
+static void AddEntityCallback(tString asType,
+										tString asDestName,
+										tString asFuncName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asDestName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find entity '%s'\n", asDestName.c_str());
@@ -1471,8 +1471,8 @@ SCRIPT_DEFINE_FUNC_3(void, AddEntityCallback, string, string, string)
 
 /////////////////////
 
-static void RemoveEntityCallback(std::string asType,
-										   std::string asDestName) {
+static void RemoveEntityCallback(tString asType,
+										   tString asDestName) {
 	iGameEntity *pEntity = gpInit->mpMapHandler->GetGameEntity(asDestName);
 	if (pEntity == NULL) {
 		Warning("Couldn't find entity '%s'\n", asDestName.c_str());
@@ -1493,8 +1493,8 @@ SCRIPT_DEFINE_FUNC_2(void, RemoveEntityCallback, string, string)
 
 //-----------------------------------------------------------------------
 
-static void CreateSoundEntityAt(std::string asType, std::string asDestName,
-										  std::string asSoundName, std::string asSoundFile) {
+static void CreateSoundEntityAt(tString asType, tString asDestName,
+										  tString asSoundName, tString asSoundFile) {
 	cWorld3D *pWorld = gpInit->mpGame->GetScene()->GetWorld3D();
 	iPhysicsWorld *pPhysicsWorld = gpInit->mpGame->GetScene()->GetWorld3D()->GetPhysicsWorld();
 

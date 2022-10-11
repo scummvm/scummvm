@@ -211,10 +211,10 @@ void cInventorySlot::OnDraw() {
 		if (pType && pType->GetString(mpItem) != _W("")) {
 			tWString sString = pType->GetString(mpItem);
 			mpFont->draw(vPos + cVector3f(0, 0, 1), 12, cColor(1, mpInit->mpInventory->GetAlpha()), eFontAlign_Left,
-						 sString.c_str());
+						 sString);
 		} else if (mpItem->HasCount()) {
 			mpFont->draw(vPos + cVector3f(0, 0, 1), 12, cColor(1, mpInit->mpInventory->GetAlpha()), eFontAlign_Left,
-						 _W("%d"), mpItem->GetCount());
+						 Common::U32String::format("%d", mpItem->GetCount()));
 		}
 	}
 
@@ -1011,9 +1011,9 @@ void cInventory::OnDraw() {
 								cVector2f(800, 17 * 4 + 8 * 2), cColor(1, 1, 1, fMessAlpha * 0.92f));
 
 		mpFont->drawWordWrap(vMessPos + cVector3f(0, 0, 0), 720, 16, 17, cColor(1, 1, 1, fMessAlpha), eFontAlign_Left,
-							 msMessage.c_str());
+							 msMessage);
 		mpFont->drawWordWrap(vMessPos + cVector3f(0, 1, -1), 720, 16, 17, cColor(0, 0, 0, fMessAlpha), eFontAlign_Left,
-							 msMessage.c_str());
+							 msMessage);
 	}
 
 	//////////////////////////
@@ -1021,14 +1021,14 @@ void cInventory::OnDraw() {
 	if (mpInit->mpRadioHandler->IsActive() == false || mpInit->mbSubtitles == false) {
 		float fTextAlpha = mfAlpha * mfTextAlpha * (1 - mfMessageAlpha);
 		mpFont->draw(cVector3f(400, 460, 10), 19, cColor(1, 1, 1, fTextAlpha), eFontAlign_Center,
-					 _W("%ls"), msItemName.c_str());
+					 msItemName);
 		mpFont->draw(cVector3f(400 + 1, 460 + 1, 9), 19, cColor(0, 0, 0, fTextAlpha), eFontAlign_Center,
-					 _W("%ls"), msItemName.c_str());
+					msItemName);
 
 		mpFont->drawWordWrap(cVector3f(80, 480, 10), 640, 16, 17, cColor(1, 1, 1, fTextAlpha), eFontAlign_Left,
-							 msItemDesc.c_str());
+							 msItemDesc);
 		mpFont->drawWordWrap(cVector3f(80 + 1, 480 + 1, 9), 640, 16, 17, cColor(0, 0, 0, fTextAlpha), eFontAlign_Left,
-							 msItemDesc.c_str());
+							 msItemDesc);
 	}
 }
 

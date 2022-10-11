@@ -48,10 +48,10 @@
 
 namespace hpl {
 
-using BitmapArray = Common::Array<Common::SharedPtr<Bitmap2D>>;
+using BitmapArray = Common::Array<Common::SharedPtr<Bitmap2D> >;
 
 Glyph::Glyph(cGfxObject *apObject, cGuiGfxElement *apGuiGfx, const cVector2f &avOffset,
-			   const cVector2f &avSize, float afAdvance) {
+			 const cVector2f &avSize, float afAdvance) {
 	_gfxObject = apObject;
 	_guiGfx = apGuiGfx;
 	_offset = avOffset;
@@ -82,7 +82,7 @@ static Common::ScopedPtr<TiXmlDocument> loadFontXML(const Common::String &filepa
 	Common::ScopedPtr<TiXmlDocument> doc(new TiXmlDocument(filepath.c_str()));
 	if (!doc->LoadFile(filepath.c_str())) {
 		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugResourceLoading,
-			"Couldn't load font file at: %s", filepath.c_str());
+				"Couldn't load font file at: %s", filepath.c_str());
 		return nullptr;
 	}
 	return doc;
@@ -92,7 +92,7 @@ cVector2l loadXMLCommon(const TiXmlElement *commonElement, uint16 &firstChar, ui
 	int lineHeight = Hpl1::stoi(commonElement->Attribute("lineHeight"));
 	int base = Hpl1::stoi(commonElement->Attribute("base"));
 	firstChar = 0;
-	lastchar = 3000; //engine max
+	lastchar = 3000; // engine max
 	height = static_cast<float>(lineHeight);
 	sizeRatio.x = static_cast<float>(base) / height;
 	sizeRatio.y = 1;
@@ -104,7 +104,7 @@ bool loadNextBitmap(BitmapArray &bitmaps, const Common::String &file, const Comm
 	Common::SharedPtr<Bitmap2D> bitmap(resources->loadBitmap2D(bitmapPath.c_str()));
 	if (bitmap == nullptr) {
 		debugCN(Hpl1::kDebugLevelError, Hpl1::kDebugResourceLoading,
-			"Couldn't load bitmap %s", file.c_str());
+				"Couldn't load bitmap %s", file.c_str());
 		return false;
 	}
 	bitmaps.push_back(bitmap);
@@ -112,9 +112,9 @@ bool loadNextBitmap(BitmapArray &bitmaps, const Common::String &file, const Comm
 }
 
 bool loadBitmaps(BitmapArray &bitmaps, const TiXmlElement *pagesRoot, const Common::String &fontDir, LowLevelResources *resources) {
-	bitmaps.reserve(3000); //engine max
+	bitmaps.reserve(3000); // engine max
 	const TiXmlElement *pageIt = pagesRoot->FirstChildElement("page");
-	for(; pageIt != nullptr; pageIt = pageIt->NextSiblingElement("page")) {
+	for (; pageIt != nullptr; pageIt = pageIt->NextSiblingElement("page")) {
 		if (!loadNextBitmap(bitmaps, pageIt->Attribute("file"), fontDir, resources))
 			return false;
 	}
@@ -135,7 +135,7 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 	cVector2l size(w, h);
 	Bitmap2D &src = *bitmaps[page];
 	Common::ScopedPtr<Bitmap2D> charBmp(_lowLevelGraphics->CreateBitmap2D(size));
-	src.drawToBitmap(*charBmp, {0,0}, Common::Rect(x, y, x + w, y + h));
+	src.drawToBitmap(*charBmp, {0, 0}, Common::Rect(x, y, x + w, y + h));
 
 	charBmp->copyRedToAlpha();
 	_glyphs[id] = createGlyph(charBmp.get(), {xOffset, yOffset}, {w, h}, fontSize, advance);
@@ -144,12 +144,12 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 void FontData::loadGlyphs(const TiXmlElement *charsRoot, BitmapArray &bitmaps, const cVector2l &fontSize) {
 	const TiXmlElement *charIt = charsRoot->FirstChildElement("char");
 	_glyphs.resize(3000, nullptr);
-	for(; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
+	for (; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
 		loadNextGlyph(charIt, bitmaps, fontSize);
 }
 
 bool FontData::createFromBitmapFile(const tString &file) {
-	//FIXME: string types
+	// FIXME: string types
 	Common::String filename = file.c_str();
 	Common::ScopedPtr<TiXmlDocument> xmlDoc = loadFontXML(filename);
 	if (!xmlDoc)
@@ -164,32 +164,24 @@ bool FontData::createFromBitmapFile(const tString &file) {
 }
 
 bool FontData::createFromFontFile(const tString &asFileName, int alSize, unsigned short alFirstChar,
-									  unsigned short alLastChar) {
+								  unsigned short alLastChar) {
 	error("call to unimplemented function FontData::CreateFromFontFile");
 }
 
 void FontData::draw(const cVector3f &avPos, const cVector2f &avSize, const cColor &aCol,
-					 eFontAlign aAlign, const wchar_t *fmt, ...) {
-	wchar_t sText[256];
-	va_list ap;
-	if (fmt == NULL)
-		return;
-	va_start(ap, fmt);
-	vswprintf(sText, 255, fmt, ap);
-	va_end(ap);
-
+					eFontAlign aAlign, const tWString &text) {
 	int lCount = 0;
-	//float lXAdd = 0;
+	// float lXAdd = 0;
 	cVector3f vPos = avPos;
 
 	if (aAlign == eFontAlign_Center) {
-		vPos.x -= getLength(avSize, sText) / 2;
+		vPos.x -= getLength(avSize, text.c_str()) / 2;
 	} else if (aAlign == eFontAlign_Right) {
-		vPos.x -= getLength(avSize, sText);
+		vPos.x -= getLength(avSize, text.c_str());
 	}
 
-	while (sText[lCount] != 0) {
-		wchar_t lGlyphNum = ((wchar_t)sText[lCount]);
+	while (lCount < static_cast<int>(text.size())) {
+		char32_t lGlyphNum = text[lCount];
 		if (lGlyphNum < _firstChar || lGlyphNum > _lastChar) {
 			lCount++;
 			continue;
@@ -210,7 +202,7 @@ void FontData::draw(const cVector3f &avPos, const cVector2f &avSize, const cColo
 }
 
 int FontData::drawWordWrap(cVector3f avPos, float afLength, float afFontHeight, cVector2f avSize, const cColor &aCol,
-							eFontAlign aAlign, const tWString &asString) {
+						   eFontAlign aAlign, const tWString &asString) {
 	int rows = 0;
 
 	unsigned int pos;
@@ -222,7 +214,7 @@ int FontData::drawWordWrap(cVector3f avPos, float afLength, float afFontHeight, 
 	float fTextLength;
 
 	for (pos = 0; pos < asString.size(); pos++) {
-		if (asString[pos] == _W(' ') || asString[pos] == _W('\n')) {
+		if (asString[pos] == ' ' || asString[pos] == '\n') {
 			tWString temp = asString.substr(first_letter, pos - first_letter);
 			fTextLength = getLength(avSize, temp.c_str());
 
@@ -234,7 +226,7 @@ int FontData::drawWordWrap(cVector3f avPos, float afLength, float afFontHeight, 
 				last_space = pos;
 				nothing = false;
 			}
-			if (asString[pos] == _W('\n')) {
+			if (asString[pos] == '\n') {
 				last_space = pos;
 				first_letter = last_space + 1;
 				RowLengthList.push_back(last_space - 1);
@@ -254,26 +246,26 @@ int FontData::drawWordWrap(cVector3f avPos, float afLength, float afFontHeight, 
 	}
 
 	if (rows == 0) {
-		draw(avPos, avSize, aCol, aAlign, _W("%ls"), asString.c_str());
+		draw(avPos, avSize, aCol, aAlign, asString);
 	} else {
 		first_letter = 0;
 		unsigned int i = 0;
 
 		for (tUIntListIt it = RowLengthList.begin(); it != RowLengthList.end(); ++it) {
 			draw(cVector3f(avPos.x, avPos.y + i * afFontHeight, avPos.z), avSize, aCol, aAlign,
-				 _W("%ls"), asString.substr(first_letter, *it - first_letter).c_str());
+				 asString.substr(first_letter, *it - first_letter));
 			i++;
 			first_letter = *it + 1;
 		}
 		draw(cVector3f(avPos.x, avPos.y + i * afFontHeight, avPos.z), avSize, aCol, aAlign,
-			 _W("%ls"), asString.substr(first_letter).c_str());
+			 asString.substr(first_letter));
 	}
 
 	return rows;
 }
 
 void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avSize,
-								const tWString &asString, tWStringVec *apRowVec) {
+							   const tWString &asString, tWStringVec *apRowVec) {
 	int rows = 0;
 
 	unsigned int pos;
@@ -286,7 +278,7 @@ void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avS
 
 	for (pos = 0; pos < asString.size(); pos++) {
 		// Log("char: %d\n",(char)asString[pos]);
-		if (asString[pos] == _W(' ') || asString[pos] == _W('\n')) {
+		if (asString[pos] == ' ' || asString[pos] == '\n') {
 			tWString temp = asString.substr(first_letter, pos - first_letter);
 			fTextLength = getLength(avSize, temp.c_str());
 
@@ -300,7 +292,7 @@ void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avS
 				last_space = pos;
 				nothing = false;
 			}
-			if (asString[pos] == _W('\n')) {
+			if (asString[pos] == '\n') {
 				last_space = pos;
 				first_letter = last_space + 1;
 				RowLengthList.push_back(last_space);
@@ -320,26 +312,26 @@ void FontData::getWordWrapRows(float afLength, float afFontHeight, cVector2f avS
 	}
 
 	if (rows == 0) {
-		apRowVec->push_back(asString.c_str());
+		apRowVec->push_back(asString);
 	} else {
 		first_letter = 0;
 		unsigned int i = 0;
 
 		for (tUIntListIt it = RowLengthList.begin(); it != RowLengthList.end(); ++it) {
-			apRowVec->push_back(asString.substr(first_letter, *it - first_letter).c_str());
+			apRowVec->push_back(asString.substr(first_letter, *it - first_letter));
 			i++;
 			first_letter = *it + 1;
 		}
-		apRowVec->push_back(asString.substr(first_letter).c_str());
+		apRowVec->push_back(asString.substr(first_letter));
 	}
 }
 
-float FontData::getLength(const cVector2f &avSize, const wchar_t *sText) {
+float FontData::getLength(const cVector2f &avSize, const char32_t *sText) {
 	int lCount = 0;
-	//float lXAdd = 0;
+	// float lXAdd = 0;
 	float fLength = 0;
 	while (sText[lCount] != 0) {
-		unsigned short lGlyphNum = ((wchar_t)sText[lCount]);
+		unsigned short lGlyphNum = (sText[lCount]);
 		if (lGlyphNum < _firstChar || lGlyphNum > _lastChar) {
 			lCount++;
 			continue;
@@ -348,8 +340,8 @@ float FontData::getLength(const cVector2f &avSize, const wchar_t *sText) {
 
 		Glyph *pGlyph = _glyphs[lGlyphNum];
 		if (pGlyph) {
-			//cVector2f vOffset(pGlyph->_offset * avSize);
-			//cVector2f vSize(pGlyph->_size * avSize);
+			// cVector2f vOffset(pGlyph->_offset * avSize);
+			// cVector2f vSize(pGlyph->_size * avSize);
 
 			fLength += pGlyph->_advance * avSize.x;
 		}
@@ -359,20 +351,8 @@ float FontData::getLength(const cVector2f &avSize, const wchar_t *sText) {
 	return fLength;
 }
 
-float FontData::getLengthFmt(const cVector2f &avSize, const wchar_t *fmt, ...) {
-	wchar_t sText[256];
-	va_list ap;
-	if (fmt == NULL)
-		return 0;
-	va_start(ap, fmt);
-	vswprintf(sText, 255, fmt, ap);
-	va_end(ap);
-
-	return getLength(avSize, sText);
-}
-
 Glyph *FontData::createGlyph(Bitmap2D *apBmp, const cVector2l &avOffset, const cVector2l &avSize,
-							   const cVector2l &avFontSize, int alAdvance) {
+							 const cVector2l &avFontSize, int alAdvance) {
 	// Here the bitmap should be saved to diskk for faster loading.
 
 	//////////////////////////

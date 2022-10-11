@@ -162,13 +162,13 @@ void cMainMenuWidget_MainButton::OnMouseDown(eMButton aButton) {
 //-----------------------------------------------------------------------
 
 void cMainMenuWidget_MainButton::OnDraw() {
-	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f + mfAlpha * 0.3f, 1), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f + mfAlpha * 0.3f, 1), eFontAlign_Center, msText);
 
 	float fAdd = sin(mfOverTimer) * 16.0f;
 
 	if (mfAlpha > 0) {
-		mpFont->draw(mvPositon + cVector3f(fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
-		mpFont->draw(mvPositon + cVector3f(-fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText);
+		mpFont->draw(mvPositon + cVector3f(-fAdd, 0, -1), mvFontSize, cColor(0.56f, 0.35f * mfAlpha), eFontAlign_Center, msText);
 	}
 }
 
@@ -247,16 +247,16 @@ void cMainMenuWidget_Button::OnMouseDown(eMButton aButton) {
 //-----------------------------------------------------------------------
 
 void cMainMenuWidget_Button::OnDraw() {
-	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f, 1), mAlignment, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.62f, 1), mAlignment, msText);
 
 	if (mfAlpha > 0) {
 		float fX = 0.8f + sin(mfOverTimer) * 0.2f;
 
-		mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(0.9f, 0.95f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->draw(mvPositon + cVector3f(2, 2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->draw(mvPositon + cVector3f(-2, -2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText.c_str());
-		mpFont->draw(mvPositon + cVector3f(3, 3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
-		mpFont->draw(mvPositon + cVector3f(-3, -3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText.c_str());
+		mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(0.9f, 0.95f, 1.0f, mfAlpha * fX), mAlignment, msText);
+		mpFont->draw(mvPositon + cVector3f(2, 2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText);
+		mpFont->draw(mvPositon + cVector3f(-2, -2, -1), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * fX), mAlignment, msText);
+		mpFont->draw(mvPositon + cVector3f(3, 3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText);
+		mpFont->draw(mvPositon + cVector3f(-3, -3, -2), mvFontSize, cColor(0.1f, 0.32f, 1.0f, mfAlpha * 0.5f * fX), mAlignment, msText);
 	}
 }
 
@@ -309,10 +309,10 @@ void cMainMenuWidget_Text::UpdateSize() {
 
 void cMainMenuWidget_Text::OnDraw() {
 	if (mfMaxWidth <= 0)
-		mpFont->draw(mvPositon, mvFontSize, cColor(0.9f, 1), mAlignment, _W("%ls"), msText.c_str());
+		mpFont->draw(mvPositon, mvFontSize, cColor(0.9f, 1), mAlignment, msText);
 	else
 		mpFont->drawWordWrap(mvPositon, mfMaxWidth, mvFontSize.y + 1,
-							 mvFontSize, cColor(0.9f, 1), mAlignment, msText.c_str());
+							 mvFontSize, cColor(0.9f, 1), mAlignment, msText);
 }
 
 //-----------------------------------------------------------------------
@@ -503,12 +503,12 @@ void cMainMenuWidget_List::OnDraw() {
 			break;
 
 		if (mlSelected ==(int)i) {
-			mpFont->draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i].c_str());
+			mpFont->draw(vPos, mvFontSize, cColor(0.95f, 1), eFontAlign_Left, mvEntries[i]);
 			mpDrawer->DrawGfxObject(mpBackGfx, vPos + cVector3f(0, 2, -1),
 									cVector2f(mvSize.x - 5, mvFontSize.y),
 									cColor(0.0f, 0.0f, 0.73f, 1));
 		} else
-			mpFont->draw(vPos, mvFontSize, cColor(0.7f, 1), eFontAlign_Left, mvEntries[i].c_str());
+			mpFont->draw(vPos, mvFontSize, cColor(0.7f, 1), eFontAlign_Left, mvEntries[i]);
 
 		vPos.y += mvFontSize.y + 2;
 	}
@@ -733,7 +733,7 @@ public:
 		if (lSelected < 0)
 			return;
 
-		tWString sFile = msDir + _W("/") + gvSaveGameFileVec[mlNum][lSelected];
+		tWString sFile = msDir + Common::U32String("/") + gvSaveGameFileVec[mlNum][lSelected];
 
 		mpInit->mpMainMenu->SetActive(false);
 		mpInit->ResetGame(true);
@@ -783,7 +783,7 @@ public:
 			return;
 
 		tWString originalName = gvSaveGameFileVec[mlNum][lSelected];
-		tWString newName = _W("favorite-") + cString::SubW(originalName, originalName.find_first_of('.') + 1);
+		tWString newName = _W("favorite-") + cString::SubW(originalName, originalName.find('.') + 1);
 		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %s to favourites\n", cString::To8Char(newName).c_str());
 		Common::String originalFile(Hpl1::g_engine->mapInternalSaveToFile(cString::To8Char(originalName).c_str()));
 		Common::String newFile(Hpl1::g_engine->createSaveFile(cString::To8Char(newName).c_str()));
@@ -1800,7 +1800,7 @@ void cMainMenu::OnDraw() {
 	// Draw tip
 	if (msButtonTip != _W("")) {
 		mpTipFont->drawWordWrap(cVector3f(10, 570, 150), 780, 13, 12, cColor(1, 1),
-								eFontAlign_Left, msButtonTip.c_str());
+								eFontAlign_Left, msButtonTip);
 	}
 
 	////////////////////////////////
@@ -2487,7 +2487,7 @@ void cMainMenu::CreateWidgets() {
 		vPos.y += 46 + 30;
 		vPos.x += 15;
 
-		tWString sDir = _W("spot:");
+		tWString sDir("spot:");
 		if (i == 1)
 			sDir = _W("auto:");
 		else if (i == 2)
@@ -2515,7 +2515,7 @@ void cMainMenu::CreateWidgets() {
 
 			gvSaveGameFileVec[i].push_back(sFile);
 
-			sFile = cString::SubW(sFile, sFile.find_first_of(_W(":")) + 1);
+			sFile = cString::SubW(sFile, sFile.find(':') + 1);
 			gpSaveGameList[i]->AddEntry(sFile);
 			// gpSaveGameList[i]->AddEntry(sFile);
 		}
@@ -2701,63 +2701,63 @@ void cMainMenu::CreateWidgets() {
 	vPos.y += 46;
 	vPos.x += 15;
 
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Forward:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Forward"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Backward:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Backward"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Strafe Left:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Left"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Strafe Right:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Right"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Run:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Run"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Crouch:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Crouch"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Jump:"),
 														  18, eFontAlign_Left, pTempTextWidget, "Jump"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Lean Left:"),
 														  18, eFontAlign_Left, pTempTextWidget, "LeanLeft"));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pWidgetKeyButton);
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMove, pTempTextWidget);
 	pWidgetKeyButton = hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Lean Right:"),
 														  18, eFontAlign_Left, pTempTextWidget, "LeanRight"));
@@ -2771,31 +2771,31 @@ void cMainMenu::CreateWidgets() {
 	vPos.y += 46;
 	vPos.x += 15;
 
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Interact:"),
 																							  18, eFontAlign_Left, pTempTextWidget, "Interact")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Examine:"),
 																							  18, eFontAlign_Left, pTempTextWidget, "Examine")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "InteractMode:"),
 																							  18, eFontAlign_Left, pTempTextWidget, "InteractMode")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Holster:"),
 																							  18, eFontAlign_Left, pTempTextWidget, "Holster")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupAction, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "LookMode:"),
 																							  18, eFontAlign_Left, pTempTextWidget, "LookMode")));
@@ -2808,31 +2808,31 @@ void cMainMenu::CreateWidgets() {
 	vPos.y += 46;
 	vPos.x += 15;
 
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Inventory:"),
 																							18, eFontAlign_Left, pTempTextWidget, "Inventory")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Notebook:"),
 																							18, eFontAlign_Left, pTempTextWidget, "NoteBook")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Pers. Notes:"),
 																							18, eFontAlign_Left, pTempTextWidget, "PersonalNotes")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Flashlight:"),
 																							18, eFontAlign_Left, pTempTextWidget, "Flashlight")));
 
 	vPos.y += 23;
-	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), _W(""), 18, eFontAlign_Left));
+	pTempTextWidget = hplNew(cMainMenuWidget_Text, (mpInit, vPos + cVector3f(fKeyTextXAdd, 0, 0), Common::U32String(), 18, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, pTempTextWidget);
 	AddWidgetToState(eMainMenuState_OptionsKeySetupMisc, hplNew(cMainMenuWidget_KeyButton, (mpInit, vPos, kTranslate("MainMenu", "Glowstick:"),
 																							18, eFontAlign_Left, pTempTextWidget, "GlowStick")));

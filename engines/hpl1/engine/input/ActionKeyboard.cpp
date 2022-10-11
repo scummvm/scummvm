@@ -70,424 +70,424 @@ float cActionKeyboard::GetValue() {
 tString cActionKeyboard::GetInputName() {
 	tString tsKey = "";
 	if (mMod & eKeyModifier_SHIFT) {
-		tsKey.append("Shift ");
+		tsKey += "Shift ";
 	}
 	if (mMod & eKeyModifier_ALT) {
-		tsKey.append("Alt ");
+		tsKey += "Alt ";
 	}
 	if (mMod & eKeyModifier_CTRL) {
-		tsKey.append("Control ");
+		tsKey += "Control ";
 	}
 	if (mMod & eKeyModifier_META) {
 #ifdef __APPLE__
-		tsKey.append("Command ");
+		tsKey += "Command ";
 #else
-		tsKey.append("Windows ");
+		tsKey += "Windows ";
 #endif
 	}
 
 	switch (mKey) {
 	case eKey_BACKSPACE:
-		tsKey.append("BackSpace");
+		tsKey += "BackSpace";
 		break;
 	case eKey_TAB:
-		tsKey.append("Tab");
+		tsKey += "Tab";
 		break;
 	case eKey_CLEAR:
-		tsKey.append("Clear");
+		tsKey += "Clear";
 		break;
 	case eKey_RETURN:
-		tsKey.append("Return");
+		tsKey += "Return";
 		break;
 	case eKey_PAUSE:
-		tsKey.append("Pause");
+		tsKey += "Pause";
 		break;
 	case eKey_ESCAPE:
-		tsKey.append("Escape");
+		tsKey += "Escape";
 		break;
 	case eKey_SPACE:
-		tsKey.append("Space");
+		tsKey += "Space";
 		break;
 	case eKey_EXCLAIM:
-		tsKey.append("Exclaim");
+		tsKey += "Exclaim";
 		break;
 	case eKey_QUOTEDBL:
-		tsKey.append("DblQoute");
+		tsKey += "DblQoute";
 		break;
 	case eKey_HASH:
-		tsKey.append("Hash");
+		tsKey += "Hash";
 		break;
 	case eKey_DOLLAR:
-		tsKey.append("Dollar");
+		tsKey += "Dollar";
 		break;
 	case eKey_AMPERSAND:
-		tsKey.append("Ampersand");
+		tsKey += "Ampersand";
 		break;
 	case eKey_QUOTE:
-		tsKey.append("Quote");
+		tsKey += "Quote";
 		break;
 	case eKey_LEFTPAREN:
-		tsKey.append("LeftParent");
+		tsKey += "LeftParent";
 		break;
 	case eKey_RIGHTPAREN:
-		tsKey.append("RightParent");
+		tsKey += "RightParent";
 		break;
 	case eKey_ASTERISK:
-		tsKey.append("Asterisk");
+		tsKey += "Asterisk";
 		break;
 	case eKey_PLUS:
-		tsKey.append("Plus");
+		tsKey += "Plus";
 		break;
 	case eKey_COMMA:
-		tsKey.append("Comma");
+		tsKey += "Comma";
 		break;
 	case eKey_MINUS:
-		tsKey.append("Minus");
+		tsKey += "Minus";
 		break;
 	case eKey_PERIOD:
-		tsKey.append("Period");
+		tsKey += "Period";
 		break;
 	case eKey_SLASH:
-		tsKey.append("Slash");
+		tsKey += "Slash";
 		break;
 	case eKey_0:
-		tsKey.append("0");
+		tsKey += "0";
 		break;
 	case eKey_1:
-		tsKey.append("1");
+		tsKey += "1";
 		break;
 	case eKey_2:
-		tsKey.append("2");
+		tsKey += "2";
 		break;
 	case eKey_3:
-		tsKey.append("3");
+		tsKey += "3";
 		break;
 	case eKey_4:
-		tsKey.append("4");
+		tsKey += "4";
 		break;
 	case eKey_5:
-		tsKey.append("5");
+		tsKey += "5";
 		break;
 	case eKey_6:
-		tsKey.append("6");
+		tsKey += "6";
 		break;
 	case eKey_7:
-		tsKey.append("7");
+		tsKey += "7";
 		break;
 	case eKey_8:
-		tsKey.append("8");
+		tsKey += "8";
 		break;
 	case eKey_9:
-		tsKey.append("9");
+		tsKey += "9";
 		break;
 	case eKey_COLON:
-		tsKey.append("Colon");
+		tsKey += "Colon";
 		break;
 	case eKey_SEMICOLON:
-		tsKey.append("SemiColon");
+		tsKey += "SemiColon";
 		break;
 	case eKey_LESS:
-		tsKey.append("Less");
+		tsKey += "Less";
 		break;
 	case eKey_EQUALS:
-		tsKey.append("Equals");
+		tsKey += "Equals";
 		break;
 	case eKey_GREATER:
-		tsKey.append("Greater");
+		tsKey += "Greater";
 		break;
 	case eKey_QUESTION:
-		tsKey.append("Question");
+		tsKey += "Question";
 		break;
 	case eKey_AT:
-		tsKey.append("At");
+		tsKey += "At";
 		break;
 	case eKey_LEFTBRACKET:
-		tsKey.append("LeftBracket");
+		tsKey += "LeftBracket";
 		break;
 	case eKey_BACKSLASH:
-		tsKey.append("BackSlash");
+		tsKey += "BackSlash";
 		break;
 	case eKey_RIGHTBRACKET:
-		tsKey.append("RightBracket");
+		tsKey += "RightBracket";
 		break;
 	case eKey_CARET:
-		tsKey.append("Caret");
+		tsKey += "Caret";
 		break;
 	case eKey_UNDERSCORE:
-		tsKey.append("Underscore");
+		tsKey += "Underscore";
 		break;
 	case eKey_BACKQUOTE:
-		tsKey.append("BackQuote");
+		tsKey += "BackQuote";
 		break;
 	case eKey_a:
-		tsKey.append("A");
+		tsKey += "A";
 		break;
 	case eKey_b:
-		tsKey.append("B");
+		tsKey += "B";
 		break;
 	case eKey_c:
-		tsKey.append("C");
+		tsKey += "C";
 		break;
 	case eKey_d:
-		tsKey.append("D");
+		tsKey += "D";
 		break;
 	case eKey_e:
-		tsKey.append("E");
+		tsKey += "E";
 		break;
 	case eKey_f:
-		tsKey.append("F");
+		tsKey += "F";
 		break;
 	case eKey_g:
-		tsKey.append("G");
+		tsKey += "G";
 		break;
 	case eKey_h:
-		tsKey.append("H");
+		tsKey += "H";
 		break;
 	case eKey_i:
-		tsKey.append("I");
+		tsKey += "I";
 		break;
 	case eKey_j:
-		tsKey.append("J");
+		tsKey += "J";
 		break;
 	case eKey_k:
-		tsKey.append("K");
+		tsKey += "K";
 		break;
 	case eKey_l:
-		tsKey.append("L");
+		tsKey += "L";
 		break;
 	case eKey_m:
-		tsKey.append("M");
+		tsKey += "M";
 		break;
 	case eKey_n:
-		tsKey.append("N");
+		tsKey += "N";
 		break;
 	case eKey_o:
-		tsKey.append("O");
+		tsKey += "O";
 		break;
 	case eKey_p:
-		tsKey.append("P");
+		tsKey += "P";
 		break;
 	case eKey_q:
-		tsKey.append("Q");
+		tsKey += "Q";
 		break;
 	case eKey_r:
-		tsKey.append("R");
+		tsKey += "R";
 		break;
 	case eKey_s:
-		tsKey.append("S");
+		tsKey += "S";
 		break;
 	case eKey_t:
-		tsKey.append("T");
+		tsKey += "T";
 		break;
 	case eKey_u:
-		tsKey.append("U");
+		tsKey += "U";
 		break;
 	case eKey_v:
-		tsKey.append("V");
+		tsKey += "V";
 		break;
 	case eKey_w:
-		tsKey.append("W");
+		tsKey += "W";
 		break;
 	case eKey_x:
-		tsKey.append("X");
+		tsKey += "X";
 		break;
 	case eKey_y:
-		tsKey.append("Y");
+		tsKey += "Y";
 		break;
 	case eKey_z:
-		tsKey.append("Z");
+		tsKey += "Z";
 		break;
 	case eKey_DELETE:
-		tsKey.append("Delete");
+		tsKey += "Delete";
 		break;
 	case eKey_KP0:
-		tsKey.append("Kp0");
+		tsKey += "Kp0";
 		break;
 	case eKey_KP1:
-		tsKey.append("Kp1");
+		tsKey += "Kp1";
 		break;
 	case eKey_KP2:
-		tsKey.append("Kp2");
+		tsKey += "Kp2";
 		break;
 	case eKey_KP3:
-		tsKey.append("Kp3");
+		tsKey += "Kp3";
 		break;
 	case eKey_KP4:
-		tsKey.append("Kp4");
+		tsKey += "Kp4";
 		break;
 	case eKey_KP5:
-		tsKey.append("Kp5");
+		tsKey += "Kp5";
 		break;
 	case eKey_KP6:
-		tsKey.append("Kp6");
+		tsKey += "Kp6";
 		break;
 	case eKey_KP7:
-		tsKey.append("Kp7");
+		tsKey += "Kp7";
 		break;
 	case eKey_KP8:
-		tsKey.append("Kp8");
+		tsKey += "Kp8";
 		break;
 	case eKey_KP9:
-		tsKey.append("Kp9");
+		tsKey += "Kp9";
 		break;
 	case eKey_KP_PERIOD:
-		tsKey.append("Period");
+		tsKey += "Period";
 		break;
 	case eKey_KP_DIVIDE:
-		tsKey.append("Divide");
+		tsKey += "Divide";
 		break;
 	case eKey_KP_MULTIPLY:
-		tsKey.append("Multiply");
+		tsKey += "Multiply";
 		break;
 	case eKey_KP_MINUS:
-		tsKey.append("Minus");
+		tsKey += "Minus";
 		break;
 	case eKey_KP_PLUS:
-		tsKey.append("Plus");
+		tsKey += "Plus";
 		break;
 	case eKey_KP_ENTER:
-		tsKey.append("Enter");
+		tsKey += "Enter";
 		break;
 	case eKey_KP_EQUALS:
-		tsKey.append("Equals");
+		tsKey += "Equals";
 		break;
 	case eKey_UP:
-		tsKey.append("Up");
+		tsKey += "Up";
 		break;
 	case eKey_DOWN:
-		tsKey.append("Down");
+		tsKey += "Down";
 		break;
 	case eKey_RIGHT:
-		tsKey.append("Right");
+		tsKey += "Right";
 		break;
 	case eKey_LEFT:
-		tsKey.append("Left");
+		tsKey += "Left";
 		break;
 	case eKey_INSERT:
-		tsKey.append("Insert");
+		tsKey += "Insert";
 		break;
 	case eKey_HOME:
-		tsKey.append("Home");
+		tsKey += "Home";
 		break;
 	case eKey_END:
-		tsKey.append("End");
+		tsKey += "End";
 		break;
 	case eKey_PAGEUP:
-		tsKey.append("PageUp");
+		tsKey += "PageUp";
 		break;
 	case eKey_PAGEDOWN:
-		tsKey.append("PageDown");
+		tsKey += "PageDown";
 		break;
 	case eKey_F1:
-		tsKey.append("F1");
+		tsKey += "F1";
 		break;
 	case eKey_F2:
-		tsKey.append("F2");
+		tsKey += "F2";
 		break;
 	case eKey_F3:
-		tsKey.append("F3");
+		tsKey += "F3";
 		break;
 	case eKey_F4:
-		tsKey.append("F4");
+		tsKey += "F4";
 		break;
 	case eKey_F5:
-		tsKey.append("F5");
+		tsKey += "F5";
 		break;
 	case eKey_F6:
-		tsKey.append("F6");
+		tsKey += "F6";
 		break;
 	case eKey_F7:
-		tsKey.append("F7");
+		tsKey += "F7";
 		break;
 	case eKey_F8:
-		tsKey.append("F8");
+		tsKey += "F8";
 		break;
 	case eKey_F9:
-		tsKey.append("F9");
+		tsKey += "F9";
 		break;
 	case eKey_F10:
-		tsKey.append("F10");
+		tsKey += "F10";
 		break;
 	case eKey_F11:
-		tsKey.append("F11");
+		tsKey += "F11";
 		break;
 	case eKey_F12:
-		tsKey.append("F12");
+		tsKey += "F12";
 		break;
 	case eKey_F13:
-		tsKey.append("F13");
+		tsKey += "F13";
 		break;
 	case eKey_F14:
-		tsKey.append("F14");
+		tsKey += "F14";
 		break;
 	case eKey_F15:
-		tsKey.append("F15");
+		tsKey += "F15";
 		break;
 	case eKey_NUMLOCK:
-		tsKey.append("NumLock");
+		tsKey += "NumLock";
 		break;
 	case eKey_CAPSLOCK:
-		tsKey.append("CapsLock");
+		tsKey += "CapsLock";
 		break;
 	case eKey_SCROLLOCK:
-		tsKey.append("ScrollLock");
+		tsKey += "ScrollLock";
 		break;
 	case eKey_RSHIFT:
-		tsKey.append("RightShift");
+		tsKey += "RightShift";
 		break;
 	case eKey_LSHIFT:
-		tsKey.append("LeftShift");
+		tsKey += "LeftShift";
 		break;
 	case eKey_RCTRL:
-		tsKey.append("RightControl");
+		tsKey += "RightControl";
 		break;
 	case eKey_LCTRL:
-		tsKey.append("LeftControl");
+		tsKey += "LeftControl";
 		break;
 	case eKey_RALT:
-		tsKey.append("RightAlt");
+		tsKey += "RightAlt";
 		break;
 	case eKey_LALT:
-		tsKey.append("LeftAlt");
+		tsKey += "LeftAlt";
 		break;
 	case eKey_RMETA:
-		tsKey.append("RightMeta");
+		tsKey += "RightMeta";
 		break;
 	case eKey_LMETA:
-		tsKey.append("LeftMeta");
+		tsKey += "LeftMeta";
 		break;
 	case eKey_LSUPER:
-		tsKey.append("LeftSuper");
+		tsKey += "LeftSuper";
 		break;
 	case eKey_RSUPER:
-		tsKey.append("RightSuper");
+		tsKey += "RightSuper";
 		break;
 	case eKey_MODE:
-		tsKey.append("Mode");
+		tsKey += "Mode";
 		break;
 	case eKey_HELP:
-		tsKey.append("Help");
+		tsKey += "Help";
 		break;
 	case eKey_PRINT:
-		tsKey.append("Print");
+		tsKey += "Print";
 		break;
 	case eKey_SYSREQ:
-		tsKey.append("SysReq");
+		tsKey += "SysReq";
 		break;
 	case eKey_BREAK:
-		tsKey.append("Break");
+		tsKey += "Break";
 		break;
 	case eKey_MENU:
-		tsKey.append("Menu");
+		tsKey += "Menu";
 		break;
 	case eKey_POWER:
-		tsKey.append("Power");
+		tsKey += "Power";
 		break;
 	case eKey_EURO:
-		tsKey.append("Euro");
+		tsKey += "Euro";
 		break;
 	case eKey_NONE:
-		tsKey.append("None");
+		tsKey += "None";
 		break;
 	default:
 		break;

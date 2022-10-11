@@ -495,7 +495,7 @@ const char *cSerializeClass::ValueToString(void *apData, size_t alOffset, eSeria
 	case eSerializeType_WString: {
 		msTempString = "";
 		tWString &wsString = PointerValue(pVal, tWString);
-		for (size_t i = 0; i < wsString.length(); ++i) {
+		for (size_t i = 0; i < wsString.size(); ++i) {
 			msTempString += cString::ToString((int)wsString[i]) + " ";
 		}
 		return msTempString.c_str();

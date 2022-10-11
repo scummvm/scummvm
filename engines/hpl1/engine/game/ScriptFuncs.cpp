@@ -116,22 +116,22 @@ static cGame *gpGame = NULL;
 
 //-----------------------------------------------------------------------
 
-static void Print(std::string asText) {
+static void Print(tString asText) {
 	Log(asText.c_str());
 }
 SCRIPT_DEFINE_FUNC_1(void, Print, string)
 
-static std::string FloatToString(float afX) {
+static tString FloatToString(float afX) {
 	char sTemp[30];
 	sprintf(sTemp, "%f", afX);
-	return (std::string)sTemp;
+	return (tString)sTemp;
 }
 SCRIPT_DEFINE_FUNC_1(string, FloatToString, float)
 
-static std::string IntToString(int alX) {
+static tString IntToString(int alX) {
 	char sTemp[30];
 	sprintf(sTemp, "%d", alX);
-	return (std::string)sTemp;
+	return (tString)sTemp;
 }
 SCRIPT_DEFINE_FUNC_1(string, IntToString, int)
 
@@ -145,7 +145,7 @@ static int RandInt(int alMin, int alMax) {
 }
 SCRIPT_DEFINE_FUNC_2(int, RandInt, int, int)
 
-static bool StringContains(std::string asString, std::string asSubString) {
+static bool StringContains(tString asString, tString asSubString) {
 	return cString::GetLastStringPos(asString, asSubString) >= 0;
 }
 SCRIPT_DEFINE_FUNC_2(bool, StringContains, string, string)
@@ -195,7 +195,7 @@ SCRIPT_DEFINE_FUNC_4(void, SetSkyboxColor, float, float, float, float)
  * Sets the skybox
  * \param asTexture Name of the cube map texture to use
  **/
-static void SetSkybox(std::string asTexture) {
+static void SetSkybox(tString asTexture) {
 	if (asTexture != "") {
 		iTexture *pTex = gpResources->GetTextureManager()->CreateCubeMap(asTexture, false);
 		gpGraphics->GetRenderer3D()->SetSkyBox(pTex, true);
@@ -212,7 +212,7 @@ SCRIPT_DEFINE_FUNC_1(void, SetSkybox, string)
  * \param asName Name of particle system
  * \param asType The type of particle system (file)
  **/
-static void CreateParticleSystemOnCamera(std::string asName, std::string asType) {
+static void CreateParticleSystemOnCamera(tString asName, tString asType) {
 	cParticleSystem3D *pPS = gpScene->GetWorld3D()->CreateParticleSystem(asName, asType,
 																		 1, cMatrixf::Identity);
 	if (pPS) {
@@ -257,7 +257,7 @@ SCRIPT_DEFINE_FUNC_5(void, SetFogProperties, float, float, float, float, float)
 
 //-----------------------------------------------------------------------
 
-static void SetSectorProperties(std::string asSector, float afAmbR, float afAmbG, float afAmbB) {
+static void SetSectorProperties(tString asSector, float afAmbR, float afAmbG, float afAmbB) {
 	cPortalContainer *pContainer = gpScene->GetWorld3D()->GetPortalContainer();
 
 	cSector *pSector = pContainer->GetSector(asSector);
@@ -272,7 +272,7 @@ SCRIPT_DEFINE_FUNC_4(void, SetSectorProperties, string, float, float, float)
 
 //-----------------------------------------------------------------------
 
-static void SetSectorPortalActive(std::string asSector, int alPortal, bool abActive) {
+static void SetSectorPortalActive(tString asSector, int alPortal, bool abActive) {
 	cPortalContainer *pContainer = gpScene->GetWorld3D()->GetPortalContainer();
 
 	cSector *pSector = pContainer->GetSector(asSector);
@@ -301,7 +301,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetSectorPortalActive, string, int, bool)
  * \param asCat The translation category
  * \param asName The name of the category entry.
  **/
-static std::string Translate(std::string asCat, std::string asName) {
+static tString Translate(tString asCat, tString asName) {
 	tWString wsText = gpResources->Translate(asCat, asName);
 	return cString::To8Char(wsText);
 }
@@ -313,7 +313,7 @@ SCRIPT_DEFINE_FUNC_2(string, Translate, string, string)
  * Preloads the data for a sound.
  * \param asFile This can be a wav, ogg, mp3 or snt file.
  **/
-static void PreloadSound(std::string asFile) {
+static void PreloadSound(tString asFile) {
 	tString sExt = cString::ToLowerCase(cString::GetFileExt(asFile));
 	if (sExt == "snt") {
 		cSoundEntityData *pData = gpResources->GetSoundEntityManager()->CreateSoundEntity(asFile);
@@ -351,7 +351,7 @@ SCRIPT_DEFINE_FUNC_1(void, PreloadSound, string)
 
 //-----------------------------------------------------------------------
 
-static void SetMeshActive(std::string asName, bool abActive) {
+static void SetMeshActive(tString asName, bool abActive) {
 	cMeshEntity *pEnt = gpScene->GetWorld3D()->GetMeshEntity(asName);
 	if (pEnt == NULL) {
 		Warning("Didn't find mesh entity '%s'\n", asName.c_str());
@@ -376,7 +376,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetMeshActive, string, bool)
  * \param asName The name of the particle system.
  * \param abActive If it should be active or not.
  **/
-static void SetParticleSystemActive(std::string asName, bool abActive) {
+static void SetParticleSystemActive(tString asName, bool abActive) {
 	cParticleSystem3D *pPS = gpScene->GetWorld3D()->GetParticleSystem(asName);
 	if (pPS == NULL) {
 		Warning("Didn't find particle system '%s'\n", asName.c_str());
@@ -397,7 +397,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetParticleSystemActive, string, bool)
  * \param asArea The name of the area
  * \param X Y and Z the variables of the particle system.
  **/
-static void CreateParticleSystem(std::string asName, std::string asType, std::string asArea,
+static void CreateParticleSystem(tString asName, tString asType, tString asArea,
 										   float afX, float afY, float afZ) {
 	cAreaEntity *pArea = gpScene->GetWorld3D()->GetAreaEntity(asArea);
 	if (pArea == NULL) {
@@ -420,7 +420,7 @@ SCRIPT_DEFINE_FUNC_6(void, CreateParticleSystem, string, string, string, float, 
  * Kill a particle system
  * \param asName The name of the particle system.
  **/
-static void KillParticleSystem(std::string asName) {
+static void KillParticleSystem(tString asName) {
 	/*cParticleSystem3D *pPS = gpScene->GetWorld3D()->GetParticleSystem(asName);
 	if(pPS==NULL){
 		Warning("Didn't find particle system '%s'\n",asName.c_str());
@@ -459,8 +459,8 @@ SCRIPT_DEFINE_FUNC_1(void, KillParticleSystem, string)
  * \param asStartArea
  * \param asEndArea
  */
-static void CreateBeam(std::string asName, std::string asFile,
-								 std::string asStartArea, std::string asEndArea) {
+static void CreateBeam(tString asName, tString asFile,
+								 tString asStartArea, tString asEndArea) {
 	cAreaEntity *pStartArea = gpScene->GetWorld3D()->GetAreaEntity(asStartArea);
 	if (pStartArea == NULL) {
 		Warning("Couldn't find area '%s'\n", asStartArea.c_str());
@@ -492,7 +492,7 @@ SCRIPT_DEFINE_FUNC_4(void, CreateBeam, string, string, string, string)
  * Destroys a beam
  * \param asName
  */
-static void DestroyBeam(std::string asName) {
+static void DestroyBeam(tString asName) {
 	cBeam *pBeam = gpScene->GetWorld3D()->GetBeam(asName);
 	if (pBeam == NULL) {
 		Warning("Couldn't find beam '%s'\n", asName.c_str());
@@ -521,7 +521,7 @@ SCRIPT_DEFINE_FUNC_1(void, DestroyBeam, string)
  * \param afRadius The radius to fade to.
  * \param afTime The amount of seconds the fade should last.
  **/
-static void FadeLight3D(std::string asName, float afR, float afG, float afB, float afA,
+static void FadeLight3D(tString asName, float afR, float afG, float afB, float afA,
 								  float afRadius, float afTime) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
@@ -543,7 +543,7 @@ SCRIPT_DEFINE_FUNC_7(void, FadeLight3D, string, float, float, float, float, floa
  * \param asLightName The light name
  * \param abX True if it should be attached, false if you want to remove.
  **/
-static void AttachBillboardToLight3D(std::string asBillboardName, std::string asLightName, bool abX) {
+static void AttachBillboardToLight3D(tString asBillboardName, tString asLightName, bool abX) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asLightName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asLightName.c_str());
@@ -570,7 +570,7 @@ SCRIPT_DEFINE_FUNC_3(void, AttachBillboardToLight3D, string, string, bool)
  * \param asName The light name
  * \param abX if the light should be on or off.
  **/
-static void SetLight3DVisible(std::string asName, bool abX) {
+static void SetLight3DVisible(tString asName, bool abX) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asName.c_str());
@@ -588,7 +588,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetLight3DVisible, string, bool)
  * \param asName The light name
  * \param abX if the light should only affects objects in same sector or not.
  **/
-static void SetLight3DOnlyAffectInSector(std::string asName, bool abX) {
+static void SetLight3DOnlyAffectInSector(tString asName, bool abX) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asName.c_str());
@@ -606,7 +606,7 @@ SCRIPT_DEFINE_FUNC_2(void, SetLight3DOnlyAffectInSector, string, bool)
  * \param asName The light name
  * \param abX if the light flicker should be on or off.
  **/
-static void SetLight3DFlickerActive(std::string asName, bool abX) {
+static void SetLight3DFlickerActive(tString asName, bool abX) {
 	iLight3D *pLight = gpScene->GetWorld3D()->GetLight(asName);
 	if (pLight == NULL) {
 		Warning("Couldn't find light '%s'\n", asName.c_str());
@@ -636,15 +636,15 @@ SCRIPT_DEFINE_FUNC_2(void, SetLight3DFlickerActive, string, bool)
  * \param afOnFadeLength Fade length from off to on.
  * \param afOffFadeLength Fade length from on to off.
  **/
-static void SetLight3DFlicker(std::string asName,
+static void SetLight3DFlicker(tString asName,
 										float afR, float afG, float afB, float afA,
 										float afRadius,
 
 										float afOnMinLength, float afOnMaxLength,
-										std::string asOnSound, std::string asOnPS,
+										tString asOnSound, tString asOnPS,
 
 										float afOffMinLength, float afOffMaxLength,
-										std::string asOffSound, std::string asOffPS,
+										tString asOffSound, tString asOffPS,
 
 										bool abFade,
 										float afOnFadeLength, float afOffFadeLength) {
@@ -677,8 +677,8 @@ SCRIPT_DEFINE_FUNC_17(void, SetLight3DFlicker, string,
  * \param asFile The snt file to load.
  * \param asArea The area to create at.
  */
-static void CreateSoundEntity(std::string asName, std::string asFile,
-										std::string asArea) {
+static void CreateSoundEntity(tString asName, tString asFile,
+										tString asArea) {
 	cAreaEntity *pArea = gpScene->GetWorld3D()->GetAreaEntity(asArea);
 	if (pArea == NULL) {
 		Warning("Couldn't find area '%s'\n", asArea.c_str());
@@ -701,7 +701,7 @@ SCRIPT_DEFINE_FUNC_3(void, CreateSoundEntity, string, string, string)
  * \param asName The entity name
  * \param abPlayStart If the start sound should be played.
  **/
-static void PlaySoundEntity(std::string asName, bool abPlayStart) {
+static void PlaySoundEntity(tString asName, bool abPlayStart) {
 	cSoundEntity *pSound = gpScene->GetWorld3D()->GetSoundEntity(asName);
 	if (pSound == NULL) {
 		Warning("Couldn't find sound entity '%s'\n", asName.c_str());
@@ -717,7 +717,7 @@ SCRIPT_DEFINE_FUNC_2(void, PlaySoundEntity, string, bool)
  * \param asName The entity name
  * \param abPlayEnd If the end sound should be played.
  **/
-static void StopSoundEntity(std::string asName, bool abPlayEnd) {
+static void StopSoundEntity(tString asName, bool abPlayEnd) {
 	cSoundEntity *pSound = gpScene->GetWorld3D()->GetSoundEntity(asName);
 	if (pSound == NULL) {
 		Warning("Couldn't find sound entity '%s'\n", asName.c_str());
@@ -735,7 +735,7 @@ SCRIPT_DEFINE_FUNC_2(void, StopSoundEntity, string, bool)
  * \param asName The entity name
  * \param afSpeed Volume increase per second.
  **/
-static void FadeInSoundEntity(std::string asName, float afSpeed) {
+static void FadeInSoundEntity(tString asName, float afSpeed) {
 	cSoundEntity *pSound = gpScene->GetWorld3D()->GetSoundEntity(asName);
 	if (pSound == NULL) {
 		Warning("Couldn't find sound entity '%s'\n", asName.c_str());
@@ -751,7 +751,7 @@ SCRIPT_DEFINE_FUNC_2(void, FadeInSoundEntity, string, float)
  * \param asName The entity name
  * \param afSpeed Volume decrease per second.
  **/
-static void FadeOutSoundEntity(std::string asName, float afSpeed) {
+static void FadeOutSoundEntity(tString asName, float afSpeed) {
 	cSoundEntity *pSound = gpScene->GetWorld3D()->GetSoundEntity(asName);
 	if (pSound == NULL) {
 		Warning("Couldn't find sound entity '%s'\n", asName.c_str());
@@ -764,7 +764,7 @@ SCRIPT_DEFINE_FUNC_2(void, FadeOutSoundEntity, string, float)
 
 //-----------------------------------------------------------------------
 
-static void PlayMusic(std::string asName, float afVol, float afStepSize, bool abLoop) {
+static void PlayMusic(tString asName, float afVol, float afStepSize, bool abLoop) {
 	gpSound->GetMusicHandler()->Play(asName, afVol, afStepSize, abLoop);
 }
 SCRIPT_DEFINE_FUNC_4(void, PlayMusic, string, float, float, bool)
@@ -783,7 +783,7 @@ SCRIPT_DEFINE_FUNC_1(void, StopMusic, float)
  * \param asName The sound name
  * \param afVol Volume of the sound
  **/
-static void PlayGuiSound(std::string asName, float afVol) {
+static void PlayGuiSound(tString asName, float afVol) {
 	gpSound->GetSoundHandler()->PlayGui(asName, false, afVol);
 }
 SCRIPT_DEFINE_FUNC_2(void, PlayGuiSound, string, float)
@@ -801,8 +801,8 @@ SCRIPT_DEFINE_FUNC_2(void, PlayGuiSound, string, float)
  * \param asType The type, can be: "OnMax" or "OnMin".
  * \param asFunc The script function to be called. Must be in the current script file. "" = disabled.
  **/
-static void SetJointCallback(std::string asJointName, std::string asType,
-									   std::string asFunc) {
+static void SetJointCallback(tString asJointName, tString asType,
+									   tString asFunc) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -840,7 +840,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetJointCallback, string, string, string)
  * Breaks a joint.
  * \param asJointName The joint name
  **/
-static void BreakJoint(std::string asJointName) {
+static void BreakJoint(tString asJointName) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -859,7 +859,7 @@ SCRIPT_DEFINE_FUNC_1(void, BreakJoint, string)
  * \param asCtrlName The controller name
  * \param abActive If the controller is to be active or not.
  **/
-static void SetJointControllerActive(std::string asJointName, std::string asCtrlName, bool abActive) {
+static void SetJointControllerActive(tString asJointName, tString asCtrlName, bool abActive) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -883,7 +883,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetJointControllerActive, string, string, bool)
  * \param asJointName The joint name
  * \param asCtrlName The controller name
  **/
-static void ChangeJointController(std::string asJointName, std::string asCtrlName) {
+static void ChangeJointController(tString asJointName, tString asCtrlName) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -906,8 +906,8 @@ SCRIPT_DEFINE_FUNC_2(void, ChangeJointController, string, string)
  * \param asProperty Property to change, can be "DestValue"
  * \param afValue Value to set it to.
  **/
-static void SetJointControllerPropertyFloat(std::string asJointName, std::string asCtrlName,
-													  std::string asProperty, float afValue) {
+static void SetJointControllerPropertyFloat(tString asJointName, tString asCtrlName,
+													  tString asProperty, float afValue) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -941,7 +941,7 @@ SCRIPT_DEFINE_FUNC_4(void, SetJointControllerPropertyFloat, string, string, stri
  * \param asJointName The joint name
  * \param asProp The property to get
  **/
-static float GetJointProperty(std::string asJointName, std::string asProp) {
+static float GetJointProperty(tString asJointName, tString asProp) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -1022,7 +1022,7 @@ SCRIPT_DEFINE_FUNC_2(float, GetJointProperty, string, string)
  * \param asBodyName The body name
  * \param asProp The property to get
  **/
-static float GetBodyProperty(std::string asBodyName, std::string asProp) {
+static float GetBodyProperty(tString asBodyName, tString asProp) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
 		Warning("Couldn't find Body '%s'\n", asBodyName.c_str());
@@ -1055,7 +1055,7 @@ SCRIPT_DEFINE_FUNC_2(float, GetBodyProperty, string, string)
  * \param asProp The property to get
  * \param afVal The new value of the property
  **/
-static void SetBodyProperty(std::string asBodyName, std::string asProp, float afVal) {
+static void SetBodyProperty(tString asBodyName, tString asProp, float afVal) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
 		Warning("Couldn't find Body '%s'\n", asBodyName.c_str());
@@ -1088,7 +1088,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetBodyProperty, string, string, float)
 
 //-----------------------------------------------------------------------
 
-static void AttachBodiesWithJoint(std::string asParentName, std::string asChildName, std::string asJointName) {
+static void AttachBodiesWithJoint(tString asParentName, tString asChildName, tString asJointName) {
 	iPhysicsBody *pParent = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asParentName);
 	if (pParent == NULL) {
 		Warning("Couldn't find Body '%s'\n", asParentName.c_str());
@@ -1124,7 +1124,7 @@ SCRIPT_DEFINE_FUNC_3(void, AttachBodiesWithJoint, string, string, string)
  * \param asProp The property to get
  * \param afVal The new value of the property
  **/
-static void SetJointProperty(std::string asJointName, std::string asProp, float afVal) {
+static void SetJointProperty(tString asJointName, tString asProp, float afVal) {
 	iPhysicsJoint *pJoint = gpScene->GetWorld3D()->GetPhysicsWorld()->GetJoint(asJointName);
 	if (pJoint == NULL) {
 		Warning("Couldn't find joint '%s'\n", asJointName.c_str());
@@ -1200,7 +1200,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetJointProperty, string, string, float)
  * \param afY force in the y direction. (in newton, kg*m/s^2)
  * \param afZ force in the z direction. (in newton, kg*m/s^2)
  **/
-static void AddBodyForce(std::string asBodyName, std::string asCoordType,
+static void AddBodyForce(tString asBodyName, tString asCoordType,
 								   float afX, float afY, float afZ) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
@@ -1241,7 +1241,7 @@ SCRIPT_DEFINE_FUNC_5(void, AddBodyForce, string, string, float, float, float)
  * \param afY velocity in the y direction. (in m/s)
  * \param afZ velocity in the z direction. (in m/s)
  **/
-static void AddBodyImpulse(std::string asBodyName, std::string asCoordType,
+static void AddBodyImpulse(tString asBodyName, tString asCoordType,
 									 float afX, float afY, float afZ) {
 	iPhysicsBody *pBody = gpScene->GetWorld3D()->GetPhysicsWorld()->GetBody(asBodyName);
 	if (pBody == NULL) {
@@ -1278,7 +1278,7 @@ SCRIPT_DEFINE_FUNC_5(void, AddBodyImpulse, string, string, float, float, float)
 /////// LOCAL VARS //////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-static void CreateLocalVar(std::string asName, int alVal) {
+static void CreateLocalVar(tString asName, int alVal) {
 	if (gpScene->GetLocalVar(asName) == NULL) {
 		cScriptVar *pVar = gpScene->CreateLocalVar(asName);
 		pVar->mlVal = alVal;
@@ -1286,19 +1286,19 @@ static void CreateLocalVar(std::string asName, int alVal) {
 }
 SCRIPT_DEFINE_FUNC_2(void, CreateLocalVar, string, int)
 
-static void SetLocalVar(std::string asName, int alVal) {
+static void SetLocalVar(tString asName, int alVal) {
 	cScriptVar *pVar = gpScene->CreateLocalVar(asName);
 	pVar->mlVal = alVal;
 }
 SCRIPT_DEFINE_FUNC_2(void, SetLocalVar, string, int)
 
-static void AddLocalVar(std::string asName, int alVal) {
+static void AddLocalVar(tString asName, int alVal) {
 	cScriptVar *pVar = gpScene->CreateLocalVar(asName);
 	pVar->mlVal += alVal;
 }
 SCRIPT_DEFINE_FUNC_2(void, AddLocalVar, string, int)
 
-static int GetLocalVar(std::string asName) {
+static int GetLocalVar(tString asName) {
 	cScriptVar *pVar = gpScene->GetLocalVar(asName);
 	if (pVar == NULL) {
 		Error("Couldn't find local var '%s'\n", asName.c_str());
@@ -1313,7 +1313,7 @@ SCRIPT_DEFINE_FUNC_1(int, GetLocalVar, string)
 /////// GLOBAL VARS //////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 
-static void CreateGlobalVar(std::string asName, int alVal) {
+static void CreateGlobalVar(tString asName, int alVal) {
 	if (gpScene->GetGlobalVar(asName) == NULL) {
 		cScriptVar *pVar = gpScene->CreateGlobalVar(asName);
 		pVar->mlVal = alVal;
@@ -1321,19 +1321,19 @@ static void CreateGlobalVar(std::string asName, int alVal) {
 }
 SCRIPT_DEFINE_FUNC_2(void, CreateGlobalVar, string, int)
 
-static void SetGlobalVar(std::string asName, int alVal) {
+static void SetGlobalVar(tString asName, int alVal) {
 	cScriptVar *pVar = gpScene->CreateGlobalVar(asName);
 	pVar->mlVal = alVal;
 }
 SCRIPT_DEFINE_FUNC_2(void, SetGlobalVar, string, int)
 
-static void AddGlobalVar(std::string asName, int alVal) {
+static void AddGlobalVar(tString asName, int alVal) {
 	cScriptVar *pVar = gpScene->CreateGlobalVar(asName);
 	pVar->mlVal += alVal;
 }
 SCRIPT_DEFINE_FUNC_2(void, AddGlobalVar, string, int)
 
-static int GetGlobalVar(std::string asName) {
+static int GetGlobalVar(tString asName) {
 	cScriptVar *pVar = gpScene->GetGlobalVar(asName);
 	if (pVar == NULL) {
 		Error("Couldn't find global var '%s'\n", asName.c_str());

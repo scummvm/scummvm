@@ -92,7 +92,7 @@ void cCredits::OnDraw() {
 	float fY = mfYPos;
 	for (size_t i = 0; i < mvTextRows.size(); ++i) {
 		int lSize = 0;
-		if (mvTextRows[i][0] == _W('*')) {
+		if (mvTextRows[i][0] == '*') {
 			lSize = 1;
 		}
 		if (mvTextRows[i].size() <= 1) {
@@ -109,10 +109,10 @@ void cCredits::OnDraw() {
 
 			if (lSize == 0)
 				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(1, fAlpha), eFontAlign_Center,
-							 mvTextRows[i].c_str());
+							 mvTextRows[i]);
 			else
 				mpFont->draw(cVector3f(400, fY, 10), fSize[lSize], cColor(0.8f, fAlpha), eFontAlign_Center,
-							 mvTextRows[i].substr(1).c_str());
+							 mvTextRows[i].substr(1));
 		}
 		fY += fSize[lSize];
 	}
@@ -134,7 +134,7 @@ void cCredits::Update(float afTimeStep) {
 	float fY = mfYPos;
 	for (size_t i = 0; i < mvTextRows.size(); ++i) {
 		int lSize = 0;
-		if (mvTextRows[i][0] == _W('*'))
+		if (mvTextRows[i][0] == '*')
 			lSize = 1;
 		if (mvTextRows[i].size() <= 1)
 			fY += fSize[lSize];

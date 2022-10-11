@@ -112,14 +112,14 @@ bool cLanguageFile::LoadFromFile(const tString asFile) {
 
 					// if(sCatName == "TEST") Log("String: '%s' %d\n",sString.c_str(),sString.size());
 
-					for (size_t i = 0; i < sString.length(); ++i) {
+					for (size_t i = 0; i < sString.size(); ++i) {
 						unsigned char c = sString[i];
 						if (c == '[') {
 							bool bFoundCommand = true;
 							tString sCommand = "";
 							int lCount = 1;
 
-							while (sString[i + lCount] != ']' && i + lCount < sString.length() && lCount < 16) {
+							while (sString[i + lCount] != ']' && i + lCount < sString.size() && lCount < 16) {
 								sCommand += sString[i + lCount];
 								lCount++;
 							}

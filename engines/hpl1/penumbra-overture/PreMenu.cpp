@@ -56,7 +56,7 @@ cPreMenu::cPreMenu(cInit *apInit) : iUpdateable("PreMenu") {
 
 	mlMaxChars = 0;
 	for (size_t i = 0; i < mvTextRows.size(); ++i)
-		mlMaxChars += (int)mvTextRows[i].length();
+		mlMaxChars += (int)mvTextRows[i].size();
 
 	Reset();
 }
@@ -216,22 +216,22 @@ void cPreMenu::OnDraw() {
 		int lCharCount = 0;
 		for (size_t i = 0; i < mvTextRows.size(); ++i) {
 			lPrevStart = lCharCount;
-			lCharCount += (int)mvTextRows[i].length();
+			lCharCount += (int)mvTextRows[i].size();
 			if (lCharCount >= mlCurrentTextChar) {
 				tWString sText = mvTextRows[i].substr(0, mlCurrentTextChar - lPrevStart);
 				mpTextFont->draw(cVector3f(25, 90 + 19 * (float)i, 10) + mvecLastTextPos, 17 + mfLastTextSize, cColor(mfLastTextColor, mfFontColor, mfFontColor, 1), // cColor(0.7f,1,0.7f,1),
-								 eFontAlign_Left, sText.c_str());
+								 eFontAlign_Left, sText);
 				if (mlState == 5) {
 					// First pair of shadow texts
 					mpTextFont->draw(cVector3f(25 + mfLastTextSpeed1, 90 + 19 * (float)i, 0) + mvecLastTextPos, 17 + (mfLastTextSize), cColor(mfLastTextColor + 0.5f, 0, 0, 0.25f), // cColor(0.7f,1,0.7f,1),
-									 eFontAlign_Left, sText.c_str());
+									 eFontAlign_Left, sText);
 					mpTextFont->draw(cVector3f(25 + 1.5f * mfLastTextSpeed1, 90 + 19 * (float)i, 0) + mvecLastTextPos, 17 + (mfLastTextSize), cColor(mfLastTextColor + 0.5f, 0, 0, 0.20f), // cColor(0.7f,1,0.7f,1),
-									 eFontAlign_Left, sText.c_str());
+									 eFontAlign_Left, sText);
 					// Second pair
 					mpTextFont->draw(cVector3f(25 + 3 * mfLastTextSpeed1, 90 + 19 * (float)i, 0) + mvecLastTextPos, 17 + (mfLastTextSize), cColor(mfLastTextColor + 0.25f, 0, 0, 0.15f), // cColor(0.7f,1,0.7f,1),
-									 eFontAlign_Left, sText.c_str());
+									 eFontAlign_Left, sText);
 					mpTextFont->draw(cVector3f(25 + 5 * mfLastTextSpeed1, 90 + 19 * (float)i, 0) + mvecLastTextPos, 17 + (mfLastTextSize), cColor(mfLastTextColor + 0.25f, 0, 0, 0.1f), // cColor(0.7f,1,0.7f,1),
-									 eFontAlign_Left, sText.c_str());
+									 eFontAlign_Left, sText);
 
 					// mpTextFont->Draw(cVector3f(25-mfLastTextPos,90+19*(float)i-mfLastTextPos,0),cVector2f(17,17+(mfLastTextSize)),cColor(mfLastTextColor,mfFontColor,mfFontColor,0.25f),//cColor(0.7f,1,0.7f,1),
 					//				eFontAlign_Left,sText.c_str());
@@ -240,7 +240,7 @@ void cPreMenu::OnDraw() {
 				break;
 			} else {
 				mpTextFont->draw(cVector3f(25, 90 + 19 * (float)i, 10), 17, cColor(mfFontColor, mfFontColor), // cColor(0.7f,1,0.7f,1),
-								 eFontAlign_Left, mvTextRows[i].c_str());
+								 eFontAlign_Left, mvTextRows[i]);
 			}
 		}
 	}
@@ -365,7 +365,7 @@ void cPreMenu::Update(float afTimeStep) {
 
 				int lCharCount = 0;
 				for (size_t i = 0; i < mvTextRows.size(); ++i) {
-					lCharCount += (int)mvTextRows[i].length();
+					lCharCount += (int)mvTextRows[i].size();
 					if (lCharCount == mlCurrentTextChar) {
 						if (i + 1 < mvTextRows.size() && mvTextRows[i + 1].size() == 0) {
 							mfNewCharCount = 1.0f;

@@ -39,23 +39,13 @@ namespace hpl {
 //-----------------------------------------------------------------------
 
 tWString cString::To16Char(const tString &asString) {
-	tWString wsTemp;
-	size_t needed = mbstowcs(NULL, &asString[0], 0);
-	wsTemp.resize(needed);
-	mbstowcs(&wsTemp[0], &asString[0], needed);
-
-	return wsTemp;
+	return asString;
 }
 
 //-----------------------------------------------------------------------
 
 tString cString::To8Char(const tWString &awsString) {
-	tString sTemp;
-	size_t needed = wcstombs(NULL, &awsString[0], 0);
-	sTemp.resize(needed);
-	wcstombs(&sTemp[0], &awsString[0], needed);
-
-	return sTemp;
+	return awsString;
 }
 
 //-----------------------------------------------------------------------
@@ -65,13 +55,10 @@ tWString cString::Get16BitFromArray(const tString &asArray) {
 	tIntVec vVals;
 	GetIntVec(asArray, vVals, NULL);
 
-	tWString wsString = _W("");
-	wsString.resize(vVals.size());
-
-	for (size_t i = 0; i < vVals.size(); ++i) {
-		wsString[i] = (wchar_t)vVals[i];
+	tWString wsString;
+	for (auto v : vVals) {
+		wsString += static_cast<Common::U32String::value_type>(v);
 	}
-
 	return wsString;
 }
 
@@ -92,9 +79,9 @@ tString cString::Sub(const tString &asString, int alStart, int alCount) {
 tWString cString::SubW(const tWString &asString, int alStart, int alCount) {
 	int lStringSize = (int)asString.size();
 	if (lStringSize == 0)
-		return _W("");
+		return Common::U32String("");
 	if (alStart >= lStringSize)
-		return _W("");
+		return Common::U32String("");
 	if (alStart + alCount > lStringSize)
 		alCount = lStringSize - alStart;
 
@@ -117,10 +104,10 @@ tString cString::GetFileExt(tString aString) {
 }
 
 tWString cString::GetFileExtW(tWString aString) {
-	int pos = GetLastStringPosW(aString, _W("."));
+	int pos = GetLastStringPosW(aString, Common::U32String("."));
 
 	if (pos < 0)
-		return _W("");
+		return Common::U32String("");
 	else
 		return aString.substr(pos + 1);
 }
@@ -128,16 +115,12 @@ tWString cString::GetFileExtW(tWString aString) {
 //-----------------------------------------------------------------------
 
 tString cString::ToLowerCase(tString aString) {
-	for (int i = 0; i < (int)aString.size(); i++) {
-		aString[i] = tolower(aString[i]);
-	}
+	aString.toLowercase();
 	return aString;
 }
 
 tWString cString::ToLowerCaseW(tWString aString) {
-	for (int i = 0; i < (int)aString.size(); i++) {
-		aString[i] = tolower(aString[i]);
-	}
+	aString.toLowercase();
 	return aString;
 }
 
@@ -158,13 +141,13 @@ tString cString::SetFileExt(tString aString, tString aExt) {
 }
 
 tWString cString::SetFileExtW(tWString aString, tWString aExt) {
-	if (aExt.substr(0, 1) == _W("."))
+	if (aExt.substr(0, 1) == Common::U32String("."))
 		aExt = aExt.substr(1);
-	if (GetFileExtW(aString) != _W("")) {
-		aString = aString.substr(0, GetLastStringPosW(aString, _W(".")));
+	if (GetFileExtW(aString) != Common::U32String("")) {
+		aString = aString.substr(0, GetLastStringPosW(aString, Common::U32String(".")));
 	}
 
-	if (aExt != _W(""))
+	if (aExt != Common::U32String(""))
 		aString = aString + _W(".") + aExt;
 
 	return aString;
@@ -250,16 +233,15 @@ tString cString::ReplaceCharTo(tString aString, tString asOldChar, tString asNew
 	if (asNewChar != "") {
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] == asOldChar[0])
-				aString[i] = asNewChar[0];
+				aString.setChar(asNewChar[0],i);
 		}
 		return aString;
 	} else {
 		tString sNewString;
-		sNewString.reserve(aString.size());
 
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] != asOldChar[0])
-				sNewString.push_back(aString[i]);
+				sNewString += aString[i];
 		}
 		return sNewString;
 	}
@@ -269,16 +251,15 @@ tWString cString::ReplaceCharToW(tWString aString, tWString asOldChar, tWString 
 	if (asNewChar != _W("")) {
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] == asOldChar[0])
-				aString[i] = asNewChar[0];
+				aString.setChar(asNewChar[0], i);
 		}
 		return aString;
 	} else {
 		tWString sNewString;
-		sNewString.reserve(aString.size());
 
 		for (int i = 0; i < (int)aString.size(); i++) {
 			if (aString[i] != asOldChar[0])
-				sNewString.push_back(aString[i]);
+				sNewString += aString[i];
 		}
 		return sNewString;
 	}
@@ -526,19 +507,11 @@ tString cString::ToString(float afX) {
 //-----------------------------------------------------------------------
 
 tWString cString::ToStringW(int alX) {
-	wchar_t buff[256];
-
-	swprintf(buff, 256, _W("%d"), alX);
-
-	return buff;
+	return Common::U32String::format("%d", alX);
 }
 
 tWString cString::ToStringW(float afX) {
-	wchar_t buff[256];
-
-	swprintf(buff, 256, _W("%f"), afX);
-
-	return buff;
+	return Common::U32String::format("%f", afX);
 }
 
 //-----------------------------------------------------------------------
@@ -548,7 +521,7 @@ tStringVec &cString::GetStringVec(const tString &asData, tStringVec &avVec, tStr
 	bool start = false;
 	tString c = "";
 
-	for (int i = 0; i < (int)asData.length(); i++) {
+	for (int i = 0; i < (int)asData.size(); i++) {
 		c = asData.substr(i, 1);
 		bool bNewWord = false;
 
@@ -575,7 +548,7 @@ tStringVec &cString::GetStringVec(const tString &asData, tStringVec &avVec, tStr
 		} else {
 			start = true;
 			str += c;
-			if (i == (int)asData.length() - 1)
+			if (i == (int)asData.size() - 1)
 				avVec.push_back(str);
 		}
 	}

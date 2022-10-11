@@ -145,7 +145,7 @@ public:
 	// Widget Creation
 	cWidgetWindow *CreateWidgetWindow(const cVector3f &avLocalPos = 0,
 									  const cVector2f &avSize = 0,
-									  const tWString &asText = _W(""),
+									  const tWString &asText = {},
 									  iWidget *apParent = NULL,
 									  const tString &asName = "");
 
@@ -157,13 +157,13 @@ public:
 
 	cWidgetButton *CreateWidgetButton(const cVector3f &avLocalPos = 0,
 									  const cVector2f &avSize = 0,
-									  const tWString &asText = _W(""),
+									  const tWString &asText = {},
 									  iWidget *apParent = NULL,
 									  const tString &asName = "");
 
 	cWidgetLabel *CreateWidgetLabel(const cVector3f &avLocalPos = 0,
 									const cVector2f &avSize = 0,
-									const tWString &asText = _W(""),
+									const tWString &asText = {},
 									iWidget *apParent = NULL,
 									const tString &asName = "");
 
@@ -176,13 +176,13 @@ public:
 
 	cWidgetTextBox *CreateWidgetTextBox(const cVector3f &avLocalPos = 0,
 										const cVector2f &avSize = 0,
-										const tWString &asText = _W(""),
+										const tWString &asText = {},
 										iWidget *apParent = NULL,
 										const tString &asName = "");
 
 	cWidgetCheckBox *CreateWidgetCheckBox(const cVector3f &avLocalPos = 0,
 										  const cVector2f &avSize = 0,
-										  const tWString &asText = _W(""),
+										  const tWString &asText = {},
 										  iWidget *apParent = NULL,
 										  const tString &asName = "");
 
@@ -201,7 +201,7 @@ public:
 
 	cWidgetComboBox *CreateWidgetComboBox(const cVector3f &avLocalPos = 0,
 										  const cVector2f &avSize = 0,
-										  const tWString &asText = _W(""),
+										  const tWString &asText = {},
 										  iWidget *apParent = NULL,
 										  const tString &asName = "");
 

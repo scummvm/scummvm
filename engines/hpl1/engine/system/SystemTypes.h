@@ -35,6 +35,7 @@
 
 #include "hpl1/engine/system/Container.h"
 #include "common/list.h"
+#include "common/str.h"
 
 namespace hpl {
 
@@ -62,7 +63,7 @@ namespace hpl {
 #define eFlagBit_14 (0x00004000)
 #define eFlagBit_15 (0x00008000)
 
-#define _W(t) L##t
+#define _W(t) Common::U32String(t)
 
 //--------------------------------------------------------
 
@@ -75,7 +76,7 @@ enum eSystemPath {
 
 typedef unsigned int tFlag;
 
-typedef std::string tString;
+typedef Common::String tString;
 
 typedef Common::List<tString> tStringList;
 typedef tStringList::iterator tStringListIt;
@@ -88,7 +89,7 @@ typedef tStringSet::iterator tStringSetIt;
 
 //--------------------------------------------------------
 
-typedef std::wstring tWString;
+typedef Common::U32String tWString;
 typedef Common::List<tWString> tWStringList;
 typedef tWStringList::iterator tWStringListIt;
 

@@ -185,8 +185,8 @@
 
 #define SCRIPT_FUNC_BEGIN(funcname, return, args)     \
 	namespace GenericScript {                         \
-	static std::string funcname##_return = #return;   \
-	static std::string funcname##_arg = args;         \
+	static tString funcname##_return = #return;   \
+	static tString funcname##_arg = args;         \
 	void funcname##_Generic(asIScriptGeneric * gen) { \
 		SCRIPT_RETURN_##return;
 
@@ -196,12 +196,13 @@
 	}
 
 // Parameter Macros
-#define SCRIPT_ARG_string(n) std::string _arg##n = *(std::string *)gen->GetArgObject(n)
+// FIXME: string types
+#define SCRIPT_ARG_string(n) tString _arg##n = (*(std::string *)gen->GetArgObject(n)).c_str()
 #define SCRIPT_ARG_float(n) float _arg##n = gen->GetArgFloat(n)
 #define SCRIPT_ARG_int(n) int _arg##n = gen->GetArgDWord(n)
 #define SCRIPT_ARG_bool(n) bool _arg##n = gen->GetArgByte(n)
 // Return Value Macros
-#define SCRIPT_RETURN_string std::string _ret
+#define SCRIPT_RETURN_string tString _ret
 #define SCRIPT_RETURN_CALL_string _ret =
 #define SCRIPT_SET_RETURN_string gen->SetReturnObject(&_ret)
 #define SCRIPT_RETURN_bool bool _ret

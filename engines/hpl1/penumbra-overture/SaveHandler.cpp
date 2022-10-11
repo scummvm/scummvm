@@ -565,8 +565,7 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 	sMapName = cString::ReplaceCharToW(sMapName, _W("\n"), _W(" "));
 	sMapName = cString::ReplaceCharToW(sMapName, _W(":"), _W(" "));
 	cDate date = mpInit->mpGame->GetSystem()->GetLowLevel()->getDate();
-	wchar_t sTemp[512];
-	swprintf(sTemp, 512, _W("%ls: %ls %d-%02d-%02d %02d:%02d:%02d"),
+	tWString sFile = Common::U32String::format("%S: %S %d-%02d-%02d %02d:%02d:%02d",
 			 asDir.c_str(),
 			 sMapName.c_str(),
 			 date.year,
@@ -575,7 +574,6 @@ void cSaveHandler::AutoSave(const tWString &asDir, int alMaxSaves) {
 			 date.hours,
 			 date.minutes,
 			 date.seconds);
-	tWString sFile = sTemp;
 	SaveGameToFile(sFile);
 
 	mpInit->mpGame->ResetLogicTimer();

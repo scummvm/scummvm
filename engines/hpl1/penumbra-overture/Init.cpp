@@ -378,7 +378,7 @@ bool cInit::Init(tString saveToLoad) {
 
 	// Make sure there really is haptic support!
 	if (mbHasHaptics && cHaptic::GetIsUsed() == false) {
-		CreateMessageBoxW(_W("Error!"), _W("No haptic support found. Mouse will be used instead!\n"));
+		//CreateMessageBoxW(_W("Error!"), _W("No haptic support found. Mouse will be used instead!\n"));
 		mbHasHaptics = false;
 	}
 

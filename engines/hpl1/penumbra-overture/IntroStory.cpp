@@ -438,15 +438,15 @@ void cIntroStory::OnDraw() {
 	if (msCentreText != _W("")) {
 		float fAlpha = mvImages[5].mfBrightness;
 		mpFont->draw(cVector3f(400, 300, 2), 18, cColor(1, 1, 1, fAlpha),
-					 eFontAlign_Center, msCentreText.c_str());
+					 eFontAlign_Center, msCentreText);
 		mpFont->draw(cVector3f(400 + 1, 300 + 1, 1), 18, cColor(0, fAlpha),
-					 eFontAlign_Center, msCentreText.c_str());
+					 eFontAlign_Center, msCentreText);
 		mpFont->draw(cVector3f(400 - 1, 300 - 1, 1), 18, cColor(0, fAlpha),
-					 eFontAlign_Center, msCentreText.c_str());
+					 eFontAlign_Center, msCentreText);
 		mpFont->draw(cVector3f(400 - 1, 300 + 1, 1), 18, cColor(0, fAlpha),
-					 eFontAlign_Center, msCentreText.c_str());
+					 eFontAlign_Center, msCentreText);
 		mpFont->draw(cVector3f(400 + 1, 300 - 1, 1), 18, cColor(0, fAlpha),
-					 eFontAlign_Center, msCentreText.c_str());
+					 eFontAlign_Center, msCentreText);
 	}
 
 	// mpFont->DrawWordWrap(vPos + cVector3f(3,3,-1),760,21,vSize,cColor(1,0),eFontAlign_Left,msMessage);

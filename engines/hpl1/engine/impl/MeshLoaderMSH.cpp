@@ -289,7 +289,6 @@ void cMeshLoaderMSH::SaveFloatData(TiXmlElement *apRoot, int alSize, const char 
 	TiXmlElement *pElem = static_cast<TiXmlElement *>(apRoot->InsertEndChild(XmlData));
 
 	tString sData = "";
-	sData.reserve((alSize * 17) + 1);
 	char sTemp[20];
 
 	for (int i = 0; i < alSize; i++) {
@@ -358,7 +357,6 @@ const char *cMeshLoaderMSH::GetVertexName(tVertexFlag aFlag) {
 
 void cMeshLoaderMSH::SaveIntData(TiXmlElement *apElem, int alSize, unsigned int *apData) {
 	tString sData = "";
-	sData.reserve((alSize * 6) + 1);
 	char sTemp[10];
 
 	for (int i = 0; i < alSize; i++) {
