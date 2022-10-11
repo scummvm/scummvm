@@ -69,19 +69,25 @@ namespace Scumm {
 		(dst)[1] = val;	\
 	} while (0)
 
-static const  int8 codec47_table_small1[] = {
+#define MOTION_OFFSET_TABLE_SIZE 0xF8
+#define PROCESS_SUBBLOCKS 0xFF
+#define FILL_SINGLE_COLOR 0xFE
+#define DRAW_GLYPH 0xFD
+#define COPY_PREV_BUFFER 0xFC
+
+static const  int8 codec47_glyph4_xvec[] = {
   0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
-static const int8 codec47_table_small2[] = {
+static const int8 codec47_glyph4_yvec[] = {
   0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
-static const int8 codec47_table_big1[] = {
+static const int8 codec47_glyph8_xvec[] = {
   0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
-static const int8 codec47_table_big2[] = {
+static const int8 codec47_glyph8_yvec[] = {
   0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
@@ -139,121 +145,128 @@ static const int8 codec47_table[] = {
 	 -6,  43,   1,  43,   0,   0,   0,   0,   0,   0
 };
 
-void Codec47Decoder::makeTablesInterpolation(int param) {
-	int32 variable1, variable2;
-	int32 b1, b2;
-	int32 value_table47_1_2, value_table47_1_1, value_table47_2_2, value_table47_2_1;
-	int32 tableSmallBig[64], tmp, s;
-	const int8 *table47_1 = nullptr, *table47_2 = nullptr;
+enum Edge {
+    kEdgeLeft,
+    kEdgeTop,
+    kEdgeRight,
+    kEdgeBottom,
+    kEdgeNone,
+};
+
+#define NGLYPHS 256
+
+void Codec47Decoder::makeTablesInterpolation(int sideLength) {
+	int32 pos, npoints;
+	int32 edge0, edge1;
+	int32 x1, x0, y1, y0;
+	int32 tableSmallBig[64], s;
+	const int8 *glyph_x = nullptr, *glyph_y = nullptr;
 	int32 *ptr_small_big;
 	byte *ptr;
 	int i, x, y;
 
-	if (param == 8) {
-		table47_1 = codec47_table_big1;
-		table47_2 = codec47_table_big2;
+	if (sideLength == 8) {
+		glyph_x = codec47_glyph8_xvec;
+		glyph_y = codec47_glyph8_yvec;
 		ptr = _tableBig;
-		for (i = 0; i < 256; i++) {
+		for (i = 0; i < NGLYPHS; i++) {
 			ptr[384] = 0;
 			ptr[385] = 0;
 			ptr += 388;
 		}
-	} else if (param == 4) {
-		table47_1 = codec47_table_small1;
-		table47_2 = codec47_table_small2;
+	} else if (sideLength == 4) {
+		glyph_x = codec47_glyph4_xvec;
+		glyph_y = codec47_glyph4_yvec;
 		ptr = _tableSmall;
-		for (i = 0; i < 256; i++) {
+		for (i = 0; i < NGLYPHS; i++) {
 			ptr[96] = 0;
 			ptr[97] = 0;
 			ptr += 128;
 		}
 	} else {
-		error("Codec47Decoder::makeTablesInterpolation: unknown param %d", param);
+		error("Codec47Decoder::makeTablesInterpolation: unknown sideLength %d", sideLength);
 	}
 
 	s = 0;
 	for (x = 0; x < 16; x++) {
-		value_table47_1_1 = table47_1[x];
-		value_table47_2_1 = table47_2[x];
+		x0 = glyph_x[x];
+		y0 = glyph_y[x];
+
+		if (y0 == 0) {
+			edge0 = kEdgeBottom;
+		} else if (y0 == sideLength - 1) {
+			edge0 = kEdgeTop;
+		} else if (x0 == 0) {
+			edge0 = kEdgeLeft;
+		} else if (x0 == sideLength - 1) {
+			edge0 = kEdgeRight;
+		} else {
+			edge0 = kEdgeNone;
+		}
+
 		for (y = 0; y < 16; y++) {
-			value_table47_1_2 = table47_1[y];
-			value_table47_2_2 = table47_2[y];
+			x1 = glyph_x[y];
+			y1 = glyph_y[y];
 
-			if (value_table47_2_1 == 0) {
-				b1 = 0;
-			} else if (value_table47_2_1 == param - 1) {
-				b1 = 1;
-			} else if (value_table47_1_1 == 0) {
-				b1 = 2;
-			} else if (value_table47_1_1 == param - 1) {
-				b1 = 3;
+			if (y1 == 0) {
+				edge1 = kEdgeBottom;
+			} else if (y1 == sideLength - 1) {
+				edge1 = kEdgeTop;
+			} else if (x1 == 0) {
+				edge1 = kEdgeLeft;
+			} else if (x1 == sideLength - 1) {
+				edge1 = kEdgeRight;
 			} else {
-				b1 = 4;
+				edge1 = kEdgeNone;
 			}
 
-			if (value_table47_2_2 == 0) {
-				b2 = 0;
-			} else if (value_table47_2_2 == param - 1) {
-				b2 = 1;
-			} else if (value_table47_1_2 == 0) {
-				b2 = 2;
-			} else if (value_table47_1_2 == param - 1) {
-				b2 = 3;
-			} else {
-				b2 = 4;
-			}
+			memset(tableSmallBig, 0, sideLength * sideLength * 4);
 
-			memset(tableSmallBig, 0, param * param * 4);
+			npoints = MAX(ABS(y1 - y0), ABS(x1 - x0));
 
-			variable2 = ABS(value_table47_2_2 - value_table47_2_1);
-			tmp = ABS(value_table47_1_2 - value_table47_1_1);
-			if (variable2 <= tmp) {
-				variable2 = tmp;
-			}
+			for (pos = 0; pos <= npoints; pos++) {
+				int32 yPoint, xPoint;
 
-			for (variable1 = 0; variable1 <= variable2; variable1++) {
-				int32 variable3, variable4;
-
-				if (variable2 > 0) {
-					// Linearly interpolate between value_table47_1_1 and value_table47_1_2
-					// respectively value_table47_2_1 and value_table47_2_2.
-					variable4 = (value_table47_1_1 * variable1 + value_table47_1_2 * (variable2 - variable1) + variable2 / 2) / variable2;
-					variable3 = (value_table47_2_1 * variable1 + value_table47_2_2 * (variable2 - variable1) + variable2 / 2) / variable2;
+				if (npoints > 0) {
+					// Linearly interpolate between x0 and x1
+					// respectively y0 and y1.
+					xPoint = (x0 * pos + x1 * (npoints - pos) + npoints / 2) / npoints;
+					yPoint = (y0 * pos + y1 * (npoints - pos) + npoints / 2) / npoints;
 				} else {
-					variable4 = value_table47_1_1;
-					variable3 = value_table47_2_1;
+					xPoint = x0;
+					yPoint = y0;
 				}
-				ptr_small_big = &tableSmallBig[param * variable3 + variable4];
+				ptr_small_big = &tableSmallBig[sideLength * yPoint + xPoint];
 				*ptr_small_big = 1;
 
-				if ((b1 == 2 && b2 == 3) || (b2 == 2 && b1 == 3) ||
-				    (b1 == 0 && b2 != 1) || (b2 == 0 && b1 != 1)) {
-					if (variable3 >= 0) {
-						i = variable3 + 1;
+				if ((edge0 == kEdgeLeft && edge1 == kEdgeRight) || (edge1 == kEdgeLeft && edge0 == kEdgeRight) ||
+				    (edge0 == kEdgeBottom && edge1 != kEdgeTop) || (edge1 == kEdgeBottom && edge0 != kEdgeTop)) {
+					if (yPoint >= 0) {
+						i = yPoint + 1;
 						while (i--) {
 							*ptr_small_big = 1;
-							ptr_small_big -= param;
+							ptr_small_big -= sideLength;
 						}
 					}
-				} else if ((b2 != 0 && b1 == 1) || (b1 != 0 && b2 == 1)) {
-					if (param > variable3) {
-						i = param - variable3;
+				} else if ((edge1 != kEdgeBottom && edge0 == kEdgeTop) || (edge0 != kEdgeBottom && edge1 == kEdgeTop)) {
+					if (sideLength > yPoint) {
+						i = sideLength - yPoint;
 						while (i--) {
 							*ptr_small_big = 1;
-							ptr_small_big += param;
+							ptr_small_big += sideLength;
 						}
 					}
-				} else if ((b1 == 2 && b2 != 3) || (b2 == 2 && b1 != 3)) {
-					if (variable4 >= 0) {
-						i = variable4 + 1;
+				} else if ((edge0 == kEdgeLeft && edge1 != kEdgeRight) || (edge1 == kEdgeLeft && edge0 != kEdgeRight)) {
+					if (xPoint >= 0) {
+						i = xPoint + 1;
 						while (i--) {
 							*(ptr_small_big--) = 1;
 						}
 					}
-				} else if ((b1 == 0 && b2 == 1) || (b2 == 0 && b1 == 1) ||
-				           (b1 == 3 && b2 != 2) || (b2 == 3 && b1 != 2)) {
-					if (param > variable4) {
-						i = param - variable4;
+				} else if ((edge0 == kEdgeBottom && edge1 == kEdgeTop) || (edge1 == kEdgeBottom && edge0 == kEdgeTop) ||
+				           (edge0 == kEdgeRight && edge1 != kEdgeLeft) || (edge1 == kEdgeRight && edge0 != kEdgeLeft)) {
+					if (sideLength > xPoint) {
+						i = sideLength - xPoint;
 						while (i--) {
 							*(ptr_small_big++) = 1;
 						}
@@ -261,7 +274,7 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 				}
 			}
 
-			if (param == 8) {
+			if (sideLength == 8) {
 				for (i = 64 - 1; i >= 0; i--) {
 					if (tableSmallBig[i] != 0) {
 						_tableBig[256 + s + _tableBig[384 + s]] = (byte)i;
@@ -273,7 +286,7 @@ void Codec47Decoder::makeTablesInterpolation(int param) {
 				}
 				s += 388;
 			}
-			if (param == 4) {
+			if (sideLength == 4) {
 				for (i = 16 - 1; i >= 0; i--) {
 					if (tableSmallBig[i] != 0) {
 						_tableSmall[64 + s + _tableSmall[96 + s]] = (byte)i;
@@ -363,19 +376,19 @@ void Codec47Decoder::level3(byte *d_dst) {
 	int32 tmp;
 	byte code = *_d_src++;
 
-	if (code < 0xF8) {
+	if (code < MOTION_OFFSET_TABLE_SIZE) {
 		tmp = _table[code] + _offset1;
 		COPY_2X1_LINE(d_dst, d_dst + tmp);
 		COPY_2X1_LINE(d_dst + _d_pitch, d_dst + _d_pitch + tmp);
-	} else if (code == 0xFF) {
+	} else if (code == PROCESS_SUBBLOCKS) {
 		COPY_2X1_LINE(d_dst, _d_src + 0);
 		COPY_2X1_LINE(d_dst + _d_pitch, _d_src + 2);
 		_d_src += 4;
-	} else if (code == 0xFE) {
+	} else if (code == FILL_SINGLE_COLOR) {
 		byte t = *_d_src++;
 		FILL_2X1_LINE(d_dst, t);
 		FILL_2X1_LINE(d_dst + _d_pitch, t);
-	} else if (code == 0xFC) {
+	} else if (code == COPY_PREV_BUFFER) {
 		tmp = _offset2;
 		COPY_2X1_LINE(d_dst, d_dst + tmp);
 		COPY_2X1_LINE(d_dst + _d_pitch, d_dst + _d_pitch + tmp);
@@ -391,13 +404,13 @@ void Codec47Decoder::level2(byte *d_dst) {
 	byte code = *_d_src++;
 	int i;
 
-	if (code < 0xF8) {
+	if (code < MOTION_OFFSET_TABLE_SIZE) {
 		tmp = _table[code] + _offset1;
 		for (i = 0; i < 4; i++) {
 			COPY_4X1_LINE(d_dst, d_dst + tmp);
 			d_dst += _d_pitch;
 		}
-	} else if (code == 0xFF) {
+	} else if (code == PROCESS_SUBBLOCKS) {
 		level3(d_dst);
 		d_dst += 2;
 		level3(d_dst);
@@ -405,13 +418,13 @@ void Codec47Decoder::level2(byte *d_dst) {
 		level3(d_dst);
 		d_dst += 2;
 		level3(d_dst);
-	} else if (code == 0xFE) {
+	} else if (code == FILL_SINGLE_COLOR) {
 		byte t = *_d_src++;
 		for (i = 0; i < 4; i++) {
 			FILL_4X1_LINE(d_dst, t);
 			d_dst += _d_pitch;
 		}
-	} else if (code == 0xFD) {
+	} else if (code == DRAW_GLYPH) {
 		byte *tmp_ptr = _tableSmall + *_d_src++ * 128;
 		int32 l = tmp_ptr[96];
 		byte val = *_d_src++;
@@ -427,7 +440,7 @@ void Codec47Decoder::level2(byte *d_dst) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
-	} else if (code == 0xFC) {
+	} else if (code == COPY_PREV_BUFFER) {
 		tmp = _offset2;
 		for (i = 0; i < 4; i++) {
 			COPY_4X1_LINE(d_dst, d_dst + tmp);
@@ -443,18 +456,18 @@ void Codec47Decoder::level2(byte *d_dst) {
 }
 
 void Codec47Decoder::level1(byte *d_dst) {
-	int32 tmp, tmp2;
+	int32 tmp;
 	byte code = *_d_src++;
 	int i;
 
-	if (code < 0xF8) {
-		tmp2 = _table[code] + _offset1;
+	if (code < MOTION_OFFSET_TABLE_SIZE) {
+		tmp = _table[code] + _offset1;
 		for (i = 0; i < 8; i++) {
-			COPY_4X1_LINE(d_dst + 0, d_dst + tmp2);
-			COPY_4X1_LINE(d_dst + 4, d_dst + tmp2 + 4);
+			COPY_4X1_LINE(d_dst + 0, d_dst + tmp);
+			COPY_4X1_LINE(d_dst + 4, d_dst + tmp + 4);
 			d_dst += _d_pitch;
 		}
-	} else if (code == 0xFF) {
+	} else if (code == PROCESS_SUBBLOCKS) {
 		level2(d_dst);
 		d_dst += 4;
 		level2(d_dst);
@@ -462,14 +475,14 @@ void Codec47Decoder::level1(byte *d_dst) {
 		level2(d_dst);
 		d_dst += 4;
 		level2(d_dst);
-	} else if (code == 0xFE) {
+	} else if (code == FILL_SINGLE_COLOR) {
 		byte t = *_d_src++;
 		for (i = 0; i < 8; i++) {
 			FILL_4X1_LINE(d_dst, t);
 			FILL_4X1_LINE(d_dst + 4, t);
 			d_dst += _d_pitch;
 		}
-	} else if (code == 0xFD) {
+	} else if (code == DRAW_GLYPH) {
 		tmp = *_d_src++;
 		byte *tmp_ptr = _tableBig + tmp * 388;
 		byte l = tmp_ptr[384];
@@ -486,11 +499,11 @@ void Codec47Decoder::level1(byte *d_dst) {
 			*(d_dst + READ_LE_UINT16(tmp_ptr2)) = val;
 			tmp_ptr2++;
 		}
-	} else if (code == 0xFC) {
-		tmp2 = _offset2;
+	} else if (code == COPY_PREV_BUFFER) {
+		tmp = _offset2;
 		for (i = 0; i < 8; i++) {
-			COPY_4X1_LINE(d_dst + 0, d_dst + tmp2);
-			COPY_4X1_LINE(d_dst + 4, d_dst + tmp2 + 4);
+			COPY_4X1_LINE(d_dst + 0, d_dst + tmp);
+			COPY_4X1_LINE(d_dst + 4, d_dst + tmp + 4);
 			d_dst += _d_pitch;
 		}
 	} else {
@@ -505,7 +518,7 @@ void Codec47Decoder::level1(byte *d_dst) {
 
 void Codec47Decoder::decode2(byte *dst, const byte *src, int width, int height, const byte *param_ptr) {
 	_d_src = src;
-	_paramPtr = param_ptr - 0xf8;
+	_paramPtr = param_ptr - MOTION_OFFSET_TABLE_SIZE;
 	int bw = (width + 7) / 8;
 	int bh = (height + 7) / 8;
 	int next_line = width * 7;
@@ -526,8 +539,8 @@ Codec47Decoder::Codec47Decoder(int width, int height) {
 	_lastTableWidth = -1;
 	_width = width;
 	_height = height;
-	_tableBig = (byte *)malloc(256 * 388);
-	_tableSmall = (byte *)malloc(256 * 128);
+	_tableBig = (byte *)malloc(NGLYPHS * 388);
+	_tableSmall = (byte *)malloc(NGLYPHS * 128);
 	if ((_tableBig != nullptr) && (_tableSmall != nullptr)) {
 		makeTablesInterpolation(4);
 		makeTablesInterpolation(8);
