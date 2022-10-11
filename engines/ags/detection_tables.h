@@ -1226,6 +1226,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "gladiatorquest", "Gladiator Quest" },
 	{ "glitchquest", "Glitch Quest" },
 	{ "globalistagenda", "My Dear Globalist Agenda" },
+	{ "gloriouswolf2", "Glorious Wolf 2 - The Queens Gambit" },
 	{ "gnomeshomebrewingadventure", "Gnome's Homebrewing Adventure" },
 	{ "gnrblex", "GNRBLEX" },
 	{ "goatburn", "Goat Burn" },
@@ -5222,6 +5223,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("glitchquest", "glitchquest.exe", "465f972675db2da6040518221af5b0ba", 3182715),
 	GAME_ENTRY_EN_PLATFORM("glitchquest", "GQnofun.exe", "465f972675db2da6040518221af5b0ba", 3181931, "No-Fun"),
 	GAME_ENTRY_EN("globalistagenda", "yamaiay.exe", "23a67b6de10ec35e9f5a4dfc7d928222", 24536162),
+	GAME_ENTRY("gloriouswolf2", "GloriousWolf2.exe", "776a62db4387dc68be92ef9933399fd5", 378308425),  // En-Fr
 	GAME_ENTRY_EN("gnomeshomebrewingadventure", "gnomebrew.exe", "abb3aee32ae97a8475626cceefb0664e", 50307521),
 	GAME_ENTRY_EN_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85038656, "MAGS"),  // MAGS v1.0.0.1
 	GAME_ENTRY_EN_PLATFORM("gnrblex", "Gnrblex_AGS.exe", "476a1a39d43ea27577eacf907173e2c1", 85043059, "MAGS"),  // MAGS v1.0.0.5
