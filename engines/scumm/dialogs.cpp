@@ -593,7 +593,7 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 			{3, "ERROR READING %d type %d"},					// As found on the Italian v2 executable...
 			{4, "PAUSA - Premere SPAZIO per continuare."},		// Original DOS Italian v2
 			{5, "Sei sicuro di voler ricominciare? (s/n)s"},	// Original DOS Italian v2
-			{6, "Sei sicuro di voler uscire?  (s/n)s"}			// Original DOS Italian v2
+			{6, "Sei sicuro di voler uscire? (s/n)s"}			// (matching the previous sentence)
 		},
 		{	// Spanish
 			{1, "Introduce el disco %c y pulsa un bot""\xa2""n para continuar."},
@@ -648,12 +648,34 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, "Text Display Only"},
 		{0, "Text Speed   Slow  ==========  Fast"},
 		{0, "Roland Volume    Low  =========  High"},
-		{0, "Heap %dK"}
+		{0, "Heap %dK"},
+		// Snap scroll messages
+		{0, "Snap Scroll On"}, // v2
+		{0, "Snap Scroll Off"},
+		{0, "Screen reposition instantly"}, // v3
+		{0, "Screen reposition by Scrolling"},
+		{0, "Horizontal Screen Snap"}, // v4
+		{0, "Horizontal Screen Scroll"},
+		// Miscellaneous input messages
+		{0, "Recalibrating Joystick"},
+		{0, "Mouse Mode"},
+		{0, "Mouse On"},
+		{0, "Mouse Off"},
+		{0, "Joystick On"},
+		{0, "Joystick Off"},
+		{0, "Sounds On"},
+		{0, "Sounds Off"},
+		// V1-2 graphic modes
+		{0, "VGA Graphics"},
+		{0, "EGA Graphics"},
+		{0, "CGA Graphics"},
+		{0, "Hercules Graphics"},
+		{0, "TANDY Graphics"}
 	};
 
 	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
 		stringno -= ARRAYSIZE(strMap1) - 1;
-		assert(stringno + 1 < ARRAYSIZE(strMap2));
+		assert(stringno < ARRAYSIZE(strMap2));
 		return strMap2[stringno];
 	}
 
@@ -683,6 +705,20 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		break;
 	}
 
+	// Special case for ZAK v2 ITA, which has a different string both for the pause
+	// message and for the restart message.
+	// If it can be verified that other languages have different strings for this game
+	// we can refactor strMap1 to contain both a MM string and a ZAK string; but with
+	// currently only one language doing this, it seems overkill...
+	if (_vm->_game.version == 2 && _vm->_game.id == GID_ZAK && langIndex == 3) {
+		if (stringno == 3) {
+			static const ResString altStr = {4, "PAUSE - Premere SPACE per continuare."};
+			return altStr;
+		} else if (stringno == 4) {
+			static const ResString altStr = {5, "Sei sicuro che vuoi ricominciare? (s/n)s"};
+			return altStr;
+		}
+	}
 	return strMap1[langIndex][stringno];
 }
 

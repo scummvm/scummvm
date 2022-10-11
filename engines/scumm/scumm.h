@@ -429,7 +429,22 @@ enum GUIString {
 	gsTextSpeed = 37,
 	gsDisplayText = 38,
 	gsSpooledMusic = 39,
-	gsInsertSaveDisk = 40
+	gsInsertSaveDisk = 40,
+	gsSnapOn = 41,
+	gsSnapOff = 42,
+	gsRecalJoystick = 43,
+	gsMouseMode = 44,
+	gsMouseOn = 45,
+	gsMouseOff = 46,
+	gsJoystickOn = 47,
+	gsJoystickOff = 48,
+	gsSoundsOn = 49,
+	gsSoundsOff = 50,
+	gsVGAMode = 51,
+	gsEGAMode = 52,
+	gsCGAMode = 53,
+	gsHerculesMode = 54,
+	gsTandyMode = 55
 };
 
 struct InternalGUIControl {
@@ -636,7 +651,11 @@ protected:
 	int _saveScriptParam = 0;
 	int _guiCursorAnimCounter = 0;
 	int _v5VoiceMode = 0;
+
+	// Fake flags just for sub v5 GUIs
 	int _internalSpeakerSoundsAreOn = 1;
+	int _guiMouseFlag = 1;
+	int _guiJoystickFlag = 1;
 
 	Graphics::Surface _savegameThumbnail;
 	byte *_tempTextSurface = nullptr;
@@ -658,7 +677,7 @@ protected:
 	void initBanners();
 	Common::KeyState showBannerAndPause(int bannerId, int32 waitTime, const char *msg, ...);
 	Common::KeyState showOldStyleBannerAndPause(const char *msg, int color, int32 waitTime);
-	Common::KeyState printMessageAndPause(const char *msg, int32 waitTime, bool drawOnSentenceLine);
+	Common::KeyState printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine);
 
 	void clearBanner();
 	void setBannerColors(int bannerId, byte r, byte g, byte b);
