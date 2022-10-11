@@ -1084,9 +1084,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 					}
 				}  else {
 					if (_snapScroll) {
-						showBannerAndPause(0, 90, getGUIString(gsSnapOn));
+						showOldStyleBannerAndPause(getGUIString(gsSnapOn), 9, 90);
 					} else {
-						showBannerAndPause(0, 90, getGUIString(gsSnapOff));
+						showOldStyleBannerAndPause(getGUIString(gsSnapOff), 9, 90);
 					}
 				}
 
