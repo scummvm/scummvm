@@ -1140,34 +1140,46 @@ const char *Datum::type2str(bool isk) const {
 	static char res[20];
 
 	switch (isk ? u.i : type) {
-	case INT:
-		return isk ? "#integer" : "INT";
-	case FLOAT:
-		return isk ? "#float" : "FLOAT";
-	case STRING:
-		return isk ? "#string" : "STRING";
+	case ARGC:
+		return "ARGC";
+	case ARGCNORET:
+		return "ARGCNORET";
+	case ARRAY:
+		return "ARRAY";
 	case CASTREF:
 		return "CASTREF";
-	case VOID:
-		return isk ? "#void" : "VOID";
-	case POINT:
-		return isk ? "#point" : "POINT";
-	case SYMBOL:
-		return isk ? "#symbol" : "SYMBOL";
-	case OBJECT:
-		return isk ? "#object" : "OBJECT";
-	case FIELDREF:
-		return "FIELDREF";
 	case CHUNKREF:
 		return "CHUNKREF";
-	case VARREF:
-		return "VARREF";
+	case FIELDREF:
+		return "FIELDREF";
+	case FLOAT:
+		return isk ? "#float" : "FLOAT";
 	case GLOBALREF:
 		return "GLOBALREF";
+	case INT:
+		return isk ? "#integer" : "INT";
 	case LOCALREF:
 		return "LOCALREF";
+	case MENUREF:
+		return "MENUREF";
+	case OBJECT:
+		return isk ? "#object" : "OBJECT";
+	case PARRAY:
+		return "PARRAY";
+	case POINT:
+		return isk ? "#point" : "POINT";
 	case PROPREF:
 		return "PROPREF";
+	case RECT:
+		return "RECT";
+	case STRING:
+		return isk ? "#string" : "STRING";
+	case SYMBOL:
+		return isk ? "#symbol" : "SYMBOL";
+	case VARREF:
+		return "VARREF";
+	case VOID:
+		return isk ? "#void" : "VOID";
 	default:
 		snprintf(res, 20, "-- (%d) --", type);
 		return res;
@@ -1359,28 +1371,28 @@ void Lingo::cleanLocalVars() {
 Common::String Lingo::formatAllVars() {
 	Common::String result;
 
-	result += Common::String("  Local vars: ");
+	result += Common::String("  Local vars:\n");
 	if (_localvars) {
 		for (DatumHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
-			result += Common::String::format("%s, ", (*i)._key.c_str());
+			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
 		}
 	} else {
-		result += Common::String("(no local vars)");
+		result += Common::String("    (no local vars)\n");
 	}
 	result += Common::String("\n");
 
 	if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
 		ScriptContext *script = static_cast<ScriptContext *>(_currentMe.u.obj);
-		result += Common::String("  Instance/property vars: ");
+		result += Common::String("  Instance/property vars: \n");
 		for (DatumHash::iterator i = script->_properties.begin(); i != script->_properties.end(); ++i) {
-			result += Common::String("%s, ", (*i)._key.c_str());
+			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
 		}
 		result += Common::String("\n");
 	}
 
-	result += Common::String("  Global vars: ");
+	result += Common::String("  Global vars:\n");
 	for (DatumHash::iterator i = _globalvars.begin(); i != _globalvars.end(); ++i) {
-		result += Common::String::format("%s, ", (*i)._key.c_str());
+		result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
 	}
 	result += Common::String("\n");
 	return result;
