@@ -262,7 +262,7 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	return ks;
 }
 
-Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int32 waitTime, bool drawOnSentenceLine) {
+Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int color, int32 waitTime, bool drawOnSentenceLine) {
 	Common::Rect sentenceline;
 
 	// Pause the engine
@@ -321,28 +321,49 @@ Common::KeyState ScummEngine::printMessageAndPause(const char *msg, int32 waitTi
 		drawString(2, (byte *)string);
 		drawDirtyScreenParts();
 	} else {
+		_string[0].xpos = 0;
+		_string[0].ypos = 0;
+		_string[0].right = _screenWidth - 1;
+		_string[0].center = false;
+		_string[0].overhead = false;
 
+		byte tmpColor = _string[0].color;
+		byte tmpAct = _actorToPrintStrFor;
+
+		_string[0].color = color;
+		_actorToPrintStrFor = 0xFF;
+
+		actorTalk((const byte *)msg);
+
+		_actorToPrintStrFor = tmpAct;
+		_string[0].color = tmpColor;
 	}
+
+	Common::KeyState ks = Common::KEYCODE_INVALID;
+	bool leftBtnPressed = false, rightBtnPressed = false;
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
 	// unless we have specified a positive waitTime: in that case, the banner
 	// will stay on screen until an input has been received or until the time-out.
-	Common::KeyState ks = Common::KEYCODE_INVALID;
-	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
+		ScummEngine::drawDirtyScreenParts();
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
+		stopTalk();
 	}
-	setBuiltinCursor(0);
-	restoreBackground(sentenceline);
 
-	// Restore the sentence which was being displayed before
-	// (MANIAC v1 doesn't do this)
-	if (!(_game.id == GID_MANIAC && _game.version <= 1))
-		drawSentence();
+	if (drawOnSentenceLine) {
+		setBuiltinCursor(0);
+		restoreBackground(sentenceline);
+
+		// Restore the sentence which was being displayed before
+		// (MANIAC v1 doesn't do this)
+		if (!(_game.id == GID_MANIAC && _game.version <= 1))
+			drawSentence();
+	}
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
-	clearClickedStatus();;
+	clearClickedStatus();
 
 	return ks;
 }
@@ -1396,7 +1417,7 @@ void ScummEngine::queryQuit(bool returnToLauncher) {
 		} else if (_game.version == 4) {
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
 		} else {
-			ks = printMessageAndPause(msgLabelPtr, -1, true);
+			ks = printMessageAndPause(msgLabelPtr, 0, -1, true);
 		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
@@ -1429,10 +1450,13 @@ void ScummEngine::queryRestart() {
 
 		// "Are you sure you want to restart?  (Y/N)"
 		Common::KeyState ks;
-		if (_game.version > 4)
+		if (_game.version > 4) {
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		else
+		} else if (_game.version == 3) {
 			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
+		} else {
+			ks = printMessageAndPause(msgLabelPtr, 4, -1, false);
+		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
 
@@ -3120,23 +3144,31 @@ void ScummEngine::drawGUIText(const char *buttonString, Common::Rect *clipRect, 
 void ScummEngine::getSliderString(int stringId, int value, char *sliderString, int size) {
 	char *ptrToChar;
 	char tempStr[256];
+	if (_game.version > 2) {
+		Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
+		convertMessageToString((const byte *)tempStr, (byte *)sliderString, size);
 
-	Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
-	convertMessageToString((const byte *)tempStr, (byte *)sliderString, size);
+		ptrToChar = strchr(sliderString, '=');
 
-	ptrToChar = strchr(sliderString, '=');
+		if (!ptrToChar) {
+			ptrToChar = strstr(sliderString, "xxx");
+		}
 
-	if (!ptrToChar) {
-		ptrToChar = strstr(sliderString, "xxx");
-	}
-
-	if (ptrToChar) {
+		if (ptrToChar) {
+			if (stringId == gsTextSpeedSlider) {
+				memset(ptrToChar, '\v', 10);
+				ptrToChar[9 - value] = '\f';
+			} else {
+				memset(ptrToChar, '\v', 9);
+				ptrToChar[value / 15] = '\f';
+			}
+		}
+	} else {
 		if (stringId == gsTextSpeedSlider) {
-			memset(ptrToChar, '\v', 10);
-			ptrToChar[9 - value] = '\f';
-		} else {
-			memset(ptrToChar, '\v', 9);
-			ptrToChar[value / 15] = '\f';
+			Common::strlcpy(tempStr, getGUIString(stringId), sizeof(tempStr));
+
+			// Format the string with the arguments...
+			Common::sprintf_s(sliderString, size, tempStr, value);
 		}
 	}
 }
@@ -3321,13 +3353,83 @@ const char *ScummEngine::getGUIString(int stringId) {
 		resStringId = 24;
 		break;
 	case gsTextSpeedSlider:
-		resStringId = 25;
+		if (_game.version <= 2) {
+			return "TextRate %d";
+		} else {
+			resStringId = 25;
+		}
+
 		break;
 	case gsMusicVolumeSlider:
 		resStringId = 26;
 		break;
 	case gsHeap:
-		resStringId = 28;
+		resStringId = 27;
+		break;
+	case gsSnapOn:
+		switch (_game.version) {
+		case 2:
+			resStringId = 28;
+			break;
+		case 3:
+			resStringId = 30;
+			break;
+		default:
+			resStringId = 32;
+		}
+
+		break;
+	case gsSnapOff:
+		switch (_game.version) {
+		case 2:
+			resStringId = 29;
+			break;
+		case 3:
+			resStringId = 31;
+			break;
+		default:
+			resStringId = 33;
+		}
+
+		break;
+	case gsRecalJoystick:
+		resStringId = 34;
+		break;
+	case gsMouseMode:
+		resStringId = 35;
+		break;
+	case gsMouseOn:
+		resStringId = 36;
+		break;
+	case gsMouseOff:
+		resStringId = 37;
+		break;
+	case gsJoystickOn:
+		resStringId = 38;
+		break;
+	case gsJoystickOff:
+		resStringId = 39;
+		break;
+	case gsSoundsOn:
+		resStringId = 40;
+		break;
+	case gsSoundsOff:
+		resStringId = 41;
+		break;
+	case gsVGAMode:
+		resStringId = 42;
+		break;
+	case gsEGAMode:
+		resStringId = 43;
+		break;
+	case gsCGAMode:
+		resStringId = 44;
+		break;
+	case gsHerculesMode:
+		resStringId = 45;
+		break;
+	case gsTandyMode:
+		resStringId = 46;
 		break;
 	default:
 		break;

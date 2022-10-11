@@ -922,11 +922,12 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			_cursor.state = oldCursorState;
 			return;
 		} else if (_game.version <= 2 && lastKeyHit.keycode == Common::KEYCODE_SPACE) {
-			printMessageAndPause(getGUIString(gsPause), -1, true);
+			printMessageAndPause(getGUIString(gsPause), 0, -1, true);
 			return;
 		}
 
 		if ((VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) ||
+			(_game.version == 2 && (lastKeyHit.keycode == Common::KEYCODE_F8)) ||
 			((_game.id == GID_CMI && !(_game.features & GF_DEMO))
 				&& lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
 			queryRestart();
@@ -989,7 +990,6 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				return;
 
 			Common::KeyState ks = lastKeyHit;
-
 			pt = pauseEngine();
 
 			do {
@@ -1008,10 +1008,11 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				setTalkSpeed(_defaultTextSpeed);
 
 				getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
-				if (_game.version > 4)
+				if (_game.version > 4) {
 					showBannerAndPause(0, 0, sliderString);
-				else
+				} else if (_game.version == 4) {
 					showOldStyleBannerAndPause(sliderString, 9, 0);
+				}
 
 				ks = Common::KEYCODE_INVALID;
 				bool leftBtnPressed = false, rightBtnPressed = false;
@@ -1024,12 +1025,37 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
+		if (_game.version <= 2 && (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-' ||
+			lastKeyHit.ascii == '>' || lastKeyHit.ascii == '<')) {
+			Common::KeyState ks = lastKeyHit;
+			byte textSpeedColor;
+
+			if (ks.ascii == '+' || ks.ascii == '>') {
+				textSpeedColor = _game.version <= 1 ? 7 : 14;
+				if (_defaultTextSpeed > 0)
+					_defaultTextSpeed -= 1;
+
+			} else {
+				textSpeedColor = _game.version <= 1 ? 2 : 4;
+				if (_defaultTextSpeed < 9)
+					_defaultTextSpeed += 1;
+			}
+
+			setTalkSpeed(_defaultTextSpeed);
+			ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+
+			getSliderString(gsTextSpeedSlider, 9 - _defaultTextSpeed + 1, sliderString, sizeof(sliderString));
+			printMessageAndPause(sliderString, textSpeedColor, 0, false);
+			return;
+		}
+
 
 		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
 			return;
 		}
 
+		// NOTE: For consistency we enable the quit message even for sub v3 games which don't have it.
 		if ((lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) ||
 			(lastKeyHit.keycode == Common::KEYCODE_x && lastKeyHit.hasFlags(Common::KBD_ALT))) {
 			Common::Event event;
@@ -1045,16 +1071,23 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (snapScrollKeyEnabled) {
-			if ((_game.version <= 3 && lastKeyHit.keycode == Common::KEYCODE_i && lastKeyHit.hasFlags(Common::KBD_ALT)) ||
+			if ((_game.version == 2 && lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) ||
+				(_game.version == 3 && lastKeyHit.keycode == Common::KEYCODE_i && lastKeyHit.hasFlags(Common::KBD_ALT)) ||
 				(_game.version == 4 && lastKeyHit.keycode == Common::KEYCODE_r && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
-				const char *msgSnap = _game.version == 4 ? "Horizontal Screen Snap" : "Screen reposition instantly";
-				const char *msgScroll = _game.version == 4 ? "Horizontal Screen Scroll" : "Screen reposition by Scrolling";
 
 				_snapScroll ^= 1;
-				if (_snapScroll) {
-					showOldStyleBannerAndPause(msgSnap, 9, 90);
-				} else {
-					showOldStyleBannerAndPause(msgScroll, 9, 90);
+				if (_game.version < 3) {
+					if (_snapScroll) {
+						printMessageAndPause(getGUIString(gsSnapOn), 2, 0, false);
+					} else {
+						printMessageAndPause(getGUIString(gsSnapOff), 14, 0, false);
+					}
+				}  else {
+					if (_snapScroll) {
+						showBannerAndPause(0, 90, getGUIString(gsSnapOn));
+					} else {
+						showBannerAndPause(0, 90, getGUIString(gsSnapOff));
+					}
 				}
 
 				if (VAR_CAMERA_FAST_X != 0xFF)
@@ -1062,31 +1095,102 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 				return;
 			}
+		}
 
-			// The following ones serve no purpose whatsoever, but just for the sake of completeness...
-			// Also, these were originally mapped with the CTRL flag, but they would clash with other
-			// internal ScummVM commands, so they are instead available with the SHIFT flag.
-			if (lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
-				showOldStyleBannerAndPause("Recalibrating Joystick", 2, 90);
-				return;
-			}
-
-			if (lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
-				showOldStyleBannerAndPause("Mouse Mode", 2, 90);
-				return;
-			}
-
-			if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
-				_internalSpeakerSoundsAreOn ^= 1;
-				if (_internalSpeakerSoundsAreOn) {
-					showOldStyleBannerAndPause("Sounds On", 9, 90);
+		// The following ones serve no purpose whatsoever, but just for the sake of completeness...
+		// Also, some of these were originally mapped with the CTRL flag, but they would clash with other
+		// internal ScummVM commands, so they are instead available with the SHIFT flag.
+		if (_game.version < 7) {
+			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				if (_game.version == 4) {
+					showOldStyleBannerAndPause(getGUIString(gsRecalJoystick), 2, 90);
 				} else {
-					showOldStyleBannerAndPause("Sounds Off", 9, 90);
+					showBannerAndPause(0, 90, getGUIString(gsRecalJoystick));
+				}
+				return;
+			}
+
+			if (_game.version >= 4 && lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				if (_game.version == 4) {
+					showOldStyleBannerAndPause(getGUIString(gsMouseMode), 2, 90);
+				} else {
+					showBannerAndPause(0, 90, getGUIString(gsMouseMode));
+				}
+				return;
+			}
+
+			if (_game.version < 3) {
+				if (lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					_guiMouseFlag ^= 1;
+					if (_guiMouseFlag) {
+						printMessageAndPause(getGUIString(gsMouseOn), _game.version <= 1 ? 5 : 2, 0, false);
+					} else {
+						printMessageAndPause(getGUIString(gsMouseOff), _game.version <= 1 ? 2 : 4, 0, false);
+					}
+					return;
 				}
 
-				return;
+				if (lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					_guiJoystickFlag ^= 1;
+					if (_guiJoystickFlag) {
+						printMessageAndPause(getGUIString(gsJoystickOn), _game.version <= 1 ? 5 : 2, 0, false);
+					} else {
+						printMessageAndPause(getGUIString(gsJoystickOff), _game.version <= 1 ? 2 : 4, 0, false);
+					}
+					return;
+				}
+
+				if (lastKeyHit.keycode == Common::KEYCODE_F6) {
+					_internalSpeakerSoundsAreOn ^= 1;
+					if (_internalSpeakerSoundsAreOn) {
+						printMessageAndPause(getGUIString(gsSoundsOn), _game.version <= 1 ? 5 : 2, 0, false);
+					} else {
+						printMessageAndPause(getGUIString(gsSoundsOff), _game.version <= 1 ? 2 : 4, 0, false);
+					}
+					return;
+				}
 			}
 
+			if ((_game.version > 2 && _game.version < 5)) {
+				if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					_internalSpeakerSoundsAreOn ^= 1;
+
+					if (_internalSpeakerSoundsAreOn) {
+						showOldStyleBannerAndPause(getGUIString(gsSoundsOn), 9, 90);
+					} else {
+						showOldStyleBannerAndPause(getGUIString(gsSoundsOff), 9, 90);
+					}
+					return;
+				}
+			}
+
+			// Graphic mode toggles for v1-2... maybe one day they'll actually do something :-)
+			if (_game.version == 1 || _game.version == 2) {
+				// VGA/MCGA mode
+				if (lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					printMessageAndPause(getGUIString(gsVGAMode), _game.version <= 1 ? 5 : 2, 0, false);
+				}
+
+				// EGA mode
+				if (lastKeyHit.keycode == Common::KEYCODE_e && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					printMessageAndPause(getGUIString(gsEGAMode), _game.version <= 1 ? 5 : 2, 0, false);
+				}
+
+				// CGA mode
+				if (lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					printMessageAndPause(getGUIString(gsCGAMode), _game.version <= 1 ? 5 : 2, 0, false);
+				}
+
+				// Hercules mode
+				if (lastKeyHit.keycode == Common::KEYCODE_h && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					printMessageAndPause(getGUIString(gsHerculesMode), _game.version <= 1 ? 5 : 2, 0, false);
+				}
+
+				// Tandy 16-color mode
+				if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+					printMessageAndPause(getGUIString(gsTandyMode), _game.version <= 1 ? 5 : 2, 0, false);
+				}
+			}
 		}
 	}
 
