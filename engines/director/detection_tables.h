@@ -540,6 +540,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "isscommerce",		"International Space Station: Space Commercialization" },
 	{ "itc",				"Internet the City: A Guided Tour Through the Internet" },
 	{ "journey2life",		"The Journey to Life" },
+	{ "klondikegold",		"Klondike Gold - An Interactive History" },
 	{ "learningcoreldraw3",	"Learning CorelDRAW 3" },
 	{ "laughingbird",		"The Laughing Bird Restaurant" },
 	{ "learninternet",		"Video Professor: Learn to Use the Internet" },
@@ -3874,6 +3875,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// From Star Trek: Klingon (Disc 3)
 	MACGAME1("klingonlab", "", "Klingon Language Lab/Klingon Language Lab", "b797956eb3a4dabcc15bfadf6fc66591", 481226, 404),
 	WINGAME1("klingonlab", "", "TREK_WIN.EXE", "204417e63c0a2df18cf42d780b97ed58", 1425763, 400),
+
+	WINGAME2("klondikegold", "", "KLONDIKE.EXE", "58a1d6965e1bc2a3281d1060e09f8d19", 908685,
+								 "DREDGE.DIR",   "9b20cdc5ce0dffe165a495f94bb1b450", 4916524, 404),
 
 	MACGAME1("korkydragons", "", "Dragons!", "0c7bbb4b24823e5ab871cb4c1d6f3710", 486726, 404),
 	WINGAME1t("korkydragons", "", "DRAGONS!.EXE", "4d35a9f14ea5b012e552cd6b3a7e7452", 698833, 404),
