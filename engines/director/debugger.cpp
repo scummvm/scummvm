@@ -67,7 +67,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("bt", WRAP_METHOD(Debugger, cmdBacktrace));
 	registerCmd("disasm", WRAP_METHOD(Debugger, cmdDisasm));
 	registerCmd("da", WRAP_METHOD(Debugger, cmdDisasm));
-	registerCmd("vars", WRAP_METHOD(Debugger, cmdVars));
+	registerCmd("var", WRAP_METHOD(Debugger, cmdVar));
+	registerCmd("v", WRAP_METHOD(Debugger, cmdVar));
 	registerCmd("step", WRAP_METHOD(Debugger, cmdStep));
 	registerCmd("s", WRAP_METHOD(Debugger, cmdStep));
 	registerCmd("next", WRAP_METHOD(Debugger, cmdNext));
@@ -141,7 +142,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" stack / st - Lists the elements on the stack\n");
 	debugPrintf(" scriptframe / sf - Prints the current script frame\n");
 	debugPrintf(" funcs - Lists all of the functions available in the current script frame\n");
-	debugPrintf(" vars - Lists all of the variables available in the current script frame\n");
+	debugPrintf(" var / v - Lists all of the variables available in the current script frame\n");
 	debugPrintf(" step / s [n] - Steps forward one or more operations\n");
 	debugPrintf(" next / n [n] - Steps forward one or more operations, skips over calls\n");
 	debugPrintf(" finish / fin - Steps until the current stack frame returns\n");
@@ -154,7 +155,7 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" bpset / b [funcName] [offset] - Creates a breakpoint on a Lingo function matching a name and offset\n");
 	debugPrintf(" bpset / b [scriptId:funcName] - Creates a breakpoint on a Lingo function matching a script ID and name\n");
 	debugPrintf(" bpset / b [scriptId:funcName] [offset] - Creates a breakpoint on a Lingo function matching a script ID, name and offset\n");
-	debugPrintf(" bpmovie / bf [moviePath] - Create a breakpoint on a switch to a movie\n");
+	debugPrintf(" bpmovie / bm [moviePath] - Create a breakpoint on a switch to a movie\n");
 	debugPrintf(" bpframe / bf [frameId] - Create a breakpoint on a frame in the score\n");
 	debugPrintf(" bpframe / bf [moviePath] [frameId] - Create a breakpoint on a frame in the score of a specific movie\n");
 	debugPrintf(" bpdel [n] - Deletes a specific breakpoint\n");
@@ -434,7 +435,7 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 	return true;
 }
 
-bool Debugger::cmdVars(int argc, const char **argv) {
+bool Debugger::cmdVar(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	debugPrintf("%s\n", lingo->formatAllVars().c_str());
 	return true;
