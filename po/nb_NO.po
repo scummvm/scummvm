@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-10 11:29+0000\n"
-"PO-Revision-Date: 2022-10-11 14:49+0000\n"
+"PO-Revision-Date: 2022-10-11 14:51+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -462,7 +462,7 @@ msgstr "Filbane for ekstrainnhold:"
 #: gui/editgamedialog.cpp:330 gui/editgamedialog.cpp:332
 #: gui/editgamedialog.cpp:333
 msgid "Specifies path to additional data used by the game"
-msgstr "Spesifiserer filbanen for tilleggsdata som brukes av spillet"
+msgstr "Angir filbanen for tilleggsdata som brukes av spillet"
 
 #: gui/editgamedialog.cpp:332 gui/options.cpp:2351
 msgctxt "lowres"
@@ -476,7 +476,7 @@ msgstr "Filbane for lagringsdata:"
 #: gui/editgamedialog.cpp:339 gui/editgamedialog.cpp:341
 #: gui/editgamedialog.cpp:342 gui/options.cpp:2325 gui/options.cpp:2327
 msgid "Specifies where your saved games are put"
-msgstr "Bestemmer sti til lagrede spill"
+msgstr "Angir filbanen til lagrede spill"
 
 #: gui/editgamedialog.cpp:341 gui/options.cpp:2327
 msgctxt "lowres"
@@ -1185,8 +1185,7 @@ msgstr "Shader:"
 #: gui/options.cpp:1537 gui/options.cpp:1539 gui/options.cpp:1540
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr ""
-"Spesifiserer filbanen til shaderen som brukes til å skalere spillets "
-"skjermbilde"
+"Angir filbanen til shaderen som brukes til å skalere spillets skjermbilde"
 
 #: gui/options.cpp:1539
 msgctxt "lowres"
@@ -1252,11 +1251,11 @@ msgstr "Musikkenhet:"
 
 #: gui/options.cpp:1596 gui/options.cpp:1598
 msgid "Specifies preferred sound device or sound card emulator"
-msgstr "Velger foretrukket lydenhet eller lydkort-emulator"
+msgstr "Angir foretrukket lydenhet eller lydkort-emulator"
 
 #: gui/options.cpp:1596 gui/options.cpp:1598 gui/options.cpp:1599
 msgid "Specifies output sound device or sound card emulator"
-msgstr "Velger ut-lydenhet eller lydkortemulator"
+msgstr "Angir lydenhet for avspilling eller lydkortemulator"
 
 #: gui/options.cpp:1598
 msgctxt "lowres"
@@ -1282,7 +1281,7 @@ msgstr "GM-enhet:"
 
 #: gui/options.cpp:1641
 msgid "Specifies default sound device for General MIDI output"
-msgstr "Velger standard lydenhet for General MIDI-utdata"
+msgstr "Angir standard lydenhet for General MIDI-avspilling"
 
 #: gui/options.cpp:1652
 msgid "Don't use General MIDI music"
@@ -1323,7 +1322,7 @@ msgstr "MT-32 Enhet:"
 
 #: gui/options.cpp:1696
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
-msgstr "Velger standard lydenhet for Roland MT-32/LAPC1/CM32I/CM64-avspilling"
+msgstr "Angir standard lydenhet for Roland MT-32/LAPC1/CM32I/CM64-avspilling"
 
 #: gui/options.cpp:1701
 msgid "True Roland MT-32 (disable GM emulation)"
@@ -1501,7 +1500,7 @@ msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
-"Spesifiseres hvor de lagrede spillene dine lagres. En rød farge indikerer at "
+"Angir hvor de lagrede spillene dine lagres. En rød farge indikerer at "
 "verdien er midlertidig og at den ikke blir lagret."
 
 #: gui/options.cpp:2333
@@ -1529,8 +1528,7 @@ msgstr "Standard"
 
 #: gui/options.cpp:2349 gui/options.cpp:2351 gui/options.cpp:2352
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr ""
-"Spesifiser filbanen for tilleggsdata som brukes av alle spill eller ScummVM"
+msgstr "Angir filbanen for tilleggsdata som brukes av alle spill eller ScummVM"
 
 #: gui/options.cpp:2358
 msgid "Plugins Path:"
@@ -1953,7 +1951,7 @@ msgstr "Velg mappe for ytterligere filer"
 
 #: gui/options.cpp:3001
 msgid "Select directory for plugins"
-msgstr "Velg mappe for plugins"
+msgstr "Velg mappe for tilleggsmoduler"
 
 #: gui/options.cpp:3014
 msgid "Select directory for Files Manager /root/"
@@ -2341,11 +2339,11 @@ msgstr "Dataskriving feilet"
 
 #: common/error.cpp:67
 msgid "Could not find suitable engine plugin"
-msgstr "Kunne ikke finne en passende engine-plugin"
+msgstr "Kunne ikke finne en passende tilleggsmodul for spillmotoren"
 
 #: common/error.cpp:69
 msgid "Engine plugin does not support saved games"
-msgstr "Spillmotor-plugin støtter ikke lagrede spill"
+msgstr "Tilleggsmodulen for spillmotoren støtter ikke lagrede spill"
 
 #: common/error.cpp:72
 msgid "User canceled"
