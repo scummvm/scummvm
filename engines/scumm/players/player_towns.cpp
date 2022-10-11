@@ -188,7 +188,7 @@ int Player_Towns::allocatePcmChannel(int sound, int sfxChanRelIndex, uint32 prio
 
 Player_Towns_v1::Player_Towns_v1(ScummEngine *vm, Audio::Mixer *mixer) : Player_Towns(vm, false) {
 	_soundOverride = nullptr;
-	_cdaCurrentSound = _eupCurrentSound = _cdaNumLoops = 0;
+	_cdaCurrentSound = _cdaCurrentSoundTemp = _eupCurrentSound = _cdaNumLoops = 0;
 	_cdaForceRestart = 0;
 	_cdaVolLeft = _cdaVolRight = 0;
 
