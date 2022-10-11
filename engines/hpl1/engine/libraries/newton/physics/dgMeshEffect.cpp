@@ -1426,26 +1426,26 @@ void dgMeshEffect::BuildFromVertexListIndexList(
 					if (duplicate) {
 						dgTree<dgInt32, dgInt32>::dgTreeNode *aliasNode = aliasVertexMap.Find(i0);
 						if (!aliasNode) {
-							dgInt32 index = i0 * vertexStride;
+							dgInt32 nodeIndex = i0 * vertexStride;
 							aliasNode = aliasVertexMap.Insert(m_pointCount, i0);
-							AddVertex(dgBigVector(vertex[index + 0], vertex[index + 1], vertex[index + 2], vertex[index + 3] + 1.0f));
+							AddVertex(dgBigVector(vertex[nodeIndex + 0], vertex[nodeIndex + 1], vertex[nodeIndex + 2], vertex[nodeIndex + 3] + 1.0f));
 						}
 						i0 = aliasNode->GetInfo();
 						newFaceIndex[k ? (k - 1) : (count - 1)] = i0;
 
 						aliasNode = aliasVertexMap.Find(i1);
 						if (!aliasNode) {
-							dgInt32 index = i1 * vertexStride;
+							dgInt32 nodeIndex = i1 * vertexStride;
 							aliasNode = aliasVertexMap.Insert(m_pointCount, i1);
-							AddVertex(dgBigVector(vertex[index + 0], vertex[index + 1], vertex[index + 2], vertex[index + 3] + 1.0f));
+							AddVertex(dgBigVector(vertex[nodeIndex + 0], vertex[nodeIndex + 1], vertex[nodeIndex + 2], vertex[nodeIndex + 3] + 1.0f));
 						}
 						i1 = aliasNode->GetInfo();
 						newFaceIndex[k] = i1;
 					}
 					i0 = i1;
 				}
-				dgEdge *const edge = AddFace(count, newFaceIndex, userdata);
-				if (!edge) {
+				dgEdge *const edgeF = AddFace(count, newFaceIndex, userdata);
+				if (!edgeF) {
 					faceAdded = false;
 					memcpy(index, newFaceIndex, count * sizeof(newFaceIndex[0]));
 				}
@@ -1463,8 +1463,8 @@ void dgMeshEffect::BuildFromVertexListIndexList(
 		dgTreeNode *const aliasNode = FindGreaterEqual(key.GetVal());
 		if (aliasNode && (aliasNode->GetInfo().m_incidentVertex == aliasVertex)) {
 			dgInt32 parentVertex = iter.GetNode()->GetKey();
-			dgPolyhedra::dgPairKey key(parentVertex, 0);
-			dgTreeNode *const parentNode = FindGreaterEqual(key.GetVal());
+			dgPolyhedra::dgPairKey keyV(parentVertex, 0);
+			dgTreeNode *const parentNode = FindGreaterEqual(keyV.GetVal());
 
 			_ASSERTE(parentNode);
 			dgEdge *const alliasEdge = &aliasNode->GetInfo();
@@ -1730,33 +1730,33 @@ void *dgMeshEffect::GetNextVertex(const void *vertex) {
 	Iterator iter(*this);
 	iter.Set(node);
 	for (iter++; iter; iter++) {
-		dgTreeNode *const node = iter.GetNode();
-		if (node->GetInfo().m_mark != mark) {
-			dgEdge *const edge = &node->GetInfo();
+		dgTreeNode *const nodeI = iter.GetNode();
+		if (nodeI->GetInfo().m_mark != mark) {
+			dgEdge *const edge = &nodeI->GetInfo();
 			dgEdge *ptr = edge;
 			do {
 				ptr->m_mark = mark;
 				ptr = ptr->m_twin->m_next;
 			} while (ptr != edge);
-			return node;
+			return nodeI;
 		}
 	}
 	return NULL;
 }
 
 dgInt32 dgMeshEffect::GetVertexIndex(const void *vertex) const {
-	dgTreeNode *const node = (dgTreeNode *)vertex;
-	dgEdge *const edge = &node->GetInfo();
+	dgTreeNode *const nodeT = (dgTreeNode *)vertex;
+	dgEdge *const edge = &nodeT->GetInfo();
 	return edge->m_incidentVertex;
 }
 
 void *dgMeshEffect::GetFirstPoint() {
 	Iterator iter(*this);
 	for (iter.Begin(); iter; iter++) {
-		dgTreeNode *const node = iter.GetNode();
-		dgEdge *const edge = &node->GetInfo();
+		dgTreeNode *const nodeI = iter.GetNode();
+		dgEdge *const edge = &nodeI->GetInfo();
 		if (edge->m_incidentFace > 0) {
-			return node;
+			return nodeI;
 		}
 	}
 	return NULL;
@@ -1846,11 +1846,11 @@ void *dgMeshEffect::GetNextEdge(const void *edge) {
 	Iterator iter(*this);
 	iter.Set(node);
 	for (iter++; iter; iter++) {
-		dgTreeNode *const node = iter.GetNode();
-		if (node->GetInfo().m_mark != mark) {
-			node->GetInfo().m_mark = mark;
-			node->GetInfo().m_twin->m_mark = mark;
-			return node;
+		dgTreeNode *const nodeI = iter.GetNode();
+		if (nodeI->GetInfo().m_mark != mark) {
+			nodeI->GetInfo().m_mark = mark;
+			nodeI->GetInfo().m_twin->m_mark = mark;
+			return nodeI;
 		}
 	}
 	return NULL;
@@ -1897,15 +1897,15 @@ void *dgMeshEffect::GetNextFace(const void *const face) {
 	Iterator iter(*this);
 	iter.Set(node);
 	for (iter++; iter; iter++) {
-		dgTreeNode *const node = iter.GetNode();
-		if (node->GetInfo().m_mark != mark) {
-			dgEdge *const edge = &node->GetInfo();
+		dgTreeNode *const nodeI = iter.GetNode();
+		if (nodeI->GetInfo().m_mark != mark) {
+			dgEdge *const edge = &nodeI->GetInfo();
 			dgEdge *ptr = edge;
 			do {
 				ptr->m_mark = mark;
 				ptr = ptr->m_next;
 			} while (ptr != edge);
-			return node;
+			return nodeI;
 		}
 	}
 	return NULL;
@@ -2679,16 +2679,16 @@ dgMeshEffect::dgVertexAtribute dgMeshEffect::InterpolateVertex(
 			dgBigVector p_p1(point - q1);
 			dgBigVector p_p2(point - q2);
 
-			dgFloat64 alpha1 = p10 % p_p0;
-			dgFloat64 alpha2 = p20 % p_p0;
-			dgFloat64 alpha3 = p10 % p_p1;
-			dgFloat64 alpha4 = p20 % p_p1;
-			dgFloat64 alpha5 = p10 % p_p2;
-			dgFloat64 alpha6 = p20 % p_p2;
+			dgFloat64 p_alpha1 = p10 % p_p0;
+			dgFloat64 p_alpha2 = p20 % p_p0;
+			dgFloat64 p_alpha3 = p10 % p_p1;
+			dgFloat64 p_alpha4 = p20 % p_p1;
+			dgFloat64 p_alpha5 = p10 % p_p2;
+			dgFloat64 p_alpha6 = p20 % p_p2;
 
-			dgFloat64 vc = alpha1 * alpha4 - alpha3 * alpha2;
-			dgFloat64 vb = alpha5 * alpha2 - alpha1 * alpha6;
-			dgFloat64 va = alpha3 * alpha6 - alpha5 * alpha4;
+			dgFloat64 vc = p_alpha1 * p_alpha4 - p_alpha3 * p_alpha2;
+			dgFloat64 vb = p_alpha5 * p_alpha2 - p_alpha1 * p_alpha6;
+			dgFloat64 va = p_alpha3 * p_alpha6 - p_alpha5 * p_alpha4;
 			dgFloat64 den = va + vb + vc;
 			dgFloat64 minError = den * (-tol);
 			dgFloat64 maxError = den * (dgFloat32(1.0f) + tol);
@@ -2828,11 +2828,11 @@ void dgMeshEffect::FilterCoplanarFaces(const dgMeshEffect *const coplanarFaces,
 			for (capIter.Begin(); capIter; capIter++) {
 				dgEdge *const capFace = &(*capIter);
 				if ((capFace->m_mark != capMark) && (capFace->m_incidentFace > 0)) {
-					dgEdge *ptr = capFace;
+					dgEdge *ptrCF = capFace;
 					do {
-						ptr->m_mark = capMark;
-						ptr = ptr->m_next;
-					} while (ptr != capFace);
+						ptrCF->m_mark = capMark;
+						ptrCF = ptrCF->m_next;
+					} while (ptrCF != capFace);
 
 					dgBigVector capNormal(
 						coplanarFaces->FaceNormal(capFace,
@@ -3058,12 +3058,12 @@ dgMeshEffectSolidTree *dgMeshEffect::CreateSolidTree() const {
 				dgVertexAtribute points[256];
 
 				flatFace.BeginPolygon();
-				dgEdge *ptr = face;
+				dgEdge *ptrF = face;
 				do {
-					points[count] = m_attib[ptr->m_userData];
+					points[count] = m_attib[ptrF->m_userData];
 					count++;
-					ptr = ptr->m_next;
-				} while (ptr != face);
+					ptrF = ptrF->m_next;
+				} while (ptrF != face);
 				flatFace.AddPolygon(count, &points[0].m_vertex.m_x,
 									sizeof(dgVertexAtribute), 0);
 				flatFace.EndPolygon(dgFloat64(1.0e-5f));
@@ -3071,25 +3071,25 @@ dgMeshEffectSolidTree *dgMeshEffect::CreateSolidTree() const {
 				dgInt32 flatMark = flatFace.IncLRU();
 				dgPolyhedra::Iterator flatIter(flatFace);
 				for (flatIter.Begin(); flatIter; flatIter++) {
-					dgEdge *const face = &(*flatIter);
-					if ((face->m_incidentFace > 0) && (face->m_mark != flatMark)) {
-						dgEdge *ptr = face;
+					dgEdge *const faceI = &(*flatIter);
+					if ((faceI->m_incidentFace > 0) && (faceI->m_mark != flatMark)) {
+						dgEdge *ptrFI = faceI;
 						do {
-							ptr->m_mark = flatMark;
-							ptr = ptr->m_next;
-						} while (ptr != face);
+							ptrFI->m_mark = flatMark;
+							ptrFI = ptrFI->m_next;
+						} while (ptrFI != faceI);
 
 						if (!tree) {
 							dgBigVector normal(
-								flatFace.FaceNormal(face, &flatFace.m_points[0][0],
+								flatFace.FaceNormal(faceI, &flatFace.m_points[0][0],
 													sizeof(dgBigVector)));
 							dgFloat64 mag2 = normal % normal;
 							if (mag2 > dgFloat32(1.0e-10f)) {
 								tree = new (GetAllocator()) dgMeshEffectSolidTree(flatFace,
-																				  face);
+																				  faceI);
 							}
 						} else {
-							tree->AddFace(flatFace, face);
+							tree->AddFace(flatFace, faceI);
 						}
 					}
 				}
@@ -3783,11 +3783,11 @@ dgMeshEffect *dgMeshEffect::GetNextLayer(dgInt32 mark) {
 
 	polyhedra.BeginFace();
 	for (iter.Begin(); iter; iter++) {
-		dgEdge *const edge = &(*iter);
-		if ((edge->m_mark < mark) && (edge->m_incidentFace > 0)) {
-			dgInt32 thislayer = dgInt32(m_points[edge->m_incidentVertex].m_w);
+		dgEdge *const edgeI = &(*iter);
+		if ((edgeI->m_mark < mark) && (edgeI->m_incidentFace > 0)) {
+			dgInt32 thislayer = dgInt32(m_points[edgeI->m_incidentVertex].m_w);
 			if (thislayer == layer) {
-				dgEdge *ptr = edge;
+				dgEdge *ptr = edgeI;
 				dgInt32 count = 0;
 				dgInt32 faceIndex[256];
 				dgInt64 faceDataIndex[256];
@@ -3798,7 +3798,7 @@ dgMeshEffect *dgMeshEffect::GetNextLayer(dgInt32 mark) {
 					count++;
 					_ASSERTE(count < dgInt32(sizeof(faceIndex) / sizeof(faceIndex[0])));
 					ptr = ptr->m_next;
-				} while (ptr != edge);
+				} while (ptr != edgeI);
 				polyhedra.AddFace(count, &faceIndex[0], &faceDataIndex[0]);
 			}
 		}
@@ -4041,8 +4041,8 @@ void dgMeshEffect::ClipMesh(const dgMeshEffectSolidTree *const clipper,
 			originalFace->Release();
 			for (dgList<dgMeshTreeCSGFace *>::dgListNode *node = faceList.GetFirst();
 				 node; node = node->GetNext()) {
-				dgMeshTreeCSGFace *const face = node->GetInfo();
-				face->Release();
+				dgMeshTreeCSGFace *const faceT = node->GetInfo();
+				faceT->Release();
 			}
 		}
 	}
@@ -4156,16 +4156,16 @@ void dgMeshEffect::RepairTJoints(bool triangulate) {
 			_ASSERTE(lastEdge);
 
 			bool isTJoint = true;
-			dgBigVector p0(m_points[firstEdge->m_incidentVertex]);
-			dgBigVector p1(m_points[lastEdge->m_incidentVertex]);
-			dgBigVector p1p0(p1 - p0);
-			dgFloat64 den = p1p0 % p1p0;
+			dgBigVector point0(m_points[firstEdge->m_incidentVertex]);
+			dgBigVector point1(m_points[lastEdge->m_incidentVertex]);
+			dgBigVector pnt1pnt0(point1 - point0);
+			dgFloat64 den = pnt1pnt0 % pnt1pnt0;
 			ptr = firstEdge->m_next;
 			do {
-				dgBigVector p2(m_points[ptr->m_incidentVertex]);
-				dgFloat64 num = (p2 - p0) % p1p0;
-				dgBigVector q(p0 + p1p0.Scale(num / den));
-				dgBigVector dist(p2 - q);
+				dgBigVector point2(m_points[ptr->m_incidentVertex]);
+				dgFloat64 num = (point2 - point0) % pnt1pnt0;
+				dgBigVector q(point0 + pnt1pnt0.Scale(num / den));
+				dgBigVector dist(point2 - q);
 				dgFloat64 err2 = dist % dist;
 				isTJoint &= (err2 < (dgFloat64(1.0e-4f) * dgFloat64(1.0e-4f)));
 				ptr = ptr->m_next;
@@ -4275,11 +4275,11 @@ void dgMeshEffect::RepairTJoints(bool triangulate) {
 					if (triangulate) {
 						_ASSERTE(begin);
 						_ASSERTE(last);
-						for (dgEdge *ptr = begin->m_next->m_next; ptr != last;
-							 ptr = ptr->m_next) {
+						for (dgEdge *ptrI = begin->m_next->m_next; ptrI != last;
+							 ptrI = ptrI->m_next) {
 							dgEdge *const e = AddHalfEdge(begin->m_incidentVertex,
-														  ptr->m_incidentVertex);
-							dgEdge *const t = AddHalfEdge(ptr->m_incidentVertex,
+														  ptrI->m_incidentVertex);
+							dgEdge *const t = AddHalfEdge(ptrI->m_incidentVertex,
 														  begin->m_incidentVertex);
 							if (e && t) {
 								_ASSERTE(e);
@@ -4287,16 +4287,16 @@ void dgMeshEffect::RepairTJoints(bool triangulate) {
 								e->m_twin = t;
 								t->m_twin = e;
 
-								e->m_incidentFace = ptr->m_incidentFace;
-								t->m_incidentFace = ptr->m_incidentFace;
+								e->m_incidentFace = ptrI->m_incidentFace;
+								t->m_incidentFace = ptrI->m_incidentFace;
 
 								e->m_userData = last->m_next->m_userData;
-								t->m_userData = ptr->m_userData;
+								t->m_userData = ptrI->m_userData;
 
-								t->m_prev = ptr->m_prev;
-								ptr->m_prev->m_next = t;
-								e->m_next = ptr;
-								ptr->m_prev = e;
+								t->m_prev = ptrI->m_prev;
+								ptrI->m_prev->m_next = t;
+								e->m_next = ptrI;
+								ptrI->m_prev = e;
 								t->m_next = last->m_next;
 								e->m_prev = last;
 								last->m_next->m_prev = t;

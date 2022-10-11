@@ -463,8 +463,8 @@ dgMeshEffect::dgMeshEffect(const dgMeshEffect &source, dgFloat32 absoluteconcavi
 				dgEdge *ptr = face.m_edge;
 				do {
 					if (ptr->m_userData != dgUnsigned64(-1)) {
-						dgList<dgPairProxi>::dgListNode *const pairNode = (dgList<dgPairProxi>::dgListNode *)ptr->m_userData;
-						dgPairProxi &pairProxy = pairNode->GetInfo();
+						dgList<dgPairProxi>::dgListNode *const pairNodeT = (dgList<dgPairProxi>::dgListNode *)ptr->m_userData;
+						dgPairProxi &pairProxy = pairNodeT->GetInfo();
 						pairProxy.m_edgeA = NULL;
 						pairProxy.m_edgeB = NULL;
 					}
