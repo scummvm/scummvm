@@ -1495,8 +1495,8 @@ void cPlayer::OnDraw() {
 
 	// DEBUG: health
 	if (mbShowHealth) {
-		mpFont->draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Health: %.0f"),
-					 mfHealth);
+		mpFont->draw(cVector3f(5, 5, 0), 12, cColor(1, 1, 1, 1), eFontAlign_Left, Common::U32String::format("Health: %.0f",
+					 mfHealth));
 	}
 
 	// DEBUG: misc
@@ -1534,7 +1534,7 @@ void cPlayer::OnDraw() {
 			vEntries.push_back(&(*it));
 		}
 
-		mpFont->draw(cVector3f(5, 18, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left, _W("Num of sounds: %d"), vSoundNames.size() - 1);
+		mpFont->draw(cVector3f(5, 18, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left, Common::U32String::format("Num of sounds: %d", vSoundNames.size() - 1));
 
 		int lRow = 0, lCol = 0;
 		for (int i = 0; i < (int)vSoundNames.size(); i++) {
@@ -1545,8 +1545,7 @@ void cPlayer::OnDraw() {
 				continue;
 			}
 			mpFont->draw(cVector3f((float)lCol * 250, 26 + (float)lRow * 11, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
-						 _W("%ls(%.2f (%.2f %.2f)->%.2f"), cString::To16Char(vSoundNames[i]).c_str(),
-						 //_W("%ls(%.2f (%.2f %.2f)->%.2f %d %.2f/%.2f)"),cString::To16Char(vSoundNames[i]).c_str(),
+						 Common::U32String::format("%S(%.2f (%.2f %.2f)->%.2f", cString::To16Char(vSoundNames[i]).c_str(),
 						 pEntry->mpSound->GetVolume(),
 						 pEntry->mfNormalVolumeMul,
 						 pEntry->mfNormalVolumeFadeSpeed,
@@ -1555,7 +1554,7 @@ void cPlayer::OnDraw() {
 						 pEntry->mpSound->GetElapsedTime(),
 						 pEntry->mpSound->GetTotalTime()
 
-			);
+			));
 			//								pEntry->mpSound->GetPriority(),
 			//								pEntry->mpSound->IsBufferUnderrun()?1:0);
 
@@ -1572,13 +1571,13 @@ void cPlayer::OnDraw() {
 		if (pMusic) {
 			iSoundChannel *pChannel = pMusic->mpStream;
 			mpFont->draw(cVector3f(5, 18 + 70, 0), 10, cColor(1, 1, 1, 1), eFontAlign_Left,
-						 _W("Music: '%ls' vol: %.2f playing: %d prio: %d elapsed: %.2f total time: %.2f"),
+						 Common::U32String::format("Music: '%S' vol: %.2f playing: %d prio: %d elapsed: %.2f total time: %.2f",
 						 cString::To16Char(pChannel->GetData()->GetName()).c_str(),
 						 pChannel->GetVolume(),
 						 pChannel->IsPlaying(),
 						 pChannel->GetPriority(),
 						 pChannel->GetElapsedTime(),
-						 pChannel->GetTotalTime());
+						 pChannel->GetTotalTime()));
 		}
 	}
 

@@ -111,7 +111,7 @@ public:
 	 * \param ...
 	 */
 	void draw(const cVector3f &avPos, const cVector2f &avSize, const cColor &aCol, eFontAlign mAlign,
-			  const wchar_t *fmt, ...);
+			  const tWString &text);
 	/**
 	 * Draw a string  with word wrap.
 	 * \param avPos Screen pos
@@ -136,20 +136,12 @@ public:
 	inline float getHeight() const { return _height; }
 
 	/**
-	 * Get the length in screen size "pixels" of a formated string
-	 * \param avSize size of the characters
-	 * \param fmt
-	 * \param ...
-	 * \return
-	 */
-	float getLengthFmt(const cVector2f &avSize, const wchar_t *fmt, ...);
-	/**
 	 * Get the length in screen size "pixels" of a string
 	 * \param avSize size of the characters
 	 * \param sText
 	 * \return
 	 */
-	float getLength(const cVector2f &avSize, const wchar_t *sText);
+	float getLength(const cVector2f &avSize, const char32_t *sText);
 
 private:
 	iLowLevelGraphics *_lowLevelGraphics;

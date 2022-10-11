@@ -2119,9 +2119,9 @@ void cMeshLoaderCollada::AddSectorChildren(cColladaNode *apNode, tString asSecto
 
 			// Get number of digits
 			lDigits = 1;
-			while ((int)apNode->msName.length() > lStartChar + 4 + lDigits &&
+			while ((int)apNode->msName.size() > lStartChar + 4 + lDigits &&
 				   apNode->msName[lStartChar + 4 + lDigits] != '_' &&
-				   (int)apNode->msName.length() >= 7 + lDigits &&
+				   (int)apNode->msName.size() >= 7 + lDigits &&
 				   apNode->msName[7 + lDigits] != 0) {
 				lDigits++;
 			}

@@ -106,14 +106,12 @@ void LogUpdate(const char *fmt, ...) {
 //-----------------------------------------------------------------------
 
 void CopyTextToClipboard(const tWString &text) {
-	// FIXME: string types
-	g_system->setTextInClipboard(Common::String(cString::To8Char(text.c_str()).c_str()));
+	g_system->setTextInClipboard(text);
 }
 
 tWString LoadTextFromClipboard() {
-	// FIXME: string types
 	Common::U32String text = g_system->getTextFromClipboard();
-	return cString::To16Char(Common::String(text).c_str());
+	return text;
 }
 
 //-----------------------------------------------------------------------
@@ -187,7 +185,7 @@ tWString GetSystemSpecialPath(eSystemPath aPathType) {
 		}
 #endif
 #endif
-	return _W("");
+	return Common::U32String("");
 }
 
 //-----------------------------------------------------------------------

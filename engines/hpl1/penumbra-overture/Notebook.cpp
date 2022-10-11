@@ -116,16 +116,16 @@ void cNotebookState_Front::OnDraw() {
 		if (mvOptions[i].mfAlpha > 0) {
 			mpFrontFont->draw(mvOptions[i].mvPos + cVector3f(0, 0, 1), mvFontSize,
 							  cColor(0.9f, 0.9f, 0.9f, 1.0f * mpNotebook->GetAlpha() * mvOptions[i].mfAlpha),
-							  eFontAlign_Center, mvOptions[i].msText.c_str());
+							  eFontAlign_Center, mvOptions[i].msText);
 
 			mpDrawer->DrawGfxObject(mpTextBack, mvOptions[i].mvPos + cVector3f(-160, -2, -1),
 									cVector2f(320, mvFontSize.y + 15), cColor(1, mvOptions[i].mfAlpha * 0.7f));
 		}
 
 		mpFrontFont->draw(mvOptions[i].mvPos, mvFontSize, cColor(0.7f, 0.7f, 0.7f, 0.8f * mpNotebook->GetAlpha()),
-						  eFontAlign_Center, mvOptions[i].msText.c_str());
+						  eFontAlign_Center, mvOptions[i].msText);
 		mpFrontFont->draw(mvOptions[i].mvPos + cVector3f(1, 1, -1), mvFontSize, cColor(0.0f, 0.0f, 0.0f, 0.8f * mpNotebook->GetAlpha()),
-						  eFontAlign_Center, mvOptions[i].msText.c_str());
+						  eFontAlign_Center, mvOptions[i].msText);
 	}
 }
 
@@ -299,7 +299,7 @@ void cNotebookState_TaskList::OnDraw() {
 
 		mpTextFont->draw(vPos + cVector3f(-12, 0, 0), 14, cColor(0.0f, 0.0f, 0.0f, 0.9f), eFontAlign_Left,
 						 _W("-"));
-		int lRows = mpTextFont->drawWordWrap(vPos, 308, 15, 14, cColor(0.0f, 0.0f, 0.0f, 0.9f), eFontAlign_Left, pTask->msText.c_str());
+		int lRows = mpTextFont->drawWordWrap(vPos, 308, 15, 14, cColor(0.0f, 0.0f, 0.0f, 0.9f), eFontAlign_Left, pTask->msText);
 
 		vPos.y += 30.0f + (float)lRows * 15.0f;
 
@@ -309,7 +309,7 @@ void cNotebookState_TaskList::OnDraw() {
 	//////////////////////////////////
 	// Page number
 	mpTextFont->draw(cVector3f(400, 490, 16), 15, cColor(0.05f, mpNotebook->GetAlpha()), eFontAlign_Center,
-					 _W("%d"), mlCurrentPage + 1);
+					Common::U32String::format("%d", mlCurrentPage + 1));
 
 	//////////////////////////////////
 	// Draw arrows back and forward
@@ -524,7 +524,7 @@ void cNotebookState_NoteList::OnDraw() {
 
 		if (pNote->mfAlpha < 1) {
 			float fAlpha = 0.9f * mpNotebook->GetAlpha() * (1 - pNote->mfAlpha);
-			mpTextFont->draw(vTextPos, mvSize, cColor(0, fAlpha), eFontAlign_Left, pNote->msName.c_str());
+			mpTextFont->draw(vTextPos, mvSize, cColor(0, fAlpha), eFontAlign_Left, pNote->msName);
 		}
 
 		if (pNote->mfAlpha > 0) {
@@ -536,7 +536,7 @@ void cNotebookState_NoteList::OnDraw() {
 
 			mpDrawer->DrawGfxObject(mpTextBack, vPos, vSize, cColor(1, fAlpha * 0.7f));
 
-			mpTextFont->draw(vTextPos, mvSize, cColor(0.85f, fAlpha), eFontAlign_Left, pNote->msName.c_str());
+			mpTextFont->draw(vTextPos, mvSize, cColor(0.85f, fAlpha), eFontAlign_Left, pNote->msName);
 		}
 
 		lCount++;
@@ -545,7 +545,7 @@ void cNotebookState_NoteList::OnDraw() {
 	//////////////////////////////////
 	// Page number
 	mpTextFont->draw(cVector3f(400, 490, 16), 17, cColor(0.05f, mpNotebook->GetAlpha()), eFontAlign_Center,
-					 _W("%d"), (mlFirstNote / 11) + 1);
+					 Common::U32String::format("%d", (mlFirstNote / 11) + 1));
 
 	//////////////////////////////////
 	// Draw arrows back and forward
@@ -741,7 +741,7 @@ void cNotebookState_Note::OnDraw() {
 	cVector3f vPos(235, 107, 70);
 	for (int i = mvPages[mlCurrentPage].mlStart; i < mvPages[mlCurrentPage].mlEnd; ++i) {
 		mpTextFont->draw(vPos, mvSize, cColor(0, 1.0f * mpNotebook->GetAlpha()),
-						 eFontAlign_Left, mvRows[i].c_str());
+						 eFontAlign_Left, mvRows[i]);
 
 		vPos.y += mvSize.y + 2;
 	}
@@ -749,7 +749,7 @@ void cNotebookState_Note::OnDraw() {
 	//////////////////////////////////
 	// Page number
 	mpTextFont->draw(cVector3f(400, 490, 16), 15, cColor(0.05f, mpNotebook->GetAlpha()), eFontAlign_Center,
-					 _W("%d"), mlCurrentPage + 1);
+					 Common::U32String::format("%d", mlCurrentPage + 1));
 
 	//////////////////////////////////
 	// Draw arrows back and forward

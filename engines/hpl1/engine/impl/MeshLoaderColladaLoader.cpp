@@ -508,8 +508,7 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			TiXmlElement *pJointsElem = CreateXMLChild(pControllerElem, "Joints");
 			pJointsElem->SetAttribute("Size", (int)pController->mvJoints.size());
 
-			tString sData = "";
-			sData.reserve(pController->mvJoints.size() * 10);
+			tString sData;
 			for (size_t idx = 0; idx < pController->mvJoints.size(); ++idx) {
 				sData += pController->mvJoints[idx] + " ";
 			}
@@ -522,7 +521,6 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			pWeightsElem->SetAttribute("Size", (int)pController->mvWeights.size());
 
 			tString sData = "";
-			sData.reserve(pController->mvWeights.size() * 5);
 			for (size_t idx = 0; idx < pController->mvWeights.size(); ++idx) {
 				sData += cString::ToString(pController->mvWeights[idx]) + " ";
 			}
@@ -535,7 +533,6 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			pMatricesElem->SetAttribute("Size", (int)pController->mvMatrices.size());
 
 			tString sData = "";
-			sData.reserve(pController->mvMatrices.size() * 5);
 			for (size_t idx = 0; idx < pController->mvMatrices.size(); ++idx) {
 				sData += pController->mvMatrices[idx].ToFileString() + " ";
 			}
@@ -555,7 +552,6 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			int lCount = 0;
 			TiXmlElement *pPairsElem = CreateXMLChild(pPairVecElem, "Pairs");
 			tString sData = "";
-			sData.reserve(pController->mvPairs.size() * 4 * 2);
 			for (size_t idx = 0; idx < pController->mvPairs.size(); ++idx) {
 				tColladaJointPairList *pList = &pController->mvPairs[idx];
 
@@ -573,7 +569,6 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			// The pair numbers
 			TiXmlElement *pPairNumElem = CreateXMLChild(pPairVecElem, "PairNum");
 			sData = "";
-			sData.reserve(pController->mvPairs.size() * 4);
 			for (size_t idx = 0; idx < pController->mvPairs.size(); ++idx) {
 				sData += cString::ToString(vPairNumVec[idx]) + " ";
 			}
@@ -621,7 +616,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 		TiXmlElement *pIndicesDataElem = CreateXMLChild(pIndexVecElem, "Indices");
 
 		tString sIndexVec = "";
-		sIndexVec.reserve(pGeometry->mvIndexVec.size() * 5);
 		for (size_t j = 0; j < pGeometry->mvIndexVec.size(); ++j) {
 			sIndexVec += cString::ToString((int)pGeometry->mvIndexVec[j]) + " ";
 		}
@@ -636,7 +630,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			/////////////////////////////////
 			// Positions
 			tString sData = "";
-			sData.reserve(pGeometry->mvVertexVec.size() * 10 * 3);
 			for (size_t j = 0; j < pGeometry->mvVertexVec.size(); ++j) {
 				sData += pGeometry->mvVertexVec[j].pos.ToFileString() + " ";
 			}
@@ -647,7 +640,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			/////////////////////////////////
 			// Normals
 			sData = "";
-			sData.reserve(pGeometry->mvVertexVec.size() * 10 * 3);
 			for (size_t j = 0; j < pGeometry->mvVertexVec.size(); ++j) {
 				sData += pGeometry->mvVertexVec[j].norm.ToFileString() + " ";
 			}
@@ -658,7 +650,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			/////////////////////////////////
 			// UVs
 			sData = "";
-			sData.reserve(pGeometry->mvVertexVec.size() * 10 * 3);
 			for (size_t j = 0; j < pGeometry->mvVertexVec.size(); ++j) {
 				sData += pGeometry->mvVertexVec[j].tex.ToFileString() + " ";
 			}
@@ -670,7 +661,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			// Tangents
 			sData = "";
 			char sTemp[20];
-			sData.reserve(pGeometry->mvVertexVec.size() * 10 * 4);
 			for (size_t j = 0; j < pGeometry->mvTangents.size(); ++j) {
 				sprintf(sTemp, "%g ", pGeometry->mvTangents[j]);
 				sData += sTemp;
@@ -692,7 +682,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			////////////////////////////
 			// Extra vertices
 			tString sData = "";
-			sData.reserve(pGeometry->mvExtraVtxVec.size() * 4 * 4 * 4);
 			int lExtraCount = 0;
 			TiXmlElement *pExtraElem = CreateXMLChild(pExtraVertexVecElem, "ExtraVertex");
 			for (size_t idx = 0; idx < pGeometry->mvExtraVtxVec.size(); ++idx) {
@@ -715,7 +704,6 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			////////////////////////////
 			// Extra num
 			sData = "";
-			sData.reserve(pGeometry->mvExtraVtxVec.size() * 4 * 4);
 			TiXmlElement *pExtraNumElem = CreateXMLChild(pExtraVertexVecElem, "ExtraNum");
 			for (size_t idx = 0; idx < pGeometry->mvExtraVtxVec.size(); ++idx) {
 				sData += cString::ToString((int)vExtraNum[idx]) + " ";

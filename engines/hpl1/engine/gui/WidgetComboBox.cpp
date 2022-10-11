@@ -238,11 +238,11 @@ kGuiCalllbackDeclaredFuncEnd(cWidgetComboBox, SliderLostFocus)
 	//-----------------------------------------------------------------------
 
 	void cWidgetComboBox::OnInit() {
-	mpText = mpSet->CreateWidgetTextBox(0, mvSize, _W(""), this);
+	mpText = mpSet->CreateWidgetTextBox(0, mvSize, Common::U32String(), this);
 	mpText->SetText(msText);
 	mpText->SetCanEdit(false);
 
-	mpButton = mpSet->CreateWidgetButton(0, 0, _W(""), this);
+	mpButton = mpSet->CreateWidgetButton(0, 0, Common::U32String(), this);
 	mpButton->SetImage(mpSkin->GetGfx(eGuiSkinGfx_ComboBoxButtonIcon), false);
 	mpButton->AddCallback(eGuiMessage_MouseDown, this, kGuiCallback(ButtonPress));
 

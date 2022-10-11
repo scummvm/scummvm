@@ -84,9 +84,9 @@ void cDeathMenuButton::OnUpdate(float afTimeStep) {
 void cDeathMenuButton::OnDraw() {
 	float fAlpha = mpInit->mpDeathMenu->mfAlpha;
 
-	mpFont->draw(mvPositon, mvFontSize, cColor(0.8f, 0.7f, 0.7f, fAlpha), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon, mvFontSize, cColor(0.8f, 0.7f, 0.7f, fAlpha), eFontAlign_Center, msText);
 
-	mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(1, 0, 0, fAlpha * mfAlpha), eFontAlign_Center, msText.c_str());
+	mpFont->draw(mvPositon + cVector3f(0, 0, 1), mvFontSize, cColor(1, 0, 0, fAlpha * mfAlpha), eFontAlign_Center, msText);
 }
 
 //-----------------------------------------------------------------------
@@ -181,7 +181,7 @@ void cDeathMenu::OnDraw() {
 	mpDrawer->DrawGfxObject(mpGfxBackground, cVector3f(0, 0, 0), cVector2f(800, 600), cColor(1, mfAlpha));
 
 	mpFont->drawWordWrap(cVector3f(400, 210, 40), 500, 25, 24, cColor(0.7f, 0.3f, 0.3f), eFontAlign_Center,
-						 kTranslate("DeathMenu", "YouAreDead").c_str());
+						 kTranslate("DeathMenu", "YouAreDead"));
 
 	////////////////////////////////
 	// Update buttons
