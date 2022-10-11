@@ -274,8 +274,8 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 	dgInt8 pointSide[256];
 
 	dgInt32 count = 0;
-	dgInt32 rightCount = 0;
-	dgInt32 leftCount = 0;
+	dgInt32 rightPCount = 0;
+	dgInt32 leftPCount = 0;
 	for (dgMeshTreeCSGFace::dgListNode *ptr = GetFirst(); ptr; ptr =
 																   ptr->GetNext()) {
 		const dgHugeVector &p = ptr->GetInfo();
@@ -288,10 +288,10 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 
 		if (val > dgFloat64(0.0f)) {
 			pointSide[count] = 1;
-			rightCount++;
+			rightPCount++;
 		} else if (val < dgFloat64(0.0f)) {
 			pointSide[count] = -1;
-			leftCount++;
+			leftPCount++;
 		} else {
 			pointSide[count] = 0;
 		}
@@ -300,19 +300,19 @@ void dgMeshTreeCSGFace::Clip(const dgHugeVector &plane,
 
 	*leftOut = NULL;
 	*rightOut = NULL;
-	if ((leftCount && !rightCount) || (!leftCount && rightCount)) {
-		if (leftCount) {
-			_ASSERTE(!rightCount);
+	if ((leftPCount && !rightPCount) || (!leftPCount && rightPCount)) {
+		if (leftPCount) {
+			_ASSERTE(!rightPCount);
 			AddRef();
 			*leftOut = this;
 		} else {
-			_ASSERTE(!leftCount);
+			_ASSERTE(!leftPCount);
 			*rightOut = this;
 			AddRef();
 		}
-	} else if (!(leftCount || rightCount)) {
-		_ASSERTE(!leftCount);
-		_ASSERTE(!rightCount);
+	} else if (!(leftPCount || rightPCount)) {
+		_ASSERTE(!leftPCount);
+		_ASSERTE(!rightPCount);
 		AddRef();
 		// AddRef();
 	} else {

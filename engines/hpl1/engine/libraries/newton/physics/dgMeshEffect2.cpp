@@ -2070,7 +2070,7 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 	dgTree<dgList<dgInt32>, dgInt32>::Iterator iter(delanayNodes);
 	for (iter.Begin(); iter; iter++) {
 
-		dgInt32 count = 0;
+		dgInt32 countI = 0;
 		dgBigVector pointArray[256];
 		dgTree<dgList<dgInt32>, dgInt32>::dgTreeNode *const nodeNode =
 			iter.GetNode();
@@ -2100,21 +2100,21 @@ dgMeshEffect *dgMeshEffect::CreateVoronoiPartition(dgInt32 pointsCount,
 						n = n.Scale(dgFloat64(1.0f) / sqrt(n % n));
 						dgBigVector normal(dgFloat64(n.m_x), dgFloat64(n.m_y),
 										   dgFloat64(n.m_z), dgFloat64(0.0f));
-						pointArray[count] = voronoiPoints[i] + normal.Scale(perimeterConvexBound);
+						pointArray[countI] = voronoiPoints[i] + normal.Scale(perimeterConvexBound);
 
-						count++;
-						_ASSERTE(count < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+						countI++;
+						_ASSERTE(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
 					}
 				}
 			}
 
-			pointArray[count] = voronoiPoints[i];
-			count++;
-			_ASSERTE(count < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
+			pointArray[countI] = voronoiPoints[i];
+			countI++;
+			_ASSERTE(countI < dgInt32(sizeof(pointArray) / sizeof(pointArray[0])));
 		}
 
 		dgMeshEffect *const convexMesh = MakeDelanayIntersection(tree,
-																 &pointArray[0], count, interiorMaterial, textureProjectionMatrix,
+																 &pointArray[0], countI, interiorMaterial, textureProjectionMatrix,
 																 dgFloat64(45.0f * 3.1416f / 180.0f));
 		if (convexMesh) {
 			for (dgInt32 i = 0; i < convexMesh->m_pointCount; i++) {
