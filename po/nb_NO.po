@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-10 11:29+0000\n"
-"PO-Revision-Date: 2022-10-05 16:10+0000\n"
+"PO-Revision-Date: 2022-10-11 14:49+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -253,7 +253,7 @@ msgstr "Lukk"
 
 #: gui/downloadiconsdialog.cpp:382 gui/downloadiconsdialog.cpp:428
 msgid "ERROR: No icons path set"
-msgstr "FEIL: Ikon ikonmappe valgt"
+msgstr "FEIL: Ikon filbane for ikoner valgt"
 
 #: gui/downloadiconsdialog.cpp:416
 msgid "No new icons packs available"
@@ -439,39 +439,39 @@ msgstr "Overstyr globale MT-32-instillinger"
 
 #: gui/editgamedialog.cpp:314 gui/options.cpp:2170
 msgid "Paths"
-msgstr "Sti"
+msgstr "Baner"
 
 #: gui/editgamedialog.cpp:316 gui/options.cpp:2172
 msgctxt "lowres"
 msgid "Paths"
-msgstr "Sti"
+msgstr "Baner"
 
 #: gui/editgamedialog.cpp:323
 msgid "Game Path:"
-msgstr "Spillsti:"
+msgstr "Filbane for spill:"
 
 #: gui/editgamedialog.cpp:325
 msgctxt "lowres"
 msgid "Game Path:"
-msgstr "Spillsti:"
+msgstr "Filbane for spill:"
 
 #: gui/editgamedialog.cpp:330 gui/options.cpp:2349
 msgid "Extra Path:"
-msgstr "Ekstrasti:"
+msgstr "Filbane for ekstrainnhold:"
 
 #: gui/editgamedialog.cpp:330 gui/editgamedialog.cpp:332
 #: gui/editgamedialog.cpp:333
 msgid "Specifies path to additional data used by the game"
-msgstr "Bestemmer sti til ytterligere data brukt av spillet"
+msgstr "Spesifiserer filbanen for tilleggsdata som brukes av spillet"
 
 #: gui/editgamedialog.cpp:332 gui/options.cpp:2351
 msgctxt "lowres"
 msgid "Extra Path:"
-msgstr "Ekstrasti:"
+msgstr "Filbane for ekstrainnhold:"
 
 #: gui/editgamedialog.cpp:339 gui/options.cpp:2325
 msgid "Save Path:"
-msgstr "Lagringssti:"
+msgstr "Filbane for lagringsdata:"
 
 #: gui/editgamedialog.cpp:339 gui/editgamedialog.cpp:341
 #: gui/editgamedialog.cpp:342 gui/options.cpp:2325 gui/options.cpp:2327
@@ -481,7 +481,7 @@ msgstr "Bestemmer sti til lagrede spill"
 #: gui/editgamedialog.cpp:341 gui/options.cpp:2327
 msgctxt "lowres"
 msgid "Save Path:"
-msgstr "Lagringssti:"
+msgstr "Filbane for lagringsdata:"
 
 #: gui/editgamedialog.cpp:353 engines/dialogs.cpp:342
 msgid "Achievements"
@@ -1080,8 +1080,6 @@ msgstr "Liten"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1540
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Ingen"
@@ -1117,10 +1115,8 @@ msgid "the filtering setting could not be changed"
 msgstr "filterinnstillingen kunne ikke endres"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "strekkmodusen kunne ikke bli endret"
+msgstr "kunne ikke endre shader"
 
 #: gui/options.cpp:1335
 msgid "Touchpad mouse mode"
@@ -1183,23 +1179,19 @@ msgid "Scaler:"
 msgstr "Skalering:"
 
 #: gui/options.cpp:1537
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1537 gui/options.cpp:1539 gui/options.cpp:1540
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Bestemmer sti til ytterligere data brukt av spillet"
+msgstr ""
+"Spesifiserer filbanen til shaderen som brukes til å skalere spillets "
+"skjermbilde"
 
 #: gui/options.cpp:1539
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Lagringssti:"
+msgstr "Shaderbane:"
 
 #: gui/options.cpp:1546 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1514,21 +1506,21 @@ msgstr ""
 
 #: gui/options.cpp:2333
 msgid "Theme Path:"
-msgstr "Temasti:"
+msgstr "Filbane for tema:"
 
 #: gui/options.cpp:2335
 msgctxt "lowres"
 msgid "Theme Path:"
-msgstr "Temasti:"
+msgstr "Filbane for tema:"
 
 #: gui/options.cpp:2341
 msgid "Icon Path:"
-msgstr "Ikonmappe:"
+msgstr "Filbane for ikoner:"
 
 #: gui/options.cpp:2343
 msgctxt "lowres"
 msgid "Icon Path:"
-msgstr "Ikonmappe:"
+msgstr "Filbane for ikoner:"
 
 #: gui/options.cpp:2344
 msgctxt "path"
@@ -1537,25 +1529,26 @@ msgstr "Standard"
 
 #: gui/options.cpp:2349 gui/options.cpp:2351 gui/options.cpp:2352
 msgid "Specifies path to additional data used by all games or ScummVM"
-msgstr "Velger sti for ytterligere data brukt av alle spill eller ScummVM"
+msgstr ""
+"Spesifiser filbanen for tilleggsdata som brukes av alle spill eller ScummVM"
 
 #: gui/options.cpp:2358
 msgid "Plugins Path:"
-msgstr "Pluginsti:"
+msgstr "Filbane for tilleggsfunksjoner:"
 
 #: gui/options.cpp:2360
 msgctxt "lowres"
 msgid "Plugins Path:"
-msgstr "Pluginsti:"
+msgstr "Filbane for tilleggsmoduler:"
 
 #: gui/options.cpp:2370
 msgid "ScummVM config path: "
-msgstr "Lagringsmappe for ScummVM-konfigurering: "
+msgstr "Filbane for ScummVM-konfigurering: "
 
 #. I18N: Referring to the last path memorized when adding a game
 #: gui/options.cpp:2380 gui/options.cpp:3057
 msgid "Last browser path: "
-msgstr "Forrige mappe utforsket: "
+msgstr "Forrige filbane utforsket: "
 
 #: gui/options.cpp:2385
 msgid "Theme:"
@@ -1833,7 +1826,7 @@ msgstr "Kjører ikke"
 #: gui/options.cpp:2585
 msgctxt "lowres"
 msgid "/root/ Path:"
-msgstr "/root/ Sti:"
+msgstr "/root/ Filbane:"
 
 #: gui/options.cpp:2585 gui/options.cpp:2587 gui/options.cpp:2588
 msgid "Select which directory will be shown as /root/ in the Files Manager"
@@ -1841,7 +1834,7 @@ msgstr "Angi hvilken mappe filbehandleren skal vise som /root/"
 
 #: gui/options.cpp:2587
 msgid "/root/ Path:"
-msgstr "/root/ Sti:"
+msgstr "/root/ Filbane:"
 
 #: gui/options.cpp:2593
 msgid "Server's port:"
@@ -1967,10 +1960,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Velg mappe for filbehandler /root/"
 
 #: gui/options.cpp:3068
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Velg et tema"
+msgstr "Velg shader"
 
 #: gui/options.cpp:3161
 msgid ""
@@ -2033,11 +2024,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"Et testmønster vises.\n"
+"Ønsker du å beholde disse skalerinnstillingene for shaderen?"
 
 #: gui/options.cpp:3649
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Bytter automatisk tilbake om %d sekunder"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
@@ -2324,15 +2317,15 @@ msgstr "Skrivetilgang nektet"
 
 #: common/error.cpp:53
 msgid "Path does not exist"
-msgstr "Stien eksisterer ikke"
+msgstr "Filbanen eksisterer ikke"
 
 #: common/error.cpp:55
 msgid "Path not a directory"
-msgstr "Stien er ikke en mappe"
+msgstr "Filbanen er ikke en mappe"
 
 #: common/error.cpp:57
 msgid "Path not a file"
-msgstr "Stien er ikke en fil"
+msgstr "Filbanen er ikke en fil"
 
 #: common/error.cpp:60
 msgid "Cannot create file"
@@ -5616,7 +5609,7 @@ msgid ""
 "Do you wish to use this saved game file with ScummVM?\n"
 "\n"
 msgstr ""
-"Det følgende originale lagrede spillet ble funnet i spillstien din:\n"
+"Følgende opprinnelige lagrede spill funnet i filbanen til spillet:\n"
 "\n"
 "%s %s\n"
 "\n"
