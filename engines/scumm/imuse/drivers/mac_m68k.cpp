@@ -453,7 +453,7 @@ bool IMuseDriver_MacM68k::MidiChannel_MacM68k::allocate() {
 	_allocated = true;
 	_voice = nullptr;
 	_priority = 0;
-	memset(&_instrument, 0, sizeof(_instrument));
+	_instrument.reset();
 	_pitchBend = 0;
 	_pitchBendFactor = 2;
 	_volume = 0;

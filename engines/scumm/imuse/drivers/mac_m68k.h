@@ -62,7 +62,7 @@ private:
 	int _mixBufferLength;
 
 	struct Instrument {
-		Instrument() : length(0), sampleRate(0), loopStart(0), loopEnd(0), baseFrequency(0), data(nullptr) {}
+		Instrument() { reset(); }
 		uint length;
 		uint sampleRate;
 		uint loopStart;
@@ -70,6 +70,15 @@ private:
 		int baseFrequency;
 
 		byte *data;
+
+		void reset() {
+			length = 0;
+			sampleRate = 0;
+			loopStart = 0;
+			loopEnd = 0;
+			baseFrequency = 0;
+			data = nullptr;
+		}
 	};
 
 	enum {
