@@ -148,6 +148,13 @@ DirectorEngine::~DirectorEngine() {
 Archive *DirectorEngine::getMainArchive() const { return _currentWindow->getMainArchive(); }
 Movie *DirectorEngine::getCurrentMovie() const { return _currentWindow->getCurrentMovie(); }
 Common::String DirectorEngine::getCurrentPath() const { return _currentWindow->getCurrentPath(); }
+Common::String DirectorEngine::getCurrentAbsolutePath() {
+	Common::String currentPath = getCurrentPath();
+	Common::String result;
+	result += (getPlatform() == Common::kPlatformWindows) ? "C:\\" : "";
+	result += convertPath(currentPath);
+	return result;
+}
 
 static bool buildbotErrorHandler(const char *msg) { return true; }
 

@@ -176,6 +176,7 @@ public:
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
+	Common::String getCurrentAbsolutePath();
 	Common::String getStartupPath() const;
 
 	// graphics.cpp

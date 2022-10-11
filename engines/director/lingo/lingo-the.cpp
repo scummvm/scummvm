@@ -708,7 +708,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMoviePath:
 	case kThePathName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentPath());
+		d.u.s = new Common::String(_vm->getCurrentAbsolutePath());
 		break;
 	case kTheMultiSound:
 		// We always support multiple sound channels!
