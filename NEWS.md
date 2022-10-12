@@ -110,6 +110,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed potential lockups in games using iMuse.
    - Prevented crashes caused by missing .SOU/.BUN files.
    - Fixed crashes in v7-v8 games on strict-alignment platforms.
+   - Fixed speech lipsync for COMI on big-endian ports (such as PS3 or Wii).
 
  Tinsel:
    - Fixed an issue in Discworld that prevented some items from being placed in the inventory.
