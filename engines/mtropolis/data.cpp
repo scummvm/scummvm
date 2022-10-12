@@ -1962,9 +1962,9 @@ DataReadErrorCode ColorTableAsset::load(DataReader &reader) {
 		for (size_t i = 0; i < numColors; i++) {
 			ColorRGB16 &cdef = colors[i];
 
-			cdef.red = cdefBytes[i * 4 + 2] * 0x101;
+			cdef.red = cdefBytes[i * 4 + 0] * 0x101;
 			cdef.green = cdefBytes[i * 4 + 1] * 0x101;
-			cdef.blue = cdefBytes[i * 4 + 0] * 0x101;
+			cdef.blue = cdefBytes[i * 4 + 2] * 0x101;
 		}
 	} else
 		return kDataReadErrorUnrecognized;
@@ -2129,7 +2129,7 @@ MToonAsset::MToonAsset()
 	: marker(0), unknown1{0, 0, 0, 0, 0, 0, 0, 0}, assetID(0), haveMacPart(false), haveWinPart(false), frameDataPosition(0), sizeOfFrameData(0),
 	  mtoonHeader{0, 0}, version(0), unknown2{0, 0, 0, 0}, encodingFlags(0), numFrames(0),
 	  unknown3{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}, bitsPerPixel(0), codecID(0), unknown4_1{0, 0, 0, 0, 0, 0, 0, 0},
-	  codecDataSize(0), unknown4_2{0, 0, 0, 0} {
+	  codecDataSize(0) {
 	memset(&this->platform, 0, sizeof(this->platform));
 }
 
@@ -2160,7 +2160,7 @@ DataReadErrorCode MToonAsset::load(DataReader &reader) {
 		|| !reader.readU32(mtoonHeader[1]) || !reader.readU16(version) || !reader.readBytes(unknown2)
 		|| !reader.readU32(encodingFlags) || !rect.load(reader) || !reader.readU16(numFrames)
 		|| !reader.readBytes(unknown3) || !reader.readU16(bitsPerPixel) || !reader.readU32(codecID)
-		|| !reader.readBytes(unknown4_1) || !reader.readU32(codecDataSize) || !reader.readBytes(unknown4_2))
+		|| !reader.readBytes(unknown4_1) || !reader.readU32(codecDataSize) || !registrationPoint.load(reader))
 		return kDataReadErrorReadFailed;
 
 	if (mtoonHeader[0] != 0 || mtoonHeader[1] != 0x546f6f6e)

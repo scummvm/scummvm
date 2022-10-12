@@ -1997,7 +1997,7 @@ struct MToonAsset : public DataObject {
 	uint32 codecID;
 	uint8 unknown4_1[8];
 	uint32 codecDataSize;
-	uint8 unknown4_2[4];
+	Point registrationPoint;
 
 	Common::Array<FrameDef> frames;
 

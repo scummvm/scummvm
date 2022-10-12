@@ -2054,9 +2054,20 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 				if (sibling)
 					outStructuralDest = sibling;
 			} break;
+		case kMessageDestSourcesParent: {
+				// This sends to the exact parent, e.g. if the sender is inside of a behavior, then it sends it to the behavior.
+				if (sender) {
+					Common::SharedPtr<RuntimeObject> parentObj = sender->getParent().lock();
+					if (parentObj) {
+						if (parentObj->isModifier())
+							outModifierDest = parentObj->getSelfReference().staticCast<Modifier>();
+						else if (parentObj->isStructural())
+							outStructuralDest = parentObj->getSelfReference().staticCast<Structural>();
+					}
+				}
+			} break;
 		case kMessageDestChildren:
 		case kMessageDestSubsection:
-		case kMessageDestSourcesParent:
 		case kMessageDestBehavior:
 		case kMessageDestBehaviorsParent:
 			warning("Not-yet-implemented message destination type");
@@ -2495,7 +2506,7 @@ void MessageProperties::setValue(const DynamicValue &value) {
 		_value = value;
 }
 
-WorldManagerInterface::WorldManagerInterface() {
+WorldManagerInterface::WorldManagerInterface() : _gameMode(false) {
 }
 
 bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
@@ -2512,6 +2523,10 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 			return false;
 
 		result.setInt(bitDepth);
+		return true;
+	}
+	else if (attrib == "gamemode") {
+		result.setBool(_gameMode);
 		return true;
 	}
 
@@ -2533,6 +2548,10 @@ MiniscriptInstructionOutcome WorldManagerInterface::writeRefAttribute(Miniscript
 	}
 	if (attrib == "winsndbuffersize") {
 		DynamicValueWriteFuncHelper<WorldManagerInterface, &WorldManagerInterface::setWinSndBufferSize>::create(this, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "gamemode") {
+		DynamicValueWriteBoolHelper::create(&_gameMode, result);
 		return kMiniscriptInstructionOutcomeContinue;
 	}
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);

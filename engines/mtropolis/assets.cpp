@@ -1069,6 +1069,9 @@ bool MToonAsset::load(AssetLoaderContext &context, const Data::MToonAsset &data)
 	_frameDataPosition = data.frameDataPosition;
 	_sizeOfFrameData = data.sizeOfFrameData;
 
+	if (!data.registrationPoint.toScummVMPoint(_metadata->registrationPoint))
+		return false;
+
 	if (!data.rect.toScummVMRect(_metadata->rect))
 		return false;
 

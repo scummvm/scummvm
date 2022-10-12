@@ -92,6 +92,7 @@ struct MToonMetadata {
 	ImageFormat imageFormat;
 
 	Common::Rect rect;
+	Common::Point registrationPoint;
 	uint16 bitsPerPixel;
 	uint32 codecID;
 	uint32 encodingFlags;

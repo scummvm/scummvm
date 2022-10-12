@@ -1158,6 +1158,9 @@ bool MToonElement::readAttribute(MiniscriptThread *thread, DynamicValue &result,
 		else
 			result.setInt(0);
 		return true;
+	} else if (attrib == "regpoint") {
+		result.setPoint(_cachedMToon->getMetadata()->registrationPoint);
+		return true;
 	}
 
 	return VisualElement::readAttribute(thread, result, attrib);
