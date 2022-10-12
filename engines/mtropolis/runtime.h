@@ -1003,6 +1003,14 @@ struct DynamicValueWriteStringHelper {
 	static void create(Common::String *strValue, DynamicValueWriteProxy &proxy);
 };
 
+struct DynamicValueWriteDiscardHelper {
+	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset);
+	static MiniscriptInstructionOutcome refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib);
+	static MiniscriptInstructionOutcome refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index);
+
+	static void create(DynamicValueWriteProxy &proxy);
+};
+
 template<class TClass, MiniscriptInstructionOutcome (TClass::*TWriteMethod)(MiniscriptThread *thread, const DynamicValue &dest), MiniscriptInstructionOutcome (TClass::*TRefAttribMethod)(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, const Common::String &attrib)>
 struct DynamicValueWriteOrRefAttribFuncHelper {
 	static MiniscriptInstructionOutcome write(MiniscriptThread *thread, const DynamicValue &dest, void *objectRef, uintptr ptrOrOffset) {
@@ -1485,6 +1493,17 @@ public:
 	virtual void onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene);
 };
 
+class Palette {
+public:
+	Palette();
+	explicit Palette(const ColorRGB8 *colors);
+
+	const byte *getPalette() const;
+
+private:
+	byte _colors[256 * 3];
+};
+
 class Runtime {
 public:
 	explicit Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider, const Common::SharedPtr<SubtitleRenderer> &subRenderer);
@@ -1603,6 +1622,9 @@ public:
 	void addPostEffect(IPostEffect *postEffect);
 	void removePostEffect(IPostEffect *postEffect);
 	const Common::Array<IPostEffect *> &getPostEffects() const;
+
+	const Palette &getGlobalPalette() const;
+	void setGlobalPalette(const Palette &palette);
 
 	const Common::String *resolveAttributeIDName(uint32 attribID) const;
 
@@ -1851,6 +1873,8 @@ private:
 
 	Common::Array<IPostEffect *> _postEffects;
 
+	Palette _globalPalette;
+
 	Common::SharedPtr<SubtitleRenderer> _subtitleRenderer;
 
 	Hacks _hacks;
@@ -1957,6 +1981,14 @@ private:
 };
 
 class AssetManagerInterface : public RuntimeObject {
+public:
+	AssetManagerInterface();
+
+	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
+
+private:
+	Common::String _opString;
 };
 
 class SystemInterface : public RuntimeObject {
@@ -1970,9 +2002,6 @@ public:
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
 private:
-	static ColorDepthMode bitDepthToDisplayMode(int32 bitDepth);
-	static int32 displayModeToBitDepth(ColorDepthMode displayMode);
-
 	MiniscriptInstructionOutcome setEjectCD(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setGameMode(MiniscriptThread *thread, const DynamicValue &value);
 	MiniscriptInstructionOutcome setMasterVolume(MiniscriptThread *thread, const DynamicValue &value);
@@ -1980,6 +2009,7 @@ private:
 	MiniscriptInstructionOutcome setVolumeName(MiniscriptThread *thread, const DynamicValue &value);
 
 	Common::String _volumeName;
+	Common::String _opString;
 	int _masterVolume;
 };
 
@@ -2237,6 +2267,8 @@ public:
 	~Project();
 
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
+	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
 	void loadFromDescription(const ProjectDescription &desc, const Hacks &hacks);
 	void loadSceneFromStream(const Common::SharedPtr<Structural> &structural, uint32 streamID, const Hacks &hacks);
@@ -2611,6 +2643,9 @@ public:
 	virtual void render(Window *window) = 0;
 	void finalizeRender();
 
+	void setPalette(const Common::SharedPtr<Palette> &palette);
+	const Common::SharedPtr<Palette> &getPalette() const;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
@@ -2662,6 +2697,8 @@ protected:
 	Common::WeakPtr<GraphicModifier> _primaryGraphicModifier;
 
 	VisualElementTransitionProperties _transitionProps;
+
+	Common::SharedPtr<Palette> _palette;
 
 	Common::Rect _prevRect;
 	bool _contentsDirty;

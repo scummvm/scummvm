@@ -810,23 +810,19 @@ const Common::SharedPtr<Graphics::ManagedSurface> &CachedImage::optimize(Runtime
 			_optimizedSurface.reset(new Graphics::ManagedSurface());
 			_optimizedSurface->create(w, h, renderFmt);
 			Render::convert32To16(*_optimizedSurface, *_surface);
+
+			_colorDepth = kColorDepthMode16Bit;
 		} else if (renderDepth == kColorDepthMode32Bit && _colorDepth == kColorDepthMode16Bit) {
 			_optimizedSurface.reset(new Graphics::ManagedSurface());
 			_optimizedSurface->create(w, h, renderFmt);
 			Render::convert16To32(*_optimizedSurface, *_surface);
+
+			_colorDepth = kColorDepthMode32Bit;
 		} else {
 			_optimizedSurface = _surface;	// Can't optimize
 		}
 	} else {
-		static const byte bwPalette[6] = {255, 255, 255, 0, 0, 0};
-
-		const byte *palette = nullptr;
-
-		if (_colorDepth == kColorDepthMode16Bit || _colorDepth == kColorDepthMode32Bit)
-			palette = bwPalette;
-
-		_surface->convertToInPlace(renderFmt, palette);
-		_optimizedSurface = _surface;
+		_optimizedSurface = _surface;	// Doesn't need to be optimized
 	}
 
 	return _optimizedSurface;
@@ -910,8 +906,6 @@ ImageAsset::ImageFormat ImageAsset::getImageFormat() const {
 const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *runtime) {
 	if (_imageCache)
 		return _imageCache;
-
-	ColorDepthMode renderDepth = runtime->getRealColorDepth();
 
 	size_t streamIndex = getStreamIndex();
 	int segmentIndex = runtime->getProject()->getSegmentForStreamIndex(streamIndex);
@@ -1054,7 +1048,7 @@ const Common::SharedPtr<CachedImage> &ImageAsset::loadAndCacheImage(Runtime *run
 	}
 
 	_imageCache.reset(new CachedImage());
-	_imageCache->resetSurface(renderDepth, imageSurface);
+	_imageCache->resetSurface(getColorDepth(), imageSurface);
 
 	return _imageCache;
 }

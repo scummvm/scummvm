@@ -142,6 +142,7 @@ Common::Error MTropolisEngine::run() {
 		preferredWidth = 640;
 		preferredHeight = 480;
 		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
 	}
 
 	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))

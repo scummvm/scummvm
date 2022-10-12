@@ -27,6 +27,7 @@
 
 #include "graphics/cursorman.h"
 #include "graphics/managed_surface.h"
+#include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/wincursor.h"
 #include "graphics/maccursor.h"
@@ -45,6 +46,44 @@
 #include "mtropolis/render.h"
 
 namespace MTropolis {
+
+int32 displayModeToBitDepth(ColorDepthMode displayMode) {
+	switch (displayMode) {
+	case kColorDepthMode1Bit:
+		return 1;
+	case kColorDepthMode2Bit:
+		return 2;
+	case kColorDepthMode4Bit:
+		return 4;
+	case kColorDepthMode8Bit:
+		return 8;
+	case kColorDepthMode16Bit:
+		return 16;
+	case kColorDepthMode32Bit:
+		return 32;
+	default:
+		return 0;
+	}
+}
+
+ColorDepthMode bitDepthToDisplayMode(int32 bits) {
+	switch (bits) {
+	case 1:
+		return kColorDepthMode1Bit;
+	case 2:
+		return kColorDepthMode2Bit;
+	case 4:
+		return kColorDepthMode4Bit;
+	case 8:
+		return kColorDepthMode8Bit;
+	case 16:
+		return kColorDepthMode16Bit;
+	case 32:
+		return kColorDepthMode32Bit;
+	default:
+		return kColorDepthModeInvalid;
+	}
+}
 
 class MainWindow : public Window {
 public:
@@ -1733,6 +1772,25 @@ void DynamicValueWriteStringHelper::create(Common::String *strValue, DynamicValu
 	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteStringHelper>::getInstance();
 }
 
+MiniscriptInstructionOutcome DynamicValueWriteDiscardHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
+	return kMiniscriptInstructionOutcomeContinue;
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteDiscardHelper::refAttrib(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib) {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+MiniscriptInstructionOutcome DynamicValueWriteDiscardHelper::refAttribIndexed(MiniscriptThread *thread, DynamicValueWriteProxy &proxy, void *objectRef, uintptr ptrOrOffset, const Common::String &attrib, const DynamicValue &index) {
+	return kMiniscriptInstructionOutcomeFailed;
+}
+
+void DynamicValueWriteDiscardHelper::create(DynamicValueWriteProxy &proxy) {
+	proxy.pod.ptrOrOffset = 0;
+	proxy.pod.objectRef = nullptr;
+	proxy.pod.ifc = DynamicValueWriteInterfaceGlue<DynamicValueWriteDiscardHelper>::getInstance();
+}
+
+
 MiniscriptInstructionOutcome DynamicValueWritePointHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
 	if (value.getType() != DynamicValueTypes::kPoint) {
 		thread->error("Can't set point to invalid type");
@@ -2448,6 +2506,13 @@ bool WorldManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue
 		else
 			result.clear();
 		return true;
+	} else if (attrib == "monitordepth") {
+		int bitDepth = displayModeToBitDepth(thread->getRuntime()->getFakeColorDepth());
+		if (bitDepth <= 0)
+			return false;
+
+		result.setInt(bitDepth);
+		return true;
 	}
 
 	return RuntimeObject::readAttribute(thread, result, attrib);
@@ -2590,44 +2655,6 @@ MiniscriptInstructionOutcome SystemInterface::writeRefAttribute(MiniscriptThread
 	return RuntimeObject::writeRefAttribute(thread, result, attrib);
 }
 
-int32 SystemInterface::displayModeToBitDepth(ColorDepthMode displayMode) {
-	switch (displayMode) {
-	case kColorDepthMode1Bit:
-		return 1;
-	case kColorDepthMode2Bit:
-		return 2;
-	case kColorDepthMode4Bit:
-		return 4;
-	case kColorDepthMode8Bit:
-		return 8;
-	case kColorDepthMode16Bit:
-		return 16;
-	case kColorDepthMode32Bit:
-		return 32;
-	default:
-		return 0;
-	}
-}
-
-ColorDepthMode SystemInterface::bitDepthToDisplayMode(int32 bits) {
-	switch (bits) {
-	case 1:
-		return kColorDepthMode1Bit;
-	case 2:
-		return kColorDepthMode2Bit;
-	case 4:
-		return kColorDepthMode4Bit;
-	case 8:
-		return kColorDepthMode8Bit;
-	case 16:
-		return kColorDepthMode16Bit;
-	case 32:
-		return kColorDepthMode32Bit;
-	default:
-		return kColorDepthModeInvalid;
-	}
-}
-
 MiniscriptInstructionOutcome SystemInterface::setEjectCD(MiniscriptThread *thread, const DynamicValue &value) {
 	if (value.getType() != DynamicValueTypes::kBoolean)
 		return kMiniscriptInstructionOutcomeFailed;
@@ -2667,7 +2694,7 @@ MiniscriptInstructionOutcome SystemInterface::setMonitorBitDepth(MiniscriptThrea
 	if (!value.roundToInt(asInteger))
 		return kMiniscriptInstructionOutcomeFailed;
 
-	const ColorDepthMode depthMode = SystemInterface::bitDepthToDisplayMode(asInteger);
+	const ColorDepthMode depthMode = bitDepthToDisplayMode(asInteger);
 	if (depthMode != kColorDepthModeInvalid) {
 		thread->getRuntime()->switchDisplayMode(thread->getRuntime()->getRealColorDepth(), depthMode);
 	}
@@ -2685,6 +2712,33 @@ MiniscriptInstructionOutcome SystemInterface::setVolumeName(MiniscriptThread *th
 }
 
 StructuralHooks::~StructuralHooks() {
+}
+
+AssetManagerInterface::AssetManagerInterface() {
+}
+
+bool AssetManagerInterface::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
+	if (attrib == "volumeismounted") {
+		int volID = 0;
+		bool isMounted = false;
+		bool hasVolume = thread->getRuntime()->getVolumeState(_opString.c_str(), volID, isMounted);
+
+		result.setBool(hasVolume && isMounted);
+		return true;
+	}
+	return false;
+}
+
+MiniscriptInstructionOutcome AssetManagerInterface::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "opstring") {
+		DynamicValueWriteStringHelper::create(&_opString, result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	if (attrib == "cdeject") {
+		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+	return kMiniscriptInstructionOutcomeFailed;
 }
 
 void StructuralHooks::onCreate(Structural *structural) {
@@ -3849,6 +3903,62 @@ void SceneTransitionHooks::onSceneTransitionSetup(Runtime *runtime, const Common
 }
 
 void SceneTransitionHooks::onSceneTransitionEnded(Runtime *runtime, const Common::WeakPtr<Structural> &newScene) {
+}
+
+
+Palette::Palette() {
+	int outColorIndex = 0;
+	for (int rb = 0; rb < 6; rb++) {
+		for (int rg = 0; rg < 6; rg++) {
+			for (int rr = 0; rr < 6; rr++) {
+				byte *color = _colors + outColorIndex * 3;
+				outColorIndex++;
+
+				color[0] = 255 - rr * 51;
+				color[1] = 255 - rg * 51;
+				color[2] = 255 - rb * 51;
+			}
+		}
+	}
+
+	outColorIndex--;
+
+	for (int ch = 0; ch < 4; ch++) {
+		for (int ri = 0; ri < 16; ri++) {
+			if (ri % 3 == 0)
+				continue;
+
+			byte *color = _colors + outColorIndex * 3;
+			outColorIndex++;
+
+			byte intensity = 255 - ri * 17;
+
+			if (ch == 4) {
+				color[0] = color[1] = color[2] = intensity;
+			} else {
+				color[0] = color[1] = color[2] = 0;
+				color[ch] = intensity;
+			}
+		}
+	}
+
+	assert(outColorIndex == 255);
+
+	_colors[255 * 3 + 0] = 0;
+	_colors[255 * 3 + 1] = 0;
+	_colors[255 * 3 + 2] = 0;
+}
+
+Palette::Palette(const ColorRGB8 *colors) {
+	for (int i = 0; i < 256; i++) {
+		_colors[i * 3 + 0] = colors[i].r;
+		_colors[i * 3 + 1] = colors[i].g;
+		_colors[i * 3 + 2] = colors[i].b;
+	}
+}
+
+const byte *Palette::getPalette() const {
+	return _colors;
 }
 
 Runtime::Runtime(OSystem *system, Audio::Mixer *mixer, ISaveUIProvider *saveProvider, ILoadUIProvider *loadProvider, const Common::SharedPtr<SubtitleRenderer> &subRenderer)
@@ -5700,6 +5810,19 @@ const Common::Array<IPostEffect *> &Runtime::getPostEffects() const {
 	return _postEffects;
 }
 
+const Palette &Runtime::getGlobalPalette() const {
+	return _globalPalette;
+}
+
+void Runtime::setGlobalPalette(const Palette &palette) {
+	if (_realDisplayMode <= kColorDepthMode8Bit)
+		g_system->getPaletteManager()->setPalette(palette.getPalette(), 0, 256);
+	else
+		setSceneGraphDirty();
+
+	_globalPalette = palette;
+}
+
 void Runtime::checkBoundaries() {
 	// Boundary Detection Messenger behavior is very quirky in mTropolis 1.1.  Basically, if an object moves in the direction of
 	// the boundary, then it may trigger collision checks with the boundary.  If it moves but does not move in the direction of
@@ -6310,6 +6433,15 @@ VThreadState Project::consumeCommand(Runtime *runtime, const Common::SharedPtr<M
 	}
 
 	return Structural::consumeCommand(runtime, msg);
+}
+
+MiniscriptInstructionOutcome Project::writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) {
+	if (attrib == "allowquit") {
+		DynamicValueWriteDiscardHelper::create(result);
+		return kMiniscriptInstructionOutcomeContinue;
+	}
+
+	return Structural::writeRefAttribute(thread, result, attrib);
 }
 
 void Project::loadFromDescription(const ProjectDescription &desc, const Hacks &hacks) {
@@ -7721,6 +7853,15 @@ void VisualElement::finalizeRender() {
 	_renderProps.clearDirty();
 	_prevRect = _rect;
 	_contentsDirty = false;
+}
+
+void VisualElement::setPalette(const Common::SharedPtr<Palette> &palette) {
+	_palette = palette;
+	_contentsDirty = true;
+}
+
+const Common::SharedPtr<Palette> &VisualElement::getPalette() const {
+	return _palette;
 }
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
