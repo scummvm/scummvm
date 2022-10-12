@@ -2812,20 +2812,9 @@ void ScummEngine_v5::o5_stopObjectScript() {
 }
 
 void ScummEngine_v5::o5_stopScript() {
-	const byte *oldaddr = _scriptPointer - 1;
 	int script;
 
 	script = getVarOrDirectByte(PARAM_1);
-
-	if (_game.id == GID_INDY4 && script == 164 &&
-		_roomResource == 50 && vm.slot[_currentScript].number == 213 && VAR(VAR_HAVE_MSG)) {
-		// WORKAROUND bug #2215: Due to a script bug, a line of text is skipped
-		// which Indy is supposed to speak when he finds Orichalcum in some old
-		// bones in the caves below Crete.
-		_scriptPointer = oldaddr;
-		o5_breakHere();
-		return;
-	}
 
 	if (!script)
 		stopObjectCode();
