@@ -63,6 +63,11 @@ enum Resistance {
 	RESISTANCE_PSYCHIC = 7
 };
 
+enum CharFlags {
+	CHARFLAG_COURIER = 4,
+	CHARFLAG_ZAM_CLUE = 0x10
+};
+
 class Inventory {
 public:
 	struct Entry {
@@ -262,6 +267,7 @@ struct Character {
 	int _v6c, _v6e, _alignmentCtr;
 
 	byte _quest = 0;
+	byte _flags = 0;
 
 	// Non persistent fields
 	byte _numDrinks = 0;

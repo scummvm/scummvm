@@ -22,22 +22,54 @@
 #ifndef MM1_MAPS_MAP01_H
 #define MM1_MAPS_MAP01_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/maps/map_town.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map01 : public Map {
+class Map01 : public MapTown {
 	typedef void (Map01:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special15();
+	void special16();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map01::special00
+	const SpecialFn SPECIAL_FN[17] = {
+		&Map01::special00,
+		&Map01::special01,
+		&Map01::special02,
+		&Map01::special03,
+		&Map01::special04,
+		&Map01::special05,
+		&Map01::special06,
+		&Map01::special07,
+		&Map01::special08,
+		&Map01::special09,
+		&Map01::special10,
+		&Map01::special11,
+		&Map01::special12,
+		&Map01::special13,
+		&Map01::special14,
+		&Map01::special15,
+		&Map01::special16
 	};
 public:
-	Map01() : Map(1, "portsmit", 0xC03) {}
+	Map01() : MapTown(1, "portsmit", 0xC03) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

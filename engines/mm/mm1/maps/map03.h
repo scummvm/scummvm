@@ -22,13 +22,13 @@
 #ifndef MM1_MAPS_MAP03_H
 #define MM1_MAPS_MAP03_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/maps/map_town.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map03 : public Map {
+class Map03 : public MapTown {
 	typedef void (Map03:: *SpecialFn)();
 private:
 	void special00();
@@ -37,7 +37,7 @@ private:
 		&Map03::special00
 	};
 public:
-	Map03() : Map(3, "dusk", 0x802) {}
+	Map03() : MapTown(3, "dusk", 0x802) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
