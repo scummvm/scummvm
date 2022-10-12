@@ -241,7 +241,7 @@ static bool getBoolConfig(const char *name, const bool defaultVal) {
 
 static tString getStringConfig(const char *name, const tString &defaultVal) {
 	if (ConfMan.hasKey(name))
-		return ConfMan.get(name).c_str(); // FIXME: strings
+		return ConfMan.get(name);
 	return defaultVal;
 }
 
@@ -747,7 +747,7 @@ void cInit::Exit() {
 	ConfMan.setInt("screen-width", mvScreenSize.x);
 	ConfMan.setInt("screen-height", mvScreenSize.y);
 
-	ConfMan.set("global_script", msGlobalScriptFile.c_str()); // FIXME: strings
+	ConfMan.set("global_script", msGlobalScriptFile);
 
 	ConfMan.setBool("simple_weapon_swing", mbSimpleWeaponSwing);
 	ConfMan.setBool("disable_personal_notes", mbDisablePersonalNotes);
@@ -755,8 +755,8 @@ void cInit::Exit() {
 	ConfMan.setBool("flash_tems", mbFlashItems);
 	ConfMan.setBool("show_crosshair", mbShowCrossHair);
 
-	ConfMan.set("starting_map", msStartMap.c_str()); // FIXME: strings
-	ConfMan.set("starting_map_position", msStartLink.c_str()); // FIXME: strings
+	ConfMan.set("starting_map", msStartMap);
+	ConfMan.set("starting_map_position", msStartLink);
 
 	ConfMan.setInt("difficulty", mDifficulty);
 

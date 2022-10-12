@@ -145,8 +145,7 @@ void CreateMessageBoxW(const wchar_t *caption, const wchar_t *fmt, ...) {
 //-----------------------------------------------------------------------
 
 void OpenBrowserWindow(const tWString &URL) {
-	// FIXME: use proper string types
-	g_system->openUrl(cString::To8Char(URL).c_str());
+	g_system->openUrl(URL);
 }
 
 //-----------------------------------------------------------------------
