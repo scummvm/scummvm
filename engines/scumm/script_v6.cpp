@@ -2435,7 +2435,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88) {
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && _enableEnhancements) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
