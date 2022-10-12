@@ -165,6 +165,16 @@ void Encounter::changeCharAlignment(Alignment align) {
 	}
 }
 
+void Encounter::clearMonsters() {
+	_monsterList.size();
+}
+
+void Encounter::addMonster(byte id, byte arr1) {
+	const Monster &mons = g_globals->_monsters[id];
+	_monsterList.push_back(mons);
+	_arr1[_monsterList.size() - 1] = arr1;
+}
+
 } // namespace Game
 } // namespace MM1
 } // namespace MM

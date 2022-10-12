@@ -25,6 +25,7 @@
 #include "common/array.h"
 #include "common/str.h"
 #include "mm/mm1/events.h"
+#include "mm/mm1/game/game_logic.h"
 
 namespace MM {
 namespace MM1 {
@@ -91,7 +92,7 @@ enum CellState {
 
 class Maps;
 
-class Map {
+class Map : public Game::GameLogic {
 protected:
 	Common::String _name;
 	uint16 _id;

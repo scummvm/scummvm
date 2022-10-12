@@ -171,8 +171,17 @@ void Character::synchronize(Common::Serializer &s) {
 	_equipped.synchronize(s, false);
 	_backpack.synchronize(s, false);
 
+	_physicalAttr.synchronize(s);
+	_missileAttr.synchronize(s);
+
+	s.syncAsByte(_v6c);
+	s.syncAsByte(_quest);
+	s.syncAsByte(_v6e);
+	s.syncAsByte(_alignmentCtr);
+	s.syncBytes(_flags, 8);
+
 	// TODO: Figure purpose of remaining unknown fields
-	s.skip(39);
+	s.skip(7);
 }
 
 void Character::clear() {
@@ -206,6 +215,8 @@ void Character::clear() {
 	_resistances._s._poison.clear();
 	_resistances._s._psychic.clear();
 	_v6c = _alignmentCtr = 0;
+
+	Common::fill(&_flags[0], &_flags[8], 0);
 }
 
 

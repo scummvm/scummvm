@@ -63,9 +63,9 @@ enum Resistance {
 	RESISTANCE_PSYCHIC = 7
 };
 
-enum CharFlags {
-	CHARFLAG_COURIER = 4,
-	CHARFLAG_ZAM_CLUE = 0x10
+enum CharFlags0 {
+	CHARFLAG0_COURIER = 4,
+	CHARFLAG0_ZAM_CLUE = 0x10
 };
 
 class Inventory {
@@ -264,10 +264,11 @@ struct Character {
 
 	// TODO: Figure out what these are
 	AttributePair _physicalAttr, _missileAttr;
-	int _v6c, _v6e, _alignmentCtr;
-
+	int _v6c;
 	byte _quest = 0;
-	byte _flags = 0;
+	int _v6e;
+	int _alignmentCtr;
+	byte _flags[8];
 
 	// Non persistent fields
 	byte _numDrinks = 0;

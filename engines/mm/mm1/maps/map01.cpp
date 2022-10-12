@@ -59,13 +59,13 @@ void Map01::special01() {
 
 	bool hasCourier = false;
 	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
-		hasCourier = (g_globals->_party[i]._flags & CHARFLAG_COURIER) != 0;
+		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER) != 0;
 	}
 
 	if (hasCourier) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			c._flags |= CHARFLAG_COURIER | CHARFLAG_ZAM_CLUE;
+			c._flags[0] |= CHARFLAG0_COURIER | CHARFLAG0_ZAM_CLUE;
 		}
 
 		line2 = STRING["maps.map01.zam2"];
@@ -94,7 +94,6 @@ void Map01::special04() {
 			g_maps->changeMap(0x101, 2);
 		}
 	));
-
 }
 
 void Map01::special05() {
@@ -110,6 +109,34 @@ void Map01::special07() {
 }
 
 void Map01::special08() {
+	// Paralyze all the men
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (c._sex == MALE && !(c._condition & BAD_CONDITION))
+			c._condition = PARALYZED;
+	}
+
+	// Redraw the party
+	g_events->send("GameParty", GameMessage("UPDATE"));
+
+	// Show the message and wait for a keypress
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map01.secret"],
+		[]() {
+			Game::Encounter &enc = g_globals->_encounters;
+			enc.clearMonsters();
+
+			uint count = getRandomNumber(4) + 4;
+			enc.addMonster(6, 12);
+			for (uint i = 0; i < count; ++i)
+				enc.addMonster(4, 9);
+
+			enc._flag = true;
+			enc._levelIndex = 80;
+			enc.execute();
+		}
+	));
 }
 
 void Map01::special09() {
