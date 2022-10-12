@@ -39,8 +39,7 @@ enum EncounterType {
 
 class Encounter : public GameLogic {
 private:
-	bool _flag = false;
-	int _levelIndex = 0, _levelOffset = 0;
+	int _levelOffset = 0;
 	int _val9 = 0;
 	int _monsterNum16 = 0;
 	int _totalLevels = 0;
@@ -59,6 +58,8 @@ public:
 	EncounterType _encounterType = NORMAL_SURPRISED;
 	byte _fleeThreshold = 0;
 	byte _arr1[MAX_COMBAT_MONSTERS];
+	bool _flag = false;
+	int _levelIndex = 0;
 
 public:
 	/**
@@ -72,6 +73,16 @@ public:
 	bool checkSurroundParty() const;
 
 	void changeCharAlignment(Alignment align);
+
+	/**
+	 * Clears the monster list
+	 */
+	void clearMonsters();
+
+	/**
+	 * Adds a monster to the monster list
+	 */
+	void addMonster(byte id, byte arr1);
 };
 
 } // namespace Game
