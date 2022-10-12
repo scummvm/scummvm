@@ -2056,7 +2056,7 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 		|| !reader.readU32(filePosition) || !reader.readU32(size))
 		return kDataReadErrorReadFailed;
 
-	if (numCuePoints * 14u != cuePointDataSize)
+	if (numCuePoints * 14u > cuePointDataSize)
 		return kDataReadErrorUnrecognized;
 
 	cuePoints.resize(numCuePoints);
@@ -2066,6 +2066,10 @@ DataReadErrorCode AudioAsset::load(DataReader &reader) {
 			|| !reader.readU32(cuePoint.cuePointID))
 			return kDataReadErrorReadFailed;
 	}
+
+	uint32 extraJunkSize = cuePointDataSize - (numCuePoints * 14u);
+	if (!reader.skip(extraJunkSize))
+		return kDataReadErrorReadFailed;
 
 	return kDataReadErrorNone;
 }
@@ -2315,7 +2319,7 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		return kDataReadErrorReadFailed;
 	}
 
-	debug(4, "Loading data object type %x", static_cast<int>(type));
+	debug(4, "Loading data object type 0x%x", static_cast<int>(type));
 
 	DataObject *dataObject = nullptr;
 	switch (type) {
@@ -2514,14 +2518,14 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 	}
 
 	if (dataObject == nullptr) {
-		warning("Unrecognized data object type %x", static_cast<int>(type));
+		warning("Unrecognized data object type 0x%x", static_cast<int>(type));
 		return kDataReadErrorUnrecognized;
 	}
 
 	Common::SharedPtr<DataObject> sharedPtr(dataObject);
 	DataReadErrorCode errorCode = dataObject->load(static_cast<DataObjectTypes::DataObjectType>(type), revision, reader);
 	if (errorCode != kDataReadErrorNone) {
-		warning("Data object type %x failed to load", static_cast<int>(type));
+		warning("Data object type 0x%x failed to load", static_cast<int>(type));
 		outObject.reset();
 		return errorCode;
 	}
