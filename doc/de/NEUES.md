@@ -110,7 +110,8 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Mögliche Abstürze in Spielen, die iMUSE verwenden, korrigiert.
    - Fehlende .SOU- und .BUN-Dateien führen nun nicht mehr zu einem Absturz.
    - Abstürze in v7- und v8-Spielen auf Systemen mit striktem Aligment behoben.
-
+   - Fehlerhafte Lippen-Synchronisation in COMI auf Big-Endian-Systemen (wie der PS3 oder Wii) korrigiert.
+ 
  Tinsel:
    - Fehler behoben, der dazu führt, dass in Discworld einige Gegenstände nicht im Inventar abgelegt werden konnten.
 
