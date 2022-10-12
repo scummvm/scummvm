@@ -34,6 +34,9 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Fehlende .SOU- und .BUN-Dateien führen nun nicht mehr zu einem Absturz.
    - Abstürze in v7- und v8-Spielen auf Systemen mit striktem Aligment behoben.
 
+ Tinsel:
+   - Fehler behoben, der dazu führt, dass in Discworld einige Gegenstände nicht im Inventar abgelegt werden konnten.
+
  Toltecs:
    - Abstürze auf einigen Systemen mit striktem Aligment behoben.
 
