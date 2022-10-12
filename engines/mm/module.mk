@@ -93,6 +93,7 @@ MODULE_OBJS := \
 	mm1/views_enh/locations/temple.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
+	mm1/maps/map_town.o \
 	mm1/maps/map00.o \
 	mm1/maps/map01.o \
 	mm1/maps/map02.o \

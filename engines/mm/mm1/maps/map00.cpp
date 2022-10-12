@@ -57,13 +57,7 @@ void Map00::special() {
 }
 
 void Map00::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.inn_inside"],
-		[]() {
-			g_events->replaceView("Inn");
-		}
-	));
+	inn();
 }
 
 void Map00::special01() {
@@ -92,23 +86,11 @@ void Map00::special01() {
 }
 
 void Map00::special02() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.blacksmith_inside"],
-		[]() {
-			g_events->addView("Blacksmith");
-		}
-	));
+	blacksmith();
 }
 
 void Map00::special03() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.market_inside"],
-		[]() {
-			g_events->addView("Market");
-		}
-	));
+	market();
 }
 
 void Map00::special04() {
@@ -123,33 +105,15 @@ void Map00::special04() {
 }
 
 void Map00::special05() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.tavern_inside"],
-		[]() {
-			g_events->addView("Tavern");
-		}
-	));
+	tavern();
 }
 
 void Map00::special06() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.temple_inside"],
-		[]() {
-			g_events->addView("Temple");
-		}
-	));
+	temple();
 }
 
 void Map00::special07() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		STRING["maps.map00.training_inside"],
-		[]() {
-			g_events->addView("Training");
-		}
-	));
+	trainer();
 }
 
 void Map00::special08() {

@@ -31,7 +31,7 @@ namespace Maps {
 
 void Map01::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 17; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
@@ -50,6 +50,90 @@ void Map01::special() {
 }
 
 void Map01::special00() {
+	inn();
+}
+
+void Map01::special01() {
+	Common::String line1 = STRING["maps.map01.zam1"];
+	Common::String line2 = STRING["maps.map01.zam3"];
+
+	bool hasCourier = false;
+	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
+		hasCourier = (g_globals->_party[i]._flags & CHARFLAG_COURIER) != 0;
+	}
+
+	if (hasCourier) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._flags |= CHARFLAG_COURIER | CHARFLAG_ZAM_CLUE;
+		}
+
+		line2 = STRING["maps.map01.zam2"];
+	}
+
+	send(InfoMessage(
+		0, 1, line1,
+		0, 3, line2
+	));
+}
+
+void Map01::special02() {
+	blacksmith();
+}
+
+void Map01::special03() {
+	market();
+}
+
+void Map01::special04() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map01.passage_outside"],
+		[]() {
+			g_maps->_mapPos = Common::Point(3, 3);
+			g_maps->changeMap(0x101, 2);
+		}
+	));
+
+}
+
+void Map01::special05() {
+	tavern();
+}
+
+void Map01::special06() {
+	temple();
+}
+
+void Map01::special07() {
+	trainer();
+}
+
+void Map01::special08() {
+}
+
+void Map01::special09() {
+}
+
+void Map01::special10() {
+}
+
+void Map01::special11() {
+}
+
+void Map01::special12() {
+}
+
+void Map01::special13() {
+}
+
+void Map01::special14() {
+}
+
+void Map01::special15() {
+}
+
+void Map01::special16() {
 }
 
 } // namespace Maps

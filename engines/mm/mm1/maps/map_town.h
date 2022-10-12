@@ -19,30 +19,51 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP04_H
-#define MM1_MAPS_MAP04_H
+#ifndef MM1_MAPS_MAP_TOWN_H
+#define MM1_MAPS_MAP_TOWN_H
 
-#include "mm/mm1/maps/map_town.h"
+#include "mm/mm1/maps/map.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map04 : public MapTown {
-	typedef void (Map04:: *SpecialFn)();
-private:
-	void special00();
-
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map04::special00
-	};
-public:
-	Map04() : MapTown(4, "erliquin", 0x0B1A) {}
+class MapTown : public Map {
+protected:
+	/**
+	 * Handles visiting blacksmith
+	 */
+	void blacksmith();
 
 	/**
-	 * Handles all special stuff that happens on the map
+	 * Handles visiting inn
 	 */
-	void special() override;
+	void inn();
+
+	/**
+	 * Handles visiting market
+	 */
+	void market();
+
+	/**
+	 * Handles visiting tavern
+	 */
+	void tavern();
+
+	/**
+	 * Handles visiting temple
+	 */
+	void temple();
+
+	/**
+	 * Handles visiting trainer
+	 */
+	void trainer();
+
+public:
+	MapTown(uint index, const Common::String &name, uint16 id) :
+		Map(index, name, id) {}
+	virtual ~MapTown() {}
 };
 
 } // namespace Maps
