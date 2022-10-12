@@ -138,8 +138,7 @@ Common::StringArray Hpl1Engine::listInternalSaves(const Common::String &pattern)
 Common::Error Hpl1Engine::loadGameState(int slot) {
 	SaveStateDescriptor a = getMetaEngine()->querySaveMetaInfos(_targetName.c_str(), slot);
 	_gameInit->mpMainMenu->SetActive(false);
-	// FIXME: strings
-	_gameInit->mpSaveHandler->LoadGameFromFile(cString::To16Char(Common::String(a.getDescription()).c_str()));
+	_gameInit->mpSaveHandler->LoadGameFromFile(a.getDescription());
 	return Common::kNoError;
 }
 

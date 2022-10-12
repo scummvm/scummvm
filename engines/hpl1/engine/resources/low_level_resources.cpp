@@ -31,13 +31,11 @@
 
 namespace hpl {
 
-static tString getImageType(const tString &filepath) {
-	//FIXME: use proper string types
-	Common::String str(filepath.c_str()); 
-	str.toLowercase(); 
-	size_t pos = str.findLastOf(".");
+static tString getImageType(tString filepath) {
+	filepath.toLowercase();
+	size_t pos = filepath.findLastOf(".");
 	if (pos != Common::String::npos)
-		return str.substr(pos + 1).c_str();
+		return filepath.substr(pos + 1).c_str();
 	return "";
 }
 
@@ -66,14 +64,13 @@ void LowLevelResources::addVideoLoaders(cVideoManager *vm) {
 }
 
 void LowLevelResources::findFilesInDir(tStringList &alstStrings, tString asDir, tString asMask) {
-	//FIXME: use consistent string types
-	Common::String pattern = Common::String(asDir.c_str()) + '/' +  Common::String(asMask.c_str()); 
-	Common::ArchiveMemberList ls; 
-	if (SearchMan.listMatchingMembers(ls, pattern) == 0) 
-		debugCN(Hpl1::kDebugLevelWarning, Hpl1::kDebugFilePath, "no files matching pattern %s were found", pattern.c_str());  
-	
-	for (auto f : ls)
-		alstStrings.push_back(f->getName().c_str()); 
+	Common::String pattern = asDir + '/' +  asMask;
+	Common::ArchiveMemberList ls;
+	if (SearchMan.listMatchingMembers(ls, pattern) == 0)
+		Hpl1::logWarning(Hpl1::kDebugFilePath, "no files matching pattern %s were found", pattern.c_str());
+
+	for (auto &f : ls)
+		alstStrings.push_back(f->getName());
 }
 
 } // namespace hpl

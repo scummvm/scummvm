@@ -148,9 +148,7 @@ void FontData::loadGlyphs(const TiXmlElement *charsRoot, BitmapArray &bitmaps, c
 		loadNextGlyph(charIt, bitmaps, fontSize);
 }
 
-bool FontData::createFromBitmapFile(const tString &file) {
-	// FIXME: string types
-	Common::String filename = file.c_str();
+bool FontData::createFromBitmapFile(const tString &filename) {
 	Common::ScopedPtr<TiXmlDocument> xmlDoc = loadFontXML(filename);
 	if (!xmlDoc)
 		return false;

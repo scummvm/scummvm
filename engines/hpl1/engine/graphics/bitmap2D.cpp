@@ -32,9 +32,8 @@
 namespace hpl {
 
 static Image::ImageDecoder *loadImage(const tString &filepath, Image::ImageDecoder *decoder) {
-	//FIXME: string types
 	Common::File imgFile;
-	if (!imgFile.open(filepath.c_str()))
+	if (!imgFile.open(filepath))
 		error("Could not open file: %s", filepath.c_str());
 	if (!decoder->loadStream(imgFile))
 		error("Could not load image at %s", filepath.c_str());

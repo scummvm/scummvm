@@ -190,13 +190,11 @@ void cSerializeClass::PrintMembers(iSerializable *apData) {
 
 //-----------------------------------------------------------------------
 
-bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, const tString &asRoot) {
+bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &saveFile, const tString &asRoot) {
 	SetUpData();
 
 	glTabs = 0;
-	// FIXME: string types
-	Common::String saveDesc(cString::To8Char(asFile).c_str());
-	Common::String filename(Hpl1::g_engine->createSaveFile(saveDesc));
+	Common::String filename(Hpl1::g_engine->createSaveFile(saveFile));
 	TiXmlDocument pXmlDoc;
 	// Create root
 	TiXmlElement XmlRoot(asRoot.c_str());
@@ -211,7 +209,7 @@ bool cSerializeClass::SaveToFile(iSerializable *apData, const tWString &asFile, 
 		Hpl1::logError(Hpl1::kDebugSaves, "couldn't save to file '%s'\n", filename.c_str());
 		return false;
 	}
-	g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), saveDesc, filename.contains("auto"));
+	g_engine->getMetaEngine()->appendExtendedSave(savefile.get(), g_engine->getTotalPlayTime(), saveFile, filename.contains("auto"));
 	return true;
 }
 
@@ -279,8 +277,7 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 
 	// Load document
 	TiXmlDocument pXmlDoc;
-	// FIXME: string types
-	Common::String filename(Hpl1::g_engine->mapInternalSaveToFile(cString::To8Char(asFile).c_str()));
+	Common::String filename(Hpl1::g_engine->mapInternalSaveToFile(asFile));
 	Common::ScopedPtr<Common::InSaveFile> saveFile(g_engine->getSaveFileManager()->openForLoading(filename));
 	if (!saveFile) {
 		Hpl1::logError(Hpl1::kDebugSaves | Hpl1::kDebugResourceLoading, "save file %s could not be opened\n", filename.c_str());
@@ -294,7 +291,7 @@ bool cSerializeClass::LoadFromFile(iSerializable *apData, const tWString &asFile
 	g_engine->setTotalPlayTime(header.playtime);
 	if (pXmlDoc.LoadFile(*saveFile) == false) {
 		Hpl1::logError(Hpl1::kDebugResourceLoading | Hpl1::kDebugSaves,
-			"Couldn't load saved class file '%s' from %s!\n", cString::To8Char(asFile).c_str(),
+			"Couldn't load saved class file '%S' from %s!\n", asFile.c_str(),
 			pXmlDoc.ErrorDesc());
 		return false;
 	}

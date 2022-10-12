@@ -57,8 +57,7 @@ cOpenALSoundData::~cOpenALSoundData() {
 //-----------------------------------------------------------------------
 
 bool cOpenALSoundData::CreateFromFile(const tString &filename) {
-	// FIXME: string types
-	_filename = filename.c_str();
+	_filename = filename;
 	return true;
 }
 

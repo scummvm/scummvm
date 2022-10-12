@@ -658,9 +658,8 @@ void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMa
 //-----------------------------------------------------------------------
 
 tWString cSaveHandler::GetLatest(const tWString &asMask) {
-	// FIXME: string types
-	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asMask).c_str());
-	return cString::To16Char(firstSave(saves, [](const cDate& a, const cDate &b){return a > b;}).c_str());
+	Common::StringArray saves = Hpl1::g_engine->listInternalSaves(asMask);
+	return firstSave(saves, [](const cDate& a, const cDate &b){return a > b;});
 }
 
 //-----------------------------------------------------------------------

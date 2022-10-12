@@ -61,10 +61,9 @@ cConfigFile::~cConfigFile() {
 
 bool cConfigFile::Load() {
 	Common::File cf;
-	//FIXME: use proper string types
-	if (!cf.open(cString::To8Char(msFile).c_str())) {
-		debugCN(Hpl1::kDebugLevelWarning, Hpl1::kDebugFilePath, "file %s could not be opened", cString::To8Char(msFile).c_str()); 
-		return false; 
+	if (!cf.open(cString::To8Char(msFile))) {
+		debugCN(Hpl1::kDebugLevelWarning, Hpl1::kDebugFilePath, "file %s could not be opened", cString::To8Char(msFile).c_str());
+		return false;
 	}
 	return mpXmlDoc->LoadFile(cf);
 }
@@ -72,7 +71,6 @@ bool cConfigFile::Load() {
 //-----------------------------------------------------------------------
 
 bool cConfigFile::Save() {
-	//FIXME: use proper string types
 	return mpXmlDoc->SaveFile(cString::To8Char(msFile).c_str());
 }
 
