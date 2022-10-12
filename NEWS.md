@@ -111,6 +111,9 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Prevented crashes caused by missing .SOU/.BUN files.
    - Fixed crashes in v7-v8 games on strict-alignment platforms.
 
+ Tinsel:
+   - Fixed an issue in Discworld that prevented some items from being placed in the inventory.
+
  Toltecs:
    - Fixed crashes on some strict-alignment platforms.
 
