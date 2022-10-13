@@ -14,7 +14,51 @@ Usage
 
     scummvm [option] [game]
 
-To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any of the options documented below, and/or the path to the game you wish to start. If a game has already been added to the games list in the Launcher, you can pass the game id instead of the path to the game.
+By default executing `scummvm` on the command line starts the launcher. But if a game is specified, or if ``--auto-detect`` is used, this starts the game directly. And otherwise if a command option such as ``--list-games`` or ``--detect`` is specified, the result will be printed and ScummVM will quit immediately without starting a game or the launcher.
+
+
+Starting a game
+===============
+
+To start a game on the command line, three options are possible.
+
+For games that have previously been added to ScummVM:
+
+.. code::
+
+    scummvm <target>
+
+For any supported games (it does not need to be added to ScummVM beforehand):
+
+.. code::
+
+    scummvm -p <path to game files> <game id>
+
+or
+
+.. code::
+
+    scummvm -p <path to game files> --auto-detect
+
+In all cases additional options can be specified on the command line, for example to specify the graphics mode or a save game to load.
+
+The `target` is a name assigned to a game added to ScummVM. It can be seen and changed in the :ref:`Game Options<id>`. If the same game is added twice to ScummVM, it will be given two different `target` names, and they can be configured differently. The list of configured targets can be obtained with:
+
+.. code::
+
+    scummvm --list-targets
+
+The `game id` is a unique identifier for any game supported by ScummVM. You can get a list of all supported games for your ScummVM release by using:
+
+.. code::
+
+    scummvm --list-games
+
+When using a `target` name on the command line to start a game, it will be using the settings configured for this target, unless overwritten by settings specified on the command line. There is also no need to specify the path for the game files since this is already part of the target configuration.
+
+On the other hand using the `game id` or ``--auto-detect`` will start the games with default settings for any settings not specified on the command line, and the path to the game file needs to be specified.
+
+The full `game id` contains both an engine name and a game name. For example the game id for Full Throttle is `scumm:ft` (where `scumm` is the engine name). In many cases where there is no ambiguity, the engine name can be omitted when specifying a `game id` on the command line. For example both `scumm:ft` and `ft` can be used. However if there is an ambiguity with the game name, the full `game id` needs to be used. For example for Indiana Jones and the Fate of Atlantis only `scumm:atlantis` can be used as there would otherwise be an ambiguity with `cryomni3d:atlantis`.
 
 
 .. tabbed:: Windows
@@ -26,11 +70,11 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code-block::
 
-            C:\Program Files\ScummVM\scummvm.exe -f monkey
+            C:\Program Files\ScummVM\scummvm.exe -f monkey1
 
 
 
@@ -38,7 +82,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         .. code-block::
 
-            C:\Program Files\ScummVM\scummvm.exe -f -n -pD:``resource``ft
+            C:\Program Files\ScummVM\scummvm.exe -f -n -p "D:\resource" scumm:ft
 
 .. tabbed:: macOS
 
@@ -53,18 +97,18 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code::
 
-            /Applications/ScummVM.app/Contents/MacOS/scummvm -f monkey
+            /Applications/ScummVM.app/Contents/MacOS/scummvm -f monkey1
 
 
         To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``):
 
         .. code::
 
-            /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p/cdrom/resource/ft
+            /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p "/Volumes/Full Throttle/resource" scumm:ft
 
 .. tabbed:: Linux
 
@@ -75,18 +119,18 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code::
 
-            /usr/games/scummvm -f monkey
+            /usr/games/scummvm -f monkey1
 
 
         To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``):
 
         .. code::
 
-            /usr/games/scummvm -f -n -p/cdrom/resource/ft
+            /usr/games/scummvm -f -n -p /cdrom/resource scumm:ft
 
         .. tip::
 
