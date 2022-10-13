@@ -647,7 +647,7 @@ Common::String firstSave(const Common::StringArray &saves, DateCmp cmp) {
 }
 
 void cSaveHandler::DeleteOldestIfMax(const tWString &asDir, const tWString &asMask, int alMaxFiles) {
-	const Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(asDir + asMask).c_str());
+	const Common::StringArray saves = Hpl1::g_engine->listInternalSaves(asDir + asMask);
 	if (static_cast<int>(saves.size()) > alMaxFiles) {
 		const Common::String oldest = firstSave(saves, [](const cDate& a, const cDate &b){return a < b;});
 		Hpl1::logInfo(Hpl1::kDebugSaves, "removing save %s\n", oldest.c_str());
