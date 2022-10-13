@@ -13,6 +13,7 @@ For a more comprehensive changelog of the latest experimental code, see:
  AGOS:
    - Fixed various bugs that lead to crashes in the demo versions of The Feeble Files
      and Personal Nightmare and in the full version of Waxworks.
+   - Fixed pirate dialogue freeze in Simon the Sorcerer 2.
 
  Asylum:
    - Fixed the Keyboard Config screen.
