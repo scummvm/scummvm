@@ -784,7 +784,7 @@ public:
 
 		tWString originalName = gvSaveGameFileVec[mlNum][lSelected];
 		tWString newName = _W("favorite-") + cString::SubW(originalName, originalName.find('.') + 1);
-		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %S to favourites\n", newName);
+		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %S to favourites\n", newName.encode().c_str());
 		Common::String originalFile(Hpl1::g_engine->mapInternalSaveToFile(originalName));
 		Common::String newFile(Hpl1::g_engine->createSaveFile(newName));
 		g_engine->getSaveFileManager()->copySavefile(originalFile, newFile);
