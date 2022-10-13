@@ -228,6 +228,11 @@ union Resistances {
 	AttributePair _arr[8];
 
 	Resistances();
+
+	/**
+	 * Handles save/loading resistences
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 struct Character {
@@ -268,7 +273,7 @@ struct Character {
 	byte _quest = 0;
 	int _v6e;
 	int _alignmentCtr;
-	byte _flags[8];
+	byte _flags[14];
 
 	// Non persistent fields
 	byte _numDrinks = 0;

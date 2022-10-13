@@ -35,6 +35,11 @@ Resistances::Resistances() {
 		_arr[i].clear();
 }
 
+void Resistances::synchronize(Common::Serializer &s) {
+	for (int i = 0; i < 8; ++i)
+		_arr[i].synchronize(s);
+}
+
 void Inventory::clear() {
 	_items.clear();
 	_items.resize(INVENTORY_COUNT);
@@ -171,6 +176,7 @@ void Character::synchronize(Common::Serializer &s) {
 	_equipped.synchronize(s, false);
 	_backpack.synchronize(s, false);
 
+	_resistances.synchronize(s);
 	_physicalAttr.synchronize(s);
 	_missileAttr.synchronize(s);
 
@@ -178,10 +184,9 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_quest);
 	s.syncAsByte(_v6e);
 	s.syncAsByte(_alignmentCtr);
-	s.syncBytes(_flags, 8);
+	s.syncBytes(_flags, 14);
 
-	// TODO: Figure purpose of remaining unknown fields
-	s.skip(7);
+	s.skip(1);
 }
 
 void Character::clear() {
