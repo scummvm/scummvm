@@ -90,6 +90,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
  AGOS:
    - Mehrere Fehler korrigiert, die zu Abstürzen in den Demo-Versionen von The Feeble Files
      und Personal Nightmare sowie in der Vollversion von Waxworks geführt haben.
+   - Absturz während des Dialogs mit den Piraten in Simon the Sorcerer 2 behoben.
 
  Asylum:
    - Menü zur Tastatur-Konfiguration repariert.
