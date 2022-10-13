@@ -303,7 +303,7 @@ SCRIPT_DEFINE_FUNC_3(void, SetSectorPortalActive, string, int, bool)
  **/
 static tString Translate(tString asCat, tString asName) {
 	tWString wsText = gpResources->Translate(asCat, asName);
-	return cString::To8Char(wsText);
+	return wsText;
 }
 SCRIPT_DEFINE_FUNC_2(string, Translate, string, string)
 

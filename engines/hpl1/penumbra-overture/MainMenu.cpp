@@ -761,7 +761,7 @@ public:
 			return;
 
 		tWString sFile = gvSaveGameFileVec[mlNum][lSelected];
-		Hpl1::g_engine->removeSaveFile(cString::To8Char(sFile).c_str());
+		Hpl1::g_engine->removeSaveFile(sFile);
 		mpInit->mpMainMenu->UpdateWidgets();
 	}
 
@@ -784,9 +784,9 @@ public:
 
 		tWString originalName = gvSaveGameFileVec[mlNum][lSelected];
 		tWString newName = _W("favorite-") + cString::SubW(originalName, originalName.find('.') + 1);
-		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %s to favourites\n", cString::To8Char(newName).c_str());
-		Common::String originalFile(Hpl1::g_engine->mapInternalSaveToFile(cString::To8Char(originalName).c_str()));
-		Common::String newFile(Hpl1::g_engine->createSaveFile(cString::To8Char(newName).c_str()));
+		Hpl1::logInfo(Hpl1::kDebugSaves, "adding save %S to favourites\n", newName);
+		Common::String originalFile(Hpl1::g_engine->mapInternalSaveToFile(originalName));
+		Common::String newFile(Hpl1::g_engine->createSaveFile(newName));
 		g_engine->getSaveFileManager()->copySavefile(originalFile, newFile);
 		mpInit->mpMainMenu->UpdateWidgets();
 	}
@@ -2498,7 +2498,7 @@ void cMainMenu::CreateWidgets() {
 		AddWidgetToState(state, gpSaveGameList[i]);
 
 		tTempFileAndDataSet setTempFiles;
-		Common::StringArray saves = Hpl1::g_engine->listInternalSaves(cString::To8Char(sDir).c_str() + Common::String("*"));
+		Common::StringArray saves = Hpl1::g_engine->listInternalSaves(sDir + "*");
 		for (auto &s : saves) {
 			tWString sFile = cString::To16Char(s.c_str());
 			cDate date = cSaveHandler::parseDate(s);
