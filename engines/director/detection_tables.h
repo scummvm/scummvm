@@ -1173,6 +1173,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "strata",				"Strata Studio Pro" },
 	{ "toeic",				"PowerTOEIC" },
 	{ "toonet11",			"TooNet11" },
+	{ "trans2",				"Trans'2　～僕とあたしと恋人と～" }, // Trans' 2: Boku to Atashi to Koibito to
 	{ "transland",			"トランスランド" },
 	{ "wonderompm",			"アルダスページメーカー4.5J速習用CD-ROM" },		// CD-ROM for Quick Study of Aldus PageMaker 4.5J
 	{ "wonderomcw",			"WONDEROM クラリスワークス" },					// WONDEROM ClarisWorks ver.2
@@ -7998,6 +7999,14 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("timewarp", "",  "Time Warp", "80d51128cda4f75986e2e00e110b26f3", 705445, Common::DE_DEU, 500),
 	WINGAME2t_l("timewarp", "", "START32.EXE", "13fa7fd5d46ec8f5a44fecef77e27962", 1855247,
 								"TIMEWARP/INTRO.DXR", "18e309348235ac467f103d80dcea13ee", 2498042, Common::DE_DEU, 501),
+
+	// Mac version also includes Classic binaries
+	// Mac and Windows demos from http://www.catear.info/pr/trans2/download/
+	MACDEMO1("trans2", "Demo", "Trans2.osx", "91824f7788a1a8c129637dcadaff32df", 284863, 1010),
+	// Name configuration tool is also Director, and a separate executable
+	MACDEMO1("trans2", "Name configuration (demo)", "name_config.osx", "91824f7788a1a8c129637dcadaff32df", 284863, 1010),
+	WINDEMO1t_l("trans2", "Demo", "Trans2.exe", "1345daaccfb2e922bce7a1ec76bd229a", 2680954, Common::JA_JPN, 1010),
+	WINDEMO1t_l("trans2", "Name configuration (demo)", "name_config.exe", "cef71307ff7456353f06b03cf79d60d3", 4896694, Common::JA_JPN, 1010),
 
 	MACGAME1("vsexasia", "", "Virtual Sex with Asia", "f3817a8eca9efb143a23b76525dedfa9", 744578, 501),
 	WINGAME1t("vsexasia", "", "ASIA32.EXE", "686e9ceb9d2bceae861eac37d0f67653", 1397213, 501),
