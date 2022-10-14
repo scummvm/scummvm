@@ -49,6 +49,14 @@ void Map01::special() {
 	g_globals->_encounters.execute();
 }
 
+void Map01::showSign(const Common::String &msg) {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		2, 1, STRING["maps.map00.sign"],
+		6, 2, msg
+	));
+}
+
 void Map01::special00() {
 	inn();
 }
@@ -140,27 +148,47 @@ void Map01::special08() {
 }
 
 void Map01::special09() {
+	Sound::sound(SOUND_2);
+
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map01.passage_outside"],
+		[]() {
+			g_maps->_mapPos = Common::Point(8, 0);
+			g_maps->changeMap(0xc01, 1);
+		}
+	));
 }
 
 void Map01::special10() {
+	showSign(STRING["maps.map01.market"]);
 }
 
 void Map01::special11() {
+	showSign(STRING["maps.map01.blacksmith"]);
 }
 
 void Map01::special12() {
+	showSign(STRING["maps.map01.inn"]);
 }
 
 void Map01::special13() {
+	showSign(STRING["maps.map01.temple"]);
 }
 
 void Map01::special14() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		0, 1, STRING["maps.map00.zam0"]
+	));
 }
 
 void Map01::special15() {
+	showSign(STRING["maps.map01.tavern"]);
 }
 
 void Map01::special16() {
+	showSign(STRING["maps.map01.training"]);
 }
 
 } // namespace Maps
