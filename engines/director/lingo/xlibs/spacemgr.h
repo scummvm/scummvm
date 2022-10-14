@@ -24,12 +24,19 @@
 
 namespace Director {
 
-class SpaceMgrXObject : public Object<SpaceMgrXObject> {
-public:
-	SpaceMgrXObject(ObjectType objType);
+namespace SpaceMgr {
+
+struct Node {
+	Common::HashMap<Common::String, Common::String> views;
 };
 
-namespace SpaceMgr {
+struct Space {
+	Common::HashMap<Common::String, Node> nodes;
+};
+
+struct SpaceCollection {
+	Common::HashMap<Common::String, Space> spaces;
+};
 
 extern const char *xlibName;
 extern const char *fileNames[];
@@ -79,6 +86,18 @@ void m_getGlobalLinks(int nargs);
 
 } // End of namespace SpaceMgr
 
+class SpaceMgrXObject : public Object<SpaceMgrXObject> {
+public:
+	SpaceMgrXObject(ObjectType objType);
+
+	Common::String _curSpaceCollection;
+	Common::String _curSpace;
+	Common::String _curNode;
+	Common::String _curView;
+	bool _checkForDups = false;
+
+	Common::HashMap<Common::String, SpaceMgr::SpaceCollection> _spaceCollections;
+};
 } // End of namespace Director
 
 #endif
