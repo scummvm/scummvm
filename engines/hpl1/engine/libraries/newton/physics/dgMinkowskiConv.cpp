@@ -585,9 +585,9 @@ class dgContactSolver {
 			p2 += clipPlane2.Scale(DG_ROBUST_PLANE_CLIP);
 			dgInt32 count2 = m_floatingcollision->CalculatePlaneIntersection(
 				clipPlane2, p2, shape2);
-			dgVector err(clipPlane2.Scale(clipPlane2 % (point2 - p2)));
+			dgVector err2(clipPlane2.Scale(clipPlane2 % (point2 - p2)));
 			for (dgInt32 i = 0; i < count2; i++) {
-				shape2[i] += err;
+				shape2[i] += err2;
 			}
 
 			if (count2) {
@@ -614,12 +614,12 @@ class dgContactSolver {
 
 				} else if ((count1 == 2) && (count2 == 2)) {
 					const dgMatrix &matrix1 = m_proxy->m_referenceMatrix;
-					dgVector p0(shape1[0]);
-					dgVector p1(shape1[1]);
-					dgVector q0(m_matrix.TransformVector(shape2[0]));
-					dgVector q1(m_matrix.TransformVector(shape2[1]));
-					dgVector p10(p1 - p0);
-					dgVector q10(q1 - q0);
+					dgVector pp0(shape1[0]);
+					dgVector pp1(shape1[1]);
+					dgVector qq0(m_matrix.TransformVector(shape2[0]));
+					dgVector qq1(m_matrix.TransformVector(shape2[1]));
+					dgVector p10(pp1 - pp0);
+					dgVector q10(qq1 - qq0);
 					p10 = p10.Scale(
 						dgFloat32(1.0f) / dgSqrt(p10 % p10 + dgFloat32(1.0e-8f)));
 					q10 = q10.Scale(
@@ -630,13 +630,13 @@ class dgContactSolver {
 						// dgFloat32 pl1;
 						// dgFloat32 ql0;
 						// dgFloat32 ql1;
-						dgFloat32 pl0 = p0 % p10;
-						dgFloat32 pl1 = p1 % p10;
-						dgFloat32 ql0 = q0 % p10;
-						dgFloat32 ql1 = q1 % p10;
+						dgFloat32 pl0 = pp0 % p10;
+						dgFloat32 pl1 = pp1 % p10;
+						dgFloat32 ql0 = qq0 % p10;
+						dgFloat32 ql1 = qq1 % p10;
 						if (pl0 > pl1) {
 							Swap(pl0, pl1);
-							Swap(p0, p1);
+							Swap(pp0, pp1);
 							p10 = p10.Scale(dgFloat32(-1.0f));
 						}
 						if (ql0 > ql1) {
@@ -649,12 +649,12 @@ class dgContactSolver {
 							dgFloat32 clip1 = (ql1 < pl1) ? ql1 : pl1;
 
 							count = 2;
-							contactOut[0].m_point = p0 + p10.Scale(clip0 - pl0);
+							contactOut[0].m_point = pp0 + p10.Scale(clip0 - pl0);
 							contactOut[0].m_normal = matrix1.RotateVector(clipPlane);
 							contactOut[0].m_userId = contacID;
 							contactOut[0].m_penetration = dist;
 
-							contactOut[1].m_point = p0 + p10.Scale(clip1 - pl0);
+							contactOut[1].m_point = pp0 + p10.Scale(clip1 - pl0);
 							contactOut[1].m_normal = matrix1.RotateVector(clipPlane);
 							contactOut[1].m_userId = contacID;
 							contactOut[1].m_penetration = dist;
@@ -664,7 +664,7 @@ class dgContactSolver {
 						dgVector c0;
 						dgVector c1;
 						count = 1;
-						dgRayToRayDistance(p0, p1, q0, q1, c0, c1);
+						dgRayToRayDistance(pp0, pp1, qq0, qq1, c0, c1);
 						contactOut[0].m_point = (c0 + c1).Scale(dgFloat32(0.5f));
 						contactOut[0].m_normal = matrix1.RotateVector(clipPlane);
 						contactOut[0].m_userId = contacID;
@@ -6447,15 +6447,15 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
 			for (dgInt32 i = 0; i < faceCount; i++) {
 				_ASSERTE(
 					(contact[i].m_isEdgeContact == 0) || (contact[i].m_isEdgeContact == 1));
-				for (dgInt32 j = faceCount; j < count; j++) {
+				for (dgInt32 k = faceCount; k < count; k++) {
 					dgFloat32 dist;
-					dgVector distVector(contact[i].m_point - contact[j].m_point);
+					dgVector distVector(contact[i].m_point - contact[k].m_point);
 					dist = distVector % distVector;
 					//					if (dist < dgFloat32 (0.04f)) {
 					if (dist < dgFloat32(1.e-2f)) {
 						count--;
-						contact[j] = contact[count];
-						j--;
+						contact[k] = contact[count];
+						k--;
 					}
 				}
 			}
