@@ -35,7 +35,7 @@ void BlacksmithSubview::drawItems() {
 		writeChar(17, 1, 'A' + idx);
 		writeString(") ");
 
-		getItem(_items[idx]);
+		g_globals->_items.getItem(_items[idx]);
 		drawIsAllowed();
 		writeString(g_globals->_currItem._name);
 		_textPos.x = 35;

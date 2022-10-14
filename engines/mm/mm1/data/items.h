@@ -22,7 +22,9 @@
 #ifndef MM1_DATA_ITEMS_H
 #define MM1_DATA_ITEMS_H
 
-#include "common/str.h"
+#include "common/array.h"
+#include "common/stream.h"
+#include "mm/mm1/data/text_parser.h"
 
 namespace MM {
 namespace MM1 {
@@ -52,30 +54,34 @@ enum TransferKind {
 
 
 struct ItemData {
-	byte _disablements;
-	EquipMode _equipMode;
-	byte _val10;
-	byte _effectId;
-	byte _spellId;
-	byte _maxCharges;
-	uint16 _cost;
-	byte _val16;
-	byte _val17;
+	byte _disablements = 0;
+	EquipMode _equipMode = EQUIPMODE_0;
+	byte _val10 = 0;
+	byte _effectId = 0;
+	byte _spellId = 0;
+	byte _maxCharges = 0;
+	uint16 _cost = 0;
+	byte _val16 = 0;
+	byte _val17 = 0;
 };
 
 struct Item : public ItemData {
 	Common::String _name;
-
-	Item *operator=(const ItemData &rhs) {
-		*dynamic_cast<ItemData *>(this) = rhs;
-		_name.clear();
-		return this;
-	}
 };
 
-extern const ItemData ITEMS1[];
-extern const ItemData ITEMS2[];
+struct ItemsArray : public Common::Array<Item>, public TextParser {
+	ItemsArray() {}
 
+	/**
+	 * Loads the items array
+	 */
+	bool load();
+
+	/**
+	 * Gets an item
+	 */
+	Item *getItem(byte index) const;
+};
 
 inline bool isWeapon(byte id) {
 	return id >= 1 && id <= 60;
@@ -93,7 +99,6 @@ inline bool isShield(byte id) {
 	return id >= 156 && id <= 170;
 };
 
-extern Item *getItem(byte index);
 extern ItemCategory getItemCategory(byte itemId);
 
 } // namespace MM1

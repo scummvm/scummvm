@@ -328,7 +328,7 @@ Character::LevelIncrease Character::increaseLevel() {
 }
 
 Character::BuyResult Character::buyItem(byte itemId) {
-	getItem(itemId);
+	g_globals->_items.getItem(itemId);
 
 	// Check if backpack is full
 	int slotIndex = 0;

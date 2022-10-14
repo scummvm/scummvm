@@ -22,6 +22,7 @@ MODULE_OBJS := \
 	mm1/data/monsters.o \
 	mm1/data/party.o \
 	mm1/data/roster.o \
+	mm1/data/text_parser.o \
 	mm1/game/game_logic.o \
 	mm1/game/combat.o \
 	mm1/game/encounter.o \

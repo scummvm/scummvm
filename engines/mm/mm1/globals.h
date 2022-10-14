@@ -43,6 +43,7 @@ public:
 	Roster _roster;
 	Character *_currCharacter = nullptr;
 	Item _currItem;
+	ItemsArray _items;
 	Maps::TownId _startingTown = Maps::SORPIGAL;
 	Maps::Maps _maps;
 	bool _intangible = false; // Console flag

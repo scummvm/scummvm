@@ -25,103 +25,36 @@
 namespace MM {
 namespace MM1 {
 
-// TODO: Figure out all item fields
-const ItemData ITEMS1[86] = {
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 },
-	{ 0 }
-};
+bool ItemsArray::load() {
+	Common::File f;
+	if (!f.open("items.txt"))
+		return false;
 
-const ItemData ITEMS2[] = {
-	{ 0 }
-};
+	resize(256);
+	for (int lineNum = 0; lineNum < 256; ++lineNum) {
+		Item &item = (*this)[lineNum];
+		Common::String line = f.readLine();
+		assert(line.size() > 20 && line[0] == '"' && line[15] == '"');
 
-Item *getItem(byte index) {
-	g_globals->_currItem = (index >= 86) ?
-		ITEMS1[index - 1] : ITEMS2[index - 86];
+		item._name = Common::String(line.c_str() + 1, line.c_str() + 14);
+		line = Common::String(line.c_str() + 16);
+
+		item._disablements = getNextValue(line);
+		item._equipMode = (EquipMode)getNextValue(line);
+		item._val10 = getNextValue(line);
+		item._effectId = getNextValue(line);
+		item._spellId = getNextValue(line);
+		item._maxCharges = getNextValue(line);
+		item._cost = getNextValue(line);
+		item._val16 = getNextValue(line);
+		item._val17 = getNextValue(line);
+	}
+
+	return true;
+}
+
+Item *ItemsArray::getItem(byte index) const {
+	g_globals->_currItem = (*this)[index];
 	g_globals->_currItem._name = STRING[Common::String::format(
 		"stats.items.%d", (int)index)];
 

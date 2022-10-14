@@ -34,6 +34,7 @@ namespace MM1 {
 Console::Console() : GUI::Debugger() {
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
 	registerCmd("dump_monsters", WRAP_METHOD(Console, cmdDumpMonsters));
+	registerCmd("dump_items", WRAP_METHOD(Console, cmdDumpItems));
 	registerCmd("map_string", WRAP_METHOD(Console, cmdMapString));
 	registerCmd("map", WRAP_METHOD(Console, cmdMap));
 	registerCmd("pos", WRAP_METHOD(Console, cmdPos));
@@ -132,6 +133,49 @@ bool Console::cmdDumpMonsters(int argc, const char **argv) {
 				for (int j = 0; j < 17; ++j) {
 					line += ", ";
 					line += Common::String::format("%d", f.readByte());
+				}
+
+				df.writeString(line);
+				df.writeByte('\n');
+			}
+
+			df.close();
+			f.close();
+			debugPrintf("Done\n");
+			return true;
+		}
+	}
+
+	debugPrintf("Could not create\n");
+	return true;
+}
+
+bool Console::cmdDumpItems(int argc, const char **argv) {
+	Common::File f;
+	Common::DumpFile df;
+	Common::String line;
+
+	if (f.open("mm.exe")) {
+		if (df.open("items.txt")) {
+			f.seek(0x19b2a);
+
+			for (int i = 0; i < 255; ++i) {
+				if (i == 85) {
+					// Add the blank unused item line
+					line = "\"              \", 0, 0, 0, 0, 0, 0, 0, 0, 0";
+					df.writeString(line);
+					df.writeByte('\n');
+				}
+
+				line = "\"";
+				for (int j = 0; j < 14; ++j)
+					line += f.readByte();
+				line += '"';
+
+				for (int j = 0; j < 9; ++j) {
+					line += ", ";
+					line += Common::String::format("%d",
+						(j == 6) ? f.readUint16BE() : f.readByte());
 				}
 
 				df.writeString(line);
