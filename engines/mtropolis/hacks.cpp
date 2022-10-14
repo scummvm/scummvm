@@ -84,10 +84,10 @@ void ObsidianCorruptedAirTowerTransitionFix::onLoaded(Asset *asset, const Common
 
 class ObsidianInventoryWindscreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
 };
 
-void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void ObsidianInventoryWindscreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
 	if (pt.y < 480) {
 		// Set direct to screen so it draws over cinematics
 		static_cast<VisualElement *>(structural)->setDirectToScreen(true);
@@ -99,13 +99,13 @@ void ObsidianInventoryWindscreenHooks::onSetPosition(Structural *structural, Com
 
 class ObsidianSecurityFormWidescreenHooks : public StructuralHooks {
 public:
-	void onSetPosition(Structural *structural, Common::Point &pt) override;
+	void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) override;
 
 private:
 	Common::Array<uint32> _hiddenCards;
 };
 
-void ObsidianSecurityFormWidescreenHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void ObsidianSecurityFormWidescreenHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
 	bool cardVisibility = (pt.y > 480);
 
 	// Originally tried manipulating layer order but that's actually not a good solution because
@@ -138,11 +138,11 @@ void ObsidianSecurityFormWidescreenHooks::onSetPosition(Structural *structural, 
 
 			if (cardVisibility) {
 				if (Common::find(_hiddenCards.begin(), _hiddenCards.end(), card->getStaticGUID()) != _hiddenCards.end())
-					card->setVisible(true);
+					card->setVisible(runtime, true);
 			} else {
 				if (card->isVisible()) {
 					_hiddenCards.push_back(card->getStaticGUID());
-					card->setVisible(false);
+					card->setVisible(runtime, false);
 				}
 			}
 		}

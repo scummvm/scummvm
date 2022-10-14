@@ -2763,7 +2763,7 @@ MiniscriptInstructionOutcome AssetManagerInterface::writeRefAttribute(Miniscript
 void StructuralHooks::onCreate(Structural *structural) {
 }
 
-void StructuralHooks::onSetPosition(Structural *structural, Common::Point &pt) {
+void StructuralHooks::onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt) {
 }
 
 ProjectPresentationSettings::ProjectPresentationSettings() : width(640), height(480), bitsPerPixel(8) {
@@ -7511,8 +7511,11 @@ bool VisualElement::isVisible() const {
 	return _visible;
 }
 
-void VisualElement::setVisible(bool visible) {
-	_visible = visible;
+void VisualElement::setVisible(Runtime *runtime, bool visible) {
+	if (_visible != visible) {
+		runtime->setSceneGraphDirty();
+		_visible = visible;
+	}
 }
 
 bool VisualElement::isDirectToScreen() const {
@@ -7520,7 +7523,10 @@ bool VisualElement::isDirectToScreen() const {
 }
 
 void VisualElement::setDirectToScreen(bool directToScreen) {
-	_directToScreen = directToScreen;
+	if (_directToScreen != directToScreen) {
+		_contentsDirty = true;
+		_directToScreen = directToScreen;
+	}
 }
 
 uint16 VisualElement::getLayer() const {
@@ -7528,7 +7534,10 @@ uint16 VisualElement::getLayer() const {
 }
 
 void VisualElement::setLayer(uint16 layer) {
-	_layer = layer;
+	if (_layer != layer) {
+		_contentsDirty = true;
+		_layer = layer;
+	}
 }
 
 VThreadState VisualElement::consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
@@ -7934,7 +7943,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPosition(MiniscriptThread *
 		Common::Point destPoint = value.getPoint();
 
 		if (_hooks)
-			_hooks->onSetPosition(this, destPoint);
+			_hooks->onSetPosition(thread->getRuntime(), this, destPoint);
 
 		int32 xDelta = destPoint.x - _rect.left;
 		int32 yDelta = destPoint.y - _rect.top;
@@ -7957,7 +7966,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionX(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(asInteger, _rect.top);
 	if (_hooks)
-		_hooks->onSetPosition(this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;
 
@@ -7974,7 +7983,7 @@ MiniscriptInstructionOutcome VisualElement::scriptSetPositionY(MiniscriptThread 
 
 	Common::Point updatedPoint = Common::Point(_rect.left, asInteger);
 	if (_hooks)
-		_hooks->onSetPosition(this, updatedPoint);
+		_hooks->onSetPosition(thread->getRuntime(), this, updatedPoint);
 
 	int32 xDelta = updatedPoint.x - _rect.left;
 	int32 yDelta = updatedPoint.y - _rect.top;
@@ -8110,6 +8119,9 @@ void VisualElement::offsetTranslate(int32 xDelta, int32 yDelta, bool cachedOrigi
 				static_cast<VisualElement *>(element)->offsetTranslate(xDelta, yDelta, true);
 		}
 	}
+
+	if (xDelta != 0 || yDelta != 0)
+		_contentsDirty = true;
 }
 
 Common::Point VisualElement::getCenterPosition() const {
@@ -8118,7 +8130,7 @@ Common::Point VisualElement::getCenterPosition() const {
 
 VThreadState VisualElement::changeVisibilityTask(const ChangeFlagTaskData &taskData) {
 	if (_visible != taskData.desiredFlag) {
-		_visible = taskData.desiredFlag;
+		setVisible(taskData.runtime, taskData.desiredFlag);
 
 		Common::SharedPtr<MessageProperties> msgProps(new MessageProperties(Event(_visible ? EventIDs::kElementHide : EventIDs::kElementShow, 0), DynamicValue(), getSelfReference()));
 		Common::SharedPtr<MessageDispatch> dispatch(new MessageDispatch(msgProps, this, false, true, false));

@@ -2020,7 +2020,7 @@ public:
 	virtual ~StructuralHooks();
 
 	virtual void onCreate(Structural *structural);
-	virtual void onSetPosition(Structural *structural, Common::Point &pt);
+	virtual void onSetPosition(Runtime *runtime, Structural *structural, Common::Point &pt);
 };
 
 class Structural : public RuntimeObject, public IModifierContainer, public IMessageConsumer, public Debuggable {
@@ -2592,7 +2592,7 @@ public:
 	VThreadState consumeCommand(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 
 	bool isVisible() const;
-	void setVisible(bool visible);
+	void setVisible(Runtime *runtime, bool visible);
 
 	bool isDirectToScreen() const;
 	void setDirectToScreen(bool directToScreen);
