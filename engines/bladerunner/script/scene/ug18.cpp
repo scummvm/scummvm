@@ -519,6 +519,12 @@ void SceneScriptUG18::talkWithGuzza() {
 	Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 	Actor_Start_Speech_Sample(kActorGuzza, 810);
 	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, false, false, false);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Fix for inconsistency bug:
+	// This quote plays for the KIA clue (kClueBriefcase)
+	// but did not play during the actual in-game scene
+	Actor_Says(kActorGuzza, 820, 3);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 5875, 13);
 	Actor_Says(kActorGuzza, 830, 3);
 	Actor_Says(kActorGuzza, 840, 12);
