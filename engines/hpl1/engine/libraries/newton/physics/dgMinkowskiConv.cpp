@@ -1906,6 +1906,8 @@ class dgContactSolver {
 					}
 					m_vertexIndex = 2;
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 2: {
 					dgInt32 best = 0;
@@ -1932,6 +1934,8 @@ class dgContactSolver {
 					}
 					m_vertexIndex = 3;
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				default: {
 					const dgVector &p0 = m_hullVertex[0];
@@ -2049,6 +2053,8 @@ class dgContactSolver {
 						return dgMinkDisjoint;
 					}
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 2: {
 					rotMatrix.m_front = dir;
@@ -2122,10 +2128,14 @@ class dgContactSolver {
 						dist2 = dist3;
 					}
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 3: {
 					CalcSupportVertex(separatingPlane, 3);
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 				}
 
 				m_vertexIndex = 4;
@@ -2261,6 +2271,8 @@ class dgContactSolver {
 					}
 					m_vertexIndex = 2;
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 2: {
 					dgInt32 best = 0;
@@ -2288,6 +2300,8 @@ class dgContactSolver {
 					}
 					m_vertexIndex = 3;
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				default: {
 					const dgBigVector &p0 = m_hullVertexLarge[0];
@@ -2412,6 +2426,8 @@ class dgContactSolver {
 						return dgMinkDisjoint;
 					}
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 2: {
 					rotMatrix.m_front = dir32;
@@ -2489,10 +2505,14 @@ class dgContactSolver {
 						dist2 = dist3;
 					}
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 
 				case 3: {
 					CalcSupportVertexLarge(separatingPlane, 3);
 				}
+				// FIXME: fallthrough intended?
+				// fallthrough
 				}
 
 				m_vertexIndex = 4;
