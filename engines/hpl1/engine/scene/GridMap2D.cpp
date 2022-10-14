@@ -233,12 +233,17 @@ void cGridMap2DRectIt::GetGridObject() {
 				// Log("Has NO outer!\n");
 				mIt = mpGridMap->m_mapOuterObjects.end();
 			}
+			// FIXME: fallthrough intended from here?
+			// fallthrough
 		} else {
 			mpObject = mIt->second;
 			// Log("Found the object in global!\n");
 			break;
 		}
 	}
+	// FIXME: fallthrough intended?
+	// fallthrough
+
 	//// OUTER OBJECTS //////////////////
 	case 1: {
 		// No need to loop this one, since they only occur once and
@@ -298,6 +303,8 @@ void cGridMap2DRectIt::GetGridObject() {
 			} else {
 				mIt = mpGridMap->mvGrids[mlGridNum].m_mapObjects.begin();
 			}
+			// FIXME: fallthrough intended from here?
+			// fallthrough
 		} else {
 			// Log("Found the object in outer!\n");
 			mpObject = mIt->second;
@@ -307,6 +314,8 @@ void cGridMap2DRectIt::GetGridObject() {
 			break;
 		}
 	}
+	// FIXME: fallthrough intended?
+	// fallthrough
 
 	//// GRID OBJECTS //////////////////
 	case 2: {
