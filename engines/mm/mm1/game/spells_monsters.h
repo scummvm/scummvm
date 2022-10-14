@@ -187,6 +187,7 @@ protected:
 
 public:
 	SpellsMonsters();
+	virtual ~SpellsMonsters() {}
 
 	/**
 	 * Monster casts a spell

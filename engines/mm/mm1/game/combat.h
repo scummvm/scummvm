@@ -84,6 +84,14 @@ protected:
 	 */
 	Combat();
 
+	/**
+	 * Destructor
+	 */
+	virtual ~Combat() {}
+
+	/**
+	 * Sets the combat display mode
+	 */
 	virtual void setMode(Mode newMode) = 0;
 
 	/**
