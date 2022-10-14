@@ -277,7 +277,12 @@ Common::String LingoArchive::formatFunctionList(const char *prefix) {
 		if (scriptContexts[i].size() == 0)
 			result += Common::String::format("%s  [empty]\n", prefix);
 		for (ScriptContextHash::iterator it = scriptContexts[i].begin(); it != scriptContexts[i].end(); ++it) {
-			result += Common::String::format("%s  %d:\n", prefix, it->_key);
+			result += Common::String::format("%s  %d", prefix, it->_key);
+			CastMemberInfo *cmi = cast->getCastMemberInfo(it->_key);
+			if (cmi && !cmi->name.empty()) {
+				result += Common::String::format(" \"%s\"", cmi->name.c_str());
+			}
+			result += ":\n";
 			result += (*it->_value).formatFunctionList(Common::String::format("%s    ", prefix).c_str());
 		}
 	}
