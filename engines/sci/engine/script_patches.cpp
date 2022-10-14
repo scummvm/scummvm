@@ -7400,8 +7400,8 @@ static const uint16 lighthouseOpenSafeSpeedPatch[] = {
 // 1. When facing the ladder (scene 504) and there are 3 birds, exitRight:curPic
 //    is set to 7506 (no birds) instead of 7504 (left and broken center bird).
 // 2. When facing right of the perch and there are no birds (scene 502), there
-//    is code to handle the bird count being 0, and so exitLeft:curPic is set to
-//    4511 (left and broken center bird) instead of 501 (no birds).
+//    is no code to handle the bird count being 0, and so exitLeft:curPic is set
+//    to 4511 (left and broken center bird) instead of 501 (no birds).
 //
 // We fix this by setting the correct scene/pic view when facing the ladder and
 //  adding the missing bird count test when facing right of the perch.
