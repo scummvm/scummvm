@@ -552,6 +552,9 @@ void SceneScriptUG18::talkWithGuzza() {
 	Actor_Says(kActorGuzza, 900, 15);
 	Actor_Says(kActorGuzza, 910, 12);
 	Actor_Says(kActorGuzza, 920, 16);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorGuzza, 930, 12);
+	}
 	Actor_Says(kActorMcCoy, 5925, 14);
 	Actor_Says(kActorGuzza, 940, 14);
 	Actor_Says(kActorMcCoy, 5930, 18);
