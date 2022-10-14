@@ -41,6 +41,11 @@ protected:
 	bool cmdDumpMonsters(int argc, const char **argv);
 
 	/**
+	 * Dumps the item list
+	 */
+	bool cmdDumpItems(int argc, const char **argv);
+
+	/**
 	 * Prints a string from within a map's data segment
 	 */
 	bool cmdMapString(int argc, const char **argv);

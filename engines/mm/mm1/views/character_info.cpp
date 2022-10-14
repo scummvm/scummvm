@@ -323,7 +323,7 @@ void CharacterInfo::equipItem(uint index) {
 		break;
 	}
 
-	getItem(itemId);
+	g_globals->_items.getItem(itemId);
 	const Item &item = g_globals->_currItem;
 
 	if (equipError.empty() && (item._disablements & classBit))
@@ -451,7 +451,7 @@ void CharacterInfo::removeItem(uint index) {
 
 	Common::String removeError;
 
-	getItem(itemId);
+	g_globals->_items.getItem(itemId);
 	const Item &item = g_globals->_currItem;
 	if (item._equipMode == EQUIP_CURSED) {
 		removeError = STRING["dialogs.character.cursed"];
@@ -570,7 +570,7 @@ void CharacterInfo::tradeHowMuch() {
 }
 
 void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
-	Item *item = getItem(invEntry._id);
+	Item *item = g_globals->_items.getItem(invEntry._id);
 	Common::String msg;
 
 	if (!item->_effectId) {
@@ -612,7 +612,7 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 }
 
 void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
-	Item *item = getItem(invEntry._id);
+	Item *item = g_globals->_items.getItem(invEntry._id);
 	Common::String msg;
 
 	if (!item->_effectId) {

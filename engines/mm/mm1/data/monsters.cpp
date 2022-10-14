@@ -61,21 +61,6 @@ bool Monsters::load() {
 	return true;
 }
 
-uint Monsters::getNextValue(Common::String &line) {
-	// Verify the next comma
-	if (!line.hasPrefix(", "))
-		return 0;
-	line.deleteChar(0);
-	line.deleteChar(0);
-
-	// Get the value
-	int result = atoi(line.c_str());
-	while (!line.empty() && Common::isDigit(line.firstChar()))
-		line.deleteChar(0);
-
-	return result;
-}
-
 Graphics::ManagedSurface Monsters::getMonsterImage(int monsterNum) {
 	Common::SeekableReadStream *entry = _monPix.load(monsterNum);
 	entry->skip(2);

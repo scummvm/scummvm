@@ -23,6 +23,7 @@
 #define MM1_DATA_MONSTERS_H
 
 #include "mm/mm1/gfx/dta.h"
+#include "mm/mm1/data/text_parser.h"
 #include "common/str.h"
 #include "graphics/managed_surface.h"
 
@@ -72,15 +73,10 @@ struct Monster {
 	byte _field1f;
 };
 
-class Monsters {
+class Monsters : public TextParser {
 private:
 	Monster _monsters[MONSTERS_COUNT];
 	Gfx::DTA _monPix;
-private:
-	/**
-	 * Get the next value from a read line
-	 */
-	uint getNextValue(Common::String &line);
 public:
 	Monsters() : _monPix(MONPIX_DTA) {}
 
