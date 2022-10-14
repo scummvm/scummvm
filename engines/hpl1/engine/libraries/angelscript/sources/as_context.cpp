@@ -5781,20 +5781,25 @@ int as_powi(int base, int exponent, bool& isOverflow)
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 4:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 3:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 2:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 1:
 			if( exponent ) result *= base;
+			// fallthrough
 		default:
 			isOverflow = false;
 			return result;
@@ -5843,20 +5848,25 @@ asDWORD as_powu(asDWORD base, asDWORD exponent, bool& isOverflow)
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 4:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 3:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 2:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 1:
 			if( exponent ) result *= base;
+			// fallthrough
 		default:
 			isOverflow = false;
 			return result;
@@ -5919,24 +5929,30 @@ asINT64 as_powi64(asINT64 base, asINT64 exponent, bool& isOverflow)
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 5:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 4:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 3:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 2:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 1:
 			if( exponent ) result *= base;
+			// fallthrough
 		default:
 			isOverflow = false;
 			return result;
@@ -5985,24 +6001,30 @@ asQWORD as_powu64(asQWORD base, asQWORD exponent, bool& isOverflow)
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 5:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 4:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 3:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 2:
 			if( exponent & 1 ) result *= base;
 			exponent >>= 1;
 			base *= base;
+			// fallthrough
 		case 1:
 			if( exponent ) result *= base;
+			// fallthrough
 		default:
 			isOverflow = false;
 			return result;
