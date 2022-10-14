@@ -138,14 +138,19 @@ Common::String SpellCasting::getSpellError() const {
 	switch (_spellState) {
 	case SS_NOT_ENOUGH_SP:
 		msg = STRING["spells.not_enough_sp"];
+		break;
 	case SS_NOT_ENOUGH_GEMS:
 		msg = STRING["spells.not_enough_gems"];
+		break;
 	case SS_COMBAT_ONLY:
 		msg = STRING["spells.combat_only"];
+		break;
 	case SS_OUTDOORS_ONLY:
 		msg = STRING["spells.outdoors_only"];
+		break;
 	default:
 		msg = STRING["spells.done"];
+		break;
 	}
 
 	if (!g_globals->_inCombat)
