@@ -184,6 +184,7 @@ static const char *const selectorNameTable[] = {
 	"font",         // KQ7
 	"setHeading",   // KQ7
 	"newPic",       // Lighthouse
+	"start",        // Lighthouse
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
 	"showTitle",    // LSL6hires
@@ -323,6 +324,7 @@ enum ScriptPatcherSelectors {
 	SELECTOR_font,
 	SELECTOR_setHeading,
 	SELECTOR_newPic,
+	SELECTOR_start,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
 	SELECTOR_showTitle,
@@ -7349,6 +7351,47 @@ static const uint16 lighthouseCompassPatch[] = {
 	PATCH_END
 };
 
+// The script for opening the underwater safe has a timing bug that relies on
+//  the original interpreter being too slow to play the robot video at the
+//  specified frame rate. In ScummVM this causes the submarine arm animation to
+//  be out of sync with the safe door, repeat itself, and end on the wrong cel.
+//
+// openSafe:changeState(0) starts two animations: robot 596 (the safe door) and
+//  view 595 (the submarine arm). State 1 cues when the robot completes and
+//  resets the view's cel on the assumption that the view's cycler has already
+//  completed. But the robot is 50 frames at 2 ticks per frame (100 ticks) while
+//  the view is 39 ticks at 6 ticks per frame (234 ticks) so the robot should
+//  complete first. This worked in the original interpreter because it wasn't
+//  fast enough to run this scene at 2 ticks per frame and because Lighthouse's
+//  RobotPlayer script has a bug in its time calculations that amplifies delays
+//  when the specified frame rate can't be achieved. This combination caused the
+//  the robot to animate slower than specified and complete before the view.
+//
+// We fix this by lowering the robot's specified frame rate to the effective
+//  frame rate from the original.
+//
+// Applies to: All versions
+// Responsible Method: openSafe:changeState(0)
+// Fixes bug: #10226
+static const uint16 lighthouseOpenSafeSpeedSignature[] = {
+	0x39, SIG_SELECTOR8(init),             // pushi init
+	SIG_MAGICDWORD,
+	0x3c,                                  // dup
+	0x38, SIG_UINT16(0x0254),              // pushi 0254 [ view 585 ]
+	SIG_ADDTOOFFSET(+10),
+	0x38, SIG_SELECTOR16(start),           // pushi start
+	0x7a,                                  // push2
+	0x78,                                  // push1
+	0x39, 0x1e,                            // pushi 1e [ 30 frames per second (100 ticks) ]
+	SIG_END
+};
+
+static const uint16 lighthouseOpenSafeSpeedPatch[] = {
+	PATCH_ADDTOOFFSET(+21),
+	0x39, 0x0a,                            // pushi 0a [ 10 frames per second (300 ticks) ]
+	PATCH_END
+};
+
 // At the top of the roost tower there can be up to three mechanical birds, but
 //  they can appear and disappear inconsistently depending on which direction
 //  the player was facing before turning. rm510:changeScene has two bugs that
@@ -7425,6 +7468,7 @@ static const SciScriptPatcherEntry lighthouseSignatures[] = {
 	{  true,   360, "fix slow computer memory counter",            1, lighthouseMemoryCountSignature,   lighthouseMemoryCountPatch },
 	{  true,   510, "fix roost bird pic",                          1, lighthouseRoostBirdPicSignature1, lighthouseRoostBirdPicPatch1 },
 	{  true,   510, "fix roost bird pic",                          1, lighthouseRoostBirdPicSignature2, lighthouseRoostBirdPicPatch2 },
+	{  true,   700, "fix open safe speed",                         1, lighthouseOpenSafeSpeedSignature, lighthouseOpenSafeSpeedPatch },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
