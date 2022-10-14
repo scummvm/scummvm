@@ -360,7 +360,7 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 
 	setV1ColorTable(_renderMode);
 
-	_isRTL = (_language == Common::HE_ISR && (_game.heversion == 0 || _game.heversion >= 72)) 
+	_isRTL = (_language == Common::HE_ISR && (_game.heversion == 0 || _game.heversion >= 72))
 			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7)) && !(_game.features & GF_HE_NO_BIDI);
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
@@ -3144,13 +3144,13 @@ bool ScummEngine::isUsingOriginalGUI() {
 	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
 		return false;
 
+	if (_game.platform == Common::kPlatformNES)
+		return false;
+
 	if (_game.heversion != 0)
 		return false;
 
-	if (_game.version >= 0)
-		return _useOriginalGUI;
-
-	return false;
+	return _useOriginalGUI;
 }
 
 void ScummEngine::runBootscript() {
