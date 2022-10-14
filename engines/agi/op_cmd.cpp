@@ -32,7 +32,28 @@
 #include "agi/words.h"
 
 #include "common/random.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+
+namespace {
+// Creates a unique log file name each time this function is called.
+// We never want to override an existing log file, so here we create one
+// based on the current game and system time.
+//
+// For example: dumps/agi.kq.20221013214511.log
+Common::String generateLogFileName(Agi::AgiGame *state, Agi::AgiEngine *vm) {
+	TimeDate date;
+	vm->_system->getTimeAndDate(date, true);
+	return Common::String::format("dumps/agi.%s.%d%02d%02d%02d%02d%02d.log",
+								  vm->getTargetName().c_str(),
+								  date.tm_year + 1900,
+								  date.tm_mon + 1,
+								  date.tm_mday,
+								  date.tm_hour,
+								  date.tm_min,
+								  date.tm_sec);
+}
+} // namespace
 
 namespace Agi {
 
@@ -784,19 +805,23 @@ void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing
 }
 
-// The log command adds an entry to the game's log file. The log format is:
+// The log command logs adds an entry to the game's log file and the console.
+// Neither are enabled by default.
 //
-// Room <#>
-// Input line : <text>
-// <message>
+// * To log to the console, run ScummVM with the following arguments:
+//   * --debugflags=Scripts -d 1
+// * To log to the file, create the directory "dumps" in the current
+//   working directory.
 //
-// Note: If AGI encounters any file errors while trying to open or write to
-// the logfile, it just ignores the errors, and does not write the log file entry.
+// The log format is:
+//   Room <#>
+//   Input line : <text>
+//   <message>
 //
 // This is not yet a complete implementation of log(). There
-// are two follow-up items which are planned to be addressed.
+// is a follow-up item which is planned to be addressed.
 //
-// 1. No Log Formatting
+// == No Log Formatting ==
 // We just log the message literally without
 // processing. According to the docs, you can use variables in the message, like:
 //
@@ -810,12 +835,6 @@ void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             
 // %v<number>: at this place the output will include a decimal value of variable with the given number.
 // %w<number>: the text of the player - entered word with the given index number is inserted at this place. (The index is 'one based'; i.e.first word is % w1, second is % w2, etc.)
 //
-// 2. Logs not written to a file.
-// At the moment we are just logging to the console. To see
-// the logs, use the following arguments to scummvm:
-//
-// --debugflags=Scripts -d 1
-//
 void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 textNr = parameter[0];
 	if (state->_curLogic->texts != nullptr && (textNr - 1) <= state->_curLogic->numTexts) {
@@ -823,9 +842,26 @@ void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		const char *inputLine = (char *)vm->_text->_promptPrevious;
 		const char *message = state->_curLogic->texts[textNr - 1];
 
-		debugC(1, kDebugLevelScripts, "Room %hhu", currentRoom);
-		debugC(1, kDebugLevelScripts, "Input line : %s", inputLine);
-		debugC(1, kDebugLevelScripts, "%s", message);
+		Common::String logMessage = Common::String::format("Room %hhu\nInput line : %s\n%s\n",
+														   currentRoom,
+														   inputLine,
+														   message);
+
+		// Logs to the console. To see, use arguments: --debugflags=Scripts -d 1
+		debugCN(1, kDebugLevelScripts, "%s", logMessage.c_str());
+
+		Common::DumpFile *&dumpFile = vm->_logFile;
+		if (!dumpFile) {
+			dumpFile = new Common::DumpFile();
+			Common::String logFileName = generateLogFileName(state, vm);
+			dumpFile->open(logFileName);
+		}
+		// The logs will only be written if the "dumps" folder has been created by
+		// the user.
+		if (dumpFile->isOpen()) {
+			dumpFile->writeString(logMessage);
+			dumpFile->flush();
+		}
 	}
 }
 

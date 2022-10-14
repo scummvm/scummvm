@@ -847,6 +847,7 @@ public:
 	AgiLoader *_loader; // loader
 	GfxMenu *_menu;
 	SystemUI *_systemUI;
+	Common::DumpFile *_logFile; // File used for the log() agi command.
 
 	Common::Stack<ImageStackElement> _imageStack;
 
@@ -898,6 +899,8 @@ public:
 	void allowSynthetic(bool);
 	void processScummVMEvents();
 	void checkQuickLoad();
+
+	const Common::String getTargetName() const { return _targetName; }
 
 	// Objects
 public:
