@@ -24,6 +24,7 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/raw.h"
+#include "common/debug.h"
 #include "common/stream.h"
 #include "common/system.h"
 #include "common/textconsole.h"
@@ -114,6 +115,33 @@ MKVDecoder::~MKVDecoder() {
 	close();
 }
 
+long long audioChannels;
+
+static uint64 xiph_lace_value(byte **np) {
+	uint64 lace;
+	uint64 value;
+	byte *p = *np;
+
+	lace = *p++;
+	value = lace;
+	while (lace == 255) {
+		lace = *p++;
+		value += lace;
+	}
+
+	*np = p;
+
+	return value;
+}
+
+vorbis_dsp_state vorbisDspState;
+int64 audioNsPerByte;
+int64 audioNsPlayed;
+int64 audioNsBuffered;
+int64 audioBufferLen;
+bool movieSoundPlaying = false;
+int movieAudioIndex;
+
 bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
@@ -157,7 +185,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	vorbis_comment vorbisComment;
 	vorbis_block vorbisBlock;
 
-#if 0
 	while (i != j) {
 		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
 
@@ -168,31 +195,32 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		//const unsigned long long trackUid = pTrack->GetUid();
 		//const char* pTrackName = pTrack->GetNameAsUTF8();
 
-		if (trackType == VIDEO_TRACK && videoTrack < 0) {
+		if (trackType == mkvparser::Track::kVideo && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
-			const VideoTrack *const pVideoTrack = static_cast<const VideoTrack *>(pTrack);
+			const mkvparser::VideoTrack *const pVideoTrack = static_cast<const mkvparser::VideoTrack *>(pTrack);
 
 			const long long width = pVideoTrack->GetWidth();
 			const long long height = pVideoTrack->GetHeight();
 
 			const double rate = pVideoTrack->GetFrameRate();
 
+#if 0
 			if (rate > 0)
-				Init_Special_Timer(rate);
-
-			movieAspect = (float)width / height;
+				Init_Special_Timer(rate); // TODO
+#endif
+			warning("VideoTrack: %lld x %lld @ %g fps", width, height, rate);
 		}
 
-		if (trackType == AUDIO_TRACK && audioTrack < 0) {
+		if (trackType == mkvparser::Track::kAudio && audioTrack < 0) {
 			audioTrack = pTrack->GetNumber();
-			const AudioTrack *const pAudioTrack = static_cast<const AudioTrack *>(pTrack);
+			const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
 
 			audioChannels = pAudioTrack->GetChannels();
 			audioBitDepth = pAudioTrack->GetBitDepth();
 			audioSampleRate = pAudioTrack->GetSamplingRate();
 
-			uint audioHeaderSize;
-			const byte *audioHeader = pAudioTrack->GetCodecPrivate(audioHeaderSize);
+			size_t audioHeaderSize;
+			byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
 
 			if (audioHeaderSize < 1) {
 				warning("Strange audio track in movie.");
@@ -200,7 +228,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 				continue;
 			}
 
-			byte *p = (byte *)audioHeader;
+			byte *p = audioHeader;
 
 			uint count = *p++ + 1;
 			if (count != 3) {
@@ -248,11 +276,15 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			if (r)
 				warning("vorbis_block_init failed, error: %d", r);
 
+#if 0
 			ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
 			movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
+#endif
 
 			debug(1, "Movie sound inited.");
+#if 0
 			audio_queue_init(&audioQ);
+#endif
 			audioNsPerByte = (1000000000 / audioSampleRate) / (audioChannels * 2);
 			audioNsBuffered = 0;
 			audioBufferLen = audioChannels * audioSampleRate;
@@ -265,47 +297,53 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (audioTrack < 0)
 		error("Movie error: No sound found.");
 
+#if 0
 	video_queue_init(&videoQ);
+#endif
 
 	const unsigned long clusterCount = pSegment->GetCount();
 
 	if (clusterCount == 0) {
-		fatal("Movie error: Segment has no clusters.\n");
+		error("Movie error: Segment has no clusters.\n");
 	}
 
 	/* Initialize video codec */
-	if (vpx_codec_dec_init(&codec, interface, NULL, 0))
-		die_codec(&codec, "Failed to initialize decoder for movie.");
+	if (vpx_codec_dec_init(_codec, &vpx_codec_vp8_dx_algo, NULL, 0))
+		error("Failed to initialize decoder for movie.");
 
 	byte *frame = new byte[256 * 1024];
-	if (!checkNew(frame))
+	if (!frame)
 		return false;
 
 	const mkvparser::Cluster *pCluster = pSegment->GetFirst();
 
+#if 0
 	movieIsPlaying = playing;
 	movieIsEnding = 0;
+#endif
 
 	//const long long timeCode = pCluster->GetTimeCode();
 	long long time_ns = pCluster->GetTime();
 
-	const BlockEntry *pBlockEntry = pCluster->GetFirst();
+	const mkvparser::BlockEntry *pBlockEntry;
+	if (pCluster->GetFirst(pBlockEntry))
+		error("pCluster::GetFirst() failed");
 
 	if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
 		pCluster = pSegment->GetNext(pCluster);
 		if ((pCluster == NULL) || pCluster->EOS()) {
-			fatal("Error: No movie found in the movie file.");
+			error("Error: No movie found in the movie file.");
 		}
-		pBlockEntry = pCluster->GetFirst();
+		if (pCluster->GetFirst(pBlockEntry))
+			error("oCluster::GetFirst() failed");
 	}
-	const Block *pBlock = pBlockEntry->GetBlock();
+	const mkvparser::Block *pBlock = pBlockEntry->GetBlock();
 	long long trackNum = pBlock->GetTrackNumber();
 	unsigned long tn = static_cast<unsigned long>(trackNum);
-	const Track *pTrack = pTracks->GetTrackByNumber(tn);
+	const mkvparser::Track *pTrack = pTracks->GetTrackByNumber(tn);
 	long long trackType = pTrack->GetType();
 	int frameCount = pBlock->GetFrameCount();
 	time_ns = pBlock->GetTime(pCluster);
-#endif
 
 	return true;
 }
