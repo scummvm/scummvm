@@ -20,7 +20,9 @@
  */
 
 #include "sludge/sludge.h"
+#include "sludge/event.h"
 #include "sludge/fileset.h"
+#include "sludge/graphics.h"
 #include "sludge/movie.h"
 #include "sludge/newfatal.h"
 #include "sludge/sound.h"
@@ -333,6 +335,31 @@ int playMovie(int fileNumber) {
 	Common::SeekableSubReadStream video(stream, stream->pos(), stream->pos() + fsize);
 
 	decoder.loadStream(&video);
+
+
+	while (movieIsPlaying) {
+		g_sludge->_evtMan->checkInput();
+		if (g_sludge->_evtMan->quit())
+			break;
+
+		g_sludge->_evtMan->handleInput();
+
+		if (decoder.isVideoLoaded()) {
+			if (decoder.endOfVideo()) {
+				// Movie complete, so unload the movie
+				break;
+			} else if (decoder.needsUpdate()) {
+				const Graphics::Surface *s = decoder.decodeNextFrame();
+				if (s) {
+					// Transfer the next frame
+					assert(s->format.bytesPerPixel == 4);
+
+					g_system->copyRectToScreen(s->getPixels(), s->pitch, 0, 0, MIN<uint32>(s->w, g_sludge->_gfxMan->getWinWidth()), MIN<uint32>(s->h, g_sludge->_gfxMan->getWinHeight()));
+					g_system->updateScreen();
+				}
+			}
+		}
+	}
 
 	g_sludge->_resMan->finishAccess();
 	setResourceForFatal(-1);
