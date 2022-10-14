@@ -285,7 +285,7 @@ ScriptContext::ScriptContext(const ScriptContext &sc) : Object<ScriptContext>(sc
 ScriptContext::~ScriptContext() {}
 
 Common::String ScriptContext::asString() {
-	return Common::String::format("script: #%s %d %p", _name.c_str(), _inheritanceLevel, (void *)this);
+	return Common::String::format("script: %d \"%s\" %d %p", _id, _name.c_str(), _inheritanceLevel, (void *)this);
 }
 
 Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Common::Array<Common::String> *argNames, Common::Array<Common::String> *varNames) {
