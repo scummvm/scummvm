@@ -2120,7 +2120,7 @@ static const uint16 freddypharkasPatchMacEasterEggHang[] = {
 //  require precise placement to blend in with those backgrounds.
 //
 // The Mac easter egg adds such a view. View 275 contains a hand in the lake
-//  holding a Maintosh computer. Because this feature was developed against the
+//  holding a Macintosh computer. Because this feature was developed against the
 //  Mac interpreter, the y coordinate that achieved the water effect is really
 //  off by one. In our interpreter, which doesn't have this bug, the view
 //  appears one pixel lower than intended and doesn't match the background.
@@ -2493,7 +2493,7 @@ static const uint16 hoyle5PatchSetScale[] = {
 // In these two collections, the scripts for the other games have been removed.
 // Choosing any other game than the above results in a "No script found" error.
 // The original game did not show the game selection screen, as there were
-// direct shortucts to each game.
+// direct shortcuts to each game.
 // We do show the game selection screen for Children's Collection, thus we
 // disable all the games which are not included in this version:
 // - Hearts (script 300)
@@ -5315,7 +5315,7 @@ static const SciScriptPatcherEntry kq5Signatures[] = {
 // ===========================================================================
 // In the garden (room 480), when giving the milk bottle to one of the babies,
 // script 481 starts a looping a baby cry sound (cryMusic). However, that
-// particular sound has an overriden check() method that explicitly restarts
+// particular sound has an overridden check() method that explicitly restarts
 // the sound, even if it's set to be looped. Thus the same sound is played
 // twice, squelching all other sounds.
 //
@@ -7365,7 +7365,7 @@ static const uint16 lighthouseCompassPatch[] = {
 //  fast enough to run this scene at 2 ticks per frame and because Lighthouse's
 //  RobotPlayer script has a bug in its time calculations that amplifies delays
 //  when the specified frame rate can't be achieved. This combination caused the
-//  the robot to animate slower than specified and complete before the view.
+//  the robot to animate slower than specified and complete after the view.
 //
 // We fix this by lowering the robot's specified frame rate to the effective
 //  frame rate from the original.
@@ -8314,7 +8314,7 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 //  three times with no delay between the messages. In the original, each was
 //  visibly erased before the next because the interpreter drew directly to the
 //  screen. This created the necessary flicker effect indicating that the three
-//  identical messages were separte. In ScummVM there is no flicker because the
+//  identical messages were separate. In ScummVM there is no flicker because the
 //  window is updated with the screen buffer when processing events or between
 //  game cycles. The result is a single message box that appears to not respond
 //  to Enter or clicks until the third one dismisses it.
@@ -9669,7 +9669,7 @@ static const uint16 laurabow2CDPatchFixMuseumActorLoops2[] = {
 	PATCH_END
 };
 
-// When entering the main musem party room (w/ the golden Egyptian head), Laura
+// When entering the main museum party room (w/ the golden Egyptian head), Laura
 // is walking a bit into the room automatically. If you press a mouse button
 // while this is happening, you will get stuck inside that room and won't be
 // able to exit it anymore.
@@ -14239,9 +14239,9 @@ static const uint16 qfg3PatchChiefPriority[] = {
 };
 
 // There are 3 points that can't be achieved in the game. They should've been
-// awarded for telling Rakeesh and Kreesha (room 285) about the Simabni
+// awarded for telling Rakeesh and Kreesha (room 285) about the Simbani
 // initiation.
-// However the array of posibble messages the hero can tell in that room
+// However the array of possible messages the hero can tell in that room
 // (local[156]) is missing the "Tell about Initiation" message (#31) which
 // awards these points.
 // This patch adds the message to that array, thus allowing the hero to tell
@@ -14266,7 +14266,7 @@ static const uint16 qfg3SignatureMissingPoints1[] = {
 	SIG_UINT16(0xffd7),                 // -41 "Greet"
 	SIG_UINT16(0xffb4),                 // -76 "Say Good-bye"
 	SIG_UINT16(0x0001),                 //   1 "Tell about Tarna"
-	SIG_UINT16(0xffe2),                 // -30 "Tell about Simani"
+	SIG_UINT16(0xffe2),                 // -30 "Tell about Simbani"
 	SIG_UINT16(0xffb3),                 // -77 "Tell about Prisoner"
 	SIG_UINT16(0xffdf),                 // -33 "Dispelled Leopard Lady"
 	SIG_UINT16(0xffde),                 // -34 "Tell about Leopard Lady"
