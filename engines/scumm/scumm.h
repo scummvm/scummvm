@@ -1315,12 +1315,16 @@ protected:
 	virtual void drawDirtyScreenParts();
 	void updateDirtyScreen(VirtScreenNumber slot);
 	void drawStripToScreen(VirtScreen *vs, int x, int width, int top, int bottom);
+
+	void mac_markScreenAsDirty(int x, int y, int w, int h);
 	void mac_drawStripToScreen(VirtScreen *vs, int top, int x, int y, int width, int height);
 	void mac_drawLoomPracticeMode();
 	void mac_createIndy3TextBox(Actor *a);
 	void mac_drawIndy3TextBox();
 	void mac_undrawIndy3TextBox();
 	void mac_undrawIndy3CreditsText();
+	void mac_drawBorder(int x, int y, int w, int h, byte color);
+	Common::KeyState mac_showOldStyleBannerAndPause(const char *msg, int32 waitTime);
 
 	const byte *postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const;
 	const byte *ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const;

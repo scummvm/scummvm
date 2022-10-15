@@ -374,6 +374,10 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		return showBannerAndPause(0, waitTime, msg);
 	}
 
+	if (_macScreen) {
+		return mac_showOldStyleBannerAndPause(msg, waitTime);
+	}
+
 	char bannerMsg[512];
 	int bannerMsgWidth, bannerMsgHeight;
 	int startingPointY;
