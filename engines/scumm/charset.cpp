@@ -1514,7 +1514,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// (At the time of writing, there are still cases, at least in Loom,
 	// where text isn't correctly positioned.)
 
-	_correctFontSpacing = _vm->_game.id == GID_LOOM || _vm->_enableEnhancements;
+	_useCorrectFontSpacing = _vm->_game.id == GID_LOOM || _vm->_enableEnhancements;
 	_pad = false;
 	_glyphSurface = nullptr;
 
@@ -1523,13 +1523,10 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	// headline. The rest of the Mac GUI seems to use a system font, but
 	// that is not implemented.
 
-	// As far as I can tell, Loom uses only font size 13 for in-game text.
-	// The font is also provided in sizes 9 and 12, and it's possible that
-	// 12 is used for system messages, e.g. the original pause dialog. We
-	// don't support that.
-	//
-	// I have no idea what size 9 is used for. Possibly the original About
-	// dialog?
+	// As far as I can tell, Loom uses only font size 13 for in-game text,
+	// but size 12 is used for system messages, e.g. the original pause
+	// dialog. I have no idea what size 9 is used for. Possibly the
+	// original About dialog?
 	//
 	// As far as I can tell, the game does not use anything fancy, like
 	// different styles, and the font does not appear to have a kerning
@@ -1570,6 +1567,8 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 		} else {
 			if (fontSize == 13)
 				fontId = 0;
+			else if (fontSize == 12)
+				fontId = 1;
 		}
 		if (fontId != -1) {
 			Common::SeekableReadStream *font = resource.getResource(MKTAG('F', 'O', 'N', 'T'), (*assoc)[i]._fontID);
@@ -1606,6 +1605,9 @@ void CharsetRendererMac::setCurID(int32 id) {
 	if  (id == -1)
 		return;
 
+	_useRealCharWidth = (id & 0x80) != 0;
+	id = id & 0x7F;
+
 	// Indiana Jones and the Last Crusade uses font id 1 in a number of
 	// places. In the DOS version, this is a bolder font than font 0, but
 	// by the looks of it the Mac version uses the same font for both
@@ -1619,9 +1621,7 @@ void CharsetRendererMac::setCurID(int32 id) {
 		}
 	}
 
-	int maxId = (_vm->_game.id == GID_LOOM) ? 0 : 1;
-
-	if (id > maxId) {
+	if (id > 1) {
 		warning("CharsetRendererMac::setCurID(%d) - invalid charset", id);
 		id = 0;
 	}
@@ -1671,13 +1671,7 @@ int CharsetRendererMac::getFontHeight() const {
 
 int CharsetRendererMac::getCharWidth(uint16 chr) const {
 	int width = getDrawWidthIntern(chr);
-
-	// For font 1 in Last Crusade, we want the real width. It is used for
-	// text box titles, which are drawn outside the normal font rendering.
-	if (_curId == 0 || _vm->_game.id != GID_INDY3)
-		width /= 2;
-
-	return width;
+	return _useRealCharWidth ? width : width / 2;
 }
 
 void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
@@ -1785,7 +1779,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	// the width of a string (e.g. to center text on screen). It is,
 	// however, used for things like the Grail Diary.
 
-	if (!_correctFontSpacing && !drawToTextBox && (width & 1))
+	if (!_useCorrectFontSpacing && !drawToTextBox && (width & 1))
 		width++;
 
 	if (enableShadow) {
