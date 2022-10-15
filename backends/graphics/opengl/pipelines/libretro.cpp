@@ -136,8 +136,12 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	// Set input texture for 1st pass to texture to draw.
 	_passes[0].inputTexture = &texture;
 
-	// XXX:
-	setOutputSize(coordinates[6], coordinates[7]);
+	// Get back screen size from texture coordinates.
+	// FIXME: We assume a fixed set of triangle strip
+	GLfloat w, h;
+	w = coordinates[6] - coordinates[0];
+	h = coordinates[7] - coordinates[1];
+	setOutputSize(w, h);
 
 	// In case texture dimensions or viewport dimensions changed, we need to
 	// update the pipeline's state.
