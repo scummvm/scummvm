@@ -1811,6 +1811,9 @@ void LB::b_copyToClipBoard(int nargs) {
 }
 
 void LB::b_duplicate(int nargs) {
+	// Removed previous implementation since it copied only the reference to the cast
+	// and didn't actually duplicate it.
+	// See commit: 76e56f5b1f51a51d073ecf3970134d87964a4ea4
 	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
 	g_lingo->dropStack(nargs);
 }
