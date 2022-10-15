@@ -278,6 +278,7 @@ void OpenGLSdlGraphicsManager::updateScreen() {
 }
 
 void OpenGLSdlGraphicsManager::notifyVideoExpose() {
+	_forceRedraw = true;
 }
 
 void OpenGLSdlGraphicsManager::notifyResize(const int width, const int height) {
