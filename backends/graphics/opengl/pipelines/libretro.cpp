@@ -472,7 +472,7 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	Shader *const shader = pass.shader;
 
 	// Set output dimensions.
-	shader->setUniform("OutputSize", Math::Vector2d(_outputWidth, _outputHeight));
+	shader->setUniform("OutputSize", Math::Vector2d(pass.target->getTexture()->getLogicalWidth(), pass.target->getTexture()->getLogicalHeight()));
 
 	// Set texture dimensions for input, original, and the passes.
 	setShaderTexUniforms(Common::String(), shader, *pass.inputTexture);
