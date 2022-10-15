@@ -1811,34 +1811,8 @@ void LB::b_copyToClipBoard(int nargs) {
 }
 
 void LB::b_duplicate(int nargs) {
-	Datum to = g_lingo->pop();
-	Datum from = g_lingo->pop();
-
-	Movie *movie = g_director->getCurrentMovie();
-	Score *score = movie->getScore();
-
-	Frame *currentFrame = score->_frames[score->getCurrentFrame()];
-	CastMember *castMember = movie->getCastMember(from.asMemberID());
-	if (!castMember) {
-		warning("LB::b_duplicate: source cast member doesn't exist");
-		return;
-	}
-	auto channels = score->_channels;
-
-	castMember->setModified(true);
-	movie->createOrReplaceCastMember(to.asMemberID(), castMember);
-
-	for (uint16 i = 0; i < currentFrame->_sprites.size(); i++) {
-		if (currentFrame->_sprites[i]->_castId == to.asMemberID())
-			currentFrame->_sprites[i]->setCast(to.asMemberID());
-	}
-
-	for (uint i = 0; i < channels.size(); i++) {
-		if (channels[i]->_sprite->_castId == to.asMemberID()) {
-			channels[i]->_sprite->setCast(to.asMemberID());
-			channels[i]->_dirty = true;
-		}
-	}
+	g_lingo->printSTUBWithArglist("b_duplicate", nargs);
+	g_lingo->dropStack(nargs);
 }
 
 void LB::b_editableText(int nargs) {
@@ -2185,6 +2159,7 @@ void LB::b_move(int nargs) {
 	}
 
 	g_lingo->push(dest);
+	// Room for improvement, b_erase already marks the sprites as dirty
 	b_erase(1);
 	Score *score = movie->getScore();
 	uint16 frame = score->getCurrentFrame();

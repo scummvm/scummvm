@@ -332,6 +332,7 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 }
 
 CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
+	warning("Movie::createOrReplaceCastMember: stubbed: functions only handles create");
 	CastMember *result = nullptr;
 
 	if (_casts.contains(memberID.castLib)) {
