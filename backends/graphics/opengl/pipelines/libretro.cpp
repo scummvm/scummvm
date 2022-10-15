@@ -477,8 +477,12 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	// Set texture dimensions for input, original, and the passes.
 	setShaderTexUniforms(Common::String(), shader, *pass.inputTexture);
 	setShaderTexUniforms("Orig", shader, *_passes[0].inputTexture);
+	if (id >= 1) {
+		setShaderTexUniforms(Common::String::format("PassPrev%u", id), shader, *_passes[0].inputTexture);
+	}
 	for (uint passId = 1; id >= 2 && passId <= id - 1; ++passId) {
 		setShaderTexUniforms(Common::String::format("Pass%u", passId), shader, *_passes[passId].inputTexture);
+		setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId].inputTexture);
 	}
 
 	// TODO: We do not support Prev right now. Instead we always use the orig
@@ -561,8 +565,12 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 	}
 
 	// 2. Step: Assign pass inputs to samplers.
+	if (id >= 1) {
+		addTexSampler(Common::String::format("PassPrev%u", id), &sampler, TextureSampler::kTypePass, 0);
+	}
 	for (uint pass = 1; id >= 2 && pass <= id - 1; ++pass) {
 		addTexSampler(Common::String::format("Pass%u", pass), &sampler, TextureSampler::kTypePass, pass);
+		addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass);
 	}
 
 	// 3. Step: Assign original input to samplers.
