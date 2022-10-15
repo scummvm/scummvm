@@ -407,6 +407,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		const uint requestedWidth  = _currentState.gameWidth;
 		const uint requestedHeight = intToFrac(requestedWidth) / desiredAspect;
 
+		// Consider that shader is OK by default
+		// If loadVideoMode fails, we won't consider that shader was the error
+		bool shaderOK = true;
+
 		if (!loadVideoMode(requestedWidth, requestedHeight,
 #ifdef USE_RGB_COLOR
 		                   _currentState.gameFormat
@@ -414,7 +418,7 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		                   Graphics::PixelFormat::createFormatCLUT8()
 #endif
 		                  )
-			|| !loadShader(_currentState.shader)
+			|| !(shaderOK = loadShader(_currentState.shader))
 		   // HACK: This is really nasty but we don't have any guarantees of
 		   // a context existing before, which means we don't know the maximum
 		   // supported texture size before this. Thus, we check whether the
@@ -464,6 +468,12 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 					_transactionMode = kTransactionRollback;
 
 					// Try to set up the old state.
+					continue;
+				}
+				// If the shader failed and we had not a valid old state, try to unset the shader and do it again
+				if (!shaderOK && !_currentState.shader.empty()) {
+					_currentState.shader = "";
+					_transactionMode = kTransactionRollback;
 					continue;
 				}
 			}
