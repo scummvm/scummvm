@@ -125,8 +125,8 @@ static const KeysRecord NORMAL_RECORDS[] = {
 static const KeysRecord *MODE_RECORDS[5] = {
 	MENU_RECORDS,
 	PARTY_MENU_RECORDS,
-	COMBAT_MENU_RECORDS,
 	NORMAL_RECORDS,
+	COMBAT_MENU_RECORDS,
 	nullptr		// TODO: combat keybindings
 };
 
