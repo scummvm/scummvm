@@ -83,6 +83,7 @@ MODULE_OBJS := \
 	mm1/views_enh/character_info.o \
 	mm1/views_enh/dialogs.o \
 	mm1/views_enh/game.o \
+	mm1/views_enh/game_commands.o \
 	mm1/views_enh/game_messages.o \
 	mm1/views_enh/map.o \
 	mm1/views_enh/scroll_popup.o \
