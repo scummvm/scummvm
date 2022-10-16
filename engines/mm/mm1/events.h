@@ -315,6 +315,8 @@ public:
 			focusedView()->drawElements();
 	}
 
+	void addAction(KeybindingAction action);
+
 	void draw() override {}
 
 	bool tick() override {

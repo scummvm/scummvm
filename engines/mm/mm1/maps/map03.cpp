@@ -29,9 +29,12 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+static const byte MONSTER_ID1[8] = { 5, 10, 12, 2, 11, 16, 6, 12 };
+static const byte MONSTER_ID2[8] = { 2, 7, 7, 7, 5, 4, 3, 8 };
+
 void Map03::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 29; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
@@ -44,14 +47,183 @@ void Map03::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map03::special00() {
+	inn();
+}
+
+void Map03::special01() {
+	bool hasCourier = false;
+	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
+		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER2) != 0;
+	}
+
+	bool hasScroll = false;
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		for (uint j = 0; j < c._equipped.size() && !hasScroll; ++j) {
+			if (c._equipped[i]._id == 231) {
+				hasScroll = true;
+				c._gold += 1500;
+				break;
+			}
+		}
+	}
+
+	if (hasCourier && hasScroll) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			g_globals->_currCharacter = &c;
+			c._exp += 2500;
+
+			for (uint j = 0; j < c._equipped.size(); ++j) {
+				if (c._equipped[j]._id == 231) {
+					c._equipped.removeAt(j);
+					break;
+				}
+			}
+		}
+
+		InfoMessage info1(
+			0, 0, STRING["maps.map03.telgoran1"],
+			0, 1, STRING["maps.map03.zam2"],
+			[](const Common::KeyState &) {
+				InfoMessage info2(
+					0, 0, STRING["maps.map03.telgoran1"],
+					0, 1, STRING["maps.map03.zam3"],
+					[](const Common::KeyState &) {
+						g_events->close();
+					}
+				);
+
+				info2._largeMessage = true;
+				g_events->send(info2);
+			}
+		);
+		info1._largeMessage = true;
+		g_events->send(info1);
+
+	} else {
+		send(InfoMessage(
+			0, 0, STRING["maps.map03.telgoran1"],
+			0, 1, STRING["maps.map03.zam4"]
+		));
+	}
+}
+
+void Map03::special02() {
+	blacksmith();
+}
+
+void Map03::special03() {
+	market();
+}
+
+void Map03::special04() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map01.passage_outside"],
+		[]() {
+			g_maps->_mapPos = Common::Point(9, 11);
+			g_maps->changeMap(0x112, 2);
+		}
+	));
+}
+
+void Map03::special05() {
+	tavern();
+}
+
+void Map03::special06() {
+	temple();
+}
+
+void Map03::special07() {
+	trainer();
+}
+
+void Map03::special08() {
+	g_globals->_treasure[1] = 9;
+	g_globals->_treasure[4] = 200;
+	g_globals->_treasure[7] = 200;
+	g_events->addAction(KEYBIND_SEARCH);
+}
+
+void Map03::special09() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map01.stairs"],
+		[]() {
+			g_maps->_mapPos = Common::Point(14, 0);
+			g_maps->changeMap(5, 1);
+		}
+	));
+}
+
+void Map03::special10() {
+	showSign(STRING["maps.map03.market"]);
+}
+
+void Map03::special11() {
+	showSign(STRING["maps.map03.blacksmith"]);
+}
+
+void Map03::special12() {
+	showSign(STRING["maps.map03.inn"]);
+}
+
+void Map03::special13() {
+	_data[0x1d] = 80;
+	_data[0x2e] = 3;
+	_data[0x2f] = 3;
+}
+
+void Map03::special14() {
+	_data[0x1d] = 150;
+	_data[0x2e] = 2;
+	_data[0x2f] = 2;
+}
+
+void Map03::special15() {
+	assert(g_maps->_mapPos.x < 8);
+	g_maps->clearSpecial();
+	int monsterCount = (g_maps->_mapPos.x < 3) ? 1 :
+		getRandomNumber(8);
+
+	Game::Encounter &enc = g_globals->_encounters;
+	enc._levelIndex = 80;
+	enc._flag = true;
+
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(MONSTER_ID1[i], MONSTER_ID2[i]);
+
+	enc.execute();
+}
+
+void Map03::special18() {
+	showSign(STRING["maps.map03.temple"]);
+}
+
+void Map03::special20() {
+	showSign(STRING["maps.map03.tavern"]);
+}
+
+void Map03::special21() {
+	showSign(STRING["maps.map03.training"]);
+}
+
+void Map03::special27() {
+	showSign(STRING["maps.map03.forbidden_crypt"]);
+}
+
+void Map03::special28() {
+	showSign(STRING["maps.map03.eternal_rest"]);
 }
 
 } // namespace Maps
