@@ -116,8 +116,7 @@ void Map02::special07() {
 }
 
 void Map02::special08() {
-	// TODO: Show resistances
-
+	g_events->addView("Resistances");
 }
 
 void Map02::special09() {
