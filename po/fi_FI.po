@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-14 17:41+0000\n"
-"PO-Revision-Date: 2022-10-03 20:37+0000\n"
-"Last-Translator: LINUX-SAUNA <linuxsauna@protonmail.com>\n"
+"PO-Revision-Date: 2022-10-17 00:33+0000\n"
+"Last-Translator: Timo Mikkolainen <tmikkola@gmail.com>\n"
 "Language-Team: Finnish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/fi/>\n"
 "Language: fi_FI\n"
@@ -1078,8 +1078,6 @@ msgstr "Pieni"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1540
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Ei mikään"
@@ -1115,10 +1113,8 @@ msgid "the filtering setting could not be changed"
 msgstr "Suodatusasetusta ei voitu muuttaa"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "venytystilaa ei voitu vaihtaa"
+msgstr "sävytintä ei voitu vaihtaa"
 
 #: gui/options.cpp:1335
 msgid "Touchpad mouse mode"
@@ -1181,23 +1177,17 @@ msgid "Scaler:"
 msgstr "Skalaaja:"
 
 #: gui/options.cpp:1537
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Sävytin"
+msgstr "Sävytin:"
 
 #: gui/options.cpp:1537 gui/options.cpp:1539 gui/options.cpp:1540
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Määrittää polun lisätiedostoihin joita peli mahdollisesti käyttää"
+msgstr "Määrittää polun peliruudun skaalaukseen käytetylle sävyttimelle"
 
 #: gui/options.cpp:1539
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Tallennuskansio:"
+msgstr "Sävytinkansio:"
 
 #: gui/options.cpp:1546 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1970,10 +1960,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Valitse /root/ hakemisto tiedostonhallinnalle"
 
 #: gui/options.cpp:3068
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Valitse teema"
+msgstr "Valitse sävytin"
 
 #: gui/options.cpp:3161
 msgid ""
@@ -2036,11 +2024,13 @@ msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
+"Näkyvissä pitäisi olla testikuvio.\n"
+"Haluatko pitää nämä sävyttimen skaalausasetukset?"
 
 #: gui/options.cpp:3649
 #, c-format
 msgid "Reverting automatically in %d seconds"
-msgstr ""
+msgstr "Palautetaan asetukset automaattisesti %d sekunnin kuluttua"
 
 #: gui/predictivedialog.cpp:66
 msgid "Enter Text"
