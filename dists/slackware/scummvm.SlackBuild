@@ -9,7 +9,7 @@ if [ "$TMP" = "" ]; then
 fi
 PKG=$TMP/package-scummvm
 
-VERSION=2.6.1pre
+VERSION=2.6.2pre
 ARCH=i486
 BUILD=1
 
