@@ -767,7 +767,8 @@ void ScummEngine_v5::o5_animateActor() {
 	// animateCostume(31,255), with 86 and 31 being script numbers used as
 	// (way out of range) actor numbers. This seems to be yet another script
 	// bug which the original engine let slip by.
-	if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 206 && _currentRoom == 17 && (act == 31 || act == 86)) {
+	// For more information about why this happens, see o5_getActorRoom().
+	if (!isValidActor(act)) {
 		return;
 	}
 
