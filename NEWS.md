@@ -1,7 +1,7 @@
 For a more comprehensive changelog of the latest experimental code, see:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.6.1 (2022-XX-XX)
+#### 2.6.1 "Incremental Escapism" (2022-10-31)
 
  General:
    - Various improvements to the icon-based grid view in the ScummVM launcher.

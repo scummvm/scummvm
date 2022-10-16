@@ -1,7 +1,7 @@
 Umfangreichere Informationen über die Änderungen des aktuellen Codes findest Du unter:
         https://github.com/scummvm/scummvm/commits/
 
-#### 2.6.1 (XX.XX.2022)
+#### 2.6.1 "Incremental Escapism" (31.10.2022)
 
  Allgemein:
    - Verschiedene Verbesserungen für die icon-basierte Ansicht des Launchers vorgenommen.
