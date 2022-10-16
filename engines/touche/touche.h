@@ -36,12 +36,12 @@
 #include "touche/console.h"
 
 /**
- * This is the namespace of the Touche engine.
+ * This is the namespace of the Touché engine.
  *
  * Status of this engine: ???
  *
  * Games using this engine:
- * - Touche: The Adventures of the Fifth Musketeer
+ * - Touché: The Adventures of the Fifth Musketeer
  */
 namespace Touche {
 

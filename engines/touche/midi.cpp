@@ -85,7 +85,7 @@ void MidiPlayer::setVolume(int volume) {
 	// transmit the volume change, even if the current _masterVolume
 	// equals the new master volume. This *could* make a difference in
 	// some situations.
-	// So, we should determine whether Touche requires this behavioral
+	// So, we should determine whether Touché requires this behavioral
 	// difference; and maybe also if other engines could benefit from it
 	// (as hypothetically, it might fix some subtle bugs?)
 	_masterVolume = CLIP(volume, 0, 255);
