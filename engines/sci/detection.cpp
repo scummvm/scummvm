@@ -80,7 +80,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle1",          "Hoyle Official Book of Games: Volume 1"},
 	{"hoyle2",          "Hoyle Official Book of Games: Volume 2"},
 	{"kq4sci",          "King's Quest IV: The Perils of Rosella"},	// Note: There was also an AGI version of this
-	{"laurabow",        "Laura Bow: The Colonel's Bequest"},
+	{"laurabow",        "Laura Bow I: The Colonel's Bequest"},
 	{"lsl2",            "Leisure Suit Larry 2: Goes Looking for Love (in Several Wrong Places)"},
 	{"lsl3",            "Leisure Suit Larry 3: Passionate Patti in Pursuit of the Pulsating Pectorals"},
 	{"mothergoose",     "Mixed-Up Mother Goose"},
@@ -119,7 +119,7 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"hoyle4",          "Hoyle Classic Card Games"},
 	{"inndemo",         "ImagiNation Network (INN) Demo"},
 	{"kq6",             "King's Quest VI: Heir Today, Gone Tomorrow"},
-	{"laurabow2",       "Roberta Williams' Laura Bow in The Dagger of Amon Ra"}, //also called Laura Bow II
+	{"laurabow2",       "Laura Bow II: The Dagger of Amon Ra"}, 
 	{"qfg1vga",         "Quest for Glory I: So You Want to Be a Hero"},	// Note: There was also a SCI0 version of this (further up) called Hero's Quest: So You Want to Be a Hero
 	{"qfg3",            "Quest for Glory III: Wages of War"},
 	{"sq5",             "Space Quest V: The Next Mutation"},
