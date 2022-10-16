@@ -116,13 +116,13 @@ static const char *g_compatFragment =
 LibRetroPipeline::LibRetroPipeline()
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _shaderPreset(nullptr), _applyProjectionChanges(false),
-	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0), _frameCount(0) {
 }
 
 LibRetroPipeline::LibRetroPipeline(const Common::FSNode &shaderPreset)
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _shaderPreset(nullptr), _applyProjectionChanges(false),
-	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0) {
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0), _frameCount(0) {
 	open(shaderPreset);
 }
 
@@ -168,6 +168,8 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	ShaderPipeline::activateInternal();
 	ShaderPipeline::drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates, texcoords);
 	ShaderPipeline::deactivateInternal();
+
+	_frameCount++;
 }
 
 void LibRetroPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
@@ -393,6 +395,8 @@ bool LibRetroPipeline::loadPasses() {
 		_passes.push_back(Pass(i, shader, target));
 		Pass &pass = _passes[_passes.size() - 1];
 		const uint passId = _passes.size() - 1;
+
+		pass.hasFrameCount = shader->getUniformLocation("FrameCount") != -1;
 
 		pass.buildTexCoords(passId, aliases);
 		pass.buildTexSamplers(passId, _textures, aliases);
@@ -641,6 +645,14 @@ void LibRetroPipeline::renderPass(const Pass &pass) {
 	// Activate shader and framebuffer to be used for rendering.
 	pass.shader->use();
 	setFramebuffer(pass.target);
+
+	if (pass.hasFrameCount) {
+		uint frameCount = _frameCount;
+		if (pass.shaderPass->frameCountMod) {
+			frameCount %= pass.shaderPass->frameCountMod;
+		}
+		pass.shader->setUniform("FrameCount", frameCount);
+	}
 
 	// Activate attribute arrays and setup matching attributes.
 	renderPassSetupCoordinates(pass);

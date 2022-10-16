@@ -91,6 +91,8 @@ private:
 	uint _outputWidth;
 	uint _outputHeight;
 
+	uint _frameCount;
+
 	struct Texture {
 		Texture() : textureData(nullptr), glTexture(nullptr) {}
 		Texture(Graphics::Surface *tD, GLTexture *glTex) : textureData(tD), glTexture(glTex) {}
@@ -107,10 +109,10 @@ private:
 	struct Pass {
 		Pass()
 			: shaderPass(nullptr), shader(nullptr), target(nullptr),
-			  texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord() {}
+			  texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord(), hasFrameCount(false) {}
 		Pass(const LibRetro::ShaderPass *sP, Shader *s, TextureTarget *t)
 			: shaderPass(sP), shader(s), target(t), texCoords(),
-			  texSamplers(), inputTexture(nullptr), vertexCoord() {}
+			  texSamplers(), inputTexture(nullptr), vertexCoord(), hasFrameCount(false) {}
 
 		const LibRetro::ShaderPass *shaderPass;
 		Shader *shader;
@@ -230,6 +232,12 @@ private:
 		 * Vertex coordinates used for drawing.
 		 */
 		GLfloat vertexCoord[2*4];
+
+		/**
+		 * Whether the shader has a FrameCount uniform or not
+		 * Allows to speed up if it is not here
+		 */
+		bool hasFrameCount;
 	};
 
 	typedef Common::Array<Pass> PassArray;
