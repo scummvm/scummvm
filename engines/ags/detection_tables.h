@@ -352,7 +352,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "qfg2agdi", "Quest for Glory II: Trial by Fire Remake" },
 
 	// Infamous Adventures games. Likewise
-	{ "sq2fg", "Space Quest for Glory" },
+	{ "sq2fg", "Space Quest for Glory" }, 
 	{ "sq2vga", "Space Quest II - Vohaul's Revenge VGA Remake" },
 	{ "kq3vga", "King's Quest III: To Heir is Human VGA Remake" },
 
