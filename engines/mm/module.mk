@@ -50,6 +50,7 @@ MODULE_OBJS := \
 	mm1/views/locations/tavern.o \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
+	mm1/views/maps/resistances.o \
 	mm1/views/spells/spell_view.o \
 	mm1/views/spells/cast_spell.o \
 	mm1/views/spells/detect_magic.o \
