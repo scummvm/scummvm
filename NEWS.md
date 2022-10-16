@@ -78,7 +78,7 @@ For a more comprehensive changelog of the latest experimental code, see:
    - Fixed recenter the screen on activating an inventory item
    - Fixed pressing W to talk to people also makes you jump
 
-#### 2.6.1 (2022-XX-XX)
+#### 2.6.1 "Incremental Escapism" (2022-10-31)
 
  General:
    - Various improvements to the icon-based grid view in the ScummVM launcher.
