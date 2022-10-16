@@ -51,6 +51,7 @@ private:
 	bool lookUpValue(const Common::String &key, FilteringMode *value, const FilteringMode defaultValue);
 	bool lookUpValue(const Common::String &key, ScaleType *value, const ScaleType defaultValue);
 	bool lookUpValueScale(const Common::String &key, float *floatValue, uint *uintValue, const ScaleType scaleType);
+	bool lookUpValue(const Common::String &key, WrapMode *value, const WrapMode defaultValue);
 
 	template<typename T, typename DefaultT>
 	bool lookUpValue(const Common::String &key, T *value, const DefaultT &defaultValue) {
@@ -285,6 +286,31 @@ bool PresetParser::lookUpValueScale(const Common::String &key, float *floatValue
 	}
 }
 
+bool PresetParser::lookUpValue(const Common::String &key, WrapMode *value, const WrapMode defaultValue) {
+	StringMap::const_iterator iter = _entries.find(key);
+	if (iter != _entries.end()) {
+		if (iter->_value == "clamp_to_border") {
+			*value = kWrapModeBorder;
+			return true;
+		} else if (iter->_value == "clamp_to_edge") {
+			*value = kWrapModeEdge;
+			return true;
+		} else if (iter->_value == "repeat") {
+			*value = kWrapModeRepeat;
+			return true;
+		} else if (iter->_value == "mirrored_repeat") {
+			*value = kWrapModeMirroredRepeat;
+			return true;
+		} else {
+			_errorDesc = "Invalid wrap mode for key '" + key + "': '" + iter->_value + '\'';
+			return false;
+		}
+	} else {
+		*value = defaultValue;
+		return true;
+	}
+}
+
 bool PresetParser::parseTextures() {
 	Common::String textures;
 	if (!lookUpValue("textures", &textures)) {
@@ -314,7 +340,12 @@ bool PresetParser::parseTexture(const Common::String &id) {
 		return false;
 	}
 
-	_shader->textures.push_back(ShaderTexture(id, fileName, filteringMode));
+	WrapMode wrapMode;
+	if (!lookUpValue(id + "_wrap_mode", &wrapMode, kWrapModeBorder)) {
+		return false;
+	}
+
+	_shader->textures.push_back(ShaderTexture(id, fileName, filteringMode, wrapMode));
 	return true;
 }
 
@@ -348,6 +379,10 @@ bool PresetParser::parsePass(const uint id, const bool isLast) {
 	}
 
 	if (!lookUpValue(passKey("filter_linear"), &pass.filteringMode, kFilteringModeUnspecified)) {
+		return false;
+	}
+
+	if (!lookUpValue(passKey("wrap_mode"), &pass.wrapMode, kWrapModeBorder)) {
 		return false;
 	}
 

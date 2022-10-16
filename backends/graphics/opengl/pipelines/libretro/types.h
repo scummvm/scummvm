@@ -23,6 +23,7 @@
 #define BACKENDS_GRAPHICS_OPENGL_PIPELINES_LIBRETRO_TYPES_H
 
 #include "graphics/opengl/system_headers.h"
+#include "backends/graphics/opengl/texture.h"
 
 #if !USE_FORCED_GLES
 #include "common/str.h"
@@ -40,12 +41,13 @@ enum FilteringMode {
 
 struct ShaderTexture {
 	ShaderTexture() : id(), fileName(), filteringMode(kFilteringModeUnspecified) {}
-	ShaderTexture(const Common::String &i, const Common::String &fN, FilteringMode fM)
-		: id(i), fileName(fN), filteringMode(fM) {}
+	ShaderTexture(const Common::String &i, const Common::String &fN, FilteringMode fM, WrapMode wM)
+		: id(i), fileName(fN), filteringMode(fM), wrapMode(wM) {}
 
 	Common::String id;
 	Common::String fileName;
 	FilteringMode filteringMode;
+	WrapMode wrapMode;
 };
 
 enum ScaleType {
@@ -83,6 +85,7 @@ struct ShaderPass {
 	Common::String alias;
 
 	FilteringMode filteringMode;
+	WrapMode wrapMode;
 	bool mipmapInput;
 
 	bool floatFBO;

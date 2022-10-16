@@ -249,6 +249,7 @@ bool LibRetroPipeline::loadTextures() {
 		}
 
 		texture.glTexture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
+		texture.glTexture->setWrapMode(i->wrapMode);
 		_textures.push_back(texture);
 	}
 	return true;
@@ -398,6 +399,7 @@ bool LibRetroPipeline::loadPasses() {
 		if (passId > 0) {
 			GLTexture *const texture = _passes[passId - 1].target->getTexture();
 			texture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
+			texture->setWrapMode(i->wrapMode);
 			pass.inputTexture = texture;
 		}
 	}
