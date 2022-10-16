@@ -51,11 +51,11 @@ static const DebugChannelDef debugFlagList[] = {
 
 static const PlainGameDescriptor agosGames[] = {
 	{"pn", "Personal Nightmare"},
-	{"elvira1", "Elvira - Mistress of the Dark"},
-	{"elvira2", "Elvira II - The Jaws of Cerberus"},
+	{"elvira1", "Elvira: Mistress of the Dark"},
+	{"elvira2", "Elvira II: The Jaws of Cerberus"},
 	{"waxworks", "Waxworks"},
-	{"simon1", "Simon the Sorcerer 1"},
-	{"simon2", "Simon the Sorcerer 2"},
+	{"simon1", "Simon the Sorcerer"},
+	{"simon2", "Simon the Sorcerer II: The Lion, the Wizard and the Wardrobe"},
 	{"feeble", "The Feeble Files"},
 	{"dimp", "Demon in my Pocket"},
 	{"jumble", "Jumble"},
