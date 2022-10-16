@@ -596,6 +596,14 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 void LibRetroPipeline::Pass::addTexSampler(const Common::String &prefix, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId) {
 	const Common::String id = prefixIsId ? prefix : (prefix + "Texture");
 
+	/* Search in the samplers if we already have one for the texture */
+	for(TextureSamplerArray::iterator it = texSamplers.begin(); it != texSamplers.end(); it++) {
+		if (it->type == type && it->index == index) {
+			shader->setUniform(id, it->unit);
+			return;
+		}
+	}
+
 	if (shader->setUniform(id, *unit)) {
 		texSamplers.push_back(TextureSampler((*unit)++, type, index));
 	}
