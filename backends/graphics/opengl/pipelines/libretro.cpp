@@ -478,11 +478,12 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	setShaderTexUniforms(Common::String(), shader, *pass.inputTexture);
 	setShaderTexUniforms("Orig", shader, *_passes[0].inputTexture);
 	if (id >= 1) {
-		setShaderTexUniforms(Common::String::format("PassPrev%u", id), shader, *_passes[0].inputTexture);
-	}
-	for (uint passId = 1; id >= 2 && passId <= id - 1; ++passId) {
-		setShaderTexUniforms(Common::String::format("Pass%u", passId), shader, *_passes[passId].inputTexture);
-		setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId].inputTexture);
+		setShaderTexUniforms(Common::String::format("PassPrev%u", id + 1), shader, *_passes[0].inputTexture);
+		for (uint passId = 0; passId < id; ++passId) {
+			setShaderTexUniforms(Common::String::format("Pass%u", passId + 1), shader, *_passes[passId].inputTexture);
+			// PassPrev is (id + 1) - (passId + 1)
+			setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId].inputTexture);
+		}
 	}
 
 	// TODO: We do not support Prev right now. Instead we always use the orig
@@ -539,8 +540,8 @@ void LibRetroPipeline::Pass::buildTexCoords(const uint id) {
 	addTexCoord("OrigTexCoord", TexCoordAttribute::kTypePass, 0);
 	addTexCoord("LUTTexCoord", TexCoordAttribute::kTypeTexture, 0);
 
-	for (uint pass = 1; id >= 2 && pass <= id - 1; ++pass) {
-		addTexCoord(Common::String::format("Pass%uTexCoord", pass), TexCoordAttribute::kTypePass, pass);
+	for (uint pass = 0; pass < id; ++pass) {
+		addTexCoord(Common::String::format("Pass%uTexCoord", pass + 1), TexCoordAttribute::kTypePass, pass);
 	}
 
 	addTexCoord("PrevTexCoord", TexCoordAttribute::kTypePrev, 0);
@@ -567,10 +568,11 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 	// 2. Step: Assign pass inputs to samplers.
 	if (id >= 1) {
 		addTexSampler(Common::String::format("PassPrev%u", id), &sampler, TextureSampler::kTypePass, 0);
-	}
-	for (uint pass = 1; id >= 2 && pass <= id - 1; ++pass) {
-		addTexSampler(Common::String::format("Pass%u", pass), &sampler, TextureSampler::kTypePass, pass);
-		addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass);
+		for (uint pass = 0; pass < id; ++pass) {
+			addTexSampler(Common::String::format("Pass%u", pass + 1), &sampler, TextureSampler::kTypePass, pass);
+			// PassPrev is (id + 1) - (pass + 1)
+			addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass);
+		}
 	}
 
 	// 3. Step: Assign original input to samplers.
