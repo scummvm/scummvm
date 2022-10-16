@@ -480,9 +480,10 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 	if (id >= 1) {
 		setShaderTexUniforms(Common::String::format("PassPrev%u", id + 1), shader, *_passes[0].inputTexture);
 		for (uint passId = 0; passId < id; ++passId) {
-			setShaderTexUniforms(Common::String::format("Pass%u", passId + 1), shader, *_passes[passId].inputTexture);
-			// PassPrev is (id + 1) - (passId + 1)
-			setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId].inputTexture);
+			// Pass1 is the output texture of first pass, ie. the input texture of second pass (indexed 1)
+			setShaderTexUniforms(Common::String::format("Pass%u", passId + 1), shader, *_passes[passId + 1].inputTexture);
+			// PassPrev1 is the output texture of last pass, ie. the input texture of current pass
+			setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId + 1].inputTexture);
 		}
 	}
 
@@ -540,8 +541,14 @@ void LibRetroPipeline::Pass::buildTexCoords(const uint id) {
 	addTexCoord("OrigTexCoord", TexCoordAttribute::kTypePass, 0);
 	addTexCoord("LUTTexCoord", TexCoordAttribute::kTypeTexture, 0);
 
-	for (uint pass = 0; pass < id; ++pass) {
-		addTexCoord(Common::String::format("Pass%uTexCoord", pass + 1), TexCoordAttribute::kTypePass, pass);
+	if (id >= 1) {
+		addTexCoord(Common::String::format("PassPrev%uTexCoord", id + 1), TexCoordAttribute::kTypePass, 0);
+		for (uint pass = 0; pass < id; ++pass) {
+			// Pass1TexCoord is the output texture coords of first pass, ie. the input texture coords of second pass (indexed 1)
+			addTexCoord(Common::String::format("Pass%uTexCoord", pass + 1), TexCoordAttribute::kTypePass, pass + 1);
+			// PassPrev1TexCoord is the output texture coords of last pass, ie. the input texture coords of current pass
+			addTexCoord(Common::String::format("PassPrev%uTexCoord", id - pass), TexCoordAttribute::kTypePass, pass + 1);
+		}
 	}
 
 	addTexCoord("PrevTexCoord", TexCoordAttribute::kTypePrev, 0);
@@ -567,11 +574,12 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 
 	// 2. Step: Assign pass inputs to samplers.
 	if (id >= 1) {
-		addTexSampler(Common::String::format("PassPrev%u", id), &sampler, TextureSampler::kTypePass, 0);
+		addTexSampler(Common::String::format("PassPrev%u", id + 1), &sampler, TextureSampler::kTypePass, 0);
 		for (uint pass = 0; pass < id; ++pass) {
-			addTexSampler(Common::String::format("Pass%u", pass + 1), &sampler, TextureSampler::kTypePass, pass);
-			// PassPrev is (id + 1) - (pass + 1)
-			addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass);
+			// Pass1 is the output texture of first pass, ie. the input texture of second pass (indexed 1)
+			addTexSampler(Common::String::format("Pass%u", pass + 1), &sampler, TextureSampler::kTypePass, pass + 1);
+			// PassPrev1 is the output texture of last pass, ie. the input texture of current pass
+			addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass + 1);
 		}
 	}
 
