@@ -342,6 +342,11 @@ bool PresetParser::parsePass(const uint id, const bool isLast) {
 		return false;
 	}
 
+	if (!lookUpValue(passKey("alias"), &pass.alias)) {
+		_errorDesc.clear();
+		pass.alias.clear();
+	}
+
 	if (!lookUpValue(passKey("filter_linear"), &pass.filteringMode, kFilteringModeUnspecified)) {
 		return false;
 	}

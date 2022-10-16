@@ -164,7 +164,7 @@ private:
 		 *
 		 * @param id Identifier of the current pass.
 		 */
-		void buildTexCoords(const uint id);
+		void buildTexCoords(const uint id, const Common::StringArray &aliases);
 
 		void addTexCoord(const Common::String &prefix, const TexCoordAttribute::Type type, const uint index);
 
@@ -217,7 +217,7 @@ private:
 		 * @param id       Identifier of the current pass.
 		 * @param textures Array of shader textures available.
 		 */
-		void buildTexSamplers(const uint id, const TextureArray &textures);
+		void buildTexSamplers(const uint id, const TextureArray &textures, const Common::StringArray &aliases);
 
 		void addTexSampler(const Common::String &name, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId = false);
 

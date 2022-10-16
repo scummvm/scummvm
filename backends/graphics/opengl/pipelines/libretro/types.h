@@ -80,6 +80,7 @@ inline void applyScale(const ScaleType type,
 
 struct ShaderPass {
 	Common::String fileName;
+	Common::String alias;
 
 	FilteringMode filteringMode;
 	bool mipmapInput;

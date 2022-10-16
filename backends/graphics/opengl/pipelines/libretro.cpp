@@ -278,6 +278,20 @@ static void stripShaderParameters(char *source, UniformsMap &uniforms) {
 }
 
 bool LibRetroPipeline::loadPasses() {
+	// First of all, build the aliases list
+	Common::String aliasesDefines;
+	Common::StringArray aliases;
+
+	aliases.reserve(_shaderPreset->passes.size());
+	for (LibRetro::ShaderPreset::PassArray::const_iterator
+		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
+		 i != end; ++i) {
+		aliases.push_back(i->alias);
+		if (!i->alias.empty()) {
+			aliasesDefines += Common::String::format("#define %s_ALIAS\n", i->alias.c_str());
+		}
+	}
+
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
@@ -335,8 +349,6 @@ bool LibRetroPipeline::loadPasses() {
 			shimsDetected += "#define HAS_ROUND\n";
 		}
 
-		// TODO: Handle alias defines
-
 		Shader *shader = new Shader;
 
 		const char *const vertexSources[] = {
@@ -344,7 +356,7 @@ bool LibRetroPipeline::loadPasses() {
 			"#define VERTEX\n#define PARAMETER_UNIFORM\n",
 			shimsDetected.c_str(),
 			g_compatVertex,
-			// TODO: alias defines
+			aliasesDefines.c_str(),
 			shaderFileStart,
 		};
 		const char *const fragmentSources[] = {
@@ -352,10 +364,9 @@ bool LibRetroPipeline::loadPasses() {
 			"#define FRAGMENT\n#define PARAMETER_UNIFORM\n",
 			shimsDetected.c_str(),
 			g_compatFragment,
-			// TODO: alias defines
+			aliasesDefines.c_str(),
 			shaderFileStart,
 		};
-
 
 		if (!shader->loadFromStringsArray(fileNode.getName(),
 				 ARRAYSIZE(vertexSources), vertexSources,
@@ -382,8 +393,8 @@ bool LibRetroPipeline::loadPasses() {
 		Pass &pass = _passes[_passes.size() - 1];
 		const uint passId = _passes.size() - 1;
 
-		pass.buildTexCoords(passId);
-		pass.buildTexSamplers(passId, _textures);
+		pass.buildTexCoords(passId, aliases);
+		pass.buildTexSamplers(passId, _textures, aliases);
 		if (passId > 0) {
 			GLTexture *const texture = _passes[passId - 1].target->getTexture();
 			texture->enableLinearFiltering(i->filteringMode == LibRetro::kFilteringModeLinear);
@@ -484,6 +495,11 @@ void LibRetroPipeline::setupPassUniforms(const uint id) {
 			setShaderTexUniforms(Common::String::format("Pass%u", passId + 1), shader, *_passes[passId + 1].inputTexture);
 			// PassPrev1 is the output texture of last pass, ie. the input texture of current pass
 			setShaderTexUniforms(Common::String::format("PassPrev%u", id - passId), shader, *_passes[passId + 1].inputTexture);
+
+			// If pass has an alias, define the uniforms using the input texture of the next pass
+			if (!_passes[passId].shaderPass->alias.empty()) {
+				setShaderTexUniforms(_passes[passId].shaderPass->alias, shader, *_passes[passId + 1].inputTexture);
+			}
 		}
 	}
 
@@ -534,7 +550,7 @@ LibRetroPipeline::Texture LibRetroPipeline::loadTexture(const Common::FSNode &fi
 	return Texture();
 }
 
-void LibRetroPipeline::Pass::buildTexCoords(const uint id) {
+void LibRetroPipeline::Pass::buildTexCoords(const uint id, const Common::StringArray &aliases) {
 	texCoords.clear();
 
 	addTexCoord("TexCoord", TexCoordAttribute::kTypePass, id);
@@ -548,6 +564,11 @@ void LibRetroPipeline::Pass::buildTexCoords(const uint id) {
 			addTexCoord(Common::String::format("Pass%uTexCoord", pass + 1), TexCoordAttribute::kTypePass, pass + 1);
 			// PassPrev1TexCoord is the output texture coords of last pass, ie. the input texture coords of current pass
 			addTexCoord(Common::String::format("PassPrev%uTexCoord", id - pass), TexCoordAttribute::kTypePass, pass + 1);
+
+			// If pass has an alias, define the uniforms using the input texture coords of the next pass
+			if (!aliases[pass].empty()) {
+				addTexCoord(Common::String::format("%sTexCoord", aliases[pass].c_str()), TexCoordAttribute::kTypePass, pass + 1);
+			}
 		}
 	}
 
@@ -563,7 +584,7 @@ void LibRetroPipeline::Pass::addTexCoord(const Common::String &name, const TexCo
 	}
 }
 
-void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray &textures) {
+void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray &textures, const Common::StringArray &aliases) {
 	texSamplers.clear();
 	uint sampler = 1;
 
@@ -580,6 +601,11 @@ void LibRetroPipeline::Pass::buildTexSamplers(const uint id, const TextureArray 
 			addTexSampler(Common::String::format("Pass%u", pass + 1), &sampler, TextureSampler::kTypePass, pass + 1);
 			// PassPrev1 is the output texture of last pass, ie. the input texture of current pass
 			addTexSampler(Common::String::format("PassPrev%u", id - pass), &sampler, TextureSampler::kTypePass, pass + 1);
+
+			// If pass has an alias, define the uniforms using the input texture of the next pass
+			if (!aliases[pass].empty()) {
+				addTexSampler(aliases[pass], &sampler, TextureSampler::kTypePass, pass + 1);
+			}
 		}
 	}
 
