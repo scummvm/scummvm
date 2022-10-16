@@ -1523,9 +1523,10 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 void OpenGLGraphicsManager::updateLinearFiltering() {
 #if !USE_FORCED_GLES
 	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
-		// Filtering clashes with LibRetro shaders, so it's explicitly disabled here.
+		// Apply filtering in LibRetro first input texture which is _gameScreenTarget
 		if (_gameScreen) {
 			_gameScreen->enableLinearFiltering(false);
+			_gameScreenTarget->getTexture()->enableLinearFiltering(_currentState.filtering);
 		}
 
 		if (_cursor) {
