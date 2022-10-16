@@ -808,32 +808,13 @@ void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             
 // The log command logs adds an entry to the game's log file and the console.
 // Neither are enabled by default.
 //
-// * To log to the console, run ScummVM with the following arguments:
-//   * --debugflags=Scripts -d 1
-// * To log to the file, create the directory "dumps" in the current
-//   working directory.
+// Room <#>
+// Input line: <text>
+// <message>
 //
-// The log format is:
-//   Room <#>
-//   Input line : <text>
-//   <message>
-//
-// This is not yet a complete implementation of log(). There
-// is a follow-up item which is planned to be addressed.
-//
-// == No Log Formatting ==
-// We just log the message literally without
-// processing. According to the docs, you can use variables in the message, like:
-//
-// log("Unknown word: %w1"); [ This should log the first word the user typed.
-//
-// Other format codes include:
-// %g<number>: the text of the message with this number from message field of logic 0 is inserted at this place.
-// %m<number>: the text of the message with the given number(in this same logic) is inserted at this place.
-// %o<number>: the name of the inventory item that has an index number equal to the value of the variable given by <number> is inserted at this place.
-// %s<number>: the text of the string with the given number is inserted at this place.
-// %v<number>: at this place the output will include a decimal value of variable with the given number.
-// %w<number>: the text of the player - entered word with the given index number is inserted at this place. (The index is 'one based'; i.e.first word is % w1, second is % w2, etc.)
+// To see the logs in your console, use the following arguments to scummvm:
+//   --debugflags=Scripts -d 1
+// To see the logs in a file, create the "dumps" directory.
 //
 void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 	uint16 textNr = parameter[0];
@@ -842,12 +823,11 @@ void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		const char *inputLine = (char *)vm->_text->_promptPrevious;
 		const char *message = state->_curLogic->texts[textNr - 1];
 
-		Common::String logMessage = Common::String::format("Room %hhu\nInput line : %s\n%s\n",
+		Common::String logMessage = Common::String::format("Room %hhu\nInput line: %s\n%s\n",
 														   currentRoom,
 														   inputLine,
-														   message);
+														   vm->_text->stringPrintf(message));
 
-		// Logs to the console. To see, use arguments: --debugflags=Scripts -d 1
 		debugCN(1, kDebugLevelScripts, "%s", logMessage.c_str());
 
 		Common::DumpFile *&dumpFile = vm->_logFile;
