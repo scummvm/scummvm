@@ -625,7 +625,7 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 			if (prevFrame == targetFrame)
 				return;
 			if (prevFrame < targetFrame)
-				backStopFrame = prevFrame;
+				backStopFrame = prevFrame + 1;
 		}
 
 		firstFrameToRender = targetFrame;
@@ -644,7 +644,7 @@ void CachedMToon::getOrRenderFrame(uint32 prevFrame, uint32 targetFrame, Common:
 
 		for (size_t i = firstFrameToRender; i <= targetFrame; i++) {
 			if (_rleOptimizedFormat.bytesPerPixel == 1)
-				decompressMToonRLE<uint8, 0x80u, 0>(_rleData[i], _rleData[i].data8, *surface, isBottomUp);
+				decompressMToonRLE<uint8, 0x80u, 0x80u>(_rleData[i], _rleData[i].data8, *surface, isBottomUp);
 			else if (_rleOptimizedFormat.bytesPerPixel == 2)
 				decompressMToonRLE<uint16, 0x8000u, 0x8000u>(_rleData[i], _rleData[i].data16, *surface, isBottomUp);
 			else if (_rleOptimizedFormat.bytesPerPixel == 4)
