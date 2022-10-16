@@ -64,6 +64,51 @@ void GLTexture::enableLinearFiltering(bool enable) {
 	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, _glFilter));
 }
 
+void GLTexture::setWrapMode(WrapMode wrapMode) {
+	GLuint glwrapMode;
+
+	switch(wrapMode) {
+		case kWrapModeBorder:
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+			if (OpenGLContext.textureBorderClampSupported) {
+				glwrapMode = GL_CLAMP_TO_BORDER;
+				break;
+			}
+#endif
+		// fall through
+		case kWrapModeEdge:
+			if (OpenGLContext.textureEdgeClampSupported) {
+				glwrapMode = GL_CLAMP_TO_EDGE;
+				break;
+			} else {
+#if !USE_FORCED_GLES && !USE_FORCED_GLES2
+				// Fallback on clamp
+				glwrapMode = GL_CLAMP;
+#else
+				// This fallback should never happen in real life (GLES/GLES2 have border/edge clamp)
+				glwrapMode = GL_REPEAT;
+#endif
+				break;
+			}
+		case kWrapModeMirroredRepeat:
+#if !USE_FORCED_GLES
+			if (OpenGLContext.textureMirrorRepeatSupported) {
+				glwrapMode = GL_MIRRORED_REPEAT;
+				break;
+			}
+#endif
+		// fall through
+		case kWrapModeRepeat:
+			glwrapMode = GL_REPEAT;
+	}
+
+
+	bind();
+
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, glwrapMode));
+	GL_CALL(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, glwrapMode));
+}
+
 void GLTexture::destroy() {
 	GL_CALL(glDeleteTextures(1, &_glTexture));
 	_glTexture = 0;
