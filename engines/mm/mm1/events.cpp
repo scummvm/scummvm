@@ -150,6 +150,16 @@ void Events::clearViews() {
 	_views.clear();
 }
 
+void Events::addAction(KeybindingAction action) {
+	Common::Event e;
+	e.type = Common::EVENT_CUSTOM_BACKEND_ACTION_START;
+	e.customType = action;
+	g_system->getEventManager()->pushEvent(e);
+
+	e.type = Common::EVENT_CUSTOM_BACKEND_ACTION_END;
+	g_system->getEventManager()->pushEvent(e);
+}
+
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
