@@ -185,7 +185,7 @@ bool IMuseInternal::isMT32(int sound) {
 	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return false;
 
-	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
+	error("Unknown music type: '%s'", tag2str(tag));
 
 	return false;
 }
@@ -227,7 +227,7 @@ bool IMuseInternal::isMIDI(int sound) {
 	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return true;
 
-	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
+	error("Unknown music type: '%s'", tag2str(tag));
 
 	return false;
 }
@@ -271,7 +271,7 @@ bool IMuseInternal::supportsPercussion(int sound) {
 	if (ptr[4] == 'S' && ptr[5] == 'O')
 		return true;
 
-	error("Unknown music type: '%c%c%c%c'", (char)tag >> 24, (char)tag >> 16, (char)tag >> 8, (char)tag);
+	error("Unknown music type: '%s'", tag2str(tag));
 
 	return false;
 }
