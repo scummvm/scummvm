@@ -841,7 +841,7 @@ void CharsetRendererV3::printChar(int chr, bool ignoreCharsetMask) {
 	assertRange(0, _curId, _vm->_numCharsets - 1, "charset");
 
 	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
-		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '\\x%X'", _top, chr);
 		return;
 	}
 
@@ -1695,7 +1695,7 @@ void CharsetRendererMac::printChar(int chr, bool ignoreCharsetMask) {
 	VirtScreen *vs;
 
 	if ((vs = _vm->findVirtScreen(_top)) == nullptr) {
-		warning("findVirtScreen(%d) failed, therefore printChar cannot print '%c'", _top, chr);
+		warning("findVirtScreen(%d) failed, therefore printChar cannot print '\\x%X'", _top, chr);
 		return;
 	}
 
