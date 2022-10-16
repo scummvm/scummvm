@@ -65,6 +65,7 @@ enum Resistance {
 
 enum CharFlags0 {
 	CHARFLAG0_COURIER = 4,
+	CHARFLAG0_ZOM_CLUE = 8,
 	CHARFLAG0_ZAM_CLUE = 0x10
 };
 

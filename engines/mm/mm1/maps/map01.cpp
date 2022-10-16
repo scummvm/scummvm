@@ -49,14 +49,6 @@ void Map01::special() {
 	g_globals->_encounters.execute();
 }
 
-void Map01::showSign(const Common::String &msg) {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
-		2, 1, STRING["maps.map00.sign"],
-		6, 2, msg
-	));
-}
-
 void Map01::special00() {
 	inn();
 }
