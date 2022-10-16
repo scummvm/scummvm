@@ -49,8 +49,6 @@ private:
 	void special15();
 	void special16();
 
-	void showSign(const Common::String &msg);
-
 	const SpecialFn SPECIAL_FN[17] = {
 		&Map01::special00,
 		&Map01::special01,

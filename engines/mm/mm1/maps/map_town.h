@@ -60,6 +60,10 @@ protected:
 	 */
 	void trainer();
 
+	/**
+	 * Show a sign message
+	 */
+	void showSign(const Common::String &msg);
 public:
 	MapTown(uint index, const Common::String &name, uint16 id) :
 		Map(index, name, id) {}
