@@ -1125,13 +1125,11 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {
-		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (_game.id == GID_SAMNMAX && a2 == nullptr) {
-			// WORKAROUND bug #801 SAM: Fish Farm. Note quite sure why it
-			// happens, whether it's normal or due to a bug in the ScummVM code.
-			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
+		if (!isValidActor(obj))
 			return;
-		}
+
+		a2 = derefActor(obj, "o6_walkActorToObj(2)");
+
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
