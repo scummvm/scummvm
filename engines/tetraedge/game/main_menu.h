@@ -42,14 +42,14 @@ public:
 	bool onBFGRateItButtonValidated();
 	bool onBFGRateItQuitButtonValidated();
 	bool onBFGSplashButtonUpdated() { return false; }
-	bool onBFGSplashButtonValidated()  { return false; }
-	bool onBFGTellAFriendButtonValidated()  { return false; }
+	bool onBFGSplashButtonValidated() { return false; }
+	bool onBFGTellAFriendButtonValidated() { return false; }
 	bool onBFGUnlockGameButtonValidated();
 	bool onContinueGameButtonValidated();
 	bool onDisabledTuto();
 	bool onEnterGameRotateAnimFinished();
-	bool onFacebookButtonValidated()  { return false; }
-	bool onFacebookLogged()  { return false; }
+	bool onFacebookButtonValidated() { return false; }
+	bool onFacebookLogged() { return false; }
 	bool onGalleryButtonValidated();
 	bool onHowToButtonValidated();
 	bool onLoadGameButtonValidated();

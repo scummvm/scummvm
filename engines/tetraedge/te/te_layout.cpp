@@ -36,7 +36,7 @@ TeLayout::TeLayout() : Te3DObject2(), _updatingZ(false), _updatingZSize(false),
 	_safeAreaRatio(1.3333334f), _ratioMode(RATIO_MODE_NONE),
 	_positionType(CoordinatesType::RELATIVE_TO_PARENT)
 {
-	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.5f);
+	_userPosition = _position = TeVector3f32(0.5f, 0.5f, 0.0f);
 	_size = TeVector3f32(1.0f, 1.0f, 1.0f);
 	_onChildSizeChangedCallback.reset(
 		new TeCallback0Param<TeLayout>(this, &TeLayout::onChildSizeChanged));
@@ -50,8 +50,10 @@ TeLayout::TeLayout() : Te3DObject2(), _updatingZ(false), _updatingZSize(false),
 }
 
 TeLayout::~TeLayout() {
-	if (parent() && _onParentSizeChangedCallback)
+	if (parent() && _onParentSizeChangedCallback) {
 		parent()->onSizeChanged().remove(_onParentSizeChangedCallback);
+		parent()->onWorldTransformationMatrixChanged().remove(_onParentWorldTransformationMatrixChangedCallback);
+	}
 
 	if (_onChildSizeChangedCallback) {
 		for (auto &child : childList()) {
@@ -111,7 +113,6 @@ bool TeLayout::isAutoZEnabled() {
 
 void TeLayout::draw() {
 	if (visible() && worldVisible()) {
-		//debug("Draw TeLayout %p (%s)", this, name().empty() ? "no name" : name().c_str());
 		// Ensure world transform is up-to-date.
 		worldTransformationMatrix();
 		for (auto &child : childList()) {
@@ -195,6 +196,7 @@ void TeLayout::setMode(DrawMode mode) {
 }
 
 void TeLayout::setParent(Te3DObject2 *parent) {
+	assert(parent != this);
 	Te3DObject2 *oldParent = Te3DObject2::parent();
 	if (oldParent) {
 		if (_onParentSizeChangedCallback)
@@ -253,7 +255,7 @@ void TeLayout::setRatioMode(RatioMode mode) {
 		_ratioMode = mode;
 		_sizeChanged = true;
 		_worldMatrixChanged = true;
-   }
+	}
 }
 
 void TeLayout::setRotation(const TeQuaternion &rot) {
@@ -342,7 +344,8 @@ void TeLayout::updatePosition() {
 		const TeVector3f32 parentSize(parentObj->xSize(), parentObj->ySize(), 0.0);
 		const TeVector3f32 offsetAnchor =  midPoint - _anchor;
 		const TeVector3f32 thisSize(xSize(), ySize(), 0.0);
-		_position = (offsetUserPos * parentSize) + (offsetAnchor * thisSize);
+		const TeVector3f32 newpos = (offsetUserPos * parentSize) + (offsetAnchor * thisSize);
+		_position = newpos;
 	} else if (_positionType == RELATIVE_TO_PARENT && !parentObj) {
 		// Not in original, but no parent -> set midpoint.
 		const TeVector3f32 offsetAnchor =  midPoint - _anchor;
@@ -351,6 +354,7 @@ void TeLayout::updatePosition() {
 	} else if (_positionType == ABSOLUTE) {
 		_position = _userPosition;
 	}
+	_position.z() = _userPosition.z();
 	_worldMatrixChanged = true;
 	_updatingPosition = false;
 

@@ -31,7 +31,7 @@ namespace Tetraedge {
 class TeAnimation {
 public:
 	TeAnimation();
-	virtual ~TeAnimation() {};
+	virtual ~TeAnimation();
 
 	virtual void cont();
 	virtual void pause();

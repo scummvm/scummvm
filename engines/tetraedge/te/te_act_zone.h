@@ -19,35 +19,29 @@
  *
  */
 
-#include "tetraedge/tetraedge.h"
-#include "tetraedge/game/application.h"
-#include "tetraedge/game/help_option_menu.h"
+#ifndef TETRAEDGE_TE_TE_ACT_ZONE_H
+#define TETRAEDGE_TE_TE_ACT_ZONE_H
+
+#include "common/str.h"
+#include "tetraedge/te/te_vector2f32.h"
 
 namespace Tetraedge {
 
-HelpOptionMenu::HelpOptionMenu() : _entered(false) {
-}
+class TeActZone {
+public:
+	TeActZone();
 
-void HelpOptionMenu::enter() {
-	if (!_entered) {
-		Application *app = g_engine->getApplication();
-		app->captureFade();
-		load("menus/helpoptionMenu/optionsMenu.lua");
+	Common::String s1;
+	Common::String s2;
+	TeVector2f32 points[4];
+	bool flag1;
+	bool flag2;
 
-		TeLayout *menu = layoutChecked("menu");
-		app->appSpriteLayout().addChild(menu);
-		app->fade();
-	}
-}
+private:
+	// TODO add private members
 
-void HelpOptionMenu::leave() {
-	Application *app = g_engine->getApplication();
-	app->captureFade();
-	unload();
-	app->fade();
-	_entered = false;
-}
-
-// TODO: Add more functions here.
+};
 
 } // end namespace Tetraedge
+
+#endif // TETRAEDGE_TE_TE_ACT_ZONE_H

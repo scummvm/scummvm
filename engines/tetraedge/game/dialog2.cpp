@@ -140,6 +140,7 @@ void Dialog2::unload() {
 	_music.close();
 	_gui.unload();
 	error("TODO: Finish Dialog2::unload");
+
 	//_dialogDataList.clear();
 	//_minimumTimeTimer.stop();
 }

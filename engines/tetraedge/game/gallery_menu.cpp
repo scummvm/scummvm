@@ -21,9 +21,13 @@
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/game.h"
 #include "tetraedge/game/gallery_menu.h"
 
 namespace Tetraedge {
+
+static const char *AMBIENT_SND_BIKE = "sounds/Ambiances/b_automatebike.ogg";
+static const char *AMBIENT_SND_ENGR = "sounds/Ambiances/b_engrenagebg.ogg";
 
 GalleryMenu::GalleryMenu() {
 }
@@ -34,7 +38,22 @@ bool GalleryMenu::onLockVideoButtonValidated() {
 }
 
 bool GalleryMenu::onSkipVideoButtonValidated() {
-	error("TODO: Implement onSkipVideoButtonValidated");
+	Application *app = g_engine->getApplication();
+	app->music().play();
+	Game *game = g_engine->getGame();
+
+	game->stopSound(AMBIENT_SND_BIKE);
+	game->playSound(AMBIENT_SND_BIKE, -1, 0.1);
+
+	game->stopSound(AMBIENT_SND_ENGR);
+	game->playSound(AMBIENT_SND_ENGR, -1, 0.09);
+
+	TeSpriteLayout *video = spriteLayoutChecked("video");
+	video->stop();
+	video->setVisible(false);
+	buttonLayoutChecked("videoBackgroundButton")->setVisible(false);
+	buttonLayoutChecked("skipVideoButton")->setVisible(false);
+	_music.stop();
 	return false;
 }
 
@@ -59,11 +78,44 @@ bool GalleryMenu::onVideoFinished() {
 }
 
 void GalleryMenu::enter() {
-	error("TODO: implement GalleryMenu::enter");
+	Application *app = g_engine->getApplication();
+	Game *game = g_engine->getGame();
+
+	load("menus/galleryMenu/galleryMenu.lua");
+	TeLayout *menu = layoutChecked("galleryMenu");
+	app->_frontLayout.addChild(menu);
+
+	game->stopSound(AMBIENT_SND_BIKE);
+	game->playSound(AMBIENT_SND_BIKE, -1, 0.1);
+
+	game->stopSound(AMBIENT_SND_ENGR);
+	game->playSound(AMBIENT_SND_ENGR, -1, 0.09);
+
+	TeButtonLayout *btn = buttonLayoutChecked("quitButton");
+	btn->onMouseClickValidated().add(this, &GalleryMenu::onQuitButton);
+
+	//TeLayout *list = layoutChecked("galleryList");
+
+	error("TODO: Finish GalleryMenu::enter");
 }
 
 void GalleryMenu::leave() {
-	error("TODO: implement GalleryMenu::leave");
+	if (!_loaded)
+		return;
+
+	Game *game = g_engine->getGame();
+	game->stopSound(AMBIENT_SND_BIKE);
+	game->stopSound(AMBIENT_SND_ENGR);
+	unload();
+	for (GalleryBtnObject *btn : _btnObjects) {
+		delete btn;
+	}
+	_btnObjects.clear();
 }
+
+bool GalleryMenu::GalleryBtnObject::onValidated() {
+	error("TODO: Implement GalleryMenu::GalleryBtnObject::onValidated");
+}
+
 
 } // end namespace Tetraedge

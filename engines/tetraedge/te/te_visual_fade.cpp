@@ -30,7 +30,7 @@ TeVisualFade::TeVisualFade() {
 }
 
 void TeVisualFade::animateBlackFade() {
-	error("TODO: Implement me.");
+	error("TODO: Implement TeVisualFade::animateBlackFade.");
 }
 
 void TeVisualFade::animateFade() {

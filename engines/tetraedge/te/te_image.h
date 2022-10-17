@@ -61,7 +61,7 @@ public:
 	}
 	void create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 				Format format, uint bufxsize, uint bufysize);
-	void deSerialize(Common::ReadStream &stream);
+	void deserialize(Common::ReadStream &stream);
 	void destroy();
 	void drawPlot(int x, int y, const TeColor &col) {
 		drawPlot(getPixels(), x, y, bufSize(), col);

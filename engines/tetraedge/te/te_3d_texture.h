@@ -44,7 +44,7 @@ public:
 	void create();
 	void destroy();
 
-	void ForceTexData(uint gltextures, uint xsize, uint ysize);
+	void forceTexData(uint gltextures, uint xsize, uint ysize);
 
 	TeImage::Format getFormat() const { return _format; }
 	bool hasAlpha() const;
@@ -55,7 +55,7 @@ public:
 
 	static TeVector2s32 optimisedSize(const TeVector2s32 &size);
 
-	void unbind();
+	static void unbind();
 	bool unload();
 	void update(const TeImage &img, uint xoff, uint yoff);
 

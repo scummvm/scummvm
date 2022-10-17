@@ -37,6 +37,8 @@
 
 namespace Tetraedge {
 
+class TeModel;
+class TeModelVertexAnimation;
 
 class TeMesh : public Te3DObject2 {
 public:

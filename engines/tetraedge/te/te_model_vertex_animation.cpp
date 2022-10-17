@@ -23,9 +23,84 @@
 
 namespace Tetraedge {
 
-TeModelVertexAnimation::TeModelVertexAnimation() {
+TeModelVertexAnimation::TeModelVertexAnimation() : _rot(1.0f, 0.0f, 0.0f, 0.0f),
+_lastMillis(0.0f), _modelAnim(nullptr) {
+	// TODO: set some other things up here.
+	_rot.fromAxisAndAngle(TeVector3f32(0.0f, 1.0f, 0.0f), -1.570796);
 }
 
-// TODO: Add more functions here.
+void TeModelVertexAnimation::bind(TeIntrusivePtr<TeModel> &model) {
+	_model = model;
+	_lastMillis = 0.0f;
+}
+
+void TeModelVertexAnimation::destroy() {
+	_keydata.clear();
+}
+
+TeVector3f32 TeModelVertexAnimation::getKeyVertex(unsigned long keyno, unsigned int vertexno) {
+	assert(keyno < _keydata.size());
+	const KeyData &data = _keydata[keyno];
+	assert(vertexno < data._vectors.size());
+	TeVector3f32 retval = data._vectors[vertexno];
+	if (!data._matricies.empty()) {
+		retval = data._matricies[vertexno] * retval;
+		retval.rotate(_rot);
+	}
+	return retval;
+}
+
+const Common::Array<TeVector3f32> &TeModelVertexAnimation::getVertices() {
+	static Common::Array<TeVector3f32> lerpVtx;
+
+	lerpVtx.clear();
+	if (_keydata.size() < 2)
+		return lerpVtx;
+
+	float frame = fmod((_lastMillis / 1000.0) * 30, _keydata[_keydata.size() - 1]._frame);
+	unsigned int keyno = 0;
+	while (keyno < _keydata.size() - 1 && _keydata[keyno]._frame < frame)
+		keyno++;
+
+	lerpVtx.resize(_keydata[0]._vectors.size());
+	float prevFrame = _keydata[keyno]._frame;
+	float nextFrame = _keydata[keyno + 1]._frame;
+	float interp = (frame - nextFrame) / (nextFrame - prevFrame);
+
+	for (unsigned int i = 0; i < _keydata[0]._vectors.size(); i++) {
+		const TeVector3f32 prevVector = getKeyVertex(keyno, i);
+		const TeVector3f32 nextVector = getKeyVertex(keyno + 1, i);
+		lerpVtx.push_back(prevVector * (1.0 - interp) + nextVector * interp);
+	}
+
+	return lerpVtx;
+}
+
+bool TeModelVertexAnimation::load(Common::ReadStream &stream) {
+	error("TODO: implement TeModelVertexAnimation::load");
+}
+
+void TeModelVertexAnimation::save(Common::WriteStream &stream) const {
+	error("TODO: implement TeModelVertexAnimation::save");
+}
+
+void TeModelVertexAnimation::update(double millis) {
+	if (_keydata.empty())
+		return;
+
+	double lastMillis = _lastMillis;
+	double lastFrame = fmod((lastMillis / 1000.0) * 30.0, _keydata.back()._frame);
+
+	if (_modelAnim) {
+		int frame = _modelAnim->calcCurrentFrame(millis);
+		millis = (frame * 1000.0) / 30.0;
+	}
+	_lastMillis = millis;
+	double thisFrame = fmod((millis / 1000.0) * 30.0, _keydata.back()._frame);
+	if (lastFrame > thisFrame)
+		_onFinishedSignal.call();
+}
+
+
 
 } // end namespace Tetraedge

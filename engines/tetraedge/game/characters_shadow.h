@@ -26,6 +26,8 @@
 
 namespace Tetraedge {
 
+class InGameScene;
+
 class CharactersShadow {
 public:
 	CharactersShadow();
@@ -37,8 +39,10 @@ public:
 	//void drawTexture(); // empty?
 
 private:
-	// TODO add private members
-
+	uint _glTex;
+	int _texSize;
+	TeIntrusivePtr<TeCamera> _camera;
+	static Te3DObject2 *_camTarget;
 };
 
 } // end namespace Tetraedge

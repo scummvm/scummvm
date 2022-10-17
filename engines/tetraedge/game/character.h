@@ -45,8 +45,8 @@ public:
 	struct AnimSettings {
 		AnimSettings() : _stepLeft(0), _stepRight(0) {};
 		Common::String _file;
-		int _stepRight;
 		int _stepLeft;
+		int _stepRight;
 	};
 
 	struct WalkSettings {
@@ -100,7 +100,7 @@ public:
 
 	float animLength(const TeModelAnimation &modelanim, long bone, long lastframe);
 	float animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe);
-	bool blendAnimation(const Common::String &animname, float param_2, bool param_3, bool param_4);
+	bool blendAnimation(const Common::String &animname, float amount, bool repeat, bool param_4);
 	TeVector3f32 correctPosition(const TeVector3f32 &pos);
 	float curveOffset();
 	void deleteAllCallback();
@@ -110,26 +110,26 @@ public:
 	void endMove();
 
 	const WalkSettings *getCurrentWalkFiles();
-	bool isFramePassed(uint frameno);
+	bool isFramePassed(int frameno);
 	bool isWalkEnd();
-	bool leftStepFrame(enum WalkPart walkpart);
-	bool rightStepFrame(enum WalkPart walkpart);
+	int leftStepFrame(enum WalkPart walkpart);
+	int rightStepFrame(enum WalkPart walkpart);
 	bool loadModel(const Common::String &name, bool param_2);
 	static bool loadSettings(const Common::String &path);
 
-	bool onBonesUpdate(const Common::String &param_1, const TeMatrix4x4 *param_2);
+	bool onBonesUpdate(const Common::String &boneName, const TeMatrix4x4 &param_2);
 	bool onModelAnimationFinished();
 	void permanentUpdate();
-	void placeOnCurve(const TeBezierCurve &curve);
+	void placeOnCurve(TeIntrusivePtr<TeBezierCurve> &curve);
 	//void play() // just called TeAnimation::play();
 	void removeAnim();
 	void removeFromCurve();
 	static Common::String rootBone() { return "Pere"; }
 
 	bool setAnimation(const Common::String &name, bool repeat, bool param_3, bool param_4, int startFrame, int endFrame);
-	void setAnimationSound(const Common::String &name, uint param_2);
+	void setAnimationSound(const Common::String &name, uint offset);
 	void setCurveOffset(float offset);
-	void setFreeMoveZone(const Common::SharedPtr<TeFreeMoveZone> &zone);
+	void setFreeMoveZone(TeFreeMoveZone *zone);
 	bool setShadowVisible(bool visible);
 	void setStepSound(const Common::String &stepSound1, const Common::String &stepSound2);
 	float speedFromAnim(double movepercent);
@@ -153,14 +153,20 @@ public:
 	const Common::String walkModeStr() const { return _walkModeStr; }
 	const Common::String curAnimName() const { return _curAnimName; }
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
+	void setCharLookingAt(Character *other) { _charLookingAt = other; }
 
 private:
 	float _curveOffset;
-	TeBezierCurve _curve;
-	Common::SharedPtr<TeFreeMoveZone> _freeMoveZone;
+	TeIntrusivePtr<TeBezierCurve> _curve;
+	TeFreeMoveZone *_freeMoveZone;
 	Common::String _stepSound1;
 	Common::String _stepSound2;
 	Common::String _walkModeStr; // Walk or Jog
+	Common::String _animSound;
+
+	Character *_charLookingAt;
+
+	uint _animSoundOffset;
 
 	TeIntrusivePtr<TeModelAnimation> _curModelAnim;
 
@@ -175,6 +181,7 @@ private:
 	uint32 _walkPart3AnimFrameCount;
 
 	int _lastFrame;
+	int _lastAnimFrame;
 	bool _missingCurrentAnim;
 	bool _someRepeatFlag; // TODO: what is this?
 	bool _callbacksChanged;

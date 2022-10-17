@@ -209,6 +209,7 @@ void TeButtonLayout::resetTimeFromLastValidation() {
 }
 
 long TeButtonLayout::timeFromLastValidation() {
+	// probably not needed because we reimplemented how this works.
 	error("TODO: Implement TeButtonLayout::timeFromLastValidation.");
 }
 
@@ -305,9 +306,11 @@ void TeButtonLayout::setEnable(bool enable) {
 
 void TeButtonLayout::setPosition(const TeVector3f32 &pos) {
 	TeLayout::setPosition(pos);
+
 	if (_currentState != BUTTON_STATE_DISABLED) {
 		int somethingCount = 0;
 		if (!_intArr.empty()) {
+			// probably not needed as we reimplememted how this works.
 			error("TODO: Implement setPosition logic for up/down state");
 		}
 		if (_someClickFlag) {

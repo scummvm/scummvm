@@ -269,6 +269,24 @@ void TeLuaGUI::unload() {
 		iter._value->deleteLater();
 	}
 	_extendedTextLayouts.clear();
+
+	for (auto &iter : _layoutAnchorLinearAnimations) {
+		iter._value->stop();
+		delete iter._value;
+	}
+	_layoutAnchorLinearAnimations.clear();
+
+	for (auto &iter : _layoutPositionLinearAnimations) {
+		iter._value->stop();
+		delete iter._value;
+	}
+	_layoutPositionLinearAnimations.clear();
+
+	for (auto &iter : _colorLinearAnimations) {
+		iter._value->stop();
+		delete iter._value;
+	}
+	_colorLinearAnimations.clear();
 }
 
 TeVariant TeLuaGUI::value(const Common::String &globalName) {

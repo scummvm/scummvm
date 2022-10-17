@@ -44,19 +44,18 @@ public:
 	void setControlPoints(const Common::Array<TeVector3f32> &points);
 	void setNbIterations(unsigned long iterations);
 
-	static void serialize(Common::WriteStream &stream, const TeBezierCurve &mesh);
-	static void deserialize(Common::ReadStream &stream, TeBezierCurve &mesh);
+	static void serialize(Common::WriteStream &stream, const TeBezierCurve &curve);
+	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
 
 private:
-	int _numiterations;
+	unsigned int _numiterations;
 	float _length;
 	float _rawLength;
 	bool _lengthNeedsUpdate;
 	bool _rawLengthNeedsUpdate;
 	Common::Array<TeVector3f32> _controlPoints;
 	Common::Array<float> _rawLengths;
-	// TODO add private members
-
+	Common::Array<float> _lengths;
 };
 
 } // end namespace Tetraedge

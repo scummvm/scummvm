@@ -361,7 +361,17 @@ void TeMesh::update(const Common::Array<TeMatrix4x4> *matricies1, const Common::
 }
 
 void TeMesh::update(TeIntrusivePtr<TeModelVertexAnimation> vertexanim) {
+	_updatedVerticies.resize(_verticies.size());
+	_updatedNormals.resize(_normals.size());
 
+	const Common::Array<TeVector3f32> &animverts = vertexanim->getVertices();
+	assert(animverts.size() >= _verticies.size());
+	for (unsigned int i = 0; i < _verticies.size(); i++) {
+		_updatedVerticies[i] = animverts[i];
+	}
+	for (unsigned int i = 0; i < _normals.size(); i++) {
+		_updatedNormals[i] = _normals[i];
+	}
 }
 
 void TeMesh::updateTo(const Common::Array<TeMatrix4x4> *matricies1, const Common::Array<TeMatrix4x4> *matricies2,

@@ -29,6 +29,8 @@
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/characters_shadow.h"
+#include "tetraedge/game/in_game_scene.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_resource_manager.h"
 #include "tetraedge/te/te_renderer.h"
@@ -380,11 +382,12 @@ void Application::performRender() {
 	Game *game = g_engine->getGame();
 	TeRenderer *renderer = g_engine->getRenderer();
 
-	if (game->running() && _inGameScene._character && true /*some other ingamescene things*/) {
+	if (game->running() && game->scene()._character
+			&& game->scene()._shadowLightNo != -1
+			&& game->scene()._charactersShadow != nullptr) {
 		renderer->shadowMode(TeRenderer::ShadowMode1);
-		//_inGameScene._charactersShadow->createTexture(_inGameScene);
+		game->scene()._charactersShadow->createTexture(&game->scene());
 		renderer->shadowMode(TeRenderer::ShadowMode0);
-		error("TODO: Implement characters shadow thing here.");
 	}
 
 	drawBack();
@@ -392,14 +395,17 @@ void Application::performRender() {
 	renderer->renderTransparentMeshes();
 	renderer->clearBuffer(GL_ACCUM);
 
-	if (game->running() && _inGameScene._character && true /*some other ingamescene things*/) {
-		TeIntrusivePtr<TeCamera> currentCamera = _inGameScene.currentCamera();
-		if (currentCamera) {
-			currentCamera->apply();
-			renderer->shadowMode(TeRenderer::ShadowMode2);
-			//_inGameScene._charactersShadow->draw(_inGameScene);
-			renderer->shadowMode(TeRenderer::ShadowMode0);
-			error("TODO: Implement characters shadow thing here.");
+	if (game->running()) {
+		if (game->scene()._character
+			&& game->scene()._shadowLightNo != -1
+			&& game->scene()._charactersShadow != nullptr) {
+			TeIntrusivePtr<TeCamera> currentCamera = game->scene().currentCamera();
+			if (currentCamera) {
+				currentCamera->apply();
+				renderer->shadowMode(TeRenderer::ShadowMode2);
+				game->scene()._charactersShadow->createTexture(&game->scene());
+				renderer->shadowMode(TeRenderer::ShadowMode0);
+			}
 		}
 		game->draw();
 	}
@@ -409,7 +415,7 @@ void Application::performRender() {
 	drawFront();
 	renderer->renderTransparentMeshes();
 	// What gets called here??
-	//_inGameScene.removeModel(const Common::String &name)
+	game->scene().drawPath();
 	g_system->updateScreen();
 }
 
@@ -463,16 +469,20 @@ bool Application::isLockCursor() {
 }
 
 bool Application::isLockPad() {
-	error("TODO: Implement Application::isLockPad");
-	return false;
+	Game *game = g_engine->getGame();
+	bool result = isLockCursor() || game->dialog2().isDialogPlaying() || game->isMoviePlaying()
+		|| game->question2().gui().layoutChecked("background")->visible()
+		|| game->isDocumentOpened();
+	return result;
 }
 
 void Application::lockCursor(bool lock) {
-	error("TODO: Implement Application::lockCursor");
+	_lockCursorButton.setVisible(lock);
 }
 
 void Application::lockCursorFromAction(bool lock) {
-	error("TODO: Implement Application::lockCursorFromAction");
+	_lockCursorFromActionButton.setVisible(lock);
+	g_engine->getGame()->showMarkers(lock);
 }
 
 void Application::loadOptions(const Common::String &fname) {

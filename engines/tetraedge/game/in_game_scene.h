@@ -28,12 +28,19 @@
 
 #include "tetraedge/game/object3d.h"
 #include "tetraedge/game/billboard.h"
+
+#include "tetraedge/te/te_act_zone.h"
+#include "tetraedge/te/te_bezier_curve.h"
+#include "tetraedge/te/te_free_move_zone.h"
 #include "tetraedge/te/te_scene.h"
+#include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_lua_gui.h"
+#include "tetraedge/te/te_pick_mesh2.h"
 
 namespace Tetraedge {
 
 class Character;
+class CharactersShadow;
 class TeLayout;
 
 class InGameScene : public TeScene {
@@ -52,13 +59,27 @@ public:
 		Common::String _stepSound2;
 	};
 
-	class AnchorZone {
+	struct AnchorZone {
+		Common::String _name;
+		bool _activated;
+	};
+
+	struct Object {
+		TeIntrusivePtr<TeModel> _model;
+		Common::String _name;
 	};
 
 	class TeMarker {
 	};
 
-	void activateAnchorZone(const Common::String &name, bool param_2);
+	struct Dummy {
+		Common::String _name;
+		TeVector3f32 _position;
+		TeQuaternion _rotation;
+		TeVector3f32 _scale;
+	};
+
+	void activateAnchorZone(const Common::String &name, bool val);
 	void addAnchorZone(const Common::String &param_1, const Common::String &param_2, float param_3);
 	void addBlockingObject(const Common::String &obj) {
 		_blockingObjects.push_back(obj);
@@ -68,17 +89,29 @@ public:
 	static float angularDistance(float a1, float a2);
 	bool aroundAnchorZone(const AnchorZone *zone);
 	TeLayout *background();
+	virtual bool load(const Common::Path &path) override;
 	void loadBackground(const Common::Path &path);
 	void loadInteractions(const Common::Path &path);
 	void initScroll();
 
 	void draw();
+	void drawPath();
 	Character *character(const Common::String &name);
 	bool loadCharacter(const Common::String &name);
+	void loadBlockers();
 	bool loadPlayerCharacter(const Common::String &name);
+	bool loadLights(const Common::Path &path);
 	bool changeBackground(const Common::String &name);
-	void unloadPlayerCharacter(const Common::String &character);
 	void unloadCharacter(const Common::String &name);
+
+	// Original has a typo, "converPathToMesh", corrected.
+	void convertPathToMesh(TeFreeMoveZone *zone);
+	void onMainWindowSizeChanged();
+
+	// Original just calls these "deserialize" but that's a fairly vague name
+	// so renamed to be more meaningful.
+	void deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCamera> &cam);
+	void deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<TeModel> &model, TePickMesh2 *pickmesh);
 
 	void close();
 	void reset();
@@ -88,8 +121,9 @@ public:
 
 	void setStep(const Common::String &scene, const Common::String &step1, const Common::String &step2);
 
-	void loadBlockers();
-	Common::Path getBlockersFileName();
+	Common::Path getActZoneFileName() const;
+	Common::Path getBlockersFileName() const;
+	Common::Path getLightsFileName() const;
 
 	// Does nothing, but to keep calls from original..
 	static void updateScroll() {};
@@ -101,12 +135,19 @@ public:
 
 	TeLuaGUI &bgGui() { return _bgGui; }
 
+	int _shadowLightNo;
+	CharactersShadow *_charactersShadow;
+
 private:
-	struct TeBlocker {};
-	struct TeRectBlocker {};
+	TeColor _shadowColor;
+	float _shadowFarPlane;
+	float _shadowNearPlane;
+	float _shadowFov;
 
 	Common::Array<TeBlocker> _blockers;
 	Common::Array<TeRectBlocker> _rectBlockers;
+	Common::Array<TeActZone> _actZones;
+	Common::Array<TeFreeMoveZone*> _freeMoveZones;
 	Common::Array<TeMarker *> _markers;
 	Common::Array<AnchorZone *> _anchorZones;
 	Common::Array<AnimObject *> _animObjects;
@@ -116,14 +157,23 @@ private:
 
 	Common::HashMap<Common::String, SoundStep> _soundSteps;
 
+	Common::Array<TeIntrusivePtr<TeModel>> _hitObjects;
+	Common::Array<Object> _objects;
+	Common::Array<TeIntrusivePtr<TeBezierCurve>> _bezierCurves;
+	Common::Array<Dummy> _dummies;
+
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
 	Common::Array<Common::String> _blockingObjects;
 	TeLuaGUI _bgGui;
 	TeLuaGUI _gui2; // TODO: find a better name.
 	TeLuaGUI _gui3; // TODO: find a better name.
-	// TODO add private members
+
+	Common::Array<TeLight> _lights;
 
 	TeVector2f32 _someScrollVector;
+	TeVector2f32 _viewportSize;
+
+	Common::Path _loadedPath;
 };
 
 } // end namespace Tetraedge

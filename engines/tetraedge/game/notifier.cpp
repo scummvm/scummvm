@@ -30,10 +30,49 @@ Notifier::Notifier() {
 }
 
 void Notifier::launchNextnotifier() {
-	TeCurveAnim2<Te3DObject2, TeColor> *fadeInAnim = _gui.colorLinearAnimation("fadeIn");
-	if (fadeInAnim->_runTimer._stopped) {
-		warning("TODO: Implement Notifier::launchNextnotifier");
+	TeCurveAnim2<Te3DObject2, TeColor> *colorAnim = _gui.colorLinearAnimation("fadeIn");
+	assert(colorAnim);
+	if (!colorAnim->_runTimer._stopped)
+		return;
+
+	colorAnim = _gui.colorLinearAnimation("fadeOut");
+	if (!colorAnim->_runTimer._stopped) {
+		colorAnim = _gui.colorLinearAnimation("visible");
+		bool abort = true;
+		if (!colorAnim->_runTimer._stopped) {
+			abort = _notifierDataArray.empty();
+		}
+		if (abort)
+			return;
 	}
+
+	unload();
+	load();
+
+	if (_notifierDataArray.empty())
+		return;
+
+	TeVariant textformat = _gui.value("textFormat");
+	Common::String formattedName = Common::String::format(textformat.toString().c_str(), _notifierDataArray[0]._name.c_str());
+
+	TeTextLayout *text = _gui.textLayout("text");
+	text->setText(formattedName);
+
+	if (!_notifierDataArray[0]._imgpath.empty()) {
+		_gui.spriteLayoutChecked("image")->load(_notifierDataArray[0]._imgpath);
+	}
+
+	_gui.layoutChecked("notifier")->setVisible(true);
+
+	colorAnim = _gui.colorLinearAnimation("fadeIn");
+	colorAnim->_callbackObj = _gui.layoutChecked("sprite");
+	colorAnim->play();
+
+	colorAnim = _gui.colorLinearAnimation("fadeInImage");
+	colorAnim->_callbackObj = _gui.layoutChecked("image");
+	colorAnim->play();
+
+	_notifierDataArray.remove_at(0);
 }
 
 void Notifier::load() {
@@ -54,8 +93,15 @@ void Notifier::load() {
 }
 
 bool Notifier::onFadeInFinished() {
-	//TeCurveAnim2<Te3DObject2, TeColor> *visible = _gui.colorLinearAnimation("visible");
-	error("TODO: Implement me.");
+	TeCurveAnim2<Te3DObject2, TeColor> *colorAnim = _gui.colorLinearAnimation("visible");
+	colorAnim->_callbackObj = _gui.layout("sprite");
+	colorAnim->play();
+
+	colorAnim = _gui.colorLinearAnimation("visibleImage");
+	colorAnim->_callbackObj = _gui.layout("image");
+	colorAnim->play();
+
+	return false;
 }
 
 bool Notifier::onFadeOutFinished() {
@@ -66,7 +112,14 @@ bool Notifier::onFadeOutFinished() {
 }
 
 bool Notifier::onVisibleFinished() {
-	error("TODO: Implement me.");
+	TeCurveAnim2<Te3DObject2, TeColor> *colorAnim = _gui.colorLinearAnimation("fadeOut");
+	colorAnim->_callbackObj = _gui.layout("sprite");
+	colorAnim->play();
+
+	colorAnim = _gui.colorLinearAnimation("fadeOutImage");
+	colorAnim->_callbackObj = _gui.layout("image");
+	colorAnim->play();
+	return false;
 }
 
 void Notifier::push(const Common::String &name, const Common::String &imgpath) {

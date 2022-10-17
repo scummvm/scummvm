@@ -58,6 +58,7 @@ distribution.
 
 #include "common/array.h"
 #include "common/util.h"
+#include "common/math.h"
 #include "common/types.h"
 
 

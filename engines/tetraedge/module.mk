@@ -38,10 +38,12 @@ MODULE_OBJS := \
 	game/options_menu.o \
 	game/owner_error_menu.o \
 	game/question2.o \
+	game/scene_lights_xml_parser.o \
 	game/splash_screens.o \
 	te/micropather.o \
 	te/te_3d_object2.o \
 	te/te_3d_texture.o \
+	te/te_act_zone.o \
 	te/te_animation.o \
 	te/te_bezier_curve.o \
 	te/te_button_layout.o \

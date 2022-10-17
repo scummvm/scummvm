@@ -34,12 +34,12 @@ _curFrame(0), _curFrameValFresh(false), _repeatNum(0), _finishedSignalPending(fa
 _curFrame2(0), _useNMOArrays(0), _speed(0.0f) {
 }
 
-int TeModelAnimation::calcCurrentFrame(double proportion) {
+int TeModelAnimation::calcCurrentFrame(double millis) {
 	if (!_curFrameValFresh) {
 		int lastf = lastFrame();
 		int firstf = _firstFrame < 0 ? 0 : _firstFrame;
 
-		int curf = (proportion / 1000.0) * _speed;
+		int curf = (millis / 1000.0) * _speed;
 
 		curf = curf % ((lastf + 1) - firstf) + firstf;
 		if (!_dontRepeat && curf < _curFrame) {
@@ -175,7 +175,7 @@ bool TeModelAnimation::load(const Common::Path &path) {
 		return false;
 	}
 	bool retval;
-	if (TeModel::loadAndCheckString(modelFile, "TEZ0")) {
+	if (Te3DObject2::loadAndCheckFourCC(modelFile, "TEZ0")) {
 		Common::SeekableReadStream *zlibStream = TeModel::tryLoadZlibStream(modelFile);
 		if (!zlibStream)
 			return false;
@@ -190,7 +190,7 @@ bool TeModelAnimation::load(const Common::Path &path) {
 }
 
 bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
-	if (!TeModel::loadAndCheckString(stream, "TEAN")) {
+	if (!Te3DObject2::loadAndCheckFourCC(stream, "TEAN")) {
 		warning("[TeModelAnimation::load] Unknown format.");
 		return false;
 	}
@@ -214,11 +214,11 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 
 	_speed = stream.readFloatLE();
 	for (unsigned int i = 0; i < numBones; i++) {
-		if (!TeModel::loadAndCheckString(stream, "BONE"))
+		if (!Te3DObject2::loadAndCheckFourCC(stream, "BONE"))
 			return false;
 		const Common::String boneName = Te3DObject2::deserializeString(stream);
 		setBoneName(i, boneName);
-		if (!TeModel::loadAndCheckString(stream, "BTRA"))
+		if (!Te3DObject2::loadAndCheckFourCC(stream, "BTRA"))
 			return false;
 		uint32 numTrans = stream.readUint32LE();
 		for (unsigned int j = 0; j < numTrans; j++) {
@@ -227,7 +227,7 @@ bool TeModelAnimation::load(Common::SeekableReadStream &stream) {
 			TeVector3f32::deserialize(stream, trans);
 			setTranslation(j, f, trans);
 		}
-		if (!TeModel::loadAndCheckString(stream, "BROT"))
+		if (!Te3DObject2::loadAndCheckFourCC(stream, "BROT"))
 			return false;
 		uint32 numRots = stream.readUint32LE();
 		for (unsigned int j = 0; j < numRots; j++) {

@@ -29,26 +29,48 @@ GlobalBonusMenu::GlobalBonusMenu() : _entered(false) {
 }
 
 void GlobalBonusMenu::enter() {
-	error("TODO: Finish implementing GlobalBonusMenu::enter");
-	//Application *app = g_engine->getApplication();
-	//todo: call some virtual function on a field in app
-	//app->captureFade();
-	//_entered = true;
-	//load("menus/bonusmenu/GlobalBonusMenu.lua");
-	//TeLayout *menu = layout("menu");
-	//if (menu) {
-	//   ...
-	//}
+	Application *app = g_engine->getApplication();
+	app->appSpriteLayout().setVisible(true);
+	app->captureFade();
+	_entered = true;
+	load("menus/bonusmenu/GlobalBonusMenu.lua");
+	TeLayout *menu = layoutChecked("menu");
+	app->_frontLayout.addChild(menu);
+
+	// Original checks each layout's existence
+	TeButtonLayout *btn;
+	btn = buttonLayoutChecked("Val");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onValButtonValidated);
+	btn = buttonLayoutChecked("Bar");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onBarButtonValidated);
+	btn = buttonLayoutChecked("Cit");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onCitButtonValidated);
+	btn = buttonLayoutChecked("Ara");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onAraButtonValidated);
+	btn = buttonLayoutChecked("Syb2");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onSyb2ButtonValidated);
+	btn = buttonLayoutChecked("Syb3");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onSyb3ButtonValidated);
+	btn = buttonLayoutChecked("Back");
+	if (btn)
+		btn->onMouseClickValidated().add(this, &GlobalBonusMenu::onQuitButton);
 }
 
 void GlobalBonusMenu::leave() {
-	if (_entered != 0) {
-		Application *app = g_engine->getApplication();
-		app->captureFade();
-		TeLuaGUI::unload();
-		app->fade();
-		_entered = false;
-	}
+	if (!_entered)
+		return;
+
+	Application *app = g_engine->getApplication();
+	app->captureFade();
+	TeLuaGUI::unload();
+	app->fade();
+	_entered = false;
 }
 
 bool GlobalBonusMenu::onSomeButtonValidated(const char *script) {

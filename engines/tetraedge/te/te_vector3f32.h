@@ -28,6 +28,8 @@
 
 namespace Tetraedge {
 
+class TeQuaternion;
+
 class TeVector3f32 : public Math::Vector3d {
 
 public:
@@ -41,6 +43,10 @@ public:
 		Math::Vector3d::operator=(other);
 		return *this;
 	}
+
+	//TeVector3f32 operator*(const TeVector3f32 &other) const {
+	//	return TeVector3f32(x() * other.x(), y() * other.y(), z() * other.z());
+	//}
 
 	explicit TeVector3f32(const TeVector2s32 &vec2d) {
 		set(vec2d._x, vec2d._y, 0.0);
@@ -68,16 +74,8 @@ public:
 	Common::String dump() const {
 		return Common::String::format("TeVector3f32(%.02f %.02f %.02f)", x(), y(), z());
 	}
-	/*
-	 TODO: do we need anything not already provided by Vector3d?
-public:
-	TeVector3f32();
 
-public:
-	float x;
-	float y;
-	float z;
-	 */
+	void rotate(const TeQuaternion &rot);
 };
 
 } // end namespace Tetraedge

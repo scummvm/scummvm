@@ -40,7 +40,7 @@ namespace Tetraedge {
 
 Game::Game() : _objectsTakenVal(0), _score(0), _entered(false), _gameLoadState(0),
 _noScaleLayout(nullptr), _noScaleLayout2(nullptr), _warped(false), _saveRequested(false),
-_firstInventory(true) {
+_firstInventory(true), _movePlayerCharacterDisabled(false) {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -183,11 +183,56 @@ bool Game::changeWarp(const Common::String &zone, const Common::String &scene, b
 }
 
 bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
-	error("TODO: Implemet me");
+	_warped = false;
+	_movePlayerCharacterDisabled = false;
+	_sceneCharacterVisibleFromLoad = false;
+	// TODO: set 3 other fields here (0x3f40 = -1, 0x4249 = 1, 0x424b = 0)
+	Common::Path luapath("scenes");
+	luapath.joinInPlace(zone);
+	luapath.joinInPlace(scene);
+	luapath.joinInPlace("Logic");
+	luapath.appendInPlace(zone);
+	luapath.appendInPlace(".lua");
+
+	if (Common::File::exists(luapath)) {
+		_luaScript.execute("OnLeave");
+		_luaContext.removeGlobal("On");
+		_luaContext.removeGlobal("OnEnter");
+		_luaContext.removeGlobal("OnWarpObjectHit");
+		_luaContext.removeGlobal("OnButtonDown");
+		_luaContext.removeGlobal("OnButtonUp");
+		_luaContext.removeGlobal("OnFinishedAnim");
+		_luaContext.removeGlobal("OnCharacterAnimationFinished");
+		_luaContext.removeGlobal("OnCharacterAnimationPlayerFinished");
+		_luaContext.removeGlobal("OnDisplacementFinished");
+		_luaContext.removeGlobal("OnFreeSoundFinished");
+		_luaContext.removeGlobal("OnDocumentClosed");
+		_luaContext.removeGlobal("OnSelectedObject");
+		_luaContext.removeGlobal("OnDialogFinished");
+		_luaContext.removeGlobal("OnAnswered");
+		_luaContext.removeGlobal("OnLeave");
+		_luaScript.unload();
+	}
+
+	_gui3.unload();
+	_prevSceneName = _currentScene;
+	if (fadeFlag)
+		g_engine->getApplication()->fade();
+
+	return initWarp(zone, scene, false);
 }
 
 void Game::deleteNoScale() {
-	error("TODO: Implemet me");
+	if (_noScaleLayout) {
+		removeNoScaleChildren();
+		delete _noScaleLayout;
+		_noScaleLayout = nullptr;
+	}
+	if (_noScaleLayout2) {
+		removeNoScale2Children();
+		delete _noScaleLayout2;
+		_noScaleLayout2 = nullptr;
+	}
 }
 
 void Game::draw() {
@@ -206,6 +251,7 @@ void Game::enter(bool newgame) {
 	app->visualFade().init();
 	Common::SharedPtr<TeCallback1Param<Game, const Common::Point &>> callbackptr(new TeCallback1Param<Game, const Common::Point &>(this, &Game::onMouseClick, -1000.0f));
 	g_engine->getInputMgr()->_mouseLUpSignal.insert(callbackptr);
+	_movePlayerCharacterDisabled = false;
 	warning("TODO: Game::enter set some other fields here");
 	_sceneCharacterVisibleFromLoad = false;
 	Character::loadSettings("models/ModelsSettings.xml");
@@ -360,10 +406,10 @@ void Game::initScene(bool fade, const Common::String &scenePath) {
 	_scene._character->_model->setVisible(true);
 }
 
-void Game::initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
+bool Game::initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
 	_inventoryMenu.unload();
 	_gui4.unload();
-	warning("Game::initWarp: set field_0x4248 false here");
+	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = true;
 
 	if (_scene._character) {
@@ -401,10 +447,11 @@ void Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	if (!intLuaExists && !logicLuaExists && !setLuaExists && !forLuaExists && !markerLuaExists) {
 		debug("No lua scripts for scene %s zone %s", scene.c_str(), zone.c_str());
-		return;
+		return false;
 	}
 
-	warning("TODO: Game::initWarp: stop game sounds");
+	if (!_gameSounds.empty())
+		warning("TODO: Game::initWarp: stop game sounds");
 
 	if (logicLuaExists) {
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
@@ -451,8 +498,9 @@ void Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	TeButtonLayout *vidbgbtn = _gui4.buttonLayout("videoBackgroundButton");
 	vidbgbtn->setVisible(false);
-	vidbgbtn->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
-	vidbgbtn->onMouseClickValidated().add(this, &Game::onLockVideoButtonValidated);
+	/* TODO: Restore the original behavior here (onLockVideoButtonValidated) */
+	vidbgbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
+	vidbgbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
 
 	TeSpriteLayout *video = _gui4.spriteLayout("video");
 	video->setVisible(false);
@@ -530,10 +578,14 @@ void Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.execute("OnSelectedObject", _inventory.selectedObject());
 	}
 
-	//for (auto & sound : _gameSounds) {
-	warning("TODO: Game::initWarp: Do game sound stuff here");
+	if (!_gameSounds.empty()) {
+		//for (auto & sound : _gameSounds) {
+		warning("TODO: Game::initWarp: Do game sound stuff here");
+	}
+	// TODO: Also do random sound stuff here.
 
 	_scene.initScroll();
+	return true;
 }
 
 bool Game::isDocumentOpened() {
@@ -549,7 +601,7 @@ bool Game::isMoviePlaying() {
 }
 
 bool Game::launchDialog(const Common::String &param_1, uint param_2, const Common::String &param_3,
-				  const Common::String &param_4, float param_5)  {
+				  const Common::String &param_4, float param_5) {
 	error("TODO: Implemet Game::launchDialog");
 }
 
@@ -666,7 +718,7 @@ bool Game::onMarkersVisible(TeCheckboxLayout::State state) {
 	return false;
 }
 
-bool Game::onMouseClick(const Common::Point &pt)  {
+bool Game::onMouseClick(const Common::Point &pt) {
 	Application *app = g_engine->getApplication();
 
 	if (app->isFading())
@@ -832,6 +884,10 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 	music.play();
 	videoSpriteLayout->play();
 
+	// FIXME TODO!! Stop the movie and soundearly for testing.
+	videoSpriteLayout->_tiledSurfacePtr->_frameAnim._nbFrames = 10;
+	music.stop();
+
 	app->fade();
 }
 
@@ -950,7 +1006,7 @@ bool Game::unloadCharacters() {
 }
 
 bool Game::unloadPlayerCharacter(const Common::String &character) {
-	_scene.unloadPlayerCharacter(character);
+	_scene.unloadCharacter(character);
 	return true;
 }
 

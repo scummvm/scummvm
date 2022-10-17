@@ -163,13 +163,13 @@ static int tolua_bnd_type(lua_State *L) {
 }
 
 static void *tolua_clone(lua_State *L, void *dest, lua_CFunction fn) {
-  lua_pushstring(L, "tolua_gc");
-  lua_rawget(L, LUA_REGISTRYINDEX);
-  lua_pushlightuserdata(L, dest);
-  lua_pushcclosure(L, fn, 0);
-  lua_rawset(L,-3);
-  lua_settop(L,-2);
-  return dest;
+	lua_pushstring(L, "tolua_gc");
+	lua_rawget(L, LUA_REGISTRYINDEX);
+	lua_pushlightuserdata(L, dest);
+	lua_pushcclosure(L, fn, 0);
+	lua_rawset(L,-3);
+	lua_settop(L,-2);
+	return dest;
 }
 
 
@@ -182,13 +182,13 @@ static int tolua_bnd_takeownership(lua_State *L) {
 			if (lua_iscfunction(L,-1)) {
 				fn = lua_tocfunction(L, -1);
 			}
-	  lua_settop(L,-3);
-	  void *data = lua_touserdata(L, 1);
-	  tolua_clone(L, data, fn);
+			lua_settop(L,-3);
+			void *data = lua_touserdata(L, 1);
+			tolua_clone(L, data, fn);
+		}
 	}
-  }
-  lua_pushboolean(L, (uint)(fn != nullptr));
-  return 1;
+	lua_pushboolean(L, (uint)(fn != nullptr));
+	return 1;
 }
 
 static int tolua_bnd_releaseownership(lua_State *L) {
@@ -309,12 +309,12 @@ static int module_newindex_event(lua_State *L) {
 }
 
 static void tolua_moduleevents(lua_State *L) {
-  lua_pushstring(L, "__index");
-  lua_pushcclosure(L, module_index_event, 0);
-  lua_rawset(L, -3);
-  lua_pushstring(L, "__newindex");
-  lua_pushcclosure(L, module_newindex_event, 0);
-  lua_rawset(L, -3);
+	lua_pushstring(L, "__index");
+	lua_pushcclosure(L, module_index_event, 0);
+	lua_rawset(L, -3);
+	lua_pushstring(L, "__newindex");
+	lua_pushcclosure(L, module_newindex_event, 0);
+	lua_rawset(L, -3);
 }
 
 static bool tolua_ismodulemetatable(lua_State *L) {
@@ -388,11 +388,11 @@ int tolua_isboolean(lua_State *L, int lo, int def, tolua_Error *err) {
 
 int tolua_isnoobj(lua_State *L, int lo, tolua_Error *err) {
 	if (lua_gettop(L) < abs(lo))
-          return 1;
+		return 1;
 	err->index = lo;
 	err->array = false;
 	err->type = "[no object]";
-   return 0;
+	return 0;
 }
 
 int tolua_isnumber(lua_State *L, int lo, int def, tolua_Error *err) {
@@ -423,7 +423,7 @@ double tolua_tonumber(lua_State *L, int narg, double def) {
 }
 
 const char *tolua_tostring(lua_State *L, int narg, const char *def) {
-   return lua_gettop(L) < abs(narg) ? def : lua_tostring(L, narg);
+	return lua_gettop(L) < abs(narg) ? def : lua_tostring(L, narg);
 }
 
 void *tolua_tousertype(lua_State *L, int narg, void* def) {

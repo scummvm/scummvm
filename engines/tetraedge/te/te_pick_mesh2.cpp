@@ -97,5 +97,24 @@ void TePickMesh2::setTriangle(unsigned long num, const TeVector3f32 &v1, const T
 	_verticies[num * 3 + 2] = v3;
 }
 
+/*static*/
+void TePickMesh2::serialize(Common::WriteStream &stream, const TePickMesh2 &mesh) {
+	error("TODO: Implement TePickMesh2::serialize");
+}
+
+/*static*/
+void TePickMesh2::deserialize(Common::ReadStream &stream, TePickMesh2 &mesh) {
+	Te3DObject2::deserialize(stream, mesh);
+	uint32 ntriangles = stream.readUint32LE();
+	mesh._verticies.resize(ntriangles * 3);
+	mesh._lastTriangleHit = 0;
+
+	for (unsigned int i = 0; i < ntriangles * 3; i++) {
+		TeVector3f32 vec;
+		TeVector3f32::deserialize(stream, vec);
+		mesh._verticies.push_back(vec);
+	}
+}
+
 
 } // end namespace Tetraedge

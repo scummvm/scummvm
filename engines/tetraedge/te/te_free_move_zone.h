@@ -26,6 +26,7 @@
 
 #include "tetraedge/te/te_pick_mesh2.h"
 #include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/te/te_act_zone.h"
 #include "tetraedge/te/te_timer.h"
 
 namespace Tetraedge {
@@ -33,6 +34,20 @@ namespace Tetraedge {
 namespace micropather {
 	class MicroPather;
 }
+
+// TODO: should these structs be moved to their own headers?
+struct TeBlocker {
+	Common::String _s;
+	TeVector2f32 _pts[2];
+	long _x;
+};
+
+struct TeRectBlocker {
+	Common::String _s;
+	TeVector2f32 _pts[4];
+	long _x;
+};
+
 
 class TeFreeMoveZone : public TePickMesh2 {
 public:
@@ -55,12 +70,17 @@ public:
 	void buildAStar();
 	void calcGridMatrix();
 	void clear();
-	Common::Array<TeVector3f32> collisions(TeVector3f32 const&, TeVector2f32 const&);
-	TeVector3f32 correctCharacterPosition(TeVector3f32 const&, bool*, bool);
+	Common::Array<TeVector3f32> collisions(const TeVector3f32 &v1, const TeVector3f32 &v2);
+	TeVector3f32 correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f);
 
-	// TODO add public members
+	static void deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
+               Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones);
 
 private:
+	Common::Array<TeActZone> *_actzones;
+	Common::Array<TeBlocker> *_blockers;
+	Common::Array<TeRectBlocker> *_rectBlockers;
+
 	TeFreeMoveZoneGraph *_graph;
 	bool _transformedVerticiesDirty;
 	bool _bordersDirty;

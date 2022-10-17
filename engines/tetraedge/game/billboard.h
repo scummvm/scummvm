@@ -25,6 +25,8 @@
 #include "common/str.h"
 
 #include "tetraedge/te/te_object.h"
+#include "tetraedge/te/te_intrusive_ptr.h"
+#include "tetraedge/te/te_model.h"
 #include "tetraedge/te/te_vector2f32.h"
 #include "tetraedge/te/te_vector3f32.h"
 
@@ -42,6 +44,7 @@ public:
 	void size(const TeVector2f32 &size);
 
 private:
+	TeIntrusivePtr<TeModel> _model;
 	TeVector3f32 _pos;
 	TeVector3f32 _pos2;
 	TeVector2f32 _size;
