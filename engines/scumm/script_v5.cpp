@@ -3187,15 +3187,6 @@ void ScummEngine_v5::o5_walkActorToActor() {
 	int nr2 = getVarOrDirectByte(PARAM_2);
 	int dist = fetchScriptByte();
 
-	if (_game.id == GID_LOOM && _game.version == 4 && nr == 1 && nr2 == 0 &&
-		dist == 255 && vm.slot[_currentScript].number == 98) {
-		// WORKAROUND bug #814: LoomCD script 98 contains this:
-		//   walkActorToActor(1,0,255)
-		// Once again this is either a script bug, or there is some hidden
-		// or unknown meaning to this odd walk request...
-		return;
-	}
-
 	if (_game.id == GID_INDY4 && nr == 1 && nr2 == 106 &&
 		dist == 255 && vm.slot[_currentScript].number == 210) {
 		// WORKAROUND bug: Work around an invalid actor bug when using the
