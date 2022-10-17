@@ -324,19 +324,19 @@ void Combat::proc1() {
 	_val6 = MAX(_val6, _val7);
 
 	if (_val7 & 1)
-		g_globals->_treasure[7] += getRandomNumber(6);
+		g_globals->_treasure[8] += getRandomNumber(6);
 
 	if (_val7 & 6) {
 		if (!(_val7 & 2)) {
-			WRITE_LE_UINT16(&g_globals->_treasure[5],
-				READ_LE_UINT16(&g_globals->_treasure[5]) +
+			WRITE_LE_UINT16(&g_globals->_treasure[6],
+				READ_LE_UINT16(&g_globals->_treasure[6]) +
 				getRandomNumber(10));
 		} else if (!(_val7 & 4)) {
-			WRITE_LE_UINT16(&g_globals->_treasure[5],
-				READ_LE_UINT16(&g_globals->_treasure[5]) +
+			WRITE_LE_UINT16(&g_globals->_treasure[6],
+				READ_LE_UINT16(&g_globals->_treasure[6]) +
 				getRandomNumber(100));
 		} else {
-			g_globals->_treasure[6] += getRandomNumber(4);
+			g_globals->_treasure[7] += getRandomNumber(4);
 		}
 	}
 }
@@ -351,22 +351,22 @@ void Combat::selectTreasure() {
 #undef SHIFT_BIT
 
 	auto &treasure = g_globals->_treasure;
-	treasure[0] = 0;
+	treasure[1] = 0;
 
 	if (_treasureFlags[4]) {
-		treasure[1] = 10;
+		treasure[2] = 10;
 	} else if (_treasureFlags[3]) {
-		treasure[1] = 5 + getRandomNumber(4);
+		treasure[2] = 5 + getRandomNumber(4);
 	} else if (_treasureFlags[2]) {
-		treasure[1] = 4 + getRandomNumber(4);
+		treasure[2] = 4 + getRandomNumber(4);
 	} else if (_treasureFlags[1]) {
-		treasure[1] = 3 + getRandomNumber(4);
-	} else if (_treasureFlags[0] || treasure[7]) {
-		treasure[1] = 1 + getRandomNumber(4);
-	} else if (treasure[6]) {
-		treasure[1] = getRandomNumber(4) - 1;
+		treasure[2] = 3 + getRandomNumber(4);
+	} else if (_treasureFlags[0] || treasure[8]) {
+		treasure[2] = 1 + getRandomNumber(4);
+	} else if (treasure[7]) {
+		treasure[2] = getRandomNumber(4) - 1;
 	} else {
-		treasure[1] = getRandomNumber(2) - 1;
+		treasure[2] = getRandomNumber(2) - 1;
 	}
 }
 
@@ -388,12 +388,12 @@ void Combat::selectTreasure2(int count) {
 	_val1 += getRandomNumber(_allowFight) - 1;
 
 	auto &treasure = g_globals->_treasure;
-	if (!treasure[2])
-		treasure[2] = _val1;
-	else if (!treasure[3])
+	if (!treasure[3])
 		treasure[3] = _val1;
 	else if (!treasure[4])
 		treasure[4] = _val1;
+	else if (!treasure[5])
+		treasure[5] = _val1;
 }
 
 void Combat::nextRound() {

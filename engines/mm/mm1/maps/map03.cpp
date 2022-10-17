@@ -148,9 +148,9 @@ void Map03::special07() {
 }
 
 void Map03::special08() {
-	g_globals->_treasure[1] = 9;
-	g_globals->_treasure[4] = 200;
-	g_globals->_treasure[7] = 200;
+	g_globals->_treasure[2] = 9;
+	g_globals->_treasure[5] = 200;
+	g_globals->_treasure[8] = 200;
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

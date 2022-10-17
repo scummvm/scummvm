@@ -32,9 +32,43 @@ class Map05 : public Map {
 	typedef void (Map05:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special14();
+	void encounter(int monsterId);
+	void showMessage(const Common::String &msg);
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map05::special00
+	const SpecialFn SPECIAL_FN[21] = {
+		&Map05::special00,
+		&Map05::special01,
+		&Map05::special02,
+		&Map05::special03,
+		&Map05::special04,
+		&Map05::special05,
+		&Map05::special06,
+		&Map05::special07,
+		&Map05::special08,
+		&Map05::special09,
+		&Map05::special10,
+		&Map05::special11,
+		&Map05::special11,
+		&Map05::special11,
+		&Map05::special14,
+		&Map05::special14,
+		&Map05::special14,
+		&Map05::special14,
+		&Map05::special14,
+		&Map05::special14,
+		&Map05::special08
 	};
 public:
 	Map05() : Map(5, "cave1", 0x0A11) {}

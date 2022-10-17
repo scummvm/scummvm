@@ -29,7 +29,7 @@
 namespace MM {
 namespace MM1 {
 
-#define TREASURE_COUNT 8
+#define TREASURE_COUNT 9
 
 enum EnablementBit {
 	KNIGHT_BIT = 0x20, PALADIN_BIT = 0x10, ARCHER_BIT = 8,
