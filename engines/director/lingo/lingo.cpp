@@ -1418,13 +1418,16 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 			Common::String name = *var.u.s;
 			if (_localvars && _localvars->contains(name)) {
 				(*_localvars)[name] = value;
+				g_debugger->varWriteHook(name);
 				return;
 			}
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 				_currentMe.u.obj->setProp(name, value);
+				g_debugger->varWriteHook(name);
 				return;
 			}
 			_globalvars[name] = value;
+			g_debugger->varWriteHook(name);
 		}
 		break;
 	case GLOBALREF:
@@ -1439,6 +1442,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 			Common::String name = *var.u.s;
 			if (_localvars && _localvars->contains(name)) {
 				(*_localvars)[name] = value;
+				g_debugger->varWriteHook(name);
 			} else {
 				warning("varAssign: local variable %s not defined", name.c_str());
 			}
@@ -1449,6 +1453,7 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 			Common::String name = *var.u.s;
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 				_currentMe.u.obj->setProp(name, value);
+				g_debugger->varWriteHook(name);
 			} else {
 				warning("varAssign: property %s not defined", name.c_str());
 			}
@@ -1528,6 +1533,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 		{
 			Datum d;
 			Common::String name = *var.u.s;
+			g_debugger->varReadHook(name);
 
 			if (_localvars && _localvars->contains(name)) {
 				return (*_localvars)[name];
@@ -1547,6 +1553,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 	case GLOBALREF:
 		{
 			Common::String name = *var.u.s;
+			g_debugger->varReadHook(name);
 			if (_globalvars.contains(name)) {
 				return _globalvars[name];
 			}
@@ -1557,6 +1564,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 	case LOCALREF:
 		{
 			Common::String name = *var.u.s;
+			g_debugger->varReadHook(name);
 			if (_localvars && _localvars->contains(name)) {
 				return (*_localvars)[name];
 			}
@@ -1567,6 +1575,7 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 	case PROPREF:
 		{
 			Common::String name = *var.u.s;
+			g_debugger->varReadHook(name);
 			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
 				return _currentMe.u.obj->getProp(name);
 			}
