@@ -197,7 +197,7 @@ void Map05::showMessage(const Common::String &msg) {
 bool Map05::hasScroll() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
-		if (c._equipped.indexOf(SCROLL_ID) != -1)
+		if (c._equipped.indexOf(VELLUM_SCROLL_ID) != -1)
 			return true;
 	}
 
@@ -209,8 +209,8 @@ bool Map05::addScroll() {
 		Character &c = g_globals->_party[i];
 		if (!c._backpack.full()) {
 			// Add item
-			c._backpack.add(SCROLL_ID, 0);
-			g_globals->_items.getItem(SCROLL_ID);
+			c._backpack.add(VELLUM_SCROLL_ID, 0);
+			g_globals->_items.getItem(VELLUM_SCROLL_ID);
 			return true;
 		}
 	}

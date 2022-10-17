@@ -29,13 +29,18 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+static const byte MONSTER_IDS1[5] = { 2, 4, 1, 6, 4 };
+static const byte MONSTER_IDS2[5] = { 2, 5, 2, 3, 3 };
+static const byte MONSTER_IDS3[6] = {  2, 3, 3, 8, 8, 8 };
+static const byte MONSTER_IDS4[6] = { 10, 9, 9, 7, 7, 7 };
+
 void Map07::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 18; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
+			if (g_maps->_forwardMask & _data[69 + i]) {
 				
 				(this->*SPECIAL_FN[i])();
 			} else {
@@ -44,14 +49,183 @@ void Map07::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
+
 	g_maps->clearSpecial();
+	int idx = getRandomNumber(5) - 1;
+	setMonsters(MONSTER_IDS1[idx], MONSTER_IDS2[idx]);
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map07::special00() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map07.stairs"],
+		[]() {
+			g_maps->_mapPos = Common::Point(0, 15);
+			g_maps->changeMap(0xc03, 1);
+		}
+	));
+}
+
+void Map07::special01() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map07.portal"],
+		[]() {
+			g_maps->_mapPos = Common::Point(2, 7);
+			g_maps->changeMap(0x202, 1);
+		}
+	));
+}
+
+void Map07::special02() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Character &c = g_globals->_party[i];
+
+		for (uint j = 0; j < c._equipped.size(); ++j) {
+			if (c._equipped[j]._id >= BRONZE_KEY_ID &&
+				c._equipped[j]._id <= DIAMOND_KEY_ID)
+				// Someone has a key
+				return;
+		}
+	}
+
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map07.gate"]));
+	g_maps->_mapPos.y--;
+	g_events->send("Game", GameMessage("UPDATE"));
+}
+
+void Map07::special03() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map07.do_not_disturb"]));
+}
+
+void Map07::special04() {
+	Game::Encounter &enc = g_globals->_encounters;
+	g_maps->clearSpecial();
+
+	enc.clearMonsters();
+	for (int i = 0; i < 6; ++i)
+		enc.addMonster(MONSTER_IDS3[i], MONSTER_IDS4[i]);
+
+	for (int i = 6; i < 13; ++i)
+		enc.addMonster(1, 2);
+
+	enc.execute();
+}
+
+void Map07::special05() {
+	g_maps->clearSpecial();
+	setMonsters();
+	g_globals->_encounters.addMonster(9, 2);
+	g_globals->_encounters.execute();
+}
+
+void Map07::special07() {
+	g_maps->clearSpecial();
+	setMonsters();
+	g_globals->_encounters.addMonster(10, 4);
+	g_globals->_encounters.execute();
+}
+
+void Map07::special09() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	g_maps->clearSpecial();
+	setMonsters();
+
+	for (int i = 6; i < 10; ++i)
+		enc.addMonster(9, 2);
+	for (int i = 10; i < 13; ++i)
+		enc.addMonster(10, 4);
+	enc.addMonster(11, 4);
+	enc.execute();
+}
+
+void Map07::special11() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	g_maps->clearSpecial();
+	setMonsters();
+
+	for (int i = 6; i < 12; ++i)
+		enc.addMonster(11, 4);
+
+	enc.addMonster(9, 5);
+	enc.execute();
+}
+
+void Map07::special13() {
+	poolYN(
+		[]() {
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				c._sex = (c._sex == MALE) ? FEMALE : MALE;
+			}
+
+			Sound::sound(SOUND_2);
+			Sound::sound(SOUND_3);
+			g_events->send(InfoMessage(0, 1, STRING["maps.map07.reversal"]));
+		}
+	);
+}
+
+void Map07::special14() {
+	applyCondition(POISONED);
+}
+
+void Map07::special15() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._flags[11] & CHARFLAG11_GOT_MIGHT)) {
+			c._flags[11] |= CHARFLAG11_GOT_MIGHT;
+			c._might._base = MIN((int)c._might._base + 4, 255);
+		}
+	}
+
+	Sound::sound(SOUND_2);
+	Sound::sound(SOUND_3);
+	g_events->send(InfoMessage(0, 1, STRING["maps.map07.might"]));
+}
+
+void Map07::special16() {
+	applyCondition(DISEASED);
+}
+
+void Map07::special17() {
+	poolYN([]() {
+		g_globals->_treasure[5] = getRandomNumber(12) + 24;
+		g_globals->_treasure[8] = 20;
+		g_events->addAction(KEYBIND_SEARCH);
+	});
+}
+
+void Map07::setMonsters(int id1, int id2) {
+	Game::Encounter &enc = g_globals->_encounters;
+	enc.clearMonsters();
+
+	for (int i = 0; i < 6; ++i)
+		enc.addMonster(id1, id2);
+
+	enc._flag = true;
+	enc._levelIndex = 48;
+}
+
+void Map07::poolYN(YNCallback callback) {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(STRING["maps.map07.pool"], callback));
+}
+
+void Map07::applyCondition(Condition cond) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._condition & BAD_CONDITION))
+			c._condition = cond;
+	}
+
+	Sound::sound(SOUND_3);
+	send(InfoMessage(0, 1, STRING["maps.map07.toxic"]));
 }
 
 } // namespace Maps
