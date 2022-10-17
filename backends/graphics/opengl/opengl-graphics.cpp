@@ -536,7 +536,10 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		if (_libretroPipeline) {
 			_gameScreenTarget = new TextureTarget();
 			_gameScreenTarget->create();
-			_gameScreenTarget->setSize(_currentState.gameWidth, _currentState.gameHeight);
+			// To take software scaler into account we need to create a framebuffer matching the size of the _gameScreen output texture
+			// We cheat a little because ScaledTexture does everything it can to hide the real size
+			const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
+			_gameScreenTarget->setSize(gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight());
 		}
 #endif
 	}
@@ -652,7 +655,8 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
 		Framebuffer *lastFramebuffer = Pipeline::getActivePipeline()->setFramebuffer(_gameScreenTarget);
 		_gameScreenTarget->enableBlend(Framebuffer::kBlendModeDisabled);
-		Pipeline::getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), 0, 0, _gameScreen->getWidth(), _gameScreen->getHeight());
+		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
+		Pipeline::getActivePipeline()->drawTexture(gameScreenTexture, 0, 0, gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight());
 
 		// Draw the cursor if necessary.
 		if (needsCursor && !_overlayVisible) {
