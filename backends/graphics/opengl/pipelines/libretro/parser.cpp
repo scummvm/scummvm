@@ -521,11 +521,13 @@ bool PresetParser::parseParameters() {
 	Common::StringTokenizer tokenizer(parameters, ";");
 	while (!tokenizer.empty()) {
 		Common::String key = tokenizer.nextToken();
-		float value;
-		if (!lookUpValue(key, &value)) {
-			return false;
+		if (_entries.contains(key)) {
+			float value;
+			if (!lookUpValue(key, &value)) {
+				return false;
+			}
+			_shader->parameters[key] = value;
 		}
-		_shader->parameters[key] = value;
 	}
 
 	return true;
