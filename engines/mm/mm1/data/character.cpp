@@ -104,9 +104,18 @@ void Inventory::remove(Entry *e) {
 	removeAt(index);
 }
 
-int Inventory::indexOf(Entry *e) {
+int Inventory::indexOf(Entry *e) const {
 	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
 		if (e == &_items[i])
+			return i;
+	}
+
+	return -1;
+}
+
+int Inventory::indexOf(byte itemId) const {
+	for (uint i = 0; i < INVENTORY_COUNT; ++i) {
+		if (_items[i]._id == itemId)
 			return i;
 	}
 

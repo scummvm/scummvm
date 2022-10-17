@@ -150,7 +150,12 @@ public:
 	/**
 	 * Returns the index of a given entry
 	 */
-	int indexOf(Entry *e);
+	int indexOf(Entry *e) const;
+
+	/**
+	 * Returns the index of an entry with a given id
+	 */
+	int indexOf(byte itemId) const;
 
 	/**
 	 * Decreases the charge on a magic item, and removes
