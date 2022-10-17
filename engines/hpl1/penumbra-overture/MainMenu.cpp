@@ -1727,6 +1727,11 @@ cMainMenu::cMainMenu(cInit *apInit) : iUpdateable("MainMenu") {
 
 cMainMenu::~cMainMenu(void) {
 	STLDeleteAll(mlstWidgets);
+	// prevents the strings from still staying
+	// around after the game is closed
+	gvSaveGameFileVec[0].clear();
+	gvSaveGameFileVec[1].clear();
+	gvSaveGameFileVec[2].clear();
 
 	mpDrawer->DestroyGfxObject(mpGfxBlackQuad);
 	mpDrawer->DestroyGfxObject(mpGfxMouse);

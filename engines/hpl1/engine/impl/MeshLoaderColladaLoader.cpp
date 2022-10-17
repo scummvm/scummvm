@@ -72,7 +72,7 @@ bool cMeshLoaderCollada::FillStructures(const tString &asFile,
 	// Log("Loading %s\n",asFile.c_str());
 
 	tString sCacheFile = cString::GetFileName(cString::SetFileExt(asFile, "collcach"));
-	sCacheFile = msCacheDir + sCacheFile;
+	sCacheFile = "core/cache/" + sCacheFile;
 
 	if (abCache &&
 		FileExists(cString::To16Char(sCacheFile)) &&

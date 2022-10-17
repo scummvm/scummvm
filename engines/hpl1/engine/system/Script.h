@@ -185,8 +185,8 @@
 
 #define SCRIPT_FUNC_BEGIN(funcname, return, args)     \
 	namespace GenericScript {                         \
-	static tString funcname##_return = #return;   \
-	static tString funcname##_arg = args;         \
+	static const char *funcname##_return = #return;   \
+	static const char *funcname##_arg = args;         \
 	void funcname##_Generic(asIScriptGeneric * gen) { \
 		SCRIPT_RETURN_##return;
 
@@ -221,7 +221,7 @@
 #define AS_MAX_PORTABILITY
 #if defined(AS_MAX_PORTABILITY)
 #define SCRIPT_REGISTER_FUNC(funcname) \
-	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", GenericScript::funcname##_Generic, asCALL_GENERIC
+	Common::String(GenericScript::funcname##_return) + " "  + Common::String(#funcname) + " ("  + Common::String(GenericScript::funcname##_arg) + ")", GenericScript::funcname##_Generic, asCALL_GENERIC
 #else
 #define SCRIPT_REGISTER_FUNC(funcname) \
 	GenericScript::funcname##_return + " " #funcname " (" + GenericScript::funcname##_arg + ")", (void *)funcname, asCALL_STDCALL

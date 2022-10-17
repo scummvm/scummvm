@@ -37,8 +37,6 @@ namespace hpl {
 
 bool iMeshLoader::mbRestricStaticLightToSector = false;
 bool iMeshLoader::mbUseFastMaterial = false;
-tString iMeshLoader::msFastMaterialFile = "";
-tString iMeshLoader::msCacheDir = "core/cache/";
 
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS

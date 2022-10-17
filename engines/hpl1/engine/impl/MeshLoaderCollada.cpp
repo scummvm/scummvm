@@ -703,12 +703,7 @@ cMesh *cMeshLoaderCollada::LoadMesh(const tString &asFile, tMeshLoadFlag aFlags)
 		tString sMatName = GetMaterialTextureFile(Geom.msMaterial, vColladaMaterials, vColladaTextures,
 												  vColladaImages);
 		// Log("Material name: '%s'\n",sMatName.c_str());
-		iMaterial *pMaterial;
-		if (mbUseFastMaterial && msFastMaterialFile != "") {
-			pMaterial = mpMaterialManager->CreateMaterial(msFastMaterialFile);
-		} else {
-			pMaterial = mpMaterialManager->CreateMaterial(sMatName);
-		}
+		iMaterial *pMaterial = mpMaterialManager->CreateMaterial(sMatName);
 		if (pMaterial == NULL) {
 			Error("Couldn't create material '%s' for object '%s'\n", sMatName.c_str(),
 				  Geom.msName.c_str());
@@ -1377,12 +1372,7 @@ cMeshEntity *cMeshLoaderCollada::CreateStaticMeshEntity(cColladaNode *apNode, cW
 		pSubMesh->Compile();
 
 		// Add material
-		iMaterial *pMaterial;
-		if (mbUseFastMaterial && msFastMaterialFile != "") {
-			pMaterial = mpMaterialManager->CreateMaterial(msFastMaterialFile);
-		} else {
-			pMaterial = mpMaterialManager->CreateMaterial(sMatName);
-		}
+		iMaterial *pMaterial = mpMaterialManager->CreateMaterial(sMatName);
 		if (pMaterial == NULL) {
 			Error("Couldn't create material '%s' for object '%s'\n", sMatName.c_str(),
 				  apNode->msName.c_str());
