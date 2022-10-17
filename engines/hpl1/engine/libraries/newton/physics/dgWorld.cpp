@@ -898,38 +898,38 @@ void dgWorld::BodySetMatrix(dgBody *body, const dgMatrix &matrix) {
 	body->m_genericLRUMark = m_genericLRUMark;
 	dgMatrix relMatrix(body->GetMatrix().Inverse() * matrix);
 	while (index) {
-		dgBody *body;
+		dgBody *bodyI;
 
 		index--;
-		body = queue[index];
-		_ASSERTE(body != m_sentionelBody);
+		bodyI = queue[index];
+		_ASSERTE(bodyI != m_sentionelBody);
 
-		dgBroadPhaseCollision::Remove(body);
-		dgBroadPhaseCollision::Add(body);
+		dgBroadPhaseCollision::Remove(bodyI);
+		dgBroadPhaseCollision::Add(bodyI);
 
-		dgMatrix matrix(body->GetMatrix() * relMatrix);
-		body->SetVelocity(
+		dgMatrix matrixI(bodyI->GetMatrix() * relMatrix);
+		bodyI->SetVelocity(
 			dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 					 dgFloat32(0.0f)));
-		body->SetOmega(
+		bodyI->SetOmega(
 			dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f),
 					 dgFloat32(0.0f)));
-		body->SetMatrix(matrix);
-		body->m_isInWorld = true;
+		bodyI->SetMatrix(matrixI);
+		bodyI->m_isInWorld = true;
 
 		for (dgBodyMasterListRow::dgListNode *jointNode =
-				 body->m_masterNode->GetInfo().GetFirst();
+				 bodyI->m_masterNode->GetInfo().GetFirst();
 			 jointNode; jointNode =
 							jointNode->GetNext()) {
 			dgBodyMasterListCell &cell = jointNode->GetInfo();
-			body = cell.m_bodyNode;
-			if (body != m_sentionelBody) {
-				if (body->m_genericLRUMark != m_genericLRUMark) {
+			bodyI = cell.m_bodyNode;
+			if (bodyI != m_sentionelBody) {
+				if (bodyI->m_genericLRUMark != m_genericLRUMark) {
 					dgConstraint *constraint;
 					constraint = cell.m_joint;
 					if (constraint->GetId() != dgContactConstraintId) {
-						body->m_genericLRUMark = m_genericLRUMark;
-						queue[index] = body;
+						bodyI->m_genericLRUMark = m_genericLRUMark;
+						queue[index] = bodyI;
 						index++;
 						_ASSERTE(index < DG_RECURSIVE_SIZE);
 					}
@@ -1138,12 +1138,12 @@ bool dgWorld::AreBodyConnectedByJoints(dgBody *const originSrc,
 	origin->m_genericLRUMark = m_genericLRUMark;
 
 	while (start != end) {
-		dgBody *const origin = queue[start];
+		dgBody *const originI = queue[start];
 		start++;
 		start &= (DG_QEUEU_SIZE - 1);
 
 		for (dgBodyMasterListRow::dgListNode *jointNode =
-				 origin->m_masterNode->GetInfo().GetFirst();
+				 originI->m_masterNode->GetInfo().GetFirst();
 			 jointNode; jointNode =
 							jointNode->GetNext()) {
 			dgBodyMasterListCell &cell = jointNode->GetInfo();

@@ -1286,31 +1286,31 @@ void dgWorld::ProcessContacts(dgCollidingPairCollector::dgPair *const pair,
 			}
 
 		} else {
-			dgVector vel0(v0 + w0 * (contactMaterial->m_point - matrix0.m_posit));
-			dgVector vel1(v1 + w1 * (contactMaterial->m_point - matrix1.m_posit));
-			dgVector vRel(vel1 - vel0);
+			dgVector velocity0(v0 + w0 * (contactMaterial->m_point - matrix0.m_posit));
+			dgVector velocity1(v1 + w1 * (contactMaterial->m_point - matrix1.m_posit));
+			dgVector vRelative(velocity1 - velocity0);
 
-			dgFloat32 impulse = vRel % contactMaterial->m_normal;
+			dgFloat32 impulse = vRelative % contactMaterial->m_normal;
 			if (dgAbsf(impulse) > maxImpulse) {
 				maxImpulse = dgAbsf(impulse);
 				breakImpulse0 = contactMaterial->m_collision0->GetBreakImpulse();
 				breakImpulse1 = contactMaterial->m_collision1->GetBreakImpulse();
 			}
 
-			dgVector tangDir(vRel - contactMaterial->m_normal.Scale(impulse));
-			diff = tangDir % tangDir;
+			dgVector tangDirection(vRelative - contactMaterial->m_normal.Scale(impulse));
+			diff = tangDirection % tangDirection;
 
 			if (diff > dgFloat32(1.0e-2f)) {
-				contactMaterial->m_dir0 = tangDir.Scale(dgRsqrt(diff));
+				contactMaterial->m_dir0 = tangDirection.Scale(dgRsqrt(diff));
 			} else {
 				if (dgAbsf(contactMaterial->m_normal.m_z) > dgFloat32(0.577f)) {
-					tangDir = dgVector(-contactMaterial->m_normal.m_y,
+					tangDirection = dgVector(-contactMaterial->m_normal.m_y,
 									   contactMaterial->m_normal.m_z, dgFloat32(0.0f), dgFloat32(0.0f));
 				} else {
-					tangDir = dgVector(-contactMaterial->m_normal.m_y,
+					tangDirection = dgVector(-contactMaterial->m_normal.m_y,
 									   contactMaterial->m_normal.m_x, dgFloat32(0.0f), dgFloat32(0.0f));
 				}
-				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDir;
+				contactMaterial->m_dir0 = contactMaterial->m_normal * tangDirection;
 				_ASSERTE(
 					contactMaterial->m_dir0 % contactMaterial->m_dir0 > dgFloat32(1.0e-8f));
 				contactMaterial->m_dir0 = contactMaterial->m_dir0.Scale(
