@@ -53,9 +53,9 @@ void Map04::special() {
 			g_maps->clearSpecial();
 			if ((*g_maps->_currentMap)[MAP04_TREASURE_STOLEN] < 255)
 				(*g_maps->_currentMap)[MAP04_TREASURE_STOLEN]++;
-			g_globals->_treasure[5] = 88;
-			g_globals->_treasure[6] = 2;
-			g_globals->_treasure[7] = 10;
+			g_globals->_treasure[6] = 88;
+			g_globals->_treasure[7] = 2;
+			g_globals->_treasure[8] = 10;
 			g_events->addAction(KEYBIND_SEARCH);
 		}
 	));
