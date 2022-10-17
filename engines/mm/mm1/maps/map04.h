@@ -28,7 +28,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define MAP04_TREASURE_OVERRIDE 169
+#define MAP04_PASSAGE_OVERRIDE 169
+#define MAP04_STAIRS_OVERRIDE 196
 #define MAP04_TREASURE_STOLEN 971
 
 class Map04 : public MapTown {
@@ -42,7 +43,6 @@ private:
 	void special05();
 	void special06();
 	void special07();
-	void special08();
 	void special09();
 	void special10();
 	void special11();
@@ -83,6 +83,8 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	void special08();
 };
 
 } // namespace Maps

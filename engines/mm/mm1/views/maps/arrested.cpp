@@ -91,19 +91,13 @@ void Arrested::bribe() {
 }
 
 void Arrested::run() {
+	close();
 	g_globals->_currCharacter = &g_globals->_party[
 		getRandomNumber(g_globals->_party.size()) - 1
 	];
 	g_globals->_currCharacter->_condition = ERADICATED;
 
-	// Pick random run destination. This seems incredibly dangerous,
-	// since couldn't it end up with the party in a wall?
-	g_maps->_mapPos.x = getRandomNumber(15);
-	g_maps->_mapPos.y = getRandomNumber(15);
-
-	clearSurface();
-	writeString(0, 1, STRING["maps.map04.poof"]);
-	delaySeconds(2);
+	static_cast<MM1::Maps::Map04 *>(g_maps->_currentMap)->special08();
 }
 
 void Arrested::surrender(int numYears) {

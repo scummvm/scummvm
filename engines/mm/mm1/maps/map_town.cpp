@@ -79,7 +79,7 @@ void MapTown::temple() {
 	));
 }
 
-void MapTown::trainer() {
+void MapTown::training() {
 	Sound::sound(SOUND_2);
 	send(InfoMessage(
 		STRING[Common::String::format("maps.map%.2u.training_inside", _mapIndex)],

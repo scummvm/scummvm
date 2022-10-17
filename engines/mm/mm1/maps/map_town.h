@@ -58,7 +58,7 @@ protected:
 	/**
 	 * Handles visiting trainer
 	 */
-	void trainer();
+	void training();
 
 	/**
 	 * Show a sign message
