@@ -36,7 +36,7 @@
 #include "touche/console.h"
 
 /**
- * This is the namespace of the Touché engine.
+ * This is the namespace of the Touche engine.
  *
  * Status of this engine: ???
  *

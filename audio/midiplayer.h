@@ -105,7 +105,7 @@ public:
 	 *
 	 * @todo This method currently does not do anything if the new volume
 	 *       matches the old volume. But some engines always update the
-	 *       volume (Parallaction, Tinsel, Touché, ...). This is why
+	 *       volume (Parallaction, Tinsel, Touche, ...). This is why
 	 *       this method is currently virtual. We really should figure
 	 *       which way to do it, and then make this the default, and make
 	 *       this method non-virtual again.
