@@ -75,12 +75,12 @@ static float TeLuaToF32(lua_State *L, int index) {
 }
 
 static bool TeLuaToBool(lua_State *L,int index) {
-  if (lua_type(L, index) != LUA_TBOOLEAN) {
-	  warning("TeLuaToBool:: not a bool");
-	  return false;
-  } else {
-	  return lua_toboolean(L, index);
-  }
+	if (lua_type(L, index) != LUA_TBOOLEAN) {
+		warning("TeLuaToBool:: not a bool");
+		return false;
+	} else {
+		return lua_toboolean(L, index);
+	}
 }
 
 
@@ -245,7 +245,7 @@ int layoutBindings(lua_State *L) {
 		layout->setName(Common::String::format("%p", (void *)layout));
 	}
 	lua_pushstring(L, "__TeLuaGUIThis");
-    lua_gettable(L, LUA_REGISTRYINDEX);
+	lua_gettable(L, LUA_REGISTRYINDEX);
 	TeLuaGUI *gui = TeLuaTo<TeLuaGUI*>(L,-1);
 	TeLuaGUI::StringMap<TeLayout *> &layouts = gui->layouts();
 	if (!layouts.contains(layout->name())) {
@@ -384,7 +384,7 @@ int spriteLayoutBindings(lua_State *L) {
 		}
 		lua_settop(L, -2);
 	}
-	if (!imgFullPath.empty())
+	if (!imgFullPath.empty()) {}
 		layout->load(imgFullPath);
 
 	lua_pushnil(L);

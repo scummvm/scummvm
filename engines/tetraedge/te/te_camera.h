@@ -73,6 +73,8 @@ public:
 	int _projectionMatrixType;
 	float _orthNearVal;
 	float _orthFarVal;
+	float _focalLenMaybe;
+	float _somePerspectiveVal;
 
 private:
 	int _viewportX;

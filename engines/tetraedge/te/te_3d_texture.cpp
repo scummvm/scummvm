@@ -95,8 +95,18 @@ void Te3DTexture::destroy() {
 	_glTexture = NO_TEXTURE;
 }
 
-void Te3DTexture::ForceTexData(uint gltextures, uint xsize, uint ysize) {
-	error("TODO: Implement me");
+void Te3DTexture::forceTexData(uint gltextures, uint xsize, uint ysize) {
+	if (_glTexture != 0xffffffff) {
+		if (_createdTexture)
+			glDeleteTextures(1, &_glTexture);
+		_createdTexture = false;
+		_loaded = false;
+	}
+	_glTexture = gltextures;
+	_width = xsize;
+	_height = ysize;
+	_texWidth = xsize;
+	_texHeight = ysize;
 }
 
 bool Te3DTexture::hasAlpha() const {
@@ -217,6 +227,7 @@ TeVector2s32 Te3DTexture::optimisedSize(const TeVector2s32 &size) {
 	return TeVector2s32(v1, v2);
 }
 
+/*static*/
 void Te3DTexture::unbind() {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->setMatrixMode(TeRenderer::MM_GL_TEXTURE);

@@ -57,7 +57,8 @@ void Character::WalkSettings::clear() {
 Character::Character() : _curveOffset(0), _lastFrame(-1), _callbacksChanged(false),
 _missingCurrentAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"), _needsSomeUpdate(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
-_freeMoveZone(nullptr) {
+_freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr) {
+	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
 }
 
 void Character::addCallback(const Common::String &key, const Common::String &s2, float f1, float f2) {
@@ -127,12 +128,37 @@ float Character::animLengthFromFile(const Common::String &animname, uint *pframe
 	return animLen * _model->scale().z();
 }
 
-bool Character::blendAnimation(const Common::String &animname, float param_2, bool param_3, bool param_4) {
-	error("TODO: Implement Character::blendAnimation");
+bool Character::blendAnimation(const Common::String &animname, float amount, bool repeat, bool param_4) {
+	Common::Path animpath("models/Anims");
+	animpath.joinInPlace(animname);
+
+	_missingCurrentAnim = !(animname.contains(_characterSettings._walkFileName)
+			|| animname.contains(walkAnim(WalkPart_Start))
+			|| animname.contains(walkAnim(WalkPart_Loop))
+			|| animname.contains(walkAnim(WalkPart_EndG))
+			|| animname.contains(walkAnim(WalkPart_EndD)));
+
+	if (_curModelAnim)
+		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
+
+	_curModelAnim = animCacheLoad(animpath);
+	_curModelAnim->onFinished().add(this, &Character::onModelAnimationFinished);
+
+	_curModelAnim->bind(_model);
+	_model->blendAnim(_curModelAnim, amount, repeat);
+	_lastFrame = -1;
+	_curModelAnim->play();
+	_curAnimName = animname;
+	warning("TODO: Set field 0x2d1 in Character::blendAnimation");
+	return true;
 }
 
 TeVector3f32 Character::correctPosition(const TeVector3f32 &pos) {
-	error("TODO: Implement Character::correctPosition");
+	bool flag;
+	TeVector3f32 result = _freeMoveZone->correctCharacterPosition(pos, &flag, true);
+	if (!flag)
+		result = _model->position();
+	return result;
 }
 
 float Character::curveOffset() {
@@ -150,7 +176,12 @@ void Character::deleteAllCallback() {
 }
 
 void Character::deleteAnim() {
-	error("TODO: Implement Character::deleteAnim");
+	if (_curModelAnim) {
+		_curModelAnim->onFinished().remove(this, &Character::onModelAnimationFinished);
+		_curModelAnim->unbind();
+	}
+	_model->removeAnim();
+	_curModelAnim.release();
 }
 
 void Character::deleteCallback(const Common::String &str1, const Common::String &str2, float f) {
@@ -159,7 +190,11 @@ void Character::deleteCallback(const Common::String &str1, const Common::String 
 
 //static bool deserialize(TiXmlElement *param_1, Walk *param_2);
 void Character::endMove() {
-	error("TODO: Implement Character::endMove.");
+	if (_model->name() == "Kate")
+		walkMode("Walk");
+
+	_onFinishedSignal.call();
+	stop();
 }
 
 const Character::WalkSettings *Character::getCurrentWalkFiles() {
@@ -170,23 +205,34 @@ const Character::WalkSettings *Character::getCurrentWalkFiles() {
 	return nullptr;
 }
 
-bool Character::isFramePassed(uint frameno) {
-	error("TODO: Implement Character::isFramePassed.");
+bool Character::isFramePassed(int frameno) {
+	return (frameno > _lastAnimFrame && _model->anim()->curFrame2() >= frameno);
 }
 
 bool Character::isWalkEnd() {
-	error("TODO: Implement Character::isWalkEnd.");
+	Common::String animFile = _model->anim()->_loadedPath.getLastComponent().toString();
+	for (const auto & walkSettings : _characterSettings._walkSettings) {
+		if (walkSettings._value._walkParts[WalkPart_EndD]._file.contains(animFile)
+				|| walkSettings._value._walkParts[WalkPart_EndG]._file.contains(animFile))
+			return true;
+	}
 	return false;
 }
 
-bool Character::leftStepFrame(enum Character::WalkPart walkpart) {
-	error("TODO: Implement Character::leftStepFrame.");
-	return false;
+int Character::leftStepFrame(enum Character::WalkPart walkpart) {
+	const Character::WalkSettings *settings = getCurrentWalkFiles();
+	if (settings) {
+		return settings->_walkParts[(int)walkpart]._stepLeft;
+	}
+	return -1;
 }
 
-bool Character::rightStepFrame(enum Character::WalkPart walkpart) {
-	error("TODO: Implement Character::rightStepFrame.");
-	return false;
+int Character::rightStepFrame(enum Character::WalkPart walkpart) {
+	const Character::WalkSettings *settings = getCurrentWalkFiles();
+	if (settings) {
+		return settings->_walkParts[(int)walkpart]._stepRight;
+	}
+	return -1;
 }
 
 bool Character::loadModel(const Common::String &name, bool param_2) {
@@ -290,7 +336,7 @@ bool Character::loadModel(const Common::String &name, bool param_2) {
 	return false;
 }
 
-bool Character::onBonesUpdate(const Common::String &param_1, const TeMatrix4x4 *param_2) {
+bool Character::onBonesUpdate(const Common::String &boneName, const TeMatrix4x4 &param_2) {
 	error("TODO: Implement Character::onBonesUpdate");
 	return false;
 }
@@ -304,7 +350,7 @@ void Character::permanentUpdate() {
 	error("TODO: Implement Character::permanentUpdate.");
 }
 
-void Character::placeOnCurve(const TeBezierCurve &curve) {
+void Character::placeOnCurve(TeIntrusivePtr<TeBezierCurve> &curve) {
 	_curve = curve;
 	updatePosition(_curveOffset);
 }
@@ -320,10 +366,10 @@ void Character::removeAnim() {
 }
 
 void Character::removeFromCurve() {
-	error("TODO: Implement Character::removeFromCurve.");
+	_curve.release();
 }
 
-bool Character::setAnimation(const Common::String &name, bool repeat, bool param_3, bool unused, int startFrame, int endFrame)  {
+bool Character::setAnimation(const Common::String &name, bool repeat, bool param_3, bool unused, int startFrame, int endFrame) {
 	if (name.empty())
 		return false;
 
@@ -354,8 +400,10 @@ bool Character::setAnimation(const Common::String &name, bool repeat, bool param
 	return true;
 }
 
-void Character::setAnimationSound(const Common::String &name, uint param_2)  {
-	error("TODO: Implement Character::setAnimationSound.");
+void Character::setAnimationSound(const Common::String &name, uint offset) {
+	warning("TODO: Set field 0x2f8 to 0 in Character::setAnimationSound.");
+	_animSound = name;
+	_animSoundOffset = offset;
 }
 
 void Character::setCurveOffset(float offset) {
@@ -363,7 +411,7 @@ void Character::setCurveOffset(float offset) {
 	updatePosition(offset);
 }
 
-void Character::setFreeMoveZone(const Common::SharedPtr<TeFreeMoveZone> &zone) {
+void Character::setFreeMoveZone(TeFreeMoveZone *zone) {
 	_freeMoveZone = zone;
 }
 
@@ -387,23 +435,26 @@ float Character::translationFromAnim(const TeModelAnimation &anim, long bone, lo
 	return translationVectorFromAnim(anim, bone, param_3).z();
 }
 
-TeVector3f32 Character::translationVectorFromAnim(const TeModelAnimation &anim, long bone, long frame)  {
+TeVector3f32 Character::translationVectorFromAnim(const TeModelAnimation &anim, long bone, long frame) {
 	const TeTRS trs = trsFromAnim(anim, bone, frame);
 	return trs.getTranslation();
 }
 
-TeTRS Character::trsFromAnim(const TeModelAnimation &anim, long bone, long frame)  {
+TeTRS Character::trsFromAnim(const TeModelAnimation &anim, long bone, long frame) {
 	if (bone == -1)
 		return TeTRS();
 
 	return anim.getTRS(bone, frame, false);
 }
 
-void Character::update(double percentval)  {
+void Character::update(double percentval) {
 	error("TODO: Implement Character::update");
 }
 
-void Character::updateAnimFrame()  {
+void Character::updateAnimFrame() {
+	if (_model->anim()) {
+		_lastAnimFrame = _model->anim()->curFrame2();
+	}
 	error("TODO: Implement Character::updateAnimFrame");
 }
 
@@ -411,7 +462,7 @@ void Character::updatePosition(float curveOffset) {
 	error("TODO: Implement Character::updatePosition");
 }
 
-Common::String Character::walkAnim(Character::WalkPart part)  {
+Common::String Character::walkAnim(Character::WalkPart part) {
 	Common::String result;
 	const Character::WalkSettings *settings = getCurrentWalkFiles();
 	if (settings) {

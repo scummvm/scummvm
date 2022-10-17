@@ -30,20 +30,20 @@ namespace Tetraedge {
  */
 template<class T> class TeIntrusivePtr {
 public:
-	TeIntrusivePtr() : _p(nullptr) {}
+	typedef void(T::*Tdestructor)();
 
-	TeIntrusivePtr(const TeIntrusivePtr<T> &other) {
+	TeIntrusivePtr() : _p(nullptr), _deleteFn(nullptr) {}
+
+	TeIntrusivePtr(const TeIntrusivePtr<T> &other) : _deleteFn(nullptr) {
 		_p = other._p;
 		if (_p)
 			_p->incrementCounter();
-
 	}
 
-	TeIntrusivePtr(T *obj) {
+	TeIntrusivePtr(T *obj) : _deleteFn(nullptr) {
 		_p = obj;
 		if (_p)
 			_p->incrementCounter();
-
 	}
 
 	virtual ~TeIntrusivePtr() {
@@ -64,6 +64,7 @@ public:
 		if (this != &other) {
 			release();
 			_p = other._p;
+			_deleteFn = other._deleteFn;
 			if (_p)
 				_p->incrementCounter();
 		}
@@ -72,8 +73,12 @@ public:
 
 	void release() {
 		if (_p) {
-			if (_p->decrementCounter())
-				delete _p;
+			if (_p->decrementCounter()) {
+				if (_deleteFn)
+					(_p->*_deleteFn)();
+				else
+					delete _p;
+			}
 		}
 		_p = nullptr;
 	}
@@ -110,8 +115,13 @@ public:
 		return _p;
 	}
 
+	void setDeleteFn(Tdestructor destructor) {
+		_deleteFn = destructor;
+	}
+
 private:
 	T *_p;
+	Tdestructor _deleteFn;
 };
 
 } // end namespace Tetraedge

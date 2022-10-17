@@ -140,7 +140,6 @@ private:
 	Credits _credits;
 	OwnerErrorMenu _ownerErrorMenu;
 	SplashScreens _splashScreens;
-	InGameScene _inGameScene;
 
 	TeIntrusivePtr<TeFont3> _fontComic;
 	TeIntrusivePtr<TeFont3> _fontArgh;

@@ -47,7 +47,7 @@ public:
 	Common::String currentCameraName() const;
 
 	void draw();
-	virtual void load(Common::Path &path) {};
+	virtual bool load(const Common::Path &path) { return false; };
 
 	void removeModel(const Common::String &name);
 	void setCurrentCamera(const Common::String &name);

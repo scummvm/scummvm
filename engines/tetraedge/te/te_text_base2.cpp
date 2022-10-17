@@ -139,6 +139,7 @@ void TeTextBase2::clearText() {
 }
 
 void TeTextBase2::computeNbSpaces(Line &line, unsigned int startOffset, unsigned int endOffset) {
+	// only needed if we implement Justify
 	error("TODO: Implement TeTextBase2::computeNbSpaces");
 }
 
@@ -292,8 +293,9 @@ void TeTextBase2::strikethrough(bool val) {
 		_strikethrough = val;
 		_valueWasSet = true;
 	}
-	if (val)
+	if (val) {
 		warning("TODO: Implement TeTextBase2::draw strikethrough support");
+	}
 }
 
 

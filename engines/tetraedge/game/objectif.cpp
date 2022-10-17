@@ -26,6 +26,7 @@
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/objectif.h"
 #include "tetraedge/te/te_vector2f32.h"
+#include "tetraedge/te/te_text_layout.h"
 
 namespace Tetraedge {
 
@@ -157,7 +158,16 @@ void Objectif::update() {
 			}
 		}
 
-		warning("TODO: Finish main part of Objectif::update");
+		float z = 0.1;
+		for (Te3DObject2 *child : tasks->childList()) {
+			TeTextLayout *text = dynamic_cast<TeTextLayout *>(child);
+			/*TeVector3f32 size =*/
+			text->size();
+			TeVector3f32 userPos = text->userPosition();
+			userPos.z() = z;
+			text->setPosition(userPos);
+			z += text->userSize().y();
+		}
 	}
 	_layoutsDirty = false;
 }

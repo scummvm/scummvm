@@ -43,8 +43,8 @@ public:
 
 private:
 	struct notifierData {
-		Common::String name;
-		Common::String imgpath;
+		Common::String _name;
+		Common::String _imgpath;
 	};
 	Common::Array<notifierData> _notifierDataArray;
 	TeLuaGUI _gui;

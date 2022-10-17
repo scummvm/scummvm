@@ -19,36 +19,55 @@
  *
  */
 
-#include "common/str.h"
-#include "common/array.h"
-
-#include "tetraedge/te/te_animation.h"
-#include "tetraedge/te/te_matrix4x4.h"
-#include "tetraedge/te/te_resource.h"
-#include "tetraedge/te/te_vector3f32.h"
-
 #ifndef TETRAEDGE_TE_TE_MODEL_VERTEX_ANIMATION_H
 #define TETRAEDGE_TE_TE_MODEL_VERTEX_ANIMATION_H
 
+#include "common/str.h"
+#include "common/array.h"
+#include "common/stream.h"
+
+#include "tetraedge/te/te_animation.h"
+#include "tetraedge/te/te_matrix4x4.h"
+#include "tetraedge/te/te_model.h"
+#include "tetraedge/te/te_intrusive_ptr.h"
+#include "tetraedge/te/te_resource.h"
+#include "tetraedge/te/te_vector3f32.h"
+
 namespace Tetraedge {
+
+class TeModel;
+class TeModelAnimation;
 
 class TeModelVertexAnimation : public TeAnimation, public TeResource {
 public:
 	struct KeyData {
-		float _f;
+		float _frame;
 		Common::Array<TeVector3f32> _vectors;
 		Common::Array<TeMatrix4x4> _matricies;
 	};
 
 	TeModelVertexAnimation();
 
+	void bind(TeIntrusivePtr<TeModel> &model);
+	// void deleteLater() // original overrides this, but just calls the super.
+	void destroy();
+
 	const Common::String &head() const { return _head; }
+	TeVector3f32 getKeyVertex(unsigned long keyno, unsigned int vertexno);
+	const Common::Array<TeVector3f32> &getVertices();
+
+	bool load(Common::ReadStream &stream);
+	void save(Common::WriteStream &stream) const;
+
+	void update(double amount) override;
 
 private:
+	float _lastMillis;
+	TeIntrusivePtr<TeModel> _model;
+	TeModelAnimation *_modelAnim;
+	TeQuaternion _rot;
 	Common::String _head;
 	Common::Array<KeyData> _keydata;
-
-	// TODO add private members
 
 };
 

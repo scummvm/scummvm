@@ -19,33 +19,11 @@
  *
  */
 
-#include "tetraedge/tetraedge.h"
-#include "tetraedge/game/application.h"
-#include "tetraedge/game/help_option_menu.h"
+#include "tetraedge/te/te_act_zone.h"
 
 namespace Tetraedge {
 
-HelpOptionMenu::HelpOptionMenu() : _entered(false) {
-}
-
-void HelpOptionMenu::enter() {
-	if (!_entered) {
-		Application *app = g_engine->getApplication();
-		app->captureFade();
-		load("menus/helpoptionMenu/optionsMenu.lua");
-
-		TeLayout *menu = layoutChecked("menu");
-		app->appSpriteLayout().addChild(menu);
-		app->fade();
-	}
-}
-
-void HelpOptionMenu::leave() {
-	Application *app = g_engine->getApplication();
-	app->captureFade();
-	unload();
-	app->fade();
-	_entered = false;
+TeActZone::TeActZone() {
 }
 
 // TODO: Add more functions here.

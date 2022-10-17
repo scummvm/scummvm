@@ -81,7 +81,7 @@ void TeOBP::setScale(const TeVector3f32 &scale) {
 	_boundsNeedUpdate = true;
 }
 
-void TeOBP::translate(const TeVector3f32 &offset)  {
+void TeOBP::translate(const TeVector3f32 &offset) {
 	Te3DObject2::translate(offset);
 	_boundsNeedUpdate = true;
 }

@@ -35,6 +35,9 @@ Common::Array<TeAnimation *> *TeAnimation::_animations = nullptr;
 TeAnimation::TeAnimation() : _repeatCount(1), _dontRepeat(false) {
 }
 
+TeAnimation::~TeAnimation() {
+	stop();
+}
 
 void TeAnimation::cont() {
 	if (_runTimer._stopped) {
@@ -98,10 +101,13 @@ void TeAnimation::seekToStart() {
 }
 
 /*static*/ void TeAnimation::updateAll() {
-	for (auto &anim : *animations()) {
-		if (!anim->_runTimer._stopped) {
-			float msFromStart = anim->_runTimer.getTimeFromStart() / 1000.0;
-			anim->update(msFromStart);
+	Common::Array<TeAnimation *> &anims = *animations();
+	// Note: update can cause events which cascade into animtaions
+	// getting deleted, so be careful about the numbers.
+	for (unsigned int i = 0; i < anims.size(); i++) {
+		if (!anims[i]->_runTimer._stopped) {
+			float msFromStart = anims[i]->_runTimer.getTimeFromStart() / 1000.0;
+			anims[i]->update(msFromStart);
 		}
 	}
 

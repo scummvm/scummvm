@@ -20,7 +20,10 @@
  */
 
 #include "common/textconsole.h"
+
+#include "tetraedge/tetraedge.h"
 #include "tetraedge/game/billboard.h"
+#include "tetraedge/game/game.h"
 
 namespace Tetraedge {
 
@@ -28,11 +31,21 @@ Billboard::Billboard() {
 }
 
 bool Billboard::load(const Common::String &path) {
-	error("TODO: implement Billboard::load");
+	_model = new TeModel();
+	TeIntrusivePtr<Te3DTexture> texture = new Te3DTexture();
+	Game *game = g_engine->getGame();
+	Common::Path texpath = game->sceneZonePath().join(path);
+	texture->load(texpath);
+	_model->setName(texpath.toString());
+	Common::Array<TeVector3f32> quad;
+	quad.resize(4);
+	_model->setQuad(texture, quad, TeColor(0xff, 0xff, 0xff, 0xff));
+	game->scene().models().push_back(_model);
 	return false;
 }
 
 void Billboard::calcVertex() {
+	//Game *game = g_engine->getGame();
 	error("TODO: implement Billboard::calcVertex");
 }
 

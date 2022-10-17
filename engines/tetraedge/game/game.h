@@ -30,6 +30,7 @@
 #include "tetraedge/game/in_game_scene.h"
 #include "tetraedge/game/notifier.h"
 #include "tetraedge/game/cellphone.h"
+#include "tetraedge/game/game_sound.h"
 #include "tetraedge/game/objectif.h"
 #include "tetraedge/game/question2.h"
 #include "tetraedge/game/dialog2.h"
@@ -44,12 +45,16 @@ class Game {
 public:
 	Game();
 
-	class HitObject {
+	struct HitObject {
 		byte OnChangeWarp();
 		byte OnDown();
 		byte OnUp();
 		byte OnValidated();
 		//byte OnVisible(); empty never used?
+		
+		Common::String _name;
+		Game *_game;
+		TeButtonLayout *_button;
 	};
 
 	class RandomSound {
@@ -92,7 +97,7 @@ public:
 	void initLoadedBackupData();
 	void initNoScale();
 	void initScene(bool param_1, const Common::String &scenePath);
-	void initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag);
+	bool initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag);
 	bool isDocumentOpened();
 	bool isMouse() { return false; }
 	bool isMoviePlaying();
@@ -156,8 +161,11 @@ public:
 
 	const Common::String &currentZone() { return _currentZone; }
 	const Common::String &currentScene() { return _currentScene; }
+	const Common::Path &sceneZonePath() { return _sceneZonePath; }
 	TeLuaScript &luaScript() { return _luaScript; }
 	InGameScene &scene() { return _scene; }
+	Dialog2 &dialog2() { return _dialog2; }
+	Question2 &question2() { return _question2; }
 
 private:
 	bool _luaShowOwnerError;
@@ -194,6 +202,8 @@ private:
 
 	Common::String _loadName;
 
+	Common::Array<GameSound *> _gameSounds;
+
 	Common::HashMap<Common::String, bool> _unlockedArtwork;
 
 	int _gameLoadState;
@@ -219,6 +229,7 @@ private:
 	bool _sceneCharacterVisibleFromLoad;
 	bool _markersVisible;
 	bool _saveRequested;
+	bool _movePlayerCharacterDisabled;
 
 	TeLayout *_noScaleLayout;
 	TeLayout *_noScaleLayout2;

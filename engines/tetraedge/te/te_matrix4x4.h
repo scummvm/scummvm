@@ -28,6 +28,8 @@
 
 namespace Tetraedge {
 
+class TeTRS;
+
 /* A 4x4 matrix, but stored in *column-major* order to match
  * OpenGL (and the original engine)
  */
@@ -51,7 +53,7 @@ public:
 		return !operator==(other);
 	}
 
-	TeMatrix4x4 &operator*=(const TeMatrix4x4 &mul);
+	//TeMatrix4x4 &operator*=(const TeMatrix4x4 &mul);
 
 	TeVector3f32 operator*(const TeVector3f32 &mul) const;
 
@@ -72,6 +74,8 @@ public:
 	void meshAdd(const TeMatrix4x4 &other);
 
 	bool inverse();
+
+	static TeMatrix4x4 fromTRS(const TeTRS &trs);
 
 	const float *getData() const { return _data; }
 	float *getData() { return _data; }

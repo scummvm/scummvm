@@ -29,17 +29,18 @@
 #include "tetraedge/te/te_trs.h"
 #include "tetraedge/te/te_mesh.h"
 #include "tetraedge/te/te_model_animation.h"
+#include "tetraedge/te/te_model_vertex_animation.h"
 #include "tetraedge/te/te_tiled_texture.h"
 #include "tetraedge/te/te_intrusive_ptr.h"
 
 namespace Tetraedge {
 
+class TeModelVertexAnimation;
 class TeModelAnimation;
+class TeMesh;
 
 class TeModel : public Te3DObject2, public TeResource {
 public:
-	TeModel();
-
 	class BonesBlender {
 	public:
 		// Note: original takes a TeModel & but ignores it.
@@ -63,13 +64,17 @@ public:
 
 	struct bone {
 		Common::String _name;
-		unsigned short _x;
+		short _x;
 		TeTRS _trs;
 	};
+
 	struct weightElement {
 		float _w;
 		unsigned short _x;
 	};
+
+	TeModel();
+	virtual ~TeModel();
 
 	void addMesh(const TeMesh &mesh) {
 		_meshes.push_back(mesh);
@@ -83,8 +88,16 @@ public:
 
 	int checkFileType(Common::SeekableReadStream &instream);
 
+	void create();
+	void destroy();
+
 	void draw() override;
-	virtual void setColor(const TeColor &col) override;
+
+	int findModelBone(const Common::String &name);
+	int findOrAddWeights(const Common::Array<weightElement> &weights);
+	void forceMatrix(const TeMatrix4x4 &matrix);
+	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned long num);
+	TeMatrix4x4 lerpElementsMatrix(unsigned long num, Common::Array<TeMatrix4x4> &matricies);
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
@@ -93,17 +106,26 @@ public:
 	bool load(const Common::Path &path);
 	bool load(Common::SeekableReadStream &stream);
 
-	bool loadWeights(Common::ReadStream &stream, Common::Array<weightElement> weights);
+	bool loadWeights(Common::ReadStream &stream, Common::Array<weightElement> &weights);
 	bool loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh);
 
+	void optimize();
 	void update();
 	void removeAnim();
-	void setVisibleByName(const Common::String &name, bool vis);
-	void setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Array<TeVector3f32> &verts, const TeColor &col);
+
+	void saveBone(Common::SeekableWriteStream &stream, unsigned long boneno);
+	void saveMesh(Common::SeekableWriteStream &stream, const TeMesh &mesh);
+	void saveModel(Common::SeekableWriteStream &stream, unsigned int num);
+	void saveWeights(Common::SeekableWriteStream &stream, const Common::Array<weightElement> weights);
 
 	void setAnim(TeIntrusivePtr<TeModelAnimation> &anim, bool repeat);
+	virtual void setColor(const TeColor &col) override;
+	void setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Array<TeVector3f32> &verts, const TeColor &col);
+	void setVertexAnim(TeIntrusivePtr<TeModelVertexAnimation> &anim, bool repeat);
+	void setVisibleByName(const Common::String &name, bool vis);
 
-	static bool loadAndCheckString(Common::ReadStream &stream, const char *str);
+	TeMatrix4x4 skinOffset(unsigned long boneno) const;
+
 	static Common::SeekableReadStream *tryLoadZlibStream(Common::SeekableReadStream &instr);
 	TeIntrusivePtr<TeTiledTexture> _tiledTexture;
 
@@ -114,6 +136,8 @@ public:
 	Common::Array<TeMesh> _meshes;
 
 protected:
+	bool _matrixForced;
+	TeMatrix4x4 _forcedMatrix;
 	Common::Array<MeshBlender *> _meshBlenders;
 	Common::Array<bone> _bones;
 	Common::Array<TeMatrix4x4> _boneMatrices;

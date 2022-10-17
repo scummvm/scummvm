@@ -32,8 +32,12 @@ class GalleryMenu : public TeLuaGUI {
 public:
 	GalleryMenu();
 
-	class GalleryBtnObject {
-		bool OnValidated();
+	struct GalleryBtnObject {
+		bool onValidated();
+
+		Common::String _audioPath;
+		Common::String _moviePath;
+		GalleryMenu *_owner;
 	};
 
 	void enter();
@@ -43,6 +47,7 @@ public:
 	bool onLockVideoButtonValidated();
 	bool onSkipVideoButtonValidated();
 	bool onVideoFinished();
+	TeMusic &music();
 
 private:
 	TeMusic _music;

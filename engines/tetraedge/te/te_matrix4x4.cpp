@@ -20,6 +20,7 @@
  */
 
 #include "tetraedge/te/te_matrix4x4.h"
+#include "tetraedge/te/te_trs.h"
 
 namespace Tetraedge {
 
@@ -65,10 +66,12 @@ TeMatrix4x4 operator*(const TeMatrix4x4 &left, const TeMatrix4x4 &right) {
 	return retval;
 }
 
+/*
 TeMatrix4x4 &TeMatrix4x4::operator*=(const TeMatrix4x4 &mul) {
-	error("TODO: Opeartor *=");
+	TeMatrix4x4 result = operator*(*this, mul);
+	*this = result;
 	return *this;
-}
+}*/
 
 bool TeMatrix4x4::operator==(const TeMatrix4x4 &other) const {
 	for (int i = 0; i < 16; i++) {
@@ -314,6 +317,31 @@ void TeMatrix4x4::serialize(Common::WriteStream &stream) const {
 	for (int i = 0; i < 16; i++) {
 		stream.writeFloatLE(_data[i]);
 	}
+}
+
+/*static*/
+TeMatrix4x4 TeMatrix4x4::fromTRS(const TeTRS &trs) {
+	TeMatrix4x4 result;
+	const TeVector3f32 trans = trs.getTranslation();
+	TeMatrix4x4 transm;
+	float *tm = transm.getData();
+	tm[12] = trans.x();
+	tm[13] = trans.y();
+	tm[14] = trans.z();
+	result = result * transm;
+
+	const TeMatrix4x4 rotm = trs.getRotation().toMatrix();
+	result = result * rotm;
+
+	const TeVector3f32 scle = trs.getScale();
+	TeMatrix4x4 scalem;
+	float *sm = scalem.getData();
+	sm[0] = scle.x();
+	sm[5] = scle.y();
+	sm[10] = scle.z();
+	result = result * scalem;
+
+	return result;
 }
 
 

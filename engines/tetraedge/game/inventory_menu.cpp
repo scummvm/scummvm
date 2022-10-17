@@ -117,7 +117,7 @@ bool InventoryMenu::onQuitButton() {
 }
 
 bool InventoryMenu::onSaveButton(){
-   return false;
+	return false;
 }
 
 } // end namespace Tetraedge

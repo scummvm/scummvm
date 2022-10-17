@@ -30,6 +30,7 @@ namespace Tetraedge {
 class TeCheckboxLayout : public TeLayout {
 public:
 	TeCheckboxLayout();
+	virtual ~TeCheckboxLayout();
 
 	enum State {
 		CheckboxStateActive,

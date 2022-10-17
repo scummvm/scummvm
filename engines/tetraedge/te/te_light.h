@@ -29,9 +29,9 @@
 namespace Tetraedge {
 
 enum TeLightType {
-	Type0 = 0,
-	Type1 = 1,
-	Type2 = 2  // uses quadratic attenuation?
+	LightTypePoint = 0,
+	LightTypeDirectional = 1,
+	LightTypeSpot = 2
 };
 
 class TeCamera;
@@ -43,29 +43,49 @@ public:
 	TeVector3f32 directionVector() const;
 	void disable(uint lightno);
 	void enable(uint lightno);
-	static void enableAll();
 	static void disableAll();
+	static void enableAll();
 
 	void draw(TeCamera &camera);
 
-	void transformDirPoint(TeVector3f32 &pt1,TeVector3f32 &pt2);
+	void transformDirPoint(const TeVector3f32 &pt1, TeVector3f32 &pt2);
 	void transformSpotPoint(TeVector3f32 &pt1);
 
 	void update(uint lightno);
-	void updateGlobal();
+	static void updateGlobal();
+	static void setGlobalAmbient(const TeColor &col) { _globalAmbientColor = col; }
+
+	void setSpecular(const TeColor &col) { _colSpecular = col; }
+	void setDiffuse(const TeColor &col) { _colDiffuse = col; }
+	void setAmbient(const TeColor &col) { _colAmbient = col; }
+
+	void setConstAtten(float val) { _constAtten = val; }
+	void setLinearAtten(float val) { _linearAtten = val; }
+	void setQuadraticAtten(float val) { _quadraticAtten = val; }
+	void setCutoff(float val) { _cutoff = val; }
+	void setExponent(float val) { _exponent = val; }
+	void setDisplaySize(float val) { _displaySize = val; }
+	void setPosition3d(const TeVector3f32 &pos) { _position3d = pos; }
+	void setPositionRadial(const TeVector2f32 &pos) { _positionRadial = pos; }
 
 private:
 	TeVector3f32 _position3d;
 	TeVector2f32 _positionRadial;
 
-	TeColor col1;
-	TeColor col2;
-	TeColor col3;
-	// TODO add private members
+	TeColor _colAmbient;
+	TeColor _colDiffuse;
+	TeColor _colSpecular;
 
 	enum TeLightType _type;
 
 	static TeColor _globalAmbientColor;
+
+	float _constAtten;
+	float _linearAtten;
+	float _quadraticAtten;
+	float _cutoff;
+	float _exponent;
+	float _displaySize;
 };
 
 } // end namespace Tetraedge

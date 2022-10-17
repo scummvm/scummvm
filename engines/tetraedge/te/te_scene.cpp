@@ -23,7 +23,7 @@
 
 namespace Tetraedge {
 
-TeScene::TeScene() {
+TeScene::TeScene() : _currentCameraIndex(0) {
 }
 
 void TeScene::close() {
@@ -90,7 +90,7 @@ void TeScene::setCurrentCamera(const Common::String &name) {
 		}
 	}
 	if (i == n) {
-		warning("setCurrentCamera: Couldn't find camera %s", name.c_str());
+		//warning("TeScene::setCurrentCamera: Couldn't find camera %s", name.c_str());
 		return;
 	}
 	_currentCameraIndex = i;

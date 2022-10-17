@@ -30,7 +30,8 @@ namespace Tetraedge {
 
 TeCamera::TeCamera() : _projectionMatrixType(0), _orthogonalParamL(1.0f),
 	_orthogonalParamR(0.0f), _orthogonalParamT(1.0f), _orthogonalParamB(0.0f),
-	_orthNearVal(10.0), _orthFarVal(4000.0), _transformA(0), _transformB(0)
+	_orthNearVal(10.0f), _orthFarVal(4000.0f), _transformA(0), _transformB(0),
+	_focalLenMaybe(40.0f), _somePerspectiveVal(1.0f)
 {
 }
 

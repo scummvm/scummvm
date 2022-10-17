@@ -45,6 +45,14 @@ _clickPassThrough(false), _state(CheckboxState6)
 	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpMaxPriorityCallback);
 }
 
+TeCheckboxLayout::~TeCheckboxLayout() {
+	TeInputMgr *inputmgr = g_engine->getInputMgr();
+	inputmgr->_mouseMoveSignal.remove(_onMousePositionChangedCallback);
+	inputmgr->_mouseLDownSignal.remove(_onMouseLeftDownCallback);
+	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpCallback);
+	inputmgr->_mouseLUpSignal.remove(_onMouseLeftUpMaxPriorityCallback);
+}
+
 void TeCheckboxLayout::setActiveLayout(TeLayout *layout) {
 	if (_activeLayout)
 		removeChild(_activeLayout);

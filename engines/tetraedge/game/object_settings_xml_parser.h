@@ -47,6 +47,7 @@ public:
 		KEY_END()
 	} PARSER_END()
 
+private:
 	// Parser callback methods
 	bool parserCallback_ObjectsSettings(ParserNode *node);
 	bool parserCallback_Object(ParserNode *node);
@@ -54,7 +55,6 @@ public:
 	bool parserCallback_defaultScale(ParserNode *node);
 	bool textCallback(const Common::String &val) override;
 
-private:
 	enum TextTagType {
 		TagModelFileName,
 		TagDefaultScale

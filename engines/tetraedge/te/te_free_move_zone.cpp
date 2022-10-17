@@ -23,9 +23,41 @@
 
 namespace Tetraedge {
 
-TeFreeMoveZone::TeFreeMoveZone() {
+TeFreeMoveZone::TeFreeMoveZone() : _actzones(nullptr), _blockers(nullptr), _rectBlockers(nullptr),
+_transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _projectedPointsDirty(true)
+{
 }
 
-// TODO: Add more functions here.
+void TeFreeMoveZone::buildAStar() {
+	error("TODO: Implement TeFreeMoveZone::buildAStar");
+}
+
+void TeFreeMoveZone::calcGridMatrix() {
+	error("TODO: Implement TeFreeMoveZone::calcGridMatrix");
+}
+
+void TeFreeMoveZone::clear() {
+	error("TODO: Implement TeFreeMoveZone::clear");
+}
+
+Common::Array<TeVector3f32> TeFreeMoveZone::collisions(const TeVector3f32 &v1, const TeVector3f32 &v2) {
+	error("TODO: Implement TeFreeMoveZone::collisions");
+}
+
+TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f) {
+	error("TODO: Implement TeFreeMoveZone::correctCharacterPosition");
+}
+
+/*static*/
+void TeFreeMoveZone::deserialize(Common::ReadStream &stream, TeFreeMoveZone &dest, Common::Array<TeBlocker> *blockers,
+               Common::Array<TeRectBlocker> *rectblockers, Common::Array<TeActZone> *actzones) {
+	dest.clear();
+	TePickMesh2::deserialize(stream, dest);
+
+	error("TODO: Implement TeFreeMoveZone::deserialize");
+	dest._blockers = blockers;
+	dest._rectBlockers = rectblockers;
+	dest._actzones = actzones;
+}
 
 } // end namespace Tetraedge

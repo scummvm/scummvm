@@ -42,7 +42,19 @@ void TeBezierCurve::draw() {
 
 float TeBezierCurve::length() {
 	if (_lengthNeedsUpdate) {
-		error("TODO: Implement TeBezierCurve::length");
+		_length = 0.0;
+		_lengthNeedsUpdate = false;
+		_lengths.clear();
+
+		TeVector3f32 lastpt = _controlPoints[0];
+		for (unsigned int i = 0; i < _numiterations; i++) {
+			float amount = (float)i / _numiterations;
+			const TeVector3f32 pt = retrievePoint(amount);
+			float len = (lastpt - pt).length();
+			_length += len;
+			_lengths.push_back(_length);
+			lastpt = pt;
+		}
 	}
 	return _length;
 }
@@ -81,5 +93,24 @@ void TeBezierCurve::setNbIterations(unsigned long iterations) {
 	_numiterations = iterations;
 }
 
+/*static*/
+void TeBezierCurve::serialize(Common::WriteStream &stream, const TeBezierCurve &curve) {
+	error("TODO: Implement TeBezierCurve::serialize");
+}
+
+/*static*/
+void TeBezierCurve::deserialize(Common::ReadStream &stream, TeBezierCurve &curve) {
+	Te3DObject2::deserialize(stream, curve);
+
+	curve._lengthNeedsUpdate = false;
+	curve._length = stream.readFloatLE();
+	uint32 npoints = stream.readUint32LE();
+
+	for (unsigned int i = 0; i < npoints; i++) {
+		TeVector3f32 vec;
+		TeVector3f32::deserialize(stream, vec);
+		curve._controlPoints.push_back(vec);
+	}
+}
 
 } // end namespace Tetraedge

@@ -33,7 +33,39 @@
 
 namespace Tetraedge {
 
-TeModel::TeModel() : _enableLights(false), _skipBoneMatricies(false) {
+TeModel::TeModel() : _enableLights(false), _skipBoneMatricies(false), _matrixForced(false) {
+	// TODO: set 0x17c to 1.0
+	// TODO: set 0x178, 0x170 to 0
+	_modelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
+	_modelVertexAnim.setDeleteFn(&TeModelVertexAnimation::deleteLater);
+	create();
+}
+
+TeModel::~TeModel() {
+	destroy();
+}
+
+void TeModel::create() {
+	// TODO: set field_0x158 to 0
+	_modelAnim.release();
+	_modelVertexAnim.release();
+	_matrixForced = false;
+	_skipBoneMatricies = false;
+}
+
+void TeModel::destroy() {
+	_weightElements.clear();
+	// TODO: clear matrix array 0x148
+	_meshes.clear();
+	_bones.clear();
+	// TODO: clear matrix array 0x190
+	_boneMatrices.clear();
+	for (MeshBlender *blender : _meshBlenders)
+		delete blender;
+	_meshBlenders.clear();
+	for (BonesBlender *blender : _boneBlenders)
+		delete blender;
+	_boneBlenders.clear();
 }
 
 int TeModel::checkFileType(Common::SeekableReadStream &instream) {
@@ -49,11 +81,11 @@ int TeModel::checkFileType(Common::SeekableReadStream &instream) {
 	return 0;
 }
 
-void TeModel::blendAnim(TeIntrusivePtr<TeModelAnimation>& anim, float amount, bool repeat) {
+void TeModel::blendAnim(TeIntrusivePtr<TeModelAnimation>& anim, float seconds, bool repeat) {
 	if (!_modelAnim) {
 		setAnim(anim, repeat);
 	} else {
-		BonesBlender *blender = new BonesBlender(anim, amount);
+		BonesBlender *blender = new BonesBlender(anim, seconds);
 		anim->_repeatCount = (repeat ? -1 : 1);
 		anim->play();
 		_boneBlenders.push_back(blender);
@@ -73,12 +105,26 @@ void TeModel::draw() {
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
 		for (TeMesh &mesh : _meshes) {
-			// TODO: Set some value in the mesh here to this->field_0x158??
+			// TODO: Set some flag in the mesh here to this->field_0x158??
 			mesh.draw();
 		}
 		renderer->popMatrix();
 		TeLight::disableAll();
 	}
+}
+
+void TeModel::forceMatrix(const TeMatrix4x4 &matrix) {
+	_matrixForced = true;
+	_forcedMatrix = matrix;
+}
+
+TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned long num) {
+	if (anim) {
+		int bone = anim->findBone(_bones[num]._name);
+		if (bone != -1)
+			return anim->getTRS(bone, anim->curFrame2(), false);
+	}
+	return _bones[num]._trs;
 }
 
 void TeModel::setColor(const TeColor &col) {
@@ -99,9 +145,17 @@ void TeModel::removeAnim() {
 void TeModel::update() {
 	Common::Array<TeMatrix4x4> matricies;
 	matricies.resize(_bones.size());
-	for (const bone &b : _bones) {
-		//TeMatrix4x4 matrix = TeMatrix4x4::fomTRS(b._trs);
-		warning("TODO: Finish TeModel::update.");
+	for (unsigned int i = 0; i < _bones.size(); i++) {
+		const bone &b = _bones[i];
+		TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
+		if (b._x == -1 || _bones.size() < 2) {
+			matricies[0] = matrix;
+		} else {
+			matricies[i] = matricies[b._x] * matrix;
+		}
+	}
+	if (_bones.size()) {
+		//warning("TODO: Finish TeModel::update. (disasm 190 ~ 697)");
 	}
 	for (TeMesh &mesh : _meshes) {
 		if (!_modelVertexAnim) {
@@ -128,14 +182,16 @@ _name(name), _amount(amount) {
 	_timer.start();
 }
 
-/*static*/ void TeModel::loadAlign(Common::SeekableReadStream &stream) {
+/*static*/
+void TeModel::loadAlign(Common::SeekableReadStream &stream) {
 	int64 pos = stream.pos();
 	if (pos % 4) {
 		stream.seek(4 - (pos % 4), SEEK_CUR);
 	}
 }
 
-/*static*/ void TeModel::saveAlign(Common::SeekableWriteStream &stream) {
+/*static*/
+void TeModel::saveAlign(Common::SeekableWriteStream &stream) {
 	int64 pos = stream.pos();
 	if (pos % 4) {
 		stream.seek(4 - (pos % 4), SEEK_CUR);
@@ -143,7 +199,10 @@ _name(name), _amount(amount) {
 }
 
 bool TeModel::load(Common::SeekableReadStream &stream) {
-	if (!loadAndCheckString(stream, "TEMD")) {
+	destroy();
+	create();
+
+	if (!loadAndCheckFourCC(stream, "TEMD")) {
 		error("[TeModel::load] Unknown format.");
 	}
 
@@ -162,7 +221,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		_skipBoneMatricies = stream.readUint32LE();
 	}
 
-	if (!loadAndCheckString(stream, "SKEL")) {
+	if (!loadAndCheckFourCC(stream, "SKEL")) {
 		error("[TeModel::load] Unable to find skeleton.");
 	}
 
@@ -182,7 +241,7 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		}
 	}
 
-	if (!loadAndCheckString(stream, "WEIG")) {
+	if (!loadAndCheckFourCC(stream, "WEIG")) {
 		error("[TeModel::load] Unable to load weight.");
 	}
 	for (unsigned int i = 0; i < _weightElements.size(); i++) {
@@ -204,7 +263,7 @@ bool TeModel::load(const Common::Path &path) {
 	}
 
 	bool retval;
-	if (loadAndCheckString(modelFile, "TEZ0")) {
+	if (loadAndCheckFourCC(modelFile, "TEZ0")) {
 		Common::SeekableReadStream *zlibStream = tryLoadZlibStream(modelFile);
 		if (!zlibStream)
 			return false;
@@ -233,7 +292,7 @@ Common::SeekableReadStream *TeModel::tryLoadZlibStream(Common::SeekableReadStrea
 	return Common::wrapCompressedReadStream(&substream, uncompressedSize);
 }
 
-bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElement> weights) {
+bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElement> &weights) {
 	uint32 nweights = stream.readUint32LE();
 	if (nweights > 100000)
 		error("Improbable number of weights %d", (int)nweights);
@@ -247,7 +306,7 @@ bool TeModel::loadWeights(Common::ReadStream &stream, Common::Array<weightElemen
 }
 
 bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
-	if (!loadAndCheckString(stream, "MESH"))
+	if (!loadAndCheckFourCC(stream, "MESH"))
 		return false;
 
 	uint32 vertcount = stream.readUint32LE();
@@ -265,7 +324,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	mesh.setName(Te3DObject2::deserializeString(stream));
 	loadAlign(stream);
 
-	if (!loadAndCheckString(stream, "MTRL"))
+	if (!loadAndCheckFourCC(stream, "MTRL"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.materials().size(); i++) {
@@ -276,7 +335,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 		mesh.attachMaterial(i, mat);
 	}
 
-	if (!loadAndCheckString(stream, "VERT"))
+	if (!loadAndCheckFourCC(stream, "VERT"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
@@ -285,7 +344,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 		mesh.setVertex(i, v);
 	}
 	if (mesh.hasUvs()) {
-		if (!loadAndCheckString(stream, "TUVS"))
+		if (!loadAndCheckFourCC(stream, "TUVS"))
 			return false;
 		for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
 			TeVector2f32 v;
@@ -294,7 +353,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 		}
 	}
 
-	if (!loadAndCheckString(stream, "NORM"))
+	if (!loadAndCheckFourCC(stream, "NORM"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
@@ -304,7 +363,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	}
 
 	if (mesh.hasColor()) {
-		if (!loadAndCheckString(stream, "COLS"))
+		if (!loadAndCheckFourCC(stream, "COLS"))
 			return false;
 
 		for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
@@ -314,7 +373,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 		}
 	}
 
-	if (!loadAndCheckString(stream, "FCPM"))
+	if (!loadAndCheckFourCC(stream, "FCPM"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.materials().size(); i++) {
@@ -322,7 +381,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	}
 
 	loadAlign(stream);
-	if (!loadAndCheckString(stream, "MTXI"))
+	if (!loadAndCheckFourCC(stream, "MTXI"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.numVerticies(); i++) {
@@ -330,7 +389,7 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	}
 
 	loadAlign(stream);
-	if (!loadAndCheckString(stream, "IDXS"))
+	if (!loadAndCheckFourCC(stream, "IDXS"))
 		return false;
 
 	for (unsigned int i = 0; i < mesh.numIndexes(); i++) {
@@ -377,6 +436,11 @@ void TeModel::setAnim(TeIntrusivePtr<TeModelAnimation> &anim, bool repeat) {
 	_modelAnim = anim;
 }
 
+void TeModel::setVertexAnim(TeIntrusivePtr<TeModelVertexAnimation> &anim, bool repeat) {
+	anim->_repeatCount = (repeat ? -1 : 1);
+	_modelVertexAnim = anim;
+}
+
 void TeModel::setVisibleByName(const Common::String &name, bool vis) {
 	for (TeMesh &mesh : _meshes) {
 		if (mesh.name().contains(name)) {
@@ -385,14 +449,14 @@ void TeModel::setVisibleByName(const Common::String &name, bool vis) {
 	}
 }
 
-bool TeModel::loadAndCheckString(Common::ReadStream &stream, const char *str) {
-	char buf[5];
-	buf[4] = '\0';
-	stream.read(buf, 4);
-	return !strncmp(buf, str, 4);
+TeMatrix4x4 TeModel::skinOffset(unsigned long boneno) const {
+	if (boneno >= _boneMatrices.size())
+		return TeMatrix4x4();
+	return _boneMatrices[boneno];
 }
 
 TeModel::BonesBlender::BonesBlender(TeIntrusivePtr<TeModelAnimation> anim, float seconds) : _anim(anim), _seconds(seconds) {
+	_anim.setDeleteFn(&TeModelAnimation::deleteLater);
 	_timer.stop();
 	_timer.start();
 }

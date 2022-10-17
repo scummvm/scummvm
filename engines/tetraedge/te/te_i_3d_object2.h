@@ -28,6 +28,8 @@ class TeI3DObject2 {
 public:
 	TeI3DObject2();
 
+	virtual ~TeI3DObject2() {}
+
 	// TODO add public members
 
 private:

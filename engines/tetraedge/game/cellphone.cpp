@@ -61,15 +61,28 @@ bool Cellphone::addNumber(const Common::String &num) {
 }
 
 void Cellphone::currentPage(int offset) {
-	error("TODO: implement Cellphone::currentPage");
+	if (_textLayoutArray.empty())
+		return;
+
+	_nextNumber = offset;
+	TeLayout *repertoire = _gui.layoutChecked("numRepertoire");
+	for (int i = 0; i < repertoire->childCount(); i++) {
+		repertoire->child(i)->setVisible(i == offset);
+	}
 }
 
 void Cellphone::enter() {
-	error("TODO: implement Cellphone::enter");
+	_gui.buttonLayoutChecked("background")->setVisible(true);
+	currentPage(_nextNumber);
 }
 
 void Cellphone::leave() {
-	error("TODO: implement Cellphone::leave");
+	_gui.buttonLayoutChecked("background")->setVisible(false);
+	for (TeTextLayout *text : _textLayoutArray) {
+		text->deleteLater();
+	}
+	_textLayoutArray.clear();
+	_addedNumbers.clear();
 }
 
 void Cellphone::load() {
@@ -89,6 +102,7 @@ void Cellphone::load() {
 }
 
 void Cellphone::loadFromBackup(const Common::XMLParser::ParserNode *node) {
+	error("TODO: implement Cellphone::loadFromBackup");
 	/*
 	 basic algorithm:
 	child = node->lastChild;
@@ -113,12 +127,10 @@ bool Cellphone::onCloseButtonValidated() {
 }
 
 bool Cellphone::onNextNumber() {
-	error("TODO: work out how the max num works here.");
-	/*
-	int numoffset = _nextNumber + 1;
-	if (numoffset < _maxnum) {
+	unsigned int numoffset = _nextNumber + 1;
+	if (numoffset < _textLayoutArray.size()) {
 		currentPage(numoffset);
-	}*/
+	}
 	return false;
 }
 
@@ -142,4 +154,5 @@ void Cellphone::unload() {
 	leave();
 	_gui.unload();
 }
+
 } // end namespace Tetraedge

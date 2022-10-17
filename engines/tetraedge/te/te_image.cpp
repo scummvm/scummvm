@@ -58,7 +58,7 @@ void TeImage::create(uint xsize, uint ysize, Common::SharedPtr<TePalette> &pal,
 	Graphics::Surface::fillRect(Common::Rect(0, 0, xsize, ysize), 0xff883311);
 }
 
-void TeImage::deSerialize(Common::ReadStream &stream) {
+void TeImage::deserialize(Common::ReadStream &stream) {
 	error("TODO: TeImage: Implement me.");
 }
 
@@ -71,21 +71,21 @@ void TeImage::drawPlot(void *outbuf, int x, int y, const TeVector2s32 &bufsize, 
 	error("TODO: TeImage: Implement me.");
 }
 
-void TeImage::fill(byte val)  {
+void TeImage::fill(byte val) {
 	error("TODO: TeImage: Implement me.");
 }
 
-void TeImage::fill(byte r, byte g, byte b, byte a)  {
+void TeImage::fill(byte r, byte g, byte b, byte a) {
 	Common::Rect wholeSurf(0, 0, w, h);
 	uint32 col = (r << 24) | (g << 16) | (b << 8) | a;
 	Graphics::Surface::fillRect(wholeSurf, col);
 }
 
-void TeImage::getBuff(uint x, uint y, byte *pout, uint w_, uint h_)  {
+void TeImage::getBuff(uint x, uint y, byte *pout, uint w_, uint h_) {
 	error("TODO: TeImage: Implement me.");
 }
 
-bool TeImage::isExtensionSupported(const Common::Path &path)  {
+bool TeImage::isExtensionSupported(const Common::Path &path) {
 	error("TODO: TeImage: Implement me.");
 }
 
@@ -105,15 +105,15 @@ bool TeImage::load(const Common::Path &path) {
 	return true;
 }
 
-bool TeImage::load(Common::ReadStream &stream, const Common::Path &path)  {
+bool TeImage::load(Common::ReadStream &stream, const Common::Path &path) {
 	error("TODO: TeImage::load Implement me.");
 }
 
-bool TeImage::save(const Common::Path &path, enum Type type)  {
+bool TeImage::save(const Common::Path &path, enum Type type) {
 	error("TODO: TeImage::save Implement me.");
 }
 
-int TeImage::serialize(Common::WriteStream &stream)  {
+int TeImage::serialize(Common::WriteStream &stream) {
 	error("TODO: TeImage::serialize Implement me.");
 }
 

@@ -46,9 +46,9 @@ public:
 		return _children.size();
 	}
 
-	long childIndex(Te3DObject2 *childToFind);
+	long childIndex(Te3DObject2 *childToFind) const;
 
-	Common::Array<Te3DObject2 *> &childList() {
+	const Common::Array<Te3DObject2 *> &childList() const {
 		return _children;
 	}
 
@@ -68,7 +68,7 @@ public:
 	static void serialize(Common::WriteStream &stream, Te3DObject2 &src);
 	static Common::String deserializeString(Common::ReadStream &stream);
 
-	virtual void draw() = 0;
+	virtual void draw() {}
 	const Common::String &name() const {
 		return _name;
 	}
@@ -141,6 +141,8 @@ public:
 	virtual float xSize() { return _size.x(); };
 	virtual float ySize() { return _size.y(); };
 	virtual float zSize() { return _size.z(); };
+
+	static bool loadAndCheckFourCC(Common::ReadStream &stream, const char *str);
 
 protected:
 	TeVector3f32 _size;

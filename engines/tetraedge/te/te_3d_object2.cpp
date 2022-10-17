@@ -42,13 +42,25 @@ Te3DObject2::~Te3DObject2() {
 	setParent(nullptr);
 }
 
-void Te3DObject2::addChild(Te3DObject2 *child) {
-	_children.push_back(child);
-	child->setParent(this);
+void Te3DObject2::addChild(Te3DObject2 *newChild) {
+	assert(newChild != this && newChild != _parent);
+	for (auto *c : _children) {
+		if (c == newChild)
+			error("Trying to re-add child %s to object %s", newChild->name().c_str(), _name.c_str());
+	}
+
+	_children.push_back(newChild);
+	newChild->setParent(this);
 	_childListChangedSignal.call();
 }
 
 void Te3DObject2::addChildBefore(Te3DObject2 *newChild, const Te3DObject2 *ref) {
+	assert(newChild != this && newChild != _parent);
+	for (auto *c : _children) {
+		if (c == newChild)
+			error("Trying to re-add child %s to object %s", newChild->name().c_str(), _name.c_str());
+	}
+
 	Common::Array<Te3DObject2 *>::iterator iter;
 	for (iter = _children.begin(); iter != _children.end(); iter++) {
 		if (*iter == ref) {
@@ -67,15 +79,16 @@ Te3DObject2 *Te3DObject2::child(long offset) {
 	return _children[offset];
 }
 
-long Te3DObject2::childIndex(Te3DObject2 *child) {
+long Te3DObject2::childIndex(Te3DObject2 *c) const {
 	for (uint i = 0; i < _children.size(); i++) {
-		if (_children[i] == child)
+		if (_children[i] == c)
 			return i;
 	}
 	return -1;
 }
 
-/*static*/ Common::String Te3DObject2::deserializeString(Common::ReadStream &stream) {
+/*static*/
+Common::String Te3DObject2::deserializeString(Common::ReadStream &stream) {
 	uint slen = stream.readUint32LE();
 	if (slen > 1024 * 1024)
 		error("Improbable string size %d", slen);
@@ -91,7 +104,8 @@ long Te3DObject2::childIndex(Te3DObject2 *child) {
 	return Common::String();
 }
 
-/*static*/ void Te3DObject2::deserialize(Common::ReadStream &stream, Te3DObject2 &dest) {
+/*static*/
+void Te3DObject2::deserialize(Common::ReadStream &stream, Te3DObject2 &dest) {
 	Common::String str = deserializeString(stream);
 	dest.setName(str);
 
@@ -107,7 +121,8 @@ long Te3DObject2::childIndex(Te3DObject2 *child) {
 	dest.setScale(vect);
 }
 
-/*static*/ void Te3DObject2::serialize(Common::WriteStream &stream, Te3DObject2 &src) {
+/*static*/
+void Te3DObject2::serialize(Common::WriteStream &stream, Te3DObject2 &src) {
 	const Common::String &name = src.name();
 	stream.writeUint32LE(name.size());
 	stream.write(name.c_str(), name.size());
@@ -171,6 +186,7 @@ void Te3DObject2::setColor(const TeColor &col) {
 }
 
 void Te3DObject2::setParent(Te3DObject2 *newparent) {
+	assert(newparent != this);
 	if (_parent) {
 		if (_onWorldVisibleChangedParentCallback)
 			_parent->onWorldVisibleChanged().remove(_onWorldVisibleChangedParentCallback);
@@ -303,6 +319,14 @@ bool Te3DObject2::worldVisible() {
 	} else {
 		return _parent->worldVisible() && visible();
 	}
+}
+
+/*static*/
+bool Te3DObject2::loadAndCheckFourCC(Common::ReadStream &stream, const char *str) {
+	char buf[5];
+	buf[4] = '\0';
+	stream.read(buf, 4);
+	return !strncmp(buf, str, 4);
 }
 
 } // end namespace Tetraedge

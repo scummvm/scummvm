@@ -21,7 +21,9 @@
 
 #include "tetraedge/tetraedge.h"
 #include "common/str-array.h"
+#include "math/matrix4.h"
 #include "tetraedge/te/te_vector3f32.h"
+#include "tetraedge/te/te_quaternion.h"
 
 namespace Tetraedge {
 
@@ -33,6 +35,11 @@ bool TeVector3f32::parse(const Common::String &val) {
 	y() = atof(parts[1].c_str());
 	z() = atof(parts[2].c_str());
 	return true;
+}
+
+void TeVector3f32::rotate(const TeQuaternion &rot) {
+	Math::Matrix4 matrix = rot.toMatrix();
+	matrix.transform(this, false);
 }
 
 

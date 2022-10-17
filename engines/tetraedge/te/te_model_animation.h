@@ -57,7 +57,7 @@ public:
 	void bind(const TeIntrusivePtr<TeModel> &ptr) {
 		_model = ptr;
 	};
-	int calcCurrentFrame(double proportion);
+	int calcCurrentFrame(double millis);
 	void cont() override;
 	void destroy();
 	int findBone(const Common::String &name);
@@ -86,6 +86,8 @@ public:
 	void setTranslation(unsigned long num, float amount, const TeVector3f32 &trans);
 	void unbind();
 	void update(double proportion) override;
+
+	int curFrame2() const { return _curFrame2; }
 
 	TeIntrusivePtr<TeModel> _model;
 	int _firstFrame;
