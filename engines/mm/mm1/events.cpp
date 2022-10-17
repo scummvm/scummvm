@@ -150,6 +150,17 @@ void Events::clearViews() {
 	_views.clear();
 }
 
+void Events::addKeypress(const Common::KeyCode kc) {
+	Common::Event e;
+	e.type = Common::EVENT_KEYDOWN;
+	e.kbd.keycode = kc;
+	e.kbd.ascii = kc <= 127 ? kc : 0;
+	g_system->getEventManager()->pushEvent(e);
+
+	e.type = Common::EVENT_KEYUP;
+	g_system->getEventManager()->pushEvent(e);
+}
+
 void Events::addAction(KeybindingAction action) {
 	Common::Event e;
 	e.type = Common::EVENT_CUSTOM_BACKEND_ACTION_START;

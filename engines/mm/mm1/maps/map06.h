@@ -32,9 +32,46 @@ class Map06 : public Map {
 	typedef void (Map06:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special06();
+	void special07();
+	void special09();
+	void special10();
+	void special13();
+	void special26();
+	void slide();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map06::special00
+	const SpecialFn SPECIAL_FN[27] = {
+		&Map06::special00,
+		&Map06::special01,
+		&Map06::special02,
+		&Map06::special03,
+		&Map06::special04,
+		&Map06::special04,
+		&Map06::special06,
+		&Map06::special07,
+		&Map06::special07,
+		&Map06::special09,
+		&Map06::special10,
+		&Map06::special10,
+		&Map06::special10,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special13,
+		&Map06::special26
 	};
 public:
 	Map06() : Map(6, "cave2", 0x1) {}

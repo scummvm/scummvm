@@ -315,6 +315,14 @@ public:
 			focusedView()->drawElements();
 	}
 
+	/**
+	 * Add a keypress to the event queue
+	 */
+	void addKeypress(const Common::KeyCode kc);
+
+	/**
+	 * Add a action to the event queue
+	 */
 	void addAction(KeybindingAction action);
 
 	void draw() override {}

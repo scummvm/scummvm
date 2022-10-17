@@ -815,6 +815,7 @@ monster_spells:
 
 maps:
 	sign: "A SIGN ABOVE THE DOOR READS:\n"
+	poof: "POOF!"
 
 	map00:
 		blacksmith: """B AND B BLACKSMITHING"""
@@ -935,7 +936,6 @@ maps:
 		agar3: """I HAVE NO BUSINESS WITH YOU. BEGONE!"""
 		guards: "TOWN GUARDS: YOU'RE UNDER ARREST!\n\nA)ATTACK B)BRIBE C)RUN D)SURRENDER"
 		passage_outside: "PASSAGE OUTSIDE, EXIT (Y/N)?"
-		poof: "POOF!"
 		sentence: "HIGH COURT SENTENCE: YEARS= "
 		stairs: "STAIRS GOING DOWN! TAKE THEM (Y/N)?"
 		treasure: "TOWN TREASURE, STEAL (Y/N)?"
@@ -953,3 +953,10 @@ maps:
 		man3: """GOOD! TAKE THIS SCROLL TO THE\nWIZARD AGAR IN ERLIQUIN AND YOU SHALL\nBE REWARDED."""
 		backpacks_full: "*** BACK PACKS FULL ***"
 
+	map06:
+		passage_outside: "PASSAGE OUTSIDE, EXIT (Y/N)?"
+		portal: "SHIMMERING BLUE AND WHITE PORTAL,\nENTER (Y/N)?"
+		acid: "SPLASH! A POOL OF ACID!"
+		button: "BUTTON ON THE WALL, PRESS IT (Y/N)?"
+		banner: "A BANNER READS:\nCORRIDOR OF ENDLESS ENCOUNTERS!"
+		wizard: "A CRAZED WIZARD EXCLAIMS,\n""ENCOUNTER THE 13, WIN THE PRIZE!""

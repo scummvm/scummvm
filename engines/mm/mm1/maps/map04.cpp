@@ -146,7 +146,7 @@ void Map04::special08() {
 	g_maps->_mapPos.x = getRandomNumber(15);
 	g_maps->_mapPos.y = getRandomNumber(15);
 
-	send(InfoMessage(0, 1, STRING["maps.map04.poof"]));
+	send(InfoMessage(0, 1, STRING["maps.poof"]));
 }
 
 void Map04::special09() {
