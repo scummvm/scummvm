@@ -305,6 +305,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "samaritan", "The Samaritan Paradox" },
 	{ "shardlight", "Shardlight" },
 	{ "shivah", "The Shivah" },
+	{ "shivahkosher", "The Shivah: Kosher Edition" },
 	{ "shoaly", "Shoaly You Can't Be Serious!" },
 	{ "sisterssecret", "Sisters' Secret" },
 	{ "smallsister", "Small Sister" },
@@ -3695,15 +3696,15 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642151325),
 	GAME_ENTRY_EN("shardlight", "shardlight.exe", "ee801fba52d252249677a9170bd2db96", 642142591),
 	GAME_ENTRY_EN("shivah", "shivah.exe", "6cddccb3744ec5c6af7c398fb7b3b11c", 19542815), // Official website
-	GAME_ENTRY_PLUGIN_STEAM_EN("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, AGSTEAM_WADJETEYE),  // Win Orig
-	GAME_ENTRY_PLUGIN_STEAM_EN("shivah", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845144, AGSTEAM_WADJETEYE),  // Win v2.1
-	GAME_ENTRY_PLUGIN_STEAM_EN("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, AGSTEAM_WADJETEYE),  // Linux
-	GAME_ENTRY_EN("shivah", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32339699), // Android
-	GAME_ENTRY_EN("shivah", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
-	GAME_ENTRY_EN("shivah", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
-	GAME_ENTRY_EN_GOG("shivah", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
-	GAME_ENTRY_EN_GOG("shivah", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
-	GAME_ENTRY_EN_GOG("shivah", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376), // macOS v2.1a
+	GAME_ENTRY_PLUGIN_STEAM_EN("shivahkosher", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, AGSTEAM_WADJETEYE),  // Win Orig
+	GAME_ENTRY_PLUGIN_STEAM_EN("shivahkosher", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845144, AGSTEAM_WADJETEYE),  // Win v2.1
+	GAME_ENTRY_PLUGIN_STEAM_EN("shivahkosher", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32323040, AGSTEAM_WADJETEYE),  // Linux
+	GAME_ENTRY_EN("shivahkosher", "ac2game.dat", "0aaf5445a3544a631d6e7dd4561fc7ae", 32339699), // Android
+	GAME_ENTRY_EN("shivahkosher", "ac2game.dat", "ec0019b528dd1e9bcb4264967c4a3a31", 30446404), // Linux Humble Bundle
+	GAME_ENTRY_EN("shivahkosher", "ac2game.dat", "bdc618b23fc279938f05f8ac058a938b", 32723739), // MacOS
+	GAME_ENTRY_EN_GOG("shivahkosher", "shivah.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 32319665), // Windows GOG, Humble Bundle
+	GAME_ENTRY_EN_GOG("shivahkosher", "shivah.exe", "adf5d1e8de8b1292e98ef59ce89ab42c", 33845596), // GOG, v2.1
+	GAME_ENTRY_EN_GOG("shivahkosher", "ac2game.dat", "021b85e94ba52ed77b6b4841ffb50c43", 30658376), // macOS v2.1a
 	GAME_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18659398),  // v1.0.0a
 	GAME_ENTRY_STEAM("smallsister", "sister.exe", "78dd4ca028ee0156b6a093d6d780aa65", 18534526),  // Eng-Tur
 	GAME_ENTRY_EN_STEAM("spaceraven", "Tiny Planet.exe", "c6154d27a773ebf98a9be181a840d146", 29803571),
@@ -4154,7 +4155,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	DEMO_ENTRY_EN("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642405010), // Steam
 	DEMO_ENTRY_EN("shardlight", "shardlight demo.exe", "ee801fba52d252249677a9170bd2db96", 642366257),
 	DEMO_ENTRY_EN("shivah", "shivahdemo.exe", "6e3d6225dee662ff6450a3bfa942773b", 20897850),
-	DEMO_ENTRY_EN("shivah", "shivah-demo.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 23987292),
+	DEMO_ENTRY_EN("shivahkosher", "shivah-demo.exe", "0aaf5445a3544a631d6e7dd4561fc7ae", 23987292),
 	DEMO_ENTRY_EN("simonthesorcerer3", "simon3.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 8189928),
 	DEMO_ENTRY_EN("simonthesorcerersbrother", "stsb-trailer.exe", "06a03fe35791b0578068ab1873455463", 2283838),
 	DEMO_ENTRY_EN("sisterssecret", "SistersSecret.exe", "f8d06c339ca2af5160b662c7a19572d6", 18660074),  // v1.0.1
