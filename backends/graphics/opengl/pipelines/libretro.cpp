@@ -41,6 +41,8 @@
 
 namespace OpenGL {
 
+using LibRetro::UniformsMap;
+
 template<typename DecoderType>
 static Graphics::Surface *loadViaImageDecoder(const Common::FSNode &fileNode) {
 	Common::SeekableReadStream *stream = fileNode.createReadStream();
@@ -257,8 +259,6 @@ bool LibRetroPipeline::loadTextures() {
 	return true;
 }
 
-typedef Common::HashMap<Common::String, float, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> UniformsMap;
-
 static void stripShaderParameters(char *source, UniformsMap &uniforms) {
 	char uniformId[64], desc[64];
 	float initial, minimum, maximum, step;
@@ -295,6 +295,8 @@ bool LibRetroPipeline::loadPasses() {
 		}
 	}
 
+	// parameters are shared among all passes so we load them first and apply them to all shaders
+	UniformsMap uniformParams;
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
 		 i = _shaderPreset->passes.begin(), end = _shaderPreset->passes.end();
 		 i != end; ++i) {
@@ -339,7 +341,6 @@ bool LibRetroPipeline::loadPasses() {
 					shaderFileVersion, shaderFileVersionExtra);
 		}
 
-		UniformsMap uniformParams;
 		stripShaderParameters(shaderFileStart, uniformParams);
 
 		Common::String shimsDetected;
@@ -384,10 +385,6 @@ bool LibRetroPipeline::loadPasses() {
 		// Input texture is always bound at sampler 0.
 		shader->setUniform("Texture", 0);
 
-		for(UniformsMap::iterator it = uniformParams.begin(); it != uniformParams.end(); it++) {
-			shader->setUniform1f(it->_key, it->_value);
-		}
-
 		TextureTarget *target = nullptr;
 		// TODO: float and sRGB FBO handling.
 		target = new TextureTarget();
@@ -407,6 +404,19 @@ bool LibRetroPipeline::loadPasses() {
 			pass.inputTexture = texture;
 		}
 	}
+
+	// Apply preset parameters last to override all others
+	for(UniformsMap::iterator it = _shaderPreset->parameters.begin(); it != _shaderPreset->parameters.end(); it++) {
+		uniformParams[it->_key] = it->_value;
+	}
+
+	// Finally apply parameters to all shaders as uniforms
+	for(PassArray::iterator i = _passes.begin(); i != _passes.end(); i++) {
+		for(UniformsMap::iterator it = uniformParams.begin(); it != uniformParams.end(); it++) {
+			i->shader->setUniform1f(it->_key, it->_value);
+		}
+	}
+
 
 	// Now try to setup FBOs with some dummy size to make sure it could work
 	uint bakInputWidth = _inputWidth;

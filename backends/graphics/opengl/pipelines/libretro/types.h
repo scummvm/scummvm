@@ -33,6 +33,8 @@
 namespace OpenGL {
 namespace LibRetro {
 
+typedef Common::HashMap<Common::String, float, Common::CaseSensitiveString_Hash, Common::CaseSensitiveString_EqualTo> UniformsMap;
+
 enum FilteringMode {
 	kFilteringModeUnspecified,
 	kFilteringModeNearest,
@@ -118,6 +120,8 @@ struct ShaderPreset {
 
 	typedef Common::Array<ShaderPass> PassArray;
 	PassArray passes;
+
+	UniformsMap parameters;
 };
 
 } // End of namespace LibRetro

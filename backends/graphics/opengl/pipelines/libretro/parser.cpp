@@ -73,6 +73,8 @@ private:
 	bool parsePassScale(const uint id, ShaderPass *pass);
 	bool computeDefaultScale(const Common::String &key, float *floatValue, uint *uintValue, const ScaleType scaleType);
 
+	bool parseParameters();
+
 	typedef Common::HashMap<Common::String, Common::String> StringMap;
 	StringMap _entries;
 
@@ -95,6 +97,10 @@ ShaderPreset *PresetParser::parseStream(Common::SeekableReadStream &stream) {
 	}
 
 	if (!parsePasses()) {
+		return nullptr;
+	}
+
+	if (!parseParameters()) {
 		return nullptr;
 	}
 
@@ -503,6 +509,26 @@ bool PresetParser::computeDefaultScale(const Common::String &key, float *floatVa
 			_errorDesc = "Internal Error: Invalid scale type";
 			return false;
 	}
+}
+
+bool PresetParser::parseParameters() {
+	Common::String parameters;
+	if (!lookUpValue("parameters", &parameters)) {
+		return true;
+	}
+
+	// Parse all texture information from preset.
+	Common::StringTokenizer tokenizer(parameters, ";");
+	while (!tokenizer.empty()) {
+		Common::String key = tokenizer.nextToken();
+		float value;
+		if (!lookUpValue(key, &value)) {
+			return false;
+		}
+		_shader->parameters[key] = value;
+	}
+
+	return true;
 }
 
 ShaderPreset *parsePreset(const Common::FSNode &shaderPreset) {
