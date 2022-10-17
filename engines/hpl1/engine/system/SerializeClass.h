@@ -30,6 +30,7 @@
 
 #include "hpl1/engine/system/MemoryManager.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/static_string.h"
 #include <map>
 
 class TiXmlElement;
@@ -211,18 +212,16 @@ public:                                                           \
 
 class cSerializeMemberField {
 public:
-	cSerializeMemberField(const tString &asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType) {
-		msName = asName;
+	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType) : msName(asName), msClassName(""){
 		mlOffset = alOffset;
 		mlSize = alSize;
 		mType = alType;
 		mMainType = aMainType;
 	}
 
-	cSerializeMemberField(const tString &asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, size_t alArraySize) {
-		msName = asName;
+	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType, size_t alArraySize) : msName(asName), msClassName("") {
 		mlOffset = alOffset;
 		mlSize = alSize;
 		mType = alType;
@@ -230,18 +229,16 @@ public:
 		mlArraySize = alArraySize;
 	}
 
-	cSerializeMemberField(const tString &asName, size_t alOffset, size_t alSize, eSerializeType alType,
-						  eSerializeMainType aMainType, const tString &asClassName) {
-		msName = asName;
+	cSerializeMemberField(Hpl1::StaticString asName, size_t alOffset, size_t alSize, eSerializeType alType,
+						  eSerializeMainType aMainType, Hpl1::StaticString asClassName) : msName(asName), msClassName(asClassName) {
 		mlOffset = alOffset;
 		mlSize = alSize;
 		mType = alType;
 		mMainType = aMainType;
-		msClassName = asClassName;
 	}
 
-	tString msName;
-	tString msClassName;
+	Hpl1::StaticString msName;
+	Hpl1::StaticString msClassName;
 	size_t mlOffset;
 	size_t mlSize;
 	eSerializeType mType;
@@ -299,7 +296,7 @@ private:
 
 //-------------------------------------------------
 
-typedef std::map<tString, cSerializeSavedClass> tSerializeSavedClassMap;
+typedef std::map<Hpl1::StaticString, cSerializeSavedClass> tSerializeSavedClassMap;
 typedef tSerializeSavedClassMap::iterator tSerializeSavedClassMapIt;
 
 typedef Common::List<cSerializeSavedClass *> tSerializeSavedClassList;
@@ -325,7 +322,7 @@ public:
 
 	static cSerializeMemberFieldIterator GetMemberFieldIterator(iSerializable *apData);
 
-	static const char *ValueToString(void *apData, size_t alOffset, eSerializeType aType);
+	static tString ValueToString(void *apData, size_t alOffset, eSerializeType aType);
 	static void StringToValue(void *apData, size_t alOffset, eSerializeType aType,
 							  const char *asVal);
 
@@ -349,7 +346,6 @@ private:
 
 	static void SetUpData();
 
-	static tString msTempString;
 	static char msTempCharArray[2048];
 
 	static bool mbDataSetup;

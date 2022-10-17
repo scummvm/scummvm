@@ -132,7 +132,6 @@ int glSerializeTempClassesNum = 0;
 // Define static variables
 tSerializeSavedClassMap cSerializeClass::m_mapSavedClasses;
 bool cSerializeClass::mbDataSetup = false;
-tString cSerializeClass::msTempString = "";
 char cSerializeClass::msTempCharArray[2048];
 
 //-----------------------------------------------------------------------
@@ -143,13 +142,10 @@ char cSerializeClass::msTempCharArray[2048];
 
 static bool gbLog = false;
 static int glTabs = 0;
-static tString gsTabString = "";
+static const char* gsTabString = "";
 
 const char *GetTabs() {
-	gsTabString = "";
-	for (int i = 0; i < glTabs; ++i)
-		gsTabString += "   ";
-	return gsTabString.c_str();
+	return gsTabString;
 }
 
 cSerializeClass::cSerializeClass(const char *asName, const char *asParent,
@@ -183,7 +179,7 @@ void cSerializeClass::PrintMembers(iSerializable *apData) {
 		cSerializeMemberField *pField = classIt.GetNext();
 
 		Log(" '%s':'%s' type: %d offset: %d\n", pField->msName.c_str(),
-			ValueToString(apData, pField->mlOffset, pField->mType),
+			ValueToString(apData, pField->mlOffset, pField->mType).c_str(),
 			pField->mType, pField->mlOffset);
 	}
 }
@@ -246,7 +242,7 @@ void cSerializeClass::SaveToElement(iSerializable *apData, const tString &asName
 		cSerializeMemberField *pField = classIt.GetNext();
 
 		if (gbLog)
-			Log(" Field : '%s'\n", pField->msName.c_str());
+			Log(" Field : '%s'\n", pField->msName);
 
 		switch (pField->mMainType) {
 		// VARIABLE /////////////////////////////////
@@ -352,7 +348,7 @@ void cSerializeClass::LoadFromElement(iSerializable *apData, TiXmlElement *apEle
 cSerializeSavedClass *cSerializeClass::GetClass(const tString &asName) {
 	SetUpData();
 
-	tSerializeSavedClassMapIt it = m_mapSavedClasses.find(asName);
+	tSerializeSavedClassMapIt it = m_mapSavedClasses.find(asName.c_str());
 	if (it == m_mapSavedClasses.end()) {
 		Warning("Serialize class '%s' not found!\n", asName.c_str());
 		return NULL;
@@ -375,7 +371,7 @@ cSerializeMemberFieldIterator cSerializeClass::GetMemberFieldIterator(iSerializa
 #define ValuePointer(aObject, aOffset) (((char *)aObject) + aOffset)
 #define PointerValue(aPointer, aType) (*((aType *)aPointer))
 
-const char *cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerializeType aType) {
+tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerializeType aType) {
 	void *pVal = ValuePointer(apData, alOffset);
 
 	switch (aType) {
@@ -490,12 +486,12 @@ const char *cSerializeClass::ValueToString(void *apData, size_t alOffset, eSeria
 
 	/////////// WSTRING ////////////////////////////////
 	case eSerializeType_WString: {
-		msTempString = "";
+		tString temp = "";
 		tWString &wsString = PointerValue(pVal, tWString);
 		for (size_t i = 0; i < wsString.size(); ++i) {
-			msTempString += cString::ToString((int)wsString[i]) + " ";
+			temp += cString::ToString((int)wsString[i]) + " ";
 		}
-		return msTempString.c_str();
+		return temp;
 		break;
 	}
 	}
@@ -653,13 +649,13 @@ void cSerializeClass::SaveVariable(TiXmlElement *apElement, cSerializeMemberFiel
 	if (apField->mType == eSerializeType_Class) {
 		void *pClassData = ValuePointer(apData, apField->mlOffset);
 
-		SaveToElement((iSerializable *)pClassData, apField->msName, apElement);
+		SaveToElement((iSerializable *)pClassData, apField->msName.c_str(), apElement);
 	}
 	// CLASS POINTER
 	else if (apField->mType == eSerializeType_ClassPointer) {
 		iSerializable **pFieldData = (iSerializable **)ValuePointer(apData, apField->mlOffset);
 
-		SaveToElement(*pFieldData, apField->msName, apElement, true);
+		SaveToElement(*pFieldData, apField->msName.c_str(), apElement, true);
 	}
 	// NORMAL VAR
 	else {
@@ -668,7 +664,7 @@ void cSerializeClass::SaveVariable(TiXmlElement *apElement, cSerializeMemberFiel
 
 		pVarElem->SetAttribute("type", apField->mType);
 		pVarElem->SetAttribute("name", apField->msName.c_str());
-		pVarElem->SetAttribute("val", ValueToString(apData, apField->mlOffset, apField->mType));
+		pVarElem->SetAttribute("val", ValueToString(apData, apField->mlOffset, apField->mType).c_str());
 	}
 }
 
@@ -722,7 +718,7 @@ void cSerializeClass::SaveArray(TiXmlElement *apElement, cSerializeMemberField *
 			TiXmlElement XmlClassElem("var");
 			TiXmlElement *pVarElem = static_cast<TiXmlElement *>(pArrayElem->InsertEndChild(XmlClassElem));
 
-			pVarElem->SetAttribute("val", ValueToString(pArrayData, lOffset, apField->mType));
+			pVarElem->SetAttribute("val", ValueToString(pArrayData, lOffset, apField->mType).c_str());
 		}
 	}
 }
@@ -767,7 +763,7 @@ void cSerializeClass::SaveContainer(TiXmlElement *apElement, cSerializeMemberFie
 
 			void *pData = const_cast<void *>(pContIt->NextPtr());
 
-			pVarElem->SetAttribute("val", ValueToString(pData, 0, apField->mType));
+			pVarElem->SetAttribute("val", ValueToString(pData, 0, apField->mType).c_str());
 		}
 	}
 
@@ -1079,7 +1075,7 @@ void cSerializeClass::SetUpData() {
 
 	for (int i = 0; i < glSerializeTempClassesNum; i++) {
 		m_mapSavedClasses.insert(tSerializeSavedClassMap::value_type(
-			tString(gvSerializeTempClasses[i].msName), gvSerializeTempClasses[i]));
+			gvSerializeTempClasses[i].msName, gvSerializeTempClasses[i]));
 	}
 }
 

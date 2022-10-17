@@ -50,7 +50,7 @@ struct cButtonHandlerAction {
 	bool mbConfig;
 };
 
-static tString gsLastPlayerAction = "GlowStick";
+static const char* const gsLastPlayerAction = "GlowStick";
 static cButtonHandlerAction gvDefaultActions[] = {
 	{"Forward", "Keyboard", eKey_w, true},
 	{"Backward", "Keyboard", eKey_s, true},
