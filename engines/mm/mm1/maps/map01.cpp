@@ -105,7 +105,7 @@ void Map01::special06() {
 }
 
 void Map01::special07() {
-	trainer();
+	training();
 }
 
 void Map01::special08() {
