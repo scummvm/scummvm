@@ -62,6 +62,7 @@ MODULE_OBJS = \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/videodiscxobj.o \
+	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \
 	lingo/xlibs/xplayanim.o
 
