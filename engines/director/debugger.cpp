@@ -57,6 +57,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	registerCmd("nextmovie", WRAP_METHOD(Debugger, cmdNextMovie));
 	registerCmd("nm", WRAP_METHOD(Debugger, cmdNextMovie));
 
+	registerCmd("print", WRAP_METHOD(Debugger, cmdPrint));
+	registerCmd("p", WRAP_METHOD(Debugger, cmdPrint));
 	registerCmd("repl", WRAP_METHOD(Debugger, cmdRepl));
 	registerCmd("stack", WRAP_METHOD(Debugger, cmdStack));
 	registerCmd("st", WRAP_METHOD(Debugger, cmdStack));
@@ -100,8 +102,8 @@ Debugger::Debugger(): GUI::Debugger() {
 	_finishCounter = 0;
 	_next = false;
 	_nextCounter = 0;
-	_nextFrame = false;
-	_nextFrameCounter = 0;
+	_lingoEval = false;
+	_lingoReplMode = false;
 	_bpNextId = 1;
 	_bpCheckFunc = false;
 	_bpCheckMoviePath = false;
@@ -138,8 +140,8 @@ bool Debugger::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" nextmovie / nm - Steps forward until the next change of movie\n");
 	debugPrintf("\n");
 	debugPrintf("Lingo execution:\n");
-	//debugPrintf(" eval [statement] - Evaluates a single Lingo statement\n");
-	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo code\n");
+	debugPrintf(" print / p [statement] - Evaluates a single Lingo statement\n");
+	debugPrintf(" repl - Switches to a REPL interface for evaluating Lingo statements\n");
 	debugPrintf(" backtrace / bt - Prints a backtrace of all stack frames\n");
 	debugPrintf(" disasm / da [scriptId:funcName] - Lists the bytecode disassembly for a script function\n");
 	debugPrintf(" disasm / da all - Lists the bytecode disassembly for all available script functions\n");
@@ -277,9 +279,24 @@ bool Debugger::cmdNextMovie(int argc, const char **argv) {
 	return cmdExit(0, nullptr);
 }
 
+bool Debugger::cmdPrint(int argc, const char **argv) {
+	if (argc == 1) {
+		debugPrintf("Missing expression");
+		return true;
+	}
+	Common::String command;
+	for (int i = 1; i < argc; i++) {
+		command += " ";
+		command += argv[i];
+	}
+	command.trim();
+	return lingoEval(command.c_str());
+}
+
 bool Debugger::cmdRepl(int argc, const char **argv) {
 	debugPrintf("Switching to Lingo REPL mode, type 'lingo off' to return to the debug console.\n");
 	registerDefaultCmd(WRAP_DEFAULTCOMMAND(Debugger, lingoCommandProcessor));
+	_lingoReplMode = true;
 	debugPrintf(PROMPT);
 	return true;
 }
@@ -738,6 +755,11 @@ void Debugger::bpUpdateState() {
 }
 
 void Debugger::bpTest(bool forceCheck) {
+	// don't check for breakpoints if we're in eval mode
+	if (_lingoEval)
+		return;
+
+	// Check if there's a funcName/offset or frame/movie match
 	bool stop = forceCheck;
 	uint funcOffset = g_lingo->_pc;
 	Score *score = g_director->getCurrentMovie()->getScore();
@@ -748,6 +770,8 @@ void Debugger::bpTest(bool forceCheck) {
 	if (_bpCheckMoviePath) {
 		stop |= _bpMatchFrameOffsets.contains(frameOffset);
 	}
+
+	// Print the breakpoints that matched
 	if (stop) {
 		debugPrintf("Hit a breakpoint:\n");
 		for (auto &it : _breakpoints) {
@@ -776,17 +800,30 @@ void Debugger::bpTest(bool forceCheck) {
 bool Debugger::lingoCommandProcessor(const char *inputOrig) {
 	if (!strcmp(inputOrig, "lingo off")) {
 		registerDefaultCmd(nullptr);
+		_lingoReplMode = false;
 		return true;
 	}
+	return lingoEval(inputOrig);
+}
 
-	Common::String expr = Common::String(inputOrig);
+bool Debugger::lingoEval(const char *inputOrig) {
+	Common::String inputSan = inputOrig;
+	inputSan.trim();
+	if (inputSan.empty())
+		return true;
+	Common::String expr = Common::String::format("return %s", inputSan.c_str());
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(expr);
+	if (!sc) {
+		debugPrintf("Failed to parse expression!\n%s", _lingoReplMode ? PROMPT : "");
+		return true;
+	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
-	LC::call(sym, 0, false);
-	g_lingo->execute();
-	debugPrintf(PROMPT);
-	return true;
+	_lingoEval = true;
+	LC::call(sym, 0, true);
+	_finish = true;
+	_finishCounter = 1;
+	return cmdExit(0, nullptr);
 }
 
 void Debugger::stepHook() {
@@ -803,7 +840,13 @@ void Debugger::stepHook() {
 	}
 	if (_finish && _finishCounter == 0) {
 		_finish = false;
-		cmdScriptFrame(0, nullptr);
+		if (_lingoEval) {
+			_lingoEval = false;
+			Datum result = g_lingo->pop();
+			debugPrintf("%s\n\n%s", result.asString(true).c_str(), _lingoReplMode ? PROMPT : "");
+		} else {
+			cmdScriptFrame(0, nullptr);
+		}
 		attach();
 		g_system->updateScreen();
 	}

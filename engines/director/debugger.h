@@ -104,6 +104,7 @@ private:
 	bool cmdCast(int argc, const char **argv);
 	bool cmdNextFrame(int argc, const char **argv);
 	bool cmdNextMovie(int argc, const char **argv);
+	bool cmdPrint(int argc, const char **argv);
 	bool cmdRepl(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdDisasm(int argc, const char **argv);
@@ -128,6 +129,7 @@ private:
 	void bpTest(bool forceCheck = false);
 
 	bool lingoCommandProcessor(const char *inputOrig);
+	bool lingoEval(const char *inputOrig);
 
 
 	Common::DumpFile _out;
@@ -142,6 +144,8 @@ private:
 	int _finishCounter;
 	bool _next;
 	int _nextCounter;
+	bool _lingoEval;
+	bool _lingoReplMode;
 
 	Common::Array<Breakpoint> _breakpoints;
 	int _bpNextId;
