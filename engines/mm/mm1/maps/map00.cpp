@@ -80,7 +80,7 @@ void Map00::special01() {
 	}
 
 	send(InfoMessage(
-		2, 0, STRING["maps.map00.sign"],
+		2, 0, STRING["maps.sign"],
 		x, 1, line2
 	));
 }

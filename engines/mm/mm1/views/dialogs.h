@@ -43,6 +43,7 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/views/spells/detect_magic.h"
@@ -79,6 +80,7 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
+	Views::Maps::Arrested _arrested;
 	Views::Maps::Resistances _resistances;
 
 	Views::Spells::CastSpell _castSpell;

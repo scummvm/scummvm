@@ -60,7 +60,7 @@ void Map03::special00() {
 void Map03::special01() {
 	bool hasCourier = false;
 	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
-		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER2) != 0;
+		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER3) != 0;
 	}
 
 	bool hasScroll = false;
@@ -91,11 +91,11 @@ void Map03::special01() {
 
 		InfoMessage info1(
 			0, 0, STRING["maps.map03.telgoran1"],
-			0, 1, STRING["maps.map03.zam2"],
+			0, 1, STRING["maps.map03.telgoran2"],
 			[](const Common::KeyState &) {
 				InfoMessage info2(
 					0, 0, STRING["maps.map03.telgoran1"],
-					0, 1, STRING["maps.map03.zam3"],
+					0, 1, STRING["maps.map03.telgoran3"],
 					[](const Common::KeyState &) {
 						g_events->close();
 					}
@@ -111,7 +111,7 @@ void Map03::special01() {
 	} else {
 		send(InfoMessage(
 			0, 0, STRING["maps.map03.telgoran1"],
-			0, 1, STRING["maps.map03.zam4"]
+			0, 1, STRING["maps.map03.telgoran4"]
 		));
 	}
 }

@@ -814,8 +814,9 @@ monster_spells:
 		10: "IS AFFECTED"
 
 maps:
+	sign: "A SIGN ABOVE THE DOOR READS:\n"
+
 	map00:
-		sign: "A SIGN ABOVE THE DOOR READS: "
 		blacksmith: """B AND B BLACKSMITHING"""
 		inn: """THE INN OF SORPIGAL"""
 		jail: "JAIL. KEEP OUT!"
@@ -839,7 +840,6 @@ maps:
 		passage_outside: "A PASSAGE LEADS OUTSIDE, TAKE IT (Y/N)?"
 
 	map01:
-		sign: "A SIGN ABOVE THE DOOR READS:\n"
 		blacksmith: """B. SMITH',27h,'S WORKSHOP"""
 		inn: """INN OF PORTSMITH"""
 		market: """MAID MARION'S MARKET"""
@@ -864,7 +864,6 @@ maps:
 		zam3: "YOU'RE NOT THE COURIERS!"""
 
 	map02:
-		sign: "A SIGN ABOVE THE DOOR READS:\n"
 		blacksmith: """SWAMPSIDE SUPPLIES"""
 		inn: """THE INN OF ALGARY"""
 		market: """ARCON'S SLOP"""
@@ -892,7 +891,6 @@ maps:
 		zom3: "YOU'RE NOT THE COURIERS!"""
 
 	map03:
-		sign: "A SIGN ABOVE THE DOOR READS:\n"
 		blacksmith: """MYSTICAL METAL WORKS"""
 		inn: """THE INN OF DUSK"""
 		market: """FEWLERD'S FEED"""
@@ -916,3 +914,28 @@ maps:
 		telgoran2: """FRIENDS, I AM TELGORAN. THIS SCROLL YOU\nHAVE BROUGHT ME WILL BE VERY HELPFUL',0Dh,'(+2500 EXP) HERE'S 1500 GOLD FOR YOUR\nSERVICES. I'LL TELL YOU A SECRET, IF\nTREASURE IS WHAT YOU WANT..."""
 		telgoran3: """THE BROTHERS YOU MUST FIND...',0Dh,'PORTSMITH AND ALGARY ARE COMBINED.""" 
 		telgoran4: """YOU'RE NOT THE COURIERS!"""
+
+	map04:
+		blacksmith: """CURRENT TRENDS IRONWORKS"""
+		inn: """THE INN OF ERLIQUIN"""
+		market: """FOUR STAR FOODS"""
+		tavern: """TAVERN OF TALL TALES"""
+		temple: """TEMPLE GAUCHE"""
+		training: """SUPERIOR TRAINING"""
+
+		blacksmith_inside: "A BOISTROUS HALF-ORC PROCLAIMS,\n""WE CARRY THE VERY LATEST,\nBROWSE (Y/N)?"""
+		inn_inside: "ADJUSTING HIS SPECTACLES, AN ELDERLY\nGNOME EYES THE PARTY AND ASKS,\n""SIGNING IN (Y/N)?"""
+		market_inside: "THE CHEF SAYS,""I ONLY SERVE THE BEST!\nHUNGRY (Y/N)?"""
+		tavern_inside: "STEP UP TO THE BAR (Y/N)?"
+		training_inside: "THREE HUGE ARMOR CLAD KNIGHTS BARK IN\nUNISON, ""WANT A GOOD WORKOUT (Y/N)?"""
+		temple_inside: "SEVERAL FAT CLERICS WELCOME YOU.\nNEED HELP (Y/N)?"
+
+		agar1: "THE WIZARD AGAR SPEAKS:\n\n"
+		agar2: """YOU HAVE DONE WELL TO BRING ME THIS\nSCROLL. (+1000 EXP) NOW TAKE IT TO MY\nPROTEGE TELGORAN IN DUSK."""
+		agar3: """I HAVE NO BUSINESS WITH YOU. BEGONE!"""
+		guards: "TOWN GUARDS: YOU'RE UNDER ARREST!\n\nA)ATTACK B)BRIBE C)RUN D)SURRENDER"
+		passage_outside: "PASSAGE OUTSIDE, EXIT (Y/N)?"
+		poof: "POOF!"
+		sentence: "HIGH COURT SENTENCE: YEARS= "
+		stairs: "STAIRS GOING DOWN! TAKE THEM (Y/N)?"
+		treasure: "TOWN TREASURE, STEAL (Y/N)?"
