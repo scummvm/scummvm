@@ -30,6 +30,8 @@ namespace MM1 {
 namespace Maps {
 
 #define MONSTER_ID 169
+#define VAL1 574
+#define VAL2 575
 
 void Map05::special() {
 	// Scan for special actions on the map cell
@@ -91,7 +93,18 @@ void Map05::special05() {
 }
 
 void Map05::special06() {
-	// TODO: special
+	if (!hasScroll()) {
+		Sound::sound(SOUND_2);
+		send(InfoMessage(
+			0, 1, STRING[!hasFlag() ? "maps.map05.man1" : "maps.map05.man2"],
+			[]() {
+				if (addScroll()) {
+					addFlag();
+					g_events->send(InfoMessage(0, 1, STRING["maps.map05.man3"]));
+				}
+			}
+		));
+	}
 }
 
 void Map05::special07() {
@@ -179,6 +192,49 @@ void Map05::showMessage(const Common::String &msg) {
 		0, 1, STRING["maps.map05.message1"],
 		0, 2, msg
 	));
+}
+
+bool Map05::hasScroll() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Character &c = g_globals->_party[i];
+		if (c._equipped.indexOf(SCROLL_ID) != -1)
+			return true;
+	}
+
+	return false;
+}
+
+bool Map05::addScroll() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!c._backpack.full()) {
+			// Add item
+			c._backpack.add(SCROLL_ID, 0);
+			g_globals->_items.getItem(SCROLL_ID);
+			return true;
+		}
+	}
+
+	Sound::sound(SOUND_2);
+	g_events->send(InfoMessage(8, 2, STRING["maps.map05.backpacks_full"]));
+	return false;
+}
+
+bool Map05::hasFlag() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		const Character &c = g_globals->_party[i];
+		if (c._flags[0] & CHARFLAG0_COURIER1)
+			return true;
+	}
+
+	return false;
+}
+
+void Map05::addFlag() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._flags[0] |= CHARFLAG0_COURIER1;
+	}
 }
 
 } // namespace Maps
