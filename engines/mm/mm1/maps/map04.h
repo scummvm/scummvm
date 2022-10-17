@@ -28,13 +28,53 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define MAP04_TREASURE_OVERRIDE 169
+#define MAP04_TREASURE_STOLEN 971
+
 class Map04 : public MapTown {
 	typedef void (Map04:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special18();
+	void special20();
+	void special21();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map04::special00
+	const SpecialFn SPECIAL_FN[22] = {
+		&Map04::special00,
+		&Map04::special01,
+		&Map04::special02,
+		&Map04::special03,
+		&Map04::special04,
+		&Map04::special05,
+		&Map04::special06,
+		&Map04::special07,
+		&Map04::special08,
+		&Map04::special09,
+		&Map04::special10,
+		&Map04::special11,
+		&Map04::special12,
+		&Map04::special13,
+		&Map04::special13,
+		&Map04::special13,
+		&Map04::special13,
+		&Map04::special13,
+		&Map04::special18,
+		&Map04::special13,
+		&Map04::special20,
+		&Map04::special21
 	};
 public:
 	Map04() : MapTown(4, "erliquin", 0x0B1A) {}

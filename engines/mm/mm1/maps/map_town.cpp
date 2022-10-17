@@ -92,7 +92,7 @@ void MapTown::trainer() {
 void MapTown::showSign(const Common::String &msg) {
 	Sound::sound(SOUND_2);
 	send(InfoMessage(
-		2, 1, STRING[Common::String::format("maps.map%.2u.sign", _mapIndex)],
+		2, 1, STRING["maps.sign"],
 		6, 2, msg
 	));
 }

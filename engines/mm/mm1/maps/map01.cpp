@@ -59,13 +59,13 @@ void Map01::special01() {
 
 	bool hasCourier = false;
 	for (uint i = 0; i < g_globals->_party.size() && !hasCourier; ++i) {
-		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER2) != 0;
+		hasCourier = (g_globals->_party[i]._flags[0] & CHARFLAG0_COURIER3) != 0;
 	}
 
 	if (hasCourier) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			c._flags[0] |= CHARFLAG0_COURIER2 | CHARFLAG0_ZAM_CLUE;
+			c._flags[0] |= CHARFLAG0_COURIER3 | CHARFLAG0_ZAM_CLUE;
 		}
 
 		line2 = STRING["maps.map01.zam2"];
