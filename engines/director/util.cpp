@@ -647,6 +647,15 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 
 	const char **exts = (g_director->getVersion() >= 400) ? extsD4 : extsD3;
 	for (int i = 0; exts[i]; ++i) {
+		Common::String newpath = convPath + component.c_str() + exts[i];
+
+		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
+		Common::String res = wrappedPathMakeRelative(newpath, false, false);
+
+		if (testPath(res))
+			return res;
+	}
+	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
 		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
