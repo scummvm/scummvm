@@ -351,7 +351,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "1f2f79e399098859c73e49ac6a3545d8", 330657},
 		{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
 		{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267811},
-		// MISSING: resource.008, resource.009
+		{"resource.008", 0, "4e5c20d6942d97db9501a2110bb0d7db", 327461},
+		{"resource.009", 0, "27f3027aa41bdb0deff031ad0cc56f21", 324093},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
