@@ -1885,22 +1885,22 @@ class dgContactSolver {
 
 					dgInt32 best = 0;
 					dgFloat32 maxErr = dgFloat32(0.0f);
-					dgInt32 i = 0;
-					for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+					dgInt32 j = 0;
+					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
 						// dgFloat32 error2;
-						CalcSupportVertex(m_dir[i], 1);
+						CalcSupportVertex(m_dir[j], 1);
 						dgVector e(m_hullVertex[1] - m_hullVertex[0]);
 						dgFloat32 error2 = e % e;
 						if (error2 > dgFloat32(1.0e-4f)) {
 							break;
 						}
 						if (error2 > maxErr) {
-							best = i;
+							best = j;
 							maxErr = error2;
 						}
 					}
 
-					if (i == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
 						_ASSERTE(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 1);
 					}
@@ -1913,9 +1913,9 @@ class dgContactSolver {
 					dgInt32 best = 0;
 					dgFloat32 maxErr = dgFloat32(0.0f);
 					dgVector e0(m_hullVertex[1] - m_hullVertex[0]);
-					dgInt32 i = 0;
-					for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
-						CalcSupportVertex(m_dir[i], 2);
+					dgInt32 j = 0;
+					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
+						CalcSupportVertex(m_dir[j], 2);
 						dgVector e1(m_hullVertex[2] - m_hullVertex[0]);
 						dgVector n(e0 * e1);
 						dgFloat32 error2 = n % n;
@@ -1923,12 +1923,12 @@ class dgContactSolver {
 							break;
 						}
 						if (error2 > maxErr) {
-							best = i;
+							best = j;
 							maxErr = error2;
 						}
 					}
 
-					if (i == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
 						_ASSERTE(maxErr > dgFloat32(0.0f));
 						CalcSupportVertex(m_dir[best], 2);
 					}
@@ -1991,7 +1991,7 @@ class dgContactSolver {
 				dgPlane separatingPlane(dir.Scale(dgFloat32(-1.0f)), origin % dir);
 				switch (m_vertexIndex) {
 				case 1: {
-					dgFloat32 minDist = dgFloat32(1.0e10f);
+					dgFloat32 minDistance = dgFloat32(1.0e10f);
 					rotMatrix = dgMatrix(dir);
 					_ASSERTE(rotMatrix.m_front.m_w == dgFloat32(0.0f));
 					_ASSERTE(rotMatrix.m_up.m_w == dgFloat32(0.0f));
@@ -2021,26 +2021,26 @@ class dgContactSolver {
 
 						dir1 = tmp;
 						dgVector dir2(dir1);
-						for (dgInt32 i = 0; i < 8; i++) {
-							dgVector tmp(dir2.m_x,
+						for (dgInt32 k = 0; k < 8; k++) {
+							dgVector tmpV(dir2.m_x,
 										 dir2.m_y * yawPitch.m_y - dir2.m_z * yawPitch.m_z,
 										 dir2.m_y * yawPitch.m_z + dir2.m_z * yawPitch.m_y,
 										 dgFloat32(0.0f));
 
 							_ASSERTE(
-								dgAbsf((tmp % tmp) - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
+								dgAbsf((tmpV % tmpV) - dgFloat32(1.0f)) < dgFloat32(1.0e-4f));
 
-							dir2 = tmp;
-							tmp = rotMatrix.RotateVector(dir2);
-							CalcSupportVertex(tmp, 2);
+							dir2 = tmpV;
+							tmpV = rotMatrix.RotateVector(dir2);
+							CalcSupportVertex(tmpV, 2);
 							dgVector err0(m_hullVertex[2] - m_hullVertex[0]);
 							val = err0 % err0;
 							if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
 								val = separatingPlane.Evalue(m_hullVertex[2]);
 								_ASSERTE(val > dgFloat32(0.0f));
-								if (val < minDist) {
+								if (val < minDistance) {
 									keepSeaching = 0;
-									minDist = val;
+									minDistance = val;
 									m_hullVertex[1] = m_hullVertex[2];
 									m_averVertex[1] = m_averVertex[2];
 								}
@@ -2086,8 +2086,8 @@ class dgContactSolver {
 						dgVector err0(m_hullVertex[2] - m_hullVertex[0]);
 						val = err0 % err0;
 						if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
-							dgVector err0(m_hullVertex[2] - m_hullVertex[1]);
-							val = err0 % err0;
+							dgVector err1(m_hullVertex[2] - m_hullVertex[1]);
+							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 #ifdef _DEBUG
@@ -2109,8 +2109,8 @@ class dgContactSolver {
 						dgVector err0(m_hullVertex[3] - m_hullVertex[0]);
 						val = err0 % err0;
 						if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
-							dgVector err0(m_hullVertex[3] - m_hullVertex[1]);
-							val = err0 % err0;
+							dgVector err1(m_hullVertex[3] - m_hullVertex[1]);
+							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 #ifdef _DEBUG
@@ -2174,14 +2174,14 @@ class dgContactSolver {
 		}
 
 		if (m_vertexIndex == 4) {
-			dgFloat32 minDist;
+			dgFloat32 minDistance;
 			if (!CheckTetraHedronVolume()) {
 				Swap(m_hullVertex[2], m_hullVertex[1]);
 				Swap(m_averVertex[2], m_averVertex[1]);
 				_ASSERTE(CheckTetraHedronVolume());
 			}
 
-			minDist = dgFloat32(1.0e20f);
+			minDistance = dgFloat32(1.0e20f);
 			for (dgInt32 i = 0; i < 4; i++) {
 				// dgFloat32 dist;
 				dgInt32 i0 = m_faceIndex[i][0];
@@ -2204,8 +2204,8 @@ class dgContactSolver {
 				if (dist > DG_DISTANCE_TOLERANCE_ZERO) {
 					n = n.Scale(dgRsqrt(dist));
 					dist = dgAbsf(n % (origin - p0));
-					if (dist < minDist) {
-						minDist = dist;
+					if (dist < minDistance) {
+						minDistance = dist;
 						plane = &m_simplex[i];
 					}
 				}
@@ -2250,22 +2250,22 @@ class dgContactSolver {
 				case 1: {
 					dgInt32 best = 0;
 					dgFloat64 maxErr = dgFloat64(0.0f);
-					dgInt32 i = 0;
-					for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+					dgInt32 j = 0;
+					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
 						dgFloat64 error2;
-						CalcSupportVertexLarge(m_dir[i], 1);
+						CalcSupportVertexLarge(m_dir[j], 1);
 						dgBigVector e(m_hullVertexLarge[1] - m_hullVertexLarge[0]);
 						error2 = e % e;
 						if (error2 > dgFloat64(1.0e-4f)) {
 							break;
 						}
 						if (error2 > maxErr) {
-							best = i;
+							best = j;
 							maxErr = error2;
 						}
 					}
 
-					if (i == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
 						_ASSERTE(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 1);
 					}
@@ -2278,10 +2278,10 @@ class dgContactSolver {
 					dgInt32 best = 0;
 					dgFloat64 maxErr = dgFloat64(0.0f);
 					dgBigVector e0(m_hullVertexLarge[1] - m_hullVertexLarge[0]);
-					dgInt32 i = 0;
-					for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
+					dgInt32 j = 0;
+					for (; j < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); j++) {
 						dgFloat64 error2;
-						CalcSupportVertexLarge(m_dir[i], 2);
+						CalcSupportVertexLarge(m_dir[j], 2);
 						dgBigVector e1(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
 						dgBigVector n(e0 * e1);
 						error2 = n % n;
@@ -2289,12 +2289,12 @@ class dgContactSolver {
 							break;
 						}
 						if (error2 > maxErr) {
-							best = i;
+							best = j;
 							maxErr = error2;
 						}
 					}
 
-					if (i == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
+					if (j == dgInt32(sizeof(m_dir) / sizeof(m_dir[0]))) {
 						_ASSERTE(maxErr > dgFloat64(0.0f));
 						CalcSupportVertexLarge(m_dir[best], 2);
 					}
@@ -2366,7 +2366,7 @@ class dgContactSolver {
 
 				switch (m_vertexIndex) {
 				case 1: {
-					dgFloat64 minDist = dgFloat64(1.0e10f);
+					dgFloat64 minDistance = dgFloat64(1.0e10f);
 					rotMatrix = dgMatrix(dir32);
 					_ASSERTE(rotMatrix.m_front.m_w == dgFloat64(0.0f));
 					_ASSERTE(rotMatrix.m_up.m_w == dgFloat64(0.0f));
@@ -2395,26 +2395,26 @@ class dgContactSolver {
 
 						dir1 = tmp;
 						dgVector dir2(dir1);
-						for (dgInt32 i = 0; i < 8; i++) {
-							dgVector tmp(dir2.m_x,
+						for (dgInt32 k = 0; k < 8; k++) {
+							dgVector tmp2(dir2.m_x,
 										 dir2.m_y * yawPitch.m_y - dir2.m_z * yawPitch.m_z,
 										 dir2.m_y * yawPitch.m_z + dir2.m_z * yawPitch.m_y,
 										 dgFloat64(0.0f));
 
-							//								_ASSERTE (dgAbsf ((tmp % tmp) - dgFloat32 (1.0f)) < dgFloat32 (1.0e-4f));
+							//								_ASSERTE (dgAbsf ((tmp2 % tmp2) - dgFloat32 (1.0f)) < dgFloat32 (1.0e-4f));
 
-							dir2 = tmp;
-							tmp = rotMatrix.RotateVector(dir2);
-							CalcSupportVertexLarge(tmp, 2);
+							dir2 = tmp2;
+							tmp2 = rotMatrix.RotateVector(dir2);
+							CalcSupportVertexLarge(tmp2, 2);
 							dgBigVector err0(m_hullVertex[2] - m_hullVertex[0]);
 							dgFloat64 val = err0 % err0;
 							if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
 								//									val = separatingPlane.Evalue(m_hullVertex[2]);
 								val = separatingPlane.m_x * m_hullVertexLarge[2].m_x + separatingPlane.m_y * m_hullVertexLarge[2].m_y + separatingPlane.m_z * m_hullVertexLarge[2].m_z + separatingPlane.m_w;
 								_ASSERTE(val > dgFloat64(0.0f));
-								if (val < minDist) {
+								if (val < minDistance) {
 									keepSeaching = 0;
-									minDist = val;
+									minDistance = val;
 									m_hullVertexLarge[1] = m_hullVertexLarge[2];
 									m_averVertexLarge[1] = m_averVertexLarge[2];
 								}
@@ -2464,8 +2464,8 @@ class dgContactSolver {
 						dgBigVector err0(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
 						val = err0 % err0;
 						if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
-							dgBigVector err0(m_hullVertexLarge[2] - m_hullVertexLarge[1]);
-							val = err0 % err0;
+							dgBigVector err1(m_hullVertexLarge[2] - m_hullVertexLarge[1]);
+							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 					_ASSERTE(
@@ -2485,8 +2485,8 @@ class dgContactSolver {
 						dgBigVector err0(m_hullVertexLarge[3] - m_hullVertexLarge[0]);
 						val = err0 % err0;
 						if (val > DG_FALLBACK_SEPARATING_DIST_TOLERANCE) {
-							dgBigVector err0(m_hullVertexLarge[3] - m_hullVertexLarge[1]);
-							val = err0 % err0;
+							dgBigVector err1(m_hullVertexLarge[3] - m_hullVertexLarge[1]);
+							val = err1 % err1;
 						}
 					} while (val < DG_FALLBACK_SEPARATING_DIST_TOLERANCE);
 					_ASSERTE(
@@ -2557,7 +2557,7 @@ class dgContactSolver {
 				_ASSERTE(CheckTetraHedronVolumeLarge());
 			}
 
-			dgFloat64 minDist = dgFloat64(1.0e20f);
+			dgFloat64 minDistance = dgFloat64(1.0e20f);
 			for (dgInt32 i = 0; i < 4; i++) {
 				dgInt32 i0 = m_faceIndex[i][0];
 				dgInt32 i1 = m_faceIndex[i][1];
@@ -2579,8 +2579,8 @@ class dgContactSolver {
 				if (dist > DG_DISTANCE_TOLERANCE_ZERO) {
 					n = n.Scale(dgFloat32(1.0f) / sqrt(dist));
 					dist = fabs(n % (origin - p0));
-					if (dist < minDist) {
-						minDist = dist;
+					if (dist < minDistance) {
+						minDistance = dist;
 						plane = &m_simplex[i];
 					}
 				}
@@ -3452,22 +3452,22 @@ class dgContactSolver {
 		CalcSupportVertexLarge(m_dir[0], 0);
 		dgInt32 i = 1;
 		for (; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
-			dgFloat64 error2;
+			dgFloat64 error3;
 			CalcSupportVertexLarge(m_dir[i], 1);
 			e1 = m_hullVertexLarge[1] - m_hullVertexLarge[0];
-			error2 = e1 % e1;
-			if (error2 > DG_CALCULATE_SEPARATING_PLANE_ERROR) {
+			error3 = e1 % e1;
+			if (error3 > DG_CALCULATE_SEPARATING_PLANE_ERROR) {
 				break;
 			}
 		}
 
 		for (i++; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
-			dgFloat64 error2;
+			dgFloat64 error3;
 			CalcSupportVertexLarge(m_dir[i], 2);
 			e2 = m_hullVertexLarge[2] - m_hullVertexLarge[0];
 			normal = e1 * e2;
-			error2 = normal % normal;
-			if (error2 > DG_CALCULATE_SEPARATING_PLANE_ERROR1) {
+			error3 = normal % normal;
+			if (error3 > DG_CALCULATE_SEPARATING_PLANE_ERROR1) {
 				break;
 			}
 		}
@@ -3504,8 +3504,8 @@ class dgContactSolver {
 			maxErr = dgFloat32(0.0f);
 			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
 				CalcSupportVertexLarge(m_dir[i], 2);
-				dgBigVector e2(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
-				normal = e1 * e2;
+				dgBigVector e4(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
+				normal = e1 * e4;
 				error2 = normal % normal;
 				if (error2 > maxErr) {
 					best = i;
@@ -3514,16 +3514,16 @@ class dgContactSolver {
 			}
 
 			CalcSupportVertexLarge(m_dir[best], 2);
-			dgBigVector e2(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
-			normal = e1 * e2;
+			dgBigVector e4(m_hullVertexLarge[2] - m_hullVertexLarge[0]);
+			normal = e1 * e4;
 
 			best = 0;
 			maxErr = dgFloat32(0.0f);
 			for (i = 1; i < dgInt32(sizeof(m_dir) / sizeof(m_dir[0])); i++) {
 				CalcSupportVertexLarge(m_dir[i], 3);
 
-				dgBigVector e3(m_hullVertexLarge[3] - m_hullVertexLarge[0]);
-				error2 = normal % e3;
+				dgBigVector e5(m_hullVertexLarge[3] - m_hullVertexLarge[0]);
+				error2 = normal % e5;
 				if (fabs(error2) > fabs(maxErr)) {
 					best = i;
 					maxErr = error2;
@@ -4134,8 +4134,8 @@ class dgContactSolver {
 
 					//					dgTrace (("Max face count overflow, breaking with last best face\n"));
 
-					dgPlane &plane = *face;
-					plane = bestPlane;
+					dgPlane &planeF = *face;
+					planeF = bestPlane;
 
 					i = face->m_vertex[0];
 					face->m_vertex[0] = 0;
@@ -4450,8 +4450,8 @@ class dgContactSolver {
 
 					//					dgTrace (("Max face count overflow, breaking with last best face\n"));
 
-					dgPlane &plane = *face;
-					plane = bestPlane;
+					dgPlane &planeF = *face;
+					planeF = bestPlane;
 
 					i = face->m_vertex[0];
 					face->m_vertex[0] = 0;
@@ -5221,12 +5221,12 @@ public:
 						i0 = face->m_vertex[0];
 						i1 = face->m_vertex[1];
 						i2 = face->m_vertex[2];
-						// dgPlane plane (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
-						dgVector plane(
+						// dgPlane planeTemp (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
+						dgVector planeTemp(
 							(m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-						_ASSERTE(plane % plane > dgFloat32(0.0f));
+						_ASSERTE(planeTemp % planeTemp > dgFloat32(0.0f));
 
-						den = plane % m_localRelVeloc;
+						den = planeTemp % m_localRelVeloc;
 						//						if (dgAbsf (den) > dgFloat32 (1.0e-24f)) {
 						if (den >= dgFloat32(-1.0e-24f)) {
 							code = UpdateSeparatingPlane(tmpFaceface, p1);
@@ -5235,11 +5235,11 @@ public:
 							i0 = face->m_vertex[0];
 							i1 = face->m_vertex[1];
 							i2 = face->m_vertex[2];
-							// dgPlane plane (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
-							dgVector plane(
+							// dgPlane planeT (m_hullVertex[i0], m_hullVertex[i1], m_hullVertex[i2]);
+							dgVector planeT(
 								(m_hullVertex[i1] - m_hullVertex[i0]) * (m_hullVertex[i2] - m_hullVertex[i0]));
-							_ASSERTE(plane % plane > dgFloat32(-1.0e-24f));
-							den = plane % m_localRelVeloc;
+							_ASSERTE(planeT % planeT > dgFloat32(-1.0e-24f));
+							den = planeT % m_localRelVeloc;
 							if (den >= dgFloat32(0.0f)) {
 								return 0;
 							}
@@ -5252,7 +5252,7 @@ public:
 						saveAver[1] = m_averVertex[i1];
 						saveAver[2] = m_averVertex[i2];
 						if (den < dgFloat32(-1.0e-24f)) {
-							timeOfImpact = (plane % m_hullVertex[i0]) / den;
+							timeOfImpact = (planeTemp % m_hullVertex[i0]) / den;
 							if (timeOfImpact < 0.0f) {
 								return 0;
 							}
@@ -6464,16 +6464,16 @@ dgInt32 dgWorld::FilterPolygonEdgeContacts(dgInt32 count,
 		for (dgInt32 i = 0; i < count - 1; i++) {
 			_ASSERTE(
 				(contact[i].m_isEdgeContact == 0) || (contact[i].m_isEdgeContact == 1));
-			for (dgInt32 j = i + 1; j < count; j++) {
+			for (dgInt32 k = i + 1; k < count; k++) {
 				dgFloat32 dist;
-				dgVector distVector(contact[i].m_point - contact[j].m_point);
+				dgVector distVector(contact[i].m_point - contact[k].m_point);
 				dist = distVector % distVector;
 				//				if (dist < dgFloat32 (0.04f)) {
-				//				if ((dist < dgFloat32 (0.001f)) || ((dist < dgFloat32 (0.01f)) && ((contact[i].m_normal % contact[j].m_normal) > dgFloat32 (0.86f)))) {
+				//				if ((dist < dgFloat32 (0.001f)) || ((dist < dgFloat32 (0.01f)) && ((contact[i].m_normal % contact[k].m_normal) > dgFloat32 (0.86f)))) {
 				if (dist < dgFloat32(1.e-3f)) {
 					count--;
-					contact[j] = contact[count];
-					j--;
+					contact[k] = contact[count];
+					k--;
 				}
 			}
 		}
