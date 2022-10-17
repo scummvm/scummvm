@@ -276,20 +276,41 @@ void Window::loadEXE(const Common::String movie) {
 }
 
 void Window::loadEXEv3(Common::SeekableReadStream *stream) {
+	uint32 mmmSize;
+	Common::String mmmFileName;
+	Common::String directoryName;
+
 	uint16 entryCount = stream->readUint16LE();
-	if (entryCount != 1)
-		error("Unhandled multiple entry v3 EXE");
 
 	stream->skip(5); // unknown
 
-	uint32 mmmSize = stream->readUint32LE(); // Main MMM size
+	for (int i = 0; i < entryCount; ++i) {
+		uint32 mmmSize_ = stream->readUint32LE(); // Main MMM size
 
-	Common::String mmmFileName = stream->readPascalString();
-	Common::String directoryName = stream->readPascalString();
+		Common::String mmmFileName_ = stream->readPascalString();
+		Common::String directoryName_ = stream->readPascalString();
 
-	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
-	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
-	debugC(1, kDebugLoading, "Main mmmSize: %d (0x%x)", mmmSize, mmmSize);
+		debugC(1, kDebugLoading, "MMM #%d: '%s'", i, mmmFileName_.c_str());
+		debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName_.c_str());
+		debugC(1, kDebugLoading, "MMM size: %d (0x%x)", mmmSize_, mmmSize_);
+		if (i == 0) {
+			mmmSize = mmmSize_;
+			mmmFileName = mmmFileName_;
+			directoryName = directoryName_;
+		} else {
+			if (!SearchMan.hasFile(Common::Path(mmmFileName_, g_director->_dirSeparator)))
+				warning("Failed to find MMM '%s'", mmmFileName_.c_str());
+			else {
+				Common::SeekableReadStream *const mmmFile_ = SearchMan.createReadStreamForMember(Common::Path(mmmFileName_, g_director->_dirSeparator));
+				uint32 mmmFileSize_ = mmmFile_->size();
+				if (mmmSize_ != mmmFileSize_)
+					warning("File size for '%s' doesn't match. Got %d (0x%x), want %d (0x%x)", mmmFileName_.c_str(), mmmFileSize_, mmmFileSize_, mmmSize_, mmmSize_);
+				delete mmmFile_;
+			}
+		}
+		// Print a blank line to separate the entries, format a blank string to silence gcc warning
+		debugC(1, kDebugLoading, "%s", "");
+	}
 
 	if (mmmSize) {
 		uint32 riffOffset = stream->pos();
