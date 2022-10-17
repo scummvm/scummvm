@@ -32,7 +32,9 @@ namespace MM1 {
 #define TREASURE_COUNT 9
 
 enum ItemId {
-	SCROLL_ID = 231
+	VELLUM_SCROLL_ID = 231,
+	BRONZE_KEY_ID = 237,
+	DIAMOND_KEY_ID = 240
 };
 
 enum EnablementBit {
