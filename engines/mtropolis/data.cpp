@@ -1532,8 +1532,8 @@ DataReadErrorCode SharedSceneModifier::load(DataReader &reader) {
 	if (_revision != 1000)
 		return kDataReadErrorUnsupportedRevision;
 
-	if (!modHeader.load(reader) || !executeWhen.load(reader)
-		|| !reader.readBytes(unknown1) || !reader.readU32(sectionGUID)
+	if (!modHeader.load(reader) || !reader.readBytes(unknown1)
+		|| !executeWhen.load(reader) || !reader.readU32(sectionGUID)
 		|| !reader.readU32(subsectionGUID) || !reader.readU32(sceneGUID))
 		return kDataReadErrorReadFailed;
 

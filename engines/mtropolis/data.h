@@ -1304,8 +1304,8 @@ struct SharedSceneModifier : public DataObject {
 
 	TypicalModifierHeader modHeader;
 
-	Event executeWhen;
 	uint8 unknown1[4];
+	Event executeWhen;
 	uint32 sectionGUID;
 	uint32 subsectionGUID;
 	uint32 sceneGUID;
