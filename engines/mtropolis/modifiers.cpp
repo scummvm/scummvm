@@ -1352,6 +1352,35 @@ bool SharedSceneModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState SharedSceneModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		Project *project = runtime->getProject();
+		bool found = false;
+		for (const Common::SharedPtr<Structural> &section : project->getChildren()) {
+			if (section->getStaticGUID() == _targetSectionGUID) {
+				for (const Common::SharedPtr<Structural> &subsection : section->getChildren()) {
+					if (subsection->getStaticGUID() == _targetSubsectionGUID) {
+						for (const Common::SharedPtr<Structural> &scene : subsection->getChildren()) {
+							if (scene->getStaticGUID() == _targetSceneGUID) {
+								runtime->addSceneStateTransition(HighLevelSceneTransition(scene, HighLevelSceneTransition::kTypeChangeSharedScene, false, false));
+								found = true;
+								break;
+							}
+						}
+						break;
+					}
+				}
+				break;
+			}
+		}
+
+		if (!found) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notifyFmt(kDebugSeverityError, "Failed to resolve shared scene modifier target scene");
+#endif
+			return kVThreadError;
+		}
+	}
 	return kVThreadReturn;
 }
 

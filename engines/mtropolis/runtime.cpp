@@ -4702,7 +4702,28 @@ void Runtime::executeHighLevelSceneTransition(const HighLevelSceneTransition &tr
 				executeCompleteTransitionToScene(targetScene);
 			}
 		} break;
+	case HighLevelSceneTransition::kTypeChangeSharedScene: {
+			Common::SharedPtr<Structural> targetSharedScene = transition.scene;
+
+			if (targetSharedScene != _activeSharedScene) {
+				if (_activeSharedScene) {
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneEnded, 0), _activeSharedScene.get(), true, true);
+					queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentDisabled, 0), _activeSharedScene.get(), true, true);
+					_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(_activeSharedScene, LowLevelSceneStateTransitionAction::kUnload));
+				}
+
+				_pendingLowLevelTransitions.push_back(LowLevelSceneStateTransitionAction(targetSharedScene, LowLevelSceneStateTransitionAction::kLoad));
+				queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kParentEnabled, 0), targetSharedScene.get(), true, true);
+				queueEventAsLowLevelSceneStateTransitionAction(Event(EventIDs::kSceneStarted, 0), targetSharedScene.get(), true, true);
+
+				SceneStackEntry sharedSceneEntry;
+				sharedSceneEntry.scene = targetSharedScene;
+
+				_sceneStack[0] = sharedSceneEntry;
+			}
+		} break;
 	default:
+		error("Unknown high-level scene transition type");
 		break;
 	}
 }
