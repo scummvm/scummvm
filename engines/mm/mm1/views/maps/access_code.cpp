@@ -50,7 +50,7 @@ bool AccessCode::msgFocus(const FocusMessage &msg) {
 void AccessCode::draw() {
 	clearSurface();
 
-	writeString(0, 1, STRING["maps.map08.dancing_lights"]);
+	writeString(0, 1, STRING["maps.map08.enter_code"]);
 	writeString(16, 3, _code);
 	for (uint i = 0; i < (MAX_CODE_LENGTH - _code.size()); ++i)
 		writeChar('.');

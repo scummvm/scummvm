@@ -39,6 +39,7 @@ private:
 	void special06();
 	void special08();
 	void special20();
+	void addTreasure();
 
 	const SpecialFn SPECIAL_FN[24] = {
 		&Map08::special00,
