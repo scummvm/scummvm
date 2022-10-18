@@ -38,6 +38,8 @@ namespace Glk {
 namespace Scott {
 
 const PlainGameDescriptor SCOTT_GAME_LIST[] = {
+	{ "scottadams",			"Scott Adams IF Game" },
+
 	// Scott Adams games
 	{ "adventureland",		"Adventureland" },
 	{ "pirateadventure",	"Pirate Adventure" },
