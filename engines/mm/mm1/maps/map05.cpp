@@ -56,7 +56,7 @@ void Map05::special() {
 void Map05::special00() {
 	Sound::sound(SOUND_2);
 	send(InfoMessage(
-		STRING["maps.map05.stairs"],
+		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->changeMap(0x604, 1);
 		}

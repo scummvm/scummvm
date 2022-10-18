@@ -170,7 +170,7 @@ void Map00::special08() {
 void Map00::special09() {
 	Sound::sound(SOUND_2);
 	send(InfoMessage(
-		STRING["maps.map00.stairs"],
+		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->changeMap(0xa11, 1);
 		}

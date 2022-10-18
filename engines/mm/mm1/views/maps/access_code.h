@@ -19,63 +19,46 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP08_H
-#define MM1_MAPS_MAP08_H
+#ifndef MM1_VIEWS_MAPS_ACCESS_CODE_H
+#define MM1_VIEWS_MAPS_ACCESS_CODE_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map08 : public Map {
-	typedef void (Map08:: *SpecialFn)();
+class AccessCode : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special04();
-	void special05();
-	void special06();
-	void special08();
-	void special20();
-
-	const SpecialFn SPECIAL_FN[24] = {
-		&Map08::special00,
-		&Map08::special01,
-		&Map08::special02,
-		&Map08::special02,
-		&Map08::special04,
-		&Map08::special05,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special08,
-		&Map08::special08,
-		&Map08::special08,
-		&Map08::special08,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special06,
-		&Map08::special20,
-		&Map08::special20,
-		&Map08::special20,
-		&Map08::special20
-	};
-public:
-	Map08() : Map(8, "cave4", 0x202) {}
+	Common::String _code;
 
 	/**
-	 * Handles all special stuff that happens on the map
+	 * Called when the code has been entered
 	 */
-	void special() override;
+	void codeEntered();
+
+	/**
+	 * Correct code entered
+	 */
+	void correctCode();
+
+	/**
+	 * Incorrect code entered
+	 */
+	void incorrectCode();
+
+public:
+	AccessCode();
+	virtual ~AccessCode() {}
+
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

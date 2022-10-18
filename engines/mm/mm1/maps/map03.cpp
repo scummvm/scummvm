@@ -157,7 +157,7 @@ void Map03::special08() {
 void Map03::special09() {
 	Sound::sound(SOUND_2);
 	send(InfoMessage(
-		STRING["maps.map01.stairs"],
+		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->_mapPos = Common::Point(14, 0);
 			g_maps->changeMap(5, 1);
