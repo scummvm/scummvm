@@ -70,9 +70,9 @@ protected:
 	} _pcmCurrentSound[9];
 	friend void syncWithSerializer(Common::Serializer &, PcmCurrentSound &);
 
-	uint8 _unkFlags;
+	uint8 _unkFlags = 0x33;
 
-	TownsAudioInterface *_intf;
+	TownsAudioInterface *_intf = nullptr;
 	ScummEngine *_vm;
 
 	const int _numSoundMax;
@@ -118,24 +118,24 @@ private:
 		uint8 note;
 	};
 
-	SoundOvrParameters *_soundOverride;
+	SoundOvrParameters *_soundOverride = nullptr;
 
-	uint8 _cdaVolLeft;
-	uint8 _cdaVolRight;
+	uint8 _cdaVolLeft = 0;
+	uint8 _cdaVolRight = 0;
 
-	uint8 _eupCurrentSound;
-	uint8 _eupLooping;
-	uint8 _eupVolLeft;
-	uint8 _eupVolRight;
+	uint8 _eupCurrentSound = 0;
+	uint8 _eupLooping = 0;
+	uint8 _eupVolLeft = 0;
+	uint8 _eupVolRight = 0;
 
-	uint8 _cdaCurrentSound;
-	uint8 _cdaNumLoops;
-	uint8 _cdaForceRestart;
+	uint8 _cdaCurrentSound = 0;
+	uint8 _cdaNumLoops = 0;
+	uint8 _cdaForceRestart = 0;
 
-	uint8 _cdaCurrentSoundTemp;
-	uint8 _cdaNumLoopsTemp;
+	uint8 _cdaCurrentSoundTemp = 0;
+	uint8 _cdaNumLoopsTemp = 0;
 
-	EuphonyPlayer *_player;
+	EuphonyPlayer *_player = nullptr;
 };
 
 class Player_Towns_v2 : public Player_Towns {
@@ -165,11 +165,11 @@ private:
 		uint8 type;
 	};
 
-	SoundOvrParameters *_soundOverride;
+	SoundOvrParameters *_soundOverride = nullptr;
 
-	uint8 *_sblData;
+	uint8 *_sblData = nullptr;
 
-	IMuse *_imuse;
+	IMuse *_imuse = nullptr;
 	const bool _imuseDispose;
 };
 
