@@ -803,29 +803,27 @@ const Common::SharedPtr<Graphics::ManagedSurface> &CachedImage::optimize(Runtime
 	const Graphics::PixelFormat &renderFmt = runtime->getRenderPixelFormat();
 
 	if (renderDepth != _colorDepth) {
-		size_t w = _surface->w;
-		size_t h = _surface->h;
+		if (!_optimizedSurface) {
+			size_t w = _surface->w;
+			size_t h = _surface->h;
 
-		if (renderDepth == kColorDepthMode16Bit && _colorDepth == kColorDepthMode32Bit) {
-			_optimizedSurface.reset(new Graphics::ManagedSurface());
-			_optimizedSurface->create(w, h, renderFmt);
-			Render::convert32To16(*_optimizedSurface, *_surface);
-
-			_colorDepth = kColorDepthMode16Bit;
-		} else if (renderDepth == kColorDepthMode32Bit && _colorDepth == kColorDepthMode16Bit) {
-			_optimizedSurface.reset(new Graphics::ManagedSurface());
-			_optimizedSurface->create(w, h, renderFmt);
-			Render::convert16To32(*_optimizedSurface, *_surface);
-
-			_colorDepth = kColorDepthMode32Bit;
-		} else {
-			_optimizedSurface = _surface;	// Can't optimize
+			if (renderDepth == kColorDepthMode16Bit && _colorDepth == kColorDepthMode32Bit) {
+				_optimizedSurface.reset(new Graphics::ManagedSurface());
+				_optimizedSurface->create(w, h, renderFmt);
+				Render::convert32To16(*_optimizedSurface, *_surface);
+			} else if (renderDepth == kColorDepthMode32Bit && _colorDepth == kColorDepthMode16Bit) {
+				_optimizedSurface.reset(new Graphics::ManagedSurface());
+				_optimizedSurface->create(w, h, renderFmt);
+				Render::convert16To32(*_optimizedSurface, *_surface);
+			} else {
+				return _surface; // Can't optimize
+			}
 		}
-	} else {
-		_optimizedSurface = _surface;	// Doesn't need to be optimized
+
+		return _optimizedSurface;
 	}
 
-	return _optimizedSurface;
+	return _surface;	// Already optimal
 }
 
 ImageAsset::ImageAsset() : _colorDepth(kColorDepthMode8Bit), _filePosition(0), _size(0), _streamIndex(0), _imageFormat(kImageFormatWindows) {

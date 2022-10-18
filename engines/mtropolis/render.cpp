@@ -577,8 +577,8 @@ void convert16To32(Graphics::ManagedSurface &destSurface, const Graphics::Manage
 	size_t h = srcSurface.h;
 
 	for (size_t y = 0; y < h; y++) {
-		const uint32 *srcRow = static_cast<const uint32 *>(srcSurface.getBasePtr(0, y));
-		uint16 *destRow = static_cast<uint16 *>(destSurface.getBasePtr(0, y));
+		const uint16 *srcRow = static_cast<const uint16 *>(srcSurface.getBasePtr(0, y));
+		uint32 *destRow = static_cast<uint32 *>(destSurface.getBasePtr(0, y));
 
 		for (size_t x = 0; x < w; x++) {
 			uint32 packed16 = srcRow[x];
@@ -589,7 +589,7 @@ void convert16To32(Graphics::ManagedSurface &destSurface, const Graphics::Manage
 			r = expand5To8(r);
 			g = expand5To8(g);
 			b = expand5To8(b);
-			destRow[x] = (r << destFmt.rShift) | (g << destFmt.gShift) | (b << destFmt.bShift);
+			destRow[x] = (r << destFmt.rShift) | (g << destFmt.gShift) | (b << destFmt.bShift) | (0xffu << destFmt.aShift);
 		}
 	}
 }
