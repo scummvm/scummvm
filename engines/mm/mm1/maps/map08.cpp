@@ -46,7 +46,6 @@ void Map08::special() {
 		}
 	}
 
-	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 
 	if (g_maps->_mapPos.x == 0 || g_maps->_mapPos.x == 15) {
