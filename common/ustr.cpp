@@ -60,6 +60,11 @@ U32String &U32String::operator=(const U32String &str) {
 	return *this;
 }
 
+U32String &U32String::operator=(U32String &&str) {
+	assign(static_cast<U32String &&>(str));
+	return *this;
+}
+
 U32String &U32String::operator=(const String &str) {
 	clear();
 	decodeInternal(str.c_str(), str.size(), Common::kUtf8);
@@ -145,12 +150,12 @@ void U32String::insertString(const String &s, uint32 p, CodePage page) {
 	insertString(U32String(s, page), p);
 }
 
-U32String U32String::format(U32String fmt, ...) {
+U32String U32String::formatInternal(const U32String *fmt, ...) {
 	U32String output;
 
 	va_list va;
 	va_start(va, fmt);
-	U32String::vformat(fmt.c_str(), fmt.c_str() + fmt.size(), output, va);
+	U32String::vformat(fmt->c_str(), fmt->c_str() + fmt->size(), output, va);
 	va_end(va);
 
 	return output;

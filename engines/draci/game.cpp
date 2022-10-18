@@ -381,10 +381,10 @@ void Game::handleOrdinaryLoop(int x, int y) {
 }
 
 int Game::inventoryPositionFromMouse() const {
-	const int column = CLIP(scummvm_lround(
+	const int column = CLIP(lround(
 		(_vm->_mouse->getPosX() - kInventoryX + kInventoryItemWidth / 2.) /
 		kInventoryItemWidth) - 1, 0L, (long) kInventoryColumns - 1);
-	const int line = CLIP(scummvm_lround(
+	const int line = CLIP(lround(
 		(_vm->_mouse->getPosY() - kInventoryY + kInventoryItemHeight / 2.) /
 		kInventoryItemHeight) - 1, 0L, (long) kInventoryLines - 1);
 	return line * kInventoryColumns + column;
@@ -1495,8 +1495,8 @@ void Game::positionAnimAsHero(Animation *anim) {
 	// click but sprites are drawn from their top-left corner so we subtract
 	// the current height of the dragon's sprite
 	Common::Point p = _hero;
-	p.x -= scummvm_lround(scale * frame->getWidth() / 2);
-	p.y -= scummvm_lround(scale * frame->getHeight());
+	p.x -= lround(scale * frame->getWidth() / 2);
+	p.y -= lround(scale * frame->getHeight());
 
 	// Since _persons[] is used for placing talking text, we use the non-adjusted x value
 	// so the text remains centered over the dragon.
@@ -1533,8 +1533,8 @@ void Game::positionHeroAsAnim(Animation *anim) {
 	// used in positionAnimAsHero() and even rounding errors are exactly
 	// the same.
 	Drawable *frame = anim->getCurrentFrame();
-	_hero.x += scummvm_lround(anim->getScaleX() * frame->getWidth() / 2);
-	_hero.y += scummvm_lround(anim->getScaleY() * frame->getHeight());
+	_hero.x += lround(anim->getScaleX() * frame->getWidth() / 2);
+	_hero.y += lround(anim->getScaleY() * frame->getHeight());
 }
 
 void Game::pushNewRoom() {

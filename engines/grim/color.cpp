@@ -46,9 +46,7 @@ Color::Color(uint32 c) {
 }
 
 uint32 Color::toEncodedValue() {
-	return (_vals[0] << 16) |
-		   (_vals[1] << 8) |
-		   _vals[2];
+	return (_vals[0] << 16) | (_vals[1] << 8) | _vals[2];
 }
 
 Color &Color::operator =(const Color &c) {
@@ -66,4 +64,3 @@ Color &Color::operator =(const Color *c) {
 }
 
 } // end of namespace Grim
-

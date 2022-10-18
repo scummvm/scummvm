@@ -57,6 +57,7 @@ namespace AGS3 {
 typedef uint8 uint8_t;
 typedef uint16 uint16_t;
 typedef uint32 uint32_t;
+typedef uint64 uint64_t;
 typedef int8 int8_t;
 typedef int16 int16_t;
 typedef int32 int32_t;
@@ -76,6 +77,7 @@ typedef int64 intptr_t;
 #undef INT32_MAX
 #undef INT_MIN
 #undef INT_MAX
+#undef UINT32_MAX
 #undef UINT_MAX
 #undef SIZE_MAX
 #define INT16_MIN     -32768
@@ -87,6 +89,7 @@ typedef int64 intptr_t;
 #define INT_MAX       2147483647
 #define UINT_MAX      0xffffffff
 #define SIZE_MAX      0xffffffff
+#define UINT32_MAX    0xffffffff
 
 #undef TRUE
 #undef FALSE

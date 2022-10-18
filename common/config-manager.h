@@ -115,6 +115,11 @@ public:
 	/** The name of keymapper domain used to store the key maps. */
 	static char const *const kKeymapperDomain;
 
+	/** The name of the session domain where configs are put 
+	 * for the entire session or until they are overwritten or removed. 
+	 * These settings don't get saved to disk. */
+	static char const *const kSessionDomain; 
+
 #ifdef USE_CLOUD
 	/** The name of cloud domain used to store the user's tokens. */
 	static char const *const kCloudDomain;
@@ -202,6 +207,8 @@ public:
 	bool                     hasGameDomain(const String &domName) const; /*!< Check if a specific game domain exists in the DomainMap. */
 	bool                     hasMiscDomain(const String &domName) const; /*!< Check if a specific miscellaneous domain exists in the DomainMap. */
 
+	bool                     isKeyTemporary(const String &key) const; /*!< Check if a specific key exists in either transient or session domain. */
+
 	const DomainMap         &getGameDomains() const { return _gameDomains; } /*!< Return all game domains in the DomainMap. */
 	DomainMap::iterator      beginGameDomains() { return _gameDomains.begin(); } /*!< Return the beginning position of game domains. */
 	DomainMap::iterator      endGameDomains() { return _gameDomains.end(); } /*!< Return the ending position of game domains. */
@@ -227,6 +234,8 @@ private:
 	Domain			_defaultsDomain;
 
 	Domain			_keymapperDomain;
+
+	Domain          _sessionDomain; 	
 
 #ifdef USE_CLOUD
 	Domain			_cloudDomain;

@@ -157,8 +157,10 @@ void OSystem_SDL::init() {
 	SDL_EnableUNICODE(1);
 #endif
 
+#if !defined(OPENPANDORA)
 	// Disable OS cursor
 	SDL_ShowCursor(SDL_DISABLE);
+#endif
 
 	if (_window == nullptr)
 		_window = new SdlWindow();
@@ -180,6 +182,12 @@ bool OSystem_SDL::hasFeature(Feature f) {
 	if (f == kFeatureJoystickDeadzone || f == kFeatureKbdMouseSpeed) {
 		return _eventSource->isJoystickConnected();
 	}
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	/* Even if we are using the 2D graphics manager,
+	 * we are at one initGraphics3d call of supporting OpenGL */
+	if (f == kFeatureOpenGLForGame) return true;
+	if (f == kFeatureShadersForGame) return _supportsShaders;
+#endif
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
@@ -196,13 +204,6 @@ void OSystem_SDL::initBackend() {
 			_logger->open(logFile);
 	}
 
-	// In case the user specified the screenshot path, we get it here.
-	// That way if it was specified on the command line we will not lose it
-	// when the launcher is started (as it clears the ConfMan transient domain).
-	_userScreenshotPath = ConfMan.get("screenshotpath");
-	if (!_userScreenshotPath.empty() && !_userScreenshotPath.hasSuffix("/"))
-		_userScreenshotPath += "/";
-
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	const char *sdlDriverName = SDL_GetCurrentVideoDriver();
 	// Allow the screen to turn off
@@ -216,7 +217,7 @@ void OSystem_SDL::initBackend() {
 	debug(1, "Using SDL Video Driver \"%s\"", sdlDriverName);
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	detectFramebufferSupport();
+	detectOpenGLFeaturesSupport();
 	detectAntiAliasingSupport();
 #endif
 
@@ -301,6 +302,8 @@ void OSystem_SDL::initBackend() {
 	_presence = new DiscordPresence();
 #endif
 
+	ConfMan.registerDefault("iconspath", this->getDefaultIconsPath());
+
 	_inited = true;
 
 	BaseBackend::initBackend();
@@ -313,31 +316,63 @@ void OSystem_SDL::initBackend() {
 }
 
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-void OSystem_SDL::detectFramebufferSupport() {
+void OSystem_SDL::detectOpenGLFeaturesSupport() {
+	_oglType = OpenGL::kContextNone;
 	_supportsFrameBuffer = false;
+	_supportsShaders = false;
 #if USE_FORCED_GLES2
-	// Framebuffers are always available with GLES2
+	// Framebuffers and shaders are always available with GLES2
+	_oglType = OpenGL::kContextGLES2;
 	_supportsFrameBuffer = true;
-#elif !defined(AMIGAOS) && !defined(__MORPHOS__)
+	_supportsShaders = true;
+#else
 	// Spawn a 32x32 window off-screen with a GL context to test if framebuffers are supported
 #if SDL_VERSION_ATLEAST(2, 0, 0)
 	SDL_Window *window = SDL_CreateWindow("", SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, 32, 32, SDL_WINDOW_OPENGL | SDL_WINDOW_HIDDEN);
-	if (window) {
-		SDL_GLContext glContext = SDL_GL_CreateContext(window);
-		if (glContext) {
-			OpenGLContext.initialize(OpenGL::kOGLContextGL);
-			_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
-			OpenGLContext.reset();
-			SDL_GL_DeleteContext(glContext);
-		}
-		SDL_DestroyWindow(window);
+	if (!window) {
+		return;
 	}
+
+	int glContextProfileMask, glContextMajor;
+	if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, &glContextProfileMask) != 0) {
+		SDL_DestroyWindow(window);
+		return;
+	}
+	if (glContextProfileMask == SDL_GL_CONTEXT_PROFILE_ES) {
+		if (SDL_GL_GetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, &glContextMajor) != 0) {
+			SDL_DestroyWindow(window);
+			return;
+		}
+		if (glContextMajor == 2) {
+			_oglType = OpenGL::kContextGLES2;
+		} else {
+			SDL_DestroyWindow(window);
+			return;
+		}
+	} else {
+		_oglType = OpenGL::kContextGL;
+	}
+	SDL_GLContext glContext = SDL_GL_CreateContext(window);
+	if (!glContext) {
+		SDL_DestroyWindow(window);
+		return;
+	}
+
+	OpenGLContext.initialize(_oglType);
+	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	_supportsShaders = OpenGLContext.enginesShadersSupported;
+	OpenGLContext.reset();
+	SDL_GL_DeleteContext(glContext);
+	SDL_DestroyWindow(window);
 #else
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=9000,9000"));
 	SDL_SetVideoMode(32, 32, 0, SDL_OPENGL);
 	SDL_putenv(const_cast<char *>("SDL_VIDEO_WINDOW_POS=center"));
-	OpenGLContext.initialize(OpenGL::kOGLContextGL);
+	// SDL 1.2 only supports OpenGL
+	_oglType = OpenGL::kContextGL;
+	OpenGLContext.initialize(_oglType);
 	_supportsFrameBuffer = OpenGLContext.framebufferObjectSupported;
+	_supportsShaders = OpenGLContext.enginesShadersSupported;
 	OpenGLContext.reset();
 #endif
 #endif
@@ -486,6 +521,12 @@ void OSystem_SDL::setWindowCaption(const Common::U32String &caption) {
 #if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 Common::Array<uint> OSystem_SDL::getSupportedAntiAliasingLevels() const {
 	return _antiAliasLevels;
+}
+#endif
+
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+void *OSystem_SDL::getOpenGLProcAddress(const char *name) const {
+	return SDL_GL_GetProcAddress(name);
 }
 #endif
 
@@ -722,8 +763,19 @@ Common::SaveFileManager *OSystem_SDL::getSavefileManager() {
 }
 
 //Not specified in base class
+Common::String OSystem_SDL::getDefaultIconsPath() {
+	Common::String path = ConfMan.get("iconspath");
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
+}
+
+//Not specified in base class
 Common::String OSystem_SDL::getScreenshotsPath() {
-	return _userScreenshotPath;
+	Common::String path = ConfMan.get("screenshotpath");
+	if (!path.empty() && !path.hasSuffix("/"))
+		path += "/";
+	return path;
 }
 
 #ifdef USE_OPENGL

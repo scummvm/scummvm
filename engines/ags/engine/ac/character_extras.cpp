@@ -26,7 +26,7 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-void CharacterExtras::ReadFromFile(Stream *in) {
+void CharacterExtras::ReadFromSavegame(Stream *in, int save_ver) {
 	in->ReadArrayOfInt16(invorder, MAX_INVORDER);
 	invorder_count = in->ReadInt16();
 	width = in->ReadInt16();
@@ -42,9 +42,16 @@ void CharacterExtras::ReadFromFile(Stream *in) {
 	process_idle_this_time = in->ReadInt8();
 	slow_move_counter = in->ReadInt8();
 	animwait = in->ReadInt16();
+	if (save_ver >= 2) // expanded at ver 2
+	{
+		anim_volume = in->ReadInt8();
+		cur_anim_volume = in->ReadInt8();
+		in->ReadInt8(); // reserved to fill int32
+		in->ReadInt8();
+	}
 }
 
-void CharacterExtras::WriteToFile(Stream *out) {
+void CharacterExtras::WriteToSavegame(Stream *out) {
 	out->WriteArrayOfInt16(invorder, MAX_INVORDER);
 	out->WriteInt16(invorder_count);
 	out->WriteInt16(width);
@@ -60,6 +67,10 @@ void CharacterExtras::WriteToFile(Stream *out) {
 	out->WriteInt8(process_idle_this_time);
 	out->WriteInt8(slow_move_counter);
 	out->WriteInt16(animwait);
+	out->WriteInt8(static_cast<uint8_t>(anim_volume));
+	out->WriteInt8(static_cast<uint8_t>(cur_anim_volume));
+	out->WriteInt8(0); // reserved to fill int32
+	out->WriteInt8(0);
 }
 
 } // namespace AGS3

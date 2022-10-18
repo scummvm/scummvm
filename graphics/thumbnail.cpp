@@ -201,6 +201,18 @@ bool loadThumbnail(Common::SeekableReadStream &in, Graphics::Surface *&thumbnail
 	return true;
 }
 
+bool createThumbnail(Graphics::Surface &thumb) {
+	if (thumb.getPixels())
+		thumb.free();
+
+	if (!createThumbnailFromScreen(&thumb)) {
+		warning("Couldn't create thumbnail from screen, aborting thumbnail save");
+		return false;
+	}
+
+	return true;
+}
+
 bool saveThumbnail(Common::WriteStream &out) {
 	Graphics::Surface thumb;
 
@@ -279,7 +291,7 @@ int *scaleLine(int size, int srcSize) {
 	int scale = 100 * size / srcSize;
 	assert(scale > 0);
 	int *v = new int[size];
-	Common::fill(v, &v[size - 1], 0);
+	Common::fill(v, v + size, 0);
 
 	int distCtr = 0;
 	int *destP = v;

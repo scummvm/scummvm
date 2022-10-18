@@ -153,11 +153,11 @@ void Sprite::createQDMatte() {
 	switch (_spriteType) {
 	case kOutlinedRectangleSprite:
 	case kRectangleSprite:
-		Graphics::drawFilledRect(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
+		Graphics::drawFilledRect1(fillAreaRect, g_director->_wm->_colorBlack, g_director->_wm->getDrawPixel(), &plotFill);
 		break;
 	case kOutlinedRoundedRectangleSprite:
 	case kRoundedRectangleSprite:
-		Graphics::drawRoundRect(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
+		Graphics::drawRoundRect1(fillAreaRect, 12, g_director->_wm->_colorBlack, true, g_director->_wm->getDrawPixel(), &plotFill);
 		break;
 	case kOutlinedOvalSprite:
 	case kOvalSprite:
@@ -212,6 +212,13 @@ MacShape *Sprite::getShape() {
 	shape->backColor = _backColor;
 	shape->lineSize = _thickness & 0x3;
 	shape->pattern = getPattern();
+	shape->tile = nullptr;
+	shape->tileRect = nullptr;
+
+	if (shape->pattern > 56 && shape->pattern <= 64) {
+		shape->tile = g_director->getTile(shape->pattern - 57);
+		shape->tileRect = &g_director->getTileRect(shape->pattern - 57);
+	}
 
 	if (g_director->getVersion() >= 300 && shape->spriteType == kCastMemberSprite) {
 		if (!_cast) {
@@ -237,13 +244,6 @@ MacShape *Sprite::getShape() {
 		default:
 			break;
 		}
-
-		if (g_director->getVersion() >= 400) {
-			shape->foreColor = sc->getForeColor();
-			shape->backColor = sc->getBackColor();
-			shape->lineSize = sc->_lineThickness;
-			shape->ink = sc->_ink;
-		}
 	}
 
 	// for outlined shapes, line thickness of 1 means invisible.
@@ -258,8 +258,7 @@ uint32 Sprite::getBackColor() {
 
 	switch (_cast->_type) {
 	case kCastText:
-	case kCastButton:
-	case kCastShape: {
+	case kCastButton: {
 		return _cast->getBackColor();
 	}
 	default:
@@ -273,8 +272,7 @@ uint32 Sprite::getForeColor() {
 
 	switch (_cast->_type) {
 	case kCastText:
-	case kCastButton:
-	case kCastShape: {
+	case kCastButton: {
 		return _cast->getForeColor();
 	}
 	default:
@@ -292,7 +290,6 @@ Common::Point Sprite::getRegistrationOffset() {
 		{
 			BitmapCastMember *bc = (BitmapCastMember *)(_cast);
 
-			Common::Point point(0, 0);
 			// stretch the offset
 			if (!_stretch && (_width != bc->_initialRect.width() || _height != bc->_initialRect.height())) {
 				result.x = (bc->_initialRect.left - bc->_regX) * _width / bc->_initialRect.width();
@@ -344,6 +341,9 @@ bool Sprite::respondsToMouse() {
 }
 
 bool Sprite::isActive() {
+	if (_moveable)
+		return true;
+
 	if (_cast && _cast->_type == kCastButton)
 		return true;
 
@@ -440,17 +440,18 @@ void Sprite::setCast(CastMemberID memberID) {
 	 *   1. The cast member's type
 	 *   2. The sprite's type
 	 * If the two types do not align, the sprite should not render.
-	 * 
+	 *
 	 * Before D4, you needed to manually set a sprite's type along
 	 * with its castNum.
-	 * 
+	 *
 	 * Starting in D4, setting a sprite's castNum also set its type
 	 * to an appropriate default.
 	 */
 
 	_castId = memberID;
 	_cast = _movie->getCastMember(_castId);
-	if (g_director->getVersion() >= 400)
+	//As QDShapes don't have an associated cast, we must not change their _SpriteType.
+	if (g_director->getVersion() >= 400 && !isQDShape() && _castId != CastMemberID(0, 0))
 		_spriteType = kCastMemberSprite;
 
 	if (_cast) {

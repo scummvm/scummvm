@@ -47,7 +47,6 @@ typedef std::shared_ptr<InteractionScripts> PInteractionScripts;
 using AGS::Shared::PInteraction;
 using AGS::Shared::PInteractionScripts;
 using AGS::Shared::HGameFileError;
-struct OldGameSetupStruct;
 
 
 // TODO: split GameSetupStruct into struct used to hold loaded game data, and actual runtime object
@@ -57,7 +56,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// TODO: split into installation params (used only when reading) and runtime params
 	std::vector<FontInfo> fonts;
 	InventoryItemInfo invinfo[MAX_INV];
-	MouseCursor       mcurs[MAX_CURSOR];
+	std::vector<MouseCursor> mcurs;
 	std::vector<PInteraction> intrChar;
 	PInteraction intrInv[MAX_INV];
 	std::vector<PInteractionScripts> charScripts;
@@ -81,8 +80,8 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// NOTE: saveGameFolderName is generally used to create game subdirs in common user directories
 	char              saveGameFolderName[MAX_SG_FOLDER_LEN];
 	int               roomCount;
-	int *roomNumbers;
-	char **roomNames;
+	std::vector<int>  roomNumbers;
+	std::vector<Shared::String> roomNames;
 	std::vector<ScriptAudioClip> audioClips;
 	std::vector<AudioClipType> audioClipTypes;
 	// A clip to play when player gains score in game
@@ -90,6 +89,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	int               scoreClipID;
 	// number of allowed game audio channels (the ones under direct user control)
 	int               numGameChannels = 0;
+	int               numCompatGameChannels = 0;
 
 	// TODO: I converted original array of sprite infos to vector here, because
 	// statistically in most games sprites go in long continious sequences with minimal
@@ -132,7 +132,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	// Part 1
 	void read_savegame_info(Shared::Stream *in, GameDataVersion data_ver);
 	void read_font_infos(Shared::Stream *in, GameDataVersion data_ver);
-	HGameFileError read_cursors(Shared::Stream *in, GameDataVersion data_ver);
+	HGameFileError read_cursors(Shared::Stream *in);
 	void read_interaction_scripts(Shared::Stream *in, GameDataVersion data_ver);
 	void read_words_dictionary(Shared::Stream *in);
 
@@ -142,7 +142,7 @@ struct GameSetupStruct : public GameSetupStructBase {
 	void WriteMouseCursors_Aligned(Shared::Stream *out);
 	//------------------------------
 	// Part 2
-	void read_characters(Shared::Stream *in, GameDataVersion data_ver);
+	void read_characters(Shared::Stream *in);
 	void read_lipsync(Shared::Stream *in, GameDataVersion data_ver);
 	void read_messages(Shared::Stream *in, GameDataVersion data_ver);
 
@@ -166,8 +166,11 @@ struct GameSetupStruct : public GameSetupStructBase {
 };
 
 //=============================================================================
-// TODO: find out how this function was supposed to be used
+#if defined (OBSOLETE)
+struct OldGameSetupStruct;
 void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss);
+#endif // OBSOLETE
+
 // Finds an audio clip using legacy convention index
 ScriptAudioClip *GetAudioClipForOldStyleNumber(GameSetupStruct &game, bool is_music, int num);
 

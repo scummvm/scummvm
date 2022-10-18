@@ -50,7 +50,7 @@ bool Room48::timer(int16 t_nr, int16 ani_nr) {
 
 void Room48::calc_pic() {
 	for (int16 i = 0; i < 2; i++) {
-		_G(atds)->setControlBit(312 + i, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(312 + i, ATS_ACTIVE_BIT);
 		_G(gameState).R48Auswahl[3 + i] = 0;
 	}
 
@@ -60,13 +60,13 @@ void Room48::calc_pic() {
 
 	if (_G(obj)->checkInventory(VCARD_INV)) {
 		_G(gameState).R48Auswahl[3] = 1;
-		_G(atds)->delControlBit(312, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(312, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(4);
 	}
 
 	if (_G(obj)->checkInventory(KAPPE_INV)) {
 		_G(gameState).R48Auswahl[4] = 1;
-		_G(atds)->delControlBit(313, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(313, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(4);
 	}
 }
@@ -93,7 +93,7 @@ void Room48::setup_func() {
 		if (_G(menu_display) == 0) {
 			_G(menu_item) = CUR_USE;
 			cur_2_inventory();
-			cursorChoice(CUR_ZEIGE);
+			cursorChoice(CUR_POINT);
 			const int16 idx = _G(det)->maus_vector(g_events->_mousePos.x, g_events->_mousePos.y);
 
 			if (idx != -1) {
@@ -134,10 +134,10 @@ void Room48::setup_func() {
 							hideCur();
 							_G(room)->set_timer_status(255, TIMER_STOP);
 							_G(room)->set_timer_status(0, TIMER_STOP);
-							_G(det)->stop_detail(0);
+							_G(det)->stopDetail(0);
 							_G(det)->del_static_ani(0);
 							startSetAILWait(2, 1, ANI_FRONT);
-							g_engine->_sound->stopSound(0);
+							_G(det)->stopSound(0);
 							_G(menu_item) = CUR_WALK;
 							cursorChoice(_G(menu_item));
 							showCur();

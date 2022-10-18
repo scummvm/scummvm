@@ -48,7 +48,8 @@ public:
 	GraphicsManagerType getDefaultGraphicsManager() const override;
 #endif
 
-	//Screenshots
+	// Default paths
+	Common::String getDefaultIconsPath() override;
 	Common::String getScreenshotsPath() override;
 
 protected:

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -78,7 +79,7 @@ void Room55::entry() {
 			startSetAILWait(3, 1, ANI_FRONT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(zoom_horizont) = 1;
-			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(340, ATS_ACTIVE_BIT);
 		} else {
 			_G(gameState).scrollx = 0;
 
@@ -131,7 +132,7 @@ int16 Room55::use_stapel1() {
 	int16 action_ret = false;
 	hideCur();
 	
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		if (!_G(gameState).R55ScriptWeg) {
 			action_ret = true;
 			_G(gameState).R55ScriptWeg = true;
@@ -153,7 +154,7 @@ int16 Room55::use_stapel1() {
 			autoMove(4, P_CHEWY);
 			_G(gameState).R55EscScriptOk = true;
 			_G(det)->showStaticSpr(0);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(atds)->set_ats_str(354, 2, ATS_DATA);
 		} else {
 			startAadWait(326);
@@ -180,7 +181,7 @@ int16 Room55::use_stapel2() {
 int16 Room55::use_telefon() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		if (_G(gameState).R55EscScriptOk) {
 			if (!_G(gameState).R55RaumOk) {
@@ -191,7 +192,7 @@ int16 Room55::use_telefon() {
 				startSetAILWait(10, 1, ANI_FRONT);
 				_G(det)->startDetail(11, 255, ANI_FRONT);
 				startAadWait(329);
-				_G(det)->stop_detail(11);
+				_G(det)->stopDetail(11);
 				startSetAILWait(10, 1, ANI_BACK);
 
 				_G(gameState)._personHide[P_CHEWY] = false;
@@ -203,7 +204,7 @@ int16 Room55::use_telefon() {
 				startSetAILWait(0, 1, ANI_FRONT);
 				_G(det)->startDetail(1, 255, ANI_FRONT);
 				startAadWait(331);
-				_G(det)->stop_detail(1);
+				_G(det)->stopDetail(1);
 
 				_G(det)->showStaticSpr(16);
 				startAadWait(608);
@@ -280,7 +281,7 @@ void Room55::get_job() {
 	switchRoom(61);
 
 	showCur();
-	startAdsWait(15);
+	startDialogCloseupWait(15);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(gameState).scrollx = oldScrollx;
@@ -289,9 +290,9 @@ void Room55::get_job() {
 	int16 r_nr;
 	if (_G(gameState).R55Job) {
 		r_nr = 55;
-		_G(atds)->delControlBit(357, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(354, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(355, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(357, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(354, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(355, ATS_ACTIVE_BIT);
 	} else {
 		r_nr = 54;
 		mans2rock();
@@ -341,12 +342,12 @@ void Room55::verleger_mov(int16 mode) {
 }
 
 void Room55::strasse(int16 mode) {
-	if (!_G(gameState).inv_cur || mode) {
+	if (!_G(cur)->usingInventoryCursor() || mode) {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		_G(room)->set_timer_status(4, TIMER_STOP);
 		_G(det)->del_static_ani(4);
-		_G(det)->stop_detail(4);
-		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(det)->stopDetail(4);
+		_G(atds)->setControlBit(340, ATS_ACTIVE_BIT);
 		startSetAILWait(3, 1, ANI_BACK);
 
 		_G(gameState).scrollx = 0;
@@ -372,15 +373,15 @@ int16 Room55::use_kammeraus() {
 		
 			const int aniNr = 19 + (_G(gameState).R55Entry ? 1 : 0);
 			_G(room)->set_timer_status(aniNr, TIMER_STOP);
-			_G(det)->stop_detail(aniNr);
+			_G(det)->stopDetail(aniNr);
 			_G(det)->del_static_ani(aniNr);
 			_G(det)->hideStaticSpr(10);
 			_G(gameState).R55ExitDia = 322;
 			_G(gameState).R55SekWeg = true;
-			_G(atds)->setControlBit(352, ATS_ACTIVE_BIT, ATS_DATA);
-			delInventory(_G(gameState).AkInvent);
-			_G(atds)->setControlBit(345, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(346, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(352, ATS_ACTIVE_BIT);
+			delInventory(_G(cur)->getInventoryCursor());
+			_G(atds)->setControlBit(345, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(346, ATS_ACTIVE_BIT);
 			strasse(1);
 			showCur();
 		}
@@ -392,7 +393,7 @@ int16 Room55::use_kammeraus() {
 void Room55::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 55) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 100) {
@@ -428,7 +429,7 @@ void Room55::talk_line() {
 		_G(gameState).R55ExitDia = 321;
 		const int aniNr = 19 + (_G(gameState).R55Entry ? 1 : 0);
 		_G(room)->set_timer_status(aniNr, TIMER_STOP);
-		_G(det)->stop_detail(aniNr);
+		_G(det)->stopDetail(aniNr);
 		_G(det)->del_static_ani(aniNr);
 		startSetAILWait(22, 1, ANI_FRONT);
 		_G(det)->set_static_ani(21, -1);

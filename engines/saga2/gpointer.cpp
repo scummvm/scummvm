@@ -31,29 +31,29 @@
 namespace Saga2 {
 
 gMousePointer::gMousePointer(gDisplayPort &port) {
-	hideCount = 0;                          // pointer not hidden
+	_hideCount = 0;                          // pointer not hidden
 
 	//  initialize coords
-	offsetPosition.x = offsetPosition.y = 0;
-	currentPosition.x = currentPosition.y = 0;
+	_offsetPosition.x = _offsetPosition.y = 0;
+	_currentPosition.x = _currentPosition.y = 0;
 
 	//  a backsave extent of 0 means not saved
-	saveExtent.width = saveExtent.height = 0;
-	shown = 0;
+	_saveExtent.width = _saveExtent.height = 0;
+	_shown = 0;
 
 	//  set up the backsave port
-	savePort.setMap(&saveMap);
-	savePort.setMode(drawModeReplace);
+	_savePort.setMap(&_saveMap);
+	_savePort.setMode(drawModeReplace);
 
-	videoPort = &port;
+	_videoPort = &port;
 
 	//  no imagery at this time.
-	pointerImage = nullptr;
+	_pointerImage = nullptr;
 }
 
 gMousePointer::~gMousePointer() {
-	if (saveMap.data)
-		free(saveMap.data);
+	if (_saveMap._data)
+		free(_saveMap._data);
 }
 
 //  Init & status check
@@ -63,38 +63,38 @@ bool gMousePointer::init(Point16 pointerLimits) {
 
 //  Private routine to draw the mouse pointer image
 void gMousePointer::draw() {
-	if (hideCount < 1) {
+	if (_hideCount < 1) {
 		CursorMan.showMouse(true);
-		shown = 1;
+		_shown = 1;
 	} else
-		shown = 0;
+		_shown = 0;
 }
 
 //  Private routine to restore the mouse pointer image
 void gMousePointer::restore() {
-	if (shown) {
+	if (_shown) {
 		//  blit from the saved map to the current position.
 
 		CursorMan.showMouse(false);
 
 		//  A height of zero means backsave is invalid
 
-		shown = 0;
+		_shown = 0;
 	}
 }
 
 //  Makes the mouse pointer visible
 void gMousePointer::show() {
-	assert(hideCount > 0);
+	assert(_hideCount > 0);
 
-	if (--hideCount == 0) {
+	if (--_hideCount == 0) {
 		draw();
 	}
 }
 
 //  Makes the mouse pointer invisible
 void gMousePointer::hide() {
-	if (hideCount++ == 0) {
+	if (_hideCount++ == 0) {
 		restore();
 	}
 }
@@ -106,8 +106,8 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 	r.x += org.x;
 	r.y += org.y;
 
-	if (saveExtent.overlap(r)) {
-		if (--hideCount == 0) {
+	if (_saveExtent.overlap(r)) {
+		if (--_hideCount == 0) {
 			draw();
 		}
 
@@ -117,15 +117,15 @@ void gMousePointer::show(gPort &port, Rect16 r) {
 //  Makes the mouse pointer visible
 int gMousePointer::manditoryShow() {
 	int rv = 0;
-	while (hideCount > 0) {
+	while (_hideCount > 0) {
 		show();
 		rv++;
 	}
-	while (hideCount < 0) {
+	while (_hideCount < 0) {
 		hide();
 		rv--;
 	}
-	if (!shown)
+	if (!_shown)
 		draw();
 	return rv;
 }
@@ -138,8 +138,8 @@ void gMousePointer::hide(gPort &port, Rect16 r) {
 	r.x += org.x;
 	r.y += org.y;
 
-	if (saveExtent.overlap(r)) {
-		if (hideCount++ == 0) {
+	if (_saveExtent.overlap(r)) {
+		if (_hideCount++ == 0) {
 			restore();
 			CursorMan.showMouse(false);
 		}
@@ -148,11 +148,11 @@ void gMousePointer::hide(gPort &port, Rect16 r) {
 
 //  Moves the mouse pointer to a new position
 void gMousePointer::move(Point16 pos) {
-	Point16         offsetPos = pos + offsetPosition;
+	Point16         offsetPos = pos + _offsetPosition;
 
-	if (offsetPos != currentPosition) {
+	if (offsetPos != _currentPosition) {
 		restore();
-		currentPosition = offsetPos;
+		_currentPosition = offsetPos;
 		draw();
 	}
 }
@@ -162,24 +162,24 @@ void gMousePointer::setImage(
     gPixelMap       &img,
     int             x,
     int             y) {
-	Point16         pos = currentPosition - offsetPosition;
+	Point16         pos = _currentPosition - _offsetPosition;
 
-	if (pointerImage != &img
-	        ||  x != offsetPosition.x
-	        ||  y != offsetPosition.y
-	        ||  img.size != saveMap.size) {
-		offsetPosition.x = x;
-		offsetPosition.y = y;
+	if (_pointerImage != &img
+	        ||  x != _offsetPosition.x
+	        ||  y != _offsetPosition.y
+	        ||  img._size != _saveMap._size) {
+		_offsetPosition.x = x;
+		_offsetPosition.y = y;
 
 		hide();
-		if (saveMap.data)
-			free(saveMap.data);
-		saveMap.size = img.size;
-		saveMap.data = (uint8 *)malloc(img.bytes());
-		pointerImage = &img;
-		currentPosition = pos + offsetPosition;
+		if (_saveMap._data)
+			free(_saveMap._data);
+		_saveMap._size = img._size;
+		_saveMap._data = (uint8 *)malloc(img.bytes());
+		_pointerImage = &img;
+		_currentPosition = pos + _offsetPosition;
 
-		CursorMan.replaceCursor(img.data, img.size.x, img.size.y, -x, -y, 0);
+		CursorMan.replaceCursor(img._data, img._size.x, img._size.y, -x, -y, 0);
 		CursorMan.showMouse(true);
 		show();
 	}

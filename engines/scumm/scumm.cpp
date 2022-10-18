@@ -42,7 +42,6 @@
 #include "scumm/file_nes.h"
 #include "scumm/imuse/imuse.h"
 #include "scumm/imuse_digi/dimuse_engine.h"
-#include "scumm/smush/smush_mixer.h"
 #include "scumm/smush/smush_player.h"
 #include "scumm/players/player_towns.h"
 #include "scumm/insane/insane.h"
@@ -71,6 +70,7 @@
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
+#include "scumm/string_v7.h"
 #include "scumm/imuse/sysex.h"
 #include "scumm/he/localizer.h"
 #include "scumm/he/sprite_he.h"
@@ -81,6 +81,7 @@
 #include "scumm/imuse/drivers/mac_m68k.h"
 #include "scumm/imuse/drivers/amiga.h"
 #include "scumm/imuse/drivers/fmtowns.h"
+#include "scumm/imuse/drivers/midi.h"
 #include "scumm/detection_steam.h"
 
 #include "backends/audiocd/audiocd.h"
@@ -106,14 +107,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	  _game(dr.game),
 	  _filenamePattern(dr.fp),
 	  _language(dr.language),
-	  _currentScript(0xFF), // Let debug() work on init stage
-	  _messageDialog(nullptr), _pauseDialog(nullptr), _versionDialog(nullptr),
-	  _rnd("scumm"),
-	  _shakeTimerRate(dr.game.version <= 3 ? 236696 : 291304),
-	  _enableEnhancements(false)
-	  {
-
-	_localizer = nullptr;
+	  _rnd("scumm")
+{
 
 #ifdef USE_RGB_COLOR
 	if (_game.features & GF_16BIT_COLOR) {
@@ -158,195 +153,43 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	_objs = nullptr;
 	_sound = nullptr;
 	memset(&vm, 0, sizeof(vm));
-	_pauseDialog = nullptr;
-	_versionDialog = nullptr;
-	_fastMode = 0;
-	_actors = _sortedActors = nullptr;
-	_arraySlot = nullptr;
-	_inventory = nullptr;
-	_newNames = nullptr;
-	_scummVars = nullptr;
-	_roomVars = nullptr;
-	_varwatch = 0;
-	_bitVars = nullptr;
-	_numVariables = 0;
-	_numBitVariables = 0;
-	_numRoomVariables = 0;
-	_numLocalObjects = 0;
-	_numGlobalObjects = 0;
-	_numArray = 0;
-	_numVerbs = 0;
-	_numFlObject = 0;
-	_numInventory = 0;
-	_numRooms = 0;
-	_numScripts = 0;
-	_numSounds = 0;
-	_numCharsets = 0;
-	_numNewNames = 0;
-	_numGlobalScripts = 0;
-	_numCostumes = 0;
-	_numImages = 0;
-	_numLocalScripts = 60;
-	_numSprites = 0;
-	_numTalkies = 0;
-	_numPalettes = 0;
-	_numUnk = 0;
-	_curPalIndex = 0;
-	_currentRoom = 0;
-	_egoPositioned = false;
-	_mouseAndKeyboardStat = 0;
-	_leftBtnPressed = 0;
-	_rightBtnPressed = 0;
-	_lastInputScriptTime = 0;
-	_bootParam = 0;
-	_dumpScripts = false;
-	_debugMode = false;
-	_objectOwnerTable = nullptr;
-	_objectRoomTable = nullptr;
-	_objectStateTable = nullptr;
-	_numObjectsInRoom = 0;
-	_userPut = 0;
-	_userState = 0;
-	_resourceHeaderSize = 8;
-	_saveLoadFlag = 0;
-	_saveLoadSlot = 0;
-	_lastSaveTime = 0;
-	_saveTemporaryState = false;
 	memset(_localScriptOffsets, 0, sizeof(_localScriptOffsets));
-	_scriptPointer = nullptr;
-	_scriptOrgPointer = nullptr;
-	_opcode = 0;
 	vm.numNestedScripts = 0;
-	_lastCodePtr = nullptr;
-	_scummStackPos = 0;
 	memset(_vmStack, 0, sizeof(_vmStack));
-	_fileOffset = 0;
 	memset(_resourceMapper, 0, sizeof(_resourceMapper));
-	_lastLoadedRoom = 0;
-	_roomResource = 0;
-	OF_OWNER_ROOM = 0;
-	_verbMouseOver = 0;
-	_classData = nullptr;
-	_actorToPrintStrFor = 0;
-	_sentenceNum = 0;
 	memset(_sentence, 0, sizeof(_sentence));
 	memset(_string, 0, sizeof(_string));
-	_screenB = 0;
-	_screenH = 0;
-	_roomHeight = 0;
-	_roomWidth = 0;
-	_screenHeight = 0;
-	_screenWidth = 0;
 	for (uint i = 0; i < ARRAYSIZE(_virtscr); i++) {
 		_virtscr[i].clear();
 	}
+
+	setTimerAndShakeFrequency();
+
 	camera.reset();
 	memset(_colorCycle, 0, sizeof(_colorCycle));
 	memset(_colorUsedByCycle, 0, sizeof(_colorUsedByCycle));
-	_ENCD_offs = 0;
-	_EXCD_offs = 0;
-	_CLUT_offs = 0;
-	_EPAL_offs = 0;
-	_IM00_offs = 0;
-	_PALS_offs = 0;
-	_fullRedraw = false;
-	_bgNeedsRedraw = false;
-	_screenEffectFlag = false;
-	_completeScreenRedraw = false;
-	_disableFadeInEffect = false;
 	memset(&_cursor, 0, sizeof(_cursor));
 	memset(_grabbedCursor, 0, sizeof(_grabbedCursor));
-	_currentCursor = 0;
-	_newEffect = 0;
-	_switchRoomEffect2 = 0;
-	_switchRoomEffect = 0;
-
-	_bytesPerPixel = 1;
-	_doEffect = false;
-	_snapScroll = false;
-	_shakeEnabled = false;
-	_shakeNextTick = _shakeTickCounter = 0;
-	_shakeFrame = 0;
-	_screenStartStrip = 0;
-	_screenEndStrip = 0;
-	_screenTop = 0;
-	_drawObjectQueNr = 0;
 	memset(_drawObjectQue, 0, sizeof(_drawObjectQue));
-	_palManipStart = 0;
-	_palManipEnd = 0;
-	_palManipCounter = 0;
-	_palManipPalette = nullptr;
-	_palManipIntermediatePal = nullptr;
 	memset(gfxUsageBits, 0, sizeof(gfxUsageBits));
-	_hePalettes = nullptr;
-	_hePaletteSlot = 0;
-	_16BitPalette = nullptr;
-	_macScreen = nullptr;
-	_macIndy3TextBox = nullptr;
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsScreen = nullptr;
-	_scrollRequest = _scrollDeltaAdjust = 0;
-	_scrollDestOffset = _scrollTimer = 0;
 	_scrollNeedDeltaAdjust = scumm_stricmp(_game.gameid, "indyzak");
-	_refreshNeedCatchUp = false;
 	_enableSmoothScrolling = (_game.platform == Common::kPlatformFMTowns);
 	memset(_refreshDuration, 0, sizeof(_refreshDuration));
-	_refreshArrayPos = 0;
-#ifdef USE_RGB_COLOR
-	_cjkFont = nullptr;
 #endif
-#endif
-	_shadowPalette = nullptr;
-	_shadowPaletteSize = 0;
-	_verbPalette = nullptr;
 	memset(_currentPalette, 0, sizeof(_currentPalette));
 	memset(_darkenPalette, 0, sizeof(_darkenPalette));
 	memset(_HEV7ActorPalette, 0, sizeof(_HEV7ActorPalette));
-	_palDirtyMin = 0;
-	_palDirtyMax = 0;
-	_haveMsg = 0;
-	_haveActorSpeechMsg = false;
-	_useTalkAnims = false;
-	_defaultTalkDelay = 0;
-	_saveSound = 0;
+	_egaColorMap[0] = &_currentPalette[0x30];
+	_egaColorMap[1] = &_currentPalette[0x130];
 	memset(_extraBoxFlags, 0, sizeof(_extraBoxFlags));
 	memset(_scaleSlots, 0, sizeof(_scaleSlots));
-	_charset = nullptr;
-	_charsetColor = 0;
 	memset(_charsetColorMap, 0, sizeof(_charsetColorMap));
 	memset(_charsetData, 0, sizeof(_charsetData));
-	_charsetBufPos = 0;
 	memset(_charsetBuffer, 0, sizeof(_charsetBuffer));
-	_copyProtection = false;
-	_voiceMode = 0;
-	_talkDelay = 0;
-	_NES_lastTalkingActor = 0;
-	_NES_talkColor = 0;
-	_keepText = false;
-	_msgCount = 0;
-	_costumeLoader = nullptr;
-	_costumeRenderer = nullptr;
-	_existLanguageFile = false;
-	_languageBuffer = nullptr;
-	_numTranslatedLines = 0;
-	_translatedLines = nullptr;
-	_languageLineIndex = nullptr;
-	_2byteFontPtr = nullptr;
-	_2byteWidth = 0;
-	_2byteHeight = 0;
-	_2byteShadow = 0;
-	_krStrPost = 0;
-	_V1TalkingActor = 0;
 	for (int i = 0; i < 20; i++)
 		_2byteMultiFontPtr[i] = nullptr;
-	_NESStartStrip = 0;
-
-	_skipDrawObject = 0;
-
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-	_townsPaletteFlags = 0;
-	_townsClearLayerFlag = 1;
-	_townsActiveLayerFlags = 3;
 	_curStringRect.top = -1;
 	_curStringRect.left = -1;
 	_curStringRect.bottom = -1;
@@ -359,147 +202,8 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_cyclRects[i].right = 0;
 	}
 
-	_numCyclRects = 0;
 	memset(_scrollFeedStrips, 0, sizeof(_scrollFeedStrips));
 #endif
-
-	//
-	// Init all VARS to 0xFF
-	//
-	VAR_KEYPRESS = 0xFF;
-	VAR_SYNC = 0xFF;
-	VAR_EGO = 0xFF;
-	VAR_CAMERA_POS_X = 0xFF;
-	VAR_HAVE_MSG = 0xFF;
-	VAR_ROOM = 0xFF;
-	VAR_OVERRIDE = 0xFF;
-	VAR_MACHINE_SPEED = 0xFF;
-	VAR_ME = 0xFF;
-	VAR_NUM_ACTOR = 0xFF;
-	VAR_CURRENT_LIGHTS = 0xFF;
-	VAR_CURRENTDRIVE = 0xFF;	// How about merging this with VAR_CURRENTDISK?
-	VAR_CURRENTDISK = 0xFF;
-	VAR_TMR_1 = 0xFF;
-	VAR_TMR_2 = 0xFF;
-	VAR_TMR_3 = 0xFF;
-	VAR_MUSIC_TIMER = 0xFF;
-	VAR_ACTOR_RANGE_MIN = 0xFF;
-	VAR_ACTOR_RANGE_MAX = 0xFF;
-	VAR_CAMERA_MIN_X = 0xFF;
-	VAR_CAMERA_MAX_X = 0xFF;
-	VAR_TIMER_NEXT = 0xFF;
-	VAR_VIRT_MOUSE_X = 0xFF;
-	VAR_VIRT_MOUSE_Y = 0xFF;
-	VAR_ROOM_RESOURCE = 0xFF;
-	VAR_LAST_SOUND = 0xFF;
-	VAR_CUTSCENEEXIT_KEY = 0xFF;
-	VAR_OPTIONS_KEY = 0xFF;
-	VAR_TALK_ACTOR = 0xFF;
-	VAR_CAMERA_FAST_X = 0xFF;
-	VAR_SCROLL_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT = 0xFF;
-	VAR_ENTRY_SCRIPT2 = 0xFF;
-	VAR_EXIT_SCRIPT = 0xFF;
-	VAR_EXIT_SCRIPT2 = 0xFF;
-	VAR_VERB_SCRIPT = 0xFF;
-	VAR_SENTENCE_SCRIPT = 0xFF;
-	VAR_INVENTORY_SCRIPT = 0xFF;
-	VAR_CUTSCENE_START_SCRIPT = 0xFF;
-	VAR_CUTSCENE_END_SCRIPT = 0xFF;
-	VAR_CHARINC = 0xFF;
-	VAR_CHARCOUNT = 0xFF;
-	VAR_WALKTO_OBJ = 0xFF;
-	VAR_DEBUGMODE = 0xFF;
-	VAR_HEAPSPACE = 0xFF;
-	VAR_RESTART_KEY = 0xFF;
-	VAR_PAUSE_KEY = 0xFF;
-	VAR_MOUSE_X = 0xFF;
-	VAR_MOUSE_Y = 0xFF;
-	VAR_TIMER = 0xFF;
-	VAR_TIMER_TOTAL = 0xFF;
-	VAR_SOUNDCARD = 0xFF;
-	VAR_VIDEOMODE = 0xFF;
-	VAR_MAINMENU_KEY = 0xFF;
-	VAR_FIXEDDISK = 0xFF;
-	VAR_CURSORSTATE = 0xFF;
-	VAR_USERPUT = 0xFF;
-	VAR_SOUNDRESULT = 0xFF;
-	VAR_TALKSTOP_KEY = 0xFF;
-	VAR_FADE_DELAY = 0xFF;
-	VAR_NOSUBTITLES = 0xFF;
-
-	VAR_SOUNDPARAM = 0xFF;
-	VAR_SOUNDPARAM2 = 0xFF;
-	VAR_SOUNDPARAM3 = 0xFF;
-	VAR_INPUTMODE = 0xFF;
-	VAR_MEMORY_PERFORMANCE = 0xFF;
-
-	VAR_VIDEO_PERFORMANCE = 0xFF;
-	VAR_ROOM_FLAG = 0xFF;
-	VAR_GAME_LOADED = 0xFF;
-	VAR_NEW_ROOM = 0xFF;
-	VAR_VERSION_KEY = 0xFF;
-
-	VAR_V5_TALK_STRING_Y = 0xFF;
-
-	VAR_ROOM_WIDTH = 0xFF;
-	VAR_ROOM_HEIGHT = 0xFF;
-	VAR_SUBTITLES = 0xFF;
-	VAR_V6_EMSSPACE = 0xFF;
-
-	VAR_CAMERA_POS_Y = 0xFF;
-	VAR_CAMERA_MIN_Y = 0xFF;
-	VAR_CAMERA_MAX_Y = 0xFF;
-	VAR_CAMERA_THRESHOLD_X = 0xFF;
-	VAR_CAMERA_THRESHOLD_Y = 0xFF;
-	VAR_CAMERA_SPEED_X = 0xFF;
-	VAR_CAMERA_SPEED_Y = 0xFF;
-	VAR_CAMERA_ACCEL_X = 0xFF;
-	VAR_CAMERA_ACCEL_Y = 0xFF;
-	VAR_CAMERA_DEST_X = 0xFF;
-	VAR_CAMERA_DEST_Y = 0xFF;
-	VAR_CAMERA_FOLLOWED_ACTOR = 0xFF;
-
-	VAR_LEFTBTN_DOWN = 0xFF;
-	VAR_RIGHTBTN_DOWN = 0xFF;
-	VAR_LEFTBTN_HOLD = 0xFF;
-	VAR_RIGHTBTN_HOLD = 0xFF;
-
-	VAR_SAVELOAD_SCRIPT = 0xFF;
-	VAR_SAVELOAD_SCRIPT2 = 0xFF;
-
-	VAR_DEFAULT_TALK_DELAY = 0xFF;
-	VAR_CHARSET_MASK = 0xFF;
-
-	VAR_CUSTOMSCALETABLE = 0xFF;
-	VAR_V6_SOUNDMODE = 0xFF;
-
-	VAR_ACTIVE_VERB = 0xFF;
-	VAR_ACTIVE_OBJECT1 = 0xFF;
-	VAR_ACTIVE_OBJECT2 = 0xFF;
-	VAR_VERB_ALLOWED = 0xFF;
-
-	VAR_BLAST_ABOVE_TEXT = 0xFF;
-	VAR_VOICE_MODE = 0xFF;
-	VAR_MUSIC_BUNDLE_LOADED = 0xFF;
-	VAR_VOICE_BUNDLE_LOADED = 0xFF;
-
-	VAR_REDRAW_ALL_ACTORS = 0xFF;
-	VAR_SKIP_RESET_TALK_ACTOR = 0xFF;
-
-	VAR_SOUND_CHANNEL = 0xFF;
-	VAR_TALK_CHANNEL = 0xFF;
-	VAR_SOUNDCODE_TMR = 0xFF;
-	VAR_RESERVED_SOUND_CHANNELS = 0xFF;
-
-	VAR_MAIN_SCRIPT = 0xFF;
-
-	VAR_NUM_SCRIPT_CYCLES = 0xFF;
-	VAR_SCRIPT_CYCLE = 0xFF;
-
-	VAR_QUIT_SCRIPT = 0xFF;
-
-	VAR_NUM_GLOBAL_OBJS = 0xFF;
 
 	// Use g_scumm from error() ONLY
 	g_scumm = this;
@@ -538,6 +242,19 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		_renderMode = Common::kRenderDefault;
 	}
 
+	// VGA games which support an EGA dithering mode
+	static const byte egaModeIDs[] = {
+		GID_SAMNMAX,		// Not supported in the original interpreter. Glitches might occur.
+		GID_TENTACLE,		// Not supported in the original interpreter. Glitches might occur.
+		GID_LOOM,			// Supported in the original interpreter.
+		GID_MONKEY,
+		GID_MONKEY_VGA,
+		GID_INDY4,			// Not supported in all versions of the original interpreter.
+		GID_MONKEY2			// Support in the original interpreter.
+	};
+
+	_supportsEGADithering = ((_game.version == 6 || (_game.version > 3 && _game.platform == Common::kPlatformDOS)) && Common::find(egaModeIDs, &egaModeIDs[ARRAYSIZE(egaModeIDs)], _game.id) != &egaModeIDs[ARRAYSIZE(egaModeIDs)]);
+
 	if (_game.platform == Common::kPlatformFMTowns && _game.id != GID_LOOM && _game.version == 3)
 		if (ConfMan.getBool("aspect_ratio") && !ConfMan.getBool("trim_fmtowns_to_200_pixels")) {
 			GUI::MessageDialog dialog(
@@ -546,23 +263,35 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 			dialog.runModal();
 		}
 
-	// Check some render mode restrictions
-	if (_game.version <= 1)
-		_renderMode = Common::kRenderDefault;
-
 	switch (_renderMode) {
 	case Common::kRenderHercA:
 	case Common::kRenderHercG:
-		if (_game.version > 2 && _game.id != GID_MONKEY_EGA)
+		if ((_game.version > 2 && _game.id != GID_MONKEY_EGA) || _game.platform != Common::kPlatformDOS)
+			_renderMode = Common::kRenderDefault;
+		break;
+
+	case Common::kRenderCGA_BW:
+	case Common::kRenderCGAComp:
+		if (_game.version > 1 || _game.platform != Common::kPlatformDOS)
 			_renderMode = Common::kRenderDefault;
 		break;
 
 	case Common::kRenderCGA:
 	case Common::kRenderEGA:
+		if ((_game.version >= 4 && !(_game.features & GF_16COLOR) && !_supportsEGADithering)
+			|| (_game.features & GF_OLD256) || (_game.platform != Common::kPlatformDOS && !_supportsEGADithering))
+			_renderMode = Common::kRenderDefault;
+		break;
+
 	case Common::kRenderAmiga:
-		if ((_game.version >= 4 && !(_game.features & GF_16COLOR)
-			&& !(_game.platform == Common::kPlatformAmiga && _renderMode == Common::kRenderEGA))
-			|| (_game.features & GF_OLD256))
+		// Allow v2 games to be rendered in forced Amiga mode; this works, and
+		// doing this to avoid the "sunburn effect" in MM/Zak is popular.
+		if (_game.platform != Common::kPlatformAmiga && _game.version != 2)
+			_renderMode = Common::kRenderDefault;
+		break;
+
+	case Common::kRenderMacintosh:
+		if (_game.platform != Common::kPlatformMacintosh)
 			_renderMode = Common::kRenderDefault;
 		break;
 
@@ -572,12 +301,14 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 		}
 		break;
 
+	case Common::kRenderFMTowns:
+		if (_game.platform != Common::kPlatformFMTowns)
+			_renderMode = Common::kRenderDefault;
+		break;
+
 	default:
 		break;
 	}
-
-	_hexdumpScripts = false;
-	_showStack = false;
 
 	if (_game.platform == Common::kPlatformFMTowns && _game.version == 3) {	// FM-TOWNS V3 games originally use 320x240, and we have an option to trim to 200
 		_screenWidth = 320;
@@ -622,11 +353,15 @@ ScummEngine::ScummEngine(OSystem *syst, const DetectorResult &dr)
 	else
 		_compositeBuf = nullptr;
 
-	_herculesBuf = nullptr;
-	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-		_herculesBuf = (byte *)malloc(kHercWidth * kHercHeight);
-	}
+	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
+		_hercCGAScaleBuf = (byte *)malloc(kHercWidth * kHercHeight);
+	else if (_renderMode == Common::kRenderCGA_BW || (_renderMode == Common::kRenderEGA && _supportsEGADithering))
+		_hercCGAScaleBuf = (byte *)malloc(_screenWidth * 2 * _screenHeight * 2);
 
+	setV1ColorTable(_renderMode);
+
+	_isRTL = (_language == Common::HE_ISR && (_game.heversion == 0 || _game.heversion >= 72)) 
+			&& (_game.id == GID_MANIAC || (_game.version >= 4 && _game.version < 7)) && !(_game.features & GF_HE_NO_BIDI);
 #ifndef DISABLE_HELP
 	// Create custom GMM dialog providing a help subdialog
 	assert(!_mainMenuDialog);
@@ -690,8 +425,7 @@ ScummEngine::~ScummEngine() {
 	free(_arraySlot);
 
 	free(_compositeBuf);
-	free(_herculesBuf);
-
+	free(_hercCGAScaleBuf);
 	free(_16BitPalette);
 
 	if (_macScreen) {
@@ -837,10 +571,6 @@ ScummEngine_v6::ScummEngine_v6(OSystem *syst, const DetectorResult &dr)
 	_blastObjectQueuePos = 0;
 	for (uint i = 0; i < ARRAYSIZE(_blastObjectQueue); i++) {
 		_blastObjectQueue[i].clear();
-	}
-	_blastTextQueuePos = 0;
-	for (uint i = 0; i < ARRAYSIZE(_blastTextQueue); i++) {
-		_blastTextQueue[i].clear();
 	}
 
 	memset(_akosQueue, 0, sizeof(_akosQueue));
@@ -1061,6 +791,10 @@ void ScummEngine_vCUPhe::parseEvents() {
 #ifdef ENABLE_SCUMM_7_8
 ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	: ScummEngine_v6(syst, dr) {
+	_blastTextQueuePos = 0;
+	for (uint i = 0; i < ARRAYSIZE(_blastTextQueue); i++) {
+		_blastTextQueue[i].clear();
+	}
 	_verbLineSpacing = 10;
 
 	_smushFrameRate = 0;
@@ -1074,20 +808,25 @@ ScummEngine_v7::ScummEngine_v7(OSystem *syst, const DetectorResult &dr)
 	_languageIndex = NULL;
 	clearSubtitleQueue();
 
+	_textV7 = NULL;
+	_newTextRenderStyle = (_game.version == 8 || _language == Common::JA_JPN || _language == Common::KO_KOR || _language == Common::ZH_TWN);
+	_defaultTextClipRect = Common::Rect(_screenWidth, _screenHeight);
+	_wrappedTextClipRect = _newTextRenderStyle ? Common::Rect(10, 10, _screenWidth - 10, _screenHeight - 10) : Common::Rect(_screenWidth, _screenHeight);
+
+	_guiStringTransBuff = new byte[512];
+
 	_game.features |= GF_NEW_COSTUMES;
 }
 
 ScummEngine_v7::~ScummEngine_v7() {
-	if (_smixer) {
-		_smixer->stop();
-		delete _smixer;
-	}
 	if (_splayer) {
 		_splayer->release();
 		delete _splayer;
 	}
 
 	delete _insane;
+	delete _textV7;
+	delete[] _guiStringTransBuff;
 
 	free(_languageBuffer);
 	free(_languageIndex);
@@ -1115,7 +854,12 @@ Common::Error ScummEngine::init() {
 
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 
+	ConfMan.registerDefault("original_gui", true);
+	if (ConfMan.hasKey("original_gui", _targetName)) {
+		_useOriginalGUI = ConfMan.getBool("original_gui");
+	}
 	_enableEnhancements = ConfMan.getBool("enable_enhancements");
+	_enableAudioOverride = ConfMan.getBool("audio_override");
 
 	// Add default file directories.
 	if (((_game.platform == Common::kPlatformAmiga) || (_game.platform == Common::kPlatformAtariST)) && (_game.version <= 4)) {
@@ -1414,6 +1158,8 @@ Common::Error ScummEngine::init() {
 	// Initialize backend
 	if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 		initGraphics(kHercWidth, kHercHeight);
+	} else if (_renderMode == Common::kRenderCGA_BW || (_renderMode == Common::kRenderEGA && _supportsEGADithering)) {
+		initGraphics(_screenWidth * 2, _screenHeight * 2);
 	} else {
 		int screenWidth = _screenWidth;
 		int screenHeight = _screenHeight;
@@ -1497,6 +1243,11 @@ Common::Error ScummEngine::init() {
 		if (!_sound->hasSfxFile() && !ConfMan.getBool("subtitles"))
 			ConfMan.setBool("subtitles", true);
 	}
+
+	// While most games set their own default talkspeed at start-up,
+	// some don't, so let's preventively set a default one.
+	if (!ConfMan.hasKey("talkspeed", _targetName))
+		setTalkSpeed(_defaultTextSpeed);
 
 	syncSoundSettings();
 
@@ -1626,7 +1377,8 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 		_bootParam = -7873;
 	}
 
-	if (!_copyProtection && _game.id == GID_SAMNMAX && _bootParam == 0) {
+	// Skip the sound pre-loading
+	if (_game.id == GID_SAMNMAX && _bootParam == 0 && _enableEnhancements) {
 		_bootParam = -1;
 	}
 
@@ -1652,6 +1404,16 @@ void ScummEngine::setupScumm(const Common::String &macResourceFile) {
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 
+	// The object line toggle is always synchronized from the main game to
+	// our internal Game Options; at startup we do the opposite, since an user
+	// might change the toggle just before starting up the game...
+	if (_game.version == 8) {
+		if (ConfMan.hasKey("original_gui_object_labels", _targetName) &&
+			ConfMan.hasKey("object_labels", _targetName)) {
+			ConfMan.setInt("original_gui_object_labels", ConfMan.getBool("object_labels") ? 1 : 0);
+		}
+	}
+
 	if (_game.id == GID_DIG && (_game.features & GF_DEMO))
 		_smushFrameRate = 15;
 	else
@@ -1665,14 +1427,16 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	// COMI demo is excluded from the count since it appears it can't be compressed
 	// DIG demo uses raw VOC files for speech instead of a MONSTER.SOU file
 	if ((_game.id == GID_CMI || _game.id == GID_DIG) && !(_game.features & GF_DEMO)) {
-		BundleMgr *bnd = new BundleMgr(new BundleDirCache());
+		BundleDirCache *ch = new BundleDirCache();
+		BundleMgr *bnd = new BundleMgr(ch);
 		filesAreCompressed |= bnd->isExtCompBun(_game.id);
 		delete bnd;
+		delete ch;
 	} else if (_game.id == GID_FT) {
 		filesAreCompressed |= _sound->isSfxFileCompressed();
 	}
 
-	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer);
+	_musicEngine = _imuseDigital = new IMuseDigital(this, _mixer, &_resourceAccessMutex);
 
 	if (filesAreCompressed) {
 		GUI::MessageDialog dialog(_(
@@ -1688,11 +1452,11 @@ void ScummEngine_v7::setupScumm(const Common::String &macResourceFile) {
 	if (_game.id == GID_FT)
 		_insane = new Insane(this);
 	else
-		_insane = 0;
+		_insane = nullptr;
 
-	_smixer = new SmushMixer(_mixer);
+	_splayer = new SmushPlayer(this, _imuseDigital, _insane);
 
-	_splayer = new SmushPlayer(this, _imuseDigital);
+	initBanners();
 }
 #endif
 
@@ -1715,8 +1479,14 @@ void ScummEngine::setupCharsetRenderer(const Common::String &macFontFile) {
 		else
 			_charset = new CharsetRendererV3(this);
 #ifdef ENABLE_SCUMM_7_8
+	} else if (_game.version == 7) {
+		CharsetRendererV7 *c7 = new CharsetRendererV7(this);
+		_charset = c7;
+		createTextRenderer(c7);
 	} else if (_game.version == 8) {
-		_charset = new CharsetRendererNut(this);
+		CharsetRendererNut *c8 = new CharsetRendererNut(this);
+		_charset = c8;
+		createTextRenderer(c8);
 #endif
 	} else {
 #ifdef USE_RGB_COLOR
@@ -1820,7 +1590,7 @@ void ScummEngine::resetScumm() {
 	_cursor.animate = 1;
 
 	// Allocate and Initialize actors
-	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInavlidBox);
+	Actor::kInvalidBox = ((_game.features & GF_SMALL_HEADER) ? kOldInvalidBox : kNewInvalidBox);
 	_actors = new Actor * [_numActors];
 	_sortedActors = new Actor * [_numActors];
 	for (i = 0; i < _numActors; ++i) {
@@ -1913,7 +1683,7 @@ void ScummEngine::resetScumm() {
 	_varwatch = -1;
 	_screenStartStrip = 0;
 
-	_defaultTalkDelay = 3;
+	_defaultTextSpeed = 6;
 	_talkDelay = 0;
 	_keepText = false;
 	_nextLeft = 0;
@@ -2152,6 +1922,21 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		}
 	}
 
+	// WORKAROUND: MT-32 support is broken in the 8-disk French VGA floppy
+	// version of MI1 (the index references an invalid DISK00.LEC file, and the
+	// 'roland' room appears to be completely missing). We can't do much about
+	// this; revert to Adlib so that users don't get confused by the fatal
+	// error about DISK00.LEC.
+	if (_game.id == GID_MONKEY_VGA && _language == Common::FR_FRA && _sound->_musicType == MDT_MIDI &&
+		memcmp(_gameMD5, "\xa0\x1f\xab\x4a\x64\xd4\x7b\x96\xe2\xe5\x8e\x6b\x0f\x82\x5c\xc7", 16) == 0) {
+		GUI::MessageDialog dialog(
+			_("This particular version of Monkey Island 1 is known to miss some\n"
+			"required resources for MT-32. Using AdLib instead."),
+			_("OK"));
+		dialog.runModal();
+		_sound->_musicType = MDT_ADLIB;
+	}
+
 	if (_game.platform == Common::kPlatformMacintosh && (_game.id == GID_MONKEY2 || _game.id == GID_INDY4)) {
 		// While the Mac versions do have ADL resources, the Mac player
 		// doesn't handle them. So if a song is missing a MAC resource,
@@ -2183,12 +1968,6 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		// only as ADL and SPK.
 		_sound->_musicType = MDT_MIDI;
 	}
-
-	// DOTT + SAM use General MIDI, so they shouldn't use GS settings
-	if ((_game.id == GID_TENTACLE) || (_game.id == GID_SAMNMAX))
-		_enable_gs = false;
-	else
-		_enable_gs = ConfMan.getBool("enable_gs");
 
 	/* Bind the mixer to the system => mixer will be invoked
 	 * automatically when samples need to be generated */
@@ -2263,39 +2042,49 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 		bool multi_midi = ConfMan.getBool("multi_midi") && _sound->_musicType != MDT_NONE && _sound->_musicType != MDT_PCSPK && (midi & MDT_ADLIB);
 		bool useOnlyNative = false;
 
+		// DOTT + SAM use General MIDI, so they shouldn't use GS settings
+		bool enable_gs = (_game.id == GID_TENTACLE || _game.id == GID_SAMNMAX) ? false : (ConfMan.getBool("enable_gs") && MidiDriver::getMusicType(dev) != MT_MT32);
+		bool newSystem = (_game.id == GID_SAMNMAX);
+
 		if (isMacM68kIMuse()) {
 			// We setup this driver as native MIDI driver to avoid playback
 			// of the Mac music via a selected MIDI device.
-			nativeMidiDriver = new MacM68kDriver(_mixer);
+			nativeMidiDriver = new IMuseDriver_MacM68k(_mixer);
 			// The Mac driver is never MT-32.
 			_native_mt32 = false;
 			// Ignore non-native drivers. This also ignores the multi MIDI setting.
 			useOnlyNative = true;
 		} else if (_sound->_musicType == MDT_AMIGA) {
 			nativeMidiDriver = new IMuseDriver_Amiga(_mixer);
-			_native_mt32 = _enable_gs = false;
+			_native_mt32 = enable_gs = false;
 			useOnlyNative = true;
 		} else if (_sound->_musicType != MDT_ADLIB && _sound->_musicType != MDT_TOWNS && _sound->_musicType != MDT_PCSPK) {
-			nativeMidiDriver = MidiDriver::createMidi(dev);
+			if (_native_mt32)
+				nativeMidiDriver = new IMuseDriver_MT32(dev, newSystem);
+			else
+				nativeMidiDriver = new IMuseDriver_GMidi(dev, enable_gs, newSystem);
 		}
 
-		if (nativeMidiDriver != nullptr && _native_mt32)
-			nativeMidiDriver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
 		if (!useOnlyNative) {
-			if (_sound->_musicType == MDT_TOWNS) {
-				adlibMidiDriver = new MidiDriver_TOWNS(_mixer);
-			} else if (_sound->_musicType == MDT_ADLIB || multi_midi) {
-				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(_sound->_musicType == MDT_TOWNS ? MDT_TOWNS : MDT_ADLIB));
+			if (_sound->_musicType == MDT_ADLIB || multi_midi) {
+				adlibMidiDriver = MidiDriver::createMidi(MidiDriver::detectDevice(MDT_ADLIB));
 				adlibMidiDriver->property(MidiDriver::PROP_OLD_ADLIB, (_game.features & GF_SMALL_HEADER) ? 1 : 0);
 				// Try to use OPL3 mode for Sam&Max when possible.
 				adlibMidiDriver->property(MidiDriver::PROP_SCUMM_OPL3, (_game.id == GID_SAMNMAX) ? 1 : 0);
+			} else if (_sound->_musicType == MDT_TOWNS) {
+				adlibMidiDriver = new IMuseDriver_FMTowns(_mixer);
 			} else if (_sound->_musicType == MDT_PCSPK) {
-				adlibMidiDriver = new PcSpkDriver(_mixer);
+				adlibMidiDriver = new IMuseDriver_PCSpk(_mixer);
 			}
 		}
 
-		_imuse = IMuse::create(_system, nativeMidiDriver, adlibMidiDriver);
+		uint32 imsFlags =  newSystem ? IMuse::kFlagNewSystem : 0;
+		if (_native_mt32)
+			imsFlags |= IMuse::kFlagNativeMT32;
+		if (enable_gs)
+			imsFlags |= IMuse::kFlagRolandGS;
+
+		_imuse = IMuse::create(this, nativeMidiDriver, adlibMidiDriver, isMacM68kIMuse() ? MDT_MACINTOSH : _sound->_musicType, imsFlags);
 
 		if (_game.platform == Common::kPlatformFMTowns) {
 			_musicEngine = _townsPlayer = new Player_Towns_v2(this, _mixer, _imuse, true);
@@ -2309,27 +2098,66 @@ void ScummEngine::setupMusic(int midi, const Common::String &macInstrumentFile) 
 			_imuse->addSysexHandler
 				(/*IMUSE_SYSEX_ID*/ 0x7D,
 				 (_game.id == GID_SAMNMAX) ? sysexHandler_SamNMax : sysexHandler_Scumm);
-			_imuse->property(IMuse::PROP_GAME_ID, _game.id);
 			if (ConfMan.hasKey("tempo"))
 				_imuse->property(IMuse::PROP_TEMPO_BASE, ConfMan.getInt("tempo"));
-			if (midi != MDT_NONE) {
-				_imuse->property(IMuse::PROP_NATIVE_MT32, _native_mt32);
-				if (MidiDriver::getMusicType(dev) != MT_MT32) // MT-32 Emulation shouldn't be GM/GS initialized
-					_imuse->property(IMuse::PROP_GS, _enable_gs);
-			}
 			if (_game.heversion >= 60) {
 				_imuse->property(IMuse::PROP_LIMIT_PLAYERS, 1);
 				_imuse->property(IMuse::PROP_RECYCLE_PLAYERS, 1);
 			}
-			if (_sound->_musicType == MDT_PCSPK)
-				_imuse->property(IMuse::PROP_PC_SPEAKER, 1);
-			if (_sound->_musicType == MDT_AMIGA)
-				_imuse->property(IMuse::PROP_AMIGA, 1);
 		}
+	}
+
+	// Restore audio cd settings to defaults, since they might have been changed
+	// outside the engine (the audio cd manager is a global object). FM-Towns does
+	// these things in the sound driver, so we skip it here.
+	if (_sound->_musicType != MDT_TOWNS && (_game.features & GF_AUDIOTRACKS)) {
+		g_system->getAudioCDManager()->setVolume(Audio::Mixer::kMaxChannelVolume);
+		g_system->getAudioCDManager()->setBalance(0);
 	}
 }
 
 void ScummEngine::syncSoundSettings() {
+	if (isUsingOriginalGUI() && _game.version > 6) {
+		if (ConfMan.hasKey("original_gui_text_status", _targetName)) {
+			_voiceMode = ConfMan.getInt("original_gui_text_status");
+		} else if (ConfMan.hasKey("subtitles", _targetName) && ConfMan.hasKey("speech_mute", _targetName)){
+			int guiTextStatus = 0;
+			if (ConfMan.getBool("speech_mute")) {
+				guiTextStatus = 2;
+			} else if (ConfMan.getBool("subtitles")) {
+				guiTextStatus = 1;
+			}
+
+			// Let's set it now so we don't have to do the conversion the next time...
+			ConfMan.setInt("original_gui_text_status", guiTextStatus);
+			_voiceMode = guiTextStatus;
+		}
+
+		if (VAR_VOICE_MODE != 0xFF)
+			VAR(VAR_VOICE_MODE) = _voiceMode;
+
+		if (ConfMan.hasKey("original_gui_text_speed", _targetName)) {
+			// If the value has been changed from the GMM, sync it...
+			if (getTalkSpeed() != ConfMan.getInt("original_gui_text_speed")) {
+				ConfMan.setInt("original_gui_text_speed", getTalkSpeed());
+			}
+
+			_defaultTextSpeed = ConfMan.getInt("original_gui_text_speed");
+
+			if (VAR_CHARINC != 0xFF)
+				VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
+		}
+
+#ifdef ENABLE_SCUMM_7_8
+		if (_game.version >= 7 && _imuseDigital) {
+			_imuseDigital->diMUSESetMusicGroupVol(ConfMan.getInt("music_volume") / 2);
+			_imuseDigital->diMUSESetVoiceGroupVol(ConfMan.getInt("speech_volume") / 2);
+			_imuseDigital->diMUSESetSFXGroupVol(ConfMan.getInt("sfx_volume") / 2);
+		}
+#endif
+		return;
+	}
+
 	Engine::syncSoundSettings();
 
 	// Sync the engine with the config manager
@@ -2362,9 +2190,10 @@ void ScummEngine::syncSoundSettings() {
 		VAR(VAR_VOICE_MODE) = _voiceMode;
 
 	if (ConfMan.hasKey("talkspeed", _targetName)) {
-		_defaultTalkDelay = getTalkSpeed();
+		_defaultTextSpeed = getTalkSpeed();
+
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 	}
 
 	// Backyard Baseball 2003 uses a unique subtitle variable,
@@ -2391,26 +2220,21 @@ int ScummEngine::getTalkSpeed() {
 Common::Error ScummEngine::go() {
 	setTotalPlayTime();
 
+	_lastWaitTime = _system->getMillis();
+
 	// If requested, load a save game instead of running the boot script
 	if (_saveLoadFlag != 2 || !loadState(_saveLoadSlot, _saveTemporaryState)) {
 		_saveLoadFlag = 0;
 		runBootscript();
 	} else {
+		_loadFromLauncher = true; // The only purpose of this is triggering the IQ points update for INDY3/4
 		_saveLoadFlag = 0;
 	}
-
-	int diff = 0;	// Duration of one loop iteration
 
 	while (!shouldQuit()) {
 		// Randomize the PRNG by calling it at regular intervals. This ensures
 		// that it will be in a different state each time you run the program.
 		_rnd.getRandomNumber(2);
-
-		// Notify the script about how much time has passed, in ticks (60 ticks per second)
-		if (VAR_TIMER != 0xFF)
-			VAR(VAR_TIMER) = diff * 60 / 1000;
-		if (VAR_TIMER_TOTAL != 0xFF)
-			VAR(VAR_TIMER_TOTAL) += diff * 60 / 1000;
 
 		// Determine how long to wait before the next loop iteration should start
 		int delta = (VAR_TIMER_NEXT != 0xFF) ? VAR(VAR_TIMER_NEXT) : 4;
@@ -2440,26 +2264,29 @@ Common::Error ScummEngine::go() {
 			delta += ((ScummEngine_v0 *)this)->DelayCalculateDelta();
 		}
 
-		// WORKAROUND: walking speed in the original v1 interpreter
-		// is sometimes slower (e.g. during scrolling) than in ScummVM.
-		// This is important for the door-closing action in the dungeon,
-		// otherwise (delta < 6) a single kid is able to escape.
-		if (_game.version == 1 && isScriptRunning(137)) {
-			delta = 6;
+		// In MANIAC V1, the workings of the wait loop will increment the
+		// timer past the comparison, producing a longer wait loop than
+		// expected. The timer resolution is lower than the frame-time
+		// derived from it, i.e., one tick represents three frames. We need
+		// to round up VAR_TIMER_NEXT to the nearest multiple of three.
+		if (_game.id == GID_MANIAC && _game.version == 1) {
+			delta = ceil(delta / 3.0) * 3;
 		}
 
-		// Wait and start the stop watch at the time the wait is assumed
+		// In COMI we put no speed limit while on the main menu.
+		if (_game.version == 8 && _currentRoom == 92) {
+			delta = 0;
+		}
+
+		// Wait, start and stop the stop watch at the time the wait is assumed
 		// to end. There is no guarantee that the wait is that exact,
 		// but this way if it overshoots that time will count as part
 		// of the main loop.
 
-		diff = waitForTimer(delta * 1000 / 60 - diff);
+		waitForTimer(delta * 4);
 
 		// Run the main loop
 		scummLoop(delta);
-
-		// Halt the stop watch and compute how much time this iteration took.
-		diff = _system->getMillis() - diff;
 
 		if (shouldQuit()) {
 			// TODO: Maybe perform an autosave on exit?
@@ -2470,17 +2297,19 @@ Common::Error ScummEngine::go() {
 	return Common::kNoError;
 }
 
-int ScummEngine::waitForTimer(int msec_delay) {
-	uint32 end_time;
+void ScummEngine::waitForTimer(int quarterFrames) {
+	uint32 endTime, cur;
+	uint32 msecDelay = getIntegralTime(quarterFrames * (1000 / _timerFrequency));
 
 	if (_fastMode & 2)
-		msec_delay = 0;
+		msecDelay = 0;
 	else if (_fastMode & 1)
-		msec_delay = 10;
+		msecDelay = 10;
 
-	uint32 cur = _system->getMillis();;
-
-	end_time = cur + msec_delay;
+	cur = _system->getMillis();
+	uint32 diff = cur - _lastWaitTime;
+	msecDelay = (msecDelay > diff) ? msecDelay - diff : 0;
+	endTime = cur + msecDelay;
 
 	while (!shouldQuit()) {
 		_sound->updateCD(); // Loop CD Audio if needed
@@ -2502,20 +2331,78 @@ int ScummEngine::waitForTimer(int msec_delay) {
 		_refreshDuration[_refreshArrayPos] = (int)(cur - screenUpdateTimerStart);
 		_refreshArrayPos = (_refreshArrayPos + 1) % ARRAYSIZE(_refreshDuration);
 #endif
-		if (cur >= end_time)
+		if (cur >= endTime)
 			break;
-		_system->delayMillis(MIN<uint32>(10, end_time - cur));
+		_system->delayMillis(MIN<uint32>(10, endTime - cur));
 	}
 
-	// Return the expected end time, which may be different from the actual
-	// time. This helps the main loop maintain consistent timing.
+	// Set the last wait time as the expected end time, which may be different
+	// from the actual time. This helps the main loop maintain consistent timing.
 	//
 	// If it's lagging too far behind, we probably resumed from pausing, or
 	// the process was suspended, or any such thing. We probably can't
 	// sensibly detect all of them from within ScummVM, so in that case we
 	// simply return the current time to catch up.
 
-	return (cur > end_time + 50) ? cur : end_time;
+	_lastWaitTime = (cur > endTime + 50) ? cur : endTime;
+}
+
+uint32 ScummEngine::getIntegralTime(double fMsecs) {
+	double msecIntPart;
+	_msecFractParts += modf(fMsecs, &msecIntPart);
+	if (_msecFractParts >= 1) {
+		_msecFractParts--;
+		msecIntPart++;
+	}
+
+	return msecIntPart;
+}
+
+void ScummEngine::setTimerAndShakeFrequency() {
+	_shakeTimerRate = _timerFrequency = 240.0;
+
+	if (_game.platform == Common::kPlatformDOS || _game.platform == Common::kPlatformWindows || _game.platform == Common::kPlatformUnknown) {
+		switch (_game.version) {
+		case 1:
+			if (_game.id == GID_MANIAC) {
+				// In MANIAC V1, one tick represents three frames,
+				// i.e., 12 quarter-frames.
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V1_DIVISOR * 12;
+			} else {
+				_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
+			}
+			break;
+		case 2:
+		case 3:
+		case 4:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V2_4_DIVISOR;
+			break;
+		case 5:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V5_SUBTIMER_THRESH;
+			break;
+		case 6:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V5_6_ORCHESTRATOR_DIVISOR;
+			if (_game.id == GID_TENTACLE) {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_DOTT_SUBTIMER_THRESH;
+			} else {
+				_timerFrequency *= PIT_V5_6_SUBTIMER_INC / PIT_V6_SAMNMAX_SUBTIMER_THRESH;
+			}
+			break;
+		case 7:
+			_shakeTimerRate = _timerFrequency = PIT_BASE_FREQUENCY / PIT_V7_ORCHESTRATOR_DIVISOR;
+			_timerFrequency *= PIT_V7_SUBTIMER_INC / PIT_V7_SUBTIMER_THRESH;
+			break;
+		default:
+			_shakeTimerRate = _timerFrequency = 240.0;
+		}
+	} else if (_game.platform == Common::kPlatformAmiga) {
+		_shakeTimerRate = _timerFrequency = AMIGA_NTSC_VBLANK_RATE;
+	}
+}
+
+double ScummEngine::getTimerFrequency() {
+	return _timerFrequency;
 }
 
 void ScummEngine_v0::scummLoop(int delta) {
@@ -2525,6 +2412,12 @@ void ScummEngine_v0::scummLoop(int delta) {
 }
 
 void ScummEngine::scummLoop(int delta) {
+	// Notify the script about how much time has passed, in jiffies
+	if (VAR_TIMER != 0xFF)
+		VAR(VAR_TIMER) = delta;
+	if (VAR_TIMER_TOTAL != 0xFF)
+		VAR(VAR_TIMER_TOTAL) += delta;
+
 	if (_game.version >= 3) {
 		VAR(VAR_TMR_1) += delta;
 		VAR(VAR_TMR_2) += delta;
@@ -2561,53 +2454,63 @@ void ScummEngine::scummLoop(int delta) {
 
 	processInput();
 
+	if (_game.version == 8) {
+		// In v7-8 this function is executed at the end of processInput().
+		// Currently there are no known cases for v7 in which not calling this here,
+		// causes issues. Because of the way things are positioned in our implementation
+		// of the SCUMM loop, as of now enabling this for v7 breaks the screen shake
+		// effect. For v8 we really need to call this here, so let's do that...
+		checkExecVerbs();
+
+		// Saving is performed here in v8; this is important when saving the thumbnail,
+		// which would otherwise miss blastObjects/Texts on the bitmap.
+		scummLoop_handleSaveLoad();
+	}
+
+	// BlastObjects/Texts are completely removed in this moment of the codepath, in v7.
+	// In v8 we just reset the queue: the rects will be restored after runAllScripts().
+	if (_game.version >= 7) {
+		((ScummEngine_v6 *)this)->removeBlastObjects();
+#ifdef ENABLE_SCUMM_7_8
+		((ScummEngine_v7 *)this)->removeBlastTexts();
+#endif
+	}
+
 	scummLoop_updateScummVars();
 
 	if (_game.features & GF_AUDIOTRACKS) {
-		// Covered automatically by the Sound class
+		VAR(VAR_MUSIC_TIMER) = _sound->getCDMusicTimer();
 	} else if (VAR_MUSIC_TIMER != 0xFF) {
-		if (_sound->useReplacementAudioTracks() && _sound->getCurrentCDSound()) {
+		if (_sound->useReplacementAudio() && _sound->getCurrentCDSound()) {
+			// The replacement music timer operates on real time, adjusted to
+			// the expected length of the Loom Overture (since there are so
+			// many different recordings of it). It's completely independent of
+			// the SCUMM engine's timer frequency.
 			_sound->updateMusicTimer();
 			VAR(VAR_MUSIC_TIMER) = _sound->getMusicTimer();
 		} else if (_musicEngine) {
 			// The music engine generates the timer data for us.
-			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer();
+			VAR(VAR_MUSIC_TIMER) = _musicEngine->getMusicTimer() * _timerFrequency / 240.0;
 		}
 	}
 
-	if (VAR_GAME_LOADED != 0xFF)
-		VAR(VAR_GAME_LOADED) = 0;
+	// Another v8 quirk: runAllScripts() is called here; after that we can
+	// finally restore the blastTexts/blastObject rects...
+	if (_game.version == 8) {
+		runAllScripts();
+		((ScummEngine_v6 *)this)->restoreBlastObjectsRects();
+#ifdef ENABLE_SCUMM_7_8
+		((ScummEngine_v7 *)this)->restoreBlastTextsRects();
+#endif
+	}
+
+	if (_game.version < 8)
 load_game:
-	scummLoop_handleSaveLoad();
+		scummLoop_handleSaveLoad();
 
 	if (_completeScreenRedraw) {
-		clearCharsetMask();
-		_charset->_hasMask = false;
-
-		// HACK as in game save stuff isn't supported currently
-		if (_game.id == GID_LOOM) {
-			int args[NUM_SCRIPT_LOCAL];
-			uint var;
-			memset(args, 0, sizeof(args));
-			args[0] = 2;
-
-			if (_game.platform == Common::kPlatformMacintosh)
-				var = 105;
-			// 256 color CD version and PC engine version
-			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
-				var = 150;
-			else
-				var = 100;
-			byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
-			// if verbs should be shown restore them
-			if (VAR(var) == 2)
-				runScript(restoreScript, 0, 0, args);
-		} else if (_game.version > 3) {
-			for (int i = 0; i < _numVerbs; i++)
-				drawVerb(i, 0);
-		} else {
-			redrawVerbs();
-		}
+		// Update volume settings
+		syncSoundSettings();
 
 		handleMouseOver(false);
 
@@ -2618,8 +2521,17 @@ load_game:
 	if (_game.heversion >= 80) {
 		((SoundHE *)_sound)->processSoundCode();
 	}
-	runAllScripts();
-	checkExecVerbs();
+
+	if (_game.version < 8) {
+		runAllScripts();
+	}
+
+	// SCUMM v7-8 executes checkExecVerbs inside the function
+	// which processes keyboard inputs, so we handle it above
+	// in that case. Again, we make an exception for v7, for now.
+	if (_game.version < 8)
+		checkExecVerbs();
+
 	checkAndRunSentenceScript();
 
 	if (shouldQuit())
@@ -2635,6 +2547,13 @@ load_game:
 
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 	towns_processPalCycleField();
+#endif
+
+#ifdef ENABLE_SCUMM_7_8
+	// Dequeue the stamp shots for the main menu of COMI
+	if (_game.version == 8) {
+		((ScummEngine_v8 *)this)->stampShotDequeue();
+	}
 #endif
 
 	if (_currentRoom == 0) {
@@ -2756,27 +2675,33 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 		bool success;
 		Common::U32String errMsg;
 
-		if (_game.version == 8 && _saveTemporaryState)
+		if (_game.version == 8 && VAR_GAME_LOADED != 0xFF)
 			VAR(VAR_GAME_LOADED) = 0;
 
 		Common::String filename;
 		if (_saveLoadFlag == 1) {
 			success = saveState(_saveLoadSlot, _saveTemporaryState, filename);
-			if (!success)
+			if (!success) {
 				errMsg = _("Failed to save game to file:\n\n%s");
+				if (isUsingOriginalGUI() && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
+					VAR(VAR_GAME_LOADED) = GAME_FAILED_SAVE;
+			}
 
 			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
-				VAR(VAR_GAME_LOADED) = 201;
+				VAR(VAR_GAME_LOADED) = GAME_PROPER_SAVE;
 
 			if (!_saveTemporaryState)
 				_lastSaveTime = _system->getMillis();
 		} else {
 			success = loadState(_saveLoadSlot, _saveTemporaryState, filename);
-			if (!success)
+			if (!success) {
 				errMsg = _("Failed to load saved game from file:\n\n%s");
+				if (isUsingOriginalGUI() && VAR_GAME_LOADED != 0xFF && _game.version <= 7)
+					VAR(VAR_GAME_LOADED) = GAME_FAILED_LOAD;
+			}
 
-			if (success && _saveTemporaryState && VAR_GAME_LOADED != 0xFF)
-				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : 203;
+			if (success && (_saveTemporaryState || _game.version == 8) && VAR_GAME_LOADED != 0xFF)
+				VAR(VAR_GAME_LOADED) = (_game.version == 8) ? 1 : GAME_PROPER_LOAD;
 		}
 
 		if (!success) {
@@ -2784,13 +2709,14 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 
 			GUI::MessageDialog dialog(buf);
 			runDialog(dialog);
-		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState) {
+		} else if (_saveLoadFlag == 1 && _saveLoadSlot != 0 && !_saveTemporaryState && !isUsingOriginalGUI()) {
 			// Display "Save successful" message, except for auto saves
 			Common::U32String buf = Common::U32String::format(_("Successfully saved game in file:\n\n%s"), filename.c_str());
 
 			GUI::TimedMessageDialog dialog(buf, 1500);
 			runDialog(dialog);
 		}
+
 		if (success && _saveLoadFlag != 1)
 			clearClickedStatus();
 
@@ -2798,37 +2724,244 @@ void ScummEngine::scummLoop_handleSaveLoad() {
 	}
 }
 
-void ScummEngine_v4::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+void ScummEngine_v3::scummLoop_handleSaveLoad() {
+	bool processIQPoints = (_game.id == GID_INDY3 && (_saveLoadFlag == 2 || _loadFromLauncher));
+	_loadFromLauncher = false;
 
-	ScummEngine_v5::scummLoop_handleSaveLoad();
+	ScummEngine::scummLoop_handleSaveLoad();
 
-	// update IQ points after loading
-	if (saveLoad == 2) {
-		if (_game.id == GID_INDY3)
-			updateIQPoints();
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+		bool restoreFMTownsSounds = (_townsPlayer != nullptr);
+
+		if (_game.id == GID_LOOM) {
+			// HACK as in game save stuff isn't supported exactly as in the original interpreter when using the
+			// ScummVM save/load dialog. The original save/load screen uses a special script (which we cannot
+			// call without displaying that screen) which will also makes some necessary follow-up operations. We
+			// simply try to achieve that manually. It fixes bugs #6011 and #13369.
+			// We just have to kind of pretend that we've gone through the save/load "room" (with all the right
+			// variables in place), so that all the operations get triggered properly.
+			// The Mac, DOS Talkie and PC-Engine don't have the bugs. We can rely on our old hack there, since
+			// it wouldn't work otherwise, anyway.
+			int args[NUM_SCRIPT_LOCAL];
+			memset(args, 0, sizeof(args));
+
+			uint saveLoadVar = 100;
+			if (_game.platform == Common::kPlatformMacintosh)
+				saveLoadVar = 105;
+			else if (_game.platform == Common::kPlatformPCEngine || _game.version == 4)
+				saveLoadVar = 150;
+
+			// Run this hack only under conditions where the original save script could actually be executed.
+			// Otherwise this would cause all sorts of glitches. Also exclude Mac, PC-Engine and DOS Talkie...
+			if (saveLoadVar == 100 && _userPut > 0 && !isScriptRunning(VAR(VAR_VERB_SCRIPT))) {
+				uint16 prevFlag = VAR(214) & 0x6000;
+				beginCutscene(args);
+				uint16 blockVerbsFlag = VAR(214) & (0x6000 ^ prevFlag);
+				if (Actor *a = derefActor(VAR(VAR_EGO))) {
+					// This is used to restore the correct camera position.
+					VAR(171) = a->_walkbox;
+					VAR(172) = a->getRealPos().x;
+					VAR(173) = a->getRealPos().y;
+				}
+				startScene(70, nullptr, 0);
+				VAR(saveLoadVar) = 0;
+				VAR(214) &= ~blockVerbsFlag;
+				endCutscene();
+
+				if (_game.platform == Common::kPlatformFMTowns && VAR(163)) {
+					// Sound restore script. Unlike other versions which handle this
+					// inside the usual entry scripts, FM-Towns calls this from the save script.
+					memset(args, 0, sizeof(args));
+					args[0] = VAR(163);
+					runScript(38, false, false, args);
+				}
+
+				restoreFMTownsSounds = false;
+
+			} else if (VAR(saveLoadVar) == 2) {
+				// This is our old hack. If verbs should be shown restore them.
+				byte restoreScript = (_game.platform == Common::kPlatformFMTowns) ? 17 : 18;
+				args[0] = 2;
+				runScript(restoreScript, 0, 0, args);
+				// Reset two variables, similiar to what the save script would do, to avoid minor glitches
+				// of the verb image on the right of the distaff (image remainung blank when moving the
+				// mouse cursor over an object, bug #13369).
+				VAR(saveLoadVar + 2) = VAR(saveLoadVar + 3) = 0;
+			}
+
+		} else {
+			if (_game.platform == Common::kPlatformNES) {
+				// WORKAROUND: Original save/load script ran this script
+				// after game load, and o2_loadRoomWithEgo() does as well
+				// this script starts character-dependent music
+				// Fixes bug #3362: MANIACNES: Music Doesn't Start On Load Game
+				if (_game.platform == Common::kPlatformNES) {
+					runScript(5, 0, 0, nullptr);
+					if (VAR(224))
+						_sound->addSoundToQueue(VAR(224));
+				}
+
+			} else if (_game.platform != Common::kPlatformC64 && _game.platform != Common::kPlatformMacintosh) {
+				// MM and ZAK (v1/2)
+				int saveLoadRoom = 50;
+				int saveLoadVar = 21;
+				int saveLoadEnable = 1;
+
+				if (_game.id == GID_INDY3) {
+					saveLoadRoom = 14;
+					saveLoadVar = 58;
+				} else if (_game.platform == Common::kPlatformFMTowns) {
+					// ZAK FM-Towns
+					saveLoadVar = 115;
+				}
+
+				// Only execute this if the original would even allow saving in that situation
+				if (VAR(saveLoadVar) == saveLoadEnable && _userPut > 0 && !(VAR_VERB_SCRIPT != 0xFF && isScriptRunning(VAR(VAR_VERB_SCRIPT)))) {
+					int args[NUM_SCRIPT_LOCAL];
+					memset(args, 0, sizeof(args));
+					beginCutscene(args);
+					startScene(saveLoadRoom, nullptr, 0);
+					endCutscene();
+					restoreFMTownsSounds = false;
+				}
+			}
+
+			// update IQ points after loading
+			if (processIQPoints)
+				updateIQPoints();
+
+			redrawVerbs();
+		}
+
+		if (restoreFMTownsSounds)
+			_townsPlayer->restoreAfterLoad();
 	}
 }
 
 void ScummEngine_v5::scummLoop_handleSaveLoad() {
-	// copy saveLoadFlag as handleSaveLoad() resets it
-	byte saveLoad = _saveLoadFlag;
+	bool processIQPoints = (_game.id == GID_INDY4 && (_saveLoadFlag == 2 || _loadFromLauncher));
+	_loadFromLauncher = false;
 
 	ScummEngine::scummLoop_handleSaveLoad();
 
+	if (_videoModeChanged) {
+		_videoModeChanged = false;
+		warning("Loading savegame with a different render mode setting. Glitches might occur");
+
+		if (_game.id == GID_MONKEY_EGA) {
+			// WORKAROUND: MI1 post-load room palette fixes for games that were saved with a different
+			// render mode. The entry scripts apply custom fixes here, based on the VAR_VIDEOMODE
+			// var. Saving this state and then loading the savegame with a different render mode setting,
+			// will mess up the room palette. The original interpreter does not fix this, savegames
+			// from different videomodes are basically incompatible, at least until a scene comes up
+			// where the script might again apply the necessary fixes. Unfortunately, this workaround
+			// will also only work if the current room has a script with the correct fixes...
+
+			// Reset everything that the former entry script might have
+			// done (based on the former VAR_VIDEOMODE).
+			for (int i = 0; i < ARRAYSIZE(_roomPalette); ++i)
+				_roomPalette[i] = i;
+			// We want just the ENCD script...
+			int entryScript = VAR_ENTRY_SCRIPT;
+			int entryScript2 = VAR_ENTRY_SCRIPT2;
+			VAR_ENTRY_SCRIPT = VAR_ENTRY_SCRIPT2 = 0xFF;
+			runEntryScript();
+			VAR_ENTRY_SCRIPT = entryScript;
+			VAR_ENTRY_SCRIPT2 = entryScript2;
+		} else if (_supportsEGADithering) {
+			// Reconstruct the screen palette. It might glitch a bit if the palette was modified with
+			// darkenPalette or similar. But we do give warning... and the alternative would be to
+			// completely process, save and load both the VGA and EGA palettes all the time (regardless
+			// of the current render mode).
+			setCurrentPalette(_curPalIndex);
+			// This is also needed to fix the verb interface colors for the games with the purple verbs
+			// interface. It looks like this came up first with MI2 and was then brought over to MI1 CD
+			// and even to DOTT. GID_MONKEY_VGA (with the green verbs) is not affected.
+			if ((_game.id == GID_MONKEY || _game.id == GID_MONKEY2) && VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
+				runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
+		}
+	}
+
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+
+		if (_townsPlayer)
+			_townsPlayer->restoreAfterLoad();
+
+		redrawVerbs();
+
+		// For LOOM VGA Talkie, we restore the text glyphs on top of the note verbs
+		// and also restore the text description on top of the image of the selected
+		// object in the bottom right corner.
+		// These text parts are not actually connected to the verbs (which are image
+		// verbs only). redrawVerbs() will not restore them. They require some script
+		// work. The original interpreter just sets this variable after loading.
+		// Apparently, this is the trigger for all necessary steps to happen...
+		if (_game.id == GID_LOOM)
+			VAR(66) = 1;
+	}
+
 	// update IQ points after loading
-	if (saveLoad == 2) {
-		if (_game.id == GID_INDY4)
-			runScript(145, 0, 0, nullptr);
+	if (processIQPoints)
+		runScript(145, 0, 0, nullptr);
+}
+
+void ScummEngine_v6::scummLoop_handleSaveLoad() {
+	ScummEngine::scummLoop_handleSaveLoad();
+
+	if (_videoModeChanged) {
+		_videoModeChanged = false;
+		warning("Loading savegame with a different render mode setting. Glitches might occur");
+		if (_supportsEGADithering) {
+			// Reconstruct the screen palette.
+			setCurrentPalette(_curPalIndex);
+			// Reconstruct mouse cursor (crosshair for DOTT, verb cursor for SAM).
+			if (_game.id == GID_SAMNMAX) {
+				setCursorFromImg(VAR(177), VAR(177) > 890 ? 94 : 93, 1);
+				if (VAR(177) > 890) {
+					// The inventory item cursors require some extra treatment...
+					setCursorTransparency(180);
+					setCursorTransparency(178);
+					setCursorTransparency(176);
+					setCursorTransparency(6);
+					setCursorTransparency(0);
+				}
+			} else {
+				setDefaultCursor();
+				// For DOTT, this is also needed to fix the verb interface colors. Weirdly, it
+				// does check the videomode var for an EGA setting and makes color changes
+				// based on that. My guess is that this was brought over from MI2 (since the
+				// color adjustments are also the same).
+				if (VAR_ENTRY_SCRIPT2 != 0xFF && VAR(VAR_ENTRY_SCRIPT2))
+					runScript(VAR(VAR_ENTRY_SCRIPT2), 0, 0, nullptr);
+			}
+		}
+	}
+
+	if (_completeScreenRedraw) {
+		clearCharsetMask();
+		_charset->_hasMask = false;
+		redrawVerbs();
 	}
 }
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::scummLoop_handleSaveLoad() {
-	ScummEngine::scummLoop_handleSaveLoad();
+	if (_saveLoadFlag == 1) {
+		createInternalSaveStateThumbnail();
+	}
 
-	removeBlastObjects();
+	// Needed for newer savegames saved within the original GUI
+	if (_loadFromLauncher && VAR_GAME_LOADED != 0xFF) {
+		_loadFromLauncher = false;
+		VAR(VAR_GAME_LOADED) = 1;
+		return;
+	}
+
+	ScummEngine::scummLoop_handleSaveLoad();
 }
 #endif
 
@@ -2908,9 +3041,8 @@ void ScummEngine_v7::scummLoop_handleSound() {
 		_imuseDigital->refreshScripts();
 	}
 
-	if (_smixer) {
-		_smixer->flush();
-	}
+	_splayer->setChanFlag(0, VAR(VAR_VOICE_MODE) != 0);
+	_splayer->setChanFlag(2, VAR(VAR_VOICE_MODE) != 2);
 }
 #endif
 
@@ -2970,13 +3102,20 @@ void ScummEngine::restart() {
 	// subclass which is implemented using a memory buffer (i.e. no actual file is
 	// created). Then to restart we just have to load that pseudo save state.
 
-
 	int i;
 
 	// Reset some stuff
 	_currentRoom = 0;
 	_currentScript = 0xFF;
 	killAllScriptsExceptCurrent();
+
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+	if (_townsScreen && _game.id == GID_MONKEY) {
+		_textSurface.fillRect(Common::Rect(0, 0, _textSurface.w * _textSurfaceMultiplier, _textSurface.h * _textSurfaceMultiplier), 0);
+		_townsScreen->clearLayer(1);
+	}
+#endif
+
 	setShake(0);
 	_sound->stopAllSounds();
 
@@ -3000,6 +3139,19 @@ void ScummEngine::restart() {
 
 	// Re-run bootscript
 	runBootscript();
+}
+
+bool ScummEngine::isUsingOriginalGUI() {
+	if (_game.id == GID_MONKEY2 && (_game.features & GF_DEMO))
+		return false;
+
+	if (_game.heversion != 0)
+		return false;
+
+	if (_game.version > 3)
+		return _useOriginalGUI;
+
+	return false;
 }
 
 void ScummEngine::runBootscript() {

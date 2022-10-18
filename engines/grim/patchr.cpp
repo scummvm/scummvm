@@ -51,7 +51,7 @@ private:
 	static const uint32 _kDiffBufferSize, _kHeaderSize, _kMd5size;
 	static const uint16 _kVersionMajor, _kVersionMinor;
 
-	//Flags
+	// Flags
 	enum Flags {
 		FLAG_MIX_DIFF_EXTRA = 1 << 0,
 		FLAG_COMPRESS_CTRL = 1 << 1
@@ -268,11 +268,12 @@ bool PatchedFile::readNextInst() {
 
 	//Sanity checks
 	if (_ctrl->err() ||
-			(int32(_diffCopy) > _file->size() - _file->pos()) ||
-			(int32(_diffCopy) > _diff->size() - _diff->pos()) ||
-			(int32(_extraCopy) > _extra->size() - _extra->pos()) ||
-			(_jump > _file->size() - _file->pos()))
+	    (int32(_diffCopy) > _file->size() - _file->pos()) ||
+	    (int32(_diffCopy) > _diff->size() - _diff->pos()) ||
+	    (int32(_extraCopy) > _extra->size() - _extra->pos()) ||
+	    (_jump > _file->size() - _file->pos())) {
 		error("%s: Corrupted patchfile. istrleft = %d", _patchName.c_str(), _instrLeft);
+	}
 
 	--_instrLeft;
 	return true;

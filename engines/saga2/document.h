@@ -90,34 +90,34 @@ private:
 		int8        data[2];
 	};
 
-	CDocumentAppearance &app;
+	CDocumentAppearance &_app;
 
 	// image poiner array
-	void            *images[maxPages];
+	void            *_images[maxPages];
 
-	uint16          currentPage,
-	                lineWidth,
-	                pageHeight,
-	                totalLines,
-	                totalPages;
+	uint16          _currentPage,
+	                _lineWidth,
+	                _pageHeight,
+	                _totalLines,
+	                _totalPages;
 
-	gFont           *textFont;
-	uint16          textHeight;
-	uint16          pages;
-	uint16          numLines[maxPages];
-	uint16          lineLen[maxPages][maxLines];
-	uint16          lineOffset[maxPages];
-	Extent16        imageSizes[maxPages];
-	bool            pageBreakSet;
+	gFont           *_textFont;
+	uint16          _textHeight;
+	uint16          _pages;
+	uint16          _numLines[maxPages];
+	uint16          _lineLen[maxPages][maxLines];
+	uint16          _lineOffset[maxPages];
+	Extent16        _imageSizes[maxPages];
+	bool            _pageBreakSet;
 
-	char            *scan;                  // for parsing book text.
+	char            *_scan;                  // for parsing book text.
 
 	// string sizes
-	uint16  maxSize;
-	uint16  textSize;
+	uint16  _maxSize;
+	uint16  _textSize;
 
 	// image context
-	hResContext *illustrationCon;
+	hResContext *_illustrationCon;
 
 private:
 	bool activate(gEventType why);       // activate the control

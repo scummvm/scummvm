@@ -38,11 +38,9 @@ namespace ALSW {
 
 class ScummVMRendererGfxFilter : public ScalingGfxFilter {
 public:
-	virtual ~ScummVMRendererGfxFilter() {}
+	~ScummVMRendererGfxFilter() override {}
 
-	virtual const GfxFilterInfo &GetInfo() const;
-
-	static const GfxFilterInfo FilterInfo;
+	const GfxFilterInfo &GetInfo() const override;
 };
 
 } // namespace ALSW

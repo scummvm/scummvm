@@ -30,7 +30,7 @@ void Action::deserialize(Archive &archive) {
 	_actor = static_cast<Actor *>(archive.readObject());
 }
 
-bool Action::initPalette(Director *director) {
+bool Action::initPalette(Screen *screen) {
 	return false;
 }
 

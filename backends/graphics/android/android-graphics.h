@@ -89,7 +89,6 @@ public:
 
 protected:
 	void setSystemMousePosition(const int x, const int y) override {}
-	bool showMouse(bool visible) override;
 
 	void showOverlay() override;
 	void hideOverlay() override;
@@ -99,11 +98,9 @@ protected:
 
 	void refreshScreen() override;
 
-	void *getProcAddress(const char *name) const override;
-
 private:
 	OpenGL::Surface *_touchcontrols;
-	bool _old_touch_3d_mode;
+	int _old_touch_mode;
 };
 
 #endif

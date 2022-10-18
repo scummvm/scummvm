@@ -33,7 +33,9 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdPath3D, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdPath3D::AdPath3D(BaseGame *inGame) : BaseClass(inGame), _ready(false), _currIndex(-1) {
+AdPath3D::AdPath3D(BaseGame *inGame) : BaseClass(inGame) {
+	_currIndex = -1;
+	_ready = false;
 }
 
 //////////////////////////////////////////////////////////////////////////

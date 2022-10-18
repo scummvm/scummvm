@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -80,7 +81,7 @@ void Room33::look_schublade() {
 int16 Room33::use_schublade() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R33SchubFirst && !_G(gameState).inv_cur && !_G(gameState).R33Messer) {
+	if (_G(gameState).R33SchubFirst && !_G(cur)->usingInventoryCursor() && !_G(gameState).R33Messer) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R33Messer = true;
@@ -89,7 +90,7 @@ int16 Room33::use_schublade() {
 		_G(atds)->set_ats_str(210, TXT_MARK_LOOK, 1, ATS_DATA);
 		_G(atds)->set_ats_str(210, TXT_MARK_USE, 2, ATS_DATA);
 		start_spz(CH_LGET_O, 1, ANI_FRONT, P_CHEWY);
-		invent_2_slot(MESSER_INV);
+		invent_2_slot(KNIFE_INV);
 		showCur();
 	}
 
@@ -105,20 +106,20 @@ void Room33::use_maschine() {
 		autoMove(4, P_CHEWY);
 
 		bool hocker = false;
-		if (_G(gameState).inv_cur) {
+		if (_G(cur)->usingInventoryCursor()) {
 			bool action = true;
 
-			switch (_G(gameState).AkInvent) {
+			switch (_G(cur)->getInventoryCursor()) {
 			case MILCH_INV:
 				_G(gameState).R33Munter[3] = true;
-				invent_2_slot(MILCH_LEER_INV);
+				invent_2_slot(EMPTY_MILK_BOTTLE_INV);
 				break;
 
 			case K_FLEISCH_INV:
 				_G(gameState).R33Munter[1] = true;
 				break;
 
-			case EIER_INV:
+			case EGGS_INV:
 				_G(gameState).R33Munter[2] = true;
 				break;
 
@@ -139,7 +140,7 @@ void Room33::use_maschine() {
 				setPersonPos(128, 65, P_CHEWY, P_LEFT);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 				hocker = true;
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				ani_nr = CH_TALK12;
 
 				if (calc_muntermacher()) {
@@ -167,7 +168,7 @@ void Room33::use_maschine() {
 			_G(gameState)._personHide[P_CHEWY] = false;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(71);
-			_G(atds)->delControlBit(225, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(225, ATS_ACTIVE_BIT);
 		}
 
 		if (hocker) {
@@ -198,14 +199,14 @@ bool Room33::calc_muntermacher() {
 int16 Room33::get_munter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R33MunterGet && _G(gameState).R33MunterOk) {
 		action_flag = true;
 		hideCur();
 		_G(gameState).R33MunterGet = true;
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		invent_2_slot(MUNTER_INV);
-		_G(atds)->setControlBit(225, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(225, ATS_ACTIVE_BIT);
 		_G(det)->hideStaticSpr(3);
 		start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 		startAadWait(72);

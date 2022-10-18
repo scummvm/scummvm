@@ -6,12 +6,12 @@ Use the Cloud tab to manage connected cloud storage services.
 
 For a comprehensive look at how to use ScummVM's built-in cloud functionality, check out our :doc:`../use_scummvm/connect_cloud` guide.
 
-From the Launcher, select **Options**, click the **>** scroll arrow until the Cloud tab is visible, and then select the **Cloud** tab.
+From the Launcher, select **Global Options**, if necessary click the **>** scroll arrow until the Cloud tab is visible, and then select the **Cloud** tab.
 
 
 .. figure:: ../images/settings/cloud.png
 
-    The Cloud tab in the global settings
+    The Cloud tab in the Global Options menu
 
 
 ,,,,,,,,,,,,,,,,,,,,,

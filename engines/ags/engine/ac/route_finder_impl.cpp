@@ -96,7 +96,7 @@ static int find_route_jps(int fromx, int fromy, int destx, int desty) {
 	_G(num_navpoints) = 0;
 
 	// new behavior: cut path if too complex rather than abort with error message
-	int count = std::min<int>((int)cpath.size(), MAXNAVPOINTS);
+	int count = MIN<int>((int)cpath.size(), MAXNAVPOINTS);
 
 	for (int i = 0; i < count; i++) {
 		int x, y;
@@ -230,22 +230,22 @@ int find_route(short srcx, short srcy, short xx, short yy, Bitmap *onscreen, int
 #endif
 
 	int mlist = movlst;
-	_G(mls)[mlist].numstage = _G(num_navpoints);
-	memcpy(&_G(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int) * _G(num_navpoints));
+	_GP(mls)[mlist].numstage = _G(num_navpoints);
+	memcpy(&_GP(mls)[mlist].pos[0], &_G(navpoints)[0], sizeof(int) * _G(num_navpoints));
 #ifdef DEBUG_PATHFINDER
 	AGS::Shared::Debug::Printf("stages: %d\n", _G(num_navpoints));
 #endif
 
 	for (i = 0; i < _G(num_navpoints) - 1; i++)
-		calculate_move_stage(&_G(mls)[mlist], i);
+		calculate_move_stage(&_GP(mls)[mlist], i);
 
-	_G(mls)[mlist].fromx = srcx;
-	_G(mls)[mlist].fromy = srcy;
-	_G(mls)[mlist].onstage = 0;
-	_G(mls)[mlist].onpart = 0;
-	_G(mls)[mlist].doneflag = 0;
-	_G(mls)[mlist].lastx = -1;
-	_G(mls)[mlist].lasty = -1;
+	_GP(mls)[mlist].fromx = srcx;
+	_GP(mls)[mlist].fromy = srcy;
+	_GP(mls)[mlist].onstage = 0;
+	_GP(mls)[mlist].onpart = 0;
+	_GP(mls)[mlist].doneflag = 0;
+	_GP(mls)[mlist].lastx = -1;
+	_GP(mls)[mlist].lasty = -1;
 	return mlist;
 }
 

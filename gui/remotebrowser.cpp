@@ -144,18 +144,15 @@ void RemoteBrowserDialog::updateListing() {
 	if (!_navigationLocked) {
 		// Populate the ListWidget
 		Common::U32StringArray list;
-		ListWidget::ColorList colors;
 		for (Common::Array<Cloud::StorageFile>::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
 			if (i->isDirectory()) {
-				list.push_back(i->name() + "/");
-				colors.push_back(ThemeEngine::kFontColorNormal);
+				list.push_back(ListWidget::getThemeColor(ThemeEngine::kFontColorNormal) + Common::U32String(i->name() + "/"));
 			} else {
-				list.push_back(i->name());
-				colors.push_back(ThemeEngine::kFontColorAlternate);
+				list.push_back(ListWidget::getThemeColor(ThemeEngine::kFontColorAlternate) + Common::U32String(i->name()));
 			}
 		}
 
-		_fileList->setList(list, &colors);
+		_fileList->setList(list);
 		_fileList->scrollTo(0);
 	}
 

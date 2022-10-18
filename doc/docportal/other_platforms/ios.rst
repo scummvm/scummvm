@@ -76,7 +76,7 @@ It's time to generate the Xcode project. Run the following on the command line:
 
 .. code::
 
-    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --enable-fluidsynth --disable-nasm --disable-opengl --disable-theoradec --disable-taskbar --disable-tts --disable-fribidi
+    ../scummvm/devtools/create_project/xcode/build/Release/create_project ../scummvm --xcode --enable-fluidsynth --disable-nasm --disable-opengl --disable-theoradec --disable-mpeg2 --disable-taskbar --disable-tts --disable-fribidi
 
 The resulting directory structure looks like this:
 
@@ -219,6 +219,10 @@ If you press down a second finger in this mode, it releases the simulated left m
 Keyboard
 ^^^^^^^^^^^^^^^^^^^^
 If no external keyboard is connected, the pinch gesture shows and hides the onscreen keyboard. When an external keyboard is connected, the pinch gesture enables/disables inputs from the external keyboard.
+
+Game controllers
+^^^^^^^^^^^^^^^^^^^^
+If running iOS 14 and later there is support for connected mouses and gamepad controllers using the Apple Game Controller framework. Only "Extended Gamepad Controllers" are supported at the moment. For more information visit https://developer.apple.com/documentation/gamecontroller/gcextendedgamepad
 
 Paths
 =======

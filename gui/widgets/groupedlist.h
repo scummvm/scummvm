@@ -46,12 +46,10 @@ public:
 	GroupedListWidget(Dialog *boss, const Common::String &name, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 	GroupedListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0);
 
-	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
+	void setList(const Common::U32StringArray &list);
 	void setAttributeValues(const Common::U32StringArray &attrValues);
 	void setMetadataNames(const Common::StringMap &metadata);
-	const Common::U32StringArray &getList() const { return _dataList; }
 
-	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
 	void setGroupHeaderFormat(const Common::U32String &prefix, const Common::U32String &suffix);
 	void groupByAttribute();
 
@@ -65,8 +63,6 @@ public:
 	void handleMouseWheel(int x, int y, int direction) override;
 	void handleCommand(CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	void reflowLayout() override;
-
 	void setGroupsVisibility(bool val) { _groupsVisible = val; }
 
 	void startEditMode() override { error("Edit mode is not supported for Grouped Lists"); }
@@ -75,8 +71,6 @@ protected:
 	void sortGroups();
 	void toggleGroup(int groupID);
 	void drawWidget() override;
-
-	void scrollToCurrent();
 };
 
 } // End of namespace GUI

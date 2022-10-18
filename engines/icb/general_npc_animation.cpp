@@ -57,8 +57,8 @@ bool8 _game_session::Easy_frame_motion_and_pan(__mega_set_names anim_type, bool8
 	// Get current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetPan(&pan1);
-	currentFrame->markers[ORG_POS].GetPan(&pan2);
+	PXmarker_PSX_Object::GetPan(&nextFrame->markers[ORG_POS], &pan1);
+	PXmarker_PSX_Object::GetPan(&currentFrame->markers[ORG_POS], &pan2);
 
 	L->pan += (pan1 - pan2); // update by difference
 
@@ -66,8 +66,8 @@ bool8 _game_session::Easy_frame_motion_and_pan(__mega_set_names anim_type, bool8
 	// note that we always read frame+1 for motion of next frame even though the voxel frame itself will be looped back to 0
 	PXreal x1, x2, z1, z2, unused;
 
-	nextFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
-	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x1, &unused, &z1);
 
 	xnext = x2 - x1;
 	znext = z2 - z1;
@@ -82,7 +82,7 @@ bool8 _game_session::Easy_frame_motion_and_pan(__mega_set_names anim_type, bool8
 	// as GCC got it all wrong if the same reference was re-used
 	currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	currentFrame->markers[ORG_POS].GetPan(&pan);
+	PXmarker_PSX_Object::GetPan(&currentFrame->markers[ORG_POS], &pan);
 
 	L->pan_adjust = pan; // this value will be unwound from the orientation of the frame at render time in stage draw
 
@@ -132,8 +132,8 @@ bool8 _game_session::Easy_frame_and_motion(__mega_set_names anim_type, bool8 /*p
 	// Get current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
-	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x1, &unused, &z1);
 
 	xnext = x2 - x1;
 	znext = z2 - z1;
@@ -213,8 +213,8 @@ __barrier_result _game_session::Core_advance(__mega_set_names anim_type, bool8 p
 	// Get current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
-	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x1, &unused, &z1);
 
 	xnext = x2 - x1;
 	znext = z2 - z1;
@@ -326,8 +326,8 @@ __barrier_result _game_session::Core_reverse(__mega_set_names anim_type, bool8 p
 	// Get current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
-	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x1, &unused, &z1);
 
 	xnext = x2 - x1;
 	znext = z2 - z1;
@@ -407,7 +407,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	}
 
 	if ((info_pc >= pAnim->frame_qty) || (next_pc >= pAnim->frame_qty))
-		Fatal_error("Animate_turn_to_pan [%s] using illegal frame", object->GetName());
+		Fatal_error("Animate_turn_to_pan [%s] using illegal frame", CGameObject::GetName(object));
 
 	// update engine pan with the difference between pan of previous frame and next frame
 	PXreal pan1, pan2;
@@ -417,8 +417,8 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	// Get current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(L->anim_pc, pAnim);
 
-	infoFrame->markers[ORG_POS].GetPan(&pan1);
-	currentFrame->markers[ORG_POS].GetPan(&pan2);
+	PXmarker_PSX_Object::GetPan(&infoFrame->markers[ORG_POS], &pan1);
+	PXmarker_PSX_Object::GetPan(&currentFrame->markers[ORG_POS], &pan2);
 
 	this_pan_change = (pan1 - pan2); // update by difference
 
@@ -453,10 +453,10 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	// Get the next frame from the anim
 	PXframe *nextFrame = PXFrameEnOfAnim(next_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x2, &unused, &z2);
 
 	// Note, assumes current frame hasn't changed i.e L->info_pc is same
-	currentFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x1, &unused, &z1);
 
 	// FIXME: xnext and znext are not used currently...
 	//PXreal xnext = x2 - x1;
@@ -469,7 +469,7 @@ void _game_session::Animate_turn_to_pan(__mega_set_names anim_type, uint32 speed
 	PXreal pan;
 
 	// Note, L->anim_pc = next_pc
-	nextFrame->markers[ORG_POS].GetPan(&pan);
+	PXmarker_PSX_Object::GetPan(&nextFrame->markers[ORG_POS], &pan);
 
 	L->pan_adjust = pan;
 
@@ -698,7 +698,7 @@ int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 	PXanim *pCur_Anim = (PXanim *)rs_anims->Res_open(I->get_info_name(L->cur_anim_type), I->info_name_hash[L->cur_anim_type], I->base_path, I->base_path_hash);
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(L->anim_pc, pCur_Anim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(L->anim_pc, pCur_Anim)->left_foot_distance);
 
 	// Jake check the link anim exists / make its name
 	ANIM_CHECK(link);
@@ -712,7 +712,7 @@ int32 _game_session::Soften_up_anim_file(__mega_set_names link, int32 diff) {
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnk_Anim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnk_Anim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnk_Anim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 
 		if (d < diff) {

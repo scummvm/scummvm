@@ -112,8 +112,8 @@ enum MessageType {
 
 // This enumeration is a list of common hard-coded groups, but more could
 // be added via debugging configuration interface (see 'debug/debug.h').
-enum CommonDebugGroup {
-	kDbgGroup_None = -1,
+enum CommonDebugGroup : uint32 {
+	kDbgGroup_None = SIZE_MAX,
 	// Main debug group is for reporting general engine status and issues
 	kDbgGroup_Main = 0,
 	// Game group is for logging game logic state and issues

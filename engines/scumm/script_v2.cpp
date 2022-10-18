@@ -396,6 +396,38 @@ void ScummEngine_v2::decodeParseString() {
 	}
 	*ptr = 0;
 
+	// WORKAROUND bug #13473: in the French version of Maniac Mansion, the cutscene
+	// where Purple Tentacle is bullying Sandy hangs once Dr Fred is done talking,
+	// because his reaction line in shorter in this translation (which is unusual for
+	// French which tends to be more verbose) and the `unless (VAR_CHARCOUNT > 90)`
+	// loop in script #155 hasn't been ajusted for this shorter length.
+	//
+	// So we add some extra spaces at the end of the string if it's too short; this
+	// unblocks the cutscene and also lets Sandy react as intended.
+	//
+	// (Not using `_enableEnhancements` because some users could be really confused
+	// by the game hanging and they may not know about the Esc key.)
+	if (_game.id == GID_MANIAC && _game.platform != Common::kPlatformNES && _language == Common::FR_FRA && vm.slot[_currentScript].number == 155 && _roomResource == 31 && _actorToPrintStrFor == 9) {
+		while (ptr - buffer < 100) {
+			*ptr++ = ' ';
+		}
+		*ptr = 0;
+	}
+
+	// WORKAROUND: There is a typo in Syd's biography ("tring" instead of
+	// "trying") in the English DOS version of Maniac Mansion (v1). As far
+	// as I know, this is the only version with the typo.
+	else if (_game.id == GID_MANIAC && _game.version == 1
+		&& _game.platform == Common::kPlatformDOS
+		&& !(_game.features & GF_DEMO) && _language == Common::EN_ANY
+		&& vm.slot[_currentScript].number == 260 && _enableEnhancements
+		&& strncmp((char *)buffer + 26, " tring ", 7) == 0) {
+		for (byte *p = ptr; p >= buffer + 29; p--)
+			*(p + 1) = *p;
+
+		buffer[29] = 'y';
+	}
+
 	int textSlot = 0;
 	_string[textSlot].xpos = 0;
 	_string[textSlot].ypos = 0;
@@ -431,6 +463,25 @@ void ScummEngine_v2::writeVar(uint var, int value) {
 		// Remap the cutscene exit key in earlier games
 		if (value == 4 || value == 13 || value == 64)
 			value = 27;
+	}
+
+	// WORKAROUND: According to the Maniac Mansion manual, you should be
+	// able to execute your command by clicking on the sentence line. But
+	// this does not work until later games. The main difference between
+	// the verb scripts (script 4) in Maniac Mansion and Zak McKracken is
+	// that Zak will set variable 34 when you click on the sentence line
+	// (as indicated by VAR_CLICK_AREA), and Maniac Mansion will not.
+	//
+	// When VAR_CLICK_AREA is 5, there is only one place where variable 34
+	// is initialized to 0, so that seems like a good place to inject our
+	// own check.
+
+	if (_game.id == GID_MANIAC && (_game.version == 1 || _game.version == 2)
+			&& _game.platform != Common::kPlatformNES
+			&& vm.slot[_currentScript].number == 4
+			&& VAR(VAR_CLICK_AREA) == kSentenceClickArea
+			&& var == 34 && value == 0 && _enableEnhancements) {
+		value = 1;
 	}
 
 	_scummVars[var] = value;
@@ -812,13 +863,13 @@ void ScummEngine_v2::o2_verbOps() {
 			vs->color = 1;
 			vs->hicolor = 1;
 			vs->dimcolor = 1;
-		} else if (_game.version == 1) {
-			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 16 : 5;
+		} else if (_game.platform == Common::kPlatformC64) {
+			vs->color = 5;
 			vs->hicolor = 7;
 			vs->dimcolor = 11;
 		} else {
 			vs->color = (_game.id == GID_MANIAC && (_game.features & GF_DEMO)) ? 13 : 2;
-			vs->hicolor = 14;
+			vs->hicolor = _hiLiteColorVerbArrow;
 			vs->dimcolor = 8;
 		}
 		vs->type = kTextVerbType;
@@ -967,6 +1018,7 @@ void ScummEngine_v2::drawPreposition(int index) {
 			{ " ", " in", " con", " su", " a" },     // Italian
 			{ " ", " en", " con", " en", " a" },     // Spanish
 			{ " ", " \x7f", " \x7f", " na", " \x7f" },// Russian
+			{ " ", " B", " SN", " SM", " M" },       // Hebrew
 			};
 		int lang;
 		switch (_language) {
@@ -984,6 +1036,9 @@ void ScummEngine_v2::drawPreposition(int index) {
 			break;
 		case Common::RU_RUS:
 			lang = 5;
+			break;
+		case Common::HE_ISR:
+			lang = 6;
 			break;
 		default:
 			lang = 0;	// Default to english
@@ -1047,10 +1102,11 @@ void ScummEngine_v2::o2_drawSentence() {
 	if (_game.platform == Common::kPlatformNES) {
 		_string[2].xpos = 16;
 		_string[2].color = 0;
-	} else if (_game.version == 1)
+	} else if (_game.platform == Common::kPlatformC64) {
 		_string[2].color = 16;
-	else
+	} else {
 		_string[2].color = 13;
+	}
 
 	byte string[80];
 	const char *ptr = _sentenceBuf.c_str();
@@ -1112,7 +1168,10 @@ void ScummEngine_v2::o2_walkActorTo() {
 
 	int act = getVarOrDirectByte(PARAM_1);
 
-	// WORKAROUND bug #2110
+	// WORKAROUND bug #2110: crash when trying to fly back to San Francisco.
+	// walkActorTo() is called with an invalid actor number by script 115,
+	// after the room is loaded. The original DOS interpreter probably let
+	// this slip by.
 	if (_game.id == GID_ZAK && _game.version == 1 && vm.slot[_currentScript].number == 115 && act == 249) {
 		act = VAR(VAR_EGO);
 	}
@@ -1195,13 +1254,8 @@ void ScummEngine_v2::o2_startScript() {
 	// a permanent resident.
 	// Our fix is simply to prevent the Cutscene playing, if the lab has already been stormed
 	if (_game.id == GID_MANIAC) {
-		if (_game.version >= 1 && script == 155) {
-			if (VAR(120) == 1)
-				return;
-		}
-		// Script numbers are different in V0
-		if (_game.version == 0 && script == 150) {
-			if (VAR(104) == 1)
+		if (script == MM_SCRIPT(150)) {
+			if (VAR(MM_VALUE(104, 120)) == 1)
 				return;
 		}
 	}
@@ -1210,7 +1264,7 @@ void ScummEngine_v2::o2_startScript() {
 }
 
 void ScummEngine_v2::stopScriptCommon(int script) {
-	// WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the powered turned off
+	// WORKAROUND bug #4112: If you enter the lab while Dr. Fred has the power turned off
 	// to repair the Zom-B-Matic, the script will be stopped and the power will never turn
 	// back on. This fix forces the power on, when the player enters the lab,
 	// if the script which turned it off is running

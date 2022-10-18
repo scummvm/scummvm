@@ -22,6 +22,8 @@
 #ifndef AGS_STD_UTILITY_H
 #define AGS_STD_UTILITY_H
 
+#include "common/textconsole.h"
+
 namespace AGS3 {
 namespace std {
 
@@ -41,9 +43,31 @@ pair<T1, T2> make_pair(T1 first, T2 second) {
 	return pair<T1, T2>(first, second);
 }
 
-template<class T>
-T move(const T &v) {
-	return v;
+// STRUCT TEMPLATE remove_reference
+template <class _Ty>
+struct remove_reference {
+	typedef _Ty type;
+};
+
+template<class _Ty>
+struct remove_reference<_Ty &> {
+	typedef _Ty type;
+};
+
+template<class _Ty>
+struct remove_reference<_Ty &&> {
+	typedef _Ty type;
+};
+
+template <class _Ty>
+using remove_reference_t = typename remove_reference<_Ty>::type;
+
+// FUNCTION TEMPLATE move
+// TODO: Haven't been able to get this to properly work to reset
+// the source when moving the contents of std::vector arrays
+template <class _Ty>
+constexpr remove_reference_t<_Ty> &&move(_Ty &&_Arg) noexcept {
+	return static_cast<remove_reference_t<_Ty> &&>(_Arg);
 }
 
 } // namespace std

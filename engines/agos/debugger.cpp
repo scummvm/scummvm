@@ -55,7 +55,7 @@ bool Debugger::Cmd_PlayMusic(int argc, const char **argv) {
 				// TODO
 			} else if (_vm->getGameType() == GType_SIMON2) {
 				_vm->loadMusic(music);
-				_vm->_midi->startTrack(0);
+				_vm->_midi->play();
 			} else {
 				_vm->playMusic(music, 0);
 			}

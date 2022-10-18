@@ -22,7 +22,6 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 #define BACKENDS_GRAPHICS_OPENGL_OPENGL_GRAPHICS_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
 #include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/windowed.h"
 
@@ -46,7 +45,7 @@ namespace OpenGL {
 class Surface;
 class Pipeline;
 #if !USE_FORCED_GLES
-class Shader;
+class LibRetroPipeline;
 #endif
 
 enum {
@@ -84,6 +83,10 @@ public:
 	bool setScaler(uint mode, int factor) override;
 	uint getScaler() const override;
 	uint getScaleFactor() const override;
+#endif
+
+#if !USE_FORCED_GLES
+	bool setShader(const Common::String &fileNode) override;
 #endif
 
 	void beginGFXTransaction() override;
@@ -130,28 +133,22 @@ protected:
 	/**
 	 * Whether an GLES or GLES2 context is active.
 	 */
-	bool isGLESContext() const { return g_context.type == kContextGLES || g_context.type == kContextGLES2; }
-
-	/**
-	 * Sets the OpenGL (ES) type the graphics manager shall work with.
-	 *
-	 * This needs to be called at least once (and before ever calling
-	 * notifyContextCreate).
-	 *
-	 * @param type Type of the OpenGL (ES) contexts to be created.
-	 */
-	void setContextType(ContextType type);
+	bool isGLESContext() const { return OpenGLContext.type == kContextGLES || OpenGLContext.type == kContextGLES2; }
 
 	/**
 	 * Notify the manager of a OpenGL context change. This should be the first
 	 * thing to call after you created an OpenGL (ES) context!
 	 *
+	 * @param type               Type of the OpenGL (ES) contexts created.
 	 * @param defaultFormat      The new default format for the game screen
 	 *                           (this is used for the CLUT8 game screens).
 	 * @param defaultFormatAlpha The new default format with an alpha channel
 	 *                           (this is used for the overlay and cursor).
 	 */
-	void notifyContextCreate(const Graphics::PixelFormat &defaultFormat, const Graphics::PixelFormat &defaultFormatAlpha);
+	void notifyContextCreate(
+			ContextType type,
+			const Graphics::PixelFormat &defaultFormat,
+			const Graphics::PixelFormat &defaultFormatAlpha);
 
 	/**
 	 * Notify the manager that the OpenGL context is about to be destroyed.
@@ -182,7 +179,7 @@ protected:
 		    gameFormat(),
 #endif
 		    aspectRatioCorrection(false), graphicsMode(GFX_OPENGL), filtering(true),
-		    scalerIndex(0), scaleFactor(1) {
+		    scalerIndex(0), scaleFactor(1), shader() {
 		}
 
 		bool valid;
@@ -198,6 +195,8 @@ protected:
 		uint scalerIndex;
 		int scaleFactor;
 
+		Common::String shader;
+
 		bool operator==(const VideoState &right) {
 			return gameWidth == right.gameWidth && gameHeight == right.gameHeight
 #ifdef USE_RGB_COLOR
@@ -205,7 +204,8 @@ protected:
 #endif
 			    && aspectRatioCorrection == right.aspectRatioCorrection
 			    && graphicsMode == right.graphicsMode
-				&& filtering == right.filtering;
+				&& filtering == right.filtering
+			    && shader == right.shader;
 		}
 
 		bool operator!=(const VideoState &right) {
@@ -269,6 +269,8 @@ protected:
 	 */
 	virtual bool loadVideoMode(uint requestedWidth, uint requestedHeight, const Graphics::PixelFormat &format) = 0;
 
+	bool loadShader(const Common::String &fileName);
+
 	/**
 	 * Refresh the screen contents.
 	 */
@@ -300,19 +302,12 @@ private:
 	 */
 	Pipeline *_pipeline;
 
-public:
+#if !USE_FORCED_GLES
 	/**
-	 * Query the address of an OpenGL function by name.
-	 *
-	 * This can only be used after a context has been created.
-	 * Please note that this function can return valid addresses even if the
-	 * OpenGL context does not support the function.
-	 *
-	 * @param name The name of the OpenGL function.
-	 * @return An function pointer for the requested OpenGL function or
-	 *         nullptr in case of failure.
+	 * OpenGL pipeline used for post-processing.
 	 */
-	virtual void *getProcAddress(const char *name) const = 0;
+	LibRetroPipeline *_libretroPipeline;
+#endif
 
 protected:
 	/**
@@ -326,6 +321,8 @@ protected:
 	int getGameRenderScale() const override;
 	void recalculateDisplayAreas() override;
 	void handleResizeImpl(const int width, const int height) override;
+
+	void updateLinearFiltering();
 
 	/**
 	 * The default pixel format of the backend.
@@ -351,6 +348,14 @@ protected:
 	 * The game palette if in CLUT8 mode.
 	 */
 	byte _gamePalette[3 * 256];
+
+#if !USE_FORCED_GLES
+	/**
+	 * The render target for the virtual game screen. Used when
+	 * LibRetro shaders are enabled.
+	 */
+	TextureTarget *_gameScreenTarget;
+#endif
 
 	//
 	// Overlay

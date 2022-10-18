@@ -190,9 +190,7 @@ ArthurOxygen50Action::ArthurOxygen50Action() : AIPlayMessageAction("Images/AI/Ma
 }
 
 void ArthurOxygen50Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur())
+	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && g_vm->isChattyArthur())
 		g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA84", kArthurMarsOxygen50Warning);
 	else
 		AIPlayMessageAction::performAIAction(rule);
@@ -209,10 +207,8 @@ ArthurOxygen25Action::ArthurOxygen25Action() : AIPlayMessageAction("Images/AI/Ma
 }
 
 void ArthurOxygen25Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur()) {
-		if (vm->getRandomBit())
+	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && g_vm->isChattyArthur()) {
+		if (g_vm->getRandomBit())
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA85", kArthurMarsOxygen25Warning);
 		else
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA87", kArthurMarsOxygen25Warning);
@@ -232,10 +228,8 @@ ArthurOxygen5Action::ArthurOxygen5Action() : AIPlayMessageAction("Images/AI/Mars
 }
 
 void ArthurOxygen5Action::performAIAction(AIRule *rule) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && vm->isChattyArthur()) {
-		if (vm->getRandomBit())
+	if (GameState.isTakenItemID(kArthurBiochip) && g_arthurChip && g_vm->isChattyArthur()) {
+		if (g_vm->getRandomBit())
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA86", kArthurMarsOxygen5Warning);
 		else
 			g_arthurChip->playArthurMovieForEvent("Images/AI/Globals/XGLOBA88", kArthurMarsOxygen5Warning);
@@ -4265,7 +4259,7 @@ void Mars::checkAirMask() {
 }
 
 void Mars::airStageExpired() {
-	if (((PegasusEngine *)g_engine)->playerHasItemID(kAirMask))
+	if (g_vm->playerHasItemID(kAirMask))
 		die(kDeathNoAirInMaze);
 	else
 		die(kDeathNoMaskInMaze);

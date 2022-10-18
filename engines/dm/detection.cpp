@@ -98,11 +98,11 @@ public:
 	DMMetaEngineDetection() : AdvancedMetaEngineDetection(DM::gameDescriptions, sizeof(DMADGameDescription), DMGames, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "dm";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Dungeon Master";
 	}
 

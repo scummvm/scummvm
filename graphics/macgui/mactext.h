@@ -48,7 +48,7 @@ struct MacFontRun {
 	uint16 palinfo1;
 	uint16 palinfo2;
 	uint16 palinfo3;
-	uint16 fgcolor;
+	uint32 fgcolor;
 	// to determine whether the next word is part of this one
 	bool wordContinuation;
 	const Font *font;
@@ -56,6 +56,15 @@ struct MacFontRun {
 
 	MacFontRun() {
 		wm = nullptr;
+		fontId = textSlant = fontSize = 0;
+		palinfo1 = palinfo2 = palinfo3 = 0;
+		fgcolor = 0;
+		font = nullptr;
+		wordContinuation = false;
+	}
+
+	MacFontRun(MacWindowManager *wm_) {
+		wm = wm_;
 		fontId = textSlant = fontSize = 0;
 		palinfo1 = palinfo2 = palinfo3 = 0;
 		fgcolor = 0;
@@ -148,12 +157,12 @@ struct SelectedText {
 
 class MacText : public MacWidget {
 public:
-	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
+	MacText(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, const Common::U32String &s, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment = kTextAlignLeft, int interlinear = 0, uint16 border = 0, uint16 gutter = 0, uint16 boxShadow = 0, uint16 textShadow = 0, bool fixedDims = true);
 	// 0 pixels between the lines by default
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const MacFont *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
 
-	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, int fgcolor, int bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
+	MacText(const Common::U32String &s, MacWindowManager *wm, const Font *font, uint32 fgcolor, uint32 bgcolor, int maxWidth, TextAlign textAlignment, int interlinear = 0, bool fixedDims = true);
 
 	virtual ~MacText();
 
@@ -194,6 +203,7 @@ public:
 	void appendText(const Common::U32String &str, const Font *font, uint16 r = 0, uint16 g = 0, uint16 b = 0, bool skipAdd = false);
 
 	int getTextFont() { return _defaultFormatting.fontId; }
+	void enforceTextFont(uint16 fontId);
 
 	// because currently, we are counting linespacing as font height
 	int getTextSize() { return _defaultFormatting.fontSize; }
@@ -202,14 +212,15 @@ public:
 	int getTextSize(int start, int end);
 	void setTextSize(int textSize, int start, int end);
 
-	uint getTextColor() { return _defaultFormatting.fgcolor; }
-	uint getTextColor(int start, int end);
+	uint32 getTextColor() { return _defaultFormatting.fgcolor; }
+	uint32 getTextColor(int start, int end);
 
 	int getTextFont(int start, int end);
 	void setTextFont(int fontId, int start, int end);
 
 	int getTextSlant(int start, int end);
 	void setTextSlant(int textSlant, int start, int end);
+	void enforceTextSlant(int textSlant);
 
 	// director text related-functions
 	int getMouseChar(int x, int y);
@@ -272,8 +283,11 @@ public:
 
 	Common::U32String getEditedString();
 	Common::U32String getText() { return _str; }
+	Common::U32String getPlainText();
 
 	void setSelRange(int selStart, int selEnd);
+
+	void scroll(int delta);
 
 private:
 	void init();
@@ -304,8 +318,6 @@ private:
 	void render(int from, int to);
 	void recalcDims();
 	void reallocSurface();
-
-	void scroll(int delta);
 
 	void drawSelection(int xoff, int yoff);
 	void updateCursorPos();

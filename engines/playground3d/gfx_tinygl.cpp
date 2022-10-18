@@ -177,6 +177,16 @@ void TinyGLRenderer::setupViewport(int x, int y, int width, int height) {
 	tglViewport(x, y, width, height);
 }
 
+void TinyGLRenderer::enableFog(const Math::Vector4d &fogColor) {
+	tglFogi(TGL_FOG_MODE, TGL_EXP);
+	tglFogf(TGL_FOG_START, 1.0f);
+	tglFogf(TGL_FOG_END, 1.0f);
+	tglFogf(TGL_FOG_DENSITY, 0.1f);
+	TGLfloat color[4] = { fogColor.x(), fogColor.y(), fogColor.z(), fogColor.w() };
+	tglFogfv(TGL_FOG_COLOR, color);
+	tglEnable(TGL_FOG);
+}
+
 void TinyGLRenderer::drawFace(uint face) {
 	tglBegin(TGL_TRIANGLE_STRIP);
 	for (uint i = 0; i < 4; i++) {

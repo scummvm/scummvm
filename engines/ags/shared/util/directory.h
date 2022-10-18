@@ -112,7 +112,7 @@ private:
 	Common::Stack<FindFile> _fdirs;
 	FindFile _fdir; // current find dir iterator
 	FindFile _ffile; // current find file iterator
-	int _maxLevel = -1; // max nesting level, -1 for unrestricted
+	uint32_t _maxLevel = SIZE_MAX;
 	String _fullDir; // full directory path
 	String _curDir; // current dir path, relative to the base path
 	String _curFile; // current file path with parent dirs

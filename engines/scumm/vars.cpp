@@ -558,6 +558,9 @@ void ScummEngine_v8::setupScummVars() {
 	VAR_KEYPRESS = 132;
 	VAR_BLAST_ABOVE_TEXT = 133;
 	VAR_SYNC = 134;
+
+	VAR_SAVELOAD_PAGE = 175;
+	VAR_OBJECT_LABEL_FLAG = 176;
 }
 #endif
 
@@ -783,22 +786,7 @@ void ScummEngine::resetScummVars() {
 			break;
 		}
 
-		if (_game.platform == Common::kPlatformFMTowns)
-			VAR(VAR_VIDEOMODE) = 42;
-		// Value only used by the Macintosh version of Indiana Jones and the Last Crusade
-		else if (_game.platform == Common::kPlatformMacintosh && _game.version == 3)
-			VAR(VAR_VIDEOMODE) = 50;
-		// Value only used by the Amiga version of Monkey Island 2
-		else if (_game.platform == Common::kPlatformAmiga)
-			VAR(VAR_VIDEOMODE) = 82;
-		else if (_renderMode == Common::kRenderCGA)
-			VAR(VAR_VIDEOMODE) = 4;
-		else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
-			VAR(VAR_VIDEOMODE) = 30;
-		else if (_renderMode == Common::kRenderEGA)
-			VAR(VAR_VIDEOMODE) = 13;
-		else
-			VAR(VAR_VIDEOMODE) = 19;
+		setVideoModeVarToCurrentConfig();
 
 		if (_game.platform == Common::kPlatformMacintosh && (_game.features & GF_OLD_BUNDLE)) {
 			// Set screen size for the Macintosh version of Indy3/Loom
@@ -843,6 +831,30 @@ void ScummEngine::resetScummVars() {
 
 	VAR(VAR_CHARINC) = 4;
 	setTalkingActor(0);
+}
+
+void ScummEngine::setVideoModeVarToCurrentConfig() {
+	if (VAR_VIDEOMODE == 0xFF)
+		return;
+
+	if (_game.platform == Common::kPlatformFMTowns)
+		VAR(VAR_VIDEOMODE) = 42;
+	// Value only used by the Macintosh version of Indiana Jones and the Last Crusade
+	else if (_game.platform == Common::kPlatformMacintosh && _game.version == 3)
+		VAR(VAR_VIDEOMODE) = 50;
+	// Value only used by the Amiga version of Monkey Island 2
+	else if (_game.platform == Common::kPlatformAmiga)
+		VAR(VAR_VIDEOMODE) = 82;
+	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
+		VAR(VAR_VIDEOMODE) = 4;
+	else if (_renderMode == Common::kRenderCGA_BW)
+		VAR(VAR_VIDEOMODE) = 6;
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG)
+		VAR(VAR_VIDEOMODE) = 30;
+	else if (_renderMode == Common::kRenderEGA)
+		VAR(VAR_VIDEOMODE) = 13;
+	else
+		VAR(VAR_VIDEOMODE) = 19;
 }
 
 } // End of namespace Scumm

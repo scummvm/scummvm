@@ -58,7 +58,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
-			target = getEngineId();
+			target = getName();
 		if (saveGameIdx == kSavegameFilePattern)
 			return Common::String::format("%s-##.SAV", target);
 		else

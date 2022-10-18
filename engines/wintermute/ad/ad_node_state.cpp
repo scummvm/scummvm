@@ -31,6 +31,7 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/utils/utils.h"
 #include "engines/wintermute/platform_osystem.h"
+
 #include "common/str.h"
 
 namespace Wintermute {

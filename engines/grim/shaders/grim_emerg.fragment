@@ -5,7 +5,6 @@ OUTPUT
 uniform sampler2D tex;
 uniform vec3 color;
 
-void main()
-{
-	    outColor = vec4(color, texture(tex, Texcoord).a);
+void main() {
+	outColor = vec4(color, texture(tex, Texcoord).a);
 }

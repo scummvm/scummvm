@@ -19,13 +19,11 @@
  *
  */
 
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 #include "ags/engine/ac/statobj/static_object.h"
 #include "ags/shared/util/memory.h"
-
-//include <string.h> // for memcpy()
 
 namespace AGS3 {
 
@@ -40,12 +38,12 @@ using namespace AGS::Shared;
 
 // TODO: use endian-agnostic method to access global vars
 
-uint8_t RuntimeScriptValue::ReadByte() {
+uint8_t RuntimeScriptValue::ReadByte() const {
 	if (this->Type == kScValStackPtr || this->Type == kScValGlobalVar) {
 		if (RValue->Type == kScValData) {
 			return *(uint8_t *)(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
-			return RValue->IValue; // get RValue as int
+			return static_cast<uint8_t>(RValue->IValue);
 		}
 	} else if (this->Type == kScValStaticObject || this->Type == kScValStaticArray) {
 		return this->StcMgr->ReadInt8(this->Ptr, this->IValue);
@@ -55,18 +53,18 @@ uint8_t RuntimeScriptValue::ReadByte() {
 	return *((uint8_t *)this->GetPtrWithOffset());
 }
 
-int16_t RuntimeScriptValue::ReadInt16() {
+int16_t RuntimeScriptValue::ReadInt16() const {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
 			return *(int16_t *)(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
-			return RValue->IValue; // get RValue as int
+			return static_cast<uint16_t>(RValue->IValue);
 		}
 	} else if (this->Type == kScValGlobalVar) {
 		if (RValue->Type == kScValData) {
 			return Memory::ReadInt16LE(RValue->GetPtrWithOffset() + this->IValue);
 		} else {
-			return RValue->IValue; // get RValue as int
+			return static_cast<uint16_t>(RValue->IValue);
 		}
 	} else if (this->Type == kScValStaticObject || this->Type == kScValStaticArray) {
 		return this->StcMgr->ReadInt16(this->Ptr, this->IValue);
@@ -76,7 +74,7 @@ int16_t RuntimeScriptValue::ReadInt16() {
 	return *((int16_t *)this->GetPtrWithOffset());
 }
 
-int32_t RuntimeScriptValue::ReadInt32() {
+int32_t RuntimeScriptValue::ReadInt32() const {
 	if (this->Type == kScValStackPtr) {
 		if (RValue->Type == kScValData) {
 			return *(int32_t *)(RValue->GetPtrWithOffset() + this->IValue);

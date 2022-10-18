@@ -1508,7 +1508,7 @@ GUI_EoB::GUI_EoB(EoBCoreEngine *vm) : GUI(vm), _vm(vm), _screen(vm->_screen), _n
 
 	_saveSlotStringsTemp = new char*[6];
 	for (int i = 0; i < 6; i++) {
-		_saveSlotStringsTemp[i] = new char[26]();
+		_saveSlotStringsTemp[i] = new char[52]();
 	}
 	_saveSlotIdTemp = new int16[7];
 	memset(_saveSlotIdTemp, 0xFF, sizeof(int16) * 7);
@@ -3040,8 +3040,9 @@ Common::String GUI_EoB::transferTargetMenu(Common::Array<Common::String> &target
 
 	Common::StringArray::iterator ii = targets.begin();
 	for (int i = 0; i < _savegameListSize; ++i) {
-		_savegameList[i] = new char[(*ii).size() + 1];
-		strcpy(_savegameList[i], (*ii++).c_str());
+		int slsize = (*ii).size() + 1;
+		_savegameList[i] = new char[slsize];
+		Common::strlcpy(_savegameList[i], (*ii++).c_str(), slsize);
 	}
 
 	const ScreenDim *dm = _screen->getScreenDim(11);
@@ -3186,12 +3187,13 @@ bool GUI_EoB::runSaveMenu(int x, int y) {
 
 			Graphics::Surface thumb;
 			createScreenThumbnail(thumb);
-			char temp[26];
-			Common::strlcpy(temp, _saveSlotStringsTemp[slot], 26);
+			char temp[52];
+			Common::strlcpy(temp, _saveSlotStringsTemp[slot], 52);
 			// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
 			// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 			if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(temp).contains('\r')))
-				Util::convertDOSToUTF8(temp, 26);
+				Util::convertString_KYRAtoGUI(temp, 52);
+			_vm->updatePlayTimer();
 			Common::Error err = _vm->saveGameStateIntern(_savegameOffset + slot, temp, &thumb);
 			thumb.free();
 
@@ -4596,7 +4598,7 @@ void GUI_EoB::setupSaveMenuSlots() {
 				Common::strlcpy(_saveSlotStringsTemp[i], _savegameList[i + _savegameOffset], 25);
 
 				if (!(_vm->gameFlags().lang == Common::JA_JPN && _vm->gameFlags().platform == Common::kPlatformSegaCD &&
-					Common::String(_saveSlotStringsTemp[i]).contains('\r')) && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().platform == Common::kPlatformSegaCD)) {
+					Common::String(_saveSlotStringsTemp[i]).contains('\r')) && (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN || _vm->gameFlags().platform == Common::kPlatformSegaCD)) {
 						// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
 						// Special case for Japanese SegaCD: Only the save descriptions from GMM should be stripped. The auto-generated descriptions from the ingame save dialog
 						// have a special 1-byte encoding that must be kept. It is easy to distinguish between GMM descriptions and ingame descriptions due to the '\r' characters

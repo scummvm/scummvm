@@ -23,6 +23,7 @@
 #define COMMON_PLATFORM_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Common {
 
@@ -42,7 +43,7 @@ class String;
  * This may be optional or required, depending on the game engine and the
  * game in question.
  */
-enum Platform {
+enum Platform : int8 {
 	kPlatformDOS,
 	kPlatformAmiga,
 	kPlatformAtari8Bit,
@@ -68,6 +69,7 @@ enum Platform {
 	kPlatformXbox,
 	kPlatformCDi,
 	kPlatformIOS,
+	kPlatformAndroid,
 	kPlatformOS2,
 	kPlatformBeOS,
 	kPlatformPocketPC,
@@ -76,6 +78,8 @@ enum Platform {
 	kPlatformPippin,
 	kPlatformMacintoshII,
 	kPlatformShockwave,
+	kPlatformZX,
+	kPlatformTI994,
 
 	kPlatformUnknown = -1
 };
@@ -95,6 +99,8 @@ extern Platform parsePlatform(const String &str);
 extern const char *getPlatformCode(Platform id);
 extern const char *getPlatformAbbrev(Platform id);
 extern const char *getPlatformDescription(Platform id);
+
+List<String> getPlatformList();
 
 /** @} */
 

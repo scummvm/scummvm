@@ -919,12 +919,13 @@ void MidiDriver_ADLIB_Lure::channelAftertouch(uint8 channel, uint8 pressure, uin
 	_activeNotesMutex.lock();
 
 	// Find the active note on the specified channel.
-	for (int i = 0; i < determineNumOplChannels(); i++) {
-		if (_activeNotes[i].noteActive && _activeNotes[i].source == source &&
-				_activeNotes[i].channel == channel) {
+	for (int i = 0; i < _numMelodicChannels; i++) {
+		uint8 oplChannel = _melodicChannels[i];
+		if (_activeNotes[oplChannel].noteActive && _activeNotes[oplChannel].source == source &&
+				_activeNotes[oplChannel].channel == channel) {
 			// Set the velocity of the note and recalculate and write the
 			// volume.
-			_activeNotes[i].velocity = pressure;
+			_activeNotes[oplChannel].velocity = pressure;
 
 			recalculateVolumes(channel, source);
 

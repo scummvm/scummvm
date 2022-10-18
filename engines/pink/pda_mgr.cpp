@@ -21,7 +21,7 @@
 
 #include "pink/pda_mgr.h"
 #include "pink/pink.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/objects/actors/pda_button_actor.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/pda_page.h"
@@ -116,7 +116,7 @@ void PDAMgr::onLeftButtonClick(Common::Point point) {
 	Actor* rightHand = _globalPage->findActor(kRightHand);
 	if (rightHand)
 		static_cast<ActionStill*>(rightHand->getAction())->setFrame(1);
-	Actor *actor = _game->getDirector()->getActorByPoint(point);
+	Actor *actor = _game->getScreen()->getActorByPoint(point);
 	if (actor)
 		actor->onLeftClickMessage();
 }
@@ -128,7 +128,7 @@ void PDAMgr::onLeftButtonUp() {
 }
 
 void PDAMgr::onMouseMove(Common::Point point) {
-	Actor *actor = _game->getDirector()->getActorByPoint(point);
+	Actor *actor = _game->getScreen()->getActorByPoint(point);
 	if (actor && dynamic_cast<PDAButtonActor *>(actor))
 		actor->onMouseOver(point, &_cursorMgr);
 	else

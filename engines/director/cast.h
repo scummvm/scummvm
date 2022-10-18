@@ -45,12 +45,14 @@ class FilmLoopCastMember;
 class ScriptCastMember;
 class ShapeCastMember;
 class TextCastMember;
+class PaletteCastMember;
+class SoundCastMember;
 
 typedef Common::HashMap<byte, byte> CharMap;
 typedef Common::HashMap<uint16, uint16> FontSizeMap;
 struct FontXPlatformInfo {
 	Common::String toFont;
-		bool remapChars;
+	bool remapChars;
 	FontSizeMap sizeMap;
 
 	FontXPlatformInfo() : remapChars(false) {}
@@ -65,6 +67,12 @@ struct FontMapEntry {
 	FontMapEntry() : toFont(0), remapChars(false) {}
 };
 typedef Common::HashMap<uint16, FontMapEntry *> FontMap;
+
+#define NUMTILEPATTERNS 8
+struct TilePatternEntry {
+	CastMemberID bitmapId;
+	Common::Rect rect;
+};
 
 class Cast {
 public:
@@ -85,12 +93,18 @@ public:
 	void loadExternalSound(Common::SeekableReadStreamEndian &stream);
 	void loadSord(Common::SeekableReadStreamEndian &stream);
 
-	void loadCastChildren();
-	void loadSoundCasts();
+	void loadCastMemberData();
+	void loadStxtData(int key, TextCastMember *member);
+	void loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p);
+	void loadFilmLoopData(FilmLoopCastMember *member);
+	void loadBitmapData(int key, BitmapCastMember *bitmapCast);
+	void loadSoundData(int key, SoundCastMember *soundCast);
 
-	void copyCastStxts();
+	int getCastSize();
 	Common::Rect getCastMemberInitialRect(int castId);
 	void setCastMemberModified(int castId);
+	CastMember *setCastMember(CastMemberID castId, CastMember *cast);
+	bool eraseCastMember(CastMemberID castId);
 	CastMember *getCastMember(int castId);
 	CastMember *getCastMemberByName(const Common::String &name);
 	CastMember *getCastMemberByScriptId(int scriptId);
@@ -108,12 +122,15 @@ public:
 	Common::CodePage getFileEncoding();
 	Common::U32String decodeString(const Common::String &str);
 
+	Common::String formatCastSummary(int castId);
+
 private:
 	void loadScriptText(Common::SeekableReadStreamEndian &stream, uint16 id);
 	void loadFontMap(Common::SeekableReadStreamEndian &stream);
 	void loadFontMapV4(Common::SeekableReadStreamEndian &stream);
 	void loadFXmp(Common::SeekableReadStreamEndian &stream);
 	bool readFXmpLine(Common::SeekableReadStreamEndian &stream);
+	void loadVWTL(Common::SeekableReadStreamEndian &stream);
 
 public:
 	Archive *_castArchive;
@@ -135,6 +152,7 @@ public:
 	Common::Rect _movieRect;
 	uint16 _stageColor;
 	int _defaultPalette;
+	TilePatternEntry _tiles[kNumBuiltinTiles];
 
 	LingoArchive *_lingoArchive;
 

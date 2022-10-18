@@ -113,8 +113,10 @@ SupernovaEngine::~SupernovaEngine() {
 
 Common::Error SupernovaEngine::run() {
 	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
-	if (ttsMan != nullptr)
+	if (ttsMan != nullptr) {
 		ttsMan->setLanguage(ConfMan.get("language"));
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
+	}
 
 	init();
 

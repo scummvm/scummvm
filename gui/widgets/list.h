@@ -48,13 +48,21 @@ enum {
 /* ListWidget */
 class ListWidget : public EditableWidget {
 public:
-	typedef Common::Array<ThemeEngine::FontColor> ColorList;
+	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, const Common::U32String &token);
 
-	typedef bool (*FilterMatcher)(void *arg, int idx, const Common::U32String &item, Common::U32String token);
+	struct ListData {
+		Common::U32String orig;
+		Common::U32String clean;
+
+		ListData(const Common::U32String &o, const Common::U32String &c) { orig = o; clean = c; }
+	};
+
+	typedef Common::Array<ListData> ListDataArray;
+
 protected:
 	Common::U32StringArray	_list;
-	Common::U32StringArray	_dataList;
-	ColorList		_listColors;
+	Common::U32StringArray	_cleanedList;
+	ListDataArray	_dataList;
 	Common::Array<int>	_listIndex;
 	bool			_editable;
 	bool			_editMode;
@@ -96,16 +104,15 @@ public:
 	bool containsWidget(Widget *) const override;
 	Widget *findWidget(int x, int y) override;
 
-	void setList(const Common::U32StringArray &list, const ColorList *colors = nullptr);
-	const Common::U32StringArray &getList()	const			{ return _dataList; }
+	void setList(const Common::U32StringArray &list);
+	const Common::U32StringArray &getList()	const			{ return _cleanedList; }
 
-	void append(const Common::String &s, ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal);
+	void append(const Common::String &s);
 
 	void setSelected(int item);
 	int getSelected() const						{ return (_filter.empty() || _selectedItem == -1) ? _selectedItem : _listIndex[_selectedItem]; }
 
-	const Common::U32String &getSelectedString() const	{ return _list[_selectedItem]; }
-	ThemeEngine::FontColor getSelectionColor() const;
+	const Common::U32String getSelectedString() const	{ return stripGUIformatting(_list[_selectedItem]); }
 
 	void setNumberingMode(NumberingMode numberingMode)	{ _numberingMode = numberingMode; }
 
@@ -143,6 +150,11 @@ public:
 
 	bool wantsFocus() override { return true; }
 
+	static Common::U32String getThemeColor(byte r, byte g, byte b);
+	static Common::U32String getThemeColor(ThemeEngine::FontColor color);
+	static ThemeEngine::FontColor getThemeColor(const Common::U32String &color);
+	static Common::U32String stripGUIformatting(const Common::U32String &str);
+
 protected:
 	void drawWidget() override;
 
@@ -153,11 +165,19 @@ protected:
 	void abortEditMode() override;
 
 	Common::Rect getEditRect() const override;
+	int getCaretOffset() const override;
+
+	void copyListData(const Common::U32StringArray &list);
 
 	void receivedFocusWidget() override;
 	void lostFocusWidget() override;
 	void checkBounds();
 	void scrollToCurrent();
+
+	void drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state = ThemeEngine::kStateEnabled,
+					Graphics::TextAlign align = Graphics::kTextAlignCenter,
+					ThemeEngine::TextInversionState inverted = ThemeEngine::kTextInversionNone, int deltax = 0, bool useEllipsis = true,
+					ThemeEngine::FontColor color = ThemeEngine::kFontColorFormatting);
 };
 
 } // End of namespace GUI

@@ -25,6 +25,8 @@
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
 
+#define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
+
 namespace Made {
 
 static const MadeGameDescription gameDescriptions[] = {
@@ -43,7 +45,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -61,7 +63,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -78,7 +80,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -95,7 +97,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -112,7 +114,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -130,7 +132,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -151,7 +153,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -169,7 +171,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -187,7 +189,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -205,7 +207,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -223,7 +225,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::IT_ITA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -241,7 +243,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -259,7 +261,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -282,7 +284,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::KO_KOR,
 			Common::kPlatformDOS,
 			ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -333,7 +335,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -351,7 +353,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO | ADGF_CD,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,
@@ -370,7 +372,7 @@ static const MadeGameDescription gameDescriptions[] = {
 			Common::EN_ANY,
 			Common::kPlatformMacintosh,
 			ADGF_DEMO | ADGF_CD | ADGF_MACRESFORK,
-			GUIO0()
+			GUIO1(GAMEOPTION_INTRO_MUSIC_DIGITAL)
 		},
 		GID_RTZ,
 		0,

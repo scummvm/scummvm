@@ -57,9 +57,9 @@ class WriteStream;
 class INIFile {
 public:
 	struct KeyValue {
-		String key;     /*!< Key of the configuration entry. */
-		String value;   /*!< Value of the configuration entry. */
-		String comment; /*!< Comment within an INI file. */
+		String key;     /*!< Key of the configuration entry, whitespace trimmed. */
+		String value;   /*!< Value of the configuration entry, whitespace trimmed. */
+		String comment; /*!< Comment within an INI file, including #s and newlines. */
 	};
 
 	typedef List<KeyValue> SectionKeyList; /*!< A list of all key/value pairs in this section. */
@@ -75,9 +75,9 @@ public:
 	 * INI files manually.
 	 */
 	struct Section {
-		String name;         /*!< Name of the section. */
+		String name;         /*!< Name of the section, whitespace trimmed. */
 		List<KeyValue> keys; /*!< List of all keys in this section. */
-		String comment;      /*!< Comment within the section. */
+		String comment;      /*!< Comment within the section, including #s and newlines. */
 
 		bool hasKey(const String &key) const; /*!< Check whether the section has a @p key. */
 		const KeyValue* getKey(const String &key) const; /*!< Get the value assigned to a @p key. */
@@ -138,6 +138,7 @@ private:
 
 	Section *getSection(const String &section);
 	const Section *getSection(const String &section) const;
+	bool isValidChar(char c) const; /*!< Is given char allowed in section or key names*/
 };
 
 /** @} */

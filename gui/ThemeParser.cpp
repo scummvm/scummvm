@@ -69,6 +69,10 @@ static const TextColorDataInfo kTextColorDefaults[] = {
 	{ kTextColorAlternativeInverted,	"color_alternative_inverted" },
 	{ kTextColorAlternativeHover,		"color_alternative_hover" },
 	{ kTextColorAlternativeDisabled,	"color_alternative_disabled" },
+	{ kTextColorOverride,               "color_override" }, 
+	{ kTextColorOverrideInverted,       "color_override_inverted" }, 
+	{ kTextColorOverrideHover,          "color_override_hover" }, 
+	{ kTextColorOverrideDisabled,       "color_override_disabled" }, 
 	{ kTextColorButton,					"color_button" },
 	{ kTextColorButtonHover,			"color_button_hover" },
 	{ kTextColorButtonDisabled,			"color_button_disabled" }

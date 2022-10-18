@@ -32,6 +32,13 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+enum GraphicFlip {
+	kFlip_None,
+	kFlip_Horizontal, // this means - mirror over horizontal middle line
+	kFlip_Vertical,   // this means - mirror over vertical middle line
+	kFlip_Both        // mirror over diagonal (horizontal and vertical)
+};
+
 enum BlendMode {
 	// free blending (ARGB -> ARGB) modes
 	kBlendMode_NoAlpha = 0, // ignore alpha channel
@@ -43,10 +50,12 @@ enum BlendMode {
 
 namespace GfxDef {
 
+// Converts percentage of transparency into alpha
 inline int Trans100ToAlpha255(int transparency) {
 	return ((100 - transparency) * 255) / 100;
 }
 
+// Converts alpha into percentage of transparency
 inline int Alpha255ToTrans100(int alpha) {
 	return 100 - ((alpha * 100) / 255);
 }
@@ -67,25 +76,29 @@ inline int Alpha250ToTrans100(int alpha) {
 // 255 = invisible,
 // 1 -to- 254 = barely visible -to- mostly visible (as proper alpha)
 inline int Trans100ToLegacyTrans255(int transparency) {
-	if (transparency == 0) {
+	switch (transparency) {
+	case 0:
 		return 0; // this means opaque
-	} else if (transparency == 100) {
+	case 100:
 		return 255; // this means invisible
+	default:
+		// the rest of the range works as alpha
+		return Trans100ToAlpha250(transparency);
 	}
-	// the rest of the range works as alpha
-	return Trans100ToAlpha250(transparency);
 }
 
 // Convert legacy 255-ranged "incorrect" transparency into proper
 // 100-ranged transparency.
 inline int LegacyTrans255ToTrans100(int legacy_transparency) {
-	if (legacy_transparency == 0) {
+	switch (legacy_transparency) {
+	case 0:
 		return 0; // this means opaque
-	} else if (legacy_transparency == 255) {
+	case 255:
 		return 100; // this means invisible
+	default:
+		// the rest of the range works as alpha
+		return Alpha250ToTrans100(legacy_transparency);
 	}
-	// the rest of the range works as alpha
-	return Alpha250ToTrans100(legacy_transparency);
 }
 
 // Convert legacy 100-ranged transparency into proper 255-ranged alpha
@@ -93,13 +106,41 @@ inline int LegacyTrans255ToTrans100(int legacy_transparency) {
 // 100    => alpha 0
 // 1 - 99 => alpha 1 - 244
 inline int LegacyTrans100ToAlpha255(int legacy_transparency) {
-	if (legacy_transparency == 0) {
+	switch (legacy_transparency) {
+	case 0:
 		return 255; // this means opaque
-	} else if (legacy_transparency == 100) {
+	case 100:
 		return 0; // this means invisible
+	default:
+		// the rest of the range works as alpha (only 100-ranged)
+		return legacy_transparency * 255 / 100;
 	}
-	// the rest of the range works as alpha (only 100-ranged)
-	return legacy_transparency * 255 / 100;
+}
+
+// Convert legacy 255-ranged transparency into proper 255-ranged alpha
+inline int LegacyTrans255ToAlpha255(int legacy_transparency) {
+	switch (legacy_transparency) {
+	case 0:
+		return 255; // this means opaque
+	case 255:
+		return 0; // this means invisible
+	default:
+		// the rest of the range works as alpha
+		return legacy_transparency;
+	}
+}
+
+// Convert 255-ranged alpha into legacy 255-ranged transparency
+inline int Alpha255ToLegacyTrans255(int alpha) {
+	switch (alpha) {
+	case 255:
+		return 0; // this means opaque
+	case 0:
+		return 255; // this means invisible
+	default:
+		// the rest of the range works as alpha
+		return alpha;
+	}
 }
 
 } // namespace GfxDef

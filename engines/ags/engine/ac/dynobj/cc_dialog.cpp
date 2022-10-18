@@ -23,27 +23,31 @@
 #include "ags/engine/ac/dialog.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/shared/ac/game_struct_defines.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *CCDialog::GetType() {
 	return "Dialog";
 }
 
-// serialize the object into BUFFER (which is BUFSIZE bytes)
-// return number of bytes used
-int CCDialog::Serialize(const char *address, char *buffer, int bufsize) {
-	const ScriptDialog *shh = (const ScriptDialog *)address;
-	StartSerialize(buffer);
-	SerializeInt(shh->id);
-	return EndSerialize();
+size_t CCDialog::CalcSerializeSize() {
+	return sizeof(int32_t);
 }
 
-void CCDialog::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+// serialize the object into BUFFER (which is BUFSIZE bytes)
+// return number of bytes used
+void CCDialog::Serialize(const char *address, Stream *out) {
+	const ScriptDialog *shh = (const ScriptDialog *)address;
+	out->WriteInt32(shh->id);
+}
+
+void CCDialog::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_G(scrDialog)[num], this);
 }
 

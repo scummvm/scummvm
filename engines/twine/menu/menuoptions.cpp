@@ -374,17 +374,15 @@ int MenuOptions::chooseSave(TextId textIdx, bool showEmptySlots) {
 		}
 	}
 
-	for (;;) {
-		const int32 id = _engine->_menu->processMenu(&saveFiles);
-		switch (id) {
-		case kQuitEngine:
-		case (int32)TextId::kReturnMenu:
-			return -1;
-		default:
-			const int16 slot = saveFiles.getButtonState(id) - 1;
-			debug("Selected savegame slot %d", slot);
-			return slot;
-		}
+	const int32 id = _engine->_menu->processMenu(&saveFiles);
+	switch (id) {
+	case kQuitEngine:
+	case (int32)TextId::kReturnMenu:
+		return -1;
+	default:
+		const int slot = saveFiles.getButtonState(id) - 1;
+		debug("Selected savegame slot %d", slot);
+		return slot;
 	}
 
 	return -1;

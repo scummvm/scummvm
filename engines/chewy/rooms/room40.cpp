@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -53,9 +54,9 @@ void Room40::entry(int16 eib_nr) {
 		_G(room)->set_timer_status(4, TIMER_STOP);
 	}
 
-	if (_G(gameState).R40PoliceWeg == false) {
+	if (_G(gameState).R40PoliceAway == false) {
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 10);
-		_G(atds)->delControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(275, ATS_ACTIVE_BIT);
 	} else {
 		_G(det)->hideStaticSpr(15);
 	}
@@ -107,7 +108,7 @@ void Room40::xit(int16 eib_nr) {
 			_G(gameState)._personRoomNr[P_HOWARD] = 28;
 
 		} else if (eib_nr == 72) {
-			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42BriefOk && _G(gameState).R28Manuskript)
+			if ((_G(obj)->checkInventory(HOTEL_INV) && _G(obj)->checkInventory(TICKET_INV) && _G(gameState).R42LetterOk && _G(gameState).R28Manuskript)
 				|| _G(gameState).R40TrainOk) {
 				_G(gameState).R40TrainOk = true;
 				_G(gameState)._personRoomNr[P_HOWARD] = 45;
@@ -115,10 +116,10 @@ void Room40::xit(int16 eib_nr) {
 				_G(obj)->hide_sib(SIB_MUENZE_R40);
 
 				_G(uhr)->disableTimer();
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				hide_person();
 				setupScreen(DO_SETUP);
-				_G(out)->einblenden(_G(pal), 0);
+				_G(out)->fadeIn(_G(pal));
 				_G(uhr)->enableTimer();
 
 				_G(mouseLeftClick) = false;
@@ -177,15 +178,20 @@ void Room40::move_train(int16 mode) {
 	if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
 		_G(det)->showStaticSpr(12);
 
-	g_engine->_sound->playSound(7, 0);
+	_G(det)->playSound(7, 0);
 	int16 delay = 0;
 
 	while (ax < 560) {
-		_G(det)->setSetailPos(7, lx, 46);
+		_G(det)->setDetailPos(7, lx, 46);
+		// Train sprite
 		_G(det)->setStaticPos(11, ax, 62, false, false);
 
+		// Chewy and Howard sprite
+		// The original offsets were ax and 62, which for some reason
+		// aren't shown correctly here (perhaps bad correction coords).
+		// Thus, adjust the coordinates here.
 		if (mode && _G(gameState).ChewyAni == CHEWY_PUMPKIN)
-			_G(det)->setStaticPos(12, ax, 62, false, true);
+			_G(det)->setStaticPos(12, ax + 27, 161, false, true);
 
 		if (!delay) {
 			lx += SPEED;
@@ -199,7 +205,7 @@ void Room40::move_train(int16 mode) {
 		SHOULD_QUIT_RETURN;
 	}
 
-	_G(det)->stop_detail(7);
+	_G(det)->stopDetail(7);
 	_G(det)->hideStaticSpr(11);
 	_G(det)->hideStaticSpr(12);
 
@@ -217,7 +223,7 @@ void Room40::setup_func() {
 		calc_person_look();
 
 		int16 x, y;
-		const int16 sp_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 sp_x = _G(moveState)[P_CHEWY].Xypos[0];
 		if (sp_x > 170 && sp_x < 255) {
 			x = 248;
 			y = 97;
@@ -231,14 +237,14 @@ void Room40::setup_func() {
 			x = 166;
 			y = 99;
 		} else {
-			x = _G(spieler_vector)[P_HOWARD].Xypos[0];
-			y = _G(spieler_vector)[P_HOWARD].Xypos[1];
+			x = _G(moveState)[P_HOWARD].Xypos[0];
+			y = _G(moveState)[P_HOWARD].Xypos[1];
 		}
 
 		goAutoXy(x, y, P_HOWARD, ANI_GO);
 	}
 
-	if (_G(gameState).R40PoliceWeg == false) {
+	if (_G(gameState).R40PoliceAway == false) {
 		if (_G(gameState).R40PoliceStart) {
 			_G(gameState).R40PoliceStart = false;
 			_G(gameState).R40PoliceAniStatus = POLICE_LEFT;
@@ -246,7 +252,7 @@ void Room40::setup_func() {
 			_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 			_G(det)->hideStaticSpr(15);
 			_G(det)->startDetail(POLICE_LEFT, 1, ANI_FRONT);
-			_G(atds)->setControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(275, ATS_ACTIVE_BIT);
 		}
 
 		switch (_G(gameState).R40PoliceAniStatus) {
@@ -271,7 +277,7 @@ void Room40::setup_func() {
 				_G(gameState).R40PoliceAniStatus = 255;
 				_G(room)->set_timer_status(255, TIMER_START);
 				_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
-				_G(atds)->delControlBit(275, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(275, ATS_ACTIVE_BIT);
 			}
 			break;
 
@@ -280,22 +286,22 @@ void Room40::setup_func() {
 				_G(det)->hideStaticSpr(0);
 				if (_G(gameState).R40DuengerTele) {
 					hideCur();
-					_G(gameState).R40PoliceWeg = true;
+					_G(gameState).R40PoliceAway = true;
 					_G(det)->startDetail(17, 255, ANI_FRONT);
 					startAadWait(226);
-					_G(det)->stop_detail(17);
+					_G(det)->stopDetail(17);
 					_G(gameState).R40HoUse = true;
 					_G(person_end_phase)[P_CHEWY] = P_RIGHT;
 					startSetAILWait(10, 1, ANI_FRONT);
 					_G(person_end_phase)[P_HOWARD] = P_RIGHT;
 					startAadWait(224);
-					_G(gameState).R40PoliceWeg = true;
+					_G(gameState).R40PoliceAway = true;
 					showCur();
 
 					_G(flags).MouseLeft = false;
 					_G(flags).MainInput = true;
 					_G(gameState).R40HoUse = false;
-					_G(atds)->setControlBit(276, ATS_ACTIVE_BIT, ATS_DATA);
+					_G(atds)->setControlBit(276, ATS_ACTIVE_BIT);
 
 				} else {
 					_G(det)->startDetail(POLICE_RIGHT, 1, ANI_FRONT);
@@ -316,15 +322,14 @@ int16 Room40::use_mr_pumpkin() {
 	if (_G(menu_item) != CUR_HOWARD) {
 		hideCur();
 
-		if (!_G(gameState).inv_cur) {
+		if (!_G(cur)->usingInventoryCursor()) {
 			action_ret = use_schalter(205);
-
 		} else {
-			switch (_G(gameState).AkInvent) {
+			switch (_G(cur)->getInventoryCursor()) {
 			case CENT_INV:
 				action_ret = true;
 				autoMove(5, P_CHEWY);
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				startSetAILWait(15, 1, ANI_FRONT);
 				start_spz(CH_PUMP_TALK, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(200);
@@ -334,14 +339,14 @@ int16 Room40::use_mr_pumpkin() {
 				action_ret = true;
 
 				if (_G(gameState).R39TvRecord == 6) {
-					if (_G(gameState).R40PoliceWeg == false)
+					if (_G(gameState).R40PoliceAway == false)
 						use_schalter(227);
 					else {
 						hideCur();
 						autoMove(8, P_CHEWY);
 						start_spz_wait(CH_PUMP_GET1, 1, false, P_CHEWY);
-						delInventory(_G(gameState).AkInvent);
-						_G(out)->ausblenden(1);
+						delInventory(_G(cur)->getInventoryCursor());
+						_G(out)->fadeOut();
 						Room43::catch_pg();
 						remove_inventory(LIKOER_INV);
 						_G(obj)->addInventory(LIKOER2_INV, &_G(room_blk));
@@ -368,7 +373,7 @@ int16 Room40::use_mr_pumpkin() {
 int16 Room40::use_schalter(int16 aad_nr) {
 	int16 action_flag = false;
 
-	if (_G(menu_item) != CUR_HOWARD &&_G(gameState).R40PoliceWeg == false) {
+	if (_G(menu_item) != CUR_HOWARD &&_G(gameState).R40PoliceAway == false) {
 		action_flag = true;
 
 		hideCur();
@@ -412,7 +417,7 @@ int16 Room40::use_schalter(int16 aad_nr) {
 }
 
 void Room40::talk_police() {
-	if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
+	if (!_G(gameState).R40PoliceAway && _G(gameState).R40PoliceAniStatus == 255) {
 		hideCur();
 		_G(gameState).R40PoliceStart = false;
 		_G(room)->set_timer_status(255, TIMER_STOP);
@@ -454,7 +459,7 @@ int16 Room40::use_haendler() {
 			_G(gameState).R40HaendlerOk = true;
 			_G(gameState).R40TeilKarte = true;
 			_G(gameState).R40DuengerMit = true;
-			_G(atds)->setControlBit(283, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(283, ATS_ACTIVE_BIT);
 			autoMove(10, P_CHEWY);
 			autoMove(11, P_HOWARD);
 			startAadWait(208);
@@ -474,10 +479,10 @@ int16 Room40::use_haendler() {
 				_G(det)->del_static_ani(5);
 				_G(det)->set_static_ani(3, -1);
 				startAadWait(211);
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				_G(out)->set_partialpalette(_G(pal), 255, 1);
 				startAadWait(212);
-				_G(out)->ausblenden(0);
+				_G(out)->fadeOut();
 				_G(gameState).R40Wettbewerb = true;
 				_G(gameState)._personRoomNr[P_HOWARD] = 28;
 				_G(flags).NoScroll = false;
@@ -546,7 +551,7 @@ void Room40::bmeister_dia(int16 aad_nr) {
 	auto_scroll(206, 0);
 	_G(det)->del_static_ani(0);
 	_G(room)->set_timer_status(0, TIMER_STOP);
-	_G(det)->stop_detail(0);
+	_G(det)->stopDetail(0);
 	startSetAILWait(1, 1, ANI_FRONT);
 	_G(det)->set_static_ani(2, -1);
 
@@ -572,7 +577,7 @@ bool Room40::use_police() {
 	bool result = false;
 
 	if (_G(menu_item) == CUR_HOWARD) {
-		if (!_G(gameState).R40PoliceWeg && _G(gameState).R40PoliceAniStatus == 255) {
+		if (!_G(gameState).R40PoliceAway && _G(gameState).R40PoliceAniStatus == 255) {
 			result = true;
 			_G(gameState).R40PoliceAb = true;
 			hideCur();
@@ -602,7 +607,7 @@ bool Room40::use_police() {
 int16 Room40::use_tele() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && _G(gameState).R40PoliceWeg == false) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R40PoliceAway == false) {
 		action_flag = true;
 		hideCur();
 
@@ -634,7 +639,7 @@ int16 Room40::use_tele() {
 
 			if (dia_nr1 == 223) {
 				if (isCurInventory(DUENGER_INV)) {
-					delInventory(_G(gameState).AkInvent);
+					delInventory(_G(cur)->getInventoryCursor());
 				} else {
 					remove_inventory(DUENGER_INV);
 				}

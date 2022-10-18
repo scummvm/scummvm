@@ -30,7 +30,9 @@ namespace Hypno {
 
 extern const char *sceneVariables[];
 
-SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd) : HypnoEngine(syst, gd) {
+SpiderEngine::SpiderEngine(OSystem *syst, const ADGameDescription *gd)
+  : HypnoEngine(syst, gd),
+  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft) {
 	_screenW = 640;
 	_screenH = 480;
 	_font = nullptr;
@@ -75,7 +77,15 @@ void SpiderEngine::loadAssetsFullGame() {
 	ChangeLevel *cl;
 	Global *gl;
 
+	Sound *snd = new Sound("mouse.raw");
 	loadSceneLevel("mainmenu.mi_", "", prefix);
+	sc = (Scene *) _levels["mainmenu.mi_"];
+	sc->hots[1].actions.push_back(snd);
+	sc->hots[2].actions.push_back(snd);
+	sc->hots[3].actions.push_back(snd);
+	sc->hots[4].actions.push_back(snd);
+	sc->hots[5].actions.push_back(snd);
+	sc->hots[6].actions.push_back(snd);
 	loadSceneLevel("tryagain.mi_", "", prefix);
 
 	cl = new ChangeLevel("<give_up>");
@@ -87,6 +97,14 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("options.mi_", "", prefix);
 	loadSceneLevel("levels.mi_", "mv0t.mi_", prefix);
+	sc = (Scene *) _levels["levels.mi_"];
+	sc->hots[1].actions.push_back(snd);
+	sc->hots[2].actions.push_back(snd);
+	sc->hots[3].actions.push_back(snd);
+	sc->hots[4].actions.push_back(snd);
+	sc->hots[5].actions.push_back(snd);
+	sc->hots[6].actions.push_back(snd);
+
 	loadSceneLevel("combmenu.mi_", "", prefix);
 
 	// start level
@@ -306,81 +324,126 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("bushard2.mi_", "", prefix);
 	sc = (Scene *) _levels["bushard2.mi_"];
+	sc->levelIfLose = "<over_bus>";
 	Escape *escape = new Escape();
 
-	Hotspots *hs = sc->hots[1].smenu;
+	Hotspots *hs = &sc->hots;
+	Timer *tm = new Timer(600000, "vus0");
+	Actions ac = (*hs)[0].actions;
+	(*hs)[0].actions.clear();
+	(*hs)[0].actions.push_back(tm);
+
+	for (int i = 0; i < int(ac.size()); i++)
+		(*hs)[0].actions.push_back(ac[i]);
+
+	hs = sc->hots[1].smenu;
 	(*hs)[1].actions.push_back(escape);
 
 	cl = new ChangeLevel("<check_mixture>");
 	sc->hots[2].actions.push_back(cl);
 
 	cl = new ChangeLevel("<add_ingredient>");
+	sc->hots[3].actions.push_back(snd);
 	sc->hots[3].actions.push_back(cl);
 
 	gl = new Global("", "CLEAR");
+	SwapPointer *swpt = new SwapPointer(20);
+	sc->hots[4].actions.push_back(swpt);
+	sc->hots[4].actions.push_back(snd);
 	sc->hots[4].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH1", "TURNON"); // hairspray
 	sc->hots[4].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[5].actions.push_back(snd);
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH2", "TURNON"); // spot remover
+	swpt = new SwapPointer(21);
+	sc->hots[5].actions.push_back(swpt);
 	sc->hots[5].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[6].actions.push_back(snd);
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH3", "TURNON"); // rubbing alcohol
+	swpt = new SwapPointer(22);
+	sc->hots[6].actions.push_back(swpt);
 	sc->hots[6].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[7].actions.push_back(snd);
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH4", "TURNON"); // turpentine
+	swpt = new SwapPointer(23);
+	sc->hots[7].actions.push_back(swpt);
 	sc->hots[7].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[8].actions.push_back(snd);
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH5", "TURNON"); // spray paint
+	swpt = new SwapPointer(24);
+	sc->hots[8].actions.push_back(swpt);
+	sc->hots[8].actions.push_back(swpt);
 	sc->hots[8].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(26);
+	sc->hots[9].actions.push_back(swpt);
+	sc->hots[9].actions.push_back(snd);
 	sc->hots[9].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // glass cleaner
 	sc->hots[9].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[10].actions.push_back(snd);
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	swpt = new SwapPointer(18);
+	sc->hots[10].actions.push_back(swpt);
 	sc->hots[10].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[11].actions.push_back(snd);
 	sc->hots[11].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // cleanser
+	swpt = new SwapPointer(28);
+	sc->hots[11].actions.push_back(swpt);
 	sc->hots[11].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	sc->hots[12].actions.push_back(snd);
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH6", "TURNON"); // fingernail polish
+	swpt = new SwapPointer(29);
+	sc->hots[12].actions.push_back(swpt);
 	sc->hots[12].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(30);
+	sc->hots[13].actions.push_back(swpt);
+	sc->hots[13].actions.push_back(snd);
 	sc->hots[13].actions.push_back(gl);
 
 	gl = new Global("GS_SWITCH0", "TURNON"); // other
 	sc->hots[13].actions.push_back(gl);
 
 	gl = new Global("", "CLEAR");
+	swpt = new SwapPointer(31);
+	sc->hots[14].actions.push_back(swpt);
+	sc->hots[14].actions.push_back(snd);
 	sc->hots[14].actions.push_back(gl);
 
-	gl = new Global("GS_SWITCH0", "TURNON"); // other
+	gl = new Global("GS_SWITCH0", "TURNON"); // aspirine
 	sc->hots[14].actions.push_back(gl);
 
 	loadSceneLevel("buspuz.mi_", "<after_bus_easy>", prefix);
@@ -469,6 +532,29 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadSceneLevel("boilhard.mi_", "", prefix);
 	sc = (Scene *) _levels["boilhard.mi_"];
+	Hotspots *hots = sc->hots[1].smenu;
+
+	swpt = (SwapPointer *) (*hots)[1].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[2].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[3].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[4].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[5].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[6].actions[4];
+	swpt->index--;
+
+	swpt = (SwapPointer *) (*hots)[7].actions[4];
+	swpt->index--;
+
 	over = (Overlay*) sc->hots[0].actions[2];
 	over->path = "int_alof\\BOILB1.SMK"; // seems to be a bug?
 
@@ -573,7 +659,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	loadArcadeLevel("c5h.mi_", "<trans_apt_6>", "<over_hob2>", prefix);
 	if (_restoredContentEnabled)
-		_levels["c5.mi_"]->intros.push_back("cine/ppv006bs.smk");
+		_levels["c5h.mi_"]->intros.push_back("cine/ppv006bs.smk");
 	_levels["c5h.mi_"]->intros.push_back("cine/ctss001s.smk");
 
 	Transition *trans_apt_6 = new Transition("factory1.mi_");
@@ -889,7 +975,7 @@ void SpiderEngine::loadAssetsFullGame() {
 
 	Transition *over_bus = new Transition("tryagain.mi_");
 	over_bus->intros.push_back("spider/cine/blcs002s.smk");
-	over_bus->intros.push_back("spider/cine/apt04as.smk");
+	over_bus->intros.push_back("spider/cine/apts04as.smk");
 	_levels["<over_bus>"] = over_bus;
 
 	Transition *over_octo1 = new Transition("tryagain.mi_");

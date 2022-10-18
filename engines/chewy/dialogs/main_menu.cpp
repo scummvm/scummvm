@@ -20,15 +20,16 @@
  */
 
 #include "common/config-manager.h"
-#include "common/textconsole.h"
 #include "chewy/dialogs/main_menu.h"
 #include "chewy/dialogs/cinema.h"
 #include "chewy/dialogs/credits.h"
 #include "chewy/dialogs/files.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
-#include "chewy/ngshext.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -53,24 +54,22 @@ void MainMenu::execute() {
 	_G(cur)->move(152, 92);
 	g_events->_mousePos.x = 152;
 	g_events->_mousePos.y = 92;
-	_G(gameState).inv_cur = false;
+	_G(cur)->setInventoryCursor(-1);
 	_G(menu_display) = 0;
-	_G(gameState).soundLoopMode = 1;
 
 	bool done = false;
 	while (!done && !SHOULD_QUIT) {
 		g_engine->_sound->stopAllSounds();
 		_G(SetUpScreenFunc) = screenFunc;
 
-		cursorChoice(CUR_ZEIGE);
+		cursorChoice(CUR_POINT);
 		_selection = -1;
 		_G(gameState).scrollx = _G(gameState).scrolly = 0;
 		_G(gameState)._personRoomNr[P_CHEWY] = 98;
 		_G(room)->loadRoom(&_G(room_blk), 98, &_G(gameState));
 
-		_G(currentSong) = -1;
-		load_room_music(98);
-		_G(fx)->border(_G(workpage), 100, 0, 0);
+		g_engine->_sound->playRoomMusic(98);
+		_G(fx)->border(_G(workpage), 0, 0);
 
 		_G(out)->setPalette(_G(pal));
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -91,7 +90,7 @@ void MainMenu::execute() {
 			break;
 
 		case MM_VIEW_INTRO:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(out)->setPointer(_G(workptr));
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_135);
@@ -117,10 +116,10 @@ void MainMenu::execute() {
 			break;
 
 		case MM_CREDITS:
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			_G(flags).NoPalAfterFlc = true;
 			flic_cut(FCUT_159);
-			_G(fx)->border(_G(workpage), 100, 0, 0);
+			_G(fx)->border(_G(workpage), 0, 0);
 			Dialogs::Credits::execute();
 			break;
 
@@ -133,7 +132,7 @@ void MainMenu::execute() {
 void MainMenu::screenFunc() {
 	int vec = _G(det)->maus_vector(g_events->_mousePos.x + _G(gameState).scrollx, g_events->_mousePos.y + _G(gameState).scrolly);
 
-	if (_G(in)->getSwitchCode() == 28 || _G(minfo)._button == 1) {
+	if (g_events->getSwitchCode() == 28 || _G(minfo).button == 1) {
 		_selection = vec;
 	}
 }
@@ -142,7 +141,7 @@ void MainMenu::animate() {
 	if (_G(ani_timer)->_timeFlag) {
 		_G(uhr)->resetTimer(0, 0);
 		_G(gameState).DelaySpeed = _G(FrameSpeed) / _G(gameState).FramesPerSecond;
-		_G(spieler_vector)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
+		_G(moveState)->Delay = _G(gameState).DelaySpeed + _G(spz_delay)[0];
 		_G(FrameSpeed) = 0;
 		_G(det)->set_global_delay(_G(gameState).DelaySpeed);
 	}
@@ -160,11 +159,10 @@ void MainMenu::animate() {
 	spriteEngine();
 	kb_mov(1);
 	calcMouseText(g_events->_mousePos.x, g_events->_mousePos.y, 1);
-	_G(cur)->plot_cur();
+	_G(cur)->updateCursor();
 	_G(mouseLeftClick) = false;
-	_G(menu_flag) = 0;
 	_G(out)->setPointer(nullptr);
-	_G(out)->back2screen(_G(workpage));
+	_G(out)->copyToScreen();
 
 	g_screen->update();
 	g_events->update();
@@ -175,23 +173,17 @@ void MainMenu::startGame() {
 	animate();
 	exit_room(-1);
 
-	uint8 soundVol = _G(gameState).SoundVol;
-	uint8 musicVol = _G(gameState).MusicVol;
 	uint8 framesPerSecond = _G(gameState).FramesPerSecond;
-	int sndLoopMode = _G(gameState).soundLoopMode;
 
 	var_init();
 
-	_G(gameState).SoundVol = soundVol;
-	_G(gameState).MusicVol = musicVol;
 	_G(gameState).FramesPerSecond = framesPerSecond;
-	_G(gameState).soundLoopMode = sndLoopMode;
 
 	_G(gameState)._personRoomNr[P_CHEWY] = 0;
 	_G(room)->loadRoom(&_G(room_blk), 0, &_G(gameState));
 
-	_G(spieler_vector)[P_CHEWY].Phase = 6;
-	_G(spieler_vector)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
+	_G(moveState)[P_CHEWY].Phase = 6;
+	_G(moveState)[P_CHEWY].PhAnz = _G(chewy_ph_nr)[6];
 	setPersonPos(160, 80, P_CHEWY, P_RIGHT);
 	_G(fx_blend) = BLEND3;
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -204,18 +196,16 @@ void MainMenu::startGame() {
 bool MainMenu::loadGame() {
 	_G(flags).SaveMenu = true;
 	savePersonAni();
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(fontMgr)->setFont(_G(font6));
 	cursorChoice(CUR_SAVE);
 	_G(cur)->move(152, 92);
 	g_events->_mousePos.x = 152;
 	g_events->_mousePos.y = 92;
 	_G(savegameFlag) = true;
-	int result = Dialogs::Files::execute(false);
+	int result = Files::execute(false);
 
-	cursorChoice((_G(gameState).inv_cur && _G(gameState).AkInvent != -1 &&
-		_G(menu_item) == CUR_USE) ? 8 : 0);
-	_G(cur_display) = true;
+	cursorChoice((_G(cur)->usingInventoryCursor() && _G(menu_item) == CUR_USE) ? 8 : 0);
 	restorePersonAni();
 	_G(flags).SaveMenu = false;
 
@@ -230,7 +220,6 @@ bool MainMenu::loadGame() {
 void MainMenu::playGame() {
 	// unused1 = 0;
 	_G(inv_disp_ok) = false;
-	_G(cur_display) = true;
 	_G(tmp_menu_item) = 0;
 	_G(mouseLeftClick) = false;
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
@@ -238,8 +227,8 @@ void MainMenu::playGame() {
 	_G(flags).mainMouseFlag = false;
 	_G(flags).MainInput = true;
 	_G(flags).ShowAtsInvTxt = true;
-	_G(cur)->show_cur();
-	_G(spieler_vector)[P_CHEWY].Count = 0;
+	_G(cur)->showCursor();
+	_G(moveState)[P_CHEWY].Count = 0;
 	_G(uhr)->resetTimer(0, 0);
 
 	while (!SHOULD_QUIT && !mainLoop(1)) {

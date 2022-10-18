@@ -78,9 +78,10 @@ ResourceLoader::ResourceLoader() {
 	Lab *l;
 	Common::ArchiveMemberList files, updFiles;
 
-	//Load the update from the executable, if needed
+	// Load the update from the executable, if needed
 	const char *updateFilename = nullptr;
-	if (g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered()) {
+	if ((g_grim->getGameType() == GType_GRIM && !g_grim->isRemastered())
+	    || g_grim->getGameType() == GType_MONKEY4) {
 		updateFilename = g_grim->getUpdateFilename();
 	}
 	if (updateFilename) {
@@ -95,19 +96,21 @@ ResourceLoader::ResourceLoader() {
 		// Check if the update has been correctly loaded
 		if (!SearchMan.hasArchive("update")) {
 			Common::U32String errorMessage;
+			Common::String urlForPatchDownload = Common::String::format("https://downloads.scummvm.org/frs/extras/patches/%s",
+			                                     (g_grim->getGameType() == GType_GRIM)? "gfupd101.exe" : "");
 			if (g_grim->getGameType() == GType_GRIM) {
-				errorMessage = _("The original patch of Grim Fandango\n"
+				errorMessage = Common::U32String::format(_("The original patch of Grim Fandango\n"
 								"is missing. Please download it from\n"
-								"https://downloads.scummvm.org/frs/extras/patches/gfupd101.exe\n"
-								"and put it in the game data files directory");
+								"%s\n"
+								"and put it in the game data files directory"), urlForPatchDownload.c_str());
 			} else if (g_grim->getGameType() == GType_MONKEY4) {
-				errorMessage = _("The original patch of Escape from Monkey Island is missing. \n"
-								"Please download it from https://downloads.scummvm.org/frs/extras/patches/\n"
+				errorMessage = Common::U32String::format(_("The original patch of Escape from Monkey Island is missing. \n"
+								"Please download it from %s\n"
 								"and put it in the game data files directory.\n"
-								"Pay attention to download the correct version according to the game's language");
+								"Pay attention to download the correct version according to the game's language!"), urlForPatchDownload.c_str());
 			}
 
-			GUI::displayErrorDialog(errorMessage);
+			GUIErrorMessageWithURL(errorMessage, urlForPatchDownload.c_str());
 			error("%s not found", updateFilename);
 		}
 	}
@@ -140,11 +143,11 @@ ResourceLoader::ResourceLoader() {
 				SearchMan.listMatchingMembers(files, "commentary.lab");
 				SearchMan.listMatchingMembers(files, "images.lab");
 			}
-			//Sort the archives in order to ensure that they are loaded with the correct order
+			// Sort the archives in order to ensure that they are loaded with the correct order
 			Common::sort(files.begin(), files.end(), LabListComperator());
 
-			//Check the presence of datausr.lab and if the user wants to load it.
-			//In this case put it in the top of the list
+			// Check the presence of datausr.lab and if the user wants to load it.
+			// In this case put it in the top of the list
 			const char *datausr_name = "datausr.lab";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
 				warning("%s", "Loading datausr.lab. Please note that the ScummVM team doesn't provide support for using such patches");
@@ -164,9 +167,8 @@ ResourceLoader::ResourceLoader() {
 			SearchMan.listMatchingMembers(files, "tile.lab");
 			SearchMan.listMatchingMembers(files, "voice.lab");
 		} else {
-
-			//Keep i9n.m4b before patch.m4b for a better efficiency
-			//in decompressing from Monkey Update.exe
+			// Keep i9n.m4b before patch.m4b for a better efficiency
+			// in decompressing from Monkey Update.exe
 			SearchMan.listMatchingMembers(files, "i9n.m4b");
 			SearchMan.listMatchingMembers(files, "patch.m4b");
 			SearchMan.listMatchingMembers(files, "art???.m4b");
@@ -180,8 +182,8 @@ ResourceLoader::ResourceLoader() {
 				SearchMan.listMatchingMembers(files, "???.m4b");
 			}
 
-			//Check the presence of datausr.m4b and if the user wants to load it.
-			//In this case put it in the top of the list
+			// Check the presence of datausr.m4b and if the user wants to load it.
+			// In this case put it in the top of the list
 			const char *datausr_name = "datausr.m4b";
 			if (SearchMan.hasFile(datausr_name) && ConfMan.getBool("datausr_load")) {
 				warning("%s", "Loading datausr.m4b. Please note that the ScummVM team doesn't provide support for using such patches");
@@ -193,13 +195,13 @@ ResourceLoader::ResourceLoader() {
 	if (files.empty())
 		error("%s", "Cannot find game data - check configuration file");
 
-	//load labs
+	// Load labs
 	int priority = files.size();
 	for (Common::ArchiveMemberList::const_iterator x = files.begin(); x != files.end(); ++x) {
 		Common::String filename = (*x)->getName();
 		filename.toLowercase();
 
-		//Avoid duplicates
+		// Avoid duplicates
 		if (SearchMan.hasArchive(filename))
 			continue;
 
@@ -249,7 +251,6 @@ Common::SeekableReadStream *ResourceLoader::getFileFromCache(const Common::Strin
 		return nullptr;
 
 	return new Common::MemoryReadStream(entry->resPtr, entry->len);
-
 }
 
 ResourceLoader::ResourceCache *ResourceLoader::getEntryFromCache(const Common::String &filename) const {
@@ -451,6 +452,12 @@ Material *ResourceLoader::loadMaterial(const Common::String &filename, CMap *c, 
 			return loadMaterial(replacement, nullptr, clamp);
 		} else {
 			error("Could not find material %s", filename.c_str());
+		}
+	}
+	if (!stream) {
+		// Specialty materials are not loaded from files.
+		if (!filename.hasPrefix("specialty")) {
+			error("Couldn't open %s", fname.c_str());
 		}
 	}
 

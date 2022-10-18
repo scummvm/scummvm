@@ -95,7 +95,7 @@ void GameState::initHeroVars() {
 
 	_usingSabre = false;
 
-	_engine->_scene->_sceneHero->_body = BodyType::btNormal;
+	_engine->_scene->_sceneHero->_genBody = BodyType::btNormal;
 	_engine->_scene->_sceneHero->setLife(kActorMaxLife);
 	_engine->_scene->_sceneHero->_talkColor = COLOR_BRIGHT_BLUE;
 }
@@ -110,9 +110,9 @@ void GameState::initEngineVars() {
 	initGameStateVars();
 	initHeroVars();
 
-	_engine->_scene->_newHeroPos.x = 16 * BRICK_SIZE;
-	_engine->_scene->_newHeroPos.y = 24 * BRICK_HEIGHT;
-	_engine->_scene->_newHeroPos.z = 16 * BRICK_SIZE;
+	_engine->_scene->_newHeroPos.x = 16 * SIZE_BRICK_XZ;
+	_engine->_scene->_newHeroPos.y = 24 * SIZE_BRICK_Y;
+	_engine->_scene->_newHeroPos.z = 16 * SIZE_BRICK_XZ;
 
 	_engine->_scene->_currentSceneIdx = SCENE_CEILING_GRID_FADE_1;
 	_engine->_scene->_needChangeScene = LBA1SceneId::Citadel_Island_Prison;
@@ -141,7 +141,7 @@ void GameState::initEngineVars() {
 	_engine->_actor->_previousHeroBehaviour = HeroBehaviourType::kNormal;
 }
 
-// http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
+// https://web.archive.org/web/*/http://lbafileinfo.kazekr.net/index.php?title=LBA1:Savegame
 bool GameState::loadGame(Common::SeekableReadStream *file) {
 	if (file == nullptr) {
 		return false;
@@ -193,7 +193,7 @@ bool GameState::loadGame(Common::SeekableReadStream *file) {
 	_engine->_scene->_newHeroPos.z = file->readSint16LE();
 	_engine->_scene->_sceneHero->_angle = ToAngle(file->readSint16LE());
 	_engine->_actor->_previousHeroAngle = _engine->_scene->_sceneHero->_angle;
-	_engine->_scene->_sceneHero->_body = (BodyType)file->readByte();
+	_engine->_scene->_sceneHero->_genBody = (BodyType)file->readByte();
 
 	const byte numHolomapFlags = file->readByte(); // number of holomap locations
 	if (numHolomapFlags != NUM_LOCATIONS) {
@@ -260,7 +260,7 @@ bool GameState::saveGame(Common::WriteStream *file) {
 	file->writeSint16LE(_engine->_scene->_newHeroPos.y);
 	file->writeSint16LE(_engine->_scene->_newHeroPos.z);
 	file->writeSint16LE(FromAngle(_engine->_scene->_sceneHero->_angle));
-	file->writeByte((uint8)_engine->_scene->_sceneHero->_body);
+	file->writeByte((uint8)_engine->_scene->_sceneHero->_genBody);
 
 	// number of holomap locations
 	file->writeByte(NUM_LOCATIONS);
@@ -316,22 +316,22 @@ void GameState::processFoundItem(InventoryItems item) {
 	_engine->saveFrontBuffer();
 
 	IVec3 itemCamera;
-	itemCamera.x = _engine->_grid->_newCamera.x * BRICK_SIZE;
-	itemCamera.y = _engine->_grid->_newCamera.y * BRICK_HEIGHT;
-	itemCamera.z = _engine->_grid->_newCamera.z * BRICK_SIZE;
+	itemCamera.x = _engine->_grid->_newCamera.x * SIZE_BRICK_XZ;
+	itemCamera.y = _engine->_grid->_newCamera.y * SIZE_BRICK_Y;
+	itemCamera.z = _engine->_grid->_newCamera.z * SIZE_BRICK_XZ;
 
-	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_entity];
+	BodyData &bodyData = _engine->_resources->_bodyData[_engine->_scene->_sceneHero->_body];
 	const IVec3 bodyPos = _engine->_scene->_sceneHero->_pos - itemCamera;
 	Common::Rect modelRect;
 	_engine->_renderer->renderIsoModel(bodyPos, ANGLE_0, ANGLE_45, ANGLE_0, bodyData, modelRect);
 	_engine->_interface->setClip(modelRect);
 
-	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + BRICK_HEIGHT) / BRICK_SIZE;
-	int32 itemY = _engine->_scene->_sceneHero->_pos.y / BRICK_HEIGHT;
+	const int32 itemX = (_engine->_scene->_sceneHero->_pos.x + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
+	int32 itemY = _engine->_scene->_sceneHero->_pos.y / SIZE_BRICK_Y;
 	if (_engine->_scene->_sceneHero->brickShape() != ShapeType::kNone) {
 		itemY++;
 	}
-	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + BRICK_HEIGHT) / BRICK_SIZE;
+	const int32 itemZ = (_engine->_scene->_sceneHero->_pos.z + SIZE_BRICK_Y) / SIZE_BRICK_XZ;
 
 	_engine->_grid->drawOverModelActor(itemX, itemY, itemZ);
 
@@ -459,7 +459,7 @@ void GameState::processGameChoices(TextId choiceIdx) {
 
 	_engine->_text->drawAskQuestion(choiceIdx);
 
-	_engine->_menu->processMenu(&_gameChoicesSettings, false);
+	_engine->_menu->processMenu(&_gameChoicesSettings);
 	const int16 activeButton = _gameChoicesSettings.getActiveButton();
 	_choiceAnswer = _gameChoices[activeButton];
 
@@ -503,18 +503,18 @@ void GameState::processGameoverAnimation() {
 	_engine->_interface->setClip(rect);
 
 	Common::Rect dummy;
-	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= 500) {
+	while (!_engine->_input->toggleAbortAction() && (_engine->_lbaTime - startLbaTime) <= TO_SECONDS(10)) {
 		FrameMarker frame(_engine, 66);
 		_engine->readKeys();
 		if (_engine->shouldQuit()) {
 			return;
 		}
 
-		const int32 avg = _engine->_collision->getAverageValue(40000, 3200, 500, _engine->_lbaTime - startLbaTime);
-		const int32 cdot = _engine->_screens->lerp(1, ANGLE_360, 100, (_engine->_lbaTime - startLbaTime) % 100);
+		const int32 zoom = _engine->_collision->clampedLerp(40000, 3200, TO_SECONDS(10), _engine->_lbaTime - startLbaTime);
+		const int32 angle = _engine->_screens->lerp(1, ANGLE_360, TO_SECONDS(2), (_engine->_lbaTime - startLbaTime) % TO_SECONDS(2));
 
 		_engine->blitWorkToFront(rect);
-		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -cdot, 0, avg);
+		_engine->_renderer->setCameraAngle(0, 0, 0, 0, -angle, 0, zoom);
 		_engine->_renderer->renderIsoModel(0, 0, 0, ANGLE_0, ANGLE_0, ANGLE_0, gameOverPtr, dummy);
 
 		_engine->_lbaTime++;
@@ -549,6 +549,27 @@ int16 GameState::setGas(int16 value) {
 
 void GameState::addGas(int16 value) {
 	setGas(_inventoryNumGas + value);
+}
+
+// late game items from lba1 classic new game +
+void GameState::handleLateGameItems() {
+	if (!_endGameItems) {
+		return;
+	}
+	debug("Give end game items");
+	_endGameItems = false;
+	_magicLevelIdx = 4;
+	setMaxMagicPoints();
+	giveItem(InventoryItems::kiUseSabre);
+	giveItem(InventoryItems::kiProtoPack);
+	giveItem(InventoryItems::kiHolomap);
+	giveItem(InventoryItems::kiTunic);
+	giveItem(InventoryItems::kiMagicBall);
+	giveItem(InventoryItems::kSendellsMedallion);
+	giveItem(InventoryItems::kiPenguin);
+	giveItem(InventoryItems::kGasItem);
+	giveItem(InventoryItems::kiCloverLeaf);
+	addGas(10);
 }
 
 int16 GameState::setKashes(int16 value) {

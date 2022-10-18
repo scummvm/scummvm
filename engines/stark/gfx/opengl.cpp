@@ -50,11 +50,6 @@ OpenGLDriver::~OpenGLDriver() {
 void OpenGLDriver::init() {
 	computeScreenViewport();
 
-#if defined(USE_OPENGL_SHADERS)
-	// The ShaderSurfaceRenderer sets an array buffer which conflict with fixed pipeline rendering
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glMatrixMode(GL_MODELVIEW);
@@ -224,11 +219,6 @@ FadeRenderer *OpenGLDriver::createFadeRenderer() {
 }
 
 void OpenGLDriver::start2DMode() {
-#if defined(USE_OPENGL_SHADERS)
-	// The ShaderSurfaceRenderer sets an array buffer which conflict with fixed pipeline rendering
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	// Enable alpha blending
 	glEnable(GL_BLEND);
 	//glBlendEquation(GL_FUNC_ADD); // It's the default
@@ -253,11 +243,6 @@ void OpenGLDriver::end2DMode() {
 }
 
 void OpenGLDriver::set3DMode() {
-#if defined(USE_OPENGL_SHADERS)
-	// The ShaderSurfaceRenderer sets an array buffer which conflict with fixed pipeline rendering
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	glEnable(GL_DEPTH_TEST);
 	glDepthFunc(GL_LESS);
 

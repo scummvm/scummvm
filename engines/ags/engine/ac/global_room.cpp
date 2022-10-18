@@ -124,7 +124,7 @@ void NewRoom(int nrnum) {
 		if (is_char_walking_ndirect(_G(playerchar))) {
 			// nasty hack - make sure it doesn't move the character
 			// to a walkable area
-			_G(mls)[_G(playerchar)->walking].direct = 1;
+			_GP(mls)[_G(playerchar)->walking].direct = 1;
 			StopMoving(_GP(game).playercharacter);
 		}
 	} else if (_G(in_graph_script))
@@ -177,8 +177,8 @@ void CallRoomScript(int value) {
 		quit("!CallRoomScript: not inside a script???");
 
 	_GP(play).roomscript_finished = 0;
-	RuntimeScriptValue rval_null;
-	_G(curscript)->run_another("on_call", kScInstRoom, 1, RuntimeScriptValue().SetInt32(value), rval_null);
+	RuntimeScriptValue params[]{ value , RuntimeScriptValue() };
+	_G(curscript)->run_another("on_call", kScInstRoom, 1, params);
 }
 
 int HasBeenToRoom(int roomnum) {

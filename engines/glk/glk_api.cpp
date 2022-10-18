@@ -206,7 +206,7 @@ void GlkAPI::glk_window_get_arrangement(winid_t win, uint *method,
 }
 
 winid_t GlkAPI::glk_window_iterate(winid_t win, uint *rock) {
-	win = win ? win->_next : _windows->getRoot();
+	win = win ? win->_next : *_windows->begin();
 
 	if (win) {
 		if (rock)

@@ -66,9 +66,20 @@ public:
 	void addStaticMenus(const MacMenuData *data);
 	void calcDimensions();
 
+	int numberOfMenus();
+	int numberOfMenuItems(MacMenuItem *menu);
+
+	MacMenuItem *getMenuItem(int menuId);
+	MacMenuItem *getMenuItem(const Common::String &menuId);
+	MacMenuItem *getSubMenuItem(MacMenuItem *menu, int itemId);
+	MacMenuItem *getSubMenuItem(MacMenuItem *menu, const Common::String &itemId);
+
 	MacMenuSubMenu *addSubMenu(MacMenuSubMenu *submenu, int index = -1);
 	int addMenuItem(MacMenuSubMenu *submenu, const Common::String &text, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
 	int addMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void insertMenuItem(MacMenuSubMenu *submenu, const Common::String &text, uint pos, int action = -1, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void insertMenuItem(MacMenuSubMenu *submenu, const Common::U32String &text, uint pos, int action = 0, int style = 0, char shortcut = 0, bool enabled = true, bool checked = false);
+	void removeMenuItem(MacMenuSubMenu *submenu, uint pos);
 	void loadMenuResource(Common::MacResManager *resFork, uint16 id);
 	void loadMenuBarResource(Common::MacResManager *resFork, uint16 id);
 	void createSubMenuFromString(int id, const char *string, int commandId);
@@ -85,6 +96,7 @@ public:
 	void enableCommand(int menunum, int action, bool state);
 	void enableCommand(const char *menuitem, const char *menuaction, bool state);
 	void enableCommand(const Common::U32String &menuitem, const Common::U32String &menuaction, bool state);
+	void enableAllMenus();
 	void disableAllMenus();
 
 	bool isVisible() { return _isVisible; }
@@ -97,25 +109,17 @@ public:
 	bool checkIntersects(Common::Rect &rect);
 
 	// macmenuItem operations
-	void setCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
-	void setCheckMark(int menuId, int itemId, bool checkMark);
-	bool getCheckMark(const Common::String &menuId, const Common::String &itemId);
-	bool getCheckMark(int menuId, int itemId);
+	void setCheckMark(MacMenuItem *menuItem, bool checkMark);
+	bool getCheckMark(MacMenuItem *menuItem);
 
-	void setEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
-	void setEnabled(int menuId, int itemId, bool enabled);
-	bool getEnabled(const Common::String &menuId, const Common::String &itemId);
-	bool getEnabled(int menuId, int itemId);
+	void setEnabled(MacMenuItem *menuItem, bool enabled);
+	bool getEnabled(MacMenuItem *menuItem);
 
-	void setName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
-	void setName(int menuId, int itemId, const Common::String &name);
-	Common::String getName(const Common::String &menuId, const Common::String &itemId);
-	Common::String getName(int menuId, int itemId);
+	void setName(MacMenuItem *menuItem, const Common::String &name);
+	Common::String getName(MacMenuItem *menuItem);
 
-	void setAction(const Common::String &menuId, const Common::String &itemId, int actionId);
-	void setAction(int menuId, int itemId, int actionId);
-	int getAction(const Common::String &menuId, const Common::String &itemId);
-	int getAction(int menuId, int itemId);
+	void setAction(MacMenuItem *menuItem, int actionId);
+	int getAction(MacMenuItem *menuItem);
 
 	Common::Rect _bbox;
 

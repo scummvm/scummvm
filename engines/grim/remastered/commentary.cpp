@@ -39,7 +39,7 @@ class Comment {
 	Common::String _name;
 	Common::String _filename;
 	Common::Array<CommentLine> _lines;
-	bool _hasHeard; //TODO: Should be saved
+	bool _hasHeard; // TODO: Should be saved
 public:
 	Comment(const Common::String &name, const Common::String &filename);
 	Common::String getName() const;

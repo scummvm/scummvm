@@ -40,6 +40,7 @@ class SeekableReadStreamEndian;
 namespace Director {
 
 struct ChunkReference;
+struct MenuReference;
 struct TheEntity;
 struct TheEntityField;
 struct LingoArchive;
@@ -56,6 +57,7 @@ class LingoCompiler;
 typedef void (*inst)(void);
 #define	STOP (inst)0
 #define ENTITY_INDEX(t,id) ((t) * 100000 + (id))
+#define printWithArgList g_lingo->printSTUBWithArglist
 
 int calcStringAlignment(const char *s);
 int calcCodeAlignment(int l);
@@ -140,9 +142,12 @@ struct Datum {	/* interpreter stack type */
 		AbstractObject *obj; /* OBJECT */
 		ChunkReference *cref; /* CHUNKREF */
 		CastMemberID *cast;	/* CASTREF, FIELDREF */
+		MenuReference *menu; /* MENUREF	*/
 	} u;
 
 	int *refCount;
+
+	bool ignoreGlobal; // True if this Datum should be ignored by showGlobals and clearGlobals
 
 	Datum();
 	Datum(const Datum &d);
@@ -192,6 +197,15 @@ struct ChunkReference {
 
 	ChunkReference(const Datum &src, ChunkType t, int sc, int ec, int s, int e)
 		: source(src), type(t), startChunk(sc), endChunk(ec), start(s), end(e) {}
+};
+
+struct MenuReference {
+	int menuIdNum;
+	Common::String *menuIdStr;
+	int menuItemIdNum;
+	Common::String *menuItemIdStr;
+
+	MenuReference();
 };
 
 struct PCell {
@@ -266,7 +280,9 @@ struct LingoArchive {
 	SymbolHash functionHandlers;
 
 	ScriptContext *getScriptContext(ScriptType type, uint16 id);
+	ScriptContext *findScriptContext(uint16 id);
 	Common::String getName(uint16 id);
+	Common::String formatFunctionList(const char *prefix);
 
 	void addCode(const Common::U32String &code, ScriptType type, uint16 id, const char *scriptName = nullptr);
 	void removeCode(ScriptType type, uint16 id);
@@ -282,12 +298,21 @@ public:
 	~Lingo();
 
 	void resetLingo();
+	int getMenuNum();
+	int getMenuItemsNum(Datum &d);
 
 	void executeHandler(const Common::String &name);
 	void executeScript(ScriptType type, CastMemberID id);
+	Common::String formatStack();
 	void printStack(const char *s, uint pc);
+	Common::String formatCallStack(uint pc);
 	void printCallStack(uint pc);
+	Common::String formatFrame();
+	Common::String formatCurrentInstruction();
 	Common::String decodeInstruction(ScriptData *sd, uint pc, uint *newPC = NULL);
+	Common::String decodeScript(ScriptData *sd);
+	Common::String formatFunctionName(Symbol &sym);
+	Common::String formatFunctionBody(Symbol &sym);
 
 	void reloadBuiltIns();
 	void initBuiltIns();
@@ -334,9 +359,11 @@ public:
 	Common::U32String evalChunkRef(const Datum &var);
 	Datum findVarV4(int varType, const Datum &id);
 	CastMemberID resolveCastMember(const Datum &memberID, const Datum &castLib);
+	void exposeXObject(const char *name, Datum obj);
 
 	int getAlignedType(const Datum &d1, const Datum &d2, bool numsOnly);
 
+	Common::String formatAllVars();
 	void printAllVars();
 
 	inst readInst() { return getInst(_pc++); }
@@ -383,13 +410,13 @@ public:
 	bool _exitLock;
 	bool _preLoadEventAbort; // no-op, everything is always preloaded
 	Datum _searchPath;
+	bool _trace;	// state of movie's trace function
 	int _traceLoad; // internal Director verbosity level
 	bool _updateMovieEnabled;
+	bool _romanLingo;
 
 	Datum getTheEntity(int entity, Datum &id, int field);
 	void setTheEntity(int entity, Datum &id, int field, Datum &d);
-	Datum getTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId);
-	void setTheMenuItemEntity(int entity, Datum &menuId, int field, Datum &menuItemId, Datum &d);
 	Datum getTheSprite(Datum &id, int field);
 	void setTheSprite(Datum &id, int field, Datum &d);
 	Datum getTheCast(Datum &id, int field);

@@ -382,11 +382,9 @@ void Sound::convertPan(int32 &pan) {
 
 	int32 p = CLIP<int32>(pan, -10000, 10000);
 	if (p < 0) {
-		pan = (int)(255.0 * pow(10.0, (double)p / 2000.0) + 127.5);
-	} else if (p > 0) {
-		pan = (int)(255.0 * pow(10.0, (double)p / -2000.0) - 127.5);
+		pan =  129 * (1 - pow(10.0, p /  5000.0));
 	} else {
-		pan = 0;
+		pan = -129 * (1 - pow(10.0, p / -5000.0));
 	}
 }
 

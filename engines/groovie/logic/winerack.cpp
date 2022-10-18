@@ -60,6 +60,7 @@ void WineRackGame::run(byte *scriptVariables) {
 
 	switch (op) {
 	case 3:
+		debugC(kDebugLogic, "WineRackGame initGrid, seed: %u", _random.getSeed());
 		initGrid(scriptVariables[4]);
 		break;
 	case 4:	// Player's move
@@ -456,8 +457,12 @@ int8 WineRackGame::randomMoveStart() {
 
 int8 WineRackGame::randomMoveStart2() {
 	const int8 moves[] = { 25, 26, 63, 64 };
-
-	return moves[_random.getRandomNumber(3)];
+	// the original game doesn't ensure the spot isn't taken
+	int8 res = 0;
+	do {
+		res = moves[_random.getRandomNumber(3)];
+	} while (_wineRackGrid[res] != 0);
+	return res;
 }
 
 void WineRackGame::testWinCondition(byte player, int baseX, int baseY) {
@@ -520,6 +525,8 @@ void WineRackGame::runTests() {
 	// pairs of x,y for the player's moves
 	testGame(1, {9,0, 9,1, 9,2, 9,3, 9,4, 9,5, 9,6, 9,7, 9,8, 9,9}, false);
 	testGame(2, {5,5, 3,5, 7,4, 1,6, 9,3, 0,7, 2,6, 4,5, 6,5, 8,4}, true);
+	// in the original game, the AI had a 25% chance to move to 2,6 as its first move, even if your first move was to 2,6 already
+	testGame(147160395, {2,6, 3,6, 4,6, 5,6, 7,6, 8,6, 9,6, 2,7, 3,7, 4,7}, false);
 
 	_random.setSeed(oldSeed);
 	warning("WineRackGame::runTests() finished");

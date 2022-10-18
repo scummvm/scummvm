@@ -722,13 +722,11 @@ void GfxAnimate::throttleSpeed() {
 
 		// One entry drawn -> check if that entry was a speed benchmark view, if not enable speed throttler
 		AnimateEntry *onlyCast = &_lastCastData[0];
-		if ((onlyCast->viewId == 0) && (onlyCast->loopNo == 13) && (onlyCast->celNo == 0)) {
-			// this one is used by jones talkie
-			if ((onlyCast->celRect.height() == 8) && (onlyCast->celRect.width() == 8)) {
-				_s->_gameIsBenchmarking = true;
-				return;
-			}
-		}
+
+		// Note that we now use script patches disable speed tests and avoid their overflow errors.
+		// This heuristic is still useful for any games or versions that haven't been patched yet
+		// and it does make some of the patched tests complete faster and reduce startup delay.
+
 		// first loop and first cel used?
 		if ((onlyCast->loopNo == 0) && (onlyCast->celNo == 0)) {
 			// and that cel has a known speed benchmark resolution
@@ -741,18 +739,15 @@ void GfxAnimate::throttleSpeed() {
 				// check further that there is only one cel in that view
 				GfxView *onlyView = _cache->getView(onlyCast->viewId);
 				if ((onlyView->getLoopCount() == 1) && (onlyView->getCelCount(0))) {
-					_s->_gameIsBenchmarking = true;
 					return;
 				}
 			}
 		}
-		_s->_gameIsBenchmarking = false;
 		_s->_throttleTrigger = true;
 		break;
 	}
 	default:
 		// More than 1 entry drawn -> time for speed throttling
-		_s->_gameIsBenchmarking = false;
 		_s->_throttleTrigger = true;
 		break;
 	}

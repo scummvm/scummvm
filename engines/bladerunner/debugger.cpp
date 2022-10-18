@@ -112,6 +112,7 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	_useBetaCrosshairsCursor = false;
 	_useAdditiveDrawModeForMouseCursorMode0 = false;
 	_useAdditiveDrawModeForMouseCursorMode1 = false;
+	resetPendingOuttake();
 
 	registerCmd("anim", WRAP_METHOD(Debugger, cmdAnimation));
 	registerCmd("health", WRAP_METHOD(Debugger, cmdHealth));
@@ -139,6 +140,8 @@ Debugger::Debugger(BladeRunnerEngine *vm) : GUI::Debugger() {
 	registerCmd("region", WRAP_METHOD(Debugger, cmdRegion));
 	registerCmd("mouse", WRAP_METHOD(Debugger, cmdMouse));
 	registerCmd("difficulty", WRAP_METHOD(Debugger, cmdDifficulty));
+	registerCmd("outtake", WRAP_METHOD(Debugger, cmdOuttake));
+	registerCmd("playvqa", WRAP_METHOD(Debugger, cmdPlayVqa));
 #if BLADERUNNER_ORIGINAL_BUGS
 #else
 	registerCmd("effect", WRAP_METHOD(Debugger, cmdEffect));
@@ -452,7 +455,7 @@ bool Debugger::cmdFlag(int argc, const char **argv) {
 
 	int flag = atoi(argv[1]);
 	int flagCount = _vm->_gameInfo->getFlagCount();
-	if (flag > 0 && flag < flagCount) {
+	if (flag >= 0 && flag < flagCount) {
 		if (argc == 3) {
 			int value = atoi(argv[2]);
 			if (value == 0) {
@@ -638,7 +641,7 @@ bool Debugger::cmdMusic(int argc, const char** argv) {
 	Common::String trackArgStr = argv[1];
 	if (trackArgStr == "list") {
 		for (int i = 0; i < (int)_vm->_gameInfo->getMusicTrackCount(); ++i) {
-			debugPrintf("%2d %s\n", i, kMusicTracksArr[i]);
+			debugPrintf("%2d - %s\n", i, kMusicTracksArr[i]);
 		}
 		return true;
 	} else if (trackArgStr == "stop") {
@@ -1012,6 +1015,10 @@ bool Debugger::cmdLoad(int argc, const char **argv) {
 		return true;
 	}
 
+	// NOTE Using FSNode here means that ScummVM will not use SearchMan to find the file,
+	//      so the file should be at folder where ScummVM was launched from.
+	// TODO Consider using Common::File instead similar to how
+	//      BladeRunnerEngine::getResourceStream() is implemented)
 	Common::FSNode fs(argv[1]);
 
 	if (!fs.isReadable()) {
@@ -1040,6 +1047,9 @@ bool Debugger::cmdSave(int argc, const char **argv) {
 		return true;
 	}
 
+	// NOTE Using FSNode here means that ScummVM will ouput the saved game file
+	//      into the folder ScummVM was launched from.
+	// TODO Maybe output the saved game file into the game data (top most) folder?
 	Common::FSNode fs(argv[1]);
 
 	if (fs.exists() && !fs.isWritable()) {
@@ -1160,12 +1170,11 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 	bool invalidSyntax = false;
 
 	if (_vm->_kia->isOpen()
-		|| _vm->_esper->isOpen()
-		|| _vm->_spinner->isOpen()
-		|| _vm->_elevator->isOpen()
-		|| _vm->_vk->isOpen()
-		|| _vm->_scores->isOpen()
-	) {
+	    || _vm->_esper->isOpen()
+	    || _vm->_spinner->isOpen()
+	    || _vm->_elevator->isOpen()
+	    || _vm->_vk->isOpen()
+	    || _vm->_scores->isOpen() ) {
 		debugPrintf("Sorry, playing custom overlays in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
 		return true;
 	}
@@ -1387,7 +1396,7 @@ bool Debugger::cmdOverlay(int argc, const char **argv) {
 bool Debugger::cmdSubtitle(int argc, const char **argv) {
 	bool invalidSyntax = false;
 
-	if (argc != 2) {
+	if (argc != 2 && argc != 3) {
 		invalidSyntax = true;
 	} else {
 		if (!_vm->_subtitles->isSystemActive()) {
@@ -1395,6 +1404,15 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 		}
 
 		Common::String subtitleText = argv[1];
+		int subtitleRole = BladeRunner::Subtitles::kSubtitlesPrimary;
+		if (argc == 3) {
+			subtitleRole = atoi(argv[2]);
+			// Just interpret any number other than 0 as secondary subtitles
+			if (subtitleRole != BladeRunner::Subtitles::kSubtitlesPrimary) {
+				subtitleRole = BladeRunner::Subtitles::kSubtitlesSecondary;
+			}
+		}
+
 		if (subtitleText == "info") {
 			debugPrintf("Subtitles version info: v%s (%s) %s\nCredits:\n%s\n",
 			            _vm->_subtitles->getSubtitlesInfo().versionStr.c_str(),
@@ -1405,21 +1423,39 @@ bool Debugger::cmdSubtitle(int argc, const char **argv) {
 			            _vm->_subtitles->getSubtitlesInfo().fontName.c_str());
 
 		} else if (subtitleText == "reset") {
-			_vm->_subtitles->setGameSubsText("", false);
+			if (argc == 2) {
+				_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesPrimary, "", false);
+				_vm->_subtitles->setGameSubsText(BladeRunner::Subtitles::kSubtitlesSecondary, "", false);
+			} else {
+				_vm->_subtitles->setGameSubsText(subtitleRole, "", false);
+			}
+		} else if (subtitleText == "printExtAscii") {
+			// Test displaying all glyphs in subtitles font
+			Common::String allGlyphQuote;
+			int strpos = 0;
+			for (int j = 1; j < 8; ++j) {
+				for (int i = j * 32; i < (j + 1) * 32 && i < 255 ; ++i) {
+					allGlyphQuote.insertChar((char)i, strpos++);
+					allGlyphQuote.insertChar(' ', strpos++);
+				}
+				if (j < 7) allGlyphQuote.insertChar('\n', strpos++);
+			}
+			_vm->_subtitles->setGameSubsText(subtitleRole, allGlyphQuote, true);
+			_vm->_subtitles->show(subtitleRole);
 		} else {
 			debugPrintf("Showing text: %s\n", subtitleText.c_str());
-			_vm->_subtitles->setGameSubsText(subtitleText, true);
-			_vm->_subtitles->show();
+			_vm->_subtitles->setGameSubsText(subtitleRole, subtitleText, true);
+			_vm->_subtitles->show(subtitleRole);
 		}
 	}
 
 	if (invalidSyntax) {
 		debugPrintf("Show subtitles info, or display and clear (reset) a specified text as subtitle or clear the current subtitle.\n");
 		debugPrintf("Use double quotes to encapsulate the text.\n");
-		debugPrintf("Usage: %s (\"<text_to_display>\" | info | reset)\n", argv[0]);
+		debugPrintf("SubtitleRole can be 0 (primary) or 1 (secondary).\n");
+		debugPrintf("Usage: %s (info | \"<text_to_display>\" [subtitleRole] | printExtAscii [subtitleRole]  | reset [subtitleRole])\n", argv[0]);
 	}
 	return true;
-
 }
 
 /**
@@ -2776,6 +2812,204 @@ void Debugger::updateTogglesForDbgDrawListInCurrentSetAndScene() {
 					 || _viewWaypointsCoverToggle || _specificWaypointCoverDrawn
 					 || _viewWalkboxes || _specificWalkboxesDrawn
 					 || !_specificDrawnObjectsList.empty();
+}
+
+// NOTE The Flythrough (FLYTRU_E) outtake has sound only in Restored Content mode.
+const struct OuttakesVQAsList {
+	int resourceId;
+	const char* name;
+	bool notLocalized;
+	int container;
+	const char* description;
+} outtakesList[] = {
+	{  0, "INTRO",   false,  1, "Act 1 Intro - Prologue" },
+	{  1, "MW_A",    false,  1, "Act 2 Intro" },
+	{  2, "MW_B01",  false,  2, "Act 3 Intro - Start" },
+	{  3, "MW_B02",  false,  2, "Act 3 Intro - Mid A" }, // Lucy is Replicant
+	{  4, "MW_B03",  false,  2, "Act 3 Intro - Mid B" }, // Dektora is Replicant
+	{  5, "MW_B04",  false,  2, "Act 3 Intro - Mid C" }, // Lucy and Dektora are Human
+	{  6, "MW_B05",  false,  2, "Act 3 Intro - End" },
+	{  7, "MW_C01",  false,  3, "Act 4 Intro - Start" },
+	{  8, "MW_C02",  false,  3, "Act 4 Intro - End A" }, // Clovis with INCEPT PHOTO - Twins are Humans
+	{  9, "MW_C03",  false,  3, "Act 4 Intro - End B" }, // Clovis without INCEPT PHOTO - Twins are Replicants
+	{ 10, "MW_D",    false,  3, "Act 5 Intro" },
+	{ 11, "INTRGT",  false,  1, "Interrogation scene" },
+	{ 12, "END01A",  false,  4, "Underground Ending - A" }, // with Lucy (Human)
+	{ 13, "END01B",  false,  4, "Underground Ending - B" }, // with Lucy (Replicant) and enough DNA data
+	{ 14, "END01C",  false,  4, "Underground Ending - C" }, // with Lucy (Replicant) but insufficient DNA data
+	{ 15, "END01D",  false,  4, "Underground Ending - D" }, // with Dektora (Human)
+	{ 16, "END01E",  false,  4, "Underground Ending - E" }, // with Dektora (Replicant) and enough DNA data
+	{ 17, "END01F",  false,  4, "Underground Ending - F" }, // with Dektora (Replicant) but insufficient DNA data
+	{ 18, "END02",   false,  4, "Underground Enging - Clovis" }, // Clovis dying alone in Moonbus
+	{ 19, "END03",   false,  4, "Underground Ending - McCoy" },  // McCoy alone
+	{ 20, "END04A",  false,  4, "Moonbus Ending - Start" },
+	{ 21, "END04B",  false,  4, "Moonbus Ending - Mid A" }, // With Lucy
+	{ 22, "END04C",  false,  4, "Moonbus Ending - Mid B" }, // With Dektora
+	{ 23, "END04D",  false,  4, "Moonbus Ending - End" },   // Moonbus take-off
+	{ 24, "END05",   false,  4, "End 5 - Gaff's Origami" },
+	{ 25, "END06",   false,  4, "Kipple Ending - 6" }, // With Steele
+	{ 26, "END07",   false,  4, "Kipple Ending - 7" }, // McCoy picks up dog origami
+	{ 27, "TB_FLY",  false,  2, "Flying to Tyrell Pyramid" },
+	{ 28, "WSTLGO_E", true, -1, "Westwood Studios Partnership Intro"}, // STARTUP.MIX
+	{ 29, "FLYTRU_E", true,  1, "Spinner Fly-Through"},
+	{ 30, "AWAY01_E", true,  2, "Spinner Flying Away 01"},
+	{ 31, "AWAY02_E", true,  1, "Spinner Flying Away 02"},
+	{ 32, "ASCENT_E", true, -1, "Spinner Ascending"},
+	{ 33, "DSCENT_E", true, -1, "Spinner Descending"},
+	{ 34, "INSD01_E", true,  1, "Spinner Flying (Inside Camera) 01"},
+	{ 35, "INSD02_E", true, -1, "Spinner Flying (Inside Camera) 02"},
+	{ 36, "TWRD01_E", true,  1, "Spinner Flying Towards 01"},
+	{ 37, "TWRD02_E", true,  1, "Spinner Flying Towards 02"},
+	{ 38, "TWRD03_E", true, -1, "Spinner Flying Towards 03"},
+	{ 39, "RACHEL_E", true,  2, "Rachael walks in"},
+	{ 40, "DEKTRA_E", true,  2, "Dektora's (Hecuba's) dance"},
+	{ 41, "BRLOGO_E", true, -1, "Blade Runner Logo"}, // STARTUP.MIX
+	{ -1, nullptr,    true, -1, nullptr}
+};
+
+bool Debugger::cmdOuttake(int argc, const char** argv) {
+	bool invalidSyntax = false;
+
+	if (argc != 2) {
+		invalidSyntax = true;
+	} else {
+		if (_vm->_kia->isOpen()
+		    || _vm->_esper->isOpen()
+		    || _vm->_spinner->isOpen()
+		    || _vm->_elevator->isOpen()
+		    || _vm->_vk->isOpen()
+		    || _vm->_scores->isOpen() ) {
+			debugPrintf("Sorry, playing custom outtakes in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
+			return true;
+		}
+
+		if (!_vm->canSaveGameStateCurrently()) {
+			debugPrintf("Sorry, playing custom outtakes while player control is disabled or an in-game script is running, is not supported\n");
+			return true;
+		}
+
+		Common::String outtakeArgStr = argv[1];
+		if (outtakeArgStr == "list") {
+			for (int i = 0; i < (int)_vm->_gameInfo->getOuttakeCount(); ++i) {
+				debugPrintf("%2d - %s\n", outtakesList[i].resourceId, outtakesList[i].description);
+			}
+			return true;
+		} else {
+			int argId = atoi(argv[1]);
+
+			if ((argId == 0 && !isAllZeroes(outtakeArgStr))
+			    || argId < 0
+			    || argId >= (int)_vm->_gameInfo->getOuttakeCount()) {
+				debugPrintf("Invalid outtake id specified.\nPlease choose an integer between 0 and %d.\n", (int)_vm->_gameInfo->getOuttakeCount() - 1);
+				return true;
+			} else {
+				_dbgPendingOuttake.container = outtakesList[argId].container;
+				if (argId == 35 || argId == 38) {
+					// These outtakes exist in containers: OUTTAKE1 and OUTTAKE2
+					if (_vm->_chapters->currentResourceId() != 1
+					    && _vm->_chapters->currentResourceId() != 2) {
+						_dbgPendingOuttake.container = (int)_vm->_rnd.getRandomNumberRng(1, 2);
+					}
+				} else if (argId == 32 || argId == 33) {
+					// These outtakes exist in containers: OUTTAKE1, OUTTAKE3, OUTTAKE4
+					if (_vm->_chapters->currentResourceId() != 1
+					    && _vm->_chapters->currentResourceId() != 3
+					    && _vm->_chapters->currentResourceId() != 4) {
+						_dbgPendingOuttake.container = (int)_vm->_rnd.getRandomNumberRng(2, 4);
+						if (_dbgPendingOuttake.container == 2)
+							_dbgPendingOuttake.container = 1;
+					}
+				}
+				// We need to close the debugger console first before playing back the outtake.
+				// The following prepares the outtake video for playback within BladeRunnerEngine::gameTick()
+				_dbgPendingOuttake.pending = true;
+				_dbgPendingOuttake.outtakeId = outtakesList[argId].resourceId;
+				_dbgPendingOuttake.notLocalized = outtakesList[argId].notLocalized;
+			}
+		}
+	}
+
+	if (invalidSyntax) {
+		debugPrintf("Play an outtake video.\n");
+		debugPrintf("Usage: %s [<outtakeId> | list]\n", argv[0]);
+		debugPrintf("outtakeId can be in [0, %d]\n", (int)_vm->_gameInfo->getOuttakeCount() - 1);
+		return true;
+	}
+	// close debugger (to play the outtake)
+	return false;
+}
+
+void Debugger::resetPendingOuttake() {
+	_dbgPendingOuttake.pending = false;
+	_dbgPendingOuttake.outtakeId = -1;
+	_dbgPendingOuttake.notLocalized = false;
+	_dbgPendingOuttake.container = -1;
+	_dbgPendingOuttake.externalFilename.clear();
+}
+
+bool Debugger::cmdPlayVqa(int argc, const char** argv) {
+	if (argc != 2) {
+		debugPrintf("Loads a VQA file to play.\n");
+		debugPrintf("Usage: %s <file path>\n", argv[0]);
+		return true;
+	}
+
+	if (_vm->_kia->isOpen()
+	    || _vm->_esper->isOpen()
+	    || _vm->_spinner->isOpen()
+	    || _vm->_elevator->isOpen()
+	    || _vm->_vk->isOpen()
+	    || _vm->_scores->isOpen() ) {
+		debugPrintf("Sorry, playing custom outtakes in KIA, ESPER, Voigt-Kampff, Spinner GPS,\nScores or Elevator mode is not supported\n");
+		return true;
+	}
+
+	if (!_vm->canSaveGameStateCurrently()) {
+		debugPrintf("Sorry, playing custom outtakes while player control is disabled or an in-game script is running, is not supported\n");
+		return true;
+	}
+
+	Common::String filenameArg = argv[1];
+	Common::String basename = filenameArg;
+
+	// Strip the base name of the file of any extension given
+	// to check for existence of basename.VQP and basename.VQA files
+	size_t startOfExt = basename.findLastOf('.');
+	if (startOfExt != Common::String::npos && (basename.size() - startOfExt - 1) == 3) {
+		basename.erase(startOfExt);
+	}
+
+	Common::String basenameVQA = Common::String::format("%s.VQA", basename.c_str());
+	Common::String basenameVQP = Common::String::format("%s.VQP", basename.c_str());
+
+	// Check for existence of VQP
+	bool vqpFileExists = false;
+
+	// Use Common::File exists() check instead of Common::FSNode directly
+	// to allow the file to be placed within SearchMan accessible locations
+	if (!Common::File::exists(basenameVQP)) {
+		debugPrintf("Warning: VQP file %s does not exist\n", basenameVQP.c_str());
+	} else {
+		vqpFileExists = true;
+	}
+
+	if (!Common::File::exists(basenameVQA)) {
+		debugPrintf("Warning: VQA file %s does not exist\n", basenameVQA.c_str());
+		return true;
+	}
+
+	_dbgPendingOuttake.pending = true;
+	_dbgPendingOuttake.outtakeId = -1;
+	if (vqpFileExists) {
+		_dbgPendingOuttake.container = -2; // indicates that an external outtake file with possible VQP companion should be read
+	} else {
+		_dbgPendingOuttake.container = -3; // indicates that an external outtake file but no VQP companion was found so don't check again
+	}
+	_dbgPendingOuttake.notLocalized = true;
+	_dbgPendingOuttake.externalFilename = basename; // external base filename
+
+	// close debugger (to play the outtake)
+	return false;
 }
 
 } // End of namespace BladeRunner

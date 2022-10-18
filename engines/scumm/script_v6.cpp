@@ -763,45 +763,6 @@ void ScummEngine_v6::o6_startScript() {
 		o6_breakHere();
 	}
 
-	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
-	// the church clock, he'll read out the current time. Nice touch, only that
-	// it sounds crap in the german version (and maybe others, too). It seems
-	// the original engine of the german version played just a simple fixed
-	// text in this spot, for the above reason. Since the data files are
-	// unchanged, it must have been an engine hack job. No idea how they did
-	// it exactly, but this here is how we do it :-)
-	if (_game.id == GID_CMI && script == 204 &&
-		_currentRoom == 15 && vm.slot[_currentScript].number == 421 &&
-		_language == Common::DE_DEU) {
-
-		_actorToPrintStrFor = 1;
-		_string[0].loadDefault();
-		actorTalk((const byte *)"/VDSO325/Whoa! Look at the time. Gotta scoot.");
-
-		return;
-	}
-
-	// WORKAROUND bug #3591: When turning pages in the recipe book
-	// (found on Blood Island), there is a brief moment where it displays
-	// text from two different pages at the same time.
-	//
-	// The content of the books is drawing (in an endless loop) by local
-	// script 2007. Changing the page is handled by script 2006, which
-	// first stops script 2007; then switches the page; then restarts
-	// script 2007. But it fails to clear the blast texts beforehand.
-	// Hence, the next time blast text is drawn, both the old one (from
-	// the old instance of script 2007) and the new text (from the new
-	// instance) are briefly drawn simultaneously.
-	//
-	// This looks like a script bug to me (a missing call to clearTextQueue).
-	// But this could also hint at a subtle bug in ScummVM; we should check
-	// whether this bug occurs with the original engine or not.
-	if (_game.id == GID_CMI && script == 2007 &&
-		_currentRoom == 62 && vm.slot[_currentScript].number == 2006) {
-
-		removeBlastTexts();
-	}
-
 	runScript(script, (flags & 1) != 0, (flags & 2) != 0, args);
 }
 
@@ -1115,6 +1076,20 @@ void ScummEngine_v6::o6_setCameraAt() {
 
 void ScummEngine_v6::o6_loadRoom() {
 	int room = pop();
+
+	// WORKAROUND bug #13378: During Sam's reactions to Max beating up the
+	// scientist in the intro, we sometimes have to slow down animations
+	// artificially. This is where we speed them back up again.
+	if (_game.id == GID_SAMNMAX && vm.slot[_currentScript].number == 65 && room == 6 && _enableEnhancements) {
+		int actors[] = { 2, 3, 10 };
+
+		for (int i = 0; i < ARRAYSIZE(actors); i++) {
+			Actor *a = derefActorSafe(actors[i], "o6_animateActor");
+			if (a && a->getAnimSpeed() > 0)
+				a->setAnimSpeed(0);
+		}
+	}
+
 	startScene(room, nullptr, 0);
 	if (_game.heversion >= 61) {
 		setCameraAt(camera._cur.x, 0);
@@ -1150,13 +1125,11 @@ void ScummEngine_v6::o6_walkActorToObj() {
 		getObjectXYPos(obj, x, y, dir);
 		a->startWalkActor(x, y, dir);
 	} else {
-		a2 = derefActorSafe(obj, "o6_walkActorToObj(2)");
-		if (_game.id == GID_SAMNMAX && a2 == nullptr) {
-			// WORKAROUND bug #801 SAM: Fish Farm. Note quite sure why it
-			// happens, whether it's normal or due to a bug in the ScummVM code.
-			debug(0, "o6_walkActorToObj: invalid actor %d", obj);
+		if (!isValidActor(obj))
 			return;
-		}
+
+		a2 = derefActor(obj, "o6_walkActorToObj(2)");
+
 		if (!a->isInCurrentRoom() || !a2->isInCurrentRoom())
 			return;
 		if (dist == 0) {
@@ -1249,6 +1222,17 @@ void ScummEngine_v6::o6_animateActor() {
 			stopTalk();
 		}
 	}
+	if (_game.id == GID_SAMNMAX && _roomResource == 47 && vm.slot[_currentScript].number == 202 &&
+		act == 2 && anim == 249 && _enableEnhancements) {
+		// WORKAROUND for bug #3832: parts of Bruno are left on the screen when he
+		// escapes Bumpusville with Trixie. Bruno (act. 11) and Trixie (act. 12) are
+		// properly removed from the scene by the script, but not the combined actor
+		// which is used by this animation (act. 6).
+		Actor *a = derefActorSafe(6, "o6_animateActor");
+		if (a && a->_costume == 243)
+			a->putActor(0, 0, 0);
+	}
+
 	Actor *a = derefActor(act, "o6_animateActor");
 	a->animateActor(anim);
 }
@@ -1320,8 +1304,8 @@ void ScummEngine_v6::o6_loadRoomWithEgo() {
 }
 
 void ScummEngine_v6::o6_getRandomNumber() {
-	int rnd;
-	rnd = _rnd.getRandomNumber(ABS(pop()));
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = rnd % (pop() + 1);
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -1330,7 +1314,8 @@ void ScummEngine_v6::o6_getRandomNumber() {
 void ScummEngine_v6::o6_getRandomNumberRange() {
 	int max = pop();
 	int min = pop();
-	int rnd = _rnd.getRandomNumberRng(min, max);
+	int rnd = _rnd.getRandomNumber(0x7fff);
+	rnd = min + (rnd % (max - min + 1));
 	if (VAR_RANDOM_NR != 0xFF)
 		VAR(VAR_RANDOM_NR) = rnd;
 	push(rnd);
@@ -1479,6 +1464,19 @@ void ScummEngine_v6::o6_getVerbFromXY() {
 }
 
 void ScummEngine_v6::o6_beginOverride() {
+	// WORKAROUND (bug in the original):
+	// When Guybrush gets on the Sea Cucumber for the first time and the monkeys show up on deck,
+	// if the ESC key is pressed before the "Any last words, Threepwood?" dialogue, the music will
+	// continue playing indefinitely throughout the game (or until another "sequence" music is played).
+	//
+	// To amend this, we intercept this exact script override and we force the playback of sound 2277,
+	// which is the iMUSE sequence which would have been played after the dialogue.
+	if (_enableEnhancements && _game.id == GID_CMI && _currentRoom == 37 && vm.slot[_currentScript].number == 251 &&
+		_sound->isSoundRunning(2275) != 0 && (_scriptPointer - _scriptOrgPointer) == 0x1A) {
+		int list[16] = {0x1001, 2277, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+		_sound->soundKludge(list, 2);
+	}
+
 	beginOverride();
 	_skipVideo = 0;
 }
@@ -1776,7 +1774,16 @@ void ScummEngine_v6::o6_actorOps() {
 
 	switch (subOp) {
 	case 76:		// SO_COSTUME
-		a->setActorCostume(pop());
+		i = pop();
+		// WORKAROUND: There's a small continuity error in DOTT; the fire that
+		// makes Washington leave the room can only exist if he's wearing the
+		// chattering teeth, but yet when he comes back he's not wearing them
+		// during this cutscene.
+		if (_game.id == GID_TENTACLE && _currentRoom == 13 && vm.slot[_currentScript].number == 211 &&
+			a->_number == 8 && i == 53 && _enableEnhancements) {
+			i = 69;
+		}
+		a->setActorCostume(i);
 		break;
 	case 77:		// SO_STEP_DIST
 		j = pop();
@@ -2354,7 +2361,7 @@ void ScummEngine_v6::o6_printEgo() {
 void ScummEngine_v6::o6_talkActor() {
 	int offset = _scriptPointer - _scriptOrgPointer;
 
-	// WORKAROUND for bug #1452: see below for detailed description
+	// WORKAROUND for missing waitForMessage() calls; see below
 	if (_forcedWaitForMessage) {
 		if (VAR(VAR_HAVE_MSG)) {
 			_scriptPointer--;
@@ -2368,19 +2375,52 @@ void ScummEngine_v6::o6_talkActor() {
 		return;
 	}
 
+	// WORKAROUND: If Sam tries to buy an object at Snuckey's without having
+	// any money, Max's comment on capitalism may be cut too early because the
+	// employee reacts immediately after Max without any prior waitForMessage().
+	// The magic values below come from scripts 11-67 and 11-205.
+	//
+	// This call can't just be inserted after Max's line; it needs to be done
+	// just before the employee's line, otherwise the timing with Sam's moves
+	// will feel off -- so we can't use the _forcedWaitForMessage trick.
+	if (_game.id == GID_SAMNMAX && _roomResource == 11 && vm.slot[_currentScript].number == 67
+		&& getOwner(70) != 2 && !readVar(0x8000 + 67) && !readVar(0x8000 + 39) && readVar(0x8000 + 12) == 1
+		&& !getClass(126, 6) && _enableEnhancements) {
+		if (VAR(VAR_HAVE_MSG)) {
+			_scriptPointer--;
+			o6_breakHere();
+			return;
+		}
+	}
+
 	_actorToPrintStrFor = pop();
 
 	// WORKAROUND for bug #3803: "DOTT: Bernard impersonating LaVerne"
 	// Original script did not check for VAR_EGO == 2 before executing
 	// a talkActor opcode.
 	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 307
-			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2) {
+			&& VAR(VAR_EGO) != 2 && _actorToPrintStrFor == 2
+			&& _enableEnhancements) {
 		_scriptPointer += resStrLen(_scriptPointer) + 1;
 		return;
 	}
 
 	_string[0].loadDefault();
 	actorTalk(_scriptPointer);
+
+	// WORKAROUND: Dr Fred's first reaction line about Hoagie's and Laverne's
+	// units after receiving a new diamond is unused because of missing
+	// wait.waitForMessage() calls. We always simulate this opcode when
+	// triggering Dr Fred's lines in this part of the script, since there is
+	// no stable offset for all the floppy, CD and translated versions, and
+	// no easy way to only target the impacted lines.
+	if (_game.id == GID_TENTACLE && vm.slot[_currentScript].number == 9
+		&& vm.localvar[_currentScript][0] == 216 && _actorToPrintStrFor == 4 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
 
 	// WORKAROUND for bug #1452: "DIG: Missing subtitles when talking to Brink"
 	// Original script does not have wait.waitForMessage() after several messages:
@@ -2393,7 +2433,7 @@ void ScummEngine_v6::o6_talkActor() {
 	// [0166] (73)   } else {
 	//
 	// Here we simulate that opcode.
-	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88) {
+	if (_game.id == GID_DIG && vm.slot[_currentScript].number == 88 && _enableEnhancements) {
 		if (offset == 0x158 || offset == 0x214 || offset == 0x231 || offset == 0x278) {
 			_forcedWaitForMessage = true;
 			_scriptPointer--;
@@ -2401,6 +2441,24 @@ void ScummEngine_v6::o6_talkActor() {
 			return;
 		}
 	}
+
+	// WORKAROUND bug #4410: Restore a missing subtitle when Low is inside the
+	// tomb and he finds the purpose of the crypt ("/TOMB.022/Now that I know
+	// what I'm looking for"...). Also happens in the original interpreters.
+	// We used to do this in actorTalk(), but then Low's proper walking
+	// animation was lost and he would just glide over the floor. Having him
+	// wait before he moves is less disturbing, since that's something he
+	// already does in the game.
+	if (_game.id == GID_DIG && _roomResource == 58 && vm.slot[_currentScript].number == 402
+		&& _actorToPrintStrFor == 3 && vm.localvar[_currentScript][0] == 0
+		&& readVar(0x8000 + 94) && readVar(0x8000 + 78) && !readVar(0x8000 + 97)
+		&& _scummVars[269] == 3 && getState(388) == 2 && _enableEnhancements) {
+		_forcedWaitForMessage = true;
+		_scriptPointer--;
+
+		return;
+	}
+
 	_scriptPointer += resStrLen(_scriptPointer) + 1;
 }
 
@@ -2585,7 +2643,7 @@ void ScummEngine_v7::o6_kernelSetFunctions() {
 		break;
 	case 16:
 	case 17:
-		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16));
+		enqueueText(getStringAddressVar(VAR_STRING2DRAW), args[3], args[4], args[2], args[1], (args[0] == 16) ? kStyleAlignCenter : kStyleAlignLeft);
 		break;
 	case 20:
 		_imuseDigital->setRadioChatterSFX(args[1]);
@@ -2859,6 +2917,20 @@ int ScummEngine::getKeyState(int key) {
 }
 
 void ScummEngine_v6::o6_delayFrames() {
+	// WORKAROUND:  At startup, Moonbase Commander will pause for 20 frames before
+	// showing the Infogrames logo.  The purpose of this break is to give time for the
+	// GameSpy Arcade application to fill with the online game infomation.
+	//
+	// [0000] (84) localvar2 = max(readConfigFile.number(":var263:","user","wait-for-gamespy"),10)
+	// [0029] (08) delayFrames((localvar2 * 2))
+	//
+	// But since we don't support GameSpy and have our own online support, this break
+	// has become redundant and only wastes time.
+	if (_game.id == GID_MOONBASE && vm.slot[_currentScript].number == 69) {
+		pop();
+		return;
+	}
+
 	ScriptSlot *ss = &vm.slot[_currentScript];
 	if (ss->delayFrameCount == 0) {
 		ss->delayFrameCount = pop();

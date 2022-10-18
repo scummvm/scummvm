@@ -27,8 +27,6 @@
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/engine/ac/dynobj/script_audio_channel.h"
 #include "ags/engine/media/audio/ambient_sound.h"
-#include "ags/engine/util/mutex.h"
-#include "ags/engine/util/mutex_lock.h"
 #include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
@@ -105,7 +103,7 @@ void        apply_volume_drop_modifier(bool applyModifier);
 void        update_audio_system_on_game_loop();
 void        stopmusic();
 void        update_music_volume();
-void        post_new_music_check(int newchannel);
+void        post_new_music_check();
 // Sets up the crossfading for playing the new music track,
 // and returns the channel number to use; the channel is guaranteed to be free
 int         prepare_for_new_music();

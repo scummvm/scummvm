@@ -216,7 +216,8 @@ void TlcGame::regionsLoad() {
 
 	// Search for the question entry
 	for (int i = 0; i <= _numRegionHeaders; i++) {
-		if (strcmp(questName, _regionHeader[i].name) == 0) {
+		Common::String regionName(_regionHeader[i].name);
+		if (regionName.equalsIgnoreCase(questName)) {
 
 			// move to coordinates for this question
 			regionsfile->seek(_regionHeader[i].offset, SEEK_SET);

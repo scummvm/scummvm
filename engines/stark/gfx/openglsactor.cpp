@@ -155,11 +155,11 @@ void OpenGLSActorRenderer::render(const Math::Vector3d &position, float directio
 }
 
 void OpenGLSActorRenderer::clearVertices() {
-	OpenGL::ShaderGL::freeBuffer(_faceVBO); // Zero names are silently ignored
+	OpenGL::Shader::freeBuffer(_faceVBO); // Zero names are silently ignored
 	_faceVBO = 0;
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
-		OpenGL::ShaderGL::freeBuffer(it->_value);
+		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
 	_faceEBO.clear();
@@ -203,17 +203,17 @@ GLuint OpenGLSActorRenderer::createModelVBO(const Model *model) {
 		*vertPtr++ = (*tri)->_texT;
 	}
 
-	GLuint vbo = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * modelVertices.size(), vertices);
+	GLuint vbo = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 14 * modelVertices.size(), vertices);
 	delete[] vertices;
 
 	return vbo;
 }
 
 GLuint OpenGLSActorRenderer::createFaceEBO(const Face *face) {
-	return OpenGL::ShaderGL::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices[0]);
+	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices[0]);
 }
 
-void OpenGLSActorRenderer::setBonePositionArrayUniform(OpenGL::ShaderGL *shader, const char *uniform) {
+void OpenGLSActorRenderer::setBonePositionArrayUniform(OpenGL::Shader *shader, const char *uniform) {
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
 	GLint pos = shader->getUniformLocation(uniform);
@@ -234,7 +234,7 @@ void OpenGLSActorRenderer::setBonePositionArrayUniform(OpenGL::ShaderGL *shader,
 	delete[] positions;
 }
 
-void OpenGLSActorRenderer::setBoneRotationArrayUniform(OpenGL::ShaderGL *shader, const char *uniform) {
+void OpenGLSActorRenderer::setBoneRotationArrayUniform(OpenGL::Shader *shader, const char *uniform) {
 	const Common::Array<BoneNode *> &bones = _model->getBones();
 
 	GLint rot = shader->getUniformLocation(uniform);

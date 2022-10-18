@@ -39,14 +39,13 @@ public:
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
-		return
-			(f == kSupportsListSaves) ||
-			(f == kSupportsDeleteSave) ||
-			(f == kSupportsLoadingDuringStartup) ||
-			(f == kSavesSupportMetaInfo) ||
-			(f == kSavesSupportThumbnail) ||
-			(f == kSavesSupportCreationDate) ||
-			(f == kSavesSupportPlayTime);
+		return  (f == kSupportsListSaves) ||
+		        (f == kSupportsDeleteSave) ||
+		        (f == kSupportsLoadingDuringStartup) ||
+		        (f == kSavesSupportMetaInfo) ||
+		        (f == kSavesSupportThumbnail) ||
+		        (f == kSavesSupportCreationDate) ||
+		        (f == kSavesSupportPlayTime);
 	}
 
 	SaveStateList listSaves(const char *target) const override {

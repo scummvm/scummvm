@@ -44,15 +44,24 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_cursorColorKey((vm->game() == GI_KYRA1 || vm->game() == GI_EOB1 || vm->game() == GI_EOB2) ? 0xFF : 0),
 	_screenHeight(vm->gameFlags().platform == Common::kPlatformSegaCD ? SCREEN_H_SEGA_NTSC : SCREEN_H) {
 	_debugEnabled = false;
+	_forceFullUpdate = false;
 	_maskMinY = _maskMaxY = -1;
+
+	_mouseLockCount = 0;
 
 	_drawShapeVar1 = 0;
 	_drawShapeVar3 = 1;
 	_drawShapeVar4 = 0;
 	_drawShapeVar5 = 0;
 
+	_dsShapeFadingTable = _dsColorTable = _dsTransparencyTable1 = _dsTransparencyTable2 = _dsBackgroundFadingTable = nullptr;
+	_dsDstPage = nullptr;
+	_dsShapeFadingLevel = _dsDrawLayer = _dsTmpWidth = _dsOffscreenLeft = _dsOffscreenRight = _dsScaleW = _dsScaleH = _dsOffscreenScaleVal1 = _dsOffscreenScaleVal2 = 0;
+
+	memset(_shapePages, 0, sizeof(_shapePages));
 	memset(_fonts, 0, sizeof(_fonts));
 
+	_pagePtrsBuff = nullptr;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	memset(_pageMapping, 0, sizeof(_pageMapping));
 	memset(_sjisOverlayPtrs, 0, sizeof(_sjisOverlayPtrs));
@@ -72,7 +81,7 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_16bitShadingLevel = 0;
 	_bytesPerPixel = 1;
 	_4bitPixelPacking = _useAmigaExtraColors = _isAmiga = _isSegaCD = _use16ColorMode = false;
-	_useSJIS = _useOverlays = false;
+	_useSJIS = _useOverlays = _useHiResEGADithering = false;
 
 	_currentFont = FID_8_FNT;
 	_fontStyles = 0;
@@ -80,9 +89,12 @@ Screen::Screen(KyraEngine_v1 *vm, OSystem *system, const ScreenDim *dimTable, co
 	_textMarginRight = SCREEN_W;
 	_customDimTable = nullptr;
 	_curDim = nullptr;
+	_curDimIndex = 0;
+	_animBlockSize = 0;
 
 	_lineBreakChars = (_vm->gameFlags().platform == Common::kPlatformMacintosh) ? "\n\r" : "\r";
 	_yTransOffs = 0;
+	_dualPaletteModeSplitY = 0;
 
 	_idleUpdateTimer = 0;
 }
@@ -91,7 +103,7 @@ Screen::~Screen() {
 	for (int i = 0; i < SCREEN_OVLS_NUM; ++i)
 		delete[] _sjisOverlayPtrs[i];
 
-	delete[] _pagePtrs[0];
+	delete[] _pagePtrsBuff;
 
 	for (int f = 0; f < ARRAYSIZE(_fonts); ++f)
 		delete _fonts[f];
@@ -152,6 +164,7 @@ bool Screen::init() {
 			_pageMapping[i] = i;
 	}
 
+	memset(_shapePages, 0, sizeof(_shapePages));
 	memset(_fonts, 0, sizeof(_fonts));
 
 	_useOverlays = (_vm->gameFlags().useHiRes && _renderMode != Common::kRenderEGA);
@@ -194,8 +207,6 @@ bool Screen::init() {
 	_curPage = 0;
 
 	enableHiColorMode(false);
-
-	memset(_shapePages, 0, sizeof(_shapePages));
 
 	const int paletteCount = _isAmiga ? 13 : 4;
 	// We allow 256 color palettes in EGA mode, since original EOB II code does the same and requires it
@@ -346,7 +357,17 @@ void Screen::enableHiColorMode(bool enabled) {
 	resetPagePtrsAndBuffers(_isSegaCD ? SCREEN_W * _screenHeight : SCREEN_PAGE_SIZE * _bytesPerPixel);
 }
 
-void Screen::updateScreen() {
+int Screen::updateScreen() {
+	int res = 0;
+	if (_forceFullUpdate) {
+		res = SCREEN_W * SCREEN_H;
+	} else if (!_dirtyRects.empty()) {
+		for (Common::List<Common::Rect>::const_iterator i = _dirtyRects.begin(); i != _dirtyRects.end(); ++i)
+			res += (i->width() * i->height());
+		// Due to overlapping the value might be larger than the actual vga video memory size.
+		res = MIN<int>(res, SCREEN_W * SCREEN_H);
+	}
+
 	bool needRealUpdate = _forceFullUpdate || !_dirtyRects.empty() || _paletteChanged;
 	_paletteChanged = false;
 
@@ -368,6 +389,10 @@ void Screen::updateScreen() {
 
 	if (needRealUpdate)
 		updateBackendScreen(true);
+
+	// I've determined this value for the estimated screen update time on legacy hardware experimentally
+	// with a side-by-side comparison with DOSBox. This was as close as I got...
+	return res / 4000;
 }
 
 #ifdef KYRA_SCREEN_IDLE_REFRESH
@@ -532,7 +557,7 @@ void Screen::setScreenDim(int dim) {
 void Screen::resetPagePtrsAndBuffers(int pageSize) {
 	_screenPageSize = pageSize;
 
-	delete[] _pagePtrs[0];
+	delete[] _pagePtrsBuff;
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 
 	Common::Array<uint8> realPages;
@@ -543,16 +568,19 @@ void Screen::resetPagePtrsAndBuffers(int pageSize) {
 
 	int numPages = realPages.size();
 	uint32 bufferSize = numPages * _screenPageSize;
-
-	uint8 *pagePtr = new uint8[bufferSize]();
+ 
+	uint8 *pos = new uint8[bufferSize]();
+	_pagePtrsBuff = pos;
 
 	memset(_pagePtrs, 0, sizeof(_pagePtrs));
 	for (int i = 0; i < SCREEN_PAGE_NUM; i++) {
 		if (_pagePtrs[_pageMapping[i]]) {
 			_pagePtrs[i] = _pagePtrs[_pageMapping[i]];
+		} else if (pos < &_pagePtrsBuff[bufferSize]) {
+			_pagePtrs[i] = pos;
+			pos += _screenPageSize;
 		} else {
-			_pagePtrs[i] = pagePtr;
-			pagePtr += _screenPageSize;
+			error("Screen::resetPagePtrsAndBuffers(): Failed to allocate screen page buffers");
 		}
 	}
 }
@@ -668,7 +696,7 @@ void Screen::copyWsaRect(int x, int y, int w, int h, int dimState, int plotFunc,
 		switch (plotFunc) {
 		case 0:
 			memcpy(dst, src, cW);
-			dst += cW; src += cW;
+			src += cW;
 			break;
 
 		case 1:
@@ -1377,10 +1405,14 @@ bool Screen::loadFont(FontId fontId, const char *filename) {
 				fa->push_back(fn1);
 				fa->push_back(fn2);
 				fnt = new MultiSubsetFont(fa);
+				_vm->staticres()->setLanguage(_vm->gameFlags().extraLang, k2FontData);
 				const uint8 *oneByteData = _vm->staticres()->loadRawData(k2FontData, temp);
 				Common::MemoryReadStream str(oneByteData, temp);
 				fnt->load(str);
 			}
+		} else if (fontId == FID_KOREAN_FNT) {
+			const uint16 *lookupTable = _vm->staticres()->loadRawDataBe16(k1TwoByteFontLookupTable, temp);
+			fnt = new JohabFontLoK(_fonts[FID_8_FNT], lookupTable, temp);
 		} else {
 			fnt = new DOSFont();
 		}
@@ -1415,8 +1447,10 @@ int Screen::getFontWidth() const {
 }
 
 int Screen::getCharWidth(uint16 c) const {
-	const int width = _fonts[_currentFont]->getCharWidth(c);
-	return width + (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII ? _charSpacing : 0);
+	int width = _fonts[_currentFont]->getCharWidth(c);
+	if (_isSegaCD || _fonts[_currentFont]->getType() == Font::kASCII || (_fonts[_currentFont]->getType() == Font::kJohab && c < 0x80))
+		width += _charSpacing;
+	return width;
 }
 
 int Screen::getCharHeight(uint16 c) const {
@@ -1524,13 +1558,15 @@ void Screen::printText(const char *str, int x, int y, uint8 color1, uint8 color2
 }
 
 uint16 Screen::fetchChar(const char *&s) const {
-	if (_fonts[_currentFont]->getType() == Font::kASCII)
+	const int fontType = _fonts[_currentFont]->getType();
+	if (fontType == Font::kASCII)
 		return (uint8)*s++;
 
 	uint16 ch = (uint8)*s++;
 
-	if ((_fonts[_currentFont]->getType() == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) || (_fonts[_currentFont]->getType() == Font::kBIG5 && ch < 0x7F))
-		return ch;
+	if ((fontType == Font::kSJIS && (ch <= 0x7F || (ch >= 0xA1 && ch <= 0xDF))) ||
+		((fontType == Font::kBIG5 || fontType == Font::kJohab) && ch < 0x80))
+			return ch;
 
 	ch |= (uint8)(*s++) << 8;
 	return ch;
@@ -1578,7 +1614,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		shapeData += 2;
 
 	if (*shapeData & 1)
-		flags |= 0x400;
+		flags |= kDRAWSHP_COMPACT;
 
 	va_list args;
 	va_start(args, flags);
@@ -1595,36 +1631,36 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	_dsBackgroundFadingTable = nullptr;
 	_dsDrawLayer = 0;
 
-	if (flags & DSF_CUSTOM_PALETTE) {
+	if (flags & kDRAWSHP_COLOR) {
 		_dsColorTable = va_arg(args, uint8 *);
 	}
 
-	if (flags & DSF_SHAPE_FADING) {
+	if (flags & kDRAWSHP_FADE) {
 		_dsShapeFadingTable = va_arg(args, uint8 *);
 		_dsShapeFadingLevel = va_arg(args, int);
 		if (!_dsShapeFadingLevel)
-			flags &= ~DSF_SHAPE_FADING;
+			flags &= ~kDRAWSHP_FADE;
 	}
 
-	if (flags & DSF_TRANSPARENCY) {
+	if (flags & kDRAWSHP_TRANSPARENT) {
 		_dsTransparencyTable1 = va_arg(args, uint8 *);
 		_dsTransparencyTable2 = va_arg(args, uint8 *);
 	}
 
-	if (flags & 0x200) {
+	if (flags & kDRAWSHP_PREDATOR) {
 		_drawShapeVar1 = (_drawShapeVar1 + 1) & 0x7;
 		_drawShapeVar3 = drawShapeVar2[_drawShapeVar1];
 		_drawShapeVar4 = 0;
 		_drawShapeVar5 = 256;
 	}
 
-	if (flags & 0x4000)
+	if (flags & kDRAWSHP_MORPH)
 		_drawShapeVar5 = va_arg(args, int);
 
-	if (flags & 0x800)
+	if (flags & kDRAWSHP_PRIORITY)
 		_dsDrawLayer = va_arg(args, int);
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		_dsScaleW = va_arg(args, int);
 		_dsScaleH = va_arg(args, int);
 	} else {
@@ -1632,7 +1668,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		_dsScaleH = 0x100;
 	}
 
-	if ((flags & DSF_BACKGROUND_FADING) && _vm->game() != GI_KYRA1)
+	if ((flags & kDRAWSHP_BCKGRNDFADE) && _vm->game() != GI_KYRA1)
 		_dsBackgroundFadingTable = va_arg(args, uint8 *);
 
 	va_end(args);
@@ -1707,21 +1743,21 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int scaleCounterV = 0;
 
 	const int drawFunc = flags & 0x0F;
-	_dsProcessMargin = dsMarginFunc[drawFunc];
-	_dsScaleSkip = dsSkipFunc[drawFunc];
-	_dsProcessLine = dsLineFunc[drawFunc];
+	DsMarginSkipFunc dsProcessMargin = dsMarginFunc[drawFunc];
+	DsMarginSkipFunc dsScaleSkip = dsSkipFunc[drawFunc];
+	DsLineFunc dsProcessLine = dsLineFunc[drawFunc];
 
 	const int ppc = (flags >> 8) & 0x3F;
-	_dsPlot = dsPlotFunc[ppc];
+	DsPlotFunc dsPlot = dsPlotFunc[ppc];
 	DsPlotFunc dsPlot2 = dsPlotFunc[ppc], dsPlot3 = dsPlotFunc[ppc];
-	if (flags & 0x800)
-		dsPlot3 = dsPlotFunc[((flags >> 8) & 0xF7) & 0x3F];
+	if (_vm->gameFlags().gameID == GI_KYRA3 && (flags & kDRAWSHP_PRIORITY))
+		dsPlot3 = dsPlotFunc[ppc & ~8];
 
-	if (!_dsPlot || !dsPlot2 || !dsPlot3) {
+	if (!dsPlot || !dsPlot2 || !dsPlot3) {
 		if (!dsPlot2)
 			warning("Missing drawShape plotting method type %d", ppc);
 		if (dsPlot3 != dsPlot2 && !dsPlot3)
-			warning("Missing drawShape plotting method type %d", (((flags >> 8) & 0xF7) & 0x3F));
+			warning("Missing drawShape plotting method type %d", ppc & ~8);
 		return;
 	}
 
@@ -1732,12 +1768,12 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	const ScreenDim *dsDim = getScreenDim(sd);
 	dst += (dsDim->sx << 3);
 
-	if (!(flags & 0x10))
+	if (!(flags & kDRAWSHP_WINREL))
 		x -= (dsDim->sx << 3);
 
 	int x2 = (dsDim->w << 3);
 	int y1 = dsDim->sy;
-	if (flags & 0x10)
+	if (flags & kDRAWSHP_WINREL)
 		y += y1;
 
 	int y2 = y1 + dsDim->h;
@@ -1750,7 +1786,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int shpWidthScaled1 = shapeWidth;
 	int shpWidthScaled2 = shapeWidth;
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		shapeHeight = (shapeHeight * _dsScaleH) >> 8;
 		shpWidthScaled1 = shpWidthScaled2 = (shapeWidth * _dsScaleW) >> 8;
 
@@ -1758,7 +1794,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			return;
 	}
 
-	if (flags & DSF_CENTER) {
+	if (flags & kDRAWSHP_CENTER) {
 		x -= (shpWidthScaled1 >> 1);
 		y -= (shapeHeight >> 1);
 	}
@@ -1769,10 +1805,10 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 
 	int colorTableColors = ((_vm->game() != GI_KYRA1) && (shapeFlags & 4)) ? *src++ : 16;
 
-	if (!(flags & 0x8000) && (shapeFlags & 1))
+	if (!(flags & kDRAWSHP_COLOR) && (shapeFlags & 1))
 		_dsColorTable = src;
 
-	if (flags & 0x400)
+	if (flags & kDRAWSHP_COMPACT)
 		src += colorTableColors;
 
 	if (!(shapeFlags & 2)) {
@@ -1780,7 +1816,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 		src = _animBlockPtr;
 	}
 
-	int t = (flags & 2) ? y2 - y - shapeHeight : y - y1;
+	int t = (flags & kDRAWSHP_YFLIP) ? y2 - y - shapeHeight : y - y1;
 
 	if (t < 0) {
 		shapeHeight += t;
@@ -1797,7 +1833,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			_dsTmpWidth = shapeWidth;
 
 			int cnt = shapeWidth;
-			(this->*_dsScaleSkip)(dst, src, cnt);
+			(this->*dsScaleSkip)(dst, src, cnt);
 
 			scaleCounterV += _dsScaleH;
 
@@ -1813,17 +1849,17 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			scaleCounterV += (-t << 8);
 		}
 
-		if (!(flags & 2))
+		if (!(flags & kDRAWSHP_YFLIP))
 			y = y1;
 	}
 
-	t = (flags & 2) ? y + shapeHeight - y1 : y2 - y;
+	t = (flags & kDRAWSHP_YFLIP) ? y + shapeHeight - y1 : y2 - y;
 	if (t <= 0)
 		return;
 
 	if (t < shapeHeight) {
 		shapeHeight = t;
-		if (flags & 2)
+		if (flags & kDRAWSHP_YFLIP)
 			y = y1;
 	}
 
@@ -1850,19 +1886,19 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 	int dsPitch = 320;
 	int ty = y;
 
-	if (flags & 2) {
+	if (flags & kDRAWSHP_YFLIP) {
 		dsPitch *= -1;
 		ty = ty - 1 + shapeHeight;
 	}
 
-	if (flags & DSF_X_FLIPPED) {
+	if (flags & kDRAWSHP_XFLIP) {
 		SWAP(_dsOffscreenLeft, _dsOffscreenRight);
 		dst += (shpWidthScaled1 - 1);
 	}
 
 	dst += (320 * ty + x);
 
-	if (flags & DSF_SCALE) {
+	if (flags & kDRAWSHP_SCALE) {
 		_dsOffscreenRight = 0;
 		_dsOffscreenScaleVal2 = _dsOffscreenLeft;
 		_dsOffscreenLeft <<= 8;
@@ -1886,7 +1922,7 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			if (!(scaleCounterV & 0xFF00)) {
 				_dsTmpWidth = shapeWidth;
 				int cnt = shapeWidth;
-				(this->*_dsScaleSkip)(d, src, cnt);
+				(this->*dsScaleSkip)(d, src, cnt);
 			}
 		}
 
@@ -1896,19 +1932,19 @@ void Screen::drawShape(uint8 pageNum, const uint8 *shapeData, int x, int y, int 
 			src = b_src;
 			_dsTmpWidth = shapeWidth;
 			int cnt = _dsOffscreenLeft;
-			int scaleState = (this->*_dsProcessMargin)(d, src, cnt);
+			int scaleState = (this->*dsProcessMargin)(d, src, cnt);
 
 			if (_dsTmpWidth) {
 				cnt += shpWidthScaled1;
 				if (cnt > 0) {
-					if (flags & 0x800)
+					if (flags & kDRAWSHP_PRIORITY)
 						normalPlot = (curY > _maskMinY && curY < _maskMaxY);
-					_dsPlot = normalPlot ? dsPlot2 : dsPlot3;
-					(this->*_dsProcessLine)(d, src, cnt, scaleState);
+					dsPlot = normalPlot ? dsPlot2 : dsPlot3;
+					(this->*dsProcessLine)(d, src, dsPlot, cnt, scaleState);
 				}
 				cnt += _dsOffscreenRight;
 				if (cnt)
-					(this->*_dsScaleSkip)(d, src, cnt);
+					(this->*dsScaleSkip)(d, src, cnt);
 			}
 			dst += dsPitch;
 			d = dst;
@@ -2032,12 +2068,12 @@ int Screen::drawShapeSkipScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt)
 	return found ? 0 : _dsOffscreenScaleVal1;
 }
 
-void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16) {
+void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, const DsPlotFunc plot, int &cnt, int16) {
 	do {
 		uint8 c = *src++;
 		if (c) {
 			uint8 *d = dst++;
-			(this->*_dsPlot)(d, c);
+			(this->*plot)(d, c);
 			cnt--;
 		} else {
 			c = *src++;
@@ -2047,12 +2083,12 @@ void Screen::drawShapeProcessLineNoScaleUpwind(uint8 *&dst, const uint8 *&src, i
 	} while (cnt > 0);
 }
 
-void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16) {
+void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src, const DsPlotFunc plot, int &cnt, int16) {
 	do {
 		uint8 c = *src++;
 		if (c) {
 			uint8 *d = dst--;
-			(this->*_dsPlot)(d, c);
+			(this->*plot)(d, c);
 			cnt--;
 		} else {
 			c = *src++;
@@ -2062,7 +2098,7 @@ void Screen::drawShapeProcessLineNoScaleDownwind(uint8 *&dst, const uint8 *&src,
 	} while (cnt > 0);
 }
 
-void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState) {
+void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, const DsPlotFunc plot, int &cnt, int16 scaleState) {
 	int c = 0;
 
 	do {
@@ -2081,7 +2117,7 @@ void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int
 				scaleState = r & 0xFF;
 			}
 		} else if (scaleState) {
-			(this->*_dsPlot)(dst++, c);
+			(this->*plot)(dst++, c);
 			scaleState -= 0x100;
 			cnt--;
 		}
@@ -2090,7 +2126,7 @@ void Screen::drawShapeProcessLineScaleUpwind(uint8 *&dst, const uint8 *&src, int
 	cnt = -1;
 }
 
-void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, int &cnt, int16 scaleState) {
+void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, const DsPlotFunc plot, int &cnt, int16 scaleState) {
 	int c = 0;
 
 	do {
@@ -2109,7 +2145,7 @@ void Screen::drawShapeProcessLineScaleDownwind(uint8 *&dst, const uint8 *&src, i
 				scaleState = r & 0xFF;
 			}
 		} else {
-			(this->*_dsPlot)(dst--, c);
+			(this->*plot)(dst--, c);
 			scaleState -= 0x100;
 			cnt--;
 		}
@@ -3878,7 +3914,7 @@ void SJISFont::drawChar(uint16 c, byte *dst, int pitch, int) const {
 }
 
 ChineseFont::ChineseFont(int pitch, int renderWidth, int renderHeight, int spacingWidth, int spacingHeight, int extraSpacingWidth, int extraSpacingHeight) : Font(),
-	_renderWidth(renderWidth), _renderHeight(renderHeight), _spacingWidth(spacingWidth), _spacingHeight(spacingHeight), _pitch(pitch), _border(false),
+	_renderWidth(renderWidth), _renderHeight(renderHeight), _spacingWidth(spacingWidth), _spacingHeight(spacingHeight), _pitch(pitch), _border(false), _colorMap(nullptr),
 	_borderExtraSpacingWidth(extraSpacingWidth), _borderExtraSpacingHeight(extraSpacingHeight), _glyphData(0), _glyphDataSize(0), _pixelColorShading(true) {
 }
 

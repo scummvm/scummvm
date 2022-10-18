@@ -384,7 +384,21 @@ Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream() {
 }
 
 bool AmigaOSFilesystemNode::createDirectory() {
-	warning("AmigaOSFilesystemNode::createDirectory() -> Not supported");
+	Common::String temp = _sPath;
+	if (temp.lastChar() == '/') {
+		temp = temp.substr(0, temp.size() - 1);
+	}
+
+	BPTR lock = IDOS->CreateDir(temp.c_str());
+	if (lock) {
+		IDOS->UnLock(lock);
+		debug(6, "AmigaOSFilesystemNode::createDirectory() -> Directory '%s' created", temp.c_str());
+		_bIsValid = true;
+		_bIsDirectory = true;
+	} else {
+		debug(6, "AmigaOSFilesystemNode::createDirectory() failed -> Directory '%s' not created", temp.c_str());
+	}
+
 	return _bIsValid && _bIsDirectory;
 }
 

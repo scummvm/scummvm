@@ -76,6 +76,12 @@ class BaseGame: public BaseObject {
 public:
 	DECLARE_PERSISTENT(BaseGame, BaseObject)
 
+	virtual bool getLayerSize(int *LayerWidth, int *LayerHeight, Rect32 *viewport, bool *customViewport);
+#ifdef ENABLE_WME3D
+	virtual uint32 getAmbientLightColor();
+	virtual bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end);
+#endif
+
 	virtual bool onScriptShutdown(ScScript *script);
 
 	virtual bool onActivate(bool activate, bool refreshMouse);
@@ -110,6 +116,7 @@ public:
 	void setShowFPS(bool enabled) { _debugShowFPS = enabled; }
 	bool getBilinearFiltering() { return _bilinearFiltering; }
 	bool getSuspendedRendering() const { return _suspendedRendering; }
+	virtual bool renderShadowGeometry();
 
 	TTextEncoding _textEncoding;
 	bool _textRTL;
@@ -118,6 +125,17 @@ public:
 
 	void DEBUG_DumpClassRegistry();
 	bool setWaitCursor(const char *filename);
+
+#ifdef ENABLE_WME3D
+	bool _supportsRealTimeShadows;
+	TShadowType _maxShadowType;
+
+	bool setMaxShadowType(TShadowType maxShadowType);
+	virtual TShadowType getMaxShadowType(BaseObject *object = nullptr);
+
+	int32 _editorResolutionWidth;
+	int32 _editorResolutionHeight;
+#endif
 
 	uint32 getSaveThumbWidth() const { return _thumbnailWidth; }
 	uint32 getSaveThumbHeight() const { return _thumbnailHeight; }
@@ -161,17 +179,8 @@ public:
 #ifdef ENABLE_WME3D
 	BaseRenderer3D *_renderer3D;
 	bool _playing3DGame;
-
-	bool _supportsRealTimeShadows;
-	TShadowType _maxShadowType;
-
-	bool setMaxShadowType(TShadowType maxShadowType);
-	virtual TShadowType getMaxShadowType(BaseObject *object);
-
-	virtual uint32 getAmbientLightColor();
-
-	virtual bool getFogParams(FogParameters &fogParameters);
 #endif
+
 	BaseSoundMgr *_soundMgr;
 #if EXTENDED_DEBUGGER_ENABLED
 	DebuggableScEngine *_scEngine;
@@ -306,6 +315,9 @@ protected:
 private:
 	bool _debugShowFPS;
 	bool _bilinearFiltering;
+#ifdef ENABLE_WME3D
+	bool _force2dRenderer;
+#endif
 	void *_debugLogFile;
 	void DEBUG_DebugDisable();
 	void DEBUG_DebugEnable(const char *filename = nullptr);

@@ -32,7 +32,7 @@ bool PPCDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 	Elf32_Rela *rel = NULL;
 
 	if (!(rel = (Elf32_Rela *)malloc(size))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the relocation table", size);
 		return false;
 	}
 

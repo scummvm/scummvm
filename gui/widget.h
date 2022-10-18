@@ -138,7 +138,7 @@ public:
 	virtual void handleMouseEntered(int button) {}
 	virtual void handleMouseLeft(int button) {}
 	virtual void handleMouseMoved(int x, int y, int button) {}
-	virtual void handleMouseWheel(int x, int y, int direction) {}
+	void handleMouseWheel(int x, int y, int direction) override { assert(_boss); _boss->handleMouseWheel(x, y, direction); }
 	virtual bool handleKeyDown(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual bool handleKeyUp(Common::KeyState state) { return false; }	// Return true if the event was handled
 	virtual void handleTickle() {}
@@ -201,6 +201,7 @@ protected:
 	Common::U32String		_label;
 	Graphics::TextAlign		_align;
 	ThemeEngine::FontStyle	_font;
+	ThemeEngine::FontColor  _fontColor; 
 	bool _useEllipsis;
 
 public:
@@ -213,6 +214,7 @@ public:
 	void setAlign(Graphics::TextAlign align);
 	Graphics::TextAlign getAlign() const		{ return _align; }
 	void readLabel() { read(_label); }
+	void setFontColor(ThemeEngine::FontColor color);  
 
 protected:
 	void drawWidget() override;
@@ -225,9 +227,12 @@ class ButtonWidget : public StaticTextWidget, public CommandSender {
 protected:
 	uint32	_cmd;
 	uint8	_hotkey;
+	uint8	_highresHotkey;
+	uint8	_lowresHotkey;
+	Common::U32String _lowresLabel;
 public:
-	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
-	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
+	ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
+	ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 
 	void getMinSize(int &minWidth, int &minHeight) override;
 
@@ -236,6 +241,8 @@ public:
 
 	void setLabel(const Common::U32String &label);
 	void setLabel(const Common::String &label);
+	void setLowresLabel(const Common::U32String &label);
+	const Common::U32String &getLabel();
 
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
 	void handleMouseDown(int x, int y, int button, int clickCount) override;
@@ -253,8 +260,8 @@ protected:
 /* DropdownButtonWidget */
 class DropdownButtonWidget : public ButtonWidget {
 public:
-	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
-	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
+	DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
+	DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0, const Common::U32String &lowresLabel = Common::U32String());
 
 	void handleMouseMoved(int x, int y, int button) override;
 	void handleMouseUp(int x, int y, int button, int clickCount) override;
@@ -314,6 +321,7 @@ protected:
 class CheckboxWidget : public ButtonWidget {
 protected:
 	bool	_state;
+	bool _overrideText; 
 	int _spacing;
 public:
 	CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip = Common::U32String(), uint32 cmd = 0, uint8 hotkey = 0);
@@ -327,6 +335,8 @@ public:
 	void toggleState()			{ setState(!_state); }
 	bool getState() const		{ return _state; }
 
+	void setOverride(bool enable); 
+	
 protected:
 	void drawWidget() override;
 };

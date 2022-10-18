@@ -38,6 +38,8 @@ void engine_pre_gfxmode_release();
 void engine_pre_gfxsystem_shutdown();
 // Applies necessary changes after screen<->virtual coordinate transformation has changed
 void on_coordinates_scaling_changed();
+// prepares game screen for rotation setting
+void engine_adjust_for_rotation_settings();
 
 } // namespace AGS3
 

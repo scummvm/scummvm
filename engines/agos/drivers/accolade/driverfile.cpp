@@ -51,6 +51,9 @@ void MidiDriver_Accolade_readDriver(Common::String filename, MusicType requested
 		case MT_MT32:
 			skipChunks = 1; // Skip one entry for MT32
 			break;
+		case MT_CT460:
+			skipChunks = 2; // CT-460 data is the third entry
+			break;
 		default:
 			assert(0);
 			break;

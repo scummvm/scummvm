@@ -94,6 +94,7 @@ protected:
 	void s1_playVocFile();
 	void s1_miscUnk3();
 	void s1_prefetchVocFile();
+	void s1_textDisplayWait();
 
 	struct SeqMovie {
 		Movie *movie;
@@ -113,11 +114,14 @@ protected:
 	};
 
 	const uint8 *_seqData;
+	uint8 _seqCode;
 	uint8 *_specialBuffer;
 	SeqMovie _seqMovies[12];
 	SeqLoop _seqLoopTable[20];
+	uint8 _seqLoopPos;
 	uint16 _seqWsaCurDecodePage;
 	uint32 _seqDisplayedTextTimer;
+	uint32 _seqVocStartTimer;
 	bool _seqDisplayTextFlag;
 	uint8 _seqDisplayedText;
 	uint8 _seqDisplayedChar;
@@ -125,6 +129,7 @@ protected:
 	bool _seqTalkTextPrinted;
 	bool _seqTalkTextRestored;
 	bool _seqQuitFlag;
+	bool _seqSkipCommand;
 };
 
 } // End of namespace Kyra

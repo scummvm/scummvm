@@ -26,7 +26,7 @@
 #include "common/endian.h"
 
 namespace Kyra {
-EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(nullptr), _filename(nullptr) {
+EMCInterpreter::EMCInterpreter(KyraEngine_v1 *vm) : _vm(vm), _scriptData(nullptr), _filename(nullptr), _parameter(0) {
 #define OPCODE(x) { &EMCInterpreter::x, #x }
 	static const OpcodeEntry opcodes[] = {
 		// 0x00
@@ -165,7 +165,7 @@ bool EMCInterpreter::start(EMCState *script, int function) {
 		return false;
 
 	if (_vm->game() == GI_KYRA1) {
-		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98)
+		if (_vm->gameFlags().platform == Common::kPlatformFMTowns || _vm->gameFlags().platform == Common::kPlatformPC98 || _vm->gameFlags().lang == Common::KO_KOR)
 			script->ip = &script->dataPtr->data[functionOffset+1];
 		else
 			script->ip = &script->dataPtr->data[functionOffset];

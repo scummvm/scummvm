@@ -219,7 +219,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
@@ -241,11 +243,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "trecision";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Trecision Adventure Module";
 	}
 

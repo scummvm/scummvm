@@ -47,9 +47,6 @@ extern const char *DefaultConfigFileName;
 // Subsitutes illegal characters with '_'. This function uses illegal chars array
 // specific to current platform.
 void FixupFilename(char *filename);
-// Tests the input path, if it's an absolute path then returns it unchanged;
-// if it's a relative path then resolves it into absolute, using install dir as a base.
-String PathFromInstallDir(const String &path);
 
 // FSLocation describes a file system location defined by two parts:
 // a secure path that engine does not own, and sub-path that it owns.
@@ -66,7 +63,22 @@ struct FSLocation {
 		: BaseDir(base), SubDir(subdir),
 		FullDir(AGS::Shared::Path::ConcatPaths(base, subdir)) {
 	}
+	inline bool IsValid() const {
+		return !FullDir.IsEmpty();
+	}
+	// Concats the given path to the existing full dir
+	inline FSLocation Concat(const String &path) const {
+		return FSLocation(BaseDir, AGS::Shared::Path::ConcatPaths(FullDir, path));
+	}
+	// Sets full path as a relative to the existing base dir
+	inline FSLocation Rebase(const String &path) const {
+		return FSLocation(BaseDir, AGS::Shared::Path::ConcatPaths(BaseDir, path));
+	}
 };
+// Tests the input path, if it's an absolute path then returns it unchanged;
+// if it's a relative path then resolves it into absolute, using install dir as a base.
+String PathFromInstallDir(const String &path);
+FSLocation PathFromInstallDir(const FSLocation &fsloc);
 // Makes sure that given system location is available, makes directories if have to (and if it's allowed to)
 // Returns full file path on success, empty string on failure.
 String PreparePathForWriting(const FSLocation &fsloc, const String &filename);
@@ -106,6 +118,8 @@ bool ResolveScriptPath(const String &sc_path, bool read_only, ResolvedPath &rp);
 // Returns 'true' on success, and 'false' if either path is impossible to resolve,
 // forbidden for writing, or if failed to create any subdirectories.
 bool ResolveWritePathAndCreateDirs(const String &sc_path, ResolvedPath &rp);
+// Creates all necessary subdirectories inside the safe parent location.
+bool CreateFSDirs(const FSLocation &fs);
 
 } // namespace AGS3
 

@@ -144,7 +144,7 @@ void MacWindowBorder::setTitle(const Common::String& title, int width, MacWindow
 	_title = title;
 	const Graphics::Font *font = wm->_fontMan->getFont(Graphics::MacFont(kMacFontChicago, 12));
 	int sidesWidth = getOffset().left + getOffset().right;
-	int titleWidth = font->getStringWidth(_title) + 10;
+	int titleWidth = font->getStringWidth(_title) + 8;
 	int maxWidth = MAX<int>(width - sidesWidth - 7, 0);
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
@@ -170,7 +170,7 @@ void MacWindowBorder::drawScrollBar(ManagedSurface *g, MacWindowManager *wm) {
 	Common::Rect rr(rx1, ry1, rx2, ry2);
 
 	MacPlotData pd(g, nullptr,  &wm->getPatterns(), 1, 0, 0, 1, wm->_colorWhite, true);
-	Graphics::drawFilledRect(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
+	Graphics::drawFilledRect1(rr, wm->_colorWhite, wm->getDrawInvertPixel(), &pd);
 
 	// after drawing, we set the _scrollSize negative, to indicate no more drawing is needed
 	// if win95 mode is enabled, then we keep on drawing the scrollbar
@@ -184,13 +184,13 @@ void MacWindowBorder::drawTitle(ManagedSurface *g, MacWindowManager *wm, int tit
 	int titleColor = getOffset().dark ? wm->_colorWhite: wm->_colorBlack;
 	int titleY = getOffset().titleTop;
 	int sidesWidth = getOffset().left + getOffset().right;
-	int titleWidth = font->getStringWidth(_title) + 10;
+	int titleWidth = font->getStringWidth(_title) + 8;
 	int yOff = wm->_fontMan->hasBuiltInFonts() ? 3 : 1;
 	int maxWidth = width - sidesWidth - 7;
 	if (titleWidth > maxWidth)
 		titleWidth = maxWidth;
 
-	font->drawString(g, _title, titleOffset + 5, titleY + yOff, titleWidth, titleColor);
+	font->drawString(g, _title, titleOffset + 4, titleY + yOff, titleWidth, titleColor);
 }
 
 void MacWindowBorder::setBorderType(int type) {

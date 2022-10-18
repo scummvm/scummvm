@@ -23,6 +23,7 @@
 // https://github.com/System25/drxtract/blob/master/snd2wav
 // License: GNU GPL v2 (see COPYING file for details)
 
+#include "audio/audiostream.h"
 #include "common/file.h"
 #include "common/macresman.h"
 #include "common/substream.h"
@@ -105,6 +106,8 @@ void DirectorSound::playStream(Audio::AudioStream &stream, uint8 soundChannel) {
 		return;
 
 	cancelFade(soundChannel);
+	if (_channels[soundChannel - 1].loopPtr)
+		_channels[soundChannel - 1].loopPtr = nullptr;
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_channels[soundChannel - 1].handle, &stream, -1, getChannelVolume(soundChannel));
 }
@@ -134,6 +137,13 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 		if (shouldStopOnZero(soundChannel)) {
 			stopSound(soundChannel);
 		} else {
+			// If there is a loopable stream specified, set the loop to expire by itself
+			if (_channels[soundChannel - 1].loopPtr) {
+				debugC(5, kDebugSound, "DirectorSound::playCastMember(): telling loop in channel %d to stop", soundChannel);
+				_channels[soundChannel - 1].loopPtr->setRemainingIterations(1);
+				_channels[soundChannel - 1].loopPtr = nullptr;
+			}
+
 			// Don't stop the currently playing sound, just set the last played sound to 0.
 			setLastPlayedSound(soundChannel, SoundID(), false);
 		}
@@ -146,16 +156,12 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 				bool looping = ((SoundCastMember *)soundCast)->_looping;
 				bool stopOnZero = true;
 
-				if (!forPuppet && isLastPlayedSound(soundChannel, memberID)) {
-					// We just played this sound.
-					// If the sound is not marked "looping", we should not play it again.
-					if (!looping)
-						return;
+				// For a non-puppet sound, if the sound is the same ID as the last
+				// played, do nothing.
+				if (!forPuppet && isLastPlayedSound(soundChannel, memberID))
+					return;
 
-					// If the sound is not finished yet, we need to wait more before playing it again.
-					if (isChannelActive(soundChannel))
-						return;
-
+				if (!forPuppet && looping) {
 					// We know that this is a non-puppet, looping sound.
 					// We don't want to stop it if this channel's cast member changes to 0.
 					stopOnZero = false;
@@ -174,6 +180,11 @@ void DirectorSound::playCastMember(CastMemberID memberID, uint8 soundChannel, bo
 					warning("DirectorSound::playCastMember: audio data failed to load from cast");
 					return;
 				}
+				debugC(5, kDebugSound, "DirectorSound::playCastMember(): playing cast ID %s, channel %d, looping %d, stopOnZero %d, forPuppet %d", memberID.asString().c_str(), soundChannel, looping, stopOnZero, forPuppet);
+				// For looping sounds, keep a copy of the AudioStream so it is
+				// possible to gracefully stop the playback
+				if (looping)
+					_channels[soundChannel - 1].loopPtr = dynamic_cast<Audio::LoopableAudioStream *>(as);
 				playStream(*as, soundChannel);
 				setLastPlayedSound(soundChannel, memberID, stopOnZero);
 			}
@@ -308,7 +319,7 @@ void DirectorSound::loadSampleSounds(uint type) {
 	uint id = 0xFF;
 	Archive *archive = nullptr;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
 		Common::Array<uint16> idList = it->_value->getResourceIDList(tag);
 		for (uint j = 0; j < idList.size(); j++) {
 			if ((idList[j] & 0xFF) == type) {
@@ -377,6 +388,7 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 		loadSampleSounds(menu);
 
 	if (1 <= submenu && submenu <= menuSounds.size()) {
+		debugC(5, kDebugSound, "DirectorSound::playExternalSound(): playing menu ID %d, submenu ID %d, channel %d", menu, submenu, soundChannel);
 		playStream(*(menuSounds[submenu - 1]->getAudioStream()), soundChannel);
 		setLastPlayedSound(soundChannel, soundId);
 	} else {
@@ -387,9 +399,11 @@ void DirectorSound::playExternalSound(uint16 menu, uint16 submenu, uint8 soundCh
 void DirectorSound::changingMovie() {
 	for (uint i = 1; i < _channels.size(); i++) {
 		_channels[i - 1].movieChanged = true;
-		if (isChannelPuppet(i)) {
-			setPuppetSound(SoundID(), i); // disable puppet sound
-		} else if (isChannelActive(i)) {
+		if (isChannelActive(i)) {
+			if (isChannelPuppet(i)) {
+				setPuppetSound(SoundID(), i); // disable puppet sound
+			}
+
 			// Don't stop this sound until there's a new, non-zero sound in this channel.
 			_channels[i - 1].stopOnZero = false;
 
@@ -425,6 +439,9 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 	if (!isChannelValid(soundChannel))
 		return;
 
+	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping channel %d", soundChannel);
+	if (_channels[soundChannel - 1].loopPtr)
+		_channels[soundChannel - 1].loopPtr = nullptr;
 	cancelFade(soundChannel);
 	_mixer->stopHandle(_channels[soundChannel - 1].handle);
 	setLastPlayedSound(soundChannel, SoundID());
@@ -432,7 +449,10 @@ void DirectorSound::stopSound(uint8 soundChannel) {
 }
 
 void DirectorSound::stopSound() {
+	debugC(5, kDebugSound, "DirectorSound::stopSound(): stopping all channels");
 	for (uint i = 0; i < _channels.size(); i++) {
+		if (_channels[i].loopPtr)
+			_channels[i].loopPtr = nullptr;
 		cancelFade(i + 1);
 
 		_mixer->stopHandle(_channels[i].handle);
@@ -444,6 +464,7 @@ void DirectorSound::stopSound() {
 }
 
 void DirectorSound::systemBeep() {
+	debugC(5, kDebugSound, "DirectorSound::systemBeep(): beep!");
 	_speaker->play(Audio::PCSpeaker::kWaveFormSquare, 500, 150);
 }
 
@@ -464,6 +485,7 @@ void DirectorSound::setPuppetSound(SoundID soundId, uint8 soundChannel) {
 
 	_channels[soundChannel - 1].newPuppet = true;
 	_channels[soundChannel - 1].puppet = soundId;
+	_channels[soundChannel - 1].stopOnZero = true;
 }
 
 void DirectorSound::playPuppetSound(uint8 soundChannel) {
@@ -473,6 +495,8 @@ void DirectorSound::playPuppetSound(uint8 soundChannel) {
 	// only play if the puppet was just set
 	if (!_channels[soundChannel - 1].newPuppet)
 		return;
+
+	debugC(5, kDebugSound, "DirectorSound::playPuppetSound(): playing on channel %d", soundChannel);
 
 	_channels[soundChannel - 1].newPuppet = false;
 	playSound(_channels[soundChannel - 1].puppet, soundChannel, true);
@@ -501,7 +525,7 @@ void DirectorSound::playFPlaySound() {
 	Archive *archive = nullptr;
 
 	// iterate opened ResFiles
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
 		id = it->_value->findResourceID(tag, sndName, true);
 		if (id != 0xFFFF) {
 			archive = it->_value;
@@ -567,7 +591,7 @@ void DirectorSound::setSoundLevelInternal(uint8 soundChannel, uint8 soundLevel) 
 }
 
 // -1 represent all the sound channel
-void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
+void DirectorSound::setSoundLevel(int channel, uint8 soundLevel) {
 	if (soundLevel >= 8) {
 		warning("DirectorSound::setSoundLevel: soundLevel %d out of bounds", soundLevel);
 		return;
@@ -576,8 +600,10 @@ void DirectorSound::setSouldLevel(int channel, uint8 soundLevel) {
 	if (channel != -1) {
 		if (!isChannelValid(channel))
 			return;
+		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting channel %d to level %d", channel, soundLevel);
 		setSoundLevelInternal(channel, soundLevel);
 	} else {
+		debugC(5, kDebugSound, "DirectorSound::setSoundLevel: setting all channels to level %d", soundLevel);
 		for (uint i = 0; i < _channels.size(); i++)
 			setSoundLevelInternal(i + 1, soundLevel);
 	}
@@ -740,20 +766,13 @@ Audio::AudioStream *SNDDecoder::getAudioStream(bool looping, bool forPuppet, Dis
 
 	if (looping) {
 		if (hasLoopBounds()) {
-			// If this is for a puppet, return an automatically looping stream.
-			// Otherwise, the sound will be looped by the score.
-			if (forPuppet)
-				return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
-			else
-				return new Audio::SubSeekableAudioStream(stream, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
+			// Return an automatically looping stream.
+			return new Audio::SubLoopingAudioStream(stream, 0, Audio::Timestamp(0, _loopStart, _rate), Audio::Timestamp(0, _loopEnd, _rate));
 		} else {
 			// Not sure if looping sounds can appear without loop bounds.
 			// Let's just log a warning and loop the entire sound...
 			warning("SNDDecoder::getAudioStream: Looping sound has no loop bounds");
-			if (forPuppet)
-				return new Audio::LoopingAudioStream(stream, 0);
-			else
-				return stream;
+			return new Audio::LoopingAudioStream(stream, 0);
 		}
 	}
 
@@ -767,7 +786,7 @@ bool SNDDecoder::hasLoopBounds() {
 AudioFileDecoder::AudioFileDecoder(Common::String &path)
 		: AudioDecoder() {
 	_path = path;
-	_macresman = nullptr;
+	_macresman = new Common::MacResManager();
 }
 
 AudioFileDecoder::~AudioFileDecoder() {
@@ -778,9 +797,12 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	if (_path.empty())
 		return nullptr;
 
-	_macresman = new Common::MacResManager();
-	_macresman->open(Common::Path(pathMakeRelative(_path), g_director->_dirSeparator));
-	Common::SeekableReadStream *file = _macresman->getDataFork();
+	Common::Path filePath = Common::Path(pathMakeRelative(_path), g_director->_dirSeparator);
+	Common::SeekableReadStream *file = nullptr;
+
+	if (_macresman->open(filePath)) {
+		file = _macresman->getDataFork();
+	}
 
 	if (file == nullptr) {
 		warning("Failed to open %s", _path.c_str());
@@ -805,9 +827,7 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	}
 
 	if (stream) {
-		if (looping && forPuppet) {
-			// If this is for a puppet, return an automatically looping stream.
-			// Otherwise, the sound will be looped by the score
+		if (looping) {
 			return new Audio::LoopingAudioStream(stream, 0);
 		}
 		return stream;

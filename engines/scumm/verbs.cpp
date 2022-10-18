@@ -26,6 +26,7 @@
 #include "scumm/resource.h"
 #include "scumm/scumm_v0.h"
 #include "scumm/scumm_v7.h"
+#include "scumm/string_v7.h"
 #include "scumm/verbs.h"
 
 namespace Scumm {
@@ -193,16 +194,20 @@ void ScummEngine_v0::switchActor(int slot) {
 
 void ScummEngine_v2::initV2MouseOver() {
 	int i;
-	int arrow_color, color, hi_color;
+	int arrow_color, color;
+	_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 14;
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
+		_hiLiteColorInvSentence = 15;
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
+		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 15;
 
-	if (_game.version == 2) {
-		color = 13;
-		hi_color = 14;
-		arrow_color = 1;
-	} else {
+	if (_game.platform == Common::kPlatformC64) {
 		color = 16;
-		hi_color = 7;
+		_hiLiteColorVerbArrow = _hiLiteColorInvSentence = 7;
 		arrow_color = 6;
+	} else {
+		color = 13;
+		arrow_color = 1;
 	}
 
 	_mouseOverBoxV2 = -1;
@@ -216,7 +221,7 @@ void ScummEngine_v2::initV2MouseOver() {
 		_mouseOverBoxesV2[2 * i].rect.bottom = _mouseOverBoxesV2[2 * i].rect.top + 8;
 
 		_mouseOverBoxesV2[2 * i].color = color;
-		_mouseOverBoxesV2[2 * i].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i].hicolor = _hiLiteColorInvSentence;
 
 		_mouseOverBoxesV2[2 * i + 1].rect.left = 176;
 		_mouseOverBoxesV2[2 * i + 1].rect.right = 320;
@@ -224,7 +229,7 @@ void ScummEngine_v2::initV2MouseOver() {
 		_mouseOverBoxesV2[2 * i + 1].rect.bottom = _mouseOverBoxesV2[2 * i].rect.bottom;
 
 		_mouseOverBoxesV2[2 * i + 1].color = color;
-		_mouseOverBoxesV2[2 * i + 1].hicolor = hi_color;
+		_mouseOverBoxesV2[2 * i + 1].hicolor = _hiLiteColorInvSentence;
 	}
 
 	// Inventory arrows
@@ -235,7 +240,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kInventoryUpArrow].rect.bottom = 40;
 
 	_mouseOverBoxesV2[kInventoryUpArrow].color = arrow_color;
-	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryUpArrow].hicolor = _hiLiteColorVerbArrow;
 
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.left = 144;
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.right = 176;
@@ -243,7 +248,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kInventoryDownArrow].rect.bottom = 48;
 
 	_mouseOverBoxesV2[kInventoryDownArrow].color = arrow_color;
-	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = hi_color;
+	_mouseOverBoxesV2[kInventoryDownArrow].hicolor = _hiLiteColorVerbArrow;
 
 	// Sentence line
 
@@ -253,7 +258,7 @@ void ScummEngine_v2::initV2MouseOver() {
 	_mouseOverBoxesV2[kSentenceLine].rect.bottom = 8;
 
 	_mouseOverBoxesV2[kSentenceLine].color = color;
-	_mouseOverBoxesV2[kSentenceLine].hicolor = hi_color;
+	_mouseOverBoxesV2[kSentenceLine].hicolor = _hiLiteColorInvSentence;
 }
 
 void ScummEngine_v2::initNESMouseOver() {
@@ -570,7 +575,7 @@ void ScummEngine::checkExecVerbs() {
 		if ((_game.id == GID_INDY4 || _game.id == GID_PASS) && _mouseAndKeyboardStat >= '0' && _mouseAndKeyboardStat <= '9') {
 			// To support keyboard fighting in FOA, we need to remap the number keys.
 			// FOA apparently expects PC scancode values (see script 46 if you want
-			// to know where I got these numbers from). Oddly enough, the The Indy 3
+			// to know where I got these numbers from). Oddly enough, the Indy 3
 			// part of the "Passport to Adventure" demo expects the same keyboard
 			// mapping, even though the full game doesn't.
 			static const int numpad[10] = {
@@ -612,9 +617,16 @@ void ScummEngine::checkExecVerbs() {
 		// Generic keyboard input
 		runInputScript(kKeyClickArea, _mouseAndKeyboardStat, 1);
 	} else if (_mouseAndKeyboardStat & MBS_MOUSE_MASK) {
-		VirtScreen *zone = findVirtScreen(_mouse.y);
 		const byte code = _mouseAndKeyboardStat & MBS_LEFT_CLICK ? 1 : 2;
+		if (_game.id == GID_SAMNMAX) {
+			// This has been simplified for SAMNMAX while DOTT still has the "normal" implementation
+			// (which makes sense, since it still has the "normal" verb interface). Anyway, we need this,
+			// it fixes bug #13761 ("SAMNMAX: Can't shoot names during the credits").
+			runInputScript(kSceneClickArea, 0, code);
+			return;
+		}
 
+		VirtScreen *zone = findVirtScreen(_mouse.y);
 		// This could be kUnkVirtScreen.
 		// Fixes bug #2773: "MANIACNES: Crash on click in speechtext-area"
 		if (!zone)
@@ -815,7 +827,7 @@ void ScummEngine_v0::checkExecVerbs() {
 			_activeVerb = kVerbPush;
 		}
 
-		if (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY) {
+		if (!zone || (_mouseAndKeyboardStat > 0 && _mouseAndKeyboardStat < MBS_MAX_KEY)) {
 			// keys already checked by input handler
 		} else if ((_mouseAndKeyboardStat & MBS_MOUSE_MASK) || _activeVerb == kVerbWhatIs) {
 			// click region: sentence line
@@ -993,6 +1005,17 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		else if (mode && vs->hicolor)
 			color = vs->hicolor;
 
+		TextStyleFlags flags = kStyleAlignLeft;
+		int xpos = vs->origLeft;
+		int ypos = vs->curRect.top;
+
+		if (vs->center) {
+			flags = kStyleAlignCenter;
+		} else if (_language == Common::HE_ISR) {
+			flags = kStyleAlignRight;
+			xpos = _screenWidth - 1 - vs->origLeft;
+		}
+
 		const byte *msg = getResourceAddress(rtVerb, verb);
 		if (!msg)
 			return;
@@ -1012,54 +1035,37 @@ void ScummEngine_v7::drawVerb(int verb, int mode) {
 		_charset->setCurID(vs->charset_nr);
 
 		// Compute the text rect
-		int textWidth = 0;
-		vs->curRect.bottom = 0;
-		const byte *msg2 = msg;
-		while (*msg2) {
-			const int charWidth = _charset->getCharWidth(*msg2);
-			const int charHeight = _charset->getCharHeight(*msg2);
-			textWidth += charWidth;
-			if (vs->curRect.bottom < charHeight)
-				vs->curRect.bottom = charHeight;
-			msg2++;
-		}
-		vs->curRect.bottom += vs->curRect.top;
-		vs->oldRect = vs->curRect;
+		vs->curRect = _textV7->calcStringDimensions((const char*)msg, xpos, vs->curRect.top, flags);
+		
+		const int maxWidth = _screenWidth - vs->curRect.left;
+		int finalWidth = maxWidth;
 
-		const int maxWidth = _language == Common::HE_ISR ? vs->curRect.right + 1 : _screenWidth - vs->curRect.left;
-		if (_game.version == 8 && _charset->getStringWidth(0, buf) > maxWidth) {
+		if (_game.version == 8 && _textV7->getStringWidth((const char*)buf) > maxWidth) {
 			byte tmpBuf[384];
-			memcpy(tmpBuf, msg, 384);
+			int len = resStrLen(msg);
+			memcpy(tmpBuf, msg, len);
+			len--;
 
-			int len = resStrLen(tmpBuf) - 1;
 			while (len >= 0) {
 				if (tmpBuf[len] == ' ') {
 					tmpBuf[len] = 0;
-					if (_charset->getStringWidth(0, tmpBuf) <= maxWidth) {
+					if ((finalWidth = _textV7->getStringWidth((const char*)tmpBuf)) <= maxWidth) {
 						break;
 					}
 				}
 				--len;
 			}
-			int16 leftPos = vs->curRect.left;
-			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->origLeft = leftPos = vs->curRect.right - _charset->getStringWidth(0, tmpBuf);
-			else
-				vs->curRect.right = vs->curRect.left + _charset->getStringWidth(0, tmpBuf);
-			enqueueText(tmpBuf, leftPos, vs->curRect.top, color, vs->charset_nr, vs->center);
-			if (len >= 0) {
-				if (_language == Common::HE_ISR)
-					leftPos = vs->curRect.right - _charset->getStringWidth(0, &msg[len + 1]);
-				enqueueText(&msg[len + 1], leftPos, vs->curRect.top + _verbLineSpacing, color, vs->charset_nr, vs->center);
-				vs->curRect.bottom += _verbLineSpacing;
-			}
+
+			enqueueText(tmpBuf, xpos, ypos, color, vs->charset_nr, flags);
+			enqueueText(&msg[len + 1], xpos, ypos + _verbLineSpacing, color, vs->charset_nr, flags);
+			vs->curRect.right = vs->curRect.left + finalWidth;
+			vs->curRect.bottom += _verbLineSpacing;			
 		} else {
-			if (_language == Common::HE_ISR)
-				vs->curRect.left = vs->origLeft = vs->curRect.right - textWidth;
-			else
-				vs->curRect.right = vs->curRect.left + textWidth;
-			enqueueText(msg, vs->curRect.left, vs->curRect.top, color, vs->charset_nr, vs->center);
+			enqueueText(msg, xpos, ypos, color, vs->charset_nr, flags);
 		}
+
+		vs->oldRect = vs->curRect;
+		vs->curRect.top = ypos;
 		_charset->setCurID(oldID);
 	}
 }
@@ -1182,6 +1188,9 @@ void ScummEngine::drawVerbBitmap(int verb, int x, int y) {
 	xstrip = x / 8;
 	ydiff = y - vs->topline;
 
+	if (_game.version == 4)
+		ydiff &= ~7;
+
 	obim = getResourceAddress(rtVerb, verb);
 	assert(obim);
 	if (_game.features & GF_OLD_BUNDLE) {
@@ -1276,6 +1285,15 @@ void ScummEngine::setVerbObject(uint room, uint object, uint verb) {
 
 	if (whereIsObject(object) == WIO_FLOBJECT)
 		error("Can't grab verb image from flobject");
+
+	// HACK: When the straw changes to gold, or the other way around, the
+	// object image changes, but the text is not undrawn. This causes the
+	// two object names to overlap each other. The text can be undrawn by
+	// script 8, but the logic for it is more convoluted in the Mac version
+	// than in the EGA DOS version, and I can't figure out how to bend it
+	// to my will. So hard-code the clearing here.
+	if (_game.id == GID_LOOM && verb == 53 && _game.platform == Common::kPlatformMacintosh)
+		drawBox(232, 152, 312, 192, 0);
 
 	if (_game.features & GF_OLD_BUNDLE) {
 		for (i = (_numLocalObjects-1); i > 0; i--) {

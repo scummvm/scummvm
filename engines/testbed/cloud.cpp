@@ -91,7 +91,9 @@ void CloudTests::infoCallback(Cloud::Storage::StorageInfoResponse response) {
 	Testsuite::logPrintf("Info! User's ID: %s\n", response.value.uid().c_str());
 	Testsuite::logPrintf("Info! User's email: %s\n", response.value.email().c_str());
 	Testsuite::logPrintf("Info! User's name: %s\n", response.value.name().c_str());
-	Testsuite::logPrintf("Info! User's quota: %lu bytes used / %lu bytes available\n", response.value.used(), response.value.available());
+	Testsuite::logPrintf("Info! User's quota: %lu bytes used / %lu bytes available\n",
+						 static_cast<unsigned long>(response.value.used()),
+						 static_cast<unsigned long>(response.value.available()));
 }
 
 void CloudTests::directoryListedCallback(Cloud::Storage::FileArrayResponse response) {

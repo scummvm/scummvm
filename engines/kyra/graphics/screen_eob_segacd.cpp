@@ -646,7 +646,7 @@ void SegaRenderer::render(int destPageNum, int renderBlockX, int renderBlockY, i
 	}
 
 	// Sprites
-	memset(_spriteMask, 0xFF, _screenW * _screenH * sizeof(uint8));
+	memset(_spriteMask, 0xFF, (uint32)_screenW * (uint32)_screenH * sizeof(uint8));
 	const uint16 *pos = _spriteTable;
 	for (int i = 0; i < _numSpritesMax && pos; ++i) {
 		int y = *pos++ & 0x3FF;

@@ -80,11 +80,6 @@ void OpenGLRenderer::init() {
 
 	computeScreenViewport();
 
-#if defined(USE_OPENGL_SHADERS)
-	// The ShaderSurfaceRenderer sets an array buffer which conflict with fixed pipeline rendering
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-#endif // defined(USE_OPENGL_SHADERS)
-
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 
@@ -152,6 +147,16 @@ void OpenGLRenderer::loadTextureRGBA4444(Graphics::Surface *texture) {
 
 void OpenGLRenderer::setupViewport(int x, int y, int width, int height) {
 	glViewport(x, y, width, height);
+}
+
+void OpenGLRenderer::enableFog(const Math::Vector4d &fogColor) {
+	glFogi(GL_FOG_MODE, GL_EXP);
+	glFogf(GL_FOG_START, 1.0f);
+	glFogf(GL_FOG_END, 1.0f);
+	glFogf(GL_FOG_DENSITY, 0.1f);
+	GLfloat color[4] = { fogColor.x(), fogColor.y(), fogColor.z(), fogColor.w() };
+	glFogfv(GL_FOG_COLOR, color);
+	glEnable(GL_FOG);
 }
 
 void OpenGLRenderer::drawFace(uint face) {

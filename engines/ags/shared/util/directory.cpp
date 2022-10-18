@@ -193,7 +193,7 @@ bool FindFileRecursive::Next() {
 }
 
 bool FindFileRecursive::PushDir(const String &sub) {
-	if (_maxLevel != -1 && (int)_fdirs.size() == _maxLevel)
+	if (_maxLevel != SIZE_MAX && (uint32_t)_fdirs.size() == _maxLevel)
 		return false; // no more nesting allowed
 
 	String path = Path::ConcatPaths(_fullDir, sub);
@@ -217,6 +217,8 @@ bool FindFileRecursive::PopDir() {
 	_fdirs.pop();
 	_fullDir = Path::GetParent(_fullDir);
 	_curDir = Path::GetParent(_curDir);
+	if (_curDir.Compare(".") == 0)
+		_curDir = ""; // hotfix for GetParent returning "."
 	// advance dir iterator that we just recovered
 	_fdir.Next();
 	return true;

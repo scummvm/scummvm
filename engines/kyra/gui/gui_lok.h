@@ -151,6 +151,7 @@ private:
 
 	uint8 defaultColor1() const override { return 12; }
 	uint8 defaultColor2() const override { return 248; }
+	uint8 menuItemLabelColor() const override { return 253; }
 
 	Common::String getMenuTitle(const Menu &menu) override { return menu.menuNameString; }
 	Common::String getMenuItemTitle(const MenuItem &menuItem) override { return menuItem.itemString; }
@@ -162,9 +163,16 @@ private:
 	bool _menuRestoreScreen;
 	uint8 _toplevelMenu;
 	int _savegameOffset;
-	char _savegameName[35];
-	char _savegameNames[5][35];
+	char _savegameName[35 * 4]; // allow extra space, since the string can be UTF-8, temporarily
+	char _savegameNames[5][35 * 4];
 	const char *_specialSavegameString;
+	bool _resetHanInput;
+
+	int _inputType;
+	// The purpose of these variables is improved handling of backspace character deletion for
+	// Hangul input. The original allows "deconstruction" of the last glyph, so why shouldn't we...
+	uint8 _inputState;
+	uint16 _backupChars[4];
 
 	int _saveLoadNumSlots;
 

@@ -284,7 +284,7 @@ void Object::update() {
 	// Examine flags
 	if (flags & kObjectFlag20) {
 		if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
-			_frameIndex =((_frameIndex + 1) % _frameCount);
+			_frameIndex = (_frameIndex + 1) % _frameCount;
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
 		}
@@ -310,7 +310,7 @@ void Object::update() {
 
 		if (!isFirstFrame) {
 			if (_vm->getTick() - _tickCount >= (uint32)Common::Rational(1000, _field_B4).toInt()) {
-				_frameIndex =((_frameIndex + 1) % _frameCount);
+				_frameIndex = (_frameIndex + 1) % _frameCount;
 				_tickCount = _vm->getTick();
 				doPlaySounds = true;
 			}
@@ -318,7 +318,7 @@ void Object::update() {
 	} else if (BYTE1(flags) & kObjectFlag8) {
 		if (_vm->getTick() - _tickCount >= 1000 * _tickCount2) {
 			if (_vm->getRandom(_field_C0) == 1)
-				_frameIndex =((_frameIndex + 1) % _frameCount);
+				_frameIndex = (_frameIndex + 1) % _frameCount;
 
 			_tickCount = _vm->getTick();
 			doPlaySounds = true;
@@ -380,6 +380,9 @@ void Object::update() {
 				BYTE1(flags) = (BYTE1(flags) & 0xFB) | kObjectFlag2;
 			}
 		}
+
+		_tickCount = _vm->getTick();
+		doPlaySounds = true;
 	}
 
 	if (flags & kObjectFlag40000) {

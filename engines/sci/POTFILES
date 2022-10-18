@@ -1,4 +1,5 @@
 engines/sci/detection.cpp
+engines/sci/detection_options.h
 engines/sci/detection_tables.h
 engines/sci/engine/guest_additions.cpp
 engines/sci/engine/kfile.cpp

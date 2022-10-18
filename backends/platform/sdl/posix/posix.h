@@ -35,6 +35,8 @@ public:
 
 	void addSysArchivesToSearchSet(Common::SearchSet &s, int priority = 0) override;
 
+	// Default paths
+	Common::String getDefaultIconsPath() override;
 	Common::String getScreenshotsPath() override;
 
 protected:

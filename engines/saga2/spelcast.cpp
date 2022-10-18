@@ -30,6 +30,7 @@
 #include "saga2/spelshow.h"
 #include "saga2/spelvals.h"
 #include "saga2/tilevect.h"
+#include "saga2/tileline.h"
 
 namespace Saga2 {
 
@@ -60,19 +61,21 @@ int32 scatterer(int32 i, int32 m, int32 s);
 //	ctor
 
 SpellStuff::SpellStuff() {
-	master = nullSpell;
-	display = nullSpell;
-	prototype = nullptr;
-	targetableTypes = spellTargNone;
-	targetTypes = spellApplyNone;
-	effects = nullptr;
-	targets = nullptr;
-	manaType = sManaIDSkill;
-	manaUse = 0;
-	shape = eAreaInvisible;
-	size = 0;
-	range = 0;
-	sound = 0;
+	_master = nullSpell;
+	_display = nullSpell;
+	_prototype = nullptr;
+	_targetableTypes = spellTargNone;
+	_targetTypes = spellApplyNone;
+	_effects = nullptr;
+	_targets = nullptr;
+	_manaType = sManaIDSkill;
+	_manaUse = 0;
+	_shape = eAreaInvisible;
+	_size = 0;
+	_range = 0;
+	_sound = 0;
+
+	_debug = false;
 }
 
 //-----------------------------------------------------------------------
@@ -87,7 +90,7 @@ bool SpellStuff::isOffensive() {
 //	determine whether an area spell protects the caster
 
 bool SpellStuff::safe() {
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
@@ -112,12 +115,12 @@ bool SpellStuff::safe() {
 //	add an internal effect to a spell
 
 void SpellStuff::addEffect(ProtoEffect *pe) {
-	if (effects == nullptr)
-		effects = pe;
+	if (_effects == nullptr)
+		_effects = pe;
 	else {
-		ProtoEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next) ;
-		tail->next = pe;
+		ProtoEffect *_tail;
+		for (_tail = _effects; _tail->_next; _tail = _tail->_next) ;
+		_tail->_next = pe;
 	}
 }
 
@@ -125,9 +128,9 @@ void SpellStuff::addEffect(ProtoEffect *pe) {
 //	play the sound associated with a spell
 
 void SpellStuff::playSound(GameObject *go) {
-	if (sound) {
+	if (_sound) {
 		Location cal = go->notGetWorldLocation(); //Location(go->getLocation(),go->IDParent());
-		Saga2::playSoundAt(MKTAG('S', 'P', 'L', sound), cal);
+		Saga2::playSoundAt(MKTAG('S', 'P', 'L', _sound), cal);
 	}
 }
 
@@ -135,10 +138,10 @@ void SpellStuff::playSound(GameObject *go) {
 //	cleanup
 
 void SpellStuff::killEffects() {
-	if (effects) {
-		delete effects;
+	if (_effects) {
+		delete _effects;
 	}
-	effects = nullptr;
+	_effects = nullptr;
 }
 
 //-----------------------------------------------------------------------
@@ -151,7 +154,7 @@ void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 		implement(enactor, Location(target->getPoint(), Nothing));
 		break;
 	case SpellTarget::spellTargetObjectPoint:
-		if (targetTypes == spellApplyObject)
+		if (_targetTypes == spellApplyObject)
 			implement(enactor, target->getObject());
 		else
 			implement(enactor, Location(target->getPoint(), Nothing));
@@ -176,8 +179,8 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 	        target->thisID() == enactor->thisID() &&
 	        !canTarget(spellTargCaster))
 		return;
-	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->next)
+	if (_effects) {
+		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -188,8 +191,8 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 
 void SpellStuff::implement(GameObject *enactor, ActiveItem *target) {
 	SpellTarget st = SpellTarget(target);
-	if (effects) {
-		for (ProtoEffect *pe = effects; pe; pe = pe->next)
+	if (_effects) {
+		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 			if (pe->applicable(st))
 				pe->implement(enactor, &st);
 	}
@@ -201,14 +204,14 @@ void SpellStuff::implement(GameObject *enactor, ActiveItem *target) {
 void SpellStuff::implement(GameObject *enactor, Location target) {
 	SpellTarget st = SpellTarget(target);
 	buildTargetList(enactor, st);
-	if (effects && targets) {
-		for (SpellTarget *t = targets; t; t = t->next) {
+	if (_effects && _targets) {
+		for (SpellTarget *t = _targets; t; t = t->_next) {
 			if (safe() &&
 			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
 			        !canTarget(spellTargCaster))
 				continue;
-			for (ProtoEffect *pe = effects; pe; pe = pe->next)
+			for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 				if (pe->applicable(*t))
 					pe->implement(enactor, t);
 		}
@@ -220,17 +223,17 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 //	determine target list for a spell
 
 void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
-	int16 radius = size;
+	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
 	show(caster, trg);
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
 	case eAreaProjectile:
 	case eAreaExchange:
 	case eAreaMissle:
-		targets = &trg;
+		_targets = &trg;
 		break;
 	case eAreaSquare: {
 		tVect = trg.getPoint();
@@ -364,12 +367,12 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 //	add a target to the target list
 
 void SpellStuff::addTarget(SpellTarget *trg) {
-	if (targets == nullptr)
-		targets = trg;
+	if (_targets == nullptr)
+		_targets = trg;
 	else {
-		SpellTarget *t = targets;
-		while (t->next) t = t->next;
-		t->next = trg;
+		SpellTarget *t = _targets;
+		while (t->_next) t = t->_next;
+		t->_next = trg;
 	}
 }
 
@@ -377,14 +380,14 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 //	clean the target list
 
 void SpellStuff::removeTargetList() {
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 	case eAreaAura:
 	case eAreaGlow:
 	case eAreaProjectile:
 	case eAreaExchange:
 	case eAreaMissle:
-		targets = nullptr;
+		_targets = nullptr;
 		break;
 	case eAreaWall:
 	case eAreaCone:
@@ -393,19 +396,18 @@ void SpellStuff::removeTargetList() {
 	case eAreaBall:
 	case eAreaStorm:
 	case eAreaSquare:
-		if (targets) delete targets;
-		targets = nullptr;
+		if (_targets) delete _targets;
+		_targets = nullptr;
 		break;
 	default:
 		error("bad spell");
 	}
-	assert(targets == nullptr);
+	assert(_targets == nullptr);
 }
 
 //-----------------------------------------------------------------------
 //	spell debugging
 
-#if DEBUG
 #define DSPELL_AREA_COLOR 3
 #define DSPELL_TARGET_COLOR 7
 
@@ -414,9 +416,11 @@ void showTarg(const TilePoint &tp) {
 }
 
 void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
-	int16 radius = size;
+	if (!_debug) return;
+
+	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
-	switch (shape) {
+	switch (_shape) {
 	case eAreaInvisible:
 		showTarg(trg.getPoint());
 		break;
@@ -567,11 +571,6 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	}
 	}
 }
-#else
-
-void SpellStuff::show(GameObject *, SpellTarget &) {}
-
-#endif
 
 /* ===================================================================== *
    SpellInstance implementation
@@ -583,10 +582,10 @@ void SpellStuff::show(GameObject *, SpellTarget &) {}
 SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, SpellID spellNo) {
 	assert(newCaster);
 	assert(newTarget);
-	caster = newCaster;
-	target = new SpellTarget(*newTarget);
-	world = newCaster->world();
-	spell = spellNo;
+	_caster = newCaster;
+	_target = new SpellTarget(*newTarget);
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -595,10 +594,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, Spe
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -608,10 +607,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject &newTarget, Spel
 SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, SpellID spellNo) {
 	assert(newCaster);
 	assert(newTarget);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -620,10 +619,10 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, GameObject *newTarget, Spel
 
 SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, SpellID spellNo) {
 	assert(newCaster);
-	target = new SpellTarget(newTarget);
-	caster = newCaster;
-	world = newCaster->world();
-	spell = spellNo;
+	_target = new SpellTarget(newTarget);
+	_caster = newCaster;
+	_world = newCaster->world();
+	_spell = spellNo;
 	init();
 }
 
@@ -632,38 +631,41 @@ SpellInstance::SpellInstance(SpellCaster *newCaster, TilePoint &newTarget, Spell
 
 
 SpellInstance::~SpellInstance() {
-	if (age < implementAge && g_vm->_gameRunning)
-		spellBook[spell].implement(caster, target);
-	for (int32 i = 0; i < eList.count; i++) {
-		if (eList.displayList[i].efx)
-			delete eList.displayList[i].efx;
-		eList.displayList[i].efx = nullptr;
+	if (_age < _implementAge && g_vm->_gameRunning)
+		spellBook[_spell].implement(_caster, _target);
+	for (int32 i = 0; i < _eList._count; i++) {
+		if (_eList._displayList[i]._efx)
+			delete _eList._displayList[i]._efx;
+		_eList._displayList[i]._efx = nullptr;
 	}
-	if (target)
-		delete target;
-	target = nullptr;
+	if (_target)
+		delete _target;
+	_target = nullptr;
 }
 
 // ------------------------------------------------------------------
 // common initialization code
 
 void SpellInstance::init() {
-	dProto = (*g_vm->_sdpList)[spell];
-	ProtoObj        *proto = caster->proto();
-	TilePoint       sPoint = caster->getWorldLocation();
+	_dProto = (*g_vm->_sdpList)[_spell];
+	ProtoObj        *proto = _caster->proto();
+	TilePoint       sPoint = _caster->getWorldLocation();
 	sPoint.z += proto->height / 2;
-	age = 0;
-	implementAge = 0;
-	effSeq = 0;
-	assert(dProto);
-	if (!dProto)   return;
-	effect = (*g_vm->_edpList)[dProto->effect];
-	implementAge = dProto->implementAge;
-	maxAge = dProto->maxAge;
+	_age = 0;
+	_implementAge = 0;
+	_effSeq = 0;
+
+	assert(_dProto);
+	if (!_dProto)
+		return;
+
+	_effect = (*g_vm->_edpList)[_dProto->_effect];
+	_implementAge = _dProto->_implementAge;
+	_maxAge = _dProto->_maxAge;
 	initEffect(sPoint);
 
-	if (implementAge == 0)
-		spellBook[spell].implement(caster, target);
+	if (_implementAge == 0)
+		spellBook[_spell].implement(_caster, _target);
 
 }
 
@@ -671,11 +673,11 @@ void SpellInstance::init() {
 // common cleanup
 
 void SpellInstance::termEffect() {
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
-			if (eList.displayList[i].efx) {
-				delete eList.displayList[i].efx;
-				eList.displayList[i].efx = nullptr;
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
+			if (_eList._displayList[i]._efx) {
+				delete _eList._displayList[i]._efx;
+				_eList._displayList[i]._efx = nullptr;
 			}
 		}
 }
@@ -684,16 +686,16 @@ void SpellInstance::termEffect() {
 // visual init
 
 void SpellInstance::initEffect(TilePoint startpoint) {
-	eList.count = effect->nodeCount; //sdp->effCount;
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	_eList._count = _effect->_nodeCount; //sdp->effCount;
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
 			Effectron *e = new Effectron(0, i);
-			eList.displayList[i].efx = e;
-			e->parent = this;
-			e->start = startpoint;
-			e->current = startpoint;
-			e->partno = i;
-			e->stepNo = 0;
+			_eList._displayList[i]._efx = e;
+			e->_parent = this;
+			e->_start = startpoint;
+			e->_current = startpoint;
+			e->_partno = i;
+			e->_stepNo = 0;
 			e->initCall(i);
 		}
 }
@@ -702,16 +704,16 @@ void SpellInstance::initEffect(TilePoint startpoint) {
 // visual update
 
 bool SpellInstance::buildList() {
-	if (eList.dissipated()) {
+	if (_eList.dissipated()) {
 		termEffect();
-		if (effect->next == nullptr)
+		if (_effect->_next == nullptr)
 			return false;
-		effect = effect->next;
-		effSeq++;
+		_effect = _effect->_next;
+		_effSeq++;
 		//
-		initEffect(target->getPoint());
+		initEffect(_target->getPoint());
 	}
-	eList.buildEffects(false);
+	_eList.buildEffects(false);
 	return true;
 }
 
@@ -720,13 +722,13 @@ bool SpellInstance::buildList() {
 
 bool SpellInstance::updateStates(int32 deltaTime) {
 
-	spellBook[spell].show(caster, *target);
-	age++;
-	if (age == implementAge || implementAge == continuouslyImplemented)
-		spellBook[spell].implement(caster, target);
-	if (maxAge > 0 && age > maxAge)
+	spellBook[_spell].show(_caster, *_target);
+	_age++;
+	if (_age == _implementAge || _implementAge == continuouslyImplemented)
+		spellBook[_spell].implement(_caster, _target);
+	if (_maxAge > 0 && _age > _maxAge)
 		termEffect();
-	eList.updateEStates(deltaTime);
+	_eList.updateEStates(deltaTime);
 	return true;
 }
 
@@ -777,73 +779,73 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 // default constructor
 
 Effectron::Effectron() {
-	age = 0;
-	pos = 0;
-	flags = effectronDead;
-	parent = nullptr;
-	partno = 0;
-	totalSteps = stepNo = 0;
-	hgt = 0;
-	brd = 0;
-	spr = 0;
+	_age = 0;
+	_pos = 0;
+	_flags = effectronDead;
+	_parent = nullptr;
+	_partno = 0;
+	_totalSteps = _stepNo = 0;
+	_hgt = 0;
+	_brd = 0;
+	_spr = 0;
 }
 
 //-----------------------------------------------------------------------
 // constructor with starting position / velocity
 
 Effectron::Effectron(uint16 newPos, uint16 newDir) {
-	age = 0;
-	pos = (newDir << 16) + newPos;
-	flags = 0;
-	parent = nullptr;
-	partno = 0;
-	totalSteps = stepNo = 0;
-	hgt = 0;
-	brd = 0;
-	spr = 0;
+	_age = 0;
+	_pos = (newDir << 16) + newPos;
+	_flags = 0;
+	_parent = nullptr;
+	_partno = 0;
+	_totalSteps = _stepNo = 0;
+	_hgt = 0;
+	_brd = 0;
+	_spr = 0;
 }
 
 //-----------------------------------------------------------------------
 // Effectron display update
 
 void Effectron::updateEffect(int32 deltaTime) {
-	age += deltaTime;
-	if (age > 1) {
-		age = 0;
-		pos++;
-		finish = parent->target->getPoint();
-		stepNo++;
+	_age += deltaTime;
+	if (_age > 1) {
+		_age = 0;
+		_pos++;
+		_finish = _parent->_target->getPoint();
+		_stepNo++;
 
-		flags = staCall();
+		_flags = staCall();
 		if (isHidden() || isDead())
 			return;
-		spr = sprCall();
-		hgt = hgtCall();
-		brd = brdCall();
+		_spr = sprCall();
+		_hgt = hgtCall();
+		_brd = brdCall();
 		TilePoint oLoc = posCall();
 
 		// at this point we need to detect collisions
 		// between current ( or start ) and oLoc
 
-		current = collideTo(this, oLoc);
-		TileToScreenCoords(oLoc, screenCoords);
+		_current = collideTo(this, oLoc);
+		TileToScreenCoords(oLoc, _screenCoords);
 	}
 
 }
 
 //-----------------------------------------------------------------------
 void Effectron::bump() {
-	switch (parent->dProto->elasticity) {
-	case ecFlagBounce :
-		velocity = -velocity;
+	switch (_parent->_dProto->_elasticity) {
+	case ecFlagBounce:
+		_velocity = -_velocity;
 		break;
-	case ecFlagDie :
+	case ecFlagDie:
 		kill();
 		break;
-	case ecFlagStop :
-		velocity = TilePoint(0, 0, 0);
+	case ecFlagStop:
+		_velocity = TilePoint(0, 0, 0);
 		break;
-	case ecFlagNone :
+	case ecFlagNone:
 		break;
 	}
 }

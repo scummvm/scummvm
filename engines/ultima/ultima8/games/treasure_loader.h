@@ -29,7 +29,7 @@
 namespace Ultima {
 namespace Ultima8 {
 
-typedef Std::map<istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
+typedef Common::HashMap<istring, TreasureInfo, Common::IgnoreCase_Hash> TreasureMap;
 
 class TreasureLoader {
 public:

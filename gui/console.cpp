@@ -620,13 +620,27 @@ void ConsoleDialog::saveHistory() {
 		return;
 	}
 
-	for (int i = 0; i < _historySize; ++i) {
-		saveFile->writeString(_history[i]);
-		saveFile->writeByte('\n');
+	// Saving the history entries in the proper order;
+	// The most recent entry should be the last to be saved.
+	// NOTE When the _history table is full, we need to start saving
+	//      from one slot after (in a circular manner) the _historyIndex slot.
+	//      In this case the _historyIndex slot contains the temporary stored user input,
+	//      which we do not want to persist.
+	//      This means that when full, (kHistorySize - 1) entries will be saved.
+	//      When the table is not full, storing always begins from index 0.
+	int idx = (kHistorySize == _historySize) ? ((_historyIndex + 1) % kHistorySize) : 0;
+	int entriesWritten = 0;
+	while (idx != _historyIndex) {
+		if (!_history[idx].empty()) {
+			saveFile->writeString(_history[idx]);
+			saveFile->writeByte('\n');
+			++entriesWritten;
+		}
+		idx = (idx + 1) % kHistorySize;
 	}
 	saveFile->finalize();
 	delete saveFile;
-	debug("Wrote %i history entries", _historySize);
+	debug("Wrote %i history entries", entriesWritten);
 }
 
 void ConsoleDialog::addToHistory(const Common::String &str) {
@@ -641,15 +655,25 @@ void ConsoleDialog::historyScroll(int direction) {
 	if (_historySize == 0)
 		return;
 
-	if (_historyLine == 0 && direction > 0) {
-		int i;
-		for (i = 0; i < _promptEndPos - _promptStartPos; i++)
-			_history[_historyIndex].insertChar(buffer(_promptStartPos + i), i);
-	}
+	if (_historyLine == 0 && direction > 0)
+		// Save current line in history
+		_history[_historyIndex] = getUserInput();
 
 	// Advance to the next line in the history
+	// NOTE Due to temporarily storing the user input line in the
+	//      _history table, without executing an addToHistory() call,
+	//      that user input line is stored into the slot _historyIndex
+	//      where the next committed command will replace it.
+	//      However, since this slot is still a slot from the _history table,
+	//      when the table is full (kHistorySize entries) and while scrolling
+	//      the history upwards, the user can reach this slot (top most)
+	//      and get their user input again instead of a historic entry.
+	//      We prevent this by stopping upwards navigation one slot earlier,
+	//      when the table is full.
 	int line = _historyLine + direction;
-	if ((direction < 0 && line < 0) || (direction > 0 && line > _historySize))
+	if ((direction < 0 && line < 0)
+	    || (direction > 0 && (line > _historySize
+	                         || (_historySize == kHistorySize && line == _historySize))) )
 		return;
 	_historyLine = line;
 

@@ -36,6 +36,10 @@ namespace Audio {
 class Paula : public AudioStream {
 public:
 	static const int NUM_VOICES = 4;
+	// Default panning value for left channels.
+	static const int PANNING_LEFT = 63;
+	// Default panning value for right channels.
+	static const int PANNING_RIGHT = 191;
 	enum {
 		kPalSystemClock  = 7093790,
 		kNtscSystemClock = 7159090,

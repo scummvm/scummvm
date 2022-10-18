@@ -127,19 +127,13 @@ public:
 
 	bool _lastJoyFlag = false;
 
-	/** Process actor coordinate */
-	IVec3 _processActor;
-
-	/** Previous process actor coordinate */
-	IVec3 _previousActor;
-
 	int32 _targetActorDistance = 0;
 
 	/**
 	 * Get shadow position
 	 * @param pos Shadow coordinates
 	 */
-	void getShadowPosition(const IVec3 &pos);
+	IVec3 getShadowPosition(const IVec3 &pos);
 
 	/**
 	 * Set actor safe angle
@@ -188,12 +182,12 @@ public:
 
 	/**
 	 * Move actor around the scene
-	 * @param angleFrom Current actor angle
-	 * @param angleTo Angle to rotate
-	 * @param speed Rotate speed
+	 * @param start Current actor angle
+	 * @param end Angle to rotate
+	 * @param duration Rotate speed
 	 * @param movePtr Pointer to process movements
 	 */
-	void moveActor(int32 angleFrom, int32 angleTo, int32 speed, ActorMoveStruct *movePtr) const;
+	void initRealAngleConst(int32 start, int32 end, int32 duration, ActorMoveStruct *movePtr) const;
 
 	void processActorMovements(int32 actorIdx);
 };

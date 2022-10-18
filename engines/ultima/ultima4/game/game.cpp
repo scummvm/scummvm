@@ -492,7 +492,7 @@ Std::vector<Coords> gameGetDirectionalActionPath(int dirmask, int validDirection
 
 	/*
 	 * try every tile in the given direction, up to the given range.
-	 * Stop when the the range is exceeded, or the action is blocked.
+	 * Stop when the range is exceeded, or the action is blocked.
 	 */
 
 	MapCoords t_c(origin);

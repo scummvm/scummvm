@@ -43,12 +43,17 @@ namespace Video {
 
 class BigHuffmanTree;
 
+// Because the maximum number of bits read from a bitstream is 16, and the data is 8-bit, the container only
+// needs to hold up to 23 bits at any given time. As such, we use a bitstream with a 32-bit container to
+// avoid the overhead of 64-bit maths on systems that don't support it natively.
+typedef Common::BitStreamImpl<Common::BitStreamMemoryStream, uint32, 8, false, false> SmackerBitStream;
+
 /**
  * Decoder for Smacker v2/v4 videos.
  *
  * Based on http://wiki.multimedia.cx/index.php?title=Smacker
  * and the FFmpeg Smacker decoder (libavcodec/smacker.c), revision 16143
- * http://svn.ffmpeg.org/ffmpeg/trunk/libavcodec/smacker.c?revision=16143&view=markup
+ * https://git.ffmpeg.org/gitweb/ffmpeg.git/commit/40a19c443430de520d86bbd644033c8e2ca87e9b
  *
  * Video decoder used in engines:
  *  - agos
@@ -81,9 +86,11 @@ protected:
 
 	virtual void handleAudioTrack(byte track, uint32 chunkSize, uint32 unpackedSize);
 
+	virtual uint32 getSignatureVersion(uint32 signature) const;
+
 	class SmackerVideoTrack : public FixedRateVideoTrack {
 	public:
-		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature);
+		SmackerVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version);
 		~SmackerVideoTrack();
 
 		bool isRewindable() const { return true; }
@@ -98,9 +105,9 @@ protected:
 		const byte *getPalette() const { _dirtyPalette = false; return _palette; }
 		bool hasDirtyPalette() const { return _dirtyPalette; }
 
-		void readTrees(Common::BitStreamMemory8LSB &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
+		void readTrees(SmackerBitStream &bs, uint32 mMapSize, uint32 mClrSize, uint32 fullSize, uint32 typeSize);
 		void increaseCurFrame() { _curFrame++; }
-		void decodeFrame(Common::BitStreamMemory8LSB &bs);
+		void decodeFrame(SmackerBitStream &bs);
 		void unpackPalette(Common::SeekableReadStream *stream);
 
 		Common::Rational getFrameRate() const { return _frameRate; }
@@ -112,7 +119,7 @@ protected:
 
 	private:
 		Common::Rational _frameRate;
-		uint32 _flags, _signature;
+		uint32 _flags, _version;
 
 		byte _palette[3 * 256];
 		mutable bool _dirtyPalette;
@@ -132,7 +139,7 @@ protected:
 		static uint getBlockRun(int index) { return (index <= 58) ? index + 1 : 128 << (index - 59); }
 	};
 
-	virtual SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const;
+	virtual SmackerVideoTrack *createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) const;
 
 	Common::SeekableReadStream *_fileStream;
 

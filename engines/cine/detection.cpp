@@ -51,7 +51,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -60,7 +62,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use transparent dialog boxes in 16 color scenes"),
 			_s("Use transparent dialog boxes in 16 color scenes even if the original game version did not support them"),
 			"transparentdialogboxes",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -73,11 +77,11 @@ public:
 		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cine";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Cinematique evo 1";
 	}
 

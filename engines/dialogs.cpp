@@ -81,6 +81,8 @@ MainMenuDialog::MainMenuDialog(Engine *engine)
 	// To enable "Help", an engine needs to use a subclass of MainMenuDialog
 	// (at least for now, we might change how this works in the future).
 	_helpButton = new GUI::ButtonWidget(this, "GlobalMenu.Help", _("~H~elp"), Common::U32String(), kHelpCmd);
+	_helpButton->setVisible(_engine->hasFeature(Engine::kSupportsHelp));
+	_helpButton->setEnabled(_engine->hasFeature(Engine::kSupportsHelp));
 
 	new GUI::ButtonWidget(this, "GlobalMenu.About", _("~A~bout"), Common::U32String(), kAboutCmd);
 
@@ -272,7 +274,7 @@ ConfigDialog::ConfigDialog() :
 	// The game specific options tab
 	//
 
-	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine", false);
+	int tabId = tab->addTab(_("Game"), "GlobalConfig_Engine");
 
 	if (g_engine->hasFeature(Engine::kSupportsChangingOptionsDuringRuntime)) {
 		_engineOptions = metaEngine->buildEngineOptionsWidgetDynamic(tab, "GlobalConfig_Engine.Container", gameDomain);
@@ -382,19 +384,53 @@ ExtraGuiOptionsWidget::ExtraGuiOptionsWidget(GuiObject *containerBoss, const Com
 
 	for (uint i = 0; i < _options.size(); i++) {
 		Common::String id = Common::String::format("%d", i + 1);
+		uint32 cmd = _options[i].groupLeaderId ? kClickGroupLeaderCmd : 0;
 		_checkboxes.push_back(new CheckboxWidget(widgetsBoss(),
-			_dialogLayout + ".customOption" + id + "Checkbox", _(_options[i].label), _(_options[i].tooltip)));
+			_dialogLayout + ".customOption" + id + "Checkbox", _(_options[i].label), _(_options[i].tooltip), cmd));
 	}
 }
 
 ExtraGuiOptionsWidget::~ExtraGuiOptionsWidget() {
 }
 
+void ExtraGuiOptionsWidget::handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) {
+	switch (cmd) {
+	case kClickGroupLeaderCmd: {
+		byte groupLeaderId = 0;
+
+		for (uint i = 0; i < _checkboxes.size(); i++) {
+			if (_checkboxes[i] == (CheckboxWidget *)sender) {
+				groupLeaderId = _options[i].groupLeaderId;
+				break;
+			}
+		}
+
+		if (!groupLeaderId)
+			break;
+
+		// We have found the "group leader" checkbox. Enable or disable
+		// all checkboxes in the group. Theoretically, this could mean
+		// that we disable another group leader, so its group should
+		// also be disabled. But that seems overkill for now.
+
+		for (uint i = 0; i < _options.size(); i++) {
+			if (_options[i].groupId == groupLeaderId) {
+				_checkboxes[i]->setEnabled(data != 0);
+			}
+		}
+		break;
+	}
+	default:
+		OptionsContainerWidget::handleCommand(sender, cmd, data);
+		break;
+	}
+}
+
 Common::String ExtraGuiOptionsWidget::dialogLayout(const Common::String &domain) {
 	if (ConfMan.getActiveDomainName().equals(domain)) {
 		return "GlobalConfig_Engine_Container";
 	} else {
-		return "GameOptions_Engine_Container";
+		return "GameOptions_Game_Container";
 	}
 }
 
@@ -417,7 +453,7 @@ void ExtraGuiOptionsWidget::load() {
 bool ExtraGuiOptionsWidget::save() {
 	// Set the state of engine-specific checkboxes
 	for (uint i = 0; i < _options.size() && i < _checkboxes.size(); i++) {
-		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->getState(), _domain);
+		ConfMan.setBool(_options[i].configOption, _checkboxes[i]->isEnabled() && _checkboxes[i]->getState(), _domain);
 	}
 
 	return true;

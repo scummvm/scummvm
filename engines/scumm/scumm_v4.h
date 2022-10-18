@@ -51,9 +51,10 @@ public:
 	void resetScumm() override;
 
 protected:
-	void setupOpcodes() override;
+	const byte _GUIPalette[13]    = {0x00, 0x01, 0x0B, 0x03, 0x00, 0x0B, 0x0B, 0x03, 0x01, 0x00, 0x01, 0x0B, 0x09};
+	const byte _GUIPaletteCGA[13] = {0x00, 0x03, 0x0B, 0x03, 0x00, 0x0B, 0x0B, 0x0F, 0x03, 0x00, 0x0B, 0x0B, 0x05};
 
-	void scummLoop_handleSaveLoad() override;
+	void setupOpcodes() override;
 
 	int readResTypeList(ResType type) override;
 	void readIndexFile() override;
@@ -69,6 +70,9 @@ protected:
 	void saveIQPoints();
 	void loadIQPoints(byte *ptr, int size);
 	void updateIQPoints();
+
+	int getBannerColor(int bannerId) override;
+	void setUpMainMenuControls() override;
 
 	/* Version 4 script opcodes */
 	void o4_ifState();

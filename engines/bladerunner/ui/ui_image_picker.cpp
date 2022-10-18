@@ -295,15 +295,19 @@ void UIImagePicker::drawTooltip(Graphics::Surface &surface, int x, int y) {
 	}
 
 	rect.right = width + rect.left + 3;
-	if (rect.right >= 640) {
-		rect.right = 639;
-		rect.left = 636 - width;
+	if (rect.right >= BladeRunnerEngine::kOriginalGameWidth) {
+		rect.right = BladeRunnerEngine::kOriginalGameWidth - 1;
+		rect.left = BladeRunnerEngine::kOriginalGameWidth - 4 - width;
+		if (rect.left < 0)  rect.left = 0;  // should never happen
+		if (rect.right < 0) rect.right = 0; // should never happen
 	}
 
 	rect.bottom = height + rect.top + 2;
-	if (rect.bottom >= 480) {
-		rect.bottom = 479;
-		rect.top = 478 - height;
+	if (rect.bottom >= BladeRunnerEngine::kOriginalGameHeight) {
+		rect.bottom = BladeRunnerEngine::kOriginalGameHeight - 1;
+		rect.top = BladeRunnerEngine::kOriginalGameHeight - 3 - height;
+		if (rect.top < 0)    rect.top = 0;    // should never happen
+		if (rect.bottom < 0) rect.bottom = 0; // should never happen
 	}
 
 	surface.fillRect(rect, surface.format.RGBToColor(0, 0, 0));

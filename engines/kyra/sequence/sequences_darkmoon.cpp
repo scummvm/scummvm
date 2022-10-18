@@ -28,8 +28,6 @@
 
 #include "common/system.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 class DarkmoonSequenceHelper {
@@ -154,7 +152,7 @@ int DarkMoonEngine::mainMenu() {
 
 			of = _screen->setFont(Screen::FID_6_FNT);
 			op = _screen->setCurPage(2);
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			Common::String versionString = "ScummVM " + _versionString;
 			_screen->printText(versionString.c_str(), 267 - versionString.size() * 6, _flags.platform == Common::kPlatformFMTowns ? 152 : 160, _flags.platform == Common::kPlatformAmiga ? 18 : 13, 0);
 			_screen->setFont(of);
 			_screen->_curPage = op;
@@ -1127,7 +1125,7 @@ void DarkMoonEngine::seq_playCredits(DarkmoonSequenceHelper *sq, const uint8 *da
 		delete[] items[i].str;
 }
 
-DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen) {
+DarkmoonSequenceHelper::DarkmoonSequenceHelper(OSystem *system, DarkMoonEngine *vm, Screen_EoB *screen, DarkmoonSequenceHelper::Mode mode) : _system(system), _vm(vm), _screen(screen), _fadePalIndex(0) {
 	init(mode);
 }
 
@@ -1178,8 +1176,8 @@ void DarkmoonSequenceHelper::loadScene(int index, int pageNum, bool ignorePalett
 	}
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga) {
-		// Tolerance for diffenrences up to 2 bytes is needed in some cases
-		if ((((int32)(chunkID & 0xFFFF) + 5) & ~3) != (((s->size()) + 3) & ~3))
+		// Tolerance for differences up to 2 bytes is needed in some cases.
+		if (s && ((((int32)(chunkID & 0xFFFF) + 5) & ~3) != (((s->size()) + 3) & ~3)))
 			isRawData = true;
 	} else if (file.firstChar() == 'X' && _vm->gameFlags().lang == Common::DE_DEU) {
 		isRawData = true;
@@ -1423,31 +1421,17 @@ void DarkmoonSequenceHelper::printText(int index, int color) {
 		color = 255;
 	}
 
-	char *temp = new char[strlen(_config->strings[index]) + 1];
-	char *str = temp;
-	strcpy(str, _config->strings[index]);
-
+	Common::String str = _config->strings[index];
 	const ScreenDim *dm = _screen->_curDim;
-	int fontHeight = _screen->getFontHeight() + 1;
+	int fontHeight = (_vm->gameFlags().platform == Common::kPlatformPC98) ? (_screen->getFontHeight() << 1) : (_screen->getFontHeight() + 1);
+	int xAlignFactor = (_vm->gameFlags().platform == Common::kPlatformPC98) ? 2 : 1;
 
-	for (int yOffs = 0; *str; yOffs += fontHeight) {
-		char *cr = strchr(str, 13);
-
-		if (cr)
-			*cr = 0;
-
-		uint32 len = strlen(str);
-		_screen->printText(str, (dm->sx + ((dm->w - len) >> 1)) << 3, dm->sy + yOffs, color, dm->unkA);
-
-		if (cr) {
-			*cr = 13;
-			str = cr + 1;
-		} else {
-			str += len;
-		}
+	for (int yOffs = 0; !str.empty(); yOffs += fontHeight) {
+		uint linebrk = str.findFirstOf('\r');
+		Common::String str2 = (linebrk != Common::String::npos) ? str.substr(0, linebrk) : str;
+		_screen->printText(str2.c_str(), (dm->sx * xAlignFactor + ((dm->w * xAlignFactor - str2.size()) >> 1)) << (4 - xAlignFactor), dm->sy + yOffs, color, dm->unkA);
+		str = (linebrk != Common::String::npos) ? str.substr(linebrk + 1) : "";
 	}
-
-	delete[] temp;
 
 	if (_vm->gameFlags().platform == Common::kPlatformAmiga)
 		_screen->fadePalette(*_palettes[0], 20);

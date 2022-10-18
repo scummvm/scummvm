@@ -123,8 +123,6 @@ endif
 # OpenGL specific source files.
 ifdef USE_OPENGL
 MODULE_OBJS += \
-	graphics/opengl/context.o \
-	graphics/opengl/debug.o \
 	graphics/opengl/framebuffer.o \
 	graphics/opengl/opengl-graphics.o \
 	graphics/opengl/shader.o \
@@ -132,6 +130,8 @@ MODULE_OBJS += \
 	graphics/opengl/pipelines/clut8.o \
 	graphics/opengl/pipelines/fixed.o \
 	graphics/opengl/pipelines/pipeline.o \
+	graphics/opengl/pipelines/libretro.o \
+	graphics/opengl/pipelines/libretro/parser.o \
 	graphics/opengl/pipelines/shader.o
 endif
 
@@ -211,6 +211,11 @@ MODULE_OBJS += \
 	text-to-speech/macosx/macosx-text-to-speech.o
 endif
 
+ifdef SDL_BACKEND
+MODULE_OBJS += \
+	plugins/sdl/macosx/macosx-provider.o
+endif
+
 endif
 
 ifdef WIN32
@@ -270,7 +275,13 @@ MODULE_OBJS += \
 	events/riscossdl/riscossdl-events.o \
 	fs/riscos/riscos-fs.o \
 	fs/riscos/riscos-fs-factory.o \
+	midi/riscos.o \
+	plugins/riscos/riscos-provider.o
+ifndef SDL_BACKEND
+# This is needed for null backend but already included in SDL backend
+MODULE_OBJS += \
 	platform/sdl/riscos/riscos-utils.o
+endif
 endif
 
 ifdef PLAYSTATION3
@@ -369,6 +380,7 @@ MODULE_OBJS += \
 	fs/posix/posix-iostream.o \
 	fs/posix-drives/posix-drives-fs.o \
 	fs/posix-drives/posix-drives-fs-factory.o \
+	plugins/psp2/psp2-provider.o \
 	events/psp2sdl/psp2sdl-events.o
 endif
 

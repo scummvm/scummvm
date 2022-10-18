@@ -55,7 +55,6 @@ Texture *TinyGLRenderer::createTexture3D(const Graphics::Surface *surface) {
 	return new TinyGLTexture3D(surface);
 }
 
-
 void TinyGLRenderer::init() {
 	debug("Initializing Software 3D Renderer");
 
@@ -147,7 +146,7 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 }
 
 void TinyGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect,
-		Texture *texture, float transparency, bool additiveBlending) {
+	                                Texture *texture, float transparency, bool additiveBlending) {
 	TinyGLTexture2D *glTexture = static_cast<TinyGLTexture2D *>(texture);
 
 	const float sLeft = screenRect.left;
@@ -239,8 +238,7 @@ void TinyGLRenderer::drawCube(Texture **textures) {
 }
 
 void TinyGLRenderer::drawTexturedRect3D(const Math::Vector3d &topLeft, const Math::Vector3d &bottomLeft,
-		const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
-
+	                                const Math::Vector3d &topRight, const Math::Vector3d &bottomRight, Texture *texture) {
 	TinyGLTexture3D *glTexture = static_cast<TinyGLTexture3D *>(texture);
 
 	tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);

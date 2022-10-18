@@ -34,7 +34,6 @@ namespace Scumm {
 
 void Insane::runScene(int arraynum) {
 	_insaneIsRunning = true;
-	_player = _vm->_splayer;
 	_player->insanity(true);
 
 	_numberArray = arraynum;
@@ -141,6 +140,7 @@ void Insane::runScene(int arraynum) {
 		error("Unknown FT_INSANE mode %d", readArray(0));
 	}
 
+	_player->resetAudioTracks();
 	putActors();
 	_enemy[EN_ROTT3].maxdamage = 120;
 
@@ -278,17 +278,17 @@ void Insane::stopSceneSounds(int sceneId) {
 	default:
 		break;
 	}
-	if (!flag)
-		return;
 
-	smlayer_setActorCostume(0, 2, 0);
-	smlayer_setActorCostume(0, 0, 0);
-	smlayer_setActorCostume(0, 1, 0);
-	smlayer_setActorCostume(1, 2, 0);
-	smlayer_setActorCostume(1, 0, 0);
-	smlayer_setActorCostume(1, 1, 0);
+	_player->resetAudioTracks();
 
-	return;
+	if (flag) {
+		smlayer_setActorCostume(0, 2, 0);
+		smlayer_setActorCostume(0, 0, 0);
+		smlayer_setActorCostume(0, 1, 0);
+		smlayer_setActorCostume(1, 2, 0);
+		smlayer_setActorCostume(1, 0, 0);
+		smlayer_setActorCostume(1, 1, 0);
+	}
 }
 
 void Insane::shutCurrentScene() {
@@ -854,7 +854,6 @@ void Insane::procPostRendering(byte *renderBitmap, int32 codecparam, int32 setup
 			postCase17(renderBitmap, codecparam, setupsan12, setupsan13, curFrame, maxFrame);
 			smlayer_stopSound(95);
 			smlayer_stopSound(87);
-			smlayer_stopSound(88);
 			if (!smlayer_isSoundRunning(88))
 				smlayer_startSfx(88);
 			break;

@@ -26,8 +26,6 @@
 #include "kyra/resource/resource.h"
 #include "kyra/sound/sound.h"
 
-#include "base/version.h"
-
 #include "common/system.h"
 
 namespace Kyra {
@@ -42,7 +40,12 @@ int LoLEngine::processPrologue() {
 		return playDemo();
 	} else {
 		setupPrologueData(true);
-		if (!saveFileLoadable(0) || _flags.isDemo)
+		bool hasSave = false;
+		for (int i = 0; i < 20 && !hasSave; ++i) {
+			if (saveFileLoadable(i)) 
+				hasSave = true;
+		}
+		if (!hasSave || _flags.isDemo)
 			showIntro();
 	}
 
@@ -60,7 +63,7 @@ int LoLEngine::processPrologue() {
 
 	preInit();
 
-	Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+	Common::String versionString = "ScummVM " + _versionString;
 
 	int processSelection = -1;
 	while (!shouldQuit() && processSelection == -1) {
@@ -121,6 +124,7 @@ int LoLEngine::processPrologue() {
 	}
 
 	if (processSelection == 0) {
+		restartPlayTimerAt(0);
 		if (_flags.isDemo) {
 			_charSelection = 0;
 			_screen->loadBitmap("ITEMICN.SHP", 3, 3, 0);
@@ -167,20 +171,18 @@ void LoLEngine::setupPrologueData(bool load) {
 
 	const char *const *fileList = _flags.isTalkie ? (_flags.isDemo ? fileListCDDemo : fileListCD) : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 
-	char filename[32];
+	Common::String filename;
 	for (uint i = 0; fileList[i]; ++i) {
-		filename[0] = '\0';
+		filename.clear();
 
-		if (_flags.isTalkie && !_flags.isDemo) {
-			strcpy(filename, _languageExt[_lang]);
-			strcat(filename, "/");
-		}
+		if (_flags.isTalkie && !_flags.isDemo)
+			filename = Common::String(_languageExt[_lang]) + "/";
 
-		strcat(filename, fileList[i]);
+		filename += fileList[i];
 
 		if (load) {
 			if (!_res->loadPakFile(filename))
-				error("Couldn't load file: '%s'", filename);
+				error("Couldn't load file: '%s'", filename.c_str());
 		} else {
 			_res->unloadPakFile(filename);
 		}
@@ -307,7 +309,7 @@ int LoLEngine::chooseCharacter() {
 	while (!_screen->isMouseVisible())
 		_screen->showMouse();
 
-	_screen->loadBitmap("CHAR.CPS", 2, 2, &_screen->getPalette(0));
+	_screen->loadBitmap(_flags.lang == Common::ZH_TWN ? "CHARCHI.CPS" : "CHAR.CPS", 2, 2, &_screen->getPalette(0));
 	_screen->loadBitmap("BACKGRND.CPS", 4, 4, &_screen->getPalette(0));
 
 	if (!_chargenWSA->open("CHARGEN.WSA", 1, 0))
@@ -571,36 +573,35 @@ int LoLEngine::selectionCharInfo(int character) {
 	if (character < 0)
 		return -1;
 
-	char filename[16];
-	char vocFilename[6];
-	strcpy(vocFilename, "000X0");
+	Common::String filename;
+	Common::String vocFilename = "000X0";
 
 	switch (character) {
 	case 0:
-		strcpy(filename, "FACE09.SHP");
-		vocFilename[3] = 'A';
+		filename = "FACE09.SHP";
+		vocFilename.setChar('A', 3);
 		break;
 
 	case 1:
-		strcpy(filename, "FACE01.SHP");
-		vocFilename[3] = 'M';
+		filename = "FACE01.SHP";
+		vocFilename.setChar('M', 3);
 		break;
 
 	case 2:
-		strcpy(filename, "FACE08.SHP");
-		vocFilename[3] = 'K';
+		filename = "FACE08.SHP";
+		vocFilename.setChar('K', 3);
 		break;
 
 	case 3:
-		strcpy(filename, "FACE05.SHP");
-		vocFilename[3] = 'C';
+		filename = "FACE05.SHP";
+		vocFilename.setChar('C', 3);
 		break;
 
 	default:
 		break;
 	}
 
-	_screen->loadBitmap(filename, 9, 9, 0);
+	_screen->loadBitmap(filename.c_str(), 9, 9, 0);
 	_screen->copyRegion(0, 122, 0, 122, 320, 78, 4, 0, Screen::CR_NO_P_CHECK);
 	_screen->copyRegion(_charPreviews[character].x - 3, _charPreviews[character].y - 3, 8, 127, 38, 38, 2, 0);
 
@@ -652,17 +653,17 @@ int LoLEngine::selectionCharInfo(int character) {
 	return character;
 }
 
-void LoLEngine::selectionCharInfoIntro(char *file) {
-	int index = 0;
-	file[4] = '0';
+void LoLEngine::selectionCharInfoIntro(Common::String &file) {
+	char index = '\0';
+	file.setChar('0', 4);
 	bool processAnim = true;
 
 	while (_charSelectionInfoResult == -1 && !shouldQuit()) {
-		if (speechEnabled() && !_sound->isVoicePresent(file))
+		if (speechEnabled() && !_sound->isVoicePresent(file.c_str()))
 			break;
 
 		if (_flags.isTalkie)
-			_sound->voicePlay(file, &_speechHandle);
+			_sound->voicePlay(file.c_str(), &_speechHandle);
 
 		int i = 0;
 		while ((!speechEnabled() || (speechEnabled() && _sound->voiceIsPlaying(&_speechHandle))) && _charSelectionInfoResult == -1 && !shouldQuit()) {
@@ -682,7 +683,7 @@ void LoLEngine::selectionCharInfoIntro(char *file) {
 		}
 
 		_sound->voiceStop(&_speechHandle);
-		file[4] = ++index + '0';
+		file.setChar(++index + '0', 4);
 	}
 
 	_screen->drawShape(0, _screen->getPtrToShape(_screen->getCPagePtr(9), 0), 11, 130, 0, 0);
@@ -807,7 +808,7 @@ void HistoryPlayer::play() {
 	char tempWsaFilename[16];
 	char voiceFilename[13];
 	// the 'a' *has* to be lowercase
-	strcpy(voiceFilename, "PS_1a");
+	Common::strlcpy(voiceFilename, "PS_1a", sizeof(voiceFilename));
 
 	int part = 0;
 	Sound *sound = _vm->sound();
@@ -866,7 +867,7 @@ void HistoryPlayer::play() {
 					sound->voicePlay(voiceFilename);
 					playWsa(true);
 
-					strcpy(tempWsaFilename, &data[part * 15]);
+					Common::strlcpy(tempWsaFilename, &data[part * 15], sizeof(tempWsaFilename));
 
 					for (int i = 1; i < 4 && !_vm->shouldQuit(); ++i) {
 						uint32 nextTime = _system->getMillis() + 30 * _vm->tickLength();
@@ -1042,20 +1043,18 @@ void LoLEngine::setupEpilogueData(bool load) {
 	const char *const *fileList = _flags.isTalkie ? fileListCD : (_flags.platform == Common::kPlatformFMTowns ? fileListTowns : fileListFloppy);
 	assert(fileList);
 
-	char filename[32];
+	Common::String filename;
 	for (uint i = 0; fileList[i]; ++i) {
-		filename[0] = '\0';
+		filename.clear();
 
-		if (_flags.isTalkie) {
-			strcpy(filename, _languageExt[_lang]);
-			strcat(filename, "/");
-		}
+		if (_flags.isTalkie)
+			filename = Common::String(_languageExt[_lang]) + "/";
 
-		strcat(filename, fileList[i]);
+		filename += fileList[i];
 
 		if (load) {
 			if (!_res->loadPakFile(filename))
-				error("Couldn't load file: '%s'", filename);
+				error("Couldn't load file: '%s'", filename.c_str());
 		} else {
 			_res->unloadPakFile(filename);
 		}

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -33,10 +34,8 @@ int Room76::_state;
 
 
 void Room76::entry() {
-	g_engine->_sound->playSound(0,0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0,0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_state = 0;
@@ -47,18 +46,18 @@ void Room76::entry() {
 	_G(gameState)._personHide[P_NICHELLE] = true;
 
 	if (!_G(gameState).flags29_4) {
-		_G(atds)->delControlBit(453, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(457, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(458, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(453, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(457, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(458, ATS_ACTIVE_BIT);
 
 	} else {
 		_G(det)->del_static_ani(2);
 		for (int i = 0; i < 3; ++i)
 			_G(det)->hideStaticSpr(8 + i);
 
-		_G(atds)->setControlBit(453, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(457, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(458, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(453, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(457, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(458, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(flags).LoadGame)
@@ -156,7 +155,7 @@ int Room76::proc6() {
 
 	if (isCurInventory(93)) {
 		hideCur();
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).flags29_8 = true;
 		retVal = 1;
 		autoMove(3, P_CHEWY);
@@ -187,11 +186,11 @@ int Room76::proc7() {
 		hideCur();
 		autoMove(6, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		invent_2_slot(106);
 		invent_2_slot(105);
 		startAadWait(444);
-		_G(out)->ausblenden(0);
+		_G(out)->fadeOut();
 		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		startAadWait(443);
 		_G(gameState).scrollx = 0;
@@ -206,7 +205,7 @@ int Room76::proc7() {
 
 		startAadWait(427);
 		showCur();
-		startAdsWait(21);
+		startDialogCloseupWait(21);
 		hideCur();
 		startAadWait(428);
 		showCur();

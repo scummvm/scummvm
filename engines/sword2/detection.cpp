@@ -32,16 +32,18 @@ static const ExtraGuiOption sword2ExtraGuiOption = {
 	_s("Show object labels"),
 	_s("Show labels for objects on mouse hover"),
 	"object_labels",
-	false
+	false,
+	0,
+	0
 };
 
 class Sword2MetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sword2";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Broken Sword II: The Smoking Mirror";
 	}
 	const char *getOriginalCopyright() const override {
@@ -51,7 +53,7 @@ public:
 	PlainGameList getSupportedGames() const override;
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
 
 PlainGameList Sword2MetaEngineDetection::getSupportedGames() const {
@@ -80,7 +82,7 @@ PlainGameDescriptor Sword2MetaEngineDetection::findGame(const char *gameid) cons
 	return PlainGameDescriptor::of(g->gameid, g->description);
 }
 
-DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames Sword2MetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
 	// The required game data files can be located in the game directory, or in
 	// a subdirectory called "clusters". In the latter case, we don't want to
 	// detect the game in that subdirectory, as this will detect the game twice

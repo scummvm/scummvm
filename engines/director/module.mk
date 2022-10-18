@@ -11,6 +11,7 @@ MODULE_OBJS = \
 	events.o \
 	fonts.o \
 	frame.o \
+	game-quirks.o \
 	graphics.o \
 	images.o \
 	metaengine.o \
@@ -38,19 +39,30 @@ MODULE_OBJS = \
 	lingo/lingo-preprocessor.o \
 	lingo/lingo-the.o \
 	lingo/lingo-utils.o \
+	lingo/xlibs/aiff.o \
+	lingo/xlibs/applecdxobj.o \
+	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/fileio.o \
 	lingo/xlibs/flushxobj.o \
 	lingo/xlibs/fplayxobj.o \
+	lingo/xlibs/gpid.o \
+	lingo/xlibs/jitdraw3.o \
+	lingo/xlibs/jwxini.o \
 	lingo/xlibs/labeldrvxobj.o \
 	lingo/xlibs/memoryxobj.o \
+	lingo/xlibs/miscx.o \
+	lingo/xlibs/moovxobj.o \
 	lingo/xlibs/movemousexobj.o \
+	lingo/xlibs/movutils.o \
 	lingo/xlibs/orthoplayxobj.o \
 	lingo/xlibs/palxobj.o \
 	lingo/xlibs/popupmenuxobj.o \
+	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
 	lingo/xlibs/videodiscxobj.o \
+	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \
 	lingo/xlibs/xplayanim.o
 

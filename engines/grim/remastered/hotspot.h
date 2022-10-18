@@ -30,12 +30,10 @@
 
 namespace Grim {
 
-
 class Hotspot : public PoolObject<Hotspot> {
 public:
 	Hotspot(const Common::String &name, int x, int y, int width, int height);
 	~Hotspot();
-
 
 	static int32 getStaticTag() { return MKTAG('H','O','T','S'); }
 

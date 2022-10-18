@@ -27,6 +27,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+// TODO: perhaps let configure line break character per TextWriter object?
 #if AGS_PLATFORM_OS_WINDOWS
 static const char Endl[2] = { '\r', '\n' };
 #else
@@ -56,54 +57,33 @@ void TextStreamWriter::ReleaseStream() {
 }
 
 bool TextStreamWriter::EOS() const {
-	return _stream ? _stream->EOS() : true;
+	return _stream->EOS();
 }
 
 void TextStreamWriter::WriteChar(char c) {
-	if (_stream) {
-		_stream->WriteByte(c);
-	}
+	_stream->WriteByte(c);
 }
 
 void TextStreamWriter::WriteString(const String &str) {
-	if (_stream) {
-		// TODO: replace line-feed characters in string with platform-specific line break
-		_stream->Write(str.GetCStr(), str.GetLength());
-	}
+	_stream->Write(str.GetCStr(), str.GetLength());
 }
 
 void TextStreamWriter::WriteLine(const String &str) {
-	if (!_stream) {
-		return;
-	}
-
-	// TODO: replace line-feed characters in string with platform-specific line break
+	// TODO: perhaps let configure line break character?
 	_stream->Write(str.GetCStr(), str.GetLength());
 	_stream->Write(Endl, sizeof(Endl));
 }
 
 void TextStreamWriter::WriteFormat(const char *fmt, ...) {
-	if (!_stream) {
-		return;
-	}
-
-	// TODO: replace line-feed characters in format string with platform-specific line break
-
 	va_list argptr;
 	va_start(argptr, fmt);
-	int need_length = vsnprintf(nullptr, 0, fmt, argptr);
-	va_start(argptr, fmt); // Reset argptr
-	char *buffer = new char[need_length + 1];
-	vsprintf(buffer, fmt, argptr);
+	_buf.FormatV(fmt, argptr);
 	va_end(argptr);
-
-	_stream->Write(buffer, need_length);
-	delete[] buffer;
+	_stream->Write(_buf.GetCStr(), _buf.GetLength());
 }
 
 void TextStreamWriter::WriteLineBreak() {
-	if (_stream)
-		_stream->Write(Endl, sizeof(Endl));
+	_stream->Write(Endl, sizeof(Endl));
 }
 
 } // namespace Shared

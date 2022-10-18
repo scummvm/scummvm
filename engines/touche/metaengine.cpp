@@ -41,7 +41,7 @@ public:
 	void removeSaveState(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
-			target = getEngineId();
+			target = getName();
 		return Touche::generateGameStateFileName(target, saveGameIdx, saveGameIdx == kSavegameFilePattern);
 	}
 };

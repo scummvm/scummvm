@@ -832,6 +832,11 @@ void tglLightf(TGLenum light, TGLenum type, const TGLfloat v);
 void tglLightModeli(TGLenum pname, TGLint param);
 void tglLightModelfv(TGLenum pname, const TGLfloat *param);
 
+// fog
+void tglFogfv(TGLenum pname, const TGLfloat *params);
+void tglFogf(TGLenum pname, TGLfloat param);
+void tglFogiv(TGLenum pname, const TGLint *params);
+void tglFogi(TGLenum pname, TGLint param);
 
 // misc
 void tglFlush();

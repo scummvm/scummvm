@@ -24,6 +24,15 @@
 
 namespace Hypno {
 
+void SpiderEngine::endConversation() {
+	debugC(1, kHypnoDebugScene, "Ending and clearing conversation");
+	for (Actions::iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
+		Talk *a = (Talk *)*itt;
+		delete a;
+	}
+	_conversation.clear();
+}
+
 void SpiderEngine::showConversation() {
 	debugC(1, kHypnoDebugScene, "Showing conversation");
 	defaultCursor();
@@ -31,11 +40,21 @@ void SpiderEngine::showConversation() {
 	uint32 y = 0;
 	Graphics::Surface *speaker = decodeFrame("dialog/speaker3.smk", 0);
 	bool activeFound = false;
+	bool skipRepeated = false;
 
 	// First iteration on the talk commands
 	Videos videos;
 	for (Actions::iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
+
+		for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
+			if (it->command == "P") {
+				if (_intros[it->path]) {
+					skipRepeated = true;
+				}
+			}
+		}
+
 		if (a->boxPos != Common::Point(0, 0)) {
 			if (!(x == 0 && x == y))
 				error("Multiple BOX positions found");
@@ -47,6 +66,7 @@ void SpiderEngine::showConversation() {
 			videos.push_back(MVideo(a->intro, a->introPos, false, false, false));
 			_intros[a->intro] = true;
 		}
+
 	}
 
 	if (videos.size() > 0) {
@@ -60,7 +80,7 @@ void SpiderEngine::showConversation() {
 	// Second iteration on the talk commands
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;
-		if (a->active) {
+		if (a->active && !skipRepeated) {
 			uint32 frame;
 			Common::String path;
 			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
@@ -78,7 +98,7 @@ void SpiderEngine::showConversation() {
 				drawImage(*surf, x + speaker->w, y, false);
 				a->rect = Common::Rect(x + speaker->w, y, x + surf->w, y + surf->h);
 				y = y + surf->h;
-				
+
 				surf->free();
 				delete surf;
 			}
@@ -88,8 +108,18 @@ void SpiderEngine::showConversation() {
 		debugC(1, kHypnoDebugScene, "No active item was found in the current conversation");
 		// Final iteration on the talk commands
 		bool shouldEscape = false;
-		for (Actions::const_iterator it = _conversation.begin(); it != _conversation.end(); ++it) {
-			Talk *a = (Talk *)*it;
+		for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
+			Talk *a = (Talk *)*itt;
+
+			// Avoid this conversation next time
+			for (TalkCommands::const_iterator it = a->commands.begin(); it != a->commands.end(); ++it) {
+				if (it->command == "P") {
+					if (!it->path.empty()) {
+						_intros[it->path] = true;
+					}
+				}
+			}
+
 			if (!a->second.empty()) {
 				debugC(1, kHypnoDebugScene, "Adding %s to play after the conversation ends", a->second.c_str());
 				videos.push_back(MVideo(a->second, a->secondPos, false, false, false));
@@ -104,8 +134,7 @@ void SpiderEngine::showConversation() {
 			videos.clear();
 		}
 
-		debugC(1, kHypnoDebugScene, "Clearing conversation");
-		_conversation.clear();
+		endConversation();
 		_music.clear();
 
 		if (shouldEscape) {
@@ -123,12 +152,13 @@ void SpiderEngine::showConversation() {
 		}
 
 		drawScreen();
-	} 
+	}
 	speaker->free();
 	delete speaker;
 }
 
 void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
+	defaultCursor();
 	Talk *t;
 	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
@@ -161,7 +191,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 
 			}
 		}
-		if (!a->background.empty()) {
+		if (_refreshConversation && !a->background.empty()) {
 			loadImage(a->background, a->backgroundPos.x, a->backgroundPos.y, false);
 		}
 	}
@@ -178,6 +208,7 @@ void SpiderEngine::leftClickedConversation(const Common::Point &mousePos) {
 }
 
 void SpiderEngine::rightClickedConversation(const Common::Point &mousePos) {
+	defaultCursor();
 	Videos videos;
 	for (Actions::const_iterator itt = _conversation.begin(); itt != _conversation.end(); ++itt) {
 		Talk *a = (Talk *)*itt;

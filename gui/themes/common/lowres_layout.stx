@@ -62,12 +62,6 @@
 		<def var = 'Radiobutton.Spacing' value = '5' scalable = 'yes'/>
 
 		<def var = 'GridSupported' value = '0'/>
-		<def var = 'GridItemThumbnail.Width' value = '128' scalable = 'no'/>
-		<def var = 'GridItemThumbnail.Height' value = '128' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Width' value = '30' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Height' value = '15' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Width' value = '24' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Height' value = '24' scalable = 'no'/>
 		<def var = 'Grid.XSpacing' value = '20' scalable = 'no'/>
 		<def var = 'Grid.YSpacing' value = '10' scalable = 'no'/>
 		<def var = 'Grid.ShowTitles' value = '0' scalable = 'no'/>
@@ -253,6 +247,15 @@
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
 				/>
+				<widget name = 'GridItemsPerRowDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GridItemsPerRow'
+						type = 'Slider'
+				/>
+				<widget name = 'GridItemsPerRowLabel'
+						type = 'SmallLabel'
+				/>
 			</layout>
 			<widget name = 'GameList'/>
 			<widget name = 'IconArea'/>
@@ -435,6 +438,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grShaderButton'
+						type = 'Button'
+				/>
+				<widget name = 'grShader'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'grShaderClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'
 			/>
@@ -460,19 +475,6 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'grAntiAliasPopup'
-						type = 'PopUp'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalOptions_Shader' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<widget name = 'grShaderPopUpDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'grShaderPopUp'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -1031,6 +1033,9 @@
 				<widget name = 'CloseButton'
 						type = 'Button'
 				/>
+				<widget name = 'ResetButton'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>
@@ -1219,15 +1224,6 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions_Shader' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
-			<widget name = 'EnableTabCheckbox'
-					type = 'Checkbox'
-			/>
-			<import layout = 'Dialog.GlobalOptions_Shader' />
-		</layout>
-	</dialog>
-
 	<dialog name = 'GameOptions_Audio' overlays = 'Dialog.GameOptions.TabWidget'>
 		<layout type = 'vertical' padding = '8, 8, 8, 8' spacing = '6'>
 			<widget name = 'EnableTabCheckbox'
@@ -1413,7 +1409,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>

@@ -225,7 +225,7 @@ void _sound_logic::NewSound(uint32 nObjectID, int32 nX, int32 nY, int32 nZ, cons
 	// Don't put up a new SFX subtitle if one is being displayed already.
 	if (m_nSFXSubtitleTimer == 0) {
 		// Here, we put up a SFX subtitle if one is listed for the sound.
-		m_pcSFXSubtitleText = (const char *)global_text->Try_fetch_item_by_hash(nSoundHash);
+		m_pcSFXSubtitleText = (const char *)LinkedDataObject::Try_fetch_item_by_hash(global_text, nSoundHash);
 
 		if (m_pcSFXSubtitleText)
 			m_nSFXSubtitleTimer = Get_reading_time(m_pcSFXSubtitleText);

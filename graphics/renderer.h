@@ -23,6 +23,7 @@
 #define GRAPHICS_RENDERER_H
 
 #include "common/scummsys.h"
+#include "common/array.h"
 #include "common/str.h"
 
 namespace Graphics {
@@ -41,11 +42,11 @@ namespace Graphics {
  *
  * It specifies which rendering driver to use
  */
-enum RendererType {
+enum RendererType : uint32 {
 	kRendererTypeDefault = 0,
 	kRendererTypeOpenGL = 1,
 	kRendererTypeOpenGLShaders = 2,
-	kRendererTypeTinyGL = 3
+	kRendererTypeTinyGL = 4
 };
 
 struct RendererTypeDescription {
@@ -54,17 +55,28 @@ struct RendererTypeDescription {
 	RendererType id;
 };
 
-const RendererTypeDescription *listRendererTypes();
+class Renderer {
+public:
+	static Common::Array<RendererTypeDescription> listTypes();
 
-/** Convert a renderer code to a RendererType enum value */
-RendererType parseRendererTypeCode(const Common::String &code);
+	/** Convert a renderer code to a RendererType enum value */
+	static RendererType parseTypeCode(const Common::String &code);
 
-/** Get a character string code from a RendererType enum value */
-Common::String getRendererTypeCode(RendererType type);
+	/** Get a character string code from a RendererType enum value */
+	static Common::String getTypeCode(RendererType type);
 
-/** Get the best matching renderer among available renderers */
-RendererType getBestMatchingAvailableRendererType(RendererType desired);
- /** @} */
+	/** Get a bitmask of available renderers */
+	static uint32 getAvailableTypes();
+
+	/** Perform renderer selection amongst available ones */
+	static RendererType getBestMatchingType(RendererType desired, uint32 available);
+
+	/** Get the best matching renderer among available and supported renderers */
+	static RendererType getBestMatchingAvailableType(RendererType desired, uint32 supported) {
+		return getBestMatchingType(desired, getAvailableTypes() & supported);
+	}
+};
+/** @} */
 } // End of namespace Graphics
 
 #endif

@@ -35,13 +35,15 @@
 #include "scumm/scumm.h"
 #include "scumm/scumm_v2.h"
 #include "scumm/scumm_v5.h"
+#include "scumm/scumm_v8.h"
+#include "scumm/smush/smush_player.h"
 
 namespace Scumm {
 
 /*
  * Mouse cursor cycle colors (for the default crosshair).
  */
-static const byte default_v1_cursor_colors[4] = {
+static const byte default_v0_cursor_colors[4] = {
 	1, 1, 12, 11
 };
 
@@ -89,6 +91,46 @@ static const byte default_v6_cursor[] = {
 	0xFF,0xFF,0xFF,0xFF,0xFF,0xFF, 0x00,0x0F,0x00, 0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,0xFF,
 };
 
+#ifdef ENABLE_SCUMM_7_8
+static const byte default_v7_cursor[] = {
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x00,0x00,0x00,0x00, 0x01,0x01,0x01, 0x00,0x00,0x00,0x00,
+	0x0F,0x0F,0x0F,0x0F, 0x01,0x01,0x01, 0x0F,0x0F,0x0F,0x0F,
+	0x00,0x00,0x00,0x00, 0x01,0x01,0x01, 0x00,0x00,0x00,0x00,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x01,0x01,0x01,0x01, 0x00,0x0F,0x00, 0x01,0x01,0x01,0x01,
+	0x00,0x00,0x00,
+};
+
+static const byte default_v8_cursor[] = {
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0xFE,0xFE,0xFE,0xFE, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F, 0xFE,0xFE,0xFE,0xFE, 0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,
+	0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F, 0xFE,0xFE,0xFE,0xFE, 0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,0x0F,
+	0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00, 0xFE,0xFE,0xFE,0xFE, 0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+	0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE, 0x00,0x0F,0x0F,0x00, 0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,
+};
+#endif
+
 void ScummEngine_v5::animateCursor() {
 	if (_cursor.animate) {
 		if (!(_cursor.animateIndex & 0x1)) {
@@ -99,6 +141,11 @@ void ScummEngine_v5::animateCursor() {
 }
 
 void ScummEngine_v6::setCursorHotspot(int x, int y) {
+	if (_enableEGADithering) {
+		x <<= 1;
+		y <<= 1;
+	}
+
 	_cursor.hotspotX = x;
 	_cursor.hotspotY = y;
 }
@@ -108,9 +155,17 @@ void ScummEngine_v6::setCursorTransparency(int a) {
 
 	size = _cursor.width * _cursor.height;
 
-	for (i = 0; i < size; i++)
-		if (_grabbedCursor[i] == (byte)a)
-			_grabbedCursor[i] = 0xFF;
+	if (_enableEGADithering) {
+		for (i = 0; i < size; i += 2) {
+			int st = 1 ^ ((i / (_cursor.width << 1)) & 1);
+			if (_grabbedCursor[i] == _egaColorMap[st][a] && _grabbedCursor[i + 1] == _egaColorMap[st ^ 1][a])
+				_grabbedCursor[i] = _grabbedCursor[i + 1] = 0xFF;
+		}
+	} else {
+		for (i = 0; i < size; i++)
+			if (_grabbedCursor[i] == (byte)a)
+				_grabbedCursor[i] = 0xFF;
+	}
 
 	updateCursor();
 }
@@ -148,11 +203,132 @@ void ScummEngine_v6::setDefaultCursor() {
 	setCursorFromBuffer(default_v6_cursor, 16, 13, 16);
 }
 
-void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch) {
+#ifdef ENABLE_SCUMM_7_8
+void ScummEngine_v7::setDefaultCursor() {
+	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
+	byte cursorBuffer[124];
+	byte cursorPixel;
+	int black, white, inverseRgbIdx;
+	int rgbIdx = 0;
+
+	do {
+		black = getPaletteColorFromRGB(palette, rgbIdx, rgbIdx, rgbIdx);
+		++rgbIdx;
+	} while (black == 1 && rgbIdx != 100);
+	rgbIdx = 0;
+
+	do {
+		inverseRgbIdx = 0xFF - rgbIdx++;
+		white = getPaletteColorFromRGB(palette, inverseRgbIdx, inverseRgbIdx, inverseRgbIdx);
+	} while (white == 1 && rgbIdx != 100);
+
+	for (int i = 0; i < ARRAYSIZE(default_v7_cursor); i++) {
+		cursorPixel = default_v7_cursor[i];
+
+		if (cursorPixel == 0x0F)
+			cursorPixel = white;
+
+		cursorBuffer[i] = (byte)(cursorPixel & 0xFF);
+	}
+
+	setCursorHotspot(5, 5);
+	setCursorFromBuffer(cursorBuffer, 11, 11, 11);
+	setCursorTransparency(0x01);
+}
+
+void ScummEngine_v8::setDefaultCursor() {
+	byte *palette = isSmushActive() ? _splayer->getVideoPalette() : _currentPalette;
+	byte cursorBuffer[400];
+	byte cursorPixel;
+	int /* black,*/ white, inverseRgbIdx;
+	int rgbIdx = 0;
+
+	/*	The interpreter does this, but we don't need it, at least for v8.
+	 *	See below for details.
+	 *
+	 *	do {
+	 *		black = getPaletteColorFromRGB(palette, rgbIdx, rgbIdx, rgbIdx);
+	 *		++rgbIdx;
+	 *	} while (black == 1 && rgbIdx != 100);
+	 *	rgbIdx = 0;
+	 */
+	do {
+		inverseRgbIdx = 0xFF - rgbIdx++;
+		white = getPaletteColorFromRGB(palette, inverseRgbIdx, inverseRgbIdx, inverseRgbIdx);
+	} while (white == 1 && rgbIdx != 100);
+
+	for (int i = 0; i < ARRAYSIZE(default_v8_cursor); i++) {
+		cursorPixel = default_v8_cursor[i];
+
+		if (isSmushActive() && cursorPixel == 0x0F)
+			cursorPixel = white;
+
+		/* The interpreter also performs this substitution.
+		 * we can't since we handle the palette in a different way and we wouldn't
+		 * find the same color the interpreter finds.
+		 *
+		 * if (cursorPixel == 0x00)
+		 *	cursorPixel = black;
+		 */
+
+		cursorBuffer[i] = (byte)(cursorPixel & 0xFF);
+	}
+
+	setCursorHotspot(9, 9);
+	setCursorFromBuffer(cursorBuffer, 20, 20, 20);
+	setCursorTransparency(0xFE);
+}
+
+void ScummEngine_v7::setCursorTransparency(int a) {
+	int i, size;
+
+	size = _cursor.width * _cursor.height;
+
+	for (i = 0; i < size; i++) {
+		if (_grabbedCursor[i] == (byte)a) {
+			if (_game.version == 8) {
+				_grabbedCursor[i] = isSmushActive() ? 0xFE : 0xFF;
+			} else {
+				_grabbedCursor[i] = isSmushActive() ? 0x01 : 0xFF;
+			}
+		}
+	}
+
+	updateCursor();
+}
+
+void ScummEngine_v7::updateCursor() {
+	int transColor;
+	if (_game.version == 8) {
+		transColor = isSmushActive() ? 0xFE : 0xFF;
+	} else {
+		transColor = isSmushActive() ? 0x01 : 0xFF;
+	}
+
+#ifdef USE_RGB_COLOR
+	Graphics::PixelFormat format = _system->getScreenFormat();
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							transColor,
+							false,
+							&format);
+#else
+	CursorMan.replaceCursor(_grabbedCursor, _cursor.width, _cursor.height,
+							_cursor.hotspotX, _cursor.hotspotY,
+							transColor,
+							false);
+#endif
+}
+#endif
+
+void ScummEngine_v6::setCursorFromBuffer(const byte *ptr, int width, int height, int pitch, bool preventScale) {
 	uint size;
 	byte *dst;
 
+	bool needsDithering = (_enableEGADithering && !preventScale);
 	size = width * height * _bytesPerPixel;
+	if (needsDithering)
+		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("grabCursor: grabbed cursor too big");
 
@@ -160,14 +336,35 @@ void ScummEngine::setCursorFromBuffer(const byte *ptr, int width, int height, in
 	_cursor.height = height;
 	_cursor.animate = 0;
 
-	dst = _grabbedCursor;
+	dst = needsDithering ? _compositeBuf : _grabbedCursor;
 	for (; height; height--) {
 		memcpy(dst, ptr, width * _bytesPerPixel);
 		dst += width * _bytesPerPixel;
 		ptr += pitch;
 	}
 
+	if (needsDithering)
+		ditherCursor();
+
 	updateCursor();
+}
+
+void ScummEngine_v6::ditherCursor() {
+	int x = 0;
+	int y = 0;
+	int pitch = _cursor.width;
+
+	// We temporarily put the transparency color in the EGA color tables.
+	uint8 backupEGA0 = _egaColorMap[0][255];
+	uint8 backupEGA1 = _egaColorMap[1][255];
+	_egaColorMap[0][255] = _egaColorMap[1][255] = 0xFF;
+
+	ditherVGAtoEGA(pitch, x, y, _cursor.width, _cursor.height);
+
+	_egaColorMap[0][255] = backupEGA0;
+	_egaColorMap[1][255] = backupEGA1;
+
+	memcpy(_grabbedCursor, _hercCGAScaleBuf, _cursor.width * _cursor.height);
 }
 
 void ScummEngine_v70he::setCursorFromImg(uint img, uint room, uint imgindex) {
@@ -318,6 +515,14 @@ void ScummEngine_v6::setCursorFromImg(uint img, uint room, uint imgindex) {
 		useBompCursor(bomp, w, h);
 	else
 		useIm01Cursor(dataptr, w, h);
+
+	// There are several occasions in which the screen is not updated
+	// between subsequent cursor changes, and as a result we would never
+	// be able to see some of those updates (i.e. the loading cursors in
+	// The Dig and The Curse of Monkey Island). This forced screen update
+	// addresses that.
+	if (_game.version > 6)
+		_system->updateScreen();
 }
 
 void ScummEngine_v6::useIm01Cursor(const byte *im, int w, int h) {
@@ -371,6 +576,8 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	height *= 8;
 
 	size = width * height;
+	if (_enableEGADithering)
+		size <<= 2;
 	if (size > sizeof(_grabbedCursor))
 		error("useBompCursor: cursor too big (%d)", size);
 
@@ -384,7 +591,10 @@ void ScummEngine_v6::useBompCursor(const byte *im, int width, int height) {
 	} else {
 		im += 18;
 	}
-	decompressBomp(_grabbedCursor, im, width, height);
+	decompressBomp(_enableEGADithering ? _compositeBuf : _grabbedCursor, im, width, height);
+
+	if (_enableEGADithering)
+		ditherCursor();
 
 	updateCursor();
 }
@@ -465,8 +675,12 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 
 	memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 
-	if (_game.version <= 1)
-		color = default_v1_cursor_colors[idx];
+	if (_game.version == 0)
+		color = default_v0_cursor_colors[idx];
+	else if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp)
+		color = (idx & 1) * 3;
+	else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW)
+		color = idx & 1;
 	else
 		color = default_cursor_colors[idx];
 
@@ -561,6 +775,30 @@ void ScummEngine_v2::setBuiltinCursor(int idx) {
 		*(hotspot - (_cursor.width * 5) + 1) = color;
 		*(hotspot + (_cursor.width * 5) - 1) = color;
 		*(hotspot + (_cursor.width * 5) + 1) = color;
+
+		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderCGA_BW) {
+			const byte *src = &_grabbedCursor[_cursor.width * _cursor.height - 1];
+
+			_cursor.width <<= 1;
+			_cursor.height <<= 1;
+			_cursor.hotspotX <<= 1;
+			_cursor.hotspotY <<= 1;
+
+			byte *dst1 = &_grabbedCursor[_cursor.width * _cursor.height - 1];
+			byte *dst2 = dst1 - _cursor.width;
+
+			while (dst2 >= _grabbedCursor) {
+				for (i = _cursor.width >> 1; i; --i) {
+					uint8 col2 = (_renderMode == Common::kRenderCGA_BW) ? *src : 0xFF;
+					*dst1-- = col2;
+					*dst1-- = col2;
+					*dst2-- = *src;
+					*dst2-- = *src--;
+				}
+				dst1 -= _cursor.width;
+				dst2 -= _cursor.width;
+			}
+		}
 	}
 
 	updateCursor();
@@ -664,32 +902,36 @@ void ScummEngine_v5::setBuiltinCursor(int idx) {
 				252, 252, 253, 254
 			};
 			color = indy4AmigaColors[idx];
+		} else if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
+			color = idx & 1;
 		} else {
 			color = default_cursor_colors[idx];
 		}
 		memset(_grabbedCursor, 0xFF, sizeof(_grabbedCursor));
 	}
 
-	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * _textSurfaceMultiplier;
-	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * _textSurfaceMultiplier;
-	_cursor.width = 16 * _textSurfaceMultiplier;
-	_cursor.height = 16 * _textSurfaceMultiplier;
+	int sclW = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG || _enableEGADithering) ? 2 : _textSurfaceMultiplier;
+	int sclH = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) ? 1 : (_enableEGADithering ? 2 : _textSurfaceMultiplier);
+	int sclW2 = _outputPixelFormat.bytesPerPixel * sclW;
 
-	int scl = _outputPixelFormat.bytesPerPixel * _textSurfaceMultiplier;
+	_cursor.hotspotX = _cursorHotspots[2 * _currentCursor] * sclW;
+	_cursor.hotspotY = _cursorHotspots[2 * _currentCursor + 1] * sclH;
+	_cursor.width = 16 * sclW;
+	_cursor.height = 16 * sclH;
 
 	for (i = 0; i < 16; i++) {
 		for (j = 0; j < 16; j++) {
 			if (src[i] & (1 << j)) {
-				byte *dst1 = _grabbedCursor + 16 * scl * i * _textSurfaceMultiplier + (15 - j) * scl;
-				byte *dst2 = (_textSurfaceMultiplier == 2) ? dst1 + 16 * scl : dst1;
+				byte *dst1 = _grabbedCursor + 16 * sclW2 * i * sclH + (15 - j) * sclW2;
+				byte *dst2 = (sclH == 2) ? dst1 + 16 * sclW2 : dst1;
 				if (_outputPixelFormat.bytesPerPixel == 2) {
-					for (int b = 0; b < scl; b += 2) {
+					for (int b = 0; b < sclW; b++) {
 						*((uint16 *)dst1) = *((uint16 *)dst2) = color;
 						dst1 += 2;
 						dst2 += 2;
 					}
 				} else {
-					for (int b = 0; b < scl; b++)
+					for (int b = 0; b < sclW; b++)
 						*dst1++ = *dst2++ = color;
 				}
 			}

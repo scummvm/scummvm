@@ -33,9 +33,11 @@ namespace Tinsel {
 // internal allocation flags
 #define	DWM_USED		0x0001	///< the objects memory block is in use
 #define	DWM_DISCARDED	0x0002	///< the objects memory block has been discarded
-#define	DWM_LOCKED		0x0004	///< the objects memory block is locked
+#define	DWM_LOCKED		((TinselVersion == 3) ? 0x0200 : 0x0004)	///< the objects memory block is locked
 #define	DWM_SENTINEL	0x0008	///< the objects memory block is a sentinel
-
+// Noir
+#define	DWM_V3X20		0x0020	///< unknown
+#define	DWM_V3X4		0x0004	///< unknown
 
 struct MEM_NODE {
 	MEM_NODE *pNext;	// link to the next node in the list
@@ -125,9 +127,9 @@ void MemoryInit() {
 
 	// store the current heap size in the sentinel
 	uint32 size = MemoryPoolSize[0];
-	if (TinselVersion == TINSEL_V1) size = MemoryPoolSize[1];
-	else if (TinselVersion == TINSEL_V2) size = MemoryPoolSize[2];
-	else if (TinselVersion == TINSEL_V3) {
+	if (TinselVersion == 1) size = MemoryPoolSize[1];
+	else if (TinselVersion == 2) size = MemoryPoolSize[2];
+	else if (TinselVersion == 3) {
 		warning("TODO: Find the correct memory pool size for Noir, using 512 MiB for now");
 		size = MemoryPoolSize[3];
 	}

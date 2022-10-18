@@ -30,6 +30,7 @@
 #include "graphics/font.h"
 #include "graphics/fontman.h"
 #include "graphics/macgui/macwindow.h"
+#include "graphics/macgui/macmenu.h"
 
 #include "engines/engine.h"
 
@@ -75,18 +76,19 @@ enum MacCursorType {
 };
 
 enum {
-	kWMModeNone         	= 0,
-	kWMModeNoDesktop    	= (1 << 0),
-	kWMModeAutohideMenu 	= (1 << 1),
-	kWMModalMenuMode 		= (1 << 2),
-	kWMModeForceBuiltinFonts= (1 << 3),
-	kWMModeUnicode			= (1 << 4),
-	kWMModeManualDrawWidgets= (1 << 5),
-	kWMModeFullscreen       = (1 << 6),
-	kWMModeButtonDialogStyle= (1 << 7),
-	kWMMode32bpp			= (1 << 8),
-	kWMNoScummVMWallpaper   = (1 << 9),
-	kWMModeWin95            = (1 << 10)
+	kWMModeNone         		= 0,
+	kWMModeNoDesktop    		= (1 << 0),
+	kWMModeAutohideMenu 		= (1 << 1),
+	kWMModalMenuMode 			= (1 << 2),
+	kWMModeForceBuiltinFonts	= (1 << 3),
+	kWMModeUnicode				= (1 << 4),
+	kWMModeManualDrawWidgets	= (1 << 5),
+	kWMModeFullscreen			= (1 << 6),
+	kWMModeButtonDialogStyle	= (1 << 7),
+	kWMMode32bpp				= (1 << 8),
+	kWMNoScummVMWallpaper		= (1 << 9),
+	kWMModeWin95				= (1 << 10),
+	kWMModeForceMacFontsInWin95 = (1 << 11) // Enforce Mac font for languages which don't have glyphs in ms_sans_serif.ttf
 };
 
 }
@@ -209,6 +211,7 @@ public:
 	void disableScreenCopy();
 
 	bool isMenuActive();
+	void setDesktopMode(uint32 mode);
 
 	/**
 	 * Set hot zone where menu appears (works only with autohide menu)
@@ -230,12 +233,12 @@ public:
 	 * Return Top Window containing a point
 	 * @param x x coordinate of point
 	 * @param y y coordiante of point
-	 */ 
+	 */
 	MacWindow *findWindowAtPoint(int16 x, int16 y);
 	/**
 	 * Return Top Window containing a point
 	 * @param point Point
-	 */ 
+	 */
 	MacWindow *findWindowAtPoint(Common::Point point);
 
 	/**
@@ -296,6 +299,8 @@ public:
 
 	void clearWidgetRefs(MacWidget *widget);
 
+	void printWMMode(int debuglevel = 0);
+
 private:
 	void replaceCursorType(MacCursorType type);
 
@@ -318,15 +323,15 @@ public:
 	void setEngineRedrawCallback(void *engine, void (*redrawCallback)(void *engine));
 
 	void passPalette(const byte *palette, uint size);
-	uint findBestColor(byte cr, byte cg, byte cb);
-	uint findBestColor(uint32 color);
-	void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	template <typename T> void decomposeColor(uint32 color, byte &r, byte &g, byte &b);
+	uint32 findBestColor(byte cr, byte cg, byte cb);
+	uint32 findBestColor(uint32 color);
 	void setDesktopColor(byte, byte, byte);
 
-	uint inverter(uint src);
+	byte inverter(byte src);
 
 	const byte *getPalette() { return _palette; }
-	uint getPaletteSize() { return _paletteSize; }
+	byte getPaletteSize() { return _paletteSize; }
 
 	void renderZoomBox(bool redraw = false);
 	void addZoomBox(ZoomBox *box);
@@ -335,6 +340,8 @@ public:
 
 	void loadDataBundle();
 	void cleanupDataBundle();
+	void cleanupDesktopBmp();
+
 	BorderOffsets getBorderOffsets(byte windowType);
 	Common::SeekableReadStream *getBorderFile(byte windowType, uint32 flags);
 	Common::SeekableReadStream *getFile(const Common::String &filename);
@@ -354,23 +361,16 @@ public:
 	 */
 	void clearHandlingWidgets();
 
-	void setMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId, bool checkMark);
-	void setMenuItemCheckMark(int menuId, int itemId, bool checkMark);
-	void setMenuItemEnabled(const Common::String &menuId, const Common::String &itemId, bool enabled);
-	void setMenuItemEnabled(int menuId, int itemId, bool enabled);
-	void setMenuItemName(const Common::String &menuId, const Common::String &itemId, const Common::String &name);
-	void setMenuItemName(int menuId, int itemId, const Common::String &name);
-	void setMenuItemAction(const Common::String &menuId, const Common::String &itemId, int actionId);
-	void setMenuItemAction(int menuId, int itemId, int actionId);
+	void setMenuItemCheckMark(MacMenuItem *menuItem, bool checkMark);
+	void setMenuItemEnabled(MacMenuItem *menuItem, bool enabled);
+	void setMenuItemName(MacMenuItem *menuItem, const Common::String &name);
+	void setMenuItemAction(MacMenuItem *menuItem, int actionId);
 
-	bool getMenuItemCheckMark(const Common::String &menuId, const Common::String &itemId);
-	bool getMenuItemCheckMark(int menuId, int itemId);
-	bool getMenuItemEnabled(const Common::String &menuId, const Common::String &itemId);
-	bool getMenuItemEnabled(int menuId, int itemId);
-	Common::String getMenuItemName(const Common::String &menuId, const Common::String &itemId);
-	Common::String getMenuItemName(int menuId, int itemId);
-	int getMenuItemAction(const Common::String &menuId, const Common::String &itemId);
-	int getMenuItemAction(int menuId, int itemId);
+	bool getMenuItemCheckMark(MacMenuItem *menuItem);
+	bool getMenuItemEnabled(MacMenuItem *menuItem);
+	Common::String getMenuItemName(MacMenuItem *menuItem);
+	int getMenuItemAction(MacMenuItem *menuItem);
+	MacMenu *getMenu();
 
 public:
 	MacFontManager *_fontMan;
@@ -448,7 +448,7 @@ private:
 	PauseToken *_screenCopyPauseToken;
 
 	Common::Array<ZoomBox *> _zoomBoxes;
-	Common::HashMap<uint, uint> _colorHash;
+	Graphics::PaletteLookup _paletteLookup;
 	Common::HashMap<uint, uint> _invertColorHash;
 
 	Common::Archive *_dataBundle;

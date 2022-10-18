@@ -32,8 +32,6 @@
 #include "common/system.h"
 #include "common/substream.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 class EoBSeqPlayerCommon {
@@ -521,8 +519,8 @@ void EoBIntroPlayer::tower() {
 	displaySubtitle(0, 168, 32, _stringsTower, 0, 17, 22, 0xE1, 0x0F, 2);
 	printSub(_stringsTower, 1, 13, 24, 0xE1, 0x0F, 2);
 
-	for (int i = 0; i < 64 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
-		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
+	for (int i = 0; i < 64 && !_vm->shouldQuit() && !_vm->skipFlag(); ++i) {
+		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
 		_screen->copyRegion(0, 142 - i, 96, 0, 128, i + 1, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, 96, i + 1, 128, 167 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->selectPC98Palette(0, _screen->getPalette(0), MIN(i / 4 - 14, 0), true);
@@ -532,22 +530,22 @@ void EoBIntroPlayer::tower() {
 
 	_screen->selectPC98Palette(0, _screen->getPalette(0), 0, true);
 
-	for (int i = 0; i < 24 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
-		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
-		_screen->copyRegion(0, 79 - i, 96, 0, 24, 65 + i, 4, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(104, 79 - i, 200, 0, 24, 65 + i, 4, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(24, 110, 120, i + 31, 80, 34, 4, 0, Screen::CR_NO_P_CHECK);
+	for (int i = 0; i < 23 && !_vm->shouldQuit() && !_vm->skipFlag(); ++i) {
+		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
+		_screen->copyRegion(0, 78 - i, 96, 0, 24, 65 + i, 4, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(104, 78 - i, 200, 0, 24, 65 + i, 4, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(24, 109, 120, i + 31, 80, 34, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(152, 0, 120, 32, 80, i + 1, 4, 0, Screen::CR_NO_P_CHECK);
 		_screen->copyRegion(0, 0, 96, 65 + i, 128, 103 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
 
-	for (int i = 0; i < 56 && !_vm->shouldQuit() && !_vm->skipFlag(); i += 2) {
-		uint32 end = _vm->_system->getMillis() + 2 * _vm->_tickLength;
-		_screen->copyRegion(0, 56, 96, i, 24, 54, 4, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(104, 56, 200, i, 24, 54, 4, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(0, 110, 96, 54 + i, 128, 34, 4, 0, Screen::CR_NO_P_CHECK);
+	for (int i = 0; i < 56 && !_vm->shouldQuit() && !_vm->skipFlag(); ++i) {
+		uint32 end = _vm->_system->getMillis() + _vm->_tickLength;
+		_screen->copyRegion(0, 55, 96, i, 24, 54, 4, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(104, 55, 200, i, 24, 54, 4, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0, 109, 96, 54 + i, 128, 34, 4, 0, Screen::CR_NO_P_CHECK);
 
 		if (i < 32) {
 			_screen->fillRect(128, 0, 255, i + 1, _fillColor1, 2);
@@ -560,7 +558,7 @@ void EoBIntroPlayer::tower() {
 
 		_screen->drawShape(2, _shapes[10], 128, i - 55, 0);
 		_screen->copyRegion(128, 0, 96, 0, 128, i + 1, 2, 0, Screen::CR_NO_P_CHECK);
-		_screen->copyRegion(0, 0, 96, i + 89, 128, 79 - i, 2, 0, Screen::CR_NO_P_CHECK);
+		_screen->copyRegion(0, 0, 96, i + 88, 128, 80 - i, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
 		_vm->delayUntil(end);
 	}
@@ -2172,7 +2170,7 @@ int EoBEngine::mainMenu() {
 			else
 				_screen->setScreenPalette(_screen->getPalette(0));
 
-			Common::String versionString(Common::String::format("ScummVM %s", gScummVMVersion));
+			Common::String versionString = "ScummVM " + _versionString;
 
 			if (_flags.platform == Common::kPlatformSegaCD) {
 				_txt->clearDim(3);
@@ -2381,10 +2379,10 @@ void EoBEngine::seq_xdeath() {
 			_screen->copyRegion(0, 0, 0, 0, 176, 120, 2, 0, Screen::CR_NO_P_CHECK);
 			_screen->drawShape(0, shapes2, 32, 10, 0);
 			_screen->updateScreen();
-			updateAnimTimers();
+			updateAnimations();
 			delete[] shapes2;
 			for (uint32 cur = _system->getMillis(); cur < del; cur = _system->getMillis()) {
-				updateAnimTimers();
+				updateAnimations();
 				delay(MIN<uint32>(8, del - cur));
 			}
 		}
@@ -2819,7 +2817,6 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 	if (_flags.platform != Common::kPlatformSegaCD)
 		return true;
 
-	uint32 startTime = _system->getMillis();
 	_allowSkip = true;
 	resetSkipFlag();
 
@@ -2833,8 +2830,6 @@ bool EoBEngine::seq_segaPlaySequence(int sequenceId, bool setupScreen) {
 
 	if (setupScreen)
 		seq_segaRestoreAfterSequence();
-
-	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
 	if (!res)
 		error("EoBEngine::seq_segaPlaySequence(): Failed to play cutscene no. %d", sequenceId);

@@ -25,6 +25,8 @@
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/room23.h"
 #include "chewy/rooms/room25.h"
+
+#include "chewy/cursor.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -44,16 +46,21 @@ static const MovLine SURIMY_MPKT[2] = {
 
 
 void Room25::entry() {
-	if (!_G(gameState).R25GleiteLoesch) {
-		g_engine->_sound->playSound(0, 0);
+	if (!_G(gameState).R25GliderFlamesExtinguished) {
+		_G(det)->playSound(0, 0);
 
 		for (int i = 0; i < 9; ++i)
 			_G(det)->startDetail(i, 255, ANI_FRONT);
 	}
 
-	if (!_G(gameState).R29Schlauch2) {
+	if (!_G(gameState).R29WaterHose) {
 		_G(det)->hideStaticSpr(0);
 		_G(det)->hideStaticSpr(1);
+		_G(atds)->setControlBit(219, ATS_ACTIVE_BIT);
+	} else {
+		_G(det)->showStaticSpr(0);
+		_G(det)->showStaticSpr(1);
+		_G(atds)->delControlBit(219, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(gameState).R25FirstEntry) {
@@ -64,63 +71,62 @@ void Room25::entry() {
 			_G(atds)->set_ats_str(113, 0, ATS_DATA);
 
 			remove_inventory(TRANSLATOR_INV);
-			_G(gameState).inv_cur = false;
+			_G(cur)->setInventoryCursor(-1);
 			_G(menu_item) = CUR_WALK;
-			_G(gameState).AkInvent = -1;
+			_G(cur)->setInventoryCursor(-1);
 			cursorChoice(_G(menu_item));
 		}
 
 		_G(gameState).R25FirstEntry = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
 		flic_cut(FCUT_029);
-		g_engine->_sound->playSound(0, 0);
+		_G(det)->playSound(0, 0);
 		_G(fx_blend) = BLEND_NONE;
 		setPersonPos(219, 141, P_CHEWY, P_RIGHT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		start_spz(CH_TALK11, 255, ANI_FRONT, P_CHEWY);
 		startAadWait(64);
 		showCur();
-
-	} else if (_G(gameState).R25GleiterExit && !_G(flags).LoadGame) {
+	} else if (_G(gameState).R25GliderExit && !_G(flags).LoadGame) {
 		setPersonPos(127, 122, P_CHEWY, P_LEFT);
 
 		if (!_G(gameState).R25SurimyGo) {
 			_G(gameState).R25SurimyGo = 1;
-			xit_gleiter();
+			xit_glider();
 		}
 	}
 
-	_G(gameState).R25GleiterExit = false;
+	_G(gameState).R25GliderExit = false;
 }
 
-int16 Room25::gleiter_loesch() {
+int16 Room25::extinguishGliderFlames() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (!_G(gameState).R25GleiteLoesch && _G(gameState).R29Schlauch2) {
-		if (!_G(gameState).inv_cur) {
+	if (!_G(gameState).R25GliderFlamesExtinguished && _G(gameState).R29WaterHose) {
+		if (!_G(cur)->usingInventoryCursor()) {
 			action_flag = true;
-			_G(gameState).R25GleiteLoesch = true;
+			_G(gameState).R25GliderFlamesExtinguished = true;
 			autoMove(2, P_CHEWY);
 			flic_cut(FCUT_030);
 			_G(obj)->calc_rsi_flip_flop(SIB_SCHLAUCH_R25);
 			_G(atds)->set_ats_str(219, 1, ATS_DATA);
 			_G(atds)->set_ats_str(187, 1, ATS_DATA);
-			g_engine->_sound->stopSound(0);
+			_G(det)->stopSound(0);
 
 			for (int i = 0; i < 9; ++i)
-				_G(det)->stop_detail(i);
+				_G(det)->stopDetail(i);
 		}
 
-	} else if (_G(gameState).R25GleiteLoesch) {
-		if (isCurInventory(MILCH_LEER_INV)) {
+	} else if (_G(gameState).R25GliderFlamesExtinguished) {
+		if (isCurInventory(EMPTY_MILK_BOTTLE_INV)) {
 			action_flag = true;
 			autoMove(2, P_CHEWY);
 			start_spz_wait((_G(gameState).ChewyAni == CHEWY_ROCKER) ? 28 : 14, 1, false, P_CHEWY);
 
-			delInventory(_G(gameState).AkInvent);
-			_G(obj)->addInventory(MILCH_WAS_INV, &_G(room_blk));
-			inventory_2_cur(MILCH_WAS_INV);
+			delInventory(_G(cur)->getInventoryCursor());
+			_G(obj)->addInventory(WATER_FILLED_BOTTLE_INV, &_G(room_blk));
+			inventory_2_cur(WATER_FILLED_BOTTLE_INV);
 			startAadWait(253);
 		}
 	}
@@ -129,22 +135,22 @@ int16 Room25::gleiter_loesch() {
 	return action_flag;
 }
 
-int16 Room25::use_gleiter() {
+int16 Room25::useGlider() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && _G(gameState).R25GleiteLoesch) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R25GliderFlamesExtinguished) {
 		action_flag = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
 		showCur();
 
-		_G(gameState).R23GleiterExit = 25;
+		_G(gameState).R23GliderExit = 25;
 		Room23::cockpit();
 	}
 	return action_flag;
 }
 
-void Room25::xit_gleiter() {
+void Room25::xit_glider() {
 	if (!_G(gameState).R25SurimyLauf) {
 		hideCur();
 		_G(gameState).R25SurimyLauf = true;

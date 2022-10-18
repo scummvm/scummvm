@@ -61,8 +61,9 @@ void CruAvatarMoverProcess::run() {
 	if (!avatar)
 		return;
 
-	// When not in combat the angle is kept as -1
-	if (avatar->isInCombat()) {
+	// When in combat and not running, update the angle.
+	// Otherwise, angle is kept as -1 and direction is just actor dir.
+	if (avatar->isInCombat() && (avatar->getLastAnim() != Animation::run)) {
 		if (_avatarAngle < 0) {
 			_avatarAngle = Direction_ToCentidegrees(avatar->getDir());
 		}

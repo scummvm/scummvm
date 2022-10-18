@@ -23,8 +23,6 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-//#define FORBIDDEN_SYMBOL_ALLOW_ALL // FIXME: Remove
-
 #include "saga2/saga2.h"
 #include "saga2/cmisc.h"
 #include "saga2/player.h"
@@ -245,13 +243,13 @@ void evalObjectEnchantments(GameObject *obj) {
 
 EnchantmentIterator::EnchantmentIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
-	baseObject = container;
-	wornObject = nullptr;
-	nextID = Nothing;
+	_baseObject = container;
+	_wornObject = nullptr;
+	_nextID = Nothing;
 }
 
 ObjectID EnchantmentIterator::first(GameObject **obj) {
-	nextID = baseObject->IDChild();
+	_nextID = _baseObject->IDChild();
 
 	return next(obj);
 }
@@ -261,13 +259,13 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 	ObjectID            id;
 
 	for (;;) {
-		id = nextID;
+		id = _nextID;
 
 		if (id == Nothing) {
 			//  If we were searching a 'worn' object, then pop up a level
-			if (wornObject) {
-				nextID = wornObject->IDNext();
-				wornObject = nullptr;
+			if (_wornObject) {
+				_nextID = _wornObject->IDNext();
+				_wornObject = nullptr;
 				continue;
 			}
 
@@ -281,14 +279,14 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 		uint16          cSet = proto->containmentSet();
 
 		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
-		        &&  wornObject == nullptr
+		        &&  _wornObject == nullptr
 		        &&  proto->isObjectBeingUsed(object)) {
-			wornObject = object;
-			nextID = object->IDChild();
+			_wornObject = object;
+			_nextID = object->IDChild();
 			continue;
 		}
 
-		nextID = object->IDNext();
+		_nextID = object->IDNext();
 
 		if (cSet & ProtoObj::isEnchantment) break;
 	}

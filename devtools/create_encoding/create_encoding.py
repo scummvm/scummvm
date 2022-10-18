@@ -56,6 +56,11 @@ tables = [
         FILE: "CP950.TXT",
         HIGH: range(0xA1, 0xFA),
         LOW: merge_ranges(range(0x40, 0x7f), range(0xa1, 0xff))
+    },
+	{
+        FILE: "JOHAB.TXT",
+        HIGH: range(0x84, 0xD4),
+        LOW: merge_ranges(range(0x41, 0x7f), range(0x81, 0xff))
     }
 ]
 

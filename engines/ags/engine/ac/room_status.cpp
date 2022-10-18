@@ -25,6 +25,7 @@
 #include "ags/shared/game/custom_properties.h"
 #include "ags/engine/game/savegame_components.h"
 #include "ags/shared/util/aligned_stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -32,14 +33,24 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
+void HotspotState::ReadFromSavegame(Shared::Stream *in, int save_ver) {
+	Enabled = in->ReadInt8() != 0;
+	if (save_ver > 0) {
+		Name = StrUtil::ReadString(in);
+	}
+}
+
+void HotspotState::WriteToSavegame(Shared::Stream *out) const {
+	out->WriteInt8(Enabled);
+	StrUtil::WriteString(Name, out);
+}
+
 RoomStatus::RoomStatus() {
 	beenhere = 0;
 	numobj = 0;
-	memset(&flagstates, 0, sizeof(flagstates));
 	tsdatasize = 0;
 	tsdata = nullptr;
 
-	memset(&hotspot_enabled, 0, sizeof(hotspot_enabled));
 	memset(&region_enabled, 0, sizeof(region_enabled));
 	memset(&walkbehind_base, 0, sizeof(walkbehind_base));
 	memset(&interactionVariableValues, 0, sizeof(interactionVariableValues));
@@ -62,29 +73,35 @@ void RoomStatus::FreeProperties() {
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 		hsProps[i].clear();
 	}
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		objProps[i].clear();
-	}
+	objProps.clear();
 }
 
 void RoomStatus::ReadFromFile_v321(Stream *in) {
+	FreeScriptData();
+	FreeProperties();
+
 	beenhere = in->ReadInt32();
 	numobj = in->ReadInt32();
+	obj.resize(numobj);
+	objProps.resize(numobj);
+	intrObject.resize(numobj);
 	ReadRoomObjects_Aligned(in);
-	in->ReadArrayOfInt16(flagstates, MAX_FLAGS);
+
+	in->Seek(MAX_LEGACY_ROOM_FLAGS * sizeof(int16_t)); // flagstates (OBSOLETE)
 	tsdatasize = in->ReadInt32();
 	in->ReadInt32(); // tsdata
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 		intrHotspot[i].ReadFromSavedgame_v321(in);
 	}
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		intrObject[i].ReadFromSavedgame_v321(in);
+	for (auto &intr : intrObject) {
+		intr.ReadFromSavedgame_v321(in);
 	}
 	for (int i = 0; i < MAX_ROOM_REGIONS; ++i) {
 		intrRegion[i].ReadFromSavedgame_v321(in);
 	}
 	intrRoom.ReadFromSavedgame_v321(in);
-	in->ReadArrayOfInt8((int8_t *)hotspot_enabled, MAX_ROOM_HOTSPOTS);
+	for (size_t i = 0; i < MAX_ROOM_HOTSPOTS; ++i)
+		hotspot[i].Enabled = in->ReadInt8() != 0;
 	in->ReadArrayOfInt8((int8_t *)region_enabled, MAX_ROOM_REGIONS);
 	in->ReadArrayOfInt16(walkbehind_base, MAX_WALK_BEHINDS);
 	in->ReadArrayOfInt32(interactionVariableValues, MAX_GLOBAL_VARIABLES);
@@ -94,34 +111,37 @@ void RoomStatus::ReadFromFile_v321(Stream *in) {
 		for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
 			Properties::ReadValues(hsProps[i], in);
 		}
-		for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-			Properties::ReadValues(objProps[i], in);
+		for (auto &props : objProps) {
+			Properties::ReadValues(props, in);
 		}
 	}
 }
 
 void RoomStatus::ReadRoomObjects_Aligned(Shared::Stream *in) {
 	AlignedStream align_s(in, Shared::kAligned_Read);
-	for (int i = 0; i < MAX_ROOM_OBJECTS; ++i) {
-		obj[i].ReadFromFile(&align_s);
+	for (auto &o : obj) {
+		o.ReadFromSavegame(&align_s, 0);
 		align_s.Reset();
 	}
 }
 
-void RoomStatus::ReadFromSavegame(Stream *in) {
+void RoomStatus::ReadFromSavegame(Stream *in, int save_ver) {
 	FreeScriptData();
 	FreeProperties();
 
 	beenhere = in->ReadInt8();
-	numobj = in->ReadInt32();
-	for (int i = 0; i < numobj; ++i) {
-		obj[i].ReadFromFile(in);
+	numobj = static_cast<uint32_t>(in->ReadInt32());
+	obj.resize(numobj);
+	objProps.resize(numobj);
+	intrObject.resize(numobj);
+	for (uint32_t i = 0; i < numobj; ++i) {
+		obj[i].ReadFromSavegame(in, save_ver);
 		Properties::ReadValues(objProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			SavegameComponents::ReadInteraction272(intrObject[i], in);
 	}
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
-		hotspot_enabled[i] = in->ReadInt8();
+		hotspot[i].ReadFromSavegame(in, save_ver);
 		Properties::ReadValues(hsProps[i], in);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			SavegameComponents::ReadInteraction272(intrHotspot[i], in);
@@ -151,14 +171,14 @@ void RoomStatus::ReadFromSavegame(Stream *in) {
 void RoomStatus::WriteToSavegame(Stream *out) const {
 	out->WriteInt8(beenhere);
 	out->WriteInt32(numobj);
-	for (int i = 0; i < numobj; ++i) {
-		obj[i].WriteToFile(out);
+	for (uint32_t i = 0; i < numobj; ++i) {
+		obj[i].WriteToSavegame(out);
 		Properties::WriteValues(objProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			SavegameComponents::WriteInteraction272(intrObject[i], out);
 	}
 	for (int i = 0; i < MAX_ROOM_HOTSPOTS; ++i) {
-		out->WriteInt8(hotspot_enabled[i]);
+		hotspot[i].WriteToSavegame(out);
 		Properties::WriteValues(hsProps[i], out);
 		if (_G(loaded_game_file_version) <= kGameVersion_272)
 			SavegameComponents::WriteInteraction272(intrHotspot[i], out);

@@ -2,27 +2,22 @@ MODULE := engines/chewy
 
 MODULE_OBJS = \
 	atds.o \
+	barriers.o \
 	chewy.o \
 	cursor.o \
-	data.o \
-	debugger.o \
+	console.o \
 	detail.o \
 	effect.o \
 	events.o \
-	gedclass.o \
+	font.o \
 	globals.o \
 	inits.o \
-	io_game.o \
-	m_event.o \
 	main.o \
-	mouse.o \
-	mcga.o \
 	mcga_graphics.o \
 	memory.o \
 	menus.o \
 	metaengine.o \
 	movclass.o \
-	ngstypes.o \
 	object.o \
 	object_extra.o \
 	r_event.o \
@@ -34,6 +29,9 @@ MODULE_OBJS = \
 	text.o \
 	timer.o \
 	types.o \
+	audio/chewy_voc.o \
+	audio/module_tmf.o \
+	audio/tmf_stream.o \
 	dialogs/cinema.o \
 	dialogs/credits.o \
 	dialogs/files.o \

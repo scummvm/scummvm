@@ -23,6 +23,7 @@
 #define COMMON_LANGUAGE_H
 
 #include "common/scummsys.h"
+#include "common/list.h"
 
 namespace Common {
 
@@ -41,7 +42,7 @@ class String;
 /**
  * List of game language.
  */
-enum Language {
+enum Language : int8 {
 	AR_ARB,
 	CA_ESP,
 	CS_CZE,
@@ -104,6 +105,8 @@ const String getGameGUIOptionsDescriptionLanguage(Common::Language lang);
 
 // TODO: Document this GUIO related function
 bool checkGameGUIOptionLanguage(Common::Language lang, const String &str);
+
+List<String> getLanguageList();
 
 /** @} */
 

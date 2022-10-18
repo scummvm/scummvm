@@ -148,7 +148,8 @@ enum GlobalVar {
 	kGlobalVarPreviousRoomNo = 12,
 	kGlobalVarNewRoomNo      = 13,
 	kGlobalVarScore          = 15,
-	kGlobalVarVersion        = 27,
+	kGlobalVarVersionNew     = 27, // version string or object in later games
+	kGlobalVarVersionOld     = 28, // version string in earlier games
 	kGlobalVarGK2MusicVolume = 76, // 0 to 127
 	kGlobalVarPhant2SecondaryVolume = 76, // 0 to 127
 	kGlobalVarUser                 = 80,

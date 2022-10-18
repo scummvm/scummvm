@@ -22,44 +22,100 @@
 #ifndef AGS_LIB_ALFONT_H
 #define AGS_LIB_ALFONT_H
 
-#include "common/hashmap.h"
-#include "common/memstream.h"
-#include "graphics/font.h"
-#include "ags/lib/allegro/gfx.h"
+#include "ags/lib/allegro/surface.h"
 
 namespace AGS3 {
 
-struct ALFONT_FONT {
-	Common::MemoryReadStream _ttfData;
-	int _size;
-	Common::HashMap<int, Graphics::Font *> _fonts;
-	Common::String _fontName;
+/* common define */
 
-	ALFONT_FONT() : _size(-1), _ttfData(nullptr, 0) {}
-	ALFONT_FONT(const byte *data, int size) : _size(-1), _ttfData(data, size, DisposeAfterUse::YES) {}
+#define ALFONT_MAJOR_VERSION        1
+#define ALFONT_MINOR_VERSION        9
+#define ALFONT_SUB_VERSION          1
+#define ALFONT_VERSION_STR          "1.9.1"
+#define ALFONT_DATE_STR             "24/11/2002"
+#define ALFONT_DATE                 20021124    /* yyyymmdd */
 
-	~ALFONT_FONT() {
-		for (Common::HashMap<int, Graphics::Font *>::iterator it = _fonts.begin();
-				it != _fonts.end(); ++it)
-			delete(*it)._value;
-	}
+/* error codes */
 
-	Graphics::Font *getFont();
-};
+#define ALFONT_OK                   0
+#define ALFONT_ERROR                -1
 
-inline void alfont_init() {}
-inline void alfont_exit() {}
-inline void alfont_text_mode(int val) {}
-extern ALFONT_FONT *alfont_load_font_from_mem(const byte *data, int data_len);
-extern void alfont_destroy_font(ALFONT_FONT *font);
+/* font adjustment flags (AGS compatibility hacks) */
 
-extern size_t alfont_text_length(ALFONT_FONT *font, const char *text);
-extern size_t alfont_text_height(ALFONT_FONT *font);
-extern void alfont_textout(BITMAP *bmp, ALFONT_FONT *font, ALFONT_FONT *refFont, const char *text, int x, int y, uint32 color);
-extern const char *alfont_get_name(ALFONT_FONT *font);
-extern void alfont_set_font_size(ALFONT_FONT *font, int size);
-extern int alfont_get_font_height(ALFONT_FONT *font);
-extern int alfont_get_font_real_height(ALFONT_FONT *font);
+// Force reupdate the font even if the face size matches the request
+#define ALFONT_FLG_FORCE_RESIZE       0x01
+// Make ascender equal to formal font height
+#define ALFONT_FLG_ASCENDER_EQ_HEIGHT 0x02
+// When resizing a font, select the first result even if the actual
+// pixel height is different from the requested size;
+// otherwise will search for the point size which results in pixel
+// height closest to the requested size.
+#define ALFONT_FLG_SELECT_NOMINAL_SZ  0x04
+
+/* structs */
+typedef struct ALFONT_FONT ALFONT_FONT;
+
+/* API */
+#define ALFONT_DLL_DECLSPEC
+
+ALFONT_DLL_DECLSPEC const char *alfont_get_name(ALFONT_FONT *f);
+
+ALFONT_DLL_DECLSPEC int alfont_init(void);
+ALFONT_DLL_DECLSPEC void alfont_exit(void);
+
+ALFONT_DLL_DECLSPEC ALFONT_FONT *alfont_load_font(const char *filepathname);
+ALFONT_DLL_DECLSPEC ALFONT_FONT *alfont_load_font_from_mem(const char *data, int data_len);
+ALFONT_DLL_DECLSPEC void alfont_destroy_font(ALFONT_FONT *f);
+
+ALFONT_DLL_DECLSPEC int alfont_set_font_size(ALFONT_FONT *f, int h);
+ALFONT_DLL_DECLSPEC int alfont_set_font_size_ex(ALFONT_FONT *f, int h, int flags);
+ALFONT_DLL_DECLSPEC int alfont_get_font_height(ALFONT_FONT *f);
+/* Returns the real font graphical height */
+ALFONT_DLL_DECLSPEC int alfont_get_font_real_height(ALFONT_FONT *f);
+
+ALFONT_DLL_DECLSPEC int alfont_text_mode(int mode);
+
+ALFONT_DLL_DECLSPEC void alfont_textout_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+ALFONT_DLL_DECLSPEC void alfont_textout_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+
+ALFONT_DLL_DECLSPEC void alfont_textout_centre_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout_centre(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout_centre_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+ALFONT_DLL_DECLSPEC void alfont_textout_centre_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+
+ALFONT_DLL_DECLSPEC void alfont_textout_right_aa(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout_right(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color);
+ALFONT_DLL_DECLSPEC void alfont_textout_right_aa_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+ALFONT_DLL_DECLSPEC void alfont_textout_right_ex(BITMAP *bmp, ALFONT_FONT *f, const char *s, int x, int y, int color, int bg);
+
+ALFONT_DLL_DECLSPEC void alfont_textprintf(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+
+ALFONT_DLL_DECLSPEC void alfont_textprintf_centre(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_centre_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_centre_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_centre_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+
+ALFONT_DLL_DECLSPEC void alfont_textprintf_right(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_right_aa(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_right_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+ALFONT_DLL_DECLSPEC void alfont_textprintf_right_aa_ex(BITMAP *bmp, ALFONT_FONT *f, int x, int y, int color, int bg, const char *format, ...);
+
+ALFONT_DLL_DECLSPEC int alfont_text_height(ALFONT_FONT *f);
+ALFONT_DLL_DECLSPEC int alfont_text_length(ALFONT_FONT *f, const char *str);
+
+ALFONT_DLL_DECLSPEC int alfont_is_fixed_font(ALFONT_FONT *f);
+ALFONT_DLL_DECLSPEC int alfont_is_scalable_font(ALFONT_FONT *f);
+
+ALFONT_DLL_DECLSPEC const int *alfont_get_available_fixed_sizes(ALFONT_FONT *f);
+ALFONT_DLL_DECLSPEC int alfont_get_nof_available_fixed_sizes(ALFONT_FONT *f);
+
+ALFONT_DLL_DECLSPEC int alfont_get_char_extra_spacing(ALFONT_FONT *f);
+ALFONT_DLL_DECLSPEC void alfont_set_char_extra_spacing(ALFONT_FONT *f, int spacing);
 
 } // namespace AGS3
 

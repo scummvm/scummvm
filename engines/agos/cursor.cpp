@@ -301,6 +301,7 @@ static const byte _simon2_cursors[10][256] = {
 };
 
 // Feeble Files specific
+#ifdef ENABLE_AGOS2
 static const byte _mouseOffs[29 * 32] = {
 	6,0,15,21,16,21,14,21,15,21,16,21,16,21,16,21,15,21,15,21,15,21,14,21,12,21,12,21,12,21,12,21,
 	6,2,10,12,9,12,8,11,7,10,6,9,4,8,3,7,1,7,0,6,3,7,4,8,6,9,7,10,8,11,9,12,
@@ -343,7 +344,6 @@ static const byte _mouseOffs[29 * 32] = {
 	0,0,10,7,10,6,10,5,10,4,10,3,10,4,10,5,10,6,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 };
 
-#ifdef ENABLE_AGOS2
 void AGOSEngine_PuzzlePack::handleMouseMoved() {
 	uint x;
 

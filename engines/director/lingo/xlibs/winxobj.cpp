@@ -19,7 +19,7 @@
  *
  */
 
-/* RearWindow is a Mac only XObject. It's purpose is to cover the screen
+/* RearWindow is a Mac only XObject. Its purpose is to cover the screen
  * with either a 1-bit pattern, indexed color, direct(RGB) color, bitmappedCastMember
  * or PICT file picture.
  *
@@ -39,9 +39,10 @@ namespace Director {
 
 const char *RearWindowXObj::xlibName = "RearWindow";
 const char *RearWindowXObj::fileNames[] = {
+	"Backdrop",
+	"RearWindow",
 	"RearWindow.Xobj",
 	"winXObj",
-	"RearWindow",
 	nullptr
 };
 
@@ -55,7 +56,7 @@ const char *RearWindowXObj::fileNames[] = {
 --   © 1989-93 by Macromedia Inc.
 --
 -- Purpose of the XObject:
---   Covers the the Finder desktop (behind the Director Stage) with a window
+--   Covers the Finder desktop (behind the Director Stage) with a window
 --   containing either a 1-bit pattern, indexed color, direct (RGB) color,
 --   bitmapped castMember, or PICT file picture.
 --
@@ -103,7 +104,7 @@ S   mGetAppName -- returns name of current application, so you can test for eith
 --
 I  mGetMemoryNeeded  -- Returns number of Bytes needed to create a RearWindow
 --  for all screen devices. Compare this with the Lingo function 'the freeBlock'.
---  If the the mNew method specified "Single" monitor configuration, then
+--  If the mNew method specified "Single" monitor configuration, then
 --  this refers to the number of Bytes for only one monitor. See the
 --  RearWindow Example Movie for how to use this with Lingo
 --
@@ -225,14 +226,15 @@ X mDispose -- closes the RearWindow, releases its data, and the XObject itself f
 
 static MethodProto xlibMethods[] = {
 	{ "new",				RearWindowXObj::m_new,					1,	1,	400 },	// D4
+	{ "getappname",			RearWindowXObj::m_getAppName,			0,	0,	400 },	// D4
 	{ "GetMemoryNeeded",	RearWindowXObj::m_getMemoryNeeded,		0,	0,	400 },	// D4
-	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
-	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
-	{ "RGBColorToWindow",   RearWindowXObj::m_rgbColorToWindow,     3,  3,  400 },  // D4
-	{ "GetScreenTop",		RearWindowXObj::m_getScreenTop,			0,	0,	400 },	// D4
-	{ "GetScreenLeft",		RearWindowXObj::m_getScreenLeft,		0,	0,	400 },	// D4
 	{ "GetScreenBottom",	RearWindowXObj::m_getScreenBottom,		0,	0,	400 },	// D4
+	{ "GetScreenLeft",		RearWindowXObj::m_getScreenLeft,		0,	0,	400 },	// D4
 	{ "GetScreenRight",		RearWindowXObj::m_getScreenRight,		0,	0,	400 },	// D4
+	{ "GetScreenTop",		RearWindowXObj::m_getScreenTop,			0,	0,	400 },	// D4
+	{ "IndexColorToWindow",	RearWindowXObj::m_indexColorToWindow,	1,	1,	400 },	// D4
+	{ "PatToWindow",		RearWindowXObj::m_patToWindow,			1,	1,	400 },	// D4
+	{ "RGBColorToWindow",	RearWindowXObj::m_rgbColorToWindow,		3,	3,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -240,7 +242,7 @@ void RearWindowXObj::open(int type) {
 	if (type == kXObj) {
 		RearWindowXObject::initMethods(xlibMethods);
 		RearWindowXObject *xobj = new RearWindowXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 
@@ -268,10 +270,15 @@ void RearWindowXObj::m_getMemoryNeeded(int nargs) {
 
 void RearWindowXObj::m_patToWindow(int nargs) {
 	g_lingo->pop();
+	g_lingo->push(Datum(0));
 }
 
 void RearWindowXObj::m_indexColorToWindow(int nargs) {
 	g_lingo->pop();
+}
+
+void RearWindowXObj::m_getAppName(int nargs) {
+	g_lingo->push(Datum(g_director->getStartMovie().startMovie));
 }
 
 void RearWindowXObj::m_rgbColorToWindow(int nargs) {

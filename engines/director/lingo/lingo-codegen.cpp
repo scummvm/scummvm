@@ -178,7 +178,7 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 		currentFunc.type = HANDLER;
 		currentFunc.u.defn = _currentAssembly;
 		Common::String typeStr = Common::String(scriptType2str(type));
-		currentFunc.name = new Common::String("[" + typeStr + " " + _assemblyContext->getName() + "]");
+		currentFunc.name = new Common::String("scummvm_" + typeStr + "_" + _assemblyContext->getName());
 		currentFunc.ctx = _assemblyContext;
 		currentFunc.anonymous = anonymous;
 		Common::Array<Common::String> *argNames = new Common::Array<Common::String>;
@@ -204,15 +204,18 @@ ScriptContext *LingoCompiler::compileLingo(const Common::U32String &code, LingoA
 
 		currentFunc.argNames = argNames;
 		currentFunc.varNames = varNames;
+		_assemblyContext->_functionHandlers[*currentFunc.name] = currentFunc;
 		_assemblyContext->_eventHandlers[kEventGeneric] = currentFunc;
 	} else {
 		delete _currentAssembly;
 	}
 
 	// Register this context's functions with the containing archive.
-	for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
-		if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
-			_assemblyArchive->functionHandlers[it->_key] = it->_value;
+	if (_assemblyArchive) {
+		for (SymbolHash::iterator it = _assemblyContext->_functionHandlers.begin(); it != _assemblyContext->_functionHandlers.end(); ++it) {
+			if (!_assemblyArchive->functionHandlers.contains(it->_key)) {
+				_assemblyArchive->functionHandlers[it->_key] = it->_value;
+			}
 		}
 	}
 
@@ -377,18 +380,18 @@ void LingoCompiler::registerFactory(Common::String &name) {
 void LingoCompiler::updateLoopJumps(uint nextTargetPos, uint exitTargetPos) {
 	if (!_currentLoop)
 		return;
-	
+
 	for (uint i = 0; i < _currentLoop->nextRepeats.size(); i++) {
 		uint nextRepeatPos = _currentLoop->nextRepeats[i];
 		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, nextTargetPos - nextRepeatPos);
-		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset; 
+		(*_currentAssembly)[nextRepeatPos + 1] = jmpOffset;
 	}
 	for (uint i = 0; i < _currentLoop->exitRepeats.size(); i++) {
 		uint exitRepeatPos = _currentLoop->exitRepeats[i];
 		inst jmpOffset = nullptr;
 		WRITE_UINT32(&jmpOffset, exitTargetPos - exitRepeatPos);
-		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset; 
+		(*_currentAssembly)[exitRepeatPos + 1] = jmpOffset;
 	}
 }
 
@@ -559,7 +562,7 @@ bool LingoCompiler::visitCmdNode(CmdNode *node) {
 
 bool LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -571,7 +574,7 @@ bool LingoCompiler::visitPutIntoNode(PutIntoNode *node) {
 
 bool LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -583,7 +586,7 @@ bool LingoCompiler::visitPutAfterNode(PutAfterNode *node) {
 
 bool LingoCompiler::visitPutBeforeNode(PutBeforeNode *node) {
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -691,7 +694,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 				COMPILE(node->val);
 				COMPILE(menuItem->arg1)
 				COMPILE(menuItem->arg2);
-				code1(LC::c_themenuitementityassign);
+				code1(LC::c_theentityassign);
 				codeInt(kTheMenuItem);
 				codeInt(fieldId);
 				return true;
@@ -756,7 +759,7 @@ bool LingoCompiler::visitSetNode(SetNode *node) {
 	}
 
 	if (node->var->type == kVarNode) {
-		registerMethodVar(*static_cast<VarNode *>(node->var)->name);	
+		registerMethodVar(*static_cast<VarNode *>(node->var)->name);
 	}
 	COMPILE(node->val);
 	COMPILE_REF(node->var);
@@ -937,7 +940,7 @@ bool LingoCompiler::visitRepeatWithInNode(RepeatWithInNode *node) {
 	codeInt(0);
 	code1(LC::c_stackpeek);	// get array size
 	codeInt(2);
-	code1(LC::c_le); 
+	code1(LC::c_le);
 	uint jzPos = _currentAssembly->size();
 	code2(LC::c_jumpifz, nullptr);
 
@@ -1094,7 +1097,25 @@ bool LingoCompiler::visitListNode(ListNode *node) {
 /* PropListNode */
 
 bool LingoCompiler::visitPropListNode(PropListNode *node) {
-	COMPILE_LIST(node->items);
+	bool refModeStore = _refMode;
+	_refMode = false;
+	bool success = true;
+	for (uint i = 0; i < node->items->size(); i++) {
+		Node *item = (*node->items)[i];
+		if (item->type != kPropPairNode) {
+			// We have a keyless expression, as in ["key": "value", "keyless expression"]
+			// Automatically set its key to its index in the list.
+			code1(LC::c_intpush);
+			codeInt(i + 1);
+		}
+		success = item->accept(this);
+		if (!success)
+			break;
+	}
+	_refMode = refModeStore;
+	if (!success)
+		return false;
+
 	code1(LC::c_proparraypush);
 	codeInt(node->items->size());
 	return true;
@@ -1137,7 +1158,7 @@ bool LingoCompiler::visitFuncNode(FuncNode *node) {
 /* VarNode */
 
 bool LingoCompiler::visitVarNode(VarNode *node) {
-	if (g_director->getVersion() < 400 || g_director->getCurrentMovie()->_allowOutdatedLingo) {
+	if (g_director->getVersion() < 400 || (g_director->getCurrentMovie() && g_director->getCurrentMovie()->_allowOutdatedLingo)) {
 		int val = castNumToNum(node->name->c_str());
 		if (val != -1) {
 			code1(LC::c_intpush);

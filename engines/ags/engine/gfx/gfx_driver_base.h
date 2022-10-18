@@ -28,8 +28,11 @@
 #ifndef AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 #define AGS_ENGINE_GFX_GFX_DRIVER_BASE_H
 
+#include "ags/lib/std/memory.h"
+#include "engines/ags/lib/std/map.h"
 #include "ags/lib/std/vector.h"
 #include "ags/engine/gfx/ddb.h"
+#include "ags/shared/gfx/gfx_def.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/util/scaling.h"
 
@@ -42,6 +45,7 @@ using Shared::PlaneScaling;
 
 // Sprite batch, defines viewport and an optional model transformation for the list of sprites
 struct SpriteBatchDesc {
+	uint32_t                 Parent = 0;
 	// View rectangle for positioning and clipping, in resolution coordinates
 	// (this may be screen or game frame resolution, depending on circumstances)
 	Rect                     Viewport;
@@ -50,15 +54,15 @@ struct SpriteBatchDesc {
 	// Global node offset applied to the whole batch as the last transform
 	Point                    Offset;
 	// Global node flip applied to the whole batch as the last transform
-	GlobalFlipType           Flip;
+	Shared::GraphicFlip      Flip = Shared::kFlip_None;
 	// Optional bitmap to draw sprites upon. Used exclusively by the software rendering mode.
 	PBitmap                  Surface;
 
-	SpriteBatchDesc() : Flip(kFlip_None) {
-	}
-	SpriteBatchDesc(const Rect viewport, const SpriteTransform &transform, const Point offset = Point(),
-	                GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr)
-		: Viewport(viewport)
+	SpriteBatchDesc() = default;
+	SpriteBatchDesc(uint32_t parent, const Rect viewport, const SpriteTransform & transform, const Point offset = Point(),
+		Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr)
+		: Parent(parent)
+		, Viewport(viewport)
 		, Transform(transform)
 		, Offset(offset)
 		, Flip(flip)
@@ -71,19 +75,15 @@ typedef std::vector<SpriteBatchDesc> SpriteBatchDescs;
 // The single sprite entry in the render list
 template<class T_DDB>
 struct SpriteDrawListEntry {
-	T_DDB *bitmap; // TODO: use shared pointer?
-	int x, y; // sprite position, in camera coordinates
-	bool skip;
+	T_DDB *ddb = nullptr; // TODO: use shared pointer?
+	uint32_t node = 0; // sprite batch / scene node index
+	int x = 0, y = 0; // sprite position, in local batch / node coordinates
+	bool skip = false;
 
-	SpriteDrawListEntry()
-		: bitmap(nullptr)
-		, x(0)
-		, y(0)
-		, skip(false) {
-	}
-
-	SpriteDrawListEntry(T_DDB *ddb, int x_ = 0, int y_ = 0)
-		: bitmap(ddb)
+	SpriteDrawListEntry() = default;
+	SpriteDrawListEntry(T_DDB * ddb_, uint32_t node_, int x_, int y_)
+		: ddb(ddb_)
+		, node(node_)
 		, x(x_)
 		, y(y_)
 		, skip(false) {
@@ -105,7 +105,8 @@ public:
 	Rect        GetRenderDestination() const override;
 
 	void        BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-	                             const Point offset = Point(), GlobalFlipType flip = kFlip_None, PBitmap surface = nullptr) override;
+	                             const Point offset = Point(), Shared::GraphicFlip flip = Shared::kFlip_None, PBitmap surface = nullptr) override;
+	void        EndSpriteBatch() override;
 	void        ClearDrawLists() override;
 
 	void        SetCallbackForPolling(GFXDRV_CLIENTCALLBACK callback) override {
@@ -123,6 +124,11 @@ public:
 	}
 
 protected:
+	// Special internal values, applied to DrawListEntry
+	static const intptr_t DRAWENTRY_STAGECALLBACK = 0x0;
+	static const intptr_t DRAWENTRY_FADE = 0x1;
+	static const intptr_t DRAWENTRY_TINT = 0x2;
+
 	// Called after graphics driver was initialized for use for the first time
 	virtual void OnInit();
 	// Called just before graphics mode is going to be uninitialized and its
@@ -166,11 +172,6 @@ protected:
 
 
 
-// Generic TextureTile base
-struct TextureTile {
-	int x, y;
-	int width, height;
-};
 
 // Parent class for the video memory DDBs
 class BaseDDB : public IDriverDependantBitmap {
@@ -195,6 +196,23 @@ protected:
 	virtual ~BaseDDB() {}
 };
 
+// A base parent for the otherwise opaque texture data object;
+// TextureData refers to the pixel data itself, with no additional
+// properties. It may be shared between multiple sprites if necessary.
+struct TextureData {
+	uint32_t ID = UINT32_MAX;
+	virtual ~TextureData() = default;
+protected:
+	TextureData() = default;
+};
+
+// Generic TextureTile base
+struct TextureTile {
+	int x = 0, y = 0;
+	int width = 0, height = 0;
+};
+
+
 // VideoMemoryGraphicsDriver - is the parent class for the graphic drivers
 // which drawing method is based on passing the sprite stack into GPU,
 // rather than blitting to flat screen bitmap.
@@ -208,11 +226,27 @@ public:
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
 	bool GetStageMatrixes(RenderMatrixes &rm) override;
+	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override = 0;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque = false) override;
+	// Get shared texture from cache, or create from bitmap and assign ID
+	IDriverDependantBitmap *GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	// Removes the shared texture reference, will force the texture to recreate next time
+	 void ClearSharedDDB(uint32_t sprite_id) override;
+	 // Updates shared texture data, but only if it is present in the cache
+	 void UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) override;
+	void DestroyDDB(IDriverDependantBitmap* ddb) override;
 
 protected:
-	// Creates a "raw" DDB, without pixel initialization
-	virtual IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque = false) = 0;
+	// Create texture data with the given parameters
+	virtual TextureData *CreateTextureData(int width, int height, bool opaque) = 0;
+	// Update texture data from the given bitmap
+	virtual void UpdateTextureData(TextureData *txdata, Bitmap *bmp, bool opaque, bool hasAlpha) = 0;
+	// Create DDB using preexisting texture data
+	virtual IDriverDependantBitmap *CreateDDB(std::shared_ptr<TextureData> txdata,
+		  int width, int height, int color_depth, bool opaque) = 0;
+	// Retrieve shared texture data object from the given DDB
+	virtual std::shared_ptr<TextureData> GetTextureData(IDriverDependantBitmap *ddb) = 0;
+	virtual void DestroyDDBImpl(IDriverDependantBitmap* ddb) = 0;
 
 	// Stage screens are raw bitmap buffers meant to be sent to plugins on demand
 	// at certain drawing stages. If used at least once these buffers are then
@@ -270,6 +304,20 @@ private:
 	};
 	std::vector<ScreenFx> _fxPool;
 	size_t _fxIndex; // next free pool item
+
+	// Texture short-term cache:
+	// - caches textures while they are in the immediate use;
+	// - this lets to share same texture data among multiple sprites on screen.
+	// TextureCacheItem stores weak references to the existing texture tiles,
+	// identified by an arbitrary uint32 number.
+	struct TextureCacheItem {
+		GraphicResolution Res;
+		std::weak_ptr<TextureData> Data;
+		TextureCacheItem() = default;
+		TextureCacheItem(std::shared_ptr<TextureData> data, const GraphicResolution &res)
+			: Data(data), Res(res) {}
+	};
+	std::unordered_map<uint32_t, TextureCacheItem> _txRefs;
 };
 
 } // namespace Engine

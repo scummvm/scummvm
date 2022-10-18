@@ -66,8 +66,8 @@ struct Room {
 };
 
 struct SeqLoop {
-	const uint8 *ptr;
-	uint16 count;
+	const uint8 *ptr = nullptr;
+	uint16 count = 0;
 };
 
 struct SceneExits {
@@ -308,8 +308,8 @@ protected:
 
 	// chat
 	// -> process
-	void characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration);
-	void waitForChatToFinish(int vocFile, int16 chatDuration, const char *str, uint8 charNum, const bool printText);
+	void characterSays(int vocFile, const char *chatStr, int16 charNum, int16 chatDuration);
+	void waitForChatToFinish(int vocFile, int chatDuration, const char *str, uint8 charNum, const bool printText);
 
 	// -> initialization
 	int initCharacterChat(int8 charNum);
@@ -468,7 +468,7 @@ protected:
 
 	int8 _talkingCharNum;
 	int8 _charSayUnk2;
-	int8 _charSayUnk3;
+	int8 _talkHeadAnimCharNum;
 	int8 _currHeadShape;
 	int _currentHeadFrameTableIndex;
 	int8 _disabledTalkAnimObject;
@@ -480,6 +480,7 @@ protected:
 	uint8 _configTextspeed;
 
 	Screen::FontId _defaultFont;
+	Screen::FontId _noteFont;
 	int _defaultLineSpacing;
 
 	Animator_LoK *_animator;

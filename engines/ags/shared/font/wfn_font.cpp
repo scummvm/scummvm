@@ -24,6 +24,7 @@
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/memory.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -44,7 +45,9 @@ void WFNChar::RestrictToBytes(size_t bytes) {
 		Height = static_cast<uint16_t>(bytes / GetRowByteCount());
 }
 
-const WFNChar WFNFont::_emptyChar;
+const WFNChar &WFNFont::GetChar(uint8_t code) const {
+	return code < _refs.size() ? *_refs[code] : _G(emptyChar);
+}
 
 void WFNFont::Clear() {
 	_refs.clear();
@@ -67,7 +70,8 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 
 	const soff_t table_addr = static_cast<uint16_t>(in->ReadInt16()); // offset table relative address
 	if (table_addr < (soff_t)(WFN_FILE_SIG_LENGTH + sizeof(uint16_t)) || table_addr >= used_data_size) {
-		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %lld (%d - %d)", table_addr, WFN_FILE_SIG_LENGTH + sizeof(uint16_t), used_data_size);
+		Debug::Printf(kDbgMsg_Error, "\tWFN: bad table address: %llu (%llu - %llu)", static_cast<int64>(table_addr),
+			static_cast<int64>(WFN_FILE_SIG_LENGTH + sizeof(uint16_t)), static_cast<int64>(used_data_size));
 		return kWFNErr_BadTableAddress; // bad table address
 	}
 
@@ -168,7 +172,7 @@ WFNError WFNFont::ReadFromFile(Stream *in, const soff_t data_size) {
 		const uint16_t off = offset_table[i];
 		// if bad character offset - reference empty character
 		if (off < raw_data_offset || (soff_t)(off + MinCharDataSize) > table_addr) {
-			_refs[i] = &_emptyChar;
+			_refs[i] = &_G(emptyChar);
 		} else {
 			// in usual case the offset table references items in strict order
 			if (i < _items.size() && offs[i] == off)

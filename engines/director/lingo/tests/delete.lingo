@@ -43,6 +43,10 @@ delete item 2 to 5 of test
 scummvmAssertEqual(test, "lorem")
 
 put "lorem,ipsum,dolor,sit,amet" into test
+delete item 1 of test
+scummvmAssertEqual(test, "ipsum,dolor,sit,amet")
+
+put "lorem,ipsum,dolor,sit,amet" into test
 delete the last item of test
 scummvmAssertEqual(test, "lorem,ipsum,dolor,sit")
 

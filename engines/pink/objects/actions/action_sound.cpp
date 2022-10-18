@@ -23,7 +23,7 @@
 
 #include "pink/archive.h"
 #include "pink/pink.h"
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/sound.h"
 #include "pink/objects/actions/action_sound.h"
 #include "pink/objects/actors/actor.h"
@@ -54,8 +54,8 @@ void ActionSound::start() {
 
 	Page *page = _actor->getPage();
 	if (!_isLoop) {
-		Director *director = page->getGame()->getDirector();
-		director->addSound(this);
+		Screen *screen = page->getGame()->getScreen();
+		screen->addSound(this);
 	} else
 		_actor->endAction();
 
@@ -67,8 +67,8 @@ void ActionSound::start() {
 void ActionSound::end() {
 	_sound.stop();
 	if (!_isLoop) {
-		Director *director = _actor->getPage()->getGame()->getDirector();
-		director->removeSound(this);
+		Screen *screen = _actor->getPage()->getGame()->getScreen();
+		screen->removeSound(this);
 	}
 
 	debugC(6, kPinkDebugActions, "ActionSound %s of Actor %s is ended", _name.c_str(), _actor->getName().c_str());

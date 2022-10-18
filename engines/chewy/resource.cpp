@@ -36,16 +36,18 @@ Resource::Resource(Common::String filename) {
 	const uint32 headerTxtDec  = MKTAG('T', 'C', 'F', '\0');
 	const uint32 headerTxtEnc  = MKTAG('T', 'C', 'F', '\1');
 	const uint32 headerSprite  = MKTAG('T', 'A', 'F', '\0');
+	const uint32 headerBarrier = MKTAG('G', 'E', 'P', '\0');
 
 	filename.toLowercase();
 	_stream.open(filename);
 
-	uint32 header = _stream.readUint32BE();
-	bool isText = (header == headerTxtDec || header == headerTxtEnc);
-	bool isSprite = (header == headerSprite);
-	bool isSpeech = filename.contains("speech.tvp");
+	const uint32 header = _stream.readUint32BE();
+	const bool isText = (header == headerTxtDec || header == headerTxtEnc);
+	const bool isSprite = (header == headerSprite);
+	//const bool isSpeech = filename.contains("speech.tvp");
+	const bool isBarrier = (header == headerBarrier);
 
-	if (header != headerGeneric && !isSprite && !isText)
+	if (header != headerGeneric && !isSprite && !isText && !isBarrier)
 		error("Invalid resource - %s", filename.c_str());
 
 	if (isText) {
@@ -54,6 +56,9 @@ Resource::Resource(Common::String filename) {
 	} else if (isSprite) {
 		initSprite(filename);
 		return;
+	} else if (isBarrier) {
+		_resType = kResourceGEP;
+		_encrypted = false;
 	} else {
 		_resType = (ResourceType)_stream.readUint16LE();
 		_encrypted = false;
@@ -63,22 +68,41 @@ Resource::Resource(Common::String filename) {
 		_encrypted = true;
 
 	_chunkCount = _stream.readUint16LE();
-	_chunkList.reserve(_chunkCount);
+	_chunkList.resize(_chunkCount);
+
+	if (header == headerGeneric) {
+		// NGS files have an index at the end
+		_stream.seek(-(int)(_chunkCount * sizeof(uint32)), SEEK_END);
+		for (uint i = 0; i < _chunkCount; i++) {
+			Chunk &cur = _chunkList[i];
+			cur.pos = _stream.readUint32LE();
+		}
+	}
 
 	for (uint i = 0; i < _chunkCount; i++) {
-		Chunk cur;
+		Chunk &cur = _chunkList[i];
+		if (header == headerGeneric)
+			_stream.seek(cur.pos - 6);
+
 		cur.size = _stream.readUint32LE();
 
-		if (!isText) {
-			cur.type = (ResourceType)_stream.readUint16LE();
-			cur.num = 0;
-		} else {
+		if (isText) {
 			cur.type = kResourceUnknown;
 			cur.num = _stream.readUint16LE();
+		} else if (isBarrier) {
+			cur.type = kResourceUnknown;
+			cur.num = i;
+			cur.size += 6;
+		} else {
+			cur.type = (ResourceType)_stream.readUint16LE();
+			cur.num = 0;
 		}	
 
 		cur.pos = _stream.pos();
 
+		// TODO: Is this workaround necessary anymore
+		// with the stream offset fixes
+#if 0
 		// WORKAROUND: Patch invalid speech sample
 		if (isSpeech && i == 2277 && cur.size == 57028) {
 			cur.size = 152057;
@@ -87,9 +111,10 @@ Resource::Resource(Common::String filename) {
 			_chunkList.push_back(cur);
 			continue;
 		}
+#endif
 
-		_stream.skip(cur.size);
-		_chunkList.push_back(cur);
+		if (header != headerGeneric)
+			_stream.skip(cur.size);
 	}
 
 	_spriteCorrectionsCount = 0;
@@ -112,6 +137,15 @@ Chunk *Resource::getChunk(uint num) {
 	assert(num < _chunkList.size());
 
 	return &_chunkList[num];
+}
+
+uint32 Resource::findLargestChunk(uint start, uint end) {
+	uint32 maxSize = 0;
+	for (uint i = start; i < end; i++) {
+		if (_chunkList[i].size > maxSize)
+			maxSize = _chunkList[i].size;
+	}
+	return maxSize;
 }
 
 uint8 *Resource::getChunkData(uint num) {
@@ -269,42 +303,11 @@ SoundChunk *SoundResource::getSound(uint num) {
 
 	Chunk *chunk = &_chunkList[num];
 	SoundChunk *sound = new SoundChunk();
+	sound->size = chunk->size;
+	sound->data = new uint8[sound->size];
 
 	_stream.seek(chunk->pos, SEEK_SET);
-
-	uint8 blocksRemaining;
-	uint32 totalLength = 0;
-	uint32 blockSize;
-
-	do {
-		blocksRemaining = _stream.readByte();
-
-		uint8 b1 = _stream.readByte();
-		uint8 b2 = _stream.readByte();
-		uint8 b3 = _stream.readByte();
-		blockSize = b1 + (b2 << 8) + (b3 << 16);
-
-		totalLength += blockSize;
-		_stream.skip(blockSize);
-	} while (blocksRemaining > 1);
-
-	sound->size = totalLength;
-	sound->data = new uint8[totalLength];
-	uint8 *ptr = sound->data;
-
-	_stream.seek(chunk->pos, SEEK_SET);
-
-	do {
-		blocksRemaining = _stream.readByte();
-
-		uint8 b1 = _stream.readByte();
-		uint8 b2 = _stream.readByte();
-		uint8 b3 = _stream.readByte();
-		blockSize = b1 + (b2 << 8) + (b3 << 16);
-
-		_stream.read(ptr, blockSize);
-		ptr += blockSize;
-	} while (blocksRemaining > 1);
+	_stream.read(sound->data, sound->size);
 
 	return sound;
 }
@@ -419,6 +422,19 @@ void DialogResource::loadStream(Common::SeekableReadStream *s) {
 void DialogResource::saveStream(Common::WriteStream* s) {
 	_dialogStream->seek(0, SEEK_SET);
 	s->writeStream(_dialogStream, _stream.size());
+}
+
+void BarrierResource::init(int16 room, int16 bgWidth, int16 bgHeight) {
+	assert(room < (int16)_chunkList.size());
+
+	Chunk *chunk = &_chunkList[room];
+	_stream.seek(chunk->pos, SEEK_SET);
+	_x = _stream.readSint16LE();
+	_y = _stream.readSint16LE();
+	_level = _stream.readSint16LE();
+	_w = bgWidth / _x;
+	_h = bgHeight / _y;
+	_room = room;
 }
 
 }

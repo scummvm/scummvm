@@ -129,18 +129,11 @@ struct PathTileInfo {
 
 typedef PathTileInfo        PathTilePosInfo[maxPlatforms];
 
-typedef PathTilePosInfo     PathTilePosArray
-[searchDiameter + 4]
-[searchDiameter + 4];
+typedef PathTilePosInfo     PathTilePosArray[searchDiameter + 4][searchDiameter + 4];
 
-typedef uint8               PathSubMetaFlags
-[((((searchDiameter
-     +   subMetaMask + 4)
-    * (searchDiameter
-    +   subMetaMask + 4))
-   >>  subMetaShift)
-  +   7)
- >>  3];
+typedef uint8 PathSubMetaFlags[((((searchDiameter + subMetaMask + 4)
+				 * (searchDiameter + subMetaMask + 4))
+					>>  subMetaShift) + 7) >> 3];
 
 
 //  This class manages an array containing terrain information, which
@@ -149,14 +142,14 @@ class PathTileRegion {
 
 	friend class PathRequest;
 
-	int16           mapNum;         //  The map number of the terrain data
+	int16           _mapNum;         //  The map number of the terrain data
 
-	TilePoint       origin,         //  The base tile coords of the array
-	                area,           //  The size of the array in tiles
-	                subMetaArea;    //  The number of submetatiles overlaying
+	TilePoint       _origin,         //  The base tile coords of the array
+	                _area,           //  The size of the array in tiles
+	                _subMetaArea;    //  The number of submetatiles overlaying
 	//  the array area
-	PathTilePosInfo *array;         //  The pointer to the array
-	uint8           *subMetaFlags;  //  A bit array indicating which
+	PathTilePosInfo *_array;         //  The pointer to the array
+	uint8           *_subMetaFlags;  //  A bit array indicating which
 	//  submetatiles have been loaded
 
 	void fetchSubMeta(const TilePoint &subMeta);
@@ -164,9 +157,9 @@ class PathTileRegion {
 public:
 
 	PathTileRegion() {
-		mapNum = 0;
-		array = nullptr;
-		subMetaFlags = nullptr;
+		_mapNum = 0;
+		_array = nullptr;
+		_subMetaFlags = nullptr;
 	}
 
 	void init(
@@ -178,9 +171,9 @@ public:
 
 	void fetchTileSection(const TilePoint &org, const TilePoint &a);
 	PathTilePosInfo *tilePos(const TilePoint &pos) {
-		assert(pos.u >= origin.u && (pos.u - origin.u) < area.u);
-		assert(pos.v >= origin.v && (pos.v - origin.v) < area.v);
-		return &array[(pos.u - origin.u) * area.v + pos.v - origin.v];
+		assert(pos.u >= _origin.u && (pos.u - _origin.u) < _area.u);
+		assert(pos.v >= _origin.v && (pos.v - _origin.v) < _area.v);
+		return &_array[(pos.u - _origin.u) * _area.v + pos.v - _origin.v];
 	}
 };
 
@@ -192,25 +185,25 @@ void PathTileRegion::init(
     const TilePoint &a,
     PathTilePosInfo *arr,
     uint8           *flagArray) {
-	mapNum = map;
-	origin = org;
-	area = a;
-	array = arr;
-	subMetaFlags = flagArray;
+	_mapNum = map;
+	_origin = org;
+	_area = a;
+	_array = arr;
+	_subMetaFlags = flagArray;
 
-	origin.z = area.z = subMetaArea.z = 0;
-	subMetaArea.u = (area.u + (origin.u & subMetaMask) + subMetaMask)
+	_origin.z = _area.z = _subMetaArea.z = 0;
+	_subMetaArea.u = (_area.u + (_origin.u & subMetaMask) + subMetaMask)
 	                >> subMetaShift;
-	subMetaArea.v = (area.v + (origin.v & subMetaMask) + subMetaMask)
+	_subMetaArea.v = (_area.v + (_origin.v & subMetaMask) + subMetaMask)
 	                >> subMetaShift;
 
 	//  clear all of the submetatile flags
-	memset(subMetaFlags, 0, (subMetaArea.u * subMetaArea.v + 7) >> 3);
+	memset(_subMetaFlags, 0, (_subMetaArea.u * _subMetaArea.v + 7) >> 3);
 
 	//  nullptr the tile pointers in the array
-	int16           arraySize = area.u * area.v;
-	PathTilePosInfo *tiPtr = array;
-	for (; arraySize > 0; arraySize--, tiPtr++) {
+	int16           _arraySize = _area.u * _area.v;
+	PathTilePosInfo *tiPtr = _array;
+	for (; _arraySize > 0; _arraySize--, tiPtr++) {
 		PathTilePosInfo &ptpi = *tiPtr;
 		for (int i = 0; i < maxPlatforms; i++)
 			ptpi[i].surfaceTile = nullptr;
@@ -256,18 +249,18 @@ void PathTileRegion::fetchTileSection(const TilePoint &org,
 	                   >> subMetaShift;
 
 	for (u = 0; u < secSubMetaArea.u; u++) {
-		relSubMeta.u = secSubMetaOrigin.u - (origin.u >> subMetaShift) + u;
-		relSubMeta.v = secSubMetaOrigin.v - (origin.v >> subMetaShift);
-		flagIndex = relSubMeta.u * subMetaArea.v + relSubMeta.v;
+		relSubMeta.u = secSubMetaOrigin.u - (_origin.u >> subMetaShift) + u;
+		relSubMeta.v = secSubMetaOrigin.v - (_origin.v >> subMetaShift);
+		flagIndex = relSubMeta.u * _subMetaArea.v + relSubMeta.v;
 
 		for (v = 0; v < secSubMetaArea.v; v++, flagIndex++) {
 			//  Check the submetatile flag in the bit array
-			if (!(subMetaFlags[flagIndex >> 3] & (1 << (flagIndex & 7)))) {
+			if (!(_subMetaFlags[flagIndex >> 3] & (1 << (flagIndex & 7)))) {
 				//  Load the submetatile and set its flag
 				fetchSubMeta(TilePoint(secSubMetaOrigin.u + u,
 				                       secSubMetaOrigin.v + v,
 				                       0));
-				subMetaFlags[flagIndex >> 3] |= 1 << (flagIndex & 7);
+				_subMetaFlags[flagIndex >> 3] |= 1 << (flagIndex & 7);
 			}
 		}
 	}
@@ -276,7 +269,7 @@ void PathTileRegion::fetchTileSection(const TilePoint &org,
 
 //  This function will load a submeta tile in the array
 void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
-	WorldMapData    *map = &mapList[mapNum];
+	WorldMapData    *map = &mapList[_mapNum];
 
 	TilePoint       mCoords;
 	MetaTile        *mt;
@@ -307,14 +300,14 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 		TileRegion  tileReg;
 		TilePoint   offset;
 
-		tileReg.min.u = (subMeta.u << subMetaShift) - origin.u;
-		offset.u =  tileReg.min.u + subMetaSize < area.u
+		tileReg.min.u = (subMeta.u << subMetaShift) - _origin.u;
+		offset.u =  tileReg.min.u + subMetaSize < _area.u
 		            ?   subMetaSize
-		            :   area.u - tileReg.min.u;
-		tileReg.min.v = (subMeta.v << subMetaShift) - origin.v;
-		offset.v =  tileReg.min.v + subMetaSize < area.v
+		            :   _area.u - tileReg.min.u;
+		tileReg.min.v = (subMeta.v << subMetaShift) - _origin.v;
+		offset.v =  tileReg.min.v + subMetaSize < _area.v
 		            ?   subMetaSize
-		            :   area.v - tileReg.min.v;
+		            :   _area.v - tileReg.min.v;
 
 		if (tileReg.min.u < 0) {
 			offset.u += tileReg.min.u;
@@ -326,17 +319,17 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 		}
 
 		//  Compute tile region relative to metatile
-		tileReg.min.u = (tileReg.min.u + origin.u) & kPlatMask;
+		tileReg.min.u = (tileReg.min.u + _origin.u) & kPlatMask;
 		tileReg.max.u = tileReg.min.u + offset.u;
-		tileReg.min.v = (tileReg.min.v + origin.v) & kPlatMask;
+		tileReg.min.v = (tileReg.min.v + _origin.v) & kPlatMask;
 		tileReg.max.v = tileReg.min.v + offset.v;
 
 		assert(tileReg.max.u <= kPlatformWidth);
 		assert(tileReg.max.v <= kPlatformWidth);
 
 		//  Compute the offset of base tile in metatile to origin
-		offset.u = ((subMeta.u >> 1) << kPlatShift) - origin.u;
-		offset.v = ((subMeta.v >> 1) << kPlatShift) - origin.v;
+		offset.u = ((subMeta.u >> 1) << kPlatShift) - _origin.u;
+		offset.v = ((subMeta.v >> 1) << kPlatShift) - _origin.v;
 
 		for (int i = 0; i < maxPlatforms; i++) {
 			uint16      tpFlags = 0;
@@ -345,13 +338,13 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 			TileRef     *tr;
 			int16       height;
 
-			if ((p = mt->fetchPlatform(mapNum, i)) == nullptr)
+			if ((p = mt->fetchPlatform(_mapNum, i)) == nullptr)
 				continue;
 
 			if (!(p->flags & plVisible)) continue;
 
 			for (u = tileReg.min.u; u < tileReg.max.u; u++) {
-				PathTilePosInfo *arrRow = &array[(u + offset.u) * area.v];
+				PathTilePosInfo *arrRow = &_array[(u + offset.u) * _area.v];
 
 				assert(u >= 0);
 				assert(u < kPlatformWidth);
@@ -380,7 +373,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 
 							assert((uint16)tr->tile <= activeItemIndexNullID);
 							groupItem = ActiveItem::activeItemAddress(
-							                ActiveItemID(mapNum, tr->tile));
+							                ActiveItemID(_mapNum, tr->tile));
 
 							tagU = u - ((tr->flags >> 1) & 0x07);
 							tagV = v - ((tr->flags >> 4) & 0x07);
@@ -408,7 +401,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 
 							//  Look up the group instance in the hash.
 							instanceItem = map->findHashedInstance(absPos, tr->tile);
-							if (instanceItem) state = instanceItem->getInstanceState(mapNum);
+							if (instanceItem) state = instanceItem->getInstanceState(_mapNum);
 
 							stateData = &(map->activeItemData)[
 							                groupItem->_data.group.grDataOffset
@@ -416,7 +409,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 
 							for (tempU = subMetaTag.min.u; tempU < subMetaTag.max.u; tempU++) {
 								TileRef         *rowData = &stateData[(tempU - tagU) * groupItem->_data.group.vSize];
-								PathTilePosInfo *tempArrRow = &array[(tempU + offset.u) * area.v];
+								PathTilePosInfo *tempArrRow = &_array[(tempU + offset.u) * _area.v];
 
 								for (tempV = subMetaTag.min.v; tempV < subMetaTag.max.v; tempV++) {
 									flagIndex = ((tempU & subMetaMask) << subMetaShift) + (tempV & subMetaMask);
@@ -484,7 +477,7 @@ private:
 	};
 
 	//  Master array of chunk pointers
-	PathArrayChunk  *array[maxPlatforms][regionChunkDiameter][regionChunkDiameter];
+	PathArrayChunk  *_array[maxPlatforms][regionChunkDiameter][regionChunkDiameter];
 public:
 
 	//  Exception class
@@ -520,7 +513,7 @@ PathArray::PathArray() {
 	for (plat = 0; plat < maxPlatforms; plat++) {
 		for (chunkU = 0; chunkU < regionChunkDiameter; chunkU++) {
 			for (chunkV = 0; chunkV < regionChunkDiameter; chunkV++)
-				array[plat][chunkU][chunkV] = nullptr;
+				_array[plat][chunkU][chunkV] = nullptr;
 		}
 	}
 }
@@ -546,7 +539,7 @@ PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
 	                chunkVCoord = vCoord >> 2;
 
 	//  Get a pointer to the chunk pointer in the array
-	PathArrayChunk  **chunkPtrPtr = &array[plat][chunkUCoord][chunkVCoord];
+	PathArrayChunk  **chunkPtrPtr = &_array[plat][chunkUCoord][chunkVCoord];
 
 	//  Get existing chunk or allocate a new one
 	if (*chunkPtrPtr != nullptr || (*chunkPtrPtr = new PathArrayChunk) !=  nullptr) {
@@ -585,7 +578,7 @@ PathCell *PathArray::getCell(int plat, int uCoord, int vCoord) {
 	                chunkVCoord = vCoord >> 2;
 	uint16          chunkCellMask;
 
-	PathArrayChunk  *chunkPtr = array[plat][chunkUCoord][chunkVCoord];
+	PathArrayChunk  *chunkPtr = _array[plat][chunkUCoord][chunkVCoord];
 
 	if (chunkPtr == nullptr) return nullptr;
 
@@ -613,7 +606,7 @@ void PathArray::deleteCell(int plat, int uCoord, int vCoord) {
 	                chunkVCoord = vCoord >> 2;
 	uint16          chunkCellMask;
 
-	PathArrayChunk  *chunkPtr = array[plat][chunkUCoord][chunkVCoord];
+	PathArrayChunk  *chunkPtr = _array[plat][chunkUCoord][chunkVCoord];
 
 	if (chunkPtr == nullptr)
 		return;
@@ -638,7 +631,7 @@ void PathArray::reset() {
 			for (chunkV = 0; chunkV < regionChunkDiameter; chunkV++) {
 				PathArrayChunk      **chunkPtrPtr;
 
-				chunkPtrPtr = &array[plat][chunkU][chunkV];
+				chunkPtrPtr = &_array[plat][chunkU][chunkV];
 
 				if (*chunkPtrPtr != nullptr) {
 					delete *chunkPtrPtr;
@@ -691,11 +684,11 @@ struct PointMask {
 class DirMask {
 	friend class DirMaskGroup;
 
-	PointMask pathPt[4];
+	PointMask _pathPt[4];
 
 public:
 	PointMask &operator[](int16 index) {
-		return pathPt[index];
+		return _pathPt[index];
 	}
 };
 
@@ -704,15 +697,15 @@ public:
 class DirMaskGroup {
 	friend class MaskComputer;
 
-	uint8   crossSection;
-	DirMask dMask[8];
+	uint8   _crossSection;
+	DirMask _dMask[8];
 
 	void computeMask(uint8 objSection);
 
 public:
-	DirMaskGroup() : crossSection(0) {}
+	DirMaskGroup() : _crossSection(0) {}
 	DirMask &operator[](int16 index) {
-		return dMask[index];
+		return _dMask[index];
 	}
 };
 
@@ -721,14 +714,14 @@ public:
 class MaskComputer {
 
 private:
-	DirMaskGroup    array[8],
-	                *ptrArray[8];
-	int16           arraySize;
+	DirMaskGroup    _array[8],
+	                *_ptrArray[8];
+	int16           _arraySize;
 
 public:
-	MaskComputer() : arraySize(0) {
+	MaskComputer() : _arraySize(0) {
 		for (int i = 0; i < 8; i++)
-			ptrArray[i] = nullptr;
+			_ptrArray[i] = nullptr;
 	}
 
 	DirMaskGroup *computeMask(uint8 objSection);
@@ -750,7 +743,7 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 		int16   max;
 	}           area;
 
-	crossSection = objSection;
+	_crossSection = objSection;
 
 	//  Calculate the area in subtiles the object occupies.  Since U and
 	//  V coordinates will alway equal each other, there is no need to
@@ -796,7 +789,7 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 			          v;
 			TileRegion  ptMaskArea;
 			uint16      tempMask[16];
-			PointMask   *ptMask = &dMask[dir].pathPt[ptNum];
+			PointMask   *ptMask = &_dMask[dir]._pathPt[ptNum];
 
 			//  Compute the point mask area
 			ptMaskArea.min = baseMaskArea.min + tDirTable2[dir] * (ptNum + 1);
@@ -859,36 +852,36 @@ void DirMaskGroup::computeMask(uint8 objSection) {
 	}
 }
 
-DirMaskGroup *MaskComputer::computeMask(uint8 crossSection) {
+DirMaskGroup *MaskComputer::computeMask(uint8 _crossSection) {
 	DirMaskGroup    *maskGroup;
 	int             i;
 
 	//  Check if this mask group has already been computed
-	for (i = 0; i < arraySize; i++) {
-		maskGroup = ptrArray[i];
+	for (i = 0; i < _arraySize; i++) {
+		maskGroup = _ptrArray[i];
 
-		if (maskGroup->crossSection == crossSection) {
+		if (maskGroup->_crossSection == _crossSection) {
 			//  This mask group has already been computed
 			if (i > 0) {
 				//  Move the reference to this mask group up one position
-				ptrArray[i] = ptrArray[i - 1];
-				ptrArray[i - 1] = maskGroup;
+				_ptrArray[i] = _ptrArray[i - 1];
+				_ptrArray[i - 1] = maskGroup;
 			}
 
 			return maskGroup;
 		}
 	}
 
-	if (arraySize < ARRAYSIZE(array)) {
+	if (_arraySize < ARRAYSIZE(_array)) {
 		//  Allocate a new place for this mask group
-		maskGroup = ptrArray[arraySize] = &array[arraySize];
-		arraySize++;
+		maskGroup = _ptrArray[_arraySize] = &_array[_arraySize];
+		_arraySize++;
 	} else
 		//  Discard last referenced mask group in array
-		maskGroup = ptrArray[ARRAYSIZE(array) - 1];
+		maskGroup = _ptrArray[ARRAYSIZE(_array) - 1];
 
 	//  Compute the new group of masks
-	maskGroup->computeMask(crossSection);
+	maskGroup->computeMask(_crossSection);
 
 	return maskGroup;
 }
@@ -1077,10 +1070,10 @@ class PathRequest {
 	friend void addPathRequestToQueue(PathRequest *pr);
 
 protected:
-	Actor           *actor;                 // actor path applies to.
-	int16           smartness;              // how intelligent?
-	MotionTask      *mTask;                 // which motion task started this
-	uint8           flags;
+	Actor           *_actor;                 // actor path applies to.
+	int16           _smartness;              // how intelligent?
+	MotionTask      *_mTask;                 // which motion task started this
+	uint8           _flags;
 
 	enum pathFlags {
 		aborted     = (1 << 0),             // path request has been aborted
@@ -1095,53 +1088,53 @@ protected:
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static TilePoint *path;
-	static int16            pathLength;
+	static TilePoint *_path;
+	static int16      _pathLength;
 
-	static StaticTilePoint  baseCoords,
-	       baseTileCoords,
-	       centerPt,       // The current center coordinates
-	       bestLoc;        // The best cell coordinates,
+	static StaticTilePoint  _baseCoords,
+	       _baseTileCoords,
+	       _centerPt,       // The current center coordinates
+	       _bestLoc;        // The best cell coordinates,
 	// currently visited
 
-	static uint8            centerPlatform,
-	       bestPlatform;
+	static uint8            _centerPlatform,
+	       _bestPlatform;
 
-	static int16            fetchRadius;
+	static int16            _fetchRadius;
 
-	static int32            firstTick,
-	       lastTick,
-	       timeLimit;
+	static int32            _firstTick,
+	       _lastTick,
+	       _timeLimit;
 
-	static DirMaskGroup     *dirMasks;
+	static DirMaskGroup     *_dirMasks;
 
 	//  Calculates the center point given the base coordinate of the
 	//  cell array and a queue item which contains cell coordinates.
 	static void calcCenterPt(const TilePoint &baseTileCoords_, const QueueItem &qi) {
-		centerPt.u = ((baseTileCoords_.u + qi.u) << kTileUVShift)
+		_centerPt.u = ((baseTileCoords_.u + qi.u) << kTileUVShift)
 		             +   kTileUVSize / 2;
-		centerPt.v = ((baseTileCoords_.v + qi.v) << kTileUVShift)
+		_centerPt.v = ((baseTileCoords_.v + qi.v) << kTileUVShift)
 		             +   kTileUVSize / 2;
-		centerPt.z = qi.z;
+		_centerPt.z = qi.z;
 
-		centerPlatform = qi.platform;
+		_centerPlatform = qi.platform;
 	}
 
 	//  Constructor
 	PathRequest(Actor *a, int16 howSmart);
 
 public:
-	static PathTileRegion   *tileArray;
+	static PathTileRegion   *_tileArray;
 
 	virtual ~PathRequest() {
-		if (path)
-			delete[] path;
+		if (_path)
+			delete[] _path;
 
-		path = nullptr;
+		_path = nullptr;
 	}
 
 	void requestAbort() {
-		flags |= aborted;
+		_flags |= aborted;
 	}
 
 	virtual void initialize();
@@ -1152,7 +1145,7 @@ public:
 
 	//  Set and evaluate a new center location.
 	virtual bool setCenter(
-	    const TilePoint &baseTileCoords,
+	    const TilePoint &_baseTileCoords,
 	    const QueueItem &qi) = 0;
 
 	//  Determine if path request will allow a move to the specified
@@ -1172,7 +1165,7 @@ public:
 	virtual int16 evaluateMove(const TilePoint &testPt, uint8 testPlatform) = 0;
 
 	// NEW added by Evan 12/3
-	virtual bool timeLimitExceeded();
+	virtual bool _timeLimitExceeded();
 
 };
 
@@ -1181,21 +1174,21 @@ public:
  * ===================================================================== */
 
 //  This class is used to request a path leading to a specified
-//  destination.
+//  _destination.
 class DestinationPathRequest : public PathRequest {
 protected:
-	TilePoint           destination;    // The destination of the path
-	uint8               destPlatform;   // The destination platform
+	TilePoint           _destination;    // The _destination of the path
+	uint8               _destPlatform;   // The _destination platform
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static StaticTilePoint targetCoords;   // The current destination coordinates
+	static StaticTilePoint _targetCoords;   // The current _destination coordinates
 	// quantized to the nearest tile
 	// center.
-	static uint8        targetPlatform;
-	static int16        bestDist,       // The distance from the target of
+	static uint8        _targetPlatform;
+	static int16        _bestDist,       // The distance from the target of
 	       // the best cell visited so far.
-	       centerCost;     // The distance from the target of
+	       _centerCost;     // The distance from the target of
 	// the current center coordinates.
 public:
 	DestinationPathRequest(Actor *a, int16 howSmart);
@@ -1205,7 +1198,7 @@ public:
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
-	    const TilePoint &baseTileCoords,
+	    const TilePoint &_baseTileCoords,
 	    const QueueItem &qi) override;
 
 	bool validMove(const TilePoint &testPt) override;
@@ -1228,22 +1221,22 @@ public:
 
 class WanderPathRequest : public PathRequest {
 protected:
-	bool                tethered;       //  Flag indicating if there is a
+	bool                _tethered;       //  Flag indicating if there is a
 	//  tether on this path
 
 	//  Tether coordinates
-	int16               tetherMinU,
-	                    tetherMinV,
-	                    tetherMaxU,
-	                    tetherMaxV;
+	int16               _tetherMinU,
+	                    _tetherMinV,
+	                    _tetherMaxU,
+	                    _tetherMaxV;
 
 	//  These static members are initialized when the path request
 	//  becomes the current active request being serviced.
-	static StaticTilePoint startingCoords; // The actor's location at the
+	static StaticTilePoint _startingCoords; // The actor's location at the
 	// beginning of the service.
-	static int16        bestDist,       // The distance from the target of
+	static int16        _bestDist,       // The distance from the target of
 	       // the best cell visited so far.
-	       centerCost;     // The distance from the target of
+	       _centerCost;     // The distance from the target of
 	// the current center coordinates.
 
 public:
@@ -1255,7 +1248,7 @@ public:
 
 	//  Set and evaluate a new center location.
 	bool setCenter(
-	    const TilePoint &baseTileCoords,
+	    const TilePoint &_baseTileCoords,
 	    const QueueItem &qi) override;
 
 	//  Determine if point is within the tether region if there is a
@@ -1282,7 +1275,7 @@ public:
 PathRequest                 *currentRequest = nullptr;
 
 static PathTilePosArray     *pathTileArray;
-static PathSubMetaFlags     subMetaFlags;
+static PathSubMetaFlags     _subMetaFlags;
 
 static MaskComputer         *maskComp;
 
@@ -1299,34 +1292,34 @@ struct VolumeLookupNode {
 static VolumeLookupNode     volumeLookupNodePool[256];
 static VolumeLookupNode     *volumeLookupTable[searchDiameter][searchDiameter];
 
-TilePoint *PathRequest::path = nullptr;
-int16           PathRequest::pathLength;
+TilePoint *PathRequest::_path = nullptr;
+int16           PathRequest::_pathLength;
 
-StaticTilePoint PathRequest::baseCoords = {0, 0, 0},
-                PathRequest::baseTileCoords = {0, 0, 0},
-                PathRequest::centerPt = {0, 0, 0},      // The current center coordinates
-                PathRequest::bestLoc = {0, 0, 0};       // The best cell coordinates,
+StaticTilePoint PathRequest::_baseCoords = {0, 0, 0},
+                PathRequest::_baseTileCoords = {0, 0, 0},
+                PathRequest::_centerPt = {0, 0, 0},      // The current center coordinates
+                PathRequest::_bestLoc = {0, 0, 0};       // The best cell coordinates,
 // currently visited
-uint8           PathRequest::centerPlatform,
-                PathRequest::bestPlatform;
+uint8           PathRequest::_centerPlatform,
+                PathRequest::_bestPlatform;
 
-int16           PathRequest::fetchRadius;
+int16           PathRequest::_fetchRadius;
 
-int32           PathRequest::firstTick,
-                PathRequest::timeLimit;
+int32           PathRequest::_firstTick,
+                PathRequest::_timeLimit;
 
-DirMaskGroup    *PathRequest::dirMasks = nullptr;
+DirMaskGroup    *PathRequest::_dirMasks = nullptr;
 
-PathTileRegion  *PathRequest::tileArray = nullptr;
+PathTileRegion  *PathRequest::_tileArray = nullptr;
 
-StaticTilePoint DestinationPathRequest::targetCoords = {0, 0, 0};
-uint8           DestinationPathRequest::targetPlatform;
-int16           DestinationPathRequest::bestDist,
-                DestinationPathRequest::centerCost;
+StaticTilePoint DestinationPathRequest::_targetCoords = {0, 0, 0};
+uint8           DestinationPathRequest::_targetPlatform;
+int16           DestinationPathRequest::_bestDist,
+                DestinationPathRequest::_centerCost;
 
-StaticTilePoint WanderPathRequest::startingCoords = {0, 0, 0};
-int16           WanderPathRequest::bestDist,
-                WanderPathRequest::centerCost;
+StaticTilePoint WanderPathRequest::_startingCoords = {0, 0, 0};
+int16           WanderPathRequest::_bestDist,
+                WanderPathRequest::_centerCost;
 
 /* ===================================================================== *
    PathQueue member functions
@@ -1386,20 +1379,20 @@ static void push(
  * ===================================================================== */
 
 PathRequest::PathRequest(Actor *a, int16 howSmart) {
-	actor       = a;
-	smartness   = howSmart;
-	mTask       = actor->_moveTask;
-	flags       = mTask->flags & MotionTask::requestRun ? run : 0;
+	_actor       = a;
+	_smartness   = howSmart;
+	_mTask       = _actor->_moveTask;
+	_flags       = _mTask->_flags & MotionTask::requestRun ? run : 0;
 
-	if (path == nullptr)
-		path = new TilePoint[kPathSize]();
+	if (_path == nullptr)
+		_path = new TilePoint[kPathSize]();
 
-	mTask->pathFindTask = this;
+	_mTask->_pathFindTask = this;
 }
 
 void PathRequest::initialize() {
-	ProtoObj        *proto = actor->proto();
-	TilePoint       startingCoords = actor->getLocation();
+	ProtoObj        *proto = _actor->proto();
+	TilePoint       startingCoords = _actor->getLocation();
 	int             uCoord, vCoord;
 	int             objectVolumes = 0;
 	int             nextAvailableLookupNode = 0;
@@ -1411,42 +1404,42 @@ void PathRequest::initialize() {
 	              maxTileRegV;
 	uint8 pCross = proto->crossSection;
 
-	firstTick = gameTime,
-	timeLimit = /*flags & run ? ticksPerSecond / 4 :*/ ticksPerSecond;
+	_firstTick = gameTime,
+	_timeLimit = /*flags & run ? ticksPerSecond / 4 :*/ ticksPerSecond;
 
-	fetchRadius =
+	_fetchRadius =
 	    ((kTileUVSize / 2 + pCross) >> kTileUVShift) + 1;
 
-	dirMasks = maskComp->computeMask(pCross);
+	_dirMasks = maskComp->computeMask(pCross);
 
 	//  Set the best location to the starting location
-	bestLoc.set(Nowhere.u, Nowhere.v, Nowhere.z);
+	_bestLoc.set(Nowhere.u, Nowhere.v, Nowhere.z);
 
 	//  Calculate where search cells will be projected onto map
-	baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
-	baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
-	baseTileCoords.z = 0;
+	_baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
+	_baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
+	_baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << kTileUVShift;
-	baseCoords.v = baseTileCoords.v << kTileUVShift;
-	baseCoords.z = 0;
+	_baseCoords.u = _baseTileCoords.u << kTileUVShift;
+	_baseCoords.v = _baseTileCoords.v << kTileUVShift;
+	_baseCoords.z = 0;
 
 	//  Clear the priority queue
 	queue->clear();
 
 	//  Initialize the tile array
-	tileArray->init(
-	    actor->getMapNum(),
+	_tileArray->init(
+	    _actor->getMapNum(),
 	    TilePoint(
-	        baseTileCoords.u - 2,
-	        baseTileCoords.v - 2,
+	        _baseTileCoords.u - 2,
+	        _baseTileCoords.v - 2,
 	        0),
 	    TilePoint(
 	        searchDiameter + 4,
 	        searchDiameter + 4,
 	        0),
 	    (PathTilePosInfo *)pathTileArray,
-	    subMetaFlags);
+	    _subMetaFlags);
 
 	for (uCoord = 0; uCoord < searchDiameter; uCoord++) {
 		for (vCoord = 0; vCoord < searchDiameter; vCoord++)
@@ -1455,11 +1448,11 @@ void PathRequest::initialize() {
 
 	RegionalObjectIterator  iter(
 	    currentWorld,
-	    baseCoords,
+	    _baseCoords,
 	    TilePoint(
-	        baseCoords.u
+	        _baseCoords.u
 	        + (searchCenter << kTileUVShift) * 2,
-	        baseCoords.v
+	        _baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
 	GameObject *obj = nullptr;
@@ -1467,13 +1460,13 @@ void PathRequest::initialize() {
 	for (iter.first(&obj);
 	        obj != nullptr;
 	        iter.next(&obj)) {
-		TilePoint       objLoc = obj->getLocation() - baseCoords;
+		TilePoint       objLoc = obj->getLocation() - _baseCoords;
 		ProtoObj        *objProto = obj->proto();
 		TileRegion      *objRegion = &objectVolumeArray[objectVolumes];
 		uint8 poCross = objProto->crossSection;
 
 		//  Obviously, we shouldn't block ourselves.
-		if (obj == actor || obj->isInvisible()) continue;
+		if (obj == _actor || obj->isInvisible()) continue;
 
 		//  Dead corpses and invisible actors are not considered
 		//  obstacles.
@@ -1559,7 +1552,7 @@ big_break:
 			quantizedCoords.z = startingCoords.z;
 			quantizedCoords.z = tileSlopeHeight(
 			                        quantizedCoords,
-			                        actor,
+			                        _actor,
 			                        nullptr,
 			                        &platform);
 
@@ -1578,8 +1571,8 @@ big_break:
 			//  Push this point
 			push(
 			    TilePoint(
-			        curTileRegU - baseTileCoords.u,
-			        curTileRegV - baseTileCoords.v,
+			        curTileRegU - _baseTileCoords.u,
+			        curTileRegV - _baseTileCoords.v,
 			        quantizedCoords.z),
 			    platform,
 			    cost,
@@ -1592,7 +1585,7 @@ big_break:
 void PathRequest::finish() {
 	Direction           prevDir;
 	int16               prevHeight = 0;
-	TilePoint           *resultSteps = path,
+	TilePoint           *resultSteps = _path,
 	                    coords;
 	int16               stepCount = 0;
 	TilePoint           *res;
@@ -1602,8 +1595,8 @@ void PathRequest::finish() {
 
 	debugC(2, kDebugPath, "Finishing Path Request: %p", (void *)this);
 
-	if (bestLoc != Nowhere) {
-		cell = cellArray->getCell(bestPlatform, bestLoc.u, bestLoc.v);
+	if (_bestLoc != Nowhere) {
+		cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 		assert(cell != nullptr);
 
 		if (cell->direction != dirInvalid) {
@@ -1614,7 +1607,7 @@ void PathRequest::finish() {
 			for (;;) {
 				int16       reverseDir;
 
-				cell = cellArray->getCell(bestPlatform, bestLoc.u, bestLoc.v);
+				cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 				assert(cell != nullptr);
 
 				if (cell->direction != dirInvalid) {
@@ -1623,12 +1616,12 @@ void PathRequest::finish() {
 						if (res <= tempResult) break;
 
 						coords.u =
-						    (bestLoc.u << kTileUVShift)
-						    +   baseCoords.u
+						    (_bestLoc.u << kTileUVShift)
+						    +   _baseCoords.u
 						    +   kTileUVSize / 2;
 						coords.v =
-						    (bestLoc.v << kTileUVShift)
-						    +   baseCoords.v
+						    (_bestLoc.v << kTileUVShift)
+						    +   _baseCoords.v
 						    +   kTileUVSize / 2;
 						coords.z = cell->height;
 						*--res = coords;
@@ -1638,11 +1631,11 @@ void PathRequest::finish() {
 					}
 
 					reverseDir = (cell->direction + 4) & 0x07;
-					bestLoc += tDirTable2[reverseDir];
-					assert(bestLoc.u >= 0 && bestLoc.u < searchDiameter);
-					assert(bestLoc.v >= 0 && bestLoc.v < searchDiameter);
-					bestPlatform -= cell->platformDelta;
-					assert(bestPlatform < maxPlatforms);
+					_bestLoc += tDirTable2[reverseDir];
+					assert(_bestLoc.u >= 0 && _bestLoc.u < searchDiameter);
+					assert(_bestLoc.v >= 0 && _bestLoc.v < searchDiameter);
+					_bestPlatform -= cell->platformDelta;
+					assert(_bestPlatform < maxPlatforms);
 				} else
 					break;
 			}
@@ -1656,26 +1649,26 @@ void PathRequest::finish() {
 			}
 		} else
 			//  if pathfinder didn't get anywhere, we're done
-			flags |= completed;
+			_flags |= completed;
 	}
 
-	pathLength = stepCount;
+	_pathLength = stepCount;
 
-	if (mTask->pathFindTask == this && mTask->isWalk()) {
-		memcpy(mTask->pathList, path, pathLength * sizeof path[0]);
-		mTask->pathCount = pathLength;
-		mTask->pathIndex = 0;
-		mTask->flags |= MotionTask::reset;
-		if (flags & completed) mTask->flags |= MotionTask::finalPath;
-		mTask->pathFindTask = nullptr;
+	if (_mTask->_pathFindTask == this && _mTask->isWalk()) {
+		memcpy(_mTask->_pathList, _path, _pathLength * sizeof(_path[0]));
+		_mTask->_pathCount = _pathLength;
+		_mTask->_pathIndex = 0;
+		_mTask->_flags |= MotionTask::reset;
+		if (_flags & completed) _mTask->_flags |= MotionTask::finalPath;
+		_mTask->_pathFindTask = nullptr;
 	}
 }
 
 void PathRequest::abortReq() {
 	debugC(4, kDebugPath, "Aborting Path Request: %p", (void *)this);
 
-	if (mTask->pathFindTask == this)
-		mTask->pathFindTask = nullptr;
+	if (_mTask->_pathFindTask == this)
+		_mTask->_pathFindTask = nullptr;
 }
 
 
@@ -1684,13 +1677,13 @@ PathResult PathRequest::findPath() {
 
 	static const uint8 costTable[] = {4, 10, 12, 16, 12, 10, 4, 0, 4, 10, 12, 16, 12, 10, 4, 0};
 
-	ProtoObj        *proto = actor->proto();
+	ProtoObj        *proto = _actor->proto();
 	QueueItem       qi;
 	uint8 pCross = proto->crossSection;
 
 	debugC(4, kDebugPath, "Finding Path for %p: pCross = %d", (void *)this, pCross);
 
-	if (flags & aborted) return pathAborted;
+	if (_flags & aborted) return pathAborted;
 
 	int32 lastTick_ = gameTime;
 
@@ -1707,14 +1700,14 @@ PathResult PathRequest::findPath() {
 
 
 		//  Limit the total path length to avoid maze-solving
-		if (qi.cost > smartness) continue;
+		if (qi.cost > _smartness) continue;
 
 		//  Set a new center and determine if we're done
-		if (setCenter(baseTileCoords, qi)) return pathDone;
+		if (setCenter(_baseTileCoords, qi)) return pathDone;
 
 		//  Calculate the coordinates of the center in tiles
-		centerTileCoords.u = qi.u + baseTileCoords.u;
-		centerTileCoords.v = qi.v + baseTileCoords.v;
+		centerTileCoords.u = qi.u + _baseTileCoords.u;
+		centerTileCoords.v = qi.v + _baseTileCoords.v;
 		centerTileCoords.z = 0;
 
 		if (qi.direction == dirInvalid) {
@@ -1723,12 +1716,12 @@ PathResult PathRequest::findPath() {
 			tDir = tDirTable2;
 			endDir = 8;
 
-			tileArray->fetchTileSection(
-			    TilePoint(qi.u - fetchRadius, qi.v - fetchRadius, 0)
-			    +   baseTileCoords,
+			_tileArray->fetchTileSection(
+			    TilePoint(qi.u - _fetchRadius, qi.v - _fetchRadius, 0)
+			    +   _baseTileCoords,
 			    TilePoint(
-			        (fetchRadius << 1) + 1,
-			        (fetchRadius << 1) + 1,
+			        (_fetchRadius << 1) + 1,
+			        (_fetchRadius << 1) + 1,
 			        0));
 		} else {
 			//  Check only the forward directions
@@ -1738,76 +1731,76 @@ PathResult PathRequest::findPath() {
 
 			switch (qi.direction) {
 			case 0:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u + fetchRadius,
-				        qi.v - fetchRadius,
+				        qi.u + _fetchRadius,
+				        qi.v - _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(1, fetchRadius << 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint(1, _fetchRadius << 1, 0));
 					// fall through
 			case 1:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius,
-				        qi.v + fetchRadius,
+				        qi.u - _fetchRadius,
+				        qi.v + _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint((fetchRadius << 1) + 1, 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint((_fetchRadius << 1) + 1, 1, 0));
 				break;
 			case 2:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius + 1,
-				        qi.v + fetchRadius,
+				        qi.u - _fetchRadius + 1,
+				        qi.v + _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(fetchRadius << 1, 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint(_fetchRadius << 1, 1, 0));
 					// fall through
 			case 3:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius,
-				        qi.v - fetchRadius,
+				        qi.u - _fetchRadius,
+				        qi.v - _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(1, (fetchRadius << 1) + 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint(1, (_fetchRadius << 1) + 1, 0));
 				break;
 			case 4:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius,
-				        qi.v - fetchRadius + 1,
+				        qi.u - _fetchRadius,
+				        qi.v - _fetchRadius + 1,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(1, fetchRadius << 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint(1, _fetchRadius << 1, 0));
 					// fall through
 			case 5:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius,
-				        qi.v - fetchRadius,
+				        qi.u - _fetchRadius,
+				        qi.v - _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint((fetchRadius << 1) + 1, 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint((_fetchRadius << 1) + 1, 1, 0));
 				break;
 			case 6:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u - fetchRadius,
-				        qi.v - fetchRadius,
+				        qi.u - _fetchRadius,
+				        qi.v - _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(fetchRadius << 1, 1,  0));
+				    +   _baseTileCoords,
+				    TilePoint(_fetchRadius << 1, 1,  0));
 					// fall through
 			case 7:
-				tileArray->fetchTileSection(
+				_tileArray->fetchTileSection(
 				    TilePoint(
-				        qi.u + fetchRadius,
-				        qi.v - fetchRadius,
+				        qi.u + _fetchRadius,
+				        qi.v - _fetchRadius,
 				        0)
-				    +   baseTileCoords,
-				    TilePoint(1, (fetchRadius << 1) + 1, 0));
+				    +   _baseTileCoords,
+				    TilePoint(1, (_fetchRadius << 1) + 1, 0));
 			}
 
 		}
@@ -1815,16 +1808,16 @@ PathResult PathRequest::findPath() {
 		for (;
 		        i < endDir;
 		        tDir = &tDirTable2[(dir = (++i & 0x7))]) {
-			if (!validMove(centerPt + tDirTable3[dir]))
+			if (!validMove(_centerPt + tDirTable3[dir]))
 				continue;
 
 			PathTileInfo    pti;
-			TilePoint       testPt = centerPt;
+			TilePoint       testPt = _centerPt;
 			uint8           testPlatform;
 			uint32          terrain = 0;
 			int32           cost;
-			DirMask         &dMask = (*dirMasks)[dir];
-			int16           prevZ = centerPt.z;
+			DirMask         &dMask = (*_dirMasks)[dir];
+			int16           prevZ = _centerPt.z;
 
 			for (int d = 0; d < 4; d++) {
 				int       u, v;
@@ -1841,9 +1834,9 @@ PathResult PathRequest::findPath() {
 				testPt.u += tDirTable[dir].u;
 				testPt.v += tDirTable[dir].v;
 				testPt.z =  tileSlopeHeight(
-				                *tileArray,
+				                *_tileArray,
 				                testPt,
-				                actor,
+				                _actor,
 				                &pti,
 				                &testPlatform);
 
@@ -1856,35 +1849,27 @@ PathResult PathRequest::findPath() {
 				//  Compute the actor's volume at this point relative to
 				//  the base of the search region
 				actorVolume.min.u =     testPt.u
-				                        -   baseCoords.u
+				                        -   _baseCoords.u
 				                        -   pCross;
 				actorVolume.max.u = actorVolume.min.u + pCross * 2;
 				actorVolume.min.v =     testPt.v
-				                        -   baseCoords.v
+				                        -   _baseCoords.v
 				                        -   pCross;
 				actorVolume.max.v = actorVolume.min.v + pCross * 2;
 				actorVolume.min.z = testPt.z;
 				actorVolume.max.z = testPt.z + proto->height;
-				int16 aph = actor->proto()->height;
+				int16 aph = _actor->proto()->height;
 
-				for (u = maskReg.min.u, maskU = 0;
-				        u < maskReg.max.u;
-				        u++, maskU++) {
+				for (u = maskReg.min.u, maskU = 0; u < maskReg.max.u; u++, maskU++) {
 					PathTilePosInfo *arrRow =
-					    &tileArray->array[
-					        (u - tileArray->origin.u)
-					        *   tileArray->area.v];
+					    &_tileArray->_array[(u - _tileArray->_origin.u) * _tileArray->_area.v];
 
-					for (v = maskReg.min.v, maskV = 0;
-					        v < maskReg.max.v;
-					        v++, maskV++) {
+					for (v = maskReg.min.v, maskV = 0; v < maskReg.max.v; v++, maskV++) {
 						VolumeLookupNode    *node;
 
 						//  Lookup any potentially intersecting object
 						//  volumes
-						for (node = volumeLookupTable
-						            [u - baseTileCoords.u]
-						            [v - baseTileCoords.v];
+						for (node = volumeLookupTable[u - _baseTileCoords.u][v - _baseTileCoords.v];
 						        node != nullptr;
 						        node = node->next) {
 							TileRegion *trv = node->volume;
@@ -1900,7 +1885,7 @@ PathResult PathRequest::findPath() {
 						}
 
 						terrain |=  tileTerrain(
-						                &arrRow[v - tileArray->origin.v],
+						                &arrRow[v - _tileArray->_origin.v],
 						                ptMask.mask[(maskU << 2) | maskV],
 						                testPt.z,
 						                testPt.z + aph);
@@ -1972,18 +1957,18 @@ PathResult PathRequest::findPath() {
 
 			//  Assign additional costs based on having to travel
 			//  uphill or having to jump down steep slopes
-			else if (testPt.z > centerPt.z
-			         ||  testPt.z < centerPt.z - 12) {
-				cost += ((testPt.z - centerPt.z)
-				         * (testPt.z - centerPt.z)) >> 5;
+			else if (testPt.z > _centerPt.z
+			         ||  testPt.z < _centerPt.z - 12) {
+				cost += ((testPt.z - _centerPt.z)
+				         * (testPt.z - _centerPt.z)) >> 5;
 			}
 
 			//  If the drop-off is too much, then don't go there!
 			//  (i.e. don't jmup off of cliffs). Also we can
 			//  only climb steps below a certain height.
 
-//			if (   testPt.z < centerPt.z - kMaxJumpStep
-//				||    testPt.z > centerPt.z + kMaxStepHeight)
+//			if (   testPt.z < _centerPt.z - kMaxJumpStep
+//				||    testPt.z > _centerPt.z + kMaxStepHeight)
 //					continue;
 
 			//  Turns are expensive, the sharper turns are more so.
@@ -1993,10 +1978,10 @@ PathResult PathRequest::findPath() {
 			            +   dir
 			            - (qi.direction != dirInvalid
 			               ?   qi.direction
-			               :   actor->_currentFacing)];
+			               :   _actor->_currentFacing)];
 
 #if VISUAL1
-			TPLine(centerPt, testPt);
+			TPLine(_centerPt, testPt);
 #endif
 			//  Determine the final cost of moving to this cell
 			cost = clamp(0L,
@@ -2018,15 +2003,15 @@ PathResult PathRequest::findPath() {
 			    testPlatform,
 			    cost,
 			    dir,
-			    testPlatform - centerPlatform);
-			assert(cellArray->getCell(centerPlatform, qi.u, qi.v) != nullptr);
+			    testPlatform - _centerPlatform);
+			assert(cellArray->getCell(_centerPlatform, qi.u, qi.v) != nullptr);
 
 big_continue:
 			;
 		}
 
 		if ((gameTime - lastTick_) >= 4) {         // JEFFKLUDGE
-			if (timeLimitExceeded())
+			if (_timeLimitExceeded())
 				return pathDone;
 		}
 	}
@@ -2043,12 +2028,12 @@ big_continue:
 //   usually get (72/2)+(100/10) or 46 ticks.
 
 
-bool PathRequest::timeLimitExceeded() {
+bool PathRequest::_timeLimitExceeded() {
 #ifdef OLD_PATHFINDER_TIME_MGMT
-	return (gameTime - firstTick >= timeLimit);
+	return (gameTime - _firstTick >= _timeLimit);
 #else
-	int32 cutoff = smartness / (queue->getCount() ? 5 : 8);
-	return (gameTime - firstTick >= cutoff);
+	int32 cutoff = _smartness / (queue->getCount() ? 5 : 8);
+	return (gameTime - _firstTick >= cutoff);
 #endif
 }
 
@@ -2060,15 +2045,15 @@ bool PathRequest::timeLimitExceeded() {
 DestinationPathRequest::DestinationPathRequest(Actor *a, int16 howSmart) :
 	PathRequest(a, howSmart) {
 	//  Quantize the target destination to the nearest tile center.
-	mTask->finalTarget.u = (mTask->finalTarget.u & ~kTileUVMask) + kTileUVSize / 2;
-	mTask->finalTarget.v = (mTask->finalTarget.v & ~kTileUVMask) + kTileUVSize / 2;
-	mTask->finalTarget.z =  tileSlopeHeight(
-	                            mTask->finalTarget,
+	_mTask->_finalTarget.u = (_mTask->_finalTarget.u & ~kTileUVMask) + kTileUVSize / 2;
+	_mTask->_finalTarget.v = (_mTask->_finalTarget.v & ~kTileUVMask) + kTileUVSize / 2;
+	_mTask->_finalTarget.z =  tileSlopeHeight(
+	                            _mTask->_finalTarget,
 	                            a,
 	                            nullptr,
-	                            &destPlatform);
+	                            &_destPlatform);
 
-	destination = mTask->finalTarget;
+	_destination = _mTask->_finalTarget;
 }
 
 //  Initialize the static data members
@@ -2077,14 +2062,14 @@ void DestinationPathRequest::initialize() {
 
 	PathRequest::initialize();
 
-	//  Initialize bestDist to the highest possible value.
-	bestDist = maxint16;
+	//  Initialize _bestDist to the highest possible value.
+	_bestDist = maxint16;
 
 	//  Quantize the target coordinates to the nearest tile center.
-	targetCoords.u = (destination.u & ~kTileUVMask) + kTileUVSize / 2;
-	targetCoords.v = (destination.v & ~kTileUVMask) + kTileUVSize / 2;
-	targetCoords.z = destination.z;
-	targetPlatform = destPlatform;
+	_targetCoords.u = (_destination.u & ~kTileUVMask) + kTileUVSize / 2;
+	_targetCoords.v = (_destination.v & ~kTileUVMask) + kTileUVSize / 2;
+	_targetCoords.z = _destination.z;
+	_targetPlatform = _destPlatform;
 }
 
 //  Set and evaluate a new center location.
@@ -2100,26 +2085,26 @@ bool DestinationPathRequest::setCenter(
 	calcCenterPt(baseTileCoords_, qi);
 
 	//  Determine the target vector in order to calculate distance.
-	targetDelta = (targetCoords - centerPt);
+	targetDelta = (_targetCoords - _centerPt);
 	dist = targetDelta.quickHDistance();
 	zDist = ABS(targetDelta.z);
-	platDiff = ABS(centerPlatform - targetPlatform);
-	centerCost = dist + zDist * (platDiff + 1);
+	platDiff = ABS(_centerPlatform - _targetPlatform);
+	_centerCost = dist + zDist * (platDiff + 1);
 
 	//  Determine if this location is closer than any location we have
 	//  previously visited.
-	if (centerCost < bestDist) {
+	if (_centerCost < _bestDist) {
 		//  Save closest point encountered.
 
-		bestLoc.u = qi.u;
-		bestLoc.v = qi.v;
-		bestLoc.z = qi.z;
-		bestPlatform = qi.platform;
-		bestDist = centerCost;
+		_bestLoc.u = qi.u;
+		_bestLoc.v = qi.v;
+		_bestLoc.z = qi.z;
+		_bestPlatform = qi.platform;
+		_bestDist = _centerCost;
 
 		//  If we're at target square, then we're done!
 		if (dist == 0 && zDist <= kMaxStepHeight) {
-			flags |= PathRequest::completed;
+			_flags |= PathRequest::completed;
 
 			//  Return true to indicate that the path finding is done.
 			return true;
@@ -2147,15 +2132,15 @@ int16 DestinationPathRequest::evaluateStairs(
 	//  altitude of the target coordinates.  If not, assign
 	//  additional costs.
 
-	if (targetCoords.z >= upperAltitude) {
+	if (_targetCoords.z >= upperAltitude) {
 		if (moveDir != stairDir) {
-			cost = ((testPt.z - centerPt.z)
-			        * (testPt.z - centerPt.z)) >> 4;
+			cost = ((testPt.z - _centerPt.z)
+			        * (testPt.z - _centerPt.z)) >> 4;
 		}
-	} else if (targetCoords.z <= baseAltitude) {
+	} else if (_targetCoords.z <= baseAltitude) {
 		if (moveDir == stairDir) {
-			cost = ((testPt.z - centerPt.z)
-			        * (testPt.z - centerPt.z)) >> 4;
+			cost = ((testPt.z - _centerPt.z)
+			        * (testPt.z - _centerPt.z)) >> 4;
 		}
 	}
 
@@ -2174,12 +2159,12 @@ int16 DestinationPathRequest::evaluateMove(
 
 	//  Determine the target vector of the specified coordinates, in
 	//  order to calculate the distance.
-	targetDelta = targetCoords - testPt;
+	targetDelta = _targetCoords - testPt;
 	dist = targetDelta.quickHDistance();
 	zDist = ABS(targetDelta.z);
-	platDiff = ABS(testPlatform - targetPlatform);
+	platDiff = ABS(testPlatform - _targetPlatform);
 
-	return (dist + zDist * (platDiff + 1) - centerCost) >> 2;
+	return (dist + zDist * (platDiff + 1) - _centerCost) >> 2;
 }
 
 /* ===================================================================== *
@@ -2190,15 +2175,15 @@ WanderPathRequest::WanderPathRequest(
     Actor *a,
     int16 howSmart) :
 	PathRequest(a, howSmart) {
-	if (mTask->flags & MotionTask::tethered) {
-		tethered = true;
-		tetherMinU = mTask->tetherMinU;
-		tetherMinV = mTask->tetherMinV;
-		tetherMaxU = mTask->tetherMaxU;
-		tetherMaxV = mTask->tetherMaxV;
+	if (_mTask->_flags & MotionTask::tethered) {
+		_tethered = true;
+		_tetherMinU = _mTask->_tetherMinU;
+		_tetherMinV = _mTask->_tetherMinV;
+		_tetherMaxU = _mTask->_tetherMaxU;
+		_tetherMaxV = _mTask->_tetherMaxV;
 	} else {
-		tethered = false;
-		tetherMinU = tetherMinV = tetherMaxU = tetherMaxV = 0;
+		_tethered = false;
+		_tetherMinU = _tetherMinV = _tetherMaxU = _tetherMaxV = 0;
 	}
 }
 
@@ -2206,11 +2191,11 @@ WanderPathRequest::WanderPathRequest(
 void WanderPathRequest::initialize() {
 	PathRequest::initialize();
 
-	//  Initialize bestDist to zero.
-	bestDist = 0;
-	startingCoords.set(actor->getLocation().u,
-	                   actor->getLocation().v,
-	                   actor->getLocation().z);
+	//  Initialize _bestDist to zero.
+	_bestDist = 0;
+	_startingCoords.set(_actor->getLocation().u,
+	                    _actor->getLocation().v,
+	                    _actor->getLocation().z);
 }
 
 
@@ -2226,32 +2211,32 @@ bool WanderPathRequest::setCenter(
 	calcCenterPt(baseTileCoords_, qi);
 
 	//  Determine the movement vector in order to calculate distance.
-	movementDelta = (startingCoords - centerPt);
+	movementDelta = (_startingCoords - _centerPt);
 	dist = movementDelta.quickHDistance();
 	zDist = ABS(movementDelta.z);
-	centerCost = dist + zDist;
+	_centerCost = dist + zDist;
 
 	//  Determine if this location is farther than any location we have
 	//  previously visited.
-	if (centerCost > bestDist) {
+	if (_centerCost > _bestDist) {
 		//  Save farthest point encountered.
 
-		bestLoc.u = qi.u;
-		bestLoc.v = qi.v;
-		bestLoc.z = qi.z;
-		bestPlatform = qi.platform;
-		bestDist = centerCost;
+		_bestLoc.u = qi.u;
+		_bestLoc.v = qi.v;
+		_bestLoc.z = qi.z;
+		_bestPlatform = qi.platform;
+		_bestDist = _centerCost;
 	}
 
 	return false;
 }
 
 bool WanderPathRequest::validMove(const TilePoint &testPt) {
-	return      !tethered
-	            || (testPt.u >= tetherMinU
-	                &&  testPt.u < tetherMaxU
-	                &&  testPt.v >= tetherMinV
-	                &&  testPt.v < tetherMaxV);
+	return      !_tethered
+	            || (testPt.u >= _tetherMinU
+	                &&  testPt.u < _tetherMaxU
+	                &&  testPt.v >= _tetherMinV
+	                &&  testPt.v < _tetherMaxV);
 }
 
 //  There will be no additional costs for travelling on stairs
@@ -2273,11 +2258,11 @@ int16 WanderPathRequest::evaluateMove(const TilePoint &testPt, uint8) {
 
 	//  Determine the movement vector of the specified coordinates, in
 	//  order to calculate the distance.
-	movementDelta = startingCoords - testPt;
+	movementDelta = _startingCoords - testPt;
 	dist = movementDelta.quickHDistance();
 	zDist = ABS(movementDelta.z) >> 1;
 
-	return (centerCost - (dist + zDist)) >> 1;
+	return (_centerCost - (dist + zDist)) >> 1;
 }
 
 void runPathFinder() {
@@ -2307,7 +2292,7 @@ void runPathFinder() {
 }
 
 void addPathRequestToQueue(PathRequest *pr) {
-	Actor           *a = pr->actor;
+	Actor           *a = pr->_actor;
 	Actor           *centerActor = getCenterActor();
 
 	if (a == centerActor)
@@ -2317,7 +2302,7 @@ void addPathRequestToQueue(PathRequest *pr) {
 			Common::List<PathRequest *>::iterator it;
 
 			for (it = g_vm->_pathQueue.begin(); it != g_vm->_pathQueue.end(); ++it) {
-				Actor       *prActor = (*it)->actor;
+				Actor       *prActor = (*it)->_actor;
 
 				if (prActor != centerActor || !isPlayerActor(prActor))
 					break;
@@ -2332,32 +2317,32 @@ void addPathRequestToQueue(PathRequest *pr) {
 	}
 }
 
-void RequestPath(MotionTask *mTask, int16 smartness) {
+void RequestPath(MotionTask *mTask, int16 _smartness) {
 	DestinationPathRequest      *pr;
-	Actor                       *a = (Actor *)mTask->object;
+	Actor                       *a = (Actor *)mTask->_object;
 
-	if ((pr = new DestinationPathRequest(a, smartness)) != nullptr)
+	if ((pr = new DestinationPathRequest(a, _smartness)) != nullptr)
 		addPathRequestToQueue(pr);
 }
 
-void RequestWanderPath(MotionTask *mTask, int16 smartness) {
+void RequestWanderPath(MotionTask *mTask, int16 _smartness) {
 	WanderPathRequest           *pr;
-	Actor                       *a = (Actor *)mTask->object;
+	Actor                       *a = (Actor *)mTask->_object;
 
-	if ((pr = new WanderPathRequest(a, smartness)) != nullptr)
+	if ((pr = new WanderPathRequest(a, _smartness)) != nullptr)
 		addPathRequestToQueue(pr);
 }
 
 void abortPathFind(MotionTask *mTask) {
-	if (mTask->pathFindTask) {
-		PathRequest     *pr = mTask->pathFindTask;
+	if (mTask->_pathFindTask) {
+		PathRequest     *pr = mTask->_pathFindTask;
 
 		if (pr == currentRequest)
 			pr->requestAbort();
 		else
 			g_vm->_pathQueue.remove(pr);
 
-		mTask->pathFindTask = nullptr;
+		mTask->_pathFindTask = nullptr;
 	}
 }
 
@@ -2454,12 +2439,12 @@ TilePoint selectNearbySite(
     bool            offScreenOnly) {        // true if we want it off-screen
 	assert(isWorld(worldID));
 
-	TilePoint       baseCoords,
-	                baseTileCoords,
-	                centerPt,               // The current center coordinates
-	                bestLoc;                // The best cell coordinates,
+	TilePoint       _baseCoords,
+	                _baseTileCoords,
+	                _centerPt,               // The current center coordinates
+	                _bestLoc;                // The best cell coordinates,
 	// currently visited
-	int16           mapNum = GameWorld::IDtoMapNum(worldID);
+	int16           _mapNum = GameWorld::IDtoMapNum(worldID);
 
 	int32           bestRating = -100,
 	                bestPossible = (maxDist - minDist) / 2;
@@ -2470,16 +2455,16 @@ TilePoint selectNearbySite(
 	SimpleCellArray *cellArray1 = (SimpleCellArray *)malloc(sizeof * cellArray1);
 
 	//  Nowhere indicates failure of the algorithm.
-	bestLoc = Nowhere;
+	_bestLoc = Nowhere;
 
 	//  Calculate where search cells will be projected onto map
-	baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
-	baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
-	baseTileCoords.z = 0;
+	_baseTileCoords.u = (startingCoords.u >> kTileUVShift) - searchCenter;
+	_baseTileCoords.v = (startingCoords.v >> kTileUVShift) - searchCenter;
+	_baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << kTileUVShift;
-	baseCoords.v = baseTileCoords.v << kTileUVShift;
-	baseCoords.z = 0;
+	_baseCoords.u = _baseTileCoords.u << kTileUVShift;
+	_baseCoords.v = _baseTileCoords.v << kTileUVShift;
+	_baseCoords.z = 0;
 
 	//  Clear the search array and the queue
 	memset(cellArray1, cellUnvisited, sizeof(*cellArray1));
@@ -2489,11 +2474,11 @@ TilePoint selectNearbySite(
 	//  as occupied.
 	RegionalObjectIterator  iter(
 	    (GameWorld *)GameObject::objectAddress(worldID),
-	    baseCoords,
+	    _baseCoords,
 	    TilePoint(
-	        baseCoords.u
+	        _baseCoords.u
 	        + (searchCenter << kTileUVShift) * 2,
-	        baseCoords.v
+	        _baseCoords.v
 	        + (searchCenter << kTileUVShift) * 2,
 	        0));
 	GameObject *obj = nullptr;
@@ -2512,7 +2497,7 @@ TilePoint selectNearbySite(
 		}
 
 		//  Calculate which tile actor is standing on.
-		objLoc = (objLoc - baseCoords) >> kTileUVShift;
+		objLoc = (objLoc - _baseCoords) >> kTileUVShift;
 
 		//  If that tile is in the search area, then mark it.
 		if (objLoc.u >= 0 && objLoc.u < searchDiameter
@@ -2547,13 +2532,13 @@ TilePoint selectNearbySite(
 		rating = MIN(distFromCenter - minDist, maxDist - distFromCenter);
 
 		//  Calculate the coordinates of the center in tiles
-		centerTileCoords.u = qi.u + baseTileCoords.u;
-		centerTileCoords.v = qi.v + baseTileCoords.v;
+		centerTileCoords.u = qi.u + _baseTileCoords.u;
+		centerTileCoords.v = qi.v + _baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
-		centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
-		centerPt.z = qi.z;
+		_centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
+		_centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
+		_centerPt.z = qi.z;
 
 		//  If this is the best cell found so far, and it is not
 		//  occupied, then mark it as the best cell.
@@ -2566,7 +2551,7 @@ TilePoint selectNearbySite(
 				Point16 screenCoords;           // screen coordinates
 
 				//  Convert to XY coords.
-				TileToScreenCoords(centerPt, screenCoords);
+				TileToScreenCoords(_centerPt, screenCoords);
 
 				//  If the point is on-screen, then reject it.
 				//  (We want the monsters to walk in from off-screen,
@@ -2579,9 +2564,9 @@ TilePoint selectNearbySite(
 
 			//  Save closest point encountered.
 			if (cellOK) {
-				bestLoc.u = qi.u;
-				bestLoc.v = qi.v;
-				bestLoc.z = qi.z;
+				_bestLoc.u = qi.u;
+				_bestLoc.v = qi.v;
+				_bestLoc.z = qi.z;
 				bestRating = rating;
 
 				if (rating >= bestPossible) break;
@@ -2611,14 +2596,14 @@ TilePoint selectNearbySite(
 			//  is checked, to save time.
 			if (*cell & cellVisited) continue;
 
-			testPt = centerPt + tDirTable3[dir];
+			testPt = _centerPt + tDirTable3[dir];
 
 			//  Get info about the terrain at that point
-			terrain =   tileTerrain(mapNum,
+			terrain =   tileTerrain(_mapNum,
 			                        centerTileCoords,
 			                        moveMask[0],
-			                        centerPt.z + 8,
-			                        centerPt.z + 68);
+			                        _centerPt.z + 8,
+			                        _centerPt.z + 68);
 
 			//  Reject if we can't move
 			if (terrain & (terrainImpassable | terrainRaised)) {
@@ -2627,17 +2612,17 @@ TilePoint selectNearbySite(
 			}
 
 			//  Get the height of the terrain at the new point
-			testPt.z =  tileSlopeHeight(testPt, mapNum, 68, &sti);
+			testPt.z =  tileSlopeHeight(testPt, _mapNum, 68, &sti);
 
 			//  If it's too high to step, then don't continue
 //			if (testPt.z - qi.z > kMaxStepHeight) continue;
-			fromSubPt = centerPt;
+			fromSubPt = _centerPt;
 			for (i = 0; i < kTileSubSize; i++) {
 				int16       deltaZ;
 
 				//  Next sub tile
 				toSubPt = fromSubPt + tDirTable[dir];
-				toSubPt.z = tileSlopeHeight(toSubPt, mapNum, 68);
+				toSubPt.z = tileSlopeHeight(toSubPt, _mapNum, 68);
 
 				deltaZ = toSubPt.z - fromSubPt.z;
 
@@ -2654,7 +2639,7 @@ TilePoint selectNearbySite(
 
 
 			//  Get info about terrain at new point
-			terrain =   tileTerrain(mapNum,
+			terrain =   tileTerrain(_mapNum,
 			                        centerTileCoords + *tDir,
 			                        moveMask[1],
 			                        testPt.z + 8,
@@ -2664,7 +2649,7 @@ TilePoint selectNearbySite(
 			if (terrain & (terrainImpassable | terrainRaised)) continue;
 
 #if VISUAL6
-			TPLine(centerPt, testPt);
+			TPLine(_centerPt, testPt);
 #endif
 
 			*cell |= cellVisited;
@@ -2682,11 +2667,11 @@ TilePoint selectNearbySite(
 
 	free(cellArray1);
 
-	return  bestLoc != Nowhere
+	return  _bestLoc != Nowhere
 	        ?   TilePoint(
-	            ((bestLoc.u + baseTileCoords.u) << kTileUVShift) + kTileUVSize / 2,
-	            ((bestLoc.v + baseTileCoords.v) << kTileUVShift) + kTileUVSize / 2,
-	            bestLoc.z)
+	            ((_bestLoc.u + _baseTileCoords.u) << kTileUVShift) + kTileUVSize / 2,
+	            ((_bestLoc.v + _baseTileCoords.v) << kTileUVShift) + kTileUVSize / 2,
+	            _bestLoc.z)
 	        :   Nowhere;
 }
 
@@ -2699,9 +2684,9 @@ bool checkPath(
 	                destCoords = destPt,
 	                startingTileCoords,
 	                destTileCoords;
-	TilePoint       baseCoords,
-	                baseTileCoords,
-	                centerPt;               // The current center coordinates
+	TilePoint       _baseCoords,
+	                _baseTileCoords,
+	                _centerPt;               // The current center coordinates
 	int           minTileRegU,
 	              minTileRegV,
 	              maxTileRegU,
@@ -2709,7 +2694,7 @@ bool checkPath(
 	              curTileRegU,
 	              curTileRegV;
 
-	int16           mapNum = GameWorld::IDtoMapNum(worldID);
+	int16           _mapNum = GameWorld::IDtoMapNum(worldID);
 
 	QueueItem       qi;
 
@@ -2723,12 +2708,12 @@ bool checkPath(
 	destTileCoords.v = destCoords.v >> kTileUVShift;
 	destTileCoords.z = 0;
 
-	//  Quantize destination coords to nearest tile center
+	//  Quantize _destination coords to nearest tile center
 	destCoords.u = (destTileCoords.u << kTileUVShift) + kTileUVSize / 2;
 	destCoords.v = (destTileCoords.v << kTileUVShift) + kTileUVSize / 2;
-	destCoords.z = tileSlopeHeight(destCoords, mapNum, height);
+	destCoords.z = tileSlopeHeight(destCoords, _mapNum, height);
 
-	//  Determine if destination is outside the search region
+	//  Determine if _destination is outside the search region
 	if (destTileCoords.u < startingTileCoords.u - searchCenter
 	        ||  destTileCoords.u >= startingTileCoords.u + searchCenter
 	        ||  destTileCoords.v < startingTileCoords.v - searchCenter
@@ -2741,13 +2726,13 @@ bool checkPath(
 		return false;
 
 	//  Calculate where search cells will be projected onto map
-	baseTileCoords.u = startingTileCoords.u - searchCenter;
-	baseTileCoords.v = startingTileCoords.v - searchCenter;
-	baseTileCoords.z = 0;
+	_baseTileCoords.u = startingTileCoords.u - searchCenter;
+	_baseTileCoords.v = startingTileCoords.v - searchCenter;
+	_baseTileCoords.z = 0;
 
-	baseCoords.u = baseTileCoords.u << kTileUVShift;
-	baseCoords.v = baseTileCoords.v << kTileUVShift;
-	baseCoords.z = 0;
+	_baseCoords.u = _baseTileCoords.u << kTileUVShift;
+	_baseCoords.v = _baseTileCoords.v << kTileUVShift;
+	_baseCoords.z = 0;
 
 	//  Clear the search array and the queue
 	memset(cellArray1, cellUnvisited, sizeof(* cellArray1));
@@ -2777,7 +2762,7 @@ bool checkPath(
 			quantizedCoords.u = (curTileRegU << kTileUVShift) + kTileUVSize / 2;
 			quantizedCoords.v = (curTileRegV << kTileUVShift) + kTileUVSize / 2;
 			quantizedCoords.z = startingCoords.z;
-			quantizedCoords.z = tileSlopeHeight(quantizedCoords, mapNum, height);
+			quantizedCoords.z = tileSlopeHeight(quantizedCoords, _mapNum, height);
 
 			//  If the height difference is too great skip this tile
 			//  position
@@ -2794,8 +2779,8 @@ bool checkPath(
 			//  Push this point
 			spush(
 			    TilePoint(
-			        curTileRegU - baseTileCoords.u,
-			        curTileRegV - baseTileCoords.v,
+			        curTileRegU - _baseTileCoords.u,
+			        curTileRegV - _baseTileCoords.v,
 			        quantizedCoords.z),
 			    cost + 1,
 			    0);
@@ -2809,15 +2794,15 @@ bool checkPath(
 		int       dir;
 
 		//  Calculate the coordinates of the center in tiles
-		centerTileCoords.u = qi.u + baseTileCoords.u;
-		centerTileCoords.v = qi.v + baseTileCoords.v;
+		centerTileCoords.u = qi.u + _baseTileCoords.u;
+		centerTileCoords.v = qi.v + _baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
-		centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
-		centerPt.z = qi.z;
+		_centerPt.u = (centerTileCoords.u << kTileUVShift) + kTileUVSize / 2;
+		_centerPt.v = (centerTileCoords.v << kTileUVShift) + kTileUVSize / 2;
+		_centerPt.z = qi.z;
 
-		centerDistFromDest = (centerPt - destCoords).quickHDistance();
+		centerDistFromDest = (_centerPt - destCoords).quickHDistance();
 
 		for (dir = dirUpLeft;
 		        dir <= dirUpRight;
@@ -2846,31 +2831,31 @@ bool checkPath(
 			//  Only visit each cell once..
 			if (*cell & cellVisited) continue;
 
-			testPt = centerPt + tDirTable3[dir];
+			testPt = _centerPt + tDirTable3[dir];
 
 			testDistFromDest = (testPt - destCoords).quickHDistance();
 			deltaDistFromDest = testDistFromDest - centerDistFromDest;
 
 			//  Get info about the terrain at that point
-			terrain =   tileTerrain(mapNum,
+			terrain =   tileTerrain(_mapNum,
 			                        centerTileCoords,
 			                        moveMask[0],
-			                        centerPt.z + 8,
-			                        centerPt.z + height);
+			                        _centerPt.z + 8,
+			                        _centerPt.z + height);
 
 			//  Reject if we can't move
 			if (terrain & (terrainImpassable | terrainRaised)) continue;
 
 			//  Get the height of the terrain at the new point
-			testPt.z =  tileSlopeHeight(testPt, mapNum, height, &sti);
+			testPt.z =  tileSlopeHeight(testPt, _mapNum, height, &sti);
 
-			fromSubPt = centerPt;
+			fromSubPt = _centerPt;
 			for (i = 0; i < kTileSubSize; i++) {
 				int16       deltaZ;
 
 				//  Next sub tile
 				toSubPt = fromSubPt + tDirTable[dir];
-				toSubPt.z = tileSlopeHeight(toSubPt, mapNum, height);
+				toSubPt.z = tileSlopeHeight(toSubPt, _mapNum, height);
 
 				deltaZ = toSubPt.z - fromSubPt.z;
 
@@ -2886,7 +2871,7 @@ bool checkPath(
 			if (!traversable) continue;
 
 			//  Get info about terrain at new point
-			terrain =   tileTerrain(mapNum,
+			terrain =   tileTerrain(_mapNum,
 			                        centerTileCoords + *tDir,
 			                        moveMask[1],
 			                        testPt.z + 8,
@@ -2896,7 +2881,7 @@ bool checkPath(
 			if (terrain & (terrainImpassable | terrainRaised)) continue;
 
 #if VISUAL7
-			TPLine(centerPt, testPt);
+			TPLine(_centerPt, testPt);
 #endif
 
 			*cell |= cellVisited;
@@ -2906,7 +2891,7 @@ bool checkPath(
 				free(cellArray1);
 
 				//  If the resulting height is significantly different
-				//  from the destination height, assume we're on a
+				//  from the _destination height, assume we're on a
 				//  different level and return false.
 				return ABS(testPt.z - destCoords.z) <= kMaxStepHeight;
 			}
@@ -2940,7 +2925,7 @@ void initPathFinder() {
 	pathTileArray = (PathTilePosArray *)malloc( sizeof *pathTileArray);
 	maskComp = new MaskComputer;
 	cellArray = new PathArray;
-	PathRequest::tileArray = new PathTileRegion;
+	PathRequest::_tileArray = new PathTileRegion;
 }
 
 void cleanupPathFinder() {
@@ -2960,7 +2945,7 @@ void cleanupPathFinder() {
 	delete queue;
 	delete squeue;
 	delete[] objectVolumeArray;
-	delete PathRequest::tileArray;
+	delete PathRequest::_tileArray;
 }
 
 } // end of namespace Saga2

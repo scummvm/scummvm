@@ -143,7 +143,7 @@ typedef struct Bone_Frame {
 	LinkedMatrix bones[1]; // actually LinkedMatrix rot[nBones]
 } Bone_Frame;
 
-typedef struct rab_API {
+typedef struct {
 	char id[4];
 	uint32 schema;
 	uint16 nFrames;
@@ -155,14 +155,16 @@ typedef struct rab_API {
 
 	// byte offsets from start of the file
 	uint32 frameOffsets[1]; // nFrames of them
+} RabAPI;
 
-	Bone_Frame *GetFrame(const int32 f);
+typedef struct _RabAPIObject {
+	static Bone_Frame *GetFrame(RabAPI *rab, const int32 f);
 
-	Bone_Frame *GetCurrentFrame(void) { return (Bone_Frame *)((uint8 *)(id + currentFrameOffset)); }
+	static Bone_Frame *GetCurrentFrame(RabAPI *rab) { return (Bone_Frame *)((uint8 *)(rab->id + FROM_LE_32(rab->currentFrameOffset))); }
 
-	FrameData *GetFrameData(const int32 f) { return (FrameData *)((uint8 *)(id + frameOffsets[f])); }
+	static FrameData *GetFrameData(RabAPI *rab, const int32 f) { return (FrameData *)((uint8 *)(rab->id + FROM_LE_32(rab->frameOffsets[f]))); }
 
-} rab_API;
+} RabAPIObject;
 
 // Compress an SVECTOR ( uint16 vx,vy,vz, pad; ) -> uint32
 // by dividing the angles (12-bits 0-4095) by four to make them 10-bits

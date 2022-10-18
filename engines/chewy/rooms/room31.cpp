@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -78,7 +79,7 @@ void Room31::calc_luke() {
 			_G(det)->showStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 1, ATS_DATA);
-		_G(atds)->delControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(245, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[75].Attribut = EXIT_BOTTOM;
 
 	} else {
@@ -86,7 +87,7 @@ void Room31::calc_luke() {
 			_G(det)->hideStaticSpr(5 + i);
 
 		_G(atds)->set_ats_str(244, 0, ATS_DATA);
-		_G(atds)->setControlBit(245, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(245, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[75].Attribut = 255;
 	}
 }
@@ -94,13 +95,13 @@ void Room31::calc_luke() {
 int16 Room31::open_luke() {
 	int16 action_flag = false;
 	
-	if (!_G(gameState).inv_cur && _G(gameState).R31KlappeZu) {
+	if (!_G(cur)->usingInventoryCursor() && _G(gameState).R31KlappeZu) {
 		action_flag = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_U, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = false;
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		calc_luke();
 		showCur();
 	}
@@ -111,13 +112,13 @@ int16 Room31::open_luke() {
 int16 Room31::close_luke_proc1() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R31KlappeZu) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R31KlappeZu) {
 		action_flag = true;
 		hideCur();
 		autoMove(2, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = true;
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		calc_luke();
 		showCur();
 	}
@@ -131,8 +132,8 @@ void Room31::close_luke_proc3() {
 		autoMove(2, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(gameState).R31KlappeZu = true;
-		g_engine->_sound->playSound(3);
-		g_engine->_sound->playSound(3, 1, false);
+		_G(det)->playSound(3, 0);
+		_G(det)->playSound(3, 1);
 		calc_luke();
 		showCur();
 	}
@@ -144,27 +145,27 @@ int16 Room31::use_topf() {
 	int16 action_flag = false;
 
 	hideCur();
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursor()) {
 		if (_G(gameState).R31PflanzeWeg) {
 			if (isCurInventory(K_KERNE_INV)) {
 				_G(gameState).R31KoernerDa = true;
 				autoMove(1, P_CHEWY);
 				start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				ani_nr = CH_TALK3;
 				dia_nr = 150;
 				_G(atds)->set_ats_str(242, 2, ATS_DATA);
 
-			} else if (isCurInventory(MILCH_WAS_INV)) {
+			} else if (isCurInventory(WATER_FILLED_BOTTLE_INV)) {
 				if (_G(gameState).R31KoernerDa) {
 					_G(gameState).R31Wasser = true;
 					autoMove(1, P_CHEWY);
 					_G(gameState)._personHide[P_CHEWY] = true;
 					startAniBlock(3, ABLOCK30);
 					_G(gameState)._personHide[P_CHEWY] = false;
-					delInventory(_G(gameState).AkInvent);
-					_G(obj)->addInventory(MILCH_LEER_INV, &_G(room_blk));
-					inventory_2_cur(MILCH_LEER_INV);
+					delInventory(_G(cur)->getInventoryCursor());
+					_G(obj)->addInventory(EMPTY_MILK_BOTTLE_INV, &_G(room_blk));
+					inventory_2_cur(EMPTY_MILK_BOTTLE_INV);
 					ani_nr = CH_TALK6;
 					dia_nr = 151;
 					_G(atds)->set_ats_str(242, 3, ATS_DATA);

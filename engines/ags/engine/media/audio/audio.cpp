@@ -34,6 +34,7 @@
 #include "ags/engine/media/audio/sound.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/engine/debugging/debugger.h"
+#include "ags/engine/platform/base/sys_main.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/file.h"
 #include "ags/engine/ac/global_audio.h"
@@ -136,7 +137,8 @@ static void move_track_to_crossfade_channel(int currentChannel, int crossfadeSpe
 // NOTE: this function assumes one of the user channels
 void stop_or_fade_out_channel(int fadeOutChannel, int fadeInChannel, ScriptAudioClip *newSound) {
 	ScriptAudioClip *sourceClip = AudioChannel_GetPlayingClip(&_G(scrAudioChannel)[fadeOutChannel]);
-	if ((sourceClip != nullptr) && (_GP(game).audioClipTypes[sourceClip->type].crossfadeSpeed > 0)) {
+	if ((_GP(play).fast_forward == 0) && // don't crossfade if skipping a cutscene
+		(sourceClip != nullptr) && (_GP(game).audioClipTypes[sourceClip->type].crossfadeSpeed > 0)) {
 		move_track_to_crossfade_channel(fadeOutChannel, _GP(game).audioClipTypes[sourceClip->type].crossfadeSpeed, fadeInChannel, newSound);
 	} else {
 		stop_and_destroy_channel(fadeOutChannel);
@@ -151,15 +153,17 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 	if (!interruptEqualPriority)
 		priority--;
 
+	// NOTE: in backward compat mode we allow to place sound on a crossfade channel
 	int startAtChannel = _G(reserved_channel_count);
-	int endBeforeChannel = _GP(game).numGameChannels;
+	int endBeforeChannel = _GP(game).numCompatGameChannels;
 
 	if (_GP(game).audioClipTypes[clip->type].reservedChannels > 0) {
 		startAtChannel = 0;
 		for (int i = 0; i < clip->type; i++) {
-			startAtChannel += _GP(game).audioClipTypes[i].reservedChannels;
+			startAtChannel += MIN(MAX_SOUND_CHANNELS,
+				_GP(game).audioClipTypes[i].reservedChannels);
 		}
-		endBeforeChannel = MIN(_GP(game).numGameChannels,
+		endBeforeChannel = MIN(_GP(game).numCompatGameChannels,
 			startAtChannel + _GP(game).audioClipTypes[clip->type].reservedChannels);
 	}
 
@@ -187,8 +191,9 @@ static int find_free_audio_channel(ScriptAudioClip *clip, int priority, bool int
 	return channelToUse;
 }
 
-bool is_audiotype_allowed_to_play(AudioFileType type) {
-	return _GP(usetup).audio_backend != 0;
+bool is_audiotype_allowed_to_play(AudioFileType /*type*/) {
+	// TODO: this is a remnant of an old audio logic, think this function over
+	return _GP(usetup).audio_enabled;
 }
 
 SOUNDCLIP *load_sound_clip(ScriptAudioClip *audioClip, bool repeat) {
@@ -591,6 +596,8 @@ void shutdown_sound() {
 #if !AGS_PLATFORM_SCUMMVM
 	audio_core_shutdown(); // audio core system
 #endif
+	sys_audio_shutdown(); // backend
+	_GP(usetup).audio_enabled = false;
 }
 
 // the sound will only be played if there is a free channel or
@@ -759,8 +766,6 @@ void update_audio_system_on_game_loop() {
 
 	process_scheduled_music_update();
 
-	_G(audio_doing_crossfade) = true;
-
 	audio_update_polled_stuff();
 
 	if (_G(crossFading)) {
@@ -793,15 +798,13 @@ void update_audio_system_on_game_loop() {
 		}
 	}
 
-	_G(audio_doing_crossfade) = false;
-
 	if (_G(loopcounter) % 5 == 0) {
 		update_ambient_sound_vol();
 		update_directional_sound_vol();
 	}
 
 	// Update and sync logical game channels with the audio backend
-	for (int i = 0; i < _GP(game).numGameChannels; ++i) {
+	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; ++i) {
 		auto *ch = AudioChans::GetChannel(i);
 		if (ch) { // update the playing channel, and if it's finished then dispose it
 			if (ch->is_ready() && !ch->update()) {
@@ -888,9 +891,9 @@ void update_music_volume() {
 	}
 }
 
-// Ensures crossfader is stable after loading (or failing to load)
-// new music
-void post_new_music_check(int newchannel) {
+// Ensures crossfader is stable after loading (or failing to load) new music
+// NOTE: part of the legacy audio logic
+void post_new_music_check() {
 	if ((_G(crossFading) > 0) && (AudioChans::GetChannel(_G(crossFading)) == nullptr)) {
 		_G(crossFading) = 0;
 		// Was fading out but then they played invalid music, continue to fade out
@@ -1012,7 +1015,7 @@ static void play_new_music(int mnum, SOUNDCLIP *music) {
 			_G(current_music_type) = ch->get_sound_type();
 	}
 
-	post_new_music_check(useChannel);
+	post_new_music_check();
 	update_music_volume();
 }
 

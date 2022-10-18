@@ -378,7 +378,7 @@ int TTparser::searchAndReplace(TTstring &line, int startIndex, const StringArray
 		const CString &replacementStr = strings[idx + 1];
 
 		if (!strncmp(line.c_str() + startIndex, origStr.c_str(), strings[idx].size())) {
-			// Ensure that that a space follows the match, or the end of string,
+			// Ensure that a space follows the match, or the end of string,
 			// so the end of the string doesn't match on parts of larger words
 			char c = line[startIndex + strings[idx].size()];
 			if (c == ' ' || c == '\0') {

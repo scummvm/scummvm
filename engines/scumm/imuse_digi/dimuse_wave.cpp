@@ -34,39 +34,39 @@ int IMuseDigital::waveTerminate() {
 }
 
 int IMuseDigital::wavePause() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksPause();
 	return 0;
 }
 
 int IMuseDigital::waveResume() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksResume();
 	return 0;
 }
 
 void IMuseDigital::waveSaveLoad(Common::Serializer &ser) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksSaveLoad(ser);
 }
 
 void IMuseDigital::waveUpdateGroupVolumes() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	tracksSetGroupVol();
 }
 
 int IMuseDigital::waveStartSound(int soundId, int priority) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksStartSound(soundId, priority, 0);
 }
 
 int IMuseDigital::waveStopSound(int soundId) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksStopSound(soundId);
 }
 
 int IMuseDigital::waveStopAllSounds() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksStopAllSounds();
 }
 
@@ -75,12 +75,12 @@ int IMuseDigital::waveGetNextSound(int soundId) {
 }
 
 int IMuseDigital::waveSetParam(int soundId, int opcode, int value) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksSetParam(soundId, opcode, value);
 }
 
 int IMuseDigital::waveGetParam(int soundId, int opcode) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksGetParam(soundId, opcode);
 }
 
@@ -96,32 +96,32 @@ int IMuseDigital::waveStartStream(int soundId, int priority, int bufferId) {
 	if (soundId == 0)
 		return -1;
 
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksStartSound(soundId, priority, bufferId);
 }
 
 int IMuseDigital::waveSwitchStream(int oldSoundId, int newSoundId, int fadeLengthMs, int fadeSyncFlag2, int fadeSyncFlag1) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return dispatchSwitchStream(oldSoundId, newSoundId, fadeLengthMs, fadeSyncFlag2, fadeSyncFlag1);
 }
 
 int IMuseDigital::waveSwitchStream(int oldSoundId, int newSoundId, uint8 *crossfadeBuffer, int crossfadeBufferSize, int vocLoopFlag) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return dispatchSwitchStream(oldSoundId, newSoundId, crossfadeBuffer, crossfadeBufferSize, vocLoopFlag);
 }
 
 int IMuseDigital::waveProcessStreams() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return streamerProcessStreams();
 }
 
-void IMuseDigital::waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
-	Common::StackLock lock(_mutex);
-	tracksQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
+int  IMuseDigital::waveQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	Common::StackLock lock(*_mutex);
+	return tracksQueryStream(soundId, bufSize, criticalSize, freeSpace, paused);
 }
 
 int IMuseDigital::waveFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	return tracksFeedStream(soundId, srcBuf, sizeToFeed, paused);
 }
 

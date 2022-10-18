@@ -130,7 +130,7 @@ void Costume::load(Common::SeekableReadStream *data) {
 
 	ts.expectString("section components");
 	ts.scanString(" numcomponents %d", 1, &_numComponents);
-	_components = new Component *[_numComponents];
+	_components = new Component *[_numComponents]{};
 	for (int i = 0; i < _numComponents; i++) {
 		int id, tagID, hash, parentID, namePos;
 		const char *line = ts.getCurrentLine();
@@ -166,10 +166,11 @@ void Costume::load(Common::SeekableReadStream *data) {
 
 	delete[] tags;
 
-	for (int i = 0; i < _numComponents; i++)
+	for (int i = 0; i < _numComponents; i++) {
 		if (_components[i]) {
 			_components[i]->init();
 		}
+	}
 
 	ts.expectString("section chores");
 	ts.scanString(" numchores %d", 1, &_numChores);
@@ -491,7 +492,7 @@ float Costume::getLookAtRate() const {
 }
 
 void Costume::setPosRotate(const Math::Vector3d &pos, const Math::Angle &pitch,
-						   const Math::Angle &yaw, const Math::Angle &roll) {
+	                   const Math::Angle &yaw, const Math::Angle &roll) {
 	_matrix.setPosition(pos);
 	_matrix.buildFromEuler(yaw, pitch, roll, Math::EO_ZXY);
 }

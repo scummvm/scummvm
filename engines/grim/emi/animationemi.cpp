@@ -20,11 +20,13 @@
  */
 
 #include "common/stream.h"
+#include "common/textconsole.h"
+
 #include "math/vector3d.h"
 #include "math/quat.h"
+
 #include "engines/grim/resource.h"
 #include "engines/grim/emi/animationemi.h"
-#include "common/textconsole.h"
 
 namespace Grim {
 

@@ -22,7 +22,7 @@
 #include "common/textconsole.h"
 #include "common/util.h"
 
-#if (defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)) && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 
 #include "backends/graphics3d/opengl/framebuffer.h"
 
@@ -124,7 +124,7 @@ void FrameBuffer::detach() {
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
-#if !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if !USE_FORCED_GLES2
 MultiSampleFrameBuffer::MultiSampleFrameBuffer(uint width, uint height, int samples)
 		: FrameBuffer(width,height) {
 	if (!OpenGLContext.framebufferObjectMultisampleSupported) {
@@ -186,7 +186,7 @@ void MultiSampleFrameBuffer::detach() {
 	glViewport(_prevStateViewport[0], _prevStateViewport[1], _prevStateViewport[2], _prevStateViewport[3]);
 }
 
-#endif // !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#endif // !USE_FORCED_GLES2
 
 } // End of namespace OpenGL
 

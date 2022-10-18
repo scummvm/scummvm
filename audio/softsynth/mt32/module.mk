@@ -3,6 +3,7 @@ MODULE := audio/softsynth/mt32
 MODULE_OBJS := \
 	Analog.o \
 	BReverbModel.o \
+	Display.o \
 	File.o \
 	FileStream.o \
 	LA32FloatWaveGenerator.o \

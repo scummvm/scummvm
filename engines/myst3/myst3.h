@@ -126,9 +126,9 @@ public:
 	Common::Error saveGameState(const Common::String &desc, const Graphics::Surface *thumbnail, bool isAutosave);
 
 	ResourceDescription getFileDescription(const Common::String &room, uint32 index, uint16 face,
-	                                            Archive::ResourceType type);
+	                                       Archive::ResourceType type);
 	ResourceDescriptionArray listFilesMatching(const Common::String &room, uint32 index, uint16 face,
-	                                        Archive::ResourceType type);
+	                                       Archive::ResourceType type);
 
 	Graphics::Surface *loadTexture(uint16 id);
 	static Graphics::Surface *decodeJpeg(const ResourceDescription *jpegDesc);

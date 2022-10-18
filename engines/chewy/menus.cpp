@@ -19,13 +19,15 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/menus.h"
-#include "chewy/dialogs/inventory.h"
 
 namespace Chewy {
 
@@ -46,7 +48,7 @@ void plotMainMenu() {
 	const int16 x = MAX(g_events->_mousePos.x - 32, 0);
 	_G(menu_item) = (x / (MOUSE_MENU_MAX_X / 5));
 
-	int16 *correction = (int16 *)_G(menutaf)->_correction;
+	int16 *correction = (int16 *)_G(menutaf)->correction;
 
 	for (int16 i = MENU_START_SPRITE; i < MAX_MENU_SPRITE; i++) {
 		int deltaX = 0;
@@ -64,7 +66,7 @@ void plotMainMenu() {
 				deltaX = -40;
 		}
 
-		_G(out)->scale_set(_G(menutaf)->_image[i],
+		_G(out)->scale_set(_G(menutaf)->image[i],
 			MENU_X + deltaX + correction[i * 2],
 		    _G(gameState).MainMenuY + correction[i * 2 + 1],
 			zoomX, zoomY, 0);
@@ -81,7 +83,7 @@ void plotMainMenu() {
 			deltaX = 40;
 
 		int img = IMAGES[_G(menu_item)];
-		_G(out)->scale_set(_G(menutaf)->_image[img],
+		_G(out)->scale_set(_G(menutaf)->image[img],
 		    MENU_X + deltaX + correction[img * 2] - 5,
 		    _G(gameState).MainMenuY + correction[img * 2 + 1] - 10,
 			zoomX, zoomY, 0);
@@ -91,9 +93,9 @@ void plotMainMenu() {
 	}
 }
 
-void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr) {
+void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtCount) {
 	int16 len = 0;
-	for (int16 i = 0; i < txtNr; i++) {
+	for (int16 i = 0; i < txtCount; i++) {
 		int16 tmpLen = strlen(_G(txt)->strPos(txtAdr, i));
 		if (tmpLen > len)
 			len = tmpLen;
@@ -105,7 +107,25 @@ void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr) {
 		*x = SCREEN_WIDTH - len;
 	else if (*x < 0)
 		*x = 0;
-	*y = *y - (10 * txtNr);
+	*y = *y - (10 * txtCount);
+	if (*y < 0)
+		*y = 0;
+}
+
+void calcTxtXy(int16 *x, int16 *y, Common::StringArray &textList) {
+	int16 len = 0;
+	for (int16 i = 0; i < (int16)textList.size(); i++) {
+		if ((int16)textList[i].size() > len)
+			len = textList[i].size();
+	}
+	len = len * _G(fontMgr)->getFont()->getDataWidth();
+	int16 pixLen = len / 2;
+	*x = *x - pixLen + 12;
+	if (*x > (SCREEN_WIDTH - len))
+		*x = SCREEN_WIDTH - len;
+	else if (*x < 0)
+		*x = 0;
+	*y = *y - (10 * textList.size());
 	if (*y < 0)
 		*y = 0;
 }
@@ -146,14 +166,14 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 	xy[3][1] = y + 16 * (yNr - 1);
 
 	for (i = 0; i < 4; i++)
-		_G(out)->spriteSet(_G(menutaf)->_image[(int16)spriteCornerNr[i]],
+		_G(out)->spriteSet(_G(menutaf)->image[(int16)spriteCornerNr[i]],
 		                 xy[i][0], xy[i][1], _G(scr_width));
 
 	int16 s_nr = BUILDING_MENU_SIDE_L;
 	for (j = 0; j < 2; j++) {
 		y = xy[j][1] + 16;
 		for (i = 0; i < yNr - 2; i++) {
-			_G(out)->spriteSet(_G(menutaf)->_image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
+			_G(out)->spriteSet(_G(menutaf)->image[s_nr], xy[j][0], y + i * 16, _G(scr_width));
 		}
 		++s_nr;
 	}
@@ -163,7 +183,7 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 		x = xy[j * 2][0] + 16;
 		if ((!mode) || (mode == 1 && j == 1)) {
 			for (i = 0; i < xNr - 2; i++) {
-				_G(out)->spriteSet(_G(menutaf)->_image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
+				_G(out)->spriteSet(_G(menutaf)->image[s_nr], x + i * 16, xy[j * 2][1], _G(scr_width));
 			}
 		}
 		s_nr -= 3;
@@ -188,15 +208,15 @@ void buildMenu(int16 x, int16 y, int16 xNr, int16 yNr, int16 col, int16 mode) {
 		x = xy[0][0] + 16;
 		for (j = 0; j < 2; j++) {
 			for (i = 0; i < leer; i++)
-				_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE], x + i * 16, xy[0][1], _G(scr_width));
+				_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE], x + i * 16, xy[0][1], _G(scr_width));
 			x = xy[1][0] - leer * 16;
 		}
-		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_L], xy[0][0] + 16 + leer * 16, xy[0][1], _G(scr_width));
 
 		x = xy[0][0] + 16 + leer * 16 + 32;
 		for (i = 0; i < center; i++)
-			_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_M], x + i * 16, xy[0][1], _G(scr_width));
-		_G(out)->spriteSet(_G(menutaf)->_image[BUILDING_MENU_ABOVE_R], x + i * 16, xy[0][1], _G(scr_width));
+			_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_M], x + i * 16, xy[0][1], _G(scr_width));
+		_G(out)->spriteSet(_G(menutaf)->image[BUILDING_MENU_ABOVE_R], x + i * 16, xy[0][1], _G(scr_width));
 	}
 
 	_G(out)->boxFill(xy[0][0] + 16, xy[0][1] + 16, xy[0][0] + 16 + (xNr - 2) * 16, xy[0][1] + 16 + (yNr - 2) * 16, col);
@@ -228,11 +248,11 @@ void autoMenu(int16 *x, int16 *y, int16 lineNr, int16 height, char *text, int16 
 
 #define ADS_WIN 0,153,20,3,60,1
 
-void adsMenu() {
+void handleDialogCloseupMenu() {
 	int16 curYStart;
 	int16 col;
 
-	if (_G(flags).AdsDialog) {
+	if (_G(flags).DialogCloseup) {
 		_G(flags).ShowAtsInvTxt = false;
 		_G(flags).MainInput = false;
 		if (_G(ads_item_nr) > 4)
@@ -247,7 +267,6 @@ void adsMenu() {
 
 		if (_G(atds)->aadGetStatus() == -1 && _G(ads_push) == false &&
 		        _G(flags).NoDiaBox == false) {
-			_G(cur_display) = true;
 
 			buildMenu(ADS_WIN);
 			_G(fontMgr)->setFont(_G(font6));
@@ -260,29 +279,28 @@ void adsMenu() {
 					col = 255;
 				else
 					col = 14;
-				_G(out)->printxy(4, curYStart - i * 10, col, 300, 0, _G(ads_item_ptr)[i]);
+				_G(out)->printxy(4, curYStart - i * 10, col, 300, 0, _G(dialogCloseupItemPtr)[i]);
 			}
 		}
 
-		switch (_G(in)->getSwitchCode()) {
-		case 255:
+		switch (g_events->getSwitchCode()) {
+		case Common::MOUSE_BUTTON_LEFT:
 		case Common::KEYCODE_RETURN:
 			if (curY < _G(ads_item_nr) && curY >= 0 && _G(ads_push) == false) {
-				_G(cur_display) = false;
 				_G(ads_push) = true;
 				g_events->_mousePos.y = 159;
-				AdsNextBlk *an_blk = _G(atds)->ads_item_choice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
+				DialogCloseupNextBlock *an_blk = _G(atds)->dialogCloseupItemChoice(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 				if (an_blk->_blkNr == -1) {
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
-					ads_ende(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
-					stop_ads_dialog();
+					endDialogCloseup(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
+					stopDialogCloseupDialog();
 				} else {
-					an_blk = _G(atds)->calc_next_block(_G(ads_dia_nr), _G(ads_blk_nr), curY);
+					an_blk = _G(atds)->calcNextDialogCloseupBlock(_G(ads_dia_nr), _G(ads_blk_nr), curY);
 					selectDialogOption(_G(ads_dia_nr), _G(ads_blk_nr), an_blk->_endNr);
 					_G(ads_blk_nr) = an_blk->_blkNr;
-					_G(ads_item_ptr) = _G(atds)->ads_item_ptr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
+					_G(dialogCloseupItemPtr) = _G(atds)->dialogCloseupItemPtr(_G(ads_dia_nr), _G(ads_blk_nr), &_G(ads_item_nr));
 				}
-				_G(det)->stop_detail(_G(talk_start_ani));
+				_G(det)->stopDetail(_G(talk_start_ani));
 				_G(det)->showStaticSpr(_G(talk_hide_static));
 				_G(talk_start_ani) = -1;
 				_G(talk_hide_static) = -1;
@@ -296,36 +314,34 @@ void adsMenu() {
 	}
 }
 
-void stop_ads_dialog() {
+void stopDialogCloseupDialog() {
 	aadWait(-1);
 	_G(gameState).DispFlag = _G(ads_tmp_dsp);
-	_G(cur_display) = true;
 	_G(flags).ShowAtsInvTxt = true;
 	_G(flags).MainInput = true;
-	_G(flags).AdsDialog = false;
+	_G(flags).DialogCloseup = false;
 	_G(mouseLeftClick) = false;
-	_G(atds)->stop_ads();
-	if (_G(minfo)._button)
+	_G(atds)->stopDialogCloseup();
+	if (_G(minfo).button)
 		_G(flags).mainMouseFlag = 1;
 }
 
 void cur_2_inventory() {
-	if (_G(gameState).AkInvent != -1) {
-		invent_2_slot(_G(gameState).AkInvent);
-		_G(gameState).AkInvent = -1;
+	if (_G(cur)->usingInventoryCursor()) {
+		invent_2_slot(_G(cur)->getInventoryCursor());
+		_G(cur)->setInventoryCursor(-1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(_G(menu_item));
 	}
-	_G(gameState).inv_cur = false;
+	_G(cur)->setInventoryCursor(-1);
 }
 
 void inventory_2_cur(int16 nr) {
-	if (_G(gameState).AkInvent == -1 && _G(obj)->checkInventory(nr)) {
+	if (!_G(cur)->usingInventoryCursor() && _G(obj)->checkInventory(nr)) {
 		del_invent_slot(nr);
 		_G(menu_item) = CUR_USE;
-		_G(gameState).AkInvent = nr;
-		cursorChoice(CUR_AK_INVENT);
-		getDisplayCoord(&_G(gameState).DispZx, &_G(gameState).DispZy, _G(gameState).AkInvent);
+		_G(cur)->setInventoryCursor(nr);
+		getDisplayCoord(&_G(gameState).DispZx, &_G(gameState).DispZy, _G(cur)->getInventoryCursor());
 	}
 }
 
@@ -336,11 +352,10 @@ void new_invent_2_cur(int16 inv_nr) {
 }
 
 void invent_2_slot(int16 nr) {
-	int16 ok = 0;
-	for (int16 i = 0; i < MAX_MOV_OBJ && !ok; i++) {
+	for (int16 i = 0; i < MAX_MOV_OBJ; i++) {
 		if (_G(gameState).InventSlot[i] == -1) {
 			_G(gameState).InventSlot[i] = nr;
-			ok = true;
+			break;
 		}
 	}
 	_G(obj)->addInventory(nr, &_G(room_blk));
@@ -360,7 +375,7 @@ int16 del_invent_slot(int16 nr) {
 }
 
 void remove_inventory(int16 nr) {
-	if (nr == _G(gameState).AkInvent) {
+	if (nr == _G(cur)->getInventoryCursor()) {
 		delInventory(nr);
 	} else {
 		_G(obj)->delInventory(nr, &_G(room_blk));

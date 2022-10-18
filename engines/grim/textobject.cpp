@@ -20,6 +20,7 @@
  */
 
 #include "common/unicode-bidi.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/textobject.h"
@@ -346,7 +347,6 @@ void TextObject::draw() {
 		warning("TextObject::draw: Unknown justification code (%d)", _justify);
 
 	g_driver->drawTextObject(this);
-
 }
 
 void TextObject::update() {

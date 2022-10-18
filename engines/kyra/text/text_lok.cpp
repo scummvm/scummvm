@@ -29,7 +29,7 @@
 
 namespace Kyra {
 
-void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const char *chatStr, uint8 charNum, const bool printText) {
+void KyraEngine_LoK::waitForChatToFinish(int vocFile, int chatDuration, const char *chatStr, uint8 charNum, const bool printText) {
 	bool hasUpdatedNPCs = false;
 	bool runLoop = true;
 	uint8 currPage;
@@ -100,7 +100,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 		_animator->copyChangedObjectsForward(0);
 		updateTextFade();
 
-		if (((chatDuration < (int16)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (!printText && !snd_voiceIsPlaying()))
+		if (((chatDuration < (int)(_system->getMillis() - timeAtStart)) && chatDuration != -1 && printText) || (!printText && !snd_voiceIsPlaying()))
 			break;
 
 		uint32 nextTime = loopStart + _tickLength;
@@ -132,7 +132,7 @@ void KyraEngine_LoK::waitForChatToFinish(int vocFile, int16 chatDuration, const 
 }
 
 void KyraEngine_LoK::endCharacterChat(int8 charNum, int16 convoInitialized) {
-	_charSayUnk3 = -1;
+	_talkHeadAnimCharNum = -1;
 
 	if (charNum > 4 && charNum < 11) {
 		_animator->sprites()[_disabledTalkAnimObject].active = 1;
@@ -244,12 +244,12 @@ int KyraEngine_LoK::initCharacterChat(int8 charNum) {
 	_animator->flagAllObjectsForRefresh();
 	_animator->flagAllObjectsForBkgdChange();
 	_animator->preserveAnyChangedBackgrounds();
-	_charSayUnk3 = charNum;
+	_talkHeadAnimCharNum = charNum;
 
 	return returnValue;
 }
 
-void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNum, int8 chatDuration) {
+void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int16 charNum, int16 chatDuration) {
 	uint8 startAnimFrames[] =  { 0x10, 0x32, 0x56, 0x0, 0x0, 0x0 };
 
 	uint16 chatTicks;
@@ -268,9 +268,11 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 		backupChatPartnerAnimFrame(chatPartnerNum);
 
 	if (charNum < 5) {
-		_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
-		_charSayUnk3 = charNum;
-		_talkingCharNum = charNum;
+		if (_flags.isTalkie || _flags.platform == Common::kPlatformFMTowns || _flags.platform == Common::kPlatformPC98 || _animator->_brandonScaleX == 0x100 || !_scaleMode) {
+			_characterList[charNum].currentAnimFrame = startAnimFrames[charNum];
+			_talkHeadAnimCharNum = charNum;
+			_talkingCharNum = charNum;
+		}
 		_animator->animRefreshNPC(charNum);
 	}
 
@@ -282,10 +284,10 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 	int16 yPos = _characterList[charNum].y1;
 	yPos -= ((_scaleTable[yPos] * _characterList[charNum].height) >> 8);
 	yPos -= 8;
-	yPos -= lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	yPos -= (lineNum * _screen->getFontHeight() + (lineNum - 1) * _screen->_lineSpacing);
 
-	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);;
-	_text->_talkMessageH = lineNum * (_screen->getFontHeight() + _screen->_lineSpacing);
+	_text->_talkMessageY = (_flags.lang == Common::ZH_TWN) ? CLIP<int>(yPos, 10, 80) : CLIP<int>(yPos, 11, 100);
+	_text->_talkMessageH = lineNum * _screen->getFontHeight() + (lineNum - 1) * _screen->_lineSpacing + _text->_langExtraSpacing;
 
 	const bool printText = textEnabled();
 
@@ -293,18 +295,24 @@ void KyraEngine_LoK::characterSays(int vocFile, const char *chatStr, int8 charNu
 		_animator->restoreAllObjectBackgrounds();
 
 		_screen->copyRegion(8, _text->_talkMessageY, 8, 136, 304, _text->_talkMessageH, 2, 2);
-
+	
 		_text->printCharacterText(processedString, charNum, _characterList[charNum].x1);
 	}
+
+	// This happens right at the beginning, when talking to the tree and can be seen in DOSBox, too.
+	// It will make the sentence stay basically forever. We just set it to
+	// the value from the other versions (probably some typo from the translators).
+	if (_flags.lang == Common::KO_KOR && chatDuration == -20)
+		chatDuration = -2;
 
 	if (chatDuration == -2)
 		chatTicks = strlen(processedString) * 9;
 	else
-		chatTicks = chatDuration;
+		chatTicks = (uint16)chatDuration;
 
 	if (!speechEnabled())
 		vocFile = -1;
-	waitForChatToFinish(vocFile, chatTicks, chatStr, charNum, printText);
+	waitForChatToFinish(vocFile, (chatDuration == -1) ? -1 : chatTicks, chatStr, charNum, printText);
 
 	if (printText) {
 		_animator->restoreAllObjectBackgrounds();
@@ -329,9 +337,9 @@ void KyraEngine_LoK::drawSentenceCommand(const char *sentence, int color) {
 	int boxY2 = 152;
 	int col2 = _flags.platform == Common::kPlatformAmiga ? 19 : 12;
 
-	if (_flags.lang == Common::ZH_TWN) {
+	if (_flags.lang == Common::ZH_TWN || _flags.lang == Common::KO_KOR) {
 		boxY1 = 140;
-		boxY2 = 153;
+		boxY2 = _flags.lang == Common::KO_KOR ? 155 : 153;
 		col2 = 0;
 	}
 

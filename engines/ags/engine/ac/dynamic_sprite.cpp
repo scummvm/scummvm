@@ -22,7 +22,6 @@
 #include "ags/lib/std/math.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
@@ -30,7 +29,6 @@
 #include "ags/engine/ac/global_dynamic_sprite.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/math.h"    // M_PI
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
@@ -127,13 +125,8 @@ void DynamicSprite_Flip(ScriptDynamicSprite *sds, int direction) {
 	// resize the sprite to the requested size
 	Bitmap *newPic = BitmapHelper::CreateTransparentBitmap(_GP(game).SpriteInfos[sds->slot].Width, _GP(game).SpriteInfos[sds->slot].Height, _GP(spriteset)[sds->slot]->GetColorDepth());
 
-	if (direction == 1)
-		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_HFlip);
-	else if (direction == 2)
-		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_VFlip);
-	else if (direction == 3)
-		newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, Shared::kBitmap_HVFlip);
-
+	// AGS script FlipDirection corresponds to internal GraphicFlip
+	newPic->FlipBlt(_GP(spriteset)[sds->slot], 0, 0, static_cast<GraphicFlip>(direction));
 	delete _GP(spriteset)[sds->slot];
 
 	// replace the bitmap in the sprite set
@@ -271,7 +264,7 @@ int DynamicSprite_SaveToFile(ScriptDynamicSprite *sds, const char *namm) {
 		quit("!DynamicSprite.SaveToFile: sprite has been deleted");
 
 	auto filename = String(namm);
-	if (filename.FindChar('.') == (size_t)-1)
+	if (filename.FindChar('.') == String::NoIndex)
 		filename.Append(".bmp");
 
 	ResolvedPath rp;

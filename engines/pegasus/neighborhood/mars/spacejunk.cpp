@@ -147,24 +147,22 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 	_bounceStart.x = (bounds.left + bounds.right) >> 1;
 	_bounceStart.y = (bounds.top + bounds.bottom) >> 1;
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	switch (vm->getRandomNumber(3)) {
+	switch (g_vm->getRandomNumber(3)) {
 	case 0:
-		_bounceStop.x = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetHRange - 1);
+		_bounceStop.x = kMaxBounceSize / 2 + 1 + g_vm->getRandomNumber(kBounceTargetHRange - 1);
 		_bounceStop.y = kMaxBounceSize / 2 + 1;
 		break;
 	case 1:
-		_bounceStop.x = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetHRange - 1);
+		_bounceStop.x = kMaxBounceSize / 2 + 1 + g_vm->getRandomNumber(kBounceTargetHRange - 1);
 		_bounceStop.y = 480 - kMaxBounceSize / 2 + 1;
 		break;
 	case 2:
 		_bounceStop.x = kMaxBounceSize / 2 + 1;
-		_bounceStop.y = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetVRange - 1);
+		_bounceStop.y = kMaxBounceSize / 2 + 1 + g_vm->getRandomNumber(kBounceTargetVRange - 1);
 		break;
 	case 3:
 		_bounceStop.x = 640 - kMaxBounceSize / 2 + 1;
-		_bounceStop.y = kMaxBounceSize / 2 + 1 + vm->getRandomNumber(kBounceTargetVRange - 1);
+		_bounceStop.y = kMaxBounceSize / 2 + 1 + g_vm->getRandomNumber(kBounceTargetVRange - 1);
 		break;
 	default:
 		break;
@@ -185,7 +183,7 @@ void SpaceJunk::rebound(const TimeValue reboundTime) {
 void SpaceJunk::hitByEnergyBeam(Common::Point) {
 	rebound(kWeaponReboundTime);
 	setGlowing(true);
-	((PegasusEngine *)g_engine)->delayShell(1, 3);
+	g_vm->delayShell(1, 3);
 	setGlowing(false);
 }
 

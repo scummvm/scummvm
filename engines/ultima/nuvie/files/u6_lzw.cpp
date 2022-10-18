@@ -21,7 +21,7 @@
 
 //
 // This code is a modified version of the code from nodling's Ultima 6 website.
-// http://www.geocities.com/nodling/
+// https://web.archive.org/web/20091019144234/http://www.geocities.com/nodling/
 //
 
 // =============================================================

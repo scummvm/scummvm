@@ -93,7 +93,7 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_mouse_dont_scale(false),
 	_show_mouse(false),
 	_touchcontrols_texture(nullptr),
-	_old_touch_3d_mode(false) {
+	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
 
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
@@ -113,7 +113,9 @@ AndroidGraphics3dManager::AndroidGraphics3dManager() :
 	_touchcontrols_texture = loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP);
 
 	initSurface();
-	JNI::setTouch3DMode(true);
+
+	// in 3D, not in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, false);
 }
 
 AndroidGraphics3dManager::~AndroidGraphics3dManager() {
@@ -123,8 +125,6 @@ AndroidGraphics3dManager::~AndroidGraphics3dManager() {
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
 	glUseProgram(0);
-
-	JNI::setTouch3DMode(false);
 
 	deinitSurface();
 
@@ -171,7 +171,7 @@ void AndroidGraphics3dManager::initSurface() {
 	_screenChangeID = JNI::surface_changeid;
 
 	// Initialize OpenGLES context.
-	OpenGLContext.initialize(OpenGL::kOGLContextGLES2);
+	OpenGLContext.initialize(OpenGL::kContextGLES2);
 	logExtensions();
 	GLESTexture::initGL();
 
@@ -244,7 +244,7 @@ void AndroidGraphics3dManager::deinitSurface() {
 		_touchcontrols_texture->release();
 	}
 
-	OpenGL::ContextGL::destroy();
+	OpenGLContext.reset();
 
 	JNI::deinitSurface();
 }
@@ -383,9 +383,50 @@ void AndroidGraphics3dManager::displayMessageOnOSD(const Common::U32String &msg)
 	JNI::displayMessageOnOSD(msg);
 }
 
+Common::Point AndroidGraphics3dManager::convertScreenToVirtual(int &x, int &y) const {
+	const GLESBaseTexture *tex = getActiveTexture();
+	const Common::Rect &screenRect = tex->getDrawRect();
+
+	// Clip in place the coordinates that comes handy to call setMousePosition
+	x = CLIP<int>(x, screenRect.left, screenRect.right - 1);
+	y = CLIP<int>(y, screenRect.top, screenRect.bottom - 1);
+
+	// Now convert this to virtual coordinates using texture virtual size
+	const uint16 virtualWidth = tex->width();
+	const uint16 virtualHeight = tex->height();
+
+	int virtualX = ((x - screenRect.left) * virtualWidth + screenRect.width() / 2) / screenRect.width();
+	int virtualY = ((y - screenRect.top) * virtualHeight + screenRect.height() / 2) / screenRect.height();
+
+	return Common::Point(CLIP<int>(virtualX, 0, virtualWidth - 1),
+	                     CLIP<int>(virtualY, 0, virtualHeight - 1));
+}
+
+Common::Point AndroidGraphics3dManager::convertVirtualToScreen(int x, int y) const {
+	const GLESBaseTexture *tex = getActiveTexture();
+	const uint16 virtualWidth = tex->width();
+	const uint16 virtualHeight = tex->height();
+	const Common::Rect &screenRect = tex->getDrawRect();
+
+	int screenX = screenRect.left + (x * screenRect.width() + virtualWidth / 2) / virtualWidth;
+	int screenY = screenRect.top + (y * screenRect.height() + virtualHeight / 2) / virtualHeight;
+
+	return Common::Point(CLIP<int>(screenX, screenRect.left, screenRect.right - 1),
+	                     CLIP<int>(screenY, screenRect.top, screenRect.bottom - 1));
+}
+
 bool AndroidGraphics3dManager::notifyMousePosition(Common::Point &mouse) {
-	clipMouse(mouse);
-	setMousePosition(mouse.x, mouse.y);
+	// At entry, mouse is in screen coordinates like the texture draw rectangle
+	int x = mouse.x, y = mouse.y;
+	Common::Point vMouse = convertScreenToVirtual(x, y);
+
+	// Our internal mouse position is in screen coordinates
+	// convertScreenToVirtual just clipped coordinates so we are safe
+	setMousePosition(x, y);
+
+	// Now modify mouse to translate to virtual coordinates for the caller
+	mouse = vMouse;
+
 	return true;
 }
 
@@ -457,8 +498,9 @@ void AndroidGraphics3dManager::showOverlay() {
 		return;
 	}
 
-	_old_touch_3d_mode = JNI::getTouch3DMode();
-	JNI::setTouch3DMode(false);
+	_old_touch_mode = JNI::getTouchMode();
+	// in 3D, in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
 
 	_show_overlay = true;
 	_force_redraw = true;
@@ -504,7 +546,8 @@ void AndroidGraphics3dManager::hideOverlay() {
 
 	_overlay_background->release();
 
-	JNI::setTouch3DMode(_old_touch_3d_mode);
+	// Restore touch mode active before overlay was shown
+	JNI::setTouchMode(_old_touch_mode);
 
 	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
 
@@ -650,17 +693,30 @@ bool AndroidGraphics3dManager::showMouse(bool visible) {
 }
 
 void AndroidGraphics3dManager::warpMouse(int x, int y) {
+	// x and y are in virtual coordinates
 	ENTER("%d, %d", x, y);
 
+	// Check active coordinate instead of screen coordinate to avoid warping
+	// the mouse if it is still within the same virtual pixel
+	// Don't take the risk of modifying _cursorX and _cursorY
+	int cx = _cursorX, cy = _cursorY;
+	const Common::Point currentMouse = convertScreenToVirtual(cx, cy);
+	if (currentMouse.x == x && currentMouse.y == y) {
+		// Same virtual coordinates: nothing to do
+		return;
+	}
+
+	const Common::Point sMouse = convertVirtualToScreen(x, y);
+
+	// Our internal mouse position is in screen coordinates
+	// convertVirtualToScreen just clipped coordinates so we are safe
+	setMousePosition(sMouse.x, sMouse.y);
+
+	// Events pushed to Android system are in screen coordinates too
+	// They are converted back by notifyMousePosition later
 	Common::Event e;
-
 	e.type = Common::EVENT_MOUSEMOVE;
-	e.mouse.x = x;
-	e.mouse.y = y;
-
-	clipMouse(e.mouse);
-
-	setMousePosition(e.mouse.x, e.mouse.y);
+	e.mouse = sMouse;
 
 	dynamic_cast<OSystem_Android *>(g_system)->pushEvent(e);
 }
@@ -809,13 +865,6 @@ void AndroidGraphics3dManager::setCursorPalette(const byte *colors,
 bool AndroidGraphics3dManager::lockMouse(bool lock) {
 	_show_mouse = lock;
 	return true;
-}
-
-void AndroidGraphics3dManager::clipMouse(Common::Point &p) const {
-	const GLESBaseTexture *tex = getActiveTexture();
-
-	p.x = CLIP(p.x, tex->getDrawRect().left, tex->getDrawRect().right);
-	p.y = CLIP(p.y, tex->getDrawRect().top, tex->getDrawRect().bottom);
 }
 
 #ifdef USE_RGB_COLOR

@@ -26,7 +26,7 @@ namespace Gnap {
 
 struct FONT_CHAR_INFO {
   const byte _width;              // width, in bits (or pixels), of the character
-  const uint16 _offset;           // offset of the character's bitmap, in bytes, into the the FONT_INFO's data array
+  const uint16 _offset;           // offset of the character's bitmap, in bytes, into the FONT_INFO's data array
 
   FONT_CHAR_INFO(byte width, uint16 offset) : _width(width), _offset(offset) {}
 };

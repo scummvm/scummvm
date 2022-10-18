@@ -25,6 +25,8 @@
 #include "chewy/room.h"
 
 #include "chewy/rooms/room82.h"
+
+#include "chewy/cursor.h"
 #include "chewy/rooms/room66.h"
 #include "chewy/sound.h"
 
@@ -32,16 +34,15 @@ namespace Chewy {
 namespace Rooms {
 
 void Room82::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 
 	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->showStaticSpr(6);
-		_G(atds)->setControlBit(473, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(467, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(473, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(467, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags37_20)
@@ -90,7 +91,7 @@ void Room82::xit(int16 eib_nr) {
 void Room82::setup_func() {
 	calc_person_look();
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (posX < 200) {
@@ -108,7 +109,7 @@ void Room82::setup_func() {
 	goAutoXy(nicDestX, 110, P_NICHELLE, ANI_GO);
 }
 
-void Room82::talk1() {
+void Room82::talkWithDirector() {
 	if (_G(gameState).flags30_40)
 		return;
 
@@ -131,7 +132,7 @@ void Room82::talk1() {
 	Room66::proc8(2, 7, transitionAniNr, transitionDiaNr);
 }
 
-void Room82::talk2() {
+void Room82::talkWithFilmDiva() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	startAadWait(453);
@@ -156,7 +157,7 @@ int Room82::proc3() {
 	_G(det)->set_static_ani(0, -1);
 	start_spz_wait(13, 1, false, P_CHEWY);
 
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	new_invent_2_cur(104);
 	showCur();
 
@@ -196,7 +197,7 @@ int Room82::proc6() {
 
 	if (_G(gameState).flags30_10) {
 		startAadWait(450);
-		_G(out)->ausblenden(0);
+		_G(out)->fadeOut();
 		_G(out)->set_partialpalette(_G(pal), 255, 1);
 		_G(atds)->enableEvents(false);
 		startAadWait(598);
@@ -207,7 +208,7 @@ int Room82::proc6() {
 		Room66::proc8(2, 7, 7, 451);
 		_G(gameState).flags30_20 = true;
 		_G(gameState).flags37_20 = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		remove_inventory(105);
 		remove_inventory(106);
 	} else {
@@ -225,13 +226,13 @@ void Room82::proc8() {
 	startAadWait(447);
 	autoMove(6, P_CHEWY);
 
-	while (_G(spieler_vector)[P_NICHELLE].Count != 0)
+	while (_G(moveState)[P_NICHELLE].Count != 0)
 		setupScreen(DO_SETUP);
 
 	_G(gameState)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(10, 255, false);
 	startAadWait(625);
-	_G(det)->stop_detail(10);
+	_G(det)->stopDetail(10);
 	_G(gameState)._personHide[P_NICHELLE] = false;
 	startAadWait(448);
 	_G(det)->del_static_ani(4);
@@ -240,8 +241,8 @@ void Room82::proc8() {
 	showCur();
 }
 
-int Room82::proc9() {
-	if (_G(gameState).inv_cur || !_G(gameState).flags30_40)
+int Room82::procClimbLadderToGorilla() {
+	if (_G(cur)->usingInventoryCursor() || !_G(gameState).flags30_40)
 		return 0;
 
 	autoMove(7, P_CHEWY);

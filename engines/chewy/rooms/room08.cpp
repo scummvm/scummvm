@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -51,7 +52,7 @@ void Room8::entry() {
 
 void Room8::start_folter() {
 	_G(atds)->set_ats_str(67, 1, ATS_DATA);
-	_G(det)->stop_detail(19);
+	_G(det)->stopDetail(19);
 	_G(det)->startDetail(13, 255, ANI_FRONT);
 }
 
@@ -59,7 +60,7 @@ void Room8::stop_folter() {
 	_G(atds)->set_ats_str(67, 0, ATS_DATA);
 	_G(det)->startDetail(19, 255, ANI_FRONT);
 
-	_G(det)->stop_detail(13);
+	_G(det)->stopDetail(13);
 
 	_G(gameState).R8Folter = true;
 	_G(obj)->hide_sib(SIB_FOLTER_R8);
@@ -84,7 +85,7 @@ void Room8::hole_kohle() {
 void Room8::start_verbrennen() {
 	hideCur();
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(3, P_CHEWY);
 		start_aad(102, 0);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -94,14 +95,14 @@ void Room8::start_verbrennen() {
 			setupScreen(DO_SETUP);
 			SHOULD_QUIT_RETURN;
 
-			if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+			if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 				if (g_events->_mousePos.x > 146 && g_events->_mousePos.x < 208 &&
 					g_events->_mousePos.y > 107 && g_events->_mousePos.y < 155)
 					break;
 			}
 		}
 
-		_G(det)->stop_detail(9);
+		_G(det)->stopDetail(9);
 		setPersonPos(129, 246, P_CHEWY, P_RIGHT);
 		startAniBlock(2, ABLOCK13);
 		_G(atds)->set_ats_str(60, TXT_MARK_LOOK, 1, ATS_DATA);
@@ -160,7 +161,7 @@ void Room8::open_gdoor() {
 	_G(det)->hideStaticSpr(17);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	setPersonPos(204, 274, P_CHEWY, P_LEFT);
-	_G(atds)->delControlBit(69, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(69, ATS_ACTIVE_BIT);
 	_G(obj)->hide_sib(31);
 	_G(gameState).R8GTuer = true;
 	_G(gameState).room_e_obj[15].Attribut = EXIT_BOTTOM;
@@ -174,12 +175,12 @@ void Room8::talk_nimoy() {
 		int16 diaNr = _G(gameState).R8GipsWurf ? 2 : 1;
 
 		if (!_G(gameState).R8GTuer)
-			loadAdsDia(diaNr);
+			loadDialogCloseup(diaNr);
 		else
 			startAadWait(61);
 	} else {
 		startAadWait(603);
-		loadAdsDia(6);
+		loadDialogCloseup(6);
 	}
 
 	_G(flags).NoScroll = false;

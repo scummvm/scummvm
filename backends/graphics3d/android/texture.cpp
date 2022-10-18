@@ -51,7 +51,7 @@
 
 // Supported GL extensions
 bool GLESBaseTexture::_npot_supported = false;
-OpenGL::ShaderGL *GLESBaseTexture::_box_shader = nullptr;
+OpenGL::Shader *GLESBaseTexture::_box_shader = nullptr;
 GLuint GLESBaseTexture::_verticesVBO = 0;
 
 template<class T>
@@ -111,8 +111,8 @@ void GLESBaseTexture::initGL() {
 	_npot_supported = OpenGLContext.NPOTSupported;
 
 	const char *attributes[] = { "position", "texcoord", NULL };
-	_box_shader = OpenGL::ShaderGL::fromStrings("control", controlVertex, controlFragment, attributes);
-	_verticesVBO = OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	_box_shader = OpenGL::Shader::fromStrings("control", controlVertex, controlFragment, attributes);
+	_verticesVBO = OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	_box_shader->enableVertexAttribute("position", _verticesVBO, 2, GL_FLOAT, GL_TRUE,
 	                                   2 * sizeof(float), 0);
 	_box_shader->enableVertexAttribute("texcoord", _verticesVBO, 2, GL_FLOAT, GL_TRUE,

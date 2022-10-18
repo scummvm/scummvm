@@ -55,7 +55,7 @@ void getProcessDirectory(TCHAR *processDirectory, DWORD size);
 
 /**
  * Checks if the current running Windows version is greater or equal to the specified version.
- * See: https://docs.microsoft.com/en-us/windows/desktop/sysinfo/operating-system-version
+ * See: https://docs.microsoft.com/en-us/windows/win32/sysinfo/operating-system-version
  *
  * @param majorVersion The major version number (x.0)
  * @param minorVersion The minor version number (0.x)
@@ -97,7 +97,7 @@ char *unicodeToAnsi(const wchar_t *s);
 /**
  * Converts a Common::String to a TCHAR array for the purpose of passing to
  * a Windows API or CRT call. If UNICODE is defined then the string will be
- * converted from UTF8 to to wide characters, otherwise the character array
+ * converted from UTF8 to wide characters, otherwise the character array
  * will be copied with no conversion.
  *
  * @param s Source string

@@ -157,6 +157,7 @@ DialogueManager::DialogueManager(Parallaction *vm, ZonePtr z) : _vm(vm), _z(z) {
 }
 
 void DialogueManager::start() {
+	_vm->_gfx->hideFloatingLabel();
 	assert(_dialogue);
 	_q = _dialogue->_questions[0];
 	_state = DIALOGUE_START;

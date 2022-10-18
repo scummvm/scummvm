@@ -52,6 +52,9 @@ void  save_room_data_segment();
 void  unload_old_room();
 void  load_new_room(int newnum, CharacterInfo *forchar);
 void  new_room(int newnum, CharacterInfo *forchar);
+// Sets up a placeholder room object; this is used to avoid occasional crashes
+// in case an API function was called that needs to access a room, while no real room is loaded
+void  set_room_placeholder();
 int   find_highest_room_entered();
 void  first_room_initialization();
 void  check_new_room();

@@ -739,6 +739,9 @@ list: '[' exprlist ']'			{ $$ = new ListNode($exprlist); }
 	| '[' proplist ']'			{ $$ = new PropListNode($proplist); }
 	;
 
+// A property list must start with a proppair, but it may be followed by
+// keyless expressions, which will be compiled as equivalent to the
+// proppair <index>: <expr>.
 proplist: proppair[item]				{
 		NodeList *list = new NodeList; 
 		list->push_back($item);
@@ -746,11 +749,16 @@ proplist: proppair[item]				{
 	| proplist[prev] ',' proppair[item]	{
 		$prev->push_back($item);
 		$$ = $prev; }
+	| proplist[prev] ',' expr[item]	{
+		$prev->push_back($item);
+		$$ = $prev; }
 	;
 
 proppair: tSYMBOL ':' expr		{ $$ = new PropPairNode(new SymbolNode($tSYMBOL), $expr); }
 	| ID ':' expr				{ $$ = new PropPairNode(new SymbolNode($ID), $expr); }
 	| tSTRING ':' expr 			{ $$ = new PropPairNode(new StringNode($tSTRING), $expr); }
+	| tINT ':' expr             { $$ = new PropPairNode(new IntNode($tINT), $expr); }
+	| tFLOAT ':' expr           { $$ = new PropPairNode(new FloatNode($tFLOAT), $expr); }
 	;
 
 unarymath: '+' simpleexpr[arg]  %prec tUNARY	{ $$ = $arg; }

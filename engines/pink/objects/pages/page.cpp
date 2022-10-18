@@ -19,7 +19,7 @@
  *
  */
 
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/pink.h"
 #include "pink/objects/actors/lead_actor.h"
 #include "pink/objects/pages/page.h"
@@ -62,7 +62,7 @@ void Page::init() {
 
 void Page::initPalette() {
 	for (uint i = 0; i < _actors.size(); ++i) {
-		if (_actors[i]->initPalette(getGame()->getDirector()))
+		if (_actors[i]->initPalette(getGame()->getScreen()))
 			break;
 	}
 }

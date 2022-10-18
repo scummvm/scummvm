@@ -96,7 +96,6 @@ Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Math::Line2d &li
 
 
 Segment2d::Segment2d() {
-
 }
 
 Segment2d::Segment2d(const Vector2d &b, const Vector2d &e) :

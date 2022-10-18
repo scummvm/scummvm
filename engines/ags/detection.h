@@ -70,11 +70,11 @@ public:
 	AGSMetaEngineDetection();
 	~AGSMetaEngineDetection() override {}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "ags";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Adventure Game Studio";
 	}
 
@@ -86,7 +86,7 @@ public:
 		return debugFlagList;
 	}
 
-	DetectedGames detectGames(const Common::FSList &fslist) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) override;
 
 	ADDetectedGame fallbackDetect(const FileMap &allFiles, const Common::FSList &fslist, ADDetectedGameExtraInfo **extra = nullptr) const override;
 

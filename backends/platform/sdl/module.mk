@@ -72,6 +72,12 @@ MODULE_OBJS += \
 	switch/switch.o
 endif
 
+ifdef EMSCRIPTEN
+MODULE_OBJS += \
+	emscripten/emscripten-main.o \
+	emscripten/emscripten.o
+endif
+
 # We don't use rules.mk but rather manually update OBJS and MODULE_DIRS.
 MODULE_OBJS := $(addprefix $(MODULE)/, $(MODULE_OBJS))
 OBJS := $(MODULE_OBJS) $(OBJS)

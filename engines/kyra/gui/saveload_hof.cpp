@@ -150,6 +150,8 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	Common::SeekableSubReadStreamEndian in(saveFile, saveFile->pos(), saveFile->size(), !header.originalSave, DisposeAfterUse::YES);
 
 	_screen->hideMouse();
+	_screen->fadeToBlack(10);
+	_screen->fillRect(0, 0, 319, 143, 0, 0);
 
 	if (!header.originalSave) {
 		_timer->loadDataFromFile(in, header.version);
@@ -303,6 +305,8 @@ Common::Error KyraEngine_HoF::loadGameState(int slot) {
 	_mainCharX = _mainCharacter.x2 = _mainCharacter.x1;
 	_mainCharY = _mainCharacter.y2 = _mainCharacter.y1;
 	_mainCharacter.facing = 4;
+
+	restartPlayTimerAt(header.totalPlaySecs);
 
 	enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 	setHandItem(_itemInHand);

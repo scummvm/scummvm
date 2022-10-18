@@ -22,6 +22,7 @@
 #include "common/config-manager.h"
 #include "common/file.h"
 #include "common/substream.h"
+#include "common/xpfloat.h"
 
 #include "director/director.h"
 #include "director/cast.h"
@@ -71,6 +72,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x1d, LC::c_telldone,		"" },
 	{ 0x1e, LC::cb_list,		"" },
 	{ 0x1f, LC::cb_proplist,	"" },
+
 	{ 0x41, LC::c_intpush,		"B" },
 	{ 0x42, LC::c_argcnoretpush,"b" },
 	{ 0x43, LC::c_argcpush,		"b" },
@@ -106,6 +108,7 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0x64, LC::c_stackpeek, 	"b" },
 	{ 0x65, LC::c_stackdrop, 	"b" },
 	{ 0x66, LC::cb_v4theentitynamepush, "bN" },
+
 	{ 0x81, LC::c_intpush,		"W" },
 	{ 0x82, LC::c_argcnoretpush,"w" },
 	{ 0x83, LC::c_argcpush,		"w" },
@@ -136,6 +139,9 @@ static LingoV4Bytecode lingoV4[] = {
 	{ 0xa0, LC::cb_theassign2, "wN" },
 	{ 0xa1, LC::cb_objectfieldpush, "wN" },
 	{ 0xa2, LC::cb_objectfieldassign, "wN" },
+	{ 0xa3, LC::cb_call,		"wN" }, // tellcall
+	{ 0xa4, LC::c_stackpeek, 	"w" },
+	{ 0xa5, LC::c_stackdrop, 	"w" },
 	{ 0xa6, LC::cb_v4theentitynamepush, "wN" },
 	{ 0, nullptr, nullptr }
 };
@@ -163,8 +169,8 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x01, 0x03, kTheItems,			kTheNumber,			false, kTEAString },
 	{ 0x01, 0x04, kTheLines,			kTheNumber,			false, kTEAString },
 
-	{ 0x02, 0x01, kTheMenu,				kTheName,			false, kTEAItemId },
-	{ 0x02, 0x02, kTheMenuItems,		kTheNumber,			false, kTEAItemId },
+	{ 0x02, 0x01, kTheMenu,				kTheName,			false, kTEAMenuId },
+	{ 0x02, 0x02, kTheMenuItems,		kTheNumber,			false, kTEAMenuId },
 
 	{ 0x03, 0x01, kTheMenuItem,			kTheName,			true, kTEAMenuIdItemId },
 	{ 0x03, 0x02, kTheMenuItem,			kTheCheckMark,		true, kTEAMenuIdItemId },
@@ -220,10 +226,10 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x0a, kTheFullColorPermit,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0b, kTheImageDirect,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0c, kTheDoubleClick,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x0d, ???,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x0d, ???,					kTheNOField,		true, kTEANOArgs }, // key
 	{ 0x07, 0x0e, kTheLastClick,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x0f, kTheLastEvent,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x10, ???,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x10, ???,					kTheNOField,		true, kTEANOArgs }, // keyCode
 	{ 0x07, 0x11, kTheLastKey,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x12, kTheLastRoll,			kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x13, kTheTimeoutLapsed,	kTheNOField,		true, kTEANOArgs },
@@ -235,7 +241,7 @@ static LingoV4TheEntity lingoV4TheEntity[] = {
 	{ 0x07, 0x19, kTheSoundEnabled,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1a, kTheSoundLevel,		kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1b, kTheStageColor,		kTheNOField,		true, kTEANOArgs },
-//	{ 0x07, 0x1c, ????,					kTheNOField,		true, kTEANOArgs },
+//	{ 0x07, 0x1c, ????,					kTheNOField,		true, kTEANOArgs }, // indicates dontPassEvent was called
 	{ 0x07, 0x1d, kTheSwitchColorDepth,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1e, kTheTimeoutKeyDown,	kTheNOField,		true, kTEANOArgs },
 	{ 0x07, 0x1f, kTheTimeoutLength,	kTheNOField,		true, kTEANOArgs },
@@ -416,7 +422,7 @@ void LC::cb_localcall() {
 	if ((nargs.type == ARGC) || (nargs.type == ARGCNORET)) {
 		Common::String name = g_lingo->_currentScriptContext->_functionNames[functionId];
 		if (debugChannelSet(3, kDebugLingoExec))
-			g_lingo->printSTUBWithArglist(name.c_str(), nargs.u.i, "localcall:");
+			printWithArgList(name.c_str(), nargs.u.i, "localcall:");
 
 		LC::call(name, nargs.u.i, nargs.type == ARGC);
 
@@ -723,6 +729,27 @@ void LC::cb_v4theentitypush() {
 				result = g_lingo->getTheEntity(entity, id, field);
 			}
 			break;
+		case kTEAMenuId:
+			{
+				Datum id = g_lingo->pop();
+				debugC(3, kDebugLingoExec, "cb_v4theentitypush: calling getTheEntity(%s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field));
+				if (id.type == INT) {
+					int menuId = id.u.i;
+					id.u.menu = new MenuReference();
+					id.u.menu->menuIdNum = menuId;
+				} else if (id.type == STRING) {
+					Common::String *menuId = id.u.s;
+					id.u.menu = new MenuReference();
+					id.u.menu->menuIdStr = menuId;
+				} else {
+					warning("LC::cb_v4theentitypush : Unknown type of menu Reference %d of entity type %d", id.type, g_lingo->_lingoV4TheEntity[key]->type);
+					break;
+				}
+				id.type = MENUREF;
+
+				result = g_lingo->getTheEntity(entity, id, field);
+			}
+			break;
 		case kTEAString:
 			{
 				Datum stringArg = g_lingo->pop();
@@ -851,6 +878,26 @@ void LC::cb_v4theentityassign() {
 			g_lingo->setTheEntity(entity, id, field, value);
 		}
 		break;
+	case kTEAMenuId:
+		{
+			Datum id = g_lingo->pop();
+			if (id.type == INT) {
+				int menuId = id.u.i;
+				id.u.menu = new MenuReference();
+				id.u.menu->menuIdNum = menuId;
+			} else if (id.type == STRING) {
+				Common::String *menuId = id.u.s;
+				id.u.menu = new MenuReference();
+				id.u.menu->menuIdStr = menuId;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menu Reference %d of entity type %d", id.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
+			}
+			id.type = MENUREF;
+			debugC(3, kDebugLingoExec, "cb_v4theentityassign: calling setTheEntity(%s, %s, %s, %s)", g_lingo->entity2str(entity), id.asString(true).c_str(), g_lingo->field2str(field), value.asString(true).c_str());
+			g_lingo->setTheEntity(entity, id, field, value);
+		}
+		break;
 	case kTEAString:
 		{
 			/*Datum stringArg = */g_lingo->pop();
@@ -861,7 +908,26 @@ void LC::cb_v4theentityassign() {
 		{
 			Datum menuId = g_lingo->pop();
 			Datum itemId = g_lingo->pop();
-			g_lingo->setTheMenuItemEntity(entity, menuId, field, itemId, value);
+			Datum menuDatum;
+			menuDatum.type = MENUREF;
+			menuDatum.u.menu = new MenuReference();
+			if (menuId.type == INT) {
+				menuDatum.u.menu->menuIdNum = menuId.u.i;
+			} else if (menuId.type == STRING) {
+				menuDatum.u.menu->menuIdStr = menuId.u.s;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menu Reference %d of entity type %d", menuId.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
+			}
+			if (itemId.type == INT) {
+				menuDatum.u.menu->menuItemIdNum = itemId.u.i;
+			} else if (itemId.type == STRING) {
+				menuDatum.u.menu->menuItemIdStr = itemId.u.s;
+			} else {
+				warning("LC::cb_v4theentityassign : Unknown type of menuItem Reference %d of entity type %d", itemId.type, g_lingo->_lingoV4TheEntity[key]->type);
+				break;
+			}
+			g_lingo->setTheEntity(entity, menuDatum, field, value);
 		}
 		break;
 	case kTEAChunk:
@@ -879,9 +945,7 @@ void LC::cb_v4theentityassign() {
 }
 
 void LC::cb_zeropush() {
-	Datum d;
-	d.u.i = 0;
-	d.type = INT;
+	Datum d(0);
 	g_lingo->push(d);
 }
 
@@ -1140,29 +1204,10 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 					error("Constant float expected to be 10 bytes");
 					break;
 				}
-				uint16 exponent = READ_BE_UINT16(&constsStore[pointer]);
-				uint64 f64sign = (uint64)(exponent & 0x8000) << 48;
-				exponent &= 0x7fff;
-				uint64 fraction = READ_BE_UINT64(&constsStore[pointer+2]);
-				fraction &= 0x7fffffffffffffffULL;
-				uint64 f64exp = 0;
-				if (exponent == 0) {
-					f64exp = 0;
-				} else if (exponent == 0x7fff) {
-					f64exp = 0x7ff;
-				} else {
-					int32 normexp = (int32)exponent - 0x3fff;
-					if ((-0x3fe > normexp) || (normexp >= 0x3ff)) {
-						error("Constant float exponent too big for a double");
-						break;
-					}
-					f64exp = (uint64)(normexp + 0x3ff);
-				}
-				f64exp <<= 52;
-				uint64 f64fract = fraction >> 11;
-				uint64 f64bin = f64sign | f64exp | f64fract;
+				uint16 signAndExponent = READ_BE_UINT16(&constsStore[pointer]);
+				uint64 mantissa = READ_BE_UINT64(&constsStore[pointer+2]);
 
-				constant.u.f = *(double *)(&f64bin);
+				constant.u.f = Common::XPFloat(signAndExponent, mantissa).toDouble(Common::XPFloat::kSemanticsSANE);
 			}
 			break;
 		default:
@@ -1192,7 +1237,12 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 	bool skipdump = false;
 
 	if (ConfMan.getBool("dump_scripts")) {
-		Common::String buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
+		Common::String buf;
+		if (scriptFlags & kScriptFlagFactoryDef) {
+			buf = dumpFactoryName(encodePathForDump(archName).c_str(), factoryName.c_str(), "lscr");
+		} else {
+			buf = dumpScriptName(encodePathForDump(archName).c_str(), scriptType, castId, "lscr");
+		}
 
 		if (!out.open(buf, true)) {
 			warning("Lingo::addCodeV4(): Can not open dump file %s", buf.c_str());
@@ -1521,27 +1571,7 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		}
 
 		if (!skipdump && ConfMan.getBool("dump_scripts")) {
-			if (0 <= nameIndex && nameIndex < (int16)archive->names.size()) {
-				Common::String res = Common::String::format("function %s, %d args", archive->names[nameIndex].c_str(), argCount);
-				if (argCount != 0)
-					res += ": ";
-				for (int argIndex = 0;  argIndex < argCount; argIndex++) {
-					res += (*argNames)[argIndex].c_str();
-					if (argIndex < (argCount - 1))
-						res += ", ";
-				}
-				res += "\n";
-				out.writeString(res.c_str());
-			} else {
-				out.writeString(Common::String::format("<noname>, %d args\n", argCount));
-			}
-			uint pc = 0;
-			while (pc < _currentAssembly->size()) {
-				uint spc = pc;
-				Common::String instr = g_lingo->decodeInstruction(_currentAssembly, pc, &pc);
-				out.writeString(Common::String::format("[%5d] %s\n", spc, instr.c_str()));
-			}
-			out.writeString(Common::String::format("<end code>\n\n"));
+			out.writeString(g_lingo->formatFunctionBody(sym));
 		}
 
 		_assemblyContext->_functionNames.push_back(*sym.name);

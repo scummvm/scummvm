@@ -619,7 +619,7 @@ enum {
 void RipTimer::initImage() {
 	_middle = -1;
 
-	_timerImage.getImageFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLeftRipPICTID);
+	_timerImage.getImageFromPICTResource(g_vm->_resFork, kLeftRipPICTID);
 
 	Common::Rect r;
 	_timerImage.getSurfaceBounds(r);
@@ -664,7 +664,7 @@ void RipTimer::timeChanged(const TimeValue newTime) {
 	}
 
 	if (newTime == getStop())
-		((PegasusEngine *)g_engine)->die(kDeathUncreatedInTSA);
+		g_vm->die(kDeathUncreatedInTSA);
 }
 
 FullTSA::FullTSA(InputHandler *nextHandler, PegasusEngine *owner) : Neighborhood(nextHandler, owner, "Full TSA", kFullTSAID),

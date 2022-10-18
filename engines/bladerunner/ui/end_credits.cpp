@@ -110,7 +110,7 @@ void EndCredits::show() {
 		position += (double)(timeNow - timeLast) * 0.05f; // unsigned difference is intentional
 		timeLast = timeNow;
 
-		_vm->_surfaceFront.fillRect(Common::Rect(640, 480), 0);
+		_vm->_surfaceFront.fillRect(Common::Rect(BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
 
 		for (int i = 0; i < textCount; ++i) {
 			Common::String s = textResource->getText(i);
@@ -141,8 +141,8 @@ void EndCredits::show() {
 			}
 		}
 
-		_vm->_surfaceFront.fillRect(Common::Rect(0, 0, 640, 28), 0);
-		_vm->_surfaceFront.fillRect(Common::Rect(0, 452, 640, 480), 0);
+		_vm->_surfaceFront.fillRect(Common::Rect(0, 0, BladeRunnerEngine::kOriginalGameWidth, 28), 0);
+		_vm->_surfaceFront.fillRect(Common::Rect(0, BladeRunnerEngine::kOriginalGameHeight - 28, BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
 
 		_vm->blitToScreen(_vm->_surfaceFront);
 	}

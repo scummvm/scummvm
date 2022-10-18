@@ -135,8 +135,6 @@ private:
 
 	EoBCoreEngine *_vm;
 
-	bool _pressFlag;
-
 	Button *_specialProcessButton;
 	Button *_backupButtonList;
 	uint16 _flagsMouseLeft;

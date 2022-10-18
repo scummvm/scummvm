@@ -27,7 +27,7 @@
 #include "saga2/shorten.h"
 
 // Based on etree's Shorten tool, version 3.6.1
-// http://etree.org/shnutils/shorten/
+// http://shnutils.freeshell.org/shorten/
 // and
 // https://github.com/soiaf/Java-Shorten-decoder
 

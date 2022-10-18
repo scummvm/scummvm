@@ -268,9 +268,9 @@ void Music::SetMidiVolume(int vol) {
 void Music::OpenMidiFiles() {
 	Common::File midiStream;
 
-	if (TinselV0) {
+	if (TinselVersion == 0) {
 		// The early demo version of DW1 doesn't have MIDI
-	} else if (TinselV2) {
+	} else if (TinselVersion >= 2) {
 		// DW2 uses a different music mechanism
 	} else if (TinselV1Mac) {
 		// open MIDI sequence file in binary mode
@@ -693,6 +693,10 @@ PCMMusicPlayer::PCMMusicPlayer() {
 
 	_vm->_mixer->playStream(Audio::Mixer::kMusicSoundType,
 			&_handle, this, -1, _volume, 0, DisposeAfterUse::NO, true);
+
+	if (TinselVersion == 3) {
+		warning("Todo: remove workaround when deadlock in readBuffer is fixed");
+	}
 }
 
 PCMMusicPlayer::~PCMMusicPlayer() {
@@ -725,6 +729,10 @@ void PCMMusicPlayer::stopPlay() {
 
 int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
 	Common::StackLock slock(_mutex);
+
+	// Workaround for v3 to prevent deadlock due to missing chunk
+	if ((TinselVersion == 3) && !_curChunk && _state == S_MID)
+		return 0;
 
 	if (!_curChunk && ((_state == S_IDLE) || (_state == S_STOP)))
 		return 0;
@@ -765,7 +773,7 @@ int PCMMusicPlayer::readBuffer(int16 *buffer, const int numSamples) {
 }
 
 bool PCMMusicPlayer::isStereo() const {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		return true;
 	} else {
 		return false;
@@ -773,7 +781,7 @@ bool PCMMusicPlayer::isStereo() const {
 }
 
 int PCMMusicPlayer::getRate() const {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		if (_curChunk) {
 			return _curChunk->getRate();
 		} else {
@@ -1023,7 +1031,7 @@ void PCMMusicPlayer::loadMP3MusicFromSegment(int segmentNum) {
 }
 
 void PCMMusicPlayer::loadMusicFromSegment(int segmentNum) {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		loadMP3MusicFromSegment(segmentNum);
 	} else {
 		loadADPCMMusicFromSegment(segmentNum);

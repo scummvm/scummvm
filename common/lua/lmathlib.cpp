@@ -13,7 +13,7 @@
 // MSVC does not define M_PI, M_SQRT2 and other math defines by default.
 // _USE_MATH_DEFINES must be defined in order to have these defined, thus
 // we enable it here. For more information, check:
-// http://msdn.microsoft.com/en-us/library/4hwaceh6(v=VS.100).aspx
+// https://docs.microsoft.com/en-us/cpp/c-runtime-library/math-constants
 #define _USE_MATH_DEFINES
 #include <math.h>
 

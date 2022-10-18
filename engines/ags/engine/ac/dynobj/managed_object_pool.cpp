@@ -24,8 +24,8 @@
 #include "ags/engine/ac/dynobj/cc_dynamic_array.h" // globalDynamicArray, constants
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/util/string_utils.h"               // fputstring, etc
-#include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_common.h"
+#include "ags/shared/script/cc_internal.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
@@ -48,14 +48,10 @@ int ManagedObjectPool::Remove(ManagedObject &o, bool force) {
 		return 0;
 	}
 
-	//auto handle = o.handle;
 	available_ids.push(o.handle);
-
 	handleByAddress.erase(o.addr);
+	ManagedObjectLog("Line %d Disposed managed object handle=%d", currentline, o.handle);
 	o = ManagedObject();
-
-	ManagedObjectLog("Line %d Disposed managed object handle=%d", _G(currentline), handle);
-
 	return 1;
 }
 

@@ -44,8 +44,8 @@ extern GameMode     ModalMode;
  * ===================================================================== */
 class ModalWindow : public DecoratedWindow {
 
-	GameMode    *prevModeStackPtr[Max_Modes];
-	int         prevModeStackCtr;
+	GameMode    *_prevModeStackPtr[Max_Modes];
+	int         _prevModeStackCtr;
 
 public:
 
@@ -58,7 +58,7 @@ public:
 	void close();
 	bool isModal();
 
-	static ModalWindow *current;
+	static ModalWindow *_current;
 	void handleKey(short, short);
 };
 

@@ -37,6 +37,21 @@
 
 namespace AGOS {
 
+// This data is hardcoded in the executable.
+const int AGOSEngine_Simon1::SIMON1_GMF_SIZE[] = {
+	8900, 12166,  2848,  3442,  4034,  4508,  7064,  9730,  6014,  4742,
+	3138,  6570,  5384,  8909,  6457, 16321,  2742,  8968,  4804,  8442,
+	7717,  9444,  5800,  1381,  5660,  6684,  2456,  4744,  2455,  1177,
+	1232, 17256,  5103,  8794,  4884,    16
+};
+
+// High nibble is the file ID (STINGSx.MUS), low nibble is the SFX number
+// in the file (0 based).
+const byte AGOSEngine::SIMON1_RHYTHM_SFX[] = {
+	0x15, 0x16, 0x2C, 0x31, 0x37, 0x3A, 0x42, 0x43, 0x44,
+	0x51, 0x55, 0x61, 0x68, 0x74, 0x78, 0x83, 0x89, 0x90
+};
+
 void AGOSEngine_Simon1::playSpeech(uint16 speech_id, uint16 vgaSpriteId) {
 	if (speech_id == 9999) {
 		if (_subtitles)
@@ -116,20 +131,17 @@ void AGOSEngine::skipSpeech() {
 	}
 }
 
-void AGOSEngine::loadMusic(uint16 music) {
-	char buf[4];
-
+void AGOSEngine::loadMusic(uint16 music, bool forceSimon2Gm) {
 	stopMusic();
 
-	_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-	_gameFile->read(buf, 4);
-	if (!memcmp(buf, "FORM", 4)) {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi->loadXMIDI(_gameFile);
-	} else {
-		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music - 1], SEEK_SET);
-		_midi->loadMultipleSMF(_gameFile);
-	}
+	uint16 indexBase = forceSimon2Gm ? MUSIC_INDEX_BASE_SIMON2_GM : _musicIndexBase;
+
+	_gameFile->seek(_gameOffsetsPtr[indexBase + music - 1], SEEK_SET);
+	_midi->load(_gameFile);
+
+	// Activate Simon 2 GM to MT-32 remapping if we force GM, otherwise
+	// deactivate it (in case it was previously activated).
+	_midi->setSimon2Remapping(forceSimon2Gm);
 
 	_lastMusicPlayed = music;
 	_nextMusicToPlay = -1;
@@ -220,11 +232,34 @@ void AGOSEngine::playModule(uint16 music) {
 	}
 
 	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_modHandle, audioStream);
-	_mixer->pauseHandle(_modHandle, _musicPaused);
+}
+
+void AGOSEngine_Simon2::playMusic(uint16 music, uint16 track) {
+	if (_lastMusicPlayed == 10 && getPlatform() == Common::kPlatformDOS && _midi->usesMT32Data()) {
+		// WORKAROUND Simon 2 track 10 (played during the first intro scene)
+		// consist of 3 subtracks. Subtracks 2 and 3 are missing from the MT-32
+		// MIDI data. The original interpreter just stops playing after track 1
+		// and does not restart until the next scene.
+		// We fix this by loading the GM version of track 10 and remapping the
+		// instruments to MT-32.
+
+		// Reload track 10 and force GM for all subtracks but the first (this
+		// also activates the instrument remapping).
+		loadMusic(10, track > 0);
+	}
+
+	_midi->play(track);
 }
 
 void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 	stopMusic();
+
+	if (getPlatform() != Common::kPlatformAmiga && (getFeatures() & GF_TALKIE) && music == 35) {
+		// WORKAROUND: For a script bug in the CD versions
+		// We skip this music resource, as it was replaced by
+		// a sound effect, and the script was never updated.
+		return;
+	}
 
 	// Support for compressed music from the ScummVM Music Enhancement Project
 	_system->getAudioCDManager()->stop();
@@ -234,32 +269,22 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 
 	if (getPlatform() == Common::kPlatformAmiga) {
 		playModule(music);
-	} else if (getFeatures() & GF_TALKIE) {
-		char buf[4];
+	} else if ((getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformAcorn) &&
+			getFeatures() & GF_TALKIE) {
+		// DOS CD and Acorn CD use the same music data.
 
-		// WORKAROUND: For a script bug in the CD versions
-		// We skip this music resource, as it was replaced by
-		// a sound effect, and the script was never updated.
-		if (music == 35)
-			return;
-
-		_midi->setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		// Data is stored in one large data file and the GMF format does not
+		// have an indication of size or end of data, so the data size has to
+		// be supplied from a hardcoded list.
+		int size = SIMON1_GMF_SIZE[music];
 
 		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-		_gameFile->read(buf, 4);
-		if (!memcmp(buf, "GMF\x1", 4)) {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_midi->loadSMF(_gameFile, music);
-		} else {
-			_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
-			_midi->loadMultipleSMF(_gameFile);
-		}
+		_midi->load(_gameFile, size);
+		_midi->play();
+	} else if (getPlatform() == Common::kPlatformDOS) {
+		// DOS floppy version.
 
-		_midi->startTrack(0);
-		_midi->startTrack(track);
-	} else if (getPlatform() == Common::kPlatformAcorn) {
-		// TODO: Add support for Desktop Tracker format in Acorn disk version
-	} else {
+		// GMF music data is in separate MODxx.MUS files.
 		char filename[15];
 		Common::File f;
 		sprintf(filename, "MOD%d.MUS", music);
@@ -267,16 +292,68 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		if (f.isOpen() == false)
 			error("playMusic: Can't load music from '%s'", filename);
 
-		_midi->setLoop(true); // Must do this BEFORE loading music. (GMF may have its own override.)
+		_midi->load(&f, f.size());
+		if (getFeatures() & GF_DEMO) {
+			// Full version music data has a loop flag in the file header, but
+			// the demo needs to have this set manually.
+			_midi->setLoop(true);
+		}
 
-		if (getFeatures() & GF_DEMO)
-			_midi->loadS1D(&f);
-		else
-			_midi->loadSMF(&f, music);
+		_midi->play();
+	} else if (getPlatform() == Common::kPlatformWindows) {
+		// Windows version uses SMF data in one large data file.
+		_gameFile->seek(_gameOffsetsPtr[_musicIndexBase + music], SEEK_SET);
 
-		_midi->startTrack(0);
-		_midi->startTrack(track);
+		_midi->load(_gameFile);
+		_midi->setLoop(true);
+
+		_midi->play();
+	} else if (getPlatform() == Common::kPlatformAcorn) {
+		// Acorn floppy version.
+		
+		// TODO: Add support for Desktop Tracker format in Acorn disk version
 	}
+}
+
+void AGOSEngine_Simon1::playMidiSfx(uint16 sound) {
+	// The sound effects in floppy disk version of
+	// Simon the Sorcerer 1 are only meant for AdLib
+	if (!_midi->hasMidiSfx())
+		return;
+
+	// AdLib SFX use GMF data bundled in 9 STINGSx.MUS files.
+	char filename[16];
+	Common::File mus_file;
+
+	sprintf(filename, "STINGS%i.MUS", _soundFileId);
+	mus_file.open(filename);
+	if (!mus_file.isOpen())
+		error("playSting: Can't load sound effect from '%s'", filename);
+
+	// WORKAROUND Some Simon 1 DOS floppy SFX use the OPL rhythm instruments.
+	// This can conflict with the music using the rhythm instruments, so the
+	// original interpreter disables the music rhythm notes while a sound
+	// effect is playing. However, only some sound effects use rhythm notes, so
+	// in many cases this is not needed and leads to the music drums needlessly
+	// being disabled.
+	// To improve this, the sound effect number is checked against a list of
+	// SFX using rhythm notes, and only if it is in the list the music drums
+	// will be disabled while it plays.
+	bool rhythmSfx = false;
+	// Search for the file ID / SFX ID combination in the list of SFX that use
+	// rhythm notes.
+	byte sfxId = (_soundFileId << 4) | sound;
+	for (int i = 0; i < ARRAYSIZE(SIMON1_RHYTHM_SFX); i++) {
+		if (SIMON1_RHYTHM_SFX[i] == sfxId) {
+			rhythmSfx = true;
+			break;
+		}
+	}
+
+	_midi->stop(true);
+
+	_midi->load(&mus_file, mus_file.size(), true);
+	_midi->play(sound, true, rhythmSfx);
 }
 
 void AGOSEngine::playMusic(uint16 music, uint16 track) {
@@ -301,9 +378,9 @@ void AGOSEngine::playMusic(uint16 music, uint16 track) {
 			str = file;
 		}
 
-		_midi->loadS1D(str);
-		_midi->startTrack(0);
-		_midi->startTrack(track);
+		//warning("Playing track %d", music);
+		_midi->load(str);
+		_midi->play();
 		delete str;
 	}
 }
@@ -313,32 +390,6 @@ void AGOSEngine::stopMusic() {
 		_midi->stop();
 	}
 	_mixer->stopHandle(_modHandle);
-}
-
-void AGOSEngine::playSting(uint16 soundId) {
-	// The sound effects in floppy disk version of
-	// Simon the Sorcerer 1 are only meant for AdLib
-	if (!_midi->_adLibMusic || !_midi->_enable_sfx)
-		return;
-
-	char filename[16];
-
-	Common::File mus_file;
-	uint16 mus_offset;
-
-	sprintf(filename, "STINGS%i.MUS", _soundFileId);
-	mus_file.open(filename);
-	if (!mus_file.isOpen())
-		error("playSting: Can't load sound effect from '%s'", filename);
-
-	mus_file.seek(soundId * 2, SEEK_SET);
-	mus_offset = mus_file.readUint16LE();
-	if (mus_file.err())
-		error("playSting: Can't read sting %d offset", soundId);
-
-	mus_file.seek(mus_offset, SEEK_SET);
-	_midi->loadSMF(&mus_file, soundId, true);
-	_midi->startTrack(0);
 }
 
 static const byte elvira1_soundTable[100] = {
@@ -520,6 +571,14 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		_sound->playSfx5Data(dst, sound, pan, vol);
 }
 
+void AGOSEngine::playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly, bool midiOnly) {
+	if (_useDigitalSfx && !midiOnly) {
+		loadSound(sound, freq, flags);
+	} else if (!_useDigitalSfx && !digitalOnly) {
+		playMidiSfx(sound);
+	}
+}
+
 void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 	byte *dst;
 	uint32 offs, size = 0;
@@ -560,7 +619,6 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 
 			if (size > _curSfxFileSize)
 				error("loadSound: Reading beyond EOF (%d, %d)", size, _curSfxFileSize);
-
 		}
 
 		size = READ_BE_UINT16(dst + 2);
@@ -585,6 +643,29 @@ void AGOSEngine::loadSound(uint16 sound, uint16 freq, uint16 flags) {
 			_sound->stopSfx();
 		_sound->playRawData(dst + offs, sound, size, rate);
 	}
+}
+
+void AGOSEngine::loadMidiSfx() {
+	if (!_midi->hasMidiSfx())
+		return;
+
+	Common::File fxb_file;
+
+	Common::String filename = getGameType() == GType_ELVIRA2 ? "MYLIB.FXB" : "WAX.FXB";
+	fxb_file.open(filename);
+	if (!fxb_file.isOpen())
+		error("loadMidiSfx: Can't open sound effect bank '%s'", filename.c_str());
+
+	_midi->load(&fxb_file, fxb_file.size(), true);
+
+	fxb_file.close();
+}
+
+void AGOSEngine::playMidiSfx(uint16 sound) {
+	if (!_midi->hasMidiSfx())
+		return;
+
+	_midi->play(sound, true);
 }
 
 void AGOSEngine::loadVoice(uint speechId) {
@@ -620,6 +701,12 @@ void AGOSEngine::loadVoice(uint speechId) {
 	} else {
 		_sound->playVoice(speechId);
 	}
+}
+
+void AGOSEngine::stopAllSfx() {
+	_sound->stopAllSfx();
+	if (_midi->hasMidiSfx())
+		_midi->stop(true);
 }
 
 } // End of namespace AGOS

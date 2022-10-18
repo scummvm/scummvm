@@ -167,10 +167,6 @@ void ResourceViewer::key(const AsylumEvent &evt) {
 	default:
 		break;
 
-	case Common::KEYCODE_ESCAPE:
-		_vm->switchEventHandler(_handler);
-		break;
-
 	case Common::KEYCODE_SPACE:
 		if (RESOURCE_INDEX(_resourceId) < resPackSizes[_resPack] - 1) {
 			int i = 1;
@@ -240,6 +236,11 @@ bool ResourceViewer::handleEvent(const AsylumEvent &evt) {
 
 	case Common::EVENT_KEYDOWN:
 		key(evt);
+		return true;
+
+	case Common::EVENT_CUSTOM_ENGINE_ACTION_START:
+		if ((AsylumAction)evt.customType == kAsylumActionShowMenu)
+			_vm->switchEventHandler(_handler);
 		return true;
 	}
 

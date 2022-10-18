@@ -195,7 +195,7 @@ static inline uint32 ConvertYUV(uint32 x, const uint32 *RGBtoYUV) {
 
 /*
  * The HQ2x high quality 2x graphics filter.
- * Original author Maxim Stepin (see http://www.hiend3d.com/hq2x.html).
+ * Original author Maxim Stepin (https://web.archive.org/web/20090204033742/http://www.hiend3d.com/hq2x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
 template<typename ColorMask>
@@ -2112,7 +2112,7 @@ static void HQ2x_implementation(const uint8 *srcPtr, uint32 srcPitch, uint8 *dst
 
 /*
  * The HQ3x high quality 3x graphics filter.
- * Original author Maxim Stepin (see http://www.hiend3d.com/hq3x.html).
+ * Original author Maxim Stepin (https://web.archive.org/web/20090203211353/http://www.hiend3d.com/hq3x.html).
  * Adapted for ScummVM to 16 bit output and optimized by Max Horn.
  */
 template<typename ColorMask>

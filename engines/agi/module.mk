@@ -24,10 +24,6 @@ MODULE_OBJS := \
 	op_dbg.o \
 	op_test.o \
 	picture.o \
-	preagi.o \
-	preagi_mickey.o \
-	preagi_troll.o \
-	preagi_winnie.o \
 	saveload.o \
 	sound.o \
 	sound_2gs.o \
@@ -39,8 +35,11 @@ MODULE_OBJS := \
 	systemui.o \
 	text.o \
 	view.o \
-	words.o
-
+	words.o \
+	preagi/preagi.o \
+	preagi/mickey.o \
+	preagi/troll.o \
+	preagi/winnie.o
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_AGI), DYNAMIC_PLUGIN)

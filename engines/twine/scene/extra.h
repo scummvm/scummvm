@@ -62,7 +62,7 @@ enum ExtraType {
 };
 
 struct ExtraListStruct {
-	int16 info0 = 0; /**< a value of -1 indicates that this instance is free to use */
+	int16 sprite = 0; /**< a value of -1 indicates that this instance is free to use */
 	IVec3 pos;
 	IVec3 lastPos;
 	IVec3 destPos;
@@ -70,16 +70,16 @@ struct ExtraListStruct {
 	ActorMoveStruct trackActorMove;
 
 	uint16 type = 0; /**< ExtraType bitmask */
-	int16 angle = 0; // field_16
-	int32 spawnTime = 0;
+	int16 angle = 0; // weight
+	int32 spawnTime = 0; // memo timer 50hz
 	union payload { // field_ 1C
 		int16 lifeTime;
 		int16 actorIdx;
 		int16 extraIdx;
 		int16 unknown;
 	} payload{0};
-	int16 strengthOfHit = 0; // field_1E
-	int16 info1 = 0;         // field_20
+	int16 strengthOfHit = 0; // apply damage if != 0
+	int16 info1 = 0;         // various - number for zone giver
 };
 
 class TwinEEngine;
@@ -89,7 +89,7 @@ private:
 	TwinEEngine *_engine;
 
 	void throwExtra(ExtraListStruct *extra, int32 xAngle, int32 yAngle, int32 x, int32 extraAngle);
-	void processMagicballBounce(ExtraListStruct *extra, int32 x, int32 y, int32 z);
+	void bounceExtra(ExtraListStruct *extra, int32 x, int32 y, int32 z);
 	int32 findExtraKey() const;
 	int32 addExtraAimingAtKey(int32 actorIdx, int32 x, int32 y, int32 z, int32 spriteIdx, int32 extraIdx);
 	void drawSpecialShape(const ExtraShape &shapeTable, int32 x, int32 y, int32 color, int32 angle, int32 size, Common::Rect &renderRect);
@@ -115,7 +115,7 @@ public:
 	/** Reset all used extras */
 	void resetExtras();
 
-	int32 addExtraSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
+	int32 initSpecial(int32 x, int32 y, int32 z, ExtraSpecialType type);
 	int32 addExtraBonus(int32 x, int32 y, int32 z, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount);
 
 	inline int32 addExtraBonus(const IVec3 &pos, int32 xAngle, int32 yAngle, int32 type, int32 bonusAmount) {

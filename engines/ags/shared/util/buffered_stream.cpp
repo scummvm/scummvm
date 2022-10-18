@@ -29,13 +29,13 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
-	: FileStream(file_name, open_mode, work_mode, stream_endianess), _buffer(BufferStreamSize), _bufferPosition(0), _position(0) {
-	if (IsValid()) {
-		if (FileStream::Seek(0, kSeekEnd) == false)
-			error("Error determining stream end.");
+//-----------------------------------------------------------------------------
+// BufferedStream
+//-----------------------------------------------------------------------------
 
-		_end = -1;
+BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
+	: FileStream(file_name, open_mode, work_mode, stream_endianess) {
+	if (IsValid()) {
 		if (FileStream::Seek(0, kSeekEnd)) {
 			_start = 0;
 			_end = FileStream::GetPosition();
@@ -48,53 +48,85 @@ BufferedStream::BufferedStream(const String &file_name, FileOpenMode open_mode, 
 			error("Error determining stream end.");
 		}
 	}
+}
 
-	_buffer.resize(0);
+BufferedStream::~BufferedStream() {
+	Close();
 }
 
 void BufferedStream::FillBufferFromPosition(soff_t position) {
 	FileStream::Seek(position, kSeekBegin);
-
-	_buffer.resize(BufferStreamSize);
-	auto sz = FileStream::Read(_buffer.data(), BufferStreamSize);
+	_buffer.resize(BufferSize);
+	auto sz = FileStream::Read(_buffer.data(), BufferSize);
 	_buffer.resize(sz);
-
 	_bufferPosition = position;
+}
+
+void BufferedStream::FlushBuffer(soff_t position) {
+	size_t sz = _buffer.size() > 0 ? FileStream::Write(_buffer.data(), _buffer.size()) : 0u;
+	_buffer.clear(); // will start from the clean buffer next time
+	_bufferPosition += sz;
+	if (position != _bufferPosition) {
+		FileStream::Seek(position, kSeekBegin);
+		_bufferPosition = position;
+	}
 }
 
 bool BufferedStream::EOS() const {
 	return _position == _end;
 }
 
-soff_t BufferedStream::GetPosition() const {
-	return _position;
+soff_t BufferedStream::GetLength() const {
+	return _end - _start;
 }
 
-size_t BufferedStream::Read(void *toBuffer, size_t toSize) {
-	auto to = static_cast<char *>(toBuffer);
+soff_t BufferedStream::GetPosition() const {
+	return _position - _start;
+}
 
-	while (toSize > 0) {
+void BufferedStream::Close() {
+	if (GetWorkMode() == kFile_Write)
+		FlushBuffer(_position);
+	FileStream::Close();
+}
+
+bool BufferedStream::Flush() {
+	if (GetWorkMode() == kFile_Write)
+		FlushBuffer(_position);
+	return FileStream::Flush();
+}
+
+size_t BufferedStream::Read(void *buffer, size_t size) {
+	// If the read size is larger than the internal buffer size,
+	// then read directly into the user buffer and bail out.
+	if (size >= BufferSize) {
+		FileStream::Seek(_position, kSeekBegin);
+		size_t sz = FileStream::Read(buffer, size);
+		_position += sz;
+		return sz;
+	}
+
+	auto *to = static_cast<uint8_t*>(buffer);
+
+	while(size > 0) {
 		if (_position < _bufferPosition || _position >= _bufferPosition + _buffer.size()) {
 			FillBufferFromPosition(_position);
 		}
-		if (_buffer.size() <= 0) {
-			break;
-		} // reached EOS
-		assert(_position >= _bufferPosition && _position < _bufferPosition + _buffer.size());  // sanity check only, should be checked by above.
+		if (_buffer.empty()) { break; } // reached EOS
+		assert(_position >= _bufferPosition && _position < _bufferPosition + _buffer.size());
 
 		soff_t bufferOffset = _position - _bufferPosition;
 		assert(bufferOffset >= 0);
 		size_t bytesLeft = _buffer.size() - (size_t)bufferOffset;
-		size_t chunkSize = std::min<size_t>(bytesLeft, toSize);
+		size_t chunkSize = MIN<size_t>(bytesLeft, size);
 
 		memcpy(to, _buffer.data() + bufferOffset, chunkSize);
 
 		to += chunkSize;
 		_position += chunkSize;
-		toSize -= chunkSize;
+		size -= chunkSize;
 	}
-
-	return to - (char *)toBuffer;
+	return to - static_cast<uint8_t*>(buffer);
 }
 
 int32_t BufferedStream::ReadByte() {
@@ -107,12 +139,27 @@ int32_t BufferedStream::ReadByte() {
 }
 
 size_t BufferedStream::Write(const void *buffer, size_t size) {
-	FileStream::Seek(_position, kSeekBegin);
-	auto sz = FileStream::Write(buffer, size);
-	if (_position == _end)
-		_end += sz;
-	_position += sz;
-	return sz;
+	const uint8_t *from = static_cast<const uint8_t*>(buffer);
+	while (size > 0) {
+		if (_position < _bufferPosition || // seeked before buffer pos
+			_position > _bufferPosition + _buffer.size() || // seeked beyond buffer pos
+			_position >= _bufferPosition + (soff_t) BufferSize) // seeked, or exceeded buffer limit
+		{
+			FlushBuffer(_position);
+		}
+		size_t pos_in_buff = static_cast<size_t>(_position - _bufferPosition);
+		size_t chunk_sz = std::min(size, BufferSize - pos_in_buff);
+		if (_buffer.size() < pos_in_buff + chunk_sz)
+			_buffer.resize(pos_in_buff + chunk_sz);
+		memcpy(_buffer.data() + pos_in_buff, from, chunk_sz);
+		_position += chunk_sz;
+		from += chunk_sz;
+		size -= chunk_sz;
+	}
+
+	_end = std::max(_end, _position);
+	return from - static_cast<const uint8_t*>(buffer);
+
 }
 
 int32_t BufferedStream::WriteByte(uint8_t val) {
@@ -133,27 +180,24 @@ bool BufferedStream::Seek(soff_t offset, StreamSeek origin) {
 	}
 
 	// clamp
-	_position = std::min(std::max(want_pos, (soff_t)_start), _end);
+	_position = MIN(MAX(want_pos, (soff_t)_start), _end);
 	return _position == want_pos;
 }
+
+//-----------------------------------------------------------------------------
+// BufferedSectionStream
+//-----------------------------------------------------------------------------
 
 BufferedSectionStream::BufferedSectionStream(const String &file_name, soff_t start_pos, soff_t end_pos,
 	FileOpenMode open_mode, FileWorkMode work_mode, DataEndianess stream_endianess)
 	: BufferedStream(file_name, open_mode, work_mode, stream_endianess) {
 	assert(start_pos <= end_pos);
-	start_pos = std::min(start_pos, end_pos);
-	_start = std::min(start_pos, _end);
-	_end = std::min(end_pos, _end);
+	start_pos = MIN(start_pos, end_pos);
+	_start = MIN(start_pos, _end);
+	_end = MIN(end_pos, _end);
 	Seek(0, kSeekBegin);
 }
 
-soff_t BufferedSectionStream::GetPosition() const {
-	return BufferedStream::GetPosition() - _start;
-}
-
-soff_t BufferedSectionStream::GetLength() const {
-	return _end - _start;
-}
 
 } // namespace Shared
 } // namespace AGS

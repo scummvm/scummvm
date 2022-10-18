@@ -56,6 +56,9 @@ int             StringToInt(const String &s, int def_val = 0);
 // of range; the 'val' variable will be set with resulting integer, or
 // def_val on failure
 ConversionError StringToInt(const String &s, int &val, int def_val);
+// Tries to convert whole string into float value;
+// returns def_val on failure
+float           StringToFloat(const String &s, float def_val = 0.f);
 
 // A simple unescape string implementation, unescapes '\\x' into '\x'.
 String          Unescape(const String &s);
@@ -75,6 +78,11 @@ void            WriteString(const char *cstr, size_t len, Stream *out);
 
 // Serialize and unserialize string as c-string (null-terminated sequence)
 void            ReadCStr(char *buf, Stream *in, size_t buf_limit);
+// Reads a null-terminated string and !! mallocs !! a char buffer for it;
+// returns nullptr if the read string is empty.
+// Buffer is hard-limited to 1024 bytes, including null-terminator.
+// Strictly for compatibility with the C lib code!
+char *          ReadMallocCStrOrNull(Stream *in);
 void            SkipCStr(Stream *in);
 void            WriteCStr(const char *cstr, Stream *out);
 void            WriteCStr(const String &s, Stream *out);
@@ -82,6 +90,16 @@ void            WriteCStr(const String &s, Stream *out);
 // Serialize and unserialize a string map, both keys and values are read using ReadString
 void            ReadStringMap(StringMap &map, Stream *in);
 void            WriteStringMap(const StringMap &map, Stream *out);
+
+// Convert utf-8 string to ascii/ansi representation;
+	// writes into out_cstr buffer limited by out_sz bytes; returns bytes written.
+size_t ConvertUtf8ToAscii(const char *mbstr, const char *loc_name, char *out_cstr, size_t out_sz);
+// Convert utf-8 string to wide-string (16-bit char);
+// writes into out_wcstr buffer limited by out_sz *wchars*; returns *wchars* written.
+size_t ConvertUtf8ToWstr(const char *mbstr, wchar_t *out_wcstr, size_t out_sz);
+// Convert wide-string to utf-8 string;
+// writes into out_mbstr buffer limited by out_sz *bytes*; returns *bytes* written.
+size_t ConvertWstrToUtf8(const wchar_t *wcstr, char *out_mbstr, size_t out_sz);
 
 } // namespace StrUtil
 } // namespace Shared

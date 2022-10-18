@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -41,40 +42,60 @@ int16 Room4::comp_probe() {
 		{ 188, 101 }
 	};
 
-	static const Common::Rect consoleHotspots[] = {
-		{  99, 165, 160, 206 },
-		{ 167, 166, 211, 200 },
-		{ 218, 161, 279, 200 }
+	// This can't be static because it makes them global objects
+	const Common::Rect CONSOLE_HOTSPOTS[] = {
+		{  80, 140, 120, 175 },
+		{ 140, 140, 170, 175 },
+		{ 195, 140, 235, 175 }
 	};
 
 	cur_2_inventory();
 	_G(gameState)._personHide[P_CHEWY] = true;
-	_G(cur_display) = false;
 	switchRoom(4);
-	_G(cur_display) = true;
 	bool endLoop = false;
-	_G(curblk).sprite = _G(room_blk)._detImage;
+
+	// TODO: The original limited the cursor height to 16 pixels
+	//WRITE_LE_INT16(_G(room_blk)._detImage[HAND_NORMAL] + 2, 16);
+	//WRITE_LE_INT16(_G(room_blk)._detImage[HAND_CLICK] + 2, 16);
+
+	_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_NORMAL]);
+
+	byte curCursor = HAND_NORMAL;
 	int16 curX = 1;
 	int16 sprNr = RED_FRAME;
 	_G(cur)->move(160, 160);
 
+	// Clear any pending keys
+	g_events->_kbInfo._keyCode = '\0';
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	_G(minfo).button = 0;
+	_G(mouseLeftClick) = false;
+
 	start_aad(46);
+
 	while (!endLoop) {
+		// WORKAROUND: The original constrained the mouse area.
+		// We don't do that in ScummVM so the below prevents
+		// potential crashes caused by the hand sprites being
+		// unloaded if the cursor is moved up too high
+		if (g_events->_mousePos.y < 135)
+			g_events->_mousePos.y = 135;
 		mouseAction();
+
 		if (_G(mouseLeftClick)) {
-			switch (_G(in)->findHotspot(consoleHotspots)) {
+			switch (_G(out)->findHotspot(CONSOLE_HOTSPOTS)) {
 			case 0:
 				if (curX > 0)
 					--curX;
 				else
 					curX = 2;
-				g_engine->_sound->playSound(0, 1);
+				_G(det)->playSound(0, 1);
 				break;
 
 			case 1:
 				endLoop = true;
 				sprNr = YELLOW_FRAME;
-				g_engine->_sound->playSound(0, 0);
+				_G(det)->playSound(0, 0);
 				break;
 
 			case 2:
@@ -82,7 +103,7 @@ int16 Room4::comp_probe() {
 					++curX;
 				else
 					curX = 0;
-				g_engine->_sound->playSound(0, 2);
+				_G(det)->playSound(0, 2);
 				break;
 
 			default:
@@ -95,15 +116,20 @@ int16 Room4::comp_probe() {
 		_G(spr_info)[0]._x = CUR_POS[curX][0];
 		_G(spr_info)[0]._y = CUR_POS[curX][1];
 
-		if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
-			_G(curani)._start = HAND_CLICK;
-			_G(curani)._end = HAND_CLICK;
+		if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+			if (curCursor != HAND_CLICK) {
+				_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_CLICK]);
+				_G(cur)->setAnimation(HAND_CLICK, HAND_CLICK, -1);
+				curCursor = HAND_CLICK;
+			}
 		} else {
-			_G(curani)._start = HAND_NORMAL;
-			_G(curani)._end = HAND_NORMAL;
+			if (curCursor != HAND_NORMAL) {
+				_G(cur)->setCustomRoomCursor(_G(room_blk)._detImage[HAND_NORMAL]);
+				_G(cur)->setAnimation(HAND_NORMAL, HAND_NORMAL, -1);
+				curCursor = HAND_NORMAL;
+			}
 		}
 		cursorChoice(CUR_USER);
-		_G(gameState)._curHeight = 16;
 
 		if (g_events->_mousePos.y < 124)
 			g_events->_mousePos.y = 123;
@@ -118,9 +144,9 @@ int16 Room4::comp_probe() {
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(_G(menu_item));
 
-	_G(spieler_vector)[P_CHEWY]._delayCount = 0;
+	_G(moveState)[P_CHEWY]._delayCount = 0;
 	_G(mouseLeftClick) = false;
-	_G(minfo)._button = 0;
+	_G(minfo).button = 0;
 	_G(gameState)._personRoomNr[P_CHEWY] = 3;
 	_G(room)->loadRoom(&_G(room_blk), 3, &_G(gameState));
 	setPersonPos(110, 139, P_CHEWY, P_LEFT);

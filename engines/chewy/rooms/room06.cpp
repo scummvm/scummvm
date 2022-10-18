@@ -60,19 +60,19 @@ void Room6::entry() {
 
 	if (_G(gameState).R6BolaSchild && _G(gameState).R6RaumBetreten < 2) {
 		_G(det)->startDetail(7, 255, ANI_FRONT);
-		_G(atds)->delControlBit(44, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(44, ATS_ACTIVE_BIT);
 		if (!_G(flags).LoadGame)
 			++_G(gameState).R6RaumBetreten;
 
 		if (_G(gameState).R6RaumBetreten == 2) {
 			hideCur();
-			_G(det)->stop_detail(7);
+			_G(det)->stopDetail(7);
 			init_robo();
 			wait_auto_obj(0);
 			_G(gameState).R6BolaOk = true;
 			_G(obj)->show_sib(SIB_BOLA_BUTTON_R6);
 			_G(obj)->hide_sib(SIB_BOLA_R6);
-			_G(atds)->setControlBit(44, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(44, ATS_ACTIVE_BIT);
 			showCur();
 		}
 	}
@@ -102,7 +102,7 @@ void Room6::bola_button() {
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_FLECK_R6);
 			waitDetail(2);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_SCHACHT);
-			_G(atds)->delControlBit(42, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(42, ATS_ACTIVE_BIT);
 			_G(atds)->set_ats_str(41, TXT_MARK_LOOK, 1, ATS_DATA);
 			_G(obj)->calc_rsi_flip_flop(SIB_BOLA_BUTTON_R6);
 			_G(obj)->hide_sib(SIB_BOLA_BUTTON_R6);

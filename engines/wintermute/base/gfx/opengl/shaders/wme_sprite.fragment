@@ -3,7 +3,7 @@ in vec4 Color;
 
 uniform sampler2D tex;
 uniform float alphaRef;
-uniform bool alphaTest;
+uniform UBOOL alphaTest;
 
 OUTPUT
 
@@ -11,7 +11,7 @@ void main() {
 	vec4 texColor = texture(tex, Texcoord);
 	outColor = Color * texColor;
 
-	if (alphaTest && outColor.a < alphaRef) {
+	if (UBOOL_TEST(alphaTest) && outColor.a < alphaRef) {
 		discard;
 	}
 }

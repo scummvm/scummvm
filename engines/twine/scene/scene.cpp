@@ -90,7 +90,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 		act->_staticFlags.bDoesntCastShadow = 1;
 	}
 	if (staticFlags & 0x2000) {
-		//act->staticFlags.bIsBackgrounded = 1;
+		act->_staticFlags.bIsBackgrounded = 1;
 	}
 	if (staticFlags & 0x4000) {
 		act->_staticFlags.bIsCarrierActor = 1;
@@ -120,7 +120,7 @@ void Scene::setActorStaticFlags(ActorStruct *act, uint32 staticFlags) {
 
 void Scene::setBonusParameterFlags(ActorStruct *act, uint16 bonusFlags) {
 	if (bonusFlags & 0x1) {
-		act->_bonusParameter.unk1 = 1;
+		act->_bonusParameter.givenNothing = 1;
 	}
 	if (bonusFlags & 0x2) {
 		act->_bonusParameter.unk2 = 1;
@@ -195,8 +195,8 @@ bool Scene::loadSceneLBA2() {
 
 		act->loadModel((int16)stream.readUint16LE(), false);
 
-		act->_body = (BodyType)stream.readSint16LE();
-		act->_anim = (AnimationTypes)stream.readByte();
+		act->_genBody = (BodyType)stream.readSint16LE();
+		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
@@ -258,7 +258,7 @@ bool Scene::loadSceneLBA2() {
 		zone->infoData.generic.info7 = stream.readSint32LE();
 
 		zone->type = (ZoneType)stream.readUint16LE();
-		zone->snap = stream.readUint16LE();
+		zone->num = stream.readSint16LE();
 	}
 
 	_sceneNumTracks = (int16)stream.readUint16LE();
@@ -278,6 +278,7 @@ bool Scene::loadSceneLBA2() {
 	return true;
 }
 
+// LoadScene
 bool Scene::loadSceneLBA1() {
 	Common::MemoryReadStream stream(_currentScene, _currentSceneSize);
 
@@ -326,8 +327,8 @@ bool Scene::loadSceneLBA1() {
 
 		act->loadModel(stream.readUint16LE(), true);
 
-		act->_body = (BodyType)stream.readByte();
-		act->_anim = (AnimationTypes)stream.readByte();
+		act->_genBody = (BodyType)stream.readByte();
+		act->_genAnim = (AnimationTypes)stream.readByte();
 		act->_sprite = (int16)stream.readUint16LE();
 		act->_pos.x = (int16)stream.readUint16LE();
 		act->_pos.y = (int16)stream.readUint16LE();
@@ -335,6 +336,7 @@ bool Scene::loadSceneLBA1() {
 		act->_collisionPos = act->pos();
 		act->_strengthOfHit = stream.readByte();
 		setBonusParameterFlags(act, stream.readUint16LE());
+		act->_bonusParameter.givenNothing = 0;
 		act->_angle = (int16)stream.readUint16LE();
 		act->_speed = (int16)stream.readUint16LE();
 		act->_controlMode = (ControlMode)stream.readUint16LE();
@@ -366,33 +368,32 @@ bool Scene::loadSceneLBA1() {
 	_sceneNumZones = (int16)stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumZones; i++) {
 		ZoneStruct *zone = &_sceneZones[i];
-		zone->mins.x = (int16)stream.readUint16LE();
-		zone->mins.y = (int16)stream.readUint16LE();
-		zone->mins.z = (int16)stream.readUint16LE();
+		zone->mins.x = stream.readSint16LE();
+		zone->mins.y = stream.readSint16LE();
+		zone->mins.z = stream.readSint16LE();
 
-		zone->maxs.x = (int16)stream.readUint16LE();
-		zone->maxs.y = (int16)stream.readUint16LE();
-		zone->maxs.z = (int16)stream.readUint16LE();
+		zone->maxs.x = stream.readSint16LE();
+		zone->maxs.y = stream.readSint16LE();
+		zone->maxs.z = stream.readSint16LE();
 
 		zone->type = (ZoneType)stream.readUint16LE();
+		zone->num = stream.readSint16LE();
 
-		zone->infoData.generic.info0 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info1 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info2 = (int16)stream.readUint16LE();
-		zone->infoData.generic.info3 = (int16)stream.readUint16LE();
-
-		zone->snap = stream.readUint16LE();
+		zone->infoData.generic.info0 = stream.readSint16LE();
+		zone->infoData.generic.info1 = stream.readSint16LE();
+		zone->infoData.generic.info2 = stream.readSint16LE();
+		zone->infoData.generic.info3 = stream.readSint16LE();
 	}
 
 	_sceneNumTracks = stream.readUint16LE();
 	for (int32 i = 0; i < _sceneNumTracks; i++) {
 		IVec3 *point = &_sceneTracks[i];
-		point->x = (int16)stream.readUint16LE();
-		point->y = (int16)stream.readUint16LE();
-		point->z = (int16)stream.readUint16LE();
+		point->x = stream.readSint16LE();
+		point->y = stream.readSint16LE();
+		point->z = stream.readSint16LE();
 	}
 
-	if (_useScenePatches) {
+	if (_enableEnhancements) {
 		switch (_currentSceneIdx) {
 		case LBA1SceneId::Hamalayi_Mountains_landing_place:
 			_sceneActors[21]._pos.x = _sceneActors[21]._collisionPos.x = 6656 + 256;
@@ -454,7 +455,7 @@ void Scene::resetScene() {
 		_engine->_redraw->overlayList[i].info0 = -1;
 	}
 
-	_engine->_screens->_useAlternatePalette = false;
+	_engine->_screens->setNormalPal();
 }
 
 void Scene::reloadCurrentScene() {
@@ -481,9 +482,10 @@ void Scene::dumpSceneScripts() const {
 	}
 }
 
+// ChangeCube
 void Scene::changeScene() {
 	if (_engine->isLBA1()) {
-		if (_useScenePatches) {
+		if (_enableEnhancements) {
 			if (_currentSceneIdx == LBA1SceneId::Citadel_Island_Harbor && _needChangeScene == LBA1SceneId::Principal_Island_Harbor) {
 				if (_sceneNumZones >= 15 && _sceneNumTracks >= 8) {
 					const ZoneStruct *zone = &_sceneZones[15];
@@ -580,8 +582,6 @@ void Scene::changeScene() {
 
 	_engine->_gameState->_inventoryNumKeys = 0;
 	_engine->_disableScreenRecenter = false;
-	_heroPositionType = ScenePositionType::kNoPosition;
-	_sampleAmbienceTime = 0;
 
 	ActorStruct *followedActor = getActor(_currentlyFollowedActor);
 	_engine->_grid->centerOnActor(followedActor);
@@ -591,16 +591,19 @@ void Scene::changeScene() {
 	_engine->_grid->_useCellingGrid = -1;
 	_engine->_grid->_cellingGridIdx = -1;
 	_engine->_screens->_fadePalette = false;
+	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
 
 	_needChangeScene = SCENE_CEILING_GRID_FADE_1;
 	_enableGridTileRendering = true;
-
-	_engine->_renderer->setLightVector(_alphaLight, _betaLight, ANGLE_0);
+	_heroPositionType = ScenePositionType::kNoPosition;
+	_zoneHeroPos = IVec3();
+	_sampleAmbienceTime = 0;
 
 	if (_sceneMusic != -1) {
 		debug(2, "Scene %i music track id: %i", _currentSceneIdx, _sceneMusic);
 		_engine->_music->playTrackMusic(_sceneMusic);
 	}
+	_engine->_gameState->handleLateGameItems();
 }
 
 ActorStruct *Scene::getActor(int32 actorIdx) {
@@ -668,7 +671,7 @@ void Scene::processEnvironmentSound() {
 	}
 
 	// compute next ambiance timer
-	_sampleAmbienceTime = _engine->_lbaTime + (_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay) * 50;
+	_sampleAmbienceTime = _engine->_lbaTime + TO_SECONDS(_engine->getRandomNumber(_sampleMinDelayRnd) + _sampleMinDelay);
 }
 
 void Scene::processZoneExtraBonus(ZoneStruct *zone) {
@@ -682,8 +685,10 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 
 	const int32 amount = zone->infoData.Bonus.amount;
-	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(ABS(zone->maxs.x + zone->mins.x) / 2, ABS(zone->maxs.z + zone->mins.z) / 2, _sceneHero->_pos.x, _sceneHero->_pos.z);
-	const int32 index = _engine->_extra->addExtraBonus(ABS(zone->maxs.x + zone->mins.x) / 2, zone->maxs.y, ABS(zone->maxs.z + zone->mins.z) / 2, ANGLE_63, angle, bonusSprite, amount);
+	const int32 x = (zone->maxs.x + zone->mins.x) / 2;
+	const int32 z = (zone->maxs.z + zone->mins.z) / 2;
+	const int32 angle = _engine->_movements->getAngleAndSetTargetActorDistance(x, z, _sceneHero->_pos.x, _sceneHero->_pos.z);
+	const int32 index = _engine->_extra->addExtraBonus(x, zone->maxs.y, z, ANGLE_63, angle, bonusSprite, amount);
 
 	if (index != -1) {
 		_engine->_extra->_extraList[index].type |= ExtraType::TIME_IN;
@@ -691,7 +696,7 @@ void Scene::processZoneExtraBonus(ZoneStruct *zone) {
 	}
 }
 
-void Scene::processActorZones(int32 actorIdx) {
+void Scene::checkZoneSce(int32 actorIdx) {
 	ActorStruct *actor = &_sceneActors[actorIdx];
 
 	int32 currentX = actor->_pos.x;
@@ -715,7 +720,7 @@ void Scene::processActorZones(int32 actorIdx) {
 			switch (zone->type) {
 			case ZoneType::kCube:
 				if (IS_HERO(actorIdx) && actor->_life > 0) {
-					_needChangeScene = zone->infoData.ChangeScene.newSceneIdx;
+					_needChangeScene = zone->num;
 					_zoneHeroPos.x = actor->_pos.x - zone->mins.x + zone->infoData.ChangeScene.x;
 					_zoneHeroPos.y = actor->_pos.y - zone->mins.y + zone->infoData.ChangeScene.y;
 					_zoneHeroPos.z = actor->_pos.z - zone->mins.z + zone->infoData.ChangeScene.z;
@@ -729,22 +734,22 @@ void Scene::processActorZones(int32 actorIdx) {
 						_engine->_grid->_newCamera.x = zone->infoData.CameraView.x;
 						_engine->_grid->_newCamera.y = zone->infoData.CameraView.y;
 						_engine->_grid->_newCamera.z = zone->infoData.CameraView.z;
-						_engine->_redraw->_reqBgRedraw = true;
+						_engine->_redraw->_firstTime = true;
 					}
 				}
 				break;
 			case ZoneType::kSceneric:
-				actor->_zone = zone->infoData.Sceneric.zoneIdx;
+				actor->_zone = zone->num;
 				break;
 			case ZoneType::kGrid:
 				if (_currentlyFollowedActor == actorIdx) {
 					tmpCellingGrid = true;
-					if (_engine->_grid->_useCellingGrid != zone->infoData.CeillingGrid.newGrid) {
-						if (zone->infoData.CeillingGrid.newGrid != -1) {
+					if (_engine->_grid->_useCellingGrid != zone->num) {
+						if (zone->num != -1) {
 							_engine->_grid->createGridMap();
 						}
 
-						_engine->_grid->_useCellingGrid = zone->infoData.CeillingGrid.newGrid;
+						_engine->_grid->_useCellingGrid = zone->num;
 						_engine->_grid->_cellingGridIdx = z;
 						ScopedEngineFreeze freeze(_engine);
 						_engine->_grid->initCellingGrid(_engine->_grid->_useCellingGrid);
@@ -763,18 +768,18 @@ void Scene::processActorZones(int32 actorIdx) {
 					_engine->exitSceneryView();
 					_engine->_text->setFontCrossColor(zone->infoData.DisplayText.textColor);
 					_talkingActor = actorIdx;
-					_engine->_text->drawTextProgressive(zone->infoData.DisplayText.textIdx);
+					_engine->_text->drawTextProgressive((TextId)zone->num);
 					_engine->_redraw->redrawEngineActions(true);
 				}
 				break;
 			case ZoneType::kLadder:
-				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_anim == AnimationTypes::kForward || actor->_anim == AnimationTypes::kTopLadder || actor->_anim == AnimationTypes::kClimbLadder)) {
-					IVec3 destPos = _engine->_movements->rotateActor(actor->_boudingBox.mins.x, actor->_boudingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
-					destPos.x += _engine->_movements->_processActor.x;
-					destPos.z += _engine->_movements->_processActor.z;
+				if (IS_HERO(actorIdx) && _engine->_actor->_heroBehaviour != HeroBehaviourType::kProtoPack && (actor->_genAnim == AnimationTypes::kForward || actor->_genAnim == AnimationTypes::kTopLadder || actor->_genAnim == AnimationTypes::kClimbLadder)) {
+					IVec3 destPos = _engine->_movements->rotateActor(actor->_boundingBox.mins.x, actor->_boundingBox.mins.z, actor->_angle + ANGLE_360 + ANGLE_135);
+					destPos.x += actor->_processActor.x;
+					destPos.z += actor->_processActor.z;
 
 					if (destPos.x >= 0 && destPos.z >= 0 && destPos.x <= SCENE_SIZE_MAX && destPos.z <= SCENE_SIZE_MAX) {
-						if (_engine->_grid->getBrickShape(destPos.x, actor->_pos.y + BRICK_HEIGHT, destPos.z) != ShapeType::kNone) {
+						if (_engine->_grid->worldColBrick(destPos.x, actor->_pos.y + SIZE_BRICK_Y, destPos.z) != ShapeType::kNone) {
 							_currentActorInZone = true;
 							if (actor->_pos.y >= ABS(zone->mins.y + zone->maxs.y) / 2) {
 								_engine->_animations->initAnim(AnimationTypes::kTopLadder, AnimType::kAnimationAllThen, AnimationTypes::kStanding, actorIdx); // reached end of ladder
@@ -793,7 +798,7 @@ void Scene::processActorZones(int32 actorIdx) {
 		_engine->_grid->_useCellingGrid = -1;
 		_engine->_grid->_cellingGridIdx = -1;
 		_engine->_grid->createGridMap();
-		_engine->_redraw->_reqBgRedraw = true;
+		_engine->_redraw->_firstTime = true;
 	}
 }
 

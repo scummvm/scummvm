@@ -96,7 +96,7 @@ String GetDirectoryPath(const String &path) {
 	String dir = path;
 	FixupPath(dir);
 	size_t slash_at = dir.FindCharReverse('/');
-	if (slash_at != (size_t)-1) {
+	if (slash_at != String::NoIndex) {
 		dir.ClipMid(slash_at + 1);
 		return dir;
 	}

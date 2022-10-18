@@ -31,7 +31,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Skip EGA dithering pass (full color backgrounds)"),
 			_s("Skip dithering pass in EGA games, graphics are shown with full colors"),
 			"disable_dithering",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -41,7 +43,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable high resolution graphics"),
 			_s("Enable high resolution graphics/content"),
 			"enable_high_resolution_graphics",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -51,7 +55,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable black-lined video"),
 			_s("Draw black lines over videos to increase their apparent sharpness"),
 			"enable_black_lined_video",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -62,7 +68,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use high-quality video scaling"),
 			_s("Use linear interpolation when upscaling videos, where possible"),
 			"enable_hq_video",
-			true
+			true,
+			0,
+			0
 		}
 	},
 #endif
@@ -73,7 +81,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use high-quality \"LarryScale\" cel scaling"),
 			_s("Use special cartoon scaler for drawing character sprites"),
 			"enable_larryscale",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -83,7 +93,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Prefer digital sound effects"),
 			_s("Prefer digital sound effects instead of synthesized ones"),
 			"prefer_digitalsfx",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -93,7 +105,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	// Jones in the Fast Lane - CD audio tracks or resource.snd
@@ -103,7 +117,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use CD audio"),
 			_s("Use CD audio instead of in-game audio, if available"),
 			"use_cdaudio",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -114,7 +130,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use Windows cursors"),
 			_s("Use the Windows cursors (smaller and monochrome) instead of the DOS ones"),
 			"windows_cursors",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -125,7 +143,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use silver cursors"),
 			_s("Use the alternate set of silver cursors instead of the normal golden ones"),
 			"silver_cursors",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -136,7 +156,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable content censoring"),
 			_s("Enable the game's built-in optional content censoring"),
 			"enable_censoring",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -147,7 +169,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Upscale videos"),
 			_s("Upscale videos to double their size"),
 			"enable_video_upscale",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -158,7 +182,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use RGB rendering"),
 			_s("Use RGB rendering to improve screen transitions"),
 			"rgb_rendering",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -169,7 +195,9 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use per-resource modified palettes"),
 			_s("Use custom per-resource palettes to improve visuals"),
 			"palette_mods",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -180,19 +208,23 @@ const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable bearded musicians"),
 			_s("Enable graphics that were disabled for legal reasons"),
 			"enable_bearded_musicians",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
 #ifdef USE_TTS
- 	{
- 		GAMEOPTION_TTS,
- 		{
- 			_s("Enable Text to Speech"),
- 			_s("Use TTS to read the descriptions (if TTS is available)"),
- 			"tts_enabled",
- 			false
- 		}
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
  	},
 #endif
 

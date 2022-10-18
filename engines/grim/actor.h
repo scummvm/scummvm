@@ -25,6 +25,7 @@
 #include "engines/grim/pool.h"
 #include "engines/grim/object.h"
 #include "engines/grim/color.h"
+
 #include "math/vector3d.h"
 #include "math/angle.h"
 #include "math/quat.h"

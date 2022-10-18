@@ -144,7 +144,7 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &rect) const {
 }
 
 void Surface::copyToCurrentPort(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 
@@ -158,7 +158,7 @@ void Surface::copyToCurrentPort(const Common::Rect &srcRect, const Common::Rect 
 }
 
 void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Common::Rect &dstRect) const {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 
@@ -186,7 +186,7 @@ void Surface::copyToCurrentPortTransparent(const Common::Rect &srcRect, const Co
 }
 
 void Surface::copyToCurrentPortMasked(const Common::Rect &srcRect, const Common::Rect &dstRect, const Surface *mask) const {
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 
@@ -220,7 +220,7 @@ void Surface::copyToCurrentPortTransparentGlow(const Common::Rect &srcRect, cons
 	// This is the same as copyToCurrentPortTransparent(), but turns the red value of each
 	// pixel all the way up.
 
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 	byte *src = (byte *)_surface->getBasePtr(srcRect.left, srcRect.top);
 	byte *dst = (byte *)screen->getBasePtr(dstRect.left, dstRect.top);
 
@@ -251,7 +251,7 @@ void Surface::scaleTransparentCopy(const Common::Rect &srcRect, const Common::Re
 	// I'm doing simple linear scaling here
 	// dstRect(x, y) = srcRect(x * srcW / dstW, y * srcH / dstH);
 
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();
@@ -281,7 +281,7 @@ void Surface::scaleTransparentCopyGlow(const Common::Rect &srcRect, const Common
 	// This is the same as scaleTransparentCopy(), but turns the red value of each
 	// pixel all the way up.
 
-	Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getCurSurface();
+	Graphics::Surface *screen = g_vm->_gfx->getCurSurface();
 
 	int srcW = srcRect.width();
 	int srcH = srcRect.height();

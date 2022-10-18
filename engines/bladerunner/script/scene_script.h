@@ -279,6 +279,7 @@ DECLARE_SCRIPT(MA04)
 	void phoneCallWithClovis();
 	void turnOnTV();
 	void sleep();
+	void blip();
 END_SCRIPT
 
 DECLARE_SCRIPT(MA05)

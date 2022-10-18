@@ -20,6 +20,7 @@
  */
 
 #include "video/avi_decoder.h"
+#include "video/flic_decoder.h"
 #include "video/mpegps_decoder.h"
 #include "video/theora_decoder.h"
 #include "ags/shared/core/platform.h"
@@ -52,7 +53,7 @@ namespace AGS3 {
 
 using AGS::Shared::AssetManager;
 
-static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip, int flags, bool showError) {
+static bool play_video(Video::VideoDecoder *decoder, const char *name, int flags, VideoSkipType skip, bool showError) {
 	std::unique_ptr<Stream> video_stream(_GP(AssetMgr)->OpenAsset(name));
 	if (!video_stream) {
 		if (showError)
@@ -70,13 +71,12 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 	update_polled_stuff_if_runtime();
 
 	Graphics::Screen scr;
-	bool stretchVideo = (flags % 10) != 0;
-	int canAbort = skip;
-	bool ignoreAudio = (flags >= 10);
+	bool stretchVideo = (flags & kVideo_Stretch) != 0;
+	bool enableVideo = (flags & kVideo_EnableVideo) != 0;
+	bool enableAudio = (flags & kVideo_EnableAudio) != 0;
 
-	if (!ignoreAudio) {
-		stop_all_sound_and_music();
-	}
+	if (!enableAudio)
+		decoder->setVolume(0);
 
 	update_polled_stuff_if_runtime();
 	 
@@ -86,8 +86,7 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 			// Get the next video frame and draw onto the screen
 			const Graphics::Surface *frame = decoder->decodeNextFrame();
 
-			if (frame) {
-
+			if (frame && enableVideo) {
 				if (stretchVideo && frame->w == scr.w && frame->h == scr.h)
 					// Don't need to stretch video after all
 					stretchVideo = false;
@@ -107,18 +106,19 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 		g_system->delayMillis(10);
 		::AGS::g_events->pollEvents();
 
-		if (canAbort) {
+		if (skip != VideoSkipNone) {
 			// Check for whether user aborted video
 			KeyInput key;
-			int mbut, mwheelz;
+			eAGSMouseButton mbut;
+			int mwheelz;
 			if (run_service_key_controls(key)) {
-				if (key.Key == 27 && canAbort)
+				if (key.Key == 27 && skip >= VideoSkipEscape)
 					return true;
-				if (canAbort >= 2)
+				if (skip >= VideoSkipAnyKey)
 					return true;  // skip on any key
 			}
 
-			if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && canAbort == 3) {
+			if (run_service_mb_controls(mbut, mwheelz) && mbut >= kMouseNone && skip == VideoSkipKeyOrMouse) {
 				return true; // skip on mouse click
 			}
 		}
@@ -129,30 +129,40 @@ static bool play_video(Video::VideoDecoder *decoder, const char *name, int skip,
 	return true;
 }
 
-bool play_avi_video(const char *name, int skip, int flags, bool showError) {
+bool play_avi_video(const char *name, int flags, VideoSkipType skip, bool showError) {
 	Video::AVIDecoder decoder;
-	return play_video(&decoder, name, skip, flags, showError);
+	return play_video(&decoder, name, flags, skip, showError);
 }
 
-bool play_mpeg_video(const char *name, int skip, int flags, bool showError) {
+bool play_mpeg_video(const char *name, int flags, VideoSkipType skip, bool showError) {
 	Video::MPEGPSDecoder decoder;
-	return play_video(&decoder, name, skip, flags, showError);
+	return play_video(&decoder, name, flags, skip, showError);
 }
 
-bool play_theora_video(const char *name, int skip, int flags, bool showError) {
+bool play_theora_video(const char *name, int flags, VideoSkipType skip, bool showError) {
 #if !defined (USE_THEORADEC)
 	if (showError)
 		Display("This games uses Theora videos but ScummVM has been compiled without Theora support");
 	return false;
 #else
 	Video::TheoraDecoder decoder;
-	return play_video(&decoder, name, skip, flags, showError);
+	return play_video(&decoder, name, flags, skip, showError);
 #endif
 }
 
-bool play_flc_file(int numb, int playflags) {
-	warning("TODO: play_flc_file");
-	return false;
+bool play_flc_video(int numb, int flags, VideoSkipType skip) {
+	Video::FlicDecoder decoder;
+	String flicName = String::FromFormat("flic%d.flc", numb);
+
+	return play_video(&decoder, flicName, flags, skip, false);
+}
+
+void video_pause() {
+	// TODO
+}
+
+void video_resume() {
+	// TODO
 }
 
 } // namespace AGS3

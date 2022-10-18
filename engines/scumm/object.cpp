@@ -172,7 +172,7 @@ void ScummEngine::clearOwnerOf(int obj) {
 	// Stop the associated object script code (else crashes might occurs)
 	stopObjectScript(obj);
 
-	// If the object is "owned" by a the current room, we scan the
+	// If the object is "owned" by the current room, we scan the
 	// object list and (only if it's a floating object) nuke it.
 	if (getOwner(obj) == OF_OWNER_ROOM) {
 		for (i = 0; i < _numLocalObjects; i++)  {
@@ -307,7 +307,7 @@ int ScummEngine::getState(int obj) {
 		// it. Fortunately this does not prevent frustrated players from
 		// blowing up the mansion, should they feel the urge to.
 
-		if (_game.id == GID_MANIAC && _game.version != 0 && (obj == 182 || obj == 193))
+		if (_game.id == GID_MANIAC && _game.version != 0 && _game.platform != Common::kPlatformNES && (obj == 182 || obj == 193))
 			_objectStateTable[obj] |= kObjectState_08;
 	}
 
@@ -368,6 +368,37 @@ int ScummEngine::whereIsObject(int object) const {
 	return WIO_NOT_FOUND;
 }
 
+int ScummEngine::getObjectOrActorWidth(int object, int &width) {
+	Actor *act;
+
+	if (objIsActor(object)) {
+		act = derefActorSafe(objToActor(object), "getObjectOrActorWidth");
+		if (act && act->isInCurrentRoom()) {
+			width = act->_width;
+			return 0;
+		} else
+			return -1;
+	}
+
+	switch (whereIsObject(object)) {
+	case WIO_NOT_FOUND:
+		return -1;
+	case WIO_INVENTORY:
+		if (objIsActor(_objectOwnerTable[object])) {
+			act = derefActor(_objectOwnerTable[object], "getObjectOrActorWidth(2)");
+			if (act && act->isInCurrentRoom()) {
+				width = act->_width;
+				return 0;
+			}
+		}
+		return -1;
+	default:
+		break;
+	}
+	getObjectWidth(object, width);
+	return 0;
+}
+
 int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
 	Actor *act;
 
@@ -405,7 +436,7 @@ int ScummEngine::getObjectOrActorXY(int object, int &x, int &y) {
  * Return the position of an object.
  * Returns X, Y and direction in angles
  */
-void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir) {
+void ScummEngine::getObjectXYPos(int object, int &x, int &y, int &dir, int &width) {
 	int idx = getObjectIndex(object);
 	assert(idx >= 0);
 	ObjectData &od = _objs[idx];
@@ -624,8 +655,16 @@ void ScummEngine::drawObject(int obj, int arg) {
 	const int xpos = od.x_pos / 8;
 	const int ypos = od.y_pos;
 
+	// In most cases we want to mask out the last three bits, though it is
+	// possible that this has already been done by resetRoomObject(). In
+	// later versions we need to keep those bits intact. See bug #13419 for
+	// an example of where this is important.
+
+	if (_game.version < 7)
+		od.height &= 0xFFFFFFF8;
+
 	width = od.width / 8;
-	height = od.height &= 0xFFFFFFF8;	// Mask out last 3 bits
+	height = od.height;
 
 	// Short circuit for objects which aren't visible at all.
 	if (width == 0 || xpos > _screenEndStrip || xpos + width < _screenStartStrip)
@@ -655,6 +694,38 @@ void ScummEngine::drawObject(int obj, int arg) {
 		numstrip++;
 	}
 
+	byte *patchedBmpPtr = nullptr;
+	// WORKAROUND bug #3208: in all 256-color versions of Indy3, the tapestry
+	// in one of the first rooms of Castle Brunwald has a strange vertical
+	// line at the bottom of its first 'strip' (purple in the DOS version,
+	// blue on the FM-TOWNS). We can't include the whole redrawn resource for
+	// copyright reasons, so we just patch the impacted bytes from a fixed OI
+	// (made with BMRP.EXE).
+	if (_game.id == GID_INDY3 && (_game.features & GF_OLD256) && _currentRoom == 135
+	    && od.obj_nr == 324 && numstrip == od.width / 8 && _enableEnhancements) {
+		// Extra safety: make sure that the OI has the expected length. Indy3
+		// should always be GF_SMALL_HEADER, but that's implicit, so do an
+		// explicit check, since we're doing some low-level byte tricks.
+		const uint32 origOILen = 6184, firstPartLen = 123, droppedPartLen = 3, patchLen = 8;
+		const int nextObjIdx = getObjectIndex(od.obj_nr + 1);
+		if ((_game.features & GF_SMALL_HEADER) && nextObjIdx != -1 &&
+		    _objs[nextObjIdx].OBIMoffset - od.OBIMoffset == origOILen && READ_LE_UINT32(ptr) == 6146) {
+			// Copy the original (compressed) OI and patch the faulty content
+			patchedBmpPtr = new byte[origOILen - 8 + patchLen - droppedPartLen];
+			memcpy(patchedBmpPtr, ptr, firstPartLen);
+			memcpy(patchedBmpPtr + firstPartLen, "\x08\xAF\xE0\xC7\x47\xB8\xF1\x11", patchLen);
+			memcpy(patchedBmpPtr + firstPartLen + patchLen, ptr + (firstPartLen + droppedPartLen),
+			    origOILen - 8 - (firstPartLen + droppedPartLen));
+
+			// Adjust the offsets for the new OI size
+			WRITE_LE_UINT32(patchedBmpPtr, READ_LE_UINT32(patchedBmpPtr) + (patchLen - droppedPartLen));
+			for (int i = 2; i <= od.width / 8; i++)
+				WRITE_LE_UINT32(patchedBmpPtr + i * 4, READ_LE_UINT32(patchedBmpPtr + i * 4) + (patchLen - droppedPartLen));
+
+			ptr = patchedBmpPtr;
+		}
+	}
+
 	if (numstrip != 0) {
 		byte flags = od.flags | Gdi::dbObjectMode;
 
@@ -671,6 +742,9 @@ void ScummEngine::drawObject(int obj, int arg) {
 #endif
 			_gdi->drawBitmap(ptr, &_virtscr[kMainVirtScreen], x, ypos, width * 8, height, x - xpos, numstrip, flags);
 	}
+
+	if (patchedBmpPtr)
+		delete[] patchedBmpPtr;
 }
 
 void ScummEngine::clearRoomObjects() {
@@ -1785,24 +1859,50 @@ void ScummEngine_v6::drawBlastObject(BlastObject *eo) {
 }
 
 void ScummEngine_v6::removeBlastObjects() {
-	BlastObject *eo;
-	int i;
+	// While v6-7 games restore the rect immediately, we only reset
+	// the blastObject queue in here for v8, since their graphics
+	// has to remain on screen until after runAllScripts().
+	if (_game.version == 8) {
+		if (_blastObjectQueuePos != 0) {
+			for (int i = 0; i < _blastObjectQueuePos; i++) {
+				_blastObjectsRectsToBeRestored[i] = _blastObjectQueue[i].rect;
+				_blastObjectRectsQueue = _blastObjectQueuePos;
+			}
+		}
 
-	eo = _blastObjectQueue;
-	for (i = 0; i < _blastObjectQueuePos; i++, eo++) {
-		removeBlastObject(eo);
+		_blastObjectQueuePos = 0;
+		return;
 	}
+
+	for (int i = 0; i < _blastObjectQueuePos; i++) {
+		restoreBlastObjectRect(_blastObjectQueue[i].rect);
+	}
+
 	_blastObjectQueuePos = 0;
 }
 
-void ScummEngine_v6::removeBlastObject(BlastObject *eo) {
+void ScummEngine_v6::restoreBlastObjectsRects() {
+	// While v6-7 games restore the rect immediately in
+	// ScummEngine_v6::removeBlastObjects(), we do that here
+	// for v8, which has to restore the rects after runAllScripts().
+	if (_game.version < 8)
+		return;
+
+	for (int i = 0; i < _blastObjectRectsQueue; i++) {
+		restoreBlastObjectRect(_blastObjectsRectsToBeRestored[i]);
+
+		// Invalidate the rect after restoring it...
+		_blastObjectsRectsToBeRestored[i].setHeight(0);
+	}
+
+	_blastObjectRectsQueue = 0;
+}
+
+void ScummEngine_v6::restoreBlastObjectRect(Common::Rect r) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
-	Common::Rect r;
 	int left_strip, right_strip;
 	int i;
-
-	r = eo->rect;
 
 	r.clip(Common::Rect(vs->w, vs->h));
 

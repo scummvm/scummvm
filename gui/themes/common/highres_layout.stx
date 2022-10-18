@@ -69,15 +69,13 @@
 		<def var = 'Radiobutton.Spacing' value = '15' scalable = 'yes'/>
 
 		<def var = 'GridSupported' value = '1'/>
-		<def var = 'GridItemThumbnail.Width' value = '192' scalable = 'no'/>
-		<def var = 'GridItemThumbnail.Height' value = '192' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Width' value = '50' scalable = 'no'/>
-		<def var = 'Grid.FlagIcon.Height' value = '25' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Width' value = '32' scalable = 'no'/>
-		<def var = 'Grid.PlatformIcon.Height' value = '32' scalable = 'no'/>
-		<def var = 'Grid.XSpacing' value = '40' scalable = 'no'/>
-		<def var = 'Grid.YSpacing' value = '30' scalable = 'no'/>
-		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no'/>
+		<def var = 'Grid.XSpacing' value = '40' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.YSpacing' value = '30' scalable = 'no' resolution = 'x>640' />
+		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no' resolution = 'x>640' />
+
+		<def var = 'Grid.XSpacing' value = '20' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.YSpacing' value = '15' scalable = 'no' resolution = 'x<641' />
+		<def var = 'Grid.ShowTitles' value = '1' scalable = 'no' resolution = 'x<641' />
 
 		<widget name = 'OptionsLabel'
 				size = '115, Globals.Line.Height'
@@ -226,7 +224,7 @@
 					/>
 				</layout>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '2'>
+			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
@@ -299,10 +297,9 @@
 				/>
 			</layout>
 			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
-				<widget name = 'GameList'/>
 				<widget name = 'IconArea'/>
 			</layout>
-			<layout type = 'horizontal' padding = '0, 0, 2, 0' spacing = '2'>
+			<layout type = 'horizontal' padding = '0, 0, 6, 0' spacing = '2'>
 				<widget name = 'ListSwitch'
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
@@ -310,6 +307,18 @@
 				<widget name = 'GridSwitch'
 						height = 'Globals.Button.Height'
 						width = 'Globals.Button.Height'
+				/>
+				<widget name = 'GridItemsPerRowDesc'
+						type = 'OptionsLabel'
+				/>
+				<widget name = 'GridItemsPerRow'
+						type = 'Slider'
+						rtl = 'no'
+				/>
+				<space size = '6'
+				/>
+				<widget name = 'GridItemsPerRowLabel'
+						type = 'SmallLabel'
 				/>
 				<space />
 			</layout>
@@ -368,7 +377,25 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GlobalOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+	<dialog name = 'GlobalOptions' overlays = 'screen' inset = '32' shading = 'dim' resolution='x<800'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Apply'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GlobalOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -472,6 +499,18 @@
 						type = 'PopUp'
 				/>
 			</layout>
+			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
+				<widget name = 'grShaderButton'
+						type = 'Button'
+				/>
+				<widget name = 'grShader'
+						height = 'Globals.Line.Height'
+				/>
+				<widget name = 'grShaderClearButton'
+						height = 'Globals.Line.Height'
+						width = 'Globals.Line.Height'
+				/>
+			</layout>
 			<widget name = 'grAspectCheckbox'
 					type = 'Checkbox'
 			/>
@@ -497,19 +536,6 @@
 						type = 'OptionsLabel'
 				/>
 				<widget name = 'grAntiAliasPopup'
-						type = 'PopUp'
-				/>
-			</layout>
-		</layout>
-	</dialog>
-
-	<dialog name = 'GlobalOptions_Shader' overlays = 'Dialog.GlobalOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<layout type = 'horizontal' padding = '0, 0, 0, 0' spacing = '10' align = 'center'>
-				<widget name = 'grShaderPopUpDesc'
-						type = 'OptionsLabel'
-				/>
-				<widget name = 'grShaderPopUp'
 						type = 'PopUp'
 				/>
 			</layout>
@@ -1056,6 +1082,9 @@
 				<widget name = 'CloseButton'
 						type = 'Button'
 				/>
+				<widget name = 'ResetButton'
+						type = 'Button'
+				/>
 			</layout>
 		</layout>
 	</dialog>
@@ -1199,7 +1228,22 @@
 		</layout>
 	</dialog>
 
-	<dialog name = 'GameOptions' overlays = 'Dialog.Launcher.GameList' shading = 'dim'>
+	<dialog name = 'GameOptions' overlays = 'screen' inset = '32' shading = 'dim' resolution='x<800'>
+		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+			<widget name = 'TabWidget' type = 'TabWidget'/>
+			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
+				<space/>
+				<widget name = 'Cancel'
+						type = 'Button'
+				/>
+				<widget name = 'Ok'
+						type = 'Button'
+				/>
+			</layout>
+		</layout>
+	</dialog>
+
+	<dialog name = 'GameOptions' overlays = 'screen_center' inset = '32' size='750,550' shading = 'dim' resolution='x>799'>
 		<layout type = 'vertical' padding = '0, 0, 0, 0'>
 			<widget name = 'TabWidget' type = 'TabWidget'/>
 			<layout type = 'horizontal' padding = '16, 16, 16, 16'>
@@ -1246,15 +1290,6 @@
 					type = 'Checkbox'
 			/>
 			<import layout = 'Dialog.GlobalOptions_Graphics_Container' />
-		</layout>
-	</dialog>
-
-	<dialog name = 'GameOptions_Shader' overlays = 'Dialog.GameOptions.TabWidget'>
-		<layout type = 'vertical' padding = '16, 16, 16, 16' spacing = '8'>
-			<widget name = 'EnableTabCheckbox'
-					type = 'Checkbox'
-			/>
-			<import layout = 'Dialog.GlobalOptions_Shader' />
 		</layout>
 	</dialog>
 
@@ -1434,7 +1469,7 @@
 	</dialog>
 
 	<dialog name = 'GlobalConfig_Engine' overlays = 'Dialog.GlobalConfig.TabWidget'>
-		<layout type = 'vertical' padding = '0, 0, 0, 0'>
+		<layout type = 'vertical' padding = '8, 8, 8, 8'>
 			<widget name = 'Container'/>
 		</layout>
 	</dialog>

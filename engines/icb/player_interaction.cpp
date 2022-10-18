@@ -47,6 +47,7 @@
 namespace ICB {
 
 mcodeFunctionReturnCodes fn_start_player_interaction(int32 &result, int32 *params) { return (MS->fn_start_player_interaction(result, params)); }
+mcodeFunctionReturnCodes fn_set_interact_distance(int32 &result, int32 *params) { return (MS->fn_set_interact_distance(result, params)); }
 
 #define INTERACT_DISTANCE (250 * REAL_ONE)
 #define MIN_INTERACT_DISTANCE (5 * REAL_ONE)
@@ -228,8 +229,6 @@ void _player::Find_current_player_interact_object() {
 	}
 }
 
-#if CD_MODE == 0
-
 void _player::Render_crude_interact_highlight() {
 	uint32 pitch; // backbuffer pitch
 	uint8 *ad;
@@ -280,12 +279,6 @@ void _player::Render_crude_interact_highlight() {
 	surface_manager->Unlock_surface(working_buffer_id);
 }
 
-#else
-
-void _player::Render_crude_interact_highlight() {}
-
-#endif // #if CD_MODE == 0
-
 __mode_return _player::Player_interact() {
 	// check if the player has pressed the interact button
 	// if so see if there's a current interact object and if so setup the interaction
@@ -294,7 +287,7 @@ __mode_return _player::Player_interact() {
 	//				__FINISHED_THIS_CYCLE, or
 	//				__MORE_THIS_CYCLE
 
-	c_game_object *iobject;
+	CGame *iobject;
 	uint32 j;
 
 	// first check for auto-interact objects
@@ -303,15 +296,15 @@ __mode_return _player::Player_interact() {
 		for (j = 0; j < MAX_auto_interact; j++)
 			if (MS->auto_interact_list[j] == (cur_interact_id + 1)) {
 				//      try to fetch the object
-				iobject = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+				iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
-				Zdebug("  INTERACT with %s", iobject->GetName());
+				Zdebug("  INTERACT with %s", CGameObject::GetName(iobject));
 
 				//      get the address of the script we want to run
-				const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+				const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, CGameObject::GetScriptNameFullHash(iobject, OB_ACTION_CONTEXT)); //
 
 				if (pc == nullptr)
-					Fatal_error("Object [%s] has no interact script", iobject->GetName());
+					Fatal_error("Object [%s] has no interact script", CGameObject::GetName(iobject));
 
 				//      now run the action context script which may or may not set a new script on level 1
 				RunScript(pc, iobject);
@@ -323,13 +316,13 @@ __mode_return _player::Player_interact() {
 	// check for interact button AND there being an object to interact with
 	if ((cur_state.IsButtonSet(__INTERACT)) && (interact_selected) && (!interact_lock) && (!stood_on_lift)) {
 		// try to fetch the object
-		iobject = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+		iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 		// get the address of the script we want to run
-		const char *pc = (const char *)MS->scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(OB_ACTION_CONTEXT)); //
+		const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(MS->scripts, CGameObject::GetScriptNameFullHash(iobject, OB_ACTION_CONTEXT)); //
 
 		if (pc == nullptr)
-			Fatal_error("Object [%s] has no interact script", iobject->GetName());
+			Fatal_error("Object [%s] has no interact script", CGameObject::GetName(iobject));
 
 		interact_lock = TRUE8; // switch the lock on
 
@@ -352,6 +345,23 @@ __mode_return _player::Player_interact() {
 		interact_lock = FALSE8; // let go
 
 	return (__MORE_THIS_CYCLE);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_set_interact_distance(int32 &, int32 *params) {
+	// set the distance that the player needs to be from named object to interact with it
+	// params: 0 - name of object, 1 - distance in cm's
+
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+	if (id == 0xffffffff)
+		Fatal_error("[%s] calling fn_set_interact_distance finds [%s] is not a legal object", CGameObject::GetName(object), object_name);
+
+	if (params[1]) //positive value
+		logic_structs[id]->interact_dist = (PXreal)(params[1] * params[1]);
+	else
+		logic_structs[id]->interact_dist = DEFAULT_interact_distance;  //default interact distance - this is the ICB figure, but ED imps can change as required
+
+	return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int32 *params) {
@@ -379,7 +389,7 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 	M->interacting = TRUE8;
 
 	// fetch action script
-	ad = (char *)scripts->Try_fetch_item_by_hash(params[0] /*(uint32)params*/);
+	ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, params[0] /*(uint32)params*/);
 
 	//	write actual offset
 	L->logic[1] = ad;
@@ -399,23 +409,23 @@ mcodeFunctionReturnCodes _game_session::fn_start_player_interaction(int32 &, int
 bool8 _game_session::Engine_start_interaction(const char *script, uint32 id) {
 	// set the current mega object interacting named 'script' in target object 'id'
 
-	c_game_object *iobject;
+	CGame *iobject;
 	uint32 script_hash;
 
 	script_hash = HashString(script);
 
 	// get target object
-	iobject = (c_game_object *)MS->objects->Fetch_item_by_number(id);
+	iobject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!iobject)
 		Fatal_error("Engine_start_interaction - named object dont exist"); // should never happen
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < iobject->GetNoScripts(); k++) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(iobject); k++) {
 
-		if (script_hash == iobject->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(iobject, k)) {
 			//			script k is the one to run
 			//			get the address of the script we want to run
-			char *pc = (char *)scripts->Try_fetch_item_by_hash(iobject->GetScriptNameFullHash(k));
+			char *pc = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(iobject, k));
 
 			// set target id
 			M->target_id = id;

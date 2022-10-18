@@ -155,15 +155,5 @@ endif
 # Include common rules
 include $(srcdir)/rules.mk
 
-# HACK: Skip this when including the file for detection objects.
-ifeq "$(USE_RULES)" "1"
-ifeq ($(BACKEND), maemo)
-# Ugly workaround, screen.cpp crashes gcc version 3.4.4 (CodeSourcery ARM 2005q3-2) with anything but -O3
-$(MODULE)/graphics/screen.o: $(MODULE)/graphics/screen.cpp
-	$(MKDIR) $(*D)/$(DEPDIR)
-	$(CXX) -Wp,-MMD,"$(*D)/$(DEPDIR)/$(*F).d",-MQ,"$@",-MP $(CXXFLAGS) -O3 $(CPPFLAGS) -c $(<) -o $*.o
-endif # BACKEND=MAEMO
-endif # USE_RULES
-
 # Detection objects
 DETECT_OBJS += $(MODULE)/detection.o

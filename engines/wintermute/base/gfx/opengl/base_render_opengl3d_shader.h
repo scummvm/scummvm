@@ -65,14 +65,12 @@ public:
 
 	void dumpData(const char *filename) override {}
 	BaseImage *takeScreenshot() override;
-	bool saveScreenShot(const Common::String &filename, int sizeX = 0, int sizeY = 0) override;
 	void setWindowed(bool windowed) override;
 	void fadeToColor(byte r, byte g, byte b, byte a) override;
 	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
 
 	bool setViewport(int left, int top, int right, int bottom) override;
-	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;                // Unused outside indicator-display
-	bool drawRect(int x1, int y1, int x2, int y2, uint32 color, int width = 1) override; // Unused outside indicator-display
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
 
 	bool setProjection() override;
 	bool setProjection2D() override;
@@ -123,7 +121,7 @@ public:
 	void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
 
 	Mesh3DS *createMesh3DS() override;
-	MeshX *createMeshX() override;
+	XMesh *createXMesh() override;
 	ShadowVolume *createShadowVolume() override;
 
 private:
@@ -148,15 +146,15 @@ private:
 	GLuint _flatShadowFrameBuffer;
 	GLuint _flatShadowRenderTexture;
 	GLuint _flatShadowDepthBuffer;
-	OpenGL::ShaderGL *_spriteShader;
-	OpenGL::ShaderGL *_fadeShader;
-	OpenGL::ShaderGL *_modelXShader;
-	OpenGL::ShaderGL *_geometryShader;
-	OpenGL::ShaderGL *_shadowVolumeShader;
-	OpenGL::ShaderGL *_shadowMaskShader;
-	OpenGL::ShaderGL *_lineShader;
-	OpenGL::ShaderGL *_flatShadowModelXShader;
-	OpenGL::ShaderGL *_flatShadowMaskShader;
+	OpenGL::Shader *_spriteShader;
+	OpenGL::Shader *_fadeShader;
+	OpenGL::Shader *_xmodelShader;
+	OpenGL::Shader *_geometryShader;
+	OpenGL::Shader *_shadowVolumeShader;
+	OpenGL::Shader *_shadowMaskShader;
+	OpenGL::Shader *_lineShader;
+	OpenGL::Shader *_flatShadowXModelShader;
+	OpenGL::Shader *_flatShadowMaskShader;
 };
 
 } // namespace Wintermute

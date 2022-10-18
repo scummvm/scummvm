@@ -158,9 +158,11 @@ __mode_return _player::Player_press_remora_button() {
 		Push_control_mode(ACTOR_RELATIVE);
 		MS->Awaken_doors(); // sleeping doors come alive while in remora display!
 
-		// This sets a flag which the Remora will pick up next cycle.
-		g_oRemora->ActivateRemora(_remora::MOTION_SCAN);
-		g_oRemora->CycleRemoraLogic(cur_state);
+		if (g_icb->getGameType() == GType_ICB) {
+			// This sets a flag which the Remora will pick up next cycle.
+			g_oRemora->ActivateRemora(_remora::MOTION_SCAN);
+			g_oRemora->CycleRemoraLogic(cur_state);
+		}
 		return (__FINISHED_THIS_CYCLE);
 	} else if (!(cur_state.IsButtonSet(__REMORA)))
 		remora_lock = FALSE8;
@@ -236,14 +238,14 @@ __mode_return _player::Player_press_fire_button() {
 		if ((interact_selected) && (MS->Call_socket(cur_interact_id, "give_state", &retval))) {
 			if (!retval) {
 				//      try to fetch the object
-				MS->socket_object = (c_game_object *)MS->objects->Fetch_item_by_number(cur_interact_id);
+				MS->socket_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, cur_interact_id);
 
 				res = MS->Call_socket(cur_interact_id, "gun_shot", &retval);
 
 				MS->Set_chi_permission(); // if chi's around she gets permission to start shooting
 
 				if (!res)
-					Tdebug("gun_shot_errors.txt", "no [%s] for object [%s]", "gun_shot", MS->socket_object->GetName());
+					Tdebug("gun_shot_errors.txt", "no [%s] for object [%s]", "gun_shot", CGameObject::GetName(MS->socket_object));
 			}
 		} else {
 			// no hit play ricochet sound
@@ -556,7 +558,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 	// Jake 15/2/98 : set the default
 	__mode_return ret = __FINISHED_THIS_CYCLE;
 	int32 bull_per_clip;
-	c_game_object *ob;
+	CGame *ob;
 
 	// Set the player control mode correctly
 	switch (g_px->display_mode) {
@@ -738,18 +740,18 @@ mcodeFunctionReturnCodes _player::Gateway() {
 
 						interact_lock = TRUE8;
 
-						ob = (c_game_object *)MS->objects->Fetch_item_by_number(player_id);
+						ob = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, player_id);
 
 						// Make sure number of medi-packs is > 0
 						if (GetNoMediPacks() > 0) {
-							hit_var = ob->GetVariable((const char *)"hits");
-							hits = ob->GetIntegerVariable(hit_var);
+							hit_var = CGameObject::GetVariable(ob, (const char *)"hits");
+							hits = CGameObject::GetIntegerVariable(ob, hit_var);
 							if (hits != MAX_HITS) {
 								new_energy = hits + MAX_HITS / 2;
 								if (new_energy > MAX_HITS)
 									new_energy = MAX_HITS;
 
-								ob->SetIntegerVariable(hit_var, new_energy); // full health again
+								CGameObject::SetIntegerVariable(ob, hit_var, new_energy); // full health again
 								UseMediPacks(1); // use the pack
 								// Play the medi-pack sound !
 								RegisterSoundSpecial(defaultUsingMediSfx, addingMediDesc, 127, 0);
@@ -815,6 +817,10 @@ mcodeFunctionReturnCodes _player::Gateway() {
 			break;
 
 		case REMORA:
+			if (g_icb->getGameType() == GType_ELDORADO) {
+				return IR_REPEAT;
+			}
+
 			// The Remora is currently up over the game screen.  Most important check is to see if player
 			// wants to quit it.
 			if (cur_state.IsButtonSet(__REMORA)) {
@@ -934,7 +940,7 @@ mcodeFunctionReturnCodes _player::Gateway() {
 		}
 	} while (ret == __MORE_THIS_CYCLE);
 
-	return (IR_REPEAT);
+	return IR_REPEAT;
 }
 
 void _player::Set_player_status(_player_stat new_mode) {
@@ -978,14 +984,14 @@ void _player::Soft_start_new_mode_no_link(_player_stat new_mode, __mega_set_name
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// JAKE : just in case defrag has moved something about
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(type), log->voxel_info->info_name_hash[type], log->voxel_info->base_path,
 	                                                log->voxel_info->base_path_hash); //
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1027,7 +1033,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// JAKE : just in case defrag has moved something about
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(opt_link), log->voxel_info->info_name_hash[opt_link], log->voxel_info->base_path,
@@ -1035,7 +1041,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1255,7 +1261,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 	                                                log->voxel_info->base_path, log->voxel_info->base_path_hash); //
 
 	// find out leg position for current frame
-	old_leg_pos = PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance;
+	old_leg_pos = FROM_LE_16(PXFrameEnOfAnim(log->anim_pc, pCurAnim)->left_foot_distance);
 
 	// Load the first link candidate anim
 	PXanim *pLnkAnim = (PXanim *)rs_anims->Res_open(log->voxel_info->get_info_name(opt_link), log->voxel_info->info_name_hash[opt_link], log->voxel_info->base_path,
@@ -1263,7 +1269,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1278,7 +1284,7 @@ void _player::Soft_start_new_mode(_player_stat new_mode, __mega_set_names opt_li
 
 	// see which has the closest leg position
 	for (j = 0; j < (pLnkAnim->frame_qty - 1); j++) {
-		int32 foot = PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance;
+		int32 foot = FROM_LE_16(PXFrameEnOfAnim(j, pLnkAnim)->left_foot_distance);
 		int32 d = twabs(foot - old_leg_pos);
 		if (d < diff) {
 			diff = d;
@@ -1354,7 +1360,7 @@ __mode_return _player::Process_strike() {
 	currentFrame = PXFrameEnOfAnim(log->anim_pc, pAnim);
 
 	if (currentFrame->marker_qty > INT_POS) {
-		if (INT_TYPE == currentFrame->markers[INT_POS].GetType()) {
+		if (INT_TYPE == PXmarker_PSX_Object::GetType(&currentFrame->markers[INT_POS])) {
 			// punching a prop
 			if ((interact_selected) && (MS->logic_structs[cur_interact_id]->image_type == PROP)) {
 				MS->Call_socket(cur_interact_id, "ko", &retval); // call a ko script if there is one
@@ -1372,12 +1378,12 @@ __mode_return _player::Process_strike() {
 
 				// get interact marker offset
 				PXreal x_org, z_org, unused;
-				PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS].GetXYZ(&x_org, &unused, &z_org);
+				PXmarker_PSX_Object::GetXYZ(&PXFrameEnOfAnim(0, pAnim)->markers[ORG_POS], &x_org, &unused, &z_org);
 
 				// The interact marker exists
 				PXreal x_int, z_int;
 
-				currentFrame->markers[INT_POS].GetXYZ(&x_int, &unused, &z_int);
+				PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[INT_POS], &x_int, &unused, &z_int);
 
 				int_x = x_int - x_org;
 				int_z = z_int - z_org;
@@ -1398,11 +1404,11 @@ __mode_return _player::Process_strike() {
 						//								behind
 						ret = MS->Call_socket(cur_interact_id, "ko", &retval);
 						if (!ret)
-							Fatal_error("no ko script for object [%s]", MS->socket_object->GetName());
+							Fatal_error("no ko script for object [%s]", CGameObject::GetName(MS->socket_object));
 					} else { // infront
 						ret = MS->Call_socket(cur_interact_id, "see_ko", &retval);
 						if (!ret)
-							Fatal_error("no see_ko script for object [%s]", MS->socket_object->GetName());
+							Fatal_error("no see_ko script for object [%s]", CGameObject::GetName(MS->socket_object));
 					}
 					MS->Signal_to_other_guards(); // make other guards see this!
 					return __FINISHED_THIS_CYCLE;
@@ -1912,7 +1918,7 @@ void _player::Add_to_interact_history() {
 	// record it
 	MS->history[MS->cur_history].interaction = TRUE8;
 	MS->history[MS->cur_history].id = MS->stairs[stair_num].stair_id;
-	Tdebug("history.txt", "Stair [%s]", MS->objects->Fetch_items_name_by_number(MS->stairs[stair_num].stair_id));
+	Tdebug("history.txt", "Stair [%s]", LinkedDataObject::Fetch_items_name_by_number(MS->objects, MS->stairs[stair_num].stair_id));
 
 	MS->floor_def->Set_floor_rect_flag(log);
 	Tdebug("history.txt", "...%d", log->owner_floor_rect);
@@ -2729,16 +2735,16 @@ bool8 _player::Advance_frame_motion_and_pan(__mega_set_names anim_type) {
 	// Get the current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(log->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetPan(&pan1);
-	currentFrame->markers[ORG_POS].GetPan(&pan2);
+	PXmarker_PSX_Object::GetPan(&nextFrame->markers[ORG_POS], &pan1);
+	PXmarker_PSX_Object::GetPan(&currentFrame->markers[ORG_POS], &pan2);
 
 	log->pan += (pan1 - pan2); // update by difference
 
 	// get motion displacement from currently displayed frame to next one
 	// note that we always read frame+1 for motion of next frame even though the voxel frame itself will be looped back to 0
 	PXreal x1, x2, z1, z2, unused;
-	nextFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
-	currentFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x2, &unused, &z2);
 
 	xnext = x1 - x2;
 	znext = z1 - z2;
@@ -2748,7 +2754,7 @@ bool8 _player::Advance_frame_motion_and_pan(__mega_set_names anim_type) {
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
-	PXFrameEnOfAnim(log->anim_pc, pAnim)->markers[ORG_POS].GetPan(&pan);
+	PXmarker_PSX_Object::GetPan(&PXFrameEnOfAnim(log->anim_pc, pAnim)->markers[ORG_POS], &pan);
 	log->pan_adjust = pan; // this value will be unwound from the orientation of the frame at render time in stage draw
 
 	// calculate the new x and z coordinate from this frames motion offset
@@ -2825,16 +2831,16 @@ bool8 _player::Reverse_frame_motion_and_pan(__mega_set_names anim_type) {
 	// Get the current frame from the anim
 	PXframe *currentFrame = PXFrameEnOfAnim(log->anim_pc, pAnim);
 
-	nextFrame->markers[ORG_POS].GetPan(&pan1);
-	currentFrame->markers[ORG_POS].GetPan(&pan2);
+	PXmarker_PSX_Object::GetPan(&nextFrame->markers[ORG_POS], &pan1);
+	PXmarker_PSX_Object::GetPan(&currentFrame->markers[ORG_POS], &pan2);
 
 	log->pan += (pan1 - pan2); // update by difference
 
 	// get motion displacement from currently displayed frame to next one
 	// note that we always read frame+1 for motion of next frame even though the voxel frame itself will be looped back to 0
 	PXreal x1, x2, z1, z2, unused;
-	nextFrame->markers[ORG_POS].GetXYZ(&x1, &unused, &z1);
-	currentFrame->markers[ORG_POS].GetXYZ(&x2, &unused, &z2);
+	PXmarker_PSX_Object::GetXYZ(&nextFrame->markers[ORG_POS], &x1, &unused, &z1);
+	PXmarker_PSX_Object::GetXYZ(&currentFrame->markers[ORG_POS], &x2, &unused, &z2);
 
 	xnext = x1 - x2;
 	znext = z1 - z2;
@@ -2844,7 +2850,7 @@ bool8 _player::Reverse_frame_motion_and_pan(__mega_set_names anim_type) {
 
 	// get the pan unwind value of the frame to be printed
 	PXreal pan;
-	nextFrame->markers[ORG_POS].GetPan(&pan);
+	PXmarker_PSX_Object::GetPan(&nextFrame->markers[ORG_POS], &pan);
 
 	log->pan_adjust = pan;
 
@@ -2900,8 +2906,10 @@ void _player::Set_player_id(uint32 id) {
 	// get player structures - we can be sure they wont get moved
 	log = g_mission->session->Fetch_object_struct(player_id);
 
-	// get initial barriers for player
-	MS->Prepare_megas_route_barriers(TRUE8);
+	if (g_icb->getGameType() == GType_ICB) {
+		// get initial barriers for player
+		MS->Prepare_megas_route_barriers(TRUE8);
+	}
 
 	// reset pointer to player parent barrier box
 	MS->logic_structs[id]->mega->cur_parent = nullptr;
@@ -3139,19 +3147,19 @@ void _game_session::Restart_player() {
 	player.Reset_player();
 
 	int32 var_num;
-	c_game_object *ob;
+	CGame *ob;
 
-	ob = (c_game_object *)objects->Fetch_item_by_number(player.Fetch_player_id());
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
 
-	var_num = ob->GetVariable("state");
+	var_num = CGameObject::GetVariable(ob, "state");
 	if (var_num == -1)
 		Fatal_error("Restart_player cant fetch state");
-	ob->SetIntegerVariable(var_num, 0); // alive
+	CGameObject::SetIntegerVariable(ob, var_num, 0); // alive
 
-	var_num = ob->GetVariable("hits");
+	var_num = CGameObject::GetVariable(ob, "hits");
 	if (var_num == -1)
 		Fatal_error("Restart_player cant fetch hits");
-	ob->SetIntegerVariable(var_num, MAX_HITS); // another 10 hits
+	CGameObject::SetIntegerVariable(ob, var_num, MAX_HITS); // another 10 hits
 
 	L->logic_level = 0; // restart
 	L->logic_ref[1] = nullptr;

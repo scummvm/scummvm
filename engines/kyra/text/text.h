@@ -51,6 +51,7 @@ public:
 
 	uint16 _talkMessageY;
 	uint16 _talkMessageH;
+	int _langExtraSpacing;
 	bool printed() const { return _talkMessagePrinted; }
 
 protected:

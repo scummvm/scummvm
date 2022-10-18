@@ -38,6 +38,9 @@ enum {
 struct GameFlags {
 	Common::Language lang;
 
+	// Only for MR versions which have 4 languages instead of 3 (Simplified Chinese/Traditional Chinese)
+	Common::Language extraLang;
+
 	// language overwrites of fan translations (only needed for multilingual games)
 	Common::Language fanLang;
 	Common::Language replacedLang;
@@ -53,7 +56,6 @@ struct GameFlags {
 	bool useHiColorMode       : 1;
 	bool useDigSound          : 1;
 	bool useInstallerPackage  : 1;
-	bool hasExtraLanguage     : 1;
 
 	byte gameID;
 };

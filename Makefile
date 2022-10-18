@@ -1,3 +1,8 @@
+# GNU Make 3.80 and older have bugs that cause parsing issues.
+# Make sure we have at least version 3.81.
+ifndef .FEATURES
+$(error GNU Make 3.81 or higher is required)
+endif
 
 #######################################################################
 # Default compilation parameters. Normally don't edit these           #
@@ -74,6 +79,12 @@ MKDIR   ?= mkdir -p
 RM      ?= rm -f
 RM_REC  ?= $(RM) -r
 ZIP     ?= zip -q
+
+ifeq ($(VERBOSE_BUILD),1)
+	LS := ls -l
+else
+	LS := true
+endif
 
 #######################################################################
 # Misc stuff - you should never have to edit this                     #

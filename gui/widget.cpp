@@ -292,6 +292,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, int x, int y, int w, int h, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(align, g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
 	_useEllipsis = useEllipsis;
 }
 
@@ -302,6 +303,7 @@ StaticTextWidget::StaticTextWidget(GuiObject *boss, const Common::String &name, 
 	_label = text;
 	_align = Graphics::convertTextAlignH(g_gui.xmlEval()->getWidgetTextHAlign(name), g_gui.useRTL() && _useRTL);
 	setFont(font, lang);
+	_fontColor = ThemeEngine::FontColor::kFontColorNormal; 
 	_useEllipsis = useEllipsis;
 }
 
@@ -326,11 +328,14 @@ void StaticTextWidget::setAlign(Graphics::TextAlign align) {
 	}
 }
 
+void StaticTextWidget::setFontColor(const ThemeEngine::FontColor color) {
+	_fontColor = color; 
+}
 
 void StaticTextWidget::drawWidget() {
 	g_gui.theme()->drawText(
 			Common::Rect(_x, _y, _x + _w, _y + _h),
-			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, _useEllipsis, _font
+			_label, _state, _align, ThemeEngine::kTextInversionNone, 0, _useEllipsis, _font, _fontColor
 	);
 }
 
@@ -346,22 +351,38 @@ void StaticTextWidget::setFont(ThemeEngine::FontStyle font, Common::Language lan
 
 #pragma mark -
 
-ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel)
 	: StaticTextWidget(boss, x, y, w, h, cleanupHotkey(label), Graphics::kTextAlignCenter, tooltip), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
+	_lowresLabel = cleanupHotkey(lowresLabel);
 
-	if (hotkey == 0)
-		_hotkey = parseHotkey(label);
+	if (hotkey == 0) {
+		_highresHotkey = parseHotkey(label);
+		_hotkey = _highresHotkey;
+		_lowresHotkey = parseHotkey(lowresLabel);
+	} else {
+		_highresHotkey = hotkey;
+		_lowresHotkey = hotkey;
+	}
 
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
 
-ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
+ButtonWidget::ButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel)
 	: StaticTextWidget(boss, name, cleanupHotkey(label), tooltip), CommandSender(boss),
 	  _cmd(cmd), _hotkey(hotkey), _duringPress(false) {
-	if (hotkey == 0)
-		_hotkey = parseHotkey(label);
+	_lowresLabel = cleanupHotkey(lowresLabel);
+
+	if (hotkey == 0) {
+		_highresHotkey = parseHotkey(label);
+		_hotkey = _highresHotkey;
+		_lowresHotkey = parseHotkey(lowresLabel);
+	} else {
+		_highresHotkey = hotkey;
+		_lowresHotkey = hotkey;
+	}
+
 	setFlags(WIDGET_ENABLED/* | WIDGET_BORDER*/ | WIDGET_CLEARBG);
 	_type = kButtonWidget;
 }
@@ -387,7 +408,7 @@ void ButtonWidget::handleMouseDown(int x, int y, int button, int clickCount) {
 }
 
 void ButtonWidget::drawWidget() {
-	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state, getFlags());
+	g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state, getFlags());
 }
 
 void ButtonWidget::setLabel(const Common::U32String &label) {
@@ -396,6 +417,18 @@ void ButtonWidget::setLabel(const Common::U32String &label) {
 
 void ButtonWidget::setLabel(const Common::String &label) {
 	ButtonWidget::setLabel(Common::U32String(label));
+}
+
+void ButtonWidget::setLowresLabel(const Common::U32String &label) {
+	_lowresLabel = cleanupHotkey(label);
+}
+
+const Common::U32String &ButtonWidget::getLabel() {
+	bool useLowres = false;
+	if (!_lowresLabel.empty())
+		useLowres = g_system->getOverlayWidth() <= 320;
+	_hotkey = useLowres ? _lowresHotkey : _highresHotkey;
+	return useLowres ? _lowresLabel : _label;
 }
 
 ButtonWidget *addClearButton(GuiObject *boss, const Common::String &name, uint32 cmd, int x, int y, int w, int h) {
@@ -437,15 +470,15 @@ void ButtonWidget::setUnpressedState() {
 
 #pragma mark -
 
-DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey) :
-		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey) {
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel) :
+		ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey, lowresLabel) {
 	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 
 	reset();
 }
 
-DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey) :
-		ButtonWidget(boss, name, label, tooltip, cmd, hotkey) {
+DropdownButtonWidget::DropdownButtonWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey, const Common::U32String &lowresLabel) :
+		ButtonWidget(boss, name, label, tooltip, cmd, hotkey, lowresLabel) {
 	setFlags(getFlags() | WIDGET_TRACK_MOUSE);
 
 	reset();
@@ -534,9 +567,9 @@ void DropdownButtonWidget::clearEntries() {
 void DropdownButtonWidget::drawWidget() {
 	if (_entries.empty()) {
 		// Degrade to a regular button
-		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), _label, _state);
+		g_gui.theme()->drawButton(Common::Rect(_x, _y, _x + _w, _y + _h), getLabel(), _state);
 	} else {
-		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, _label,
+		g_gui.theme()->drawDropDownButton(Common::Rect(_x, _y, _x + _w, _y + _h), _dropdownWidth, getLabel(),
 										  _state, _inButton, _inDropdown, (g_gui.useRTL() && _useRTL));
 	}
 }
@@ -561,12 +594,7 @@ const Graphics::ManagedSurface *scaleGfx(const Graphics::ManagedSurface *gfx, in
 	w = nw;
 	h = nh;
 
-	Graphics::ManagedSurface tmp(*gfx);
-
-	const Graphics::ManagedSurface *tmp2 = new Graphics::ManagedSurface(tmp.surfacePtr()->scale(w, h, filtering));
-	tmp.free();
-
-	return tmp2;
+	return new Graphics::ManagedSurface(gfx->rawSurface().scale(w, h, filtering));
 }
 
 PicButtonWidget::PicButtonWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
@@ -674,14 +702,14 @@ void PicButtonWidget::drawWidget() {
 #pragma mark -
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, int x, int y, int w, int h, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false) {
+	: ButtonWidget(boss, x, y, w, h, label, tooltip, cmd, hotkey), _state(false), _overrideText(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
 }
 
 CheckboxWidget::CheckboxWidget(GuiObject *boss, const Common::String &name, const Common::U32String &label, const Common::U32String &tooltip, uint32 cmd, uint8 hotkey)
-	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false) {
+	: ButtonWidget(boss, name, label, tooltip, cmd, hotkey), _state(false), _overrideText(false) {
 	setFlags(WIDGET_ENABLED);
 	_type = kCheckboxWidget;
 	_spacing = g_gui.xmlEval()->getVar("Globals.Checkbox.Spacing", 15);
@@ -691,6 +719,7 @@ void CheckboxWidget::handleMouseUp(int x, int y, int button, int clickCount) {
 	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	setUnpressedState();
 	_duringPress = false;
 }
 
@@ -702,9 +731,13 @@ void CheckboxWidget::setState(bool state) {
 	}
 	sendCommand(_cmd, _state);
 }
+	
+void CheckboxWidget::setOverride(bool enable) {
+	_overrideText = enable; 
+}
 
 void CheckboxWidget::drawWidget() {
-	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawCheckbox(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, _overrideText, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -
@@ -757,6 +790,7 @@ void RadiobuttonWidget::handleMouseUp(int x, int y, int button, int clickCount) 
 	if (isEnabled() && _duringPress && x >= 0 && x < _w && y >= 0 && y < _h) {
 		toggleState();
 	}
+	setUnpressedState();
 	_duringPress = false;
 }
 
@@ -775,7 +809,7 @@ void RadiobuttonWidget::setState(bool state, bool setGroup) {
 }
 
 void RadiobuttonWidget::drawWidget() {
-	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, _label, _state, Widget::_state, (g_gui.useRTL() && _useRTL));
+	g_gui.theme()->drawRadiobutton(Common::Rect(_x, _y, _x + _w, _y + _h), _spacing, getLabel(), _state, Widget::_state, (g_gui.useRTL() && _useRTL));
 }
 
 #pragma mark -

@@ -20,22 +20,18 @@
  */
 
 #include "chewy/dialogs/cinema.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
 namespace Dialogs {
 
 static constexpr int CINEMA_LINES = 12;
-
-static const Common::Rect cinematicsHotspots[] = {
-	{ 10,  80,  32, 105 },
-	{ 10, 150,  32, 175 },
-	{ 36,  64, 310, 188 },
-	{ -1,  -1,  -1,  -1 }
-};
 
 static const uint8 CINEMA_FLICS[35] = {
 	FCUT_000, FCUT_002, FCUT_006, FCUT_009, FCUT_015,
@@ -50,8 +46,8 @@ static const uint8 CINEMA_FLICS[35] = {
 void Cinema::execute() {
 	int16 txt_anz = 0;
 	int topIndex = 0;
-	int selected = -1;
-	bool flag = false;
+	int selected = 0;
+	bool flag = true;
 	int delay = 0;
 	Common::Array<int> cutscenes;
 	Common::String cutsceneName;
@@ -60,7 +56,7 @@ void Cinema::execute() {
 
 	_G(fontMgr)->setFont(_G(font6));
 
-	_G(room)->load_tgp(4, &_G(room_blk), 1, 0, GBOOK);
+	_G(room)->load_tgp(4, &_G(room_blk), 1, false, GBOOK);
 	showCur();
 	EVENTS_CLEAR;
 	g_events->_kbInfo._scanCode = 0;
@@ -73,7 +69,11 @@ void Cinema::execute() {
 			// Render cut-scene list
 
 			for (int i = 0; i < CINEMA_LINES; ++i) {
-				cutsceneName = _G(atds)->getTextEntry(98 + 500, i + topIndex + 1);
+				if ((topIndex + i) >= (int)cutscenes.size())
+					continue;
+
+				cutsceneName = _G(atds)->getTextEntry(98,
+					546 + cutscenes[topIndex + i], ATS_DATA);
 				int yp = i * 10 + 68;
 
 				if (i == selected)
@@ -82,44 +82,38 @@ void Cinema::execute() {
 			}
 		} else {
 			// No cut-scene seen yet
-			cutsceneName = _G(atds)->getTextEntry(98 + 500, 0);
+			cutsceneName = _G(atds)->getTextEntry(98, 545, ATS_DATA);
 			_G(out)->printxy(40, 68, 14, 300, _G(scr_width), cutsceneName.c_str());
 		}
 
-		if (_G(minfo)._button == 1 && !flag) {
+		if (_G(minfo).button == 1 && !flag) {
 			flag = true;
-			switch (_G(in)->findHotspot(cinematicsHotspots)) {
+			switch (_G(out)->findHotspot(_G(cinematicsHotspots))) {
 			case 0:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_UP;
-				if (!endLoop)
-					endLoop = true;
-
 				break;
 
 			case 1:
 				g_events->_kbInfo._scanCode = Common::KEYCODE_DOWN;
-				if (!endLoop)
-					endLoop = true;
-
 				break;
 
-			case 2:
-			{
-				int selIndex = (g_events->_mousePos.y - 68) / 10 + topIndex;
-				if (selIndex < (int)cutscenes.size())
-					selected = selIndex;
-				g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
+			case 2: {
+				int selLine = (g_events->_mousePos.y - 68) / 10;
+				int selIndex = topIndex + selLine;
+				if (selIndex < (int)cutscenes.size()) {
+					selected = selLine;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_RETURN;
+				}
 				break;
 			}
 
 			default:
 				break;
 			}
-		} else if (_G(minfo)._button == 2 && !flag) {
+		} else if (_G(minfo).button == 2 && !flag) {
 			g_events->_kbInfo._scanCode = Common::KEYCODE_ESCAPE;
 			flag = true;
-		} else if (_G(minfo)._button != 1) {
-			flag = false;
+		} else if (_G(minfo).button != 1) {
 			delay = 0;
 		} else if (flag) {
 			g_events->update();
@@ -161,10 +155,10 @@ void Cinema::execute() {
 		case Common::KEYCODE_RETURN:
 			hideCur();
 			_G(out)->cls();
-			_G(out)->setPointer(_G(screen0));
-			_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+			_G(out)->setPointer((byte *)g_screen->getPixels());
+			_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
-			flic_cut(CINEMA_FLICS[topIndex + selected]);
+			flic_cut(CINEMA_FLICS[cutscenes[topIndex + selected]]);
 			_G(fontMgr)->setFont(_G(font6));
 			showCur();
 			delay = 0;
@@ -177,19 +171,19 @@ void Cinema::execute() {
 
 		// The below are hacks to get the dialog to work in ScummVM
 		g_events->_kbInfo._scanCode = 0;
-		_G(minfo)._button = 0;
+		_G(minfo).button = 0;
 		txt_anz = 0;
 
 		if (!txt_anz) {
-			_G(cur)->plot_cur();
+			_G(cur)->updateCursor();
 
 			if (flag) {
 				flag = false;
-				_G(out)->setPointer(_G(screen0));
+				_G(out)->setPointer((byte *)g_screen->getPixels());
 				_G(room)->set_ak_pal(&_G(room_blk));
-				_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+				_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 			} else {
-				_G(out)->back2screen(_G(workpage));
+				_G(out)->copyToScreen();
 			}
 		}
 

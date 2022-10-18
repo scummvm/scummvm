@@ -59,7 +59,7 @@ public:
 	uint32 getAnimTransitionTime(char *from, char *to) override;
 	BaseArray<BaseAnimationTransitionTime *> _transitionTimes;
 
-	virtual bool renderModel();
+	virtual bool renderModel() override;
 
 	uint32 _defaultTransTime;
 	uint32 _defaultStopTransTime;

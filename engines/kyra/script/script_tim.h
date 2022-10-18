@@ -275,7 +275,7 @@ private:
 	void update() override;
 	void checkSpeechProgress() override;
 
-	char *getTableString(int id);
+	const char *getTableString(int id);
 	void advanceToOpcode(int opcode);
 
 	LoLEngine *_vm;

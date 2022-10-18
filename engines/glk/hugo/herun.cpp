@@ -1037,9 +1037,14 @@ void Hugo::RunPrint() {
 				{
 					if (!hexnumber)
 					{
+						// FIXME: This code has identical branch code since the cast to unsigned int of a
+						//        is reversed by passing this to itoa as this has the function signature of:
+						//        char * itoa(int value, char *str, int base)
+#if 0
 						if (capital)
 							itoa((unsigned int)a, line, 10);
 						else
+#endif
 							itoa(a, line, 10);
 						capital = 0;
 					}

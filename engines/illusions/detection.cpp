@@ -116,11 +116,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "illusions";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Illusions";
 	}
 

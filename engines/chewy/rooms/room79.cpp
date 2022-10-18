@@ -30,8 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room79::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
@@ -65,7 +64,7 @@ void Room79::xit() {
 
 void Room79::setup_func() {
 	calc_person_look();
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int howDestX, howDestY, nicDestX, nicDestY;
 

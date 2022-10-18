@@ -67,10 +67,7 @@ public:
 	int getDefaultGraphicsMode() const override;
 	bool setGraphicsMode(int mode, uint flags = kGfxModeNoFlags) override;
 	int getGraphicsMode() const override;
-	const GraphicsMode *getSupportedShaders() const override final;
-	int getDefaultShader() const override final;
-	int getShader() const override final;
-	bool setShader(int id) override final;
+	bool setShader(const Common::String &name) override final;
 	const GraphicsMode *getSupportedStretchModes() const override final;
 	int getDefaultStretchMode() const override final;
 	bool setStretchMode(int mode) override final;

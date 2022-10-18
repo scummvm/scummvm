@@ -59,6 +59,8 @@
 #define GUIO_RENDERATARIST		"\x22"
 #define GUIO_RENDERMACINTOSH	"\x23"
 #define GUIO_RENDERMACINTOSHBW	"\x28"	// Setting this to 0x28 is not ideal, but there is no free slot left. Maybe we need to migrate to 3-digit numbers...
+#define GUIO_RENDERCGACOMP		"\x29"
+#define GUIO_RENDERCGABW		"\x2a"
 
 #define GUIO_LINKSPEECHTOSFX "\x24"
 #define GUIO_LINKMUSICTOSFX  "\x25"
@@ -111,6 +113,9 @@
 #define GUIO7(a,b,c,d,e,f,g) (a b c d e f g)
 #define GUIO8(a,b,c,d,e,f,g,h) (a b c d e f g h)
 #define GUIO9(a,b,c,d,e,f,g,h,i) (a b c d e f g h i)
+#define GUIO10(a,b,c,d,e,f,g,h,i,j) (a b c d e f g h i j)
+#define GUIO11(a,b,c,d,e,f,g,h,i,j,k) (a b c d e f g h i j k)
+#define GUIO12(a,b,c,d,e,f,g,h,i,j,k,l) (a b c d e f g h i j k l)
 
 namespace Common {
 

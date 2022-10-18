@@ -31,8 +31,7 @@ namespace Rooms {
 
 void Room78::entry() {
 	_G(gameState).r76State = -1;
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 1);
 	hideCur();
 	_G(gameState).ScrollxStep = 1;
 	_G(gameState)._personHide[P_CHEWY] = true;
@@ -49,7 +48,7 @@ void Room78::entry() {
 
 		int destX = 592;
 		while (destX > 0) {
-			_G(det)->setSetailPos(3, destX, 77);
+			_G(det)->setDetailPos(3, destX, 77);
 			if (delay)
 				--delay;
 			else {
@@ -71,8 +70,8 @@ void Room78::entry() {
 		bool flag2 = false;
 
 		while (exitLoopFlag == 0) {
-			_G(det)->setSetailPos(0, det0DestX, 93);
-			_G(det)->setSetailPos(4, det4DestX, 57);
+			_G(det)->setDetailPos(0, det0DestX, 93);
+			_G(det)->setDetailPos(4, det4DestX, 57);
 			
 			if (delay)
 				--delay;
@@ -84,7 +83,7 @@ void Room78::entry() {
 							flag1 = true;
 					} else {
 						flag1 = true;
-						_G(det)->stop_detail(0);
+						_G(det)->stopDetail(0);
 						_G(det)->startDetail(1, 1, false);
 					}
 				}
@@ -94,7 +93,7 @@ void Room78::entry() {
 				if (det4DestX <= 222 && flag2 == 0) {
 					if (_G(gameState).flags29_10) {
 						flag2 = true;
-						_G(det)->stop_detail(4);
+						_G(det)->stopDetail(4);
 						if (flag1 == 0) {
 							_G(det)->startDetail(5, 1, false);
 						} else {

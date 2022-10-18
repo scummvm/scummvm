@@ -27,12 +27,12 @@ namespace Rooms {
 
 class Room25 {
 private:
-	static void xit_gleiter();
+	static void xit_glider();
 
 public:
 	static void entry();
-	static int16 gleiter_loesch();
-	static int16 use_gleiter();
+	static int16 extinguishGliderFlames();
+	static int16 useGlider();
 };
 
 } // namespace Rooms

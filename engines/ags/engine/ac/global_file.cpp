@@ -67,9 +67,13 @@ int32_t FindFreeFileSlot() {
 }
 
 int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileWorkMode work_mode) {
+	debug_script_print(kDbgMsg_Debug, "FileOpen: request: %s", fnmm);
+
 	int32_t useindx = FindFreeFileSlot();
-	if (useindx < 0)
+	if (useindx < 0) {
+		debug_script_warn("FileOpen: no free handles: %s", fnmm);
 		return 0;
+	}
 
 	ResolvedPath rp;
 	if (open_mode == kFile_Open && work_mode == kFile_Read) {
@@ -81,18 +85,24 @@ int32_t FileOpen(const char *fnmm, Shared::FileOpenMode open_mode, Shared::FileW
 	}
 
 	Stream *s;
+	String resolved_path = rp.FullPath;
 	if (rp.AssetMgr) {
 		s = _GP(AssetMgr)->OpenAsset(rp.FullPath, "*");
 	} else {
 		s = File::OpenFile(rp.FullPath, open_mode, work_mode);
-		if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0)
+		if (!s && !rp.AltPath.IsEmpty() && rp.AltPath.Compare(rp.FullPath) != 0) {
 			s = File::OpenFile(rp.AltPath, open_mode, work_mode);
+			resolved_path = rp.AltPath;
+		}
 	}
 
 	valid_handles[useindx].stream = s;
-	if (valid_handles[useindx].stream == nullptr)
+	if (valid_handles[useindx].stream == nullptr) {
+		debug_script_warn("FileOpen: FAILED: %s", resolved_path.GetCStr());
 		return 0;
+	}
 	valid_handles[useindx].handle = useindx + 1; // make handle indexes 1-based
+	debug_script_print(kDbgMsg_Info, "FileOpen: success: %s", resolved_path.GetCStr());
 
 	if (useindx >= num_open_script_files)
 		num_open_script_files++;
@@ -175,9 +185,9 @@ int FileReadInt(int32_t handle) {
 
 int8 FileReadRawChar(int32_t handle) {
 	Stream *in = get_valid_file_stream_from_handle(handle, "FileReadRawChar");
-	if (in->EOS())
-		return -1;
-	return in->ReadInt8();
+	return static_cast<uint8_t>(in->ReadByte());
+	// NOTE: this function has incorrect return value for historical reasons;
+	// we keep this strictly for backwards compatibility with old scripts
 }
 
 int FileReadRawInt(int32_t handle) {
@@ -192,7 +202,7 @@ void FileWriteRawChar(int32_t handle, int chartoWrite) {
 	if ((chartoWrite < 0) || (chartoWrite > 255))
 		debug_script_warn("!FileWriteRawChar: can only write values 0-255");
 
-	out->WriteInt8(chartoWrite);
+	out->WriteByte(static_cast<uint8_t>(chartoWrite));
 }
 
 } // namespace AGS3

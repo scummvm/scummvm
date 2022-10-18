@@ -32,6 +32,7 @@ namespace ICB {
 #define ICON_X_SIZE 60
 
 #define ICON_Y_SIZE 40
+#define ICON_Y_SIZE_ED 61
 
 // And this defines the space between them when we draw them.
 #define ICON_SPACING 4
@@ -40,6 +41,7 @@ namespace ICB {
 #define ICON_MENU_PIXEL_X ICON_SPACING
 
 #define ICON_MENU_PIXEL_Y 420
+#define ICON_MENU_PIXEL_Y_ED 410
 
 // These position the flashing icon when medipacks and ammo clips are added.
 #define ICON_ADDING_X 570

@@ -128,6 +128,13 @@ void SnapProcess::removeEgg(Item *item) {
 	}
 }
 
+void SnapProcess::clearEggs() {
+	_snapEggs.clear();
+	_currentSnapEgg = 0;
+	_currentSnapEggRange = Rect();
+}
+
+
 bool SnapProcess::isNpcInRangeOfCurrentEgg() const {
 	if (!_currentSnapEgg)
 		return false;
@@ -190,6 +197,8 @@ bool SnapProcess::loadData(Common::ReadStream *rs, uint32 version) {
 	for (int i = 0; i < numeggs; i++) {
 		_snapEggs.push_back(rs->readUint16LE());
 	}
+
+	_type = 1; // should be persistant but older savegames may not know that.
 
 	return true;
 }

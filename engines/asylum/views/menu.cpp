@@ -26,6 +26,8 @@
 
 #include "common/keyboard.h"
 
+#include "graphics/palette.h"
+
 #include "asylum/views/menu.h"
 
 #include "asylum/resources/actor.h"
@@ -77,6 +79,9 @@ Menu::Menu(AsylumEngine *vm): _vm(vm) {
 	// Savegames
 	_prefixWidth = 0;
 	_loadingDuringStartup = false;
+
+	// Thumbnails
+	_thumbnailIndex = -1;
 
 	// Credits
 	_creditsFrameIndex = 0;
@@ -734,14 +739,6 @@ void Menu::updateNewGame() {
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1323));
 }
 
-void Menu::adjustCoordinates(Common::Point &point) {
-	if (!g_system->isOverlayVisible())
-		return;
-
-	point.x *= 640.0 / g_system->getOverlayWidth();
-	point.y *= 480.0 / g_system->getOverlayHeight();
-}
-
 bool Menu::hasThumbnail(int index) {
 	if (getSaveLoad()->hasSavegame(index + _startIndex))
 		return _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex).getThumbnail();
@@ -749,48 +746,34 @@ bool Menu::hasThumbnail(int index) {
 	return false;
 }
 
-void Menu::showThumbnail(int index) {
-	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), index + _startIndex);
+void Menu::readThumbnail() {
+	if (_thumbnailSurface.getPixels())
+		_thumbnailSurface.free();
+
+	Graphics::PaletteLookup paletteLookup(getScreen()->getPalette(), 256);
+	SaveStateDescriptor desc = _vm->getMetaEngine()->querySaveMetaInfos(_vm->getTargetName().c_str(), _thumbnailIndex + _startIndex);
 	const Graphics::Surface *thumbnail = desc.getThumbnail();
+	int w = thumbnail->w, h = thumbnail->h;
 
-	int x, y;
-	int overlayWidth  = g_system->getOverlayWidth(),
-		overlayHeight = g_system->getOverlayHeight();
-	Graphics::PixelFormat overlayFormat = g_system->getOverlayFormat();
-	Graphics::Surface overlay, *thumbnail1;
-
-	x = (index < 6 ? 150 : 470)  * overlayWidth  / 640;
-	y = (179 + (index % 6) * 29) * overlayHeight / 480;
-
-	overlay.create(overlayWidth, overlayHeight, overlayFormat);
-	if (!g_system->hasFeature(OSystem::kFeatureOverlaySupportsAlpha)) {
-		Graphics::Surface *screen = getScreen()->getSurface().convertTo(overlayFormat, getScreen()->getPalette());
-		if (screen->w != overlayWidth || screen->h != overlayHeight) {
-			Graphics::Surface *screen1 = screen->scale(overlayWidth, overlayHeight);
-			overlay.copyRectToSurface(screen1->getPixels(), screen1->pitch, 0, 0, screen1->w, screen1->h);
-			screen1->free();
-			delete screen1;
-		} else {
-			overlay.copyRectToSurface(screen->getPixels(), screen->pitch, 0, 0, 640, 480);
+	_thumbnailSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
+	for (int i = 0; i < w; i++)
+		for (int j = 0; j < h; j++) {
+			byte r, g, b;
+			thumbnail->format.colorToRGB(thumbnail->getPixel(i, j), r, g, b);
+			_thumbnailSurface.setPixel(i, j, paletteLookup.findBestColor(r, g, b));
 		}
-		screen->free();
-		delete screen;
-	}
+}
 
-	thumbnail1 = thumbnail->convertTo(overlayFormat);
-	overlay.copyRectToSurface(thumbnail1->getPixels(), thumbnail1->pitch, x, y, thumbnail1->w, thumbnail1->h);
+void Menu::showThumbnail() {
+	int x, y;
+	x = _thumbnailIndex < 6 ? 150 : 470;
+	y = 179 + (_thumbnailIndex % 6) * 29;
 
-	g_system->copyRectToOverlay(overlay.getPixels(), overlay.pitch, 0, 0, overlay.w, overlay.h);
-	g_system->showOverlay();
-
-	overlay.free();
-	thumbnail1->free();
-	delete thumbnail1;
+	getScreen()->draw(_thumbnailSurface, x, y);
 }
 
 void Menu::updateLoadGame() {
 	Common::Point cursor = getCursor()->position();
-	adjustCoordinates(cursor);
 
 	char text[100];
 
@@ -921,10 +904,17 @@ void Menu::updateLoadGame() {
 	getText()->setPosition(Common::Point(550, 340));
 	getText()->draw(MAKE_RESOURCE(kResourcePackText, 1327));
 
-	if (current == -1)
-		g_system->hideOverlay();
-	else
-		showThumbnail(current);
+	if (current == -1) {
+		_thumbnailIndex = -1;
+		return;
+	}
+
+	if (current != _thumbnailIndex) {
+		_thumbnailIndex = current;
+		readThumbnail();
+	}
+
+	showThumbnail();
 }
 
 void Menu::updateSaveGame() {
@@ -1646,9 +1636,6 @@ void Menu::clickNewGame() {
 
 void Menu::clickLoadGame() {
 	Common::Point cursor = getCursor()->position();
-	adjustCoordinates(cursor);
-
-	g_system->hideOverlay();
 
 	if (_dword_455C80) {
 		if (cursor.x < 247 || cursor.x > (247 + getText()->getWidth(MAKE_RESOURCE(kResourcePackText, 1330)))

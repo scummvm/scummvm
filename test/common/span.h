@@ -263,7 +263,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
@@ -280,7 +280,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
@@ -327,9 +327,10 @@ public:
 
 		{
 			TS_ASSERT_EQUALS((bool)owner, true);
-			void *dataPtr = owner->data();
+			byte *dataPtr = owner->data();
 			TS_ASSERT_EQUALS(owner.release(), dataPtr);
 			TS_ASSERT_EQUALS((bool)owner, false);
+			delete[] dataPtr;
 		}
 	}
 
@@ -359,7 +360,7 @@ public:
 			}
 
 			TS_ASSERT_EQUALS((bool)owner2, true);
-			owner2.release();
+			owner2.clear();
 			TS_ASSERT_EQUALS((bool)owner2, false);
 		}
 
@@ -401,9 +402,10 @@ public:
 
 		{
 			TS_ASSERT_EQUALS((bool)owner, true);
-			void *dataPtr = owner->data();
+			byte *dataPtr = owner->data();
 			TS_ASSERT_EQUALS(owner.release(), dataPtr);
 			TS_ASSERT_EQUALS((bool)owner, false);
+			delete[] dataPtr;
 		}
 	}
 

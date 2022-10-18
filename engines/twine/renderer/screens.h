@@ -109,6 +109,8 @@ public:
 	 */
 	bool loadImageDelay(TwineImage image, int32 seconds);
 
+	bool loadBitmapDelay(const char *image, int32 seconds);
+
 	/**
 	 * Fade image in
 	 * @param palette current palette to fade in

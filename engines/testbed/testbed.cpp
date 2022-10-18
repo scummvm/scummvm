@@ -59,20 +59,21 @@ void TestbedExitDialog::init() {
 	Common::String text = "Thank you for using ScummVM testbed! Here are yor summarized results:";
 	addText(450, 20, text, Graphics::kTextAlignCenter, _xOffset, 15);
 	Common::Array<Common::U32String> strArray;
-	GUI::ListWidget::ColorList colors;
+	Common::U32String color;
 
 	for (Common::Array<Testsuite *>::const_iterator i = _testsuiteList.begin(); i != _testsuiteList.end(); ++i) {
-		strArray.push_back(Common::String::format("%s :", (*i)->getDescription()));
-		colors.push_back(GUI::ThemeEngine::kFontColorNormal);
+		color = GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorNormal);
+		strArray.push_back(color + Common::U32String::format("%s :", (*i)->getDescription()));
+
+		color = GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorAlternate);
 		if ((*i)->isEnabled()) {
-			strArray.push_back(Common::String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
+			strArray.push_back(color + Common::U32String::format("Passed: %d  Failed: %d Skipped: %d", (*i)->getNumTestsPassed(), (*i)->getNumTestsFailed(), (*i)->getNumTestsSkipped()));
 		} else {
-			strArray.push_back(Common::U32String("Skipped"));
+			strArray.push_back(color + Common::U32String("Skipped"));
 		}
-		colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
 	}
 
-	addList(0, _yOffset, 500, 200, strArray, &colors);
+	addList(0, _yOffset, 500, 200, strArray);
 	text = "More Details can be viewed in the Log file : " + ConfParams.getLogFilename();
 	addText(450, 20, text, Graphics::kTextAlignLeft, 0, 0);
 	if (ConfParams.getLogDirectory().size()) {

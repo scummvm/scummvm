@@ -20,6 +20,7 @@
  */
 
 #include "common/endian.h"
+#include "common/config-manager.h"
 
 #include "scumm/scumm.h"
 #include "scumm/charset.h"
@@ -202,7 +203,7 @@ void ScummEngine::towns_updateGfx() {
 			if (!_scrollTimer)
 				_scrollTimer = cur;
 			_scrollTimer += 1000 / 60;
-			_townsScreen->scrollLayers(1, _scrollRequest);
+			_townsScreen->scrollLayers(1, _scrollRequest, VAR(VAR_TIMER_NEXT) == 0);
 			if (_scrollNeedDeltaAdjust && _townsScreen->isScrolling(0))
 				_scrollDeltaAdjust++;
 			_scrollRequest = 0;
@@ -250,7 +251,7 @@ void ScummEngine::towns_scriptScrollEffect(int dir) {
 		uint32 nextFrame = _system->getMillis() + 1000 / 60;
 		// Same as in requestScroll(): This prevents glitches from graphics layer wrapping.
 		towns_waitForScroll(dir, threshold);
-		_townsScreen->scrollLayers(0, dir << 3);
+		_townsScreen->scrollLayers(0, dir << 3, false);
 		towns_drawStripToScreen(vs, destX << 3, vs->topline, (srcX + (-dir * x)) << 3, 0, stripWidth, vs->h);
 		waitForTimer(nextFrame - _system->getMillis());
 	}
@@ -339,6 +340,8 @@ TownsScreen::TownsScreen(OSystem *system) :	_system(system), _width(0), _height(
 	_height = s->h;
 	_pitch = s->pitch;
 	_system->unlockScreen();
+
+	_semiSmoothScroll = ConfMan.getBool("semi_smooth_scroll");
 
 	setupLayer(0, _width, _height, 1, 1, 256);
 }
@@ -523,13 +526,21 @@ void TownsScreen::toggleLayers(int flags) {
 	_system->updateScreen();
 }
 
-void TownsScreen::scrollLayers(int flags, int offset) {
+void TownsScreen::scrollLayers(int flags, int offset, bool fast) {
 	// This actually supports layer 0 only, since this is all we need.
 	_scrollRemainder += offset;
 	if (!_scrollRemainder)
 		return;
 
 	int step = (_scrollRemainder > 0) ? -1 : 1;
+
+	// Smooth scrolling isn't fast enough to keep up with the fast camera
+	// movement in the Loom intro. Non-smooth scrolling is eight pixels at
+	// at time, so two or four should be safe to use. Two is too slow, so
+	// four it is.
+	if (fast && _semiSmoothScroll)
+		step *= 4;
+
 	_scrollRemainder += step;
 	_scrollOffset = (_scrollOffset + step) % _layers[0].width;
 

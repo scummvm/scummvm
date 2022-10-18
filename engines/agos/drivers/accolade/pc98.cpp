@@ -23,6 +23,7 @@
 #include "audio/mididrv.h"
 #include "audio/mixer.h"
 #include "engines/engine.h"
+#include "common/config-manager.h"
 #include "common/func.h"
 
 namespace AGOS {
@@ -154,6 +155,7 @@ private:
 
 	MidiDriver *_drv;
 	DeviceHandle _dev;
+	MusicType _devType;
 
 	uint8 _volSysex[9];
 	uint8 _partAssignSysexGS[9];
@@ -530,7 +532,8 @@ const uint16 PC98FMDriver::_frequency[12] = {
 #define MIDIMSG32(s, p1, p2) (p2 << 16 | p1 << 8 | s)
 
 PC98MidiDriver::PC98MidiDriver(MidiDriver::DeviceHandle dev) : _dev(dev), _drv(nullptr) {
-	_instrumentsRemap = (getMusicType(dev) == MT_MT32) ? _instrumentsRemapMT32 : (getMusicType(dev) == MT_GM ? _instrumentsRemapGM : nullptr);
+	_devType = (getMusicType(dev) == MT_MT32 || ConfMan.getBool("native_mt32")) ? MT_MT32 : MT_GM;
+	_instrumentsRemap = (_devType == MT_MT32) ? _instrumentsRemapMT32 : (_devType == MT_GM ? _instrumentsRemapGM : nullptr);
 	int8 *tbl2 = new int8[128]();
 	_instrumentLevelAdjust = tbl2;
 	_partsRemap = _partsRemapMidi;
@@ -565,7 +568,7 @@ int PC98MidiDriver::open() {
 
 		property(kPropMusicVolume, Audio::Mixer::kMaxChannelVolume);
 
-		if (getMusicType(_dev) == MT_MT32) {
+		if (_devType == MT_MT32) {
 			_partAssignSysexGS[7] = 0x10;
 			for (uint8 i = 0x10; i < 0x20; ++i) {
 				_partAssignSysexGS[5] = i;
@@ -578,7 +581,7 @@ int PC98MidiDriver::open() {
 				sendSysexWithCheckSum(_partAssignSysexMT32);
 			}
 
-		} else if (getMusicType(_dev) == MT_GM) {
+		} else if (_devType == MT_GM) {
 			_partAssignSysexGS[5] = 0x10;
 			_partAssignSysexGS[7] = 9;
 			sendSysexWithCheckSum(_partAssignSysexGS);
@@ -647,7 +650,7 @@ void PC98MidiDriver::setVolume(int musicVolume, int sfxVolume) {
 	if (!_isOpen)
 		return;
 
-	if (getMusicType(_dev) == MT_MT32) {
+	if (_devType == MT_MT32) {
 		_volSysex[7] = musicVolume * 100 / Audio::Mixer::kMaxChannelVolume;
 		sendSysexWithCheckSum(_volSysex);
 	} else {

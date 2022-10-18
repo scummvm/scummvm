@@ -34,17 +34,10 @@ class FrameBuffer : public TextureGL {
 public:
 	FrameBuffer(uint width, uint height);
 	FrameBuffer(GLuint texture_name, uint width, uint height, uint texture_width, uint texture_height);
-#if defined(AMIGAOS) || defined(__MORPHOS__)
-	virtual ~FrameBuffer() {}
-
-	void attach() {}
-	void detach() {}
-#else
 	virtual ~FrameBuffer();
 
 	virtual void attach();
 	virtual void detach();
-#endif
 
 protected:
 	GLuint getFrameBufferName() const { return _frameBuffer; }
@@ -56,7 +49,7 @@ private:
 	GLint _prevStateViewport[4];
 };
 
-#if !USE_FORCED_GLES2 && !defined(AMIGAOS) && !defined(__MORPHOS__)
+#if !USE_FORCED_GLES2
 class MultiSampleFrameBuffer : public FrameBuffer {
 public:
 	MultiSampleFrameBuffer(uint width, uint height, int samples);

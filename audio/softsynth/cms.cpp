@@ -124,6 +124,10 @@ void CMSEmulator::readBuffer(int16 *buffer, const int numSamples) {
 	update(1, &buffer[0], numSamples);
 }
 
+void CMSEmulator::reset() {
+	memset(_saa1099, 0, sizeof(SAA1099) * 2);
+}
+
 void CMSEmulator::envelope(int chip, int ch) {
 	SAA1099 *saa = &_saa1099[chip];
 	if (saa->env_enable[ch]) {

@@ -29,11 +29,7 @@
 #include "common/stream.h"
 
 #if defined(USE_ZLIB)
-  #ifdef __SYMBIAN32__
-	#include <zlib\zlib.h>
-  #else
-	#include <zlib.h>
-  #endif
+  #include <zlib.h>
 
   #if ZLIB_VERNUM < 0x1204
   #error Version 1.2.0.4 or newer of zlib is required for this code

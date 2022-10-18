@@ -1,10 +1,10 @@
 -- This file is binary. Watch for 0xC2 symbol at the line ends
 
     if the text of cast 1 <> the text of cast 2 then Â
-    set the text of cast 1 = the text of cast 2
+    put "Hello"
 
 if the text of cast 1 <> the text of cast 2 then Â
-set the text of cast 1 = the text of cast 2
+put "Goodbye"
 
 set the selStart to Â
 	0

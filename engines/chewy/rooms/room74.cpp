@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -30,8 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room74::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).ScrollxStep = 2;
 	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
 	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
@@ -103,8 +103,8 @@ int Room74::proc1() {
 		_G(gameState).flags29_1 = true;
 		_G(atds)->set_ats_str(435, 1, ATS_DATA);
 
-	} else if (!_G(gameState).inv_cur && _G(gameState).R74CutRubberPlant) {
-		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT, ATS_DATA);
+	} else if (!_G(cur)->usingInventoryCursor() && _G(gameState).R74CutRubberPlant) {
+		_G(atds)->setControlBit(435, ATS_ACTIVE_BIT);
 		autoMove(5, P_CHEWY);
 		start_spz_wait(13, 1, false, P_CHEWY);
 		new_invent_2_cur(RUBBER_INV);

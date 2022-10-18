@@ -232,25 +232,22 @@ void BrowserDialog::updateListing() {
 
 	// Populate the ListWidget
 	Common::U32StringArray list;
-	ListWidget::ColorList colors;
+	Common::U32String color = ListWidget::getThemeColor(ThemeEngine::kFontColorNormal);
 	for (Common::FSList::iterator i = _nodeContent.begin(); i != _nodeContent.end(); ++i) {
-		if (i->isDirectory())
-			list.push_back(i->getName() + "/");
-		else
-			list.push_back(i->getName());
-
 		if (_isDirBrowser) {
 			if (i->isDirectory())
-				colors.push_back(ThemeEngine::kFontColorNormal);
+				color = ListWidget::getThemeColor(ThemeEngine::kFontColorNormal);
 			else
-				colors.push_back(ThemeEngine::kFontColorAlternate);
+				color = ListWidget::getThemeColor(ThemeEngine::kFontColorAlternate);
 		}
+
+		if (i->isDirectory())
+			list.push_back(color + Common::U32String(i->getName() + "/"));
+		else
+			list.push_back(color + Common::U32String(i->getName()));
 	}
 
-	if (_isDirBrowser)
-		_fileList->setList(list, &colors);
-	else
-		_fileList->setList(list);
+	_fileList->setList(list);
 	_fileList->scrollTo(0);
 
 	// Finally, redraw

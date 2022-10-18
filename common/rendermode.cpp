@@ -34,6 +34,9 @@ const RenderModeDescription g_renderModes[] = {
 	{ "hercGreen", _s("Hercules Green"), kRenderHercG },
 	{ "hercAmber", _s("Hercules Amber"), kRenderHercA },
 	{ "cga", "CGA", kRenderCGA },
+	{ "cgaComp", "CGA Composite", kRenderCGAComp },
+	// I18N: CGA black-and-white
+	{ "cgaBW", "CGA b/w", kRenderCGA_BW },
 	{ "ega", "EGA", kRenderEGA },
 	{ "vga", "VGA", kRenderVGA },
 	{ "amiga", "Amiga", kRenderAmiga },
@@ -69,7 +72,9 @@ static const RenderGUIOMapping s_renderGUIOMapping[] = {
 	{ kRenderApple2GS,		GUIO_RENDERAPPLE2GS },
 	{ kRenderAtariST,		GUIO_RENDERATARIST },
 	{ kRenderMacintosh,		GUIO_RENDERMACINTOSH },
-	{ kRenderMacintoshBW,	GUIO_RENDERMACINTOSHBW }
+	{ kRenderMacintoshBW,	GUIO_RENDERMACINTOSHBW },
+	{ kRenderCGAComp,	    GUIO_RENDERCGACOMP },
+	{ kRenderCGA_BW,	    GUIO_RENDERCGABW }
 };
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("Hercules Green", "lowres")

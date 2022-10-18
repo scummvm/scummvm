@@ -39,33 +39,42 @@ class Stream;
 using AGS::Shared::Stream;
 using AGS::Shared::Interaction;
 
+struct HotspotState {
+	bool Enabled = false;
+	Shared::String Name;
+
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
+	void WriteToSavegame(Shared::Stream *out) const;
+};
+
 // This struct is saved in the save games - it contains everything about
 // a room that could change
 struct RoomStatus {
 	int   beenhere = 0;
-	int   numobj = 0;
-	RoomObject obj[MAX_ROOM_OBJECTS];
-	short flagstates[MAX_FLAGS];
+	uint32_t numobj = 0;
+	std::vector<RoomObject> obj;
 	int   tsdatasize = 0;
 	char *tsdata = nullptr;
 	Interaction intrHotspot[MAX_ROOM_HOTSPOTS];
-	Interaction intrObject[MAX_ROOM_OBJECTS];
+	std::vector<Interaction> intrObject;
 	Interaction intrRegion[MAX_ROOM_REGIONS];
 	Interaction intrRoom;
 
 	Shared::StringIMap roomProps;
 	Shared::StringIMap hsProps[MAX_ROOM_HOTSPOTS];
-	Shared::StringIMap objProps[MAX_ROOM_OBJECTS];
-	// [IKM] 2012-06-22: not used anywhere
-#ifdef UNUSED_CODE
+	std::vector<Shared::StringIMap> objProps;
+	HotspotState hotspot[MAX_ROOM_HOTSPOTS];
+	int8  region_enabled[MAX_ROOM_REGIONS];
+	short walkbehind_base[MAX_WALK_BEHINDS];
+	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
+
+	// Likely pre-2.5 data
+#if defined (OBSOLETE)
+	short flagstates[MAX_LEGACY_ROOM_FLAGS]{};
 	EventBlock hscond[MAX_ROOM_HOTSPOTS];
 	EventBlock objcond[MAX_ROOM_OBJECTS];
 	EventBlock misccond;
 #endif
-	int8  hotspot_enabled[MAX_ROOM_HOTSPOTS];
-	int8  region_enabled[MAX_ROOM_REGIONS];
-	short walkbehind_base[MAX_WALK_BEHINDS];
-	int32_t interactionVariableValues[MAX_GLOBAL_VARIABLES];
 
 	RoomStatus();
 	~RoomStatus();
@@ -75,7 +84,7 @@ struct RoomStatus {
 
 	void ReadFromFile_v321(Shared::Stream *in);
 	void ReadRoomObjects_Aligned(Shared::Stream *in);
-	void ReadFromSavegame(Shared::Stream *in);
+	void ReadFromSavegame(Shared::Stream *in, int save_ver);
 	void WriteToSavegame(Shared::Stream *out) const;
 };
 

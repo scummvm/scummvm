@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -96,7 +97,7 @@ void Room54::setup_func() {
 		calc_person_look();
 
 		if (_G(gameState).R54HowardVorne != 255) {
-			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 			int16 x, y;
 			if (_G(gameState).R54HowardVorne) {
 				if (ch_x < 218) {
@@ -117,8 +118,7 @@ void Room54::setup_func() {
 				}
 			}
 
-			if (!_G(flags).SaveMenu)
-				goAutoXy(x, y, P_HOWARD, ANI_GO);
+			goAutoXy(x, y, P_HOWARD, ANI_GO);
 		}
 	}
 }
@@ -126,7 +126,7 @@ void Room54::setup_func() {
 int16 Room54::use_schalter() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		action_ret = true;
 
@@ -138,25 +138,25 @@ int16 Room54::use_schalter() {
 			start_spz_wait(CH_ROCK_GET2, 1, false, P_CHEWY);
 			_G(det)->showStaticSpr(0);
 			autoMove(2, P_CHEWY);
-			g_engine->_sound->playSound(1, 0);
-			g_engine->_sound->playSound(0, 1);
-			g_engine->_sound->stopSound(2);
+			_G(det)->playSound(1, 0);
+			_G(det)->playSound(0, 1);
+			_G(det)->stopSound(2);
 
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(3, 255, ANI_FRONT);
 			startAadWait(292 + _G(gameState).R54LiftCount);
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			++_G(gameState).R54LiftCount;
 
 			int16 aad_nr;
 			if (_G(gameState).R54LiftCount < 3) {
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->hideStaticSpr(0);
-				g_engine->_sound->stopSound(0);
-				g_engine->_sound->stopSound(1);
-				g_engine->_sound->playSound(1, 2);
+				_G(det)->stopSound(0);
+				_G(det)->stopSound(1);
+				_G(det)->playSound(1, 2);
 				startSetAILWait(1, 1, ANI_BACK);
-				g_engine->_sound->stopSound(2);
+				_G(det)->stopSound(2);
 				aad_nr = 295;
 
 			} else {
@@ -165,7 +165,7 @@ int16 Room54::use_schalter() {
 				startSetAILWait(4, 1, ANI_FRONT);
 				aad_nr = 296;
 				_G(gameState).R54FputzerWeg = true;
-				_G(atds)->delControlBit(345, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(345, ATS_ACTIVE_BIT);
 				_G(atds)->set_ats_str(349, 1, ATS_DATA);
 				_G(atds)->set_ats_str(351, 1, ATS_DATA);
 			}
@@ -188,7 +188,7 @@ void Room54::talk_verkauf() {
 
 	if (!_G(gameState).R54HotDogOk) {
 		if (_G(gameState).R45MagOk) {
-			if (_G(gameState).AkInvent == DOLLAR175_INV)
+			if (_G(cur)->getInventoryCursor() == DOLLAR175_INV)
 				delInventory(DOLLAR175_INV);
 			else
 				remove_inventory(DOLLAR175_INV);
@@ -204,12 +204,12 @@ void Room54::talk_verkauf() {
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 		startAadWait(310);
 
-		_G(det)->stop_detail(8);
+		_G(det)->stopDetail(8);
 		startSetAILWait(9, 1, ANI_FRONT);
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(det)->startDetail(11, 255, ANI_FRONT);
 		startAadWait(311);
-		_G(det)->stop_detail(11);
+		_G(det)->stopDetail(11);
 		_G(room)->set_timer_status(6, TIMER_START);
 		_G(det)->set_static_ani(6, -1);
 		autoMove(4, P_CHEWY);
@@ -228,7 +228,7 @@ int16 Room54::use_zelle() {
 	int16 action_ret = false;
 	hideCur();
 
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursor()) {
 		if (isCurInventory(JMKOST_INV)) {
 			action_ret = true;
 
@@ -242,7 +242,7 @@ int16 Room54::use_zelle() {
 				goAutoXy(239, 101, P_HOWARD, ANI_WAIT);
 				flic_cut(FCUT_069);
 
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				invent_2_slot(LEDER_INV);
 				load_chewy_taf(CHEWY_JMANS);
 				_G(zoom_horizont) = 90;
@@ -271,7 +271,7 @@ int16 Room54::use_zelle() {
 int16 Room54::use_azug() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 
@@ -285,8 +285,7 @@ int16 Room54::use_azug() {
 				_G(gameState).R55Location = true;
 				_G(SetUpScreenFunc) = nullptr;
 				goAutoXy(91, 62, P_HOWARD, ANI_WAIT);
-				g_engine->_sound->playSound(1, 0);
-				g_engine->_sound->playSound(1);
+				_G(det)->playSound(1, 0);
 
 				int16 ch_y = 68;
 				int16 ay = 0;
@@ -326,8 +325,7 @@ void Room54::aufzug_ab() {
 	_G(gameState).scrollx = 0;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(det)->showStaticSpr(12);
-	g_engine->_sound->playSound(1, 0);
-	g_engine->_sound->playSound(1);
+	_G(det)->playSound(1, 0);
 
 	int16 ch_y = -40;
 	int16 ay = -108;
@@ -349,7 +347,7 @@ void Room54::aufzug_ab() {
 		SHOULD_QUIT_RETURN;
 	}
 
-	g_engine->_sound->stopSound(0);
+	_G(det)->stopSound(0);
 	_G(det)->hideStaticSpr(12);
 	setPersonPos(99, 82, P_CHEWY, P_RIGHT);
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -361,7 +359,7 @@ void Room54::aufzug_ab() {
 short Room54::use_taxi() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 		autoMove(7, P_CHEWY);

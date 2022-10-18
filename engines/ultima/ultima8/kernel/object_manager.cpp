@@ -134,14 +134,14 @@ void ObjectManager::objectStats() {
 
 void ObjectManager::objectTypes() {
 	g_debugger->debugPrintf("Current object types:\n");
-	Std::map<Common::String, unsigned int> objecttypes;
+	Common::HashMap<Common::String, unsigned int> objecttypes;
 	for (unsigned int i = 1; i < _objects.size(); ++i) {
 		Object *o = _objects[i];
 		if (!o) continue;
 		objecttypes[o->GetClassType()._className]++;
 	}
 
-	Std::map<Common::String, unsigned int>::const_iterator iter;
+	Common::HashMap<Common::String, unsigned int>::const_iterator iter;
 	for (iter = objecttypes.begin(); iter != objecttypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
@@ -307,7 +307,7 @@ bool ObjectManager::load(Common::ReadStream *rs, uint32 version) {
 void ObjectManager::saveObject(Common::WriteStream *ws, Object *obj) const {
 	const Std::string & classname = obj->GetClassType()._className; // note: virtual
 
-	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
+	Common::HashMap<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
 	if (iter == _objectLoaders.end()) {
 		error("Object class cannot save without registered loader: %s", classname.c_str());
@@ -332,7 +332,7 @@ Object *ObjectManager::loadObject(Common::ReadStream *rs, uint32 version) {
 
 Object *ObjectManager::loadObject(Common::ReadStream *rs, Std::string classname,
 								  uint32 version) {
-	Std::map<Common::String, ObjectLoadFunc>::iterator iter;
+	Common::HashMap<Common::String, ObjectLoadFunc>::iterator iter;
 	iter = _objectLoaders.find(classname);
 
 	if (iter == _objectLoaders.end()) {

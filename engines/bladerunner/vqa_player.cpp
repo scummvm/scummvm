@@ -32,7 +32,7 @@
 namespace BladeRunner {
 
 bool VQAPlayer::open() {
-	_s = _vm->getResourceStream(_name);
+	_s = _vm->getResourceStream(_vm->_enhancedEdition ? ("video/" + _name) : _name);
 	if (!_s) {
 		return false;
 	}
@@ -86,6 +86,68 @@ void VQAPlayer::close() {
 	_vm->_mixer->stopHandle(_soundHandle);
 	delete _s;
 	_s = nullptr;
+}
+
+bool VQAPlayer::loadVQPTable(const Common::String &vqpResName) {
+	Common::SeekableReadStream *vqpFileSRS = _vm->getResourceStream(vqpResName);
+	if (!vqpFileSRS) {
+		return false;
+	}
+
+	bool vqpFileReadError = false;
+
+	if (vqpFileSRS != nullptr) {
+		uint32 numOfPalettes = vqpFileSRS->readUint32LE();
+		uint32 palettesReadIn = 0;
+
+		if (vqpFileSRS->eos() || vqpFileSRS->err()) {
+			vqpFileReadError = true;
+		} else {
+			_decoder.allocatePaletteVQPTable(numOfPalettes);
+			uint8 colorb = 0;
+			uint32 colorsReadIn = 0;
+			bool endVqpFileParsing = false;
+			for (uint32 i = 0; i < numOfPalettes && !endVqpFileParsing; ++i) {
+				colorsReadIn = 0;
+				// For each palette read a 2d array for color combinations
+				for (uint16 j = 0; j < 256 && !endVqpFileParsing; ++j) {
+					for (uint16 k = 0; k <= j && !endVqpFileParsing; ++k) {
+						colorb = vqpFileSRS->readByte();
+						if (vqpFileSRS->eos() || vqpFileSRS->err()) {
+							endVqpFileParsing = true;
+							break;
+						}
+						++colorsReadIn;
+						_decoder.updatePaletteVQPTable(i, j, k, colorb);
+					}
+				}
+				// Since VQP is omitting the duplicates the palette entries are
+				// the number of combinations of 256 items in tuples of 2 items
+				// with the addition of the number of tuples of the same item
+				// (ie. (0,0), (1,1)) which are 256 (the whole diagonal of the 2d array).
+				// Thus:
+				// (256! / (2! * (256-2)!)) + 256 = ((256 * 255) / 2) + 256 = 32896 entries per palette
+				if (colorsReadIn == 32896) {
+					++palettesReadIn;
+				}
+			}
+			// Quick validation check
+			if (palettesReadIn != numOfPalettes) {
+				debug("Error: [VQP] Palettes Read-In: %d mismatch with number in header: %d\n", palettesReadIn, numOfPalettes);
+				_decoder.deleteVQPTable();
+				vqpFileReadError = true;
+			}
+		}
+		delete vqpFileSRS;
+		vqpFileSRS = nullptr;
+
+		if (!vqpFileReadError) {
+			//debug("Info: [VQP] Palettes Read-In: %d matches number in header", palettesReadIn);
+			return true;
+		}
+	}
+
+	return false;
 }
 
 int VQAPlayer::update(bool forceDraw, bool advanceFrame, bool useTime, Graphics::Surface *customSurface) {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -38,7 +39,7 @@ void Room28::entry(int16 eib_nr) {
 	if (_G(gameState).R28RKuerbis)
 		_G(det)->showStaticSpr(6);
 
-	if (_G(gameState).R28Briefkasten) {
+	if (_G(gameState).R28LetterBox) {
 		_G(det)->showStaticSpr(8);
 		_G(det)->showStaticSpr(9);
 	} else {
@@ -64,7 +65,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(gameState).R28EntryHaus = true;
 					setPersonPos(232, 100, P_HOWARD, P_RIGHT);
 					autoMove(3, P_HOWARD);
-					goAutoXy(320, _G(spieler_vector)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
+					goAutoXy(320, _G(moveState)[P_HOWARD].Xypos[1], P_HOWARD, ANI_WAIT);
 					startAadWait(176);
 				} else if (_G(gameState).R31SurFurz && !_G(gameState).R28RKuerbis) {
 					_G(gameState).R28RKuerbis = true;
@@ -81,7 +82,7 @@ void Room28::entry(int16 eib_nr) {
 					_G(det)->showStaticSpr(6);
 
 					if (!_G(gameState).R40TeilKarte) {
-						_G(out)->ausblenden(0);
+						_G(out)->fadeOut();
 						_G(out)->set_partialpalette(_G(pal), 255, 1);
 						startAadWait(607);
 						_G(fx_blend) = BLEND3;
@@ -203,7 +204,7 @@ void Room28::haendler() {
 void Room28::setup_func() {
 	calc_person_look();
 
-	int16 x = (_G(spieler_vector)[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
+	int16 x = (_G(moveState)[P_CHEWY].Xypos[0] > 350) ? 420 : 320;
 	goAutoXy(x, 113, P_HOWARD, ANI_GO);
 }
 
@@ -243,13 +244,13 @@ void Room28::set_pump() {
 	if (_G(gameState)._personRoomNr[P_CHEWY] == 28) {
 		if (!_G(flags).AutoAniPlay) {
 			_G(flags).AutoAniPlay = true;
-			if (_G(spieler_vector)[P_CHEWY].Xypos[0] < 380)
+			if (_G(moveState)[P_CHEWY].Xypos[0] < 380)
 				autoMove(5, P_CHEWY);
 
 			_G(gameState)._personHide[P_CHEWY] = true;
 			int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
 			delInventory(K_MASKE_INV);
-			_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+			_G(det)->setDetailPos(tmp, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1]);
 
 			if (_G(gameState).R28PumpTxt1 < 3) {
 				start_aad(137);
@@ -296,7 +297,7 @@ void Room28::get_pump() {
 		_G(gameState).R28ChewyPump = false;
 		_G(gameState)._personHide[P_CHEWY] = true;
 		int16 tmp = (_G(person_end_phase)[P_CHEWY] == P_RIGHT) ? 1 : 0;
-		_G(det)->setSetailPos(tmp, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		_G(det)->setDetailPos(tmp, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1]);
 		startSetAILWait(tmp, 1, ANI_BACK);
 
 		invent_2_slot(K_MASKE_INV);
@@ -317,10 +318,10 @@ void Room28::get_pump() {
 int16 Room28::use_breifkasten() {
 	int16 action_flag = false;
 
-	if (_G(gameState).R28Briefkasten && !_G(gameState).inv_cur) {
+	if (_G(gameState).R28LetterBox && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		hideCur();
-		_G(gameState).R28Briefkasten = false;
+		_G(gameState).R28LetterBox = false;
 		autoMove(7, P_CHEWY);
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 		_G(det)->hideStaticSpr(8);

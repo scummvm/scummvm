@@ -509,8 +509,10 @@ void SceneScriptPS09::dialogueWithGrigorian() {
 				//       in order to show up in the ESP version
 				Actor_Says_With_Pause(kActorGrigorian, 340, 0.0f, 14);
 			}
-			Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansResources, true, kActorGrigorian);
 #endif // BLADERUNNER_ORIGINAL_BUGS
+			if (_vm->_cutContent) {
+				Actor_Clue_Acquire(kActorMcCoy, kClueGrigoriansResources, true, kActorGrigorian);
+			}
 			Actor_Says(kActorMcCoy, 4375, 18);
 		}
 		break;

@@ -44,25 +44,25 @@ namespace Saga2 {
 // ctor
 
 SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
-	effect = rsi->effect;                // Effect ID
-	effParm1 = 0;                        //   effect setting 1
-	effParm2 = 0;                        //   effect setting 1
-	effParm3 = 0;                        //   effect setting 1
-	effParm4 = 0;                        //   effect setting 1
-	scatter = diFlagZero;                // direction init mode
-	elasticity = (effectCollisionCont) rsi->effectronElasticity; // collision flags
-	maxAge = rsi->maxAge;                // auto self-destruct age
-	implementAge = rsi->implAge;         // auto self-destruct age
-	primarySpriteID = rsi->baseSprite; // RES_ID(x, y, z, 0) to get sprites
-	primarySpriteNo = rsi->spriteCount; // sprites available
-	secondarySpriteID = rsi->baseSprite2; // RES_ID(x, y, z, 0) to get sprites
-	secondarySpriteNo = rsi->spriteCount2; // sprites available
-	//effCount=0;            // effectrons to allocate
-	colorMap[0] = rsi->cm0;
-	colorMap[1] = rsi->cm1;
-	colorMap[2] = 0;
-	colorMap[3] = 0;
-	ID = spellNone;
+	_effect = rsi->effect;                // Effect ID
+	_effParm1 = 0;                        //   effect setting 1
+	_effParm2 = 0;                        //   effect setting 1
+	_effParm3 = 0;                        //   effect setting 1
+	_effParm4 = 0;                        //   effect setting 1
+	_scatter = diFlagZero;                // direction init mode
+	_elasticity = (effectCollisionCont) rsi->effectronElasticity; // collision flags
+	_maxAge = rsi->maxAge;                // auto self-destruct age
+	_implementAge = rsi->implAge;         // auto self-destruct age
+	_primarySpriteID = rsi->baseSprite; // RES_ID(x, y, z, 0) to get sprites
+	_primarySpriteNo = rsi->spriteCount; // sprites available
+	_secondarySpriteID = rsi->baseSprite2; // RES_ID(x, y, z, 0) to get sprites
+	_secondarySpriteNo = rsi->spriteCount2; // sprites available
+	//_effCount=0;            // effectrons to allocate
+	_colorMap[0] = rsi->cm0;
+	_colorMap[1] = rsi->cm1;
+	_colorMap[2] = 0;
+	_colorMap[3] = 0;
+	_ID = spellNone;
 }
 
 /* ===================================================================== *
@@ -73,15 +73,15 @@ SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
 // init from res file
 
 void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
-	master = (SpellID) rsi->spell;
-	display = (SpellID) rsi->spell;
-	targetableTypes = (SpellTargetingTypes) rsi->targs;
-	targetTypes = (SpellApplicationTypes) rsi->applys;
-	manaType = (SpellManaID) rsi->manaType;
-	manaUse = rsi->manaAmount;
-	shape = (effectAreas) rsi->effect;
-	size = 0;
-	sound = rsi->soundID;
+	_master = (SpellID) rsi->spell;
+	_display = (SpellID) rsi->spell;
+	_targetableTypes = (SpellTargetingTypes) rsi->targs;
+	_targetTypes = (SpellApplicationTypes) rsi->applys;
+	_manaType = (SpellManaID) rsi->manaType;
+	_manaUse = rsi->manaAmount;
+	_shape = (effectAreas) rsi->effect;
+	_size = 0;
+	_sound = rsi->soundID;
 }
 
 // ------------------------------------------------------------------
@@ -89,7 +89,7 @@ void SpellStuff::setupFromResource(ResourceSpellItem *rsi) {
 
 void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	ProtoEffect *pe = nullptr;
-	assert(rse && rse->spell == master);
+	assert(rse && rse->spell == _master);
 	switch (rse->effectGroup) {
 	case effectNone     :
 		return;
@@ -190,12 +190,12 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	if (pe == nullptr)
 		error("failed to alloc protoEffect");
 
-	if (effects == nullptr)
-		effects = pe;
+	if (_effects == nullptr)
+		_effects = pe;
 	else {
 		ProtoEffect *tail;
-		for (tail = effects; tail->next; tail = tail->next) ;
-		tail->next = pe;
+		for (tail = _effects; tail->_next; tail = tail->_next) ;
+		tail->_next = pe;
 	}
 }
 
@@ -224,7 +224,7 @@ void cleanupSpellState() {
 }
 
 // ------------------------------------------------------------------
-// cleanup active spells
+// cleanup active _spells
 
 StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 	GameObject *go = nullptr;
@@ -255,17 +255,17 @@ StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 }
 
 StorageSpellInstance::StorageSpellInstance(SpellInstance &si) {
-	implementAge = si.implementAge; // age at which to implement the spell effects
-	effect = si.effect->thisID();      // effect prototype of the current effect
-	dProto = si.dProto->thisID();      // effect prototype of the current effect
-	caster = si.caster->thisID();
-	target = StorageSpellTarget(*si.target);
-	world = si.world->thisID();
-	age = si.age;
-	spell = si.spell;
-	maxAge = si.maxAge;
-	effSeq = si.effSeq;         // which effect in a sequence is being played
-	eListSize = si.eList.count;
+	implementAge = si._implementAge; // age at which to implement the spell effects
+	effect = si._effect->thisID();      // effect prototype of the current effect
+	dProto = si._dProto->thisID();      // effect prototype of the current effect
+	caster = si._caster->thisID();
+	target = StorageSpellTarget(*si._target);
+	world = si._world->thisID();
+	age = si._age;
+	spell = si._spell;
+	maxAge = si._maxAge;
+	effSeq = si._effSeq;         // which effect in a sequence is being played
+	eListSize = si._eList._count;
 }
 
 StorageSpellTarget::StorageSpellTarget() {
@@ -325,43 +325,43 @@ void StorageSpellInstance::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 SpellTarget::SpellTarget(StorageSpellTarget &sst) {
-	type = (SpellTarget::spellTargetType) sst.type;
-	loc = sst.loc;
-	next = nullptr;
+	_type = (SpellTarget::spellTargetType) sst.type;
+	_loc = sst.loc;
+	_next = nullptr;
 	if (sst.obj != Nothing)
-		obj = GameObject::objectAddress(sst.obj);
+		_obj = GameObject::objectAddress(sst.obj);
 	else
-		obj = nullptr;
+		_obj = nullptr;
 	if (sst.tag != NoActiveItem)
-		tag = ActiveItem::activeItemAddress(sst.tag);
+		_tag = ActiveItem::activeItemAddress(sst.tag);
 	else
-		tag = nullptr;
+		_tag = nullptr;
 }
 
 SpellInstance::SpellInstance(StorageSpellInstance &ssi) {
-	implementAge = ssi.implementAge; // age at which to implement the spell effects
-	dProto = (*g_vm->_sdpList)[ssi.dProto];
-	caster = GameObject::objectAddress(ssi.caster);
-	target = new SpellTarget(ssi.target);
+	_implementAge = ssi.implementAge; // age at which to implement the spell effects
+	_dProto = (*g_vm->_sdpList)[ssi.dProto];
+	_caster = GameObject::objectAddress(ssi.caster);
+	_target = new SpellTarget(ssi.target);
 	GameObject *go = GameObject::objectAddress(ssi.world);
 	assert(isWorld(go));
-	world = (GameWorld *) go;
-	age = ssi.age;
-	spell = ssi.spell;
-	maxAge = ssi.maxAge;
-	effSeq = 0;
-	effect = (*g_vm->_edpList)[ssi.effect];
-	while (effSeq < ssi.effSeq)         // which effect in a sequence is being played
-		effect = effect->next;
+	_world = (GameWorld *) go;
+	_age = ssi.age;
+	_spell = ssi.spell;
+	_maxAge = ssi.maxAge;
+	_effSeq = 0;
+	_effect = (*g_vm->_edpList)[ssi.effect];
+	while (_effSeq < ssi.effSeq)         // which effect in a sequence is being played
+		_effect = _effect->_next;
 }
 
 size_t SpellDisplayList::saveSize() {
 	size_t total = 0;
 
-	total += sizeof(count);
-	if (count) {
-		for (int i = 0; i < count; i++)
-			total += spells[i]->saveSize();
+	total += sizeof(_count);
+	if (_count) {
+		for (int i = 0; i < _count; i++)
+			total += _spells[i]->saveSize();
 	}
 	return total;
 }
@@ -369,16 +369,16 @@ size_t SpellDisplayList::saveSize() {
 void SpellDisplayList::write(Common::OutSaveFile *outS) {
 	outS->write("SPEL", 4);
 	CHUNK_BEGIN;
-	out->writeUint16LE(count);
+	out->writeUint16LE(_count);
 
-	debugC(3, kDebugSaveload, "... count = %d", count);
+	debugC(3, kDebugSaveload, "... count = %d", _count);
 
-	if (count) {
-		for (int i = 0; i < count; i++) {
+	if (_count) {
+		for (int i = 0; i < _count; i++) {
 			debugC(3, kDebugSaveload, "Saving Spell Instance %d", i);
-			StorageSpellInstance ssi = StorageSpellInstance(*spells[i]);
+			StorageSpellInstance ssi = StorageSpellInstance(*_spells[i]);
 			ssi.write(out);
-			spells[i]->writeEffect(out);
+			_spells[i]->writeEffect(out);
 		}
 	}
 	CHUNK_END;
@@ -391,7 +391,7 @@ void SpellDisplayList::read(Common::InSaveFile *in) {
 
 	debugC(3, kDebugSaveload, "... count = %d", tCount);
 
-	assert(tCount < maxCount);
+	assert(tCount < _maxCount);
 	if (tCount) {
 		for (int i = 0; i < tCount; i++) {
 			debugC(3, kDebugSaveload, "Loading Spell Instance %d", i);
@@ -403,47 +403,47 @@ void SpellDisplayList::read(Common::InSaveFile *in) {
 			si->readEffect(in, ssi.eListSize);
 		}
 	}
-	assert(tCount == count);
+	assert(tCount == _count);
 }
 
 void SpellDisplayList::wipe() {
-	for (int i = 0; i < maxCount; i++)
-		if (spells[i]) {
-			delete spells[i];
-			spells[i] = nullptr;
-			count--;
+	for (int i = 0; i < _maxCount; i++)
+		if (_spells[i]) {
+			delete _spells[i];
+			_spells[i] = nullptr;
+			_count--;
 		}
 
-	assert(count == 0);
+	assert(_count == 0);
 }
 
 size_t SpellInstance::saveSize() {
 	size_t total = 0;
 	total += sizeof(StorageSpellInstance);
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
 			total += sizeof(StorageEffectron);
 		}
 	return total;
 }
 
 void SpellInstance::writeEffect(Common::MemoryWriteStreamDynamic *out) {
-	if (eList.count > 0 && !(maxAge > 0 && (age + 1) > maxAge))
-		for (int32 i = 0; i < eList.count; i++) {
-			StorageEffectron se = StorageEffectron(*eList.displayList[i].efx);
+	if (_eList._count > 0 && !(_maxAge > 0 && (_age + 1) > _maxAge))
+		for (int32 i = 0; i < _eList._count; i++) {
+			StorageEffectron se = StorageEffectron(*_eList._displayList[i]._efx);
 			se.write(out);
 		}
 }
 
 void SpellInstance::readEffect(Common::InSaveFile *in, uint16 eListSize) {
-	assert(eListSize == effect->nodeCount);
-	eList.count = effect->nodeCount; //sdp->effCount;
-	if (eList.count)
-		for (int32 i = 0; i < eList.count; i++) {
+	assert(eListSize == _effect->_nodeCount);
+	_eList._count = _effect->_nodeCount; //sdp->effCount;
+	if (_eList._count)
+		for (int32 i = 0; i < _eList._count; i++) {
 			StorageEffectron se;
 			se.read(in);
 			Effectron *e = new Effectron(se, this);
-			eList.displayList[i].efx = e;
+			_eList._displayList[i]._efx = e;
 		}
 }
 
@@ -468,23 +468,23 @@ StorageEffectron::StorageEffectron() {
 }
 
 StorageEffectron::StorageEffectron(Effectron &e) {
-	flags =         e.flags;
-	size =          e.size;
-	hitBox =        e.hitBox;
-	screenCoords =  e.screenCoords;
-	partno =        e.partno;
-	start =         e.start;
-	finish =        e.finish;
-	current =       e.current;
-	velocity =      e.velocity;
-	acceleration =  e.acceleration;
-	totalSteps =    e.totalSteps;
-	stepNo =        e.stepNo;
-	hgt =           e.hgt;
-	brd =           e.brd;
-	pos =           e.pos;
-	spr =           e.spr;
-	age =           e.age;
+	flags =         e._flags;
+	size =          e._size;
+	hitBox =        e._hitBox;
+	screenCoords =  e._screenCoords;
+	partno =        e._partno;
+	start =         e._start;
+	finish =        e._finish;
+	current =       e._current;
+	velocity =      e._velocity;
+	acceleration =  e._acceleration;
+	totalSteps =    e._totalSteps;
+	stepNo =        e._stepNo;
+	hgt =           e._hgt;
+	brd =           e._brd;
+	pos =           e._pos;
+	spr =           e._spr;
+	age =           e._age;
 }
 
 void StorageEffectron::read(Common::InSaveFile *in) {
@@ -528,24 +528,24 @@ void StorageEffectron::write(Common::MemoryWriteStreamDynamic *out) {
 }
 
 Effectron::Effectron(StorageEffectron &se, SpellInstance *si) {
-	flags =         se.flags;
-	size =          se.size;
-	hitBox =        se.hitBox;
-	screenCoords =  se.screenCoords;
-	partno =        se.partno;
-	start =         se.start;
-	finish =        se.finish;
-	current =       se.current;
-	velocity =      se.velocity;
-	acceleration =  se.acceleration;
-	totalSteps =    se.totalSteps;
-	stepNo =        se.stepNo;
-	hgt =           se.hgt;
-	brd =           se.brd;
-	pos =           se.pos;
-	spr =           se.spr;
-	age =           se.age;
-	parent = si;
+	_flags =         se.flags;
+	_size =          se.size;
+	_hitBox =        se.hitBox;
+	_screenCoords =  se.screenCoords;
+	_partno =        se.partno;
+	_start =         se.start;
+	_finish =        se.finish;
+	_current =       se.current;
+	_velocity =      se.velocity;
+	_acceleration =  se.acceleration;
+	_totalSteps =    se.totalSteps;
+	_stepNo =        se.stepNo;
+	_hgt =           se.hgt;
+	_brd =           se.brd;
+	_pos =           se.pos;
+	_spr =           se.spr;
+	_age =           se.age;
+	_parent = si;
 }
 
 } // end of namespace Saga2

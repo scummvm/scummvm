@@ -107,7 +107,7 @@ private:
 
 	Std::vector<TileAnimSet *> _tileAnimSets;
 	Layout *_gemLayout;
-	Std::map<Common::String, int> _dungeonTileChars;
+	Common::HashMap<Common::String, int> _dungeonTileChars;
 	ImageInfo *_charSetInfo;
 	ImageInfo *_gemTilesInfo;
 
@@ -166,7 +166,7 @@ private:
 	 *   "Improvements to a Fast Algorithm for Calculating Shading
 	 *   and Visibility in a Two-Dimensional Field"
 	 *   -----
-	 *   http://www.fadden.com/techmisc/fast-los.html
+	 *   https://fadden.com/tech/fast-los.html
 	 *
 	 * This function uses a lookup table to get the correct shadowmap,
 	 * therefore, the table will need to be updated if the viewport

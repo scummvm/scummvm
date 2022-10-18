@@ -27,6 +27,8 @@
 #include "director/cast.h"
 #include "director/channel.h"
 #include "director/castmember.h"
+#include "director/movie.h"
+#include "director/score.h"
 #include "director/window.h"
 #include "director/util.h"
 #include "director/lingo/lingo.h"
@@ -34,19 +36,30 @@
 #include "director/lingo/lingo-object.h"
 #include "director/lingo/lingo-the.h"
 
+#include "director/lingo/xlibs/aiff.h"
+#include "director/lingo/xlibs/applecdxobj.h"
+#include "director/lingo/xlibs/barakeobj.h"
 #include "director/lingo/xlibs/cdromxobj.h"
 #include "director/lingo/xlibs/fileio.h"
 #include "director/lingo/xlibs/flushxobj.h"
 #include "director/lingo/xlibs/fplayxobj.h"
+#include "director/lingo/xlibs/gpid.h"
+#include "director/lingo/xlibs/jwxini.h"
+#include "director/lingo/xlibs/jitdraw3.h"
 #include "director/lingo/xlibs/labeldrvxobj.h"
 #include "director/lingo/xlibs/memoryxobj.h"
+#include "director/lingo/xlibs/miscx.h"
+#include "director/lingo/xlibs/moovxobj.h"
 #include "director/lingo/xlibs/movemousexobj.h"
+#include "director/lingo/xlibs/movutils.h"
 #include "director/lingo/xlibs/orthoplayxobj.h"
 #include "director/lingo/xlibs/palxobj.h"
 #include "director/lingo/xlibs/popupmenuxobj.h"
+#include "director/lingo/xlibs/registercomponent.h"
 #include "director/lingo/xlibs/serialportxobj.h"
 #include "director/lingo/xlibs/soundjam.h"
 #include "director/lingo/xlibs/videodiscxobj.h"
+#include "director/lingo/xlibs/widgetxobj.h"
 #include "director/lingo/xlibs/winxobj.h"
 #include "director/lingo/xlibs/xplayanim.h"
 
@@ -61,21 +74,21 @@ static struct PredefinedProto {
 	int version;
 } predefinedMethods[] = {
 	// all except window
-	{ "new",					LM::m_new,					-1, 0,	kAllObj, 				200 },	// D2
+	{ "new",					LM::m_new,					-1, 0,	kAllObj,				200 },	// D2
 
 	// factory and XObject
 	{ "describe",				LM::m_describe,				 0, 0,	kXObj,					200 },	// D2
 	{ "dispose",				LM::m_dispose,				 0, 0,	kFactoryObj | kXObj,	200 },	// D2
 	{ "get",					LM::m_get,					 1, 1,	kFactoryObj,			200 },	// D2
-	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					300 },		// D3
-	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					300 },		// D3
-	{ "name",					LM::m_name,					 0, 0,	kXObj,					300 },		// D3
-	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj, 	300 },		// D3
+	{ "instanceRespondsTo",		LM::m_instanceRespondsTo,	 1, 1,	kXObj,					300 },	// D3
+	{ "messageList",			LM::m_messageList,			 0, 0,	kXObj,					300 },	// D3
+	{ "name",					LM::m_name,					 0, 0,	kXObj,					300 },	// D3
+	{ "perform",				LM::m_perform,				-1, 0,	kFactoryObj | kXObj,	300 },	// D3
 	{ "put",					LM::m_put,					 2, 2,	kFactoryObj,			200 },	// D2
 	{ "respondsTo",				LM::m_respondsTo,			 1, 1,	kXObj,					200 },	// D2
 
 	// script object and Xtra
-	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj, 	400 },			// D4
+	{ "birth",					LM::m_new,					-1, 0,	kScriptObj | kXtraObj,	400 },	// D4
 
 	{ nullptr, nullptr, 0, 0, 0, 0 }
 };
@@ -119,22 +132,33 @@ static struct XLibProto {
 	int type;
 	int version;
 } xlibs[] = {
-	{ CDROMXObj::fileNames,			CDROMXObj::open,		CDROMXObj::close,			kXObj,					200 },	// D2
-	{ FileIO::fileNames,			FileIO::open,			FileIO::close,				kXObj | kXtraObj,		200 },	// D2
-	{ FlushXObj::fileNames,			FlushXObj::open,		FlushXObj::close,			kXObj,					400 },	// D4
-	{ FPlayXObj::fileNames,			FPlayXObj::open,		FPlayXObj::close,			kXObj,					200 },	// D2
-	{ LabelDrvXObj::fileNames,		LabelDrvXObj::open,		LabelDrvXObj::close,		kXObj,					400 }, 	// D4
-	{ OrthoPlayXObj::fileNames,		OrthoPlayXObj::open,	OrthoPlayXObj::close,		kXObj,					400 }, 	// D4
-	{ PalXObj::fileNames,			PalXObj::open,			PalXObj::close,				kXObj,					400 }, 	// D4
-	{ PopUpMenuXObj::fileNames,		PopUpMenuXObj::open,	PopUpMenuXObj::close,		kXObj,					200 }, 	// D2
-	{ SerialPortXObj::fileNames,	SerialPortXObj::open,	SerialPortXObj::close,		kXObj,					200 },	// D2
-	{ SoundJam::fileNames,			SoundJam::open,			SoundJam::close,			kXObj,					400 },	// D4
-	{ VideodiscXObj::fileNames,		VideodiscXObj::open,	VideodiscXObj::close,		kXObj,					200 }, 	// D2
-	{ RearWindowXObj::fileNames,	RearWindowXObj::open,	RearWindowXObj::close,		kXObj,					400 },	// D4
-	{ MoveMouseXObj::fileNames,		MoveMouseXObj::open,	MoveMouseXObj::close,		kXObj,					400 },	// D4
-	{ XPlayAnim::fileNames,			XPlayAnim::open,		XPlayAnim::close, 			kXObj,					300 },	// D3
+	{ AiffXObj::fileNames,				AiffXObj::open,				AiffXObj::close,			kXObj,					400 },	// D4
+	{ AppleCDXObj::fileNames,			AppleCDXObj::open,			AppleCDXObj::close,			kXObj,					400 },	// D4
+	{ BarakeObj::fileNames,				BarakeObj::open,			BarakeObj::close,			kXObj,					400 },	// D4
+	{ CDROMXObj::fileNames,				CDROMXObj::open,			CDROMXObj::close,			kXObj,					200 },	// D2
+	{ FileIO::fileNames,				FileIO::open,				FileIO::close,				kXObj | kXtraObj,		200 },	// D2
+	{ FlushXObj::fileNames,				FlushXObj::open,			FlushXObj::close,			kXObj,					300 },	// D3
+	{ FPlayXObj::fileNames,				FPlayXObj::open,			FPlayXObj::close,			kXObj,					200 },	// D2
+	{ GpidXObj::fileNames,				GpidXObj::open,				GpidXObj::close,			kXObj,					400 },	// D4
+	{ JITDraw3XObj::fileNames,			JITDraw3XObj::open,			JITDraw3XObj::close,		kXObj,					400 },	// D4
+	{ JourneyWareXINIXObj::fileNames,	JourneyWareXINIXObj::open,	JourneyWareXINIXObj::close,	kXObj,					400 },	// D4
+	{ LabelDrvXObj::fileNames,			LabelDrvXObj::open,			LabelDrvXObj::close,		kXObj,					400 },	// D4
+	{ MemoryXObj::fileNames,			MemoryXObj::open,			MemoryXObj::close,			kXObj,					300 },	// D3
+	{ MiscX::fileNames,					MiscX::open,				MiscX::close,				kXObj,					400 },	// D4
+	{ MoovXObj::fileNames, 				MoovXObj::open, 			MoovXObj::close,			kXObj,					300 },  // D3
+	{ MoveMouseXObj::fileNames,			MoveMouseXObj::open,		MoveMouseXObj::close,		kXObj,					400 },	// D4
+	{ MovUtilsXObj::fileNames,			MovUtilsXObj::open,			MovUtilsXObj::close,		kXObj,					400 },	// D4
+	{ OrthoPlayXObj::fileNames,			OrthoPlayXObj::open,		OrthoPlayXObj::close,		kXObj,					400 },	// D4
+	{ PalXObj::fileNames,				PalXObj::open,				PalXObj::close,				kXObj,					400 },	// D4
+	{ PopUpMenuXObj::fileNames,			PopUpMenuXObj::open,		PopUpMenuXObj::close,		kXObj,					200 },	// D2
+	{ RearWindowXObj::fileNames,		RearWindowXObj::open,		RearWindowXObj::close,		kXObj,					400 },	// D4
+	{ RegisterComponent::fileNames,		RegisterComponent::open,	RegisterComponent::close,	kXObj,					400 },	// D4
+	{ SerialPortXObj::fileNames,		SerialPortXObj::open,		SerialPortXObj::close,		kXObj,					200 },	// D2
+	{ SoundJam::fileNames,				SoundJam::open,				SoundJam::close,			kXObj,					400 },	// D4
+	{ WidgetXObj::fileNames,			WidgetXObj::open,			WidgetXObj::close, 			kXObj,					400 },  // D4
+	{ VideodiscXObj::fileNames,			VideodiscXObj::open,		VideodiscXObj::close,		kXObj,					200 },	// D2
+	{ XPlayAnim::fileNames,				XPlayAnim::open,			XPlayAnim::close,			kXObj,					300 },	// D3
 	{ nullptr, nullptr, nullptr, 0, 0 }
-
 };
 
 void Lingo::initXLibs() {
@@ -272,12 +296,7 @@ Symbol ScriptContext::define(const Common::String &name, ScriptData *code, Commo
 	sym.ctx = this;
 
 	if (debugChannelSet(1, kDebugCompile)) {
-		uint pc = 0;
-		while (pc < sym.u.defn->size()) {
-			uint spc = pc;
-			Common::String instr = g_lingo->decodeInstruction(sym.u.defn, pc, &pc);
-			debugC(1, kDebugCompile, "[%5d] %s", spc, instr.c_str());
-		}
+		debugC(1, kDebugCompile, "%s", g_lingo->formatFunctionBody(sym).c_str());
 		debugC(1, kDebugCompile, "<end define code>");
 	}
 
@@ -364,6 +383,15 @@ bool ScriptContext::setProp(const Common::String &propName, const Datum &value) 
 	}
 	return false;
 }
+
+Common::String ScriptContext::formatFunctionList(const char *prefix) {
+	Common::String result;
+	for (auto it = _functionHandlers.begin(); it != _functionHandlers.end(); ++it) {
+		result += Common::String::format("%s%s\n", prefix, g_lingo->formatFunctionName(it->_value).c_str());
+	}
+	return result;
+}
+
 
 // Object array
 
@@ -477,6 +505,7 @@ bool Window::hasField(int field) {
 	case kTheDrawRect:
 	case kTheFileName:
 	case kTheModal:
+	case kTheRect:
 	case kTheSourceRect:
 	case kTheTitle:
 	case kTheTitleVisible:
@@ -499,6 +528,9 @@ Datum Window::getField(int field) {
 		return isVisible();
 	case kTheWindowType:
 		return getWindowType();
+	case kTheRect:
+		return getStageRect();
+
 	default:
 		warning("Window::getField: unhandled field '%s'", g_lingo->field2str(field));
 		return Datum();
@@ -640,7 +672,7 @@ Datum CastMember::getField(int field) {
 		break;
 	case kTheFileName:
 		if (castInfo)
-			d = Datum(castInfo->fileName);
+			d = Datum(castInfo->directory + g_director->_dirSeparator + castInfo->fileName);
 		break;
 	case kTheForeColor:
 		d = (int)getForeColor();
@@ -652,7 +684,7 @@ Datum CastMember::getField(int field) {
 		d = 1; // Not loaded handled in Lingo::getTheCast
 		break;
 	case kTheModified:
-		warning("STUB: CastMember::getField():: Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d = (int)_isChanged;
 		break;
 	case kTheName:
 		if (castInfo)
@@ -691,10 +723,10 @@ bool CastMember::setField(int field, const Datum &d) {
 
 	switch (field) {
 	case kTheBackColor:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		_cast->getCastMember(_castId)->setBackColor(d.asInt());
+		return true;
 	case kTheCastType:
-		warning("CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->entity2str(field), _castId);
 		return false;
 	case kTheFileName:
 		if (!castInfo) {
@@ -704,10 +736,10 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->fileName = d.asString();
 		return true;
 	case kTheForeColor:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		_cast->getCastMember(_castId)->setForeColor(d.asInt());
+		return true;
 	case kTheHeight:
-		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheName:
 		if (!castInfo) {
@@ -717,7 +749,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->name = d.asString();
 		return true;
 	case kTheRect:
-		warning("STUB: CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kThePurgePriority:
 		_purgePriority = CLIP<int>(d.asInt(), 0, 3);
@@ -731,7 +763,7 @@ bool CastMember::setField(int field, const Datum &d) {
 		castInfo->script = d.asString();
 		return true;
 	case kTheWidth:
-		warning("CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BUILDBOT: CastMember::setField(): Attempt to set read-only field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	default:
 		warning("CastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
@@ -782,8 +814,7 @@ Datum DigitalVideoCastMember::getField(int field) {
 	case kTheDuration:
 		// sometimes, we will get duration before we start video.
 		// _duration is initialized in startVideo, thus we will not get the correct number.
-		d.type = INT;
-		d.u.i = getDuration();
+		d = (int)getDuration();
 		break;
 	case kTheFrameRate:
 		d = _frameRate;
@@ -874,10 +905,13 @@ Datum BitmapCastMember::getField(int field) {
 
 	switch (field) {
 	case kTheDepth:
-		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d = _bitsPerPixel;
 		break;
 	case kTheRegPoint:
-		warning("STUB: BitmapCastMember::getField(): Unprocessed getting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		d.type = POINT;
+		d.u.farr = new FArray;
+		d.u.farr->arr.push_back(_regX);
+		d.u.farr->arr.push_back(_regY);
 		break;
 	case kThePalette:
 		d = _clut;
@@ -895,11 +929,20 @@ Datum BitmapCastMember::getField(int field) {
 bool BitmapCastMember::setField(int field, const Datum &d) {
 	switch (field) {
 	case kTheDepth:
-		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
+		warning("BitmapCastMember::setField(): Attempt to set read-only field %s of cast %d", g_lingo->field2str(field), _castId);
 		return false;
 	case kTheRegPoint:
-		warning("STUB: BitmapCastMember::setField(): Unprocessed setting field \"%s\" of cast %d", g_lingo->field2str(field), _castId);
-		return false;
+		if (d.type == POINT || (d.type == ARRAY && d.u.farr->arr.size() >= 2)) {
+			Score *score = g_director->getCurrentMovie()->getScore();
+			score->invalidateRectsForMember(this);
+			_regX = d.u.farr->arr[0].asInt();
+			_regY = d.u.farr->arr[1].asInt();
+			_modified = true;
+		} else {
+			warning("BitmapCastMember::setField(): Wrong Datum type %d for kTheRegPoint", d.type);
+			return false;
+		}
+		return true;
 	case kThePalette:
 		_clut = d.asInt();
 		return true;
@@ -957,16 +1000,17 @@ Datum TextCastMember::getField(int field) {
 		}
 		break;
 	case kTheTextFont:
-		d.u.i = _fontId;
+		d.type = STRING;
+		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(_fontId));
 		break;
 	case kTheTextHeight:
-		d.u.i = getTextHeight();
+		d = getTextHeight();
 		break;
 	case kTheTextSize:
-		d.u.i = getTextSize();
+		d = getTextSize();
 		break;
 	case kTheTextStyle:
-		d.u.i = _textSlant;
+		d = (int)_textSlant;
 		break;
 	default:
 		d = CastMember::getField(field);
@@ -976,6 +1020,22 @@ Datum TextCastMember::getField(int field) {
 }
 
 bool TextCastMember::setField(int field, const Datum &d) {
+	Channel *toEdit = nullptr;
+
+	if (field == kTheTextFont || field == kTheTextSize || field == kTheTextStyle) {
+		Common::Array<Channel *> channels = g_director->getCurrentMovie()->getScore()->_channels;
+		for (uint i = 0; i < channels.size(); i++) {
+			if (channels[i]->_sprite->_cast == this) {
+				toEdit = channels[i];
+				break;
+			}
+		}
+		if (toEdit) {
+			Common::Rect bbox = toEdit->getBbox();
+			toEdit->_widget = createWidget(bbox, toEdit, toEdit->_sprite->_spriteType);
+		}
+	}
+
 	switch (field) {
 	case kTheBackColor:
 		{
@@ -1021,20 +1081,45 @@ bool TextCastMember::setField(int field, const Datum &d) {
 	}
 		return true;
 	case kTheTextFont:
-		_fontId = d.asInt();
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
+		((Graphics::MacText *)toEdit->_widget)->enforceTextFont((uint16) g_director->_wm->_fontMan->getFontIdByName(d.asString()));
+		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
+		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
-		return false;
+		toEdit->_widget->removeWidget(_widget);
+		return true;
 	case kTheTextHeight:
 		_lineSpacing = d.asInt();
 		_modified = true;
 		return false;
 	case kTheTextSize:
-		setTextSize(d.asInt());
-		return false;
-	case kTheTextStyle:
-		_textSlant = d.asInt();
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
+		((Graphics::MacText *)toEdit->_widget)->setTextSize(d.asInt());
+		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
+		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
 		_modified = true;
-		return false;
+		toEdit->_widget->removeWidget(_widget);
+		return true;
+	case kTheTextStyle:
+		if (!toEdit) {
+			warning("Channel containing this CastMember %d doesn't exist", (int) _castId);
+			return false;
+		}
+		{
+			int slant = g_director->_wm->_fontMan->parseSlantFromName(d.asString());
+			((Graphics::MacText *)toEdit->_widget)->enforceTextSlant(slant);
+		}
+		_ptext = ((Graphics::MacText *)toEdit->_widget)->getPlainText();
+		_ftext = ((Graphics::MacText *)toEdit->_widget)->getTextChunk(0, 0, -1, -1, true);
+		_modified = true;
+		toEdit->_widget->removeWidget(_widget);
+		return true;
 	default:
 		break;
 	}
@@ -1070,12 +1155,17 @@ Datum TextCastMember::getChunkField(int field, int start, int end) {
 		else
 			d.u.i = getForeColor();
 		break;
-	case kTheTextFont:
+	case kTheTextFont: {
+		int fontId;
 		if (_widget)
-			d.u.i = macText->getTextFont(start, end);
+			fontId = macText->getTextFont(start, end);
 		else
-			d.u.i = _fontId;
+			fontId = _fontId;
+
+		d.type = STRING;
+		d.u.s = new Common::String(g_director->_wm->_fontMan->getFontName(fontId));
 		break;
+		}
 	case kTheTextHeight:
 		warning("TextCastMember::getChunkField getting text height(line spacing) is not implemented yet, returning the default one");
 		d.u.i = _lineSpacing;

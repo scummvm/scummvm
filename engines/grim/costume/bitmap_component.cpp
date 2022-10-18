@@ -23,15 +23,12 @@
 #include "engines/grim/grim.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/set.h"
-
 #include "engines/grim/costume/bitmap_component.h"
 
 namespace Grim {
 
-
 BitmapComponent::BitmapComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {
-
 }
 
 void BitmapComponent::setKey(int val) {

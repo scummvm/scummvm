@@ -32,6 +32,7 @@
 #include "common/savefile.h"
 #include "common/str.h"
 #include "common/system.h"
+#include "common/substream.h"
 #include "common/timer.h"
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -52,12 +53,14 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	  _nextHotsToAdd(nullptr), _nextHotsToRemove(nullptr),
 	  _levelId(0), _skipLevel(false), _health(0), _maxHealth(0),
 	  _playerFrameIdx(0), _playerFrameSep(0), _refreshConversation(false),
-	  _countdown(0), _timerStarted(false), _score(0), _lives(0),
-	  _defaultCursor(""), _checkpoint(""),
-	  _currentPlayerPosition(kPlayerLeft), _lastPlayerPosition(kPlayerLeft),
-	  //_obj1KillsCount(0), _obj1MissesCount(0),
-	  _screenW(0), _screenH(0) { // Every games initializes its own resolution
+	  _countdown(0), _timerStarted(false), _score(0), _bonus(0), _lives(0),
+	  _defaultCursor(""), _defaultCursorIdx(0),  _skipDefeatVideo(false),
+	  _background(nullptr), _masks(nullptr), _musicRate(0), _musicStereo(false),
+	  _additionalVideo(nullptr), _ammo(0), _maxAmmo(0), _skipNextVideo(false),
+	  _doNotStopSounds(false), _screenW(0), _screenH(0), // Every games initializes its own resolution
+	  _keepTimerDuringScenes(false) {
 	_rnd = new Common::RandomSource("hypno");
+	_checkpoint = "";
 
 	if (gd->extra)
 		_variant = gd->extra;
@@ -68,6 +71,15 @@ HypnoEngine::HypnoEngine(OSystem *syst, const ADGameDescription *gd)
 	_language = Common::parseLanguage(ConfMan.get("language"));
 	_platform = Common::parsePlatform(ConfMan.get("platform"));
 	if (!Common::parseBool(ConfMan.get("cheats"), _cheatsEnabled))
+		error("Failed to parse bool from cheats options");
+
+	if (!Common::parseBool(ConfMan.get("infiniteHealth"), _infiniteHealthCheat))
+		error("Failed to parse bool from cheats options");
+
+	if (!Common::parseBool(ConfMan.get("infiniteAmmo"), _infiniteAmmoCheat))
+		error("Failed to parse bool from cheats options");
+
+	if (!Common::parseBool(ConfMan.get("unlockAllLevels"), _unlockAllLevels))
 		error("Failed to parse bool from cheats options");
 
 	if (!Common::parseBool(ConfMan.get("restored"), _restoredContentEnabled))
@@ -117,6 +129,7 @@ LibFile *HypnoEngine::loadLib(const Filename &prefix, const Filename &filename, 
 }
 
 void HypnoEngine::loadAssets() { error("Function \"%s\" not implemented", __FUNCTION__); }
+Common::String HypnoEngine::findNextLevel(const Common::String &level) { error("Function \"%s\" not implemented", __FUNCTION__); }
 
 Common::Error HypnoEngine::run() {
 	Graphics::ModeList modes;
@@ -128,7 +141,7 @@ Common::Error HypnoEngine::run() {
 	_pixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	initGraphics(_screenW, _screenH, &_pixelFormat);
 
-	_compositeSurface = new Graphics::ManagedSurface();
+	_compositeSurface = new Graphics::Surface();
 	_compositeSurface->create(_screenW, _screenH, _pixelFormat);
 
 	// Main event loop
@@ -150,7 +163,8 @@ Common::Error HypnoEngine::run() {
 			_nextLevel = "";
 			_arcadeMode = "";
 			runLevel(_currentLevel);
-		}
+		} else
+			g_system->delayMillis(300);
 	}
 	return Common::kNoError;
 }
@@ -165,11 +179,19 @@ void HypnoEngine::runLevel(Common::String &name) {
 
 	// Play intros
 	disableCursor();
+
+	if (_levels[name]->playMusicDuringIntro && !_levels[name]->music.empty()) {
+		playSound(_levels[name]->music, 0, _levels[name]->musicRate);
+		_doNotStopSounds = true;
+	}
+
 	debug("Number of videos to play: %d", _levels[name]->intros.size());
 	for (Filenames::iterator it = _levels[name]->intros.begin(); it != _levels[name]->intros.end(); ++it) {
 		MVideo v(*it, Common::Point(0, 0), false, true, false);
 		runIntro(v);
 	}
+
+	_doNotStopSounds = false;
 
 	if (_levels[name]->type == TransitionLevel) {
 		debugC(1, kHypnoDebugScene, "Executing transition level %s", name.c_str());
@@ -187,7 +209,6 @@ void HypnoEngine::runLevel(Common::String &name) {
 		runCode((Code *)_levels[name]);
 	} else if (_levels[name]->type == SceneLevel) {
 		debugC(1, kHypnoDebugScene, "Executing scene level %s with next level: %s", name.c_str(), _levels[name]->levelIfWin.c_str());
-		changeScreenMode("640x480");
 		runScene((Scene *)_levels[name]);
 	} else {
 		error("Invalid level %s", name.c_str());
@@ -197,8 +218,11 @@ void HypnoEngine::runLevel(Common::String &name) {
 void HypnoEngine::runIntros(Videos &videos) {
 	debugC(1, kHypnoDebugScene, "Starting run intros with %d videos!", videos.size());
 	Common::Event event;
-	stopSound();
-	// defaultCursor();
+	if (!_doNotStopSounds)
+		stopSound();
+	bool skip = false;
+	int clicked[3] = {-1, -1, -1};
+	int clicks = 0;
 
 	for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 		playVideo(*it);
@@ -209,12 +233,17 @@ void HypnoEngine::runIntros(Videos &videos) {
 			// Events
 			switch (event.type) {
 			case Common::EVENT_KEYDOWN:
-				if (event.kbd.keycode == Common::KEYCODE_ESCAPE) {
-					for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
-						if (it->decoder)
-							skipVideo(*it);
-					}
-					videos.clear();
+				if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+					skip = true;
+				break;
+			case Common::EVENT_LBUTTONDOWN:
+				if (videos.size() == 1) {
+					int first = (clicks - 2) % 3;
+					int last = clicks % 3;
+					clicked[last] = videos[0].decoder->getCurFrame();
+					if (clicks >= 2 && clicked[last] - clicked[first] <= 10)
+						skip = true;
+					clicks++;
 				}
 				break;
 
@@ -222,6 +251,14 @@ void HypnoEngine::runIntros(Videos &videos) {
 				break;
 			}
 		}
+		if (skip) {
+			for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
+				if (it->decoder)
+					skipVideo(*it);
+			}
+			videos.clear();
+		}
+
 		bool playing = false;
 		for (Videos::iterator it = videos.begin(); it != videos.end(); ++it) {
 			assert(!it->loop);
@@ -233,8 +270,8 @@ void HypnoEngine::runIntros(Videos &videos) {
 				} else {
 					playing = true;
 					if (it->decoder->needsUpdate()) {
-						drawScreen();
 						updateScreen(*it);
+						drawScreen();
 					}
 				}
 			}
@@ -286,34 +323,16 @@ void HypnoEngine::loadImage(const Common::String &name, int x, int y, bool trans
 }
 
 void HypnoEngine::drawImage(Graphics::Surface &surf, int x, int y, bool transparent) {
+	Common::Rect srcRect(surf.w, surf.h);
+	Common::Rect dstRect = srcRect;
+
+	dstRect.moveTo(x, y);
+	_compositeSurface->clip(srcRect, dstRect);
+
 	if (transparent) {
-		_compositeSurface->transBlitFrom(surf, Common::Point(x, y), _transparentColor);
+		_compositeSurface->copyRectToSurfaceWithKey(surf, dstRect.left, dstRect.top, srcRect, _transparentColor);
 	} else
-		_compositeSurface->blitFrom(surf, Common::Point(x, y));
-}
-
-Common::File *HypnoEngine::fixSmackerHeader(Common::File *file) {
-	Common::String magic;
-	magic += file->readByte();
-	magic += file->readByte();
-	magic += file->readByte();
-	magic += file->readByte();
-
-	if (magic == "HYP2") {
-		uint32 size = file->size();
-		byte *data = (byte *)malloc(size);
-		file->seek(0);
-		file->read(data, size);
-		data[0] = 'S';
-		data[1] = 'M';
-		data[2] = 'K';
-		file->close();
-		delete file;
-		file = (Common::File *)new Common::MemoryReadStream(data, size, DisposeAfterUse::YES);
-	} else
-		file->seek(0);
-
-	return file;
+		_compositeSurface->copyRectToSurface(surf, dstRect.left, dstRect.top, srcRect);
 }
 
 Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, byte **palette) {
@@ -324,8 +343,6 @@ Graphics::Surface *HypnoEngine::decodeFrame(const Common::String &name, int n, b
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
-
-	file = fixSmackerHeader(file);
 
 	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
@@ -354,8 +371,6 @@ Frames HypnoEngine::decodeFrames(const Common::String &name) {
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
-
-	file = fixSmackerHeader(file);
 
 	HypnoSmackerDecoder vd;
 	if (!vd.loadStream(file))
@@ -386,11 +401,8 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface->free();
 		delete _compositeSurface;
 
-		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface = new Graphics::Surface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
-		_compositeSurface->setTransparentColor(_transparentColor);
-
 	} else if (mode == "320x200") {
 		if (_screenW == 320 && _screenH == 200)
 			return;
@@ -403,10 +415,8 @@ void HypnoEngine::changeScreenMode(const Common::String &mode) {
 		_compositeSurface->free();
 		delete _compositeSurface;
 
-		_compositeSurface = new Graphics::ManagedSurface();
+		_compositeSurface = new Graphics::Surface();
 		_compositeSurface->create(_screenW, _screenH, _pixelFormat);
-
-		_compositeSurface->setTransparentColor(_transparentColor);
 	} else
 		error("Unknown screen mode %s", mode.c_str());
 }
@@ -431,9 +441,21 @@ void HypnoEngine::loadPalette(const byte *palette, uint32 offset, uint32 size) {
 	g_system->getPaletteManager()->setPalette(palette, offset, size);
 }
 
+
+byte *HypnoEngine::getPalette(uint32 idx) {
+	byte *videoPalette = (byte *)malloc(3);
+	g_system->getPaletteManager()->grabPalette(videoPalette, idx, 1);
+	return videoPalette;
+}
+
+void HypnoEngine::updateVideo(MVideo &video) {
+	video.decoder->decodeNextFrame();
+}
+
 void HypnoEngine::updateScreen(MVideo &video) {
 	const Graphics::Surface *frame = video.decoder->decodeNextFrame();
 	bool dirtyPalette = video.decoder->hasDirtyPalette();
+	bool isFullscreen = (frame->w == _screenW && frame->h == _screenH);
 
 	if (frame->h == 0 || frame->w == 0 || video.decoder->getPalette() == nullptr)
 		return;
@@ -445,22 +467,33 @@ void HypnoEngine::updateScreen(MVideo &video) {
 		g_system->getPaletteManager()->setPalette(videoPalette, 0, 256);
 	}
 
-	if (video.scaled) {
+	if (video.scaled && !isFullscreen) {
 		Graphics::Surface *sframe = frame->scale(_screenW, _screenH);
+		Common::Rect srcRect(sframe->w, sframe->h);
+		Common::Rect dstRect = srcRect;
+
+		dstRect.moveTo(video.position);
+		_compositeSurface->clip(srcRect, dstRect);
 
 		if (video.transparent) {
-			_compositeSurface->transBlitFrom(*sframe, video.position, _transparentColor);
+			_compositeSurface->copyRectToSurfaceWithKey(*sframe, dstRect.left, dstRect.top, srcRect, _transparentColor);
 		} else {
-			_compositeSurface->blitFrom(*sframe, video.position);
+			_compositeSurface->copyRectToSurface(*sframe, dstRect.left, dstRect.top, srcRect);
 		}
 
 		sframe->free();
 		delete sframe;
 	} else {
+		Common::Rect srcRect(frame->w, frame->h);
+		Common::Rect dstRect = srcRect;
+
+		dstRect.moveTo(video.position);
+		_compositeSurface->clip(srcRect, dstRect);
+
 		if (video.transparent) {
-			_compositeSurface->transBlitFrom(*frame, video.position, _transparentColor);
+			_compositeSurface->copyRectToSurfaceWithKey(*frame, dstRect.left, dstRect.top, srcRect, _transparentColor);
 		} else {
-			_compositeSurface->blitFrom(*frame, video.position);
+			_compositeSurface->copyRectToSurface(*frame, dstRect.left, dstRect.top, srcRect);
 		}
 	}
 }
@@ -482,8 +515,6 @@ void HypnoEngine::playVideo(MVideo &video) {
 
 	if (!file->open(path))
 		error("unable to find video file %s", path.c_str());
-
-	file = fixSmackerHeader(file);
 
 	if (video.decoder != nullptr) {
 		debugC(1, kHypnoDebugMedia, "Restarting %s!!!!", video.path.c_str());
@@ -511,14 +542,24 @@ void HypnoEngine::skipVideo(MVideo &video) {
 
 // Sound handling
 
-void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate) {
+void HypnoEngine::playSound(const Common::String &filename, uint32 loops, uint32 sampleRate, bool stereo) {
 	debugC(1, kHypnoDebugMedia, "%s(%s, %d, %d)", __FUNCTION__, filename.c_str(), loops, sampleRate);
 	Common::String name = convertPath(filename);
 
 	Audio::LoopingAudioStream *stream = nullptr;
 	Common::File *file = new Common::File();
 	if (file->open(name)) {
-		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(file, sampleRate, Audio::FLAG_UNSIGNED, DisposeAfterUse::YES), loops);
+		uint32 flags = Audio::FLAG_UNSIGNED;
+
+		Common::SeekableSubReadStream *sub;
+		if (stereo) {
+			sub = new Common::SeekableSubReadStream(file, 0, file->size() - (file->size() % 2), DisposeAfterUse::YES);
+			flags = flags | Audio::FLAG_STEREO;
+		} else {
+			sub = new Common::SeekableSubReadStream(file, 0, file->size(), DisposeAfterUse::YES);
+		}
+
+		stream = new Audio::LoopingAudioStream(Audio::makeRawStream(sub, sampleRate, flags, DisposeAfterUse::YES), loops);
 		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundHandle, stream, -1, Audio::Mixer::kMaxChannelVolume);
 	} else {
 		if (!_prefixDir.empty())
@@ -582,6 +623,7 @@ bool HypnoEngine::startCountdown(uint32 delay) {
 
 void HypnoEngine::removeTimers() {
 	_timerStarted = false;
+	_keepTimerDuringScenes = false;
 	g_system->getTimerManager()->removeTimerProc(&alarmCallback);
 	g_system->getTimerManager()->removeTimerProc(&countdownCallback);
 }

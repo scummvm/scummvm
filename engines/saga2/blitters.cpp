@@ -70,9 +70,9 @@ void _HLine(uint8 *dstPtr, uint32 width, uint32 color) {
 }
 
 void unpackImage(gPixelMap &map, int16 width, int16 rowCount, int8 *srcData) {
-	int8  *dest = (int8 *)map.data;
+	int8  *dest = (int8 *)map._data;
 	int16 bytecount = (width + 1) & ~1;
-	int16 rowMod = map.size.x - bytecount;
+	int16 rowMod = map._size.x - bytecount;
 
 	while (rowCount--) {
 		for (int16 k = 0; k < bytecount;) {
@@ -107,8 +107,8 @@ void unpackImage(gPixelMap *map, int32 width, int32 rowCount, int8 *srcData) {
 #define DEBUGPACK 0
 
 void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
-	byte *dst = map->data;
-	int bytes = map->size.x * map->size.y;
+	byte *dst = map->_data;
+	int bytes = map->_size.x * map->_size.y;
 	bool fail = false;
 
 	if (!sprData) {
@@ -129,7 +129,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 
 		if (bytes < trans) {
 #if DEBUGPACK
-			warning("unpackSprite: too many trans %d < %d for %dx%d (src %d bytes)", bytes, trans, map->size.x, map->size.y, dataSize);
+			warning("unpackSprite: too many trans %d < %d for %dx%d (src %d bytes)", bytes, trans, map->_size.x, map->_size.y, dataSize);
 #endif
 			fail = true;
 			break;
@@ -150,7 +150,7 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 		}
 		if (bytes < fill) {
 #if DEBUGPACK
-			warning("unpackSprite: too many fill %d < %d for %dx%d (src %d bytes)", bytes, fill, map->size.x, map->size.y, dataSize);
+			warning("unpackSprite: too many fill %d < %d for %dx%d (src %d bytes)", bytes, fill, map->_size.x, map->_size.y, dataSize);
 #endif
 			fill = bytes;
 			fail = true;
@@ -177,12 +177,12 @@ void unpackSprite(gPixelMap *map, uint8 *sprData, uint32 dataSize) {
 	if (fail) {
 #if DEBUGPACK
 		Graphics::Surface surf;
-		surf.w = map->size.x;
-		surf.h = map->size.y;
-		surf.pitch = map->size.x;
+		surf.w = map->_size.x;
+		surf.h = map->_size.y;
+		surf.pitch = map->_size.x;
 		surf.format = Graphics::PixelFormat::createFormatCLUT8();
 
-		surf.setPixels(map->data);
+		surf.setPixels(map->_data);
 
 		surf.debugPrint();
 #endif
@@ -204,7 +204,7 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 	if (point.x + SAGA_ISOTILE_WIDTH < 0)
 		return;
 
-	if (point.x - SAGA_ISOTILE_WIDTH >= map->size.x)
+	if (point.x - SAGA_ISOTILE_WIDTH >= map->_size.x)
 		return;
 
 	tilePointer = srcData;
@@ -213,15 +213,15 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 
 	drawPoint.y -= height;
 
-	if (drawPoint.y >= map->size.y)
+	if (drawPoint.y >= map->_size.y)
 		return;
 
 	readPointer = tilePointer;
-	lowBound = MIN((int)(drawPoint.y + height), (int)map->size.y);
+	lowBound = MIN((int)(drawPoint.y + height), (int)map->_size.y);
 	for (row = drawPoint.y; row < lowBound; row++) {
 		widthCount = 0;
 		if (row >= 0) {
-			drawPointer = map->data + drawPoint.x + (row * map->size.x);
+			drawPointer = map->_data + drawPoint.x + (row * map->_size.x);
 			col = drawPoint.x;
 			for (;;) {
 				bgRunCount = *readPointer++;
@@ -244,7 +244,7 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 					col += colDiff;
 				}
 
-				colDiff = map->size.x - col;
+				colDiff = map->_size.x - col;
 				if (colDiff > 0) {
 					int countDiff = fgRunCount - count;
 					if (colDiff > countDiff)
@@ -281,14 +281,14 @@ void drawTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData, bo
 	// Compute dirty rect
 	int rectX = MAX<int>(drawPoint.x, 0);
 	int rectY = MAX<int>(drawPoint.y, 0);
-	int rectX2 = MIN<int>(drawPoint.x + SAGA_ISOTILE_WIDTH, map->size.x);
+	int rectX2 = MIN<int>(drawPoint.x + SAGA_ISOTILE_WIDTH, map->_size.x);
 	int rectY2 = lowBound;
 	debugC(3, kDebugTiles, "Rect = (%d,%d,%d,%d)", rectX, rectY, rectX2, rectY2);
 
 #if 0
 	Graphics::Surface sur;
-	sur.create(map->size.x, map->size.y, Graphics::PixelFormat::createFormatCLUT8());
-	sur.setPixels(map->data);
+	sur.create(map->_size.x, map->_size.y, Graphics::PixelFormat::createFormatCLUT8());
+	sur.setPixels(map->_data);
 	//sur.debugPrint();
 	g_system->copyRectToScreen(sur.getPixels(), sur.pitch, 0, 0, sur.w, sur.h);
 	g_system->updateScreen();
@@ -301,8 +301,8 @@ void maskTile(gPixelMap *map, int32 x, int32 y, int32 height, uint8 *srcData) {
 }
 
 void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int32 xpos, int32 ypos) {
-	int16 w = srcMap->size.x;
-	int16 h = srcMap->size.y;
+	int16 w = srcMap->_size.x;
+	int16 h = srcMap->_size.y;
 	int32 offset = 0;
 
 	if (ypos < 0) {
@@ -317,18 +317,18 @@ void TBlit(gPixelMap *dstMap, gPixelMap *srcMap, int32 xpos, int32 ypos) {
 		xpos = 0;
 	}
 
-	if (w > dstMap->size.x - xpos)
-		w = dstMap->size.x - xpos;
-	if (h > dstMap->size.y - ypos)
-		h = dstMap->size.y - ypos;
+	if (w > dstMap->_size.x - xpos)
+		w = dstMap->_size.x - xpos;
+	if (h > dstMap->_size.y - ypos)
+		h = dstMap->_size.y - ypos;
 	if (w < 0 || h < 0)
 		return;
 
-	int16 dstMod = dstMap->size.x - w;
-	int16 srcMod = srcMap->size.x - w;
+	int16 dstMod = dstMap->_size.x - w;
+	int16 srcMod = srcMap->_size.x - w;
 
-	byte *srcPtr = srcMap->data + offset;
-	byte *dstPtr = dstMap->data + xpos + ypos * dstMap->size.x;
+	byte *srcPtr = srcMap->_data + offset;
+	byte *dstPtr = dstMap->_data + xpos + ypos * dstMap->_size.x;
 
 	for (int16 y = 0; y < h; y++) {
 		for (int16 x = 0; x < w; x++) {
@@ -349,12 +349,12 @@ void TBlit4(gPixelMap *d, gPixelMap *s, int32 x, int32 y) {
 }
 
 void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, byte *lookup) {
-	byte *srcPtr = sprMap->data;
-	byte *dstPtr = compMap->data + xpos + ypos * compMap->size.x;
-	int16 rowMod = compMap->size.x - sprMap->size.x;
+	byte *srcPtr = sprMap->_data;
+	byte *dstPtr = compMap->_data + xpos + ypos * compMap->_size.x;
+	int16 rowMod = compMap->_size.x - sprMap->_size.x;
 
-	for (int16 y = 0; y < sprMap->size.y; y++) {
-		for (int16 x = 0; x < sprMap->size.x; x++) {
+	for (int16 y = 0; y < sprMap->_size.y; y++) {
+		for (int16 x = 0; x < sprMap->_size.x; x++) {
 			byte c = *srcPtr++;
 
 			if (c == 0)
@@ -367,15 +367,15 @@ void compositePixels(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 yp
 }
 
 void compositePixelsRvs(gPixelMap *compMap, gPixelMap *sprMap, int32 xpos, int32 ypos, byte *lookup) {
-	byte *srcPtr = sprMap->data + sprMap->bytes();
-	byte *dstPtr = compMap->data + xpos + (ypos + sprMap->size.y) * compMap->size.x;
+	byte *srcPtr = sprMap->_data + sprMap->bytes();
+	byte *dstPtr = compMap->_data + xpos + (ypos + sprMap->_size.y) * compMap->_size.x;
 
-	int16 rowMod = compMap->size.x + sprMap->size.x;
+	int16 rowMod = compMap->_size.x + sprMap->_size.x;
 
-	for (int16 y = 0; y < sprMap->size.y; y++) {
+	for (int16 y = 0; y < sprMap->_size.y; y++) {
 		dstPtr -= rowMod;
 
-		for (int16 x = 0; x < sprMap->size.x; x++) {
+		for (int16 x = 0; x < sprMap->_size.x; x++) {
 			byte c = *--srcPtr;
 
 			if (c == 0)

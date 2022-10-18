@@ -237,9 +237,7 @@ int main(int argc, char *argv[])
 
 	OutputMode outputMode = kCPPOutput;
 
-	if (argc != 2)
-		showhelp(argv[0]);
-	if (strcmp(argv[1], "--c++") == 0) {
+	if (argc == 1 || strcmp(argv[1], "--c++") == 0) {
 		outputMode = kCPPOutput;
 	} else if (strcmp(argv[1], "--php") == 0) {
 		outputMode = kPHPOutput;

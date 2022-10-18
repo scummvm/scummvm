@@ -61,7 +61,8 @@ Channel::Channel(Sprite *sp, int priority) {
 	_visible = true;
 	_dirty = true;
 
-	_sprite->updateEditable();
+	if (_sprite)
+		_sprite->updateEditable();
 }
 
 Channel::Channel(const Channel &channel) {
@@ -105,9 +106,9 @@ Channel::~Channel() {
 }
 
 DirectorPlotData Channel::getPlotData() {
-	DirectorPlotData pd(g_director->_wm, _sprite->_spriteType, _sprite->_ink, _sprite->_blend, _sprite->getBackColor(), _sprite->getForeColor());
-	pd.colorWhite = pd._wm->_colorWhite;
-	pd.colorBlack = pd._wm->_colorBlack;
+	DirectorPlotData pd(g_director, _sprite->_spriteType, _sprite->_ink, _sprite->_blend, _sprite->getBackColor(), _sprite->getForeColor());
+	pd.colorWhite = 255;
+	pd.colorBlack = 0;
 	pd.dst = nullptr;
 
 	pd.srf = getSurface();
@@ -200,7 +201,7 @@ bool Channel::isDirty(Sprite *nextSprite) {
 		_delta != Common::Point(0, 0) ||
 		(_sprite->_cast && _sprite->_cast->isModified());
 
-	if (!_sprite->_puppet) {
+	if (_sprite && !_sprite->_puppet) {
 		// When puppet is set, the overall dirty flag should be set when sprite is
 		// modified.
 		isDirtyFlag |= _sprite->_castId != nextSprite->_castId ||
@@ -313,14 +314,15 @@ bool Channel::isMatteWithin(Channel *channel) {
 }
 
 bool Channel::isActiveVideo() {
-	if (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo)
+	if (_sprite && (!_sprite->_cast || _sprite->_cast->_type != kCastDigitalVideo))
 		return false;
 
 	return true;
 }
 
 void Channel::updateVideoTime() {
-	_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
+	if (isActiveVideo())
+		_movieTime = ((DigitalVideoCastMember *)_sprite->_cast)->getMovieCurrentTime();
 }
 
 bool Channel::isVideoDirectToStage() {
@@ -332,7 +334,20 @@ bool Channel::isVideoDirectToStage() {
 
 Common::Rect Channel::getBbox(bool unstretched) {
 	Common::Rect result(unstretched ? _sprite->_width : _width,
-											unstretched ? _sprite->_height : _height);
+						unstretched ? _sprite->_height : _height);
+	result.moveTo(getPosition());
+
+	if (_constraint > 0 && _constraint <= g_director->getCurrentMovie()->getScore()->_channels.size()) {
+		Common::Rect constraintBbox = g_director->getCurrentMovie()->getScore()->_channels[_constraint]->getBbox();
+		if (result.top < constraintBbox.top)
+			_currentPoint.y = constraintBbox.top;
+		if (result.left < constraintBbox.left)
+			_currentPoint.x = constraintBbox.left;
+		if (result.top > constraintBbox.bottom)
+			_currentPoint.y = constraintBbox.bottom;
+		if (result.left > constraintBbox.right)
+			_currentPoint.x = constraintBbox.right;
+	}
 	result.moveTo(getPosition());
 
 	return result;
@@ -488,6 +503,10 @@ void Channel::replaceSprite(Sprite *nextSprite) {
 		widgetKeeped = false;
 		_sprite->_cast->releaseWidget();
 		newSprite = true;
+	}
+	if (_sprite->_castId != nextSprite->_castId && _sprite->_cast && _sprite->_cast->_type == kCastDigitalVideo) {
+		((DigitalVideoCastMember *)_sprite->_cast)->stopVideo();
+		((DigitalVideoCastMember *)_sprite->_cast)->rewindVideo();
 	}
 
 	int width = _width;
@@ -661,14 +680,14 @@ void Channel::addDelta(Common::Point pos) {
 		if (!constraintBbox.contains(currentBbox)) {
 			if (currentBbox.top < constraintBbox.top) {
 				pos.y += constraintBbox.top - currentBbox.top;
-			} else if (currentBbox.bottom > constraintBbox.bottom) {
-				pos.y += constraintBbox.bottom - currentBbox.bottom;
+			} else if (currentBbox.top > constraintBbox.bottom) {
+				pos.y += constraintBbox.bottom;
 			}
 
 			if (currentBbox.left < constraintBbox.left) {
 				pos.x += constraintBbox.left - currentBbox.left;
-			} else if (currentBbox.right > constraintBbox.right) {
-				pos.x += constraintBbox.right - currentBbox.right;
+			} else if (currentBbox.left > constraintBbox.right) {
+				pos.x += constraintBbox.right;
 			}
 		}
 	}

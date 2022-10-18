@@ -112,11 +112,9 @@ void AIChip::takeSharedArea() {
 
 void AIChip::setUpAIChip() {
 	if (!_playingMovie) {
-		PegasusEngine *vm = (PegasusEngine *)g_engine;
-
 		uint numSolves;
 		if (GameState.getWalkthroughMode()) {
-			if (vm->canSolve())
+			if (g_vm->canSolve())
 				numSolves = 2;
 			else
 				numSolves = 1;
@@ -124,18 +122,16 @@ void AIChip::setUpAIChip() {
 			numSolves = 0;
 		}
 
-		setItemState(s_highlightState[vm->getNumHints()][numSolves][0]);
+		setItemState(s_highlightState[g_vm->getNumHints()][numSolves][0]);
 	}
 }
 
 // Only does something when there are hints or solves available.
 void AIChip::setUpAIChipRude() {
 	if (!_playingMovie) {
-		PegasusEngine *vm = (PegasusEngine *)g_engine;
-
 		uint numSolves;
 		if (GameState.getWalkthroughMode()) {
-			if (vm->canSolve())
+			if (g_vm->canSolve())
 				numSolves = 2;
 			else
 				numSolves = 1;
@@ -143,18 +139,17 @@ void AIChip::setUpAIChipRude() {
 			numSolves = 0;
 		}
 
-		uint numHints = vm->getNumHints();
+		uint numHints = g_vm->getNumHints();
 		if (numSolves == 2 || numHints != 0)
 			setItemState(s_highlightState[numHints][numSolves][0]);
 	}
 }
 
 void AIChip::activateAIHotspots() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
 	_briefingSpot.setActive();
 	_scanSpot.setActive();
 
-	switch (vm->getNumHints()) {
+	switch (g_vm->getNumHints()) {
 	case 3:
 		_hint3Spot.setActive();
 		// fall through
@@ -168,18 +163,16 @@ void AIChip::activateAIHotspots() {
 		break;
 	}
 
-	if (GameState.getWalkthroughMode() && vm->canSolve())
+	if (GameState.getWalkthroughMode() && g_vm->canSolve())
 		_solveSpot.setActive();
 }
 
 void AIChip::showBriefingClicked() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
 	_playingMovie = true;
 
 	uint numSolves;
 	if (GameState.getWalkthroughMode()) {
-		if (vm->canSolve())
+		if (g_vm->canSolve())
 			numSolves = 2;
 		else
 			numSolves = 1;
@@ -187,19 +180,17 @@ void AIChip::showBriefingClicked() {
 		numSolves = 0;
 	}
 
-	ItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIBriefingSpotID - kAIHint1SpotID + 1];
+	ItemState newState = s_highlightState[g_vm->getNumHints()][numSolves][kAIBriefingSpotID - kAIHint1SpotID + 1];
 	if (newState != -1)
 		setItemState(newState);
 }
 
 void AIChip::showEnvScanClicked() {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
 	_playingMovie = true;
 
 	uint numSolves;
 	if (GameState.getWalkthroughMode()) {
-		if (vm->canSolve())
+		if (g_vm->canSolve())
 			numSolves = 2;
 		else
 			numSolves = 1;
@@ -207,7 +198,7 @@ void AIChip::showEnvScanClicked() {
 		numSolves = 0;
 	}
 
-	ItemState newState = s_highlightState[vm->getNumHints()][numSolves][kAIScanSpotID - kAIHint1SpotID + 1];
+	ItemState newState = s_highlightState[g_vm->getNumHints()][numSolves][kAIScanSpotID - kAIHint1SpotID + 1];
 
 	if (newState != -1)
 		setItemState(newState);
@@ -219,25 +210,23 @@ void AIChip::clearClicked() {
 }
 
 void AIChip::clickInAIHotspot(HotSpotID id) {
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
 	Common::String movieName;
 
 	switch (id) {
 	case kAIBriefingSpotID:
-		movieName = vm->getBriefingMovie();
+		movieName = g_vm->getBriefingMovie();
 		break;
 	case kAIScanSpotID:
-		movieName = vm->getEnvScanMovie();
+		movieName = g_vm->getEnvScanMovie();
 		break;
 	case kAIHint1SpotID:
-		movieName = vm->getHintMovie(1);
+		movieName = g_vm->getHintMovie(1);
 		break;
 	case kAIHint2SpotID:
-		movieName = vm->getHintMovie(2);
+		movieName = g_vm->getHintMovie(2);
 		break;
 	case kAIHint3SpotID:
-		movieName = vm->getHintMovie(3);
+		movieName = g_vm->getHintMovie(3);
 		break;
 	case kAISolveSpotID:
 		g_neighborhood->doSolve();
@@ -253,7 +242,7 @@ void AIChip::clickInAIHotspot(HotSpotID id) {
 
 		uint numSolves;
 		if (GameState.getWalkthroughMode()) {
-			if (vm->canSolve())
+			if (g_vm->canSolve())
 				numSolves = 2;
 			else
 				numSolves = 1;
@@ -261,15 +250,15 @@ void AIChip::clickInAIHotspot(HotSpotID id) {
 			numSolves = 0;
 		}
 
-		ItemState newState = s_highlightState[vm->getNumHints()][numSolves][id - kAIHint1SpotID + 1];
+		ItemState newState = s_highlightState[g_vm->getNumHints()][numSolves][id - kAIHint1SpotID + 1];
 
 		if (newState != -1)
 			setItemState(newState);
 
 		if (g_AIArea) {
-			vm->prepareForAIHint(movieName);
+			g_vm->prepareForAIHint(movieName);
 			g_AIArea->playAIMovie(kRightAreaSignature, movieName, false, kHintInterruption);
-			vm->cleanUpAfterAIHint(movieName);
+			g_vm->cleanUpAfterAIHint(movieName);
 		}
 
 		if (newState != -1)

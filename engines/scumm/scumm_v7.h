@@ -25,12 +25,14 @@
 #ifdef ENABLE_SCUMM_7_8
 
 #include "scumm/scumm_v6.h"
+#include "scumm/charset_v7.h"
 
 namespace Scumm {
 
 class Insane;
 class SmushMixer;
 class SmushPlayer;
+class TextRenderer_v7;
 
 class ScummEngine_v7 : public ScummEngine_v6 {
 	friend class SmushPlayer;
@@ -64,6 +66,12 @@ public:
 	};
 
 protected:
+	TextRenderer_v7 *_textV7;
+	Common::Rect _defaultTextClipRect;
+	Common::Rect _wrappedTextClipRect;
+	bool _newTextRenderStyle;
+	int _blastTextRectsQueue = 0;
+
 	int _verbLineSpacing;
 	bool _existLanguageFile;
 	char *_languageBuffer;
@@ -71,19 +79,15 @@ protected:
 	int _languageIndexSize;
 	char _lastStringTag[12+1];
 
-#if defined(__SYMBIAN32__) // for some reason VC6 cannot find the base class TextObject
-	struct SubtitleText {
-		int16 xpos, ypos;
-		byte color;
-		byte charset;
-		byte text[256];
-		bool actorSpeechMsg;
-	};
-#else
 	struct SubtitleText : TextObject {
+		void clear() {
+			TextObject::clear();
+			actorSpeechMsg = center = wrap = false;
+		}
 		bool actorSpeechMsg;
+		bool center;
+		bool wrap;
 	};
-#endif
 
 	friend void syncWithSerializer(Common::Serializer &, SubtitleText &);
 
@@ -92,10 +96,12 @@ protected:
 
 public:
 	void processSubtitleQueue();
-	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset);
+	void addSubtitleToQueue(const byte *text, const Common::Point &pos, byte color, byte charset, bool center, bool wrap);
 	void clearSubtitleQueue();
 	void CHARSET_1() override;
-	bool isSmushActive() { return _smushActive; }
+	bool isSmushActive() override { return _smushActive; }
+	void removeBlastTexts() override;
+	void restoreBlastTextsRects();
 
 protected:
 
@@ -125,17 +131,56 @@ protected:
 
 	int getObjectIdFromOBIM(const byte *obim) override;
 
+	void createTextRenderer(GlyphRenderer_v7 *gr) override;
+	void enqueueText(const byte *text, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void drawTextImmediately(const byte *text, Common::Rect *clipRect, int x, int y, byte color, byte charset, TextStyleFlags flags);
+	void drawBlastTexts() override;
+	void showMessageDialog(const byte *msg) override;
+
 	void actorTalk(const byte *msg) override;
-	void translateText(const byte *text, byte *trans_buff) override;
+	void translateText(const byte *text, byte *trans_buff, int transBufferSize) override;
 	void loadLanguageBundle() override;
 	void playSpeech(const byte *ptr);
+
+	void queryQuit(bool returnToLauncher) override;
+	int getBannerColor(int bannerId) override;
+	const char *getGUIString(int stringId) override;
+	int getGUIStringHeight(const char *str) override;
+	int getGUIStringWidth(const char *str) override;
+	void drawGUIText(const char *buttonString, Common::Rect *clipRect, int textXPos, int textYPos, int textColor, bool centerFlag) override;
+	int getMusicVolume() override;
+	int getSpeechVolume() override;
+	int getSFXVolume() override;
+	void setMusicVolume(int volume) override;
+	void setSpeechVolume(int volume) override;
+	void setSFXVolume(int volume) override;
+	void toggleVoiceMode() override;
+	void handleLoadDuringSmush() override;
+
+	void setDefaultCursor() override;
+	void updateCursor() override;
+	void setCursorTransparency(int a) override;
 
 	void drawVerb(int verb, int mode) override;
 
 	void pauseEngineIntern(bool pause) override;
 
-
 	void o6_kernelSetFunctions() override;
+
+	struct BlastText : TextObject {
+		Common::Rect rect;
+		TextStyleFlags flags;
+
+		void clear() {
+			this->TextObject::clear();
+			rect = Common::Rect();
+		}
+	};
+
+	int _blastTextQueuePos;
+	BlastText _blastTextQueue[50];
+
+	byte *_guiStringTransBuff = nullptr;
 };
 
 

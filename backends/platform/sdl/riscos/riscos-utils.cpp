@@ -23,7 +23,6 @@
 #include "backends/platform/sdl/riscos/riscos-utils.h"
 
 #include <unixlib/local.h>
-#include <limits.h>
 
 namespace RISCOS_Utils {
 

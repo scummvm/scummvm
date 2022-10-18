@@ -258,12 +258,12 @@ void Kernel::kernelStats() {
 
 void Kernel::processTypes() {
 	g_debugger->debugPrintf("Current process types:\n");
-	Std::map<Common::String, unsigned int> processtypes;
+	Common::HashMap<Common::String, unsigned int> processtypes;
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 		processtypes[p->GetClassType()._className]++;
 	}
-	Std::map<Common::String, unsigned int>::const_iterator iter;
+	Common::HashMap<Common::String, unsigned int>::const_iterator iter;
 	for (iter = processtypes.begin(); iter != processtypes.end(); ++iter) {
 		g_debugger->debugPrintf("%s: %u\n", (*iter)._key.c_str(), (*iter)._value);
 	}
@@ -323,6 +323,8 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
 		Process *p = *it;
 
+		// * If objid is 0, terminate procs for all objects.
+		// * Never terminate procs with objid 0
 		if (p->_itemNum != 0 && (objid == 0 || objid == p->_itemNum) &&
 		        (p->_type != processtype) &&
 		        !(p->_flags & Process::PROC_TERMINATED) &&
@@ -335,6 +337,26 @@ void Kernel::killProcessesNotOfType(ObjId objid, uint16 processtype, bool fail) 
 	}
 }
 
+void Kernel::killAllProcessesNotOfTypeExcludeCurrent(uint16 processtype, bool fail) {
+	for (ProcessIterator it = _processes.begin(); it != _processes.end(); ++it) {
+		Process *p = *it;
+
+		// Don't kill the running process
+		if (p == _runningProcess)
+			continue;
+
+		if ((p->_type != processtype) &&
+				!(p->_flags & Process::PROC_TERMINATED) &&
+				!(p->_flags & Process::PROC_TERM_DEFERRED)) {
+			if (fail)
+				p->fail();
+			else
+				p->terminate();
+		}
+	}
+}
+
+
 void Kernel::save(Common::WriteStream *ws) {
 	ws->writeUint32LE(_tickNum);
 	_pIDs->save(ws);
@@ -343,7 +365,7 @@ void Kernel::save(Common::WriteStream *ws) {
 		const Std::string & classname = (*it)->GetClassType()._className; // virtual
 		assert(classname.size());
 
-		Std::map<Common::String, ProcessLoadFunc>::iterator iter;
+		Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
 		iter = _processLoaders.find(classname);
 
 		if (iter == _processLoaders.end()) {
@@ -408,7 +430,7 @@ Process *Kernel::loadProcess(Common::ReadStream *rs, uint32 version) {
 	Std::string classname = buf;
 	delete[] buf;
 
-	Std::map<Common::String, ProcessLoadFunc>::iterator iter;
+	Common::HashMap<Common::String, ProcessLoadFunc>::iterator iter;
 	iter = _processLoaders.find(classname);
 
 	if (iter == _processLoaders.end()) {

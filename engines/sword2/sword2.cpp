@@ -80,6 +80,7 @@ Sword2Engine::Sword2Engine(OSystem *syst) : Engine(syst), _rnd("sword2") {
 	_mouse = NULL;
 	_logic = NULL;
 	_fontRenderer = NULL;
+	_isRTL = Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR;
 	_debugger = NULL;
 
 	_keyboardEvent.pending = false;

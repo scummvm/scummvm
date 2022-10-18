@@ -32,8 +32,7 @@ class Serializer;
 
 namespace Tinsel {
 
-// forward declaration
-struct INV_OBJECT;
+class InventoryObject;
 
 enum RESUME_STATE {
 	RES_NOT, RES_1, RES_2, RES_SAVEGAME
@@ -64,7 +63,7 @@ struct INT_CONTEXT {
 	TINSEL_EVENT	event;		///< causal event
 	HPOLYGON	hPoly;		///< associated polygon (if any)
 	int			idActor;	///< associated actor (if any)
-	INV_OBJECT	*pinvo;		///< associated inventory object
+	const InventoryObject	*pinvo;		///< associated inventory object
 
 	// Previously local variables in Interpret()
 	int32 stack[PCODE_STACK_SIZE];	///< interpeters run time stack
@@ -99,7 +98,7 @@ INT_CONTEXT *InitInterpretContext(
 	TINSEL_EVENT	event,		// causal event
 	HPOLYGON	hpoly,		// associated polygon (if any)
 	int		actorid,	// associated actor (if any)
-	INV_OBJECT	*pinvo,
+	const InventoryObject	*pinvo,
 	int myEscape = -1);		// associated inventory object
 
 INT_CONTEXT *RestoreInterpretContext(INT_CONTEXT *ric);

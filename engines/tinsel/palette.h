@@ -144,8 +144,9 @@ void DimPartPalette(
 
 
 int TranslucentColor();
+int DarkGreen();
 
-#define BoxColor TranslucentColor
+#define BoxColor (TinselVersion == 3 ? DarkGreen : TranslucentColor)
 
 int HighlightColor();
 

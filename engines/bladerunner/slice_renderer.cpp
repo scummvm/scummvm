@@ -233,8 +233,8 @@ void SliceRenderer::calculateBoundingRect() {
 	Matrix3x2 mStartMVP = mStart * _mvpMatrix;
 	Matrix3x2 mEndMVP   = mEnd   * _mvpMatrix;
 
-	float minX =  640.0f;
-	float maxX =    0.0f;
+	float minX = (float)BladeRunnerEngine::kOriginalGameWidth;
+	float maxX = 0.0f;
 
 	for (float i = 0.0f; i <= 255.0f; i += 255.0f) {
 		for (float j = 0.0f; j <= 255.0f; j += 255.0f) {
@@ -248,8 +248,8 @@ void SliceRenderer::calculateBoundingRect() {
 		}
 	}
 
-	_screenRectangle.left  = CLIP((int)minX,     0, 640);
-	_screenRectangle.right = CLIP((int)maxX + 1, 0, 640);
+	_screenRectangle.left  = CLIP<int32>(minX,     0, BladeRunnerEngine::kOriginalGameWidth);
+	_screenRectangle.right = CLIP<int32>(maxX + 1, 0, BladeRunnerEngine::kOriginalGameWidth);
 
 	_startScreenVector.x = startScreenVector.x;
 	_startScreenVector.y = startScreenVector.y;
@@ -442,7 +442,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 	int frameY = sliceLineIterator._startY;
 
-	uint16 *zBufferLinePtr = zbuffer + 640 * frameY;
+	uint16 *zBufferLinePtr = zbuffer + BladeRunnerEngine::kOriginalGameWidth * frameY;
 
 	while (sliceLineIterator._currentY <= sliceLineIterator._endY) {
 		_m13 = sliceLineIterator._sliceMatrix(0, 2);
@@ -473,7 +473,7 @@ void SliceRenderer::drawInWorld(int animationId, int animationFrame, Vector3 pos
 
 		sliceLineIterator.advance();
 		++frameY;
-		zBufferLinePtr += 640;
+		zBufferLinePtr += BladeRunnerEngine::kOriginalGameWidth;
 	}
 }
 
@@ -525,11 +525,11 @@ void SliceRenderer::drawOnScreen(int animationId, int animationFrame, int screen
 	float currentSlice = 0;
 	float sliceStep = 1.0f / size / _frameSliceHeight;
 
-	uint16 lineZbuffer[640];
+	uint16 lineZbuffer[BladeRunnerEngine::kOriginalGameWidth];
 
 	while (currentSlice < _frameSliceCount) {
 		if (currentY >= 0 && currentY < surface.h) {
-			memset(lineZbuffer, 0xFF, 640 * 2);
+			memset(lineZbuffer, 0xFF, BladeRunnerEngine::kOriginalGameWidth * 2);
 			drawSlice(currentSlice, false, currentY, surface, lineZbuffer);
 			currentSlice += sliceStep;
 			--currentY;
@@ -566,7 +566,7 @@ void SliceRenderer::drawSlice(int slice, bool advanced, int y, Graphics::Surface
 		int previousVertexX = lastVertexX;
 
 		while (vertexCount--) {
-			int vertexX = CLIP((_m11lookup[p[0]] + _m12lookup[p[1]] + _m13) / 65536, 0, 640);
+			int vertexX = CLIP<int32>((_m11lookup[p[0]] + _m12lookup[p[1]] + _m13) / 65536, 0, BladeRunnerEngine::kOriginalGameWidth);
 
 			if (vertexX > previousVertexX) {
 				int vertexZ = (_m21lookup[p[0]] + _m22lookup[p[1]] + _m23) / 64;
@@ -644,11 +644,11 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 	// this simplified polygon drawing algo is in the game
 
 	int yMax = 0;
-	int yMin = 480;
+	int yMin = BladeRunnerEngine::kOriginalGameHeight;
 	uint16 zMin = 65535;
 
-	int polygonLeft[480] = {};
-	int polygonRight[480] = {};
+	int polygonLeft[BladeRunnerEngine::kOriginalGameHeight] = {};
+	int polygonRight[BladeRunnerEngine::kOriginalGameHeight] = {};
 
 	int iNext = 11;
 	for (int i = 0; i < 12; ++i) {
@@ -682,7 +682,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 
 		if (yCurrent > yNext) {
 			while (y >= yNext) {
-				if (y >= 0 && y < 480) {
+				if (y >= 0 && y < BladeRunnerEngine::kOriginalGameHeight) {
 					polygonLeft[y] = x;
 				}
 				xCounter += xDelta;
@@ -694,7 +694,7 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 			}
 		} else if (yCurrent < yNext) {
 			while (y <= yNext) {
-				if (y >= 0 && y < 480) {
+				if (y >= 0 && y < BladeRunnerEngine::kOriginalGameHeight) {
 					polygonRight[y] = x;
 				}
 				xCounter += xDelta;
@@ -708,8 +708,8 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 		iNext = (iNext + 1) % 12;
 	}
 
-	yMax = CLIP(yMax, 0, 480);
-	yMin = CLIP(yMin, 0, 480);
+	yMax = CLIP<int32>(yMax, 0, BladeRunnerEngine::kOriginalGameHeight);
+	yMin = CLIP<int32>(yMin, 0, BladeRunnerEngine::kOriginalGameHeight);
 
 	static const int ditheringFactor[] = {
 		0,  8,  2, 10,
@@ -719,11 +719,11 @@ void SliceRenderer::drawShadowPolygon(int transparency, Graphics::Surface &surfa
 	};
 
 	for (int y = yMin; y < yMax; ++y) {
-		int xMin = CLIP(polygonLeft[y], 0, 640);
-		int xMax = CLIP(polygonRight[y], 0, 640);
+		int xMin = CLIP<int32>(polygonLeft[y],  0, BladeRunnerEngine::kOriginalGameWidth);
+		int xMax = CLIP<int32>(polygonRight[y], 0, BladeRunnerEngine::kOriginalGameWidth);
 
 		for (int x = MIN(xMin, xMax); x < MAX(xMin, xMax); ++x) {
-			uint16 z = zbuffer[x + y * 640];
+			uint16 z = zbuffer[x + y * BladeRunnerEngine::kOriginalGameWidth];
 			void *pixel = surface.getBasePtr(CLIP(x, 0, surface.w - 1), CLIP(y, 0, surface.h - 1));
 
 			if (z >= zMin) {

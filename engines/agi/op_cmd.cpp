@@ -32,7 +32,28 @@
 #include "agi/words.h"
 
 #include "common/random.h"
+#include "common/system.h"
 #include "common/textconsole.h"
+
+namespace {
+// Creates a unique log file name each time this function is called.
+// We never want to override an existing log file, so here we create one
+// based on the current game and system time.
+//
+// For example: dumps/agi.kq.20221013214511.log
+Common::String generateLogFileName(Agi::AgiGame *state, Agi::AgiEngine *vm) {
+	TimeDate date;
+	vm->_system->getTimeAndDate(date, true);
+	return Common::String::format("dumps/agi.%s.%d%02d%02d%02d%02d%02d.log",
+								  vm->getTargetName().c_str(),
+								  date.tm_year + 1900,
+								  date.tm_mon + 1,
+								  date.tm_mday,
+								  date.tm_hour,
+								  date.tm_min,
+								  date.tm_sec);
+}
+} // namespace
 
 namespace Agi {
 
@@ -784,7 +805,44 @@ void cmdLoadGame(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 void cmdInitDisk(AgiGame *state, AgiEngine *vm, uint8 *parameter) {             // do nothing
 }
 
-void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing
+// The log command logs adds an entry to the game's log file and the console.
+// Neither are enabled by default.
+//
+// Room <#>
+// Input line: <text>
+// <message>
+//
+// To see the logs in your console, use the following arguments to scummvm:
+//   --debugflags=Scripts -d 1
+// To see the logs in a file, create the "dumps" directory.
+//
+void cmdLog(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
+	uint16 textNr = parameter[0];
+	if (state->_curLogic->texts != nullptr && (textNr - 1) <= state->_curLogic->numTexts) {
+		byte currentRoom = vm->getVar(VM_VAR_CURRENT_ROOM);
+		const char *inputLine = (char *)vm->_text->_promptPrevious;
+		const char *message = state->_curLogic->texts[textNr - 1];
+
+		Common::String logMessage = Common::String::format("Room %hhu\nInput line: %s\n%s\n",
+														   currentRoom,
+														   inputLine,
+														   vm->_text->stringPrintf(message));
+
+		debugCN(1, kDebugLevelScripts, "%s", logMessage.c_str());
+
+		Common::DumpFile *&dumpFile = vm->_logFile;
+		if (!dumpFile) {
+			dumpFile = new Common::DumpFile();
+			Common::String logFileName = generateLogFileName(state, vm);
+			dumpFile->open(logFileName);
+		}
+		// The logs will only be written if the "dumps" folder has been created by
+		// the user.
+		if (dumpFile->isOpen()) {
+			dumpFile->writeString(logMessage);
+			dumpFile->flush();
+		}
+	}
 }
 
 void cmdTraceOn(AgiGame *state, AgiEngine *vm, uint8 *parameter) {              // do nothing

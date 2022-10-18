@@ -70,7 +70,7 @@ static COLORREF ScaleColor(COLORREF color, uint32 colorMult)	{
  */
 static void FadePalette(COLORREF *pNew, COLORREF *pOrig, int numColors, uint32 mult) {
 	for (int i = 0; i < numColors; i++, pNew++, pOrig++) {
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			// apply multiplier to RGB components
 			*pNew = ScaleColor(*pOrig, mult);
 		else if (i == (TalkColor() - 1)) {
@@ -103,7 +103,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		// Note that this palette is being faded
 		FadingPalette(pFade->pPalQ, true);
 
@@ -114,7 +114,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		// go through all multipliers in table - until a negative entry
 
 		// fade palette using next multiplier
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			FadePalette(_ctx->fadeRGB, pFade->pPalQ->palRGB,
 				pFade->pPalQ->numColors, (uint32) *_ctx->pColMult);
 		else
@@ -128,7 +128,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 		CORO_SLEEP(1);
 	}
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		// Note that this palette is being faded
 		FadingPalette(pFade->pPalQ, false);
 
@@ -145,7 +145,7 @@ static void FadeProcess(CORO_PARAM, const void *param) {
 static void Fader(const long multTable[]) {
 	PALQ *pPal;	// palette manager iterator
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// The is only ever one cuncurrent fade
 		// But this could be a fade out and the fade in is still going!
 		CoroScheduler.killMatchingProcess(PID_FADER);

@@ -1957,7 +1957,7 @@ uint LBCode::parseCode(const Common::String &source) {
 				Common::String tempString;
 				tempString += token;
 				while (pos < source.size()) {
-					if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]))
+					if (!Common::isAlpha(source[pos]) && !Common::isDigit(source[pos]) && source[pos] != '_') // Wanderful sampler uses _ in variables
 						break;
 					tempString += source[pos++];
 				}

@@ -22,10 +22,10 @@
 #ifndef AGS_SHARED_AC_OLD_GAME_SETUP_STRUCT_H
 #define AGS_SHARED_AC_OLD_GAME_SETUP_STRUCT_H
 
+#if defined (OBSOLETE)
+
 #include "ags/shared/ac/character_info.h"       // OldCharacterInfo, CharacterInfo
-#ifdef UNUSED_CODE
 #include "ags/shared/ac/event_block.h"       // EventBlock
-#endif
 #include "ags/shared/ac/interface_element.h"    // InterfaceElement
 #include "ags/shared/ac/inventory_item_info.h"   // InventoryItemInfo
 #include "ags/shared/ac/mouse_cursor.h"      // MouseCursor
@@ -46,10 +46,10 @@ struct OriGameSetupStruct {
 	char *globalscript;
 	int               numcharacters;
 	OldCharacterInfo *chars;
-	#ifdef UNUSED_CODE
-	EventBlock        __charcond[50];   // [IKM] 2012-06-22: does not seem to be used anywhere
-	EventBlock        __invcond[100];   // same
-	#endif
+#if defined (OBSOLETE)
+	EventBlock        __charcond[50];
+	EventBlock        __invcond[100];
+#endif
 	ccScript *compiled_script;
 	int               playercharacter;
 	unsigned char     __old_spriteflags[2100];
@@ -82,5 +82,7 @@ struct OldGameSetupStruct : public OriGameSetupStruct2 {
 };
 
 } // namespace AGS3
+
+#endif
 
 #endif

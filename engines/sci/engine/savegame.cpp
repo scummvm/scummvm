@@ -688,6 +688,8 @@ void MusicEntry::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsSint16LE(fadeStep);
 	s.syncAsSint32LE(fadeTicker);
 	s.syncAsSint32LE(fadeTickerStep);
+	s.syncAsByte(fadeSetVolume, VER(46));
+	s.syncAsByte(fadeCompleted, VER(46));
 	s.syncAsByte(stopAfterFading, VER(45));
 	s.syncAsByte(status);
 	if (s.getVersion() >= 32)
@@ -845,6 +847,13 @@ void GfxPalette::palVarySaveLoadPalette(Common::Serializer &s, Palette *palette)
 }
 
 void GfxPalette::saveLoadWithSerializer(Common::Serializer &s) {
+	if (s.isLoading()) {
+		// Palette cycling schedules must be reset on load because we persist the engine tick count.
+		// Otherwise, loading during cycling leaves the animation stuck until the new lower tick count
+		// reaches the stale scheduled values. (Example: SQ5 Kiz Urazgubi waterfalls)
+		// SSCI didn't persist or reset engine tick count so it didn't need to reset the schedules.
+		_schedules.clear();
+	}
 	if (s.getVersion() >= 25) {
 		// We need to save intensity of the _sysPalette at least for kq6 when entering the dark cave (room 390)
 		//  from room 340. scripts will set intensity to 60 for this room and restore them when leaving.
@@ -1239,11 +1248,16 @@ bool gamestate_save(EngineState *s, Common::WriteStream *fh, const Common::Strin
 	Common::String ver = version;
 
 	// If the game version is empty, we are probably saving from the GMM, so read it
-	// from global 27 and then the VERSION file
+	// from the version global and then the VERSION file
 	if (ver == "") {
-		reg_t versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersion];
+		// The version global was originally 28 but then became 27.
+		// When it was 28, 27 was a volume level, so differentiate by type.
+		reg_t versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersionNew];
+		if (versionRef.isNumber()) {
+			versionRef = s->variables[VAR_GLOBAL][kGlobalVarVersionOld];
+		}
 #ifdef ENABLE_SCI32
-		// LSL7 stores the version string as an object instead of a reference
+		// LSL7 and Phant2 store the version string as an object instead of a reference
 		if (s->_segMan->isObject(versionRef)) {
 			versionRef = readSelector(s->_segMan, versionRef, SELECTOR(data));
 		}

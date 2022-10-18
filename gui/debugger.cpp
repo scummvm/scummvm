@@ -635,8 +635,9 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("md5 [-n length] <filename | pattern>\n");
 	} else {
-		uint32 length = 0;
+		int32 length = 0;
 		uint paramOffset = 0;
+		bool tail = false;
 
 		// If the user supplied an -n parameter, set the bytes to read
 		if (!strcmp(argv[1], "-n")) {
@@ -646,6 +647,10 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 				return true;
 			}
 			length = atoi(argv[2]);
+			if (length < 0) {
+				length = -length;
+				tail = true;
+			}
 			paramOffset = 2;
 		}
 
@@ -662,8 +667,12 @@ bool Debugger::cmdMd5(int argc, const char **argv) {
 			sort(list.begin(), list.end(), ArchiveMemberLess());
 			for (Common::ArchiveMemberList::iterator iter = list.begin(); iter != list.end(); ++iter) {
 				Common::SeekableReadStream *stream = (*iter)->createReadStream();
+				if (tail && stream->size() > length)
+					stream->seek(-length, SEEK_END);
 				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-				debugPrintf("%s  %s  %d\n", md5.c_str(), (*iter)->getName().c_str(), (int32)stream->size());
+				if (length != 0 && length < stream->size())
+					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+				debugPrintf("%s: %s, %llu bytes\n", (*iter)->getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
 				delete stream;
 			}
 		}
@@ -675,8 +684,9 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 	if (argc < 2) {
 		debugPrintf("md5mac [-n length] <base filename>\n");
 	} else {
-		uint32 length = 0;
+		int32 length = 0;
 		uint paramOffset = 0;
+		bool tail = false;
 
 		// If the user supplied an -n parameter, set the bytes to read
 		if (!strcmp(argv[1], "-n")) {
@@ -686,6 +696,10 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 				return true;
 			}
 			length = atoi(argv[2]);
+			if (length < 0) {
+				length = -length;
+				tail = true;
+			}
 			paramOffset = 2;
 		}
 
@@ -707,13 +721,19 @@ bool Debugger::cmdMd5Mac(int argc, const char **argv) {
 			} else {
 				// The resource fork is probably the most relevant one.
 				if (macResMan.hasResFork()) {
-					Common::String md5 = macResMan.computeResForkMD5AsString(length);
-					debugPrintf("%s  %s (resource)  %d\n", md5.c_str(), macResMan.getBaseFileName().toString().c_str(), macResMan.getResForkDataSize());
+					Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
+					if (length != 0 && length < (int32)macResMan.getResForkDataSize())
+						md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+					debugPrintf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
 				}
 				if (macResMan.hasDataFork()) {
 					Common::SeekableReadStream *stream = macResMan.getDataFork();
+					if (tail && stream->size() > length)
+						stream->seek(-length, SEEK_END);
 					Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
-					debugPrintf("%s  %s (data)  %d\n", md5.c_str(), macResMan.getBaseFileName().toString().c_str(), (int32)stream->size());
+					if (length != 0 && length < stream->size())
+						md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+					debugPrintf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)stream->size());
 				}
 			}
 			macResMan.close();

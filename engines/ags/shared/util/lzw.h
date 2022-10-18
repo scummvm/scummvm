@@ -22,6 +22,8 @@
 #ifndef AGS_SHARED_UTIL_LZW_H
 #define AGS_SHARED_UTIL_LZW_H
 
+#include "ags/shared/core/types.h"
+
 namespace AGS3 {
 
 namespace AGS {
@@ -32,8 +34,8 @@ class Stream;
 
 using namespace AGS; // FIXME later
 
-void lzwcompress(Shared::Stream *lzw_in, Shared::Stream *out);
-unsigned char *lzwexpand_to_mem(Shared::Stream *in);
+bool lzwcompress(Shared::Stream *lzw_in, Shared::Stream *out);
+bool lzwexpand(Shared::Stream *lzw_in, Shared::Stream *out, size_t out_size);
 
 } // namespace AGS3
 

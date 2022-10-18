@@ -37,6 +37,7 @@
 #include "engines/icb/mission.h"
 #include "engines/icb/cluster_manager_pc.h"
 #include "engines/icb/configfile.h"
+#include "engines/icb/icb.h"
 
 #include "common/str.h"
 #include "common/config-manager.h"
@@ -99,7 +100,12 @@ void ReadConfigFromIniFile() {
 	char configFile[1024];
 	uint32 temp;
 
-	sprintf(configFile, CONFIG_INI_FILENAME);
+	if (g_icb->getGameType() == GType_ICB)
+		sprintf(configFile, "engine\\icb.ini");
+	else if (g_icb->getGameType() == GType_ELDORADO)
+		sprintf(configFile, "engine\\eldorado.ini");
+	else
+		assert(false);
 
 	ConfigFile config;
 	pxString filename = configFile;
@@ -355,9 +361,9 @@ void Mission_and_console() {
 		// the mission has terminated of its own accord - as apposed to a user quit
 
 		// if the player died then we bring up a restart/continue menu here
-		c_game_object *ob = (c_game_object *)MS->objects->Fetch_item_by_number(MS->player.Fetch_player_id());
-		int32 ret = ob->GetVariable("state");
-		if (ob->GetIntegerVariable(ret)) {
+		CGame *ob = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, MS->player.Fetch_player_id());
+		int32 ret = CGameObject::GetVariable(ob, "state");
+		if (CGameObject::GetIntegerVariable(ob, ret)) {
 			// Return to avoid deleting the mission
 			g_stub->Push_stub_mode(__gameover_menu);
 			return;

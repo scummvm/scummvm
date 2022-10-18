@@ -33,7 +33,8 @@ RoomOptions::RoomOptions()
 	, SaveLoadDisabled(false)
 	, PlayerCharOff(false)
 	, PlayerView(0)
-	, MusicVolume(kRoomVolumeNormal) {
+	, MusicVolume(kRoomVolumeNormal)
+	, Flags(0) {
 }
 
 RoomBgFrame::RoomBgFrame()
@@ -111,10 +112,7 @@ void RoomStruct::Free() {
 		Hotspots[i].Interaction.reset();
 		Hotspots[i].Properties.clear();
 	}
-	for (size_t i = 0; i < (size_t)MAX_ROOM_OBJECTS; ++i) {
-		Objects[i].Interaction.reset();
-		Objects[i].Properties.clear();
-	}
+	Objects.clear();
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i) {
 		Regions[i].Interaction.reset();
 		Regions[i].Properties.clear();
@@ -138,8 +136,8 @@ void RoomStruct::FreeScripts() {
 	EventHandlers.reset();
 	for (size_t i = 0; i < HotspotCount; ++i)
 		Hotspots[i].EventHandlers.reset();
-	for (size_t i = 0; i < ObjectCount; ++i)
-		Objects[i].EventHandlers.reset();
+	for (auto &obj : Objects)
+		obj.EventHandlers.reset();
 	for (size_t i = 0; i < RegionCount; ++i)
 		Regions[i].EventHandlers.reset();
 }
@@ -158,21 +156,13 @@ void RoomStruct::InitDefaults() {
 
 	BgFrameCount = 1;
 	HotspotCount = 0;
-	ObjectCount = 0;
 	RegionCount = 0;
 	WalkAreaCount = 0;
 	WalkBehindCount = 0;
 	MessageCount = 0;
 
-	for (size_t i = 0; i < (size_t)MAX_ROOM_HOTSPOTS; ++i) {
+	for (size_t i = 0; i < (size_t)MAX_ROOM_HOTSPOTS; ++i)
 		Hotspots[i] = RoomHotspot();
-		if (i == 0)
-			Hotspots[i].Name = "No hotspot";
-		else
-			Hotspots[i].Name.Format("Hotspot %zu", i);
-	}
-	for (size_t i = 0; i < (size_t)MAX_ROOM_OBJECTS; ++i)
-		Objects[i] = RoomObjectInfo();
 	for (size_t i = 0; i < (size_t)MAX_ROOM_REGIONS; ++i)
 		Regions[i] = RoomRegion();
 	for (size_t i = 0; i <= (size_t)MAX_WALK_AREAS; ++i)
@@ -192,25 +182,24 @@ void RoomStruct::SetResolution(RoomResolutionType type) {
 
 Bitmap *RoomStruct::GetMask(RoomAreaMask mask) const {
 	switch (mask) {
-	case kRoomAreaNone: break;
 	case kRoomAreaHotspot: return HotspotMask.get();
 	case kRoomAreaWalkBehind: return WalkBehindMask.get();
 	case kRoomAreaWalkable: return WalkAreaMask.get();
 	case kRoomAreaRegion: return RegionMask.get();
+	default: return nullptr;
 	}
-	return nullptr;
 }
 
 float RoomStruct::GetMaskScale(RoomAreaMask mask) const {
 	switch (mask) {
-	case kRoomAreaNone: break;
 	case kRoomAreaWalkBehind: return 1.f; // walk-behinds always 1:1 with room size
 	case kRoomAreaHotspot:
 	case kRoomAreaWalkable:
 	case kRoomAreaRegion:
 		return 1.f / MaskResolution;
+	default:
+		return 0.f;
 	}
-	return 0.f;
 }
 
 bool RoomStruct::HasRegionLightLevel(int id) const {

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -59,10 +60,10 @@ void Room39::entry() {
 			else
 				_G(det)->set_static_ani(5, -1);
 
-			_G(atds)->delControlBit(62, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(62, ATS_ACTIVE_BIT);
 		}
 	} else {
-		_G(atds)->setControlBit(62, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(62, ATS_ACTIVE_BIT);
 	}
 
 	set_tv();
@@ -74,7 +75,7 @@ short Room39::use_howard() {
 
 	if (!_G(gameState).R39HowardWach) {
 		int16 dia_nr;
-		if (_G(gameState).inv_cur) {
+		if (_G(cur)->usingInventoryCursor()) {
 			if (isCurInventory(MANUSKRIPT_INV)) {
 				hideCur();
 				_G(gameState).R39HowardWach = true;
@@ -83,16 +84,16 @@ short Room39::use_howard() {
 				_G(gameState)._personHide[P_CHEWY] = true;
 				_G(det)->startDetail(6, 255, ANI_FRONT);
 				startAadWait(170);
-				_G(det)->stop_detail(6);
+				_G(det)->stopDetail(6);
 				startSetAILWait(7, 1, ANI_FRONT);
 				_G(gameState)._personHide[P_CHEWY] = false;
 
-				delInventory(_G(gameState).AkInvent);
-				_G(det)->stop_detail(1);
+				delInventory(_G(cur)->getInventoryCursor());
+				_G(det)->stopDetail(1);
 				startAniBlock(2, ABLOCK33);
 				start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 				startAadWait(167);
-				_G(det)->stop_detail(3);
+				_G(det)->stopDetail(3);
 				startSetAILWait(4, 1, ANI_FRONT);
 				_G(det)->set_static_ani(5, -1);
 				_G(atds)->set_ats_str(62, 1, ATS_DATA);
@@ -155,7 +156,7 @@ void Room39::ok() {
 	_G(obj)->show_sib(SIB_ZEITUNG_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_SURIMY_R27);
 	_G(obj)->calc_rsi_flip_flop(SIB_ZEITUNG_R27);
-	invent_2_slot(BRIEF_INV);
+	invent_2_slot(LETTER_INV);
 
 	switchRoom(27);
 	startAadWait(192);
@@ -341,7 +342,7 @@ void Room39::set_tv() {
 		if (_G(gameState).R39TvKanal == 2) {
 			_G(det)->startDetail(0, 255, ANI_FRONT);
 		} else {
-			_G(det)->stop_detail(0);
+			_G(det)->stopDetail(0);
 			_G(det)->showStaticSpr(_G(gameState).R39TvKanal + 4);
 		}
 

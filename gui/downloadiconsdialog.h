@@ -54,6 +54,7 @@ class DownloadIconsDialog : public Dialog, public CommandSender {
 	SliderWidget *_progressBar;
 	ButtonWidget *_cancelButton;
 	ButtonWidget *_closeButton;
+	ButtonWidget *_clearCacheButton;
 
 	Common::String _localDirectory;
 	bool _close;
@@ -73,18 +74,12 @@ public:
 	void handleTickle() override;
 	void reflowLayout() override;
 
-	void downloadListCallback(Networking::DataResponse response);
-	void downloadFileCallback(Networking::DataResponse response);
-	void errorCallback(Networking::ErrorResponse error);
-
 	void setError(Common::U32String &msg);
 
 private:
-	void downloadList();
 	void calculateList();
-	void proceedDownload();
+	void clearCache();
 	void setState(IconProcessState state);
-	bool takeOneFile();
 };
 
 } // End of namespace GUI

@@ -19,6 +19,7 @@
  *
  */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_printf
 #include "common/scummsys.h"
 
 #ifdef __MORPHOS__
@@ -26,7 +27,6 @@
 #include "backends/platform/sdl/morphos/morphos.h"
 #include "backends/fs/morphos/morphos-fs-factory.h"
 #include "backends/dialogs/morphos/morphos-dialogs.h"
-#include <proto/openurl.h>
 
 void OSystem_MorphOS::init() {
 	// Initialze File System Factory
@@ -52,16 +52,9 @@ bool OSystem_MorphOS::hasFeature(Feature f) {
 	return OSystem_SDL::hasFeature(f);
 }
 
-bool OSystem_MorphOS::openUrl(const Common::String &url) {
-
-	static struct TagItem URLTags[] = {{TAG_DONE, (ULONG) NULL}};
-
-	if (OpenURLBase){
-		URL_OpenA((STRPTR)url.c_str(), (struct TagItem*) URLTags);
-		return true;
-	}
-
-	return false;
-
+void OSystem_MorphOS::logMessage(LogMessageType::Type type, const char * message) {
+#ifdef DEBUG_BUILD
+	printf("%s\n", message);
+#endif
 }
 #endif

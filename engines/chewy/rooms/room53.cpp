@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -43,7 +44,7 @@ static const AniBlock ABLOCK35[7] = {
 void Room53::entry() {
 	hideCur();
 	_G(obj)->hide_sib(SIB_VISIT_R53);
-	_G(atds)->delControlBit(319, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(319, ATS_ACTIVE_BIT);
 	startSetAILWait(0, 1, ANI_FRONT);
 	_G(det)->set_static_ani(1, -1);
 	_G(timer_nr)[0] = _G(room)->set_timer(1, 7);
@@ -54,7 +55,7 @@ void Room53::man_go() {
 	_G(room)->set_timer_status(1, TIMER_STOP);
 	_G(det)->del_static_ani(1);
 	startSetAILWait(5, 1, ANI_FRONT);
-	_G(atds)->setControlBit(319, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(319, ATS_ACTIVE_BIT);
 	if (!_G(gameState).R53Visit)
 		_G(obj)->show_sib(SIB_VISIT_R53);
 }
@@ -80,7 +81,7 @@ int16 Room53::use_man() {
 		action_ret = true;
 		hideCur();
 		_G(gameState).R53Kostuem = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(2, P_CHEWY);
 		startAadWait(271);
 		_G(room)->set_timer_status(1, TIMER_STOP);
@@ -88,7 +89,7 @@ int16 Room53::use_man() {
 		startAniBlock(7, ABLOCK35);
 		_G(obj)->addInventory(JMKOST_INV, &_G(room_blk));
 		inventory_2_cur(JMKOST_INV);
-		_G(atds)->setControlBit(319, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(319, ATS_ACTIVE_BIT);
 		showCur();
 	}
 

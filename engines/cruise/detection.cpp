@@ -120,6 +120,17 @@ static const CRUISEGameDescription gameDescriptions[] = {
 		{
 			"cruise",
 			nullptr,
+			AD_ENTRY1("D1", "a9ff0e8b6ad2c08ccc3100d6b321e7b4"),
+			Common::EN_ANY,
+			Common::kPlatformAmiga,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+	},
+	{ // Amiga English US GOLD edition (Delphine Collection).
+		{
+			"cruise",
+			nullptr,
 			AD_ENTRY1("D1", "de084e9d2c6e4b2cc14803bf849eda3e"),
 			Common::EN_ANY,
 			Common::kPlatformAmiga,
@@ -204,11 +215,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cruise";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Cinematique evo 2";
 	}
 

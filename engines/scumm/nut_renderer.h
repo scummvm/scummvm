@@ -24,6 +24,7 @@
 
 #include "common/file.h"
 #include "graphics/surface.h"
+#include "scumm/charset_v7.h"
 
 namespace Scumm {
 
@@ -41,11 +42,20 @@ protected:
 	int _numChars;
 	int _maxCharSize;
 	int _fontHeight;
+	int _spacing;
 	byte *_charBuffer;
 	byte *_decodedData;
 	byte *_paletteMap;
 	byte _bpp;
 	byte _palette[16];
+	const int _direction;
+
+	const int8 *_2byteShadowXOffsetTable;
+	const int8 *_2byteShadowYOffsetTable;
+	uint8 *_2byteColorTable;
+	uint8 *_2byteMainColor;
+	const int _2byteSteps;
+
 	struct {
 		uint16 width;
 		uint16 height;
@@ -65,11 +75,13 @@ public:
 	int getNumChars() const { return _numChars; }
 
 	void drawFrame(byte *dst, int c, int x, int y);
-	void drawChar(const Graphics::Surface &s, byte c, int x, int y, byte color);
-	void draw2byte(const Graphics::Surface &s, int c, int x, int y, byte color);
+	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr);
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr, bool hardcodedColors = false, bool smushColorMode = false);
 
 	int getCharWidth(byte c) const;
 	int getCharHeight(byte c) const;
+
+	int getFontHeight() const { return _fontHeight; }
 };
 
 } // End of namespace Scumm

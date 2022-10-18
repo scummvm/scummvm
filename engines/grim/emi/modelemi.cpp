@@ -21,6 +21,7 @@
 
 #include "common/endian.h"
 #include "common/foreach.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/material.h"
@@ -132,9 +133,9 @@ void EMIModel::loadMesh(Common::SeekableReadStream *data) {
 
 	int type = data->readUint32LE();
 	// Check that it is one of the known types
-	//3  is no texture vertecies
-	//18 is no normals
-	//19 is regular
+	// 3  is no texture vertecies
+	// 18 is no normals
+	// 19 is regular
 	assert(type == 19 || type == 18 || type == 3);
 
 	_numVertices = data->readUint32LE();

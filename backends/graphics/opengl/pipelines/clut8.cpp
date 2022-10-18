@@ -22,6 +22,7 @@
 #include "backends/graphics/opengl/pipelines/clut8.h"
 #include "backends/graphics/opengl/shader.h"
 #include "backends/graphics/opengl/framebuffer.h"
+#include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 

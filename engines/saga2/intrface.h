@@ -187,12 +187,12 @@ protected:
 	};
 
 
-	char            lineBuf[bufSize]; // text to render on button
-	textPallete     textFacePal;    // contains info about coloring for multi-depth text rendering
-	Rect16          textRect;       // rect for the text
-	int16           textPosition;
-	gFont           *buttonFont;    // pointer to font for this button
-	gFont           *oldFont;
+	char            _lineBuf[bufSize]; // text to render on button
+	textPallete     _textFacePal;    // contains info about coloring for multi-depth text rendering
+	Rect16          _textRect;       // rect for the text
+	int16           _textPosition;
+	gFont           *_buttonFont;    // pointer to font for this button
+	gFont           *_oldFont;
 
 public:
 
@@ -220,17 +220,17 @@ public:
 class CStatusLine : public CPlaqText {
 private:
 
-	Alarm   waitAlarm,
-	        minWaitAlarm;
+	Alarm   _waitAlarm,
+	        _minWaitAlarm;
 
 	struct {
 		char    *text;
 		uint32  frameTime;
-	} lineQueue[12];
+	} _lineQueue[12];
 
-	uint8       queueHead,
-	            queueTail;
-	bool        lineDisplayed;
+	uint8       _queueHead,
+	            _queueTail;
+	bool        _lineDisplayed;
 
 	static uint8 bump(uint8 i) {
 		return (i + 1) % 12;
@@ -265,11 +265,11 @@ enum PortraitType {
 
 class CPortrait {
 private:
-	PortraitType    currentState[kNumViews + 1];
-	uint16          numButtons;
+	PortraitType    _currentState[kNumViews + 1];
+	uint16          _numButtons;
 	uint16          _numViews;
-	GfxMultCompButton **buttons;
-	GfxMultCompButton *indivButton;
+	GfxMultCompButton **_buttons;
+	GfxMultCompButton *_indivButton;
 
 	void setPortrait(uint16);
 
@@ -280,7 +280,7 @@ public:
 	void ORset(uint16, PortraitType type);
 	void set(uint16 brotherID, PortraitType type);
 	PortraitType getCurrentState(uint16 brotherID) {
-		return currentState[brotherID];
+		return _currentState[brotherID];
 	}
 	void getStateString(char buf[], int8 size, uint16 brotherID);
 };
@@ -292,10 +292,10 @@ public:
 
 class CMassWeightIndicator {
 private:
-	GameObject *containerObject;
+	GameObject *_containerObject;
 
 public:
-	static  bool bRedraw;
+	static  bool _bRedraw;
 
 private:
 	enum {
@@ -313,49 +313,49 @@ private:
 	};
 
 	// xy positions of this indicator
-	Point16 backImagePos;
-	Point16 massPiePos;
-	Point16 bulkPiePos;
+	Point16 _backImagePos;
+	Point16 _massPiePos;
+	Point16 _bulkPiePos;
 
 	// memory for update
-	uint16 currentMass;
-	uint16 currentBulk;
+	uint16 _currentMass;
+	uint16 _currentBulk;
 
 	// resource context pointer
-	hResContext *containerRes;
+	hResContext *_containerRes;
 
 	// indicator images
-	void *massBulkImag;
+	void *_massBulkImag;
 
 	// array of pointers to images
-	void **pieIndImag;
+	void **_pieIndImag;
 
 	// image control buttons
-	GfxCompImage          *pieMass;
-	GfxCompImage          *pieBulk;
+	GfxCompImage          *_pieMass;
+	GfxCompImage          *_pieBulk;
 
 
 public:
 	void invalidate(Rect16 *unused = nullptr) {
-		pieMass->invalidate();
-		pieBulk->invalidate();
+		_pieMass->invalidate();
+		_pieBulk->invalidate();
 	}
 
 	CMassWeightIndicator(gPanelList *, const Point16 &, uint16 type = 1, bool death = false);
 	~CMassWeightIndicator();
 
 	uint16 getMassPieDiv() {
-		return pieMass->getMax();
+		return _pieMass->getMax();
 	}
 	uint16 getBulkPieDiv() {
-		return pieBulk->getMax();
+		return _pieBulk->getMax();
 	}
 
 	void setMassPie(uint16 val) {
-		pieMass->setCurrent(val);
+		_pieMass->setCurrent(val);
 	}
 	void setBulkPie(uint16 val) {
-		pieBulk->setCurrent(val);
+		_pieBulk->setCurrent(val);
 	}
 	void recalculate();
 	static void update();
@@ -488,31 +488,31 @@ public:
 private:
 
 	// resource handle
-	hResContext     *resContext;
+	hResContext     *_resContext;
 
 	// array of image pointers
-	void            **starImages;
-	void            **ringImages;
+	void            **_starImages;
+	void            **_ringImages;
 
 	// background image pointer
-	void            *backImage;
-	void            *wellImage;
+	void            *_backImage;
+	void            *_wellImage;
 
 	// image maps
-	gPixelMap   savedMap;
+	gPixelMap   _savedMap;
 
 	// array of manaLine infos for blitting
-	manaLineInfo manaLines[numManaTypes];
+	manaLineInfo _manaLines[numManaTypes];
 
 	// array of ring and star end positions
 	// this is initialized via constructor
-	Point16 starRingEndPos[numManaTypes];
+	Point16 _starRingEndPos[numManaTypes];
 
-	Point16 starSizes[numStars];
-	Point16 ringSizes[numRings];
+	Point16 _starSizes[numStars];
+	Point16 _ringSizes[numRings];
 
 	// these are checks against redundent updates
-	int32   currentMana[numManaTypes], currentBaseMana[numManaTypes];
+	int32   _currentMana[numManaTypes], _currentBaseMana[numManaTypes];
 protected:
 
 	// these do line and position calculations
@@ -555,7 +555,7 @@ public:
 class CHealthIndicator {
 private:
 
-	static const char *hintText;
+	static const char *_hintText;
 
 	enum {
 		starFrameResNum     = 14,
@@ -580,23 +580,23 @@ private:
 	};
 
 	// resource handle
-	hResContext *healthRes;
+	hResContext *_healthRes;
 
 	// buttons
-	GfxCompImage          *starBtns[numControls];
-	GfxCompImage          *indivStarBtn;
+	GfxCompImage          *_starBtns[numControls];
+	GfxCompImage          *_indivStarBtn;
 
 	// array of pointer to the star imagery
-	void **starImag;
+	void **_starImag;
 
 	// health star frame imagery
-	void *starFrameImag;
+	void *_starFrameImag;
 
 	void updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVitality, int32 curVitality);
 
 public:
-	uint16  starIDs[3];
-	int16   imageIndexMemory[4];
+	uint16  _starIDs[3];
+	int16   _imageIndexMemory[4];
 
 public:
 

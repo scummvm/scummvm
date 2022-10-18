@@ -114,18 +114,18 @@ void ImageAsset::decodePPIC(ObjID id, Common::Array<byte> &data, uint &bitHeight
 	Common::SeekableReadStream *baseStream = _container->getItem(realID);
 	Common::BitStream32BEMSB stream(baseStream);
 
-	uint8 mode = stream.getBits(3);
+	uint8 mode = stream.getBits<3>();
 	int w, h;
 	if (stream.getBit()) {
-		h = stream.getBits(10);
+		h = stream.getBits<10>();
 	} else {
-		h = stream.getBits(6);
+		h = stream.getBits<6>();
 	}
 
 	if (stream.getBit()) {
-		w = stream.getBits(10);
+		w = stream.getBits<10>();
 	} else {
-		w = stream.getBits(6);
+		w = stream.getBits<6>();
 	}
 
 	rowBytes = ((w + 0xF) >> 3) & 0xFFFE;
@@ -164,7 +164,7 @@ void ImageAsset::decodePPIC0(Common::BitStream32BEMSB &stream, Common::Array<byt
 	uint p = 0;
 	for (uint y = 0; y < bitHeight; y++) {
 		for (uint x = 0; x < words; x++) {
-			v = stream.peekBits(32);
+			v = stream.peekBits<32>();
 			stream.skip(16);
 			v >>= 16 - (stream.pos() % 8);
 			data[p] = (v >> 8) & 0xff; p++;
@@ -217,7 +217,7 @@ void ImageAsset::decodePPIC3(Common::BitStream32BEMSB &stream, Common::Array<byt
 		}
 	}
 
-	bits = stream.getBits(2) + 1;
+	bits = stream.getBits<2>() + 1;
 	uint16 mask = 0;
 	for (uint i = 0; i < 0xf; i++) {
 		if (i) {
@@ -245,9 +245,9 @@ void ImageAsset::decodeHuffGraphic(const PPICHuff &huff, Common::BitStream32BEMS
 	_walkRepeat = 0;
 	_walkLast = 0;
 	if (bitWidth & 3) {
-		flags = stream.getBits(5);
+		flags = stream.getBits<5>();
 	} else {
-		flags = stream.getBits(4) << 1;
+		flags = stream.getBits<4>() << 1;
 	}
 
 	byte odd = 0;
@@ -341,7 +341,7 @@ byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream
 		_walkLast = ((_walkLast << 8) & 0xFF00) | (_walkLast >> 8);
 		return _walkLast & 0xFF;
 	}
-	uint16 dw = stream.peekBits(16);
+	uint16 dw = stream.peekBits<16>();
 	uint16 i = 0;
 	for (;i < 16; i++) {
 		if (huff.masks[i + 1] > dw) {
@@ -355,13 +355,13 @@ byte ImageAsset::walkHuff(const PPICHuff &huff, Common::BitStream32BEMSB &stream
 			_walkLast &= 0xFF;
 			_walkLast |= _walkLast << 8;
 		}
-		_walkRepeat = stream.getBits(3);
+		_walkRepeat = stream.getBits<3>();
 		if (_walkRepeat < 3) {
 			_walkRepeat <<= 4;
-			_walkRepeat |= stream.getBits(4);
+			_walkRepeat |= stream.getBits<4>();
 			if (_walkRepeat < 8) {
 				_walkRepeat <<= 8;
-				_walkRepeat |= stream.getBits(8);
+				_walkRepeat |= stream.getBits<8>();
 			}
 		}
 		_walkRepeat -= 2;

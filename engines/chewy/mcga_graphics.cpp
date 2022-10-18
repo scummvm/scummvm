@@ -20,14 +20,17 @@
  */
 
 #include "common/memstream.h"
+#include "common/system.h"
+#include "graphics/palette.h"
 #include "chewy/chewy.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
-#include "chewy/main.h"
 #include "chewy/mcga_graphics.h"
-#include "chewy/mcga.h"
 
 namespace Chewy {
+
+#define VGA_COLOR_TRANS(x) ((x)*255 / 63)
 
 McgaGraphics::McgaGraphics() {
 }
@@ -36,14 +39,18 @@ McgaGraphics::~McgaGraphics() {
 }
 
 void McgaGraphics::init() {
-	init_mcga();
+	_G(currentScreen) = (byte *)g_screen->getPixels();
+	_G(spriteWidth) = 0;
 }
 
-void McgaGraphics::setClip(int16 x1, int16 y1, int16 x2, int16 y2) {
-	_G(clipx1) = x1;
-	_G(clipx2) = x2;
-	_G(clipy1) = y1;
-	_G(clipy2) = y2;
+void setScummVMPalette(const byte *palette, uint start, uint count) {
+	byte tempPal[PALETTE_SIZE];
+	byte *dest = &tempPal[0];
+
+	for (uint i = 0; i < count * 3; ++i, ++palette, ++dest)
+		*dest = VGA_COLOR_TRANS(*palette);
+
+	g_system->getPaletteManager()->setPalette(tempPal, start, count);
 }
 
 void McgaGraphics::setPointer(byte *ptr) {
@@ -57,18 +64,17 @@ void McgaGraphics::setPointer(byte *ptr) {
 void McgaGraphics::setPalette(byte *palette) {
 	for (int16 i = 0; i < 768; i++)
 		_palTable[i] = palette[i];
-	set_palette(palette);
+	setScummVMPalette(palette, 0, PALETTE_COUNT);
 }
 
 void McgaGraphics::raster_col(int16 c, int16 r, int16 g, int16 b) {
-	int16 index = c * 3;
-	_palTable[index] = r;
-	_palTable[index + 1] = g;
-	_palTable[index + 2] = b;
-	rastercol(c, r, g, b);
+	_palTable[c * 3] = r;
+	_palTable[c * 3 + 1] = g;
+	_palTable[c * 3 + 2] = b;
+	setScummVMPalette(&_palTable[c * 3], c, 1);
 }
 
-void McgaGraphics::einblenden(byte *palette, int16 frames) {
+void McgaGraphics::fadeIn(byte *palette) {
 	for (int16 j = 63; j >= 0; j--) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -86,11 +92,11 @@ void McgaGraphics::einblenden(byte *palette, int16 frames) {
 				_palTable[k + 2] = b1;
 			k += 3;
 		}
-		set_palette(_palTable);
+		setScummVMPalette(_palTable, 0, PALETTE_COUNT);
 	}
 }
 
-void McgaGraphics::ausblenden(int16 frames) {
+void McgaGraphics::fadeOut() {
 	for (int16 j = 0; j < 64; j++) {
 		int16 k = 0;
 		for (int16 i = 0; i < 256; i++) {
@@ -105,7 +111,7 @@ void McgaGraphics::ausblenden(int16 frames) {
 			_palTable[k + 2] = b;
 			k += 3;
 		}
-		set_palette(_palTable);
+		setScummVMPalette(_palTable, 0, PALETTE_COUNT);
 	}
 }
 
@@ -118,22 +124,20 @@ void McgaGraphics::set_partialpalette(const byte *palette, int16 startCol, int16
 		_palTable[k + 2] = palette[k + 2];
 		k += 3;
 	}
-	setPartialPalette(_palTable, startCol, nr);
+	setScummVMPalette(_palTable + startCol * 3, startCol, nr);
 }
 
 void McgaGraphics::cls() {
-	clear_mcga();
+	Common::Rect r(0, 0, _G(currentScreen).pitch, _G(currentScreen).h);
+	_G(currentScreen).fillRect(r, 0);
 }
 
 void McgaGraphics::drawLine(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
-	line_mcga(x1, y1, x2, y2, color);
+	_G(currentScreen).drawLine(x1, y1, x2, y2, color);
 }
 
 void McgaGraphics::box(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
-	line_mcga(x1, y1, x2, y1, color);
-	line_mcga(x1, y2 - 1, x2, y2 - 1, color);
-	line_mcga(x1, y1, x1, y2, color);
-	line_mcga(x2, y1, x2, y2, color);
+	_G(currentScreen).frameRect(Common::Rect(x1, y1, x2, y2), color);
 }
 
 void McgaGraphics::boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) {
@@ -142,7 +146,7 @@ void McgaGraphics::boxFill(int16 x1, int16 y1, int16 x2, int16 y2, int16 color) 
 	if (h == 0)
 		h = 1;
 	for (int16 i = 0; i < h; i++)
-		line_mcga(x1, y1 + i, x2, y1 + i, color);
+		drawLine(x1, y1 + i, x2, y1 + i, color);
 }
 
 void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int16 col2, int16 back_col) {
@@ -154,44 +158,143 @@ void McgaGraphics::pop_box(int16 x, int16 y, int16 x1, int16 y1, int16 col1, int
 	drawLine(x, y, x, y1 + 1, col1);
 }
 
-void McgaGraphics::back2screen(byte *ptr) {
-	mem2mcga(ptr);
+void McgaGraphics::copyToScreen() {
+	byte *destP = (byte *)g_screen->getPixels();
+	const byte *ptr = _G(workpage);
+	Common::copy(ptr + 4, ptr + 4 + (SCREEN_WIDTH * SCREEN_HEIGHT), destP);
+	g_screen->markAllDirty();
 }
 
-void McgaGraphics::spriteSave(byte *spritePtr, int16 x, int16 y, int16 width, int16 height, int16 screenWidth) {
+void McgaGraphics::spriteSave(byte *spritePtr, int16 x, int16 y, int16 width, int16 height) {
 	if (width < 4)
 		width = 4;
 	if (height <= 0)
 		height = 1;
-	if (x < _G(clipx1)) {
-		x = _G(clipx1);
-		width -= (_G(clipx1) - x);
+	if (x < 0) {
+		x = 0;
+		width -= (0 - x);
 	}
-	if ((x + width) > _G(clipx2) + 1)
-		width = _G(clipx2) - x;
-	if (y < _G(clipy1)) {
-		y = _G(clipy1);
-		height -= (_G(clipy1) - y);
+	if ((x + width) > 320 + 1)
+		width = 320 - x;
+	if (y < 0) {
+		y = 0;
+		height -= (0 - y);
 	}
-	if ((y + height) > _G(clipy2) + 1)
-		height = _G(clipy2) - y;
+	if ((y + height) > 200 + 1)
+		height = 200 - y;
 	if (width < 1)
 		width = 0;
 	if (height <= 0)
 		height = 0;
 
-	spr_save_mcga(spritePtr, x, y, width, height, screenWidth);
+	*((int16 *)spritePtr) = width;
+	spritePtr += 2;
+	*((int16 *)spritePtr) = height;
+	spritePtr += 2;
+
+	int pitch = SCREEN_WIDTH;
+	byte *scrP = _G(currentScreen).getPixels() + y * SCREEN_WIDTH + x;
+		
+	if (width >= 1 && height >= 1) {
+		for (int row = 0; row < height; ++row) {
+			Common::copy(scrP, scrP + width, spritePtr);
+			scrP += pitch;
+			spritePtr += width;
+		}
+	}
 }
 
-void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrwidth) {
-	mspr_set_mcga(sptr, x, y, scrwidth);
+static bool mspr_set_mcga_clip(int x, int y, int pitch, int &width, int &height, const byte *&srcP, byte *&destP) {
+	if (y < 0) {
+		int yDiff = ABS(0 - y);
+		height -= yDiff;
+		srcP += yDiff * width;
+		y = 0;
+	}
+	if (height < 1)
+		return false;
+
+	if (x < 0) {
+		int xDiff = ABS(0 - x);
+		width -= xDiff;
+		srcP += xDiff;
+		x = 0;
+	}
+	if (width < 1)
+		return false;
+
+	int x2 = x + width;
+	if (x2 > 320) {
+		int xDiff = x2 - 320;
+		width -= xDiff;
+	}
+	if (width <= 1)
+		return false;
+
+	int y2 = y + height;
+	if (y2 > 200) {
+		int yDiff = y2 - 200;
+		height -= yDiff;
+	}
+	if (height < 1)
+		return false;
+
+	destP = _G(currentScreen).getPixels() + pitch * y + x;
+	return true;
+}
+
+void McgaGraphics::spriteSet(byte *sptr, int16 x, int16 y, int16 scrWidth, uint16 spriteWidth, uint16 spriteHeight) {
+	if (!sptr)
+		return;
+
+	byte *destP;
+	int width, height;
+
+	if (spriteWidth == 0 && spriteHeight == 0) {
+		width = *((const int16 *)sptr);
+		sptr += 2;
+		height = *((const int16 *)sptr);
+		sptr += 2;
+	} else {
+		width = spriteWidth;
+		height = spriteHeight;
+	}
+
+	const byte *srcP = sptr;
+	_G(spriteWidth) = width;
+
+	if (!(height >= 1 && width >= 4))
+		return;
+
+	int pitch = scrWidth ? scrWidth : SCREEN_WIDTH;
+	if (!mspr_set_mcga_clip(x, y, pitch, width, height, srcP, destP))
+		return;
+	const int destPitchRemainder = pitch - width;
+	const int srcPitchRemainder = _G(spriteWidth) - width;
+
+	for (int row = 0; row < height; ++row,
+			 srcP += srcPitchRemainder, destP += destPitchRemainder) {
+		for (int col = 0; col < width; ++col, ++srcP, ++destP) {
+			if (*srcP != 0)
+				*destP = *srcP;
+		}
+	}
 }
 
 void McgaGraphics::map_spr2screen(byte *sptr, int16 x, int16 y) {
-	int16 br = ((int16 *)sptr)[0];
-	int16 h = ((int16 *)sptr)[1];
-	if ((br >= 320) || (h >= 200))
-		map_spr_2screen(sptr, x, y);
+	const int16 width = ((const int16 *)sptr)[0];
+	const int16 height = ((const int16 *)sptr)[1];
+	if (width >= 320 || height >= 200) {
+		sptr += 4 + y * width + x;
+
+		for (int row = 0; row < SCREEN_HEIGHT; ++row, sptr += width) {
+			Common::copy(
+				sptr,
+				sptr + SCREEN_WIDTH,
+				(byte *)_G(currentScreen).getBasePtr(0, row)
+			);
+		}
+	}
 }
 
 int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_col, int16 scrwidth,
@@ -375,10 +478,10 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 						for (i = disp_stelle; i <= disp_stellemax + disp_stelle; ++i) {
 							if (zstring[i] != 0) {
 								putz(zstring[i], fcol, bcol, scrwidth);
-								vors();
+								_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
 							} else {
 								putz(zstring[i], fcol, bcol, scrwidth);
-								vors();
+								_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
 								break;
 							}
 						}
@@ -439,8 +542,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 							else if (disp_akt > 0) {
 								--disp_akt;
 							}
-						} else {
-							putch(7);
 						}
 					}
 
@@ -452,9 +553,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 								getch();
 							eing = 1;
 							if (stelle <= 0) {
-								putch(7);
-								stelle = 0;
-
 							} else {
 								if (disp_akt > 0) {
 									--disp_akt;
@@ -473,7 +571,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 							++j;
 							if (stelle >= stellemax) {
 								stelle = stellemax;
-								putch(7);
 							} else {
 								if (disp_akt < disp_stellemax) {
 									++disp_akt;
@@ -539,8 +636,6 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 					}
 					if ((stelle == stellemax) && (stellemax >= zaehler)) {
 						stellemax = zaehler;
-						putch(7);
-
 					} else {
 						if (disp_akt < disp_stellemax) {
 							++disp_akt;
@@ -588,10 +683,10 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 	for (i = disp_stelle; i <= disp_stellemax + disp_stelle; ++i) {
 		if (zstring[i] != 0) {
 			putz(zstring[i], fcol, bcol, scrwidth);
-			vors();
+			_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
 		} else {
 			putz(zstring[i], fcol, bcol, scrwidth);
-			vors();
+			_G(gcurx) += _G(fontMgr)->getFont()->getDataWidth();
 			break;
 		}
 	}
@@ -671,7 +766,180 @@ void McgaGraphics::scale_set(byte *sptr, int16 x, int16 y, int16 xdiff_, int16 y
 	if (xdiff_ || ydiff_)
 		zoom_set(sptr, x, y, xdiff_, ydiff_, scrwidth);
 	else
-		mspr_set_mcga(sptr, x, y, scrwidth);
+		spriteSet(sptr, x, y, scrwidth);
+}
+
+void McgaGraphics::putz(unsigned char c, int16 fgCol, int16 bgCol, int16 scrWidth) {
+	const int16 x = _G(gcurx);
+	const int16 y = _G(gcury);
+	ChewyFont *font = _G(fontMgr)->getFont();
+	Graphics::Surface *textSurface = font->getLine(Common::String(c));
+	byte *data = (byte *)textSurface->getPixels();
+
+	for (int curX = 0; curX < textSurface->pitch; curX++) {
+		for (int curY = 0; curY < textSurface->h; curY++) {
+			if (curX + x < 320 && curY + y < 200) {
+				byte *src = data + (curY * textSurface->pitch) + curX;
+				byte *dst = (byte *)_G(currentScreen).getBasePtr(curX + x, curY + y);
+				if (*src != 0xFF)
+					*dst = fgCol;
+				else if (bgCol < 0xFF)
+					*dst = bgCol;
+			}
+		}
+	}
+
+	g_screen->addDirtyRect(Common::Rect(
+		x, y, x + textSurface->pitch, y + textSurface->h));
+
+	textSurface->free();
+	delete textSurface;
+}
+
+void McgaGraphics::setXVals() {
+	if (_zoomSpriteDeltaX2 == 0) {
+		_zoomSpriteXVal1 = 0;
+		_zoomSpriteXVal2 = 1;
+	} else {
+		_zoomSpriteXVal1 = _G(spriteWidth) / _zoomSpriteDeltaX2;
+		_zoomSpriteXVal2 = 1000 * (_G(spriteWidth) % _zoomSpriteDeltaX2);
+		_zoomSpriteXVal2 /= _zoomSpriteDeltaX2;
+	}
+}
+
+void McgaGraphics::setYVals(int spriteHeight) {
+	if (_zoomSpriteDeltaY2 == 0) {
+		_zoomSpriteYVal1 = 0;
+		_zoomSpriteYVal2 = 1;
+	} else {
+		_zoomSpriteYVal1 = spriteHeight / _zoomSpriteDeltaY2;
+		_zoomSpriteYVal2 = 1000 * (spriteHeight % _zoomSpriteDeltaY2);
+		_zoomSpriteYVal2 /= _zoomSpriteDeltaY2;
+	}
+}
+
+void McgaGraphics::clip(byte *&source, byte *&dest, int16 &x, int16 &y) {
+	if (y < 0) {
+		int yCount = 0 - y;
+		_zoomSpriteDeltaY2 -= yCount;
+
+		--yCount;
+		if (yCount >= 1) {
+			for (int yc = 0, countY = _zoomSpriteYVal2; yc < yCount; ++yc) {
+				source += _G(spriteWidth) * _zoomSpriteYVal1;
+				dest += SCREEN_WIDTH;
+
+				while (countY > 1000) {
+					countY -= 1000;
+					source += _G(spriteWidth);
+				}
+			}
+		}
+	}
+
+	if (_zoomSpriteDeltaY2 <= 0) {
+		source = nullptr;
+		return;
+	}
+
+	if (x < 0) {
+		int xCount = 0 - x;
+		_zoomSpriteDeltaX2 -= xCount;
+		dest += xCount;
+
+		--xCount;
+		if (xCount >= 1) {
+			for (int xc = 0, countX = _zoomSpriteXVal2; xc < xCount; ++xc) {
+				source += _zoomSpriteXVal1;
+				while (countX >= 1000) {
+					countX -= 1000;
+					++source;
+				}
+			}
+		}
+	}
+
+	if (_zoomSpriteDeltaX2 > 0) {
+		int x2 = x + _zoomSpriteDeltaX2;
+		if (x2 >= 320) {
+			_zoomSpriteDeltaX2 -= x2 - 320;
+		}
+
+		if (_zoomSpriteDeltaY2 > 0) {
+			int y2 = y + _zoomSpriteDeltaY2;
+			if (y2 >= 200) {
+				_zoomSpriteDeltaY2 -= y2 - 200;
+			}
+			if (_zoomSpriteDeltaY2 <= 0)
+				source = nullptr;
+		} else {
+			source = nullptr;
+		}
+	} else {
+		source = nullptr;
+	}
+}
+
+void McgaGraphics::zoom_set(byte *source, int16 x, int16 y, int16 xDiff, int16 yDiff, int16 scrWidth) {
+	_G(spriteWidth) = ((int16 *)source)[0];
+	int spriteHeight = ((int16 *)source)[1];
+	source += 4;
+
+	_zoomSpriteDeltaX2 = _G(spriteWidth) + xDiff;
+	_zoomSpriteDeltaY2 = spriteHeight + yDiff;
+
+	setXVals();
+	setYVals(spriteHeight);
+
+	const int16 screenWidth = scrWidth > 0 ? scrWidth : SCREEN_WIDTH;
+	byte *scrP = _G(currentScreen).getPixels() + y * screenWidth + x;
+
+	clip(source, scrP, x, y);
+
+	if (source) {
+		for (int yc = _zoomSpriteDeltaY2, countY = _zoomSpriteYVal2; yc > 0; --yc) {
+			byte *srcLine = source;
+			byte *scrLine = scrP;
+
+			for (int xc = _zoomSpriteDeltaX2, countX = _zoomSpriteXVal2; xc > 0; --xc) {
+				if (*source)
+					*scrP = *source;
+
+				++scrP;
+				source += _zoomSpriteXVal1;
+				countX += _zoomSpriteXVal2;
+				while (countX > 1000) {
+					countX -= 1000;
+					++source;
+				}
+			}
+
+			source = srcLine;
+			scrP = scrLine + SCREEN_WIDTH;
+
+			for (int ySkip = 0; ySkip < _zoomSpriteYVal1; ++ySkip) {
+				source += _G(spriteWidth);
+			}
+
+			countY += _zoomSpriteYVal2;
+			while (countY > 1000) {
+				countY -= 1000;
+				source += _G(spriteWidth);
+			}
+		}
+	}
+}
+
+int16 McgaGraphics::findHotspot(const Common::Rect *hotspots) {
+	int16 i = 0;
+
+	do {
+		if (hotspots[i].contains(g_events->_mousePos))
+			return i;
+		i++;
+	} while (hotspots[i].left != -1);
+
+	return -1;
 }
 
 } // namespace Chewy

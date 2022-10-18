@@ -122,7 +122,7 @@ protected:
 
 	int getActiveObject() override;
 
-	void resetSentence();
+	void resetSentence() override;
 
 	bool areBoxesNeighbors(int box1nr, int box2nr) override;
 

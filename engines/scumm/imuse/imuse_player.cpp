@@ -217,7 +217,7 @@ int Player::start_seq_sound(int sound, bool reset_vars) {
 }
 
 void Player::loadStartParameters(int sound) {
-	_priority = 0x80;
+	_priority = _se->_newSystem ? 0x40 : 0x80;
 	_volume = 0x7F;
 	_vol_chan = 0xFFFF;
 	_vol_eff = (_se->get_channel_volume(0xFFFF) << 7) >> 7;
@@ -313,10 +313,15 @@ void Player::send(uint32 b) {
 			part->pitchBendFactor(param2);
 			break;
 		case 17: // GP Slider 2
-			part->set_detune(param2 - 0x40);
+			if (_se->_newSystem)
+				part->set_polyphony(param2);
+			else
+				part->set_detune(param2 - 0x40);
 			break;
 		case 18: // GP Slider 3
-			part->set_pri(param2 - 0x40);
+			if (!_se->_newSystem)
+				param2 -= 0x40;
+			part->set_pri(param2);
 			_se->reallocateMidiChannels(_midi);
 			break;
 		case 64: // Sustain Pedal
@@ -355,7 +360,7 @@ void Player::send(uint32 b) {
 		}
 		break;
 
-	case 0xE: // Pitch Bend
+	case 0xE: // Pitch Bend (or also volume fade for Samnmax)
 		part = getPart(chan);
 		if (part)
 			part->pitchBend(((param2 << 7) | param1) - 0x2000);
@@ -387,7 +392,7 @@ void Player::sysEx(const byte *p, uint16 len) {
 		if (a == ROLAND_SYSEX_ID) {
 			// Roland custom instrument definition.
 			// There is at least one (pointless) attempt in INDY4 Amiga to send this, too.
-			if ((_isMIDI && !_se->_isAmiga) || _isMT32) {
+			if ((_isMIDI && _se->_soundType != MDT_AMIGA) || _isMT32) {
 				part = getPart(p[0] & 0x0F);
 				if (part) {
 					part->_instrument.roland(p - 1);
@@ -395,9 +400,6 @@ void Player::sysEx(const byte *p, uint16 len) {
 						part->_instrument.send(part->_mc);
 				}
 			}
-		} else if (a == YM2612_SYSEX_ID) {
-			// FM-TOWNS custom instrument definition
-			_midi->sysEx_customInstrument(p[0], 'EUP ', p + 1);
 		} else {
 			// SysEx manufacturer 0x97 has been spotted in the
 			// Monkey Island 2 AdLib music, so don't make this a
@@ -567,13 +569,14 @@ int Player::setTranspose(byte relative, int b) {
 	if (b > 24 || b < -24 || relative > 1)
 		return -1;
 	if (relative)
-		b = transpose_clamp(_transpose + b, -24, 24);
+		b = transpose_clamp(_transpose + b, -7, 7);	
 
 	_transpose = b;
 
-	for (part = _parts; part; part = part->_next) {
-		part->set_transpose(part->_transpose);
-	}
+	// MI2 and INDY4 use boundaries of -12/12 for MT-32 and -24/24 for AdLib and PC Speaker, DOTT uses -12/12 for everything.
+	int lim = (_se->_game_id == GID_TENTACLE || _se->isNativeMT32()) ? 12 : 24;
+	for (part = _parts; part; part = part->_next)
+		part->set_transpose(part->_transpose, -lim, lim);
 
 	return 0;
 }
@@ -589,7 +592,10 @@ void Player::part_set_transpose(uint8 chan, byte relative, int8 b) {
 		return;
 	if (relative)
 		b = transpose_clamp(b + part->_transpose, -7, 7);
-	part->set_transpose(b);
+
+	// MI2 and INDY4 use boundaries of -12/12 for MT-32 and -24/24 for AdLib and PC Speaker, DOTT uses -12/12 for everything.
+	int lim = (_se->_game_id == GID_TENTACLE || _se->isNativeMT32()) ? 12 : 24;
+	part->set_transpose(b, -lim, lim);
 }
 
 bool Player::jump(uint track, uint beat, uint tick) {

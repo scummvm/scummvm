@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -60,12 +61,12 @@ void Room87::setup_func() {
 	int nicDestY = 0;
 
 	
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 186) {
+	if (_G(moveState)[P_CHEWY].Xypos[0] > 186) {
 		howDestX = 103;
 		howDestY = 128;
 		nicDestX = 134;
 		nicDestY = 123;
-	} else if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 20) {
+	} else if (_G(moveState)[P_CHEWY].Xypos[0] > 20) {
 		howDestX = 27;
 		howDestY = 98;
 		nicDestX = -2;
@@ -132,19 +133,19 @@ int Room87::proc2(int16 txt_nr) {
 		startAadWait(diaNr);
 	} else {
 		autoMove(movNr, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(atds)->set_ats_str(txt_nr, 1, ATS_DATA);
 		_G(det)->showStaticSpr(movNr);
 		if (_G(gameState).flags32_4 && _G(gameState).flags32_8)
-			_G(atds)->delControlBit(502, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(502, ATS_ACTIVE_BIT);
 	}
 	showCur();
 	return 1;
 }
 
 int Room87::proc4() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();

@@ -35,14 +35,14 @@ class Collision {
 private:
 	TwinEEngine *_engine;
 
-	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, const ActorStruct *actor, ActorStruct *actorTest);
+	void handlePushing(const IVec3 &minsTest, const IVec3 &maxsTest, ActorStruct *actor, ActorStruct *actorTest);
+
+	/** Actor collision coordinate */
+	IVec3 _processCollision; // SaveNxw, SaveNyw, SaveNzw
 public:
 	Collision(TwinEEngine *engine);
 	/** Actor collision coordinate */
 	IVec3 _collision;
-
-	/** Actor collision coordinate */
-	IVec3 _processCollision;
 
 	/** Cause damage in current processed actor */
 	int32 _causeActorDamage = 0; //fieldCauseDamage
@@ -54,20 +54,22 @@ public:
 	 */
 	bool standingOnActor(int32 actorIdx1, int32 actorIdx2) const;
 
-	int32 getAverageValue(int32 start, int32 end, int32 maxDelay, int32 delay) const;
+	int32 clampedLerp(int32 start, int32 end, int32 maxDelay, int32 delay) const;
 
 	/**
 	 * Reajust actor position in scene according with brick shape bellow actor
 	 * @param brickShape Shape of brick bellow the actor
 	 */
-	void reajustActorPosition(ShapeType brickShape);
+	void reajustPos(IVec3 &processActor, ShapeType brickShape) const;
 
 	/**
 	 * Check collision with actors
 	 * @param actorIx Current process actor index
 	 */
-	int32 checkCollisionWithActors(int32 actorIdx);
+	int32 checkObjCol(int32 actorIdx);
+	bool checkValidObjPos(int32 actorIdx);
 
+	void setCollisionPos(const IVec3 &pos);
 	/**
 	 * Check Hero collision with bricks
 	 * @param x Hero X coordinate
@@ -75,7 +77,7 @@ public:
 	 * @param z Hero Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkHeroCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
+	void doCornerReajustTwinkel(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/**
 	 * Check other actor collision with bricks
@@ -84,27 +86,27 @@ public:
 	 * @param z Actor Z coordinate
 	 * @param damageMask Cause damage mask
 	 */
-	void checkActorCollisionWithBricks(int32 x, int32 y, int32 z, int32 damageMask);
+	void doCornerReajust(ActorStruct *actor, int32 x, int32 y, int32 z, int32 damageMask);
 
 	/** Make actor to stop falling */
-	void stopFalling();
+	void receptionObj(int actorIdx);
 
 	/**
 	 * Check extra collision with actors
 	 * @param extra to process
 	 * @param actorIdx actor to check collision
 	 */
-	int32 checkExtraCollisionWithActors(ExtraListStruct *extra, int32 actorIdx);
+	int32 extraCheckObjCol(ExtraListStruct *extra, int32 actorIdx);
 
 	/** Check extra collision with bricks */
-	bool checkExtraCollisionWithBricks(int32 x, int32 y, int32 z, const IVec3 &oldPos);
+	bool fullWorldColBrick(int32 x, int32 y, int32 z, const IVec3 &oldPos);
 
 	/**
 	 * Check extra collision with another extra
 	 * @param extra to process
 	 * @param extraIdx extra index to check collision
 	 */
-	int32 checkExtraCollisionWithExtra(ExtraListStruct *extra, int32 extraIdx) const;
+	int32 extraCheckExtraCol(ExtraListStruct *extra, int32 extraIdx) const;
 };
 
 } // namespace TwinE

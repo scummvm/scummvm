@@ -27,19 +27,21 @@
 
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdBlock::AdBlock(BaseGame *inGame) : BaseScriptable(inGame, false, false),
-									 _receiveShadows(false), _active(true),
-									 _mesh(nullptr) {
+AdBlock::AdBlock(BaseGame *inGame) : BaseScriptable(inGame, false, false) {
+	_mesh = nullptr;
+	_active = true;
+	_receiveShadows = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AdBlock::~AdBlock() {
 	delete _mesh;
+	_mesh = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

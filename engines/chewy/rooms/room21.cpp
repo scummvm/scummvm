@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -85,32 +86,32 @@ bool Room21::timer(int16 t_nr, int16 ani_nr) {
 void Room21::calc_laser() {
 	if (_G(gameState).R21Hebel1 && !_G(gameState).R21Hebel2 && _G(gameState).R21Hebel3) {
 		_G(gameState).R21Laser1Weg = true;
-		_G(det)->stop_detail(3);
-		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(det)->stopDetail(3);
+		_G(atds)->setControlBit(134, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(133, ATS_ACTIVE_BIT);
 	} else {
 		_G(gameState).R21Laser1Weg = false;
 		_G(det)->startDetail(3, 255, ANI_FRONT);
-		_G(atds)->delControlBit(134, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(134, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(133, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(gameState).R21Hebel1 && _G(gameState).R21Hebel2 && !_G(gameState).R21Hebel3) {
 		if (!_G(obj)->checkInventory(SEIL_INV) && !_G(gameState).R17Seil) {
 			_G(obj)->show_sib(SIB_SEIL_R21);
-			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(129, ATS_ACTIVE_BIT);
 		}
 
 		_G(gameState).R21Laser2Weg = true;
-		_G(det)->stop_detail(4);
-		_G(atds)->setControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(det)->stopDetail(4);
+		_G(atds)->setControlBit(135, ATS_ACTIVE_BIT);
 
 	} else {
 		_G(obj)->hide_sib(SIB_SEIL_R21);
-		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT);
 		_G(gameState).R21Laser2Weg = false;
 		_G(det)->startDetail(4, 255, ANI_FRONT);
-		_G(atds)->delControlBit(135, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(135, ATS_ACTIVE_BIT);
 	}
 }
 
@@ -176,44 +177,43 @@ void Room21::chewy_kolli() {
 		xoff += _G(auto_mov_vector)[i].Xzoom;
 		yoff += _G(auto_mov_vector)[i].Yzoom;
 
-		if ((!i && _G(spieler_vector)[P_CHEWY].Xypos[0] < 516) ||
-			(i == 1 && _G(spieler_vector)[P_CHEWY].Xypos[1] > 70) ||
+		if ((!i && _G(moveState)[P_CHEWY].Xypos[0] < 516) ||
+			(i == 1 && _G(moveState)[P_CHEWY].Xypos[1] > 70) ||
 			(i == 2)) {
-			if (_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 >= _G(auto_mov_vector)[i].Xypos[0] + Cxy[0] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[0] + 12 <= _G(auto_mov_vector)[i].Xypos[0] + xoff + Cxy[0] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 >= _G(auto_mov_vector)[i].Xypos[1] + Cxy[1] &&
-				_G(spieler_vector)[P_CHEWY].Xypos[1] + 12 <= _G(auto_mov_vector)[i].Xypos[1] + yoff + Cxy[1] &&
+			if (_G(moveState)[P_CHEWY].Xypos[0] + 12 >= _G(auto_mov_vector)[i].Xypos[0] + Cxy[0] &&
+				_G(moveState)[P_CHEWY].Xypos[0] + 12 <= _G(auto_mov_vector)[i].Xypos[0] + xoff + Cxy[0] &&
+				_G(moveState)[P_CHEWY].Xypos[1] + 12 >= _G(auto_mov_vector)[i].Xypos[1] + Cxy[1] &&
+				_G(moveState)[P_CHEWY].Xypos[1] + 12 <= _G(auto_mov_vector)[i].Xypos[1] + yoff + Cxy[1] &&
 				_G(mov_phasen)[i].Start == 1)
 				kolli = true;
 		}
 	}
 
 	if (kolli && !_G(flags).AutoAniPlay) {
-		const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
+		const int16 tmp = _G(moveState)[P_CHEWY].Count;
 		stopPerson(P_CHEWY);
 		_G(flags).AutoAniPlay = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
-		int16 ani_nr = (_G(spieler_vector)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
-		_G(det)->setSetailPos(ani_nr, _G(spieler_vector)[P_CHEWY].Xypos[0], _G(spieler_vector)[P_CHEWY].Xypos[1]);
+		int16 ani_nr = (_G(moveState)[P_CHEWY].Xyvo[0] < 0) ? 10 : 11;
+		_G(det)->setDetailPos(ani_nr, _G(moveState)[P_CHEWY].Xypos[0], _G(moveState)[P_CHEWY].Xypos[1]);
 		startSetAILWait(ani_nr, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
-		_G(spieler_vector)[P_CHEWY].Count = tmp;
-		get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
+		_G(moveState)[P_CHEWY].Count = tmp;
+		get_phase(&_G(moveState)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 		_G(mov)->continue_auto_go();
 	}
 }
 
 void Room21::salto() {
-	if (!_G(gameState).inv_cur && _G(atds)->get_ats_str(134, TXT_MARK_USE, ATS_DATA) == 8
-		&& !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R21Salto && !_G(flags).AutoAniPlay) {
 		_G(gameState).R21Salto = true;
 		_G(flags).AutoAniPlay = true;
 		_G(gameState)._personHide[P_CHEWY] = true;
 
 		for (int16 i = 0; i < 3; i++) {
-			_G(det)->setSetailPos(12 + i, _G(spieler_vector)[P_CHEWY].Xypos[0],
-				_G(spieler_vector)[P_CHEWY].Xypos[1]);
+			_G(det)->setDetailPos(12 + i, _G(moveState)[P_CHEWY].Xypos[0],
+				_G(moveState)[P_CHEWY].Xypos[1]);
 		}
 
 		startAniBlock(3, ABLOCK19);
@@ -240,10 +240,10 @@ void Room21::use_gitter_energie() {
 int16 Room21::use_fenster() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(flags).AutoAniPlay && _G(gameState).R21Laser1Weg) {
 		action_flag = true;
 		_G(flags).AutoAniPlay = true;
-		_G(gameState).R18Gitter = true;
+		_G(gameState).R18Grid = true;
 		autoMove(13, P_CHEWY);
 		setPersonPos(541, 66, P_CHEWY, P_LEFT);
 		switchRoom(18);

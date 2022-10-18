@@ -115,10 +115,16 @@ bool DialogueMenu::addToList(int answer, bool done, int priorityPolite, int prio
 // Original uses incorrect spelling for entry id 1020: DRAGONFLY JEWERLY
 	const Common::String &text = _textResource->getText(answer);
 #else
-// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 	const char *answerTextCP = _textResource->getText(answer);
 	if (_vm->_language == Common::EN_ANY && answer == 1020 && strcmp(answerTextCP, "DRAGONFLY JEWERLY") == 0) {
+		// fix spelling or entry id 1020 to DRAGONFLY JEWELRY in English version
 		answerTextCP = "DRAGONFLY JEWELRY";
+	} else if (_vm->_language == Common::IT_ITA && answer == 180 && strcmp(answerTextCP, "AUTOMOBILI") == 0) {
+		// fix bad dialogue entry id 180 for Italian version.
+		// The entry is supposed to be Grigorian's organization name (which is CARS in English, but CCSR in Italian)
+		// However, the original localization has it as "AUTOMOBILI" which is literally "cars" and results in confusion.
+		// The other official localizations do not have this issue.
+		answerTextCP = "C.C.S.R.";
 	}
 	const Common::String &text = answerTextCP;
 #endif // BLADERUNNER_ORIGINAL_BUGS
@@ -415,8 +421,8 @@ void DialogueMenu::calculatePosition(int unusedX, int unusedY) {
 	_screenX = _centerX - w / 2;
 	_screenY = _centerY - h / 2;
 
-	_screenX = CLIP(_screenX, 0, 640 - w);
-	_screenY = CLIP(_screenY, 0, 480 - h);
+	_screenX = CLIP(_screenX, 0, BladeRunnerEngine::kOriginalGameWidth  - w);
+	_screenY = CLIP(_screenY, 0, BladeRunnerEngine::kOriginalGameHeight - h);
 
 	_fadeInItemIndex = 0;
 }
@@ -544,8 +550,8 @@ void DialogueMenu::reset() {
 void DialogueMenu::darkenRect(Graphics::Surface &s, int x1, int y1, int x2, int y2) {
 	x1 = MAX(x1, 0);
 	y1 = MAX(y1, 0);
-	x2 = MIN(x2, 640);
-	y2 = MIN(y2, 480);
+	x2 = MIN<int32>(x2, BladeRunnerEngine::kOriginalGameWidth);
+	y2 = MIN<int32>(y2, BladeRunnerEngine::kOriginalGameHeight);
 
 	if (x1 < x2 && y1 < y2) {
 		for (int y = y1; y != y2; ++y) {

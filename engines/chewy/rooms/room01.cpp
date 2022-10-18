@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -32,28 +33,28 @@ void Room1::gottenCard() {
 	_G(det)->hideStaticSpr(2);
 	startSetAILWait(4, 1, ANI_FRONT);
 	_G(gameState)._personHide[P_CHEWY] = false;
-	_G(atds)->delControlBit(7, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->delControlBit(7, ATS_COUNT_BIT);
 }
 
 void Room1::gedAction(int index) {
-	#define KABELABDECKUNG 1
+	#define CABLEBOX 1
 
 	if (index == 0 && !_G(gameState).R2ElectrocutedBork) {
-		bool flag = false;
-		if (_G(gameState).AkInvent == KABEL_INV) {
-			flag = true;
-			delInventory(_G(gameState).AkInvent);
-		} else if (_G(obj)->checkInventory(KABEL_INV)) {
-			flag = true;
-			_G(obj)->del_obj_use(KABEL_INV);
-			remove_inventory(KABEL_INV);
+		bool pickedUpCable = false;
+		if (_G(cur)->getInventoryCursor() == CABLE_INV) {
+			pickedUpCable = true;
+			delInventory(_G(cur)->getInventoryCursor());
+		} else if (_G(obj)->checkInventory(CABLE_INV)) {
+			pickedUpCable = true;
+			_G(obj)->del_obj_use(CABLE_INV);
+			remove_inventory(CABLE_INV);
 		}
 
-		if (flag) {
+		if (pickedUpCable) {
 			startAadWait(54);
 			_G(atds)->set_ats_str(8, TXT_MARK_LOOK, 0, ATS_DATA);
-			_G(gameState).room_s_obj[KABELABDECKUNG].ZustandFlipFlop = 2;
-			_G(obj)->calc_rsi_flip_flop(KABELABDECKUNG);
+			_G(gameState).room_s_obj[CABLEBOX].ZustandFlipFlop = 2;
+			_G(obj)->calc_rsi_flip_flop(CABLEBOX);
 			_G(obj)->calc_all_static_detail();
 		}
 	}

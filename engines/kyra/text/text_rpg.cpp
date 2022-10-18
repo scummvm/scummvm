@@ -74,6 +74,8 @@ TextDisplayer_rpg::TextDisplayer_rpg(KyraRpgEngine *engine, Screen *scr) : _vm(e
 	_table1 = new char[128]();
 	_table2 = new char[16]();
 
+	_tempString1 = _tempString2 = 0;
+
 	_waitButtonSpace = 0;
 }
 
@@ -109,7 +111,7 @@ void TextDisplayer_rpg::resetDimTextPositions(int dim) {
 
 void TextDisplayer_rpg::resetPageBreakString() {
 	if (_vm->_moreStrings)
-		strcpy(_pageBreakString, _vm->_moreStrings[0]);
+		_pageBreakString = _vm->_moreStrings[0];
 }
 
 void TextDisplayer_rpg::setPageBreakFlag() {
@@ -155,10 +157,10 @@ void TextDisplayer_rpg::displayText(char *str, ...) {
 
 		if (!_tempString2 && c == '%') {
 			if (a == 'd') {
-				strcpy(_scriptParaString, Common::String::format("%d", va_arg(args, int)).c_str());
-				_tempString2 = _scriptParaString;
+				_scriptParaString = Common::String::format("%d", va_arg(args, int));
+				_tempString2 = _scriptParaString.c_str();
 			} else if (a == 's') {
-				_tempString2 = va_arg(args, char*);
+				_tempString2 = va_arg(args, const char*);
 			} else {
 				break;
 			}
@@ -545,7 +547,7 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 
 	if (pageBreakString) {
 		if (pageBreakString[0]) {
-			strcpy(_pageBreakString, pageBreakString);
+			_pageBreakString = pageBreakString;
 			displayWaitButton();
 			resetPageBreakString();
 		}
@@ -555,10 +557,9 @@ void TextDisplayer_rpg::printDialogueText(int stringId, const char *pageBreakStr
 }
 
 void TextDisplayer_rpg::printDialogueText(const char *str, bool wait) {
-	assert(strlen(str) < kEoBTextBufferSize);
+	assert(Common::strnlen(str, kEoBTextBufferSize) < kEoBTextBufferSize);
 	Common::strlcpy(_dialogueBuffer, str, kEoBTextBufferSize);
 
-	strcpy(_dialogueBuffer, str);
 	displayText(_dialogueBuffer);
 	if (wait)
 		displayWaitButton();
@@ -656,12 +657,12 @@ void TextDisplayer_rpg::textPageBreak() {
 
 	if (_vm->game() == GI_LOL && _vm->gameFlags().use16ColorMode) {
 		_vm->gui_drawBox(x + 8, (y & ~7) - 1, 66, 10, 0xEE, 0xCC, -1);
-		_screen->printText(_pageBreakString, (x + 37 - (strlen(_pageBreakString) << 1) + 4) & ~3, (y + 2) & ~7, 0xC1, 0);
+		_screen->printText(_pageBreakString.c_str(), (x + 37 - (_pageBreakString.size() << 1) + 4) & ~3, (y + 2) & ~7, 0xC1, 0);
 	} else {
 		_screen->set16bitShadingLevel(4);
 		_vm->gui_drawBox(x, y, w, _vm->guiSettings()->buttons.height, _vm->guiSettings()->colors.frame1, _vm->guiSettings()->colors.frame2, _vm->guiSettings()->colors.fill);
 		_screen->set16bitShadingLevel(0);
-		_screen->printText(_pageBreakString, x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
+		_screen->printText(_pageBreakString.c_str(), x + (w >> 1) - (_vm->screen()->getTextWidth(_pageBreakString.c_str()) >> 1), y + _vm->guiSettings()->buttons.txtOffsY, _vm->_dialogueButtonLabelColor1, 0);
 	}
 
 	_vm->removeInputTop();
@@ -739,7 +740,7 @@ void TextDisplayer_rpg::textPageBreak() {
 
 void TextDisplayer_rpg::displayWaitButton() {
 	_vm->_dialogueNumButtons = 1;
-	_vm->_dialogueButtonString[0] = _pageBreakString;
+	_vm->_dialogueButtonString[0] = _pageBreakString.c_str();
 	_vm->_dialogueButtonString[1] = 0;
 	_vm->_dialogueButtonString[2] = 0;
 	_vm->_dialogueHighlightedButton = 0;

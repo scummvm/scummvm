@@ -46,8 +46,6 @@ Debugger::Debugger(QueenEngine *vm)
 	registerCmd("song",  WRAP_METHOD(Debugger, Cmd_Song));
 }
 
-Debugger::~Debugger() {} // we need this here for __SYMBIAN32__
-
 void Debugger::preEnter() {
 	GUI::Debugger::preEnter();
 }

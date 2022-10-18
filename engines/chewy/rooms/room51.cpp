@@ -19,13 +19,13 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/ani_dat.h"
 #include "chewy/room.h"
 #include "chewy/rooms/room51.h"
-#include "chewy/rooms/room65.h"
 #include "chewy/sound.h"
 
 namespace Chewy {
@@ -143,9 +143,9 @@ void Room51::setup_func() {
 
 		_G(det)->setStaticPos(17, _tmpx, _tmpy, false, false);
 
-		if ((_G(minfo)._button == 1 || _G(in)->getSwitchCode() == 28) && !_flag) {
+		if ((_G(minfo).button == 1 || g_events->getSwitchCode() == 28) && !_flag) {
 			_flag = true;
-			_G(det)->setSetailPos(8, _tmpx - 20, _tmpy + 41);
+			_G(det)->setDetailPos(8, _tmpx - 20, _tmpy + 41);
 			startSetAILWait(8, 1, ANI_FRONT);
 			_flag = false;
 			++_index;
@@ -184,7 +184,7 @@ void Room51::setup_func() {
 		}
 	} else if (_G(gameState)._personRoomNr[P_HOWARD] == 51) {
 		calc_person_look();
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 
 		int16 x, y;
 		if (ch_y < 129) {
@@ -237,8 +237,7 @@ int16 Room51::use_door(int16 txt_nr) {
 			autoMove(9, P_CHEWY);
 
 			if (!_G(gameState).R51KillerWeg) {
-				g_engine->_sound->playSound(2, 0);
-				g_engine->_sound->playSound(2);
+				_G(det)->playSound(2, 0);
 				_G(det)->showStaticSpr(1);
 				startSetAILWait(2, 1, ANI_FRONT);
 				_G(det)->startDetail(5, 255, ANI_FRONT);
@@ -246,26 +245,26 @@ int16 Room51::use_door(int16 txt_nr) {
 				if (!_G(gameState).R52HotDogOk) {
 					startAadWait(287);
 					autoMove(12, P_CHEWY);
-					_G(det)->stop_detail(5);
+					_G(det)->stopDetail(5);
 					startAniBlock(5, ABLOCK37);
 					_G(det)->hideStaticSpr(1);
-					g_engine->_sound->stopSound(0);
+					_G(det)->stopSound(0);
 					startAadWait(284);
 				} else {
 					_G(gameState).R51KillerWeg = true;
 					startAadWait(290);
-					g_engine->_sound->stopSound(0);
-					_G(out)->ausblenden(1);
+					_G(det)->stopSound(0);
+					_G(out)->fadeOut();
 					_G(out)->setPointer(nullptr);
 					_G(out)->cls();
-					_G(out)->einblenden(_G(pal), 0);
+					_G(out)->fadeIn(_G(pal));
 					_G(flags).NoPalAfterFlc = true;
 					_G(det)->showStaticSpr(16);
 					flic_cut(FCUT_068);
 
 					_G(det)->hideStaticSpr(16);
 					_G(flags).NoPalAfterFlc = false;
-					_G(det)->stop_detail(5);
+					_G(det)->stopDetail(5);
 					_G(obj)->show_sib(SIB_AUSRUEST_R52);
 					_G(obj)->calc_rsi_flip_flop(SIB_AUSRUEST_R52);
 					_G(det)->hideStaticSpr(1);

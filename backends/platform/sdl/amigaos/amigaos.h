@@ -32,6 +32,7 @@ public:
 	bool hasFeature(Feature f) override;
 
 	void init() override;
+	void initBackend() override;
 };
 
 #endif

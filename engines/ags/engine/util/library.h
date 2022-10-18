@@ -29,17 +29,25 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
+using AGS::Shared::String;
+
 class BaseLibrary {
 public:
 	BaseLibrary() {}
 
 	virtual ~BaseLibrary() {}
 
-	virtual AGS::Shared::String GetFilenameForLib(const AGS::Shared::String &libraryName) = 0;
+	String GetName() const { return _name; }
+	String GetFilePath() const { return _path; }
 
-	virtual bool Load(const AGS::Shared::String &libraryName) = 0;
+	virtual String GetFilenameForLib(const String &libname) = 0;
+	virtual bool Load(const String &libname) = 0;
+	virtual void Unload() = 0;
+	virtual bool IsLoaded() const = 0;
 
-	virtual bool Unload() = 0;
+protected:
+	String _name;
+	String _path;
 };
 
 } // namespace Engine

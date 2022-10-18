@@ -29,19 +29,19 @@
 namespace Saga2 {
 
 SPELLHEIGHTFUNCTION(ShortTillThere) {
-	if (effectron->stepNo <= effectron->totalSteps) {
+	if (effectron->_stepNo <= effectron->_totalSteps) {
 		return 8;
-	} else if (effectron->stepNo - effectron->totalSteps <= 8) {
-		return 8 * (effectron->stepNo - effectron->totalSteps);
+	} else if (effectron->_stepNo - effectron->_totalSteps <= 8) {
+		return 8 * (effectron->_stepNo - effectron->_totalSteps);
 	}
 	return 0;
 }
 
 SPELLBREADTHFUNCTION(ThinTillThere) {
-	if (effectron->stepNo <= effectron->totalSteps) {
+	if (effectron->_stepNo <= effectron->_totalSteps) {
 		return 8;
-	} else if (effectron->stepNo - effectron->totalSteps <= 8) {
-		return 8 * (effectron->stepNo - effectron->totalSteps);
+	} else if (effectron->_stepNo - effectron->_totalSteps <= 8) {
+		return 8 * (effectron->_stepNo - effectron->_totalSteps);
 	}
 	return 0;
 }

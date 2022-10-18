@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -35,21 +36,21 @@ void Room16::entry() {
 	if (!_G(gameState).R16F5Exit) {
 		_G(det)->showStaticSpr(4);
 		_G(gameState).room_e_obj[32].Attribut = 255;
-		_G(atds)->delControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(124, ATS_ACTIVE_BIT);
 	} else {
 		_G(det)->hideStaticSpr(4);
 		_G(gameState).room_e_obj[32].Attribut = EXIT_LEFT;
-		_G(atds)->setControlBit(124, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(124, ATS_ACTIVE_BIT);
 	}
 }
 
 int16 Room16::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		_G(gameState).R23GleiterExit = 16;
+		_G(gameState).R23GliderExit = 16;
 		Room23::cockpit();
 	}
 

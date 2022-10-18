@@ -39,18 +39,40 @@ private:
 	struct Loop {
 		uint16 timer;
 		byte *start, *end;
+		bool noDelta;
 	} _loops[16];
 
+	// Data for monophonic chords mode.
+	// If this is activated, when multiple notes are played at the same time on
+	// a melodic channel (0-5), only the highest note will be played.
+	// This functionality is used by Elvira 2 (although there are no chords in
+	// the MIDI data), Waxworks and the Simon 1 floppy demo.
+
+	// The highest note played at _lastPlayedNoteTime for each channel.
+	byte _highestNote[6];
+	// The timestamp at which the last note was played at each channel.
+	uint32 _lastPlayedNoteTime[6];
+
+	// True if, for notes played at the same time, only the highest note should
+	// be played. If false, all notes of a chord will be sent to the driver.
+	bool _monophonicChords;
+
 	uint32 readVLQ2(byte *&data);
-	void chainEvent(EventInfo &info);
 protected:
 	void parseNextEvent(EventInfo &info) override;
+	bool processEvent(const EventInfo &info, bool fireEvents = true) override;
 	void resetTracking() override;
 
-public:
-	MidiParser_S1D() : _data(nullptr), _noDelta(false) {}
+	public:
+	MidiParser_S1D(uint8 source = 0, bool monophonicChords = false) : MidiParser(source),
+			_monophonicChords(monophonicChords), _data(nullptr), _noDelta(false) {
+		Common::fill(_loops, _loops + ARRAYSIZE(_loops), Loop { 0, 0, 0, false });
+		Common::fill(_highestNote, _highestNote + ARRAYSIZE(_highestNote), 0);
+		Common::fill(_lastPlayedNoteTime, _lastPlayedNoteTime + ARRAYSIZE(_lastPlayedNoteTime), 0);
+	}
 
 	bool loadMusic(byte *data, uint32 size) override;
+	int32 determineDataSize(Common::SeekableReadStream *stream) override;
 };
 
 uint32 MidiParser_S1D::readVLQ2(byte *&data) {
@@ -66,17 +88,11 @@ uint32 MidiParser_S1D::readVLQ2(byte *&data) {
 	return delta;
 }
 
-void MidiParser_S1D::chainEvent(EventInfo &info) {
-	// When we chain an event, we add up the old delta.
-	uint32 delta = info.delta;
-	parseNextEvent(info);
-	info.delta += delta;
-}
-
 void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 	info.start = _position._playPos;
 	info.length = 0;
 	info.delta = _noDelta ? 0 : readVLQ2(_position._playPos);
+	info.noop = false;
 	_noDelta = false;
 
 	info.event = *_position._playPos++;
@@ -118,6 +134,7 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			const int16 loopIterations = int8(*_position._playPos++);
 			if (!loopIterations) {
 				_loops[info.channel()].start = _position._playPos;
+				_loops[info.channel()].noDelta = _noDelta;
 			} else {
 				if (!_loops[info.channel()].timer) {
 					if (_loops[info.channel()].start) {
@@ -126,26 +143,28 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 
 						// Go to the start of the loop
 						_position._playPos = _loops[info.channel()].start;
+						_noDelta = _loops[info.channel()].noDelta;
+						info.loop = true;
 					}
 				} else {
-					if (_loops[info.channel()].timer)
+					if (_loops[info.channel()].timer) {
 						_position._playPos = _loops[info.channel()].start;
+						_noDelta = _loops[info.channel()].noDelta;
+						info.loop = true;
+					}
 					--_loops[info.channel()].timer;
 				}
 			}
-
-			// We need to read the next midi event here. Since we can not
-			// safely pass this event to the MIDI event processing.
-			chainEvent(info);
+			// Event has been fully processed here.
+			info.noop = true;
 			} break;
 
 		case 0xB: // auto stop marker(?)
 			// In case the stop mode(?) is set to 0x80 this will stop the
 			// track.
 
-			// We need to read the next midi event here. Since we can not
-			// safely pass this event to the MIDI event processing.
-			chainEvent(info);
+			// Event has been fully processed here.
+			info.noop = true;
 			break;
 
 		case 0xC: // program change
@@ -157,9 +176,8 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			if (_loops[info.channel()].end)
 				_position._playPos = _loops[info.channel()].end;
 
-			// We need to read the next midi event here. Since we can not
-			// safely pass this event to the MIDI event processing.
-			chainEvent(info);
+			// Event has been fully processed here.
+			info.noop = true;
 			break;
 
 		default:
@@ -167,12 +185,36 @@ void MidiParser_S1D::parseNextEvent(EventInfo &info) {
 			// not to be MIDI related.
 			warning("MidiParser_S1D: default case %d", info.channel());
 
-			// We need to read the next midi event here. Since we can not
-			// safely pass this event to the MIDI event processing.
-			chainEvent(info);
+			// Event has been fully processed here.
+			info.noop = true;
 			break;
 		}
 	}
+}
+
+bool MidiParser_S1D::processEvent(const EventInfo &info, bool fireEvents) {
+	byte channel = info.channel();
+	if (_monophonicChords && channel < 6 && info.command() == 0x9 && info.basic.param2 > 0) {
+		// In monophonic chords mode, when multiple notes are played at the
+		// same time on a melodic channel (0-5), only the highest note should
+		// be played.
+		if (_lastPlayedNoteTime[channel] == _position._playTick && _highestNote[channel] > info.basic.param1) {
+			// This note is lower than a previously played note on the same
+			// channel and with the same timestamp. Ignore it.
+			return true;
+		} else {
+			// This note either has a different timestamp (i.e. it is not
+			// played at the same time), or it is higher than the previously
+			// played note.
+			// Update the timestamp and note registry and play this note
+			// (because the channel is monophonic, a previously played lower
+			// note will be cut off).
+			_lastPlayedNoteTime[channel] = _position._playTick;
+			_highestNote[channel] = info.basic.param1;
+		}
+	}
+
+	return MidiParser::processEvent(info, fireEvents);
 }
 
 bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
@@ -182,7 +224,7 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 		return false;
 
 	// The original actually just ignores the first two bytes.
-	byte *pos = data;
+	byte *pos = data + 2;
 	if (*pos == 0xFC) {
 		// SysEx found right at the start
 		// this seems to happen since Elvira 2, we ignore it
@@ -230,13 +272,18 @@ bool MidiParser_S1D::loadMusic(byte *data, uint32 size) {
 	return true;
 }
 
+int32 MidiParser_S1D::determineDataSize(Common::SeekableReadStream* stream) {
+	// Data size is stored in the first two bytes.
+	return stream->readUint16LE() + 2;
+}
+
 void MidiParser_S1D::resetTracking() {
 	MidiParser::resetTracking();
 	// The first event never contains any delta.
 	_noDelta = true;
-	memset(_loops, 0, sizeof(_loops));
+	Common::fill(_loops, _loops + ARRAYSIZE(_loops), Loop { 0, 0, 0, false });
 }
 
-MidiParser *MidiParser_createS1D() { return new MidiParser_S1D; }
+MidiParser *MidiParser_createS1D(uint8 source, bool monophonicChords) { return new MidiParser_S1D(source, monophonicChords); }
 
 } // End of namespace AGOS

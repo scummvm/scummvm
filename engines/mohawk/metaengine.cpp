@@ -143,7 +143,7 @@ public:
 	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
-			target = getEngineId();
+			target = getName();
 		Common::String gameId = ConfMan.get("gameid", target);
 		const char *suffix;
 		// Saved games are only supported in Myst/Riven currently.

@@ -85,6 +85,8 @@ ADD_OP(DepthFunc, 1, "%d")
 ADD_OP(StencilFunc, 3, "%C %d %d")
 ADD_OP(StencilOp, 3, "%C %C %C")
 
+ADD_OP(Fog, 5, "%d %f %f %f %f")
+
 ADD_OP(CallList, 1, "%d")
 ADD_OP(Hint, 2, "%C %C")
 

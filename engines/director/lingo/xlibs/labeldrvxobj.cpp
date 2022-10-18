@@ -59,7 +59,7 @@ void LabelDrvXObj::open(int type) {
 	if (type == kXObj) {
 		LabelDrvXObject::initMethods(xlibMethods);
 		LabelDrvXObject *xobj = new LabelDrvXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

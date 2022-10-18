@@ -282,7 +282,7 @@ void SoundTowns_LoK::beginFadeOut() {
 		_player->driver()->setOutputVolume(1, 0, 0);
 
 	} else {
-		if (_lastTrack == -1)
+		if (_lastTrack == -1 || !_player->isPlaying())
 			return;
 
 		uint32 ticks = 2;

@@ -754,6 +754,30 @@ static const SAGAGameDescription gameDescriptions[] = {
 		ITEPatch_Files,
 	},
 
+	// Inherit the earth - Hebrew fan translation
+	{
+		{
+			"ite",
+			"CD Version",
+			{
+				{"ite.rsc",		GAME_RESOURCEFILE,	"b9354a4c2d138f680306e4baf8585e9d", -1},
+				{"scripts.rsc",	GAME_SCRIPTFILE,	"a891405405edefc69c9d6c420c868b84", -1},
+				AD_LISTEND
+			},
+			Common::HE_ISR,
+			Common::kPlatformUnknown,
+			ADGF_CD,
+			GUIO0()
+		},
+		GID_ITE,
+		0,
+		ITE_DEFAULT_SCENE,
+		&ITE_Resources,
+		ARRAYSIZE(ITE_GameFonts),
+		ITE_GameFonts,
+		NULL,
+	},
+
 	// Inherit the earth - DOS CD German version
 	// reported by mld. Bestsellergamers cover disk
 	{

@@ -4,17 +4,18 @@ Keymaps
 
 Use the Keymaps tab to assign actions to keyboard keys or shortcuts, or to mouse or joystick buttons.
 
+
 **To change settings globally:**
 
-	From the Launcher, select **Options**, then select the **Keymaps** tab.
+ 	From the Launcher, select **Global Options**, then select the **Keymaps** tab.
 
 **To change settings for a specific game:**
 
-	Highlight the game in the games list, select **Edit Game** then select the **Keymaps** tab.
+	From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. Select the **Keymaps** tab.
 
 .. figure:: ../images/settings/keymaps.png
 
-    The Keymaps tab in the global settings
+    The Keymaps tab in the Global Options menu
 
 .. figure:: ../images/settings/keymaps_dropdown.png
 

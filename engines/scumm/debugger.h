@@ -31,7 +31,6 @@ class ScummEngine;
 class ScummDebugger : public GUI::Debugger {
 public:
 	ScummDebugger(ScummEngine *s);
-	~ScummDebugger() override; // we need this here for __SYMBIAN32__
 
 private:
 	ScummEngine *_vm;
@@ -58,6 +57,7 @@ private:
 	bool Cmd_ImportRes(int argc, const char **argv);
 
 	bool Cmd_PrintDraft(int argc, const char **argv);
+	bool Cmd_PrintGrail(int argc, const char **argv);
 	bool Cmd_Passcode(int argc, const char **argv);
 
 	bool Cmd_Debug(int argc, const char **argv);
@@ -65,6 +65,7 @@ private:
 	bool Cmd_Show(int argc, const char **argv);
 	bool Cmd_Hide(int argc, const char **argv);
 
+	bool Cmd_Cosdump(int argc, const char **argv);
 	bool Cmd_IMuse(int argc, const char **argv);
 	bool Cmd_DiMuse(int argc, const char **argv);
 

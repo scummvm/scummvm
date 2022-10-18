@@ -22,7 +22,7 @@
 #ifndef WINTERMUTE_MESH_OPENGL_H
 #define WINTERMUTE_MESH_OPENGL_H
 
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -32,7 +32,7 @@ namespace Wintermute {
 
 class Mesh3DSOpenGLShader : public Mesh3DS {
 public:
-	Mesh3DSOpenGLShader(OpenGL::ShaderGL *shader);
+	Mesh3DSOpenGLShader(OpenGL::Shader *shader);
 	~Mesh3DSOpenGLShader();
 	void fillVertexBuffer(uint32 color) override;
 	void render() override;
@@ -40,7 +40,7 @@ public:
 private:
 	GLuint _vertexBuffer;
 	GLuint _indexBuffer;
-	OpenGL::ShaderGL *_shader;
+	OpenGL::Shader *_shader;
 };
 
 } // namespace Wintermute

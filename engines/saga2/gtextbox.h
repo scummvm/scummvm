@@ -64,55 +64,55 @@ extern StaticRect editBaseRect;
 class gTextBox : public gControl {
 private:
 
-	char    **fieldStrings;
-	char    *undoBuffer;                // undo buffer for editing
-	bool    internalBuffer;
+	char    **_fieldStrings;
+	char    *_undoBuffer;                // undo buffer for editing
+	bool    _internalBuffer;
 
 	// editor values
-	uint16  maxLen,
-	        currentLen[numEditLines],
-	        exists[numEditLines],
-	        undoLen,
-	        cursorPos,
-	        anchorPos,
-	        scrollPixels;
-	uint16  flags;
+	uint16  _maxLen,
+	        _currentLen[numEditLines],
+	        _exists[numEditLines],
+	        _undoLen,
+	        _cursorPos,
+	        _anchorPos,
+	        _scrollPixels;
+	uint16  _flags;
 
 	// text display values
-	int8    fontOffset;
-	int8    linesPerPage;
-	int8    index;
-	int8    endLine;
-	int8    oldMark;
+	int8    _fontOffset;
+	int8    _linesPerPage;
+	int8    _index;
+	int8    _endLine;
+	int8    _oldMark;
 
 	// font settings
-	gFont   *textFont;
-	gFont   *oldFont;
-	int8    fontHeight;
-	int8    fontColorFore;
-	int8    fontColorBack;
-	int8    fontColorHilite;
-	byte    fontColorBackHilite;
-	byte    cursorColor;
-	int32   blinkStart;
-	int16   blinkX;
-	int8    blinkState;
+	gFont   *_textFont;
+	gFont   *_oldFont;
+	int8    _fontHeight;
+	int8    _fontColorFore;
+	int8    _fontColorBack;
+	int8    _fontColorHilite;
+	byte    _fontColorBackHilite;
+	byte    _cursorColor;
+	int32   _blinkStart;
+	int16   _blinkX;
+	int8    _blinkState;
 
 
 	// editing switch values
-	bool    displayOnly;
-	bool    editing;
-	Rect16  editRect;
-	bool    hilit;
-	bool    noUndo;
-	bool    fullRedraw;
-	bool    inDrag;
-	bool    isActiveCtl;
+	bool    _displayOnly;
+	bool    _editing;
+	Rect16  _editRect;
+	bool    _hilit;
+	bool    _noUndo;
+	bool    _fullRedraw;
+	bool    _inDrag;
+	bool    _isActiveCtl;
 
-	AppFunc         *onEnter;
-	AppFunc         *onEscape;
+	AppFunc         *_onEnter;
+	AppFunc         *_onEscape;
 
-	gPanelList  *parent;            // window
+	gPanelList  *_parent;            // window
 
 protected:
 
@@ -197,7 +197,7 @@ public:
 
 	char *getLine(int8);
 	int8 getIndex() {
-		return index;
+		return _index;
 	}
 
 	void killChanges() {

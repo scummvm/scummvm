@@ -33,84 +33,38 @@ gBackSave::gBackSave(const Rect16 &extent) {
 
 	//  initialize the rectangle
 
-	savedRegion = intersect(extent, displayRect);    // intersect with display size
+	_savedRegion = intersect(extent, displayRect);    // intersect with display size
 
 	//  Set up the image structure for the video page
 
-	savedPixels.size.x = savedRegion.width;
-	savedPixels.size.y = savedRegion.height;
-//	savedPixels.data = (uint8 *)malloc( savedPixels.bytes() );
-	savedPixels.data = (uint8 *)malloc(savedPixels.bytes());
+	_savedPixels._size.x = _savedRegion.width;
+	_savedPixels._size.y = _savedRegion.height;
+//	_savedPixels._data = (uint8 *)malloc(_savedPixels.bytes());
+	_savedPixels._data = (uint8 *)malloc(_savedPixels.bytes());
 
 	//  Initialize the graphics port
 
-	setMap(&savedPixels);
+	setMap(&_savedPixels);
 	setMode(drawModeReplace);
 
-	saved = false;
+	_saved = false;
 }
 
-/********* vbacksav.cpp/gBackSave::~gBackSave ************************
-*
-*       NAME gBackSave::~gBackSave
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 gBackSave::~gBackSave() {
-	free(savedPixels.data);
+	free(_savedPixels._data);
 }
 
-/********* vbacksav.cpp/gBackSave::save ******************************
-*
-*       NAME gBackSave::save
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gBackSave::save(gDisplayPort &port) {
-	if (!saved && savedPixels.data) {
-		port.protoPage.readPixels(savedRegion,
-		                             savedPixels.data,
-		                             savedPixels.size.x);
-		saved = true;
+	if (!_saved && _savedPixels._data) {
+		port._protoPage.readPixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
+		_saved = true;
 	}
 }
 
-/********* vbacksav.cpp/gBackSave::restore ***************************
-*
-*       NAME gBackSave::restore
-*
-*   SYNOPSIS
-*
-*   FUNCTION
-*
-*     INPUTS
-*
-*     RESULT
-*
-**********************************************************************
-*/
 void gBackSave::restore(gDisplayPort &port) {
-	if (saved && savedPixels.data) {
-		port.protoPage.writePixels(savedRegion,
-		                              savedPixels.data,
-		                              savedPixels.size.x);
-		saved = false;
+	if (_saved && _savedPixels._data) {
+		port._protoPage.writePixels(_savedRegion, _savedPixels._data, _savedPixels._size.x);
+		_saved = false;
 	}
 }
 

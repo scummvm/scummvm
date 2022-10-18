@@ -53,9 +53,9 @@ public:
 	MainMenuDialog(Engine *engine);
 	~MainMenuDialog();
 
-	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data);
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
-	virtual void reflowLayout();
+	virtual void reflowLayout() override;
 
 protected:
 	void save();
@@ -94,8 +94,15 @@ private:
 
 class ExtraGuiOptionsWidget : public OptionsContainerWidget {
 public:
+	enum {
+		kClickGroupLeaderCmd = 'CGLC'
+	};
+
+public:
 	ExtraGuiOptionsWidget(GuiObject *widgetsBoss, const Common::String &name, const Common::String &domain, const ExtraGuiOptions &options);
 	~ExtraGuiOptionsWidget() override;
+
+	virtual void handleCommand(GUI::CommandSender *sender, uint32 cmd, uint32 data) override;
 
 	// OptionsContainerWidget API
 	void load() override;

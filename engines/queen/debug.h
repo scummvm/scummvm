@@ -31,7 +31,6 @@ class QueenEngine;
 class Debugger : public GUI::Debugger {
 public:
 	Debugger(QueenEngine *vm);
-	~Debugger() override; // we need this here for __SYMBIAN32__ archaic gcc/UIQ
 
 	int flags() const { return _flags; }
 

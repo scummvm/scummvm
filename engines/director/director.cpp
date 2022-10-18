@@ -49,18 +49,13 @@
 
 namespace Director {
 
-const uint32 wmModeDesktop = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
-const uint32 wmModeFullscreen = Graphics::kWMModalMenuMode | Graphics::kWMModeNoDesktop
-	| Graphics::kWMModeManualDrawWidgets | Graphics::kWMModeFullscreen;
-uint32 wmMode = 0;
-
 DirectorEngine *g_director;
 
 DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gameDesc) : Engine(syst), _gameDescription(gameDesc) {
 	g_director = this;
 	g_debugger = new Debugger();
 	setDebugger(g_debugger);
-	
+
 	_dirSeparator = ':';
 
 	parseOptions();
@@ -77,7 +72,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	// Load key codes
 	loadKeyCodes();
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 	_currentPaletteLength = 0;
 	_stage = nullptr;
 	_windowList = new Datum;
@@ -86,16 +81,20 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_currentWindow = nullptr;
 	_cursorWindow = nullptr;
 	_lingo = nullptr;
+	_clipBoard = nullptr;
 	_version = getDescriptionVersion();
+	_fixStageSize = false;
+	_fixStageRect = Common::Rect();
+	_wmMode = 0;
+
+	_wmWidth = 1024;
+	_wmHeight = 768;
 
 	_wm = nullptr;
 
 	_gameDataDir = Common::FSNode(ConfMan.get("path"));
 
-	// Meet Mediaband could have up to 5 levels of directories
 	SearchMan.addDirectory(_gameDataDir.getPath(), _gameDataDir, 0, 5);
-
-	SearchMan.addSubDirectoryMatching(_gameDataDir, "win_data", 0, 2);
 
 	for (uint i = 0; Director::directoryGlobs[i]; i++) {
 		Common::String directoryGlob = directoryGlobs[i];
@@ -111,6 +110,9 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	case Common::kPlatformMacintoshII:
 		_machineType = 4;
 		break;
+	case Common::kPlatformPippin:
+		_machineType = 71;
+		break;
 	case Common::kPlatformWindows:
 		_machineType = 256;
 		break;
@@ -124,6 +126,7 @@ DirectorEngine::DirectorEngine(OSystem *syst, const DirectorGameDescription *gam
 	_centerStage = true;
 
 	_surface = nullptr;
+	_tickBaseline = 0;
 }
 
 DirectorEngine::~DirectorEngine() {
@@ -132,7 +135,7 @@ DirectorEngine::~DirectorEngine() {
 	delete _wm;
 	delete _surface;
 
-	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _openResFiles.begin(); it != _openResFiles.end(); ++it) {
+	for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = _allOpenResFiles.begin(); it != _allOpenResFiles.end(); ++it) {
 		delete it->_value;
 	}
 
@@ -172,22 +175,34 @@ Common::Error DirectorEngine::run() {
 		return Common::kAudioDeviceInitFailed;
 	}
 
-	_currentPalette = nullptr;
+	memset(_currentPalette, 0, 768);
 
-	wmMode = debugChannelSet(-1, kDebugDesktop) ? wmModeDesktop : wmModeFullscreen;
+	//        we run mac-style menus     |   and we will redraw all widgets
+	_wmMode = Graphics::kWMModalMenuMode | Graphics::kWMModeManualDrawWidgets;
+
+	if (!debugChannelSet(-1, kDebugDesktop))
+		_wmMode |= Graphics::kWMModeFullscreen | Graphics::kWMModeNoDesktop;
 
 	if (debugChannelSet(-1, kDebug32bpp))
-		wmMode |= Graphics::kWMMode32bpp;
+		_wmMode |= Graphics::kWMMode32bpp;
 
-	_wm = new Graphics::MacWindowManager(wmMode, &_director3QuickDrawPatterns, getLanguage());
+	_wm = new Graphics::MacWindowManager(_wmMode, &_director3QuickDrawPatterns, getLanguage());
 	_wm->setEngine(this);
 
+	gameQuirks(_gameDescription->desc.gameId, _gameDescription->desc.platform);
+
+	_wm->setDesktopMode(_wmMode);
+
+	_wm->printWMMode();
+
 	_pixelformat = _wm->_pixelformat;
+
+	debug("Director pixelformat is: %s", _pixelformat.toString().c_str());
 
 	_stage = new Window(_wm->getNextId(), false, false, false, _wm, this, true);
 	*_stage->_refCount += 1;
 
-	if (!debugChannelSet(-1, kDebugDesktop))
+	if (!desktopEnabled())
 		_stage->disableBorder();
 
 	_surface = new Graphics::ManagedSurface(1, 1);
@@ -239,6 +254,7 @@ Common::Error DirectorEngine::run() {
 		}
 
 		draw();
+		_system->delayMillis(10);
 	}
 
 	return Common::kNoError;
@@ -316,6 +332,10 @@ StartMovie DirectorEngine::getStartMovie() const {
 
 Common::String DirectorEngine::getStartupPath() const {
 	return _options.startupPath;
+}
+
+bool DirectorEngine::desktopEnabled() {
+	return !(_wmMode & Graphics::kWMModeNoDesktop);
 }
 
 } // End of namespace Director

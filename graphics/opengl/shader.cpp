@@ -22,7 +22,9 @@
 #include "common/scummsys.h"
 #include "common/config-manager.h"
 
-#if defined(USE_OPENGL_SHADERS)
+#include "graphics/opengl/system_headers.h"
+
+#if defined(USE_OPENGL) && !USE_FORCED_GLES
 
 #include "graphics/opengl/shader.h"
 
@@ -64,6 +66,18 @@ static const char *compatFragment =
 		"#define OUTPUT out vec4 outColor;\n"
 	"#endif\n";
 
+// OGLES2 on AmigaOS doesn't support uniform booleans, let's introduce some shim
+#if defined(AMIGAOS)
+static const char *compatUniformBool =
+	"#define UBOOL mediump int\n"
+	"#define UBOOL_TEST(v) (v != 0)\n";
+#else
+static const char *compatUniformBool =
+	"#define UBOOL bool\n"
+	"#define UBOOL_TEST(v) v\n";
+#endif
+
+
 static const GLchar *readFile(const Common::String &filename) {
 	Common::File file;
 	Common::String shaderDir;
@@ -102,56 +116,105 @@ static const GLchar *readFile(const Common::String &filename) {
 	return shaderSource;
 }
 
-static GLuint createDirectShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 1, &shaderSource, NULL);
-	glCompileShader(shader);
+GLuint Shader::createDirectShader(size_t shaderSourcesCount, const char *const *shaderSources, GLenum shaderType, const Common::String &name) {
+	GLuint shader;
+	GL_ASSIGN(shader, glCreateShader(shaderType));
+	GL_CALL(glShaderSource(shader, shaderSourcesCount, shaderSources, NULL));
+	GL_CALL(glCompileShader(shader));
 
 	GLint status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shader, logSize, nullptr, log);
-		error("Could not compile shader %s: %s", name.c_str(), log);
+		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
+
+		_error = Common::String::format("Could not compile shader %s: %s", name.c_str(), log);
+		warning("Shader::createDirectShader(): %s", _error.c_str());
+		return 0;
 	}
 
 	return shader;
 }
 
-static GLuint createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name) {
-	const GLchar *versionSource = OpenGLContext.type == kOGLContextGLES2 ? "#version 100\n" : "#version 120\n";
+GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, const Common::String &name, int compatGLSLVersion) {
+	GLchar versionSource[20];
+	if (OpenGLContext.type == kContextGLES2) {
+		switch(compatGLSLVersion) {
+			case 100:
+			case 110:
+			case 120:
+				// GLSL ES 1.00 is a subset of GLSL 1.20
+				compatGLSLVersion = 100;
+				break;
+			default:
+				_error = Common::String::format("Invalid GLSL version %d", compatGLSLVersion);
+				warning("Shader: createCompatShader(): %s", _error.c_str());
+				return 0;
+		}
+	} else {
+		switch(compatGLSLVersion) {
+			case 100:
+			case 110:
+			case 120:
+				break;
+			default:
+				_error = Common::String::format("Invalid GLSL version %d", compatGLSLVersion);
+				warning("Shader: createCompatShader(): %s", _error.c_str());
+				return 0;
+		}
+	}
+
+	if (OpenGLContext.glslVersion < compatGLSLVersion) {
+		_error = Common::String::format("Required GLSL version %d is not supported (%d maximum)", compatGLSLVersion, OpenGLContext.glslVersion);
+
+		warning("Shader: createCompatShader(): %s", _error.c_str());
+		return 0;
+	}
+
+	sprintf(versionSource, "#version %d\n", compatGLSLVersion);
+
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? compatVertex : compatFragment;
 	const GLchar *shaderSources[] = {
 		versionSource,
 		compatSource,
+		compatUniformBool,
 		shaderSource
 	};
 
-	GLuint shader = glCreateShader(shaderType);
-	glShaderSource(shader, 3, shaderSources, NULL);
-	glCompileShader(shader);
+	GLuint shader;
+	GL_ASSIGN(shader, glCreateShader(shaderType));
+	GL_CALL(glShaderSource(shader, 4, shaderSources, NULL));
+	GL_CALL(glCompileShader(shader));
 
 	GLint status;
-	glGetShaderiv(shader, GL_COMPILE_STATUS, &status);
+	GL_CALL(glGetShaderiv(shader, GL_COMPILE_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shader, logSize, nullptr, log);
-		error("Could not compile shader %s: %s", name.c_str(), log);
+		GL_CALL(glGetShaderInfoLog(shader, logSize, nullptr, log));
+
+		_error = Common::String::format("Could not compile shader %s: %s", name.c_str(), log);
+		warning("Shader: createCompatShader(): %s", _error.c_str());
+		return 0;
 	}
 
 	return shader;
 }
 
-static GLuint loadShaderFromFile(const char *base, const char *extension, GLenum shaderType) {
+GLuint Shader::loadShaderFromFile(const char *base, const char *extension, GLenum shaderType, int compatGLSLVersion) {
 	const Common::String filename = Common::String(base) + "." + extension;
 	const GLchar *shaderSource = readFile(filename);
 
-	GLuint shader = createCompatShader(shaderSource, shaderType, filename);
+	GLuint shader;
+	if (compatGLSLVersion) {
+		shader = createCompatShader(shaderSource, shaderType, filename, compatGLSLVersion);
+	} else {
+		shader = createDirectShader(1, &shaderSource, shaderType, filename);
+	}
 
 	delete[] shaderSource;
 
@@ -164,126 +227,246 @@ static GLuint loadShaderFromFile(const char *base, const char *extension, GLenum
 struct SharedPtrProgramDeleter {
 	void operator()(GLuint *ptr) {
 		if (ptr) {
-			glDeleteProgram(*ptr);
+			GL_CALL(glDeleteProgram(*ptr));
 		}
 		delete ptr;
 	}
 };
 
-ShaderGL *ShaderGL::_previousShader = nullptr;
+Shader *Shader::_previousShader = nullptr;
+uint32 Shader::previousNumAttributes = 0;
 
-ShaderGL::ShaderGL(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char **attributes)
-	: _name(name) {
+Shader::Shader() {
+}
+
+bool Shader::loadShader(const Common::String &name, GLuint vertexShader, GLuint fragmentShader, const char *const *attributes) {
 	assert(attributes);
-	GLuint shaderProgram = glCreateProgram();
-	glAttachShader(shaderProgram, vertexShader);
-	glAttachShader(shaderProgram, fragmentShader);
+
+	_name = name;
+
+	GLuint shaderProgram;
+	GL_ASSIGN(shaderProgram, glCreateProgram());
+	GL_CALL(glAttachShader(shaderProgram, vertexShader));
+	GL_CALL(glAttachShader(shaderProgram, fragmentShader));
 
 	for (int idx = 0; attributes[idx]; ++idx) {
-		glBindAttribLocation(shaderProgram, idx, attributes[idx]);
+		GL_CALL(glBindAttribLocation(shaderProgram, idx, attributes[idx]));
 		_attributes.push_back(VertexAttrib(idx, attributes[idx]));
 	}
-	glLinkProgram(shaderProgram);
+	GL_CALL(glLinkProgram(shaderProgram));
 
 	GLint status;
-	glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
+	GL_CALL(glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status));
 	if (status != GL_TRUE) {
 		GLint logSize;
-		glGetShaderiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize);
+		GL_CALL(glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &logSize));
 		GLchar *log = new GLchar[logSize];
-		glGetShaderInfoLog(shaderProgram, logSize, nullptr, log);
-		error("Could not link shader %s: %s", name.c_str(), log);
+		GL_CALL(glGetProgramInfoLog(shaderProgram, logSize, nullptr, log));
+
+		_error = Common::String::format("Could not link shader %s: %s", name.c_str(), log);
+		warning("Shader:Shader(): %s", _error.c_str());
+		return false;
 	}
 
-	glDetachShader(shaderProgram, vertexShader);
-	glDetachShader(shaderProgram, fragmentShader);
+	GL_CALL(glDetachShader(shaderProgram, vertexShader));
+	GL_CALL(glDetachShader(shaderProgram, fragmentShader));
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	GL_CALL(glDeleteShader(vertexShader));
+	GL_CALL(glDeleteShader(fragmentShader));
 
 	_shaderNo = Common::SharedPtr<GLuint>(new GLuint(shaderProgram), SharedPtrProgramDeleter());
 	_uniforms = Common::SharedPtr<UniformsMap>(new UniformsMap());
+
+	return true;
 }
 
-ShaderGL *ShaderGL::fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char **attributes) {
-	GLuint vertexShader = createDirectShader(vertex, GL_VERTEX_SHADER, name + ".vertex");
-	GLuint fragmentShader = createDirectShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment");
-	return new ShaderGL(name, vertexShader, fragmentShader, attributes);
+Shader *Shader::fromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	Shader *shader = new Shader;
+
+	shader->loadFromStrings(name, vertex, fragment, attributes, compatGLSLVersion);
+
+	if (shader->hasError())
+		error("%s", shader->getError().c_str());
+
+	return shader;
 }
 
-ShaderGL *ShaderGL::fromFiles(const char *vertex, const char *fragment, const char **attributes) {
-	GLuint vertexShader = loadShaderFromFile(vertex, "vertex", GL_VERTEX_SHADER);
-	GLuint fragmentShader = loadShaderFromFile(fragment, "fragment", GL_FRAGMENT_SHADER);
+bool Shader::loadFromStrings(const Common::String &name, const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	GLuint vertexShader, fragmentShader;
+
+	if (compatGLSLVersion) {
+		vertexShader = createCompatShader(vertex, GL_VERTEX_SHADER, name + ".vertex", compatGLSLVersion);
+
+		if (!vertexShader)
+			return false;
+
+		fragmentShader = createCompatShader(fragment, GL_FRAGMENT_SHADER, name + ".fragment", compatGLSLVersion);
+	} else {
+		vertexShader = createDirectShader(1, &vertex, GL_VERTEX_SHADER, name + ".vertex");
+
+		if (!vertexShader)
+			return false;
+
+		fragmentShader = createDirectShader(1, &fragment, GL_FRAGMENT_SHADER, name + ".fragment");
+	}
+
+	if (!fragmentShader)
+		return false;
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
+}
+
+bool Shader::loadFromStringsArray(const Common::String &name,
+			size_t vertexCount, const char *const *vertex,
+			size_t fragmentCount, const char *const *fragment,
+			const char *const *attributes) {
+	GLuint vertexShader, fragmentShader;
+
+	vertexShader = createDirectShader(vertexCount, vertex, GL_VERTEX_SHADER, name + ".vertex");
+
+	if (!vertexShader)
+		return false;
+
+	fragmentShader = createDirectShader(fragmentCount, fragment, GL_FRAGMENT_SHADER, name + ".fragment");
+
+	if (!fragmentShader)
+		return false;
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
+}
+
+Shader *Shader::fromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	Shader *shader = new Shader;
+
+	shader->loadFromFiles(vertex, fragment, attributes, compatGLSLVersion);
+
+	if (shader->hasError())
+		error("%s", shader->getError().c_str());
+
+	return shader;
+}
+
+bool Shader::loadFromFiles(const char *vertex, const char *fragment, const char *const *attributes, int compatGLSLVersion) {
+	GLuint vertexShader = loadShaderFromFile(vertex, "vertex", GL_VERTEX_SHADER, compatGLSLVersion);
+
+	if (!vertexShader)
+		return false;
+
+	GLuint fragmentShader = loadShaderFromFile(fragment, "fragment", GL_FRAGMENT_SHADER, compatGLSLVersion);
+
+	if (!fragmentShader)
+		return false;
 
 	Common::String name = Common::String::format("%s/%s", vertex, fragment);
-	return new ShaderGL(name, vertexShader, fragmentShader, attributes);
+
+	return loadShader(name, vertexShader, fragmentShader, attributes);
 }
 
-void ShaderGL::use(bool forceReload) {
-	static uint32 previousNumAttributes = 0;
+void Shader::use(bool forceReload) {
 	if (this == _previousShader && !forceReload)
 		return;
 
 	// The previous shader might have had more attributes. Disable any extra ones.
 	if (_attributes.size() < previousNumAttributes) {
 		for (uint32 i = _attributes.size(); i < previousNumAttributes; ++i) {
-			glDisableVertexAttribArray(i);
+			GL_CALL(glDisableVertexAttribArray(i));
 		}
 	}
 
 	_previousShader = this;
 	previousNumAttributes = _attributes.size();
 
-	glUseProgram(*_shaderNo);
+	GL_CALL(glUseProgram(*_shaderNo));
 	for (uint32 i = 0; i < _attributes.size(); ++i) {
 		VertexAttrib &attrib = _attributes[i];
 		if (attrib._enabled) {
-			glEnableVertexAttribArray(i);
-			glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo);
-			glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, (const GLvoid *)attrib._offset);
+			GL_CALL(glEnableVertexAttribArray(i));
+			GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, attrib._vbo));
+			GL_CALL(glVertexAttribPointer(i, attrib._size, attrib._type, attrib._normalized, attrib._stride, (const void *)attrib._pointer));
 		} else {
-			glDisableVertexAttribArray(i);
+			GL_CALL(glDisableVertexAttribArray(i));
 			switch (attrib._size) {
 			case 2:
-				glVertexAttrib2fv(i, attrib._const);
+				GL_CALL(glVertexAttrib2fv(i, attrib._const));
 				break;
 			case 3:
-				glVertexAttrib3fv(i, attrib._const);
+				GL_CALL(glVertexAttrib3fv(i, attrib._const));
 				break;
 			case 4:
-				glVertexAttrib4fv(i, attrib._const);
+				GL_CALL(glVertexAttrib4fv(i, attrib._const));
 				break;
 			}
 		}
 	}
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 }
 
-GLuint ShaderGL::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage) {
+GLuint Shader::createBuffer(GLenum target, GLsizeiptr size, const GLvoid *data, GLenum usage) {
 	GLuint vbo;
-	glGenBuffers(1, &vbo);
-	glBindBuffer(target, vbo);
-	glBufferData(target, size, data, usage);
+	GL_CALL(glGenBuffers(1, &vbo));
+	GL_CALL(glBindBuffer(target, vbo));
+	GL_CALL(glBufferData(target, size, data, usage));
+	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, 0));
 	return vbo;
 }
 
-void ShaderGL::freeBuffer(GLuint vbo) {
-	glDeleteBuffers(1, &vbo);
+void Shader::freeBuffer(GLuint vbo) {
+	GL_CALL(glDeleteBuffers(1, &vbo));
 }
 
-VertexAttrib &ShaderGL::getAttributeAt(uint32 idx) {
+bool Shader::addAttribute(const char *attrib) {
+	// Once we are linked we can't rebind the attribute so we have to deal with its place defined by OpenGL
+	// As we store attribute at its OpenGL index, we will end up with empty attributes in the middle
+	uint32 i;
+	for (i = 0; i < _attributes.size(); ++i)
+		if (_attributes[i]._name.equals(attrib))
+			return true;
+
+	GLint result = -1;
+	GL_ASSIGN(result, glGetAttribLocation(*_shaderNo, attrib));
+	if (result < 0)
+		return false;
+
+
+	// Make sure we can store our new attribute
+	if (_attributes.size() <= (uint)result) {
+		for(; i < (uint)result; i++) {
+			_attributes.push_back(VertexAttrib(i, ""));
+		}
+		_attributes.push_back(VertexAttrib(result, attrib));
+	}
+
+	_attributes[result] = VertexAttrib(result, attrib);
+	return true;
+}
+
+VertexAttrib &Shader::getAttributeAt(uint32 idx) {
 	assert(idx < _attributes.size());
 	return _attributes[idx];
 }
 
-VertexAttrib &ShaderGL::getAttribute(const char *attrib) {
+VertexAttrib &Shader::getAttribute(const char *attrib) {
 	for (uint32 i = 0; i < _attributes.size(); ++i)
 		if (_attributes[i]._name.equals(attrib))
 			return _attributes[i];
-	error("Could not find attribute %s in shader %s", attrib, _name.c_str());
+
+	_error = Common::String::format("Could not find attribute %s in shader %s", attrib, _name.c_str());
+	warning("Shader: getAttribute(): %s", _error.c_str());
 	return _attributes[0];
 }
 
-void ShaderGL::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLboolean normalized, GLsizei stride, uint32 offset) {
+void Shader::enableVertexAttribute(const char *attrib, GLint size, GLenum type, GLboolean normalized, GLsizei stride, const void *pointer) {
+	VertexAttrib &va = getAttribute(attrib);
+	va._enabled = true;
+	va._vbo = 0;
+	va._size = size;
+	va._type = type;
+	va._normalized = normalized;
+	va._stride = stride;
+	va._pointer = (uintptr)pointer;
+}
+
+void Shader::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size, GLenum type, GLboolean normalized, GLsizei stride, uint32 offset) {
 	VertexAttrib &va = getAttribute(attrib);
 	va._enabled = true;
 	va._vbo = vbo;
@@ -291,10 +474,10 @@ void ShaderGL::enableVertexAttribute(const char *attrib, GLuint vbo, GLint size,
 	va._type = type;
 	va._normalized = normalized;
 	va._stride = stride;
-	va._offset = offset;
+	va._pointer = offset;
 }
 
-void ShaderGL::disableVertexAttribute(const char *attrib, int size, const float *data) {
+void Shader::disableVertexAttribute(const char *attrib, int size, const float *data) {
 	VertexAttrib &va = getAttribute(attrib);
 	va._enabled = false;
 	va._size = size;
@@ -302,12 +485,18 @@ void ShaderGL::disableVertexAttribute(const char *attrib, int size, const float 
 		va._const[i] = data[i];
 }
 
-void ShaderGL::unbind() {
-	glUseProgram(0);
+void Shader::unbind() {
+	GL_CALL(glUseProgram(0));
 	_previousShader = nullptr;
+
+	// Disable all vertex attributes as well
+	for (uint32 i = 0; i < previousNumAttributes; ++i) {
+		GL_CALL(glDisableVertexAttribArray(i));
+	}
+	previousNumAttributes = 0;
 }
 
-ShaderGL::~ShaderGL() {
+Shader::~Shader() {
 	// If this is the currently active shader, unbind
 	if (_previousShader == this) {
 		unbind();

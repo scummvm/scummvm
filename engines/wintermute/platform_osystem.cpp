@@ -153,19 +153,18 @@ void BasePlatform::handleEvent(Common::Event *event) {
 // Win32 API bindings
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::getCursorPos(Point32 *lpPoint) {
-	// in 3d mode we take the mouse postion as is for now
-	// this seems to give the right results
-	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
-#ifndef ENABLE_WME3D
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-
-#endif
 	Common::Point p = g_system->getEventManager()->getMousePos();
 	lpPoint->x = p.x;
 	lpPoint->y = p.y;
 
+	// in 3d mode we take the mouse postion as is for now
+	// this seems to give the right results
+	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
-	renderer->pointFromScreen(lpPoint);
+	if (!_gameRef->_useD3D) {
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+		renderer->pointFromScreen(lpPoint);
+	}
 #endif
 
 	return true;
@@ -173,16 +172,18 @@ bool BasePlatform::getCursorPos(Point32 *lpPoint) {
 
 //////////////////////////////////////////////////////////////////////////
 bool BasePlatform::setCursorPos(int x, int y) {
-#ifndef ENABLE_WME3D
-	BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
-
-#endif
 	Point32 p;
 	p.x = x;
 	p.y = y;
 
+	// in 3d mode we take the mouse postion as is for now
+	// this seems to give the right results
+	// actually, BaseRenderer has no functions pointFromScreen/pointToScreen anyways
 #ifndef ENABLE_WME3D
-	renderer->pointToScreen(&p);
+	if (!_gameRef->_useD3D) {
+		BaseRenderOSystem *renderer = static_cast<BaseRenderOSystem *>(_gameRef->_renderer);
+		renderer->pointToScreen(&p);
+	}
 #endif
 
 	g_system->warpMouse(x, y);

@@ -95,11 +95,11 @@ public:
 	DraciMetaEngineDetection() : AdvancedMetaEngineDetection(Draci::gameDescriptions, sizeof(ADGameDescription), draciGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "draci";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Draci Historie";
 	}
 

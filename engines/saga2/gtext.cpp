@@ -30,9 +30,6 @@ namespace Saga2 {
 
 #define textStyleBar    (textStyleUnderBar|textStyleHiLiteBar)
 
-#define TempAlloc       malloc
-#define TempFree        free
-
 /* ============================================================================ *
                             Text Blitting Routines
  * ============================================================================ */
@@ -288,73 +285,73 @@ void gPort::drawStringChars(
 	int16           x;                      // current x position
 	uint8           *buffer,                // buffer to render to
 	                *uBuffer;               // underline buffer
-	uint16          drowMod = dest.size.x;  // row modulus of dest
+	uint16          drowMod = dest._size.x;  // row modulus of dest
 	int16           i;                      // loop index
-	uint8           underbar = (textStyles & textStyleBar) != 0;
+	uint8           underbar = (_textStyles & textStyleBar) != 0;
 	bool            underscore;
 	int16           underPos;
 
 	// the address to start rendering pixels to.
 
-	underPos = font->baseLine + 2;
-	if (underPos > font->height) underPos = font->height;
-	buffer = dest.data + (ypos * drowMod);
+	underPos = _font->baseLine + 2;
+	if (underPos > _font->height) underPos = _font->height;
+	buffer = dest._data + (ypos * drowMod);
 	uBuffer = buffer + (underPos * drowMod);
 
 	// draw drop-shadow, if any
 
-	if (textStyles & textStyleShadow) {
+	if (_textStyles & textStyleShadow) {
 		x = xpos - 1;
 		s = str;
 
-		if (textStyles & textStyleOutline) { // if outlining
+		if (_textStyles & textStyleOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
-				x += font->charKern[drawchar];
-				DrawChar3x3Outline(font, drawchar, x, buffer, shPen, drowMod);
-				x += font->charSpace[drawchar] + textSpacing;
+				x += _font->charKern[drawchar];
+				DrawChar3x3Outline(_font, drawchar, x, buffer, _shPen, drowMod);
+				x += _font->charSpace[drawchar] + _textSpacing;
 			}
-		} else if (textStyles & textStyleThickOutline) { // if outlining
+		} else if (_textStyles & textStyleThickOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;                // draw thick drop shadow
-				x += font->charKern[drawchar];
-				DrawChar5x5Outline(font, drawchar, x, buffer, shPen, drowMod);
-				x += font->charSpace[drawchar] + textSpacing;
+				x += _font->charKern[drawchar];
+				DrawChar5x5Outline(_font, drawchar, x, buffer, _shPen, drowMod);
+				x += _font->charSpace[drawchar] + _textSpacing;
 			}
 		} else {
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
-				x += font->charKern[drawchar];
-				DrawChar(font, drawchar, x, buffer + drowMod,
-				         shPen, drowMod);
-				x += font->charSpace[drawchar] + textSpacing;
+				x += _font->charKern[drawchar];
+				DrawChar(_font, drawchar, x, buffer + drowMod,
+				         _shPen, drowMod);
+				x += _font->charSpace[drawchar] + _textSpacing;
 			}
 		}
 	}
 
 	// draw outline, if any
 
-	if (textStyles & textStyleOutline) { // if outlining
+	if (_textStyles & textStyleOutline) { // if outlining
 		x = xpos;
 		s = str;
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw thick text
-			x += font->charKern[drawchar];
-			DrawChar3x3Outline(font, drawchar, x, buffer - drowMod,
-			                   olPen, drowMod);
-			x += font->charSpace[drawchar] + textSpacing;
+			x += _font->charKern[drawchar];
+			DrawChar3x3Outline(_font, drawchar, x, buffer - drowMod,
+			                   _olPen, drowMod);
+			x += _font->charSpace[drawchar] + _textSpacing;
 		}
-	} else if (textStyles & textStyleThickOutline) { // if thick outlining
+	} else if (_textStyles & textStyleThickOutline) { // if thick outlining
 		x = xpos;
 		s = str;
 
 		for (i = 0; i < len; i++) {
 			drawchar = *s++;                // draw extra thick text
-			x += font->charKern[drawchar];
-			DrawChar5x5Outline(font, drawchar, x, buffer - drowMod * 2,
-			                   olPen, drowMod);
-			x += font->charSpace[drawchar] + textSpacing;
+			x += _font->charKern[drawchar];
+			DrawChar5x5Outline(_font, drawchar, x, buffer - drowMod * 2,
+			                   _olPen, drowMod);
+			x += _font->charSpace[drawchar] + _textSpacing;
 		}
 	}
 
@@ -362,24 +359,24 @@ void gPort::drawStringChars(
 
 	x = xpos;
 	s = str;
-	underscore = textStyles & textStyleUnderScore ? true : false;
+	underscore = _textStyles & textStyleUnderScore ? true : false;
 
 	for (i = 0; i < len; i++) {
 		int16       last_x = x;
-		uint8       color = fgPen;
+		uint8       color = _fgPen;
 
 		drawchar = *s++;                // draw thick drop shadow
 		if (drawchar == '_' && underbar) {
 			len--;
 			drawchar = *s++;
-			if (textStyles & textStyleUnderBar)
+			if (_textStyles & textStyleUnderBar)
 				underscore = true;
-			if (textStyles & textStyleHiLiteBar)
-				color = bgPen;
+			if (_textStyles & textStyleHiLiteBar)
+				color = _bgPen;
 		}
-		x += font->charKern[drawchar];
-		DrawChar(font, drawchar, x, buffer, color, drowMod);
-		x += font->charSpace[drawchar] + textSpacing;
+		x += _font->charKern[drawchar];
+		DrawChar(_font, drawchar, x, buffer, color, drowMod);
+		x += _font->charSpace[drawchar] + _textSpacing;
 
 		if (underscore) {               // draw underscore
 			uint8   *put = uBuffer + last_x;
@@ -389,7 +386,7 @@ void gPort::drawStringChars(
 				*put++ = color;
 			}
 
-			if (!(textStyles & textStyleUnderScore))
+			if (!(_textStyles & textStyleUnderScore))
 				underscore = false;
 		}
 	}
@@ -407,7 +404,7 @@ int16 gPort::drawClippedString(
 	int16           clipWidth = 0,          // width of clipped string
 	                clipLen;                // chars to draw
 	gPixelMap       tempMap;                // temp buffer for text
-	uint8           underbar = (textStyles & textStyleBar) != 0;
+	uint8           underbar = (_textStyles & textStyleBar) != 0;
 	int16           xoff = 0,               // offset for outlines
 	                yoff = 0;               // offset for outlines
 	int16           penMove = 0;            // keep track of pen movement
@@ -423,16 +420,16 @@ int16 gPort::drawClippedString(
 
 		if (drawchar == '_' && underbar) {
 			drawchar = s[1];
-			charwidth   = font->charKern[drawchar]
-			              + font->charSpace[drawchar] + textSpacing;
+			charwidth   = _font->charKern[drawchar]
+			              + _font->charSpace[drawchar] + _textSpacing;
 
-			if (xpos + charwidth >= clip.x)
+			if (xpos + charwidth >= _clip.x)
 				break;
 			s++;
 		} else {
-			charwidth   = font->charKern[drawchar]
-			              + font->charSpace[drawchar] + textSpacing;
-			if (xpos + charwidth >= clip.x)
+			charwidth   = _font->charKern[drawchar]
+			              + _font->charSpace[drawchar] + _textSpacing;
+			if (xpos + charwidth >= _clip.x)
 				break;
 		}
 
@@ -453,17 +450,17 @@ int16 gPort::drawClippedString(
 		if (drawchar == '_' && underbar)
 			continue;
 
-		clipWidth += font->charKern[drawchar]
-		             + font->charSpace[drawchar] + textSpacing;
+		clipWidth += _font->charKern[drawchar]
+		             + _font->charSpace[drawchar] + _textSpacing;
 
-		if (xpos > clip.x + clip.width)
+		if (xpos > _clip.x + _clip.width)
 			break;
 	}
 
 	//  Handle special case of negative kern value of 1st character
 
-	if (font->charKern[(byte)s[0]] < 0) {
-		int16       kern = - font->charKern[(byte)s[0]];
+	if (_font->charKern[(byte)s[0]] < 0) {
+		int16       kern = - _font->charKern[(byte)s[0]];
 
 		clipWidth += kern;              // increase size of map to render
 		xoff += kern;                   // offset text into map right
@@ -472,49 +469,49 @@ int16 gPort::drawClippedString(
 
 	//  Set up a temporary bitmap to hold the string.
 
-	tempMap.size.x = clipWidth;
-	tempMap.size.y = font->height;
+	tempMap._size.x = clipWidth;
+	tempMap._size.y = _font->height;
 
 	//  Adjust the size and positioning of the temp map due
 	//  to text style effects.
 
-	if (textStyles & textStyleOutline) {
+	if (_textStyles & textStyleOutline) {
 		xoff = yoff = 1;
 		xpos--;
 		ypos--;
-		tempMap.size.x += 2;
-		tempMap.size.y += 2;
-	} else if (textStyles & textStyleThickOutline) {
+		tempMap._size.x += 2;
+		tempMap._size.y += 2;
+	} else if (_textStyles & textStyleThickOutline) {
 		xoff = yoff = 2;
 		xpos -= 2;
 		ypos -= 2;
-		tempMap.size.x += 4;
-		tempMap.size.y += 4;
+		tempMap._size.x += 4;
+		tempMap._size.y += 4;
 	}
 
-	if (textStyles & (textStyleShadow | textStyleUnderScore | textStyleUnderBar)) {
-		tempMap.size.x += 1;
-		tempMap.size.y += 1;
+	if (_textStyles & (textStyleShadow | textStyleUnderScore | textStyleUnderBar)) {
+		tempMap._size.x += 1;
+		tempMap._size.y += 1;
 	}
 
-	if (textStyles & textStyleItalics) {
-		int n = (font->height - font->baseLine - 1) / 2;
+	if (_textStyles & textStyleItalics) {
+		int n = (_font->height - _font->baseLine - 1) / 2;
 
 		if (n > 0) xpos += n;
-		tempMap.size.x += tempMap.size.y / 2;
+		tempMap._size.x += tempMap._size.y / 2;
 	}
 
 	//  Allocate a temporary bitmap
 
 	if (tempMap.bytes() == 0)
 		return 0;
-	tempMap.data = (uint8 *)TempAlloc(tempMap.bytes());
-	if (tempMap.data != nullptr) {
+	tempMap._data = (uint8 *)malloc(tempMap.bytes());
+	if (tempMap._data != nullptr) {
 		//  Fill the buffer with background pen if we're
 		//  not doing a transparent blit.
 
-		memset(tempMap.data,
-		       (drawMode == drawModeReplace) ? bgPen : 0,
+		memset(tempMap._data,
+		       (_drawMode == drawModeReplace) ? _bgPen : 0,
 		       tempMap.bytes());
 
 		//  Draw the characters into the buffer
@@ -523,34 +520,34 @@ int16 gPort::drawClippedString(
 
 		//  apply slant if italics
 
-		if (textStyles & textStyleItalics) {
-			int n = (font->height - font->baseLine - 1) / 2;
+		if (_textStyles & textStyleItalics) {
+			int n = (_font->height - _font->baseLine - 1) / 2;
 			int shift = (n > 0 ? n : 0);
-			int flag = (font->height - font->baseLine - 1) & 1;
+			int flag = (_font->height - _font->baseLine - 1) & 1;
 
 			shift = -shift;
 
-			for (int k = font->height - 1; k >= 0; k--) {
+			for (int k = _font->height - 1; k >= 0; k--) {
 				if (shift < 0) {
-					uint8   *dest = tempMap.data + k * tempMap.size.x,
+					uint8   *dest = tempMap._data + k * tempMap._size.x,
 					         *src = dest - shift;
 					int     j;
 
-					for (j = 0; j < tempMap.size.x + shift; j++) {
+					for (j = 0; j < tempMap._size.x + shift; j++) {
 						*dest++ = *src++;
 					}
-					for (; j < tempMap.size.x; j++) {
+					for (; j < tempMap._size.x; j++) {
 						*dest++ = 0;
 					}
 				} else if (shift > 0) {
-					uint8   *dest = tempMap.data + (k + 1) * tempMap.size.x,
+					uint8   *dest = tempMap._data + (k + 1) * tempMap._size.x,
 					         *src = dest - shift;
 					int     j;
 
-					for (j = 0; j < tempMap.size.x - shift; j++) {
+					for (j = 0; j < tempMap._size.x - shift; j++) {
 						*--dest = *--src;
 					}
-					for (; j < tempMap.size.x; j++) {
+					for (; j < tempMap._size.x; j++) {
 						*--dest = 0;
 					}
 				}
@@ -565,9 +562,9 @@ int16 gPort::drawClippedString(
 
 		bltPixels(tempMap, 0, 0,
 		          xpos, ypos,
-		          tempMap.size.x, tempMap.size.y);
+		          tempMap._size.x, tempMap._size.y);
 
-		TempFree(tempMap.data);
+		free(tempMap._data);
 	}
 
 	//  Now, we still need to scan the rest of the string
@@ -580,8 +577,8 @@ int16 gPort::drawClippedString(
 		if (drawchar == '_' && underbar)
 			continue;
 
-		penMove += font->charKern[drawchar]
-		           + font->charSpace[drawchar] + textSpacing;
+		penMove += _font->charKern[drawchar]
+		           + _font->charSpace[drawchar] + _textSpacing;
 	}
 
 	return penMove;
@@ -627,7 +624,7 @@ void gPort::drawText(
 		length = strlen(str);
 
 	if (length > 0)
-		penPos.x += drawClippedString(str, length, penPos.x, penPos.y);
+		_penPos.x += drawClippedString(str, length, _penPos.x, _penPos.y);
 }
 
 /********* gtext.cpp/gPort::drawTextInBox *********************************
@@ -690,16 +687,16 @@ void gPort::drawTextInBox(
 	int16           height, width;
 	int16           x, y;
 	Rect16          newClip,
-	                saveClip = clip;
+	                saveClip = _clip;
 
-	if (!font)
+	if (!_font)
 		return;
 
-	height = font->height;
-	width  = TextWidth(font, str, length, textStyles);
+	height = _font->height;
+	width  = TextWidth(_font, str, length, _textStyles);
 
-	if (textStyles & (textStyleUnderScore | textStyleUnderBar)) {
-		if (font->baseLine + 2 >= font->height)
+	if (_textStyles & (textStyleUnderScore | textStyleUnderBar)) {
+		if (_font->baseLine + 2 >= _font->height)
 			height++;
 	}
 
@@ -723,7 +720,7 @@ void gPort::drawTextInBox(
 
 	//  Calculate clipping region
 
-	clip = intersect(clip, r);
+	_clip = intersect(_clip, r);
 
 	//  Draw the text
 
@@ -732,7 +729,7 @@ void gPort::drawTextInBox(
 
 	//  Restore the clipping region
 
-	clip = saveClip;
+	_clip = saveClip;
 }
 
 //  Attach to gFont?

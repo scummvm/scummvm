@@ -194,7 +194,7 @@ void Player_AD::saveLoadWithSerializer(Common::Serializer &s) {
 	Common::StackLock lock(_mutex);
 
 	if (s.getVersion() < VER(95)) {
-		IMuse *dummyImuse = IMuse::create(_vm->_system, nullptr, nullptr);
+		IMuse *dummyImuse = IMuse::create(_vm, nullptr, nullptr, MDT_ADLIB, 0);
 		dummyImuse->saveLoadIMuse(s, _vm, false);
 		delete dummyImuse;
 		return;

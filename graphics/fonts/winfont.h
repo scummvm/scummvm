@@ -65,13 +65,16 @@ public:
 	int getFontHeight() const { return _pixHeight; }
 	int getFontAscent() const { return _ascent; }
 	int getMaxCharWidth() const { return _maxWidth; }
+	Common::String getName() const { return _name; }
 	int getCharWidth(uint32 chr) const;
 	void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
+	int getStyle();
 
 private:
 	bool loadFromEXE(Common::WinResources *exe, const Common::String &fileName, const WinFontDirEntry &dirEntry);
 
 	uint32 getFontIndex(Common::SeekableReadStream &stream, const WinFontDirEntry &dirEntry);
+	Common::String getFONFontName(Common::SeekableReadStream &stream);
 	bool loadFromFNT(Common::SeekableReadStream &stream);
 	char indexToCharacter(uint16 index) const;
 	uint16 characterToIndex(uint32 character) const;
@@ -82,6 +85,18 @@ private:
 	byte _firstChar;
 	byte _lastChar;
 	byte _defaultChar;
+	bool _italic;
+	bool _strikethrough;
+	bool _underline;
+	uint16 _weight;
+	Common::String _name;
+
+	enum {
+		kFontStyleRegular,
+		kFontStyleBold = 1,
+		kFontStyleItalic = 2,
+		kFontStyleUnderline = 4,
+	};
 
 	uint16 _glyphCount;
 	struct GlyphEntry {

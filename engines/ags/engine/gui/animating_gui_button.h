@@ -19,9 +19,13 @@
  *
  */
 
+// Description of a button animation; stored separately from the GUI button.
+//
+
 #ifndef AGS_ENGINE_GUI_ANIMATING_GUI_BUTTON_H
 #define AGS_ENGINE_GUI_ANIMATING_GUI_BUTTON_H
 
+#include "ags/shared/core/types.h"
 #include "ags/engine/ac/runtime_defines.h"
 
 namespace AGS3 {
@@ -35,14 +39,16 @@ class Stream;
 using namespace AGS; // FIXME later
 
 struct AnimatingGUIButton {
-	// index into _GP(guibuts) array, GUI, button
-	short buttonid = 0, ongui = 0, onguibut = 0;
+	// index into guibuts array, GUI, button
+	short buttonid = -1, ongui = -1, onguibut = -1;
 	// current animation status
-	short view = 0, loop = 0, frame = 0;
-	short speed = 0, repeat = 0, wait = 0;
+	uint16_t view = 0, loop = 0, frame = 0;
+	short speed = 0, repeat = 0, blocking = 0, direction = 0, wait = 0;
+	// relative volume of the frame sounds
+	int volume = -1;
 
-	void ReadFromFile(Shared::Stream *in);
-	void WriteToFile(Shared::Stream *out);
+	void ReadFromSavegame(Shared::Stream *in, int cmp_ver);
+	void WriteToSavegame(Shared::Stream *out);
 };
 
 } // namespace AGS3

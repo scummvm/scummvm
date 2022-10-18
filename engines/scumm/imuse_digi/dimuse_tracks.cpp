@@ -71,7 +71,7 @@ void IMuseDigital::tracksResume() {
 }
 
 void IMuseDigital::tracksSaveLoad(Common::Serializer &ser) {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	dispatchSaveLoad(ser);
 
 	for (int l = 0; l < _trackCount; l++) {
@@ -150,8 +150,6 @@ void IMuseDigital::tracksCallback() {
 		_tracksPauseTimer = 3;
 	}
 
-	Common::StackLock lock(_mutex);
-
 	// If we leave the number of queued streams unbounded, we fill the queue with streams faster than
 	// we can play them: this leads to a very noticeable audio latency and desync with the graphics.
 	if ((int)_internalMixer->_stream->numQueuedStreams() < _maxQueuedStreams) {
@@ -162,6 +160,10 @@ void IMuseDigital::tracksCallback() {
 
 		if (_outputFeedSize != 0) {
 			_internalMixer->clearMixerBuffer();
+			if (_isEarlyDiMUSE && _splayer && _splayer->isAudioCallbackEnabled()) {
+				_splayer->processDispatches(_outputFeedSize);
+			}
+
 			if (!_tracksPauseTimer) {
 				IMuseDigiTrack *track = _trackList;
 
@@ -224,9 +226,9 @@ int IMuseDigital::tracksStartSound(int soundId, int tryPriority, int group) {
 		return -1;
 	}
 
-	Common::StackLock lock(_mutex);
+	_mutex->lock();
 	addTrackToList(&_trackList, allocatedTrack);
-	Common::StackLock unlock(_mutex);
+	_mutex->unlock();
 
 	return 0;
 }
@@ -235,19 +237,22 @@ int IMuseDigital::tracksStopSound(int soundId) {
 	if (!_trackList)
 		return -1;
 
-	IMuseDigiTrack *track = _trackList;
-	do {
-		if (track->soundId == soundId) {
-			tracksClear(track);
+	IMuseDigiTrack *nextTrack = _trackList;
+	IMuseDigiTrack *curTrack;
+
+	while (nextTrack) {
+		curTrack = nextTrack;
+		nextTrack = curTrack->next;
+		if (curTrack->soundId == soundId) {
+			tracksClear(curTrack);
 		}
-		track = track->next;
-	} while (track);
+	}
 
 	return 0;
 }
 
 int IMuseDigital::tracksStopAllSounds() {
-	Common::StackLock lock(_mutex);
+	Common::StackLock lock(*_mutex);
 	IMuseDigiTrack *nextTrack = _trackList;
 	IMuseDigiTrack *curTrack;
 
@@ -277,22 +282,42 @@ int IMuseDigital::tracksGetNextSound(int soundId) {
 	return foundSoundId;
 }
 
-void IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
-	if (!_trackList)
+int IMuseDigital::tracksQueryStream(int soundId, int32 &bufSize, int32 &criticalSize, int32 &freeSpace, int &paused) {
+	if (!_trackList) {
 		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: empty trackList, ignoring call...");
+		return isFTSoundEngine() ? 0 : -1;
+	}
 
 	IMuseDigiTrack *track = _trackList;
-	do {
-		if (track->soundId) {
-			if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
-				streamerQueryStream(track->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
-				return;
-			}
-		}
-		track = track->next;
-	} while (track);
+	if (isFTSoundEngine()) {
+		IMuseDigiTrack *chosenTrack = nullptr;
 
-	debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+		do {
+			if (track->soundId > soundId && (!chosenTrack || track->soundId < chosenTrack->soundId)) {
+				if (track->dispatchPtr->streamPtr)
+					chosenTrack = track;
+			}
+			track = track->next;
+		} while (track);
+
+		if (!chosenTrack)
+			return 0;
+		streamerQueryStream(chosenTrack->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
+		return chosenTrack->soundId;
+	} else {
+		do {
+			if (track->soundId) {
+				if (soundId == track->soundId && track->dispatchPtr->streamPtr) {
+					streamerQueryStream(track->dispatchPtr->streamPtr, bufSize, criticalSize, freeSpace, paused);
+					return 0;
+				}
+			}
+			track = track->next;
+		} while (track);
+
+		debug(5, "IMuseDigital::tracksQueryStream(): WARNING: couldn't find sound %d in trackList, ignoring call...", soundId);
+		return -1;
+	}
 }
 
 int IMuseDigital::tracksFeedStream(int soundId, uint8 *srcBuf, int32 sizeToFeed, int paused) {
@@ -484,23 +509,21 @@ int IMuseDigital::tracksGetParam(int soundId, int opcode) {
 }
 
 int IMuseDigital::tracksLipSync(int soundId, int syncId, int msPos, int32 &width, int32 &height) {
-	int32 h, w;
+	int32 w, h;
 
 	byte *syncPtr = nullptr;
 	int32 syncSize = 0;
 
 	IMuseDigiTrack *curTrack;
-	uint16 msPosDiv;
-	uint16 *tmpPtr;
-	int32 loopIndex;
 	int16 val;
 
-	h = 0;
 	w = 0;
+	h = 0;
 	curTrack = _trackList;
 
 	if (msPos >= 0) {
-		msPosDiv = msPos >> 4;
+		// Check for an invalid timestamp:
+		// this has to be a suitable 2-bytes word...
 		if (((msPos >> 4) & 0xFFFF0000) != 0) {
 			return -5;
 		} else {
@@ -529,20 +552,36 @@ int IMuseDigital::tracksLipSync(int soundId, int syncId, int msPos, int32 &width
 					}
 
 					if (syncSize && syncPtr) {
-						tmpPtr = (uint16 *)(syncPtr + 2);
-						loopIndex = (syncSize >> 2) - 1;
-						if (syncSize >> 2) {
-							do {
-								if (*tmpPtr >= msPosDiv)
-									break;
-								tmpPtr += 2;
-							} while (loopIndex--);
+						// SYNC data is packed in a number of 4-bytes entries, in the following order:
+						// - Width and height values, packed as one byte each, next to each other;
+						// - The time position of said values, packed as an unsigned word (2-bytes).
+
+						// Given an input timestamp (in ms), we're going to get its representation as 60Hz
+						// increments by dividing it by 16, then we're going to search the SYNC data from
+						// the beginning to find the first entry with a timestamp being equal or greater
+						// our 60Hz timestamp.
+						uint16 inputTs = msPos >> 4;
+						int32 numOfEntries = (syncSize >> 2);
+						uint16 *syncDataWordPtr = (uint16 *)syncPtr;
+						uint16 curEntryTs = 0;
+						int idx;
+						for (idx = 0; idx < numOfEntries; idx++) {
+							curEntryTs = READ_LE_UINT16(&syncDataWordPtr[idx * 2 + 1]);
+							if (curEntryTs >= inputTs) {
+								break;
+							}
 						}
 
-						if (loopIndex < 0 || *tmpPtr > msPosDiv)
-							tmpPtr -= 2;
+						// If no relevant entry is found, or if the found entry timestamp is strictly greater
+						// than ours, then we get the previous entry. If no entry was found, this will get the
+						// last entry in our data block.
+						if (idx == numOfEntries || curEntryTs > inputTs) {
+							idx--;
+						}
 
-						val = *(tmpPtr - 1);
+						// Finally, extract width and height values and remove
+						// their signs by performing AND operations with 0x7F...
+						val = READ_LE_INT16(&syncDataWordPtr[idx * 2]);
 						w = (val >> 8) & 0x7F;
 						h = val & 0x7F;
 					}

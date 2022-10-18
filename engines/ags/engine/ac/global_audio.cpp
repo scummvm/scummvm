@@ -407,7 +407,7 @@ void PlayMP3File(const char *filename) {
 		debug_script_warn("PlayMP3File: file '%s' not found or cannot play", filename);
 	}
 
-	post_new_music_check(useChan);
+	post_new_music_check();
 
 	update_music_volume();
 }
@@ -448,35 +448,23 @@ void SetSpeechVolume(int newvol) {
 	_GP(play).speech_volume = newvol;
 }
 
-// 0 = text only
-// 1 = voice & text
-// 2 = voice only
 void SetVoiceMode(int newmod) {
-	if ((newmod < 0) | (newmod > 2))
-		quit("!SetVoiceMode: invalid mode number (must be 0,1,2)");
-	// If speech is turned off, store the mode anyway in case the
-	// user adds the VOX file later
-	if (_GP(play).want_speech < 0)
-		_GP(play).want_speech = (-newmod) - 1;
-	else
-		_GP(play).want_speech = newmod;
+	if ((newmod < kSpeech_First) | (newmod > kSpeech_Last))
+		quitprintf("!SetVoiceMode: invalid mode number %d", newmod);
+	_GP(play).speech_mode = (SpeechMode)newmod;
 }
 
 int GetVoiceMode() {
-	return _GP(play).want_speech >= 0 ? _GP(play).want_speech : -(_GP(play).want_speech + 1);
+	return (int)_GP(play).speech_mode;
 }
 
 int IsVoxAvailable() {
-	if (_GP(play).want_speech < 0)
-		return 0;
-	return 1;
+	return _GP(play).voice_avail ? 1 : 0;
 }
 
 int IsMusicVoxAvailable() {
-	return _GP(play).separate_music_lib;
+	return _GP(play).separate_music_lib ? 1 : 0;
 }
-
-
 
 ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) {
 	if (!play_voice_nonblocking(ch->index_id, sndid, as_speech))
@@ -486,6 +474,7 @@ ScriptAudioChannel *PlayVoiceClip(CharacterInfo *ch, int sndid, bool as_speech) 
 
 // Construct an asset name for the voice-over clip for the given character and cue id
 String get_cue_filename(int charid, int sndid) {
+	String asset_path = get_voice_assetpath();
 	String script_name;
 	if (charid >= 0) {
 		// append the first 4 characters of the script name to the filename
@@ -496,7 +485,7 @@ String get_cue_filename(int charid, int sndid) {
 	} else {
 		script_name = "NARR";
 	}
-	return String::FromFormat("%s%d", script_name.GetCStr(), sndid);
+	return String::FromFormat("%s%s%d", asset_path.GetCStr(), script_name.GetCStr(), sndid);
 }
 
 // Play voice-over clip on the common channel;

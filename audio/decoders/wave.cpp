@@ -34,7 +34,7 @@
 
 namespace Audio {
 
-bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_) {
+bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate, byte &flags, uint16 *wavType, int *blockAlign_, int *samplesPerBlock_) {
 	const int32 initialPos = stream.pos();
 	byte buf[4+1];
 
@@ -73,6 +73,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 		warning("getWavInfo: 'fmt' header is too short");
 		return false;
 	}
+	uint32 fmtRemaining = fmtLength;
 
 	// Next comes the "type" field of the fmt header. Some typical
 	// values for it:
@@ -88,13 +89,32 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	uint16 blockAlign = stream.readUint16LE();	// == NumChannels * BitsPerSample/8
 	uint16 bitsPerSample = stream.readUint16LE();	// 8, 16 ...
 	// 8 bit data is unsigned, 16 bit data signed
+	fmtRemaining -= 16;
 
+	uint16 samplesPerBlock = 1;
+	if (type == kWaveFormatMSADPCM) {
+		// TODO: There is a samplesPerBlock in this header. It should be parsed and the below warning removed.
+		// (NB: The FMT header for MSADPCM has different information from the MSIMAADPCM)
+		warning("getWavInfo: 'fmt' header not parsed in entirety for MSADPCM");
+	} else if (type == kWaveFormatMSIMAADPCM) {
+		if (fmtRemaining != 4) {
+			// A valid IMA ADPCM fmt chunk is always 20 bytes long
+			warning("getWavInfo: 'fmt' header is wrong length for IMA ADPCM");
+			return false;
+		}
+		stream.readUint16LE(); // cbSize
+		samplesPerBlock = stream.readUint16LE();
+		fmtRemaining -= 4;
+	}
 
 	if (wavType != nullptr)
 		*wavType = type;
 
 	if (blockAlign_ != nullptr)
 		*blockAlign_ = blockAlign;
+
+	if (samplesPerBlock_ != nullptr)
+		*samplesPerBlock_ = samplesPerBlock;
 #if 0
 	debug("WAVE information:");
 	debug("  total size: %d", wavLength);
@@ -124,7 +144,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 
 	if (type == kWaveFormatMP3) {
 		bitsPerSample = 8;
-	} else if (type != kWaveFormatMSADPCM) {
+	} else if (type != kWaveFormatMSADPCM && type != kWaveFormatMSIMAADPCM) {
 		if (blockAlign != numChannels * bitsPerSample / 8) {
 			debug(0, "getWavInfo: blockAlign is invalid");
 		}
@@ -162,7 +182,7 @@ bool loadWAVFromStream(Common::SeekableReadStream &stream, int &size, int &rate,
 	// 'data' chunk.
 
 	// Skip over the rest of the fmt chunk.
-	int offset = fmtLength - 16;
+	int offset = fmtRemaining;
 
 	do {
 		stream.seek(offset, SEEK_CUR);

@@ -38,18 +38,15 @@ namespace AGS3 {
 using namespace AGS::Shared;
 
 void redo_walkable_areas() {
-	_GP(thisroom).WalkAreaMask->Blit(_G(walkareabackup), 0, 0, 0, 0, _GP(thisroom).WalkAreaMask->GetWidth(), _GP(thisroom).WalkAreaMask->GetHeight());
-
-	int hh, ww;
-	for (hh = 0; hh < _G(walkareabackup)->GetHeight(); hh++) {
-		uint8_t *walls_scanline = _GP(thisroom).WalkAreaMask->GetScanLineForWriting(hh);
-		for (ww = 0; ww < _G(walkareabackup)->GetWidth(); ww++) {
-			//      if (_GP(play).walkable_areas_on[_getpixel(_GP(thisroom).WalkAreaMask,ww,hh)]==0)
-			if (_GP(play).walkable_areas_on[walls_scanline[ww]] == 0)
-				walls_scanline[ww] = 0;
+	_GP(thisroom).WalkAreaMask->Blit(_G(walkareabackup), 0, 0);
+	for (int h = 0; h < _G(walkareabackup)->GetHeight(); ++h) {
+		uint8_t *walls_scanline = _GP(thisroom).WalkAreaMask->GetScanLineForWriting(h);
+		for (int w = 0; w < _G(walkareabackup)->GetWidth(); ++w) {
+			if ((walls_scanline[w] >= sizeof(_GP(play).walkable_areas_on)) ||
+				(_GP(play).walkable_areas_on[walls_scanline[w]] == 0))
+				walls_scanline[w] = 0;
 		}
 	}
-
 }
 
 int get_walkable_area_pixel(int x, int y) {
@@ -137,10 +134,9 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 	else if (_GP(game).chars[sourceChar].flags & CHF_NOBLOCKING)
 		return _G(walkable_areas_temp);
 
-	int ww;
 	// for each character in the current room, make the area under
 	// them unwalkable
-	for (ww = 0; ww < _GP(game).numcharacters; ww++) {
+	for (int ww = 0; ww < _GP(game).numcharacters; ww++) {
 		if (_GP(game).chars[ww].on != 1) continue;
 		if (_GP(game).chars[ww].room != _G(displayed_room)) continue;
 		if (ww == sourceChar) continue;
@@ -162,7 +158,7 @@ Bitmap *prepare_walkable_areas(int sourceChar) {
 
 	// check for any blocking objects in the room, and deal with them
 	// as well
-	for (ww = 0; ww < _G(croom)->numobj; ww++) {
+	for (uint32_t ww = 0; ww < _G(croom)->numobj; ww++) {
 		if (_G(objs)[ww].on != 1) continue;
 		if ((_G(objs)[ww].flags & OBJF_SOLID) == 0)
 			continue;

@@ -119,10 +119,12 @@ void CruMusicProcess::playMusic(int track) {
 		}
 
 		// Regret has a Christmas music easter egg.
-		TimeDate t;
-		g_system->getTimeAndDate(t);
-		if ((t.tm_mon == 11 && t.tm_mday >= 24) || ConfMan.getBool("always_christmas")) {
-			track = 22;
+		if (!GAME_IS_DEMO) {
+			TimeDate t;
+			g_system->getTimeAndDate(t);
+			if ((t.tm_mon == 11 && t.tm_mday >= 24) || ConfMan.getBool("always_christmas")) {
+				track = 22;
+			}
 		}
 	}
 	playMusic_internal(track);

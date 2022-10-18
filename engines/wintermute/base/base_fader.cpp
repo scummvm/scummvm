@@ -79,7 +79,7 @@ bool BaseFader::update() {
 	} else {
 		_currentAlpha = (byte)(_sourceAlpha + (float)time / (float)_duration * alphaDelta);
 	}
-	_currentAlpha = MIN((unsigned char)255, MAX(_currentAlpha, (byte)0));  // TODO: clean
+	_currentAlpha = MIN((byte)255, MAX(_currentAlpha, (byte)0));
 
 	_ready = time >= _duration;
 	if (_ready && _currentAlpha == 0x00) {

@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/psx_config.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 
 #if _PSX_ON_PC == 1

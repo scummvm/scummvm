@@ -159,8 +159,15 @@ bool OSystem_Win32::displayLogFile() {
 	// Try opening the log file with the default text editor
 	// log files should be registered as "txtfile" by default and thus open in the default text editor
 	TCHAR *tLogFilePath = Win32::stringToTchar(_logFilePath);
-	HINSTANCE shellExec = ShellExecute(getHwnd(), nullptr, tLogFilePath, nullptr, nullptr, SW_SHOWNORMAL);
-	if ((intptr_t)shellExec > 32) {
+	SHELLEXECUTEINFO sei;
+
+	memset(&sei, 0, sizeof(sei));
+	sei.fMask  = SEE_MASK_FLAG_NO_UI;
+	sei.hwnd   = getHwnd();
+	sei.lpFile = tLogFilePath;
+	sei.nShow  = SW_SHOWNORMAL;
+
+	if (ShellExecuteEx(&sei)) {
 		free(tLogFilePath);
 		return true;
 	}
@@ -196,11 +203,20 @@ bool OSystem_Win32::displayLogFile() {
 
 bool OSystem_Win32::openUrl(const Common::String &url) {
 	TCHAR *tUrl = Win32::stringToTchar(url);
-	HINSTANCE result = ShellExecute(getHwnd(), nullptr, tUrl, nullptr, nullptr, SW_SHOWNORMAL);
+	SHELLEXECUTEINFO sei;
+
+	memset(&sei, 0, sizeof(sei));
+	sei.cbSize = sizeof(sei);
+	sei.fMask  = SEE_MASK_FLAG_NO_UI;
+	sei.hwnd   = getHwnd();
+	sei.lpFile = tUrl;
+	sei.nShow  = SW_SHOWNORMAL;
+
+	BOOL success = ShellExecuteEx(&sei);
+
 	free(tUrl);
-	// ShellExecute returns a value greater than 32 if successful
-	if ((intptr_t)result <= 32) {
-		warning("ShellExecute failed: error = %p", (void*)result);
+	if (!success) {
+		warning("ShellExecuteEx failed: error = %08lX", GetLastError());
 		return false;
 	}
 	return true;
@@ -237,16 +253,30 @@ Common::String OSystem_Win32::getSystemLanguage() const {
 	return OSystem_SDL::getSystemLanguage();
 }
 
+Common::String OSystem_Win32::getDefaultIconsPath() {
+	TCHAR iconsPath[MAX_PATH];
+
+	if (_isPortable) {
+		Win32::getProcessDirectory(iconsPath, MAX_PATH);
+		_tcscat(iconsPath, TEXT("\\Icons\\"));
+	} else {
+		// Use the Application Data directory of the user profile
+		if (!Win32::getApplicationDataDirectory(iconsPath)) {
+			return Common::String();
+		}
+		_tcscat(iconsPath, TEXT("\\Icons\\"));
+		CreateDirectory(iconsPath, nullptr);
+	}
+
+	return Win32::tcharToString(iconsPath);
+}
+
 Common::String OSystem_Win32::getScreenshotsPath() {
 	// If the user has configured a screenshots path, use it
-	Common::String screenshotsPath = OSystem_SDL::getScreenshotsPath();
+	Common::String screenshotsPath = ConfMan.get("screenshotpath");
 	if (!screenshotsPath.empty()) {
-		// OSystem_SDL may have appended a '/' at the end
-		if (screenshotsPath.hasSuffix("/")) {
-			screenshotsPath.deleteLastChar();
-			if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
-				screenshotsPath += "\\";
-		}
+		if (!screenshotsPath.hasSuffix("\\") && !screenshotsPath.hasSuffix("/"))
+			screenshotsPath += "\\";
 		return screenshotsPath;
 	}
 

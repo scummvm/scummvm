@@ -256,7 +256,7 @@ int16 ScriptInterpreter::readInt16() {
 void ScriptInterpreter::execOpcode(byte opcode) {
 	int16 ofs;
 
-	debug(2, "[%ld] %d", _code - _codeStart - 1, opcode);
+	debug(2, "[%ld] %d", long(_code - _codeStart - 1), opcode);
 
 	switch (opcode) {
 	case 0:

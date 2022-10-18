@@ -121,12 +121,12 @@ int LoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 		if (!_parent->rewind()) {
 			// TODO: Properly indicate error
-			_loops = _completeIterations = 1;
+			_loops = _completeIterations;
 			return samplesRead;
 		}
 		if (_parent->endOfStream()) {
 			// Apparently this is an empty stream
-			_loops = _completeIterations = 1;
+			_loops = _completeIterations;
 		}
 
 		return samplesRead + readBuffer(buffer + samplesRead, remainingSamples);
@@ -176,19 +176,19 @@ SubLoopingAudioStream::SubLoopingAudioStream(SeekableAudioStream *stream,
 											 const Timestamp loopStart,
 											 const Timestamp loopEnd,
 											 DisposeAfterUse::Flag disposeAfterUse)
-	: _parent(stream, disposeAfterUse), _loops(loops),
+	: _parent(stream, disposeAfterUse), _loops(loops), _completeIterations(0),
 	  _pos(0, getRate() * (isStereo() ? 2 : 1)),
 	  _loopStart(convertTimeToStreamPos(loopStart, getRate(), isStereo())),
-	  _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())),
-	  _done(false) {
+	  _loopEnd(convertTimeToStreamPos(loopEnd, getRate(), isStereo())) {
 	assert(loopStart < loopEnd);
+	assert(stream);
 
 	if (!_parent->rewind())
-		_done = true;
+		_loops = _completeIterations = 1;
 }
 
 int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
-	if (_done)
+	if ((_loops && _completeIterations == _loops) || !numSamples)
 		return 0;
 
 	int framesLeft = MIN(_loopEnd.frameDiff(_pos), numSamples);
@@ -197,20 +197,18 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 
 	if (framesRead < framesLeft && _parent->endOfStream()) {
 		// TODO: Proper error indication.
-		_done = true;
+		if (!_completeIterations)
+			_completeIterations = 1;
+		_loops = _completeIterations;
 		return framesRead;
 	} else if (_pos == _loopEnd) {
-		if (_loops != 0) {
-			--_loops;
-			if (!_loops) {
-				_done = true;
-				return framesRead;
-			}
-		}
+		++_completeIterations;
+		if (_completeIterations == _loops)
+			return framesRead;
 
 		if (!_parent->seek(_loopStart)) {
 			// TODO: Proper error indication.
-			_done = true;
+			_loops = _completeIterations;
 			return framesRead;
 		}
 
@@ -225,13 +223,13 @@ int SubLoopingAudioStream::readBuffer(int16 *buffer, const int numSamples) {
 bool SubLoopingAudioStream::endOfData() const {
 	// We're out of data if this stream is finished or the parent
 	// has run out of data for now.
-	return _done || _parent->endOfData();
+	return (_loops != 0 && _completeIterations == _loops) || _parent->endOfData();
 }
 
 bool SubLoopingAudioStream::endOfStream() const {
 	// The end of the stream has been reached only when we've gone
 	// through all the iterations.
-	return _done;
+	return _loops != 0 && _completeIterations == _loops;
 }
 
 #pragma mark -

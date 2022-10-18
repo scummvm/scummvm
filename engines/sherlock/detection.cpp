@@ -58,7 +58,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -68,7 +70,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Pixellated scene transitions"),
 			_s("When changing scenes, a randomized pixel transition is done"),
 			"fade_style",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -78,7 +82,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Don't show hotspots when moving mouse"),
 			_s("Only show hotspot names after you actually click on a hotspot or action button"),
 			"help_style",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -88,7 +94,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show character portraits"),
 			_s("Show portraits for the characters when conversing"),
 			"portraits_on",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -98,7 +106,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Slide dialogs into view"),
 			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
 			"window_style",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -108,7 +118,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Transparent windows"),
 			_s("Show windows with a partially transparent background"),
 			"transparent_windows",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -119,7 +131,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("TTS Narrator"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_narrator",
-			false
+			false,
+			0,
+			0
 		}
 	},
 #endif
@@ -134,11 +148,11 @@ public:
 	SherlockMetaEngineDetection() : AdvancedMetaEngineDetection(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
 		sherlockGames, optionsList) {}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sherlock";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Sherlock";
 	}
 

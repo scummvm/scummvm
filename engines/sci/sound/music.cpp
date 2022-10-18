@@ -39,7 +39,7 @@
 namespace Sci {
 
 SciMusic::SciMusic(SciVersion soundVersion, bool useDigitalSFX)
-	: _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX), _needsResume(soundVersion > SCI_VERSION_0_LATE), _globalPause(0) {
+	: _mutex(g_system->getMixer()->mutex()), _soundVersion(soundVersion), _soundOn(true), _masterVolume(15), _globalReverb(0), _useDigitalSFX(useDigitalSFX), _needsResume(soundVersion > SCI_VERSION_0_LATE), _globalPause(0) {
 
 	// Reserve some space in the playlist, to avoid expensive insertion
 	// operations
@@ -261,10 +261,27 @@ void SciMusic::clearPlayList() {
 
 void SciMusic::pauseAll(bool pause) {
 	const MusicList::iterator end = _playList.end();
+	bool alreadyUnpaused = (_globalPause <= 0);
+
 	if (pause)
 		_globalPause++;
 	else
-		_globalPause = MAX<int>(_globalPause - 1, 0);
+		_globalPause--;
+
+	bool stillUnpaused = (_globalPause <= 0);
+	// This check is for a specific situation (the ScummVM autosave) which will try to unpause the music,
+	// although it is already unpaused, and after the save it will then pause it again. We allow the
+	// _globalPause counter to go into the negative, so that the final outcome of both calls is a _globalPause
+	// counter of 0 (First: 0, then -1, then 0 again). However, the pause counters of the individual sounds
+	// do not support negatives. And it would be somewhat more likely to cause regressions to add that
+	// support than to just contain it here...
+	// So, for cases where the status of the _globalPause counter only changes in the range below or equal 0
+	// we return here. The individual sounds only need to get targeted if they ACTUALLY get paused or
+	// unpaused (_globalPause counter changes from 0 to 1 or from 1 to 0) or if the pause counter is
+	// increased above 1 (since positive counters are supported and required for the individual sounds).
+	if (alreadyUnpaused && stillUnpaused)
+		return;
+
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {
 #ifdef ENABLE_SCI32
 		// The entire DAC will have been paused by the caller;
@@ -275,6 +292,28 @@ void SciMusic::pauseAll(bool pause) {
 #endif
 		soundToggle(*i, pause);
 	}
+}
+
+void SciMusic::resetGlobalPauseCounter() {
+	// This is an adjustment for our savegame loading process,
+	// ONLY when done from kRestoreGame().
+	// The enginge will call SciMusic::pauseAll() before loading.
+	// So the _globalPause will be increased and the individual
+	// sounds will be paused, too. However, the sounds will
+	// then be restored to the playing status that is stored in
+	// the savegame. The _globalPause stays, however. There may
+	// be no unpausing after the loading, since the playing status
+	// in the savegames is the correct one. So, the essence is:
+	// the _globalPause counter needs to go down without anything
+	// else happening.
+	// The loading from GMM has been implemented differently. It
+	// will remove the paused state before loading (and doesn't
+	// do anything unpleasant afterwards, either). So this is not
+	// needed there.
+	// I have added an assert, since it is such a special case,
+	// people need to know what they're doing if they call this...
+	assert(_globalPause == 1);
+	_globalPause = 0;
 }
 
 void SciMusic::stopAll() {
@@ -462,19 +501,26 @@ void SciMusic::soundInitSnd(MusicEntry *pSnd) {
 
 				assert(chan.number < ARRAYSIZE(pSnd->_chan));
 				pSnd->_usedChannels[i] = chan.number;
+				// Flag 1 is exclusive towards the other flags. When it is
+				// set the others won't even get evaluated. And it wouldn't
+				// matter, since channels flagged with 1 operate completely
+				// independent of the channel mapping.
+				// For more info on the flags see the comment in
+				// SoundResource::SoundResource().
+				pSnd->_chan[chan.number]._dontMap = (chan.flags & 1);
 				pSnd->_chan[chan.number]._dontRemap = (chan.flags & 2);
 				pSnd->_chan[chan.number]._prio = chan.prio;
 				pSnd->_chan[chan.number]._voices = chan.poly;
-
-				// CHECKME: Some SCI versions use chan.flags & 1 for this:
-				pSnd->_chan[chan.number]._dontMap = false;
-
+				pSnd->_chan[chan.number]._mute = (chan.flags & 4) ? 1 : 0;
 				// FIXME: Most MIDI tracks use the first 10 bytes for
 				// fixed MIDI commands. SSCI skips those the first iteration,
 				// but _does_ update channel state (including volume) with
 				// them. Specifically, prio/voices, patch, volume, pan.
-				// This should probably be implemented in
-				// MidiParser_SCI::loadMusic.
+				// This should probably be implemented in MidiParser_SCI::loadMusic.
+				// 
+				// UPDATE: While we could change how we handle it, we DO
+				// read the commands into the channel data arrays when we call
+				// trackState(). So, I think what we do has the same result...
 			}
 
 			pSnd->pMidiParser->mainThreadBegin();
@@ -682,7 +728,7 @@ void SciMusic::soundStop(MusicEntry *pSnd) {
 	pSnd->fadeStep = 0; // end fading, if fading was in progress
 
 	// SSCI0 resumes the next available sound from the (priority ordered) list with a paused status.
-	if (_soundVersion <= SCI_VERSION_0_LATE && (pSnd = getFirstSlotWithStatus(kSoundPaused)))
+	if (_soundVersion <= SCI_VERSION_0_LATE && previousStatus == kSoundPlaying && (pSnd = getFirstSlotWithStatus(kSoundPaused)))
 		soundResume(pSnd);
 }
 
@@ -797,7 +843,7 @@ void SciMusic::soundResume(MusicEntry *pSnd) {
 		pSnd->pauseCounter--;
 	if (pSnd->pauseCounter != 0)
 		return;
-	if (pSnd->status != kSoundPaused || (_globalPause && !_needsResume))
+	if (pSnd->status != kSoundPaused || (_globalPause > 0 && !_needsResume))
 		return;
 	_needsResume = (_soundVersion > SCI_VERSION_0_LATE);
 	if (pSnd->pStreamAud) {
@@ -1190,6 +1236,7 @@ void SciMusic::remapChannels(bool mainThread) {
 #ifdef DEBUG_REMAP
 			debug(" Mapping (dontRemap) song %d, channel %d to device channel %d", songIndex, _channelMap[i]._channel, i);
 #endif
+			resetDeviceChannel(i, mainThread);
 			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadBegin();
 			_channelMap[i]._song->pMidiParser->remapChannel(_channelMap[i]._channel, i);
 			if (mainThread) _channelMap[i]._song->pMidiParser->mainThreadEnd();
@@ -1277,7 +1324,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	if (_playList.empty())
 		return map;
 
-	// TODO: set reverb, either from first song, or from global???
+	// Set reverb, either from first song, or from global (verified with KQ5 floppy
+	// and LSL6 interpreters, fixes bug # 11683 ("QFG2 - Heavy reverb from city street sounds...").
+	int8 reverb = _playList.front()->reverb;
+	_pMidiDrv->setReverb(reverb == 127 ? _globalReverb : reverb);
 
 	MusicList::iterator songIter;
 	int songIndex = -1;
@@ -1491,6 +1541,10 @@ ChannelRemapping *SciMusic::determineChannelMap() {
 	}
 
 	return map;
+}
+
+bool SciMusic::isDeviceChannelMapped(int devChannel) const {
+	return _channelMap[devChannel]._song;
 }
 
 void SciMusic::resetDeviceChannel(int devChannel, bool mainThread) {

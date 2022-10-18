@@ -88,7 +88,6 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 	update(surface);
-
 }
 
 OpenGLTexture::~OpenGLTexture() {
@@ -137,6 +136,7 @@ void OpenGLTexture::copyFromFramebuffer(const Common::Rect &screen) {
 	}
 
 	glBindTexture(GL_TEXTURE_2D, id);
+	glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, internalWidth, internalHeight, 0, internalFormat, GL_UNSIGNED_BYTE, nullptr);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 

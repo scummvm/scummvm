@@ -593,6 +593,8 @@ void ScummEngine::nukeCharset(int i) {
 }
 
 void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
+	Common::StackLock lock(_resourceAccessMutex);
+
 	debugC(DEBUG_RESOURCE, "ensureResourceLoaded(%s,%d)", nameOfResType(type), idx);
 
 	if ((type == rtRoom) && idx > 0x7F && _game.version < 7 && _game.heversion <= 71) {
@@ -615,6 +617,22 @@ void ScummEngine::ensureResourceLoaded(ResType type, ResId idx) {
 
 	if (idx <= _res->_types[type].size() && _res->_types[type][idx]._address)
 		return;
+
+	#ifdef ENABLE_SCUMM_7_8
+	_resourceAccessMutex.unlock();
+
+	if (_imuseDigital) {
+		int32 bufSize, criticalSize, freeSpace;
+		int paused;
+		if (_imuseDigital->isFTSoundEngine() && _imuseDigital->queryNextSoundFile(bufSize, criticalSize, freeSpace, paused)) {
+			_imuseDigital->fillStreamsWhileMusicCritical(5);
+		} else {
+			_imuseDigital->fillStreamsWhileMusicCritical(_game.id == GID_DIG ? 30 : 20);
+		}
+	}
+
+	_resourceAccessMutex.lock();
+#endif
 
 	loadResource(type, idx);
 
@@ -1127,7 +1145,7 @@ void ScummEngine::loadPtrToResource(ResType type, ResId idx, const byte *source)
 			refreshScriptPointer();
 			source = _scriptPointer;
 		}
-		translateText(source, translateBuffer);
+		translateText(source, translateBuffer, sizeof(translateBuffer));
 
 		source = translateBuffer;
 		len = resStrLen(source) + 1;
@@ -1202,8 +1220,8 @@ void ScummEngine_v5::readMAXS(int blockSize) {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
+	_fileHandle->read(_engineVersionString, 50);
+	_fileHandle->read(_dataFileVersionString, 50);
 	_numVariables = _fileHandle->readUint32LE();     // 1500
 	_numBitVariables = _fileHandle->readUint32LE();  // 2048
 	_fileHandle->readUint32LE();                     // 40
@@ -1230,8 +1248,8 @@ void ScummEngine_v8::readMAXS(int blockSize) {
 }
 
 void ScummEngine_v7::readMAXS(int blockSize) {
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over SCUMM engine version
-	_fileHandle->seek(50, SEEK_CUR);                 // Skip over data file version
+	_fileHandle->read(_engineVersionString, 50);
+	_fileHandle->read(_dataFileVersionString, 50);
 	_numVariables = _fileHandle->readUint16LE();
 	_numBitVariables = _fileHandle->readUint16LE();
 	_fileHandle->readUint16LE();
@@ -1686,29 +1704,29 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 	//
 	// However, this means that there is no way to pick the difficulty
 	// level. Since ScummVM bypasses the copy protection check, there is
-	// no harm in showing the screen by simply re-inserging the missing
+	// no harm in showing the screen by simply re-inserting the missing
 	// part of the script.
 
 	else if (_game.id == GID_MONKEY2 && _game.platform == Common::kPlatformMacintosh && type == rtScript && idx == 1 && size == 6718) {
 		byte *unpatchedScript = getResourceAddress(type, idx);
 
 		const byte patch[] = {
-0x48, 0x00, 0x40, 0x00, 0x00, 0x13, 0x00, // if (Local[0] == 0) {
-0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       //     SetScreen(0,200);
-0x0a, 0x82, 0xff,                         //     startScript(130,[]);
-0x80,                                     //     breakHere();
-0x68, 0x00, 0x00, 0x82,                   //     VAR_RESULT = isScriptRunning(130);
-0x28, 0x00, 0x00, 0xf6, 0xff,             //     unless (!VAR_RESULT) goto 0955;
-                                          // }
-0x48, 0x00, 0x40, 0x3f, 0xe1, 0x1d, 0x00, // if (Local[0] == -7873) [
-0x1a, 0x32, 0x00, 0x3f, 0x01,             //     VAR_MAINMENU_KEY = 319;
-0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       //     SetScreen(0,200);
-0x0a, 0x82, 0xff,                         //     startScript(130,[]);
-0x80,                                     //     breakHere();
-0x68, 0x00, 0x00, 0x82,                   //     VAR_RESULT = isScriptRunning(130);
-0x28, 0x00, 0x00, 0xf6, 0xff,             //     unless (!VAR_RESULT) goto 0955;
-0x1a, 0x00, 0x40, 0x00, 0x00              //     Local[0] = 0;
-                                          // }
+0x48, 0x00, 0x40, 0x00, 0x00, 0x13, 0x00, // [0926] if (Local[0] == 0) {
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       // [092D]   SetScreen(0,200);
+0x0a, 0x82, 0xff,                         // [0933]   startScript(130,[]);
+0x80,                                     // [0936]   breakHere();
+0x68, 0x00, 0x00, 0x82,                   // [0937]   VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6, 0xff,             // [093B]   unless (!VAR_RESULT) goto 0936;
+                                          // [0940] }
+0x48, 0x00, 0x40, 0x3f, 0xe1, 0x1d, 0x00, // [0940] if (Local[0] == -7873) [
+0x1a, 0x32, 0x00, 0x3f, 0x01,             // [0947]   VAR_MAINMENU_KEY = 319;
+0x33, 0x03, 0x00, 0x00, 0xc8, 0x00,       // [094C]   SetScreen(0,200);
+0x0a, 0x82, 0xff,                         // [0952]   startScript(130,[]);
+0x80,                                     // [0955]   breakHere();
+0x68, 0x00, 0x00, 0x82,                   // [0956]   VAR_RESULT = isScriptRunning(130);
+0x28, 0x00, 0x00, 0xf6, 0xff,             // [095A]   unless (!VAR_RESULT) goto 0955;
+0x1a, 0x00, 0x40, 0x00, 0x00              // [095F]   Local[0] = 0;
+                                          // [0964] }
 		};
 
 		byte *patchedScript = new byte[6780];
@@ -1732,21 +1750,21 @@ void ScummEngine::applyWorkaroundIfNeeded(ResType type, int idx) {
 		delete[] patchedScript;
 	} else
 
-	// For some reason, the CD version of Monkey Island 1 removes some of
-	// the text when giving the wimpy idol to the cannibals. It looks like
-	// a mistake, because one of the text that is printed is immediately
-	// overwritten. This probably affects all CD versions, so we just have
-	// to add further patches as they are reported.
+	// WORKAROUND: For some reason, the CD version of Monkey Island 1
+	// removes some of the text when giving the wimpy idol to the cannibals.
+	// It looks like a mistake, because one of the text that is printed is
+	// immediately overwritten. This probably affects all CD versions, so we
+	// just have to add further patches as they are reported.
 
 	if (_game.id == GID_MONKEY && type == rtRoom && idx == 25 && _enableEnhancements) {
 		tryPatchMI1CannibalScript(getResourceAddress(type, idx), size);
 	} else
 
-	// There is a cracked version of Maniac Mansion v2 that attempts to
-	// remove the security door copy protection. With it, any code is
-	// accepted as long as you get the last digit wrong. Unfortunately,
-	// it changes a script that is used by all keypads in the game, which
-	// means some puzzles are completely nerfed.
+	// WORKAROUND: There is a cracked version of Maniac Mansion v2 that
+	// attempts to remove the security door copy protection. With it, any
+	// code is accepted as long as you get the last digit wrong.
+	// Unfortunately, it changes a script that is used by all keypads in the
+	// game, which means some puzzles are completely nerfed.
 	//
 	// Even worse, this is the version that GOG and Steam are selling. No,
 	// seriously! I've reported this as a bug, but it remains unclear

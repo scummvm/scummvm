@@ -206,11 +206,11 @@ public:
 		_guiOptions = GUIO1(GUIO_NOLAUNCHLOAD);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "parallaction";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Parallaction";
 	}
 

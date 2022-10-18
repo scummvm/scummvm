@@ -169,8 +169,8 @@ Size get_game_frame_from_screen_size(const Size &game_size, const Size screen_si
 		if (scale > 0)
 			fp_scale = convert_scaling_to_fp(scale);
 		else
-			fp_scale = Math::Max<int32_t>(kUnit,
-				Math::Min((screen_size.Width / game_size.Width) << kShift,
+			fp_scale = MAX<int32_t>(kUnit,
+				MIN((screen_size.Width / game_size.Width) << kShift,
 				(screen_size.Height / game_size.Height) << kShift));
 		Size frame_size = Size(
 			(game_size.Width * fp_scale) >> kShift,
@@ -182,9 +182,8 @@ Size get_game_frame_from_screen_size(const Size &game_size, const Size screen_si
 		return frame_size;
 	}
 	default:
-		break;
+		return Size();
 	}
-	return Size();
 }
 
 static Size precalc_screen_size(const Size &game_size, const WindowSetup &ws, const FrameScaleDef frame) {
@@ -223,8 +222,8 @@ bool try_init_compatible_mode(const DisplayMode &dm) {
 	// Windowed mode
 	if (dm.IsWindowed()) {
 		// If windowed mode, make the resolution stay in the generally supported limits
-		dm_compat.Width = Math::Min(dm_compat.Width, device_size.Width);
-		dm_compat.Height = Math::Min(dm_compat.Height, device_size.Height);
+		dm_compat.Width = MIN(dm_compat.Width, device_size.Width);
+		dm_compat.Height = MIN(dm_compat.Height, device_size.Height);
 	}
 	// Fullscreen mode
 	else {
@@ -410,12 +409,12 @@ bool graphics_mode_init_any(const GraphicResolution &game_res, const DisplayMode
 
 	// Try to create renderer and init gfx mode, choosing one factory at a time
 	bool result = false;
-	for (StringV::const_iterator it2 = ids.begin(); it2 != ids.end(); ++it2) {
+	for (const auto &id : ids) {
 		result =
 #ifdef USE_SIMPLE_GFX_INIT
-			simple_create_gfx_driver_and_init_mode(*it2, game_res, setup, color_depth);
+			simple_create_gfx_driver_and_init_mode(id, game_res, setup, color_depth);
 #else
-			create_gfx_driver_and_init_mode_any(*it2, game_res, setup, color_depth);
+			create_gfx_driver_and_init_mode_any(id, game_res, setup, color_depth);
 #endif
 
 		if (result)
@@ -474,8 +473,9 @@ bool graphics_mode_set_dm(const DisplayMode &dm) {
 		_GP(SavedWindowedSetting).Dm = rdm;
 	else
 		_GP(SavedFullscreenSetting).Dm = rdm;
-	Debug::Printf("Succeeded. Using gfx mode %d x %d (%d-bit) %s",
-		rdm.Width, rdm.Height, rdm.ColorDepth, rdm.IsWindowed() ? "windowed" : "fullscreen");
+	Debug::Printf(kDbgMsg_Info, "Graphics mode set: %d x %d (%d-bit) %s",
+		rdm.Width, rdm.Height, rdm.ColorDepth,
+		rdm.IsWindowed() ? "windowed" : (rdm.IsRealFullscreen() ? "fullscreen" : "fullscreen desktop"));
 	return true;
 }
 

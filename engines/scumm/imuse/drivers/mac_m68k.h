@@ -32,20 +32,19 @@ class SeekableReadStream;
 
 namespace Scumm {
 
-class MacM68kDriver : public MidiDriver_Emulated {
+class IMuseDriver_MacM68k : public MidiDriver_Emulated {
 	friend class MidiChannel_MacM68k;
 public:
-	MacM68kDriver(Audio::Mixer *mixer);
-	~MacM68kDriver() override;
+	IMuseDriver_MacM68k(Audio::Mixer *mixer);
+	~IMuseDriver_MacM68k() override;
 
 	int open() override;
 	void close() override;
 
 	void send(uint32 d) override;
-	void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) override;
 
 	MidiChannel *allocateChannel() override;
-	MidiChannel *getPercussionChannel() override { return 0; }
+	MidiChannel *getPercussionChannel() override { return nullptr; }
 
 	bool isStereo() const override { return false; }
 	int getRate() const override {
@@ -63,6 +62,7 @@ private:
 	int _mixBufferLength;
 
 	struct Instrument {
+		Instrument() { reset(); }
 		uint length;
 		uint sampleRate;
 		uint loopStart;
@@ -70,6 +70,15 @@ private:
 		int baseFrequency;
 
 		byte *data;
+
+		void reset() {
+			length = 0;
+			sampleRate = 0;
+			loopStart = 0;
+			loopEnd = 0;
+			baseFrequency = 0;
+			data = nullptr;
+		}
 	};
 
 	enum {
@@ -127,8 +136,10 @@ private:
 	};
 
 	class MidiChannel_MacM68k : public MidiChannel {
-		friend class MacM68kDriver;
+		friend class IMuseDriver_MacM68k;
 	public:
+		MidiChannel_MacM68k(IMuseDriver_MacM68k *driver, byte number) : MidiChannel(), _owner(driver), _number(number), _allocated(false),
+			_priority(0), _sustain(0), _pitchBend(0), _pitchBendFactor(2), _transpose(0), _detune(0), _volume(0), _voice(nullptr), _instrument() {}
 		MidiDriver *device() override { return _owner; }
 		byte getNumber() override { return _number; }
 		void release() override;
@@ -140,18 +151,19 @@ private:
 		void pitchBend(int16 bend) override;
 		void controlChange(byte control, byte value) override;
 		void pitchBendFactor(byte value) override;
+		void transpose(int8 value) override;
+		void detune(byte value) override;
 		void priority(byte value) override;
-		void sysEx_customInstrument(uint32 type, const byte *instr) override;
+		void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override;
 
-		void init(MacM68kDriver *owner, byte channel);
 		bool allocate();
 
 		void addVoice(VoiceChannel *voice);
 		void removeVoice(VoiceChannel *voice);
 	private:
-		MacM68kDriver *_owner;
+		IMuseDriver_MacM68k *_owner;
+		const byte _number;
 		bool _allocated;
-		int _number;
 
 		VoiceChannel *_voice;
 		int _priority;
@@ -159,10 +171,12 @@ private:
 		Instrument _instrument;
 		int _pitchBend;
 		int _pitchBendFactor;
+		int8 _detune;
+		int8 _transpose;
 		int _volume;
 	};
 
-	MidiChannel_MacM68k _channels[32];
+	MidiChannel_MacM68k *_channels[32];
 
 	enum {
 		kChannelCount = 8

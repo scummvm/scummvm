@@ -23,6 +23,7 @@
 #define TWINE_TWINE_H
 
 #include "backends/keymapper/keymap.h"
+#include "common/platform.h"
 #include "common/random.h"
 #include "common/rect.h"
 #include "engines/advancedDetector.h"
@@ -48,6 +49,8 @@ namespace TwinE {
 
 /** Default frames per second */
 #define DEFAULT_FRAMES_PER_SECOND 20
+#define DEFAULT_HZ (1000 / DEFAULT_FRAMES_PER_SECOND)
+#define TO_SECONDS(x) (DEFAULT_HZ * (x))
 
 #define ORIGINAL_WIDTH 640
 #define ORIGINAL_HEIGHT 480
@@ -159,7 +162,7 @@ enum class SceneLoopState {
 
 struct ScopedEngineFreeze {
 	TwinEEngine *_engine;
-	ScopedEngineFreeze(TwinEEngine *engine);
+	ScopedEngineFreeze(TwinEEngine *engine, bool pause = false);
 	~ScopedEngineFreeze();
 };
 
@@ -227,7 +230,7 @@ private:
 	 */
 	bool runGameEngine();
 public:
-	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, TwineGameType gameType);
+	TwinEEngine(OSystem *system, Common::Language language, uint32 flagsTwineGameType, Common::Platform platform, TwineGameType gameType);
 	~TwinEEngine() override;
 
 	Common::Error run() override;
@@ -251,7 +254,9 @@ public:
 	bool isLBASlideShow() const { return _gameType == TwineGameType::GType_LBASHOW; }
 	bool isMod() const { return (_gameFlags & TwinE::TF_MOD) != 0; }
 	bool isDotEmuEnhanced() const { return (_gameFlags & TwinE::TF_DOTEMU_ENHANCED) != 0; }
+	bool isLba1Classic() const { return (_gameFlags & TwinE::TF_LBA1_CLASSIC) != 0; }
 	bool isDemo() const { return (_gameFlags & ADGF_DEMO) != 0; };
+	bool isAndroid() const { return _platform == Common::Platform::kPlatformAndroid; };
 	const char *getGameId() const;
 	Common::Language getGameLang() const;
 
@@ -293,6 +298,7 @@ public:
 	int32 _loopInventoryItem = 0;
 	int32 _loopActorStep = 0;
 	uint32 _gameFlags;
+	Common::Platform _platform;
 
 	/** Disable screen recenter */
 	bool _disableScreenRecenter = false;
@@ -329,7 +335,7 @@ public:
 	void restoreFrontBuffer();
 	void saveFrontBuffer();
 
-	void freezeTime();
+	void freezeTime(bool pause);
 	void unfreezeTime();
 
 	/**

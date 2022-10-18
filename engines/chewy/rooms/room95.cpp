@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -30,8 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room95::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(SetUpScreenFunc) = setup_func;	
 	_G(zoom_horizont) = 140;
 	_G(gameState).ScrollxStep = 2;
@@ -66,7 +66,7 @@ void Room95::xit(int16 eib_nr) {
 
 void Room95::setup_func() {
 	calc_person_look();
-	int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int destX;
 	int destY = 120;
 	
@@ -91,7 +91,7 @@ int Room95::proc2() {
 	hideCur();
 	autoMove(3, P_CHEWY);
 	if (isCurInventory(113)) {
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 
 		start_spz_wait(14, 1, false, P_CHEWY);
 		_G(gameState).flags35_20 = true;
@@ -101,7 +101,7 @@ int Room95::proc2() {
 		return 1;
 	}
 
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursor()) {
 		showCur();
 		return 0;
 	}

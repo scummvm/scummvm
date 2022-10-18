@@ -17,10 +17,12 @@ MODULE_OBJS := \
 	effect.o \
 	events.o \
 	faders.o \
+	film.o \
 	font.o \
 	graphics.o \
 	handle.o \
 	heapmem.o \
+	inv_objects.o \
 	mareels.o \
 	metaengine.o \
 	move.o \
@@ -46,7 +48,10 @@ MODULE_OBJS := \
 	timers.o \
 	tinlib.o \
 	tinsel.o \
-	token.o
+	token.o \
+	noir/notebook.o \
+	noir/notebook_page.o \
+	noir/sysreel.o \
 
 # This module can be built as a plugin
 ifeq ($(ENABLE_TINSEL), DYNAMIC_PLUGIN)

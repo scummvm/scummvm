@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2021 Sergey V. Mikayev
+/* Copyright (C) 2015-2022 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -36,7 +36,7 @@ friend void freeResamplerModel(FloatSampleProvider &model, FloatSampleProvider &
 public:
 	CascadeStage(FloatSampleProvider &source, ResamplerStage &resamplerStage);
 
-	void getOutputSamples(FloatSample *outBuffer, unsigned int size) override;
+	void getOutputSamples(FloatSample *outBuffer, unsigned int size);
 
 protected:
 	ResamplerStage &resamplerStage;
@@ -120,7 +120,7 @@ void ResamplerModel::freeResamplerModel(FloatSampleProvider &model, FloatSampleP
 	FloatSampleProvider *currentStage = &model;
 	while (currentStage != &source) {
 		CascadeStage *cascadeStage = dynamic_cast<CascadeStage *>(currentStage);
-		if (cascadeStage == nullptr) return;
+		if (cascadeStage == NULL) return;
 		FloatSampleProvider &prevStage = cascadeStage->source;
 		delete currentStage;
 		currentStage = &prevStage;

@@ -26,6 +26,7 @@
  */
 
 #include "common/str.h"
+
 #include "engines/wintermute/ad/ad_geom_ext_node.h"
 #include "engines/wintermute/base/base_game.h"
 #include "engines/wintermute/base/base_parser.h"
@@ -34,8 +35,10 @@
 namespace Wintermute {
 
 //////////////////////////////////////////////////////////////////////////
-AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame),
-												 _receiveShadows(false), _type(GEOM_GENERIC), _namePattern(nullptr) {
+AdGeomExtNode::AdGeomExtNode(BaseGame *inGame) : BaseClass(inGame) {
+	_namePattern = nullptr;
+	_receiveShadows = false;
+	_type = GEOM_GENERIC;
 }
 
 //////////////////////////////////////////////////////////////////////////

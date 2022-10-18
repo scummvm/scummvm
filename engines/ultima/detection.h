@@ -75,22 +75,17 @@ public:
 	UltimaMetaEngineDetection();
 	~UltimaMetaEngineDetection() override {}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "ultima";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Ultima";
 	}
 
 	const char *getOriginalCopyright() const override {
 		return "Ultima Games (C) 1980-1995 Origin Systems Inc.";
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-
-private:
-	static Common::String getGameId(const Common::String& target);
 };
 
 #endif

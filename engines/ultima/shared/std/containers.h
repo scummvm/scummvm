@@ -29,20 +29,10 @@
 #include "common/list.h"
 #include "common/queue.h"
 #include "common/stack.h"
+#include "common/util.h"
 
 namespace Ultima {
 namespace Std {
-
-template<class T1, class T2>
-struct pair {
-	T1 first;
-	T2 second;
-
-	pair() {
-	}
-	pair(T1 first_, T2 second_) : first(first_), second(second_) {
-	}
-};
 
 template<class T>
 class vector : public Common::Array<T> {
@@ -106,24 +96,6 @@ public:
 	}
 	vector(size_t newSize, const T elem) {
 		resize(newSize, elem);
-	}
-
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator pos) {
-		return Common::Array<T>::erase(pos);
-	}
-
-	typename Common::Array<T>::iterator erase(typename Common::Array<T>::iterator first,
-			typename Common::Array<T>::iterator last) {
-		Common::copy(last, this->_storage + this->_size, first);
-
-		int count = (last - first);
-		this->_size -= count;
-
-		// We also need to destroy the objects beyond the new size
-		for (uint idx = this->_size; idx < (this->_size + count); ++idx)
-			this->_storage[idx].~T();
-
-		return first;
 	}
 
 	void swap(vector &arr) {
@@ -239,24 +211,6 @@ public:
 	}
 };
 
-struct PointerHash {
-	Common::Hash<const char *> hash;
-
-	uint operator()(const void *ptr) const {
-		Common::String str = Common::String::format("%p", ptr);
-		return hash.operator()(str.c_str());
-	}
-};
-
-template<class Key, class Val, class HashFunc = Common::Hash<Key>,
-		 class EqualFunc = Common::EqualTo<Key> >
-class map : public Common::HashMap<Key, Val, HashFunc, EqualFunc> {
-public:
-	void insert(Std::pair<Key, Val> elem) {
-		this->operator[](elem.first) = elem.second;
-	}
-};
-
 template<class VAL>
 class deque : public Common::List<VAL> {
 public:
@@ -304,10 +258,6 @@ public:
 	reverse_iterator rend() {
 		return reverse_iterator(Common::List<T>::end());
 	}
-};
-
-template<class VAL>
-class stack : public Common::Stack<VAL> {
 };
 
 /**

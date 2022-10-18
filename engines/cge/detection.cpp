@@ -113,7 +113,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Color Blind Mode"),
 			_s("Enable Color Blind Mode by default"),
 			"enable_color_blind",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -124,7 +126,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Text to Speech"),
 			_s("Use TTS to read text in the game (if TTS is available)"),
 			"tts_enabled",
-			false
+			false,
+			0,
+			0
 		}
 	},
 #endif
@@ -137,11 +141,11 @@ public:
 	CGEMetaEngineDetection() : AdvancedMetaEngineDetection(CGE::gameDescriptions, sizeof(ADGameDescription), CGEGames, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cge";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "CGE";
 	}
 

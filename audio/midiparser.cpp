@@ -30,7 +30,8 @@
 //
 //////////////////////////////////////////////////
 
-MidiParser::MidiParser() :
+MidiParser::MidiParser(int8 source) :
+_source(source),
 _hangingNotesCount(0),
 _driver(nullptr),
 _timerRate(0x4A0000),
@@ -84,11 +85,19 @@ void MidiParser::property(int prop, int value) {
 }
 
 void MidiParser::sendToDriver(uint32 b) {
-	_driver->send(b);
+	if (_source < 0) {
+		_driver->send(b);
+	} else {
+		_driver->send(_source, b);
+	}
 }
 
 void MidiParser::sendMetaEventToDriver(byte type, byte *data, uint16 length) {
-	_driver->metaEvent(type, data, length);
+	if (_source < 0) {
+		_driver->metaEvent(type, data, length);
+	} else {
+		_driver->metaEvent(_source, type, data, length);
+	}
 }
 
 void MidiParser::setTempo(uint32 tempo) {
@@ -186,7 +195,7 @@ void MidiParser::onTimer() {
 	// even if the parser does not parse events.
 	_sysExDelay -= (_sysExDelay > _timerRate) ? _timerRate : _sysExDelay;
 
-	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady())
+	if (!_position._playPos || !_driver || !_doParse || _pause || !_driver->isReady(_source))
 		return;
 
 	_abortParse = false;
@@ -218,27 +227,29 @@ void MidiParser::onTimer() {
 		if (eventTime > endTime)
 			break;
 
-		// Process the next info.
-		if (info.event < 0x80) {
-			warning("Bad command or running status %02X", info.event);
-			_position._playPos = nullptr;
-			return;
-		}
+		if (!info.noop) {
+			// Process the next info.
+			if (info.event < 0x80) {
+				warning("Bad command or running status %02X", info.event);
+				_position._playPos = nullptr;
+				return;
+			}
 
-		if (info.command() == 0x8) {
-			activeNote(info.channel(), info.basic.param1, false);
-		} else if (info.command() == 0x9) {
-			if (info.length > 0)
-				hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
-			else
-				activeNote(info.channel(), info.basic.param1, true);
-		}
+			if (info.command() == 0x8) {
+				activeNote(info.channel(), info.basic.param1, false);
+			} else if (info.command() == 0x9) {
+				if (info.length > 0)
+					hangingNote(info.channel(), info.basic.param1, info.length * _psecPerTick - (endTime - eventTime));
+				else
+					activeNote(info.channel(), info.basic.param1, true);
+			}
 
-		// Player::metaEvent() in SCUMM will delete the parser object,
-		// so return immediately if that might have happened.
-		bool ret = processEvent(info);
-		if (!ret)
-			return;
+			// Player::metaEvent() in SCUMM will delete the parser object,
+			// so return immediately if that might have happened.
+			bool ret = processEvent(info);
+			if (!ret)
+				return;
+		}
 
 		loopEvent |= info.loop;
 
@@ -291,7 +302,6 @@ bool MidiParser::processEvent(const EventInfo &info, bool fireEvents) {
 			// as well as sending it to the output device.
 			if (_autoLoop) {
 				jumpToTick(0);
-				parseNextEvent(_nextEvent);
 			} else {
 				stopPlaying();
 				if (fireEvents)

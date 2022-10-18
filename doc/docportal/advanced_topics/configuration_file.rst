@@ -163,6 +163,7 @@ There are many recognized configuration keys. In the table below, each key is ei
 		enable_unsupported_game_warning,boolean,true, Shows a warning when adding a game that is unsupported.
 		extra,string, ,"Shows additional information about a game, such as version"
 		":ref:`extrapath <extra>`",string,None,
+		":ref:`iconspath <iconspath>`",string,None,
 		":ref:`fade_style <fade>`",boolean,true,
 		":ref:`filtering <filtering>`",boolean,false,
 		":ref:`floating_cursors <floating>`",boolean,false,
@@ -366,14 +367,14 @@ There are many recognized configuration keys. In the table below, each key is ei
 	- macintosh "
 		":ref:`retrowaveopl3_bus <adlib>`",string,,"
 	Specifies how the RetroWave OPL3 is connected:
-	
+
 	- serial (connected to a USB port using a PotatoPi)
 	- spi (connected as a HAT using SPI) "
 		":ref:`retrowaveopl3_disable_buffer <adlib>`",boolean,false,
 		":ref:`retrowaveopl3_port <adlib>`",string,,"
 	Specifies the serial port that the RetroWave OPL3 is connected to.
 	For example:
-	
+
 	- COM3
 	- ttyACM2 "
 		":ref:`retrowaveopl3_spi_cs <adlib>`",string,,"Specifies the GPIO chip and line that the RetroWave OPL3 is connected to. Use the format <chip>,<line>."
@@ -455,11 +456,5 @@ Screenshot path
 			:column: col-lg-12 mb-2
 
 			In the current directory.
-
-
-
-
-
-
 
 

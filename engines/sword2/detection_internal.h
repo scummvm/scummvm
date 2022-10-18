@@ -39,17 +39,18 @@ struct GameSettings {
 	const char *description;
 	uint32 features;
 	const char *detectname;
+	Common::Platform platform;
 };
 
 static const GameSettings sword2_settings[] = {
 	/* Broken Sword II */
-	{"sword2", "Broken Sword II: The Smoking Mirror", 0, "players.clu" },
-	{"sword2alt", "Broken Sword II: The Smoking Mirror (alt)", 0, "r2ctlns.ocx" },
-	{"sword2psx", "Broken Sword II: The Smoking Mirror (PlayStation)", 0, "screens.clu"},
-	{"sword2psxdemo", "Broken Sword II: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu"},
-	{"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu" },
-	{"sword2demo-es", "Broken Sword II: The Smoking Mirror (Spanish/Demo)", Sword2::GF_DEMO | Sword2::GF_SPANISHDEMO, "vielogo.tga" },
-	{NULL, NULL, 0, NULL}
+	{"sword2", "Broken Sword II: The Smoking Mirror", 0, "players.clu", Common::kPlatformWindows },
+	{"sword2alt", "Broken Sword II: The Smoking Mirror (alt)", 0, "r2ctlns.ocx", Common::kPlatformWindows },
+	{"sword2psx", "Broken Sword II: The Smoking Mirror (PlayStation)", 0, "screens.clu", Common::kPlatformPSX },
+	{"sword2psxdemo", "Broken Sword II: The Smoking Mirror (PlayStation/Demo)", Sword2::GF_DEMO, "screens.clu", Common::kPlatformPSX },
+	{"sword2demo", "Broken Sword II: The Smoking Mirror (Demo)", Sword2::GF_DEMO, "players.clu", Common::kPlatformWindows },
+	{"sword2demo-es", "Broken Sword II: The Smoking Mirror (Spanish/Demo)", Sword2::GF_DEMO | Sword2::GF_SPANISHDEMO, "vielogo.tga", Common::kPlatformWindows },
+	{NULL, NULL, 0, NULL, Common::kPlatformUnknown }
 };
 
 } // End of namespace Sword2
@@ -87,7 +88,8 @@ static DetectedGames detectGamesImpl(const Common::FSList &fslist, bool recursio
 					continue;
 
 				// Match found, add to list of candidates, then abort inner loop.
-				DetectedGame game = DetectedGame("sword2", g->gameid, g->description);
+				DetectedGame game = DetectedGame("sword2", g->gameid, g->description,
+												 Common::UNK_LANG, g->platform);
 				game.setGUIOptions(GUIO2(GUIO_NOMIDI, GUIO_NOASPECT));
 
 				detectedGames.push_back(game);

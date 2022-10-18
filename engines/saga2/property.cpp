@@ -119,7 +119,7 @@ bool SimpleMetaTileProperty::operator()(
     int16 mapNum,
     const TilePoint &tp) const {
 	//  Simply pass this call to the property evaluation function
-	return (*propertyFunc)(mt, mapNum, tp);
+	return (*_propertyFunc)(mt, mapNum, tp);
 }
 
 /* ===================================================================== *
@@ -133,18 +133,18 @@ CompoundMetaTileProperty::CompoundMetaTileProperty(
 	uint16  arrayBytes = sizeof(MetaTileProperty *) * size;
 
 	//  Allocate memory for a copy of the array
-	propertyArray = (MetaTileProperty **)malloc(arrayBytes);
+	_propertyArray = (MetaTileProperty **)malloc(arrayBytes);
 #if DEBUG
-	assert(propertyArray);
+	assert(_propertyArray);
 #endif
 	//  Copy the array
-	memcpy(propertyArray, array, arrayBytes);
-	arraySize = size;
+	memcpy(_propertyArray, array, arrayBytes);
+	_arraySize = size;
 }
 
 CompoundMetaTileProperty::~CompoundMetaTileProperty() {
 	//  Free the memory for the copy of the array
-	free(propertyArray);
+	free(_propertyArray);
 }
 
 /* ===================================================================== *
@@ -159,8 +159,8 @@ bool MetaTilePropertyAnd::operator()(
 
 	//  Iterate through each element in the array and if any evaluate to
 	//  false, return false immediately.
-	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(mt, mapNum, tp) == false) return false;
+	for (i = 0; i < _arraySize; i++)
+		if ((*_propertyArray[i])(mt, mapNum, tp) == false) return false;
 
 	return true;
 }
@@ -177,8 +177,8 @@ bool MetaTilePropertyOr::operator()(
 
 	//  Iterate through each element in the array and if any evaluate to
 	//  true, return true immediately.
-	for (i = 0; i < arraySize; i++)
-		if ((*propertyArray[i])(mt, mapNum, tp)) return true;
+	for (i = 0; i < _arraySize; i++)
+		if ((*_propertyArray[i])(mt, mapNum, tp)) return true;
 
 	return false;
 }

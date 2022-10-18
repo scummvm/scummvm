@@ -53,7 +53,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Skip support"),
 			_s("Allow cutscenes to be skipped"),
 			"skip_support",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	AD_EXTRA_GUI_OPTIONS_TERMINATOR
@@ -73,11 +75,11 @@ public:
 		_directoryGlobs = Buried::directoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "buried";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "The Journeyman Project 2: Buried in Time";
 	}
 

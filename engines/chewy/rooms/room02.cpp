@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -46,29 +47,29 @@ void Room2::jump_out_r1(int16 nr) {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	startSetAILWait(nr, 1, ANI_FRONT);
 	setupScreen(DO_SETUP);
-	_G(det)->stop_detail(6);
+	_G(det)->stopDetail(6);
 	setPersonPos(32, 127, P_CHEWY, P_LEFT);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	clear_prog_ani();
 	switchRoom(1);
-	check_shad(2, 1);
+	setShadowPalette(2, true);
 }
 
 void Room2::electrifyWalkway1() {
 	_G(det)->startDetail(ANI_5, 255, ANI_FRONT);
 	start_spz(CH_TALK6, 255, false, ANI_FRONT);
 	startAadWait(49);
-	_G(det)->stop_detail(ANI_5);
+	_G(det)->stopDetail(ANI_5);
 
 	_G(det)->startDetail(GRID_FLASHING, 12, ANI_FRONT);
 	_G(gameState).R2ElectrocutedBork = true;
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 
-	_G(atds)->delControlBit(11, ATS_COUNT_BIT, ATS_DATA);
-	_G(atds)->delControlBit(11, ATS_ACTION_BIT, ATS_DATA);
-	_G(atds)->delControlBit(19, ATS_COUNT_BIT, ATS_DATA);
-	_G(atds)->delControlBit(25, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(8, ATS_COUNT_BIT, ATS_DATA);
+	_G(atds)->delControlBit(11, ATS_COUNT_BIT);
+	_G(atds)->delControlBit(11, ATS_ACTION_BIT);
+	_G(atds)->delControlBit(19, ATS_COUNT_BIT);
+	_G(atds)->delControlBit(25, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(8, ATS_COUNT_BIT);
 	_G(atds)->set_ats_str(11, 1, ATS_DATA);
 }
 
@@ -79,7 +80,7 @@ void Room2::electrifyWalkway2() {
 
 void Room2::gedAction(int index) {
 	if (index == 0) {
-		_G(det)->stop_detail(5);
+		_G(det)->stopDetail(5);
 		if (!_G(gameState).R2ElectrocutedBork)
 			_G(det)->startDetail(6, 2, ANI_FRONT);
 		else

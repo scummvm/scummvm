@@ -89,6 +89,11 @@ enum RoomVolumeMod {
 	kRoomVolumeMax = kRoomVolumeExtra2,
 };
 
+// Extended room boolean options
+enum RoomFlags {
+	kRoomFlag_BkgFrameLocked = 0x01
+};
+
 // Flag tells that walkable area does not have continious zoom
 #define NOT_VECTOR_SCALED  -10000
 // Flags tells that room is not linked to particular game ID
@@ -96,8 +101,8 @@ enum RoomVolumeMod {
 
 #define MAX_ROOM_BGFRAMES  5   // max number of frames in animating bg scene
 
-#define MAX_ROOM_HOTSPOTS  50  // v2.62 increased from 20 to 30; v2.8 to 50
-#define MAX_ROOM_OBJECTS   40
+#define MAX_ROOM_HOTSPOTS  50  // v2.62: 20 -> 30; v2.8: -> 50
+#define MAX_ROOM_OBJECTS   256 // v3.6.0: 40 -> 256 (now limited by room format)
 #define MAX_ROOM_REGIONS   16
 // TODO: this is remains of the older code, MAX_WALK_AREAS = real number - 1, where
 // -1 is for the solid wall. When fixing this you need to be careful, because some
@@ -128,6 +133,8 @@ struct RoomOptions {
 	int  PlayerView;
 	// Room's music volume modifier
 	RoomVolumeMod MusicVolume;
+	// A collection of boolean options
+	int  Flags;
 
 	RoomOptions();
 };
@@ -342,8 +349,7 @@ public:
 	// Room entities
 	size_t                  HotspotCount;
 	RoomHotspot             Hotspots[MAX_ROOM_HOTSPOTS];
-	size_t                  ObjectCount;
-	RoomObjectInfo          Objects[MAX_ROOM_OBJECTS];
+	std::vector<RoomObjectInfo> Objects;
 	size_t                  RegionCount;
 	RoomRegion              Regions[MAX_ROOM_REGIONS];
 	size_t                  WalkAreaCount;
@@ -365,6 +371,8 @@ public:
 	PInteractionScripts     EventHandlers;
 	// Compiled room script
 	PScript                 CompiledScript;
+	// Various extended options with string values, meta-data etc
+	StringMap               StrOptions;
 
 private:
 	// Room's legacy resolution type, defines relation room and game's resolution

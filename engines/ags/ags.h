@@ -36,7 +36,6 @@
 #include "ags/detection.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/lib/allegro/system.h"
-#include "ags/engine/util/mutex_std.h"
 
 namespace AGS3 {
 class Globals;
@@ -68,9 +67,6 @@ public:
 	EventsManager *_events;
 	Music *_music;
 	::AGS3::GFX_DRIVER *_gfxDriver;
-	::AGS3::AGS::Engine::Mutex _sMutex;
-	::AGS3::AGS::Engine::Mutex _soundCacheMutex;
-	::AGS3::AGS::Engine::Mutex _mp3Mutex;
 	::AGS3::Globals *_globals;
 	bool _forceTextAA;
 protected:

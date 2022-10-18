@@ -714,7 +714,7 @@ void Sprite::checkSprite() {
 
 		if (objBounds.contains(pt)) {
 			if (objBounds.contains(spritePt)) {
-				// Current point is already inside the the bounds, so impact occurred
+				// Current point is already inside the bounds, so impact occurred
 				// on a previous call. So simply do nothing until we're clear of the box
 				switch (obj._aType) {
 				case TALK_MOVE:

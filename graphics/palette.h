@@ -23,6 +23,7 @@
 #define GRAPHICS_PALETTE_H
 
 #include "common/scummsys.h"
+#include "common/hashmap.h"
 #include "common/noncopyable.h"
 
 /**
@@ -107,4 +108,46 @@ public:
 	virtual void grabPalette(byte *colors, uint start, uint num) const = 0;
 };
  /** @} */
+
+namespace Graphics {
+
+class PaletteLookup {
+public:
+	PaletteLookup();
+	/**
+	 * @brief Construct a new Palette Lookup object
+	 *
+	 * @param palette   the palette data, in interleaved RGB format
+	 * @param len       the number of palette entries to be read
+	 */
+	PaletteLookup(const byte *palette, uint len);
+
+	/**
+	 * @brief Pass palette to the look up. It also compares given palette
+	 * with the current one and resets cache only when their contents is different.
+	 *
+	 * @param palette   the palette data, in interleaved RGB format
+	 * @param len       the number of palette entries to be read
+	 *
+	 * @return true if palette was changed and false if it was the same
+	 */
+	bool setPalette(const byte *palette, uint len);
+
+	/**
+	 * @brief This method returns closest color from the palette
+	 *        and it uses cache for faster lookups
+	 *
+	 * @param useNaiveAlg            if true, use a simpler algorithm (non-floating point calculations)
+	 *
+	 * @return the palette index
+	 */
+	byte findBestColor(byte r, byte g, byte b, bool useNaiveAlg = false);
+
+private:
+	byte _palette[256 * 3];
+	uint _paletteSize;
+	Common::HashMap<int, byte> _colorHash;
+};
+
+} //  // end of namespace Graphics
 #endif

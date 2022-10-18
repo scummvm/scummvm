@@ -47,14 +47,15 @@ void ItemPickup::setup(int animationId, int screenX, int screenY) {
 	_facing = 0.0;
 	_timeLeft = 3000u;
 	_scale = 0;
-	_screenX = CLIP(screenX, 40, 600);
-	_screenY = CLIP(screenY, 40, 440);
+	_screenX = CLIP(screenX, 40, BladeRunnerEngine::kOriginalGameWidth  - 40);
+	_screenY = CLIP(screenY, 40, BladeRunnerEngine::kOriginalGameHeight - 40);
 	_screenRect.left = _screenX - 40;
 	_screenRect.right = _screenX + 40;
 	_screenRect.top = _screenY - 40;
 	_screenRect.bottom = _screenY + 40;
 
-	int pan = (75 * (2 * _screenX - 640)) / 640; // map [0..640] to [-75..75]
+	// map [0..640] to [-75..75]
+	int pan = (75 * (2 * _screenX - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 	_vm->_audioPlayer->playAud(_vm->_gameInfo->getSfxTrack(kSfxGETITEM1), 80, pan, pan, 50, 0);
 
 	_timeLast = _vm->_time->currentSystem();

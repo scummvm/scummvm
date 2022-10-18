@@ -46,6 +46,19 @@ namespace Graphics {
 
 struct TransformStruct;
 
+enum DitherMethod {
+	kDitherNaive,
+	kDitherFloyd,
+	kDitherAtkinson,
+	kDitherBurkes,
+	kDitherFalseFloyd,
+	kDitherSierra,
+	kDitherSierraTwoRow,
+	kDitherSierraLite,
+	kDitherStucki,
+	kDitherJarvis,
+};
+
 /**
  * An arbitrary graphics surface that can be the target (or source) of blit
  * operations, font rendering, etc.
@@ -260,6 +273,11 @@ public:
 	const Surface getSubArea(const Common::Rect &area) const;
 
 	/**
+	 * Clip the given source bounds so the passed destBounds will be entirely on-screen.
+	 */
+	bool clip(Common::Rect &srcBounds, Common::Rect &destBounds) const;
+
+	/**
 	 * Copy a bitmap to the internal buffer of the surface.
 	 *
 	 * The pixel format of the buffer must match the pixel format of the surface.
@@ -285,6 +303,34 @@ public:
 	void copyRectToSurface(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect);
 
 	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 *
+	 * @param buffer    Buffer containing the graphics data source.
+	 * @param srcPitch  Pitch of the buffer (number of bytes in a scanline).
+	 * @param destX     The x coordinate of the destination rectangle.
+	 * @param destY     The y coordinate of the destination rectangle.
+	 * @param width     Width of the destination rectangle.
+	 * @param height    Height of the destination rectangle.
+	 * @param key
+	 */
+	void copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key);
+
+	/**
+	 * Copy a bitmap to the internal buffer of the surface.
+	 *
+	 * The pixel format of the buffer must match the pixel format of the surface.
+	 *
+	 * @param srcSurface  Source of the bitmap data.
+	 * @param destX       The x coordinate of the destination rectangle.
+	 * @param destY       The y coordinate of the destination rectangle.
+	 * @param subRect     The subRect of the surface to be blitted.
+	 * @param key
+	 */
+	void copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key);
+
+	/**
 	 * Convert the data to another pixel format.
 	 *
 	 * This works in-place. This means it does not create an additional buffer
@@ -305,10 +351,19 @@ public:
 	 * The client code must call @ref free on the returned surface and then delete
 	 * it.
 	 *
-	 * @param dstFormat  The desired format.
-	 * @param palette    The palette (in RGB888), if the source format has a bpp of 1.
+	 * @param dstFormat   The desired format.
+	 * @param srcPalette  The palette (in RGB888), if the source format has a bpp of 1.
+	 * @param srcPaletteCount The color count in the for the srcPalette.
+	 * @param dstPalette  The palette (in RGB888), If the destination format has a bpp of 1.
+	 * @param dstaletteCount The color count in the for the dstPalette.
+	 * @param method      The dithering method if destination format has a bpp of 1. Default is Floyd-Steinberg.
 	 */
-	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *palette = 0) const;
+	Graphics::Surface *convertTo(const PixelFormat &dstFormat, const byte *srcPalette = 0, int srcPaletteCount = 0, const byte *dstPalette = 0, int dstPaletteCount = 0, DitherMethod method = kDitherFloyd) const;
+
+private:
+	void ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const;
+
+public:
 
 	/**
 	 * Draw a line.

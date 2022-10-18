@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -29,10 +30,8 @@ namespace Chewy {
 namespace Rooms {
 
 void Room77::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	if (_G(gameState).r76State == 1) {
 		_G(gameState).flags29_4 = true;
@@ -44,7 +43,7 @@ void Room77::entry() {
 
 		for (int i = 0; i < 3; ++i) {
 			_G(det)->showStaticSpr(2 + i);
-			_G(atds)->delControlBit(460 + i, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(460 + i, ATS_ACTIVE_BIT);
 		}
 	}
 
@@ -106,8 +105,8 @@ int Room77::proc2() {
 	int diaNr, aniId;
 	if (_G(gameState).flags29_8) {
 		start_spz_wait(14, 1, false, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
-		_G(atds)->set_ats_str(464, 1, 1);
+		delInventory(_G(cur)->getInventoryCursor());
+		_G(atds)->set_ats_str(464, 1, ATS_DATA);
 		_G(gameState).flags29_20 = true;
 		_G(gameState).flags29_40 = true;
 		diaNr = 442;

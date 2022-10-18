@@ -19,20 +19,6 @@
  *
  */
 
-//=============================================================================
-//
-// C-Script run-time interpreter (c) 2001 Chris Jones
-//
-// You must DISABLE OPTIMIZATIONS AND REGISTER VARIABLES in your compiler
-// when compiling this, or strange results can happen.
-//
-// There is a problem with importing functions on 16-bit compilers: the
-// script system assumes that all parameters are passed as 4 bytes, which
-// ints are not on 16-bit systems. Be sure to define all parameters as longs,
-// or join the 21st century and switch to DJGPP or Visual C++.
-//
-//=============================================================================
-
 #ifndef AGS_ENGINE_SCRIPT_SCRIPT_RUNTIME_H
 #define AGS_ENGINE_SCRIPT_SCRIPT_RUNTIME_H
 
@@ -77,8 +63,11 @@ extern Plugins::PluginMethod ccGetSymbolAddressForPlugin(const String &name);
 typedef void (*new_line_hook_type)(ccInstance *, int);
 extern void ccSetDebugHook(new_line_hook_type jibble);
 
-// Set the number of while loop iterations that aborts the script
-extern void ccSetScriptAliveTimer(int);
+// Set the script interpreter timeout values:
+// * sys_poll_timeout - defines the timeout (ms) at which the interpreter will run system events poll;
+// * abort_timeout - [temp disabled] defines the timeout (ms) at which the interpreter will cancel with error.
+// * abort_loops - max script loops without an engine update after which the interpreter will error;
+extern void ccSetScriptAliveTimer(unsigned sys_poll_timeout, unsigned abort_timeout, unsigned abort_loops);
 // reset the current while loop counter
 extern void ccNotifyScriptStillAlive();
 // for calling exported plugin functions old-style

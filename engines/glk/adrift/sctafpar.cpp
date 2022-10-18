@@ -503,7 +503,7 @@ static void parse_push_key(sc_vartype_t vt_key, sc_char type) {
 		sc_fatal("parse_push_key: stack overrun\n");
 
 	/* Push the key, and its associated type. */
-	parse_vt_key[parse_depth] = vt_key;
+	memcpy(parse_vt_key + parse_depth, &vt_key, sizeof(vt_key));
 	parse_format[parse_depth] = type;
 	parse_depth++;
 }

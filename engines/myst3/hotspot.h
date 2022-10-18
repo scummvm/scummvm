@@ -64,7 +64,6 @@ private:
 	int32 isZipDestinationAvailable(GameState *state);
 };
 
-
 } // End of namespace Myst3
 
 #endif // HOTSPOT_H_

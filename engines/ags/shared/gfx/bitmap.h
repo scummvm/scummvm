@@ -28,6 +28,7 @@
 #ifndef AGS_SHARED_GFX_BITMAP_H
 #define AGS_SHARED_GFX_BITMAP_H
 
+#include "ags/shared/gfx/gfx_def.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string.h"
 
@@ -41,12 +42,6 @@ enum BitmapMaskOption {
 	kBitmap_Copy,
 	// Consider mask color fully transparent and do not copy pixels having it
 	kBitmap_Transparency
-};
-
-enum BitmapFlip {
-	kBitmap_HFlip,
-	kBitmap_VFlip,
-	kBitmap_HVFlip
 };
 
 } // namespace Shared
@@ -67,6 +62,7 @@ namespace BitmapHelper {
 // Helper functions, that delete faulty bitmaps automatically, and return
 // NULL if bitmap could not be created.
 Bitmap *CreateBitmap(int width, int height, int color_depth = 0);
+Bitmap *CreateClearBitmap(int width, int height, int clear_color = 0, int color_depth = 0);
 Bitmap *CreateTransparentBitmap(int width, int height, int color_depth = 0);
 Bitmap *CreateSubBitmap(Bitmap *src, const Rect &rc);
 Bitmap *CreateBitmapCopy(Bitmap *src, int color_depth = 0);

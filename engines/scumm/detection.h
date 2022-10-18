@@ -30,6 +30,9 @@ namespace Scumm {
 
 // GUI-options, primarily used by detection_tables.h
 #define GUIO_TRIM_FMTOWNS_TO_200_PIXELS                GUIO_GAMEOPTIONS1
+#define GUIO_ENHANCEMENTS                              GUIO_GAMEOPTIONS2
+#define GUIO_AUDIO_OVERRIDE                            GUIO_GAMEOPTIONS3
+#define GUIO_ORIGINALGUI                               GUIO_GAMEOPTIONS4
 
 /**
  * Descriptor of a specific SCUMM game. Used internally to store
@@ -182,7 +185,14 @@ enum GameFeatures {
 	 * SCUMM v5-v7 Mac games stored in a container file
 	 * Used to differentiate between m68k and PPC versions of Indy4
 	 */
-	GF_MAC_CONTAINER = 1 << 16
+	GF_MAC_CONTAINER = 1 << 16,
+
+	/**
+	 * SCUMM HE Official Hebrew translations were audio only
+	 * but used reversed string for credits etc.
+	 * Used to disable BiDi in those games.
+	 */
+	GF_HE_NO_BIDI = 1 << 17
 };
 
 enum ScummGameId {
@@ -210,6 +220,7 @@ enum ScummGameId {
 	GID_PUTTZOO,
 	GID_FREDDI,
 	GID_FREDDI3,
+	GID_FREDDI4,
 	GID_BIRTHDAYRED,
 	GID_BIRTHDAYYELLOW,
 	GID_TREASUREHUNT,

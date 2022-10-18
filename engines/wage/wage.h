@@ -59,6 +59,14 @@
 
 struct ADGameDescription;
 
+namespace Common {
+struct Event;
+}
+
+namespace Graphics {
+class MacDialog;
+}
+
 namespace Wage {
 
 class Console;
@@ -103,6 +111,11 @@ enum {
 	// the current limitation is 32 debug levels (1 << 31 is the last one)
 };
 
+enum Resolution {
+	GF_RES800  =	1 << 0,
+	GF_RES1024 =	1 << 1
+};
+
 Common::Rect *readRect(Common::SeekableReadStream *in);
 const char *getIndefiniteArticle(const Common::String &word);
 const char *prependGenderSpecificPronoun(int gender);
@@ -127,6 +140,7 @@ public:
 	void regen();
 
 	const char *getTargetName() { return _targetName.c_str(); }
+	bool pollEvent(Common::Event &event);
 
 private:
 	bool loadWorld(Common::MacResManager *resMan);
@@ -200,6 +214,7 @@ public:
 	void appendText(const char *str);
 	void gameOver();
 	bool saveDialog();
+	void aboutDialog();
 	Obj *getOffer();
 	Chr *getMonster();
 	void processEvents();
@@ -208,6 +223,8 @@ public:
 	void encounter(Chr *player, Chr *chr);
 	void redrawScene();
 	void saveGame();
+
+	uint32 getFeatures();
 
 	Common::Error loadGameState(int slot) override;
 	Common::Error saveGameState(int slot, const Common::String &desc, bool isAutosave = false) override;

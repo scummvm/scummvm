@@ -896,7 +896,7 @@ private:
 	/**
 	 * Assumes that filename/resname contain a resourcefile name and a resource name.
 	 * If resname is "", filename contains the path of the resource on disk.
-	 * Returns the length of the resource if if the named resource is found.
+	 * Returns the length of the resource if the named resource is found.
 	 *
 	 * If FindResource() returns non-zero, the file is hot, i.e., it is open and positioned
 	 * to the start of the resource.

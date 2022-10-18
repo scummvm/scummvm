@@ -94,7 +94,8 @@ public:
 
 	// Add library location to the list of asset locations
 	AssetError   AddLibrary(const String &path, const AssetLibInfo **lib = nullptr);
-	// Add library location, specifying comma-separated list of filters
+	// Add library location, specifying comma-separated list of filters;
+	// if library was already added before, this method will overwrite the filters only
 	AssetError   AddLibrary(const String &path, const String &filters, const AssetLibInfo **lib = nullptr);
 	// Remove library location from the list of asset locations
 	void         RemoveLibrary(const String &path);
@@ -138,7 +139,7 @@ private:
 	// Loads library and registers its contents into the cache
 	AssetError  RegisterAssetLib(const String &path, AssetLibEx *&lib);
 
-	// Tries to find asset in known locations, tests if it's possible to open, and fills in AssetLocation
+	// Tries to find asset in the given location, and then opens a stream for reading
 	Stream *OpenAssetFromLib(const AssetLibEx *lib, const String &asset_name) const;
 	Stream *OpenAssetFromDir(const AssetLibEx *lib, const String &asset_name) const;
 

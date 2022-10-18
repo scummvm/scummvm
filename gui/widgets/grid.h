@@ -42,7 +42,8 @@ enum {
 	kLoadButtonCmd = 'LOAD',
 	kOpenTrayCmd = 'OPTR',
 	kItemClicked = 'LBX1',
-	kItemDoubleClickedCmd = 'LBX2'
+	kItemDoubleClickedCmd = 'LBX2',
+	kItemSizeCmd = 'SIZE'
 };
 
 /* GridItemInfo */
@@ -52,22 +53,24 @@ struct GridItemInfo {
 	Common::String 		engineid;
 	Common::String 		gameid;
 	Common::String 		title;
+	Common::String		description;
+	Common::String		extra;
 	Common::String 		thumbPath;
 	// Generic attribute value, may be any piece of metadata
 	Common::String		attribute;
 	Common::Language	language;
 	Common::Platform 	platform;
 
-	Common::Rect		rect;
+	int32				x, y, w, h;
 
-	GridItemInfo(int id, const Common::String &eid, const Common::String &gid
-		,const Common::String &t, Common::Language l, Common::Platform p)
-		: entryID(id), gameid(gid), engineid(eid), title(t), language(l), platform(p), isHeader(false) {
+	GridItemInfo(int id, const Common::String &eid, const Common::String &gid, const Common::String &t,
+		const Common::String &d, const Common::String &e, Common::Language l, Common::Platform p)
+		: entryID(id), gameid(gid), engineid(eid), title(t), description(d), extra(e), language(l), platform(p), isHeader(false) {
 		thumbPath = Common::String::format("icons/%s-%s.png", engineid.c_str(), gameid.c_str());
 	}
 
-	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), isHeader(true),
-		entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
+	GridItemInfo(const Common::String &groupHeader, int groupID) : title(groupHeader), description(groupHeader),
+		isHeader(true), entryID(groupID), language(Common::UNK_LANG), platform(Common::kPlatformUnknown) {
 		thumbPath = Common::String("");
 	}
 };
@@ -97,12 +100,14 @@ class GridWidget : public ContainerWidget, public CommandSender {
 protected:
 	Common::HashMap<int, const Graphics::ManagedSurface *> _platformIcons;
 	Common::HashMap<int, const Graphics::ManagedSurface *> _languageIcons;
+	Common::HashMap<int, const Graphics::ManagedSurface *> _extraIcons;
 
 	// Images are mapped by filename -> surface.
 	Common::HashMap<Common::String, const Graphics::ManagedSurface *> _loadedSurfaces;
 
 	Common::Array<GridItemInfo>			_dataEntryList;
-	Common::Array<GridItemInfo>			_sortedEntryList;
+	Common::Array<GridItemInfo>			_headerEntryList;
+	Common::Array<GridItemInfo *>		_sortedEntryList;
 	Common::Array<GridItemInfo *>		_visibleEntryList;
 
 	Common::String							_groupingAttribute;
@@ -131,6 +136,8 @@ protected:
 	int				_flagIconWidth;
 	int				_platformIconHeight;
 	int				_platformIconWidth;
+	int				_extraIconHeight;
+	int				_extraIconWidth;
 	int				_minGridXSpacing;
 	int				_minGridYSpacing;
 	int				_rows;
@@ -166,6 +173,7 @@ public:
 	const Graphics::ManagedSurface *filenameToSurface(const Common::String &name);
 	const Graphics::ManagedSurface *languageToSurface(Common::Language languageCode);
 	const Graphics::ManagedSurface *platformToSurface(Common::Platform platformCode);
+	const Graphics::ManagedSurface *demoToSurface(const Common::String extraString);
 
 	/// Update _visibleEntries from _allEntries and returns true if reload is required.
 	bool calcVisibleEntries();
@@ -184,6 +192,7 @@ public:
 	void reloadThumbnails();
 	void loadFlagIcons();
 	void loadPlatformIcons();
+	void loadExtraIcons();
 
 	void destroyItems();
 	void calcInnerHeight();
@@ -203,10 +212,13 @@ public:
 
 	void reflowLayout() override;
 
+	bool wantsFocus() override { return true; }
+
 	void openTray(int x, int y, int entryID);
 	void openTrayAtSelected();
 	void scrollBarRecalc();
 
+	void setSelected(int id);
 	void setFilter(const Common::U32String &filter);
 };
 

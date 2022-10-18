@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -94,15 +95,15 @@ void Room89::entry() {
 		// Squash screen into a single point at the center
 		int edi = -20;
 		int var24 = 0;
-		_G(out)->spriteSave(_G(Ci).TempArea, 0, 0, 320, 200, 320);
+		_G(out)->spriteSave(_G(tempArea), 0, 0, 320, 200);
 		for (int esi = 0; esi < 100; ++esi) {
 			edi -= 3;
 			var24 -= 2;
 			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
+			_G(out)->scale_set(_G(tempArea), ABS(edi) / 2, ABS(var24) / 2, edi, var24, _G(scr_width));
 			_G(out)->setPointer(nullptr);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
@@ -110,10 +111,10 @@ void Room89::entry() {
 		// Unsquish out thanks for playing screen
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->cls();
-		// Those strings are also displayed in the the German version
+		// Those strings are also displayed in the German version
 		_G(out)->printxy(70, 80, 15, 0, 0, "Thank you for playing");
 		_G(out)->printxy(70, 100, 15, 0, 0, "  CHEWY Esc from F5");
-		_G(out)->spriteSave(_G(Ci).TempArea, 0, 0, 320, 200, 320);
+		_G(out)->spriteSave(_G(tempArea), 0, 0, 320, 200);
 		edi = -300;
 		int var30 = -200;
 
@@ -122,15 +123,15 @@ void Room89::entry() {
 			var30 += 2;
 			_G(out)->setPointer(_G(workptr));
 			_G(out)->cls();
-			_G(out)->scale_set(_G(Ci).TempArea, ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
+			_G(out)->scale_set(_G(tempArea), ABS(edi) / 2, ABS(var30) / 2, edi, var30, _G(scr_width));
 			_G(out)->setPointer(nullptr);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 			g_events->delay(30);
 			SHOULD_QUIT_RETURN;
 		}
 
 		g_events->delay(3000);
-		_G(out)->ausblenden(2);
+		_G(out)->fadeOut();
 		_G(out)->setPointer(_G(workptr));
 		_G(out)->cls();
 		_G(out)->setPointer(nullptr);
@@ -139,9 +140,12 @@ void Room89::entry() {
 		Dialogs::Credits::execute();
 		
 		_G(gameState).SVal4 = 1;
-		_G(out)->ausblenden(2);
+		_G(out)->fadeOut();
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
+
+		// Quit the game
+		g_engine->quitGame();
 	}
 
 	_G(gameState).SVal2 = 0;
@@ -155,7 +159,7 @@ void Room89::setup_func() {
 	calc_person_look();
 	int destX;
 	
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 230)
+	if (_G(moveState)[P_CHEWY].Xypos[0] >= 230)
 		destX = 318;
 	else
 		destX = 116;
@@ -168,7 +172,7 @@ void Room89::talk1() {
 }
 
 int Room89::proc2() {
-	if (_G(gameState).inv_cur || _G(gameState).flags33_2)
+	if (_G(cur)->usingInventoryCursor() || _G(gameState).flags33_2)
 		return 0;
 
 	hideCur();
@@ -192,7 +196,7 @@ int Room89::proc2() {
 }
 
 int Room89::proc4() {
-	if (_G(gameState).inv_cur || _G(gameState).flags32_80)
+	if (_G(cur)->usingInventoryCursor() || _G(gameState).flags32_80)
 		return 0;
 
 	hideCur();
@@ -218,7 +222,7 @@ int Room89::proc4() {
 }
 
 int Room89::proc5() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	if (!_G(gameState).flags32_80 || !_G(gameState).flags33_1 || !_G(gameState).flags33_2)

@@ -57,7 +57,7 @@ static const ScriptEntry SCRIPT_PATCHES[] = {
 	{ GType_DarkSide, 62, DS_MAP62_PIT2 }	// Fix fall position for pit
 };
 
-// List of objects that that need to be removed. Most of these are for copies of objects that appear in
+// List of objects that need to be removed. Most of these are for copies of objects that appear in
 // the distance on the edge of other maps, so they don't simply pop into existance when the map changes.
 // When the main object is removed, the original didn't properly also removie the object copies
 #define REMOVE_OBJECTS_COUNT 6

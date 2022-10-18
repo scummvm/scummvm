@@ -1207,11 +1207,10 @@ void EdenGraphics::showMovie(int16 num, char arg1) {
 		palette[j++] = palette16[i].b >> 8;
 	}
 
-	Video::VideoDecoder *decoder = new Video::HNMDecoder(false, palette);
+	Video::VideoDecoder *decoder = new Video::HNMDecoder(g_system->getScreenFormat(), false, palette);
 	if (!decoder->loadStream(stream)) {
 		warning("Could not load movie %d", num);
 		delete decoder;
-		delete stream;
 		return;
 	}
 

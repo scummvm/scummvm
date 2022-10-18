@@ -47,8 +47,6 @@
 
 namespace Sludge {
 
-Variable *launchResult = NULL;
-
 extern bool allowAnyFilename;
 extern VariableStack *noStack;
 extern int numBIFNames, numUserFunc;
@@ -879,20 +877,23 @@ builtIn(launch) {
 		(newTextA[4] == ':' || (newTextA[4] == 's' && newTextA[5] == ':'))) {
 
 		// IT'S A WEBSITE!
-		g_sludge->launchMe.clear();
-		g_sludge->launchMe = newTextA;
-	} else {
-		Common::String gameDir = g_sludge->gamePath;
-		gameDir += "/";
-		g_sludge->launchMe.clear();
-		g_sludge->launchMe = gameDir + newText;
-		if (g_sludge->launchMe.empty())
-			return BR_ERROR;
+		bool success = g_sludge->_system->openUrl(newText);
+		fun->reg.setVariable(SVT_INT, success);
+		return BR_CONTINUE;
 	}
-	fun->reg.setVariable(SVT_INT, 1);
-	launchResult = &fun->reg;
 
-	return BR_KEEP_AND_PAUSE;
+	Common::String gameDir = ConfMan.get("path");
+	newText = gameDir + newText;
+
+	// local webpage?
+	if (newText.hasSuffixIgnoreCase(".htm") || newText.hasSuffixIgnoreCase(".html")) {
+		bool success = g_sludge->_system->openUrl("file:///" + newText);
+		fun->reg.setVariable(SVT_INT, success);
+	} else {
+		fun->reg.setVariable(SVT_INT, 0);
+	}
+
+	return BR_CONTINUE;
 }
 
 builtIn(pause) {

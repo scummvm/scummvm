@@ -27,6 +27,7 @@
 
 #include "common/math.h"
 #include "common/util.h"
+
 #include "engines/wintermute/ad/ad_block.h"
 #include "engines/wintermute/ad/ad_game.h"
 #include "engines/wintermute/ad/ad_generic.h"
@@ -43,13 +44,14 @@
 #include "engines/wintermute/base/base_sprite.h"
 #include "engines/wintermute/base/file/base_file.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/3ds/camera3d.h"
-#include "engines/wintermute/base/gfx/3ds/light3d.h"
-#include "engines/wintermute/base/gfx/3ds/loader3ds.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dcamera.h"
+#include "engines/wintermute/base/gfx/3dlight.h"
+#include "engines/wintermute/base/gfx/3dloader_3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 #include "engines/wintermute/math/math_util.h"
 #include "engines/wintermute/system/sys_class_registry.h"
 #include "engines/wintermute/wintermute.h"
+
 #include "math/glmath.h"
 
 namespace Wintermute {
@@ -60,8 +62,6 @@ IMPLEMENT_PERSISTENT(AdSceneGeometry, false)
 AdSceneGeometry::AdSceneGeometry(BaseGame *gameRef) : BaseObject(gameRef) {
 	_activeCamera = _activeLight = -1;
 	_viewMatrix.setToIdentity();
-	//m_WaypointHeight = 5.0f;
-	//m_WaypointHeight = 1.0f;
 	_waypointHeight = 10.0f;
 	_wptMarker = NULL;
 
@@ -117,9 +117,6 @@ void AdSceneGeometry::cleanup() {
 	_waypointGroups.clear();
 
 	for (i = 0; i < _cameras.size(); i++) {
-		//		CBRenderD3D* _renderer = (CBRenderD3D*)_gameRef->_renderer;
-		//		if(m_Renderer->m_Camera == _cameras[i]) m_Renderer->m_Camera = NULL;
-
 		delete _cameras[i];
 	}
 	_cameras.clear();
@@ -210,42 +207,44 @@ bool AdSceneGeometry::loadFile(const char *filename) {
 
 		switch (ExtNode->_type) {
 		case GEOM_WALKPLANE: {
-			AdWalkplane *plane = new AdWalkplane(_gameRef);
-			plane->setName(meshNames[i].c_str());
-			plane->_mesh = meshes[i];
-			// TODO: These constants are endianness dependent
-			plane->_mesh->fillVertexBuffer(0xFF0000FF);
-			plane->_receiveShadows = ExtNode->_receiveShadows;
-			_planes.add(plane);
-			} break;
+				AdWalkplane *plane = new AdWalkplane(_gameRef);
+				plane->setName(meshNames[i].c_str());
+				plane->_mesh = meshes[i];
+				plane->_mesh->fillVertexBuffer(0xFF0000FF);
+				plane->_receiveShadows = ExtNode->_receiveShadows;
+				_planes.add(plane);
+			}
+			break;
 
 		case GEOM_BLOCKED: {
-			AdBlock *block = new AdBlock(_gameRef);
-			block->setName(meshNames[i].c_str());
-			block->_mesh = meshes[i];
-			block->_mesh->fillVertexBuffer(0xFFFF0000);
-			block->_receiveShadows = ExtNode->_receiveShadows;
-			_blocks.add(block);
-			} break;
+				AdBlock *block = new AdBlock(_gameRef);
+				block->setName(meshNames[i].c_str());
+				block->_mesh = meshes[i];
+				block->_mesh->fillVertexBuffer(0xFFFF0000);
+				block->_receiveShadows = ExtNode->_receiveShadows;
+				_blocks.add(block);
+			}
+			break;
 
 		case GEOM_WAYPOINT: {
-			Mesh3DS *mesh = meshes[i];
-			// TODO: groups
-			if (_waypointGroups.size() == 0) {
-				_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
+				Mesh3DS *mesh = meshes[i];
+				if (_waypointGroups.size() == 0) {
+					_waypointGroups.add(new AdWaypointGroup3D(_gameRef));
+				}
+				_waypointGroups[0]->addFromMesh(mesh);
+				delete mesh;
 			}
-			_waypointGroups[0]->addFromMesh(mesh);
-			delete mesh;
-			} break;
+			break;
 
 		case GEOM_GENERIC: {
-			AdGeneric *generic = new AdGeneric(_gameRef);
-			generic->setName(meshNames[i].c_str());
-			generic->_mesh = meshes[i];
-			generic->_mesh->fillVertexBuffer(0xFF00FF00);
-			generic->_receiveShadows = ExtNode->_receiveShadows;
-			_generics.add(generic);
-			} break;
+				AdGeneric *generic = new AdGeneric(_gameRef);
+				generic->setName(meshNames[i].c_str());
+				generic->_mesh = meshes[i];
+				generic->_mesh->fillVertexBuffer(0xFF00FF00);
+				generic->_receiveShadows = ExtNode->_receiveShadows;
+				_generics.add(generic);
+			}
+			break;
 		}
 	}
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -120,7 +121,7 @@ void Room49::calc_boy() {
 		stopPerson(P_CHEWY);
 		stopPerson(P_HOWARD);
 		_G(person_end_phase)[P_CHEWY] = P_LEFT;
-		_G(det)->stop_detail(_G(gameState).R49BoyAni ? 1 : 0);
+		_G(det)->stopDetail(_G(gameState).R49BoyAni ? 1 : 0);
 		_G(det)->del_static_ani(_G(gameState).R49BoyAni ? 1 : 0);
 		_G(det)->set_static_ani(2, -1);
 
@@ -154,7 +155,7 @@ int16 Room49::use_boy() {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		talk_boy(265);
 		_G(gameState).R49WegFrei = true;
 		_G(gameState).room_e_obj[80].Attribut = EXIT_TOP;
@@ -170,7 +171,7 @@ int16 Room49::use_boy() {
 
 void Room49::use_boy_cigar() {
 	hideCur();
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	talk_boy(263);
 	_G(SetUpScreenFunc) = nullptr;
 	autoMove(5, P_CHEWY);
@@ -188,7 +189,7 @@ void Room49::use_boy_cigar() {
 	_G(room)->set_timer_status(255, TIMER_STOP);
 	_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
 	_G(det)->del_static_ani(_G(gameState).R49BoyAni ? 1 : 0);
-	_G(det)->stop_detail(_G(gameState).R49BoyAni ? 1 : 0);
+	_G(det)->stopDetail(_G(gameState).R49BoyAni ? 1 : 0);
 
 	_G(flags).NoScroll = false;
 	setPersonSpr(P_RIGHT, P_CHEWY);
@@ -197,7 +198,7 @@ void Room49::use_boy_cigar() {
 
 	_G(obj)->addInventory(GUM_INV, &_G(room_blk));
 	inventory_2_cur(GUM_INV);
-	_G(atds)->setControlBit(318, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(318, ATS_ACTIVE_BIT);
 
 	_G(SetUpScreenFunc) = setup_func;
 	_G(gameState).R49BoyWeg = true;
@@ -215,7 +216,7 @@ void Room49::talk_boy(int16 aad_nr) {
 	if (!_G(gameState).R49BoyWeg) {
 		_G(room)->set_timer_status(255, TIMER_STOP);
 		_G(uhr)->resetTimer(_G(timer_nr)[0], 0);
-		_G(det)->stop_detail(_G(gameState).R49BoyAni ? 1 : 0);
+		_G(det)->stopDetail(_G(gameState).R49BoyAni ? 1 : 0);
 
 		_G(det)->set_static_ani(_G(gameState).R49BoyAni ? 1 : 0, -1);
 		_G(det)->set_static_ani(2, -1);
@@ -241,7 +242,7 @@ void Room49::look_hotel() {
 int16 Room49::use_taxi() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 		startAniBlock(2, ABLOCK34);
@@ -260,7 +261,7 @@ int16 Room49::use_taxi() {
 
 		_G(det)->hideStaticSpr(7);
 		startSetAILWait(5, 1, ANI_FRONT);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		switchRoom(48);
 	}
 
@@ -270,7 +271,7 @@ int16 Room49::use_taxi() {
 void Room49::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 49) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 130) {

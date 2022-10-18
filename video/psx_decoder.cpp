@@ -20,7 +20,7 @@
  */
 
 // PlayStation Stream demuxer based on FFmpeg/libav
-// MDEC video emulation based on http://kenai.com/downloads/jpsxdec/Old/PlayStation1_STR_format1-00.txt
+// MDEC video emulation based on https://web.archive.org/web/20170411092531/https://kenai.com/downloads/jpsxdec/Old/PlayStation1_STR_format1-00.txt
 
 #include "audio/audiostream.h"
 #include "audio/decoders/adpcm.h"
@@ -389,8 +389,8 @@ void PSXStreamDecoder::PSXVideoTrack::decodeFrame(Common::BitStreamMemoryStream 
 
 	bits.skip(16); // unknown
 	bits.skip(16); // 0x3800
-	uint16 scale = bits.getBits(16);
-	uint16 version = bits.getBits(16);
+	uint16 scale = bits.getBits<16>();
+	uint16 version = bits.getBits<16>();
 
 	if (version != 2 && version != 3)
 		error("Unknown PSX stream frame version");
@@ -506,7 +506,7 @@ void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStreamMemory16LEMSB *bit
 
 		if (symbol == ESCAPE_CODE) {
 			// The escape code!
-			int zeroes = bits->getBits(6);
+			int zeroes = bits->getBits<6>();
 			count += zeroes + 1;
 			BLOCK_OVERFLOW_CHECK();
 			block += zeroes;
@@ -530,7 +530,7 @@ void PSXStreamDecoder::PSXVideoTrack::readAC(Common::BitStreamMemory16LEMSB *bit
 }
 
 int PSXStreamDecoder::PSXVideoTrack::readSignedCoefficient(Common::BitStreamMemory16LEMSB *bits) {
-	uint val = bits->getBits(10);
+	uint val = bits->getBits<10>();
 
 	// extend the sign
 	uint shift = 8 * sizeof(int) - 10;

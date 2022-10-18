@@ -26,12 +26,16 @@
 #include "common/coroutines.h"
 #include "tinsel/dw.h"	// new data types
 #include "tinsel/events.h"
-#include "tinsel/pcode.h"
 #include "tinsel/tinsel.h"
 
 namespace Tinsel {
 
 struct INT_CONTEXT;
+
+struct PROCESS_STRUC {
+	uint32 processId;       // ID of process
+	SCNHANDLE hProcessCode; // handle to actor script
+};
 
 //----------------- FUNCTION PROTOTYPES --------------------
 

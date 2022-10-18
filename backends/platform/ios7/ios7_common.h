@@ -41,7 +41,11 @@ enum InputEvent {
 	kInputApplicationRestoreState,
 	kInputSwipe,
 	kInputTap,
-	kInputMainMenu
+	kInputMainMenu,
+	kInputJoystickAxisMotion,
+	kInputJoystickButtonDown,
+	kInputJoystickButtonUp,
+	kInputChanged
 };
 
 enum ScreenOrientation {
@@ -112,7 +116,6 @@ bool iOS7_isBigDevice();
 
 void iOS7_buildSharedOSystemInstance();
 void iOS7_main(int argc, char **argv);
-void *iOS7_getProcAddress(const char *name);
 const char *iOS7_getDocumentsDir();
 bool iOS7_touchpadModeEnabled();
 

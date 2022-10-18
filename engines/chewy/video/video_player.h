@@ -34,9 +34,10 @@ public:
 	 * @Plays a video file
 	 * @param num - the video file number
 	 * @param stopMusic - stop music before starting the video
+	 * @param disposeMusic - dispose music after stopping the video
 	 * @return - true if played, false if skipped
 	*/
-	bool playVideo(uint num, bool stopMusic = true);
+	bool playVideo(uint num, bool stopMusic = true, bool disposeMusic = true);
 
 private:
 	bool handleCustom(uint num, uint frame, CfoDecoder *cfoDecoder);

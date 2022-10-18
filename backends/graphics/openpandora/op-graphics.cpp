@@ -66,4 +66,7 @@ void OPGraphicsManager::unloadGFXMode() {
 	SurfaceSdlGraphicsManager::unloadGFXMode();
 }
 
+void OPGraphicsManager::showSystemMouseCursor(bool visible) {
+}
+
 #endif

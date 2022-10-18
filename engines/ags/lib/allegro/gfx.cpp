@@ -234,6 +234,8 @@ void memory_putpixel(BITMAP *bmp, int x, int y, int color) {
 
 void putpixel(BITMAP *bmp, int x, int y, int color) {
 	Graphics::ManagedSurface &surf = **bmp;
+	if (x >= surf.w || y >= surf.h)
+		return;
 	void *p = surf.getBasePtr(x, y);
 
 	switch (surf.format.bytesPerPixel) {

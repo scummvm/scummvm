@@ -19,6 +19,8 @@
  *
  */
 
+#if defined (OBSOLETE)
+
 #include "common/str.h"
 #include "ags/shared/ac/interface_element.h"
 
@@ -27,7 +29,7 @@ namespace AGS3 {
 InterfaceElement::InterfaceElement() {
 	vtextxp = 0;
 	vtextyp = 1;
-	strcpy(vtext, "@SCORETEXT@$r@GAMENAME@");
+	snprintf(vtext, sizeof(vtext), "%s", "@SCORETEXT@$r@GAMENAME@");
 
 	numbuttons = 0;
 	bgcol = 8;
@@ -38,3 +40,5 @@ InterfaceElement::InterfaceElement() {
 }
 
 } // namespace AGS3
+
+#endif // OBSOLETE

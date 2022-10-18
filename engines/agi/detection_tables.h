@@ -290,8 +290,9 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Black Cauldron (PC 5.25") 2.10 11/10/88 [AGI 3.002.098]
 	GAME3("bc", "2.10 1988-11-10 5.25\"", "bcdir", "0c5a9acbcc7e51127c34818e75806df6", 0x3149, GID_BC),
 
-	// Black Cauldron (PC) 2.10 [AGI 3.002.097]
-	GAME3("bc", "2.10", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
+	// Black Cauldron (PC 3.5") 2.10 11/10/88 [AGI 3.002.098]
+	// BC.QA says "Interpreter: 3.002.097", while AGIDATA.OVL is "3.002.098"
+	GAME3("bc", "2.10 1988-11-10 3.5\"", "bcdir", "0de3953c9225009dc91e5b0d1692967b", 0x3149, GID_BC),
 
 	// Black Cauldron (CoCo3 360k) [AGI 2.023]
 	GAME_PS("bc", "", "51212c54808ade96176f201ae0ac7a6f", 357, 0x2440, GID_BC, Common::kPlatformCoCo3),
@@ -671,7 +672,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	// Mickey's Space Adventure
 	// Preagi game
 	GAMEpre_P("mickey", "", "1.pic", "b6ec04c91a05df374792872c4d4ce66d", 2489,
-							"FLASHLIT.OOO", "d60a7b6ff96720037f7e88863f48c5d4", 97, 0x0000, GID_MICKEY, Common::kPlatformDOS),
+							"OBJ/FLASHLIT.OOO", "d60a7b6ff96720037f7e88863f48c5d4", 97, 0x0000, GID_MICKEY, Common::kPlatformDOS),
 
 	// Mixed-Up Mother Goose (Amiga) 1.1
 	// Problematic: crashes
@@ -716,7 +717,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	GAME("pq1", "2.0G 1987-12-03", "d194e5d88363095f55d5096b8e32fbbb", 0x2917, GID_PQ1),
 
 	// Police Quest 1 (PC) 2.0G 12/3/87; with Hebrew translation
-	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, 0, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
+	GAME_LVFPN("pq1", "2.0G 1987-12-03", "PQ1.WAG", "59e1b2fb6d025968b8ed7388f107c7b5", -1, Common::HE_ISR, 0x2917, GF_EXTCHAR, GID_PQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Police Quest 1 (CoCo3 360k) [AGI 2.023]
 	GAME_PS("pq1", "", "28a077041f75aab78f66804800940085", 375, 0x2440, GID_PQ1, Common::kPlatformCoCo3),
@@ -755,6 +756,9 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.426/2.917]
 	GAME("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "5d67630aba008ec5f7f9a6d0a00582f4", 0x2440, GID_SQ1),
+
+	// Space Quest 1 (PC 5.25"/3.5") 2.2 [AGI 2.917]; French Translation
+	GAME_LVFPN("sq1", "2.2 1987-05-07 5.25\"/3.5\"", "words.tok.extended", "3f1730f3c9d4622a986f735af0f8734a", 12665, Common::FR_FRA, 0x2917, GF_EXTCHAR, GID_SQ1, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT),
 
 	// Space Quest 1 (CoCo3 360k) [AGI 2.072]
 	GAME_PS("sq1", "", "5d67630aba008ec5f7f9a6d0a00582f4", 372, 0x2440, GID_SQ1, Common::kPlatformCoCo3),
@@ -845,8 +849,8 @@ static const AGIGameDescription gameDescriptions[] = {
 							"obj.40",    "188636a4a340fcfd8e7fab1e8e0ac53b", 657, 0x0000, GID_WINNIE, Common::kPlatformDOS),
 
 	// Winnie the Pooh in the Hundred Acre Wood (Amiga)
-	GAMEpre_PO("winnie", "", "title",   "2e7900c1ccaa7671d65405f6d1efed30", 1334,
-							 "room.62", "d56297aa9a1714dc654034f8db9f05c9", 1319, 0x0000, GID_WINNIE, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
+	GAMEpre_PO("winnie", "", "misc/title",    "2e7900c1ccaa7671d65405f6d1efed30", 1334,
+							 "rooms/room.62", "d56297aa9a1714dc654034f8db9f05c9", 1319, 0x0000, GID_WINNIE, Common::kPlatformAmiga, GAMEOPTIONS_AMIGA),
 
 	// Winnie the Pooh in the Hundred Acre Wood (C64)
 	GAMEpre_P("winnie", "", "title.pic", "d4eb97cffc866110f71e1ec9f84fe643", 4097,
@@ -951,6 +955,8 @@ static const AGIGameDescription gameDescriptions[] = {
 
 	FANMADE("Go West, Young Hippie", "ff31484ea465441cb5f3a0f8e956b716"),
 	FANMADE("Good Man (demo v3.41)", "3facd8a8f856b7b6e0f6c3200274d88c"),
+	FANMADE("Good Man (demo v4.0)", "d36f5d98cfcfd28cf7d4103906c59a77"),
+	FANMADE("Good Man (demo v4.0T)", "8184f70a5a33d4f407dfc8e9ddab99e9"),
 
 	GAME_LVFPNF("agi-fanmade", "Groza [AGDS sample]", "logdir", "421da3a18004122a966d64ab6bd86d2e", -1,
 	            Common::RU_RUS, 0x2440, GF_AGDS, GID_FANMADE, Common::kPlatformDOS, GType_V2, GAMEOPTIONS_DEFAULT), // Гроза
@@ -1074,6 +1080,7 @@ static const AGIGameDescription gameDescriptions[] = {
 	FANMADE("Tex McPhilip 1 - Quest For The Papacy", "3c74b9a24b51aa8020ac82bee3132266"),
 	FANMADE("Tex McPhilip 2 - Road To Divinity (v1.5)", "7387e8df854440bc26620ca0ea43af9a"),
 	FANMADE("Tex McPhilip 3 - A Destiny of Sin (Demo v0.25)", "992d12031a486ad84e592ff5d7c9d782"),
+	FANMADE("Tex McPhilip 3 - A Destiny of Sin (v1.02)", "587d15e1106e59c33053c01b301ffe05"),
 	FANMADE("The 13th Disciple (v1.00)", "887719ad59afce9a41ec057dbb73ad73"),
 	FANMADE("The 13th Disciple (v1.01)", "58e3ec1b9ac1a79901c472aaa59db832"),
 	FANMADE("The Adventures of a Crazed Hermit", "6e3086cbb794d3299a9c5a9792295511"),

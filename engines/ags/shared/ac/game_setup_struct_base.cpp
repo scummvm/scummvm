@@ -21,6 +21,7 @@
 
 #include "ags/shared/ac/character_info.h"
 #include "ags/shared/ac/game_setup_struct_base.h"
+#include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/shared/ac/words_dictionary.h"
 #include "ags/shared/script/cc_script.h"
@@ -239,6 +240,9 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	case kGameResolution_320x240:
 		return Size(320, 240);
 	case kGameResolution_640x400:
+		// The engine was modified for Whispers of a Machine to return 640x360
+		if (strcmp(_GP(game).guid, "{5833654f-6f0d-40d9-99e2-65c101c8544a}") == 0)
+			return Size(640, 360);
 		return letterbox ? Size(640, 480) : Size(640, 400);
 	case kGameResolution_640x480:
 		return Size(640, 480);
@@ -249,9 +253,8 @@ Size ResolutionTypeToSize(GameResolutionType resolution, bool letterbox) {
 	case kGameResolution_1280x720:
 		return Size(1280, 720);
 	default:
-		break;
+		return Size();
 	}
-	return Size();
 }
 
 const char *GetScriptAPIName(ScriptAPIVersion v) {
@@ -265,10 +268,10 @@ const char *GetScriptAPIName(ScriptAPIVersion v) {
 	case kScriptAPI_v350: return "v3.5.0-alpha";
 	case kScriptAPI_v3507: return "v3.5.0-final";
 	case kScriptAPI_v351: return "v3.5.1";
-	case kScriptAPI_v360: return "v3.6.0";
-	case kScriptAPI_Undefined: return "undefined";
-	}
-	return "unknown";
+	case kScriptAPI_v360: return "v3.6.0-alpha";
+	case kScriptAPI_v36026: return "v3.6.0-final";
+	default: return "unknown";
+	}	
 }
 
 } // namespace AGS3

@@ -189,7 +189,7 @@ protected:
 	// Stores the default values that should be set for each controller.
 	// -1 means no explicit default should be set for that controller.
 	struct ControllerDefaults {
-		int8 program;
+		int8 program[16];
 		int8 instrumentBank;
 		int8 drumkit;
 
@@ -354,11 +354,40 @@ public:
 	 */
 	void setControllerDefault(ControllerDefaultType type, int16 value);
 	/**
+	 * Specify a default value for a controller which should be set when a new
+	 * track is started. This expects an array of values, each of which will
+	 * be used as the default for the corresponding MIDI channel.
+	 *
+	 * This is currently only supported for program.
+	 *
+	 * See setControllerDefault for more details.
+	 *
+	 * @param type The controller which should be reset.
+	 * @param values The default values which should be set. Must be a 16 value
+	 * array.
+	 */
+	void setControllerDefaults(ControllerDefaultType type, int16 *values);
+	/**
 	 * Clears a previously set default value for the specified controller.
 	 * 
 	 * @param type The controller for which the default value should be cleared.
 	 */
 	void clearControllerDefault(ControllerDefaultType type);
+
+	/**
+	 * Sets an instrument map for arbitrarily remapping instruments in the MIDI
+	 * data. The map should consist of 128 bytes, with the index representing
+	 * the instrument number in the MIDI data, and the value being the
+	 * instrument which should be substituted.
+	 * This instrument mapping is applied before MT-32 to GM or GM to MT-32
+	 * instrument mapping.
+	 * Call this method with nullptr as parameter to clear a previously set
+	 * instrument remapping.
+	 * 
+	 * @param instrumentRemapping The instrument map that should be used for
+	 * remapping, or nullptr to disable remapping.
+	 */
+	void setInstrumentRemapping(const byte *instrumentRemapping);
 
 	/**
 	 * Applies the user volume settings to the MIDI driver. MIDI channel
@@ -423,6 +452,9 @@ protected:
 	// Default values for each controller
 	ControllerDefaults _controllerDefaults;
 
+	// Map for arbitrary instrument remapping.
+	const byte *_instrumentRemapping;
+
 	// True if the driver should scale MIDI channel volume to the user
 	// specified volume settings.
 	bool _userVolumeScaling;
@@ -447,11 +479,9 @@ protected:
 
 class MidiDriver_NULL_Multisource : public MidiDriver_Multisource {
 public:
-	~MidiDriver_NULL_Multisource();
-
 	int open() override;
 	bool isOpen() const override { return true; }
-	void close() override { }
+	void close() override;
 	uint32 getBaseTempo() override { return 10000; }
 	MidiChannel *allocateChannel() override { return 0; }
 	MidiChannel *getPercussionChannel() override { return 0; }

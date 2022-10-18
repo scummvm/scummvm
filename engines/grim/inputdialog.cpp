@@ -71,7 +71,7 @@ InputDialog::InputDialog(const Common::String &message, const Common::String &st
 	int height = 10;
 	for (int i = 0; i < lineCount; i++) {
 		new GUI::StaticTextWidget(this, 10, height, maxlineWidth, kLineHeight,
-								  lines[i], Graphics::kTextAlignCenter);
+		                          lines[i], Graphics::kTextAlignCenter);
 		height += kLineHeight;
 	}
 	height += 10;

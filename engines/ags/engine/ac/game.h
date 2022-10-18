@@ -90,13 +90,10 @@ int Game_GetMODPattern();
 //=============================================================================
 int Game_GetDialogCount();
 
-// Defines a custom save parent directory, which will replace $MYDOCS$/GameName
-// when a new save directory is set from the script
-bool SetCustomSaveParent(const Shared::String &path);
-// If explicit_path flag is false, the actual path will be constructed
-// as a relative to system's user saves directory
-bool SetSaveGameDirectoryPath(const Shared::String &newFolder, bool explicit_path = false);
-int Game_SetSaveGameDirectory(const Shared::String &newFolder);
+// Sets a default save directory, based on platform driver settings and user config
+void SetDefaultSaveDirectory();
+// Sets a new save directory within the save parent; copies "restart" slot if available
+int Game_SetSaveGameDirectory(const char *newFolder);
 const char *Game_GetSaveSlotDescription(int slnum);
 
 const char *Game_GetGlobalStrings(int index);
@@ -140,6 +137,8 @@ int Game_GetNormalFont();
 
 const char *Game_GetTranslationFilename();
 int Game_ChangeTranslation(const char *newFilename);
+const char *Game_GetSpeechVoxFilename();
+bool Game_ChangeSpeechVox(const char *newFilename);
 
 //=============================================================================
 
@@ -152,8 +151,16 @@ Shared::String get_save_game_suffix();
 void set_save_game_suffix(const Shared::String &suffix);
 // Returns full path to the save for the given slot number
 Shared::String get_save_game_path(int slotNum);
+// Try calling built-in restore game dialog;
+// NOTE: this is a script command; may be aborted according to the game & room settings
 void restore_game_dialog();
+// Unconditionally display a built-in restore game dialog
+bool do_restore_game_dialog();
+// Try calling built-in save game dialog;
+// NOTE: this is a script command; may be aborted according to the game & room settings
 void save_game_dialog();
+// Unconditionally display a built-in save game dialog
+bool do_save_game_dialog();
 void free_do_once_tokens();
 // Free all the memory associated with the game
 void unload_game_file();
@@ -194,7 +201,7 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen = 99999);
 const char *get_global_message(int msnum);
 void get_message_text(int msnum, char *buffer, char giveErr = 1);
 
-bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize);
+bool unserialize_audio_script_object(int index, const char *objectType, AGS::Shared::Stream *in, size_t data_sz);
 
 // Notifies the game objects that certain sprite was updated.
 // This make them update their render states, caches, and so on.

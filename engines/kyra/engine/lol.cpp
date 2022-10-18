@@ -50,6 +50,8 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_tim = 0;
 
 	_lang = 0;
+	_langIntern = 0;
+
 	Common::Language lang = Common::parseLanguage(ConfMan.get("language"));
 	if (lang == _flags.fanLang && _flags.replacedLang != Common::UNK_LANG)
 		lang = _flags.replacedLang;
@@ -58,7 +60,6 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	case Common::EN_ANY:
 	case Common::EN_USA:
 	case Common::EN_GRB:
-		_lang = 0;
 		break;
 
 	case Common::FR_FRA:
@@ -69,13 +70,17 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 		_lang = 2;
 		break;
 
+	case Common::ES_ESP:
+		_langIntern = 2;
+		break;
+
 	case Common::JA_JPN:
-		_lang = 0;
+		_langIntern = 1;
 		break;
 
 	default:
 		warning("unsupported language, switching back to English");
-		_lang = 0;
+		break;
 	}
 
 	_chargenFrameTable = _flags.isTalkie ? _chargenFrameTableTalkie : _chargenFrameTableFloppy;
@@ -201,6 +206,16 @@ LoLEngine::LoLEngine(OSystem *system, const GameFlags &flags) : KyraRpgEngine(sy
 	_lightningDiv = 0;
 	_lightningFirstSfx = 0;
 	_lightningSfxFrame = 0;
+
+	_stashSetupData = _monsterDirFlags = _monsterScaleX = _monsterScaleY = _updateSpellBookCoords = _updateSpellBookAnimData = _healShapeFrames = nullptr;
+	_sceneItemOffs = _monsterShiftOffs = nullptr;
+	_flyingItemShapes = nullptr;
+	_monsterDecorationShapes = nullptr;
+	_monsterModifiers1 = _monsterModifiers2 = _monsterModifiers3 = _monsterModifiers4 = _monsterScaleWH = _autoMapStrings = nullptr;
+	_fireBallCoords = nullptr;
+	_subMenuIndex = _numFireballShapes = _numHealShapes = _numHealiShapes = 0;
+	_currentMapLevel = _automapTopLeftX = _automapTopLeftY = 0;
+	_mapUpdateNeeded = false;
 
 	_compassTimer = 0;
 	_scriptCharacterCycle = 0;
@@ -479,7 +494,6 @@ void LoLEngine::pauseEngineIntern(bool pause) {
 
 Common::Error LoLEngine::go() {
 	int action = -1;
-
 	if (_gameToLoad == -1) {
 		action = processPrologue();
 		if (action == -1)
@@ -653,7 +667,11 @@ uint8 *LoLEngine::getItemIconShapePtr(int index) {
 }
 
 int LoLEngine::mainMenu() {
-	bool hasSave = saveFileLoadable(0);
+	bool hasSave = false;
+	for (int i = 0; i < 20 && !hasSave; ++i) {
+		if (saveFileLoadable(i)) 
+			hasSave = true;
+	}
 
 	MainMenu::StaticData data[] = {
 		// 256 color ASCII mode
@@ -895,6 +913,8 @@ void LoLEngine::runLoop() {
 
 		update();
 
+		updatePlayTimer();
+
 		if (_sceneUpdateRequired)
 			gui_drawScene(0);
 		else
@@ -926,6 +946,8 @@ void LoLEngine::writeSettings() {
 	ConfMan.setBool("smooth_scrolling", _smoothScrollingEnabled);
 	ConfMan.setBool("auto_savenames", _autoSaveNamesEnabled);
 
+	static const Common::Language extraLanguages[] = { Common::EN_ANY, Common::JA_JPN, Common::ES_ESP, Common::ZH_TWN };
+
 	switch (_lang) {
 	case 1:
 		_flags.lang = Common::FR_FRA;
@@ -937,10 +959,9 @@ void LoLEngine::writeSettings() {
 
 	case 0:
 	default:
-		if (_flags.platform == Common::kPlatformPC98 || _flags.platform == Common::kPlatformFMTowns)
-			_flags.lang = Common::JA_JPN;
-		else
-			_flags.lang = Common::EN_ANY;
+		assert (_langIntern >= 0 && _langIntern < ARRAYSIZE(extraLanguages));
+		_flags.lang = extraLanguages[_langIntern];
+		break;
 	}
 
 	if (_flags.lang == _flags.replacedLang && _flags.fanLang != Common::UNK_LANG)
@@ -985,7 +1006,7 @@ void LoLEngine::update() {
 
 #pragma mark - Localization
 
-char *LoLEngine::getLangString(uint16 id) {
+const char *LoLEngine::getLangString(uint16 id) {
 	if (id == 0xFFFF)
 		return 0;
 
@@ -1709,8 +1730,7 @@ void LoLEngine::generateBrightnessPalette(const Palette &src, Palette &dst, int 
 		modifier >>= 1;
 		if (modifier)
 			modifier--;
-		if (modifier > 3)
-			modifier = 3;
+
 		_blockBrightness = modifier << 4;
 		_sceneUpdateRequired = true;
 
@@ -1840,7 +1860,7 @@ int LoLEngine::characterSays(int track, int charId, bool redraw) {
 	return r ? (textEnabled() ? 1 : 0) : 1;
 }
 
-int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
+int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex) {
 	int ch = 0;
 	bool skipAnim = false;
 
@@ -1912,6 +1932,7 @@ int LoLEngine::playCharacterScriptChat(int charId, int mode, int restorePortrait
 
 void LoLEngine::setupDialogueButtons(int numStr, const char *s1, const char *s2, const char *s3) {
 	screen()->setScreenDim(5);
+	assert(numStr);
 
 	if (numStr == 1 && speechEnabled()) {
 		_dialogueNumButtons = 0;
@@ -3273,7 +3294,7 @@ void LoLEngine::playSpellAnimation(WSAMovie_v2 *mov, int firstFrame, int lastFra
 			fin = true;
 	}
 
-	if (restoreScreen && (mov || callback)) {
+	if (restoreScreen && mov) {
 		_screen->copyPage(12, 2);
 		_screen->copyRegion(x, y, x, y, w2, h2, 2, 0, Screen::CR_NO_P_CHECK);
 		_screen->updateScreen();
@@ -3550,14 +3571,7 @@ int LoLEngine::calcInflictableDamagePerItem(int16 attacker, int16 target, uint16
 	if (hitType == 2 || !dmg)
 		return (dmg == 1) ? 2 : dmg;
 
-
-	int p = (calculateProtection(target) << 7) / dmg;
-	if (p > 217)
-		p = 217;
-
-	d = 256 - p;
-	r = (dmg * ABS(d)) >> 8;
-	dmg = d < 0 ? -r : r;
+	dmg = (dmg * (256 - MIN<int>((calculateProtection(target) << 7) / dmg, 217))) >> 8;
 
 	return (dmg < 2) ? 2 : dmg;
 }

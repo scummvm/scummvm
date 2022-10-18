@@ -92,20 +92,19 @@
  * and vice versa.
  */
 
-// compilerspecific variants come first, fallback last
+// compiler-specific variants come first, fallback last
+#if GCC_ATLEAST(4, 8) || defined(__clang__)
 
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint16 SWAP_BYTES_16(const uint16 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_16(a);
-		} else {
-			uint16 result;
-			__asm__ ("wsbh %0,%1" : "=r" (result) : "r" (a));
-			return result;
-		}
+	FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
+		return __builtin_bswap16(a);
 	}
+
+#elif defined(_MSC_VER)
+
+	FORCEINLINE uint16 SWAP_BYTES_16(uint16 a) {
+		return _byteswap_ushort(a);
+	}
+
 #else
 
 	inline uint16 SWAP_BYTES_16(const uint16 a) {
@@ -120,29 +119,8 @@
  * and vice versa.
  */
 
-// machine/compiler-specific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint32 SWAP_BYTES_32(const uint32 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_32(a);
-		} else {
-			uint32 result;
-#	if defined(__psp__)
-			// use special allegrex instruction
-			__asm__ ("wsbw %0,%1" : "=r" (result) : "r" (a));
-#	else
-			__asm__ ("wsbh %0,%1\n"
-			         "rotr %0,%0,16" : "=r" (result) : "r" (a));
-#	endif
-			return result;
-		}
-	}
-
-// Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif GCC_ATLEAST(4, 3)
+// compiler-specific variants come first, fallback last
+#if defined(__GNUC__)
 
 	FORCEINLINE uint32 SWAP_BYTES_32(uint32 a) {
 		return __builtin_bswap32(a);
@@ -169,26 +147,8 @@
  * and vice versa.
  */
 
-// machine/compiler-specific variants come first, fallback last
-
-// Test for GCC and if the target has the MIPS rel.2 instructions (we know the psp does)
-//
-#if defined(__GNUC__) && (defined(__psp__) || defined(_MIPS_ARCH_MIPS32R2) || defined(_MIPS_ARCH_MIPS64R2))
-
-	FORCEINLINE uint64 SWAP_BYTES_64(const uint64 a) {
-		if (__builtin_constant_p(a)) {
-			return SWAP_CONSTANT_64(a);
-		} else {
-			uint32 low = (uint32)a, high = (uint32)(a >> 32);
-			low = SWAP_BYTES_32(low);
-			high = SWAP_BYTES_32(high);
-
-			return (((uint64)low) << 32) | high;
-		}
-	}
-
-// Test for GCC >= 4.3.0 as this version added the bswap builtin
-#elif GCC_ATLEAST(4, 3)
+// compiler-specific variants come first, fallback last
+#if defined(__GNUC__)
 
 	FORCEINLINE uint64 SWAP_BYTES_64(uint64 a) {
 		return __builtin_bswap64(a);
@@ -239,14 +199,10 @@
  *  @{
  */
 
-// Test for GCC >= 4.0. These implementations will automatically use
+// Test for GCC and compatible. These implementations will automatically use
 // CPU-specific instructions for unaligned data when they are available (eg.
-// MIPS). See also this email thread on scummvm-devel for details:
-// <http://thread.gmane.org/gmane.games.devel.scummvm/8063>
-//
-// Moreover, we activate this code for GCC >= 3.3 but *only* if unaligned access
-// is allowed.
-#if GCC_ATLEAST(4, 0) || (GCC_ATLEAST(3, 3) && !defined(SCUMM_NEED_ALIGNMENT))
+// MIPS).
+#if defined(__GNUC__)
 
 	FORCEINLINE uint16 READ_UINT16(const void *ptr) {
 		struct Unaligned16 { uint16 val; } __attribute__ ((__packed__, __may_alias__));
@@ -626,6 +582,188 @@ inline void WRITE_BE_UINT24(void *ptr, uint32 value) {
 #define READ_UINT24(a) READ_BE_UINT24(a)
 #define WRITE_UINT24(a,b) WRITE_BE_UINT24(a,b)
 #endif
+
+union SwapFloat {
+	float f;
+	uint32 u32;
+};
+
+STATIC_ASSERT(sizeof(float) == sizeof(uint32), Unexpected_size_of_float);
+
+inline float READ_LE_FLOAT32(const void *ptr) {
+	SwapFloat swap;
+	swap.u32 = READ_LE_UINT32(ptr);
+	return swap.f;
+}
+
+inline void WRITE_LE_FLOAT32(void *ptr, float value) {
+	SwapFloat swap;
+	swap.f = value;
+	WRITE_LE_UINT32(ptr, swap.u32);
+}
+
+inline float READ_BE_FLOAT32(const void *ptr) {
+	SwapFloat swap;
+	swap.u32 = READ_BE_UINT32(ptr);
+	return swap.f;
+}
+
+inline void WRITE_BE_FLOAT32(void *ptr, float value) {
+	SwapFloat swap;
+	swap.f = value;
+	WRITE_BE_UINT32(ptr, swap.u32);
+}
+
+#ifdef SCUMM_LITTLE_ENDIAN
+#define READ_FLOAT32(a) READ_LE_FLOAT32(a)
+#define WRITE_FLOAT32(a,b) WRITE_LE_FLOAT32(a,b)
+#else
+#define READ_FLOAT32(a) READ_BE_FLOAT32(a)
+#define WRITE_FLOAT32(a,b) WRITE_BE_FLOAT32(a,b)
+#endif
+
+#ifdef SCUMM_FLOAT_WORD_LITTLE_ENDIAN
+union SwapDouble {
+	double d;
+	uint64 u64;
+	struct {
+		uint32 low, high;
+	} u32;
+};
+#else
+union SwapDouble {
+	double d;
+	uint64 u64;
+	struct {
+		uint32 high, low;
+	} u32;
+};
+#endif
+
+STATIC_ASSERT(sizeof(double) == sizeof(uint64) || sizeof(double) == sizeof(uint32), Unexpected_size_of_double);
+
+template<size_t n> inline double READ_DOUBLE(const SwapDouble& sw);
+template<size_t n> inline void WRITE_DOUBLE(SwapDouble &sw, double d);
+
+// 64-bit double
+template<> inline double READ_DOUBLE<sizeof(uint64)>(const SwapDouble& sd)
+{
+  return sd.d;
+}
+
+template<> inline void WRITE_DOUBLE<sizeof(uint64)>(SwapDouble &sd, double d)
+{
+  sd.d = d;
+}
+
+// 32-bit double
+template<> inline double READ_DOUBLE<sizeof(uint32)>(const SwapDouble& sd)
+{
+  SwapFloat sf;
+  uint32 e = (sd.u32.high >> 20) & 0x7ff;
+  if (e <= 896) {
+    // Too small for normalized, create a zero with the correct sign
+    // (FIXME: Create denormalized numbers instead when possible?)
+    sf.u32 = (sd.u32.high & 0x80000000U); // sign bit
+    return sf.f;
+  } else if(e >= 1151) {
+    // Overflow, infinity or NaN
+    if (e < 2047) {
+      // Overflow; make sure result is infinity and not NaN
+      sf.u32 = (sd.u32.high & 0x80000000U) | // sign bit
+        (255 << 23); // exponent
+      return sf.f;
+    }
+    e = 255;
+  } else
+    e -= 896;
+  sf.u32 = (sd.u32.high & 0x80000000U) | // sign bit
+    (e << 23) | // exponent
+    ((sd.u32.high & 0xfffff) << 3) | (sd.u32.low >> 29); // mantissa
+  return sf.f;
+}
+
+template<> inline void WRITE_DOUBLE<sizeof(uint32)>(SwapDouble &sd, double d)
+{
+  SwapFloat sf;
+  sf.f = d;
+  uint32 e = (sf.u32 >> 23) & 0xff;
+  if (!e) {
+    // Denormalized or zero, create a zero with the correct sign
+    // (FIXME: Convert denormalized 32-bit to normalized 64-bit?)
+    sd.u32.high = (sf.u32 & 0x80000000U); // sign bit
+    sd.u32.low = 0;
+    return;
+  } else if (e == 255) {
+    // Infinity or NaN
+    e = 2047;
+  } else
+    e += 896;
+  sd.u32.high = (sf.u32 & 0x80000000U) | // sign bit
+    (e << 20) | // exponent
+    ((sf.u32 >> 3) & 0xfffff); // mantissa
+  sd.u32.low = sf.u32 << 29;
+}
+
+inline double READ_LE_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.low  = READ_LE_UINT32(b);
+	swap.u32.high = READ_LE_UINT32(b + 4);
+	return READ_DOUBLE<sizeof(double)>(swap);
+}
+
+inline void WRITE_LE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
+	uint8 *b = (uint8 *)ptr;
+	WRITE_LE_UINT32(b,     swap.u32.low);
+	WRITE_LE_UINT32(b + 4, swap.u32.high);
+}
+
+inline double READ_BE_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.high = READ_BE_UINT32(b);
+	swap.u32.low  = READ_BE_UINT32(b + 4);
+	return READ_DOUBLE<sizeof(double)>(swap);
+}
+
+inline void WRITE_BE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
+	uint8 *b = (uint8 *)ptr;
+	WRITE_BE_UINT32(b,     swap.u32.high);
+	WRITE_BE_UINT32(b + 4, swap.u32.low);
+}
+
+inline double READ_FPA_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	const uint8 *b = (const uint8 *)ptr;
+	swap.u32.high = READ_LE_UINT32(b);
+	swap.u32.low  = READ_LE_UINT32(b + 4);
+	return READ_DOUBLE<sizeof(double)>(swap);
+}
+
+inline void WRITE_FPA_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
+	uint8 *b = (uint8 *)ptr;
+	WRITE_LE_UINT32(b,     swap.u32.high);
+	WRITE_LE_UINT32(b + 4, swap.u32.low);
+}
+
+inline double READ_FLOAT64(const void *ptr) {
+	SwapDouble swap;
+	swap.u64 = READ_UINT64(ptr);
+	return READ_DOUBLE<sizeof(double)>(swap);
+}
+
+inline void WRITE_FLOAT64(void *ptr, double value) {
+	SwapDouble swap;
+	WRITE_DOUBLE<sizeof(double)>(swap, value);
+	WRITE_UINT64(ptr, swap.u64);
+}
 
 inline int16 READ_LE_INT16(const void *ptr) {
 	return static_cast<int16>(READ_LE_UINT16(ptr));

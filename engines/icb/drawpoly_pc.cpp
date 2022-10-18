@@ -205,10 +205,6 @@ gte_lcirbk();
 
 //------------------------------------------------------------------------
 
-#if CD_MODE == 0
-
-//------------------------------------------------------------------------
-
 // Flat, Un-Textured, Self-Luminous, triangles
 void drawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
@@ -349,8 +345,6 @@ void drawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 		}
 	}
 }
-
-//------------------------------------------------------------------------
 
 // Gouraud, Un-Textured, Self-Luminous, triangles
 void drawGUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
@@ -677,7 +671,7 @@ void drawFTS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 				if (selFace == i)
 					setRGB0(poly, selPRed, selPGreen, selPBlue);
 				else
-					setRGB0(poly, rgbIn->r, rgbIn->b, rgbIn->b);
+					setRGB0(poly, rgbIn->r, rgbIn->g, rgbIn->b);
 
 				// Put it into the global ot at the correct place
 				myAddPrimClip(avgz, drawpacket);
@@ -2621,8 +2615,6 @@ void drawTRI3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	}
 }
 
-#endif // #if CD_MODE == 0
-
 // Flat, Un-Textured, Self-Luminous, triangles
 void fastDrawFUS3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex) {
 	SVECTORPC *v0;
@@ -3492,8 +3484,6 @@ void fastDrawGTL3PC(uint32 *polyStart, const uint32 n, SVECTORPC *pVertex, SVECT
 // and do flat & goraud shading
 // Assume the GTE lighting registers to be pre-prepared
 
-#if CD_MODE == 0
-
 void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn) {
 	// 6 POLY_F4's i.e. 6 faces
 	// The 8 verticies are:
@@ -3653,8 +3643,6 @@ void drawSolidBboxPC(SVECTOR *scrn, CVECTOR *rgbIn) {
 		myAddPacket(sizeof(POLY_F4));
 	}
 }
-
-#endif // #if CD_MODE == 0
 
 // Simple flat untextured triangles
 // draw backfacing triangles as well

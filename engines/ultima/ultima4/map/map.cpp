@@ -676,7 +676,7 @@ void Map::alertGuards() {
 }
 
 MapCoords Map::getLabel(const Common::String &name) const {
-	Std::map<Common::String, MapCoords>::const_iterator i = _labels.find(name);
+	Common::HashMap<Common::String, MapCoords>::const_iterator i = _labels.find(name);
 	if (i == _labels.end())
 		return MapCoords::nowhere();
 

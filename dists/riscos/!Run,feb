@@ -18,7 +18,7 @@ Set Alias$Run_ScummVM Run <Obey$Dir>.scummvm %%*0 ><Choices$Write>.ScummVM.stdou
 If "<Wimp$State>"="commands" Then Set Alias$Run_ScummVM Run <Obey$Dir>.scummvm %%*0
 CDir <Choices$Write>.ScummVM
 
-|WimpSlot
+WIMPSLOT
 Run_ScummVM %*0
 
 Unset Alias$Run_ScummVM

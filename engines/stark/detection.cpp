@@ -350,6 +350,18 @@ static const ADGameDescription gameDescriptions[] = {
 	},
 
 	// The Longest Journey
+	// Russian by Triada
+	{
+		"tlj", "Triada",
+		AD_ENTRY2s("x.xarc",		"a0559457126caadab0cadac02d35f26f", 3032,
+				   "chapters.ini",	"17510546145f6f574702094dca436a8d", 409),
+		Common::RU_RUS,
+		Common::kPlatformWindows,
+		ADGF_UNSTABLE,
+		GUIO_NONE
+	},
+
+	// The Longest Journey
 	// Hungarian fan-made
 	{
 		"tlj", "Fanmade",
@@ -375,7 +387,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Load modded assets"),
 			_s("Enable loading of external replacement assets."),
 			"enable_assets_mod",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	{
@@ -384,7 +398,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable linear filtering of the backgrounds images"),
 			_s("When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details."),
 			"use_linear_filtering",
-			true
+			true,
+			0,
+			0
 		}
 	},
 	{
@@ -393,7 +409,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable font anti-aliasing"),
 			_s("When font anti-aliasing is enabled, the text is smoother."),
 			"enable_font_antialiasing",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -406,11 +424,11 @@ public:
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Stark";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "stark";
 	}
 

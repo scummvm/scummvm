@@ -212,7 +212,7 @@ private:
 	// Message handling
 	bool init();
 	bool update();
-	bool key(const AsylumEvent &evt);
+	bool key(const AsylumEvent &evt) { return true; }
 	bool mouse(const AsylumEvent &evt);
 
 	//////////////////////////////////////////////////////////////////////////

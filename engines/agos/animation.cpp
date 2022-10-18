@@ -416,6 +416,12 @@ MoviePlayerSMK::MoviePlayerSMK(AGOSEngine_Feeble *vm, const char *name)
 
 	memset(baseName, 0, sizeof(baseName));
 	memcpy(baseName, name, strlen(name));
+
+	int16 h = g_system->getOverlayHeight();
+
+	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
+	_subtitles.setColor(0xff, 0xff, 0xff);
+	_subtitles.setFont("FreeSans.ttf");
 }
 
 bool MoviePlayerSMK::load() {
@@ -430,6 +436,9 @@ bool MoviePlayerSMK::load() {
 	debug(0, "Playing video %s", videoName.c_str());
 
 	CursorMan.showMouse(false);
+
+	Common::String subtitlesName = Common::String::format("%s.srt", baseName);
+	loadSubtitles(subtitlesName.c_str());
 
 	return true;
 }
@@ -457,11 +466,16 @@ void MoviePlayerSMK::copyFrameToBuffer(byte *dst, uint x, uint y, uint pitch) {
 }
 
 void MoviePlayerSMK::playVideo() {
-	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit())
+	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit()) {
+		_subtitles.drawSubtitle(getTime(), true);
 		handleNextFrame();
+		g_system->showOverlay();
+		g_system->clearOverlay();
+	}
 }
 
 void MoviePlayerSMK::stopVideo() {
+	g_system->hideOverlay();
 	close();
 }
 

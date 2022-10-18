@@ -56,6 +56,8 @@
 #include "common/str.h"
 #include "common/keyboard.h"
 #include "common/debug.h"
+#include "backends/keymapper/keymap.h"
+#include "backends/keymapper/keymapper.h"
 
 #include "graphics/scaler.h"
 
@@ -154,6 +156,18 @@ void KIA::openLastOpened() {
 }
 
 void KIA::open(KIASections sectionId) {
+	if (_vm->getEventManager()->getKeymapper() != nullptr) {
+		if ( _vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId) != nullptr) {
+			// When disabling a keymap, make sure all their active events in the _activeCustomEvents array
+			// are cleared, because as they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
+			_vm->cleanupPendingRepeatingEvents(BladeRunnerEngine::kGameplayKeymapId);
+			_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->setEnabled(false);
+		}
+
+		if (_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId) != nullptr)
+			_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId)->setEnabled(true);
+	}
+
 	if (_currentSectionId == sectionId) {
 		return;
 	}
@@ -476,31 +490,56 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 		}
 	}
 
-	switch (kbd.keycode) {
-	case Common::KEYCODE_ESCAPE:
+	if (_currentSection) {
+		_currentSection->handleKeyDown(kbd);
+	}
+
+	if (_currentSection && _currentSection->_scheduledSwitch) {
+		open(kKIASectionNone);
+	}
+}
+
+void KIA::handleCustomEventStop(const Common::Event &evt) {
+	if (!isOpen()) {
+		return;
+	}
+
+	if (_currentSection) {
+		_currentSection->handleCustomEventStop(evt);
+	}
+}
+
+void KIA::handleCustomEventStart(const Common::Event &evt) {
+	if (!isOpen()) {
+		return;
+	}
+
+	switch ((BladeRunnerEngine::BladeRunnerEngineMappableAction)evt.customType) {
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionToggleKiaOptions:
 		if (!_forceOpen) {
 			open(kKIASectionNone);
 		}
 		break;
 
-	case Common::KEYCODE_F1:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabHelp:
 		open(kKIASectionHelp);
 		break;
 
-	case Common::KEYCODE_F2:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabSaveGame:
 		if (!_forceOpen) {
 			open(kKIASectionSave);
 		}
 		break;
-	case Common::KEYCODE_F3:
+
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabLoadGame:
 		open(kKIASectionLoad);
 		break;
 
-	case Common::KEYCODE_F10:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabQuitGame:
 		open(kKIASectionQuit);
 		break;
 
-	case Common::KEYCODE_F4:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabCrimeSceneDatabase:
 		if (_currentSectionId != kKIASectionCrimes) {
 			if (!_forceOpen) {
 				open(kKIASectionCrimes);
@@ -510,7 +549,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 		}
 		break;
 
-	case Common::KEYCODE_F5:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabSuspectDatabase:
 		if (_currentSectionId != kKIASectionSuspects) {
 			if (!_forceOpen) {
 				open(kKIASectionSuspects);
@@ -520,7 +559,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 		}
 		break;
 
-	case Common::KEYCODE_F6:
+	case BladeRunnerEngine::BladeRunnerEngineMappableAction::kMpActionOpenKIATabClueDatabase:
 		if (_currentSectionId != kKIASectionClues) {
 			if (!_forceOpen) {
 				open(kKIASectionClues);
@@ -532,7 +571,7 @@ void KIA::handleKeyDown(const Common::KeyState &kbd) {
 
 	default:
 		if (_currentSection) {
-			_currentSection->handleKeyDown(kbd);
+			_currentSection->handleCustomEventStart(evt);
 		}
 		break;
 	}
@@ -664,7 +703,7 @@ void KIA::mouseDownCallback(int buttonId, void *callbackData) {
 		if (buttonId == 12) {
 			int endTrackId = self->_vm->_audioPlayer->playAud(self->_vm->_gameInfo->getSfxTrack(kSfxSHUTDOWN), 70, 0, 0, 50, 0);
 
-			self->_vm->_surfaceFront.fillRect(Common::Rect(0, 0, 640, 480), 0);
+			self->_vm->_surfaceFront.fillRect(Common::Rect(0, 0, BladeRunnerEngine::kOriginalGameWidth, BladeRunnerEngine::kOriginalGameHeight), 0);
 			self->_vm->blitToScreen(self->_vm->_surfaceFront);
 
 			if (endTrackId != -1) {
@@ -759,6 +798,18 @@ void KIA::init() {
 }
 
 void KIA::unload() {
+	if (_vm->getEventManager()->getKeymapper() != nullptr) {
+		if ( _vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId) != nullptr)
+			_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kGameplayKeymapId)->setEnabled(true);
+
+		if (_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId) != nullptr) {
+			// When disabling a keymap, make sure all their active events in the _activeCustomEvents array
+			// are cleared, because as they won't get an explicit "EVENT_CUSTOM_ENGINE_ACTION_END" event.
+			_vm->cleanupPendingRepeatingEvents(BladeRunnerEngine::kKiaKeymapId);
+			_vm->getEventManager()->getKeymapper()->getKeymap(BladeRunnerEngine::kKiaKeymapId)->setEnabled(false);
+		}
+	}
+
 	_thumbnail.free();
 
 	if (!isOpen()) {

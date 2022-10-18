@@ -21,8 +21,9 @@
 
 #include "chewy/dialogs/credits.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
-#include "chewy/main.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/text.h"
 
 namespace Chewy {
@@ -194,12 +195,12 @@ void Credits::execute() {
 	int lineScrolled = 0;
 	int fontCol;
 
-	_G(room)->load_tgp(5, &_G(room_blk), 1, 0, GBOOK);
+	_G(room)->load_tgp(5, &_G(room_blk), 1, false, GBOOK);
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 
 	for (int i = 0; i < 6; ++i) {
 		int color = 63 - (6 * i);
@@ -215,7 +216,7 @@ void Credits::execute() {
 	_G(gameState).DelaySpeed = 2;
 
 	for (;;) {
-		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
+		if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE || SHOULD_QUIT)
 			break;
 
 		// Display the starfield background
@@ -227,7 +228,7 @@ void Credits::execute() {
 		if (++_G(gameState).scrollx >= 320)
 			_G(gameState).scrollx = 0;
 
-		if (_G(in)->getSwitchCode() == Common::KEYCODE_ESCAPE)
+		if (g_events->getSwitchCode() == Common::KEYCODE_ESCAPE)
 			break;
 
 		++lineScrolled;
@@ -256,7 +257,7 @@ void Credits::execute() {
 			break;
 
 		_G(out)->setPointer(nullptr);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	_G(fontMgr)->setFont(_G(font8));

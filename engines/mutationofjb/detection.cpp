@@ -103,11 +103,11 @@ public:
 		_directoryGlobs = mutationofjbDirectoryGlobs;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "mutationofjb";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Mutation of J.B.";
 	}
 

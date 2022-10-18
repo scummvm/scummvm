@@ -54,6 +54,7 @@ Common::String stripMacPath(const char *name);
 Common::String convertMacFilename(const char *name);
 
 Common::String dumpScriptName(const char *prefix, int type, int id, const char *ext);
+Common::String dumpFactoryName(const char *prefix, const char *name, const char *ext);
 
 bool isButtonSprite(SpriteType spriteType);
 
@@ -99,6 +100,25 @@ Common::String encodePathForDump(const Common::String &path);
 Common::String utf8ToPrintable(const Common::String &str);
 
 Common::String decodePlatformEncoding(Common::String input);
+
+inline byte lerpByte(byte a, byte b, int alpha, int span) {
+	int ai = static_cast<int>(a);
+	int bi = static_cast<int>(b);
+	span = CLIP<int>(span, 1, span);
+	alpha = CLIP<int>(alpha, 0, span);
+	return static_cast<byte>((bi * alpha + ai * (span - alpha)) / span);
+}
+
+inline void lerpPalette(byte *target, byte *palA, int palALength, byte *palB, int palBLength, int alpha, int span) {
+	for (int i = 0; i < 768; i++) {
+		target[i] = lerpByte(
+			i < palALength * 3 ? palA[i] : 0,
+			i < palBLength * 3 ? palB[i] : 0,
+			alpha,
+			span
+		);
+	}
+}
 
 } // End of namespace Director
 

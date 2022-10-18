@@ -38,7 +38,7 @@ static const ResIDType kElevatorUpOnID = 203;
 
 NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const RoomID downRoom,
 		const HotSpotID upHotspot, const HotSpotID downHotspot) : GameInteraction(kNoradElevatorInteractionID, handler),
-		_elevatorControls(kNoradElevatorControlsID), _elevatorNotification(kNoradElevatorNotificationID, ((PegasusEngine *)g_engine)) {
+		_elevatorControls(kNoradElevatorControlsID), _elevatorNotification(kNoradElevatorNotificationID, g_vm) {
 	_timerExpired = false;
 	_upRoom = upRoom;
 	_downRoom = downRoom;
@@ -48,19 +48,19 @@ NoradElevator::NoradElevator(Neighborhood *handler, const RoomID upRoom, const R
 
 void NoradElevator::openInteraction() {
 	SpriteFrame *frame = new SpriteFrame();
-	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorLabelID, true);
+	frame->initFromPICTResource(g_vm->_resFork, kElevatorLabelID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorButtonsID, true);
+	frame->initFromPICTResource(g_vm->_resFork, kElevatorButtonsID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorDownOnID, true);
+	frame->initFromPICTResource(g_vm->_resFork, kElevatorDownOnID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
-	frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kElevatorUpOnID, true);
+	frame->initFromPICTResource(g_vm->_resFork, kElevatorUpOnID, true);
 	_elevatorControls.addFrame(frame, 0, 0);
 
 	_elevatorControls.setCurrentFrameIndex(0);

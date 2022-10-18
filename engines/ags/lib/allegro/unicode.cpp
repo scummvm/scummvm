@@ -30,7 +30,7 @@ int (*ugetc)(const char *s) = utf8_getc;
 /* ugetxc: */
 int (*ugetx)(char **s) = utf8_getx;
 /* ugetxc: */
-int (*ugetxc)(const char **s) = (int (*)(const char **)) utf8_getx;
+int (*ugetxc)(const char * const *s) = (int (*)(const char * const *)) utf8_getx;
 /* usetc: */
 int (*usetc)(char *s, int c) = utf8_setc;
 /* uwidth: */
@@ -82,7 +82,7 @@ void set_uformat(int type) {
 		_G(utype) = info->id;
 		ugetc = info->u_getc;
 		ugetx = (int (*)(char **)) info->u_getx;
-		ugetxc = (int (*)(AL_CONST char **)) info->u_getx;
+		ugetxc = (int (*)(AL_CONST char * const*)) info->u_getx;
 		usetc = info->u_setc;
 		uwidth = info->u_width;
 		ucwidth = info->u_cwidth;
@@ -1206,6 +1206,11 @@ int uoffset(const char *s, int index) {
 	return (intptr_t)s - (intptr_t)orig;
 }
 
+int ugetat(const char *s, int index) {
+	assert(s);
+	return ugetc(s + uoffset(s, index));
+}
+
 char *ustrlwr(char *s) {
 	int pos = 0;
 	int c, lc;
@@ -1281,6 +1286,20 @@ int ustrsizez(const char *s) {
 	} while (ugetxc(&s) != 0);
 
 	return (intptr_t)s - (intptr_t)orig;
+}
+
+void setlocale(int type, const char *language) {
+	// TODO: If needed for alfont
+}
+
+int need_uconvert(const char *s, int type, int newtype) {
+	// TODO: need_uconvert
+	return 0;
+}
+
+int uvszprintf(char *buf, int size, const char *format, va_list args) {
+	error("TODO: uvszprintf");
+	return 0;
 }
 
 } // namespace AGS3

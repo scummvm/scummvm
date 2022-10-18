@@ -85,7 +85,7 @@ TinyGLTexture3D::~TinyGLTexture3D() {
 void TinyGLTexture3D::update(const Graphics::Surface *surface) {
 	tglBindTexture(TGL_TEXTURE_2D, id);
 	tglTexImage2D(TGL_TEXTURE_2D, 0, internalFormat, width, height, 0,
-			internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
+	              internalFormat, sourceFormat, const_cast<void *>(surface->getPixels())); // TESTME: Not sure if it works.
 }
 
 void TinyGLTexture3D::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {

@@ -147,9 +147,10 @@ public:
 	void pitchBend(int16 bend) override;
 	void pitchBendFactor(byte value) override;
 	void transpose(int8 value) override;
+	void detune(uint8 value) override;
 
 	void priority(byte value) override;
-	void sysEx_customInstrument(uint32 type, const byte *instr) override {}
+	void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) override {}
 
 	int getPriority() const { return _priority; }
 	SoundChannel_Amiga *getChannel() const { return _out; }
@@ -164,6 +165,7 @@ private:
 	uint8 _program;
 	int8 _modulation;
 	int8 _transpose;
+	int8 _detune;
 	int16 _pitchBend;
 	uint8 _pitchBendSensitivity;
 	uint16 _volume;
@@ -475,7 +477,7 @@ SoundChannel_Amiga *SoundChannel_Amiga::_channels[4] = { nullptr, nullptr, nullp
 const int8 SoundChannel_Amiga::_muteData[16] = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 IMusePart_Amiga::IMusePart_Amiga(IMuseDriver_Amiga *driver, int id) : _driver(driver), _id(id), _allocated(false), _out(nullptr), _priority(0), _program(0),
-	_pitchBend(0), _pitchBendSensitivity(2), _volume(0), _modulation(0), _transpose(0), _sustain(false) {
+	_pitchBend(0), _pitchBendSensitivity(2), _volume(0), _modulation(0), _transpose(0), _detune(0), _sustain(false) {
 }
 
 bool IMusePart_Amiga::allocate() {
@@ -524,7 +526,7 @@ void IMusePart_Amiga::noteOn(byte note, byte velocity) {
 
 	chan->connect(this);
 	// The velocity parameter is ignored here.
-	chan->noteOn(note, _volume, _program, _transpose, (_pitchBend * _pitchBendSensitivity) >> 6);
+	chan->noteOn(note, _volume, _program, _transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
 }
 
 void IMusePart_Amiga::controlChange(byte control, byte value) {
@@ -557,19 +559,25 @@ void IMusePart_Amiga::programChange(byte program) {
 void IMusePart_Amiga::pitchBend(int16 bend) {
 	_pitchBend = bend;
 	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next())
-		cur->transposePitchBend(_transpose, (_pitchBend * _pitchBendSensitivity) >> 6);
+		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
 }
 
 void IMusePart_Amiga::pitchBendFactor(byte value) {
 	_pitchBendSensitivity = value;
 	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next())
-		cur->transposePitchBend(_transpose, (_pitchBend * _pitchBendSensitivity) >> 6);
+		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
 }
 
 void IMusePart_Amiga::transpose(int8 value) {
 	_transpose = value << 1;
 	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next())
-		cur->transposePitchBend(_transpose, (_pitchBend * _pitchBendSensitivity) >> 6);
+		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
+}
+
+void IMusePart_Amiga::detune(uint8 value) {
+	_detune = (int8)value;
+	for (SoundChannel_Amiga *cur = _out; cur; cur = cur->next())
+		cur->transposePitchBend(_transpose, ((_pitchBend * _pitchBendSensitivity) >> 6) + _detune);
 }
 
 void IMusePart_Amiga::priority(byte value) {

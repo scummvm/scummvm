@@ -66,20 +66,16 @@ void SetInvItemName(int invi, const char *newName) {
 	GUI::MarkSpecialLabelsForUpdate(kLabelMacro_Overhotspot);
 }
 
-int GetInvAt(int xxx, int yyy) {
-	int ongui = GetGUIAt(xxx, yyy);
+int GetInvAt(int atx, int aty) {
+	int ongui = GetGUIAt(atx, aty);
 	if (ongui >= 0) {
-		int mxwas = _G(mousex), mywas = _G(mousey);
-		_G(mousex) = data_to_game_coord(xxx) - _GP(guis)[ongui].X;
-		_G(mousey) = data_to_game_coord(yyy) - _GP(guis)[ongui].Y;
-		int onobj = _GP(guis)[ongui].FindControlUnderMouse();
+		data_to_game_coords(&atx, &aty);
+		int32_t onobj = _GP(guis)[ongui].FindControlAt(atx, aty);
 		GUIObject *guio = _GP(guis)[ongui].GetControl(onobj);
 		if (guio) {
-			_G(mouse_ifacebut_xoffs) = _G(mousex) - (guio->X);
-			_G(mouse_ifacebut_yoffs) = _G(mousey) - (guio->Y);
+			_G(mouse_ifacebut_xoffs) = atx - _GP(guis)[ongui].X - guio->X;
+			_G(mouse_ifacebut_yoffs) = aty - _GP(guis)[ongui].Y - guio->Y;
 		}
-		_G(mousex) = mxwas;
-		_G(mousey) = mywas;
 		if (guio && (_GP(guis)[ongui].GetControlType(onobj) == kGUIInvWindow))
 			return offset_over_inv((GUIInvWindow *)guio);
 	}
@@ -89,7 +85,7 @@ int GetInvAt(int xxx, int yyy) {
 void GetInvName(int indx, char *buff) {
 	VALIDATE_STRING(buff);
 	if ((indx < 0) | (indx >= _GP(game).numinvitems)) quit("!GetInvName: invalid inventory item specified");
-	strcpy(buff, get_translation(_GP(game).invinfo[indx].name));
+	snprintf(buff, MAX_MAXSTRLEN, "%s", get_translation(_GP(game).invinfo[indx].name));
 }
 
 int GetInvGraphic(int indx) {

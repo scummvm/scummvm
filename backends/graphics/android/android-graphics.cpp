@@ -66,7 +66,8 @@ static void loadBuiltinTexture(JNI::BitmapResources resource, OpenGL::Surface *s
 // AndroidGraphicsManager
 //
 AndroidGraphicsManager::AndroidGraphicsManager() :
-	_touchcontrols(nullptr) {
+	_touchcontrols(nullptr),
+	_old_touch_mode(OSystem_Android::TOUCH_MODE_TOUCHPAD) {
 	ENTER();
 
 	// Initialize our OpenGL ES context.
@@ -76,8 +77,8 @@ AndroidGraphicsManager::AndroidGraphicsManager() :
 	loadBuiltinTexture(JNI::BitmapResources::TOUCH_ARROWS_BITMAP, _touchcontrols);
 	_touchcontrols->updateGLTexture();
 
-	// In 2D we always fallback to standard 2D mode
-	JNI::setTouch3DMode(false);
+	// not in 3D, not in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, false);
 }
 
 AndroidGraphicsManager::~AndroidGraphicsManager() {
@@ -92,19 +93,22 @@ void AndroidGraphicsManager::initSurface() {
 	assert(!JNI::haveSurface());
 	JNI::initSurface();
 
-	// Notify the OpenGL code about our context.
-	setContextType(OpenGL::kContextGLES2);
-
 	if (JNI::egl_bits_per_pixel == 16) {
 		// We default to RGB565 and RGBA5551 which is closest to what we setup in Java side
-		notifyContextCreate(Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0), Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
+		notifyContextCreate(OpenGL::kContextGLES2,
+				Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0),
+				Graphics::PixelFormat(2, 5, 5, 5, 1, 11, 6, 1, 0));
 	} else {
 		// If not 16, this must be 24 or 32 bpp so make use of them
+		notifyContextCreate(OpenGL::kContextGLES2,
 #ifdef SCUMM_BIG_ENDIAN
-		notifyContextCreate(Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0));
+				Graphics::PixelFormat(3, 8, 8, 8, 0, 16, 8, 0, 0),
+				Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0)
 #else
-		notifyContextCreate(Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0), Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24));
+				Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0),
+				Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24)
 #endif
+		);
 	}
 
 	if (_touchcontrols) {
@@ -150,23 +154,13 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	JNI::displayMessageOnOSD(msg);
 }
 
-bool AndroidGraphicsManager::showMouse(bool visible) {
-	bool last = OpenGL::OpenGLGraphicsManager::showMouse(visible);
-
-	if (visible && last != visible) {
-		// We just displayed a mouse cursor, disable the 3D mode if user enabled it
-		JNI::setTouch3DMode(false);
-	}
-
-	return last;
-}
-
 void AndroidGraphicsManager::showOverlay() {
 	if (_overlayVisible)
 		return;
 
-	_old_touch_3d_mode = JNI::getTouch3DMode();
-	JNI::setTouch3DMode(false);
+	_old_touch_mode = JNI::getTouchMode();
+	// not in 3D, in overlay
+	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
 
 	OpenGL::OpenGLGraphicsManager::showOverlay();
 }
@@ -175,7 +169,8 @@ void AndroidGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
 
-	JNI::setTouch3DMode(_old_touch_3d_mode);
+	// Restore touch mode active before overlay was shown
+	JNI::setTouchMode(_old_touch_mode);
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }
@@ -211,19 +206,13 @@ void AndroidGraphicsManager::refreshScreen() {
 
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
-	OpenGL::g_context.getActivePipeline()->drawTexture(_touchcontrols->getGLTexture(),
-		                                           x, y, w, h, clip);
+	OpenGL::Pipeline::getActivePipeline()->drawTexture(_touchcontrols->getGLTexture(),
+	                                                   x, y, w, h, clip);
 }
 
 void AndroidGraphicsManager::touchControlNotifyChanged() {
 	// Make sure we redraw the screen
 	_forceRedraw = true;
-}
-
-void *AndroidGraphicsManager::getProcAddress(const char *name) const {
-	ENTER("%s", name);
-
-	return androidGLgetProcAddress(name);
 }
 
 bool AndroidGraphicsManager::notifyMousePosition(Common::Point &mouse) {

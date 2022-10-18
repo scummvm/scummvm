@@ -580,7 +580,7 @@ bool RivenConsole::Cmd_DumpScript(int argc, const char **argv) {
 	// Get CARD/HSPT data and dump their scripts
 	if (!scumm_stricmp(argv[2], "CARD")) {
 		// Use debugN to print these because the scripts can get very large and would
-		// really be useless if the the text console is not used. A DumpFile could also
+		// really be useless if the text console is not used. A DumpFile could also
 		// theoretically be used, but I (clone2727) typically use this dynamically and
 		// don't want countless files laying around without game context. If one would
 		// want a file of a script they could just redirect stdout to a file or use

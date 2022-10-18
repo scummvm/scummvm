@@ -193,10 +193,10 @@ void DrawCompositeMaskedSprite(
 
 	//  Build a temporary bitmap to composite the sprite within
 
-	compMap.size.x = xMax - xMin;
-	compMap.size.y = yMax - yMin;
-	compMap.data = (uint8 *)getQuickMem(compMap.bytes());
-	memset(compMap.data, 0, compMap.bytes());
+	compMap._size.x = xMax - xMin;
+	compMap._size.y = yMax - yMin;
+	compMap._data = (uint8 *)getQuickMem(compMap.bytes());
+	memset(compMap._data, 0, compMap.bytes());
 
 	//  Calculate the offset from the upper-left corner of
 	//  our composite map to the origin point where the sprites
@@ -213,13 +213,13 @@ void DrawCompositeMaskedSprite(
 
 		//  Create a temp map for the sprite to unpack in
 
-		sprMap.size = sp->size;
-		if (sprMap.size.x <= 0 || sprMap.size.y <= 0) continue;
-		sprMap.data = (uint8 *)getQuickMem(compMap.bytes());
+		sprMap._size = sp->size;
+		if (sprMap._size.x <= 0 || sprMap._size.y <= 0) continue;
+		sprMap._data = (uint8 *)getQuickMem(compMap.bytes());
 
 		//  Unpack the sprite into the temp map
 
-		unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+		unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 		//  Blit the temp map onto the composite map
 
@@ -238,7 +238,7 @@ void DrawCompositeMaskedSprite(
 			    org.y + sc->offset.y + sp->offset.y,
 			    sc->colorTable);
 		}
-		freeQuickMem(sprMap.data);
+		freeQuickMem(sprMap._data);
 	}
 
 	//  do terrain masking
@@ -254,10 +254,10 @@ void DrawCompositeMaskedSprite(
 			                visiblePixels;
 			bool            isObscured;
 
-			tempMap.size = compMap.size;
-			tempMap.data = (uint8 *)getQuickMem(compMapBytes);
+			tempMap._size = compMap._size;
+			tempMap._data = (uint8 *)getQuickMem(compMapBytes);
 
-			memcpy(tempMap.data, compMap.data, compMapBytes);
+			memcpy(tempMap._data, compMap._data, compMapBytes);
 
 			drawTileMask(
 			    Point16(xMin, yMin),
@@ -266,7 +266,7 @@ void DrawCompositeMaskedSprite(
 
 			visiblePixels = 0;
 			for (int i = 0; i < compMapBytes; i++) {
-				if (compMap.data[i] != 0) {
+				if (compMap._data[i] != 0) {
 					visiblePixels++;
 					if (visiblePixels > 10) break;
 				}
@@ -274,24 +274,24 @@ void DrawCompositeMaskedSprite(
 
 			isObscured = visiblePixels <= 10;
 			if (isObscured) {
-				memcpy(compMap.data, tempMap.data, compMapBytes);
+				memcpy(compMap._data, tempMap._data, compMapBytes);
 				effects |= sprFXGhosted;
 			}
 
 			if (obscured != nullptr) *obscured = isObscured;
 
-			freeQuickMem(tempMap.data);
+			freeQuickMem(tempMap._data);
 		}
 	}
 
 	//  Check if location is underwater
 	if (loc.z < 0) {
-		uint8   *submergedArea = &compMap.data[(-loc.z < compMap.size.y ?
-		                                        (compMap.size.y + loc.z)
-		                                        * compMap.size.x :
+		uint8   *submergedArea = &compMap._data[(-loc.z < compMap._size.y ?
+		                                        (compMap._size.y + loc.z)
+		                                        * compMap._size.x :
 		                                        0)];
 
-		uint16  submergedSize = &compMap.data[compMap.bytes()] -
+		uint16  submergedSize = &compMap._data[compMap.bytes()] -
 		                        submergedArea;
 
 		memset(submergedArea, 0, submergedSize);
@@ -299,12 +299,12 @@ void DrawCompositeMaskedSprite(
 
 	//  Add in "ghost" effects
 	if (effects & sprFXGhosted) {
-		uint32  *dstRow = (uint32 *)compMap.data;
+		uint32  *dstRow = (uint32 *)compMap._data;
 
 		uint32  mask = (yMin & 1) ? 0xff00ff00 : 0x00ff00ff;
 
-		for (y = 0; y < compMap.size.y; y++) {
-			for (x = 0; x < compMap.size.x; x += 4) {
+		for (y = 0; y < compMap._size.y; y++) {
+			for (x = 0; x < compMap._size.x; x += 4) {
 				*dstRow++ &= mask;
 			}
 			mask = ~mask;
@@ -313,9 +313,9 @@ void DrawCompositeMaskedSprite(
 
 	//  Blit to the port
 
-	TBlit(port.map, &compMap, xMin, yMin);
+	TBlit(port._map, &compMap, xMin, yMin);
 
-	freeQuickMem(compMap.data);
+	freeQuickMem(compMap._data);
 }
 
 void DrawSprite(
@@ -325,11 +325,11 @@ void DrawSprite(
 	gPixelMap       sprMap;                 // sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Blit to the port
 	port.setMode(drawModeMatte);
@@ -337,9 +337,9 @@ void DrawSprite(
 	               0, 0,
 	               destPoint.x + sp->offset.x,
 	               destPoint.y + sp->offset.y,
-	               sprMap.size.x, sprMap.size.y);
+	               sprMap._size.x, sprMap._size.y);
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Draw a single sprite with no masking, but with color mapping.
@@ -353,15 +353,15 @@ void DrawColorMappedSprite(
 	                sprReMap;               // remapped sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
-	sprReMap.size = sp->size;
-	sprReMap.data = (uint8 *)getQuickMem(sprReMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprReMap._size = sp->size;
+	sprReMap._data = (uint8 *)getQuickMem(sprReMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
-	memset(sprReMap.data, 0, sprReMap.bytes());
+	memset(sprReMap._data, 0, sprReMap.bytes());
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -377,10 +377,10 @@ void DrawColorMappedSprite(
 	               0, 0,
 	               destPoint.x + sp->offset.x,
 	               destPoint.y + sp->offset.y,
-	               sprReMap.size.x, sprReMap.size.y);
+	               sprReMap._size.x, sprReMap._size.y);
 
-	freeQuickMem(sprReMap.data);
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprReMap._data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Draw a single sprite with no masking, but with color mapping.
@@ -393,11 +393,11 @@ void ExpandColorMappedSprite(
 	                sprReMap;               // remapped sprite map
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  remap the sprite to the color table given
 	compositePixels(
@@ -407,7 +407,7 @@ void ExpandColorMappedSprite(
 	    0,
 	    colorTable);
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 }
 
 //  Unpacks a sprite for a moment and returns the value of a
@@ -422,20 +422,20 @@ uint8 GetSpritePixel(
 	uint8           result;
 
 	//  Create a temp map for the sprite to unpack in
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
 	//  Unpack the sprite into the temp map
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Map the coords to the bitmap and return the pixel
 	if (flipped) {
-		result = sprMap.data[testPoint.y * sprMap.size.x
-		                                  + sprMap.size.x - testPoint.x];
+		result = sprMap._data[testPoint.y * sprMap._size.x
+		                                  + sprMap._size.x - testPoint.x];
 	} else {
-		result = sprMap.data[testPoint.y * sprMap.size.x + testPoint.x];
+		result = sprMap._data[testPoint.y * sprMap._size.x + testPoint.x];
 	}
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 
 	return result;
 }
@@ -472,16 +472,16 @@ uint16 visiblePixelsInSprite(
 	xMax = (xMax + 31) & ~31;
 
 	//  Build a temporary bitmap to composite the sprite within
-	compMap.size.x = xMax - xMin;
-	compMap.size.y = yMax - yMin;
-	compMap.data = (uint8 *)getQuickMem(compBytes = compMap.bytes());
-	memset(compMap.data, 0, compBytes);
+	compMap._size.x = xMax - xMin;
+	compMap._size.y = yMax - yMin;
+	compMap._data = (uint8 *)getQuickMem(compBytes = compMap.bytes());
+	memset(compMap._data, 0, compBytes);
 
 	//  Build bitmap in which to unpack the sprite
-	sprMap.size = sp->size;
-	sprMap.data = (uint8 *)getQuickMem(sprMap.bytes());
+	sprMap._size = sp->size;
+	sprMap._data = (uint8 *)getQuickMem(sprMap.bytes());
 
-	unpackSprite(&sprMap, sp->_data, sp->_dataSize);
+	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	org.x = drawPos.x - xMin;
 	org.y = drawPos.y - yMin;
@@ -512,15 +512,15 @@ uint16 visiblePixelsInSprite(
 
 	//  count the visible pixels in the composite map
 	for (i = 0, visiblePixels = 0; i < compBytes; i++)
-		if (compMap.data[i]) visiblePixels++;
+		if (compMap._data[i]) visiblePixels++;
 
 #if DEBUG*0
 	WriteStatusF(8, "Visible pixels = %u", visiblePixels);
 #endif
 
-	freeQuickMem(sprMap.data);
+	freeQuickMem(sprMap._data);
 
-	freeQuickMem(compMap.data);
+	freeQuickMem(compMap._data);
 
 	return visiblePixels;
 }
@@ -560,12 +560,12 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 	g_vm->_appearanceLRU.push_back(this);
 
 	//  Load in additional sprite banks if requested...
-	for (bank = 0; bank < (long)ARRAYSIZE(spriteBanks); bank++) {
+	for (bank = 0; bank < (long)ARRAYSIZE(_spriteBanks); bank++) {
 		//  Load the sprite handle...
-		if (spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
-			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, id + MKTAG(0, 0, 0, bank), "sprite bank");
+		if (_spriteBanks[bank] == nullptr && (banksNeeded & (1 << bank))) {
+			Common::SeekableReadStream *stream = loadResourceToStream(spriteRes, _id + MKTAG(0, 0, 0, bank), "sprite bank");
 			if (stream) {
-				spriteBanks[bank] = new SpriteSet(stream);
+				_spriteBanks[bank] = new SpriteSet(stream);
 				delete stream;
 			}
 		}
@@ -652,10 +652,10 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	//  Search the table for either a matching appearance,
 	//  or for an empty one.
 	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
-		if ((*it)->id == id                    // If has same ID
-		        && (*it)->poseList != nullptr) {      // and frames not dumped
+		if ((*it)->_id == id                    // If has same ID
+		        && (*it)->_poseList != nullptr) {      // and frames not dumped
 			// then use this one!
-			(*it)->useCount++;
+			(*it)->_useCount++;
 			(*it)->loadSpriteBanks(banksNeeded);
 			return *it;
 		}
@@ -666,7 +666,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	ActorAppearance *aa = nullptr;
 	//  Search from LRU end of list.
 	for (Common::List<ActorAppearance *>::iterator it = g_vm->_appearanceLRU.begin(); it != g_vm->_appearanceLRU.end(); ++it) {
-		if ((*it)->useCount == 0)  {	// If not in use
+		if ((*it)->_useCount == 0)  {	// If not in use
 			aa = *it;					// then use this one!
 			break;
 		}
@@ -678,35 +678,35 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 	}
 
 	//  Dump the sprites being stored
-	for (bank = 0; bank < (long)ARRAYSIZE(aa->spriteBanks); bank++) {
-		if (aa->spriteBanks[bank])
-			delete aa->spriteBanks[bank];
-		aa->spriteBanks[bank] = nullptr;
+	for (bank = 0; bank < (long)ARRAYSIZE(aa->_spriteBanks); bank++) {
+		if (aa->_spriteBanks[bank])
+			delete aa->_spriteBanks[bank];
+		aa->_spriteBanks[bank] = nullptr;
 	}
 
-	if (aa->poseList) {
-		for (uint i = 0; i < aa->poseList->numPoses; i++)
-			delete aa->poseList->poses[i];
+	if (aa->_poseList) {
+		for (uint i = 0; i < aa->_poseList->numPoses; i++)
+			delete aa->_poseList->poses[i];
 
-		free(aa->poseList->poses);
+		free(aa->_poseList->poses);
 
-		for (uint i = 0; i < aa->poseList->numAnimations; i++)
-			delete aa->poseList->animations[i];
+		for (uint i = 0; i < aa->_poseList->numAnimations; i++)
+			delete aa->_poseList->animations[i];
 
-		free(aa->poseList->animations);
+		free(aa->_poseList->animations);
 
-		delete aa->poseList;
+		delete aa->_poseList;
 	}
-	aa->poseList = nullptr;
+	aa->_poseList = nullptr;
 
-	if (aa->schemeList) {
-		delete aa->schemeList;
+	if (aa->_schemeList) {
+		delete aa->_schemeList;
 	}
-	aa->schemeList = nullptr;
+	aa->_schemeList = nullptr;
 
 	//  Set ID and use count
-	aa->id = id;
-	aa->useCount = 1;
+	aa->_id = id;
+	aa->_useCount = 1;
 
 	//  Load in new frame lists and sprite banks
 	aa->loadSpriteBanks(banksNeeded);
@@ -717,7 +717,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		warning("LoadActorAppearance: Could not load pose list");
 	} else {
 		ActorAnimSet *as = new ActorAnimSet;
-		aa->poseList = as;
+		aa->_poseList = as;
 		as->numAnimations = poseStream->readUint32LE();
 		as->poseOffset = poseStream->readUint32LE();
 
@@ -726,7 +726,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 		const int poseSize = 14;
 
 		debugC(1, kDebugLoading, "Pose List: bytes: %ld numAnimations: %d  poseOffset: %d calculated offset: %d numPoses: %d",
-			poseStream->size(), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
+			long(poseStream->size()), as->numAnimations, as->poseOffset, 8 + as->numAnimations * 32, poseBytes / poseSize);
 
 		if (poseBytes % poseSize != 0)
 			warning("Incorrect number of poses, %d bytes more", poseBytes % poseSize);
@@ -756,7 +756,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 
 		schemeListSize = schemeRes->size(id) / colorSchemeSize;
 		stream = loadResourceToStream(schemeRes, id, "scheme list");
-		aa->schemeList = new ColorSchemeList(schemeListSize, stream);
+		aa->_schemeList = new ColorSchemeList(schemeListSize, stream);
 
 		delete stream;
 	}
@@ -765,7 +765,7 @@ ActorAppearance *LoadActorAppearance(uint32 id, int16 banksNeeded) {
 }
 
 void ReleaseActorAppearance(ActorAppearance *aa) {
-	aa->useCount--;
+	aa->_useCount--;
 }
 
 /* ===================================================================== *
@@ -776,34 +776,34 @@ Sprite::Sprite(Common::SeekableReadStream *stream) {
 	size.load(stream);
 	offset.load(stream);
 
-	_dataSize = size.x * size.y;
-	_data = (byte *)malloc(_dataSize);
-	stream->read(_data, _dataSize);
+	dataSize = size.x * size.y;
+	data = (byte *)malloc(dataSize);
+	stream->read(data, dataSize);
 }
 
 Sprite::~Sprite() {
-	free(_data);
+	free(data);
 }
 
 SpriteSet::SpriteSet(Common::SeekableReadStream *stream) {
 	count = stream->readUint32LE();
-	_sprites = (Sprite **)malloc(count * sizeof(Sprite *));
+	sprites = (Sprite **)malloc(count * sizeof(Sprite *));
 
 	for (uint i = 0; i < count; ++i) {
 		stream->seek(4 + i * 4);
 		uint32 offset = stream->readUint32LE();
 		stream->seek(offset);
-		_sprites[i] = new Sprite(stream);
+		sprites[i] = new Sprite(stream);
 	}
 }
 
 SpriteSet::~SpriteSet() {
 	for (uint i = 0; i < count; ++i) {
-		if (_sprites[i])
-			delete _sprites[i];
+		if (sprites[i])
+			delete sprites[i];
 	}
 
-	free(_sprites);
+	free(sprites);
 }
 
 void initSprites() {
@@ -862,7 +862,7 @@ void initSprites() {
 	for (i = 0; i < ARRAYSIZE(appearanceTable); i++) {
 		ActorAppearance *aa = &appearanceTable[i];
 
-		aa->useCount = 0;
+		aa->_useCount = 0;
 		g_vm->_appearanceLRU.push_front(aa);
 	}
 }

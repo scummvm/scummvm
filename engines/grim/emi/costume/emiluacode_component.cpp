@@ -20,8 +20,8 @@
  */
 
 #include "common/debug.h"
-#include "engines/grim/debug.h"
 
+#include "engines/grim/debug.h"
 #include "engines/grim/emi/costume/emiluacode_component.h"
 
 namespace Grim {

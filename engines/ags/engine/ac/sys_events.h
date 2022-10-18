@@ -27,21 +27,6 @@
 
 namespace AGS3 {
 
-// AGS own mouse button codes
-// TODO: these were internal button codes, but AGS script uses different ones,
-// which start with Left=1, and make more sense (0 is easier to use as "no value").
-// Must research if there are any dependencies to these internal values, and if not,
-// then just replace these matching script ones!
-// UPD: even plugin API seem to match script codes and require remap to internals.
-// UPD: or use SDL constants in the engine, but make conversion more visible by using a function.
-enum eAGSMouseButton {
-	MouseNone = -1,
-	MouseLeft = 0,
-	MouseRight = 1,
-	MouseMiddle = 2
-};
-
-
 // Keyboard input handling
 //
 // avoid including SDL.h here, at least for now, because that leads to conflicts with allegro
@@ -65,7 +50,10 @@ inline int make_merged_mod(int mod) {
 	return m_mod;
 }
 
-extern KeyInput ags_keycode_from_scummvm(const Common::Event &event);
+// Converts ScummVM key event to eAGSKeyCode if it is in proper range,
+// see comments to eAGSKeyCode for details.
+// Optionally works in bacward compatible mode (old_keyhandle)
+extern KeyInput ags_keycode_from_scummvm(const Common::Event &event, bool old_keyhandle);
 
 // Tells if there are any buffered key events
 extern bool ags_keyevent_ready();
@@ -82,13 +70,13 @@ extern void ags_simulate_keypress(eAGSKeyCode ags_key);
 // Mouse input handling
 //
 // Tells if the mouse button is currently down
-extern bool ags_misbuttondown(int but);
+extern bool ags_misbuttondown(eAGSMouseButton but);
 // Returns mouse button code
-extern int  ags_mgetbutton();
+extern eAGSMouseButton ags_mgetbutton();
 // Returns recent relative mouse movement
 extern void ags_mouse_get_relxy(int &x, int &y);
 // Updates mouse cursor position in game
-extern void ags_domouse(int what);
+extern void ags_domouse();
 // Returns -1 for wheel down and +1 for wheel up
 // TODO: introduce constants for this
 extern int  ags_check_mouse_wheel();
@@ -116,10 +104,10 @@ extern void sys_evt_set_quit_callback(void(*proc)(void));
 // Set engine callback for when input focus is received or lost by the window.
 extern void sys_evt_set_focus_callbacks(void(*switch_in)(void), void(*switch_out)(void));
 
-// Process single event.
-//extern void sys_evt_process_one(const Common::Event &event);
 // Process all events in the backend's queue.
 extern void sys_evt_process_pending(void);
+// Flushes system events following window initialization.
+void sys_flush_events(void);
 
 } // namespace AGS3
 

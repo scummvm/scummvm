@@ -45,7 +45,7 @@ AIPlayMessageAction::AIPlayMessageAction(const Common::String &movieName, bool k
 }
 
 void AIPlayMessageAction::performAIAction(AIRule *) {
-	if (g_AIArea && ((PegasusEngine *)g_engine)->isChattyAI()) {
+	if (g_AIArea && g_vm->isChattyAI()) {
 		g_AIArea->checkMiddleArea();
 		g_AIArea->playAIMovie(kRightAreaSignature, _movieName, _keepLastFrame, _interruptionFilter);
 	}

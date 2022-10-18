@@ -13,8 +13,8 @@ static const char *md5_test_string[] = {
 	"message digest",
 	"abcdefghijklmnopqrstuvwxyz",
 	"ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789",
-	"12345678901234567890123456789012345678901234567890123456789012" \
-		"345678901234567890"
+	("12345678901234567890123456789012345678901234567890123456789012"
+		"345678901234567890")
 };
 
 static const char *md5_test_digest[] = {

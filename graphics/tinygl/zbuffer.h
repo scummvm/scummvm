@@ -41,6 +41,9 @@ namespace TinyGL {
 
 #define ZB_Z_BITS 16
 
+#define ZB_FOG_BITS               16
+#define ZB_FOG_MAX                ( (1 << ZB_FOG_BITS) - 1 )
+
 #define ZB_POINT_Z_FRAC_BITS 14
 
 #define ZB_POINT_ST_FRAC_BITS 14
@@ -80,11 +83,11 @@ struct Buffer {
 };
 
 struct ZBufferPoint {
-	int x, y, z;   // integer coordinates in the zbuffer
-	int s, t;      // coordinates for the mapping
+	int x, y, z;      // integer coordinates in the zbuffer
+	int s, t;         // coordinates for the mapping
 	int r, g, b, a;   // color indexes
-
-	float sz, tz;  // temporary coordinates for mapping
+	float sz, tz;     // temporary coordinates for mapping
+	int f;            // fog factor
 
 	bool operator==(const ZBufferPoint &other) const {
 		return
@@ -304,20 +307,22 @@ private:
 		}
 	}
 
-	template <bool kDepthWrite, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-	FORCEINLINE void putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
-	                                   int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
-	                                   int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
+	template <bool kDepthWrite, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	void putPixelNoTexture(int fbOffset, uint *pz, byte *ps, int _a,
+	                       int x, int y, uint &z, uint &r, uint &g, uint &b, uint &a,
+	                       int &dzdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+	                       uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
-	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
-	FORCEINLINE void putPixelTexture(int fbOffset, const TexelBuffer *texture,
-	                                 uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
-	                                 int x, int y, uint &z, int &t, int &s,
-	                                 uint &r, uint &g, uint &b, uint &a,
-	                                 int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx);
+	template <bool kDepthWrite, bool kLightsMode, bool kSmoothMode, bool kFogMode, bool kEnableAlphaTest, bool kEnableScissor, bool kEnableBlending, bool kStencilEnabled, bool kDepthTestEnabled>
+	void putPixelTexture(int fbOffset, const TexelBuffer *texture,
+	                     uint wrap_s, uint wrap_t, uint *pz, byte *ps, int _a,
+	                     int x, int y, uint &z, int &t, int &s,
+	                     uint &r, uint &g, uint &b, uint &a,
+	                     int &dzdx, int &dsdx, int &dtdx, int &drdx, int &dgdx, int &dbdx, uint dadx,
+	                     uint &fog, int fog_r, int fog_g, int fog_b, int &dfdx);
 
 	template <bool kDepthWrite, bool kEnableScissor, bool kStencilEnabled, bool kDepthTestEnabled>
-	FORCEINLINE void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx);
+	void putPixelDepth(uint *pz, byte *ps, int _a, int x, int y, uint &z, int &dzdx);
 
 
 	template <bool kEnableAlphaTest>
@@ -365,15 +370,43 @@ private:
 
 	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite>
 	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, uint z) {
+		writePixel<kEnableAlphaTest, kBlendingEnabled, false, false>(pixel, aSrc, rSrc, gSrc, bSrc, z, 0.0f, 0, 0, 0);
+	}
+
+	template <bool kEnableAlphaTest, bool kBlendingEnabled, bool kDepthWrite, bool kFogMode>
+	FORCEINLINE void writePixel(int pixel, byte aSrc, byte rSrc, byte gSrc, byte bSrc, float z, uint fog, byte fog_r, byte fog_g, byte fog_b) {
 		if (kEnableAlphaTest) {
 			if (!checkAlphaTest(aSrc))
 				return;
 		}
+
 		if (kDepthWrite) {
 			_zbuf[pixel] = z;
 		}
 
-		if (kBlendingEnabled == false) {
+		if (kFogMode) {
+			int oneMinusFog = (1 << ZB_FOG_BITS) - fog;
+			int finalR = (rSrc * fog + fog_r * oneMinusFog) >> ZB_FOG_BITS;
+			int finalG = (gSrc * fog + fog_g * oneMinusFog) >> ZB_FOG_BITS;
+			int finalB = (bSrc * fog + fog_b * oneMinusFog) >> ZB_FOG_BITS;
+			if (finalR > 255) {
+				rSrc = 255;
+			} else {
+				rSrc = finalR;
+			}
+			if (finalG > 255) {
+				gSrc = 255;
+			} else {
+				gSrc = finalG;
+			}
+			if (finalB > 255) {
+				bSrc = 255;
+			} else {
+				bSrc = finalB;
+			}
+		}
+
+		if (!kBlendingEnabled) {
 			_pbuf.setPixelAt(pixel, aSrc, rSrc, gSrc, bSrc);
 		} else {
 			byte rDst, gDst, bDst, aDst;
@@ -485,88 +518,98 @@ public:
 	void clear(int clear_z, int z, int clear_color, int r, int g, int b,
 	           bool clearStencil, int stencilValue);
 	void clearRegion(int x, int y, int w, int h, bool clearZ, int z,
-					 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
+	                 bool clearColor, int r, int g, int b, bool clearStencil, int stencilValue);
 
-	FORCEINLINE void setScissorRectangle(const Common::Rect &rect) {
+	void setScissorRectangle(const Common::Rect &rect) {
 		_clipRectangle = rect;
 		_enableScissor = true;
 	}
 
-	FORCEINLINE void resetScissorRectangle() {
+	void resetScissorRectangle() {
 		_enableScissor = false;
 	}
 
-	FORCEINLINE void enableBlending(bool enable) {
+	void enableBlending(bool enable) {
 		_blendingEnabled = enable;
 	}
 
-	FORCEINLINE void setBlendingFactors(int sFactor, int dFactor) {
+	void setBlendingFactors(int sFactor, int dFactor) {
 		_sourceBlendingFactor = sFactor;
 		_destinationBlendingFactor = dFactor;
 	}
 
-	FORCEINLINE void enableAlphaTest(bool enable) {
+	void enableAlphaTest(bool enable) {
 		_alphaTestEnabled = enable;
 	}
 
-	FORCEINLINE void setAlphaTestFunc(int func, int ref) {
+	void setAlphaTestFunc(int func, int ref) {
 		_alphaTestFunc = func;
 		_alphaTestRefVal = ref;
 	}
 
-	FORCEINLINE void enableDepthTest(bool enable) {
+	void enableDepthTest(bool enable) {
 		_depthTestEnabled = enable;
 	}
 
-	FORCEINLINE void setDepthFunc(int func) {
+	void setDepthFunc(int func) {
 		_depthFunc = func;
 	}
 
-	FORCEINLINE void enableDepthWrite(bool enable) {
+	void enableDepthWrite(bool enable) {
 		_depthWrite = enable;
 	}
 
-	FORCEINLINE void enableStencilTest(bool enable) {
+	void enableStencilTest(bool enable) {
 		_stencilTestEnabled = enable;
 	}
 
-	FORCEINLINE void setStencilWriteMask(uint stencilWriteMask) {
+	void setStencilWriteMask(uint stencilWriteMask) {
 		_stencilWriteMask = stencilWriteMask;
 	}
 
-	FORCEINLINE void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
+	void setStencilTestFunc(int stencilFunc, int stencilValue, uint stencilMask) {
 		_stencilTestFunc = stencilFunc;
 		_stencilRefVal = stencilValue;
 		_stencilMask = stencilMask;
 	}
 
-	FORCEINLINE void setStencilOp(int stencilSfail, int stencilDpfail, int stencilDppass) {
+	void setStencilOp(int stencilSfail, int stencilDpfail, int stencilDppass) {
 		_stencilSfail = stencilSfail;
 		_stencilDpfail = stencilDpfail;
 		_stencilDppass = stencilDppass;
 	}
-	
-	FORCEINLINE void setOffsetStates(int offsetStates) {
+
+	void setOffsetStates(int offsetStates) {
 		_offsetStates = offsetStates;
 	}
 
-	FORCEINLINE void setOffsetFactor(float offsetFactor) {
+	void setOffsetFactor(float offsetFactor) {
 		_offsetFactor = offsetFactor;
 	}
 
-	FORCEINLINE void setOffsetUnits(float offsetUnits) {
+	void setOffsetUnits(float offsetUnits) {
 		_offsetUnits = offsetUnits;
 	}
 
-	FORCEINLINE void setTexture(const TexelBuffer *texture, uint wraps, uint wrapt) {
+	void setTexture(const TexelBuffer *texture, uint wraps, uint wrapt) {
 		_currentTexture = texture;
 		_wrapS = wraps;
 		_wrapT = wrapt;
 	}
 
-	FORCEINLINE void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
+	void setTextureSizeAndMask(int textureSize, int textureSizeMask) {
 		_textureSize = textureSize;
 		_textureSizeMask = textureSizeMask;
+	}
+
+	void setFogEnabled(bool enable) {
+		_fogEnabled = enable;
+	}
+
+	void setFogColor(float colorR, float colorG, float colorB) {
+		_fogColorR = colorR;
+		_fogColorG = colorG;
+		_fogColorB = colorB;
 	}
 
 private:
@@ -582,29 +625,37 @@ private:
 	void selectOffscreenBuffer(Buffer *buffer);
 	void clearOffscreenBuffer(Buffer *buffer);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
-	          bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
-	          bool kStencilEnabled, bool kDepthTestEnabled>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
+	          bool kBlendingEnabled, bool kStencilEnabled, bool kDepthTestEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kSmoothMode,
-	          bool kDepthWrite, bool kAlphaTestEnabled, bool kEnableScissor, bool kBlendingEnabled,
-	          bool kStencilEnabled>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode, bool kAlphaTestEnabled, bool kEnableScissor,
+	          bool kBlendingEnabled, bool kStencilEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawLogic, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor, bool kBlendingEnabled>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest, bool kEnableScissor>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest, bool kEnableScissor>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite, bool enableAlphaTest>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode, bool enableAlphaTest>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode, bool kDepthWrite>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite, bool kFogMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
-	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, int kDrawMode>
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode,
+	          bool kDepthWrite>
+	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
+
+	template <bool kInterpRGB, bool kInterpZ, bool kInterpST, bool kInterpSTZ, bool kSmoothMode>
 	void fillTriangle(ZBufferPoint *p0, ZBufferPoint *p1, ZBufferPoint *p2);
 
 public:
@@ -636,10 +687,10 @@ private:
 	FORCEINLINE void putPixel(uint pixelOffset, int color, int x, int y);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
-	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite, bool kEnableScissor>
-	FORCEINLINE void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
+	void drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2);
 
 	Buffer _offscreenBuffer;
 	Graphics::PixelBuffer _pbuf;
@@ -681,6 +732,10 @@ private:
 	int _offsetStates;
 	float _offsetFactor;
 	float _offsetUnits;
+	bool _fogEnabled;
+	float _fogColorR;
+	float _fogColorG;
+	float _fogColorB;
 };
 
 // memory.c

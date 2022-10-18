@@ -68,7 +68,7 @@ int IsTranslationAvailable() {
 
 int GetTranslationName(char *buffer) {
 	VALIDATE_STRING(buffer);
-	strcpy(buffer, get_translation_name().GetCStr());
+	snprintf(buffer, MAX_MAXSTRLEN, "%s", get_translation_name().GetCStr());
 	return IsTranslationAvailable();
 }
 

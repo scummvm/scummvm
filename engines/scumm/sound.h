@@ -35,9 +35,6 @@
 
 #define DEFAULT_LOOM_OVERTURE_TRANSITION 1160
 
-#define TICKS_TO_TIMER(x) ((((x) * 204) / _loomOvertureTransition) + 1)
-#define TIMER_TO_TICKS(x) ((((x) - 1) * _loomOvertureTransition) / 204)
-
 namespace Audio {
 class Mixer;
 class SoundHandle;
@@ -104,7 +101,6 @@ protected:
 	int _musicTimer;
 	int _loomOvertureTransition;
 	uint32 _replacementTrackStartTime;
-	uint32 _replacementTrackPauseTime;
 
 public:
 	Audio::SoundHandle *_talkChannelHandle;	// Handle of mixer channel actor is talking on
@@ -112,6 +108,9 @@ public:
 	bool _soundsPaused;
 	byte _sfxMode;
 	uint _lastSound;
+	uint32 _cdMusicTimerMod;
+	uint32 _cdMusicTimer;
+	uint32 _speechTimerMod;
 
 	MidiDriverFlags _musicType;
 
@@ -137,6 +136,11 @@ public:
 	bool isSfxFileCompressed();
 	bool hasSfxFile() const;
 	ScummFile *restoreDiMUSESpeechFile(const char *fileName);
+	void extractSyncsFromDiMUSEMarker(const char *marker);
+	void incrementSpeechTimer();
+	void resetSpeechTimer();
+	void startSpeechTimer();
+	void stopSpeechTimer();
 
 	void startCDTimer();
 	void stopCDTimer();
@@ -148,14 +152,17 @@ public:
 	void updateCD();
 	AudioCDManager::Status getCDStatus();
 	int getCurrentCDSound() const { return _currentCDSound; }
-
+	int getCDTrackIdFromSoundId(int soundId, int &loops, int &start);
 	bool isRolandLoom() const;
-	bool useReplacementAudioTracks() const { return _useReplacementAudioTracks; }
+	bool useReplacementAudio() const { return _useReplacementAudioTracks; }
 	void updateMusicTimer();
 	int getMusicTimer() const { return _musicTimer; }
+	int getCDMusicTimer() const { return _cdMusicTimer; }
 
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 	void restoreAfterLoad();
+
+	bool isAudioDisabled();
 
 protected:
 	void setupSfxFile();

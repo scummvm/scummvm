@@ -29,8 +29,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room75::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(gameState).ScrollxStep = 2;
 	_G(gameState).ZoomXy[P_HOWARD][0] = 70;
 	_G(gameState).ZoomXy[P_HOWARD][1] = 100;
@@ -84,7 +83,6 @@ void Room75::xit(int16 eib_nr) {
 }
 
 void Room75::proc1() {
-	_G(cur_hide_flag) = 0;
 	hideCur();
 	setPersonPos(363, 110, P_CHEWY, P_LEFT);
 	setPersonPos(322, 85, P_NICHELLE, P_RIGHT);

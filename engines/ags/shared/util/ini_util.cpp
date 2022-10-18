@@ -24,13 +24,93 @@
 #include "ags/shared/util/ini_util.h"
 #include "ags/shared/util/ini_file.h"
 #include "ags/shared/util/stream.h"
+#include "ags/shared/util/string_utils.h"
 #include "ags/shared/util/text_stream_writer.h"
 
 namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
+//-----------------------------------------------------------------------------
+// ConfigReader
+//-----------------------------------------------------------------------------
+
+bool CfgReadItem(const ConfigTree &cfg, const String &sectn, const String &item, String &value) {
+	const auto sec_it = cfg.find(sectn);
+	if (sec_it != cfg.end()) {
+		const auto item_it = sec_it->_value.find(item);
+		if (item_it != sec_it->_value.end()) {
+			value = item_it->_value;
+			return true;
+		}
+	}
+	return false;
+}
+
+int CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int def) {
+	String str;
+	if (!CfgReadItem(cfg, sectn, item, str))
+		return def;
+	return StrUtil::StringToInt(str, def);
+}
+
+int CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int min, int max, int def) {
+	int val = CfgReadInt(cfg, sectn, item, def);
+	if ((val < min) || (val > max))
+		return def;
+	return val;
+}
+
+float CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float def) {
+	String str;
+	if (!CfgReadItem(cfg, sectn, item, str))
+		return def;
+	return StrUtil::StringToFloat(str, def);
+}
+
+float CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float min, float max, float def) {
+	float val = CfgReadFloat(cfg, sectn, item, def);
+	if ((val < min) || (val > max))
+		return def;
+	return val;
+}
+
+String CfgReadString(const ConfigTree &cfg, const String &sectn, const String &item, const String &def) {
+	String str;
+	if (!CfgReadItem(cfg, sectn, item, str))
+		return def;
+	return str;
+}
+
+//-----------------------------------------------------------------------------
+// ConfigWriter
+//-----------------------------------------------------------------------------
+
+void CfgWriteInt(ConfigTree &cfg, const String &sectn, const String &item, int value) {
+	cfg[sectn][item].Format("%d", value);
+}
+
+void CfgWriteFloat(ConfigTree &cfg, const String &sectn, const String &item, float value) {
+	cfg[sectn][item].Format("%f", value);
+}
+
+void CfgWriteFloat(ConfigTree &cfg, const String &sectn, const String &item, float value, unsigned precision) {
+	char fmt[10];
+	snprintf(fmt, sizeof(fmt), "%%0.%df", precision);
+	cfg[sectn][item].Format(fmt, value);
+}
+
+void CfgWriteString(ConfigTree &cfg, const String &sectn, const String &item, const String &value) {
+	cfg[sectn][item] = value;
+}
+
+//-----------------------------------------------------------------------------
+// IniUtil
+//-----------------------------------------------------------------------------
+
 typedef std::unique_ptr<Stream>       UStream;
+typedef StringOrderMap::const_iterator StrStrOIter;
+typedef ConfigTree::const_iterator    ConfigNode;
 typedef IniFile::SectionIterator      SectionIterator;
 typedef IniFile::ConstSectionIterator CSectionIterator;
 typedef IniFile::ItemIterator         ItemIterator;

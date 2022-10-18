@@ -491,6 +491,7 @@ void MacVentureEngine::processEvents() {
 
 		switch (event.type) {
 		case Common::EVENT_QUIT:
+		case Common::EVENT_RETURN_TO_LAUNCHER:
 			_gameState = kGameStateQuitting;
 			break;
 		default:
@@ -784,7 +785,12 @@ void MacVentureEngine::openObject(ObjID objID) {
 	} else { // Open inventory window
 		Common::Point p(_world->getObjAttr(objID, kAttrPosX), _world->getObjAttr(objID, kAttrPosY));
 		WindowReference invID = _gui->createInventoryWindow(objID);
-		_gui->setWindowTitle(invID, _world->getText(objID, objID, objID));
+		Common::String title = _world->getText(objID, objID, objID);
+		// HACK, trim titletext to fit initial inventory size
+		while (title.size() > 6) {
+			title.deleteLastChar();
+		}
+		_gui->setWindowTitle(invID, title);
 		_gui->updateWindowInfo(invID, objID, _world->getChildren(objID, true));
 		_gui->updateWindow(invID, _world->getObjAttr(objID, kAttrContainerOpen));
 	}

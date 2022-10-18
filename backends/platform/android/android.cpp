@@ -121,11 +121,6 @@ void checkGlError(const char *expr, const char *file, int line) {
 }
 #endif
 
-void *androidGLgetProcAddress(const char *name) {
-	// This exists since Android 2.3 (API Level 9)
-	return (void *)eglGetProcAddress(name);
-}
-
 OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_audio_sample_rate(audio_sample_rate),
 	_audio_buffer_size(audio_buffer_size),
@@ -139,7 +134,7 @@ OSystem_Android::OSystem_Android(int audio_sample_rate, int audio_buffer_size) :
 	_eventScaleX(100),
 	_eventScaleY(100),
 	// TODO put these values in some option dlg?
-	_touchpad_mode(true),
+	_touch_mode(TOUCH_MODE_TOUCHPAD),
 	_touchpad_scale(66),
 	_dpad_scale(4),
 //	_fingersDown(0),
@@ -506,6 +501,11 @@ bool OSystem_Android::hasFeature(Feature f) {
 			f == kFeatureClipboardSupport) {
 		return true;
 	}
+	/* Even if we are using the 2D graphics manager,
+	 * we are at one initGraphics3d call of supporting GLES2 */
+	if (f == kFeatureOpenGLForGame) return true;
+	/* GLES2 always supports shaders */
+	if (f == kFeatureShadersForGame) return true;
 	return ModularGraphicsBackend::hasFeature(f);
 }
 
@@ -787,5 +787,12 @@ int OSystem_Android::getGraphicsMode() const {
 	// We only support one mode
 	return 0;
 }
+
+#if defined(USE_OPENGL) && defined(USE_GLAD)
+void *OSystem_Android::getOpenGLProcAddress(const char *name) const {
+	// This exists since Android 2.3 (API Level 9)
+	return (void *)eglGetProcAddress(name);
+}
+#endif
 
 #endif

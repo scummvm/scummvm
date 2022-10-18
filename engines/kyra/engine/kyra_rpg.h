@@ -323,7 +323,7 @@ protected:
 	int16 *_lvlShapeTop;
 	int16 *_lvlShapeBottom;
 
-	char _lastBlockDataFile[13];
+	Common::String _lastBlockDataFile;
 	uint32 _hasTempDataFlags;
 
 	int16 _sceneDrawVarDown;
@@ -448,6 +448,8 @@ protected:
 	const int _numFlyingObjects;
 	uint32 _flyingObjectStructSize;
 	void *_flyingObjectsPtr;
+
+	Common::String _versionString;
 
 	// sound
 	virtual bool snd_processEnvironmentalSoundEffect(int soundId, int block);

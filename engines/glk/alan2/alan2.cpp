@@ -76,7 +76,8 @@ bool Alan2::initialize() {
 		return false;
 	}
 
-	if (_gameFile.readUint32BE() != MKTAG(2, 8, 1, 0)) {
+	uint32 version = _gameFile.readUint32BE();
+	if (version != MKTAG(2, 8, 1, 0) && version != MKTAG(2, 6, 0, 0)) {
 		GUIErrorMessage(_("This is not a valid Alan2 file."));
 		return false;
 	}
@@ -118,9 +119,11 @@ Common::Error Alan2::writeGameData(Common::WriteStream *ws) {
 }
 
 // This works around gcc errors for passing packed structure fields
-void syncVal(Common::Serializer &s, uint32 *fld) {
-	uint32 &v = *fld;
+void syncVal(Common::Serializer &s, void *fld) {
+	uint32 v = READ_UINT32(fld);
 	s.syncAsUint32LE(v);
+	if (s.isLoading())
+		WRITE_UINT32(fld, v);
 }
 
 static void syncActors(Common::Serializer &s) {

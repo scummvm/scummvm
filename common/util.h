@@ -129,6 +129,20 @@ namespace Common {
  */
 
 /**
+ * Provides a way to store two heterogeneous objects as a single unit.
+ */
+template<class T1, class T2>
+struct Pair {
+	T1 first;
+	T2 second;
+
+	Pair() {
+	}
+	Pair(T1 first_, T2 second_) : first(first_), second(second_) {
+	}
+};
+
+/**
  * Print a hexdump of the data passed in. The number of bytes per line is
  * customizable.
  *

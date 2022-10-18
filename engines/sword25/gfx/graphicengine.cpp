@@ -51,6 +51,8 @@
 
 #include "common/lua/lua.h"
 #include "common/lua/lauxlib.h"
+#include "common/config-manager.h"
+
 enum {
 	BIT_DEPTH = 32,
 	BACKBUFFER_COUNT = 1
@@ -105,6 +107,7 @@ bool GraphicEngine::init(int width, int height, int bitDepth, int backbufferCoun
 	_screenRect.top = 0;
 	_screenRect.right = _width;
 	_screenRect.bottom = _height;
+    _isRTL = Common::parseLanguage(ConfMan.get("language")) == Common::HE_ISR;
 
 	const Graphics::PixelFormat format = g_system->getScreenFormat();
 
@@ -451,6 +454,10 @@ bool GraphicEngine::unpersist(InputPersistenceBlock &reader) {
 	_renderObjectManagerPtr->unpersist(reader);
 
 	return reader.isGood();
+}
+
+bool GraphicEngine::isRTL(){
+    return _isRTL;
 }
 
 } // End of namespace Sword25

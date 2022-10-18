@@ -22,6 +22,8 @@
 #ifndef AGS_ENGINE_AC_GLOBAL_AUDIO_H
 #define AGS_ENGINE_AC_GLOBAL_AUDIO_H
 
+#include "ags/engine/ac/speech.h"
+
 namespace AGS3 {
 
 void    StopAmbientSound(int channel);

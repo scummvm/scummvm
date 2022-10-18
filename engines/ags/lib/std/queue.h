@@ -63,6 +63,80 @@ public:
 	}
 };
 
+template<class T>
+class deque {
+private:
+	vector<T> _intern;
+public:
+	deque() = default;
+	typedef typename vector<T>::iterator iterator;
+	typedef const typename vector<T>::const_iterator const_iterator;
+	typedef typename vector<T>::reverse_iterator reverse_iterator;
+	typedef const typename vector<T>::const_reverse_iterator const_reverse_iterator;
+
+	void clear() {
+		_intern.clear();
+	}
+	void insert(const T &item) {
+		_intern.push_back(item);
+	}
+	void push_back(const T &item) {
+		_intern.push_back(item);
+	}
+	void push_front(const T &item) {
+		_intern.push_front(item);
+	}
+	void pop_back() {
+		_intern.pop_back();
+	}
+	void pop_front() {
+		_intern.remove_at(0);
+	}
+	const T &front() const {
+		return _intern.front();
+	}
+	const T &back() const {
+		return _intern.back();
+	}
+
+	void resize(size_t newSize) {
+		_intern.resize(newSize);
+	}
+
+	size_t size() const {
+		return _intern.size();
+	}
+
+	T at(size_t idx) {
+		return _intern[idx];
+	}
+
+	const_iterator cbegin() {
+		return _intern.cbegin();
+	}
+	const_iterator cend() {
+		return _intern.cend();
+	}
+	reverse_iterator rbegin() {
+		return _intern.rbegin();
+	}
+	reverse_iterator rend() {
+		return _intern.rend();
+	}
+	const_reverse_iterator rbegin() const {
+		return _intern.rbegin();
+	}
+	const_reverse_iterator rend() const {
+		return _intern.rend();
+	}
+	const_reverse_iterator crbegin() const {
+		return _intern.crbegin();
+	}
+	const_reverse_iterator crend() const {
+		return _intern.crend();
+	}
+};
+
 } // namespace std
 } // namespace AGS3
 

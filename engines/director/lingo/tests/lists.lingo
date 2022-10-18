@@ -47,6 +47,20 @@ set res to a >= machinery
 set res to machinery = a
 set res to machinery >= a
 
+-- property Array tests
+set propArray to [501: "cast", 502: "value", 1.5: "script", a: "score", #b: "member"]
+set var to getPropAt(propArray, 1)
+scummvmAssertEqual(var, 501)
+set var to getAt(propArray, 1)
+scummvmAssertEqual(var, "cast")
+
+set var to getProp(propArray, 1.5)
+scummvmAssertEqual(var, "script")
+set var to getProp(propArray, #a)
+scummvmAssertEqual(var, "score")
+set var to getProp(propArray, #b)
+scummvmAssertEqual(var, "member")
+
 -- itemOf
 set string_array to "one,, three, four"
 set res to item 2 of string_array
@@ -93,3 +107,35 @@ set gA to getAt(rct, 3)
 scummvmAssertEqual(gA, 100)
 setAt rct, 2, 20
 scummvmAssertEqual(getAt(rct, 2), 20)
+
+-- array conversions
+set a to point(10, 10)
+set b to rect(20, 20, 20, 20)
+set c to [30]
+set d to [40, 40]
+set e to [50, 50, 50]
+set f to [60, 60, 60, 60]
+set g to [70, 70, 70, 70]
+put a + d -- point(50, 50)
+put d + a -- [50, 50]
+put b + f -- rect(80, 80, 80, 80)
+put f + b -- [80, 80, 80, 80]
+put a + c -- [40.0000f]
+put a + d -- point(50, 50)
+put a + e -- point(60, 60)
+put a + f -- point(70, 70)
+put f + a -- [70, 70]
+put b + a -- [30, 30]
+put b + c -- [50]
+put b + e -- [70, 70, 70]
+put b + f -- rect(80, 80, 80, 80)
+put b + g -- rect(90, 90, 90, 90)
+put a + 5 -- point(15, 15)
+put 5 + a -- point(15, 15)
+put b + 5 -- rect(25, 25, 25, 25)
+put 5 + b -- rect(25, 25, 25, 25)
+
+-- proplist with missing keys
+set proplist_without_keys = ["key": "value", "keyless expr 1", "keyless expr 2"]
+set proplist_with_keys = ["key": "value", 2: "keyless expr 1", 3: "keyless expr 2"]
+scummvmAssert(proplist_without_keys = proplist_with_keys)

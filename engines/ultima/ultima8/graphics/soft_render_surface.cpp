@@ -75,7 +75,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 	w = rect.width();
 	h = rect.height();
 
-	if (!w || !h || !RenderSurface::_format.aMask) return;
+	if (!w || !h || !RenderSurface::_format->aMask) return;
 
 	// An optimization.
 	if ((int)(w * sizeof(uintX)) == _pitch) {
@@ -89,24 +89,24 @@ template<class uintX> void SoftRenderSurface<uintX>::FillAlpha(uint8 alpha, int3
 	uint8 *line_end = pixel + w * sizeof(uintX);
 	int diff = _pitch - w * sizeof(uintX);
 
-	uintX a = (((uintX)alpha) << RenderSurface::_format.aShift)&RenderSurface::_format.aMask;
+	uintX a = (((uintX)alpha) << RenderSurface::_format->aShift)&RenderSurface::_format->aMask;
 
 #ifdef CHECK_ALPHA_FILLS
 	uintX c;
 	uintX m;
 	if (a == 0) {
-		c = (RenderSurface::_format.bMask >> 1)&RenderSurface::_format.bMask;
-		m = RenderSurface::_format.bMask;
+		c = (RenderSurface::_format->bMask >> 1)&RenderSurface::_format->bMask;
+		m = RenderSurface::_format->bMask;
 	} else {
-		c = (RenderSurface::_format.rMask >> 1)&RenderSurface::_format.rMask;
-		m = RenderSurface::_format.rMask;
+		c = (RenderSurface::_format->rMask >> 1)&RenderSurface::_format->rMask;
+		m = RenderSurface::_format->rMask;
 	}
 #endif
 
 	while (pixel != end) {
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
-			*dest = (*dest & ~RenderSurface::_format.aMask) | a;
+			*dest = (*dest & ~RenderSurface::_format->aMask) | a;
 #ifdef CHECK_ALPHA_FILLS
 			*dest = (*dest & ~m) | (c + (((*dest & m) >> 1)&m));
 #endif
@@ -154,7 +154,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FillBlended(uint32 rgba, in
 		while (pixel != line_end) {
 			uintX *dest = reinterpret_cast<uintX *>(pixel);
 			uintX d = *dest;
-			*dest = (d & RenderSurface::_format.aMask) | BlendPreModFast(rgba, d);
+			*dest = (d & RenderSurface::_format->aMask) | BlendPreModFast(rgba, d);
 			pixel += sizeof(uintX);
 		}
 
@@ -342,7 +342,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (texformat == _format) {
+	} else if (texformat == *_format) {
 		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
 		int tex_diff = tex->w - w;
 
@@ -362,7 +362,7 @@ template<class uintX> void SoftRenderSurface<uintX>::FadedBlit(const Graphics::M
 			texel += tex_diff;
 		}
 	} else {
-		error("FadedBlit not supported from %d bpp to %d bpp", texformat.bpp(), _format.bpp());
+		error("FadedBlit not supported from %d bpp to %d bpp", texformat.bpp(), _format->bpp());
 	}
 }
 
@@ -422,7 +422,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 					if (*texel & TEX32_A_MASK) {
-						if (!RenderSurface::_format.aMask || (*dest & RenderSurface::_format.aMask)) {
+						if (!RenderSurface::_format->aMask || (*dest & RenderSurface::_format->aMask)) {
 							*dest = static_cast<uintX>(
 								PACK_RGB8(
 									(TEX32_R(*texel) * ia + r) >> 8,
@@ -439,7 +439,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 				while (pixel != line_end) {
 					uintX *dest = reinterpret_cast<uintX *>(pixel);
 
-					if (!RenderSurface::_format.aMask || (*dest & RenderSurface::_format.aMask)) {
+					if (!RenderSurface::_format->aMask || (*dest & RenderSurface::_format->aMask)) {
 						uint32 alpha = *texel & TEX32_A_MASK;
 						if (alpha == 0xFF) {
 							*dest = static_cast<uintX>(
@@ -473,7 +473,7 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 			pixel += diff;
 			texel += tex_diff;
 		}
-	} else if (texbpp == _format.bpp()) {
+	} else if (texbpp == _format->bpp()) {
 		const uintX *texel = reinterpret_cast<const uintX *>(tex->getBasePtr(sx, sy));
 		int tex_diff = tex->w - w;
 
@@ -482,8 +482,8 @@ template<class uintX> void SoftRenderSurface<uintX>::MaskedBlit(const Graphics::
 				uintX *dest = reinterpret_cast<uintX *>(pixel);
 
 				// Uh, not completely supported right now
-				//if ((*texel & RenderSurface::_format.a_mask) && (*dest & RenderSurface::_format.a_mask))
-				if (*dest & RenderSurface::_format.aMask) {
+				//if ((*texel & RenderSurface::_format->a_mask) && (*dest & RenderSurface::_format->a_mask))
+				if (*dest & RenderSurface::_format->aMask) {
 					*dest = BlendHighlight(*texel, r, g, b, 1, ia);
 				}
 				pixel += sizeof(uintX);

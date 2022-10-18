@@ -670,7 +670,7 @@ static int run_metacommand(int cnum, int *redir_offset)
 
 static integer expand_redirect(word w) {
 	assert(w != -1); /* <*NONE*> object shouldn't make it this far */
-	if (w == 0 || aver < AGTME10) return -w;
+	if (w == 0 || aver < AGT15) return -w;
 	if (w == ext_code[wdverb]) return -syntbl[auxsyn[vb]];
 	if (w == ext_code[wdnoun]) return dobj;
 	if (w == ext_code[wdobject]) return iobj;

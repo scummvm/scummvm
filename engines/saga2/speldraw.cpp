@@ -57,15 +57,15 @@ EffectDisplayPrototype::EffectDisplayPrototype(
     SpellHeightFunction     *newHeight,
     SpellBreadthFunction    *newBreadth,
     SpellInitFunction       *newInit) {
-	nodeCount = nodes;
-	location = newLocation;
-	spriteno = newSpriteno;
-	status  = newStatus;
-	height  = newHeight;
-	breadth = newBreadth;
-	init    = newInit;
-	next = nullptr;
-	ID = spellNone;
+	_nodeCount = nodes;
+	_location = newLocation;
+	_spriteno = newSpriteno;
+	_status  = newStatus;
+	_height  = newHeight;
+	_breadth = newBreadth;
+	_init    = newInit;
+	_next = nullptr;
+	_ID = spellNone;
 }
 
 /* ===================================================================== *
@@ -73,49 +73,49 @@ EffectDisplayPrototype::EffectDisplayPrototype(
  * ===================================================================== */
 
 EffectDisplayPrototypeList::EffectDisplayPrototypeList(int32 c) {
-	count = 0;
-	maxCount = 0;
-	effects = new pEffectDisplayPrototype[c]();
+	_count = 0;
+	_maxCount = 0;
+	_effects = new pEffectDisplayPrototype[c]();
 	for (int i = 0; i < c; i++)
-		effects[i] = nullptr;
-	assert(effects);
-	if (effects) maxCount = c;
+		_effects[i] = nullptr;
+	assert(_effects);
+	if (_effects) _maxCount = c;
 }
 
 EffectDisplayPrototypeList::~EffectDisplayPrototypeList() {
-	if (maxCount && effects)
-		delete[] effects;
-	maxCount = 0;
-	effects = nullptr;
+	if (_maxCount && _effects)
+		delete[] _effects;
+	_maxCount = 0;
+	_effects = nullptr;
 }
 
 int32 EffectDisplayPrototypeList::add(EffectDisplayPrototype *edp) {
-	assert(count < maxCount);
-	edp->setID(count);
-	effects[count++] = edp;
-	return count - 1;
+	assert(_count < _maxCount);
+	edp->setID(_count);
+	_effects[_count++] = edp;
+	return _count - 1;
 }
 
 void EffectDisplayPrototypeList::cleanup() {
-	if (maxCount && effects)
-		for (int i = 0; i < maxCount; i++)
-			if (effects[i]) {
-				delete effects[i];
-				effects[i] = nullptr;
+	if (_maxCount && _effects)
+		for (int i = 0; i < _maxCount; i++)
+			if (_effects[i]) {
+				delete _effects[i];
+				_effects[i] = nullptr;
 			}
-	maxCount = 0;
+	_maxCount = 0;
 }
 
 void EffectDisplayPrototypeList::append(EffectDisplayPrototype *nedp, int32 acount) {
-	assert(acount < maxCount);
-	EffectDisplayPrototype *edp = effects[acount];
-	while (edp->next) edp = edp->next;
-	edp->next = nedp;
+	assert(acount < _maxCount);
+	EffectDisplayPrototype *edp = _effects[acount];
+	while (edp->_next) edp = edp->_next;
+	edp->_next = nedp;
 }
 
 EffectDisplayPrototype *EffectDisplayPrototypeList::operator[](EffectID e) {
-	assert(e < maxCount);
-	return effects[e];
+	assert(e < _maxCount);
+	return _effects[e];
 }
 
 /* ===================================================================== *
@@ -126,33 +126,33 @@ SpellDisplayPrototype::SpellDisplayPrototype(
     EffectID e, int32 e1, int32 e2, int32 e3, int32 e4,
     effectDirectionInit sc, effectCollisionCont cc, SpellAge sa,
     uint32 spID, uint8 sco, uint8) {
-	effect = e;      // Effect ID
-	effParm1 = e1;    //   effect setting 1
-	effParm2 = e2;    //   effect setting 1
-	effParm3 = e3;    //   effect setting 1
-	effParm4 = e4;    //   effect setting 1
+	_effect = e;      // Effect ID
+	_effParm1 = e1;    //   effect setting 1
+	_effParm2 = e2;    //   effect setting 1
+	_effParm3 = e3;    //   effect setting 1
+	_effParm4 = e4;    //   effect setting 1
 
-	scatter = sc;     // direction init mode
-	elasticity = cc;  // collision flags
+	_scatter = sc;     // direction init mode
+	_elasticity = cc;  // collision flags
 
-	maxAge = sa;      // auto self-destruct age
-	primarySpriteID = spID; // RES_ID( x, y, z, 0 ) to get sprites
-	primarySpriteNo = sco; // sprites available
-	secondarySpriteID = spID; // RES_ID( x, y, z, 0 ) to get sprites
-	secondarySpriteNo = sco; // sprites available
-	//effCount=eco;      // effectrons to allocate
+	_maxAge = sa;      // auto self-destruct age
+	_primarySpriteID = spID; // RES_ID( x, y, z, 0 ) to get sprites
+	_primarySpriteNo = sco; // sprites available
+	_secondarySpriteID = spID; // RES_ID( x, y, z, 0 ) to get sprites
+	_secondarySpriteNo = sco; // sprites available
+	//_effCount=eco;      // effectrons to allocate
 
-	ID = spellNone;
-	implementAge = 0;
+	_ID = spellNone;
+	_implementAge = 0;
 }
 
 SpellDisplayPrototype *SpellDisplayPrototypeList::operator[](SpellID s) {
-	assert(s >= 0 && s < count);
-	return spells[s];
+	assert(s >= 0 && s < _count);
+	return _spells[s];
 }
 
 void SpellDisplayPrototype::getColorTranslation(ColorTable map, Effectron *e) {
-	int32 i = colorMap[whichColorMap(effect, e)];
+	int32 i = _colorMap[whichColorMap(_effect, e)];
 	i = MAX<int32>(0, MIN(loadedColorMaps, i));
 	buildColorTable(map, spellSchemes->_schemes[i]->bank, 11);
 }
@@ -167,39 +167,39 @@ void SpellDisplayPrototypeList::init() {
 }
 
 void SpellDisplayPrototypeList::cleanup() {
-	if (spells) {
-		for (int i = 0; i < maxCount; i++)
-			if (spells[i]) {
-				delete spells[i];
-				spells[i] = nullptr;
+	if (_spells) {
+		for (int i = 0; i < _maxCount; i++)
+			if (_spells[i]) {
+				delete _spells[i];
+				_spells[i] = nullptr;
 			}
-		delete[] spells;
-		spells = nullptr;
-		maxCount = 0;
+		delete[] _spells;
+		_spells = nullptr;
+		_maxCount = 0;
 	}
 }
 
 SpellDisplayPrototypeList::SpellDisplayPrototypeList(uint16 s) {
-	count = 0;
-	maxCount = 0;
-	spells = new pSpellDisplayPrototype[s]();
+	_count = 0;
+	_maxCount = 0;
+	_spells = new pSpellDisplayPrototype[s]();
 	for (int i = 0; i < s; i++)
-		spells[i] = nullptr;
-	assert(spells);
-	if (spells) maxCount = s;
+		_spells[i] = nullptr;
+	assert(_spells);
+	if (_spells) _maxCount = s;
 }
 
 SpellDisplayPrototypeList::~SpellDisplayPrototypeList() {
-	if (maxCount && spells)
-		delete[] spells;
-	spells = nullptr;
+	if (_maxCount && _spells)
+		delete[] _spells;
+	_spells = nullptr;
 }
 
 int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
-	assert(count < maxCount);
-	sdp->setID((SpellID) count);
-	spells[count++] = sdp;
-	return count;
+	assert(_count < _maxCount);
+	sdp->setID((SpellID) _count);
+	_spells[_count++] = sdp;
+	return _count;
 }
 
 /* ===================================================================== *
@@ -207,12 +207,12 @@ int32 SpellDisplayPrototypeList::add(SpellDisplayPrototype *sdp) {
  * ===================================================================== */
 
 SpellDisplayList::SpellDisplayList(uint16 s) {
-	count = 0;
-	maxCount = 0;
-	spells = new pSpellInstance[s]();
+	_count = 0;
+	_maxCount = 0;
+	_spells = new pSpellInstance[s]();
 	for (int i = 0; i < s; i++)
-		spells[i] = nullptr;
-	if (spells) maxCount = s;
+		_spells[i] = nullptr;
+	if (_spells) _maxCount = s;
 	init();
 }
 
@@ -221,45 +221,45 @@ SpellDisplayList::~SpellDisplayList() {
 }
 
 void SpellDisplayList::init() {
-	count = 0;
+	_count = 0;
 }
 
 void SpellDisplayList::cleanup() {
-	if (maxCount && spells)
-		delete[] spells;
-	spells = nullptr;
+	if (_maxCount && _spells)
+		delete[] _spells;
+	_spells = nullptr;
 }
 
 void SpellDisplayList::add(SpellInstance *newSpell) {
 	assert(newSpell);
-	if (count < maxCount)
-		spells[count++] = newSpell;
+	if (_count < _maxCount)
+		_spells[_count++] = newSpell;
 }
 
 void SpellDisplayList::buildList() {
-	if (count)
-		for (int16 i = 0; i < count; i++)   // check all active spells
-			if (!spells[i]->buildList()) {   // update
+	if (_count)
+		for (int16 i = 0; i < _count; i++)   // check all active _spells
+			if (!_spells[i]->buildList()) {   // update
 				tidyKill(i--);              // that spell is done
 			}
 }
 
 void SpellDisplayList::updateStates(int32 deltaTime) {
-	if (count)
-		for (int16 i = 0; i < count; i++)
-			spells[i]->updateStates(deltaTime);
+	if (_count)
+		for (int16 i = 0; i < _count; i++)
+			_spells[i]->updateStates(deltaTime);
 }
 
 void SpellDisplayList::tidyKill(uint16 spellNo) {
-	assert(count);
-	if (spells[spellNo]) {
-		delete spells[spellNo];
-		spells[spellNo] = nullptr;
+	assert(_count);
+	if (_spells[spellNo]) {
+		delete _spells[spellNo];
+		_spells[spellNo] = nullptr;
 	}
-	if (spellNo < count--) {
-		for (uint16 i = spellNo; i <= count; i++)
-			spells[i] = spells[i + 1];
-		spells[count + 1] = nullptr;
+	if (spellNo < _count--) {
+		for (uint16 i = spellNo; i <= _count; i++)
+			_spells[i] = _spells[i + 1];
+		_spells[_count + 1] = nullptr;
 	}
 }
 

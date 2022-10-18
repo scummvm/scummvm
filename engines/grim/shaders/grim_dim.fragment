@@ -4,8 +4,7 @@ OUTPUT
 
 uniform sampler2D tex;
 
-void main()
-{
+void main() {
 	vec4 c = texture(tex, Texcoord);
 
 	float val = (c.r + c.g + c.b) / 10.0;

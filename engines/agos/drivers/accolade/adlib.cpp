@@ -19,44 +19,19 @@
  *
  */
 
-#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
 
-#include "audio/fmopl.h"
-#include "audio/mididrv.h"
+#include "agos/drivers/accolade/mididriver.h"
 
 namespace AGOS {
 
-#define AGOS_ADLIB_VOICES_MELODIC_COUNT 6
-#define AGOS_ADLIB_VOICES_PERCUSSION_START 6
-#define AGOS_ADLIB_VOICES_PERCUSSION_COUNT 5
-#define AGOS_ADLIB_VOICES_PERCUSSION_CYMBAL 9
-
-// 5 instruments on top of the regular MIDI ones
-// used by the MUSIC.DRV variant for percussion instruments
-#define AGOS_ADLIB_EXTRA_INSTRUMENT_COUNT 5
-
-const byte operator1Register[AGOS_ADLIB_VOICES_COUNT] = {
-	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x14, 0x12, 0x15, 0x11
-};
-
-const byte operator2Register[AGOS_ADLIB_VOICES_COUNT] = {
-	0x03, 0x04, 0x05, 0x0B, 0x0C, 0x0D, 0x13, 0xFF, 0xFF, 0xFF, 0xFF
-};
-
-// percussion:
-//  voice  6 - base drum - also uses operator 13h
-//  voice  7 - snare drum
-//  voice  8 - tom tom
-//  voice  9 - cymbal
-//  voice 10 - hi hat
-const byte percussionBits[AGOS_ADLIB_VOICES_PERCUSSION_COUNT] = {
-	0x10, 0x08, 0x04, 0x02, 0x01
-};
-
 // hardcoded, dumped from Accolade music system
 // same for INSTR.DAT + MUSIC.DRV, except that MUSIC.DRV does the lookup differently
-const byte percussionKeyNoteChannelTable[] = {
+// Numbers 6-A correspond to MIDI channels in the original driver, but here they
+// are directly mapped to rhythm instrument types (bass drum, snare drum,
+// tom tom, cymbal and hi-hat respectively). F means there is no instrument
+// defined for the rhythm note.
+const byte MidiDriver_Accolade_AdLib::RHYTHM_NOTE_INSTRUMENT_TYPES[] = {
 	0x06, 0x07, 0x07, 0x07, 0x07, 0x08, 0x0A, 0x08, 0x0A, 0x08,
 	0x0A, 0x08, 0x08, 0x09, 0x08, 0x09, 0x0F, 0x0F, 0x0A, 0x0F,
 	0x0A, 0x0F, 0x0F, 0x0F, 0x08, 0x08, 0x08, 0x08, 0x08, 0x08,
@@ -64,26 +39,25 @@ const byte percussionKeyNoteChannelTable[] = {
 };
 
 // hardcoded, dumped from Accolade music system (INSTR.DAT variant)
-const uint16 frequencyLookUpTable[12] = {
-	0x02B2, 0x02DB, 0x0306, 0x0334, 0x0365, 0x0399, 0x03CF,
-	0xFE05, 0xFE23, 0xFE44, 0xFE67, 0xFE8B
+const uint16 MidiDriver_Accolade_AdLib::OPL_NOTE_FREQUENCIES_INSTR_DAT[] = {
+	0x02B2, 0x02DB, 0x0306, 0x0334, 0x0365, 0x0399,
+	0x03CF, 0xFE05, 0xFE23, 0xFE44, 0xFE67, 0xFE8B
 };
 
 // hardcoded, dumped from Accolade music system (MUSIC.DRV variant)
-const uint16 frequencyLookUpTableMusicDrv[12] = {
-	0x0205, 0x0223, 0x0244, 0x0267, 0x028B, 0x02B2, 0x02DB,
-	0x0306, 0x0334, 0x0365, 0x0399, 0x03CF
+const uint16 MidiDriver_Accolade_AdLib::OPL_NOTE_FREQUENCIES_MUSIC_DRV[] = {
+	0x0205, 0x0223, 0x0244, 0x0267, 0x028B, 0x02B2,
+	0x02DB, 0x0306, 0x0334, 0x0365, 0x0399, 0x03CF
 };
 
-//
 // Accolade adlib music driver
 //
 // Remarks:
 //
 // There are at least 2 variants of this sound system.
-// One for the games Elvira 1 + Elvira 2
+// One for the game Elvira 1
 // It seems it was also used for the game "Altered Destiny"
-// Another one for the games Waxworks + Simon, the Sorcerer 1 Demo
+// Another one for the games Elvira 2 + Waxworks + Simon, the Sorcerer 1 Demo
 //
 // First one uses the file INSTR.DAT for instrument data, channel mapping etc.
 // Second one uses the file MUSIC.DRV, which actually contains driver code + instrument data + channel mapping, etc.
@@ -92,697 +66,485 @@ const uint16 frequencyLookUpTableMusicDrv[12] = {
 // feature was at least definitely disabled for Simon, the Sorcerer 1 demo and for the Waxworks demo too.
 //
 // I have currently not implemented dynamic channel allocation.
+MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib(OPL::Config::OplType oplType, bool newVersion, int timerFrequency) :
+		MidiDriver_ADLIB_Multisource(oplType, timerFrequency) {
+	_instrumentBank = nullptr;
+	_rhythmBank = nullptr;
+	_newVersion = newVersion;
+	_oplNoteFrequencies = _newVersion ? OPL_NOTE_FREQUENCIES_MUSIC_DRV : OPL_NOTE_FREQUENCIES_INSTR_DAT;
 
-MidiDriver_Accolade_AdLib::MidiDriver_Accolade_AdLib()
-		: _masterVolume(143), _opl(nullptr),
-		  _adlibTimerProc(nullptr), _adlibTimerParam(nullptr), _isOpen(false) {
-	memset(_channelMapping, 0, sizeof(_channelMapping));
-	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
-	memset(_instrumentVolumeAdjust, 0, sizeof(_instrumentVolumeAdjust));
-	memset(_percussionKeyNoteMapping, 0, sizeof(_percussionKeyNoteMapping));
-
-	_instrumentTable = nullptr;
-	_instrumentCount = 0;
-	_musicDrvMode = false;
-	_percussionReg = 0x20;
+	Common::fill(_channelRemapping, _channelRemapping + ARRAYSIZE(_channelRemapping), 0);
+	Common::fill(_instrumentRemapping, _instrumentRemapping + ARRAYSIZE(_instrumentRemapping), 0);
+	Common::fill(_volumeAdjustments, _volumeAdjustments + ARRAYSIZE(_volumeAdjustments), 0);
+	Common::fill(_sfxNoteFractions, _sfxNoteFractions + ARRAYSIZE(_sfxNoteFractions), 0);
+	memset(_sfxInstruments, 0, sizeof(_sfxInstruments));
 }
 
 MidiDriver_Accolade_AdLib::~MidiDriver_Accolade_AdLib() {
-	if (_instrumentTable) {
-		delete[] _instrumentTable;
-		_instrumentCount = 0;
-	}
+	if (_instrumentBank)
+		delete[] _instrumentBank;
+	if (_rhythmBank)
+		delete[] _rhythmBank;
 }
 
 int MidiDriver_Accolade_AdLib::open() {
-//	debugC(kDebugLevelAdLibDriver, "AdLib: starting driver");
+	_modulationDepth = MODULATION_DEPTH_LOW;
+	_vibratoDepth = VIBRATO_DEPTH_LOW;
 
-	_opl = OPL::Config::create(OPL::Config::kOpl2);
+	int result = MidiDriver_ADLIB_Multisource::open();
 
-	if (!_opl)
-		return -1;
+	if (result == 0) {
+		// Rhythm mode is always on.
+		setRhythmMode(true);
 
-	_opl->init();
+		// The original driver writes out default instruments to all channels
+		// here. This implementation writes instruments before note on, so this
+		// is not necessary.
 
-	_isOpen = true;
+		// driver initialization does this here:
+		// INSTR.DAT
+		// noteOn(9, 0x29, 0);
+		// noteOff(9, 0x26, false);
+		// MUSIC.DRV
+		// noteOn(9, 0x26, 0);
+		// noteOff(9, 0x26, false);
+	}
 
-	_opl->start(new Common::Functor0Mem<void, MidiDriver_Accolade_AdLib>(this, &MidiDriver_Accolade_AdLib::onTimer));
+	return result;
+}
 
-	resetAdLib();
+void MidiDriver_Accolade_AdLib::send(int8 source, uint32 b) {
+	// Remap the MIDI channel according to the channel map.
+	// (Seems to be 1 on 1 for AdLib...)
+	byte channel = b & 0xF;
+	channel = _channelRemapping[channel];
+	b &= 0xFFFFFFF0;
+	b |= channel;
+	byte command = b & 0xF0;
 
-	// Finally set up default instruments
-	for (byte FMvoiceNr = 0; FMvoiceNr < AGOS_ADLIB_VOICES_COUNT; FMvoiceNr++) {
-		if (FMvoiceNr < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-			// Regular FM voices with instrument 0
-			programChangeSetInstrument(FMvoiceNr, 0, 0);
-		} else {
-			byte percussionInstrument;
-			if (!_musicDrvMode) {
-				// INSTR.DAT: percussion voices with instrument 1, 2, 3, 4 and 5
-				percussionInstrument = FMvoiceNr - AGOS_ADLIB_VOICES_PERCUSSION_START + 1;
+	if (_oplType != OPL::Config::kOpl3 && _sources[source].type != SOURCE_TYPE_SFX && command != MIDI_COMMAND_PROGRAM_CHANGE) {
+		// Filter out events for channels used by SFX.
+		// Program change events are always accepted; they just set the program
+		// for the music source and do not affect the SFX notes.
+		if (_activeNotes[channel].channelAllocated)
+			return;
+	}
+
+	MidiDriver_ADLIB_Multisource::send(source, b);
+}
+
+void MidiDriver_Accolade_AdLib::deinitSource(uint8 source) {
+	if (_sources[source].type == SOURCE_TYPE_SFX) {
+		// When a sound effect ends, the original driver will immediately
+		// rewrite the music instrument for the channel used by this sound
+		// effect. This has the effect of stopping the release phase of the
+		// sound effect. This is reproduced here to make sure the sound effects
+		// sound the same.
+		byte channel = _channelAllocations[source][0];
+		// OPL3 mode has no fixed instrument assignment to the OPL channel, so
+		// just use instrument 0.
+		byte program = 0;
+		if (_oplType != OPL::Config::kOpl3) {
+			// For OPL2, get the current music instrument for this OPL channel.
+			program = _controlData[0][channel].program;
+			// Apply instrument remapping to instrument channels.
+			program = _instrumentRemapping[program];
+		}
+
+		InstrumentInfo instrument { };
+		instrument.instrumentId = program;
+		instrument.instrumentDef = &_instrumentBank[program];
+		instrument.oplNote = 0;
+
+		writeInstrument(channel, instrument);
+
+		// Clear other SFX data.
+		_sfxNoteFractions[source - 1] = 0;
+	}
+
+	MidiDriver_ADLIB_Multisource::deinitSource(source);
+}
+
+uint8 MidiDriver_Accolade_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+	Common::StackLock lock(_allocationMutex);
+
+	if (_sources[source].type == SOURCE_TYPE_SFX) {
+		if (_channelAllocations[source][0] == 0xFF) {
+			// Allocate a channel for this SFX source.
+			byte allocatedChannel;
+			if (_oplType != OPL::Config::kOpl3) {
+				// For OPL2, use channels 5 and 4.
+				allocatedChannel = 6 - source;
 			} else {
-				// MUSIC.DRV: percussion voices with instrument 0x80, 0x81, 0x82, 0x83 and 0x84
-				percussionInstrument = FMvoiceNr - AGOS_ADLIB_VOICES_PERCUSSION_START + 0x80;
+				// For OPL3, use the dynamic allocation algorithm.
+				allocatedChannel = MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
 			}
-			programChangeSetInstrument(FMvoiceNr, percussionInstrument, percussionInstrument);
+
+			_activeNotesMutex.lock();
+
+			ActiveNote *activeNote = &_activeNotes[allocatedChannel];
+			if (activeNote->noteActive) {
+				// Turn off the note currently playing on this OPL channel.
+				writeKeyOff(allocatedChannel, activeNote->instrumentDef->rhythmType);
+			}
+			_channelAllocations[source][0] = allocatedChannel;
+			activeNote->channelAllocated = true;
+			activeNote->source = source;
+			activeNote->channel = channel;
+			activeNote->oplNote = 0;
+
+			_activeNotesMutex.unlock();
 		}
+
+		// Return the allocated channel.
+		return _channelAllocations[source][0];
 	}
 
-	// driver initialization does this here:
-	// INSTR.DAT
-	// noteOn(9, 0x29, 0);
-	// noteOff(9, 0x26, false);
-	// MUSIC.DRV
-	// noteOn(9, 0x26, 0);
-	// noteOff(9, 0x26, false);
+	// Channel allocation for music sources.
+	if (_oplType != OPL::Config::kOpl3) {
+		// For OPL2, discard events for channels 6 and 7 and channels allocated
+		// for SFX.
+		if (channel >= 6 || _activeNotes[channel].channelAllocated)
+			return 0xFF;
 
-	return 0;
-}
-
-void MidiDriver_Accolade_AdLib::close() {
-	delete _opl;
-	_isOpen = false;
-}
-
-void MidiDriver_Accolade_AdLib::setVolume(byte volume) {
-	_masterVolume = volume;
-	for (int i = 0; i < AGOS_ADLIB_VOICES_COUNT; i++) {
-		// Re-set registers
-		noteOnSetVolume(i, 1, _channels[i].velocity);
-		if (i <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
-			// Set second operator for FM voices + first percussion
-			noteOnSetVolume(i, 2, _channels[i].velocity);
-		}
+		// Then just map MIDI channels 0-5 to OPL channels 0-5.
+		return channel;
+	} else {
+		// For OPL3, use the dynamic allocation algorithm.
+		return MidiDriver_ADLIB_Multisource::allocateOplChannel(channel, source, instrumentId);
 	}
 }
 
-void MidiDriver_Accolade_AdLib::onTimer() {
-	if (_adlibTimerProc)
-		(*_adlibTimerProc)(_adlibTimerParam);
+byte MidiDriver_Accolade_AdLib::getNumberOfSfxSources() {
+	// With OPL3 more channels are available for SFX.
+	return _oplType == OPL::Config::kOpl3 ? 4 : 2;
 }
 
-void MidiDriver_Accolade_AdLib::resetAdLib() {
-	// The original driver sent 0x00 to register 0x00 up to 0xF5
-	setRegister(0xBD, 0x00); // Disable rhythm
-
-	// reset FM voice instrument data
-	resetAdLibOperatorRegisters(0x20, 0);
-	resetAdLibOperatorRegisters(0x60, 0);
-	resetAdLibOperatorRegisters(0x80, 0);
-	resetAdLibFMVoiceChannelRegisters(0xA0, 0);
-	resetAdLibFMVoiceChannelRegisters(0xB0, 0);
-	resetAdLibFMVoiceChannelRegisters(0xC0, 0);
-	resetAdLibOperatorRegisters(0xE0, 0);
-	resetAdLibOperatorRegisters(0x40, 0x3F); // original driver sent 0x00
-
-	setRegister(0x01, 0x20); // enable waveform control on both operators
-	setRegister(0x04, 0x60); // Timer control
-
-	setRegister(0x08, 0);    // select FM music mode
-	setRegister(0xBD, 0x20); // Enable rhythm
-
-	// reset our percussion register
-	_percussionReg = 0x20;
-}
-
-void MidiDriver_Accolade_AdLib::resetAdLibOperatorRegisters(byte baseRegister, byte value) {
-	byte operatorIndex;
-
-	for (operatorIndex = 0; operatorIndex < 0x16; operatorIndex++) {
-		switch (operatorIndex) {
-		case 0x06:
-		case 0x07:
-		case 0x0E:
-		case 0x0F:
-			break;
-		default:
-			setRegister(baseRegister + operatorIndex, value);
-		}
-	}
-}
-
-void MidiDriver_Accolade_AdLib::resetAdLibFMVoiceChannelRegisters(byte baseRegister, byte value) {
-	byte FMvoiceChannel;
-
-	for (FMvoiceChannel = 0; FMvoiceChannel < AGOS_ADLIB_VOICES_COUNT; FMvoiceChannel++) {
-		setRegister(baseRegister + FMvoiceChannel, value);
-	}
-}
-
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
-void MidiDriver_Accolade_AdLib::send(uint32 b) {
-	byte command = b & 0xf0;
-	byte channel = b & 0xf;
-	byte op1 = (b >> 8) & 0xff;
-	byte op2 = (b >> 16) & 0xff;
-
-	byte mappedChannel    = _channelMapping[channel];
-	byte mappedInstrument = 0;
-
-	// Ignore everything that is outside of our channel range
-	if (mappedChannel >= AGOS_ADLIB_VOICES_COUNT)
+void MidiDriver_Accolade_AdLib::loadSfxInstrument(uint8 source, byte *instrumentData) {
+	if (source > (_oplType == OPL::Config::kOpl3 ? 4 : 2))
 		return;
 
-	switch (command) {
-	case 0x80:
-		noteOff(mappedChannel, op1, false);
-		break;
-	case 0x90:
-		// Convert noteOn with velocity 0 to a noteOff
-		if (op2 == 0)
-			return noteOff(mappedChannel, op1, false);
+	// Copy instrument data into SFX instruments bank.
+	loadInstrumentData(_sfxInstruments[source - 1], instrumentData, RHYTHM_TYPE_UNDEFINED, 0, _newVersion);
 
-		noteOn(mappedChannel, op1, op2);
-		break;
-	case 0xb0: // Control change
-		// Doesn't seem to be implemented
-		break;
-	case 0xc0: // Program Change
-		mappedInstrument = _instrumentMapping[op1];
-		programChange(mappedChannel, mappedInstrument, op1);
-		break;
-	case 0xa0: // Polyphonic key pressure (aftertouch)
-	case 0xd0: // Channel pressure (aftertouch)
-		// Aftertouch doesn't seem to be implemented
-		break;
-	case 0xe0:
-		// No pitch bend change
-		break;
-	case 0xf0: // SysEx
-		warning("ADLIB: SysEx: %x", b);
-		break;
-	default:
-		warning("ADLIB: Unknown event %02x", command);
-	}
+	_activeNotesMutex.lock();
+
+	// Allocate a channel
+	programChange(0, 0, source);
+	InstrumentInfo instrument = determineInstrument(0, source, 0);
+	uint8 oplChannel = allocateOplChannel(0, source, instrument.instrumentId);
+
+	// Update the active note data.
+	ActiveNote *activeNote = &_activeNotes[oplChannel];
+	activeNote->instrumentId = instrument.instrumentId;
+	activeNote->instrumentDef = instrument.instrumentDef;
+
+	_activeNotesMutex.unlock();
 }
 
-void MidiDriver_Accolade_AdLib::setTimerCallback(void *timerParam, Common::TimerManager::TimerProc timerProc) {
-	_adlibTimerProc = timerProc;
-	_adlibTimerParam = timerParam;
+void MidiDriver_Accolade_AdLib::setSfxNoteFraction(uint8 source, uint16 noteFraction) {
+	// Note is in the upper byte.
+	_activeNotes[_channelAllocations[source][0]].oplNote = noteFraction >> 8;
+	// Note fraction is in the lower byte.
+	_sfxNoteFractions[source - 1] = noteFraction & 0xFF;
 }
 
-void MidiDriver_Accolade_AdLib::noteOn(byte FMvoiceChannel, byte note, byte velocity) {
-	byte adjustedNote     = note;
-	byte regValueA0h      = 0;
-	byte regValueB0h      = 0;
+void MidiDriver_Accolade_AdLib::updateSfxNote(uint8 source) {
+	writeFrequency(_channelAllocations[source][0]);
+}
 
-	// adjust velocity
-	byte adjustedVelocity = velocity + _channels[FMvoiceChannel].volumeAdjust;
+void MidiDriver_Accolade_AdLib::patchE1Instruments() {
+	// WORKAROUND One instrument in Elvira 1 has a very slow attack. This
+	// causes a problem in OPL3 mode (see patchWwInstruments for more details).
+	// This is fixed by shortening the attack and compensating by making the
+	// decay longer.
 
-	if (!_musicDrvMode) {
-		// INSTR.DAT
-		// force note-off
-		noteOff(FMvoiceChannel, note, true);
+	if (_oplType != OPL::Config::kOpl3)
+		// This workaround is only needed for OPL3 mode.
+		return;
 
+	// Patch the attack and decay of instrument 0x18.
+	_instrumentBank[0x18].operator0.decayAttack = 0x42; // Was 0x24
+}
+
+void MidiDriver_Accolade_AdLib::patchWwInstruments() {
+	// WORKAROUND Several instruments in Waxworks have a very slow attack (it
+	// takes a long time for a note to reach maximum volume). When a note
+	// played by this instrument is very short, only a small part of the attack
+	// phase is played and the note is barely audible. Example: the rapid notes
+	// in track 10 (played at the start of the London scenario).
+	// This problem only occurs in OPL3 mode. In OPL2 mode, these notes are all
+	// played on the same OPL channel. This means that each successive note
+	// builds on the volume reached by the previous note and apart from the
+	// first couple of notes they can be heard clearly. In OPL3 mode, each note
+	// is played on its own channel, so each note starts from 0 volume.
+	// This is fixed here by patching the attack value of this instrument to be
+	// 1/4th of the original length (from 3 to 5). The notes do not sound
+	// exactly as on OPL2, but they are clearly audible.
+
+	if (_oplType != OPL::Config::kOpl3)
+		// This workaround is only needed for OPL3 mode.
+		return;
+
+	// Patch the attack of instrument 0x22.
+	_instrumentBank[0x22].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x22].operator1.decayAttack |= 0x50;
+
+	// Patch the attack of instrument 0x25.
+	_instrumentBank[0x25].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x25].operator1.decayAttack |= 0x60;
+
+	// Patch the attack of instrument 0x7F.
+	_instrumentBank[0x7F].operator0.decayAttack &= 0x0F;
+	_instrumentBank[0x7F].operator0.decayAttack |= 0x60;
+	_instrumentBank[0x7F].operator1.decayAttack &= 0x0F;
+	_instrumentBank[0x7F].operator1.decayAttack |= 0x90;
+}
+
+MidiDriver_Accolade_AdLib::InstrumentInfo MidiDriver_Accolade_AdLib::determineInstrument(uint8 channel, uint8 source, uint8 note) {
+	if (_sources[source].type == SOURCE_TYPE_SFX) {
+		// For SFX sources, return an instrument from the SFX bank.
+		InstrumentInfo instrument { };
+		instrument.instrumentId = 0xFFFF - source;
+		instrument.instrumentDef = &_sfxInstruments[source - 1];
+		instrument.oplNote = note;
+		return instrument;
 	} else {
-		// MUSIC.DRV
-		if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-			// force note-off, but only for actual FM voice channels
-			noteOff(FMvoiceChannel, note, true);
-		}
+		return MidiDriver_ADLIB_Multisource::determineInstrument(channel, source, note);
 	}
+}
 
-	if (FMvoiceChannel != 9) {
-		// regular FM voice
-
-		if (!_musicDrvMode) {
-			// INSTR.DAT: adjust key note
-			while (adjustedNote < 24)
-				adjustedNote += 12;
-			adjustedNote -= 12;
+uint16 MidiDriver_Accolade_AdLib::calculateFrequency(uint8 channel, uint8 source, uint8 note) {
+	if (!_newVersion) {
+		// Elvira 1 version.
+		if (channel != MIDI_RHYTHM_CHANNEL) {
+			// All melodic notes are lowered by 1 octave, except the lowest notes.
+			while (note < 0x18)
+				note += 0xC;
+			note -= 0xC;
 		}
-
+		// Highest 32 notes are clipped.
+		if (note > 0x5F)
+			note = 0x5F;
 	} else {
-		// percussion channel
-		// MUSIC.DRV variant didn't do this adjustment, it directly used a pointer
-		adjustedNote -= 36;
-		if (adjustedNote > 40) { // Security check
-			warning("ADLIB: bad percussion channel note");
-			return;
-		}
-
-		byte percussionChannel = percussionKeyNoteChannelTable[adjustedNote];
-		if (percussionChannel >= AGOS_ADLIB_VOICES_COUNT)
-			return; // INSTR.DAT variant checked for ">" instead of ">=", which seems to have been a bug
-
-		// Map the keynote accordingly
-		adjustedNote = _percussionKeyNoteMapping[adjustedNote];
-		// Now overwrite the FM voice channel
-		FMvoiceChannel = percussionChannel;
+		// Elvira 2 / Waxworks version.
+		// Notes 19 and higher are transposed down 19 semitones.
+		// Note that this is about 1.5 octave, which implies that notes 0-18 are
+		// not played accurately by this driver.
+		if (note >= 0x13)
+			note -= 0x13;
 	}
 
-	if (!_musicDrvMode) {
-		// INSTR.DAT
+	// Determine octave and note within octave, and look up the matching OPL
+	// frequency.
+	int8 block = note / 12;
+	if (!_newVersion)
+		// Elvira 1 version lowers the octave by 1 (note that melodic notes
+		// were lowered 1 octave earlier).
+		block--;
+	uint8 octaveNote = note % 12;
 
-		// Save this key note
-		_channels[FMvoiceChannel].currentNote = adjustedNote;
-
-		adjustedVelocity += 24;
-		if (adjustedVelocity > 120)
-			adjustedVelocity = 120;
-		adjustedVelocity = adjustedVelocity >> 1; // divide by 2
-
+	// Look up the note frequency.
+	uint16 baseFrequency = _oplNoteFrequencies[octaveNote];
+	uint16 frequency;
+	if (!_newVersion) {
+		// Elvira 1 version has a negative frequency lookup value for notes
+		// which are in a higher octave than the others.
+		if (baseFrequency & 0x8000)
+			block++;
+		// Clear the high bits of the negative lookup values.
+		frequency = baseFrequency & 0x3FF;
+		if (block < 0) {
+			// If octave is now negative, halve the frequency and increase
+			// octave.
+			frequency >>= 1;
+			block++;
+		}
 	} else {
-		// MUSIC.DRV
-		adjustedVelocity = adjustedVelocity >> 1; // divide by 2
-	}
-
-	// Save velocity in the case volume will need to be changed
-	_channels[FMvoiceChannel].velocity = adjustedVelocity;
-	// Set volume of voice channel
-	noteOnSetVolume(FMvoiceChannel, 1, adjustedVelocity);
-	if (FMvoiceChannel <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
-		// Set second operator for FM voices + first percussion
-		noteOnSetVolume(FMvoiceChannel, 2, adjustedVelocity);
-	}
-
-	if (FMvoiceChannel >= AGOS_ADLIB_VOICES_PERCUSSION_START) {
-		// Percussion
-		byte percussionIdx = FMvoiceChannel - AGOS_ADLIB_VOICES_PERCUSSION_START;
-
-		// Enable bit of the requested percussion type
-		assert(percussionIdx < AGOS_ADLIB_VOICES_PERCUSSION_COUNT);
-		_percussionReg |= percussionBits[percussionIdx];
-		setRegister(0xBD, _percussionReg);
-	}
-
-	if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_CYMBAL) {
-		// FM voice, Base Drum, Snare Drum + Tom Tom
-		byte adlibNote = adjustedNote;
-		byte adlibOctave = 0;
-		byte adlibFrequencyIdx = 0;
-		uint16 adlibFrequency = 0;
-
-		if (!_musicDrvMode) {
-			// INSTR.DAT
-			if (adlibNote >= 0x60)
-				adlibNote = 0x5F;
-
-			adlibOctave = (adlibNote / 12) - 1;
-			adlibFrequencyIdx = adlibNote % 12;
-			adlibFrequency = frequencyLookUpTable[adlibFrequencyIdx];
-
-			if (adlibFrequency & 0x8000)
-				adlibOctave++;
-			if (adlibOctave & 0x80) {
-				adlibOctave++;
-				adlibFrequency = adlibFrequency >> 1;
-			}
-
-		} else {
-			// MUSIC.DRV variant
-			if (adlibNote >= 19)
-				adlibNote -= 19;
-
-			adlibOctave = (adlibNote / 12);
-			adlibFrequencyIdx = adlibNote % 12;
-			// additional code, that will lookup octave and do a multiplication with it
-			// noteOn however calls the frequency calculation in a way that it multiplies with 0
-			adlibFrequency = frequencyLookUpTableMusicDrv[adlibFrequencyIdx];
+		// Elvira 2 / Waxworks version adds the note fraction for SFX.
+		uint16 fractionFrequency = 0;
+		if (_sources[source].type == SOURCE_TYPE_SFX) {
+			// Because the frequency differences between notes are not constant
+			// the fraction is multiplied by a factor depending on the note.
+			fractionFrequency = (((octaveNote + 1) / 6) + 2) * (_sfxNoteFractions[source - 1] >> 4);
 		}
-
-		regValueA0h = adlibFrequency & 0xFF;
-		regValueB0h = ((adlibFrequency & 0x300) >> 8) | (adlibOctave << 2);
-		if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-			// set Key-On flag for regular FM voices, but not for percussion
-			regValueB0h |= 0x20;
-		}
-
-		setRegister(0xA0 + FMvoiceChannel, regValueA0h);
-		setRegister(0xB0 + FMvoiceChannel, regValueB0h);
-		_channels[FMvoiceChannel].currentA0hReg = regValueA0h;
-		_channels[FMvoiceChannel].currentB0hReg = regValueB0h;
-
-		if (_musicDrvMode) {
-			// MUSIC.DRV
-			if (FMvoiceChannel < AGOS_ADLIB_VOICES_MELODIC_COUNT) {
-				_channels[FMvoiceChannel].currentNote = adjustedNote;
-			}
-		}
+		frequency = baseFrequency + fractionFrequency;
 	}
+	// Note that when processing sound effects, the note can be higher than the
+	// MIDI maximum value of 0x7F. The original interpreter depends on this for
+	// correct playback of the sound effect. However, this can cause block to
+	// overflow the 3 bit range available to it in the OPL registers.
+	block &= 0x7;
+
+	return block << 10 | frequency;
 }
 
-// 100% the same for INSTR.DAT and MUSIC.DRV variants
-// except for a bug, that was introduced for MUSIC.DRV
-void MidiDriver_Accolade_AdLib::noteOnSetVolume(byte FMvoiceChannel, byte operatorNr, byte velocity) {
-	byte operatorReg = 0;
-	byte regValue40h = 0;
-	const InstrumentEntry *curInstrument = nullptr;
-
-	// Adjust velocity with the master volume
-	uint16 adjustedVelocity = CLIP<uint16>((velocity * _masterVolume) / 255, 0, 0x3F);
-
-	regValue40h = (63 - adjustedVelocity) & 0x3F;
-
-	if ((operatorNr == 1) && (FMvoiceChannel <= AGOS_ADLIB_VOICES_PERCUSSION_START)) {
-		// first operator of FM voice channels or first percussion channel
-		curInstrument = _channels[FMvoiceChannel].currentInstrumentPtr;
-		if (!(curInstrument->regC0 & 0x01)) { // check, if both operators produce sound
-			// only one does, instrument wants fixed volume
-			if (operatorNr == 1) {
-				regValue40h = curInstrument->reg40op1;
-			} else {
-				regValue40h = curInstrument->reg40op2;
-			}
-
-			// not sure, if we are supposed to implement these bugs, or not
-#if 0
-			if (!_musicDrvMode) {
-				// Table is 16 bytes instead of 18 bytes
-				if ((FMvoiceChannel == 7) || (FMvoiceChannel == 9)) {
-					regValue40h = 0;
-					warning("volume set bug (original)");
-				}
-			}
-			if (_musicDrvMode) {
-				// MUSIC.DRV variant has a bug, which will overwrite these registers
-				// for all operators above 11 / 0Bh, which means percussion will always
-				// get a value of 0 (the table holding those bytes was 12 bytes instead of 18
-				if (FMvoiceChannel >= AGOS_ADLIB_VOICES_PERCUSSION_START) {
-					regValue40h = 0;
-					warning("volume set bug (original)");
-				}
-			}
-#endif
+uint8 MidiDriver_Accolade_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	// A volume adjustment is applied to the velocity of melodic notes.
+	int8 volumeAdjustment = 0;
+	if (_sources[source].type != SOURCE_TYPE_SFX) {
+		if (instrumentDef.rhythmType == RHYTHM_TYPE_UNDEFINED) {
+			byte program = _controlData[source][channel].program;
+			volumeAdjustment = _volumeAdjustments[program];
+		} else if (!_newVersion) {
+			// For rhythm notes, the Elvira 1 version of the driver checks the
+			// current "instrument" of channel 9. In this driver channel 9
+			// corresponds to the cymbal rhythm instrument, which is set to
+			// instrument definition 4. It then reads the volume adjustment
+			// for instrument 4 and applies this to all rhythm notes. This
+			// seems quite dubious and might be a bug, but it is reproduced
+			// here so rhythm volume is the same as the original interpreter.
+			// The Elvira 2 / Waxworks driver skips volume adjustment
+			// completely for rhythm notes.
+			volumeAdjustment = _volumeAdjustments[4];
 		}
 	}
+	// Note velocity and the volume adjustment are added, clipped to normal
+	// velocity range and divided by 2 to get an OPL volume value.
+	uint8 vol = CLIP(velocity + volumeAdjustment, 0, 0x7F);
 
-	if (operatorNr == 1) {
-		operatorReg = operator1Register[FMvoiceChannel];
-	} else {
-		operatorReg = operator2Register[FMvoiceChannel];
+	if (!_newVersion) {
+		// The Elvira 1 version raises the volume a bit and clips the highest
+		// values.
+		vol += 0x18;
+		if (vol > 0x78)
+			vol = 0x78;
 	}
-	assert(operatorReg != 0xFF); // Security check
-	setRegister(0x40 + operatorReg, regValue40h);
+
+	// Invert the volume.
+	return 0x3F - (vol >> 1);
 }
 
-void MidiDriver_Accolade_AdLib::noteOff(byte FMvoiceChannel, byte note, bool dontCheckNote) {
-	byte adjustedNote = note;
-	byte regValueB0h = 0;
-
-	if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-		// regular FM voice
-
-		if (!_musicDrvMode) {
-			// INSTR.DAT: adjust key note
-			while (adjustedNote < 24)
-				adjustedNote += 12;
-			adjustedNote -= 12;
-		}
-
-		if (!dontCheckNote) {
-			// check, if current note is also the current actually playing channel note
-			if (_channels[FMvoiceChannel].currentNote != adjustedNote)
-				return; // not the same -> ignore this note off command
-		}
-
-		regValueB0h = _channels[FMvoiceChannel].currentB0hReg & 0xDF; // Remove "key on" bit
-		setRegister(0xB0 + FMvoiceChannel, regValueB0h);
-
-	} else {
-		// percussion
-		adjustedNote -= 36;
-		if (adjustedNote > 40) { // Security check
-			warning("ADLIB: bad percussion channel note");
-			return;
-		}
-
-		byte percussionChannel = percussionKeyNoteChannelTable[adjustedNote];
-		if (percussionChannel > AGOS_ADLIB_VOICES_COUNT)
-			return;
-
-		byte percussionIdx = percussionChannel - AGOS_ADLIB_VOICES_PERCUSSION_START;
-
-		// Disable bit of the requested percussion type
-		assert(percussionIdx < AGOS_ADLIB_VOICES_PERCUSSION_COUNT);
-		_percussionReg &= ~percussionBits[percussionIdx];
-		setRegister(0xBD, _percussionReg);
-	}
+void MidiDriver_Accolade_AdLib::writePanning(uint8 oplChannel, OplInstrumentRhythmType rhythmType) {
+	// The Elvira 1 driver does not write the Cx register for rhythm
+	// instruments except the bass drum; the Elvira 2 / Waxworks driver does
+	// not write it for the bass drum either.
+	if (rhythmType == RHYTHM_TYPE_UNDEFINED || (rhythmType == RHYTHM_TYPE_BASS_DRUM && !_newVersion))
+		MidiDriver_ADLIB_Multisource::writePanning(oplChannel, rhythmType);
 }
 
-void MidiDriver_Accolade_AdLib::programChange(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr) {
-	if (mappedInstrumentNr >= _instrumentCount) {
-		warning("ADLIB: tried to set non-existent instrument");
-		return; // out of range
-	}
-
-	// setup instrument
-	//warning("ADLIB: program change for FM voice channel %d, instrument id %d", FMvoiceChannel, mappedInstrumentNr);
-
-	if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-		// Regular FM voice
-		programChangeSetInstrument(FMvoiceChannel, mappedInstrumentNr, MIDIinstrumentNr);
-
-	} else {
-		// Percussion
-		// set default instrument (again)
-		byte percussionInstrumentNr = 0;
-		const InstrumentEntry *instrumentPtr;
-
-		if (!_musicDrvMode) {
-			// INSTR.DAT: percussion default instruments start at instrument 1
-			percussionInstrumentNr = FMvoiceChannel - AGOS_ADLIB_VOICES_PERCUSSION_START + 1;
-		} else {
-			// MUSIC.DRV: percussion default instruments start at instrument 0x80
-			percussionInstrumentNr = FMvoiceChannel - AGOS_ADLIB_VOICES_PERCUSSION_START + 0x80;
-		}
-		if (percussionInstrumentNr >= _instrumentCount) {
-			warning("ADLIB: tried to set non-existent instrument");
-			return;
-		}
-		instrumentPtr = &_instrumentTable[percussionInstrumentNr];
-		_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-		_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[percussionInstrumentNr];
-	}
+void MidiDriver_Accolade_AdLib::writeFrequency(uint8 oplChannel, OplInstrumentRhythmType rhythmType) {
+	// The original driver does not write the frequency for the cymbal and
+	// hi-hat instruments.
+	if (rhythmType != RHYTHM_TYPE_HI_HAT && rhythmType != RHYTHM_TYPE_CYMBAL)
+		MidiDriver_ADLIB_Multisource::writeFrequency(oplChannel, rhythmType);
 }
 
-void MidiDriver_Accolade_AdLib::programChangeSetInstrument(byte FMvoiceChannel, byte mappedInstrumentNr, byte MIDIinstrumentNr) {
-	const InstrumentEntry *instrumentPtr;
-	byte op1Reg = 0;
-	byte op2Reg = 0;
+void MidiDriver_Accolade_AdLib::loadInstrumentData(OplInstrumentDefinition &definition, byte *instrumentData,
+		OplInstrumentRhythmType rhythmType, byte rhythmNote, bool newVersion) {
+	definition.fourOperator = false;
 
-	if (mappedInstrumentNr >= _instrumentCount) {
-		warning("ADLIB: tried to set non-existent instrument");
-		return; // out of range
+	definition.connectionFeedback0 = instrumentData[8];
+	definition.operator0.freqMultMisc = instrumentData[0];
+	// The original driver does not add the KSL bits to the calculated
+	// volume when writing the level registers. To replicate this, the KSL
+	// bits are set to 0 for operators affected by volume.
+	// Note that the Elvira 2 / Waxworks driver has a bug which will cause
+	// the operator 0 level register of the bass drum instrument to be
+	// overwritten by the connection bit (usually 0) of another instrument
+	// if the bass drum connection is FM (and it is). This is fixed here by
+	// setting the correct value. The Elvira 1 version does not have this
+	// bug.
+	definition.operator0.level = (definition.connectionFeedback0 & 1) ? 0 : instrumentData[1];
+	definition.operator0.decayAttack = instrumentData[2];
+	definition.operator0.releaseSustain = instrumentData[3];
+	// The original driver only writes 0 to the waveform select registers
+	// during initialization, so only sine waveform is used.
+	definition.operator0.waveformSelect = 0;
+	definition.operator1.freqMultMisc = instrumentData[4];
+	definition.operator1.level = 0;
+	definition.operator1.decayAttack = instrumentData[6];
+	definition.operator1.releaseSustain = instrumentData[7];
+	definition.operator1.waveformSelect = 0;
+	if (newVersion) {
+		// The Elvira 2 / Waxworks driver always sets the last two bits of
+		// the sustain value.
+		// This was done during "programChange" in the original driver
+		definition.operator0.releaseSustain |= 3;
+		definition.operator1.releaseSustain |= 3;
 	}
 
-	// setup instrument
-	instrumentPtr = &_instrumentTable[mappedInstrumentNr];
-	//warning("set instrument for FM voice channel %d, instrument id %d", FMvoiceChannel, mappedInstrumentNr);
-
-	op1Reg = operator1Register[FMvoiceChannel];
-	op2Reg = operator2Register[FMvoiceChannel];
-
-	setRegister(0x20 + op1Reg, instrumentPtr->reg20op1);
-	setRegister(0x40 + op1Reg, instrumentPtr->reg40op1);
-	setRegister(0x60 + op1Reg, instrumentPtr->reg60op1);
-	setRegister(0x80 + op1Reg, instrumentPtr->reg80op1);
-
-	if (FMvoiceChannel <= AGOS_ADLIB_VOICES_PERCUSSION_START) {
-		// set 2nd operator as well for FM voices and first percussion voice
-		setRegister(0x20 + op2Reg, instrumentPtr->reg20op2);
-		setRegister(0x40 + op2Reg, instrumentPtr->reg40op2);
-		setRegister(0x60 + op2Reg, instrumentPtr->reg60op2);
-		setRegister(0x80 + op2Reg, instrumentPtr->reg80op2);
-
-		if (!_musicDrvMode) {
-			// set Feedback / Algorithm as well
-			setRegister(0xC0 + FMvoiceChannel, instrumentPtr->regC0);
-		} else {
-			if (FMvoiceChannel < AGOS_ADLIB_VOICES_PERCUSSION_START) {
-				// set Feedback / Algorithm as well for regular FM voices only
-				setRegister(0xC0 + FMvoiceChannel, instrumentPtr->regC0);
-			}
-		}
-	}
-
-	// Remember instrument
-	_channels[FMvoiceChannel].currentInstrumentPtr = instrumentPtr;
-	_channels[FMvoiceChannel].volumeAdjust         = _instrumentVolumeAdjust[MIDIinstrumentNr];
+	definition.rhythmType = rhythmType;
+	definition.rhythmNote = rhythmNote;
 }
 
-void MidiDriver_Accolade_AdLib::setRegister(int reg, int value) {
-	_opl->writeReg(reg, value);
-	//warning("OPL %x %x (%d)", reg, value, value);
-}
+void MidiDriver_Accolade_AdLib::readDriverData(byte *driverData, uint16 driverDataSize, bool newVersion) {
+	uint16 minDataSize = newVersion ? 468 : 354;
+	if (driverDataSize < minDataSize)
+		error("ACCOLADE-ADLIB: Expected minimum driver data size of %d - got %d", minDataSize, driverDataSize);
 
-uint32 MidiDriver_Accolade_AdLib::property(int prop, uint32 param) {
-	return 0;
-}
+	// INSTR.DAT Data is like this:
+	// 128 bytes  instrument mapping
+	// 128 bytes  instrument volume adjust (signed!)
+	//  16 bytes  unknown
+	//  16 bytes  channel mapping
+	//  64 bytes  key note mapping (not used for MT32)
+	//   1 byte   instrument count
+	//   1 byte   bytes per instrument
+	//   x bytes  no instruments used for MT32
 
-// Called right at the start, we get an INSTR.DAT entry
-bool MidiDriver_Accolade_AdLib::setupInstruments(byte *driverData, uint16 driverDataSize, bool useMusicDrvFile) {
-	uint16 channelMappingOffset         = 0;
-	uint16 channelMappingSize           = 0;
-	uint16 instrumentMappingOffset      = 0;
-	uint16 instrumentMappingSize        = 0;
-	uint16 instrumentVolumeAdjustOffset = 0;
-	uint16 instrumentVolumeAdjustSize   = 0;
-	uint16 keyNoteMappingOffset         = 0;
-	uint16 keyNoteMappingSize           = 0;
-	uint16 instrumentCount              = 0;
-	uint16 instrumentDataOffset         = 0;
-	uint16 instrumentDataSize           = 0;
-	uint16 instrumentEntrySize          = 0;
+	// music.drv is basically a driver, but with a few fixed locations for certain data
 
-	if (!useMusicDrvFile) {
-		// INSTR.DAT: we expect at least 354 bytes
-		if (driverDataSize < 354)
-			return false;
+	uint16 channelMappingOffset = newVersion ? 396 : 256 + 16;
+	Common::copy(driverData + channelMappingOffset, driverData + channelMappingOffset + ARRAYSIZE(_channelRemapping), _channelRemapping);
 
-		// Data is like this:
-		// 128 bytes  instrument mapping
-		// 128 bytes  instrument volume adjust (signed!)
-		//  16 bytes  unknown
-		//  16 bytes  channel mapping
-		//  64 bytes  key note mapping (not used for MT32)
-		//   1 byte   instrument count
-		//   1 byte   bytes per instrument
-		//   x bytes  no instruments used for MT32
+	uint16 instrumentMappingOffset = newVersion ? 140 : 0;
+	Common::copy(driverData + instrumentMappingOffset, driverData + instrumentMappingOffset + ARRAYSIZE(_instrumentRemapping), _instrumentRemapping);
+	setInstrumentRemapping(_instrumentRemapping);
 
-		channelMappingOffset         = 256 + 16;
-		channelMappingSize           = 16;
-		instrumentMappingOffset      = 0;
-		instrumentMappingSize        = 128;
-		instrumentVolumeAdjustOffset = 128;
-		instrumentVolumeAdjustSize   = 128;
-		keyNoteMappingOffset         = 256 + 16 + 16;
-		keyNoteMappingSize           = 64;
+	uint16 volumeAdjustmentsOffset = newVersion ? 140 + 128 : 128;
+	int8 *volumeAdjustmentsData = (int8 *)driverData + volumeAdjustmentsOffset;
+	Common::copy(volumeAdjustmentsData, volumeAdjustmentsData + ARRAYSIZE(_volumeAdjustments), _volumeAdjustments);
 
-		byte instrDatInstrumentCount    = driverData[256 + 16 + 16 + 64];
+	if (!newVersion) {
 		byte instrDatBytesPerInstrument = driverData[256 + 16 + 16 + 64 + 1];
 
 		// We expect 9 bytes per instrument
 		if (instrDatBytesPerInstrument != 9)
-			return false;
-		// And we also expect at least one adlib instrument
-		if (!instrDatInstrumentCount)
-			return false;
-
-		instrumentCount      = instrDatInstrumentCount;
-		instrumentDataOffset = 256 + 16 + 16 + 64 + 2;
-		instrumentDataSize   = instrDatBytesPerInstrument * instrDatInstrumentCount;
-		instrumentEntrySize  = instrDatBytesPerInstrument;
-
-	} else {
-		// MUSIC.DRV: we expect at least 468 bytes
-		if (driverDataSize < 468)
-			return false;
-
-		// music.drv is basically a driver, but with a few fixed locations for certain data
-
-		channelMappingOffset         = 396;
-		channelMappingSize           = 16;
-		instrumentMappingOffset      = 140;
-		instrumentMappingSize        = 128;
-		instrumentVolumeAdjustOffset = 140 + 128;
-		instrumentVolumeAdjustSize   = 128;
-		keyNoteMappingOffset         = 376 + 36; // adjust by 36, because we adjust keyNote before mapping (see noteOn)
-		keyNoteMappingSize           = 64;
-
-		// seems to have used 128 + 5 instruments
-		// 128 regular ones and an additional 5 for percussion
-		instrumentCount         = 128 + AGOS_ADLIB_EXTRA_INSTRUMENT_COUNT;
-		instrumentDataOffset    = 722;
-		instrumentEntrySize     = 9;
-		instrumentDataSize      = instrumentCount * instrumentEntrySize;
+			error("ACCOLADE-ADLIB: Expected instrument definitions of length 9 - got length %d", instrDatBytesPerInstrument);
 	}
 
-	// Channel mapping
-	if (channelMappingSize) {
-		// Get these 16 bytes for MIDI channel mapping
-		if (channelMappingSize != sizeof(_channelMapping))
-			return false;
+	byte instrumentDefinitionCount = newVersion ? 128 : driverData[256 + 16 + 16 + 64];
+	uint16 rhythmNoteOffset = newVersion ? 376 + 36 : 256 + 16 + 16;
+	uint16 instrumentDataOffset = newVersion ? 722 : 256 + 16 + 16 + 64 + 2;
 
-		memcpy(_channelMapping, driverData + channelMappingOffset, sizeof(_channelMapping));
-	} else {
-		// Set up straight mapping
-		for (uint16 channelNr = 0; channelNr < sizeof(_channelMapping); channelNr++) {
-			_channelMapping[channelNr] = channelNr;
-		}
+	_instrumentBank = new OplInstrumentDefinition[instrumentDefinitionCount];
+	for (int i = 0; i < instrumentDefinitionCount; i++) {
+		byte *instrumentData = driverData + instrumentDataOffset + (i * 9);
+		loadInstrumentData(_instrumentBank[i], instrumentData, RHYTHM_TYPE_UNDEFINED, 0, newVersion);
 	}
 
-	if (instrumentMappingSize) {
-		// And these for instrument mapping
-		if (instrumentMappingSize > sizeof(_instrumentMapping))
-			return false;
+	_rhythmBank = new OplInstrumentDefinition[40];
+	_rhythmBankFirstNote = 36;
+	_rhythmBankLastNote = 75;
+	// Elvira 1 version uses instruments 1-5 for rhythm, Elvira 2 / Waxworks
+	// version uses 0x80-0x84.
+	byte *rhythmInstrumentDefinitions = driverData + instrumentDataOffset + ((newVersion ? 0x80 : 1) * 9);
+	byte *rhythmNotes = driverData + rhythmNoteOffset;
+	for (int i = 0; i < 40; i++) {
+		byte instrumentDefNumber = RHYTHM_NOTE_INSTRUMENT_TYPES[i] > 0xA ? 0 : RHYTHM_NOTE_INSTRUMENT_TYPES[i] - 6;
+		OplInstrumentRhythmType rhythmType = RHYTHM_NOTE_INSTRUMENT_TYPES[i] > 0xA ? RHYTHM_TYPE_UNDEFINED :
+			static_cast<OplInstrumentRhythmType>(11 - RHYTHM_NOTE_INSTRUMENT_TYPES[i]);
+		byte *instrumentData = rhythmInstrumentDefinitions + (instrumentDefNumber * 9);
 
-		memcpy(_instrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
+		loadInstrumentData(_rhythmBank[i], instrumentData, rhythmType, rhythmNotes[i], newVersion);
 	}
-	// Set up straight mapping for the remaining data
-	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_instrumentMapping); instrumentNr++) {
-		_instrumentMapping[instrumentNr] = instrumentNr;
-	}
-
-	if (instrumentVolumeAdjustSize) {
-		if (instrumentVolumeAdjustSize != sizeof(_instrumentVolumeAdjust))
-			return false;
-
-		memcpy(_instrumentVolumeAdjust, driverData + instrumentVolumeAdjustOffset, instrumentVolumeAdjustSize);
-	}
-
-	// Get key note mapping, if available
-	if (keyNoteMappingSize) {
-		if (keyNoteMappingSize != sizeof(_percussionKeyNoteMapping))
-			return false;
-
-		memcpy(_percussionKeyNoteMapping, driverData + keyNoteMappingOffset, keyNoteMappingSize);
-	}
-
-	// Check, if there are enough bytes left to hold all instrument data
-	if (driverDataSize < (instrumentDataOffset + instrumentDataSize))
-		return false;
-
-	// We release previous instrument data, just in case
-	if (_instrumentTable)
-		delete[] _instrumentTable;
-
-	_instrumentTable = new InstrumentEntry[instrumentCount];
-	_instrumentCount = instrumentCount;
-
-	byte            *instrDATReadPtr    = driverData + instrumentDataOffset;
-	InstrumentEntry *instrumentWritePtr = _instrumentTable;
-
-	for (uint16 instrumentNr = 0; instrumentNr < _instrumentCount; instrumentNr++) {
-		memcpy(instrumentWritePtr, instrDATReadPtr, sizeof(InstrumentEntry));
-		instrDATReadPtr += instrumentEntrySize;
-		instrumentWritePtr++;
-	}
-
-	// Enable MUSIC.DRV-Mode (slightly different behaviour)
-	if (useMusicDrvFile)
-		_musicDrvMode = true;
-
-	if (_musicDrvMode) {
-		// Extra code for MUSIC.DRV
-
-		// This was done during "programChange" in the original driver
-		instrumentWritePtr = _instrumentTable;
-		for (uint16 instrumentNr = 0; instrumentNr < _instrumentCount; instrumentNr++) {
-			instrumentWritePtr->reg80op1 |= 0x03; // set release rate
-			instrumentWritePtr->reg80op2 |= 0x03;
-			instrumentWritePtr++;
-		}
-	}
-	return true;
 }
 
-MidiDriver *MidiDriver_Accolade_AdLib_create(Common::String driverFilename) {
-	byte  *driverData = nullptr;
+MidiDriver_Multisource *MidiDriver_Accolade_AdLib_create(Common::String driverFilename, OPL::Config::OplType oplType, int timerFrequency) {
+	byte *driverData = nullptr;
 	uint16 driverDataSize = 0;
-	bool   isMusicDrvFile = false;
+	bool newVersion = false;
 
-	MidiDriver_Accolade_readDriver(driverFilename, MT_ADLIB, driverData, driverDataSize, isMusicDrvFile);
+	MidiDriver_Accolade_readDriver(driverFilename, MT_ADLIB, driverData, driverDataSize, newVersion);
 	if (!driverData)
 		error("ACCOLADE-ADLIB: error during readDriver()");
 
-	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib();
-	if (driver) {
-		if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
-			delete driver;
-			driver = nullptr;
-		}
-	}
+	MidiDriver_Accolade_AdLib *driver = new MidiDriver_Accolade_AdLib(oplType, newVersion, timerFrequency);
+	if (!driver)
+		error("ACCOLADE-ADLIB: could not create driver");
+
+	driver->readDriverData(driverData, driverDataSize, newVersion);
 
 	delete[] driverData;
 	return driver;

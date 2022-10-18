@@ -37,11 +37,33 @@ namespace AGS {
 namespace Shared {
 
 typedef std::map<String, String>         StringOrderMap;
-typedef StringOrderMap::const_iterator   StrStrOIter;
-
 typedef std::map<String, StringOrderMap> ConfigTree;
-typedef ConfigTree::const_iterator       ConfigNode;
 
+//
+// Helper functions for parsing values in a ConfigTree
+bool    CfgReadItem(const ConfigTree &cfg, const String &sectn, const String &item, String &value);
+int     CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int def = 0);
+int     CfgReadInt(const ConfigTree &cfg, const String &sectn, const String &item, int min, int max, int def = 0);
+inline bool CfgReadBoolInt(const ConfigTree &cfg, const String &sectn, const String &item, bool def = false) {
+	return CfgReadInt(cfg, sectn, item, 0, 1, def) != 0;
+}
+float   CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float def = 0.f);
+float   CfgReadFloat(const ConfigTree &cfg, const String &sectn, const String &item, float min, float max, float def = 0.f);
+String  CfgReadString(const ConfigTree &cfg, const String &sectn, const String &item, const String &def = "");
+//
+// Helper functions for writing values into a ConfigTree
+void    CfgWriteInt(ConfigTree &cfg, const String &sectn, const String &item, int value);
+inline void CfgWriteBoolInt(ConfigTree &cfg, const String &sectn, const String &item, bool value) {
+	CfgWriteInt(cfg, sectn, item, static_cast<int>(value));
+}
+void    CfgWriteFloat(ConfigTree &cfg, const String &sectn, const String &item, float value);
+void    CfgWriteFloat(ConfigTree &cfg, const String &sectn, const String &item, float value, unsigned precision);
+void    CfgWriteString(ConfigTree &cfg, const String &sectn, const String &item, const String &value);
+
+
+class IniFile;
+
+// Utility functions that exchange data between ConfigTree and INI file.
 namespace IniUtil {
 
 // Parse the contents of given file as INI format and insert values

@@ -157,11 +157,17 @@ void GLContext::glopBegin(GLParam *p) {
 void GLContext::gl_vertex_transform(GLVertex *v) {
 	Matrix4 *m;
 
-	if (lighting_enabled) {
-		// eye coordinates needed for lighting
+	if (lighting_enabled || fog_enabled) {
+		// eye coordinates needed for lighting and fog
 		m = matrix_stack_ptr[0];
 		m->transform3x4(v->coord, v->ec);
+	}
 
+	if (fog_enabled) {
+		gl_calc_fog_factor(v);
+	}
+
+	if (lighting_enabled) {
 		// projection coordinates
 		m = matrix_stack_ptr[1];
 		m->transform(v->ec, v->pc);

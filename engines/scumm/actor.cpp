@@ -20,6 +20,7 @@
  */
 
 #include "common/system.h"	// for setFocusRectangle/clearFocusRectangle
+#include "common/scummsys.h"
 #include "scumm/scumm.h"
 #include "scumm/actor.h"
 #include "scumm/actor_he.h"
@@ -397,7 +398,16 @@ void Actor_v3::setupActorScale() {
 	// To workaround this, we override the scale of Henry. Since V3 games
 	// like Indy3 don't use the costume scale otherwise, this works fine.
 	// The scale factor 0x50 was determined by some guess work.
-	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12) {
+	//
+	// TODO: I can't reproduce this with the EGA DOS, EGA Macintosh and
+	// VGA DOS English releases, since Indy says he'd "better not" go back
+	// to the front of the castle at this point (script 77-201), as long
+	// as a special Bit is set for this (and it's set in room 21 entry
+	// script when Henry escapes from his room). Maybe there's a problem
+	// in the German release (and then it'd probably be better to restore
+	// that safeguard instead, since the game clearly doesn't expect you
+	// to go back inside the castle), but I don't own this version.  -dwa
+	if (_number == 2 && _costume == 7 && _vm->_game.id == GID_INDY3 && _vm->_currentRoom == 12 && _vm->_enableEnhancements) {
 		_scalex = 0x50;
 		_scaley = 0x50;
 	} else {
@@ -628,7 +638,7 @@ int Actor_v3::actorWalkStep() {
 		// The next two lines fix bug #12278 for ZAK FM-TOWNS (SCUMM3). They are alse required for SCUMM 1/2 to prevent movement while
 		// turning, but only if the character has to make a turn. The correct behavior for v1/2 can be tested by letting Zak (only v1/2
 		// versions) walk in the starting room from the torn wallpaper to the desk drawer: Zak should first turn around clockwise by
-		// 180�, then walk one step to the left, then turn clockwise 90�. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
+		// 180°, then walk one step to the left, then turn clockwise 90°. For ZAK FM-TOWNS (SCUMM3) this part will look quite different
 		// (and a bit weird), but I have confirmed the correctness with the FM-Towns emulator, too.
 		if (_vm->_game.version == 3 || (_vm->_game.version <= 2 && (_moving & MF_TURN)))
 			return 1;
@@ -1313,11 +1323,14 @@ void Actor_v3::walkActor() {
 			return;
 		}
 
-		// Can't walk through locked boxes
-		int flags = _vm->getBoxFlags(next_box);
-		if ((flags & kBoxLocked) && !((flags & kBoxPlayerOnly) && !isPlayer())) {
-			_moving |= MF_LAST_LEG;
-			return;
+		// This is version specific for ZAK FM-TOWNS. The flags check that is present in later SCUMM versions does not exist
+		// in SCUMM3. I have looked at disams of ZAK FM-TOWNS, LOOM FM-TOWNS, LOOM DOS EGA, INDY3 FM-TOWNS, INDY3 DOS VGA.
+		if (_vm->_game.id == GID_ZAK) {
+			// Check for equals, not for a bit mask (otherwise: bug no. 13399)
+			if (_vm->getBoxFlags(next_box) == kBoxLocked) {
+				_moving |= MF_LAST_LEG;
+				return;
+			}
 		}
 
 		_walkdata.curbox = next_box;
@@ -1368,16 +1381,19 @@ int Actor::remapDirection(int dir, bool is_walking) {
 	// actor is in the current room anyway.
 
 	if (!_ignoreBoxes || _vm->_game.id == GID_LOOM) {
-		specdir = _vm->_extraBoxFlags[_walkbox];
-		if (specdir) {
-			if (specdir & 0x8000) {
-				dir = specdir & 0x3FFF;
-			} else {
-				specdir = specdir & 0x3FFF;
-				if (specdir - 90 < dir && dir < specdir + 90)
-					dir = specdir;
-				else
-					dir = specdir + 180;
+		if (_walkbox != kOldInvalidBox) {
+			assert(_walkbox < ARRAYSIZE(_vm->_extraBoxFlags));
+			specdir = _vm->_extraBoxFlags[_walkbox];
+			if (specdir) {
+				if (specdir & 0x8000) {
+					dir = specdir & 0x3FFF;
+				} else {
+					specdir = specdir & 0x3FFF;
+					if (specdir - 90 < dir && dir < specdir + 90)
+						dir = specdir;
+					else
+						dir = specdir + 180;
+				}
 			}
 		}
 
@@ -1516,6 +1532,21 @@ void Actor::setDirection(int direction) {
 		vald = _cost.frame[i];
 		if (vald == 0xFFFF)
 			continue;
+		if (!(_vm->_game.features & GF_NEW_COSTUMES)) {
+			// Fix bug mentioned here: https://github.com/scummvm/scummvm/pull/3795/
+			// For versions 1 to 6 we need to store the direction info in the frame array (like
+			// the original interpreters do). I haven't found any signs that v7/8 require it, though.
+			// I haven't checked HE, but since it uses the same AKOS costumes as v7/8 I leave that
+			// as it is...
+			if ((vald & 3) == newDirToOldDir(_facing)) {
+				// v1/2 skip the frame only if everything is equal...
+				if (_vm->_game.version > 2 || (vald >> 2) == _frame)
+					continue;
+			}
+			vald >>= 2;
+			if (_vm->_game.version < 3)
+				_frame = vald;
+		}
 		_vm->_costumeLoader->costumeDecodeData(this, vald, (_vm->_game.version <= 2) ? 0xFFFF : aMask);
 	}
 
@@ -1549,7 +1580,7 @@ void Actor_v0::setDirection(int direction) {
 }
 
 void Actor::faceToObject(int obj) {
-	int x2, y2, dir;
+	int x2, y2, dir, width;
 
 	if (!isInCurrentRoom())
 		return;
@@ -1557,7 +1588,17 @@ void Actor::faceToObject(int obj) {
 	if (_vm->getObjectOrActorXY(obj, x2, y2) == -1)
 		return;
 
-	dir = (x2 > _pos.x) ? 90 : 270;
+	if (_vm->_game.version > 4) {
+		dir = (x2 > _pos.x) ? 90 : 270;
+	} else {
+		_vm->getObjectOrActorWidth(obj, width);
+		dir = (_pos.x < x2) ? 1 : 0;
+		if (abs(_pos.x - x2) < width / 2)
+			dir = (_pos.y > y2) ? 3 : 2;
+
+		dir = oldDirToNewDir(dir);
+	}
+
 	turnToDirection(dir);
 }
 
@@ -2337,8 +2378,8 @@ void Actor::drawActorCostume(bool hitTestMode) {
 
 	if (!hitTestMode) {
 		// Record the vertical extent of the drawn actor
-		_top = bcr->_draw_top;
-		_bottom = bcr->_draw_bottom;
+		_top = bcr->_drawTop;
+		_bottom = bcr->_drawBottom;
 	}
 }
 
@@ -2356,9 +2397,9 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 		bcr->_scaleY = _scaley;
 	}
 
-	bcr->_shadow_mode = _shadowMode;
+	bcr->_shadowMode = _shadowMode;
 	if (_vm->_game.version >= 5 && _vm->_game.heversion == 0) {
-		bcr->_shadow_table = _vm->_shadowPalette;
+		bcr->_shadowTable = _vm->_shadowPalette;
 	}
 
 	bcr->setCostume(_costume, (_vm->_game.heversion == 0) ? 0 : _heXmapNum);
@@ -2389,8 +2430,8 @@ void Actor::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 
 	}
 
-	bcr->_draw_top = 0x7fffffff;
-	bcr->_draw_bottom = 0;
+	bcr->_drawTop = 0x7fffffff;
+	bcr->_drawBottom = 0;
 }
 
 void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
@@ -2405,7 +2446,7 @@ void ActorHE::prepareDrawActorCostume(BaseCostumeRenderer *bcr) {
 	bcr->_clipOverride = _clipOverride;
 
 	if (_vm->_game.heversion == 70) {
-		bcr->_shadow_table = _vm->_HEV7ActorPalette;
+		bcr->_shadowTable = _vm->_HEV7ActorPalette;
 	}
 
 	bcr->_skipLimbs = (_heSkipLimbs != 0);
@@ -2645,7 +2686,7 @@ void Actor_v0::limbFrameCheck(int limb) {
 	_limbFrameRepeat[limb] = _limbFrameRepeatNew[limb];
 
 	// 0x25C3
-	_cost.active[limb] = ((V0CostumeLoader *)_vm->_costumeLoader)->getFrame(this, limb);
+	_cost.animType[limb] = ((V0CostumeLoader *)_vm->_costumeLoader)->getFrame(this, limb);
 	_cost.curpos[limb] = 0;
 
 	_needRedraw = true;
@@ -2705,7 +2746,7 @@ void Actor::animateLimb(int limb, int f) {
 		size = _vm->getResourceDataSize(akfo) / 2;
 
 		while (f--) {
-			if (_cost.active[limb] != 0)
+			if (_cost.animType[limb] != AKAT_Empty)
 				((ScummEngine_v6 *)_vm)->akos_increaseAnim(this, limb, aksq, (const uint16 *)akfo, size);
 		}
 
@@ -2861,18 +2902,30 @@ void ScummEngine::resetV1ActorTalkColor() {
 void ScummEngine_v7::actorTalk(const byte *msg) {
 	Actor *a;
 	bool stringWrap = false;
+	bool usingOldSystem = (_game.id == GID_FT) || (_game.id == GID_DIG && _game.features & GF_DEMO);
+
+	// WORKAROUND bug #1493: In Puerto Pollo, if you have Guybrush examine
+	// the church clock, he'll read out the current time. However, this was
+	// disabled in some releases, possibly because of the poor results for
+	// some languages (e.g. German, French). The check was done inside the
+	// original interpreters, so we replicate their behavior.
+	if (_game.id == GID_CMI && _language != Common::EN_ANY && _language != Common::IT_ITA && _language != Common::RU_RUS) {
+		if (strncmp((const char *)msg, "/CKGT326/", 9) == 0)
+			msg = (const byte *)"/VDSO325/Whoa! Look at the time. Gotta scoot.";
+
+		// Reject every line which begins with the CKGT tag ("ClocK Guybrush Threepwood")
+		if (strncmp((const char *)msg, "/CKGT", 5) == 0)
+			return;
+	}
 
 	convertMessageToString(msg, _charsetBuffer, sizeof(_charsetBuffer));
 
 	// Play associated speech, if any
 	playSpeech((byte *)_lastStringTag);
 
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
-		if (VAR(VAR_HAVE_MSG)) {
-			if (_game.id == GID_DIG && _roomResource == 58 && msg[0] == ' ' && !msg[1])
-				return;
+	if (!usingOldSystem) {
+		if (VAR(VAR_HAVE_MSG))
 			stopTalk();
-		}
 	} else {
 		if (!_keepText)
 			stopTalk();
@@ -2900,15 +2953,18 @@ void ScummEngine_v7::actorTalk(const byte *msg) {
 	_charsetBufPos = 0;
 	_talkDelay = 0;
 	_haveMsg = 1;
-	if (_game.id == GID_FT)
+	if (usingOldSystem)
 		VAR(VAR_HAVE_MSG) = 0xFF;
-	_haveActorSpeechMsg = (_game.id == GID_FT) ? true : (!_sound->isSoundRunning(kTalkSoundID));
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+	_haveActorSpeechMsg = usingOldSystem ? true : (!_sound->isSoundRunning(kTalkSoundID));
+
+	if (!usingOldSystem) {
 		stringWrap = _string[0].wrapping;
 		_string[0].wrapping = true;
 	}
+
 	CHARSET_1();
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+
+	if (!usingOldSystem) {
 		if (_game.version == 8)
 			VAR(VAR_HAVE_MSG) = (_string[0].no_talk_anim) ? 2 : 1;
 		else
@@ -2940,12 +2996,6 @@ void ScummEngine::actorTalk(const byte *msg) {
 		setTalkingActor(0xFF);
 	} else {
 		int oldact;
-
-		// WORKAROUND bug #1025
-		if (_game.id == GID_LOOM && _roomResource == 23 &&
-			vm.slot[_currentScript].number == 232 && _actorToPrintStrFor == 0) {
-			_actorToPrintStrFor = 2;	// Could be anything from 2 to 5. Maybe compare to original?
-		}
 
 		a = derefActor(_actorToPrintStrFor, "actorTalk");
 
@@ -3038,14 +3088,20 @@ void ScummEngine::stopTalk() {
 		}
 		if (_game.version <= 7 && _game.heversion == 0)
 			setTalkingActor(0xFF);
-		if (_game.heversion != 0)
-			((ActorHE *)a)->_heTalking = false;
+		if (_game.heversion != 0) {
+			if (_game.heversion == 98 && _game.id == GID_FREDDI4) {
+				// Delay unsetting _heTalking to next sound frame. fixes bug #3533.
+				_actorShouldStopTalking = true;
+			} else {
+				((ActorHE *)a)->_heTalking = false;
+			}
+		}
 	}
 
-	if (_game.id == GID_DIG || _game.id == GID_CMI) {
+	if ((_game.id == GID_DIG && !(_game.features & GF_DEMO)) || _game.id == GID_CMI) {
 		setTalkingActor(0);
 		VAR(VAR_HAVE_MSG) = 0;
-	} else if (_game.heversion >= 60) {
+	} else if (_game.heversion >= 60 && !_actorShouldStopTalking) {
 		setTalkingActor(0);
 	}
 
@@ -3143,15 +3199,15 @@ void Actor::setActorCostume(int c) {
 	} else if (_vm->_game.features & GF_OLD_BUNDLE) {
 		for (i = 0; i < 16; i++)
 			_palette[i] = i;
-
-		// Make stuff more visible on CGA. Based on disassembly
-		if (_vm->_renderMode == Common::kRenderCGA && _vm->_game.version > 2) {
-			_palette[6] = 5;
-			_palette[7] = 15;
-		}
 	} else {
 		for (i = 0; i < 32; i++)
 			_palette[i] = 0xFF;
+	}
+
+	// Make stuff more visible on CGA. Based on disassembly. It is exactly the same in INDY3, LOOM and MI1 EGA.
+	if (_vm->_renderMode == Common::kRenderCGA && _vm->_game.version > 2 && _vm->_game.version < 5) {
+		_palette[6] = 5;
+		_palette[7] = 15;
 	}
 }
 
@@ -3339,7 +3395,12 @@ bool Actor::isPlayer() {
 bool Actor_v2::isPlayer() {
 	// isPlayer() is not supported by v0
 	assert(_vm->_game.version != 0);
-	return _vm->VAR(42) <= _number && _number <= _vm->VAR(43);
+	// MM V1 PC uses VAR_EGO and not VARS 42 / 43. ZAK V1 does already have VARS 42 / 43 here.
+	// For MM NES I do not have a disasm and the room I used to test it (MM room 24) also has
+	// different box flags in the NES version, so it will not even call into this function.
+	// However, I could at least confirm that VARS 42 and 43 are both set to 0, so apparently
+	// not in use.
+	return (_vm->_game.id == GID_MANIAC && _vm->_game.version == 1) ? (_number == _vm->VAR(_vm->VAR_EGO)) : (_vm->VAR(42) <= _number && _number <= _vm->VAR(43));
 }
 
 void ActorHE::setHEFlag(int bit, int set) {
@@ -3351,13 +3412,13 @@ void ActorHE::setHEFlag(int bit, int set) {
 	}
 }
 
-void ActorHE::setUserCondition(int slot, int set) {
+void ActorHE::setCondition(int slot, int set) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setUserCondition: Condition");
+	assertRange(1, slot, 32, "setCondition: Condition");
 	if (set == 0) {
-		_heCondMask &= ~(1 << (slot + 0xF));
+		_heCondMask &= ~(1 << (slot - 1));
 	} else {
-		_heCondMask |= 1 << (slot + 0xF);
+		_heCondMask |= 1 << (slot - 1);
 	}
 	if (_heCondMask & condMaskCode) {
 		_heCondMask &= ~1;
@@ -3366,28 +3427,33 @@ void ActorHE::setUserCondition(int slot, int set) {
 	}
 }
 
+bool ActorHE::isConditionSet(int slot) const {
+	assertRange(1, slot, 32, "isConditionSet: Condition");
+	return (_heCondMask & (1 << (slot - 1))) != 0;
+}
+
+void ActorHE::setUserCondition(int slot, int set) {
+	assertRange(1, slot, 16, "setUserCondition: Condition");
+	setCondition(slot + 16, set);
+}
+
 bool ActorHE::isUserConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isUserConditionSet: Condition");
-	return (_heCondMask & (1 << (slot + 0xF))) != 0;
+	assertRange(1, slot, 16, "isUserConditionSet: Condition");
+	return isConditionSet(slot + 16);
 }
 
 void ActorHE::setTalkCondition(int slot) {
 	const int condMaskCode = (_vm->_game.heversion >= 85) ? 0x1FFF : 0x3FF;
-	assertRange(1, slot, 32, "setTalkCondition: Condition");
+	assertRange(1, slot, 16, "setTalkCondition: Condition");
 	_heCondMask = (_heCondMask & ~condMaskCode) | 1;
 	if (slot != 1) {
-		_heCondMask |= 1 << (slot - 1);
-		if (_heCondMask & condMaskCode) {
-			_heCondMask &= ~1;
-		} else {
-			_heCondMask |= 1;
-		}
+		setCondition(slot, 1);
 	}
 }
 
 bool ActorHE::isTalkConditionSet(int slot) const {
-	assertRange(1, slot, 32, "isTalkConditionSet: Condition");
-	return (_heCondMask & (1 << (slot - 1))) != 0;
+	assertRange(1, slot, 16, "isTalkConditionSet: Condition");
+	return isConditionSet(slot);
 }
 
 #ifdef ENABLE_HE
@@ -3759,7 +3825,7 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsUint16LE(_walkdata.point3.x, VER(42));
 	s.syncAsUint16LE(_walkdata.point3.y, VER(42));
 
-	s.syncBytes(_cost.active, 16, VER(8));
+	s.syncBytes(_cost.animType, 16, VER(8));
 	s.syncAsUint16LE(_cost.stopped, VER(8));
 	s.syncArray(_cost.curpos, 16, Common::Serializer::Uint16LE, VER(8));
 	s.syncArray(_cost.start, 16, Common::Serializer::Uint16LE, VER(8));
@@ -3795,6 +3861,39 @@ void Actor::saveLoadWithSerializer(Common::Serializer &s) {
 		}
 
 		setDirection(_facing);
+	}
+
+	if (s.isLoading() && _vm->_game.version > 0 && !(_vm->_game.features & GF_NEW_COSTUMES) && s.getVersion() < VER(105)) {
+		// For older saves, we can't reconstruct the frame's direction if it is different from the actor
+		// direction, this is the best we can do. However, it seems to be relevant only for very rare
+		// edge cases, anyway...
+		for (int i = 0; i < 16; ++i) {
+			if (_cost.frame[i] != 0xffff)
+				_cost.frame[i] = (_cost.frame[i] << 2) | newDirToOldDir(_facing);
+		}
+	}
+
+	// WORKAROUND: Post-load actor palette fixes for games that were saved with a different render mode
+	// (concerns INDY3, LOOM and MI1EGA). The original interpreter does not fix this, savegames from
+	// different videomodes will cause glitches there.
+	if (s.isLoading() && (_vm->_game.version == 3 || _vm->_game.id == GID_MONKEY_EGA) && _vm->_game.platform == Common::kPlatformDOS) {
+		// Loom is not really much of a problem here, since it has extensive scripted post-load
+		// treatment in ScummEngine_v3::scummLoop_handleSaveLoad(). But there are situations
+		// where it won't be triggered (basically savegames from places where the original does
+		// not allow saving).  Indy3 is more dependant on this than Loom, since it does have much
+		// less scripted post-load magic of its own. Monkey Island always needs this, since V4+
+		// games don't do scripted loading of savegames (scripted post-load things) at all.
+		bool cga = (_vm->_renderMode == Common::kRenderCGA);
+		if (cga && _vm->_game.id == GID_MONKEY_EGA && _palette[6] == 0xFF && _palette[7] == 0xFF) {
+			_palette[6] = 5;
+			_palette[7] = 15;
+		} else if ((cga && _palette[6] == 6 && _palette[7] == 7) || (!cga && _palette[6] == 5 && _palette[7] == 15)) {
+			_palette[6] ^= 3;
+			_palette[7] ^= 8;
+		}
+		// Extra fix for Bobbin in his normal costume.
+		if (_vm->_game.id == GID_LOOM && _number == 1 && ((cga && _palette[8] == 8) || (!cga && _palette[8] == 0)))
+			_palette[8] ^= 8;
 	}
 }
 

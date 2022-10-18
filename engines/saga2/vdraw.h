@@ -34,7 +34,7 @@ class gDisplayPort : public gPort {
 public:
 	virtual ~gDisplayPort() {}
 
-	vDisplayPage protoPage;
+	vDisplayPage _protoPage;
 
 	//  Lowest-level drawing functions, (virtually) retargeted to
 	//  call SVGA drawing routines
@@ -42,7 +42,7 @@ public:
 	void fillRect(const Rect16 r);
 
 	void clear() {
-		protoPage.fillRect(clip, fgPen);
+		_protoPage.fillRect(_clip, _fgPen);
 	}
 
 	//  Blitting functions

@@ -30,6 +30,8 @@ public:
 
 	bool loadGFXMode() override;
 	void unloadGFXMode() override;
+
+	void showSystemMouseCursor(bool visible) override;
 };
 
 #endif /* BACKENDS_GRAPHICS_OP_H */

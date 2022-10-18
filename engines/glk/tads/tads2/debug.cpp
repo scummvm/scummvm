@@ -155,7 +155,7 @@ int dbgnam(dbgcxdef *ctx, char *outbuf, int typ, int val)
 {
 	toksdef  sym;
 
-	if (!ctx->dbgcxtab || !ctx->dbgcxtab->tokthhsh)
+	if (!ctx->dbgcxtab)
 	{
 		memcpy(outbuf, "<NO SYMBOL TABLE>", (size_t)17);
 		return(17);

@@ -43,7 +43,8 @@ struct SaveListItem {
 	}
 };
 
-
+// Notify the running game that the engine requested immediate stop
+void AbortGame();
 void GiveScore(int amnt);
 void restart_game();
 void RestoreGameSlot(int slnum);
@@ -107,7 +108,10 @@ void scrWait(int nloops);
 int WaitKey(int nloops);
 int WaitMouse(int nloops);
 int WaitMouseKey(int nloops);
+int WaitInput(int input_flags, int nloops);
 void SkipWait();
+
+void scStartRecording(int keyToStop);
 
 } // namespace AGS3
 

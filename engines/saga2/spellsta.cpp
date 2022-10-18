@@ -52,13 +52,13 @@ SPELLSTATUSFUNCTION(invisibleSpellSta) {
 // semi permanent aura
 
 SPELLSTATUSFUNCTION(auraSpellSta) {
-	if (effectron->stepNo > effectron->totalSteps)
+	if (effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(wallSpellSta) {
-	if (effectron->stepNo > effectron->totalSteps)
+	if (effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
@@ -66,68 +66,68 @@ SPELLSTATUSFUNCTION(wallSpellSta) {
 // projectile spell ( also used as first half of exploding spells
 
 SPELLSTATUSFUNCTION(projectileSpellSta) {
-	if (effectron->stepNo > effectron->totalSteps)
+	if (effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
 
 
 SPELLSTATUSFUNCTION(exchangeSpellSta) {
-	if (effectron->stepNo < effectron->partno / 2)
+	if (effectron->_stepNo < effectron->_partno / 2)
 		return effectronHidden;
-	if (effectron->stepNo >= effectron->totalSteps)
+	if (effectron->_stepNo >= effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(boltSpellSta) {
-	if (effectron->stepNo - (effectron->partno / 9) > effectron->totalSteps)
+	if (effectron->_stepNo - (effectron->_partno / 9) > effectron->_totalSteps)
 		return effectronDead;
-	if ((effectron->partno / 9) >= effectron->stepNo)
+	if ((effectron->_partno / 9) >= effectron->_stepNo)
 		return effectronHidden;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(beamSpellSta) {
-	if ((effectron->partno > effectron->totalSteps) ||
-	        (effectron->stepNo > effectron->totalSteps))
+	if ((effectron->_partno > effectron->_totalSteps) ||
+	        (effectron->_stepNo > effectron->_totalSteps))
 		return effectronDead;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(coneSpellSta) {
-	if (effectron->stepNo - (effectron->partno / 9) > effectron->totalSteps)
+	if (effectron->_stepNo - (effectron->_partno / 9) > effectron->_totalSteps)
 		return effectronDead;
-	if (effectron->partno / 9 >= effectron->stepNo)
+	if (effectron->_partno / 9 >= effectron->_stepNo)
 		return effectronHidden;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(waveSpellSta) {
-	if (effectron->stepNo - (effectron->partno / 17) > effectron->totalSteps)
+	if (effectron->_stepNo - (effectron->_partno / 17) > effectron->_totalSteps)
 		return effectronDead;
-	if (effectron->partno / 17 < effectron->stepNo)
+	if (effectron->_partno / 17 < effectron->_stepNo)
 		return effectronHidden;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(ballSpellSta) {
 	if (effectron->isBumped() ||
-	        effectron->stepNo > effectron->totalSteps)
+	        effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(squareSpellSta) {
 	if (effectron->isBumped() ||
-	        effectron->stepNo > effectron->totalSteps)
+	        effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }
 
 SPELLSTATUSFUNCTION(stormSpellSta) {
 	if (effectron->isBumped() ||
-	        effectron->stepNo > effectron->totalSteps)
+	        effectron->_stepNo > effectron->_totalSteps)
 		return effectronDead;
 	return 0;
 }

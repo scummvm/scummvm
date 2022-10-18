@@ -251,6 +251,8 @@ typedef gidispatch_intconst_struct gidispatch_intconst_t;
 
 typedef uint32 glui32;
 
+typedef int32 glsi32;
+
 } // End of namespace Glk
 
 #endif

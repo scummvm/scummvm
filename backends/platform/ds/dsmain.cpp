@@ -64,6 +64,8 @@
 // - Memory size for ite
 // - Try discworld?
 
+#include <nds.h>
+
 #include "backends/platform/ds/osystem_ds.h"
 #include "backends/plugins/ds/ds-provider.h"
 #include "base/main.h"
@@ -101,6 +103,11 @@ void fastRamReset() {
 /////////////////
 
 int main(int argc, char **argv) {
+#ifndef DISABLE_TEXT_CONSOLE
+	videoSetModeSub(MODE_0_2D);
+	consoleInit(NULL, 1, BgType_Text4bpp, BgSize_T_256x256, 30, 0, false, true);
+#endif
+
 	g_system = new OSystem_DS();
 	assert(g_system);
 

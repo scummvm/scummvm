@@ -25,10 +25,10 @@
  * Copyright (c) 2003-2013 Jan Nedoma and contributors
  */
 
-#ifndef WINTERMUTE_MESH_X_OPENGL_SHADER_H
-#define WINTERMUTE_MESH_X_OPENGL_SHADER_H
+#ifndef WINTERMUTE_XMESH_OPENGL_SHADER_H
+#define WINTERMUTE_XMESH_OPENGL_SHADER_H
 
-#include "engines/wintermute/base/gfx/x/meshx.h"
+#include "engines/wintermute/base/gfx/xmesh.h"
 
 #if defined(USE_OPENGL_SHADERS)
 
@@ -36,13 +36,13 @@
 
 namespace Wintermute {
 
-class MeshXOpenGLShader : public MeshX {
+class XMeshOpenGLShader : public XMesh {
 public:
-	MeshXOpenGLShader(BaseGame *inGame, OpenGL::ShaderGL *shader, OpenGL::ShaderGL *flatShadowShader);
-	~MeshXOpenGLShader() override;
+	XMeshOpenGLShader(BaseGame *inGame, OpenGL::Shader *shader, OpenGL::Shader *flatShadowShader);
+	~XMeshOpenGLShader() override;
 
-	bool loadFromX(const Common::String &filename, XFileLexer &lexer, Common::Array<MaterialReference> &materialReferences) override;
-	bool render(ModelX *model) override;
+	bool loadFromXData(const Common::String &filename, XFileData *xobj, Common::Array<MaterialReference> &materialReferences) override;
+	bool render(XModel *model) override;
 	bool renderFlatShadowModel() override;
 	bool update(FrameNode *parentFrame) override;
 
@@ -50,8 +50,8 @@ protected:
 	GLuint _vertexBuffer;
 	GLuint _indexBuffer;
 
-	OpenGL::ShaderGL *_shader;
-	OpenGL::ShaderGL *_flatShadowShader;
+	OpenGL::Shader *_shader;
+	OpenGL::Shader *_flatShadowShader;
 };
 
 } // namespace Wintermute

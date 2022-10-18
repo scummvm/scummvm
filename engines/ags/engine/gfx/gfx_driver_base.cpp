@@ -66,10 +66,14 @@ Rect GraphicsDriverBase::GetRenderDestination() const {
 }
 
 void GraphicsDriverBase::BeginSpriteBatch(const Rect &viewport, const SpriteTransform &transform,
-        const Point offset, GlobalFlipType flip, PBitmap surface) {
-	_actSpriteBatch++;
-	_spriteBatchDesc.push_back(SpriteBatchDesc(viewport, transform, offset, flip, surface));
+	const Point offset, GraphicFlip flip, PBitmap surface) {
+	_spriteBatchDesc.push_back(SpriteBatchDesc(_actSpriteBatch, viewport, transform, offset, flip, surface));
+	_actSpriteBatch = _spriteBatchDesc.size() - 1;
 	InitSpriteBatch(_actSpriteBatch, _spriteBatchDesc[_actSpriteBatch]);
+}
+
+void GraphicsDriverBase::EndSpriteBatch() {
+	_actSpriteBatch = _spriteBatchDesc[_actSpriteBatch].Parent;
 }
 
 void GraphicsDriverBase::ClearDrawLists() {
@@ -148,7 +152,8 @@ Bitmap *VideoMemoryGraphicsDriver::GetMemoryBackBuffer() {
 	return nullptr;
 }
 
-void VideoMemoryGraphicsDriver::SetMemoryBackBuffer(Bitmap *backBuffer) { // do nothing, video-memory drivers don't use main back buffer, only stage bitmaps they pass to plugins
+void VideoMemoryGraphicsDriver::SetMemoryBackBuffer(Bitmap * /*backBuffer*/) {
+	// do nothing, video-memory drivers don't use main back buffer, only stage bitmaps they pass to plugins
 }
 
 Bitmap *VideoMemoryGraphicsDriver::GetStageBackBuffer(bool mark_dirty) {
@@ -166,6 +171,50 @@ IDriverDependantBitmap *VideoMemoryGraphicsDriver::CreateDDBFromBitmap(Bitmap *b
 	if (ddb)
 		UpdateDDBFromBitmap(ddb, bitmap, hasAlpha);
 	return ddb;
+}
+
+IDriverDependantBitmap *VideoMemoryGraphicsDriver::GetSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end()) {
+		const auto &item = found->_value;
+		if (!item.Data.expired())
+			return CreateDDB(item.Data.lock(), item.Res.Width, item.Res.Height, item.Res.ColorDepth, opaque);
+	}
+
+	// Create and add a new element
+	std::shared_ptr<TextureData> txdata(CreateTextureData(bitmap->GetWidth(), bitmap->GetHeight(), opaque));
+	txdata->ID = sprite_id;
+	UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	// only add into the map when has valid sprite ID
+	if (sprite_id != UINT32_MAX) {
+		_txRefs[sprite_id] = TextureCacheItem(txdata,
+			GraphicResolution(bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth()));
+	}
+	return CreateDDB(txdata, bitmap->GetWidth(), bitmap->GetHeight(), bitmap->GetColorDepth(), opaque);
+}
+
+void VideoMemoryGraphicsDriver::UpdateSharedDDB(uint32_t sprite_id, Bitmap *bitmap, bool hasAlpha, bool opaque) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end()) {
+		auto txdata = found->_value.Data.lock();
+		if (txdata)
+			UpdateTextureData(txdata.get(), bitmap, opaque, hasAlpha);
+	}
+ }
+
+ void VideoMemoryGraphicsDriver::ClearSharedDDB(uint32_t sprite_id) {
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end())
+		_txRefs.erase(found);
+ }
+
+ void VideoMemoryGraphicsDriver::DestroyDDB(IDriverDependantBitmap* ddb) {
+	uint32_t sprite_id = ddb->GetRefID();
+	DestroyDDBImpl(ddb);
+	// Remove shared object from ref list if no more active refs left
+	const auto found = _txRefs.find(sprite_id);
+	if (found != _txRefs.end() && found->_value.Data.expired())
+		_txRefs.erase(found);
 }
 
 PBitmap VideoMemoryGraphicsDriver::CreateStageScreen(size_t index, const Size &sz) {

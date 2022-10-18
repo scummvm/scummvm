@@ -111,6 +111,7 @@ public:
 	Common::Error run() override;
 	bool showMainmenu(bool &loadedGame);
 	bool showOptions();
+	bool showQuitConfirmationDialogue();
 	void init();
 	bool loadToonDat();
 	char **loadTextsVariants(Common::File &in);
@@ -210,9 +211,11 @@ public:
 	void waitForScriptStep();
 	void doMagnifierEffect();
 	void drawCustomText(int16 x, int16 y, const char *line, Graphics::Surface *frame, byte color);
+	bool showConversationText() const;
 	bool canSaveGameStateCurrently() override;
 	bool canLoadGameStateCurrently() override;
 	void pauseEngineIntern(bool pause) override;
+	void syncSoundSettings() override;
 
 	Resources *resources() {
 		return _resources;
@@ -330,6 +333,7 @@ public:
 
 	bool hasFeature(EngineFeature f) const override {
 		return
+			(f == kSupportsSubtitleOptions) ||
 			(f == kSupportsReturnToLauncher) ||
 			(f == kSupportsLoadingDuringRuntime) ||
 			(f == kSupportsSavingDuringRuntime);
@@ -439,8 +443,10 @@ protected:
 	bool _isDemo;
 	bool _isEnglishDemo;
 	bool _showConversationText;
+	int  _textSpeed;
 	bool _useAlternativeFont;
 	bool _needPaletteFlush;
+	bool _noMusicDriver; // If "Music Device" is set to "No Music" from Audio tab
 };
 
 } // End of namespace Toon

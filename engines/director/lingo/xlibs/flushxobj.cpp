@@ -41,17 +41,24 @@
 
 namespace Director {
 
-const char *FlushXObj::xlibName = "FlushXObj";
-const char *FlushXObj::fileNames[] = {
+const char *FlushXObj::xlibNames[] = {
 	"FlushXObj",
+	"Johnny",
+	nullptr,
+};
+const char *FlushXObj::fileNames[] = {
+	"FlushEvents",
+	"FlushXObj",
+	"Johnny",
+	"Toilet",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",				FlushXObj::m_new,				 0, 0,	400 },	// D4
+	{ "new",				FlushXObj::m_new,				 0, 0,	300 },	// D3
 	{ "AddToMask",			FlushXObj::m_addToMask,			 2, 2,	400 },	// D4
 	{ "ClearMask",			FlushXObj::m_clearMask,			 0, 0,	400 },	// D4
-	{ "Flush",				FlushXObj::m_flush,				 0, 0,  400 },	// D4
+	{ "Flush",				FlushXObj::m_flush,				 0, 0,  300 },	// D3
 	{ "FlushEvents",		FlushXObj::m_flushEvents,		 2, 2,  400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
@@ -60,14 +67,18 @@ void FlushXObj::open(int type) {
 	if (type == kXObj) {
 		FlushXObject::initMethods(xlibMethods);
 		FlushXObject *xobj = new FlushXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->exposeXObject(xlibNames[i], xobj);
+		}
 	}
 }
 
 void FlushXObj::close(int type) {
 	if (type == kXObj) {
 		FlushXObject::cleanupMethods();
-		g_lingo->_globalvars[xlibName] = Datum();
+		for (uint i = 0; xlibNames[i]; i++) {
+			g_lingo->_globalvars[xlibNames[i]] = Datum();
+		}
 	}
 }
 

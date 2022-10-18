@@ -22,11 +22,13 @@
 #include "common/mutex.h"
 #include "common/str.h"
 #include "common/stream.h"
+#include "common/textconsole.h"
+
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
+
 #include "engines/grim/savegame.h"
 #include "engines/grim/emi/sound/track.h"
-#include "common/textconsole.h"
 #include "engines/grim/grim.h"
 #include "engines/grim/set.h"
 

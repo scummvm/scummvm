@@ -131,6 +131,7 @@ Gui::Gui(WageEngine *engine) {
 	uint maxWidth = _screen.w;
 
 	_consoleWindow = _wm->addTextWindow(font, kColorBlack, kColorWhite, maxWidth, Graphics::kTextAlignLeft, _menu);
+	_consoleWindow->setEditable(true);
 
 	loadBorders();
 }
@@ -156,8 +157,8 @@ void Gui::draw() {
 
 		_scene = _engine->_world->_player->_currentScene;
 
-		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_sceneWindow->setTitle(_scene->_name);
+		_sceneWindow->setDimensions(*_scene->_designBounds);
 		_consoleWindow->setDimensions(*_scene->_textBounds);
 
 		_wm->setFullRefresh(true);
@@ -263,6 +264,8 @@ void menuCommandsCallback(int action, Common::String &text, void *data) {
 void Gui::executeMenuCommand(int action, Common::String &text) {
 	switch(action) {
 	case kMenuActionAbout:
+		_engine->aboutDialog();
+		break;
 	case kMenuActionNew:
 	case kMenuActionClose:
 	case kMenuActionRevert:

@@ -26,7 +26,6 @@
 
 #include "engines/grim/pool.h"
 
-
 namespace Grim {
 
 class Material;
@@ -44,13 +43,11 @@ public:
 
 	static int32 getStaticTag() { return MKTAG('O','V','E','R'); }
 
-
-
 //private:
 	Material *_material;
 	float _x;
 	float _y;
-	int _layer;
+	int _layer = 0;
 };
 
 }

@@ -376,7 +376,7 @@ void DrawFrame(const int32 frame) {
 	ambient.b = 128;
 
 	pxanim = (PXanim *)rs_anims->Res_open(raj_name, raj_name_hash, cluster_name, cluster_name_hash);
-	PXFrameEnOfAnim(framenum, pxanim)->markers[ORG_POS];
+	PXFrameEnOfAnim(framenum, pxanim);
 
 	// Make the actors orientation matrix
 	g_av_actor->rot = rot;
@@ -389,7 +389,7 @@ void DrawFrame(const int32 frame) {
 	PXframe *frm = PXFrameEnOfAnim(framenum, pxanim);
 	PXmarker &marker = frm->markers[ORG_POS];
 	float mposx, mposy, mposz;
-	marker.GetXYZ(&mposx, &mposy, &mposz);
+	PXmarker_PSX_Object::GetXYZ(&marker, &mposx, &mposy, &mposz);
 	int32 dy = (int32)mposy;
 
 	g_av_actor->lw.t[0] = 0;
@@ -408,43 +408,43 @@ void DrawFrame(const int32 frame) {
 	sprintf(smesh_name, "mesh_shadow.rap");
 
 	uint32 mesh_hash = HashString(mesh_name);
-	rap_API *mesh = (rap_API *)rs_anims->Res_open(mesh_name, mesh_hash, cluster_name, cluster_name_hash);
+	RapAPI *mesh = (RapAPI *)rs_anims->Res_open(mesh_name, mesh_hash, cluster_name, cluster_name_hash);
 	uint32 smesh_hash = HashString(smesh_name);
-	rap_API *smesh = (rap_API *)rs_anims->Res_open(smesh_name, smesh_hash, cluster_name, cluster_name_hash);
+	RapAPI *smesh = (RapAPI *)rs_anims->Res_open(smesh_name, smesh_hash, cluster_name, cluster_name_hash);
 	uint32 pose_hash = HashString(pose_name);
-	rap_API *pose = (rap_API *)rs_anims->Res_open(pose_name, pose_hash, cluster_name, cluster_name_hash);
+	RapAPI *pose = (RapAPI *)rs_anims->Res_open(pose_name, pose_hash, cluster_name, cluster_name_hash);
 	uint32 bone_hash = HashString(bone_name);
-	rab_API *rab = (rab_API *)rs_anims->Res_open(bone_name, bone_hash, cluster_name, cluster_name_hash);
+	RabAPI *rab = (RabAPI *)rs_anims->Res_open(bone_name, bone_hash, cluster_name, cluster_name_hash);
 
 	ConvertRAP(pose);
 	ConvertRAP(smesh);
 	ConvertRAP(mesh);
 
 	// Some error checking
-	if (*(int32 *)mesh->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
+	if (READ_LE_INT32((int32 *)mesh->id) != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", mesh->id, RAP_API_ID, mesh_name);
 	}
-	if (mesh->schema != RAP_API_SCHEMA) {
+	if (FROM_LE_32(mesh->schema) != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", mesh->schema, RAP_API_SCHEMA, mesh_name);
 	}
-	if (*(int32 *)pose->id != *(int32 *)const_cast<char *>(RAP_API_ID)) {
+	if (READ_LE_INT32((int32 *)pose->id) != *(int32 *)const_cast<char *>(RAP_API_ID)) {
 		Fatal_error("Wrong rap id value file %d api %d file:%s", pose->id, RAP_API_ID, pose_name);
 	}
-	if (pose->schema != RAP_API_SCHEMA) {
+	if (FROM_LE_32(pose->schema) != RAP_API_SCHEMA) {
 		Fatal_error("Wrong rap schema value file %d rap_api %d file:%s", pose->schema, RAP_API_SCHEMA, pose_name);
 	}
-	if (*(int32 *)rab->id != *(int32 *)const_cast<char *>(RAB_API_ID)) {
+	if (READ_LE_INT32((int32 *)rab->id) != *(int32 *)const_cast<char *>(RAB_API_ID)) {
 		Fatal_error("Wrong rab id value file %d rab_api %d file:%s", rab->id, RAB_API_ID, bone_name);
 	}
-	if (rab->schema != RAB_API_SCHEMA) {
+	if (FROM_LE_32(rab->schema) != RAB_API_SCHEMA) {
 		Fatal_error("Wrong rab schema value file %d rab_api %d file:%s", rab->schema, RAB_API_SCHEMA, bone_name);
 	}
-	if (mesh->nBones != rab->nBones) {
+	if (FROM_LE_16(mesh->nBones) != rab->nBones) {
 		Fatal_error("mesh nBones != animation nBones %d != %d", mesh->nBones, rab->nBones);
 	}
 
 	// Pass in the linkage file and the bones file
-	Bone_Frame *bone_frame = rab->GetFrame(frame);
+	Bone_Frame *bone_frame = RabAPIObject::GetFrame(rab, frame);
 	int32 brightness;
 
 	int32 debug = 1;

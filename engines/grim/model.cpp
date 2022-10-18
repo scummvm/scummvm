@@ -35,13 +35,11 @@
 
 namespace Grim {
 
-
 /**
  * @class Model
  */
 Model::Model(const Common::String &filename, Common::SeekableReadStream *data, CMap *cmap, Model *parent) :
 		Object(), _parent(parent), _numMaterials(0), _numGeosets(0), _cmap(cmap), _fname(filename) {
-
 	if (data->readUint32BE() == MKTAG('L','D','O','M'))
 		loadBinary(data);
 	else {
@@ -395,9 +393,7 @@ Mesh::Mesh() :
 		_vertices(nullptr), _verticesI(nullptr), _vertNormals(nullptr),
 		_numTextureVerts(0), _textureVerts(nullptr), _faces(nullptr), _userData(nullptr) {
 	_name[0] = '\0';
-
 }
-
 
 Mesh::~Mesh() {
 	g_driver->destroyMesh(this);

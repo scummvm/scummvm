@@ -20,20 +20,19 @@
  */
 
 #include "common/system.h"
-#include "chewy/dialogs/main_menu.h"
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/ani_dat.h"
 #include "chewy/rooms/rooms.h"
-#include "chewy/main.h"
 #include "chewy/resource.h"
 #include "chewy/sound.h"
 #include "chewy/video/video_player.h"
 
 namespace Chewy {
 
-void play_scene_ani(int16 nr, int16 mode) {
+void play_scene_ani(int16 nr, int16 direction) {
 #define ROOM_1_1 101
 #define ROOM_1_2 102
 #define ROOM_1_5 105
@@ -55,14 +54,14 @@ void play_scene_ani(int16 nr, int16 mode) {
 		break;
 
 	case ROOM_18_20:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		break;
 
 	default:
 		break;
 	}
 
-	startSetAILWait(nr, 1, mode);
+	startSetAILWait(nr, 1, direction);
 
 	switch (r_nr) {
 	case ROOM_1_1:
@@ -95,7 +94,7 @@ void timer_action(int16 t_nr) {
 	if (g_engine->_sound->isSpeechActive())
 		return;
 
-#define TIMER(NUM) case NUM: Room##NUM::timer(t_nr, ani_nr); break;
+#define TIMER(NUM) case NUM: default_flag = Room##NUM::timer(t_nr, ani_nr); break;
 	switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 	TIMER(0);
 	TIMER(11);
@@ -172,137 +171,8 @@ void check_ged_action(int16 index) {
 	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
 }
 
-int16 ged_user_func(int16 idx_nr) {
-	switch (idx_nr) {
-	case 40:
-		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
-		case 8:
-			if (_G(gameState).R8GTuer)
-				idx_nr = 0;
-			break;
-
-		case 9:
-			if (!_G(gameState).R9Gitter)
-				idx_nr = 0;
-			break;
-
-		case 16:
-			if (!_G(gameState).R16F5Exit)
-				idx_nr = 0;
-			break;
-
-		case 17:
-			if (_G(gameState).R17Location != 1)
-				idx_nr = 0;
-			break;
-
-		case 21:
-			if (!_G(gameState).R21Laser2Weg)
-				idx_nr = 0;
-			break;
-
-		case 31:
-			if (!_G(gameState).R31KlappeZu)
-				idx_nr = 0;
-			break;
-
-		case 41:
-			if (!_G(gameState).R41LolaOk)
-				idx_nr = 0;
-			break;
-
-		case 52:
-			if (!_G(gameState).R52LichtAn)
-				idx_nr = 2;
-			else
-				idx_nr = 4;
-			break;
-
-		case 71:
-			idx_nr = _G(gameState).R71LeopardVined ? 1 : 0;
-			break;
-
-		case 76:
-			idx_nr = _G(gameState).flags29_4 ? 4 : 0;
-			break;
-
-		case 84:
-			if (!_G(gameState).R88UsedMonkey)
-				_G(gameState).R84GoonsPresent = true;
-			break;
-
-		case 86:
-			if (!_G(gameState).flags32_2)
-				idx_nr = 0;
-			break;
-
-		case 94:
-			if (!_G(gameState).flags35_10)
-				idx_nr = 0;
-			break;
-
-		case 97:
-			if (_G(gameState).flags35_80)
-				idx_nr = 0;
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	case 41:
-		switch (_G(gameState)._personRoomNr[P_CHEWY]) {
-		case 17:
-			if (_G(gameState).R17Location != 2)
-				idx_nr = 0;
-			break;
-
-		case 21:
-			if (!_G(gameState).R21Laser1Weg) {
-				idx_nr = 0;
-			} else
-				idx_nr = 3;
-			break;
-
-		case 37:
-			if (!_G(gameState).R37Kloppe)
-				idx_nr = 0;
-			break;
-
-		case 52:
-			if (!_G(gameState).R52TuerAuf)
-				idx_nr = 2;
-			else
-				idx_nr = 4;
-			break;
-
-		case 97:
-			if (_G(gameState).flags36_20)
-				idx_nr = 0;
-			break;
-
-		default:
-			break;
-		}
-		break;
-
-	case 42:
-		if (_G(gameState)._personRoomNr[P_CHEWY] == 97) {
-			if (!_G(gameState).flags37_1)
-				idx_nr = 0;
-		}
-		break;
-
-	default:
-		break;
-	}
-
-	return idx_nr;
-}
-
 void enter_room(int16 eib_nr) {
-	load_room_music(_G(gameState)._personRoomNr[P_CHEWY]);
+	g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[P_CHEWY]);
 	load_chewy_taf(_G(gameState).ChewyAni);
 	_G(atds)->stopAad();
 	_G(atds)->stop_ats();
@@ -324,7 +194,6 @@ void enter_room(int16 eib_nr) {
 	_G(flags).AutoAniPlay = false;
 	_G(SetUpScreenFunc) = nullptr;
 	_G(HowardMov) = 0;
-	_G(cur_hide_flag) = false;
 
 #define ENTRY(NUM) case NUM: Room##NUM::entry(); break
 #define ENTRY_NR(NUM) case NUM: Room##NUM::entry(eib_nr); break
@@ -348,8 +217,8 @@ void enter_room(int16 eib_nr) {
 	case 17:
 		Room17::entry();
 		if (g_engine->_sound->soundEnabled()) {
-			if (!_G(gameState).R17EnergieOut)
-				g_engine->_sound->playSound(15);
+			if (!_G(gameState).R17EnergyOut)
+				_G(det)->playSound(15, 0);
 		}
 		break;
 
@@ -362,7 +231,7 @@ void enter_room(int16 eib_nr) {
 	case 24:
 		Room24::entry();
 		if (g_engine->_sound->soundEnabled())
-			g_engine->_sound->playSound(17);
+			_G(det)->playSound(17, 0);
 		break;
 
 	ENTRY(25);
@@ -448,7 +317,7 @@ void enter_room(int16 eib_nr) {
 
 void exit_room(int16 eib_nr) {
 	bool no_exit = false;
-	_G(det)->disable_room_sound();
+	g_engine->_sound->stopAllSounds();
 
 	switch (_G(gameState)._personRoomNr[P_CHEWY]) {
 	case 6:
@@ -457,7 +326,7 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 11:
-		_G(atds)->setControlBit(121, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(121, ATS_ACTIVE_BIT);
 		break;
 
 	case 13:
@@ -471,7 +340,7 @@ void exit_room(int16 eib_nr) {
 			_G(gameState).R17Location = 3;
 		_G(gameState).ScrollxStep = 1;
 		_G(flags).NoScroll = false;
-		_G(gameState).R18Gitter = false;
+		_G(gameState).R18Grid = false;
 		_G(gameState).room_e_obj[50].Attribut = 255;
 		_G(gameState).room_e_obj[41].Attribut = EXIT_BOTTOM;
 		break;
@@ -494,13 +363,13 @@ void exit_room(int16 eib_nr) {
 
 	case 23:
 		_G(gameState)._personHide[P_CHEWY] = false;
-		switch (_G(gameState).R23GleiterExit) {
+		switch (_G(gameState).R23GliderExit) {
 		case 16:
 			setPersonPos(126, 110, P_CHEWY, P_RIGHT);
 			break;
 
 		case 25:
-			_G(gameState).R25GleiterExit = true;
+			_G(gameState).R25GliderExit = true;
 			break;
 
 		default:
@@ -572,7 +441,7 @@ void exit_room(int16 eib_nr) {
 	case 120:
 	case 139:
 		x = -44;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		break;
 
 	case 1:
@@ -594,7 +463,7 @@ void exit_room(int16 eib_nr) {
 	case 135: {
 		int16 *xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
 		x = xy[0] + 30;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		}
 		break;
 
@@ -609,7 +478,7 @@ void exit_room(int16 eib_nr) {
 	case 122:
 	case 131: {
 		int16 *xy = (int16 *)_G(ablage)[_G(room_blk).AkAblage];
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		x = _G(moveState)[P_CHEWY].Xypos[0];
 		y = xy[1] + 3;
 		}
 		break;
@@ -628,8 +497,8 @@ void exit_room(int16 eib_nr) {
 	case 50:
 	case 65:
 	case 126:
-		setPersonPos(_G(spieler_vector)[P_CHEWY].Xypos[0],
-		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
+		setPersonPos(_G(moveState)[P_CHEWY].Xypos[0],
+		               _G(moveState)[P_CHEWY].Xypos[1], P_CHEWY, P_RIGHT);
 		setupScreen(DO_SETUP);
 		break;
 
@@ -644,8 +513,8 @@ void exit_room(int16 eib_nr) {
 	case 36:
 	case 71:
 	case 96:
-		setPersonPos(_G(spieler_vector)[P_CHEWY].Xypos[0],
-		               _G(spieler_vector)[P_CHEWY].Xypos[1], P_CHEWY, P_LEFT);
+		setPersonPos(_G(moveState)[P_CHEWY].Xypos[0],
+		               _G(moveState)[P_CHEWY].Xypos[1], P_CHEWY, P_LEFT);
 		setupScreen(DO_SETUP);
 		break;
 
@@ -655,8 +524,8 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 72:
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0];
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 10;
+		x = _G(moveState)[P_CHEWY].Xypos[0];
+		y = _G(moveState)[P_CHEWY].Xypos[1] - 10;
 		break;
 
 	case 75:
@@ -666,34 +535,34 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 84:
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 70;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 50;
+		x = _G(moveState)[P_CHEWY].Xypos[0] - 70;
+		y = _G(moveState)[P_CHEWY].Xypos[1] - 50;
 		_G(HowardMov) = 1;
 		break;
 
 	case 85:
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] + 70;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		x = _G(moveState)[P_CHEWY].Xypos[0] + 70;
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 1;
 		break;
 
 	case 86:
 		_G(det)->showStaticSpr(0);
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 44;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		x = _G(moveState)[P_CHEWY].Xypos[0] - 44;
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		_G(HowardMov) = 2;
 		break;
 
 	case 90:
 		_G(det)->showStaticSpr(8);
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 60;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		x = _G(moveState)[P_CHEWY].Xypos[0] - 60;
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		break;
 
 	case 94:
 		_G(det)->showStaticSpr(3);
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 40;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1] - 10;
+		x = _G(moveState)[P_CHEWY].Xypos[0] - 40;
+		y = _G(moveState)[P_CHEWY].Xypos[1] - 10;
 		break;
 
 	case 127:
@@ -708,13 +577,13 @@ void exit_room(int16 eib_nr) {
 		break;
 
 	case 140:
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] + 40;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		x = _G(moveState)[P_CHEWY].Xypos[0] + 40;
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		break;
 
 	case 141:
-		x = _G(spieler_vector)[P_CHEWY].Xypos[0] - 12;
-		y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		x = _G(moveState)[P_CHEWY].Xypos[0] - 12;
+		y = _G(moveState)[P_CHEWY].Xypos[1];
 		break;
 
 	default:
@@ -790,27 +659,28 @@ static void playIntroSequence() {
 	int16 ret = 0;
 
 	_G(atds)->load_atds(98, AAD_DATA);
-
+	setupScreen(DO_SETUP);
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 
 	for (int i = 0; i < 29 && ret != -1; ++i) {
 		if (introVideo[i] == FCUT_135)
-			load_room_music(258);
+			g_engine->_sound->playRoomMusic(258);
 		else if (introVideo[i] == FCUT_148)
-			load_room_music(259);
+			g_engine->_sound->playRoomMusic(259);
 		else if (introVideo[i] == FCUT_143)
-			load_room_music(260);
+			g_engine->_sound->playRoomMusic(260);
 
 		if (introDialog[i] != -1)
-			start_aad(introDialog[i], -1);
+			start_aad(introDialog[i], -1, true);
 
-		ret = g_engine->_video->playVideo(introVideo[i]) ? 0 : -1;
+		ret = g_engine->_video->playVideo(introVideo[i], false) ? 0 : -1;
 		_G(atds)->stopAad();
 		SHOULD_QUIT_RETURN;
 	}
 
-	//if (ret == -1) {
+	// Chewy says he's in big trouble
+	if (ret != -1) {
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(out)->raster_col(254, 62, 35, 7);
@@ -822,7 +692,7 @@ static void playIntroSequence() {
 		} else {
 			delay(6000);
 		}
-	//}
+	}
 
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->cls();
@@ -839,56 +709,54 @@ void flic_cut(int16 nr) {
 	bool keepPlaying = true;
 
 	_G(out)->setPointer(nullptr);
-	_G(det)->disable_room_sound();
 	g_engine->_sound->stopAllSounds();
 	g_events->delay(50);
 
 	switch (nr) {
 	case FCUT_SPACECHASE_18:
-		// _G(sndPlayer)->setLoopMode(1)
+		// Play the space chase video, after escaping F5.
+		// The music is placed in the first video of the
+		// series, so we need to keep a copy of it and
+		// dispose it after the series of videos ends.
 		for (i = 0; i < 11 && keepPlaying; i++) {
-			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i);
+			keepPlaying = g_engine->_video->playVideo(FCUT_SPACECHASE_18 + i, false, false);
 		}
 
-		// TODO: Reimplement
-		//_G(sndPlayer)->fadeOut(0);
-		_G(out)->ausblenden(1);
+		g_engine->_sound->stopMusic();
+		_G(out)->fadeOut();
 		_G(out)->cls();
-		//while (_G(sndPlayer)->musicPlaying()) {}
 		break;
 
 	case FCUT_058:
-		load_room_music(255);
+		g_engine->_sound->playRoomMusic(255);
 		g_engine->_video->playVideo(FCUT_058);
 		g_engine->_video->playVideo(FCUT_059);
 
 		if (!_G(gameState).R43GetPgLady) {
 			g_engine->_video->playVideo(FCUT_060);
 		} else {
-			start_aad(623, -1);
+			start_aad(623, -1, true);
 			g_engine->_video->playVideo(FCUT_061);
 			g_engine->_video->playVideo(FCUT_062);
 		}
 
 		// TODO: Reimplement
 		//_G(sndPlayer)->fadeOut(0);
-		_G(out)->ausblenden(1);
+		_G(out)->fadeOut();
 		_G(out)->cls();
 		//while (_G(sndPlayer)->musicPlaying() && !SHOULD_QUIT) {}
 		break;
 
 	case FCUT_065:
 		g_engine->_sound->stopMusic();
-		_G(currentSong) = -1;
-		load_room_music(256);
+		g_engine->_sound->playRoomMusic(256);
 		Room46::kloppe();
-		_G(currentSong) = -1;
 		break;
 
 	case FCUT_112:
-		g_engine->_sound->setMusicVolume(32 * Audio::Mixer::kMaxChannelVolume / 120);
+		g_engine->_sound->setActiveMusicVolume(32);
 		g_engine->_video->playVideo(nr);
-		g_engine->_sound->setMusicVolume(5 * Audio::Mixer::kMaxChannelVolume / 120);
+		g_engine->_sound->setActiveMusicVolume(5);
 		break;
 
 	case FCUT_133:
@@ -905,23 +773,23 @@ void flic_cut(int16 nr) {
 		playIntroSequence();
 		break;
 
+	case FCUT_155:
+	case FCUT_160:
+		g_engine->_video->playVideo(nr, false);
+		break;
+
 	default:
 		g_engine->_video->playVideo(nr);
 		break;
 	}
 
-	g_engine->_sound->stopSound();
+	_G(det)->stopSound(0);
 	SHOULD_QUIT_RETURN;
 
 	g_events->delay(50);
-	g_engine->_sound->setSoundVolume(_G(gameState).SoundVol * Audio::Mixer::kMaxChannelVolume / 120);
-	g_engine->_sound->setMusicVolume(_G(gameState).MusicVol * Audio::Mixer::kMaxChannelVolume / 120);
 
 	if (nr != FCUT_135) {
-		load_room_music(_G(gameState)._personRoomNr[0]);
-
-		if (g_engine->_sound->speechEnabled())
-			_G(det)->enable_room_sound();
+		g_engine->_sound->playRoomMusic(_G(gameState)._personRoomNr[0]);
 
 		_G(uhr)->resetTimer(0, 0);
 	}
@@ -974,20 +842,20 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(gameState).R0Monocle = true;
 		_G(obj)->hide_sib(SIB_MONOCLE);
 		if (_G(gameState).R0Noteboook)
-			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_NOTEBOOK:
 		_G(gameState).R0Noteboook = true;
 		_G(obj)->hide_sib(SIB_NOTEBOOK);
 		if (_G(gameState).R0Monocle)
-			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(12, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_TERMINAL_R5:
 		if (_G(gameState).R5Terminal) {
 			_G(gameState).R5Terminal = 0;
-			_G(det)->stop_detail(6);
+			_G(det)->stopDetail(6);
 			_G(atds)->set_ats_str(27, TXT_MARK_LOOK, 0, ATS_DATA);
 			_G(atds)->set_ats_str(30, TXT_MARK_LOOK, 0, ATS_DATA);
 		}
@@ -1055,7 +923,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				_G(obj)->calc_rsi_flip_flop(SIB_RHAKEN_R7);
 				_G(atds)->set_ats_str(54, TXT_MARK_LOOK, 1, ATS_DATA);
 				_G(atds)->set_ats_str(55, TXT_MARK_LOOK, 1, ATS_DATA);
-				_G(atds)->delControlBit(56, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(56, ATS_ACTIVE_BIT);
 				start_aad(9);
 			} else {
 				_G(obj)->set_rsi_flip_flop(SIB_LHAKEN_R7, 2);
@@ -1090,7 +958,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 				_G(det)->startDetail(i, 255, ANI_FRONT);
 		} else {
 			for (int i = 0; i < 5; ++i)
-				_G(det)->stop_detail(i);
+				_G(det)->stopDetail(i);
 		}
 
 		_G(atds)->set_ats_str(94, TXT_MARK_LOOK, _G(gameState).R13Bandlauf, ATS_DATA);
@@ -1146,7 +1014,7 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_SEIL_R21:
-		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(129, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_GITTER1_R21:
@@ -1154,16 +1022,16 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART1_R18:
-		_G(atds)->setControlBit(155, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(155, ATS_ACTIVE_BIT);
 		break;
 
 	case SIB_DOORKNOB_R18:
 		if (_G(gameState).R18DoorBruecke) {
-			g_engine->_sound->stopSound(0);
-			g_engine->_sound->playSound(19, 1);
+			_G(det)->stopSound(0);
+			_G(det)->playSound(19, 1);
 		} else {
-			g_engine->_sound->playSound(19, 0);
-			g_engine->_sound->stopSound(1);
+			_G(det)->playSound(19, 0);
+			_G(det)->stopSound(1);
 		}
 
 		if (!_G(gameState).R6DoorLeftF) {
@@ -1178,9 +1046,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 
 	case SIB_CART_FACH_R18:
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(gameState).R18CartFach = 0;
+		_G(gameState).R18CartridgeInSlot = false;
 		cur_2_inventory();
-		_G(atds)->set_ats_str(157, 1, AAD_DATA);
+		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 0, ATS_DATA);
 		break;
 
 	case SIB_SCHLAUCH_R26:
@@ -1241,9 +1109,9 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		break;
 
 	case SIB_LAMPE_R52:
-		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(338, ATS_ACTIVE_BIT);
 		_G(gameState).R52LichtAn ^= 1;
-		check_shad(2 * (_G(gameState).R52LichtAn + 1), 1);
+		setShadowPalette(2 * (_G(gameState).R52LichtAn + 1), true);
 		break;
 
 	case SIB_KAUTABAK_R56:
@@ -1251,15 +1119,16 @@ int16 sib_event_no_inv(int16 sib_nr) {
 		_G(gameState).R56GetTabak = true;
 		break;
 
-	case SIB_ASCHE_R64:
-		_G(det)->stop_detail(0);
+	case SIB_ASHTRAY_R64:
+		// Pick up ashtray
+		_G(det)->stopDetail(0);
 		_G(obj)->hide_sib(sib_nr);
+		_G(gameState).R64AshtrayTaken = true;
 		Room64::talk_man(351);
 		break;
 
 	case 94:
 		_G(det)->showStaticSpr(7);
-		_G(cur_hide_flag) = false;
 		hideCur();
 		startAadWait(406);
 		if (_G(gameState)._personRoomNr[P_HOWARD] == 66)
@@ -1310,7 +1179,7 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_BOLA_BUTTON_R6:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).R6BolaSchild = true;
 		_G(det)->showStaticSpr(2);
 		_G(obj)->calc_rsi_flip_flop(SIB_BOLA_BUTTON_R6);
@@ -1363,13 +1232,13 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_FLUXO_R23:
 		_G(gameState).R23FluxoFlex = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(112, 1, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
 
 	case SIB_TRANSLATOR_23:
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(113, 0, ATS_DATA);
 		_G(menu_item_vorwahl) = CUR_USE;
 		break;
@@ -1380,7 +1249,7 @@ void sib_event_inv(int16 sib_nr) {
 
 	case SIB_ROEHRE_R12:
 		_G(gameState).R12TalismanOk = true;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(atds)->set_ats_str(118, TXT_MARK_LOOK, 1, ATS_DATA);
 		start_spz(CH_TALK6, 255, false, P_CHEWY);
 		startAadWait(115);
@@ -1396,10 +1265,9 @@ void sib_event_inv(int16 sib_nr) {
 		break;
 
 	case SIB_CART_FACH_R18:
-		_G(cur_hide_flag) = false;
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(gameState).R18CartFach = true;
-		delInventory(_G(gameState).AkInvent);
+		_G(gameState).R18CartridgeInSlot = true;
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(det)->showStaticSpr(7);
 		_G(atds)->set_ats_str(157, TXT_MARK_LOOK, 1, ATS_DATA);
 

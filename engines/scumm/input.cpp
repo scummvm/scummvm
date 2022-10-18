@@ -29,6 +29,7 @@
 #include "scumm/dialogs.h"
 #include "scumm/insane/insane.h"
 #include "scumm/imuse/imuse.h"
+#include "scumm/imuse_digi/dimuse_engine.h"
 #ifdef ENABLE_HE
 #include "scumm/he/intern_he.h"
 #include "scumm/he/logic_he.h"
@@ -38,8 +39,9 @@
 #include "scumm/scumm_v6.h"
 #include "scumm/scumm_v8.h"
 #include "scumm/sound.h"
+#include "scumm/dialogs.h"
 
-
+#include "graphics/cursorman.h"
 
 namespace Scumm {
 
@@ -122,16 +124,24 @@ void ScummEngine::parseEvent(Common::Event event) {
 		} else if (event.kbd.hasFlags(Common::KBD_CTRL) && event.kbd.keycode == Common::KEYCODE_s) {
 			_res->resourceStats();
 		} else if (event.kbd.hasFlags(Common::KBD_ALT) && event.kbd.keycode == Common::KEYCODE_x) {
-			// TODO: Some SCUMM games quit when Alt-x is pressed. However, not
-			// all of them seem to exhibit this behavior. LordHoto found that
-			// the Loom manual does not mention this hotkey. On the other hand
-			// the Sam&Max manual mentions that Alt-x does so on "most"
-			// platforms. We should really check which games exhibit this
-			// behavior and only use it for them.
-			quitGame();
+			if (_game.version < 8) {
+				if (isUsingOriginalGUI()) {
+					_keyPressed = event.kbd;
+				} else {
+					quitGame();
+				}
+			}
 		} else {
 			// Normal key press, pass on to the game.
 			_keyPressed = event.kbd;
+		}
+
+		// HACK: Because we use ASCII values here, it's necessary to
+		// remap keypad keys to always have a corresponding ASCII value.
+		// Normally, keypad keys would only have an ASCII value when
+		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
+		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
 		}
 
 		// FIXME: We are using ASCII values to index the _keyDownMap here,
@@ -149,6 +159,14 @@ void ScummEngine::parseEvent(Common::Event event) {
 		break;
 
 	case Common::EVENT_KEYUP:
+		// HACK: Because we use ASCII values here, it's necessary to
+		// remap keypad keys to always have a corresponding ASCII value.
+		// Normally, keypad keys would only have an ASCII value when
+		// NumLock is enabled. This fixes fighting in Indy 3 (Trac #11227)
+		if (_keyPressed.keycode >= Common::KEYCODE_KP0 && _keyPressed.keycode <= Common::KEYCODE_KP9) {
+			_keyPressed.ascii = (_keyPressed.keycode - Common::KEYCODE_KP0) + '0';
+		}
+
 		if (event.kbd.ascii >= 512) {
 			debugC(DEBUG_GENERAL, "keyPressed > 512 (%d)", event.kbd.ascii);
 		} else {
@@ -183,8 +201,18 @@ void ScummEngine::parseEvent(Common::Event event) {
 		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
 			_mouse.x -= (kHercWidth - _screenWidth * 2) / 2;
 			_mouse.x >>= 1;
-			_mouse.y = _mouse.y * 4 / 7;
-		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2)) {
+			if (_game.version < 3) {
+				// MM/ZAK v1/v2
+				if (_mouse.y >= _virtscr[kMainVirtScreen].topline)
+					_mouse.y = _mouse.y / 2 + _virtscr[kMainVirtScreen].topline / 2;
+				if (_mouse.y > _virtscr[kVerbVirtScreen].topline)
+					_mouse.y += (_mouse.y - _virtscr[kVerbVirtScreen].topline);
+			} else {
+				// MI1
+				_mouse.y = _mouse.y * 4 / 7;
+			}
+
+		} else if (_macScreen || (_useCJKMode && _textSurfaceMultiplier == 2) || _renderMode == Common::kRenderCGA_BW || _enableEGADithering) {
 			_mouse.x >>= 1;
 			_mouse.y >>= 1;
 		}
@@ -203,13 +231,43 @@ void ScummEngine::parseEvent(Common::Event event) {
 	case Common::EVENT_WHEELDOWN:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
 			_keyPressed = Common::KeyState(Common::KEYCODE_7, 55);	// '7'
+		if (_mainMenuIsActive)
+			_mouseWheelFlag = Common::EVENT_WHEELDOWN;
 		break;
 
 	case Common::EVENT_WHEELUP:
 		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformSegaCD)
 			_keyPressed = Common::KeyState(Common::KEYCODE_6, 54);	// '6'
+		if (_mainMenuIsActive)
+			_mouseWheelFlag = Common::EVENT_WHEELUP;
 		break;
 
+	case Common::EVENT_MAINMENU:
+		// Let the user open the GMM when the menu is active.
+		if (isUsingOriginalGUI() && _mainMenuIsActive)
+			openMainMenuDialog();
+		break;
+	case Common::EVENT_RETURN_TO_LAUNCHER:
+	case Common::EVENT_QUIT:
+		if (isUsingOriginalGUI()) {
+			if (!_quitByGUIPrompt && !_mainMenuIsActive) {
+				bool exitType = (event.type == Common::EVENT_RETURN_TO_LAUNCHER);
+				// If another message banner is currently on the screen, close it
+				// and then execute the quit prompt. Otherwise, prompt the user.
+				getEventManager()->resetQuit();
+				getEventManager()->resetReturnToLauncher();
+				if (!_messageBannerActive) {
+					queryQuit(exitType);
+					_closeBannerAndQueryQuitFlag = false;
+				} else {
+					_closeBannerAndQueryQuitFlag = true;
+				}
+			} else if (_quitByGUIPrompt) {
+				if (!getEventManager()->shouldReturnToLauncher())
+					quitGame();
+			}
+		}
+		break;
 	default:
 		break;
 	}
@@ -245,6 +303,7 @@ void ScummEngine::clearClickedStatus() {
 	_mouseAndKeyboardStat = 0;
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
+	_mouseWheelFlag = 0;
 }
 
 void ScummEngine_v0::processInput() {
@@ -337,6 +396,24 @@ void ScummEngine::processInput() {
 		} else if (_game.version >= 7) {
 			VAR(VAR_LEFTBTN_DOWN) = (_leftBtnPressed & msClicked) != 0;
 			VAR(VAR_RIGHTBTN_DOWN) = (_rightBtnPressed & msClicked) != 0;
+
+			// WORKAROUND: In COMI main menu, sometimes clicks are not registered
+			// correctly; in particular there usually a situation in which both
+			// states for a mouse button (msClicked and msDown) are being captured.
+			// Apparently this is not what the script expects: it asks for the
+			// mouse button being held down (why?) but not clicked (again, why?).
+			//
+			// Instead of mangling our very sturdy input system just for this use
+			// case, we just insert this little hack to make sure that the menu
+			// works as intended. After all, this all just might be caused by the
+			// difference between the (very slow...) mouse polling rate of the original
+			// and ours.
+			if (isUsingOriginalGUI() && _game.id == GID_CMI && _currentRoom == 92) {
+				VAR(VAR_LEFTBTN_HOLD) = (_leftBtnPressed & msDown) != 0;
+				VAR(VAR_RIGHTBTN_HOLD) = (_rightBtnPressed & msDown) != 0;
+				VAR(VAR_LEFTBTN_DOWN) = 0;
+				VAR(VAR_RIGHTBTN_DOWN) = 0;
+			}
 		}
 	}
 
@@ -351,35 +428,54 @@ void ScummEngine::processInput() {
 
 #ifdef ENABLE_SCUMM_7_8
 void ScummEngine_v8::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		if (lastKeyHit.keycode == Common::KEYCODE_INVALID)
+			return;
+
+		// Main menu (allow both F1 and F5) mapping; unlike in
+		// the past we choose not to enable it without the
+		// original GUI selected as an option
+		if (!(_game.features & GF_DEMO) &&
+			(lastKeyHit.keycode == Common::KEYCODE_F1 || lastKeyHit.keycode == Common::KEYCODE_F5) &&
+			lastKeyHit.hasFlags(0)) {
+			lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
+		}
+
+		// Actually show the main menu screen...
+		if (!(_game.features & GF_DEMO) && _keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
+			if (!isSmushActive())
+				runScript(_keyScriptNo, 0, 0, 0);
+			return;
+		}
+	}
+
 	// F1 (the trigger for the original save/load dialog) is mapped to F5
 	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F1 && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_F5, 319);
 	}
 
-	// Alt-F5 should bring up the original save/load dialog, so map it to F1.
-	if (!(_game.features & GF_DEMO) && lastKeyHit.keycode == Common::KEYCODE_F5 && lastKeyHit.hasFlags(Common::KBD_ALT)) {
-		lastKeyHit = Common::KeyState(Common::KEYCODE_F1, 315);
-	}
-
-	// If a key script was specified (a V8 feature), and it's trigger
-	// key was pressed, run it. Usually used to display the built-in menu.
-	if (_keyScriptNo && (_keyScriptKey == lastKeyHit.ascii)) {
-		runScript(_keyScriptNo, 0, 0, 0);
-		return;
-	}
-
-	// Fall back to V7 behavior
+	// Fall back to V7 behavior...
 	ScummEngine_v7::processKeyboard(lastKeyHit);
+
 }
 
 void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		if (lastKeyHit.keycode == Common::KEYCODE_b && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			int curBufferCount = _imuseDigital->roundRobinSetBufferCount();
+			// "iMuse buffer count changed to %d"
+			showBannerAndPause(0, 90, getGUIString(gsIMuseBuffer), curBufferCount);
+			return;
+		}
+	}
+
 	const bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 
 	// VAR_VERSION_KEY (usually ctrl-v) is used in COMI, Dig and FT to trigger
 	// a version dialog, unless VAR_VERSION_KEY is set to 0. However, the COMI
 	// version string is hard coded in the engine, hence we don't invoke
 	// versionDialog for it. Dig/FT version strings are partly hard coded, too.
-	if (_game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
+	if (!isUsingOriginalGUI() && _game.id != GID_CMI && 0 != VAR(VAR_VERSION_KEY) &&
 	    lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
 		versionDialog();
 
@@ -416,33 +512,252 @@ void ScummEngine_v7::processKeyboard(Common::KeyState lastKeyHit) {
 }
 #endif
 
-void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
-	if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
-		SubtitleSettingsDialog dialog(this, _voiceMode);
-		_voiceMode = runDialog(dialog);
 
-		switch (_voiceMode) {
-		case 0:
-			ConfMan.setBool("speech_mute", false);
-			ConfMan.setBool("subtitles", false);
-			break;
-		case 1:
-			ConfMan.setBool("speech_mute", false);
-			ConfMan.setBool("subtitles", true);
-			break;
-		case 2:
-			ConfMan.setBool("speech_mute", true);
-			ConfMan.setBool("subtitles", true);
-			break;
-		default:
-			break;
+void ScummEngine::waitForBannerInput(int32 waitTime, Common::KeyState &ks, bool &leftBtnClicked, bool &rightBtnClicked, bool handeleMouseWheel) {
+	bool validKey = false;
+
+	if (waitTime && waitTime != -1) {
+		uint32 millis = _system->getMillis();
+		while (((_system->getMillis() - millis) * (_timerFrequency / 4) / 1000) < waitTime) {
+			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+
+			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
+				_guiCursorAnimCounter = 0;
+				animateCursor();
+			}
+
+			ks = _keyPressed;
+			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
+			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
+
+			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+					   ks.keycode != Common::KEYCODE_LALT    &&
+					   ks.keycode != Common::KEYCODE_RALT    &&
+					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
+
+			if (validKey || leftBtnClicked || rightBtnClicked || (handeleMouseWheel && _mouseWheelFlag))
+				return;
+
+			if (shouldQuit())
+				return;
+
+			if (_closeBannerAndQueryQuitFlag) {
+				_closeBannerAndQueryQuitFlag = false;
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
+				return;
+			}
+		}
+	} else {
+		while (!validKey && !leftBtnClicked && !rightBtnClicked && !(handeleMouseWheel && _mouseWheelFlag)) {
+			waitForTimer(1); // Allow the engine to update the screen and fetch new inputs...
+
+			if (_game.version < 7 && (_guiCursorAnimCounter++ & 16)) {
+				_guiCursorAnimCounter = 0;
+				animateCursor();
+			}
+
+			ks = _keyPressed;
+			leftBtnClicked = (_leftBtnPressed & msClicked) != 0;
+			rightBtnClicked = (_rightBtnPressed & msClicked) != 0;
+
+			if (shouldQuit())
+				return;
+
+			if (_closeBannerAndQueryQuitFlag && !_comiQuitMenuIsOpen) {
+				_closeBannerAndQueryQuitFlag = false;
+				Common::Event event;
+				event.type = Common::EVENT_QUIT;
+				getEventManager()->pushEvent(event);
+				return;
+			}
+
+ 			validKey = ks.keycode != Common::KEYCODE_INVALID &&
+					   ks.keycode != Common::KEYCODE_LALT    &&
+					   ks.keycode != Common::KEYCODE_RALT    &&
+					   ks.keycode != Common::KEYCODE_LCTRL   &&
+					   ks.keycode != Common::KEYCODE_RCTRL   &&
+					   ks.keycode != Common::KEYCODE_LSHIFT  &&
+					   ks.keycode != Common::KEYCODE_RSHIFT  &&
+					   ks.keycode != Common::KEYCODE_UP      &&
+					   ks.keycode != Common::KEYCODE_DOWN    &&
+					   ks.keycode != Common::KEYCODE_LEFT    &&
+					   ks.keycode != Common::KEYCODE_RIGHT   &&
+					   !(ks.keycode == Common::KEYCODE_s && ks.hasFlags(Common::KBD_ALT));
+		}
+	}
+}
+
+void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
+	if (isUsingOriginalGUI()) {
+		char sliderString[256];
+		PauseToken pt;
+
+		if (_game.version != 8 || (_game.version == 8 && (_game.features & GF_DEMO))) {
+			// "Music Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_o || lastKeyHit.keycode == Common::KEYCODE_p)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+#ifdef ENABLE_SCUMM_7_8
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetMusicGroupVol() : getMusicVolume();
+#else
+				int volume = getMusicVolume();
+#endif
+				do {
+					if (ks.keycode == Common::KEYCODE_o) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsMusicVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_o || ks.keycode == Common::KEYCODE_p);
+				clearBanner();
+
+				setMusicVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
+
+			// "Voice Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_k || lastKeyHit.keycode == Common::KEYCODE_l)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+#ifdef ENABLE_SCUMM_7_8
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetVoiceGroupVol() : getSpeechVolume();
+#else
+				int volume = getSpeechVolume();
+#endif
+				do {
+					if (ks.keycode == Common::KEYCODE_k) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsVoiceVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_k || ks.keycode == Common::KEYCODE_l);
+				clearBanner();
+
+				setSpeechVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
+
+			// "Sfx Volume  Low  =========  High"
+			if (lastKeyHit.hasFlags(Common::KBD_SHIFT) &&
+				(lastKeyHit.keycode == Common::KEYCODE_n || lastKeyHit.keycode == Common::KEYCODE_m)) {
+				Common::KeyState ks = lastKeyHit;
+
+				pt = pauseEngine();
+
+#ifdef ENABLE_SCUMM_7_8
+				int volume = (_game.version > 6) ? _imuseDigital->diMUSEGetSFXGroupVol() : getSFXVolume();
+#else
+				int volume = getSFXVolume();
+#endif
+				do {
+					if (ks.keycode == Common::KEYCODE_n) {
+						volume -= 16;
+						if (volume < 0)
+							volume = 0;
+					} else {
+						volume += 16;
+						if (volume > 127)
+							volume = 127;
+					}
+
+					getSliderString(gsSfxVolumeSlider, volume, sliderString, sizeof(sliderString));
+					showBannerAndPause(0, 0, sliderString);
+					ks = Common::KEYCODE_INVALID;
+					bool leftBtnPressed = false, rightBtnPressed = false;
+					waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+				} while (ks.keycode == Common::KEYCODE_n || ks.keycode == Common::KEYCODE_m);
+				clearBanner();
+
+				setSFXVolume(volume);
+
+				pt.clear();
+
+				return;
+			}
 		}
 
-		// We need to sync the current sound settings here to make sure that
-		// we actually update the mute state of speech properly.
-		syncSoundSettings();
+		if (VAR_VERSION_KEY != 0xFF && VAR(VAR_VERSION_KEY) != 0 &&
+			lastKeyHit.keycode == Common::KEYCODE_v && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			if (_game.version == 8) {
+				showBannerAndPause(0, -1, _dataFileVersionString);
+				// This is not the string being used by the interpreter, which is instead hardcoded
+				// in the executable. The one used here is found in the data files.
+				showBannerAndPause(0, -1, _engineVersionString);
 
-		return;
+				if (_game.features & GF_DEMO)
+					showBannerAndPause(0, -1, "iMuse(tm) initialized");
+				return;
+			} else if (_game.version == 7) {
+				showBannerAndPause(0, -1, getGUIString(gsVersion));
+				showBannerAndPause(0, -1, "Scripts compiled %s", _dataFileVersionString);
+				showBannerAndPause(0, -1, "SPU(tm) version %s", _engineVersionString);
+				showBannerAndPause(0, -1, "iMuse(tm) initialized");
+				return;
+			}
+			// Older versions show this banner via scripts, so just let it fallback...
+		}
+	} else {
+		if (lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			SubtitleSettingsDialog dialog(this, _voiceMode);
+			_voiceMode = runDialog(dialog);
+
+			switch (_voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
+			// We need to sync the current sound settings here to make sure that
+			// we actually update the mute state of speech properly.
+			syncSoundSettings();
+
+			return;
+		}
 	}
 
 	// Fall back to default behavior
@@ -450,10 +765,10 @@ void ScummEngine_v6::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine_v2::processKeyboard(Common::KeyState lastKeyHit) {
-	// RETURN is used to skip cutscenes in the Commodote 64 version of Zak McKracken
+	// RETURN is used to skip cutscenes in the Commodore 64 version of Zak McKracken
 	if (_game.id == GID_ZAK &&_game.platform == Common::kPlatformC64 && lastKeyHit.keycode == Common::KEYCODE_RETURN && lastKeyHit.hasFlags(0)) {
 		lastKeyHit = Common::KeyState(Common::KEYCODE_ESCAPE);
-	// F7 is used to skip cutscenes in the Commodote 64 version of Maniac Mansion
+	// F7 is used to skip cutscenes in the Commodore 64 version of Maniac Mansion
 	} else if (_game.id == GID_MANIAC &&_game.platform == Common::kPlatformC64) {
 		// Demo always F7 to be pressed to restart
 		if (_game.features & GF_DEMO) {
@@ -523,17 +838,198 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 }
 
 void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
-	// Enable the following five special keys conditionally:
+	// Enable the following special keys conditionally:
 	bool restartKeyEnabled = (VAR_RESTART_KEY == 0xFF || VAR(VAR_RESTART_KEY) != 0);
 	bool pauseKeyEnabled = (VAR_PAUSE_KEY == 0xFF || VAR(VAR_PAUSE_KEY) != 0);
 	bool talkstopKeyEnabled = (VAR_TALKSTOP_KEY == 0xFF || VAR(VAR_TALKSTOP_KEY) != 0);
 	bool cutsceneExitKeyEnabled = (VAR_CUTSCENEEXIT_KEY == 0xFF || VAR(VAR_CUTSCENEEXIT_KEY) != 0);
 	bool mainmenuKeyEnabled = (VAR_MAINMENU_KEY == 0xFF || VAR(VAR_MAINMENU_KEY) != 0);
-	bool snapScrollKeyEnabled = (_game.version <= 2 || VAR_CAMERA_FAST_X != 0xFF);
+	bool snapScrollKeyEnabled = (_game.version >= 2 && _game.version <= 4);
+	bool optionKeysEnabled = !isUsingOriginalGUI();
 
 	// In FM-TOWNS games F8 / restart is always enabled
 	if (_game.platform == Common::kPlatformFMTowns)
 		restartKeyEnabled = true;
+
+	if (isUsingOriginalGUI()) {
+		char sliderString[256];
+		PauseToken pt;
+
+		if ((VAR_PAUSE_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_PAUSE_KEY))) ||
+			(lastKeyHit.keycode == Common::KEYCODE_SPACE && _game.features & GF_DEMO)) {
+			// Force the cursor OFF...
+			int8 oldCursorState = _cursor.state;
+			_cursor.state = 0;
+			CursorMan.showMouse(_cursor.state > 0);
+			// "Game Paused.  Press SPACE to Continue."
+			if (_game.version > 4)
+				showBannerAndPause(0, -1, getGUIString(gsPause));
+			else
+				showOldStyleBannerAndPause(getGUIString(gsPause), 12, -1);
+
+			_cursor.state = oldCursorState;
+			return;
+		}
+
+		if ((VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) ||
+			((_game.id == GID_CMI && !(_game.features & GF_DEMO))
+				&& lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
+			queryRestart();
+			return;
+		}
+
+		// Generally allow voice mode settings only for v6, 7 and 8.
+		// Also allow it for Indy4 Talkie, which does its own thing.
+		if (((VAR_VOICE_MODE != 0xFF) || (_game.variant && (!strcmp(_game.variant, "SE Talkie") ||
+			(_game.id == GID_INDY4 && strcmp(_game.variant, "Floppy") && strcmp(_game.variant, "Amiga"))))) &&
+			(lastKeyHit.keycode == Common::KEYCODE_t && lastKeyHit.hasFlags(Common::KBD_CTRL))) {
+			int voiceMode = (_game.version == 5) ? _v5VoiceMode : VAR(VAR_VOICE_MODE);
+
+			voiceMode++;
+			if (voiceMode >= 3) {
+				voiceMode = 0;
+			}
+
+			if (_game.version == 5)
+				_v5VoiceMode = voiceMode;
+
+			switch (voiceMode) {
+			case 0: // "Voice Only"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceOnly));
+				break;
+			case 1: // "Voice and Text"
+				showBannerAndPause(0, 120, getGUIString(gsVoiceAndText));
+				break;
+			default: // "Text Display Only"
+				showBannerAndPause(0, 120, getGUIString(gsTextDisplayOnly));
+			}
+
+			ConfMan.setInt("original_gui_text_status", voiceMode);
+			switch (voiceMode) {
+			case 0:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", false);
+				break;
+			case 1:
+				ConfMan.setBool("speech_mute", false);
+				ConfMan.setBool("subtitles", true);
+				break;
+			case 2:
+				ConfMan.setBool("speech_mute", true);
+				ConfMan.setBool("subtitles", true);
+				break;
+			default:
+				break;
+			}
+
+			ConfMan.flushToDisk();
+			syncSoundSettings();
+			return;
+		}
+
+		// "Text Speed  Slow  ==========  Fast"
+		if (((_game.version > 3 && _game.version < 8) || (_game.version == 8 && (_game.features & GF_DEMO)))
+			&& (lastKeyHit.ascii == '+' || lastKeyHit.ascii == '-')) {
+			if (VAR_CHARINC == 0xFF)
+				return;
+
+			Common::KeyState ks = lastKeyHit;
+
+			pt = pauseEngine();
+
+			do {
+				if (ks.ascii == '+') {
+					VAR(VAR_CHARINC) -= 1;
+					if (VAR(VAR_CHARINC) < 0)
+						VAR(VAR_CHARINC) = 0;
+				} else {
+					VAR(VAR_CHARINC) += 1;
+					if (VAR(VAR_CHARINC) > 9)
+						VAR(VAR_CHARINC) = 9;
+				}
+
+				_defaultTextSpeed = 9 - VAR(VAR_CHARINC);
+				ConfMan.setInt("original_gui_text_speed", _defaultTextSpeed);
+				setTalkSpeed(_defaultTextSpeed);
+
+				getSliderString(gsTextSpeedSlider, VAR(VAR_CHARINC), sliderString, sizeof(sliderString));
+				if (_game.version > 4)
+					showBannerAndPause(0, 0, sliderString);
+				else
+					showOldStyleBannerAndPause(sliderString, 9, 0);
+
+				ks = Common::KEYCODE_INVALID;
+				bool leftBtnPressed = false, rightBtnPressed = false;
+				waitForBannerInput(60, ks, leftBtnPressed, rightBtnPressed);
+			} while (ks.ascii == '+' || ks.ascii == '-');
+			clearBanner();
+
+			pt.clear();
+
+			return;
+		}
+
+
+		if (_game.version > 4 && lastKeyHit.keycode == Common::KEYCODE_k && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+			showBannerAndPause(0, 120, getGUIString(gsHeap), _res->getHeapSize() / 1024);
+			return;
+		}
+
+		if ((lastKeyHit.keycode == Common::KEYCODE_c && lastKeyHit.hasFlags(Common::KBD_CTRL)) ||
+			(lastKeyHit.keycode == Common::KEYCODE_x && lastKeyHit.hasFlags(Common::KBD_ALT))) {
+			Common::Event event;
+			event.type = Common::EVENT_QUIT;
+			getEventManager()->pushEvent(event);
+			return;
+		}
+
+		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0))
+			&& _game.platform != Common::kPlatformFMTowns) {
+			showMainMenu();
+			return;
+		}
+
+		if (_game.version == 4) {
+			if (lastKeyHit.keycode == Common::KEYCODE_r && lastKeyHit.hasFlags(Common::KBD_CTRL)) {
+				_snapScroll ^= 1;
+				if (_snapScroll) {
+					showOldStyleBannerAndPause("Horizontal Screen Snap", 9, 90);
+				} else {
+					showOldStyleBannerAndPause("Horizontal Screen Scroll", 9, 90);
+				}
+
+				if (VAR_CAMERA_FAST_X != 0xFF)
+					VAR(VAR_CAMERA_FAST_X) = _snapScroll;
+
+				return;
+			}
+
+			// The following ones serve no purpose whatsoever, but just for the sake of completeness...
+			// Also, these were originally mapped with the CTRL flag, but they would clash with other
+			// internal ScummVM commands, so they are instead available with the SHIFT flag.
+			if (lastKeyHit.keycode == Common::KEYCODE_j && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				showOldStyleBannerAndPause("Recalibrating Joystick", 2, 90);
+				return;
+			}
+
+			if (lastKeyHit.keycode == Common::KEYCODE_m && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				showOldStyleBannerAndPause("Mouse Mode", 2, 90);
+				return;
+			}
+
+			if (lastKeyHit.keycode == Common::KEYCODE_s && lastKeyHit.hasFlags(Common::KBD_SHIFT)) {
+				_internalSpeakerSoundsAreOn ^= 1;
+				if (_internalSpeakerSoundsAreOn) {
+					showOldStyleBannerAndPause("Sounds On", 9, 90);
+				} else {
+					showOldStyleBannerAndPause("Sounds Off", 9, 90);
+				}
+
+				return;
+			}
+
+		}
+	}
 
 	// For games which use VAR_MAINMENU_KEY, disable the mainmenu key if
 	// requested by the scripts. We make an exception for COMI (i.e.
@@ -546,6 +1042,9 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			runScript(VAR(VAR_SAVELOAD_SCRIPT), 0, 0, nullptr);
 
 		openMainMenuDialog();		// Display global main menu
+
+		// reload options
+		_enableAudioOverride = ConfMan.getBool("audio_override");
 
 		if (VAR_SAVELOAD_SCRIPT2 != 0xFF && _currentRoom != 0)
 			runScript(VAR(VAR_SAVELOAD_SCRIPT2), 0, 0, nullptr);
@@ -578,7 +1077,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 
 		if (VAR_CAMERA_FAST_X != 0xFF)
 			VAR(VAR_CAMERA_FAST_X) = _snapScroll;
-	} else if (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']') { // Change music volume
+	} else if (optionKeysEnabled && (lastKeyHit.ascii == '[' || lastKeyHit.ascii == ']')) { // Change music volume
 		int vol = ConfMan.getInt("music_volume") / 16;
 		if (lastKeyHit.ascii == ']' && vol < 16)
 			vol++;
@@ -596,21 +1095,21 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		ConfMan.setInt("music_volume", vol);
 		syncSoundSettings();
 
-	} else if (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+') { // Change text speed
-		if (lastKeyHit.ascii == '+' && _defaultTalkDelay > 0)
-			_defaultTalkDelay--;
-		else if (lastKeyHit.ascii == '-' && _defaultTalkDelay < 9)
-			_defaultTalkDelay++;
+	} else if (optionKeysEnabled && (lastKeyHit.ascii == '-' || lastKeyHit.ascii == '+')) { // Change text speed
+		if (lastKeyHit.ascii == '-' && _defaultTextSpeed > 0)
+			_defaultTextSpeed--;
+		else if (lastKeyHit.ascii == '+' && _defaultTextSpeed < 9)
+			_defaultTextSpeed++;
 
 		// Display the talk speed
-		ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, 9 - _defaultTalkDelay, '+', '-');
-		_defaultTalkDelay = 9 - runDialog(dlg);
+		ValueDisplayDialog dlg(_("Subtitle speed: "), 0, 9, _defaultTextSpeed, '+', '-');
+		_defaultTextSpeed = runDialog(dlg);
 
 		// Save the new talkspeed value to ConfMan
-		setTalkSpeed(_defaultTalkDelay);
+		setTalkSpeed(_defaultTextSpeed);
 
 		if (VAR_CHARINC != 0xFF)
-			VAR(VAR_CHARINC) = _defaultTalkDelay;
+			VAR(VAR_CHARINC) = 9 - _defaultTextSpeed;
 
 	} else {
 
@@ -639,9 +1138,8 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 				// Map arrow keys to number keys in the SEGA version of MI to support
 				// scrolling to conversation choices. See bug report #2013 for details.
 				_mouseAndKeyboardStat = lastKeyHit.keycode - Common::KEYCODE_UP + 54;
-			} else if (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine) {
-				// Map arrow keys to number keys in the PCEngine version of Loom to support
-				// the menu screen.
+			} else if (isUsingOriginalGUI() || (_game.id == GID_LOOM && _game.platform == Common::kPlatformPCEngine)) {
+				// Map arrow keys to number keys in games which use the original menu screen.
 				switch (lastKeyHit.keycode) {
 				case Common::KEYCODE_UP:
 					_mouseAndKeyboardStat = 328;
@@ -668,8 +1166,21 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			}
 
 		} else {
-			_mouseAndKeyboardStat = lastKeyHit.ascii;
+			// Map the DEL key when using the original GUI; used when writing the savegame name.
+			if (isUsingOriginalGUI() && lastKeyHit.keycode == Common::KEYCODE_DELETE)
+				_mouseAndKeyboardStat = 339;
+			else
+				_mouseAndKeyboardStat = lastKeyHit.ascii;
 		}
+	}
+
+	// The original interpreters allowed the usage of the Enter key as a substitute for left mouse click,
+	// and the Tab key as a substitute for right click; while v7-8 games handle this substitution via
+	// scripts, we have to do this manually for the other games.
+	if (_mouseAndKeyboardStat == Common::KEYCODE_RETURN && _cursor.state > 0 && _game.version <= 6) {
+		_mouseAndKeyboardStat = MBS_LEFT_CLICK;
+	} else if (_mouseAndKeyboardStat == Common::KEYCODE_TAB && _cursor.state > 0 && _game.version >= 4 && _game.version <= 6) {
+		_mouseAndKeyboardStat = MBS_RIGHT_CLICK;
 	}
 }
 

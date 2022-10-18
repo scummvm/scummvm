@@ -24,6 +24,8 @@
 
 namespace OpenGL {
 
+Pipeline *Pipeline::activePipeline = nullptr;
+
 Pipeline::Pipeline()
 	: _activeFramebuffer(nullptr), _isActive(false) {
 }
@@ -60,6 +62,20 @@ Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
 	}
 
 	return oldFramebuffer;
+}
+
+Pipeline *Pipeline::setPipeline(Pipeline *pipeline) {
+	Pipeline *oldPipeline = activePipeline;
+	if (oldPipeline) {
+		oldPipeline->deactivate();
+	}
+
+	activePipeline = pipeline;
+	if (activePipeline) {
+		activePipeline->activate();
+	}
+
+	return oldPipeline;
 }
 
 } // End of namespace OpenGL

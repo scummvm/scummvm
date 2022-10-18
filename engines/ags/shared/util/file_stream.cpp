@@ -68,15 +68,11 @@ bool FileStream::EOS() const {
 }
 
 soff_t FileStream::GetLength() const {
-	if (IsValid()) {
-		soff_t pos = (soff_t)ags_ftell(_file);
-		ags_fseek(_file, 0, SEEK_END);
-		soff_t end = (soff_t)ags_ftell(_file);
-		ags_fseek(_file, pos, SEEK_SET);
-		return end;
-	}
-
-	return 0;
+	soff_t pos = (soff_t)ags_ftell(_file);
+	ags_fseek(_file, 0, SEEK_END);
+	soff_t end = (soff_t)ags_ftell(_file);
+	ags_fseek(_file, pos, SEEK_SET);
+	return end;
 }
 
 soff_t FileStream::GetPosition() const {
@@ -140,10 +136,6 @@ int32_t FileStream::WriteByte(uint8_t val) {
 }
 
 bool FileStream::Seek(soff_t offset, StreamSeek origin) {
-	if (!_file) {
-		return false;
-	}
-
 	int stdclib_origin;
 	switch (origin) {
 	case kSeekBegin:
@@ -172,11 +164,13 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 		} else {
 			// First try to open file in game folder
 			Common::File *f = new Common::File();
-			if (!f->open(getFSNode(file_name.GetCStr()))) {
+			Common::FSNode fsNode = getFSNode(file_name.GetCStr());
+
+			if (fsNode.exists() && f->open(fsNode)) {
+				_file = f;
+			} else {
 				delete f;
 				_file = nullptr;
-			} else {
-				_file = f;
 			}
 		}
 

@@ -25,6 +25,7 @@
 #include "image/png.h"
 
 #include "saga2/saga2.h"
+#include "saga2/automap.h"
 #include "saga2/objects.h"
 #include "saga2/player.h"
 #include "saga2/mapfeatr.h"
@@ -36,6 +37,7 @@ namespace Saga2 {
 
 extern GameObject *objectList;
 extern WorldMapData *mapList;
+extern AutoMap *pAutoMap;
 
 Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
@@ -89,6 +91,8 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
 
 	registerCmd("invis", WRAP_METHOD(Console, cmdInvisibility));
+
+	registerCmd("map_cheat", WRAP_METHOD(Console, cmdMapCheat));
 }
 
 Console::~Console() {
@@ -404,13 +408,13 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 		debugPrintf("Usage: %s <Map Size Multiplier>\n", argv[0]);
 	else {
 		gPixelMap drawMap;
-		drawMap.size = _vm->_tileDrawMap.size * atoi(argv[1]);
-		drawMap.data = new uint8[drawMap.bytes()]();
+		drawMap._size = _vm->_tileDrawMap._size * atoi(argv[1]);
+		drawMap._data = new uint8[drawMap.bytes()]();
 		drawMetaTiles(drawMap);
 
 		Graphics::Surface sur;
-		sur.create(drawMap.size.x, drawMap.size.y, Graphics::PixelFormat::createFormatCLUT8());
-		sur.setPixels(drawMap.data);
+		sur.create(drawMap._size.x, drawMap._size.y, Graphics::PixelFormat::createFormatCLUT8());
+		sur.setPixels(drawMap._data);
 
 		Common::String pngFile = Common::String::format("%s-mapdump.png", _vm->getMetaEngine()->getName());
 		Common::DumpFile dump;
@@ -423,7 +427,7 @@ bool Console::cmdDumpMap(int argc, const char **argv) {
 
 		dump.close();
 
-		delete[] drawMap.data;
+		delete[] drawMap._data;
 	}
 
 	return true;
@@ -462,6 +466,19 @@ bool Console::cmdInvisibility(int argc, const char **argv) {
 				p->setEffect(actorInvisible, true);
 			else
 				p->setEffect(actorInvisible, false);
+		}
+	}
+
+	return true;
+}
+
+bool Console::cmdMapCheat(int argc, const char **argv) {
+	if (argc != 2)
+		debugPrintf("Usage: %s <1/0>\n", argv[0]);
+	else {
+		bool cheat = atoi(argv[1]);
+		if (pAutoMap) {
+			pAutoMap->setCheatFlag(cheat);
 		}
 	}
 

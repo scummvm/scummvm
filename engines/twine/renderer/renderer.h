@@ -182,6 +182,8 @@ private:
 	 * that is needed to render the primitive.
 	 */
 	uint8 _renderCoordinatesBuffer[10000]{0};
+	Vertex _clippedPolygonVertices1[128];
+	Vertex _clippedPolygonVertices2[128];
 
 	int32 _polyTabSize = 0;
 	int16 *_polyTab = nullptr;
@@ -205,7 +207,7 @@ private:
 	void renderPolygonsDither(int vtop, int32 vsize) const;
 	void renderPolygonsMarble(int vtop, int32 vsize, uint16 color) const;
 	void renderPolygonsSimplified(int vtop, int32 vsize, uint16 color) const;
-	bool computePolygons(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
+	bool computePoly(int16 polyRenderType, const Vertex *vertices, int32 numVertices);
 
 	const RenderCommand *depthSortRenderCommands(int32 numOfPrimitives);
 	uint8 *preparePolygons(const Common::Array<BodyPolygon>& polygons, int32 &numOfPrimitives, RenderCommand **renderCmds, uint8 *renderBufferPtr, ModelData *modelData);
@@ -218,6 +220,11 @@ private:
 	void computeHolomapPolygon(int32 y1, int32 x1, int32 y2, int32 x2, int16 *polygonTabPtr);
 	void fillHolomapPolygons(const Vertex &vertex1, const Vertex &vertex2, const Vertex &texCoord1, const Vertex &texCoord2, int32 &top, int32 &bottom);
 
+	int16 leftClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
+	int16 rightClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
+	int16 topClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
+	int16 bottomClip(int16 polyRenderType, Vertex** offTabPoly, int32 numVertices);
+	int32 computePolyMinMax(int16 polyRenderType, Vertex **offTabPoly, int32 numVertices);
 public:
 	Renderer(TwinEEngine *engine);
 	~Renderer();
@@ -239,7 +246,7 @@ public:
 	void fillVertices(int vtop, int32 vsize, uint8 renderType, uint16 color);
 	void renderPolygons(const CmdRenderPolygon &polygon, Vertex *vertices, int vtop, int vbottom);
 
-	inline IVec3 &projectPositionOnScreen(const IVec3& pos) {
+	inline IVec3 &projectPositionOnScreen(const IVec3& pos) { // ProjettePoint
 		return projectPositionOnScreen(pos.x, pos.y, pos.z);
 	}
 

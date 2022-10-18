@@ -191,12 +191,12 @@ void AGOSEngine::vc52_playSound() {
 			_sound->playEffects(sound);
 	} else if (getFeatures() & GF_TALKIE) {
 		_sound->playEffects(sound);
-	} else if (getGameId() == GID_SIMON1DOS) {
-		playSting(sound);
-	} else if (getGameType() == GType_WW) {
-		// TODO: Sound effects in PC version only
 	} else {
-		loadSound(sound, 0, 0);
+		// Waxworks uses 2 opcodes to play SFX: vc28 for digital SFX and vc52
+		// for MIDI SFX. If a sound effect has both a MIDI and a digital
+		// version, both opcodes are triggered. Only one of them should play
+		// a sound effect.
+		playSfx(sound, 0, 0, false, getGameType() == GType_WW);
 	}
 }
 

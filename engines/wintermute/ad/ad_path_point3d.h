@@ -31,6 +31,7 @@
 
 #include "engines/wintermute/persistent.h"
 #include "engines/wintermute/base/base.h"
+
 #include "math/vector3d.h"
 
 namespace Wintermute {

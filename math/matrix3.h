@@ -50,7 +50,7 @@ public:
 	 * All the parameters MUST be normalized.
 	 */
 	void buildFromTargetDir(const Math::Vector3d &modelForward, const Math::Vector3d &targetDirection,
-								const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
+	                        const Math::Vector3d &modelUp, const Math::Vector3d &worldUp);
 
 	inline Matrix<3, 3> operator*(const Matrix<3, 3> &m2) const {
 		Matrix<3, 3> result;

@@ -161,11 +161,13 @@ void CryOmni3DEngine_Versailles::saveGame(bool visit, uint saveNum,
 	syncCountdown();
 
 	// Write save name
-	char saveNameC[kSaveDescriptionLen];
+
+	// Allocate one more byte to silence GCC warning
+	// The save name doesn't have to be null terminated in the save file
+	char saveNameC[kSaveDescriptionLen + 1];
 	memset(saveNameC, 0, sizeof(saveNameC));
-	// Silence -Wstringop-truncation using parentheses, we don't have to have a null-terminated string here
-	(strncpy(saveNameC, saveName.c_str(), sizeof(saveNameC)));
-	out->write(saveNameC, sizeof(saveNameC));
+	strncpy(saveNameC, saveName.c_str(), kSaveDescriptionLen);
+	out->write(saveNameC, kSaveDescriptionLen);
 
 	// dummy values
 	out->writeUint32LE(0);

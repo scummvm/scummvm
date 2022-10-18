@@ -108,7 +108,7 @@ public:
 		Common::SeekableReadStream *getStream() {
 			_stream->seek(_chunks[_index]._offset);
 			return (_chunks[_index]._size == 0) ?
-				new Common::MemoryReadStream((byte *)malloc(0), 0, DisposeAfterUse::YES) :
+				new Common::MemoryReadStream(nullptr, 0, DisposeAfterUse::YES) :
 				_stream->readStream(_chunks[_index]._size);
 		}
 	};

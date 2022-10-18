@@ -252,7 +252,7 @@ void ResetVarsPCode() {
  */
 void LockCode(INT_CONTEXT *ic) {
 	if (ic->GSort == GS_MASTER) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			// Get the srcipt handle from a specific global chunk
 			ic->code = (byte *)_vm->_handle->LockMem(g_hMasterScript);
 		else
@@ -318,7 +318,7 @@ static void FreeWaitCheck(INT_CONTEXT * pic, bool bVoluntary) {
  */
 static void FreeInterpretContextPi(INT_CONTEXT *pic) {
 	FreeWaitCheck(pic, true);
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		memset(pic, 0, sizeof(INT_CONTEXT));
 	pic->GSort = GS_NONE;
 }
@@ -335,7 +335,7 @@ void FreeInterpretContextPr(Common::PROCESS *pProc) {
 	for (i = 0, pic = g_icList; i < NUM_INTERPRET; i++, pic++) {
 		if (pic->GSort != GS_NONE && pic->pProc == pProc) {
 			FreeWaitCheck(pic, false);
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				memset(pic, 0, sizeof(INT_CONTEXT));
 			pic->GSort = GS_NONE;
 			break;
@@ -385,7 +385,7 @@ void FreeMasterInterpretContext() {
  * @param pinvo			Associated inventory object
  */
 INT_CONTEXT *InitInterpretContext(GSORT gsort, SCNHANDLE hCode,	TINSEL_EVENT event,
-		HPOLYGON hpoly, int actorid, INV_OBJECT *pinvo, int myEscape) {
+		HPOLYGON hpoly, int actorid, const InventoryObject *pinvo, int myEscape) {
 	INT_CONTEXT *ic;
 
 	ic = AllocateInterpretContext(gsort);
@@ -435,7 +435,7 @@ void RegisterGlobals(int num) {
 	if (g_pGlobals == nullptr) {
 		g_numGlobals = num;
 
-		g_hMasterScript = !TinselV2 ? 0 :
+		g_hMasterScript = (TinselVersion <= 1) ? 0 :
 			READ_32(FindChunk(MASTER_SCNHANDLE, CHUNK_MASTER_SCRIPT));
 
 		// Allocate RAM for pGlobals and make sure it's allocated
@@ -458,7 +458,7 @@ void RegisterGlobals(int num) {
 		memset(g_icList, 0, NUM_INTERPRET * sizeof(INT_CONTEXT));
 	}
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// read initial values
 		CdCD(Common::nullContext);
 
@@ -553,7 +553,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
 	switch (numBytes) {
 	case 0:
 		// Instruction byte
-		tmp = code[ip++ * (TinselV0 ? 4 : 1)];
+		tmp = code[ip++ * ((TinselVersion == 0) ? 4 : 1)];
 		break;
 	case 1:
 		// Fetch and sign extend a 8 bit value to 32 bits.
@@ -565,7 +565,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
 		ip += 2;
 		break;
 	default:
-		if (TinselV0)
+		if (TinselVersion == 0)
 			tmp = (int32)READ_LE_UINT32(code + ip++ * 4);
 		else {
 			tmp = (int32)READ_LE_UINT32(code + ip);
@@ -582,7 +582,7 @@ static int32 GetBytes(const byte *scriptCode, const WorkaroundEntry* &wkEntry, i
  * stream and advance the instruction pointer accordingly.
  */
 static int32 Fetch(byte opcode, const byte *code, const WorkaroundEntry* &wkEntry, int &ip) {
-	if (TinselV0)
+	if (TinselVersion == 0)
 		// Fetch a 32 bit value.
 		return GetBytes(code, wkEntry, ip, 4);
 	else if (opcode & OPSIZE8)
@@ -611,7 +611,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 					(wkEntry->ip == ip) &&
 					(wkEntry->isDemo == _vm->getIsADGFDemo()) &&
 					((wkEntry->platform == Common::kPlatformUnknown) || (wkEntry->platform == _vm->getPlatform())) &&
-					(!TinselV1 || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
+					((TinselVersion != 1) || (wkEntry->scnFlag == ((_vm->getFeatures() & GF_SCNFILES) != 0)))) {
 					// Point to start of workaround fragment
 					ip = 0;
 					break;
@@ -622,10 +622,10 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 		}
 
 		byte opcode = (byte)GetBytes(ic->code, wkEntry, ip, 0);
-		if (TinselV0 && ((opcode & OPMASK) > OP_IMM))
+		if ((TinselVersion == 0) && ((opcode & OPMASK) > OP_IMM))
 			opcode += 3;
 
-		if (TinselV3) {
+		if (TinselVersion == 3) {
 			// Discworld Noir adds a NOOP-operation as opcode 0, leaving everything
 			// else 1 higher, so we subtract 1, and add NOOP as the highest opcode instead.
 			opcode -= 1;
@@ -720,10 +720,10 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			tmp2 = CallLibraryRoutine(coroParam, tmp, &ic->stack[ic->sp], ic, &ic->resumeState);
 			if (coroParam)
 				return;
-			if (!TinselV0)
+			if (TinselVersion != 0)
 				ic->sp += tmp2;
 			LockCode(ic);
-			if (TinselV2 && (ic->resumeState == RES_1))
+			if ((TinselVersion >= 2) && (ic->resumeState == RES_1))
 				ic->resumeState = RES_NOT;
 			break;
 
@@ -858,7 +858,7 @@ void Interpret(CORO_PARAM, INT_CONTEXT *ic) {
 			break;
 
 		case OP_NOOP:
-			if (!TinselV3) {
+			if (TinselVersion != 3) {
 				error("OP_NOOP seen outside Discworld Noir");
 			}
 			break;

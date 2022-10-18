@@ -99,7 +99,7 @@ SOUNDCLIP *my_load_mod(const AssetPath &asset_name, bool loop) {
 	if (data) {
 		// determine the file extension
 		size_t lastDot = asset_name.Filter.FindCharReverse('.');
-		if (lastDot == AGS::Shared::String::npos || lastDot == asset_name.Filter.GetLength() - 1) {
+		if (lastDot == AGS::Shared::String::NoIndex || lastDot == asset_name.Filter.GetLength() - 1) {
 			delete data;
 			return nullptr;
 		}

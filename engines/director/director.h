@@ -56,6 +56,7 @@ class ManagedSurface;
 namespace Director {
 
 class Archive;
+class MacArchive;
 class Cast;
 class DirectorSound;
 class Lingo;
@@ -84,7 +85,9 @@ enum {
 	kDebugScreenshot	= 1 << 14,
 	kDebugDesktop		= 1 << 15,
 	kDebug32bpp			= 1 << 16,
-	kDebugEndVideo		= 1 << 17
+	kDebugEndVideo		= 1 << 17,
+	kDebugLingoStrict	= 1 << 18,
+	kDebugSound			= 1 << 19,
 };
 
 struct MovieReference {
@@ -123,69 +126,23 @@ struct MacShape {
 	int lineSize;
 	uint pattern;
 
+	Image::ImageDecoder *tile;
+	const Common::Rect *tileRect;
+
 	Graphics::MacPlotData *pd;
 };
 
-const int SCALE_THRESHOLD = 0x100;
+struct PatternTile {
+	Image::ImageDecoder *img = 0;
+	Common::Rect rect;
 
-// An extension of MacPlotData for interfacing with inks and patterns without
-// needing extra surfaces.
-struct DirectorPlotData {
-	Graphics::MacWindowManager *_wm;
-	Graphics::ManagedSurface *dst;
-
-	Common::Rect destRect;
-	Common::Point srcPoint;
-
-	Graphics::ManagedSurface *srf;
-	MacShape *ms;
-
-	SpriteType sprite;
-	InkType ink;
-	uint32 colorWhite;
-	uint32 colorBlack;
-	int alpha;
-
-	uint32 backColor;
-	uint32 foreColor;
-	bool applyColor;
-
-	// graphics.cpp
-	void setApplyColor();
-	uint32 preprocessColor(uint32 src);
-	void inkBlitShape(Common::Rect &srcRect);
-	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
-	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
-
-	DirectorPlotData(Graphics::MacWindowManager *w, SpriteType s, InkType i, int a, uint32 b, uint32 f) : _wm(w), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
-		srf = nullptr;
-		ms = nullptr;
-		dst = nullptr;
-		colorWhite = w->_colorWhite;
-		colorBlack = w->_colorBlack;
-		applyColor = false;
-	}
-
-	DirectorPlotData(const DirectorPlotData &old) : _wm(old._wm), sprite(old.sprite),
-	                                                ink(old.ink), alpha(old.alpha),
-	                                                backColor(old.backColor), foreColor(old.foreColor),
-	                                                srf(old.srf), dst(old.dst),
-	                                                destRect(old.destRect), srcPoint(old.srcPoint),
-	                                                colorWhite(old.colorWhite), colorBlack(old.colorBlack),
-	                                                applyColor(old.applyColor) {
-		if (old.ms) {
-			ms = new MacShape(*old.ms);
-		} else {
-			ms = nullptr;
-		}
-	}
-
-	DirectorPlotData &operator=(const DirectorPlotData &);
-
-	~DirectorPlotData() {
-		delete ms;
+	~PatternTile() {
+		if (img)
+			delete img;
 	}
 };
+
+const int SCALE_THRESHOLD = 0x100;
 
 class DirectorEngine : public ::Engine {
 public:
@@ -225,6 +182,7 @@ public:
 	void addPalette(int id, byte *palette, int length);
 	bool setPalette(int id);
 	void setPalette(byte *palette, uint16 count);
+	void shiftPalette(int startIndex, int endIndex, bool reverse);
 	void clearPalettes();
 	PaletteV4 *getPalette(int id);
 	void loadDefaultPalettes();
@@ -236,6 +194,8 @@ public:
 	uint16 getPaletteColorCount() const { return _currentPaletteLength; }
 
 	void loadPatterns();
+	Image::ImageDecoder *getTile(int num);
+	const Common::Rect &getTileRect(int num);
 	uint32 transformColor(uint32 color);
 	Graphics::MacPatterns &getPatterns();
 	void setCursor(DirectorCursor type);
@@ -248,10 +208,15 @@ public:
 
 	Archive *createArchive();
 
+	bool desktopEnabled();
+
 	// events.cpp
 	bool processEvents(bool captureClick = false);
 	void processEventQUIT();
 	uint32 getMacTicks();
+
+	// game-quirks.cpp
+	void gameQuirks(const char *target, Common::Platform platform);
 
 public:
 	RandomState _rnd;
@@ -266,18 +231,30 @@ public:
 	bool _skipFrameAdvance;
 	bool _centerStage;
 	char _dirSeparator;
+	bool _fixStageSize;
+	Common::Rect _fixStageRect;
+	Common::List<Common::String> _extraSearchPath;
 
-	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+	Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _allOpenResFiles;
+	// Opened Resource Files that were opened by OpenResFile
+	Common::HashMap<Common::String, MacArchive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _openResFiles;
+
 	Common::Array<Graphics::WinCursorGroup *> _winCursor;
+
 
 protected:
 	Common::Error run() override;
 
-private:
+public:
 	const DirectorGameDescription *_gameDescription;
 	Common::FSNode _gameDataDir;
+	CastMemberID *_clipBoard;
+	uint32 _wmMode;
+	uint16 _wmWidth;
+	uint16 _wmHeight;
 
-	byte *_currentPalette;
+private:
+	byte _currentPalette[768];
 	uint16 _currentPaletteLength;
 	Lingo *_lingo;
 	uint16 _version;
@@ -289,17 +266,80 @@ private:
 
 	Graphics::MacPatterns _director3Patterns;
 	Graphics::MacPatterns _director3QuickDrawPatterns;
+	PatternTile _builtinTiles[kNumBuiltinTiles];
 
 	Common::HashMap<int, PaletteV4> _loadedPalettes;
 
 	Graphics::ManagedSurface *_surface;
 
 	StartOptions _options;
+
+public:
+	int _tickBaseline;
+	Common::String _traceLogFile;
+};
+
+// An extension of MacPlotData for interfacing with inks and patterns without
+// needing extra surfaces.
+struct DirectorPlotData {
+	DirectorEngine *d;
+	Graphics::ManagedSurface *dst;
+
+	Common::Rect destRect;
+	Common::Point srcPoint;
+
+	Graphics::ManagedSurface *srf;
+	MacShape *ms;
+
+	SpriteType sprite;
+	InkType ink;
+	uint32 colorWhite;
+	uint32 colorBlack;
+	int alpha;
+
+	uint32 backColor;
+	uint32 foreColor;
+	bool applyColor;
+
+	// graphics.cpp
+	void setApplyColor();
+	uint32 preprocessColor(uint32 src);
+	void inkBlitShape(Common::Rect &srcRect);
+	void inkBlitSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
+	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
+
+	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
+		srf = nullptr;
+		ms = nullptr;
+		dst = nullptr;
+		colorWhite = d->_wm->_colorWhite;
+		colorBlack = d->_wm->_colorBlack;
+		applyColor = false;
+	}
+
+	DirectorPlotData(const DirectorPlotData &old) : d(old.d), sprite(old.sprite),
+	                                                ink(old.ink), alpha(old.alpha),
+	                                                backColor(old.backColor), foreColor(old.foreColor),
+	                                                srf(old.srf), dst(old.dst),
+	                                                destRect(old.destRect), srcPoint(old.srcPoint),
+	                                                colorWhite(old.colorWhite), colorBlack(old.colorBlack),
+	                                                applyColor(old.applyColor) {
+		if (old.ms) {
+			ms = new MacShape(*old.ms);
+		} else {
+			ms = nullptr;
+		}
+	}
+
+	DirectorPlotData &operator=(const DirectorPlotData &);
+
+	~DirectorPlotData() {
+		delete ms;
+	}
 };
 
 extern DirectorEngine *g_director;
 extern Debugger *g_debugger;
-extern uint32 wmMode;
 
 } // End of namespace Director
 

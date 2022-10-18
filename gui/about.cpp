@@ -26,7 +26,6 @@
 #include "common/system.h"
 #include "common/translation.h"
 #include "common/util.h"
-#include "graphics/conversion.h"
 #include "graphics/surface.h"
 #include "graphics/fonts/amigafont.h"
 #include "gui/about.h"
@@ -98,10 +97,11 @@ AboutDialog::AboutDialog()
 
 	Common::String version("C0""ScummVM ");
 	version += gScummVMVersion;
-	_lines.push_back(version);
+	addLine(version);
 
-	Common::U32String date = Common::U32String::format(_("(built on %s)"), gScummVMBuildDate);
-	_lines.push_back(Common::U32String("C2") + date);
+	// I18N: built on <build date> with <compiler>
+	Common::U32String date = Common::U32String::format(_("(built on %s with %s)"), gScummVMBuildDate, gScummVMCompiler);
+	addLine(Common::U32String("C2") + date);
 
 	for (i = 0; i < ARRAYSIZE(copyright_text); i++)
 		addLine(Common::U32String(copyright_text[i]));
@@ -123,9 +123,6 @@ AboutDialog::AboutDialog()
 	PluginList::const_iterator iter = plugins.begin();
 	for (; iter != plugins.end(); ++iter) {
 		Common::String str;
-		str = "C0";
-		str += (*iter)->getName();
-		addLine(str);
 
 		const Plugin *p = EngineMan.findPlugin((*iter)->getName());
 
@@ -134,6 +131,9 @@ AboutDialog::AboutDialog()
 			continue;
 		}
 
+		str = "C0";
+		str += p->get<MetaEngineDetection>().getEngineName();
+		addLine(str);
 		str = "C2";
 		str += p->get<MetaEngineDetection>().getOriginalCopyright();
 		addLine(str);
@@ -1098,7 +1098,7 @@ void EE::draw(int sn, int x1, int y1) {
 	int x = x1 * _scale;
 	int y = y1 * _scale;
 
-	Graphics::keyBlit((byte *)_back.getBasePtr(x, y), (const byte *)_sp[sn].getPixels(), _back.pitch, _sp[sn].pitch, _sp[sn].w, _sp[sn].h, _back.format.bytesPerPixel, _colorKey);
+	_back.copyRectToSurfaceWithKey(_sp[sn].getPixels(), _sp[sn].pitch, x, y, _sp[sn].w, _sp[sn].h, _colorKey);
 	g_system->copyRectToOverlay(_back.getBasePtr(x, y), _back.pitch, _windowX + x, _windowY + y, _sp[sn].w, _sp[sn].h);
 }
 

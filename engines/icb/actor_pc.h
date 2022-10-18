@@ -44,7 +44,7 @@ namespace ICB {
 void ConvertToScreenCoords(SVECTORPC *local, SVECTORPC *screen, int32 nVertices);
 void ConvertToScreenCoords(SVECTOR *local, SVECTOR *screen, int32 nVertices);
 
-void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, rap_API *mesh, rap_API *pose, rap_API *smesh, PSXrgb *ambient, PSXLampList *lamplist,
+void DrawActor4PC(psxActor *actor, psxCamera *camera, Bone_Frame *frame, RapAPI *mesh, RapAPI *pose, RapAPI *smesh, PSXrgb *ambient, PSXLampList *lamplist,
 				  PSXShadeList *shadelist, int32 nShadows, SVECTORPC *p_n, int32 *p_d, uint32 debug, int32 uvframe, BoneDeformation **boneDeforms, int32 *brightness,
 				  MATRIXPC *local2screen);
 

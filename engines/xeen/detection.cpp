@@ -55,7 +55,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show item costs in standard inventory mode"),
 			_s("Shows item costs in standard inventory mode, allowing the value of items to be compared"),
 			"ShowItemCosts",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -65,7 +67,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("More durable armor"),
 			_s("Armor won't break until character is at -80HP, rather than merely -10HP"),
 			"DurableArmor",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -79,11 +83,11 @@ public:
 		_maxScanDepth = 3;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "xeen";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Xeen";
 	}
 

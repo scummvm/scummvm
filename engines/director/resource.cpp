@@ -38,17 +38,12 @@
 namespace Director {
 
 Archive *DirectorEngine::createArchive() {
-	if (getPlatform() != Common::kPlatformWindows) {
-		if (getVersion() < 400)
+	if (getVersion() < 400) {
+		if (getPlatform() != Common::kPlatformWindows)
 			return new MacArchive();
-		else
-			return new RIFXArchive();
-	} else {
-		if (getVersion() < 400)
-			return new RIFFArchive();
-		else
-			return new RIFXArchive();
+		return new RIFFArchive();
 	}
+	return new RIFXArchive();
 }
 
 Common::Error Window::loadInitialMovie() {
@@ -90,6 +85,7 @@ Common::Error Window::loadInitialMovie() {
 			_currentMovie->processEvent(kEventStartUp);
 
 			free(script);
+			delete stream;
 		} else {
 			warning("Window::LoadInitialMovie: failed to load startup scripts");
 		}
@@ -117,12 +113,9 @@ void Window::probeProjector(const Common::String &movie) {
 	}
 
 	probeMacBinary(archive);
-	delete archive;
 }
 
 void Window::probeMacBinary(MacArchive *archive) {
-	// Let's check if it is a projector file
-	// So far tested with Spaceship Warlock, D2
 	if (archive->hasResource(MKTAG('B', 'N', 'D', 'L'), "Projector")) {
 		warning("Detected Projector file");
 
@@ -136,6 +129,7 @@ void Window::probeMacBinary(MacArchive *archive) {
 					v->preReleaseVer, v->region, v->str.c_str(), v->msg.c_str());
 
 				delete v;
+				delete vvers;
 			}
 		}
 
@@ -178,6 +172,16 @@ void Window::probeMacBinary(MacArchive *archive) {
 			g_lingo->openXLib(res.name, kXObj);
 		}
 	}
+	if (archive->hasResource(MKTAG('X', 'C', 'M', 'D'), -1)) {
+		Common::Array<uint16> xcmd = archive->getResourceIDList(MKTAG('X', 'C', 'M', 'D'));
+		for (Common::Array<uint16>::iterator iterator = xcmd.begin(); iterator != xcmd.end(); ++iterator) {
+			Resource res = archive->getResourceDetail(MKTAG('X', 'C', 'M', 'D'), *iterator);
+			debug(0, "Detected XCMD '%s'", res.name.c_str());
+			g_lingo->openXLib(res.name, kXObj);
+		}
+	}
+	// Register the resfile so that Cursor::readFromResource can find it
+	g_director->_allOpenResFiles.setVal(archive->getPathName(), archive);
 }
 
 Archive *Window::openMainArchive(const Common::String movie) {
@@ -209,6 +213,7 @@ void Window::loadEXE(const Common::String movie) {
 		_currentMovie = nullptr;
 
 		free(script);
+		delete iniStream;
 	} else {
 		warning("No LINGO.INI");
 	}
@@ -271,20 +276,41 @@ void Window::loadEXE(const Common::String movie) {
 }
 
 void Window::loadEXEv3(Common::SeekableReadStream *stream) {
+	uint32 mmmSize;
+	Common::String mmmFileName;
+	Common::String directoryName;
+
 	uint16 entryCount = stream->readUint16LE();
-	if (entryCount != 1)
-		error("Unhandled multiple entry v3 EXE");
 
 	stream->skip(5); // unknown
 
-	uint32 mmmSize = stream->readUint32LE(); // Main MMM size
+	for (int i = 0; i < entryCount; ++i) {
+		uint32 mmmSize_ = stream->readUint32LE(); // Main MMM size
 
-	Common::String mmmFileName = stream->readPascalString();
-	Common::String directoryName = stream->readPascalString();
+		Common::String mmmFileName_ = stream->readPascalString();
+		Common::String directoryName_ = stream->readPascalString();
 
-	debugC(1, kDebugLoading, "Main MMM: '%s'", mmmFileName.c_str());
-	debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName.c_str());
-	debugC(1, kDebugLoading, "Main mmmSize: %d (0x%x)", mmmSize, mmmSize);
+		debugC(1, kDebugLoading, "MMM #%d: '%s'", i, mmmFileName_.c_str());
+		debugC(1, kDebugLoading, "Directory Name: '%s'", directoryName_.c_str());
+		debugC(1, kDebugLoading, "MMM size: %d (0x%x)", mmmSize_, mmmSize_);
+		if (i == 0) {
+			mmmSize = mmmSize_;
+			mmmFileName = mmmFileName_;
+			directoryName = directoryName_;
+		} else {
+			if (!SearchMan.hasFile(Common::Path(mmmFileName_, g_director->_dirSeparator)))
+				warning("Failed to find MMM '%s'", mmmFileName_.c_str());
+			else {
+				Common::SeekableReadStream *const mmmFile_ = SearchMan.createReadStreamForMember(Common::Path(mmmFileName_, g_director->_dirSeparator));
+				uint32 mmmFileSize_ = mmmFile_->size();
+				if (mmmSize_ != mmmFileSize_)
+					warning("File size for '%s' doesn't match. Got %d (0x%x), want %d (0x%x)", mmmFileName_.c_str(), mmmFileSize_, mmmFileSize_, mmmSize_, mmmSize_);
+				delete mmmFile_;
+			}
+		}
+		// Print a blank line to separate the entries, format a blank string to silence gcc warning
+		debugC(1, kDebugLoading, "%s", "");
+	}
 
 	if (mmmSize) {
 		uint32 riffOffset = stream->pos();
@@ -314,10 +340,13 @@ void Window::loadEXEv3(Common::SeekableReadStream *stream) {
 
 		_mainArchive = new RIFFArchive();
 
-		if (!_mainArchive->openStream(stream, riffOffset))
-			warning("Failed to load RIFF from EXE");
-		else
+		if (_mainArchive->openStream(stream, riffOffset))
 			return;
+
+		warning("Failed to load RIFF from EXE");
+		delete _mainArchive;
+		_mainArchive = nullptr;
+		delete stream;
 	}
 
 	openMainArchive(mmmFileName);

@@ -52,6 +52,7 @@ SoundMidiPC::SoundMidiPC(KyraEngine_v1 *vm, Audio::Mixer *mixer, MidiDriver *dri
 
 	_musicVolume = _sfxVolume = 0;
 	_fadeMusicOut = false;
+	_fadeStartTime = 0;
 
 	_type = type;
 	assert(_type == kMidiMT32 || _type == kMidiGM || _type == kPCSpkr);

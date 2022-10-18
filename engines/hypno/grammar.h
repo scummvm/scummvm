@@ -40,6 +40,9 @@ typedef Common::List<Filename> Filenames;
 class HypnoSmackerDecoder : public Video::SmackerDecoder {
 public:
 	bool loadStream(Common::SeekableReadStream *stream) override;
+
+protected:
+	uint32 getSignatureVersion(uint32 signature) const override;
 };
 
 class MVideo {
@@ -65,6 +68,7 @@ enum ActionType {
 	TimerAction,
 	PaletteAction,
 	BackgroundAction,
+	HighlightAction,
 	OverlayAction,
 	EscapeAction,
 	SaveAction,
@@ -78,6 +82,8 @@ enum ActionType {
 	WalNAction,
 	GlobalAction,
 	TalkAction,
+	SwapPointerAction,
+	SoundAction,
 	ChangeLevelAction
 };
 
@@ -93,6 +99,7 @@ class Hotspot;
 
 typedef Common::Array<Hotspot> Hotspots;
 typedef Common::Array<Hotspots *> HotspotsStack;
+typedef Common::Array<Graphics::Surface *> Frames;
 
 class Hotspot {
 public:
@@ -105,6 +112,8 @@ public:
 	Common::String flags[3];
 	Common::Rect rect;
 	Common::String setting;
+	Filename background;
+	Frames backgroundFrames;
 	Actions actions;
 	Hotspots *smenu;
 };
@@ -120,13 +129,24 @@ public:
 	uint32 index;
 };
 
+class SwapPointer : public Action {
+public:
+	SwapPointer(uint32 index_) {
+		type = SwapPointerAction;
+		index = index_;
+	}
+	uint32 index;
+};
+
 class Timer : public Action {
 public:
-	Timer(uint32 delay_) {
+	Timer(uint32 delay_, Common::String flag_) {
 		type = TimerAction;
 		delay = delay_;
+		flag = flag_;
 	}
 	uint32 delay;
+	Common::String flag;
 };
 
 class Palette : public Action {
@@ -136,6 +156,15 @@ public:
 		path = path_;
 	}
 	Filename path;
+};
+
+class Highlight : public Action {
+public:
+	Highlight(Common::String condition_) {
+		type = HighlightAction;
+		condition = condition_;
+	}
+	Common::String condition;
 };
 
 class Background : public Action {
@@ -207,6 +236,15 @@ class Cutscene : public Action {
 public:
 	Cutscene(Filename path_) {
 		type = CutsceneAction;
+		path = path_;
+	}
+	Filename path;
+};
+
+class Sound : public Action {
+public:
+	Sound(Filename path_) {
+		type = SoundAction;
 		path = path_;
 	}
 	Filename path;
@@ -300,6 +338,11 @@ public:
 		escape = false;
 		active = true;
 	}
+
+	Talk(Talk *t)  {
+		*this = *t;
+	}
+
 	TalkCommands commands;
 	bool active;
 	bool escape;
@@ -332,7 +375,10 @@ enum LevelType {
 class Level {
 public:
 	Level() {
+		type = CodeLevel;
 		musicRate = 22050;
+		playMusicDuringIntro = false;
+		musicStereo = false;
 	}
 	virtual ~Level() {} // needed to make Level polymorphic
 	LevelType type;
@@ -340,15 +386,19 @@ public:
 	Filename prefix;
 	Filename levelIfWin;
 	Filename levelIfLose;
+	bool playMusicDuringIntro;
 	Filename music;
 	uint32 musicRate;
+	bool musicStereo;
 };
 
 class Scene : public Level {
 public:
 	Scene()  {
 		type = SceneLevel;
+		resolution = "640x480";
 	}
+	Common::String resolution;
 	Hotspots hots;
 };
 
@@ -366,6 +416,27 @@ public:
 	uint32 length;
 };
 
+enum ScriptMode {
+	Interactive = 1,
+	NonInteractive,
+};
+
+class ScriptInfo {
+public:
+	ScriptInfo(uint32 time_, uint32 mode_, uint32 actor_, uint32 cursor_) {
+		time = time_;
+		mode = ScriptMode(mode_);
+		actor = actor_;
+		cursor = cursor_;
+	}
+	uint32 time;
+	ScriptMode mode;
+	uint32 actor;
+	uint32 cursor;
+};
+
+typedef Common::List<ScriptInfo> Script;
+
 class Shoot {
 public:
 	Shoot() {
@@ -376,12 +447,24 @@ public:
 		attackWeight = 0;
 		paletteOffset = 0;
 		paletteSize = 0;
+		missedAnimation = 0;
 		objKillsCount = 0;
 		objMissesCount = 0;
 		animation = "NONE";
 		explosionAnimation = "";
+		startFrame = 0;
 		lastFrame = 1024;
+		interactionFrame = 0;
 		noEnemySound = false;
+		enemySoundRate = 22050;
+		isAnimal = false;
+		nonHostile = false;
+		playInteractionAudio = false;
+		animalSound = "";
+		jumpToTimeAfterKilled = 0;
+		warningVideoIdx = 0;
+		waitForClickAfterInteraction = 0;
+		direction = 0;
 	}
 	Common::String name;
 	Filename animation;
@@ -402,19 +485,37 @@ public:
 	uint32 paletteOffset;
 	uint32 paletteSize;
 
+	// Missed animation
+	uint32 missedAnimation;
+
 	// Sounds
 	Filename enemySound;
+	uint32 enemySoundRate;
 	Filename deathSound;
 	Filename hitSound;
+	Filename animalSound;
 
 	MVideo *video;
 	Common::List<uint32> attackFrames;
 	Common::Array<FrameInfo> bodyFrames;
 	Common::Array<FrameInfo> explosionFrames;
+	uint32 startFrame;
 	uint32 lastFrame;
+	uint32 interactionFrame;
 	Filename explosionAnimation;
+	Filename additionalVideo;
+	bool playInteractionAudio;
 	bool destroyed;
 	bool noEnemySound;
+
+	// Soldier Boyz specific
+	bool nonHostile;
+	bool isAnimal;
+	Common::String checkIfDestroyed;
+	int jumpToTimeAfterKilled;
+	char direction;
+	uint32 waitForClickAfterInteraction;
+	uint32 warningVideoIdx;
 };
 
 typedef Common::Array<Shoot> Shoots;
@@ -467,33 +568,106 @@ public:
 
 typedef Common::Array<Segment> Segments;
 
+class ArcadeTransition {
+public:
+	ArcadeTransition(Filename video_, Filename palette_, Filename sound_, uint32 soundRate_, uint32 time_)  {
+		video = video_;
+		palette = palette_;
+		sound = sound_;
+		soundRate = soundRate_;
+		soundStereo = false;
+		loseLevel = false;
+		winLevel = false;
+		selection = false;
+		jumpToTime = 0;
+		time = time_;
+	}
+
+	Filename video;
+	Filename palette;
+	Filename sound;
+	uint32 soundRate;
+	bool soundStereo;
+	bool loseLevel;
+	bool winLevel;
+	bool selection;
+	uint32 jumpToTime;
+	uint32 time;
+};
+
+typedef Common::List<ArcadeTransition> ArcadeTransitions;
+
 class ArcadeShooting : public Level {
 public:
 	ArcadeShooting()  {
 		type = ArcadeLevel;
 		health = 100;
-		transitionTime = 0;
 		id = 0;
 		objKillsRequired[0] = 0;
 		objKillsRequired[1] = 0;
 		objMissesAllowed[0] = 0;
 		objMissesAllowed[1] = 0;
+		mouseBox = Common::Rect(0, 0, 320, 200);
 		frameDelay = 0;
+		targetSoundRate = 0; // TODO: unused
+		shootSoundRate = 0;
+		enemySoundRate = 0;
+		hitSoundRate = 0;
+		additionalSoundRate = 0;
+		noAmmoSoundRate = 0;
 	}
+	void clear() {
+		nextLevelVideo.clear();
+		postStatsVideo.clear();
+		backgroundVideo.clear();
+		transitions.clear();
+		maskVideo.clear();
+		player.clear();
+		shoots.clear();
+		intros.clear();
+		defeatNoEnergyFirstVideo.clear();
+		defeatMissBossVideo.clear();
+		defeatNoEnergySecondVideo.clear();
+		missBoss1Video.clear();
+		missBoss2Video.clear();
+		hitBoss1Video.clear();
+		hitBoss2Video.clear();
+		beforeVideo.clear();
+		briefingVideo.clear();
+		additionalVideo.clear();
+		additionalSound.clear();
+		noAmmoSound.clear();
+		segments.clear();
+		script.clear();
+		objKillsRequired[0] = 0;
+		objKillsRequired[1] = 0;
+		objMissesAllowed[0] = 0;
+		objMissesAllowed[1] = 0;
+		mouseBox = Common::Rect(0, 0, 320, 200);
+		targetSoundRate = 0;
+		shootSoundRate = 0;
+		enemySoundRate = 0;
+		hitSoundRate = 0;
+		noAmmoSoundRate = 0;
+	}
+
 	uint32 id;
 	uint32 frameDelay;
 	Common::String mode;
-	uint32 transitionTime;
+	Common::Rect mouseBox;
+	ArcadeTransitions transitions;
 	Segments segments;
 
 	// Objectives
 	uint32 objKillsRequired [2];
 	uint32 objMissesAllowed [2];
 
+	// Script
+	Script script;
+
 	// Videos
-	Filename transitionVideo;
-	Filename transitionPalette;
 	Filename nextLevelVideo;
+	Filename postStatsVideo;
 	Filename defeatNoEnergyFirstVideo;
 	Filename defeatNoEnergySecondVideo;
 	Filename defeatMissBossVideo;
@@ -507,6 +681,7 @@ public:
 
 	Filename backgroundVideo;
 	Filename backgroundPalette;
+	Filename maskVideo;
 	Filename player;
 	int health;
 	Shoots shoots;
@@ -521,6 +696,10 @@ public:
 	uint32 enemySoundRate;
 	Filename hitSound;
 	uint32 hitSoundRate;
+	Filename additionalSound;
+	uint32 additionalSoundRate;
+	Filename noAmmoSound;
+	uint32 noAmmoSoundRate;
 };
 
 class Transition : public Level {
@@ -560,6 +739,28 @@ public:
 typedef Common::HashMap<Filename, Level*> Levels;
 extern Hotspots *g_parsedHots;
 extern ArcadeShooting *g_parsedArc;
+
+class ArcadeStats {
+	public:
+	ArcadeStats()  {
+		livesUsed = 0;
+		shootsFired = 0;
+		enemyHits = 0;
+		enemyTargets = 0;
+		targetsDestroyed = 0;
+		targetsMissed = 0;
+		friendliesEncountered = 0;
+		infoReceived = 0;
+	}
+	uint32 livesUsed;
+	uint32 shootsFired;
+	uint32 enemyHits;
+	uint32 enemyTargets;
+	uint32 targetsDestroyed;
+	uint32 targetsMissed;
+	uint32 friendliesEncountered;
+	uint32 infoReceived;
+};
 
 } // End of namespace Hypno
 

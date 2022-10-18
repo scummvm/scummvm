@@ -100,8 +100,9 @@ bool AdGeomExt::loadBuffer(byte *buffer) {
 				}
 
 				cmd = PARSERR_GENERIC;
+				}
 			}
-			} break;
+			break;
 		}
 	}
 

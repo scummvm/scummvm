@@ -154,7 +154,7 @@ protected:
 	 */
 	Common::EventManager *_eventMan;
 	/**
-	 * The SaveFileMAnager used by the engine.
+	 * The SaveFileManager used by the engine.
 	 */
 	Common::SaveFileManager *_saveFileMan;
 
@@ -286,7 +286,14 @@ public:
 		 * The engine will need to read the actual resolution used by the
 		 * backend using OSystem::getWidth and OSystem::getHeight.
 		 */
-		kSupportsArbitraryResolutions
+		kSupportsArbitraryResolutions,
+
+		/**
+		 * The game provides custom help.
+		 *
+		 * This enables the help button in the main menu.
+		 */
+		 kSupportsHelp
 	};
 
 

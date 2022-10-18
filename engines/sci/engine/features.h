@@ -49,6 +49,10 @@ enum MessageTypeSyncStrategy {
 #endif
 };
 
+enum {
+	kSpeedThrottleDefaultDelay = 30 // kGameIsRestarting default max delay in ms
+};
+
 class GameFeatures {
 public:
 	GameFeatures(SegManager *segMan, Kernel *kernel);
@@ -281,6 +285,21 @@ public:
 	 * games which don't follow the normal saving scheme.
 	*/
 	bool canSaveFromGMM() const;
+	
+	/**
+	 * Returns the global variable index to the start of the game's
+	 * global flags array. This is used by the console debugger.
+	 *
+	 * @return Non-zero index if successful, otherwise zero.
+	 */
+	uint16 getGameFlagsGlobal() const;
+
+	/**
+	 * Returns the bit order in which game flags are stored.
+	 *
+	 * @return true if bit order is normal or false if reversed.
+	 */
+	bool isGameFlagBitOrderNormal() const;
 
 private:
 	reg_t getDetectionAddr(const Common::String &objName, Selector slc, int methodNum = -1);

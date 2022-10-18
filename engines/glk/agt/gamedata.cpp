@@ -487,7 +487,7 @@ const char *averstr[] = {"????", "1.0", "1.18",
 						};
 
 const char *portstr = PORTSTR;
-const char *version_str = "version 1.1.1";
+const char *version_str = "version 1.1.2";
 
 const char nonestr[5] = {4, 'n', 'o', 'n', 'e'};
 static const char NONEstr[5] = {4, 'N', 'O', 'N', 'E'};
@@ -552,7 +552,7 @@ static const char verbdef[] =
 */
 
 /* These are alternative (that is, non-canonical) forms of verbs that
-   were present in the oringal AGT interpreters.  They have the property
+   were present in the original AGT interpreters.  They have the property
    that they have no effect if used in a dummy_verb declaration. */
 /* Their dictionary indices are stored in old_agt_verb, which is
    initialized by reinit_dict. */
@@ -994,9 +994,39 @@ int verb_authorsyn(word w) {
 
 	/* Check game-specific synonyms first */
 	/* Scan in reverse so later synonyms will override earlier ones */
-	for (i = TOTAL_VERB - 1; i > 0; i--)
-		for (j = synlist[i]; syntbl[j] != 0; j++)
-			if (w == syntbl[j]) return i;
+	if (aver < AGX00) {
+		for (i = MAX_SUB-1; i >= 0; i--)
+			for (j = synlist[BASE_VERB+DVERB+i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j]) return BASE_VERB+DVERB+i;
+
+		/*  In AGT the dummy verbs are laid out in memory in a non-obvious
+			order:
+			DUMMY_VERB1
+			DUMMY_VERB26
+			DUMMY_VERB2
+			DUMMY_VERB27
+			...
+			For a few games this is relevant (e.g. SIGNAL in Shades of Gray),
+			as the same synonym occurs in multiple dummy verbs, so we scan
+			the dummy verb synonyms here in the same order as original AGT. */
+		for (i = DVERB-1; i >= 0; i--) {
+			int ii = ((i % 2) == 0) ? i / 2 : (i+DVERB-1) / 2;
+			for (j = synlist[BASE_VERB+ii]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return BASE_VERB + ii;
+		}
+		for (i = BASE_VERB-1; i > 0; i--)
+			for (j = synlist[i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return i;
+
+	} else {
+		for (i = TOTAL_VERB-1; i > 0; i--)
+			for (j = synlist[i]; syntbl[j] != 0; j++)
+				if (w == syntbl[j])
+					return i;
+	}
+
 	return 0;
 }
 
@@ -1211,7 +1241,7 @@ void sort_cmd(void) {
 	}
 
 #ifdef SORT_META
-	if (!agx_file && aver >= AGX00) rsort();
+	rsort();
 #endif
 
 
@@ -1261,8 +1291,42 @@ void sort_cmd(void) {
 	}
 }
 
+static word check_comb(int combptr, int verbcmd, int nouncmd) {
+	word w;
 
+	if (combptr == 0) return 0;
 
+	w = syntbl[combptr];
+	if (syntbl[combptr+1] != verbcmd) return 0;
+	if (syntbl[combptr+2] != nouncmd) return 0;
+	if (syntbl[combptr+3] == 0) return w;
+
+	return 0;
+}
+
+/* For metacommands that apply to built-in two-word synonyms (e.g. GET OUT),
+   change the command to apply to the canonical form. */
+void cmds_syns_canon(void) {
+	int i, j, vb;
+	word w;
+
+	for (i = 0; i < last_cmd; i++) {
+		/* VERB NOUN only */
+		if (command[i].verbcmd > 0 && command[i].nouncmd > 0 && command[i].prep == 0 &&
+				command[i].objcmd == 0) {
+			for (j = 0; j < num_auxcomb; j++) {
+				w = check_comb(auxcomb[j], command[i].verbcmd, command[i].nouncmd);
+				if (w > 0) {
+					vb = verb_builtin(w);
+					if (vb > 0) {
+						command[i].verbcmd = syntbl[auxsyn[vb]];
+						command[i].nouncmd = 0;
+					}
+				}
+			}
+		}
+	}
+}
 
 /* ------------------------------------------------------------------- */
 /*  Functions for getting opcode information                           */

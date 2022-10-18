@@ -27,793 +27,690 @@
 #include "agos/agos.h"
 #include "agos/midi.h"
 
+#include "agos/midiparser_gmf.h"
+#include "agos/midiparser_simonwin.h"
+
 #include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/adlib.h"
+#include "agos/drivers/accolade/cms.h"
 #include "agos/drivers/accolade/mt32.h"
 #include "agos/drivers/simon1/adlib.h"
 // Miles Audio for Simon 2
 #include "audio/miles.h"
+#include "audio/midiparser.h"
 
 // PKWARE data compression library decompressor required for Simon 2
 #include "common/dcl.h"
 #include "common/translation.h"
 
 #include "gui/message.h"
+#include "agos/intern_detection.h"
 
 namespace AGOS {
-
 
 // MidiParser_S1D is not considered part of the standard
 // MidiParser suite, but we still try to mask its details
 // and just provide a factory function.
-extern MidiParser *MidiParser_createS1D();
+extern MidiParser *MidiParser_createS1D(uint8 source = 0, bool monophonicChords = false);
 
-MidiPlayer::MidiPlayer() {
-	// Since initialize() is called every time the music changes,
-	// this is where we'll initialize stuff that must persist
-	// between songs.
+// This instrument remapping has been constructed by checking how the GM
+// instruments correspond to MT-32 instruments in other tracks (f.e. track 10-3
+// is similar to track 11).
+const byte MidiPlayer::SIMON2_TRACK10_GM_MT32_INSTRUMENT_REMAPPING[] {
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x65, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x33, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x5D, 0x00, 0x1D, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x54, 0x00, 0x56, 0x53, 0x4B, 0x00, 0x4B, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
+};
+
+MidiPlayer::MidiPlayer(AGOSEngine *vm) {
+	_vm = vm;
 	_driver = nullptr;
-	_map_mt32_to_gm = false;
+	_driverMsMusic = nullptr;
+	_driverMsSfx = nullptr;
 
-	_adLibMusic = false;
-	_enable_sfx = true;
-	_current = nullptr;
-
-	_musicVolume = 255;
-	_sfxVolume = 255;
-
-	resetVolumeTable();
 	_paused = false;
 
-	_currentTrack = 255;
-	_loopTrack = 0;
 	_queuedTrack = 255;
 	_loopQueuedTrack = 0;
 
-	_musicMode = kMusicModeDisabled;
+	_pc98 = false;
+	_deviceType = MT_NULL;
+	_dataType = MT_NULL;
+
+	_parserMusic = nullptr;
+	_parserSfx = nullptr;
+	_musicData = nullptr;
+	_sfxData = nullptr;
+	_parserSfxAccolade = nullptr;
 }
 
 MidiPlayer::~MidiPlayer() {
 	stop();
+	stop(true);
 
-	if (_driver) {
+	// Close the drivers first before locking the mutex. Otherwise a deadlock
+	// can occur where the timer thread has locked the timer mutex while
+	// waiting for the MidiPlayer mutex in the callback, while the main thread
+	// has locked the MidiPlayer mutex and waits for the timer mutex to remove
+	// a driver callback.
+	if (_driverMsSfx && _driverMsSfx != _driverMsMusic) {
+		_driverMsSfx->setTimerCallback(nullptr, nullptr);
+		_driverMsSfx->close();
+	}
+	if (_driverMsMusic) {
+		_driverMsMusic->setTimerCallback(nullptr, nullptr);
+		_driverMsMusic->close();
+	} else if (_driver) {
 		_driver->setTimerCallback(nullptr, nullptr);
 		_driver->close();
-		delete _driver;
 	}
-	_driver = nullptr;
 
 	Common::StackLock lock(_mutex);
-	clearConstructs();
+
+	if (_parserMusic)
+		delete _parserMusic;
+	if (_parserSfx)
+		delete _parserSfx;
+	if (_parserSfxAccolade)
+		delete _parserSfxAccolade;
+
+	if (_musicData)
+		delete[] _musicData;
+	if (_sfxData)
+		delete[] _sfxData;
+
+	if (_driverMsSfx && _driverMsSfx != _driverMsMusic) {
+		delete _driverMsSfx;
+		_driverMsSfx = nullptr;
+	}
+	if (_driverMsMusic) {
+		delete _driverMsMusic;
+		_driverMsMusic = nullptr;
+	} else if (_driver) {
+		delete _driver;
+		_driver = nullptr;
+	}
 }
 
-int MidiPlayer::open(int gameType, Common::Platform platform, bool isDemo) {
+int MidiPlayer::open() {
 	// Don't call open() twice!
 	assert(!_driver);
 
-	Common::String accoladeDriverFilename;
-	musicType = MT_INVALID;
-	int devFlags = MDT_MIDI | MDT_ADLIB | MDT_PREFER_MT32;
+	_pc98 = _vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformPC98;
+	// All games have MT-32 data, except Simon 2, which has both GM and MT-32
+	// data for DOS, or only GM for Windows. Some of the GM tracks have extra
+	// instruments compared to the MT-32 tracks, so GM is preferred.
+	int devFlags = MDT_MIDI | (_pc98 ? MDT_PC98 : MDT_ADLIB) |
+		(_vm->getGameType() == GType_SIMON2 ? MDT_PREFER_GM : MDT_PREFER_MT32);
+	if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS)
+		// CMS is only supported by Elvira 1 DOS.
+		devFlags |= MDT_CMS;
 
-	switch (gameType) {
-	case GType_ELVIRA1:
-		if (platform == Common::kPlatformPC98) {
-			_musicMode = kMusicModePC98;
-			devFlags = (devFlags & ~MDT_ADLIB) | MDT_PC98;
-		} else {
-			_musicMode = kMusicModeAccolade;
-			accoladeDriverFilename = "INSTR.DAT";
+	// Check the type of device that the user has configured.
+	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(devFlags);
+	_deviceType = MidiDriver::getMusicType(dev);
+
+	// Check if a Casio device has been configured for Elvira 1 DOS.
+	if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS &&
+			_deviceType == MT_GM && ConfMan.hasKey("midi_mode")) {
+		int midiMode = ConfMan.getInt("midi_mode");
+		if (midiMode == 3) {
+			_deviceType = MT_MT540;
+		} else if (midiMode == 4) {
+			_deviceType = MT_CT460;
 		}
-		break;
-	case GType_ELVIRA2:
-	case GType_WW:
-		// Attention: Elvira 2 shipped with INSTR.DAT and MUSIC.DRV
-		// MUSIC.DRV is the correct one. INSTR.DAT seems to be a left-over
-		_musicMode = kMusicModeAccolade;
-		accoladeDriverFilename = "MUSIC.DRV";
-		break;
-	case GType_SIMON1:
-		if (isDemo) {
-			_musicMode = kMusicModeAccolade;
-			accoladeDriverFilename = "MUSIC.DRV";
-		} else if (Common::File::exists("MT_FM.IBK")) {
-			_musicMode = kMusicModeSimon1;
-		}
-		break;
-	case GType_SIMON2:
-		//_musicMode = kMusicModeMilesAudio;
-		// currently disabled, because there are a few issues
-		// MT32 seems to work fine now, AdLib seems to use bad instruments and is also outputting music on
-		// the right speaker only. The original driver did initialize the panning to 0 and the Simon2 XMIDI
-		// tracks don't set panning at all. We can reset panning to be centered, which would solve this
-		// issue, but we still don't know who's setting it in the original interpreter.
-		break;
-	default:
-		break;
 	}
 
-	MidiDriver::DeviceHandle dev;
-	int ret = 0;
+	if (_deviceType == MT_GM && ConfMan.getBool("native_mt32"))
+		_deviceType = MT_MT32;
 
-	if (_musicMode == kMusicModePC98) {
-		dev = MidiDriver::detectDevice(devFlags);
-		_driver = MidiDriverPC98_create(dev);
-		if (_driver && !_driver->open()) {
-			_driver->setTimerCallback(this, &onTimer);
-			return 0;
-		}
-	} else if (_musicMode != kMusicModeDisabled) {
-		dev = MidiDriver::detectDevice(devFlags);
-		musicType = MidiDriver::getMusicType(dev);
+	if (_vm->getGameType() == GType_SIMON2) {
+		// Simon 2 DOS version has both MT-32 and GM tracks; Windows is GM only.
+		_dataType = (_vm->getPlatform() == Common::kPlatformDOS && _deviceType == MT_MT32) ? MT_MT32 : MT_GM;
+	} else {
+		// All the other games' MIDI data targets MT-32 (even Simon 1 Windows
+		// and Acorn).
+		_dataType = MT_MT32;
+	}
 
-		switch (musicType) {
+	if (_dataType == MT_MT32 && _deviceType == MT_GM) {
+		// Not a real MT32 / no MUNT
+		::GUI::MessageDialog dialog(_(
+			"You appear to be using a General MIDI device,\n"
+			"but your game only supports Roland MT32 MIDI.\n"
+			"We try to map the Roland MT32 instruments to\n"
+			"General MIDI ones. It is still possible that\n"
+			"some tracks sound incorrect."));
+		dialog.runModal();
+	}
+
+	// Elvira 2, Waxworks and Simon 1 DOS floppy have MIDI SFX.
+	bool usesMidiSfx = _vm->getGameType() == GType_WW || _vm->getGameType() == GType_ELVIRA2 ||
+		(_vm->getGameType() == GType_SIMON1 && _vm->getPlatform() == Common::kPlatformDOS &&
+			!(_vm->getFeatures() & GF_DEMO) && !(_vm->getFeatures() & GF_TALKIE));
+
+	// OPL3 is used for Windows and Acorn versions, all Simon 2 versions and
+	// if the user has set the OPL3 mode option. Otherwise OPL2 is used.
+	OPL::Config::OplType oplType = (_vm->getPlatform() != Common::kPlatformDOS ||
+		_vm->getGameType() == GType_SIMON2 || ConfMan.getBool("opl3_mode")) ? OPL::Config::kOpl3 : OPL::Config::kOpl2;
+
+	// Create drivers and parsers for the different versions of the games.
+	if ((_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS) ||
+			_vm->getGameType() == GType_ELVIRA2 || _vm->getGameType() == GType_WW ||
+			(_vm->getGameType() == GType_SIMON1 && _vm->getPlatform() == Common::kPlatformDOS &&
+				 (_vm->getFeatures() & GF_DEMO) && !(_vm->getFeatures() & GF_TALKIE))) {
+		// Elvira 1 DOS, Elvira 2, Waxworks and Simon 1 DOS floppy demo
+
+		// These games use drivers used by several Accolade games.
+		// Elvira 1 DOS uses an older version of the Accolade drivers which
+		// uses different files.
+		Common::String accoladeDriverFilename = _vm->getGameType() == GType_ELVIRA1 ? "INSTR.DAT" : "MUSIC.DRV";
+
+		switch (_deviceType) {
 		case MT_ADLIB:
-		case MT_MT32:
-			break;
-		case MT_GM:
-			if (!ConfMan.getBool("native_mt32")) {
-				// Not a real MT32 / no MUNT
-				::GUI::MessageDialog dialog(_(
-											"You appear to be using a General MIDI device,\n"
-											"but your game only supports Roland MT32 MIDI.\n"
-											"We try to map the Roland MT32 instruments to\n"
-											"General MIDI ones. It is still possible that\n"
-											"some tracks sound incorrect."));
-				dialog.runModal();
-			}
-			// Switch to MT32 driver in any case
-			musicType = MT_MT32;
-			break;
-		default:
-			_musicMode = kMusicModeDisabled;
-			break;
-		}
-	}
-
-	switch (_musicMode) {
-	case kMusicModeAccolade: {
-		// Setup midi driver
-		switch (musicType) {
-		case MT_ADLIB:
-			_driver = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename);
-			break;
-		case MT_MT32:
-			_driver = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
-			break;
-		default:
-			assert(0);
-			break;
-		}
-		if (!_driver)
-			return 255;
-
-		ret = _driver->open();
-		if (ret == 0) {
-			// Reset is done inside our MIDI driver
-			_driver->setTimerCallback(this, &onTimer);
-		}
-
-		//setTimerRate(_driver->getBaseTempo());
-		return 0;
-	}
-
-	case kMusicModeMilesAudio: {
-		switch (musicType) {
-		case MT_ADLIB: {
-			Common::File instrumentDataFile;
-			if (instrumentDataFile.exists("MIDPAK.AD")) {
-				// if there is a file called MIDPAK.AD, use it directly
-				warning("SIMON 2: using MIDPAK.AD");
-				_driver = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "MIDPAK.AD");
+			if (usesMidiSfx) {
+				// Elvira 2 and Waxworks have AdLib SFX.
+				_parserSfxAccolade = new SfxParser_Accolade_AdLib();
+				// Sync the driver to the AdLib SFX script timer.
+				_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType, SfxParser_Accolade::SCRIPT_TIMER_FREQUENCY);
 			} else {
-				// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
-				// if we didn't do this, the user would be forced to "install" the game instead of simply
-				// copying all files from CD-ROM.
-				Common::SeekableReadStream *midpakAdLibStream;
-				midpakAdLibStream = simon2SetupExtractFile("MIDPAK.AD");
-				if (!midpakAdLibStream)
-					error("MidiPlayer: could not extract MIDPAK.AD from SETUP.SHR");
-
-				// Pass this extracted data to the driver
-				warning("SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
-				_driver = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
-				delete midpakAdLibStream;
+				_driverMsMusic = _driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType);
 			}
-			// TODO: not sure what's going wrong with AdLib
-			// it doesn't seem to matter if we use the regular XMIDI tracks or the 2nd set meant for MT32
+			if (_vm->getGameType() == GType_ELVIRA1 && oplType == OPL::Config::kOpl3)
+				// WORKAROUND Some Elvira 1 OPL instruments do not work
+				// well in OPL3 mode and need some adjustments.
+				static_cast<MidiDriver_Accolade_AdLib *>(_driverMsMusic)->patchE1Instruments();
+			if (_vm->getGameType() == GType_WW) {
+				// WORKAROUND Some Waxworks tracks do not set an instrument on
+				// a MIDI channel. This will cause that channel to play with
+				// whatever instrument was set there by a previous track.
+				// This is fixed by setting default instruments on all channels
+				// before starting a track.
+				_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM);
+				if (oplType == OPL::Config::kOpl3)
+					// WORKAROUND Some Waxworks OPL instruments do not work
+					// well in OPL3 mode and need some adjustments.
+					static_cast<MidiDriver_Accolade_AdLib *>(_driverMsMusic)->patchWwInstruments();
+			}
 			break;
-		}
 		case MT_MT32:
-			_driver = Audio::MidiDriver_Miles_MT32_create("");
-			_nativeMT32 = true; // use 2nd set of XMIDI tracks
-			break;
 		case MT_GM:
-			if (ConfMan.getBool("native_mt32")) {
-				_driver = Audio::MidiDriver_Miles_MT32_create("");
-				_nativeMT32 = true; // use 2nd set of XMIDI tracks
+			_driverMsMusic = MidiDriver_Accolade_MT32_create(accoladeDriverFilename);
+			if (_vm->getGameType() == GType_WW) {
+				// WORKAROUND See above.
+				int16 defaultInstruments[16];
+				Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
+				Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
+				_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+			}
+			if (usesMidiSfx) {
+				if (ConfMan.getBool("multi_midi")) {
+					// Use AdLib SFX with MT-32 music.
+					_driverMsSfx = MidiDriver_Accolade_AdLib_create(accoladeDriverFilename, oplType, SfxParser_Accolade::SCRIPT_TIMER_FREQUENCY);
+					_parserSfxAccolade = new SfxParser_Accolade_AdLib();
+				} else {
+					// Use MT-32 SFX.
+					_driverMsSfx = _driverMsMusic;
+					_parserSfxAccolade = new SfxParser_Accolade_MT32();
+				}
 			}
 			break;
-
+		case MT_MT540:
+		case MT_CT460:
+			// Casio devices are supported by Elvira 1 DOS only.
+			_driverMsMusic = MidiDriver_Accolade_Casio_create(accoladeDriverFilename);
+			break;
+		case MT_CMS:
+			// CMS is supported by Elvira 1 DOS only.
+			if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformDOS) {
+				_driver = new MidiDriver_Accolade_Cms();
+				break;
+			}
+			// fall through
 		default:
+			_driverMsMusic = new MidiDriver_NULL_Multisource();
 			break;
 		}
 		if (!_driver)
-			return 255;
+			_driver = _driverMsMusic;
 
-		ret = _driver->open();
-		if (ret == 0) {
-			// Reset is done inside our MIDI driver
-			_driver->setTimerCallback(this, &onTimer);
-		}
-		return 0;
-	}
+		// These games use the MUS MIDI format used by several Accolade games.
+		// The Elvira 2 / Waxworks version of the AdLib driver has a mechanism
+		// that will only play the highest note of a chord; the Elvira 1
+		// version does not have this.
+		_parserMusic = MidiParser_createS1D(0, _vm->getGameType() != GType_ELVIRA1 && _deviceType == MT_ADLIB);
+	} else if (_vm->getGameType() == GType_ELVIRA1 && _vm->getPlatform() == Common::kPlatformPC98) {
+		// Elvira 1 PC-98
 
-	case kMusicModeSimon1: {
-		// This only handles the original AdLib driver of Simon1.
-		if (musicType == MT_ADLIB) {
-			_adLibMusic = true;
-			_map_mt32_to_gm = false;
-			_nativeMT32 = false;
+		// This version has its own drivers. It uses the same MUS format as the
+		// DOS version.
+		_driver = MidiDriverPC98_create(dev);
+		_parserMusic = MidiParser_createS1D(0);
+	} else if (_vm->getGameType() == GType_SIMON1) {
+		// Simon 1 (except the DOS floppy demo)
 
-			_driver = createMidiDriverSimon1AdLib("MT_FM.IBK");
-			if (_driver && _driver->open() == 0) {
-				_driver->setTimerCallback(this, &onTimer);
-				// Like the original, we enable the rhythm support by default.
-				_driver->send(0xB0, 0x67, 0x01);
-				return 0;
+		// The DOS versions have their own drivers. The Windows version uses
+		// the standard Windows drivers.
+		switch (_deviceType) {
+		case MT_ADLIB:
+			if (_vm->getPlatform() == Common::kPlatformDOS) {
+				// The DOS version AdLib driver uses an instrument bank file.
+				_driverMsMusic = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+				if (!(_vm->getFeatures() & GF_TALKIE)) {
+					// The DOS floppy version has AdLib MIDI SFX.
+					_driverMsSfx = _driverMsMusic;
+				}
+			} else {
+				// Windows and Acorn CD
+				// TODO Acorn does not use an OPL chip, but ScummVM doesn't
+				// have an implementation of the Acorn audio. It has the same
+				// music data as the DOS CD version, but it does not have
+				// the MT_FM.IBK instrument bank, so the standard AdLib MIDI
+				// driver is used.
+				_driverMsMusic = new MidiDriver_ADLIB_Multisource(oplType);
+				// WORKAROUND These versions have the same music data as the
+				// DOS versions, which target MT-32, despite Windows using GM
+				// as its MIDI format. To fix this, the MT-32 instruments are
+				// remapped to corresponding GM instruments.
+				_driverMsMusic->setInstrumentRemapping(MidiDriver::_mt32ToGm);
 			}
 
-			delete _driver;
-			_driver = nullptr;
+			// WORKAROUND The Simon 1 MIDI data does not always set a value for
+			// program before it starts playing notes on a MIDI channel. This
+			// can cause instruments from a previous track to be used
+			// unintentionally.
+			// To correct this, default instruments are set when a new track is
+			// started.
+			_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM);
+
+			break;
+		case MT_MT32:
+		case MT_GM:
+			_driverMsMusic = new MidiDriver_MT32GM(_dataType);
+
+			// WORKAROUND See above.
+			int16 defaultInstruments[16];
+			Common::fill(defaultInstruments, defaultInstruments + ARRAYSIZE(defaultInstruments), -1);
+			Common::copy(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS, MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS + ARRAYSIZE(MidiDriver_MT32GM::MT32_DEFAULT_INSTRUMENTS), defaultInstruments + 1);
+			_driverMsMusic->setControllerDefaults(MidiDriver_Multisource::CONTROLLER_DEFAULT_PROGRAM, defaultInstruments);
+
+			if (_vm->getPlatform() == Common::kPlatformDOS && !(_vm->getFeatures() & GF_TALKIE) &&
+					ConfMan.getBool("multi_midi")) {
+				// The DOS floppy version can use AdLib MIDI SFX with MT-32
+				// music.
+				_driverMsSfx = createMidiDriverSimon1AdLib("MT_FM.IBK", oplType);
+			}
+
+			break;
+		default:
+			_driverMsMusic = new MidiDriver_NULL_Multisource();
+			break;
 		}
+		_driver = _driverMsMusic;
 
-		_musicMode = kMusicModeDisabled;
+		// WORKAROUND The Simon 1 MIDI data does not always set a value for
+		// volume or panning before it starts playing notes on a MIDI channel.
+		// This can cause settings for these parameters from a previous track
+		// to be used unintentionally. To correct this, default values for
+		// these parameters are set when a new track is started.
+		_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_VOLUME);
+		_driverMsMusic->setControllerDefault(MidiDriver_Multisource::CONTROLLER_DEFAULT_PANNING);
+
+		// The Windows version uses music tempos which are noticably faster
+		// than those used by the DOS versions. The MIDI parsers can be
+		// configured to use one of both tempos. The DOS tempos will be used
+		// for the DOS versions or if the user has selected the "Use DOS music
+		// tempos" option. Otherwise the Windows tempos will be used.
+		bool useDosTempos = ConfMan.hasKey("dos_music_tempos") ? ConfMan.getBool("dos_music_tempos") : _vm->getPlatform() == Common::kPlatformDOS;
+
+		// Create the MIDI parser(s) for the format used by the platform.
+		if (_vm->getPlatform() == Common::kPlatformWindows) {
+			// The Windows version uses a slightly different SMF variant.
+			_parserMusic = new MidiParser_SimonWin(0, useDosTempos);
+		} else {
+			// DOS floppy & CD and Acorn CD use GMF (also an SMF variant).
+			_parserMusic = new MidiParser_GMF(0, useDosTempos);
+
+			if (_driverMsSfx) {
+				// DOS floppy needs a second GMF parser for AdLib SFX.
+				_parserSfx = new MidiParser_GMF(1, true);
+				_parserMusic->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+				_parserSfx->property(MidiParser::mpDisableAllNotesOffMidiEvents, true);
+				_parserSfx->property(MidiParser::mpDisableAutoStartPlayback, true);
+			}
+		}
+	} else if (_vm->getGameType() == GType_SIMON2) {
+		// Simon 2
+
+		// The DOS version uses MIDPAK, which is similar to Miles AIL v2.
+		// The Windows version uses the standard Windows drivers.
+		switch (_deviceType) {
+		case MT_ADLIB:
+			if (_vm->getPlatform() == Common::kPlatformDOS) {
+				// DOS
+				if (Common::File::exists("MIDPAK.AD")) {
+					// if there is a file called MIDPAK.AD, use it directly
+					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD");
+					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("MIDPAK.AD", "");
+				} else {
+					// if there is no file called MIDPAK.AD, try to extract it from the file SETUP.SHR
+					// if we didn't do this, the user would be forced to "install" the game instead of simply
+					// copying all files from CD-ROM.
+					Common::SeekableReadStream *midpakAdLibStream = simon2SetupExtractFile("MIDPAK.AD");
+					if (!midpakAdLibStream)
+						error("MidiPlayer::open - Could not extract MIDPAK.AD from SETUP.SHR");
+
+					// Pass this extracted data to the driver
+					warning("MidiPlayer::open - SIMON 2: using MIDPAK.AD extracted from SETUP.SHR");
+					_driverMsMusic = Audio::MidiDriver_Miles_AdLib_create("", "", midpakAdLibStream);
+					delete midpakAdLibStream;
+				}
+			} else {
+				// Windows
+				_driverMsMusic = new MidiDriver_ADLIB_Multisource(OPL::Config::kOpl3);
+			}
+			break;
+		case MT_MT32:
+		case MT_GM:
+			if (_vm->getPlatform() == Common::kPlatformDOS) {
+				// DOS
+				_driverMsMusic = Audio::MidiDriver_Miles_MIDI_create(_dataType, "");
+			} else {
+				// Windows
+				_driverMsMusic = new MidiDriver_MT32GM(_dataType);
+			}
+			break;
+		default:
+			_driverMsMusic = new MidiDriver_NULL_Multisource();
+			break;
+		}
+		_driver = _driverMsMusic;
+
+		// Create the MIDI parser(s) for the format used by the platform.
+		if (_vm->getPlatform() == Common::kPlatformDOS) {
+			// DOS uses Miles XMIDI.
+			_parserMusic = MidiParser::createParser_XMIDI(MidiParser::defaultXMidiCallback, 0, 0);
+		} else {
+			// Windows version uses an SMF variant (same as Simon 1 Windows).
+			_parserMusic = new MidiParser_SimonWin(0);
+		}
 	}
 
-	default:
-		break;
+	// Set common properties for the drivers and music parser.
+	if (_driverMsMusic)
+		_driverMsMusic->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+	if (_driverMsSfx && _driverMsSfx != _driverMsMusic)
+		_driverMsSfx->property(MidiDriver::PROP_USER_VOLUME_SCALING, true);
+
+	_parserMusic->property(MidiParser::mpDisableAutoStartPlayback, true);
+
+	// Open the MIDI driver(s).
+	int returnCode = _driver->open();
+	if (returnCode != 0)
+		error("MidiPlayer::open - Failed to open MIDI music driver - error code %d.", returnCode);
+	if (_driverMsSfx && _driverMsSfx != _driverMsMusic) {
+		returnCode = _driverMsSfx->open();
+		if (returnCode != 0)
+			error("MidiPlayer::open - Failed to open MIDI SFX driver - error code %d.", returnCode);
 	}
 
-	dev = MidiDriver::detectDevice(MDT_ADLIB | MDT_MIDI | (gameType == GType_SIMON1 ? MDT_PREFER_MT32 : MDT_PREFER_GM));
-	_adLibMusic = (MidiDriver::getMusicType(dev) == MT_ADLIB);
-	_nativeMT32 = ((MidiDriver::getMusicType(dev) == MT_MT32) || ConfMan.getBool("native_mt32"));
+	syncSoundSettings();
 
-	_driver = MidiDriver::createMidi(dev);
-	if (!_driver)
-		return 255;
+	// Connect the driver(s) and the parser(s).
+	_parserMusic->setMidiDriver(_driver);
+	_parserMusic->setTimerRate(_driver->getBaseTempo());
+	if (_parserSfx) {
+		_parserSfx->setMidiDriver(_driverMsSfx);
+	} else if (_parserSfxAccolade) {
+		_parserSfxAccolade->setMidiDriver(_driverMsSfx);
+	}
 
-	if (_nativeMT32)
-		_driver->property(MidiDriver::PROP_CHANNEL_MASK, 0x03FE);
-
-	_map_mt32_to_gm = (gameType != GType_SIMON2 && !_nativeMT32);
-
-	ret = _driver->open();
-	if (ret)
-		return ret;
-	_driver->setTimerCallback(this, &onTimer);
-
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
+	if ((_parserSfx || _parserSfxAccolade) && _driverMsSfx == _driver) {
+		// Use MidiPlayer::onTimer to trigger both parsers from the
+		// single driver (it can only have one timer callback).
+		_driver->setTimerCallback(this, &onTimer);
+		if (_parserSfx) {
+			_parserSfx->setTimerRate(_driver->getBaseTempo());
+		} else if (_parserSfxAccolade) {
+			_parserSfxAccolade->setTimerRate(_driver->getBaseTempo());
+		}
+	} else {
+		// Connect each parser to its own driver.
+		_driver->setTimerCallback(_parserMusic, &_parserMusic->timerCallback);
+		if (_parserSfx) {
+			_driverMsSfx->setTimerCallback(_parserSfx, &_parserSfx->timerCallback);
+			_parserSfx->setTimerRate(_driverMsSfx->getBaseTempo());
+		} else if (_parserSfxAccolade) {
+			_driverMsSfx->setTimerCallback(_parserSfxAccolade, &_parserSfxAccolade->timerCallback);
+			_parserSfxAccolade->setTimerRate(_driverMsSfx->getBaseTempo());
+		}
+	}
 
 	return 0;
-}
-
-void MidiPlayer::send(uint32 b) {
-	if (!_current)
-		return;
-
-	if (_musicMode != kMusicModeDisabled) {
-		// Handle volume control for Simon1 output.
-		if (_musicMode == kMusicModeSimon1) {
-			// The driver does not support any volume control, thus we simply
-			// scale the velocities on note on for now.
-			// TODO: We should probably handle this at output level at some
-			// point. Then we can allow volume changes to affect already
-			// playing notes too. For now this simple change allows us to
-			// have some simple volume control though.
-			if ((b & 0xF0) == 0x90) {
-				byte volume = (b >> 16) & 0x7F;
-
-				if (_current == &_sfx) {
-					volume = volume * _sfxVolume / 255;
-				} else if (_current == &_music) {
-					volume = volume * _musicVolume / 255;
-				}
-
-				b = (b & 0xFF00FFFF) | (volume << 16);
-			}
-		}
-
-		// Send directly to Accolade/Miles/Simon1 Audio driver
-		_driver->send(b);
-		return;
-	}
-
-	byte channel = (byte)(b & 0x0F);
-	if ((b & 0xFFF0) == 0x07B0) {
-		// Adjust volume changes by master music and master sfx volume.
-		byte volume = (byte)((b >> 16) & 0x7F);
-		_current->volume[channel] = volume;
-		if (_current == &_sfx)
-			volume = volume * _sfxVolume / 255;
-		else if (_current == &_music)
-			volume = volume * _musicVolume / 255;
-		b = (b & 0xFF00FFFF) | (volume << 16);
-	} else if ((b & 0xF0) == 0xC0 && _map_mt32_to_gm) {
-		b = (b & 0xFFFF00FF) | (MidiDriver::_mt32ToGm[(b >> 8) & 0xFF] << 8);
-	} else if ((b & 0xFFF0) == 0x007BB0) {
-		// Only respond to an All Notes Off if this channel
-		// has already been allocated.
-		if (!_current->channel[b & 0x0F])
-			return;
-	} else if ((b & 0xFFF0) == 0x79B0) {
-		// "Reset All Controllers". There seems to be some confusion
-		// about what this message should do to the volume controller.
-		// See http://www.midi.org/about-midi/rp15.shtml for more
-		// information.
-		//
-		// If I understand it correctly, the current standard indicates
-		// that the volume should be reset, but the next revision will
-		// exclude it. On my system, both ALSA and FluidSynth seem to
-		// reset it, while AdLib does not. Let's follow the majority.
-
-		_current->volume[channel] = 127;
-	}
-
-	// Allocate channels if needed
-	if (!_current->channel[channel])
-		_current->channel[channel] = (channel == 9) ? _driver->getPercussionChannel() : _driver->allocateChannel();
-
-	if (_current->channel[channel]) {
-		if (channel == 9) {
-			if (_current == &_sfx)
-				_current->channel[9]->volume(_current->volume[9] * _sfxVolume / 255);
-			else if (_current == &_music)
-				_current->channel[9]->volume(_current->volume[9] * _musicVolume / 255);
-		}
-		_current->channel[channel]->send(b);
-		if ((b & 0xFFF0) == 0x79B0) {
-			// We have received a "Reset All Controllers" message
-			// and passed it on to the MIDI driver. This may or may
-			// not have affected the volume controller. To ensure
-			// consistent behavior, explicitly set the volume to
-			// what we think it should be.
-
-			if (_current == &_sfx)
-				_current->channel[channel]->volume(_current->volume[channel] * _sfxVolume / 255);
-			else if (_current == &_music)
-				_current->channel[channel]->volume(_current->volume[channel] * _musicVolume / 255);
-		}
-	}
-}
-
-void MidiPlayer::metaEvent(byte type, byte *data, uint16 length) {
-	// Only thing we care about is End of Track.
-	if (!_current || type != 0x2F) {
-		return;
-	} else if (_current == &_sfx) {
-		clearConstructs(_sfx);
-	} else if (_loopTrack) {
-		_current->parser->jumpToTick(0);
-	} else if (_queuedTrack != 255) {
-		_currentTrack = 255;
-		byte destination = _queuedTrack;
-		_queuedTrack = 255;
-		_loopTrack = _loopQueuedTrack;
-		_loopQueuedTrack = false;
-
-		// Remember, we're still inside the locked mutex.
-		// Have to unlock it before calling jump()
-		// (which locks it itself), and then relock it
-		// upon returning.
-		_mutex.unlock();
-		startTrack(destination);
-		_mutex.lock();
-	} else {
-		stop();
-	}
 }
 
 void MidiPlayer::onTimer(void *data) {
 	MidiPlayer *p = (MidiPlayer *)data;
 	Common::StackLock lock(p->_mutex);
 
-	if (!p->_paused) {
-		if (p->_music.parser && p->_currentTrack != 255) {
-			p->_current = &p->_music;
-			p->_music.parser->onTimer();
+	if (p->_parserMusic) {
+		p->_parserMusic->onTimer();
+		if (!p->_parserMusic->isPlaying() && p->_queuedTrack != 255) {
+			// Music is no longer playing and there is a track queued up.
+			// Play the queued track.
+			p->setLoop(p->_loopQueuedTrack);
+			p->play(p->_queuedTrack, false, false, true);
+			p->_queuedTrack = 255;
+			p->_loopQueuedTrack = false;
 		}
 	}
-	if (p->_sfx.parser) {
-		p->_current = &p->_sfx;
-		p->_sfx.parser->onTimer();
-	}
-	p->_current = nullptr;
+	if (p->_parserSfx)
+		p->_parserSfx->onTimer();
+
+	if (p->_parserSfxAccolade)
+		p->_parserSfxAccolade->onTimer();
 }
 
-void MidiPlayer::startTrack(int track) {
-	Common::StackLock lock(_mutex);
-
-	if (track == _currentTrack)
-		return;
-
-	if (_music.num_songs > 0) {
-		if (track >= _music.num_songs)
-			return;
-
-		if (_music.parser) {
-			_current = &_music;
-			delete _music.parser;
-			_current = nullptr;
-			_music.parser = nullptr;
-		}
-
-		MidiParser *parser = MidiParser::createParser_SMF();
-		parser->property (MidiParser::mpMalformedPitchBends, 1);
-		parser->setMidiDriver(this);
-		parser->setTimerRate(_driver->getBaseTempo());
-		if (!parser->loadMusic(_music.songs[track], _music.song_sizes[track])) {
-			warning("Error reading track %d", track);
-			delete parser;
-			parser = nullptr;
-		}
-
-		_currentTrack = (byte)track;
-		_music.parser = parser; // That plugs the power cord into the wall
-	} else if (_music.parser) {
-		if (!_music.parser->setTrack(track)) {
-			return;
-		}
-		_currentTrack = (byte)track;
-		_current = &_music;
-		_music.parser->jumpToTick(0);
-		_current = nullptr;
-	}
+bool MidiPlayer::usesMT32Data() const {
+	return _dataType == MT_MT32;
 }
 
-void MidiPlayer::stop() {
+bool MidiPlayer::hasMidiSfx() const {
+	return _parserSfx != nullptr || _parserSfxAccolade != nullptr;
+}
+
+bool MidiPlayer::isPlaying(bool checkQueued) {
 	Common::StackLock lock(_mutex);
 
-	if (_music.parser) {
-		_current = &_music;
-		_music.parser->jumpToTick(0);
+	return _parserMusic->isPlaying() && (!checkQueued || _queuedTrack != 255);
+}
+
+void MidiPlayer::stop(bool sfx) {
+	Common::StackLock lock(_mutex);
+
+	if (!sfx) {
+		// Clear the queued track to prevent it from starting when the current
+		// track is stopped.
+		_queuedTrack = 255;
+
+		if (_parserMusic) {
+			_parserMusic->stopPlaying();
+			if (_driverMsMusic)
+				_driverMsMusic->deinitSource(0);
+		}
+	} else {
+		if (_parserSfx) {
+			_parserSfx->stopPlaying();
+			if (_driverMsSfx)
+				_driverMsSfx->deinitSource(1);
+		}
+		if (_parserSfxAccolade) {
+			_parserSfxAccolade->stopAll();
+		}
 	}
-	_current = nullptr;
-	_currentTrack = 255;
 }
 
 void MidiPlayer::pause(bool b) {
 	if (_paused == b || !_driver)
 		return;
+
 	_paused = b;
 
 	Common::StackLock lock(_mutex);
-	// if using the driver Accolade_AdLib call setVolume() to turn off\on the volume on all channels
-	if (musicType == MT_ADLIB && _musicMode == kMusicModeAccolade) {
-		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_paused ? 0 : ConfMan.getInt("music_volume"));
-	} else if (_musicMode == kMusicModePC98) {
-		_driver->property(0x30, _paused ? 1 : 0);
-	}
 
-	for (int i = 0; i < 16; ++i) {
-		if (_music.channel[i])
-			_music.channel[i]->volume(_paused ? 0 : (_music.volume[i] * _musicVolume / 255));
-		if (_sfx.channel[i])
-			_sfx.channel[i]->volume(_paused ? 0 : (_sfx.volume[i] * _sfxVolume / 255));
+	if (_paused) {
+		if (_parserMusic)
+			_parserMusic->pausePlaying();
+		if (_parserSfx)
+			_parserSfx->pausePlaying();
+	} else {
+		if (_parserMusic)
+			_parserMusic->resumePlaying();
+		if (_parserSfx)
+			_parserSfx->resumePlaying();
 	}
+	if (_parserSfxAccolade)
+		_parserSfxAccolade->pauseAll(_paused);
 }
 
-void MidiPlayer::setVolume(int musicVol, int sfxVol) {
-	musicVol = CLIP(musicVol, 0, 255);
-	sfxVol   = CLIP(sfxVol,   0, 255);
+void MidiPlayer::fadeOut() {
+	Common::StackLock lock(_mutex);
 
-	if (_musicVolume == musicVol && _sfxVolume == sfxVol)
+	if (!_parserMusic->isPlaying())
 		return;
 
-	_musicVolume = musicVol;
-	_sfxVolume   = sfxVol;
+	// 1 second fade-out to silence.
+	_driverMsMusic->startFade(0, 1000, 0);
+}
 
-	if (_musicMode == kMusicModePC98) {
-		_driver->property(0x10, _musicVolume);
-		_driver->property(0x20, _sfxVolume);
-	} else if (_musicMode == kMusicModeAccolade && musicType == MT_ADLIB) {
-		static_cast <MidiDriver_Accolade_AdLib*> (_driver)->setVolume(_musicVolume);
-	}
+void MidiPlayer::syncSoundSettings() {
+	if (_driverMsMusic)
+		_driverMsMusic->syncSoundSettings();
+	if (_driverMsSfx)
+		_driverMsSfx->syncSoundSettings();
 
-	// Now tell all the channels this.
-	Common::StackLock lock(_mutex);
-	if (_driver && !_paused) {
-		for (int i = 0; i < 16; ++i) {
-			if (_music.channel[i])
-				_music.channel[i]->volume(_music.volume[i] * _musicVolume / 255);
-			if (_sfx.channel[i])
-				_sfx.channel[i]->volume(_sfx.volume[i] * _sfxVolume / 255);
-		}
+	if (_pc98) {
+		// Sync code for non-multisource drivers.
+		bool mute = false;
+		if (ConfMan.hasKey("mute"))
+			mute = ConfMan.getBool("mute");
+
+		// Sync the engine with the config manager
+		int soundVolumeMusic = ConfMan.getInt("music_volume");
+		int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+
+		_driver->property(0x10, mute ? 0 : soundVolumeMusic);
+		_driver->property(0x20, mute ? 0 : soundVolumeSFX);
 	}
 }
 
 void MidiPlayer::setLoop(bool loop) {
 	Common::StackLock lock(_mutex);
 
-	_loopTrack = loop;
+	if (_parserMusic)
+		_parserMusic->property(MidiParser::mpAutoLoop, loop);
+}
+
+void MidiPlayer::setSimon2Remapping(bool remap) {
+	if (_driverMsMusic)
+		_driverMsMusic->setInstrumentRemapping(remap ? SIMON2_TRACK10_GM_MT32_INSTRUMENT_REMAPPING : nullptr);
 }
 
 void MidiPlayer::queueTrack(int track, bool loop) {
-	_mutex.lock();
-	if (_currentTrack == 255) {
-		_mutex.unlock();
+	Common::StackLock lock(_mutex);
+
+	if (!_parserMusic->isPlaying()) {
+		// There is no music playing right now, so immediately play the track.
 		setLoop(loop);
-		startTrack(track);
+		play(track);
 	} else {
+		// Queue up the track for playback at the end of the current track.
 		_queuedTrack = track;
 		_loopQueuedTrack = loop;
-		_mutex.unlock();
 	}
 }
 
-void MidiPlayer::clearConstructs() {
-	clearConstructs(_music);
-	clearConstructs(_sfx);
-}
-
-void MidiPlayer::clearConstructs(MusicInfo &info) {
-	int i;
-	if (info.num_songs > 0) {
-		for (i = 0; i < info.num_songs; ++i)
-			free(info.songs[i]);
-		info.num_songs = 0;
-	}
-
-	free(info.data);
-	info.data = nullptr;
-
-	delete info.parser;
-	info.parser = nullptr;
-
-	if (_driver) {
-		for (i = 0; i < 16; ++i) {
-			if (info.channel[i]) {
-				info.channel[i]->allNotesOff();
-				info.channel[i]->release();
-			}
-		}
-	}
-	info.clear();
-}
-
-void MidiPlayer::resetVolumeTable() {
-	int i;
-	for (i = 0; i < 16; ++i) {
-		_music.volume[i] = _sfx.volume[i] = 127;
-		if (_driver)
-			_driver->send(((_musicVolume >> 1) << 16) | 0x7B0 | i);
-	}
-}
-
-static const int simon1_gmf_size[] = {
-	8900, 12166, 2848, 3442, 4034, 4508, 7064, 9730, 6014, 4742, 3138,
-	6570, 5384, 8909, 6457, 16321, 2742, 8968, 4804, 8442, 7717,
-	9444, 5800, 1381, 5660, 6684, 2456, 4744, 2455, 1177, 1232,
-	17256, 5103, 8794, 4884, 16
-};
-
-void MidiPlayer::loadSMF(Common::SeekableReadStream *in, int song, bool sfx) {
+void MidiPlayer::load(Common::SeekableReadStream *in, int32 size, bool sfx) {
 	Common::StackLock lock(_mutex);
 
-	MusicInfo *p = sfx ? &_sfx : &_music;
-	clearConstructs(*p);
-
-	uint32 startpos = in->pos();
-	byte header[4];
-	in->read(header, 4);
-	bool isGMF = !memcmp(header, "GMF\x1", 4);
-	in->seek(startpos, SEEK_SET);
-
-	uint32 size = in->size() - in->pos();
-	if (isGMF) {
-		if (sfx) {
-			// Multiple GMF resources are stored in the SFX files,
-			// but each one is referenced by a pointer at the
-			// beginning of the file. Those pointers can be used
-			// to determine file size.
-			in->seek(0, SEEK_SET);
-			uint16 value = in->readUint16LE() >> 2; // Number of resources
-			if (song != value - 1) {
-				in->seek(song * 2 + 2, SEEK_SET);
-				value = in->readUint16LE();
-				size = value - startpos;
-			}
-			in->seek(startpos, SEEK_SET);
-		} else if (size >= 64000) {
-			// For GMF resources not in separate
-			// files, we're going to have to use
-			// hardcoded size tables.
-			size = simon1_gmf_size[song];
-		}
-	}
-
-	// When allocating space, add 4 bytes in case
-	// this is a GMF and we have to tack on our own
-	// End of Track event.
-	p->data = (byte *)calloc(size + 4, 1);
-	in->read(p->data, size);
-
-	uint32 timerRate = _driver->getBaseTempo();
-
-	if (isGMF) {
-		// The GMF header
-		// 3 BYTES: 'GMF'
-		// 1 BYTE : Major version
-		// 1 BYTE : Minor version
-		// 1 BYTE : Ticks (Ranges from 2 - 8, always 2 for SFX)
-		// 1 BYTE : Loop control. 0 = no loop, 1 = loop (Music only)
-		if (!sfx) {
-			// In the original, the ticks value indicated how many
-			// times the music timer was called before it actually
-			// did something. The larger the value the slower the
-			// music.
-			//
-			// We, on the other hand, have a timer rate which is
-			// used to control by how much the music advances on
-			// each onTimer() call. The larger the value, the
-			// faster the music.
-			//
-			// It seems that 4 corresponds to our base tempo, so
-			// this should be the right way to calculate it.
-			timerRate = (4 * _driver->getBaseTempo()) / p->data[5];
-
-			// According to bug #1706 calling setLoop() from
-			// within a lock causes a lockup, though I have no
-			// idea when this actually happens.
-			_loopTrack = (p->data[6] != 0);
-		}
-	}
-
-	MidiParser *parser = MidiParser::createParser_SMF();
-	parser->property(MidiParser::mpMalformedPitchBends, 1);
-	parser->setMidiDriver(this);
-	parser->setTimerRate(timerRate);
-	if (!parser->loadMusic(p->data, size)) {
-		warning("Error reading track");
-		delete parser;
-		parser = nullptr;
-	}
-
-	if (!sfx) {
-		_currentTrack = 255;
-		resetVolumeTable();
-	}
-	p->parser = parser; // That plugs the power cord into the wall
-}
-
-void MidiPlayer::loadMultipleSMF(Common::SeekableReadStream *in, bool sfx) {
-	// This is a special case for Simon 2 Windows.
-	// Instead of having multiple sequences as
-	// separate tracks in a Type 2 file, simon2win
-	// has multiple songs, each of which is a Type 1
-	// file. Thus, preceding the songs is a single
-	// byte specifying how many songs are coming.
-	// We need to load ALL the songs and then
-	// treat them as separate tracks -- for the
-	// purpose of jumps, anyway.
-	Common::StackLock lock(_mutex);
-
-	MusicInfo *p = sfx ? &_sfx : &_music;
-	clearConstructs(*p);
-
-	p->num_songs = in->readByte();
-	if (p->num_songs > 16) {
-		warning("playMultipleSMF: %d is too many songs to keep track of", (int)p->num_songs);
+	if (sfx && _parserSfxAccolade) {
+		_parserSfxAccolade->load(in, size);
 		return;
 	}
 
-	byte i;
-	for (i = 0; i < p->num_songs; ++i) {
-		byte buf[5];
-		uint32 pos = in->pos();
+	MidiParser *parser = sfx ? _parserSfx : _parserMusic;
+	if (!parser)
+		return;
 
-		// Make sure there's a MThd
-		in->read(buf, 4);
-		if (memcmp(buf, "MThd", 4) != 0) {
-			warning("Expected MThd but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
+	if (size < 0) {
+		// Use the parser to determine the size of the MIDI data.
+		int64 startPos = in->pos();
+		size = parser->determineDataSize(in);
+		if (size < 0) {
+			warning("MidiPlayer::load - Could not determine size of music data");
 			return;
 		}
-		in->seek(in->readUint32BE(), SEEK_CUR);
-
-		// Now skip all the MTrk blocks
-		while (true) {
-			in->read(buf, 4);
-			if (memcmp(buf, "MTrk", 4) != 0)
-				break;
-			in->seek(in->readUint32BE(), SEEK_CUR);
-		}
-
-		uint32 pos2 = in->pos() - 4;
-		uint32 size = pos2 - pos;
-		p->songs[i] = (byte *)calloc(size, 1);
-		in->seek(pos, SEEK_SET);
-		in->read(p->songs[i], size);
-		p->song_sizes[i] = size;
+		// determineDataSize might move the stream position, so return it to
+		// the original position.
+		in->seek(startPos);
 	}
 
-	if (!sfx) {
-		_currentTrack = 255;
-		resetVolumeTable();
+	parser->unloadMusic();
+
+	// Copy the data into _musicData or _sfxData.
+	byte **dataPtr = sfx ? &_sfxData : &_musicData;
+	if (*dataPtr) {
+		delete[] *dataPtr;
 	}
+
+	*dataPtr = new byte[size];
+	in->read(*dataPtr, size);
+
+	// Finally, load the data into the parser.
+	parser->loadMusic(*dataPtr, size);
 }
 
-void MidiPlayer::loadXMIDI(Common::SeekableReadStream *in, bool sfx) {
+void MidiPlayer::play(int track, bool sfx, bool sfxUsesRhythm, bool queued) {
 	Common::StackLock lock(_mutex);
-	MusicInfo *p = sfx ? &_sfx : &_music;
-	clearConstructs(*p);
 
-	char buf[4];
-	uint32 pos = in->pos();
-	uint32 size = 4;
-	in->read(buf, 4);
-	if (!memcmp(buf, "FORM", 4)) {
-		int i;
-		for (i = 0; i < 16; ++i) {
-			if (!memcmp(buf, "CAT ", 4))
-				break;
-			size += 2;
-			memcpy(buf, &buf[2], 2);
-			in->read(&buf[2], 2);
+	if (sfx && _parserSfxAccolade) {
+		_parserSfxAccolade->play(track);
+		return;
+	}
+	
+	MidiParser *parser = sfx ? _parserSfx : _parserMusic;
+	if (!parser)
+		return;
+
+	if (parser->setTrack(track)) {
+		if (sfx && sfxUsesRhythm) {
+			// This sound effect uses OPL rhythm instruments. Disable music
+			// rhythm notes while this sound effect is playing to prevent
+			// conflicts.
+			// Note that if AdLib music is used, _driverMsMusic and
+			// _driverMsSfx point to the same object. If AdLib music is not
+			// used, the disableMusicRhythmNotes call will do nothing.
+			MidiDriver_Simon1_AdLib *adLibSfxDriver = dynamic_cast<MidiDriver_Simon1_AdLib *>(_driverMsSfx);
+			if (adLibSfxDriver)
+				adLibSfxDriver->disableMusicRhythmNotes();
 		}
-		if (memcmp(buf, "CAT ", 4) != 0) {
-			error("Could not find 'CAT ' tag to determine resource size");
-		}
-		size += 4 + in->readUint32BE();
-		in->seek(pos, 0);
-		p->data = (byte *)calloc(size, 1);
-		in->read(p->data, size);
+
+		if (!sfx && !queued && _driverMsMusic)
+			// Reset the volume to neutral (in case the previous track was
+			// faded out).
+			_driverMsMusic->resetSourceVolume(0);
+		parser->startPlaying();
 	} else {
-		error("Expected 'FORM' tag but found '%c%c%c%c' instead", buf[0], buf[1], buf[2], buf[3]);
+		// Original interpreter stops playing when an invalid track is
+		// requested (f.e. Simon 2 MT-32 intro).
+		parser->stopPlaying();
+		warning("MidiPlayer::play - Could not play %s track %i", sfx ? "SFX" : "music", track);
 	}
-
-	// In the DOS version of Simon the Sorcerer 2, the music contains lots
-	// of XMIDI callback controller events. As far as we know, they aren't
-	// actually used, so we disable the callback handler explicitly.
-
-	MidiParser *parser = MidiParser::createParser_XMIDI(nullptr);
-	parser->setMidiDriver(this);
-	parser->setTimerRate(_driver->getBaseTempo());
-	if (!parser->loadMusic(p->data, size))
-		error("Error reading track");
-
-	if (!sfx) {
-		_currentTrack = 255;
-		resetVolumeTable();
-	}
-	p->parser = parser; // That plugs the power cord into the wall
-}
-
-void MidiPlayer::loadS1D(Common::SeekableReadStream *in, bool sfx) {
-	Common::StackLock lock(_mutex);
-	MusicInfo *p = sfx ? &_sfx : &_music;
-	clearConstructs(*p);
-
-	uint16 size = in->readUint16LE();
-	if (size != in->size() - 2) {
-		error("Size mismatch in MUS file (%ld versus reported %d)", (long)in->size() - 2, (int)size);
-	}
-
-	p->data = (byte *)calloc(size, 1);
-	in->read(p->data, size);
-
-	MidiParser *parser = MidiParser_createS1D();
-	parser->setMidiDriver(this);
-	parser->setTimerRate(_driver->getBaseTempo());
-	if (!parser->loadMusic(p->data, size))
-		error("Error reading track");
-
-	if (!sfx) {
-		_currentTrack = 255;
-		resetVolumeTable();
-	}
-	p->parser = parser; // That plugs the power cord into the wall
 }
 
 #define MIDI_SETUP_BUNDLE_HEADER_SIZE 56

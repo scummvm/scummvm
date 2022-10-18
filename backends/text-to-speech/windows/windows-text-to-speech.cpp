@@ -178,7 +178,8 @@ DWORD WINAPI startSpeech(LPVOID parameters) {
 
 bool WindowsTextToSpeechManager::say(const Common::U32String &str, Action action) {
 	if (_speechState == BROKEN || _speechState == NO_VOICE) {
-		warning("The text to speech cannot speak in this state");
+		if (_ttsState->_enabled)
+			warning("The text to speech cannot speak in this state");
 		return true;
 	}
 
@@ -339,8 +340,12 @@ void WindowsTextToSpeechManager::setVolume(unsigned volume) {
 }
 
 void WindowsTextToSpeechManager::setLanguage(Common::String language) {
-	Common::TextToSpeechManager::setLanguage(language);
-	updateVoices();
+	if (_ttsState->_language != language.substr(0, 2) || _ttsState->_availableVoices.empty()) {
+		Common::TextToSpeechManager::setLanguage(language);
+		updateVoices();
+	} else if (_speechState == NO_VOICE) {
+		_speechState = READY;
+	}
 	setVoice(0);
 }
 
@@ -424,8 +429,14 @@ Common::String WindowsTextToSpeechManager::lcidToLocale(LCID locale) {
 }
 
 void WindowsTextToSpeechManager::updateVoices() {
+	if (!_ttsState->_enabled) {
+		_speechState = NO_VOICE;
+		return;
+	}
+
 	if (_speechState == BROKEN)
 		return;
+
 	_ttsState->_availableVoices.clear();
 	ISpObjectToken *cpVoiceToken = nullptr;
 	IEnumSpObjectTokens *cpEnum = nullptr;

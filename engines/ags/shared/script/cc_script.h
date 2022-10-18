@@ -70,7 +70,7 @@ public:
 	void        Write(Shared::Stream *out);
 	// read back a script written with Write
 	bool        Read(Shared::Stream *in);
-	const char *GetSectionName(int32_t offset);
+	const char *GetSectionName(int32_t offset) const;
 
 protected:
 	// free the memory occupied by the script - do NOT attempt to run the

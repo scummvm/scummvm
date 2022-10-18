@@ -25,6 +25,7 @@
  * - grim
  * - groovie
  * - kyra
+ * - mtropolis
  */
 
 #ifndef COMMON_STUFFIT_H

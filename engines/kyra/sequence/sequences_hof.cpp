@@ -384,6 +384,11 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	_target = kHoF;
 	_firstScene = _loopStartScene = 0;
 
+	_specialAnimTimeOutTotal = 0;
+	_specialAnimFrameTimeOut = 0;
+
+	memset(_hofDemoItemShapes, 0, sizeof(_hofDemoItemShapes));
+
 	_defaultFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_vm->gameFlags().lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_GOLDFONT_FNT);
 	_creditsFont = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : Screen::FID_8_FNT;
 	_creditsFont2 = (_vm->gameFlags().lang == Common::ZH_TWN) ? Screen::FID_GOLDFONT_FNT : Screen::FID_8_FNT;
@@ -415,20 +420,20 @@ SeqPlayer_HOF::SeqPlayer_HOF(KyraEngine_v1 *vm, Screen_v2 *screen, OSystem *syst
 	char **tmpSndLst = new char *[_sequenceSoundListSize];
 
 	for (int i = 0; i < _sequenceSoundListSize; i++) {
-		const int len = strlen(seqSoundList[i]);
+		const int len = Common::strnlen(seqSoundList[i], 8);
 
 		tmpSndLst[i] = new char[len + 1];
 		tmpSndLst[i][0] = 0;
 
 		if (tlkfiles && len > 1) {
 			for (int ii = 0; ii < tempSize; ii++) {
-				if (strlen(tlkfiles[ii]) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
-					strcpy(tmpSndLst[i], tlkfiles[ii]);
+				if (Common::strnlen(tlkfiles[ii], 8) > 1 && !scumm_stricmp(&seqSoundList[i][1], &tlkfiles[ii][1]))
+					Common::strlcpy(tmpSndLst[i], tlkfiles[ii], len + 1);
 			}
 		}
 
 		if (tmpSndLst[i][0] == 0)
-			strcpy(tmpSndLst[i], seqSoundList[i]);
+			Common::strlcpy(tmpSndLst[i], seqSoundList[i],  len + 1);
 	}
 
 	tlkfiles = seqSoundList = nullptr;
@@ -997,7 +1002,7 @@ void SeqPlayer_HOF::playAnimation(WSAMovie_v2 *wsaObj, int startFrame, int lastF
 			origW = 320 - x;
 
 		if (y + origH > 199)
-			origW = 200 - y;
+			origH = 200 - y;
 	}
 
 	int8 frameStep = (startFrame > lastFrame) ? -1 : 1;
@@ -1691,6 +1696,7 @@ void SeqPlayer_HOF::displayHoFTalkieScrollText(uint8 *data, const ScreenDim *d, 
 			textData[1].text += strlen((char *)textData[1].text);
 			textData[1].text[0] = textData[1].unk1;
 			cnt--;
+			assert(cnt >= 0);
 			memmove(&textData[1], &textData[2], cnt * sizeof(ScrollTextData));
 		}
 

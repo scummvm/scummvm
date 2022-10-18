@@ -409,7 +409,7 @@ void convertYUV410ToRGB(byte *dstPtr, int dstPitch, const YUVToRGBLookup *lookup
 
 	for (int y = 0; y < yHeight; y++) {
 		for (int x = 0; x < quarterWidth; x++) {
-			// Perform bilinear interpolation on the the chroma values
+			// Perform bilinear interpolation on the chroma values
 			// Based on the algorithm found here: http://tech-algorithm.com/articles/bilinear-image-scaling/
 			// Feel free to optimize further
 			int targetY = y >> 2;

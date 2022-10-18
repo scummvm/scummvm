@@ -37,6 +37,7 @@
 #include "ags/lib/std/set.h"
 #include "ags/lib/std/unordered_set.h"
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
+#include "ags/shared/util/stream.h"
 #include "ags/shared/util/string.h"
 #include "ags/shared/util/string_types.h"
 
@@ -48,8 +49,7 @@ class ScriptSetBase : public AGSCCDynamicObject {
 public:
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 	virtual bool IsCaseSensitive() const = 0;
 	virtual bool IsSorted() const = 0;
@@ -61,10 +61,13 @@ public:
 	virtual int GetItemCount() const = 0;
 	virtual void GetItems(std::vector<const char *> &buf) const = 0;
 
+protected:
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
+
 private:
-	virtual size_t CalcSerializeSize() = 0;
-	virtual void SerializeContainer() = 0;
-	virtual void UnserializeContainer(const char *serializedData) = 0;
+	virtual void SerializeContainer(AGS::Shared::Stream *out) = 0;
+	virtual void UnserializeContainer(AGS::Shared::Stream *in) = 0;
 };
 
 template <typename TSet, bool is_sorted, bool is_casesensitive>
@@ -83,8 +86,7 @@ public:
 
 	bool Add(const char *item) override {
 		if (!item) return false;
-		size_t len = strlen(item);
-		return TryAddItem(item, len);
+		return TryAddItem(String(item));
 	}
 	void Clear() override {
 		for (auto it = _set.begin(); it != _set.end(); ++it)
@@ -110,34 +112,34 @@ public:
 	}
 
 private:
-	bool TryAddItem(const char *item, size_t len) {
-		return _set.insert(String(item, len))._value;
+	bool TryAddItem(const String &s) {
+		return _set.insert(s)._value;
 	}
-	void DeleteItem(ConstIterator it) { /* do nothing */
-	}
+	void DeleteItem(ConstIterator /*it*/) { /* do nothing */ }
 
 	size_t CalcSerializeSize() override {
-		size_t total_sz = sizeof(int32_t);
+		// 2 class properties + item count
+		size_t total_sz = sizeof(int32_t) * 3;
+		// (int32 + string buffer) per item
 		for (auto it = _set.begin(); it != _set.end(); ++it)
 			total_sz += sizeof(int32_t) + it->GetLength();
 		return total_sz;
 	}
 
-	void SerializeContainer() override {
-		SerializeInt((int)_set.size());
+	void SerializeContainer(AGS::Shared::Stream *out) override {
+		out->WriteInt32((int)_set.size());
 		for (auto it = _set.begin(); it != _set.end(); ++it) {
-			SerializeInt((int)it->GetLength());
-			memcpy(&serbuffer[bytesSoFar], it->GetCStr(), it->GetLength());
-			bytesSoFar += it->GetLength();
+			out->WriteInt32((int)it->GetLength());
+			out->Write(it->GetCStr(), it->GetLength());
 		}
 	}
 
-	void UnserializeContainer(const char *serializedData) override {
-		size_t item_count = (size_t)UnserializeInt();
+	void UnserializeContainer(AGS::Shared::Stream *in) override {
+		size_t item_count = in->ReadInt32();
 		for (size_t i = 0; i < item_count; ++i) {
-			size_t len = UnserializeInt();
-			TryAddItem(&serializedData[bytesSoFar], len);
-			bytesSoFar += len;
+			size_t len = in->ReadInt32();
+			String item = String::FromStreamCount(in, len);
+			TryAddItem(item);
 		}
 	}
 

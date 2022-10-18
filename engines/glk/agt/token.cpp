@@ -93,6 +93,8 @@ static long ask_for_number(int n1, int n2) {
 	for (;;) {
 		writestr(s);
 		n = read_number();
+		if (aver < AGX00)
+			n = (integer) (n & 0xFFFF);
 		if (n1 == n2 || (n >= n1 && n <= n2)) return n;
 		writeln("");
 	}
@@ -456,7 +458,7 @@ static int exec_cond(int op_, int arg1, int arg2) {
 	case 88:
 		cret(agt_var[arg1] < agt_var[arg2]);
 	case 89:
-		cret(agt_var[arg1] < agt_rand(1, arg2));
+		cret(agt_var[arg1] < get_random(1, arg2));
 	case 90:
 		cret((actor != 0) && (it_loc(actor) == loc + first_room));
 	case 91:
@@ -468,7 +470,7 @@ static int exec_cond(int op_, int arg1, int arg2) {
 	case 94:
 		cret(it_contents(arg1) != 0);
 	case 95:
-		cret(agt_rand(1, 100) <= arg1);
+		cret(get_random(1, 100) <= arg1);
 	case 96:
 		cret(yesno("Yes or no? "));
 	case 97:
@@ -613,7 +615,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 		goto_room(arg1 - first_room);
 		break;
 	case 1001:
-		goto_room(agt_rand(arg1, arg2) - first_room);
+		goto_room(get_random(arg1, arg2) - first_room);
 		break;
 	case 1002:
 		agt_var[arg1] = loc + first_room;
@@ -678,7 +680,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 		musiccmd(1, arg1 - 1);
 		break;
 	case 1020:
-		musiccmd(1, agt_rand(arg1, arg2) - 1);
+		musiccmd(1, get_random(arg1, arg2) - 1);
 		break;
 	case 1021:
 		musiccmd(2, arg1 - 1);
@@ -816,7 +818,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 		break;
 	/* 1062 is RedirectTo */
 	case 1063:
-		msgout(agt_rand(arg1, arg2), 1);
+		msgout(get_random(arg1, arg2), 1);
 		break;
 	case 1064:
 		print_contents(arg1, 1);
@@ -922,7 +924,7 @@ static void exec_action(int op_, int arg1, int arg2) {
 		agt_var[arg1] -= agt_var[arg2];
 		break;
 	case 1102:
-		agt_var[arg1] = agt_rand(0, arg2);
+		agt_var[arg1] = get_random(0, arg2);
 		break;
 	case 1103:
 		agt_var[arg1] = dobj_rec->num;
@@ -1154,6 +1156,21 @@ int exec_instr(op_rec *oprec)
 		if (oprec->failmsg) return 102;
 		else return 0;
 	}
+}
+
+static unsigned int rand_gen = 1234;
+
+void reset_random(void) {
+	rand_gen = 1234;
+}
+
+int get_random(int a, int b) {
+	if (stable_random) {
+		rand_gen = rand_gen * 214013 + 2531011;
+		unsigned int rand_num = (rand_gen >> 16) & 0xFFFF;
+		return a + (rand_num % (b - a + 1));
+	} else
+		return agt_rand(a,b);
 }
 
 } // End of namespace AGT

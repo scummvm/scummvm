@@ -305,7 +305,7 @@ static const char *const k1GUIStringsMacEnglish[28] = {
 	"off",
 	"Yes",
 	"No",
-	("123456789012345678901234567890123456""Walk speed "),
+	"Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are "

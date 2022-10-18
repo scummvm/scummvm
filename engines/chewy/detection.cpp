@@ -98,7 +98,7 @@ static const ChewyGameDescription gameDescriptions[] = {
 			AD_ENTRY1s("txt/atds.tap", "c3be5641e90dd01274309b778cf8146d", 230686),
 			Common::DE_DEU,
 			Common::kPlatformDOS,
-			ADGF_DEMO,
+			ADGF_DEMO | ADGF_UNSUPPORTED,
 			GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD)
 		},
 	},
@@ -113,7 +113,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"original_menus",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -122,16 +124,16 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 
 class ChewyMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames) {
+	ChewyMetaEngineDetection() : AdvancedMetaEngineDetection(Chewy::gameDescriptions, sizeof(Chewy::ChewyGameDescription), chewyGames, Chewy::optionsList) {
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "chewy";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Chewy: Esc from F5";
 	}
 

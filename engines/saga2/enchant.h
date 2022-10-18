@@ -90,11 +90,11 @@ enum actorEnchantments {
 //	Iterates through all active enchantments on an object or actor
 
 class EnchantmentIterator {
-	ObjectID        nextID;             //  Pointer to ID of next object.
+	ObjectID        _nextID;             //  Pointer to ID of next object.
 
 public:
-	GameObject      *baseObject,        //  Base obj we're searching for enchantments
-	                *wornObject;        //  An object 'worn' by the base object.
+	GameObject      *_baseObject,        //  Base obj we're searching for enchantments
+	                *_wornObject;        //  An object 'worn' by the base object.
 
 	//  Constructor
 	EnchantmentIterator(GameObject *container);

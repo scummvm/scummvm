@@ -23,27 +23,31 @@
 #include "ags/engine/ac/dynobj/script_region.h"
 #include "ags/shared/ac/common_defines.h"
 #include "ags/shared/game/room_struct.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *CCRegion::GetType() {
 	return "Region";
 }
 
-// serialize the object into BUFFER (which is BUFSIZE bytes)
-// return number of bytes used
-int CCRegion::Serialize(const char *address, char *buffer, int bufsize) {
-	const ScriptRegion *shh = (const ScriptRegion *)address;
-	StartSerialize(buffer);
-	SerializeInt(shh->id);
-	return EndSerialize();
+size_t CCRegion::CalcSerializeSize() {
+	return sizeof(int32_t);
 }
 
-void CCRegion::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+// serialize the object into BUFFER (which is BUFSIZE bytes)
+// return number of bytes used
+void CCRegion::Serialize(const char *address, Stream *out) {
+	const ScriptRegion *shh = (const ScriptRegion *)address;
+	out->WriteInt32(shh->id);
+}
+
+void CCRegion::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_G(scrRegion)[num], this);
 }
 

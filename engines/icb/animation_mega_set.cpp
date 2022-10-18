@@ -40,6 +40,7 @@
 #include "engines/icb/common/px_features.h"
 #include "engines/icb/res_man.h"
 
+#include "common/str.h"
 #include "common/util.h"
 
 namespace ICB {
@@ -145,7 +146,10 @@ _player_stat player_stat_table[__TOTAL_WEAPONS] = {STOOD, NEW_AIM, CROUCHING, CR
 bool8 crouch_state_table[__TOTAL_WEAPONS] = {FALSE8, FALSE8, TRUE8, TRUE8};
 
 void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
-// store these things temporarily so we can recall this function when swapping voxel -> polygon and vice verse...
+	// Clear the override pose hash value
+	Cancel_override_pose();
+
+	// store these things temporarily so we can recall this function when swapping voxel -> polygon and vice verse...
 	strcpy(temp_chr, chr);
 	strcpy(temp_set, set);
 	temp_weapon = weapon;
@@ -227,29 +231,25 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 }
 
 void _vox_image::MakeAnimEntry(int32 i) {
-// make name
+	Common::String strName;
 
-	char name[ANIM_NAME_STR_LEN];
-	int32 len;
+	strName = Common::String::format("%s%s.rab", (const char *)image_path, (const char *)master_anim_name_table[i].name);
 
-	len = sprintf(name, "%s%s.rab", (const char *)image_path, (const char *)master_anim_name_table[i].name);
+	if (strName.size() > ANIM_NAME_STR_LEN) {
+		Fatal_error("_vox_image::___init [%s] string too long", strName.c_str());
+	}
+	strcpy(anim_name[i], strName.c_str());
 
-	if (len > ANIM_NAME_STR_LEN)
-		Fatal_error("_vox_image::___init [%s] string too long", name);
-	strcpy(anim_name[i], name);
+	anim_name_hash[i] = HashString(anim_name[i]);
 
+	strName = Common::String::format("%s%s.raj", (const char *)image_path, (const char *)master_anim_name_table[i].name);
 
-	anim_name_hash[i] = HashString(name);
+	if (strName.size() > ANIM_NAME_STR_LEN) {
+		Fatal_error("_vox_image::___init [%s] string too long", strName.c_str());
+	}
+	strcpy(info_name[i], strName.c_str());
 
-
-	len = sprintf(name, "%s%s.raj", (const char *)image_path, (const char *)master_anim_name_table[i].name);
-
-	if (len > ANIM_NAME_STR_LEN)
-		Fatal_error("_vox_image::___init [%s] string too long", name);
-	strcpy(info_name[i], name);
-
-
-	info_name_hash[i] = HashString(name);
+	info_name_hash[i] = HashString(info_name[i]);
 
 	// do the test file
 	anim_table[i] = (int8)(rs_anims->Test_file(get_anim_name(i), anim_name_hash[i], base_path, base_path_hash));
@@ -459,6 +459,43 @@ bool8 _vox_image::Set_palette(const char *pal_name) {
 	PreRegisterTexture(texture_name, texture_hash, palette_name, palette_hash, base_path, base_path_hash);
 
 	return TRUE8;
+}
+
+bool8 _vox_image::Set_override_pose(const char *p_name) {
+	int len = sprintf(override_pose_name, "%s\\pose.rap", p_name);
+
+	if (len > IMAGE_PATH_STR_LEN)
+		Fatal_error("_vox_image::Set_override_pose [%s] string too long", override_pose_name);
+
+	override_pose_hash = HashString(override_pose_name);
+
+	return TRUE8;
+}
+
+bool8 _vox_image::Cancel_override_pose() {
+	override_pose_hash = NULL_HASH;
+	override_pose_name[0] = '\0';
+
+	return TRUE8;
+}
+
+// Async load a file from a character cluster into rs_anims
+// Return 0 - file is not in memory
+// Return 1 - file is in memory
+int _vox_image::Preload_file(const char *file) {
+	char file_name[ENGINE_STRING_LEN];
+	int len = sprintf(file_name, "%s", file);
+
+	if (len > IMAGE_PATH_STR_LEN)
+		Fatal_error("_vox_image::Preload_file [%s] string too long", file_name);
+
+	uint32 fileHash = NULL_HASH;
+
+	// The PC version does not use async loading
+	if (rs_anims->Res_open(file_name, fileHash, base_path, base_path_hash))
+		return 1;
+
+	return 0;
 }
 
 } // End of namespace ICB

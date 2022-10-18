@@ -62,15 +62,15 @@ class gDisplayPort;
 
 class Messager {
 protected:
-	bool enabled;
+	bool _enabled;
 	virtual int dumpit(char *, size_t) = 0;
 
 public:
 	Messager() {
-		enabled = true;
+		_enabled = true;
 	}
 	Messager(const char *entry) {
-		enabled = true;
+		_enabled = true;
 	}
 	virtual ~Messager() {}
 
@@ -78,13 +78,13 @@ public:
 	size_t va(const char *format, va_list argptr);
 
 	void enable() {
-		enabled = true;
+		_enabled = true;
 	}
 	void disable() {
-		enabled = false;
+		_enabled = false;
 	}
 	bool active() {
-		return enabled;
+		return _enabled;
 	}
 };
 
@@ -100,10 +100,10 @@ typedef Messager *pMessager;
 
 class StatusLineMessager : public Messager {
 private:
-	int line;
-	int32 atX, atY, atW;
-	int16 atColor;
-	gDisplayPort *textPort;
+	int _line;
+	int32 _atX, _atY, _atW;
+	int16 _atColor;
+	gDisplayPort *_textPort;
 
 protected:
 	int dumpit(char *s, size_t size) ;

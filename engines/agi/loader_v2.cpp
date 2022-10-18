@@ -275,10 +275,11 @@ int AgiLoader_v2::loadObjects(const char *fname) {
 }
 
 int AgiLoader_v2::loadWords(const char *fname) {
-	if (_vm->getLanguage() != Common::HE_ISR)
-		return _vm->_words->loadDictionary(fname);
-	else
+	if (_vm->getFeatures() & GF_EXTCHAR) {
 		return _vm->_words->loadExtendedDictionary(fname);
+	} else {
+		return _vm->_words->loadDictionary(fname);
+	}
 }
 
 } // End of namespace Agi

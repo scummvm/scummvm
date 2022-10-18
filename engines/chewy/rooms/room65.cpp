@@ -37,21 +37,20 @@ void Room65::entry() {
 	_G(r65tmp_scrolly) = _G(gameState).scrolly;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	_G(r65tmp_ch_x) = _G(spieler_vector)[P_CHEWY].Xypos[0];
-	_G(r65tmp_ch_y) = _G(spieler_vector)[P_CHEWY].Xypos[1];
-	_G(r65tmp_ho_x) = _G(spieler_vector)[P_HOWARD].Xypos[0];
-	_G(r65tmp_ho_y) = _G(spieler_vector)[P_HOWARD].Xypos[1];
-	_G(spieler_vector)[P_CHEWY].Xypos[0] = 10;
-	_G(spieler_vector)[P_CHEWY].Xypos[1] = 80;
-	_G(spieler_vector)[P_HOWARD].Xypos[0] = 150;
-	_G(spieler_vector)[P_HOWARD].Xypos[1] = 10;
+	_G(r65tmp_ch_x) = _G(moveState)[P_CHEWY].Xypos[0];
+	_G(r65tmp_ch_y) = _G(moveState)[P_CHEWY].Xypos[1];
+	_G(r65tmp_ho_x) = _G(moveState)[P_HOWARD].Xypos[0];
+	_G(r65tmp_ho_y) = _G(moveState)[P_HOWARD].Xypos[1];
+	_G(moveState)[P_CHEWY].Xypos[0] = 10;
+	_G(moveState)[P_CHEWY].Xypos[1] = 80;
+	_G(moveState)[P_HOWARD].Xypos[0] = 150;
+	_G(moveState)[P_HOWARD].Xypos[1] = 10;
 	if (_G(gameState).PersonDia[P_HOWARD] < 10000) {
-		_G(cur_hide_flag) = false;
 		hideCur();
 		startAadWait(_G(gameState).PersonDia[P_HOWARD]);
 		showCur();
 	} else {
-		startAdsWait(_G(gameState).PersonDia[P_HOWARD] - 10000);
+		startDialogCloseupWait(_G(gameState).PersonDia[P_HOWARD] - 10000);
 	}
 	_G(flags).LoadGame = true;
 	show_person();
@@ -65,7 +64,6 @@ void Room65::xit() {
 	setPersonPos(_G(r65tmp_ch_x), _G(r65tmp_ch_y), P_CHEWY, -1);
 	setPersonPos(_G(r65tmp_ho_x), _G(r65tmp_ho_y), P_HOWARD, -1);
 	_G(room_blk).AadLoad = true;
-	_G(room_blk).AtsLoad = true;
 	_G(mouseLeftClick) = false;
 }
 
@@ -140,7 +138,7 @@ void Room65::atds_string_start(int16 dia_nr, int16 str_nr, int16 person_nr, int1
 	} else if (mode == AAD_STR_START) {
 		_G(det)->startDetail(person_nr, 255, ANI_FRONT);
 	} else {
-		_G(det)->stop_detail(person_nr);
+		_G(det)->stopDetail(person_nr);
 	}
 }
 

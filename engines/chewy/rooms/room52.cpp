@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -35,14 +36,13 @@ void Room52::entry() {
 
 	if (_G(gameState).R52HotDogOk && !_G(gameState).R52KakerWeg) {
 		plot_armee(0);
-		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
+		_G(det)->playSound(0, 0);
 	} else {
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 	}
 
 	if (_G(gameState).R52KakerWeg)
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 
 	if (!_G(flags).LoadGame) {
 		_G(det)->showStaticSpr(4);
@@ -52,7 +52,7 @@ void Room52::entry() {
 		autoMove(2, P_CHEWY);
 		_G(gameState).R52TuerAuf = false;
 		_G(det)->hideStaticSpr(4);
-		check_shad(2, 1);
+		setShadowPalette(2, true);
 	}
 }
 
@@ -77,12 +77,11 @@ int16 Room52::use_hot_dog() {
 		autoMove(3, P_CHEWY);
 		start_spz_wait(CH_ROCK_GET1, 1, false, P_CHEWY);
 		_G(det)->showStaticSpr(0);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		autoMove(4, P_CHEWY);
 		_G(gameState).R52HotDogOk = true;
 		plot_armee(20);
-		g_engine->_sound->playSound(0, 0);
-		g_engine->_sound->playSound(0);
+		_G(det)->playSound(0, 0);
 		_G(atds)->set_ats_str(341, 1, ATS_DATA);
 		autoMove(2, P_CHEWY);
 		setPersonSpr(P_LEFT, P_CHEWY);
@@ -93,22 +92,21 @@ int16 Room52::use_hot_dog() {
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(7, 1, ANI_FRONT);
-		g_engine->_sound->playSound(7, 0);
-		g_engine->_sound->playSound(7);
+		_G(det)->playSound(7, 0);
 		_G(det)->startDetail(8, 255, ANI_FRONT);
 
 		for (int16 i = 0; i < 5; i++) {
 			waitShowScreen(20);
-			_G(det)->stop_detail(2 + i);
+			_G(det)->stopDetail(2 + i);
 		}
 
-		g_engine->_sound->stopSound(0);
-		_G(det)->stop_detail(0);
-		_G(det)->stop_detail(8);
+		_G(det)->stopSound(0);
+		_G(det)->stopDetail(0);
+		_G(det)->stopDetail(8);
 		startSetAILWait(7, 1, ANI_BACK);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		_G(gameState)._personHide[P_CHEWY] = false;
-		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(341, ATS_ACTIVE_BIT);
 		startAadWait(303);
 		_G(atds)->set_ats_str(KILLER_INV, 1, INV_ATS_DATA);
 		_G(gameState).R52KakerWeg = true;
@@ -138,7 +136,7 @@ void Room52::kaker_platt() {
 void Room52::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 52) {
 		calc_person_look();
-		const int16 y = (_G(spieler_vector)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
+		const int16 y = (_G(moveState)[P_CHEWY].Xypos[1] < 97) ? 44 : 87;
 		goAutoXy(1, y, P_HOWARD, ANI_GO);
 	}
 }

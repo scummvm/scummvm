@@ -65,7 +65,7 @@ struct MusicEntryChannel {
 	int8 _voices;
 	bool _dontRemap;
 	bool _dontMap;
-	bool _mute;
+	uint8 _mute;
 };
 
 
@@ -193,6 +193,8 @@ private:
 public:
 	void clearPlayList();
 	void pauseAll(bool pause);
+	bool isAllPaused() const { return (_globalPause > 0); }
+	void resetGlobalPauseCounter();
 	void stopAll();
 	void stopAllSamples();
 
@@ -256,10 +258,10 @@ public:
 	void saveLoadWithSerializer(Common::Serializer &ser) override;
 
 	// Mutex for music code. Used to guard access to the song playlist, to the
-	// MIDI parser and to the MIDI driver/player. Note that guarded code must NOT
-	// include references to the mixer, otherwise there will probably be situations
-	// where a deadlock can occur
-	Common::Mutex _mutex;
+	// MIDI parser and to the MIDI driver/player. We use a reference to
+	// the mixer's internal mutex to avoid deadlocks which sometimes occur when
+	// different threads lock each other up in different mutexes.
+	Common::Mutex &_mutex;
 
 protected:
 	void sortPlayList();
@@ -277,6 +279,10 @@ protected:
 	void remapChannels(bool mainThread = true);
 	ChannelRemapping *determineChannelMap();
 	void resetDeviceChannel(int devChannel, bool mainThread);
+
+public:
+	// The parsers need to know this for the dontMap channels...
+	bool isDeviceChannelMapped(int devChannel) const;
 
 private:
 	MusicList _playList;

@@ -76,6 +76,9 @@ public:
 	/** Construct a copy of the given string. */
 	U32String(const U32String &str) : BaseString<u32char_type_t>(str) {}
 
+	/** Construct a string by moving an existing string. */
+	U32String(U32String &&str) : BaseString<u32char_type_t>(static_cast<BaseString<u32char_type_t> &&>(str)) {}
+
 	/** Construct a new string from the given null-terminated C string that uses the given @p page encoding. */
 	explicit U32String(const char *str, CodePage page = kUtf8);
 
@@ -93,6 +96,9 @@ public:
 
 	/** Assign a given string to this string. */
 	U32String &operator=(const U32String &str);
+
+	/** Move a given string to this string. */
+	U32String &operator=(U32String &&str);
 
 	/** @overload */
 	U32String &operator=(const String &str);
@@ -127,13 +133,18 @@ public:
 	/** Convert the string to the given @p page encoding and return the result as a new String. */
 	String encode(CodePage page = kUtf8) const;
 
+	/** Convert the string to the given @p page encoding and output in string @p outString,
+		replacing invalid characters with @p errorChar. */
+	StringEncodingResult encode(String &outString, CodePage page, char errorChar) const;
+
 	/**
 	 * Print formatted data into a U32String object.
 	 *
 	 * Similar to sprintf, except that it stores the result
 	 * in a (variably sized) string instead of a fixed-size buffer.
 	 */
-	static U32String format(U32String fmt, ...);
+	template<class... TParam>
+	static U32String format(const U32String &fmt, TParam... param);
 
 	/** @overload **/
 	static U32String format(const char *fmt, ...);
@@ -180,15 +191,23 @@ public:
 	uint16 *encodeUTF16Native(uint *len = nullptr) const;
 
 private:
+	static U32String formatInternal(const U32String *fmt, ...);
+
 	void decodeInternal(const char *str, uint32 len, CodePage page);
 	void decodeOneByte(const char *str, uint32 len, CodePage page);
 	void decodeWindows932(const char *src, uint32 len);
 	void decodeWindows949(const char *src, uint32 len);
 	void decodeWindows950(const char *src, uint32 len);
+	void decodeJohab(const char *src, uint32 len);
 	void decodeUTF8(const char *str, uint32 len);
 
 	friend class String;
 };
+
+template<class... TParam>
+inline U32String U32String::format(const U32String &fmt, TParam... param) {
+	return formatInternal(&fmt, param...);
+}
 
 /** Concatenate strings @p x and @p y. */
 U32String operator+(const U32String &x, const U32String &y);

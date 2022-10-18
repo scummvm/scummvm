@@ -59,60 +59,57 @@ enum RendererFlip {
 
 class ALSoftwareBitmap : public BaseDDB {
 public:
-	// Transparency is a bit counter-intuitive
-	// 0=not transparent, 255=invisible, 1..254 barely visible .. mostly visible
-	int  GetTransparency() const override {
-		return _transparency;
+	uint32_t GetRefID() const override { return UINT32_MAX /* not supported */; }
+
+	int  GetAlpha() const override {
+		return _alpha;
 	}
-	void SetTransparency(int transparency) override {
-		_transparency = transparency;
+	void SetAlpha(int alpha) override {
+		_alpha = alpha;
 	}
 	void SetFlippedLeftRight(bool isFlipped) override {
 		_flipped = isFlipped;
 	}
-	void SetStretch(int width, int height, bool useResampler = true) override {
+	void SetStretch(int width, int height, bool /*useResampler*/) override {
 		_stretchToWidth = width;
 		_stretchToHeight = height;
 	}
-	void SetLightLevel(int lightLevel) override {
-	}
-	void SetTint(int red, int green, int blue, int tintSaturation) override {
-	}
+	void SetLightLevel(int /*lightLevel*/) override {}
+	void SetTint(int /*red*/, int /*green*/, int /*blue*/, int /*tintSaturation*/) override {}
 
-	Bitmap *_bmp;
-	bool _flipped;
-	int _stretchToWidth, _stretchToHeight;
-	bool _opaque; // no mask color
-	bool _hasAlpha;
-	int _transparency;
+	Bitmap *_bmp = nullptr;
+	bool _flipped = false;
+	int _stretchToWidth = 0, _stretchToHeight = 0;
+	int _alpha = 255;
+
+	ALSoftwareBitmap(int width, int height, int color_depth, bool opaque) {
+		_width = width;
+		_height = height;
+		_colDepth = color_depth;
+		_opaque = opaque;
+		_stretchToWidth = _width;
+		_stretchToHeight = _height;
+	}
 
 	ALSoftwareBitmap(Bitmap *bmp, bool opaque, bool hasAlpha) {
 		_bmp = bmp;
 		_width = bmp->GetWidth();
 		_height = bmp->GetHeight();
 		_colDepth = bmp->GetColorDepth();
-		_flipped = false;
-		_stretchToWidth = 0;
-		_stretchToHeight = 0;
-		_transparency = 0;
 		_opaque = opaque;
 		_hasAlpha = hasAlpha;
+		_stretchToWidth = _width;
+		_stretchToHeight = _height;
 	}
 
 	int GetWidthToRender() {
-		return (_stretchToWidth > 0) ? _stretchToWidth : _width;
+		return _stretchToWidth;
 	}
 	int GetHeightToRender() {
-		return (_stretchToHeight > 0) ? _stretchToHeight : _height;
+		return _stretchToHeight;
 	}
 
-	void Dispose() {
-		// do we want to free the bitmap?
-	}
-
-	~ALSoftwareBitmap() override {
-		Dispose();
-	}
+	~ALSoftwareBitmap() override = default;
 };
 
 
@@ -142,14 +139,13 @@ private:
 typedef SpriteDrawListEntry<ALSoftwareBitmap> ALDrawListEntry;
 // Software renderer's sprite batch
 struct ALSpriteBatch {
-	// List of sprites to render
-	std::vector<ALDrawListEntry> List;
+	uint32_t ID = 0;
 	// Intermediate surface which will be drawn upon and transformed if necessary
-	std::shared_ptr<Bitmap>      Surface;
+	std::shared_ptr<Bitmap> Surface;
 	// Whether surface is a virtual screen's region
-	bool                         IsVirtualScreen;
+	bool IsVirtualScreen = false;
 	// Tells whether the surface is treated as opaque or transparent
-	bool                         Opaque;
+	bool Opaque = false;
 };
 typedef std::vector<ALSpriteBatch> ALSpriteBatches;
 
@@ -165,7 +161,7 @@ public:
 	const char *GetDriverID() override {
 		return "Software";
 	}
-	void SetTintMethod(TintMethod method) override;
+	void SetTintMethod(TintMethod /*method*/) override;
 	bool SetDisplayMode(const DisplayMode &mode) override;
 	void UpdateDeviceScreen(const Size &screen_sz) override;
 	bool SetNativeResolution(const GraphicResolution &native_res) override;
@@ -178,30 +174,41 @@ public:
 	// Clears the screen rectangle. The coordinates are expected in the **native game resolution**.
 	void ClearRectangle(int x1, int y1, int x2, int y2, RGB *colorToUse) override;
 	int  GetCompatibleBitmapFormat(int color_depth) override;
+	IDriverDependantBitmap *CreateDDB(int width, int height, int color_depth, bool opaque) override;
 	IDriverDependantBitmap *CreateDDBFromBitmap(Bitmap *bitmap, bool hasAlpha, bool opaque) override;
-	void UpdateDDBFromBitmap(IDriverDependantBitmap *bitmapToUpdate, Bitmap *bitmap, bool hasAlpha) override;
-	void DestroyDDB(IDriverDependantBitmap *bitmap) override;
+	void UpdateDDBFromBitmap(IDriverDependantBitmap *ddb, Bitmap *bitmap, bool hasAlpha) override;
+	void DestroyDDB(IDriverDependantBitmap *ddb) override;
 
-	void DrawSprite(int x, int y, IDriverDependantBitmap *bitmap) override;
+	IDriverDependantBitmap *GetSharedDDB(uint32_t /*sprite_id*/,
+		Bitmap *bitmap, bool hasAlpha, bool opaque) override {
+		// Software renderer does not require a texture cache, because it uses bitmaps directly
+		return CreateDDBFromBitmap(bitmap, hasAlpha, opaque);
+	}
+
+	void UpdateSharedDDB(uint32_t /*sprite_id*/, Bitmap */*bitmap*/, bool /*hasAlpha*/, bool /*opaque*/) override {
+		/* do nothing */
+	}
+	void ClearSharedDDB(uint32_t /*sprite_id*/) override {
+		/* do nothing */
+	}
+
+	void DrawSprite(int x, int y, IDriverDependantBitmap *ddb) override;
 	void SetScreenFade(int red, int green, int blue) override;
 	void SetScreenTint(int red, int green, int blue) override;
 
 	void RenderToBackBuffer() override;
 	void Render() override;
-	void Render(int xoff, int yoff, GlobalFlipType flip) override;
+	void Render(int xoff, int yoff, Shared::GraphicFlip flip) override;
 	bool GetCopyOfScreenIntoBitmap(Bitmap *destination, bool at_native_res, GraphicResolution *want_fmt) override;
 	void FadeOut(int speed, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
 	void FadeIn(int speed, PALETTE pal, int targetColourRed, int targetColourGreen, int targetColourBlue) override;
 	void BoxOutEffect(bool blackingOut, int speed, int delay) override;
 	bool SupportsGammaControl() override;
 	void SetGamma(int newGamma) override;
-	void UseSmoothScaling(bool enabled) override {
-	}
-	void EnableVsyncBeforeRender(bool enabled) override {
-	}
-	void Vsync() override;
-	void RenderSpritesAtScreenResolution(bool enabled, int supersampling) override {
-	}
+	void UseSmoothScaling(bool /*enabled*/) override {}
+	bool DoesSupportVsyncToggle() override;
+	bool SetVsync(bool enabled) override;
+	void RenderSpritesAtScreenResolution(bool /*enabled*/, int /*supersampling*/) override {}
 	bool RequiresFullRedrawEachFrame() override {
 		return false;
 	}
@@ -214,7 +221,7 @@ public:
 	Bitmap *GetMemoryBackBuffer() override;
 	void SetMemoryBackBuffer(Bitmap *backBuffer) override;
 	Bitmap *GetStageBackBuffer(bool mark_dirty) override;
-	bool GetStageMatrixes(RenderMatrixes &rm) override {
+	bool GetStageMatrixes(RenderMatrixes & /*rm*/) override {
 		return false; /* not supported */
 	}
 
@@ -253,7 +260,10 @@ private:
 	Bitmap *_stageVirtualScreen;
 	int _tint_red, _tint_green, _tint_blue;
 
+	// Sprite batches (parent scene nodes)
 	ALSpriteBatches _spriteBatches;
+	// List of sprites to render
+	std::vector<ALDrawListEntry> _spriteList;
 
 	void InitSpriteBatch(size_t index, const SpriteBatchDesc &desc) override;
 	void ResetAllBatches() override;
@@ -264,7 +274,7 @@ private:
 	// Unset parameters and release resources related to the display mode
 	void ReleaseDisplayMode();
 	// Renders single sprite batch on the precreated surface
-	void RenderSpriteBatch(const ALSpriteBatch &batch, Shared::Bitmap *surface, int surf_offx, int surf_offy);
+	size_t RenderSpriteBatch(const ALSpriteBatch &batch, size_t from, Shared::Bitmap *surface, int surf_offx, int surf_offy);
 
 	void highcolor_fade_in(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);
 	void highcolor_fade_out(Bitmap *vs, void(*draw_callback)(), int offx, int offy, int speed, int targetColourRed, int targetColourGreen, int targetColourBlue);

@@ -40,7 +40,7 @@ public:
 
 	void setMusicState(int stateId);
 	void flushTracks();
-// Save/Load:
+	// Save/Load:
 	void restoreState(SaveGame *savedState);
 	void saveState(SaveGame *savedState);
 };

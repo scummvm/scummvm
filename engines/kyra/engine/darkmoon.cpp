@@ -110,8 +110,7 @@ void DarkMoonEngine::loadItemsAndDecorationsShapes() {
 	_teleporterShapes = new const uint8 *[6];
 	_sparkShapes = new const uint8 *[3];
 	_compassShapes = new const uint8 *[12];
-	if (_flags.gameID == GI_EOB2)
-		_wallOfForceShapes = new const uint8 *[6];
+	_wallOfForceShapes = new const uint8 *[6];
 
 	_lightningColumnShape = _staticres->loadRawData(kEoB2LightningColumnShapeData, size);
 	for (int i = 0; i < 6; i++)
@@ -481,11 +480,11 @@ bool DarkMoonEngine::killMonsterExtra(EoBMonsterInPlay *m) {
 
 void DarkMoonEngine::loadVcnData(const char *file, const uint8 *cgaMapping) {
 	if (file)
-		strcpy(_lastBlockDataFile, file);
+		_lastBlockDataFile = file;
 	delete[] _vcnBlocks;
 
 	if (_flags.platform == Common::kPlatformFMTowns) {
-		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile);
+		Common::String fn = Common::String::format(_vcnFilePattern.c_str(), _lastBlockDataFile.c_str());
 		_vcnBlocks = _res->fileData(fn.c_str(), 0);
 	} else {
 		EoBCoreEngine::loadVcnData(file, cgaMapping);

@@ -48,11 +48,11 @@ public:
 		_flags = kADFlagUseExtraAsHint;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "mortevielle";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Mortville Manor";
 	}
 

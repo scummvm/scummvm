@@ -9,9 +9,9 @@ How do the graphics settings work together?
 
 The graphics mode scaler, aspect ratio, and stretch mode settings work together to change the resolution and display of each game.
 
-For the SDL Surface graphics mode, the scaler is applied first, then the aspect ratio correction, and finally the stretch mode. For the OpenGL graphics mode there is no scaler and the aspect ratio correct and stretch modes are applied together in one pass to arrive to the final image. This means that when you want to preserve pixels, you may prefer to use the OpenGL mode, especially if you use aspect ratio correction. The aspect ratio correction in the SDL Surface mode introduces some irregularities that can be avoided with the OpenGL mode.
+For the SDL Surface graphics mode, the scaler is applied first, then the aspect ratio correction, and finally the stretch mode. For the OpenGL graphics mode there is no scaler and the aspect ratio correction and stretch modes are applied together in one pass to arrive to the final image. This means that when you want to preserve pixels, you may prefer to use the OpenGL mode, especially if you use aspect ratio correction. The aspect ratio correction in the SDL Surface mode introduces some irregularities that can be avoided with the OpenGL mode.
 
-Render modes are only applicable to some older games that were designed to be played on multiple systems, and lets us choose which system's graphics to replicate.
+Render modes are only applicable to some older games that were designed to be played on multiple systems, and let us choose which system's graphics to replicate.
 
 .. _graphics:
 
@@ -30,7 +30,7 @@ With the OpenGL graphics mode the original game image is provided to the graphic
 SDL Surface graphics mode
 *************************************
 
-With the SDL Surface graphics mode, a software scaler is applied to the game image, before applying the aspect ratio correction with a software vertical stretch. The image is then passed to SDL to apply the :ref:`stretch mode <stretch>` and get the final result. With the graphics mode the software scaler is not affected by the :ref:`Filter graphics <filter>` options. This option only affects the aspect ratio correction and the final scaling related to the stretch mode.
+With the SDL Surface graphics mode, a software scaler is applied to the game image, before applying the aspect ratio correction with a software vertical stretch. The image is then passed to SDL to apply the :ref:`stretch mode <stretch>` and get the final result. With this graphics mode the software scaler is not affected by the :ref:`Filter graphics <filter>` option. This option only affects the aspect ratio correction and the final scaling related to the stretch mode.
 
 A comparison of SDL Surface software scalers
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -146,13 +146,13 @@ Stretch modes control how the game screen is stretched to fill the ScummVM windo
 
 The base resolution for this stretch mode includes the selected scaler and, if enabled, the :ref:`aspect ratio correction <aspect>`. This means that if the original game resolution is 320x200 and a 2x scaler is selected, the display is a multiple of 640x400 (for example 1280x800 or 1920x1200). And if aspect ratio correction is also selected, the display is a multiple of 640x480. With this stretch mode you may thus prefer to use either the OpenGL graphics mode or the SDL Surface graphics mode with a 1x scaler.
 
-This means that while the width of result will always be a multiple of the original game width, if aspect ratio correction is enabled the height of the result may not be a multiple of the original game height. This can thus cause some blurring. If you want to use aspect ratio correction but avoid any blurring, you may prefer to use the Even-pixels scaling.
+This means that, while the width of result will always be a multiple of the original game width, if aspect ratio correction is enabled, the height of the result may not be a multiple of the original game height. This can thus cause some blurring. If you want to use aspect ratio correction but avoid any blurring, you may prefer to use the Even-pixels scaling.
 
 .. figure:: ../images/graphics/stretch_mode/even-pixels.png
 
     **Even pixels scaling**: The game screen is scaled to the highest multiples of the original game width and height. Any empty space is filled with black bars. This mode is only available for the OpenGL graphics mode.
 
-The factors used on the width and height may be different if the :ref:`aspect ratio correction <aspect>` is enabled as it will try to get the result as close as possible to the expected aspect ratio. For example, with a screen resolution of 1920x1080, a game with an original resolution of 320x200 and the aspect ratio correction enabled will be stretched to 1280x1000 (original width of 320 x 4 and original height of 200 x 5). Unlike the Pixel-perfect scaling, This does not provide exactly the expected aspect ratio (4:3) but uses instead a good approximation (4:3.125) while ensuring all the original pixels are scaled by the same amount.
+The factors used on the width and height may be different if the :ref:`aspect ratio correction <aspect>` is enabled as it will try to get the result as close as possible to the expected aspect ratio. For example, with a screen resolution of 1920x1080, a game with an original resolution of 320x200 and the aspect ratio correction enabled will be stretched to 1280x1000 (original width of 320 x 4 and original height of 200 x 5). Unlike the Pixel-perfect scaling, this does not provide exactly the expected aspect ratio (4:3) but uses instead a good approximation (4:3.125) while ensuring all the original pixels are scaled by the same amount.
 
 .. figure:: ../images/graphics/stretch_mode/fit-to-window.png
 
@@ -164,7 +164,7 @@ With this mode you may get either horizontal black bars or vertical black bars o
 
     **Stretch to window**: Stretches the game to fill the window.
 
-The game may be stretch horizontally or vertically to fill the window. This mode does not enforce the aspect ratio of the game to be preserved.
+The game may be stretched horizontally or vertically to fill the window. This mode does not enforce the aspect ratio of the game to be preserved.
 
 .. figure:: ../images/graphics/stretch_mode/fit-3-4.png
 

@@ -1341,7 +1341,8 @@ enum SceneLoopMode {
 	kSceneLoopModeLoseControl =  0,
 	kSceneLoopModeChangeSet   =  1,
 	kSceneLoopModeOnce        =  2,
-	kSceneLoopModeSpinner     =  3
+	kSceneLoopModeSpinner     =  3,
+	kSceneLoopModeOnceNStay   =  4
 };
 
 enum Scenes {

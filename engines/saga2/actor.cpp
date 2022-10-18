@@ -638,7 +638,7 @@ bool ActorProto::acceptInsertionAtAction(
 	}
 
 	//  Determine if this object is simply being moved within this actor
-	if (oldLoc.context == dObj) {
+	if (oldLoc._context == dObj) {
 		//  Determine if and where the object is in use by this actor
 		if (a->_leftHandObject == item)
 			inUseType = heldInLeftHand;
@@ -942,7 +942,7 @@ void Actor::init(
 	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & actorPermanent);
 
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype           = (ProtoObj *)g_vm->_actorProtos[protoIndex];
+	_prototype           = (ProtoObj *)g_vm->_actorProtos[protoIndex];
 
 	//  Initialize object fields
 //	nameIndex = 0;
@@ -1001,10 +1001,8 @@ void Actor::init(
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
-	memcpy(
-	    &_effectiveStats,
-	    &((ActorProto *)prototype)->baseStats,
-	    sizeof(_effectiveStats));
+	_effectiveStats = ((ActorProto *)_prototype)->baseStats;
+
 	_effectiveStats.vitality = MAX<int16>(_effectiveStats.vitality, 1);
 
 	_actionCounter       = 0;
@@ -1028,7 +1026,7 @@ void Actor::init(
 //  Actor constructor -- copies the resource fields and simply NULL's most
 //	of the rest of the data members
 Actor::Actor() {
-	prototype = nullptr;
+	_prototype = nullptr;
 	_faction             = 0;
 	_colorScheme         = 0;
 	_appearanceID        = 0;
@@ -1095,7 +1093,7 @@ Actor::Actor() {
 
 Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype   =   prototype != nullptr
+	_prototype  =   _prototype != nullptr
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   nullptr;
 
@@ -1142,8 +1140,8 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
-	if (prototype)
-		memcpy(&_effectiveStats, &((ActorProto *)prototype)->baseStats, sizeof(_effectiveStats));
+	if (_prototype)
+		_effectiveStats = ((ActorProto *)_prototype)->baseStats;
 
 	_effectiveStats.vitality = MAX<uint16>(_effectiveStats.vitality, 1);
 
@@ -1168,7 +1166,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 
 Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	//  Fixup the prototype pointer to point to an actor prototype
-	prototype   =   prototype != nullptr
+	_prototype   =   _prototype != nullptr
 	                ? (ProtoObj *)g_vm->_actorProtos[getProtoNum()]
 	                :   nullptr;
 
@@ -1299,19 +1297,19 @@ int32 Actor::archiveSize() {
 }
 
 void Actor::write(Common::MemoryWriteStreamDynamic *out) {
-	ProtoObj    *holdProto = prototype;
+	ProtoObj    *holdProto = _prototype;
 
 	debugC(3, kDebugSaveload, "Saving actor %d", thisID());
 
 	//  Modify the protoype temporarily so the GameObject::write()
 	//  will store the index correctly
-	if (prototype != nullptr)
-		prototype = g_vm->_objectProtos[getProtoNum()];
+	if (_prototype != nullptr)
+		_prototype = g_vm->_objectProtos[getProtoNum()];
 
 	GameObject::write(out, false);
 
 	//  Restore the prototype pointer
-	prototype = holdProto;
+	_prototype = holdProto;
 
 	out->writeByte(_faction);
 	out->writeByte(_colorScheme);
@@ -1725,9 +1723,9 @@ void Actor::lobotomize() {
 
 ActorAttributes *Actor::getBaseStats() {
 	if (_disposition < dispositionPlayer)
-		return &((ActorProto *)prototype)->baseStats;
+		return &((ActorProto *)_prototype)->baseStats;
 	else
-		return &g_vm->_playerList[_disposition - dispositionPlayer]->baseStats;
+		return &g_vm->_playerList[_disposition - dispositionPlayer]->_baseStats;
 }
 
 //-----------------------------------------------------------------------
@@ -1736,7 +1734,7 @@ ActorAttributes *Actor::getBaseStats() {
 
 uint32 Actor::getBaseEnchantmentEffects() {
 	//if ( disposition < dispositionPlayer )
-	return ((ActorProto *)prototype)->baseEffectFlags;
+	return ((ActorProto *)_prototype)->baseEffectFlags;
 }
 
 //-----------------------------------------------------------------------
@@ -1745,7 +1743,7 @@ uint32 Actor::getBaseEnchantmentEffects() {
 
 uint16 Actor::getBaseResistance() {
 	//if ( disposition < dispositionPlayer )
-	return ((ActorProto *)prototype)->resistance;
+	return ((ActorProto *)_prototype)->resistance;
 }
 
 //-----------------------------------------------------------------------
@@ -1754,7 +1752,7 @@ uint16 Actor::getBaseResistance() {
 
 uint16 Actor::getBaseImmunity() {
 	//if ( disposition < dispositionPlayer )
-	return ((ActorProto *)prototype)->immunity;
+	return ((ActorProto *)_prototype)->immunity;
 }
 
 //-----------------------------------------------------------------------
@@ -1930,7 +1928,7 @@ void Actor::attack(GameObject *target) {
 //	Stop all attacks on a specified target
 
 void Actor::stopAttack(GameObject *target) {
-	if (_moveTask && _moveTask->isAttack() && _moveTask->targetObj == target)
+	if (_moveTask && _moveTask->isAttack() && _moveTask->_targetObj == target)
 		_moveTask->finishAttack();
 }
 
@@ -2024,9 +2022,9 @@ void Actor::getColorTranslation(ColorTable map) {
 	//  If actor has color table loaded, then calculate the
 	//  translation table.
 	if (_appearance
-	        &&  _appearance->schemeList) {
+	        &&  _appearance->_schemeList) {
 		buildColorTable(map,
-		                _appearance->schemeList->_schemes[_colorScheme]->bank,
+		                _appearance->_schemeList->_schemes[_colorScheme]->bank,
 		                11);
 	} else memcpy(map, identityColors, 256);
 }
@@ -2511,7 +2509,7 @@ void Actor::updateState() {
 	        &&  isDead()
 	        &&  isInterruptable()
 	        && (_moveTask == nullptr
-	            ||  _moveTask->motionType != MotionTask::motionTypeDie)) {
+	            ||  _moveTask->_motionType != MotionTask::motionTypeDie)) {
 		int16       deadState = isActionAvailable(actionDead)
 		                        ?   actionDead
 		                        :   isActionAvailable(actionDie)
@@ -2738,7 +2736,7 @@ void Actor::handleOffensiveAct(Actor *attacker) {
 //	damage.
 
 void Actor::handleDamageTaken(uint8 damage) {
-	uint8       combatBehavior = ((ActorProto *)prototype)->combatBehavior;
+	uint8       combatBehavior = ((ActorProto *)_prototype)->combatBehavior;
 
 	if (combatBehavior == behaviorHungry) return;
 
@@ -3047,7 +3045,7 @@ void Actor::removeFollower(Actor *bandMember) {
 
 		for (i = 0; i < _followers->size(); i++) {
 			Actor       *follower = (*_followers)[i];
-			ActorProto  *proto = (ActorProto *)follower->prototype;
+			ActorProto  *proto = (ActorProto *)follower->_prototype;
 			uint8       combatBehavior = proto->combatBehavior;
 
 			if (follower->_currentGoal == actorGoalAttackEnemy
@@ -3117,7 +3115,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 bool Actor::pathFindState() {
 	if (_moveTask == nullptr)
 		return 0;
-	if (_moveTask->pathFindTask)
+	if (_moveTask->_pathFindTask)
 		return 1;
 	return 2;
 }

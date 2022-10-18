@@ -32,7 +32,6 @@ namespace Myst3 {
 
 Effect::FaceMask::FaceMask() :
 		surface(nullptr) {
-
 	for (uint i = 0; i < 10; i++) {
 		for (uint j = 0; j < 10; j++) {
 			block[i][j] = false;
@@ -340,7 +339,6 @@ LavaEffect::LavaEffect(Myst3Engine *vm) :
 }
 
 LavaEffect::~LavaEffect() {
-
 }
 
 LavaEffect *LavaEffect::create(Myst3Engine *vm, uint32 id) {
@@ -682,7 +680,6 @@ ShieldEffect::ShieldEffect(Myst3Engine *vm):
 }
 
 ShieldEffect::~ShieldEffect() {
-
 }
 
 ShieldEffect *ShieldEffect::create(Myst3Engine *vm, uint32 id) {

@@ -1396,6 +1396,9 @@ int LoLEngine::checkForPossibleDistanceAttack(uint16 monsterBlock, int direction
 
 	int p = monsterBlock;
 
+	if (direction > 3)
+		return 5;
+
 	for (int i = 0; i < distance; i++) {
 		p = calcNewBlockPosition(p, direction);
 

@@ -16,6 +16,7 @@ MODULE_OBJS := \
 	dialogs.o \
 	file.o \
 	file_nes.o \
+	gfx_gui.o \
 	gfx_mac.o \
 	gfx_towns.o \
 	gfx.o \
@@ -32,6 +33,7 @@ MODULE_OBJS := \
 	imuse/sysex_scumm.o \
 	imuse/drivers/amiga.o \
 	imuse/drivers/fmtowns.o \
+	imuse/drivers/midi.o \
 	imuse/drivers/mac_m68k.o \
 	imuse/drivers/pcspk.o \
 	input.o \
@@ -87,6 +89,7 @@ endif
 ifdef ENABLE_SCUMM_7_8
 MODULE_OBJS += \
 	nut_renderer.o \
+	string_v7.o \
 	script_v8.o \
 	imuse_digi/dimuse_bndmgr.o \
 	imuse_digi/dimuse_codecs.o \
@@ -111,15 +114,11 @@ MODULE_OBJS += \
 	insane/insane_enemy.o \
 	insane/insane_scenes.o \
 	insane/insane_iact.o \
-	smush/channel.o \
 	smush/codec1.o \
 	smush/codec20.o \
 	smush/codec37.o \
 	smush/codec47.o \
-	smush/smush_player.o \
-	smush/saud_channel.o \
-	smush/smush_mixer.o \
-	smush/smush_font.o
+	smush/smush_player.o
 
 ifdef USE_ARM_SMUSH_ASM
 MODULE_OBJS += \

@@ -19,8 +19,10 @@
  *
  */
 
-#ifndef AGS_ENGINE_MAIN__GAMERUN_H
-#define AGS_ENGINE_MAIN__GAMERUN_H
+#ifndef AGS_ENGINE_MAIN_GAME_RUN_H
+#define AGS_ENGINE_MAIN_GAME_RUN_H
+
+#include "ags/shared/ac/keycode.h"
 
 namespace AGS3 {
 
@@ -40,21 +42,23 @@ void GameLoopUntilValueIsNegative(const short *value);
 void GameLoopUntilValueIsNegative(const int *value);
 void GameLoopUntilNotMoving(const short *move);
 void GameLoopUntilNoOverlay();
+void GameLoopUntilButAnimEnd(int guin, int objn);
 
 // Run the actual game until it ends, or aborted by player/error; loops GameTick() internally
 void RunGameUntilAborted();
 // Update everything game related
 void UpdateGameOnce(bool checkControls = false, IDriverDependantBitmap *extraBitmap = nullptr, int extraX = 0, int extraY = 0);
+// Update minimal required game state: audio, loop counter, etc
+void UpdateGameAudioOnly();
 // Gets current logical game FPS, this is normally a fixed number set in script;
 // in case of "maxed fps" mode this function returns real measured FPS.
 float get_current_fps();
 // Runs service key controls, returns false if no key was pressed or key input was claimed by the engine,
 // otherwise returns true and provides a keycode.
-struct KeyInput;
 bool run_service_key_controls(KeyInput &kgn);
 // Runs service mouse controls, returns false if mouse input was claimed by the engine,
 // otherwise returns true and provides mouse button code.
-bool run_service_mb_controls(int &mbut, int &mwheelz);
+bool run_service_mb_controls(eAGSMouseButton &mbut, int &mwheelz);
 
 } // namespace AGS3
 

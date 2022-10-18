@@ -28,15 +28,18 @@
 // configure rules, or it should be removed from the aforementioned
 // Makefile.
 
+#include <malloc.h>
+#include <time.h>
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <malloc.h>
-#include <math.h>
-#include <time.h>
-#include <ctype.h>
+#include <stddef.h>
 #include <assert.h>
+#include <ctype.h>
+#include <limits.h>
+#include <math.h>
 #include <new>
 
 #include <pspkernel.h>

@@ -22,6 +22,8 @@
 #ifndef CHEWY_MOVCLASS_H
 #define CHEWY_MOVCLASS_H
 
+#include "common/scummsys.h"
+
 namespace Chewy {
 
 #define MAX_KNOTEN_PKT 15
@@ -71,10 +73,6 @@ struct GotoPkt {
 	int16 Sy = 0;
 	int16 Dx = 0;
 	int16 Dy = 0;
-	byte *Mem = nullptr;
-	int16 Breite = 0;
-	int16 Hoehe = 0;
-	int16 Ebenen = 0;
 	int16 AkMovEbene = 0;
 	int16 Vorschub = 0;
 };

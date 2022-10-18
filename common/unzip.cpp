@@ -71,13 +71,7 @@
 #include "common/scummsys.h"
 
 #ifdef USE_ZLIB
-
-#ifdef __SYMBIAN32__
-#include <zlib\zlib.h>
-#else
 #include <zlib.h>
-#endif
-
 #else  // !USE_ZLIB
 
 // Even when zlib is not linked in, we can still open ZIP archives and read
@@ -534,7 +528,7 @@ unzFile unzOpen(Common::SeekableReadStream *stream) {
 
 	uLong number_disk;          /* number of the current dist, used for
 								   spaning ZIP, unsupported, always 0*/
-	uLong number_disk_with_CD;  /* number the the disk with central dir, used
+	uLong number_disk_with_CD;  /* number the disk with central dir, used
 								   for spaning ZIP, unsupported, always 0*/
 	uLong number_entry_CD;      /* total number of entries in
 	                               the central dir

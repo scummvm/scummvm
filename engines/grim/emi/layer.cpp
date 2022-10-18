@@ -22,7 +22,6 @@
 #include "common/str.h"
 
 #include "engines/grim/emi/layer.h"
-
 #include "engines/grim/bitmap.h"
 
 namespace Grim {
@@ -79,4 +78,5 @@ void Layer::restoreState(SaveGame *state) {
 	_frame = state->readLESint32();
 	_sortOrder = state->readLESint32();
 }
+
 }

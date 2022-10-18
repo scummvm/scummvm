@@ -24,6 +24,7 @@
 #include "common/util.h"
 #include "common/rect.h"
 #include "common/textconsole.h"
+#include "graphics/palette.h"
 #include "graphics/primitives.h"
 #include "graphics/surface.h"
 #include "graphics/conversion.h"
@@ -135,6 +136,35 @@ const Surface Surface::getSubArea(const Common::Rect &area) const {
 	return subSurface;
 }
 
+bool Surface::clip(Common::Rect &srcBounds, Common::Rect &destBounds) const {
+	if (destBounds.left >= this->w || destBounds.top >= this->h ||
+		destBounds.right <= 0 || destBounds.bottom <= 0)
+		return false;
+
+	// Clip the bounds if necessary to fit on-screen
+	if (destBounds.right > this->w) {
+		srcBounds.right -= destBounds.right - this->w;
+		destBounds.right = this->w;
+	}
+
+	if (destBounds.bottom > this->h) {
+		srcBounds.bottom -= destBounds.bottom - this->h;
+		destBounds.bottom = this->h;
+	}
+
+	if (destBounds.top < 0) {
+		srcBounds.top += -destBounds.top;
+		destBounds.top = 0;
+	}
+
+	if (destBounds.left < 0) {
+		srcBounds.left += -destBounds.left;
+		destBounds.left = 0;
+	}
+
+	return true;
+}
+
 void Surface::copyRectToSurface(const void *buffer, int srcPitch, int destX, int destY, int width, int height) {
 	assert(buffer);
 
@@ -157,6 +187,26 @@ void Surface::copyRectToSurface(const Graphics::Surface &srcSurface, int destX, 
 	assert(srcSurface.format == format);
 
 	copyRectToSurface(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height());
+}
+
+void Surface::copyRectToSurfaceWithKey(const void *buffer, int srcPitch, int destX, int destY, int width, int height, uint32 key) {
+	assert(buffer);
+
+	assert(destX >= 0 && destX < w);
+	assert(destY >= 0 && destY < h);
+	assert(height > 0 && destY + height <= h);
+	assert(width > 0 && destX + width <= w);
+
+	// Copy buffer data to internal buffer
+	const byte *src = (const byte *)buffer;
+	byte *dst = (byte *)getBasePtr(destX, destY);
+	Graphics::keyBlit(dst, src, pitch, srcPitch, width, height, format.bytesPerPixel, key);
+}
+
+void Surface::copyRectToSurfaceWithKey(const Graphics::Surface &srcSurface, int destX, int destY, const Common::Rect subRect, uint32 key) {
+	assert(srcSurface.format == format);
+
+	copyRectToSurfaceWithKey(srcSurface.getBasePtr(subRect.left, subRect.top), srcSurface.pitch, destX, destY, subRect.width(), subRect.height(), key);
 }
 
 void Surface::hLine(int x, int y, int x2, uint32 color) {
@@ -408,10 +458,10 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	}
 
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+		error("Surface::convertToInPlace(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
 	if (dstFormat.bytesPerPixel != 2 && dstFormat.bytesPerPixel != 4)
-		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp");
+		error("Surface::convertToInPlace(): Can only convert to 2Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	// In case the surface data needs more space allocate it.
 	if (dstFormat.bytesPerPixel > format.bytesPerPixel) {
@@ -467,28 +517,41 @@ void Surface::convertToInPlace(const PixelFormat &dstFormat, const byte *palette
 	pitch = w * dstFormat.bytesPerPixel;
 }
 
-Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *palette) const {
+Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *srcPalette, int srcPaletteCount, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const {
 	assert(pixels);
 
 	Graphics::Surface *surface = new Graphics::Surface();
 
 	// If the target format is the same, just copy
 	if (format == dstFormat) {
-		surface->copyFrom(*this);
-		return surface;
+		if (dstFormat.bytesPerPixel == 1) { // Checking if dithering could be skipped
+			if (!srcPalette // No palette is specified
+					|| !dstPalette // No dst palette
+					|| srcPaletteCount != dstPaletteCount // palettes have different size
+					|| !memcmp(srcPalette, dstPalette, srcPaletteCount * 3)) { // palettes are different
+				surface->copyFrom(*this);
+				return surface;
+			}
+		}
 	}
 
 	if (format.bytesPerPixel == 0 || format.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp");
+		error("Surface::convertTo(): Can only convert from 1Bpp, 2Bpp, 3Bpp, and 4Bpp but have %dbpp", format.bytesPerPixel);
 
-	if (dstFormat.bytesPerPixel < 2 || dstFormat.bytesPerPixel > 4)
-		error("Surface::convertTo(): Can only convert to 2Bpp, 3Bpp and 4Bpp");
+	if (dstFormat.bytesPerPixel == 0 || dstFormat.bytesPerPixel > 4)
+		error("Surface::convertTo(): Can only convert to 1Bpp, 2Bpp, 3Bpp and 4Bpp but requested %dbpp", dstFormat.bytesPerPixel);
 
 	surface->create(w, h, dstFormat);
 
+	// We are here when we are converting from a higher bpp or palettes are different
+	if (dstFormat.bytesPerPixel == 1) {
+		ditherFloyd(srcPalette, srcPaletteCount, surface, dstPalette, dstPaletteCount, method);
+		return surface;
+	}
+
 	if (format.bytesPerPixel == 1) {
 		// Converting from paletted to high color
-		assert(palette);
+		assert(srcPalette);
 
 		for (int y = 0; y < h; y++) {
 			const byte *srcRow = (const byte *)getBasePtr(0, y);
@@ -496,9 +559,9 @@ Graphics::Surface *Surface::convertTo(const PixelFormat &dstFormat, const byte *
 
 			for (int x = 0; x < w; x++) {
 				byte index = *srcRow++;
-				byte r = palette[index * 3];
-				byte g = palette[index * 3 + 1];
-				byte b = palette[index * 3 + 2];
+				byte r = srcPalette[index * 3];
+				byte g = srcPalette[index * 3 + 1];
+				byte b = srcPalette[index * 3 + 2];
 
 				uint32 color = dstFormat.RGBToColor(r, g, b);
 
@@ -638,6 +701,227 @@ void Surface::debugPrint(int debuglevel, int width, int height, int x, int y, in
 		debugN(debuglevel, "-");
 	debug(debuglevel, "+");
 }
+
+/*******************************************
+ *
+ * Dithering
+ *
+ *******************************************/
+
+static void updatePixel(byte *surf, int x, int y, int w, int h, int qr, int qg, int qb, int qq, int qdiv) {
+	if (x >= w || y >= h)
+		return;
+
+	byte *ptr = &surf[x * 3 + y * w * 3];
+
+	ptr[0] = CLIP(ptr[0] + qr * qq / qdiv, 0, 255);
+	ptr[1] = CLIP(ptr[1] + qg * qq / qdiv, 0, 255);
+	ptr[2] = CLIP(ptr[2] + qb * qq / qdiv, 0, 255);
+}
+
+void Surface::ditherFloyd(const byte *srcPalette, int srcPaletteCount, Surface *dstSurf, const byte *dstPalette, int dstPaletteCount, DitherMethod method) const {
+	assert(dstPalette);
+
+	PaletteLookup _paletteLookup;
+
+	_paletteLookup.setPalette(dstPalette, dstPaletteCount);
+
+	byte *tmpSurf = (byte *)malloc(w * h * 3);
+
+	int bpp = format.bytesPerPixel;
+
+	for (int y = 0; y < h; y++) {
+		const byte *src = (const byte *)getBasePtr(0, y);
+		byte *dst = &tmpSurf[y * w * 3];
+
+		byte r, g, b;
+
+		for (int x = 0; x < w; x++) {
+			uint32 color;
+
+			switch (bpp) {
+			case 1:
+				color = *src * 3;
+				src += 1;
+				r = srcPalette[color + 0]; g = srcPalette[color + 1]; b = srcPalette[color + 2];
+				break;
+			case 2:
+				color = *((const uint16 *)src);
+				src += 2;
+				format.colorToRGB(color, r, g, b);
+				break;
+			case 4:
+				color = *((const uint32 *)src);
+				src += 4;
+				format.colorToRGB(color, r, g, b);
+				break;
+			default:
+				error("Surface::ditherFloydImage(): Unsupported bit depth: %d", bpp);
+			}
+
+			dst[0] = r; dst[1] = g; dst[2] = b;
+			dst += 3;
+		}
+	}
+
+	struct DitherParams {
+		int dy, dx, qq;
+	};
+
+	const DitherParams paramsNaive[] = {
+		{ 0, 0, 0 }
+	};
+
+	const DitherParams paramsFloyd[] = {
+		{ 0, +1, 7 },
+		{ 1, -1, 3 },
+		{ 1,  0, 5 },
+		{ 1, +1, 1 },
+		{ 0,  0, 0 }
+	};
+
+	const DitherParams paramsAtkinson[] = {
+		{ 0, +1, 1 },
+		{ 0, +2, 1 },
+		{ 1, -1, 1 },
+		{ 1,  0, 1 },
+		{ 1, +1, 1 },
+		{ 2,  0, 1 },
+		{ 0,  0, 0 }
+	};
+
+	const DitherParams paramsBurkes[] = {
+		{ 0, +1, 8 },
+		{ 0, +2, 4 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 8 },
+		{ 1, +1, 4 },
+		{ 1, +2, 2 },
+		{ 0,  0, 0 }
+	};
+
+	const DitherParams paramsFalseFloyd[] = {
+		{ 0, +1, 3 },
+		{ 1,  0, 3 },
+		{ 1, +1, 2 },
+		{ 0,  0, 0 }
+	};
+
+    const DitherParams paramsSierra[] = {
+		{ 0,  1, 5 },
+		{ 0,  2, 3 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 5 },
+		{ 1,  1, 4 },
+		{ 1,  2, 2 },
+		{ 2, -1, 2 },
+		{ 2,  0, 3 },
+		{ 2,  1, 2 },
+		{ 0,  0, 0 }
+    };
+
+    const DitherParams paramsSierraTwoRow[] = {
+		{ 0,  1, 4 },
+		{ 0,  2, 3 },
+		{ 1, -2, 1 },
+		{ 1, -1, 2 },
+		{ 1,  0, 3 },
+		{ 1,  1, 2 },
+		{ 1,  2, 1 },
+		{ 0,  0, 0 }
+    };
+
+    const DitherParams paramsSierraLite[] = {
+		{ 0,  1, 2 },
+		{ 1, -1, 1 },
+		{ 1,  0, 1 },
+		{ 0,  0, 0 }
+    };
+
+    const DitherParams paramsStucki[] = {
+		{ 0,  1, 8 },
+		{ 0,  2, 4 },
+		{ 1, -2, 2 },
+		{ 1, -1, 4 },
+		{ 1,  0, 8 },
+		{ 1,  1, 4 },
+		{ 1,  2, 2 },
+		{ 2, -2, 1 },
+		{ 2, -1, 2 },
+		{ 2,  0, 4 },
+		{ 2,  1, 2 },
+		{ 2,  2, 1 },
+		{ 0,  0, 0 }
+    };
+
+    const DitherParams paramsJarvis[] = {
+		{ 0,  1, 7 },
+		{ 0,  2, 5 },
+		{ 1, -2, 3 },
+		{ 1, -1, 5 },
+		{ 1,  0, 7 },
+		{ 1,  1, 5 },
+		{ 1,  2, 3 },
+		{ 2, -2, 1 },
+		{ 2, -1, 3 },
+		{ 2,  0, 5 },
+		{ 2,  1, 3 },
+		{ 2,  2, 1 },
+		{ 0,  0, 0 }
+    };
+
+	struct DitherAlgos {
+		const char *name;
+		const DitherParams *params;
+		int qdiv;
+	} const algos[] = {
+		{ "Naive",                paramsNaive,         1 },
+		{ "Floyd-Steinberg",      paramsFloyd,        16 },
+		{ "Atkinson",             paramsAtkinson,      8 },
+		{ "Burkes",               paramsBurkes,       32 },
+		{ "False Floyd-Steinberg",paramsFalseFloyd,    8 },
+		{ "Sierra",               paramsSierra,       32 },
+		{ "Sierra 2",             paramsSierraTwoRow, 16 },
+		{ "Sierra Lite",          paramsSierraLite,    4 },
+		{ "Stucki",               paramsStucki,       42 },
+		{ "Jarvis-Judice-Ninke ", paramsJarvis,       48 },
+		{ nullptr, nullptr, 0 }
+	};
+
+	for (int y = 0; y < h; y++) {
+		const byte *src = &tmpSurf[y * w * 3];
+		byte *dst = (byte *)dstSurf->getBasePtr(0, y);
+
+		for (int x = 0; x < w; x++) {
+			byte r = src[0], g = src[1], b = src[2];
+			byte col = _paletteLookup.findBestColor(r, g, b);
+
+			*dst = col;
+
+			int qr = r - dstPalette[col * 3 + 0];
+			int qg = g - dstPalette[col * 3 + 1];
+			int qb = b - dstPalette[col * 3 + 2];
+
+			const DitherParams *params = algos[method].params;
+
+			for (int i = 0; params[i].dx != 0 || params[i].dy != 0; i++)
+				updatePixel(tmpSurf, x + params[i].dx, y + params[i].dy, w, h, qr, qg, qb, params[i].qq, algos[method].qdiv);
+
+			src += 3;
+			dst++;
+		}
+	}
+
+	::free(tmpSurf);
+}
+
+/*******************************************
+ *
+ * Flood Fill
+ *
+ *******************************************/
 
 FloodFill::FloodFill(Graphics::Surface *surface, uint32 oldColor, uint32 fillColor, bool maskMode) {
 	_surface = surface;

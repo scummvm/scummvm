@@ -846,7 +846,6 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 		break;
 	}
 
-#ifdef ENABLE_SCI32
 	// Reserve a high range of kernel call IDs (0xe0 to 0xef) that can be used
 	// by ScummVM to improve integration and fix bugs in games that require
 	// more help than can be provided by a simple script patch (e.g. spinloops
@@ -856,17 +855,24 @@ void Kernel::loadKernelNames(GameFeatures *features) {
 	// that might try to add their own kernel calls in the same manner. It also
 	// helps to separate ScummVM interpreter's kernel calls from SSCI's standard
 	// kernel calls.
+	uint maxKernelId = kScummVMSleepId;
+#ifdef ENABLE_SCI32
 	if (getSciVersion() >= SCI_VERSION_2) {
-		const uint kernelListSize = _kernelNames.size();
-		_kernelNames.resize(0xe2);
-		for (uint id = kernelListSize; id < 0xe0; ++id) {
-			_kernelNames[id] = "Dummy";
-		}
+		maxKernelId = kScummVMSaveLoadId;
+	}
+#endif
+	const uint kernelListSize = _kernelNames.size();
+	_kernelNames.resize(maxKernelId + 1);
+	for (uint id = kernelListSize; id < kScummVMSleepId; ++id) {
+		_kernelNames[id] = "Dummy";
+	}
 
-		// Used by SCI32 script patches to remove CPU spinning on kGetTime
-		_kernelNames[kScummVMSleepId] = "ScummVMSleep";
+	// Used by script patches to remove CPU spinning on kGetTime and add delays
+	_kernelNames[kScummVMSleepId] = "ScummVMSleep";
 
-		// Used by GuestAdditions to support integrated save/load dialogue
+#ifdef ENABLE_SCI32
+	if (getSciVersion() >= SCI_VERSION_2) {
+		// Used by GuestAdditions to support integrated save/load dialog
 		_kernelNames[kScummVMSaveLoadId] = "ScummVMSaveLoad";
 	}
 #endif

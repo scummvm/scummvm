@@ -473,6 +473,10 @@ RasterizationDrawCall::RasterizationState RasterizationDrawCall::captureState() 
 	state.wrapT = c->texture_wrap_t;
 	state.lightingEnabled = c->lighting_enabled;
 	state.textureVersion = c->current_texture->versionNumber;
+	state.fogEnabled = c->fog_enabled;
+	state.fogColorR = c->fog_color.X;
+	state.fogColorG = c->fog_color.Y;
+	state.fogColorB = c->fog_color.Z;
 
 	memcpy(state.viewportScaling, c->viewport.scale._v, sizeof(c->viewport.scale._v));
 	memcpy(state.viewportTranslation, c->viewport.trans._v, sizeof(c->viewport.trans._v));
@@ -496,6 +500,8 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->fb->setOffsetStates(state.offsetStates);
 	c->fb->setOffsetFactor(state.offsetFactor);
 	c->fb->setOffsetUnits(state.offsetUnits);
+	c->fb->setFogEnabled(state.fogEnabled);
+	c->fb->setFogColor(state.fogColorR, state.fogColorG, state.fogColorB);
 
 	c->blending_enabled = state.enableBlending;
 	c->source_blending_factor = state.sfactor;
@@ -533,6 +539,8 @@ void RasterizationDrawCall::applyState(const RasterizationDrawCall::Rasterizatio
 	c->current_texture = state.texture;
 	c->texture_wrap_s = state.wrapS;
 	c->texture_wrap_t = state.wrapT;
+	c->fog_enabled = state.fogEnabled;
+	c->fog_color = Vector4(state.fogColorR, state.fogColorG, state.fogColorB, 1.0f);
 
 	memcpy(c->viewport.scale._v, state.viewportScaling, sizeof(c->viewport.scale._v));
 	memcpy(c->viewport.trans._v, state.viewportTranslation, sizeof(c->viewport.trans._v));
@@ -752,6 +760,10 @@ bool RasterizationDrawCall::RasterizationState::operator==(const RasterizationSt
 		texture2DEnabled == other.texture2DEnabled &&
 		texture == other.texture &&
 		textureVersion == texture->versionNumber &&
+		fogEnabled == other.fogEnabled &&
+		fogColorR == other.fogColorR &&
+		fogColorG == other.fogColorG &&
+		fogColorB == other.fogColorB &&
 		viewportTranslation[0] == other.viewportTranslation[0] &&
 		viewportTranslation[1] == other.viewportTranslation[1] &&
 		viewportTranslation[2] == other.viewportTranslation[2] &&

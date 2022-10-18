@@ -31,7 +31,6 @@
 #include "engines/grim/resource.h"
 #include "engines/grim/inputdialog.h"
 #include "engines/grim/textobject.h"
-
 #include "engines/grim/lua/lauxlib.h"
 
 namespace Grim {
@@ -281,7 +280,7 @@ void Lua_V1::SayLine() {
 
 	if ((lua_isuserdata(paramObj) && lua_tag(paramObj) == MKTAG('A','C','T','R'))
 			|| lua_isstring(paramObj) || lua_istable(paramObj)) {
-		Actor *actor = nullptr;//some_Actor, maybe some current actor
+		Actor *actor = nullptr;// some Actor, maybe some current actor
 		if (lua_isuserdata(paramObj) && lua_tag(paramObj) == MKTAG('A','C','T','R')) {
 			actor = getactor(paramObj);
 			paramObj = lua_getparam(paramId++);
@@ -302,7 +301,7 @@ void Lua_V1::SayLine() {
 				paramObj = lua_getparam(paramId++);
 			}
 
-			actor->sayLine(msgId, background, x, y); //background, vol, pan, x, y
+			actor->sayLine(msgId, background, x, y); // background, vol, pan, x, y
 		}
 	}
 }
@@ -336,7 +335,7 @@ void Lua_V1::PrintLine() {
 			msg = parseMsgText(tmpstr, msgId);
 		}
 		if (!msg.empty()) {
-//			actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
+			//actor->sayLine(msg.c_str(), msgId); //background, vol, pan, x, y
 		}
 	}
 }

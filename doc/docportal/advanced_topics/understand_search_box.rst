@@ -108,7 +108,7 @@ To abbreviate the 6 most common configuration keys, just type any prefix instead
 Inverting the search pattern
 ___________________________________________
 
-To invert the search result, prefix the search pattern with the`!` character. For example: 
+To invert the search result, prefix the search pattern with the`!` character. For example:
 
 - ``!GOG`` - games that don't contain "GOG" substring in description
 - ``!lang=ru`` - games not in Russian languange

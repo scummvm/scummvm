@@ -40,7 +40,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 	},
 	{
@@ -54,7 +54,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_TESTING | ADGF_DROPPLATFORM | ADGF_MACRESFORK,
+		ADGF_DROPPLATFORM | ADGF_MACRESFORK,
 		GUIO1(GUIO_NOMIDI)
 
 	},
@@ -69,7 +69,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 
 	},
@@ -83,7 +83,7 @@ static const ADGameDescription gameDescriptions[] = {
 		},
 		Common::RU_RUS,
 		Common::kPlatformWindows,
-		ADGF_TESTING | ADGF_DROPPLATFORM,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 
 	},

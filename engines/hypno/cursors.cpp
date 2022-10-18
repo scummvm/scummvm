@@ -28,21 +28,21 @@ namespace Hypno {
 
 static const byte MOUSECURSOR_SCI[] = {
 	1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0,
-	1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1,
-	1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0,
-	1, 2, 1, 0, 1, 2, 2, 1, 0, 0, 0,
-	1, 1, 0, 0, 1, 2, 2, 1, 0, 0, 0,
-	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-	0, 0, 0, 0, 0, 1, 2, 2, 1, 0, 0,
-	0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 0};
+	1, 3, 1, 0, 0, 0, 0, 0, 0, 0, 0,
+	1, 3, 3, 1, 0, 0, 0, 0, 0, 0, 0,
+	1, 3, 3, 3, 1, 0, 0, 0, 0, 0, 0,
+	1, 3, 3, 3, 3, 1, 0, 0, 0, 0, 0,
+	1, 3, 3, 3, 3, 3, 1, 0, 0, 0, 0,
+	1, 3, 3, 3, 3, 3, 3, 1, 0, 0, 0,
+	1, 3, 3, 3, 3, 3, 3, 3, 1, 0, 0,
+	1, 3, 3, 3, 3, 3, 3, 3, 3, 1, 0,
+	1, 3, 3, 3, 3, 3, 3, 3, 3, 3, 1,
+	1, 3, 3, 3, 3, 3, 1, 0, 0, 0, 0,
+	1, 3, 1, 0, 1, 3, 3, 1, 0, 0, 0,
+	1, 1, 0, 0, 1, 3, 3, 1, 0, 0, 0,
+	0, 0, 0, 0, 0, 1, 3, 3, 1, 0, 0,
+	0, 0, 0, 0, 0, 1, 3, 3, 1, 0, 0,
+	0, 0, 0, 0, 0, 0, 1, 3, 3, 1, 0};
 
 static const byte circleCursor[] = {
 	0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0,
@@ -72,11 +72,33 @@ static const byte targetCursor[] = {
 	0, 0, 1, 0, 0, 2, 2, 2, 2, 2, 0, 0, 1, 0, 0,
 	0, 0, 0, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0};
 
+static const byte crosshairCursor[] = {
+	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
+	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+	2, 2, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 2, 2,
+	0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+	0, 0, 0, 2, 2, 0, 0, 2, 0, 0, 2, 2, 0, 0, 0,
+	0, 0, 0, 0, 0, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0,
+	0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0};
+
 static const byte cursorPalette[] = {
-	0x00, 0x00, 0x00, // Black / Transparent
+	0x00, 0x00, 0x00, // Transparent
 	0x00, 0x00, 0xff, // Blue
 	0xff, 0x00, 0x00, // Red
-	0x00, 0x00, 0x00  // Red
+	0xff, 0xff, 0xff  // White
+};
+
+static const byte sciCursorPalette[] = {
+	0x00, 0x00, 0x00, // Transparent
+	0xff, 0xff, 0xff, // Black
+	0xff, 0x00, 0x00, // Red
+	0xff, 0xff, 0xff  // White
 };
 
 struct CursorTable {
@@ -92,6 +114,7 @@ static const CursorTable cursorTable[] = {
 	{"default", MOUSECURSOR_SCI, 11, 16, 0, 0},
 	{"arcade", circleCursor, 13, 11, 7, 5},
 	{"target", targetCursor, 15, 13, 8, 6},
+	{"crosshair", crosshairCursor, 15, 13, 8, 6},
 	{nullptr, nullptr, 0, 0, 0, 0}};
 
 void HypnoEngine::disableCursor() {
@@ -99,9 +122,12 @@ void HypnoEngine::disableCursor() {
 }
 
 void HypnoEngine::defaultCursor() {
-	if (!_defaultCursor.empty())
-		changeCursor(_defaultCursor, 0);
-	else
+	if (!_defaultCursor.empty()) {
+		if (_defaultCursorIdx == uint32(-1))
+			changeCursor(_defaultCursor);
+		else
+			changeCursor(_defaultCursor, _defaultCursorIdx);
+	} else
 		changeCursor("default");
 }
 
@@ -114,7 +140,10 @@ void HypnoEngine::changeCursor(const Common::String &cursor) {
 	}
 	assert(entry->name);
 
-	CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
+	if (cursor == "default")
+		CursorMan.replaceCursorPalette(sciCursorPalette, 0, 3);
+	else
+		CursorMan.replaceCursorPalette(cursorPalette, 0, 3);
 	CursorMan.replaceCursor(entry->buf, entry->w, entry->h, entry->hotspotX, entry->hotspotY, 0);
 	CursorMan.showMouse(true);
 }
@@ -124,12 +153,21 @@ void HypnoEngine::changeCursor(const Common::String &cursor, uint32 n, bool cent
 	Graphics::Surface *entry = decodeFrame(cursor, n, &palette);
 	uint32 hotspotX = centerCursor ? entry->w / 2 : 0;
 	uint32 hotspotY = centerCursor ? entry->h / 2 : 0;
-	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, hotspotX, hotspotY, 0, &_pixelFormat);
+	CursorMan.replaceCursor(entry->getPixels(), entry->w, entry->h, hotspotX, hotspotY, 0, false, &_pixelFormat);
 	CursorMan.replaceCursorPalette(palette, 0, 256);
 	entry->free();
 	delete entry;
 	CursorMan.showMouse(true);
 }
+
+void HypnoEngine::changeCursor(const Graphics::Surface &entry, byte *palette, bool centerCursor) {
+	uint32 hotspotX = centerCursor ? entry.w / 2 : 0;
+	uint32 hotspotY = centerCursor ? entry.h / 2 : 0;
+	CursorMan.replaceCursor(entry.getPixels(), entry.w, entry.h, hotspotX, hotspotY, 0, false, &_pixelFormat);
+	CursorMan.replaceCursorPalette(palette, 0, 256);
+	CursorMan.showMouse(true);
+}
+
 
 } // End of namespace Hypno
 

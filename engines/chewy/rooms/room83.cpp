@@ -27,8 +27,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room83::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 }
 
 } // namespace Rooms

@@ -121,7 +121,7 @@ public:
 
 	/**
 	 * Creates a thumbnail with the dimensions of 200x125. This will not include the top and bottom of the screen..
-	 * the interface boards the the image as a 16th of it's original size.
+	 * the interface boards the image as a 16th of it's original size.
 	 * Notes: This method should only be called after a call to EndFrame(), and before the next call to StartFrame().
 	 * The frame buffer must have a resolution of 800x600.
 	 * @param Filename  The filename for the screenshot
@@ -231,8 +231,8 @@ public:
 	// -------------------
 	bool persist(OutputPersistenceBlock &writer) override;
 	bool unpersist(InputPersistenceBlock &reader) override;
-
-	static void ARGBColorToLuaColor(lua_State *L, uint color);
+    bool isRTL();
+    static void ARGBColorToLuaColor(lua_State *L, uint color);
 	static uint luaColorToARGBColor(lua_State *L, int stackIndex);
 
 protected:
@@ -266,6 +266,8 @@ private:
 
 	Common::ScopedPtr<RenderObjectManager> _renderObjectManagerPtr;
 
+    bool _isRTL;
+
 	struct DebugLine {
 		DebugLine(const Vertex &start, const Vertex &end, uint color) :
 			_start(start),
@@ -277,6 +279,7 @@ private:
 		Vertex _end;
 		uint _color;
 	};
+
 };
 
 } // End of namespace Sword25

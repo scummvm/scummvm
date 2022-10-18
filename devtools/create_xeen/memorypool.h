@@ -147,7 +147,7 @@ public:
  * This *should* work with all C++ implementations, but may not.
  *
  * For details on using placement new for custom allocators, see e.g.
- * <http://www.parashift.com/c++-faq-lite/dtors.html#faq-11.14>
+ * <https://isocpp.org/wiki/faq/dtors#memory-pools>
  */
 inline void *operator new(size_t nbytes, Common::MemoryPool &pool) {
 	assert(nbytes <= pool.getChunkSize());

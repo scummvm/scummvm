@@ -14,7 +14,51 @@ Usage
 
     scummvm [option] [game]
 
-To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any of the options documented below, and/or the path to the game you wish to start. If a game has already been added to the games list in the Launcher, you can pass the game id instead of the path to the game.
+By default executing `scummvm` on the command line starts the launcher. But if a game is specified, or if ``--auto-detect`` is used, this starts the game directly. And otherwise if a command option such as ``--list-games`` or ``--detect`` is specified, the result will be printed and ScummVM will quit immediately without starting a game or the launcher.
+
+
+Starting a game
+===============
+
+To start a game on the command line, three options are possible.
+
+For games that have previously been added to ScummVM:
+
+.. code::
+
+    scummvm <target>
+
+For any supported games (it does not need to be added to ScummVM beforehand):
+
+.. code::
+
+    scummvm -p <path to game files> <game id>
+
+or
+
+.. code::
+
+    scummvm -p <path to game files> --auto-detect
+
+In all cases additional options can be specified on the command line, for example to specify the graphics mode or a save game to load.
+
+The `target` is a name assigned to a game added to ScummVM. It can be seen and changed in the :ref:`Game Options<id>`. If the same game is added twice to ScummVM, it will be given two different `target` names, and they can be configured differently. The list of configured targets can be obtained with:
+
+.. code::
+
+    scummvm --list-targets
+
+The `game id` is a unique identifier for any game supported by ScummVM. You can get a list of all supported games for your ScummVM release by using:
+
+.. code::
+
+    scummvm --list-games
+
+When using a `target` name on the command line to start a game, it will be using the settings configured for this target, unless overwritten by settings specified on the command line. There is also no need to specify the path for the game files since this is already part of the target configuration.
+
+On the other hand using the `game id` or ``--auto-detect`` will start the games with default settings for any settings not specified on the command line, and the path to the game file needs to be specified.
+
+The full `game id` contains both an engine name and a game name. For example the game id for Full Throttle is `scumm:ft` (where `scumm` is the engine name). In many cases where there is no ambiguity, the engine name can be omitted when specifying a `game id` on the command line. For example both `scumm:ft` and `ft` can be used. However if there is an ambiguity with the game name, the full `game id` needs to be used. For example for Indiana Jones and the Fate of Atlantis only `scumm:atlantis` can be used as there would otherwise be an ambiguity with `cryomni3d:atlantis`.
 
 
 .. tabbed:: Windows
@@ -26,11 +70,11 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code-block::
 
-            C:\Program Files\ScummVM\scummvm.exe -f monkey
+            C:\Program Files\ScummVM\scummvm.exe -f monkey1
 
 
 
@@ -38,7 +82,7 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         .. code-block::
 
-            C:\Program Files\ScummVM\scummvm.exe -f -n -pD:``resource``ft
+            C:\Program Files\ScummVM\scummvm.exe -f -n -p "D:\resource" scumm:ft
 
 .. tabbed:: macOS
 
@@ -53,18 +97,18 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code::
 
-            /Applications/ScummVM.app/Contents/MacOS/scummvm -f monkey
+            /Applications/ScummVM.app/Contents/MacOS/scummvm -f monkey1
 
 
         To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``):
 
         .. code::
 
-            /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p/cdrom/resource/ft
+            /Applications/ScummVM.app/Contents/MacOS/scummvm -f -n -p "/Volumes/Full Throttle/resource" scumm:ft
 
 .. tabbed:: Linux
 
@@ -75,18 +119,18 @@ To launch ScummVM, enter the path to ScummVM. Optionally, follow this with any o
 
         ^^^^^^
 
-        To run Monkey Island, fullscreen (``-f``):
+        To run Monkey Island, fullscreen (``-f``), if the game has already been added to ScummVM under the `target` name `monkey1`:
 
         .. code::
 
-            /usr/games/scummvm -f monkey
+            /usr/games/scummvm -f monkey1
 
 
         To run Full Throttle, fullscreen (``-f``) and with subtitles enabled (``-n``), specifying the path to the game on a CD (``-p``):
 
         .. code::
 
-            /usr/games/scummvm -f -n -p/cdrom/resource/ft
+            /usr/games/scummvm -f -n -p /cdrom/resource scumm:ft
 
         .. tip::
 
@@ -128,7 +172,9 @@ Short options are listed where they are available.
         ``--engine-speed=NUM``,,"Sets frames per second limit (0 - 100) for Grim Fandango or Escape from Monkey Island (default: 60)."
         ``--dump-scripts``,``-u``,"Enables script dumping if a directory called 'dumps' exists in the current directory"
         ``--enable-gs``,,":ref:`Enables Roland GS mode for MIDI playback <gs>`"
+        ``--engine=ID``,,"In combination with ``--list-games`` or ``--list-all-games`` only lists games for this engine"
         ``--extrapath=PATH``,,":ref:`Extra path to additional game data <extra>`"
+        ``--iconspath=PATH``,,":ref:`Path to additional icons for the launcher grid view <iconspath>`"
         ``--filtering``,,":ref:`Forces filtered graphics mode <filtering>`"
         ``--fullscreen``,``-f``,":ref:`Forces full-screen mode <fullscreen>`"
         ``--game=NAME``,,"In combination with ``--add`` or ``--detect`` only adds or attempts to detect the game with id NAME."
@@ -138,6 +184,10 @@ Short options are listed where they are available.
         ``--joystick=NUM``,,"Enables joystick input (default: 0 = first joystick)"
         ``--language``,``-q``,":ref:`Selects language <lang>` (en, de, fr, it, pt, es, jp, zh, kr, se, gb, hb, ru, cz)"
         ``--list-audio-devices``,,"Lists all available audio devices"
+        ``--list-engines``,,"Display list of supported engines and exit"
+        ``--list-all-engines``,,"Display list of all detection engines and exit"
+        ``--list-debugflags=engine``,,"Display list of engine specified debugflags. If ``engine=global`` or engine is not specified, then it will list global debugflags."
+        ``--list-all-debugflags``,,"Display list of all engine specified debugflags"
         ``--list-saves --game=TARGET``,,"Displays a list of saved games for the game (TARGET) specified"
         ``--list-targets``,``-t``,"Displays list of configured targets and exits"
         ``--list-themes``,,"Displays list of all usable GUI themes"
@@ -166,7 +216,8 @@ Short options are listed where they are available.
         ``--tempo=NUM``,,"Sets music tempo (in percent, 50-200) for SCUMM games (default: 100)"
         ``--themepath=PATH``,,":ref:`Specifies path to where GUI themes are stored <themepath>`"
         ``--version``,``-v``,"Displays ScummVM version information and exits"
-
-
-
-
+        ``--md5``,,"Shows MD5 hash of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last ``NUM`` bytes of the file given by ``PATH``. If ``--md5-engine=ENGINE_ID`` option is passed then it auto-calculates the required bytes and its hash, overriding ``--md5-length``"
+        ``--md5mac``,,"Shows MD5 hash for both the resource fork and data fork of the file given by ``--md5-path=PATH``. If ``--md5-length=NUM`` is passed then it shows the MD5 hash of the first or last ``NUM`` bytes of each fork."
+        ``--md5-path=PATH``,,"Used with ``--md5`` or ```--md5mac`` to specify path of file to calculate MD5 hash of (default: ./scummvm)"
+        ``--md5-length=NUM``,,"Used with ``--md5`` or ```--md5mac`` to specify the number of bytes to be hashed. If ``NUM`` is 0, MD5 hash of the whole file is calculated. Of ``NUM`` is negative, the MD5 hash is calculated from the tail. Is overriden if passed with ``--md5-engine`` option. (default: 0)"
+        ``--md5-engine=ENGINE_ID``,,"Used with ``--md5`` to specify the engine for which number of bytes to be hashed must be calculated. This option overrides ``--md5-length`` if used along with it. Use ``--list-engines`` to find all engineIds."

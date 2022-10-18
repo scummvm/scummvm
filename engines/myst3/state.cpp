@@ -354,7 +354,6 @@ GameState::GameState(const Common::Platform platform, Database *database):
 		VAR(1394, LanguageText, false)
 
 		VAR(1406, ShieldEffectActive, false)
-
 	} else {
 		shiftVariables(927, 1);
 		shiftVariables(1031, 2);
@@ -394,7 +393,7 @@ GameState::~GameState() {
 }
 
 void GameState::syncFloat(Common::Serializer &s, float &val,
-		Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
+	                  Common::Serializer::Version minVersion, Common::Serializer::Version maxVersion) {
 	static const float precision = 10000.0;
 
 	if (s.isLoading()) {
@@ -582,8 +581,8 @@ Common::String GameState::formatSaveTime() {
 
 	// TODO: Check the Xbox NTSC version, maybe it uses that strange MM/DD/YYYY format
 	return Common::String::format("%02d/%02d/%02d %02d:%02d",
-			_data.saveDay, _data.saveMonth, _data.saveYear,
-			_data.saveHour, _data.saveMinute);
+	                              _data.saveDay, _data.saveMonth, _data.saveYear,
+	                              _data.saveHour, _data.saveMinute);
 }
 
 Common::Array<uint16> GameState::getInventory() {
@@ -708,9 +707,9 @@ const Common::String GameState::describeCondition(int16 condition) {
 	int16 value = (unsignedCond >> 11) - 1;
 
 	return Common::String::format("c[%s %s %d]",
-			describeVar(var).c_str(),
-			(condition >= 0 && value >= 0) || (condition < 0 && value < 0) ? "==" : "!=",
-			value >= 0 ? value : 0);
+	                              describeVar(var).c_str(),
+	                              (condition >= 0 && value >= 0) || (condition < 0 && value < 0) ? "==" : "!=",
+	                              value >= 0 ? value : 0);
 }
 
 void GameState::limitCubeCamera(float minPitch, float maxPitch, float minHeading, float maxHeading) {
@@ -849,4 +848,5 @@ Common::StringArray Saves::list(Common::SaveFileManager *saveFileManager, Common
 
 	return filenames;
 }
+
 } // End of namespace Myst3

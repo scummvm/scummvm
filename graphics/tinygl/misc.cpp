@@ -78,6 +78,9 @@ void GLContext::glopEnableDisable(GLParam *p) {
 	case TGL_COLOR_MATERIAL:
 		color_material_enabled = v;
 		break;
+	case TGL_FOG:
+		fog_enabled = v;
+		break;
 	case TGL_TEXTURE_2D:
 		texture_2d_enabled = v;
 		break;

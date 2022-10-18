@@ -63,23 +63,23 @@ struct AnimTimerDataStruct {
 
 /** Actors static flags structure */
 struct StaticFlagsStruct {
-	uint32 bComputeCollisionWithObj : 1;    // 0x000001
-	uint32 bComputeCollisionWithBricks : 1; // 0x000002
-	uint32 bIsZonable : 1;                  // 0x000004
-	uint32 bUsesClipping : 1;               // 0x000008
-	uint32 bCanBePushed : 1;                // 0x000010
-	uint32 bComputeLowCollision : 1;        // 0x000020
-	uint32 bCanDrown : 1;                   // 0x000040
-	uint32 bComputeCollisionWithFloor : 1;  // 0x000080
+	uint32 bComputeCollisionWithObj : 1;    // 0x000001 CHECK_OBJ_COL
+	uint32 bComputeCollisionWithBricks : 1; // 0x000002 CHECK_BRICK_COL
+	uint32 bIsZonable : 1;                  // 0x000004 CHECK_ZONE - testing of scenaric areas
+	uint32 bUsesClipping : 1;               // 0x000008 SPRITE_CLIP - (doors) fixed clip area
+	uint32 bCanBePushed : 1;                // 0x000010 PUSHABLE
+	uint32 bComputeLowCollision : 1;        // 0x000020 COL_BASSE
+	uint32 bCanDrown : 1;                   // 0x000040 CHECK_CODE_JEU
+	uint32 bComputeCollisionWithFloor : 1;  // 0x000080 CHECK_WATER_COL
 	uint32 bUnk0100 : 1;                    // 0x000100
-	uint32 bIsHidden : 1;                   // 0x000200
-	uint32 bIsSpriteActor : 1;              // 0x000400
-	uint32 bCanFall : 1;                    // 0x000800
-	uint32 bDoesntCastShadow : 1;           // 0x001000
-	uint32 bIsBackgrounded : 1;             // 0x002000
-	uint32 bIsCarrierActor : 1;             // 0x004000
+	uint32 bIsHidden : 1;                   // 0x000200 INVISIBLE - not drawn but all computed
+	uint32 bIsSpriteActor : 1;              // 0x000400 SPRITE_3D - a sprite not a 3D object
+	uint32 bCanFall : 1;                    // 0x000800 OBJ_FALLABLE
+	uint32 bDoesntCastShadow : 1;           // 0x001000 NO_SHADOW - no auto shadow
+	uint32 bIsBackgrounded : 1;             // 0x002000 OBJ_BACKGROUND - is embedded in the decor the 1st time
+	uint32 bIsCarrierActor : 1;             // 0x004000 OBJ_CARRIER - can carry and move an obj
 	// take smaller value for bound, or if not set take average for bound
-	uint32 bUseMiniZv : 1;                  // 0x008000
+	uint32 bUseMiniZv : 1;                  // 0x008000 MINI_ZV - square on smaller dimension (if 3D object)
 	uint32 bHasInvalidPosition : 1;         // 0x010000
 	uint32 bNoElectricShock : 1;            // 0x020000
 	uint32 bHasSpriteAnim3D : 1;            // 0x040000
@@ -90,15 +90,15 @@ struct StaticFlagsStruct {
 
 /** Actors dynamic flags structure */
 struct DynamicFlagsStruct {
-	uint16 bWaitHitFrame : 1;            // 0x0001 wait for hit frame
-	uint16 bIsHitting : 1;               // 0x0002 hit frame anim
-	uint16 bAnimEnded : 1;               // 0x0004 anim ended in the current loop (will be looped in the next engine loop)
-	uint16 bAnimFrameReached : 1;        // 0x0008 new frame anim reached
-	uint16 bIsVisible : 1;               // 0x0010 actor has been drawn in this loop
-	uint16 bIsDead : 1;                  // 0x0020 is dead
-	uint16 bIsSpriteMoving : 1;          // 0x0040 door is opening or closing (wait to reach the destination position)
-	uint16 bIsRotationByAnim : 1;        // 0x0080 actor rotation is managed by its animaation not by the engine
-	uint16 bIsFalling : 1;               // 0x0100 is falling on scene
+	uint16 bWaitHitFrame : 1;            // 0x0001 WAIT_HIT_FRAME - wait for hit frame
+	uint16 bIsHitting : 1;               // 0x0002 OK_HIT - hit frame anim
+	uint16 bAnimEnded : 1;               // 0x0004 ANIM_END - anim ended in the current loop (will be looped in the next engine loop)
+	uint16 bAnimFrameReached : 1;        // 0x0008 NEW_FRAME - new frame anim reached
+	uint16 bIsDrawn : 1;                 // 0x0010 WAS_DRAWN - actor has been drawn in this loop
+	uint16 bIsDead : 1;                  // 0x0020 OBJ_DEAD - is dead
+	uint16 bIsSpriteMoving : 1;          // 0x0040 AUTO_STOP_DOOR - door is opening or closing (wait to reach the destination position)
+	uint16 bIsRotationByAnim : 1;        // 0x0080 ANIM_MASTER_ROT - actor rotation is managed by its animaation not by the engine
+	uint16 bIsFalling : 1;               // 0x0100 FALLING - is falling on scene
 	uint16 bIsTargetable : 1;            // 0x0200
 	uint16 bIsBlinking : 1;              // 0x0400
 	uint16 bWasWalkingBeforeFalling : 1; // 0x0800
@@ -119,10 +119,10 @@ struct DynamicFlagsStruct {
  * will be chosen randomly each time player uses Action.
  */
 struct BonusParameter {
-	uint16 unk1 : 1;
-	uint16 unk2 : 1;
-	uint16 unk3 : 1;
-	uint16 unk4 : 1;
+	uint16 givenNothing : 1;
+	uint16 unk2 : 1; // unused in lba1
+	uint16 unk3 : 1; // unused in lba1
+	uint16 unk4 : 1; // unused in lba1
 	uint16 kashes : 1;
 	uint16 lifepoints : 1;
 	uint16 magicpoints : 1;
@@ -141,7 +141,7 @@ struct BonusParameter {
 class ActorStruct {
 private:
 	ShapeType _brickShape = ShapeType::kNone; // field_3
-	bool _brickCausesDamage = false;
+	bool _brickCausesDamage = false; // TODO: this is a bitmask with multiple values in the original source
 
 	EntityData _entityData;
 public:
@@ -167,21 +167,21 @@ public:
 
 	const IVec3 &pos() const;
 
-	int32 _entity = 0; // costumeIndex - index into bodyTable
-	BodyType _body = BodyType::btNormal;
-	AnimationTypes _anim = AnimationTypes::kAnimNone;
+	int32 _body = -1; // costumeIndex - index into bodyTable
+	BodyType _genBody = BodyType::btNormal;
+	AnimationTypes _genAnim = AnimationTypes::kAnimNone;
 	AnimationTypes _animExtra = AnimationTypes::kStanding;
 	AnimationTypes _animExtraPtr = AnimationTypes::kAnimNone;
 	int32 _sprite = 0;
 	EntityData *_entityDataPtr = nullptr;
 
 	int16 _actorIdx = 0; // own actor index
-	IVec3 _pos;
+	IVec3 _pos; // PosObjX, PosObjY, PosObjZ
 	int32 _strengthOfHit = 0;
-	int32 _hitBy = 0;
+	int32 _hitBy = -1;
 	BonusParameter _bonusParameter;
-	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise
-	int32 _speed = 0;
+	int32 _angle = 0; // facing angle of actor. Minumum is 0 (SW). Going counter clock wise (BETA in original sources)
+	int32 _speed = 40; // speed of movement
 	ControlMode _controlMode = ControlMode::kNoMove;
 	int32 _delayInMillis = 0;
 	int32 _cropLeft = 0;
@@ -191,12 +191,16 @@ public:
 	int32 _followedActor = 0; // same as info3
 	int32 _bonusAmount = 0;
 	int32 _talkColor = COLOR_BLACK;
-	int32 _armor = 0;
-	int32 _life = 0;
+	int32 _armor = 1;
+	int32 _life = kActorMaxLife;
 
+	/** Process actor coordinate Nxw, Nyw, Nzw */
+	IVec3 _processActor;
+	/** Previous process actor coordinate */
+	IVec3 _previousActor;
 	IVec3 _collisionPos;
 
-	int32 _positionInMoveScript = 0;
+	int32 _positionInMoveScript = -1;
 	uint8 *_moveScript = nullptr;
 	int32 _moveScriptSize = 0;
 
@@ -211,23 +215,23 @@ public:
 	/**
 	 * colliding actor id
 	 */
-	int32 _collision = 0;
+	int32 _collision = -1; // ObjCol
 	/**
 	 * actor id we are standing on
 	 */
-	int32 _carryBy = 0;
-	int32 _zone = 0;
+	int32 _carryBy = -1;
+	int32 _zone = -1;
 
 	int32 _lastRotationAngle = ANGLE_0;
-	IVec3 _lastPos;
-	int32 _previousAnimIdx = 0;
-	int32 _doorStatus = 0;
+	IVec3 _animStep;
+	int32 _previousAnimIdx = -1;
+	int32 _doorWidth = 0;
 	int32 _animPosition = 0;
 	AnimType _animType = AnimType::kAnimationTypeLoop;
 	int32 _spriteActorRotation = 0;
-	uint8 _brickSound = 0U;
+	uint8 _brickSound = 0U; // CodeJeu
 
-	BoundingBox _boudingBox;
+	BoundingBox _boundingBox; // Xmin, YMin, Zmin, Xmax, Ymax, Zmax
 	ActorMoveStruct _move;
 	AnimTimerDataStruct _animTimerData;
 };
@@ -280,10 +284,7 @@ public:
 
 	ActorStruct *_processActorPtr = nullptr;
 
-	/** Actor shadow coordinate */
-	IVec3 _shadowCoord;
-
-	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal;
+	HeroBehaviourType _heroBehaviour = HeroBehaviourType::kNormal; // Comportement
 	/** Hero auto aggressive mode */
 	bool _autoAggressive = true;
 	/** Previous Hero behaviour */
@@ -291,7 +292,7 @@ public:
 	/** Previous Hero angle */
 	int16 _previousHeroAngle = 0;
 
-	int16 _cropBottomScreen = 0;
+	int16 _cropBottomScreen = 0; // TODO: usage differ in original sources
 
 	/** Hero current anim for normal behaviour */
 	int16 _heroAnimIdxNORMAL = 0;
@@ -347,13 +348,13 @@ public:
 	 * @param strengthOfHit actor hitting strength of hit
 	 * @param angle angle of actor hitting
 	 */
-	void hitActor(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
+	void hitObj(int32 actorIdx, int32 actorIdxAttacked, int32 strengthOfHit, int32 angle);
 
 	/** Process actor carrier */
 	void processActorCarrier(int32 actorIdx);
 
 	/** Process actor extra bonus */
-	void processActorExtraBonus(int32 actorIdx);
+	void giveExtraBonus(int32 actorIdx);
 };
 
 } // namespace TwinE

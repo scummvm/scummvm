@@ -48,7 +48,7 @@
 	// We use functionality introduced with Win7 in this file.
 	// To assure that including the respective system headers gives us all
 	// required definitions we set Win7 as minimum version we target.
-	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+	// See: https://docs.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers#macros-for-conditional-declarations
 	#include <sdkddkver.h>
 	#undef _WIN32_WINNT
 	#define _WIN32_WINNT _WIN32_WINNT_WIN7
@@ -67,7 +67,7 @@
 
 #include "common/textconsole.h"
 
-// System.Title property key, values taken from http://msdn.microsoft.com/en-us/library/bb787584.aspx
+// System.Title property key, values taken from https://docs.microsoft.com/en-us/windows/win32/properties/props-system-title
 const PROPERTYKEY PKEY_Title = { /* fmtid = */ { 0xF29F85E0, 0x4FF9, 0x1068, { 0xAB, 0x91, 0x08, 0x00, 0x2B, 0x27, 0xB3, 0xD9 } }, /* propID = */ 2 };
 
 Win32TaskbarManager::Win32TaskbarManager(SdlWindow_Win32 *window) : _window(window), _taskbar(nullptr), _count(0), _icon(nullptr) {

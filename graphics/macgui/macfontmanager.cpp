@@ -24,6 +24,7 @@
 #include "common/macresman.h"
 #include "graphics/fonts/bdf.h"
 #include "graphics/fonts/macfont.h"
+#include "graphics/fonts/winfont.h"
 #include "graphics/fonts/ttf.h"
 
 #include "graphics/macgui/macwindowmanager.h"
@@ -32,7 +33,7 @@
 namespace Graphics {
 
 // Source: Apple IIGS Technical Note #41, "Font Family Numbers"
-// http://apple2.boldt.ca/?page=til/tn.iigs.041
+// https://www.1000bit.it/support/manuali/apple/technotes/iigs/tn.iigs.041.html
 static struct FontProto {
 	int id;
 	Common::Language lang;
@@ -139,7 +140,8 @@ Common::String cleanFontName(const Common::String fontname) {
 	return f;
 }
 
-MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode), _language(language) {
+MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(mode),
+	_language(language), _japaneseFontsLoaded(false) {
 	for (FontProto *font = defaultFonts; font->name; font++) {
 		if (!_fontInfo.contains(font->id)) {
 			FontInfo *info = new FontInfo;
@@ -170,20 +172,21 @@ MacFontManager::MacFontManager(uint32 mode, Common::Language language) : _mode(m
 	} else {
 		loadFonts();
 	}
-	_japaneseFontsLoaded = false;
 }
 
 MacFontManager::~MacFontManager() {
-	for (Common::HashMap<int, FontInfo *>::iterator it = _fontInfo.begin(); it != _fontInfo.end(); it++)
-		delete it->_value;
-	for (Common::HashMap<int, const Graphics::Font *>::iterator it = _uniFonts.begin(); it != _uniFonts.end(); it++)
-		delete it->_value;
-	for (Common::HashMap<Common::String, Common::SeekableReadStream *>::iterator it = _ttfData.begin(); it != _ttfData.end(); it++)
-		delete it->_value;
-	for (Common::HashMap<Common::String, MacFont *>::iterator it = _fontRegistry.begin(); it != _fontRegistry.end(); it++)
-		delete it->_value;
-	for (Common::HashMap<Common::String, MacFontFamily *>::iterator it = _fontFamilies.begin(); it != _fontFamilies.end(); it++)
-		delete it->_value;
+	for (auto &it: _fontInfo)
+		delete it._value;
+	for (auto &it: _uniFonts)
+		delete it._value;
+	for (auto &it: _ttfData)
+		delete it._value;
+	for (auto &it: _fontRegistry)
+		delete it._value;
+	for (auto &it: _winFontRegistry)
+		delete it._value;
+	for (auto &it: _fontFamilies)
+		delete it;
 }
 
 void MacFontManager::setLocalizedFonts() {
@@ -336,7 +339,7 @@ void MacFontManager::loadJapaneseFonts() {
 void MacFontManager::loadFonts(Common::SeekableReadStream *stream) {
 	Common::MacResManager fontFile;
 
-	if (!fontFile.loadFromMacBinary(*stream))
+	if (!fontFile.loadFromMacBinary(stream))
 		return;
 
 	loadFonts(&fontFile);
@@ -424,48 +427,67 @@ void MacFontManager::loadFonts(Common::MacResManager *fontFile) {
 			delete fond;
 
 			if (fontFamilyUsed)
-				_fontFamilies[familyName] = fontFamily;
+				_fontFamilies.push_back(fontFamily);
 			else
 				delete fontFamily;
 		}
 	}
 }
 
-const Font *MacFontManager::getFont(MacFont macFont) {
+void MacFontManager::loadWindowsFont(const Common::String fileName) {
+	Graphics::WinFont *winFont = new Graphics::WinFont();
+	bool isLoaded = winFont->loadFromFON(fileName);
+
+	if (!isLoaded) {
+		warning("MacFontManager::loadWindowsFont(): Windows Font data from file %s not loaded", fileName.c_str());
+		delete winFont;
+		return;
+	}
+
+	Common::String fontName = winFont->getName();
+	_winFontRegistry.setVal(fontName, winFont);
+	MacFont *font = new MacFont();
+	Common::String fullName = Common::String::format("%s-%d-%d", fontName.c_str(), winFont->getStyle(), winFont->getFontHeight());
+	font->setName(fullName);
+	font->setFont(winFont, false);
+	_fontRegistry.setVal(font->getName(), font);
+}
+
+const Font *MacFontManager::getFont(MacFont *macFont) {
 	Common::String name;
 	const Font *font = 0;
 
-	int aliasForId = getFontAliasForId(macFont.getId());
+	int aliasForId = getFontAliasForId(macFont->getId());
 	if (aliasForId > -1) {
-		macFont.setId(aliasForId);
+		macFont->setId(aliasForId);
 	}
 
 	if (!_builtInFonts) {
-		Common::Language lang = getFontLanguage(macFont.getId());
+		Common::Language lang = getFontLanguage(macFont->getId());
 		if (lang == Common::JA_JPN && !_japaneseFontsLoaded) {
 			loadJapaneseFonts();
 		}
 
-		if (macFont.getName().empty()) {
-			name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant());
-			macFont.setName(name);
+		if (macFont->getName().empty()) {
+			name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant());
+			macFont->setName(name);
 		}
 
-		if (!_fontRegistry.contains(macFont.getName())) {
+		if (!_fontRegistry.contains(macFont->getName())) {
 			// Let's try to generate name
-			if (macFont.getSlant() != kMacFontRegular) {
-				name = getFontName(macFont.getId(), macFont.getSize(), macFont.getSlant(), true);
-				macFont.setName(name);
+			if (macFont->getSlant() != kMacFontRegular) {
+				name = getFontName(macFont->getId(), macFont->getSize(), macFont->getSlant(), true);
+				macFont->setName(name);
 			}
 
-			if (!_fontRegistry.contains(macFont.getName()))
-				generateFontSubstitute(macFont);
+			if (!_fontRegistry.contains(macFont->getName()))
+				generateFontSubstitute(*macFont);
 		}
 
-		font = FontMan.getFontByName(macFont.getName());
+		font = FontMan.getFontByName(macFont->getName());
 
 		if (!font) {
-			debug(1, "Cannot load font '%s'", macFont.getName().c_str());
+			debug(1, "Cannot load font '%s'", macFont->getName().c_str());
 
 			font = FontMan.getFontByName(MacFont(kMacFontChicago, 12).getName());
 		}
@@ -474,25 +496,44 @@ const Font *MacFontManager::getFont(MacFont macFont) {
 #ifdef USE_FREETYPE2
 	if (!font) {
 		if (_mode & kWMModeUnicode) {
-			if (macFont.getSize() <= 0) {
+			if (macFont->getSize() <= 0) {
 				debug(1, "MacFontManager::getFont() - Font size <= 0!");
 			}
-			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont.getSize());
+			Common::HashMap<int, const Graphics::Font *>::iterator pFont = _uniFonts.find(macFont->getSize());
 
 			if (pFont != _uniFonts.end()) {
 				font = pFont->_value;
 			} else {
-				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont.getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
-				_uniFonts[macFont.getSize()] = font;
+				font = Graphics::loadTTFFontFromArchive("FreeSans.ttf", macFont->getSize(), Graphics::kTTFSizeModeCharacter, 0, Graphics::kTTFRenderModeMonochrome);
+				_uniFonts[macFont->getSize()] = font;
 			}
 		}
 	}
 #endif
 
-	if (!font)
-		font = FontMan.getFontByUsage(macFont.getFallback());
+	if (!font) {
+		int id = macFont->getId();
+
+		if (_fontInfo.contains(id) && _winFontRegistry.contains(_fontInfo.getVal(id)->name)) {
+			font = _winFontRegistry.getVal(_fontInfo.getVal(id)->name);
+		}
+	}
+
+	if (!font) {
+		font = macFont->getFallback();
+
+		for (auto &it : _fontInfo) {
+			if (it._value->name == macFont->getFallbackName()) {
+				macFont->setId(it._key);
+			}
+		}
+	}
 
 	return font;
+}
+
+const Font *MacFontManager::getFont(MacFont macFont) {
+	return getFont(&macFont);
 }
 
 int MacFontManager::parseFontSlant(Common::String slant) {
@@ -512,22 +553,24 @@ int MacFontManager::parseFontSlant(Common::String slant) {
 int MacFontManager::parseSlantFromName(const Common::String &name) {
 	int slantVal = 0;
 
-	if (name.contains(" Bold"))
+	if (name.contains(" Bold") || name.equalsIgnoreCase("Bold"))
 		slantVal |= kMacFontBold;
-	if (name.contains(" Italic"))
+	if (name.contains(" Italic") || name.equalsIgnoreCase("Italic"))
 		slantVal |= kMacFontItalic;
-	if (name.contains(" Regular"))
+	if (name.contains(" Regular") || name.equalsIgnoreCase("Regular"))
 		slantVal |= kMacFontRegular;
-	if (name.contains(" Underline"))
+	if (name.contains(" Underline") || name.equalsIgnoreCase("Underline"))
 		slantVal |= kMacFontUnderline;
-	if (name.contains(" Shadow"))
+	if (name.contains(" Shadow") || name.equalsIgnoreCase("Shadow"))
 		slantVal |= kMacFontShadow;
-	if (name.contains(" Outline"))
+	if (name.contains(" Outline") || name.equalsIgnoreCase("Outline"))
 		slantVal |= kMacFontOutline;
-	if (name.contains(" Condense"))
+	if (name.contains(" Condense") || name.equalsIgnoreCase("Condense"))
 		slantVal |= kMacFontCondense;
-	if (name.contains(" Extend"))
+	if (name.contains(" Extend") || name.equalsIgnoreCase("Extend"))
 		slantVal |= kMacFontExtend;
+	if (name.contains(" Plain") || name.equalsIgnoreCase("Plain"))
+		slantVal = kMacFontRegular;
 
 	return slantVal;
 }
@@ -591,6 +634,11 @@ int MacFontManager::getFontIdByName(Common::String name) {
 	if (_fontIds.contains(name))
 		return _fontIds[name];
 
+	for (auto it = _fontIds.begin(); it != _fontIds.end(); it++) {
+		if (it->_key.equalsIgnoreCase(name)) {
+			return it->_value;
+		}
+	}
 	return 1;
 }
 
@@ -626,7 +674,7 @@ int MacFontManager::getFontAliasForId(uint16 id) {
 
 Common::String MacFontManager::getFontName(uint16 id) {
 	if (!_fontInfo.contains(id)) {
-		warning("MacFontManager::getFontAliasForId: No _fontInfo entry for font %d", id);
+		warning("MacFontManager::getFontName: No _fontInfo entry for font %d", id);
 		return "";
 	}
 	if (_fontInfo[id]->aliasForId > -1) {
@@ -777,6 +825,11 @@ void MacFontManager::generateFONTFont(MacFont &toFont, MacFont &fromFont) {
 	_fontRegistry.setVal(getFontName(toFont), new MacFont(toFont));
 
 	debug("Generated font '%s'", getFontName(toFont).c_str());
+}
+
+void MacFont::setFallback(const Font *font, Common::String name) {
+	_fallback = font;
+	_fallbackName = name;
 }
 
 } // End of namespace Graphics

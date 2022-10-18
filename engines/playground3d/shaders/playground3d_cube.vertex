@@ -7,7 +7,7 @@ uniform mat4 mvpMatrix;
 uniform mat4 projMatrix;
 uniform mat4 modelMatrix;
 uniform mat4 rotateMatrix;
-uniform bool textured;
+uniform UBOOL textured;
 uniform vec3 modelPos;
 
 out vec2 Texcoord;
@@ -19,7 +19,7 @@ void main() {
 	vec4 pos = rotateMatrix * vec4(position, 1.0);
 	gl_Position = mvpMatrix * (pos + vec4(modelPos, 1.0));
 
-	if (textured) {
+	if (UBOOL_TEST(textured)) {
 		Color = vec3(1.0);
 	} else {
 		Color = color;

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -39,7 +40,7 @@ void Room41::entry() {
 	hideCur();
 
 	if (!_G(gameState).R41LolaOk) {
-		g_engine->_sound->playSound(6);
+		_G(det)->playSound(6, 0);
 
 		if (!_G(flags).LoadGame) {
 			_G(room)->set_timer_status(0, TIMER_STOP);
@@ -54,13 +55,13 @@ void Room41::entry() {
 	}
 
 	if (_G(gameState).R41Einbruch) {
-		_G(atds)->delControlBit(271, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(271, ATS_ACTIVE_BIT);
 		_G(det)->showStaticSpr(6);
 		_G(det)->showStaticSpr(7);
 	}
 
 	if (_G(gameState).ChewyAni == CHEWY_ROCKER) {
-		_G(atds)->setControlBit(269, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(269, ATS_ACTIVE_BIT);
 	}
 
 	if (!_G(flags).LoadGame)
@@ -82,7 +83,7 @@ void Room41::xit() {
 void Room41::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 41) {
 		calc_person_look();
-		if (_G(spieler_vector)->Xypos[P_HOWARD] == 160) {
+		if (_G(moveState)->Xypos[P_HOWARD] == 160) {
 			goAutoXy(258, 75, P_HOWARD, ANI_GO);
 		} else {
 			goAutoXy(246, 120, P_HOWARD, ANI_GO);
@@ -99,7 +100,7 @@ void Room41::talk_hoggy1() {
 
 	} else if (!_G(gameState).R41Einbruch) {
 		showCur();
-		startAdsWait(11);
+		startDialogCloseupWait(11);
 
 	} else if (_G(gameState).R41Einbruch) {
 		if (!_G(gameState).R41BruchInfo) {
@@ -168,7 +169,7 @@ void Room41::stop_hoggy() {
 	for (int16 i = 0; i < 2; i++) {
 		_G(room)->set_timer_status(i, TIMER_STOP);
 		_G(det)->del_static_ani(i);
-		_G(det)->stop_detail(i);
+		_G(det)->stopDetail(i);
 		_G(det)->set_static_ani(i + 3, -1);
 	}
 }
@@ -176,7 +177,7 @@ void Room41::stop_hoggy() {
 int16 Room41::use_kasse() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(1, P_CHEWY);
@@ -190,19 +191,19 @@ int16 Room41::use_kasse() {
 int16 Room41::use_lola() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
+	if (!_G(cur)->usingInventoryCursor() && !_G(gameState).R41LolaOk && _G(gameState).R41RepairInfo) {
 		hideCur();
 		action_flag = true;
 		_G(gameState).R41LolaOk = true;
 		autoMove(4, P_CHEWY);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		flic_cut(FCUT_057);
 		setPersonPos(127, 112, P_CHEWY, P_LEFT);
-		_G(det)->stop_detail(6);
+		_G(det)->stopDetail(6);
 
-		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(267, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(267, 1, ATS_DATA);
-		_G(atds)->hide_item(11, 0, 3);
+		_G(atds)->hideDialogCloseupItem(11, 0, 3);
 		showCur();
 	}
 
@@ -213,25 +214,25 @@ int16 Room41::use_brief() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (isCurInventory(BRIEF_INV)) {
+	if (isCurInventory(LETTER_INV)) {
 		action_flag = true;
 		stop_hoggy();
 		autoMove(6, P_CHEWY);
 		startAadWait(126);
 		start_hoggy();
 
-	} else if (isCurInventory(BRIEF2_INV)) {
+	} else if (isCurInventory(STAMPEDLETTER_INV)) {
 		action_flag = true;
 		autoMove(6, P_CHEWY);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		stop_hoggy();
 		startAadWait(186);
 		start_hoggy();
 		_G(atds)->set_ats_str(206, 1, ATS_DATA);
-		_G(gameState).R28Briefkasten = true;
+		_G(gameState).R28LetterBox = true;
 		_G(gameState).R40TrainMove = true;
 		_G(gameState).R28PostCar = true;
-		_G(gameState).R42BriefOk = true;
+		_G(gameState).R42LetterOk = true;
 	}
 
 	showCur();
@@ -244,8 +245,8 @@ void Room41::sub_dia() {
 
 	if (_G(gameState).R41LolaOk) {
 		startAadWait(163);
-		_G(atds)->hide_item(11, 0, 2);
-		stop_ads_dialog();
+		_G(atds)->hideDialogCloseupItem(11, 0, 2);
+		stopDialogCloseupDialog();
 		autoMove(5, P_CHEWY);
 		new_invent_2_cur(PAPIER_INV);
 

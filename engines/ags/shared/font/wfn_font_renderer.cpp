@@ -19,11 +19,11 @@
  *
  */
 
+#include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/ac/common.h" // our_eip
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/shared/font/wfn_font.h"
-#include "ags/shared/font/wfn_font_renderer.h"
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
@@ -35,8 +35,6 @@ using namespace AGS::Shared;
 static unsigned char GetCharCode(unsigned char wanted_code, const WFNFont *font) {
 	return wanted_code < font->GetCharCount() ? wanted_code : '?';
 }
-
-static int RenderChar(Bitmap *ds, const int at_x, const int at_y, const WFNChar &wfn_char, const int scale, const color_t text_color);
 
 void WFNFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
 	// Do nothing
@@ -78,44 +76,47 @@ int WFNFontRenderer::GetTextHeight(const char *text, int fontNumber) {
 	return max_height * params.SizeMultiplier;
 }
 
-Bitmap render_wrapper;
+static int RenderChar(Bitmap *ds, const int at_x, const int at_y, Rect clip,
+	const WFNChar &wfn_char, const int scale, const color_t text_color);
+
 void WFNFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) {
 	int oldeip = get_our_eip();
 	set_our_eip(415);
 
 	const WFNFont *font = _fontData[fontNumber].Font;
 	const FontRenderParams &params = _fontData[fontNumber].Params;
-	render_wrapper.WrapAllegroBitmap(destination, true);
+	Bitmap ds(destination, true);
 
+	// NOTE: allegro's putpixel ignores clipping (optimization),
+	// so we'll have to accomodate for that ourselves
+	Rect clip = ds.GetClip();
 	for (; *text; ++text)
-		x += RenderChar(&render_wrapper, x, y, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
+		x += RenderChar(&ds, x, y, clip, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
 
 	set_our_eip(oldeip);
 }
 
-int RenderChar(Bitmap *ds, const int at_x, const int at_y, const WFNChar &wfn_char, const int scale, const color_t text_color) {
+static int RenderChar(Bitmap *ds, const int at_x, const int at_y, Rect clip,
+	const WFNChar &wfn_char, const int scale, const color_t text_color) {
 	const int width = wfn_char.Width;
 	const int height = wfn_char.Height;
 	const unsigned char *actdata = wfn_char.Data;
 	const int bytewid = wfn_char.GetRowByteCount();
 
-	int x = at_x;
-	int y = at_y;
-	for (int h = 0; h < height; ++h) {
-		for (int w = 0; w < width; ++w) {
+	int sx = std::max(at_x, clip.Left), ex = clip.Right + 1;
+	int sy = std::max(at_y, clip.Top), ey = clip.Bottom + 1;
+	int sw = std::max(0, clip.Left - at_x);
+	int sh = std::max(0, clip.Top - at_y);
+	for (int h = sh, y = sy; h < height && y < ey; ++h, y += scale) {
+		for (int w = sw, x = sx; w < width && x < ex; ++w, x += scale) {
 			if (((actdata[h * bytewid + (w / 8)] & (0x80 >> (w % 8))) != 0)) {
 				if (scale > 1) {
-					ds->FillRect(Rect(x + w, y + h, x + w + (scale - 1),
-					                  y + h + (scale - 1)), text_color);
+					ds->FillRect(RectWH(x, y, scale, scale), text_color);
 				} else {
-					ds->PutPixel(x + w, y + h, text_color);
+					ds->PutPixel(x, y, text_color);
 				}
 			}
-
-			x += scale - 1;
 		}
-		y += scale - 1;
-		x = at_x;
 	}
 	return width * scale;
 }
@@ -154,6 +155,8 @@ bool WFNFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
 	}
 	_fontData[fontNumber].Font = font;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
+	if (metrics)
+		*metrics = FontMetrics();
 	return true;
 }
 

@@ -108,7 +108,9 @@ void CrosshairProcess::saveData(Common::WriteStream *ws) {
 }
 
 bool CrosshairProcess::loadData(Common::ReadStream *rs, uint32 version) {
-	return Process::loadData(rs, version);
+	if (!Process::loadData(rs, version)) return false;
+	_type = 1; // should be persistant but older savegames may not know that.
+	return true;
 }
 
 } // End of namespace Ultima8

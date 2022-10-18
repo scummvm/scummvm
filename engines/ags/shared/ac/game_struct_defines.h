@@ -76,17 +76,17 @@ namespace AGS3 {
 #define OPT_GLOBALTALKANIMSPD 39
 #define OPT_HIGHESTOPTION_321 39
 #define OPT_SPRITEALPHA     40
-#define OPT_HIGHESTOPTION_330 OPT_SPRITEALPHA
 #define OPT_SAFEFILEPATHS   41
-#define OPT_HIGHESTOPTION_335 OPT_SAFEFILEPATHS
 #define OPT_DIALOGOPTIONSAPI 42 // version of dialog options API (-1 for pre-3.4.0 API)
 #define OPT_BASESCRIPTAPI   43 // version of the Script API (ScriptAPIVersion) used to compile game script
 #define OPT_SCRIPTCOMPATLEV 44 // level of API compatibility (ScriptAPIVersion) used to compile game script
 #define OPT_RENDERATSCREENRES 45 // scale sprites at the (final) screen resolution
 #define OPT_RELATIVEASSETRES 46 // relative asset resolution mode (where sprites are resized to match game type)
 #define OPT_WALKSPEEDABSOLUTE 47 // if movement speeds are independent of walkable mask resolution
-#define OPT_FONTLOADLOGIC   48 // fonts load/init logic, see FONT_LOAD_xxx flags
-#define OPT_HIGHESTOPTION   OPT_WALKSPEEDABSOLUTE
+#define OPT_CLIPGUICONTROLS 48 // clip drawn gui control contents to the control's rectangle
+#define OPT_GAMETEXTENCODING 49 // how the text in the game data should be interpreted
+#define OPT_KEYHANDLEAPI    50 // key handling mode (old/new)
+#define OPT_HIGHESTOPTION   OPT_KEYHANDLEAPI
 #define OPT_NOMODMUSIC      98
 #define OPT_LIPSYNCTEXT     99
 #define PORTRAIT_LEFT       0
@@ -105,8 +105,19 @@ namespace AGS3 {
 #define FFLG_LEGACY_SIZEMASK 0x3f
 #define MAX_LEGACY_FONT_SIZE 63
 // Contemporary font flags
-#define FFLG_SIZEMULTIPLIER  0x01  // size data means multiplier
-#define FFLG_DEFLINESPACING  0x02  // linespacing derived from the font height
+#define FFLG_SIZEMULTIPLIER        0x01  // size data means multiplier
+#define FFLG_DEFLINESPACING        0x02  // linespacing derived from the font height
+// Font load flags, primarily for backward compatibility:
+// REPORTNOMINALHEIGHT: get_font_height should return nominal font's height,
+// eq to "font size" parameter, otherwise returns real pixel height.
+#define FFLG_REPORTNOMINALHEIGHT   0x04
+// ASCENDFIXUP: do the TTF ascender fixup, where font's ascender is resized
+// to the nominal font's height.
+#define FFLG_ASCENDERFIXUP         0x08
+// Collection of flags defining fully backward compatible TTF fixup
+#define FFLG_TTF_BACKCOMPATMASK   (FFLG_REPORTNOMINALHEIGHT | FFLG_ASCENDERFIXUP)
+// Collection of flags defining font's load mode
+#define FFLG_LOADMODEMASK         (FFLG_REPORTNOMINALHEIGHT | FFLG_ASCENDERFIXUP)
 // Font outline types
 #define FONT_OUTLINE_NONE -1
 #define FONT_OUTLINE_AUTO -10
@@ -168,7 +179,8 @@ enum ScriptAPIVersion {
 	kScriptAPI_v3507 = 7,
 	kScriptAPI_v351 = 8,
 	kScriptAPI_v360 = 3060000,
-	kScriptAPI_Current = kScriptAPI_v360
+	kScriptAPI_v36026 = 3060026,
+	kScriptAPI_Current = kScriptAPI_v36026
 };
 
 extern const char *GetScriptAPIName(ScriptAPIVersion v);
@@ -240,8 +252,8 @@ struct FontInfo {
 
 	// General font's loading and rendering flags
 	uint32_t      Flags;
-	// Font size, in points (basically means pixels in AGS)
-	int           SizePt;
+	// Nominal font import size (in pixels)
+	int           Size;
 	// Factor to multiply base font size by
 	int           SizeMultiplier;
 	// Outlining font index, or auto-outline flag

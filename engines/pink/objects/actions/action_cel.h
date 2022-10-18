@@ -35,7 +35,7 @@ public:
 
 	void deserialize(Archive &archive) override;
 
-	bool initPalette(Director *director) override;
+	bool initPalette(Screen *screen) override;
 
 	void start() override;
 	void end() override;

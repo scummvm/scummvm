@@ -20,8 +20,10 @@
  */
 
 #include "common/endian.h"
+
 #include "image/tga.h"
 #include "image/png.h"
+
 #include "graphics/surface.h"
 
 #include "engines/grim/grim.h"
@@ -155,7 +157,6 @@ static void loadTGA(Common::SeekableReadStream *data, Texture *t) {
 }
 
 void MaterialData::initEMI(Common::SeekableReadStream *data) {
-
 	if (_fname.hasSuffix(".sur")) {  // This expects that we want all the materials in the sur-file
 		Common::Array<Common::String> texFileNames;
 		char readFileName[64];

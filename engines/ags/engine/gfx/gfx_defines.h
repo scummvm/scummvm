@@ -29,14 +29,6 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-// TODO: find the way to merge this with sprite batch transform
-enum GlobalFlipType {
-	kFlip_None,
-	kFlip_Horizontal, // this means - mirror over horizontal middle line
-	kFlip_Vertical,   // this means - mirror over vertical middle line
-	kFlip_Both
-};
-
 // GraphicResolution struct determines image size and color depth
 struct GraphicResolution : Size {
 	int32_t ColorDepth; // color depth in bits per pixel

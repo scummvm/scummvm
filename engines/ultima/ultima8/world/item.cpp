@@ -3402,8 +3402,8 @@ uint32 Item::I_create(const uint8 *args, unsigned int /*argsize*/) {
 	return 1;
 }
 
-uint32 Item::I_pop(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
+uint32 Item::I_pop(const uint8 */*args*/, unsigned int /*argsize*/) {
+	//ARG_NULL32(); // ARG_ITEM_FROM_PTR(item); // unused
 
 	World *w = World::get_instance();
 

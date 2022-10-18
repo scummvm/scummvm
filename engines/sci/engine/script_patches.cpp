@@ -150,6 +150,8 @@ static const char *const selectorNameTable[] = {
 	"setVol",       // Laura Bow 2 CD
 	"at",           // Longbow, QFG4
 	"owner",        // Longbow, QFG4
+	"fade",         // Longbow, Shivers
+	"enable",       // Longbow, SQ6
 	"delete",       // EcoQuest 1
 	"size",         // EcoQuest 1
 	"signal",       // EcoQuest 1, GK1
@@ -160,7 +162,6 @@ static const char *const selectorNameTable[] = {
 	"newWith",      // SCI2 array script
 	"posn",         // GK1, Phant2, QFG4
 	"printLang",    // GK2
-	"fade",         // Shivers
 	"test",         // Torin
 	"get",          // Torin, GK1
 	"normalize",    // GK1
@@ -176,13 +177,18 @@ static const char *const selectorNameTable[] = {
 	"track",        // Phant2
 	"update",       // Phant2
 	"xOff",         // Phant2
+	"addRespondVerb",// KQ7
 	"eachElementDo",// KQ7
 	"fore",         // KQ7
 	"back",         // KQ7
 	"font",         // KQ7
 	"setHeading",   // KQ7
+	"newPic",       // Lighthouse
+	"start",        // Lighthouse
 	"setScale",     // LSL6hires, QFG4
 	"setScaler",    // LSL6hires, QFG4
+	"showTitle",    // LSL6hires
+	"name",         // LSL6hires
 	"oSpecialSync", // LSL7
 	"readWord",     // LSL7, Phant1, Torin
 	"points",       // PQ4
@@ -203,9 +209,9 @@ static const char *const selectorNameTable[] = {
 	"retreat",      // QFG4
 	"sayMessage",   // QFG4
 	"setLooper",    // QFG4
+	"use",          // QFG4
 	"useStamina",   // QFG4
 	"value",        // QFG4
-	"enable",       // SQ6
 	"setupExit",    // SQ6
 	"vol",          // SQ6
 	"walkIconItem", // SQ6
@@ -283,6 +289,8 @@ enum ScriptPatcherSelectors {
 	SELECTOR_setVol,
 	SELECTOR_at,
 	SELECTOR_owner,
+	SELECTOR_fade,
+	SELECTOR_enable,
 	SELECTOR_delete,
 	SELECTOR_size,
 	SELECTOR_signal,
@@ -294,7 +302,6 @@ enum ScriptPatcherSelectors {
 	SELECTOR_newWith,
 	SELECTOR_posn,
 	SELECTOR_printLang,
-	SELECTOR_fade,
 	SELECTOR_test,
 	SELECTOR_get,
 	SELECTOR_normalize,
@@ -310,13 +317,18 @@ enum ScriptPatcherSelectors {
 	SELECTOR_track,
 	SELECTOR_update,
 	SELECTOR_xOff,
+	SELECTOR_addRespondVerb,
 	SELECTOR_eachElementDo,
 	SELECTOR_fore,
 	SELECTOR_back,
 	SELECTOR_font,
 	SELECTOR_setHeading,
+	SELECTOR_newPic,
+	SELECTOR_start,
 	SELECTOR_setScale,
 	SELECTOR_setScaler,
+	SELECTOR_showTitle,
+	SELECTOR_name,
 	SELECTOR_oSpecialSync,
 	SELECTOR_readWord,
 	SELECTOR_points,
@@ -337,9 +349,9 @@ enum ScriptPatcherSelectors {
 	SELECTOR_retreat,
 	SELECTOR_sayMessage,
 	SELECTOR_setLooper,
+	SELECTOR_use,
 	SELECTOR_useStamina,
 	SELECTOR_value,
-	SELECTOR_enable,
 	SELECTOR_setupExit,
 	SELECTOR_vol,
 	SELECTOR_walkIconItem
@@ -531,6 +543,93 @@ static const uint16 torinLarry7NumSavesPatch[] = {
 };
 
 #endif
+
+// Most SCI games run an initial speed test. The results are used to enable
+//  animations and other details but some games go further. For example, LSL3
+//  calculates how many times the player has to do a task using machine speed.
+//
+// We disable speed tests by patching them to return fixed results so that all
+//  graphics are enabled and games behave consistently. This also fixes the bug
+//  where tests fail on fast CPUs because their scores overflow. (bug #13529)
+//  We still have a heuristic in GfxAnimate::throttleSpeed() that attempts to
+//  detect tests and unthrottle the engine so that they score well. That should
+//  reasonably handle any games or versions that haven't been patched yet.
+//
+// Note that these patches are only for SCI16 games; the test was rewritten for
+//  SCI32 and we have separate patches for those.
+//
+// The first generation of speed tests measured how many game cycles occurred
+//  within a fixed amount of time and stored it in a global. Initialize this
+//  to a value that always passes and skip the real initialization so that the
+//  test immediately completes. This also removes a 1-2 second startup delay.
+static const uint16 sci0EarlySpeedTestSignature[] = {
+	0xc9, SIG_ADDTOOFFSET(+1),          // +sg machine-speed
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	0x30,                               // bnt [ skip initialization ]
+	SIG_END
+};
+
+static const uint16 sci0EarlySpeedTestPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 255 ]
+	0x32,                               // jmp [ always skip initialization ]
+	PATCH_END
+};
+
+// Same as previous but the +sg instruction became +ag/push
+static const uint16 sci01SpeedTestGlobalSignature[] = {
+	0xc1, SIG_ADDTOOFFSET(+1),          // +ag machine-speed
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	SIG_END                             // bnt [ skip initialization ]
+};
+
+static const uint16 sci01SpeedTestGlobalPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 255 ]
+	0x18,                               // not [ always skip initialization ]
+	PATCH_END
+};
+
+// Same as previous but a local variable is used instead of a global
+static const uint16 sci01SpeedTestLocalSignature[] = {
+	0xc3, SIG_ADDTOOFFSET(+1),          // +al machine-speed
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq?
+	SIG_END                             // bnt [ skip initialization ]
+};
+
+static const uint16 sci01SpeedTestLocalPatch[] = {
+	0x34, PATCH_UINT16(0x00ff),         // ldi 00ff
+	0xa3, PATCH_GETORIGINALBYTE(+1),    // sal [ machine-speed = 255 ]
+	0x18,                               // not [ always skip initialization ]
+	PATCH_END
+};
+
+// The second generation of speed tests measured how much time it takes to do a
+//  fixed amount of work. Patch the duration calculation to always be zero.
+static const uint16 sci11SpeedTestSignature[] = {
+	0x76,                               // push0
+	0x43, 0x42, 0x00,                   // callk GetTime 00
+	0x36,                               // push
+	SIG_MAGICDWORD,
+	0x83, 0x01,                         // lal 01
+	0x04,                               // sub    [ GetTime() - start-time ]
+	0xa3, 0x00,                         // sal 00 [ local0 = test-duration ]
+	SIG_END
+};
+
+static const uint16 sci11SpeedTestPatch[] = {
+	0x35, 0x00,                         // ldi 00
+	0x33, 0x04,                         // jmp 04 [ local0 = 0, best result ]
+	PATCH_END
+};
 
 // The Narrator class contains a bug that's responsible for rare random lockups
 //  in almost every Messager SCI game from 1992 to 1996. The later first-person
@@ -1053,9 +1152,19 @@ static const SciScriptPatcherEntry camelotSignatures[] = {
 	{ true,    11, "fix hunter missing points",                    1, camelotSignatureHunterMissingPoints,  camelotPatchHunterMissingPoints },
 	{ true,    62, "fix peepingTom Sierra bug",                    1, camelotSignaturePeepingTom,           camelotPatchPeepingTom },
 	{ true,    64, "fix Fatima room messages",                     2, camelotSignatureFatimaRoomMessages,   camelotPatchFatimaRoomMessages },
+	{ true,   112, "disable speed test",                           1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
 	{ true,   158, "fix give mule message",                        1, camelotSignatureGiveMuleMessage,      camelotPatchGiveMuleMessage },
 	{ true,   169, "fix relic merchant lockup (1/2)",              1, camelotSignatureRelicMerchantLockup1, camelotPatchRelicMerchantLockup1 },
 	{ true,   169, "fix relic merchant lockup (2/2)",              1, camelotSignatureRelicMerchantLockup2, camelotPatchRelicMerchantLockup2 },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
+// Castle of Dr. Brain
+
+//          script, description,                                      signature                                 patch
+static const SciScriptPatcherEntry castleBrainSignatures[] = {
+	{  true,   802, "disable speed test",                          1, sci01SpeedTestGlobalSignature,            sci01SpeedTestGlobalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -1425,6 +1534,7 @@ static const SciScriptPatcherEntry ecoquest1Signatures[] = {
 	{  true,   321, "CD: north cliffs position",                   1, ecoquest1SignatureNorthCliffsPosition,    ecoquest1PatchNorthCliffsPosition },
 	{  true,   321, "CD: north cliffs disposal",                   2, ecoquest1SignatureNorthCliffsDisposal,    ecoquest1PatchNorthCliffsDisposal },
 	{  true,   660, "CD: bad messagebox and freeze",               1, ecoquest1SignatureStayAndHelp,            ecoquest1PatchStayAndHelp },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestGlobalSignature,            sci01SpeedTestGlobalPatch },
 	{  true,   816, "CD: prophecy scroll",                         1, ecoquest1SignatureProphecyScroll,         ecoquest1PatchProphecyScroll },
 	{  true,   928, "CD: EcoTalker lockup fix",                    1, ecoquest1Sq4CdNarratorLockupSignature,    ecoquest1Sq4CdNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -1668,6 +1778,7 @@ static const uint16 ecoquest2PatchCampMessages2[] = {
 //          script, description,                                        signature                          patch
 static const SciScriptPatcherEntry ecoquest2Signatures[] = {
 	{  true,     0, "icon bar tutorial",                            10, ecoquest2SignatureIconBarTutorial, ecoquest2PatchIconBarTutorial },
+	{  true,    10, "disable speed test",                            1, sci11SpeedTestSignature,           sci11SpeedTestPatch},
 	{  true,    50, "initial text not removed on ecorder",           3, ecoquest2SignatureEcorder,         ecoquest2PatchEcorder },
 	{  true,   333, "initial text not removed on ecorder tutorial",  3, ecoquest2SignatureEcorderTutorial, ecoquest2PatchEcorderTutorial },
 	{  true,   500, "room 500 items reappear",                       1, ecoquest2SignatureRoom500Items,    ecoquest2PatchRoom500Items },
@@ -1734,7 +1845,7 @@ static const uint16 fanmadePatchDemoQuestInfiniteLoop[] = {
 //
 // Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
 // Responsible method: TheMenuBar:handleEvent
-static const uint16 fangameSignatureVolumeSlider[] = {
+static const uint16 fangameSignatureVolumeSlider1[] = {
 	0x39, SIG_SELECTOR8(doit),       // pushi doit
 	SIG_ADDTOOFFSET(+1),             // push1 [ opcode 79 instead of 78 in some games ]
 	SIG_ADDTOOFFSET(+1),             // push2 [ opcode 7b instead of 7a in some games ]
@@ -1745,7 +1856,7 @@ static const uint16 fangameSignatureVolumeSlider[] = {
 	SIG_END
 };
 
-static const uint16 fangamePatchVolumeSlider[] = {
+static const uint16 fangamePatchVolumeSlider1[] = {
 	PATCH_ADDTOOFFSET(+3),
 	0x39, 0x01,                      // pushi 01
 	0x38, PATCH_UINT16(0x0008),      // pushi 0008 [ volume ]
@@ -1753,10 +1864,71 @@ static const uint16 fangamePatchVolumeSlider[] = {
 	PATCH_END
 };
 
+static const uint16 fangameSignatureVolumeSlider2[] = {
+	0x38, SIG_SELECTOR16(doit),      // pushi doit
+	0x39, 0x01,                      // pushi 01
+	0x39, 0x02,                      // pushi 02
+	SIG_MAGICDWORD,
+	0x38, SIG_UINT16(0x0008),        // pushi 0808 [ volume ]
+	0x8d, 0x03,                      // lst 03     [ uninitialized variable ]
+	0x43, 0x31, 0x04,                // callk DoSound 04 [ set volume and return previous ]
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeSlider2[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x39, 0x01,                      // pushi 01
+	PATCH_ADDTOOFFSET(+3),
+	0x33, 0x00,                      // jmp 00
+	0x43, 0x31, 0x02,                // callk DoSound 02 [ return volume ]
+	PATCH_END
+};
+
+// Fan games based on the SCI Studio template reset their volume to 15 (max) in
+//  the init method of their game object in script 0. As with most SCI32 games,
+//  we patch this out so that the volume stored in ScummVM is used.
+// 
+// Applies to: Fan games built with the SCI Studio / SCI Companion SCI0 template
+// Responsible method: Template:init (the Game object in script 0)
+// Fixes bug: #13795
+static const uint16 fangameSignatureVolumeReset1[] = {
+	0x35, 0x0f,                      // ldi 0f
+	SIG_ADDTOOFFSET(+1), 0x1d,       // sag 1d   [ sag or sal depending on compiler ] 
+	SIG_ADDTOOFFSET(+1),             // push2    [ opcode 7b instead of 7a in some games ]
+	0x39, 0x08,                      // pushi 08 [ volume ]
+	SIG_ADDTOOFFSET(+1),             // lsg 1d   [ lsg or lsl depending on compiler ]
+	SIG_MAGICDWORD, 0x1d,      
+	0x43, 0x31, 0x04,                // callk DoSound 04
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeReset1[] = {
+	0x33, 0x0a,                      // jmp 0a
+	PATCH_END
+};
+
+static const uint16 fangameSignatureVolumeReset2[] = {
+	0x34, SIG_UINT16(0x000f),        // ldi 0f
+	0xa1, 0x1d,                      // sag 1d
+	0x39, 0x02,                      // pushi 02
+	0x38, SIG_UINT16(0x0008),        // pushi 0008 [ volume ]
+	0x89, SIG_MAGICDWORD, 0x1d,      // lsg 1d
+	0x43, 0x31, 0x04,                // callk DoSound 04
+	SIG_END
+};
+
+static const uint16 fangamePatchVolumeReset2[] = {
+	0x33, 0x0d,                      // jmp 0d
+	PATCH_END
+};
+
 //          script, description,                                      signature                                  patch
 static const SciScriptPatcherEntry fanmadeSignatures[] = {
+	{  true,     0, "SCI Template: disable volume reset",          1, fangameSignatureVolumeReset1,              fangamePatchVolumeReset1 },
+	{  true,     0, "SCI Template: disable volume reset",          1, fangameSignatureVolumeReset2,              fangamePatchVolumeReset2 },
 	{  true,   994, "Cascade Quest: fix auto-saving",              1, fanmadeSignatureCascadeQuestFixAutoSaving, fanmadePatchCascadeQuestFixAutoSaving },
-	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider,              fangamePatchVolumeSlider },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider1,             fangamePatchVolumeSlider1 },
+	{  true,   997, "SCI Template: fix volume slider",             1, fangameSignatureVolumeSlider2,             fangamePatchVolumeSlider2 },
 	{  true,   999, "Demo Quest: infinite loop on typo",           1, fanmadeSignatureDemoQuestInfiniteLoop,     fanmadePatchDemoQuestInfiniteLoop },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -1925,7 +2097,7 @@ static const uint16 freddypharkasPatchMacInventory[] = {
 // Applies to: Mac Floppy
 // Responsible method: Heap in script 270
 // Fixes bug #7065
-static const uint16 freddypharkasSignatureMacEasterEgg[] = {
+static const uint16 freddypharkasSignatureMacEasterEggHang[] = {
 	SIG_MAGICDWORD,                 // macSound
 	SIG_UINT16(0x0b89),             // number = 2953
 	SIG_UINT16(0x007f),             // vol = 127
@@ -1934,9 +2106,41 @@ static const uint16 freddypharkasSignatureMacEasterEgg[] = {
 	SIG_END
 };
 
-static const uint16 freddypharkasPatchMacEasterEgg[] = {
+static const uint16 freddypharkasPatchMacEasterEggHang[] = {
 	PATCH_ADDTOOFFSET(+6),
 	PATCH_UINT16(0x0001),           // loop = 1 [ play sound once ]
+	PATCH_END
+};
+
+// WORKAROUND
+// FPFP Mac's easter egg has a view that relies on a bug in the Mac interpreter.
+//  Sierra's interpreter draws views one pixel higher than their y coordinate.
+//  KQ6 Mac has this bug too. Compared to their original PC versions, views
+//  appear higher relative to their background. This is a problem for views that
+//  require precise placement to blend in with those backgrounds.
+//
+// The Mac easter egg adds such a view. View 275 contains a hand in the lake
+//  holding a Macintosh computer. Because this feature was developed against the
+//  Mac interpreter, the y coordinate that achieved the water effect is really
+//  off by one. In our interpreter, which doesn't have this bug, the view
+//  appears one pixel lower than intended and doesn't match the background.
+//
+// We fix this by adjusting macView:y to compensate for Sierra's off-by-one bug
+//  so that view 275 matches the lake background as in the original.
+//
+// Applies to: Mac Floppy
+// Responsible method: Heap in script 270
+static const uint16 freddypharkasSignatureMacEasterEggView[] = {
+	SIG_MAGICDWORD,                 // macView
+	SIG_UINT16(0x061e),             // name = $061e [ macView ]
+	SIG_UINT16(0x00cd),             // x = 205
+	SIG_UINT16(0x0065),             // y = 101
+	SIG_END
+};
+
+static const uint16 freddypharkasPatchMacEasterEggView[] = {
+	PATCH_ADDTOOFFSET(+4),
+	PATCH_UINT16(0x0064),           // y = 100
 	PATCH_END
 };
 
@@ -2073,17 +2277,19 @@ static const uint16 freddypharkasPatchDeskLetter[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                            patch
+//          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry freddypharkasSignatures[] = {
-	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,  freddypharkasPatchMacInventory },
-	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,  freddypharkasPatchIntroScaling },
-	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,   freddypharkasPatchMacHopSingh },
-	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,  freddypharkasPatchCanisterHang },
-	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEgg,  freddypharkasPatchMacEasterEgg },
-	{  true,   310, "church key reappears",                        1, freddypharkasSignatureChurchKey,     freddypharkasPatchChurchKey },
-	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,   freddypharkasPatchLadderEvent },
-	{  true,   610, "desk letter reappears",                       1, freddypharkasSignatureDeskLetter,    freddypharkasPatchDeskLetter },
-	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
+	{  true,    15, "Mac: broken inventory",                       1, freddypharkasSignatureMacInventory,      freddypharkasPatchMacInventory },
+	{  true,    28, "disable speed test",                          1, sci11SpeedTestSignature,                 sci11SpeedTestPatch },
+	{  true,   110, "intro scaling workaround",                    2, freddypharkasSignatureIntroScaling,      freddypharkasPatchIntroScaling },
+	{  false,  200, "Mac: skip broken hop singh scene",            1, freddypharkasSignatureMacHopSingh,       freddypharkasPatchMacHopSingh },
+	{  true,   235, "CD: canister pickup hang",                    3, freddypharkasSignatureCanisterHang,      freddypharkasPatchCanisterHang },
+	{  true,   270, "Mac: easter egg hang",                        1, freddypharkasSignatureMacEasterEggHang,  freddypharkasPatchMacEasterEggHang },
+	{  true,   270, "Mac: easter egg view",                        1, freddypharkasSignatureMacEasterEggView,  freddypharkasPatchMacEasterEggView },
+	{  true,   310, "church key reappears",                        1, freddypharkasSignatureChurchKey,         freddypharkasPatchChurchKey },
+	{  true,   320, "ladder event issue",                          2, freddypharkasSignatureLadderEvent,       freddypharkasPatchLadderEvent },
+	{  true,   610, "desk letter reappears",                       1, freddypharkasSignatureDeskLetter,        freddypharkasPatchDeskLetter },
+	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,              sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -2287,41 +2493,16 @@ static const uint16 hoyle5PatchSetScale[] = {
 // In these two collections, the scripts for the other games have been removed.
 // Choosing any other game than the above results in a "No script found" error.
 // The original game did not show the game selection screen, as there were
-// direct shortucts to each game.
-// Since we do show the game selection screen, we remove all the games
-// which from the ones below, which are not included in each version:
-// - Crazy Eights (script 100)
-// - Old Maid (script 200)
+// direct shortcuts to each game.
+// We do show the game selection screen for Children's Collection, thus we
+// disable all the games which are not included in this version:
 // - Hearts (script 300)
 // - Gin Rummy (script 400)
 // - Cribbage (script 500)
 // - Klondike / Solitaire (script 600)
 // - Bridge (script 700)
 // - Poker (script 1100)
-// - Checkers (script 1200)
 // - Backgammon (script 1300)
-static const uint16 hoyle5SignatureCrazyEights[] = {
-	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x9c, 0x01,      // lofsa chooseCrazy8s
-	0x4a, 0x08, 0x00,      // send  0008
-	SIG_END
-};
-
-static const uint16 hoyle5SignatureOldMaid[] = {
-	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x2c, 0x02,      // lofsa chooseOldMaid
-	0x4a, 0x08, 0x00,      // send  0008
-	SIG_END
-};
-
 static const uint16 hoyle5SignatureHearts[] = {
 	SIG_MAGICDWORD,
 	0x38, 0x8e, 0x00,      // pushi 008e
@@ -2384,17 +2565,6 @@ static const uint16 hoyle5SignaturePoker[] = {
 	0x38, 0xf0, 0x02,      // pushi 02f0
 	0x76,                  // push0
 	0x72, 0x8c, 0x05,      // lofsa choosePoker
-	0x4a, 0x08, 0x00,      // send  0008
-	SIG_END
-};
-
-static const uint16 hoyle5SignatureCheckers[] = {
-	SIG_MAGICDWORD,
-	0x38, 0x8e, 0x00,      // pushi 008e
-	0x76,                  // push0
-	0x38, 0xf0, 0x02,      // pushi 02f0
-	0x76,                  // push0
-	0x72, 0x1c, 0x06,      // lofsa chooseCheckers
 	0x4a, 0x08, 0x00,      // send  0008
 	SIG_END
 };
@@ -2471,45 +2641,13 @@ static const SciScriptPatcherEntry hoyle5Signatures[] = {
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
 	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-//          script, description,                                      signature                         patch
-static const SciScriptPatcherEntry hoyle5ChildrensCollectionSignatures[] = {
-	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,   200, "fix setScale calls",                         11, hoyle5SetScaleSignature,          hoyle5PatchSetScale },
-	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Bridge",                              1, hoyle5SignatureBridge,            hoyle5PatchDisableGame },
-	{  true,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
-	{  true,   975, "disable Hearts",                              1, hoyle5SignatureHearts,            hoyle5PatchDisableGame },
-	{  true,   975, "disable Backgammon",                          1, hoyle5SignatureBackgammon,        hoyle5PatchDisableGame },
-	SCI_SIGNATUREENTRY_TERMINATOR
-};
-
-//          script, description,                                      signature                         patch
-static const SciScriptPatcherEntry hoyle5BridgeSignatures[] = {
-	{  true,     3, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,    23, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,   500, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true, 64937, "remove kGetTime spin",                        1, hoyle5SignatureSpinLoop,          hoyle5PatchSpinLoop },
-	{  true,   733, "bridge arithmetic against object ",           1, hoyle5SignatureBridgeArithmetic,  hoyle5PatchBridgeArithmetic },
-	{  true,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
-	{  true,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
-	{  true,   975, "disable Hearts",                              1, hoyle5SignatureHearts,            hoyle5PatchDisableGame },
-	{  true,   975, "disable Backgammon",                          1, hoyle5SignatureBackgammon,        hoyle5PatchDisableGame },
-	{  true,   975, "disable Crazy Eights",                        1, hoyle5SignatureCrazyEights,       hoyle5PatchDisableGame },
-	{  true,   975, "disable Old Maid",                            1, hoyle5SignatureOldMaid,           hoyle5PatchDisableGame },
-	{  true,   975, "disable Checkers",                            1, hoyle5SignatureCheckers,          hoyle5PatchDisableGame },
-	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
-	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
-	{  true, 64990, "disable change directory button",             1, sci2ChangeDirSignature,           sci2ChangeDirPatch },
+	{ false,   975, "disable Gin Rummy",                           1, hoyle5SignatureGinRummy,          hoyle5PatchDisableGame },
+	{ false,   975, "disable Cribbage",                            1, hoyle5SignatureCribbage,          hoyle5PatchDisableGame },
+	{ false,   975, "disable Klondike",                            1, hoyle5SignatureKlondike,          hoyle5PatchDisableGame },
+	{ false,   975, "disable Bridge",                              1, hoyle5SignatureBridge,            hoyle5PatchDisableGame },
+	{ false,   975, "disable Poker",                               1, hoyle5SignaturePoker,             hoyle5PatchDisableGame },
+	{ false,   975, "disable Hearts",                              1, hoyle5SignatureHearts,            hoyle5PatchDisableGame },
+	{ false,   975, "disable Backgammon",                          1, hoyle5SignatureBackgammon,        hoyle5PatchDisableGame },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4182,6 +4320,8 @@ static const uint16 gk2BenchmarkPatch[] = {
 //
 // We fix this by clearing SoundManager's timer state in SoundManager:play.
 //  This prevents the delay timer from ever running while music is playing.
+//  Note that this bug is unrelated to lockups when the music volume slider
+//  is set to its lowest value. We fix that in Sci::Audio32::fadeChannel().
 //
 // Applies to: All versions
 // Responsible method: SoundManager:play
@@ -4673,6 +4813,7 @@ static const uint16 icemanClimbDownHatchPatch[] = {
 //         script, description,                                       signature                                      patch
 static const SciScriptPatcherEntry icemanSignatures[] = {
 	{ true,    23, "climb down hatch",                             1, icemanClimbDownHatchSignature,                 icemanClimbDownHatchPatch },
+	{ true,    99, "disable speed test",                           1, sci01SpeedTestLocalSignature,                  sci01SpeedTestLocalPatch },
 	{ true,   314, "destroyer timer (1/2)",                        1, icemanDestroyerTimer1Signature,                icemanDestroyerTimer1Patch },
 	{ true,   391, "destroyer timer (2/2)",                        1, icemanDestroyerTimer2Signature,                icemanDestroyerTimer2Patch },
 	SCI_SIGNATUREENTRY_TERMINATOR
@@ -4723,6 +4864,15 @@ static const SciScriptPatcherEntry islandBrainSignatures[] = {
 };
 
 // ===========================================================================
+// Jones In The Fast Lane
+
+//          script, description,                                      signature                         patch
+static const SciScriptPatcherEntry jonesSignatures[] = {
+	{  true,   764, "disable speed test",                          1, sci01SpeedTestLocalSignature,     sci01SpeedTestLocalPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
+
+// ===========================================================================
 // King's Quest 1
 
 // In the demo, the leprechaun dance runs awkwardly fast on modern computers.
@@ -4754,6 +4904,8 @@ static const uint16 kq1PatchDemoDanceSpeed[] = {
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry kq1Signatures[] = {
 	{  true,    77, "demo: dance speed",                           1, kq1SignatureDemoDanceSpeed,       kq1PatchDemoDanceSpeed },
+	{  true,    99, "demo: disable speed test",                    1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
+	{  true,   777, "disable speed test",                          1, sci01SpeedTestGlobalSignature,    sci01SpeedTestGlobalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -4919,6 +5071,8 @@ static const uint16 kq4PatchUnicornNightRide[] = {
 static const SciScriptPatcherEntry kq4Signatures[] = {
 	{ false,    24, "missing waterfall view",                      1, kq4SignatureMissingWaterfallView,         kq4PatchMissingWaterfallView },
 	{  true,    90, "fall down stairs",                            1, kq4SignatureFallDownStairs,               kq4PatchFallDownStairs },
+	{  true,    98, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
+	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,              sci0EarlySpeedTestPatch },
 	{  true,   994, "ride unicorn at night",                       1, kq4SignatureUnicornNightRide,             kq4PatchUnicornNightRide },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -5147,6 +5301,8 @@ static const uint16 kq5PatchPc98CampfireMessages[] = {
 static const SciScriptPatcherEntry kq5Signatures[] = {
 	{  true,     0, "CD: harpy volume change",                     1, kq5SignatureCdHarpyVolume,            kq5PatchCdHarpyVolume },
 	{  true,     0, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,         sci01SpeedTestLocalPatch },
+	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,              sci11SpeedTestPatch },
 	{ false,   109, "Crispin intro signal",                        1, kq5SignatureCrispinIntroSignal,       kq5PatchCrispinIntroSignal },
 	{  true,   124, "Multilingual: Ending glitching out",          3, kq5SignatureMultilingualEndingGlitch, kq5PatchMultilingualEndingGlitch },
 	{ false,   124, "Win: GM Music signal checks",                 4, kq5SignatureWinGMSignals,             kq5PatchWinGMSignals },
@@ -5159,7 +5315,7 @@ static const SciScriptPatcherEntry kq5Signatures[] = {
 // ===========================================================================
 // In the garden (room 480), when giving the milk bottle to one of the babies,
 // script 481 starts a looping a baby cry sound (cryMusic). However, that
-// particular sound has an overriden check() method that explicitly restarts
+// particular sound has an overridden check() method that explicitly restarts
 // the sound, even if it's set to be looped. Thus the same sound is played
 // twice, squelching all other sounds.
 //
@@ -5768,8 +5924,8 @@ static const uint16 kq6PatchTruncatedMessagesFix[] = {
 //  their mouths are animated by inner loops that call kDrawCel with unthrottled
 //  inner inner loops that spin to create a delay between frames. This prevents
 //  updating the screen and responding to input. We replace the spin loops with
-//  calls to kGameIsRestarting, which detects and throttles these calls so that
-//  the speed is reasonable, the screen updates, and the game is responsive.
+//  calls to kScummVMSleep for 5 ticks so that the speed is reasonable, the
+//  screen updates, and the game is responsive.
 //
 // Applies to: All versions
 // Responsible method: participle:doVerb, tomato:doVerb
@@ -5786,9 +5942,9 @@ static const uint16 kq6SignatureTalkingInventory[] = {
 static const uint16 kq6PatchTalkingInventory[] = {
 	PATCH_ADDTOOFFSET(+2),
 	0x78,                               // push1
-	0x76,                               // push0
-	0x43, 0x2c, 0x02,                   // callk GameIsRestarting 02 [ custom throttling ]
-	0x34, PATCH_UINT16(0x0000),         // ldi 0000 [ exit loop ]
+	0x39, 0x05,                         // pushi 05
+	0x43, kScummVMSleepId, 0x02,        // callk kScummVMSleep 02 [ 5 ticks ]
+	0x35, 0x00,                         // ldi 00 [ exit loop ]
 	PATCH_END
 };
 
@@ -6506,6 +6662,7 @@ static const SciScriptPatcherEntry kq6Signatures[] = {
 	{  true,    80, "fix guard dog music",                            1, kq6SignatureGuardDogMusic,                kq6PatchGuardDogMusic },
 	{  true,    87, "fix Drink Me bottle",                            1, kq6SignatureDrinkMeFix,                   kq6PatchDrinkMeFix },
 	{ false,    87, "Mac: Drink Me pic",                              1, kq6SignatureMacDrinkMePic,                kq6PatchMacDrinkMePic },
+	{  true,    99, "disable speed test",                             1, sci11SpeedTestSignature,                  sci11SpeedTestPatch },
 	{  true,   105, "Mac: opening movie delay",                       1, kq6MacSignatureMacOpeningMovieDelay,      kq6MacPatchMacOpeningMovieDelay },
 	{  true,   281, "fix pawnshop genie eye",                         1, kq6SignaturePawnshopGenieEye,             kq6PatchPawnshopGenieEye },
 	{  true,   300, "fix floating off steps",                         2, kq6SignatureCliffStepFloatFix,            kq6PatchCliffStepFloatFix },
@@ -7042,6 +7199,43 @@ static const uint16 kq7StopTimersPatch[] = {
 	PATCH_END
 };
 
+// The wooden nickel can't be given to the Faux Shop owner in early versions of
+//  KQ7 because the script doesn't register the hotspot. This was fixed in later
+//  versions. We add the missing shopOwner:addRespondVerb call.
+//
+// Applies to: PC 1.4 and PC 1.51 English/German/French
+// Responsible method: rm5000:init
+static const uint16 kq7FauxShopWoodenNickelSignature[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(ignoreActors),     // pushi ignoreActors
+	0x78,                                   // push1
+	0x78,                                   // push1
+	SIG_ADDTOOFFSET(+13),
+	0x34, SIG_UINT16(0x1000),               // ldi 1000 [ signal ]
+	SIG_ADDTOOFFSET(+2),
+	0x38, SIG_SELECTOR16(setCel),           // pushi setCel
+	0x78,                                   // push1
+	0x39, 0x09,                             // pushi 09
+	0x38, SIG_SELECTOR16(init),             // pushi init
+	0x76,                                   // push0
+	SIG_END
+};
+
+static const uint16 kq7FauxShopWoodenNickelPatch[] = {
+	0x39, PATCH_SELECTOR8(cel),             // pushi cel
+	0x78,                                   // push1
+	0x39, 0x09,                             // pushi 09
+	PATCH_ADDTOOFFSET(+13),
+	0x34, PATCH_UINT16(0x5000),             // ldi 5000 [ signal | ignoreActors flag ]
+	PATCH_ADDTOOFFSET(+2),
+	0x38, PATCH_SELECTOR16(init),           // pushi init
+	0x76,                                   // push0
+	0x38, PATCH_SELECTOR16(addRespondVerb), // pushi addRespondVerb
+	0x78,                                   // push1
+	0x39, 0x3b,                             // pushi 3b [ wooden nickel ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                 patch
 static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,     0, "disable video benchmarking",                  1, kq7BenchmarkSignature,                    kq7BenchmarkPatch },
@@ -7051,6 +7245,7 @@ static const SciScriptPatcherEntry kq7Signatures[] = {
 	{  true,    30, "fix allowing too many saves",                 1, kq7TooManySavesSignature,                 kq7TooManySavesPatch },
 	{  true,  1250, "fix opening cartoon",                         1, kq7OpeningCartoonSignature,               kq7OpeningCartoonPatch },
 	{  true,  1250, "fix statue gem cel",                          1, kq7StatueGemCelSignature,                 kq7StatueGemCelPatch },
+	{  true,  5000, "fix wooden nickel in faux shop",              1, kq7FauxShopWoodenNickelSignature,         kq7FauxShopWoodenNickelPatch },
 	{  true,  5300, "fix snake oil salesman disposal",             1, kq7SnakeOilSalesmanSignature,             kq7SnakeOilSalesmanPatch },
 	{  true,  5301, "fix chicken cartoon",                         1, kq7ChickenCartoonSignature,               kq7ChickenCartoonPatch },
 	{  true,  6100, "fix extra ambrosia",                          1, kq7ExtraAmbrosiaSignature,                kq7ExtraAmbrosiaPatch },
@@ -7156,11 +7351,124 @@ static const uint16 lighthouseCompassPatch[] = {
 	PATCH_END
 };
 
+// The script for opening the underwater safe has a timing bug that relies on
+//  the original interpreter being too slow to play the robot video at the
+//  specified frame rate. In ScummVM this causes the submarine arm animation to
+//  be out of sync with the safe door, repeat itself, and end on the wrong cel.
+//
+// openSafe:changeState(0) starts two animations: robot 596 (the safe door) and
+//  view 595 (the submarine arm). State 1 cues when the robot completes and
+//  resets the view's cel on the assumption that the view's cycler has already
+//  completed. But the robot is 50 frames at 2 ticks per frame (100 ticks) while
+//  the view is 39 ticks at 6 ticks per frame (234 ticks) so the robot should
+//  complete first. This worked in the original interpreter because it wasn't
+//  fast enough to run this scene at 2 ticks per frame and because Lighthouse's
+//  RobotPlayer script has a bug in its time calculations that amplifies delays
+//  when the specified frame rate can't be achieved. This combination caused the
+//  the robot to animate slower than specified and complete after the view.
+//
+// We fix this by lowering the robot's specified frame rate to the effective
+//  frame rate from the original.
+//
+// Applies to: All versions
+// Responsible Method: openSafe:changeState(0)
+// Fixes bug: #10226
+static const uint16 lighthouseOpenSafeSpeedSignature[] = {
+	0x39, SIG_SELECTOR8(init),             // pushi init
+	SIG_MAGICDWORD,
+	0x3c,                                  // dup
+	0x38, SIG_UINT16(0x0254),              // pushi 0254 [ view 585 ]
+	SIG_ADDTOOFFSET(+10),
+	0x38, SIG_SELECTOR16(start),           // pushi start
+	0x7a,                                  // push2
+	0x78,                                  // push1
+	0x39, 0x1e,                            // pushi 1e [ 30 frames per second (100 ticks) ]
+	SIG_END
+};
+
+static const uint16 lighthouseOpenSafeSpeedPatch[] = {
+	PATCH_ADDTOOFFSET(+21),
+	0x39, 0x0a,                            // pushi 0a [ 10 frames per second (300 ticks) ]
+	PATCH_END
+};
+
+// At the top of the roost tower there can be up to three mechanical birds, but
+//  they can appear and disappear inconsistently depending on which direction
+//  the player was facing before turning. rm510:changeScene has two bugs that
+//  set the wrong scene/pic links on the exit cursors once Birdman has appeared:
+//
+// 1. When facing the ladder (scene 504) and there are 3 birds, exitRight:curPic
+//    is set to 7506 (no birds) instead of 7504 (left and broken center bird).
+// 2. When facing right of the perch and there are no birds (scene 502), there
+//    is no code to handle the bird count being 0, and so exitLeft:curPic is set
+//    to 4511 (left and broken center bird) instead of 501 (no birds).
+//
+// We fix this by setting the correct scene/pic view when facing the ladder and
+//  adding the missing bird count test when facing right of the perch.
+//
+// Applies to: All versions
+// Responsible method: rm510:changeScene
+// Fixes bug: #10265
+static const uint16 lighthouseRoostBirdPicSignature1[] = {
+	0x3c,                                  // dup
+	0x35, 0x03,                            // ldi 03
+	0x1a,                                  // eq? [ bird count == 3 ]
+	0x31, 0x14,                            // bnt 14
+	0x38, SIG_SELECTOR16(newPic),          // pushi newPic
+	SIG_MAGICDWORD,
+	0x7a,                                  // push2
+	0x38, SIG_UINT16(0x1d52),              // pushi 1d52 [ no birds ]
+	0x39, 0x04,                            // pushi 04
+	0x7a,                                  // push2
+	0x78,                                  // push1
+	0x39, 0x04,                            // pushi 04
+	0x43, 0x02, SIG_UINT16(0x0004),        // callk ScriptID 04 [ exitRight ]
+	0x4a, SIG_UINT16(0x0008),              // send 08 [ exitRight newPic: 7506 4 ]
+	SIG_END
+};
+
+static const uint16 lighthouseRoostBirdPicPatch1[] = {
+	PATCH_ADDTOOFFSET(+10),
+	0x38, PATCH_UINT16(0x1d50),            // pushi 1d50 [ left bird + broken bird ]
+	PATCH_END
+};
+
+static const uint16 lighthouseRoostBirdPicSignature2[] = {
+	SIG_MAGICDWORD,
+	0x3c,                                  // dup
+	0x34, SIG_UINT16(0x01f6),              // ldi 01f6
+	0x1a,                                  // eq? [ is scene 502? ]
+	0x31, 0x68,                            // bnt 68
+	0x78,                                  // push1
+	0x38, SIG_UINT16(0x0182),              // pushi 0182 [ flag 386 ]
+	0x45, 0x05, SIG_UINT16(0x0002),        // callb proc5_2 [ has birdman attacked? ]
+	0x31, 0x33,                            // bnt 33 [ no birds to the left ]
+	0x89, 0xd1,                            // lsg d1 [ bird count ]
+	0x35, 0x01,                            // ldi 01
+	0x1a,                                  // eq?
+	SIG_END
+};
+
+static const uint16 lighthouseRoostBirdPicPatch2[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x89, 0x8c,                            // lsg 8c   [ flag global ]
+	0x34, PATCH_UINT16(0x2000),            // ldi 2000 [ flag 386 ]
+	0x12,                                  // and      [ is flag 386 set? ]
+	0x31, 0x35,                            // bnt 35   [ no birds to left ]
+	0x81, 0xd1,                            // lag d1   [ bird count ]
+	0x31, 0x31,                            // bnt 31   [ no birds to left if bird count == 0 ]
+	0x39, 0x01,                            // pushi 01
+	PATCH_END
+};
+
 //          script, description,                                      signature                         patch
 static const SciScriptPatcherEntry lighthouseSignatures[] = {
 	{  true,     5, "fix bad globals clear after credits",         1, lighthouseFlagResetSignature,     lighthouseFlagResetPatch },
 	{  true,     9, "fix compass in submarine",                    1, lighthouseCompassSignature,       lighthouseCompassPatch },
 	{  true,   360, "fix slow computer memory counter",            1, lighthouseMemoryCountSignature,   lighthouseMemoryCountPatch },
+	{  true,   510, "fix roost bird pic",                          1, lighthouseRoostBirdPicSignature1, lighthouseRoostBirdPicPatch1 },
+	{  true,   510, "fix roost bird pic",                          1, lighthouseRoostBirdPicSignature2, lighthouseRoostBirdPicPatch2 },
+	{  true,   700, "fix open safe speed",                         1, lighthouseOpenSafeSpeedSignature, lighthouseOpenSafeSpeedPatch },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,       sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,           sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,           sci2NumSavesPatch2 },
@@ -7682,6 +7990,35 @@ static const uint16 longbowPatchAmigaSpeedTest[] = {
 	PATCH_END
 };
 
+// The Amiga version introduced a script bug that prevents setting the flag when
+//  saving the peasant woman on day one. To get a perfect score, Robin must give
+//  the woman money as she walks away, but this causes the rest of the game to
+//  behave as if she was left to die. The script savedTheWoman was altered to
+//  set flag 173 in a later state than before, but this was a mistake because
+//  giveWomanBucks interrupts savedTheWoman and completes the scene. The Amiga
+//  script also allows exiting to the map before flag 173 is set.
+//
+// We fix this by setting flag 173 as soon as savedTheWoman enables input, just
+//  like in the PC versions. We make room by overwriting an Amiga-only test of
+//  the machine's speed. This is unnecessary as we disable the speed test above.
+//
+// Applies to: English Amiga Floppy
+// Responsible method: savedTheWoman:changeState(13)
+static const uint16 longbowSignatureAmigaPeasantWoman[] = {
+	0x89, SIG_MAGICDWORD, 0x57,     // lsg 87 [ machine speed, always 2 ]
+	0x35, 0x01,                     // ldi 01
+	0x20,                           // ge?    [ machine speed >= 1 ]
+	0x30, SIG_UINT16(0x0012),       // bnt 0012
+	SIG_END
+};
+
+static const uint16 longbowPatchAmigaPeasantWoman[] = {
+	0x39, 0x01,                     // pushi 01
+	0x38, PATCH_UINT16(0x00ad),     // pushi 00ad    [ flag 173 ]
+	0x45, 0x06, 0x02,               // callb proc0_6 [ set saved-woman flag ]
+	PATCH_END
+};
+
 // When Robin is sentenced to death, King Richard and Robin discuss Marian's
 //  death even if she is alive and just finished testifying at the trial.
 //
@@ -7730,8 +8067,70 @@ static const uint16 longbowPatchMarianMessagesFix[] = {
 	PATCH_END
 };
 
+// In the abbey hedge maze, the music stops if the interpreter loads the next
+//  maze room in under half a second. ScummVM can achieve this on fast machines.
+//  When changing maze rooms, the old room sets the music to slowly fade to zero
+//  without waiting. The new room then sets the music to fade back in to full
+//  volume (127). This has no noticeable effect since the second fade reverts
+//  the first almost instantly, but if the new room loads before the fade timer
+//  has lowered the volume at all then kDoSoundFade ignores the second fade
+//  because the volume is already at the target. The first fade then proceeds to
+//  lower the volume to zero and stop the sound, after which it never resumes.
+//
+// We fix this by patching HedgeRow:dispose to only fade out the music when
+//  exiting the maze. This doesn't change the music since the fades canceled
+//  each other out when changing maze rooms. There is already a nearby check for
+//  exiting the maze so this patch re-orders the instructions.
+//
+// Applies to: All versions
+// Responsible method: HedgeRow:dispose
+// Fixes bug: #13674
+static const uint16 longbowSignatureHedgeMazeMusic[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(fade),     // pushi fade
+	0x39, 0x04,                     // pushi 04
+	0x76,                           // push0
+	0x39, 0x1e,                     // pushi 1e
+	0x39, 0x08,                     // pushi 08
+	0x78,                           // push1
+	0x81, 0x64,                     // lag 64
+	0x4a, 0x0c,                     // send 0c [ rgnMusic fade: 0 30 8 1 ]
+	0x38, SIG_SELECTOR16(enable),   // pushi enable
+	0x78,                           // push1
+	0x39, 0x05,                     // pushi 05
+	0x81, 0x45,                     // lag 45
+	0x4a, 0x06,                     // send 06 [ IconBar enable: 5 ]
+	0x89, 0x0d,                     // lsg 0d  [ new room ]
+	0x35, 0x55,                     // ldi 55  [ max maze room ]
+	0x1e,                           // gt?     [ exiting hedge maze? ]
+	0x30, SIG_UINT16(0x0020),       // bnt 0020
+	SIG_END
+};
+
+static const uint16 longbowPatchHedgeMazeMusic[] = {
+	0x38, PATCH_SELECTOR16(enable), // pushi enable
+	0x78,                           // push1
+	0x39, 0x05,                     // pushi 05
+	0x81, 0x45,                     // lag 45
+	0x4a, 0x06,                     // send 06 [ IconBar enable: 5 ]
+	0x89, 0x0d,                     // lsg 0d  [ new room ]
+	0x35, 0x55,                     // ldi 55  [ max maze room ]
+	0x1e,                           // gt?     [ exiting hedge maze? ]
+	0x30, PATCH_UINT16(0x002f),     // bnt 002f
+	0x38, PATCH_SELECTOR16(fade),   // pushi fade
+	0x39, 0x04,                     // pushi 04
+	0x76,                           // push0
+	0x39, 0x1e,                     // pushi 1e
+	0x39, 0x08,                     // pushi 08
+	0x78,                           // push1
+	0x81, 0x64,                     // lag 64
+	0x4a, 0x0c,                     // send 0c [ rgnMusic fade: 0 30 8 1 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                patch
 static const SciScriptPatcherEntry longbowSignatures[] = {
+	{  true,    29, "amiga day 1 peasant woman",                   1, longbowSignatureAmigaPeasantWoman,       longbowPatchAmigaPeasantWoman},
 	{  true,   140, "green man riddles and forest sweep fix",      1, longbowSignatureGreenManForestSweepFix,  longbowPatchGreenManForestSweepFix },
 	{  true,   150, "day 5/6 camp sunset fix",                     2, longbowSignatureCampSunsetFix,           longbowPatchCampSunsetFix },
 	{  true,   150, "day 7 tuck net fix",                          1, longbowSignatureTuckNetFix,              longbowPatchTuckNetFix },
@@ -7742,9 +8141,11 @@ static const SciScriptPatcherEntry longbowSignatures[] = {
 	{  true,   320, "day 8 archer pathfinding workaround",         1, longbowSignatureArcherPathfinding,       longbowPatchArcherPathfinding },
 	{  true,   350, "day 9 cobbler hut fix",                      10, longbowSignatureCobblerHut,              longbowPatchCobblerHut },
 	{  true,   422, "marian messages fix",                         1, longbowSignatureMarianMessagesFix,       longbowPatchMarianMessagesFix },
+	{  true,   490, "hedge maze music",                            1, longbowSignatureHedgeMazeMusic,          longbowPatchHedgeMazeMusic },
 	{  true,   530, "amiga pub fix",                               1, longbowSignatureAmigaPubFix,             longbowPatchAmigaPubFix },
 	{  true,   600, "amiga fulk rescue fix",                       1, longbowSignatureAmigaFulkRescue,         longbowPatchAmigaFulkRescue },
 	{  true,   803, "amiga speed test",                            1, longbowSignatureAmigaSpeedTest,          longbowPatchAmigaSpeedTest },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,            sci01SpeedTestLocalPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7874,6 +8275,7 @@ static const SciScriptPatcherEntry larry1Signatures[] = {
 
 // ===========================================================================
 // Leisure Suit Larry 2
+
 // On the plane, Larry is able to wear the parachute. This grants 4 points.
 // In early versions of LSL2, it was possible to get "unlimited" points by
 //  simply wearing it multiple times.
@@ -7908,9 +8310,64 @@ static const uint16 larry2PatchWearParachutePoints[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                           patch
+// When buying a lottery ticket, the message box "Processing..." is displayed
+//  three times with no delay between the messages. In the original, each was
+//  visibly erased before the next because the interpreter drew directly to the
+//  screen. This created the necessary flicker effect indicating that the three
+//  identical messages were separate. In ScummVM there is no flicker because the
+//  window is updated with the screen buffer when processing events or between
+//  game cycles. The result is a single message box that appears to not respond
+//  to Enter or clicks until the third one dismisses it.
+//
+// We fix this by adding a brief delay in the "Processing..." loop with a call
+//  to kScummVMSleep so that the screen is redrawn between message boxes and the
+//  intended effect occurs as in the original. This patch is broken up into two
+//  parts because different versions have different instructions in the loop.
+//
+// Applies to: All versions
+// Responsible method: rm114Script:changeState(15)
+static const uint16 larry2SignatureLotteryTicketMessages1[] = {
+	0x35, 0x00,                      // ldi 00
+	0xa5, 0x00,                      // sat 00 [ temp0 = 0 ]
+	0x8d, 0x00,                      // lst 00 [ start loop ]
+	SIG_MAGICDWORD,
+	0x35, 0x03,                      // ldi 03
+	0x22,                            // lt?    [ temp0 < 3 ]
+	0x30, SIG_ADDTOOFFSET(+1), 0x00, // bnt    [ exit loop ]
+	SIG_END
+};
+
+static const uint16 larry2PatchLotteryTicketMessages1[] = {
+	0xa5, 0x00,                      // sat 00 [ temp0 = 0 (acc already 0) ]
+	0x7a,                            // push2  [ start loop ]
+	0x20,                            // ge?    [ 2 >= temp0 ]
+	0x31, PATCH_GETORIGINALBYTEADJUST(+10, +6), // bnt [ exit loop ]
+	0x78,                            // push1
+	0x39, 0x02,                      // pushi 02
+	0x43, kScummVMSleepId, 0x02,     // callk kScummVMSleep 02 [ 2 ticks ]
+	PATCH_END
+};
+
+static const uint16 larry2SignatureLotteryTicketMessages2[] = {
+	0x47, 0xff, SIG_MAGICDWORD, 0x00, 0x0c, // calle proc255_0 0c [ Print "Processing..." ]
+	0xc5, 0x00,                             // +at 00 [ temp0++, acc = temp0 ]
+	0x32, SIG_ADDTOOFFSET(+1), 0xff,        // jmp    [ continue loop ]
+	SIG_END
+};
+
+static const uint16 larry2PatchLotteryTicketMessages2[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x32, PATCH_GETORIGINALBYTEADJUST(+7, -2), 0xff, // jmp [ continue loop ]
+	PATCH_END
+};
+
+//          script, description,                                      signature                              patch
 static const SciScriptPatcherEntry larry2Signatures[] = {
-	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints, larry2PatchWearParachutePoints },
+	{  true,    63, "plane: no points for wearing parachute",      1, larry2SignatureWearParachutePoints,    larry2PatchWearParachutePoints },
+	{  true,    99, "disable speed test",                          1, sci0EarlySpeedTestSignature,           sci0EarlySpeedTestPatch },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestGlobalSignature,         sci01SpeedTestGlobalPatch },
+	{  true,   114, "lottery ticket messages (1/2)",               1, larry2SignatureLotteryTicketMessages1, larry2PatchLotteryTicketMessages1 },
+	{  true,   114, "lottery ticket messages (2/2)",               1, larry2SignatureLotteryTicketMessages2, larry2PatchLotteryTicketMessages2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -7928,20 +8385,10 @@ static const SciScriptPatcherEntry larry2Signatures[] = {
 // Applies to: All versions
 // Responsible method: rm290:doit
 // Fixes bug: #11967
-static const uint16 larry3SignatureSpeedTest[] = {
-	SIG_MAGICDWORD,
-	0x8b, 0x00,                      // lsl 00
-	0x76,                            // push0
-	0x43, SIG_ADDTOOFFSET(+1), 0x00, // callk GetTime 00
-	0x22,                            // lt? [ is speed test complete? ]
-	0x30,                            // bnt
-	SIG_END
-};
-
 static const uint16 larry3PatchSpeedTest[] = {
-	0x35, 0x28,                      // ldi 28
-	0xa1, 0x7b,                      // sag 7b [ machine speed = 40 ]
-	0x33, 0x04,                      // jmp 04 [ complete speed test ]
+	0x34, PATCH_UINT16(0x0028),         // ldi 0028
+	0xa1, PATCH_GETORIGINALBYTE(+1),    // sag [ machine-speed = 40 ]
+	0x18,                               // not [ always skip initialization ]
 	PATCH_END
 };
 
@@ -7976,10 +8423,10 @@ static const uint16 larry3PatchVolumeSlider[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                     patch
+//          script, description,                                      signature                      patch
 static const SciScriptPatcherEntry larry3Signatures[] = {
-	{  true,   290, "disable speed test",                          1, larry3SignatureSpeedTest,     larry3PatchSpeedTest },
-	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,  larry3PatchVolumeSlider },
+	{  true,   290, "disable speed test",                          1, sci01SpeedTestGlobalSignature, larry3PatchSpeedTest },
+	{  true,   997, "fix volume slider",                           1, larry3SignatureVolumeSlider,   larry3PatchVolumeSlider },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -8091,6 +8538,7 @@ static const uint16 larry6PatchDeathDialog[] = {
 //          script, description,                                      signature                   patch
 static const SciScriptPatcherEntry larry6Signatures[] = {
 	{  true,    82, "death dialog memory corruption",              1, larry6SignatureDeathDialog, larry6PatchDeathDialog },
+	{  true,    99, "disable speed test",                          1, sci11SpeedTestSignature,    sci11SpeedTestPatch },
 	{  true,   928, "Narrator lockup fix",                         1, sciNarratorLockupSignature, sciNarratorLockupPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -8158,6 +8606,146 @@ static const uint16 larry6HiresMacVolumeRestorePatch[] = {
 	PATCH_END
 };
 
+// Filling the whale oil lamp with cellulite locks up the game when the PATCHES
+//  directory is missing. The patch files for script 330 override a very broken
+//  version in the resource volumes that always goes into an infinite loop.
+//  Unfortunately, the Leisure Suit Larry Collection CD includes a RESOURCE.CFG
+//  with an incorrect path to the PATCHES directory. Sierra's fix was to issue a
+//  save file with a full oil lamp that was compatible with the broken scripts.
+//  This shouldn't affect ScummVM since we don't use RESOURCE.CFG, but something
+//  about the way the collection was packaged causes players to continue to miss
+//  this directory and not realize until it's too late. The lockup occurs late
+//  in the game and adding the missing patch files invalidates all saves. 
+//
+// We don't generally fix "bugs" that are consequences of not providing all of
+//  the game's data files, but this is a severe case that keeps coming up.
+//  Fortunately, the script bug is simple, so we might as well just patch it and
+//  allow the player to proceed.
+//
+// We mitigate this by patching fillLampScr:changeState(2) to increment its
+//  register property. This is the counter that's supposed to animate the lamp
+//  but instead register is never incremented and the loop never ends.
+//
+// Applies to: English PC CD when PATCHES is missing (TODO: check localizations)
+// Responsible method: fillLampScr:changeState(2)
+// Fixes bug: #10484
+static const uint16 larry6HiresWhaleOilLampSignature[] = {
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
+	0x78,                               // push1
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD,               // pushi cel
+	      SIG_SELECTOR8(cel),
+	0x78,                               // push1
+	0x67, 0x26,                         // pTos register
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x000c),           // send 0c [ ego loop: 1 cel: register ]
+	SIG_END
+};
+
+static const uint16 larry6HiresWhaleOilLampPatch[] = {
+	PATCH_ADDTOOFFSET(+7),
+	0x6f,                               // ipTos register [ increment register ]
+	PATCH_END
+};
+
+// When attempting to take the guard's weapons, missleDeathScr calculates an
+//  excessively long delay in game cycles based on the initial speed test. The
+//  script attempts to use this delay as a backup if the user quickly dismisses
+//  the "Without thinking twice..." message so that it doesn't get stuck. We
+//  patch the speed test to use the best value so that all details are enabled,
+//  but we also throttle game cycles, and this results in a 30+ second delay.
+//
+// We fix this incompatibility by patching the delay down to 60 cycles, but this
+//  exposes a real script bug. The backup delay is always active and interrupts
+//  the message audio if the delay lasts less than six seconds. The script
+//  attempts to prevent this by polling the message's audio position, but it
+//  passes the wrong audio tuple. We also fix the tuple and now the delay works.
+//
+// Applies to: All versions
+// Responsible method: missleDeathScr:changeState(3), missleDeathScr:doit
+// Fixes bug: #13501
+static const uint16 larry6HiresGuardDelaySignature1[] = {
+	SIG_MAGICDWORD,
+	0x89, 0x57,                         // lsg 57 [ how-fast ]
+	0x35, 0x4b,                         // ldi 4b
+	0x06,                               // mul
+	0x65, 0x26,                         // aTop register [ register = how-fast * 75 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresGuardDelayPatch1[] = {
+	0x35, 0x3c,                         // ldi 3c [ 60 cycles ]
+	0x32, PATCH_UINT16(0x0000),         // jmp 0000
+	PATCH_END
+};
+
+static const uint16 larry6HiresGuardDelaySignature2[] = {
+	SIG_MAGICDWORD,
+	0x39, 0x06,                         // pushi 06
+	0x3c,                               // dup [ kDoAudioPosition ]
+	0x38, SIG_UINT16(0x0352),           // pushi 0352
+	0x39, 0x03,                         // pushi 03 [ noun ]
+	0x39, 0x05,                         // pushi 05 [ verb ]
+	0x76,                               // push0    [ cond ]
+	0x76,                               // push0    [ seq  ]
+	SIG_END
+};
+
+static const uint16 larry6HiresGuardDelayPatch2[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x39, 0x04,                         // pushi 04 [ correct noun ]
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                               // push1    [ correct seq  ]
+	PATCH_END
+};
+
+// When using the phone with text enabled, dialing certain combinations crashes.
+//  This is due to a bug introduced when script 610 was altered for the hi-res
+//  version. The showTitle property of the phone's talker is only supposed to be
+//  set when talking to someone with a name, but now showTitle is never cleared.
+//  The operator is the one voice without a name, so talking to someone else
+//  first leaves these properties out of sync. Talking to the operator in this
+//  state causes Print:addTitle to attempt to duplicate the null name string.
+//
+// We fix this by clearing the phone talker's showTitle property when the name
+//  property is cleared. This keeps both properties in sync as before.
+//
+// Applies to: All versions
+// Responsible method: Export 2 of script 610
+// Fixes bug: #13554
+static const uint16 larry6HiresPhoneOperatorSignature[] = {
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x31, SIG_MAGICDWORD, 0x1a,         // bnt 1a  [ skip if no name ]
+	0x38, SIG_SELECTOR16(dispose),      // pushi dispose
+	0x76,                               // push0
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ talker name? ]
+	0x4a, SIG_UINT16(0x0004),           // send 04 [ name dispose: ]
+	0x39, SIG_SELECTOR8(name),          // pushi name
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa talker
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ talker name: 0 ]
+	SIG_END
+};
+
+static const uint16 larry6HiresPhoneOperatorPatch[] = {
+	PATCH_ADDTOOFFSET(+15),
+	0x4a, PATCH_UINT16(0x0004),         // send 04 [ name dispose: ]
+	0x38, PATCH_SELECTOR16(showTitle),  // pushi showTitle
+	0x78,                               // push1
+	0x76,                               // push0
+	0x33, 0x02,                         // jmp 02
+	PATCH_ADDTOOFFSET(+9),
+	0x4a, PATCH_UINT16(0x000c),         // send 0c [ talker showTitle: 0 name: 0 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,     0, "disable mac volume restore",                  1, larry6HiresMacVolumeRestoreSignature, larry6HiresMacVolumeRestorePatch },
@@ -8165,6 +8753,10 @@ static const SciScriptPatcherEntry larry6HiresSignatures[] = {
 	{  true,    71, "disable volume reset on startup (2/2)",       1, larry6HiresVolumeResetSignature,      larry6HiresVolumeResetPatch },
 	{  true,    71, "disable video benchmarking",                  1, sci2BenchmarkSignature,               sci2BenchmarkPatch },
 	{  true,   270, "fix incorrect setScale call",                 1, larry6HiresSetScaleSignature,         larry6HiresSetScalePatch },
+	{  true,   330, "fix whale oil lamp lockup",                   1, larry6HiresWhaleOilLampSignature,     larry6HiresWhaleOilLampPatch },
+	{  true,   610, "phone operator crash",                        1, larry6HiresPhoneOperatorSignature,    larry6HiresPhoneOperatorPatch },
+	{  true,   850, "guard delay (1/2)",                           1, larry6HiresGuardDelaySignature1,      larry6HiresGuardDelayPatch1 },
+	{  true,   850, "guard delay (2/2)",                           1, larry6HiresGuardDelaySignature2,      larry6HiresGuardDelayPatch2 },
 	{  true, 64928, "Narrator lockup fix",                         1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
 	{  true, 64990, "increase number of save games (1/2)",         1, sci2NumSavesSignature1,               sci2NumSavesPatch1 },
 	{  true, 64990, "increase number of save games (2/2)",         1, sci2NumSavesSignature2,               sci2NumSavesPatch2 },
@@ -8872,6 +9464,7 @@ static const SciScriptPatcherEntry laurabow1Signatures[] = {
 	{  true,    47, "attic stairs lockup fix",                  1, laurabow1SignatureAtticStairsLockupFix,            laurabow1PatchAtticStairsLockupFix },
 	{  true,    47, "left stairs lockup fix",                   3, laurabow1SignatureLeftStairsLockupFix,             laurabow1PatchLeftStairsLockupFix },
 	{  true,    58, "chapel candles persistence",               1, laurabow1SignatureChapelCandlesPersistence,        laurabow1PatchChapelCandlesPersistence },
+	{  true,    99, "disable speed test",                       1, sci01SpeedTestGlobalSignature,                     sci01SpeedTestGlobalPatch },
 	{  true,   236, "tell Lilly about Gertie blocking fix 1/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix1, laurabow1PatchTellLillyAboutGertieBlockingFix1 },
 	{  true,   236, "tell Lilly about Gertie blocking fix 2/2", 1, laurabow1SignatureTellLillyAboutGerieBlockingFix2, laurabow1PatchTellLillyAboutGertieBlockingFix2 },
 	{  true,   414, "copy protection random fix",               1, laurabow1SignatureCopyProtectionRandomFix,         laurabow1PatchCopyProtectionRandomFix },
@@ -9033,7 +9626,50 @@ static const uint16 laurabow2CDPatchFixYvetteTutResponse[] = {
 	PATCH_END
 };
 
-// When entering the main musem party room (w/ the golden Egyptian head), Laura
+// In the CD version, Wolf stands facing the wrong direction in most scenes.
+//  O'Riley also does this in the Old Masters Gallery. Their views were reduced
+//  from nine loops to five in the CD version, but the scripts weren't updated.
+//  They still set the actors' loops to eight instead of four. kAnimate adjusts
+//  invalid cels and the result is usually the last cel in the last loop, which
+//  is the actor standing facing north west.
+//
+// We fix this by setting the correct loop in the CD version so that Wolf and
+//  O'Riley face the direction the scripts request like in the floppy versions.
+//  This patch is only enabled in the CD version since the scripts don't change.
+//
+// Applies to: English CD
+// Responsible methods: sPartysOver:changeState, rm400:init, sHeimlichShoos:changeState
+//                      sEnterNorth:changeState, rm500:init, rm650:init
+static const uint16 laurabow2CDSignatureFixMuseumActorLoops1[] = {
+	0x38, SIG_SELECTOR16(setLoop),      // pushi setLoop
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x08,         // pushi 08 [ standing loop in floppy ]
+	0x38, SIG_SELECTOR16(setCel),       // pushi setCel
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixMuseumActorLoops1[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x39, 0x04,                         // pushi 04 [ standing loop in CD ]
+	PATCH_END
+};
+
+static const uint16 laurabow2CDSignatureFixMuseumActorLoops2[] = {
+	0x39, SIG_SELECTOR8(loop),          // pushi loop
+	0x78,                               // push1
+	SIG_MAGICDWORD,
+	0x39, 0x08,                         // pushi 08 [ standing loop in floppy ]
+	0x39, SIG_SELECTOR8(cel),           // pushi cel
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixMuseumActorLoops2[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x39, 0x04,                         // pushi 04 [ standing loop in CD ]
+	PATCH_END
+};
+
+// When entering the main museum party room (w/ the golden Egyptian head), Laura
 // is walking a bit into the room automatically. If you press a mouse button
 // while this is happening, you will get stuck inside that room and won't be
 // able to exit it anymore.
@@ -9224,6 +9860,31 @@ static const uint16 laurabow2SignatureFixArmorHallDoorPathfinding[] = {
 static const uint16 laurabow2PatchFixArmorHallDoorPathfinding[] = {
 	PATCH_ADDTOOFFSET(+2),
 	0x39, 0x7f,                         // pushi 7f [ y = 127 ]
+	PATCH_END
+};
+
+// Clicking most inventory items on the Dagger of Amon Ra case in the Egyptian
+//  exhibit errors the floppy versions. The doVerb methods contain nonsensical
+//  instructions that attempt to access a non-existent class and property.
+//  This would silently fail in the original. It was fixed in the CD version.
+//
+// We patch out the illegal class instructions to avoid the error.
+//
+// Applies to: All floppy versions
+// Responsible methods: glass:doVerb, daggerCase:doVerb
+static const uint16 laurabow2SignatureFixDaggerCaseError[] = {
+	0x81, SIG_MAGICDWORD, 0x5b,         // lag 5b
+	0x4a, 0x0a,                         // send 4a
+	0x33, SIG_ADDTOOFFSET(+1),          // jmp [ end of method ]
+	0x50, SIG_ADDTOOFFSET(+2),          // class ????
+	SIG_END
+};
+
+static const uint16 laurabow2PatchFixDaggerCaseError[] = {
+	PATCH_ADDTOOFFSET(+6),
+	0x18,                               // not [ acc = 1 ]
+	0x3a,                               // toss
+	0x48,                               // ret
 	PATCH_END
 };
 
@@ -9591,44 +10252,115 @@ static const uint16 laurabow2CDPatchFixAct5FinaleMusic[] = {
 	PATCH_END
 };
 
-// LB2 does a speed test during startup (room 28) to determine the initial
-//  detail level and to use for pacing later scenes. Even with the highest
-//  score the detail level is only set to medium instead of highest like
-//  other SCI games.
+// During the introduction in room 110 the music is cut off in the CD version
+//  instead of waiting for it to complete. This is the same bug as above where
+//  changes to the newer Sound class broke a script that worked in floppy.
 //
-// Platforms such as iOS can introduce a lag during game initialization that
-//  causes the speed test to occasionally get the lowest score, causing
-//  detail to be initialized to lowest and subsequent scenes such as the act 5
-//  chase scene to go very slow.
+// We fix this in the same was as the Act 5 music by testing Sound:handle.
 //
-// We patch startGame:doit to ignore the score and always set the highest detail
-//  level and cpu speed so that detail needn't be manually increased and act 5
-//  behaves consistently. This also helps touchscreen devices as the game's
-//  detail slider is prohibitively difficult to manually set to highest without
-//  switching from the default touch mode.
-//
-// Applies to: All Floppy and CD versions
-// Responsible method: startGame:doit/<noname57>
-// Fixes bug: #10761
-static const uint16 laurabow2SignatureDisableSpeedTest[] = {
-	0x89, 0x57,                         // lsg global[57] [ speed test result ]
+// Applies to: All CD versions
+// Responsible method: sCartoon:changeState(26)
+static const uint16 laurabow2CDSignatureFixIntroMusic[] = {
 	SIG_MAGICDWORD,
-	0x35, 0x03,                         // ldi 03 [ low-speed threshold ]
-	0x24,                               // le?
-	0x31, 0x04,                         // bnt 04
-	0x35, 0x01,                         // ldi 01 [ lowest detail ]
-	0x33, 0x0d,                         // jmp 0d
-	0x89, 0x57,                         // lsg global[57] [ speed test result ]
+	0x38, SIG_UINT16(0x00ab),           // pushi 00ab [ prevSignal ]
+	0x76,                               // push0
+	0x81, 0x66,                         // lag 66
+	0x4a, 0x04,                         // send 04 [ gameMusic1 prevSignal? ]
+	0x36,                               // push
+	0x35, 0xff,                         // ldi ff
 	SIG_END
 };
 
-static const uint16 laurabow2PatchDisableSpeedTest[] = {
-	0x38, PATCH_UINT16(0x0005),         // pushi 0005
-	0x81, 0x01,                         // lag global[1]
-	0x4a, 0x06,                         // send 06 [ LB2:detailLevel = 5, max detail ]
-	0x35, 0x0f,                         // ldi 0f
-	0xa1, 0x57,                         // sag global[57] [ global[57] = f, max cpu speed ]
-	0x33, 0x10,                         // jmp 10 [ continue init ]
+static const uint16 laurabow2CDPatchFixIntroMusic[] = {
+	0x38, PATCH_SELECTOR16(handle),     // pushi handle
+	PATCH_ADDTOOFFSET(+6),
+	0x35, 0x00,                         // ldi 00
+	PATCH_END
+};
+
+// At the start of act 4, if actBreak (room 26) finishes before its music fades
+//  out then the CD version gets stuck playing the happy act break music instead
+//  of the suspenseful museum music. This happens when quickly closing the
+//  message at the end of the break or even if the message is just one of the
+//  shorter ones. This is another CD regression due to Sound class changes.
+//
+// actBreak plays sound 30 using gameMusic1. After the act 4 break, rm510:init
+//  re-initializes music with WrapMusic:init. WrapMusic also uses gameMusic1,
+//  and it only plays a new sound if gameMusic1:prevSignal equals 0 or -1.
+//  In floppy versions this was always true because Sound:play resets prevSignal
+//  to 0, but CD doesn't. gameMusic1:prevSignal is 254 at the end of act 3 so if
+//  the actBreak fade completes in the CD version then the interpreter sets the
+//  signal to -1 and the music correctly changes. But if rm510:init runs before
+//  the fade completes then WrapMusic keeps playing sound 30 throughout act 4.
+//
+// We fix this by setting gameMusic1:prevSignal to 0 at the end of actBreak.
+//  We make room by overwriting a script's dispose call. The call is unnecessary
+//  because the room is already changing and that also disposes the script.
+//
+// Applies to: English CD
+// Responsible method: sBreakIt:changeState(9)
+static const uint16 laurabow2CDSignatureFixAct4WrongMusic[] = {
+	0x81, 0x66,                         // lag 66
+	0x4a, 0x0c,                         // send 0c [ gameMusic1 fade: ... ]
+	0xc1, 0x7b,                         // +ag 7b
+	0x35, 0x00,                         // ldi 00
+	0xa1, SIG_MAGICDWORD, 0x7c,         // sag 7c
+	0x38, SIG_UINT16(0x0183),           // pushi 0183 [ newRoom, CD selector ]
+	SIG_ADDTOOFFSET(+7),
+	0x39, 0x6f,                         // pushi dispose
+	0x76,                               // push0
+	0x54, 0x04,                         // self 04 [ self dispose: (unnecessary )]
+	SIG_END
+};
+
+static const uint16 laurabow2CDPatchFixAct4WrongMusic[] = {
+	0x38, PATCH_UINT16(0x00ab),         // pushi 00ab [ prevSignal ]
+	0x78,                               // push1
+	0x76,                               // push0
+	0xc1, 0x7b,                         // +ag 7b
+	0x76,                               // push0
+	0xa9, 0x7c,                         // ssg 7c
+	PATCH_ADDTOOFFSET(+10),
+	0x80, PATCH_UINT16(0x0066),         // lag 0066
+	0x4a, 0x12,                         // send 12 [ gameMusic1 fade: ... prevSignal: 0 ]
+	PATCH_END
+};
+
+// The music volume in acts 3 and 4 can be permanently lowered by clock chimes.
+//
+// In acts 3 and 4, WrapMusic plays sounds 90 through 93 in a loop in most
+//  museum rooms. WrapMusic:vol contains the volume that the music should start
+//  at and fade to when unpausing. It's initialized to 127 (max) and no other
+//  scripts change this. WrapMusic:vol is effectively the maximum volume for the
+//  gameMusic1 Sound object. Once lowered, it can never be raised.
+//
+// WrapMusic:cue records gameMusic1:vol in WrapMusic:vol when both objects are
+//  in certain states. When a body is discovered, multiple fades occur at once,
+//  and if the clock is shown then it applies its own fades and tries to save
+//  and restore all other Sound volumes. Depending on timings such as the game
+//  speed setting and the system clock's sub-second value, WrapMusic:cue can run
+//  when gameMusic1:vol is less than 127. This permanently lowers the volume and
+//  can occur multiple times. It's most likely to occur when discovering the
+//  body in the dinosaur room (430).
+//
+// We fix this by always updating WrapMusic:vol to 127 since the game doesn't
+//  expect it to change. This also fixes save games created before this patch.
+//
+// Applies to: All versions
+// Responsible method: WrapMusic:cue
+static const uint16 laurabow2SignatureMuseumMusicVolume[] = {
+	0x39, 0x5e,                         // pushi vol [ same selector in all versions ]
+	0x76,                               // push0
+	0x63, 0x16,                         // pToa wrapSound
+	SIG_MAGICDWORD,
+	0x4a, 0x04,                         // send 04 [ wrapSound vol? ]
+	0x65, 0x1c,                         // aTop vol
+	SIG_END
+};
+
+static const uint16 laurabow2PatchMuseumMusicVolume[] = {
+	0x35, 0x7f,                         // ldi 7f
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002 [ vol = 127 ]
 	PATCH_END
 };
 
@@ -9775,14 +10507,22 @@ static const uint16 laurabow2CDPatchAudioTextMenuSupport2[] = {
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   560, "CD: painting closing immediately",               1, laurabow2CDSignaturePaintingClosing,            laurabow2CDPatchPaintingClosing },
+	{  true,     0, "CD/Floppy: museum music volume",                 1, laurabow2SignatureMuseumMusicVolume,            laurabow2PatchMuseumMusicVolume },
 	{  true,     0, "CD: fix problematic icon bar",                   1, laurabow2CDSignatureFixProblematicIconBar,      laurabow2CDPatchFixProblematicIconBar },
+	{  true,    26, "CD: fix act 4 wrong music",                      1, laurabow2CDSignatureFixAct4WrongMusic,          laurabow2CDPatchFixAct4WrongMusic },
 	{  true,    90, "CD: fix yvette's tut response",                  1, laurabow2CDSignatureFixYvetteTutResponse,       laurabow2CDPatchFixYvetteTutResponse },
+	{  true,   110, "CD: fix intro music",                            1, laurabow2CDSignatureFixIntroMusic,              laurabow2CDPatchFixIntroMusic },
 	{  true,   350, "CD/Floppy: museum party fix entering south 1/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth1, laurabow2PatchMuseumPartyFixEnteringSouth1 },
 	{  true,   350, "CD/Floppy: museum party fix entering south 2/2", 1, laurabow2SignatureMuseumPartyFixEnteringSouth2, laurabow2PatchMuseumPartyFixEnteringSouth2 },
+	{ false,   355, "CD: fix museum actor loops",                     2, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,   430, "CD/Floppy: make wired east door persistent",     1, laurabow2SignatureRememberWiredEastDoor,        laurabow2PatchRememberWiredEastDoor },
 	{  true,   430, "CD/Floppy: fix wired east door",                 1, laurabow2SignatureFixWiredEastDoor,             laurabow2PatchFixWiredEastDoor },
 	{  true,   448, "CD/Floppy: fix armor hall door pathfinding",     1, laurabow2SignatureFixArmorHallDoorPathfinding,  laurabow2PatchFixArmorHallDoorPathfinding },
+	{ false,   400, "CD: fix museum actor loops",                     4, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
+	{ false,   420, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
+	{  true,   450, "Floppy: fix dagger case error",                  2, laurabow2SignatureFixDaggerCaseError,           laurabow2PatchFixDaggerCaseError },
 	{  true,   460, "CD/Floppy: fix crate room east door lockup",     1, laurabow2SignatureFixCrateRoomEastDoorLockup,   laurabow2PatchFixCrateRoomEastDoorLockup },
+	{ false,   500, "CD: fix museum actor loops",                     3, laurabow2CDSignatureFixMuseumActorLoops1,       laurabow2CDPatchFixMuseumActorLoops1 },
 	{  true,  2660, "CD/Floppy: fix elevator lockup",                 1, laurabow2SignatureFixElevatorLockup,            laurabow2PatchFixElevatorLockup },
 	{  true,   550, "CD/Floppy: fix back rub east entrance lockup",   1, laurabow2SignatureFixBackRubEastEntranceLockup, laurabow2PatchFixBackRubEastEntranceLockup },
 	{  true,   550, "CD/Floppy: fix disappearing desk items",         1, laurabow2SignatureFixDisappearingDeskItems,     laurabow2PatchFixDisappearingDeskItems },
@@ -9791,8 +10531,9 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	{  true,   448, "CD/Floppy: handle armor hall room events",       1, laurabow2SignatureHandleArmorRoomEvents,        laurabow2PatchHandleArmorRoomEvents },
 	{  true,   600, "Floppy: fix bugs with meat",                     1, laurabow2FloppySignatureFixBugsWithMeat,        laurabow2FloppyPatchFixBugsWithMeat },
 	{  true,   600, "CD: fix bugs with meat",                         1, laurabow2CDSignatureFixBugsWithMeat,            laurabow2CDPatchFixBugsWithMeat },
+	{ false,   650, "CD: fix museum actor loops",                     1, laurabow2CDSignatureFixMuseumActorLoops2,       laurabow2CDPatchFixMuseumActorLoops2 },
 	{  true,   480, "CD: fix act 5 finale music",                     1, laurabow2CDSignatureFixAct5FinaleMusic,         laurabow2CDPatchFixAct5FinaleMusic },
-	{  true,    28, "CD/Floppy: disable speed test",                  1, laurabow2SignatureDisableSpeedTest,             laurabow2PatchDisableSpeedTest },
+	{  true,    28, "disable speed test",                             1, sci11SpeedTestSignature,                        sci11SpeedTestPatch },
 	{  true,   120, "CD: disable intro volume change in text mode",   1, laurabow2CDSignatureIntroVolumeChange,          laurabow2CDPatchIntroVolumeChange },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,                     sciNarratorLockupPatch },
 	// King's Quest 6 and Laura Bow 2 share basic patches for audio + text support
@@ -9808,6 +10549,14 @@ static const SciScriptPatcherEntry laurabow2Signatures[] = {
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
+// ===========================================================================
+// Mother Goose SCI0
+
+//          script, description,                                      signature                             patch
+static const SciScriptPatcherEntry mothergooseSignatures[] = {
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestLocalSignature,        sci01SpeedTestLocalPatch },
+	SCI_SIGNATUREENTRY_TERMINATOR
+};
 // ===========================================================================
 // Mother Goose SCI1/SCI1.1
 // MG::replay somewhat calculates the savedgame-id used when saving again
@@ -10030,6 +10779,7 @@ static const SciScriptPatcherEntry mothergoose256Signatures[] = {
 	{  true,     0, "save limit dialog (SCI1.1)",                  1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,   994, "save limit dialog (SCI1)",                    1, mothergoose256SignatureSaveLimit,     mothergoose256PatchSaveLimit },
 	{  true,    90, "main menu button crash",                      1, mothergoose256SignatureMainMenuCrash, mothergoose256PatchMainMenuCrash },
+	{  true,    99, "disable speed test",                          1, sci01SpeedTestGlobalSignature,        sci01SpeedTestGlobalPatch },
 	{  true,   999, "timer rollover",                              1, sciSignatureTimerRollover,            sciPatchTimerRollover },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -11322,6 +12072,35 @@ static const uint16 pq1vgaPatchFloatOutsideCarols2[] = {
 	PATCH_END
 };
 
+// When all the poker players fold, the game displays the message "You wins."
+//  instead of "You win.". The script that builds the string compares the wrong
+//  objects to see who the winner is, and so it always adds the final "s".
+//
+// We fix this by comparing the correct objects.
+//
+// Applies to: English Floppy
+// Responsible method: HandList:winner
+static const uint16 pq1vgaSignaturePokerWinnerMessage[] = {
+	0x35, 0x00,                          // ldi 00
+	0xa3, 0x4a,                          // sal 4a   [ local74 = 0 ]
+	0x7c,                                // pushSelf [ hand1First or allHands ]
+	0x72, SIG_UINT16(0x033c),            // lofsa hand1
+	0x1c,                                // ne?      [ always true ]
+	SIG_ADDTOOFFSET(+51),
+	SIG_MAGICDWORD,
+	0x8d, 0x06,                          // lst 06 [ winning hand ]
+	0x72, SIG_UINT16(0x033c),            // lofsa hand1
+	0x1a,                                // eq?
+	SIG_END
+};
+
+static const uint16 pq1vgaPatchPokerWinnerMessage[] = {
+	0x76,                                // push0
+	0xab, 0x4a,                          // ssl 4a [ local74 = 0 ]
+	0x8d, 0x06,                          // lst 06 [ winning hand ]
+	PATCH_END
+};
+
 // The GOG release includes New Rising Sun's script patches which throttle speed
 //  in core classes. Since we do our own speed throttling, we patch the scripts
 //  back to the original code for compatibility.
@@ -11366,6 +12145,7 @@ static const SciScriptPatcherEntry pq1vgaSignatures[] = {
 	{  true,    30, "float outside carol's (1/2)",                    7, pq1vgaSignatureFloatOutsideCarols1,  pq1vgaPatchFloatOutsideCarols1 },
 	{  true,    30, "float outside carol's (2/2)",                    1, pq1vgaSignatureFloatOutsideCarols2,  pq1vgaPatchFloatOutsideCarols2 },
 	{  true,   152, "getting stuck while briefing is about to start", 1, pq1vgaSignatureBriefingGettingStuck, pq1vgaPatchBriefingGettingStuck },
+	{  true,   156, "poker winner message",                           1, pq1vgaSignaturePokerWinnerMessage,   pq1vgaPatchPokerWinnerMessage },
 	{  true,   341, "put gun in locker bug",                          1, pq1vgaSignaturePutGunInLockerBug,    pq1vgaPatchPutGunInLockerBug },
 	{  true,   500, "map save/restore bug",                           2, pq1vgaSignatureMapSaveRestoreBug,    pq1vgaPatchMapSaveRestoreBug },
 	{  true,   928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,          sciNarratorLockupPatch },
@@ -11408,7 +12188,7 @@ static const uint16 pq2PatchSpeedTest[] = {
 
 //          script, description,                                 signature                     patch
 static const SciScriptPatcherEntry pq2Signatures[] = {
-	{  true,    99, "speed test / intro speed",               1, pq2SignatureSpeedTest,        pq2PatchSpeedTest },
+	{  true,    99, "disable speed test, fix intro speed",    1, pq2SignatureSpeedTest,        pq2PatchSpeedTest },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -11653,6 +12433,7 @@ static const SciScriptPatcherEntry pq3Signatures[] = {
 	{  true,    36, "give locket missing points",             1, pq3SignatureGiveLocketPoints,      pq3PatchGiveLocketPoints },
 	{  true,    36, "doctor mouth speed",                     1, pq3SignatureDoctorMouthSpeed,      pq3PatchDoctorMouthSpeed },
 	{  true,    44, "fix judge evidence lockup",              1, pq3SignatureJudgeEvidenceLockup,   pq3PatchJudgeEvidenceLockup },
+	{  true,    99, "disable speed test",                     1, sci01SpeedTestLocalSignature,      sci01SpeedTestLocalPatch },
 	{  true,   994, "NRS: remove speed throttle",             1, pq3SignatureNrsSpeedThrottle,      pq3PatchNrsSpeedThrottle },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -12096,6 +12877,7 @@ static const uint16 qfg1egaPatchPickSafeMessage2[] = {
 static const SciScriptPatcherEntry qfg1egaSignatures[] = {
 	{  true,    54, "throw rock at nest while running",            1, qfg1egaSignatureThrowRockAtNest,     qfg1egaPatchThrowRockAtNest },
 	{  true,   289, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage1,    qfg1egaPatchPickSafeMessage1 },
+	{  true,   299, "disable speed test",                          1, sci01SpeedTestGlobalSignature,       sci01SpeedTestGlobalPatch },
 	{  true,   321, "pick safe message",                           1, qfg1egaSignaturePickSafeMessage2,    qfg1egaPatchPickSafeMessage2 },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -12517,30 +13299,6 @@ static const uint16 qfg1vgaPatchBrutusScriptFreeze[] = {
 	0x34, PATCH_UINT16(0x0000),         // ldi 0 (waste 7 bytes)
 	0x35, 0x00,                         // ldi 0
 	0x35, 0x00,                         // ldi 0
-	PATCH_END
-};
-
-// Patch the speed test so that it always ends up at the highest level. This
-//  improves the detail in Yorick's room (96), and slightly changes the timing
-//  in other rooms. This is compatible with PC and Mac versions which use
-//  significantly different tests and calculations.
-//
-// Applies to: PC Floppy, Mac Floppy
-// Responsible method: speedTest:changeState(2)
-static const uint16 qfg1vgaSignatureSpeedTest[] = {
-	0x76,                               // push0
-	0x43, 0x42, 0x00,                   // callk GetTime, 0
-	SIG_MAGICDWORD,
-	0x36,                               // push
-	0x83, 0x01,                         // lal 01
-	0x04,                               // sub
-	0xa3, 0x00,                         // sal 00
-	SIG_END
-};
-
-static const uint16 qfg1vgaPatchSpeedTest[] = {
-	0x35, 0x00,                         // ldi 00 [ local0 = 0, the best result ]
-	0x33, 0x04,                         // jmp 04
 	PATCH_END
 };
 
@@ -13061,7 +13819,7 @@ static const SciScriptPatcherEntry qfg1vgaSignatures[] = {
 	{  true,   210, "cheetaur description fixed",                  1, qfg1vgaSignatureCheetaurDescription, qfg1vgaPatchCheetaurDescription },
 	{  true,   215, "fight event issue",                           1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
 	{  true,   216, "weapon master event issue",                   1, qfg1vgaSignatureFightEvents,         qfg1vgaPatchFightEvents },
-	{  true,   299, "speedtest",                                   1, qfg1vgaSignatureSpeedTest,           qfg1vgaPatchSpeedTest },
+	{  true,   299, "disable speed test",                          1, sci11SpeedTestSignature,             sci11SpeedTestPatch},
 	{  true,   331, "moving to crusher",                           1, qfg1vgaSignatureMoveToCrusher,       qfg1vgaPatchMoveToCrusher },
 	{  true,   331, "moving to crusher from card game",            1, qfg1vgaSignatureCrusherCardGame,     qfg1vgaPatchCrusherCardGame },
 	{  true,   332, "thieves' guild cashier fix",                  1, qfg1vgaSignatureThievesGuildCashier, qfg1vgaPatchThievesGuildCashier },
@@ -13261,12 +14019,13 @@ static const uint16 qfg2PatchImportCharType[] = {
 	PATCH_END
 };
 
-//          script, description,                                      signature                    patch
+//          script, description,                                      signature                       patch
 static const SciScriptPatcherEntry qfg2Signatures[] = {
-	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,   qfg2PatchSaurusFreeze },
-	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,  qfg2PatchOopsJackalMen },
-	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType, qfg2PatchImportCharType },
-	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,   qfg2PatchImportDialog },
+	{  true,    98, "disable speed test",                          1, sci01SpeedTestGlobalSignature,  sci01SpeedTestGlobalPatch },
+	{  true,   665, "getting back on saurus freeze fix",           1, qfg2SignatureSaurusFreeze,      qfg2PatchSaurusFreeze },
+	{  true,   695, "Oops Jackalmen fix",                          1, qfg2SignatureOopsJackalMen,     qfg2PatchOopsJackalMen },
+	{  true,   805, "import character type fix",                   1, qfg2SignatureImportCharType,    qfg2PatchImportCharType },
+	{  true,   944, "import dialog continuous calls",              1, qfg2SignatureImportDialog,      qfg2PatchImportDialog },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
 
@@ -13480,9 +14239,9 @@ static const uint16 qfg3PatchChiefPriority[] = {
 };
 
 // There are 3 points that can't be achieved in the game. They should've been
-// awarded for telling Rakeesh and Kreesha (room 285) about the Simabni
+// awarded for telling Rakeesh and Kreesha (room 285) about the Simbani
 // initiation.
-// However the array of posibble messages the hero can tell in that room
+// However the array of possible messages the hero can tell in that room
 // (local[156]) is missing the "Tell about Initiation" message (#31) which
 // awards these points.
 // This patch adds the message to that array, thus allowing the hero to tell
@@ -13507,7 +14266,7 @@ static const uint16 qfg3SignatureMissingPoints1[] = {
 	SIG_UINT16(0xffd7),                 // -41 "Greet"
 	SIG_UINT16(0xffb4),                 // -76 "Say Good-bye"
 	SIG_UINT16(0x0001),                 //   1 "Tell about Tarna"
-	SIG_UINT16(0xffe2),                 // -30 "Tell about Simani"
+	SIG_UINT16(0xffe2),                 // -30 "Tell about Simbani"
 	SIG_UINT16(0xffb3),                 // -77 "Tell about Prisoner"
 	SIG_UINT16(0xffdf),                 // -33 "Dispelled Leopard Lady"
 	SIG_UINT16(0xffde),                 // -34 "Tell about Leopard Lady"
@@ -13898,18 +14657,324 @@ static const uint16 qfg3PatchNrsFloatingSpears[] = {
 	PATCH_END
 };
 
+// When purchasing from a vendor while a message box is on the screen, events
+//  are randomly dropped and clicks randomly have no effect. barter:doit runs an
+//  event processing loop that calls kGetEvent twice per iteration when a
+//  message is on screen. It's luck as to which call retrieves the input event.
+//  If the first call retrieves the input event then it's replaced by the second
+//  and never reaches the Messager object.
+//
+// We fix this by patching barter:dispatchEvent to use the current event that
+//  barter:doit provides instead of unnecessarily creating a new one.
+//
+// Applies to: All versions
+// Responsible method: barter:dispatchEvent
+// Fixes bug: #11422
+static const uint16 qfg3SignatureBarterEvents[] = {
+	0x39, SIG_SELECTOR8(new),           // pushi new
+	0x76,                               // push0
+	SIG_MAGICDWORD,
+	0x51, 0x07,                         // class Event
+	0x4a, 0x04,                         // send 04 [ Event new: ]
+	0xa5, 0x00,                         // sat 00  [ temp0 = (Event new:) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchBarterEvents[] = {
+	0x87, 0x01,                         // lap 01 [ use current event ]
+	0x32, PATCH_UINT16(0x0002),         // jmp 0002
+	PATCH_END
+};
+
+// After getting the ring from the rope, the script awardPrize stores the winner
+//  in a temp variable during its first state and expects it to be there during
+//  a later state. We patch the script to use its register property instead.
+//
+// Applies to: All versions
+// Responsible method: awardPrize:changeState
+// Fixes bug: #5277
+static const uint16 qfg3SignatureRingRopePrize[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+43),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+39),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+39),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+33),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+40),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+48),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+10),
+	0xa5, 0x00,                         // sat 00
+	SIG_ADDTOOFFSET(+49),
+	0x85, 0x00,                         // lat 00
+	SIG_END
+};
+
+static const uint16 qfg3PatchRingRopePrize[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+43),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+39),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+39),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+33),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+40),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+48),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+10),
+	0x65, 0x24,                         // aTop register
+	PATCH_ADDTOOFFSET(+49),
+	0x63, 0x24,                         // pToa register
+	PATCH_END
+};
+
+// The Laibon's hut has complex script bugs that create unintentional dead ends.
+//  After the Laibon requests a dinosaur horn from fighters and paladins, the
+//  player is unable to give the horn on subsequent visits if they have the
+//  bride's price items. Upon leaving the hut, they are unable to return.
+//
+// rm450:init sets an event number based on game state. The problem events are:
+// - Event 5: Fighters/paladins give the horn to begin initiation.
+// - Event 6: The bride's price can be paid, but fighters/paladins must have
+//            given the horn in event 5 for the Laibon to accept the price.
+//
+// The main problem is that rm450:init tests for event 6 before event 5. If the
+//  preconditions for event 6 are met then event 5 is suppressed. This is a
+//  conflict because event 6 can't be completed until event 5 has been, but the
+//  horn can only be given in event 5. More inconsistencies: some code enforces
+//  an incorrect rule that these events can only occur once, despite event 6
+//  being designed to reoccur and event 5 allowing the player to leave without
+//  giving the horn in version 1.0. Finally, the hut's event logic is out of
+//  sync between the entrance (room 420) and interior (450). The entrance blocks
+//  events from recurring even if they weren't completed and is missing a flag
+//  check, but unlike room 450 it does test the events in the correct order.
+//
+// We fix this by allowing room 450 to select event 5 (giving the horn) even if
+//  the preconditions for event 6 are met. We also allow both events to reoccur.
+//  Finally, we patch the relevant entrance logic to match the interior's.
+//  Although these patches touch a lot of logic, they only affect the game when
+//  it is in a state where the player wouldn't have been allowed to proceed with
+//  events that they've met the preconditions for. Note that these changes are
+//  broken up into smaller patches to be compatible with the many different
+//  versions of these scripts, including the NRS fan patches that GOG includes,
+//  and the comprehensive QFG3 Unofficial Update fan patches. 
+//
+// Applies to: All versions
+// Responsible methods: rm450:init, rm420:init
+// Fixes bug: #11425
+static const uint16 qfg3SignatureLaibonHutEvents1[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 0188 [ johari state ]
+	      SIG_UINT16(0x0188),
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? [ Laibon said the bride price ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents1[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x20,                               // ge? [ Laibon said the bride price OR you've tried to pay before ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEvents2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x06,                         // ldi 06
+	0xa3, 0x0b,                         // sal 0b [ room event = 6 ]
+	0x32,                               // jmp    [ end of cond ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents2[] = {
+	PATCH_ADDTOOFFSET(+4),
+	0x32, PATCH_UINT16(0x0000),        // jmp [ continue evaluating room events ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEvents3[] = {
+	0x31, 0x2b,                         // bnt 2b [ next room event ]
+	SIG_ADDTOOFFSET(+7),
+	0x31, 0x22,                         // bnt 22 [ next room event ]
+	SIG_ADDTOOFFSET(+10),
+	0x31, 0x16,                         // bnt 16 [ next room event ]
+	SIG_ADDTOOFFSET(+6),
+	0x2f, SIG_ADDTOOFFSET(+1),          // bt (06, but 08 in QFG3 Unofficial Update)
+	0x88, SIG_UINT16(0x016a),           // lsg 016a [ character class ]
+	0x35, 0x03,                         // ldi 03   [ impossible value ]
+	0x1a,                               // eq?
+	0x31, 0x06,                         // bnt 06 [ always false ]
+	SIG_MAGICDWORD,
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x33,                               // jmp [ exit cond ] 
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEvents3[] = {
+	0x31, 0x23,                         // bnt 23 [ next room event ]
+	PATCH_ADDTOOFFSET(+7),
+	0x31, 0x1a,                         // bnt 1a [ next room event ]
+	PATCH_ADDTOOFFSET(+10),
+	0x31, 0x0e,                         // bnt 0e [ next room event ]
+	PATCH_ADDTOOFFSET(+6),
+	0x31, 0x06,                         // bnt 06
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x33, 0x06,                         // jmp 06 [ exit cond ] 
+	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ is room event 6? ]
+	0x2f,                               // bt [ exit cond ]
+	PATCH_END
+};
+
+// same as above but for the NRS script due its wide branch offsets
+static const uint16 qfg3SignatureNrsLaibonHutEvents3[] = {
+	0x30, SIG_UINT16(0x0031),           // bnt 0031 [ next room event ]
+	SIG_ADDTOOFFSET(+8),
+	0x30, SIG_UINT16(0x0026),           // bnt 0026 [ next room event ]
+	SIG_ADDTOOFFSET(+10),
+	0x30, SIG_UINT16(0x0019),           // bnt 0019 [ next room event ]
+	SIG_ADDTOOFFSET(+6),
+	0x2e, SIG_UINT16(0x0006),           // bt 0006
+	0x88, SIG_UINT16(0x016a),           // lsg 016a [ character class ]
+	0x35, 0x03,                         // ldi 03   [ impossible value ]
+	0x1a,                               // eq?
+	0x30, SIG_UINT16(0x0007),           // bnt 0007 [ always false ]
+	SIG_MAGICDWORD,
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x32,                               // jmp [ exit cond ] 
+	SIG_END
+};
+
+static const uint16 qfg3PatchNrsLaibonHutEvents3[] = {
+	0x30, PATCH_UINT16(0x0028),         // bnt 0028 [ next room event ]
+	PATCH_ADDTOOFFSET(+8),
+	0x30, PATCH_UINT16(0x001d),         // bnt 001d [ next room event ]
+	PATCH_ADDTOOFFSET(+10),
+	0x30, PATCH_UINT16(0x0010),         // bnt 0010 [ next room event ]
+	PATCH_ADDTOOFFSET(+6),
+	0x30, PATCH_UINT16(0x0007),         // bnt 0007
+	0x35, 0x05,                         // ldi 05
+	0xa3, 0x0b,                         // sal 0b [ room event = 5 ]
+	0x32, PATCH_UINT16(0x0006),         // jmp 0006 [ exit cond ] 
+	0x8a, PATCH_UINT16(0x000b),         // lsl 000b
+	0x35, 0x06,                         // ldi 06
+	0x1a,                               // eq? [ is room event 6? ]
+	0x2e,                               // bt [ exit cond ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEntrance1[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 016e [ entrance event ]
+	      SIG_UINT16(0x016e),
+	0x35, 0x09,                         // ldi 09
+	0x1c,                               // ne? [ global366 != 9 (haven't entered for event 5) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEntrance1[] = {
+	0x78,                               // push1
+	0x39, 0x26,                         // pushi 26 [ flag 38 ]
+	0x45, 0x06, 0x02,                   // callb proc0_6 [ is flag 38 set? (dispelled Johari) ]
+	PATCH_END
+};
+
+static const uint16 qfg3SignatureLaibonHutEntrance2[] = {
+	0x88, SIG_MAGICDWORD,               // lsg 0188 [ johari state ]
+	      SIG_UINT16(0x0188),
+	0x35, 0x01,                         // ldi 01
+	0x1a,                               // eq? [ Laibon said the bride price ]
+	SIG_ADDTOOFFSET(+59),
+	0x88, SIG_UINT16(0x016e),           // lsg 016e [ entrance event ]
+	0x35, 0x0d,                         // ldi 0d
+	0x1c,                               // ne? [ global366 != 13 (haven't entered for event 6) ]
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonHutEntrance2[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x20,                               // ge? [ Laibon said the bride price OR you've tried to pay before ]
+	PATCH_ADDTOOFFSET(+59),
+	0x88, PATCH_UINT16(0x0188),         // lsg 0188
+	0x35, 0x04,                         // ldi 04
+	PATCH_END                           // ne? [ Haven't paid Laibon the bride price ]
+};
+
+// The Laibon's Teller needs updating to be compatible with the above script
+//  patches for the events in his hut. There are two options that should only
+//  appear in Event 6 before paying the bride's price: a "Leopardman" option and
+//  "Marriage". The script enforces this by simply testing that Johari's state
+//  is 2, which is the value for having entered the hut with all of the items.
+//  This assumes that this can only happen in Event 6, but that was one of the
+//  logic problems that we fixed, so this global can now also be 2 in Event 5.
+//
+// We fix this by only showing these Teller options when Johari's state is 2 and
+//  the room is Event 6.
+//
+// Applies to: All versions
+// Responsible method: laibonTell:showDialog
+// Fixes bug: #13748
+static const uint16 qfg3SignatureLaibonTeller[] = {
+	0x88, SIG_UINT16(0x0188),           // lsg 0188 [ johari state ]
+	SIG_MAGICDWORD,
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	0x39, 0xcf,                         // pushi cf [ Marriage cond 49 ]
+	0x88, SIG_UINT16(0x0188),           // lsg 0188 [ johari state ]
+	0x35, 0x02,                         // ldi 02
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	SIG_END
+};
+
+static const uint16 qfg3PatchLaibonTeller[] = {
+	0x80, PATCH_UINT16(0x0188),         // lag 0188 [ johari state ]
+	0x7a,                               // push2
+	0x1a,                               // eq?      [ entered with bride price? ]
+	0x36,                               // push
+	0x83, 0x0b,                         // lal 0b   [ room event ]
+	0x39, 0x06,                         // pushi 06
+	0x1a,                               // eq?      [ is room event 6? ]
+	0x12,                               // and
+	0x36,                               // push
+	0x39, 0xcf,                         // pushi cf [ Marriage cond 49 ]
+	0x36,                               // push
+	PATCH_END
+};
+
 //          script, description,                                      signature                    patch
 static const SciScriptPatcherEntry qfg3Signatures[] = {
 	{  true,   944, "import dialog continuous calls",                     1, qfg3SignatureImportDialog,           qfg3PatchImportDialog },
 	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialog,              qfg3PatchWooDialog },
 	{  true,   440, "dialog crash when asking about Woo",                 1, qfg3SignatureWooDialogAlt,           qfg3PatchWooDialogAlt },
+	{  true,    47, "barter events",                                      1, qfg3SignatureBarterEvents,           qfg3PatchBarterEvents },
 	{  true,    52, "export character save bug",                          2, qfg3SignatureExportChar,             qfg3PatchExportChar },
 	{  true,    54, "import character from QfG1 bug",                     1, qfg3SignatureImportQfG1Char,         qfg3PatchImportQfG1Char },
 	{  true,   640, "chief in hut priority fix",                          1, qfg3SignatureChiefPriority,          qfg3PatchChiefPriority },
 	{  true,   285, "missing points for telling about initiation heap",   1, qfg3SignatureMissingPoints1,         qfg3PatchMissingPoints1 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2a,	      qfg3PatchMissingPoints2 },
 	{  true,   285, "missing points for telling about initiation script", 1, qfg3SignatureMissingPoints2b,        qfg3PatchMissingPoints2 },
+	{  true,   420, "laibon hut entrance (1/2)",                          1, qfg3SignatureLaibonHutEntrance1,     qfg3PatchLaibonHutEntrance1 },
+	{  true,   420, "laibon hut entrance (2/2)",                          1, qfg3SignatureLaibonHutEntrance2,     qfg3PatchLaibonHutEntrance2 },
+	{  true,   450, "laibon hut events (1/3)",                            1, qfg3SignatureLaibonHutEvents1,       qfg3PatchLaibonHutEvents1 },
+	{  true,   450, "laibon hut events (2/3)",                            1, qfg3SignatureLaibonHutEvents2,       qfg3PatchLaibonHutEvents2 },
+	{  true,   450, "laibon hut events (3/3)",                            1, qfg3SignatureLaibonHutEvents3,       qfg3PatchLaibonHutEvents3 },
+	{  true,   450, "NRS: laibon hut events (3/3)",                       1, qfg3SignatureNrsLaibonHutEvents3,    qfg3PatchNrsLaibonHutEvents3 },
+	{  true,   450, "laibon teller",                                      1, qfg3SignatureLaibonTeller,           qfg3PatchLaibonTeller },
 	{  true,   460, "NRS: floating spears",                               1, qfg3SignatureNrsFloatingSpears,      qfg3PatchNrsFloatingSpears },
+	{  true,   510, "ring rope prize",                                    1, qfg3SignatureRingRopePrize,          qfg3PatchRingRopePrize },
 	{  true,   550, "combat speed throttling script",                     1, qfg3SignatureCombatSpeedThrottling1, qfg3PatchCombatSpeedThrottling1 },
 	{  true,   550, "combat speed throttling heap",                       1, qfg3SignatureCombatSpeedThrottling2, qfg3PatchCombatSpeedThrottling2 },
 	{  true,   750, "hero goes out of bounds in room 750",                2, qfg3SignatureRoom750Bounds1,         qfg3PatchRoom750Bounds1 },
@@ -18308,6 +19373,64 @@ static const uint16 qfg4DeathScreenKeyboardPatch[] = {
 	PATCH_END
 };
 
+// There are several rooms in which throwing a projectile (dagger or rock) uses
+//  two or three items instead of just one. In addition, throwing a dagger in
+//  these rooms when the player has exactly two locks up the game. For example,
+//  this occurs in room 600 at night when throwing at the castle gate.
+//
+// These problems are due to an incorrect coding pattern with several mistakes
+//  that was repeated in rooms 600, 625, 730, and 740. These scripts manually
+//  remove the thrown projectile from inventory with hero:use, but that is
+//  incorrect because the global script `project` does this for all throws.
+//  These scripts also prevent the player from throwing their last dagger with a
+//  message, but they repeat the check after removing the item from inventory
+//  and make a broken call to gloryMessgaer:say within a handsOff script. This
+//  redunant check wouldn't have any effect if it weren't for the first bug.
+//
+// We fix this by patching out all of the hero:use calls that consume daggers or
+//  rocks in the rooms with this bug. There are several forms of these scripts,
+//  so we patch the "use" selector to "has" so that the calls have no effect.
+//
+// Applies to: All versions
+// Responsible methods: aGate:doVerb, rm625:doVerb, theGhost:doVerb, avis:doVerb,
+//                      altarHead:doVerb, sThrowIt:changeState in script 740
+// Fixes bug: #13824
+static const uint16 qfg4UseExtraProjectileSignature1[] = {
+	SIG_MAGICDWORD,
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x7a,                               // push2
+	0x39, SIG_ADDTOOFFSET(+1),          // pushi 05 [ dagger ] or 06 [ rock ]
+	0x78,                               // push1
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0008),           // send 08 [ hero use: (5 or 6) 1 ]
+	0x35, SIG_ADDTOOFFSET(+1),          // ldi 01 or 02
+	0xa3,                               // sal
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectileSignature2[] = {
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x05,         // pushi 05 [ dagger ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero use: 5 ]
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectileSignature3[] = {
+	0x38, SIG_SELECTOR16(use),          // pushi use
+	0x78,                               // push1
+	0x39, SIG_MAGICDWORD, 0x06,         // pushi 06 [ rock ]
+	0x81, 0x00,                         // lag 00
+	0x4a, SIG_UINT16(0x0006),           // send 06 [ hero use: 6 ]
+	SIG_END
+};
+
+static const uint16 qfg4UseExtraProjectilePatch[] = {
+	0x38, PATCH_SELECTOR16(has),        // pushi has
+	PATCH_END
+};
+
 //          script, description,                                     signature                      patch
 static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,     0, "prevent autosave from deleting save games",   1, qfg4AutosaveSignature,         qfg4AutosavePatch },
@@ -18370,6 +19493,8 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   600, "fix passable closed gate after geas",         1, qfg4DungeonGateSignature,      qfg4DungeonGatePatch },
 	{  true,   600, "fix gate options after geas",                 1, qfg4GateOptionsSignature,      qfg4GateOptionsPatch },
 	{  true,   600, "fix paladin's necrotaur message",             1, qfg4NecrotaurMessageSignature, qfg4NecrotaurMessagePatch },
+	{  true,   600, "fix using extra projectile",                  2, qfg4UseExtraProjectileSignature1, qfg4UseExtraProjectilePatch },
+	{  true,   625, "fix using extra projectile",                  4, qfg4UseExtraProjectileSignature1, qfg4UseExtraProjectilePatch },
 	{  true,   630, "fix great hall entry from barrel room",       1, qfg4GreatHallEntrySignature,   qfg4GreatHallEntryPatch },
 	{  true,   633, "fix stairway pathfinding",                    1, qfg4StairwayPathfindingSignature, qfg4StairwayPathfindingPatch },
 	{  true,   633, "Floppy: fix argument message",                1, qfg4ArgumentMessageFloppySignature,  qfg4ArgumentMessageFloppyPatch },
@@ -18411,6 +19536,10 @@ static const SciScriptPatcherEntry qfg4Signatures[] = {
 	{  true,   730, "fix ad avis projectile message",              1, qfg4AdAvisMessageSignature,    qfg4AdAvisMessagePatch },
 	{  true,   730, "fix throwing weapons at ad avis",             1, qfg4AdAvisThrowWeaponSignature,qfg4AdAvisThrowWeaponPatch },
 	{  true,   730, "fix fighter's spear animation",               1, qfg4FighterSpearSignature,     qfg4FighterSpearPatch },
+	{  true,   730, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature2, qfg4UseExtraProjectilePatch },
+	{  true,   730, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature3, qfg4UseExtraProjectilePatch },
+	{  true,   740, "fix using extra projectile",                  2, qfg4UseExtraProjectileSignature2, qfg4UseExtraProjectilePatch },
+	{  true,   740, "fix using extra projectile",                  1, qfg4UseExtraProjectileSignature3, qfg4UseExtraProjectilePatch },
 	{  true,   770, "fix bone cage teller",                        1, qfg4BoneCageTellerSignature,   qfg4BoneCageTellerPatch },
 	{  true,   800, "fix setScaler calls",                         1, qfg4SetScalerSignature,        qfg4SetScalerPatch },
 	{  true,   800, "fix grapnel removing hero's scaler",          1, qfg4RopeScalerSignature,       qfg4RopeScalerPatch },
@@ -18516,6 +19645,44 @@ static const uint16 sq3AnnouncementsPatch[] = {
 	PATCH_END
 };
 
+// In the navigation computer, selecting your current location is supposed to
+//  display COURSE ALREADY ACHIEVED but the message doesn't appear in ScummVM.
+//  This occurs in later versions of SQ3.
+//
+// The navigation computer was changed in version 1.018 to return to the main
+//  screen when selecting the current location. It appears that there was some
+//  confusion though; the new script incorrectly attempts to disable the scan
+//  button and sets a three second pause after requesting a room change. The
+//  result is that the pause doesn't occur and the text is drawn and then erased
+//  on the same game cycle. By the time ScummVM updates the window from the
+//  screen buffer it's too late. In Sierra's interpreter the text only flickers
+//  on the screen, even on slow machines.
+//
+// We fix this by calling kScummVMSleep with the script's three second delay so
+//  that the screen updates and the message is displayed. The button states
+//  don't matter because no input is processed when sleeping and the script sets
+//  a new room immediately afterwards.
+//
+// Applies to: English PC 1.018, German PC, German Amiga, Macintosh
+// Responsible method: courseScript:changeState(1)
+// Fixes bug: #13114
+static const uint16 sq3CourseAchievedSignature[] = {
+	0x39, SIG_MAGICDWORD,               // pushi state
+	      SIG_SELECTOR8(state),
+	0x78,                               // push1
+	0x76,                               // push0
+	0x72, SIG_ADDTOOFFSET(+2),          // lofsa scanBut
+	0x4a, 0x06,                         // send 06 [ scanBut state: 0 (has no effect) ]
+	SIG_END
+};
+
+static const uint16 sq3CourseAchievedPatch[] = {
+	0x38, PATCH_UINT16(0x0001),         // pushi 0001
+	0x38, PATCH_UINT16(0x00b4),         // pushi 00b4
+	0x43, kScummVMSleepId, 0x02,        // callk kScummVMSleep 02 [ 180 ticks ]
+	PATCH_END
+};
+
 // Space Quest 3 has some strings hard coded in the scripts file
 // We need to patch them for the Hebrew translation
 
@@ -18546,8 +19713,11 @@ static const uint16 sq3HebrewStatusBarNamePatch[] = {
 //         script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq3Signatures[] = {
 	{ false,   0, "Hebrew: Replace name in status bar",    1, sq3HebrewStatusBarNameSignature,                     sq3HebrewStatusBarNamePatch },
+	{  true,  19, "Fix course achieved message",           1, sq3CourseAchievedSignature,                          sq3CourseAchievedPatch },
 	{  true, 117, "Fix end credits",                       1, sq3EndCreditsSignature,                              sq3EndCreditsPatch },
 	{  true, 702, "Fix scumsoft announcements",            1, sq3AnnouncementsSignature,                           sq3AnnouncementsPatch },
+	{  true, 777, "disable speed test",                    1, sci0EarlySpeedTestSignature,                         sci0EarlySpeedTestPatch },
+	{  true, 777, "disable speed test",                    1, sci01SpeedTestGlobalSignature,                       sci01SpeedTestGlobalPatch },
 	{ false, 996, "Hebrew: Replace 'Enter input' prompt",  1, sq3HebrewEnterInputSignature,                        sq3HebrewEnterInputPatch },
 	SCI_SIGNATUREENTRY_TERMINATOR
 };
@@ -20235,6 +21405,158 @@ static const uint16 sq4CdPatchLaserBeamSpeedThrottle[] = {
 	PATCH_END
 };
 
+// The Skate-O-Rama is well known for timer bugs in the CD version. Originally,
+//  the speed setting in SCI games controlled the speed of the entire game.
+//  In between the floppy and CD versions of SQ4 this was changed to control
+//  just ego's speed along with any specific actors that were programmed to use
+//  the speed value. This changed the fundamental nature of time from what SQ4
+//  had been developed against, but the Skate-O-Rama scripts weren't adjusted.
+//  As a result, most delays are instantaneous at high CPU speeds. But even at
+//  slow CPU speeds, the chase can't be completed unless the game speed is
+//  increased so that ego can move fast enough to escape the Sequel Police.
+//
+// The first problem is solved by the speed throttling we apply to all SCI games
+//  in kGameIsRestarting. The second problem is that Skate-O-Rama delays are in
+//  game cycles, which were originally relative to ego's speed, but now take a
+//  constant amount of time. New Rising Sun solved both problems by changing all
+//  all the cycle delays to tick delays (1/60th of a second) and multiplying
+//  them by the game speed global. (Speed is 1 to 15 with 1 being the fastest.)
+//  This makes the delays relative to ego as they were in the floppy version.
+//
+// We fix this by using NRS' solution of converting Skate-O-Rama cycle delays
+//  to tick delays relative to the game speed global. There are a *lot* of these
+//  delays and they're not all relevant so to keep things manageable only the
+//  practical chase delays are patched. This requires quite a few signatures
+//  even though most only differ by a constant. The code pattern we're targeting
+//  is just too short to have four common consecutive bytes for SIG_MAGICDWORD.
+//
+// Applies to: English PC CD
+// Responsible methods: enterScript:changeState, enterAndShootEgo:changeState,
+//                      shootEgo:changeState, swimAfterEgo:changeState,
+//                      landScript:changeState, swimAndShoot:changeState,
+//                      and egoFollowed:changeState in rooms 405, 406, 410, 411
+// Fixes bug: #11038
+static const uint16 sq4CdSignatureSkateORamaChaseDelays1[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x01,                         // ldi 01
+	0x65, 0x1a,                         // aTop cycles [ cycles = 1 ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays1[] = {
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x69, 0x20,                         // sTop ticks [ ticks = 1 * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays2[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x10,                         // ldi 10
+	0x65, 0x1a,                         // aTop cycles [ cycles = 16 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays3[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x0e,                         // ldi 0e
+	0x65, 0x1a,                         // aTop cycles [ cycles = 14 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays4[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x14,                         // ldi 14
+	0x65, 0x1a,                         // aTop cycles [ cycles = 20 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays5[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x78,                         // ldi 78
+	0x65, 0x1a,                         // aTop cycles [ cycles = 120 ]
+	0x32,                               // jmp [ toss / ret ]
+	SIG_END
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays2_5[] = {
+	PATCH_ADDTOOFFSET(+2),
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = acc * game speed ]
+	PATCH_END
+};
+
+static const uint16 sq4CdSignatureSkateORamaChaseDelays6[] = {
+	SIG_MAGICDWORD,
+	0x35, 0x00,                         // ldi 00
+	0x65, 0x14,                         // aTop state [ state = 0]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x65, 0x1a,                         // aTop cycles [ cycles = Random(16, 24) ]
+	SIG_END                             // jmp [ toss / ret. room 405: 33 0e room 410: 32 0f 00 ]
+};
+
+static const uint16 sq4CdPatchSkateORamaChaseDelays6[] = {
+	0x76,                               // push0
+	0x69, 0x14,                         // sTop state [ state = 0 ]
+	0x7a,                               // push2
+	0x39, 0x10,                         // pushi 10
+	0x39, 0x18,                         // pushi 18
+	0x43, 0x3c, 0x04,                   // callk Random 04
+	0x89, 0xc7,                         // lsg c7 [ game speed ]
+	0x06,                               // mul
+	0x65, 0x20,                         // aTop ticks [ ticks = Random(16, 24) * game speed ]
+	PATCH_END
+};
+
+// During the Skate-O-Rama chase, leaving via the west exit (room 405) is almost
+//  impossible when the game speed is turned up in the CD version. When entering
+//  from the north (room 406) the Sequel Police appear almost instantly at which
+//  point ego can't escape. Although this scene is known for timer bugs, this is
+//  also caused by an inconsistent y coordinate between room 405 and the more
+//  commonly used east exit (room 410) which does not have this problem.
+//
+// In 410 the police aren't eligible to arrive until ego is below 70 but in 405
+//  the script sets that limit to only 30. Both rooms initialize ego to swim to
+//  50 and their exits are symmetrical to each other. At high speeds, the timer
+//  in swimAfterEgo state 0 expires as the player gains control. In 405 this
+//  instantly kills the player because they're already below the threshold.
+//
+// We fix this by patching room 405's swimAfterEgo y coordinate to match the one
+//  in room 410. This isn't the only bug due to inconsistencies between these
+//  two rooms scripts. It appears that the east exit received more testing.
+//
+// This bug was originally reported as a crash due to ego being shot as they
+//  used the exit. It was addressed with extra speed throttling for the entire
+//  Skate-O-Rama, but I think that just made the conflict less likely. Now we
+//  patch the CD delays to be relative to game speed so that Skate-O-Rama can be
+//  completed at all speeds. There may still be a rare crash to reproduce and
+//  fix, although there have been many mall fixes since then.
+//
+// Applies to: All versions
+// Responsible method: swimAfterEgo:changeState(1)
+// Fixes bug: #5514
+static const uint16 sq4SignatureSkateORamaChaseWestExit[] = {
+	0x81, 0x00,                         // lag 00
+	0x4a, 0x04,                         // send 04 [ ego y? ]
+	SIG_MAGICDWORD,
+	0x36,                               // push
+	0x35, 0x1e,                         // ldi 1e [ 30 ]
+	0x1e,                               // gt?    [ ego:y > 30 ]
+	SIG_END
+};
+
+static const uint16 sq4PatchSkateORamaChaseWestExit[] = {
+	PATCH_ADDTOOFFSET(+5),
+	0x35, 0x46,                         // ldi 46 [ 70 ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                                      patch
 static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,     1, "Floppy: EGA intro delay fix",                    2, sq4SignatureEgaIntroDelay,                     sq4PatchEgaIntroDelay },
@@ -20267,6 +21589,21 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   396, "CD: get points for changing back clothes fix",   1, sq4CdSignatureGetPointsForChangingBackClothes, sq4CdPatchGetPointsForChangingBackClothes },
 	{  true,   397, "Floppy: software clerk message fix",             1, sq4FloppySignatureSoftwareClerkMessage,        sq4FloppyPatchSoftwareClerkMessage },
 	{  true,   397, "Floppy: software store easter eggs fix",         1, sq4FloppySignatureSoftwareStoreEasterEggs,     sq4FloppyPatchSoftwareStoreEasterEggs },
+	{  true,   405, "skate-o-rama chase west exit",                   1, sq4SignatureSkateORamaChaseWestExit,           sq4PatchSkateORamaChaseWestExit },
+	{  true,   405, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   405, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   406, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  7, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays2,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays3,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays4,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays5,          sq4CdPatchSkateORamaChaseDelays2_5 },
+	{  true,   410, "CD: skate-o-rama chase delays",                  1, sq4CdSignatureSkateORamaChaseDelays6,          sq4CdPatchSkateORamaChaseDelays6 },
+	{  true,   411, "CD: skate-o-rama chase delays",                  3, sq4CdSignatureSkateORamaChaseDelays1,          sq4CdPatchSkateORamaChaseDelays1 },
 	{  true,   405, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   406, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
 	{  true,   410, "CD/Floppy: zero gravity blast fix",              1, sq4SignatureZeroGravityBlast,                  sq4PatchZeroGravityBlast },
@@ -20286,6 +21623,7 @@ static const SciScriptPatcherEntry sq4Signatures[] = {
 	{  true,   701, "CD: getting shot, while getting rope",           1, sq4CdSignatureGettingShotWhileGettingRope,     sq4CdPatchGettingShotWhileGettingRope },
 	{  true,   706, "CD: biker crouch verb fix",                      2, sq4CdSignatureBikerCrouchVerb,                 sq4CdPatchBikerCrouchVerb },
 	{  true,     0, "CD: Babble icon speech and subtitles fix",       1, sq4CdSignatureBabbleIcon,                      sq4CdPatchBabbleIcon },
+	{  true,   803, "disable speed test",                             1, sci01SpeedTestLocalSignature,                  sci01SpeedTestLocalPatch },
 	{  true,   818, "CD: Speech and subtitles option",                1, sq4CdSignatureTextOptions,                     sq4CdPatchTextOptions },
 	{  true,   818, "CD: Speech and subtitles option button",         1, sq4CdSignatureTextOptionsButton,               sq4CdPatchTextOptionsButton },
 	{  true,   928, "CD: Narrator lockup fix",                        1, ecoquest1Sq4CdNarratorLockupSignature,         ecoquest1Sq4CdNarratorLockupPatch },
@@ -20969,6 +22307,7 @@ static const SciScriptPatcherEntry sq1vgaSignatures[] = {
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages2,            sq1vgaPatchDeltaurMessages },
 	{  true,   703, "deltaur messages",                            1, sq1vgaSignatureDeltaurMessages3,            sq1vgaPatchDeltaurMessages },
 	{  true,   704, "spider droid timing issue",                   1, sq1vgaSignatureSpiderDroidTiming,           sq1vgaPatchSpiderDroidTiming },
+	{  true,   803, "disable speed test",                          1, sci01SpeedTestLocalSignature,               sci01SpeedTestLocalPatch },
 	{  true,   989, "rename russian Sound class",                  1, sq1vgaSignatureRussianSoundName,            sq1vgaPatchRussianSoundName },
 	{  true,   992, "rename russian Motion class",                 1, sq1vgaSignatureRussianMotionName,           sq1vgaPatchRussianMotionName },
 	{  true,   994, "rename russian Rm class",                     1, sq1vgaSignatureRussianRmName,               sq1vgaPatchRussianRmName },
@@ -21357,6 +22696,86 @@ static const uint16 sq5PatchTabInventoryCursorFix[] = {
 	PATCH_END
 };
 
+// In room 310, if WD40 appears while ego is exiting through the left tunnel
+//  then the room exits break. When ego is near the tunnel, sWD40Appear waits
+//  for seven seconds before calling handsOff. If sExitViaTunnelB is running
+//  then handsOff stops ego's exit motion and the room script never completes.
+//
+// We fix this by clearing sWD40Appear:seconds when starting sExitViaTunnelB so
+//  that the timer in sWD40Appear state 0 is stopped once ego begins exiting the
+//  the room. sWD40Appear already checks that sExitViaTunnelB isn't running in
+//  its later states, but it's missing the check in state 1.
+//
+// Applies to: All versions
+// Responsible method: rm310:doit
+// Fixes bug: #9988
+static const uint16 sq5SignatureWd40TunnelLockupFix[] = {
+	0x72, SIG_ADDTOOFFSET(+2),            // lofsa sWD40Appear
+	SIG_ADDTOOFFSET(+15),
+	0x38, SIG_SELECTOR16(script),         // pushi script
+	0x76,                                 // push0
+	0x81, 0x02,                           // lag 02
+	0x4a, SIG_MAGICDWORD, 0x04,           // send 04 [ rm310 script? ]
+	0x18,                                 // not
+	0x31, 0x0e,                           // bnt 0e [ skip sExitViaTunnelB if room has script ]
+	0x38, SIG_SELECTOR16(setScript),      // pushi setScript
+	0x78,                                 // push1
+	0x72, SIG_ADDTOOFFSET(+2),            // lofsa sExitViaTunnelB
+	0x36,                                 // push
+	0x81, 0x02,                           // lag 02
+	0x4a, 0x06,                           // send 06 [ rm310 setScript: sExitViaTunnelB ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40TunnelLockupFix[] = {
+	PATCH_ADDTOOFFSET(+18),
+	0x63, 0x12,                           // pToa script
+	0x2f, 0x15,                           // bt 15 [ skip sExitViaTunnelB if room has script ]
+	0x38, PATCH_SELECTOR16(setScript),    // pushi setScript
+	0x78,                                 // push1
+	0x74, PATCH_GETORIGINALUINT16(+34),   // lofss sExitViaTunnelB
+	0x54, 0x06,                           // self 06 [ self setScript: sExitViaTunnelB ]
+	0x38, PATCH_SELECTOR16(seconds),      // pushi seconds
+	0x78,                                 // push1
+	0x76,                                 // push0
+	0x72, PATCH_GETORIGINALUINT16(+1),    // lofsa sWD40Appear
+	0x4a, 0x06,                           // send 06 [ sWD40Appear seconds: 0 (stop timer) ]
+	PATCH_END
+};
+
+// In room 310, clicking Talk or most inventory items on WD40 results in a
+//  missing message error. When WD40 is visible, wd40:doVerb passes the incoming
+//  verb directly to testMessager:say without first checking if a message exists
+//  for the verb. We fix this by setting the noun and modNum as in the other
+//  rooms on K.U. and then calling super:doVerb as normal.
+//
+// Applies to: All versions
+// Responsible method: wd40:doVerb
+static const uint16 sq5SignatureWd40MissingMessages[] = {
+	0x38, SIG_SELECTOR16(say),            // pushi say
+	SIG_MAGICDWORD,
+	0x39, 0x06,                           // pushi 06
+	0x39, 0x04,                           // pushi 04
+	0x8f, 0x01,                           // lsp 01
+	0x76,                                 // push0
+	0x76,                                 // push0
+	0x76,                                 // push0
+	0x38, SIG_UINT16(0x012d),             // pushi 012d
+	0x81, 0x5b,                           // lag 5b
+	0x4a, 0x10,                           // send 10 [ testMessager say: 4 verb 0 0 0 301 ]
+	0x33, 0x0b,                           // jmp 0b  [ skip super: doVerb verb &rest ]
+	SIG_END
+};
+
+static const uint16 sq5PatchWd40MissingMessages[] = {
+	0x35, 0x04,                           // ldi 04
+	0x65, 0x1a,                           // aTop noun [ noun = 4 ]
+	0x34, PATCH_UINT16(0x012d),           // ldi 012d
+	0x65, 0x1c,                           // aTop modNum [ modNum = 301 ]
+	0x33, 0x0a,                           // jmp 0a [ super: doVerb verb &rest ]
+	PATCH_END
+};
+
 //          script, description,                                      signature                             patch
 static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,     0, "tab inventory cursor fix",                    1, sq5SignatureTabInventoryCursorFix,    sq5PatchTabInventoryCursorFix },
@@ -21365,6 +22784,8 @@ static const SciScriptPatcherEntry sq5Signatures[] = {
 	{  true,   243, "transporter room speed fix",                  3, sq5SignatureTransporterRoomSpeedFix,  sq5PatchTransporterRoomSpeedFix },
 	{  true,   250, "elevator handsOn fix",                        1, sq5SignatureElevatorHandsOn,          sq5PatchElevatorHandsOn },
 	{  true,   305, "wd40 fruit fix",                              1, sq5SignatureWd40FruitFix,             sq5PatchWd40FruitFix },
+	{  true,   310, "wd40 tunnel lockup fix",                      1, sq5SignatureWd40TunnelLockupFix,      sq5PatchWd40TunnelLockupFix },
+	{  true,   310, "wd40 missing messages",                       1, sq5SignatureWd40MissingMessages,      sq5PatchWd40MissingMessages },
 	{  true,   335, "wd40 alarm countdown fix",                    1, sq5SignatureWd40AlarmCountdownFix,    sq5PatchWd40AlarmCountdownFix },
 	{  true,   730, "genetix bridge handsOn fix",                  1, sq5SignatureGenetixBridgeHandsOn,     sq5PatchGenetixBridgeHandsOn },
 	{  true,    30, "ChoiceTalker lockup fix",                     1, sciNarratorLockupSignature,           sciNarratorLockupPatch },
@@ -21474,11 +22895,44 @@ static const uint16 ramaChangeDirPatch[] = {
 	PATCH_END
 };
 
+// Clicking on the lower area of the screen at the start of the demo, or at a
+//  later time when the cursor is a pointer, crashes the program with a missing
+//  script error. The demo adds button handlers for buttons that don't really
+//  exist, and clicking loads scripts that aren't included.
+//
+// We fix this by removing the broken button handlers. Graphics are unaffected.
+//
+// Applies to: PC Demo
+// Responsible method: RamaInterface:init
+// Fixes bug: #10344
+static const uint16 ramaDemoBrokenButtonsSignature[] = {
+	0x38, SIG_SELECTOR16(add),     // pushi add
+	0x38, SIG_UINT16(0x0003),      // pushi 0003
+	SIG_MAGICDWORD,
+	0x72, SIG_UINT16(0x03fe),      // lofsa optionsButton [ puzzle icon ]
+	0x36,                          // push
+	0x72, SIG_UINT16(0x02d6),      // lofsa thighComputerButton [ lower area ]
+	0x36,                          // push
+	SIG_ADDTOOFFSET(+36),
+	0x4a, SIG_UINT16(0x0018),      // send 18 [ interfacePlane:theFtrs ... add: optionsButton thighComputerButton ... ]
+	SIG_END
+};
+
+static const uint16 ramaDemoBrokenButtonsPatch[] = {
+	PATCH_ADDTOOFFSET(+3),
+	0x78,                          // push1
+	0x33, 0x08,                    // jmp 08 [ skip adding optionsButton and thighComputerButton ]
+	PATCH_ADDTOOFFSET(+44),
+	0x4a, PATCH_UINT16(0x0014),    // send 14
+	PATCH_END
+};
+
 static const SciScriptPatcherEntry ramaSignatures[] = {
 	{  true,     0, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
 	{  true,    15, "disable video benchmarking",                     1, sci2BenchmarkSignature,          sci2BenchmarkReversePatch },
 	{  true,    55, "fix bad DocReader::init priority calculation",   1, ramaDocReaderInitSignature,      ramaDocReaderInitPatch },
 	{  true,    85, "fix SaveManager to use normal readWord calls",   1, ramaSerializeRegTSignature1,     ramaSerializeRegTPatch1 },
+	{  true,    90, "demo: remove broken button handlers",            1, ramaDemoBrokenButtonsSignature,  ramaDemoBrokenButtonsPatch },
 	{  true,   201, "fix crash restoring save games using NukeTimer", 1, ramaNukeTimerSignature,          ramaNukeTimerPatch },
 	{  true, 64928, "Narrator lockup fix",                            1, sciNarratorLockupSignature,      sciNarratorLockupPatch },
 	{  true, 64990, "disable change directory button",                1, ramaChangeDirSignature,          ramaChangeDirPatch },
@@ -21766,7 +23220,7 @@ static const uint16 sq6SaveDialogMessagePatch[] = {
 // Outside the arcade and club, room 330 adjusts the current music and volume
 //  based on which entrance ego is nearest and the distance. All Polysorbate LX
 //  music plays through gSound1. rm330:init records gSound1:vol when ego enters,
-/// rm330:doit uses this value in volume calculations, and then sExitToArcade or
+//  rm330:doit uses this value in volume calculations, and then sExitToArcade or
 //  sExitToClub restores gSound1:vol to its original value. The other two street
 //  rooms (320 and 340) slowly fade gSound1:vol in from 0 to the normal value of
 //  127 whenever entering from another room.
@@ -22673,6 +24127,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 	case GID_CAMELOT:
 		signatureTable = camelotSignatures;
 		break;
+	case GID_CASTLEBRAIN:
+		signatureTable = castleBrainSignatures;
+		break;
 	case GID_ECOQUEST:
 		signatureTable = ecoquest1Signatures;
 		break;
@@ -22690,15 +24147,7 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 #ifdef ENABLE_SCI32
 	case GID_HOYLE5:
-		if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
-			g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
-			signatureTable = hoyle5Signatures;
-		else if (g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
-			    !g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
-			signatureTable = hoyle5ChildrensCollectionSignatures;
-		else if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 100)) &&
-			      g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700)))
-			signatureTable = hoyle5BridgeSignatures;
+		signatureTable = hoyle5Signatures;
 		break;
 	case GID_GK1:
 		signatureTable = gk1Signatures;
@@ -22712,6 +24161,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		break;
 	case GID_ISLANDBRAIN:
 		signatureTable = islandBrainSignatures;
+		break;
+	case GID_JONES:
+		signatureTable = jonesSignatures;
 		break;
 	case GID_KQ1:
 		signatureTable = kq1Signatures;
@@ -22767,6 +24219,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 		signatureTable = larry7Signatures;
 		break;
 #endif
+	case GID_MOTHERGOOSE:
+		signatureTable = mothergooseSignatures;
+		break;
 	case GID_MOTHERGOOSE256:
 		signatureTable = mothergoose256Signatures;
 		break;
@@ -22892,6 +24347,18 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 					enablePatch(signatureTable, "subtitle patch compatibility");
 				}
 				break;
+			case GID_HOYLE5:
+				if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeScript, 700))) {
+					// Hoyle 5 children's collection
+					enablePatch(signatureTable, "disable Gin Rummy");
+					enablePatch(signatureTable, "disable Cribbage");
+					enablePatch(signatureTable, "disable Klondike");
+					enablePatch(signatureTable, "disable Bridge");
+					enablePatch(signatureTable, "disable Poker");
+					enablePatch(signatureTable, "disable Hearts");
+					enablePatch(signatureTable, "disable Backgammon");
+				}
+				break;
 			case GID_KQ4:
 				if (!g_sci->getResMan()->testResource(ResourceId(kResourceTypeView, 653))) {
 					enablePatch(signatureTable, "missing waterfall view");
@@ -22923,6 +24390,9 @@ void ScriptPatcher::processScript(uint16 scriptNr, SciSpan<byte> scriptData) {
 				break;
 			case GID_LAURABOW2:
 				if (g_sci->isCD()) {
+					// Enable patches due views having fewer loops in the CD version
+					enablePatch(signatureTable, "CD: fix museum actor loops");
+
 					// Enables Dual mode patches (audio + subtitles at the same time) for Laura Bow 2
 					enablePatch(signatureTable, "CD: audio + text support");
 				}

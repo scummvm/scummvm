@@ -172,7 +172,7 @@ public:
 	/**
 	 * A mapping of keywords to the Keyword object that represents them
 	 */
-	typedef Std::map<Common::String, Keyword *> KeywordMap;
+	typedef Common::HashMap<Common::String, Keyword *> KeywordMap;
 
 	/*
 	 * Constructors/Destructors

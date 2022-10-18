@@ -52,7 +52,7 @@ public:
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
-			target = getEngineId();
+			target = getName();
 		if (saveGameIdx == kSavegameFilePattern)
 			return Common::String::format("%s.###", target); // There is also sav0.mor for slot 0
 		else

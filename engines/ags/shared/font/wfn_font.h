@@ -90,9 +90,7 @@ public:
 	}
 
 	// Get WFN character for the given code; if the character is missing, returns empty character
-	inline const WFNChar &GetChar(uint8_t code) const {
-		return code < _refs.size() ? *_refs[code] : _emptyChar;
-	}
+	const WFNChar &GetChar(uint8_t code) const;
 
 	void Clear();
 	// Reads WFNFont object, using data_size bytes from stream; if data_size = 0,
@@ -103,8 +101,6 @@ protected:
 	std::vector<const WFNChar *> _refs;      // reference array, contains pointers to elements of _items
 	std::vector<WFNChar>        _items;     // actual character items
 	std::vector<uint8_t>        _pixelData; // pixel data array
-
-	static const WFNChar        _emptyChar; // a dummy character to substitute bad symbols
 };
 
 } // namespace AGS3

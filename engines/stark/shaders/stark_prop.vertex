@@ -21,7 +21,7 @@ const int maxLights = 10;
 uniform mat4 modelViewMatrix;
 uniform mat4 projectionMatrix;
 uniform mat3 normalMatrix;
-uniform bool doubleSided;
+uniform UBOOL doubleSided;
 uniform vec3 ambientColor;
 uniform Light lights[maxLights];
 
@@ -62,7 +62,7 @@ vec3 spotLight(vec3 position, vec3 color, float falloffNear, float falloffFar, v
 }
 
 void main() {
-	if (doubleSided) {
+	if (UBOOL_TEST(doubleSided)) {
 		Texcoord = vec2(texcoord.x, 1.0 - texcoord.y);
 	} else {
 		Texcoord = vec2(1.0 - texcoord.x, 1.0 - texcoord.y);

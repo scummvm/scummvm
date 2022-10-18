@@ -134,7 +134,6 @@ static struct FuncDescr {
 	{ LC::c_theentityassign,"c_theentityassign","EF" },
 	{ LC::c_theentitypush,	"c_theentitypush",	"EF" }, // entity, field
 	{ LC::c_themenuentitypush,"c_themenuentitypush","EF" },
-	{ LC::c_themenuitementityassign,"c_themenuitementityassign","EF" },
 	{ LC::c_varpush,		"c_varpush",		"s" },
 	{ LC::c_varrefpush,		"c_varrefpush",		"s" },
 	{ LC::c_voidpush,		"c_voidpush",		""  },
@@ -315,6 +314,8 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	if (debugChannelSet(2, kDebugLingoExec)) {
 		g_lingo->printCallStack(0);
 	}
+	g_lingo->_pc = 0;
+	g_debugger->pushContextHook();
 }
 
 void Lingo::popContext(bool aborting) {
@@ -374,6 +375,8 @@ void Lingo::popContext(bool aborting) {
 	}
 
 	delete fp;
+
+	g_debugger->popContextHook();
 }
 
 bool Lingo::hasFrozenContext() {
@@ -584,12 +587,32 @@ void LC::c_themenuentitypush() {
 
 	Datum menuId = g_lingo->pop();
 	Datum menuItemId;
+	Datum menuRef;
+	menuRef.u.menu = new MenuReference();
+	if (menuId.type == INT) {
+		menuRef.u.menu->menuIdNum = menuId.u.i;
+	} else if (menuId.type == STRING) {
+		menuRef.u.menu->menuIdStr = menuId.u.s;
+	} else {
+		warning("LC::c_themenuentitypush : Unknown type of menu Reference %d", menuId.type);
+		g_lingo->push(Datum());
+		return;
+	}
 
 	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 1 parameter
 		menuItemId = g_lingo->pop();
+		if (menuItemId.type == INT) {
+			menuRef.u.menu->menuItemIdNum = menuItemId.u.i;
+		} else if (menuItemId.type == STRING) {
+			menuRef.u.menu->menuItemIdStr = menuItemId.u.s;
+		} else {
+			warning("LC::c_themenuentitypush : Unknown type of menuItem Reference %d", menuId.type);
+			g_lingo->push(Datum());
+			return;
+		}
 	}
 
-	Datum d = g_lingo->getTheMenuItemEntity(entity, menuId, field, menuItemId);
+	Datum d = g_lingo->getTheEntity(entity, menuRef, field);
 	g_lingo->push(d);
 }
 
@@ -599,23 +622,35 @@ void LC::c_theentityassign() {
 	int entity = g_lingo->readInt();
 	int field  = g_lingo->readInt();
 
-	Datum d = g_lingo->pop();
-	g_lingo->setTheEntity(entity, id, field, d);
-}
+	if (entity == kTheMenuItem) {
+		Datum itemRef = g_lingo->pop();
+		Datum menuRef;
+		menuRef.u.menu = new MenuReference();
+		menuRef.type = MENUREF;
+		if (id.type == STRING) {
+			menuRef.u.menu->menuIdStr = id.u.s;
+		} else if (id.type == INT) {
+			menuRef.u.menu->menuIdNum = id.u.i;
+		} else {
+			warning("LC::c_theentityassign : Unknown menu reference type %d", id.type);
+			return;
+		}
 
-void LC::c_themenuitementityassign() {
-	int entity = g_lingo->readInt();
-	int field  = g_lingo->readInt();
+		if (itemRef.type == STRING) {
+			menuRef.u.menu->menuItemIdStr = itemRef.u.s;
+		} else if (itemRef.type == INT) {
+			menuRef.u.menu->menuItemIdNum = itemRef.u.i;
+		} else {
+			warning("LC::c_theentityassign : Unknown menuItem reference type %d", id.type);
+			return;
+		}
 
-	Datum d = g_lingo->pop();
-	Datum menuId = g_lingo->pop();
-	Datum menuItemId;
-
-	if (entity != kTheMenuItems) { // "<entity> of menuitems" has 2 parameters
-		menuItemId = g_lingo->pop();
+		Datum d = g_lingo->pop();
+		g_lingo->setTheEntity(entity, menuRef, field, d);
+	} else {
+		Datum d = g_lingo->pop();
+		g_lingo->setTheEntity(entity, id, field, d);
 	}
-
-	g_lingo->setTheMenuItemEntity(entity, menuId, field, menuItemId, d);
 }
 
 void LC::c_objectproppush() {
@@ -641,26 +676,52 @@ void LC::c_swap() {
 	g_lingo->push(d1);
 }
 
+static bool isArray(Datum &d1) {
+	if (d1.type == ARRAY || d1.type == POINT || d1.type == RECT)
+		return true;
+
+	return false;
+}
+
+static DatumType getArrayAlignedType(Datum &d1, Datum &d2) {
+	if (d1.type == POINT && d2.type == ARRAY && d2.u.farr->arr.size() < 2)
+		return ARRAY;
+
+	if (d1.type == POINT)
+		return POINT;
+
+	if (d1.type == RECT && (d2.type == POINT || (d2.type == ARRAY && d2.u.farr->arr.size() < 4)))
+		return ARRAY;
+
+	if (d1.type == RECT)
+		return RECT;
+
+	if (!isArray(d1))
+		return d2.type;
+
+	return ARRAY;
+}
+
 Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) {
 	// At least one of d1 and d2 must be an array
 	uint arraySize;
-	if (d1.type == ARRAY && d2.type == ARRAY) {
+	if (isArray(d1) && isArray(d2)) {
 		arraySize = MIN(d1.u.farr->arr.size(), d2.u.farr->arr.size());
-	} else if (d1.type == ARRAY) {
+	} else if (isArray(d1)) {
 		arraySize = d1.u.farr->arr.size();
 	} else {
 		arraySize = d2.u.farr->arr.size();
 	}
 	Datum res;
-	res.type = ARRAY;
+	res.type = getArrayAlignedType(d1, d2);
 	res.u.farr = new FArray(arraySize);
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
-		if (d1.type == ARRAY) {
+		if (isArray(d1)) {
 			a = d1.u.farr->arr[i];
 		}
-		if (d2.type == ARRAY) {
+		if (isArray(d2)) {
 			b = d2.u.farr->arr[i];
 		}
 		res.u.farr->arr[i] = mapFunc(a, b);
@@ -669,7 +730,7 @@ Datum LC::mapBinaryOp(Datum (*mapFunc)(Datum &, Datum &), Datum &d1, Datum &d2) 
 }
 
 Datum LC::addData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::addData, d1, d2);
 	}
 
@@ -693,7 +754,7 @@ void LC::c_add() {
 }
 
 Datum LC::subData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::subData, d1, d2);
 	}
 
@@ -717,7 +778,7 @@ void LC::c_sub() {
 }
 
 Datum LC::mulData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::mulData, d1, d2);
 	}
 
@@ -741,7 +802,7 @@ void LC::c_mul() {
 }
 
 Datum LC::divData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::divData, d1, d2);
 	}
 
@@ -775,7 +836,7 @@ void LC::c_div() {
 }
 
 Datum LC::modData(Datum &d1, Datum &d2) {
-	if (d1.type == ARRAY || d2.type == ARRAY) {
+	if (isArray(d1) || isArray(d2)) {
 		return LC::mapBinaryOp(LC::modData, d1, d2);
 	}
 
@@ -797,10 +858,10 @@ void LC::c_mod() {
 }
 
 Datum LC::negateData(Datum &d) {
-	if (d.type == ARRAY) {
+	if (isArray(d)) {
 		uint arraySize = d.u.farr->arr.size();
 		Datum res;
-		res.type = ARRAY;
+		res.type = d.type;
 		res.u.farr = new FArray(arraySize);
 		for (uint i = 0; i < arraySize; i++) {
 			res.u.farr->arr[i] = LC::negateData(d.u.farr->arr[i]);
@@ -880,10 +941,7 @@ void LC::c_starts() {
 
 	int res = s1.hasPrefix(s2) ? 1 : 0;
 
-	d1.type = INT;
-	d1.u.i = res;
-
-	g_lingo->push(d1);
+	g_lingo->push(Datum(res));
 }
 
 void LC::c_intersects() {
@@ -1220,8 +1278,7 @@ Datum LC::compareArrays(Datum (*compareFunc)(Datum, Datum), Datum d1, Datum d2, 
 	}
 
 	Datum res;
-	res.type = INT;
-	res.u.i = location ? -1 : 1;
+	res = location ? -1 : 1;
 	Datum a = d1;
 	Datum b = d2;
 	for (uint i = 0; i < arraySize; i++) {
@@ -1269,9 +1326,9 @@ Datum LC::eqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::eqData, d1, d2, false, true);
 	}
-	d1.u.i = d1.equalTo(d2, true);
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1.equalTo(d2, true);
+	return check;
 }
 
 void LC::c_eq() {
@@ -1285,9 +1342,9 @@ Datum LC::neqData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::neqData, d1, d2, false, true);
 	}
-	d1.u.i = !d1.equalTo(d2, true);
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = !d1.equalTo(d2, true);
+	return check;
 }
 
 void LC::c_neq() {
@@ -1301,9 +1358,9 @@ Datum LC::gtData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::gtData, d1, d2, false, true);
 	}
-	d1.u.i = d1 > d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = (d1 > d2 ? 1 : 0);
+	return check;
 }
 
 void LC::c_gt() {
@@ -1317,9 +1374,9 @@ Datum LC::ltData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::ltData, d1, d2, false, true);
 	}
-	d1.u.i = d1 < d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1 < d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_lt() {
@@ -1333,9 +1390,9 @@ Datum LC::geData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::geData, d1, d2, false, true);
 	}
-	d1.u.i = d1 >= d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check = d1 >= d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_ge() {
@@ -1349,9 +1406,9 @@ Datum LC::leData(Datum d1, Datum d2) {
 			d1.type == PARRAY || d2.type == PARRAY) {
 		return LC::compareArrays(LC::leData, d1, d2, false, true);
 	}
-	d1.u.i = d1 <= d2 ? 1 : 0;
-	d1.type = INT;
-	return d1;
+	Datum check;
+	check =  d1 <= d2 ? 1 : 0;
+	return check;
 }
 
 void LC::c_le() {
@@ -1442,7 +1499,7 @@ void LC::c_callfunc() {
 
 void LC::call(const Common::String &name, int nargs, bool allowRetVal) {
 	if (debugChannelSet(3, kDebugLingoExec))
-		g_lingo->printSTUBWithArglist(name.c_str(), nargs, "call:");
+		printWithArgList(name.c_str(), nargs, "call:");
 
 	Symbol funcSym;
 
@@ -1575,6 +1632,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	}
 
 	if (funcSym.type != HANDLER) {
+		g_debugger->builtinHook(funcSym);
 		uint stackSizeBefore = g_lingo->_stack.size() - nargs;
 
 		if (target.type != VOID) {
@@ -1614,8 +1672,6 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 	}
 
 	g_lingo->pushContext(funcSym, allowRetVal, defaultRetVal);
-
-	g_lingo->_pc = 0;
 }
 
 void LC::c_procret() {
@@ -1677,9 +1733,13 @@ void LC::c_delete() {
 			break;
 		case kChunkItem:
 		case kChunkLine:
-			// last char of the first portion is the delimiter. skip it.
-			if (start > 0)
+			// when deleting the first item, include the delimiter after the item
+			// deleting another item, remove the delimiter in front
+			if (start == 0) {
+				end++;
+			} else {
 				start--;
+			}
 			break;
 		}
 	}

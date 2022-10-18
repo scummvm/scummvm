@@ -27,6 +27,7 @@
 #include "ultima/ultima8/filesys/raw_archive.h"
 #include "ultima/ultima8/world/item_factory.h"
 #include "ultima/ultima8/world/actors/main_actor.h"
+#include "ultima/ultima8/world/actors/scheduler_process.h"
 #include "ultima/ultima8/world/loop_script.h"
 #include "ultima/ultima8/usecode/uc_list.h"
 #include "ultima/ultima8/misc/direction_util.h"
@@ -167,8 +168,17 @@ bool World::switchMap(uint32 newmap) {
 		_maps[oldmap]->unloadFixed();
 	}
 
-	// Kill any processes that need killing (those with type != 1 && item != 0)
-	Kernel::get_instance()->killProcessesNotOfType(0, 1, true);
+	// Kill any processes that need killing
+	if (GAME_IS_U8) {
+		// U8 doesn't kill processes of object 0 *or* type 1 when changing map.
+		Kernel::get_instance()->killProcessesNotOfType(0, 1, true);
+	} else {
+		// Crusader kills processes even for object 0 when switching.
+		SnapProcess::get_instance()->clearEggs();
+		CameraProcess::ResetCameraProcess();
+		Kernel::get_instance()->killAllProcessesNotOfTypeExcludeCurrent(1, true);
+		Kernel::get_instance()->addProcess(new SchedulerProcess());
+	}
 
 	pout << "Loading Fixed items in map " << newmap << Std::endl;
 	Common::SeekableReadStream *items = GameData::get_instance()->getFixed()
@@ -178,15 +188,19 @@ bool World::switchMap(uint32 newmap) {
 
 	_currentMap->loadMap(_maps[newmap]);
 
-	// update camera if needed (u8 only)
-	// TODO: This may not even be needed, but do it just in case the
-	// camera was looking at something else during teleport.
+	// Update camera
 	if (GAME_IS_U8) {
+		// TODO: This may not even be needed for U8, but reset in case camera
+		// was looking at something other than the avatar during teleport.
 		CameraProcess *camera = CameraProcess::GetCameraProcess();
 		if (camera && camera->getItemNum() != 1) {
 			CameraProcess::SetCameraProcess(new CameraProcess(1));
 		}
 		CameraProcess::SetEarthquake(0);
+	} else {
+		// In Crusader, snap the camera to the avatar.  The snap process will
+		// then find the right snap egg in the next frame.
+		CameraProcess::SetCameraProcess(new CameraProcess(1));
 	}
 
 	return true;

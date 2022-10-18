@@ -27,6 +27,7 @@
 #include "common/stack.h"
 #include "common/str.h"
 #include "common/list.h"
+#include "common/mutex.h"
 
 #include "gui/ThemeEngine.h"
 #include "gui/widget.h"
@@ -43,6 +44,10 @@ namespace Common {
 }
 
 namespace GUI {
+
+enum {
+	kIconsSetLoadedCmd  = 'icns'
+};
 
 class Dialog;
 class ThemeEval;
@@ -64,7 +69,7 @@ typedef Common::FixedStack<Dialog *> DialogStack;
 /**
  * GUI manager singleton.
  */
-class GuiManager : public Common::Singleton<GuiManager> {
+class GuiManager : public Common::Singleton<GuiManager>, public CommandSender {
 	friend class Dialog;
 	friend class Common::Singleton<SingletonBaseType>;
 	GuiManager();
@@ -91,6 +96,8 @@ public:
 
 	ThemeEval *xmlEval() { return _theme->getEvaluator(); }
 
+	void lockIconsSet() { _iconsMutex.lock(); }
+	void unlockIconsSet()  { _iconsMutex.unlock(); }
 	Common::SearchSet &getIconsSet() { return _iconsSet; }
 
 	int16 getGUIWidth() const { return _baseWidth; }
@@ -108,8 +115,8 @@ public:
 	int getFontHeight(ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getFontHeight(style); }
 	int getStringWidth(const Common::String &str, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
 	int getStringWidth(const Common::U32String &str, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getStringWidth(str, style); }
-	int getCharWidth(byte c, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getCharWidth(c, style); }
-	int getKerningOffset(byte left, byte right, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold) const { return _theme->getKerningOffset(left, right, font); }
+	int getCharWidth(uint32 c, ThemeEngine::FontStyle style = ThemeEngine::kFontStyleBold) const { return _theme->getCharWidth(c, style); }
+	int getKerningOffset(uint32 left, uint32 right, ThemeEngine::FontStyle font = ThemeEngine::kFontStyleBold) const { return _theme->getKerningOffset(left, right, font); }
 
 	/**
 	 * Tell the GuiManager to check whether the screen resolution has changed.
@@ -132,6 +139,8 @@ public:
 	void redrawFull();
 
 	void initIconsSet();
+
+	void displayTopDialogOnly(bool mode);
 
 protected:
 	enum RedrawStatus {
@@ -162,7 +171,11 @@ protected:
 	int			_topDialogLeftPadding;
 	int			_topDialogRightPadding;
 
+	bool		_displayTopDialogOnly;
+
+	Common::Mutex _iconsMutex;
 	Common::SearchSet _iconsSet;
+	bool _iconsSetChanged;
 
 	// position and time of last mouse click (used to detect double clicks)
 	struct MousePos {

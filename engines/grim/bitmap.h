@@ -118,7 +118,7 @@ public:
 	uint32 _numVerts;
 	uint32 _numLayers;
 
-// private:
+//private:
 	Graphics::Surface *_data;
 	void *_userData;
 };

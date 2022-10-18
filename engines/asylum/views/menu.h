@@ -22,6 +22,8 @@
 #ifndef ASYLUM_VIEWS_MENU_H
 #define ASYLUM_VIEWS_MENU_H
 
+#include "graphics/surface.h"
+
 #include "asylum/eventhandler.h"
 #include "asylum/shared.h"
 
@@ -64,6 +66,7 @@ public:
 	void setLoadingDuringStartup()  { _loadingDuringStartup = true; }
 
 	bool isEditingSavegameName() { return _activeScreen == kMenuSaveGame && _isEditingSavegameName; };
+	bool isConfiguringKeyboard() { return _activeScreen == kMenuKeyboardConfig && _selectedShortcutIndex != -1; }
 
 private:
 	AsylumEngine *_vm;
@@ -129,6 +132,10 @@ private:
 	Common::String _previousName;
 	int32 _prefixWidth;
 	bool _loadingDuringStartup;
+
+	// Thumbnails
+	int _thumbnailIndex;
+	Graphics::Surface _thumbnailSurface;
 
 	/**
 	 * Setups menu screen
@@ -207,9 +214,9 @@ private:
 	bool click(const AsylumEvent &evt);
 
 	// Thumbnails
-	void adjustCoordinates(Common::Point &point);
 	bool hasThumbnail(int index);
-	void showThumbnail(int index);
+	void readThumbnail();
+	void showThumbnail();
 
 	// Update handlers
 	void updateNewGame();

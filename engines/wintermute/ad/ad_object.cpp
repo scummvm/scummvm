@@ -48,6 +48,7 @@
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/base/sound/base_sound.h"
+
 #include "common/str.h"
 #include "common/util.h"
 

@@ -618,7 +618,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 //		LOGD("JE_SCROLL");
 		e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
+		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 			if (_touch_pt_scroll.x == -1 && _touch_pt_scroll.y == -1) {
 				_touch_pt_scroll.x = arg3;
 				_touch_pt_scroll.y = arg4;
@@ -647,7 +647,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
+		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 			e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
 		} else {
 			e.mouse.x = arg1;
@@ -695,7 +695,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				_event_queue.push(_queuedEvent);
 			}
 
-			if (!_touchpad_mode) {
+			if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
 				// In this case the mouse move is done in "direct mode"
 				// ie. the cursor jumps to where the tap occured
 				// so we don't have relMouse coordinates to set for the event
@@ -722,7 +722,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
+		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 			e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
 		} else {
 			e.mouse.x = arg1;
@@ -753,7 +753,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 				dptype = Common::EVENT_MOUSEMOVE;
 
-				if (_touchpad_mode) {
+				if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 					e.mouse.x = (arg1 - _touch_pt_dt.x) * 100 / _touchpad_scale;
 					e.mouse.y = (arg2 - _touch_pt_dt.y) * 100 / _touchpad_scale;
 					e.mouse += _touch_pt_down;
@@ -791,7 +791,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 		e.type = Common::EVENT_MOUSEMOVE;
 
-		if (_touchpad_mode) {
+		if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 			e.mouse = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
 		} else {
 			e.mouse.x = arg3;
@@ -918,7 +918,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 				multitype = Common::EVENT_MOUSEMOVE;
 
 				// TODO TO TEST for non-touchpad mode too!
-				if (_touchpad_mode) {
+				if (_touch_mode == TOUCH_MODE_TOUCHPAD) {
 					e.mouse.x = (arg3 - _touch_pt_multi.x) * 100 / _touchpad_scale;
 					e.mouse.y = (arg4 - _touch_pt_multi.y) * 100 / _touchpad_scale;
 					e.mouse += _touch_pt_down; // TODO maybe we need another reference point???
@@ -1307,6 +1307,17 @@ void OSystem_Android::pushEvent(const Common::Event &event1, const Common::Event
 	_event_queue.push(event1);
 	_event_queue.push(event2);
 	_event_queue_lock->unlock();
+}
+
+void OSystem_Android::setupTouchMode(int oldValue, int newValue) {
+	_touch_mode = newValue;
+
+	if (newValue == TOUCH_MODE_TOUCHPAD) {
+		// Make sure we have a proper touch point if we switch to touchpad mode with finger down
+		_touch_pt_down = dynamic_cast<AndroidCommonGraphics *>(_graphicsManager)->getMousePosition();
+		_touch_pt_scroll.x = -1;
+		_touch_pt_scroll.y = -1;
+	}
 }
 
 #endif

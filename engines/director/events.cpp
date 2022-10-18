@@ -40,7 +40,7 @@
 
 namespace Director {
 
-uint32 DirectorEngine::getMacTicks() { return g_system->getMillis() * 60 / 1000.; }
+uint32 DirectorEngine::getMacTicks() { return (g_system->getMillis() * 60 / 1000.) - _tickBaseline; }
 
 bool DirectorEngine::processEvents(bool captureClick) {
 	debugC(3, kDebugEvents, "\n@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@");
@@ -189,6 +189,10 @@ bool Movie::processEvent(Common::Event &event) {
 			// Set `the clickOn` Lingo property.
 			// Even in D4, `the clickOn` uses the old "active" sprite instead of mouse sprite.
 			_currentClickOnSpriteId = sc->getActiveSpriteIDFromPos(pos);
+
+			if (!spriteId && _isBeepOn) {
+				g_lingo->func_beep(1);
+			}
 
 			if (spriteId > 0 && sc->_channels[spriteId]->_sprite->shouldHilite()) {
 				_currentHiliteChannelId = spriteId;

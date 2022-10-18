@@ -79,7 +79,6 @@ PSP_MODULE_INFO("SCUMMVM-PSP", 0, 1, 1);
  * even though the module was started in kernelmode
  */
 PSP_MAIN_THREAD_ATTR(THREAD_ATTR_USER | THREAD_ATTR_VFPU);
-PSP_HEAP_SIZE_KB(-128);	//Leave 128kb for thread stacks, etc.
 
 
 #ifndef USERSPACE_ONLY

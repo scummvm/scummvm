@@ -373,14 +373,14 @@ void Object::calc_static_detail(int16 det_nr) {
 						nr = SIB_ZUSTAND_TBL[i];
 
 						if (nr >= 40)
-							_G(det)->stop_detail(nr - 40);
+							_G(det)->stopDetail(nr - 40);
 						else
 							_G(det)->hideStaticSpr(nr);
 						++i;
 					}
 				}
 			} else if (nr >= 40)
-				_G(det)->stop_detail(nr - 40);
+				_G(det)->stopDetail(nr - 40);
 			else {
 				_G(det)->hideStaticSpr(nr);
 			}

@@ -125,7 +125,7 @@ void MatrixType<dim, 1>::readFromStream(Common::ReadStream *stream) {
 
 
 template<int dim>
-Common::StreamDebug &operator<<(Common::StreamDebug dbg, const Math::Matrix<dim, 1> &v) {
+Common::StreamDebug &operator<<(Common::StreamDebug &dbg, const Math::Matrix<dim, 1> &v) {
 	dbg.nospace() << "Vector<" << dim << ">(" << v.getValue(0);
 	for (int i = 1; i < dim; ++i) {
 		dbg << ", " << v.getValue(i);

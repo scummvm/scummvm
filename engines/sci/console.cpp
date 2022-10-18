@@ -75,7 +75,8 @@ bool g_debug_track_mouse_clicks = false;
 static int parse_reg_t(EngineState *s, const char *str, reg_t *dest);
 
 Console::Console(SciEngine *engine) : GUI::Debugger(),
-	_engine(engine), _debugState(engine->_debugState), _videoFrameDelay(0) {
+	_engine(engine), _debugState(engine->_debugState), _videoFrameDelay(0),
+	_gameFlagsGlobal(_engine->_features->getGameFlagsGlobal()) {
 
 	assert(_engine);
 	assert(_engine->_gamestate);
@@ -89,6 +90,7 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	// precaution is taken to assure that all assigned values are in the range
 	// of the enum type. We should handle this more carefully...
 	registerVar("script_abort_flag",	(int *)&_engine->_gamestate->abortScriptProcessing);
+	registerCmd("speed_throttle",   WRAP_METHOD(Console, cmdSpeedThrottle));
 
 	// General
 	registerCmd("help",				WRAP_METHOD(Console, cmdHelp));
@@ -202,6 +204,13 @@ Console::Console(SciEngine *engine) : GUI::Debugger(),
 	registerCmd("go",					WRAP_METHOD(Console, cmdGo));
 	registerCmd("logkernel",          WRAP_METHOD(Console, cmdLogKernel));
 	registerCmd("vocab994",          WRAP_METHOD(Console, cmdMapVocab994));
+	registerCmd("gameflags_init",    WRAP_METHOD(Console, cmdGameFlagsInit));
+	registerCmd("gameflags_test",    WRAP_METHOD(Console, cmdGameFlagsTest));
+	registerCmd("tf",                WRAP_METHOD(Console, cmdGameFlagsTest));
+	registerCmd("gameflags_set",     WRAP_METHOD(Console, cmdGameFlagsSet));
+	registerCmd("sf",                WRAP_METHOD(Console, cmdGameFlagsSet));
+	registerCmd("gameflags_clear",   WRAP_METHOD(Console, cmdGameFlagsClear));
+	registerCmd("cf",                WRAP_METHOD(Console, cmdGameFlagsClear));
 	// Breakpoints
 	registerCmd("bp_list",			WRAP_METHOD(Console, cmdBreakpointList));
 	registerCmd("bplist",				WRAP_METHOD(Console, cmdBreakpointList));			// alias
@@ -312,6 +321,7 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf("simulated_key: Add a key with the specified scan code to the event list\n");
 	debugPrintf("track_mouse_clicks: Toggles mouse click tracking to the console\n");
 	debugPrintf("script_abort_flag: Set to 1 to abort script execution. Set to 2 to force a replay afterwards\n");
+	debugPrintf("speed_throttle: Displays or changes kGameIsRestarting maximum delay\n");
 	debugPrintf("\n");
 	debugPrintf("Debug flags\n");
 	debugPrintf("-----------\n");
@@ -419,6 +429,10 @@ bool Console::cmdHelp(int argc, const char **argv) {
 	debugPrintf(" send - Sends a message to an object\n");
 	debugPrintf(" go - Executes the script\n");
 	debugPrintf(" logkernel - Logs kernel calls\n");
+	debugPrintf(" gameflags_init - Initialize gameflag commands if necessary\n");
+	debugPrintf(" gameflags_test / tf - Test game flags\n");
+	debugPrintf(" gameflags_set / sf - Sets game flags\n");
+	debugPrintf(" gameflags_clear / cf - Clears game flags\n");
 	debugPrintf("\n");
 	debugPrintf("Breakpoints:\n");
 	debugPrintf(" bp_list / bplist / bl - Lists the current breakpoints\n");
@@ -602,10 +616,23 @@ bool Console::cmdSelectors(int argc, const char **argv) {
 
 bool Console::cmdKernelFunctions(int argc, const char **argv) {
 	debugPrintf("Kernel function names in numeric order:\n");
+	uint column = 0;
 	for (uint seeker = 0; seeker <  _engine->getKernel()->getKernelNamesSize(); seeker++) {
-		debugPrintf("%03x: %20s | ", seeker, _engine->getKernel()->getKernelName(seeker).c_str());
-		if ((seeker % 3) == 2)
-			debugPrintf("\n");
+		const Common::String &kernelName = _engine->getKernel()->getKernelName(seeker);
+		if (kernelName == "Dummy")
+			continue;
+
+		if (argc == 1) {
+			debugPrintf("%03x: %20s | ", seeker, kernelName.c_str());
+			if ((column++ % 3) == 2)
+				debugPrintf("\n");
+		} else {
+			for (int i = 1; i < argc; ++i) {
+				if (kernelName.equalsIgnoreCase(argv[i])) {
+					debugPrintf("%03x: %s\n", seeker, kernelName.c_str());
+				}
+			}
+		}
 	}
 
 	debugPrintf("\n");
@@ -4557,6 +4584,105 @@ bool Console::cmdMapVocab994(int argc, const char **argv) {
 
 	return true;
 }
+
+bool Console::cmdGameFlagsInit(int argc, const char **argv) {
+	if (argc == 2) {
+		_gameFlagsGlobal = atoi(argv[1]);
+	} else {
+		debugPrintf("Sets the game flags global for tf / sf / cf commands\n");
+		debugPrintf("Usage: %s global_number\n", argv[0]);
+	}
+	Common::String gameFlagGlobalString = "not set";
+	if (_gameFlagsGlobal != 0) {
+		gameFlagGlobalString = Common::String::format("%d", _gameFlagsGlobal);
+	}
+	debugPrintf("Base game flag global is %s\n", gameFlagGlobalString.c_str());
+	return true;
+}
+
+bool Console::cmdGameFlagsTest(int argc, const char **argv) {
+	return processGameFlagsOperation(kGameFlagsTest, argc, argv);
+}
+
+bool Console::cmdGameFlagsSet(int argc, const char **argv) {
+	return processGameFlagsOperation(kGameFlagsSet, argc, argv);
+}
+
+bool Console::cmdGameFlagsClear(int argc, const char **argv) {
+	return processGameFlagsOperation(kGameFlagsClear, argc, argv);
+}
+
+bool Console::processGameFlagsOperation(GameFlagsOperation op, int argc, const char **argv) {
+	if (_gameFlagsGlobal == 0) {
+		debugPrintf("Use gameflags_init to set game flags global\n");
+		return true;
+	}
+
+	if (argc == 1) {
+		const char *opVerb;
+		if (op == kGameFlagsTest) {
+			opVerb = "Tests";
+		} else if (op == kGameFlagsSet) {
+			opVerb = "Sets";
+		} else {
+			opVerb = "Clears";
+		}
+		debugPrintf("%s game flags\n", opVerb);
+		debugPrintf("Usage: %s flag [flag ...]\n", argv[0]);
+		return true;
+	}
+
+	EngineState *s = _engine->_gamestate;
+	for (int i = 1; i < argc; ++i) {
+		int flagNumber;
+		if (!parseInteger(argv[i], flagNumber) || flagNumber < 0) {
+			debugPrintf("Invalid flag: %s\n", argv[i]);
+			continue;
+		}
+		// read the global that contains the flag
+		uint16 globalNumber = _gameFlagsGlobal + (flagNumber / 16);
+		if (globalNumber > s->variablesMax[VAR_GLOBAL]) {
+			debugPrintf("Invalid flag: %d (global var %d is out of range)\n", flagNumber, globalNumber);
+			continue;
+		}
+		reg_t *globalReg = &s->variables[VAR_GLOBAL][globalNumber];
+		if (!globalReg->isNumber()) {
+			debugPrintf("Invalid flag: %d (global var %d is not a number)\n", flagNumber, globalNumber);
+			continue;
+		}
+		uint16 globalValue = globalReg->toUint16();
+		uint16 flagMask;
+		if (g_sci->_features->isGameFlagBitOrderNormal()) {
+			flagMask = 0x0001 << (flagNumber % 16);
+		} else {
+			flagMask = 0x8000 >> (flagNumber % 16);
+		}
+		
+		// set or clear the flag
+		bool already = false;
+		if (op == kGameFlagsSet) {
+			if ((globalValue & flagMask)) {
+				already = true;
+			} else {
+				globalValue |= flagMask;
+				globalReg->setOffset(globalValue);
+			}
+		} else if (op == kGameFlagsClear) {
+			if (!(globalValue & flagMask)) {
+				already = true;
+			} else {
+				globalValue &= ~flagMask;
+				globalReg->setOffset(globalValue);
+			}
+		}
+		
+		const char *result = (globalValue & flagMask) ? "set" : "clear";
+		debugPrintf("Flag %d is %s%s (global var %d, flag %04x)\n",
+					flagNumber, already ? "already " : "", result, globalNumber, flagMask);
+	}
+	return true;
+}
+
 bool Console::cmdQuit(int argc, const char **argv) {
 	if (argc != 2) {
 	}
@@ -4596,6 +4722,27 @@ bool Console::cmdAddresses(int argc, const char **argv) {
 	debugPrintf("   Underscores are used as substitute characters for spaces in object names.\n");
 	debugPrintf("   For example, an object named \"Glass Jar\" can be accessed as \"Glass_Jar\".\n");
 
+	return true;
+}
+
+bool Console::cmdSpeedThrottle(int argc, const char **argv) {
+	if (argc > 2) {
+		debugPrintf("Displays or changes kGameIsRestarting maximum delay in milliseconds\n");
+		debugPrintf("usage: %s [<delay>]\n", argv[0]);
+		return true;
+	}
+	if (argc == 2) {
+		int newDelay;
+		if (!parseInteger(argv[1], newDelay)) {
+			return true;
+		}
+		if (newDelay < 0) {
+			debugPrintf("invalid delay\n");
+			return true;
+		}
+		_engine->_speedThrottleDelay = newDelay;
+	}
+	debugPrintf("kGameIsRestarting maximum delay: %d ms\n", _engine->_speedThrottleDelay);
 	return true;
 }
 

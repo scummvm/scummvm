@@ -118,8 +118,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	FrameLayout _videoLayout = null;
 
 	private EditableSurfaceView _main_surface = null;
-	private ImageView _toggleGamepadBtnIcon = null;
-	private ImageView _toggleKeyboardBtnIcon = null;
+	private ImageView _toggleTouchModeKeyboardBtnIcon = null;
 	private ImageView _openMenuBtnIcon = null;
 	private ImageView _revokeSafPermissionsBtnIcon = null;
 
@@ -142,7 +141,6 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		super.onConfigurationChanged(newConfig);
 
 		final boolean hwKeyboard = isHWKeyboardConnected();
-		_toggleKeyboardBtnIcon.setVisibility(hwKeyboard ? View.GONE : View.VISIBLE);
 		if (hwKeyboard) {
 			hideScreenKeyboard();
 		}
@@ -520,6 +518,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard - captureMouse(false)");
 				_main_surface.captureMouse(false);
 				//_main_surface.showSystemMouseCursor(true);
+				setupTouchModeBtn(_events.getTouchMode());
 				return;
 			}
 			//Log.d(ScummVM.LOG_TAG, "showScreenKeyboard: YOU SHOULD NOT SEE ME!!!");
@@ -541,6 +540,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				//Log.d(ScummVM.LOG_TAG, "hideScreenKeyboard - captureMouse(true)");
 				_main_surface.captureMouse(true);
 				//_main_surface.showSystemMouseCursor(false);
+				setupTouchModeBtn(_events.getTouchMode());
 			}
 		}
 	}
@@ -570,27 +570,58 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// ---------------------------------------------------------------------------------------------------------------------------
 	//
 
-	public final View.OnClickListener gamepadBtnOnClickListener = new View.OnClickListener() {
+	protected void setupTouchModeBtn(final int touchMode) {
+		int resId;
+
+		if (isScreenKeyboardShown()) {
+			resId = R.drawable.ic_action_keyboard;
+		} else {
+			switch(touchMode) {
+			case ScummVMEventsBase.TOUCH_MODE_TOUCHPAD:
+				resId = R.drawable.ic_action_touchpad;
+				break;
+			case ScummVMEventsBase.TOUCH_MODE_MOUSE:
+				resId = R.drawable.ic_action_mouse;
+				break;
+			case ScummVMEventsBase.TOUCH_MODE_GAMEPAD:
+				resId = R.drawable.ic_action_gamepad;
+				break;
+			default:
+				throw new IllegalArgumentException("Invalid touchMode");
+			}
+		}
+
+		_toggleTouchModeKeyboardBtnIcon.setImageResource(resId);
+	}
+
+	public final View.OnClickListener touchModeKeyboardBtnOnClickListener = new View.OnClickListener() {
 		@Override
 		public void onClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
-					boolean touch3DMode = !_events.getTouch3DMode();
-					_events.setTouch3DMode(touch3DMode);
-					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
+					// On normal click, hide keyboard if it is shown
+					// Else, change touch mode
+					if (isScreenKeyboardShown()) {
+						hideScreenKeyboard();
+					} else {
+						int newTouchMode = _events.nextTouchMode();
+						setupTouchModeBtn(newTouchMode);
+					}
 				}
 			});
 		}
 	};
 
-	public final View.OnClickListener keyboardBtnOnClickListener = new View.OnClickListener() {
+	public final View.OnLongClickListener touchModeKeyboardBtnOnLongClickListener = new View.OnLongClickListener() {
 		@Override
-		public void onClick(View v) {
+		public boolean onLongClick(View v) {
 			runOnUiThread(new Runnable() {
 				public void run() {
+					// On long click, toggle screen keyboard (if there isn't any HW)
 					toggleScreenKeyboard();
 				}
 			});
+			return true;
 		}
 	};
 
@@ -739,21 +770,21 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		@Override
-		protected void setTouch3DMode(final boolean touch3DMode) {
-			if (_events.getTouch3DMode() == touch3DMode) {
+		protected void setTouchMode(final int touchMode) {
+			if (_events.getTouchMode() == touchMode) {
 				return;
 			}
 			runOnUiThread(new Runnable() {
 				public void run() {
-					_events.setTouch3DMode(touch3DMode);
-					_toggleGamepadBtnIcon.setImageResource(touch3DMode ? R.drawable.ic_action_mouse : R.drawable.ic_action_gamepad);
+					_events.setTouchMode(touchMode);
+					setupTouchModeBtn(touchMode);
 				}
 			});
 		}
 
 		@Override
-		protected boolean getTouch3DMode() {
-			return _events.getTouch3DMode();
+		protected int getTouchMode() {
+			return _events.getTouchMode();
 		}
 
 		@Override
@@ -1009,15 +1040,9 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		_videoLayout.addView(buttonLayout, buttonLayoutParams);
 		_videoLayout.bringChildToFront(buttonLayout);
 
-		_toggleGamepadBtnIcon = new ImageView(this);
-		_toggleGamepadBtnIcon.setImageResource(R.drawable.ic_action_gamepad);
-		buttonLayout.addView(_toggleGamepadBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_toggleGamepadBtnIcon);
-
-		_toggleKeyboardBtnIcon = new ImageView(this);
-		_toggleKeyboardBtnIcon.setImageResource(R.drawable.ic_action_keyboard);
-		buttonLayout.addView(_toggleKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
-		buttonLayout.bringChildToFront(_toggleKeyboardBtnIcon);
+		_toggleTouchModeKeyboardBtnIcon = new ImageView(this);
+		buttonLayout.addView(_toggleTouchModeKeyboardBtnIcon, new FrameLayout.LayoutParams(FrameLayout.LayoutParams.WRAP_CONTENT, FrameLayout.LayoutParams.WRAP_CONTENT));
+		buttonLayout.bringChildToFront(_toggleTouchModeKeyboardBtnIcon);
 
 		_openMenuBtnIcon = new ImageView(this);
 		_openMenuBtnIcon.setImageResource(R.drawable.ic_action_menu);
@@ -1121,10 +1146,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 				_events = new ScummVMEventsBase(this, _scummvm, _mouseHelper);
 			}
 
+			setupTouchModeBtn(_events.getTouchMode());
+
 			// On screen button listener
 			//findViewById(R.id.show_keyboard).setOnClickListener(keyboardBtnOnClickListener);
-			_toggleGamepadBtnIcon.setOnClickListener(gamepadBtnOnClickListener);
-			_toggleKeyboardBtnIcon.setOnClickListener(keyboardBtnOnClickListener);
+			_toggleTouchModeKeyboardBtnIcon.setOnClickListener(touchModeKeyboardBtnOnClickListener);
+			_toggleTouchModeKeyboardBtnIcon.setOnLongClickListener(touchModeKeyboardBtnOnLongClickListener);
 			_openMenuBtnIcon.setOnClickListener(menuBtnOnClickListener);
 			_revokeSafPermissionsBtnIcon.setOnClickListener(revokeSafPermissionsBtnOnClickListener);
 
@@ -1378,21 +1405,12 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 	// Show or hide the semi-transparent onscreen controls
 	// Called by the override of showKeyboardControl()
 	private void showToggleKeyboardBtnIcon(boolean show) {
-		//ImageView keyboardBtn = findViewById(R.id.show_keyboard);
-		if (_toggleKeyboardBtnIcon != null ) {
-			if (show && !isHWKeyboardConnected()) {
-				_toggleKeyboardBtnIcon.setVisibility(View.VISIBLE);
-			} else {
-				_toggleKeyboardBtnIcon.setVisibility(View.GONE);
-			}
-		}
-
 		if (_openMenuBtnIcon != null ) {
 			_openMenuBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 
-		if (_toggleGamepadBtnIcon != null ) {
-			_toggleGamepadBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
+		if (_toggleTouchModeKeyboardBtnIcon != null ) {
+			_toggleTouchModeKeyboardBtnIcon.setVisibility(show ? View.VISIBLE : View.GONE);
 		}
 	}
 
@@ -2478,7 +2496,7 @@ public class ScummVMActivity extends Activity implements OnKeyboardVisibilityLis
 		}
 
 		// Important note: We cannot assume that anything sent here is a relative path on top of the *ONLY* SAF "root" path
-		//                 since the the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
+		//                 since the user could select another SD Card (from multiple inserted or replaces the current one and inserts another)
 		// TODO Can we translate our path string "/storage/XXXX-XXXXX/folder/doc.ext' a content URI? or a document URI?
 		String[] parts = relPath.split("\\/");
 		for (int i = 0; i < parts.length; i++) {

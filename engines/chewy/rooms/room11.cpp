@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -59,13 +60,13 @@ void Room11::entry() {
 		_G(obj)->hide_sib(SIB_TBUTTON3_R11);
 		_G(gameState).room_e_obj[20].Attribut = 255;
 		_G(gameState).room_e_obj[21].Attribut = 255;
-		_G(atds)->delControlBit(121, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(121, ATS_ACTIVE_BIT);
 
 		if (!_G(flags).LoadGame) {
 			startAniBlock(2, ABLOCK17);
 			autoMove(8, P_CHEWY);
 			startAadWait(31);
-			_G(det)->stop_detail(9);
+			_G(det)->stopDetail(9);
 		}
 		_G(det)->showStaticSpr(8);
 		if (!_G(flags).LoadGame)
@@ -107,7 +108,7 @@ void Room11::talk_debug() {
 	if (_G(gameState).R12ChewyBork) {
 		_G(flags).AutoAniPlay = true;
 		autoMove(8, P_CHEWY);
-		startAdsWait(5);
+		startDialogCloseupWait(5);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
 
@@ -124,7 +125,7 @@ void Room11::chewy_bo_use() {
 		_G(det)->hideStaticSpr(8);
 		startAniBlock(2, ABLOCK17);
 		startAadWait(32);
-		_G(det)->stop_detail(9);
+		_G(det)->stopDetail(9);
 		_G(det)->showStaticSpr(8);
 		autoMove(6, P_CHEWY);
 
@@ -156,8 +157,8 @@ int16 Room11::scanner() {
 			cursorChoice(_G(menu_item));
 			startAadWait(12);
 			showCur();
-			loadAdsDia(3);
-		} else if (!_G(gameState).inv_cur) {
+			loadDialogCloseup(3);
+		} else if (!_G(cur)->usingInventoryCursor()) {
 			if (!_G(gameState).R11TerminalOk) {
 				actionFl = true;
 				flic_cut(FCUT_009);
@@ -167,7 +168,7 @@ int16 Room11::scanner() {
 				startAadWait(12);
 				_G(menu_item) = CUR_TALK;
 				cursorChoice(_G(menu_item));
-				loadAdsDia(3);
+				loadDialogCloseup(3);
 			}
 		}
 	}
@@ -181,10 +182,8 @@ void Room11::get_card() {
 		_G(gameState).R11CardOk = false;
 		_G(obj)->addInventory(_G(gameState).R11IdCardNr, &_G(room_blk));
 
-		_G(gameState).AkInvent = _G(gameState).R11IdCardNr;
-		cursorChoice(CUR_AK_INVENT);
-		cursorChoice(CUR_AK_INVENT);
-		_G(det)->stop_detail(0);
+		_G(cur)->setInventoryCursor(_G(gameState).R11IdCardNr);
+		_G(det)->stopDetail(0);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 0, ATS_DATA);
 		_G(atds)->set_ats_str(84, TXT_MARK_LOOK, 0, ATS_DATA);
 	}
@@ -192,7 +191,7 @@ void Room11::get_card() {
 
 void Room11::put_card() {
 	if (isCurInventory(RED_CARD_INV) || isCurInventory(YEL_CARD_INV)) {
-		_G(gameState).R11IdCardNr = _G(gameState).AkInvent;
+		_G(gameState).R11IdCardNr = _G(cur)->getInventoryCursor();
 		delInventory(_G(gameState).R11IdCardNr);
 		_G(det)->startDetail(0, 255, ANI_FRONT);
 		_G(atds)->set_ats_str(83, TXT_MARK_LOOK, 1, ATS_DATA);

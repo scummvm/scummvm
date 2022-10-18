@@ -25,7 +25,6 @@
 
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/shared/ac/dialog_topic.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game.h"
@@ -45,7 +44,7 @@
 #include "ags/shared/gui/gui_label.h"
 #include "ags/engine/main/main.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/script.h"
 #include "ags/shared/util/aligned_stream.h"
 #include "ags/shared/util/stream.h"
@@ -77,7 +76,7 @@ String get_caps_list(const std::set<String> &caps) {
 // Called when the game file is opened for the first time (when preloading game data);
 // it logs information on data version and reports first found errors, if any.
 HGameFileError game_file_first_open(MainGameSource &src) {
-	HGameFileError err = OpenMainGameFileFromDefaultAsset(src);
+	HGameFileError err = OpenMainGameFileFromDefaultAsset(src, _G(AssetMgr)->get());
 	if (err ||
 	        err->Code() == kMGFErr_SignatureFailed ||
 	        err->Code() == kMGFErr_FormatVersionTooOld ||
@@ -119,14 +118,14 @@ HError preload_game_data() {
 static inline HError MakeScriptLoadError(const char *name) {
 	return new Error(String::FromFormat(
 		"Failed to load a script module: %s", name),
-		_G(ccErrorString));
+		cc_get_error().ErrorString);
 }
 
 // Looks up for the game scripts available as separate assets.
 // These are optional, so no error is raised if some of these are not found.
 // For those that do exist, reads them and replaces any scripts of same kind
 // in the already loaded game data.
-HError LoadGameScripts(LoadedGameEntities &ents, GameDataVersion data_ver) {
+HError LoadGameScripts(LoadedGameEntities &ents) {
 	// Global script 
 	std::unique_ptr<Stream> in(_GP(AssetMgr)->OpenAsset("GlobalScript.o"));
 	if (in) {
@@ -170,8 +169,8 @@ HError LoadGameScripts(LoadedGameEntities &ents, GameDataVersion data_ver) {
 
 HError load_game_file() {
 	MainGameSource src;
-	LoadedGameEntities ents(_GP(game), _G(dialog));
-	HError err = (HError)OpenMainGameFileFromDefaultAsset(src);
+	LoadedGameEntities ents(_GP(game));
+	HError err = (HError)OpenMainGameFileFromDefaultAsset(src, _GP(AssetMgr).get());
 	if (err) {
 		err = (HError)ReadGameData(ents, src.InputStream.get(), src.DataVersion);
 		src.InputStream.reset();
@@ -192,7 +191,7 @@ HError load_game_file() {
 
 	if (!err)
 		return err;
-	err = LoadGameScripts(ents, src.DataVersion);
+	err = LoadGameScripts(ents);
 	if (!err)
 		return err;
 	err = (HError)InitGameState(ents, src.DataVersion);

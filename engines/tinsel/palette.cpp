@@ -339,7 +339,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 			p->hPal = hNewPal;	// set hardware palette data
 			p->numColors = pal->numColors;	// set number of colors in palette
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Copy all the colors
 				memcpy(p->palRGB, pal->palRGB, p->numColors * sizeof(COLORREF));
 
@@ -350,7 +350,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 #endif
 
 			// Q the change to the video DAC
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				UpdateDACqueue(p->posInDAC, p->numColors, p->palRGB);
 			else
 				UpdateDACqueueHandle(p->posInDAC, p->numColors, p->hPal);
@@ -367,7 +367,7 @@ PALQ *AllocPalette(SCNHANDLE hNewPal) {
 					pNxtPal->posInDAC = (pPrev->posInDAC + pPrev->numColors) | PALETTE_MOVED;
 
 					// Q the palette change in position to the video DAC
-					if (!TinselV2)
+					if (TinselVersion <= 1)
 						UpdateDACqueueHandle(pNxtPal->posInDAC, pNxtPal->numColors, pNxtPal->hPal);
 					else if (!pNxtPal->bFading)
 						UpdateDACqueue(pNxtPal->posInDAC, pNxtPal->numColors, pNxtPal->palRGB);
@@ -451,7 +451,7 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 		// install new palette
 		pPalQ->hPal = hNewPal;
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			pPalQ->numColors = pal->numColors;
 
 			// Copy all the colors
@@ -466,7 +466,7 @@ void SwapPalette(PALQ *pPalQ, SCNHANDLE hNewPal) {
 		}
 	} else {
 		// # colors are different - will have to update all following palette entries
-		assert(!TinselV2); // Fatal error for Tinsel 2
+		assert(TinselVersion <= 1); // Fatal error for Tinsel 2
 
 		PALQ *pNxtPalQ;		// next palette queue position
 
@@ -574,7 +574,7 @@ void CreateTranslucentPalette(SCNHANDLE hPalette) {
 		val /= 63;
 		byte blackColorIndex = (!TinselV1Mac) ? 0 : 255;
 		g_transPalette[i + 1] = (uint8)((val == 0) ? blackColorIndex : val +
-			(TinselV2 ? TranslucentColor() : COL_HILIGHT) - 1);
+			((TinselVersion >= 2) ? TranslucentColor() : COL_HILIGHT) - 1);
 	}
 
 	delete pal;
@@ -637,18 +637,25 @@ void DimPartPalette(SCNHANDLE hDimPal, int startColor, int length, int brightnes
 	}
 }
 
+int DarkGreen() {
+	return _vm->screen().format.RGBToColor(0x00, 0x40, 0x00);
+}
+
 int TranslucentColor() {
 	return g_translucentIndex;
 }
 
 int HighlightColor() {
+	if (TinselVersion == 3) {
+		return _vm->screen().format.RGBToColor(0x00, 0x80, 0x00);
+	}
 	UpdateDACqueue(g_talkIndex, (COLORREF)SysVar(SYS_HighlightRGB));
 
 	return g_talkIndex;
 }
 
 int TalkColor() {
-	return TinselV2 ? g_talkIndex : TALKFONT_COL;
+	return (TinselVersion >= 2) ? g_talkIndex : TALKFONT_COL;
 }
 
 void SetTalkColorRef(COLORREF colRef) {

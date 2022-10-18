@@ -56,10 +56,8 @@
 
 namespace Common {
 
-// The sgi IRIX MIPSpro Compiler has difficulties with nested templates.
-// This and the other __sgi conditionals below work around these problems.
-// The Intel C++ Compiler suffers from the same problems.
-#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
+// The Intel C++ Compiler has difficulties with nested templates.
+#if defined(__INTEL_COMPILER)
 template<class T> class IteratorImpl;
 #endif
 
@@ -69,7 +67,7 @@ template<class T> class IteratorImpl;
  * For each used Key type, we need an "size_type hashit(Key,size_type)" function
  * that computes a hash for the given Key object and returns it as an
  * an integer from 0 to hashsize-1, and also an "equality functor".
- * that returns true if if its two arguments are to be considered
+ * that returns true if its two arguments are to be considered
  * equal. Also, we assume that "=" works on Val objects for assignment.
  *
  * If aa is an HashMap<Key,Val>, then space is allocated each time aa[key] is
@@ -152,9 +150,7 @@ private:
 	size_type lookupAndCreateIfMissing(const Key &key);
 	void expandStorage(size_type newCapacity);
 
-#if !defined(__sgi) || defined(__GNUC__)
 	template<class T> friend class IteratorImpl;
-#endif
 
 	/**
 	 * Simple HashMap iterator implementation.
@@ -162,7 +158,7 @@ private:
 	template<class NodeType>
 	class IteratorImpl {
 		friend class HashMap;
-#if (defined(__sgi) && !defined(__GNUC__)) || defined(__INTEL_COMPILER)
+#if defined(__INTEL_COMPILER)
 		template<class T> friend class Common::IteratorImpl;
 #else
 		template<class T> friend class IteratorImpl;

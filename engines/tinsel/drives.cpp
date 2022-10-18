@@ -57,7 +57,7 @@ void CdCD(CORO_PARAM) {
 	while (g_bChangingCD) {
 		if (CoroScheduler.getCurrentProcess()) {
 			// FIXME: CdCD gets passed a Common::nullContext in RegisterGlobals() and
-			//        PrimeSceneHopper(), because I didn't know how to get a proper
+			//        primeSceneHopper(), because I didn't know how to get a proper
 			//        context without converting the whole calling stack to CORO'd
 			//        functions. If these functions really get called while a CD
 			//        change is requested, this needs to be resolved.
@@ -110,7 +110,7 @@ void DoCdChange() {
 		_vm->_sound->closeSampleStream();
 
 		// Use the filesize of the sample file to determine, for Discworld 2, which CD it is
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			TinselFile f;
 			if (!f.open(_vm->getSampleFile(g_sampleLanguage)))
 				// No CD present
@@ -179,7 +179,7 @@ bool TinselFile::open(const Common::String &filename) {
 	if (openInternal(filename))
 		return true;
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return false;
 
 	// Check if the file being requested is the *1.* or *2.* files

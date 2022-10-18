@@ -41,7 +41,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Improved mode"),
 			_s("Removes some repetitive actions, adds possibility to change verbs by keyboard"),
 			"improved",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -51,7 +53,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Text to Speech"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_enabled",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -122,11 +126,11 @@ public:
 	SupernovaMetaEngineDetection() : AdvancedMetaEngineDetection(Supernova::gameDescriptions, sizeof(ADGameDescription), supernovaGames, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "supernova";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Mission Supernova";
 	}
 

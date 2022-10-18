@@ -93,7 +93,7 @@ class BMVPlayer {
 	bool bFileEnd;
 
 	/// Palette
-	COLORREF moviePal[256 * 8]; // TinselV1 & V2 need 256, TinselV3 needs 2048
+	COLORREF moviePal[256 * 8]; // TinselV1 & V2 need 256, TinselVersion == 3 needs 2048
 
 	int blobsInBuffer;
 

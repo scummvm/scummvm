@@ -19,10 +19,19 @@
  *
  */
 
-/* Based on ScottFree interpreter version 1.14 */
+/*
+ * Based on ScottFree interpreter version 1.14 developed by Swansea
+ * University Computer Society without disassembly of any other game
+ * drivers, only of game databases as permitted by EEC law (for purposes
+ * of compatibility).
+ *
+ * Licensed under GPLv2
+ *
+ * https://github.com/angstsmurf/spatterlight/tree/master/terps/scott
+ */
 
-#ifndef GLK_SCOTT
-#define GLK_SCOTT
+#ifndef GLK_SCOTT_H
+#define GLK_SCOTT_H
 
 /*
  *  Controlling block
@@ -30,32 +39,49 @@
 
 #include "common/scummsys.h"
 #include "glk/glk_api.h"
+#include "glk/scott/definitions.h"
+#include "glk/scott/globals.h"
+#include "glk/scott/types.h"
 
 namespace Glk {
 namespace Scott {
 
-#define LIGHT_SOURCE    9   // Always 9 how odd
-#define CARRIED     255     // Carried
-#define DESTROYED   0       // Destroyed
-#define DARKBIT     15
-#define LIGHTOUTBIT 16      // Light gone out
+struct Command;
+
+#define LIGHT_SOURCE 9 // Always 9 how odd
+#define CARRIED 255    // Carried
+#define DESTROYED 0    // Destroyed
+#define DARKBIT 15
+#define LIGHTOUTBIT 16 // Light gone out
 
 enum GameOption {
-	YOUARE      = 1,        ///< You are not I am
-	SCOTTLIGHT  = 2,        ///< Authentic Scott Adams light messages
-	DEBUGGING   = 4,        ///< Info from database load
-	TRS80_STYLE = 8,        ///< Display in style used on TRS-80
-	PREHISTORIC_LAMP = 16   ///< Destroy the lamp (very old databases)
+	YOUARE = 1,                ///< You are not I am
+	SCOTTLIGHT = 2,            ///< Authentic Scott Adams light messages
+	DEBUGGING = 4,             ///< Info from database load
+	TRS80_STYLE = 8,           ///< Display in style used on TRS-80
+	PREHISTORIC_LAMP = 16,     ///< Destroy the lamp (very old databases)
+	SPECTRUM_STYLE = 32,       ///< Display in style used on ZX Spectrum
+	TI994A_STYLE = 64,         ///< Display in style used on TI-99/4A
+	NO_DELAYS = 128,           ///< Skip all pauses
+	FORCE_PALETTE_ZX = 256,    ///< Force ZX Spectrum image palette
+	FORCE_PALETTE_C64 = 512,   ///< Force CBM 64 image palette
+	FORCE_INVENTORY = 1024,    ///< Inventory in upper window always on
+	FORCE_INVENTORY_OFF = 2048 ///< Inventory in upper window always off
 };
 
-#define TRS80_LINE  "\n<------------------------------------------------------------>\n"
-#define MY_LOC   (_gameHeader._playerRoom)
+#define GLK_BUFFER_ROCK 1
+#define GLK_STATUS_ROCK 1010
+#define GLK_GRAPHICS_ROCK 1020
+
+#define TRS80_LINE "\n<------------------------------------------------------------>\n"
+#define MY_LOC (_G(_gameHeader)->_playerRoom)
+#define CURRENT_GAME (_G(_game->_gameID))
 
 struct Header {
 	int _unknown;
 	int _numItems;
 	int _numActions;
-	int _numWords;           ///< Smaller of verb/noun is padded to same size
+	int _numWords; ///< Smaller of verb/noun is padded to same size
 	int _numRooms;
 	int _maxCarry;
 	int _playerRoom;
@@ -66,8 +92,8 @@ struct Header {
 	int _treasureRoom;
 
 	Header() : _unknown(0), _numItems(0), _numActions(0), _numWords(0), _numRooms(0),
-		_maxCarry(0), _playerRoom(0), _treasures(0), _wordLength(0), _lightTime(0),
-		_numMessages(0), _treasureRoom(0) {}
+			   _maxCarry(0), _playerRoom(0), _treasures(0), _wordLength(0), _lightTime(0),
+			   _numMessages(0), _treasureRoom(0) {}
 };
 
 struct Action {
@@ -84,8 +110,9 @@ struct Action {
 struct Room {
 	Common::String _text;
 	int _exits[6];
+	byte _image;
 
-	Room() {
+	Room() : _image(255) {
 		Common::fill(&_exits[0], &_exits[6], 0);
 	}
 };
@@ -95,8 +122,10 @@ struct Item {
 	byte _location;
 	byte _initialLoc;
 	Common::String _autoGet;
+	byte _flag;
+	byte _image;
 
-	Item() : _location(0), _initialLoc(0) {}
+	Item() : _location(0), _initialLoc(0), _flag(0), _image(0) {}
 };
 
 struct Tail {
@@ -112,55 +141,90 @@ struct Tail {
  */
 class Scott : public GlkAPI {
 private:
-	Header _gameHeader;
-	Common::Array<Item> _items;
-	Common::Array<Room> _rooms;
-	Common::StringArray _verbs;
-	Common::StringArray _nouns;
-	Common::StringArray _messages;
-	Common::Array<Action> _actions;
-	int _lightRefill;
+	Globals _globals;
 	char _nounText[16];
-	int _counters[16];   ///< Range unknown
-	int _currentCounter;
-	int _savedRoom;
-	int _roomSaved[16];  ///< Range unknown
-	int _options;        ///< Option flags set
-	int _width;          ///< Terminal width
-	int _topHeight;      ///< Height of top window
+	//int _width = 0;     ///< Terminal width
+	int _topHeight = 0; ///< Height of top window
+	int _topWidth = 0;
 
-	bool _splitScreen;
-	winid_t _bottomWindow, _topWindow;
-	uint32 _bitFlags;    ///< Might be >32 flags - I haven't seen >32 yet
-	int _saveSlot;		 ///< Save slot when loading savegame from launcher
+	bool _splitScreen = true;
+	int _saveSlot = -1;   ///< Save slot when loading savegame from launcher
+
+	int _printLookToTranscript = 0;
+	int _pauseNextRoomDescription = 0;
+
+	strid_t _roomDescriptionStream = nullptr;
+
 private:
 	/**
 	 * Initialization code
 	 */
 	void initialize();
-
-	void display(winid_t w, const char *fmt, ...);
-	void display(winid_t w, const Common::U32String fmt, ...);
-	void delay(int seconds);
-	void fatal(const char *x);
 	void clearScreen(void);
-	bool randomPercent(uint n);
-	int countCarried(void);
-	const char *mapSynonym(const char *word);
-	int matchUpItem(const char *text, int loc);
+	int matchUpItem(int noun, int loc);
 	Common::String readString(Common::SeekableReadStream *f);
 	void loadDatabase(Common::SeekableReadStream *f, bool loud);
+	int whichWord(const char *word, const Common::StringArray &list);
+
+	ActionResultType performLine(int ct);
+	ExplicitResultType performActions(int vb, int no);
+
+	void readInts(Common::SeekableReadStream *f, size_t count, ...);
+	void writeToRoomDescriptionStream(const char *fmt, ...);
+	void flushRoomDescription(char *buf);
+	void printWindowDelimiter();
+	void listExits();
+	void listExitsSpectrumStyle();
+	void listInventoryInUpperWindow();
+	int itemEndsWithPeriod(int item);
+	winid_t findGlkWindowWithRock(glui32 rock);
+	glui32 optimalPictureSize(uint *width, uint *height);
+	void openTopWindow();
+	void cleanupAndExit();
+	void drawBlack();
+	void drawRoomImage();
+	void restartGame();
+	void transcriptOn();
+	void transcriptOff();
+	int yesOrNo();
+	void lookWithPause();
+	void printTakenOrDropped(int index);
+	void printTitleScreenBuffer();
+	void printTitleScreenGrid();
+
+public:
+	void drawImage(int image);
 	void output(const Common::String &a);
 	void output(const Common::U32String &a);
 	void outputNumber(int a);
+	void display(winid_t w, const char *fmt, ...);
+	void display(winid_t w, const Common::U32String fmt, ...);
+	void fatal(const char *x);
+	void hitEnter();
+	void updates(event_t ev);
+	const char *mapSynonym(int noun);
+	int performExtraCommand(int extraStopTime);
 	void look(void);
-	int whichWord(const char *word, const Common::StringArray &list);
-	void lineInput(char *buf, size_t n);
-	int getInput(int *vb, int *no);
-	int performLine(int ct);
-	int performActions(int vb, int no);
+	void openGraphicsWindow();
+	void closeGraphicsWindow();
+	void listInventory();
+	void updateSettings();
+	uint getRandomNumber(uint max);
+	bool randomPercent(uint n);
+	int countCarried(void);
+	void playerIsDead();
+	void doneIt();
+	void putItemAInRoomB(int itemA, int roomB);
+	int printScore();
+	void swapItemLocations(int itemA, int itemB);
+	void moveItemAToLocOfItemB(int itemA, int itemB);
+	void goToStoredLoc();
+	void swapLocAndRoomFlag(int index);
+	void swapCounters(int index);
+	void printNoun();
+	void delay(double seconds);
+	void printMessage(int index);
 
-	void readInts(Common::SeekableReadStream *f, size_t count, ...);
 public:
 	/**
 	 * Constructor
@@ -188,6 +252,8 @@ public:
 	 */
 	Common::Error writeGameData(Common::WriteStream *ws) override;
 };
+
+extern Scott *g_scott;
 
 } // End of namespace Scott
 } // End of namespace Glk

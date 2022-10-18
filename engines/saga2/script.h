@@ -172,21 +172,20 @@ scriptResult runMethod(
 
 class Thread {
 
-	friend          char *STRING(int strNum);
+	friend char *STRING(int strNum);
 
-	friend scriptResult runScript(
-	    uint16 exportEntryNum, scriptCallFrame &args);
+	friend scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args);
 
 	friend void wakeUpThread(ThreadID, int16);
 
 public:
-	SegmentRef      programCounter;         // current PC location
+	SegmentRef      _programCounter;         // current PC location
 
-	uint8           *stackPtr;              // current stack location
-	byte            *codeSeg;                // base of current data segment
-//					*stringBase;         // base of string resource
+	uint8           *_stackPtr;              // current stack location
+	byte            *_codeSeg;                // base of current data segment
+//					*_stringBase;         // base of string resource
 
-	uint8           *stackBase;             // base of module stack
+	uint8           *_stackBase;             // base of module stack
 
 	enum threadFlags {
 		waiting     = (1 << 0),             // thread waiting for event
@@ -201,10 +200,10 @@ public:
 		asleep      = (waiting | finished | aborted)
 	};
 
-	int16           stackSize,              // allocated size of stack
-	                flags,                  // execution flags
-	                framePtr,               // pointer to call frame
-	                returnVal;              // return value from ccalls
+	int16           _stackSize,              // allocated size of stack
+	                _flags,                  // execution flags
+	                _framePtr,               // pointer to call frame
+	                _returnVal;              // return value from ccalls
 
 	bool            _valid;
 
@@ -223,19 +222,19 @@ public:
 //		waitRequest,                        // a request is up
 	};
 
-	enum WaitTypes  waitType;               // what we're waiting for
+	WaitTypes  _waitType;               // what we're waiting for
 	union {
-		Alarm       waitAlarm;              // for time-delay
-		FrameAlarm  waitFrameAlarm;         // for frame count delay
-		ActiveItem *waitParam;              // for other waiting
+		Alarm       _waitAlarm;              // for time-delay
+		FrameAlarm  _waitFrameAlarm;         // for frame count delay
+		ActiveItem *_waitParam;              // for other waiting
 	};
 
-	scriptCallFrame threadArgs;             // arguments from C to thread
+	scriptCallFrame _threadArgs;             // arguments from C to thread
 
 	//  For 'cfunc' member functions, the address of the object who's
 	//  member function is being invoked.
-	void            *thisObject;
-	uint16          argCount;               // number of args to cfunc
+	void            *_thisObject;
+	uint16          _argCount;               // number of args to cfunc
 
 	//  Constructor
 	Thread(uint16 segNum, uint16 segOff, scriptCallFrame &args);
@@ -265,9 +264,9 @@ public:
 
 	//  Tells thread to wait for an event
 	void waitForEvent(enum WaitTypes wt, ActiveItem *param) {
-		flags |= waiting;
-		waitType = wt;
-		waitParam = param;
+		_flags |= waiting;
+		_waitType = wt;
+		_waitParam = param;
 	}
 
 	//  Convert to extended script, and back to synchonous script
@@ -340,7 +339,7 @@ struct ResImportTable {
 	                EXP_spellEffect_TeleportToShrine,
 	                EXP_spellEffect_Rejoin,
 	                EXP_spellEffect_Timequake,
-	                EXP_spellEffect_CreateFood      ;
+	                EXP_spellEffect_CreateFood;
 };
 
 extern ResImportTable       *resImports;

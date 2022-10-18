@@ -32,30 +32,30 @@ namespace Saga2 {
 
 CImageNode::CImageNode(hResContext *con, uint32 resID) {
 	if (con) {
-		image           = LoadResource(con, resID, "CImageNode Allocation");
-		resourceID      = resID;
-		contextID       = con->getResID();
-		requested       = 0;    // zero request for this node at creation
+		_image           = LoadResource(con, resID, "CImageNode Allocation");
+		_resourceID      = resID;
+		_contextID       = con->getResID();
+		_requested       = 0;    // zero request for this node at creation
 	} else {
-		image = nullptr;
-		resourceID = 0;
-		contextID = 0;
-		requested = 0;
+		_image = nullptr;
+		_resourceID = 0;
+		_contextID = 0;
+		_requested = 0;
 	}
 }
 
 CImageNode::~CImageNode() {
-	if (image) {
-		free(image);
-		image = nullptr;
+	if (_image) {
+		free(_image);
+		_image = nullptr;
 	}
 }
 
 // figures out if the requested image is the same as this one
 bool CImageNode::isSameImage(hResContext *con, uint32 resID) {
 	if (con) {
-		if (con->getResID() == contextID &&
-		        resourceID == resID) {
+		if (con->getResID() == _contextID &&
+		        _resourceID == resID) {
 			return true;    // match
 		}
 	}
@@ -65,7 +65,7 @@ bool CImageNode::isSameImage(hResContext *con, uint32 resID) {
 
 bool CImageNode::isSameImage(void *imagePtr) {
 	// if the image passed has the same address as the image in the node...
-	if (imagePtr == image) {
+	if (imagePtr == _image) {
 		return true;
 	}
 
@@ -75,10 +75,10 @@ bool CImageNode::isSameImage(void *imagePtr) {
 // return true if this node needs to be deleted
 bool CImageNode::releaseRequest() {
 	// the number of requests on this resource goes down by one
-	requested--;
+	_requested--;
 
 	// if that was the last request, release this node
-	if (requested <= 0) {
+	if (_requested <= 0) {
 		return true;
 	}
 
@@ -87,8 +87,8 @@ bool CImageNode::releaseRequest() {
 }
 
 void *CImageNode::getImagePtr() {
-	requested++;
-	return image;
+	_requested++;
+	return _image;
 }
 
 /* ===================================================================== *

@@ -25,7 +25,7 @@
 namespace Kyra {
 
 Screen_MR::Screen_MR(KyraEngine_MR *vm, OSystem *system)
-	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _interfaceCommandLineY1(vm->gameFlags().hasExtraLanguage ? 185 : 188) {
+	: Screen_v2(vm, system, _screenDimTable, _screenDimTableCount), _interfaceCommandLineY1(vm->gameFlags().extraLang != Common::UNK_LANG ? 185 : 188) {
 }
 
 Screen_MR::~Screen_MR() {
@@ -52,11 +52,7 @@ int Screen_MR::getLayer(int x, int y) {
 	pixel &= 0x7F;
 	pixel >>= 3;
 
-	if (pixel < 1)
-		pixel = 1;
-	else if (pixel > 15)
-		pixel = 15;
-	return pixel;
+	return CLIP<uint8>(pixel, 1, 15);
 }
 
 byte Screen_MR::getShapeFlag1(int x, int y) {

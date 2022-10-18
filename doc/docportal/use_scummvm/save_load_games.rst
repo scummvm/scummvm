@@ -18,17 +18,17 @@ When you're playing a game and you're ready to save, press :kbd:`Ctrl+F5` (:kbd:
 
 	The Global Main Menu (GMM).
 
-There are two views: list view and tile view. Click the list and tile icons at the bottom left of the window to toggle between the two.
+There are two views: list view and grid view. Click the list and grid icons at the bottom left of the window to toggle between the two.
 
 In tile view, click on the **New Save** tile. Enter a description for the game, then click **OK**.
 
-.. figure:: ../images/Launcher/save_game_tile.png
+.. figure:: ../images/Launcher/save_game_grid.png
 
-	Saving a game, tile view.
+	Saving a game, grid view.
 
-.. figure:: ../images/Launcher/save_game_tile_desc.png
+.. figure:: ../images/Launcher/save_game_grid_desc.png
 
-	Save game decription, tile view.
+	Save game decription, grid view.
 
 In list view, click on a slot to save the game to that slot. Enter a description for the game, then click **Save**.
 
@@ -97,11 +97,11 @@ To delete a saved game, highlight the saved game and click **Delete**.
 
 	Loading a game, list view.
 
-In tile view, each tile shows a screenshot of the saved state, as well as a description and a save slot number. Click on the tile to load that saved game.
+In grid view, each tile shows a screenshot of the saved state, as well as a description and a save slot number. Click on the tile to load that saved game.
 
-.. figure:: ../images/Launcher/load_game_tile.png
+.. figure:: ../images/Launcher/load_game_grid.png
 
-  Loading a game, tile view.
+  Loading a game, grid view.
 
 
 .. _savelocation:

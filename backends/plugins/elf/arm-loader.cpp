@@ -32,7 +32,7 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 
 	// Allocate memory for relocation table
 	if (!(rel = (Elf32_Rel *)malloc(size))) {
-		warning("elfloader: Out of memory.");
+		warning("elfloader: Could not allocate %d bytes for the relocation table", size);
 		return false;
 	}
 
@@ -73,6 +73,10 @@ bool ARMDLObject::relocate(Elf32_Off offset, Elf32_Word size, byte *relSegment) 
 
 //				debug(8, "elfloader: R_ARM_ABS32: i=%d, a=%x, origTarget=%x, target=%x", i, a, origTarget, *target);
 			}
+			break;
+
+		case R_ARM_PC24:
+//			debug(8, "elfloader: R_ARM_PC24: PC-relative jump, ld takes care of necessary relocation work for us.");
 			break;
 
 		case R_ARM_THM_CALL:

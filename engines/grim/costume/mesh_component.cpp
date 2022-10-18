@@ -67,7 +67,8 @@ void MeshComponent::reset() {
 	// closing the inventory causes the hat to appear, while it shouldn't.
 	// This could however introduce regressions somewhere else, so if there is something
 	// disappearing or not behaving properly in a costume the cause might be here.
-// 	_node->_meshVisible = true;
+
+	//_node->_meshVisible = true;
 }
 
 int MeshComponent::update(uint /*time*/) {

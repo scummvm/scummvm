@@ -27,18 +27,11 @@ namespace AGS3 {
 
 using AGS::Shared::Stream;
 
-MouseCursor::MouseCursor() {
-	clear();
-}
-
 void MouseCursor::clear() {
-	pic = 2054;
-	hotx = 0;
-	hoty = 0;
+	pic = 0;
+	hotx = hoty = 0;
 	view = -1;
-	for (uint8 i = 0; i < ARRAYSIZE(name); i++) {
-		name[i] = 0;
-	}
+	Common::fill(&name[0], &name[10], '\0');
 	flags = 0;
 }
 
@@ -60,12 +53,14 @@ void MouseCursor::WriteToFile(Stream *out) {
 	out->WriteInt8(flags);
 }
 
-void MouseCursor::ReadFromSavegame(Stream *in) {
+void MouseCursor::ReadFromSavegame(Stream *in, int cmp_ver) {
 	pic = in->ReadInt32();
-	hotx = in->ReadInt32();
-	hoty = in->ReadInt32();
-	view = in->ReadInt32();
-	flags = in->ReadInt32();
+	hotx = static_cast<int16_t>(in->ReadInt32());
+	hoty = static_cast<int16_t>(in->ReadInt32());
+	view = static_cast<int16_t>(in->ReadInt32());
+	flags = static_cast<int8_t>(in->ReadInt32());
+	if (cmp_ver > 0)
+		animdelay = in->ReadInt32();
 }
 
 void MouseCursor::WriteToSavegame(Stream *out) const {
@@ -74,6 +69,7 @@ void MouseCursor::WriteToSavegame(Stream *out) const {
 	out->WriteInt32(hoty);
 	out->WriteInt32(view);
 	out->WriteInt32(flags);
+	out->WriteInt32(animdelay);
 }
 
 } // namespace AGS3

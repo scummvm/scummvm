@@ -2178,7 +2178,12 @@ void ScummEngine_v100he::o100_systemOps() {
 		break;
 	case 132:
 		// Confirm shutdown
-		confirmExitDialog();
+		if (_game.id == GID_MOONBASE)
+			// Moonbase uses this subOp to quit the game (The confirmation dialog
+			// exists inside the game).
+			quitGame();
+		else
+			confirmExitDialog();
 		break;
 	case 133:
 		quitGame();

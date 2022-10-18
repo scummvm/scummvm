@@ -51,6 +51,7 @@ VideoEntry::~VideoEntry() {
 }
 
 void VideoEntry::close() {
+	g_system->hideOverlay();
 	delete _video;
 	_video = nullptr;
 }
@@ -140,6 +141,12 @@ void VideoEntry::setVolume(int volume) {
 VideoManager::VideoManager(MohawkEngine *vm) : _vm(vm) {
 	// Set dithering enabled, if required
 	_enableDither = (_vm->getGameType() == GType_MYST || _vm->getGameType() == GType_MAKINGOF) && !_vm->isGameVariant(GF_ME);
+
+	int16 h = g_system->getOverlayHeight();
+
+	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
+	_subtitles.setColor(0xff, 0xff, 0xff);
+	_subtitles.setFont("FreeSans.ttf");
 }
 
 VideoManager::~VideoManager() {
@@ -168,6 +175,10 @@ VideoEntryPtr VideoManager::playMovie(const Common::String &fileName, Audio::Mix
 	if (!ptr)
 		return VideoEntryPtr();
 
+
+	Common::String subtitlesName = Common::String::format("%s.srt", fileName.substr(0, fileName.size() - 4).c_str());
+	loadSubtitles(subtitlesName.c_str());
+
 	ptr->start();
 	return ptr;
 }
@@ -185,6 +196,9 @@ bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
+		g_system->showOverlay();
+		g_system->clearOverlay();
+
 		// Check of the video has reached the end
 		if ((*it)->endOfVideo()) {
 			if ((*it)->isLooping()) {
@@ -205,6 +219,8 @@ bool VideoManager::updateMovies() {
 			it++;
 			continue;
 		}
+
+		_subtitles.drawSubtitle(video->getTime(), true);
 
 		// Check if we need to draw a frame
 		if (video->needsUpdate()) {

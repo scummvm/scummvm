@@ -42,8 +42,8 @@ class gPixelMap;
 struct Sprite {
 	Extent16        size;                   // size of sprite
 	Point16         offset;                 // sprite origin point
-	byte            *_data;
-	uint32			_dataSize;
+	byte            *data;
+	uint32			dataSize;
 
 	Sprite(Common::SeekableReadStream *stream);
 	~Sprite();
@@ -55,7 +55,7 @@ struct Sprite {
 
 struct SpriteSet {
 	uint32           count;                  // number of images in the range
-	Sprite           **_sprites;
+	Sprite           **sprites;
 	// (variable-length array)
 	// sprite structures follow table
 
@@ -64,7 +64,7 @@ struct SpriteSet {
 
 	//  Member function to return a sprite from the set
 	Sprite *sprite(int16 index) {
-		return _sprites[index];
+		return sprites[index];
 	}
 
 //  Sprite &operator[]( int32 index )
@@ -270,19 +270,19 @@ enum spriteBankBits {
 
 class ActorAppearance {
 public:
-	int16            useCount;               // how many actors using this
-	uint32           id;
+	int16            _useCount;               // how many actors using this
+	uint32           _id;
 
-	ActorAnimSet    *poseList;             // list of action sequences
-	ColorSchemeList *schemeList;           // color remapping info
+	ActorAnimSet    *_poseList;             // list of action sequences
+	ColorSchemeList *_schemeList;           // color remapping info
 
-	SpriteSet       *spriteBanks[sprBankCount];
+	SpriteSet       *_spriteBanks[sprBankCount];
 
 	void loadSpriteBanks(int16 banksNeeded);
 
 	//  Determine if this bank is loaded
 	bool isBankLoaded(int16 bank) {
-		return spriteBanks[bank] != nullptr;
+		return _spriteBanks[bank] != nullptr;
 	}
 
 	//  A request to load a bank.
@@ -293,22 +293,22 @@ public:
 	}
 
 	ActorAnimation *animation(int num) {
-		if (poseList == nullptr)
+		if (_poseList == nullptr)
 			return nullptr;
 
-		if (num >= (int)poseList->numAnimations) {
-			warning("ActorPose:animation(), animation number is too high, %d >= %d", num, poseList->numAnimations);
+		if (num >= (int)_poseList->numAnimations) {
+			warning("ActorPose:animation(), animation number is too high, %d >= %d", num, _poseList->numAnimations);
 			return nullptr;
 		}
 
-		if (poseList)
-			return poseList->animations[num];
+		if (_poseList)
+			return _poseList->animations[num];
 
 		return nullptr;
 	}
 
 	ActorPose *pose(ActorAnimation *anim, int dir, int num) {
-		if (poseList == nullptr)
+		if (_poseList == nullptr)
 			return nullptr;
 
 		if (num < 0 || num >= anim->count[dir])
@@ -316,12 +316,12 @@ public:
 
 		num += anim->start[dir];
 
-		if (num >= (int)poseList->numPoses) {
-			warning("ActorPose::pose(), pose number is too high, %d >= %d", num, poseList->numPoses);
+		if (num >= (int)_poseList->numPoses) {
+			warning("ActorPose::pose(), pose number is too high, %d >= %d", num, _poseList->numPoses);
 			return nullptr;
 		}
 
-		return poseList->poses[num];
+		return _poseList->poses[num];
 	}
 };
 

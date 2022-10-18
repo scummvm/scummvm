@@ -58,8 +58,8 @@ bool ToonstruckSmackerDecoder::loadStream(Common::SeekableReadStream *stream) {
 	return true;
 }
 
-Video::SmackerDecoder::SmackerVideoTrack *ToonstruckSmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 signature) const {
-	return Video::SmackerDecoder::createVideoTrack(width, height, frameCount, frameRate, (height == 200) ? 4 : flags, signature);
+Video::SmackerDecoder::SmackerVideoTrack *ToonstruckSmackerDecoder::createVideoTrack(uint32 width, uint32 height, uint32 frameCount, const Common::Rational &frameRate, uint32 flags, uint32 version) const {
+	return Video::SmackerDecoder::createVideoTrack(width, height, frameCount, frameRate, (height == 200) ? 4 : flags, version);
 }
 
 // decoder is deallocated with Movie destruction i.e. new ToonstruckSmackerDecoder is needed

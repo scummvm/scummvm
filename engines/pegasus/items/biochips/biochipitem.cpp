@@ -34,9 +34,7 @@ namespace Pegasus {
 BiochipItem::BiochipItem(const ItemID id, const NeighborhoodID neighborhood, const RoomID room, const DirectionConstant direction) :
 		Item(id, neighborhood, room, direction) {
 
-	PegasusEngine *vm = (PegasusEngine *)g_engine;
-
-	Common::SeekableReadStream *biochipInfo = vm->_resFork->getResource(MKTAG('B', 'i', 'o', 'I'), kItemBaseResID + id);
+	Common::SeekableReadStream *biochipInfo = g_vm->_resFork->getResource(MKTAG('B', 'i', 'o', 'I'), kItemBaseResID + id);
 	if (biochipInfo) {
 		_biochipInfoPanelTime = biochipInfo->readUint32BE();
 		delete biochipInfo;
@@ -44,7 +42,7 @@ BiochipItem::BiochipItem(const ItemID id, const NeighborhoodID neighborhood, con
 		_biochipInfoPanelTime = 0;
 	}
 
-	Common::SeekableReadStream *rightInfo = vm->_resFork->getResource(MKTAG('R', 'g', 'h', 't'), kItemBaseResID + id);
+	Common::SeekableReadStream *rightInfo = g_vm->_resFork->getResource(MKTAG('R', 'g', 'h', 't'), kItemBaseResID + id);
 	if (!rightInfo)
 		error("Could not find right info for biochip %d", id);
 

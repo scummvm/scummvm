@@ -48,6 +48,8 @@ public:
 	void handleMouseScroll(int direction) override; // Added by ScummVM team
 	void handleKeyUp(const Common::KeyState &kbd) override;
 	void handleKeyDown(const Common::KeyState &kbd) override;
+	void handleCustomEventStop(const Common::Event &evt) override;
+	void handleCustomEventStart(const Common::Event &evt) override;
 
 	void add(UIComponent *component);
 	void clear();

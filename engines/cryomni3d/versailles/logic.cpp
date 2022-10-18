@@ -3229,6 +3229,10 @@ void CryOmni3DEngine_Versailles::drawBombLetters(Graphics::ManagedSurface &surfa
 	} else {
 		for (uint i = 0; i < bombPasswordLength; i++) {
 			uint letterId = _bombAlphabet.find(bombPossibilites[i][bombCurrentLetters[i]]);
+			if (letterId == _bombAlphabet.npos) {
+				// Should not happen
+				continue;
+			}
 			const Graphics::Surface &letter = bmpLetters[letterId];
 			Common::Point dst(kBombLettersPos[table][i][0], kBombLettersPos[table][i][1]);
 			surface.transBlitFrom(letter, dst);

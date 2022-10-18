@@ -28,6 +28,7 @@
 
 namespace Common {
 struct KeyState;
+struct Event;
 }
 
 namespace BladeRunner {
@@ -116,6 +117,10 @@ class KIA {
 
 
 public:
+	// Indicates when KIA opens after player has died
+	// or the game just launched and there are existing saved games to load.
+	// In forced open mode, certain KIA tabs are not available,
+	// such as the Save Game tab and the Crime Scene, Suspect, Clue database tabs.
 	bool              _forceOpen;
 
 	KIALog           *_log;
@@ -143,6 +148,8 @@ public:
 	void handleMouseScroll(int mouseX, int mouseY, int direction); // Added by ScummVM team
 	void handleKeyUp(const Common::KeyState &kbd);
 	void handleKeyDown(const Common::KeyState &kbd);
+	void handleCustomEventStop(const Common::Event &evt);
+	void handleCustomEventStart(const Common::Event &evt);
 
 	void playerReset();
 	void playActorDialogue(int actorId, int sentenceId);

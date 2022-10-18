@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -105,7 +106,7 @@ void Room94::setup_func() {
 	calc_person_look();
 	int destX, destY = 122;
 
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] >= 370)
+	if (_G(moveState)[P_CHEWY].Xypos[0] >= 370)
 		destX = 399;
 	else
 		destX = 255;
@@ -136,7 +137,7 @@ int Room94::giveGhostBottle() {
 	hideCur();
 	autoMove(2, P_CHEWY);
 	auto_scroll(216, 0);
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	_G(out)->setPointer(nullptr);
 	_G(out)->cls();
 	_G(flags).NoPalAfterFlc = true;
@@ -144,21 +145,21 @@ int Room94::giveGhostBottle() {
 	_G(fx_blend) = BLEND3;
 	_G(det)->startDetail(5, 255, false);
 	startAadWait(541);
-	_G(det)->stop_detail(5);
+	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(5);
 	Room66::proc8(3, 3, 2, 617);
 	hideCur();
 	_G(det)->hideStaticSpr(5);
 	_G(det)->startDetail(5, 255, false);
 	startAadWait(622);
-	_G(det)->stop_detail(5);
+	_G(det)->stopDetail(5);
 	_G(det)->startDetail(6, 1, false);	
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
 	startSetAILWait(4, 1, ANI_FRONT);
 	_G(gameState).flags35_10 = true;
 	_G(gameState).room_e_obj[138].Attribut = EXIT_TOP;
-	_G(atds)->setControlBit(522, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(522, ATS_ACTIVE_BIT);
 	new_invent_2_cur(114);
 	
 	showCur();

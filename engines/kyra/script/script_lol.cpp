@@ -800,7 +800,7 @@ int LoLEngine::olol_copyRegion(EMCState *script) {
 
 int LoLEngine::olol_initMonster(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_initMonster(%p) (%d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d)", (const void *)script,
-	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7), stackPos(8), stackPos(9), stackPos(10));
+	       stackPos(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), safeStackPos(7), safeStackPos(8), safeStackPos(9), safeStackPos(10));
 	uint16 x = 0;
 	uint16 y = 0;
 	calcCoordinates(x, y, stackPos(0), stackPos(1), stackPos(2));
@@ -841,7 +841,7 @@ int LoLEngine::olol_initMonster(EMCState *script) {
 		l->destDirection = l->direction;
 
 		for (int ii = 0; ii < 4; ii++)
-			l->equipmentShapes[ii] = stackPos(7 + ii) & 0xFF;
+			l->equipmentShapes[ii] = safeStackPos(7 + ii) & 0xFF;
 
 		checkSceneUpdateNeed(l->block);
 		return i;
@@ -1313,7 +1313,7 @@ int LoLEngine::olol_drawExitButton(EMCState *script) {
 	int y = printPara[3 * stackPos(0) + 1];
 	int offs = printPara[3 * stackPos(0) + 2];
 
-	char *str = getLangString(0x4033);
+	const char *str = getLangString(0x4033);
 	int w = _screen->getTextWidth(str);
 
 	if (_flags.use16ColorMode) {
@@ -1592,7 +1592,7 @@ int LoLEngine::olol_playDialogueTalkText(EMCState *script) {
 	int track = stackPos(0);
 
 	if (!snd_playCharacterSpeech(track, 0, 0) || textEnabled()) {
-		char *s = getLangString(track);
+		const char *s = getLangString(track);
 		_txt->printDialogueText2(4, s, script, 0, 1);
 	}
 
@@ -1688,7 +1688,7 @@ int LoLEngine::olol_countSpecificMonsters(EMCState *script) {
 int LoLEngine::olol_updateBlockAnimations2(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "LoLEngine::olol_updateBlockAnimations2(%p) (%d, %d, %d, %d, ...)", (const void *)script, stackPos(0), stackPos(1), stackPos(2), stackPos(3));
 	int numFrames = stackPos(3);
-	assert(numFrames <= 97);
+	assert(numFrames > 0 && numFrames <= 97);
 	int curFrame = stackPos(2) % numFrames;
 	setWallType(stackPos(0), stackPos(1), stackPos(4 + curFrame));
 	return 0;
@@ -2579,23 +2579,18 @@ int LoLEngine::tlol_fadeInScene(const TIM *tim, const uint16 *param) {
 
 	_screen->copyRegion(0, 0, 0, 0, 320, 200, 0, 2, Screen::CR_NO_P_CHECK);
 
-	char filename[32];
-	strcpy(filename, sceneFile);
-	strcat(filename, ".CPS");
-
-	_screen->loadBitmap(filename, 7, 5, &_screen->getPalette(0));
+	Common::String filename = Common::String(sceneFile) + ".CPS";
+	_screen->loadBitmap(filename.c_str(), 7, 5, &_screen->getPalette(0));
 
 	uint8 *overlay = 0;
 	if (!_flags.use16ColorMode) {
-		filename[0] = 0;
+		filename.clear();
 
-		if (_flags.isTalkie) {
-			strcpy(filename, _languageExt[_lang]);
-			strcat(filename, "/");
-		}
+		if (_flags.isTalkie)
+			filename = Common::String(_languageExt[_lang]) + "/";
 
-		strcat(filename, overlayFile);
-		overlay = _res->fileData(filename, 0);
+		filename += overlayFile;
+		overlay = _res->fileData(filename.c_str(), 0);
 
 		for (int i = 0; i < 3; ++i) {
 			uint32 endTime = _system->getMillis() + 10 * _tickLength;

@@ -30,10 +30,10 @@
 
 namespace Hypno {
 
-typedef Common::Array<byte> ByteArray;
 typedef struct FileEntry {
 	Common::String name;
-	ByteArray data;
+	uint32 start;
+	uint32 size;
 } FileEntry;
 
 class LibFile : public Common::Archive {
@@ -51,6 +51,8 @@ public:
 	Common::SeekableReadStream *createReadStreamForMember(const Common::Path &path) const override;
 
 private:
+	bool _encrypted;
+	Common::File *_libfile;
 	Common::String _prefix;
 	Common::Array<FileEntry> _fileEntries;
 	const FileEntry *getEntry(const Common::Path &path) const;

@@ -90,7 +90,7 @@ struct Rect {
 		if (left < r.left) left = r.left;
 		else if (left > r.right) left = r.right;
 
-		if (bottom < r.top) bottom = r.bottom;
+		if (bottom < r.top) bottom = r.top;
 		else if (bottom > r.bottom) bottom = r.bottom;
 
 		if (right < r.left) right = r.left;

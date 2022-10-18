@@ -21,8 +21,10 @@
 
 #include "common/mutex.h"
 #include "audio/mixer.h"
+
 #include "audio/audiostream.h"
 #include "audio/decoders/mp3.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/textsplit.h"

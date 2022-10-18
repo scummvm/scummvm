@@ -24,6 +24,7 @@
  *
  */
 
+#include "engines/icb/icb.h"
 #include "engines/icb/icon_menu.h"
 #include "engines/icb/global_objects.h"
 #include "engines/icb/sound.h"
@@ -105,7 +106,8 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 	// INVENTORY QUIT: we must not be in the remora, m_bAllowEscape must be true
 	// key not locked, we are pressing inventory and we wern't last time...
-	if ((!g_oRemora->IsActive()) && (m_bAllowEscape) && (!m_nKeyLock) && (inventoryPress) && (!lastInventoryPress)) {
+	if (((g_icb->getGameType() == GType_ICB && !g_oRemora->IsActive()) ||
+	     (g_icb->getGameType() != GType_ICB)) && (m_bAllowEscape) && (!m_nKeyLock) && (inventoryPress) && (!lastInventoryPress)) {
 		CloseDownIconMenu();
 
 		// Return the player's state to what it was before the menu was activated.
@@ -120,7 +122,8 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 
 	}
 	// REMORA QUIT: remora is active we just let go of inventory button, key not locked we have a return...
-	else if ((g_oRemora->IsActive()) && (!m_nKeyLock) && (!inventoryPress) && (lastInventoryPress) && (found != -1)) {
+	else if (((g_icb->getGameType() == GType_ICB && g_oRemora->IsActive()) ||
+	          (g_icb->getGameType() != GType_ICB)) && (!m_nKeyLock) && (!inventoryPress) && (lastInventoryPress) && (found != -1)) {
 		m_nLastSelection = found;
 		m_bValidSelection = TRUE8;
 
@@ -138,7 +141,8 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 	// CONVERSATION QUIT: remora is not active m_bAllowEscape is probably true
 	// no key lock, inventory was pressed and has now been released...
 	// and we have a quit!
-	else if ((!g_oRemora->IsActive()) && (!m_bAllowEscape) && (!m_nKeyLock) && (!inventoryPress) && (lastInventoryPress) && (found != -1)) {
+	else if (((g_icb->getGameType() == GType_ICB && !g_oRemora->IsActive()) ||
+	          (g_icb->getGameType() != GType_ICB)) && (!m_bAllowEscape) && (!m_nKeyLock) && (!inventoryPress) && (lastInventoryPress) && (found != -1)) {
 		m_nLastSelection = found;
 		m_bValidSelection = TRUE8;
 
@@ -158,8 +162,7 @@ bool8 _icon_menu::CycleIconMenu(const _input &sKeyboardState) {
 			m_nLastSelection = m_nSelectedIcon;
 			m_bValidSelection = TRUE8;
 		}
-
-		if (!g_oRemora->IsActive()) {
+		if (g_icb->getGameType() == GType_ICB && !g_oRemora->IsActive()) {
 			// Return the player's state to what it was before the menu was activated.
 			MS->player.Pop_control_mode();
 			MS->player.Set_player_status(STOOD);

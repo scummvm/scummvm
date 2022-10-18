@@ -48,7 +48,7 @@ private:
 	void SetLineHeightAdjust(ScriptMethodParams &params);
 
 public:
-	AGSSpriteFont() : PluginBase() {}
+	AGSSpriteFont() : PluginBase(), _fontRenderer(nullptr), _vWidthRenderer(nullptr) {}
 	virtual ~AGSSpriteFont() {}
 
 	const char *AGS_GetPluginName() override;

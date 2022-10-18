@@ -34,11 +34,14 @@ namespace ICB {
 
 enum mcodeFunctionReturnCodes { IR_STOP = 0, IR_CONT = 1, IR_TERMINATE = 2, IR_REPEAT = 3, IR_GOSUB = 4 };
 
-#define NO_API_ROUTINES 419
+#define NO_API_ROUTINES_ELDORADO 357
+#define NO_API_ROUTINES_ICB 419
 
-extern mcodeFunctionReturnCodes (*McodeTable[NO_API_ROUTINES])(int32 &, int32 *);
+extern mcodeFunctionReturnCodes (*McodeTableICB[NO_API_ROUTINES_ICB])(int32 &, int32 *);
+extern mcodeFunctionReturnCodes (*McodeTableED[NO_API_ROUTINES_ELDORADO])(int32 &, int32 *);
 
-#define FN_ROUTINES_DATA_VERSION 963730
+#define FN_ROUTINES_DATA_VERSION_ELDORADO 800750
+#define FN_ROUTINES_DATA_VERSION_ICB 963730
 
 } // End of namespace ICB
 

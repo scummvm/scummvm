@@ -24,8 +24,10 @@
 
 #include "common/hashmap.h"
 #include "common/hash-str.h"
+
 #include "math/mathfwd.h"
 #include "math/quat.h"
+
 #include "engines/grim/object.h"
 #include "engines/grim/actor.h"
 

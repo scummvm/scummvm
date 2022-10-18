@@ -27,10 +27,10 @@ namespace Glk {
 namespace AGT {
 
 /*
- * Glk interface for AGiliTy 1.1.1.1
+ * Glk interface for AGiliTy 1.1.2
  * -------------------------------
  *
- * This module contains the the Glk porting layer for AGiliTy.  It
+ * This module contains the Glk porting layer for AGiliTy.  It
  * defines the Glk arguments list structure, the entry points for the
  * Glk library framework to use, and all platform-abstracted I/O to
  * link to Glk's I/O.
@@ -784,7 +784,7 @@ static void gagt_status_update() {
 			 * We don't (yet) have a status line.  Perhaps we're at the
 			 * very start of a game.  Print a standard message.
 			 */
-			g_vm->glk_put_string("Glk AGiliTy version 1.1.1.1");
+			g_vm->glk_put_string("Glk AGiliTy version 1.1.2");
 		}
 
 		g_vm->glk_set_window(g_vm->gagt_main_window);
@@ -2584,12 +2584,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 		4,
 		{
 			"This game is being executed by",
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.2",
 			"Copyright (C) 1996-99,2001 by Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2599,12 +2599,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 		5,
 		{
 			"AGiliTy",
-			"The (Mostly) Universal AGT Interpreter, version 1.1.1.1",
+			"The (Mostly) Universal AGT Interpreter, version 1.1.2",
 			"Copyright (C) 1996-1999,2001 by Robert Masenten",
 			"[Glk version]",
 			"-----------------------------------------------------------"
 		},
-		"|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"|SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"|ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"|EGlk version|N\n"
 	},
@@ -2620,12 +2620,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		2,
 		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+			"Being run by AGiliTy  version 1.1.2, Copyright (C) 1996-99,2001"
 			" Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2634,11 +2634,11 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		1,
 		{
-			"Being run by AGiliTy  version 1.1.1.1, Copyright (C) 1996-99,2001"
+			"Being run by AGiliTy  version 1.1.2, Copyright (C) 1996-99,2001"
 			" Robert Masenten"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -2658,12 +2658,12 @@ static gagt_special_t GAGT_SPECIALS[] = {
 	{
 		3,
 		{
-			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.1.1",
+			"AGiliTy: The (Mostly) Universal AGT Interpreter  version 1.1.2",
 			"Copyright (C) 1996-99,2001 by Robert Masenten",
 			"Glk version"
 		},
 		"This game is being executed by:\n\n"
-		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.1.1|N\n"
+		"    |SAGiliTy, The (Mostly) Universal AGT Interpreter, Version 1.1.2|N\n"
 		"    |ECopyright (C) 1996-1999,2001 by Robert Masenten|N\n"
 		"    |EGlk version|N\n"
 	},
@@ -3238,7 +3238,7 @@ static void gagt_display_debug() {
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
 		        paragraph && paragraph->special
-		        ? paragraph->special - GAGT_SPECIALS + 1 : 0,
+		        ? long(paragraph->special - GAGT_SPECIALS + 1) : 0,
 		        line->buffer.allocation, line->buffer.length,
 		        line->indent, line->outdent,
 		        line->real_length,

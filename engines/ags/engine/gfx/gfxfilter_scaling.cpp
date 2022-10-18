@@ -25,7 +25,7 @@ namespace AGS3 {
 namespace AGS {
 namespace Engine {
 
-bool ScalingGfxFilter::Initialize(const int color_depth, String &err_str) {
+bool ScalingGfxFilter::Initialize(const int /*color_depth*/, String & /*err_str*/) {
 	// succeed by default
 	return true;
 }

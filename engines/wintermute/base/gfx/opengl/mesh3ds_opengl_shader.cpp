@@ -29,7 +29,7 @@
 
 namespace Wintermute {
 
-Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(OpenGL::ShaderGL *shader) : _shader(shader) {
+Mesh3DSOpenGLShader::Mesh3DSOpenGLShader(OpenGL::Shader *shader) : _shader(shader) {
 	glGenBuffers(1, &_vertexBuffer);
 	glGenBuffers(1, &_indexBuffer);
 }

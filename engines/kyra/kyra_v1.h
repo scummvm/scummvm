@@ -69,7 +69,6 @@ class KyraMetaEngine;
  * Some execeptions:
  * - The PC-98 version of Eye of the Beholder II is not yet supported.
  * - We don't support NES or Gameboy versions of Eye of the Beholder.
- * - The Macintosh version of Kyrandia 1 lacks sound effects and music.
  *
  * The official translations of the games of which we are aware are mostly
  * supported. Some of the more rare versions (of which we don't even know
@@ -376,6 +375,9 @@ protected:
 		bool oldHeader;     // old scummvm save header
 
 		Graphics::Surface *thumbnail;
+
+		TimeDate timeDate;
+		uint32 totalPlaySecs;
 	};
 
 	enum ReadSaveHeaderError {
@@ -399,6 +401,15 @@ protected:
 
 	// TODO: Consider moving this to Screen
 	virtual Graphics::Surface *generateSaveThumbnail() const { return 0; }
+
+	// Officially used in EOB SegaCD (appears in the final stats), but we also use this for the savegame metadata for all games.
+	void updatePlayTimer();
+	void restartPlayTimerAt(uint32 totalPlaySecs);
+	void pausePlayTimer(bool pause);
+
+	uint32 _lastSecTick;
+	uint32 _lastSecTickAtPauseStart;
+	uint32 _totalPlaySecs;
 };
 
 } // End of namespace Kyra

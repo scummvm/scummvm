@@ -29,6 +29,7 @@ static const PlainGameDescriptor wageGames[] = {
 	{"amot", "A Mess O' Trouble"},
 	{"cantitoe", "Camp Cantitoe"},
 	{"drakmythcastle", "Drakmyth Castle"},
+	{"grailquest", "GrailQuest: Adventure in the Age of King Arthur"},
 	{"raysmaze", "Ray's Maze"},
 	{"scepters", "Enchanted Scepters"},
 	{"twisted", "Twisted!"},
@@ -45,11 +46,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOSPEECH, GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "wage";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "World Adventure Game Engine";
 	}
 

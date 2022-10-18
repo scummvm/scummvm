@@ -27,6 +27,7 @@
 #include "engines/grim/color.h"
 #include "engines/grim/sector.h"
 #include "engines/grim/objectstate.h"
+
 #include "math/quat.h"
 #include "math/frustum.h"
 
@@ -45,6 +46,8 @@ public:
 	Set(const Common::String &name, Common::SeekableReadStream *data);
 	Set();
 	~Set();
+
+	struct Setup;
 
 	static int32 getStaticTag() { return MKTAG('S', 'E', 'T', ' '); }
 
@@ -143,6 +146,7 @@ public:
 	};
 
 	Setup *getCurrSetup() { return _currSetup; }
+	Setup *getSetup(int num) const { return _setups + num; }
 	const Common::List<Light *> &getLights(bool inOverworld) { return (inOverworld ? _overworldLightsList : _lightsList); }
 	const Math::Frustum &getFrustum() { return _frustum; }
 

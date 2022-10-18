@@ -32,7 +32,7 @@ struct MyLabel : public NewControl {
 
 	void draw(Shared::Bitmap *ds) override;
 
-	int pressedon(int mousex, int mousey) override;
+	int pressedon(int mx, int my) override;
 
 	int processmessage(int mcode, int wParam, NumberPtr lParam) override;
 };

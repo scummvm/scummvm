@@ -30,6 +30,7 @@
 
 #include "ags/lib/std/vector.h"
 #include "ags/engine/ac/date_time.h"
+#include "ags/engine/ac/path_helper.h"
 #include "ags/shared/debugging/output_handler.h"
 #include "ags/shared/util/ini_util.h"
 #include "ags/lib/allegro/error.h"
@@ -85,25 +86,27 @@ struct AGSPlatformDriver
 	virtual void DisplayAlert(const char *, ...) = 0;
 	virtual void AttachToParentConsole();
 	virtual int  GetLastSystemError();
+	// Optionally fill in config tree from the platform-specific config source
+	virtual void ReadConfiguration(Shared::ConfigTree & /*cfg*/) {}
 	// Get root directory for storing per-game shared data
-	virtual const char *GetAllUsersDataDirectory() {
-		return ".";
+	virtual FSLocation GetAllUsersDataDirectory() {
+		return FSLocation(".");
 	}
 	// Get root directory for storing per-game saved games
-	virtual const char *GetUserSavedgamesDirectory() {
-		return ".";
+	virtual FSLocation GetUserSavedgamesDirectory() {
+		return FSLocation(".");
 	}
 	// Get root directory for storing per-game user configuration files
-	virtual const char *GetUserConfigDirectory() {
-		return ".";
+	virtual FSLocation GetUserConfigDirectory() {
+		return FSLocation(".");
 	}
 	// Get directory for storing all-games user configuration files
-	virtual const char *GetUserGlobalConfigDirectory() {
-		return ".";
+	virtual FSLocation GetUserGlobalConfigDirectory() {
+		return FSLocation(".");
 	}
 	// Get default directory for program output (logs)
-	virtual const char *GetAppOutputDirectory() {
-		return ".";
+	virtual FSLocation GetAppOutputDirectory() {
+		return FSLocation(".");
 	}
 	// Returns array of characters illegal to use in file names
 	virtual const char *GetIllegalFileChars() {
@@ -163,12 +166,9 @@ struct AGSPlatformDriver
 	virtual void AdjustWindowStyleForFullscreen();
 	// Adjust application window's parameters to suit windowed mode
 	virtual void AdjustWindowStyleForWindowed();
-	virtual void RegisterGameWithGameExplorer();
-	virtual void UnRegisterGameWithGameExplorer();
 	virtual int  ConvertKeycodeToScanCode(int keyCode);
 	// Adjust window size to ensure it is in the supported limits
-	virtual void ValidateWindowSize(int &x, int &y, bool borderless) const {
-	}
+	virtual void ValidateWindowSize(int &x, int &y, bool /*borderless*/) const;
 
 	virtual int  InitializeCDPlayer() = 0;  // return 0 on success
 	virtual int  CDPlayerCommand(int cmdd, int datt) = 0;

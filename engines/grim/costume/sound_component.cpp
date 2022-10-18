@@ -23,13 +23,10 @@
 #include "engines/grim/set.h"
 #include "engines/grim/debug.h"
 #include "engines/grim/costume.h"
-
 #include "engines/grim/costume/sound_component.h"
-
 #include "engines/grim/imuse/imuse.h"
 
 namespace Grim {
-
 
 SoundComponent::SoundComponent(Component *p, int parentID, const char *filename, tag32 t) :
 		Component(p, parentID, filename, t) {

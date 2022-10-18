@@ -36,8 +36,6 @@
 
 #include "backends/keymapper/keymapper.h"
 
-#include "base/version.h"
-
 namespace Kyra {
 
 void LoLEngine::gui_drawPlayField() {
@@ -1856,6 +1854,11 @@ GUI_LoL::GUI_LoL(LoLEngine *vm) : GUI_v1(vm), _vm(vm), _screen(vm->_screen) {
 	_specialProcessButton = _backUpButtonList = 0;
 	_flagsModifier = 0;
 	_sliderSfx = 11;
+
+	_currentMenu = _lastMenu = _newMenu = nullptr;
+	_saveDescription = nullptr;
+	_menuResult = _savegameOffset = 0;
+	_pressFlag = false;
 }
 
 void GUI_LoL::processButton(Button *button) {
@@ -1941,8 +1944,6 @@ void GUI_LoL::processButton(Button *button) {
 	default:
 		break;
 	}
-
-	_screen->updateScreen();
 }
 
 int GUI_LoL::processButtonList(Button *buttonList, uint16 inputFlag, int8 mouseWheel) {
@@ -2225,10 +2226,9 @@ int GUI_LoL::runMenu(Menu &menu) {
 	int fW = (d->w << 3) - wW;
 	int fC = 0;
 
-	// LoL doesn't have default higlighted items. No item should be
-	// highlighted when entering a new menu.
-	// Instead, the respevtive struct entry is used to determine whether
-	// a menu has scroll buttons or slider bars.
+	// LoL doesn't have default highlighted items. No item should be highlighted when
+	// entering a new menu. Instead, the respective struct entry is used to determine
+	// whether a menu has scroll buttons or slider bars.
 	uint8 hasSpecialButtons = 0;
 	_saveSlotsListUpdateNeeded = true;
 
@@ -2365,7 +2365,7 @@ int GUI_LoL::runMenu(Menu &menu) {
 
 		if (_currentMenu == &_mainMenu && !_vm->gameFlags().use16ColorMode) {
 			Screen::FontId f = _screen->setFont(Screen::FID_6_FNT);
-			_screen->fprintString("%s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, gScummVMVersion);
+			_screen->fprintString("v%s", menu.x + 8, menu.y + menu.height - 12, 204, 0, 8, _vm->_versionString.c_str());
 			_screen->setFont(f);
 			_screen->updateScreen();
 		}
@@ -2518,20 +2518,21 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 	}
 
 	int saveSlotMaxLen = ((_screen->getScreenDim(8))->w << 3)  - _screen->getCharWidth('W');
+	int buffLeft = 5120 - 1;
 
 	for (int i = startSlot; i < num && _savegameOffset + i - slotOffs < _savegameListSize; ++i) {
 		if (_savegameList[i + _savegameOffset - slotOffs]) {
-			Common::strlcpy(s, _savegameList[i + _savegameOffset - slotOffs], 80);
+			Common::strlcpy(s, _savegameList[i + _savegameOffset - slotOffs], buffLeft);
 
 			// Trim long GMM save descriptions to fit our save slots
 			int fC = _screen->getTextWidth(s);
 			while (s[0] && fC >= saveSlotMaxLen) {
-				s[strlen(s) - 1]  = 0;
+				s[Common::strnlen(s, buffLeft) - 1]  = 0;
 				fC = _screen->getTextWidth(s);
 			}
 
-			if (_vm->gameFlags().lang == Common::JA_JPN) {
-				// Strip special characters from GMM save dialog which might get misinterpreted as SJIS
+			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_TWN) {
+				// Strip special characters from GMM save dialog which might get misinterpreted as 2-byte character
 				for (uint ii = 0; ii < strlen(s); ++ii) {
 					if (s[ii] < 32) // due to the signed char type this will also clean up everything >= 0x80
 						s[ii] = ' ';
@@ -2539,7 +2540,9 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 			}
 
 			menu.item[i].itemString = s;
-			s += (strlen(s) + 1);
+			int slotLen = Common::strnlen(s, buffLeft) + 1;
+			s += slotLen;
+			buffLeft -= slotLen;
 			menu.item[i].saveSlot = _saveSlots[i + _savegameOffset - slotOffs];
 			menu.item[i].enabled = true;
 		}
@@ -2547,7 +2550,7 @@ void GUI_LoL::setupSaveMenuSlots(Menu &menu, int num) {
 
 	if (_savegameOffset == 0) {
 		if (&menu == &_saveMenu) {
-			strcpy(s, _vm->getLangString(0x4010));
+			Common::strlcpy(s, _vm->getLangString(0x4010), buffLeft);
 			menu.item[0].itemString = s;
 			menu.item[0].saveSlot = -3;
 			menu.item[0].enabled = true;
@@ -2682,19 +2685,19 @@ int GUI_LoL::clickedSaveMenu(Button *button) {
 	_saveDescription = (char *)_vm->_tempBuffer5120 + 1000;
 	_saveDescription[0] = 0;
 	if (_saveMenu.item[-s - 2].saveSlot != -3) {
-		strcpy(_saveDescription, _saveMenu.item[-s - 2].itemString.c_str());
+		Common::strlcpy(_saveDescription, _saveMenu.item[-s - 2].itemString.c_str(), 80);
 	} else if (_vm->_autoSaveNamesEnabled) {
 		TimeDate td;
 		g_system->getTimeAndDate(td);
 		// Skip character name for Japanese to prevent garbage rendering (the save description is rendered in the non-SJIS default font).
 		Common::String ts = (_vm->gameFlags().lang != Common::JA_JPN) ? Common::String::format("%s / ", _vm->_characters[0].name) : "";
-		Common::String lvl1 = Common::String(_vm->_lastBlockDataFile).substr(0, 1);
-		Common::String lvl2 = Common::String(_vm->_lastBlockDataFile).substr(1);
+		Common::String lvl1 = _vm->_lastBlockDataFile.substr(0, 1);
+		Common::String lvl2 = _vm->_lastBlockDataFile.substr(1);
 		lvl1.toUppercase();
 		lvl2.toLowercase();
 		ts = ts + lvl1 + lvl2;
 		ts += Common::String::format(" / %02d-%02d-%02d - %02d:%02d:%02d", td.tm_year + 1900, td.tm_mon + 1, td.tm_mday, td.tm_hour, td.tm_min, td.tm_sec);
-		strcpy(_saveDescription, ts.c_str());
+		Common::strlcpy(_saveDescription, ts.c_str(), 80);
 	}
 
 	return 1;
@@ -2845,11 +2848,12 @@ int GUI_LoL::clickedSavenameMenu(Button *button) {
 	updateMenuButton(button);
 	if (button->arg == _savenameMenu.item[0].itemId) {
 
-		Util::convertDOSToUTF8(_saveDescription, 5120 - (int)((uint8*)_saveDescription - _vm->_tempBuffer5120));
+		Util::convertString_KYRAtoGUI(_saveDescription, 5120 - (int)((uint8*)_saveDescription - _vm->_tempBuffer5120));
 
 		int slot = _menuResult == -2 ? getNextSavegameSlot() : _menuResult - 1;
 		Graphics::Surface thumb;
 		createScreenThumbnail(thumb);
+		_vm->updatePlayTimer();
 		_vm->saveGameStateIntern(slot, _saveDescription, &thumb);
 		thumb.free();
 

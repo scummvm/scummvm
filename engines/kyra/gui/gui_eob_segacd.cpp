@@ -34,7 +34,6 @@
 namespace Kyra {
 
 int EoBEngine::clickedCamp(Button *button) {
-	uint32 startTime = _system->getMillis();
 	gui_resetAnimations();
 
 	if (_flags.platform == Common::kPlatformSegaCD)
@@ -46,7 +45,6 @@ int EoBEngine::clickedCamp(Button *button) {
 		return button->arg;
 
 	gui_resetAnimations();
-	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 
 	return button->arg;
 }
@@ -231,7 +229,6 @@ void EoBEngine::gui_drawCharacterStatsPage() {
 }
 
 void EoBEngine::gui_displayMap() {
-	uint32 startTime = _system->getMillis();
 	disableSysTimer(2);
 
 	_screen->sega_fadeToBlack(2);
@@ -293,7 +290,7 @@ void EoBEngine::gui_displayMap() {
 		removeInputTop();
 
 		drawMapSpots(level, animState < 20 ? 0 : 1);
-		bool update = (animState == 0 || animState == 20);
+		bool needupdate = (animState == 0 || animState == 20);
 		if (++animState == 40)
 			animState = 0;
 
@@ -305,7 +302,7 @@ void EoBEngine::gui_displayMap() {
 				drawMapPage(level);
 		}
 
-		if (update) {
+		if (needupdate) {
 			r->render(0);
 			_screen->updateScreen();
 		}
@@ -322,7 +319,6 @@ void EoBEngine::gui_displayMap() {
 	snd_playLevelScore();
 
 	enableSysTimer(2);
-	_totalPlaySecs += ((_system->getMillis() - startTime) / 1000);
 }
 
 void EoBEngine::gui_drawSpellbook() {

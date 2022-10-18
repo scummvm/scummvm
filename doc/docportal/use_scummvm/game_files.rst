@@ -65,5 +65,5 @@ In most cases, ScummVM can use CD audio directly from the game CD. If you don't 
 
 Macintosh games
 ==================
-Many of the supported games also exist in versions for the Macintosh, however it can be tricky to extract the correct files from a Macintosh floppy or CD, especially if you are using Windows or Linux. See :doc:`../use_scummvm/mac_game_files` for an in-depth how-to guide. 
+Many of the supported games also exist in versions for the Macintosh, however it can be tricky to extract the correct files from a Macintosh floppy or CD, especially if you are using Windows or Linux. See :doc:`../use_scummvm/mac_game_files` for an in-depth how-to guide.
 

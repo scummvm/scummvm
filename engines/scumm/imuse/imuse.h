@@ -22,6 +22,7 @@
 #ifndef SCUMM_IMUSE_H
 #define SCUMM_IMUSE_H
 
+#include "audio/mididrv.h"
 #include "common/scummsys.h"
 #include "common/serializer.h"
 #include "common/mutex.h"
@@ -50,13 +51,14 @@ class IMuse : public MusicEngine {
 public:
 	enum {
 		PROP_TEMPO_BASE,
-		PROP_NATIVE_MT32,
-		PROP_GS,
-		PROP_AMIGA,
 		PROP_LIMIT_PLAYERS,
-		PROP_RECYCLE_PLAYERS,
-		PROP_GAME_ID,
-		PROP_PC_SPEAKER
+		PROP_RECYCLE_PLAYERS
+	};
+
+	enum {
+		kFlagNewSystem	=	1 << 0,
+		kFlagNativeMT32 =	1 << 1,
+		kFlagRolandGS =		1 << 2
 	};
 
 public:
@@ -77,7 +79,7 @@ public:
 
 public:
 	// Factory methods
-	static IMuse *create(OSystem *syst, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver);
+	static IMuse *create(ScummEngine *vm, MidiDriver *nativeMidiDriver, MidiDriver *adlibMidiDriver, MidiDriverFlags sndType, uint32 flags);
 };
 
 } // End of namespace Scumm

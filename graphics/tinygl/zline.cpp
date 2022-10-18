@@ -57,7 +57,7 @@ FORCEINLINE void FrameBuffer::putPixel(uint pixelOffset, int color, int x, int y
 }
 
 template <bool kInterpRGB, bool kInterpZ, bool kDepthWrite>
-FORCEINLINE void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
+void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	if (_enableScissor)
 		drawLine<kInterpRGB, kInterpZ, kDepthWrite, true>(p1, p2);
 	else
@@ -105,6 +105,8 @@ void FrameBuffer::drawLine(const ZBufferPoint *p1, const ZBufferPoint *p2) {
 	int sr, sg, sb;
 
 	if (kInterpZ) {
+		if (n == 0)
+			return;
 		sz = (p2->z - p1->z) / n;
 		z = p1->z;
 	}

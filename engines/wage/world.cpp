@@ -48,6 +48,7 @@
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 #include "graphics/macgui/macmenu.h"
+#include "graphics/fontman.h"
 
 #include "wage/wage.h"
 #include "wage/entities.h"
@@ -214,8 +215,14 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		if (res != NULL) {
 			scene->_textBounds = readRect(res);
 			int fontType = res->readUint16BE();
+			// WORKAROUND: Dune Eternity has a weird fontType ID so we override it to the correct one
+			if (_name == "***DUNE ETERNITY*** ")
+				fontType = 3;
+
 			int fontSize = res->readUint16BE();
-			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::kMacFontRegular, Graphics::FontManager::kConsoleFont);
+			scene->_font = new Graphics::MacFont(fontType, fontSize, Graphics::kMacFontRegular);
+			const Graphics::Font *fallback = FontMan.getFontByUsage(Graphics::FontManager::kConsoleFont);
+			scene->_font->setFallback(fallback);
 
 			Common::String text;
 			while (res->pos() < res->size()) {
@@ -304,7 +311,33 @@ bool World::loadWorld(Common::MacResManager *resMan) {
 		/* Enchanted Scepters did not use the PAT# resource for the textures. */
 		res = resMan->getResource(MKTAG('C','O','D','E'), 1);
 		if (res != NULL) {
-			res->skip(0x55ac);
+			const char *magic = "\x92\x40\x15\x81\x20\x00\x4E\x75";
+
+			int cnt = 0;
+			bool found = false;
+
+			while (!res->eos()) {
+				byte b = res->readByte();
+
+				if (b == (byte)magic[cnt]) {
+					cnt++;
+
+					if (cnt == 8) {
+						found = true;
+						break;
+					}
+				} else {
+					cnt = 0;
+				}
+			}
+
+			if (!found)
+				error("World::loadWorld(): Could not find Enhanced Scepters' patterns");
+
+			res->skip(8); // Skip 8 more bytes
+
+			debug(3, "Loading 29 patterns for Enhanced Scepters at %ld", res->pos());
+
 			for (int i = 0; i < 29; i++) {
 				byte *pattern = (byte *)malloc(8);
 

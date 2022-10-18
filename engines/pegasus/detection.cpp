@@ -149,11 +149,11 @@ public:
 	PegasusMetaEngineDetection() : AdvancedMetaEngineDetection(Pegasus::gameDescriptions, sizeof(Pegasus::PegasusGameDescription), pegasusGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "pegasus";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "The Journeyman Project: Pegasus Prime";
 	}
 

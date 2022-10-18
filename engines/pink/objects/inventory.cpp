@@ -22,7 +22,7 @@
 
 #include "common/debug.h"
 
-#include "pink/director.h"
+#include "pink/screen.h"
 #include "pink/pink.h"
 #include "pink/objects/inventory.h"
 #include "pink/objects/actions/action.h"

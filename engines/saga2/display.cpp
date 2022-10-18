@@ -86,7 +86,7 @@ void niceScreenStartup() {
 		cleanupGameState();
 		loadSavedGameState(ConfMan.getInt("save_slot"));
 
-		if (GameMode::newmodeFlag)
+		if (GameMode::_newmodeFlag)
 			GameMode::update();
 		updateActiveRegions();
 	}
@@ -249,7 +249,7 @@ void reDrawScreen() {
  * ===================================================================== */
 
 void blackOut() {
-	g_vm->_mainPort.drawMode = drawModeReplace;
+	g_vm->_mainPort._drawMode = drawModeReplace;
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
 	g_vm->_mainPort.fillRect(Rect16(0, 0, 640, 480));
 	g_vm->_pal->lightsOut();

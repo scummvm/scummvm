@@ -53,11 +53,14 @@ private:
 	GUI::ButtonWidget *_editButton;
 	GUI::ButtonWidget *_deleteButton;
 	GUI::ButtonWidget *_playbackButton;
+	GUI::ButtonWidget *_nextScreenshotBtn;
+	GUI::ButtonWidget *_prevScreenshotBtn;
 
 	void updateList();
 	void updateScreenShotsText();
 	void updateSelection(bool redraw);
 	void updateScreenshot();
+	void addThumbnailContainerButtonsAndText();
 public:
 	Common::U32String _author;
 	Common::String    _name;

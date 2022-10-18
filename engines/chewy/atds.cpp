@@ -20,13 +20,12 @@
  */
 
 #include "common/memstream.h"
-#include "chewy/ngshext.h"
 #include "chewy/atds.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
-#include "chewy/main.h"
-#include "chewy/ngsdefs.h"
+#include "chewy/mcga_graphics.h"
 #include "chewy/sound.h"
 #include "chewy/text.h"
 
@@ -55,7 +54,7 @@ void AadInfoArray::load(const void *data, size_t count) {
 		(*this)[i].load(&src);
 }
 
-bool AadTxtHeader::load(const void *src) {
+bool DialogCloseupTxtHeader::load(const void *src) {
 	Common::MemoryReadStream rs((const byte *)src, 8);
 
 	_diaNr = rs.readSint16LE();
@@ -64,68 +63,55 @@ bool AadTxtHeader::load(const void *src) {
 	_curNr = rs.readSint16LE();
 	return true;
 }
-
-bool AdsTxtHeader::load(const void *src) {
-	Common::MemoryReadStream rs((const byte *)src, 8);
-
-	_diaNr = rs.readSint16LE();
-	_perNr = rs.readSint16LE();
-	_aMov = rs.readSint16LE();
-	_curNr = rs.readSint16LE();
-	return true;
-}
-
-bool AtsStrHeader::load(Common::SeekableReadStream *src) {
-	_vocNr = src->readUint16LE();
-	return true;
-}
-
 
 Atdsys::Atdsys() {
-	SplitStringInit init_ssi = { nullptr, 0, 0, 220, 4, SPLIT_CENTER, 8, 8 };
+	SplitStringInit init_ssi = { nullptr, 0, 0 };
 	_aadv._dialog = false;
 	_aadv._strNr = -1;
 	_aadv._silentCount = false;
-	_adsv._dialog = -1;
-	_adsv._autoDia = false;
-	_adsv._strNr = -1;
-	_adsv._silentCount = false;
-	_atsv._display = DISPLAY_NONE;
-	_atsv._silentCount = false;
-	_atdsv._delay = &_tmpDelay;
-	_tmpDelay = 1;
+	_dialogCloseup._dialog = -1;
+	_dialogCloseup._autoDia = false;
+	_dialogCloseup._strNr = -1;
+	_dialogCloseup._silentCount = false;
+	_atdsv._delay = 1;
 	_atdsv._silent = false;
-	_atdsv._display = DISPLAY_TXT;
 	_atdsv._diaNr = -1;
 	_atdsv.aad_str = nullptr;
 	_atdsv._vocNr = -1;
 	_atdsv._eventsEnabled = true;
-	_ssret._next = false;
-	_ssr = &_ssret;
 	for (int16 i = 0; i < AAD_MAX_PERSON; i++)
 		_ssi[i] = init_ssi;
 	_invBlockNr = -1;
-	_invUseMem = nullptr;
 
 	_dialogResource = new DialogResource(ADS_TXT_STEUER);
-	_text = new Text();
+	_text = _G(txt);
 
-	_adsnb._blkNr = 0;
-	_adsnb._endNr = 0;
-	_adsStackPtr = 0;
+	_dialogCloseupNextBlock._blkNr = 0;
+	_dialogCloseupNextBlock._endNr = 0;
+	_dialogCloseupStackPtr = 0;
 
+	init();
 	initItemUseWith();
 }
 
 Atdsys::~Atdsys() {
 	for (int16 i = 0; i < MAX_HANDLE; i++) {
-		close_handle(i);
+		if (_atdsMem[i])
+			free(_atdsMem[i]);
+		_atdsMem[i] = nullptr;
 	}
 
-	if (_invUseMem)
-		free(_invUseMem);
-
 	delete _dialogResource;
+}
+
+void Atdsys::init() {
+	set_handle(AAD_DATA, AAD_TAP_OFF, AAD_TAP_MAX);
+	set_handle(DIALOG_CLOSEUP_DATA, ADS_TAP_OFF, ADS_TAP_MAX);
+	_G(gameState).AadSilent = 10;
+	_G(gameState).DelaySpeed = 5;
+	_G(moveState)[P_CHEWY].Delay = _G(gameState).DelaySpeed;
+	set_delay(&_G(gameState).DelaySpeed, _G(gameState).AadSilent);
+	set_string_end_func(&atdsStringStart);
 }
 
 void Atdsys::initItemUseWith() {
@@ -142,7 +128,7 @@ void Atdsys::initItemUseWith() {
 		objB = f.readSint16LE();
 		txtNum = f.readSint16LE();
 
-		assert(objA <= 255 && objB <= 65535);
+		assert(objA <= 255);
 
 		const uint32 key = (objA & 0xff) << 16 | objB;
 		_itemUseWithDesc[key] = txtNum;
@@ -152,7 +138,7 @@ void Atdsys::initItemUseWith() {
 }
 
 void Atdsys::set_delay(int16 *delay, int16 silent) {
-	_atdsv._delay = delay;
+	_atdsv._delay = *delay;
 	_atdsv._silent = silent;
 }
 
@@ -161,34 +147,30 @@ void Atdsys::set_string_end_func
 	_atdsv.aad_str = strFunc;
 }
 
-void Atdsys::setHasSpeech(bool hasSpeech) {
-	_hasSpeech = hasSpeech;
-	updateSoundSettings();
-}
-
-void Atdsys::updateSoundSettings() {
-	if (!_hasSpeech)
-		_atdsv._display = DISPLAY_TXT;
-	else
-		_atdsv._display = g_engine->_sound->getSpeechSubtitlesMode();
-}
-
 int16 Atdsys::get_delay(int16 txt_len) {
-	int16 z_len = (_ssi->_width / _ssi->Fvorx) + 1;
-	int16 maxLen = z_len * _ssi->_lines;
+	const int16 width = 220;
+	const int16 lines = 4;
+	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
+	int16 z_len = (width / w) + 1;
+	int16 maxLen = z_len * lines;
 	if (txt_len > maxLen)
 		txt_len = maxLen;
 
-	int16 ret = *_atdsv._delay * (txt_len + z_len);
+	int16 ret = _atdsv._delay * (txt_len + z_len);
 	return ret;
 }
 
-SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
-	_ssret._nr = 0;
-	_ssret._next = false;
-	_ssret._strPtr = _splitPtr;
-	_ssret._x = _splitX;
-	int16 zeichen_anz = (ssi_->_width / ssi_->Fvorx) + 1;
+void Atdsys::split_string(SplitStringInit *ssi_, SplitStringRet *ret) {
+	const int16 w = _G(fontMgr)->getFont()->getDataWidth();
+	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+	const int16 width = 220;
+	const int16 lines = 4;
+
+	ret->_nr = 0;
+	ret->_next = false;
+	ret->_strPtr = _splitPtr;
+	ret->_x = _splitX;
+	int16 zeichen_anz = (width / w) + 1;
 	memset(_splitPtr, 0, sizeof(char *) * MAX_STR_SPLIT);
 	calc_txt_win(ssi_);
 	char *str_adr = ssi_->_str;
@@ -215,14 +197,11 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 				++str_adr;
 				++count;
 			} else {
-				_splitPtr[_ssret._nr] = start_adr;
+				_splitPtr[ret->_nr] = start_adr;
 				start_adr[tmp_count] = 0;
-				if (ssi_->_mode == SPLIT_CENTER)
-					_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
-				else
-					_splitX[_ssret._nr] = ssi_->_x;
-				++_ssret._nr;
-				if (_ssret._nr == ssi_->_lines) {
+				_splitX[ret->_nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
+				++ret->_nr;
+				if (ret->_nr == lines) {
 					endLoop = true;
 					bool endInnerLoop = false;
 					while (!endInnerLoop) {
@@ -230,7 +209,7 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 							endInnerLoop = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							endInnerLoop = true;
-							_ssret._next = true;
+							ret->_next = true;
 						}
 						++str_adr;
 					}
@@ -257,25 +236,22 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 					test_zeilen = 2;
 				++count;
 				++str_adr;
-				if ((_ssret._nr + test_zeilen) >= ssi_->_lines) {
+				if (ret->_nr + test_zeilen >= lines) {
 					if (count < zeichen_anz) {
 						tmp_count = count;
 						endLoop = true;
 					}
-					_splitPtr[_ssret._nr] = start_adr;
+					_splitPtr[ret->_nr] = start_adr;
 					start_adr[tmp_count] = 0;
-					if (ssi_->_mode == SPLIT_CENTER)
-						_splitX[_ssret._nr] = ssi_->_x + ((ssi_->_width - (strlen(start_adr) * ssi_->Fvorx)) >> 1);
-					else
-						_splitX[_ssret._nr] = ssi_->_x;
-					++_ssret._nr;
+					_splitX[ret->_nr] = ssi_->_x + ((width - (strlen(start_adr) * w)) >> 1);
+					++ret->_nr;
 					bool ende1 = false;
 					while (!ende1) {
 						if (*str_adr == ATDS_END_TEXT)
 							ende1 = true;
 						else if (*str_adr != ' ' && *str_adr != 0) {
 							ende1 = true;
-							_ssret._next = true;
+							ret->_next = true;
 						}
 						++str_adr;
 					}
@@ -299,12 +275,10 @@ SplitStringRet *Atdsys::split_string(SplitStringInit *ssi_) {
 
 		}
 	}
-	if (_ssret._nr <= ssi_->_lines)
-		_ssret._y = ssi_->_y + (ssi_->_lines - _ssret._nr) * ssi_->FHoehe;
+	if (ret->_nr <= lines)
+		ret->_y = ssi_->_y + (lines - ret->_nr) * h;
 	else
-		_ssret._y = ssi_->_y;
-
-	return &_ssret;
+		ret->_y = ssi_->_y;
 }
 
 void Atdsys::str_null2leer(char *strStart, char *strEnd) {
@@ -316,19 +290,23 @@ void Atdsys::str_null2leer(char *strStart, char *strEnd) {
 }
 
 void Atdsys::calc_txt_win(SplitStringInit *ssi_) {
-	if (ssi_->_x - (ssi_->_width >> 1) < 2)
-		ssi_->_x = 2;
-	else if (ssi_->_x + (ssi_->_width >> 1) > (SCREEN_WIDTH - 2))
-		ssi_->_x = ((SCREEN_WIDTH - 2) - ssi_->_width);
-	else
-		ssi_->_x -= (ssi_->_width >> 1);
+	const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+	const int16 width = 220;
+	const int16 lines = 4;
 
-	if (ssi_->_y - (ssi_->_lines * ssi_->FHoehe) < 2) {
+	if (ssi_->_x - (width >> 1) < 2)
+		ssi_->_x = 2;
+	else if (ssi_->_x + (width >> 1) > (SCREEN_WIDTH - 2))
+		ssi_->_x = ((SCREEN_WIDTH - 2) - width);
+	else
+		ssi_->_x -= (width >> 1);
+
+	if (ssi_->_y - (lines * h) < 2) {
 		ssi_->_y = 2;
-	} else if (ssi_->_y + (ssi_->_lines * ssi_->FHoehe) > (SCREEN_HEIGHT - 2))
-		ssi_->_y = (SCREEN_HEIGHT - 2) - (ssi_->_lines * ssi_->FHoehe);
+	} else if (ssi_->_y + (lines * h) > (SCREEN_HEIGHT - 2))
+		ssi_->_y = (SCREEN_HEIGHT - 2) - (lines * h);
 	else {
-		ssi_->_y -= (ssi_->_lines * ssi_->FHoehe);
+		ssi_->_y -= (lines * h);
 	}
 }
 
@@ -337,221 +315,93 @@ void Atdsys::set_split_win(int16 nr, int16 x, int16 y) {
 	_ssi[nr]._y = y;
 }
 
-Common::Stream *Atdsys::pool_handle(const char *fname) {
-	Common::File *f = new Common::File();
-	f->open(fname);
-	if (f->isOpen()) {
-		_atdsHandle[ATDS_HANDLE] = f;
-	} else {
-		error("Error reading from %s", fname);
-	}
-	return f;
-}
+void Atdsys::set_handle(int16 mode, int16 chunkStart, int16 chunkNr) {
+	assert(mode == AAD_DATA || mode == DIALOG_CLOSEUP_DATA);
 
-void Atdsys::set_handle(const char *fname, int16 mode, Common::Stream *handle, int16 chunkStart, int16 chunkNr) {
-	Common::SeekableReadStream *rs = dynamic_cast<Common::SeekableReadStream *>(handle);
-	ChunkHead Ch;
-	char *tmp_adr = atds_adr(fname, chunkStart, chunkNr);
-	if (rs) {
-		_atdsHandle[mode] = rs;
-		_atdsMem[mode] = tmp_adr;
-		_atdsPoolOff[mode] = chunkStart;
-		switch (mode) {
-		case INV_USE_DATA:
-			_G(mem)->file->selectPoolItem(rs, _atdsPoolOff[mode]);
-			rs->seek(-ChunkHead::SIZE(), SEEK_CUR);
-
-			if (!Ch.load(rs)) {
-				error("Error reading from %s", fname);
-			} else {
-				free(_invUseMem);
-				_invUseMem = (char *)MALLOC(Ch.size + 3l);
-
-				if (Ch.size) {
-					if (!rs->read(_invUseMem, Ch.size)) {
-						error("Error reading from %s", fname);
-					} else {
-						crypt(_invUseMem, Ch.size);
-					}
-				}
-				_invUseMem[Ch.size] = (char)BLOCKENDE;
-				_invUseMem[Ch.size + 1] = (char)BLOCKENDE;
-				_invUseMem[Ch.size + 2] = (char)BLOCKENDE;
-			}
-			break;
-		}
-	}
-}
-
-void Atdsys::open_handle(const char *fname, int16 mode) {
-	_atdsMem[mode] = atds_adr(fname, 0, 20000);
-
-	Common::File *f = new Common::File();
-	f->open(fname);
-	if (f->isOpen()) {
-		close_handle(mode);
-		_atdsHandle[mode] = f;
-	} else {
-		error("Error reading from %s", fname);
-	}
-}
-
-void Atdsys::close_handle(int16 mode) {
-	Common::Stream *stream = _atdsHandle[mode];
-	if (stream) {
-		delete _atdsHandle[mode];
-		_atdsHandle[mode] = nullptr;
-
-		for (int i = 0; i < MAX_HANDLE; ++i) {
-			if (_atdsHandle[i] == stream)
-				_atdsHandle[i] = nullptr;
-		}
-	}
+	uint32 size = _text->findLargestChunk(chunkStart, chunkStart + chunkNr);
+	char *tmp_adr = size ? (char *)MALLOC(size + 3) : nullptr;
 
 	if (_atdsMem[mode])
 		free(_atdsMem[mode]);
-	_atdsMem[mode] = nullptr;
-}
-
-char *Atdsys::atds_adr(const char *fname, int16 chunkStart, int16 chunkNr) {
-	char *tmp_adr = nullptr;
-	uint32 size = _G(mem)->file->getPoolSize(fname, chunkStart, chunkNr);
-	if (size) {
-		tmp_adr = (char *)MALLOC(size + 3);
-	}
-
-	return tmp_adr;
+	_atdsMem[mode] = tmp_adr;
+	_atdsPoolOff[mode] = chunkStart;
 }
 
 void Atdsys::load_atds(int16 chunkNr, int16 mode) {
+	assert(mode == AAD_DATA || mode == DIALOG_CLOSEUP_DATA);
+
 	char *txt_adr = _atdsMem[mode];
 
-	ChunkHead Ch;
-	Common::SeekableReadStream *stream = dynamic_cast<Common::SeekableReadStream *>(_atdsHandle[mode]);
-
-	if (stream && txt_adr) {
-		_G(mem)->file->selectPoolItem(stream, chunkNr + _atdsPoolOff[mode]);
-		stream->seek(-ChunkHead::SIZE(), SEEK_CUR);
-		if (!Ch.load(stream)) {
-			error("load_atds error");
-		} else {
-			if (Ch.size) {
-				if (stream->read(txt_adr, Ch.size) != Ch.size) {
-					error("load_atds error");
-				} else {
-					crypt(txt_adr, Ch.size);
-				}
-			}
-			txt_adr[Ch.size] = (char)BLOCKENDE;
-			txt_adr[Ch.size + 1] = (char)BLOCKENDE;
-			txt_adr[Ch.size + 2] = (char)BLOCKENDE;
-		}
-	} else {
-		error("load_atds error");
+	if (txt_adr) {
+		const uint32 chunkSize = _text->getChunk(chunkNr + _atdsPoolOff[mode])->size;
+		const uint8 *chunkData = _text->getChunkData(chunkNr + _atdsPoolOff[mode]);
+		memcpy(txt_adr, chunkData, chunkSize);
+		delete[] chunkData;
+		txt_adr[chunkSize] = (char)BLOCKENDE;
+		txt_adr[chunkSize + 1] = (char)BLOCKENDE;
+		txt_adr[chunkSize + 2] = (char)BLOCKENDE;
 	}
 }
 
-void Atdsys::crypt(char *txt, uint32 size) {
-	uint8 *sp = (uint8 *)txt;
-	for (uint32 i = 0; i < size; i++) {
-		*sp = -(*sp);
-		++sp;
-	}
-}
+bool Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
+	assert(mode == ATS_DATA || mode == INV_USE_DATA || mode == INV_USE_DEF);
 
-void Atdsys::set_ats_mem(int16 mode) {
-	switch (mode) {
-	case ATS_DATA:
-		_ats_sheader = _G(gameState).Ats;
-		_atsMem = _atdsMem[mode];
-		break;
+	EVENTS_CLEAR;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._keyCode = '\0';
+	_G(minfo).button = 0;
 
-	case INV_USE_DATA:
-		_ats_sheader = _G(gameState).InvUse;
-		_atsMem = _atdsMem[mode];
-		break;
-
-	case INV_USE_DEF:
-		_ats_sheader = _G(gameState).InvUseDef;
-		_atsMem = _invUseMem;
-		break;
-
-	case INV_ATS_DATA:
-		_ats_sheader = _G(gameState).InvAts;
-		_atsMem = _atdsMem[mode];
-		break;
-
-	default:
-		break;
-	}
-}
-
-DisplayMode Atdsys::start_ats(int16 txtNr, int16 txtMode, int16 color, int16 mode, int16 *vocNr) {
 	*vocNr = -1;
-	set_ats_mem(mode);
 
-	_atsv._display = DISPLAY_NONE;
+	_atsv.shown = false;
 
-	if (_atsMem) {
-		if (_atsv._display != DISPLAY_NONE)
-			stop_ats();
+	Common::StringArray textArray;
 
-		int16 txt_anz;
-		_atsv._ptr = ats_get_txt(txtNr, txtMode, &txt_anz, mode);
-
-		if (_atsv._ptr) {
-			_atsv._display = _atdsv._display;
-			char *ptr = _atsv._ptr;
-			_atsv._txtLen = 0;
-
-			while (*ptr++ != ATDS_END_TEXT)
-				++_atsv._txtLen;
-
-			*vocNr = _atsv._strHeader._vocNr - ATDS_VOC_OFFSET;
-
-			if ((byte)*_atsv._ptr == 248) {
-				// Special code for no message to display
-				_atsv._display = (_atdsv._display == DISPLAY_TXT || *vocNr == -1) ?
-					DISPLAY_NONE : DISPLAY_VOC;
-
-			} else {
-				_atsv._delayCount = get_delay(_atsv._txtLen);
-				_printDelayCount1 = _atsv._delayCount / 10;
-				_atsv._color = color;
-				_mousePush = true;
-
-				if (*vocNr == -1) {
-					_atsv._display = (_atdsv._display == DISPLAY_VOC) ?
-						DISPLAY_NONE : DISPLAY_TXT;
-				}
-			}
-		}
+	if (mode != INV_USE_DEF) {
+		const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+		textArray = getTextArray(roomNum, txtNr, mode, txtMode);
+	} else {
+		textArray = getTextArray(0, txtNr, mode, -1);
 	}
 
-	return _atsv._display;
+	_atsv.text.clear();
+	for (uint i = 0; i < textArray.size(); i++)
+		_atsv.text += textArray[i] + " ";
+	_atsv.text.deleteLastChar();
+
+	if (_atsv.text.size() > 0) {
+		*vocNr = txtMode != TXT_MARK_NAME ? _text->getLastSpeechId() : -1;
+		_atsv.shown = true;
+		_atsv._txtMode = txtMode;
+		_atsv._delayCount = get_delay(_atsv.text.size());
+		_atsv._color = color;
+		_printDelayCount1 = _atsv._delayCount / 10;
+		_mousePush = true;
+	}
+
+	return _atsv.shown;
 }
 
 void Atdsys::stop_ats() {
-	_atsv._display = DISPLAY_NONE;
-}
-
-DisplayMode &Atdsys::ats_get_status() {
-	return _atsv._display;
+	_atsv.shown = false;
 }
 
 void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
-	if (_atsv._display == DISPLAY_TXT || _atsv._display == DISPLAY_ALL) {
+	if (_atsv.shown) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->getSwitchCode()) {
+			switch (g_events->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MOUSE_LEFT:
-				if (_mousePush == false) {
+			case Common::MOUSE_BUTTON_LEFT:
+				if (!_mousePush) {
+					EVENTS_CLEAR;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+					g_events->_kbInfo._keyCode = '\0';
+					_G(minfo).button = 0;
+
 					if (_atsv._silentCount <= 0 && _atsv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_atsv._delayCount = 0;
-						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
-						g_events->_kbInfo._keyCode = '\0';
 					}
 				}
 				break;
@@ -565,48 +415,50 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 		}
 
 		if (_atsv._silentCount <= 0) {
-			char *tmp_ptr = _atsv._ptr;
-			SplitStringInit *_atsSsi = &_ssi[0];
-			_atsSsi->_str = tmp_ptr;
-			_atsSsi->Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_atsSsi->FHoehe = _G(fontMgr)->getFont()->getDataHeight();
-			_atsSsi->_x = x - scrX;
-			_atsSsi->_y = y - scrY;
-			char *start_ptr = tmp_ptr;
-			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
-			_ssr = split_string(_atsSsi);
+			// TODO: Rewrite this
+			SplitStringInit *atsSsi = &_ssi[0];
+			char *txt = new char[_atsv.text.size() + 2];
+			const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+			uint shownLen = 0;
+			SplitStringRet splitString;
 
-			for (int16 i = 0; i < _ssr->_nr; i++) {
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe) + 1,
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe) - 1,
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i] + 1,
-				              _ssr->_y + (i * _atsSsi->FHoehe),
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i] - 1,
-				              _ssr->_y + (i * _atsSsi->FHoehe),
-				              0, 300, 0, _ssr->_strPtr[i]);
-				_G(out)->printxy(_ssr->_x[i],
-				              _ssr->_y + (i * _atsSsi->FHoehe),
-				              _atsv._color,
-				              300, 0, _ssr->_strPtr[i]);
-				tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
+			Common::strlcpy(txt, _atsv.text.c_str(), _atsv.text.size() + 1);
+			txt[_atsv.text.size() + 1] = ATDS_END_TEXT;
+			atsSsi->_str = txt;
+			atsSsi->_x = x - scrX;
+			atsSsi->_y = y - scrY;
+			split_string(atsSsi, &splitString);
+
+			for (int16 i = 0; i < splitString._nr; i++) {
+				if (g_engine->_sound->subtitlesEnabled()) {
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) + 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) - 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] + 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] - 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h),
+									 _atsv._color,
+									 300, 0, splitString._strPtr[i]);
+				}
+
+				shownLen += strlen(splitString._strPtr[i]) + 1;
 			}
 
-			str_null2leer(start_ptr, start_ptr + _atsv._txtLen - 1);
+			delete[] txt;
+
 			if (_atsv._delayCount <= 0) {
-				if (_ssr->_next == false) {
-					_atsv._display = (_atsv._display == DISPLAY_ALL) ?
-						DISPLAY_VOC : DISPLAY_NONE;
+				if (!splitString._next) {
+					_atsv.shown = false;
 				} else {
-					_atsv._ptr = tmp_ptr;
-					_atsv._txtLen = 0;
-					while (*tmp_ptr++ != ATDS_END_TEXT)
-						++_atsv._txtLen;
-					_atsv._delayCount = get_delay(_atsv._txtLen);
+					_atsv._delayCount = get_delay(_atsv.text.size() - shownLen);
 					_printDelayCount1 = _atsv._delayCount / 10;
 					_atsv._silentCount = _atdsv._silent;
 				}
@@ -619,79 +471,8 @@ void Atdsys::print_ats(int16 x, int16 y, int16 scrX, int16 scrY) {
 	}
 }
 
-char *Atdsys::ats_get_txt(int16 txtNr, int16 txtMode, int16 *retNr, int16 mode) {
-	char *str_ = nullptr;
-	set_ats_mem(mode);
-
-	_atsv._txtMode = txtMode;
-
-	if (!getControlBit(txtNr, ATS_ACTIVE_BIT, mode)) {
-		uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2];
-		int16 ak_nybble = (_atsv._txtMode + 1) % 2;
-
-		uint8 lo_hi[2];
-		lo_hi[1] = status >> 4;
-		lo_hi[0] = status &= 15;
-		str_ = ats_search_block(_atsv._txtMode, _atsMem);
-		if (str_ != nullptr) {
-			ats_search_nr(txtNr, &str_);
-			if (str_ != nullptr) {
-				ats_search_str(retNr, &lo_hi[ak_nybble], (uint8)_ats_sheader[txtNr * MAX_ATS_STATUS], &str_);
-
-				if (str_ != nullptr) {
-					status = 0;
-					lo_hi[1] <<= 4;
-					status |= lo_hi[0];
-					status |= lo_hi[1];
-					_ats_sheader[(txtNr * MAX_ATS_STATUS) + (_atsv._txtMode + 1) / 2] = status;
-				}
-			}
-		}
-	}
-
-	// WORKAROUND: Proper word wrapping some inventory items' look desc
-	if (txtMode == TXT_MARK_LOOK && str_ != nullptr) {
-		switch (txtNr) {
-		case CYB_KRONE_INV:
-			if (str_[37] == ' ' && str_[56] == '\0') {
-				str_[37] = '\0';
-				str_[56] = ' ';
-			}
-			break;
-		case YEL_CARD_INV:
-			if (str_[39] == ' ' && str_[46] == '\0') {
-				str_[39] = '\0';
-				str_[46] = ' ';
-			}
-			break;
-		case PAPIER_INV:
-			if (str_[32] == ' ') {
-				str_[32] = '\0';
-				*retNr = 2;
-			}
-			break;
-		default:
-			break;
-		}
-	}
-
-	return str_;
-}
-
 void Atdsys::set_ats_str(int16 txtNr, int16 txtMode, int16 strNr, int16 mode) {
-	set_ats_mem(mode);
-	uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	int16 ak_nybble = (txtMode + 1) % 2;
-
-	uint8 lo_hi[2];
-	lo_hi[1] = status >> 4;
-	lo_hi[0] = status &= 15;
-	lo_hi[ak_nybble] = strNr;
-	status = 0;
-	lo_hi[1] <<= 4;
-	status |= lo_hi[0];
-	status |= lo_hi[1];
-	_ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2] = status;
+	_text->setTextId(txtNr, txtMode, strNr, mode);
 }
 
 void Atdsys::set_ats_str(int16 txtNr, int16 strNr, int16 mode) {
@@ -699,171 +480,36 @@ void Atdsys::set_ats_str(int16 txtNr, int16 strNr, int16 mode) {
 		set_ats_str(txtNr, i, strNr, mode);
 }
 
-int16 Atdsys::get_ats_str(int16 txtNr, int16 txtMode, int16 mode) {
-	set_ats_mem(mode);
-	uint8 status = _ats_sheader[(txtNr * MAX_ATS_STATUS) + (txtMode + 1) / 2];
-	int16 ak_nybble = (txtMode + 1) % 2;
-
-	uint8 lo_hi[2];
-	lo_hi[1] = status >> 4;
-	lo_hi[0] = status &= 15;
-
-	return (int16)lo_hi[ak_nybble];
+int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx) {
+	return _text->getControlBit(txtNr, bitIdx);
 }
 
-int16 Atdsys::getControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
-	return (_ats_sheader[txtNr * MAX_ATS_STATUS] & bitIdx) != 0;
+void Atdsys::setControlBit(int16 txtNr, int16 bitIdx) {
+	_text->setControlBit(txtNr, bitIdx);
 }
 
-void Atdsys::setControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
-	_ats_sheader[txtNr * MAX_ATS_STATUS] |= bitIdx;
+void Atdsys::delControlBit(int16 txtNr, int16 bitIdx) {
+	_text->delControlBit(txtNr, bitIdx);
 }
 
-void Atdsys::delControlBit(int16 txtNr, int16 bitIdx, int16 mode) {
-	set_ats_mem(mode);
-	_ats_sheader[txtNr * MAX_ATS_STATUS] &= ~bitIdx;
-}
-
-char *Atdsys::ats_search_block(int16 txtMode, char *txtAdr) {
-	char *strP = txtAdr;
-	int ende = 0;
-
-	for (; !ende; ++strP) {
-		if (strP[0] == (char)BLOCKENDE &&
-		        strP[1] == (char)BLOCKENDE &&
-		        strP[2] == (char)BLOCKENDE) {
-			ende = 2;
-		} else if (strP[0] == (char)0xf2 && strP[1] == (char)0xfe) {
-			if (strP[2] == (char)txtMode)
-				ende = 1;
-			strP += 2;
-		}
-	}
-
-	if (ende == 2)
-		strP = nullptr;
-
-	return strP;
-}
-
-void Atdsys::ats_search_nr(int16 txtNr, char **str) {
-	char *start_str = *str;
-
-	bool done1 = false;
-	while (!done1) {
-		Common::MemoryReadStream rs1((const byte *)start_str + 2, AtsTxtHeader::SIZE());
-		_atsv._txtHeader.load(&rs1);
-
-		if (READ_LE_UINT16(start_str) == 0xFEF0 &&
-				_atsv._txtHeader._txtNr == txtNr) {
-			// Found match
-			*str = start_str + 2 + AtsTxtHeader::SIZE();
-
-			if (_atsv._txtMode) {
-				Common::MemoryReadStream rs2((const byte *)*str,
-					AtsStrHeader::SIZE());
-				_atsv._strHeader.load(&rs2);
-			}
-
-			*str += AtsStrHeader::SIZE();
-			break;
-		}
-
-		start_str += 2 + AtsTxtHeader::SIZE() + AtsStrHeader::SIZE();
-
-		// Need to iterate over the following string to next entry
-		bool done2 = false;
-		for (; !done2; start_str++) {
-			if (*start_str == 13) {
-				// Reached end of line
-				if (READ_LE_UINT16(start_str + 1) == 0xFEF1)
-					start_str += 4;
-				else if (start_str[1] == 0xe) {
-					++start_str;
-					if (start_str[1] == 0xf && start_str[2] == 0xf && start_str[3] == 0xf) {
-						done1 = done2 = true;
-						*str = nullptr;
-					} else {
-						done2 = true;
-					}
-				}
-			}
-		}
-	}
-}
-
-void Atdsys::ats_search_str(int16 *nr, uint8 *status, uint8 controlByte, char **str) {
-	char *tmp_str = *str;
-	char *start_str = *str;
-	*nr = 0;
-	bool endLoop = false;
-	int16 count = 0;
-
-	while (!endLoop) {
-		if (count == *status) {
-			if (!*tmp_str) {
-				++*nr;
-			} else if (*tmp_str == ATDS_END_TEXT) {
-				endLoop = true;
-				*str = start_str;
-				start_str -= AtsStrHeader::SIZE();
-
-				if (_atsv._txtMode != TXT_MARK_NAME) {
-					Common::MemoryReadStream rs((const byte *)start_str,
-						AtsStrHeader::SIZE());
-					_atsv._strHeader.load(&rs);
-				}
-
-				if (tmp_str[1] != ATDS_END) {
-					if (!(controlByte & ATS_COUNT_BIT))
-						++*status;
-				} else {
-					if (controlByte & ATS_RESET_BIT)
-						*status = 0;
-				}
-			}
-		} else {
-			if (*tmp_str == ATDS_END_TEXT) {
-				if (tmp_str[1] == ATDS_END) {
-					endLoop = false;
-					*nr = 0;
-					*status = count;
-					*str = start_str;
-					start_str -= AtsStrHeader::SIZE();
-
-					if (_atsv._txtMode != TXT_MARK_NAME) {
-						Common::MemoryReadStream rs((const byte *)start_str,
-							AtsStrHeader::SIZE());
-						_atsv._strHeader.load(&rs);
-					}
-				} else {
-					++count;
-					tmp_str += AtsStrHeader::SIZE() + 2;
-					start_str = tmp_str + 1;
-				}
-			} else if (*tmp_str == ATDS_END ||
-			           (tmp_str[0] == (char)BLOCKENDE &&
-			            tmp_str[1] == (char)BLOCKENDE &&
-			            tmp_str[2] == (char)BLOCKENDE)) {
-				endLoop = false;
-				*nr = 0;
-				*str = nullptr;
-			}
-		}
-
-		++tmp_str;
-	}
-}
-
-int16 Atdsys::start_aad(int16 diaNr) {
+int16 Atdsys::start_aad(int16 diaNr, bool continueWhenSpeechEnds) {
 	if (_aadv._dialog)
 		stopAad();
+
+	_continueWhenSpeechEnds = continueWhenSpeechEnds;
+
+	EVENTS_CLEAR;
+	g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+	g_events->_kbInfo._keyCode = '\0';
+	_G(minfo).button = 0;
 
 	if (_atdsMem[AAD_HANDLE]) {
 		_aadv._ptr = _atdsMem[AAD_HANDLE];
 		aad_search_dia(diaNr, &_aadv._ptr);
+
+		//const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+		//Common::StringArray s = getTextArray(roomNum, diaNr, AAD_DATA);
+
 		if (_aadv._ptr) {
 			_aadv._person.load(_aadv._ptr, _aadv._txtHeader->_perNr);
 			_aadv._ptr += _aadv._txtHeader->_perNr * sizeof(AadInfo);
@@ -897,18 +543,19 @@ void Atdsys::stopAad() {
 void Atdsys::print_aad(int16 scrX, int16 scrY) {
 	if (_aadv._dialog) {
 		if (_atdsv._eventsEnabled) {
-			switch (_G(in)->getSwitchCode()) {
+			switch (g_events->getSwitchCode()) {
 			case Common::KEYCODE_ESCAPE:
 			case Common::KEYCODE_RETURN:
-			case MOUSE_LEFT:
-				EVENTS_CLEAR;
+			case Common::MOUSE_BUTTON_LEFT:
+				if (!_mousePush) {
+					EVENTS_CLEAR;
+					g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
+					g_events->_kbInfo._keyCode = '\0';
+					_G(minfo).button = 0;
 
-				if (_mousePush == false) {
 					if (_aadv._silentCount <= 0 && _aadv._delayCount > _printDelayCount1) {
 						_mousePush = true;
 						_aadv._delayCount = 0;
-						g_events->_kbInfo._scanCode = Common::KEYCODE_INVALID;
-						g_events->_kbInfo._keyCode = '\0';
 					}
 				}
 				break;
@@ -923,69 +570,56 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 
 		if (_aadv._silentCount <= 0) {
 			char *tmp_ptr = _aadv._ptr;
-			_ssi[_aadv._strHeader->_akPerson]._str = tmp_ptr;
-			if (_aadv._person[_aadv._strHeader->_akPerson]._x != -1) {
-				_ssi[_aadv._strHeader->_akPerson]._x = _aadv._person[_aadv._strHeader->_akPerson]._x - scrX;
+			const int16 personId = _aadv._strHeader->_akPerson;
+			_ssi[personId]._str = tmp_ptr;
+			if (_aadv._person[personId]._x != -1) {
+				_ssi[personId]._x = _aadv._person[personId]._x - scrX;
 			}
-			if (_aadv._person[_aadv._strHeader->_akPerson]._y != -1) {
-				_ssi[_aadv._strHeader->_akPerson]._y = _aadv._person[_aadv._strHeader->_akPerson]._y - scrY;
+			if (_aadv._person[personId]._y != -1) {
+				_ssi[personId]._y = _aadv._person[personId]._y - scrY;
 			}
-			_ssi[_aadv._strHeader->_akPerson].Fvorx = _G(fontMgr)->getFont()->getDataWidth();
-			_ssi[_aadv._strHeader->_akPerson].FHoehe = _G(fontMgr)->getFont()->getDataHeight();
 			char *start_ptr = tmp_ptr;
 			int16 txt_len;
 			aad_get_zeilen(start_ptr, &txt_len);
 			str_null2leer(start_ptr, start_ptr + txt_len - 1);
-			SplitStringInit tmp_ssi = _ssi[_aadv._strHeader->_akPerson];
-			_ssr = split_string(&tmp_ssi);
+			SplitStringInit tmp_ssi = _ssi[personId];
+			SplitStringRet splitString;
+			split_string(&tmp_ssi, &splitString);
 
-			if (_atdsv._display != DISPLAY_VOC ||
-			        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1) {
-				for (int16 i = 0; i < _ssr->_nr; i++) {
-					_G(out)->printxy(_ssr->_x[i] + 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i] - 1,
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) + 1,
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe) - 1,
-					              0, 300, 0, _ssr->_strPtr[i]);
-					_G(out)->printxy(_ssr->_x[i],
-					              _ssr->_y + (i * _ssi[_aadv._strHeader->_akPerson].FHoehe),
-					              _aadv._person[_aadv._strHeader->_akPerson]._color,
-					              300, 0, _ssr->_strPtr[i]);
-					tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
+			const int16 h = _G(fontMgr)->getFont()->getDataHeight();
+			for (int16 i = 0; i < splitString._nr; i++) {
+				if (g_engine->_sound->subtitlesEnabled() ||
+					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET == -1) {
+					_G(out)->printxy(splitString._x[i] + 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i] - 1,
+									 splitString._y + (i * h),
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) + 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h) - 1,
+									 0, 300, 0, splitString._strPtr[i]);
+					_G(out)->printxy(splitString._x[i],
+									 splitString._y + (i * h),
+									 _aadv._person[personId]._color,
+									 300, 0, splitString._strPtr[i]);
 				}
-				str_null2leer(start_ptr, start_ptr + txt_len - 1);
-
+				tmp_ptr += strlen(splitString._strPtr[i]) + 1;
 			}
+			str_null2leer(start_ptr, start_ptr + txt_len - 1);
 
-			if (_atdsv._display != DISPLAY_TXT &&
-					(_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) != -1) {
+			if (g_engine->_sound->speechEnabled() &&
+					_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET != -1) {
 				if (_atdsv._vocNr != _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) {
 					_atdsv._vocNr = _aadv._strHeader->_vocNr - ATDS_VOC_OFFSET;
-					g_engine->_sound->playSpeech(_atdsv._vocNr,
-						_atdsv._display == DISPLAY_VOC);
-					int16 vocx = _G(spieler_vector)[_aadv._strHeader->_akPerson].Xypos[0] -
-								 _G(gameState).scrollx + _G(spieler_mi)[_aadv._strHeader->_akPerson].HotX;
-					g_engine->_sound->setSoundChannelBalance(0, getStereoPos(vocx));
-
-					if (_atdsv._display == DISPLAY_VOC) {
-						_aadv._strNr = -1;
-						_aadv._delayCount = 1;
-					}
+					g_engine->_sound->playSpeech(_atdsv._vocNr, false);
 				}
 
-				if (_atdsv._display != DISPLAY_ALL) {
-					for (int16 i = 0; i < _ssr->_nr; i++) {
-						tmp_ptr += strlen(_ssr->_strPtr[i]) + 1;
-					}
-					str_null2leer(start_ptr, start_ptr + txt_len - 1);
-				}
+				if (_continueWhenSpeechEnds && _atdsv._vocNr >= 0 && !g_engine->_sound->isSpeechActive())
+					stopAad();
 			}
 
 			if (_aadv._delayCount <= 0) {
@@ -995,18 +629,18 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 				if (tmp_ptr[1] == ATDS_END ||
 				        tmp_ptr[1] == ATDS_END_ENTRY) {
 					if (_atdsv.aad_str != 0)
-						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, _aadv._strHeader->_akPerson, AAD_STR_END);
+						_atdsv.aad_str(_atdsv._diaNr, _aadv._strNr, personId, AAD_STR_END);
 					_aadv._dialog = false;
-					_adsv._autoDia = false;
+					_dialogCloseup._autoDia = false;
 					_aadv._strNr = -1;
-					_ssret._next = false;
+					splitString._next = false;
 				} else {
-					if (_ssr->_next == false) {
+					if (!splitString._next) {
 						++_aadv._strNr;
 						while (*_aadv._ptr++ != ATDS_END_TEXT) {}
 
-						int16 tmp_person = _aadv._strHeader->_akPerson;
-						int16 tmp_str_nr = _aadv._strNr;
+						const int16 tmp_person = _aadv._strHeader->_akPerson;
+						const int16 tmp_str_nr = _aadv._strNr;
 						_aadv._strHeader = (AadStrHeader *)_aadv._ptr;
 						_aadv._ptr += sizeof(AadStrHeader);
 						if (_atdsv.aad_str != nullptr) {
@@ -1022,15 +656,8 @@ void Atdsys::print_aad(int16 scrX, int16 scrY) {
 					_aadv._silentCount = _atdsv._silent;
 				}
 			} else {
-				if (_atdsv._display != DISPLAY_VOC ||
-				        (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET) == -1)
+				if (_aadv._strHeader->_vocNr - ATDS_VOC_OFFSET == -1)
 					--_aadv._delayCount;
-
-				else if (_atdsv._display == DISPLAY_VOC) {
-					warning("FIXME - unknown constant SMP_PLAYING");
-
-					_aadv._delayCount = 0;
-				}
 			}
 		} else {
 			--_aadv._silentCount;
@@ -1068,10 +695,10 @@ void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
 			uint16 *pos = (uint16 *)start_ptr;
 			if (pos[0] == diaNr) {
 				ende = true;
-				_aadv._txtHeader = (AadTxtHeader *)start_ptr;
-				*ptr = start_ptr + sizeof(AadTxtHeader);
+				_aadv._txtHeader = (DialogCloseupTxtHeader *)start_ptr;
+				*ptr = start_ptr + sizeof(DialogCloseupTxtHeader);
 			} else {
-				start_ptr += sizeof(AadTxtHeader) + pos[1] * sizeof(AadInfo);
+				start_ptr += sizeof(DialogCloseupTxtHeader) + pos[1] * sizeof(AadInfo);
 				bool ende1 = false;
 				for (; !ende1; ++start_ptr) {
 					if (*start_ptr != ATDS_END_TEXT)
@@ -1095,60 +722,59 @@ void Atdsys::aad_search_dia(int16 diaNr, char **ptr) {
 	}
 }
 
-bool  Atdsys::ads_start(int16 diaNr) {
+bool  Atdsys::startDialogCloseup(int16 diaNr) {
 	bool ret = false;
+	bool end = false;
 
-	load_atds(diaNr, ADS_DATA);
-	bool ende = false;
+	load_atds(diaNr, DIALOG_CLOSEUP_DATA);
 
 	if (_atdsMem[ADS_HANDLE][0] == (char)BLOCKENDE &&
 		    _atdsMem[ADS_HANDLE][1] == (char)BLOCKENDE &&
 		    _atdsMem[ADS_HANDLE][2] == (char)BLOCKENDE)
-		ende = true;
+		end = true;
 
-	if (!ende) {
-		_adsv._ptr = _atdsMem[ADS_HANDLE];
-		_adsv._txtHeader.load(_adsv._ptr);
+	if (!end) {
+		_dialogCloseup._ptr = _atdsMem[ADS_HANDLE];
+		_dialogCloseup._txtHeader.load(_dialogCloseup._ptr);
 
-		if (_adsv._txtHeader._diaNr == diaNr) {
+		if (_dialogCloseup._txtHeader._diaNr == diaNr) {
 			ret = true;
-			_adsv._ptr += AdsTxtHeader::SIZE();
-			_adsv._person.load(_adsv._ptr, _adsv._txtHeader._perNr);
-			_adsv._ptr += _adsv._txtHeader._perNr * AadInfo::SIZE();
-			_adsv._dialog = diaNr;
-			_adsv._strNr = 0;
-			_adsStack[0] = 0;
-			_adsStackPtr = 1;
+			_dialogCloseup._ptr += DialogCloseupTxtHeader::SIZE();
+			_dialogCloseup._person.load(_dialogCloseup._ptr, _dialogCloseup._txtHeader._perNr);
+			_dialogCloseup._ptr += _dialogCloseup._txtHeader._perNr * AadInfo::SIZE();
+			_dialogCloseup._dialog = diaNr;
+			_dialogCloseup._strNr = 0;
+			_dialogCloseupStack[0] = 0;
+			_dialogCloseupStackPtr = 1;
 		}
 	}
 	return ret;
 }
 
-void Atdsys::stop_ads() {
-	_adsv._dialog = -1;
-	_adsv._autoDia = false;
-
+void Atdsys::stopDialogCloseup() {
+	_dialogCloseup._dialog = -1;
+	_dialogCloseup._autoDia = false;
 }
 
-int16 Atdsys::ads_get_status() {
-	return _adsv._dialog;
+int16 Atdsys::getDialogCloseupStatus() {
+	return _dialogCloseup._dialog;
 }
 
-char **Atdsys::ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
+char **Atdsys::dialogCloseupItemPtr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
 	*retNr = 0;
-	memset(_ePtr, 0, sizeof(char *) * ADS_MAX_BL_EIN);
-	if (_adsv._dialog != -1) {
-		_adsv._blkPtr = _adsv._ptr;
-		ads_search_block(blockNr, &_adsv._blkPtr);
-		if (_adsv._blkPtr) {
-			for (int16 i = 0; i < ADS_MAX_BL_EIN; i++) {
-				char *tmp_adr = _adsv._blkPtr;
-				ads_search_item(i, &tmp_adr);
-				if (tmp_adr) {
-					char nr = tmp_adr[-1];
-					tmp_adr += sizeof(AadStrHeader);
+	memset(_ePtr, 0, sizeof(char *) * DIALOG_CLOSEUP_MAX);
+	if (_dialogCloseup._dialog != -1) {
+		_dialogCloseup._blockPtr = _dialogCloseup._ptr;
+		dialogCloseupSearchBlock(blockNr, &_dialogCloseup._blockPtr);
+		if (_dialogCloseup._blockPtr) {
+			for (int16 i = 0; i < DIALOG_CLOSEUP_MAX; i++) {
+				char *itemPtr = _dialogCloseup._blockPtr;
+				dialogCloseupSearchItem(i, &itemPtr);
+				if (itemPtr) {
+					char nr = itemPtr[-1];
+					itemPtr += sizeof(AadStrHeader);
 					if (_dialogResource->isItemShown(dialogNum, blockNr, (int16)nr)) {
-						_ePtr[*retNr] = tmp_adr;
+						_ePtr[*retNr] = itemPtr;
 						_eNr[*retNr] = (int16)nr;
 						++(*retNr);
 					}
@@ -1160,120 +786,120 @@ char **Atdsys::ads_item_ptr(uint16 dialogNum, int16 blockNr, int16 *retNr) {
 	return _ePtr;
 }
 
-AdsNextBlk *Atdsys::ads_item_choice(uint16 dialogNum, int16 blockNr, int16 itemNr) {
-	_adsnb._blkNr = blockNr;
+DialogCloseupNextBlock *Atdsys::dialogCloseupItemChoice(uint16 dialogNum, int16 blockNr, int16 itemNr) {
+	_dialogCloseupNextBlock._blkNr = blockNr;
 	if (!_aadv._dialog) {
-		if (!_adsv._autoDia) {
-			ads_search_item(_eNr[itemNr], &_adsv._blkPtr);
-			if (_adsv._blkPtr) {
-				if (start_ads_auto_dia(_adsv._blkPtr))
-					_adsv._autoDia = true;
+		if (!_dialogCloseup._autoDia) {
+			dialogCloseupSearchItem(_eNr[itemNr], &_dialogCloseup._blockPtr);
+			if (_dialogCloseup._blockPtr) {
+				if (startAutoDialogCloseup(_dialogCloseup._blockPtr))
+					_dialogCloseup._autoDia = true;
 				if (_dialogResource->hasExitBit(dialogNum, blockNr, _eNr[itemNr])) {
-					stop_ads();
-					_adsnb._endNr = _eNr[itemNr];
-					_adsnb._blkNr = -1;
+					stopDialogCloseup();
+					_dialogCloseupNextBlock._endNr = _eNr[itemNr];
+					_dialogCloseupNextBlock._blkNr = -1;
 				}
 			}
 		}
 	}
 
-	return &_adsnb;
+	return &_dialogCloseupNextBlock;
 }
 
-AdsNextBlk *Atdsys::calc_next_block(uint16 dialogNum, int16 blockNr, int16 itemNr) {
+DialogCloseupNextBlock *Atdsys::calcNextDialogCloseupBlock(uint16 dialogNum, int16 blockNr, int16 itemNr) {
 	if (!_dialogResource->hasShowBit(dialogNum, blockNr, _eNr[itemNr]))
 		_dialogResource->setItemShown(dialogNum, blockNr, _eNr[itemNr], false);
-	_adsnb._endNr = _eNr[itemNr];
+	_dialogCloseupNextBlock._endNr = _eNr[itemNr];
 
 	if (_dialogResource->hasRestartBit(dialogNum, blockNr, _eNr[itemNr])) {
-		_adsnb._blkNr = 0;
+		_dialogCloseupNextBlock._blkNr = 0;
 
-		_adsStackPtr = 0;
+		_dialogCloseupStackPtr = 0;
 	} else {
 		const uint8 nextBlock = _dialogResource->getNextBlock(dialogNum, blockNr, _eNr[itemNr]);
 		if (nextBlock) {
-			_adsnb._blkNr = nextBlock;
+			_dialogCloseupNextBlock._blkNr = nextBlock;
 
-			int16 anzahl = 0;
-			while (!anzahl && _adsnb._blkNr != -1) {
+			int16 option = 0;
+			while (!option && _dialogCloseupNextBlock._blkNr != -1) {
 
-				anzahl = 0;
-				ads_item_ptr(dialogNum, _adsnb._blkNr, &anzahl);
-				if (!anzahl) {
-					_adsnb._blkNr = return_block(dialogNum);
+				option = 0;
+				dialogCloseupItemPtr(dialogNum, _dialogCloseupNextBlock._blkNr, &option);
+				if (!option) {
+					_dialogCloseupNextBlock._blkNr = getDialogCloseupBlock(dialogNum);
 				}
 			}
 		} else {
-			_adsnb._blkNr = return_block(dialogNum);
+			_dialogCloseupNextBlock._blkNr = getDialogCloseupBlock(dialogNum);
 		}
 	}
-	_adsStack[_adsStackPtr] = _adsnb._blkNr;
-	++_adsStackPtr;
+	_dialogCloseupStack[_dialogCloseupStackPtr] = _dialogCloseupNextBlock._blkNr;
+	++_dialogCloseupStackPtr;
 
-	return &_adsnb;
+	return &_dialogCloseupNextBlock;
 }
 
-int16 Atdsys::return_block(uint16 dialogNum) {
-	_adsStackPtr -= 1;
+int16 Atdsys::getDialogCloseupBlock(uint16 dialogNum) {
+	_dialogCloseupStackPtr -= 1;
 	int16 ret = -1;
-	bool ende = false;
-	while (_adsStackPtr >= 0 && !ende) {
-		short blk_nr = _adsStack[_adsStackPtr];
-		int16 anz;
-		ads_item_ptr(dialogNum, blk_nr, &anz);
-		if (anz) {
+	bool end = false;
+	while (_dialogCloseupStackPtr >= 0 && !end) {
+		short blk_nr = _dialogCloseupStack[_dialogCloseupStackPtr];
+		int16 option;
+		dialogCloseupItemPtr(dialogNum, blk_nr, &option);
+		if (option) {
 			ret = blk_nr;
-			ende = true;
+			end = true;
 		} else {
-			--_adsStackPtr;
+			--_dialogCloseupStackPtr;
 		}
 	}
 
-	++_adsStackPtr;
+	++_dialogCloseupStackPtr;
 	return ret;
 }
 
-void Atdsys::ads_search_block(int16 blockNr, char **ptr) {
+void Atdsys::dialogCloseupSearchBlock(int16 blockNr, char **ptr) {
 	char *start_ptr = *ptr;
-	bool ende = false;
-	while (!ende) {
+	bool end = false;
+	while (!end) {
 		if (*start_ptr == (char)blockNr) {
-			ende = true;
+			end = true;
 			*ptr = start_ptr;
 		} else {
 			start_ptr += 2 + sizeof(AadStrHeader);
 			while (*start_ptr++ != ATDS_END_BLOCK) {}
 			if (start_ptr[0] == ATDS_END &&
 			        start_ptr[1] == ATDS_END) {
-				ende = true;
+				end = true;
 				*ptr = nullptr;
 			}
 		}
 	}
 }
 
-void Atdsys::ads_search_item(int16 itemNr, char **blkAdr) {
+void Atdsys::dialogCloseupSearchItem(int16 itemNr, char **blkAdr) {
 	char *start_ptr = *blkAdr + 1;
-	bool ende = false;
-	while (!ende) {
+	bool end = false;
+	while (!end) {
 		if (*start_ptr == itemNr) {
-			ende = true;
+			end = true;
 			*blkAdr = start_ptr + 1;
 		} else {
 			start_ptr += 1 + sizeof(AadStrHeader);
 			while (*start_ptr++ != ATDS_END_ENTRY) {}
 			if (*start_ptr == ATDS_END_BLOCK) {
-				ende = true;
+				end = true;
 				*blkAdr = nullptr;
 			}
 		}
 	}
 }
 
-int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
+int16 Atdsys::startAutoDialogCloseup(char *itemAdr) {
 	_aadv._dialog = false;
 	if (itemAdr) {
-		_aadv._person = _adsv._person;
+		_aadv._person = _dialogCloseup._person;
 		_aadv._ptr = itemAdr;
 		_aadv._dialog = true;
 		_aadv._strNr = 0;
@@ -1282,7 +908,7 @@ int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
 		int16 txt_len;
 		aad_get_zeilen(_aadv._ptr, &txt_len);
 		_aadv._delayCount = get_delay(txt_len);
-		_atdsv._diaNr = _adsv._txtHeader._diaNr + 10000;
+		_atdsv._diaNr = _dialogCloseup._txtHeader._diaNr + 10000;
 
 		if (_atdsv.aad_str != nullptr)
 			_atdsv.aad_str(_atdsv._diaNr, 0, _aadv._strHeader->_akPerson, AAD_STR_START);
@@ -1295,30 +921,26 @@ int16 Atdsys::start_ads_auto_dia(char *itemAdr) {
 	return _aadv._dialog;
 }
 
-void Atdsys::hide_item(int16 diaNr, int16 blockNr, int16 itemNr) {
+void Atdsys::hideDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr) {
 	_dialogResource->setItemShown(diaNr, blockNr, itemNr, false);
 }
 
-void Atdsys::show_item(int16 diaNr, int16 blockNr, int16 itemNr) {
+void Atdsys::showDialogCloseupItem(int16 diaNr, int16 blockNr, int16 itemNr) {
 	_dialogResource->setItemShown(diaNr, blockNr, itemNr, true);
 }
 
-int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr, int16 mode) {
-	if (curInv != -1) {
-		if (_invBlockNr != curInv) {
-			_invBlockNr = curInv + 1;
-			load_atds(_invBlockNr + _atdsPoolOff[mode], INV_USE_DATA);
-		}
-	}
+int16 Atdsys::calc_inv_no_use(int16 curInv, int16 testNr) {
+	if (curInv != -1)
+		_invBlockNr = curInv + 1;
 
-	assert(mode <= 255 && testNr <= 65535);
+	assert(curInv <= 255);
 
-	const uint32 key = (mode & 0xff) << 16 | testNr;
+	const uint32 key = (curInv & 0xff) << 16 | testNr;
 	return (_itemUseWithDesc.contains(key)) ? _itemUseWithDesc[key] : -1;
 }
 
 int8 Atdsys::getStereoPos(int16 x) {
-	return floor(x / 2.5) * 2 - 127;
+	return floor(x / 2.5);
 }
 
 void Atdsys::saveAtdsStream(Common::WriteStream *stream) {
@@ -1333,12 +955,28 @@ uint32 Atdsys::getAtdsStreamSize() const {
 	return _dialogResource->getStreamSize();
 }
 
-Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum) {
-	return _text->getTextArray(dialogNum, entryNum);
+Common::StringArray Atdsys::getTextArray(uint dialogNum, uint entryNum, int type, int subEntry) {
+	if (dialogNum == 45 && entryNum == 295 && type == 1 && subEntry == -1 &&
+			g_engine->getLanguage() == Common::EN_ANY) {
+		// WORKAROUND: Taxi hotspot in room 45 (Big City)
+		Common::StringArray results;
+		results.push_back("Taxi");
+		return results;
+	} else if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
+		return _text->getTextArray(dialogNum, entryNum, type, subEntry);
+	else
+		return Common::StringArray();
 }
 
-Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum) {
-	return _text->getTextEntry(dialogNum, entryNum);
+Common::String Atdsys::getTextEntry(uint dialogNum, uint entryNum, int type, int subEntry) {
+	if (!getControlBit(entryNum, ATS_ACTIVE_BIT))
+		return _text->getTextEntry(dialogNum, entryNum, type, subEntry);
+	else
+		return Common::String();
+}
+
+int16 Atdsys::getLastSpeechId() {
+	return _text->getLastSpeechId();
 }
 
 } // namespace Chewy

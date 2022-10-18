@@ -68,12 +68,6 @@ bool g_bMultiByte = false;
 
 LANGUAGE g_textLanguage, g_sampleLanguage = TXT_ENGLISH;
 
-//----------------- LOCAL DEFINES ----------------------------
-
-#define languageExtension	".txt"
-#define indexExtension		".idx"
-#define sampleExtension		".smp"
-
 //----------------- FUNCTIONS --------------------------------
 
 void ResetVarsStrRes() {
@@ -156,7 +150,7 @@ static byte *FindStringBase(int id) {
 	byte *pText = g_textBuffer;
 
 	// For Tinsel 0, Ids are decremented by 1
-	if (TinselV0)
+	if (TinselVersion == 0)
 		--id;
 
 	// index into text resource file
@@ -192,7 +186,7 @@ static byte *FindStringBase(int id) {
 	while (strSkip-- != 0) {
 		// skip to next string
 
-		if (!TinselV2 || ((*pText & 0x80) == 0)) {
+		if ((TinselVersion <= 1) || ((*pText & 0x80) == 0)) {
 			// Tinsel 1, or string of length < 128
 			pText += *pText + 1;
 		} else if (*pText == 0x80) {
@@ -244,7 +238,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 		return 0;
 	}
 
-	if (!TinselV2 || ((*pText & 0x80) == 0)) {
+	if ((TinselVersion <= 1) || ((*pText & 0x80) == 0)) {
 		// get length of string
 		len = *pText;
 	} else if (*pText == 0x80) {

@@ -1,16 +1,10 @@
 #!/bin/bash
 #
 # This script downloads Mac OS X Lion installer from Apple and extracts fonts
-# from it. Mac only, unfortunately.
 
 echo_n() {
 	printf "$@"
 }
-
-if test `uname` != "Darwin"; then
-	echo This script is macOS-only
-	exit
-fi
 
 echo "Downloading InstallMacOSX.dmg..."
 if test ! -f InstallMacOSX.dmg; then
@@ -24,35 +18,25 @@ fi
 
 echo "...Done"
 
-echo_n "Mounting InstallMacOSX.dmg..."
-
-hdiutil attach -quiet InstallMacOSX.dmg
-
-if test ! -f "/Volumes/Install Mac OS X/InstallMacOSX.pkg"; then
-	echo "Failed to attach InstallMacOSX.dmg"
-	exit
-fi
-
-echo done
-
 echo_n "Extracting InstallMacOSX.pkg..."
 
-pkgutil --expand "/Volumes/Install Mac OS X/InstallMacOSX.pkg" InstallMacOSX
-hdiutil detach -quiet `hdiutil info|grep "/Volumes/Install Mac OS X"|cut -f 1`
+7z e InstallMacOSX.dmg "Install Mac OS X/InstallMacOSX.pkg"
+rm InstallMacOSX.dmg
 
-if test ! -f InstallMacOSX/InstallMacOSX.pkg/InstallESD.dmg; then
-	echo "Failed to extract InstallMacOSX.pkg;"
+if test ! -f "InstallMacOSX.pkg"; then
+	echo "Failed to extract InstallMacOSX.pkg"
 	exit
 fi
 
 echo done
 
-echo_n "Mounting InstallESD.dmg..."
+echo_n "Extracting InstallESD.dmg..."
 
-hdiutil attach -quiet -nobrowse InstallMacOSX/InstallMacOSX.pkg/InstallESD.dmg
+python xar-unpacker.py unpack InstallMacOSX.pkg InstallMacOSX.pkg/InstallESD.dmg InstallESD.dmg
+rm InstallMacOSX.pkg
 
-if test ! -f "/Volumes/Mac OS X Install ESD/Packages/Essentials.pkg"; then
-	echo "Failed to attach InstallESD.dmg"
+if test ! -f "InstallESD.dmg"; then
+	echo "Failed to unpack InstallESD.dmg"
 	exit
 fi
 
@@ -60,35 +44,63 @@ echo done
 
 echo_n "Extracting Essentials.pkg..."
 
-pkgutil --expand-full "/Volumes/Mac OS X Install ESD/Packages/Essentials.pkg" Essentials
-hdiutil detach -quiet `hdiutil info|grep "/Volumes/Mac OS X Install ESD"|cut -f 1`
+7z e InstallESD.dmg "Mac OS X Install ESD/Packages/Essentials.pkg"
+rm InstallESD.dmg
 
-if test ! -f Essentials/Payload/Library/Fonts/Osaka.ttf; then
+if test ! -f "Essentials.pkg"; then
 	echo "Failed to extract Essentials.pkg;"
 	exit
 fi
 
 echo done
 
-echo_n "Copying fonts..."
+echo_n "Extracting Payload..."
 
-for i in Osaka OsakaMono
-do
-	echo $i
-	cp "Essentials/Payload/Library/Fonts/$i.ttf" .
-done
+python xar-unpacker.py unpack Essentials.pkg Payload Payload.cpio.gz
+rm Essentials.pkg
 
-echo ...Done
+if test ! -f "Payload.cpio.gz"; then
+	echo "Failed to extract Payload.cpio.gz;"
+	exit
+fi
 
-hdiutil detach -quiet `hdiutil info|grep "/Volumes/Fonts"|cut -f 1`
+echo done
+
+echo_n "Decompressing Payload..."
+
+7z e Payload.cpio.gz
+rm Payload.cpio.gz
+
+if test ! -f "Payload.cpio"; then
+	echo "Failed to extract Payload.cpio;"
+	exit
+fi
+
+echo done
+
+echo_n "Extracting fonts..."
+
+7z e Payload.cpio "./Library/Fonts/Osaka*.ttf"
+rm Payload.cpio
+
+if test ! -f Osaka.ttf; then
+	echo "Failed to extract Osaka.ttf;"
+	exit
+fi
+
+if test ! -f OsakaMono.ttf; then
+	echo "Failed to extract OsakaMono.ttf;"
+	exit
+fi
+
+echo done
 
 zip -9 japanesemacfonts *.ttf
 mv japanesemacfonts.zip japanesemacfonts.dat
 
 echo_n "Cleaning up..."
-rm *.ttf
-rm -rf InstallMacOSX
-rm -rf Essentials
+rm Osaka.ttf
+rm OsakaMono.ttf
 echo done
 
 ls -l japanesemacfonts.dat

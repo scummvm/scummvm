@@ -40,7 +40,7 @@ void sys_main_shutdown() {
 	sys_window_destroy();
 }
 
-void sys_set_background_mode(bool on) {
+void sys_set_background_mode(bool /*on*/) {
 	// TODO: consider if we want any implementation here, and what...
 }
 
@@ -82,6 +82,43 @@ void sys_get_desktop_modes(std::vector<AGS::Engine::DisplayMode> &dms) {
 #endif
 }
 
+void sys_renderer_set_output(const AGS::Shared::String &name) {
+#ifndef AGS_PLATFORM_SCUMMVM
+	SDL_SetHint(SDL_HINT_RENDER_DRIVER, name.GetCStr());
+#endif
+}
+
+// ----------------------------------------------------------------------------
+// AUDIO UTILS
+// ----------------------------------------------------------------------------
+
+bool sys_audio_init(const AGS::Shared::String &driver_name) {
+#ifdef AGS_PLATFORM_SCUMMVM
+	return true;
+#else
+	bool res = false;
+	if (!driver_name.IsEmpty()) {
+		res = SDL_AudioInit(driver_name.GetCStr()) == 0;
+		if (!res)
+			Debug::Printf(kDbgMsg_Error, "Failed to initialize audio driver %s; error: %s",
+				driver_name.GetCStr(), SDL_GetError());
+	}
+	if (!res) {
+		res = SDL_InitSubSystem(SDL_INIT_AUDIO) == 0;
+		if (!res)
+			Debug::Printf(kDbgMsg_Error, "Failed to initialize audio backend: %s", SDL_GetError());
+	}
+	if (res)
+		Debug::Printf(kDbgMsg_Info, "Audio driver: %s", SDL_GetCurrentAudioDriver());
+	return res;
+#endif
+}
+
+void sys_audio_shutdown() {
+#ifndef AGS_PLATFORM_SCUMMVM
+	SDL_QuitSubSystem(SDL_INIT_AUDIO);
+#endif
+}
 
 // ----------------------------------------------------------------------------
 // WINDOW UTILS

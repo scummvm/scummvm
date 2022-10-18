@@ -81,7 +81,7 @@ public:
 	void beforeTurn() override;
 	void beforePrompt() override;
 	void afterPrompt() override;
-	int roomIsSpecial(unsigned room_index, unsigned *room_desc_string) override;
+	int roomIsSpecial(uint room_index, uint *room_desc_string) override;
 	void handleSpecialOpcode() override;
 	bool handle_restart() override;
 	void synchronizeSave(Common::Serializer &s) override;

@@ -19,6 +19,7 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
@@ -278,15 +279,9 @@ void GUI_Click(ScriptGUI *scgui, int mbut) {
 void GUI_ProcessClick(int x, int y, int mbut) {
 	int guiid = gui_get_interactable(x, y);
 	if (guiid >= 0) {
-		const int real_mousex = _G(mousex);
-		const int real_mousey = _G(mousey);
-		_G(mousex) = x;
-		_G(mousey) = y;
-		_GP(guis)[guiid].Poll();
+		_GP(guis)[guiid].Poll(x, y);
 		gui_on_mouse_down(guiid, mbut);
 		gui_on_mouse_up(guiid, mbut);
-		_G(mousex) = real_mousex;
-		_G(mousey) = real_mousey;
 	}
 }
 
@@ -311,9 +306,9 @@ void remove_popup_interface(int ifacenum) {
 void process_interface_click(int ifce, int btn, int mbut) {
 	if (btn < 0) {
 		// click on GUI background
-		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2,
-		                    RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
-		                    RuntimeScriptValue().SetInt32(mbut));
+		RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(&_G(scrGui)[ifce], &_GP(ccDynamicGUI)),
+					RuntimeScriptValue().SetInt32(mbut) };
+		QueueScriptFunction(kScInstGame, _GP(guis)[ifce].OnClickHandler.GetCStr(), 2, params);
 		return;
 	}
 
@@ -321,8 +316,8 @@ void process_interface_click(int ifce, int btn, int mbut) {
 	int rtype = kGUIAction_None, rdata = 0;
 	if (btype == kGUIButton) {
 		GUIButton *gbuto = (GUIButton *)_GP(guis)[ifce].GetControl(btn);
-		rtype = gbuto->ClickAction[kMouseLeft];
-		rdata = gbuto->ClickData[kMouseLeft];
+		rtype = gbuto->ClickAction[kGUIClickLeft];
+		rdata = gbuto->ClickData[kGUIClickLeft];
 	} else if ((btype == kGUISlider) || (btype == kGUITextBox) || (btype == kGUIListBox))
 		rtype = kGUIAction_RunScript;
 	else quit("unknown GUI object triggered process_interface");
@@ -335,23 +330,23 @@ void process_interface_click(int ifce, int btn, int mbut) {
 		// if the object has a special handler script then run it;
 		// otherwise, run interface_click
 		if ((theObj->GetEventCount() > 0) &&
-		        (!theObj->EventHandlers[0].IsEmpty()) &&
-		        (!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
+			(!theObj->EventHandlers[0].IsEmpty()) &&
+			(!_G(gameinst)->GetSymbolAddress(theObj->EventHandlers[0].GetCStr()).IsNull())) {
 			// control-specific event handler
-			if (strchr(theObj->GetEventArgs(0).GetCStr(), ',') != nullptr)
-				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
-				                    RuntimeScriptValue().SetInt32(mbut));
-			else
-				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1,
-				                    RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)));
-		} else
-			QueueScriptFunction(kScInstGame, "interface_click", 2,
-			                    RuntimeScriptValue().SetInt32(ifce),
-			                    RuntimeScriptValue().SetInt32(btn));
+			if (theObj->GetEventArgs(0).FindChar(',') != String::NoIndex) {
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)),
+					RuntimeScriptValue().SetInt32(mbut) };
+				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 2, params);
+			} else {
+				RuntimeScriptValue params[]{ RuntimeScriptValue().SetDynamicObject(theObj, &_GP(ccDynamicGUIObject)) };
+				QueueScriptFunction(kScInstGame, theObj->EventHandlers[0].GetCStr(), 1, params);
+			}
+		} else {
+			RuntimeScriptValue params[]{ ifce , btn };
+			QueueScriptFunction(kScInstGame, "interface_click", 2, params);
+		}
 	}
 }
-
 
 void replace_macro_tokens(const char *text, String &fixed_text) {
 	const char *curptr = &text[0];
@@ -383,13 +378,13 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 			macroname[idd] = 0;
 			tempo[0] = 0;
 			if (ags_stricmp(macroname, "score") == 0)
-				sprintf(tempo, "%d", _GP(play).score);
+				snprintf(tempo, sizeof(tempo), "%d", _GP(play).score);
 			else if (ags_stricmp(macroname, "totalscore") == 0)
-				sprintf(tempo, "%d", MAXSCORE);
+				snprintf(tempo, sizeof(tempo), "%d", MAXSCORE);
 			else if (ags_stricmp(macroname, "scoretext") == 0)
-				sprintf(tempo, "%d of %d", _GP(play).score, MAXSCORE);
+				snprintf(tempo, sizeof(tempo), "%d of %d", _GP(play).score, MAXSCORE);
 			else if (ags_stricmp(macroname, "gamename") == 0)
-				strcpy(tempo, _GP(play).game_name);
+				snprintf(tempo, sizeof(tempo), "%s", _GP(play).game_name);
 			else if (ags_stricmp(macroname, "overhotspot") == 0) {
 				// While game is in Wait mode, no overhotspot text
 				if (!IsInterfaceEnabled())
@@ -398,7 +393,7 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 					GetLocationName(game_to_data_coord(_G(mousex)), game_to_data_coord(_G(mousey)), tempo);
 			} else { // not a macro, there's just a @ in the message
 				curptr = curptrWasAt + 1;
-				strcpy(tempo, "@");
+				snprintf(tempo, sizeof(tempo), "%s", "@");
 			}
 
 			fixed_text.Append(tempo);
@@ -412,28 +407,13 @@ void replace_macro_tokens(const char *text, String &fixed_text) {
 }
 
 
-void update_gui_zorder() {
-	int numdone = 0, b;
-
-	// for each GUI
-	for (int a = 0; a < _GP(game).numgui; a++) {
-		// find the right place in the draw order array
-		int insertAt = numdone;
-		for (b = 0; b < numdone; b++) {
-			if (_GP(guis)[a].ZOrder < _GP(guis)[_GP(play).gui_draw_order[b]].ZOrder) {
-				insertAt = b;
-				break;
-			}
-		}
-		// insert the new item
-		for (b = numdone - 1; b >= insertAt; b--)
-			_GP(play).gui_draw_order[b + 1] = _GP(play).gui_draw_order[b];
-		_GP(play).gui_draw_order[insertAt] = a;
-		numdone++;
-	}
-
+bool sort_gui_less(const int g1, const int g2) {
+	return _GP(guis)[g1].ZOrder < _GP(guis)[g2].ZOrder;
 }
 
+void update_gui_zorder() {
+	std::sort(_GP(play).gui_draw_order.begin(), _GP(play).gui_draw_order.end(), sort_gui_less);
+}
 
 void export_gui_controls(int ee) {
 	for (int ff = 0; ff < _GP(guis)[ee].GetControlCount(); ff++) {
@@ -454,50 +434,30 @@ void unexport_gui_controls(int ee) {
 	}
 }
 
-int convert_gui_disabled_style(int oldStyle) {
-	int toret = GUIDIS_GREYOUT;
-
-	// if GUIs Turn Off is selected, don't grey out buttons for
-	// any Persistent GUIs which remain
-	// set to 0x80 so that it is still non-zero, but has no effect
-	if (oldStyle == 3)
-		toret = GUIDIS_GUIOFF;
-	// GUIs Go Black
-	else if (oldStyle == 1)
-		toret = GUIDIS_BLACKOUT;
-	// GUIs unchanged
-	else if (oldStyle == 2)
-		toret = GUIDIS_UNCHANGED;
-
-	return toret;
-}
-
 void update_gui_disabled_status() {
 	// update GUI display status (perhaps we've gone into
 	// an interface disabled state)
 	int all_buttons_was = _G(all_buttons_disabled);
-	_G(all_buttons_disabled) = 0;
+	_G(all_buttons_disabled) = -1;
 
 	if (!IsInterfaceEnabled()) {
-		_G(all_buttons_disabled) = _G(gui_disabled_style);
+		_G(all_buttons_disabled) = GUI::Options.DisabledStyle;
 	}
 
 	if (all_buttons_was != _G(all_buttons_disabled)) {
 		// As controls become enabled we must notify parent GUIs
 		// to let them reset control-under-mouse detection
 		for (int aa = 0; aa < _GP(game).numgui; aa++) {
-			_GP(guis)[aa].OnControlPositionChanged(); // this marks GUI as changed too
+			_GP(guis)[aa].MarkControlsChanged();
 		}
-
-		if (_G(gui_disabled_style) != GUIDIS_UNCHANGED) {
+		if (GUI::Options.DisabledStyle != kGuiDis_Unchanged) {
 			invalidate_screen();
 		}
 	}
 }
 
-
 int adjust_x_for_guis(int xx, int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
 		return xx;
 	// If it's covered by a GUI, move it right a bit
 	for (int aa = 0; aa < _GP(game).numgui; aa++) {
@@ -520,7 +480,7 @@ int adjust_x_for_guis(int xx, int yy) {
 }
 
 int adjust_y_for_guis(int yy) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
 		return yy;
 	// If it's covered by a GUI, move it down a bit
 	for (int aa = 0; aa < _GP(game).numgui; aa++) {
@@ -543,7 +503,7 @@ int adjust_y_for_guis(int yy) {
 }
 
 int gui_get_interactable(int x, int y) {
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0))
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0))
 		return -1;
 	return GetGUIAt(x, y);
 }
@@ -551,13 +511,13 @@ int gui_get_interactable(int x, int y) {
 int gui_on_mouse_move() {
 	int mouse_over_gui = -1;
 	// If all GUIs are off, skip the loop
-	if ((_GP(game).options[OPT_DISABLEOFF] == 3) && (_G(all_buttons_disabled) > 0));
+	if ((_GP(game).options[OPT_DISABLEOFF] == kGuiDis_Off) && (_G(all_buttons_disabled) >= 0));
 	else {
 		// Scan for mouse-y-pos GUIs, and pop one up if appropriate
 		// Also work out the mouse-over GUI while we're at it
-		int ll;
-		for (ll = 0; ll < _GP(game).numgui; ll++) {
-			const int guin = _GP(play).gui_draw_order[ll];
+		// CHECKME: not sure why, but we're testing forward draw order here -
+		// from farthest to nearest (this was in original code?)
+		for (int guin : _GP(play).gui_draw_order) {
 			if (_GP(guis)[guin].IsInteractableAt(_G(mousex), _G(mousey))) mouse_over_gui = guin;
 
 			if (_GP(guis)[guin].PopupStyle != kGUIPopupMouseY) continue;
@@ -633,7 +593,7 @@ void gui_on_mouse_up(const int wasongui, const int wasbutdown) {
 
 void gui_on_mouse_down(const int guin, const int mbut) {
 	debug_script_log("Mouse click over GUI %d", guin);
-	_GP(guis)[guin].OnMouseButtonDown();
+	_GP(guis)[guin].OnMouseButtonDown(_G(mousex), _G(mousey));
 	// run GUI click handler if not on any control
 	if ((_GP(guis)[guin].MouseDownCtrl < 0) && (!_GP(guis)[guin].OnClickHandler.IsEmpty()))
 		force_event(EV_IFACECLICK, guin, -1, mbut);

@@ -232,47 +232,9 @@ static const char *const k1ThePoisonStringsDOSCDEnglish[4] = {
 
 static const StringListProvider k1ThePoisonStringsDOSCDEnglishProvider = { ARRAYSIZE(k1ThePoisonStringsDOSCDEnglish), k1ThePoisonStringsDOSCDEnglish };
 
-static const char *const k1FluteStringsDOSCDEnglish[40] = {
+static const char *const k1FluteStringsDOSCDEnglish[2] = {
 	"Not very impressive sounding.",
-	"That last note sure was high!",
-	"\xBA",
-	"\xBA",
-	"",
-	"\x01",
-	"\x01\xB3",
-	"\xB3",
-	"\x06\x04\x08\x03\x06",
-	"\x08\x01\x01",
-	"\x02\x04",
-	"\x05\x02",
-	"\x08\x01\x01",
-	"\x11",
-	"5",
-	"Y",
-	"",
-	"",
-	"",
-	"",
-	"\x15",
-	"9",
-	"]",
-	"",
-	"",
-	"",
-	"",
-	"\x07",
-	")",
-	"M",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"",
-	"SHAPE_HORZ_REV",
-	"SHAPE_VERT_REV"
+	"That last note sure was high!"
 };
 
 static const StringListProvider k1FluteStringsDOSCDEnglishProvider = { ARRAYSIZE(k1FluteStringsDOSCDEnglish), k1FluteStringsDOSCDEnglish };
@@ -394,7 +356,7 @@ static const char *const k1GUIStringsDOSCDEnglish[81] = {
 	"off",
 	"Yes",
 	"No",
-	"\xCD\x0E\x17""+""\xD5\x0E\x17""+""\xDA\x0E\x17""+""\xE1\x0E\x17""+""\xE6\x0E\x17""+""\xEE\x0E\x17""+""\xF8\x0E\x17""+""\x03\x0F\x17""+""\x10\x0F\x17""+""\x18\x0F\x17""+""\x1F\x0F\x17""+$""\x0F\x17""+Walk speed ",
+	"Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are ",

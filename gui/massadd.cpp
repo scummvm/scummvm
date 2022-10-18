@@ -27,6 +27,8 @@
 #include "common/taskbar.h"
 #include "common/translation.h"
 
+#include "engines/advancedDetector.h"
+
 #include "gui/massadd.h"
 
 #ifndef DISABLE_MASS_ADD
@@ -174,7 +176,7 @@ void MassAddDialog::handleTickle() {
 		}
 
 		// Run the detector on the dir
-		DetectionResults detectionResults = EngineMan.detectGames(files);
+		DetectionResults detectionResults = EngineMan.detectGames(files, (ADGF_WARNING | ADGF_UNSUPPORTED), true);
 
 		if (detectionResults.foundUnknownGames()) {
 			Common::U32String report = detectionResults.generateUnknownGameReport(false, 80);
@@ -209,10 +211,10 @@ void MassAddDialog::handleTickle() {
 					Common::ConfigManager::Domain *dom = ConfMan.getDomain(*iter);
 					assert(dom);
 
-					if ((*dom)["engineid"] == result.engineId &&
+					if ((!dom->contains("engineid") || (*dom)["engineid"] == result.engineId) &&
 						(*dom)["gameid"] == result.gameId &&
 					    dom->getValOrDefault("platform") == resultPlatformCode &&
-					    dom->getValOrDefault("language") == resultLanguageCode) {
+						parseLanguage(dom->getValOrDefault("language")) == parseLanguage(resultLanguageCode)) {
 						duplicate = true;
 						break;
 					}

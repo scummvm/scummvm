@@ -21,435 +21,12 @@
 
 #include "agos/drivers/simon1/adlib.h"
 
-#include "common/textconsole.h"
-#include "common/util.h"
 #include "common/file.h"
 
 namespace AGOS {
 
-enum {
-	kChannelUnused       = 0xFF,
-	kChannelOrphanedFlag = 0x80,
-
-	kOPLVoicesCount = 9
-};
-
-MidiDriver_Simon1_AdLib::Voice::Voice()
-	: channel(kChannelUnused), note(0), instrTotalLevel(0), instrScalingLevel(0), frequency(0) {
-}
-
-MidiDriver_Simon1_AdLib::MidiDriver_Simon1_AdLib(const byte *instrumentData)
-	: _isOpen(false), _opl(nullptr), _timerProc(nullptr), _timerParam(nullptr),
-	  _melodyVoices(0), _amvdrBits(0), _rhythmEnabled(false), _voices(), _midiPrograms(),
-	  _instruments(instrumentData) {
-}
-
-MidiDriver_Simon1_AdLib::~MidiDriver_Simon1_AdLib() {
-	close();
-	delete[] _instruments;
-}
-
-int MidiDriver_Simon1_AdLib::open() {
-	if (_isOpen) {
-		return MERR_ALREADY_OPEN;
-	}
-
-	_opl = OPL::Config::create();
-	if (!_opl) {
-		return MERR_DEVICE_NOT_AVAILABLE;
-	}
-
-	if (!_opl->init()) {
-		delete _opl;
-		_opl = nullptr;
-
-		return MERR_CANNOT_CONNECT;
-	}
-
-	_opl->start(new Common::Functor0Mem<void, MidiDriver_Simon1_AdLib>(this, &MidiDriver_Simon1_AdLib::onTimer));
-
-	_opl->writeReg(0x01, 0x20);
-	_opl->writeReg(0x08, 0x40);
-	_opl->writeReg(0xBD, 0xC0);
-	reset();
-
-	_isOpen = true;
-	return 0;
-}
-
-bool MidiDriver_Simon1_AdLib::isOpen() const {
-	return _isOpen;
-}
-
-void MidiDriver_Simon1_AdLib::close() {
-	setTimerCallback(nullptr, nullptr);
-
-	if (_isOpen) {
-		_opl->stop();
-		delete _opl;
-		_opl = nullptr;
-
-		_isOpen = false;
-	}
-}
-
-void MidiDriver_Simon1_AdLib::send(uint32 b) {
-	int channel = b & 0x0F;
-	int command = b & 0xF0;
-	int param1  = (b >>  8) & 0xFF;
-	int param2  = (b >> 16) & 0xFF;
-
-	// The percussion channel is handled specially. The AdLib output uses
-	// channels 11 to 15 for percussions. For this, the original converted
-	// note on on the percussion channel to note on channels 11 to 15 before
-	// giving it to the AdLib output. We do this in here for simplicity.
-	if (command == 0x90 && channel == 9) {
-		param1 -= 36;
-		if (param1 < 0 || param1 >= ARRAYSIZE(_rhythmMap)) {
-			return;
-		}
-
-		channel = _rhythmMap[param1].channel;
-		MidiDriver::send(0xC0 | channel, _rhythmMap[param1].program, 0);
-
-		param1 = _rhythmMap[param1].note;
-		MidiDriver::send(0x80 | channel, param1, param2);
-
-		param2 >>= 1;
-	}
-
-	switch (command) {
-	case 0x80: // note OFF
-		noteOff(channel, param1);
-		break;
-
-	case 0x90: // note ON
-		if (param2 == 0) {
-			noteOff(channel, param1);
-		} else {
-			noteOn(channel, param1, param2);
-		}
-		break;
-
-	case 0xB0: // control change
-		controlChange(channel, param1, param2);
-		break;
-
-	case 0xC0: // program change
-		programChange(channel, param1);
-		break;
-
-	default:
-		break;
-	}
-}
-
-void MidiDriver_Simon1_AdLib::setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) {
-	_timerParam = timer_param;
-	_timerProc = timer_proc;
-}
-
-uint32 MidiDriver_Simon1_AdLib::getBaseTempo() {
-	return 1000000 / OPL::OPL::kDefaultCallbackFrequency;
-}
-
-void MidiDriver_Simon1_AdLib::onTimer() {
-	if (_timerProc) {
-		(*_timerProc)(_timerParam);
-	}
-}
-
-void MidiDriver_Simon1_AdLib::reset() {
-	resetOPLVoices();
-	resetRhythm();
-	for (int i = 0; i < kNumberOfVoices; ++i) {
-		_voices[i].channel = kChannelUnused;
-	}
-	resetVoices();
-}
-
-void MidiDriver_Simon1_AdLib::resetOPLVoices() {
-	_amvdrBits &= 0xE0;
-	_opl->writeReg(0xBD, _amvdrBits);
-	for (int i = 8; i >= 0; --i) {
-		_opl->writeReg(0xB0 + i, 0);
-	}
-}
-
-void MidiDriver_Simon1_AdLib::resetRhythm() {
-	_melodyVoices = 9;
-	_amvdrBits = 0xC0;
-	_opl->writeReg(0xBD, _amvdrBits);
-}
-
-void MidiDriver_Simon1_AdLib::resetVoices() {
-	memset(_midiPrograms, 0, sizeof(_midiPrograms));
-	for (int i = 0; i < kNumberOfVoices; ++i) {
-		_voices[i].channel = kChannelUnused;
-	}
-
-	for (int i = 0; i < kOPLVoicesCount; ++i) {
-		resetRhythm();
-		_opl->writeReg(0x08, 0x00);
-
-		int oplRegister = _operatorMap[i];
-		for (int j = 0; j < 4; ++j) {
-			oplRegister += 0x20;
-
-			_opl->writeReg(oplRegister + 0, _operatorDefaults[2 * j + 0]);
-			_opl->writeReg(oplRegister + 3, _operatorDefaults[2 * j + 1]);
-		}
-
-		_opl->writeReg(oplRegister + 0x60, 0x00);
-		_opl->writeReg(oplRegister + 0x63, 0x00);
-
-		// This seems to be serious bug but the original does it the same way.
-		_opl->writeReg(_operatorMap[i] + i, 0x08);
-	}
-}
-
-int MidiDriver_Simon1_AdLib::allocateVoice(uint channel) {
-	for (int i = 0; i < _melodyVoices; ++i) {
-		if (_voices[i].channel == (channel | kChannelOrphanedFlag)) {
-			return i;
-		}
-	}
-
-	for (int i = 0; i < _melodyVoices; ++i) {
-		if (_voices[i].channel == kChannelUnused) {
-			return i;
-		}
-	}
-
-	for (int i = 0; i < _melodyVoices; ++i) {
-		if (_voices[i].channel > 0x7F) {
-			return i;
-		}
-	}
-
-	// The original had some logic for a priority based reuse of channels.
-	// However, the priority value is always 0, which causes the first channel
-	// to be picked all the time.
-	const int voice = 0;
-	_opl->writeReg(0xA0 + voice, (_voices[voice].frequency     ) & 0xFF);
-	_opl->writeReg(0xB0 + voice, (_voices[voice].frequency >> 8) & 0xFF);
-	return voice;
-}
-
-void MidiDriver_Simon1_AdLib::noteOff(uint channel, uint note) {
-	if (_melodyVoices <= 6 && channel >= 11) {
-		_amvdrBits &= ~(_rhythmInstrumentMask[channel - 11]);
-		_opl->writeReg(0xBD, _amvdrBits);
-	} else {
-		for (int i = 0; i < _melodyVoices; ++i) {
-			if (_voices[i].note == note && _voices[i].channel == channel) {
-				_voices[i].channel |= kChannelOrphanedFlag;
-				_opl->writeReg(0xA0 + i, (_voices[i].frequency     ) & 0xFF);
-				_opl->writeReg(0xB0 + i, (_voices[i].frequency >> 8) & 0xFF);
-				return;
-			}
-		}
-	}
-}
-
-void MidiDriver_Simon1_AdLib::noteOn(uint channel, uint note, uint velocity) {
-	if (_rhythmEnabled && channel >= 11) {
-		noteOnRhythm(channel, note, velocity);
-		return;
-	}
-
-	const int voiceNum = allocateVoice(channel);
-	Voice &voice = _voices[voiceNum];
-
-	if ((voice.channel & 0x7F) != channel) {
-		setupInstrument(voiceNum, _midiPrograms[channel]);
-	}
-	voice.channel = channel;
-
-	_opl->writeReg(0x43 + _operatorMap[voiceNum], (0x3F - (((velocity | 0x80) * voice.instrTotalLevel) >> 8)) | voice.instrScalingLevel);
-
-	voice.note = note;
-	if (note >= 0x80) {
-		note = 0;
-	}
-
-	const int frequencyAndOctave = _frequencyIndexAndOctaveTable[note];
-	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
-
-	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
-	voice.frequency = (highByte << 8) | lowByte;
-
-	_opl->writeReg(0xA0 + voiceNum, lowByte);
-	_opl->writeReg(0xB0 + voiceNum, highByte | 0x20);
-}
-
-void MidiDriver_Simon1_AdLib::noteOnRhythm(uint channel, uint note, uint velocity) {
-	const uint voiceNum = channel - 5;
-	Voice &voice = _voices[voiceNum];
-
-	_amvdrBits |= _rhythmInstrumentMask[voiceNum - 6];
-
-	const uint level = (0x3F - (((velocity | 0x80) * voice.instrTotalLevel) >> 8)) | voice.instrScalingLevel;
-	if (voiceNum == 6) {
-		_opl->writeReg(0x43 + _rhythmOperatorMap[voiceNum - 6], level);
-	} else {
-		_opl->writeReg(0x40 + _rhythmOperatorMap[voiceNum - 6], level);
-	}
-
-	voice.note = note;
-	if (note >= 0x80) {
-		note = 0;
-	}
-
-	const int frequencyAndOctave = _frequencyIndexAndOctaveTable[note];
-	const uint frequency = _frequencyTable[frequencyAndOctave & 0x0F];
-
-	uint highByte = ((frequency & 0xFF00) >> 8) | ((frequencyAndOctave & 0x70) >> 2);
-	uint lowByte  = frequency & 0x00FF;
-	voice.frequency = (highByte << 8) | lowByte;
-
-	const uint oplOperator = _rhythmVoiceMap[voiceNum - 6];
-	_opl->writeReg(0xA0 + oplOperator, lowByte);
-	_opl->writeReg(0xB0 + oplOperator, highByte);
-
-	_opl->writeReg(0xBD, _amvdrBits);
-}
-
-void MidiDriver_Simon1_AdLib::controlChange(uint channel, uint controller, uint value) {
-	// Enable/Disable Rhythm Section
-	if (controller == 0x67) {
-		resetVoices();
-		_rhythmEnabled = (value != 0);
-
-		if (_rhythmEnabled) {
-			_melodyVoices = 6;
-			_amvdrBits = 0xE0;
-		} else {
-			_melodyVoices = 9;
-			_amvdrBits = 0xC0;
-		}
-
-		_voices[6].channel = kChannelUnused;
-		_voices[7].channel = kChannelUnused;
-		_voices[8].channel = kChannelUnused;
-
-		_opl->writeReg(0xBD, _amvdrBits);
-	}
-}
-
-void MidiDriver_Simon1_AdLib::programChange(uint channel, uint program) {
-	_midiPrograms[channel] = program;
-
-	if (_rhythmEnabled && channel >= 11) {
-		setupInstrument(channel - 5, program);
-	} else {
-		// Fully unallocate all previously allocated but now unused voices for
-		// this MIDI channel.
-		for (uint i = 0; i < kOPLVoicesCount; ++i) {
-			if (_voices[i].channel == (channel | kChannelOrphanedFlag)) {
-				_voices[i].channel = kChannelUnused;
-			}
-		}
-
-		// Set the program for all voices allocted for this MIDI channel.
-		for (uint i = 0; i < kOPLVoicesCount; ++i) {
-			if (_voices[i].channel == channel) {
-				setupInstrument(i, program);
-			}
-		}
-	}
-}
-
-void MidiDriver_Simon1_AdLib::setupInstrument(uint voice, uint instrument) {
-	const byte *instrumentData = _instruments + instrument * 16;
-
-	int scaling = instrumentData[3];
-	if (_rhythmEnabled && voice >= 7) {
-		scaling = instrumentData[2];
-	}
-
-	const int scalingLevel = scaling & 0xC0;
-	const int totalLevel   = scaling & 0x3F;
-
-	_voices[voice].instrScalingLevel = scalingLevel;
-	_voices[voice].instrTotalLevel   = (-(totalLevel - 0x3F)) & 0xFF;
-
-	if (!_rhythmEnabled || voice <= 6) {
-		int oplRegister = _operatorMap[voice];
-		for (int j = 0; j < 4; ++j) {
-			oplRegister += 0x20;
-			_opl->writeReg(oplRegister + 0, *instrumentData++);
-			_opl->writeReg(oplRegister + 3, *instrumentData++);
-		}
-		oplRegister += 0x60;
-		_opl->writeReg(oplRegister + 0, *instrumentData++);
-		_opl->writeReg(oplRegister + 3, *instrumentData++);
-
-		_opl->writeReg(0xC0 + voice, *instrumentData++);
-	} else {
-		voice -= 7;
-
-		int oplRegister = _rhythmOperatorMap[voice + 1];
-		for (int j = 0; j < 4; ++j) {
-			oplRegister += 0x20;
-			_opl->writeReg(oplRegister + 0, *instrumentData++);
-			++instrumentData;
-		}
-		oplRegister += 0x60;
-		_opl->writeReg(oplRegister + 0, *instrumentData++);
-		++instrumentData;
-
-		_opl->writeReg(0xC0 + _rhythmVoiceMap[voice + 1], *instrumentData++);
-	}
-}
-
-const int MidiDriver_Simon1_AdLib::_operatorMap[9] = {
-	0x00, 0x01, 0x02, 0x08, 0x09, 0x0A, 0x10, 0x11,
-	0x12
-};
-
-const int MidiDriver_Simon1_AdLib::_operatorDefaults[8] = {
-	0x01, 0x11, 0x4F, 0x00, 0xF1, 0xF2, 0x53, 0x74
-};
-
-const int MidiDriver_Simon1_AdLib::_rhythmOperatorMap[5] = {
-	0x10, 0x14, 0x12, 0x15, 0x11
-};
-
-const uint MidiDriver_Simon1_AdLib::_rhythmInstrumentMask[5] = {
-	0x10, 0x08, 0x04, 0x02, 0x01
-};
-
-const int MidiDriver_Simon1_AdLib::_rhythmVoiceMap[5] = {
-	6, 7, 8, 8, 7
-};
-
-const int MidiDriver_Simon1_AdLib::_frequencyIndexAndOctaveTable[128] = {
-	0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07,
-	0x08, 0x09, 0x0A, 0x0B, 0x00, 0x01, 0x02, 0x03,
-	0x04, 0x05, 0x06, 0x07, 0x08, 0x09, 0x0A, 0x0B,
-	0x10, 0x11, 0x12, 0x13, 0x14, 0x15, 0x16, 0x17,
-	0x18, 0x19, 0x1A, 0x1B, 0x20, 0x21, 0x22, 0x23,
-	0x24, 0x25, 0x26, 0x27, 0x28, 0x29, 0x2A, 0x2B,
-	0x30, 0x31, 0x32, 0x33, 0x34, 0x35, 0x36, 0x37,
-	0x38, 0x39, 0x3A, 0x3B, 0x40, 0x41, 0x42, 0x43,
-	0x44, 0x45, 0x46, 0x47, 0x48, 0x49, 0x4A, 0x4B,
-	0x50, 0x51, 0x52, 0x53, 0x54, 0x55, 0x56, 0x57,
-	0x58, 0x59, 0x5A, 0x5B, 0x60, 0x61, 0x62, 0x63,
-	0x64, 0x65, 0x66, 0x67, 0x68, 0x69, 0x6A, 0x6B,
-	0x70, 0x71, 0x72, 0x73, 0x74, 0x75, 0x76, 0x77,
-	0x78, 0x79, 0x7A, 0x7B, 0x70, 0x71, 0x72, 0x73,
-	0x74, 0x75, 0x76, 0x77, 0x78, 0x79, 0x7A, 0x7B,
-	0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B, 0x7B
-};
-
-const int MidiDriver_Simon1_AdLib::_frequencyTable[16] = {
-	0x0157, 0x016B, 0x0181, 0x0198, 0x01B0, 0x01CA, 0x01E5, 0x0202,
-	0x0220, 0x0241, 0x0263, 0x0287, 0x2100, 0xD121, 0xA307, 0x46A4
-};
-
-const MidiDriver_Simon1_AdLib::RhythmMap MidiDriver_Simon1_AdLib::_rhythmMap[39] = {
+// Rhythm map hardcoded in the Simon 1 executable.
+const MidiDriver_Simon1_AdLib::RhythmMapEntry MidiDriver_Simon1_AdLib::RHYTHM_MAP[39] = {
 	{ 11, 123,  40 },
 	{ 12, 127,  50 },
 	{ 12, 124,   1 },
@@ -491,25 +68,261 @@ const MidiDriver_Simon1_AdLib::RhythmMap MidiDriver_Simon1_AdLib::_rhythmMap[39]
 	{ 13, 125, 100 }
 };
 
-MidiDriver *createMidiDriverSimon1AdLib(const char *instrumentFilename) {
+// Frequency table hardcoded in the Simon 1 executable.
+// Note that only the first 12 entries are used.
+const uint16 MidiDriver_Simon1_AdLib::FREQUENCY_TABLE[16] = {
+	0x0157, 0x016B, 0x0181, 0x0198, 0x01B0, 0x01CA, 0x01E5, 0x0202,
+	0x0220, 0x0241, 0x0263, 0x0287, 0x2100, 0xD121, 0xA307, 0x46A4
+};
+
+MidiDriver_Simon1_AdLib::MidiDriver_Simon1_AdLib(OPL::Config::OplType oplType, const byte *instrumentData) : MidiDriver_ADLIB_Multisource(oplType), _musicRhythmNotesDisabled(false) {
+	// The Simon 1 MIDI data is written for MT-32 and rhythm notes are played
+	// by quickly turning a note on and off. The note off has no effect on an
+	// MT-32, but it will cut off the rhythm note on OPL. To prevent this, note
+	// off events for rhythm notes are ignored and the rhythm note is turned
+	// off right before this rhythm instrument is played again. The original
+	// interpreter does this as well.
+	_rhythmModeIgnoreNoteOffs = true;
+
+	parseInstrumentData(instrumentData);
+}
+
+MidiDriver_Simon1_AdLib::~MidiDriver_Simon1_AdLib() {
+	delete[] _instrumentBank;
+	delete[] _rhythmBank;
+}
+
+int MidiDriver_Simon1_AdLib::open() {
+	int result = MidiDriver_ADLIB_Multisource::open();
+	if (result >= 0)
+		// Simon 1 has the OPL rhythm mode permanently enabled.
+		setRhythmMode(true);
+
+	return result;
+}
+
+void MidiDriver_Simon1_AdLib::parseInstrumentData(const byte *instrumentData) {
+	const byte *dataPtr = instrumentData;
+
+	// The instrument data consists of 128 16-byte entries.
+	_instrumentBank = new OplInstrumentDefinition[128];
+
+	for (int i = 0; i < 128; i++) {
+		_instrumentBank[i].fourOperator = false;
+
+		_instrumentBank[i].operator0.freqMultMisc = *dataPtr++;
+		_instrumentBank[i].operator1.freqMultMisc = *dataPtr++;
+		_instrumentBank[i].operator0.level = *dataPtr++;
+		_instrumentBank[i].operator1.level = *dataPtr++;
+		_instrumentBank[i].operator0.decayAttack = *dataPtr++;
+		_instrumentBank[i].operator1.decayAttack = *dataPtr++;
+		_instrumentBank[i].operator0.releaseSustain = *dataPtr++;
+		_instrumentBank[i].operator1.releaseSustain = *dataPtr++;
+		_instrumentBank[i].operator0.waveformSelect = *dataPtr++;
+		_instrumentBank[i].operator1.waveformSelect = *dataPtr++;
+
+		_instrumentBank[i].connectionFeedback0 = *dataPtr++;
+		_instrumentBank[i].connectionFeedback1 = 0;
+		_instrumentBank[i].rhythmNote = 0;
+		_instrumentBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
+
+		// Remaining bytes seem to be unused.
+		dataPtr += 5;
+	}
+
+	// Construct a rhythm bank from the original rhythm map data.
+	_rhythmBank = new OplInstrumentDefinition[39];
+	// MIDI note range 36-74.
+	_rhythmBankFirstNote = 36;
+	_rhythmBankLastNote = 36 + 39 - 1;
+
+	for (int i = 0; i < 39; i++) {
+		if (RHYTHM_MAP[i].channel == 0) {
+			// Some notes in the range have no definition.
+			_rhythmBank[i].rhythmType = RHYTHM_TYPE_UNDEFINED;
+		} else {
+			// The rhythm bank makes use of instruments defined in the main instrument bank.
+			_rhythmBank[i] = _instrumentBank[RHYTHM_MAP[i].program];
+			// The MIDI channels used in the rhythm map correspond to OPL rhythm instrument types:
+			// 11 - bass drum
+			// 12 - snare drum
+			// 13 - tom tom
+			// 14 - cymbal
+			// 15 - hi-hat
+			_rhythmBank[i].rhythmType = static_cast<OplInstrumentRhythmType>(6 - (RHYTHM_MAP[i].channel - 10));
+			_rhythmBank[i].rhythmNote = RHYTHM_MAP[i].note;
+		}
+	}
+}
+
+void MidiDriver_Simon1_AdLib::noteOn(uint8 channel, uint8 note, uint8 velocity, uint8 source) {
+	if (_musicRhythmNotesDisabled && _sources[source].type != SOURCE_TYPE_SFX && channel == MIDI_RHYTHM_CHANNEL)
+		// A music source played a rhythm note while these are disabled.
+		// Ignore this event.
+		return;
+	if (_sources[source].type == SOURCE_TYPE_SFX)
+		// The original interpreter uses max velocity for all SFX notes.
+		velocity = 0x7F;
+
+	MidiDriver_ADLIB_Multisource::noteOn(channel, note, velocity, source);
+}
+
+void MidiDriver_Simon1_AdLib::programChange(uint8 channel, uint8 program, uint8 source) {
+	MidiDriver_ADLIB_Multisource::programChange(channel, program, source);
+
+	_activeNotesMutex.lock();
+
+	// Deallocate all inactive OPL channels for this MIDI channel and source.
+	for (int i = 0; i < _numMelodicChannels; i++) {
+		uint8 oplChannel = _melodicChannels[i];
+		if (_activeNotes[oplChannel].channelAllocated && !_activeNotes[oplChannel].noteActive &&
+			_activeNotes[oplChannel].channel == channel && _activeNotes[oplChannel].source == source) {
+			_activeNotes[oplChannel].channelAllocated = false;
+		}
+	}
+
+	_activeNotesMutex.unlock();
+
+	// Note: the original also sets up the new instrument on active OPL
+	// channels, i.e. channels which are currently playing a note. This is
+	// against the MIDI spec, which states that program changes should not
+	// affect active notes, and against the behavior of the MT-32, for which
+	// the music is composed. So instead, the new instrument is set up when a
+	// new note is played on these OPL channels.
+}
+
+void MidiDriver_Simon1_AdLib::deinitSource(uint8 source) {
+	if (_sources[source].type != SOURCE_TYPE_MUSIC)
+		// When a sound effect has finished playing, re-enable music rhythm
+		// notes.
+		_musicRhythmNotesDisabled = false;
+
+	MidiDriver_ADLIB_Multisource::deinitSource(source);
+}
+
+void MidiDriver_Simon1_AdLib::disableMusicRhythmNotes() {
+	_musicRhythmNotesDisabled = true;
+}
+
+uint8 MidiDriver_Simon1_AdLib::allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) {
+	// When allocating an OPL channel for playback of a note, the algorithm
+	// looks for the following types of channels:
+	// - An OPL channel already allocated to this source and MIDI channel that
+	//   is not playing a note.
+	// - An unallocated OPL channel.
+	// - An OPL channel allocated to a different source and/or MIDI channel
+	//   that is not playing a note.
+	//
+	// If no free OPL channel could be found, an active channel is "stolen" and
+	// the note it is currently playing is cut off. This channel is always
+	// channel 0.
+	uint8 allocatedChannel = 0xFF;
+
+	uint8 unallocatedChannel = 0xFF;
+	uint8 inactiveChannel = 0xFF;
+	for (int i = 0; i < _numMelodicChannels; i++) {
+		uint8 oplChannel = _melodicChannels[i];
+		if (_activeNotes[oplChannel].channelAllocated && _activeNotes[oplChannel].channel == channel &&
+			_activeNotes[oplChannel].source == source && !_activeNotes[oplChannel].noteActive) {
+			// Found an OPL channel already allocated to this source and MIDI
+			// channel that is not playing a note.
+			allocatedChannel = oplChannel;
+			// Always use the first available channel of this type.
+			break;
+		}
+
+		if (!_activeNotes[oplChannel].channelAllocated && unallocatedChannel == 0xFF)
+			// Found an unallocated OPL channel.
+			unallocatedChannel = oplChannel;
+
+		if (!_activeNotes[oplChannel].noteActive && inactiveChannel == 0xFF)
+			// Found an OPL channel allocated to a different source and/or MIDI
+			// channel that is not playing a note.
+			inactiveChannel = oplChannel;
+	}
+	if (allocatedChannel == 0xFF) {
+		// No allocated channel found.
+		if (unallocatedChannel != 0xFF) {
+			// Found an unallocated channel - use this.
+			allocatedChannel = unallocatedChannel;
+		} else if (inactiveChannel != 0xFF) {
+			// Found an inactive channel - use this.
+			allocatedChannel = inactiveChannel;
+		} else {
+			// An channel already playing a note must be "stolen".
+
+			// The original had some logic for a priority based reuse of
+			// channels. However, the priority value is always 0, which causes
+			// the first channel to be picked all the time.
+			allocatedChannel = 0;
+		}
+	}
+
+	if (_activeNotes[allocatedChannel].noteActive)
+		// Turn off the current note if the channel was "stolen".
+		writeKeyOff(allocatedChannel);
+	_activeNotes[allocatedChannel].channelAllocated = true;
+	_activeNotes[allocatedChannel].source = source;
+	_activeNotes[allocatedChannel].channel = channel;
+
+	return allocatedChannel;
+}
+
+uint16 MidiDriver_Simon1_AdLib::calculateFrequency(uint8 channel, uint8 source, uint8 note) {
+	// Determine the octave note. Notes 120-127 are clipped to octave note 12.
+	uint8 octaveNote = note >= 120 ? 12 : note % 12;
+	// Determine the octave / block. Notes 12-96 are in octaves 0-7, with lower
+	// and higher notes clipped to octave 0 and 7, respectively.
+	uint8 octave = CLIP((note / 12) - 1, 0, 7);
+
+	// Look up the OPL frequency / F-num.
+	uint16 octaveNoteFrequency = FREQUENCY_TABLE[octaveNote];
+
+	// Combine block and F-num in the format used by the OPL Ax and Bx
+	// registers.
+	return (octave << 10) | octaveNoteFrequency;
+}
+
+uint8 MidiDriver_Simon1_AdLib::calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity, OplInstrumentDefinition &instrumentDef, uint8 operatorNum) {
+	if (channel == MIDI_RHYTHM_CHANNEL && _sources[source].type != SOURCE_TYPE_SFX)
+		// The original interpreter halves the velocity for music rhythm notes.
+		// Note that SFX notes always use max velocity.
+		velocity >>= 1;
+
+	// Invert the instrument definition attenuation.
+	uint8 instDefVolume = 0x3F - (instrumentDef.getOperatorDefinition(operatorNum).level & 0x3F);
+	// Calculate the note volume using velocity and instrument definition
+	// volume.
+	uint8 calculatedVolume = ((velocity | 0x80) * instDefVolume) >> 8;
+
+	// Invert the calculated volume to an attenuation.
+	return 0x3F - calculatedVolume;
+}
+
+MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType oplType) {
 	// Load instrument data.
 	Common::File ibk;
 
 	if (!ibk.open(instrumentFilename)) {
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Could not find AdLib instrument bank file %s", instrumentFilename);
 	}
 
+	// Check for the expected FourCC (IBK\x1A)
 	if (ibk.readUint32BE() != 0x49424b1a) {
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Invalid AdLib instrument bank file %s", instrumentFilename);
 	}
 
 	byte *instrumentData = new byte[128 * 16];
 	if (ibk.read(instrumentData, 128 * 16) != 128 * 16) {
+		// Failed to read the expected amount of data.
 		delete[] instrumentData;
-		return nullptr;
+		error("MidiDriver_Simon1_AdLib::createMidiDriverSimon1AdLib - Unexpected AdLib instrument bank file %s size", instrumentFilename);
 	}
 
-	return new MidiDriver_Simon1_AdLib(instrumentData);
+	MidiDriver_Simon1_AdLib *driver = new MidiDriver_Simon1_AdLib(oplType, instrumentData);
+	delete[] instrumentData;
+
+	return driver;
 }
 
 } // End of namespace AGOS

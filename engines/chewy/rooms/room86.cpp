@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
@@ -77,7 +78,7 @@ void Room86::entry(int16 eib_nr) {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		_G(flags).NoScroll = false;
 		_G(spieler_mi)[P_CHEWY].Vorschub = 8;
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(det)->showStaticSpr(4);
 		_G(det)->showStaticSpr(5);
 		invent_2_slot(94);
@@ -124,7 +125,7 @@ void Room86::setup_func() {
 	int howDestX;
 	int nicDestY = 56;
 
-	int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];	
+	int xyPos = _G(moveState)[P_CHEWY].Xypos[0];	
 	if (xyPos > 390) {
 		howDestX = 298;
 		howDestY = 44;
@@ -150,12 +151,11 @@ int Room86::proc2() {
 	autoMove(2, P_CHEWY);
 	start_spz_wait(13, 1, false, P_CHEWY);
 	_G(det)->startDetail(0, 255, false);
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
-	delInventory(_G(gameState).AkInvent);
+	_G(det)->playSound(0, 0);
+	delInventory(_G(cur)->getInventoryCursor());
 	autoMove(3, P_CHEWY);
 	proc3(true);
-	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(499, ATS_ACTIVE_BIT);
 	_G(atds)->set_ats_str(497, 1, ATS_DATA);
 	_G(atds)->set_ats_str(498, 1, ATS_DATA);
 	_G(gameState).flags32_2 = true;
@@ -183,21 +183,19 @@ void Room86::proc3(bool cond) {
 
 	_G(det)->setStaticPos(0, 352, destY, false, false);
 	_G(det)->showStaticSpr(0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 2);
-	g_engine->_sound->playSound(0, 1, false);
-	g_engine->_sound->playSound(0, 2, false);
+	_G(det)->playSound(0, 1);
+	_G(det)->playSound(0, 2);
 
 	for (int i = 0; i < 48; ++i) {
 		setupScreen(NO_SETUP);
 		_G(det)->setStaticPos(0, 352, destY, false, false);
 		destY += deltaY;
 		_G(out)->setPointer(nullptr);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
-	g_engine->_sound->stopSound(1);
-	g_engine->_sound->stopSound(2);
+	_G(det)->stopSound(1);
+	_G(det)->stopSound(2);
 	_G(flags).NoScroll = false;
 }
 

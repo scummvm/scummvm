@@ -20,6 +20,7 @@
  */
 
 #include "ags/engine/media/audio/sound_clip.h"
+#include "ags/engine/media/audio/audio_defines.h"
 #include "ags/ags.h"
 
 namespace AGS3 {
@@ -108,6 +109,8 @@ bool SOUNDCLIP::update() {
 	case PlaybackState::PlayStatePlaying:
 		state = audio_core_slot_play(slot_);
 		break;
+	default:
+		break;
 	}
 */
 	return is_ready();
@@ -191,12 +194,34 @@ bool SoundClipWaveBase::is_paused() {
 	return _state == SoundClipPaused;
 }
 
-void SoundClipWaveBase::seek(int offset) {
+int SoundClipWaveBase::pos_to_posms(int pos) const {
+	// The pos meaning depends on the sound type:
+	// - WAV / VOC - the sample number
+	// - OGG / MP3 - milliseconds
+	// - MOD - the pattern number
+	switch (get_sound_type()) {
+	case MUS_WAVE: // Pos is in samples
+		if (!_stream)
+			return 0;
+		return static_cast<int>((static_cast<int64_t>(pos) * 1000) / _stream->getRate());
+	case MUS_MOD:  /* TODO: reimplement */
+		// better say that it does not work than return wrong value
+		return 0;
+	default:
+		return pos;
+	}
+}
+
+void SoundClipWaveBase::seek(int pos) {
+	seek_ms(pos_to_posms(pos));
+}
+
+void SoundClipWaveBase::seek_ms(int pos_ms) {
 	Audio::SeekableAudioStream *stream =
 		dynamic_cast<Audio::SeekableAudioStream *>(_stream);
 
 	if (stream) {
-		stream->seek(Audio::Timestamp(offset));
+		stream->seek(Audio::Timestamp(pos_ms));
 	} else {
 		warning("Audio stream did not support seeking");
 	}

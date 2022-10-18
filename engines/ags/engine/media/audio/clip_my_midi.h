@@ -40,6 +40,7 @@ struct MYMIDI : public SOUNDCLIP {
 	void poll() override;
 
 	void seek(int pos) override;
+	void seek_ms(int pos_ms) override;
 
 	int get_pos() override;
 

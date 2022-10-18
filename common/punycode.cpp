@@ -48,7 +48,7 @@
 
 namespace Common {
 
-/* punycode parameters, see http://tools.ietf.org/html/rfc3492#section-5 */
+// punycode parameters, see https://datatracker.ietf.org/doc/html/rfc3492#section-5
 #define BASE 36
 #define TMIN 1
 #define TMAX 26
@@ -58,7 +58,7 @@ namespace Common {
 #define INITIAL_BIAS 72
 #define SMAX 2147483647 // maximum Unicode code point
 
-#define SPECIAL_SYMBOLS "/\":*|\\?%<>"
+#define SPECIAL_SYMBOLS "/\":*|\\?%<>\x7f"
 
 static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	uint32 k;
@@ -66,7 +66,7 @@ static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 	delta /= is_first ? DAMP : 2;
 	delta += delta / n_points;
 
-	/* while delta > 455: delta /= 35 */
+	// while delta > 455: delta /= 35
 	for (k = 0; delta > ((BASE - TMIN) * TMAX) / 2; k += BASE) {
 		delta /= (BASE - TMIN);
 	}
@@ -77,13 +77,13 @@ static uint32 adapt_bias(uint32 delta, unsigned n_points, int is_first) {
 static char encode_digit(int c) {
 	assert(c >= 0 && c <= BASE - TMIN);
 	if (c > 25) {
-		return c + 22; /* '0'..'9' */
+		return c + 22; // '0'..'9'
 	} else {
-		return c + 0x61; /* 'a'..'z' */
+		return c + 0x61; // 'a'..'z'
 	}
 }
 
-/* Encode as a generalized variable-length integer. Returns number of bytes written. */
+// Encode as a generalized variable-length integer. Returns number of bytes written.
 static String encode_var_int(const size_t bias, const size_t delta) {
 	size_t k, q, t;
 	String dst;
@@ -164,7 +164,7 @@ String punycode_encode(const U32String &src) {
 	size_t m;
 
 	for (; h < srclen; n++, delta++) {
-		/* Find next smallest non-basic code point. */
+		// Find next smallest non-basic code point.
 		for (m = SMAX, si = 0; si < srclen; si++) {
 			if (src[si] >= n && src[si] < m) {
 				m = src[si];
@@ -172,7 +172,7 @@ String punycode_encode(const U32String &src) {
 		}
 
 		if ((m - n) > (SMAX - delta) / (h + 1)) {
-			/* OVERFLOW */
+			// OVERFLOW
 			warning("punycode_encode: overflow1");
 			return src;
 		}
@@ -183,7 +183,7 @@ String punycode_encode(const U32String &src) {
 		for (si = 0; si < srclen; si++) {
 			if (src[si] < n) {
 				if (++delta == 0) {
-					/* OVERFLOW */
+					// OVERFLOW
 					warning("punycode_encode: overflow2");
 					return src;
 				}
@@ -196,7 +196,7 @@ String punycode_encode(const U32String &src) {
 		}
 	}
 
-	/* Return how many Unicode code points were converted. */
+	// Return how many Unicode code points were converted.
 	return dst;
 }
 
@@ -225,7 +225,7 @@ U32String punycode_decode(const String &src1) {
 	String src(&src1.c_str()[4]); // Skip the prefix for simplification
 	int srclen = src.size();
 
-	/* Ensure that the input contains only ASCII characters. */
+	// Ensure that the input contains only ASCII characters.
 	for (int si = 0; si < srclen; si++) {
 		if (src[si] & 0x80) {
 			return src1;
@@ -233,6 +233,54 @@ U32String punycode_decode(const String &src1) {
 	}
 
 	size_t di = src.findLastOf('-');
+
+	Common::String tail;
+
+	// Sometimes strings could contain garbage at the end, like '.zip' added
+	// We try to detect these tails and keep it as is
+
+	// First, try to chop off any extensions
+	size_t dotPos = src.findLastOf('.');
+
+	while (dotPos != String::npos && dotPos > di) {
+		tail = String(src.c_str() + dotPos) + tail;
+		src = String(src.c_str(), dotPos);
+		srclen = src.size();
+
+		dotPos = src.findLastOf('.');
+
+		debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
+	}
+
+	// And now scan for the illegal characters as a whole
+	while (di != 0) {
+		bool noncode = false;
+
+		// Scan string to the end for illegal characters
+		for (int i = di + 1; i < srclen; i++) {
+			if (!((src[i] >= '0' && src[i] <= '9') || (src[i] >= 'a' && src[i] <= 'z'))) {
+				noncode = true;
+				break;
+			}
+		}
+
+		if (noncode) {
+			tail = String(src.c_str() + di) + tail;
+			src = String(src.c_str(), di);
+			srclen = src.size();
+
+			debug(9, "punycode_decode: src is: '%s', tail is: '%s'", src.c_str(), tail.c_str());
+
+			di = src.findLastOf('-');
+
+			if (di == String::npos) {
+				warning("punycode_decode: malformed string");
+				return src1;
+			}
+		} else {
+			break;
+		}
+	}
 
 	// If we have no '-', the entire string is non-ASCII character insertions.
 	if (di == String::npos)
@@ -253,6 +301,11 @@ U32String punycode_decode(const String &src1) {
 		size_t org_i = i;
 
 		for (size_t w = 1, k = BASE; true; k += BASE) {
+			if (si >= (int)src.size()) {
+				warning("punycode_decode: incorrect digit");
+				return src1;
+			}
+
 			size_t digit = decode_digit(src[si++]);
 
 			if (digit == SMAX) {
@@ -261,7 +314,7 @@ U32String punycode_decode(const String &src1) {
 			}
 
 			if (digit > (SMAX - i) / w) {
-				/* OVERFLOW */
+				// OVERFLOW
 				warning("punycode_decode: overflow1");
 				return src1;
 			}
@@ -282,7 +335,7 @@ U32String punycode_decode(const String &src1) {
 			}
 
 			if (w > SMAX / (BASE - t)) {
-				/* OVERFLOW */
+				// OVERFLOW
 				warning("punycode_decode: overflow2");
 				return src1;
 			}
@@ -293,7 +346,7 @@ U32String punycode_decode(const String &src1) {
 		bias = adapt_bias(i - org_i, di + 1, org_i == 0);
 
 		if (i / (di + 1) > SMAX - n) {
-			/* OVERFLOW */
+			// OVERFLOW
 				warning("punycode_decode: overflow3");
 			return src1;
 		}
@@ -307,6 +360,11 @@ U32String punycode_decode(const String &src1) {
 		dst = dst1;
 		i++;
 	}
+
+	// If we chopped off tail, readd it here
+	dst += tail;
+
+	debug(9, "punycode_decode: returning %s", Common::U32String(dst).encode().c_str());
 
 	return dst;
 }

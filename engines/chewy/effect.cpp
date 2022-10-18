@@ -19,9 +19,9 @@
  *
  */
 
-#include "chewy/ngshext.h"
 #include "chewy/effect.h"
 #include "chewy/globals.h"
+#include "chewy/mcga_graphics.h"
 
 namespace Chewy {
 
@@ -30,7 +30,7 @@ Effect::Effect() {
 Effect::~Effect() {
 }
 
-void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col, int16 skip_line) {
+void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, byte *palette, int16 col) {
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	int16 *rnd_zeiger = (int16 *)rnd_speicher;
 	if (col < 256) {
@@ -53,14 +53,15 @@ void Effect::rnd_blende(byte *rnd_speicher, byte *sram_speicher, byte *screen, b
 		else
 			x = rnd_zeiger[i] * 8;
 		_G(out)->setPointer(sram_speicher);
-		_G(out)->spriteSave(sp, x, y, 8, 8, 0);
+		_G(out)->spriteSave(sp, x, y, 8, 8);
 		_G(out)->setPointer(screen);
 		_G(out)->spriteSet(sp, x, y, 0);
 	}
 	free(sp);
 }
 
-void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, uint8 mode, int16 color) {
+void Effect::blende1(byte *memPtr, byte *palette, uint8 mode, int16 color) {
+	byte *screen = (byte *)g_screen->getPixels();
 	byte *sp = (byte *)MALLOC(8 * 8 + 4);
 	if (color < 256) {
 		for (int16 i = 0; i < 13; i++) {
@@ -82,25 +83,25 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 			int16 x, y, x1;
 			for (x = i; x < 39 - i; x++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}
@@ -112,25 +113,25 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 			int16 x, y, x1;
 			for (x = i; x < 39 - i; x++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, i * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, i * 8, 0);
 			}
 			for (y = i; y < 24 - i; y++) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x * 8, y * 8, 0);
 			}
 			for (x1 = 39 - i; x1 > i; x1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y * 8, 0);
 			}
 			for (int16 y1 = 24 - i; y1 > i; y1--) {
 				_G(out)->setPointer(memPtr);
-				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8, 0);
+				_G(out)->spriteSave(sp, x1 * 8, y1 * 8, 8, 8);
 				_G(out)->setPointer(screen);
 				_G(out)->spriteSet(sp, x1 * 8, y1 * 8, 0);
 			}
@@ -143,20 +144,20 @@ void Effect::blende1(byte *memPtr, byte *screen, byte *palette, int16 frames, ui
 	free(sp);
 }
 
-void Effect::border(byte *workpage_, int16 lines, uint8 mode, int16 color) {
+void Effect::border(byte *workpage_, uint8 mode, int16 color) {
 	if (mode) {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(152 - x, 0, 152 - x + 8, 200, color);
 			_G(out)->boxFill(x + 160, 0, x + 168, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	} else {
 		for (int i = 0, x = 0; i < 20; ++i, x += 8) {
 			_G(out)->setPointer(workpage_ + 4);
 			_G(out)->boxFill(x, 0, x + 8, 200, color);
 			_G(out)->boxFill(312 - x, 0, 31 - x + 8, 200, color);
-			_G(out)->back2screen(workpage_);
+			_G(out)->copyToScreen();
 		}
 	}
 }

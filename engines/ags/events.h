@@ -52,7 +52,7 @@ public:
 	/*
 	 * Converts a ScummVM event to the ags keycode
 	 */
-	static AGS3::eAGSKeyCode scummvm_key_to_ags_key(const Common::Event &event);
+	static AGS3::eAGSKeyCode scummvm_key_to_ags_key(const Common::Event &event, int &ags_mod, bool old_keyhandle);
 
 public:
 	EventsManager();
@@ -105,7 +105,7 @@ public:
 	/**
 	 * Returns true if a given key is pressed
 	 */
-	bool isKeyPressed(AGS3::eAGSKeyCode key);
+	bool isKeyPressed(AGS3::eAGSKeyCode key, bool poll = true);
 
 	void clearEvents() {
 		_pendingEvents.clear();

@@ -82,7 +82,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_interacting(int32 &, int32 *param
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_interacting - illegal object [%s]", object_name);
 
@@ -161,7 +161,7 @@ mcodeFunctionReturnCodes _game_session::fn_sony_door_interact(int32 &result, int
 	if (!L->looping) {
 		// work out which button to interact with
 
-		id = objects->Fetch_item_number_by_name(button1_name);
+		id = LinkedDataObject::Fetch_item_number_by_name(objects, button1_name);
 		if (id == 0xffffffff)
 			Fatal_error("fn_sony_door_interact - illegal object [%s]", button1_name);
 
@@ -194,7 +194,7 @@ mcodeFunctionReturnCodes _game_session::fn_sony_door_interact(int32 &result, int
 			}
 
 			// there is another button so lets take a look to see it is named correctly
-			id = objects->Fetch_item_number_by_name(button2_name);
+			id = LinkedDataObject::Fetch_item_number_by_name(objects, button2_name);
 			if (id == 0xffffffff)
 				Fatal_error("fn_sony_door_interact - illegal object [%s]", button2_name);
 
@@ -281,7 +281,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 				Fatal_error("Core_prop_interact cant indentify animation %s", anim_name);
 
 			if (!I->IsAnimTable(anim))
-				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", object->GetName(), params[0]);
+				Fatal_error("Core_prop_interact finds [%s] doesnt have a [%s] animation", CGameObject::GetName(object), params[0]);
 		} else {
 			Zdebug("calc *custom* target anim [%s]", anim_name);
 			I->Init_custom_animation(anim_name);
@@ -483,7 +483,7 @@ mcodeFunctionReturnCodes _game_session::Core_prop_interact(int32 & /*result*/, i
 		for (j = 0; j < M->anim_speed; j++) {
 			PXframe *frame = PXFrameEnOfAnim(L->anim_pc + j, pAnim);
 
-			if ((frame->marker_qty > INT_POS) && (INT_TYPE == (frame->markers[INT_POS].GetType()))) {
+			if ((frame->marker_qty > INT_POS) && (INT_TYPE == (PXmarker_PSX_Object::GetType(&frame->markers[INT_POS])))) {
 				//          run the trigger anim
 				if (!MS->Call_socket(M->target_id, "trigger", &retval)) {
 					Message_box("[%s] interact marker but no trigger script", (const char *)L->GetName());
@@ -520,7 +520,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_interact_object(int32 &resu
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_interact_object - object [%s] does not exist", object_name);
 
@@ -538,13 +538,13 @@ mcodeFunctionReturnCodes _game_session::fn_unregister_for_auto_interaction(int32
 
 	for (j = 0; j < MAX_auto_interact; j++) {
 		if (auto_interact_list[j] == (uint8)(cur_id + 1)) {
-			Tdebug("auto_interact.txt", "- [%s] %d", object->GetName(), j);
+			Tdebug("auto_interact.txt", "- [%s] %d", CGameObject::GetName(object), j);
 			auto_interact_list[j] = 0; // slot not empty
 			return IR_CONT;
 		}
 	}
 
-	Fatal_error("fn_unregister_for_auto_interaction cant unregister non registered object [%s]", object->GetName());
+	Fatal_error("fn_unregister_for_auto_interaction cant unregister non registered object [%s]", CGameObject::GetName(object));
 
 	return IR_CONT;
 }
@@ -556,16 +556,16 @@ mcodeFunctionReturnCodes _game_session::fn_register_for_auto_interaction(int32 &
 
 	for (j = 0; j < MAX_auto_interact; j++) {
 		if (auto_interact_list[j] == (uint8)(cur_id + 1))
-			Fatal_error("fn_register_for_auto_interaction finds double registration of %s", object->GetName());
+			Fatal_error("fn_register_for_auto_interaction finds double registration of %s", CGameObject::GetName(object));
 
 		if (!auto_interact_list[j]) { // empty slot
 			auto_interact_list[j] = (uint8)(cur_id + 1);
-			Tdebug("auto_interact.txt", "+ [%s] %d", object->GetName(), j);
+			Tdebug("auto_interact.txt", "+ [%s] %d", CGameObject::GetName(object), j);
 			return IR_CONT;
 		}
 	}
 
-	Fatal_error("fn_register_for_auto_interaction - list full - [%s]", object->GetName());
+	Fatal_error("fn_register_for_auto_interaction - list full - [%s]", CGameObject::GetName(object));
 
 	return IR_CONT;
 }

@@ -44,7 +44,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("TTS Narrator"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_narrator",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -277,11 +279,11 @@ public:
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "lure";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Lure of the Temptress";
 	}
 

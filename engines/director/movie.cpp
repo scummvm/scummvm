@@ -72,6 +72,7 @@ Movie::Movie(Window *window) {
 	_movieArchive = nullptr;
 
 	_cast = new Cast(this, 0);
+	_casts.setVal(_cast->_castLibID, _cast);
 	_sharedCast = nullptr;
 	_score = new Score(this);
 
@@ -87,11 +88,17 @@ Movie::Movie(Window *window) {
 	_timeOutKeyDown = true;
 	_timeOutMouse = true;
 	_timeOutPlay = false;
+
+	_isBeepOn = false; // Beep is off by default in the original
 }
 
 Movie::~Movie() {
 	// _movieArchive is shared with the cast, so the cast will free it
 	delete _cast;
+
+	if (_sharedCast)
+		g_director->_allOpenResFiles.erase(_sharedCast->getArchive()->getPathName());
+
 	delete _sharedCast;
 	delete _score;
 }
@@ -108,9 +115,8 @@ void Movie::setArchive(Archive *archive) {
 	_cast->setArchive(archive);
 
 	// Frame Labels
-	if (archive->hasResource(MKTAG('V', 'W', 'L', 'B'), -1)) {
-		Common::SeekableReadStreamEndian *r;
-		_score->loadLabels(*(r = archive->getFirstResource(MKTAG('V', 'W', 'L', 'B'))));
+	if (Common::SeekableReadStreamEndian *r = archive->getMovieResourceIfPresent(MKTAG('V', 'W', 'L', 'B'))) {
+		_score->loadLabels(*r);
 		delete r;
 	}
 }
@@ -128,8 +134,8 @@ bool Movie::loadArchive() {
 	// Wait to handle _stageColor until palette is loaded in loadCast...
 
 	// File Info
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'F', 'I'), -1)) {
-		loadFileInfo(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'F', 'I'))));
+	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'I'))) != nullptr) {
+		loadFileInfo(*r);
 		delete r;
 	}
 
@@ -147,8 +153,8 @@ bool Movie::loadArchive() {
 
 	// TODO: Add more options for desktop dimensions
 	if (_window == _vm->getStage()) {
-		uint16 windowWidth = debugChannelSet(-1, kDebugDesktop) ? 1024 : _movieRect.width();
-		uint16 windowHeight = debugChannelSet(-1, kDebugDesktop) ? 768 : _movieRect.height();
+		uint16 windowWidth = g_director->desktopEnabled() ? g_director->_wmWidth : _movieRect.width();
+		uint16 windowHeight = g_director->desktopEnabled() ? g_director->_wmHeight : _movieRect.height();
 		if (_vm->_wm->_screenDims.width() != windowWidth || _vm->_wm->_screenDims.height() != windowHeight) {
 			_vm->_wm->resizeScreen(windowWidth, windowHeight);
 			recenter = true;
@@ -157,22 +163,23 @@ bool Movie::loadArchive() {
 		}
 	}
 
-	if (recenter && debugChannelSet(-1, kDebugDesktop))
+	if (recenter && g_director->desktopEnabled())
 		_window->center(g_director->_centerStage);
 
 	_window->setStageColor(_stageColor, true);
 
 	// Score
-	if (!_movieArchive->hasResource(MKTAG('V', 'W', 'S', 'C'), -1)) {
+	if (!(r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'S', 'C')))) {
 		warning("Movie::loadArchive(): Wrong movie format. VWSC resource missing");
 		return false;
 	}
-	_score->loadFrames(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'S', 'C'))), _version);
+
+	_score->loadFrames(*r, _version);
 	delete r;
 
 	// Action list
-	if (_movieArchive->hasResource(MKTAG('V', 'W', 'A', 'C'), -1)) {
-		_score->loadActions(*(r = _movieArchive->getFirstResource(MKTAG('V', 'W', 'A', 'C'))));
+	if ((r = _movieArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'A', 'C'))) != nullptr) {
+		_score->loadActions(*r);
 		delete r;
 	}
 
@@ -278,6 +285,8 @@ void Movie::clearSharedCast() {
 	if (!_sharedCast)
 		return;
 
+	g_director->_allOpenResFiles.erase(_sharedCast->getArchive()->getPathName());
+
 	delete _sharedCast;
 
 	_sharedCast = nullptr;
@@ -304,12 +313,15 @@ void Movie::loadSharedCastsFrom(Common::String filename) {
 	_sharedCast = new Cast(this, 0, true);
 	_sharedCast->setArchive(sharedCast);
 	_sharedCast->loadArchive();
+
+	// Register the resfile so that Cursor::readFromResource can find it
+	g_director->_allOpenResFiles.setVal(sharedCast->getPathName(), sharedCast);
 }
 
 CastMember *Movie::getCastMember(CastMemberID memberID) {
 	CastMember *result = nullptr;
-	if (memberID.castLib == 0) {
-		result = _cast->getCastMember(memberID.member);
+	if (_casts.contains(memberID.castLib)) {
+		result = _casts.getVal(memberID.castLib)->getCastMember(memberID.member);
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->getCastMember(memberID.member);
 		}
@@ -319,10 +331,29 @@ CastMember *Movie::getCastMember(CastMemberID memberID) {
 	return result;
 }
 
+CastMember* Movie::createOrReplaceCastMember(CastMemberID memberID, CastMember* cast) {
+	warning("Movie::createOrReplaceCastMember: stubbed: functions only handles create");
+	CastMember *result = nullptr;
+
+	if (_casts.contains(memberID.castLib)) {
+		_casts.getVal(memberID.castLib)->setCastMember(memberID, cast);
+	}
+
+	return result;
+}
+
+bool Movie::eraseCastMember(CastMemberID memberID) {
+	if (_casts.contains(memberID.castLib)) {
+		return _casts.getVal(memberID.castLib)->eraseCastMember(memberID);
+	}
+
+	return false;
+}
+
 CastMember *Movie::getCastMemberByName(const Common::String &name, int castLib) {
 	CastMember *result = nullptr;
-	if (castLib == 0) {
-		result = _cast->getCastMemberByName(name);
+	if (_casts.contains(castLib)) {
+		result = _casts.getVal(castLib)->getCastMemberByName(name);
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->getCastMemberByName(name);
 		}
@@ -334,8 +365,8 @@ CastMember *Movie::getCastMemberByName(const Common::String &name, int castLib) 
 
 CastMemberInfo *Movie::getCastMemberInfo(CastMemberID memberID) {
 	CastMemberInfo *result = nullptr;
-	if (memberID.castLib == 0) {
-		result = _cast->getCastMemberInfo(memberID.member);
+	if (_casts.contains(memberID.castLib)) {
+		result = _casts.getVal(memberID.castLib)->getCastMemberInfo(memberID.member);
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->getCastMemberInfo(memberID.member);
 		}
@@ -347,8 +378,8 @@ CastMemberInfo *Movie::getCastMemberInfo(CastMemberID memberID) {
 
 const Stxt *Movie::getStxt(CastMemberID memberID) {
 	const Stxt *result = nullptr;
-	if (memberID.castLib == 0) {
-		result = _cast->getStxt(memberID.member);
+	if (_casts.contains(memberID.castLib)) {
+		result = _casts.getVal(memberID.castLib)->getStxt(memberID.member);
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->getStxt(memberID.member);
 		}
@@ -359,7 +390,7 @@ const Stxt *Movie::getStxt(CastMemberID memberID) {
 }
 
 LingoArchive *Movie::getMainLingoArch() {
-	return _cast->_lingoArchive;
+	return _casts.getVal(0)->_lingoArchive;
 }
 
 LingoArchive *Movie::getSharedLingoArch() {
@@ -368,8 +399,8 @@ LingoArchive *Movie::getSharedLingoArch() {
 
 ScriptContext *Movie::getScriptContext(ScriptType type, CastMemberID id) {
 	ScriptContext *result = nullptr;
-	if (id.castLib == 0) {
-		result = _cast->_lingoArchive->getScriptContext(type, id.member);
+	if (_casts.contains(id.castLib)) {
+		result = _casts.getVal(id.castLib)->_lingoArchive->getScriptContext(type, id.member);
 		if (result == nullptr && _sharedCast) {
 			result = _sharedCast->_lingoArchive->getScriptContext(type, id.member);
 		}

@@ -65,7 +65,7 @@ static void EffectProcess(CORO_PARAM, const void *param) {
 	int		x, y;		// Lead actor position
 
 	// Run effect poly enter script
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKIN,
 			GetMoverId(to->pMover), false, 0));
 	else
@@ -77,7 +77,7 @@ static void EffectProcess(CORO_PARAM, const void *param) {
 	} while (InPolygon(x, y, EFFECT) == to->hEpoly);
 
 	// Run effect poly leave script
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, to->hEpoly, WALKOUT,
 			GetMoverId(to->pMover), false, 0));
 	else

@@ -51,9 +51,9 @@ GfxBase::GfxBase() :
 		_screenWidth(0), _screenHeight(0),
 		_scaleW(1.0f), _scaleH(1.0f), _currentShadowArray(nullptr),
 		_shadowColorR(255), _shadowColorG(255), _shadowColorB(255) {
-			for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
-				_specialtyTextures[i]._isShared = true;
-			}
+	for (unsigned int i = 0; i < _numSpecialtyTextures; i++) {
+		_specialtyTextures[i]._isShared = true;
+	}
 }
 
 void GfxBase::setShadowMode() {
@@ -213,7 +213,7 @@ Bitmap *GfxBase::createScreenshotBitmap(Graphics::Surface *src, int w, int h, bo
 }
 
 void GfxBase::makeScreenTextures() {
-	//make a buffer big enough to hold any of the textures
+	// Make a buffer big enough to hold any of the textures
 	uint8 *buffer = new uint8[256 * 256 * 4];
 
 	// TODO: Handle screen resolutions other than 640 x 480

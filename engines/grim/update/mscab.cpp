@@ -46,7 +46,7 @@ MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
 	if (!_data)
 		return;
 
-	//CFHEADER PARSING
+	// CFHEADER PARSING
 
 	// Verify Head-signature
 	uint32 tag = _data->readUint32BE();
@@ -72,7 +72,7 @@ MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
 	if (numFolders == 0 || numFiles == 0)
 		return;
 
-	//This implementation doesn't support multicabinet and reserved fields
+	// This implementation doesn't support multicabinet and reserved fields
 	uint16 flags = _data->readUint16LE();
 	if (flags != 0)
 		return;
@@ -97,7 +97,7 @@ MsCabinet::MsCabinet(Common::SeekableReadStream *data) :
 		_folderMap[i] = fEntry;
 	}
 
-	//CFFILEs PARSING
+	// CFFILEs PARSING
 	_data->seek(filesOffset);
 	if (_data->err())
 		return;
@@ -171,12 +171,12 @@ Common::SeekableReadStream *MsCabinet::createReadStreamForMember(const Common::P
 
 	const FileEntry &entry = _fileMap[name];
 
-	//Check if the file has already been decompressed and it's in the cache,
+	// Check if the file has already been decompressed and it's in the cache,
 	// otherwise decompress it and put it in the cache
 	if (_cache.contains(name))
 		fileBuf = _cache[name];
 	else {
-		//Check if the decompressor should be reinitialized
+		// Check if the decompressor should be reinitialized
 		if (!_decompressor || entry.folder != _decompressor->getFolder()) {
 			delete _decompressor;
 
@@ -196,7 +196,7 @@ MsCabinet::Decompressor::Decompressor(const MsCabinet::FolderEntry *folder, Comm
 	_curFolder(folder), _data(data), _curBlock(-1), _compressedBlock(nullptr), _decompressedBlock(nullptr), _fileBuf(nullptr),
 	_inBlockEnd(0), _inBlockStart(0), _endBlock(0), _startBlock(0) {
 
-	//Alloc the decompression buffers
+	// Alloc the decompression buffers
 	_compressedBlock = new byte[kCabInputmax];
 	_decompressedBlock = new byte[kCabBlockSize];
 }
@@ -217,7 +217,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	byte *buf_tmp, *dict;
 	bool decRes;
 
-	//Sanity checks
+	// Sanity checks
 	if (!_compressedBlock || entry.folder != _curFolder)
 		return false;
 
@@ -226,17 +226,17 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 	_endBlock = (entry.folderOffset + entry.length) / kCabBlockSize;
 	_inBlockEnd = (entry.folderOffset + entry.length) % kCabBlockSize;
 
-	//Check if the decompressor should be reinitialized
+	// Check if the decompressor should be reinitialized
 	if (_curBlock > _startBlock || _curBlock == -1) {
 		_data->seek(entry.folder->offset);
-		//Check the compression method (only mszip supported)
+		// Check the compression method (only mszip supported)
 		if (entry.folder->comp_type != kMszipCompression)
 			return false;
 
-		_curBlock = -1;     //No block decompressed
+		_curBlock = -1;     // No block decompressed
 	}
 
-	//Check if the file is contained in the folder
+	// Check if the file is contained in the folder
 	if ((entry.length + entry.folderOffset) / kCabBlockSize > entry.folder->num_blocks)
 		return false;
 
@@ -244,7 +244,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 
 	buf_tmp = _fileBuf;
 
-	//if a part of this file has been decompressed in the last block, make a copy of it
+	// If a part of this file has been decompressed in the last block, make a copy of it
 	copyBlock(buf_tmp);
 
 	while ((_curBlock + 1) <= _endBlock) {
@@ -260,15 +260,15 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 		if (compressedLen > kCabInputmax || uncompressedLen > kCabBlockSize)
 			return false;
 
-		//Read the compressed block
+		// Read the compressed block
 		if (_data->read(_compressedBlock, compressedLen) != compressedLen)
 			return false;
 
-		//Check the CK header
+		// Check the CK header
 		if (_compressedBlock[0] != 'C' || _compressedBlock[1] != 'K')
 			return false;
 
-		//Decompress the block. If it isn't the first, provide the previous block as dictonary
+		// Decompress the block. If it isn't the first, provide the previous block as dictonary
 		dict = (_curBlock >= 0) ? _decompressedBlock : nullptr;
 		decRes = Common::inflateZlibHeaderless(_decompressedBlock, uncompressedLen, _compressedBlock + 2, compressedLen - 2, dict, kCabBlockSize);
 		if (!decRes)
@@ -276,7 +276,7 @@ bool MsCabinet::Decompressor::decompressFile(byte *&fileBuf, const FileEntry &en
 
 		_curBlock++;
 
-		//Copy the decompressed data, if needed
+		// Copy the decompressed data, if needed
 		copyBlock(buf_tmp);
 	}
 

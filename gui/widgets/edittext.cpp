@@ -33,10 +33,10 @@ EditTextWidget::EditTextWidget(GuiObject *boss, int x, int y, int w, int h, cons
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
 
+	_leftPadding = _rightPadding = 0;
+
 	setEditString(text);
 	setFontStyle(font);
-
-	_leftPadding = _rightPadding = 0;
 }
 
 EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip, uint32 cmd, uint32 finishCmd, ThemeEngine::FontStyle font)
@@ -45,10 +45,10 @@ EditTextWidget::EditTextWidget(GuiObject *boss, const Common::String &name, cons
 	_type = kEditTextWidget;
 	_finishCmd = finishCmd;
 
+	_leftPadding = _rightPadding = 0;
+
 	setEditString(text);
 	setFontStyle(font);
-
-	_leftPadding = _rightPadding = 0;
 }
 
 void EditTextWidget::setEditString(const Common::U32String &str) {
@@ -115,11 +115,15 @@ Common::Rect EditTextWidget::getEditRect() const {
 	// Calculate (right - left) difference for editRect's X-axis coordinates:
 	// (_w - 1 - _rightPadding) - (2 + _leftPadding)
 	int editWidth = _w - _rightPadding - _leftPadding - 3;
+	int editHeight = _h - 2;
 	// Ensure r will always be a valid rect
 	if (editWidth < 0) {
 		editWidth = 0;
 	}
-	Common::Rect r(2 + _leftPadding, 1, 2 + _leftPadding + editWidth, _h);
+	if (editHeight < 0) {
+		editHeight = 0;
+	}
+	Common::Rect r(2 + _leftPadding, 1, 2 + _leftPadding + editWidth, 1 + editHeight);
 
 	return r;
 }

@@ -118,8 +118,8 @@ void PlayerActor::recalcPortraitType() {
 	else
 		pType = kPortraitNormal;
 
-	if (pType != portraitType)
-		updateBrotherPortrait(getPlayerActorID(this), portraitType = pType);
+	if (pType != _portraitType)
+		updateBrotherPortrait(getPlayerActorID(this), _portraitType = pType);
 }
 
 
@@ -140,7 +140,7 @@ void PlayerActor::AttribUpdate() {
 	for (int16 i = 0; i < numSkills; i++) {
 		// go through each skill and update as needed
 		stdAttribUpdate(effStats->skill(i),
-		                baseStats.skill(i),
+		                _baseStats.skill(i),
 		                i);
 	}
 }
@@ -160,12 +160,12 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 		fractionRecover = attribPointsPerUpdate % attribPointsPerValue;
 
 		// if there is an overrun
-		if (attribRecPools[index] + fractionRecover > attribPointsPerValue) {
+		if (_attribRecPools[index] + fractionRecover > attribPointsPerValue) {
 			// add the overrun to the whole number
 			recover++;
-			attribRecPools[index] = (attribRecPools[index] + fractionRecover) - attribPointsPerValue;
+			_attribRecPools[index] = (_attribRecPools[index] + fractionRecover) - attribPointsPerValue;
 		} else {
-			attribRecPools[index] += fractionRecover;
+			_attribRecPools[index] += fractionRecover;
 		}
 
 
@@ -194,12 +194,12 @@ void PlayerActor::manaUpdate() {
 	                                   };
 
 	// get indirections for each of the base mana types
-	int16 *baseMana[numManas] = { &baseStats.redMana,
-	                                &baseStats.orangeMana,
-	                                &baseStats.yellowMana,
-	                                &baseStats.greenMana,
-	                                &baseStats.blueMana,
-	                                &baseStats.violetMana
+	int16 *baseMana[numManas] = { &_baseStats.redMana,
+	                                &_baseStats.orangeMana,
+	                                &_baseStats.yellowMana,
+	                                &_baseStats.greenMana,
+	                                &_baseStats.blueMana,
+	                                &_baseStats.violetMana
 	                              };
 
 	uint16  diff;
@@ -243,18 +243,18 @@ void PlayerActor::manaUpdate() {
 			if (*effectiveMana[i] < *baseMana[i] / 3) {
 				// add the diff
 //	Deleted at request of Client.
-//				manaMemory[i] -= diff;
+//				_manaMemory[i] -= diff;
 			} else {
-				manaMemory[i] += diff;
+				_manaMemory[i] += diff;
 			}
 
 
 			// if we bumped passed the ( +/- ) levelBump mark
 			// decrement the base mana
-			*baseMana[i] += (manaMemory[i] / levelBump);
+			*baseMana[i] += (_manaMemory[i] / levelBump);
 
 			// get the fraction back to memory
-			manaMemory[i] = manaMemory[i] % levelBump;
+			_manaMemory[i] = _manaMemory[i] % levelBump;
 
 			//WriteStatusF( 4, " mana: %d", *effectiveMana[i] );
 		}
@@ -283,7 +283,7 @@ void PlayerActor::skillAdvance(ActorSkillID stat,
                                uint8 points,
                                uint8 useMult) { // useMult defaulted to 1
 	// get the skill level for the skill passed ( i.e. 1-100 )
-	uint8 skillLevel = clamp(0, baseStats.skill(stat), ActorAttributes::skillMaxLevel);
+	uint8 skillLevel = clamp(0, _baseStats.skill(stat), ActorAttributes::skillMaxLevel);
 
 	// get the percentile chance of advancing
 	uint8 advanceChance = ActorAttributes::skillBasePercent - skillLevel;
@@ -302,27 +302,27 @@ void PlayerActor::skillAdvance(uint8 stat,
 	// roll percentile dice
 	if (g_vm->_rnd->getRandomNumber(99) < advanceChance) {
 		uint8 increase;
-		int16   oldValue = baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel;
+		int16   oldValue = _baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel;
 
 		// success, now apply the multiplyer
-		attribMemPools[stat] += points * useMult;
+		_attribMemPools[stat] += points * useMult;
 
 		// get the amout of whole increase points
-		increase = attribMemPools[stat] / ActorAttributes::skillFracPointsPerLevel;
+		increase = _attribMemPools[stat] / ActorAttributes::skillFracPointsPerLevel;
 
 		// now set the pool with the fraction
-		attribMemPools[stat] =
-		    attribMemPools[stat]
+		_attribMemPools[stat] =
+		    _attribMemPools[stat]
 		    -       increase
 		    *   ActorAttributes::skillFracPointsPerLevel;
 
-		// now apply changes to the baseStats
-		baseStats.skill(stat) = clamp(
+		// now apply changes to the _baseStats
+		_baseStats.skill(stat) = clamp(
 		                            0,
-		                            baseStats.skill(stat) += increase,
+		                            _baseStats.skill(stat) += increase,
 		                            ActorAttributes::skillMaxLevel);
 
-		if (baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel != oldValue) {
+		if (_baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel != oldValue) {
 			static const char *skillNames[] = {
 				ARCHERY_SKILL,
 				SWORD_SKILL,
@@ -337,22 +337,22 @@ void PlayerActor::skillAdvance(uint8 stat,
 
 			StatusMsg(SKILL_STATUS, getActor()->objName(), skillNames[stat]);
 		}
-		//WriteStatusF( 6, "frac: %d inc: %d, base: %d", attribMemPools[stat], increase, baseStats.allSkills[stat] );
+		//WriteStatusF( 6, "frac: %d inc: %d, base: %d", _attribMemPools[stat], increase, _baseStats.allSkills[stat] );
 	}
 }
 
 void PlayerActor::vitalityAdvance(uint8 points) {
 	while (points-- > 0) {
-		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > baseStats.vitality) {
-			if (++vitalityMemory >= vitalityLevelBump) {
-				vitalityMemory -= vitalityLevelBump;
-				baseStats.vitality++;
+		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > _baseStats.vitality) {
+			if (++_vitalityMemory >= vitalityLevelBump) {
+				_vitalityMemory -= vitalityLevelBump;
+				_baseStats.vitality++;
 				StatusMsg(VITALITY_STATUS, getActor()->objName());
 			}
 		}
 	}
 
-	assert(baseStats.vitality < ActorAttributes::vitalityLimit);
+	assert(_baseStats.vitality < ActorAttributes::vitalityLimit);
 }
 
 // this function will return a value of 0 - 4 to indicate
@@ -384,7 +384,7 @@ int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats def
 	//                skillCurrentFracPoints
 	if (base) {
 		return clamp(0,
-		             baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel,
+		             _baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel,
 		             ActorAttributes::skillLevels - 1);
 	} else {
 		return clamp(0,
@@ -485,9 +485,9 @@ ActorAttributes *PlayerActor::getEffStats() {
 //	Notify the user of attack if necessary
 
 void PlayerActor::handleAttacked() {
-	if (!notifiedOfAttack) {
+	if (!_notifiedOfAttack) {
 		StatusMsg(ATTACK_STATUS, getActor()->objName());
-		notifiedOfAttack = true;
+		_notifiedOfAttack = true;
 	}
 }
 
@@ -806,7 +806,7 @@ void handlePlayerActorDeath(PlayerActorID id) {
 //	to the center actor
 
 void transportCenterBand(const Location &loc) {
-	assert(isWorld(loc.context));
+	assert(isWorld(loc._context));
 
 	fadeDown();
 
@@ -836,14 +836,14 @@ void transportCenterBand(const Location &loc) {
 			TilePoint       dest;
 
 			dest =  selectNearbySite(
-			            loc.context,
+			            loc._context,
 			            loc,
 			            1,
 			            3,
 			            false);
 
 			if (dest != Nowhere) {
-				a->move(Location(dest, loc.context));
+				a->move(Location(dest, loc._context));
 				if (a->_moveTask != nullptr)
 					a->_moveTask->finishWalk();
 				player->resolveBanding();
@@ -882,14 +882,14 @@ void handleEndOfCombat() {
 
 //	This structure is used in archiving the player actor list
 struct PlayerActorArchive {
-	int16               portraitType;
+	int16               _portraitType;
 	uint16              flags;
-	ActorAttributes     baseStats;
-	int16               manaMemory[numManas];
-	uint8               attribRecPools[numSkills];
-	uint8               attribMemPools[numSkills];
-	uint8               vitalityMemory;
-	bool                notifiedOfAttack;
+	ActorAttributes     _baseStats;
+	int16               _manaMemory[numManas];
+	uint8               _attribRecPools[numSkills];
+	uint8               _attribMemPools[numSkills];
+	uint8               _vitalityMemory;
+	bool                _notifiedOfAttack;
 };
 
 
@@ -912,23 +912,23 @@ void initPlayerActors() {
 		ActorProto      *proto = (ActorProto *)a->proto();
 
 		//  Set the portrait type
-		p->portraitType = kPortraitNormal;
+		p->_portraitType = kPortraitNormal;
 
 		//  Clear all flags
-		p->flags = 0;
+		p->_flags = 0;
 		//  Copy the base stats from the actor's prototype
-		memcpy(&p->baseStats, &proto->baseStats, sizeof(p->baseStats));
+		memcpy(&p->_baseStats, &proto->baseStats, sizeof(p->_baseStats));
 
 		//  Clear out the accumulation arrays
-		memset(&p->manaMemory, 0, sizeof(p->manaMemory));
-		memset(&p->attribRecPools, 0, sizeof(p->attribRecPools));
-		memset(&p->attribMemPools, 0, sizeof(p->attribMemPools));
+		memset(&p->_manaMemory, 0, sizeof(p->_manaMemory));
+		memset(&p->_attribRecPools, 0, sizeof(p->_attribRecPools));
+		memset(&p->_attribMemPools, 0, sizeof(p->_attribMemPools));
 
-		//  Clear the vitalityMemory
-		p->vitalityMemory = 0;
+		//  Clear the _vitalityMemory
+		p->_vitalityMemory = 0;
 
 		//  Clear the attack notification flag
-		p->notifiedOfAttack = false;
+		p->_notifiedOfAttack = false;
 
 		//  Set the actor's disposition field to reflect that that
 		//  actor is a player actor
@@ -952,34 +952,34 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 		PlayerActor *p = g_vm->_playerList[i];
 
 		//  Store the portrait type
-		out->writeSint16LE(p->portraitType);
+		out->writeSint16LE(p->_portraitType);
 
 		//  Store the flags
-		out->writeUint16LE(p->flags);
+		out->writeUint16LE(p->_flags);
 
 		//  Store the base stats
-		p->baseStats.write(out);
+		p->_baseStats.write(out);
 
 		//  Store accumulation arrays
 		for (int j = 0; j < numManas; ++j)
-			out->writeSint16LE(p->manaMemory[j]);
+			out->writeSint16LE(p->_manaMemory[j]);
 
 		for (int j = 0; j < numSkills; ++j)
-			out->writeByte(p->attribRecPools[j]);
+			out->writeByte(p->_attribRecPools[j]);
 
 		for (int j = 0; j < numSkills; ++j)
-			out->writeByte(p->attribMemPools[j]);
+			out->writeByte(p->_attribMemPools[j]);
 
 		//  Store the vitality memory
-		out->writeByte(p->vitalityMemory);
+		out->writeByte(p->_vitalityMemory);
 
 		//  Store the attack notification flag
-		out->writeUint16LE(p->notifiedOfAttack);
+		out->writeUint16LE(p->_notifiedOfAttack);
 
-		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
-		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
-		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
-		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
+		debugC(4, kDebugSaveload, "... playerList[%d]._portraitType = %d", i, p->_portraitType);
+		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->_flags);
+		debugC(4, kDebugSaveload, "... playerList[%d]._vitalityMemory = %d", i, p->_vitalityMemory);
+		debugC(4, kDebugSaveload, "... playerList[%d]._notifiedOfAttack = %d", i, p->_notifiedOfAttack);
 	}
 	CHUNK_END;
 }
@@ -993,34 +993,34 @@ void loadPlayerActors(Common::InSaveFile *in) {
 		PlayerActor *p = g_vm->_playerList[i];
 
 		//  Restore the portrait type
-		p->portraitType = in->readSint16LE();
+		p->_portraitType = in->readSint16LE();
 
 		//  Restore the flags
-		p->flags = in->readUint16LE();
+		p->_flags = in->readUint16LE();
 
 		//  Restore the base stats
-		p->baseStats.read(in);
+		p->_baseStats.read(in);
 
 		//  Restore the accumulation arrays
 		for (int j = 0; j < numManas; ++j)
-			p->manaMemory[j] = in->readSint16LE();
+			p->_manaMemory[j] = in->readSint16LE();
 
 		for (int j = 0; j < numSkills; ++j)
-			p->attribRecPools[j] = in->readByte();
+			p->_attribRecPools[j] = in->readByte();
 
 		for (int j = 0; j < numSkills; ++j)
-			p->attribMemPools[j] = in->readByte();
+			p->_attribMemPools[j] = in->readByte();
 
 		//  Restore the vitality memory
-		p->vitalityMemory = in->readByte();
+		p->_vitalityMemory = in->readByte();
 
 		//  Restore the attack notification flag
-		p->notifiedOfAttack = in->readUint16LE();
+		p->_notifiedOfAttack = in->readUint16LE();
 
-		debugC(4, kDebugSaveload, "... playerList[%d].portraitType = %d", i, p->portraitType);
-		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->flags);
-		debugC(4, kDebugSaveload, "... playerList[%d].vitalityMemory = %d", i, p->vitalityMemory);
-		debugC(4, kDebugSaveload, "... playerList[%d].notifiedOfAttack = %d", i, p->notifiedOfAttack);
+		debugC(4, kDebugSaveload, "... playerList[%d]._portraitType = %d", i, p->_portraitType);
+		debugC(4, kDebugSaveload, "... playerList[%d].flags = %d", i, p->_flags);
+		debugC(4, kDebugSaveload, "... playerList[%d]._vitalityMemory = %d", i, p->_vitalityMemory);
+		debugC(4, kDebugSaveload, "... playerList[%d]._notifiedOfAttack = %d", i, p->_notifiedOfAttack);
 	}
 
 	readyContainerSetup();
@@ -1089,35 +1089,35 @@ void loadCenterActor(Common::InSaveFile *in) {
 //	Iterates through all player actors
 
 PlayerActor *PlayerActorIterator::first() {
-	index = 0;
-	return g_vm->_playerList[index++];
+	_index = 0;
+	return g_vm->_playerList[_index++];
 }
 
 PlayerActor *PlayerActorIterator::next() {
-	return (index < kPlayerActors) ? g_vm->_playerList[index++] : NULL;
+	return (_index < kPlayerActors) ? g_vm->_playerList[_index++] : NULL;
 }
 
 //-----------------------------------------------------------------------
 //	Iterates through all player actors that are not dead.
 
 PlayerActor *LivingPlayerActorIterator::first() {
-	index = 0;
+	_index = 0;
 	return LivingPlayerActorIterator::next();
 }
 
 PlayerActor *LivingPlayerActorIterator::next() {
-	if (index >= kPlayerActors)
+	if (_index >= kPlayerActors)
 		return nullptr;
 
-	Actor       *a = g_vm->_playerList[index]->getActor();
+	Actor *a = g_vm->_playerList[_index]->getActor();
 
 	while (a == nullptr || a->isDead()) {
-		if (++index >= kPlayerActors)
+		if (++_index >= kPlayerActors)
 			break;
-		a = g_vm->_playerList[index]->getActor();
+		a = g_vm->_playerList[_index]->getActor();
 	}
 
-	return (index < kPlayerActors) ? g_vm->_playerList[index++] : nullptr;
+	return (_index < kPlayerActors) ? g_vm->_playerList[_index++] : nullptr;
 }
 
 } // end of namespace Saga2

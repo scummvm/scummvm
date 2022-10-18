@@ -394,7 +394,7 @@ Andere Spiele:
      Amazon: Guardians of Eden                   [access]
      Baphomets Fluch 2.5:
          Die Rückkehr der Tempelritter           [sword25]
-     Beavis and Butt-head in Virtual Stupidity   [bbvs]
+     Beavis and Butt-Head in Virtual Stupidity   [bbvs]
      Blade Runner                                [bladerunner]
      Blue Force                                  [blueforce]
      Bud Tucker in Double Trouble                [tucker]
@@ -1591,6 +1591,8 @@ gestartet werden -- siehe nächster Abschnitt.
                            pce, segacd, windows).
   --savepath=PFAD          Pfad zu gespeicherten Spielständen
   --extrapath=PFAD         Extrapfad zu zusätzlichen Spieldaten
+  --iconspath=PFAD         Pfad zu zusätzlichen Icons für die Raster-Übersicht
+                           der ScummVM-Oberfläche
   --soundfont=DATEI        Wählt SoundFont für MIDI-Wiedergabe (wird nur
                            von einigen MIDI-Treibern unterstützt).
   --multi-midi             Aktiviert Kombinierung von AdLib und MIDI.

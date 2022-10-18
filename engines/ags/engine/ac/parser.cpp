@@ -19,8 +19,6 @@
  *
  */
 
-//include <cctype> //isalnum()
-//include <cstdio>
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -116,7 +114,7 @@ int FindMatchingMultiWordWord(char *thisword, const char **text) {
 		while (tempptr[0] == ' ') tempptr++;
 		char chbuffer[2];
 		while (is_valid_word_char(tempptr[0])) {
-			sprintf(chbuffer, "%c", tempptr[0]);
+			snprintf(chbuffer, sizeof(chbuffer), "%c", tempptr[0]);
 			strcat(tempword, chbuffer);
 			tempptr++;
 		}

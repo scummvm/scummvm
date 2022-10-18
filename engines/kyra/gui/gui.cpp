@@ -120,7 +120,7 @@ void GUI::updateSaveSlotsList(Common::String targetName, bool force) {
 				// Ingame auto-generated Japanese EOB SegaCD savegame descriptions have a special 1-byte encoding that
 				// does not survive this conversion. And the rest of the characters in these descriptions do not require it.
 				if (!(_vm->gameFlags().platform == Common::kPlatformSegaCD && _vm->gameFlags().lang == Common::JA_JPN && Common::String(*listEntry).contains('\r')))
-					Util::convertUTF8ToDOS(*listEntry, buffSize);
+					Util::convertString_GUItoKYRA(*listEntry, buffSize);
 				delete in;
 			} else {
 				*listEntry = nullptr;

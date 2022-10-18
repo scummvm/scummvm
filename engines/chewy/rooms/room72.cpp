@@ -30,8 +30,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room72::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	
@@ -85,7 +84,7 @@ void Room72::xit(int16 eib_nr) {
 }
 
 void Room72::proc1(int16 flicNr) {
-	_G(atds)->setControlBit(389, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(389, ATS_ACTIVE_BIT);
 	_G(gameState).flags28_10 = true;
 	waitShowScreen(7);
 	startAadWait(437);

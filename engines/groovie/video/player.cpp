@@ -32,12 +32,21 @@ namespace Groovie {
 VideoPlayer::VideoPlayer(GroovieEngine *vm) :
 	_vm(vm), _syst(vm->_system), _file(nullptr), _audioStream(nullptr), _fps(0), _overrideSpeed(false), _flags(0),
 	_begunPlaying(false), _millisBetweenFrames(0), _lastFrameTime(0), _frameTimeDrift(0) {
+
+	_startTime = _syst->getMillis();
+
+	int16 h = g_system->getOverlayHeight();
+
+	_subtitles.setBBox(Common::Rect(20, h - 120, g_system->getOverlayWidth() - 20, h - 20));
+	_subtitles.setColor(0xff, 0xff, 0xff);
+	_subtitles.setFont("FreeSans.ttf");
 }
 
 bool VideoPlayer::load(Common::SeekableReadStream *file, uint16 flags) {
 	_file = file;
 	_flags = flags;
 	_overrideSpeed = false;
+	_startTime = _syst->getMillis();
 
 	stopAudioStream();
 	_fps = loadInternal();
@@ -80,6 +89,9 @@ bool VideoPlayer::playFrame() {
 		end = playFrameInternal();
 	}
 
+	uint32 currTime = _syst->getMillis();
+	_subtitles.drawSubtitle(currTime - _startTime);
+
 	// The file has been completely processed
 	if (end) {
 		_file = nullptr;
@@ -95,6 +107,8 @@ bool VideoPlayer::playFrame() {
 				end = false;
 			}
 		}
+
+		g_system->hideOverlay();
 	}
 
 	return end;
@@ -109,12 +123,15 @@ void VideoPlayer::waitFrame() {
 		_begunPlaying = true;
 		_lastFrameTime = currTime;
 		_frameTimeDrift = 0.0f;
+
+		g_system->showOverlay();
+		g_system->clearOverlay();
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
 		float fMillis = _millisBetweenFrames + _frameTimeDrift;
 		// use floorf instead of roundf, because delayMillis often slightly over-sleeps
 		uint32 millisSleep = fmaxf(0.0f, floorf(fMillis) - float(millisDiff));
-		
+
 		if (millisSleep > 0) {
 			debugC(7, kDebugVideo, "Groovie::Player: Delaying %d (currTime=%d, _lastFrameTime=%d, millisDiff=%d, _millisBetweenFrame=%.2f, _frameTimeDrift=%.2f)",
 				   millisSleep, currTime, _lastFrameTime, millisDiff, _millisBetweenFrames, _frameTimeDrift);

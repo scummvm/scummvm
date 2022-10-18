@@ -105,6 +105,10 @@ void Scores::set(int index, int value) {
 	_lastScoreValue = value;
 }
 
+void Scores::handleCustomEventStart(const Common::Event &evt) {
+	close();
+}
+
 void Scores::handleKeyDown(const Common::KeyState &kbd) {
 	close();
 }

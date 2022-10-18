@@ -81,13 +81,13 @@ private:
 		maxText     = 512
 	};
 
-	int16   titleCount;
-	Point16 titlePos[maxLines];
-	char    *titleStrings[maxLines];
-	char    titleBuf[maxText];
+	int16   _titleCount;
+	Point16 _titlePos[maxLines];
+	char    *_titleStrings[maxLines];
+	char    _titleBuf[maxText];
 
-	textPallete textPal;
-	gFont       *textFont;
+	textPallete _textPal;
+	gFont       *_textFont;
 
 	void positionText(
 	    char *windowText,
@@ -122,10 +122,10 @@ class CPlacardPanel : public CPlaqText {
 		maxText     = 512
 	};
 
-	int16   titleCount;
-	Point16 titlePos[maxLines];
-	char    *titleStrings[maxLines];
-	char    titleBuf[maxText];
+	int16   _titleCount;
+	Point16 _titlePos[maxLines];
+	char    *_titleStrings[maxLines];
+	char    _titleBuf[maxText];
 
 	void positionText(const char *windowText, const Rect16 &textArea);
 

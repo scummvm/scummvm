@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -41,7 +42,6 @@ void Room66::entry(int16 eib_nr) {
 	if (!_G(gameState).flags26_4) {
 		_G(det)->showStaticSpr(4);
 		_G(det)->showStaticSpr(8);
-		_G(cur_hide_flag) = false;
 		hideCur();
 		_G(gameState).flags26_4 = true;
 		_G(gameState).scrollx = 476;
@@ -88,8 +88,8 @@ void Room66::entry(int16 eib_nr) {
 
 void Room66::xit(int16 eib_nr) {
 	_G(gameState).ScrollxStep = 1;
-	_G(atds)->setControlBit(415, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(417, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(415, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(417, ATS_ACTIVE_BIT);
 	if (_G(gameState)._personRoomNr[P_HOWARD] != 66)
 		return;
 
@@ -116,7 +116,7 @@ void Room66::xit(int16 eib_nr) {
 
 void Room66::setup_func() {
 	calc_person_look();
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int edx, esi;
 	if (posX < 30) {
@@ -178,21 +178,20 @@ int Room66::proc2() {
 }
 
 int Room66::proc7() {
-	if (!isCurInventory(ARTE_INV))
+	if (!isCurInventory(ARTIFACT_INV))
 		return 0;
 
 	hideCur();
 	autoMove(7, P_CHEWY);
-	if (_G(gameState).flags26_10) {
-		delInventory(_G(gameState).AkInvent);
+	if (_G(gameState).changedArtifactOrigin) {
+		delInventory(_G(cur)->getInventoryCursor());
 		invent_2_slot(92);
 		invent_2_slot(93);
 		invent_2_slot(94);
 		_G(gameState).flags26_20 = true;
 	}
 
-	proc8(7, 2, 3, 411 + (_G(gameState).flags26_10 ? 1 : 0));
-	_G(cur_hide_flag) = 0;
+	proc8(7, 2, 3, 411 + (_G(gameState).changedArtifactOrigin ? 1 : 0));
 	hideCur();
 	if (_G(gameState).flags26_20)
 		startSetAILWait(4, 1, ANI_FRONT);

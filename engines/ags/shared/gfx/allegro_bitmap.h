@@ -155,7 +155,7 @@ public:
 		return (index >= 0 && index < GetHeight()) ? (unsigned char *)_alBitmap->getBasePtr(0, index) : nullptr;
 	}
 
-	void    SetMaskColor(color_t color);
+	// Get bitmap's mask color (transparent color)
 	inline color_t GetMaskColor() const {
 		return bitmap_mask_color(_alBitmap);
 	}
@@ -168,6 +168,7 @@ public:
 
 	//=========================================================================
 	// Clipping
+	// TODO: consider implementing push-pop clipping stack logic.
 	//=========================================================================
 	void    SetClip(const Rect &rc);
 	void    ResetClip();
@@ -193,7 +194,7 @@ public:
 	// Draw bitmap using lighting preset
 	void    LitBlendBlt(Bitmap *src, int dst_x, int dst_y, int light_amount);
 	// TODO: generic "draw transformed" function? What about mask option?
-	void    FlipBlt(Bitmap *src, int dst_x, int dst_y, BitmapFlip flip);
+	void    FlipBlt(Bitmap *src, int dst_x, int dst_y, GraphicFlip flip);
 	void    RotateBlt(Bitmap *src, int dst_x, int dst_y, fixed_t angle);
 	void    RotateBlt(Bitmap *src, int dst_x, int dst_y, int pivot_x, int pivot_y, fixed_t angle);
 

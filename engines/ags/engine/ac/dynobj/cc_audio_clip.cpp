@@ -22,25 +22,27 @@
 #include "ags/engine/ac/dynobj/cc_audio_clip.h"
 #include "ags/shared/ac/dynobj/script_audio_clip.h"
 #include "ags/shared/ac/game_setup_struct.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
 
-
+using namespace AGS::Shared;
 
 const char *CCAudioClip::GetType() {
 	return "AudioClip";
 }
 
-int CCAudioClip::Serialize(const char *address, char *buffer, int bufsize) {
-	const ScriptAudioClip *ach = (const ScriptAudioClip *)address;
-	StartSerialize(buffer);
-	SerializeInt(ach->id);
-	return EndSerialize();
+size_t CCAudioClip::CalcSerializeSize() {
+	return sizeof(int32_t);
 }
 
-void CCAudioClip::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int id = UnserializeInt();
+void CCAudioClip::Serialize(const char *address, Stream *out) {
+	const ScriptAudioClip *ach = (const ScriptAudioClip *)address;
+	out->WriteInt32(ach->id);
+}
+
+void CCAudioClip::Unserialize(int index, Stream *in, size_t data_sz) {
+	int id = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_GP(game).audioClips[id], this);
 }
 

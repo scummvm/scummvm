@@ -37,11 +37,11 @@
  * Sparkle is a software update framework for macOS which uses appcasts for
  * release information. Appcasts are RSS-like XML feeds which contain information
  * about the most current version at the time. If a new version is available, the
- * user is presented the release-notes/changes/fixes and is asked if he wants to
+ * user is presented the release-notes/changes/fixes and is asked if they want to
  * update, and if yes the Sparkle framework downloads a signed update package
  * from the server and automatically installs and restarts the software.
  * More detailed information is available at the following address:
- * http://sparkle.andymatuschak.org/
+ * https://sparkle-project.org/
  *
  * WinSparkle is a heavily (to the point of being its almost-port) inspired by the
  * Sparkle framework originally by Andy Matuschak that became the de facto standard

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -29,17 +30,17 @@ namespace Chewy {
 namespace Rooms {
 
 void Room81::entry() {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
 	_G(zoom_horizont) = 140;
 	_G(flags).ZoomMov = true;
 	_G(zoom_mov_fak) = 3;
 	_G(gameState).DiaAMov = 0;
-	if (_G(gameState).r88DestRoom == 84) {
+
+	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->showStaticSpr(0);
-		_G(atds)->delControlBit(488, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(488, ATS_ACTIVE_BIT);
 	}
 
 	proc3();
@@ -84,7 +85,7 @@ void Room81::proc1() {
 		startSetAILWait(0, 1, ANI_FRONT);
 		_G(det)->startDetail(1, 255, false);
 		startAadWait(459);
-		_G(det)->stop_detail(1);
+		_G(det)->stopDetail(1);
 		startSetAILWait(0, 1, ANI_GO);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		goAutoXy(171, 93, P_CHEWY, ANI_WAIT);
@@ -116,7 +117,7 @@ int Room81::proc2() {
 		start_spz_wait(13, 1, false, P_CHEWY);
 		aniId = 5;
 		diaNr = 462;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).flags30_2 = true;
 	} else if (isCurInventory(104)) {
 		aniId = 4;
@@ -146,9 +147,9 @@ void Room81::proc3() {
 	for (int i = 0; i < 3; ++i)
 		_G(det)->startDetail(3 + i, 255, false);
 
-	_G(det)->stop_detail(2);
-	_G(atds)->delControlBit(486, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(490, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(det)->stopDetail(2);
+	_G(atds)->delControlBit(486, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(490, ATS_ACTIVE_BIT);
 }
 
 } // namespace Rooms

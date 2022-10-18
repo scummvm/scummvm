@@ -28,9 +28,13 @@ namespace Tinsel {
 
 #include "common/pack-start.h"	// START STRUCT PACKING
 
+struct MULTI_INIT;
 struct FREEL {
 	SCNHANDLE mobj;
 	SCNHANDLE script;
+
+	MULTI_INIT *GetMultiInit();
+	const MULTI_INIT *GetMultiInit() const;
 } PACKED_STRUCT;
 
 struct FILM {

@@ -35,12 +35,8 @@ using namespace AGS::Shared;
 GameSetupStruct::GameSetupStruct()
 	: filever(0)
 	, roomCount(0)
-	, roomNumbers(nullptr)
-	, roomNames(nullptr)
 	, scoreClipID(0) {
 	memset(invinfo, 0, sizeof(invinfo));
-	for (int i = 0; i < MAX_CURSOR; ++i)
-		mcurs[i].clear();
 	memset(lipSyncFrameLetters, 0, sizeof(lipSyncFrameLetters));
 	memset(guid, 0, sizeof(guid));
 	memset(saveGameFileExtension, 0, sizeof(saveGameFileExtension));
@@ -64,10 +60,8 @@ void GameSetupStruct::Free() {
 	invScripts.clear();
 	numinvitems = 0;
 
-	for (int i = 0; i < roomCount; i++)
-		delete roomNames[i];
-	delete[] roomNames;
-	delete[] roomNumbers;
+	roomNames.clear();
+	roomNumbers.clear();
 	roomCount = 0;
 
 	audioClips.clear();
@@ -80,14 +74,14 @@ void GameSetupStruct::Free() {
 // Assigns font info parameters using legacy flags value read from the game data
 void SetFontInfoFromLegacyFlags(FontInfo &finfo, const uint8_t data) {
 	finfo.Flags = (data >> 6) & 0xFF;
-	finfo.SizePt = data & FFLG_LEGACY_SIZEMASK;
+	finfo.Size = data & FFLG_LEGACY_SIZEMASK;
 }
 
 void AdjustFontInfoUsingFlags(FontInfo &finfo, const uint32_t flags) {
 	finfo.Flags = flags;
 	if ((flags & FFLG_SIZEMULTIPLIER) != 0) {
-		finfo.SizeMultiplier = finfo.SizePt;
-		finfo.SizePt = 0;
+		finfo.SizeMultiplier = finfo.Size;
+		finfo.Size = 0;
 	}
 }
 
@@ -128,15 +122,15 @@ void GameSetupStruct::read_font_infos(Shared::Stream *in, GameDataVersion data_v
 		for (int i = 0; i < numfonts; ++i) {
 			fonts[i].YOffset = in->ReadInt32();
 			if (data_ver >= kGameVersion_341_2)
-				fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
+				fonts[i].LineSpacing = MAX<int32_t>(0, in->ReadInt32());
 		}
 	} else {
 		for (int i = 0; i < numfonts; ++i) {
 			uint32_t flags = in->ReadInt32();
-			fonts[i].SizePt = in->ReadInt32();
+			fonts[i].Size = in->ReadInt32();
 			fonts[i].Outline = in->ReadInt32();
 			fonts[i].YOffset = in->ReadInt32();
-			fonts[i].LineSpacing = Math::Max<int32_t>(0, in->ReadInt32());
+			fonts[i].LineSpacing = MAX<int32_t>(0, in->ReadInt32());
 			AdjustFontInfoUsingFlags(fonts[i], flags);
 		}
 	}
@@ -158,10 +152,7 @@ void GameSetupStruct::WriteInvInfo_Aligned(Stream *out) {
 	}
 }
 
-HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in, GameDataVersion data_ver) {
-	if (numcursors > MAX_CURSOR)
-		return new MainGameFileError(kMGFErr_TooManyCursors, String::FromFormat("Count: %d, max: %d", numcursors, MAX_CURSOR));
-
+HGameFileError GameSetupStruct::read_cursors(Shared::Stream *in) {
 	ReadMouseCursors_Aligned(in);
 	return HGameFileError::None();
 }
@@ -198,6 +189,7 @@ void GameSetupStruct::read_words_dictionary(Shared::Stream *in) {
 }
 
 void GameSetupStruct::ReadMouseCursors_Aligned(Stream *in) {
+	mcurs.resize(numcursors);
 	AlignedStream align_s(in, Shared::kAligned_Read);
 	for (int iteratorCount = 0; iteratorCount < numcursors; ++iteratorCount) {
 		mcurs[iteratorCount].ReadFromFile(&align_s);
@@ -216,8 +208,8 @@ void GameSetupStruct::WriteMouseCursors_Aligned(Stream *out) {
 //-----------------------------------------------------------------------------
 // Reading Part 2
 
-void GameSetupStruct::read_characters(Shared::Stream *in, GameDataVersion data_ver) {
-	chars = new CharacterInfo[numcharacters + 5]; // TODO: why +5, is this really needed?
+void GameSetupStruct::read_characters(Shared::Stream *in) {
+	chars = new CharacterInfo[numcharacters];
 
 	ReadCharacters_Aligned(in);
 }
@@ -328,14 +320,11 @@ HGameFileError GameSetupStruct::read_audio(Shared::Stream *in, GameDataVersion d
 void GameSetupStruct::read_room_names(Stream *in, GameDataVersion data_ver) {
 	if ((data_ver >= kGameVersion_301) && (options[OPT_DEBUGMODE] != 0)) {
 		roomCount = in->ReadInt32();
-		roomNumbers = new int[roomCount];
-		roomNames = new char *[roomCount];
-		String pexbuf;
-		for (int bb = 0; bb < roomCount; bb++) {
-			roomNumbers[bb] = in->ReadInt32();
-			pexbuf.Read(in, STD_BUFFER_SIZE);
-			roomNames[bb] = new char[pexbuf.GetLength() + 1];
-			strcpy(roomNames[bb], pexbuf.GetCStr());
+		roomNumbers.resize(roomCount);
+		roomNames.resize(roomCount);
+		for (int i = 0; i < roomCount; ++i) {
+			roomNumbers[i] = in->ReadInt32();
+			roomNames[i].Read(in);
 		}
 	} else {
 		roomCount = 0;
@@ -378,9 +367,10 @@ void GameSetupStruct::ReadFromSaveGame_v321(Stream *in, char *gswas, ccScript *c
 }
 
 //=============================================================================
+#if defined (OBSOLETE)
 
 void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
-	strcpy(gss->gamename, ogss->gamename);
+	snprintf(gss->gamename, sizeof(GameSetupStruct::gamename), "%s", ogss->gamename);
 	for (int i = 0; i < 20; i++)
 		gss->options[i] = ogss->options[i];
 	memcpy(&gss->paluses[0], &ogss->paluses[0], 256);
@@ -410,7 +400,8 @@ void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
 	}
 
 	memcpy(&gss->invinfo[0], &ogss->invinfo[0], 100 * sizeof(InventoryItemInfo));
-	memcpy(&gss->mcurs[0], &ogss->mcurs[0], 10 * sizeof(MouseCursor));
+	for (int i = 0; i < 10; ++i)
+		gss->mcurs[i] = ogss->mcurs[i];
 	for (int i = 0; i < MAXGLOBALMES; i++)
 		gss->messages[i] = ogss->messages[i];
 	gss->dict = ogss->dict;
@@ -419,6 +410,7 @@ void ConvertOldGameStruct(OldGameSetupStruct *ogss, GameSetupStruct *gss) {
 	gss->compiled_script = ogss->compiled_script;
 	gss->numcursors = 10;
 }
+#endif // OBSOLETE
 
 void GameSetupStruct::ReadFromSavegame(Stream *in) {
 	// of GameSetupStruct

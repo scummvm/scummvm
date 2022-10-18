@@ -155,7 +155,7 @@ public:
 		if (_milesXmidiTimbres)
 			_milesXmidiTimbres->processXMIDITimbreChunk(timbreListPtr, timbreListSize);
 	};
-	bool isReady() override;
+	bool isReady(int8 source = -1) override;
 
 	void setUserVolume(uint16 volume) override;
 

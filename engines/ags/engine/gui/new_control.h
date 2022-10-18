@@ -33,13 +33,13 @@ struct NewControl {
 	int8 visible, enabled;        // not implemented
 	int8 needredraw;
 	virtual void draw(Shared::Bitmap *ds) = 0;
-	virtual int pressedon(int mousex, int mousey) = 0;
+	virtual int pressedon(int mx, int my) = 0;
 	virtual int processmessage(int, int, NumberPtr) = 0;
 
 	NewControl(int xx, int yy, int wi, int hi);
 	NewControl();
 	virtual ~NewControl() {}
-	int mouseisinarea(int mousex, int mousey);
+	int mouseisinarea(int mx, int my);
 	void drawifneeded();
 	void drawandmouse();
 };

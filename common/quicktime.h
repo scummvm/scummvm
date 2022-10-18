@@ -49,6 +49,7 @@ namespace Common {
  * @details File parser used in engines:
  *          - groovie
  *          - mohawk
+ *          - mtropolis
  *          - sci
  * @{
  */
@@ -77,11 +78,22 @@ public:
 	void close();
 
 	/**
+	 * Flattens edit lists to a single edit containing the first edit contiguously through the last edit.
+	 * Used to work around bad edit offsets.
+	 */
+	void flattenEditLists();
+
+	/**
 	 * Set the beginning offset of the video so we can modify the offsets in the stco
-	 * atom of videos inside the Mohawk archives
+	 * atom of videos inside the Mohawk/mTropolis archives
 	 * @param offset the beginning offset of the video
 	 */
 	void setChunkBeginOffset(uint32 offset) { _beginOffset = offset; }
+
+	/**
+	 * Returns the movie time scale
+	 */
+	uint32 getTimeScale() const { return _timeScale; }
 
 	/** Find out if this parser has an open file handle */
 	bool isOpen() const { return _fd != nullptr; }

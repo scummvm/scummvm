@@ -5,4 +5,5 @@ begin_section("Glk");
 	add_person("Andrew Plotkin", "", "Glulxe interpreter");
 	add_person("Alan Cox", "", "ScottFree interpreter");
 	add_person("Michael J. Roberts", "", "TADS interpreter");
+	add_person("Avijeet Maurya", "StableSteady", "Scott Sub-engine");
 end_section();

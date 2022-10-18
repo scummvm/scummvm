@@ -190,11 +190,11 @@ public:
 	NGIMetaEngineDetection() : AdvancedMetaEngineDetection(NGI::gameDescriptions, sizeof(NGI::NGIGameDescription), ngiGames) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "ngi";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Nikita Game Interface";
 	}
 

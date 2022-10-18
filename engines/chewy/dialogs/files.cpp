@@ -22,9 +22,11 @@
 #include "common/config-manager.h"
 #include "chewy/dialogs/files.h"
 #include "chewy/dialogs/options.h"
+#include "chewy/cursor.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
-#include "chewy/ngsdefs.h"
+#include "chewy/mcga_graphics.h"
+#include "chewy/memory.h"
 
 namespace Chewy {
 namespace Dialogs {
@@ -36,43 +38,33 @@ enum Widget {
 	GAME = 4, QUIT = 5, OPTIONS = 6, W7 = 7, W8 = 8
 };
 
-static const Common::Rect fileHotspots[] = {
-	{  14,  73,  32,  94 },
-	{  14,  96,  32, 118 },
-	{  36,  64, 310, 128 },
-	{  16, 143,  76, 193 },
-	{  78, 143, 130, 193 },
-	{ 132, 143, 178, 193 },
-	{ 180, 143, 228, 193 },
-	{ 232, 143, 310, 193 },
-	{  -1,  -1,  -1,  -1 }
-};
-
-
-int16 Files::execute(bool isInGame) {
+// Returns true if the game should exit to main menu
+bool Files::execute(bool isInGame) {
 	int16 key = 0;
 	Common::Point pt[8];
 	int16 mode[9];
 	bool visibility[8];
-	int16 ret = 0;
+	bool ret = false;
 	bool flag = false;
 
 	if (!ConfMan.getBool("original_menus")) {
 		g_engine->showGmm(isInGame);
-		return 0;
+		_G(flags).mainMouseFlag = false;
+		_G(minfo).button = 0;
+		const int16 roomNum = _G(gameState)._personRoomNr[P_CHEWY];
+		return isInGame ? false : (roomNum == 98);
 	}
 
 	TafInfo *ti = _G(mem)->taf_adr(OPTION_TAF);
 	EVENTS_CLEAR;
 
-	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, 0, GBOOK);
+	_G(room)->load_tgp(1, &_G(room_blk), GBOOK_TGP, false, GBOOK);
 	_G(out)->setPointer(_G(workptr));
 	_G(out)->map_spr2screen(_G(ablage)[_G(room_blk).AkAblage], 0, 0);
-	_G(out)->setPointer(_G(screen0));
+	_G(out)->setPointer((byte *)g_screen->getPixels());
 	_G(room)->set_ak_pal(&_G(room_blk));
-	FileFind *fnames = _G(iog)->io_init();
  
-	_G(fx)->blende1(_G(workptr), _G(screen0), _G(pal), 150, 0, 0);
+	_G(fx)->blende1(_G(workptr), _G(pal), 0, 0);
 	_G(out)->setPointer(_G(workptr));
 	showCur();
 
@@ -93,6 +85,7 @@ int16 Files::execute(bool isInGame) {
 
 	int16 text_off = 0;		// Top visible save slot
 	int16 active_slot = 0;	// Currently selected slot
+	SaveStateList saveList = g_engine->listSaves();
 
 	while (key != Common::KEYCODE_ESCAPE && !SHOULD_QUIT) {
 		// Draw the dialog background
@@ -104,30 +97,37 @@ int16 Files::execute(bool isInGame) {
 				if (!mode[j])
 					// Not pressed
 					_G(out)->spriteSet(
-						ti->_image[i], 16 + ti->_correction[i << 1] + pt[j].x,
-						76 + ti->_correction[(i << 1) + 1] + pt[j].y, 0);
+						ti->image[i], 16 + ti->correction[i << 1] + pt[j].x,
+						76 + ti->correction[(i << 1) + 1] + pt[j].y, 0);
 				else
 					// Pressed
-					_G(out)->spriteSet(ti->_image[i], 16 + ti->_correction[i << 1],
-						76 + ti->_correction[(i << 1) + 1], 0);
+					_G(out)->spriteSet(ti->image[i], 16 + ti->correction[i << 1],
+						76 + ti->correction[(i << 1) + 1], 0);
 			}
 		}
 
-		// Write the list of savegame slots
-		FileFind *tmp = &fnames[text_off];
-		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++, ++tmp) {
+		// Write the list of savegame slots	
+		for (int16 i = 0; i < NUM_VISIBLE_SLOTS; i++) {
+			if (i + text_off >= (int16) saveList.size())
+				break;
+
+			// TODO: This implementation disallows gaps in the save list
+			if (saveList[i + text_off].getSaveSlot() != i + text_off)
+				continue;
+
 			Common::String slot = Common::String::format("%2d.", text_off + i);
+			Common::String saveName = saveList[i + text_off].getDescription();
 			if (i != active_slot) {
 				_G(out)->printxy(40, 68 + (i * 10), 14, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, tmp->_name.c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 14, 300, 0, saveName.c_str());
 			} else {
 				_G(out)->boxFill(40, 68 + (i * 10), 308, 68 + 8 + (i * 10), 42);
 				_G(out)->printxy(40, 68 + (i * 10), 255, 300, 0, slot.c_str());
-				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, tmp->_name.c_str());
+				_G(out)->printxy(70, 68 + (i * 10), 255, 300, 0, saveName.c_str());
 			}
 		}
 
-		key = _G(in)->getSwitchCode();
+		key = g_events->getSwitchCode();
 
 		if (mode[SCROLL_UP])
 			--mode[SCROLL_UP];
@@ -143,11 +143,11 @@ int16 Files::execute(bool isInGame) {
 			--mode[QUIT];
 		if (mode[QUIT] == 1) {
 			_G(out)->printxy(120, 138, 255, 300, 0, g_engine->getLanguage() == Common::Language::DE_DEU ? QUIT_MSG_DE : QUIT_MSG_EN);
-			_G(out)->back2screen(_G(workpage));
+			_G(out)->copyToScreen();
 
 			key = getch();
 			if (key == 'j' || key == 'J' || key == 'y' || key == 'Y' || key == 'z' || key == 'Z') {
-				ret = 1;
+				ret = true;
 				key = Common::KEYCODE_ESCAPE;
 			} else {
 				key = 0;
@@ -160,8 +160,8 @@ int16 Files::execute(bool isInGame) {
 			Dialogs::Options::execute(ti);
 		}
 
-		if (!flag && _G(minfo)._button == 1) {
-			int16 rect = _G(in)->findHotspot(fileHotspots);
+		if (!flag && _G(minfo).button == 1) {
+			int16 rect = _G(out)->findHotspot(_G(fileHotspots));
 			flag = true;
 			key = 0;
 
@@ -205,7 +205,7 @@ int16 Files::execute(bool isInGame) {
 				break;
 			}
 
-		} else if (flag && _G(minfo)._button == 0) {
+		} else if (flag && _G(minfo).button == 0) {
 			flag = false;
 		}
 
@@ -251,7 +251,7 @@ int16 Files::execute(bool isInGame) {
 			mode[SCROLL_DOWN] = 10;
 			if (active_slot < (NUM_VISIBLE_SLOTS - 1))
 				++active_slot;
-			else if (text_off < (20 - NUM_VISIBLE_SLOTS))
+			else if (text_off < (999 - NUM_VISIBLE_SLOTS))
 				++text_off;
 			break;
 
@@ -260,25 +260,26 @@ int16 Files::execute(bool isInGame) {
 enter:
 			if (mode[LOAD]) {
 				const int16 slotNum = text_off + active_slot;
-				SaveStateList saveList = g_engine->listSaves();
 				for (uint j = 0; j < saveList.size(); ++j) {
 					if (saveList[j].getSaveSlot() == slotNum) {
-						_G(currentSong) = -1;
-						_G(cur)->hide_cur();
+						_G(cur)->hideCursor();
 						g_engine->loadGameState(slotNum);
 						key = Common::KEYCODE_ESCAPE;
 						break;
 					}
 				}
 			} else if (mode[SAVE]) {
-				_G(out)->back2screen(_G(workpage));
-				_G(out)->setPointer(_G(screen0));
-				tmp = fnames + ((text_off + active_slot) * 40);
+				_G(out)->copyToScreen();
+				_G(out)->setPointer((byte *)g_screen->getPixels());
+				char slotName[81];
+				slotName[0] = '\0';
 				key = _G(out)->scanxy(70, 68 + (active_slot * 10),
-					255, 42, 14, 0, "%36s36", tmp);
+					255, 42, 14, 0, "%36s36", slotName);
+				
 				_G(out)->setPointer(_G(workptr));
 				if (key != Common::KEYCODE_ESCAPE) {
-					_G(iog)->save_entry(text_off + active_slot);
+					g_engine->saveGameState(text_off + active_slot, slotName);
+					saveList = g_engine->listSaves();
 				}
 				key = Common::KEYCODE_ESCAPE;
 			}
@@ -288,15 +289,15 @@ enter:
 			break;
 		}
 
-		_G(cur)->plot_cur();
-		_G(out)->back2screen(_G(workpage));
+		_G(cur)->updateCursor();
+		_G(out)->copyToScreen();
 
 		EVENTS_UPDATE;
 	}
 
 	free(ti);
 
-	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, GED_LOAD, EPISODE1);
+	_G(room)->load_tgp(_G(gameState)._personRoomNr[P_CHEWY], &_G(room_blk), EPISODE1_TGP, true, EPISODE1);
 
 	_G(fx_blend) = BLEND1;
 	_G(room)->set_ak_pal(&_G(room_blk));

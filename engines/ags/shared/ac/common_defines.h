@@ -92,15 +92,15 @@ namespace AGS3 {
 #define OBJECT_ON     13
 #define RUN_DIALOG    14
 
-
+// Number of state-saved rooms
 #define MAX_ROOMS 300
+// Some obsolete room data, likely pre-2.5
+#define MAX_LEGACY_ROOM_FLAGS 15
 
-#define MAX_FLAGS     15
 #define LEGACY_MAXOBJNAMELEN 30
 
 #define LEGACY_MAX_SPRITES_V25  6000
 #define LEGACY_MAX_SPRITES      30000
-#define MAX_CURSOR          20
 
 #if AGS_PLATFORM_OS_WINDOWS
 #define AGS_INLINE inline

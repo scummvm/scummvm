@@ -68,11 +68,10 @@ const char *directoryGlobs[] = {
 	"endsoung",
 	"gerhelp",
 	"gervideo",
-	"mausejagd mit ton",			// Rename from Mäusejagd mit Ton
+	"xn--Musejagd mit Ton-vnb",		// GGMD German
 	"music",
 	"solos",
 	"sounds",
-	"startsnd",						// GGMD German
 	"duthelp",
 	"dutvideo",
 	"endsound",
@@ -158,7 +157,6 @@ const char *directoryGlobs[] = {
 	"gems",							// Gems of Darkness / Jewels II
 	"corel cd home",
 	"the cassandra galleries",		// Cassandra Galleries
-	"nnnn",							// Nikolai Toy Makers
 	"knights",						// Nikolai's Knights
 	"birdmpc",						// Bird's Life
 	"nemcina",						// Německá gramatika
@@ -171,25 +169,36 @@ const char *directoryGlobs[] = {
 	"typing",						// Slam Dunk Typing
 	"ceremony",
 	"copytohd",						// Ceremony of Innocence
-	"app",							// Rodney's Wonder Window
-	"settings",						// Saguaro & the City
 	"xn--t8jo8k",					// Perfect Blue screen savers
 	"maccurio",
 	"wincurio",						// Curio City
 	"a.d.a.m. the inside story 1.1", // ADAM
 	"nine month miracle 1.0",		// Nine Month Miracle
+	"_A.D.A.M. Data",				// ADAM Software Products
+	"_A.D.A.M.  Data",				// ADAM Software Products with more space
 	"_setup",
 	"bin",
 	"adam resources",				// ADAM Software Products
 	"material",						// NY Yankees Yearbook
 	"NAV",
-	"SSWARLCK",						// Spaceship Warlock (Windows)
 	"InsMilo",						// Milo and the Magical Stones
 	"dir",
 	"CHRISTMAS PRESENT",			// Christmas Present
 	"Subotnick Hummingbirds",		// All My Hummingbirds Have Alibis
 	"Silly Noisy House Folder",		// A Silly Noisy House
 	"Installer Files",				// Encarta '95
+	"Treasures of the AMNH",		// Treasures of the American Museum of Natural History (Mac)
+	"TAMNH",						// Treasures of the American Museum of Natural History (Win)
+	"xn--Sacred and Secular -ere",	// Sacred and Secular (Mac) ("Sacred and Secular ƒ")
+	"SACRED",						// Sacred and Secular (Win)
+	"Dracula - Truth and Terror",	// Dracula: Truth and Terror (Mac)
+	"DRACULA",						// Dracula: Truth and Terror (Win)
+	"The Louvre for Kids",			// The Louvre Museum (Mac)
+	"LOUVRE",						// The Louvre Museum (Win)
+	"Trinity",						// The Day After Trinity
+	"Puppet Motel Folder",			// Puppet Motel (Mac)
+	"PUPPET",						// Puppet Motel (Win)
+	"Daedalus Max",					// The Daedalus Encounter
 	0
 };
 

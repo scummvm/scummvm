@@ -22,6 +22,7 @@
 #include "common/system.h"
 #include "ags/events.h"
 #include "ags/globals.h"
+#include "ags/shared/ac/keycode.h"
 
 namespace AGS {
 
@@ -156,8 +157,9 @@ void EventsManager::updateKeys(const Common::Event &event, bool isDown) {
 	_keys[event.kbd.keycode] = isDown;
 }
 
-bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key) {
-	pollEvents();
+bool EventsManager::isKeyPressed(AGS3::eAGSKeyCode key, bool poll) {
+	if (poll)
+		pollEvents();
 
 	Common::KeyCode kc[3];
 	if (!ags_key_to_scancode(key, kc))
@@ -310,19 +312,31 @@ bool EventsManager::ags_key_to_scancode(AGS3::eAGSKeyCode key, Common::KeyCode(&
 	return false;
 }
 
-AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event) {
+AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &event, int &ags_mod, bool old_keyhandle) {
 	if (event.type != Common::EVENT_KEYDOWN)
 		return AGS3::eAGSKeyCodeNone;
 
 	const Common::KeyCode sym = event.kbd.keycode;
 	const uint16 mod = event.kbd.flags;
 
-	// Ctrl and Alt combinations realign the letter code to certain offset
-	if (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z) {
+	// First handle the mods, - these are straightforward
+	ags_mod = 0;
+	if (mod & Common::KBD_SHIFT) ags_mod |= AGS3::eAGSModLShift;
+	if (mod & Common::KBD_CTRL)  ags_mod |= AGS3::eAGSModLCtrl;
+	if (mod & Common::KBD_ALT)   ags_mod |= AGS3::eAGSModLAlt;
+	if (mod & Common::KBD_NUM)   ags_mod |= AGS3::eAGSModNum;
+	if (mod & Common::KBD_CAPS)  ags_mod |= AGS3::eAGSModCaps;
+
+	// Old mode: Ctrl and Alt combinations realign the letter code to certain offset
+	if (old_keyhandle && (sym >= Common::KEYCODE_a && sym <= Common::KEYCODE_z)) {
 		if ((mod & Common::KBD_CTRL) != 0) // align letters to code 1
 			return static_cast<AGS3::eAGSKeyCode>(0 + (sym - Common::KEYCODE_a) + 1);
 		else if ((mod & Common::KBD_ALT) != 0) // align letters to code 301
 			return static_cast<AGS3::eAGSKeyCode>(AGS_EXT_KEY_SHIFT + (sym - Common::KEYCODE_a) + 1);
+	}
+	// New mode: also handle common key range
+	else if (!old_keyhandle && (sym >= Common::KEYCODE_SPACE && sym <= Common::KEYCODE_z)) {
+		return static_cast<AGS3::eAGSKeyCode>(sym);
 	}
 
 	if (event.kbd.ascii >= 32 && event.kbd.ascii <= 127)
@@ -399,6 +413,18 @@ AGS3::eAGSKeyCode EventsManager::scummvm_key_to_ags_key(const Common::Event &eve
 	case Common::KEYCODE_KP_PERIOD:
 	case Common::KEYCODE_DELETE:
 		return AGS3::eAGSKeyCodeDelete;
+	case Common::KEYCODE_LSHIFT:
+		return AGS3::eAGSKeyCodeLShift;
+	case Common::KEYCODE_RSHIFT:
+		return AGS3::eAGSKeyCodeRShift;
+	case Common::KEYCODE_LCTRL:
+		return AGS3::eAGSKeyCodeLCtrl;
+	case Common::KEYCODE_RCTRL:
+		return AGS3::eAGSKeyCodeRCtrl;
+	case Common::KEYCODE_LALT:
+		return AGS3::eAGSKeyCodeLAlt;
+	case Common::KEYCODE_RALT:
+		return AGS3::eAGSKeyCodeRAlt;
 
 	default:
 		return AGS3::eAGSKeyCodeNone;

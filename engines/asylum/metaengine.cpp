@@ -23,6 +23,7 @@
 
 #include "backends/keymapper/action.h"
 #include "backends/keymapper/keymap.h"
+#include "backends/keymapper/standard-actions.h"
 
 #include "common/achievements.h"
 #include "common/savefile.h"
@@ -139,6 +140,30 @@ Common::KeymapArray AsylumMetaEngine::initKeymaps(const char *target) const {
 	act = new Action("OLMEC", _("Switch to Olmec"));
 	act->setCustomEngineActionEvent(kAsylumActionSwitchToOlmec);
 	act->addDefaultInputMapping("o");
+	engineKeyMap->addAction(act);
+
+	act = new Action("MENU", _("Bring up the In-Game Menu"));
+	act->setCustomEngineActionEvent(kAsylumActionShowMenu);
+	act->addDefaultInputMapping("ESCAPE");
+	act->addDefaultInputMapping("JOY_Y");
+	engineKeyMap->addAction(act);
+
+	act = new Action("INVENTORY", _("Open character inventory"));
+	act->setCustomEngineActionEvent(kAsylumActionOpenInventory);
+	act->addDefaultInputMapping("i");
+	act->addDefaultInputMapping("JOY_X");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionLeftClick, _("Left Click"));
+	act->setLeftClickEvent();
+	act->addDefaultInputMapping("MOUSE_LEFT");
+	act->addDefaultInputMapping("JOY_A");
+	engineKeyMap->addAction(act);
+
+	act = new Action(kStandardActionRightClick, _("Right Click"));
+	act->setRightClickEvent();
+	act->addDefaultInputMapping("MOUSE_RIGHT");
+	act->addDefaultInputMapping("JOY_B");
 	engineKeyMap->addAction(act);
 
 	return Keymap::arrayOf(engineKeyMap);

@@ -62,7 +62,7 @@ res_man *rs_font = nullptr;   // pointer to which res_man to use for font data
 
 // global test only
 res_man *global_text_resman = nullptr;
-_linked_data_file *global_text;
+LinkedDataFile *global_text;
 
 // route-manager service object
 // doesnt depend on session specific extrernal data so we make it global service

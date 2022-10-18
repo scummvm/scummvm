@@ -236,7 +236,12 @@ bool ScummEngine::hasFeature(EngineFeature f) const {
 		(f == kSupportsReturnToLauncher) ||
 		(f == kSupportsLoadingDuringRuntime) ||
 		(f == kSupportsSavingDuringRuntime) ||
-		(f == kSupportsSubtitleOptions);
+		(f == kSupportsSubtitleOptions) ||
+		(f == kSupportsHelp) ||
+		(
+			f == kSupportsChangingOptionsDuringRuntime &&
+			Common::String(_game.guioptions).contains(GUIO_AUDIO_OVERRIDE)
+		);
 }
 
 
@@ -309,10 +314,9 @@ Common::Error ScummMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	if (!findInMD5Table(res.md5.c_str())) {
 		Common::String md5Warning;
 
-		md5Warning = ("Your game version appears to be unknown. If this is *NOT* a fan-modified\n"
-		               "version (in particular, not a fan-made translation), please, report the\n"
-		               "following data to the ScummVM team along with the name of the game you tried\n"
-		               "to add and its version, language, etc.:\n");
+		md5Warning = ("Your game version appears to be unknown. Please, report the following data to the\n"
+		               "ScummVM team along with the name of the game you tried to add and its version,\n"
+					   "language, etc.:\n");
 
 		md5Warning += Common::String::format("  SCUMM gameid '%s', file '%s', MD5 '%s'\n\n",
 				res.game.gameid,
@@ -530,22 +534,36 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 }
 
 GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-	if (ConfMan.get("gameid", target) != "loom")
-		return nullptr;
-
-	// These Loom settings are only relevant for the EGA version, since
-	// that is the only one that has an overture.
-
-	Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
-	if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
-		return nullptr;
-
+	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
 
-	if (extra == "Steam" || extra == "VGA")
-		return nullptr;
+	if (gameid == "loom") {
+		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+		if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
+			return nullptr;
 
-	return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+		// The VGA Loom settings are only relevant for the DOS CD
+		// version, not the Steam version (which is assumed to be well
+		// timed already).
+
+		if (extra == "VGA")
+			return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
+
+		if (extra == "Steam")
+			return nullptr;
+
+		// These EGA Loom settings are only relevant for the EGA
+		// version, since that is the only one that has an overture.
+
+		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
+	} else if (gameid == "monkey") {
+		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
+			return nullptr;
+
+		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
+	}
+
+	return nullptr;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)

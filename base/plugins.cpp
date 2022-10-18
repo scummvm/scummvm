@@ -55,14 +55,6 @@ const char *Plugin::getName() const {
 	return _pluginObject->getName();
 }
 
-const char *Plugin::getEngineId() const {
-	if (_type == PLUGIN_TYPE_ENGINE_DETECTION) {
-		return _pluginObject->getEngineId();
-	}
-
-	return nullptr;
-}
-
 StaticPlugin::StaticPlugin(PluginObject *pluginobject, PluginType type) {
 	assert(pluginobject);
 	assert(type < PLUGIN_TYPE_MAX);
@@ -109,7 +101,7 @@ public:
 		// static/dynamic plugin, like it's done for the engines
 		LINK_PLUGIN(AUTO)
 		LINK_PLUGIN(NULL)
-		#if defined(WIN32) && !defined(__SYMBIAN32__)
+		#if defined(WIN32)
 		LINK_PLUGIN(WINDOWS)
 		#endif
 		#if defined(USE_ALSA)
@@ -129,6 +121,9 @@ public:
 		#endif
 		#if defined(__amigaos4__) || defined(__MORPHOS__)
 		LINK_PLUGIN(CAMD)
+		#endif
+		#if defined(RISCOS)
+		LINK_PLUGIN(RISCOS)
 		#endif
 		#if defined(MACOSX)
 		LINK_PLUGIN(COREAUDIO)
@@ -193,7 +188,9 @@ PluginList FilePluginProvider::getPlugins() {
 	#ifndef WIN32
 	pluginDirs.push_back(Common::FSNode("."));
 	#endif
+	#ifndef PSP2
 	pluginDirs.push_back(Common::FSNode("plugins"));
+	#endif
 
 	// Add the provider's custom directories
 	addCustomDirectories(pluginDirs);
@@ -294,16 +291,16 @@ const Plugin *PluginManager::getEngineFromMetaEngine(const Plugin *plugin) {
 	const Plugin *enginePlugin = nullptr;
 
 	// Use the engineID from MetaEngine for comparison.
-	Common::String metaEnginePluginName = plugin->getEngineId();
+	Common::String metaEnginePluginName = plugin->getName();
 
 	enginePlugin = PluginMan.findEnginePlugin(metaEnginePluginName);
 
 	if (enginePlugin) {
-		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->getName(), enginePlugin->getFileName());
+		debug(9, "MetaEngine: %s \t matched to \t Engine: %s", plugin->get<MetaEngineDetection>().getEngineName(), enginePlugin->getFileName());
 		return enginePlugin;
 	}
 
-	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->getName());
+	debug(9, "MetaEngine: %s couldn't find a match for an engine plugin.", plugin->get<MetaEngineDetection>().getEngineName());
 	return nullptr;
 }
 
@@ -319,7 +316,7 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	Common::String enginePluginName(plugin->getName());
 
 	for (PluginList::const_iterator itr = pl.begin(); itr != pl.end(); itr++) {
-		Common::String metaEngineName = (*itr)->getEngineId();
+		Common::String metaEngineName = (*itr)->getName();
 
 		if (metaEngineName.equalsIgnoreCase(enginePluginName)) {
 			metaEngine = (*itr);
@@ -328,7 +325,7 @@ const Plugin *PluginManager::getMetaEngineFromEngine(const Plugin *plugin) {
 	}
 
 	if (metaEngine) {
-		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->getName());
+		debug(9, "Engine: %s matched to MetaEngine: %s", plugin->getFileName(), metaEngine->get<MetaEngineDetection>().getEngineName());
 		return metaEngine;
 	}
 
@@ -680,7 +677,7 @@ QualifiedGameList EngineManager::findGamesMatching(const Common::String &engineI
 
 			PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 			if (pluginResult.gameId) {
-				results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
+				results.push_back(QualifiedGameDescriptor(engine.getName(), pluginResult));
 			}
 		}
 	} else {
@@ -710,14 +707,14 @@ QualifiedGameList EngineManager::findGameInLoadedPlugins(const Common::String &g
 		PlainGameDescriptor pluginResult = engine.findGame(gameId.c_str());
 
 		if (pluginResult.gameId) {
-			results.push_back(QualifiedGameDescriptor(engine.getEngineId(), pluginResult));
+			results.push_back(QualifiedGameDescriptor(engine.getName(), pluginResult));
 		}
 	}
 
 	return results;
 }
 
-DetectionResults EngineManager::detectGames(const Common::FSList &fslist) {
+DetectionResults EngineManager::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	DetectedGames candidates;
 	PluginList plugins;
 	PluginList::const_iterator iter;
@@ -735,7 +732,7 @@ DetectionResults EngineManager::detectGames(const Common::FSList &fslist) {
 		MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		// set the debug flags
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
-		DetectedGames engineCandidates = metaEngine.detectGames(fslist);
+		DetectedGames engineCandidates = metaEngine.detectGames(fslist, skipADFlags, skipIncomplete);
 
 		for (uint i = 0; i < engineCandidates.size(); i++) {
 			engineCandidates[i].path = fslist.begin()->getParent().getPath();
@@ -812,7 +809,7 @@ const Plugin *EngineManager::findPlugin(const Common::String &engineId) const {
 	const PluginList &plugins = getPlugins();
 
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); iter++)
-		if (engineId == (*iter)->get<MetaEngineDetection>().getEngineId())
+		if (engineId == (*iter)->get<MetaEngineDetection>().getName())
 			return *iter;
 
 	return nullptr;
@@ -884,7 +881,7 @@ QualifiedGameDescriptor EngineManager::findTarget(const Common::String &target, 
 	if (plugin)
 		*plugin = foundPlugin;
 
-	return QualifiedGameDescriptor(engine.getEngineId(), desc);
+	return QualifiedGameDescriptor(engine.getName(), desc);
 }
 
 void EngineManager::upgradeTargetIfNecessary(const Common::String &target) const {
@@ -943,10 +940,12 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 		MetaEngineDetection &metaEngine = plugin->get<MetaEngineDetection>();
 		// set debug flags before call detectGames
 		DebugMan.addAllDebugChannels(metaEngine.getDebugChannels());
+		// Clear md5 cache before detection starts
+		MD5Man.clear();
 		DetectedGames candidates = metaEngine.detectGames(files);
 		if (candidates.empty()) {
 			warning("No games supported by the engine '%s' were found in path '%s' when upgrading target '%s'",
-			        metaEngine.getEngineId(), path.c_str(), target.c_str());
+			        metaEngine.getName(), path.c_str(), target.c_str());
 			return;
 		}
 

@@ -57,7 +57,7 @@ int do_movelist_move(short *mlnum, int *xx, int *yy) {
 	int need_to_fix_sprite = 0;
 	if (mlnum[0] < 1) quit("movelist_move: attempted to move on a non-exist movelist");
 	MoveList *cmls;
-	cmls = &_G(mls)[mlnum[0]];
+	cmls = &_GP(mls)[mlnum[0]];
 	fixed xpermove = cmls->xpermove[cmls->onstage], ypermove = cmls->ypermove[cmls->onstage];
 
 	short targetx = short((cmls->pos[cmls->onstage + 1] >> 16) & 0x00ffff);
@@ -179,7 +179,7 @@ void update_script_timers() {
 
 void update_cycling_views() {
 	// update graphics for object if cycling view
-	for (int i = 0; i < _G(croom)->numobj; ++i) {
+	for (uint32_t  i = 0; i < _G(croom)->numobj; ++i) {
 		_G(objs)[i].UpdateCyclingView(i);
 	}
 }
@@ -197,22 +197,22 @@ void update_shadow_areas() {
 	}
 }
 
-void update_character_move_and_anim(int &numSheep, int *followingAsSheep) {
+void update_character_move_and_anim(std::vector<int> &followingAsSheep) {
 	// move & animate characters
 	for (int aa = 0; aa < _GP(game).numcharacters; aa++) {
 		if (_GP(game).chars[aa].on != 1) continue;
 
 		CharacterInfo *chi = &_GP(game).chars[aa];
-		CharacterExtras *chex = &_G(charextra)[aa];
+		CharacterExtras *chex = &_GP(charextra)[aa];
 
-		chi->UpdateMoveAndAnim(aa, chex, numSheep, followingAsSheep);
+		chi->UpdateMoveAndAnim(aa, chex, followingAsSheep);
 	}
 }
 
-void update_following_exactly_characters(int &numSheep, int *followingAsSheep) {
+void update_following_exactly_characters(const std::vector<int> &followingAsSheep) {
 	// update location of all following_exactly characters
-	for (int aa = 0; aa < numSheep; aa++) {
-		CharacterInfo *chi = &_GP(game).chars[followingAsSheep[aa]];
+	for (size_t i = 0; i < followingAsSheep.size(); ++i) {
+		CharacterInfo *chi = &_GP(game).chars[followingAsSheep[i]];
 
 		chi->UpdateFollowingExactlyCharacter();
 	}
@@ -383,6 +383,7 @@ void update_sierra_speech() {
 			int view_frame_x = 0;
 			int view_frame_y = 0;
 
+			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].GetImage();
 			if (_GP(game).options[OPT_SPEECHTYPE] == 3) {
 				// QFG4-style fullscreen dialog
 				if (_G(facetalk_qfg4_override_placement_x)) {
@@ -391,14 +392,13 @@ void update_sierra_speech() {
 				if (_G(facetalk_qfg4_override_placement_y)) {
 					view_frame_y = _GP(play).speech_portrait_y;
 				} else {
-					view_frame_y = (_GP(screenover)[_G(face_talking)].pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
+					view_frame_y = (frame_pic->GetHeight() / 2) - (_GP(game).SpriteInfos[thisPic].Height / 2);
 				}
-				_GP(screenover)[_G(face_talking)].pic->Clear(0);
+				frame_pic->Clear(0);
 			} else {
-				_GP(screenover)[_G(face_talking)].pic->ClearTransparent();
+				frame_pic->ClearTransparent();
 			}
 
-			Bitmap *frame_pic = _GP(screenover)[_G(face_talking)].pic;
 			const ViewFrame *face_vf = &_GP(views)[_G(facetalkview)].loops[_G(facetalkloop)].frames[_G(facetalkframe)];
 			bool face_has_alpha = (_GP(game).SpriteInfos[face_vf->pic].Flags & SPF_ALPHACHANNEL) != 0;
 			DrawViewFrame(frame_pic, face_vf, view_frame_x, view_frame_y);
@@ -410,7 +410,8 @@ void update_sierra_speech() {
 				DrawViewFrame(frame_pic, blink_vf, view_frame_x, view_frame_y, face_has_alpha);
 			}
 
-			_G(gfxDriver)->UpdateDDBFromBitmap(_GP(screenover)[_G(face_talking)].bmp, _GP(screenover)[_G(face_talking)].pic, face_has_alpha);
+			_GP(screenover)[_G(face_talking)].SetAlphaChannel(face_has_alpha);
+			_GP(screenover)[_G(face_talking)].MarkChanged();
 		}  // end if updatedFrame
 	}
 }
@@ -431,12 +432,11 @@ void update_stuff() {
 
 	_G(our_eip) = 22;
 
-	int numSheep = 0;
-	int followingAsSheep[MAX_SHEEP];
+	std::vector<int> followingAsSheep;
 
-	update_character_move_and_anim(numSheep, followingAsSheep);
+	update_character_move_and_anim(followingAsSheep);
 
-	update_following_exactly_characters(numSheep, followingAsSheep);
+	update_following_exactly_characters(followingAsSheep);
 
 	_G(our_eip) = 23;
 

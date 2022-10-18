@@ -105,7 +105,7 @@ namespace Chewy {
 #define SIB_LAMPE_R52 86
 #define SIB_AUSRUEST_R51 87
 #define SIB_KAUTABAK_R56 88
-#define SIB_ASCHE_R64 89
+#define SIB_ASHTRAY_R64 89
 #define SIB_PIRANHA 90
 #define SIB_SCHALL 91
 #define SIB_ARTEFAKT 92

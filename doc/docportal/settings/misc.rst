@@ -4,15 +4,15 @@ Miscellaneous
 
 Use the Misc tab to change miscellaneous settings that don’t belong on any of the other tabs.
 
-From the Launcher, select **Options**, click the **>** scroll arrow until the Misc tab is visible, and then select the **Misc** tab.
+From the Launcher, select **Global Options**, if necessary click the **>** scroll arrow until the Misc tab is visible, and then select the **Misc** tab.
 
 .. figure:: ../images/settings/misc.png
 
-    The Misc tab in the global settings.
+    The Misc tab in the Global Options menu
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
-,,,,,,,,,,,,,,,
+,,,,,,,,,,,,,,,,,
 
 .. _theme:
 
@@ -71,3 +71,15 @@ Ask for confirmation on exit
 	If ticked, a confirmation dialog appears when you choose **Quit** or **Return to Launcher** from the Global Main Menu.
 
 	*confirm_exit*
+
+.. _updateicons:
+
+Update Icons
+	Click on the Update Icons button to download new or updated artwork for game icons. ScummVM will scan to find applicable icons; once these have been found, click on the **Download** button in the pop up window to start the download. Click the **Hide** button to close the window and continue the download in the background. Use the **Cancel download** button to cancel the download.
+	
+.. figure:: ../images/settings/update_icons.png
+	
+	The Update Icons window
+
+Enable Discord Integration
+	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates. 

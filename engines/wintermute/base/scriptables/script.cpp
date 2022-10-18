@@ -755,12 +755,13 @@ bool ScScript::executeInstruction() {
 
 	case II_PUSH_VAR: {
 		ScValue *var = getVar(_symbols[getDWORD()]);
-		if (false && /*var->_type==VAL_OBJECT ||*/ var->_type == VAL_NATIVE) {
+		// Disabled in original code
+		/*if (false && var->_type==VAL_OBJECT || var->_type == VAL_NATIVE) {
 			_operand->setReference(var);
 			_stack->push(_operand);
-		} else {
+		} else {*/
 			_stack->push(var);
-		}
+		//}
 		break;
 	}
 
@@ -806,10 +807,8 @@ bool ScScript::executeInstruction() {
 		_stack->pushFloat(getFloat());
 		break;
 
-
 	case II_PUSH_BOOL:
 		_stack->pushBool(getDWORD() != 0);
-
 		break;
 
 	case II_PUSH_STRING:
@@ -1373,6 +1372,27 @@ bool ScScript::persist(BasePersistenceManager *persistMgr) {
 
 
 //////////////////////////////////////////////////////////////////////////
+void ScScript::afterLoad() {
+	if (_buffer == nullptr) {
+		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
+		if (!buffer) {
+			_gameRef->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
+			_state = SCRIPT_ERROR;
+			return;
+		}
+
+		_buffer = new byte [_bufferSize];
+		memcpy(_buffer, buffer, _bufferSize);
+
+		delete _scriptStream;
+		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
+
+		initTables();
+	}
+}
+
+
+//////////////////////////////////////////////////////////////////////////
 ScScript *ScScript::invokeEventHandler(const Common::String &eventName, bool unbreakable) {
 	//if (_state!=SCRIPT_PERSISTENT) return nullptr;
 
@@ -1512,25 +1532,6 @@ bool ScScript::finishThreads() {
 	return STATUS_OK;
 }
 
-//////////////////////////////////////////////////////////////////////////
-void ScScript::afterLoad() {
-	if (_buffer == nullptr) {
-		byte *buffer = _engine->getCompiledScript(_filename, &_bufferSize);
-		if (!buffer) {
-			_gameRef->LOG(0, "Error reinitializing script '%s' after load. Script will be terminated.", _filename);
-			_state = SCRIPT_ERROR;
-			return;
-		}
-
-		_buffer = new byte [_bufferSize];
-		memcpy(_buffer, buffer, _bufferSize);
-
-		delete _scriptStream;
-		_scriptStream = new Common::MemoryReadStream(_buffer, _bufferSize);
-
-		initTables();
-	}
-}
 
 void ScScript::preInstHook(uint32 inst) {}
 

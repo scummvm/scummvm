@@ -34,16 +34,16 @@ namespace Saga2 {
 
 
 void gPort::setMap(gPixelMap *newmap, bool inverted) {
-	map = newmap;
-	clip = Rect16(0, 0, map->size.x, map->size.y);
+	_map = newmap;
+	_clip = Rect16(0, 0, _map->_size.x, _map->_size.y);
 
 	//  Added by Talin to support inverted maps
 	if (inverted) {
-		baseRow = map->data + map->bytes() - map->size.x;
-		rowMod = -map->size.x;
+		_baseRow = _map->_data + _map->bytes() - _map->_size.x;
+		_rowMod = -_map->_size.x;
 	} else {
-		baseRow = map->data;
-		rowMod = map->size.x;
+		_baseRow = _map->_data;
+		_rowMod = _map->_size.x;
 	}
 }
 
@@ -114,11 +114,11 @@ void gPort::setState(gPenState &state) {
 **********************************************************************
 */
 void gPort::getState(gPenState &state) {
-	state.fgPen = fgPen;
-	state.bgPen = bgPen;
-	state.olPen = olPen;
-	state.shPen = shPen;
-	state.drawMode = drawMode;
+	state.fgPen = _fgPen;
+	state.bgPen = _bgPen;
+	state.olPen = _olPen;
+	state.shPen = _shPen;
+	state.drawMode = _drawMode;
 }
 
 /****** gdraw.cpp/gPort::fillRect *********************************
@@ -163,32 +163,32 @@ void gPort::getState(gPenState &state) {
 void gPort::fillRect(const Rect16 r) {
 	Rect16          sect;
 
-	sect = intersect(clip, r);           // intersect with clip rect
-	sect.x += origin.x;                     // apply origin translate
-	sect.y += origin.y;
+	sect = intersect(_clip, r);           // intersect with clip rect
+	sect.x += _origin.x;                     // apply origin translate
+	sect.y += _origin.y;
 
 	if (!sect.empty()) {                    // if result is non-empty
-		uint8           *addr = baseRow + sect.y * rowMod + sect.x;
+		uint8 *addr = _baseRow + sect.y * _rowMod + sect.x;
 
-		if (drawMode == drawModeComplement) { // Complement drawing mode
+		if (_drawMode == drawModeComplement) { // Complement drawing mode
 			for (int h = sect.height;
 			        h > 0;
 			        h--,
-			        addr += rowMod) {
+			        addr += _rowMod) {
 				uint16  w = sect.width;
 				uint8   *put = addr;
 
-				while (w--) *put++ ^= fgPen;
+				while (w--) *put++ ^= _fgPen;
 			}
 		} else {
-			_FillRect(addr, rowMod, sect.width, sect.height, fgPen);
+			_FillRect(addr, _rowMod, sect.width, sect.height, _fgPen);
 			/*
 			            for (int h = sect.height;
 			                 h > 0;
 			                 h--,
-			                    addr += rowMod)
+			                    addr += _rowMod)
 			            {
-			                memset( addr, fgPen, sect.width );
+			                memset( addr, _fgPen, sect.width );
 			            }
 			*/
 		}
@@ -287,20 +287,20 @@ void gPort::hLine(int16 x, int16 y, int16 width) {
 	//  Temporarily convert the coords into a rectangle, for
 	//  easy clipping
 
-	sect = intersect(clip, Rect16(x, y, width, 1));
-	sect.x += origin.x;                     // apply origin translate
-	sect.y += origin.y;
+	sect = intersect(_clip, Rect16(x, y, width, 1));
+	sect.x += _origin.x;                     // apply origin translate
+	sect.y += _origin.y;
 
 	if (!sect.empty()) {                        // if result is non-empty
-		if (drawMode == drawModeComplement) {
-			uint8 *addr = baseRow + (y + origin.y) * rowMod + x + origin.x;
+		if (_drawMode == drawModeComplement) {
+			uint8 *addr = _baseRow + (y + _origin.y) * _rowMod + x + _origin.x;
 
-			while (sect.width--) *addr++ ^= fgPen;
+			while (sect.width--) *addr++ ^= _fgPen;
 		} else {
-			_HLine(baseRow + sect.y * rowMod + sect.x, sect.width, fgPen);
+			_HLine(_baseRow + sect.y * _rowMod + sect.x, sect.width, _fgPen);
 
-			/*          memset( baseRow + sect.y * rowMod + sect.x,
-			                    fgPen,
+			/*          memset( _baseRow + sect.y * _rowMod + sect.x,
+			                    _fgPen,
 			                    sect.width );
 			*/
 		}
@@ -349,25 +349,25 @@ void gPort::vLine(int16 x, int16 y, int16 height) {
 
 	//  Just for laughs, we'll do the clipping a different way
 
-	if (x < clip.x || x >= clip.x + clip.width) return;
-	if (y < clip.y) y = clip.y;
-	if (bottom > clip.y + clip.height) bottom = clip.y + clip.height;
+	if (x < _clip.x || x >= _clip.x + _clip.width) return;
+	if (y < _clip.y) y = _clip.y;
+	if (bottom > _clip.y + _clip.height) bottom = _clip.y + _clip.height;
 
 	//  And now, draw the line
 
-	if (drawMode == drawModeComplement) {
-		for (addr = baseRow + (y + origin.y) * rowMod + x + origin.x;
+	if (_drawMode == drawModeComplement) {
+		for (addr = _baseRow + (y + _origin.y) * _rowMod + x + _origin.x;
 		        y < bottom;
 		        y++) {
-			*addr ^= fgPen;
-			addr += rowMod;
+			*addr ^= _fgPen;
+			addr += _rowMod;
 		}
 	} else {
-		for (addr = baseRow + (y + origin.y) * rowMod + x + origin.x;
+		for (addr = _baseRow + (y + _origin.y) * _rowMod + x + _origin.x;
 		        y < bottom;
 		        y++) {
-			*addr = fgPen;
-			addr += rowMod;
+			*addr = _fgPen;
+			addr += _rowMod;
 		}
 	}
 }
@@ -439,53 +439,53 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 
 	int16           errTerm;
 
-	int16           clipRight = clip.x + clip.width,
-	                clipBottom = clip.y + clip.height;
+	int16           clipRight = _clip.x + _clip.width,
+	                clipBottom = _clip.y + _clip.height;
 
 	uint8           *addr;
 
 	if (x1 > x2) {                      // drawing left
-		if (x1 < clip.x || x2 >= clipRight) return;
-		if (x2 < clip.x || x1 >= clipRight) clipNeeded = true;
+		if (x1 < _clip.x || x2 >= clipRight) return;
+		if (x2 < _clip.x || x1 >= clipRight) clipNeeded = true;
 
 		xDir = xMove = -1;              // amount to adjust address
 		xAbs = x1 - x2;                 // length of line
 	} else {                            // drawing right
-		if (x2 < clip.x || x1 >= clipRight) return;
-		if (x1 < clip.x || x2 >= clipRight) clipNeeded = true;
+		if (x2 < _clip.x || x1 >= clipRight) return;
+		if (x1 < _clip.x || x2 >= clipRight) clipNeeded = true;
 
 		xDir = xMove = 1;               // amount to adjust address
 		xAbs = x2 - x1;                 // length of line
 	}
 
 	if (y1 > y2) {                      // drawing up
-		if (y1 < clip.y || y2 >= clipBottom) return;
-		if (y2 < clip.y || y1 >= clipBottom) clipNeeded = true;
+		if (y1 < _clip.y || y2 >= clipBottom) return;
+		if (y2 < _clip.y || y1 >= clipBottom) clipNeeded = true;
 
 		yDir = -1;
 		yAbs = y1 - y2;
-		yMove = -rowMod;
+		yMove = -_rowMod;
 	} else {                                    // drawing down
-		if (y2 < clip.y || y1 >= clipBottom) return;
-		if (y1 < clip.y || y2 >= clipBottom) clipNeeded = true;
+		if (y2 < _clip.y || y1 >= clipBottom) return;
+		if (y1 < _clip.y || y2 >= clipBottom) clipNeeded = true;
 
 		yDir = 1;
 		yAbs = y2 - y1;
-		yMove = rowMod;
+		yMove = _rowMod;
 	}
 
-	addr = baseRow + (y1 + origin.y) * rowMod + x1 + origin.x;
+	addr = _baseRow + (y1 + _origin.y) * _rowMod + x1 + _origin.x;
 
 	if (clipNeeded) {                   // clipping versions
 		if (xAbs > yAbs) {
 			errTerm = yAbs - (xAbs >> 1);
 
 			for (i = xAbs + 1; i > 0; i--) {
-				if (x1 >= clip.x && x1 < clipRight
-				        && y1 >= clip.y && y1 < clipBottom) {
-					if (drawMode == drawModeComplement)
-						*addr ^= fgPen;
-					else *addr = fgPen;
+				if (x1 >= _clip.x && x1 < clipRight
+				        && y1 >= _clip.y && y1 < clipBottom) {
+					if (_drawMode == drawModeComplement)
+						*addr ^= _fgPen;
+					else *addr = _fgPen;
 				}
 
 				if (errTerm > 0) {
@@ -502,11 +502,11 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = xAbs - (yAbs >> 1);
 
 			for (i = yAbs + 1; i > 0; i--) {
-				if (x1 >= clip.x && x1 < clipRight
-				        && y1 >= clip.y && y1 < clipBottom) {
-					if (drawMode == drawModeComplement)
-						*addr ^= fgPen;
-					else *addr = fgPen;
+				if (x1 >= _clip.x && x1 < clipRight
+				        && y1 >= _clip.y && y1 < clipBottom) {
+					if (_drawMode == drawModeComplement)
+						*addr ^= _fgPen;
+					else *addr = _fgPen;
 				}
 
 				if (errTerm > 0) {
@@ -525,9 +525,9 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = yAbs - (xAbs >> 1);
 
 			for (i = xAbs + 1; i > 0; i--) {
-				if (drawMode == drawModeComplement)
-					*addr ^= fgPen;
-				else *addr = fgPen;
+				if (_drawMode == drawModeComplement)
+					*addr ^= _fgPen;
+				else *addr = _fgPen;
 
 				if (errTerm > 0) {
 					y1 += yDir;
@@ -543,9 +543,9 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = xAbs - (yAbs >> 1);
 
 			for (i = yAbs + 1; i > 0; i--) {
-				if (drawMode == drawModeComplement)
-					*addr ^= fgPen;
-				else *addr = fgPen;
+				if (_drawMode == drawModeComplement)
+					*addr ^= _fgPen;
+				else *addr = _fgPen;
 
 				if (errTerm > 0) {
 					x1 += xDir;
@@ -609,19 +609,19 @@ void gPort::bltPixels(
 	uint8           *src_line,
 	                *dst_line;
 
-	sect = intersect(clip, r);
+	sect = intersect(_clip, r);
 
 	if (!sect.empty()) {                        // if result is non-empty
 		src_x += sect.x - r.x;
 		src_y += sect.y - r.y;
 
-		src_line = src.data + src_y   * src.size.x + src_x;
-		dst_line = baseRow
-		           + (sect.y + origin.y) * rowMod
-		           + sect.x + origin.x;
+		src_line = src._data + src_y   * src._size.x + src_x;
+		dst_line = _baseRow
+		           + (sect.y + _origin.y) * _rowMod
+		           + sect.x + _origin.x;
 
-		if (drawMode == drawModeMatte) {        // Matte drawing mode
-			for (int h = sect.height; h > 0; h--, src_line += src.size.x, dst_line += rowMod) {
+		if (_drawMode == drawModeMatte) {        // Matte drawing mode
+			for (int h = sect.height; h > 0; h--, src_line += src._size.x, dst_line += _rowMod) {
 				uint8   *src_ptr = src_line,
 				*dst_ptr = dst_line;
 
@@ -632,13 +632,13 @@ void gPort::bltPixels(
 						dst_ptr++, src_ptr++;
 				}
 			}
-		} else if (drawMode == drawModeColor) { // Color drawing mode
+		} else if (_drawMode == drawModeColor) { // Color drawing mode
 			// Draws single color, except where
 			for (int h = sect.height;           // src pixels are transparent
 			        h > 0;
 			        h--,
-			        src_line += src.size.x,
-			        dst_line += rowMod) {
+			        src_line += src._size.x,
+			        dst_line += _rowMod) {
 				uint8   *src_ptr = src_line,
 				         *dst_ptr = dst_line;
 
@@ -646,29 +646,29 @@ void gPort::bltPixels(
 				        w > 0;
 				        w--) {
 					if (*src_ptr++)
-						*dst_ptr++ = fgPen;
+						*dst_ptr++ = _fgPen;
 					else
 						dst_ptr++;
 				}
 			}
-		} else if (drawMode == drawModeReplace) { // Replacement drawing mode
-            for (int h = sect.height; h > 0; h--, src_line += src.size.x, dst_line += rowMod) {
+		} else if (_drawMode == drawModeReplace) { // Replacement drawing mode
+            for (int h = sect.height; h > 0; h--, src_line += src._size.x, dst_line += _rowMod) {
 				memcpy(dst_line, src_line, sect.width);
             }
-		} else if (drawMode == drawModeComplement) { // Complement drawing mode
+		} else if (_drawMode == drawModeComplement) { // Complement drawing mode
 			// Inverts pixels, except where
 			for (int h = sect.height;           // src is transparent
 			        h > 0;
 			        h--,
-			        src_line += src.size.x,
-			        dst_line += rowMod) {
+			        src_line += src._size.x,
+			        dst_line += _rowMod) {
 				uint8   *src_ptr = src_line,
 				         *dst_ptr = dst_line;
 
 				for (int w = sect.width;
 				        w > 0;
 				        w--) {
-					if (*src_ptr++) *dst_ptr++ ^= fgPen;
+					if (*src_ptr++) *dst_ptr++ ^= _fgPen;
 					else dst_ptr++;
 				}
 			}
@@ -735,24 +735,24 @@ void gPort::bltPixelMask(
 	                *dst_line,
 	                *msk_line;
 
-	sect = intersect(clip, r);
+	sect = intersect(_clip, r);
 
 	if (!sect.empty()) {                        // if result is non-empty
 		src_x += sect.x - r.x;
 		src_y += sect.y - r.y;
 
-		src_line = src.data + src_y   * src.size.x + src_x;
-		msk_line = msk.data + src_y   * msk.size.x + src_x;
-		dst_line = baseRow
-		           + (sect.y + origin.y) * rowMod
-		           + sect.x + origin.x;
+		src_line = src._data + src_y   * src._size.x + src_x;
+		msk_line = msk._data + src_y   * msk._size.x + src_x;
+		dst_line = _baseRow
+		           + (sect.y + _origin.y) * _rowMod
+		           + sect.x + _origin.x;
 
 		for (int h = sect.height;
 		        h > 0;
 		        h--,
-		        src_line += src.size.x,
-		        dst_line += rowMod,
-		        msk_line += msk.size.x) {
+		        src_line += src._size.x,
+		        dst_line += _rowMod,
+		        msk_line += msk._size.x) {
 			uint8   *src_ptr = src_line,
 			         *dst_ptr = dst_line,
 			          *msk_ptr = msk_line;
@@ -817,15 +817,15 @@ void gPort::scrollPixels(
 	uint8           *src_ptr,
 	                *dst_ptr;
 
-	sect = intersect(clip, r);
+	sect = intersect(_clip, r);
 	if (dx == 0 && dy == 0) return;
 
 	if (!sect.empty()) {                        // if result is non-empty
 		uint16      w = sect.width,
 		            h = sect.height,
-		            mod = rowMod;
-		Point16     src(sect.x + origin.x, sect.y + origin.y),
-		            dst(sect.x + origin.x, sect.y + origin.y);
+		            mod = _rowMod;
+		Point16     src(sect.x + _origin.x, sect.y + _origin.y),
+		            dst(sect.x + _origin.x, sect.y + _origin.y);
 
 		if (dx > 0) {
 			dst.x += dx;
@@ -846,8 +846,8 @@ void gPort::scrollPixels(
 		if (w <= 0 || h <= 0) return;
 
 		if (src.y > dst.y || (src.y == dst.y && src.x > dst.x)) {
-			src_ptr = baseRow + src.y * mod + src.x;
-			dst_ptr = baseRow + dst.y * mod + dst.x;
+			src_ptr = _baseRow + src.y * mod + src.x;
+			dst_ptr = _baseRow + dst.y * mod + dst.x;
 
 			mod -= w;
 
@@ -857,8 +857,8 @@ void gPort::scrollPixels(
 				dst_ptr += mod;
 			}
 		} else {
-			src_ptr = baseRow + (src.y + h - 1) * mod + src.x + w;
-			dst_ptr = baseRow + (dst.y + h - 1) * mod + dst.x + w;
+			src_ptr = _baseRow + (src.y + h - 1) * mod + src.x + w;
+			dst_ptr = _baseRow + (dst.y + h - 1) * mod + dst.x + w;
 
 			mod -= w;
 
@@ -915,14 +915,14 @@ void gPort::scrollPixels(
 */
 void mapImage(gPixelMap &from, gPixelMap &to, gPen map[]) {
 	int32       bytes = to.bytes();
-	uint8       *get = from.data,
-	             *put = to.data;
+	uint8       *get = from._data,
+	             *put = to._data;
 
 	while (bytes--) *put++ = map[*get++];
 }
 
 void mapImage(gPort &from, gPort &to, gPen map[]) {
-	mapImage(*from.map, *to.map, map);
+	mapImage(*from._map, *to._map, map);
 }
 
 /* ======================================================================= *
@@ -969,9 +969,9 @@ bool NewTempPort(gPort &port, int width, int height) {
 
 	map = (gPixelMap *)TempAlloc(width * height + sizeof(gPixelMap));
 	if (map != nullptr) {
-		map->data = (uint8 *)(map + 1);
-		map->size.x = width;
-		map->size.y = height;
+		map->_data = (uint8 *)(map + 1);
+		map->_size.x = width;
+		map->_size.y = height;
 		port.setMap(map);
 		return true;
 	} else
@@ -1006,8 +1006,8 @@ bool NewTempPort(gPort &port, int width, int height) {
 **********************************************************************
 */
 void DisposeTempPort(gPort &port) {
-	if (port.map) TempFree(port.map);
-	port.map = nullptr;
+	if (port._map) TempFree(port._map);
+	port._map = nullptr;
 }
 
 } // end of namespace Saga2

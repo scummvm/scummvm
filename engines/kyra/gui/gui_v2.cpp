@@ -32,7 +32,6 @@ namespace Kyra {
 GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()) {
 	_backUpButtonList = _specialProcessButton = nullptr;
 	_buttonListChanged = false;
-	_lastScreenUpdate = 0;
 	_flagsModifier = 0;
 
 	_currentMenu = nullptr;
@@ -47,6 +46,9 @@ GUI_v2::GUI_v2(KyraEngine_v2 *vm) : GUI_v1(vm), _vm(vm), _screen(vm->screen_v2()
 	_saveMenuFont = Screen::FID_8_FNT;
 	_saveMenuCursor = Common::Rect(1, 1, 7, 8);
 	_saveLoadNumSlots = 5;
+	_isChoiceMenu = _isOptionsMenu = _madeSave = _loadedSave = _restartGame = _reloadTemporarySave = false;
+	_noLoadProcess = _noSaveProcess = _choice = _finishNameInput = _cancelNameInput = false;
+	_saveSlot = _slotToDelete = 0;
 
 	if (vm->game() == GI_KYRA2 && vm->gameFlags().lang == Common::ZH_TWN) {
 		_saveMenuFont = Screen::FID_CHINESE_FNT;
@@ -453,7 +455,7 @@ void GUI_v2::setupSavegameNames(Menu &menu, int num) {
 	for (int i = startSlot; i < num && uint(_savegameOffset + i) < _saveSlots.size(); ++i) {
 		if ((in = _vm->openSaveForReading(_vm->getSavegameFilename(_saveSlots[i + _savegameOffset]), header)) != nullptr) {
 			Common::String s = header.description;
-			s = Util::convertUTF8ToDOS(s);
+			s = Util::convertString_GUItoKYRA(s);
 
 			if (_vm->gameFlags().lang == Common::JA_JPN || _vm->gameFlags().lang == Common::ZH_CHN || _vm->gameFlags().lang == Common::ZH_TWN) {
 				// Strip special characters from GMM save dialog which might get misinterpreted as 2-byte characters
@@ -638,7 +640,8 @@ int GUI_v2::saveMenu(Button *caller) {
 
 	Graphics::Surface thumb;
 	createScreenThumbnail(thumb);
-	Util::convertDOSToUTF8(_saveDescription, 81);
+	_vm->updatePlayTimer();
+	Util::convertString_KYRAtoGUI(_saveDescription, 81);
 	_vm->saveGameStateIntern(_saveSlot, _saveDescription, &thumb);
 	thumb.free();
 
@@ -843,10 +846,8 @@ bool GUI_v2::checkSavegameDescription(const char *buffer, int size) {
 	if (buffer[0] == 0)
 		return false;
 	for (int i = 0; i < size; ++i) {
-		if (buffer[i] != 0x20)
+		if (buffer[i] != ' ')
 			return true;
-		else if (buffer[i] == 0x00)
-			return false;
 	}
 	return false;
 }

@@ -3,57 +3,72 @@
 # WORKAROUNDS:
 #
 # 'mkdir' seems to incorrectly set permissions to path/dirs on AmigaOS.
-# Once a vanilla installation was created, none of the special subdirectories
-# are found/accessible (extras, themes, plugins), instead ScummVM reports
-# missing theme files and a missing valid translation.dat.
+# Once a vanilla installation is created, none of the corresponding subdirs
+# are found or accessible (extras, themes, plugins), instead ScummVM will
+# report missing theme files and a missing valid translation.dat. Same with
+# cross-partition access (which make we wonder if it's a FS bug afterall).
 # Switching to AmigaOS' own "makedir" until there is a fix or other solution.
 #
 amigaosdist: $(EXECUTABLE) $(PLUGINS)
+	# Releases should always be completely fresh installs.
+	rm -rf $(AMIGAOSPATH)
 	makedir all $(AMIGAOSPATH)
-	cp ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
-	cp ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
+	$(CP) ${srcdir}/dists/amigaos/scummvm_drawer.info $(patsubst %/,%,$(AMIGAOSPATH)).info
+	$(CP) ${srcdir}/dists/amigaos/scummvm.info $(AMIGAOSPATH)/$(EXECUTABLE).info
 ifdef DIST_FILES_DOCS
 	makedir all $(AMIGAOSPATH)/doc
-	cp $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc
-	$(foreach lang, $(DIST_FILES_DOCS_languages), makedir all $(AMIGAOSPATH)/doc/$(lang); cp $(DIST_FILES_DOCS_$(lang)) $(AMIGAOSPATH)/doc/$(lang);)
-	# README.md must be in the current working directory
+	$(CP) $(DIST_FILES_DOCS) $(AMIGAOSPATH)/doc
+	$(foreach lang, $(DIST_FILES_DOCS_languages), makedir all $(AMIGAOSPATH)/doc/$(lang); $(CP) $(DIST_FILES_DOCS_$(lang)) $(AMIGAOSPATH)/doc/$(lang);)
+	# README.md and corresponding scripts must be in cwd
 	# when building out of tree.
-	cp ${srcdir}/README.md README.tmp
-	# AmigaOS AREXX will error with a "Program not found" message
-	# if srcdir is '.'. Copy the script to cwd instead.
-	cp ${srcdir}/dists/amigaos/md2ag.rexx .
-	# LC_ALL is here to workaround Debian bug #973647
+	$(CP) ${srcdir}/README.md README.tmp
+	$(CP) ${srcdir}/dists/amigaos/md2ag.rexx .
+	# (buildbot) LC_ALL is here to work around Debian bug #973647
 	LC_ALL=C rx md2ag.rexx README.tmp $(AMIGAOSPATH)/doc/
 	rm -f md2ag.rexx README.tmp
 endif
 	# Copy mandatory installation files.
 	makedir all $(AMIGAOSPATH)/extras
 ifdef DIST_FILES_ENGINEDATA
-	cp $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras
+	$(CP) $(DIST_FILES_ENGINEDATA) $(AMIGAOSPATH)/extras
 endif
 ifdef DIST_FILES_NETWORKING
-	cp $(DIST_FILES_NETWORKING) $(AMIGAOSPATH)/extras
+	$(CP) $(DIST_FILES_NETWORKING) $(AMIGAOSPATH)/extras
 endif
 ifdef DIST_FILES_VKEYBD
-	cp $(DIST_FILES_VKEYBD) $(AMIGAOSPATH)/extras
+	$(CP) $(DIST_FILES_VKEYBD) $(AMIGAOSPATH)/extras
 endif
 ifdef DIST_FILES_THEMES
 	makedir all $(AMIGAOSPATH)/themes
-	cp $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes
+	$(CP) $(DIST_FILES_THEMES) $(AMIGAOSPATH)/themes
 endif
-	# Strip and copy engine plugins.
+ifneq ($(DIST_FILES_SHADERS),)
+	makedir all $(AMIGAOSPATH)/extras/shaders
+	$(CP) $(DIST_FILES_SHADERS) $(AMIGAOSPATH)/extras/shaders
+endif
 ifdef DYNAMIC_MODULES
 	makedir all $(AMIGAOSPATH)/plugins
-	$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
-	# Shared objects get updates. To avoid conflicts with obsolete
-	# or outdated .so's, always remove and install them completely.
-	rm -rf $(AMIGAOSPATH)/sobjs
+	# Catch edge-case when no engines/plugins are compiled
+	# otherwise cp/strip will error out due to missing source files.
+ifneq ($(PLUGINS),)
+ifdef DEBUG_BUILD
+		# Preserve all debug information on debug builds
+		$(CP) $(PLUGINS) $(AMIGAOSPATH)/plugins/$(plugin)
+else
+		$(foreach plugin, $(PLUGINS), $(STRIP) $(plugin) -o $(AMIGAOSPATH)/$(plugin);)
+endif
+endif
 	makedir all $(AMIGAOSPATH)/sobjs
-	# Extract and install compiled-in shared libraries.
-	# Not every AmigaOS install, especially vanilla ones, will have
-	# every mandatory shared library, in the correct place, available.
-	cp ${srcdir}/dists/amigaos/Ext_Inst_so.rexx .
+	# AmigaOS installations, especially vanilla ones, won't have every
+	# mandatory shared library in place, let alone the correct versions.
+	# Extract and install compiled-in shared libraries to their own subdir.
+	$(CP) ${srcdir}/dists/amigaos/Ext_Inst_so.rexx .
 	rx Ext_Inst_so.rexx $(EXECUTABLE) $(AMIGAOSPATH)
 	rm -f Ext_Inst_so.rexx
 endif
+ifdef DEBUG_BUILD
+	# Preserve all debug information on debug builds
+	$(CP) $(EXECUTABLE) $(AMIGAOSPATH)/$(EXECUTABLE)
+else
 	$(STRIP) $(EXECUTABLE) -o $(AMIGAOSPATH)/$(EXECUTABLE)
+endif

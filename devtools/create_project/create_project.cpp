@@ -641,29 +641,7 @@ int main(int argc, char *argv[]) {
 			return -1;
 		}
 
-		////////////////////////////////////////////////////////////////////////////
-		// Xcode is also using GCC behind the scenes. See Code::Blocks comment
-		// for info on all warnings
-		////////////////////////////////////////////////////////////////////////////
-		globalWarnings.push_back("-Wall");
-		globalWarnings.push_back("-Wno-long-long");
-		globalWarnings.push_back("-Wno-multichar");
-		globalWarnings.push_back("-Wno-unknown-pragmas");
-		globalWarnings.push_back("-Wno-reorder");
-		globalWarnings.push_back("-Wpointer-arith");
-		globalWarnings.push_back("-Wcast-qual");
-		globalWarnings.push_back("-Wcast-align");
-		globalWarnings.push_back("-Wshadow");
-		globalWarnings.push_back("-Wimplicit");
-		globalWarnings.push_back("-Wnon-virtual-dtor");
-		globalWarnings.push_back("-Wwrite-strings");
-		// The following are not warnings at all... We should consider adding them to
-		// a different list of parameters.
-#if !NEEDS_RTTI
-		globalWarnings.push_back("-fno-rtti");
-#endif
-		globalWarnings.push_back("-fno-exceptions");
-		globalWarnings.push_back("-fcheck-new");
+		addGCCWarnings(globalWarnings);
 
 		provider = new CreateProjectTool::XcodeProvider(globalWarnings, projectWarnings);
 		break;
@@ -809,6 +787,9 @@ void addGCCWarnings(StringList &globalWarnings) {
 	globalWarnings.push_back("-Wwrite-strings");
 	// The following are not warnings at all... We should consider adding them to
 	// a different list of parameters.
+#if !NEEDS_RTTI
+	globalWarnings.push_back("-fno-rtti");
+#endif
 	globalWarnings.push_back("-fno-exceptions");
 	globalWarnings.push_back("-fcheck-new");
 }

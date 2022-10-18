@@ -1,5 +1,5 @@
 name: scummvm
-base: core18
+base: core20
 license: GPL-2.0
 adopt-info: scummvm
 summary: ScummVM
@@ -12,7 +12,7 @@ description: |
 
     Currently, ScummVM supports a huge library of adventures with over
     250 games in total.
-
+    
     It supports many classics published by legendary studios like LucasArts,
     Sierra On-Line, Revolution Software, Cyan, Inc. and Westwood Studios.
     Next to ground-breaking titles like the Monkey Island series,
@@ -24,17 +24,18 @@ compression: lzo
 
 apps:
   scummvm:
-    command-chain: ["snap/command-chain/alsa-launch"]
-    extensions: [gnome-3-28]
-    command: snap/command-chain/desktop-launch $SNAP/bin/wayland-if-possible.sh $SNAP/bin/scummvm-launch.sh
+    command-chain:
+      - snap/command-chain/alsa-launch
+      - bin/wayland-if-possible.sh
+    command: bin/scummvm-launch.sh
+    extensions: [gnome-3-38]
     plugs:
       - wayland
       - x11
       - opengl
       - unity7
-      - pulseaudio
-      - alsa
       - audio-playback
+      - alsa
       - network
       - network-bind
       - removable-media
@@ -46,20 +47,23 @@ apps:
       - hardware-observe
       - joystick
     environment:
-      LD_LIBRARY_PATH: "$LD_LIBRARY_PATH:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
+      LD_LIBRARY_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
       ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
       DBUS_FATAL_WARNINGS: 0
 
   daemon:
-    command: bin/daemon-start.sh $SNAP/snap/command-chain/desktop-launch $SNAP/bin/wayland-if-possible.sh $SNAP/bin/scummvm-launch.sh -f
+    command-chain:
+      - bin/daemon-start.sh
+      - snap/command-chain/desktop-launch
+      - bin/wayland-if-possible.sh
+    command: bin/scummvm-launch.sh -f
     daemon: simple
     restart-condition: always
     plugs:
-      - pulseaudio
       - wayland
       - opengl
-      - alsa
       - audio-playback
+      - alsa
       - network
       - network-bind
       - removable-media
@@ -70,7 +74,7 @@ apps:
       - hardware-observe
     environment:
       SDL_VIDEODRIVER: wayland
-      LD_LIBRARY_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
+      LD_LIBRARY_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/libunity/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/pulseaudio/:$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/speech-dispatcher/"
       ESPEAK_DATA_PATH: "$SNAP/usr/lib/${SNAPCRAFT_ARCH_TRIPLET}/espeak-ng-data"
       PULSE_SYSTEM: 1
       PULSE_RUNTIME_PATH: /var/run/pulse
@@ -88,36 +92,35 @@ layout:
     bind: $SNAP/usr/share/applications
   /usr/share/alsa:
     bind: $SNAP/usr/share/alsa
+  /usr/share/libdrm:
+    bind: $SNAP/usr/share/libdrm
+  /usr/share/drirc.d:
+    bind: $SNAP/usr/share/drirc.d
 
 parts:
   scummvm:
     after: [alsa-mixin]
     source: https://github.com/scummvm/scummvm.git
-    build-environment:
-      - CXXFLAGS: "$CXXFLAGS -fuse-ld=gold -flto=$(nproc) -ffunction-sections -fdata-sections"
-      - LDFLAGS:  "$LDFLAGS  -fuse-ld=gold -flto=$(nproc) -Wl,--gc-sections"
 
     override-build: |
-      last_committed_tag="$(git tag --list | tac | head -n1)"
+      last_committed_tag="$(git tag --list | sed '/android\|docs/d' | tac | head -n1)"
       trimmed_tag="$(echo $last_committed_tag | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')"
       last_released_tag="$(snap info scummvm | awk '$1 == "latest/beta:" { print $2 }')"
       # If the latest tag from the upstream project has not been released to
       # beta, build that tag instead of master.
-      #if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
+      if [ "${trimmed_tag}" != "${last_released_tag}" ]; then
         git fetch
-        # git checkout -f "${last_committed_tag}"
-        git checkout -f v2.2.0
-        # snapcraftctl set-version $(git -C ../src tag --list | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
-        snapcraftctl set-version 2.2.0
-      #else
-      #  git checkout master
-      #  snapcraftctl set-version $(git describe | sed 's/desc\///')
-      #fi
+        git checkout -f "${last_committed_tag}"
+        snapcraftctl set-version $(git -C ../src tag --list | sed '/android\|docs/d' | tac | head -n1 | sed 's/desc\///' | sed 's/git//' | sed 's/^v//')
+      else
+        git checkout master
+        snapcraftctl set-version $(git describe | sed 's/desc\///')
+      fi
       snapcraftctl build
-      strip --strip-all $SNAPCRAFT_PART_INSTALL/bin/scummvm
-
+      strip --strip-all $SNAPCRAFT_PART_INSTALL/usr/local/bin/scummvm
+      
     plugin: autotools
-    configflags:
+    autotools-configure-parameters:
       - --enable-release
       - --enable-tts
       - --enable-opl2lpt
@@ -125,8 +128,10 @@ parts:
 
     build-packages:
       - liba52-0.7.4-dev
+      - libaudio-dev
       - libcurl4-openssl-dev
       - libfaad-dev
+      - libffi-dev
       - libflac-dev
       - libfluidsynth-dev
       - libfreetype6-dev
@@ -135,13 +140,14 @@ parts:
       - libglew-dev
       - libgtk-3-dev
       - libieee1284-3-dev
-      - libjpeg62-dev
+      - libjpeg-dev
       - libmad0-dev
       - libmpeg2-4-dev
       - libogg-dev
       - libpng-dev
       - libsdl2-dev
       - libsdl2-net-dev
+      - libsndio-dev
       - libspeechd-dev
       - libtheora-dev
       - libunity-dev
@@ -153,19 +159,21 @@ parts:
       - espeak-ng-data
       - freeglut3
       - liba52-0.7.4
+      - libaudio2
       - libcurl4
       - libdbusmenu-glib4
       - libdee-1.0-4
       - libfaad2
+      - libffi7
       - libflac8
-      - libfluidsynth1
+      - libfluidsynth2
       - libfribidi0
       - libgif7
       - libgl1-mesa-dri
       - libgl1-mesa-glx
-      - libglew2.0
+      - libglew2.1
       - libglu1-mesa
-      - libicu60
+      - libicu66
       - libieee1284-3
       - libjpeg62
       - libjpeg8
@@ -177,7 +185,7 @@ parts:
       - libsdl2-2.0-0
       - libsdl2-net-2.0-0
       - libslang2
-      - libsndio6.1
+      - libsndio7.0
       - libspeechd2
       - libtheora0
       - libunity9

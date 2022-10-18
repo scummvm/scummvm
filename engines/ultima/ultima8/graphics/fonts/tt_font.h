@@ -24,6 +24,7 @@
 
 #include "ultima/ultima8/graphics/fonts/font.h"
 #include "graphics/font.h"
+#include "graphics/pixelformat.h"
 
 namespace Ultima {
 namespace Ultima8 {
@@ -61,8 +62,11 @@ protected:
 	int _borderSize;
 	bool _antiAliased;
 	bool _SJIS;
+	Graphics::PixelFormat _PF_RGBA;
 
 	uint16 _bullet;
+
+	void addTextBorder(Graphics::ManagedSurface &textSurf, uint32 *texBuf, const Ultima::Ultima8::Rect &dims, int32 resultWidth, int32 resultHeight, uint32 borderColor);
 };
 
 } // End of namespace Ultima8

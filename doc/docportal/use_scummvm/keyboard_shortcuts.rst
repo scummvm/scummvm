@@ -29,3 +29,4 @@ Default shortcuts are shown in the table.
         :kbd:`Alt+Enter` ,Toggles full screen/windowed mode
         :kbd:`Alt+s` ,Takes a :ref:`screenshot <screenshotpath>`
         :kbd:`Ctrl+F7`,"Opens virtual keyboard (if enabled). This can also be opened with a long press of the middle mouse button or wheel."
+		:kbd:`Ctrl+Alt+d`,"Opens the ScummVM debugger"

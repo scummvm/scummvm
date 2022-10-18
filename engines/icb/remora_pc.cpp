@@ -289,7 +289,7 @@ void _remora::SetUpRemora() {
 	// Prepare the Remora casing.
 	SetUpSurfaceForBitmap(REMORA_BITMAP_REMORA, m_sCasingSourceRectangle, m_sCasingTargetRectangle, m_nCasingSurfaceID);
 
-	// Draw the the casing.
+	// Draw the casing.
 	surface_manager->Blit_surface_to_surface(m_nCasingSurfaceID, m_nRemoraSurfaceID, &m_sCasingSourceRectangle, &m_sCasingTargetRectangle);
 
 	// Set up the sprites that flash when text goes off the top or botttom of the screen.
@@ -570,12 +570,12 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 	uint32 i, j, k;
 	float fX1, fZ1, fX2, fZ2;
 	int32 nX1, nZ1, nX2, nZ2;
-	_barrier_cube *pBarrierCube;
-	_barrier_slice *pSlice;
+	BarrierCube *pBarrierCube;
+	BarrierSlice *pSlice;
 	uint32 *pBarrierArray;
 	uint32 nBarrierCubeOffset;
 	uint32 nBarrierIndex;
-	_route_barrier *pBarrier;
+	RouteBarrier *pBarrier;
 
 	PXTRY
 
@@ -588,7 +588,7 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 		for (j = 0; j < pSlice->num_cubes; ++j) {
 			// Get to the barriers for this cube.
 			nBarrierCubeOffset = pSlice->offset_cubes[j];
-			pBarrierCube = (_barrier_cube *)((uint8 *)pSlice + nBarrierCubeOffset);
+			pBarrierCube = (BarrierCube *)((uint8 *)pSlice + nBarrierCubeOffset);
 			pBarrierArray = (uint32 *)((uint8 *)pSlice + pBarrierCube->barriers);
 
 			// Draw the barriers for this cube.
@@ -600,10 +600,10 @@ void _remora::DrawStaticBarriers(_rgb oLineColour) const {
 				pBarrier = MS->session_barriers->Fetch_barrier(nBarrierIndex);
 
 				// Set up the vector, the player relative bit has been done in the translation_matrix setting up
-				fX1 = pBarrier->x1();
-				fZ1 = pBarrier->z1();
-				fX2 = pBarrier->x2();
-				fZ2 = pBarrier->z2();
+				fX1 = pBarrier->m_x1;
+				fZ1 = pBarrier->m_z1;
+				fX2 = pBarrier->m_x2;
+				fZ2 = pBarrier->m_z2;
 
 				GameToRemora(fX1, fZ1);
 				GameToRemora(fX2, fZ2);
@@ -631,7 +631,7 @@ void _remora::DrawAnimatingBarriers(_rgb oLineColour) const {
 	float fX1, fZ1, fX2, fZ2;
 	int32 nX1, nZ1, nX2, nZ2;
 	uint32 nBarrierIndex;
-	_route_barrier *pBarrier;
+	RouteBarrier *pBarrier;
 	uint32 nPropID;
 	uint32 nPropState;
 	uint32 nBarriersPerState;
@@ -672,10 +672,10 @@ void _remora::DrawAnimatingBarriers(_rgb oLineColour) const {
 						pBarrier = MS->session_barriers->Fetch_barrier(*(pnBarriers++));
 
 						// Set up the vector, the player relative bit has been done in the translation_matrix setting up
-						fX1 = pBarrier->x1();
-						fZ1 = pBarrier->z1();
-						fX2 = pBarrier->x2();
-						fZ2 = pBarrier->z2();
+						fX1 = pBarrier->m_x1;
+						fZ1 = pBarrier->m_z1;
+						fX2 = pBarrier->m_x2;
+						fZ2 = pBarrier->m_z2;
 
 						GameToRemora(fX1, fZ1);
 						GameToRemora(fX2, fZ2);
@@ -1087,7 +1087,7 @@ void _remora::DrawPulse() {
 	int32 nXCoord;
 	int32 nWhiteValue;
 	float fHighlightStep, fCurrentHighlight;
-	c_game_object *pPlayer;
+	CGame *pPlayer;
 	uint32 nHits, nHealth;
 
 	// Calculate a base drawing point for the whole thing.
@@ -1095,8 +1095,8 @@ void _remora::DrawPulse() {
 	//nBaseY = REMORA_PULSE_Y;
 
 	// Work out player's health.
-	pPlayer = (c_game_object *)MS->objects->Fetch_item_by_name("player");
-	nHits = pPlayer->GetIntegerVariable(pPlayer->GetVariable("hits"));
+	pPlayer = (CGame *)LinkedDataObject::Fetch_item_by_name(MS->objects, "player");
+	nHits = CGameObject::GetIntegerVariable(pPlayer, CGameObject::GetVariable(pPlayer,  "hits"));
 
 	// This counts from 10 down to zero (check player's script for this figure if it changes).
 	if (nHits > 6)
@@ -1580,21 +1580,21 @@ void _remora::SetUpSurfaceForBitmap(const char *pcBitmapName, DXrect &sSourceRec
 	pcFullBitmapName = MakeRemoraGraphicsPath(pcBitmapName);
 	pBitmap = (_pxBitmap *)rs_remora->Res_open(pcFullBitmapName, nFullBitmapNameHash, m_pcRemoraCluster, m_nRemoraClusterHash);
 
-	if (pBitmap->schema != PC_BITMAP_SCHEMA)
+	if (FROM_LE_32(pBitmap->schema) != PC_BITMAP_SCHEMA)
 		Fatal_error("Incorrect versions loading [%s] (engine has %d, data has %d", pcFullBitmapName, PC_BITMAP_SCHEMA, pBitmap->schema);
 
-	pSprite = pBitmap->Fetch_item_by_number(0);
+	pSprite = (_pxSprite *)((byte *)pBitmap + FROM_LE_32(pBitmap->sprite_offsets[0]));
 
 	// Prepare the source/target rectangles for blitting later.
-	sSourceRect = MakeRECTFromSpriteSizes(0, 0, pSprite->width, pSprite->height);
-	sTargetRect = MakeRECTFromSpriteSizes(pSprite->x, pSprite->y, pSprite->width, pSprite->height);
+	sSourceRect = MakeRECTFromSpriteSizes(0, 0, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height));
+	sTargetRect = MakeRECTFromSpriteSizes(FROM_LE_32(pSprite->x), FROM_LE_32(pSprite->y), FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height));
 
-	nSurfaceID = surface_manager->Create_new_surface(pcBitmapName, pSprite->width, pSprite->height, SYSTEM);
+	nSurfaceID = surface_manager->Create_new_surface(pcBitmapName, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height), SYSTEM);
 	surface_manager->Set_transparent_colour_key(nSurfaceID, g_oIconMenu->GetTransparencyKey());
 
 	pSurfaceBitmap = surface_manager->Lock_surface(nSurfaceID);
 	nPitch = surface_manager->Get_pitch(nSurfaceID);
-	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, pSprite->width, pSprite->height, pBitmap, 0, 0, 0, FALSE8, nullptr, 255);
+	SpriteXYFrameDraw(pSurfaceBitmap, nPitch, FROM_LE_32(pSprite->width), FROM_LE_32(pSprite->height), pBitmap, 0, 0, 0, FALSE8, nullptr, 255);
 	surface_manager->Unlock_surface(nSurfaceID);
 }
 

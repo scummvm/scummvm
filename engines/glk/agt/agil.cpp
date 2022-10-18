@@ -124,7 +124,7 @@ static const char *ext_voc[] = {
 	"verb", "noun", "adjective", "prep", "object", "name", "step",
 	" any", "either", "both", "everyone", "everybody",
 	"he", "she", "it", "they", "him", "her", "them", "is", "are", "oops",
-	"was", "were",
+	"was", "were", "scream",
 	/* Everything between 'in' and 'about' should be a preposition */
 	"in", "out", "into", "at", "to", "across", "inside", "with", "near", "for",
 	"of", "behind", "beside", "on", "off", "under", "from", "through",
@@ -300,6 +300,7 @@ void agil_option(int optnum, char *optstr[], rbool setflag, rbool lastpass) {
 	else if (opt("tone")) PURE_TONE = setflag;
 	else if (opt("input_bold")) PURE_INPUT = setflag;
 	else if (opt("force_load")) FORCE_VERSION = setflag;
+	else if (opt("stable_random")) stable_random = setflag;
 	else if (!agt_option(optnum, optstr, setflag)) /* Platform specific options */
 		rprintf("Invalid option %s\n", optstr[0]);
 }

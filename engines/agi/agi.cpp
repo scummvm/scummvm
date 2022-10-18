@@ -395,6 +395,7 @@ AgiEngine::AgiEngine(OSystem *syst, const AGIGameDescription *gameDesc) : AgiBas
 	_menu = nullptr;
 	_systemUI = nullptr;
 	_inventory = nullptr;
+	_logFile = nullptr;
 
 	_keyHoldMode = false;
 	_keyHoldModeLastKey = Common::KEYCODE_INVALID;
@@ -494,6 +495,11 @@ AgiEngine::~AgiEngine() {
 	if (_gfx) {
 		_gfx->deinitVideo();
 	}
+	if (_logFile) {
+		_logFile->finalize();
+		_logFile->close();
+	}
+	delete _logFile;
 	delete _inventory;
 	delete _systemUI;
 	delete _menu;

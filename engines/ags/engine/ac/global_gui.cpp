@@ -76,8 +76,8 @@ void InterfaceOn(int ifn) {
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) PauseGame();
 	// clear the cached mouse position
-	_GP(guis)[ifn].OnControlPositionChanged();
-	_GP(guis)[ifn].Poll();
+	_GP(guis)[ifn].MarkControlsChanged();
+	_GP(guis)[ifn].Poll(_G(mousex), _G(mousey));
 }
 
 void InterfaceOff(int ifn) {
@@ -93,7 +93,7 @@ void InterfaceOff(int ifn) {
 		_GP(guis)[ifn].GetControl(_GP(guis)[ifn].MouseOverCtrl)->OnMouseLeave();
 		_GP(guis)[ifn].MouseOverCtrl = -1;
 	}
-	_GP(guis)[ifn].OnControlPositionChanged();
+	_GP(guis)[ifn].MarkControlsChanged();
 	// modal interface
 	if (_GP(guis)[ifn].PopupStyle == kGUIPopupModal) UnPauseGame();
 }
@@ -207,8 +207,9 @@ void SetGUIBackgroundPic(int guin, int slotn) {
 }
 
 void DisableInterface() {
-	if (_GP(play).disabled_user_interface == 0 && // only if was enabled before
-	        _G(gui_disabled_style) != GUIDIS_UNCHANGED) { // If GUI looks change when disabled, then update them all
+	if ((_GP(play).disabled_user_interface == 0) && // only if was enabled before
+		(GUI::Options.DisabledStyle != kGuiDis_Unchanged)) {
+		// If GUI looks change when disabled, then update them all
 		GUI::MarkAllGUIForUpdate();
 	}
 	_GP(play).disabled_user_interface++;
@@ -220,11 +221,12 @@ void EnableInterface() {
 	if (_GP(play).disabled_user_interface < 1) {
 		_GP(play).disabled_user_interface = 0;
 		set_default_cursor();
-		if (_G(gui_disabled_style) != GUIDIS_UNCHANGED) { // If GUI looks change when disabled, then update them all
+		if (GUI::Options.DisabledStyle != kGuiDis_Unchanged) { // If GUI looks change when disabled, then update them all
 			GUI::MarkAllGUIForUpdate();
 		}
 	}
 }
+
 // Returns 1 if user interface is enabled, 0 if disabled
 int IsInterfaceEnabled() {
 	return (_GP(play).disabled_user_interface > 0) ? 0 : 1;
@@ -241,11 +243,11 @@ int GetGUIObjectAt(int xx, int yy) {
 int GetGUIAt(int xx, int yy) {
 	data_to_game_coords(&xx, &yy);
 
-	int aa, ll;
-	for (ll = _GP(game).numgui - 1; ll >= 0; ll--) {
-		aa = _GP(play).gui_draw_order[ll];
-		if (_GP(guis)[aa].IsInteractableAt(xx, yy))
-			return aa;
+	// Test in the opposite order (from closer to further)
+	for (auto g = _GP(play).gui_draw_order.crbegin();
+			g < _GP(play).gui_draw_order.crend(); ++g) {
+		if (_GP(guis)[*g].IsInteractableAt(xx, yy))
+			return *g;
 	}
 	return -1;
 }

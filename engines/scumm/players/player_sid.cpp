@@ -42,7 +42,7 @@ namespace Scumm {
  * For more info on the SID chip see:
  * - http://www.dopeconnection.net/C64_SID.htm (German)
  * For more info on the VIC chip see:
- * - http://www.htu.tugraz.at/~herwig/c64/man-vic.php (German)
+ * - https://riff.2ix.at/c64/print.php?dok=man-vic (German)
  * - http://www.c64-wiki.de/index.php/VIC (German)
  */
 

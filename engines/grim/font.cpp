@@ -38,7 +38,6 @@ Font::Font() :
 		_fontData(nullptr), _charHeaders(nullptr), _charIndex(nullptr),
 		_numChars(0), _dataSize(0), _kernedHeight(0), _baseOffsetY(0),
 		_firstChar(0), _lastChar(0) {
-
 }
 
 Font::~Font() {

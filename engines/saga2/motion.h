@@ -99,21 +99,21 @@ class MotionTask {
 	friend void     RequestWanderPath(MotionTask *mTask, int16 smartness);
 	friend void     abortPathFind(MotionTask *mTask);
 
-	GameObject      *object;                // the object to move
-	TilePoint       velocity;               // object velocity for ballistic flight
-	TilePoint       immediateLocation,      // where we are trying to get to
-	                finalTarget;            // where we eventually want to get to
-	int16           tetherMinU,
-	                tetherMinV,
-	                tetherMaxU,
-	                tetherMaxV;
-	uint8           motionType,             // thrown or shot.
-	                prevMotionType;         // motion type before interruption
+	GameObject      *_object;                // the object to move
+	TilePoint       _velocity;               // object velocity for ballistic flight
+	TilePoint       _immediateLocation,      // where we are trying to get to
+	                _finalTarget;            // where we eventually want to get to
+	int16           _tetherMinU,
+	                _tetherMinV,
+	                _tetherMaxU,
+	                _tetherMaxV;
+	uint8           _motionType,             // thrown or shot.
+	                _prevMotionType;         // motion type before interruption
 
-	ThreadID        thread;                 // SAGA thread to wake up when
+	ThreadID        _thread;                 // SAGA thread to wake up when
 	// motion is done
 
-	uint16          flags;                  // various flags
+	uint16          _flags;                  // various flags
 
 	enum motionFlags {
 		pathFind        = (1 << 0),         // walk is using path finding
@@ -134,26 +134,26 @@ class MotionTask {
 		privledged      = (1 << 15)         // don't let AI interrupt this
 	};
 
-	Direction       direction;              // direction of movement
-	TilePoint       pathList[16];         // intermediate motion targets
-	int16           pathCount,              // number of points in path
-	                pathIndex,              // number of points so far
-	                runCount;               // used for run requests.
-	PathRequest     *pathFindTask;          // request to find the path
-	int16           steps,                  // number of steps in ballistic motion
-	                uFrac,                  // remainder in U direction
-	                vFrac,                  // remainder in V direction
-	                uErrorTerm,             // used to adjust for rounding errors
-	                vErrorTerm;             // used to adjust for rounding errors
+	Direction       _direction;              // direction of movement
+	TilePoint       _pathList[16];         // intermediate motion targets
+	int16           _pathCount,              // number of points in path
+	                _pathIndex,              // number of points so far
+	                _runCount;               // used for run requests.
+	PathRequest     *_pathFindTask;          // request to find the path
+	int16           _steps,                  // number of steps in ballistic motion
+	                _uFrac,                  // remainder in U direction
+	                _vFrac,                  // remainder in V direction
+	                _uErrorTerm,             // used to adjust for rounding errors
+	                _vErrorTerm;             // used to adjust for rounding errors
 
 	//  Data used in combat motion
-	uint8           combatMotionType;       // combat sub motion type
+	uint8           _combatMotionType;       // combat sub motion type
 
 	// Spell casting stuff
-	GameObject      *targetObj;             // target of attack or defense (object)
-	ActiveItem      *targetTAG;             // target of attack or defense (TAG)
-	Location        targetLoc;              // target of attack or defense (Location)
-	SkillProto      *spellObj;              // spell being cast
+	GameObject      *_targetObj;             // target of attack or defense (object)
+	ActiveItem      *_targetTAG;             // target of attack or defense (TAG)
+	Location        _targetLoc;              // target of attack or defense (Location)
+	SkillProto      *_spellObj;              // spell being cast
 
 	union {
 		int16           actionCounter;      // counter used in some motion
@@ -173,14 +173,14 @@ class MotionTask {
 			// upon.
 			Actor           *enactor;
 			ActiveItem      *TAI;           // TAI involved in interation
-		} o;
+		} _o;
 
 		//  Defensive motion stuff
 		struct {
 			Actor           *attacker;      // attacking actor
 			GameObject      *defensiveObj;  // shield or parrying weapon
 			uint8           defenseFlags;   // various combat flags
-		} d;
+		} _d;
 	};
 
 public:
@@ -272,15 +272,15 @@ private:
 
 	//  Routines to handle updating of specific motion types
 	void turnAction() {
-		Actor   *a = (Actor *)object;
+		Actor   *a = (Actor *)_object;
 
-		if (flags & reset) {
+		if (_flags & reset) {
 			a->setAction(actionStand, 0);
-			flags &= ~reset;
+			_flags &= ~reset;
 		}
 
-		if (a->_currentFacing != direction)
-			a->turn(direction);
+		if (a->_currentFacing != _direction)
+			a->turn(_direction);
 		else
 			remove(motionCompleted);
 	}
@@ -453,25 +453,25 @@ public:
 
 	//  Determine if the motion task is walking to a destination
 	bool isWalkToDest() {
-		return isWalk() && !(flags & wandering);
+		return isWalk() && !(_flags & wandering);
 	}
 
 	//  Determine if the motion task is a wandering motion
 	bool isWander() {
-		return isWalk() && (flags & wandering);
+		return isWalk() && (_flags & wandering);
 	}
 
 	//  Determine if the motion task is tethered
 	bool isTethered() {
-		return isWander() && (flags & tethered);
+		return isWander() && (_flags & tethered);
 	}
 
 	bool isRunning() {
-		return (flags & requestRun) && runCount == 0;
+		return (_flags & requestRun) && _runCount == 0;
 	}
 
 	bool isTurn() {
-		return motionType == motionTypeTurn;
+		return _motionType == motionTypeTurn;
 	}
 
 	//  Return the wandering tether region
@@ -479,7 +479,7 @@ public:
 
 	//  Return the final target location
 	TilePoint getTarget() {
-		return finalTarget;
+		return _finalTarget;
 	}
 
 	//  Update to a new final target
@@ -523,13 +523,13 @@ public:
 
 	//  Determine if this motion is a dodge motion
 	bool isDodging(Actor *thisAttacker) {
-		return motionType == motionTypeDodge && thisAttacker == d.attacker;
+		return _motionType == motionTypeDodge && thisAttacker == _d.attacker;
 	}
 
 	static void initMotionTasks();
 
 	bool isPrivledged() {
-		return flags & privledged;
+		return _flags & privledged;
 	}
 };
 
@@ -571,7 +571,7 @@ inline void MotionTask::walkTo(
     bool            canAgitate) {
 	walkTo(actor, target, run, canAgitate);
 	if (actor._moveTask != NULL)
-		actor._moveTask->thread = th;
+		actor._moveTask->_thread = th;
 }
 
 inline void MotionTask::walkToDirect(
@@ -582,13 +582,13 @@ inline void MotionTask::walkToDirect(
     bool            canAgitate) {
 	walkToDirect(actor, target, run, canAgitate);
 	if (actor._moveTask != NULL)
-		actor._moveTask->thread = th;
+		actor._moveTask->_thread = th;
 }
 
 inline void MotionTask::turn(ThreadID th, Actor &actor, Direction dir) {
 	turn(actor, dir);
 	if (actor._moveTask != NULL)
-		actor._moveTask->thread = th;
+		actor._moveTask->_thread = th;
 }
 
 inline void MotionTask::turnTowards(
@@ -597,13 +597,13 @@ inline void MotionTask::turnTowards(
     const TilePoint &where) {
 	turnTowards(actor, where);
 	if (actor._moveTask != NULL)
-		actor._moveTask->thread = th;
+		actor._moveTask->_thread = th;
 }
 
 inline void MotionTask::give(ThreadID th, Actor &actor, Actor &givee) {
 	give(actor, givee);
 	if (actor._moveTask != NULL)
-		actor._moveTask->thread = th;
+		actor._moveTask->_thread = th;
 }
 
 /* ===================================================================== *

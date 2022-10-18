@@ -37,7 +37,7 @@ SubtitleRenderer::~SubtitleRenderer() {
 
 
 void SubtitleRenderer::render(const Graphics::Surface &frame, uint32 frameNumber, byte color) {
-	if (!_hasSubtitles || _tw.empty()) {
+	if (!_hasSubtitles || _tw.empty() || !_vm->showConversationText()) {
 		return;
 	}
 

@@ -31,15 +31,15 @@
 namespace Saga2 {
 
 class gMousePointer {
-	gPixelMap           *pointerImage,      // pointer to current mouse image
-	                    saveMap;            // memory to backsave to
-	gPort               savePort;           // port to save to
-	gDisplayPort        *videoPort;         // port to render to
-	Rect16              saveExtent;         // extent of backsave
-	int16               hideCount;          // mouse hiding nesting level
-	Point16             currentPosition,    // where real coords are
-	                    offsetPosition;     // center of mouse image
-	bool                shown;              // mouse currently shown
+	gPixelMap           *_pointerImage,      // pointer to current mouse image
+	                    _saveMap;            // memory to backsave to
+	gPort               _savePort;           // port to save to
+	gDisplayPort        *_videoPort;         // port to render to
+	Rect16              _saveExtent;         // extent of backsave
+	int16               _hideCount;          // mouse hiding nesting level
+	Point16             _currentPosition,    // where real coords are
+	                    _offsetPosition;     // center of mouse image
+	bool                _shown;              // mouse currently shown
 
 	void draw();
 	void restore();
@@ -59,22 +59,22 @@ public:
 	void move(Point16 pos);                  // move the pointer
 	void setImage(gPixelMap &img, int x, int y);     // set the pointer imagery
 	bool isShown() {
-		return shown;
+		return _shown;
 	}
 	int16 hideDepth() {
-		return hideCount;
+		return _hideCount;
 	}
 	gPixelMap *getImage(Point16 &offset) {
-		offset = offsetPosition;
-		return pointerImage;
+		offset = _offsetPosition;
+		return _pointerImage;
 	}
 	gPixelMap *getImageCurPos(Point16 &curPos) {
-		curPos = currentPosition;
-		return pointerImage;
+		curPos = _currentPosition;
+		return _pointerImage;
 	}
 	gPixelMap *getSaveMap(Rect16 &save) {
-		save = saveExtent;
-		return &saveMap;
+		save = _saveExtent;
+		return &_saveMap;
 	}
 };
 

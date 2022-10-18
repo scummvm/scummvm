@@ -132,6 +132,14 @@ KyraEngine_HoF::KyraEngine_HoF(OSystem *system, const GameFlags &flags) : KyraEn
 	_setCharPalFinal = false;
 	_useCharPal = false;
 
+	_gui = nullptr;
+	_bookShown = _fadeMessagePalette = false;
+	_ingamePakList = _musicFileListIntro = _musicFileListFinale = _musicFileListIngame = _ingameSoundList = _ingameTimJpStr = nullptr;
+	_ingamePakListSize = _musicFileListIntroSize = _musicFileListFinaleSize = _musicFileListIngameSize = _cdaTrackTableIntroSize = _cdaTrackTableIngameSize = _cdaTrackTableFinaleSize = 0;
+	_cdaTrackTableIntro = _cdaTrackTableIngame = _cdaTrackTableFinale = nullptr;
+	_ingameSoundListSize = _ingameSoundIndexSize = _ingameTalkObjIndexSize = _ingameTimJpStrSize = _itemAnimDefinitionSize = 0;
+	_ingameSoundIndex = nullptr;
+	_ingameTalkObjIndex = nullptr;
 	memset(_characterFacingCountTable, 0, sizeof(_characterFacingCountTable));
 
 	_defaultFont = (_flags.lang == Common::ZH_TWN) ? Screen::FID_CHINESE_FNT : ((_flags.lang == Common::JA_JPN) ? Screen::FID_SJIS_FNT : Screen::FID_8_FNT);
@@ -169,7 +177,8 @@ void KyraEngine_HoF::pauseEngineIntern(bool pause) {
 		_pauseStart = 0;
 
 		_nextIdleAnim += pausedTime;
-		_tim->refreshTimersAfterPause(pausedTime);
+		if (_tim)
+			_tim->refreshTimersAfterPause(pausedTime);
 	}
 }
 
@@ -377,6 +386,7 @@ void KyraEngine_HoF::startup() {
 	loadNPCScript();
 
 	if (_gameToLoad == -1) {
+		restartPlayTimerAt(0);
 		snd_playWanderScoreViaMap(52, 1);
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
 		saveGameStateIntern(0, "New Game", nullptr);
@@ -446,6 +456,7 @@ void KyraEngine_HoF::runLoop() {
 		removeInputTop();
 
 		update();
+		updatePlayTimer();
 
 		if (inputFlag == 198 || inputFlag == 199) {
 			_savedMouseState = _mouseState;
@@ -773,45 +784,39 @@ void KyraEngine_HoF::cleanup() {
 #pragma mark - Localization
 
 void KyraEngine_HoF::loadCCodeBuffer(const char *file) {
-	char tempString[13];
-	strcpy(tempString, file);
+	Common::String tempString = file;
 	changeFileExtension(tempString);
 
 	delete[] _cCodeBuffer;
-	_cCodeBuffer = _res->fileData(tempString, nullptr);
+	_cCodeBuffer = _res->fileData(tempString.c_str(), nullptr);
 }
 
 void KyraEngine_HoF::loadOptionsBuffer(const char *file) {
-	char tempString[13];
-	strcpy(tempString, file);
+	Common::String tempString = file;
 	changeFileExtension(tempString);
 
 	delete[] _optionsBuffer;
-	_optionsBuffer = _res->fileData(tempString, nullptr);
+	_optionsBuffer = _res->fileData(tempString.c_str(), nullptr);
 }
 
 void KyraEngine_HoF::loadChapterBuffer(int chapter) {
-	char tempString[14];
-
 	static const char *const chapterFilenames[] = {
 		"CH1.XXX", "CH2.XXX", "CH3.XXX", "CH4.XXX", "CH5.XXX"
 	};
 
 	assert(chapter >= 1 && chapter <= ARRAYSIZE(chapterFilenames));
-	strcpy(tempString, chapterFilenames[chapter-1]);
+	Common::String tempString = chapterFilenames[chapter-1];
 	changeFileExtension(tempString);
 
 	delete[] _chapterBuffer;
-	_chapterBuffer = _res->fileData(tempString, nullptr);
+	_chapterBuffer = _res->fileData(tempString.c_str(), nullptr);
 	_currentChapter = chapter;
 }
 
-void KyraEngine_HoF::changeFileExtension(char *buffer) {
-	while (*buffer != '.')
-		++buffer;
-
-	++buffer;
-	strcpy(buffer, _languageExtension[_lang]);
+void KyraEngine_HoF::changeFileExtension(Common::String &file) {
+	uint insertAt = file.findFirstOf('.');
+	if (insertAt != Common::String::npos)
+		file = file.substr(0, insertAt + 1) + _languageExtension[_lang];
 }
 
 uint8 *KyraEngine_HoF::getTableEntry(uint8 *buffer, int id) {
@@ -942,13 +947,8 @@ void KyraEngine_HoF::loadItemShapes() {
 }
 
 void KyraEngine_HoF::loadCharacterShapes(int shapes) {
-	char file[10];
-	strcpy(file, "_ZX.SHP");
-
-	_characterShapeFile = shapes;
-	file[2] = '0' + shapes;
-
-	uint8 *data = _res->fileData(file, nullptr);
+	uint8 *data = _res->fileData(Common::String::format("_Z%c.SHP", '0' + (char)shapes).c_str(), nullptr);
+	assert(data);
 	for (int i = 9; i <= 32; ++i)
 		addShapeToPool(data, i, i-9);
 	delete[] data;
@@ -969,16 +969,14 @@ void KyraEngine_HoF::loadInventoryShapes() {
 }
 
 void KyraEngine_HoF::runStartScript(int script, int unk1) {
-	char filename[14];
-	strcpy(filename, "_START0X.EMC");
-	filename[7] = script + '0';
+	Common::String filename = Common::String::format("_START0%c.EMC", '0' + (char)script);
 
 	EMCData scriptData;
 	EMCState scriptState;
 	memset(&scriptData, 0, sizeof(EMCData));
 	memset(&scriptState, 0, sizeof(EMCState));
 
-	_emc->load(filename, &scriptData, &_opcodes);
+	_emc->load(filename.c_str(), &scriptData, &_opcodes);
 	_emc->init(&scriptState, &scriptData);
 	scriptState.regs[6] = unk1;
 	_emc->start(&scriptState, 0);
@@ -1388,24 +1386,21 @@ void KyraEngine_HoF::restoreGfxRect32x32(int x, int y) {
 #pragma mark -
 
 void KyraEngine_HoF::openTalkFile(int newFile) {
-	char talkFilename[16];
+	Common::String talkFilename;
 
 	if (_oldTalkFile > 0) {
-		sprintf(talkFilename, "CH%dVOC.TLK", _oldTalkFile);
+		talkFilename = Common::String::format("CH%dVOC.TLK", _oldTalkFile);
 		_res->unloadPakFile(talkFilename);
 		_oldTalkFile = -1;
 	}
 
-	if (newFile == 0)
-		strcpy(talkFilename, "ANYTALK.TLK");
-	else
-		sprintf(talkFilename, "CH%dVOC.TLK", newFile);
+	talkFilename = newFile ? Common::String::format("CH%dVOC.TLK", newFile) : "ANYTALK.TLK";
 
 	_oldTalkFile = newFile;
 
 	if (!_res->loadPakFile(talkFilename)) {
 		if (speechEnabled()) {
-			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename);
+			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename.c_str());
 			_configVoice = 0;
 
 			// Sync the config manager with the new settings

@@ -22,95 +22,56 @@
 #ifndef AGOS_SIMON1_ADLIB_H
 #define AGOS_SIMON1_ADLIB_H
 
-#include "audio/mididrv.h"
-#include "audio/fmopl.h"
+#include "audio/adlib_ms.h"
 
 namespace AGOS {
 
-class MidiDriver_Simon1_AdLib : public MidiDriver {
-public:
-	MidiDriver_Simon1_AdLib(const byte *instrumentData);
-	~MidiDriver_Simon1_AdLib() override;
-
-	// MidiDriver API
-	int open() override;
-	bool isOpen() const override;
-	void close() override;
-
-	void send(uint32 b) override;
-
-	void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) override;
-	uint32 getBaseTempo() override;
-
-	MidiChannel *allocateChannel() override { return 0; }
-	MidiChannel *getPercussionChannel() override { return 0; }
+class MidiDriver_Simon1_AdLib : public MidiDriver_ADLIB_Multisource {
 private:
-	bool _isOpen;
-
-	OPL::OPL *_opl;
-
-	Common::TimerManager::TimerProc _timerProc;
-	void *_timerParam;
-	void onTimer();
-
-	void reset();
-	void resetOPLVoices();
-
-	void resetRhythm();
-	int _melodyVoices;
-	uint8 _amvdrBits;
-	bool _rhythmEnabled;
-
-	enum {
-		kNumberOfVoices = 11,
-		kNumberOfMidiChannels = 16
+	struct RhythmMapEntry {
+		// The OPL rhythm instrument to use.
+		// The original interpreter would move a note played on the MIDI rhythm
+		// channel to one of MIDI channels 11-15, each corresponding to an OPL
+		// rhythm instrument.
+		uint8 channel;
+		// The instrument bank entry used to play the rhythm note.
+		uint8 program;
+		// The MIDI note number that is actually played.
+		uint8 note;
 	};
 
-	struct Voice {
-		Voice();
+public:
+	MidiDriver_Simon1_AdLib(OPL::Config::OplType oplType, const byte *instrumentData);
+	~MidiDriver_Simon1_AdLib();
 
-		uint channel;
-		uint note;
-		uint instrTotalLevel;
-		uint instrScalingLevel;
-		uint frequency;
-	};
+	int open() override;
 
-	void resetVoices();
-	int allocateVoice(uint channel);
+	void noteOn(uint8 channel, uint8 note, uint8 velocity, uint8 source) override;
+	void programChange(uint8 channel, uint8 program, uint8 source) override;
 
-	Voice _voices[kNumberOfVoices];
-	uint _midiPrograms[kNumberOfMidiChannels];
+	void deinitSource(uint8 source) override;
 
-	void noteOff(uint channel, uint note);
-	void noteOn(uint channel, uint note, uint velocity);
-	void noteOnRhythm(uint channel, uint note, uint velocity);
-	void controlChange(uint channel, uint controller, uint value);
-	void programChange(uint channel, uint program);
+	// Turns off rhythm notes for sources with type MUSIC (typically source 0).
+	// This should be called when a SFX source that uses rhythm notes starts
+	// playing to prevent conflicts on the rhythm channels. Deinitializing a
+	// SFX source will turn rhythm notes back on.
+	void disableMusicRhythmNotes();
 
-	void setupInstrument(uint voice, uint instrument);
-	const byte *_instruments;
+private:
+	static const RhythmMapEntry RHYTHM_MAP[];
+	static const uint16 FREQUENCY_TABLE[];
 
-	static const int _operatorMap[9];
-	static const int _operatorDefaults[8];
+	uint8 allocateOplChannel(uint8 channel, uint8 source, uint8 instrumentId) override;
+	uint16 calculateFrequency(uint8 channel, uint8 source, uint8 note) override;
+	uint8 calculateUnscaledVolume(uint8 channel, uint8 source, uint8 velocity,
+								  OplInstrumentDefinition &instrumentDef, uint8 operatorNum) override;
+	void parseInstrumentData(const byte *instrumentData);
 
-	static const int _rhythmOperatorMap[5];
-	static const uint _rhythmInstrumentMask[5];
-	static const int _rhythmVoiceMap[5];
-
-	static const int _frequencyIndexAndOctaveTable[128];
-	static const int _frequencyTable[16];
-
-	struct RhythmMap {
-		int channel;
-		int program;
-		int note;
-	};
-
-	static const RhythmMap _rhythmMap[39];
+	// True if rhythm notes for sources with type MUSIC should not be played.
+	bool _musicRhythmNotesDisabled;
 };
 
-MidiDriver *createMidiDriverSimon1AdLib(const char *instrumentFilename);
+MidiDriver_Multisource *createMidiDriverSimon1AdLib(const char *instrumentFilename, OPL::Config::OplType);
 
 } // End of namespace AGOS
 

@@ -92,13 +92,17 @@ void SpiderEngine::runMatrix(Code *code) {
 	delete v;
 	Graphics::Surface *menu;
 	Common::Rect menuArea(0, 0, 0, 0);
-	if (isDemo()) // No hints in demo
+	bool transparent;
+	if (isDemo()) { // No hints in demo
 		menu = decodeFrame("int_main/resume.smk", 0);
-	else
+		transparent = true;
+	} else {
 		menu = decodeFrame("int_main/hint1.smk", 0);
+		transparent = false;
+	}
 
 	menuArea = Common::Rect(0, 0, menu->w, menu->h);
-	drawImage(*menu, 0, 0, false);
+	drawImage(*menu, 0, 0, transparent);
 
 	while (!shouldQuit() && _nextLevel.empty()) {
 
@@ -175,6 +179,7 @@ void SpiderEngine::runMatrix(Code *code) {
 			}
 
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -200,10 +205,15 @@ void SpiderEngine::addIngredient(Code *code) {
 		ingredients[6] = true;
 	}
 	resetSceneState();
+	_defaultCursorIdx = 0;
+	defaultCursor();
 	_nextLevel = "bushard2.mi_";
 }
 
 void SpiderEngine::checkMixture(Code *code) {
+	_defaultCursorIdx = 0;
+	defaultCursor();
+
 	_nextLevel = "bushard2.mi_";
 	if (ingredients[0]) {
 		MVideo video("cine/blcs005s.smk", Common::Point(0, 0), false, true, false);
@@ -230,14 +240,17 @@ void SpiderEngine::checkMixture(Code *code) {
 		}
 	}
 	_nextLevel = "<after_bus_hard>";
+	removeTimers();
 }
 
 void SpiderEngine::runNote(Code *code) {
 	const char alphaES[] = "abcdefghijklmnopqrstuvwxyz~";
 	const char alphaEN[] = "abcdefghijklmnopqrstuvwxyz";
+	const char alphaHE[] = "\xE0\xE1\xE2\xE3\xE4\xE5\xE6\xE7\xE8\xE9\xEB\xEA\xEC\xEE\xED\xF0\xEF\xF1\xF2\xF4\xF3\xF6\xF7\xF8\xF9\xFA";
 
 	Common::Rect letterBoxES(22, 442, 554, 455);
 	Common::Rect letterBoxEN(22, 442, 535, 455);
+	Common::Rect letterBoxHE(42, 442, 555, 460);
 
 	const char solEasyES1[] = "hable cpn el svtp z talwe a";
 	const char solEasyES2[] = "masz jane";
@@ -248,6 +261,16 @@ void SpiderEngine::runNote(Code *code) {
 	char placeEasyEN[] = "????? ???? ??????? ??? ????";
 	char placeEasy2[] = "???? ????";
 
+	const char solEasyIT1[] = "parla con il russo e salva";
+	const char solEasyIT2[] = "mary jane";
+	char placeEasyIT[] = "????? ??? ?? ????? ? ?????";
+	char placeEasyIT2[] = "???? ????";
+
+	const char solEasyHE1[] = "\xE9\xF8\xE0\xEE \xFA\xE0 \xEC\xF6\xE4\xE5 \xE9\xF1\xE5\xF8\xE4 \xED\xF2 \xF8\xE1\xE3";
+	const char solEasyHE2[] = "\xEF\xE9\xE2";
+	char placeEasyHE[] = "???? ?? ???? ????? ?? ???";
+	char placeEasyHE2[] = "???";
+
 	const char solHardES1[] = "encvenuse a tmesdzakpw p tv";
 	const char solHardES2[] = "mvjes mpsisa";
 	char placeHardES[] = "????????? ? ?????????? ? ??";
@@ -257,6 +280,16 @@ void SpiderEngine::runNote(Code *code) {
 	const char solHardEN2[] = "dies";
 	char placeHardEN[] = "???? ?????????? ?? ???? ????";
 	char placeHardEN2[] = "????";
+
+	const char solHardIT1[] = "trova smerdyakov o tua";
+	const char solHardIT2[] = "moglie moure";
+	char placeHardIT[] = "????? ?????????? ? ???";
+	char placeHardIT2[] = "?????? ?????";
+
+	const char solHardHE1[] = "\xEA\xFA\xF9\xE9\xE0\xF9 \xE5\xE0 \xE1\xE5\xF7\xE9\xE3\xF8\xEE\xF1 \xFA\xE0 \xE0\xF6\xEE";
+	const char solHardHE2[] = "\xFA\xE5\xEE\xFA";
+	char placeHardHE[] = "?????? ?? ???????? ?? ???";
+	char placeHardHE2[] = "????";
 
 	changeScreenMode("640x480");
 	Common::Point mousePos;
@@ -274,16 +307,25 @@ void SpiderEngine::runNote(Code *code) {
 	Common::Rect firstSentenceBox;
 	Common::Rect firstSentenceBoxEasyEN(21, 140, 560, 160);
 	Common::Rect firstSentenceBoxEasyES(21, 140, 560, 160);
+	Common::Rect firstSentenceBoxEasyIT(21, 140, 540, 160);
+	Common::Rect firstSentenceBoxEasyHE(60, 140, 560, 160);
 
 	Common::Rect firstSentenceBoxHardEN(21, 140, 580, 160);
 	Common::Rect firstSentenceBoxHardES(21, 140, 560, 160);
+	Common::Rect firstSentenceBoxHardIT(21, 140, 456, 160);
+	Common::Rect firstSentenceBoxHardHE(60, 140, 560, 160);
 
 	Common::Rect secondSentenceBox;
 	Common::Rect secondSentenceBoxEasyEN(21, 140, 196, 201);
 	Common::Rect secondSentenceBoxEasyES(21, 180, 195, 195);
+	Common::Rect secondSentenceBoxEasyIT(21, 180, 195, 200);
+	Common::Rect secondSentenceBoxEasyHE(502, 180, 560, 200);
 
 	Common::Rect secondSentenceBoxHardEN(21, 180, 96, 201);
 	Common::Rect secondSentenceBoxHardES(21, 180, 260, 195);
+	Common::Rect secondSentenceBoxHardIT(21, 180, 253, 200);
+	Common::Rect secondSentenceBoxHardHE(484, 180, 560, 200);
+
 	switch (_language) {
 	case Common::EN_USA:
 	case Common::DE_DEU:
@@ -306,6 +348,26 @@ void SpiderEngine::runNote(Code *code) {
 		}
 	break;
 
+	case Common::IT_ITA:
+		alpha = alphaEN;
+		letterBox = letterBoxEN;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyIT;
+			secondSentence = (char*) &placeEasyIT2;
+			firstSolution = solEasyIT1;
+			secondSolution = solEasyIT2;
+			firstSentenceBox = firstSentenceBoxEasyIT;
+			secondSentenceBox = secondSentenceBoxEasyIT;
+		} else { // hard
+			firstSentence = (char*) &placeHardIT;
+			secondSentence = (char*) &placeHardIT2;
+			firstSolution = solHardIT1;
+			secondSolution = solHardIT2;
+			firstSentenceBox = firstSentenceBoxHardIT;
+			secondSentenceBox = secondSentenceBoxHardIT;
+		}
+	break;
+
 	case Common::ES_ESP:
 		alpha = alphaES;
 		letterBox = letterBoxES;
@@ -325,6 +387,27 @@ void SpiderEngine::runNote(Code *code) {
 			secondSentenceBox = secondSentenceBoxHardES;
 		}
 	break;
+
+	case Common::HE_ISR:
+		alpha = alphaHE;
+		letterBox = letterBoxHE;
+		if (_sceneState["GS_PUZZLELEVEL"] == 0) { // easy
+			firstSentence = (char*) &placeEasyHE;
+			secondSentence = (char*) &placeEasyHE2;
+			firstSolution = solEasyHE1;
+			secondSolution = solEasyHE2;
+			firstSentenceBox = firstSentenceBoxEasyHE;
+			secondSentenceBox = secondSentenceBoxEasyHE;
+		} else { // hard
+			firstSentence = (char*) &placeHardHE;
+			secondSentence = (char*) &placeHardHE2;
+			firstSolution = solHardHE1;
+			secondSolution = solHardHE2;
+			firstSentenceBox = firstSentenceBoxHardHE;
+			secondSentenceBox = secondSentenceBoxHardHE;
+		}
+	break;
+
 	default:
 		GUI::MessageDialog dialog("The following puzzle is not fully implemented for\
 								   the current language yet, so it will be skipped");
@@ -360,11 +443,11 @@ void SpiderEngine::runNote(Code *code) {
 
 		while (g_system->getEventManager()->pollEvent(event)) {
 			mousePos = g_system->getEventManager()->getMousePos();
-			uint32 o1x = 21;
-			uint32 o1y = 140;
+			uint32 o1x = firstSentenceBox.left;
+			uint32 o1y = firstSentenceBox.top;
 
-			uint32 o2x = 21;
-			uint32 o2y = 180;
+			uint32 o2x = secondSentenceBox.left;
+			uint32 o2y = secondSentenceBox.top;
 
 			// Events
 			switch (event.type) {
@@ -402,13 +485,16 @@ void SpiderEngine::runNote(Code *code) {
 					openMainMenuDialog();
 					break;
 				} else if (letterBox.contains(mousePos)) {
-					uint32 idx = (mousePos.x - 21) / (letterBox.width() / (alpha.size()-1));
+					uint32 idx = (mousePos.x - letterBox.left) / (letterBox.width() / (alpha.size()-1));
+					if (_language == Common::HE_ISR) {
+						idx = alpha.size() - idx - 1;
+					}
 					selected = alpha[idx];
 					changeCursor("int_ball/letters.smk", idx, true);
 					//debug("%s", selected.c_str());
 				} else if (firstSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {
-						uint32 idx = float(mousePos.x - 21) / (firstSentenceBox.width() / firstSentenceLength);
+						uint32 idx = float(mousePos.x - firstSentenceBox.left) / (firstSentenceBox.width() / firstSentenceLength);
 						//debug("idx: %d", idx);
 						if (firstSentence[idx] != ' ') {
 							firstSentence[idx] = selected[0];
@@ -417,7 +503,7 @@ void SpiderEngine::runNote(Code *code) {
 					}
 				} else if (secondSentenceBox.contains(mousePos)) {
 					if (!selected.empty()) {
-						uint32 idx = float(mousePos.x - 21) / (secondSentenceBox.width() / secondSentenceLength);
+						uint32 idx = float(mousePos.x - secondSentenceBox.left) / (secondSentenceBox.width() / secondSentenceLength);
 						//debug("idx: %d", idx);
 						if (secondSentence[idx] != ' ') {
 							secondSentence[idx] = selected[0];
@@ -428,10 +514,7 @@ void SpiderEngine::runNote(Code *code) {
 
 				for (uint i = 0; i < strlen(firstSentence); i++) {
 					if (firstSentence[i] != '?' && firstSentence[i] != ' ') {
-						if (firstSentence[i] == '~')
-							drawImage(*letters[26], o1x, o1y, false); // ñ
-						else
-							drawImage(*letters[firstSentence[i]-97], o1x, o1y, false);
+						drawImage(*letters[alpha.find(firstSentence[i])], o1x, o1y, false);
 
 					}
 					o1x = o1x + size.x;
@@ -439,10 +522,7 @@ void SpiderEngine::runNote(Code *code) {
 
 				for (uint i = 0; i < strlen(secondSentence); i++) {
 					if (secondSentence[i] != '?' && secondSentence[i] != ' ') {
-						if (secondSentence[i] == '~')
-							drawImage(*letters[26], o2x, o2y, false); // ñ
-						else
-							drawImage(*letters[secondSentence[i]-97], o2x, o2y, false);
+						drawImage(*letters[alpha.find(secondSentence[i])], o2x, o2y, false);
 					}
 					o2x = o2x + size.x;
 				}
@@ -466,6 +546,7 @@ void SpiderEngine::runNote(Code *code) {
 			}
 
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -571,13 +652,17 @@ void SpiderEngine::runFusePanel(Code *code) {
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = true;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseclea.smk", 0, 0, false, true);
+					defaultCursor();
 				} else if (_isFuseUnreadable && _sceneState["GS_SWITCH9"]) {
 					MVideo v("cine/spv032s.smk", Common::Point(0, 0), false, false, false);
 					runIntro(v);
 					_isFuseRust = false;
 					_isFuseUnreadable = false;
+					_defaultCursorIdx = 0;
 					loadImage("int_alof/fuseread.smk", 0, 0, false, true);
+					defaultCursor();
 				}
 
 				if (_isFuseRust || _isFuseUnreadable)
@@ -722,6 +807,8 @@ void SpiderEngine::runFileCabinet(Code *code) {
 					}
 
 					_nextLevel = code->levelIfWin;
+					_defaultCursorIdx = 36;
+					defaultCursor();
 					return;
 				}
 
@@ -750,6 +837,7 @@ void SpiderEngine::runFileCabinet(Code *code) {
 				for (int i = 0; i < 6; i++) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
+				drawImage(*menu, 0, 0, false);
 				break;
 
 
@@ -844,8 +932,10 @@ void SpiderEngine::runLock(Code *code) {
 				} else if (act.contains(mousePos)) {
 					if (_sceneState["GS_PUZZLELEVEL"] == 0 && comb[0] == 4 && comb[1] == 0 && comb[2] == 3 && comb[3] == 1 && comb[4] == 2) {
 						_nextLevel = code->levelIfWin;
+						_checkpoint = _nextLevel;
 					} else if (_sceneState["GS_PUZZLELEVEL"] == 1 && comb[0] == 1 && comb[1] == 3 && comb[2] == 4 && comb[3] == 2 && comb[4] == 0) {
 					 	_nextLevel = code->levelIfWin;
+						_checkpoint = _nextLevel;
 					}
 				}
 
@@ -863,6 +953,7 @@ void SpiderEngine::runLock(Code *code) {
 					drawImage(*nums[comb[i]], sel[i].left, sel[i].top, true);
 				}
 				drawImage(*menu, 0, 0, false);
+				playSound("mouse.raw", 1);
 				break;
 
 			default:
@@ -1066,6 +1157,7 @@ void SpiderEngine::runFuseBox(Code *code) {
 
 		if (hfound && vfound) {
 			_nextLevel = code->levelIfWin;
+			_checkpoint = _nextLevel;
 			return;
 		}
 
@@ -1084,31 +1176,22 @@ void SpiderEngine::runGiveUp() {
 }
 
 void SpiderEngine::showScore(const Common::String prefix) {
-	Common::String message = Common::String::format("%s\n\
-	You finished the game with a score of %d points", prefix.c_str(), _score);
+	Common::String fmessage = "%s\nYou finished the ";
+	fmessage = fmessage + (isDemo() ? "demo" : "game") + " with a score of %d points";
+	Common::String message = Common::String::format(fmessage.c_str(), prefix.c_str(), _score);
 	GUI::MessageDialog dialog(message);
 	dialog.runModal();
 }
 
 void SpiderEngine::showCredits() {
-	if (_cheatsEnabled && !_arcadeMode.empty()) {
-		_skipLevel = true;
-		return;
+	changeScreenMode("640x480");
+	MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
+	runIntro(video);
+	if (_restoredContentEnabled && !_checkpoint.empty()) {
+		showScore("Spider-Man saved the day!");
 	}
-
-	if (!_arcadeMode.empty())
-		return; // No credits during arcade sequence
-
-	if (!isDemo()) { // No credits in demo
-		changeScreenMode("640x480");
-		MVideo video("cine/credits.smk", Common::Point(0, 0), false, true, false);
-		runIntro(video);
-		if (_restoredContentEnabled) {
-			showScore("Spider-Man saved the day!");
-		}
-		_score = 0;
-		_nextLevel = "mainmenu.mi_";
-	}
+	_score = 0;
+	_nextLevel = "mainmenu.mi_";
 }
 
 } // End of namespace Hypno

@@ -27,6 +27,7 @@
 #ifndef ICB_PSX_SCRN_H
 #define ICB_PSX_SCRN_H
 
+#include "engines/icb/psx_config.h"
 #include "engines/icb/gfx/psx_pcgpu.h"
 #include "engines/icb/gfx/psx_pcdefines.h"
 #include "engines/icb/gfx/psx_ot.h"

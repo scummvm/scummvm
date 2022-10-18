@@ -565,12 +565,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	FORCEINLINE float readFloatLE() {
-		uint32 n = readUint32LE();
-		float f;
-
-		memcpy(&f, &n, 4);
-
-		return f;
+		uint8 val[4];
+		read(val, 4);
+		return READ_LE_FLOAT32(val);
 	}
 
 	/**
@@ -582,12 +579,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	FORCEINLINE float readFloatBE() {
-		uint32 n = readUint32BE();
-		float f;
-
-		memcpy(&f, &n, 4);
-
-		return f;
+		uint8 val[4];
+		read(val, 4);
+		return READ_BE_FLOAT32(val);
 	}
 
 
@@ -600,12 +594,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	FORCEINLINE double readDoubleLE() {
-		uint64 n = readUint64LE();
-		double d;
-
-		memcpy(&d, &n, 8);
-
-		return d;
+		uint8 val[8];
+		read(val, 8);
+		return READ_LE_FLOAT64(val);
 	}
 
 	/**
@@ -617,12 +608,9 @@ public:
 	 * calling err() and eos() ).
 	 */
 	FORCEINLINE double readDoubleBE() {
-		uint64 n = readUint64BE();
-		double d;
-
-		memcpy(&d, &n, 8);
-
-		return d;
+		uint8 val[8];
+		read(val, 8);
+		return READ_BE_FLOAT64(val);
 	}
 
 	/**
@@ -840,12 +828,9 @@ public:
 	 * and return it in native endianness.
 	 */
 	FORCEINLINE float readFloat() {
-		uint32 n = readUint32();
-		float f;
-
-		memcpy(&f, &n, 4);
-
-		return f;
+		uint8 val[4];
+		read(val, 4);
+		return (_bigEndian) ? READ_BE_FLOAT32(val) : READ_LE_FLOAT32(val);
 	}
 
 	/**
@@ -853,12 +838,9 @@ public:
 	 * and return it in native endianness.
 	 */
 	FORCEINLINE double readDouble() {
-		uint64 n = readUint64();
-		double d;
-
-		memcpy(&d, &n, 8);
-
-		return d;
+		uint8 val[8];
+		read(val, 8);
+		return (_bigEndian) ? READ_BE_FLOAT64(val) : READ_LE_FLOAT64(val);
 	}
 };
 

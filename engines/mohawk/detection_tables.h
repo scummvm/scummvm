@@ -559,6 +559,42 @@ static const MohawkGameDescription gameDescriptions[] = {
 	},
 
 	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Simplified Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "549dc58da95c1cca286d8a129868fd65", 10291378),
+			Common::ZH_CHN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
+	// Version 1.0 (5CD) - Traditional Chinese
+	// from einstein95
+	{
+		{
+			"riven",
+			"",
+			AD_ENTRY1s("a_Data.MHK", "326da4a52a6dfe0c42f94dd4a9779cee", 10654256),
+			Common::ZH_TWN,
+			Common::kPlatformWindows,
+			ADGF_DROPPLATFORM,
+			GUI_OPTIONS_RIVEN
+		},
+		GType_RIVEN,
+		0,
+		0,
+	},
+
+	// Riven: The Sequel to Myst
 	// Version 1.? (DVD, From "Myst 10th Anniversary Edition")
 	// From Clone2727
 	{
@@ -1519,6 +1555,23 @@ static const MohawkGameDescription gameDescriptions[] = {
 			"v2.0",
 			AD_ENTRY1("OUTLINE", "159c18b663c58d1aa17ad5e1ab1f0e12"),
 			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0
+	},
+
+	// Just Grandma and Me 2.0
+	// Hebrew CD
+	{
+		{
+			"grandma",
+			"v2.0",
+			AD_ENTRY1("LBPLAY32.LB", "28f6d88dae354a3c17ea0e59c771bff7"),
+			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
 			GUIO1(GUIO_NOASPECT)
@@ -2671,6 +2724,38 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	// Wanderful Interactive Storybooks version for Android
+	{
+		{
+			"lbsampler",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "131d3a3c7158345153776693de4d45d0", 2574),
+			Common::EN_ANY,
+			Common::kPlatformAndroid,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	// Wanderful Interactive Storybooks version for macOS
+	{
+		{
+			"lbsampler",
+			"Wanderful",
+			AD_ENTRY1s("Outline.txt", "e3630ec2e66e0aea98a2d31dbd710745", 2975),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	{
 		{
 			"bearfight",
@@ -3042,6 +3127,21 @@ static const MohawkGameDescription gameDescriptions[] = {
 		0,
 	},
 
+	{
+		{
+			"create",
+			"",
+			AD_ENTRY1s("BookOutline", "922698932c5ac78276484c563cb7ae10", 1135),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_NO_FLAGS,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
 	// From sev
 	{
 		{
@@ -3086,6 +3186,36 @@ static const MohawkGameDescription gameDescriptions[] = {
 			GUIO1(GUIO_NOASPECT)
 		},
 		GType_LIVINGBOOKSV2,
+		0,
+		0,
+	},
+
+	{
+		{
+			"daniel",
+			"Demo",
+			AD_ENTRY1s("DanielBO", "6a020cca6405936c35c4e4f4bf94740f", 543),
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_DEMO,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
+		0,
+		0,
+	},
+
+	{
+		{
+			"wsg",
+			_s("Missing game code"), // Reason for being unsupported
+			AD_ENTRY1s("WSKL.CFG", "0d0d1156387ad51bf2b0c6bdc380f751", 1269),
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
+			GUIO1(GUIO_NOASPECT)
+		},
+		GType_LIVINGBOOKSV3,
 		0,
 		0,
 	},

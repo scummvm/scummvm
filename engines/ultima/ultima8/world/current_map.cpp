@@ -194,6 +194,11 @@ void CurrentMap::loadMap(Map *map) {
 	_fastXMax = -1;
 	_fastYMax = -1;
 
+	// Clear target items
+	for (unsigned int i = 0; i < MAP_NUM_TARGET_ITEMS; i++) {
+		_targets[i] = 0;
+	}
+
 	loadItems(map->_fixedItems, callCacheIn);
 	loadItems(map->_dynamicItems, callCacheIn);
 
@@ -1378,11 +1383,16 @@ uint32 CurrentMap::I_canExistAt(const uint8 *args, unsigned int argsize) {
 }
 
 uint32 CurrentMap::I_canExistAtPoint(const uint8 *args, unsigned int /*argsize*/) {
-	ARG_NULL16(); // unknown
-	ARG_NULL16(); // unknown
+	ARG_ITEM_FROM_PTR(other);
 	ARG_UINT16(shape);
 	ARG_WORLDPOINT(pt);
 
+	if (other) {
+		debug("I_canExistAtPoint other object: ");
+		other->dumpInfo();
+	} else {
+		debug("I_canExistAtPoint other object null.");
+	}
 	if (shape > 0x800)
 		return 0;
 

@@ -26,7 +26,6 @@
 #include "ags/plugins/core/core.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
@@ -39,11 +38,11 @@
 #include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/parser.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
+#include "ags/engine/ac/sys_events.h"
 #include "ags/shared/ac/sprite_cache.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object_addr_and_manager.h"
 #include "ags/engine/ac/dynobj/script_string.h"
@@ -73,6 +72,7 @@
 #include "ags/shared/util/stream.h"
 #include "ags/shared/util/string_compat.h"
 #include "ags/shared/util/wgt2_allg.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
@@ -80,13 +80,13 @@ using namespace AGS::Shared;
 using namespace AGS::Shared::Memory;
 using namespace AGS::Engine;
 
-const int PLUGIN_API_VERSION = 25;
+const int PLUGIN_API_VERSION = 26;
 
 // On save/restore, the Engine will provide the plugin with a handle. Because we only ever save to one file at a time,
 // we can reuse the same handle.
 
 void PluginSimulateMouseClick(int pluginButtonID) {
-	_G(pluginSimulatedClick) = pluginButtonID - 1;
+	_G(pluginSimulatedClick) = static_cast<eAGSMouseButton>(pluginButtonID);
 }
 
 void IAGSEngine::AbortGame(const char *reason) {
@@ -293,7 +293,6 @@ void IAGSEngine::DrawTextWrapped(int32 xx, int32 yy, int32 wid, int32 font, int3
 		draw_and_invalidate_text(ds, xx, yy + linespacing * i, font, text_color, _GP(Lines)[i].GetCStr());
 }
 
-Bitmap glVirtualScreenWrap;
 void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	if (!_G(gfxDriver)->UsesMemoryBackBuffer()) {
 		debug_script_warn("SetVirtualScreen: this plugin requires software graphics driver to work correctly.");
@@ -301,10 +300,10 @@ void IAGSEngine::SetVirtualScreen(BITMAP *bmp) {
 	}
 
 	if (bmp) {
-		glVirtualScreenWrap.WrapAllegroBitmap(bmp, true);
-		_G(gfxDriver)->SetMemoryBackBuffer(&glVirtualScreenWrap);
+		_GP(glVirtualScreenWrap).WrapAllegroBitmap(bmp, true);
+		_G(gfxDriver)->SetMemoryBackBuffer(&_GP(glVirtualScreenWrap));
 	} else {
-		glVirtualScreenWrap.Destroy();
+		_GP(glVirtualScreenWrap).Destroy();
 		_G(gfxDriver)->SetMemoryBackBuffer(nullptr);
 	}
 }
@@ -340,13 +339,12 @@ void IAGSEngine::BlitSpriteRotated(int32 x, int32 y, BITMAP *bmp, int32 angle) {
 	rotate_sprite(ds->GetAllegroBitmap(), bmp, x, y, itofix(angle));
 }
 
-extern void domouse(int);
-
 void IAGSEngine::PollSystem() {
-	domouse(DOMOUSE_NOCURSOR);
+	ags_domouse();
 	update_polled_stuff_if_runtime();
-	int mbut, mwheelz;
-	if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput())
+	eAGSMouseButton mbut;
+	int mwheelz;
+	if (run_service_mb_controls(mbut, mwheelz) && mbut > kMouseNone && !_GP(play).IsIgnoringInput())
 		pl_run_plugin_hooks(AGSE_MOUSECLICK, mbut);
 	KeyInput kp;
 	if (run_service_key_controls(kp) && !_GP(play).IsIgnoringInput()) {
@@ -396,7 +394,7 @@ int IAGSEngine::GetNumObjects() {
 	return _G(croom)->numobj;
 }
 AGSObject *IAGSEngine::GetObject(int32 num) {
-	if (num >= _G(croom)->numobj)
+	if (num < 0 || static_cast<uint32_t>(num) >= _G(croom)->numobj)
 		quit("!IAGSEngine::GetObject: invalid object");
 
 	return (AGSObject *)&_G(croom)->obj[num];
@@ -484,7 +482,7 @@ void IAGSEngine::GetTextExtent(int32 font, const char *text, int32 *width, int32
 	if (width != nullptr)
 		width[0] = get_text_width_outlined(text, font);
 	if (height != nullptr)
-		height[0] = get_font_height(font);
+		height[0] = get_font_height_outlined(font);
 }
 void IAGSEngine::PrintDebugConsole(const char *text) {
 	debug_script_log("[PLUGIN] %s", text);
@@ -599,7 +597,6 @@ int IAGSEngine::IsSpriteAlphaBlended(int32 slot) {
 // disable AGS's sound engine
 void IAGSEngine::DisableSound() {
 	shutdown_sound();
-	_GP(usetup).audio_backend = 0;
 }
 int IAGSEngine::CanRunScriptFunctionNow() {
 	if (_G(inside_script))
@@ -612,11 +609,12 @@ int IAGSEngine::CallGameScriptFunction(const char *name, int32 globalScript, int
 
 	ccInstance *toRun = GetScriptInstanceByType(globalScript ? kScInstGame : kScInstRoom);
 
-	RuntimeScriptValue params[3];
-	params[0].SetPluginArgument(arg1);
-	params[1].SetPluginArgument(arg2);
-	params[2].SetPluginArgument(arg3);
-	int toret = RunScriptFunctionIfExists(toRun, name, numArgs, params);
+	RuntimeScriptValue params[]{
+		   RuntimeScriptValue().SetPluginArgument(arg1),
+		   RuntimeScriptValue().SetPluginArgument(arg2),
+		   RuntimeScriptValue().SetPluginArgument(arg3),
+	};
+	int toret = RunScriptFunction(toRun, name, numArgs, params);
 	return toret;
 }
 
@@ -641,8 +639,9 @@ void IAGSEngine::QueueGameScriptFunction(const char *name, int32 globalScript, i
 	if (numArgs < 0 || numArgs > 2)
 		quit("IAGSEngine::QueueGameScriptFunction: invalid number of arguments");
 
-	_G(curscript)->run_another(name, globalScript ? kScInstGame : kScInstRoom, numArgs,
-	                           RuntimeScriptValue().SetPluginArgument(arg1), RuntimeScriptValue().SetPluginArgument(arg2));
+	RuntimeScriptValue params[]{ RuntimeScriptValue().SetPluginArgument(arg1),
+		RuntimeScriptValue().SetPluginArgument(arg2) };
+	_G(curscript)->run_another(name, globalScript ? kScInstGame : kScInstRoom, numArgs, params);
 }
 
 int IAGSEngine::RegisterManagedObject(const void *object, IAGSScriptManagedObject *callback) {
@@ -713,21 +712,21 @@ void IAGSEngine::SimulateMouseClick(int32 button) {
 }
 
 int IAGSEngine::GetMovementPathWaypointCount(int32 pathId) {
-	return _G(mls)[pathId % TURNING_AROUND].numstage;
+	return _GP(mls)[pathId % TURNING_AROUND].numstage;
 }
 
 int IAGSEngine::GetMovementPathLastWaypoint(int32 pathId) {
-	return _G(mls)[pathId % TURNING_AROUND].onstage;
+	return _GP(mls)[pathId % TURNING_AROUND].onstage;
 }
 
 void IAGSEngine::GetMovementPathWaypointLocation(int32 pathId, int32 waypoint, int32 *x, int32 *y) {
-	*x = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
-	*y = (_G(mls)[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
+	*x = (_GP(mls)[pathId % TURNING_AROUND].pos[waypoint] >> 16) & 0x0000ffff;
+	*y = (_GP(mls)[pathId % TURNING_AROUND].pos[waypoint] & 0x0000ffff);
 }
 
 void IAGSEngine::GetMovementPathWaypointSpeed(int32 pathId, int32 waypoint, int32 *xSpeed, int32 *ySpeed) {
-	*xSpeed = _G(mls)[pathId % TURNING_AROUND].xpermove[waypoint];
-	*ySpeed = _G(mls)[pathId % TURNING_AROUND].ypermove[waypoint];
+	*xSpeed = _GP(mls)[pathId % TURNING_AROUND].xpermove[waypoint];
+	*ySpeed = _GP(mls)[pathId % TURNING_AROUND].ypermove[waypoint];
 }
 
 int IAGSEngine::IsRunningUnderDebugger() {
@@ -744,7 +743,7 @@ void IAGSEngine::BreakIntoDebugger() {
 }
 
 IAGSFontRenderer *IAGSEngine::ReplaceFontRenderer(int fontNumber, IAGSFontRenderer *newRenderer) {
-	auto *old_render = font_replace_renderer(fontNumber, newRenderer, _GP(game).options[OPT_FONTLOADLOGIC]);
+	auto *old_render = font_replace_renderer(fontNumber, newRenderer);
 	GUI::MarkForFontUpdate(fontNumber);
 	return old_render;
 }
@@ -755,6 +754,24 @@ void IAGSEngine::GetRenderStageDesc(AGSRenderStageDesc *desc) {
 	}
 }
 
+void IAGSEngine::GetGameInfo(AGSGameInfo* ginfo) {
+	if (ginfo->Version >= 26) {
+		snprintf(ginfo->GameName, sizeof(ginfo->GameName), "%s", _GP(game).gamename);
+		snprintf(ginfo->guid, sizeof(ginfo->guid), "%s", _GP(game).guid);
+		ginfo->uniqueid = _GP(game).uniqueid;
+	}
+}
+
+IAGSFontRenderer2* IAGSEngine::ReplaceFontRenderer2(int fontNumber, IAGSFontRenderer2 *newRenderer) {
+	auto *old_render = font_replace_renderer(fontNumber, newRenderer);
+	GUI::MarkForFontUpdate(fontNumber);
+	return old_render;
+}
+
+void IAGSEngine::NotifyFontUpdated(int fontNumber) {
+	font_recalc_metrics(fontNumber);
+	GUI::MarkForFontUpdate(fontNumber);
+}
 
 // *********** General plugin implementation **********
 
@@ -848,7 +865,7 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		EnginePlugin *apl = &_GP(plugins).back();
 
 		// Copy plugin info
-		snprintf(apl->filename, sizeof(apl->filename), "%s", name.GetCStr());
+		apl->filename = name;
 		if (info.DataLen) {
 			apl->savedata = (char *)malloc(info.DataLen);
 			memcpy(apl->savedata, info.Data.get(), info.DataLen);
@@ -856,18 +873,17 @@ Engine::GameInitError pl_register_plugins(const std::vector<Shared::PluginInfo> 
 		apl->savedatasize = info.DataLen;
 
 		// Compatibility with the old SnowRain module
-		if (ags_stricmp(apl->filename, "ags_SnowRain20") == 0) {
-			strcpy(apl->filename, "ags_snowrain");
+		if (apl->filename.CompareNoCase("ags_SnowRain20") == 0) {
+			apl->filename = "ags_snowrain";
 		}
 
-		String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 		if (apl->library.Load(apl->filename)) {
 			apl->_plugin = apl->library.getPlugin();
-			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded as '%s', resolving imports...", apl->filename, expect_filename.GetCStr());
-
+			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' loaded from '%s', resolving imports...", apl->filename.GetCStr(), apl->library.GetFilePath().GetCStr());
 		} else {
+			String expect_filename = apl->library.GetFilenameForLib(apl->filename);
 			AGS::Shared::Debug::Printf(kDbgMsg_Info, "Plugin '%s' could not be loaded (expected '%s')",
-			                           apl->filename, expect_filename.GetCStr());
+			                           apl->filename.GetCStr(), expect_filename.GetCStr());
 			_GP(plugins).pop_back();
 			continue;
 		}

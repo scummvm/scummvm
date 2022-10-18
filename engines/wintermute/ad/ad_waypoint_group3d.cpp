@@ -26,15 +26,15 @@
  */
 
 #include "common/util.h"
+
 #include "engines/wintermute/ad/ad_waypoint_group3d.h"
-#include "engines/wintermute/base/gfx/3ds/mesh3ds.h"
+#include "engines/wintermute/base/gfx/3dmesh.h"
 
 namespace Wintermute {
 
-//IMPLEMENT_PERSISTENT(AdWaypointGroup3D, false);
-
 //////////////////////////////////////////////////////////////////////////
-AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame), _active(true) {
+AdWaypointGroup3D::AdWaypointGroup3D(BaseGame *inGame) : BaseClass(inGame) {
+	_active = true;
 }
 
 //////////////////////////////////////////////////////////////////////////
@@ -54,7 +54,7 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 		min = max = mesh->getVertexPosition(0);
 	}
 
-	for (int i = 0; i < mesh->vertexCount(); i++){
+	for (int i = 0; i < mesh->vertexCount(); i++) {
 		min.x() = MIN(min.x(), mesh->getVertexPosition(i)[0]);
 		min.y() = MIN(min.y(), mesh->getVertexPosition(i)[1]);
 		min.z() = MIN(min.z(), mesh->getVertexPosition(i)[2]);
@@ -73,17 +73,5 @@ bool AdWaypointGroup3D::addFromMesh(Mesh3DS *mesh) {
 
 	return true;
 }
-
-/*
-//////////////////////////////////////////////////////////////////////////
-HRESULT AdWaypointGroup3D::Persist(CBPersistMgr* PersistMgr){
-
-	PersistMgr->Transfer(TMEMBER(Game));
-	PersistMgr->Transfer(TMEMBER(m_Active));
-	//_points.Persist(PersistMgr);
-
-	return S_OK;
-}
-*/
 
 } // namespace Wintermute

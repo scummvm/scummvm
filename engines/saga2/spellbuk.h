@@ -109,29 +109,31 @@ enum effectAreas {
 //   parts of the code
 
 class SpellStuff {
-	SpellID             master;             // index in array
-	SkillProto          *prototype;         // ponts back to object prototype
-	SpellID             display;            // currently same as master
-	SpellTargetingTypes targetableTypes;    // valid targeting types
-	SpellApplicationTypes targetTypes;      // the targeting type to implement
-	ProtoEffect         *effects;           // the effects of this spell
-	SpellTarget         *targets;           // transient target list
-	SpellManaID         manaType;           // color mana used
-	int8                manaUse;            // mana points used
-	effectAreas         shape;
-	int32               size;
-	int32               range;
-	int16               sound;
+	SpellID             _master;             // index in array
+	SkillProto          *_prototype;         // ponts back to object prototype
+	SpellID             _display;            // currently same as master
+	SpellTargetingTypes _targetableTypes;    // valid targeting types
+	SpellApplicationTypes _targetTypes;      // the targeting type to implement
+	ProtoEffect         *_effects;           // the effects of this spell
+	SpellTarget         *_targets;           // transient target list
+	SpellManaID         _manaType;           // color mana used
+	int8                _manaUse;            // mana points used
+	effectAreas         _shape;
+	int32               _size;
+	int32               _range;
+	int16               _sound;
+
+	bool _debug;
 
 public:
 
 	SpellStuff();
 
-	void setProto(SkillProto *p)           {
-		prototype = p;
+	void setProto(SkillProto *p) {
+		_prototype = p;
 	}
-	SkillProto *getProto()             {
-		return prototype;
+	SkillProto *getProto() {
+		return _prototype;
 	}
 
 	void setupFromResource(ResourceSpellItem *rsi);
@@ -140,17 +142,17 @@ public:
 	void addEffect(ResourceSpellEffect *rse);
 	void killEffects();
 
-	bool canTarget(SpellTargetingTypes t)  {
-		return targetableTypes & t;
+	bool canTarget(SpellTargetingTypes t) {
+		return _targetableTypes & t;
 	}
 	bool shouldTarget(SpellApplicationTypes t) {
-		return targetTypes & t;
+		return _targetTypes & t;
 	}
 
-	bool untargetable()    {
-		return (targetableTypes == spellTargNone);
+	bool untargetable() {
+		return (_targetableTypes == spellTargNone);
 	}
-	bool untargeted()      {
+	bool untargeted() {
 		return false;    //(targetableTypes == spellTargWorld ) ||
 	}
 	//(targetableTypes == spellTargCaster ) ||
@@ -162,20 +164,20 @@ public:
 	void implement(GameObject *enactor, ActiveItem *target);
 	void implement(GameObject *enactor, Location   target);
 
-	SpellID getDisplayID()            {
-		return display;
+	SpellID getDisplayID() {
+		return _display;
 	}
-	SpellManaID getManaType()           {
-		return manaType;
+	SpellManaID getManaType() {
+		return _manaType;
 	}
-	void setManaType(SpellManaID smid)    {
-		manaType = smid;
+	void setManaType(SpellManaID smid) {
+		_manaType = smid;
 	}
-	int8 getManaAmt()                   {
-		return manaUse;
+	int8 getManaAmt() {
+		return _manaUse;
 	}
-	int32 getRange()                   {
-		return range;
+	int32 getRange() {
+		return _range;
 	}
 
 	void buildTargetList(GameObject *, SpellTarget &);

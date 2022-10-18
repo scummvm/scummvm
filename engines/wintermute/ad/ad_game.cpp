@@ -34,6 +34,7 @@
 #include "engines/wintermute/ad/ad_inventory.h"
 #include "engines/wintermute/ad/ad_inventory_box.h"
 #include "engines/wintermute/ad/ad_item.h"
+#include "engines/wintermute/ad/ad_layer.h"
 #include "engines/wintermute/ad/ad_response.h"
 #include "engines/wintermute/ad/ad_response_box.h"
 #include "engines/wintermute/ad/ad_response_context.h"
@@ -65,6 +66,7 @@
 #include "engines/wintermute/video/video_player.h"
 #include "engines/wintermute/video/video_theora_player.h"
 #include "engines/wintermute/platform_osystem.h"
+
 #include "common/config-manager.h"
 #include "common/str.h"
 
@@ -98,6 +100,7 @@ AdGame::AdGame(const Common::String &gameId) : BaseGame(gameId) {
 	_texTalkLifeTime = 10000;
 
 	_talkSkipButton = TALK_SKIP_LEFT;
+	_videoSkipButton = VIDEO_SKIP_LEFT;
 
 	_sceneViewport = nullptr;
 
@@ -415,25 +418,6 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 		}
 		return STATUS_OK;
 	}
-
-	//////////////////////////////////////////////////////////////////////////
-	// UnloadActor3D
-	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadActor3D") == 0) {
-		// this does the same as UnloadActor etc. ..
-		// even WmeLite has this script call in AdScene
-		stack->correctParams(1);
-		ScValue *val = stack->pop();
-		AdObject *obj = static_cast<AdObject *>(val->getNative());
-
-		removeObject(obj);
-		if (val->getType() == VAL_VARIABLE_REF) {
-			val->setNULL();
-		}
-
-		stack->pushNULL();
-		return STATUS_OK;
-	}
 #endif
 
 	//////////////////////////////////////////////////////////////////////////
@@ -454,9 +438,13 @@ bool AdGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack, 
 	}
 
 	//////////////////////////////////////////////////////////////////////////
-	// UnloadObject / UnloadActor / UnloadEntity / DeleteEntity
+	// UnloadObject / UnloadActor / UnloadEntity / UnloadActor3D / DeleteEntity
 	//////////////////////////////////////////////////////////////////////////
-	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 || strcmp(name, "DeleteEntity") == 0) {
+	else if (strcmp(name, "UnloadObject") == 0 || strcmp(name, "UnloadActor") == 0 || strcmp(name, "UnloadEntity") == 0 ||
+#ifdef ENABLE_WME3D
+	         strcmp(name, "UnloadActor3D") == 0 ||
+#endif
+	         strcmp(name, "DeleteEntity") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
 		AdObject *obj = (AdObject *)val->getNative();
@@ -1106,16 +1094,13 @@ ScValue *AdGame::scGetProperty(const Common::String &name) {
 		return _scValue;
 	}
 
-#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (name == "VideoSkipButton") {
-		warning("AdGame::scGetProperty VideoSkipButton not implemented");
-		_scValue->setInt(0);
+		_scValue->setInt(_videoSkipButton);
 		return _scValue;
 	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// ChangingScene
@@ -1239,15 +1224,20 @@ bool AdGame::scSetProperty(const char *name, ScValue *value) {
 		return STATUS_OK;
 	}
 
-#ifdef ENABLE_WME3D
 	//////////////////////////////////////////////////////////////////////////
 	// VideoSkipButton
 	//////////////////////////////////////////////////////////////////////////
 	else if (strcmp(name, "VideoSkipButton") == 0) {
-		warning("AdGame::scSetProperty VideoSkipButton not implemented");
+		int val = value->getInt();
+		if (val < 0) {
+			val = 0;
+		}
+		if (val > VIDEO_SKIP_NONE) {
+			val = VIDEO_SKIP_NONE;
+		}
+		_videoSkipButton = (TVideoSkipButton)val;
 		return STATUS_OK;
 	}
-#endif
 
 	//////////////////////////////////////////////////////////////////////////
 	// StartupScene
@@ -1365,6 +1355,7 @@ TOKEN_DEF(INVENTORY_BOX)
 TOKEN_DEF(ITEMS)
 TOKEN_DEF(ITEM)
 TOKEN_DEF(TALK_SKIP_BUTTON)
+TOKEN_DEF(VIDEO_SKIP_BUTTON)
 TOKEN_DEF(SCENE_VIEWPORT)
 TOKEN_DEF(ENTITY_CONTAINER)
 TOKEN_DEF(EDITOR_PROPERTY)
@@ -1446,6 +1437,15 @@ bool AdGame::loadBuffer(char *buffer, bool complete) {
 					} else {
 						_talkSkipButton = TALK_SKIP_LEFT;
 					}
+					break;
+
+				case TOKEN_VIDEO_SKIP_BUTTON:
+					if (scumm_stricmp(params2, "right") == 0)
+						_videoSkipButton = VIDEO_SKIP_RIGHT;
+					else if (scumm_stricmp(params2, "both") == 0)
+						_videoSkipButton = VIDEO_SKIP_BOTH;
+					else
+						_videoSkipButton = VIDEO_SKIP_LEFT;
 					break;
 
 				case TOKEN_SCENE_VIEWPORT: {
@@ -1835,32 +1835,6 @@ AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
 		return nullptr;
 	}
 }
-
-#ifdef ENABLE_WME3D
-//////////////////////////////////////////////////////////////////////////
-uint32 Wintermute::AdGame::getAmbientLightColor() {
-	if (_scene) {
-		return _scene->_ambientLightColor;
-	} else {
-		return BaseGame::getAmbientLightColor();
-	}
-}
-
-Wintermute::TShadowType Wintermute::AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
-	TShadowType ret = BaseGame::getMaxShadowType(object);
-
-	return MIN(ret, _scene->_maxShadowType);
-}
-
-bool Wintermute::AdGame::getFogParams(FogParameters &fogParameters) {
-	if (_scene) {
-		fogParameters = _scene->_fogParameters;
-		return true;
-	} else {
-		return BaseGame::getFogParams(fogParameters);
-	}
-}
-#endif
 
 
 //////////////////////////////////////////////////////////////////////////
@@ -2517,6 +2491,71 @@ bool AdGame::displayDebugInfo() {
 	}
 	return BaseGame::displayDebugInfo();
 }
+
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+Wintermute::TShadowType AdGame::getMaxShadowType(Wintermute::BaseObject *object) {
+	TShadowType ret = BaseGame::getMaxShadowType(object);
+
+	return MIN(ret, _scene->_maxShadowType);
+}
+#endif
+
+//////////////////////////////////////////////////////////////////////////
+bool AdGame::getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) {
+	if (_scene && _scene->_mainLayer) {
+		int32 portX, portY, portWidth, portHeight;
+		_scene->getViewportOffset(&portX, &portY);
+		_scene->getViewportSize(&portWidth, &portHeight);
+		*customViewport = _sceneViewport || _scene->_viewport;
+
+		viewport->setRect(portX, portY, portX + portWidth, portY + portHeight);
+
+#ifdef ENABLE_WME3D
+		if (_scene->_scroll3DCompatibility) {
+			// backward compatibility hack
+			// WME pre-1.7 expects the camera to only view the top-left part of the scene
+			*layerWidth = _gameRef->_renderer->getWidth();
+			*layerHeight = _gameRef->_renderer->getHeight();
+			if (_gameRef->_editorResolutionWidth > 0)
+				*layerWidth = _gameRef->_editorResolutionWidth;
+			if (_gameRef->_editorResolutionHeight > 0)
+				*layerHeight = _gameRef->_editorResolutionHeight;
+		} else
+#endif
+		{
+			*layerWidth = _scene->_mainLayer->_width;
+			*layerHeight = _scene->_mainLayer->_height;
+		}
+		return true;
+	} else
+		return BaseGame::getLayerSize(layerWidth, layerHeight, viewport, customViewport);
+}
+
+#ifdef ENABLE_WME3D
+//////////////////////////////////////////////////////////////////////////
+uint32 AdGame::getAmbientLightColor() {
+	if (_scene) {
+		return _scene->_ambientLightColor;
+	} else {
+		return BaseGame::getAmbientLightColor();
+	}
+}
+
+//////////////////////////////////////////////////////////////////////////
+bool AdGame::getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) {
+	if (_scene) {
+		*fogEnabled = _scene->_fogEnabled;
+		*fogColor = _scene->_fogColor;
+		*start = _scene->_fogStart;
+		*end = _scene->_fogEnd;
+		return true;
+	} else {
+		return BaseGame::getFogParams(fogEnabled, fogColor, start, end);
+	}
+}
+#endif
 
 
 //////////////////////////////////////////////////////////////////////////

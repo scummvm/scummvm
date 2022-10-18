@@ -519,6 +519,12 @@ void SceneScriptUG18::talkWithGuzza() {
 	Actor_Face_Actor(kActorGuzza, kActorMcCoy, true);
 	Actor_Start_Speech_Sample(kActorGuzza, 810);
 	Loop_Actor_Walk_To_XYZ(kActorGuzza, -57.21f, 0.0f, -334.17f, 0, false, false, false);
+#if !BLADERUNNER_ORIGINAL_BUGS
+	// Fix for inconsistency bug:
+	// This quote plays for the KIA clue (kClueBriefcase)
+	// but did not play during the actual in-game scene
+	Actor_Says(kActorGuzza, 820, 3);
+#endif // BLADERUNNER_ORIGINAL_BUGS
 	Actor_Says(kActorMcCoy, 5875, 13);
 	Actor_Says(kActorGuzza, 830, 3);
 	Actor_Says(kActorGuzza, 840, 12);
@@ -546,6 +552,9 @@ void SceneScriptUG18::talkWithGuzza() {
 	Actor_Says(kActorGuzza, 900, 15);
 	Actor_Says(kActorGuzza, 910, 12);
 	Actor_Says(kActorGuzza, 920, 16);
+	if (_vm->_cutContent) {
+		Actor_Says(kActorGuzza, 930, 12);
+	}
 	Actor_Says(kActorMcCoy, 5925, 14);
 	Actor_Says(kActorGuzza, 940, 14);
 	Actor_Says(kActorMcCoy, 5930, 18);
@@ -573,7 +582,7 @@ void SceneScriptUG18::talkWithGuzza() {
 		Actor_Says(kActorGuzza, 1030, 14);
 	} else if (Global_Variable_Query(kVariableAffectionTowards) > 1
 			|| Player_Query_Agenda() == kPlayerAgendaSurly
-	) {
+	) { // Affection towards Lucy or Dektora, or Surly Agenda
 		Actor_Modify_Friendliness_To_Other(kActorClovis, kActorMcCoy, 20);
 		Actor_Modify_Friendliness_To_Other(kActorSadik, kActorMcCoy, 10);
 		Loop_Actor_Walk_To_XYZ(kActorMcCoy, -117.13f, 0.0f, -284.47f, 0, false, false, false);

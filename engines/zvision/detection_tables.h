@@ -50,7 +50,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -60,7 +62,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Double FPS"),
 			_s("Increase framerate from 30 to 60 FPS"),
 			"doublefps",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -70,7 +74,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Venus"),
 			_s("Enable the Venus help system"),
 			"venusenabled",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -80,7 +86,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Disable animation while turning"),
 			_s("Disable animation while turning in panorama mode"),
 			"noanimwhileturning",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -90,7 +98,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use high resolution MPEG video"),
 			_s("Use MPEG video from the DVD version instead of lower resolution AVI"),
 			"mpegmovies",
-			true
+			true,
+			0,
+			0
 		}
 	},
 

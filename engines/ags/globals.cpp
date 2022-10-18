@@ -22,6 +22,7 @@
 #include "ags/globals.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/sprite_cache.h"
+#include "ags/shared/ac/dialog_topic.h"
 #include "ags/shared/core/asset_manager.h"
 #include "ags/shared/debugging/debug_manager.h"
 #include "ags/shared/font/fonts.h"
@@ -36,8 +37,9 @@
 #include "ags/shared/gui/gui_listbox.h"
 #include "ags/shared/gui/gui_slider.h"
 #include "ags/shared/gui/gui_textbox.h"
-#include "ags/shared/script/cc_options.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/shared/util/directory.h"
+#include "ags/engine/ac/character_extras.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/draw_software.h"
 #include "ags/engine/ac/event.h"
@@ -45,7 +47,6 @@
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/mouse.h"
 #include "ags/engine/ac/move_list.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/route_finder_jps.h"
 #include "ags/engine/ac/screen_overlay.h"
@@ -126,9 +127,10 @@ Globals::Globals() {
 	_scrAudioChannel = new ScriptAudioChannel[MAX_GAME_CHANNELS];
 
 	// button.cpp globals
-	_animbuts = new AnimatingGUIButton[MAX_ANIMATING_BUTTONS];
+	_animbuts = new std::vector<AnimatingGUIButton>();
 
 	// cc_instance.cpp globals
+	_InstThreads = new std::deque<ccInstance *>();
 	_GlobalReturnValue = new RuntimeScriptValue();
 
 	// cc_options.cpp globals
@@ -139,6 +141,9 @@ Globals::Globals() {
 
 	// cc_dynamicarray.cpp globals
 	_globalDynamicArray = new CCDynamicArray();
+
+	// cc_common globals
+	_ccError = new ScriptError();
 
 	// csc_dialog.cpp globals
 	_vobjs = new NewControl *[MAXCONTROLS];
@@ -173,18 +178,23 @@ Globals::Globals() {
 	Common::fill(_dynamicallyCreatedSurfaces, _dynamicallyCreatedSurfaces +
 	             MAX_DYNAMIC_SURFACES, (AGS::Shared::Bitmap *)nullptr);
 
-	_actsps = new std::vector<Shared::Bitmap *>();
-	_actspsbmp = new std::vector<Engine::IDriverDependantBitmap *>();
-	_actspswb = new	std::vector<Shared::Bitmap *>();
-	_actspswbbmp = new std::vector<Engine::IDriverDependantBitmap *>();
-	_actspswbcache = new std::vector<CachedActSpsData>();
-	_guibg = new std::vector<Shared::Bitmap *>();
-	_guibgbmp = new std::vector<Engine::IDriverDependantBitmap *>();
+	_actsps = new std::vector<ObjTexture>();
+	_walkbehindobj = new std::vector<ObjTexture>();
+	_guibg = new std::vector<ObjTexture>();
+	_guiobjbg = new std::vector<ObjTexture>();
+
+	_guiobjddb = new std::vector<Engine::IDriverDependantBitmap *>();
+	_guiobjoff = new std::vector<Point>();
+	_guiobjddbref = new std::vector<int>();
+	_overlaybmp = new std::vector<std::unique_ptr<Shared::Bitmap> >();
+	_debugRoomMaskObj =  new ObjTexture();
+	_debugMoveListObj = new ObjTexture();
 
 	_maincoltable = new COLOR_MAP();
 	_palette = new color[256];
 	for (int i = 0; i < PALETTE_COUNT; ++i)
 		_palette[i].clear();
+
 
 	// draw_software.cpp globals
 	_BlackRects = new DirtyRects();
@@ -196,7 +206,7 @@ Globals::Globals() {
 	_ResPaths = new ResourcePaths();
 
 	// event.cpp globals
-	_event = new EventHappened[MAXEVENTS + 1];
+	_events = new std::vector<EventHappened>();
 
 	// fonts.cpp globals
 	_fonts = new std::vector<AGS::Shared::Font>();
@@ -227,7 +237,11 @@ Globals::Globals() {
 	_scrHotspot = new ScriptHotspot[MAX_ROOM_HOTSPOTS];
 	_scrRegion = new ScriptRegion[MAX_ROOM_REGIONS];
 	_scrInv = new ScriptInvItem[MAX_INV];
+	_charcache = new std::vector<ObjectCache>();
 	_objcache = new ObjectCache[MAX_ROOM_OBJECTS];
+	_screenovercache = new std::vector<Point>();
+	_charextra = new std::vector<CharacterExtras>();
+	_mls = new std::vector<MoveList>();
 	_views = new std::vector<ViewStruct>();
 	_saveGameDirectory = AGS::Shared::SAVE_FOLDER_PREFIX;
 
@@ -239,6 +253,8 @@ Globals::Globals() {
 	_StaticRegionArray = new StaticArray();
 	_StaticInventoryArray = new StaticArray();
 	_StaticDialogArray = new StaticArray();
+
+	_scummvmGfxFilter = new AGS::Engine::GfxFilterInfo("StdScale", "Nearest-neighbour");
 
 	// gfxfilter_aad3d.cpp globals
 	_aad3dFilterInfo = new AGS::Engine::GfxFilterInfo("Linear", "Linear interpolation");
@@ -333,16 +349,15 @@ Globals::Globals() {
 	_renderDialogOptionsFunc = new NonBlockingScriptFunction("dialog_options_render", 1);
 	_getDialogOptionUnderCursorFunc = new NonBlockingScriptFunction("dialog_options_get_active", 1);
 	_runDialogOptionMouseClickHandlerFunc = new NonBlockingScriptFunction("dialog_options_mouse_click", 2);
-	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 2);
+	_runDialogOptionKeyPressHandlerFunc = new NonBlockingScriptFunction("dialog_options_key_press", 3);
+	_runDialogOptionTextInputHandlerFunc = new NonBlockingScriptFunction("dialog_options_text_input", 2);
 	_runDialogOptionRepExecFunc = new NonBlockingScriptFunction("dialog_options_repexec", 1);
+	_runDialogOptionCloseFunc = new NonBlockingScriptFunction("dialog_options_close", 1);
 	_scsystem = new ScriptSystem();
 	_scriptModules = new std::vector<PScript>();
 	_moduleInst = new std::vector<ccInstance *>();
 	_moduleInstFork = new std::vector<ccInstance *>();
 	_moduleRepExecAddr = new std::vector<RuntimeScriptValue>();
-	_characterScriptObjNames = new std::vector<String>();
-	_objectScriptObjNames = new String[MAX_ROOM_OBJECTS];
-	_guiScriptObjNames = new std::vector<String>();
 
 	// script_runtime.cpp globals
 	Common::fill(_loadedInstances, _loadedInstances + MAX_LOADED_INSTANCES,
@@ -354,7 +369,7 @@ Globals::Globals() {
 
 	// translation.cpp globals
 	_trans = new AGS::Shared::Translation();
-	_transtree = new StringMap();
+	_transtree = new AGS::Shared::StringMap();
 
 	// walk_behind.cpp globals
 	Common::fill(_walkBehindLeft, _walkBehindLeft + MAX_WALK_BEHINDS, 0);
@@ -387,9 +402,10 @@ Globals::~Globals() {
 	delete[] _scrAudioChannel;
 
 	// button.cpp globals
-	delete[] _animbuts;
+	delete _animbuts;
 
 	// cc_instance.cpp globals
+	delete _InstThreads;
 	delete _GlobalReturnValue;
 	delete _scriptDumpFile;
 
@@ -398,6 +414,9 @@ Globals::~Globals() {
 
 	// cc_dynamic_array.cpp globals
 	delete _globalDynamicArray;
+
+	// cc_common.cpp globals
+	delete _ccError;
 
 	// cscdialog.cpp globals
 	delete[] _vobjs;
@@ -423,12 +442,16 @@ Globals::~Globals() {
 	delete _sprlist;
 	delete _thingsToDrawList;
 	delete _actsps;
-	delete _actspsbmp;
-	delete _actspswb;
-	delete _actspswbbmp;
-	delete _actspswbcache;
+	delete _walkbehindobj;
 	delete _guibg;
-	delete _guibgbmp;
+	delete _guiobjbg;
+	delete _guiobjddbref;
+	delete _guiobjddb;
+	delete _guiobjoff;
+	delete _overlaybmp;
+	delete _debugRoomMaskObj;
+	delete _debugMoveListObj;
+
 	delete[] _dynamicallyCreatedSurfaces;
 	delete[] _palette;
 	delete _maincoltable;
@@ -443,7 +466,7 @@ Globals::~Globals() {
 	delete _ResPaths;
 
 	// event.cpp globals
-	delete[] _event;
+	delete _events;
 
 	// fonts.cpp globals
 	delete _fonts;
@@ -474,7 +497,11 @@ Globals::~Globals() {
 	delete[] _scrHotspot;
 	delete[] _scrRegion;
 	delete[] _scrInv;
+	delete _charcache;
 	delete[] _objcache;
+	delete _screenovercache;
+	delete _charextra;
+	delete _mls;
 	delete _views;
 
 	// game_init.cpp globals
@@ -485,6 +512,7 @@ Globals::~Globals() {
 	delete _StaticRegionArray;
 	delete _StaticInventoryArray;
 	delete _StaticDialogArray;
+	delete _scummvmGfxFilter;
 
 	// gfxfilter_aad3d.cpp globals
 	delete _aad3dFilterInfo;
@@ -570,15 +598,14 @@ Globals::~Globals() {
 	delete _getDialogOptionUnderCursorFunc;
 	delete _runDialogOptionMouseClickHandlerFunc;
 	delete _runDialogOptionKeyPressHandlerFunc;
+	delete _runDialogOptionTextInputHandlerFunc;
 	delete _runDialogOptionRepExecFunc;
+	delete _runDialogOptionCloseFunc;
 	delete _scsystem;
 	delete _scriptModules;
 	delete _moduleInst;
 	delete _moduleInstFork;
 	delete _moduleRepExecAddr;
-	delete _characterScriptObjNames;
-	delete[] _objectScriptObjNames;
-	delete _guiScriptObjNames;
 
 	// system_imports.cpp globals
 	delete _simp;

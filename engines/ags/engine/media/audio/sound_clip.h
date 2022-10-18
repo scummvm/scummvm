@@ -28,12 +28,17 @@
 #ifndef AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
 #define AGS_ENGINE_MEDIA_AUDIO_SOUNDCLIP_H
 
-#include "ags/engine/util/mutex.h"
 #include "audio/mixer.h"
 #include "audio/audiostream.h"
 #include "common/stream.h"
 
 namespace AGS3 {
+
+// SOUNDCLIP's state and parameter updates sync with the audio core in
+// batches, only when the engine updates the game, never while the user script
+// is being executed. The sync is performed by calling update().
+// This is to ensure that the clip reference, state and properties don't change
+// in the middle of the script's command sequence.
 
 // TODO: one of the biggest problems with sound clips currently is that it
 // provides several methods of applying volume, which may ignore or override
@@ -67,7 +72,21 @@ struct SOUNDCLIP {
 	virtual int play() = 0;
 	virtual void pause() = 0;
 	virtual void resume() = 0;
+
+	/**
+	 * Seeks to the position, where pos units depend on the audio type:
+	 *  - MIDI - the beat number
+	 *  - MOD / XM / S3M - the pattern number
+	 *  - WAV / VOC - the sample number
+	 *  - OGG / MP3 - milliseconds
+	 */
 	virtual void seek(int offset) = 0;
+
+	/**
+	 * Seeks to the position in milliseconds
+	 */
+	virtual void seek_ms(int pos_ms) = 0;
+
 	virtual int play_from(int position) = 0;
 	virtual bool is_playing() = 0; // true if playing or paused. false if never played or stopped.
 	virtual bool is_paused() = 0; // true if paused
@@ -189,6 +208,9 @@ protected:
 struct SoundClipWaveBase : public SOUNDCLIP {
 private:
 	Audio::Mixer::SoundType _soundType = Audio::Mixer::kPlainSoundType;
+
+	int pos_to_posms(int pos) const;
+
 public:
 	Audio::Mixer *_mixer;
 	Audio::AudioStream *_stream;
@@ -209,6 +231,7 @@ public:
 	bool is_playing() override;
 	bool is_paused() override;
 	void seek(int offset) override;
+	void seek_ms(int pos_ms) override;
 	int get_pos() override;
 	int get_pos_ms() override;
 	int get_length_ms() override;

@@ -289,7 +289,7 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	if (!(var & 0xF0000000)) {
 		assertRange(0, var, _numVariables - 1, "variable (writing)");
 
-		if (var == VAR_CHARINC) {
+		if (!isUsingOriginalGUI() && var == VAR_CHARINC) {
 			// Did the user override the talkspeed manually? Then use that.
 			// Otherwise, use the value specified by the game script.
 			// Note: To determine whether there was a user override, we only
@@ -333,6 +333,11 @@ void ScummEngine_v8::writeVar(uint var, int value) {
 	}
 
 	error("Illegal varbits (w)");
+}
+
+void ScummEngine_v8::setKeyScriptVars(int keyScriptKey, int keyScriptNo) {
+	_keyScriptKey = keyScriptKey;
+	_keyScriptNo = keyScriptNo;
 }
 
 void ScummEngine_v8::decodeParseString(int m, int n) {
@@ -913,10 +918,10 @@ void ScummEngine_v8::o8_cameraOps() {
 
 	switch (subOp) {
 	case 0x32:		// SO_CAMERA_PAUSE
-		//debug(0, "freezeCamera NYI");
+		_cameraIsFrozen = true;
 		break;
 	case 0x33:		// SO_CAMERA_RESUME
-		//debug(0, "unfreezeCamera NYI");
+		_cameraIsFrozen = false;
 		break;
 	default:
 		error("o8_cameraOps: default case 0x%x", subOp);
@@ -977,10 +982,7 @@ void ScummEngine_v8::o8_verbOps() {
 		break;
 	case 0x9A:		// SO_VERB_AT Set verb (X,Y) placement
 		vs->curRect.top = pop();
-		if (_language == Common::HE_ISR)
-			vs->curRect.right = _screenWidth - 1 - pop();
-		else
-			vs->curRect.left = vs->origLeft = pop();
+		vs->origLeft = pop();
 		break;
 	case 0x9B:		// SO_VERB_ON Turn verb on
 		vs->curmode = 1;
@@ -1096,7 +1098,8 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		setScaleSlot(args[1], args[2], args[3], args[4], args[5], args[6], args[7]);
 		break;
 	case 22:	// setBannerColors
-//		debug(0, "o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		debug(5, "o8_kernelSetFunctions: setBannerColors(%d, %d, %d, %d)", args[1], args[2], args[3], args[4]);
+		setBannerColors(args[1], args[2], args[3], args[4]);
 		break;
 	case 23:	// setActorChoreLimbFrame
 		a = derefActor(args[1], "o8_kernelSetFunctions:setActorChoreLimbFrame");
@@ -1123,9 +1126,11 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		break;
 	}
 	case 26: { // saveGameWrite
-		// FIXME: This doesn't work
-		char *address = (char *)getStringAddress(args[2]);
-		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], address);
+		char *saveName = (char *)getStringAddress(args[2]);
+		debug(0, "o8_kernelSetFunctions: saveGame(%d, %s)", args[1], saveName);
+		if (isUsingOriginalGUI()) {
+			copyHeapSaveGameToFile(args[1], saveName);
+		}
 		break;
 	}
 	case 27: // saveGameRead
@@ -1133,12 +1138,12 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		_saveLoadFlag = 2;
 		_saveTemporaryState = false;
 		break;
-	case 28:	// saveGameStampScreenshot
-		debug(0, "o8_kernelSetFunctions: saveGameStampScreenshot(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+	case 28:	// stampShotEnqueue
+		debug(0, "o8_kernelSetFunctions: stampShotEnqueue(%d, %d, %d, %d, %d, %d)", args[1], args[2], args[3], args[4], args[5], args[6]);
+		stampShotEnqueue(args[1], args[2], args[3], args[4], args[5], args[6]);
 		break;
 	case 29:	// setKeyScript
-		_keyScriptKey = args[1];
-		_keyScriptNo = args[2];
+		setKeyScriptVars(args[1], args[2]);
 		break;
 	case 30:	// killAllScriptsButMe
 		killAllScriptsExceptCurrent();
@@ -1151,6 +1156,29 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		int idx = args[1];
 		int value = args[2];
 		const char *str = (const char *)getStringAddress(idx);
+		if (isUsingOriginalGUI()) {
+			if (!strcmp(str, "SFX Volume")) {
+				ConfMan.setInt("sfx_volume", value * 2);
+			} else if (!strcmp(str, "Voice Volume")) {
+				ConfMan.setInt("speech_volume", value * 2);
+			} else if (!strcmp(str, "Music Volume")) {
+				ConfMan.setInt("music_volume", value * 2);
+			} else if (!strcmp(str, "Text Status")) {
+				ConfMan.setInt("original_gui_text_status", value);
+				ConfMan.setBool("speech_mute", value == 2);
+				ConfMan.setBool("subtitles", value > 0);
+			} else if (!strcmp(str, "Text Speed")) {
+				ConfMan.setInt("original_gui_text_speed", value);
+				setTalkSpeed(value);
+			} else if (!strcmp(str, "Object Names")) {
+				ConfMan.setInt("original_gui_object_labels", value);
+				ConfMan.setBool("object_labels", value > 0);
+			} else if (!strcmp(str, "Saveload Page")) {
+				ConfMan.setInt("original_gui_saveload_page", value);
+			}
+
+			ConfMan.flushToDisk();
+		}
 
 		debugC(DEBUG_GENERAL,"o8_kernelSetFunctions: writeRegistryValue(%s, %d)", str, value);
 		}
@@ -1159,10 +1187,16 @@ void ScummEngine_v8::o8_kernelSetFunctions() {
 		debug(0, "o8_kernelSetFunctions: paletteSetIntensity(%d, %d)", args[1], args[2]);
 		break;
 	case 34:	// queryQuit
-		if (ConfMan.getBool("confirm_exit"))
-			confirmExitDialog();
-		else
-			quitGame();
+		if (isUsingOriginalGUI()) {
+			// Create an artificial CTRL-C keyPress
+			_keyPressed = Common::KEYCODE_c;
+			_keyPressed.flags |= Common::KBD_CTRL;
+		} else {
+			if (ConfMan.getBool("confirm_exit"))
+				confirmExitDialog();
+			else
+				quitGame();
+		}
 		break;
 	case 108:	// buildPaletteShadow
 		setShadowPalette(args[1], args[2], args[3], args[4], args[5], args[6]);
@@ -1237,32 +1271,56 @@ void ScummEngine_v8::o8_kernelGetFunctions() {
 		}
 		break;
 	case 0xDD:		// getGroupSfxVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSFXSoundType) / 2);
+		push(_imuseDigital->diMUSEGetSFXGroupVol());
 		break;
 	case 0xDE:		// getGroupVoiceVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kSpeechSoundType) / 2);
+		push(_imuseDigital->diMUSEGetVoiceGroupVol());
 		break;
 	case 0xDF:		// getGroupMusicVol
-		push(_mixer->getVolumeForSoundType(Audio::Mixer::kMusicSoundType) / 2);
+		push(_imuseDigital->diMUSEGetMusicGroupVol());
 		break;
 	case 0xE0:		// readRegistryValue
 		{
 		int idx = args[1];
 		const char *str = (const char *)getStringAddress(idx);
-		if (!strcmp(str, "SFX Volume"))
+		if (!strcmp(str, "SFX Volume")) {
 			push(ConfMan.getInt("sfx_volume") / 2);
-		else if (!strcmp(str, "Voice Volume"))
+		} else if (!strcmp(str, "Voice Volume")) {
 			push(ConfMan.getInt("speech_volume") / 2);
-		else if (!strcmp(str, "Music Volume"))
+		} else if (!strcmp(str, "Music Volume")) {
 			push(ConfMan.getInt("music_volume") / 2);
-		else if (!strcmp(str, "Text Status"))
-			push(ConfMan.getBool("subtitles"));
-		else if (!strcmp(str, "Object Names"))
-			push(ConfMan.getBool("object_labels"));
-		else if (!strcmp(str, "Saveload Page"))
-			push(14);
-		else		// Use defaults
+		} else if (!strcmp(str, "Text Status")) {
+			if (ConfMan.hasKey("original_gui_text_status", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_text_status"));
+			} else if (ConfMan.hasKey("subtitles", _targetName)) {
+				push(ConfMan.getBool("subtitles"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Text Speed")) {
+			if (ConfMan.hasKey("original_gui_text_speed", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_text_speed"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Object Names")) {
+			if (ConfMan.hasKey("original_gui_object_labels", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_object_labels"));
+			} else if (ConfMan.hasKey("object_labels", _targetName)) {
+				push(ConfMan.getBool("object_labels"));
+			} else {
+				push(-1); // Default value
+			}
+		} else if (!strcmp(str, "Saveload Page")) {
+			if (ConfMan.hasKey("original_gui_saveload_page", _targetName) && isUsingOriginalGUI()) {
+				push(ConfMan.getInt("original_gui_saveload_page"));
+			} else {
+				push(-1); // Default value
+			}
+		} else { // Use defaults
 			push(-1);
+		}
+
 		debugC(DEBUG_GENERAL,"o8_kernelGetFunctions: readRegistryValue(%s)", str);
 		}
 		break;

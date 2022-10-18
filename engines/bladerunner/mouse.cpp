@@ -538,13 +538,14 @@ Vector3 Mouse::getXYZ(int x, int y) const {
 	if (_vm->_scene->getSetId() == -1)
 		return Vector3();
 
-	int screenRight = 640 - x;
-	int screenDown  = 480 - y;
+	int screenRight = BladeRunnerEngine::kOriginalGameWidth  - x;
+	int screenDown  = BladeRunnerEngine::kOriginalGameHeight - y;
 
 	float zcoef = 1.0f / tan(_vm->_view->_fovX / 2.0f);
 
-	float x3d = (2.0f / 640.0f * screenRight - 1.0f);
-	float y3d = (2.0f / 480.0f * screenDown  - 1.0f) * 0.75f;
+	// Division of float by int is float, so no precision is lost here
+	float x3d = (2.0f / BladeRunnerEngine::kOriginalGameWidth  * screenRight - 1.0f);
+	float y3d = (2.0f / BladeRunnerEngine::kOriginalGameHeight * screenDown  - 1.0f) * 0.75f;
 
 	uint16 zbufval = _vm->_zbuffer->getZValue(x, y);
 

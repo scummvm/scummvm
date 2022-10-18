@@ -143,6 +143,7 @@ public:
 	 * @c true anymore
 	 */
 	bool toggleActionIfActive(TwinEActionType actionType);
+	void resetActionStates();
 
 	bool toggleAbortAction();
 

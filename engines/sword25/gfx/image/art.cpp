@@ -1051,7 +1051,7 @@ static bool art_pri_empty(ArtPriQ *pq) {
 }
 
 /* This heap implementation is based on Vasek Chvatal's course notes:
-   http://www.cs.rutgers.edu/~chvatal/notes/pq.html#heap */
+   https://users.encs.concordia.ca/~chvatal/notes/pq.html#heap */
 
 static void art_pri_bubble_up(ArtPriQ *pq, int vacant, ArtPriPoint *missing) {
 	ArtPriPoint **items = pq->items;

@@ -47,7 +47,12 @@ namespace AGS3 {
 #define DIALOG_NEWTOPIC  12000
 #define MAX_TIMERS       21
 #define MAX_PARSED_WORDS 15
+// how many saves may be listed at once
 #define MAXSAVEGAMES     50
+// topmost save index to be listed with a FillSaveGameList command
+// NOTE: changing this may theoretically affect older games which
+// use slots > 99 for special purposes!
+#define TOP_LISTEDSAVESLOT 99
 #define MAX_QUEUED_MUSIC 10
 #define GLED_INTERACTION 1
 #define GLED_EFFECTS     2
@@ -90,8 +95,11 @@ const int LegacyRoomVolumeFactor = 30;
 #define CHANIM_REPEAT    2
 #define CHANIM_BACKWARDS 4
 #define ANIM_BACKWARDS 10
+// Animates once and stops at the *last* frame
 #define ANIM_ONCE      1
+// Animates infinitely until stopped by command
 #define ANIM_REPEAT    2
+// Animates once and stops, resetting to the very first frame
 #define ANIM_ONCERESET 3
 #define FONT_STATUSBAR  0
 #define FONT_NORMAL     _GP(play).normal_font
@@ -117,18 +125,25 @@ const int LegacyRoomVolumeFactor = 30;
 #define FOR_ANIMATION 1
 #define FOR_SCRIPT    2
 #define FOR_EXITLOOP  3
-#define CHMLSOFFS (MAX_ROOM_OBJECTS+1)    // reserve this many movelists for objects & stuff
-#define abort_all_conditions _G(restrict_until)
+// an actsps index offset for characters
+#define ACTSP_OBJSOFF (MAX_ROOM_OBJECTS)
+// a 1-based movelist index offset for characters
+#define CHMLSOFFS (1 + MAX_ROOM_OBJECTS)
 #define MAX_SCRIPT_AT_ONCE 10
 #define EVENT_NONE       0
 #define EVENT_INPROGRESS 1
 #define EVENT_CLAIMED    2
 
-// Internal skip style flags, for speech/display, wait
-#define SKIP_NONE       0
-#define SKIP_AUTOTIMER  1
-#define SKIP_KEYPRESS   2
-#define SKIP_MOUSECLICK 4
+// Internal skip style flags, for speech/display, wait;
+ // theoretically correspond to InputType in script (with a 24-bit shift)
+#define SKIP_NONE       0x00
+#define SKIP_AUTOTIMER  0x01
+#define SKIP_KEYPRESS   0x02
+#define SKIP_MOUSECLICK 0x04
+// Bit shift for packing skip type into result
+#define SKIP_RESULT_TYPE_SHIFT 24
+// Bit mask for packing skip key/button data into result
+#define SKIP_RESULT_DATA_MASK  0x00FFFFFF
 
 #define MANOBJNUM 99
 
@@ -145,7 +160,6 @@ const int LegacyRoomVolumeFactor = 30;
 
 #define MAX_DYNAMIC_SURFACES 20
 
-#define MAX_ANIMATING_BUTTONS 15
 #define RESTART_POINT_SAVE_GAME_NUMBER 999
 
 #define MAX_OPEN_SCRIPT_FILES 10

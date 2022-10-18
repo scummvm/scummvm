@@ -24,38 +24,45 @@
 
 #include "common/scummsys.h"
 #include "scumm/nut_renderer.h"
+#include "scumm/scumm.h"
+#include "scumm/string_v7.h"
 
 namespace Scumm {
 
-class SmushFont : public NutRenderer {
-protected:
-	int16 _color;
-	bool _new_colors;
-	bool _original;
-
-
-	int getStringWidth(const char *str, uint numBytesMax);
-	int getStringHeight(const char *str, uint numBytesMax);
-	int draw2byte(byte *buffer, int dst_width, int x, int y, int idx);
-	int drawChar(byte *buffer, int dst_width, int x, int y, byte chr);
-	void drawSubstring(const char *str, uint numBytesMax, byte *buffer, int dst_width, int x, int y);
-
+class SmushFont : public NutRenderer, public GlyphRenderer_v7 {
 public:
-	SmushFont(ScummEngine *vm, const char *filename, bool use_original_colors, bool new_colors);
-
-	void setColor(byte c) { _color = c; }
-	void drawString    (const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center);
-	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, bool center);
-
-	static inline bool is2ByteCharacter(Common::Language lang, byte c) {
-		if (lang == Common::JA_JPN)
-			return (c >= 0x80 && c <= 0x9F) || (c >= 0xE0 && c <= 0xFD);
-		else if (lang == Common::KO_KOR)
-			return (c >= 0xB0 && c <= 0xD0);
-		else if (lang == Common::ZH_TWN || lang == Common::ZH_CHN)
-			return (c >= 0x80);
-		return false;
+	SmushFont(ScummEngine *vm, const char *filename, bool useOriginalColors) :
+		NutRenderer(vm, filename), _hardcodedFontColors(useOriginalColors) {
+		_r = new TextRenderer_v7(vm, this);
 	}
+
+	~SmushFont() override {	delete _r;}
+
+	void drawString(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
+		_r->drawString(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+	}
+
+	void drawStringWrap(const char *str, byte *buffer, Common::Rect &clipRect, int x, int y, int16 col, TextStyleFlags flags) {
+		_r->drawStringWrap(str, buffer, clipRect, x, y, _vm->_screenWidth, col, flags);
+	}
+
+private:
+	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override {
+		return NutRenderer::draw2byte(buffer, clipRect, x, y, pitch, _vm->_game.id == GID_CMI ? 255 : (_vm->_game.id == GID_DIG && col == -1 ? 1 : col), chr);
+	}
+
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override {
+		return NutRenderer::drawCharV7(buffer, clipRect, x, y, pitch, col, flags, chr, _hardcodedFontColors, true);
+	}
+
+	int getCharWidth(uint16 chr) const override { return NutRenderer::getCharWidth(chr & 0xFF); }
+	int getCharHeight(uint16 chr) const override { return NutRenderer::getCharHeight(chr & 0xFF); }
+	int getFontHeight() const override { return NutRenderer::getFontHeight(); }
+	int setFont(int) override { return 0; }
+	bool newStyleWrapping() const override { return true; }
+
+	TextRenderer_v7 *_r;
+	const bool _hardcodedFontColors;
 };
 
 } // End of namespace Scumm

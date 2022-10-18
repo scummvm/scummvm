@@ -40,14 +40,14 @@ namespace HDB {
 //
 //-------------------------------------------------------------------
 
-void aiOmniBotInit(AIEntity *e) {
+void aiOmniBotInit(AIEntity *e, int mx, int my) {
 	if (e->value1 == 1)
 		e->aiAction = aiOmniBotMove;
 	else if (g_hdb->_ai->findPath(e))
 		e->aiAction = aiOmniBotAction;
 }
 
-void aiOmniBotInit2(AIEntity *e) {
+void aiOmniBotInit2(AIEntity *e, int mx, int my) {
 	e->standdownGfx[0] = e->movedownGfx[0];
 	e->standupGfx[0] = e->movedownGfx[0];
 	e->standleftGfx[0] = e->moveleftGfx[0];
@@ -56,14 +56,14 @@ void aiOmniBotInit2(AIEntity *e) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiOmniBotMove(AIEntity *e) {
+void aiOmniBotMove(AIEntity *e, int mx, int my) {
 	if (e->goalX)
 		g_hdb->_ai->animateEntity(e);
 	else
 		g_hdb->_ai->animEntFrames(e);
 }
 
-void aiOmniBotAction(AIEntity *e) {
+void aiOmniBotAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 	if (e->goalX) {
 		if (!e->sequence) {
@@ -152,12 +152,12 @@ void aiOmniBotAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiOmniBotMissileInit(AIEntity *e) {
+void aiOmniBotMissileInit(AIEntity *e, int mx, int my) {
 	e->state = STATE_MOVEDOWN;
 	e->aiAction = aiOmniBotMissileAction;
 }
 
-void aiOmniBotMissileInit2(AIEntity *e) {
+void aiOmniBotMissileInit2(AIEntity *e, int mx, int my) {
 	for (int i = 0; i < e->movedownFrames; i++)
 		e->moveleftGfx[i] = e->moverightGfx[i] = e->moveupGfx[i] = e->movedownGfx[i];
 
@@ -165,7 +165,7 @@ void aiOmniBotMissileInit2(AIEntity *e) {
 	e->draw = e->movedownGfx[0];
 }
 
-void aiOmniBotMissileAction(AIEntity *e) {
+void aiOmniBotMissileAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	g_hdb->_ai->animEntFrames(e);
@@ -199,15 +199,15 @@ void aiOmniBotMissileAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiTurnBotInit(AIEntity *e) {
+void aiTurnBotInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiTurnBotAction;
 }
 
-void aiTurnBotInit2(AIEntity *e) {
+void aiTurnBotInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiTurnBotChoose(AIEntity *e) {
+void aiTurnBotChoose(AIEntity *e, int mx, int my) {
 	static const int xvAhead[5] = { 9, 0, 0, -1, 1 };
 	static const int yvAhead[5] = { 9, -1, 1, 0, 0 };
 	static const AIDir turnRight[5] = { DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN };
@@ -236,11 +236,11 @@ void aiTurnBotChoose(AIEntity *e) {
 	}
 }
 
-void aiTurnBotAction(AIEntity *e) {
+void aiTurnBotAction(AIEntity *e, int mx, int my) {
 	if (e->goalX)
 		g_hdb->_ai->animateEntity(e);
 	else {
-		aiTurnBotChoose(e);
+		aiTurnBotChoose(e, 0, 0);
 		g_hdb->_ai->animateEntity(e);
 		if (e->onScreen)
 			g_hdb->_sound->playSound(SND_TURNBOT_TURN);
@@ -257,7 +257,7 @@ void aiTurnBotAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiShockBotInit(AIEntity *e) {
+void aiShockBotInit(AIEntity *e, int mx, int my) {
 	g_hdb->_ai->findPath(e);
 	e->aiAction = aiShockBotAction;
 	e->animCycle = 0;
@@ -265,7 +265,7 @@ void aiShockBotInit(AIEntity *e) {
 	e->aiDraw = aiShockBotShock;
 }
 
-void aiShockBotInit2(AIEntity *e) {
+void aiShockBotInit2(AIEntity *e, int mx, int my) {
 	e->standupFrames = e->standdownFrames = e->standleftFrames = e->standrightFrames =
 		e->moveupFrames = e->moverightFrames = e->moveleftFrames = e->movedownFrames;
 
@@ -275,7 +275,7 @@ void aiShockBotInit2(AIEntity *e) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiShockBotAction(AIEntity *e) {
+void aiShockBotAction(AIEntity *e, int mx, int my) {
 	if (e->goalX) {
 		if (!e->sequence) {
 			if (hitPlayer(e->x, e->y))
@@ -320,7 +320,7 @@ void aiShockBotShock(AIEntity *e, int mx, int my) {
 				}
 				if (!e->animFrame && g_hdb->_map->boomBarrelExist(e->tileX + offX[i], e->tileY + offY[i])) {
 					AIEntity *e2 = g_hdb->_ai->findEntityType(AI_BOOMBARREL, e->tileX + offX[i], e->tileY + offY[i]);
-					aiBarrelExplode(e2);
+					aiBarrelExplode(e2, 0, 0);
 				}
 			}
 		}
@@ -335,14 +335,14 @@ void aiShockBotShock(AIEntity *e, int mx, int my) {
 //
 //-------------------------------------------------------------------
 
-void aiRightBotInit(AIEntity *e) {
+void aiRightBotInit(AIEntity *e, int mx, int my) {
 	e->moveSpeed = kPlayerMoveSpeed;
 	if (!g_hdb->getActionMode())
 		e->moveSpeed >>= 1;
 	e->aiAction = aiRightBotAction;
 }
 
-void aiRightBotInit2(AIEntity *e) {
+void aiRightBotInit2(AIEntity *e, int mx, int my) {
 	switch (e->dir) {
 	case DIR_UP:
 		e->draw = e->moveupGfx[0];
@@ -366,7 +366,7 @@ void aiRightBotInit2(AIEntity *e) {
 	}
 }
 
-void aiRightBotFindGoal(AIEntity *e) {
+void aiRightBotFindGoal(AIEntity *e, int mx, int my) {
 	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
 	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
 	static const int xvAToR[5]  = { 9, 1,-1,-1, 1 };
@@ -538,7 +538,7 @@ void aiRightBotFindGoal(AIEntity *e) {
 		g_hdb->_sound->playSound(SND_RIGHTBOT_TURN);
 }
 
-void aiRightBotAction(AIEntity *e) {
+void aiRightBotAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	if (e->goalX) {
@@ -546,7 +546,7 @@ void aiRightBotAction(AIEntity *e) {
 			g_hdb->_ai->killPlayer(DEATH_NORMAL);
 		g_hdb->_ai->animateEntity(e);
 	} else {
-		aiRightBotFindGoal(e);
+		aiRightBotFindGoal(e, 0, 0);
 		g_hdb->_ai->animEntFrames(e);
 	}
 }
@@ -560,16 +560,16 @@ void aiRightBotAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiPushBotInit(AIEntity *e) {
+void aiPushBotInit(AIEntity *e, int mx, int my) {
 	if (e->value1 != 1)
 		e->aiAction = aiPushBotAction;
 }
 
-void aiPushBotInit2(AIEntity *e) {
+void aiPushBotInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiPushBotAction(AIEntity *e) {
+void aiPushBotAction(AIEntity *e, int mx, int my) {
 	static const AIState moveState[5] = { STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT };
 	static const int xvAhead[5] = { 9, 0, 0,-1, 1 };
 	static const int yvAhead[5] = { 9,-1, 1, 0, 0 };
@@ -673,7 +673,7 @@ void aiPushBotAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiRailRiderInit(AIEntity *e) {
+void aiRailRiderInit(AIEntity *e, int mx, int my) {
 	if (e->type == AI_RAILRIDER_ON) {
 		// On the tracks already - spawn RED arrow
 		g_hdb->_ai->addToPathList(e->tileX, e->tileY, 0, e->dir);
@@ -689,16 +689,16 @@ void aiRailRiderInit(AIEntity *e) {
 	e->moveSpeed = kPlayerMoveSpeed;
 }
 
-void aiRailRiderInit2(AIEntity *e) {
+void aiRailRiderInit2(AIEntity *e, int mx, int my) {
 	e->draw = e->standdownGfx[0];
 }
 
 // Talking to RailRider off track
-void aiRailRiderUse(AIEntity *e) {
+void aiRailRiderUse(AIEntity *e, int mx, int my) {
 	e->sequence = 1;
 }
 
-void aiRailRiderAction(AIEntity *e) {
+void aiRailRiderAction(AIEntity *e, int mx, int my) {
 	switch (e->sequence) {
 		// Waiting for Dialog to goaway
 	case 1:
@@ -766,7 +766,7 @@ void aiRailRiderAction(AIEntity *e) {
 }
 
 // Talking to RailRider on track
-void aiRailRiderOnUse(AIEntity *e) {
+void aiRailRiderOnUse(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	if (p->tileX == e->tileX) {
@@ -782,7 +782,7 @@ void aiRailRiderOnUse(AIEntity *e) {
 	e->sequence = -1;	// Waiting for player to board
 }
 
-void aiRailRiderOnAction(AIEntity *e) {
+void aiRailRiderOnAction(AIEntity *e, int mx, int my) {
 	static const int xv[5] = { 9, 0, 0, -1, 1 };
 	static const int yv[5] = { 9, -1, 1, 0, 0 };
 
@@ -951,7 +951,7 @@ void aiRailRiderOnAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiMaintBotInit(AIEntity *e) {
+void aiMaintBotInit(AIEntity *e, int mx, int my) {
 	// value1 field determines whether the "MMM!" sound plays
 	// 1 means NO
 	e->int1 = e->value1;
@@ -960,11 +960,11 @@ void aiMaintBotInit(AIEntity *e) {
 	g_hdb->_ai->findPath(e);
 }
 
-void aiMaintBotInit2(AIEntity *e) {
+void aiMaintBotInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiMaintBotAction(AIEntity *e) {
+void aiMaintBotAction(AIEntity *e, int mx, int my) {
 	static const AIState useState[5]   = {STATE_NONE, STATE_USEUP, STATE_USEDOWN, STATE_USELEFT, STATE_USERIGHT};
 	static const AIState standState[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	static const int xvAhead[5]  = {9, 0, 0,-1, 1};
@@ -1124,16 +1124,16 @@ void aiMaintBotAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiFourFirerInit(AIEntity *e) {
+void aiFourFirerInit(AIEntity *e, int mx, int my) {
 	e->value1 = 0;
 	e->aiAction = aiFourFirerAction;
 }
 
-void aiFourFirerInit2(AIEntity *e) {
+void aiFourFirerInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiFourFirerAction(AIEntity *e) {
+void aiFourFirerAction(AIEntity *e, int mx, int my) {
 	static const AIState state[5] = {STATE_NONE, STATE_STANDUP, STATE_STANDDOWN, STATE_STANDLEFT, STATE_STANDRIGHT};
 	static const AIDir turn[5] = {DIR_NONE, DIR_RIGHT, DIR_LEFT, DIR_UP, DIR_DOWN};
 
@@ -1226,7 +1226,7 @@ void aiFourFirerAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiDeadEyeInit(AIEntity *e) {
+void aiDeadEyeInit(AIEntity *e, int mx, int my) {
 	e->sequence = 64;
 	e->blinkFrames = e->goalX = 0;
 	if (e->value1 == 1)
@@ -1235,11 +1235,11 @@ void aiDeadEyeInit(AIEntity *e) {
 		e->aiAction = aiDeadEyeAction;
 }
 
-void aiDeadEyeInit2(AIEntity *e) {
+void aiDeadEyeInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiDeadEyeWalkInPlace(AIEntity *e) {
+void aiDeadEyeWalkInPlace(AIEntity *e, int mx, int my) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 
 	e->sequence--;
@@ -1271,7 +1271,7 @@ void aiDeadEyeWalkInPlace(AIEntity *e) {
 	g_hdb->_ai->animEntFrames(e);
 }
 
-void aiDeadEyeAction(AIEntity *e) {
+void aiDeadEyeAction(AIEntity *e, int mx, int my) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 	static const int xvAhead[5] = {9, 0, 0, -1, 1};
 	static const int yvAhead[5] = {9, -1, 1, 0, 0};
@@ -1442,13 +1442,13 @@ void aiDeadEyeAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiLaserInit(AIEntity *e) {
+void aiLaserInit(AIEntity *e, int mx, int my) {
 	e->aiDraw = aiLaserDraw;
 	// start & end of laser beam
 	e->value1 = e->value2 = 0;
 }
 
-void aiLaserInit2(AIEntity *e) {
+void aiLaserInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 	if (!g_hdb->_ai->_gfxLaserbeamUD[0]) {
 		char name[64];
@@ -1469,7 +1469,7 @@ void aiLaserInit2(AIEntity *e) {
 	}
 }
 
-void aiLaserAction(AIEntity *e) {
+void aiLaserAction(AIEntity *e, int mx, int my) {
 	static const int xva[] = {9, 0, 0,-1, 1};
 	static const int yva[] = {9,-1, 1, 0, 0};
 
@@ -1552,7 +1552,7 @@ void aiLaserAction(AIEntity *e) {
 					g_hdb->_ai->killPlayer(DEATH_FRIED);
 				else if (hit->type == AI_BOOMBARREL && hit->state != STATE_EXPLODING && onEvenTile(hit->x, hit->y)) {
 					// hit BOOM BARREL = explodes
-					aiBarrelExplode(hit);
+					aiBarrelExplode(hit, 0, 0);
 					aiBarrelBlowup(hit, nx, ny);
 				} else if (hit->type == AI_LIGHTBARREL || hit->type == AI_HEAVYBARREL || hit->type == AI_CRATE) {
 					// hit LIGHT/HEAVY BARREL = blocking
@@ -1686,14 +1686,14 @@ void aiLaserDraw(AIEntity *e, int mx, int my) {
 //
 //-------------------------------------------------------------------
 
-void aiDiverterInit(AIEntity *e) {
+void aiDiverterInit(AIEntity *e, int mx, int my) {
 	e->aiDraw = aiDiverterDraw;
 	e->aiAction = aiDiverterAction;
 	e->moveSpeed = kPlayerMoveSpeed << 1;
 	e->dir2 = e->dir;
 }
 
-void aiDiverterInit2(AIEntity *e) {
+void aiDiverterInit2(AIEntity *e, int mx, int my) {
 	e->movedownGfx[0] = e->standdownGfx[0];
 	e->moveupGfx[0] = e->standupGfx[0];
 	e->moveleftGfx[0] = e->standleftGfx[0];
@@ -1732,7 +1732,7 @@ void aiDiverterInit2(AIEntity *e) {
 	g_hdb->_ai->_laserRescan = true;
 }
 
-void aiDiverterAction(AIEntity *e) {
+void aiDiverterAction(AIEntity *e, int mx, int my) {
 	if (e->goalX) {
 		g_hdb->_ai->animateEntity(e);
 		g_hdb->_ai->_laserRescan = true;
@@ -1860,7 +1860,7 @@ void aiDiverterDraw(AIEntity *e, int mx, int my) {
 //
 //-------------------------------------------------------------------
 
-void aiMeerkatInit(AIEntity *e) {
+void aiMeerkatInit(AIEntity *e, int mx, int my) {
 	e->state = STATE_NONE;
 	e->sequence = 0;
 	if (e->value1 == 1) {
@@ -1870,7 +1870,7 @@ void aiMeerkatInit(AIEntity *e) {
 		e->aiAction = aiMeerkatAction;
 }
 
-void aiMeerkatInit2(AIEntity *e) {
+void aiMeerkatInit2(AIEntity *e, int mx, int my) {
 	//  hidden at the start!
 	e->draw = nullptr;
 
@@ -1894,7 +1894,7 @@ void aiMeerkatDraw(AIEntity *e, int mx, int my) {
 	g_hdb->_gfx->drawText(word);
 }
 
-void aiMeerkatAction(AIEntity *e) {
+void aiMeerkatAction(AIEntity *e, int mx, int my) {
 	static const int gem_xv[] = { 0, 0,-2,-3,-4,-4,-3,-2,-2,-2,-2,-1,-1, 100};
 	static const int gem_yv[] = {-6,-5,-4,-3,-2,-1, 0, 0, 1, 2, 3, 4, 5, 100};
 
@@ -2040,7 +2040,7 @@ void aiMeerkatAction(AIEntity *e) {
 	}
 }
 
-void aiMeerkatLookAround(AIEntity *e) {
+void aiMeerkatLookAround(AIEntity *e, int mx, int my) {
 	g_hdb->_ai->animEntFrames(e);
 }
 
@@ -2051,11 +2051,11 @@ void aiMeerkatLookAround(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiFatFrogInit(AIEntity *e) {
+void aiFatFrogInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiFatFrogAction;
 }
 
-void aiFatFrogInit2(AIEntity *e) {
+void aiFatFrogInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 	// load tongue tiles
 	switch (e->dir) {
@@ -2095,7 +2095,7 @@ void aiFatFrogInit2(AIEntity *e) {
 	}
 }
 
-void aiFatFrogAction(AIEntity *e) {
+void aiFatFrogAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	switch (e->state) {
@@ -2397,17 +2397,17 @@ void aiFatFrogTongueDraw(AIEntity *e, int mx, int my) {
 //
 //-------------------------------------------------------------------
 
-void aiGoodFairyInit(AIEntity *e) {
+void aiGoodFairyInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGoodFairyAction;
 	e->sequence = 20;
 	e->blinkFrames = e->goalX = 0;
 }
 
-void aiGoodFairyInit2(AIEntity *e) {
+void aiGoodFairyInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiGoodFairyAction(AIEntity *e) {
+void aiGoodFairyAction(AIEntity *e, int mx, int my) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 	static const int xvAhead[5] = {9, 0, 0,-1, 1};
 	static const int yvAhead[5] = {9,-1, 1, 0, 0};
@@ -2598,17 +2598,17 @@ void aiGoodFairyAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiBadFairyInit(AIEntity *e) {
+void aiBadFairyInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiBadFairyAction;
 	e->sequence = 20;
 	e->blinkFrames = e->goalX = 0;
 }
 
-void aiBadFairyInit2(AIEntity *e) {
+void aiBadFairyInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 }
 
-void aiBadFairyAction(AIEntity *e) {
+void aiBadFairyAction(AIEntity *e, int mx, int my) {
 	static const AIState state[5] = {STATE_NONE, STATE_MOVEUP, STATE_MOVEDOWN, STATE_MOVELEFT, STATE_MOVERIGHT};
 	static const AIDir opposite[5] = {DIR_NONE, DIR_DOWN, DIR_UP, DIR_RIGHT, DIR_LEFT};
 	static const int xvAhead[5] = {9, 0, 0,-1, 1};
@@ -2733,15 +2733,15 @@ void aiBadFairyAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiGatePuddleInit(AIEntity *e) {
+void aiGatePuddleInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiGatePuddleAction;
 	e->value1 = 50;
 }
 
-void aiGatePuddleInit2(AIEntity *e) {
+void aiGatePuddleInit2(AIEntity *e, int mx, int my) {
 }
 
-void aiGatePuddleAction(AIEntity *e) {
+void aiGatePuddleAction(AIEntity *e, int mx, int my) {
 	static const int xva[5] = {9, 0, 0,-1, 1};
 	static const int yva[5] = {9,-1, 1, 0, 0};
 
@@ -2873,7 +2873,7 @@ void aiGatePuddleAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiIcePuffSnowballInit(AIEntity *e) {
+void aiIcePuffSnowballInit(AIEntity *e, int mx, int my) {
 	// which direction are we throwing in? Load the graphic if we need to
 	switch (e->dir) {
 	case DIR_DOWN:
@@ -2894,7 +2894,7 @@ void aiIcePuffSnowballInit(AIEntity *e) {
 	e->aiDraw = aiIcePuffSnowballDraw;
 }
 
-void aiIcePuffSnowballAction(AIEntity *e) {
+void aiIcePuffSnowballAction(AIEntity *e, int mx, int my) {
 	// check for hit BEFORE moving so snowball is closer to object
 	// NOTE: Need to do logic in this draw routine just in case the ICEPUFF gets stunned!
 	int result;
@@ -2934,7 +2934,7 @@ void aiIcePuffSnowballAction(AIEntity *e) {
 void aiIcePuffSnowballDraw(AIEntity *e, int mx, int my) {
 	// did we throw a snowball?  make it move!
 	if (e->dir2 != DIR_NONE)
-		aiIcePuffSnowballAction(e);
+		aiIcePuffSnowballAction(e, 0, 0);
 
 	switch (e->dir2) {
 	case DIR_DOWN:
@@ -2957,7 +2957,7 @@ void aiIcePuffSnowballDraw(AIEntity *e, int mx, int my) {
 	}
 }
 
-void aiIcePuffInit(AIEntity *e) {
+void aiIcePuffInit(AIEntity *e, int mx, int my) {
 	// PEEK - but no head up yet
 	e->sequence = 30;				// timed sequence for peeking
 	e->state = STATE_ICEP_PEEK;			// start in PEEK mode
@@ -2965,12 +2965,12 @@ void aiIcePuffInit(AIEntity *e) {
 	e->aiAction = aiIcePuffAction;
 }
 
-void aiIcePuffInit2(AIEntity *e) {
+void aiIcePuffInit2(AIEntity *e, int mx, int my) {
 	// empty frame
 	e->draw = e->blinkGfx[3];
 }
 
-void aiIcePuffAction(AIEntity *e) {
+void aiIcePuffAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	switch (e->state) {
@@ -3066,7 +3066,7 @@ void aiIcePuffAction(AIEntity *e) {
 			// dir2 = direction snowball is moving
 			e->dir2 = e->dir;
 			// throw it!
-			aiIcePuffSnowballInit(e);
+			aiIcePuffSnowballInit(e, 0, 0);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -3089,7 +3089,7 @@ void aiIcePuffAction(AIEntity *e) {
 			// dir2 = direction snowball is moving
 			e->dir2 = e->dir;
 			// throw it!
-			aiIcePuffSnowballInit(e);
+			aiIcePuffSnowballInit(e, 0, 0);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -3112,7 +3112,7 @@ void aiIcePuffAction(AIEntity *e) {
 			// dir2 = direction snowball is moving
 			e->dir2 = e->dir;
 			// throw it!
-			aiIcePuffSnowballInit(e);
+			aiIcePuffSnowballInit(e, 0, 0);
 			e->animFrame = 0;
 			e->state = STATE_ICEP_DISAPPEAR;
 		} else if (e->animFrame == e->special1Frames) {
@@ -3136,14 +3136,14 @@ void aiIcePuffAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiBuzzflyInit(AIEntity *e) {
+void aiBuzzflyInit(AIEntity *e, int mx, int my) {
 	e->aiAction = aiBuzzflyAction;
 	e->sequence = 0;
 
 	g_hdb->_ai->findPath(e);
 }
 
-void aiBuzzflyInit2(AIEntity *e) {
+void aiBuzzflyInit2(AIEntity *e, int mx, int my) {
 	e->draw = g_hdb->_ai->getStandFrameDir(e);
 	for (int i = 0; i < e->movedownFrames; i++) {
 		e->standdownGfx[i] = e->movedownGfx[i];
@@ -3157,7 +3157,7 @@ void aiBuzzflyInit2(AIEntity *e) {
 	e->standrightFrames = e->moverightFrames;
 }
 
-void aiBuzzflyAction(AIEntity *e) {
+void aiBuzzflyAction(AIEntity *e, int mx, int my) {
 	if (!e->goalX) {
 		switch (e->sequence) {
 		case 0:
@@ -3205,7 +3205,7 @@ void aiBuzzflyAction(AIEntity *e) {
 //
 //-------------------------------------------------------------------
 
-void aiDragonInit(AIEntity *e) {
+void aiDragonInit(AIEntity *e, int mx, int my) {
 	e->state = STATE_STANDDOWN;
 	e->sequence = 0;	// 0 = sleeping
 	e->aiAction = aiDragonAction;
@@ -3233,7 +3233,7 @@ void aiDragonInit(AIEntity *e) {
 	sprintf(block->luaFuncUse, "%03d%03d", e->tileX, e->tileY);
 }
 
-void aiDragonInit2(AIEntity *e) {
+void aiDragonInit2(AIEntity *e, int mx, int my) {
 	e->draw = nullptr;
 	if (!g_hdb->_ai->_gfxDragonAsleep) {
 		g_hdb->_ai->_gfxDragonAsleep = g_hdb->_gfx->loadPic(DRAGON_ASLEEP);
@@ -3245,18 +3245,18 @@ void aiDragonInit2(AIEntity *e) {
 	}
 }
 
-void aiDragonWake(AIEntity *e) {
+void aiDragonWake(AIEntity *e, int mx, int my) {
 	// woke up, start flapping and breathing!
 	e->sequence = 1;
 	e->animFrame = 0;
 	e->animDelay = e->animCycle;
 }
 
-void aiDragonUse(AIEntity *e) {
-	aiDragonWake(e);
+void aiDragonUse(AIEntity *e, int mx, int my) {
+	aiDragonWake(e, 0, 0);
 }
 
-void aiDragonAction(AIEntity *e) {
+void aiDragonAction(AIEntity *e, int mx, int my) {
 	AIEntity *p = g_hdb->_ai->getPlayer();
 
 	switch (e->sequence) {
@@ -3269,7 +3269,7 @@ void aiDragonAction(AIEntity *e) {
 			p->tileY >= e->tileY - 3) {
 			if ((p->state >= STATE_ATK_CLUB_UP &&
 				p->state <= STATE_ATK_SLUG_RIGHT) || g_hdb->_window->inPanicZone()) {
-				aiDragonWake(e);
+				aiDragonWake(e, 0, 0);
 				if (e->onScreen)
 					g_hdb->_sound->playSound(SND_DRAGON_WAKE);
 			}
@@ -3331,11 +3331,11 @@ void aiDragonAction(AIEntity *e) {
 					break;
 				case AI_MAGIC_EGG:
 				case AI_ICE_BLOCK:
-					aiMagicEggUse(hit);
+					aiMagicEggUse(hit, 0, 0);
 					break;
 				default:
 					if (hit->aiUse)
-						hit->aiUse(hit);
+						hit->aiUse(hit, 0, 0);
 					if (hit->luaFuncUse[0])
 						g_hdb->_lua->callFunction(hit->luaFuncUse, 0);
 				}

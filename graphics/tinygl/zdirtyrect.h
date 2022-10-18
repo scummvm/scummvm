@@ -140,6 +140,10 @@ private:
 		int stencilDppass;
 		GLTexture *texture;
 		uint wrapS, wrapT;
+		bool fogEnabled;
+		float fogColorR;
+		float fogColorG;
+		float fogColorB;
 
 		bool operator==(const RasterizationState &other) const;
 	};

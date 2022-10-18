@@ -34,6 +34,7 @@
 
 #include "asylum/system/cursor.h"
 #include "asylum/system/graphics.h"
+#include "asylum/system/savegame.h"
 #include "asylum/system/screen.h"
 #include "asylum/system/text.h"
 
@@ -777,6 +778,7 @@ bool Console::cmdChangeScene(int argc, const char **argv) {
 	_vm->_puzzles->reset();
 
 	getMenu()->setGameStarted();
+	getSaveLoad()->resetVersion();
 
 	return false;
 }

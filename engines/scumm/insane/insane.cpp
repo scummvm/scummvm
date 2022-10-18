@@ -104,6 +104,10 @@ void Insane::setSmushParams(int speed) {
 	_speed = speed;
 }
 
+void Insane::setSmushPlayer(SmushPlayer *player) {
+	_player = player;
+}
+
 void Insane::initvars() {
 	int i, j;
 
@@ -625,7 +629,7 @@ void Insane::startVideo(const char *filename, int num, int argC, int frameRate,
 		smush_setupSanFromStart(filename, 0, -1, -1, 0);
 	}
 
-	_player->play(filename, _speed, offset, startFrame);
+	_player->play(filename, frameRate, offset, startFrame);
 }
 
 void Insane::smush_warpMouse(int x, int y, int buttons) {
@@ -768,6 +772,7 @@ int32 Insane::idx2Tweak() {
 void Insane::smush_setToFinish() {
 	debugC(DEBUG_INSANE, "Video is set to finish");
 	_vm->_smushVideoShouldFinish = true;
+	_player->resetAudioTracks();
 }
 
 // smlayer_stopSound
@@ -1293,20 +1298,24 @@ void Insane::smlayer_showStatusMsg(int32 arg_0, byte *renderBitmap, int32 codecp
 	}
 
 	assert(sf != NULL);
-	sf->setColor(color);
 
+	if (_vm->_language == Common::HE_ISR && !(flags & kStyleAlignCenter)) {
+		flags |= kStyleAlignRight;
+		pos_x = _player->_width - 1 - pos_x;
+	}
+	TextStyleFlags flg = (TextStyleFlags)(flags & 7);
 	// flags:
 	// bit 0 - center                  0x01
 	// bit 1 - not used (align right)  0x02
 	// bit 2 - word wrap               0x04
 	// bit 3 - switchable              0x08
 	// bit 4 - fill background         0x10
-	if ((flags & 4) || _vm->_language == Common::HE_ISR) {
+	if (flg & kStyleWordWrap) {
 		Common::Rect clipRect(0, 0, _player->_width, _player->_height);
-		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawStringWrap(str, renderBitmap, clipRect, pos_x, pos_y, color, flg);
 	} else {
 		Common::Rect clipRect(10, 0, 310, _player->_height);
-		sf->drawString(str, renderBitmap, clipRect, pos_x, pos_y, flags & 1);
+		sf->drawString(str, renderBitmap, clipRect, pos_x, pos_y, color, flg);
 	}
 
 

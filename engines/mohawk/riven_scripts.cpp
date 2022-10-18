@@ -167,7 +167,7 @@ RivenScriptPtr RivenScriptManager::createScriptFromData(uint commandCount, ...) 
 		uint16 argumentCount = va_arg(args, int);
 		writeStream.writeUint16BE(argumentCount);
 
-		for (uint j = 0; j < commandCount; j++) {
+		for (uint j = 0; j < argumentCount; j++) {
 			uint16 argument = va_arg(args, int);
 			writeStream.writeUint16BE(argument);
 		}

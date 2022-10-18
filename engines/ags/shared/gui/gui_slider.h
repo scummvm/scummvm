@@ -37,8 +37,13 @@ public:
 	bool IsHorizontal() const;
 	bool IsOverControl(int x, int y, int leeway) const override;
 
+	// Compatibility: sliders are not clipped as of 3.6.0
+	bool IsContentClipped() const override { return false; }
+	bool HasAlphaChannel() const override;
+
 	// Operations
-	void Draw(Bitmap *ds) override;
+	Rect CalcGraphicRect(bool clipped) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 
 	// Events
 	bool OnMouseDown() override;
@@ -62,9 +67,15 @@ public:
 	bool    IsMousePressed;
 
 private:
-	// The following variables are not persisted on disk
-	// Cached coordinates of slider handle
+	// Updates dynamic metrics and positions of elements
+	void UpdateMetrics();
+
+	// Cached coordinates of slider bar; in relative coords
+	Rect    _cachedBar;
+	// Cached coordinates of slider handle; in relative coords
 	Rect    _cachedHandle;
+	// The length of the handle movement range, in pixels
+	int     _handleRange;
 };
 
 } // namespace Shared

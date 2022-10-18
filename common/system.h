@@ -29,6 +29,7 @@
 #include "common/ustr.h"
 #include "graphics/pixelformat.h"
 #include "graphics/mode.h"
+#include "graphics/opengl/context.h"
 
 namespace Audio {
 class Mixer;
@@ -407,6 +408,12 @@ public:
 		kFeatureOpenGLForGame,
 
 		/**
+		 * This feature flag can be used to check if shaders are supported
+		 * and can be used for 3D game rendering.
+		 */
+		kFeatureShadersForGame,
+
+		/**
 		 * If supported, this feature flag can be used to check if
 		 * waiting for vertical sync before refreshing the screen to reduce
 		 * tearing is enabled.
@@ -476,7 +483,7 @@ public:
 		/**
 		* Shaders.
 		*/
-		kFeatureShader,
+		kFeatureShaders,
 
 		/**
 		* Support for using the native system file browser dialog
@@ -729,65 +736,44 @@ public:
 	}
 
 	/**
-	 * Retrieve a list of all hardware shaders supported by this backend.
+	 * Return the chosen OpenGL type.
 	 *
-	 * This can be only hardware shaders.
-	 * It is completely up to the backend maintainer to decide what is
-	 * appropriate here and what not.
-	 * The list is terminated by an all-zero entry.
+	 * This function works even when a 2D graphical manager is active and
+	 * let to select a proper renderer before changing mode.
+	 * Implementation having feature kFeatureOpenGLForGame are expected to
+	 * override this function.
 	 *
-	 * @return List of supported shaders.
+	 * @return the OpenGL type of context which is supported.
 	 */
-	virtual const GraphicsMode *getSupportedShaders() const {
-		static const OSystem::GraphicsMode no_shader[2] = {{"NONE", "Normal (no shader)", 0}, {nullptr, nullptr, 0}};
-		return no_shader;
+	virtual OpenGL::ContextType getOpenGLType() const {
+		return OpenGL::kContextNone;
 	}
 
+#if defined(USE_OPENGL) && defined(USE_GLAD)
 	/**
-	 * Return the ID of the 'default' shader mode.
+	 * Query the address of an OpenGL function by name.
 	 *
-	 * What exactly this means is up to the backend.
-	 * This mode is set by the client code when no user overrides
-	 * are present (i.e. if no custom shader mode is selected using
-	 * the command line or a config file).
+	 * This can only be used after a context has been created.
+	 * Please note that this function can return valid addresses even if the
+	 * OpenGL context does not support the function.
 	 *
-	 * @return ID of the 'default' shader mode.
+	 * @param name The name of the OpenGL function.
+	 * @return An function pointer for the requested OpenGL function or
+	 *         nullptr in case of failure.
 	 */
-	virtual int getDefaultShader() const { return 0; }
+	virtual void *getOpenGLProcAddress(const char *name) const { return nullptr; }
+#endif
 
 	/**
-	 * Switch to the specified shader mode.
+	 * Load the specified shader.
 	 *
-	 * If switching to the new mode fails, this method returns false.
+	 * If loading the new shader fails, this method returns false.
 	 *
-	 * @param id ID of the new shader mode.
+	 * @param fileNode File node of the new shader.
 	 *
 	 * @return True if the switch was successful, false otherwise.
 	 */
-	virtual bool setShader(int id) { return false; }
-
-	/**
-	 * Switch to the shader mode with the given name.
-	 *
-	 * If @p name is unknown, or if switching to the new mode fails,
-	 * this method returns false.
-	 *
-	 * @param name Name of the new shader mode.
-	 *
-	 * @return True if the switch was successful, false otherwise.
-	 *
-	 * @note This is implemented using the setShader(int) method, as well
-	 *       as getSupportedShaders() and getDefaultShader().
-	 *       In particular, backends do not have to overload this!
-	 */
-	bool setShader(const char *name);
-
-	/**
-	 * Determine which shader is currently active.
-	 *
-	 * @return ID of the active shader.
-	 */
-	virtual int getShader() const { return 0; }
+	virtual bool setShader(const Common::String &fileName) { return false; }
 
 	/**
 	 * Retrieve a list of all stretch modes supported by this backend.
@@ -863,8 +849,8 @@ public:
 	 * Return the 'default' scale factor.
 	 *
 	 * This mode is set by the client code when no user overrides
-	 * are present (i.e. if no custom shader mode is selected using
-	 * the command line or a config file).
+	 * are present (i.e. if no custom scaler is selected using the
+	 * command line or a config file).
 	 *
 	 * @return The 'default' scale factor.
 	 */
@@ -1005,7 +991,8 @@ public:
 		kTransactionSizeChangeFailed = (1 << 3),        /**< Failed switching the screen dimensions (initSize) */
 		kTransactionFormatNotSupported = (1 << 4),      /**< Failed setting the color format */
 		kTransactionFilteringFailed = (1 << 5),         /**< Failed setting the filtering mode */
-		kTransactionStretchModeSwitchFailed = (1 << 6)  /**< Failed setting the stretch mode */
+		kTransactionStretchModeSwitchFailed = (1 << 6), /**< Failed setting the stretch mode */
+		kTransactionShaderChangeFailed = (1 << 7),      /**< Failed setting the shader */
 	};
 
 	/**

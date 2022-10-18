@@ -24,11 +24,12 @@
 #include "ags/engine/ac/global_character.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/shared/ac/game_version.h"
+#include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
 
-
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *CCCharacter::GetType() {
@@ -37,16 +38,19 @@ const char *CCCharacter::GetType() {
 
 // serialize the object into BUFFER (which is BUFSIZE bytes)
 // return number of bytes used
-int CCCharacter::Serialize(const char *address, char *buffer, int bufsize) {
-	const CharacterInfo *chaa = (const CharacterInfo *)address;
-	StartSerialize(buffer);
-	SerializeInt(chaa->index_id);
-	return EndSerialize();
+size_t CCCharacter::CalcSerializeSize() {
+	return sizeof(int32_t);
 }
 
-void CCCharacter::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int num = UnserializeInt();
+// serialize the object into BUFFER (which is BUFSIZE bytes)
+// return number of bytes used
+void CCCharacter::Serialize(const char *address, Stream *out) {
+	const CharacterInfo *chaa = (const CharacterInfo *)address;
+	out->WriteInt32(chaa->index_id);
+}
+
+void CCCharacter::Unserialize(int index, Stream *in, size_t data_sz) {
+	int num = in->ReadInt32();
 	ccRegisterUnserializedObject(index, &_GP(game).chars[num], this);
 }
 

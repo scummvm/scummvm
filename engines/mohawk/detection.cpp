@@ -63,6 +63,7 @@ static const PlainGameDescriptor mohawkGames[] = {
 	{"stellaluna", "Stellaluna"},
 	{"sheila", "Sheila Rae, the Brave"},
 	{"rugratsps", "Rugrats Print Shop" },
+	{"wsg", "Williams-Sonoma Guide to Good Cooking" },
 	{nullptr, nullptr}
 };
 
@@ -89,11 +90,11 @@ public:
 		return detectGameFilebased(allFiles, Mohawk::fileBased);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "mohawk";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Mohawk";
 	}
 

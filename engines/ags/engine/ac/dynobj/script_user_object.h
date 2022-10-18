@@ -41,7 +41,7 @@ protected:
 
 public:
 	static ScriptUserObject *CreateManaged(size_t size);
-	void            Create(const char *data, size_t size);
+	void Create(const char *data, AGS::Shared::Stream *in, size_t size);
 
 	// return the type name of the object
 	const char *GetType() override;
@@ -49,7 +49,7 @@ public:
 	// serialize the object into BUFFER (which is BUFSIZE bytes)
 	// return number of bytes used
 	int Serialize(const char *address, char *buffer, int bufsize) override;
-	virtual void Unserialize(int index, const char *serializedData, int dataSize);
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz);
 
 	// Support for reading and writing object values by their relative offset
 	const char *GetFieldPtr(const char *address, intptr_t offset) override;

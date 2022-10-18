@@ -74,7 +74,7 @@ bool AudioSpeech::playSpeech(const Common::String &name, int pan) {
 	// Audio cache is not usable as hash function is producing collision for speech lines.
 	// It was not used in the original game either
 
-	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(name));
+	Common::ScopedPtr<Common::SeekableReadStream> r(_vm->getResourceStream(_vm->_enhancedEdition ? ("audio/" + name) : name));
 
 	if (!r) {
 		warning("AudioSpeech::playSpeech: AUD resource \"%s\" not found", name.c_str());

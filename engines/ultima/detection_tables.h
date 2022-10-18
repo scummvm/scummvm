@@ -22,8 +22,26 @@
 namespace Ultima {
 
 #define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_FRAME_SKIPPING    GUIO_GAMEOPTIONS2
+#define GAMEOPTION_FRAME_LIMITING    GUIO_GAMEOPTIONS3
+#define GAMEOPTION_CHEATS            GUIO_GAMEOPTIONS4
+#define GAMEOPTION_HIGH_RESOLUTION   GUIO_GAMEOPTIONS5
+#define GAMEOPTION_FOOTSTEP_SOUNDS   GUIO_GAMEOPTIONS6
+#define GAMEOPTION_JUMP_TO_MOUSE     GUIO_GAMEOPTIONS7
+#define GAMEOPTION_FONT_REPLACEMENT  GUIO_GAMEOPTIONS8
+#define GAMEOPTION_FONT_ANTIALIASING GUIO_GAMEOPTIONS9
+#define GAMEOPTION_CAMERA_WITH_SILENCER GUIO_GAMEOPTIONS10
+#define GAMEOPTION_ALWAYS_CHRISTMAS     GUIO_GAMEOPTIONS11
 
-#define GUI_OPTIONS_ULTIMA8	GUIO1(GAMEOPTION_ORIGINAL_SAVELOAD)
+#define GUI_OPTIONS_ULTIMA1	GUIO0()
+#define GUI_OPTIONS_ULTIMA4	GUIO1(GUIO_NOSPEECH)
+#define GUI_OPTIONS_ULTIMA6	GUIO0()
+#define GUI_OPTIONS_ULTIMA8	GUIO9(GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_FRAME_SKIPPING, GAMEOPTION_FRAME_LIMITING, GAMEOPTION_CHEATS, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_FOOTSTEP_SOUNDS, GAMEOPTION_JUMP_TO_MOUSE, GAMEOPTION_FONT_REPLACEMENT, GAMEOPTION_FONT_ANTIALIASING)
+#define GUI_OPTIONS_REMORSE	GUIO6(GUIO_NOMIDI, GAMEOPTION_FRAME_SKIPPING, GAMEOPTION_FRAME_LIMITING, GAMEOPTION_CHEATS, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_CAMERA_WITH_SILENCER)
+#define GUI_OPTIONS_REGRET	GUIO7(GUIO_NOMIDI, GAMEOPTION_FRAME_SKIPPING, GAMEOPTION_FRAME_LIMITING, GAMEOPTION_CHEATS, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_CAMERA_WITH_SILENCER, GAMEOPTION_ALWAYS_CHRISTMAS)
+#define GUI_OPTIONS_REGRET_DEMO	GUIO6(GUIO_NOMIDI, GAMEOPTION_FRAME_SKIPPING, GAMEOPTION_FRAME_LIMITING, GAMEOPTION_CHEATS, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_CAMERA_WITH_SILENCER)
+#define GUI_OPTIONS_MARTIAN_DREAMS GUIO0()
+#define GUI_OPTIONS_SAVAGE_EMPIRE  GUIO0()
 
 static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 #ifndef RELEASE_BUILD
@@ -41,7 +59,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA1
 		},
 		GAME_ULTIMA1,
 		GF_VGA_ENHANCED
@@ -57,7 +75,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA1
 		},
 		GAME_ULTIMA1,
 		0
@@ -72,7 +90,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA1
 		},
 		GAME_ULTIMA1,
 		0
@@ -88,7 +106,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUI_OPTIONS_ULTIMA4
 		},
 		GAME_ULTIMA4,
 		0
@@ -103,7 +121,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO1(GUIO_NOSPEECH)
+			GUI_OPTIONS_ULTIMA4
 		},
 		GAME_ULTIMA4,
 		GF_VGA_ENHANCED
@@ -118,7 +136,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -133,7 +151,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
@@ -149,7 +167,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -165,7 +183,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
@@ -181,7 +199,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -196,7 +214,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::JA_JPN,
 			Common::kPlatformPC98,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -211,7 +229,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -224,7 +242,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
@@ -239,7 +257,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		0
@@ -252,7 +270,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_NO_FLAGS,
-			GUIO0()
+			GUI_OPTIONS_ULTIMA6
 		},
 		GAME_ULTIMA6,
 		GF_VGA_ENHANCED
@@ -401,7 +419,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_USECODE_DEFAULT,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -416,7 +434,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -431,7 +449,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_ORIG,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -446,7 +464,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::FR_FRA,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_FR,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -461,7 +479,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_USECODE_ES,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -476,7 +494,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_USECODE_DEFAULT,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -491,7 +509,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::JA_JPN,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE | ADGF_USECODE_JA,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -506,7 +524,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_DEMO,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REMORSE
 		},
 		GAME_CRUSADER_REM,
 		0
@@ -521,7 +539,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_DEFAULT,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REGRET
 		},
 		GAME_CRUSADER_REG,
 		0
@@ -536,7 +554,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::DE_DEU,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_DE,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REGRET
 		},
 		GAME_CRUSADER_REG,
 		0
@@ -551,7 +569,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_DEMO,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REGRET_DEMO
 		},
 		GAME_CRUSADER_REG,
 		0
@@ -566,7 +584,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::ES_ESP,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE | ADGF_USECODE_ES,
-			GUIO1(GUIO_NOMIDI)
+			GUI_OPTIONS_REGRET
 		},
 		GAME_CRUSADER_REG,
 		0
@@ -581,7 +599,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
 		0
@@ -596,7 +614,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_MARTIAN_DREAMS
 		},
 		GAME_MARTIAN_DREAMS,
 		GF_VGA_ENHANCED
@@ -612,7 +630,7 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		0
@@ -627,7 +645,37 @@ static const UltimaGameDescription GAME_DESCRIPTIONS[] = {
 			Common::EN_ANY,
 			Common::kPlatformDOS,
 			ADGF_UNSTABLE,
-			GUIO0()
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		GF_VGA_ENHANCED
+	},
+
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_SAVAGE_EMPIRE
+		},
+		GAME_SAVAGE_EMPIRE,
+		0
+	},
+
+	// The Savage Empire v2.1
+	{
+		{
+			"thesavageempire_enh",
+			0,
+			AD_ENTRY1s("talk.lzc", "1bbb5a425e1d7e2e3aa9b887e511ffc6", 160931),
+			Common::EN_ANY,
+			Common::kPlatformDOS,
+			ADGF_UNSTABLE,
+			GUI_OPTIONS_SAVAGE_EMPIRE
 		},
 		GAME_SAVAGE_EMPIRE,
 		GF_VGA_ENHANCED

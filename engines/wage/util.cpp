@@ -53,10 +53,11 @@ namespace Wage {
 Common::Rect *readRect(Common::SeekableReadStream *in) {
 	int x1, y1, x2, y2;
 
-	y1 = in->readSint16BE();
-	x1 = in->readSint16BE();
-	y2 = in->readSint16BE() + 4;
-	x2 = in->readSint16BE() + 4;
+	// Account for the extra two pixels because of the squares on the border
+	y1 = in->readSint16BE() - 2;
+	x1 = in->readSint16BE() - 2;
+	y2 = in->readSint16BE() + 2;
+	x2 = in->readSint16BE() + 2;
 
 	bool normalized = false;
 

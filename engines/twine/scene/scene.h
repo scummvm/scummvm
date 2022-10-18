@@ -51,34 +51,23 @@ struct ZoneStruct {
 	IVec3 mins;
 	IVec3 maxs;
 	ZoneType type = ZoneType::kCube;
-	int16 snap = 0;
+	int32 num;
 	union {
 		struct {
-			int32 newSceneIdx;
 			int32 x;
 			int32 y;
 			int32 z;
 		} ChangeScene;
 		struct {
-			int32 dummy;
 			int32 x;
 			int32 y;
 			int32 z;
 		} CameraView;
-		struct {
-			int32 zoneIdx;
-		} Sceneric;
-		struct {
-			int32 newGrid;
-		} CeillingGrid;
-
 		/** show a text (e.g. when reading a sign) */
 		struct {
-			TextId textIdx;   /*!< text index in the current active text bank */
 			int32 textColor; /*!< text color (see @c ActorStruct::talkColor) */
 		} DisplayText;
 		struct {
-			int32 info0;
 			BonusParameter typesFlag;
 			int32 amount;
 			/**
@@ -136,7 +125,7 @@ private:
 	void resetScene();
 
 	// the first actor is the own hero
-	ActorStruct _sceneActors[NUM_MAX_ACTORS];
+	ActorStruct _sceneActors[NUM_MAX_ACTORS]; // ListObjet
 	int32 _currentSceneSize = 0;
 	bool _isOutsideScene = false; // lba2
 
@@ -195,7 +184,7 @@ public:
 	int16 _currentlyFollowedActor = OWN_ACTOR_SCENE_INDEX;
 	/** Current actor in zone - climbing a ladder */
 	bool _currentActorInZone = false;
-	bool _useScenePatches = false;
+	bool _enableEnhancements = false;
 	/** Current actor manipulated in scripts */
 	int16 _currentScriptValue = 0;
 
@@ -232,7 +221,7 @@ public:
 	 * Process actor zones
 	 * @param actorIdx Process actor index
 	 */
-	void processActorZones(int32 actorIdx);
+	void checkZoneSce(int32 actorIdx);
 };
 
 inline bool Scene::isGameRunning() const {

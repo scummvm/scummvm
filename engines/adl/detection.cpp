@@ -53,7 +53,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("TV emulation"),
 			_s("Emulate composite output to an NTSC TV"),
 			"ntsc",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -63,7 +65,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Color graphics"),
 			_s("Use color graphics instead of monochrome"),
 			"color",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -73,7 +77,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Color graphics"),
 			_s("Use color graphics instead of monochrome"),
 			"color",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -83,7 +89,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Show scanlines"),
 			_s("Darken every other scanline to mimic the look of a CRT"),
 			"scanlines",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -93,7 +101,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Always use sharp monochrome text"),
 			_s("Do not emulate NTSC artifacts for text"),
 			"monotext",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -462,11 +472,11 @@ class AdlMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AdlMetaEngineDetection() : AdvancedMetaEngineDetection(gameFileDescriptions, sizeof(AdlGameDescription), adlGames, optionsList) { }
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "ADL";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "adl";
 	}
 
@@ -478,7 +488,7 @@ public:
 		return debugFlagList;
 	}
 
-	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) override;
+	ADDetectedGames detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) override;
 
 	bool addFileProps(const FileMap &allFiles, Common::String fname, FilePropertiesMap &filePropsMap) const;
 };
@@ -502,9 +512,9 @@ bool AdlMetaEngineDetection::addFileProps(const FileMap &allFiles, Common::Strin
 }
 
 // Based on AdvancedMetaEngine::detectGame
-ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra) {
+ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) {
 	// We run the file-based detector first, if it finds a match we do not search for disk images
-	ADDetectedGames matched = AdvancedMetaEngineDetection::detectGame(parent, allFiles, language, platform, extra);
+	ADDetectedGames matched = AdvancedMetaEngineDetection::detectGame(parent, allFiles, language, platform, extra, skipADFlags, skipIncomplete);
 
 	if (!matched.empty())
 		return matched;

@@ -65,7 +65,7 @@ void Sound::playEffectLooping(uint32 id, uint32 volume, uint16 heading, uint16 a
 }
 
 void Sound::playEffectFadeInOut(uint32 id, uint32 volume, uint16 heading, uint16 attenuation,
-		uint32 fadeInDuration, uint32 playDuration, uint32 fadeOutDuration) {
+	                        uint32 fadeInDuration, uint32 playDuration, uint32 fadeOutDuration) {
 
 	SoundChannel *channel = getChannelForSound(id, kEffect);
 	channel->play(id, fadeInDuration == 0 ? volume : 0, heading, attenuation, true, kEffect);
@@ -278,7 +278,7 @@ bool Sound::isPlaying(uint32 id) {
 }
 
 void Sound::setupNextSound(SoundNextCommand command, int16 controlVar, int16 startSoundId, int16 soundCount,
-		int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId, int32 controlSoundMaxPosition) {
+	                   int32 soundMinDelay, int32 soundMaxDelay, int32 controlSoundId, int32 controlSoundMaxPosition) {
 
 	bool playSeveralSounds = _vm->_state->getSoundNextMultipleSounds();
 

@@ -175,12 +175,14 @@ void Cursor::readFromResource(Datum resourceId) {
 	default:
 		bool readSuccessful = false;
 
-		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_openResFiles.begin(); it != g_director->_openResFiles.end(); ++it) {
-			Common::SeekableReadStreamEndian *cursorStream;
+		for (Common::HashMap<Common::String, Archive *, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo>::iterator it = g_director->_allOpenResFiles.begin(); it != g_director->_allOpenResFiles.end(); ++it) {
+			MacArchive *arch = (MacArchive *)it->_value;
+			Common::SeekableReadStreamEndian *cursorStream = nullptr;
+			if (arch->hasResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt()))
+				cursorStream = arch->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt());
 
-			cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'U', 'R', 'S'), resourceId.asInt());
-			if (!cursorStream)
-				cursorStream = ((MacArchive *)it->_value)->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt());
+			if (!cursorStream && arch->hasResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt()))
+				cursorStream = arch->getResource(MKTAG('C', 'R', 'S', 'R'), resourceId.asInt());
 
 			if (cursorStream && readFromStream(*((Common::SeekableReadStream *)cursorStream), false, 0)) {
 				_usePalette = true;
@@ -188,8 +190,10 @@ void Cursor::readFromResource(Datum resourceId) {
 				readSuccessful = true;
 
 				resetCursor(Graphics::kMacCursorCustom, false, resourceId);
+				delete cursorStream;
 				break;
 			}
+			delete cursorStream;
 		}
 
 		// TODO: figure out where to read custom cursor in windows platform

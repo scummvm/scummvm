@@ -305,7 +305,7 @@ static const char *const k1GUIStringsDOSEnglish[28] = {
 	"off",
 	"Yes",
 	"No",
-	"\x80\x0E\xFF""*""\x88\x0E\xFF""*""\x8D\x0E\xFF""*""\x94\x0E\xFF""*""\x99\x0E\xFF""*""\xA1\x0E\xFF""*""\xA9\x0E\xFF""*""\xB0\x0E\xFF""*""\xB5\x0E\xFF""*Walk speed ",
+	"Walk speed ",
 	"Text speed ",
 	"Music is ",
 	"Sounds are "

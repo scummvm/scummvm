@@ -1468,9 +1468,9 @@ public:
 	bool isPlaying() const;
 	SoundType getSong() const;
 
-	void setVolume(int volume);
-
-	void update();
+	// The update() method is to be used for cross fading, fade-in and fade-out of music
+	// However, it's currently unused and only partially implemented.
+//	void update();
 
 private:
 	static Common::String getFileName(SoundType song);
@@ -1501,16 +1501,6 @@ public:
 	void init();
 	void save(Common::OutSaveFile *out);
 	void loadSaveFile(Common::InSaveFile *in);
-	void setMusicVolume(int value);
-	int getMusicVolume() {
-		return _musicVolume;
-	}
-	void setSFXVolume(int value) {
-		_sfxVolume = value;
-	}
-	int getSFXVolume() {
-		return _sfxVolume;
-	}
 	void setVoiceStatus(bool value) {
 		_voicesOn = value;
 	}
@@ -1518,7 +1508,7 @@ public:
 		return _voicesOn;
 	}
 	void clearPersistent() {
-		memset(&_voicePlayed[0], 0, sizeof(_voicePlayed));
+		memset(_voicePlayed, 0, NUM_VOICES * sizeof(byte));
 	}
 
 	void playSound(int index);
@@ -1539,7 +1529,9 @@ public:
 	void fadeOutMusic(int ramp);
 	void stopMusic();
 	void beginMusic(SoundType song, bool fadeIn, int ramp);
-	void updateMusic();
+	// The updateMusic() method is to be used for cross fading, fade-in and fade-out of music
+	// However, it's currently unused and only partially implemented.
+//	void updateMusic();
 	bool songPlaying(SoundType song);
 	void stopChannel(int channel);
 	int registerSound(const char *name);
@@ -1570,13 +1562,11 @@ public:
 	// Music System Variables
 
 	Song _song1, _song2;
-	int _musicVolume;
 
 	// Sound Caching System Variables
 
 	SoundCache _soundCache[kMaxSounds];
 	int _numSounds;
-	int _sfxVolume;
 	Audio::SoundHandle _handles[kMaxSNDChannels];
 
 };

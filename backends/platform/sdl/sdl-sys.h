@@ -23,7 +23,7 @@
 #define BACKEND_SDL_SYS_H
 
 // The purpose of this header is to include the SDL headers in a uniform
-// fashion, even on the Symbian port.
+// fashion.
 // Moreover, it contains a workaround for the fact that SDL_rwops.h uses
 // a FILE pointer in one place, which conflicts with common/forbidden.h.
 // The SDL 1.3 headers also include strings.h
@@ -57,6 +57,11 @@
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
 #undef system
 #define system FAKE_system
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mkdir)
+#undef mkdir
+#define mkdir FAKE_mkdir
 #endif
 
 // Fix compilation with MacPorts SDL 2
@@ -163,11 +168,7 @@
 
 #endif
 
-#if defined(__SYMBIAN32__)
-#include <esdl\SDL.h>
-#else
 #include <SDL.h>
-#endif
 
 // Ignore warnings from system headers pulled by SDL
 #pragma warning(push)
@@ -247,6 +248,11 @@
 #if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_system)
 #undef system
 #define system(a) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
+#endif
+
+#if !defined(FORBIDDEN_SYMBOL_ALLOW_ALL) && !defined(FORBIDDEN_SYMBOL_EXCEPTION_mkdir)
+#undef mkdir
+#define mkdir(a,b) FORBIDDEN_look_at_common_forbidden_h_for_more_info SYMBOL !%*
 #endif
 
 // re-forbid all those time.h symbols again (if they were forbidden)

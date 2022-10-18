@@ -212,7 +212,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Widescreen mod"),
 			_s("Enable widescreen rendering in fullscreen mode."),
 			"widescreen_mod",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -227,11 +229,11 @@ public:
 		_directoryGlobs = directoryGlobs;
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Myst III";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "myst3";
 	}
 

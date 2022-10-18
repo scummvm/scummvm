@@ -33,6 +33,8 @@ Screen_LoK::Screen_LoK(KyraEngine_LoK *vm, OSystem *system)
 	_vm = vm;
 	_unkPtr1 = _unkPtr2 = nullptr;
 	_bitBlitNum = 0;
+	memset(_saveLoadPage, 0, sizeof(_saveLoadPage));
+	memset(_saveLoadPageOvl, 0, sizeof(_saveLoadPageOvl));
 }
 
 Screen_LoK::~Screen_LoK() {
@@ -531,6 +533,147 @@ void ChineseTwoByteFontLoK::processColorMap() {
 	_textColor[0] = _colorMap[1] | (cs << 8);
 	_textColor[0] = TO_LE_16(_textColor[0]);
 	_textColor[1] = _colorMap[0] | (_colorMap[0] << 8);
+}
+
+JohabFontLoK::JohabFontLoK(Font *&font8fat, const uint16 *lookupTable, uint32 lookupTableSize) : _font8fat(font8fat), _height(15), _width(15), _fileData(0), _colorMap(0), _glyphTemp(0) {
+	assert(lookupTable);
+	assert(lookupTableSize == 224);
+	for (int i = 0; i < 7; ++i)
+		_2byteTables[i] = &lookupTable[i << 5];
+	memset(_glyphData, 0, sizeof(_glyphData));
+	_glyphTemp = new uint8[30];
+}
+
+JohabFontLoK::~JohabFontLoK() {
+	delete[] _fileData;
+	delete[] _glyphTemp;
+}
+
+bool JohabFontLoK::load(Common::SeekableReadStream &data) {
+	if (_fileData)
+		return false;
+
+	if (!data.size())
+		return false;
+
+	uint32 fileSize = data.size();
+
+	if (fileSize != (kNumJongseong + kNumJungseong + kNumChoseong) * 30) {
+		warning("HangulFontLoK::load(): Invalid font file size '%d' (expected: '%d').", fileSize, (kNumJongseong + kNumJungseong + kNumChoseong) * 30);
+		return false;
+	}
+
+	uint8 *dst = new uint8[fileSize];
+	if (!dst)
+		return false;
+
+	data.read(dst, fileSize);
+	_fileData = dst;
+
+	_glyphData[0] = _fileData;
+	_glyphData[1] = _glyphData[0] + (kNumJongseong * 30);
+	_glyphData[2] = _glyphData[1] + (kNumJungseong * 30);
+
+	return true;
+}
+
+int JohabFontLoK::getCharWidth(uint16 c) const {
+	assert(_font8fat);
+	return (c >= 0x80) ? _width + 1 : _font8fat->getCharWidth(c);
+}
+
+int JohabFontLoK::getCharHeight(uint16 c) const {
+	return _colorMap[3] ? _height + 2 : _height;
+}
+
+void JohabFontLoK::setColorMap(const uint8 *src) {
+	_colorMap = src;
+	assert(_font8fat);
+	_font8fat->setColorMap(src);
+}
+
+void JohabFontLoK::drawChar(uint16 c, byte *dst, int pitch, int) const {
+	if (c < 0x80) {
+		assert(_font8fat);
+		_font8fat->drawChar(c, dst + (c == '\"' ? 0 : 5) * pitch, pitch, 0);
+		return;
+	}
+
+	const uint8 *glyph = createGlyph(c);
+	dst += (pitch + 1);
+
+	if (_colorMap[3]) {
+		renderGlyph(dst - 1, glyph, _colorMap[3], pitch);
+		renderGlyph(dst + 1, glyph, _colorMap[3], pitch);
+		renderGlyph(dst - pitch, glyph, _colorMap[3], pitch);
+		renderGlyph(dst + pitch, glyph, _colorMap[3], pitch);
+	}
+
+	renderGlyph(dst, glyph, _colorMap[1], pitch);
+}
+
+const uint8 *JohabFontLoK::createGlyph(uint16 chr) const {
+	memset(_glyphTemp, 0, 30);
+
+	uint16 t[3];
+	memset(t, 0, sizeof(t));
+
+	chr = (chr << 8) | (chr >> 8);
+	uint8 i1 = chr & 0x1f;
+	uint8 i2 = (chr >> 5) & 0x1f;
+	uint8 i3 = (chr >> 10) & 0x1f;
+
+	// determine jungseong glyph part
+	uint16 r1 = _2byteTables[1][i2];
+	if ((int16)r1 > 0)
+		r1 += (_2byteTables[3][i3] + _2byteTables[6][i1] - 3);
+
+	// determine jongseong glyph part
+	uint16 r2 = _2byteTables[0][i3];
+	if ((int16)r2 > 0)
+		r2 += (_2byteTables[4][i2] + _2byteTables[6][i1]);
+
+	// determine choseong glyph part
+	uint16 r3 = _2byteTables[2][i1];
+	if ((int16)r3 > 0)
+		r3 += (_2byteTables[5][i2] - 3);
+
+	t[0] = r2 >> 5;
+	t[1] = (r1 >> 5) - 2;
+	t[2] = (r3 >> 5) - 2;
+
+	const uint8 lim[3] = { kNumJongseong, kNumJungseong, kNumChoseong };
+
+	for (int l = 0; l < 3; ++l) {
+		if (t[l] <= lim[l]) {
+			const uint8 *src = &_glyphData[l][t[l] * 30];
+			for (int i = 0; i < 30; ++i)
+				_glyphTemp[i] |= *src++;
+		}
+	}
+
+	return _glyphTemp;
+}
+
+void JohabFontLoK::renderGlyph(byte *dst, const uint8 *glyph, uint8 col, int pitch) const {
+	const uint8 *src = glyph;
+	pitch -= 15;
+
+	for (int y = 0; y < _height; ++y) {
+		uint8 m = 0;
+		uint8 in = 0;
+		for (int x = 0; x < _width; ++x) {
+			if (m == 0) {
+				in = *src++;
+				m = 0x80;
+			}
+			if (in & m)
+				*dst = col;
+			dst++;
+			m >>= 1;
+		}
+		dst += pitch;
+	}
 }
 
 } // End of namespace Kyra

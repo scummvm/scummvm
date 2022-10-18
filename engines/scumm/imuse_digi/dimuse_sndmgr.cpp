@@ -192,7 +192,7 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 		error("ImuseDigiSndMgr::openSound() Unknown soundType %d (trying to load sound %d)", soundType, soundId);
 	}
 
-	strcpy(sound->name, soundName);
+	Common::strlcpy(sound->name, soundName, sizeof(sound->name));
 	sound->soundId = soundId;
 
 	if (soundType == IMUSE_BUNDLE) {
@@ -202,7 +202,9 @@ ImuseDigiSndMgr::SoundDesc *ImuseDigiSndMgr::openSound(int32 soundId, const char
 }
 
 void ImuseDigiSndMgr::closeSound(SoundDesc *soundDesc) {
-	assert(checkForProperHandle(soundDesc));
+	// Check if there's an actual sound to close...
+	if (!checkForProperHandle(soundDesc))
+		return;
 
 	if (soundDesc->resPtr) {
 		bool found = false;
@@ -242,7 +244,9 @@ void ImuseDigiSndMgr::scheduleSoundForDeallocation(int soundId) {
 		}
 	}
 
-	assert(checkForProperHandle(soundDesc));
+	// Check if there's an actual sound to deallocate...
+	if (!checkForProperHandle(soundDesc))
+		return;
 
 	soundDesc->scheduledForDealloc = true;
 }

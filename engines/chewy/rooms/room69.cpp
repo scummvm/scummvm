@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -30,8 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room69::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
+	_G(det)->playSound(0, 0);
 	
 	_G(gameState).ScrollxStep = 2;
 	_G(gameState).ZoomXy[P_HOWARD][0] = 46;
@@ -48,7 +48,6 @@ void Room69::entry(int16 eib_nr) {
 	if (_G(flags).LoadGame)
 		return;
 
-	_G(cur_hide_flag) = false;
 	hideCur();
 
 	if (eib_nr == 102)
@@ -84,7 +83,7 @@ void Room69::look_schild() {
 
 int16 Room69::use_bruecke() {
 	int16 action_flag = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		action_flag = true;
 

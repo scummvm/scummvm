@@ -39,7 +39,6 @@
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/gui.h"
 #include "ags/engine/ac/lip_sync.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/route_finder.h"
 #include "ags/engine/ac/sys_events.h"
@@ -105,9 +104,10 @@ bool engine_init_backend() {
 }
 
 void winclosehook() {
-	_G(want_exit) = 1;
-	_G(abort_engine) = 1;
+	_G(want_exit) = true;
+	_G(abort_engine) = true;
 	_G(check_dynamic_sprites_at_exit) = 0;
+	AbortGame();
 }
 
 void engine_setup_window() {
@@ -175,16 +175,6 @@ bool engine_run_setup(const ConfigTree &cfg, int &app_res) {
 	return true;
 }
 
-void engine_force_window() {
-	// Force to run in a window, override the config file
-	// TODO: actually overwrite config tree instead
-	if (_G(force_window) == 1) {
-		_GP(usetup).Screen.Windowed = true;
-	} else if (_G(force_window) == 2) {
-		_GP(usetup).Screen.Windowed = false;
-	}
-}
-
 // Scans given directory for the AGS game config. If such config exists
 // and it contains data file name, then returns one.
 // Otherwise returns empty string.
@@ -193,7 +183,7 @@ static String find_game_data_in_config(const String &path) {
 	ConfigTree cfg;
 	String def_cfg_file = Path::ConcatPaths(path, DefaultConfigFileName);
 	if (IniUtil::Read(def_cfg_file, cfg)) {
-		String data_file = INIreadstring(cfg, "misc", "datafile");
+		String data_file = CfgReadString(cfg, "misc", "datafile");
 		Debug::Printf("Found game config: %s", def_cfg_file.GetCStr());
 		Debug::Printf(" Cfg: data file: %s", data_file.GetCStr());
 		// Only accept if it's a relative path
@@ -277,45 +267,25 @@ void engine_init_mouse() {
 }
 
 void engine_locate_speech_pak() {
-	_GP(play).want_speech = -2;
-
-	if (!_GP(usetup).no_speech_pack) {
-		String speech_file = "speech.vox";
-		String speech_filepath = find_assetlib(speech_file);
-		if (!speech_filepath.IsEmpty()) {
-			Debug::Printf("Initializing speech vox");
-			if (_GP(AssetMgr)->AddLibrary(speech_filepath) != Shared::kAssetNoError) {
-				_G(platform)->DisplayAlert("Unable to read voice pack, file could be corrupted or of unknown format.\nSpeech voice-over will be disabled.");
-				return;
-			}
-
-			Debug::Printf(kDbgMsg_Info, "Voice pack found and initialized.");
-			_GP(play).want_speech = 1;
-		} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).VoiceDir2) != 0) {
-			// If we have custom voice directory set, we will enable voice-over even if speech.vox does not exist
-			Debug::Printf(kDbgMsg_Info, "Voice pack was not found, but explicit voice directory is defined: enabling voice-over.");
-			_GP(play).want_speech = 1;
-		}
-		_GP(ResPaths).SpeechPak.Name = speech_file;
-		_GP(ResPaths).SpeechPak.Path = speech_filepath;
-	}
+	init_voicepak("");
 }
 
 void engine_locate_audio_pak() {
-	_GP(play).separate_music_lib = 0;
+	_GP(play).separate_music_lib = false;
 	String music_file = _GP(game).GetAudioVOXName();
 	String music_filepath = find_assetlib(music_file);
 	if (!music_filepath.IsEmpty()) {
 		if (_GP(AssetMgr)->AddLibrary(music_filepath) == kAssetNoError) {
 			Debug::Printf(kDbgMsg_Info, "%s found and initialized.", music_file.GetCStr());
-			_GP(play).separate_music_lib = 1;
+			_GP(play).separate_music_lib = true;
 			_GP(ResPaths).AudioPak.Name = music_file;
 			_GP(ResPaths).AudioPak.Path = music_filepath;
 		} else {
 			_G(platform)->DisplayAlert("Unable to initialize digital audio pack '%s', file could be corrupt or of unsupported format.",
-			                           music_file.GetCStr());
+				music_file.GetCStr());
 		}
-	} else if (Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
+	} else if (!_GP(ResPaths).AudioDir2.IsEmpty() &&
+			Path::ComparePaths(_GP(ResPaths).DataDir, _GP(ResPaths).AudioDir2) != 0) {
 		Debug::Printf(kDbgMsg_Info, "Audio pack was not found, but explicit audio directory is defined.");
 	}
 }
@@ -356,23 +326,28 @@ void engine_init_timer() {
 
 void engine_init_audio() {
 #if !AGS_PLATFORM_SCUMMVM
-	if (_GP(usetup).audio_backend != 0) {
+	if (usetup.audio_backend != 0) {
 		Debug::Printf("Initializing audio");
-		audio_core_init(); // audio core system
+		try {
+			audio_core_init(); // audio core system
+		} catch (std::runtime_error ex) {
+			Debug::Printf(kDbgMsg_Error, "Failed to initialize audio: %s", ex.what());
+			usetup.audio_backend = 0;
+		}
 	}
 #endif
 
-	_G(our_eip) = -181;
-
-	if (_GP(usetup).audio_backend == 0) {
+	if (!_GP(usetup).audio_enabled) {
 		// all audio is disabled
-		// and the voice mode should not go to Voice Only
-		_GP(play).want_speech = -2;
-		_GP(play).separate_music_lib = 0;
+		_GP(play).voice_avail = false;
+		_GP(play).separate_music_lib = false;
+		Debug::Printf(kDbgMsg_Info, "Audio is disabled");
 	}
 }
 
 void engine_init_debug() {
+	if (_GP(usetup).show_fps)
+		_G(display_fps) = kFPS_Forced;
 	if ((_G(debug_flags) & (~DBG_DEBUGMODE)) > 0) {
 		_G(platform)->DisplayAlert("Engine debugging enabled.\n"
 		                           "\nNOTE: You have selected to enable one or more engine debugging options.\n"
@@ -410,22 +385,6 @@ int engine_load_game_data() {
 	return 0;
 }
 
-int engine_check_register_game() {
-	if (_G(justRegisterGame)) {
-		_G(platform)->RegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
-	if (_G(justUnRegisterGame)) {
-		_G(platform)->UnRegisterGameWithGameExplorer();
-		_G(proper_exit) = 1;
-		return EXIT_NORMAL;
-	}
-
-	return 0;
-}
-
 // Replace special tokens inside a user path option
 static void resolve_configured_path(String &option) {
 	option.Replace("$GAMENAME$", _GP(game).gamename);
@@ -443,19 +402,8 @@ void engine_init_user_directories() {
 	if (!_GP(usetup).shared_data_dir.IsEmpty())
 		Debug::Printf(kDbgMsg_Info, "Shared data directory: %s", _GP(usetup).shared_data_dir.GetCStr());
 
-	// if end-user specified custom save path, use it
-	bool res = false;
-	if (!_GP(usetup).user_data_dir.IsEmpty()) {
-		res = SetCustomSaveParent(_GP(usetup).user_data_dir);
-		if (!res) {
-			Debug::Printf(kDbgMsg_Warn, "WARNING: custom user save path failed, using default system paths");
-			res = false;
-		}
-	}
-	// if there is no custom path, or if custom path failed, use default system path
-	if (!res) {
-		SetSaveGameDirectoryPath(Path::ConcatPaths(UserSavedgamesRootToken, _GP(game).saveGameFolderName));
-	}
+	// Initialize default save directory early, for we'll need it to set restart point
+	SetDefaultSaveDirectory();
 }
 
 #if AGS_PLATFORM_OS_ANDROID
@@ -562,7 +510,6 @@ void show_preload() {
 
 int engine_init_sprites() {
 	Debug::Printf(kDbgMsg_Info, "Initialize sprites");
-
 	HError err = _GP(spriteset).InitFile(SpriteFile::DefaultSpriteFileName, SpriteFile::DefaultSpriteIndexName);
 	if (!err) {
 		sys_main_shutdown();
@@ -574,6 +521,8 @@ int engine_init_sprites() {
 		return EXIT_ERROR;
 	}
 
+	if (_GP(usetup).SpriteCacheSize > 0)
+		_GP(spriteset).SetMaxCacheSize(_GP(usetup).SpriteCacheSize);
 	return 0;
 }
 
@@ -582,7 +531,10 @@ void engine_init_game_settings() {
 	Debug::Printf("Initialize game settings");
 
 	// Setup a text encoding mode depending on the game data hint
-	set_uformat(U_ASCII);
+	if (_GP(game).options[OPT_GAMETEXTENCODING] == 65001) // utf-8 codepage number
+		set_uformat(U_UTF8);
+	else
+		set_uformat(U_ASCII);
 
 	int ee;
 
@@ -608,18 +560,10 @@ void engine_init_game_settings() {
 	if (_G(playerchar)->view >= 0)
 		precache_view(_G(playerchar)->view);
 
-	/*  dummygui.guiId = -1;
-	dummyguicontrol.guin = -1;
-	dummyguicontrol.objn = -1;*/
-
 	_G(our_eip) = -6;
-	//  _GP(game).chars[0].talkview=4;
-	//init_language_text(_GP(game).langcodes[0]);
 
 	for (ee = 0; ee < MAX_ROOM_OBJECTS; ee++) {
 		_G(scrObj)[ee].id = ee;
-		// 64 bit: Using the id instead
-		// _G(scrObj)[ee].obj = NULL;
 	}
 
 	for (ee = 0; ee < _GP(game).numcharacters; ee++) {
@@ -633,8 +577,8 @@ void engine_init_game_settings() {
 		_GP(game).chars[ee].baseline = -1;
 		_GP(game).chars[ee].walkwaitcounter = 0;
 		_GP(game).chars[ee].z = 0;
-		_G(charextra)[ee].xwas = INVALID_X;
-		_G(charextra)[ee].zoom = 100;
+		_GP(charextra)[ee].xwas = INVALID_X;
+		_GP(charextra)[ee].zoom = 100;
 		if (_GP(game).chars[ee].view >= 0) {
 			// set initial loop to 0
 			_GP(game).chars[ee].loop = 0;
@@ -642,10 +586,10 @@ void engine_init_game_settings() {
 			if (_GP(views)[_GP(game).chars[ee].view].loops[0].numFrames < 1)
 				_GP(game).chars[ee].loop = 1;
 		}
-		_G(charextra)[ee].process_idle_this_time = 0;
-		_G(charextra)[ee].invorder_count = 0;
-		_G(charextra)[ee].slow_move_counter = 0;
-		_G(charextra)[ee].animwait = 0;
+		_GP(charextra)[ee].process_idle_this_time = 0;
+		_GP(charextra)[ee].invorder_count = 0;
+		_GP(charextra)[ee].slow_move_counter = 0;
+		_GP(charextra)[ee].animwait = 0;
 	}
 
 	_G(our_eip) = -5;
@@ -716,6 +660,7 @@ void engine_init_game_settings() {
 	_GP(play).music_master_volume = 100 + LegacyMusicMasterVolumeAdjustment;
 	_GP(play).digital_master_volume = 100;
 	_GP(play).screen_flipped = 0;
+	_GP(play).speech_mode = kSpeech_VoiceText;
 	_GP(play).cant_skip_speech = user_to_internal_skip_speech((SkipSpeechStyle)_GP(game).options[OPT_NOSKIPTEXT]);
 	_GP(play).sound_volume = 255;
 	_GP(play).speech_volume = 255;
@@ -786,7 +731,7 @@ void engine_init_game_settings() {
 	_GP(play).speech_textwindow_gui = _GP(game).options[OPT_TWCUSTOM];
 	if (_GP(play).speech_textwindow_gui == 0)
 		_GP(play).speech_textwindow_gui = -1;
-	strcpy(_GP(play).game_name, _GP(game).gamename);
+	snprintf(_GP(play).game_name, sizeof(_GP(play).game_name), "%s", _GP(game).gamename);
 	_GP(play).lastParserEntry[0] = 0;
 	_GP(play).follow_change_room_timer = 150;
 	for (ee = 0; ee < MAX_ROOM_BGFRAMES; ee++)
@@ -794,8 +739,12 @@ void engine_init_game_settings() {
 	_GP(play).game_speed_modifier = 0;
 	if (_G(debug_flags) & DBG_DEBUGMODE)
 		_GP(play).debug_mode = 1;
-	_G(gui_disabled_style) = convert_gui_disabled_style(_GP(game).options[OPT_DISABLEOFF]);
 	_GP(play).shake_screen_yoff = 0;
+
+	GUI::Options.DisabledStyle = static_cast<GuiDisableStyle>(_GP(game).options[OPT_DISABLEOFF]);
+	GUI::Options.ClipControls = _GP(game).options[OPT_CLIPGUICONTROLS] != 0;
+	// Force GUI metrics recalculation, accomodating for loaded fonts
+	GUI::MarkForFontUpdate(-1);
 
 	memset(&_GP(play).walkable_areas_on[0], 1, MAX_WALK_AREAS + 1);
 	memset(&_GP(play).script_timers[0], 0, MAX_TIMERS * sizeof(int));
@@ -804,12 +753,13 @@ void engine_init_game_settings() {
 	// reset graphical script vars (they're still used by some games)
 	for (ee = 0; ee < MAXGLOBALVARS; ee++)
 		_GP(play).globalvars[ee] = 0;
-
+	for (ee = 0; ee < MAXGSVALUES; ee++)
+		_GP(play).globalscriptvars[ee] = 0;
 	for (ee = 0; ee < MAXGLOBALSTRINGS; ee++)
 		_GP(play).globalstrings[ee][0] = 0;
 
 	if (!_GP(usetup).translation.IsEmpty())
-		init_translation(_GP(usetup).translation, "", true);
+		Game_ChangeTranslation(_GP(usetup).translation.GetCStr());
 
 	update_invorder();
 	_G(displayed_room) = -10;
@@ -840,10 +790,13 @@ void engine_prepare_to_start_game() {
 
 	engine_setup_scsystem_auxiliary();
 
-#if AGS_PLATFORM_OS_ANDROID
-	if (psp_load_latest_savegame)
-		selectLatestSavegame();
+	if (_GP(usetup).load_latest_save) {
+#ifndef AGS_PLATFORM_SCUMMVM
+		int slot = GetLastSaveSlot();
+		if (slot >= 0)
+			loadSaveGameOnStartup = get_save_game_path(slot);
 #endif
+	}
 }
 
 // TODO: move to test unit
@@ -976,9 +929,9 @@ void engine_read_config(ConfigTree &cfg) {
 	// Handle directive to search for the user config inside the custom directory;
 		// this option may come either from command line or default/global config.
 	if (_GP(usetup).user_conf_dir.IsEmpty())
-		_GP(usetup).user_conf_dir = INIreadstring(cfg, "misc", "user_conf_dir");
+		_GP(usetup).user_conf_dir = CfgReadString(cfg, "misc", "user_conf_dir");
 	if (_GP(usetup).user_conf_dir.IsEmpty()) // also try deprecated option
-		_GP(usetup).user_conf_dir = INIreadint(cfg, "misc", "localuserconf") != 0 ? "." : "";
+		_GP(usetup).user_conf_dir = CfgReadBoolInt(cfg, "misc", "localuserconf") ? "." : "";
 	// Test if the file is writeable, if it is then both engine and setup
 	// applications may actually use it fully as a user config, otherwise
 	// fallback to default behavior.
@@ -994,17 +947,24 @@ void engine_read_config(ConfigTree &cfg) {
 		}
 	}
 
+	// Handle directive to search for the user config inside the game directory;
+	// this option may come either from command line or default/global config.
+	_GP(usetup).local_user_conf |= CfgReadInt(cfg, "misc", "localuserconf", 0) != 0;
+	if (_GP(usetup).local_user_conf) { // Test if the file is writeable, if it is then both engine and setup
+	  // applications may actually use it fully as a user config, otherwise
+	  // fallback to default behavior.
+		_GP(usetup).local_user_conf = File::TestWriteFile(def_cfg_file);
+	}
+
 	// Read user configuration file
 	String user_cfg_file = find_user_cfg_file();
 	if (Path::ComparePaths(user_cfg_file, def_cfg_file) != 0 &&
 	        Path::ComparePaths(user_cfg_file, user_global_cfg_file) != 0)
 		IniUtil::Read(user_cfg_file, cfg);
 
-	// Apply overriding options from mobile port settings
+	// Apply overriding options from platform settings
 	// TODO: normally, those should be instead stored in the same config file in a uniform way
-	// NOTE: the variable is historically called "ignore" but we use it in "override" meaning here
-	if (_G(psp_ignore_acsetup_cfg_file))
-		override_config_ext(cfg);
+	override_config_ext(cfg);
 }
 
 // Gathers settings from all available sources into single ConfigTree
@@ -1119,7 +1079,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	}
 	// Set up game options from user config
 	engine_set_config(cfg);
-	engine_force_window();
 	if (_G(justTellInfo)) {
 		engine_print_info(_G(tellInfoKeys), &cfg);
 		return EXIT_NORMAL;
@@ -1185,10 +1144,6 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	if (res != 0)
 		return res;
 
-	res = engine_check_register_game();
-	if (res != 0)
-		return res;
-
 	_G(our_eip) = -189;
 
 	res = engine_check_disk_space();
@@ -1206,6 +1161,8 @@ int initialize_engine(const ConfigTree &startup_opts) {
 
 	engine_init_resolution_settings(_GP(game).GetGameRes());
 
+	engine_adjust_for_rotation_settings();
+
 	// Attempt to initialize graphics mode
 	if (!engine_try_set_gfxmode_any(_GP(usetup).Screen))
 		return EXIT_ERROR;
@@ -1213,7 +1170,7 @@ int initialize_engine(const ConfigTree &startup_opts) {
 	// Configure game window after renderer was initialized
 	engine_setup_window();
 
-	SetMultitasking(0);
+	SetMultitasking(_GP(usetup).multitasking);
 
 	sys_window_show_cursor(false); // hide the system cursor
 
@@ -1237,13 +1194,17 @@ int initialize_engine(const ConfigTree &startup_opts) {
 bool engine_try_set_gfxmode_any(const DisplayModeSetup &setup) {
 	engine_shutdown_gfxmode();
 
-	const Size init_desktop = get_desktop_size();
-	if (!graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
-		setup, ColorDepthOption(_GP(game).GetColorDepth())))
-		return false;
+	sys_renderer_set_output(_GP(usetup).software_render_driver);
 
-	engine_post_gfxmode_setup(init_desktop);
-	return true;
+	const Size init_desktop = get_desktop_size();
+	bool res = graphics_mode_init_any(GraphicResolution(_GP(game).GetGameRes(), _GP(game).color_depth * 8),
+		setup, ColorDepthOption(_GP(game).GetColorDepth()));
+
+	if (res)
+		engine_post_gfxmode_setup(init_desktop);
+	// Make sure that we don't receive window events queued during init
+	sys_flush_events();
+	return res;
 }
 
 bool engine_try_switch_windowed_gfxmode() {
@@ -1292,7 +1253,9 @@ bool engine_try_switch_windowed_gfxmode() {
 			init_desktop = get_desktop_size();
 		engine_post_gfxmode_setup(init_desktop);
 	}
-	ags_clear_input_state();
+
+	// Make sure that we don't receive window events queued during init
+	sys_flush_events();
 	return res;
 }
 

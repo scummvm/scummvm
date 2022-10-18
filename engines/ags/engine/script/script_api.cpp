@@ -20,10 +20,11 @@
  */
 
 #include "ags/shared/ac/game_version.h"
-#include "ags/shared/script/cc_error.h"
+#include "ags/shared/script/cc_common.h"
 #include "ags/engine/script/runtime_script_value.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/shared/util/math.h"
+#include "ags/shared/util/utf8.h"
 #include "ags/globals.h"
 
 namespace AGS3 {
@@ -36,6 +37,7 @@ enum FormatParseResult {
 	kFormatParseLiteralPercent,
 	kFormatParseArgInteger,
 	kFormatParseArgFloat,
+	kFormatParseArgCharacter,
 	kFormatParseArgString,
 	kFormatParseArgPointer,
 
@@ -131,8 +133,10 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 				case 'u':
 				case 'x':
 				case 'X':
-				case 'c':
 					fmt_done = kFormatParseArgInteger;
+					break;
+				case 'c':
+					fmt_done = kFormatParseArgCharacter;
 					break;
 				case 'e':
 				case 'E':
@@ -176,11 +180,24 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 				// NOTE: snprintf is called with avail_outbuf + 1 here, because we let it use our reserved
 				// character for null-terminator, in case we are at the end of the buffer
 				*fmt_bufptr = 0; // terminate the format buffer, we are going to use it
-				if (fmt_done == kFormatParseArgInteger)
-					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, GetArgInt(sc_args, varg_ptr, arg_idx));
-				else if (fmt_done == kFormatParseArgFloat)
-					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, GetArgFloat(sc_args, varg_ptr, arg_idx));
-				else {
+				switch (fmt_done) {
+				case kFormatParseArgInteger:
+					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, GetArgInt(sc_args, varg_ptr, arg_idx)); break;
+				case kFormatParseArgFloat:
+					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, GetArgFloat(sc_args, varg_ptr, arg_idx)); break;
+				case kFormatParseArgCharacter:
+				{
+					int chr = GetArgInt(sc_args, varg_ptr, arg_idx);
+					char cbuf[Utf8::UtfSz + 1]{};
+					if (get_uformat() == U_UTF8)
+						Utf8::SetChar(chr, cbuf, Utf8::UtfSz);
+					else
+						cbuf[0] = chr;
+					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, "%s", cbuf);
+					break;
+				}
+				case kFormatParseArgString:
+				{
 					const char *p = GetArgPtr(sc_args, varg_ptr, arg_idx);
 					// Do extra checks for %s placeholder
 					if (fmt_done == kFormatParseArgString && !p) {
@@ -196,12 +213,17 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 						return "";
 					}
 					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, p);
+					break;
+				}
+				case kFormatParseArgPointer:
+					snprintf_res = snprintf(out_ptr, avail_outbuf + 1, fmtbuf, GetArgPtr(sc_args, varg_ptr, arg_idx)); break;
+				default: /* should not happen */ break;
 				}
 
 				arg_idx++;
 				if (snprintf_res >= 0) {
 					// snprintf returns maximal number of characters, so limit it with buffer size
-					out_ptr += Math::Min<ptrdiff_t>(snprintf_res, avail_outbuf);
+					out_ptr += MIN<ptrdiff_t>(snprintf_res, avail_outbuf);
 					continue;
 				}
 				// -- pass further to invalid format case
@@ -209,7 +231,7 @@ const char *ScriptSprintf(char *buffer, size_t buf_length, const char *format,
 
 			// If format was not valid, or there are no available
 			// parameters, just copy stored format buffer as it is
-			size_t copy_len = Math::Min(Math::Min<ptrdiff_t>(fmt_bufptr - fmtbuf, fmtbuf_size - 1), avail_outbuf);
+			size_t copy_len = MIN(MIN<ptrdiff_t>(fmt_bufptr - fmtbuf, fmtbuf_size - 1), avail_outbuf);
 			memcpy(out_ptr, fmtbuf, copy_len);
 			out_ptr += copy_len;
 		}

@@ -56,7 +56,7 @@ struct ViewFrame {
 #define LOOPFLAG_RUNNEXTLOOP 1
 
 struct ViewLoopNew {
-	short numFrames;
+	int numFrames;
 	int   flags;
 	std::vector<ViewFrame> frames;
 	// NOTE: we still need numFrames for backward compatibility:
@@ -74,7 +74,7 @@ struct ViewLoopNew {
 };
 
 struct ViewStruct {
-	short numLoops;
+	int numLoops;
 	std::vector<ViewLoopNew> loops;
 
 	ViewStruct();

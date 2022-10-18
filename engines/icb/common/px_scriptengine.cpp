@@ -31,6 +31,7 @@
 #include "engines/icb/common/px_common.h"          // common defs for tools & engine
 #include "engines/icb/common/px_globalvariables.h" // The global variable class
 #include "engines/icb/fn_routines.h"
+#include "engines/icb/icb.h"
 
 namespace ICB {
 
@@ -43,7 +44,7 @@ CpxGlobalScriptVariables *g_globalScriptVariables;
 int32 stack[STACK_SIZE]; // The current stack
 int32 stackPointer = 0;  // Position within stack
 
-#define _SCRIPT_ENGINE_ERROR(mess) Fatal_error("Script engine error\nObject %s\nScript %s\nMessage %s", object->GetName(), scriptSourceName, mess)
+#define _SCRIPT_ENGINE_ERROR(mess) Fatal_error("Script engine error\nObject %s\nScript %s\nMessage %s", CGameObject::GetName(object), scriptSourceName, mess)
 
 // Check the stack pointer is within bounds
 #define CheckStackPointer                                                                                                                                                          \
@@ -116,7 +117,7 @@ extern mcodeFunctionReturnCodes fn_context_chosen_logic(int32 &, int32 *);
 extern mcodeFunctionReturnCodes fn_start_player_interaction(int32 &, int32 *);
 
 scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to the script data that can be modified
-									   c_game_object *object,   // A pointer to the object that owns this object
+									   CGame *object,   // A pointer to the object that owns this object
 									   int32 *engineReturnValue2,
 									   const char *scriptSourceName) { // A value to return to the game engine
 	// Run a script
@@ -144,7 +145,7 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		infiniteLoopCounter++;
 		if (infiniteLoopCounter > 10000) {
 			// Oh dear, what do we do now.
-			Fatal_error("Internal script loop in object %s", object->GetName());
+			Fatal_error("Internal script loop in object %s", CGameObject::GetName(object));
 		}
 
 		int32 command = *(actualScript++);
@@ -176,10 +177,10 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 		case CP_PUSH_ADDRESS_LOCAL_VAR32: {
 			Fetch8(value); // Get the local variable number
-			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)CGameObject::GetNoLvars(object))))
 				_SCRIPT_ENGINE_ERROR("Local variable out of range");
-			ScriptTrace("Push address of local integer variable %d = %d", value, &object->GetIntegerVariable(value));
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)&object->GetIntegerVariable(value)));
+			ScriptTrace("Push address of local integer variable %d = %d", value, CGameObject::GetIntegerVariable(object, value));
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)CGameObject::GetIntegerVariablePtr(object, value)));
 		} break;
 
 		case CP_SKIPONFALSE: { // 4 :  Skip a chunk if a result if false
@@ -237,7 +238,9 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 
 			Fetch16(fnNumber);
 
-			if (!((fnNumber >= 0) && (fnNumber < NO_API_ROUTINES)))
+			const int16 numApiRoutines = (g_icb->getGameType() == GType_ELDORADO) ? NO_API_ROUTINES_ELDORADO : NO_API_ROUTINES_ICB;
+
+			if (!((fnNumber >= 0) && (fnNumber < numApiRoutines)))
 				_SCRIPT_ENGINE_ERROR("fnNumber out of range?");
 
 			// Get the number of parameters
@@ -246,7 +249,15 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			ScriptTrace("Call mcode %d (%sin expression)", fnNumber, isInExpression ? "" : "not ");
 
 			int32 routineReturnParameter = 0; // The value returned by the mcode routine
-			mcodeFunctionReturnCodes mcodeRetVal = McodeTable[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			mcodeFunctionReturnCodes mcodeRetVal;
+
+			if (g_icb->getGameType() == GType_ICB) {
+				mcodeRetVal = McodeTableICB[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			} else if (g_icb->getGameType() == GType_ELDORADO) {
+				mcodeRetVal = McodeTableED[fnNumber](routineReturnParameter, stack + (stackPointer - value));
+			} else {
+				error("unknown game type");
+			}
 
 			ScriptTrace("api returned %d(%d)", mcodeRetVal, routineReturnParameter);
 
@@ -324,25 +335,25 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 			// Get the script index
 			Fetch32(parameter1);
 
-			if (!((parameter1 >= 0) && (parameter1 < (int32)object->GetNoScripts())))
+			if (!((parameter1 >= 0) && (parameter1 < (int32)CGameObject::GetNoScripts(object))))
 				_SCRIPT_ENGINE_ERROR("Virtual script call out of range");
 
 			// Get the type
 			Fetch8(parameter2);
 
-			ScriptTrace("if (%d) call virtual script %d (%d)", value, parameter1, object->GetScriptNameFullHash(parameter1));
+			ScriptTrace("if (%d) call virtual script %d (%d)", value, parameter1, CGameObject::GetScriptNameFullHash(object, parameter1));
 
 			if (value) {
 				parameter1 &= 0xffff;
 
 				int32 dummyReturnValue;
 				ScriptTrace("param2 = %d", parameter2);
-				int32 scriptHash = object->GetScriptNameFullHash(parameter1);
+				int32 scriptHash = CGameObject::GetScriptNameFullHash(object, parameter1);
 				if (parameter2) {
 					ScriptTrace("interact");
 					fn_start_player_interaction(dummyReturnValue, &scriptHash);
 				} else {
-					ScriptTrace("chusen logic");
+					ScriptTrace("chosen logic");
 					fn_context_chosen_logic(dummyReturnValue, &scriptHash);
 				}
 
@@ -360,31 +371,35 @@ scriptInterpreterReturnCodes RunScript(const char *&scriptData, // A pointer to 
 		case CP_PUSH_LOCAL_VAR32: //  16: Push a local variable on to the stack
 			Fetch8(value);    // Get the local variable number
 
-			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)CGameObject::GetNoLvars(object))))
 				_SCRIPT_ENGINE_ERROR("Unknown variable??");
 
-			ScriptTrace("Push local integer variable %d = %d", value, object->GetIntegerVariable(value));
-			PushOnStack(object->GetIntegerVariable(value));
+			ScriptTrace("Push local integer variable %d = %d", value, CGameObject::GetIntegerVariable(object, value));
+			PushOnStack(CGameObject::GetIntegerVariable(object, value));
 			break;
 
 		case CP_POP_LOCAL_VAR32: //  17              // Pop a local variable from the stack
 			Fetch8(value);   // Get the local variable number
 
-			if (!(value >= 0) && (value < (int32)object->GetNoLvars()))
+			if (!(value >= 0) && (value < (int32)CGameObject::GetNoLvars(object)))
 				_SCRIPT_ENGINE_ERROR("Unknown variable??");
 
 			ScriptTrace("Pop local variable %d", value);
-			PopOffStack(object->GetIntegerVariable(value));
+			{
+				int32 varValue;
+				PopOffStack(varValue);
+				CGameObject::SetIntegerVariable(object, value, varValue);
+			}
 			break;
 
 		case CP_PUSH_LOCAL_VARSTRING: //  18: Push a local string variable on to the stack
 			Fetch8(value);        // Get the local variable number
 
-			if (!((value >= 0) && (value < (int32)object->GetNoLvars())))
+			if (!((value >= 0) && (value < (int32)CGameObject::GetNoLvars(object))))
 				_SCRIPT_ENGINE_ERROR("Unknown variable (string)??");
 
-			ScriptTrace("Push local string variable %d = \"%s\"", value, object->GetStringVariable(value));
-			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(object->GetStringVariable(value))));
+			ScriptTrace("Push local string variable %d = \"%s\"", value, CGameObject::GetStringVariable(object, value));
+			PushOnStack(MemoryUtil::encodePtr((uint8 *)const_cast<char *>(CGameObject::GetStringVariable(object, value))));
 			break;
 
 		case CP_DEBUG: {       // 19: Debug options

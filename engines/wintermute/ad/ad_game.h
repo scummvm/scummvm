@@ -94,13 +94,15 @@ public:
 	int32 _texTalkLifeTime;
 
 	TTalkSkipButton _talkSkipButton;
+	TVideoSkipButton _videoSkipButton;
 
+	virtual bool getLayerSize(int *layerWidth, int *layerHeight, Rect32 *viewport, bool *customViewport) override;
 #ifdef ENABLE_WME3D
 	uint32 getAmbientLightColor() override;
 
 	TShadowType getMaxShadowType(BaseObject *object) override;
 
-	bool getFogParams(FogParameters &fogParameters) override;
+	bool getFogParams(bool *fogEnabled, uint32 *fogColor, float *start, float *end) override;
 #endif
 
 	bool getVersion(byte *verMajor, byte *verMinor, byte *extMajor, byte *extMinor) const override;

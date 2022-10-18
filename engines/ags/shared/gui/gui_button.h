@@ -34,10 +34,10 @@ namespace AGS3 {
 namespace AGS {
 namespace Shared {
 
-enum MouseButton {
-	kMouseNone = -1,
-	kMouseLeft = 0,
-	kMouseRight = 1,
+enum GUIClickMouseButton {
+	kGUIClickLeft  = 0,
+	kGUIClickRight = 1,
+	kNumGUIClicks
 };
 
 enum GUIClickAction {
@@ -62,12 +62,14 @@ class GUIButton : public GUIObject {
 public:
 	GUIButton();
 
+	bool HasAlphaChannel() const override;
 	const String &GetText() const;
 	bool IsImageButton() const;
 	bool IsClippingImage() const;
 
 	// Operations
-	void Draw(Bitmap *ds) override;
+	Rect CalcGraphicRect(bool clipped) override;
+	void Draw(Bitmap *ds, int x = 0, int y = 0) override;
 	void SetClipImage(bool on);
 	void SetText(const String &text);
 
@@ -94,17 +96,16 @@ public:
 	FrameAlignment TextAlignment;
 	// Click actions for left and right mouse buttons
 	// NOTE: only left click is currently in use
-	static const int ClickCount = kMouseRight + 1;
-	GUIClickAction ClickAction[ClickCount];
-	int32_t        ClickData[ClickCount];
+	GUIClickAction ClickAction[kNumGUIClicks];
+	int32_t        ClickData[kNumGUIClicks];
 
 	bool        IsPushed;
 	bool        IsMouseOver;
 
 private:
-	void DrawImageButton(Bitmap *ds, bool draw_disabled);
-	void DrawText(Bitmap *ds, bool draw_disabled);
-	void DrawTextButton(Bitmap *ds, bool draw_disabled);
+	void DrawImageButton(Bitmap *ds, int x, int y, bool draw_disabled);
+	void DrawText(Bitmap *ds, int x, int y, bool draw_disabled);
+	void DrawTextButton(Bitmap *ds, int x, int y, bool draw_disabled);
 	void PrepareTextToDraw();
 
 	// Defines button placeholder mode; the mode is set

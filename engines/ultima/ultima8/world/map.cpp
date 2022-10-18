@@ -211,7 +211,7 @@ void Map::loadFixedFormatObjects(Std::list<Item *> &itemlist,
 
 	uint32 itemcount = size / 16;
 
-	Std::stack<Container *> cont;
+	Common::Stack<Container *> cont;
 	int contdepth = 0;
 
 	for (uint32 i = 0; i < itemcount; ++i) {

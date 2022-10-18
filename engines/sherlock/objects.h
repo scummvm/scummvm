@@ -247,7 +247,7 @@ public:
 	static void setVm(SherlockEngine *vm);
 
 	/**
-	 * Returns true if the the object has an Allow Talk Code in the sequence that it's
+	 * Returns true if the object has an Allow Talk Code in the sequence that it's
 	 * currently running, specified by the _talkSeq field of the object. If it's 0,
 	 * then it's a regular sequence. If it's not 0 but below 128, then it's a Talk Sequence.
 	 * If it's above 128, then it's one of the Listen sequences.

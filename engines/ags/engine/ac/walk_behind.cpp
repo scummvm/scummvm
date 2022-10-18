@@ -19,9 +19,11 @@
  *
  */
 
+#include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/walk_behind.h"
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/common_defines.h"
+#include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gfx/bitmap.h"
@@ -32,93 +34,134 @@ namespace AGS3 {
 using namespace AGS::Shared;
 using namespace AGS::Engine;
 
-void update_walk_behind_images() {
-	int ee, rr;
-	int bpp = (_GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth() + 7) / 8;
-	Bitmap *wbbmp;
-	for (ee = 1; ee < MAX_WALK_BEHINDS; ee++) {
-		update_polled_stuff_if_runtime();
+// Generates walk-behinds as separate sprites
+void walkbehinds_generate_sprites() {
+	const Bitmap *mask = _GP(thisroom).WalkBehindMask.get();
+	const Bitmap *bg = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic.get();
 
-		if (_G(walkBehindRight)[ee] > 0) {
-			wbbmp = BitmapHelper::CreateTransparentBitmap(
-			            (_G(walkBehindRight)[ee] - _G(walkBehindLeft)[ee]) + 1,
-			            (_G(walkBehindBottom)[ee] - _G(walkBehindTop)[ee]) + 1,
-			            _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetColorDepth());
-			int yy, startX = _G(walkBehindLeft)[ee], startY = _G(walkBehindTop)[ee];
-			for (rr = startX; rr <= _G(walkBehindRight)[ee]; rr++) {
-				for (yy = startY; yy <= _G(walkBehindBottom)[ee]; yy++) {
-					if (_GP(thisroom).WalkBehindMask->GetScanLine(yy)[rr] == ee) {
-						for (int ii = 0; ii < bpp; ii++)
-							wbbmp->GetScanLineForWriting(yy - startY)[(rr - startX) * bpp + ii] = _GP(thisroom).BgFrames[_GP(play).bg_frame].Graphic->GetScanLine(yy)[rr * bpp + ii];
+	const int coldepth = bg->GetColorDepth();
+	Bitmap wbbmp; // temp buffer
+	// Iterate through walk-behinds and generate a texture for each of them
+	for (int wb = 1 /* 0 is "no area" */; wb < MAX_WALK_BEHINDS; ++wb) {
+		const Rect pos = _G(walkBehindAABB)[wb];
+		if (pos.Right > 0) {
+			wbbmp.CreateTransparent(pos.GetWidth(), pos.GetHeight(), coldepth);
+			// Copy over all solid pixels belonging to this WB area
+			const int sx = pos.Left, ex = pos.Right, sy = pos.Top, ey = pos.Bottom;
+			for (int y = sy; y <= ey; ++y) {
+				const uint8_t *check_line = mask->GetScanLine(y);
+				const uint8_t *src_line = bg->GetScanLine(y);
+				uint8_t *dst_line = wbbmp.GetScanLineForWriting(y - sy);
+				for (int x = sx; x <= ex; ++x) {
+					if (check_line[x] != wb) continue;
+					switch (coldepth) {
+					case 8:
+						dst_line[(x - sx)] = src_line[x];
+						break;
+					case 16:
+						reinterpret_cast<uint16_t *>(dst_line)[(x - sx)] =
+							reinterpret_cast<const uint16_t *>(src_line)[x];
+						break;
+					case 32:
+						reinterpret_cast<uint32_t *>(dst_line)[(x - sx)] =
+							reinterpret_cast<const uint32_t *>(src_line)[x];
+						break;
+					default: assert(0); break;
 					}
 				}
 			}
-
-			update_polled_stuff_if_runtime();
-
-			if (_G(walkBehindBitmap)[ee] != nullptr) {
-				_G(gfxDriver)->DestroyDDB(_G(walkBehindBitmap)[ee]);
-			}
-			_G(walkBehindBitmap)[ee] = _G(gfxDriver)->CreateDDBFromBitmap(wbbmp, false);
-			delete wbbmp;
+			// Add to walk-behinds image list
+			add_walkbehind_image(wb, &wbbmp, pos.Left, pos.Top);
 		}
 	}
 
 	_G(walkBehindsCachedForBgNum) = _GP(play).bg_frame;
 }
 
+// Edits the given game object's sprite, cutting out pixels covered by walk-behinds;
+// returns whether any pixels were updated;
+bool walkbehinds_cropout(Bitmap *sprit, int sprx, int spry, int basel) {
+	if (_G(noWalkBehindsAtAll))
+		return false;
 
-void recache_walk_behinds() {
-	if (_G(walkBehindExists)) {
-		free(_G(walkBehindExists));
-		free(_G(walkBehindStartY));
-		free(_G(walkBehindEndY));
-	}
+	const int maskcol = sprit->GetMaskColor();
+	const int spcoldep = sprit->GetColorDepth();
 
-	_G(walkBehindExists) = (char *)malloc(_GP(thisroom).WalkBehindMask->GetWidth());
-	_G(walkBehindStartY) = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
-	_G(walkBehindEndY) = (int *)malloc(_GP(thisroom).WalkBehindMask->GetWidth() * sizeof(int));
-	_G(noWalkBehindsAtAll) = 1;
+	bool pixels_changed = false;
+	// pass along the sprite's pixels, but skip those that lie outside the mask
+	for (int x = MAX(0, 0 - sprx);
+		(x < sprit->GetWidth()) && (x + sprx < _GP(thisroom).WalkBehindMask->GetWidth()); ++x) {
+		// select the WB column at this x
+		const auto &wbcol = _G(walkBehindCols)[x + sprx];
+		// skip if no area, or sprite lies outside of all areas in this column
+		if ((!wbcol.Exists) ||
+			(wbcol.Y2 <= spry) ||
+			(wbcol.Y1 > spry + sprit->GetHeight()))
+			continue;
 
-	int ee, rr, tmm;
-	const int NO_WALK_BEHIND = 100000;
-	for (ee = 0; ee < MAX_WALK_BEHINDS; ee++) {
-		_G(walkBehindLeft)[ee] = NO_WALK_BEHIND;
-		_G(walkBehindTop)[ee] = NO_WALK_BEHIND;
-		_G(walkBehindRight)[ee] = 0;
-		_G(walkBehindBottom)[ee] = 0;
+		// ensure we only check within the valid areas (between Y1 and Y2)
+		// we assume that Y1 and Y2 are always within the mask
+		for (int y = MAX(0, wbcol.Y1 - spry);
+				(y < sprit->GetHeight()) && (y + spry < wbcol.Y2); ++y) {
+			const int wb = _GP(thisroom).WalkBehindMask->GetScanLine(y + spry)[x + sprx];
+			if (wb < 1) continue; // "no area"
+			if (_G(croom)->walkbehind_base[wb] <= basel) continue;
 
-		if (_G(walkBehindBitmap)[ee] != nullptr) {
-			_G(gfxDriver)->DestroyDDB(_G(walkBehindBitmap)[ee]);
-			_G(walkBehindBitmap)[ee] = nullptr;
+			pixels_changed = true;
+			uint8_t *dst_line = sprit->GetScanLineForWriting(y);
+			switch (spcoldep) {
+			case 8:
+				dst_line[x] = maskcol;
+				break;
+			case 16:
+				reinterpret_cast<uint16_t *>(dst_line)[x] = maskcol;
+				break;
+			case 32:
+				reinterpret_cast<uint32_t *>(dst_line)[x] = maskcol;
+				break;
+			default:
+				assert(0);
+				break;
+			}
 		}
 	}
+	return pixels_changed;
+}
 
-	update_polled_stuff_if_runtime();
+void walkbehinds_recalc() {
+	// Reset all data
+	_G(walkBehindCols).clear();
+	for (int wb = 0; wb < MAX_WALK_BEHINDS; ++wb) {
+		_G(walkBehindAABB)[wb] = Rect(INT32_MAX, INT32_MAX, INT32_MIN, INT32_MIN);
+	}
+	_G(noWalkBehindsAtAll) = true;
 
-	for (ee = 0; ee < _GP(thisroom).WalkBehindMask->GetWidth(); ee++) {
-		_G(walkBehindExists)[ee] = 0;
-		for (rr = 0; rr < _GP(thisroom).WalkBehindMask->GetHeight(); rr++) {
-			tmm = _GP(thisroom).WalkBehindMask->GetScanLine(rr)[ee];
-			//tmm = _getpixel(_GP(thisroom).WalkBehindMask,ee,rr);
-			if ((tmm >= 1) && (tmm < MAX_WALK_BEHINDS)) {
-				if (!_G(walkBehindExists)[ee]) {
-					_G(walkBehindStartY)[ee] = rr;
-					_G(walkBehindExists)[ee] = tmm;
-					_G(noWalkBehindsAtAll) = 0;
+	// Recalculate everything; note that mask is always 8-bit
+	const Bitmap *mask = _GP(thisroom).WalkBehindMask.get();
+	_G(walkBehindCols).resize(mask->GetWidth());
+	for (int col = 0; col < mask->GetWidth(); ++col) {
+		auto &wbcol = _G(walkBehindCols)[col];
+		for (int y = 0; y < mask->GetHeight(); ++y) {
+			int wb = mask->GetScanLine(y)[col];
+			// Valid areas start with index 1, 0 = no area
+			if ((wb >= 1) && (wb < MAX_WALK_BEHINDS)) {
+				if (!wbcol.Exists) {
+					wbcol.Y1 = y;
+					wbcol.Exists = true;
+					_G(noWalkBehindsAtAll) = false;
 				}
-				_G(walkBehindEndY)[ee] = rr + 1;  // +1 to allow bottom line of screen to work
-
-				if (ee < _G(walkBehindLeft)[tmm]) _G(walkBehindLeft)[tmm] = ee;
-				if (rr < _G(walkBehindTop)[tmm]) _G(walkBehindTop)[tmm] = rr;
-				if (ee > _G(walkBehindRight)[tmm]) _G(walkBehindRight)[tmm] = ee;
-				if (rr > _G(walkBehindBottom)[tmm]) _G(walkBehindBottom)[tmm] = rr;
+				wbcol.Y2 = y + 1; // +1 to allow bottom line of screen to work (CHECKME??)
+				// resize the bounding rect
+				_G(walkBehindAABB)[wb].Left = MIN(col, _G(walkBehindAABB)[wb].Left);
+				_G(walkBehindAABB)[wb].Top = MIN(y, _G(walkBehindAABB)[wb].Top);
+				_G(walkBehindAABB)[wb].Right = MAX(col, _G(walkBehindAABB)[wb].Right);
+				_G(walkBehindAABB)[wb].Bottom = MAX(y, _G(walkBehindAABB)[wb].Bottom);
 			}
 		}
 	}
 
 	if (_G(walkBehindMethod) == DrawAsSeparateSprite) {
-		update_walk_behind_images();
+		walkbehinds_generate_sprites();
 	}
 }
 

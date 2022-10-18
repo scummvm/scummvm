@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/detail.h"
 #include "chewy/events.h"
@@ -36,32 +37,28 @@ void Room88::entry() {
 	setPersonPos(91, 110, P_NICHELLE, P_RIGHT);
 	
 	_G(det)->showStaticSpr(1 + (_G(gameState).flags30_10 ? 1 : 0));
-	if (_G(gameState).r88DestRoom == 0)
-		_G(gameState).r88DestRoom = 82;
 
 	_G(SetUpScreenFunc) = calc_person_look;
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->startDetail(4, 255, false);
-		_G(atds)->delControlBit(505, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(505, ATS_ACTIVE_BIT);
 	}
 }
 
 void Room88::xit() {
 	_G(gameState).flags31_8 = true;
-	_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState).r88DestRoom;
-
-	if (_G(gameState)._personRoomNr[P_NICHELLE] == 88)
-		_G(gameState)._personRoomNr[P_NICHELLE] = _G(gameState)._personRoomNr[P_HOWARD];
+	_G(gameState)._personRoomNr[P_HOWARD] = _G(gameState).R88UsedMonkey ? 84 : 82;
+	_G(gameState)._personRoomNr[P_NICHELLE] = _G(gameState)._personRoomNr[P_HOWARD];
 }
 
 int Room88::proc1() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
 	autoMove(0, P_CHEWY);
-	switchRoom(_G(gameState).r88DestRoom);
+	switchRoom(_G(gameState).R88UsedMonkey ? 84 : 82);
 	_G(menu_item) = CUR_WALK;
 	cursorChoice(CUR_WALK);
 	showCur();
@@ -70,7 +67,7 @@ int Room88::proc1() {
 }
 
 int Room88::proc2() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -89,7 +86,7 @@ int Room88::proc2() {
 }
 
 int Room88::proc3() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -141,7 +138,6 @@ int Room88::proc3() {
 		_G(gameState)._personRoomNr[P_HOWARD] = 88;
 		_G(gameState)._personRoomNr[P_NICHELLE] = 88;
 		switchRoom(88);
-		_G(gameState).r88DestRoom = 84;
 		_G(gameState).R88UsedMonkey = true;
 		_G(gameState).flags32_1 = false;
 	}

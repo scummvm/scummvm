@@ -1086,7 +1086,7 @@ String JSONValue::stringifyImpl(size_t const indentDepth) const {
 
 /**
 * Creates a JSON encoded string with all required fields escaped
-* Works from http://www.ecma-internationl.org/publications/files/ECMA-ST/ECMA-262.pdf
+* Works from https://www.ecma-international.org/wp-content/uploads/ECMA-262_5.1_edition_june_2011.pdf
 * Section 15.12.3.
 *
 * @access private

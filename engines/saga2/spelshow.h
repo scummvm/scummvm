@@ -128,27 +128,27 @@ class EffectDisplayPrototype {
 	static SPELLINITFUNCTION(nullInit) {
 	}
 
-	EffectID                ID;
+	EffectID                _ID;
 public:
-	int16                   nodeCount;
-	EffectDisplayPrototype  *next;
+	int16                   _nodeCount;
+	EffectDisplayPrototype  *_next;
 
-	SpellLocationFunction   *location;
-	SpellSpritationFunction *spriteno;
-	SpellStatusFunction     *status;
-	SpellHeightFunction     *height;
-	SpellBreadthFunction    *breadth;
-	SpellInitFunction       *init;
+	SpellLocationFunction   *_location;
+	SpellSpritationFunction *_spriteno;
+	SpellStatusFunction     *_status;
+	SpellHeightFunction     *_height;
+	SpellBreadthFunction    *_breadth;
+	SpellInitFunction       *_init;
 
 	EffectDisplayPrototype() {
-		nodeCount = 0;
-		next = NULL;
-		location = &nullLocation;
-		spriteno = &nullSpritation;
-		status  = &nullStatus;
-		height  = &nullHeight;
-		breadth = &nullBreadth;
-		init    = &nullInit;
+		_nodeCount = 0;
+		_next = NULL;
+		_location = &nullLocation;
+		_spriteno = &nullSpritation;
+		_status  = &nullStatus;
+		_height  = &nullHeight;
+		_breadth = &nullBreadth;
+		_init    = &nullInit;
 	}
 
 	EffectDisplayPrototype(
@@ -160,14 +160,14 @@ public:
 	    SpellBreadthFunction    *newBreadth,
 	    SpellInitFunction       *newInit);
 	~EffectDisplayPrototype() {
-		if (next) delete next;
-		next = NULL;
+		if (_next) delete _next;
+		_next = NULL;
 	}
 	void setID(EffectID i) {
-		ID = i;
+		_ID = i;
 	}
 	EffectID thisID() {
-		return ID;
+		return _ID;
 	}
 };
 
@@ -181,9 +181,9 @@ typedef EffectDisplayPrototype *pEffectDisplayPrototype;
 
 
 class EffectDisplayPrototypeList {
-	pEffectDisplayPrototype         *effects;
-	uint16                          count;
-	uint16                          maxCount;
+	pEffectDisplayPrototype         *_effects;
+	uint16                          _count;
+	uint16                          _maxCount;
 
 public:
 	EffectDisplayPrototypeList(int32 c);
@@ -227,26 +227,26 @@ enum effectDirectionInit {
 //    Combines a SpellEffectPrototype with the appropriate sprites
 
 class SpellDisplayPrototype {
-	SpellID             ID;
+	SpellID             _ID;
 public:
-	EffectID            effect;        // Effect ID
-	int32               effParm1;      //   effect setting 1
-	int32               effParm2;      //   effect setting 1
-	int32               effParm3;      //   effect setting 1
-	int32               effParm4;      //   effect setting 1
+	EffectID            _effect;        // Effect ID
+	int32               _effParm1;      //   effect setting 1
+	int32               _effParm2;      //   effect setting 1
+	int32               _effParm3;      //   effect setting 1
+	int32               _effParm4;      //   effect setting 1
 
-	effectDirectionInit scatter;       // direction init mode
-	effectCollisionCont elasticity;    // collision flags
+	effectDirectionInit _scatter;       // direction init mode
+	effectCollisionCont _elasticity;    // collision flags
 
-	SpellAge            maxAge;        // auto self-destruct age
-	SpellAge            implementAge;        // auto self-destruct age
-	uint32              primarySpriteID;   // RES_ID(x, y, z, 0) to get sprites
-	uint8               primarySpriteNo;   // sprites available
-	uint32              secondarySpriteID;   // RES_ID(x, y, z, 0) to get sprites
-	uint8               secondarySpriteNo;   // sprites available
-	//uint8             effCount;      // effectrons to allocate
+	SpellAge            _maxAge;        // auto self-destruct age
+	SpellAge            _implementAge;        // auto self-destruct age
+	uint32              _primarySpriteID;   // RES_ID(x, y, z, 0) to get sprites
+	uint8               _primarySpriteNo;   // sprites available
+	uint32              _secondarySpriteID;   // RES_ID(x, y, z, 0) to get sprites
+	uint8               _secondarySpriteNo;   // sprites available
+	//uint8             _effCount;      // effectrons to allocate
 
-	uint8               colorMap[4];          // indirect color map
+	uint8               _colorMap[4];          // indirect color map
 	// full init
 	SpellDisplayPrototype(
 	    EffectID, int32, int32, int32, int32, effectDirectionInit,
@@ -256,10 +256,10 @@ public:
 
 	void getColorTranslation(ColorTable mainColors, Effectron *);        // colors for effectrons
 	void setID(SpellID i) {
-		ID = i;
+		_ID = i;
 	}
 	SpellID thisID() {
-		return ID;
+		return _ID;
 	}
 };
 
@@ -270,9 +270,9 @@ public:
 typedef SpellDisplayPrototype *pSpellDisplayPrototype;
 
 class SpellDisplayPrototypeList {
-	pSpellDisplayPrototype              *spells;
-	uint16                              count;
-	uint16                              maxCount;
+	pSpellDisplayPrototype              *_spells;
+	uint16                              _count;
+	uint16                              _maxCount;
 
 public:
 	SpellDisplayPrototypeList(uint16 s);
@@ -292,18 +292,18 @@ public:
 class SpellInstance {
 	friend struct StorageSpellInstance;
 
-	SpellAge                implementAge;   // age at which to implement the spell effects
+	SpellAge                _implementAge;   // age at which to implement the spell effects
 public:
-	EffectDisplayPrototype  *effect;        // effect prototype of the current effect
-	SpellDisplayPrototype   *dProto;        // effect prototype of the current effect
-	SpellCaster            *caster;
-	SpellTarget            *target;
-	GameWorld              *world;
-	SpellAge                age;
-	EffectronList           eList;
-	SpellID                 spell;
-	SpellAge                maxAge;
-	int16                   effSeq;         // which effect in a sequence is being played
+	EffectDisplayPrototype  *_effect;        // effect prototype of the current effect
+	SpellDisplayPrototype   *_dProto;        // effect prototype of the current effect
+	SpellCaster            *_caster;
+	SpellTarget            *_target;
+	GameWorld              *_world;
+	SpellAge                _age;
+	EffectronList           _eList;
+	SpellID                 _spell;
+	SpellAge                _maxAge;
+	int16                   _effSeq;         // which effect in a sequence is being played
 
 	SpellInstance(SpellCaster *newCaster, SpellTarget *newTarget, SpellID);
 	SpellInstance(SpellCaster *newCaster, GameObject  &newTarget, SpellID);
@@ -331,10 +331,10 @@ public:
 typedef SpellInstance *pSpellInstance;
 
 class SpellDisplayList {
-	uint16                      count;
-	uint16                      maxCount;
+	uint16                      _count;
+	uint16                      _maxCount;
 public :
-	pSpellInstance              *spells;
+	pSpellInstance              *_spells;
 
 	void init();
 	void cleanup();
@@ -363,42 +363,42 @@ public :
 // Some functions that require the above definitions to work
 
 inline GameWorld *Effectron::world() const {
-	return parent->world;
+	return _parent->_world;
 }
 inline int16 Effectron::getMapNum() const {
-	return parent->world->mapNum;
+	return _parent->_world->_mapNum;
 }
 
 inline EffectID Effectron::spellID() {
-	return parent->spell;
+	return _parent->_spell;
 }
 inline SpellDisplayPrototype *Effectron::spell() {
-	return (*g_vm->_sdpList)[(SpellID) spellID()];
+	return (*g_vm->_sdpList)[(SpellID)spellID()];
 }
 inline EffectID Effectron::effectID() {
-	return spell()->effect;
+	return spell()->_effect;
 }
 inline EffectDisplayPrototype *Effectron::effect() {
-	return parent->effect;
+	return _parent->_effect;
 }
 inline EffectronFlags Effectron::staCall() {
-	return parent->effect->status(this);
+	return _parent->_effect->_status(this);
 }
 inline TilePoint Effectron::posCall() {
-	return parent->effect->location(this);
+	return _parent->_effect->_location(this);
 }
 inline SpellSpritationSeed Effectron::sprCall() {
-	return parent->effect->spriteno(this);
+	return _parent->_effect->_spriteno(this);
 }
 inline spellHeight Effectron::hgtCall() {
-	return parent->effect->height(this);
+	return _parent->_effect->_height(this);
 }
 inline spellBreadth Effectron::brdCall() {
-	return parent->effect->breadth(this);
+	return _parent->_effect->_breadth(this);
 }
 inline void Effectron::initCall(int16 eno) {
-	partno = eno;
-	parent->effect->init(this);
+	_partno = eno;
+	_parent->_effect->_init(this);
 }
 
 /* ===================================================================== *

@@ -801,7 +801,8 @@ void AGOSEngine::vc15_sync() {
 		}
 	}
 
-	_lastVgaWaitFor = id;
+	if (id != 200)
+		_lastVgaWaitFor = id;
 	/* clear a wait event */
 	if (id == _vgaWaitFor)
 		_vgaWaitFor = 0;
@@ -1161,14 +1162,18 @@ void AGOSEngine::vc28_playSFX() {
 	uint16 flags = vcReadNextWord();
 	debug(0, "vc28_playSFX: (sound %d, channels %d, frequency %d, flags %d)", sound, chans, freq, flags);
 
-	loadSound(sound, freq, flags);
+	// Waxworks uses 2 opcodes to play SFX: vc28 for digital SFX and vc52
+	// for MIDI SFX. If a sound effect has both a MIDI and a digital
+	// version, both opcodes are triggered. Only one of them should play
+	// a sound effect.
+	playSfx(sound, freq, flags, getGameType() == GType_WW);
 }
 
 void AGOSEngine::vc29_stopAllSounds() {
 	if (getGameType() != GType_PP)
 		_sound->stopVoice();
 
-	_sound->stopAllSfx();
+	stopAllSfx();
 }
 
 void AGOSEngine::vc30_setFrameRate() {

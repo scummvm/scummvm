@@ -74,9 +74,9 @@ enum REEL {
 typedef enum { TRANS_DEF, TRANS_CUT, TRANS_FADE } TRANSITS;
 
 // amount to shift scene handles by
-#define	SCNHANDLE_SHIFT ((TinselV2 && !TinselV2Demo) ? 25 : 23)
-#define	OFFSETMASK ((TinselV2 && !TinselV2Demo) ? 0x01ffffffL : 0x007fffffL)
-#define HANDLEMASK ((TinselV2 && !TinselV2Demo) ? 0xFE000000L : 0xFF800000L)
+#define	SCNHANDLE_SHIFT (((TinselVersion >= 2) && !TinselV2Demo) ? 25 : 23)
+#define	OFFSETMASK (((TinselVersion >= 2) && !TinselV2Demo) ? 0x01ffffffL : 0x007fffffL)
+#define HANDLEMASK (((TinselVersion >= 2) && !TinselV2Demo) ? 0xFE000000L : 0xFF800000L)
 
 void DoHailScene(SCNHANDLE scene);
 
@@ -87,6 +87,8 @@ void StartNewScene(SCNHANDLE scene, int entry);
 void EndScene();
 
 void SendSceneTinselProcess(TINSEL_EVENT event);
+
+void SetView(int id, int scale);
 
 } // End of namespace Tinsel
 

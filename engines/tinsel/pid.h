@@ -54,10 +54,12 @@ namespace Tinsel {
 
 #define PID_BTN_CLICK 0x110				// process to handle mouse button clicks
 
-#define PID_PROCESS	(0x0110 | PID_DESTROY)	// Scene process base
+#define PID_PROCESS	(((TinselVersion == 3) ? 0x0100 : 0x0110) | PID_DESTROY)	// Scene process base
 
-#define PID_GPROCESS	0x0120			// Global process base
+#define PID_GPROCESS ((TinselVersion == 3) ? ( 0x110 | PID_DESTROY) : 0x0120) // Global process base
 
+// distinction introduced by noir
+#define PID_SCENE	((TinselVersion == 3) ? (0x0001 | PID_TCODE) : PID_TCODE)	// Root scene process
 } // End of namespace Tinsel
 
 #endif	// TINSEL_PID_H

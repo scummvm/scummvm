@@ -23,6 +23,7 @@
 #define GRIM_MODEL_H
 
 #include "engines/grim/object.h"
+
 #include "math/matrix4.h"
 #include "math/quat.h"
 
@@ -81,7 +82,7 @@ public:
 	Math::Vector3d _insertOffset;
 	int _numGeosets;
 	Geoset *_geosets;
-	float _radius;
+	float _radius = 0.0f;
 	int _numHierNodes;
 	ModelNode *_rootHierNode;
 	Math::Vector3d _bboxPos;

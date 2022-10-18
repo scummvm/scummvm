@@ -59,7 +59,6 @@ namespace Wage {
 
 void Designed::setDesignBounds(Common::Rect *bounds) {
 	_designBounds = bounds;
-	_design->setBounds(bounds);
 }
 
 Designed::~Designed() {
@@ -159,13 +158,13 @@ void Scene::paint(Graphics::ManagedSurface *surface, int x, int y) {
 Designed *Scene::lookUpEntity(int x, int y) {
 	for (ObjList::const_iterator it = _objs.end(); it != _objs.begin(); ) {
 		it--;
-		if ((*it)->_design->isPointOpaque(x, y))
+		if ((*it)->_design->isInBounds(x, y))
 			return *it;
 	}
 
 	for (ChrList::const_iterator it = _chrs.end(); it != _chrs.begin(); ) {
 		it--;
-		if ((*it)->_design->isPointOpaque(x, y))
+		if ((*it)->_design->isInBounds(x, y))
 			return *it;
 	}
 

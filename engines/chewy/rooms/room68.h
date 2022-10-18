@@ -28,23 +28,23 @@ namespace Rooms {
 class Room68 {
 private:
 	static void setup_func();
-	static void talk_indigo(int16 aad_nr);
+	static void talkToIndigo(int16 aad_nr);
 
 public:
 	static void entry();
 	static void xit();
 	static bool timer(int16 t_nr, int16 ani_nr);
 
-	static void look_kaktus();
-	static int16 use_indigo();
-	static void talk_keeper();
-	static void kostuem_aad(int16 aad_nr);
-	static void talk_papagei();
-	static int16 use_diva();
-	static int16 use_keeper();
-	static void calc_diva();
-	static int16 use_papagei();
-	static void talk_indigo();
+	static void lookAtCactus();
+	static int16 useIndigo();
+	static void talkToBartender();
+	static void useDressOnNichelle(int16 aad_nr);
+	static void talkWithParrot();
+	static int16 useDiva();
+	static int16 useBartender();
+	static void calcDiva();
+	static int16 useParrot();
+	static void talkToIndigo();
 };
 
 } // namespace Rooms

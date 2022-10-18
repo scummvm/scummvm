@@ -22,7 +22,7 @@
 #ifndef COMMON_INTTYPES_H
 #define COMMON_INTTYPES_H
 
-#if (defined(_MSC_VER) && _MSC_VER < 1800) || defined(__SYMBIAN32__)
+#if (defined(_MSC_VER) && _MSC_VER < 1800)
 	typedef signed char int8_t;
 	typedef signed short int16_t;
 	typedef unsigned char uint8_t;

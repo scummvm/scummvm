@@ -304,29 +304,28 @@ void drawMainDisplay();
 
 class TileCycleData {
 public:
-	int32           counter;                // cycling counter
-	uint8           pad;                    // odd-byte pad
-	uint8           numStates,              // number of animated states
-	                currentState,           // current state of animation
-	                cycleSpeed;             // speed of cycling (0=none)
+	int32           _counter;                // cycling counter
+	uint8           _pad;                    // odd-byte pad
+	uint8           _numStates,              // number of animated states
+	                _currentState,           // current state of animation
+	                _cycleSpeed;             // speed of cycling (0=none)
 
-	TileID          cycleList[16];        // array of tiles
+	TileID          _cycleList[16];        // array of tiles
 
 	void load(Common::SeekableReadStream *stream) {
-		counter = stream->readSint32LE();
-		pad = stream->readByte();
-		numStates = stream->readByte();
-		currentState = stream->readByte();
-		cycleSpeed = stream->readByte();
+		_counter = stream->readSint32LE();
+		_pad = stream->readByte();
+		_numStates = stream->readByte();
+		_currentState = stream->readByte();
+		_cycleSpeed = stream->readByte();
 
 		for (int i = 0; i < 16; ++i)
-			cycleList[i] = stream->readUint16LE();
+			_cycleList[i] = stream->readUint16LE();
 	}
 };
 
-typedef TileCycleData
-*CyclePtr,              // pointer to cycle data
-* *CycleHandle;         // handle to cycle data
+typedef TileCycleData *CyclePtr,            // pointer to cycle data
+					 **CycleHandle;         // handle to cycle data
 
 const int maxCycleRanges = 128;             // 128 should do for now...
 
@@ -522,8 +521,8 @@ class TileHitZone : public ActiveItem {
 public:
 
 	//  REM: Allow discontiguous regions??
-	int16           numVertices;
-	XArray<Point16> vertexList;
+	int16           _numVertices;
+	XArray<Point16> _vertexList;
 
 	int16 type() {
 		return activeTypeHitZone;
@@ -541,12 +540,12 @@ public:
 
 class ObjectInstance : public ActiveItem {
 public:
-	TileGroupID     classID;                // ID of object class
+	TileGroupID     _classID;                // ID of object class
 
 	// An instance of a specific object.
 
-	uint16          u, v, h;                // where the instance lies
-	uint8           facing;                 // which direction it's facing
+	uint16          _u, _v, _h;                // where the instance lies
+	uint8           _facing;                 // which direction it's facing
 
 	int16 type() {
 		return activeTypeObject;
@@ -569,10 +568,10 @@ class TileActivityTask {
 	friend class    TileActivityTaskList;
 	friend class    ActiveItem;
 
-	uint8           activityType;           // open or close
-	uint8           targetState;
-	ActiveItem      *tai;                   // the tile activity instance
-	ThreadID        script;                 // script to wake up when task done
+	uint8           _activityType;           // open or close
+	uint8           _targetState;
+	ActiveItem      *_tai;                   // the tile activity instance
+	ThreadID        _script;                 // script to wake up when task done
 
 	enum activityTypes {
 		activityTypeNone,                   // no activity
@@ -915,27 +914,27 @@ struct WorldMapData {
  * ===================================================================== */
 
 class MetaTileIterator {
-	TilePoint   mCoords;
-	TileRegion  region;
+	TilePoint   _mCoords;
+	TileRegion  _region;
 
-	int16       mapNum;
+	int16       _mapNum;
 
 	bool iterate();
 
 public:
-	MetaTileIterator(int16 map, const TileRegion &reg) : mapNum(map) {
-		region.min.u = reg.min.u >> kPlatShift;
-		region.max.u = (reg.max.u + kPlatMask) >> kPlatShift;
-		region.min.v = reg.min.v >> kPlatShift;
-		region.max.v = (reg.max.v + kPlatMask) >> kPlatShift;
-		region.min.z = region.max.z = 0;
+	MetaTileIterator(int16 map, const TileRegion &reg) : _mapNum(map) {
+		_region.min.u = reg.min.u >> kPlatShift;
+		_region.max.u = (reg.max.u + kPlatMask) >> kPlatShift;
+		_region.min.v = reg.min.v >> kPlatShift;
+		_region.max.v = (reg.max.v + kPlatMask) >> kPlatShift;
+		_region.min.z = _region.max.z = 0;
 	}
 
 	MetaTile *first(TilePoint *loc = NULL);
 	MetaTile *next(TilePoint *loc = NULL);
 
 	int16 getMapNum() {
-		return mapNum;
+		return _mapNum;
 	}
 };
 
@@ -944,24 +943,24 @@ public:
  * ===================================================================== */
 
 class TileIterator {
-	MetaTileIterator    metaIter;
-	MetaTile            *mt;
-	int16               platIndex;
-	Platform            *platform;
-	TilePoint           tCoords,
-	                    origin;
-	TileRegion          region,
-	                    tCoordsReg;
+	MetaTileIterator    _metaIter;
+	MetaTile            *_mt;
+	int16               _platIndex;
+	Platform            *_platform;
+	TilePoint           _tCoords,
+	                    _origin;
+	TileRegion          _region,
+	                    _tCoordsReg;
 
 	bool iterate();
 
 public:
 	TileIterator(int16 mapNum, const TileRegion &reg) :
-		metaIter(mapNum, reg),
-		region(reg) {
-			mt = nullptr;
-			platIndex = 0;
-			platform = nullptr;
+		_metaIter(mapNum, reg),
+		_region(reg) {
+			_mt = nullptr;
+			_platIndex = 0;
+			_platform = nullptr;
 	}
 
 	TileInfo *first(TilePoint *loc, StandingTileInfo *stiResult = NULL);

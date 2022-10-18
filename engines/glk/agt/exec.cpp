@@ -363,7 +363,6 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		return 1;
 	}
 
-	if (context == MSG_MAIN) return 0;
 
 	if (context == MSG_PARSE) {
 		/* The only special subsitution allowed is $word$. */
@@ -374,80 +373,81 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		} else return 0;
 	}
 
-	/* d2buff is a macro that returns 1 */
-	if (match_str(pvarname, "NOUN$"))
-		num_name(dobj_rec, just_seen_adj);
-	just_seen_adj = 0; /* It doesn't matter. */
-	if (match_str(pvarname, "VERB$"))
-		d2buff(realverb);  /* auxsyn[vb][0] */
-	if (match_str(pvarname, "OBJECT$"))
-		num_name(iobj_rec, 0);
-	if (match_str(pvarname, "NAME$"))
-		num_name(actor_rec, 0);
-	if (match_str(pvarname, "ADJECTIVE$")) {
-		just_seen_adj = get_adj(dobj_rec, fill_buff);
-		return 1;
-	}
-	if (match_str(pvarname, "PREP$") || match_str(pvarname, "PREP_$"))
-		d2buff(prep);
-	if (match_str(pvarname, "N_PRO$"))
-		d2buff(it_pronoun(dobj, 0));
-	if (match_str(pvarname, "O_PRO$"))
-		d2buff(it_pronoun(iobj, 0));
-	if (match_str(pvarname, "NAME_PRO$"))
-		d2buff(it_pronoun(actor, 0));
-	if (match_str(pvarname, "N_INDIR$"))
-		d2buff(it_pronoun(dobj, 1));
-	if (match_str(pvarname, "O_INDIR$"))
-		d2buff(it_pronoun(iobj, 1));
-	if (match_str(pvarname, "NAME_INDIR$"))
-		d2buff(it_pronoun(actor, 1));
-	if (match_str(pvarname, "N_IS$")) {
-		if (!it_plur(dobj)) d2buff(ext_code[wis])
+	if (context!=MSG_MAIN) {
+		/* d2buff is a macro that returns 1 */
+		if (match_str(pvarname, "NOUN$"))
+			num_name(dobj_rec, just_seen_adj);
+		just_seen_adj = 0; /* It doesn't matter. */
+		if (match_str(pvarname, "VERB$"))
+			d2buff(realverb); /* auxsyn[vb][0] */
+		if (match_str(pvarname, "OBJECT$"))
+			num_name(iobj_rec, 0);
+		if (match_str(pvarname, "NAME$"))
+			num_name(actor_rec, 0);
+		if (match_str(pvarname, "ADJECTIVE$")) {
+			just_seen_adj = get_adj(dobj_rec, fill_buff);
+			return 1;
+		}
+		if (match_str(pvarname, "PREP$") || match_str(pvarname, "PREP_$"))
+			d2buff(prep);
+		if (match_str(pvarname, "N_PRO$"))
+			d2buff(it_pronoun(dobj, 0));
+		if (match_str(pvarname, "O_PRO$"))
+			d2buff(it_pronoun(iobj, 0));
+		if (match_str(pvarname, "NAME_PRO$"))
+			d2buff(it_pronoun(actor, 0));
+		if (match_str(pvarname, "N_INDIR$"))
+			d2buff(it_pronoun(dobj, 1));
+		if (match_str(pvarname, "O_INDIR$"))
+			d2buff(it_pronoun(iobj, 1));
+		if (match_str(pvarname, "NAME_INDIR$"))
+			d2buff(it_pronoun(actor, 1));
+		if (match_str(pvarname, "N_IS$")) {
+			if (!it_plur(dobj)) d2buff(ext_code[wis])
 			else d2buff(ext_code[ware]);
-	}
-	if (match_str(pvarname, "O_IS$")) {
-		if (!it_plur(iobj)) d2buff(ext_code[wis])
+		}
+		if (match_str(pvarname, "O_IS$")) {
+			if (!it_plur(iobj)) d2buff(ext_code[wis])
 			else d2buff(ext_code[ware]);
-	}
-	if (match_str(pvarname, "NAME_IS$")) {
-		if (!it_plur(actor)) d2buff(ext_code[wis])
+		}
+		if (match_str(pvarname, "NAME_IS$")) {
+			if (!it_plur(actor)) d2buff(ext_code[wis])
 			else d2buff(ext_code[ware]);
-	}
-
-	if (match_str(pvarname, "N_WAS$")) {
-		if (!it_plur(dobj)) d2buff(ext_code[wwas])
+		}
+		if (match_str(pvarname, "N_WAS$")) {
+			if (!it_plur(dobj)) d2buff(ext_code[wwas])
 			else d2buff(ext_code[wwere]);
-	}
-	if (match_str(pvarname, "O_WAS$")) {
-		if (!it_plur(iobj)) d2buff(ext_code[wwas])
+		}
+		if (match_str(pvarname, "O_WAS$")) {
+			if (!it_plur(iobj)) d2buff(ext_code[wwas])
 			else d2buff(ext_code[wwere]);
-	}
-	if (match_str(pvarname, "NAME_WAS$")) {
-		if (!it_plur(actor)) d2buff(ext_code[wwas])
+		}
+		if (match_str(pvarname, "NAME_WAS$")) {
+			if (!it_plur(actor)) d2buff(ext_code[wwas])
 			else d2buff(ext_code[wwere]);
-	}
-	if (match_str(pvarname, "THE_N$")) {
-		theset(fill_buff, dobj);
-		return 1;
-	}
-	if (match_str(pvarname, "THE_O$")) {
-		theset(fill_buff, iobj);
-		return 1;
-	}
-	if (match_str(pvarname, "THE_NAME$")) {
-		theset(fill_buff, actor);
-		return 1;
-	}
-	if (match_str(pvarname, "THE_C$")) {
-		theset(fill_buff, curr_creat_rec->obj);
-		return 1;
-	}
-	if (match_str(pvarname, "C_NAME$"))
-		num_name(curr_creat_rec, 0);
-	if (match_str(pvarname, "TIME$")) {
-		time_out(fill_buff);
-		return 1;
+		}
+		if (match_str(pvarname, "THE_N$")) {
+			theset(fill_buff, dobj);
+			return 1;
+		}
+		if (match_str(pvarname, "THE_O$")) {
+			theset(fill_buff, iobj);
+			return 1;
+		}
+		if (match_str(pvarname, "THE_NAME$")) {
+			theset(fill_buff, actor);
+			return 1;
+		}
+		if (match_str(pvarname, "THE_C$")) {
+			theset(fill_buff, curr_creat_rec->obj);
+			return 1;
+		}
+		if (match_str(pvarname, "C_NAME$"))
+			num_name(curr_creat_rec, 0);
+		if (match_str(pvarname, "TIME$")) {
+			time_out(fill_buff);
+			return 1;
+		}
 	}
 
 	if (pronoun_mode && match_str(pvarname, "YOU$"))
@@ -897,7 +897,7 @@ long read_number(void) {
 		n = strtol(s, &err, 10);
 		if (err == s) err = nullptr;
 		rfree(s);
-	} while (err == nullptr);
+	} while (!quitflag && (err == nullptr));
 	return n;
 }
 
@@ -1182,7 +1182,7 @@ void increment_turn(void) {
 	/* Now increment the time counter */
 	if (delta_time > 0) {
 		if (PURE_TIME)
-			add_time(agt_rand(min_delta(), delta_time));
+			add_time(get_random(min_delta(), delta_time));
 		else /* if !PURE_TIME */
 			add_time(delta_time);
 	}

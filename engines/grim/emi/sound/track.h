@@ -24,6 +24,7 @@
 
 #include "audio/mixer.h"
 #include "audio/timestamp.h"
+
 #include "math/vector3d.h"
 
 namespace Common {

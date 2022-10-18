@@ -24,6 +24,7 @@
 
 #include "agos/agos.h"
 #include "agos/intern.h"
+#include "agos/midi.h"
 
 #include "common/system.h"
 
@@ -197,7 +198,7 @@ void AGOSEngine::vc61() {
 void AGOSEngine::vc62_fastFadeOut() {
 	vc29_stopAllSounds();
 
-	if (!_fastFadeOutFlag) {
+	if (!_neverFade && !_fastFadeOutFlag) {
 		uint i, fadeSize, fadeCount;
 
 		_fastFadeCount = 256;
@@ -219,12 +220,19 @@ void AGOSEngine::vc62_fastFadeOut() {
 			fadeSize = 4;
 		}
 
+		if (getGameType() == GType_SIMON2 && _nextMusicToPlay != -1)
+			// Music will be stopped after the screen fade, so fade out the
+			// music during the screen fade.
+			_midi->fadeOut();
+
 		for (i = fadeCount; i != 0; --i) {
 			paletteFadeOut(_currentPalette, _fastFadeCount, fadeSize);
 			_system->getPaletteManager()->setPalette(_currentPalette, 0, _fastFadeCount);
 			delay(5);
 		}
+	}
 
+	if (!_fastFadeOutFlag) {
 		if (getGameType() == GType_WW || getGameType() == GType_FF || getGameType() == GType_PP) {
 			clearSurfaces();
 		} else {

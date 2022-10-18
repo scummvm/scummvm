@@ -208,7 +208,7 @@ SECTIONS
   .debug_typenames 0 : { *(.debug_typenames) }
   .debug_varnames  0 : { *(.debug_varnames) }
   /DISCARD/ : { *(.comment) *(.pdr) }
-  /DISCARD/ : { *(.note.GNU-stack) }
+  /DISCARD/ : { *(.note.GNU-stack) *(.MIPS.abiflags*) }
 
   . = __plugin_hole_start;
   .got            : { *(.got.plt) *(.got) } : shorts

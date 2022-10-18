@@ -23,8 +23,10 @@
 #define GRIM_ANIMATIONEMI_H
 
 #include "common/str.h"
+
 #include "math/mathfwd.h"
 #include "math/quat.h"
+
 #include "engines/grim/animation.h"
 #include "engines/grim/object.h"
 #include "engines/grim/emi/skeleton.h"

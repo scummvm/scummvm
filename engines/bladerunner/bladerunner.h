@@ -30,6 +30,7 @@
 #include "common/sinetables.h"
 #include "common/stream.h"
 #include "common/keyboard.h"
+#include "common/events.h"
 
 #include "engines/engine.h"
 
@@ -41,6 +42,7 @@
 #define BLADERUNNER_ORIGINAL_BUGS     0
 
 namespace Common {
+class Archive;
 struct Event;
 }
 
@@ -110,6 +112,12 @@ public:
 	static const int kArchiveCount = 12; // +2 to original value (10) to accommodate for SUBTITLES.MIX and one extra resource file, to allow for capability of loading all VQAx.MIX and the MODE.MIX file (debug purposes)
 	static const int kActorCount =  100;
 	static const int kActorVoiceOver = kActorCount - 1;
+	static const int kMaxCustomConcurrentRepeatableEvents = 20;
+
+	static const int16 kOriginalGameWidth  = 640;
+	static const int16 kOriginalGameHeight = 480;
+	static const int16 kDemoGameWidth      = 320;
+	static const int16 kDemoGameHeight     = 200;
 
 	// Incremental number to keep track of significant revisions of the ScummVM bladerunner engine
 	// that could potentially introduce incompatibilities with old save files or require special actions to restore compatibility
@@ -120,9 +128,15 @@ public:
 	// 2: all time code uses uint32 (since July 17 2019),
 	static const int kBladeRunnerScummVMVersion = 2;
 
+	static const char *kGameplayKeymapId;
+	static const char *kKiaKeymapId;
+	static const char *kCommonKeymapId;
+
 	bool _gameIsRunning;
 	bool _windowIsActive;
 	int  _playerLosesControlCounter;
+	int  _extraCPos;
+	uint8 _extraCNotify;
 
 	Common::String   _languageCode;
 	Common::Language _language;
@@ -217,12 +231,14 @@ public:
 	bool _vqaIsPlaying;
 	bool _vqaStopIsRequested;
 	bool _subtitlesEnabled;  // tracks the state of whether subtitles are enabled or disabled from ScummVM GUI option or KIA checkbox (the states are synched)
+	bool _showSubtitlesForTextCrawl;
 	bool _sitcomMode;
 	bool _shortyMode;
 	bool _noDelayMillisFramelimiter;
 	bool _framesPerSecondMax;
 	bool _disableStaminaDrain;
 	bool _cutContent;
+	bool _enhancedEdition;
 	bool _validBootParam;
 
 	int _walkSoundId;
@@ -253,6 +269,8 @@ public:
 
 	uint32 _timeOfMainGameLoopTickPrevious;
 
+	bool _isNonInteractiveDemo;
+
 	// This addon is to emulate keeping a keyboard key pressed (continuous / repeated firing of the event)
 	// -- code is pretty much identical from our common\events.cpp (KeyboardRepeatEventSourceWrapper)
 	// for continuous events (keyDown)
@@ -265,8 +283,62 @@ public:
 	uint32 _keyRepeatTimeLast;
 	uint32 _keyRepeatTimeDelay;
 
+	uint32 _customEventRepeatTimeLast;
+	uint32 _customEventRepeatTimeDelay;
+	typedef Common::Array<Common::Event> ActiveCustomEventsArray;
+
+	// We do allow keys mapped to the same event,
+	// so eg. a key (Enter) could cause 2 or more events to fire,
+	// However, we should probably restrict the active events
+	// (that can be repeated while holding the mapped keys down)
+	// to a maximum of kMaxCustomConcurrentRepeatableEvents
+	ActiveCustomEventsArray _activeCustomEvents[kMaxCustomConcurrentRepeatableEvents];
+
+	// NOTE We still need keyboard functionality for naming saved games and also for the KIA Easter eggs.
+	//      In KIA keyboard events should be accounted where possible - however some keymaps are still needed
+	//      which is why we have the three separate common, gameplay-only and kia-only keymaps.
+	//      If a valid keyboard key character eg. ("A") for text input (or Easter egg input)
+	//      is also mapped to a common or KIA only custom event, then the custom event will be effected and not the key input.
+	// NOTE We don't use a custom action for left click -- we just use the standard left click action event (kStandardActionLeftClick)
+	// NOTE Dialogue Skip does not work for dialogue replayed when clicking on KIA clues (this is the original's behavior too)
+	// NOTE Toggle KIA options does not work when McCoy is walking towards a character when the player clicks on McCoy
+	//      (this is the original's behavior too).
+	//      "Esc" (by default) or the mapped key to this action still works though.
+	// NOTE A drawback of using customized keymapper for the game is that we can no longer replicate the original's behavior
+	//      whereby holding down <SPACEBAR> would cause McCoy to keep switching quickly between combat mode and normal mode.
+	//      This is because the original, when holding down right mouse button, would just toggle McCoy's mode once.
+	//      We keep the behavior for "right mouse button".
+	//      The continuous fast toggle behavior when holding down <SPACEBAR> feels more like a bug anyway.
+	// NOTE In the original, the KP_PERIOD key with NUMLOCK on, would work as a normal '.' character
+	//      in the KIA Save Game screen. With NUMLOCK off, it would work as a delete request for the selected entry.
+	//      However, NUMLOCK is currently not working as a modifier key for keymaps,
+	//      so maybe we can implement the original behavior more accurately,
+	//      when that is fixed in the keymapper or hardware-input code.
+	//      For now, KP_PERIOD will work (by default) as a delete request.
+	enum BladeRunnerEngineMappableAction {
+//		kMpActionLeftClick,        // default <left click> (select, walk-to, run-to, look-at, talk-to, use, shoot (combat mode), KIA (click on McCoy))
+		kMpActionToggleCombat,     // default <right click> or <Spacebar>
+		kMpActionCutsceneSkip,     // default <Return> or <KP_Enter> or <Esc> or <Spacebar>
+		kMpActionDialogueSkip,     // default <Return> or <KP_Enter>
+		kMpActionToggleKiaOptions, // default <Esc> opens/closes KIA, in Options tab
+		kMpActionOpenKiaDatabase,  // default <Tab> - only opens KIA (if closed), in one of the database tabs (the last active one, or else the first)
+		kMpActionOpenKIATabHelp,               // default <F1>
+		kMpActionOpenKIATabSaveGame,           // default <F2>
+		kMpActionOpenKIATabLoadGame,           // default <F3>
+		kMpActionOpenKIATabCrimeSceneDatabase, // default <F4>
+		kMpActionOpenKIATabSuspectDatabase,    // default <F5>
+		kMpActionOpenKIATabClueDatabase,       // default <F6>
+		kMpActionOpenKIATabQuitGame,           // default <F10>
+		kMpActionScrollUp,                     // ScummVM addition (scroll list up)
+		kMpActionScrollDown,                   // ScummVM addition (scroll list down)
+		kMpConfirmDlg,                         // default <Return> or <KP_Enter>
+		kMpDeleteSelectedSvdGame,              // default <Delete> or <KP_Period>
+		kMpActionToggleCluePrivacy             // default <right click>
+	};
+
 private:
 	MIXArchive _archives[kArchiveCount];
+	Common::Archive *_archive;
 
 public:
 	BladeRunnerEngine(OSystem *syst, const ADGameDescription *desc);
@@ -326,15 +398,25 @@ public:
 
 	bool isAllowedRepeatedKey(const Common::KeyState &currKeyState);
 
+	void handleCustomEventStart(Common::Event &event);
+	void handleCustomEventStop(Common::Event &event);
+	bool isAllowedRepeatedCustomEvent(const Common::Event &currEvent);
+
+	bool shouldDropRogueCustomEvent(const Common::Event &evt);
+	void cleanupPendingRepeatingEvents(const Common::String &keymapperId);
+
 	void gameWaitForActive();
 	void loopActorSpeaking();
 	void loopQueuedDialogueStillPlaying();
 
 	void outtakePlay(int id, bool no_localization, int container = -1);
+	void outtakePlay(const Common::String &basenameNoExt, bool no_localization, int container = -3);
 
 	bool openArchive(const Common::String &name);
 	bool closeArchive(const Common::String &name);
 	bool isArchiveOpen(const Common::String &name) const;
+
+	bool openArchiveEnhancedEdition();
 
 	void syncSoundSettings() override;
 	bool isSubtitlesEnabled();
@@ -358,6 +440,9 @@ public:
 	Graphics::Surface generateThumbnail() const;
 
 	Common::String getTargetName() const;
+
+	uint8 getExtraCNotify();
+	void  setExtraCNotify(uint8 val);
 };
 
 static inline const Graphics::PixelFormat gameDataPixelFormat() {

@@ -142,7 +142,7 @@ void GameState::UpdateViewports() {
 		}
 		_roomViewportZOrderChanged = false;
 	}
-	size_t vp_changed = (size_t)-1;
+	size_t vp_changed = SIZE_MAX;
 	for (size_t i = _roomViewportsSorted.size(); i-- > 0;) {
 		auto vp = _roomViewportsSorted[i];
 		if (vp->HasChangedSize() || vp->HasChangedPosition() || vp->HasChangedVisible()) {
@@ -151,7 +151,7 @@ void GameState::UpdateViewports() {
 			vp->ClearChangedFlags();
 		}
 	}
-	if (vp_changed != (size_t)-1)
+	if (vp_changed != SIZE_MAX)
 		detect_roomviewport_overlaps(vp_changed);
 	for (auto cam : _roomCameras) {
 		if (cam->HasChangedSize() || cam->HasChangedPosition()) {
@@ -242,9 +242,8 @@ PViewport GameState::CreateRoomViewport() {
 	PViewport viewport(new Viewport());
 	viewport->SetID(index);
 	viewport->SetRect(_mainViewport.GetRect());
-	ScriptViewport *scv = new ScriptViewport(index);
 	_roomViewports.push_back(viewport);
-	_scViewportRefs.push_back(std::make_pair<ScriptViewport*, int32_t>(scv, 0));
+	_scViewportHandles.push_back(0);
 	_roomViewportsSorted.push_back(viewport);
 	_roomViewportZOrderChanged = true;
 	on_roomviewport_created(index);
@@ -254,32 +253,38 @@ PViewport GameState::CreateRoomViewport() {
 ScriptViewport *GameState::RegisterRoomViewport(int index, int32_t handle) {
 	if (index < 0 || (size_t)index >= _roomViewports.size())
 		return nullptr;
-	auto &scobj = _scViewportRefs[index];
+	auto scview = new ScriptViewport(index);
 	if (handle == 0) {
-		handle = ccRegisterManagedObject(scobj.first, scobj.first);
+		handle = ccRegisterManagedObject(scview, scview);
 		ccAddObjectReference(handle); // one reference for the GameState
 	} else {
-		ccRegisterUnserializedObject(handle, scobj.first, scobj.first);
+		ccRegisterUnserializedObject(handle, scview, scview);
 	}
-	scobj.second = handle;
-	return scobj.first;
+	_scViewportHandles[index] = handle; // save handle for us
+	return scview;
 }
 
 void GameState::DeleteRoomViewport(int index) {
 	// NOTE: viewport 0 can not be deleted
 	if (index <= 0 || (size_t)index >= _roomViewports.size())
 		return;
-	auto scobj = _scViewportRefs[index];
-	scobj.first->Invalidate();
-	ccReleaseObjectReference(scobj.second);
+	auto handle = _scViewportHandles[index];
+	auto scobj = const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(handle));
+	if (scobj) {
+		scobj->Invalidate();
+		ccReleaseObjectReference(handle);
+	}
 	auto cam = _roomViewports[index]->GetCamera();
 	if (cam)
 		cam->UnlinkFromViewport(index);
 	_roomViewports.erase(_roomViewports.begin() + index);
-	_scViewportRefs.erase(_scViewportRefs.begin() + index);
+	_scViewportHandles.erase(_scViewportHandles.begin() + index);
 	for (size_t i = index; i < _roomViewports.size(); ++i) {
 		_roomViewports[i]->SetID(i);
-		_scViewportRefs[i].first->SetID(i);
+		handle = _scViewportHandles[index];
+		scobj = const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(handle));
+		if (scobj)
+			scobj->SetID(i);
 	}
 	for (size_t i = 0; i < _roomViewportsSorted.size(); ++i) {
 		if (_roomViewportsSorted[i]->GetID() == index) {
@@ -300,8 +305,7 @@ PCamera GameState::CreateRoomCamera() {
 	camera->SetID(index);
 	camera->SetAt(0, 0);
 	camera->SetSize(_mainViewport.GetRect().GetSize());
-	ScriptCamera *scam = new ScriptCamera(index);
-	_scCameraRefs.push_back(std::make_pair<ScriptCamera*, int32_t>(scam, 0));
+	_scCameraHandles.push_back(0);
 	_roomCameras.push_back(camera);
 	return camera;
 }
@@ -309,34 +313,40 @@ PCamera GameState::CreateRoomCamera() {
 ScriptCamera *GameState::RegisterRoomCamera(int index, int32_t handle) {
 	if (index < 0 || (size_t)index >= _roomCameras.size())
 		return nullptr;
-	auto &scobj = _scCameraRefs[index];
+	auto sccamera = new ScriptCamera(index);
 	if (handle == 0) {
-		handle = ccRegisterManagedObject(scobj.first, scobj.first);
+		handle = ccRegisterManagedObject(sccamera, sccamera);
 		ccAddObjectReference(handle); // one reference for the GameState
 	} else {
-		ccRegisterUnserializedObject(handle, scobj.first, scobj.first);
+		ccRegisterUnserializedObject(handle, sccamera, sccamera);
 	}
-	scobj.second = handle;
-	return scobj.first;
+	_scCameraHandles[index] = handle;
+	return sccamera;
 }
 
 void GameState::DeleteRoomCamera(int index) {
 	// NOTE: camera 0 can not be deleted
 	if (index <= 0 || (size_t)index >= _roomCameras.size())
 		return;
-	auto scobj = _scCameraRefs[index];
-	scobj.first->Invalidate();
-	ccReleaseObjectReference(scobj.second);
+	auto handle = _scCameraHandles[index];
+	auto scobj = const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(handle));
+	if (scobj) {
+		scobj->Invalidate();
+		ccReleaseObjectReference(handle);
+	}
 	for (auto &viewref : _roomCameras[index]->GetLinkedViewports()) {
 		auto view = viewref.lock();
 		if (view)
 			view->LinkCamera(nullptr);
 	}
 	_roomCameras.erase(_roomCameras.begin() + index);
-	_scCameraRefs.erase(_scCameraRefs.begin() + index);
+	_scCameraHandles.erase(_scCameraHandles.begin() + index);
 	for (size_t i = index; i < _roomCameras.size(); ++i) {
 		_roomCameras[i]->SetID(i);
-		_scCameraRefs[i].first->SetID(i);
+		handle = _scCameraHandles[index];
+		scobj = const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(handle));
+		if (scobj)
+			scobj->SetID(i);
 	}
 }
 
@@ -347,13 +357,13 @@ int GameState::GetRoomCameraCount() const {
 ScriptViewport *GameState::GetScriptViewport(int index) {
 	if (index < 0 || (size_t)index >= _roomViewports.size())
 		return nullptr;
-	return _scViewportRefs[index].first;
+	return const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(_scViewportHandles[index]));
 }
 
 ScriptCamera *GameState::GetScriptCamera(int index) {
 	if (index < 0 || (size_t)index >= _roomCameras.size())
 		return nullptr;
-	return _scCameraRefs[index].first;
+	return const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(_scCameraHandles[index]));
 }
 
 bool GameState::IsIgnoringInput() const {
@@ -376,11 +386,9 @@ void GameState::SetWaitSkipResult(int how, int data) {
 }
 
 int GameState::GetWaitSkipResult() const {
-	switch (wait_skipped_by) {
-	case SKIP_KEYPRESS: return wait_skipped_by_data;
-	case SKIP_MOUSECLICK: return -(wait_skipped_by_data + 1); // convert to 1-based code and negate
-	default: return 0;
-	}
+	// NOTE: we remove timer flag to make timeout reason = 0
+	return ((wait_skipped_by & ~SKIP_AUTOTIMER) << SKIP_RESULT_TYPE_SHIFT)
+		| (wait_skipped_by_data & SKIP_RESULT_DATA_MASK);
 }
 
 bool GameState::IsBlockingVoiceSpeech() const {
@@ -393,7 +401,7 @@ bool GameState::IsNonBlockingVoiceSpeech() const {
 
 bool GameState::ShouldPlayVoiceSpeech() const {
 	return !_GP(play).fast_forward &&
-	       (_GP(play).want_speech >= 1) && (!_GP(ResPaths).SpeechPak.Name.IsEmpty());
+		(_GP(play).speech_mode != kSpeech_TextOnly) && (_GP(play).voice_avail);
 }
 
 void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver, RestoredData &r_data) {
@@ -522,7 +530,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	entered_at_x = in->ReadInt32();
 	entered_at_y = in->ReadInt32();
 	entered_edge = in->ReadInt32();
-	want_speech = in->ReadInt32();
+	speech_mode = (SpeechMode)in->ReadInt32();
 	cant_skip_speech = in->ReadInt32();
 	in->ReadArrayOfInt32(script_timers, MAX_TIMERS);
 	sound_volume = in->ReadInt32();
@@ -531,7 +539,7 @@ void GameState::ReadFromSavegame(Shared::Stream *in, GameStateSvgVersion svg_ver
 	speech_font = in->ReadInt32();
 	key_skip_wait = in->ReadInt8();
 	swap_portrait_lastchar = in->ReadInt32();
-	separate_music_lib = in->ReadInt32();
+	separate_music_lib = in->ReadInt32() != 0;
 	in_conversation = in->ReadInt32();
 	screen_tint = in->ReadInt32();
 	num_parsed_words = in->ReadInt32();
@@ -726,7 +734,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(entered_at_x);
 	out->WriteInt32(entered_at_y);
 	out->WriteInt32(entered_edge);
-	out->WriteInt32(want_speech);
+	out->WriteInt32(speech_mode);
 	out->WriteInt32(cant_skip_speech);
 	out->WriteArrayOfInt32(script_timers, MAX_TIMERS);
 	out->WriteInt32(sound_volume);
@@ -735,7 +743,7 @@ void GameState::WriteForSavegame(Shared::Stream *out) const {
 	out->WriteInt32(speech_font);
 	out->WriteInt8(key_skip_wait);
 	out->WriteInt32(swap_portrait_lastchar);
-	out->WriteInt32(separate_music_lib);
+	out->WriteInt32(separate_music_lib ? 1 : 0);
 	out->WriteInt32(in_conversation);
 	out->WriteInt32(screen_tint);
 	out->WriteInt32(num_parsed_words);
@@ -818,17 +826,23 @@ void GameState::FreeProperties() {
 void GameState::FreeViewportsAndCameras() {
 	_roomViewports.clear();
 	_roomViewportsSorted.clear();
-	for (auto &scobj : _scViewportRefs) {
-		scobj.first->Invalidate();
-		ccReleaseObjectReference(scobj.second);
+	for (auto handle : _scViewportHandles) {
+		auto scview = const_cast<ScriptViewport*>((const ScriptViewport*)ccGetObjectAddressFromHandle(handle));
+		if (scview) {
+			scview->Invalidate();
+			ccReleaseObjectReference(handle);
+		}
 	}
-	_scViewportRefs.clear();
+	_scViewportHandles.clear();
 	_roomCameras.clear();
-	for (auto &scobj : _scCameraRefs) {
-		scobj.first->Invalidate();
-		ccReleaseObjectReference(scobj.second);
+	for (auto handle : _scCameraHandles) {
+		auto sccam = const_cast<ScriptCamera*>((const ScriptCamera*)ccGetObjectAddressFromHandle(handle));
+		if (sccam) {
+			sccam->Invalidate();
+			ccReleaseObjectReference(handle);
+		}
 	}
-	_scCameraRefs.clear();
+	_scCameraHandles.clear();
 }
 
 void GameState::ReadCustomProperties_v340(Shared::Stream *in) {

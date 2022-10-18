@@ -184,13 +184,15 @@ void ChangeCursorHotspot(int curs, int x, int y) {
 		set_mouse_cursor(_G(cur_cursor));
 }
 
-void Mouse_ChangeModeView(int curs, int newview) {
+void Mouse_ChangeModeViewEx(int curs, int newview, int delay) {
 	if ((curs < 0) || (curs >= _GP(game).numcursors))
 		quit("!Mouse.ChangeModeView: invalid mouse cursor");
 
 	newview--;
 
 	_GP(game).mcurs[curs].view = newview;
+	if (delay != SCR_NO_VALUE)
+		_GP(game).mcurs[curs].animdelay = delay;
 
 	if (newview >= 0) {
 		precache_view(newview);
@@ -198,6 +200,10 @@ void Mouse_ChangeModeView(int curs, int newview) {
 
 	if (curs == _G(cur_cursor))
 		_G(mouse_delay) = 0;  // force update
+}
+
+void Mouse_ChangeModeView(int curs, int newview) {
+	Mouse_ChangeModeViewEx(curs, newview, SCR_NO_VALUE);
 }
 
 void SetNextCursor() {
@@ -239,8 +245,8 @@ void enable_cursor_mode(int modd) {
 		for (ww = 0; ww < _GP(guis)[uu].GetControlCount(); ww++) {
 			if (_GP(guis)[uu].GetControlType(ww) != kGUIButton) continue;
 			GUIButton *gbpt = (GUIButton *)_GP(guis)[uu].GetControl(ww);
-			if (gbpt->ClickAction[kMouseLeft] != kGUIAction_SetMode) continue;
-			if (gbpt->ClickData[kMouseLeft] != modd) continue;
+			if (gbpt->ClickAction[kGUIClickLeft] != kGUIAction_SetMode) continue;
+			if (gbpt->ClickData[kGUIClickLeft] != modd) continue;
 			gbpt->SetEnabled(true);
 		}
 	}
@@ -255,8 +261,8 @@ void disable_cursor_mode(int modd) {
 		for (ww = 0; ww < _GP(guis)[uu].GetControlCount(); ww++) {
 			if (_GP(guis)[uu].GetControlType(ww) != kGUIButton) continue;
 			GUIButton *gbpt = (GUIButton *)_GP(guis)[uu].GetControl(ww);
-			if (gbpt->ClickAction[kMouseLeft] != kGUIAction_SetMode) continue;
-			if (gbpt->ClickData[kMouseLeft] != modd) continue;
+			if (gbpt->ClickAction[kGUIClickLeft] != kGUIAction_SetMode) continue;
+			if (gbpt->ClickData[kGUIClickLeft] != modd) continue;
 			gbpt->SetEnabled(false);
 		}
 	}
@@ -264,7 +270,7 @@ void disable_cursor_mode(int modd) {
 }
 
 void RefreshMouse() {
-	ags_domouse(DOMOUSE_NOCURSOR);
+	ags_domouse();
 	_GP(scmouse).x = game_to_data_coord(_G(mousex));
 	_GP(scmouse).y = game_to_data_coord(_G(mousey));
 }
@@ -291,11 +297,9 @@ int GetCursorMode() {
 }
 
 int IsButtonDown(int which) {
-	if ((which < 1) || (which > 3))
+	if ((which < kMouseLeft) || (which > kMouseMiddle))
 		quit("!IsButtonDown: only works with eMouseLeft, eMouseRight, eMouseMiddle");
-	if (ags_misbuttondown(which - 1))
-		return 1;
-	return 0;
+	return ags_misbuttondown(static_cast<eAGSMouseButton>(which)) ? 1 : 0;
 }
 
 int IsModeEnabled(int which) {
@@ -437,8 +441,12 @@ RuntimeScriptValue Sc_ChangeCursorHotspot(const RuntimeScriptValue *params, int3
 }
 
 // void (int curs, int newview)
-RuntimeScriptValue Sc_Mouse_ChangeModeView(const RuntimeScriptValue *params, int32_t param_count) {
+RuntimeScriptValue Sc_Mouse_ChangeModeView_2(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID_PINT2(Mouse_ChangeModeView);
+}
+
+RuntimeScriptValue Sc_Mouse_ChangeModeView(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_VOID_PINT3(Mouse_ChangeModeViewEx);
 }
 
 // void (int modd)
@@ -552,7 +560,8 @@ RuntimeScriptValue Sc_Mouse_SetSpeed(const RuntimeScriptValue *params, int32_t p
 void RegisterMouseAPI() {
 	ccAddExternalStaticFunction("Mouse::ChangeModeGraphic^2", Sc_ChangeCursorGraphic);
 	ccAddExternalStaticFunction("Mouse::ChangeModeHotspot^3", Sc_ChangeCursorHotspot);
-	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView);
+	ccAddExternalStaticFunction("Mouse::ChangeModeView^2", Sc_Mouse_ChangeModeView_2);
+	ccAddExternalStaticFunction("Mouse::ChangeModeView^3", Sc_Mouse_ChangeModeView);
 	ccAddExternalStaticFunction("Mouse::Click^1", Sc_Mouse_Click);
 	ccAddExternalStaticFunction("Mouse::DisableMode^1", Sc_disable_cursor_mode);
 	ccAddExternalStaticFunction("Mouse::EnableMode^1", Sc_enable_cursor_mode);

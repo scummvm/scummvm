@@ -27,6 +27,19 @@
 #include "twine/detection.h"
 #include "twine/shared.h"
 
+#define GAMEOPTION_WALL_COLLISION GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DISABLE_SAVE_MENU GUIO_GAMEOPTIONS2
+#define GAMEOPTION_DEBUG GUIO_GAMEOPTIONS3
+#define GAMEOPTION_AUDIO_CD GUIO_GAMEOPTIONS4
+#define GAMEOPTION_SOUND GUIO_GAMEOPTIONS5
+#define GAMEOPTION_VOICES GUIO_GAMEOPTIONS6
+#define GAMEOPTION_TEXT GUIO_GAMEOPTIONS7
+#define GAMEOPTION_MOVIES GUIO_GAMEOPTIONS8
+#define GAMEOPTION_MOUSE GUIO_GAMEOPTIONS9
+#define GAMEOPTION_USA_VERSION GUIO_GAMEOPTIONS10
+#define GAMEOPTION_HIGH_RESOLUTION GUIO_GAMEOPTIONS11
+#define GAMEOPTION_TEXT_TO_SPEECH GUIO_GAMEOPTIONS12
+
 static const PlainGameDescriptor twineGames[] = {
 	{ "lba", "Little Big Adventure" },
 	{ "lbashow", "Little Big Adventure Freeware Slide Show" },
@@ -434,6 +447,37 @@ static const ADGameDescription twineGameDescriptions[] = {
 		GUIO1(GUIO_NONE)
 	},
 
+	// Little Big Adventure - DotEmu Enhanced Version (Android)
+	// liblba.so
+	// 8 Sep 2014 at 15:56
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::EN_ANY,
+		Common::kPlatformAndroid,
+		TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::FR_FRA,
+		Common::kPlatformAndroid,
+		TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"DotEmu",
+		AD_ENTRY1s("text.hqr", "a374c93450dd2bb874b7167a63974e8d", 377224),
+		Common::DE_DEU,
+		Common::kPlatformAndroid,
+		TwinE::TF_DOTEMU_ENHANCED,
+		GUIO1(GUIO_NONE)
+	},
+
 	// Little Big Adventure - GOG Version
 	// LBA.GOG
 	// 11 October 2011 at 17:30
@@ -507,6 +551,300 @@ static const ADGameDescription twineGameDescriptions[] = {
 		Common::DE_DEU,
 		Common::kPlatformDOS,
 		ADGF_NO_FLAGS,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - Steam Version
+	// TLBA1C.exe
+	// 31 May 2022 12:58
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "38b038eee2d93a5bc0e0405886161252", 4417024),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "38b038eee2d93a5bc0e0405886161252", 4417024),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "38b038eee2d93a5bc0e0405886161252", 4417024),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "38b038eee2d93a5bc0e0405886161252", 4417024),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "38b038eee2d93a5bc0e0405886161252", 4417024),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - Steam Version
+	// TLBA1C.exe
+	// 10 Jun 2022 14:51
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "e4bab4647eabb998f627ac7628d94790", 4418048),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - Steam Version (3.2.2)
+	// TLBA1C.exe
+	// 1 Jul 2022
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"Classic Version (Steam)",
+		AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - GOG Version 3.2.0 (56122)
+	// TLBA1C.exe
+	// 1st June 2022 02:18
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e377d036e997acbf543bc3023ce72be6", 4404224),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - GOG Version 3.2.1 (56604)
+	// TLBA1C.exe
+	// 17 Jun 2022 00:30
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "e86192e4a491805dc011dda5ca83c608", 4404736),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+
+	// Little Big Adventure - GOG Version 3.2.2
+	// TLBA1C.exe
+	// 1 Jul 2022
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::EN_ANY,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::FR_FRA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::DE_DEU,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::IT_ITA,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
+		GUIO1(GUIO_NONE)
+	},
+	{
+		"lba",
+		"GOG Classic Version",
+		AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688),
+		Common::ES_ESP,
+		Common::kPlatformWindows,
+		TwinE::TF_LBA1_CLASSIC,
 		GUIO1(GUIO_NONE)
 	},
 
@@ -669,103 +1007,156 @@ static const ADGameDescription twineGameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-static const ExtraGuiOption OptWallCollision = {
-	_s("Enable wall collisions"),
-	_s("Enable the original wall collision damage"),
-	"wallcollision",
-	false
-};
-
-// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
-static const ExtraGuiOption OptDisableSaveMenu = {
-	_s("Disable save menu"),
-	_s("The original only had autosaves. This allows you to save whenever you want."),
-	"useautosaving",
-	false
-};
-
-static const ExtraGuiOption OptDebug = {
-	_s("Enable debug mode"),
-	_s("Enable the debug mode"),
-	"debug",
-	false
-};
-
-static const ExtraGuiOption OptUseCD = {
-	_s("Enable audio CD"),
-	_s("Enable the original audio cd track"),
-	"usecd",
-	false
-};
-
-static const ExtraGuiOption OptSound = {
-	_s("Enable sound"),
-	_s("Enable the sound for the game"),
-	"sound",
-	true
-};
-
-static const ExtraGuiOption OptVoices = {
-	_s("Enable voices"),
-	_s("Enable the voices for the game"),
-	"voice",
-	true
-};
-
-static const ExtraGuiOption OptText = {
-	_s("Enable text"),
-	_s("Enable the text for the game"),
-	"displaytext",
-	true
-};
-
-static const ExtraGuiOption OptMovies = {
-	_s("Enable movies"),
-	_s("Enable the cutscenes for the game"),
-	"movie",
-	true
-};
-
-static const ExtraGuiOption OptMouse = {
-	_s("Enable mouse"),
-	_s("Enable the mouse for the UI"),
-	"mouse",
-	true
-};
-
-static const ExtraGuiOption OptUSAVersion = {
-	_s("Use the USA version"),
-	_s("Enable the USA specific version flags"),
-	"version",
-	false
-};
-
-static const ExtraGuiOption OptHighRes = {
-	_s("Enable high resolution"),
-	_s("Enable a higher resolution for the game"),
-	"usehighres",
-	false
-};
-
+static const ADExtraGuiOptionsMap twineOptionsList[] = {
+	{
+		GAMEOPTION_WALL_COLLISION,
+		{
+			_s("Enable wall collisions"),
+			_s("Enable the original wall collision damage"),
+			"wallcollision",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		// this only changes the menu and doesn't change the autosave behaviour - as scummvm is handling this now
+		GAMEOPTION_DISABLE_SAVE_MENU,
+		{
+			_s("Disable save menu"),
+			_s("The original only had autosaves. This allows you to save whenever you want."),
+			"useautosaving",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DEBUG,
+		{
+			_s("Enable debug mode"),
+			_s("Enable the debug mode"),
+			"debug",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUDIO_CD,
+		{
+			_s("Enable audio CD"),
+			_s("Enable the original audio cd track"),
+			"usecd",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND,
+		{
+			_s("Enable sound"),
+			_s("Enable the sound for the game"),
+			"sound",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_VOICES,
+		{
+			_s("Enable voices"),
+			_s("Enable the voices for the game"),
+			"voice",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_TEXT,
+		{
+			_s("Enable text"),
+			_s("Enable the text for the game"),
+			"displaytext",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOVIES,
+		{
+			_s("Enable movies"),
+			_s("Enable the cutscenes for the game"),
+			"movie",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_MOUSE,
+		{
+			_s("Enable mouse"),
+			_s("Enable the mouse for the UI"),
+			"mouse",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_USA_VERSION,
+		{
+			_s("Use the USA version"),
+			_s("Enable the USA specific version flags"),
+			"version",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_HIGH_RESOLUTION,
+		{
+			_s("Enable high resolution"),
+			_s("Enable a higher resolution for the game"),
+			"usehighres",
+			false,
+			0,
+			0
+		}
+	},
 #ifdef USE_TTS
-static const ExtraGuiOption OptTextToSpeech = {
-	_s("TTS Narrator"),
-	_s("Use TTS to read the descriptions (if TTS is available)"),
-	"tts_narrator",
-	false
-};
+	{
+		GAMEOPTION_TEXT_TO_SPEECH,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false,
+			0,
+			0
+		}
+	},
 #endif
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class TwinEMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames) {
-	}
-
-	const char *getEngineId() const override {
-		return "twine";
+	TwinEMetaEngineDetection() : AdvancedMetaEngineDetection(twineGameDescriptions, sizeof(ADGameDescription), twineGames, twineOptionsList) {
+		_guiOptions = GUIO12(GAMEOPTION_WALL_COLLISION, GAMEOPTION_DISABLE_SAVE_MENU,  GAMEOPTION_DEBUG, GAMEOPTION_AUDIO_CD, GAMEOPTION_SOUND, GAMEOPTION_VOICES, GAMEOPTION_TEXT, GAMEOPTION_MOVIES, GAMEOPTION_MOUSE, GAMEOPTION_USA_VERSION, GAMEOPTION_HIGH_RESOLUTION, GAMEOPTION_TEXT_TO_SPEECH);
 	}
 
 	const char *getName() const override {
+		return "twine";
+	}
+
+	const char *getEngineName() const override {
 		return "Little Big Adventure";
 	}
 
@@ -776,27 +1167,6 @@ public:
 	const DebugChannelDef *getDebugChannels() const override {
 		return debugFlagList;
 	}
-
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
-
-const ExtraGuiOptions TwinEMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	ExtraGuiOptions options;
-	options.push_back(OptWallCollision);
-	options.push_back(OptDisableSaveMenu);
-	options.push_back(OptMouse);
-	options.push_back(OptHighRes);
-	options.push_back(OptSound);
-	options.push_back(OptUseCD);
-	options.push_back(OptMovies);
-	options.push_back(OptUSAVersion);
-	options.push_back(OptVoices);
-	options.push_back(OptText);
-	options.push_back(OptDebug);
-#ifdef USE_TTS
-	options.push_back(OptTextToSpeech);
-#endif
-	return options;
-}
 
 REGISTER_PLUGIN_STATIC(TWINE_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, TwinEMetaEngineDetection);

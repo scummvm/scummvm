@@ -20,8 +20,11 @@
  */
 
 #include "ags/engine/ac/dynobj/script_view_frame.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 int ScriptViewFrame::Dispose(const char *address, bool force) {
 	// always dispose a ViewFrame
@@ -33,19 +36,20 @@ const char *ScriptViewFrame::GetType() {
 	return "ViewFrame";
 }
 
-int ScriptViewFrame::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
-	SerializeInt(view);
-	SerializeInt(loop);
-	SerializeInt(frame);
-	return EndSerialize();
+size_t ScriptViewFrame::CalcSerializeSize() {
+	return sizeof(int32_t) * 3;
 }
 
-void ScriptViewFrame::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	view = UnserializeInt();
-	loop = UnserializeInt();
-	frame = UnserializeInt();
+void ScriptViewFrame::Serialize(const char *address, Stream *out) {
+	out->WriteInt32(view);
+	out->WriteInt32(loop);
+	out->WriteInt32(frame);
+}
+
+void ScriptViewFrame::Unserialize(int index, Stream *in, size_t data_sz) {
+	view = in->ReadInt32();
+	loop = in->ReadInt32();
+	frame = in->ReadInt32();
 	ccRegisterUnserializedObject(index, this, this);
 }
 

@@ -126,7 +126,9 @@ protected:
 	void updateScreenRect();
 	void updateCursorScaling();
 	const GLESBaseTexture *getActiveTexture() const;
-	void clipMouse(Common::Point &p) const;
+
+	Common::Point convertScreenToVirtual(int &x, int &y) const;
+	Common::Point convertVirtualToScreen(int x, int y) const;
 
 	void setSystemMousePosition(int x, int y) {}
 
@@ -183,7 +185,7 @@ private:
 
 	// Touch controls layer
 	GLESTexture *_touchcontrols_texture;
-	bool _old_touch_3d_mode;
+	int _old_touch_mode;
 };
 
 #endif

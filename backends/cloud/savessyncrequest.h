@@ -26,11 +26,10 @@
 #include "backends/cloud/storage.h"
 #include "common/hashmap.h"
 #include "common/hash-str.h"
-#include "gui/object.h"
 
 namespace Cloud {
 
-class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
+class SavesSyncRequest: public Networking::Request {
 	Storage *_storage;
 	Storage::BoolCallback _boolCallback;
 	Common::HashMap<Common::String, uint32> _localFilesTimestamps;
@@ -42,6 +41,7 @@ class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	bool _ignoreCallback;
 	uint32 _totalFilesToHandle;
 	Common::String _date;
+	uint32 _bytesToDownload, _bytesDownloaded;
 
 	void start();
 	void directoryListedCallback(Storage::ListDirectoryResponse response);
@@ -57,6 +57,9 @@ class SavesSyncRequest: public Networking::Request, public GUI::CommandSender {
 	virtual void finishError(Networking::ErrorResponse error, Networking::RequestState state = Networking::FINISHED);
 	void finishSync(bool success);
 
+	uint32 getDownloadedBytes() const;
+	uint32 getBytesToDownload() const;
+
 public:
 	SavesSyncRequest(Storage *storage, Storage::BoolCallback callback, Networking::ErrorCallback ecb);
 	virtual ~SavesSyncRequest();
@@ -66,6 +69,9 @@ public:
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getDownloadingProgress() const;
+
+	/** Fills a struct with numbers about current sync downloading progress. */
+	void getDownloadingInfo(Storage::SyncDownloadingInfo &info) const;
 
 	/** Returns a number in range [0, 1], where 1 is "complete". */
 	double getProgress() const;

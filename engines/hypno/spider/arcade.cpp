@@ -34,6 +34,10 @@ static const int shootOriginIndex[9][2] = {
 	{41, 3}, {51, 3}, {65, 6}, {40, 16}, {58, 20}, {67, 10}, {37, 14}, {37, 15}, {67, 22}};
 
 void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
+	_health = arc->health;
+	_maxHealth = _health;
+	resetStatistics();
+	_checkpoint = _currentLevel;
 	assert(!arc->player.empty());
 	_playerFrames = decodeFrames(arc->player);
 	_playerFrameSep = 0;
@@ -58,11 +62,23 @@ void SpiderEngine::runBeforeArcade(ArcadeShooting *arc) {
 }
 
 void SpiderEngine::runAfterArcade(ArcadeShooting *arc) {
-	_checkpoint = _nextLevel;
-
 	if (_health <= 0) {
 		assert(_score >= _bonus);
 		_score -= _bonus;
+	}
+
+	for (Frames::iterator it =_playerFrames.begin(); it != _playerFrames.end(); ++it) {
+		(*it)->free();
+		delete (*it);
+	}
+	_playerFrames.clear();
+
+	if (isDemo() && _restoredContentEnabled) {
+		if (_health == 0)
+			showScore("Spider-man was defeated!");
+		else
+			showScore("Spider-Man saved the day!");
+		_score = 0;
 	}
 }
 
@@ -84,12 +100,46 @@ void SpiderEngine::findNextSegment(ArcadeShooting *arc) {
 }
 
 
+void SpiderEngine::pressedKey(const int keycode) {
+	if (keycode == Common::KEYCODE_c) {
+		if (_cheatsEnabled) {
+			_skipLevel = true;
+			return;
+		}
+	} else if (keycode == Common::KEYCODE_k) { // Added for testing
+		_health = 0;
+	} else if (keycode == Common::KEYCODE_LEFT) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerLeft;
+	} else if (keycode == Common::KEYCODE_DOWN) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerBottom;
+	} else if (keycode == Common::KEYCODE_RIGHT) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerRight;
+	} else if (keycode == Common::KEYCODE_UP) {
+		_lastPlayerPosition = _currentPlayerPosition;
+		_currentPlayerPosition = kPlayerTop;
+	}
+}
+
+void SpiderEngine::missedTarget(Shoot *s, ArcadeShooting *arc) {
+	if (_arcadeMode != "YC" && _arcadeMode != "YD")
+		return;
+	if ((uint32)(s->name[0]) == _currentPlayerPosition) {
+		if (!_infiniteHealthCheat)
+			_health = _health - s->attackWeight;
+		hitPlayer();
+	}
+}
+
+
 void SpiderEngine::hitPlayer() {
 	if (_playerFrameSep < (int)_playerFrames.size()) {
 		if (_playerFrameIdx < _playerFrameSep)
 			_playerFrameIdx = _playerFrameSep;
 	} else {
-		uint32 c = 250; // red
+		uint32 c = kHypnoColorRed; // red
 		_compositeSurface->fillRect(Common::Rect(0, 0, 640, 480), c);
 		drawScreen();
 	}
@@ -98,7 +148,7 @@ void SpiderEngine::hitPlayer() {
 }
 
 void SpiderEngine::drawShoot(const Common::Point &target) {
-	uint32 c = 248; // white
+	uint32 c = kSpiderColorWhite; // white
 	uint32 ox = 0;
 	uint32 oy = 0;
 
@@ -234,6 +284,15 @@ void SpiderEngine::drawPlayer() {
 			}
 		}
 	} else if (_arcadeMode == "YE" || _arcadeMode == "YF") {
+		if (_arcadeMode == "YF") {
+			int fraction = _background->decoder->getFrameCount() / (_maxHealth / 2);
+			if (_background->decoder->getCurFrame() % fraction == 0)
+				_health = MAX(1, _health - 1);
+
+			if (checkArcadeObjectives())
+				_skipLevel = true;
+		}
+
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 		uint32 idx = mousePos.x / (_screenW / 5);
 		_playerFrameIdx = oIndexYE[idx];
@@ -271,17 +330,20 @@ void SpiderEngine::drawHealth() {
 		return;
 	r = Common::Rect(256, 152 + d, 272, 174);
 	if (d >= 11)
-		c = 250; // red
+		c = kHypnoColorRed; // red
 	else
-		c = 251; // green
+		c = kHypnoColorGreen; // green
 
 	_compositeSurface->fillRect(r, c);
 
 	r = Common::Rect(256, 152, 272, 174);
-	c = 252; // blue
+	c = kSpiderColorBlue; // blue
 	_compositeSurface->frameRect(r, c);
 
 	drawString("block05.fgx", "ENERGY", 248, 180, 38, c);
+}
+byte *SpiderEngine::getTargetColor(Common::String name, int levelId) {
+	return getPalette(kHypnoColorRed);
 }
 
 } // End of namespace Hypno

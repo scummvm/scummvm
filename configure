@@ -46,6 +46,7 @@ SAVED_WINDRESFLAGS=$WINDRESFLAGS
 
 # Use environment vars if set
 CXXFLAGS="$CXXFLAGS $CPPFLAGS"
+PLUGIN_LDFLAGS=$LDFLAGS
 
 # Backslashes into forward slashes:
 # The following OS/2 specific code is performed to deal with handling of backslashes by ksh.
@@ -190,9 +191,6 @@ _enable_prof=no
 _enable_asan=no
 _enable_tsan=no
 _enable_ubsan=no
-_global_constructors=no
-_no_undefined_var_template=no
-_no_pragma_pack=no
 _bink=yes
 _cloud=auto
 _pandoc=no
@@ -357,7 +355,7 @@ EOF
 }
 
 gcc_get_define() {
-	echo "" | $CXX -dM -E - | fgrep "$1" | head -n1 | cut -d ' ' -f 3-
+	echo "" | $CXX -dM -E - | grep -F "$1" | head -n1 | cut -d ' ' -f 3-
 }
 
 #
@@ -573,13 +571,7 @@ get_system_exe_extension() {
 
 # Show the configure help line for an option
 option_help() {
-	if test "${3}" != "" ; then
-		tmpopt_prefix="${3}"
-	else
-		tmpopt_prefix="--"
-	fi
-	tmpopt=`echo $1 | sed 's/_/-/g'`
-	option=`echo "${tmpopt_prefix}${tmpopt}                       " | sed "s/\(.\{23\}\).*/\1/"`
+	option=$(echo "${3:---}${1}                       " | sed -e "s/\(.\{23\}\).*/\1/" -e "s/_/-/g")
 	echo "  ${option}  ${2}"
 }
 
@@ -630,12 +622,11 @@ get_engine_subengines() {
 }
 
 # Ask if this is a subengine
-get_engine_sub() {
-	sub=`get_var _engine_$1_sub`
-	if test -z "$sub" ; then
-		sub=no
+check_is_subengine() {
+	if test -z "$(get_var _engine_$1_sub)" ; then
+		return 1
 	fi
-	echo $sub
+	return 0
 }
 
 # Get a subengine's parent (undefined for non-subengines)
@@ -690,7 +681,7 @@ engine_enable() {
 	engine=`echo $eng | sed 's/-/_/g'`
 
 	# Filter the parameter for the subengines
-	if test "`get_engine_sub ${engine}`" != "no" ; then
+	if check_is_subengine ${engine} ; then
 		if test "$opt" != "yes" ; then
 			subengine_option_error ${engine}
 			return
@@ -769,7 +760,7 @@ copy_if_changed() {
 for parm in "$@" ; do
 	if test "$parm" = "--help" || test "$parm" = "-help" || test "$parm" = "-h" ; then
 		for engine in $_engines; do
-			if test `get_engine_sub $engine` = no ; then
+			if ! check_is_subengine $engine ; then
 				engines_help="$engines_help`show_engine_help $engine`
 "
 			fi
@@ -837,6 +828,7 @@ Special configuration feature:
                                            psp for PlayStation Portable
                                            samsungtv for Samsung TV
                                            switch for Nintendo Switch
+                                           wasm32-unknown-emscripten for WebAssembly
                                            wii for Nintendo Wii
 
 Game engines:
@@ -977,7 +969,7 @@ Optional Libraries:
 
   --with-ieee1284-prefix=DIR prefix where libieee1284 is installed (optional)
   --enable-opl2lpt         enable OPL2LPT support
-  
+
   --with-retrowave-prefix=DIR prefix where libretrowave is installed (optional)
   --enable-retrowave       enable RetroWave OPL3 support
 
@@ -1609,7 +1601,7 @@ ios7)
 	;;
 ios7-arm64)
 	_host_os=iphone
-	# Remaining of configure don't known about arm64
+	# Remains of configure not knowing about arm64
 	_host_cpu=aarch64
 	_host_alias=arm64-apple-darwin11
 	;;
@@ -1708,7 +1700,7 @@ wasm32-*)
 	_endian=little # the endian check below fails, but emscripten is always little endian anyway
 	_host_os=emscripten
 	_host_cpu=wasm32
-	datadir='/scummvm'
+	datadir='/data'
 	CXX="em++"
 	;;
 wii)
@@ -1858,6 +1850,12 @@ riscos)
 	elif `which tokenize >/dev/null 2>&1`; then
 		add_line_to_config_mk "TOKENIZE := tokenize"
 	fi
+	if test -e "$GCCSDK_INSTALL_ENV/bin/makerun"; then
+		add_line_to_config_mk "MAKERUN := $GCCSDK_INSTALL_ENV/bin/makerun"
+	elif `which makerun >/dev/null 2>&1`; then
+		add_line_to_config_mk "MAKERUN := makerun"
+	fi
+	echo Over here!
 	;;
 *)
 	;;
@@ -2109,28 +2107,7 @@ else
 		echo non-gcc compiler version ${cxx_version}
 	fi
 	cxx_verc_fail=yes
-
-	case $_host_os in
-		irix*)
-			case $cxx_version in
-				7.4.4*)
-					# We just assume this is SGI MIPSpro
-					cxx_version="assumed SGI MIPSpro $cxx_version, ok"
-					cxx_verc_fail=no
-					_cxx_major=7
-					_cxx_minor=4
-					add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MDupdate "$(*D)/$(DEPDIR)/$(*F).d"'
-					add_line_to_config_mk '-include Makedepend'
-					;;
-				*)
-					cxx_version="$cxx_version, bad"
-					;;
-			esac
-			;;
-		*)
-			cxx_version="$cxx_version, bad"
-			;;
-	esac
+	cxx_version="$cxx_version, bad"
 fi
 
 echo "$cxx_version"
@@ -2166,8 +2143,11 @@ if test "$have_gcc" = yes ; then
 		std_variant=gnu++
 		pedantic=no
 		;;
-	amigaos* | dreamcast | ds | mingw* | mint* | n64 | ps3 | psp2)
+	amigaos* | dreamcast | ds | mingw* | mint* | morphos | n64 | ps3 | psp2)
 		std_variant=gnu++
+		;;
+	openbsd*)
+		pedantic=no
 		;;
 	*)
 		;;
@@ -2180,7 +2160,7 @@ if test "$have_gcc" = yes ; then
 elif test "$have_icc" = yes ; then
 	# ICC does not support pedantic, while GCC and clang do.
 	add_line_to_config_mk 'CXX_UPDATE_DEP_FLAG = -MMD -MF "$(*D)/$(DEPDIR)/$(*F).d" -MQ "$@" -MP'
-fi;
+fi
 
 #
 # Set status about C++11 mode
@@ -2295,18 +2275,22 @@ if test "$_release_build" = yes; then
 	append_var DEFINES "-DRELEASE_BUILD"
 fi
 
-# If possible, we want to use -Wglobal-constructors
-# However, not all compilers support that, so check whether the active one does.
-echocheck "whether C++ compiler accepts -Wglobal-constructors"
-cat > $TMPC << EOF
-int main() { return 0; }
+set_flag_if_supported() {
+	echocheck "whether C++ compiler accepts $1"
+	cat > $TMPC << EOF
+	int main() { return 0; }
 EOF
-cc_check -Wglobal-constructors -Werror && _global_constructors=yes
+	# Note: we check for -Wxxx instead of -Wno-xxx as not all compilers error
+	# out on unknown -Wno-xxx flags.
+	if cc_check $(echo $1 | sed 's/-Wno-/-W/') -Werror; then
+		append_var CXXFLAGS "$1"
+		echo yes
+	else
+		echo no
+	fi
+}
 
-if test "$_global_constructors" = yes; then
-	append_var CXXFLAGS "-Wglobal-constructors"
-fi
-echo $_global_constructors
+set_flag_if_supported -Wglobal-constructors
 
 # If the compiler supports the -Wundefined-var-template flag, silence that warning.
 # We get this warning a lot with regard to the Singleton class as we explicitly
@@ -2314,16 +2298,7 @@ echo $_global_constructors
 # change the way we instantiate the singleton classes as done in PR #967.
 # Note: we check the -Wundefined-var-template as gcc does not error out on unknown
 # -Wno-xxx flags.
-echocheck "whether C++ compiler accepts -Wno-undefined-var-template"
-cat > $TMPC << EOF
-int main() { return 0; }
-EOF
-cc_check -Wundefined-var-template -Werror && _no_undefined_var_template=yes
-
-if test "$_no_undefined_var_template" = yes; then
-	append_var CXXFLAGS "-Wno-undefined-var-template"
-fi
-echo $_no_undefined_var_template
+set_flag_if_supported -Wno-undefined-var-template
 
 # Vanilla clang 6 enables the new -Wpragma-pack which warns when leaving an
 # included file which changes the current alignment.
@@ -2331,13 +2306,7 @@ echo $_no_undefined_var_template
 # Because there is no correlation between the version reported by Apple Xcode
 # clang and vanilla clang we cannot rely on the __clang_major__/clang_minor__
 # macros.
-# Note: as above, we check for -Wpragma-pack as not all compilers error out on
-# unknown -Wno-xxx flags.
-echocheck "whether C++ compiler accepts -Wno-pragma-pack"
-echo "int main() { return 0; }" >$TMPC
-cc_check -Wpragma-pack -Werror && _no_pragma_pack=yes
-test "$_no_pragma_pack" = yes && append_var CXXFLAGS "-Wno-pragma-pack"
-echo $_no_pragma_pack
+set_flag_if_supported -Wno-pragma-pack
 
 if test -n "$STRINGS"; then
 	_strings=$STRINGS
@@ -2357,6 +2326,9 @@ fi
 #
 echo_n "Checking endianness... "
 cat > tmp_endianness_check.cpp << EOF
+#ifndef __GNUC__
+#define __attribute__(x)
+#endif
 __attribute__ ((used)) unsigned short ascii_mm[] = { 0x4249, 0x4765, 0x6E44, 0x6961, 0x6E53, 0x7953, 0 };
 __attribute__ ((used)) unsigned short ascii_ii[] = { 0x694C, 0x5454, 0x656C, 0x6E45, 0x6944, 0x6E61, 0 };
 const char * _ascii() { char* s = (char*) ascii_mm; s = (char*) ascii_ii; return s; }
@@ -2511,6 +2483,10 @@ case $_host_cpu in
 		_need_memalign=yes
 		;;
 esac
+if test "$_enable_ubsan" = yes ; then
+	# UBSan implies -fsanitize=alignment, so avoid false positives.
+	_need_memalign=yes
+fi
 echo "$_need_memalign"
 
 define_in_config_h_if_yes $_need_memalign 'SCUMM_NEED_ALIGNMENT'
@@ -2526,7 +2502,7 @@ case $_host_cpu in
 			openpandora)
 				define_in_config_if_yes yes 'USE_ARM_NEON_ASPECT_CORRECTOR'
 				;;
-			arm-*riscos | caanoo | gp2x | gp2xwiz | maemo )
+			caanoo | gp2x | gp2xwiz | maemo )
 				define_in_config_if_yes yes 'USE_ARM_SCALER_ASM'
 				define_in_config_if_yes yes 'USE_ARM_SMUSH_ASM'
 				define_in_config_if_yes yes 'USE_ARM_GFX_ASM'
@@ -2590,27 +2566,32 @@ case $_host_os in
 		append_var LIBS "-lcitro3d"
 		;;
 	amigaos*)
-		# On building dynamic, everything (possible) should be built as plugin.
+		# Leave out resources by default to save binary size
+		_builtin_resources=no
+		# AmigaOS (PPC) target
+		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
+		add_line_to_config_mk 'AMIGAOS = 1'
+		append_var CXXFLAGS "-mlongcall"
+		# Enable full optimizations for non-debug builds
+		if test "$_debug_build" = no; then
+			_optimization_level=-O3
+		else
+			_optimization_level=-O0
+			append_var CXXFLAGS "-fno-omit-frame-pointer"
+			append_var CXXFLAGS "-fno-strict-aliasing"
+			define_in_config_if_yes "$_debug_build" 'DEBUG_BUILD'
+		fi
+		# When building dynamic, add everything possible as plugin
+		# except detection_features (see bug #13603)
 		if test "$_dynamic_modules" = yes ; then
-			_detection_features_static=no
+			_detection_features_static=yes
 			_plugins_default=dynamic
 		fi
-		# We have to use 'long' for our 4 byte typedef, because AmigaOS
-		# already typedefs (u)int32 as (unsigned) long  and consequently we'd
-		# get a compiler error otherwise.
+		# Use 'long' for ScummVM's 4 byte typedef, because AmigaOS
+		# already typedefs (u)int32 as (unsigned) long and suppress
+		# those noisy format warnings caused by the 'long' 4 byte
 		type_4_byte='long'
-		# Supress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
-		# Enable optimizations for non-debug builds
-		if test "$_debug_build" = no; then
-			_optimization_level=-O2
-		fi
-		append_var LDFLAGS "-Wl,--export-dynamic"
-		append_var LDFLAGS "-L/sdk/local/newlib/lib"
-		add_line_to_config_mk 'AMIGAOS = 1'
-		_port_mk="backends/platform/sdl/amigaos/amigaos.mk"
-		# Leave out resources by default, save binary size.
-		_builtin_resources=no
 		;;
 	android)
 		case $_host in
@@ -2673,17 +2654,11 @@ case $_host_os in
 		exit 1
 		;;
 	darwin*)
-		# Pass -mlongcall to gcc so that it emits long calls
-		# which will allow for calls larger than 32MB. The linker
-		# will discard the calls if they are not needed, but we
-		# need to ensure the compiler emits them in the first place.
-		# Also the executable has grown to a size where using -Os is necessary to avoid a
-		# 'virtual memory exhausted' error when running the executable.
 		case $_host_cpu in
 		powerpc*)
-			append_var CFLAGS "-mlongcall"
-			append_var CXXFLAGS "-mlongcall"
-			_optimization_level=-Os
+			if test "$_dynamic_modules" = no ; then
+				echo "WARNING: Building static engines will probably fail at link time on Mac PowerPC"
+			fi
 			;;
 		esac
 
@@ -2692,6 +2667,7 @@ case $_host_os in
 		# SDL2 doesn't seem to add Cocoa for us.
 		append_var LIBS "-framework Cocoa"
 		add_line_to_config_mk 'MACOSX = 1'
+		_seq_midi=no
 
 		# Now we may have MacPorts or Fink installed
 		# Which put libraries and headers in non-standard places
@@ -2823,9 +2799,9 @@ EOF
 
 		# Version-specific quirks
 		if test -n "$_macos_min_version" ; then
-			# When building for MacOS X 10.5 or below we need to use the legacy icon
+			# When building for MacOS X 10.5 or below
 			if test "$_macos_min_version" -lt 1060 ; then
-				add_line_to_config_mk 'MACOSX_USE_LEGACY_ICONS = 1'
+				add_line_to_config_mk 'MACOSX_LEOPARD_OR_BELOW = 1'
 			fi
 
 			# When building with SDK 10.14 or above, we cannot compile the 32 bits dock plugin
@@ -2834,9 +2810,23 @@ EOF
 				add_line_to_config_mk 'MACOSX_64_BITS_ONLY = 1'
 			fi
 		fi
+		if test "$_host_cpu" = "aarch64" ; then
+			add_line_to_config_mk 'MACOSX_ARM64 = 1'
+		fi
+
+		# Avoid "file has no symbols" noise from ranlib, if it's new enough
+		ranlib_version=`$_ranlib -V 2>/dev/null`
+		if test -n "$ranlib_version" ; then
+			ranlib_version="`echo "${ranlib_version}" | sed -ne 's/.*cctools-\([0-9]\{1,\}\).*/\1/gp'`"
+			if test -n "$ranlib_version" && test "$ranlib_version" -ge 862 ; then
+				append_var _ranlib "-no_warning_for_no_symbols"
+				# Also tell ar not to do its own calls to ranlib
+				append_var _ar "-S"
+			fi
+		fi
 
 		# Use pandoc to generate README and NEWS file for the bundle
-		# Also default to  HTML rather than plain text as it gives a nicer
+		# Also default to HTML rather than plain text as it gives a nicer
 		# formating, especially for the README. We could consider using RTF
 		# as well, but TextEdit does not support links within the document,
 		# and having a TOC with links, which we do with html, is quite convenient.
@@ -2873,7 +2863,7 @@ EOF
 		append_var CXXFLAGS "-fno-strict-aliasing"
 		append_var CXXFLAGS "-fno-threadsafe-statics"
 		append_var CXXFLAGS "-fuse-cxa-atexit"
-		# Supress format warnings as the long 4 byte causes noisy warnings.
+		# Suppress format warnings as the long 4 byte causes noisy warnings.
 		append_var CXXFLAGS "-Wno-format"
 		append_var LDFLAGS "-mthumb"
 		append_var LDFLAGS "-mthumb-interwork"
@@ -2890,23 +2880,49 @@ EOF
 		;;
 	emscripten)
 		# mandatory emscripten flags
-		append_var LDFLAGS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1 -s ALLOW_MEMORY_GROWTH=1"
-		# enable emscripten-ports and set up paths accordingly
-		append_var LDFLAGS "-s USE_SDL=2 -s USE_SDL_MIXER=2  -s USE_OGG=1 -s USE_VORBIS=1  -s USE_LIBJPEG=1  -s USE_FREETYPE=1 -s USE_ZLIB"
-		_sdlpath="$EMSDK/upstream/emscripten/system/bin/"
-		_pngpath="$EMSDK/upstream/emscripten/cache/"
-		_freetypepath="$EMSDK/upstream/emscripten/cache/ports-builds/freetype/"
-		VORBIS_CFLAGS="-I$EMSDK/upstream/emscripten/cache//ports-builds/vorbis/include"
-		VORBIS_LIBS="-L$EMSDK/upstream/emscripten/cache/ports-builds/vorbis/lib"
-		FREETYPE2_CFLAGS="-I$_freetypepath/include"
-		_freetype_found="true"
-		if test "$_debug_build" = no; then
-			_optimization_level=-O3 -g4
-		else
+		append_var LDFLAGS "-s ALLOW_MEMORY_GROWTH=1 -s ASYNCIFY -s FORCE_FILESYSTEM=1"
+
+		append_var DEFINES "-DEMSCRIPTEN"
+		add_line_to_config_mk 'EMSCRIPTEN = 1'
+
+		if test "$_debug_build" = yes; then
 			_optimization_level=-O2
+			append_var LDFLAGS "-O2 -g3 -s ASSERTIONS=2"
+		else
+			_optimization_level=-O3
+			append_var LDFLAGS "-O3"
+		fi
+
+		# activate emscripten-ports
+		if test "$_freetype2" != no; then
+			append_var LDFLAGS "-s USE_FREETYPE=1 -s SUPPORT_LONGJMP=1" # freetype requires setjmp
+			# neither pkg-config nor freetype-config work, so we setup freetype manually
+			_freetypepath="$EMSCRIPTEN/cache/ports-builds/freetype/"
+			FREETYPE2_CFLAGS="-I$_freetypepath/include" # there were link errors / missing symbols without this
+			_freetype_found="true"
+		else
+			#use link time optimization to further reduce exe size (this can't be used with setjmp which freetype requires)
+			# TODO: Figure out why this is a conflict and/or if freetype can be built without setjmp
+			append_var CXXFLAGS "-flto"
+			append_var LDFLAGS "-flto"
+		fi
+		if test "$_jpeg" != no; then
+			append_var LDFLAGS "-s USE_LIBJPEG=1"
+		fi
+		if test "$_png" != no; then
+			append_var LDFLAGS "-s USE_LIBPNG=1"
+		fi
+		if test "$_sdl" != no; then
+			append_var LDFLAGS "-s USE_SDL=2 "
+		fi
+		if test "$_vorbis" != no; then
+			append_var LDFLAGS "-s USE_OGG=1" # vorbis needs to be linked against OGG (even if we use an external vorbis lib)
+		fi
+		if test "$_zlib" != no; then
+			append_var LDFLAGS "-s USE_ZLIB=1"
 		fi
 	;;
-	freebsd* | openbsd*)
+	freebsd*)
 		append_var LDFLAGS "-L/usr/local/lib"
 		append_var CXXFLAGS "-I/usr/local/include"
 		;;
@@ -3002,6 +3018,11 @@ EOF
 		_detection_features_full=no
 		_nuked_opl=no
 		;;
+	openbsd*)
+		append_var LDFLAGS "-L/usr/local/lib"
+		append_var CXXFLAGS "-I/usr/local/include"
+		_seq_midi=no
+		;;
 	ps3)
 		# Force use of SDL and freetype from the ps3 toolchain
 		_sdlpath="$PS3DEV/portlibs/ppu:$PS3DEV/portlibs/ppu/bin"
@@ -3035,16 +3056,14 @@ EOF
 		append_var CXXFLAGS "-mlong-calls"
 		append_var CXXFLAGS "-mword-relocations"
 		append_var CXXFLAGS "-fomit-frame-pointer"
-		#use link time optimization to further reduce exe size
-		append_var CXXFLAGS "-flto"
-		append_var LDFLAGS "-flto=jobserver"
 		#ensure verbose output during linking to prevent buildbot kills after 1200 seconds
 		if test "$_verbose_build" = yes ; then
 			append_var LDFLAGS "-Wl,-v --verbose"
 		fi
-		#use linker dead code elimination to further reduce exe size
-		append_var CXXFLAGS "-ffunction-sections -fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		fi
 		if test "$_debug_build" = no; then
 		#optimize for smallest file size. This is necessary to prevent a crash on startup
 		#due to the large executable file size when many engines are enabled
@@ -3074,12 +3093,18 @@ EOF
 	riscos)
 		define_in_config_if_yes yes 'RISCOS'
 		append_var LDFLAGS "-static"
-		_optimization_level=-O2
+		_optimization_level=-O3
 		_port_mk="backends/platform/sdl/riscos/riscos.mk"
 		_pandoc=yes
 		_sdlconfig=sdl-config
 		# RiscOS has no OpenGL support at all even though it's SDL based
 		_opengl_mode=none
+		if test "$_dynamic_modules" = yes ; then
+			_detection_features_static=no
+			_plugins_default=dynamic
+		else
+			_detection_features_full=no
+		fi
 		;;
 	solaris*)
 		append_var DEFINES "-DSOLARIS"
@@ -3135,6 +3160,7 @@ if test -n "$_host"; then
 	case "$_host" in
 		3ds)
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_SID"
 			append_var DEFINES "-DDISABLE_NES_APU"
 			_backend="3ds"
@@ -3163,9 +3189,8 @@ if test -n "$_host"; then
 		arm-linux|arm*-linux-gnueabi|arm-*-linux)
 			;;
 		arm-vfp-riscos)
-			# -O2 causes internal compiler error on VFP only with gcc 4.7
-			_optimization_level=-O1
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
+			append_var PLUGIN_LDFLAGS "-L$GCCSDK_INSTALL_ENV/vfp/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/vfp/include"
 			if test -z "$PKG_CONFIG_LIBDIR"; then
 				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/vfp/lib/pkgconfig"
@@ -3177,10 +3202,12 @@ if test -n "$_host"; then
 			append_var CXXFLAGS "-mtune=cortex-a9"
 			append_var CXXFLAGS "-mfpu=vfp"
 			append_var LDFLAGS "-mfpu=vfp"
+			append_var PLUGIN_LDFLAGS "-mfpu=vfp"
 			append_var ASFLAGS "-mfpu=vfp"
 			;;
 		arm-*riscos)
 			append_var LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
+			append_var PLUGIN_LDFLAGS "-L$GCCSDK_INSTALL_ENV/lib"
 			append_var CXXFLAGS "-isystem $GCCSDK_INSTALL_ENV/include"
 			if test -z "$PKG_CONFIG_LIBDIR"; then
 				PKG_CONFIG_LIBDIR="$GCCSDK_INSTALL_ENV/lib/pkgconfig"
@@ -3240,8 +3267,11 @@ if test -n "$_host"; then
 			;;
 		wasm*-emscripten)
 			_backend="sdl"
-			HOSTEXEPRE=
-			HOSTEXEEXT=.html
+			# Disable cloud and SDL_Net as this is handled in the browser
+			_cloud=no
+			_sdlnet=no
+			_libcurl=no
+			_curl=no
 			_ar="emar cr"
 			_ranlib="emranlib"
 			;;
@@ -3296,7 +3326,7 @@ if test -n "$_host"; then
 			if test "$_debug_build" != yes; then
 				append_var DEFINES "-DDISABLE_TEXT_CONSOLE"
 			fi
-			append_var DEFINES "-DDISABLE_COMMAND_LINE"
+			append_var DEFINES "-DDISABLE_HELP_STRINGS"
 			append_var DEFINES "-DDISABLE_DOSBOX_OPL"
 			append_var DEFINES "-DDISABLE_FANCY_THEMES"
 			append_var DEFINES "-DDISABLE_SID"
@@ -3666,6 +3696,7 @@ case $_backend in
 		append_var LIBS "-lobjc -framework UIKit -framework CoreGraphics -framework OpenGLES"
 		append_var LIBS "-framework QuartzCore -framework CoreFoundation -framework Foundation"
 		append_var LIBS "-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration "
+		append_var LIBS "-framework GameController"
 		if [ $_host_cpu = 'aarch64' ]; then
 			append_var LDFLAGS "-miphoneos-version-min=7.1 -arch arm64"
 			append_var CFLAGS "-miphoneos-version-min=7.1 -arch arm64"
@@ -3723,7 +3754,7 @@ case $_backend in
 	psp2)
 		append_var LIBS "-lSDL2 -lSceCommonDialog_stub"
 		append_var LIBS "-lSceSysmodule_stub -lSceDisplay_stub -lSceGxm_stub"
-		append_var LIBS "-lSceAudio_stub -lSceCtrl_stub -lScePower_stub"
+		append_var LIBS "-lSceAudio_stub -lSceAudioIn_stub -lSceCtrl_stub -lScePower_stub"
 		append_var LIBS "-lSceNet_stub -lSceNetCtl_stub"
 		append_var LIBS "-lSceAppMgr_stub -lSceAppUtil_stub -lScePgf_stub"
 		append_var LIBS "-lSceTouch_stub -lSceHid_stub -lSceMotion_stub"
@@ -3811,12 +3842,16 @@ if test "$_sdl" = yes ; then
 	append_var INCLUDES "$SDL_CFLAGS"
 	append_var LIBS "$SDL_LIBS"
 	case $_sdlversion in
-		2.0.*)
+		2.*.*)
 			add_line_to_config_mk "USE_SDL2 = 1"
 			_sdlMajorVersionNumber=2
 			;;
-		*)
+		1.2.*)
 			_sdlMajorVersionNumber=1
+			;;
+		*)
+			echo "support for SDL $_sdlversion not implemented yet"
+			exit 1
 			;;
 	esac
 fi
@@ -4045,18 +4080,6 @@ _mak_plugins=
 if test "$_dynamic_modules" = yes ; then
 	echo_n "Checking whether building plugins is supported... "
 	case $_host_os in
-	emscripten)
-		_plugin_prefix="lib"
-		_plugin_suffix=".wasm"
-		append_var CXXFLAGS "-fPIC"
-		append_var LIBS ""
-_mak_plugins='
-PLUGIN_EXTRA_DEPS =
-PLUGIN_LDFLAGS  += -s SIDE_MODULE=1 -s EXPORT_ALL=1
-PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
-POST_OBJS_FLAGS :=
-'
-		;;
 	3ds)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
@@ -4064,11 +4087,13 @@ _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/3ds/plugin.ld -march=armv6k -mfloat-abi=hard
 '
 		;;
-	amigaos | morphos)
-		_plugin_prefix="lib"
-		_plugin_suffix=".so"
+	amigaos)
+		_plugin_prefix=""
+		_plugin_suffix=".plugin"
 		append_var CXXFLAGS "-fPIC"
 		append_var LIBS "-use-dynld"
+		append_var LIBS "-lauto"
+		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS =
 PLUGIN_LDFLAGS  += -shared
@@ -4085,7 +4110,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 # The linker doesn't actually look in previously
 # loaded libraries when trying to resolve symbols -
 # effectively turning all dlopen(RTLD_GLOBAL) calls
-# into dlopen(RTLD_LOCAL).  It *does* look in
+# into dlopen(RTLD_LOCAL). It *does* look in
 # DT_NEEDED libraries, so the workaround is to add an
 # (otherwise unnecessary) dependency from plugins back
 # to the main libscummvm.so.
@@ -4100,6 +4125,7 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_prefix=""
 		_plugin_suffix=".plugin"
 		append_var LIBS "-ldl"
+		append_var _strip "-x"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS = $(EXECUTABLE)
 PLUGIN_LDFLAGS  += -bundle -bundle_loader $(EXECUTABLE) -exported_symbols_list "$(srcdir)/plugin.exp"
@@ -4113,7 +4139,7 @@ POST_OBJS_FLAGS :=
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(abspath $(srcdir)/backends/platform/dc/plugin.x $(srcdir)/backends/platform/dc/plugin.syms) $(EXECUTABLE) backends/platform/dc/plugin_head.o
-PLUGIN_LDFLAGS		= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
+PLUGIN_LDFLAGS		+= -ml -m4-single-only -nostartfiles -Wl,-q,-T$(srcdir)/backends/platform/dc/plugin.x,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/platform/dc/plugin.syms backends/platform/dc/plugin_head.o
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '
@@ -4125,6 +4151,19 @@ POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 		append_var DEFINES "-DELF_NO_MEM_MANAGER"
 _mak_plugins='
 PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/ds/plugin.ld -mthumb -mthumb-interwork -mfloat-abi=soft
+'
+		;;
+	emscripten)
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS ""
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += $(LDFLAGS) -s SIDE_MODULE=1 -s ASYNCIFY_IMPORTS=["*"] -s EXPORT_ALL=1
+PRE_OBJS_FLAGS  := -s MAIN_MODULE=1 -s EXPORT_ALL=1
+POST_OBJS_FLAGS :=
 '
 		;;
 	freebsd* | openbsd*)
@@ -4188,17 +4227,53 @@ POST_OBJS_FLAGS := -Wl,-no-whole-archive
 		_plugin_suffix=".dll"
 _mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		:= -Wl,--enable-auto-import -shared ./libscummvm.a
+PLUGIN_LDFLAGS		+= -Wl,--enable-auto-import -shared ./libscummvm.a
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--export-all-symbols -Wl,--no-whole-archive -Wl,--out-implib,./libscummvm.a
+'
+		;;
+	morphos)
+		_plugin_prefix="lib"
+		_plugin_suffix=".so"
+		append_var CXXFLAGS "-fPIC"
+		append_var LIBS "-use-dynld"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS =
+PLUGIN_LDFLAGS  += -shared
+PRE_OBJS_FLAGS  := -Wl,-export-dynamic -Wl,-whole-archive
+POST_OBJS_FLAGS := -Wl,-no-whole-archive
 '
 		;;
 	psp)
 		_elf_loader=yes
 		append_var DEFINES "-DUNCACHED_PLUGINS"
 _mak_plugins='
-LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld
-PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -lstdc++ -lc
+LDFLAGS				+= -Wl,-T$(srcdir)/backends/plugins/psp/main_prog.ld  -Wl,-zmax-page-size=128
+PLUGIN_LDFLAGS		+= -Wl,-T$(srcdir)/backends/plugins/psp/plugin.ld -Wl,-zmax-page-size=128 -lstdc++
+'
+		;;
+	psp2)
+		_plugin_prefix=""
+		# This will create an ELF with a suprx extension which we will have to mangle when packaging
+		_plugin_suffix=".suprx"
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS	= $(EXECUTABLE) backends/plugins/psp2/plugin.o
+PLUGIN_LDFLAGS		+= -nostartfiles -nodefaultlibs backends/plugins/psp2/plugin.o -Wl,-q -Xlinker --just-symbols -Xlinker $(EXECUTABLE) -lgcc
+PRE_OBJS_FLAGS		:= -Wl,--whole-archive
+POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
+'
+		;;
+	riscos)
+		_elf_loader=yes
+		append_var DEFINES "-DELF_LOADER_CXA_ATEXIT"
+		append_var CXXFLAGS "-fuse-cxa-atexit"
+		append_var DEFINES "-DUNCACHED_PLUGINS"
+		append_var DEFINES "-DELF_NO_MEM_MANAGER"
+_mak_plugins='
+PLUGIN_EXTRA_DEPS	+= backends/plugins/riscos/plugin.o
+PLUGIN_LDFLAGS		+= -static -Wl,-T$(srcdir)/backends/plugins/riscos/plugin.ld backends/plugins/riscos/plugin.o -Wl,--wrap=__rt_stkovf_split_small -Wl,--wrap=__rt_stkovf_split_big
 '
 		;;
 	*)
@@ -4219,7 +4294,7 @@ if test "$_elf_loader" = yes; then
 	_plugin_suffix=".plg"
 	_mak_plugins='
 PLUGIN_EXTRA_DEPS	= $(EXECUTABLE)
-PLUGIN_LDFLAGS		= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--just-symbols,$(EXECUTABLE),--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms
+PLUGIN_LDFLAGS		+= -nostartfiles backends/plugins/elf/version.o -Wl,-q,--retain-symbols-file,$(srcdir)/backends/plugins/elf/plugin.syms -Xlinker --just-symbols -Xlinker $(EXECUTABLE)
 PRE_OBJS_FLAGS		:= -Wl,--whole-archive
 POST_OBJS_FLAGS		:= -Wl,--no-whole-archive
 '"$_mak_plugins"
@@ -4345,7 +4420,7 @@ EOF
 			cc_check -lspeechd && _tts=yes
 			;;
 		darwin*)
-			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocole
+			# Check the API is available. The most recent API we need is for the NSSpeechSynthesizerDelegate protocol
 			cat > $TMPC << EOF
 #include <AppKit/NSSpeechSynthesizer.h>
 @interface SpeechDelegate : NSObject<NSSpeechSynthesizerDelegate> {
@@ -5182,7 +5257,7 @@ if test "$_libunity" = auto ; then
 			_libunity=no
 			;;
 		*)
-			# Unity has a lots of dependencies, update the libs and cflags var with them
+			# Unity has a lot of dependencies, update the libs and cflags var with them
 			LIBUNITY_LIBS="$LIBUNITY_LIBS `$_pkgconfig --libs 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			LIBUNITY_CFLAGS="$LIBUNITY_CFLAGS `$_pkgconfig --cflags 'unity > 3.8.1' 2>> "$TMPLOG"`"
 			_libunity=no
@@ -5223,7 +5298,7 @@ if test "$_gtk" = auto ; then
 			_gtk=no
 			;;
 		*)
-			# GTK has a lots of dependencies, update the libs and cflags var with them
+			# GTK has a lot of dependencies, update the libs and cflags var with them
 			GTK_LIBS="$GTK_LIBS `$_pkgconfig --libs gtk+-3.0 2>> "$TMPLOG"`"
 			GTK_CFLAGS="$GTK_CFLAGS `$_pkgconfig --cflags gtk+-3.0 2>> "$TMPLOG"`"
 			_gtk=no
@@ -5359,7 +5434,7 @@ if test "$_opengl_mode" != none ; then
 					_opengl_mode=gl
 					;;
 
-				2.0.*)
+				*)
 					# SDL2 supports both OpenGL + OpenGL ES contexts.
 					# However, macOS only allows OpenGL context creation at
 					# this time, thus we limit us to OpenGL on that platform.
@@ -5367,7 +5442,11 @@ if test "$_opengl_mode" != none ; then
 						darwin*)
 							_opengl_mode=gl
 							;;
-
+						emscripten)
+							_opengl_mode=gles2
+							_opengl_glad=no
+							append_var LDFLAGS "-s FULL_ES2=1 -s MAX_WEBGL_VERSION=1"
+							;;
 						*)
 							# As SDL2 supports everything, let the user choose if he wants to
 							test "$_opengl_mode" = "auto" && _opengl_mode=any
@@ -5380,9 +5459,6 @@ if test "$_opengl_mode" != none ; then
 		switch)
 			_opengl_mode=gles2
 			_opengl_glad=yes
-			;;
-		wasm*-emscripten)
-			_opengl_mode=gles2
 			;;
 		*)
 			# On all other platforms, by default don't enable OpenGL
@@ -5441,9 +5517,8 @@ EOF
 		_opengl_can_compile=no
 		# Try different library names
 		if test "$_opengl_mode" = "gles2" ; then
-			# 1) GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
-			# 2) ogles2    This is used by AmigaOS4 for OpenGL ES 2
-			for lib in "-lGLESv2" "-logles2"; do
+			# GLESv2    This is generally used by nearly all platforms for OpenGL ES 2
+			for lib in "-lGLESv2"; do
 				if cc_check_no_clean $DEFINES $OPENGL_CFLAGS $OPENGL_LIBS $lib; then
 					append_var OPENGL_LIBS "$lib"
 					_opengl_can_compile=yes
@@ -5485,12 +5560,6 @@ fi
 
 _opengl=yes
 case $_opengl_mode in
-	auto)
-		# This case should never occur but better safe than sorry.
-		echo "no"
-		_opengl=no
-		;;
-
 	none)
 		echo "no"
 		_opengl=no
@@ -5946,7 +6015,7 @@ case $_host_os in
 		;;
 esac
 
-case $_backend in
+case $_host in
 	3ds)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$datadir/plugins\\\""
 		;;
@@ -5960,6 +6029,9 @@ case $_backend in
 		# The Maemo apps want the plugins in the "lib" directory
 		# without a scummvm sub directory.
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir\\\""
+		;;
+	arm-*riscos)
+		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"\${datarootdir}/plugins\\\""
 		;;
 	*)
 		append_var DEFINES "-DPLUGIN_DIRECTORY=\\\"$libdir/scummvm\\\""
@@ -5985,6 +6057,7 @@ if test "$_enable_asan" = yes ; then
 	else
 		append_var CXXFLAGS "-fsanitize=address -fno-omit-frame-pointer"
 		append_var LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
+		append_var PLUGIN_LDFLAGS "-fsanitize=address -fno-omit-frame-pointer"
 	fi
 fi
 echo "$_enable_asan"
@@ -5994,6 +6067,7 @@ echo_n "Enabling Thread Sanitizer... "
 if test "$_enable_tsan" = yes ; then
 	append_var CXXFLAGS "-fsanitize=thread"
 	append_var LDFLAGS "-fsanitize=thread"
+	append_var PLUGIN_LDFLAGS "-fsanitize=thread"
 fi
 echo "$_enable_tsan"
 
@@ -6002,6 +6076,7 @@ echo_n "Enabling Undefined Behavior Sanitizer... "
 if test "$_enable_ubsan" = yes ; then
 	append_var CXXFLAGS "-fsanitize=undefined"
 	append_var LDFLAGS "-fsanitize=undefined"
+	append_var PLUGIN_LDFLAGS "-fsanitize=undefined"
 fi
 echo "$_enable_ubsan"
 
@@ -6118,6 +6193,15 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--no-gc-sections"
 		fi
 		;;
+	amigaos*)
+		# In release mode use LTO to improve performance
+		# and dead code elimination to reduce binary size
+		if test "$_release_build" = yes; then
+			append_var CXXFLAGS "-flto"
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var PLUGIN_LDFLAGS "-flto=jobserver"
+		fi
+		;;
 	android)
 		# Force treating unqualified char variables as signed by default.
 		# NDK compiler for ARM will treat them as unsigned otherwise, which creates bugs in the code.
@@ -6147,7 +6231,7 @@ case $_host_os in
 
 		# -lgcc is carefully placed here - we want to catch
 		# all toolchain symbols in *our* libraries rather
-		# than pick up anything unhygenic from the Android libs.
+		# than pick up anything unhygienic from the Android libs.
 		LIBS="-Wl,-Bstatic $static_libs -Wl,-Bdynamic -lgcc $system_libs -llog -landroid -ljnigraphics -lEGL"
 		;;
 	ds)
@@ -6156,8 +6240,24 @@ case $_host_os in
 			append_var LDFLAGS "-Wl,--gc-sections"
 		else
 			append_var LDFLAGS "-Wl,--no-gc-sections"
-			# TODO automate this required 2 step linking phase
+			# TODO: automate this required 2 step linking phase
 			# append_var LDFLAGS "-Wl,--retain-symbols-file,ds.syms"
+		fi
+		;;
+	emscripten)
+		append_var LDFLAGS "--pre-js ./dists/emscripten/custom_shell-pre.js --post-js ./dists/emscripten/custom_shell-post.js --shell-file ./dists/emscripten/custom_shell.html"
+		# we remove some linker flags for libs which will be added by emscripten from emscripten-ports to avoid duplicate symbols
+		if test "${LDFLAGS#*-s USE_LIBJPEG=1}" != "$LDFLAGS"; then
+    		LIBS=`echo ${LIBS} | sed 's/-ljpeg//g'`
+		fi
+		if test "${LDFLAGS#*-s USE_LIBPNG=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lpng -lz//g'`
+		fi
+		if test "${LDFLAGS#*-s USE_OGG=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-logg//g'`
+		fi
+		if test "${LDFLAGS#*-s USE_ZLIB=1}" != "$LDFLAGS"; then
+			LIBS=`echo ${LIBS} | sed 's/-lz//g'`
 		fi
 		;;
 	mingw*)
@@ -6171,17 +6271,31 @@ case $_host_os in
 		fi
 		;;
 	riscos)
-		if test "$_debug_build" = no; then
-			append_var CXXFLAGS "-mno-poke-function-name"
+		if test "$_dynamic_modules" = no ; then
+			append_var LDFLAGS "-Wl,--gc-sections"
+			append_var CXXFLAGS "-ffunction-sections"
+			append_var CXXFLAGS "-fdata-sections"
+		else
+			# toolchain asks for gc-sections
+			append_var LDFLAGS "-Wl,--no-gc-sections"
+			append_var PLUGIN_LDFLAGS "-Wl,--no-gc-sections"
+			append_var CXXFLAGS "-mlong-calls"
 		fi
-		append_var CXXFLAGS "-ffunction-sections"
-		append_var CXXFLAGS "-fdata-sections"
-		append_var LDFLAGS "-Wl,--gc-sections"
 		;;
 	n64)
-		# Move some libs down here, otherwise some symbols requires by libvorbis aren't found
+		# Move some libs down here, otherwise some symbols required by libvorbis aren't found
 		# during linking stage
 		append_var LIBS "-lc -lgcc -lnosys"
+		;;
+	psp2)
+		if test "$_dynamic_modules" = no ; then
+			#use link time optimization to further reduce exe size
+			append_var CXXFLAGS "-flto"
+			append_var LDFLAGS "-flto=jobserver"
+			#use linker dead code elimination to further reduce exe size
+			append_var CXXFLAGS "-ffunction-sections -fdata-sections"
+			append_var LDFLAGS "-Wl,--gc-sections"
+		fi
 		;;
 esac
 
@@ -6311,6 +6425,7 @@ OBJS += $OBJS
 DEFINES += $DEFINES
 LDFLAGS += $LDFLAGS
 
+PLUGIN_LDFLAGS = $PLUGIN_LDFLAGS
 $_mak_plugins
 
 port_mk = $_port_mk

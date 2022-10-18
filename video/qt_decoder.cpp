@@ -161,7 +161,7 @@ Common::QuickTimeParser::SampleDesc *QuickTimeDecoder::readSampleDesc(Common::Qu
 				uint16 colorCount = 1 << colorDepth;
 				int16 colorIndex = 255;
 				byte colorDec = 256 / (colorCount - 1);
-				for (byte j = 0; j < colorCount; j++) {
+				for (uint16 j = 0; j < colorCount; j++) {
 					entry->_palette[j * 3] = entry->_palette[j * 3 + 1] = entry->_palette[j * 3 + 2] = colorIndex;
 					colorIndex -= colorDec;
 					if (colorIndex < 0)
@@ -299,7 +299,8 @@ QuickTimeDecoder::VideoTrackHandler::VideoTrackHandler(QuickTimeDecoder *decoder
 
 	_curEdit = 0;
 	_curFrame = -1;
-	enterNewEditListEntry(true); // might set _curFrame
+	_delayedFrameToBufferTo = -1;
+	enterNewEditListEntry(true, true); // might set _curFrame
 
 	_durationOverride = -1;
 	_scaledSurface = 0;
@@ -369,6 +370,8 @@ bool QuickTimeDecoder::VideoTrackHandler::endOfTrack() const {
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::seek(const Audio::Timestamp &requestedTime) {
+	_delayedFrameToBufferTo = -1; // abort any delayed buffering
+
 	uint32 convertedFrames = requestedTime.convertToFramerate(_decoder->_timeScale).totalNumberOfFrames();
 	for (_curEdit = 0; !atLastEdit(); _curEdit++)
 		if (convertedFrames >= _parent->editList[_curEdit].timeOffset && convertedFrames < _parent->editList[_curEdit].timeOffset + _parent->editList[_curEdit].trackDuration)
@@ -558,12 +561,30 @@ const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::decodeNextFrame() 
 	return frame;
 }
 
+Audio::Timestamp QuickTimeDecoder::VideoTrackHandler::getFrameTime(uint frame) const {
+	// TODO: This probably doesn't work right with edit lists
+	int cumulativeDuration = 0;
+	for (int ttsIndex = 0; ttsIndex < _parent->timeToSampleCount; ttsIndex++) {
+		const TimeToSampleEntry &tts = _parent->timeToSample[ttsIndex];
+		if ((int)frame < tts.count)
+			return Audio::Timestamp(0, _parent->timeScale).addFrames(cumulativeDuration + frame * tts.duration);
+		else {
+			frame -= tts.count;
+			cumulativeDuration += tts.duration * tts.count;
+		}
+	}
+
+	return Audio::Timestamp().addFrames(-1);
+}
+
 const byte *QuickTimeDecoder::VideoTrackHandler::getPalette() const {
 	_dirtyPalette = false;
 	return _forcedDitherPalette ? _forcedDitherPalette : _curPalette;
 }
 
 bool QuickTimeDecoder::VideoTrackHandler::setReverse(bool reverse) {
+	_delayedFrameToBufferTo = -1; // abort any delayed buffering
+
 	_reversed = reverse;
 
 	if (_reversed) {
@@ -705,7 +726,7 @@ bool QuickTimeDecoder::VideoTrackHandler::isEmptyEdit() const {
 	return (_parent->editList[_curEdit].mediaTime == -1);
 }
 
-void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrames) {
+void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrames, bool initializingTrack) {
 	if (atLastEdit())
 		return;
 
@@ -749,8 +770,15 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrame
 		// Track down the keyframe
 		// Then decode until the frame before target
 		_curFrame = findKeyFrame(frameNum) - 1;
-		while (_curFrame < (int32)frameNum - 1)
-			bufferNextFrame();
+		if (initializingTrack) {
+			// We can't decode frames during track initialization,
+			// so delay buffering until the first decode.
+			_delayedFrameToBufferTo = (int32)frameNum - 1;
+		} else {
+			while (_curFrame < (int32)frameNum - 1) {
+				bufferNextFrame();
+			}
+		}
 	} else {
 		// Since frameNum is the frame that needs to be displayed
 		// we'll set _curFrame to be the "last frame displayed"
@@ -761,6 +789,16 @@ void QuickTimeDecoder::VideoTrackHandler::enterNewEditListEntry(bool bufferFrame
 }
 
 const Graphics::Surface *QuickTimeDecoder::VideoTrackHandler::bufferNextFrame() {
+	// Buffer any frames that were identified during track initialization
+	// and delayed until decoding.
+	if (_delayedFrameToBufferTo != -1) {
+		int32 frameNum = _delayedFrameToBufferTo;
+		_delayedFrameToBufferTo = -1;
+		while (_curFrame < frameNum) {
+			bufferNextFrame();
+		}
+	}
+
 	_curFrame++;
 
 	// Get the next packet

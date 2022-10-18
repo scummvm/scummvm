@@ -24,8 +24,6 @@
 
 namespace AGS3 {
 
-#define MAX_SHEEP 30    // sheep == follower
-
 int do_movelist_move(short *mlnum, int *xx, int *yy);
 void update_stuff();
 

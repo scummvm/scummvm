@@ -57,7 +57,7 @@ extern int (*ugetc)(const char *s);
 /* ugetxc: */
 extern int (*ugetx)(char **s);
 /* ugetxc: */
-extern int (*ugetxc)(const char **s);
+extern int (*ugetxc)(const char * const *s);
 /* usetc: */
 extern int (*usetc)(char *s, int c);
 /* uwidth: */
@@ -71,6 +71,9 @@ extern int (*uisok)(int c);
  *  Selects a new text encoding format.
  */
 extern void set_uformat(int type);
+
+enum { LC_CTYPE };
+extern void setlocale(int type, const char *language);
 
 /* get_uformat:
  *  Returns the current text encoding format.
@@ -110,6 +113,12 @@ extern int ustrnicmp(const char *s1, const char *s2, int n);
  *  last character).
  */
 extern int uoffset(const char *s, int index);
+
+/* ugetat:
+ *  Returns the character from the specified index within the string.
+ */
+extern int ugetat(const char *s, int idx);
+
 /* ustrlwr:
  *  Unicode-aware version of the ANSI strlwr() function.
  */
@@ -133,6 +142,9 @@ int usetat(char *s, int index, int c);
  *  trailing zero.
  */
 extern int ustrsizez(const char *s);
+
+extern int need_uconvert(const char *s, int type, int newtype);
+extern int uvszprintf(char *buf, int size, const char *format, va_list args);
 
 } // namespace AGS3
 

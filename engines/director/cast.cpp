@@ -99,7 +99,10 @@ Cast::~Cast() {
 
 	if (_loadedCast)
 		for (Common::HashMap<int, CastMember *>::iterator it = _loadedCast->begin(); it != _loadedCast->end(); ++it)
-			delete it->_value;
+			if (it->_value) {
+				delete it->_value;
+				it->_value = nullptr;
+			}
 
 	for (Common::HashMap<uint16, CastMemberInfo *>::iterator it = _castsInfo.begin(); it != _castsInfo.end(); ++it)
 		delete it->_value;
@@ -164,6 +167,10 @@ const Stxt *Cast::getStxt(int castId) {
 	return result;
 }
 
+int Cast::getCastSize() {
+	return _loadedCast->size();
+}
+
 Common::Rect Cast::getCastMemberInitialRect(int castId) {
 	CastMember *cast = _loadedCast->getVal(castId);
 
@@ -186,6 +193,26 @@ void Cast::setCastMemberModified(int castId) {
 	cast->setModified(true);
 }
 
+CastMember *Cast::setCastMember(CastMemberID castId, CastMember *cast) {
+	if (_loadedCast->contains(castId.member)) {
+		_loadedCast->erase(castId.member);
+	}
+
+	_loadedCast->setVal(castId.member, cast);
+	return cast;
+}
+
+bool Cast::eraseCastMember(CastMemberID castId) {
+	if (_loadedCast->contains(castId.member)) {
+		CastMember *member = _loadedCast->getVal(castId.member);
+		delete member;
+		_loadedCast->erase(castId.member);
+		return true;
+	}
+
+	return false;
+}
+
 void Cast::setArchive(Archive *archive) {
 	_castArchive = archive;
 
@@ -202,21 +229,40 @@ void Cast::loadArchive() {
 }
 
 bool Cast::loadConfig() {
-	if (!_castArchive->hasResource(MKTAG('V', 'W', 'C', 'F'), -1)) {
+	Common::SeekableReadStreamEndian *stream = nullptr;
+	stream = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'C', 'F'));
+	if (!stream) {
 		warning("Cast::loadConfig(): Wrong format. VWCF resource missing");
 		return false;
 	}
-
-	Common::SeekableReadStreamEndian *stream = _castArchive->getFirstResource(MKTAG('V', 'W', 'C', 'F'));
 
 	debugC(1, kDebugLoading, "****** Loading Config VWCF");
 
 	if (debugChannelSet(5, kDebugLoading))
 		stream->hexdump(stream->size());
 
+	// Post D3 Check. The version field was added in D3 and later versions.
+	// This is used to check some fields which differed pre-d7 and post-d7
+	if (stream->size() > 36) {
+		stream->seek(36);					// Seek to version
+		_version = stream->readSint16();	// Read version for post-D3
+		stream->seek(0);					// Seek to start of stream
+	}
+
 	uint16 len = stream->readUint16();
 	uint16 fileVersion = stream->readUint16(); // TODO: very high fileVersion means protected
-	_movieRect = Movie::readRect(*stream);
+
+	if (stream->size() <= 36)
+		_version = fileVersion;				// Checking if we have already read the version
+
+	uint humanVer = humanVersion(_version);
+
+	Common::Rect checkRect = Movie::readRect(*stream);
+	if (!g_director->_fixStageSize)
+		_movieRect = checkRect;
+	else
+		_movieRect = g_director->_fixStageRect;
+
 	if (!_isShared)
 		_movie->_movieRect = _movieRect;
 
@@ -227,7 +273,7 @@ bool Cast::loadConfig() {
 	// actual framerates are, on average: { 3.75, 4, 4.35, 4.65, 5, 5.5, 6, 6.6, 7.5, 8.5, 10, 12, 20, 30, 60 }
 	Common::Array<int> frameRates = { 3, 4, 4, 4, 5, 5, 6, 6, 7, 8, 10, 12, 15, 20, 30, 60 };
 	byte readRate = stream->readByte();
-	byte currentFrameRate;
+	int16 currentFrameRate;
 	if (readRate <= 0xF) {
 		currentFrameRate = frameRates[readRate];
 	} else {
@@ -254,11 +300,22 @@ bool Cast::loadConfig() {
 	}
 
 	byte lightswitch = stream->readByte();
-	uint16 unk1 = stream->readUint16();
+
+	int16 unk1 = stream->readSint16();
+
+	// Warning for post-D7 movies (unk1 is stageColorG and stageColorB post-D7)
+	if (humanVer >= 700)
+		warning("STUB: Cast::loadConfig: 16 bit unk1 read instead of two 8 bit stageColorG and stageColorB. Read value: %04x", unk1);
+
 	uint16 commentFont = stream->readUint16();
 	uint16 commentSize = stream->readUint16();
 	uint16 commentStyle = stream->readUint16();
 	_stageColor = stream->readUint16();
+
+	// Warning for post-D7 movies (stageColor is isStageColorRGB and stageColorR post-D7)
+	if (humanVer >= 700)
+		warning("STUB: Cast::loadConfig: 16 bit stageColor read instead of two 8 bit isStageColorRGB and stageColorR. Read value: %04x", _stageColor);
+
 	if (!_isShared)
 		_movie->_stageColor = _vm->transformColor(_stageColor);
 
@@ -276,30 +333,93 @@ bool Cast::loadConfig() {
 	if (debugChannelSet(1, kDebugLoading))
 		_movieRect.debugPrint(1, "Cast::loadConfig(): Movie rect: ");
 
-	_version = fileVersion;
+	// Fields required for checksum calculation
+	uint8 field17 = 0, field18 = 0;
+	int16 field21 = 0;
+	int32 field19 = 0, field22 = 0, field23 = 0;
 
 	// D3 fields - Macromedia did not increment the fileVersion from D2 to D3
 	// so we just have to check if there are more bytes to read.
 	if (stream->pos() < stream->size()) {
-		for (int i = 0; i < 0x06; i++) {
-			stream->readByte();
-		}
-		_version = stream->readUint16();
-		for (int i = 0; i < 0x0a; i++) {
-			stream->readByte();
-		}
+
+		//reading these fields for the sake of checksum calculation
+		field17 = stream->readByte();
+		field18 = stream->readByte();
+		field19 = stream->readSint32();
+
+		/* _version = */ stream->readUint16();
+
+		field21 = stream->readSint16();
+		field22 = stream->readSint32();
+		field23 = stream->readSint32();
+
 		debugC(1, kDebugLoading, "Cast::loadConfig(): directorVersion: %d", _version);
 	}
 
 	if (_version >= kFileVer400) {
-		for (int i = 0; i < 0x07; i++) {
-			stream->readByte();
-		}
-		currentFrameRate = stream->readByte();
-		_platform = platformFromID(stream->readUint16());
-		for (int i = 0; i < 0x0c; i++) {
-			stream->readByte();
-		}
+		int32 field24 = stream->readSint32();
+		int8 field25 = stream->readSByte();
+		/* int8 field26 = */ stream->readSByte();
+
+		currentFrameRate = stream->readSint16();
+		uint16 platform = stream->readUint16();
+		_platform = platformFromID(platform);
+
+		int16 protection = stream->readSint16();
+		/* int32 field29 = */ stream->readSint32();
+		uint32 checksum = stream->readUint32();
+
+		//Calculation and verification of checksum
+		uint32 check = len + 1;
+		check *= fileVersion + 2;
+		check /= checkRect.top + 3;
+		check *= checkRect.left + 4;
+		check /= checkRect.bottom + 5;
+		check *= checkRect.right + 6;
+		check -= _castArrayStart + 7;
+		check *= _castArrayEnd + 8;
+		check -= (int8)readRate + 9;
+		check -= lightswitch + 10;
+
+		if (humanVer < 700)
+			check += unk1 + 11;
+		else
+			warning("STUB: skipped using stageColorG, stageColorB for post-D7 movie in checksum calulation");
+
+		check *= commentFont + 12;
+		check += commentSize + 13;
+
+		if (humanVer < 800)
+			check *= (uint8)((commentStyle >> 8) & 0xFF) + 14;
+		else
+			check *= commentStyle + 14;
+
+		if (humanVer < 700)
+			check += _stageColor + 15;
+		else
+			check += (uint8)(_stageColor & 0xFF) + 15;	// Taking lower 8 bits to take into account stageColorR
+
+
+		check += bitdepth + 16;
+		check += field17 + 17;
+		check *= field18 + 18;
+		check += field19 + 19;
+		check *= _version + 20;
+		check += field21 + 21;
+		check += field22 + 22;
+		check += field23 + 23;
+		check += field24 + 24;
+		check *= field25 + 25;
+		check += currentFrameRate + 26;
+		check *= platform + 27;
+		check *= (protection * 0xE06) + 0xFFF450000;
+		check ^= MKTAG('r', 'a', 'l', 'f');
+
+		if (check != checksum)
+			warning("BUILDBOT: The checksum for this VWCF resource is incorrect. Got %04x, but expected %04x", check, checksum);
+
+		/* int16 field30 = */ stream->readSint16();
+
 		_defaultPalette = stream->readSint16();
 		// In this header value, the first builtin palette starts at 0 and
 		// continues down into negative numbers.
@@ -318,7 +438,6 @@ bool Cast::loadConfig() {
 		_movie->getScore()->_currentFrameRate = currentFrameRate;
 	}
 
-	uint16 humanVer = humanVersion(_version);
 	if (humanVer > _vm->getVersion()) {
 		if (_vm->getVersion() > 0)
 			warning("Movie is from later version v%d", humanVer);
@@ -355,7 +474,7 @@ void Cast::loadCast() {
 
 	// Font Directory
 	if (_castArchive->hasResource(MKTAG('F', 'O', 'N', 'D'), -1)) {
-		debug("Cast::loadArchive(): Movie has fonts. Loading....");
+		debug("Cast::loadCast(): Movie has fonts. Loading....");
 
 		_vm->_wm->_fontMan->loadFonts(_castArchive->getPathName());
 	}
@@ -368,26 +487,27 @@ void Cast::loadCast() {
 	}
 
 	// Font Mapping
-	if (_castArchive->hasResource(MKTAG('V', 'W', 'F', 'M'), -1)) {
-		loadFontMap(*(r = _castArchive->getFirstResource(MKTAG('V', 'W', 'F', 'M'))));
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'F', 'M'))) != nullptr) {
+		loadFontMap(*r);
 		delete r;
 	}
 
 	// Cross-Platform Font Mapping
-	if (_castArchive->hasResource(MKTAG('F', 'X', 'm', 'p'), -1)) {
-		loadFXmp(*(r = _castArchive->getFirstResource(MKTAG('F', 'X', 'm', 'p'))));
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'X', 'm', 'p'))) != nullptr) {
+		loadFXmp(*r);
 		delete r;
 	}
 
 	// Font Mapping V4
-	if (_castArchive->hasResource(MKTAG('F', 'm', 'a', 'p'), -1)) {
-		loadFontMapV4(*(r = _castArchive->getFirstResource(MKTAG('F', 'm', 'a', 'p'))));
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('F', 'm', 'a', 'p'))) != nullptr) {
+		loadFontMapV4(*r);
 		delete r;
 	}
 
 	// Pattern Tiles
-	if (_castArchive->hasResource(MKTAG('V', 'W', 'T', 'L'), -1)) {
-		debug("STUB: Unhandled VWTL resource.");
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('V', 'W', 'T', 'L'))) != nullptr) {
+		loadVWTL(*r);
+		delete r;
 	}
 
 	// Time code
@@ -403,8 +523,8 @@ void Cast::loadCast() {
 	}
 
 	// External sound files
-	if (_castArchive->hasResource(MKTAG('S', 'T', 'R', ' '), -1)) {
-		loadExternalSound(*(r = _castArchive->getFirstResource(MKTAG('S', 'T', 'R', ' '))));
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'T', 'R', ' '))) != nullptr) {
+		loadExternalSound(*r);
 		delete r;
 	}
 
@@ -436,14 +556,9 @@ void Cast::loadCast() {
 	// For D4+ we may request to force Lingo scripts and skip precompiled bytecode
 	if (_version >= kFileVer400 && !debugChannelSet(-1, kDebugNoBytecode)) {
 		// Try to load script context
-		Common::Array<uint16> lctx =  _castArchive->getResourceIDList(MKTAG('L','c','t','x'));
-		if (lctx.size() > 0) {
-			debugC(2, kDebugLoading, "****** Loading %d Lctx resources", lctx.size());
-
-			for (Common::Array<uint16>::iterator iterator = lctx.begin(); iterator != lctx.end(); ++iterator) {
-				loadLingoContext(*(r = _castArchive->getResource(MKTAG('L','c','t','x'), *iterator)));
-				delete r;
-			}
+		if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('L', 'c', 't', 'x'))) != nullptr) {
+			loadLingoContext(*r);
+			delete r;
 		}
 	}
 
@@ -458,8 +573,8 @@ void Cast::loadCast() {
 	}
 
 	// Score Order List resources
-	if (_castArchive->hasResource(MKTAG('S', 'o', 'r', 'd'), -1)) {
-		loadSord(*(r = _castArchive->getFirstResource(MKTAG('S', 'o', 'r', 'd'))));
+	if ((r = _castArchive->getMovieResourceIfPresent(MKTAG('S', 'o', 'r', 'd'))) != nullptr) {
+		loadSord(*r);
 		delete r;
 	}
 
@@ -485,222 +600,216 @@ void Cast::loadCast() {
 		}
 
 	}
-	copyCastStxts();
 
-	loadCastChildren();
-	loadSoundCasts();
+	loadCastMemberData();
 }
 
-void Cast::copyCastStxts() {
-	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
-		if (c->_value->_type != kCastText && c->_value->_type != kCastButton)
-			continue;
+void Cast::loadStxtData(int key, TextCastMember *member) {
+	uint stxtid;
+	if (_version >= kFileVer400 && member->_children.size() > 0)
+		stxtid = member->_children[0].index;
+	else
+		stxtid = key;
 
-		uint stxtid;
-		if (_version >= kFileVer400 && c->_value->_children.size() > 0)
-			stxtid = c->_value->_children[0].index;
-		else
-			stxtid = c->_key;
-
-		if (_loadedStxts->getVal(stxtid)) {
-			const Stxt *stxt = _loadedStxts->getVal(stxtid);
-			TextCastMember *tc = (TextCastMember *)c->_value;
-
-			tc->importStxt(stxt);
-			tc->_size = stxt->_size;
-		}
+	if (_loadedStxts->contains(stxtid)) {
+		const Stxt *stxt = _loadedStxts->getVal(stxtid);
+		member->importStxt(stxt);
+		member->_size = stxt->_size;
+	} else {
+		warning("Cast::loadStxtData: stxtid %i isn't loaded", stxtid);
 	}
 }
 
-void Cast::loadCastChildren() {
-	debugC(1, kDebugLoading, "****** Preloading sprite palettes and images");
+void Cast::loadPaletteData(PaletteCastMember *member, Common::HashMap<int, PaletteV4>::iterator &p) {
+	// TODO: Verify how palettes work in >D4 versions
+	if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
+		member->_palette = g_director->getPalette(member->_children[0].index);
+	} else if (_version >= kFileVer300 && _version < kFileVer400) {
+		// D3 palettes are always kept in this ascending order
+		member->_palette = g_director->getPalette((++p)->_value.id);
+	} else if (_version < kFileVer300) {
+		// for D2, we shall use the castId to get the palette
+		member->_palette = g_director->getPalette(member->getID());
+	} else {
+		warning("Cast::loadPaletteData(): Expected 1 child for palette cast, got %d", member->_children.size());
+	}
+}
 
+void Cast::loadFilmLoopData(FilmLoopCastMember *member) {
+	if (_version >= kFileVer400 && _version < kFileVer500) {
+		if (member->_children.size() == 1) {
+			uint16 filmLoopId = member->_children[0].index;
+			uint32 tag = member->_children[0].tag;
+			if (_castArchive->hasResource(tag, filmLoopId)) {
+				Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
+				debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
+				member->loadFilmLoopData(*loop);
+				delete loop;
+			} else {
+				warning("Cast::loadFilmLoopData(): Film loop not found");
+			}
+		} else {
+			warning("Cast::loadFilmLoopData(): Expected 1 child for film loop cast, got %d", member->_children.size());
+		}
+	} else {
+		warning("STUB: Cast::loadFilmLoopData(): Film loops not supported for version %d", _version);
+	}
+}
+
+void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
+	uint32 tag = bitmapCast->_tag;
+	uint16 imgId = key;
+	uint16 realId = 0;
 	Cast *sharedCast = _movie ? _movie->getSharedCast() : nullptr;
+
+	Image::ImageDecoder *img = nullptr;
+	Common::SeekableReadStream *pic = nullptr;
+
+	if (_version >= kFileVer400) {
+		if (bitmapCast->_children.size() > 0) {
+			imgId = bitmapCast->_children[0].index;
+			tag = bitmapCast->_children[0].tag;
+
+			if (_castArchive->hasResource(tag, imgId))
+				pic = _castArchive->getResource(tag, imgId);
+			else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
+				pic = sharedCast->getArchive()->getResource(tag, imgId);
+		}
+	} else {
+		if (_loadedCast->contains(imgId)) {
+			bitmapCast->_tag = tag = ((BitmapCastMember *)_loadedCast->getVal(imgId))->_tag;
+			realId = imgId + _castIDoffset;
+			pic = _castArchive->getResource(tag, realId);
+		} else if (sharedCast && sharedCast->_loadedCast && sharedCast->_loadedCast->contains(imgId)) {
+			bitmapCast->_tag = tag = ((BitmapCastMember *)sharedCast->_loadedCast->getVal(imgId))->_tag;
+			realId = imgId + sharedCast->_castIDoffset;
+			pic = sharedCast->getArchive()->getResource(tag, realId);
+		}
+	}
+
+	if (pic == nullptr) {
+		warning("Cast::loadBitmapData(): Bitmap image %d not found", imgId);
+		return;
+	}
+
+	int w = bitmapCast->_initialRect.width();
+	int h = bitmapCast->_initialRect.height();
+
+	switch (tag) {
+	case MKTAG('D', 'I', 'B', ' '):
+		debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
+		img = new DIBDecoder();
+		break;
+
+	case MKTAG('B', 'I', 'T', 'D'):
+		debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
+
+		if (w > 0 && h > 0) {
+			if (_version < kFileVer600) {
+				img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette(), _version);
+			} else {
+				img = new Image::BitmapDecoder();
+			}
+		} else {
+			warning("Cast::loadBitmapData(): Bitmap image %d not found", imgId);
+		}
+
+		break;
+
+	default:
+		warning("Cast::loadBitmapData(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
+		break;
+	}
+
+	if (!img) {
+		delete pic;
+		return;
+	}
+
+	img->loadStream(*pic);
+
+	bitmapCast->_img = img;
+	const Graphics::Surface *surf = img->getSurface();
+	bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
+
+	delete pic;
+
+	debugC(4, kDebugImages, "Cast::loadBitmapData(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
+}
+
+void Cast::loadSoundData(int key, SoundCastMember *soundCast) {
+	uint32 tag = MKTAG('S', 'N', 'D', ' ');
+	uint16 sndId = (uint16)(key + _castIDoffset);
+
+	if (_version >= kFileVer400 && soundCast->_children.size() > 0) {
+		sndId = soundCast->_children[0].index;
+		tag = soundCast->_children[0].tag;
+	}
+
+	Common::SeekableReadStreamEndian *sndData = nullptr;
+
+	if (!_castArchive->hasResource(tag, sndId)) {
+		if (_castArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId))
+			tag = MKTAG('s', 'n', 'd', ' ');
+	}
+
+	if (_castArchive->hasResource(tag, sndId)) {
+		debugC(2, kDebugLoading, "****** Loading '%s' id: %d", tag2str(tag), sndId);
+		sndData = _castArchive->getResource(tag, sndId);
+	}
+
+	if (sndData != nullptr) {
+		if (sndData->size() == 0) {
+			// audio file is linked, load from the filesystem
+			Common::String filename = _castsInfo[key]->fileName;
+
+			if (!_castsInfo[key]->directory.empty())
+				filename = _castsInfo[key]->directory + g_director->_dirSeparator + _castsInfo[key]->fileName;
+
+			AudioFileDecoder *audio = new AudioFileDecoder(filename);
+			soundCast->_audio = audio;
+		} else {
+			SNDDecoder *audio = new SNDDecoder();
+			audio->loadStream(*sndData);
+			soundCast->_audio = audio;
+			soundCast->_size = sndData->size();
+			if (_version < kFileVer400) {
+				// The looping flag wasn't added to sound cast members until D4.
+				// In older versions, always loop sounds that contain a loop start and end.
+				soundCast->_looping = audio->hasLoopBounds();
+			}
+		}
+		delete sndData;
+	}
+}
+
+void Cast::loadCastMemberData() {
+	debugC(1, kDebugLoading, "****** Loading casts data: sprite palettes, images, filmloops, sounds and texts.");
+
 	Common::HashMap<int, PaletteV4>::iterator p = _vm->getLoadedPalettes().find(0);
 
 	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
 		if (!c->_value)
 			continue;
 
-		// First, handle palettes
-		if (c->_value->_type == kCastPalette) {
-			PaletteCastMember *member = ((PaletteCastMember *)c->_value);
-
-			// TODO: Verify how palettes work in >D4 versions
-			if (_version >= kFileVer400 && _version < kFileVer500 && member->_children.size() == 1) {
-				member->_palette = g_director->getPalette(member->_children[0].index);
-			} else if (_version >= kFileVer300 && _version < kFileVer400) {
-				// D3 palettes are always kept in this ascending order
-				member->_palette = g_director->getPalette((++p)->_value.id);
-			} else if (_version < kFileVer300) {
-				// for D2, we shall use the castId to get the palette
-				member->_palette = g_director->getPalette(member->getID());
-			} else {
-				warning("Cast::loadCastChildren(): Expected 1 child for palette cast, got %d", member->_children.size());
-			}
-			continue;
-		}
-
-		// Then load film loops
-		if (c->_value->_type == kCastFilmLoop) {
-			FilmLoopCastMember *member = ((FilmLoopCastMember *)c->_value);
-
-			if (_version >= kFileVer400 && _version < kFileVer500) {
-				if (member->_children.size() == 1) {
-					uint16 filmLoopId = member->_children[0].index;
-					uint32 tag = member->_children[0].tag;
-					if (_castArchive->hasResource(tag, filmLoopId)) {
-						Common::SeekableReadStreamEndian *loop = _castArchive->getResource(tag, filmLoopId);
-						debugC(2, kDebugLoading, "****** Loading '%s' id: %d, %d bytes", tag2str(tag), filmLoopId, (int)loop->size());
-						member->loadFilmLoopData(*loop);
-					} else {
-						warning("Cast::loadCastChildren(): Film loop not found");
-					}
-				} else {
-					warning("Cast::loadCastChildren(): Expected 1 child for film loop cast, got %d", member->_children.size());
-				}
-			} else {
-				warning("STUB: Cast::loadCastChildren(): Film loops not supported for version %d", _version);
-			}
-			continue;
-		}
-
-		if (c->_value->_type != kCastBitmap)
-			continue;
-
-		// Then handle bitmaps
-		BitmapCastMember *bitmapCast = (BitmapCastMember *)c->_value;
-		uint32 tag = bitmapCast->_tag;
-		uint16 imgId = c->_key;
-		uint16 realId = 0;
-
-		Image::ImageDecoder *img = nullptr;
-		Common::SeekableReadStream *pic = nullptr;
-
-		if (_version >= kFileVer400) {
-			if (bitmapCast->_children.size() > 0) {
-				imgId = bitmapCast->_children[0].index;
-				tag = bitmapCast->_children[0].tag;
-
-				if (_castArchive->hasResource(tag, imgId))
-					pic = _castArchive->getResource(tag, imgId);
-				else if (sharedCast && sharedCast->getArchive()->hasResource(tag, imgId))
-					pic = sharedCast->getArchive()->getResource(tag, imgId);
-			}
-		} else {
-			if (_loadedCast->contains(imgId)) {
-				bitmapCast->_tag = tag = ((BitmapCastMember *)_loadedCast->getVal(imgId))->_tag;
-				realId = imgId + _castIDoffset;
-				pic = _castArchive->getResource(tag, realId);
-			} else if (sharedCast && sharedCast->_loadedCast && sharedCast->_loadedCast->contains(imgId)) {
-				bitmapCast->_tag = tag = ((BitmapCastMember *)sharedCast->_loadedCast->getVal(imgId))->_tag;
-				realId = imgId + sharedCast->_castIDoffset;
-				pic = sharedCast->getArchive()->getResource(tag, realId);
-			}
-		}
-
-		if (pic == nullptr) {
-			warning("Cast::loadCastChildren(): Bitmap image %d not found", imgId);
-			continue;
-		}
-
-		int w = bitmapCast->_initialRect.width();
-		int h = bitmapCast->_initialRect.height();
-
-		switch (tag) {
-		case MKTAG('D', 'I', 'B', ' '):
-			debugC(2, kDebugLoading, "****** Loading 'DIB ' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
-			img = new DIBDecoder();
-			break;
-
-		case MKTAG('B', 'I', 'T', 'D'):
-			debugC(2, kDebugLoading, "****** Loading 'BITD' id: %d (%d), %d bytes", imgId, realId, (int)pic->size());
-
-			if (w > 0 && h > 0) {
-				if (_version < kFileVer600) {
-					img = new BITDDecoder(w, h, bitmapCast->_bitsPerPixel, bitmapCast->_pitch, _vm->getPalette(), _version);
-				} else {
-					img = new Image::BitmapDecoder();
-				}
-			} else {
-				warning("Cast::loadCastChildren(): Bitmap image %d not found", imgId);
-			}
-
-			break;
-
-		default:
-			warning("Cast::loadCastChildren(): Unknown Bitmap CastMember Tag: [%d] %s", tag, tag2str(tag));
-			break;
-		}
-
-		if (!img)
-			continue;
-
-		img->loadStream(*pic);
-
-		bitmapCast->_img = img;
-		const Graphics::Surface *surf = img->getSurface();
-		bitmapCast->_size = surf->pitch * surf->h + img->getPaletteColorCount() * 3;
-
-		delete pic;
-
-		debugC(4, kDebugImages, "Cast::loadCastChildren(): Bitmap: id: %d, w: %d, h: %d, flags1: %x, flags2: %x bytes: %x, bpp: %d clut: %x", imgId, w, h, bitmapCast->_flags1, bitmapCast->_flags2, bitmapCast->_bytes, bitmapCast->_bitsPerPixel, bitmapCast->_clut);
-	}
-}
-
-void Cast::loadSoundCasts() {
-	debugC(1, kDebugLoading, "****** Preloading sound casts");
-
-	for (Common::HashMap<int, CastMember *>::iterator c = _loadedCast->begin(); c != _loadedCast->end(); ++c) {
-		if (!c->_value)
-			continue;
-
-		if (c->_value->_type != kCastSound)
-			continue;
-
-		SoundCastMember *soundCast = (SoundCastMember *)c->_value;
-		uint32 tag = MKTAG('S', 'N', 'D', ' ');
-		uint16 sndId = (uint16)(c->_key + _castIDoffset);
-
-		if (_version >= kFileVer400 && soundCast->_children.size() > 0) {
-			sndId = soundCast->_children[0].index;
-			tag = soundCast->_children[0].tag;
-		}
-
-		Common::SeekableReadStreamEndian *sndData = nullptr;
-
-		if (!_castArchive->hasResource(tag, sndId)) {
-			if (_castArchive->hasResource(MKTAG('s', 'n', 'd', ' '), sndId))
-				tag = MKTAG('s', 'n', 'd', ' ');
-		}
-
-		if (_castArchive->hasResource(tag, sndId)) {
-			debugC(2, kDebugLoading, "****** Loading '%s' id: %d", tag2str(tag), sndId);
-			sndData = _castArchive->getResource(tag, sndId);
-		}
-
-		if (sndData != nullptr) {
-			if (sndData->size() == 0) {
-				// audio file is linked, load from the filesystem
-				Common::String filename = _castsInfo[c->_key]->fileName;
-
-				if (!_castsInfo[c->_key]->directory.empty())
-					filename = _castsInfo[c->_key]->directory + g_director->_dirSeparator + _castsInfo[c->_key]->fileName;
-
-				AudioFileDecoder *audio = new AudioFileDecoder(filename);
-				soundCast->_audio = audio;
-			} else {
-				SNDDecoder *audio = new SNDDecoder();
-				audio->loadStream(*sndData);
-				soundCast->_audio = audio;
-				soundCast->_size = sndData->size();
-				if (_version < kFileVer400) {
-					// The looping flag wasn't added to sound cast members until D4.
-					// In older versions, always loop sounds that contain a loop start and end.
-					soundCast->_looping = audio->hasLoopBounds();
-				}
-			}
-			delete sndData;
+		switch (c->_value->_type){
+			case kCastPalette:
+				loadPaletteData((PaletteCastMember *)c->_value, p);
+				break;
+			case kCastFilmLoop:
+				loadFilmLoopData((FilmLoopCastMember *)c->_value);
+				break;
+			case kCastBitmap:
+				loadBitmapData(c->_key, (BitmapCastMember *)c->_value);
+				break;
+			case kCastSound:
+				loadSoundData(c->_key, (SoundCastMember *)c->_value);
+				break;
+			case kCastText:
+			case kCastButton:
+				loadStxtData(c->_key, (TextCastMember *)c->_value);
+			default:
+				break;
 		}
 	}
 }
@@ -852,11 +961,11 @@ void Cast::loadExternalSound(Common::SeekableReadStreamEndian &stream) {
 
 	Common::String resPath = g_director->getCurrentPath() + str;
 
-	if (!g_director->_openResFiles.contains(resPath)) {
+	if (!g_director->_allOpenResFiles.contains(resPath)) {
 		MacArchive *resFile = new MacArchive();
 
 		if (resFile->openFile(resPath)) {
-			g_director->_openResFiles.setVal(resPath, resFile);
+			g_director->_allOpenResFiles.setVal(resPath, resFile);
 		} else {
 			delete resFile;
 		}
@@ -953,6 +1062,12 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 
 	Common::MemoryReadStreamEndian castStream(data, castSizeToRead, stream.isBE());
 
+	if (_loadedCast->contains(id)) {
+		warning("Cast::loadCastData(): Multiple cast members with ID %d, overwriting", id);
+		delete _loadedCast->getVal(id);
+		_loadedCast->erase(id);
+	}
+
 	switch (castType) {
 	case kCastBitmap:
 		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastBitmap (%d children)", res->children.size());
@@ -999,8 +1114,8 @@ void Cast::loadCastData(Common::SeekableReadStreamEndian &stream, uint16 id, Res
 		castInfoSize = 0;
 		break;
 	case kCastMovie:
-		warning("STUB: Cast::loadCastData(): kCastMovie (id=%d, %d children)! This will be missing from the movie and may cause problems", id, res->children.size());
-		castInfoSize = 0;
+		debugC(3, kDebugLoading, "Cast::loadCastData(): loading kCastMovie (id=%d, %d children)",  id, res->children.size());
+		_loadedCast->setVal(id, new MovieCastMember(this, id, castStream, _version));
 		break;
 	default:
 		warning("Cast::loadCastData(): Unhandled cast type: %d [%s] (id=%d, %d children)! This will be missing from the movie and may cause problems", castType, tag2str(castType), id, res->children.size());
@@ -1121,6 +1236,10 @@ void Cast::loadLingoContext(Common::SeekableReadStreamEndian &stream) {
 					error("Cast::loadLingoContext: Script already defined for type %s, id %d", scriptType2str(script->_scriptType), script->_id);
 				}
 				_lingoArchive->scriptContexts[script->_scriptType][script->_id] = script;
+			} else {
+				// Keep track of scripts that are not in scriptContexts
+				// Those scripts need to be cleaned up on ~LingoArchive
+				script->setOnlyInLctxContexts();
 			}
 		}
 	} else {
@@ -1354,6 +1473,56 @@ void Cast::loadSord(Common::SeekableReadStreamEndian &stream) {
 	}
 
 	debugC(1, kDebugLoading, "Cast::loadSord(): number of entries: %d", numEntries);
+}
+
+// Pattern tiles
+//
+// Basically, a reference to Bitmap cast accompanied with rectrangle
+void Cast::loadVWTL(Common::SeekableReadStreamEndian &stream) {
+	debugC(1, kDebugLoading, "****** Loading CastMember petterns VWTL");
+
+	Common::Rect r;
+	uint16 castLibId = 0; // default for pre-D5
+	uint16 memberId;
+
+	for (int i = 0; i < kNumBuiltinTiles; i++) {
+		stream.readUint32(); // unused
+
+		if (_version >= kFileVer500)
+			castLibId = stream.readUint16();
+
+		memberId = stream.readUint16();
+
+		r = Movie::readRect(stream);
+
+		_tiles[i].bitmapId.castLib = castLibId;
+		_tiles[i].bitmapId.member = memberId;
+		_tiles[i].rect = r;
+
+		debugC(2, kDebugLoading, "Cast::loadCastDataVWCR(): entry %d - %u:%u [%d, %d, %d, %d]", i, castLibId, memberId,
+				r.left, r.top, r.right, r.bottom);
+	}
+
+}
+
+Common::String Cast::formatCastSummary(int castId = -1) {
+	Common::String result;
+	Common::Array<int> castIds;
+	for (auto it = _loadedCast->begin(); it != _loadedCast->end(); ++it) {
+		castIds.push_back(it->_key);
+	}
+	Common::sort(castIds.begin(), castIds.end());
+	for (auto it = castIds.begin(); it != castIds.end(); ++it) {
+		if (castId > -1 &&  *it != castId)
+			continue;
+		CastMember *castMember = getCastMember(*it);
+		CastMemberInfo *castMemberInfo = getCastMemberInfo(*it);
+		result += Common::String::format("%d: type=%s, name=\"%s\"\n",
+			*it, castTypeToString(castMember->_type).c_str(),
+			castMemberInfo ? castMemberInfo->name.c_str() : ""
+		);
+	}
+	return result;
 }
 
 } // End of namespace Director

@@ -69,7 +69,7 @@ using namespace Scumm;
 
 class ScummMetaEngineDetection : public MetaEngineDetection {
 public:
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "scumm";
 	}
 
@@ -77,12 +77,12 @@ public:
 		return debugFlagList;
 	}
 
-	const char *getName() const override;
+	const char *getEngineName() const override;
 	const char *getOriginalCopyright() const override;
 
 	PlainGameList getSupportedGames() const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
-	DetectedGames detectGames(const Common::FSList &fslist) override;
+	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
@@ -121,7 +121,7 @@ static Common::String generatePreferredTarget(const DetectorResult &x) {
 	return res;
 }
 
-DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) {
 	DetectedGames detectedGames;
 	Common::List<DetectorResult> results;
 	::detectGames(fslist, results, nullptr);
@@ -131,7 +131,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 		const PlainGameDescriptor *g = findPlainGameDescriptor(x->game.gameid, gameDescriptions);
 		assert(g);
 
-		DetectedGame game = DetectedGame(getEngineId(), x->game.gameid, g->description, x->language, x->game.platform, x->extra);
+		DetectedGame game = DetectedGame(getName(), x->game.gameid, g->description, x->language, x->game.platform, x->extra);
 
 		// Compute and set the preferred target name for this game.
 		// Based on generateComplexID() in advancedDetector.cpp.
@@ -146,7 +146,7 @@ DetectedGames ScummMetaEngineDetection::detectGames(const Common::FSList &fslist
 	return detectedGames;
 }
 
-const char *ScummMetaEngineDetection::getName() const {
+const char *ScummMetaEngineDetection::getEngineName() const {
 	return "SCUMM ["
 
 #if defined(ENABLE_SCUMM_7_8) && defined(ENABLE_HE)
@@ -175,42 +175,81 @@ static const ExtraGuiOption comiObjectLabelsOption = {
 	_s("Show Object Line"),
 	_s("Show the names of objects at the bottom of the screen"),
 	"object_labels",
-	true
+	true,
+	0,
+	0
 };
 
 static const ExtraGuiOption mmnesObjectLabelsOption = {
 	_s("Use NES Classic Palette"),
 	_s("Use a more neutral color palette that closely emulates the NES Classic"),
 	"mm_nes_classic_palette",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption fmtownsTrimTo200 = {
 	_s("Trim FM-TOWNS games to 200 pixels height"),
 	_s("Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing using 'aspect ratio correction'"),
 	"trim_fmtowns_to_200_pixels",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption macV3LowQualityMusic = {
 	_s("Play simplified music"),
 	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
 	"mac_v3_low_quality_music",
-	false
+	false,
+	0,
+	0
 };
 
 static const ExtraGuiOption smoothScrolling = {
 	_s("Enable smooth scrolling"),
 	_s("(instead of the normal 8-pixels steps scrolling)"),
 	"smooth_scroll",
-	true
+	true,
+	0,
+	1
+};
+
+static const ExtraGuiOption semiSmoothScrolling = {
+	_s("Allow semi-smooth scrolling"),
+	_s("Allow scrolling to be less smooth during the fast camera movement in the intro."),
+	"semi_smooth_scroll",
+	false,
+	1,
+	0
 };
 
 static const ExtraGuiOption enableEnhancements {
 	_s("Enable game-specific enhancements"),
 	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
 	"enable_enhancements",
-	true
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption audioOverride {
+	_s("Load modded audio"),
+	_s("Replace music, sound effects, and speech clips with modded audio files, if available."),
+	"audio_override",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableOriginalGUI = {
+	_s("Enable the original GUI and Menu"),
+	_s("Allow the game to use the in-engine graphical interface and the original save/load menu."),
+	"original_gui",
+	true,
+	0,
+	0
 };
 
 const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
@@ -222,15 +261,15 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
 	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 
-	if (target.empty() ||
-		gameid == "monkey" ||
-		gameid == "monkey2" ||
-		gameid == "samnmax" ||
-		gameid == "loom" ||
-		(gameid == "indy3" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
+		options.push_back(enableOriginalGUI);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
 		options.push_back(enableEnhancements);
 	}
-
+	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
+		options.push_back(audioOverride);
+	}
 	if (target.empty() || gameid == "comi") {
 		options.push_back(comiObjectLabelsOption);
 	}
@@ -239,6 +278,8 @@ const ExtraGuiOptions ScummMetaEngineDetection::getExtraGuiOptions(const Common:
 	}
 	if (target.empty() || platform == Common::kPlatformFMTowns) {
 		options.push_back(smoothScrolling);
+		if (target.empty() || gameid == "loom")
+			options.push_back(semiSmoothScrolling);
 		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
 			options.push_back(fmtownsTrimTo200);
 	}

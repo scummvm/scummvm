@@ -371,7 +371,8 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_fastFadeCount = 0;
 	_fastFadeInFlag = 0;
-	_fastFadeOutFlag = 0;
+	_fastFadeOutFlag = false;
+	_neverFade = false;
 	_exitCutscene = 0;
 	_paletteFlag = 0;
 	_bottomPalette = false;
@@ -518,9 +519,14 @@ AGOSEngine::AGOSEngine(OSystem *system, const AGOSGameDescription *gd)
 
 	_sound = nullptr;
 
-	_effectsPaused = false;
-	_ambientPaused = false;
-	_musicPaused = false;
+	_effectsMuted = false;
+	_ambientMuted = false;
+	_musicMuted = false;
+	// Initialize at default ScummVM volumes; these will be overwritten by
+	// syncSoundSettings.
+	_musicVolume = 192;
+	_effectsVolume = 192;
+	_useDigitalSfx = true;
 
 	_saveLoadType = 0;
 	_saveLoadSlot = 0;
@@ -598,26 +604,42 @@ Common::Error AGOSEngine::init() {
 		_internalHeight <<= 1;
 	}
 
+	if (ConfMan.hasKey("disable_fade_effects"))
+		_neverFade = ConfMan.getBool("disable_fade_effects");
+
 	initGraphics(_internalWidth, _internalHeight);
 
-	_midi = new MidiPlayer();
+	_midi = new MidiPlayer(this);
 
 	if ((getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformWindows) ||
-		(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
-		((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
-		(getPlatform() == Common::kPlatformDOS || getPlatform() == Common::kPlatformPC98)) {
+			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformWindows) ||
+			((getFeatures() & GF_TALKIE) && getPlatform() == Common::kPlatformAcorn) ||
+			(getPlatform() == Common::kPlatformDOS && getGameType() != GType_PN && getGameType() != GType_FF) ||
+			getPlatform() == Common::kPlatformPC98) {
 
-		int ret = _midi->open(getGameType(), getPlatform(), (getFeatures() & GF_DEMO));
+		int ret = _midi->open();
 		if (ret)
 			warning("MIDI Player init failed: \"%s\"", MidiDriver::getErrorName(ret));
 
-		_midi->setVolume(ConfMan.getInt("music_volume"), ConfMan.getInt("sfx_volume"));
-
 		_midiEnabled = true;
 	}
-
-	// Setup mixer
-	syncSoundSettings();
+	// Digital SFX are used if MIDI SFX are not available or if the "prefer
+	// digital SFX" setting is set to true or is not present at all.
+	// Two exceptions to this are:
+	// - Elvira 2 DOS needs an optional file to enable digital SFX. If it is
+	//   not present, MIDI SFX are used.
+	// - Simon 1 DOS floppy has only MIDI SFX.
+	// Note that MIDI SFX can be safely used if the MidiPlayer failed to
+	// initialize; they just will not play.
+	_useDigitalSfx = !_midiEnabled || !_midi->hasMidiSfx() || !ConfMan.hasKey("prefer_digitalsfx") || ConfMan.getBool("prefer_digitalsfx");
+	if ((getGameType() == GType_ELVIRA2 && getPlatform() == Common::kPlatformDOS && !SearchMan.hasFile("013.VGA")) ||
+			(getGameType() == GType_SIMON1 && getPlatform() == Common::kPlatformDOS && !(getFeatures() & GF_TALKIE))) {
+		_useDigitalSfx = false;
+	}
+	if (!_useDigitalSfx && (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) && getPlatform() == Common::kPlatformDOS) {
+		// Load the MIDI SFX data file for Elvira 2 and Waxworks DOS.
+		loadMidiSfx();
+	}
 
 	// allocate buffers
 	_backGroundBuf = new Graphics::Surface();
@@ -655,23 +677,6 @@ Common::Error AGOSEngine::init() {
 	setDebugger(new Debugger(this));
 	_sound = new Sound(this, gss, _mixer);
 
-	if (ConfMan.hasKey("music_mute") && ConfMan.getBool("music_mute") == 1) {
-		_musicPaused = true;
-		if (_midiEnabled) {
-			_midi->pause(_musicPaused);
-		}
-		_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, 0);
-	}
-
-	if (ConfMan.hasKey("sfx_mute") && ConfMan.getBool("sfx_mute") == 1) {
-		if (getGameId() == GID_SIMON1DOS)
-			_midi->_enable_sfx = !_midi->_enable_sfx;
-		else {
-			_effectsPaused = !_effectsPaused;
-			_sound->effectsPause(_effectsPaused);
-		}
-	}
-
 	_copyProtection = ConfMan.getBool("copy_protection");
 	_language = Common::parseLanguage(ConfMan.get("language"));
 
@@ -698,6 +703,9 @@ Common::Error AGOSEngine::init() {
 		_speech = false;
 		_subtitles = true;
 	}
+
+	// Setup mixer
+	syncSoundSettings();
 
 	return Common::kNoError;
 }
@@ -768,10 +776,10 @@ void AGOSEngine_Simon2::setupGame() {
 	_itemMemSize = 20000;
 	_tableMemSize = 100000;
 	// Check whether to use MT-32 MIDI tracks in Simon the Sorcerer 2
-	if (getGameType() == GType_SIMON2 && _midi->hasNativeMT32())
-		_musicIndexBase = (1128 + 612) / 4;
+	if (getGameType() == GType_SIMON2 && getPlatform() == Common::kPlatformDOS && _midi->usesMT32Data())
+		_musicIndexBase = MUSIC_INDEX_BASE_SIMON2_MT32;
 	else
-		_musicIndexBase = 1128 / 4;
+		_musicIndexBase = MUSIC_INDEX_BASE_SIMON2_GM;
 	_soundIndexBase = 1660 / 4;
 	_frameCount = 1;
 	_vgaBaseDelay = 1;
@@ -1008,7 +1016,7 @@ void AGOSEngine::pauseEngineIntern(bool pauseIt) {
 	} else {
 		_pause = false;
 
-		_midi->pause(_musicPaused);
+		_midi->pause(false);
 		_mixer->pauseAll(false);
 	}
 }
@@ -1087,16 +1095,63 @@ uint32 AGOSEngine::getTime() const {
 void AGOSEngine::syncSoundSettings() {
 	Engine::syncSoundSettings();
 
-	bool mute = false;
-	if (ConfMan.hasKey("mute"))
-		mute = ConfMan.getBool("mute");
+	int newMusicVolume = ConfMan.getInt("music_volume");
+	int newEffectsVolume = ConfMan.getInt("sfx_volume");
 
-	// Sync the engine with the config manager
-	int soundVolumeMusic = ConfMan.getInt("music_volume");
-	int soundVolumeSFX = ConfMan.getInt("sfx_volume");
+	_musicMuted = newMusicVolume == 0;
+	if (newMusicVolume != 0)
+		_musicVolume = newMusicVolume;
+	if (getGameType() == GType_SIMON2) {
+		// Simon 2 has regular and ambient SFX, which can be toggled on and off
+		// separately.
+		if (newEffectsVolume == 0) {
+			// Global SFX volume 0 mutes both regular and ambient SFX.
+			_effectsMuted = _ambientMuted = true;
+		} else {
+			// If global SFX volume is > 0 and both regular and ambient SFX are
+			// muted, unmute them. If only one of them is muted, the volume
+			// change will only affect that type of SFX. If both are not muted,
+			// it will affect both types.
+			if (_effectsMuted && _ambientMuted)
+				_effectsMuted = _ambientMuted = false;
+			_effectsVolume = newEffectsVolume;
+		}
+		// Engine::syncSoundSettings applies SFX volume to all SFX handles,
+		// so manage the regular and ambient handles separately here.
+		_sound->effectsMute(_effectsMuted, _effectsVolume);
+		_sound->ambientMute(_ambientMuted, _effectsVolume);
+	} else {
+		// Other games only have one SFX setting.
+		_effectsMuted = newEffectsVolume == 0;
+		if (newEffectsVolume != 0)
+			_effectsVolume = newEffectsVolume;
+	}
+	_speech = !ConfMan.getBool("speech_mute");
 
 	if (_midiEnabled)
-		_midi->setVolume((mute ? 0 : soundVolumeMusic), (mute ? 0 : soundVolumeSFX));
+		_midi->syncSoundSettings();
+}
+
+void AGOSEngine::syncSoundSettingsIntern() {
+	ConfMan.setBool("speech_mute", !_speech);
+	ConfMan.setInt("music_volume", _musicMuted ? 0 : _musicVolume);
+	bool sfxMute = getGameType() == GType_SIMON2 ?
+		_effectsMuted && _ambientMuted : _effectsMuted;
+	ConfMan.setInt("sfx_volume", sfxMute ? 0 : _effectsVolume);
+
+	Engine::syncSoundSettings();
+
+	if (getGameType() == GType_SIMON2) {
+		// Simon 2 has ambient sound effects, which can be toggled on and off
+		// separately from the other SFX.
+		// Engine::syncSoundSettings applies SFX volume to all SFX handles,
+		// so manage the regular and ambient handles separately here.
+		_sound->effectsMute(_effectsMuted, _effectsVolume);
+		_sound->ambientMute(_ambientMuted, _effectsVolume);
+	}
+
+	if (_midiEnabled)
+		_midi->syncSoundSettings();
 }
 
 } // End of namespace AGOS

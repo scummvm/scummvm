@@ -31,11 +31,16 @@ struct ScriptDynamicSprite final : AGSCCDynamicObject {
 
 	int Dispose(const char *address, bool force) override;
 	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
 
 	ScriptDynamicSprite(int slot);
 	ScriptDynamicSprite();
+
+protected:
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize() override;
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 };
 
 } // namespace AGS3

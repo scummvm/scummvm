@@ -86,6 +86,16 @@ ifdef USE_DOCKTILEPLUGIN
 # The NsDockTilePlugIn needs to be compiled in both 32 and 64 bits irrespective of how ScummVM itself is compiled.
 # Therefore do not use $(CXXFLAGS) and $(LDFLAGS).
 
+ifdef MACOSX_ARM64
+
+ScummVMDockTilePlugin.o:
+	$(CXX) -mmacosx-version-min=11.0 -arch arm64 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin.o
+
+ScummVMDockTilePlugin: ScummVMDockTilePlugin.o
+	$(CXX) -mmacosx-version-min=11.0 -arch arm64 -bundle -framework Foundation -framework AppKit -fobjc-link-runtime ScummVMDockTilePlugin.o -o ScummVMDockTilePlugin
+
+else  # MACOSX_ARM64
+
 ScummVMDockTilePlugin32.o:
 	$(CXX) -mmacosx-version-min=10.6 -arch i386 -O2 -c $(srcdir)/backends/taskbar/macosx/dockplugin/dockplugin.m -o ScummVMDockTilePlugin32.o
 
@@ -101,10 +111,12 @@ ScummVMDockTilePlugin64: ScummVMDockTilePlugin64.o
 ifdef MACOSX_64_BITS_ONLY
 ScummVMDockTilePlugin: ScummVMDockTilePlugin64
 	cp ScummVMDockTilePlugin64 ScummVMDockTilePlugin
-else
+else  # MACOSX_64_BITS_ONLY
 ScummVMDockTilePlugin: ScummVMDockTilePlugin32 ScummVMDockTilePlugin64
 	lipo -create ScummVMDockTilePlugin32 ScummVMDockTilePlugin64 -output ScummVMDockTilePlugin
-endif
+endif # MACOSX_64_BITS_ONLY
+
+endif # MACOSX_ARM64
 
 scummvm.docktileplugin: ScummVMDockTilePlugin
 	mkdir -p scummvm.docktileplugin/Contents
@@ -128,7 +140,7 @@ ifdef USE_SPARKLE
 	rm -rf $(bundle_name)/Contents/Frameworks/Sparkle.framework
 	cp -RP $(SPARKLEPATH)/Sparkle.framework $(bundle_name)/Contents/Frameworks/
 endif
-ifdef MACOSX_USE_LEGACY_ICONS
+ifdef MACOSX_LEOPARD_OR_BELOW
 	cp $(srcdir)/icons/scummvm_legacy.icns $(bundle_name)/Contents/Resources/scummvm.icns
 else
 	cp $(srcdir)/icons/scummvm.icns $(bundle_name)/Contents/Resources/scummvm.icns
@@ -150,14 +162,18 @@ ifneq ($(DIST_FILES_SHADERS),)
 endif
 	$(srcdir)/devtools/credits.pl --rtf > $(bundle_name)/Contents/Resources/AUTHORS.rtf
 	rm $(bundle_name)/Contents/Resources/AUTHORS
-	@sed -i'' -e "s/AUTHORS/AUTHORS.rtf/g" $(bundle_name)/Contents/Resources/README.md
+	@sed -i'.sed-orig' -e "s/AUTHORS/AUTHORS.rtf/g" $(bundle_name)/Contents/Resources/README.md
 ifdef USE_PANDOC
-	@sed -i'' -e "s|href=\"AUTHORS\"|href=\"https://www.scummvm.org/credits/\"|g" $(bundle_name)/Contents/Resources/README$(PANDOCEXT)
+	@sed -i'.sed-orig' -e "s|href=\"AUTHORS\"|href=\"https://www.scummvm.org/credits/\"|g" $(bundle_name)/Contents/Resources/README$(PANDOCEXT)
 endif
+	@rm $(bundle_name)/Contents/Resources/*.sed-orig
 	cp $(bundle_name)/Contents/Resources/COPYING.LGPL $(bundle_name)/Contents/Resources/COPYING-LGPL
 	cp $(bundle_name)/Contents/Resources/COPYING.FREEFONT $(bundle_name)/Contents/Resources/COPYING-FREEFONT
 	cp $(bundle_name)/Contents/Resources/COPYING.OFL $(bundle_name)/Contents/Resources/COPYING-OFL
 	cp $(bundle_name)/Contents/Resources/COPYING.BSD $(bundle_name)/Contents/Resources/COPYING-BSD
+ifdef DYNAMIC_MODULES
+	cp $(PLUGINS) $(bundle_name)/Contents/Resources/
+endif
 	chmod 644 $(bundle_name)/Contents/Resources/*
 ifneq ($(DIST_FILES_SHADERS),)
 	chmod 755 $(bundle_name)/Contents/Resources/shaders
@@ -169,12 +185,14 @@ ifdef USE_DOCKTILEPLUGIN
 	mkdir -p $(bundle_name)/Contents/PlugIns
 	cp -r scummvm.docktileplugin $(bundle_name)/Contents/PlugIns/
 endif
+ifndef MACOSX_LEOPARD_OR_BELOW
 	codesign -s - --deep --force $(bundle_name)
+endif
 
 ifdef USE_DOCKTILEPLUGIN
-bundle: scummvm-static scummvm.docktileplugin bundle-pack
+bundle: scummvm-static plugins scummvm.docktileplugin bundle-pack
 else
-bundle: scummvm-static bundle-pack
+bundle: scummvm-static plugins bundle-pack
 endif
 
 iphonebundle: iphone
@@ -472,7 +490,7 @@ endif
 # We use -force_cpusubtype_ALL to ensure the binary runs on every
 # PowerPC machine.
 scummvm-static: $(DETECT_OBJS) $(OBJS)
-	+$(LD) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(DETECT_OBJS) $(OBJS) \
+	+$(LD) $(LDFLAGS) -force_cpusubtype_ALL -o scummvm-static $(PRE_OBJS_FLAGS) $(DETECT_OBJS) $(OBJS) $(POST_OBJS_FLAGS) \
 		-framework CoreMIDI \
 		$(OSX_STATIC_LIBS) \
 		$(OSX_ZLIB)
@@ -481,7 +499,7 @@ scummvm-static: $(DETECT_OBJS) $(OBJS)
 iphone: $(DETECT_OBJS) $(OBJS)
 	+$(LD) $(LDFLAGS) -o scummvm $(DETECT_OBJS) $(OBJS) \
 		$(OSX_STATIC_LIBS) \
-		-framework UIKit -framework CoreGraphics -framework OpenGLES \
+		-framework UIKit -framework CoreGraphics -framework OpenGLES -framework GameController \
 		-framework CoreFoundation -framework QuartzCore -framework Foundation \
 		-framework AudioToolbox -framework CoreAudio -framework SystemConfiguration -lobjc -lz
 

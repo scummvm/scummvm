@@ -23,7 +23,7 @@
 #define GRAPHICS_MACGUI_MACFONTMANAGER_H
 
 #include "common/language.h"
-
+#include "graphics/fonts/bdf.h"
 #include "graphics/fontman.h"
 
 namespace Common {
@@ -79,11 +79,12 @@ struct FontInfo {
 
 class MacFont {
 public:
-	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular, FontManager::FontUsage fallback = Graphics::FontManager::kBigGUIFont) {
+	MacFont(int id = kMacFontChicago, int size = 12, int slant = kMacFontRegular) {
 		_id = id;
 		_size = size ? size : 12;
 		_slant = slant;
-		_fallback = fallback;
+		_fallback = FontMan.getFontByUsage(Graphics::FontManager::kBigGUIFont);
+		_fallbackName = Common::String(((const BdfFont *)_fallback)->getFamilyName());
 		_generated = false;
 		_truetype = false;
 		_font = NULL;
@@ -96,12 +97,14 @@ public:
 	Common::String getName() { return _name; }
 	void setName(Common::String &name) { setName(name.c_str()); }
 	void setName(const char *name);
-	FontManager::FontUsage getFallback() { return _fallback; }
+	const Graphics::Font *getFallback() { return _fallback; }
 	bool isGenerated() { return _generated; }
 	void setGenerated(bool gen) { _generated = gen; }
 	bool isTrueType() { return _truetype; }
 	Font *getFont() { return _font; }
 	void setFont(Font *font, bool truetype) { _font = font; _truetype = truetype; }
+	void setFallback(const Font *font, Common::String name = "");
+	Common::String getFallbackName() { return _fallbackName; }
 
 private:
 	int _id;
@@ -109,7 +112,8 @@ private:
 	int _slant;
 	bool _truetype;
 	Common::String _name;
-	FontManager::FontUsage _fallback;
+	const Graphics::Font *_fallback;
+	Common::String _fallbackName;
 
 	bool _generated;
 	Font *_font;
@@ -133,6 +137,7 @@ public:
 	 * @param fallback Fallback policy in case the desired font isn't there.
 	 * @return The requested font or the fallback.
 	 */
+	const Font *getFont(MacFont *macFont);
 	const Font *getFont(MacFont macFont);
 
 	/**
@@ -153,6 +158,7 @@ public:
 	void loadFonts(Common::SeekableReadStream *stream);
 	void loadFonts(const Common::String &fileName);
 	void loadFonts(Common::MacResManager *fontFile);
+	void loadWindowsFont(const Common::String fileName);
 
 	/**
 	 * Register a font name if it doesn't already exist.
@@ -181,8 +187,9 @@ private:
 	bool _japaneseFontsLoaded;
 	uint32 _mode;
 	Common::Language _language;
+	Common::HashMap<Common::String, Graphics::Font *> _winFontRegistry;
 	Common::HashMap<Common::String, MacFont *> _fontRegistry;
-	Common::HashMap<Common::String, MacFontFamily *> _fontFamilies;
+	Common::Array<MacFontFamily *> _fontFamilies;
 
 	Common::HashMap<int, FontInfo *> _fontInfo;
 	Common::HashMap<Common::String, int> _fontIds;

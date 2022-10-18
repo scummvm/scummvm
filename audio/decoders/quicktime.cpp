@@ -562,7 +562,7 @@ uint32 QuickTimeAudioDecoder::QuickTimeAudioTrack::getAACSampleTime(uint32 total
 
 	// The first chunk of AAC contains "duration" samples that are used as a primer
 	// We need to subtract that number from the duration for the first chunk. See:
-	// http://developer.apple.com/library/mac/#documentation/QuickTime/QTFF/QTFFAppenG/QTFFAppenG.html#//apple_ref/doc/uid/TP40000939-CH2-SW1
+	// https://developer.apple.com/library/archive/documentation/QuickTime/QTFF/QTFFAppenG/QTFFAppenG.html#//apple_ref/doc/uid/TP40000939-CH2-SW1
 	// The skipping of both the primer and the remainder are handled by the AAC code,
 	// whereas the timing of the remainder are handled by this time-to-sample chunk
 	// code already.

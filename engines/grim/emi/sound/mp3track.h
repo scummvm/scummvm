@@ -24,7 +24,9 @@
 
 #include "common/str.h"
 #include "common/stream.h"
+
 #include "audio/timestamp.h"
+
 #include "engines/grim/emi/sound/track.h"
 
 namespace Audio {

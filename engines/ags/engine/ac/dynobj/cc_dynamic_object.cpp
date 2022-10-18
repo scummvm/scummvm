@@ -33,15 +33,12 @@
 //
 //=============================================================================
 
-//#define DEBUG_MANAGED_OBJECTS
-
-//include <stdlib.h>
-//include <string.h>
+#include "ags/shared/core/platform.h"
 #include "ags/engine/ac/dynobj/cc_dynamic_object.h"
 #include "ags/engine/ac/dynobj/managed_object_pool.h"
 #include "ags/shared/debugging/out.h"
-#include "ags/shared/script/cc_error.h"
-#include "ags/shared/script/script_common.h"
+#include "ags/shared/script/cc_common.h"
+#include "ags/shared/script/cc_internal.h"
 #include "ags/shared/util/stream.h"
 #include "ags/globals.h"
 

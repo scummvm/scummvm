@@ -326,6 +326,7 @@ protected:
 
 	bool handleNextCharsetCode(Actor *a, int *c) override;
 	int convertMessageToString(const byte *msg, byte *dst, int dstSize) override;
+	void fakeBidiString(byte *ltext, bool ignoreVerb) const override;
 
 	void debugInput(byte *string);
 

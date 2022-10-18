@@ -45,7 +45,7 @@ void XPlayAnim::open(int type) {
 }
 
 void XPlayAnim::close(int type) {
-	g_lingo->cleanupBuiltIns();
+	g_lingo->cleanupBuiltIns(builtins);
 }
 
 void XPlayAnim::b_xplayanim(int nargs) {
@@ -55,7 +55,12 @@ void XPlayAnim::b_xplayanim(int nargs) {
 
 	debugN(5, "LB::b_xPlayAnim: x: %i y: %i", x, y);
 	Video::PacoDecoder *video = new Video::PacoDecoder();
-	video->loadFile(Common::Path(filename, g_director->_dirSeparator));
+	bool result = video->loadFile(Common::Path(filename, g_director->_dirSeparator));
+	if (!result) {
+		warning("b_xPlayAnim: PACo video not loaded: %s", filename.c_str());
+		delete video;
+		return;
+	}
 
 	// save the current palette
 	byte origPalette[256 * 3];
@@ -67,7 +72,7 @@ void XPlayAnim::b_xplayanim(int nargs) {
 	}
 
 	memcpy(origPalette, g_director->getPalette(), origCount * 3);
-	Graphics::Surface const *frame;
+	Graphics::Surface const *frame = nullptr;
 	Common::Event event;
 	bool keepPlaying = true;
 	video->start();
@@ -101,10 +106,11 @@ void XPlayAnim::b_xplayanim(int nargs) {
 		g_system->delayMillis(10);
 
 	}
-	// Display the last frame after the video is done
-	g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
-		frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
-	);
+	if (frame != nullptr)
+		// Display the last frame after the video is done
+		g_director->getCurrentWindow()->getSurface()->copyRectToSurface(
+			frame->getPixels(), frame->pitch, x, y, frame->w, frame->h
+		);
 
 	video->close();
 	delete video;

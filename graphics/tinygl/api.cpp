@@ -976,6 +976,84 @@ void tglTexCoordPointer(TGLint size, TGLenum type, TGLsizei stride, const TGLvoi
 	c->gl_add_op(p);
 }
 
+// fog
+
+void tglFogfv(TGLenum pname, const TGLfloat *params) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[6];
+
+	p[0].op = TinyGL::OP_Fog;
+	p[1].i = pname;
+	switch (pname) {
+		case TGL_FOG_MODE:
+		case TGL_FOG_DENSITY:
+		case TGL_FOG_START:
+		case TGL_FOG_END:
+			p[2].f = params[0];
+			break;
+		case TGL_FOG_COLOR:
+			p[2].f = params[0];
+			p[3].f = params[1];
+			p[4].f = params[2];
+			p[5].f = params[3];
+			break;
+		default:
+			warning("tglFogfv: Unknown param");
+			return;
+	}
+
+	c->gl_add_op(p);
+}
+
+void tglFogf(TGLenum pname, TGLfloat param) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[3];
+
+	p[0].op = TinyGL::OP_Fog;
+	p[1].i = pname;
+	p[2].f = param;
+
+	c->gl_add_op(p);
+}
+
+void tglFogiv(TGLenum pname, const TGLint *params) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[6];
+
+	p[0].op = TinyGL::OP_Fog;
+	p[1].i = pname;
+	switch (pname) {
+		case TGL_FOG_MODE:
+		case TGL_FOG_DENSITY:
+		case TGL_FOG_START:
+		case TGL_FOG_END:
+			p[2].f = (float)params[0];
+			break;
+		case TGL_FOG_COLOR:
+			p[2].f = (float)params[0];
+			p[3].f = (float)params[1];
+			p[4].f = (float)params[2];
+			p[5].f = (float)params[3];
+			break;
+		default:
+			warning("tglFogiv: Unknown param");
+			return;
+	}
+
+	c->gl_add_op(p);
+}
+
+void tglFogi(TGLenum pname, TGLint param) {
+	TinyGL::GLContext *c = TinyGL::gl_get_context();
+	TinyGL::GLParam p[6];
+
+	p[0].op = TinyGL::OP_Fog;
+	p[1].i = pname;
+	p[2].i = (float)param;
+
+	c->gl_add_op(p);
+}
+
 // gets
 
 void tglGetIntegerv(TGLenum pname, TGLint *data) {

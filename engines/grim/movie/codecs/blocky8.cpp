@@ -69,19 +69,19 @@ namespace Grim {
 	} while (0)
 
 static const int8 blocky8_table_small1[] = {
-  0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
+	0, 1, 2, 3, 3, 3, 3, 2, 1, 0, 0, 0, 1, 2, 2, 1,
 };
 
 static const int8 blocky8_table_small2[] = {
-  0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
+	0, 0, 0, 0, 1, 2, 3, 3, 3, 3, 2, 1, 1, 1, 2, 2,
 };
 
 static const int8 blocky8_table_big1[] = {
-  0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
+	0, 2, 5, 7, 7, 7, 7, 7, 7, 5, 2, 0, 0, 0, 0, 0,
 };
 
 static const int8 blocky8_table_big2[] = {
-  0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
+	0, 0, 0, 0, 1, 3, 4, 6, 7, 7, 7, 7, 6, 4, 3, 1,
 };
 
 static const int8 blocky8_table[] = {
@@ -343,16 +343,8 @@ extern "C" {
 #endif
 }
 
-extern "C" void ARM_Blocky8_decode2(      byte  *dst,
-								  const byte  *src,
-										int    width,
-										int    height,
-								  const byte  *param_ptr,
-										int16 *_table,
-										byte  *_tableBig,
-										int32  offset1,
-										int32  offset2,
-										byte  *_tableSmall);
+extern "C" void ARM_Blocky8_decode2(byte *dst, const byte *src, int width, int height, const byte  *param_ptr,
+                                    int16 *_table, byte *_tableBig, int32 offset1, int32  offset2, byte *_tableSmall);
 
 #define decode2(SRC,DST,WIDTH,HEIGHT,PARAM) \
  ARM_Blocky8_decode2(SRC,DST,WIDTH,HEIGHT,PARAM,_table,_tableBig, \

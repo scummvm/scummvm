@@ -105,7 +105,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 				_s("Color Blind Mode"),
 				_s("Enable Color Blind Mode by default"),
 				"enable_color_blind",
-				false
+				false,
+				0,
+				0
 			}
 		},
 
@@ -116,7 +118,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Text to Speech for Objects and Options"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_enabled_objects",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -126,7 +130,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Enable Text to Speech for Subtitles"),
 			_s("Use TTS to read the subtitles (if TTS is available)"),
 			"tts_enabled_speech",
-			false
+			false,
+			0,
+			0
 		}
 	},
 #endif
@@ -139,11 +145,11 @@ public:
 	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "cge2";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "CGE2";
 	}
 

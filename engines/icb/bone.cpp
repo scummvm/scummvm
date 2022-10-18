@@ -93,7 +93,7 @@ void _game_session::UpdateCartridgeCase() {
 			M->bulletBounced++;
 
 			// this is where we make the bouncing sound...
-			RegisterSound(cur_id, object->GetStringValueOrDefault(tinkleSfxVar, defaultTinkleSfx), tinkleDesc);
+			RegisterSound(cur_id, CGameObject::GetStringValueOrDefault(object, tinkleSfxVar, defaultTinkleSfx), tinkleDesc);
 		}
 	}
 }
@@ -103,7 +103,7 @@ void _game_session::UpdateCartridgeCase() {
 // for jaw and neck. This sets random
 // movement on neck (x,y,z) and random
 // movement for jaw (just in x)
-void UpdateTalking(_logic *log, rap_API *rap) {
+void UpdateTalking(_logic *log, RapAPI *rap) {
 	// check for -1 in rap
 	if (rap->jawBone == (int8)-1)
 		Tdebug("bones.txt", "mega %s speaking but has no jaw bone!", log->mega->chr_name);
@@ -216,6 +216,13 @@ void SetPlayerShotBone(int32 obj_id) {
 
 #define STANDARD_MARKER_HEIGHT 170
 
+void ResetPlayerLook() {
+	_logic *log = MS->player.log;
+	BoneDeformation *b = &(log->voxel_info->lookBone);
+
+	b->boneTarget.vx = b->boneTarget.vy = b->boneTarget.vz = 0;
+}
+
 // update the neck bone
 // should only be called with player as logic
 void UpdatePlayerLook() {
@@ -280,8 +287,8 @@ void UpdatePlayerLook() {
 
 		// target is an actor so need adjustment for eye height...
 		if (target->image_type == VOXEL) {
-			c_game_object *pGameObject = (c_game_object *)MS->objects->Fetch_item_by_number(sel_id);
-			int32 dead = pGameObject->GetIntegerVariable(pGameObject->GetVariable("state"));
+			CGame *pGameObject = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, sel_id);
+			int32 dead = CGameObject::GetIntegerVariable(pGameObject, CGameObject::GetVariable(pGameObject, "state"));
 
 			if (target->object_type == __NON_ORGANIC_MEGA) { // robot (look down)
 				oy += ROBOT_EYE;
@@ -426,6 +433,18 @@ mcodeFunctionReturnCodes fn_simple_look(int32 &result, int32 *params) { return (
 
 mcodeFunctionReturnCodes speak_simple_look(int32 &result, int32 *params) { return (MS->speak_simple_look(result, params)); }
 
+mcodeFunctionReturnCodes fn_set_mega_height(int32 &result, int32 *params) { return (MS->fn_set_mega_height(result, params)); }
+
+mcodeFunctionReturnCodes _game_session::fn_set_mega_height(int32 &, int32 *params) {
+	if (!L->mega)
+		Fatal_error("fn_set_mega_height called for %s which is not a mega!", L->GetName());
+
+	L->mega->height = params[0];
+
+	return IR_CONT;
+}
+
+
 // the array of standard look coords
 
 #define LOOK_RIGHT (int16)(-384)
@@ -462,7 +481,7 @@ mcodeFunctionReturnCodes _game_session::fn_simple_look(int32 &, int32 *params) {
 	int32 l = params[0]; // which direction
 
 	if (!logic_structs[cur_id]->mega)
-		Fatal_error("fn_set_neck_vector called by non mega %s", L->GetName());
+		Fatal_error("fn_simple_look called by non mega %s", L->GetName());
 
 	int32 callingParams[2];
 
@@ -479,16 +498,16 @@ mcodeFunctionReturnCodes _game_session::speak_simple_look(int32 &, int32 *params
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// object
-	int32 object_id = objects->Fetch_item_number_by_name(object_name);
+	int32 object_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// direction
 	int32 l = params[1];
 
 	if (!logic_structs[object_id]->mega)
-		Fatal_error("fn_set_neck_vector called by non mega %s", logic_structs[object_id]->GetName());
+		Fatal_error("speak_simple_look called by non mega %s", logic_structs[object_id]->GetName());
 
 	if (logic_structs[object_id]->voxel_info->lookBone.boneNumber == (int8)-1)
-		Fatal_error("fn_set_neck_vector called but no fn_set_neck_bone() has been called for object %s", logic_structs[object_id]->GetName());
+		Fatal_error("speak_simple_look called but no fn_set_neck_bone() has been called for object %s", logic_structs[object_id]->GetName());
 
 	Tdebug("bones.txt", "%s: Simple look %d <%d,%d,%d> at speed %d", object_name, l, looks[l][2], looks[l][1], looks[l][0], STANDARD_LOOK_SPEED);
 
@@ -564,7 +583,7 @@ mcodeFunctionReturnCodes _game_session::speak_set_neck_vector(int32 &, int32 *pa
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	object_id = objects->Fetch_item_number_by_name(object_name);
+	object_id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	x = params[1];
 	y = params[2];
 	z = params[3];

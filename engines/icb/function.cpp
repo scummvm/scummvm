@@ -42,6 +42,7 @@
 #include "engines/icb/direct_input.h"
 #include "engines/icb/actor.h"
 #include "engines/icb/remora.h"
+#include "engines/icb/res_man.h"
 
 #include "common/keyboard.h"
 
@@ -124,6 +125,8 @@ mcodeFunctionReturnCodes fn_hold_while_list_near_nico(int32 &result, int32 *para
 mcodeFunctionReturnCodes fn_set_watch(int32 &result, int32 *params) { return (MS->fn_set_watch(result, params)); }
 
 mcodeFunctionReturnCodes fn_three_sixty_interact(int32 &result, int32 *params) { return (MS->fn_three_sixty_interact(result, params)); }
+
+mcodeFunctionReturnCodes fn_radial_interact(int32 &result, int32 *params) { return (MS->fn_radial_interact(result, params)); }
 
 mcodeFunctionReturnCodes fn_near_list(int32 &result, int32 *params) { return (MS->fn_near_list(result, params)); }
 
@@ -295,6 +298,28 @@ mcodeFunctionReturnCodes fn_snap_to_ladder_bottom(int32 &result, int32 *params) 
 
 mcodeFunctionReturnCodes fn_snap_to_ladder_top(int32 &result, int32 *params) { return (MS->fn_snap_to_ladder_top(result, params)); }
 
+mcodeFunctionReturnCodes fn_set_manual_interact_object(int32 &result, int32 *params) { return (MS->fn_set_manual_interact_object(result, params)); }
+
+mcodeFunctionReturnCodes fn_cancel_manual_interact_object(int32 &result, int32 *params) { return (MS->fn_cancel_manual_interact_object(result, params)); }
+
+mcodeFunctionReturnCodes fn_display_objects_lvar(int32 &result, int32 *params) { return (MS->fn_display_objects_lvar(result, params)); }
+
+mcodeFunctionReturnCodes fn_set_override_pose(int32 &result, int32 *params) { return (MS->fn_set_override_pose(result, params)); }
+
+mcodeFunctionReturnCodes fn_cancel_override_pose(int32 &result, int32 *params) { return (MS->fn_cancel_override_pose(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_actor_file(int32 &result, int32 *params) { return (MS->fn_preload_actor_file(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_mesh(int32 &result, int32 *params) { return (MS->fn_preload_mesh(result, params)); }
+
+mcodeFunctionReturnCodes fn_hard_load_mesh(int32 &result, int32 *params) { return (MS->fn_hard_load_mesh(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_texture(int32 &result, int32 *params) { return (MS->fn_preload_texture(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_palette(int32 &result, int32 *params) { return (MS->fn_preload_palette(result, params)); }
+
+mcodeFunctionReturnCodes fn_preload_animation(int32 &result, int32 *params) { return (MS->fn_preload_animation(result, params)); }
+
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_2(int32 &, int32 *) { return IR_CONT; }
 
 mcodeFunctionReturnCodes fn_PLEASE_REUSE_THIS_SLOT_3(int32 &, int32 *) { return IR_CONT; }
@@ -305,7 +330,13 @@ mcodeFunctionReturnCodes _game_session::fn_swordfight(int32 &, int32 *) { return
 
 mcodeFunctionReturnCodes fn_set_as_player(int32 &result, int32 *params) { return (MS->fn_set_as_player(result, params)); }
 
-mcodeFunctionReturnCodes _game_session::fn_set_as_player(int32 &, int32 *) { return (IR_CONT); }
+mcodeFunctionReturnCodes fn_inventory_active(int32 &result, int32 *params) { return (MS->fn_inventory_active(result, params)); }
+
+mcodeFunctionReturnCodes fn_can_save(int32 &result, int32 *params) { return (MS->fn_can_save(result, params)); }
+
+mcodeFunctionReturnCodes fn_shadow(int32 &result, int32 *params) { return (MS->fn_shadow(result, params)); }
+
+mcodeFunctionReturnCodes fn_is_actor_relative(int32 &result, int32 *params) { return (MS->fn_is_actor_relative(result, params)); }
 
 mcodeFunctionReturnCodes _game_session::fn_rig_test(int32 &, int32 *) {
 	//	no params
@@ -364,16 +395,16 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 	script_hash = HashString(script_name);
 
 	if (g_px->socket_watch)
-		Message_box("socket_force_new_logic - obj %s, script %s", socket_object->GetName(), script_name);
+		Message_box("socket_force_new_logic - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < socket_object->GetNoScripts(); k++) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// now check for actual script name
-		if (script_hash == socket_object->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(socket_object, k)) {
 			Zdebug("script %d matches", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			ad = (char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			ad = (char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(socket_object, k));
 
 			if (g_px->socket_watch)
 				Message_box("replacing logic");
@@ -400,7 +431,7 @@ mcodeFunctionReturnCodes _game_session::socket_force_new_logic(int32 &, int32 *p
 	// didnt find the script in the target
 	// shut that object down as its full of holes!
 
-	Fatal_error("socket_force_new_logic cant find script - obj %s, script %s", socket_object->GetName(), script_name);
+	Fatal_error("socket_force_new_logic can't find script - obj %s, script %s", CGameObject::GetName(socket_object), script_name);
 
 	return (IR_TERMINATE);
 }
@@ -419,7 +450,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_voxel_image_path(int32 &, int32 *
 
 	// enforce this convention
 	if (!logic_structs[cur_id]->mega)
-		Fatal_error("fn_set_voxel_image_path %s is not a mega", object->GetName());
+		Fatal_error("fn_set_voxel_image_path %s is not a mega", CGameObject::GetName(object));
 
 	const char *param0Str = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *param1Str = (const char *)MemoryUtil::resolvePtr(params[1]);
@@ -454,7 +485,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_voxel_image_path(int32 &, int32 *
 mcodeFunctionReturnCodes _game_session::fn_set_xyz(int32 &, int32 *) {
 	// set a game objects x,y,z worldspace coords
 
-	Fatal_error("[%s] fn_set_xyz - not supported", object->GetName());
+	Fatal_error("[%s] fn_set_xyz - not supported", CGameObject::GetName(object));
 
 	return IR_CONT;
 }
@@ -481,41 +512,41 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_nico_file(int32 &, int32 * 
 
 	_feature_info *start_pos;
 
-	Zdebug("fn_init_from_nico_file - %s (cur_id %d)", object->GetName(), cur_id);
+	Zdebug("fn_init_from_nico_file - %s (cur_id %d)", CGameObject::GetName(object), cur_id);
 
 	if (L->image_type == VOXEL)
-		Fatal_error("fn_init_from_nico_file called by a mega! [%s] - use fn_init_mega_from_nico", object->GetName());
+		Fatal_error("fn_init_from_nico_file called by a mega! [%s] - use fn_init_mega_from_nico", CGameObject::GetName(object));
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, CGameObject::GetName(object));
 
 	if (!start_pos) {
-		Message_box("fn_init_from_nico_file - missing nico for item %s", object->GetName());
+		Message_box("fn_init_from_nico_file - missing nico for item %s", CGameObject::GetName(object));
 		Shut_down_object("fn_init_from_nico_file - missing nico for item");
 		return IR_STOP;
 	}
 
 	// set coordinates
-	logic_structs[cur_id]->prop_xyz.x = start_pos->x;
+	logic_structs[cur_id]->prop_xyz.x = FROM_LE_FLOAT32(start_pos->x);
 
-	if (start_pos->y < start_pos->floor_y) // nico is under the floor!
-		logic_structs[cur_id]->prop_xyz.y = start_pos->floor_y;
+	if (FROM_LE_FLOAT32(start_pos->y) < FROM_LE_FLOAT32(start_pos->floor_y)) // nico is under the floor!
+		logic_structs[cur_id]->prop_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
 
 	else
-		logic_structs[cur_id]->prop_xyz.y = start_pos->y;
+		logic_structs[cur_id]->prop_xyz.y = FROM_LE_FLOAT32(start_pos->y);
 
-	logic_structs[cur_id]->prop_xyz.z = start_pos->z;
+	logic_structs[cur_id]->prop_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction; // is this right?
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction); // is this right?
 
-	logic_structs[cur_id]->prop_interact_pan = start_pos->direction; // this might be more sensible
+	logic_structs[cur_id]->prop_interact_pan = FROM_LE_FLOAT32(start_pos->direction); // this might be more sensible
 
 	// set owner floor for things lile fn_on_screen
-	logic_structs[cur_id]->owner_floor_rect = floor_def->Return_floor_rect(start_pos->x, start_pos->z, start_pos->floor_y, 0);
+	logic_structs[cur_id]->owner_floor_rect = floor_def->Return_floor_rect(FROM_LE_FLOAT32(start_pos->x), FROM_LE_FLOAT32(start_pos->z), FROM_LE_FLOAT32(start_pos->floor_y), 0);
 
 	if (logic_structs[cur_id]->owner_floor_rect == PXNULL) {
-		Message_box("fn_init_from_nico_file - %s nico not on a legal floor position - object has been shutdown", object->GetName());
+		Message_box("fn_init_from_nico_file - %s nico not on a legal floor position - object has been shutdown", CGameObject::GetName(object));
 		Shut_down_object("fn_init_from_nico_file");
 		return IR_STOP;
 	}
@@ -531,7 +562,7 @@ mcodeFunctionReturnCodes _game_session::fn_check_for_nico(int32 &result, int32 *
 
 	_feature_info *start_pos;
 
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, CGameObject::GetName(object));
 
 	if (!start_pos)
 		result = FALSE8;
@@ -551,27 +582,27 @@ mcodeFunctionReturnCodes _game_session::fn_init_from_marker_file(int32 &, int32 
 
 	_map_marker *start_pos;
 
-	Zdebug("fn_init_from_marker_file - %s (cur_id %d)", object->GetName(), cur_id);
+	Zdebug("fn_init_from_marker_file - %s (cur_id %d)", CGameObject::GetName(object), cur_id);
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
-		Fatal_error("FN_INIT_FROM_MARKER_FILE fails because object is not registered as a mega.");
+		Fatal_error("fn_init_from_marker_file fails because object is not registered as a mega.");
 
 	// fetch tag file for this item
-	start_pos = (_map_marker *)markers.Fetch_marker_by_object_name(const_cast<char *>(object->GetName()));
+	start_pos = (_map_marker *)markers.Fetch_marker_by_object_name(const_cast<char *>(CGameObject::GetName(object)));
 
 	if (!start_pos) {
-		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - dont play the game.", object->GetName());
+		Message_box("fn_init_from_marker_file missing map marker file entry for item %s.  You must edit the markers - dont play the game.", CGameObject::GetName(object));
 		Shut_down_object("fn_init_from_marker_file");
 		return IR_STOP;
 	}
 
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->y;
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->pan;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->pan);
 
 	// has coords
 	logic_structs[cur_id]->prop_coords_set = TRUE8;
@@ -586,28 +617,28 @@ mcodeFunctionReturnCodes _game_session::fn_init_mega_from_nico(int32 &, int32 *)
 
 	_feature_info *start_pos;
 
-	Zdebug("fn_init_mega_from_nico - %s (cur_id %d)", object->GetName(), cur_id);
+	Zdebug("fn_init_mega_from_nico - %s (cur_id %d)", CGameObject::GetName(object), cur_id);
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
 		Fatal_error("fn_init_mega_from_nico fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(object->GetName());
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, CGameObject::GetName(object));
 
 	if (!start_pos) {
-		Message_box("fn_init_mega_from_nico missing nico for item %s", object->GetName());
+		Message_box("fn_init_mega_from_nico missing nico for item %s", CGameObject::GetName(object));
 		Shut_down_object("fn_init_mega_from_nico missing nico for item");
 		return IR_STOP;
 	}
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y;
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	// has coords
 	logic_structs[cur_id]->prop_coords_set = TRUE8;
@@ -624,24 +655,24 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico(int32 &, int32 *para
 
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("fn_teleport_to_nico - %s (to %s)", object->GetName(), nico_name);
+	Zdebug("fn_teleport_to_nico - %s (to %s)", CGameObject::GetName(object), nico_name);
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
 		Fatal_error("fn_teleport_to_nico fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
-		Fatal_error("no NICO marker (fn_teleport_to_nico) ob %s, nico %s", object->GetName(), nico_name);
+		Fatal_error("no NICO marker (fn_teleport_to_nico) ob %s, nico %s", CGameObject::GetName(object), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -666,14 +697,14 @@ mcodeFunctionReturnCodes _game_session::fn_panless_teleport_to_nico(int32 &, int
 		Fatal_error("fn_panless_teleport_to_nico_ fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
-		Fatal_error("no NICO marker (fn_panless_teleport_to_nico_) ob %s, nico %s", object->GetName(), nico_name);
+		Fatal_error("no NICO marker (fn_panless_teleport_to_nico_) ob %s, nico %s", CGameObject::GetName(object), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.x = start_pos->x;
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
-	logic_structs[cur_id]->mega->actor_xyz.z = start_pos->z;
+	logic_structs[cur_id]->mega->actor_xyz.x = FROM_LE_FLOAT32(start_pos->x);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.z = FROM_LE_FLOAT32(start_pos->z);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -691,19 +722,19 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_to_nico_y(int32 &, int32 *pa
 
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("fn_teleport_to_nico_y - %s (to %s)", object->GetName(), nico_name);
+	Zdebug("fn_teleport_to_nico_y - %s (to %s)", CGameObject::GetName(object), nico_name);
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
 		Fatal_error("fn_teleport_to_nico_y fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
-		Fatal_error("no NICO marker (fn_teleport_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
+		Fatal_error("no NICO marker (fn_teleport_to_nico_y) ob %s, nico %s", CGameObject::GetName(object), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y; // Gravitise_y(start_pos->y);
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y); // Gravitise_y(start_pos->y);
 
 	// for safety
 	logic_structs[cur_id]->cur_anim_type = __STAND;
@@ -724,19 +755,19 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_nico_y(int32 &, int32 *params
 
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("fn_snap_to_nico_y - %s (to %s)", object->GetName(), nico_name);
+	Zdebug("fn_snap_to_nico_y - %s (to %s)", CGameObject::GetName(object), nico_name);
 
 	// if this object does not have a voxel_info struct then we're done here!
 	if (!logic_structs[cur_id]->voxel_info)
 		Fatal_error("fn_snap_to_nico_y fails because object is not registered as a mega");
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!start_pos)
-		Fatal_error("no NICO marker (fn_snap_to_nico_y) ob %s, nico %s", object->GetName(), nico_name);
+		Fatal_error("no NICO marker (fn_snap_to_nico_y) ob %s, nico %s", CGameObject::GetName(object), nico_name);
 
 	// set coordinates
-	logic_structs[cur_id]->mega->actor_xyz.y = start_pos->floor_y;
+	logic_structs[cur_id]->mega->actor_xyz.y = FROM_LE_FLOAT32(start_pos->floor_y);
 
 	return IR_CONT;
 }
@@ -751,20 +782,20 @@ mcodeFunctionReturnCodes _game_session::fn_get_pan_from_nico(int32 &, int32 *par
 
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	Zdebug("fn_get_pan_from_nico - %s (nico %s)", object->GetName(), nico_name);
+	Zdebug("fn_get_pan_from_nico - %s (nico %s)", CGameObject::GetName(object), nico_name);
 
 	// fetch tag file for this item
-	start_pos = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	start_pos = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 	if (!start_pos) {
 		// item does not have an entry but clearly expects one
 		// for now, just carry on and log a warning
-		Zdebug("WARNING missing feature file entry for item %s", object->GetName());
-		Fatal_error("no NICO marker (fn_get_pan_from_nico) %s", object->GetName());
+		Zdebug("WARNING missing feature file entry for item %s", CGameObject::GetName(object));
+		Fatal_error("no NICO marker (fn_get_pan_from_nico) %s", CGameObject::GetName(object));
 	}
 
 	// set pan
-	logic_structs[cur_id]->pan = start_pos->direction;
+	logic_structs[cur_id]->pan = FROM_LE_FLOAT32(start_pos->direction);
 
 	return IR_CONT;
 }
@@ -801,29 +832,29 @@ mcodeFunctionReturnCodes _game_session::fn_call_socket(int32 &result, int32 *par
 	Zdebug("fn_call_socket - obj %s, script %s", target_object_name, socket_script_name);
 
 	if (g_px->socket_watch)
-		Message_box("%s fn_call_socket - obj %s, script %s", object->GetName(), target_object_name, socket_script_name);
+		Message_box("%s fn_call_socket - obj %s, script %s", CGameObject::GetName(object), target_object_name, socket_script_name);
 
 	script_hash = HashString(socket_script_name);
 
 	// get target object
-	socket_object = (c_game_object *)MS->objects->Try_fetch_item_by_name(target_object_name);
+	socket_object = (CGame *)LinkedDataObject::Try_fetch_item_by_name(MS->objects, target_object_name);
 	if (!socket_object)
-		Fatal_error("%s call to fn_call_socket - object %s doesnt exist", object->GetName(), target_object_name);
+		Fatal_error("%s call to fn_call_socket - object %s doesn't exist", CGameObject::GetName(object), target_object_name);
 
 	// set socket_id ready for any special socket functions
-	socket_id = MS->objects->Fetch_item_number_by_name(target_object_name);
+	socket_id = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 	if (socket_id == 0xffffffff)
 		Fatal_error("fn_call_socket couldnt find object [%s]", target_object_name);
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < socket_object->GetNoScripts(); k++) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// now check for actual script name
-		if (script_hash == socket_object->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(socket_object, k)) {
 			Zdebug("calling socket %d", k);
 			// script k is the one to run
 			// get the address of the script we want to run
 
-			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(socket_object, k));
 
 			// run the script - pass its object so vars can be accessed
 			RunScript(pc, socket_object, &retval);
@@ -874,25 +905,25 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 	script_hash = HashString(script);
 
 	// get target object
-	socket_object = (c_game_object *)MS->objects->Fetch_item_by_number(id);
+	socket_object = (CGame *)LinkedDataObject::Fetch_item_by_number(MS->objects, id);
 	if (!socket_object)
 		Fatal_error("internal Call_socket - named object dont exist");
 
-	Zdebug("\nCall_socket - obj %s, script %s", socket_object->GetName(), script);
+	Zdebug("\nCall_socket - obj %s, script %s", CGameObject::GetName(socket_object), script);
 
 	// set this for socket fn_ functions
 	socket_id = id;
 
 	// now try and find a script with the passed extention i.e. ???::looping
-	for (uint32 k = 0; k < socket_object->GetNoScripts(); k++) {
+	for (uint32 k = 0; k < CGameObject::GetNoScripts(socket_object); k++) {
 		// skip past the object:: aspect
 
 		// now check for actual script name
-		if (script_hash == socket_object->GetScriptNamePartHash(k)) {
+		if (script_hash == CGameObject::GetScriptNamePartHash(socket_object, k)) {
 			Zdebug("calling socket %d", k);
 			// script k is the one to run
 			// get the address of the script we want to run
-			const char *pc = (const char *)scripts->Try_fetch_item_by_hash(socket_object->GetScriptNameFullHash(k));
+			const char *pc = (const char *)LinkedDataObject::Try_fetch_item_by_hash(scripts, CGameObject::GetScriptNameFullHash(socket_object, k));
 
 			int32 result = static_cast<int>(*retval);
 
@@ -905,7 +936,7 @@ bool8 _game_session::Call_socket(uint32 id, const char *script, int32 *retval) {
 		}
 	}
 
-	Tdebug("Call_socket_fails.txt", "[%s] couldnt find script [%s] in [%s]", object->GetName(), script, socket_object->GetName());
+	Tdebug("Call_socket_fails.txt", "[%s] couldnt find script [%s] in [%s]", CGameObject::GetName(object), script, CGameObject::GetName(socket_object));
 
 	return (FALSE8);
 }
@@ -956,18 +987,18 @@ mcodeFunctionReturnCodes _game_session::fn_teleport(int32 &, int32 *params) {
 	const char *target_object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	Zdebug("\nfn_teleport to %s x%d z%d", target_object_name, params[1], params[2]);
-	Zdebug("cur_id %d [%s]", cur_id, object->GetName());
+	Zdebug("cur_id %d [%s]", cur_id, CGameObject::GetName(object));
 
 	// Made this so it takes a special name "from_origin" to indicate that the offset is to be applied
 	// from 0,0.
 	if (strcmp(target_object_name, "from_origin") != 0) {
-		uint32 tar = MS->objects->Fetch_item_number_by_name(target_object_name);
+		uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 
 		if (tar == 0xffffffff)
 			Fatal_error("'destination' teleport object [%s] does not exist", target_object_name);
 
 		if (!logic_structs[tar]->prop_coords_set)
-			Fatal_error("fn_teleport by [%s] finds object [%s] is not yet initialised :O - i.e. its not run its init script yet", object->GetName(),
+			Fatal_error("fn_teleport by [%s] finds object [%s] is not yet initialised :O - i.e. its not run its init script yet", CGameObject::GetName(object),
 			            target_object_name);
 
 		if (logic_structs[tar]->image_type == PROP) {
@@ -1007,12 +1038,12 @@ mcodeFunctionReturnCodes _game_session::fn_teleport_z(int32 &, int32 *params) {
 
 	Zdebug("fn_teleport_z to %s", target_object_name);
 
-	uint32 tar = MS->objects->Fetch_item_number_by_name(target_object_name);
+	uint32 tar = LinkedDataObject::Fetch_item_number_by_name(MS->objects, target_object_name);
 
 	if (tar == 0xffffffff)
 		Fatal_error("'destination' teleport object [%s] does not exist", target_object_name);
 	if (!logic_structs[tar]->prop_coords_set)
-		Fatal_error("fn_teleport by [%s] finds object [%s] is not yet initialised :O - i.e. its not run its init script yet", object->GetName(), target_object_name);
+		Fatal_error("fn_teleport by [%s] finds object [%s] is not yet initialised :O - i.e. its not run its init script yet", CGameObject::GetName(object), target_object_name);
 
 	if (logic_structs[tar]->image_type == PROP) {
 		logic_structs[cur_id]->mega->actor_xyz.y = floor_def->Gravitise_y(logic_structs[tar]->prop_xyz.y); // logic_structs[tar]->prop_xyz.y;
@@ -1064,10 +1095,10 @@ mcodeFunctionReturnCodes _game_session::fn_are_we_on_this_floor(int32 &result, i
 		return IR_CONT;
 
 	uint32 hash = HashString(floor_name);
-	floor_id = floor_def->floors->Fetch_item_number_by_hash(hash);
+	floor_id = LinkedDataObject::Fetch_item_number_by_hash(floor_def->floors, hash);
 
 	if (floor_id == 0xffffffff)
-		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
+		Fatal_error("fn_are_we_on_this_floor can't locate floor [%s]", floor_name);
 
 	if (floor_id == L->owner_floor_rect)
 		result = TRUE8;
@@ -1089,7 +1120,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_our_floor(int32 &result,
 	if (first_session_cycle)
 		return IR_CONT;
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
@@ -1167,7 +1198,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_screen(int32 &result, in
 	}
 
 	// get object to check
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_screen - illegal object [%s]", object_name);
 
@@ -1253,22 +1284,22 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_lvar_value(int32 &result,
 	//				1 name of lvar
 
 	int32 ret;
-	c_game_object *ob;
+	CGame *ob;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *lvar_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
 	Zdebug("fn_get_objects_lvar_value - [%s] [%s]", object_name, lvar_name);
 
 	uint32 hash = HashString(object_name);
-	ob = (c_game_object *)objects->Try_fetch_item_by_hash(hash);
+	ob = (CGame *)LinkedDataObject::Try_fetch_item_by_hash(objects, hash);
 	if (!ob)
 		Fatal_error("fn_get_objects_lvar_value - illegal object [%s]", object_name);
 
-	ret = ob->GetVariable(lvar_name);
+	ret = CGameObject::GetVariable(ob, lvar_name);
 	if (ret == -1)
-		Fatal_error("%s finds fn_get_objects_lvar_value - target object [%s] doesnt have [%s] lvar", object->GetName(), object_name, lvar_name);
+		Fatal_error("%s finds fn_get_objects_lvar_value - target object [%s] doesn't have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
 
-	result = ob->GetIntegerVariable(ret);
+	result = CGameObject::GetIntegerVariable(ob, ret);
 
 	Zdebug(" var==%d", result);
 
@@ -1281,21 +1312,21 @@ mcodeFunctionReturnCodes _game_session::fn_set_objects_lvar_value(int32 &, int32
 	//				2 new value of lvar
 
 	int32 var_num;
-	c_game_object *ob;
+	CGame *ob;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *lvar_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	Zdebug("[%s] calls fn_set_objects_lvar_value - [%s] [%s, %d]", object->GetName(), object_name, lvar_name, params[2]);
+	Zdebug("[%s] calls fn_set_objects_lvar_value - [%s] [%s, %d]", CGameObject::GetName(object), object_name, lvar_name, params[2]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(object_name);
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, object_name);
 	if (!ob)
 		Fatal_error("fn_set_objects_lvar_value - illegal object [%s]", object_name);
 
-	var_num = ob->GetVariable(lvar_name);
+	var_num = CGameObject::GetVariable(ob, lvar_name);
 	if (var_num == -1)
-		Fatal_error("[%s] fn_set_objects_lvar_value - object [%s] doesnt have [%s] lvar", object->GetName(), object_name, lvar_name);
+		Fatal_error("[%s] fn_set_objects_lvar_value - object [%s] doesn't have [%s] lvar", CGameObject::GetName(object), object_name, lvar_name);
 
-	ob->SetIntegerVariable(var_num, params[2]);
+	CGameObject::SetIntegerVariable(ob, var_num, params[2]);
 
 	Zdebug(" var==%d", params[2]);
 
@@ -1308,20 +1339,20 @@ mcodeFunctionReturnCodes _game_session::fn_set_ids_lvar_value(int32 &, int32 *pa
 	//				2 new value of lvar
 
 	int32 var_num;
-	c_game_object *ob;
+	CGame *ob;
 	const char *lvar_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	Zdebug("fn_set_ids_lvar_value - [%s] [%s]", objects->Fetch_items_name_by_number(params[0]), lvar_name);
+	Zdebug("fn_set_ids_lvar_value - [%s] [%s]", LinkedDataObject::Fetch_items_name_by_number(objects, params[0]), lvar_name);
 
-	ob = (c_game_object *)objects->Fetch_item_by_number(params[0]);
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, params[0]);
 	if (!ob)
 		Fatal_error("fn_set_ids_lvar_value - illegal object [%d]", params[0]);
 
-	var_num = ob->GetVariable(lvar_name);
+	var_num = CGameObject::GetVariable(ob, lvar_name);
 	if (var_num == -1)
-		Fatal_error("fn_set_ids_lvar_value - object [%d] doesnt have [%s] lvar", params[0], lvar_name);
+		Fatal_error("fn_set_ids_lvar_value - object [%d] doesn't have [%s] lvar", params[0], lvar_name);
 
-	ob->SetIntegerVariable(var_num, params[2]);
+	CGameObject::SetIntegerVariable(ob, var_num, params[2]);
 
 	Zdebug(" var==%d", params[2]);
 
@@ -1332,16 +1363,16 @@ mcodeFunctionReturnCodes _game_session::fn_get_state_flag(int32 &result, int32 *
 	// params        0 name of object
 
 	int32 ret;
-	c_game_object *ob;
+	CGame *ob;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(object_name);
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, object_name);
 	if (!ob)
 		Fatal_error("fn_get_state_flag - illegal object [%s]", object_name);
-	ret = ob->GetVariable("state");
+	ret = CGameObject::GetVariable(ob, "state");
 	if (ret == -1)
-		Fatal_error("fn_get_state_flag - object [%s] doesnt have 'state' lvar", object_name);
-	result = ob->GetIntegerVariable(ret);
+		Fatal_error("fn_get_state_flag - object [%s] doesn't have 'state' lvar", object_name);
+	result = CGameObject::GetIntegerVariable(ob, ret);
 
 	return (IR_CONT);
 }
@@ -1350,7 +1381,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_dead(int32 &result, int32 *
 	// params        0 name of object
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (!logic_structs[id]->mega)
 		Fatal_error("fn_get_state_flag - object [%s] not mega", object_name);
@@ -1383,7 +1414,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_weapon(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("WARNING -  %s specified weapon does not exist [%s]", object->GetName(), weapon_name);
+	Fatal_error("WARNING -  %s specified weapon does not exist [%s]", CGameObject::GetName(object), weapon_name);
 
 	return (IR_STOP);
 }
@@ -1405,7 +1436,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_an_object_crouching(int32 &result,
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_an_object_crouching - illegal object [%s]", object_name);
 
@@ -1457,7 +1488,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_pose(int32 &, int32 *params) {
 		}
 	}
 
-	Fatal_error("WARNING -  %s specified weapon does not exist [%s]", object->GetName(), pose_name);
+	Fatal_error("WARNING -  %s specified weapon does not exist [%s]", CGameObject::GetName(object), pose_name);
 
 	return (IR_STOP);
 }
@@ -1490,6 +1521,24 @@ mcodeFunctionReturnCodes _game_session::fn_set_mesh(int32 &, int32 *params) {
 	return (IR_CONT);
 }
 
+mcodeFunctionReturnCodes _game_session::fn_set_override_pose(int32 &, int32 *params) {
+	// fn_set_override_pose(text)
+
+	const char *pose = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	L->voxel_info->Set_override_pose(pose);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_cancel_override_pose(int32 &, int32 *) {
+	// fn_cancel_override_pose(text)
+
+	L->voxel_info->Cancel_override_pose();
+
+	return IR_CONT;
+}
+
 extern _player_stat player_stat_table[__TOTAL_WEAPONS];
 
 mcodeFunctionReturnCodes _game_session::fn_set_player_pose(int32 &, int32 *params) {
@@ -1520,7 +1569,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_player_pose(int32 &, int32 *param
 		}
 	}
 
-	Fatal_error("WARNING - fn_set_player_pose %s specified weapon does not exist [%s]", object->GetName(), pose_name);
+	Fatal_error("WARNING - fn_set_player_pose %s specified weapon does not exist [%s]", CGameObject::GetName(object), pose_name);
 
 	return (IR_STOP);
 }
@@ -1536,7 +1585,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_custom(int32 &, int32 *params) {
 	Zdebug("fn_set_custom [%s]", custom_name);
 
 	if (!M)
-		Fatal_error("fn_set_custom finds [%s] is not a mega", object->GetName());
+		Fatal_error("fn_set_custom finds [%s] is not a mega", CGameObject::GetName(object));
 
 	Set_string(custom_name, M->custom_set, MAX_CUSTOM_NAME_LENGTH);
 	M->custom = TRUE8;
@@ -1555,7 +1604,7 @@ mcodeFunctionReturnCodes _game_session::fn_message(int32 &, int32 *params) {
 	if (params[0] < 256) {
 		Message_box("%d", params[0]);
 	} else {
-		Message_box("%s - %s", object->GetName(), message);
+		Message_box("%s - %s", CGameObject::GetName(object), message);
 	}
 	return IR_CONT;
 }
@@ -1563,9 +1612,9 @@ mcodeFunctionReturnCodes _game_session::fn_message(int32 &, int32 *params) {
 mcodeFunctionReturnCodes _game_session::fn_message_var(int32 &, int32 *params) {
 	const char *var_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	uint32 var = object->GetVariable(var_name);
+	uint32 var = CGameObject::GetVariable(object, var_name);
 	if (var == 0xffffffff)
-		Fatal_error("fn_message_var - object %s has no var %s", object->GetName(), var_name);
+		Fatal_error("fn_message_var - object %s has no var %s", CGameObject::GetName(object), var_name);
 
 	// pc has to muck around to clear sticky ctrl key
 	// hold until ctrl key released
@@ -1574,10 +1623,10 @@ mcodeFunctionReturnCodes _game_session::fn_message_var(int32 &, int32 *params) {
 
 	char txt[100];
 
-	if (object->IsVariableString(var))
-		sprintf(txt, "%s=\"%s\"", var_name, object->GetStringVariable(var));
+	if (CGameObject::IsVariableString(object, var))
+		sprintf(txt, "%s=\"%s\"", var_name, CGameObject::GetStringVariable(object, var));
 	else
-		sprintf(txt, "%s=%d", var_name, object->GetIntegerVariable(var));
+		sprintf(txt, "%s=%d", var_name, CGameObject::GetIntegerVariable(object, var));
 
 	Message_box(txt);
 
@@ -1595,7 +1644,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_x(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_x - illegal object [%s]", object_name);
 
@@ -1617,7 +1666,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_y(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_y - illegal object [%s]", object_name);
 
@@ -1639,7 +1688,7 @@ mcodeFunctionReturnCodes _game_session::fn_get_objects_z(int32 &result, int32 *p
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_get_objects_z - illegal object [%s]", object_name);
 
@@ -1660,7 +1709,7 @@ mcodeFunctionReturnCodes _game_session::fn_has_mega_our_height(int32 &result, in
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// get target
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_has_mega_our_height - illegal object [%s]", object_name);
 
@@ -1688,7 +1737,7 @@ mcodeFunctionReturnCodes _game_session::fn_near(int32 &result, int32 *params) {
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_dead - illegal object [%s]", object_name);
 
@@ -1743,10 +1792,10 @@ mcodeFunctionReturnCodes _game_session::fn_is_mega_near_mega(int32 &result, int3
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *other_object_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_mega_near_mega - illegal object [%s]", object_name);
-	id2 = (uint32)objects->Fetch_item_number_by_name(other_object_name);
+	id2 = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, other_object_name);
 	if (id2 == 0xffffffff)
 		Fatal_error("fn_is_mega_near_mega - illegal object [%s]", other_object_name);
 
@@ -1794,7 +1843,7 @@ mcodeFunctionReturnCodes _game_session::fn_hold_if_off_screen(int32 &, int32 *) 
 	//	no params
 
 	if (L->image_type != VOXEL)
-		Fatal_error("fn_hold_if_off_screen only works with megas [%s]", object->GetName());
+		Fatal_error("fn_hold_if_off_screen only works with megas [%s]", CGameObject::GetName(object));
 
 	if (!Object_visible_to_camera(cur_id)) {
 		return (IR_REPEAT);
@@ -1814,7 +1863,7 @@ mcodeFunctionReturnCodes _game_session::fn_object_near_nico(int32 &result, int32
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[1]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_object_near_nico - illegal object [%s]", object_name);
@@ -1823,10 +1872,10 @@ mcodeFunctionReturnCodes _game_session::fn_object_near_nico(int32 &result, int32
 		Fatal_error("fn_object_near_nico object [%s] is not a mega!", object_name);
 
 	// fetch tag file for this item
-	nico = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 
 	if (!nico)
-		Fatal_error("fn_object_near_nico cant find nico [%s]", nico_name);
+		Fatal_error("fn_object_near_nico can't find nico [%s]", nico_name);
 
 	if (PXfabs(logic_structs[id]->mega->actor_xyz.y - nico->y) < (200 * REAL_ONE)) { // slack for height calc
 		sub1 = logic_structs[id]->mega->actor_xyz.x - nico->x;
@@ -1855,12 +1904,12 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_name_to_list(int32 &, int3
 
 	// check for list overflow
 	if (L->total_list == MAX_list)
-		Fatal_error("fn_object_name_to_list [%s] has exceeded list size of %d", object->GetName(), MAX_list);
+		Fatal_error("fn_add_object_name_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == -1)
-		Fatal_error("[%s] callling fn_add_object_name_to_list finds [%s] is not a legal object", object->GetName(), object_name);
+		Fatal_error("[%s] calling fn_add_object_name_to_list finds [%s] is not a legal object", CGameObject::GetName(object), object_name);
 
 	L->list[L->total_list++] = (uint32)id;
 
@@ -1872,7 +1921,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_object_id_to_list(int32 &, int32 
 
 	// check for list overflow
 	if (L->total_list == MAX_list)
-		Fatal_error("fn_object_id_to_list [%s] has exceeded list size of %d", object->GetName(), MAX_list);
+		Fatal_error("fn_add_object_id_to_list [%s] has exceeded list size of %d", CGameObject::GetName(object), MAX_list);
 
 	assert((uint32)params[0] < total_objects);
 
@@ -1903,9 +1952,9 @@ mcodeFunctionReturnCodes _game_session::fn_lift_process_list(int32 &result, int3
 		return (IR_CONT);
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lift_process_list can't find nico [%s]", nico_name);
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
@@ -1962,14 +2011,14 @@ mcodeFunctionReturnCodes _game_session::fn_lib_lift_chord_and_chi(int32 &result,
 	static int32 issued_warning = FALSE8;
 	const char *nico_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	if (!prev_save_state) { // could not save last go - then cant operate lift either. Player is in a private script
+	if (!prev_save_state) { // could not save last go - then can't operate lift either. Player is in a private script
 		result = FALSE8;
 		return IR_CONT;
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lib_lift_chord_and_chi can't find nico [%s]", nico_name);
 	lifty = monica->y;
 
 	// see if the lift has registered a coordinate platform - if so, we use that
@@ -1984,7 +2033,7 @@ mcodeFunctionReturnCodes _game_session::fn_lib_lift_chord_and_chi(int32 &result,
 	// issue one warning at a time
 	if ((!has_platform) && (!issued_warning)) {
 		issued_warning = TRUE8;
-		Message_box("lift [%s] says please can i have proper platform coords?", object->GetName());
+		Message_box("lift [%s] says please can i have proper platform coords?", CGameObject::GetName(object));
 	}
 
 	if (PXfabs(logic_structs[player.Fetch_player_id()]->mega->actor_xyz.y - lifty) < (200 * REAL_ONE)) { // slack for height calc
@@ -2074,18 +2123,18 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	}
 
 	if (lift2s[cur_id].params[0] != params[0])
-		Message_box("%s param 0 changed from %d to %d", object->GetName(), lift2s[cur_id].params[0], params[0]);
+		Message_box("%s param 0 changed from %d to %d", CGameObject::GetName(object), lift2s[cur_id].params[0], params[0]);
 	if (lift2s[cur_id].params[1] != params[1])
-		Message_box("%s param 1 changed from %d to %d", object->GetName(), lift2s[cur_id].params[1], params[1]);
+		Message_box("%s param 1 changed from %d to %d", CGameObject::GetName(object), lift2s[cur_id].params[1], params[1]);
 	if (lift2s[cur_id].params[2] != params[2])
-		Message_box("%s param 2 changed from %d to %d", object->GetName(), lift2s[cur_id].params[2], params[2]);
+		Message_box("%s param 2 changed from %d to %d", CGameObject::GetName(object), lift2s[cur_id].params[2], params[2]);
 	if (lift2s[cur_id].params[3] != params[3])
-		Message_box("%s param 3 changed from %d to %d", object->GetName(), lift2s[cur_id].params[3], params[3]);
+		Message_box("%s param 3 changed from %d to %d", CGameObject::GetName(object), lift2s[cur_id].params[3], params[3]);
 
 	// check for no people in list! Could be redefined as an error in-fact
 	if (!L->total_list) {
 		if (!issued_warning) {
-			Message_box("lift [%s] says no items in list", object->GetName());
+			Message_box("lift [%s] says no items in list", CGameObject::GetName(object));
 			issued_warning = TRUE8;
 		}
 
@@ -2094,9 +2143,9 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	}
 
 	// get nico
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_lift2_process can't find nico [%s]", nico_name);
 	lifty = monica->y;
 
 	// see if the lift has registered a coordinate platform - if so, we use that
@@ -2110,12 +2159,12 @@ mcodeFunctionReturnCodes _game_session::fn_lift2_process(int32 &result, int32 *p
 	// issue one warning at a time
 	if ((!has_platform) && (!issued_warning)) {
 		issued_warning = TRUE8;
-		Message_box("lift [%s] says please can i have proper platform coords?", object->GetName());
+		Message_box("lift [%s] says please can i have proper platform coords?", CGameObject::GetName(object));
 	}
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
-			Fatal_error("fn_lift_process_list finds [%s] is not a mega", (const char *)logic_structs[L->list[j]]->GetName());
+			Fatal_error("fn_lift2_process finds [%s] is not a mega", (const char *)logic_structs[L->list[j]]->GetName());
 
 		if (logic_structs[L->list[j]]->mega->dead)
 			continue;
@@ -2295,6 +2344,13 @@ mcodeFunctionReturnCodes _game_session::fn_get_list_result(int32 &result, int32 
 	return (IR_CONT);
 }
 
+mcodeFunctionReturnCodes _game_session::fn_display_objects_lvar(int32 &, int32 *params) {
+	//draw specified objects specified lvar on the screen - for script debugging
+
+	warning("fn_display_objects_lvar() not implemented");
+	return IR_CONT;
+}
+
 mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &result, int32 *params) {
 	// function holds the script position while a mega from the list of megas registers as being near the named nico
 
@@ -2313,9 +2369,9 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 		return (IR_CONT);
 	}
 
-	monica = (_feature_info *)features->Try_fetch_item_by_name(nico_name);
+	monica = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, nico_name);
 	if (!monica)
-		Fatal_error("fn_lift_process_list cant find nico [%s]", nico_name);
+		Fatal_error("fn_hold_while_list_near_nico can't find nico [%s]", nico_name);
 
 	for (j = 0; j < L->total_list; j++) {
 		if (logic_structs[L->list[j]]->image_type != VOXEL)
@@ -2324,7 +2380,7 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 		// ignore people who are dead
 		res = Call_socket(L->list[j], "give_state", &ret);
 		if (!res)
-			Fatal_error("fn_hold_while_list_near_nico - object doesnt have 'give_state' script. Perhaps its not a mega");
+			Fatal_error("fn_hold_while_list_near_nico - object doesn't have 'give_state' script. Perhaps it's not a mega");
 
 		if ((!ret) && (PXfabs(logic_structs[L->list[j]]->mega->actor_xyz.y - monica->y) < (200 * REAL_ONE))) { // slack for height calc
 			sub1 = logic_structs[L->list[j]]->mega->actor_xyz.x - monica->x;
@@ -2345,6 +2401,10 @@ mcodeFunctionReturnCodes _game_session::fn_hold_while_list_near_nico(int32 &resu
 }
 
 mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
+	if (g_icb->getGameType() == GType_ELDORADO) {
+		return IR_CONT;
+	}
+
 	_input *psInputState;
 	_input sInputState;
 
@@ -2353,7 +2413,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 	// params        0       name of object
 
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
-	uint32 id = objects->Fetch_item_number_by_name(object_name);
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_watch - object [%s] does not exist", object_name);
@@ -2367,40 +2427,41 @@ mcodeFunctionReturnCodes _game_session::fn_set_watch(int32 &, int32 *params) {
 	else
 		g_mission->camera_follow_id_overide = id;
 
-	// If we are switching back to the player then we need to put the Remora back up if
-	// it was up when we switched to a manual watch (but only in 3D).
-	if (g_px->display_mode == THREED) {
-		// Check if switching to player.
-		if (id == player.Fetch_player_id()) {
-			// If the Remora was active, need to bring it back up.
-			if (g_mission->remora_save_mode != -1) {
-				MS->player.Push_control_mode(ACTOR_RELATIVE);
-				g_oRemora->SetModeOverride((_remora::RemoraMode)g_mission->remora_save_mode);
-				g_oRemora->ActivateRemora((_remora::RemoraMode)g_mission->remora_save_mode);
-				MS->player.Set_player_status(REMORA);
-				MS->player.Update_input_state();
-				psInputState = MS->player.Fetch_input_state();
-				g_oRemora->CycleRemoraLogic(*psInputState);
-				g_mission->remora_save_mode = -1;
-			}
-		} else {
-			// Not switching to player so flag whether or not the Remora is active.
-			if (g_oRemora->IsActive()) {
-				// Deactivate it and remember its mode.
-				g_mission->remora_save_mode = (int32)g_oRemora->GetMode();
-				g_oRemora->SetMode(_remora::MOTION_SCAN);
-				g_oRemora->DeactivateRemora(TRUE8);
-				sInputState.UnSetButton(__UNUSEDBUTTON);
-				g_oRemora->CycleRemoraLogic(sInputState);
-				MS->player.Pop_control_mode();
-				MS->player.Set_player_status(STOOD);
+	if (g_icb->getGameType() == GType_ICB) {
+		// If we are switching back to the player then we need to put the Remora back up if
+		// it was up when we switched to a manual watch (but only in 3D).
+		if (g_px->display_mode == THREED) {
+			// Check if switching to player.
+			if (id == player.Fetch_player_id()) {
+				// If the Remora was active, need to bring it back up.
+				if (g_mission->remora_save_mode != -1) {
+					MS->player.Push_control_mode(ACTOR_RELATIVE);
+					g_oRemora->SetModeOverride((_remora::RemoraMode)g_mission->remora_save_mode);
+					g_oRemora->ActivateRemora((_remora::RemoraMode)g_mission->remora_save_mode);
+					MS->player.Set_player_status(REMORA);
+					MS->player.Update_input_state();
+					psInputState = MS->player.Fetch_input_state();
+					g_oRemora->CycleRemoraLogic(*psInputState);
+					g_mission->remora_save_mode = -1;
+				}
 			} else {
-				g_mission->remora_save_mode = -1;
+				// Not switching to player so flag whether or not the Remora is active.
+				if (g_oRemora->IsActive()) {
+					// Deactivate it and remember its mode.
+					g_mission->remora_save_mode = (int32)g_oRemora->GetMode();
+					g_oRemora->SetMode(_remora::MOTION_SCAN);
+					g_oRemora->DeactivateRemora(TRUE8);
+					sInputState.UnSetButton(__UNUSEDBUTTON);
+					g_oRemora->CycleRemoraLogic(sInputState);
+					MS->player.Pop_control_mode();
+					MS->player.Set_player_status(STOOD);
+				} else {
+					g_mission->remora_save_mode = -1;
+				}
 			}
 		}
+		// Deactivate the Remora.
 	}
-
-	// Deactivate the Remora.
 
 	return (IR_CONT);
 }
@@ -2409,11 +2470,27 @@ mcodeFunctionReturnCodes _game_session::fn_three_sixty_interact(int32 &, int32 *
 	// set object to use the prop 360deg interaction type
 
 	if (L->image_type != PROP)
-		Fatal_error("fn_three_sixty_interact - object [%s] is not a prop!", object->GetName());
+		Fatal_error("fn_three_sixty_interact - object [%s] is not a prop!", CGameObject::GetName(object));
 
-	L->three_sixty_interact |= THREE_SIXTY_INTERACT;
+	if (g_icb->getGameType() == GType_ELDORADO)
+		L->prop_interact_method = __THREE_SIXTY;
+	else
+		L->three_sixty_interact |= THREE_SIXTY_INTERACT;
 
 	return (IR_CONT);
+}
+
+mcodeFunctionReturnCodes _game_session::fn_radial_interact(int32 &, int32 *params) {
+	//set object to use the simple distance based prop interaction type
+
+	if (L->image_type != PROP)
+		Fatal_error("fn_radial_interact - object [%s] is not a prop!", CGameObject::GetName(object));
+
+	L->prop_interact_method = __RADIAL;
+
+	L->radial_interact_distance = params[0];
+
+	return IR_CONT;
 }
 
 mcodeFunctionReturnCodes _game_session::fn_prop_crouch_interact(int32 &, int32 *) {
@@ -2450,10 +2527,10 @@ mcodeFunctionReturnCodes _game_session::fn_change_session(int32 &, int32 *params
 	g_mission->Set_init_nico_name(nico_name);
 
 	// save the players 'hits' variable
-	c_game_object *ob;
-	ob = (c_game_object *)objects->Fetch_item_by_number(player.Fetch_player_id());
-	ret = ob->GetVariable("hits");
-	g_mission->old_hits_value = ob->GetIntegerVariable(ret);
+	CGame *ob;
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_number(objects, player.Fetch_player_id());
+	ret = CGameObject::GetVariable(ob, "hits");
+	g_mission->old_hits_value = CGameObject::GetIntegerVariable(ob, ret);
 
 	return (IR_STOP); // do no more
 }
@@ -2469,9 +2546,9 @@ mcodeFunctionReturnCodes _game_session::fn_changed_sessions(int32 &result, int32
 	result = g_mission->Is_there_init_nico();
 
 	if (result) { // nico is waiting Removed explicit test against TRUE8 to get rid of VC5 warning
-		nico = (_feature_info *)features->Try_fetch_item_by_name(g_mission->Return_init_nico_name());
+		nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, g_mission->Return_init_nico_name());
 		if (!nico)
-			Fatal_error("fn_changed_sessions cant find nico [%s]", g_mission->Return_init_nico_name());
+			Fatal_error("fn_changed_sessions can't find nico [%s]", g_mission->Return_init_nico_name());
 
 #define XX logic_structs[cur_id]->mega->actor_xyz.x
 #define ZZ logic_structs[cur_id]->mega->actor_xyz.z
@@ -2484,14 +2561,14 @@ mcodeFunctionReturnCodes _game_session::fn_changed_sessions(int32 &result, int32
 		logic_structs[cur_id]->pan = nico->direction;
 
 		// reset current hits from previous session
-		ret = object->GetVariable("hits");
-		object->SetIntegerVariable(ret, g_mission->old_hits_value);
+		ret = CGameObject::GetVariable(object, "hits");
+		CGameObject::SetIntegerVariable(object, ret, g_mission->old_hits_value);
 
 		// has coords
 		logic_structs[cur_id]->prop_coords_set = TRUE8;
 
 		// move player forwards a little
-		if (cur_id == objects->Fetch_item_number_by_name("chi")) {
+		if (cur_id == LinkedDataObject::Fetch_item_number_by_name(objects, "chi")) {
 			// we are the player then jump player in-front of chi
 
 			PXfloat ang = nico->direction * TWO_PI;
@@ -2543,11 +2620,11 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_adjacent(int32 &result, int
 	our_floor = floor_def->Fetch_floor_number(L->owner_floor_rect);
 
 	if (!our_floor->num_neighbours) {
-		result = FALSE8; // cant be adjacent as there are non - which is impossible of course but hey
+		result = FALSE8; // can't be adjacent as there are non - which is impossible of course but hey
 		return (IR_CONT);
 	}
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
@@ -2585,13 +2662,13 @@ mcodeFunctionReturnCodes _game_session::fn_is_object_on_this_floor(int32 &result
 
 	Zdebug("fn_is_object_on_this_floor [%s], [%s]", object_name, floor_name);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_object_on_our_floor - illegal object [%s]", object_name);
 
-	floor_id = floor_def->floors->Fetch_item_number_by_name(floor_name);
+	floor_id = LinkedDataObject::Fetch_item_number_by_name(floor_def->floors, floor_name);
 	if (floor_id == 0xffffffff)
-		Fatal_error("fn_are_we_on_this_floor cant locate floor [%s]", floor_name);
+		Fatal_error("fn_are_we_on_this_floor can't locate floor [%s]", floor_name);
 
 	if (floor_id == logic_structs[id]->owner_floor_rect)
 		result = TRUE8;
@@ -2638,7 +2715,7 @@ mcodeFunctionReturnCodes _game_session::fn_preload_custom_mega_anim(int32 &resul
 mcodeFunctionReturnCodes _game_session::fn_no_logic(int32 &, int32 *) {
 	// set wait_status to no-logic which stops the script being invoked
 
-	Tdebug("logic_modes.txt", "fn_no_logic freezing [%s]", object->GetName());
+	Tdebug("logic_modes.txt", "fn_no_logic freezing [%s]", CGameObject::GetName(object));
 
 	L->big_mode = __NO_LOGIC;
 	L->cycle_time = 0; // for mt display
@@ -2655,7 +2732,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_sleep(int32 &, int32 *params) {
 	uint32 id;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = objects->Fetch_item_number_by_name(object_name);
+	id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 	if (id == 0xffffffff)
 		Fatal_error("fn_set_sleep - illegal object [%s]", object_name);
 
@@ -2677,19 +2754,19 @@ mcodeFunctionReturnCodes _game_session::fn_mega_use_lift(int32 &, int32 *params)
 
 	// params        0   name of lift
 
-	c_game_object *ob;
+	CGame *ob;
 	uint32 var_num;
 	const char *lift_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	ob = (c_game_object *)objects->Fetch_item_by_name(lift_name);
+	ob = (CGame *)LinkedDataObject::Fetch_item_by_name(objects, lift_name);
 	if (!ob)
 		Fatal_error("fn_use_lift - illegal object [%s]", lift_name);
 
-	var_num = ob->GetVariable("request");
+	var_num = CGameObject::GetVariable(ob, "request");
 	if (var_num == (uint32)-1)
-		Fatal_error("fn_use_lift - object [%s] doesnt have REQUEST variable", lift_name);
+		Fatal_error("fn_use_lift - object [%s] doesn't have REQUEST variable", lift_name);
 
-	ob->SetIntegerVariable(var_num, 2); // two is trigger value
+	CGameObject::SetIntegerVariable(ob, var_num, 2); // two is trigger value
 
 	return (IR_CONT);
 }
@@ -2697,16 +2774,16 @@ mcodeFunctionReturnCodes _game_session::fn_mega_use_lift(int32 &, int32 *params)
 // fn_make_remora_beep(1) makes the remora beep notice us, 0 makes it not do...
 mcodeFunctionReturnCodes _game_session::fn_make_remora_beep(int32 &, int32 *params) {
 	if (logic_structs[cur_id]->image_type != VOXEL)
-		Fatal_error("fn_make_remora_beep - object %s is not a person! what is this?", object->GetName());
+		Fatal_error("fn_make_remora_beep - object %s is not a person! what is this?", CGameObject::GetName(object));
 
 	if (params[0] == 0) {
 		L->mega->make_remora_beep = FALSE8;
-		Zdebug("%s->fn_make_remora_beep(no beep)\n", object->GetName());
+		Zdebug("%s->fn_make_remora_beep(no beep)\n", CGameObject::GetName(object));
 	} else if (params[0] == 1) {
 		L->mega->make_remora_beep = TRUE8;
-		Zdebug("%s->fn_make_remora_beep(beep)\n", object->GetName());
+		Zdebug("%s->fn_make_remora_beep(beep)\n", CGameObject::GetName(object));
 	} else
-		Fatal_error("fn_make_remora_beep - object [%s] called with value %d", object->GetName(), params[0]);
+		Fatal_error("fn_make_remora_beep - object [%s] called with value %d", CGameObject::GetName(object), params[0]);
 
 	return (IR_CONT);
 }
@@ -2714,16 +2791,16 @@ mcodeFunctionReturnCodes _game_session::fn_make_remora_beep(int32 &, int32 *para
 // fn_set_evil(1) sets us to evil mode for beeping and possibly scanner, fn_set_evil(0) sets us to harmless
 mcodeFunctionReturnCodes _game_session::fn_set_evil(int32 &, int32 *params) {
 	if (logic_structs[cur_id]->image_type != VOXEL)
-		Fatal_error("fn_set_evil - object %s is not a person! what is this?", object->GetName());
+		Fatal_error("fn_set_evil - object %s is not a person! what is this?", CGameObject::GetName(object));
 
 	if (params[0] == 0) {
 		L->mega->is_evil = FALSE8;
-		Zdebug("%s->fn_set_evil(NOT_EVIL!)\n", object->GetName());
+		Zdebug("%s->fn_set_evil(NOT_EVIL!)\n", CGameObject::GetName(object));
 	} else if (params[0] == 1) {
 		L->mega->is_evil = TRUE8;
-		Zdebug("%s->fn_set_evil(EVIL!)\n", object->GetName());
+		Zdebug("%s->fn_set_evil(EVIL!)\n", CGameObject::GetName(object));
 	} else
-		Fatal_error("fn_set_evil - object [%s] called with value %d", object->GetName(), params[0]);
+		Fatal_error("fn_set_evil - object [%s] called with value %d", CGameObject::GetName(object), params[0]);
 
 	return (IR_CONT);
 }
@@ -2761,7 +2838,7 @@ mcodeFunctionReturnCodes _game_session::fn_is_mega_within_area(int32 &result, in
 	uint32 id;
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	id = (uint32)objects->Fetch_item_number_by_name(object_name);
+	id = (uint32)LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	if (id == 0xffffffff)
 		Fatal_error("fn_is_mega_within_area - illegal object [%s]", object_name);
@@ -2940,20 +3017,20 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 	uint8 j = 0;
 
 	if (!length)
-		Fatal_error("%s has 0 length", object->GetName());
+		Fatal_error("%s has 0 length", CGameObject::GetName(object));
 	if (length > 1000)
-		Fatal_error("%s has illegal length %d", object->GetName(), length);
+		Fatal_error("%s has illegal length %d", CGameObject::GetName(object), length);
 
 	// get our nico
-	stair = (_feature_info *)features->Try_fetch_item_by_name(const_cast<char *>(object->GetName()));
+	stair = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, const_cast<char *>(CGameObject::GetName(object)));
 	// get other end
-	dest_stair = (_feature_info *)features->Try_fetch_item_by_name(target);
-	dest_stair_id = objects->Fetch_item_number_by_name(target);
+	dest_stair = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, target);
+	dest_stair_id = LinkedDataObject::Fetch_item_number_by_name(objects, target);
 
 	if (!stair)
-		Fatal_error("fn_register_stairway - cant find nico %s", object->GetName());
+		Fatal_error("fn_register_stairway - can't find nico %s", CGameObject::GetName(object));
 	if (!dest_stair)
-		Fatal_error("fn_register_stairway - cant find nico %s", target);
+		Fatal_error("fn_register_stairway - can't find nico %s", target);
 	if (num_stairs == MAX_stairs)
 		Fatal_error("too many stairs - max = %d", MAX_stairs);
 
@@ -2989,18 +3066,24 @@ uint32 _game_session::Register_stair_or_ladder(const char *target, bool8 top, ui
 	z3 = z1 - dz;
 
 	// new constructor for barrier...
-	stairs[num_stairs].bar = _route_barrier(x2, z2, x3, z3, stair->floor_y, (PXreal)0 /* dont care */, BRICK /* dont care */);
+	stairs[num_stairs].bar.m_x1 = x2;
+	stairs[num_stairs].bar.m_z1 = z2;
+	stairs[num_stairs].bar.m_x2 = x3;
+	stairs[num_stairs].bar.m_z2 = z3;
+	stairs[num_stairs].bar.m_bottom = stair->floor_y;
+	stairs[num_stairs].bar.m_top = (PXreal)0;
+	stairs[num_stairs].bar.m_material = BRICK;
 
 	// create the BCM maths----------------------------------------------
 	// The barrier has coordinates x2, z2 to x3, z3.
 	// Fill in the structure that holds the extra collision maths.
 
-	stairs[num_stairs].bar.bcm().Generate(x2, z2, x3, z3);
-	stairs[num_stairs].bar.Create_pan();
+	BarrierCollisionMathsObject::Generate(&stairs[num_stairs].bar.m_bcm, x2, z2, x3, z3);
+	routeBarrierCreatePan(&stairs[num_stairs].bar);
 
-	Tdebug("stairs.txt", "try this: %.4f, %g,%g,%g %g,%g %g,%g %g,%g\n", stairs[num_stairs].bar.pan(), stairs[num_stairs].bar.bcm().linedist(),
-	       stairs[num_stairs].bar.bcm().alinedist(), stairs[num_stairs].bar.bcm().blinedist(), stairs[num_stairs].bar.bcm().lpx(), stairs[num_stairs].bar.bcm().lpz(),
-	       stairs[num_stairs].bar.bcm().alpx(), stairs[num_stairs].bar.bcm().alpz(), stairs[num_stairs].bar.bcm().blpx(), stairs[num_stairs].bar.bcm().blpz());
+	Tdebug("stairs.txt", "try this: %.4f, %g,%g,%g %g,%g %g,%g %g,%g\n", stairs[num_stairs].bar.m_pan, stairs[num_stairs].bar.m_bcm.m_linedist,
+	       stairs[num_stairs].bar.m_bcm.m_alinedist, stairs[num_stairs].bar.m_bcm.m_blinedist, stairs[num_stairs].bar.m_bcm.m_lpx, stairs[num_stairs].bar.m_bcm.m_lpz,
+		   BarrierCollisionMathsObject::alpx(&stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::alpz(&stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::blpx( &stairs[num_stairs].bar.m_bcm), BarrierCollisionMathsObject::blpz(&stairs[num_stairs].bar.m_bcm));
 
 	// create the BCM maths----------------------------------------------
 
@@ -3126,12 +3209,21 @@ mcodeFunctionReturnCodes _game_session::fn_shadows_on(int32 &, int32 *) {
 }
 
 mcodeFunctionReturnCodes _game_session::fn_shadows_off(int32 &, int32 *) {
-	// shadows back on
+	// shadows off
 
 	if (logic_structs[cur_id]->image_type != VOXEL)
 		Fatal_error("fn_shadows_off says people only!");
 
-	M->drawShadow = FALSE8; // shadows back on
+	M->drawShadow = FALSE8; // shadows off
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_shadow(int32 &, int32 *params) {
+	if (logic_structs[cur_id]->image_type != VOXEL)
+		Fatal_error("fn_shadow says people only!");
+
+	M->drawShadow = (uint8)params[0];
 
 	return IR_CONT;
 }
@@ -3140,9 +3232,9 @@ mcodeFunctionReturnCodes _game_session::fn_set_shade_percentage(int32 &, int32 *
 	// set shade percentage figure for mega
 
 	if (L->image_type != VOXEL)
-		Fatal_error("fn_set_shade_percentage [%s] says people only!", object->GetName());
+		Fatal_error("fn_set_shade_percentage [%s] says people only!", CGameObject::GetName(object));
 	if (params[0] > 99)
-		Fatal_error("fn_set_shade_percentage [%s] percentages usually go 0-99", object->GetName());
+		Fatal_error("fn_set_shade_percentage [%s] percentages usually go 0-99", CGameObject::GetName(object));
 
 	M->inShadePercentage = (uint8)params[0];
 
@@ -3153,7 +3245,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_half_character_width(int32 &, int
 	// adjust the default barrier extrapolation for route barriers - for people like spectre who is very big
 
 	if (!M)
-		Fatal_error("fn_set_door_width only for megas [%s]", object->GetName());
+		Fatal_error("fn_set_half_character_width only for megas [%s]", CGameObject::GetName(object));
 
 	M->extrap_size = (uint8)params[0];
 
@@ -3165,9 +3257,18 @@ mcodeFunctionReturnCodes _game_session::fn_set_visible(int32 &, int32 *params) {
 	// params        0   0 off 1 on
 
 	if (!M)
-		Fatal_error("%s fn_set_visible is for megas only", object->GetName());
+		Fatal_error("%s fn_set_visible is for megas only", CGameObject::GetName(object));
 
 	M->display_me = (bool8)params[0];
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_inventory_active(int32 &, int32 *params) {
+	if ((params[0] != 0) && (params[0] != 1))
+		Message_box("Must pass either 0 or 1 into fn_inventory_active");
+
+	M->inventoryActive = (bool8)params[0];
 
 	return IR_CONT;
 }
@@ -3178,7 +3279,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_object_visible(int32 &, int32 *pa
 	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
 	// Find the target object's ID.
-	nObjectID = objects->Fetch_item_number_by_name(object_name);
+	nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
 
 	// Make sure object is a mega character.
 	if (!(logic_structs[nObjectID]->mega))
@@ -3206,7 +3307,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_dead(int32 &, int32 *) {
 	// set the dead flag - we have a flag for speed of access
 
 	if (!L->mega)
-		Fatal_error("fn_set_to_dead called for [%s] but not a mega", object->GetName());
+		Fatal_error("fn_set_to_dead called for [%s] but not a mega", CGameObject::GetName(object));
 
 	L->mega->dead = TRUE8;
 
@@ -3217,10 +3318,10 @@ mcodeFunctionReturnCodes _game_session::fn_set_camera_hold(int32 &, int32 *param
 	// switch camera hold mode on or off
 
 	if (M)
-		Fatal_error("fn_set_camera_hold called for [%s] but this is for props only", object->GetName());
+		Fatal_error("fn_set_camera_hold called for [%s] but this is for props only", CGameObject::GetName(object));
 
 	// find entry for this object via its name, which we find via its number :(
-	if (!prop_anims->Try_fetch_item_by_name(object->GetName()))
+	if (!LinkedDataObject::Try_fetch_item_by_name(prop_anims, CGameObject::GetName(object)))
 		return IR_CONT; // item has no prop entry - so keep it live
 
 	if (params[0])
@@ -3235,7 +3336,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_mega_wait_for_player(int32 &, int
 	// mega will pause until the player arrives
 
 	if (!M)
-		Fatal_error("fn_set_mega_wait_for_player called for [%s] but not a mega", object->GetName());
+		Fatal_error("fn_set_mega_wait_for_player called for [%s] but not a mega", CGameObject::GetName(object));
 
 	L->big_mode = __MEGA_INITIAL_FLOOR_HELD;
 
@@ -3246,7 +3347,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_mega_off_camera_hold(int32 &, int
 	// mega will pause when not on_camera
 
 	if (!M)
-		Fatal_error("fn_set_mega_off_camera_hold called for [%s] but not a mega", object->GetName());
+		Fatal_error("fn_set_mega_off_camera_hold called for [%s] but not a mega", CGameObject::GetName(object));
 
 	L->big_mode = __MEGA_PLAYER_FLOOR_HELD;
 	L->hold_mode = mega_player_floor_hold;
@@ -3260,7 +3361,7 @@ mcodeFunctionReturnCodes _game_session::fn_set_mega_slice_hold(int32 &, int32 *p
 	// params        0   y distance to stray before character holds again
 
 	if (!M)
-		Fatal_error("fn_set_mega_slice_hold called for [%s] but not a mega", object->GetName());
+		Fatal_error("fn_set_mega_slice_hold called for [%s] but not a mega", CGameObject::GetName(object));
 
 	L->big_mode = __MEGA_SLICE_HELD;
 	L->hold_mode = mega_slice_hold;
@@ -3275,9 +3376,9 @@ mcodeFunctionReturnCodes _game_session::fn_lock_y(int32 &, int32 *params) {
 	_feature_info *nico;
 	const char *marker_name = (const char *)MemoryUtil::resolvePtr(params[0]);
 
-	nico = (_feature_info *)features->Try_fetch_item_by_name(marker_name);
+	nico = (_feature_info *)LinkedDataObject::Try_fetch_item_by_name(features, marker_name);
 	if (!nico)
-		Fatal_error("fn_lock_y by [%s] for nico [%s] finds no such nico", object->GetName(), marker_name);
+		Fatal_error("fn_lock_y by [%s] for nico [%s] finds no such nico", CGameObject::GetName(object), marker_name);
 
 	M->y_locked = TRUE8;
 	M->y_lock = nico->y;
@@ -3332,6 +3433,126 @@ mcodeFunctionReturnCodes _game_session::fn_snap_to_ladder_top(int32 &, int32 *) 
 	return IR_CONT;
 }
 
+mcodeFunctionReturnCodes _game_session::fn_set_manual_interact_object(int32 &, int32 *params) {
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	// Find the id for the named object.
+	uint32 nObjectID = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+
+	// Check the object is valid.
+	if (nObjectID == PX_LINKED_DATA_FILE_ERROR)
+		Fatal_error("fn_set_manual_interact_object( %s ) - object does not exist", object_name);
+
+	// Clear the script-forced object interact id.
+	player.cur_interact_id = nObjectID;
+
+	// Calling script can continue.
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_cancel_manual_interact_object(int32 &, int32 *) {
+	// Clear the script-forced object interact id.
+	player.cur_interact_id = -1;
+
+	// Calling script can continue.
+	return IR_CONT;
+
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_actor_file(int32 &, int32 *params ) {
+	const char *filename = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_hard_load_mesh(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char mesh[32];
+	strcpy(mesh, base_name);
+	strcat(mesh, ".rap");
+
+	uint32 fileHash = NULL_HASH;
+	rs_anims->Res_open(mesh, fileHash, L->voxel_info->base_path, L->voxel_info->base_path_hash);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_mesh(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".rap");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_texture(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".revtex");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_palette(int32 &, int32 *params) {
+	const char *base_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	char filename[32];
+	strcpy(filename, base_name);
+	strcat(filename, ".revtex");
+
+	if (L->voxel_info->Preload_file(filename) == 0)
+		return IR_REPEAT;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_preload_animation(int32 &param1, int32 *params) {
+	const char *set_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+	const char *anim_name = (const char *)MemoryUtil::resolvePtr(params[1]);
+
+	char stub[128];
+	char file[128];
+
+	// The set name
+	strcpy(stub, set_name);
+
+	// The actual animation name
+	strcat(stub, "\\");
+	strcat(stub, anim_name);
+
+	// Preload the marker file into memory
+	strcpy(file, stub);
+	strcat(file, ".raj");
+
+	if (L->voxel_info->Preload_file(file) == 0) {
+		return IR_REPEAT;
+	}
+
+	// Preload the animation file into memory
+	strcpy(file, stub);
+	strcat(file, ".rab");
+
+	 if (L->voxel_info->Preload_file(file) == 0) {
+		return IR_REPEAT;
+	 }
+
+	 return IR_CONT;
+}
+
 mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) {
 	// locate a character onto a specified floor
 	// crudely sticks the character in the middle of the first floor LRECT
@@ -3342,6 +3563,53 @@ mcodeFunctionReturnCodes _game_session::fn_set_to_floor(int32 &, int32 *params) 
 
 	// get the floor
 	//_floor *floor = (_floor *)floor_def->Fetch_named_floor(floor_name);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_is_actor_relative(int32 &result, int32 *) {
+	if (player.Get_control_mode() == ACTOR_RELATIVE)
+		result = TRUE8;
+	else
+		result = FALSE8;
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_can_save(int32 &result, int32 *) {
+	result = (int32)(MS->prev_save_state);
+
+	return IR_CONT;
+}
+
+mcodeFunctionReturnCodes _game_session::fn_set_as_player(int32 &, int32 *params) {
+	if (g_icb->getGameType() != GType_ELDORADO)
+		return IR_CONT;
+
+	const char *object_name = (const char *)MemoryUtil::resolvePtr(params[0]);
+
+	uint32 id = LinkedDataObject::Fetch_item_number_by_name(objects, object_name);
+
+	if (id == PX_LINKED_DATA_FILE_ERROR)
+		Fatal_error("fn_set_as_player object [%s] does not exist", object_name);
+
+	// first, if there is a current player then he needs to be told to re-run context as he ain't anymore
+	if (player.Player_exists()) {
+		logic_structs[player.Fetch_player_id()]->context_request = TRUE8;
+		logic_structs[player.Fetch_player_id()]->mega->async_list_pos = 0; // reset list position
+		logic_structs[player.Fetch_player_id()]->mega->asyncing = 0;
+		ResetPlayerLook(); // old player straightens out - i.e. reset look at interact object
+	}
+
+	player.Set_player_id(id);
+
+	player.Reset_player();
+
+	player.interact_lock = TRUE8;
+
+	logic_structs[id]->context_request = TRUE8;
+	logic_structs[id]->mega->async_list_pos = 0; // reset list position
+	logic_structs[id]->mega->asyncing = 0;
 
 	return IR_CONT;
 }

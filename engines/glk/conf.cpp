@@ -216,21 +216,21 @@ void Conf::synchronize() {
 
 	const char *const TG_COLOR[2] = { "tcolor_%d", "gcolor_%d" };
 	for (int tg = 0; tg < 2; ++tg) {
+		WindowStyle *pStyles = (tg == 0) ? _tStyles : _gStyles;
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_COLOR[tg], style);
-
 			if (_isLoading) {
 				if (exists(key)) {
 					Common::String line = ConfMan.get(key);
 					if (line.find(',') == 6) {
-						_tStyles[style].fg = parseColor(Common::String(line.c_str(), 6));
-						_tStyles[style].bg = parseColor(Common::String(line.c_str() + 7));
+						pStyles[style].fg = parseColor(Common::String(line.c_str(), 6));
+						pStyles[style].bg = parseColor(Common::String(line.c_str() + 7));
 					}
 				}
 			} else {
 				Common::String line = Common::String::format("%s,%s",
-					encodeColor(_tStyles[style].fg).c_str(),
-					encodeColor(_tStyles[style].bg).c_str()
+					encodeColor(pStyles[style].fg).c_str(),
+					encodeColor(pStyles[style].bg).c_str()
 				);
 				ConfMan.set(key, line);
 			}
@@ -239,19 +239,16 @@ void Conf::synchronize() {
 
 	const char *const TG_FONT[2] = { "tfont_%d", "gfont_%d" };
 	for (int tg = 0; tg < 2; ++tg) {
+		WindowStyle *pStyles = (tg == 0) ? _tStyles : _gStyles;
 		for (int style = 0; style <= 10; ++style) {
 			Common::String key = Common::String::format(TG_FONT[tg], style);
-
 			if (_isLoading) {
 				if (exists(key)) {
 					FACES font = Screen::getFontId(ConfMan.get(key));
-					if (tg == 0)
-						_tStyles[style].font = font;
-					else
-						_gStyles[style].font = font;
+					pStyles[style].font = font;
 				}
 			} else {
-				FACES font = (tg == 0) ? _tStyles[style].font : _gStyles[style].font;
+				FACES font = pStyles[style].font;
 				ConfMan.set(key, Screen::getFontName(font));
 			}
 		}

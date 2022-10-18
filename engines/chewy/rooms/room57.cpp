@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -64,7 +65,7 @@ void Room57::xit(int16 eib_nr) {
 void Room57::setup_func() {
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 57) {
 		calc_person_look();
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_y < 145) {
 			x = 176;
@@ -79,12 +80,11 @@ void Room57::setup_func() {
 
 int16 Room57::use_taxi() {
 	int16 action_ret = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 		autoMove(3, P_CHEWY);
-		g_engine->_sound->playSound(3, 0);
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 0);
 		_G(det)->showStaticSpr(7);
 		goAutoXy(16, 160, P_CHEWY, ANI_WAIT);
 		_G(gameState)._personHide[P_CHEWY] = true;
@@ -97,12 +97,12 @@ int16 Room57::use_taxi() {
 			_G(gameState)._personRoomNr[P_HOWARD] = 48;
 		}
 		_G(det)->hideStaticSpr(7);
-		g_engine->_sound->playSound(3, 1);
-		g_engine->_sound->playSound(3);
+		_G(det)->playSound(3, 1);
+		_G(det)->playSound(3, 0);
 		_G(room)->set_timer_status(3, TIMER_STOP);
 		_G(det)->del_static_ani(3);
 		startSetAILWait(5, 1, ANI_FRONT);
-		g_engine->_sound->stopSound(0);
+		_G(det)->stopSound(0);
 		switchRoom(48);
 	}
 	return action_ret;
@@ -134,13 +134,13 @@ int16 Room57::use_pfoertner() {
 		if (_G(gameState).R56AbfahrtOk) {
 			startAadWait(341);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(gameState).R57StudioAuf = true;
 			_G(gameState).room_e_obj[91].Attribut = EXIT_TOP;
 			_G(det)->hideStaticSpr(4);
 			startSetAILWait(6, 1, ANI_WAIT);
-			g_engine->_sound->stopSound(0);
-			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(det)->stopSound(0);
+			_G(atds)->setControlBit(358, ATS_ACTIVE_BIT);
 		} else {
 			startAadWait(349);
 			goAutoXy(176, 130, P_HOWARD, ANI_WAIT);

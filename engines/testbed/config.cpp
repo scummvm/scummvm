@@ -38,25 +38,23 @@ TestbedOptionsDialog::TestbedOptionsDialog(Common::Array<Testsuite *> &tsList, T
 
 	// Construct a String Array
 	Common::Array<Testsuite *>::const_iterator iter;
-	Common::String description;
+	Common::U32String description;
 	uint selected = 0;
 
 	for (iter = tsList.begin(); iter != tsList.end(); iter++) {
 		_testSuiteArray.push_back(*iter);
 		description = (*iter)->getDescription();
 		if ((*iter)->isEnabled()) {
-			_testSuiteDescArray.push_back(description + "(selected)");
+			_testSuiteDescArray.push_back(GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorNormal) + description + "(selected)");
 			selected++;
-			_colors.push_back(GUI::ThemeEngine::kFontColorNormal);
 		} else {
-			_testSuiteDescArray.push_back(description);
-			_colors.push_back(GUI::ThemeEngine::kFontColorAlternate);
+			_testSuiteDescArray.push_back(GUI::ListWidget::getThemeColor(GUI::ThemeEngine::kFontColorAlternate) + description);
 		}
 	}
 
 	_testListDisplay = new TestbedListWidget(this, "TestbedOptions.List", _testSuiteArray);
 	_testListDisplay->setNumberingMode(GUI::kListNumberingOff);
-	_testListDisplay->setList(_testSuiteDescArray, &_colors);
+	_testListDisplay->setList(_testSuiteDescArray);
 
 	// This list shouldn't be editable
 	_testListDisplay->setEditable(false);
@@ -126,8 +124,10 @@ void TestbedOptionsDialog::handleCommand(GUI::CommandSender *sender, uint32 cmd,
 	case GUI::kCloseCmd:
 		// This is final selected state, write it to config file.
 		ws = _testbedConfMan->getConfigWriteStream();
-		_testbedConfMan->writeTestbedConfigToStream(ws);
-		delete ws;
+		if (ws) {
+			_testbedConfMan->writeTestbedConfigToStream(ws);
+			delete ws;
+		}
 		break;
 
 	default:
@@ -157,13 +157,13 @@ void TestbedInteractionDialog::addButton(uint w, uint h, const Common::String na
 	_yOffset += h;
 }
 
-void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Common::Array<Common::U32String> &strArray, GUI::ListWidget::ColorList *colors, uint yPadding) {
+void TestbedInteractionDialog::addList(uint x, uint y, uint w, uint h, const Common::Array<Common::U32String> &strArray, uint yPadding) {
 	_yOffset += yPadding;
 	GUI::ListWidget *list = new GUI::ListWidget(this, x, y, w, h);
 	list->resize(x, y, w, h);
 	list->setEditable(false);
 	list->setNumberingMode(GUI::kListNumberingOff);
-	list->setList(strArray, colors);
+	list->setList(strArray);
 	_yOffset += h;
 }
 

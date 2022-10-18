@@ -29,16 +29,14 @@
 #include "ags/shared/gfx/bitmap.h"
 
 namespace AGS3 {
-
-
-
-
-
-
-
-
 namespace AGS {
 namespace Shared {
+
+bool GUIInvWindow::HasAlphaChannel() const {
+	// We would have to test every inventory item's graphic to tell precisely,
+	// so just test game color depth instead:
+	return _GP(game).GetColorDepth() == 32;
+}
 
 int GUIInvWindow::GetCharacterId() const {
 	if (CharId < 0)
@@ -47,15 +45,15 @@ int GUIInvWindow::GetCharacterId() const {
 	return CharId;
 }
 
-void GUIInvWindow::Draw(Bitmap *ds) {
+void GUIInvWindow::Draw(Bitmap *ds, int x, int y) {
 	const bool enabled = IsGUIEnabled(this);
-	if (!enabled && (_G(gui_disabled_style) == GUIDIS_BLACKOUT))
+	if (!enabled && (GUI::Options.DisabledStyle == kGuiDis_Blackout))
 		return;
 
 	// backwards compatibility
 	_GP(play).inv_numinline = ColCount;
 	_GP(play).inv_numdisp = RowCount * ColCount;
-	_GP(play).obsolete_inv_numorder = _G(charextra)[_GP(game).playercharacter].invorder_count;
+	_GP(play).obsolete_inv_numorder = _GP(charextra)[_GP(game).playercharacter].invorder_count;
 	// if the user changes top_inv_item, switch into backwards
 	// compatibiltiy mode
 	if (_GP(play).inv_top)
@@ -64,16 +62,16 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 		TopItem = _GP(play).inv_top;
 
 	// draw the items
-	const int leftmost_x = X;
-	int at_x = X;
-	int at_y = Y;
+	const int leftmost_x = x;
+	int at_x = x;
+	int at_y = y;
 	int lastItem = TopItem + (ColCount * RowCount);
-	if (lastItem > _G(charextra)[GetCharacterId()].invorder_count)
-		lastItem = _G(charextra)[GetCharacterId()].invorder_count;
+	if (lastItem > _GP(charextra)[GetCharacterId()].invorder_count)
+		lastItem = _GP(charextra)[GetCharacterId()].invorder_count;
 
 	for (int item = TopItem; item < lastItem; ++item) {
 		// draw inv graphic
-		draw_gui_sprite(ds, _GP(game).invinfo[_G(charextra)[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
+		draw_gui_sprite(ds, _GP(game).invinfo[_GP(charextra)[GetCharacterId()].invorder[item]].pic, at_x, at_y, true);
 		at_x += data_to_game_coord(ItemWidth);
 
 		// go to next row when appropriate
@@ -84,10 +82,10 @@ void GUIInvWindow::Draw(Bitmap *ds) {
 	}
 
 	if (!enabled &&
-	        _G(gui_disabled_style) == GUIDIS_GREYOUT &&
-	        _GP(play).inventory_greys_out == 1) {
+		GUI::Options.DisabledStyle == kGuiDis_Greyout &&
+		_GP(play).inventory_greys_out == 1) {
 		// darken the inventory when disabled
-		GUI::DrawDisabledEffect(ds, RectWH(X, Y, Width, Height));
+		GUI::DrawDisabledEffect(ds, RectWH(x, y, Width, Height));
 	}
 }
 

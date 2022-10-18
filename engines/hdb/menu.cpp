@@ -174,16 +174,18 @@ Menu::Menu() {
 	_titleActive = false;
 	_menuActive = false;
 	_optionsActive = false;
+	_optionsScreenId = kOptionsScreenMain;
 	_gamefilesActive = false;
 	_newgameActive = false;
 	_warpActive = false;
+	_warpMapId = -1;
 	_optionsScrolling = false;
 	_optionsScrollX = _menuX;
 	_rocketX = _mRocketX;
 	_sayHDB = false;
 	_menuKey = 0;
 
-	_nextScreen = 0;
+	_nextScreen = kMenuOptions;
 
 	_nebulaY = 0;		// Used as a flag
 	_fStars[0].y = 0;	// Used as a flag
@@ -251,8 +253,6 @@ Menu::Menu() {
 	_versionGfx = nullptr;
 	_warpGfx = nullptr;
 
-	_warpBackoutX = 0;
-	_warpBackoutY = 0;
 	_titleCycle = 0;
 	_titleDelay = 0;
 	_resumeSong = SONG_NONE;
@@ -266,7 +266,8 @@ Menu::Menu() {
 	_handangoGfx = nullptr;
 	_clickDelay = 0;
 	_saveSlot = 0;
-	_quitActive = 0;
+	_quitActive = false;
+	_quitCounter = 0;
 	_optionsXV = 0;
 	_oBannerY = 0;
 	_introSong = SONG_NONE;
@@ -346,7 +347,7 @@ void Menu::readConfig() {
 		needFlush = true;
 	}
 
-	if (ConfMan.hasKey(CONFIG_CHEAT)) {
+	if (ConfMan.hasKey(CONFIG_CHEAT) && ConfMan.getBool(CONFIG_CHEAT)) {
 		g_hdb->setCheatingOn();
 		debug("Cheating enabled");
 	}
@@ -366,7 +367,7 @@ void Menu::writeConfig() {
 	ConfMan.setInt(CONFIG_MSTONE21, value);
 
 	if (g_hdb->getCheatingOn())
-		ConfMan.set(CONFIG_CHEAT, "1");
+		ConfMan.setBool(CONFIG_CHEAT, true);
 
 	ConfMan.flushToDisk();
 }
@@ -493,6 +494,8 @@ void Menu::startMenu() {
 	// did we already say "HYPERSPACE DELIVERY BOY!" ??
 	// if not, this is a great time to check for Copy Protection!
 	if (_sayHDB == false) {
+		// NOTE The game intro "HYPERSPACE DELIVERY BOY!" sound plays as a SFX type sound.
+		//      It is not a Voice (Speech) quote.
 		g_hdb->_sound->playSound(SND_HDB);
 		_sayHDB = true;
 	}
@@ -538,13 +541,14 @@ void Menu::drawMenu() {
 			_optionsXV += 3;
 			if (_optionsScrollX > g_hdb->_screenWidth + 10) {
 				switch (_nextScreen) {
-				case 0:
+				case kMenuOptions:
 					_optionsActive = true;
+					_optionsScreenId = kOptionsScreenMain;
 					break;
-				case 1:
-					_gamefilesActive = 1;
+				case kMenuLoadGame:
+					_gamefilesActive = true;
 					break;
-				case 2:
+				case kMenuNewGame:
 					_newgameActive = true;
 					break;
 				default:
@@ -648,7 +652,7 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 		}
 	} else if (_optionsActive) {
 		//-------------------------------------------------------------------
@@ -674,7 +678,7 @@ void Menu::drawMenu() {
 			}
 
 			drawRocketAndSelections();
-		} else if (_optionsActive == 1) {
+		} else if (_optionsScreenId == kOptionsScreenMain) {
 			//
 			// Options menu content
 			//
@@ -683,20 +687,20 @@ void Menu::drawMenu() {
 			_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
 
 			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY);
-			if (!g_hdb->_sound->getMusicVolume())
+			if (ConfMan.getInt(CONFIG_MUSICVOL) == 0)
 				g_hdb->_gfx->drawText("Music OFF");
 			else
 				g_hdb->_gfx->drawText("Music Volume");
 
-			drawSlider(_optionsX, _optionsY + 20, g_hdb->_sound->getMusicVolume());
+			drawSlider(_optionsX, _optionsY + 20, ConfMan.getInt(CONFIG_MUSICVOL));
 
 			g_hdb->_gfx->setCursor(_optionsX + kOptionSPC, _optionsY + kOptionLineSPC * 2);
-			if (!g_hdb->_sound->getSFXVolume())
+			if (ConfMan.getInt(CONFIG_SFXVOL) == 0)
 				g_hdb->_gfx->drawText("Sound Effects OFF");
 			else
 				g_hdb->_gfx->drawText("Sound Effects Volume");
 
-			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, g_hdb->_sound->getSFXVolume());
+			drawSlider(_optionsX, _optionsY + kOptionLineSPC * 2 + 20, ConfMan.getInt(CONFIG_SFXVOL));
 
 			if (!g_hdb->isPPC()) {
 				// Voices ON or OFF
@@ -713,11 +717,11 @@ void Menu::drawMenu() {
 
 			// title logo
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			// Ignore Controls Screen Button
 			//_controlButtonGfx->drawMasked(centerPic(_controlButtonGfx), _mControlsY);
-		} else if (_optionsActive == 2) {
+		} else if (_optionsScreenId == kOptionsScreenModifyControls) {
 			//
 			// Draw CONTROLS screen
 			//
@@ -758,7 +762,7 @@ void Menu::drawMenu() {
 			_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
 			// CHOOSE SLOT screen
 			_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
-			_menuBackoutGfx->drawMasked(_backoutX, g_hdb->_menu->_backoutY);
+			_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 
 			if (!g_hdb->isPPC()) {
 				if (_saveGames[kAutoSaveSlot].seconds)
@@ -804,7 +808,7 @@ void Menu::drawMenu() {
 		drawWarpScreen();
 		// title logo
 		_titleLogo->drawMasked(centerPic(_titleLogo), _rocketY + _mTitleY);
-		_menuBackoutGfx->drawMasked(_warpBackoutX, g_hdb->_menu->_warpBackoutY);
+		_menuBackoutGfx->drawMasked(_warpBackoutX, _warpBackoutY);
 
 		Common::String textString;
 		for (int i = 0; i < 10; i++) {
@@ -823,9 +827,9 @@ void Menu::drawMenu() {
 			g_hdb->_gfx->drawText(textString.c_str());
 		}
 
-		if (_warpActive > 1) {
+		if (_warpMapId >= 0) {
 			g_hdb->_gfx->setCursor(_warpX + 60, _warpY + 164);
-			textString = Common::String::format("Warping to MAP%d", _warpActive - 2);
+			textString = Common::String::format("Warping to MAP%d", _warpMapId);
 			g_hdb->_gfx->centerPrint(textString.c_str());
 		}
 	} else if (_quitActive) {
@@ -835,13 +839,13 @@ void Menu::drawMenu() {
 		g_hdb->_gfx->draw3DStars();
 		drawNebula();
 
-		if (_quitActive == 3 || !g_hdb->isDemo()) {
+		if (_quitCounter == 3 || !g_hdb->isDemo()) {
 			if (!_quitScreen)
 				_quitScreen = g_hdb->_gfx->loadPic(PIC_QUITSCREEN);
 			_quitScreen->drawMasked(_quitX, _quitY);
-		} else if (_quitActive == 1) {
+		} else if (_quitCounter == 1) {
 			_screenshots1agfx->drawMasked(_quitX, _quitY);
-		} else if (_quitActive == 2) { // XXXX
+		} else if (_quitCounter == 2) { // XXXX
 			_screenshots1gfx->drawMasked(_quitX, _quitY);
 
 			if (!g_hdb->isPPC())
@@ -1290,7 +1294,8 @@ void Menu::processInput(int x, int y) {
 			y >= _menuY + _mQuitY && y < _menuY + _mQuitY + _menuItemHeight) {
 			g_hdb->_sound->playSound(SND_BYE);
 			_quitTimer = g_hdb->getTimeSlice() + 1000;
-			_quitActive = 1;
+			_quitActive = true;
+			_quitCounter = 1;
 			_menuActive = false;
 			return;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
@@ -1300,14 +1305,14 @@ void Menu::processInput(int x, int y) {
 			_optionsXV = 5;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 			g_hdb->_sound->freeSound(SND_HDB);
-			_nextScreen = 2;
+			_nextScreen = kMenuNewGame;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mLoadY && y < _menuY + _mLoadY + _menuItemHeight) {
 			// game files?
-				_optionsScrolling = true;
-				_optionsXV = 5;
-				g_hdb->_sound->playSound(SND_MENU_ACCEPT);
-				_nextScreen = 1;
+			_optionsScrolling = true;
+			_optionsXV = 5;
+			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
+			_nextScreen = kMenuLoadGame;
 		} else if (x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mOptionsY && y < _menuY + _mOptionsY + _menuItemHeight) {
 			// options?
@@ -1317,7 +1322,7 @@ void Menu::processInput(int x, int y) {
 				_resumeSong = temp;
 			_optionsScrolling = true;
 			_optionsXV = 5;
-			_nextScreen = 0;
+			_nextScreen = kMenuOptions;
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
 		} else if (((x >= _menuX && x < _menuX + _menuItemWidth &&
 			y >= _menuY + _mResumeY && y < _menuY + _mResumeY + _menuItemHeight) || resume) &&
@@ -1375,7 +1380,7 @@ void Menu::processInput(int x, int y) {
 		if (!g_hdb->getCheatingOn())
 			open = (x >= _nebulaX && x < _nebulaX + 16 && y >= _nebulaY && y < _nebulaY + 16);
 		else
-			open = (y > g_hdb->_menu->_menuExitY && x < _menuExitXLeft);
+			open = (y > _menuExitY && x < _menuExitXLeft);
 
 		if (open) {
 
@@ -1383,6 +1388,7 @@ void Menu::processInput(int x, int y) {
 
 			_menuActive = false;
 			_warpActive = true;
+			_warpMapId = -1;
 			_clickDelay = 30;
 		}
 	} else if (_newgameActive) {
@@ -1391,7 +1397,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
+		if (y >= _menuExitY || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1404,7 +1410,7 @@ void Menu::processInput(int x, int y) {
 			_newgameActive = false;
 			g_hdb->changeGameState();
 			// that's it!  the Game Loop takes over from here...
-		} else if (y >= _modeActionY - 10 && y <= g_hdb->_menu->_menuExitY) {
+		} else if (y >= _modeActionY - 10 && y <= _menuExitY) {
 			// ACTION MODE area
 			g_hdb->setActionMode(1);
 			g_hdb->_sound->playSound(SND_MENU_ACCEPT);
@@ -1420,8 +1426,8 @@ void Menu::processInput(int x, int y) {
 		//
 		// Controls screen
 		//
-		if (_optionsActive == 2) {
-			controlsInput(x, y);
+		if (_optionsScreenId == kOptionsScreenModifyControls) {
+			controlsInput(x, y, xit);
 			return;
 		}
 
@@ -1429,16 +1435,18 @@ void Menu::processInput(int x, int y) {
 		// Slider 1
 		if (x >= 0 && x <= _optionsX + 200 &&
 			y >= _optionsY + 20 && y <= _optionsY + 36) {
-			int oldVol = g_hdb->_sound->getMusicVolume();
+			int oldVol = ConfMan.getInt(CONFIG_MUSICVOL);
 			if (x < _optionsX) {
-				if (oldVol) {
+				if (oldVol > 0) {
 					g_hdb->_sound->stopMusic();
-					g_hdb->_sound->setMusicVolume(0);
+					ConfMan.setInt(CONFIG_MUSICVOL, 0);
+					g_hdb->syncSoundSettings();
 					g_hdb->_sound->playSound(SND_GUI_INPUT);
 				}
 			} else {
-				offset = ((x - _optionsX) * 256) / 200;
-				g_hdb->_sound->setMusicVolume(offset);
+				offset = ((x - _optionsX) * Audio::Mixer::kMaxMixerVolume) / 200;
+				ConfMan.setInt(CONFIG_MUSICVOL, offset);
+				g_hdb->syncSoundSettings();
 				if (!oldVol)
 					g_hdb->_sound->startMusic(_resumeSong);
 			}
@@ -1446,21 +1454,23 @@ void Menu::processInput(int x, int y) {
 			y >= _optionsY + kOptionLineSPC * 2 + 20 && y <= _optionsY + kOptionLineSPC * 2 + 36) {
 			// Slider 2
 			if (x >= _optionsX)
-				offset = ((x - _optionsX) * 256) / 200;
+				offset = ((x - _optionsX) * Audio::Mixer::kMaxMixerVolume) / 200;
 			else
 				offset = 0;
-			g_hdb->_sound->setSFXVolume(offset);
+			ConfMan.setInt(CONFIG_SFXVOL, offset);
+			g_hdb->syncSoundSettings();
 			g_hdb->_sound->playSound(SND_MENU_SLIDER);
 		} else if (x >= _optionsX && x <= _optionsX + 200 &&
 			y >= _optionsY + kOptionLineSPC * 4 + 24 && y <= _optionsY + kOptionLineSPC * 4 + 40) {
 			// Voices ON/OFF
 			if (!g_hdb->isVoiceless()) {
-				bool value = g_hdb->_sound->getVoiceStatus();
-				value ^= true;
+				bool value = !g_hdb->_sound->getVoiceStatus();
 				g_hdb->_sound->setVoiceStatus(value);
+				ConfMan.setBool(CONFIG_NOSPEECH, !value);
+				g_hdb->syncSoundSettings();
 				g_hdb->_sound->playSound(SND_GUI_INPUT);
 			}
-		} else if (y >= g_hdb->_menu->_menuExitY || y < _menuExitYTop || xit) {
+		} else if (y >= _menuExitY || y < _menuExitYTop || xit) {
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_optionsScrolling = true;
 			_optionsXV = -5;
@@ -1469,7 +1479,7 @@ void Menu::processInput(int x, int y) {
 			// CONTROLS BUTTON!
 
 			// Ignore Controls Button
-			//_optionsActive = 2;
+			//_optionsScreenId = kOptionsScreenModifyControls;
 			//_clickDelay = 20;
 			//g_hdb->_sound->playSound(SND_POP);
 		}
@@ -1479,7 +1489,7 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if (y >= g_hdb->_menu->_menuExitY + 15 || y < _menuExitYTop || xit) {
+		if (y >= _menuExitY + 15 || y < _menuExitYTop || xit) {
 			_optionsScrolling = true;
 			_optionsXV = -5;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
@@ -1535,9 +1545,10 @@ void Menu::processInput(int x, int y) {
 		//-------------------------------------------------------------------
 		int	xit = getMenuKey();
 
-		if ((y >= g_hdb->_menu->_menuExitY && x < _menuExitXLeft) || xit) {
+		if ((y >= _menuExitY && x < _menuExitXLeft) || xit) {
 			_menuActive = true;
 			_warpActive = false;
+			_warpMapId = -1;
 			g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 			_clickDelay = 10;
 		} else if (y >= _warpY && y < _warpY + 160) {
@@ -1553,11 +1564,12 @@ void Menu::processInput(int x, int y) {
 
 			map += (y - _warpY) / 16;
 
-			_warpActive = map + 2;
+			_warpMapId = map;
 			g_hdb->paint();
 			if (g_hdb->getDebug())
 				g_hdb->_gfx->updateVideo();
-			_warpActive = 0;
+			_warpActive = false;
+			_warpMapId = -1;
 
 			Common::String mapString = Common::String::format("MAP%02d", map);
 
@@ -1586,7 +1598,8 @@ void Menu::processInput(int x, int y) {
 				_quitScreen = nullptr;
 
 				_menuActive = true;
-				_quitActive = 0;
+				_quitActive = false;
+				_quitCounter = 0;
 			} else if (_quitTimer < g_hdb->getTimeSlice()) {
 				if (x >= _quitYesX1 && x <= _quitYesX2 && y > _quitYesY1 && y < _quitYesY2) {
 					writeConfig();
@@ -1594,18 +1607,19 @@ void Menu::processInput(int x, int y) {
 				}
 			}
 		} else {
-			if ((_quitActive == 1 || _quitActive == 2) && _quitTimer < g_hdb->getTimeSlice()) {
-				_quitActive++;
+			if ((_quitCounter == 1 || _quitCounter == 2) && _quitTimer < g_hdb->getTimeSlice()) {
+				_quitCounter++;
 				_quitTimer = g_hdb->getTimeSlice() + 1000;
 			} else {
-				if (_quitActive == 3 && (x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
+				if (_quitCounter == 3 && (x >= _quitNoX1 && x <= _quitNoX2 && y > _quitNoY1 && y < _quitNoY2 && _quitTimer < g_hdb->getTimeSlice())) {
 					g_hdb->_sound->playSound(SND_MENU_BACKOUT);
 					delete _quitScreen;
 					_quitScreen = nullptr;
 
 					_menuActive = true;
-					_quitActive = 0;
-				} else if (_quitActive == 3 && _quitTimer < g_hdb->getTimeSlice()){
+					_quitActive = false;
+					_quitCounter = 0;
+				} else if (_quitCounter == 3 && _quitTimer < g_hdb->getTimeSlice()){
 					writeConfig();
 					g_hdb->quitGame();
 				}
@@ -1614,10 +1628,17 @@ void Menu::processInput(int x, int y) {
 	}
 }
 
-void Menu::controlsInput(int x, int y) {
+void Menu::controlsInput(int x, int y, int xit) {
+	if (y >= _menuExitY || y < _menuExitYTop || xit) {
+		_optionsScreenId = kOptionsScreenMain;
+		_clickDelay = 20;
+		g_hdb->_sound->playSound(SND_MENU_BACKOUT);
+	}
 }
 
 void Menu::controlsDraw() {
+	_controlsGfx->drawMasked(centerPic(_controlsGfx), _oBannerY);
+	_menuBackoutGfx->drawMasked(_backoutX, _backoutY);
 }
 
 void Menu::drawNebula() {
@@ -1657,13 +1678,13 @@ void Menu::drawRocketAndSelections() {
 
 	// top-down/up scrolling stuff
 	switch (_nextScreen) {
-	case 0:
+	case kMenuOptions:
 		_optionsGfx->drawMasked(centerPic(_optionsGfx), _oBannerY);
 		break;
-	case 1:
+	case kMenuLoadGame:
 		_modeLoadGfx->drawMasked(centerPic(_modeLoadGfx), _oBannerY);
 		break;
-	case 2:
+	case kMenuNewGame:
 		_newGfx->drawMasked(centerPic(_newGfx), _oBannerY);
 		break;
 	default:
@@ -1684,20 +1705,20 @@ void Menu::drawRocketAndSelections() {
 
 	// exhaust
 	if (_rocketEx < 5) {
-		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx1->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	} else if (_rocketEx >= 5 && _rocketEx < 10) {
-		_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx2->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx1->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	} else {
 		_rocketEx = 0;
-		_rocketEx1->drawMasked(_mRocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
+		_rocketEx1->drawMasked(_rocketX + _mRocketEXHX, _rocketY + _mRocketYBottom);
 		if (!g_hdb->isPPC()) {
-			_rocketEx2->drawMasked(_mRocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
+			_rocketEx2->drawMasked(_rocketX + _mRocketEXHX2, _rocketY + _mRocketYBottom);
 		}
 	}
 	_rocketEx++;

@@ -445,7 +445,8 @@ bool VideoTheoraPlayer::setAlphaImage(const Common::String &filename) {
 	if (_alphaFilename != filename) {
 		_alphaFilename = filename;
 	}
-	//TODO: Conversion.
+	// TODO: Conversion.
+	//_alphaImage->convert(IMG_TRUECOLOR);
 	return STATUS_OK;
 }
 

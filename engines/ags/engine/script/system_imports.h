@@ -46,17 +46,17 @@ struct SystemImports {
 private:
 	// Note we can't use a hash-map here, because we sometimes need to search
 	// by partial keys.
-	typedef std::map<String, int> IndexMap;
+	typedef std::map<String, uint32_t> IndexMap;
 
 	std::vector<ScriptImport> imports;
 	IndexMap btree;
 
 public:
-	int  add(const String &name, const RuntimeScriptValue &value, ccInstance *inst);
+	uint32_t add(const String &name, const RuntimeScriptValue &value, ccInstance *inst);
 	void remove(const String &name);
 	const ScriptImport *getByName(const String &name);
-	int  get_index_of(const String &name);
-	const ScriptImport *getByIndex(int index);
+	uint32_t  get_index_of(const String &name);
+	const ScriptImport *getByIndex(uint32_t index);
 	String findName(const RuntimeScriptValue &value);
 	void RemoveScriptExports(ccInstance *inst);
 	void clear();

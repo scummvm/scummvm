@@ -242,8 +242,8 @@ int KyraEngine_v2::o2_defineScene(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2_defineScene(%p) (%d, '%s', %d, %d, %d, %d, %d, %d)",
 	       (const void *)script, stackPos(0), stackPosString(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5), stackPos(6), stackPos(7));
 	const int scene = stackPos(0);
-	strcpy(_sceneList[scene].filename1, stackPosString(1));
-	strcpy(_sceneList[scene].filename2, stackPosString(1));
+	Common::strlcpy(_sceneList[scene].filename1, stackPosString(1), sizeof(_sceneList[scene].filename1));
+	Common::strlcpy(_sceneList[scene].filename2, stackPosString(1), sizeof(_sceneList[scene].filename2));
 
 	_sceneList[scene].exit1 = stackPos(2);
 	_sceneList[scene].exit2 = stackPos(3);
@@ -323,7 +323,7 @@ int KyraEngine_v2::o2_getVocHigh(EMCState *script) {
 int KyraEngine_v2::o2a_setAnimationShapes(EMCState *script) {
 	debugC(3, kDebugLevelScriptFuncs, "KyraEngine_v2::o2a_setAnimationShapes(%p) ('%s', %d, %d, %d, %d, %d)", (const void *)script,
 	       stackPosString(0), stackPos(1), stackPos(2), stackPos(3), stackPos(4), stackPos(5));
-	strcpy(_animShapeFilename, stackPosString(0));
+	Common::strlcpy(_animShapeFilename, stackPosString(0), sizeof(_animShapeFilename));
 	_animShapeLastEntry = stackPos(1);
 	_animShapeWidth = stackPos(2);
 	_animShapeHeight = stackPos(3);

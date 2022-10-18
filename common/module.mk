@@ -55,6 +55,7 @@ MODULE_OBJS := \
 	winexe_ne.o \
 	winexe_pe.o \
 	xmlparser.o \
+	xpfloat.o \
 	zlib.o
 
 MODULE_OBJS += \

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -33,10 +34,8 @@ int Room71::_state;
 int Room71::_delay;
 
 void Room71::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
@@ -116,7 +115,7 @@ void Room71::setup_func() {
 		}
 
 	} else {
-		const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int howDestX, howDestY, nicDestX, nicDestY;
 		if (posX < 40) {
@@ -152,7 +151,7 @@ void Room71::setup_func() {
 }
 
 int Room71::proc1() {
-	if (_G(gameState).inv_cur) {
+	if (_G(cur)->usingInventoryCursor()) {
 		_G(flags).NoScroll = false;
 		return 0;
 	}
@@ -211,10 +210,10 @@ void Room71::proc2() {
 	_G(det)->hideStaticSpr(5);
 	startSetAILWait(1, 1, ANI_FRONT);
 	_G(det)->startDetail(2, 255, false);
-	_G(det)->stop_detail(5);
+	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(8);
-	_G(atds)->setControlBit(442, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->setControlBit(446, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(442, ATS_ACTIVE_BIT);
+	_G(atds)->setControlBit(446, ATS_ACTIVE_BIT);
 	_G(gameState)._personHide[P_HOWARD] = false;
 	_G(gameState)._personHide[P_NICHELLE] = false;
 	_G(gameState)._personHide[P_CHEWY] = false;
@@ -258,7 +257,7 @@ void Room71::proc5(int16 val) {
 }
 
 int Room71::proc6() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -274,7 +273,7 @@ int Room71::proc6() {
 	_G(gameState).flags28_4 = true;
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
-	_G(atds)->setControlBit(443, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(443, ATS_ACTIVE_BIT);
 	autoMove(3, P_CHEWY);
 	_G(spieler_mi)[P_CHEWY].Mode = false;
 	
@@ -294,7 +293,7 @@ void Room71::proc7() {
 	_G(gameState)._personHide[P_NICHELLE] = true;
 	_G(det)->startDetail(7, 255, false);
 	startAadWait(624);
-	_G(det)->stop_detail(7);
+	_G(det)->stopDetail(7);
 	_G(gameState)._personHide[P_NICHELLE] = false;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(flags).NoScroll = false;

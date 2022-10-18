@@ -22,6 +22,9 @@
 #include "graphics/renderer.h"
 
 #include "common/translation.h"
+#include "common/system.h"
+
+#include "graphics/opengl/context.h"
 
 namespace Graphics {
 
@@ -40,12 +43,19 @@ static const RendererTypeDescription rendererTypes[] = {
 
 DECLARE_TRANSLATION_ADDITIONAL_CONTEXT("OpenGL with shaders", "lowres")
 
-const RendererTypeDescription *listRendererTypes() {
-	return rendererTypes;
+Common::Array<RendererTypeDescription> Renderer::listTypes() {
+	uint32 available = getAvailableTypes();
+	Common::Array<RendererTypeDescription> ret;
+	for (const RendererTypeDescription *rt = rendererTypes; rt->code; ++rt) {
+		if (available & rt->id) {
+			ret.push_back(*rt);
+		}
+	}
+	return ret;
 }
 
-RendererType parseRendererTypeCode(const Common::String &code) {
-	const RendererTypeDescription *rt = listRendererTypes();
+RendererType Renderer::parseTypeCode(const Common::String &code) {
+	const RendererTypeDescription *rt = rendererTypes;
 	while (rt->code) {
 		if (rt->code == code) {
 			return rt->id;
@@ -56,8 +66,8 @@ RendererType parseRendererTypeCode(const Common::String &code) {
 	return kRendererTypeDefault;
 }
 
-Common::String getRendererTypeCode(RendererType type) {
-	const RendererTypeDescription *rt = listRendererTypes();
+Common::String Renderer::getTypeCode(RendererType type) {
+	const RendererTypeDescription *rt = rendererTypes;
 	while (rt->code) {
 		if (rt->id == type) {
 			return rt->code;
@@ -68,30 +78,62 @@ Common::String getRendererTypeCode(RendererType type) {
 	return "";
 }
 
-RendererType getBestMatchingAvailableRendererType(RendererType desired) {
-	if (desired == kRendererTypeDefault) {
-		desired = kRendererTypeOpenGLShaders;
-	}
+uint32 Renderer::getAvailableTypes() {
+	uint32 available = 0;
 
-#if !defined(USE_OPENGL_SHADERS)
-	if (desired == kRendererTypeOpenGLShaders) {
-		desired = kRendererTypeOpenGL;
-	}
+#if defined(USE_TINYGL)
+	/* TinyGL doesn't depend on hardware support */
+	available |= kRendererTypeTinyGL;
 #endif
 
-#if (!defined(USE_OPENGL_GAME) && defined(USE_OPENGL_SHADERS))
-	if (desired == kRendererTypeOpenGL) {
-		desired = kRendererTypeOpenGLShaders;
-	}
-#endif
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
+	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
 
-#if !defined(USE_OPENGL_GAME) && !defined(USE_OPENGL_SHADERS)
-	if (desired == kRendererTypeOpenGL || desired == kRendererTypeOpenGLShaders) {
-		desired = kRendererTypeTinyGL;
-	}
+	if (backendCapableOpenGL) {
+		/* Backend either support OpenGL or OpenGL ES(2) */
+#if defined(USE_OPENGL_GAME)
+		/* OpenGL classic is compiled in, check if hardware supports it */
+		if (g_system->getOpenGLType() == OpenGL::kContextGL) {
+			available |= kRendererTypeOpenGL;
+		}
 #endif
+#if defined(USE_OPENGL_SHADERS)
+		/* OpenGL with shaders is compiled in, check if hardware supports it */
+		if (g_system->hasFeature(OSystem::kFeatureShadersForGame)) {
+			available |= kRendererTypeOpenGLShaders;
+		}
+#endif
+	}
+#endif // defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS
+	return available;
+}
 
-	return desired;
+RendererType Renderer::getBestMatchingType(RendererType desired, uint32 available) {
+	/* What we want is possible */
+	if (available & desired) {
+		return desired;
+	}
+
+	/* We apply the same logic when nothing is desired and when what we want is not possible */
+	if (desired != kRendererTypeDefault) {
+		warning("Unable to create a '%s' renderer", getTypeCode(desired).c_str());
+	}
+
+	/* Shaders are the best experience */
+	if (available & kRendererTypeOpenGLShaders) {
+		return kRendererTypeOpenGLShaders;
+	}
+	/* then OpenGL */
+	if (available & kRendererTypeOpenGL) {
+		return kRendererTypeOpenGL;
+	}
+	/* then TinyGL */
+	if (available & kRendererTypeTinyGL) {
+		return kRendererTypeTinyGL;
+	}
+
+	/* Failure is not an option */
+	error("Unable to create a renderer");
 }
 
 } // End of namespace Graphics

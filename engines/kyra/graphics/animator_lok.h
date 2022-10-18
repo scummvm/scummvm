@@ -69,9 +69,9 @@ public:
 	void restoreAllObjectBackgrounds();
 	void preserveAnyChangedBackgrounds();
 	virtual void prepDrawAllObjects();
-	void copyChangedObjectsForward(int refreshFlag);
+	void copyChangedObjectsForward(int refreshFlag, bool refreshScreen = true);
 
-	void updateAllObjectShapes();
+	void updateAllObjectShapes(bool refreshScreen = true);
 	void animRemoveGameItem(int index);
 	void animAddGameItem(int index, uint16 sceneId);
 	void animAddNPC(int character);

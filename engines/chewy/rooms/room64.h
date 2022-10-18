@@ -33,8 +33,7 @@ private:
 
 public:
 	static void entry();
-	static int16 use_tasche();
-	static void talk_man();
+	static int16 useBag();
 	static void talk_man(int16 aad_nr);
 };
 

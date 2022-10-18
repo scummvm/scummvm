@@ -108,7 +108,7 @@ public:
 		_ethereal.push_front(objid);
 	}
 
-	//! check if the the ethereal void is empty
+	//! check if the ethereal void is empty
 	bool etherealEmpty() const {
 		return _ethereal.empty();
 	}

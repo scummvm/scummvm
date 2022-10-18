@@ -68,8 +68,7 @@ MODULE_OBJS = \
 	shared/gui/gui_object.o \
 	shared/gui/gui_slider.o \
 	shared/gui/gui_textbox.o \
-	shared/script/cc_error.o \
-	shared/script/cc_options.o \
+	shared/script/cc_common.o \
 	shared/script/cc_script.o \
 	shared/util/aligned_stream.o \
 	shared/util/buffered_stream.o \
@@ -139,7 +138,6 @@ MODULE_OBJS = \
 	engine/ac/global_overlay.o \
 	engine/ac/global_palette.o \
 	engine/ac/global_parser.o \
-	engine/ac/global_record.o \
 	engine/ac/global_region.o \
 	engine/ac/global_room.o \
 	engine/ac/global_screen.o \
@@ -281,7 +279,6 @@ MODULE_OBJS = \
 	engine/script/runtime_script_value.o \
 	engine/script/script.o \
 	engine/script/script_api.o \
-	engine/script/script_engine.o \
 	engine/script/script_runtime.o \
 	engine/script/system_imports.o \
 	plugins/ags_plugin.o \

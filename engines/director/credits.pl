@@ -8,4 +8,5 @@ begin_section("Director");
 	add_person("Scott Percival", "moralrecordings", "");
 	add_person("Steven Hoefel", "", "");
 	add_person("Tobia Tesan", "", "");
+	add_person("Misty De M&eacute;o", "mistydemeo", "");
 end_section();

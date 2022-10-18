@@ -28,22 +28,10 @@
 
 namespace Saga2 {
 
-#define VERSINT_MAJOR 1
-#define VERSINT_MINOR 00
-#define VERSINT_LEVEL 02   // 1=ALPHA 2=BETA 3=GREEN 4=GOLD/RC 5=RELEASE
-#define VERSINT_BUILD 28
 #define VERSION_MAJOR "1"
 #define VERSION_MINOR "00"
 #define VERSION_LEVEL "02"   // 1=ALPHA 2=BETA 3=GREEN 4=GOLD/RC 5=RELEASE
 #define VERSION_BUILD "28"
-
-#if DEBUG
-#define VERSION_DEBUG " ("__DATE__"@"__TIME__")"
-#define VERSION_DISTRIB "For internal distribution only"
-#else
-#define VERSION_DEBUG
-#define VERSION_DISTRIB "General distribution"
-#endif
 
 #ifdef __WATCOMC__
 #define VERSION_OPSYS "DOS"
@@ -55,11 +43,7 @@ namespace Saga2 {
     Target variables
  * ===================================================================== */
 
-#define VERSINT_SHOWN VERSINT_MAJOR,VERSINT_MINOR
-#define VERSINT_STAMP VERSINT_MAJOR,VERSINT_MINOR,VERSINT_LEVEL,VERSINT_BUILD
-#define VERSION_SHOWN VERSION_MAJOR "." VERSION_MINOR "\0"
-#define VERSION_STAMP VERSION_MAJOR "." VERSION_MINOR "." VERSION_LEVEL "." VERSION_BUILD VERSION_DEBUG "\0"
-#define VERSION_NOTES VERSION_DISTRIB
+#define VERSION_STAMP VERSION_MAJOR "." VERSION_MINOR "." VERSION_LEVEL "." VERSION_BUILD "\0"
 
 } // end of namespace Saga2
 

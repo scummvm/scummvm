@@ -19,199 +19,154 @@
  *
  */
 
-#include "agos/drivers/accolade/mididriver.h"
 #include "agos/drivers/accolade/mt32.h"
 
-#include "audio/mididrv.h"
-
-#include "common/config-manager.h"
+#include "agos/drivers/accolade/mididriver.h"
+#include "agos/sfxparser_accolade.h"
 
 namespace AGOS {
 
-MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() {
-	_driver = nullptr;
-	_isOpen = false;
-	_nativeMT32 = false;
-	_baseFreq = 250;
+const uint8 MidiDriver_Accolade_MT32::SYSEX_INSTRUMENT_ASSIGNMENT[7] = { 0x02, 0x00, 0x18, 0x32, 0x01, 0x00, 0x01 };
 
-	memset(_channelMapping, 0, sizeof(_channelMapping));
-	memset(_instrumentMapping, 0, sizeof(_instrumentMapping));
+MidiDriver_Accolade_MT32::MidiDriver_Accolade_MT32() : MidiDriver_MT32GM(MT_MT32) {
+	Common::fill(_channelRemapping, _channelRemapping + ARRAYSIZE(_channelRemapping), 0);
+	Common::fill(_instrumentRemapping, _instrumentRemapping + ARRAYSIZE(_instrumentRemapping), 0);
+	Common::fill(_channelLocks, _channelLocks + ARRAYSIZE(_channelLocks), false);
 }
 
-MidiDriver_Accolade_MT32::~MidiDriver_Accolade_MT32() {
-	Common::StackLock lock(_mutex);
-	if (_driver) {
-		_driver->setTimerCallback(nullptr, nullptr);
-		_driver->close();
-		delete _driver;
-	}
-	_driver = nullptr;
+int MidiDriver_Accolade_MT32::open(MidiDriver *driver, bool nativeMT32) {
+	int result = MidiDriver_MT32GM::open(driver, nativeMT32);
+
+	setInstrumentRemapping(_instrumentRemapping);
+
+	return result;
 }
 
-int MidiDriver_Accolade_MT32::open() {
-	assert(!_driver);
+void MidiDriver_Accolade_MT32::send(int8 source, uint32 b) {
+	byte dataChannel = b & 0xf;
+	int8 outputChannel = mapSourceChannel(source, dataChannel);
 
-//	debugC(kDebugLevelMT32Driver, "MT32: starting driver");
+	MidiChannelControlData &controlData = *_controlData[outputChannel];
 
-	// Setup midi driver
-	MidiDriver::DeviceHandle dev = MidiDriver::detectDevice(MDT_MIDI | MDT_PREFER_MT32);
-	MusicType musicType = MidiDriver::getMusicType(dev);
+	// Check if this event is sent by a music source and the channel is locked
+	// by an SFX source.
+	bool channelLockedByOtherSource = _sources[source].type != SOURCE_TYPE_SFX && _channelLocks[outputChannel];
 
-	// check, if we got a real MT32 (or MUNT, or MUNT over MIDI)
-	switch (musicType) {
-	case MT_MT32:
-		_nativeMT32 = true;
-		break;
-	case MT_GM:
-		if (ConfMan.getBool("native_mt32")) {
-			_nativeMT32 = true;
+	processEvent(source, b, outputChannel, controlData, channelLockedByOtherSource);
+}
+
+int8 MidiDriver_Accolade_MT32::mapSourceChannel(uint8 source, uint8 dataChannel) {
+	if (!_isOpen)
+		// Use 1 on 1 mapping during device initialization.
+		return dataChannel;
+
+	if (_sources[source].type == SOURCE_TYPE_SFX) {
+		// Use channels 7 and 8 for SFX (sources 1 and 2).
+		uint8 sfxChannel =  9 - source;
+
+		_allocationMutex.lock();
+
+		if (!_channelLocks[sfxChannel]) {
+			// Lock channel
+			stopAllNotes(0xFF, sfxChannel);
+			_channelLocks[sfxChannel] = true;
 		}
-		break;
-	default:
-		break;
-	}
 
-	_driver = MidiDriver::createMidi(dev);
-	if (!_driver)
-		return 255;
+		_allocationMutex.unlock();
 
-	int ret = _driver->open();
-	if (ret)
-		return ret;
-
-	if (_nativeMT32)
-		_driver->sendMT32Reset();
-	else
-		_driver->sendGMReset();
-
-	return 0;
-}
-
-void MidiDriver_Accolade_MT32::close() {
-	if (_driver) {
-		_driver->close();
+		return sfxChannel;
+	} else {
+		return _channelRemapping[dataChannel];
 	}
 }
 
-// MIDI messages can be found at http://www.midi.org/techspecs/midimessages.php
-void MidiDriver_Accolade_MT32::send(uint32 b) {
-	byte command = b & 0xf0;
-	byte channel = b & 0xf;
+void MidiDriver_Accolade_MT32::deinitSource(uint8 source) {
+	_allocationMutex.lock();
 
-	if (command == 0xF0) {
-		if (_driver) {
-			_driver->send(b);
+	if (_sources[source].type == SOURCE_TYPE_SFX) {
+		for (int i = 0; i < MIDI_CHANNEL_COUNT; i++) {
+			if (_controlData[i]->source == source) {
+				// Restore the music instrument.
+				programChange(i, _controlData[i]->program, 0, *_controlData[i], false);
+				// Unlock the channel.
+				_channelLocks[i] = false;
+			}
 		}
+	}
+
+	_allocationMutex.unlock();
+
+	MidiDriver_MT32GM::deinitSource(source);
+}
+
+void MidiDriver_Accolade_MT32::loadSfxInstrument(uint8 source, byte *instrumentData) {
+	if (!(source == 1 || source == 2)) {
+		warning("MidiDriver_Accolade_MT32::loadSfxInstrument - unexpected source %d", source);
 		return;
 	}
 
-	byte mappedChannel = _channelMapping[channel];
+	// Send the instrument data to the timbre memory (patch 1 or 2).
+	uint32 address = (0x08 << 14) | (((source - 1) * 2) << 7);
+	sysExMT32(instrumentData + 3, SfxParser_Accolade::INSTRUMENT_SIZE_MT32 - 3, address, true, true, source);
 
-	if (mappedChannel < AGOS_MIDI_CHANNEL_COUNT) {
-		// channel mapped to an actual MIDI channel, so use that one
-		b = (b & 0xFFFFFFF0) | mappedChannel;
-		if (command == 0xC0) {
-			// Program change
-			// Figure out the requested instrument
-			byte midiInstrument = (b >> 8) & 0xFF;
-			byte mappedInstrument = _instrumentMapping[midiInstrument];
-
-			// If there is no actual MT32 (or MUNT), we make a second mapping to General MIDI instruments
-			if (!_nativeMT32) {
-				mappedInstrument = (MidiDriver::_mt32ToGm[mappedInstrument]);
-			}
-			// And replace it
-			b = (b & 0xFFFF00FF) | (mappedInstrument << 8);
-		}
-
-		if (_driver) {
-			_driver->send(b);
-		}
-	}
+	// Allocate the new patch to instrument number 0x75 or 0x76.
+	byte instrNum = SFX_PROGRAM_BASE + source - 1;
+	address = (0x05 << 14) | instrNum << 3;
+	byte instrAssignData[7];
+	Common::copy(SYSEX_INSTRUMENT_ASSIGNMENT, SYSEX_INSTRUMENT_ASSIGNMENT + ARRAYSIZE(instrAssignData), instrAssignData);
+	instrAssignData[1] = source - 1;
+	sysExMT32(instrAssignData, 7, address, true, true, source);
 }
 
-// Called right at the start, we get an INSTR.DAT entry
-bool MidiDriver_Accolade_MT32::setupInstruments(byte *driverData, uint16 driverDataSize, bool useMusicDrvFile) {
-	uint16 channelMappingOffset = 0;
-	uint16 channelMappingSize = 0;
-	uint16 instrumentMappingOffset = 0;
-	uint16 instrumentMappingSize = 0;
-
-	if (!useMusicDrvFile) {
-		// INSTR.DAT: we expect at least 354 bytes
-		if (driverDataSize < 354)
-			return false;
-
-		// Data is like this:
-		// 128 bytes  instrument mapping
-		// 128 bytes  instrument volume adjust (signed!) (not used for MT32)
-		//  16 bytes  unknown
-		//  16 bytes  channel mapping
-		//  64 bytes  key note mapping (not really used for MT32)
-		//   1 byte   instrument count
-		//   1 byte   bytes per instrument
-		//   x bytes  no instruments used for MT32
-
-		channelMappingOffset    = 256 + 16;
-		channelMappingSize      = 16;
-		instrumentMappingOffset = 0;
-		instrumentMappingSize   = 128;
-
-	} else {
-		// MUSIC.DRV: we expect at least 468 bytes
-		if (driverDataSize < 468)
-			return false;
-
-		channelMappingOffset    = 396;
-		channelMappingSize      = 16;
-		instrumentMappingOffset = 140;
-		instrumentMappingSize   = 128;
-	}
-
-	// Channel mapping
-	if (channelMappingSize) {
-		// Get these 16 bytes for MIDI channel mapping
-		if (channelMappingSize != sizeof(_channelMapping))
-			return false;
-
-		memcpy(_channelMapping, driverData + channelMappingOffset, sizeof(_channelMapping));
-	} else {
-		// Set up straight mapping
-		for (uint16 channelNr = 0; channelNr < sizeof(_channelMapping); channelNr++) {
-			_channelMapping[channelNr] = channelNr;
-		}
-	}
-
-	if (instrumentMappingSize) {
-		// And these for instrument mapping
-		if (instrumentMappingSize > sizeof(_instrumentMapping))
-			return false;
-
-		memcpy(_instrumentMapping, driverData + instrumentMappingOffset, instrumentMappingSize);
-	}
-	// Set up straight mapping for the remaining data
-	for (uint16 instrumentNr = instrumentMappingSize; instrumentNr < sizeof(_instrumentMapping); instrumentNr++) {
-		_instrumentMapping[instrumentNr] = instrumentNr;
-	}
-	return true;
+void MidiDriver_Accolade_MT32::changeSfxInstrument(uint8 source) {
+	// Change to the newly loaded instrument.
+	byte channel = mapSourceChannel(source, 0);
+	MidiChannelControlData &controlData = *_controlData[channel];
+	byte originalInstrument = controlData.program;
+	programChange(channel, SFX_PROGRAM_BASE + source - 1, source, controlData);
+	// Store the original instrument so it can be used when deinitializing
+	// the source.
+	controlData.program = originalInstrument;
 }
 
-MidiDriver *MidiDriver_Accolade_MT32_create(Common::String driverFilename) {
-	byte  *driverData = nullptr;
+void MidiDriver_Accolade_MT32::readDriverData(byte *driverData, uint16 driverDataSize, bool newVersion) {
+	uint16 minDataSize = newVersion ? 468 : 354;
+	if (driverDataSize < minDataSize)
+		error("ACCOLADE-ADLIB: Expected minimum driver data size of %d - got %d", minDataSize, driverDataSize);
+
+	// INSTR.DAT Data is like this:
+	// 128 bytes  instrument mapping
+	// 128 bytes  instrument volume adjust (signed!) (not used for MT32)
+	//  16 bytes  unknown
+	//  16 bytes  channel mapping
+	//  64 bytes  key note mapping (not really used for MT32)
+	//   1 byte   instrument count
+	//   1 byte   bytes per instrument
+	//   x bytes  no instruments used for MT32
+
+	// music.drv is basically a driver, but with a few fixed locations for certain data
+
+	uint16 channelMappingOffset = newVersion ? 396 : 256 + 16;
+	Common::copy(driverData + channelMappingOffset, driverData + channelMappingOffset + ARRAYSIZE(_channelRemapping), _channelRemapping);
+
+	uint16 instrumentMappingOffset = newVersion ? 140 : 0;
+	Common::copy(driverData + instrumentMappingOffset, driverData + instrumentMappingOffset + ARRAYSIZE(_instrumentRemapping), _instrumentRemapping);
+}
+
+MidiDriver_Multisource *MidiDriver_Accolade_MT32_create(Common::String driverFilename) {
+	byte *driverData = nullptr;
 	uint16 driverDataSize = 0;
-	bool   isMusicDrvFile = false;
+	bool newVersion = false;
 
-	MidiDriver_Accolade_readDriver(driverFilename, MT_MT32, driverData, driverDataSize, isMusicDrvFile);
+	MidiDriver_Accolade_readDriver(driverFilename, MT_MT32, driverData, driverDataSize, newVersion);
 	if (!driverData)
-		error("ACCOLADE-ADLIB: error during readDriver()");
+		error("ACCOLADE-MT32: error during readDriver()");
 
 	MidiDriver_Accolade_MT32 *driver = new MidiDriver_Accolade_MT32();
-	if (driver) {
-		if (!driver->setupInstruments(driverData, driverDataSize, isMusicDrvFile)) {
-			delete driver;
-			driver = nullptr;
-		}
-	}
+	if (!driver)
+		error("ACCOLADE-MT32: could not create driver");
+
+	driver->readDriverData(driverData, driverDataSize, newVersion);
 
 	delete[] driverData;
 	return driver;

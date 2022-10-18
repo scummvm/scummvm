@@ -68,8 +68,8 @@ static WinFontDirEntry readDirEntry(Common::SeekableReadStream &stream) {
 
 	stream.skip(68); // Useless
 	entry.points = stream.readUint16LE();
-	stream.skip(43); // Useless (for now, maybe not in the future)
-	readString(stream);
+	stream.skip(38); // Useless (for now, maybe not in the future)
+	readString(stream); // Skip Device Name
 	entry.faceName = readString(stream);
 
 	return entry;
@@ -139,8 +139,10 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 		uint16 id = stream.readUint16LE();
 
 		// Use the first name when empty
-		if (dirEntry.faceName.empty())
+		if (dirEntry.faceName.empty()) {
+			_name = getFONFontName(stream);
 			return id;
+		}
 
 		WinFontDirEntry entry = readDirEntry(stream);
 
@@ -149,6 +151,15 @@ uint32 WinFont::getFontIndex(Common::SeekableReadStream &stream, const WinFontDi
 	}
 
 	return 0xffffffff;
+}
+
+Common::String WinFont::getFONFontName(Common::SeekableReadStream& stream) {
+	// Currently only works when dirEntry.faceName in getFontIndex is empty
+	// But this can be used for each FONTDIR entry
+	stream.seek(117);
+	/* Device Name = */ stream.readString();
+	Common::String fontName = stream.readString();
+	return fontName;
 }
 
 bool WinFont::loadFromFNT(const Common::String &fileName) {
@@ -195,10 +206,10 @@ bool WinFont::loadFromFNT(Common::SeekableReadStream &stream) {
 	_ascent = stream.readUint16LE();
 	/* uint16 internalLeading = */ stream.readUint16LE();
 	/* uint16 externalLeading = */ stream.readUint16LE();
-	/* byte italic = */ stream.readByte();
-	/* byte underline = */ stream.readByte();
-	/* byte strikeOut = */ stream.readByte();
-	/* uint16 weight = */ stream.readUint16LE();
+	_italic = stream.readByte();
+	_underline = stream.readByte();
+	_strikethrough = stream.readByte();
+	_weight = stream.readUint16LE();
 	/* byte charSet = */ stream.readByte();
 	uint16 pixWidth = stream.readUint16LE();
 	_pixHeight = stream.readUint16LE();
@@ -308,6 +319,22 @@ void WinFont::drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) con
 			}
 		}
 	}
+}
+
+int WinFont::getStyle() {
+	int style = kFontStyleRegular;
+
+	// This has been taken from Wine Source
+	// https://github.com/wine-mirror/wine/blob/b9a61cde89e5dc6264b4c152f4dc24ecf064f8f6/include/wingdi.h#L728
+
+	if (_weight >= 700)
+		style |= kFontStyleBold;
+	if (_italic)
+		style |= kFontStyleItalic;
+	if (_underline)
+		style |= kFontStyleUnderline;
+
+	return style;
 }
 
 } // End of namespace Graphics

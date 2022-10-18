@@ -178,6 +178,14 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	current_shade_model = TGL_SMOOTH;
 	cull_face_enabled = 0;
 
+	// fog
+	fog_enabled = false;
+	fog_mode = TGL_EXP;
+	fog_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+	fog_density = 1.0f;
+	fog_start = 0.0f;
+	fog_end = 0.0f;
+
 	// clear
 	clear_color = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 	clear_depth = 1.0f;
@@ -259,6 +267,7 @@ void GLContext::init(int screenW, int screenH, Graphics::PixelFormat pixelFormat
 	_drawCallAllocator[0].initialize(kDrawCallMemory);
 	_drawCallAllocator[1].initialize(kDrawCallMemory);
 	_debugRectsEnabled = false;
+	_profilingEnabled = false;
 
 	TinyGL::Internal::tglBlitResetScissorRect();
 }

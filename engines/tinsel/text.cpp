@@ -184,7 +184,7 @@ OBJECT *ObjectTextOut(OBJECT **pList, char *szStr, int color,
 				pChar->constant = color;
 
 				// set the base font color to be replaced with supplied color, only for Tinsel V3
-				g_t3fontBaseColor = TinselV3 ? pFont->baseColor : 0;
+				g_t3fontBaseColor = (TinselVersion == 3) ? pFont->baseColor : 0;
 
 				// get Y animation offset
 				GetAniOffset(hImg, pChar->flags, &aniX, &aniY);

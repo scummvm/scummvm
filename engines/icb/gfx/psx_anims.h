@@ -33,21 +33,15 @@
 
 namespace ICB {
 
-static inline PXframe_PSX *psxFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim, const char *file, const int32 line) {
+inline PXframe_PSX *PXFrameEnOfAnim(uint32 n, PXanim_PSX *pAnim) {
 	// Convert to the new schema
 	ConvertPXanim(pAnim);
 	if (n >= pAnim->frame_qty) {
-		Real_Fatal_error("Illegal frame %d %d %s %d", n, pAnim->frame_qty, file, line);
+		Real_Fatal_error("Illegal frame %d %d %s %d", n, pAnim->frame_qty);
 		error("Should exit with error-code -1");
 		return NULL;
 	}
-	return (PXframe_PSX *)((uint8 *)pAnim + pAnim->offsets[n]);
-}
-
-static inline void psxMatrixToAngles(PXorient_PSX &orient, PXfloat &pan, PXfloat &tilt, PXfloat &cant) {
-	pan = orient.pan;
-	tilt = orient.tilt;
-	cant = orient.cant;
+	return (PXframe_PSX *)((uint8 *)pAnim + FROM_LE_16(pAnim->offsets[n]));
 }
 
 } // End of namespace ICB

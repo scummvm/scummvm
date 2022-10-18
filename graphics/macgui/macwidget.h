@@ -39,7 +39,7 @@ class MacWindowManager;
 class MacWidget {
 
 public:
-	MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0, uint fgcolor = 0, uint bgcolor= 0xff);
+	MacWidget(MacWidget *parent, int x, int y, int w, int h, MacWindowManager *wm, bool focusable, uint16 border = 0, uint16 gutter = 0, uint16 shadow = 0, uint32 fgcolor = 0, uint32 bgcolor= 0xff);
 	virtual ~MacWidget();
 
 	/**

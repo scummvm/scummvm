@@ -85,18 +85,22 @@ static int DEBUG_BUFFERS_COUNT = 0;
 class ShStBuffer {
 public:
 	ShStBuffer(const ShStBuffer &buff) : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { if (lifes) (*lifes)++; }
+	ShStBuffer(ShStBuffer &&buff) noexcept : ptr(buff.ptr), len(buff.len), lifes(buff.lifes) { buff.lifes = nullptr; }
 	ShStBuffer(const void *p, uint32 cb, bool allocate = false) : ptr((const uint8*)p), len(cb), lifes(nullptr) { if (allocate) memcpy(crtbuf(), p, cb); }
 	ShStBuffer() : ShStBuffer(nullptr, 0) {}
-	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr) { s->read(crtbuf(), len); }
+	ShStBuffer(Common::SeekableReadStream *s) : len(s ? s->size() : 0), lifes(nullptr), ptr(nullptr) { if (s) s->read(crtbuf(), len); }
 	~ShStBuffer() { dcrlif(); }
-	void operator=(Common::SeekableReadStream *s) { operator=(ShStBuffer(s)); }
-	void operator=(const ShStBuffer &buff) {
-		dcrlif();
-		ptr = buff.ptr;
-		len = buff.len;
-		lifes = buff.lifes;
+	ShStBuffer &operator=(Common::SeekableReadStream *s) { return operator=(ShStBuffer(s)); }
+	ShStBuffer &operator=(ShStBuffer &&buff) noexcept {
+		trans(buff);
+		buff.lifes = nullptr;
+		return *this;
+	}
+	ShStBuffer &operator=(const ShStBuffer &buff) {
+		trans(buff);
 		if (lifes)
 			(*lifes)++;
+		return *this;
 	}
 	const uint8 *ptr;
 	uint32 len;
@@ -116,6 +120,12 @@ private:
 		*lifes = 1;
 		DEBUG_BUFFERS_COUNT++;
 		return tptr;
+	}
+	void trans(const ShStBuffer &buff) {
+		dcrlif();
+		ptr = buff.ptr;
+		len = buff.len;
+		lifes = buff.lifes;
 	}
 	int *lifes;
 };
@@ -171,7 +181,7 @@ public:
 	void setTempo(uint32 tempo);
 	void setTicksPerSecond(uint32 tps);
 
-	uint16 tempo() const { return _internalTempo; }
+	uint16 getTempo() const { return _internalTempo; }
 
 public:
 	int _numChanMusic;
@@ -225,6 +235,7 @@ private:
 	bool parseEvent(HSSong &song, TrackState *s);
 	void noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note, uint8 velo);
 
+	uint8 _partVolume[16];
 	uint8 _partPrograms[16];
 	uint8 _curCmd;
 
@@ -407,7 +418,7 @@ public:
 	static HSSoundSystem *open(SoundMacRes *res, Audio::Mixer *mixer);
 	static void close();
 
-	bool init(bool hiQuality, uint8 interpolationMode, bool output16bit);
+	bool init(bool hiQuality, uint8 interpolationMode, uint8 numChanSfx, bool output16bit);
 	void registerSamples(const uint16 *resList, bool registerOnly);
 	void releaseSamples();
 	int changeSystemVoices(int numChanMusicTotal, int numChanMusicPoly, int numChanSfx);
@@ -671,6 +682,7 @@ void HSSong::updateTempo() {
 HSMidiParser::HSMidiParser(HSLowLevelDriver *driver) : _driver(driver), _trackState(nullptr), _tracks(), _data(), _curCmd(0) {
 	_trackState = new TrackState[24]();
 	memset(_partPrograms, 0, sizeof(_partPrograms));
+	memset(_partVolume, 0, sizeof(_partVolume));
 }
 
 HSMidiParser::~HSMidiParser() {
@@ -678,6 +690,7 @@ HSMidiParser::~HSMidiParser() {
 }
 
 bool HSMidiParser::loadTracks(HSSong &song) {
+	memset(_partVolume, 0x7f, sizeof(_partVolume));
 	for (int i = 0; i < ARRAYSIZE(_partPrograms); ++i)
 		_partPrograms[i] = i;
 
@@ -760,7 +773,7 @@ bool HSMidiParser::nextTick(HSSong &song) {
 			s->status = 'R';
 			checkPos = false;
 		} else {
-			s->ticker -= song.tempo();
+			s->ticker -= song.getTempo();
 			if (s->ticker >= 0)
 				continue;
 		}
@@ -846,6 +859,8 @@ bool HSMidiParser::parseEvent(HSSong &song, TrackState *s) {
 
 	if (evt < 0xa0)
 		noteOnOff(song, s, chan, arg1, evt == 0x90 ? arg2 : 0);
+	else if (evt == 0xb0 && arg1 == 7)
+		_partVolume[chan] = arg2;
 	else if (evt == 0xc0 && (song._flags & 0x400))
 		s->program = _partPrograms[chan] = arg1;
 
@@ -866,7 +881,7 @@ void HSMidiParser::noteOnOff(HSSong &song, TrackState *s, uint8 chan, uint8 note
 		note += song._transpose;
 
 	if (velo)
-		_driver->noteOn(chan, prg, note, velo, 10000, s);
+		_driver->noteOn(chan, prg, note, _partVolume[chan] * velo / 0x7f, 10000, s);
 	else
 		_driver->noteOff(chan, note, s);
 }
@@ -1109,12 +1124,14 @@ int HSLowLevelDriver::cmd_playSoundEffect(va_list &arg) {
 	if (!vc || !vc->dataPtr || !_song._numChanSfx)
 		return 0;
 
-	HSSoundChannel *chan = &_chan[_song._numChanMusic];
+	HSSoundChannel *chan = nullptr;
 	int16 lowest = 32767;
 	for (int i = _song._numChanMusic; i < _song._numChanMusic + _song._numChanSfx; ++i) {
 		HSSoundChannel *c = &_chan[i];
-		if (c->status < 0)
+		if (c->status < 0) {
+			chan = c;
 			break;
+		}
 		if (c->status < lowest) {
 			chan = c;
 			lowest = c->status;
@@ -1295,16 +1312,18 @@ void HSLowLevelDriver::createTables() {
 	for (int i = 0; i < 16; ++i)
 		_chan[i].status = -1;
 
+	int sfxChanMult = 1;
+
 	// sample convert buffer
 	if (_sampleConvertBuffer) {
-		if (_song._convertUnitSize != _convertUnitSizeLast || _song._numChanSfx != _numChanSfxLast || _convertBufferNumUnits - _song._numChanSfx != _song._numChanMusic) {
+		if (_song._convertUnitSize != _convertUnitSizeLast || _song._numChanSfx != _numChanSfxLast || _convertBufferNumUnits - _song._numChanSfx * sfxChanMult != _song._numChanMusic) {
 			delete[] _sampleConvertBuffer;
 			_sampleConvertBuffer = nullptr;
 		}
 	}
 
-	if (!_sampleConvertBuffer || _convertBufferNumUnits - _song._numChanSfx != _song._numChanMusic) {
-		_convertBufferNumUnits = _song._numChanMusic + _song._numChanSfx;
+	if (!_sampleConvertBuffer || _convertBufferNumUnits - _song._numChanSfx * sfxChanMult != _song._numChanMusic) {
+		_convertBufferNumUnits = _song._numChanMusic + _song._numChanSfx * sfxChanMult;
 		_convertUnitSizeLast = _song._convertUnitSize;
 		_numChanSfxLast = _song._numChanSfx;
 		_sampleConvertBuffer = new uint8[(_convertBufferNumUnits << 8) + 64];
@@ -1813,7 +1832,7 @@ void HSLowLevelDriver::noteOn(uint8 part, uint8 prg, uint8 note, uint8 velo, uin
 		}
 	}
 
-	uint16 type = snd ? READ_BE_UINT16(snd) : 0;
+	uint16 type = READ_BE_UINT16(snd);
 	uint16 n = 0;
 	if (type == 1 || type == 2) {
 		uint16 numTypes = (type == 1) ? READ_BE_UINT16(snd + 2) : 0;
@@ -2054,7 +2073,7 @@ void HSSoundSystem::close() {
 	}
 }
 
-bool HSSoundSystem::init(bool hiQuality, uint8 interpolationMode, bool output16bit) {
+bool HSSoundSystem::init(bool hiQuality, uint8 interpolationMode, uint8 numChanSfx, bool output16bit) {
 	if (_ready)
 		return true;
 
@@ -2069,15 +2088,13 @@ bool HSSoundSystem::init(bool hiQuality, uint8 interpolationMode, bool output16b
 	_vblTask = new HSAudioStream::CallbackProc(this, &HSSoundSystem::vblTaskProc);
 	_voicestr->setVblCallback(_vblTask);
 
-	int numChanSfx = 1;
-
 	assert(interpolationMode < 3);
 
 	if (hiQuality) {
-		_driver->send(21, 7, 4, numChanSfx);
+		_driver->send(21, 8 - numChanSfx, 4, numChanSfx);
 		_driver->send(24, (interpolationMode << 8) + 22);
 	} else {
-		_driver->send(21, 4, 3, numChanSfx);
+		_driver->send(21, 4, 2 + numChanSfx, numChanSfx);
 		_driver->send(24, (interpolationMode << 8) + 11);
 	}
 
@@ -2623,18 +2640,18 @@ bool HSVolumeScaler::process(const ShStBuffer &src, uint8 *dst, uint16 para1, ui
 		para1 = 1;
 	if (!para2)
 		para2 = 1;
-	int f = 1 << para2;
 
 	const uint8 *s = src.ptr;
 	uint32 len = src.len - copySndHeader(s, dst);
 
 	for (uint32 i = 0; i < len; ++i) {
-		int16 a = ((int16)i - 128) * para1;
+		int16 a = (int16)*s++;
+		a = (a - 128) * para1;
 		if (a > 0)
-			a += f;
+			a += (para2 << 1);
 		else
-			a -= f;
-		a = CLIP<int16>(a / para2, -128, 127) - 128;
+			a -= (para2 << 1);
+		a = CLIP<int16>(a / para2, -128, 127) + 128;
 		*dst++ = (a & 0xff);
 	}
 
@@ -2754,8 +2771,8 @@ HalestormDriver::~HalestormDriver() {
 	_hs = nullptr;
 }
 
-bool HalestormDriver::init(bool hiQuality, InterpolationMode imode, bool output16bit) {
-	return _hs->init(hiQuality, (uint8)imode, output16bit);
+bool HalestormDriver::init(bool hiQuality, InterpolationMode imode, int numChanSfx, bool output16bit) {
+	return _hs->init(hiQuality, (uint8)imode, numChanSfx, output16bit);
 }
 
 void HalestormDriver::registerSamples(const uint16 *resList, bool registerOnly) {

@@ -57,7 +57,9 @@ enum MusicType {
 	MT_SEGACD,			// SegaCD
 	MT_GM,				// General MIDI
 	MT_MT32,			// MT-32
-	MT_GS				// Roland GS
+	MT_GS,				// Roland GS
+	MT_MT540,			// Casio MT-540
+	MT_CT460			// Casio CT-460 / CSM-1
 };
 
 /**
@@ -90,7 +92,8 @@ enum MidiDriverFlags {
 	MDT_MIDI        = 1 << 10,		// Real MIDI
 	MDT_PREFER_MT32 = 1 << 11,		// MT-32 output is preferred
 	MDT_PREFER_GM   = 1 << 12,		// GM output is preferred
-	MDT_PREFER_FLUID= 1 << 13		// FluidSynth driver is preferred
+	MDT_PREFER_FLUID= 1 << 13,		// FluidSynth driver is preferred
+	MDT_MACINTOSH	= 1 << 14
 };
 
 /**
@@ -114,11 +117,15 @@ public:
 	static const byte MIDI_CONTROLLER_MODULATION = 0x01;
 	static const byte MIDI_CONTROLLER_DATA_ENTRY_MSB = 0x06;
 	static const byte MIDI_CONTROLLER_VOLUME = 0x07;
+	static const byte MIDI_CONTROLLER_BALANCE = 0x08;
 	static const byte MIDI_CONTROLLER_PANNING = 0x0A;
 	static const byte MIDI_CONTROLLER_EXPRESSION = 0x0B;
 	static const byte MIDI_CONTROLLER_BANK_SELECT_LSB = 0x20;
 	static const byte MIDI_CONTROLLER_DATA_ENTRY_LSB = 0x26;
 	static const byte MIDI_CONTROLLER_SUSTAIN = 0x40;
+	static const byte MIDI_CONTROLLER_PORTAMENTO = 0x41;
+	static const byte MIDI_CONTROLLER_SOSTENUTO = 0x42;
+	static const byte MIDI_CONTROLLER_SOFT = 0x43;
 	static const byte MIDI_CONTROLLER_REVERB = 0x5B;
 	static const byte MIDI_CONTROLLER_CHORUS = 0x5D;
 	static const byte MIDI_CONTROLLER_RPN_LSB = 0x64;
@@ -244,8 +251,11 @@ public:
 	 * A driver implementation might need time to prepare playback of
 	 * a track. Use this function to check if the driver is ready to
 	 * receive MIDI events.
+	 *
+	 * @param source Check if the driver is ready to receive events from this
+	 * specific source. Specify -1 to check readiness regardless of source.
 	 */
-	virtual bool isReady() { return true; }
+	virtual bool isReady(int8 source = -1) { return true; }
 
 protected:
 
@@ -432,7 +442,21 @@ public:
 		 * MILES_VERSION_3: behavior matches Miles Sound System version 3 and
 		 * higher. GM devices are initialized according to the GM standard.
 		 */
-		PROP_MILES_VERSION = 9
+		PROP_MILES_VERSION = 9,
+		/**
+		 * Set this property to make the OPL driver ignore note off events for
+		 * rhythm instruments when rhythm mode is activated.
+		 * MIDI data should contain a note off for each note on. For rhythm
+		 * instruments, a note off typically has no effect, because the note
+		 * plays for a fixed amount of time. For the OPL rhythm instruments a
+		 * note off will cut off the note. With this option, this behavior can
+		 * be prevented.
+		 * Currently only the AdLib multisource driver supports this option.
+		 *
+		 * False: note offs for OPL rhythm mode instruments are processed.
+		 * True: note offs for OPL rhythm mode instruments are ignored.
+		 */
+		PROP_OPL_RHYTHM_MODE_IGNORE_NOTE_OFF = 10
 	};
 
 	/**
@@ -474,8 +498,6 @@ public:
 	 * Send a General MIDI reset sysEx to the midi device.
 	 */
 	void sendGMReset();
-
-	virtual void sysEx_customInstrument(byte channel, uint32 type, const byte *instr) { }
 
 	// Timing functions - MidiDriver now operates timers
 	virtual void setTimerCallback(void *timer_param, Common::TimerManager::TimerProc timer_proc) = 0;
@@ -525,7 +547,7 @@ public:
 	virtual void allNotesOff() { controlChange(MidiDriver::MIDI_CONTROLLER_ALL_NOTES_OFF, 0); }
 
 	// SysEx messages
-	virtual void sysEx_customInstrument(uint32 type, const byte *instr) = 0;
+	virtual void sysEx_customInstrument(uint32 type, const byte *instr, uint32 dataSize) = 0;
 };
 /** @} */
 #endif

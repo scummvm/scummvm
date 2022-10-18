@@ -318,6 +318,14 @@ bool TabWidget::handleKeyDown(Common::KeyState state) {
 	return Widget::handleKeyDown(state);
 }
 
+void TabWidget::handleMouseWheel(int x, int y, int direction) {
+	if (direction == 1) {
+		adjustTabs(kTabForwards);
+	} else {
+		adjustTabs(kTabBackwards);
+	}
+}
+
 void TabWidget::adjustTabs(int value) {
 	// Determine which tab is next
 	int tabID = _activeTab + value;

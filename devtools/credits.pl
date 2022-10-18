@@ -639,6 +639,10 @@ begin_credits("Credits");
 				add_person("Chris Warren-Smith", "", "");
 			end_section();
 
+			begin_section("Webassembly / Emscripten");
+				add_person("Christian K&uuml;ndig", "chkuendig", "");
+			end_section();
+
 			begin_section("WebOS");
 				add_person("Klaus Reimer", "kayahr", "");
 			end_section();
@@ -931,6 +935,25 @@ begin_credits("Credits");
 				add_person("Jean Marc Gimenez", "", "ScummVM logo");
 				add_person("David Jensen", "Tyst", "SVG logo conversion");
 				add_person("", "Raina", "ScummVM forum buttons");
+			end_persons();
+		end_section();
+
+		begin_section("Icons pack", "icons_pack");
+			begin_persons();
+				add_person("David Calvert", "davidcalvertfr", "");
+				add_person("Eugene Sandulenko", "sev", "");
+				add_person("J Moretti", "", "");
+				add_person("Jennifer McMurray", "", "");
+				add_person("Lothar Serra Mari", "rootfather", "");
+				add_person("Oleg Ermakov", "epushiron", "");
+				add_person("Olly Dean", "olly", "");
+				add_person("Stefan Philippsen", "", "");
+				add_person("", "Canuma", "");
+				add_person("", "SupSuper", "");
+				add_person("", "Thunderforge", "");
+				add_person("", "neuromancer", "");
+				add_person("", "nightm4re94", "");
+				add_person("", "trembyle", "");
 			end_persons();
 		end_section();
 

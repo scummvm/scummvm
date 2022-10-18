@@ -25,6 +25,7 @@
 #include "common/md5.h"
 #include "common/str-array.h"
 #include "common/util.h"
+#include "common/punycode.h"
 #include "ags/detection.h"
 #include "ags/detection_tables.h"
 
@@ -74,7 +75,7 @@ AGSMetaEngineDetection::AGSMetaEngineDetection() : AdvancedMetaEngineDetection(A
 	        sizeof(AGS::AGSGameDescription), AGS::GAME_NAMES) {
 }
 
-DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) {
+DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	FileMap allFiles;
 
 	if (fslist.empty())
@@ -84,7 +85,7 @@ DetectedGames AGSMetaEngineDetection::detectGames(const Common::FSList &fslist) 
 	composeFileHashMap(allFiles, fslist, (_maxScanDepth == 0 ? 1 : _maxScanDepth));
 
 	// Run the detector on this
-	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "");
+	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
 
 	cleanupPirated(matches);
 
@@ -152,8 +153,9 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			// Neither, so move on
 			continue;
 
+		filename = Common::punycode_encodefilename(filename);
 		Common::File f;
-		if (!f.open(allFiles[filename]))
+		if (!allFiles.contains(filename) || !f.open(allFiles[filename]))
 			continue;
 
 		if (AGS3::isAGSFile(f)) {

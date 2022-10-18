@@ -161,6 +161,10 @@ void CGEEngine::init() {
 	_offUseCount = atoi(_text->getText(kOffUseCount));
 
 	_startGameSlot = ConfMan.hasKey("save_slot") ? ConfMan.getInt("save_slot") : -1;
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfMan.getBool("tts_enabled"));
 }
 
 void CGEEngine::deinit() {

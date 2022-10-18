@@ -56,7 +56,6 @@
 #include "ags/engine/ac/global_overlay.h"
 #include "ags/engine/ac/global_palette.h"
 #include "ags/engine/ac/global_parser.h"
-#include "ags/engine/ac/global_record.h"
 #include "ags/engine/ac/global_region.h"
 #include "ags/engine/ac/global_room.h"
 #include "ags/engine/ac/global_slider.h"
@@ -718,11 +717,13 @@ RuntimeScriptValue Sc_GetWalkableAreaAtScreen(const RuntimeScriptValue *params, 
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkableArea(const RuntimeScriptValue *params, int32_t param_count) {
+	(void)params; (void)param_count;
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkable);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
 
 RuntimeScriptValue Sc_GetDrawingSurfaceForWalkbehind(const RuntimeScriptValue *params, int32_t param_count) {
+	(void)params; (void)param_count;
 	ScriptDrawingSurface *ret_obj = Room_GetDrawingSurfaceForMask(kRoomAreaWalkBehind);
 	return RuntimeScriptValue().SetDynamicObject(ret_obj, ret_obj);
 }
@@ -1023,7 +1024,7 @@ RuntimeScriptValue Sc_PlayAmbientSound(const RuntimeScriptValue *params, int32_t
 
 // void (int numb,int playflags)
 RuntimeScriptValue Sc_play_flc_file(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_PINT2(play_flc_file);
+	API_SCALL_VOID_PINT2(PlayFlic);
 }
 
 // void  (char *filename)
@@ -1058,7 +1059,7 @@ RuntimeScriptValue Sc_PlaySoundEx(const RuntimeScriptValue *params, int32_t para
 
 // void (const char* name, int skip, int flags)
 RuntimeScriptValue Sc_scrPlayVideo(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_VOID_POBJ_PINT2(scrPlayVideo, const char);
+	API_SCALL_VOID_POBJ_PINT2(PlayVideo, const char);
 }
 
 // void (int dialog)
@@ -1880,6 +1881,11 @@ RuntimeScriptValue Sc_WaitMouseKey(const RuntimeScriptValue *params, int32_t par
 	API_SCALL_INT_PINT(WaitMouseKey);
 }
 
+// int (int input_flags, int nloops)
+RuntimeScriptValue Sc_WaitInput(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_INT_PINT2(WaitInput);
+}
+
 RuntimeScriptValue Sc_SkipWait(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_VOID(SkipWait);
 }
@@ -2256,6 +2262,7 @@ void RegisterGlobalAPI() {
 	ccAddExternalStaticFunction("WaitKey",                  Sc_WaitKey);
 	ccAddExternalStaticFunction("WaitMouse",                Sc_WaitMouse);
 	ccAddExternalStaticFunction("WaitMouseKey",             Sc_WaitMouseKey);
+	ccAddExternalStaticFunction("WaitInput",                Sc_WaitInput);
 	ccAddExternalStaticFunction("SkipWait",                 Sc_SkipWait);
 }
 

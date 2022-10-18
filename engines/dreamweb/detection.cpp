@@ -54,7 +54,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -64,7 +66,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Use bright palette mode"),
 			_s("Display graphics using the game's bright palette"),
 			"bright_palette",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -75,7 +79,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Enable Text to Speech for Objects, Options, and the Bible Quote"),
 			_s("Use TTS to read the descriptions (if TTS is available)"),
 			"tts_enabled_objects",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -85,7 +91,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Enable Text to Speech for Subtitles"),
 			_s("Use TTS to read the subtitles (if TTS is available)"),
 			"tts_enabled_speech",
-			false
+			false,
+			0,
+			0
 		}
 	},
 #endif
@@ -102,11 +110,11 @@ public:
 		_guiOptions = GUIO1(GUIO_NOMIDI);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "dreamweb";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "DreamWeb";
 	}
 

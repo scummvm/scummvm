@@ -106,23 +106,23 @@ void OpenGlTexture::setLevelCount(uint32 count) {
 		// GLES2 does not allow setting the max provided mipmap level.
 		// It expects all the levels to be provided, which is not the case in TLJ.
 		// FIXME: Enable mipmapping on GLES2
-		if (OpenGLContext.type != OpenGL::kOGLContextGLES2) {
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
+		if (OpenGLContext.type != OpenGL::kContextGLES2) {
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAX_LEVEL, count - 1);
 
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
-			glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_NEAREST);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 		}
 #endif
 
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
-		glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_MIRRORED_REPEAT);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_MIRRORED_REPEAT);
 	}
 }
 
 void OpenGlTexture::addLevel(uint32 level, const Graphics::Surface *surface, const byte *palette) {
 	assert(level < _levelCount);
 
-	if (level == 0 || OpenGLContext.type != OpenGL::kOGLContextGLES2) {
+	if (level == 0 || OpenGLContext.type != OpenGL::kContextGLES2) {
 		updateLevel(level, surface, palette);
 	}
 }

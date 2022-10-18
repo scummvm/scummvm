@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -111,7 +112,7 @@ void Room50::stop_cigar() {
 	_G(room)->set_timer_status(0, TIMER_STOP);
 	_G(det)->del_static_ani(0);
 	_G(atds)->set_ats_str(328, 1, ATS_DATA);
-	_G(det)->stop_detail(0);
+	_G(det)->stopDetail(0);
 	_G(gameState).R50Zigarre = true;
 }
 
@@ -126,8 +127,8 @@ void Room50::calc_wasser() {
 void Room50::stop_page() {
 	_G(room)->set_timer_status(3, TIMER_STOP);
 	_G(det)->del_static_ani(3);
-	_G(det)->stop_detail(3);
-	_G(det)->stop_detail(4);
+	_G(det)->stopDetail(3);
+	_G(det)->stopDetail(4);
 }
 
 void Room50::go_page() {
@@ -169,7 +170,7 @@ int16 Room50::use_gutschein() {
 			_G(room)->set_timer_status(1, TIMER_STOP);
 			_wasser = false;
 			stop_page();
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			startAniBlock(2, ABLOCK36);
 			aad_page(274, 8);
 		} else {
@@ -199,7 +200,7 @@ int16 Room50::use_gum() {
 		goAutoXy(112, 57, P_HOWARD, ANI_WAIT);
 
 		setPersonSpr(P_LEFT, P_HOWARD);
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		hide_person();
 		startSetAILWait(2, 1, ANI_FRONT);
 		_G(det)->showStaticSpr(4);
@@ -254,13 +255,13 @@ void Room50::setup_func() {
 
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 50) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 		int16 x, y;
 		if (ch_x < 72) {
 			x = 1;
 			y = 64;
-		} else if (ch_x < 275 && _G(spieler_vector)[P_CHEWY].Xypos[1] > 72) {
+		} else if (ch_x < 275 && _G(moveState)[P_CHEWY].Xypos[1] > 72) {
 			x = 143;
 			y = 57;
 		} else {

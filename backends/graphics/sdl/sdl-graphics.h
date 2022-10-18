@@ -30,9 +30,7 @@
 
 class SdlEventSource;
 
-#ifndef __SYMBIAN32__
 #define USE_OSD	1
-#endif
 
 /**
  * Base class for a SDL based graphics manager.
@@ -93,7 +91,7 @@ public:
 	 */
 	virtual bool notifyMousePosition(Common::Point &mouse);
 
-	bool showMouse(bool visible) override;
+	virtual bool showMouse(bool visible) override;
 	bool lockMouse(bool lock) override;
 
 	virtual bool saveScreenshot(const Common::String &filename) const { return false; }
@@ -175,6 +173,8 @@ protected:
 		}
 #endif
 	}
+
+	virtual void showSystemMouseCursor(bool visible);
 
 	void setSystemMousePosition(const int x, const int y) override;
 

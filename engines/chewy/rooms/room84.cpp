@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -38,35 +39,33 @@ void Room84::entry() {
 	_G(zoom_mov_fak) = 3;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
 	_G(spieler_mi)[P_NICHELLE].Mode = true;
-	_G(gameState).R84GoonsPresent = false;
+	_G(gameState).R84GoonsPresent = !_G(gameState).R88UsedMonkey;
 	_flag = false;
-	g_engine->_sound->playSound(0, 0);
+	_G(det)->playSound(0, 0);
 
 	if (_G(gameState).R88UsedMonkey) {
 		_G(det)->del_static_ani(3);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
-		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->set_ats_str(485, 1, ATS_DATA);	
+		_G(atds)->setControlBit(478, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(479, ATS_ACTIVE_BIT);
+		_G(atds)->set_ats_str(485, 1, ATS_DATA);
+
+		_G(det)->showStaticSpr(7);
+		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT);
+		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->startDetail(7, 255, false);
-		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(504, ATS_ACTIVE_BIT);
 		_G(gameState).room_e_obj[124].Attribut = 255;
 		_G(atds)->set_ats_str(485, 2, ATS_DATA);
 	}
 
-	if (_G(gameState).r88DestRoom == 84) {
-		_G(det)->showStaticSpr(7);
-		_G(atds)->delControlBit(481, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->delControlBit(482, ATS_ACTIVE_BIT, ATS_DATA);
-	}
-
 	if (_G(gameState).flags32_40) {
-		_G(atds)->setControlBit(481, ATS_ACTIVE_BIT, ATS_DATA);
-		_G(atds)->setControlBit(482, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(481, ATS_ACTIVE_BIT);
+		_G(atds)->setControlBit(482, ATS_ACTIVE_BIT);
 		_G(atds)->set_ats_str(485, 1, ATS_DATA);		
 		_G(gameState).room_e_obj[124].Attribut = EXIT_TOP;
 	}
@@ -152,7 +151,7 @@ void Room84::setup_func() {
 		showCur();
 	}
 
-	const int posX = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int posX = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	if (posX > 610) {
 		howDestX = nicDestX = 610;
@@ -176,7 +175,7 @@ void Room84::talk1() {
 	_G(flags).NoScroll = true;
 	setPersonSpr(P_LEFT, P_CHEWY);
 	auto_scroll(150, 0);
-	startAdsWait(22);
+	startDialogCloseupWait(22);
 	_G(flags).NoScroll = false;
 }
 
@@ -185,14 +184,14 @@ void Room84::talk2() {
 }
 
 int Room84::proc4() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
 	autoMove(5, P_CHEWY);
 
 	if (_G(gameState).flags32_10) {
-		_G(det)->stop_detail(7);
+		_G(det)->stopDetail(7);
 		startSetAILWait(8, 1, ANI_FRONT);
 	} else {
 		_G(gameState)._personRoomNr[P_NICHELLE] = 88;

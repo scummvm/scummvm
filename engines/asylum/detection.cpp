@@ -55,11 +55,11 @@ public:
 		return detectGameFilebased(allFiles, Asylum::fileBasedFallback);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "asylum";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Sanitarium";
 	}
 

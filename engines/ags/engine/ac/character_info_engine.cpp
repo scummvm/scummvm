@@ -28,6 +28,7 @@
 #include "ags/engine/ac/global_character.h"
 #include "ags/engine/ac/global_game.h"
 #include "ags/engine/ac/math.h"
+#include "ags/engine/ac/object.h"
 #include "ags/engine/ac/view_frame.h"
 #include "ags/engine/debugging/debug_log.h"
 #include "ags/shared/game/room_struct.h"
@@ -63,7 +64,7 @@ int CharacterInfo::get_blocking_bottom() {
 	return y + 3;
 }
 
-void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, int &numSheep, int *followingAsSheep) {
+void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, std::vector<int> &followingAsSheep) {
 	int res;
 
 	if (on != 1) return;
@@ -77,7 +78,7 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, in
 
 	// Fixup character's view when possible
 	if (view >= 0 &&
-		(loop >= _GP(views)[view].numLoops || frame >= _GP(views)[view].loops[loop].numFrames)) {
+		(loop >= _GP(views)[view].numLoops || _GP(views)[view].loops[loop].numFrames == 0)) {
 		for (loop = 0;
 			(loop < _GP(views)[view].numLoops) && (_GP(views)[view].loops[loop].numFrames == 0); ++loop) {
 		}
@@ -102,7 +103,7 @@ void CharacterInfo::UpdateMoveAndAnim(int &char_index, CharacterExtras *chex, in
 		return;                   //  must be careful not to screw things up
 	}
 
-	update_character_follower(char_index, numSheep, followingAsSheep, doing_nothing);
+	update_character_follower(char_index, followingAsSheep, doing_nothing);
 
 	update_character_idle(chex, doing_nothing);
 
@@ -151,6 +152,7 @@ int CharacterInfo::update_character_walking(CharacterExtras *chex) {
 			loop = turnlooporder[wantloop];
 			if (frame >= _GP(views)[view].loops[loop].numFrames)
 				frame = 0; // AVD: make sure the loop always has a valid frame
+			if (frame >= _GP(views)[view].loops[loop].numFrames) frame = 0; // AVD: make sure the loop always has a valid frame
 			walking -= TURNING_AROUND;
 			// if still turning, wait for next frame
 			if (walking % TURNING_BACKWARDS >= TURNING_AROUND)
@@ -289,52 +291,22 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 			//continue;
 			return RETURN_CONTINUE;
 		} else {
-			int oldframe = frame;
-			if (animating & CHANIM_BACKWARDS) {
-				frame--;
-				if (frame < 0) {
-					// if the previous loop is a Run Next Loop one, go back to it
-					if ((loop > 0) &&
-					        (_GP(views)[view].loops[loop - 1].RunNextLoop())) {
+			// Normal view animation
+			const int oldframe = frame;
 
-						loop--;
-						frame = _GP(views)[view].loops[loop].numFrames - 1;
-					} else if (animating & CHANIM_REPEAT) {
-
-						frame = _GP(views)[view].loops[loop].numFrames - 1;
-
-						while (_GP(views)[view].loops[loop].RunNextLoop()) {
-							loop++;
-							frame = _GP(views)[view].loops[loop].numFrames - 1;
-						}
-					} else {
-						frame++;
-						animating = 0;
-					}
-				}
-			} else
-				frame++;
-
+			bool done_anim = false;
 			if ((aa == _G(char_speaking)) &&
-			        (_GP(play).speech_in_post_state ||
-			         ((!_GP(play).speech_has_voice) &&
-			          (_GP(play).close_mouth_speech_time > 0) &&
-			          (_GP(play).messagetime < _GP(play).close_mouth_speech_time)))) {
+				(_GP(play).speech_in_post_state ||
+				((!_GP(play).speech_has_voice) &&
+					(_GP(play).close_mouth_speech_time > 0) &&
+					(_GP(play).messagetime < _GP(play).close_mouth_speech_time)))) {
 				// finished talking - stop animation
-				animating = 0;
+				done_anim = true;
 				frame = 0;
-			}
-
-			if (frame >= _GP(views)[view].loops[loop].numFrames) {
-
-				if (_GP(views)[view].loops[loop].RunNextLoop()) {
-					if (loop + 1 >= _GP(views)[view].numLoops)
-						quit("!Animating character tried to overrun last loop in view");
-					loop++;
-					frame = 0;
-				} else if ((animating & CHANIM_REPEAT) == 0) {
-					animating = 0;
-					frame--;
+			} else {
+				if (!CycleViewAnim(view, loop, frame, (animating & CHANIM_BACKWARDS) == 0,
+					(animating & CHANIM_REPEAT) ? ANIM_REPEAT : ANIM_ONCE)) {
+					done_anim = true; // finished animating
 					// end of idle anim
 					if (idleleft < 0) {
 						// constant anim, reset (need this cos animating==0)
@@ -346,39 +318,33 @@ int CharacterInfo::update_character_animating(int &aa, int &doing_nothing) {
 							idleleft = idletime;
 						}
 					}
-				} else {
-					frame = 0;
-					// if it's a multi-loop animation, go back to start
-					if (_GP(play).no_multiloop_repeat == 0) {
-						while ((loop > 0) &&
-						        (_GP(views)[view].loops[loop - 1].RunNextLoop()))
-							loop--;
-					}
 				}
 			}
+
 			wait = _GP(views)[view].loops[loop].frames[frame].speed;
-			// idle anim doesn't have speed stored cos animating==0
+			// idle anim doesn't have speed stored cos animating==0 (TODO: investigate why?)
 			if (idleleft < 0)
-				wait += animspeed + 5;
+				wait += idle_anim_speed;
 			else
 				wait += (animating >> 8) & 0x00ff;
 
 			if (frame != oldframe)
 				CheckViewFrameForCharacter(this);
+
+			if (done_anim)
+				stop_character_anim(this);
 		}
 	}
 
 	return 0;
 }
 
-void CharacterInfo::update_character_follower(int &aa, int &numSheep, int *followingAsSheep, int &doing_nothing) {
+void CharacterInfo::update_character_follower(int &aa, std::vector<int> &followingAsSheep, int &doing_nothing) {
 	if ((following >= 0) && (followinfo == FOLLOW_ALWAYSONTOP)) {
 		// an always-on-top follow
-		if (numSheep >= MAX_SHEEP)
-			quit("too many sheep");
-		followingAsSheep[numSheep] = aa;
-		numSheep++;
+		followingAsSheep.push_back(aa);
 	}
+
 	// not moving, but should be following another character
 	else if ((following >= 0) && (doing_nothing == 1)) {
 		short distaway = (followinfo >> 8) & 0x00ff;
@@ -484,10 +450,9 @@ void CharacterInfo::update_character_idle(CharacterExtras *chex, int &doing_noth
 			else if (useloop >= maxLoops)
 				useloop = 0;
 
-			animate_character(this, useloop,
-			                  animspeed + 5, (idletime == 0) ? 1 : 0, 1);
+			animate_character(this, useloop, idle_anim_speed, (idletime == 0) ? 1 : 0, 1);
 
-			// don't set Animating while the idle anim plays
+			// don't set Animating while the idle anim plays (TODO: investigate why?)
 			animating = 0;
 		}
 	}  // end do idle animation

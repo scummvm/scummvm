@@ -54,8 +54,6 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 #endif
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth);
 
-static void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height);
-
 struct StripTable {
 	int offsets[160];
 	int run[160];
@@ -65,9 +63,14 @@ struct StripTable {
 };
 
 enum {
-	kScrolltime = 500,  // ms scrolling is supposed to take
-	kPictureDelay = 20,
-	kFadeDelay = 4 // 1/4th of a jiffie
+	kNoDelay = 0,
+	// This should actually be 3 in all games using it;
+	// every one of those games seems to accumulate some
+	// kind of internal random delay while performing
+	// the screen effect (like sound interrupts running,
+	// forcing the SCUMM timer to a lower frequency).
+	// I have added an extra quarter frame to emulate that.
+	kPictureDelay = 4
 };
 
 #define NUM_SHAKE_POSITIONS 8
@@ -82,11 +85,9 @@ static const int8 shake_positions[NUM_SHAKE_POSITIONS] = {
  * that the screen has 40 vertical strips (i.e. 320 pixel), and 25 horizontal
  * strips (i.e. 200 pixel). There is a hack in transitionEffect that
  * makes it work correctly in games which have a different screen height
- * (for example, 240 pixel), but nothing is done regarding the width, so this
- * code won't work correctly in COMI. Also, the number of iteration depends
- * on min(vertStrips, horizStrips}. So the 13 is derived from 25/2, rounded up.
- * And the 25 = min(25,40). Hence for Zak256 instead of 13 and 25, the values
- * 15 and 30 should be used, and for COMI probably 30 and 60.
+ * (for example, 240 pixel), but nothing is done regarding the width.
+ * The number of iterations is hardcoded from version 3 up to 7.
+ * Version 8 doesn't have any of these effects at all.
  */
 struct TransitionEffect {
 	byte numOfIterations;
@@ -241,6 +242,15 @@ GdiPCEngine::~GdiPCEngine() {
 
 GdiV1::GdiV1(ScummEngine *vm) : Gdi(vm) {
 	memset(&_V1, 0, sizeof(_V1));
+}
+
+void GdiV1::setRenderModeColorMap(const byte *map) {
+	_colorMap = map;
+}
+
+byte GdiV1::remapColorToRenderMode(byte col) const {
+	assert(_colorMap);
+	return _colorMap[col];
 }
 
 GdiV2::GdiV2(ScummEngine *vm) : Gdi(vm) {
@@ -561,9 +571,12 @@ void ScummEngine_v6::drawDirtyScreenParts() {
 	// Call the original method.
 	ScummEngine::drawDirtyScreenParts();
 
-	// Remove all blasted objects/text again.
-	removeBlastTexts();
-	removeBlastObjects();
+	// Remove all blasted objects/text again, except
+	// for v7-8 which do that at a later time.
+	if (_game.version < 7) {
+		removeBlastTexts();
+		removeBlastObjects();
+	}
 }
 
 /**
@@ -617,6 +630,13 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	assert(top >= 0 && bottom <= vs->h);
 	assert(x >= 0 && width <= vs->pitch);
 	assert(_textSurface.getPixels());
+
+	// Some extra vertical alignment for certain render modes. It matters for MI1EGA. The dithering patterns require the alignment,
+	// otherwise there will be visible glitches. It can be found in the original interpreters.
+	int align = (_game.version > 2 && (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderHercG || _renderMode == Common::kRenderHercA)) ? 4 : (_enableEGADithering ? 2 : 1);
+	top &= ~(align - 1);
+	if (bottom & (align - 1))
+		bottom = (bottom + align) & ~(align - 1);
 
 	// Perform some clipping
 	if (width > vs->w - x)
@@ -733,29 +753,12 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 		src = _compositeBuf;
 		pitch = width * vs->format.bytesPerPixel;
 
-		if (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG) {
-			ditherHerc(_compositeBuf, _herculesBuf, width, &x, &y, &width, &height);
-
-			src = _herculesBuf + x + y * kHercWidth;
-			pitch = kHercWidth;
-
-			// center image on the screen
-			x += (kHercWidth - _screenWidth * 2) / 2;	// (720 - 320*2)/2 = 40
-		} else if (_useCJKMode && m == 2) {
-			pitch *= m;
-			x *= m;
-			y *= m;
-			width *= m;
-			height *= m;
-		} else {
-			if (_renderMode == Common::kRenderCGA)
-				ditherCGA(_compositeBuf, width, x, y, width, height);
-
+		if (_game.platform == Common::kPlatformNES) {
 			// HACK: This is dirty hack which renders narrow NES rooms centered
 			// NES can address negative number strips and that poses problem for
 			// our code. So instead of adding zillions of fixes and potentially
 			// breaking other games, we shift it right at the rendering stage.
-			if ((_game.platform == Common::kPlatformNES) && (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen))) {
+			if (((_NESStartStrip > 0) && (vs->number == kMainVirtScreen)) || (vs->number == kTextVirtScreen)) {
 				x += 16;
 				while (x + width >= _screenWidth)
 					width -= 16;
@@ -772,7 +775,18 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 					_system->copyRectToScreen(blackbuf, 16, 0, 0, 16, 240); // Fix left strip
 				}
 			}
-
+		} else if (_useCJKMode && m == 2) {
+			pitch *= m;
+			x *= m;
+			y *= m;
+			width *= m;
+			height *= m;
+		} else if (_enableEGADithering) {
+			// EGA mode for certain VGA versions (MI2, LOOM Talkie)
+			src = ditherVGAtoEGA(pitch, x, y, width, height);
+		} else if (_game.platform == Common::kPlatformDOS && _game.version < 5) {
+			// CGA and Hercules modes for MM/ZAK v1/v2, INDY3, LOOM, MI1EGA
+			src = postProcessDOSGraphics(vs, pitch, x, y, width, height);
 		}
 	}
 
@@ -780,81 +794,208 @@ void ScummEngine::drawStripToScreen(VirtScreen *vs, int x, int width, int top, i
 	_system->copyRectToScreen(src, pitch, x, y, width, height);
 }
 
-// CGA
-// indy3 loom maniac monkey1 zak
-//
-// Herc (720x350)
-// maniac monkey1 zak
-//
-// EGA
-// monkey2 loom maniac monkey1 atlantis indy3 zak loomcd
+const byte *ScummEngine::postProcessDOSGraphics(VirtScreen *vs, int &pitch, int &x, int &y, int &width, int &height) const {
+	static const byte v2VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xF, 0x5, 0x5, 0x5, 0xA, 0xA, 0xF, 0xF };
+	static const byte v2TxtColMap[] =	{ 0x0, 0xF, 0xA, 0x5, 0xA, 0x5, 0x5, 0xF, 0xA, 0xA, 0xA, 0xA, 0xA, 0x5, 0x5, 0xF };
+	static const byte mmv1VrbColMap[] =	{ 0x0, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF, 0xA, 0x5, 0x5, 0x5, 0xA, 0xA, 0xA, 0xF };
+	static const byte v2MainColMap[] =	{ 0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0xF, 0xC, 0x7, 0xD, 0x5, 0xE, 0xB, 0xD, 0xF };
 
-static const byte cgaDither[2][2][16] = {
-	{{0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 3, 1, 3, 2, 1, 3},
-	 {0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3}},
-	{{0, 0, 1, 1, 0, 2, 2, 3, 0, 3, 1, 1, 3, 3, 1, 3},
-	 {0, 1, 0, 1, 2, 2, 0, 0, 3, 1, 1, 1, 3, 2, 1, 3}}};
+	static const byte v3MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x8, 0xA, 0x2, 0x3, 0xC, 0x7, 0xD, 0x5, 0xF, 0xB, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x2, 0xA, 0x8, 0xC, 0x3, 0xD, 0x5, 0x5, 0xF, 0xE, 0x5, 0xF
+	};
 
-// CGA dithers 4x4 square with direct substitutes
-// Odd lines have colors swapped, so there will be checkered patterns.
-// But apparently there is a mistake for 10th color.
-void ScummEngine::ditherCGA(byte *dst, int dstPitch, int x, int y, int width, int height) const {
-	byte *ptr;
-	int idx1, idx2;
+	static const byte v4MainColMap[] =	{
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0x7, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF,
+		0x0, 0x4, 0x1, 0x5, 0x2, 0xA, 0x2, 0x3, 0x0, 0x5, 0x5, 0x7, 0xF, 0xE, 0x5, 0xF, 0x0, 0x1, 0x4, 0x5, 0x8, 0xA, 0x8, 0xC, 0x0, 0xD, 0x5, 0xD, 0xF, 0xB, 0x5, 0xF
+	};
 
-	for (int y1 = 0; y1 < height; y1++) {
-		ptr = dst + y1 * dstPitch;
+	static const byte hrcTableV4[32] = {
+		0x00, 0x08, 0xAA, 0xBB, 0x55, 0x66, 0x99, 0x7F, 0x11, 0x55, 0x77, 0xEE, 0xAA, 0xEE, 0xFF, 0xFF,
+		0x00, 0x80, 0xAA, 0xDD, 0x00, 0x99, 0x66, 0xF7, 0x44, 0xAA, 0xDD, 0x77, 0xFF, 0xBB, 0xBB, 0xFF
+	};
 
-		if (_game.version == 2)
-			idx1 = 0;
-		else
-			idx1 = (y + y1) % 2;
+	static const byte *mainColMap[] = { nullptr, nullptr, v2MainColMap, v3MainColMap, v4MainColMap };
 
-		for (int x1 = 0; x1 < width; x1++) {
-			idx2 = (x + x1) % 2;
-			*ptr = cgaDither[idx1][idx2][*ptr & 0xF];
-			ptr++;
+	byte tmpTxtColMap[16];
+	for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
+		tmpTxtColMap[i] = mmv1VrbColMap[_gdi->remapColorToRenderMode(i)];
+
+	byte *res = _compositeBuf;
+	byte *dst = _compositeBuf;
+	const byte *src = res;
+	bool renderHerc = (_renderMode == Common::kRenderHercA || _renderMode == Common::kRenderHercG);
+	bool renderV1 = (_game.version == 1);
+	bool renderV3 = _game.version > 2;
+
+	if (!renderV1 && !renderHerc && _renderMode != Common::kRenderCGA)
+		return res;
+
+	const byte *colMap = (_game.id == GID_ZAK || _game.version == 2) ? ((vs->number == kVerbVirtScreen || renderHerc) ? v2VrbColMap : v2TxtColMap) : (vs->number == kVerbVirtScreen ? mmv1VrbColMap : tmpTxtColMap);
+	const byte *colMap2 = mainColMap[_game.version];
+
+	// For LOOM and INDY3, CGA gets dithered as 2x2 squares, for MI1EGA as 2x4 squares. Odd lines have the colors swapped, so there will be checkered patterns.
+	uint8 lnMod = (_game.version > 3 && !renderHerc) ? 0x40 : 0x20;
+	uint8 lnIdx = renderV3 ? ((y & ((lnMod >> 4) - 1)) << 4) : 0;
+
+	if (_renderMode == Common::kRenderCGA || _renderMode == Common::kRenderCGAComp) {
+		if (renderV3 || vs->number == kMainVirtScreen) {
+			for (int h = height; h; --h) {
+				for (int w = width >> 1; w; --w) {
+					byte c = renderV1 ? *src : (colMap2[src[0] + lnIdx] & 0x0C) | (colMap2[src[1] + lnIdx] & 0x03);
+					*dst++ = (c >> 2) & 3;
+					*dst++ = c & 3;
+					src += 2;
+				}
+				if (renderV3)
+					lnIdx = (lnIdx + 0x10) % lnMod;
+			}
+		} else {
+			for (int h = height; h; --h) {
+				for (int w = width >> 1; w; --w) {
+					*dst++ = (colMap[*src++] >> 2) & 3;
+					*dst++ = colMap[*src++] & 3;
+				}
+			}
+		}
+
+	} else if (renderHerc || _renderMode == Common::kRenderCGA_BW) {
+		// The monochrome rendering is very similiar for Hercules and CGA b/w. For Hercules we have to do some corrections to fit into the 350 pixels height.
+		// For Hercules V1/2, the text and verb vs are rendered in normal height, only the main vs gets scaled by leaving out every other line. Hercules V4
+		// instead scales everything in a 4-to-7 lines ratio. And for all versions, we center the image horizontally within the 720 pixels width.
+		// For CGA b/w the origial resolution is 640x200, so we just scale that to our 640x400 by repeating each line.
+		pitch = renderHerc ? kHercWidth : (_screenWidth << 1);
+		dst = res = _hercCGAScaleBuf;
+		int pitch1 = (pitch - width) << 1;
+
+		if (renderV3) {
+			// This is for MI1EGA Hercules only
+			pitch1 = pitch - (width << 1);
+			int height2 = height >> 2;
+			height = height2 * 7;
+			y = (y << 1) - (y >> 2);
+
+			for (int h1 = height2; h1; --h1) {
+				lnIdx = 0; // The 7-lines pattern always starts from the beginning. Which works fine, since the strips get vertically aligned for Hercules and CGA.
+				for (int h2 = 7; h2; --h2) {
+					for (int w = width >> 2; w; --w) {
+						byte c = (hrcTableV4[src[0] + lnIdx] & 0xC0) | (hrcTableV4[src[1] + lnIdx] & 0x30) | (hrcTableV4[src[2] + lnIdx] & 0x0C) | (hrcTableV4[src[3] + lnIdx] & 0x03);
+						for (int i = 7; i >= 0; --i)
+							*dst++ = (c >> i) & 1;
+						src += 4;
+					}
+					dst += pitch1;
+					if (lnIdx ^= 0x10)
+						src -= width;
+				}
+				src += width;
+			}
+
+		} else if (vs->number == kMainVirtScreen) {
+			// V1/2 Hercules and CGA b/w mode
+			uint32 *dst2 = (uint32*)(dst + pitch);
+			int pitch2 = pitch1 >> 2;
+			int height2 = height;
+
+			if (renderHerc) {
+				y = (y - vs->topline) * 2 + vs->topline;
+				height = MIN<int>(height << 1, kHercHeight - y);
+				height2 = height >> 1;
+			}
+
+			for (int h = height2; h; --h) {
+				for (int w = width >> 1; w; --w) {
+					const uint32 *s = (const uint32*)dst;
+					byte c = renderV1 ? *src : (colMap2[src[0]] & 0x0C) | (colMap2[src[1]] & 0x03);
+					*dst++ = (c >> 3) & 1;
+					*dst++ = (c >> 2) & 1;
+					*dst++ = (c >> 1) & 1;
+					*dst++ = c & 1;
+					*dst2++ = renderHerc ? 0 : *s;
+					src += 2;
+				}
+				dst += pitch1;
+				dst2 += pitch2;
+			}
+
+		} else {
+			// V1/2 Hercules and CGA b/w mode
+			if (renderHerc) {
+				pitch1 = kHercWidth - (width << 1);
+				y -= vs->topline;
+				if (vs->number == kVerbVirtScreen) {
+					y += vs->topline * 2 - 16;
+					height = MIN<int>(height, kHercHeight - y);
+				}
+			}
+
+			uint16 *dst2 = (uint16*)(dst + pitch);
+			int pitch2 = pitch1 >> 1;
+
+			for (int h = height; h; --h) {
+				for (int w = width; w; --w) {
+					const uint16 *s = (const uint16*)dst;
+					uint8 col = colMap[*src++];
+					*dst++ = (col >> 1) & 1;
+					*dst++ = col & 1;
+					if (!renderHerc)
+						*dst2++ = *s;
+				}
+				dst += pitch1;
+				dst2 += pitch2;
+			}
+		}
+
+		x <<= 1;
+		width <<= 1;
+
+		if (renderHerc) {
+			x += 40;
+		} else {
+			y <<= 1;
+			height <<= 1;
+		}
+
+	} else if (renderV1 && vs->number == kTextVirtScreen) {
+		// For EGA, the only colors that need remapping are for the kTextVirtScreen.
+		// ZAKv1 is the only game that is affected by this. The original interpreter
+		// will also apply this mapping in VGA mode (as we do) but not in MCGA mode.
+		// So, should we ever decide to offer a separate MCGA render mode, then we
+		// should skip this for that mode...
+		for (uint8 i = 0; i < ARRAYSIZE(tmpTxtColMap); ++i)
+			tmpTxtColMap[i] = _gdi->remapColorToRenderMode(i);
+		for (int h = height; h; --h)  {
+			for (int w = width; w; --w)
+				*dst++ = tmpTxtColMap[*src++];
 		}
 	}
+
+	return res;
 }
 
-// Hercules dithering. It uses same dithering tables but output is 1bpp and
-// it stretches in this way:
-//         aaaa0
-// aa      aaaa1
-// bb      bbbb0      Here 0 and 1 mean dithering table row number
-// cc -->  bbbb1
-// dd      cccc0
-//         cccc1
-//         dddd0
-void ditherHerc(byte *src, byte *hercbuf, int srcPitch, int *x, int *y, int *width, int *height) {
-	byte *srcptr, *dstptr;
-	const int xo = *x, yo = *y, widtho = *width, heighto = *height;
-	int dsty = yo*2 - yo/4;
+const byte *ScummEngine::ditherVGAtoEGA(int &pitch, int &x, int &y, int &width, int &height) const {
+	pitch <<= 1;
+	int pitch2 = (pitch - width) << 1;
 
-	for (int y1 = 0; y1 < heighto;) {
-		assert(dsty < kHercHeight);
+	uint8 *dst0 = _hercCGAScaleBuf;
+	uint8 *dst1 = _hercCGAScaleBuf + pitch;
+	uint8 *src = _compositeBuf;
 
-		srcptr = src + y1 * srcPitch;
-		dstptr = hercbuf + dsty * kHercWidth + xo * 2;
-
-		const int idx1 = (dsty % 7) % 2;
-		for (int x1 = 0; x1 < widtho; x1++) {
-			const int idx2 = (xo + x1) % 2;
-			const byte tmp = cgaDither[idx1][idx2][*srcptr & 0xF];
-			*dstptr++ = tmp >> 1;
-			*dstptr++ = tmp & 0x1;
-			srcptr++;
+	for (int i = height, st = 1 ^ (y & 1); i; --i, st ^= 1) {
+		for (int ii = width; ii; --ii) {
+			byte in = *src++;
+			*dst0++ = *dst1++ = _egaColorMap[st][in];
+			*dst0++ = *dst1++ = _egaColorMap[st ^ 1][in];
 		}
-		if (idx1 || dsty % 7 == 6)
-			y1++;
-		dsty++;
+		dst0 += pitch2;
+		dst1 += pitch2;
 	}
 
-	*x *= 2;
-	*y = yo*2 - yo/4;
-	*width *= 2;
-	*height = dsty - *y;
+	x <<= 1;
+	y <<= 1;
+	width <<= 1;
+	height <<= 1;
+
+	return _hercCGAScaleBuf;
 }
 
 #pragma mark -
@@ -1114,7 +1255,8 @@ void ScummEngine::restoreCharsetBg() {
 	_nextLeft = _string[0].xpos;
 	_nextTop = _string[0].ypos + _screenTop;
 
-	if (_charset->_hasMask) {
+	if (_charset->_hasMask || _postGUICharMask) {
+		_postGUICharMask = false;
 		_charset->_hasMask = false;
 		_charset->_str.left = -1;
 		_charset->_left = -1;
@@ -1256,10 +1398,13 @@ static void copy8Col(byte *dst, int dstPitch, const byte *src, int height, uint8
 static void clear8Col(byte *dst, int dstPitch, int height, uint8 bitDepth) {
 	do {
 #if defined(SCUMM_NEED_ALIGNMENT)
-		memset(dst, 0, 8 * bitDepth);
+		if (g_scumm->_game.platform == Common::kPlatformNES)
+			memset(dst, 0x1d, 8 * bitDepth);
+		else
+			memset(dst, 0, 8 * bitDepth);
 #else
 		if (g_scumm->_game.platform == Common::kPlatformNES) {
-			memset(dst, 0x1d, 8);
+			memset(dst, 0x1d, 8 * bitDepth);
 		} else {
 			((uint32*)dst)[0] = 0;
 			((uint32*)dst)[1] = 0;
@@ -1280,6 +1425,25 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 
 	if ((vs = findVirtScreen(y)) == nullptr)
 		return;
+
+	if (_game.version == 8) {
+		width = _screenWidth + 8;
+		height = _screenHeight;
+		int effX2 = x2;
+		int effX;
+		if (width >= x2) {
+			effX = x;
+		} else {
+			effX2 = width;
+			effX = x;
+			if (x < 0)
+				effX = 0;
+		}
+		backbuff = vs->getPixels(effX, y + _screenTop);
+		fill(backbuff, vs->pitch, color, effX2, y2, vs->format.bytesPerPixel);
+		markRectAsDirty(vs->number, effX, effX + effX2, y + _screenTop, y + y2 + _screenTop);
+		return;
+	}
 
 	// Indy4 Amiga always uses the room or verb palette map to match colors to
 	// the currently setup palette, thus we need to select it over here too.
@@ -1414,6 +1578,97 @@ void ScummEngine::drawBox(int x, int y, int x2, int y2, int color) {
 
 			fill(backbuff, vs->pitch, color, width, height, vs->format.bytesPerPixel);
 		}
+	}
+}
+
+void ScummEngine::drawLine(int x1, int y1, int x2, int y2, int color) {
+	if (_game.platform == Common::kPlatformFMTowns) {
+		drawBox(x1, y1, x2, y2, color);
+		return;
+	}
+
+	int effColor, black, white;
+	int effX1, effY1;
+	int width, height, widthAccumulator, heightAccumulator, horizontalStrips, originalHeight;
+	int nudgeX, nudgeY;
+
+	bool canDrawPixel, noColorSpecified;
+
+	VirtScreen *vs;
+
+	if ((vs = findVirtScreen(y1)) == nullptr)
+		return;
+
+	black = getPaletteColorFromRGB(_currentPalette, 0x00, 0x00, 0x00);
+	white = getPaletteColorFromRGB(_currentPalette, 0xFC, 0xFC, 0xFC);
+
+	noColorSpecified = false;
+	effColor = color;
+	if (color == -1) {
+		noColorSpecified = true;
+		effColor = white;
+	}
+
+	effX1 = x1;
+	effY1 = y1;
+	width = abs(x2 - x1);
+	height = abs(y2 - y1);
+	originalHeight = height;
+
+	if (height <= width)
+		height = width;
+
+	widthAccumulator = 0;
+	heightAccumulator = 0;
+
+	drawPixel(vs, x1, y1, effColor);
+
+	if (height >= 0) {
+		horizontalStrips = height + 1;
+		do {
+			widthAccumulator += width;
+			canDrawPixel = false;
+			heightAccumulator += originalHeight;
+			if (widthAccumulator > height) {
+				canDrawPixel = true;
+				widthAccumulator -= height;
+				nudgeX = 1;
+				if (x2 - x1 < 0)
+					nudgeX = -1;
+				effX1 += nudgeX;
+			}
+
+			if (heightAccumulator > height) {
+				canDrawPixel = true;
+				heightAccumulator -= height;
+				nudgeY = 1;
+				if (y2 - y1 < 0)
+					nudgeY = -1;
+				effY1 += nudgeY;
+			}
+
+			if (canDrawPixel) {
+				drawPixel(vs, effX1, effY1, effColor);
+				if (noColorSpecified) {
+					if (effColor != white)
+						effColor = white;
+					else
+						effColor = black;
+				}
+			}
+
+			horizontalStrips--;
+		} while (horizontalStrips);
+	}
+}
+
+void ScummEngine::drawPixel(VirtScreen *vs, int x, int y, int16 color, bool useBackbuffer) {
+	if (x >= 0 && y >= 0 && _screenWidth + 8 > x && _screenHeight > y) {
+		if (useBackbuffer)
+			*(vs->getBackPixels(x, y + _screenTop - vs->topline)) = color;
+		else
+			*(vs->getPixels(x, y + _screenTop - vs->topline)) = color;
+		markRectAsDirty(vs->number, x, x + 1, y + _screenTop - vs->topline, y + 1 + _screenTop - vs->topline);
 	}
 }
 
@@ -1955,6 +2210,46 @@ bool Gdi::drawStrip(byte *dstPtr, VirtScreen *vs, int x, int y, const int width,
 			_roomPalette = _vm->_verbPalette;
 		else
 			_roomPalette = _vm->_roomPalette;
+	}
+
+	// WORKAROUND: 256-color versions of Indy3 feature unusual pink and cyan
+	// horizontal lines when Indy meets Elsa in Berlin. This has only been fixed
+	// in the official FM-TOWNS release (with a few other subtle adjustments),
+	// but a simpler fix here is to override the pink and cyan colors in the local
+	// palette so that it matches the way these lines have been redrawn in the
+	// FM-TOWNS release.  We take care not to apply this palette change to the
+	// text or inventory, as they still require the original colors.
+	if (_vm->_game.id == GID_INDY3 && (_vm->_game.features & GF_OLD256) && _vm->_game.platform != Common::kPlatformFMTowns
+		&& _vm->_roomResource == 46 && smapLen == 43159 && vs->number == kMainVirtScreen && _vm->_enableEnhancements) {
+		if (_roomPalette[11] == 11 && _roomPalette[86] == 86)
+			_roomPalette[11] = 86;
+		if (_roomPalette[13] == 13 && _roomPalette[80] == 80)
+			_roomPalette[13] = 80;
+	}
+
+	// WORKAROUND: In the CD version of MI1, the sign about how the dogs
+	// are only sleeping has a dark blue background instead of white. This
+	// makes the sign harder to read, so temporarily remap the color while
+	// drawing it. The text is also slightly different, but that is taken
+	// care of elsewhere.
+	//
+	// The SEGA CD version uses the old colors already, and the FM Towns
+	// version makes the text more readable by giving it a black outline.
+
+	else if (_vm->_game.id == GID_MONKEY &&
+			_vm->_game.platform != Common::kPlatformSegaCD &&
+			_vm->_game.platform != Common::kPlatformFMTowns &&
+			_vm->_currentRoom == 36 &&
+			vs->number == kMainVirtScreen &&
+			y == 8 && x >= 7 && x <= 30 && height == 88 &&
+			strcmp(_vm->_game.variant, "SE Talkie") != 0 &&
+			_vm->_enableEnhancements) {
+		_roomPalette[47] = 15;
+
+		byte result = decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
+
+		_roomPalette[47] = 47;
+		return result;
 	}
 
 	return decompressBitmap(dstPtr, vs->pitch, smap_ptr + offset, height);
@@ -3151,10 +3446,10 @@ void GdiV1::drawStripV1Background(byte *dst, int dstPitch, int stripnr, int heig
 		charIdx = _V1.picMap[y + stripnr * height] * 8;
 		for (int i = 0; i < 8; i++) {
 			byte c = _V1.charMap[charIdx + i];
-			dst[0] = dst[1] = _V1.colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _V1.colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _V1.colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _V1.colors[(c >> 0) & 3];
+			dst[0] = dst[1] = _colorMap[_V1.colors[(c >> 6) & 3]];
+			dst[2] = dst[3] = _colorMap[_V1.colors[(c >> 4) & 3]];
+			dst[4] = dst[5] = _colorMap[_V1.colors[(c >> 2) & 3]];
+			dst[6] = dst[7] = _colorMap[_V1.colors[(c >> 0) & 3]];
 			dst += dstPitch;
 		}
 	}
@@ -3169,10 +3464,10 @@ void GdiV1::drawStripV1Object(byte *dst, int dstPitch, int stripnr, int width, i
 		charIdx = _V1.objectMap[y * width + stripnr] * 8;
 		for (int i = 0; i < 8; i++) {
 			byte c = _V1.charMap[charIdx + i];
-			dst[0] = dst[1] = _V1.colors[(c >> 6) & 3];
-			dst[2] = dst[3] = _V1.colors[(c >> 4) & 3];
-			dst[4] = dst[5] = _V1.colors[(c >> 2) & 3];
-			dst[6] = dst[7] = _V1.colors[(c >> 0) & 3];
+			dst[0] = dst[1] = _colorMap[_V1.colors[(c >> 6) & 3]];
+			dst[2] = dst[3] = _colorMap[_V1.colors[(c >> 4) & 3]];
+			dst[4] = dst[5] = _colorMap[_V1.colors[(c >> 2) & 3]];
+			dst[6] = dst[7] = _colorMap[_V1.colors[(c >> 0) & 3]];
 			dst += dstPitch;
 		}
 	}
@@ -3812,7 +4107,7 @@ void ScummEngine::fadeIn(int effect) {
 		transitionEffect(effect - 1);
 		break;
 	case 128:
-		unkScreenEffect6();
+		dissolveEffectSelector();
 		break;
 	case 129:
 		break;
@@ -3874,7 +4169,7 @@ void ScummEngine::fadeOut(int effect) {
 			transitionEffect(effect - 1);
 			break;
 		case 128:
-			unkScreenEffect6();
+			dissolveEffectSelector();
 			break;
 		case 129:
 			// Just blit screen 0 to the display (i.e. display will be black)
@@ -3911,13 +4206,44 @@ void ScummEngine::fadeOut(int effect) {
  * @param a		the transition effect to perform
  */
 void ScummEngine::transitionEffect(int a) {
-	int delta[16];								// Offset applied during each iteration
+	int delta[16]; // Offset applied during each iteration
 	int tab_2[16];
 	int i, j;
 	int bottom;
 	int l, t, r, b;
+	int delay, numOfIterations;
 	const int height = MIN((int)_virtscr[kMainVirtScreen].h, _screenHeight);
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+
+	if (VAR_FADE_DELAY == 0xFF) {
+		if (_game.version >= 2) {
+			delay = kPictureDelay;
+		} else {
+			delay = kNoDelay;
+		}
+	} else {
+		delay = VAR(VAR_FADE_DELAY);
+	}
+
+	// Amiga handles timing a whole frame at a time
+	// instead of using quarter frames; the following
+	// code gives my best approximation of that behavior
+	// and the resulting timing
+	if (_game.platform == Common::kPlatformAmiga) {
+		int amigaRest = (delay % 4);
+		delay = (delay / 4);
+		if (amigaRest > 0) {
+			delay += 1;
+		}
+		delay *= 10;
+	}
+
+	// V3+ games have the number of iterations hardcoded; we also
+	// have that number hardcoded for MM NES, so let's target that too:
+	if (_game.version >= 3 || _game.platform == Common::kPlatformNES) {
+		numOfIterations = transitionEffects[a].numOfIterations;
+	} else {
+		numOfIterations = (a == 0 || a == 4) ? ceil((height / 8.0) / 2) : height / 8;
+	}
 
 	for (i = 0; i < 16; i++) {
 		delta[i] = transitionEffects[a].deltaTable[i];
@@ -3928,7 +4254,7 @@ void ScummEngine::transitionEffect(int a) {
 	}
 
 	bottom = height / 8;
-	for (j = 0; j < transitionEffects[a].numOfIterations; j++) {
+	for (j = 0; j < numOfIterations; j++) {
 		for (i = 0; i < 4; i++) {
 			l = tab_2[i * 4];
 			t = tab_2[i * 4 + 1];
@@ -3959,9 +4285,11 @@ void ScummEngine::transitionEffect(int a) {
 		for (i = 0; i < 16; i++)
 			tab_2[i] += delta[i];
 
-		// Draw the current state to the screen and wait a few secs so the
-		// user can watch the effect taking place.
-		waitForTimer(delay);
+		// Draw the current state to the screen and wait
+		// for the appropriate number of quarter frames
+		if (!_fastMode) {
+			waitForTimer(delay);
+		}
 	}
 }
 
@@ -3976,11 +4304,12 @@ void ScummEngine::transitionEffect(int a) {
 void ScummEngine::dissolveEffect(int width, int height) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 	int *offsets;
-	int blits_before_refresh, blits;
+	int blitsBeforeRefresh, blits, blitsToFreeze;
 	int x, y;
 	int w, h;
 	int i;
-
+	bool canHalt = false;
+	bool is1x1Pattern = (width == 1 && height == 1);
 	// There's probably some less memory-hungry way of doing this. But
 	// since we're only dealing with relatively small images, it shouldn't
 	// be too bad.
@@ -4040,19 +4369,31 @@ void ScummEngine::dissolveEffect(int width, int height) {
 		free(offsets2);
 	}
 
-	// Blit the image piece by piece to the screen. The idea here is that
-	// the whole update should take about a quarter of a second, assuming
-	// most of the time is spent in waitForTimer(). It looks good to me,
-	// but might still need some tuning.
+	// The whole effect has a variable duration, depending on
+	// the host machine speed. We want to be accurate, but we
+	// also want to actually *see* the effect, given that in modern
+	// machines this code would run at lightspeed, so let's declare
+	// a blitsBeforeRefresh variable, which serves as a threshold
+	// value allowing us to pause rendering every N blits.
+	//
+	// Pattern 1x1:
+	//   The original construct the image piece by piece but blits it
+	//   every 8 iterations of a loop with duration h. We try to imitate
+	//   this behavior by using blitsBeforeRefresh and by assigning it a value
+	//   which is a factor of blitsToFreeze.
+	//
+	// Pattern NxM:
+	//   The original construct the image piece by piece but blits it
+	//   every time it finds an offset smaller than the height of the virtual
+	//   screen. This is trivial to do in our code, so we just sleep for a
+	//   quarter frame everytime the condition above is met.
+	//
+	// If we ever get a blitsToFreeze == 0, we will use 18 in its place
+	// since it's the most typical value got out of the calculations.
 
 	blits = 0;
-	blits_before_refresh = (3 * w * h) / 25;
-
-	// Speed up the effect for CD Loom since it uses it so often. I don't
-	// think the original had any delay at all, so on modern hardware it
-	// wasn't even noticeable.
-	if (_game.id == GID_LOOM && (_game.version == 4))
-		blits_before_refresh *= 2;
+	blitsToFreeze = (h / 8); // The number of blits between which we delay rendering for pattern 1x1
+	blitsBeforeRefresh = (w * h) / (blitsToFreeze == 0 ? 18 : blitsToFreeze);
 
 	for (i = 0; i < w * h; i++) {
 		x = offsets[i] % vs->pitch;
@@ -4065,21 +4406,54 @@ void ScummEngine::dissolveEffect(int width, int height) {
 #endif
 		if (_macScreen)
 			mac_drawStripToScreen(vs, y, x, y + vs->topline, width, height);
-		else
-			_system->copyRectToScreen(vs->getPixels(x, y), vs->pitch, x, y + vs->topline, width, height);
+		else if (IS_ALIGNED(width, 4))
+			drawStripToScreen(vs, x, width, y, y + height);
+		else {
+			const byte *src = vs->getPixels(x, y);
+			int pitch = vs->pitch;
+			y += vs->topline;
+			int wd = width;
+			int ht = height;
 
+			if (_enableEGADithering) {
+				if (is1x1Pattern) {
+					*_compositeBuf = *src;
+				} else {
+					for (int ii = 0; ii < height; ++ii) {
+						memcpy(_compositeBuf + width * ii, src, width);
+						src += pitch;
+					}
+				}
+				pitch = width;
+				src = ditherVGAtoEGA(pitch, x, y, wd, ht);
+			}
 
-		if (++blits >= blits_before_refresh) {
+			_system->copyRectToScreen(src, pitch, x, y, wd, ht);
+		}
+
+		// Test for 1x1 pattern...
+		canHalt |= is1x1Pattern && ++blits >= blitsBeforeRefresh;
+
+		// If that is true, then reset the blits var...
+		if (canHalt) {
 			blits = 0;
-			waitForTimer(30);
+		}
+
+		// Test for NxM pattern...
+		canHalt |= !is1x1Pattern && (offsets[i] < vs->h);
+
+		// Halt rendering for a quarter frame (or a whole frame in case of Amiga)...
+		if (canHalt) {
+			canHalt = false;
+			if (_game.platform == Common::kPlatformAmiga) {
+				waitForTimer(4);
+			} else {
+				waitForTimer(1);
+			}
 		}
 	}
 
 	free(offsets);
-
-	if (blits != 0) {
-		waitForTimer(30);
-	}
 }
 
 void ScummEngine::scrollEffect(int dir) {
@@ -4093,15 +4467,24 @@ void ScummEngine::scrollEffect(int dir) {
 	VirtScreen *vs = &_virtscr[kMainVirtScreen];
 
 	int x, y;
-	int step;
-	const int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) * kFadeDelay : kPictureDelay;
+	const int step = 8;
 
-	if ((dir == 0) || (dir == 1))
-		step = vs->h;
-	else
-		step = vs->w;
+	// Keep in mind: this effect is only present in v5 and v6, so VAR_FADE_DELAY is
+	// never uninitialized. The following check is here for good measure only.
+	int delay = (VAR_FADE_DELAY != 0xFF) ? VAR(VAR_FADE_DELAY) : kPictureDelay;
 
-	step = (step * delay) / kScrolltime;
+	// Amiga handles timing a whole frame at a time
+	// instead of using quarter frames; the following
+	// code gives my best approximation of that behavior
+	// and the resulting timing
+	if (_game.platform == Common::kPlatformAmiga) {
+		int amigaRest = (delay % 4);
+		delay = (delay / 4);
+		if (amigaRest > 0) {
+			delay += 1;
+		}
+		delay *= 10;
+	}
 
 	byte *src;
 	int m = _textSurfaceMultiplier;
@@ -4124,7 +4507,6 @@ void ScummEngine::scrollEffect(int dir) {
 					vsPitch,
 					0, (vs->h - step) * m,
 					vs->w * m, step * m);
-				_system->updateScreen();
 			}
 
 			waitForTimer(delay);
@@ -4147,7 +4529,6 @@ void ScummEngine::scrollEffect(int dir) {
 					vsPitch,
 					0, 0,
 					vs->w * m, step * m);
-				_system->updateScreen();
 			}
 
 			waitForTimer(delay);
@@ -4165,7 +4546,6 @@ void ScummEngine::scrollEffect(int dir) {
 				vsPitch,
 				(vs->w - step) * m, 0,
 				step * m, vs->h * m);
-			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
@@ -4182,7 +4562,6 @@ void ScummEngine::scrollEffect(int dir) {
 				vsPitch,
 				0, 0,
 				step, vs->h);
-			_system->updateScreen();
 
 			waitForTimer(delay);
 			x += step;
@@ -4193,7 +4572,7 @@ void ScummEngine::scrollEffect(int dir) {
 	}
 }
 
-void ScummEngine::unkScreenEffect6() {
+void ScummEngine::dissolveEffectSelector() {
 	// CD Loom (but not EGA Loom!) uses a more fine-grained dissolve
 	if (_game.id == GID_LOOM && _game.version == 4)
 		dissolveEffect(1, 1);
@@ -4225,7 +4604,7 @@ void ScummEngine::updateScreenShakeEffect() {
 		// but inside each respective ims driver during the driver load/init process. The screen shakes update every 8 ticks.
 		// LOOM uses either 236.696 Hz at 8 ticks delay or 473.297 Hz at 16 ticks delay, depending on the sound card selection.
 		// The outcome is the same...
-		_shakeTickCounter += ((1000000000 / _shakeTimerRate) * 8);
+		_shakeTickCounter += ((1000000 / _shakeTimerRate) * 8);
 		_shakeNextTick += (_shakeTickCounter / 1000);
 		_shakeTickCounter %= 1000;
 	}

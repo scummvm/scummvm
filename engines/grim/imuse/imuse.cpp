@@ -220,7 +220,6 @@ void Imuse::callback() {
 				if (track->volFadeStep < 0) {
 					if (track->vol > track->volFadeDest) {
 						track->vol += track->volFadeStep;
-						//warning("fade: %d", track->vol);
 						if (track->vol < track->volFadeDest) {
 							track->vol = track->volFadeDest;
 							track->volFadeUsed = false;
@@ -234,7 +233,6 @@ void Imuse::callback() {
 				} else if (track->volFadeStep > 0) {
 					if (track->vol < track->volFadeDest) {
 						track->vol += track->volFadeStep;
-						//warning("fade: %d", track->vol);
 						if (track->vol > track->volFadeDest) {
 							track->vol = track->volFadeDest;
 							track->volFadeUsed = false;
@@ -304,7 +302,7 @@ void Imuse::callback() {
 					track->stream->queueBuffer(data, result, DisposeAfterUse::YES, makeMixerFlags(track->mixerFlags));
 					track->regionOffset += result;
 				} else
-					delete[] data;
+					free(data);
 
 				if (_sound->isEndOfRegion(track->soundDesc, track->curRegion)) {
 					switchToNextRegion(track);

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -31,10 +32,8 @@ namespace Chewy {
 namespace Rooms {
 
 void Room85::entry(int16 eib_nr) {
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 1, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
 	_G(gameState).ScrollxStep = 2;
 	_G(SetUpScreenFunc) = setup_func;
 	_G(spieler_mi)[P_HOWARD].Mode = true;
@@ -50,7 +49,7 @@ void Room85::entry(int16 eib_nr) {
 
 	if (_G(gameState).flags32_10) {
 		_G(det)->showStaticSpr(4);
-		_G(atds)->delControlBit(495, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(495, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(flags).LoadGame)
@@ -65,7 +64,7 @@ void Room85::entry(int16 eib_nr) {
 		_G(mouseLeftClick) = false;
 		_G(gameState).scrollx = 78;
 		if (_G(gameState).flags32_40) {
-			_G(atds)->delControlBit(506, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(506, ATS_ACTIVE_BIT);
 			_G(det)->startDetail(1, 255, false);
 			setPersonPos(195, 146, P_CHEWY, P_RIGHT);
 			setPersonPos(186, 142, P_HOWARD, P_RIGHT);
@@ -126,7 +125,7 @@ void Room85::xit(int16 eib_nr) {
 void Room85::setup_func() {
 	calc_person_look();
 
-	const int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int xyPos = _G(moveState)[P_CHEWY].Xypos[0];
 	int howDestX, nicDestX;
 	
 	if (xyPos > 255) {
@@ -150,11 +149,11 @@ void Room85::setup_func() {
 }
 
 int Room85::proc2() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	autoMove(2, P_CHEWY);
-	_G(det)->stop_detail(1);
+	_G(det)->stopDetail(1);
 	startSetAILWait(2, 1, ANI_FRONT);
 	_G(gameState)._personRoomNr[P_HOWARD] = 89;
 	cur_2_inventory();

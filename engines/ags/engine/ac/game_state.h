@@ -25,14 +25,16 @@
 #include "ags/lib/std/memory.h"
 #include "ags/lib/std/vector.h"
 #include "ags/shared/ac/character_info.h"
+#include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/runtime_defines.h"
+#include "ags/engine/ac/speech.h"
+#include "ags/engine/ac/timer.h"
 #include "ags/shared/game/room_struct.h"
 #include "ags/engine/game/viewport.h"
 #include "ags/engine/media/audio/queued_audio_item.h"
 #include "ags/shared/util/geometry.h"
 #include "ags/shared/util/string_types.h"
 #include "ags/shared/util/string.h"
-#include "ags/engine/ac/timer.h"
 
 namespace AGS3 {
 
@@ -64,7 +66,6 @@ enum GameStateSvgVersion {
 	kGSSvgVersion_350_9 = 2,
 	kGSSvgVersion_350_10 = 3,
 };
-
 
 
 // Adding to this might need to modify AGSDEFNS.SH and AGSPLUGIN.H
@@ -169,7 +170,8 @@ struct GameState {
 	char  walkable_areas_on[MAX_WALK_AREAS + 1];
 	short screen_flipped = 0;
 	int   entered_at_x = 0, entered_at_y = 0, entered_edge = 0;
-	int   want_speech = 0;
+	bool  voice_avail; // whether voice-over is available
+	SpeechMode speech_mode; // speech mode (text, voice, or both)
 	int   cant_skip_speech = 0;
 	int32_t   script_timers[MAX_TIMERS];
 	int   sound_volume = 0, speech_volume = 0;
@@ -177,7 +179,7 @@ struct GameState {
 	int8  key_skip_wait = 0;
 	int   swap_portrait_lastchar = 0;
 	int   swap_portrait_lastlastchar = 0;
-	int   separate_music_lib = 0;
+	bool  separate_music_lib = false;
 	int   in_conversation = 0;
 	int   screen_tint = 0;
 	int   num_parsed_words = 0;
@@ -224,8 +226,8 @@ struct GameState {
 	int   gamma_adjustment = 0;
 	short temporarily_turned_off_character = 0;  // Hide Player Charactr ticked
 	short inv_backwards_compatibility = 0;
-	int32_t *gui_draw_order = 0;
-	std::vector<AGS::Shared::String> do_once_tokens = 0;
+	std::vector<int> gui_draw_order; // used only for hit detection now
+	std::vector<AGS::Shared::String> do_once_tokens;
 	int   text_min_display_time_ms = 0;
 	int   ignore_user_input_after_text_timeout_ms = 0;
 	int32_t default_audio_type_volumes[MAX_AUDIO_TYPES];
@@ -252,10 +254,12 @@ struct GameState {
 	int  complete_overlay_on = 0;
 	// Is there a blocking text overlay on screen (contains overlay ID)
 	int  text_overlay_on = 0;
-	// Blocking speech overlay managed object, for accessing in scripts
-	ScriptOverlay *speech_text_scover = nullptr;
-	// Speech portrait overlay managed object
-	ScriptOverlay *speech_face_scover = nullptr;
+	// Script overlay handles, because we must return same script objects
+	// whenever user script queries for them.
+	// Blocking speech overlay managed handle
+	int  speech_text_schandle = 0;
+	// Speech portrait overlay managed handle
+	int  speech_face_schandle = 0;
 
 	int shake_screen_yoff = 0; // y offset of the shaking screen
 
@@ -355,10 +359,13 @@ struct GameState {
 
 	// Set how the last blocking wait was skipped
 	void SetWaitSkipResult(int how, int data = 0);
-	// Returns the code of the latest blocking wait skip method.
-	// * positive value means a key code;
-	// * negative value means a -(mouse code + 1);
-	// * 0 means timeout.
+	void SetWaitKeySkip(const KeyInput &kp) {
+		SetWaitSkipResult(SKIP_KEYPRESS, AGSKeyToScriptKey(kp.Key) | kp.Mod);
+	}
+	// Returns the information about how the latest blocking wait was skipped.
+	// The information is packed into int32 value like this:
+	// | 0xFF       | 0xFF    | 0xF      | 0xFFF                     |
+	// | eInputType | eKeyMod | reserved | eKeyCode, MouseButton etc |
 	int GetWaitSkipResult() const;
 
 	//
@@ -400,11 +407,10 @@ private:
 	std::vector<PViewport> _roomViewportsSorted;
 	// Cameras defines the position of a "looking eye" inside the room.
 	std::vector<PCamera> _roomCameras;
-	// Script viewports and cameras are references to real data export to
-	// user script. They became invalidated as the actual object gets
-	// destroyed, but are kept in memory to prevent script errors.
-	std::vector<std::pair<ScriptViewport *, int32_t>> _scViewportRefs;
-	std::vector<std::pair<ScriptCamera *, int32_t>> _scCameraRefs;
+	// We keep handles to the script refs to viewports and cameras, so that we
+	// could address them and invalidate as the actual object gets destroyed.
+	std::vector<int32_t> _scViewportHandles;
+	std::vector<int32_t> _scCameraHandles;
 
 	// Tells that the main viewport's position has changed since last game update
 	bool  _mainViewportHasChanged = false;

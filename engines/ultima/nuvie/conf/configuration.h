@@ -118,7 +118,7 @@ public:
 	// list all subkeys of a key. (no guaranteed order in result)
 	Std::set<Std::string> listKeys(const Std::string &key, bool longformat = false);
 
-	typedef Std::pair<Common::String, Common::String> KeyType;
+	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
 	void getSubkeys(KeyTypeList &ktl, Std::string basekey);

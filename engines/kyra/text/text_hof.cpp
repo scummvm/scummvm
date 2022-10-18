@@ -80,7 +80,7 @@ void TextDisplayer_HoF::printCustomCharacterText(const char *text, int x, int y,
 char *TextDisplayer_HoF::preprocessString(const char *str) {
 	if (str != _talkBuffer) {
 		assert(strlen(str) < sizeof(_talkBuffer) - 1);
-		strcpy(_talkBuffer, str);
+		Common::strlcpy(_talkBuffer, str, sizeof(_talkBuffer));
 	}
 
 	if (_vm->gameFlags().lang == Common::ZH_TWN)
@@ -536,10 +536,8 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 					objectChat(str, 0, vocHi, vocLo);
 				} else {
 					if (activeTimSequence != nextTimSequence) {
-						if (activeTimSequence > -1) {
+						if (activeTimSequence > -1)
 							deinitTalkObject(activeTimSequence);
-							activeTimSequence = -1;
-						}
 						initTalkObject(nextTimSequence);
 						activeTimSequence = nextTimSequence;
 					}
@@ -558,20 +556,13 @@ void KyraEngine_HoF::processDialogue(int dlgOffset, int vocH, int csEntry) {
 void KyraEngine_HoF::initTalkObject(int index) {
 	TalkObject &object = _talkObjectList[index];
 
-	char STAFilename[13];
-	char ENDFilename[13];
+	Common::String STAFilename = Common::String(object.filename) + "_STA.TIM";
+	_TLKFilename = Common::String(object.filename) + "_TLK.TIM";
+	Common::String ENDFilename = Common::String(object.filename) + "_END.TIM";
 
-	strcpy(STAFilename, object.filename);
-	strcpy(_TLKFilename, object.filename);
-	strcpy(ENDFilename, object.filename);
-
-	strcat(STAFilename + 4, "_STA.TIM");
-	strcat(_TLKFilename + 4, "_TLK.TIM");
-	strcat(ENDFilename + 4, "_END.TIM");
-
-	_currentTalkSections.STATim = _tim->load(STAFilename, &_timOpcodes);
-	_currentTalkSections.TLKTim = _tim->load(_TLKFilename, &_timOpcodes);
-	_currentTalkSections.ENDTim = _tim->load(ENDFilename, &_timOpcodes);
+	_currentTalkSections.STATim = _tim->load(STAFilename.c_str(), &_timOpcodes);
+	_currentTalkSections.TLKTim = _tim->load(_TLKFilename.c_str(), &_timOpcodes);
+	_currentTalkSections.ENDTim = _tim->load(ENDFilename.c_str(), &_timOpcodes);
 
 	if (object.scriptId != -1) {
 		_specialSceneScriptStateBackup[object.scriptId] = _specialSceneScriptState[object.scriptId];
@@ -620,7 +611,7 @@ void KyraEngine_HoF::npcChatSequence(const Common::String &str, int objectId, in
 	objectChatInit(str, objectId, vocHigh, vocLow);
 
 	if (!_currentTalkSections.TLKTim)
-		_currentTalkSections.TLKTim = _tim->load(_TLKFilename, &_timOpcodes);
+		_currentTalkSections.TLKTim = _tim->load(_TLKFilename.c_str(), &_timOpcodes);
 
 	setNextIdleAnimTimer();
 

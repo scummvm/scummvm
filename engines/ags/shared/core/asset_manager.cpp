@@ -36,9 +36,6 @@ namespace Shared {
 inline static bool IsAssetLibDir(const AssetLibInfo *lib) {
 	return lib->BaseFileName.IsEmpty();
 }
-inline static bool IsAssetLibFile(const AssetLibInfo *lib) {
-	return !lib->BaseFileName.IsEmpty();
-}
 
 bool AssetManager::AssetLibEx::TestFilter(const String &filter) const {
 	return filter == "*" ||
@@ -124,14 +121,10 @@ AssetError AssetManager::AddLibrary(const String &path, const String &filters, c
 
 void AssetManager::RemoveLibrary(const String &path) {
 	int idx = 0;
-	for (auto it = _libs.cbegin(); it != _libs.cend(); ++it, ++idx) {
+	for (auto it = _libs.begin(); it != _libs.end(); ++it, ++idx) {
 		if (Path::ComparePaths((*it)->BasePath, path) == 0) {
-#ifdef TODO
-			std::remove(_activeLibs.begin(), _activeLibs.end(), (*it).get());
-			_libs.erase(it);
-#else
-			error("TODO");
-#endif
+			_libs.remove_at(idx);
+			_activeLibs.remove(*it);
 			return;
 		}
 	}

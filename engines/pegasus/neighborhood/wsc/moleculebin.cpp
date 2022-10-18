@@ -115,7 +115,7 @@ void MoleculeBin::draw(const Common::Rect &) {
 		r2.moveTo((_selectedMolecule & 1) * (kMoleculeWidth + 2) + _bounds.left + 2,
 				(_selectedMolecule >> 1) * (kMoleculeHeight + 2) + _bounds.top + 2);
 
-		Graphics::Surface *screen = ((PegasusEngine *)g_engine)->_gfx->getWorkArea();
+		Graphics::Surface *screen = g_vm->_gfx->getWorkArea();
 
 		screen->frameRect(r2, _highlightColor);
 		r2.grow(1);

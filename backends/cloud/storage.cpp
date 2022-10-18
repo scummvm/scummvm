@@ -189,6 +189,14 @@ double Storage::getSyncDownloadingProgress() {
 	return result;
 }
 
+void Storage::getSyncDownloadingInfo(SyncDownloadingInfo& info) {
+	_runningRequestsMutex.lock();
+	if (_savesSyncRequest) {
+		_savesSyncRequest->getDownloadingInfo(info);
+	}
+	_runningRequestsMutex.unlock();
+}
+
 double Storage::getSyncProgress() {
 	double result = 1;
 	_runningRequestsMutex.lock();
@@ -211,13 +219,6 @@ void Storage::cancelSync() {
 	_runningRequestsMutex.lock();
 	if (_savesSyncRequest)
 		_savesSyncRequest->finish();
-	_runningRequestsMutex.unlock();
-}
-
-void Storage::setSyncTarget(GUI::CommandReceiver *target) {
-	_runningRequestsMutex.lock();
-	if (_savesSyncRequest)
-		_savesSyncRequest->setTarget(target);
 	_runningRequestsMutex.unlock();
 }
 

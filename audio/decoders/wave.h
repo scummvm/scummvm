@@ -74,7 +74,8 @@ extern bool loadWAVFromStream(
 	int &rate,
 	byte &flags,
 	uint16 *wavType = 0,
-	int *blockAlign = 0);
+	int *blockAlign = 0,
+	int *samplesPerBlock = 0);
 
 /**
  * Try to load a WAVE from the given seekable stream and create an AudioStream

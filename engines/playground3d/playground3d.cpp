@@ -34,8 +34,18 @@ namespace Playground3d {
 bool Playground3dEngine::hasFeature(EngineFeature f) const {
 	// The TinyGL renderer does not support arbitrary resolutions for now
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingAvailableType(desiredRendererType,
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0);
 	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 
 	return
@@ -45,8 +55,9 @@ bool Playground3dEngine::hasFeature(EngineFeature f) const {
 
 Playground3dEngine::Playground3dEngine(OSystem *syst)
 		: Engine(syst), _system(syst), _gfx(nullptr), _frameLimiter(nullptr),
-		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0),
-		_clearColor(0.0f, 0.0f, 0.0f, 1.0f), _fade(1.0f), _fadeIn(false),
+		_rotateAngleX(0), _rotateAngleY(0), _rotateAngleZ(0), _fogEnable(false),
+		_clearColor(0.0f, 0.0f, 0.0f, 1.0f), _fogColor(0.0f, 0.0f, 0.0f, 1.0f),
+        _fade(1.0f), _fadeIn(false),
 		_rgbaTexture(nullptr), _rgbTexture(nullptr), _rgb565Texture(nullptr),
 		_rgba5551Texture(nullptr), _rgba4444Texture(nullptr) {
 }
@@ -70,6 +81,11 @@ Common::Error Playground3dEngine::run() {
 	// 4 - moving filled rectangle in viewport
 	// 5 - drawing RGBA pattern texture to check endian correctness
 	int testId = 1;
+	_fogEnable = false;
+
+	if (_fogEnable) {
+		_fogColor = Math::Vector4d(1.0f, 1.0f, 1.0f, 1.0f);
+	}
 
 	switch (testId) {
 		case 1:
@@ -214,6 +230,9 @@ void Playground3dEngine::drawFrame(int testId) {
 
 	switch (testId) {
 		case 1:
+			if (_fogEnable) {
+				_gfx->enableFog(_fogColor);
+			}
 			drawAndRotateCube();
 			break;
 		case 2:

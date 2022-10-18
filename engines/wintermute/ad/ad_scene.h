@@ -49,28 +49,36 @@ class AdSceneGeometry;
 class AdScene : public BaseObject {
 public:
 
+#ifdef ENABLE_WME3D
+	uint32 _ambientLightColor;
+	TShadowType _maxShadowType;
+	bool _scroll3DCompatibility;
+
+	bool _fogEnabled;
+	uint32 _fogColor;
+	float _fogStart;
+	float _fogEnd;
+#endif
+
 	BaseObject *getNextAccessObject(BaseObject *currObject);
 	BaseObject *getPrevAccessObject(BaseObject *currObject);
 	bool getSceneObjects(BaseArray<AdObject *> &objects, bool interactiveOnly);
 	bool getRegionObjects(AdRegion *region, BaseArray<AdObject *> &objects, bool interactiveOnly);
 
 #ifdef ENABLE_WME3D
-	uint32 _ambientLightColor;
-	TShadowType _maxShadowType;
-
-	void setMaxShadowType(TShadowType shadowType);
-
 	bool _2DPathfinding;
-	float _waypointHeight;
-
-	float _fov;
-	float _nearPlane;
-	float _farPlane;
-
-	FogParameters _fogParameters;
 #endif
 	bool afterLoad();
 
+	void setMaxShadowType(TShadowType shadowType);
+
+#ifdef ENABLE_WME3D
+	float _nearPlane;
+	float _farPlane;
+	float _fov;
+	int32 _editorResolutionWidth;
+	int32 _editorResolutionHeight;
+#endif
 	bool getRegionsAt(int x, int y, AdRegion **regionList, int numRegions);
 	bool handleItemAssociations(const char *itemName, bool show);
 	UIWindow *_shieldWindow;
@@ -105,6 +113,10 @@ public:
 	bool sortScaleLevels();
 	bool sortRotLevels();
 	bool saveAsText(BaseDynamicBuffer *buffer, int indent) override;
+#ifdef ENABLE_WME3D
+	AdSceneGeometry *_sceneGeometry;
+	bool _showGeometry;
+#endif
 	uint32 getAlphaAt(int x, int y, bool colorCheck = false);
 	bool _paralaxScrolling;
 	void skipTo(int offsetX, int offsetY);
@@ -140,10 +152,6 @@ public:
 	BaseArray<AdLayer *> _layers;
 	BaseArray<AdObject *> _objects;
 	BaseArray<AdWaypointGroup *> _waypointGroups;
-#ifdef ENABLE_WME3D
-	AdSceneGeometry* _sceneGeometry;
-	bool _showGeometry;
-#endif
 	bool loadFile(const char *filename);
 	bool loadBuffer(char *buffer, bool complete = true);
 	int32 _width;

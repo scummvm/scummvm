@@ -26,6 +26,7 @@
 
 namespace Common {
 struct KeyState;
+struct Event;
 }
 
 namespace BladeRunner {
@@ -64,6 +65,7 @@ public:
 	int query(int index) { return _scores[index]; }
 	void set(int index, int value);
 
+	void handleCustomEventStart(const Common::Event &evt);
 	void handleKeyDown(const Common::KeyState &kbd);
 	int handleMouseUp(int x, int y);
 	int handleMouseDown(int x, int y);

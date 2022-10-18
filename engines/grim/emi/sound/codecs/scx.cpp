@@ -21,9 +21,11 @@
 
 #include "audio/audiostream.h"
 #include "audio/decoders/xa.h"
+
 #include "common/memstream.h"
 #include "common/textconsole.h"
 #include "common/stream.h"
+
 #include "engines/grim/emi/sound/codecs/scx.h"
 
 namespace Grim {

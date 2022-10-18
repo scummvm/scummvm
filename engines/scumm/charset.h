@@ -26,6 +26,7 @@
 #include "common/rect.h"
 #include "graphics/fonts/macfont.h"
 #include "graphics/sjis.h"
+#include "scumm/charset_v7.h"
 #include "scumm/scumm.h"
 #include "scumm/gfx.h"
 
@@ -96,16 +97,16 @@ public:
 	virtual void printChar(int chr, bool ignoreCharsetMask) = 0;
 	virtual void drawChar(int chr, Graphics::Surface &s, int x, int y) {}
 
-	virtual int getStringWidth(int arg, const byte *text, uint strLenMax = 100000);
+	virtual int getStringWidth(int arg, const byte *text);
 	void addLinebreaks(int a, byte *str, int pos, int maxwidth);
 	void translateColor();
 
 	virtual void setCurID(int32 id) = 0;
 	int getCurID() { return _curId; }
 
-	virtual int getFontHeight() = 0;
-	virtual int getCharHeight(byte chr) { return getFontHeight(); }
-	virtual int getCharWidth(uint16 chr) = 0;
+	virtual int getFontHeight() const = 0;
+	virtual int getCharHeight(uint16 chr) const { return getFontHeight(); }
+	virtual int getCharWidth(uint16 chr) const = 0;
 
 	virtual void setColor(byte color) { _color = color; translateColor(); }
 
@@ -127,7 +128,7 @@ public:
 
 	void setCurID(int32 id) override;
 
-	int getFontHeight() override;
+	int getFontHeight() const override;
 };
 
 class CharsetRendererPC : public CharsetRendererCommon {
@@ -167,7 +168,7 @@ public:
 	void printChar(int chr, bool ignoreCharsetMask) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
-	int getCharWidth(uint16 chr) override;
+	int getCharWidth(uint16 chr) const override;
 };
 
 #ifdef USE_RGB_COLOR
@@ -176,14 +177,14 @@ class CharsetRendererTownsClassic : public CharsetRendererClassic {
 public:
 	CharsetRendererTownsClassic(ScummEngine *vm);
 
-	int getCharWidth(uint16 chr) override;
-	int getFontHeight() override;
+	int getCharWidth(uint16 chr) const override;
+	int getFontHeight() const override;
 
 private:
 	void drawBitsN(const Graphics::Surface &s, byte *dst, const byte *src, byte bpp, int drawTop, int width, int height) override;
 	bool prepareDraw(uint16 chr) override;
 	void setupShadowMode();
-	bool useFontRomCharacter(uint16 chr);
+	bool useFontRomCharacter(uint16 chr) const;
 	void processCharsetColors();
 
 	uint16 _sjisCurChar;
@@ -204,8 +205,8 @@ public:
 	void printChar(int chr, bool ignoreCharsetMask) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 
-	int getFontHeight() override { return 8; }
-	int getCharWidth(uint16 chr) override { return 8; }
+	int getFontHeight() const override { return 8; }
+	int getCharWidth(uint16 chr) const override { return 8; }
 };
 
 class CharsetRendererV3 : public CharsetRendererPC {
@@ -223,15 +224,15 @@ public:
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 	void setCurID(int32 id) override;
 	void setColor(byte color) override;
-	int getCharWidth(uint16 chr) override;
+	int getCharWidth(uint16 chr) const override;
 };
 
 class CharsetRendererTownsV3 : public CharsetRendererV3 {
 public:
 	CharsetRendererTownsV3(ScummEngine *vm);
 
-	int getCharWidth(uint16 chr) override;
-	int getFontHeight() override;
+	int getCharWidth(uint16 chr) const override;
+	int getFontHeight() const override;
 
 private:
 	void enableShadow(bool enable) override;
@@ -271,7 +272,7 @@ public:
 	~CharsetRendererV2() override;
 
 	void setCurID(int32 id) override {}
-	int getCharWidth(uint16 chr) override { return 8; }
+	int getCharWidth(uint16 chr) const override { return 8; }
 };
 
 class CharsetRendererMac : public CharsetRendererCommon {
@@ -282,7 +283,7 @@ protected:
 	int _lastTop;
 
 
-	int getDrawWidthIntern(uint16 chr);
+	int getDrawWidthIntern(uint16 chr) const;
 
 	void printCharInternal(int chr, int color, bool shadow, int x, int y);
 	void printCharToTextBox(int chr, int color, int x, int y);
@@ -298,32 +299,56 @@ public:
 
 	void setCurID(int32 id) override;
 
-	int getStringWidth(int arg, const byte *text, uint strLenMax = 100000) override;
-	int getFontHeight() override;
-	int getCharWidth(uint16 chr) override;
+	int getStringWidth(int arg, const byte *text) override;
+	int getFontHeight() const override;
+	int getCharWidth(uint16 chr) const override;
 	void printChar(int chr, bool ignoreCharsetMask) override;
 	void drawChar(int chr, Graphics::Surface &s, int x, int y) override;
 	void setColor(byte color) override;
 };
 
 #ifdef ENABLE_SCUMM_7_8
-class CharsetRendererNut : public CharsetRenderer {
-protected:
-	NutRenderer *_fr[5];
-	NutRenderer *_current;
+class CharsetRendererV7 : public CharsetRendererClassic, public GlyphRenderer_v7 {
+public:
+	CharsetRendererV7(ScummEngine *vm);
+	~CharsetRendererV7() override {};
 
+	void printChar(int, bool) override { error("CharsetRendererV7::printChar(): Unexpected call to deprecated function"); }
+
+	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
+	int getCharWidth(uint16 chr) const override;
+	int getCharHeight(uint16 chr) const override { return ((chr & 0x80) && _vm->_useCJKMode) ? _vm->_2byteHeight : _fontHeight; }
+	int getFontHeight() const override { return _fontHeight; }
+	int setFont(int) override { return 0; }
+	bool newStyleWrapping() const override { return _newStyle; }
+private:
+	const int _spacing;
+	const bool _newStyle;
+	const int _direction;
+};
+
+class CharsetRendererNut : public CharsetRenderer, public GlyphRenderer_v7 {
 public:
 	CharsetRendererNut(ScummEngine *vm);
 	~CharsetRendererNut() override;
 
-	void printChar(int chr, bool ignoreCharsetMask) override;
+	void printChar(int, bool) override { error("CharsetRendererNut::printChar(): Unexpected call to deprecated function"); }
 
 	void setCurID(int32 id) override;
+	int setFont(int id) override;
+	bool newStyleWrapping() const override { return true; }
 
-	int getStringWidth(int arg, const byte *text, uint strLenMax = 1000000) override;
-	int getFontHeight() override;
-	int getCharHeight(byte chr) override;
-	int getCharWidth(uint16 chr) override;
+	int draw2byte(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, uint16 chr) override;
+	int drawCharV7(byte *buffer, Common::Rect &clipRect, int x, int y, int pitch, int16 col, TextStyleFlags flags, byte chr) override;
+
+	int getFontHeight() const override;
+	int getCharWidth(uint16 chr) const override;
+	int getCharHeight(uint16 chr) const override;
+
+private:
+	NutRenderer *_fr[5];
+	NutRenderer *_current;
 };
 #endif
 

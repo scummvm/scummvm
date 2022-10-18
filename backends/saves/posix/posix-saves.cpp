@@ -73,7 +73,7 @@ POSIXSaveFileManager::POSIXSaveFileManager() {
 
 		// On POSIX systems we follow the XDG Base Directory Specification for
 		// where to store files. The version we based our code upon can be found
-		// over here: http://standards.freedesktop.org/basedir-spec/basedir-spec-0.8.html
+		// over here: https://specifications.freedesktop.org/basedir-spec/basedir-spec-0.8.html
 		envVar = getenv("XDG_DATA_HOME");
 		if (!envVar || !*envVar) {
 			envVar = getenv("HOME");

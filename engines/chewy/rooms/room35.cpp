@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -44,7 +45,7 @@ int16 Room35::schublade() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(gameState).inv_cur) {
+	if (_G(gameState).ChewyAni != CHEWY_ROCKER && !_G(cur)->usingInventoryCursor()) {
 		if (!_G(gameState).R35Schublade) {
 			action_flag = true;
 			autoMove(3, P_CHEWY);
@@ -90,8 +91,8 @@ int16 Room35::use_cat() {
 			autoMove(4, P_CHEWY);
 			_G(gameState).R35CatEat = true;
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			delInventory(_G(gameState).AkInvent);
-			_G(det)->stop_detail(0);
+			delInventory(_G(cur)->getInventoryCursor());
+			_G(det)->stopDetail(0);
 			_G(det)->del_static_ani(0);
 			startSetAILWait(1, 1, ANI_FRONT);
 			_G(det)->startDetail(2, 1, ANI_FRONT);
@@ -99,7 +100,7 @@ int16 Room35::use_cat() {
 			_G(obj)->show_sib(SIB_KNOCHEN_R35);
 			_G(obj)->calc_rsi_flip_flop(SIB_KNOCHEN_R35);
 			_G(det)->showStaticSpr(7);
-			_G(atds)->delControlBit(237, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(237, ATS_ACTIVE_BIT);
 
 			while (_G(det)->get_ani_status(2) && !SHOULD_QUIT) {
 				setupScreen(DO_SETUP);
@@ -131,7 +132,7 @@ void Room35::talk_cat() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		switchRoom(36);
 		showCur();
-		startAdsWait(dia_nr);
+		startDialogCloseupWait(dia_nr);
 		_G(gameState)._personHide[P_CHEWY] = false;
 		switchRoom(35);
 

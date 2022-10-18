@@ -69,11 +69,11 @@ static int check_permission(snd_seq_port_info_t *pinfo) {
 class MidiDriver_ALSA : public MidiDriver_MPU401 {
 public:
 	MidiDriver_ALSA(int client, int port);
-	int open();
-	bool isOpen() const { return _isOpen; }
-	void close();
+	int open() override;
+	bool isOpen() const override { return _isOpen; }
+	void close() override;
 	void send(uint32 b) override;
-	void sysEx(const byte *msg, uint16 length);
+	void sysEx(const byte *msg, uint16 length) override;
 
 private:
 	void send_event(int do_flush);
@@ -107,7 +107,8 @@ int MidiDriver_ALSA::open() {
 	}
 	snd_seq_set_client_group(seq_handle, "input");
 
-	// According to http://www.alsa-project.org/~tiwai/alsa-subs.html
+	// According to
+	// https://web.archive.org/web/20120505164948/http://www.alsa-project.org/~tiwai/alsa-subs.html
 	// you can set read or write capabilities to allow other clients to
 	// read or write the port. I don't think we need that, unless maybe
 	// to be able to record the sound, but I can't get that to work even

@@ -86,7 +86,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use original save/load screens"),
 			_s("Use the original save/load screens instead of the ScummVM ones"),
 			"originalsaveload",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -96,7 +98,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use an alternative palette"),
 			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
 			"altamigapalette",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -106,7 +110,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Mouse support"),
 			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
 			"mousesupport",
-			true
+			true,
+			0,
+			0
 		}
 	},
 
@@ -116,7 +122,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Use Hercules hires font"),
 			_s("Uses Hercules hires font, when font file is available."),
 			"herculesfont",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -126,7 +134,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Pause when entering commands"),
 			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
 			"commandpromptwindow",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -136,7 +146,9 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 			_s("Add speed menu"),
 			_s("Add game speed menu (similar to PC version)"),
 			"apple2gs_speedmenu",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -152,13 +164,15 @@ class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
-	}
-
-	const char *getEngineId() const override {
-		return "agi";
+		_maxScanDepth = 2;
+		_flags = kADFlagMatchFullPaths;
 	}
 
 	const char *getName() const override {
+		return "agi";
+	}
+
+	const char *getEngineName() const override {
 		return "AGI preAGI + v2 + v3";
 	}
 
@@ -275,19 +289,19 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 			g_fallbackDesc.version = wagFileParser.convertToAgiVersionNumber(*wagAgiVer);
 		}
 
-		// Set gameid according to *.wag file information if it's present and it doesn't contain whitespace.
-		if (wagGameID != nullptr && !Common::String(wagGameID->getData()).contains(" ")) {
+		// Set gameid according to *.wag file information if it's present and it's a known value
+		if (wagGameID != nullptr && findPlainGameDescriptor(wagGameID->getData(), agiGames)) {
 			_gameid = wagGameID->getData();
 			debug(3, "Agi::fallbackDetector: Using game id (%s) from WAG file", _gameid.c_str());
 		}
 
 		// Set game description and extra according to *.wag file information if they're present
-		if (wagGameDesc != nullptr) {
+		if (wagGameDesc != nullptr && Common::String(wagGameDesc->getData()) != "\"\"") {
 			description = wagGameDesc->getData();
 			debug(3, "Agi::fallbackDetector: Game description (%s) from WAG file", wagGameDesc->getData());
 
 			// If there's game version in the *.wag file, set extra to it
-			if (wagGameVer != nullptr) {
+			if (wagGameVer != nullptr && Common::String(wagGameVer->getData()) != "\"\"") {
 				_extra = wagGameVer->getData();
 				debug(3, "Agi::fallbackDetector: Game version (%s) from WAG file", wagGameVer->getData());
 			}
@@ -331,7 +345,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		fallbackWarning = "Your game version has been detected using fallback matching as a\n";
 		fallbackWarning += Common::String::format("variant of %s (%s).\n", g_fallbackDesc.desc.gameId, g_fallbackDesc.desc.extra);
 		fallbackWarning += "If this is an original and unmodified version or new made Fanmade game,\n";
-		fallbackWarning += "please report any, information previously printed by ScummVM to the team.\n";
+		fallbackWarning += "please report any information previously printed by ScummVM to the team.\n";
 
 		g_system->logMessage(LogMessageType::kWarning, fallbackWarning.c_str());
 

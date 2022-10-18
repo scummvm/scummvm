@@ -26,12 +26,6 @@
 namespace Glk {
 namespace AGT {
 
-/* TODO: The following games aren't yet supported:
- * Lost Gold : Doesn't come as separate gamefiles
- * eather's Easter Egg Hunt - Comes as an .arc archive;
- *		still need to find something to uncompress it
- */
-
 const PlainGameDescriptor AGT_GAME_LIST[] = {
 	{ "abloodylife", "A Bloody Life" },
 	{ "alandria", "The Search for Princess Alandria" },
@@ -56,6 +50,7 @@ const PlainGameDescriptor AGT_GAME_LIST[] = {
 	{ "destinationearth", "Destination: Earth" },
 	{ "dudleydilemma", "A Dudley Dilemma" },
 	{ "80days", "Around the World in Eighty Days" },
+	{ "easteregghunt", "Heather's Easter Egg Hunt" },
 	{ "electrabot", "Electrabot" },
 	{ "elf20", "The Elf's Christmas Adventure" },
 	{ "elfquest", "Elf Quest" },
@@ -88,6 +83,7 @@ const PlainGameDescriptor AGT_GAME_LIST[] = {
 	{ "klingonrpg", "In the Year 2366, Klingon Role Playing Game" },
 	{ "deadlylabyrinth", "The Deadly Labyrinth" },
 	{ "library", "Library - Library of Guilford College" },
+	{ "lostgold", "Lost Gold" },
 	{ "lostinspace", "Lost in Space : Dr.Smith Goes Home" },
 	{ "agtlottery", "Lottery" },
 	{ "loststonemansion", "Lost Stone Mansion" },
@@ -182,6 +178,7 @@ const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("cavesofdyanty", "267e8a2812d58e140be8582914d9cefb", 40662),
 	DT_ENTRY0("destinationearth", "d00cfa53e2b3315f0ee6813c064be74f", 12474),
 	DT_ENTRY0("80days", "0086c0151760c59aa4d9e8ca055de84d", 30294),
+	DT_ENTRY0("easteregghunt", "6ef9fb84ec755b88f1f7c2cc3c47db2e", 55647),
 	DT_ENTRY0("electrabot", "1c7096e4a9a0579526e9b5084aa27701", 8748),
 	DT_ENTRY0("elf20", "0fa1e888a452fec59bb4a5a6ffa43d78", 101088),
 	DT_ENTRY0("elfquest", "5419ab5d7a19037a5971c7e2de59cee4", 16929),
@@ -209,6 +206,7 @@ const GlkDetectionEntry AGT_GAMES[] = {
 	DT_ENTRY0("klingonrpg", "93811c560f0c78f470f65dbe62834aa1", 15066),
 	DT_ENTRY0("deadlylabyrinth", "3a5d3ad2f80fb8c02baf5eb9894eb9b6", 113643),
 	DT_ENTRY0("library", "f23d106273f6e5fdb50f65d2acd4e4fc", 133407),
+	DT_ENTRY0("lostgold", "ff08d607b3a1a787b5d9e369264ae7f8", 67959),
 	DT_ENTRY0("lostinspace", "322c226f26768b6962c2b3b147450410", 49410),
 	DT_ENTRY0("agtlottery", "7c0890c420d6585e4629f1cc228bf259", 24948),
 	DT_ENTRY0("loststonemansion", "f0ef6d965533e67b29acb130dd0f1213", 39933),

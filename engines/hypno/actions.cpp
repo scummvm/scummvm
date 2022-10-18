@@ -28,11 +28,12 @@ namespace Hypno {
 
 // Actions
 
-void HypnoEngine::runMenu(Hotspots *hs) {
+void HypnoEngine::runMenu(Hotspots *hs, bool only_menu) {
 	Hotspot *h = hs->begin();
 	assert(h->type == MakeMenu);
+
 	debugC(1, kHypnoDebugScene, "hotspot actions size: %d", h->actions.size());
-	for (Actions::const_iterator itt = h->actions.begin(); itt != h->actions.end(); ++itt) {
+	for (Actions::const_iterator itt = h->actions.begin(); !only_menu && itt != h->actions.end(); ++itt) {
 		Action *action = *itt;
 		switch (action->type) {
 		case QuitAction:
@@ -52,9 +53,6 @@ void HypnoEngine::runMenu(Hotspots *hs) {
 			break;
 		case IntroAction:
 			runIntro((Intro *)action);
-			break;
-		case CutsceneAction:
-			runCutscene((Cutscene *)action);
 			break;
 		case PaletteAction:
 			runPalette((Palette *)action);
@@ -92,6 +90,8 @@ void HypnoEngine::runTimer(Timer *a) {
 		return; // Do not start another timer
 
 	uint32 delay = a->delay / 1000;
+	if (a->flag == "vus0")
+		_keepTimerDuringScenes = true;
 	debugC(1, kHypnoDebugScene, "Starting timer with %d secons", delay);
 
 	if (delay == 0 || !startCountdown(delay))
@@ -104,6 +104,11 @@ void HypnoEngine::runOverlay(Overlay *a) {
 
 void HypnoEngine::runMice(Mice *a) {
 	changeCursor(a->path, a->index);
+}
+
+void HypnoEngine::runSwapPointer(SwapPointer *a) {
+	_defaultCursorIdx = a->index;
+	defaultCursor();
 }
 
 void HypnoEngine::runPalette(Palette *a) {
@@ -123,14 +128,21 @@ void HypnoEngine::runIntro(Intro *a) {
 
 	_intros[a->path] = true;
 	MVideo v(a->path, Common::Point(0, 0), false, true, false);
+	disableCursor();
 	runIntro(v);
+	defaultCursor();
 }
 
 void HypnoEngine::runCutscene(Cutscene *a) {
 	stopSound();
 	defaultCursor();
 	_music.clear();
-	_nextSequentialVideoToPlay.push_back(MVideo(a->path, Common::Point(0, 0), false, true, false));
+	MVideo v(a->path, Common::Point(0, 0), false, true, false);
+	disableCursor();
+	runIntro(v);
+	defaultCursor();
+	runMenu(stack.back());
+	drawScreen();
 }
 
 bool HypnoEngine::runGlobal(Global *a) {
@@ -166,6 +178,10 @@ void HypnoEngine::runPlay(Play *a) {
 	else {
 		_nextSequentialVideoToPlay.push_back(MVideo(a->path, a->origin, false, false, false));
 	}
+}
+
+void HypnoEngine::runSound(Sound *a) {
+	playSound(a->path, 1);
 }
 
 void HypnoEngine::runAmbient(Ambient *a) {
@@ -231,7 +247,9 @@ void HypnoEngine::runChangeLevel(ChangeLevel *a) {
 }
 
 void HypnoEngine::runTalk(Talk *a) {
-	_conversation.push_back(a);
+	// Recreate the items to allow modifications
+	Talk *n = new Talk(a);
+	_conversation.push_back(n);
 	_refreshConversation = true;
 }
 

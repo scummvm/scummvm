@@ -23,6 +23,29 @@
  *
  * Implemented as a no-op, since ScummVM doesn't need to handle memory clears.
  *
+ *
+	-- Memory XObject
+	-- December 18th, 1992
+	-- Written by Scott Kildall
+	-- 1992 by Macromedia, Inc
+	-- All rights reserved
+	--
+	I mNew
+	X mClear
+	X mCompact
+	X mPurge
+	I mAvailBytes
+	I mAvailBlock
+	I mStackSpace
+	I mGetVM
+	I mGetAddressing
+	I mGetCache
+	XI mSetCache
+	I mGetPhysicalRAM
+	I mGetMMU
+	I mGetLogicalPage
+	I mGetLogicalRAM
+	I mGetLowMemory
  */
 
 #include "director/director.h"
@@ -36,12 +59,14 @@ namespace Director {
 const char *MemoryXObj::xlibName = "Memory";
 const char *MemoryXObj::fileNames[] = {
 	"Memory XObj",
+	"Memory",
 	nullptr
 };
 
 static MethodProto xlibMethods[] = {
-	{ "new",					MemoryXObj::m_new,			0,	0,	400 },	// D4
-	{ "Clear",					MemoryXObj::m_clear,		0,	0,	400 },	// D4
+	{ "new",					MemoryXObj::m_new,			0,	0,	300 },	// D3
+	{ "Clear",					MemoryXObj::m_clear,		0,	0,	300 },	// D3
+	{ "Purge",					MemoryXObj::m_purge,		0,	0,	400 },	// D4
 	{ nullptr, nullptr, 0, 0, 0 }
 };
 
@@ -49,7 +74,7 @@ void MemoryXObj::open(int type) {
 	if (type == kXObj) {
 		MemoryXObject::initMethods(xlibMethods);
 		MemoryXObject *xobj = new MemoryXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 
@@ -66,12 +91,13 @@ MemoryXObject::MemoryXObject(ObjectType ObjectType) :Object<MemoryXObject>("Memo
 }
 
 void MemoryXObj::m_new(int nargs) {
-	// Datum d1 = g_lingo->pop();
 	g_lingo->push(g_lingo->_currentMe);
 }
 
 void MemoryXObj::m_clear(int nargs) {
-	// g_lingo->pop();
+}
+
+void MemoryXObj::m_purge(int nargs) {
 }
 
 } // End of namespace Director

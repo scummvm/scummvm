@@ -47,7 +47,7 @@ class _prim_route_builder {
 
  public:
 	void Reset_barrier_list();
-	void Add_barrier(_route_barrier *new_barrier);
+	void Add_barrier(RouteBarrier *new_barrier);
 
 	_route_stat Calc_route(PXreal startx, PXreal startz, PXreal endx, PXreal endz); // does extraping
 

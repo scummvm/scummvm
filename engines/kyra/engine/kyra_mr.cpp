@@ -62,11 +62,11 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_gamePlayBuffer = nullptr;
 	_interface = _interfaceCommandLine = nullptr;
 	// The slightly larger interface is used in the Chinese version regardless of the actual language setting.
-	_interfaceCommandLineSize = flags.hasExtraLanguage ? 4800 : 3840;
+	_interfaceCommandLineSize = flags.extraLang != Common::UNK_LANG ? 4800 : 3840;
 	_interfaceCommandLineH = _interfaceCommandLineSize / Screen::SCREEN_W;
 	_interfaceCommandLineY1 = Screen::SCREEN_H - _interfaceCommandLineH;
 	_interfaceCommandLineY2 = 156 - _interfaceCommandLineH;
-	_interfaceSize = flags.hasExtraLanguage ? 18880 : 17920;
+	_interfaceSize = flags.extraLang != Common::UNK_LANG ? 18880 : 17920;
 	_interfaceH = _interfaceSize / Screen::SCREEN_W;
 	_costPalBuffer = nullptr;
 	memset(_sceneShapes, 0, sizeof(_sceneShapes));
@@ -151,6 +151,15 @@ KyraEngine_MR::KyraEngine_MR(OSystem *system, const GameFlags &flags) : KyraEngi
 	_configHelium = false;
 	_fadeOutMusicChannel = -1;
 	memset(_scaleTable, 0, sizeof(_scaleTable));
+	_gui = nullptr;
+	_soundListSize = _sfxFileMapSize = _sfxFileListSize = _mainMenuStringsSize = _itemStringMapSize = _malcolmShapeXOffset = _malcolmShapeYOffset = _currentTalkFile = 0;
+	_sceneMinX = _sceneMaxX = _badConscienceAnim = _scoreMax = _scoreTableSize = 0;
+	_sfxFileMap = _itemMagicTable = _itemStringMap = _scoreTable = nullptr;
+	_sfxFileList = _mainMenuStrings = nullptr;
+	_shownMessage = nullptr;
+	_itemAnimDefinition = nullptr;
+	_restoreCommandLine = _badConsciencePosition = _useFrameTable = false;
+	_actorFileSize = 0;
 }
 
 KyraEngine_MR::~KyraEngine_MR() {
@@ -213,6 +222,13 @@ Common::Error KyraEngine_MR::init() {
 
 	setDebugger(new Debugger_v2(this));
 
+	// Unfortunately, if this is a Chinese version, but the language has been set to English, French or German
+	// we still don't know at this point if this is a Simplified or Traditional Chinese version. We just analyze
+	// some file...
+	if (_flags.extraLang != Common::UNK_LANG && _flags.extraLang != _flags.lang) {
+
+	}
+
 	KyraEngine_v1::init();
 	initStaticResource();
 
@@ -229,14 +245,12 @@ Common::Error KyraEngine_MR::init() {
 	_screen->loadFont(Screen::FID_BOOKFONT_FNT, "BOOKFONT.FNT");
 	_screen->setFont(Screen::FID_8_FNT);
 
-	if (_flags.hasExtraLanguage) {
-		// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
-		if (_res->exists("MALCOLM.PAK")) {
-			_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
-			if (_lang == 3) {
-				_screen->setFont(Screen::FID_CHINESE_FNT);
-				_screen->_lineSpacing = 2;
-			}
+	// We don't check the language setting here, since we want to load the file even if the language is currently set to English, French or German.
+	if (_res->exists("MALCOLM.PAK")) {
+		_screen->loadFont(Screen::FID_CHINESE_FNT, "MALCOLM.PAK");
+		if (_lang == 3) {
+			_screen->setFont(Screen::FID_CHINESE_FNT);
+			_screen->_lineSpacing = 2;
 		}
 	}
 
@@ -613,6 +627,7 @@ void KyraEngine_MR::startup() {
 	assert(_invWsa);
 	_invWsa->open("MOODOMTR.WSA", 1, nullptr);
 	_invWsaFrame = 6;
+	restartPlayTimerAt(0);
 	saveGameStateIntern(0, "New Game", nullptr);
 	if (_gameToLoad == -1)
 		enterNewScene(_mainCharacter.sceneId, _mainCharacter.facing, 0, 0, 1);
@@ -691,11 +706,9 @@ void KyraEngine_MR::runStartupScript(int script, int unk1) {
 	EMCData data;
 	memset(&state, 0, sizeof(state));
 	memset(&data, 0, sizeof(data));
-	char filename[13];
-	strcpy(filename, "_START0X.EMC");
-	filename[7] = (script % 10) + '0';
+	Common::String filename = Common::String::format("_START0%c.EMC", '0' + (char)(script % 10));
 
-	_emc->load(filename, &data, &_opcodes);
+	_emc->load(filename.c_str(), &data, &_opcodes);
 	_emc->init(&state, &data);
 	_emc->start(&state, 0);
 	state.regs[6] = unk1;
@@ -707,22 +720,22 @@ void KyraEngine_MR::runStartupScript(int script, int unk1) {
 }
 
 void KyraEngine_MR::openTalkFile(int file) {
-	char talkFilename[16];
+	Common::String talkFilename;
 
 	if (file == 0) {
-		strcpy(talkFilename, "ANYTALK.TLK");
+		talkFilename = "ANYTALK.TLK";
 	} else {
 		if (_currentTalkFile > 0) {
-			sprintf(talkFilename, "CH%dTALK.TLK", _currentTalkFile);
+			talkFilename = Common::String::format("CH%dTALK.TLK", _currentTalkFile);
 			_res->unloadPakFile(talkFilename);
 		}
-		sprintf(talkFilename, "CH%dTALK.TLK", file);
+		talkFilename = Common::String::format("CH%dTALK.TLK", file);
 	}
 
 	_currentTalkFile = file;
 	if (!_res->loadPakFile(talkFilename)) {
 		if (speechEnabled()) {
-			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename);
+			warning("Couldn't load voice file '%s', falling back to text only mode", talkFilename.c_str());
 			_configVoice = 0;
 
 			// Sync the config manager with the new settings
@@ -761,12 +774,11 @@ void KyraEngine_MR::loadCharacterShapes(int newShapes) {
 	const char highNum = (newShapes / 10) + '0';
 
 	for (int i = 0; i < 6; ++i) {
-		char filename[16];
-		strcpy(filename, filenames[i]);
-		filename[numberOffset[i]+0] = highNum;
-		filename[numberOffset[i]+1] = lowNum;
-		_res->exists(filename, true);
-		_res->loadFileToBuf(filename, _screenBuffer, 64000);
+		Common::String filename = filenames[i];
+		filename.setChar(highNum, numberOffset[i]);
+		filename.setChar(lowNum, numberOffset[i] + 1);
+		_res->exists(filename.c_str(), true);
+		_res->loadFileToBuf(filename.c_str(), _screenBuffer, 64000);
 		for (int j = startShape[i]; j <= endShape[i]; ++j) {
 			if (j == 87)
 				continue;
@@ -926,6 +938,7 @@ void KyraEngine_MR::runLoop() {
 
 		update();
 		_timer->update();
+		updatePlayTimer();
 
 		if (inputFlag == 198 || inputFlag == 199) {
 			_savedMouseState = _mouseState;
@@ -1312,8 +1325,8 @@ bool KyraEngine_MR::updateScore(int scoreId, int strId) {
 	setNextIdleAnimTimer();
 	_scoreFlagTable[scoreIndex] |= (1 << scoreBit);
 
-	strcpy(_stringBuffer, (const char *)getTableEntry(_scoreFile, strId));
-	strcat(_stringBuffer, ":        ");
+	Common::strlcpy(_stringBuffer, (const char *)getTableEntry(_scoreFile, strId), 500);
+	Common::strlcat(_stringBuffer, ":        ", 500);
 
 	assert(scoreId < _scoreTableSize);
 

@@ -1079,30 +1079,39 @@ void AvalancheEngine::guideAvvy(Common::Point cursorPos) {
 	case 0:
 	default:
 		_animation->stopWalking();
+		_animation->setDirection(kDirStopped);
 		break; // Clicked on Avvy: no movement.
 	case 1:
 		_animation->setMoveSpeed(0, kDirLeft);
+		_animation->setDirection(kDirLeft);
 		break;
 	case 2:
 		_animation->setMoveSpeed(0, kDirRight);
+		_animation->setDirection(kDirRight);
 		break;
 	case 3:
 		_animation->setMoveSpeed(0, kDirUp);
+		_animation->setDirection(kDirUp);
 		break;
 	case 4:
 		_animation->setMoveSpeed(0, kDirUpLeft);
+		_animation->setDirection(kDirLeft);
 		break;
 	case 5:
 		_animation->setMoveSpeed(0, kDirUpRight);
+		_animation->setDirection(kDirUpRight);
 		break;
 	case 6:
 		_animation->setMoveSpeed(0, kDirDown);
+		_animation->setDirection(kDirDown);
 		break;
 	case 7:
 		_animation->setMoveSpeed(0, kDirDownLeft);
+		_animation->setDirection(kDirDownLeft);
 		break;
 	case 8:
 		_animation->setMoveSpeed(0, kDirDownRight);
+		_animation->setDirection(kDirDownRight);
 		break;
 	}    // No other values are possible.
 

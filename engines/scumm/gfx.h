@@ -270,6 +270,9 @@ public:
 	Gdi(ScummEngine *vm);
 	virtual ~Gdi();
 
+	virtual void setRenderModeColorMap(const byte *map) {}
+	virtual byte remapColorToRenderMode(byte col) const { return col; }
+
 	virtual void init();
 	virtual void roomChanged(byte *roomptr);
 	virtual void loadTiles(byte *roomptr);
@@ -404,6 +407,8 @@ protected:
 		byte maskMap[4096], maskChar[4096];
 	} _V1;
 
+	const byte *_colorMap = 0;
+
 protected:
 	void decodeV1Gfx(const byte *src, byte *dst, int size) const;
 
@@ -425,6 +430,9 @@ protected:
 
 public:
 	GdiV1(ScummEngine *vm);
+
+	void setRenderModeColorMap(const byte *map) override;
+	byte remapColorToRenderMode(byte col) const override;
 
 	void roomChanged(byte *roomptr) override;
 };
@@ -482,17 +490,17 @@ public:
 	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flags);
-	void scrollLayers(int flags, int offset);
+	void scrollLayers(int flags, int offset, bool fast);
 	void update();
 	bool isScrolling(int direction, int threshold = 0) const { return (direction == 0) ? _scrollRemainder != threshold : (direction == 1 ? _scrollRemainder > threshold : _scrollRemainder < threshold); }
 
 	uint8 *getLayerPixels(int layer, int x, int y) const;
-	int getLayerPitch(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].pitch : 0; }
-	int getLayerWidth(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].width : 0; }
-	int getLayerHeight(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].height : 0; }
-	int getLayerBpp(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].bpp : 0; }
-	int getLayerScaleW(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleW : 0; }
-	int getLayerScaleH(int layer) const { return (layer >= 0 && layer < 2) ? _layers[layer].scaleH : 0; }
+	int getLayerPitch(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].pitch; }
+	int getLayerWidth(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].width; }
+	int getLayerHeight(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].height; }
+	int getLayerBpp(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].bpp; }
+	int getLayerScaleW(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].scaleW; }
+	int getLayerScaleH(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].scaleH; }
 
 private:
 	struct TownsScreenLayer {
@@ -526,6 +534,7 @@ private:
 	int _pitch;
 	uint16 _scrollOffset;
 	int _scrollRemainder;
+	bool _semiSmoothScroll;
 	Graphics::PixelFormat _pixelFormat;
 
 	int _numDirtyRects;

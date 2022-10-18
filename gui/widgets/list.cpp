@@ -32,7 +32,7 @@
 
 namespace GUI {
 
-bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, Common::U32String token) {
+bool ListWidgetDefaultMatcher(void *, int, const Common::U32String &item, const Common::U32String &token) {
 	return item.contains(token);
 }
 
@@ -116,6 +116,21 @@ ListWidget::ListWidget(Dialog *boss, int x, int y, int w, int h, const Common::U
 	_scrollBarWidth = 0;
 }
 
+void ListWidget::copyListData(const Common::U32StringArray &list) {
+	Common::U32String stripped;
+
+	_dataList.clear();
+	_cleanedList.clear();
+
+	for (uint i = 0; i < list.size(); ++i) {
+		stripped = stripGUIformatting(list[i]);
+
+		_dataList.push_back(ListData(list[i], stripped));
+		_cleanedList.push_back(stripped);
+	}
+}
+
+
 bool ListWidget::containsWidget(Widget *w) const {
 	if (w == _scrollBar || _scrollBar->containsWidget(w))
 		return true;
@@ -164,31 +179,15 @@ void ListWidget::setSelected(int item) {
 	}
 }
 
-ThemeEngine::FontColor ListWidget::getSelectionColor() const {
-	if (_listColors.empty())
-		return ThemeEngine::kFontColorNormal;
-
-	if (_filter.empty())
-		return _listColors[_selectedItem];
-	else
-		return _listColors[_listIndex[_selectedItem]];
-}
-
-void ListWidget::setList(const Common::U32StringArray &list, const ColorList *colors) {
+void ListWidget::setList(const Common::U32StringArray &list) {
 	if (_editMode && _caretVisible)
 		drawCaret(true);
 
 	// Copy everything
-	_dataList = list;
+	copyListData(list);
 	_list = list;
 	_filter.clear();
 	_listIndex.clear();
-	_listColors.clear();
-
-	if (colors) {
-		_listColors = *colors;
-		assert(_listColors.size() == _dataList.size());
-	}
 
 	int size = list.size();
 	if (_currentPos >= size)
@@ -201,20 +200,10 @@ void ListWidget::setList(const Common::U32StringArray &list, const ColorList *co
 	scrollBarRecalc();
 }
 
-void ListWidget::append(const Common::String &s, ThemeEngine::FontColor color) {
-	if (_dataList.size() == _listColors.size()) {
-		// If the color list has the size of the data list, we append the color.
-		_listColors.push_back(color);
-	} else if (!_listColors.size() && color != ThemeEngine::kFontColorNormal) {
-		// If it's the first entry to use a non default color, we will fill
-		// up all other entries of the color list with the default color and
-		// add the requested color for the new entry.
-		for (uint i = 0; i < _dataList.size(); ++i)
-			_listColors.push_back(ThemeEngine::kFontColorNormal);
-		_listColors.push_back(color);
-	}
-
-	_dataList.push_back(s);
+void ListWidget::append(const Common::String &s) {
+	Common::U32String stripped = stripGUIformatting(s);
+	_dataList.push_back(ListData(s, stripped));
+	_cleanedList.push_back(stripped);
 	_list.push_back(s);
 
 	setFilter(_filter, false);
@@ -296,7 +285,7 @@ void ListWidget::handleMouseMoved(int x, int y, int button) {
 
 	if (item != -1) {
 		if(_lastRead != item) {
-			read(_list[item]);
+			read(stripGUIformatting(_list[item]));
 			_lastRead = item;
 		}
 	}
@@ -360,7 +349,7 @@ bool ListWidget::handleKeyDown(Common::KeyState state) {
 			int bestMatch = 0;
 			bool stop;
 			for (Common::U32StringArray::const_iterator i = _list.begin(); i != _list.end(); ++i) {
-				const int match = matchingCharsIgnoringCase(i->encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
+				const int match = matchingCharsIgnoringCase(stripGUIformatting(*i).encode().c_str(), _quickSelectStr.c_str(), stop, _dictionarySelect);
 				if (match > bestMatch || stop) {
 					_selectedItem = newSelectedItem;
 					bestMatch = match;
@@ -572,15 +561,6 @@ void ListWidget::drawWidget() {
 			pad = 0;
 		}
 
-		ThemeEngine::FontColor color = ThemeEngine::kFontColorNormal;
-
-		if (!_listColors.empty()) {
-			if (_filter.empty() || _selectedItem == -1)
-				color = _listColors[pos];
-			else
-				color = _listColors[_listIndex[pos]];
-		}
-
 		Common::Rect r1(_x + r.left, y, _x + r.right, y + fontHeight);
 
 		if (g_gui.useRTL()) {
@@ -593,6 +573,8 @@ void ListWidget::drawWidget() {
 			}
 		}
 
+		ThemeEngine::FontColor color = ThemeEngine::kFontColorFormatting;
+
 		if (_selectedItem == pos && _editMode) {
 			buffer = _editString;
 			color = _editColor;
@@ -600,8 +582,8 @@ void ListWidget::drawWidget() {
 		} else {
 			buffer = _list[pos];
 		}
-		g_gui.theme()->drawText(r1, buffer, _state,
-								_drawAlign, inverted, pad, true, ThemeEngine::kFontStyleBold, color);
+
+		drawFormattedText(r1, buffer, _state, _drawAlign, inverted, pad, true, color);
 
 		// If in numbering mode & using RTL layout in GUI, we print a number suffix after drawing the text
 		if (_numberingMode != kListNumberingOff && g_gui.useRTL()) {
@@ -642,6 +624,12 @@ Common::Rect ListWidget::getEditRect() const {
 	return r;
 }
 
+int ListWidget::getCaretOffset() const {
+	Common::U32String substr(_editString.begin(), _editString.begin() + _caretPos);
+	Common::U32String stripped = stripGUIformatting(substr);
+	return g_gui.getStringWidth(stripped, _font) - _editScrollOffset;
+}
+
 void ListWidget::checkBounds() {
 	if (_currentPos < 0 || _entriesPerPage > (int)_list.size())
 		_currentPos = 0;
@@ -679,16 +667,9 @@ void ListWidget::scrollToEnd() {
 void ListWidget::startEditMode() {
 	if (_editable && !_editMode && _selectedItem >= 0) {
 		_editMode = true;
-		setEditString(_list[_selectedItem]);
+		setEditString(stripGUIformatting(_list[_selectedItem]));
 		_caretPos = _editString.size();	// Force caret to the *end* of the selection.
-		if (_listColors.empty()) {
-			_editColor = ThemeEngine::kFontColorNormal;
-		} else {
-			if (_filter.empty())
-				_editColor = _listColors[_selectedItem];
-			else
-				_editColor = _listColors[_listIndex[_selectedItem]];
-		}
+		_editColor = ThemeEngine::kFontColorNormal;
 		markAsDirty();
 		g_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, true);
 	}
@@ -763,7 +744,12 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 
 	if (_filter.empty()) {
 		// No filter -> display everything
-		_list = _dataList;
+
+		_list.clear();
+
+		for (uint i = 0; i < _dataList.size(); ++i)
+			_list.push_back(_dataList[i].orig);
+
 		_listIndex.clear();
 	} else {
 		// Restrict the list to everything which matches all tokens in _filter, ignoring case.
@@ -775,8 +761,8 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 		_list.clear();
 		_listIndex.clear();
 
-		for (Common::U32StringArray::iterator i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
-			tmp = *i;
+		for (auto i = _dataList.begin(); i != _dataList.end(); ++i, ++n) {
+			tmp = i->clean;
 			tmp.toLowercase();
 			bool matches = true;
 			tok.reset();
@@ -788,7 +774,7 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 			}
 
 			if (matches) {
-				_list.push_back(*i);
+				_list.push_back(i->orig);
 				_listIndex.push_back(n);
 			}
 		}
@@ -812,6 +798,128 @@ void ListWidget::setFilter(const Common::U32String &filter, bool redraw) {
 		// (I am borrowing these "ideas" from the NSBox class in Cocoa :).
 		g_gui.scheduleTopDialogRedraw();
 	}
+}
+
+Common::U32String ListWidget::getThemeColor(byte r, byte g, byte b) {
+	return Common::U32String::format("\001c%02x%02x%02x", r, g, b);
+}
+
+Common::U32String ListWidget::getThemeColor(ThemeEngine::FontColor color) {
+	switch (color) {
+	case ThemeEngine::kFontColorNormal:
+		return Common::U32String("\001C{normal}");
+	case ThemeEngine::kFontColorAlternate:
+		return Common::U32String("\001C{alternate}");
+	default:
+		return Common::U32String("\001C{unknown}");
+	}
+}
+
+ThemeEngine::FontColor ListWidget::getThemeColor(const Common::U32String &color) {
+	if (color == "normal")
+		return ThemeEngine::kFontColorNormal;
+
+	if (color == "alternate")
+		return ThemeEngine::kFontColorAlternate;
+
+	warning("ListWidget::getThemeColor(): Malformed color (\"%s\")", color.encode().c_str());
+
+	return ThemeEngine::kFontColorNormal;
+}
+
+Common::U32String ListWidget::stripGUIformatting(const Common::U32String &str) {
+	Common::U32String stripped;
+	const uint32 *s = str.u32_str();
+
+	while (*s) {
+		if (*s != '\001') { // normal symbol
+			stripped += *s++;
+			continue;
+		}
+
+		s++; // skip \001
+		switch (*s) {
+		case '\001':  // \001\001 -> \001
+			stripped += *s++;
+			break;
+
+		case 'c': // \001cRRGGBB
+			s += 7; // check length?
+			break;
+
+		case 'C': // \001C{color-name}
+			while (*s && *s++ != '}')
+				;
+			break;
+
+		default:
+			error("Wrong string format (%c)", *s);
+		}
+	}
+
+	return stripped;
+}
+
+void ListWidget::drawFormattedText(const Common::Rect &r, const Common::U32String &str, ThemeEngine::WidgetStateInfo state,
+				Graphics::TextAlign align, ThemeEngine::TextInversionState inverted, int deltax, bool useEllipsis,
+				ThemeEngine::FontColor color) {
+	Common::U32String chunk;
+	const uint32 *s = str.u32_str();
+	ThemeEngine::FontStyle curfont = ThemeEngine::kFontStyleBold;
+	ThemeEngine::FontColor curcolor = ThemeEngine::kFontColorNormal;
+	Common::U32String tmp;
+
+	while (*s) {
+		if (*s != '\001') { // normal symbol
+			chunk += *s++;
+			continue;
+		}
+
+		if (chunk.size()) {
+			g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, curfont, curcolor);
+
+			deltax += g_gui.theme()->getStringWidth(chunk, curfont);
+			chunk.clear();
+		}
+
+		s++; // skip \001
+		switch (*s) {
+		case '\001':  // \001\001 -> \001
+			chunk += *s++;
+			break;
+
+		case 'c': // \001cRRGGBB
+			s += 7; // check length?
+			break;
+
+		case 'C': // \001C{color-name}
+			tmp.clear();
+			s++;
+			if (*s == '{')
+				s++;
+			else
+				error("ListWidget::drawFormattedText(): Malformatted \\001C color (%c)", *s);
+
+			while (*s && *s != '}')
+				tmp += *s++;
+
+			if (*s == '}')	// skip the closing bracket
+				s++;
+
+			if (color == ThemeEngine::kFontColorFormatting)
+				curcolor = getThemeColor(tmp);
+			else
+				curcolor = color;	// Ignore color and use the requested one
+
+			break;
+
+		default:
+			error("ListWidget::drawFormattedText(): Wrong string format (\\001%c)", *s);
+		}
+	}
+
+	if (chunk.size() || str.empty())
+		g_gui.theme()->drawText(r, chunk, state, align, inverted, deltax, true, curfont, curcolor);
 }
 
 } // End of namespace GUI

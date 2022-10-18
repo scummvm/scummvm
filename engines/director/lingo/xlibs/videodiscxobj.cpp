@@ -147,7 +147,7 @@ void VideodiscXObj::open(int type) {
 	if (type == kXObj) {
 		VideodiscXObject::initMethods(xlibMethods);
 		VideodiscXObject *xobj = new VideodiscXObject(kXObj);
-		g_lingo->_globalvars[xlibName] = xobj;
+		g_lingo->exposeXObject(xlibName, xobj);
 	}
 }
 

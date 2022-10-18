@@ -56,8 +56,10 @@ void KeyframeAnim::loadBinary(Common::SeekableReadStream *data) {
 	// Next four bytes are the frames per second
 	// The fps value seems to be ignored and causes the animation the first time manny
 	// enters the kitchen of the Blue Casket to go out of sync. So we force it to 15.
-//  _fps = data->readFloatLE();
+
+	//_fps = data->readFloatLE();
 	_fps = 15.;
+
 	// Next four bytes are the number of frames
 	data->seek(56, SEEK_SET);
 	_numFrames = data->readUint32LE();
@@ -280,10 +282,10 @@ void KeyframeAnim::KeyframeNode::animate(ModelNode &node, float frame, float fad
 	Math::Angle roll = _entries[low]._roll;
 
 	/** @bug Interpolating between two orientations specified by Euler angles (yaw/pitch/roll)
-	 *	by linearly interpolating the YPR values does not compute proper in-between
-	 *	poses, i.e. the rotation from start to finish does not go via the shortest arc.
-	 *	Though, if the start and end poses are very similar to each other, this can look
-	 *	acceptable without visual artifacts.
+	 *  by linearly interpolating the YPR values does not compute proper in-between
+	 *  poses, i.e. the rotation from start to finish does not go via the shortest arc.
+	 *  Though, if the start and end poses are very similar to each other, this can look
+	 *  acceptable without visual artifacts.
 	 */
 	if (useDelta) {
 		pos += dt * _entries[low]._dpos;

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -51,7 +52,7 @@ static const MovLine CHEWY_MPKT1[2] = {
 };
 
 void Room17::entry() {
-	if (!_G(gameState).R17EnergieOut) {
+	if (!_G(gameState).R17EnergyOut) {
 		_G(det)->startDetail(1, 255, ANI_FRONT);
 		for (int i = 0; i < 3; ++i)
 			_G(det)->startDetail(6 + i, 255, ANI_FRONT);
@@ -110,7 +111,7 @@ void Room17::xit() {
 bool Room17::timer(int16 t_nr, int16 ani_nr) {
 	if (_G(room)->_roomTimer._objNr[ani_nr] == 2 ||
 		_G(room)->_roomTimer._objNr[ani_nr] == 3) {
-		if (_G(gameState).R17EnergieOut)
+		if (_G(gameState).R17EnergyOut)
 			_G(uhr)->resetTimer(t_nr, 0);
 		else
 			return true;
@@ -141,13 +142,13 @@ int16 Room17::use_seil() {
 		action_flag = true;
 		hideCur();
 
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(flags).AutoAniPlay = true;
 		autoMove(5, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(10, 1, ANI_FRONT);
 		_G(gameState).R17Seil = true;
-		_G(atds)->delControlBit(139, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(139, ATS_ACTIVE_BIT);
 		plot_seil();
 		_G(gameState)._personHide[P_CHEWY] = false;
 		_G(flags).AutoAniPlay = false;
@@ -202,7 +203,7 @@ void Room17::calc_seil() {
 	if (_G(gameState).R17Seil) {
 		if (_G(gameState).R17Location == 2) {
 			startAadWait(619);
-		} else if (!_G(flags).AutoAniPlay && !_G(gameState).inv_cur) {
+		} else if (!_G(flags).AutoAniPlay && !_G(cur)->usingInventoryCursor()) {
 			close_door();
 			_G(flags).AutoAniPlay = true;
 			_G(mov_phasen)[CHEWY_OBJ].AtsText = 0;
@@ -275,36 +276,36 @@ int16 Room17::energie_hebel() {
 
 	if (!_G(gameState).R17HebelOk) {
 		if (isCurInventory(BECHER_VOLL_INV)) {
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			_G(gameState).R17HebelOk = true;
 			startAadWait(38);
 			action_flag = true;
-		} else if (!_G(gameState).inv_cur) {
+		} else if (!_G(cur)->usingInventoryCursor()) {
 			startAadWait(37);
 			action_flag = true;
 		}
 
-	} else if (!_G(gameState).inv_cur) {
+	} else if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 
 		_G(obj)->calc_rsi_flip_flop(SIB_HEBEL_R17);
-		_G(gameState).R17EnergieOut ^= 1;
+		_G(gameState).R17EnergyOut ^= 1;
 
-		if (!_G(gameState).R17EnergieOut) {
+		if (!_G(gameState).R17EnergyOut) {
 			_G(det)->startDetail(1, 255, ANI_FRONT);
 
 			for (int i = 0; i < 3; ++i)
 				_G(det)->startDetail(i + 6, 255, ANI_FRONT);
 		}
 
-		_G(atds)->set_ats_str(142, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
-		_G(atds)->set_ats_str(140, _G(gameState).R17EnergieOut ? 1 : 0, ATS_DATA);
-		g_engine->_sound->playSound(12);
+		_G(atds)->set_ats_str(142, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
+		_G(atds)->set_ats_str(140, _G(gameState).R17EnergyOut ? 1 : 0, ATS_DATA);
+		_G(det)->playSound(12, 0);
 
-		if (_G(gameState).R17EnergieOut) {
-			g_engine->_sound->stopSound(0);
+		if (_G(gameState).R17EnergyOut) {
+			_G(det)->stopSound(0);
 		} else {
-			g_engine->_sound->playSound(15, 0);
+			_G(det)->playSound(15, 0);
 		}
 	}
 
@@ -316,7 +317,7 @@ int16 Room17::get_oel() {
 	int16 action_flag = false;
 	hideCur();
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 		start_spz_wait(CH_EKEL, 3, false, P_CHEWY);
@@ -328,7 +329,7 @@ int16 Room17::get_oel() {
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(13, 1, ANI_FRONT);
 		_G(gameState)._personHide[P_CHEWY] = false;
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(obj)->addInventory(BECHER_VOLL_INV, &_G(room_blk));
 		inventory_2_cur(BECHER_VOLL_INV);
 	}

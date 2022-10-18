@@ -77,6 +77,8 @@ SpeechManager::SpeechManager() :
 	if (_ttsMan != nullptr) {
 		// Language
 		_ttsMan->setLanguage(ConfMan.get("language"));
+		// Enable
+		_ttsMan->enable(true);
 		// Volume
 		int volume = (ConfMan.getInt("speech_volume") * 100) / 256;
 		if (ConfMan.hasKey("mute") && ConfMan.getBool("mute"))
@@ -91,8 +93,9 @@ SpeechManager::SpeechManager() :
 		} else
 			voice = _ttsMan->getDefaultVoice();
 		_ttsMan->setVoice(voice);
-	} else
+	} else {
 		debugC(kDebugSpeech, "Text to Speech is not available");
+	}
 #endif
 }
 

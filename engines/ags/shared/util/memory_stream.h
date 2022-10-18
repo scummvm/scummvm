@@ -19,17 +19,18 @@
  *
  */
 
-//=============================================================================
-//
-// MemoryStream does reading and writing over the buffer of chars stored in
-// memory. Currently has rather trivial implementation. Does not own a buffer
-// itself, but works with the provided std::vector reference, which means that
-// the buffer *must* persist until stream is closed.
-// TODO: perhaps accept const char* for reading mode, for compatibility with
-// the older code, and maybe to let also read String objects?
-// TODO: separate StringStream for reading & writing String object?
-//
-//=============================================================================
+ //=============================================================================
+ //
+ // MemoryStream does reading and writing over the buffer of bytes stored in
+ // memory. Currently has rather trivial implementation. Does not own a buffer
+ // itself, but works with the provided C-buffer pointer, which means that the
+ // buffer object *must* persist until stream is closed.
+ //
+ // VectorStream is a specialized implementation that works with std::vector.
+ // Unlike base MemoryStream provides continiously resizing buffer for writing.
+ // TODO: separate StringStream for reading & writing String object?
+ //
+ //=============================================================================
 
 #ifndef AGS_SHARED_UTIL_MEMORY_STREAM_H
 #define AGS_SHARED_UTIL_MEMORY_STREAM_H
@@ -44,16 +45,15 @@ namespace Shared {
 
 class MemoryStream : public DataStream {
 public:
-	// Construct memory stream in the read-only mode over a const std::vector;
-	// vector must persist in memory until the stream is closed.
-	MemoryStream(const std::vector<char> &cbuf, DataEndianess stream_endianess = kLittleEndian);
-	// Construct memory stream in the read-only mode over a const String;
-	// String object must persist in memory until the stream is closed.
-	MemoryStream(const String &cbuf, DataEndianess stream_endianess = kLittleEndian);
-	// Construct memory stream in the chosen mode over a given std::vector;
-	// vector must persist in memory until the stream is closed.
-	MemoryStream(std::vector<char> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
-	~MemoryStream() override;
+	// Construct memory stream in the read-only mode over a const C-buffer;
+	// reading will never exceed buf_sz bytes;
+	// buffer must persist in memory until the stream is closed.
+	MemoryStream(const uint8_t *cbuf, size_t buf_sz, DataEndianess stream_endianess = kLittleEndian);
+	// Construct memory stream in the chosen mode over a given C-buffer;
+	// neither reading nor writing will ever exceed buf_sz bytes;
+	// buffer must persist in memory until the stream is closed.
+	MemoryStream(uint8_t *buf, size_t buf_sz, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
+	~MemoryStream() override {}
 
 	void    Close() override;
 	bool    Flush() override;
@@ -77,12 +77,38 @@ public:
 
 	bool    Seek(soff_t offset, StreamSeek origin) override;
 
+protected:
+	const uint8_t           *_cbuf = nullptr; // readonly buffer ptr
+	size_t                   _buf_sz = 0u; // hard buffer limit
+	size_t                   _len = 0u; // calculated length of stream
+	const StreamWorkMode     _mode;
+	size_t                   _pos = 0u; // current stream pos
+
 private:
-	const char *_cbuf;
-	size_t _len;
-	std::vector<char> *_buf;
-	const StreamWorkMode _mode;
-	soff_t _pos;
+	uint8_t                 *_buf = nullptr; // writeable buffer ptr
+};
+
+
+class VectorStream : public MemoryStream {
+public:
+	// Construct memory stream in the read-only mode over a const std::vector;
+	// vector must persist in memory until the stream is closed.
+	VectorStream(const std::vector<uint8_t> &cbuf, DataEndianess stream_endianess = kLittleEndian);
+	// Construct memory stream in the chosen mode over a given std::vector;
+	// vector must persist in memory until the stream is closed.
+	VectorStream(std::vector<uint8_t> &buf, StreamWorkMode mode, DataEndianess stream_endianess = kLittleEndian);
+	~VectorStream() override {}
+
+	void    Close() override;
+
+	bool    CanRead() const override;
+	bool    CanWrite() const override;
+
+	size_t  Write(const void *buffer, size_t size) override;
+	int32_t WriteByte(uint8_t b) override;
+
+private:
+	std::vector<uint8_t> *_vec = nullptr; // writeable vector (may be null)
 };
 
 } // namespace Shared

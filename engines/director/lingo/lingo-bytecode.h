@@ -36,6 +36,7 @@ enum TheEntityArgsType {
 	kTEANOArgs = 0,
 	kTEAItemId = 1,
 	kTEAString,
+	kTEAMenuId,
 	kTEAMenuIdItemId,
 	kTEAChunk
 };

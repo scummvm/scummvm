@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -56,12 +57,12 @@ void Room56::entry() {
 			_G(zoom_horizont) = 0;
 			setPersonPos(-6, 16, P_HOWARD, P_RIGHT);
 			setPersonPos(3, 42, P_CHEWY, P_RIGHT);
-			g_engine->_sound->stopSound(0);
-			g_engine->_sound->playSound(7, 1);
+			_G(det)->stopSound(0);
+			_G(det)->playSound(7, 1);
 			startSetAILWait(7, 1, ANI_BACK);
 			startSetAILWait(8, 1, ANI_FRONT);
-			g_engine->_sound->stopSound(1);
-			g_engine->_sound->playSound(7, 0);
+			_G(det)->stopSound(1);
+			_G(det)->playSound(7, 0);
 			startSetAILWait(7, 1, ANI_FRONT);
 			setupScreen(DO_SETUP);
 
@@ -116,9 +117,9 @@ void Room56::entry() {
 				_G(gameState).flags34_8 = true;
 				mode = 2;
 			} else if (_G(gameState).flags34_40) {
-				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(atds)->setControlBit(367, ATS_ACTIVE_BIT, ATS_DATA);
-				_G(atds)->setControlBit(366, ATS_ACTIVE_BIT, ATS_DATA);
+				_G(atds)->delControlBit(362, ATS_ACTIVE_BIT);
+				_G(atds)->setControlBit(367, ATS_ACTIVE_BIT);
+				_G(atds)->setControlBit(366, ATS_ACTIVE_BIT);
 				_G(gameState).room_e_obj[137].Attribut = 3;
 				if (_G(gameState).flags33_80) {
 					_G(out)->setPointer(nullptr);
@@ -161,7 +162,6 @@ void Room56::entry() {
 	case 1:
 		_G(gameState)._personRoomNr[P_HOWARD] = 66;
 		_G(gameState)._personRoomNr[P_NICHELLE] = 66;
-		_G(gameState).r88DestRoom = 82;
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
 		_G(flags).NoPalAfterFlc = true;
@@ -188,8 +188,7 @@ void Room56::entry() {
 		break;
 	}
 
-	g_engine->_sound->playSound(9, 0);
-	g_engine->_sound->playSound(9);
+	_G(det)->playSound(9, 0);
 }
 
 void Room56::xit() {
@@ -208,12 +207,12 @@ bool Room56::timer(int16 t_nr, int16 ani_nr) {
 
 int16 Room56::use_taxi() {
 	int16 action_ret = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 		hideCur();
 		autoMove(1, P_CHEWY);
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(7, 1);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(7, 1);
 		startSetAILWait(7, 1, ANI_BACK);
 		_G(det)->startDetail(8, 1, ANI_FRONT);
 		_G(zoom_horizont) = 0;
@@ -239,7 +238,7 @@ int16 Room56::use_taxi() {
 void Room56::talk_man() {
 	autoMove(3, P_CHEWY);
 	if (!_G(gameState).R56AbfahrtOk) {
-		startAdsWait(16);
+		startDialogCloseupWait(16);
 	} else if (!_G(gameState).R62Flucht) {
 		hideCur();
 		startAadWait(343);
@@ -249,7 +248,7 @@ void Room56::talk_man() {
 
 int16 Room56::use_man() {
 	int16 action_ret = false;
-	if (_G(gameState).flags32_10 || !isCurInventory(FLASCHE_INV))
+	if (_G(gameState).flags32_10 || !isCurInventory(BOTTLE_INV))
 		return action_ret;
 	
 	action_ret = true;
@@ -268,7 +267,7 @@ int16 Room56::use_man() {
 		_G(room)->set_timer_status(0, TIMER_START);
 		_G(det)->set_static_ani(0, -1);
 	} else {
-		delInventory(_G(gameState).AkInvent);
+		delInventory(_G(cur)->getInventoryCursor());
 		_G(gameState).R56AbfahrtOk = true;
 		startSetAILWait(6, 1, ANI_FRONT);
 
@@ -286,7 +285,7 @@ int16 Room56::use_man() {
 int16 Room56::use_kneipe() {
 	int16 action_ret = false;
 	if (!_G(gameState).flags32_10) {
-		if (_G(menu_item) == CUR_WALK && !_G(gameState).inv_cur && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) == 0) {
+		if (_G(menu_item) == CUR_WALK && !_G(cur)->usingInventoryCursor() && _G(atds)->getControlBit(362, ATS_ACTIVE_BIT) == 0) {
 			action_ret = true;
 			hideCur();
 			if (_G(gameState).R56Kneipe) {
@@ -302,13 +301,13 @@ int16 Room56::use_kneipe() {
 				auto_scroll(0, 0);
 				startSetAILWait(12, 3, ANI_FRONT);
 				flic_cut(FCUT_075);
-				g_engine->_sound->stopSound(0);
-				g_engine->_sound->playSound(9);
+				_G(det)->stopSound(0);
+				_G(det)->playSound(9, 0);
 				_G(det)->startDetail(10, 6, ANI_FRONT);
 				startAadWait(307);
-				_G(det)->stop_detail(10);
-				g_engine->_sound->playSound(10, 0);
-				_G(out)->ausblenden(0);
+				_G(det)->stopDetail(10);
+				_G(det)->playSound(10, 0);
+				_G(out)->fadeOut();
 				setupScreen(DO_SETUP);
 				_G(gameState)._personHide[P_CHEWY] = false;
 				_G(gameState)._personHide[P_HOWARD] = false;
@@ -346,7 +345,7 @@ int16 Room56::use_kneipe() {
 			startAadWait(518);
 		}
 		showCur();
-	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(gameState).inv_cur)){
+	} else if (_G(menu_item) == 0 || _G(menu_item) == 2 || (_G(menu_item) == 1 && !_G(cur)->usingInventoryCursor())){
 		hideCur();
 		action_ret = 1;
 		_G(mouseLeftClick) = false;
@@ -361,8 +360,7 @@ int16 Room56::use_kneipe() {
 		setupScreen(NO_SETUP);
 		_G(fx_blend) = BLEND3;
 		showCur();
-		g_engine->_sound->playSound(9, 0);
-		g_engine->_sound->playSound(9);
+		_G(det)->playSound(9, 0);
 	}
 	return action_ret;
 }
@@ -410,8 +408,8 @@ void Room56::setup_func() {
 
 	if (_G(gameState)._personRoomNr[P_HOWARD] == 56) {
 		calc_person_look();
-		const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
-		const int16 ch_y = _G(spieler_vector)[P_CHEWY].Xypos[1];
+		const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
+		const int16 ch_y = _G(moveState)[P_CHEWY].Xypos[1];
 		int16 x, y;
 		if (ch_x < 196) {
 			x = 23;
@@ -432,7 +430,7 @@ void Room56::setup_func() {
 	if (_G(gameState).flags32_10)
 		return;
 	
-	if (!_G(atds)->getControlBit(362, ATS_ACTIVE_BIT, ATS_DATA) && _G(menu_item) == CUR_WALK) {
+	if (!_G(atds)->getControlBit(362, ATS_ACTIVE_BIT) && _G(menu_item) == CUR_WALK) {
 		if (g_events->_mousePos.x + _G(gameState).scrollx >= 157 && g_events->_mousePos.x + _G(gameState).scrollx <= 204 && g_events->_mousePos.y >= 28 && g_events->_mousePos.y <= 89)
 			cursorChoice(CUR_EXIT_TOP);
 		else

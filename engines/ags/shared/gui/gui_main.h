@@ -100,24 +100,29 @@ public:
 
 	// Tells if GUI has graphically changed recently
 	bool        HasChanged() const;
+	bool        HasControlsChanged() const;
 	// Manually marks GUI as graphically changed
+	// NOTE: this only matters if GUI's own graphic changes (content, size etc),
+	// but not its state (visible) or texture drawing mode (transparency, etc).
 	void        MarkChanged();
+	void        MarkControlsChanged();
 	// Clears changed flag
 	void        ClearChanged();
 
-	int32_t FindControlUnderMouse() const;
-	// this version allows some extra leeway in the Editor so that
-	// the user can grab tiny controls
-	int32_t FindControlUnderMouse(int leeway) const;
-	int32_t FindControlUnderMouse(int leeway, bool must_be_clickable) const;
+	// Finds a control under given screen coordinates, returns control's child ID.
+	// Optionally allows extra leeway (offset in all directions) to let the user grab tiny controls.
+	// Optionally only allows clickable controls, ignoring non-clickable ones.
+	int32_t FindControlAt(int atx, int aty, int leeway = 0, bool must_be_clickable = true) const;
 	// Gets the number of the GUI child controls
 	int32_t GetControlCount() const;
 	// Gets control by its child's index
-	GUIObject *GetControl(int index) const;
+	GUIObject *GetControl(int32_t index) const;
 	// Gets child control's type, looks up with child's index
-	GUIControlType GetControlType(int index) const;
+	GUIControlType GetControlType(int32_t index) const;
 	// Gets child control's global ID, looks up with child's index
-	int32_t GetControlID(int index) const;
+	int32_t GetControlID(int32_t index) const;
+	// Gets an array of child control indexes in the z-order, from bottom to top
+	const std::vector<int> &GetControlsDrawOrder() const;
 
 	// Child control management
 	// Note that currently GUIMain does not own controls (should not delete them)
@@ -125,20 +130,21 @@ public:
 	void    RemoveAllControls();
 
 	// Operations
-	bool    BringControlToFront(int index);
-	void    Draw(Bitmap *ds);
-	void    DrawAt(Bitmap *ds, int x, int y);
-	void    Poll();
+	bool    BringControlToFront(int32_t index);
+	void    DrawSelf(Bitmap *ds);
+	void    DrawWithControls(Bitmap *ds);
+	// Polls GUI state, providing current cursor (mouse) coordinates
+	void    Poll(int mx, int my);
 	HError  RebuildArray();
 	void    ResortZOrder();
-	bool    SendControlToBack(int index);
+	bool    SendControlToBack(int32_t index);
 	// Sets whether GUI should react to player clicking on it
 	void    SetClickable(bool on);
 	// Override GUI visibility; when in concealed mode GUI won't show up
 	// even if Visible = true
 	void    SetConceal(bool on);
 	// Attempts to change control's zorder; returns if zorder changed
-	bool    SetControlZOrder(int index, int zorder);
+	bool    SetControlZOrder(int32_t index, int zorder);
 	// Changes GUI style to the text window or back
 	void    SetTextWindow(bool on);
 	// Sets GUI transparency as a percentage (0 - 100) where 100 = invisible
@@ -147,9 +153,8 @@ public:
 	void    SetVisible(bool on);
 
 	// Events
-	void    OnMouseButtonDown();
+	void    OnMouseButtonDown(int mx, int my);
 	void    OnMouseButtonUp();
-	void    OnControlPositionChanged();
 
 	// Serialization
 	void    ReadFromFile(Stream *in, GuiVersion gui_version);
@@ -161,6 +166,8 @@ public:
 
 private:
 	void    DrawBlob(Bitmap *ds, int x, int y, color_t draw_color);
+	// Same as FindControlAt but expects local space coordinates
+	int32_t FindControlAtLocal(int atx, int aty, int leeway, bool must_be_clickable) const;
 
 	// TODO: all members are currently public; hide them later
 public:
@@ -189,9 +196,10 @@ public:
 
 	String  OnClickHandler; // script function name
 
-	private:
+private:
 	int32_t _flags;         // style and behavior flags
 	bool    _hasChanged;    // flag tells whether GUI has graphically changed recently
+	bool    _hasControlsChanged;
 
 	// Array of types and control indexes in global GUI object arrays;
 	// maps GUI child slots to actual controls and used for rebuilding Controls array
@@ -200,13 +208,18 @@ public:
 	// Array of child control references (not exclusively owned!)
 	std::vector<GUIObject *> _controls;
 	// Sorted array of controls in z-order.
-	std::vector<int32_t>    _ctrlDrawOrder;
+	std::vector<int>         _ctrlDrawOrder;
 };
 
 
 namespace GUI {
 extern GuiVersion GameGuiVersion;
+extern GuiOptions Options;
 
+// Calculates the text's graphical position, given the alignment
+Rect CalcTextPosition(const char *text, int font, const Rect &frame, FrameAlignment align);
+// Calculates the text's graphical position, given the horizontal alignment
+Line CalcTextPositionHor(const char *text, int font, int x1, int x2, int y, FrameAlignment align);
 // Draw standart "shading" effect over rectangle
 void DrawDisabledEffect(Bitmap *ds, const Rect &rc);
 // Draw text aligned inside rectangle
@@ -216,7 +229,10 @@ void DrawTextAlignedHor(Bitmap *ds, const char *text, int font, color_t text_col
 
 // Mark all existing GUI for redraw
 void MarkAllGUIForUpdate();
-// Mark all GUI which use the given font for redraw
+// Mark all translatable GUI controls for redraw
+void MarkForTranslationUpdate();
+// Mark all GUI which use the given font for recalculate/redraw;
+// pass -1 to update all the textual controls together
 void MarkForFontUpdate(int font);
 // Mark labels that acts as special text placeholders for redraw
 void MarkSpecialLabelsForUpdate(GUILabelMacro macro);
@@ -226,10 +242,14 @@ void MarkInventoryForUpdate(int char_id, bool is_player);
 // Parses the string and returns combination of label macro flags
 GUILabelMacro FindLabelMacros(const String &text);
 
+// Reads all GUIs and their controls.
+// WARNING: the data is read into the global arrays (guis, guibuts, and so on)
 // TODO: remove is_savegame param after dropping support for old saves
 // because only they use ReadGUI to read runtime GUI data
-HError ReadGUI(std::vector<GUIMain> &guis, Stream *in, bool is_savegame = false);
-void WriteGUI(const std::vector<GUIMain> &guis, Stream *out);
+HError ReadGUI(Stream *in, bool is_savegame = false);
+// Writes all GUIs and their controls.
+// WARNING: the data is written from the global arrays (guis, guibuts, and so on)
+void WriteGUI(Stream *out);
 // Converts legacy GUIVisibility into appropriate GUIMain properties
 void ApplyLegacyVisibility(GUIMain &gui, LegacyGUIVisState vis);
 }
@@ -241,14 +261,9 @@ extern int get_adjusted_spritewidth(int spr);
 extern int get_adjusted_spriteheight(int spr);
 extern bool is_sprite_alpha(int spr);
 
-// Those function have distinct implementations in Engine and Editor
-extern int get_text_width_outlined(Shared::Bitmap *ds, const char *tex, int font);
-
 #define SET_EIP(x) set_our_eip(x);
 extern void set_eip_guiobj(int eip);
 extern int get_eip_guiobj();
-
-extern bool outlineGuiObjects;
 
 } // namespace AGS3
 

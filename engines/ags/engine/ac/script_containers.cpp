@@ -68,16 +68,13 @@ ScriptDictBase *Dict_Create(bool sorted, bool case_sensitive) {
 }
 
 // TODO: we need memory streams
-ScriptDictBase *Dict_Unserialize(int index, const char *serializedData, int dataSize) {
-	if (dataSize < (int)sizeof(int32_t) * 2)
-		quit("Dict_Unserialize: not enough data.");
-	const char *ptr = serializedData;
-	const int sorted = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
-	const int cs = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+ScriptDictBase *Dict_Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) {
+	if (data_sz < sizeof(int32_t) * 2)
+		quit("Dict_Unserialize: not enough data."); // TODO: don't quit, return error
+	const int sorted = in->ReadInt32();
+	const int cs = in->ReadInt32();
 	ScriptDictBase *dic = Dict_CreateImpl(sorted != 0, cs != 0);
-	dic->Unserialize(index, ptr, dataSize -= sizeof(int32_t) * 2);
+	dic->Unserialize(index, in, data_sz - sizeof(int32_t) * 2);
 	return dic;
 }
 
@@ -205,16 +202,13 @@ ScriptSetBase *Set_Create(bool sorted, bool case_sensitive) {
 }
 
 // TODO: we need memory streams
-ScriptSetBase *Set_Unserialize(int index, const char *serializedData, int dataSize) {
-	if (dataSize < (int)sizeof(int32_t) * 2)
-		quit("Set_Unserialize: not enough data.");
-	const char *ptr = serializedData;
-	const int sorted = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
-	const int cs = BBOp::Int32FromLE(*((const int *)ptr));
-	ptr += sizeof(int32_t);
+ScriptSetBase *Set_Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) {
+	if (data_sz < sizeof(int32_t) * 2)
+		quit("Set_Unserialize: not enough data."); // TODO: don't quit, return error
+	const int sorted = in->ReadInt32();
+	const int cs = in->ReadInt32();
 	ScriptSetBase *set = Set_CreateImpl(sorted != 0, cs != 0);
-	set->Unserialize(index, ptr, dataSize -= sizeof(int32_t) * 2);
+	set->Unserialize(index, in, data_sz - sizeof(int32_t) * 2);
 	return set;
 }
 

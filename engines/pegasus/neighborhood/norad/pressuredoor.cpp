@@ -107,8 +107,8 @@ PressureDoor::PressureDoor(Neighborhood *handler, bool isUpperDoor, const HotSpo
 		const HotSpotID outSpotID, TimeValue pressureSoundIn, TimeValue pressureSoundOut, TimeValue equalizeSoundIn,
 		TimeValue equalizeSoundOut) : GameInteraction(kNoradPressureDoorInteractionID, handler),
 		_levelsMovie(kPressureDoorLevelsID), _typeMovie(kPressureDoorTypeID), _upButton(kPressureDoorUpButtonID),
-		_downButton(kPressureDoorDownButtonID), _pressureNotification(kNoradPressureNotificationID, ((PegasusEngine *)g_engine)),
-		_doorTracker(this), _utilityNotification(kNoradUtilityNotificationID, ((PegasusEngine *)g_engine)) {
+		_downButton(kPressureDoorDownButtonID), _pressureNotification(kNoradPressureNotificationID, g_vm),
+		_doorTracker(this), _utilityNotification(kNoradUtilityNotificationID, g_vm) {
 	_neighborhoodNotification = handler->getNeighborhoodNotification();
 	_upHotspotID = upSpotID;
 	_downHotspotID = downSpotID;
@@ -161,16 +161,16 @@ void PressureDoor::openInteraction() {
 
 	SpriteFrame *frame = new SpriteFrame();
 	if (_isUpperDoor)
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLowerPressureUpOffPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kLowerPressureUpOffPICTID);
 	else
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kUpperPressureUpOffPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kUpperPressureUpOffPICTID);
 	_upButton.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
 	if (_isUpperDoor)
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLowerPressureUpOnPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kLowerPressureUpOnPICTID);
 	else
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kUpperPressureUpOnPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kUpperPressureUpOnPICTID);
 	_upButton.addFrame(frame, 0, 0);
 
 	_upButton.setCurrentFrameIndex(0);
@@ -189,16 +189,16 @@ void PressureDoor::openInteraction() {
 
 	frame = new SpriteFrame();
 	if (_isUpperDoor)
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLowerPressureDownOffPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kLowerPressureDownOffPICTID);
 	else
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kUpperPressureDownOffPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kUpperPressureDownOffPICTID);
 	_downButton.addFrame(frame, 0, 0);
 
 	frame = new SpriteFrame();
 	if (_isUpperDoor)
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kLowerPressureDownOnPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kLowerPressureDownOnPICTID);
 	else
-		frame->initFromPICTResource(((PegasusEngine *)g_engine)->_resFork, kUpperPressureDownOnPICTID);
+		frame->initFromPICTResource(g_vm->_resFork, kUpperPressureDownOnPICTID);
 	_downButton.addFrame(frame, 0, 0);
 
 	_downButton.setCurrentFrameIndex(0);
@@ -316,7 +316,7 @@ void PressureDoor::receiveNotification(Notification *notification, const Notific
 				break;
 			case kRobotComingThrough:
 				g_system->delayMillis(2 * 1000);
-				((PegasusEngine *)g_engine)->die(kDeathRobotThroughNoradDoor);
+				g_vm->die(kDeathRobotThroughNoradDoor);
 				break;
 			case kRobotDying:
 				_robotState = kRobotDead;

@@ -24,6 +24,7 @@
 
 #include "math/vector3d.h"
 #include "math/quat.h"
+
 #include "engines/grim/costume/head.h"
 
 namespace Grim {

@@ -58,7 +58,7 @@ class Stream;
 
 class String {
 public:
-	static const size_t npos = (size_t)-1;
+	static const size_t NoIndex = (size_t)-1;
 
 	// Standard constructor: intialize empty string
 	String();
@@ -139,29 +139,29 @@ public:
 	int     CompareNoCase(const char *cstr) const;
 	// Compares the leftmost part of this string with given string
 	int     CompareLeft(const String &str, size_t count = -1) const {
-		return CompareLeft(str._cstr, count != npos ? count : str._len);
+		return CompareLeft(str._cstr, count != NoIndex ? count : str._len);
 	}
 	int     CompareLeft(const char *cstr, size_t count = -1) const;
 	int     CompareLeftNoCase(const String &str, size_t count = -1) const {
-		return CompareLeftNoCase(str._cstr, count != npos ? count : str._len);
+		return CompareLeftNoCase(str._cstr, count != NoIndex ? count : str._len);
 	}
 	int     CompareLeftNoCase(const char *cstr, size_t count = -1) const;
 	// Compares any part of this string with given string
 	int     CompareMid(const String &str, size_t from, size_t count = -1) const {
-		return CompareMid(str._cstr, from, count != npos ? count : str._len);
+		return CompareMid(str._cstr, from, count != NoIndex ? count : str._len);
 	}
 	int     CompareMid(const char *cstr, size_t from, size_t count = -1) const;
 	int     CompareMidNoCase(const String &str, size_t from, size_t count = -1) const {
-		return CompareMidNoCase(str._cstr, from, count != npos ? count : str._len);
+		return CompareMidNoCase(str._cstr, from, count != NoIndex ? count : str._len);
 	}
 	int     CompareMidNoCase(const char *cstr, size_t from, size_t count = -1) const;
 	// Compares the rightmost part of this string with given C-string
 	int     CompareRight(const String &str, size_t count = -1) const {
-		return CompareRight(str._cstr, count != npos ? count : str._len);
+		return CompareRight(str._cstr, count != NoIndex ? count : str._len);
 	}
 	int     CompareRight(const char *cstr, size_t count = -1) const;
 	int     CompareRightNoCase(const String &str, size_t count = -1) const {
-		return CompareRightNoCase(str._cstr, count != npos ? count : str._len);
+		return CompareRightNoCase(str._cstr, count != NoIndex ? count : str._len);
 	}
 	int     CompareRightNoCase(const char *cstr, size_t count = -1) const;
 	// Convenience aliases for Compare functions
@@ -422,6 +422,9 @@ public:
 	// Fixes compilation error in script_set
 	operator bool() const {
 		return !IsEmpty();
+	}
+	operator const char *() const {
+		return GetCStr();
 	}
 
 private:

@@ -63,7 +63,6 @@ enum {
 	kSearchClearCmd = 'SRCL',
 
 	kCmdGlobalGraphicsOverride = 'OGFX',
-	kCmdGlobalShaderOverride = 'OSHD',
 	kCmdGlobalBackendOverride = 'OBAK',
 	kCmdGlobalAudioOverride = 'OSFX',
 	kCmdGlobalMIDIOverride = 'OMID',
@@ -92,7 +91,7 @@ public:
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
-	bool tryInsertChar(byte c, int pos) override {
+	bool tryInsertChar(Common::u32char_type_t c, int pos) override {
 		if (Common::isAlnum(c) || c == '-' || c == '_') {
 			_editString.insertChar(c, pos);
 			return true;
@@ -215,22 +214,6 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 		_globalGraphicsOverride = new CheckboxWidget(graphicsContainer, "GameOptions_Graphics_Container.EnableTabCheckbox", _c("Override global graphic settings", "lowres"), Common::U32String(), kCmdGlobalGraphicsOverride);
 
 	addGraphicControls(graphicsContainer, "GameOptions_Graphics_Container.");
-
-	//
-	// The shader tab (currently visible only for Vita platform), visibility checking by features
-	//
-
-	_globalShaderOverride = nullptr;
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		tab->addTab(_("Shader"), "GameOptions_Shader");
-
-		if (g_system->getOverlayWidth() > 320)
-			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _("Override global shader settings"), Common::U32String(), kCmdGlobalShaderOverride);
-		else
-			_globalShaderOverride = new CheckboxWidget(tab, "GameOptions_Shader.EnableTabCheckbox", _c("Override global shader settings", "lowres"), Common::U32String(), kCmdGlobalShaderOverride);
-
-		addShaderControls(tab, "GameOptions_Shader.");
-	}
 
 	//
 	// The Keymap tab
@@ -413,6 +396,7 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("stretch_mode", _domain) ||
 		ConfMan.hasKey("scaler", _domain) ||
 		ConfMan.hasKey("scale_factor", _domain) ||
+		ConfMan.hasKey("shader", _domain) ||
 		ConfMan.hasKey("aspect_ratio", _domain) ||
 		ConfMan.hasKey("fullscreen", _domain) ||
 		ConfMan.hasKey("vsync", _domain) ||
@@ -420,11 +404,6 @@ void EditGameDialog::open() {
 		ConfMan.hasKey("renderer", _domain) ||
 		ConfMan.hasKey("antialiasing", _domain);
 	_globalGraphicsOverride->setState(e);
-
-	if (g_system->hasFeature(OSystem::kFeatureShader)) {
-		e = ConfMan.hasKey("shader", _domain);
-		_globalShaderOverride->setState(e);
-	}
 
 	if (_backendOptions) {
 		e = _backendOptions->hasKeys();
@@ -529,10 +508,6 @@ void EditGameDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 dat
 	switch (cmd) {
 	case kCmdGlobalGraphicsOverride:
 		setGraphicSettingsState(data != 0);
-		g_gui.scheduleTopDialogRedraw();
-		break;
-	case kCmdGlobalShaderOverride:
-		setShaderSettingsState(data != 0);
 		g_gui.scheduleTopDialogRedraw();
 		break;
 	case kCmdGlobalBackendOverride:

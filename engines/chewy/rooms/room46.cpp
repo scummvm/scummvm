@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -80,7 +81,7 @@ void Room46::xit() {
 void Room46::setup_func() {
 	calc_person_look();
 	int16 y = 64;
-	const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 	int16 x;
 	if (ch_x > 160) {
@@ -114,7 +115,7 @@ void Room46::bodo() {
 	startSetAILWait(0, 1, ANI_FRONT);
 	_G(det)->startDetail(5, 255, ANI_FRONT);
 	startAadWait(241);
-	_G(det)->stop_detail(5);
+	_G(det)->stopDetail(5);
 	_G(det)->showStaticSpr(5);
 	startAadWait(609);
 	_G(det)->hideStaticSpr(5);
@@ -122,7 +123,7 @@ void Room46::bodo() {
 	startSetAILWait(3, 1, ANI_FRONT);
 	_G(det)->startDetail(4, 255, ANI_FRONT);
 	startAadWait(242);
-	_G(det)->stop_detail(4);
+	_G(det)->stopDetail(4);
 
 	_G(det)->showStaticSpr(6);
 	startAadWait(610);
@@ -157,19 +158,24 @@ void Room46::kloppe() {
 		
 		_G(out)->setPointer(nullptr);
 		_G(out)->cls();
+
 		start_aad(244 + i, -1);
 		int16 delay = _G(gameState).DelaySpeed * 50;
 		_G(atds)->print_aad(0, 0);
 
+		_G(disableScreen) = true;
+
 		if (g_engine->_sound->speechEnabled()) {
 			g_engine->_sound->waitForSpeechToFinish();
-			continue;
+		} else {
+			while (g_events->getSwitchCode() == Common::KEYCODE_INVALID && delay) {
+				--delay;
+				EVENTS_UPDATE;
+				SHOULD_QUIT_RETURN;
+			}
 		}
-		
-		while (_G(in)->getSwitchCode() == Common::KEYCODE_INVALID && delay) {
-			--delay;
-			SHOULD_QUIT_RETURN;
-		}
+
+		_G(disableScreen) = false;
 	}
 
 	g_engine->_video->playVideo(FCUT_066);
@@ -185,7 +191,7 @@ void Room46::kloppe() {
 int16 Room46::use_schloss() {
 	int16 action_ret = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_ret = true;
 
 		if (!_G(gameState).R46GetLeder) {

@@ -40,15 +40,15 @@ byte *FindChunk(SCNHANDLE handle, uint32 chunk) {
 	uint32 *lptr = (uint32 *)bptr;
 	uint32 add;
 
-	// Initial adjustmnet for Tinsel 1 chunk types
-	if ((TinselV0 || TinselV1) && (chunk >= CHUNK_SCENE) &&
+	// Initial adjustment for Tinsel 1 chunk types
+	if ((TinselVersion <= 1) && (chunk >= CHUNK_SCENE) &&
 		(chunk != CHUNK_MBSTRING))
 		--chunk;
 
-	// V0 chunk types can be found by substracting 2 from the
+	// V0 chunk types can be found by subtracting 2 from the
 	// chunk type. Note that CHUNK_STRING and CHUNK_BITMAP are
 	// the same in V0 and V1
-	if (TinselVersion == TINSEL_V0 &&
+	if (TinselVersion == 0 &&
 		chunk != CHUNK_STRING && chunk != CHUNK_BITMAP)
 		chunk -= 0x2L;
 

@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -30,7 +31,7 @@ namespace Chewy {
 namespace Rooms {
 
 void Room14::entry() {
-	_G(gameState).R23GleiterExit = 14;
+	_G(gameState).R23GliderExit = 14;
 	_G(zoom_horizont) = 310;
 	_G(gameState).ScrollxStep = 2;
 
@@ -72,7 +73,7 @@ void Room14::eremit_feuer(int16 t_nr, int16 ani_nr) {
 int16 Room14::use_schrott() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(3, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(12, 1, ANI_FRONT);
@@ -91,7 +92,7 @@ int16 Room14::use_schrott() {
 int16 Room14::use_gleiter() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		autoMove(4, P_CHEWY);
 
@@ -103,7 +104,7 @@ int16 Room14::use_gleiter() {
 			_G(det)->showStaticSpr(6);
 			_G(atds)->set_ats_str(107, TXT_MARK_LOOK, 1, ATS_DATA);
 		} else {
-			_G(gameState).R23GleiterExit = 14;
+			_G(gameState).R23GliderExit = 14;
 			Room23::cockpit();
 		}
 	}
@@ -117,7 +118,7 @@ void Room14::talk_eremit()  {
 		_G(flags).AutoAniPlay = true;
 
 		if (_G(gameState).R14Translator) {
-			loadAdsDia(0);
+			loadDialogCloseup(0);
 			_G(obj)->show_sib(46);
 		} else {
 			hideCur();
@@ -131,7 +132,7 @@ void Room14::talk_eremit()  {
 int16 Room14::use_schleim() {
 	int16 action_flag = false;
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		autoMove(2, P_CHEWY);
 		_G(gameState)._personHide[P_CHEWY] = true;
 		startSetAILWait(11, 1, ANI_FRONT);
@@ -150,9 +151,8 @@ int16 Room14::use_schleim() {
 
 void Room14::feuer() {
 	int16 waffe = false;
-	int16 tmp = _G(gameState).AkInvent;
+	int16 tmp = _G(cur)->getInventoryCursor();
 	_G(gameState).R14Feuer = true;
-	_G(cur_hide_flag) = false;
 	_G(flags).AutoAniPlay = true;
 	hideCur();
 

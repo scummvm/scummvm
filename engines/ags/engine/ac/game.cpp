@@ -24,9 +24,9 @@
 #include "ags/shared/ac/common.h"
 #include "ags/shared/ac/view.h"
 #include "ags/engine/ac/audio_channel.h"
+#include "ags/engine/ac/button.h"
 #include "ags/engine/ac/character.h"
-#include "ags/engine/ac/character_cache.h"
-#include "ags/shared/ac/dialog_topic.h"
+#include "ags/engine/ac/dialog.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/dynamic_sprite.h"
 #include "ags/engine/ac/event.h"
@@ -44,7 +44,7 @@
 #include "ags/shared/ac/keycode.h"
 #include "ags/engine/ac/lip_sync.h"
 #include "ags/engine/ac/mouse.h"
-#include "ags/engine/ac/object_cache.h"
+#include "ags/engine/ac/move_list.h"
 #include "ags/engine/ac/overlay.h"
 #include "ags/engine/ac/path_helper.h"
 #include "ags/engine/ac/sys_events.h"
@@ -65,9 +65,11 @@
 #include "ags/shared/gfx/bitmap.h"
 #include "ags/engine/gfx/graphics_driver.h"
 #include "ags/shared/gui/gui_button.h"
+#include "ags/shared/gui/gui_slider.h"
 #include "ags/engine/gui/gui_dialog.h"
 #include "ags/engine/main/engine.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/engine/media/video/video.h"
 #include "ags/engine/platform/base/ags_platform_driver.h"
 #include "ags/engine/platform/base/sys_main.h"
 #include "ags/plugins/plugin_engine.h"
@@ -194,19 +196,13 @@ void set_game_speed(int new_fps) {
 void setup_for_dialog() {
 	_G(cbuttfont) = _GP(play).normal_font;
 	_G(acdialog_font) = _GP(play).normal_font;
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse(DOMOUSE_ENABLE);
 	_G(oldmouse) = _G(cur_cursor);
 	set_mouse_cursor(CURS_ARROW);
 }
 void restore_after_dialog() {
 	set_mouse_cursor(_G(oldmouse));
-	if (!_GP(play).mouse_cursor_hidden)
-		ags_domouse(DOMOUSE_DISABLE);
 	invalidate_screen();
 }
-
-
 
 String get_save_game_directory() {
 	return _G(saveGameDirectory);
@@ -220,11 +216,9 @@ void set_save_game_suffix(const String &suffix) {
 	_G(saveGameSuffix) = suffix;
 }
 
-#if !AGS_PLATFORM_SCUMMVM
 String get_save_game_filename(int slotNum) {
-	return String::FromFormat("agssave.%03d%s", slotNum, _G(saveGameSuffix).GetCStr());
+	return String(g_engine->getSaveStateName(slotNum).c_str());
 }
-#endif
 
 String get_save_game_path(int slotNum) {
 #if AGS_PLATFORM_SCUMMVM
@@ -237,85 +231,43 @@ String get_save_game_path(int slotNum) {
 
 #if !AGS_PLATFORM_SCUMMVM
 // Convert a path possibly containing path tags into acceptable save path
-bool MakeSaveGameDir(const String &newFolder, FSLocation &fsloc) {
-	fsloc = FSLocation();
+// NOTE that the game script may issue an order to change the save directory to
+// a dir of a new name. While we let this work, we also try to keep these
+// inside same parent location, would that be a common system directory,
+// or a custom one set by a player in config.
+static bool MakeSaveGameDir(const String &new_dir, FSLocation &fsdir) {
+	fsdir = FSLocation();
 	// don't allow absolute paths
-	if (!Path::IsRelativePath(newFolder))
+	if (!is_relative_filename(new_dir))
 		return false;
 
-	String base_dir;
-	String sub_dir;
-
-	if (newFolder.CompareLeft(UserSavedgamesRootToken) == 0) {
-		// IMPORTANT: for compatibility reasons we support both cases:
-		// when token is followed by the path separator and when it is not, in which case it's assumed.
-		if (saveGameParent.IsEmpty()) {
-			base_dir = PathFromInstallDir(platform->GetUserSavedgamesDirectory());
-			sub_dir = newFolder.Mid(UserSavedgamesRootToken.GetLength());
-		} else {
-			// If there is a custom save parent directory, then replace
-			// not only root token, but also first subdirectory after the token
-			base_dir = saveGameParent;
-			sub_dir = Path::ConcatPaths(".", newFolder.Mid(UserSavedgamesRootToken.GetLength()));
-			sub_dir.ClipSection('/', 0, 1); // TODO: Path helper function for this?
-		}
-		fsloc = FSLocation(base_dir, sub_dir);
-	} else {
-		// Convert the path relative to installation folder into path relative to the
-		// safe save path with default name
-		if (saveGameParent.IsEmpty()) {
-			base_dir = PathFromInstallDir(platform->GetUserSavedgamesDirectory());
-			sub_dir = Path::ConcatPaths(game.saveGameFolderName, newFolder);
-		} else {
-			base_dir = saveGameParent;
-			sub_dir = newFolder;
-		}
-		fsloc = FSLocation(base_dir, sub_dir);
-		// For games made in the safe-path-aware versions of AGS, report a warning
-		if (game.options[OPT_SAFEFILEPATHS]) {
-			debug_script_warn("Attempt to explicitly set savegame location relative to the game installation directory ('%s') denied;\nPath will be remapped to the user documents directory: '%s'",
-				newFolder.GetCStr(), fsloc.FullDir.GetCStr());
-		}
+	String fixed_newdir = FixSlashAfterToken(new_dir);
+	if (fixed_newdir.CompareLeft(UserSavedgamesRootToken, UserSavedgamesRootToken.GetLength()) == 0) {
+		fixed_newdir.ClipLeft(UserSavedgamesRootToken.GetLength());
+	} else if (game.options[OPT_SAFEFILEPATHS] > 0) { // For games made in the safe-path-aware versions of AGS, report a warning
+		debug_script_warn("Attempt to explicitly set savegame location relative to the game installation directory ('%s') denied;\nPath will be remapped to the user documents directory: '%s'",
+			fixed_newdir.GetCStr(), fsdir.FullDir.GetCStr());
 	}
+
+	// Resolve the new dir relative to the user data parent dir
+	fsdir = GetGameUserDataDir().Concat(fixed_newdir);
 	return true;
 }
 #endif
 
-bool SetCustomSaveParent(const String &path) {
-	if (SetSaveGameDirectoryPath(path, true)) {
-		_G(saveGameParent) = path;
-		return true;
+// Tries to assign a new save directory, and copies the restart point if available
+static bool SetSaveGameDirectory(const FSLocation &fsdir) {
+	if (!Directory::CreateAllDirectories(fsdir.BaseDir, fsdir.FullDir)) {
+		debug_script_warn("SetSaveGameDirectory: failed to create all subdirectories: %s", fsdir.FullDir.GetCStr());
+		return false;
 	}
-	return false;
-}
+	String newSaveGameDir = fsdir.FullDir;
 
-bool SetSaveGameDirectoryPath(const String &newFolder, bool explicit_path) {
-#if AGS_PLATFORM_SCUMMVM
-	return false;
-#else
-	String newFolder = new_dir.IsEmpty() ? "." : new_dir;
-	String newSaveGameDir;
-	if (explicit_path) {
-		newSaveGameDir = PathFromInstallDir(newFolder);
-		if (!Directory::CreateDirectory(newSaveGameDir))
-			return false;
-	} else {
-		FSLocation fsloc;
-		if (!MakeSaveGameDir(newFolder, fsloc))
-			return false;
-		if (!Directory::CreateAllDirectories(fsloc.BaseDir, fsloc.SubDir)) {
-			debug_script_warn("SetSaveGameDirectory: failed to create all subdirectories: %s", fsloc.FullDir.GetCStr());
-			return false;
-		}
-		newSaveGameDir = fsloc.FullDir;
-	}
-
-	String newFolderTempFile = Path::ConcatPaths(newSaveGameDir, "agstmp.tmp");
-	if (!File::TestCreateFile(newFolderTempFile))
+	if (!File::TestCreateFile(Path::ConcatPaths(newSaveGameDir, "agstmp.tmp")))
 		return false;
 
 	// copy the Restart Game file, if applicable
-	String restartGamePath = Path::ConcatPaths(saveGameDirectory, get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
+	String restartGamePath = Path::ConcatPaths(_G(saveGameDirectory), get_save_game_filename(RESTART_POINT_SAVE_GAME_NUMBER));
 	Stream *restartGameFile = File::OpenFileRead(restartGamePath);
 	if (restartGameFile != nullptr) {
 		long fileSize = restartGameFile->GetLength();
@@ -330,14 +282,29 @@ bool SetSaveGameDirectoryPath(const String &newFolder, bool explicit_path) {
 		free(mbuffer);
 	}
 
-	saveGameDirectory = newSaveGameDir;
+	_G(saveGameDirectory) = newSaveGameDir;
 	return true;
+}
+
+void SetDefaultSaveDirectory() {
+	// Request a default save location, and assign it as a save dir
+	FSLocation fsdir = GetGameUserDataDir();
+	SetSaveGameDirectory(fsdir);
+}
+
+int Game_SetSaveGameDirectory(const char *newFolder) {
+#if AGS_PLATFORM_SCUMMVM
+	return 1;
+#else
+	// First resolve the script path (it may contain tokens)
+	FSLocation fsdir;
+	if (!MakeSaveGameDir(newFolder, fsdir))
+		return 0;
+	// If resolved successfully, try to assign the new dir
+	return SetSaveGameDirectory(fsdir) ? 1 : 0;
 #endif
 }
 
-int Game_SetSaveGameDirectory(const String &newFolder) {
-	return SetSaveGameDirectoryPath(newFolder, false) ? 1 : 0;
-}
 
 const char *Game_GetSaveSlotDescription(int slnum) {
 	String description;
@@ -358,12 +325,16 @@ void restore_game_dialog() {
 		_G(curscript)->queue_action(ePSARestoreGameDialog, 0, "RestoreGameDialog");
 		return;
 	}
+	do_restore_game_dialog();
+}
+
+bool do_restore_game_dialog() {
 	setup_for_dialog();
 	int toload = loadgamedialog();
 	restore_after_dialog();
-	if (toload >= 0) {
+	if (toload >= 0)
 		try_restore_save(toload);
-	}
+	return toload >= 0;
 }
 
 void save_game_dialog() {
@@ -375,11 +346,16 @@ void save_game_dialog() {
 		_G(curscript)->queue_action(ePSASaveGameDialog, 0, "SaveGameDialog");
 		return;
 	}
+	do_save_game_dialog();
+}
+
+bool do_save_game_dialog() {
 	setup_for_dialog();
 	int toload = savegamedialog();
 	restore_after_dialog();
 	if (toload >= 0)
 		save_game(toload, get_gui_dialog_buffer());
+	return toload >= 0;
 }
 
 void free_do_once_tokens() {
@@ -388,39 +364,27 @@ void free_do_once_tokens() {
 
 
 // Free all the memory associated with the game
-// TODO: call this when exiting the game (currently only called in RunAGSGame)
 void unload_game_file() {
 	close_translation();
 
 	_GP(play).FreeViewportsAndCameras();
 
-	_GP(characterScriptObjNames).clear();
-	free(_G(charextra));
-	free(_G(mls));
+	_GP(charextra).clear();
+	_GP(mls).clear();
 
 	dispose_game_drawdata();
 
-	if ((_G(gameinst) != nullptr) && (_G(gameinst)->pc != 0)) {
-		quit("Error: unload_game called while script still running");
-	} else {
-		delete _G(gameinstFork);
-		delete _G(gameinst);
-		_G(gameinstFork) = nullptr;
-		_G(gameinst) = nullptr;
-	}
-
+	delete _G(gameinstFork);
+	delete _G(gameinst);
+	_G(gameinstFork) = nullptr;
+	_G(gameinst) = nullptr;
 	_GP(gamescript).reset();
 
-	if ((_G(dialogScriptsInst) != nullptr) && (_G(dialogScriptsInst)->pc != 0)) {
-		quit("Error: unload_game called while dialog script still running");
-	} else if (_G(dialogScriptsInst) != nullptr) {
-		delete _G(dialogScriptsInst);
-		_G(dialogScriptsInst) = nullptr;
-	}
-
+	delete _G(dialogScriptsInst);
+	_G(dialogScriptsInst) = nullptr;
 	_GP(dialogScriptsScript).reset();
 
-	for (int i = 0; i < _G(numScriptModules); ++i) {
+	for (size_t i = 0; i < _G(numScriptModules); ++i) {
 		delete _GP(moduleInstFork)[i];
 		delete _GP(moduleInst)[i];
 		_GP(scriptModules)[i].reset();
@@ -436,13 +400,12 @@ void unload_game_file() {
 	_GP(getDialogOptionUnderCursorFunc).moduleHasFunction.resize(0);
 	_GP(runDialogOptionMouseClickHandlerFunc).moduleHasFunction.resize(0);
 	_GP(runDialogOptionKeyPressHandlerFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionTextInputHandlerFunc).moduleHasFunction.resize(0);
 	_GP(runDialogOptionRepExecFunc).moduleHasFunction.resize(0);
+	_GP(runDialogOptionCloseFunc).moduleHasFunction.resize(0);
 	_G(numScriptModules) = 0;
 
 	_GP(views).clear();
-
-	free(_G(charcache));
-	_G(charcache) = nullptr;
 
 	if (_G(splipsync) != nullptr) {
 		for (int i = 0; i < _G(numLipLines); ++i) {
@@ -455,28 +418,25 @@ void unload_game_file() {
 		_G(curLipLine) = -1;
 	}
 
-	for (int i = 0; i < _GP(game).numdialog; ++i) {
-		if (_G(dialog)[i].optionscripts != nullptr)
-			free(_G(dialog)[i].optionscripts);
-		_G(dialog)[i].optionscripts = nullptr;
+	for (auto &dlg : _G(dialog)) {
+		if (dlg.optionscripts != nullptr)
+			free(dlg.optionscripts);
 	}
-	free(_G(dialog));
-	_G(dialog) = nullptr;
+	_G(dialog).clear();
 	delete[] _G(scrDialog);
 	_G(scrDialog) = nullptr;
 
-	_GP(guiScriptObjNames).clear();
 	_GP(guis).clear();
 	free(_G(scrGui));
 
 	free_all_fonts();
 
-	pl_stop_plugins();
 	ccRemoveAllSymbols();
 	ccUnregisterAllObjects();
+	pl_stop_plugins();
 
 	free_do_once_tokens();
-	free(_GP(play).gui_draw_order);
+	_GP(play).gui_draw_order.clear();
 
 	resetRoomStatuses();
 
@@ -702,18 +662,34 @@ const char *Game_GetTranslationFilename() {
 }
 
 int Game_ChangeTranslation(const char *newFilename) {
-	if ((newFilename == nullptr) || (newFilename[0] == 0)) {
+	if ((newFilename == nullptr) || (newFilename[0] == 0)) { // switch back to default translation
 		close_translation();
 		_GP(usetup).translation = "";
+		GUI::MarkForTranslationUpdate();
 		return 1;
 	}
 
 	String oldTransFileName = get_translation_name();
-	if (init_translation(newFilename, oldTransFileName, false)) {
-		_GP(usetup).translation = newFilename;
-		return 1;
+	if (!init_translation(newFilename, oldTransFileName))
+		return 0; // failed, kept previous translation
+
+	_GP(usetup).translation = newFilename;
+	GUI::MarkForTranslationUpdate();
+	return 1;
+}
+
+const char *Game_GetSpeechVoxFilename() {
+	return CreateNewScriptString(get_voicepak_name().GetCStr());
+}
+
+bool Game_ChangeSpeechVox(const char *newFilename) {
+	if (!init_voicepak(newFilename)) {
+		// if failed (and was not default)- fallback to default
+		if (strlen(newFilename) > 0)
+			init_voicepak();
+		return false;
 	}
-	return 0;
+	return true;
 }
 
 ScriptAudioClip *Game_GetAudioClip(int index) {
@@ -890,7 +866,8 @@ void save_game(int slotn, const char *descript) {
 	can_run_delayed_command();
 
 	if (_G(inside_script)) {
-		strcpy(_G(curscript)->postScriptSaveSlotDescription[_G(curscript)->queue_action(ePSASaveGame, slotn, "SaveGameSlot")], descript);
+		snprintf(_G(curscript)->postScriptSaveSlotDescription[_G(curscript)->queue_action(ePSASaveGame, slotn, "SaveGameSlot")],
+					 MAX_QUEUED_ACTION_DESC, "%s", descript);
 		return;
 	}
 
@@ -901,14 +878,11 @@ void save_game(int slotn, const char *descript) {
 
 	VALIDATE_STRING(descript);
 	String nametouse = get_save_game_path(slotn);
-	UBitmap screenShot;
-
-	// WORKAROUND: AGS originally only creates savegames if the game flags
-	// that it supports it. But we want it all the time for ScummVM GMM
-	if (/*_GP(game).options[OPT_SAVESCREENSHOT] != 0*/ true)
+	std::unique_ptr<Bitmap> screenShot;
+	if (_GP(game).options[OPT_SAVESCREENSHOT] != 0)
 		screenShot.reset(create_savegame_screenshot());
 
-	Engine::UStream out(StartSavegame(nametouse, descript, screenShot.get()));
+	std::unique_ptr<Stream> out(StartSavegame(nametouse, descript, screenShot.get()));
 	if (out == nullptr) {
 		Display("ERROR: Unable to open savegame file for writing!");
 		return;
@@ -967,9 +941,11 @@ bool read_savedgame_screenshot(const String &savedgame, int &want_shot) {
 
 // Test if the game file contains expected GUID / legacy id
 bool test_game_guid(const String &filepath, const String &guid, int legacy_id) {
+	std::unique_ptr<AssetManager> amgr(new AssetManager());
+	if (amgr->AddLibrary(filepath) != kAssetNoError)
+		return false;
 	MainGameSource src;
-	HGameFileError err = OpenMainGameFileFromDefaultAsset(src);
-	if (!err)
+	if (!OpenMainGameFileFromDefaultAsset(src, amgr.get()))
 		return false;
 	GameSetupStruct g;
 	PreReadGameData(g, src.InputStream.get(), src.DataVersion);
@@ -1011,7 +987,7 @@ HSaveError load_game(const String &path, int slotNumber, bool &data_overwritten)
 			String gamefile = FindGameData(_GP(ResPaths).DataDir, TestGame);
 
 			if (Shared::File::TestReadFile(gamefile)) {
-				RunAGSGame(desc.MainDataFilename, 0, 0);
+				RunAGSGame(gamefile.GetCStr(), 0, 0);
 				_G(load_new_game_restore) = slotNumber;
 				return HSaveError::None();
 			}
@@ -1105,7 +1081,7 @@ bool check_skip_cutscene_keypress(int kgn) {
 bool check_skip_cutscene_mclick(int mbut) {
 	CutsceneSkipStyle skip = get_cutscene_skipstyle();
 	if (skip == eSkipSceneMouse || skip == eSkipSceneKeyMouse ||
-	        (mbut == MouseRight && skip == eSkipSceneEscOrRMB)) {
+	        (mbut == kMouseRight && skip == eSkipSceneEscOrRMB)) {
 		start_skipping_cutscene();
 		return true;
 	}
@@ -1215,6 +1191,7 @@ int __GetLocationType(int xxx, int yyy, int allowHotspot0) {
 
 // Called whenever game looses input focus
 void display_switch_out() {
+	Debug::Printf("Switching out from the game");
 	_G(switched_away) = true;
 	ags_clear_input_state();
 	// Always unlock mouse when switching out from the game
@@ -1223,6 +1200,7 @@ void display_switch_out() {
 
 // Called when game looses input focus and must pause until focus is returned
 void display_switch_out_suspend() {
+	Debug::Printf("Suspending the game on switch out");
 	_G(switching_away_from_game)++;
 	_G(game_update_suspend)++;
 	display_switch_out();
@@ -1231,7 +1209,9 @@ void display_switch_out_suspend() {
 
 	// TODO: find out if anything has to be done here for SDL backend
 
-	// stop the sound stuttering
+	video_pause();
+
+	// Pause all the sounds
 	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
 		if (ch) {
@@ -1239,14 +1219,12 @@ void display_switch_out_suspend() {
 		}
 	}
 
-	// restore the callbacks
-	SetMultitasking(0);
-
 	_G(switching_away_from_game)--;
 }
 
 // Called whenever game gets input focus
 void display_switch_in() {
+	Debug::Printf("Switching back into the game");
 	ags_clear_input_state();
 	// If auto lock option is set, lock mouse to the game window
 	if (_GP(usetup).mouse_auto_lock && _GP(scsystem).windowed)
@@ -1256,14 +1234,17 @@ void display_switch_in() {
 
 // Called when game gets input focus and must resume after pause
 void display_switch_in_resume() {
+	Debug::Printf("Resuming the game on switch in");
 	display_switch_in();
 
+	// Resume all the sounds
 	for (int i = 0; i < TOTAL_AUDIO_CHANNELS; i++) {
 		auto *ch = AudioChans::GetChannelIfPlaying(i);
 		if (ch) {
 			ch->resume();
 		}
 	}
+	video_resume();
 
 	// clear the screen if necessary
 	if (_G(gfxDriver) && _G(gfxDriver)->UsesMemoryBackBuffer())
@@ -1304,7 +1285,7 @@ void replace_tokens(const char *srcmes, char *destm, int maxlen) {
 					quit("!Display: invalid global int index speicifed in @GI@");
 				snprintf(tval, sizeof(tval), "%d", GetGlobalInt(inx));
 			}
-			strcpy(destp, tval);
+			snprintf(destp, maxlen, "%s", tval);
 			indxdest += strlen(tval);
 		} else {
 			destp[0] = srcp[0];
@@ -1350,11 +1331,11 @@ void get_message_text(int msnum, char *buffer, char giveErr) {
 	replace_tokens(get_translation(_GP(thisroom).Messages[msnum].GetCStr()), buffer, maxlen);
 }
 
-bool unserialize_audio_script_object(int index, const char *objectType, const char *serializedData, int dataSize) {
+bool unserialize_audio_script_object(int index, const char *objectType, Stream *in, size_t data_sz) {
 	if (strcmp(objectType, "AudioChannel") == 0) {
-		_GP(ccDynamicAudio).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicAudio).Unserialize(index, in, data_sz);
 	} else if (strcmp(objectType, "AudioClip") == 0) {
-		_GP(ccDynamicAudioClip).Unserialize(index, serializedData, dataSize);
+		_GP(ccDynamicAudioClip).Unserialize(index, in, data_sz);
 	} else {
 		return false;
 	}
@@ -1362,48 +1343,48 @@ bool unserialize_audio_script_object(int index, const char *objectType, const ch
 }
 
 void game_sprite_updated(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects cache
-	if (_G(croom) != nullptr) {
-		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum)
-				_G(objcache)[i].sppic = -1;
-		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
-	}
+	// update the shared texture (if exists)
+	_G(gfxDriver)->UpdateSharedDDB(sprnum, _GP(spriteset)[sprnum], (_GP(game).SpriteInfos[sprnum].Flags & SPF_ALPHACHANNEL) != 0, false);
+
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum, false);
+
 	// gui backgrounds
-	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
-		if (_GP(guis)[i].BgImage == sprnum) {
-			_GP(guis)[i].MarkChanged();
+	for (auto &gui : _GP(guis)) {
+		if (gui.BgImage == sprnum) {
+			gui.MarkChanged();
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].NotifyParentChanged();
+	for (auto &but : _GP(guibuts)) {
+		if (but.CurrentImage == sprnum) {
+			but.MarkChanged();
 		}
+	}
+	// gui sliders
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum)) {
+			slider.MarkChanged();
+		}
+	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.MarkChanged();
 	}
 }
 
 void game_sprite_deleted(int sprnum) {
-	// Check if this sprite is assigned to any game object, and update them if necessary
-	// room objects and their cache
+	// clear from texture cache
+	_G(gfxDriver)->ClearSharedDDB(sprnum);
+	// character and object draw caches
+	reset_objcache_for_sprite(sprnum, true);
+	// room object graphics
 	if (_G(croom) != nullptr) {
 		for (size_t i = 0; i < (size_t)_G(croom)->numobj; ++i) {
-			if (_G(objs)[i].num == sprnum) {
+			if (_G(objs)[i].num == sprnum)
 				_G(objs)[i].num = 0;
-				_G(objcache)[i].sppic = -1;
-			}
 		}
-	}
-	// character cache
-	for (size_t i = 0; i < (size_t)_GP(game).numcharacters; ++i) {
-		if (_G(charcache)[i].sppic == sprnum)
-			_G(charcache)[i].sppic = -1;
 	}
 	// gui backgrounds
 	for (size_t i = 0; i < (size_t)_GP(game).numgui; ++i) {
@@ -1413,18 +1394,27 @@ void game_sprite_deleted(int sprnum) {
 		}
 	}
 	// gui buttons
-	for (size_t i = 0; i < (size_t)_G(numguibuts); ++i) {
-		if (_GP(guibuts)[i].Image == sprnum)
-			_GP(guibuts)[i].Image = 0;
-		if (_GP(guibuts)[i].MouseOverImage == sprnum)
-			_GP(guibuts)[i].MouseOverImage = 0;
-		if (_GP(guibuts)[i].PushedImage == sprnum)
-			_GP(guibuts)[i].PushedImage = 0;
+	for (auto &but : _GP(guibuts)) {
+		if (but.Image == sprnum)
+			but.Image = 0;
+		if (but.MouseOverImage == sprnum)
+			but.MouseOverImage = 0;
+		if (but.PushedImage == sprnum)
+			but.PushedImage = 0;
 
-		if (_GP(guibuts)[i].CurrentImage == sprnum) {
-			_GP(guibuts)[i].CurrentImage = 0;
-			_GP(guibuts)[i].NotifyParentChanged();
+		if (but.CurrentImage == sprnum) {
+			but.CurrentImage = 0;
+			but.MarkChanged();
 		}
+	}
+	// gui sliders
+	for (auto &slider : _GP(guislider)) {
+		if ((slider.BgImage == sprnum) || (slider.HandleImage == sprnum))
+			slider.MarkChanged();
+		if (slider.BgImage == sprnum)
+			slider.BgImage = 0;
+		if (slider.HandleImage == sprnum)
+			slider.HandleImage = 0;
 	}
 	// views
 	for (size_t v = 0; v < (size_t)_GP(game).numviews; ++v) {
@@ -1434,6 +1424,11 @@ void game_sprite_deleted(int sprnum) {
 					_GP(views)[v].loops[l].frames[f].pic = 0;
 			}
 		}
+	}
+	// overlays
+	for (auto &over : _GP(screenover)) {
+		if (over.GetSpriteNum() == sprnum)
+			over.SetSpriteNum(0);
 	}
 }
 
@@ -1466,6 +1461,10 @@ RuntimeScriptValue Sc_Game_StopAudio(const RuntimeScriptValue *params, int32_t p
 // int (const char *newFilename)
 RuntimeScriptValue Sc_Game_ChangeTranslation(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT_POBJ(Game_ChangeTranslation, const char);
+}
+
+RuntimeScriptValue Sc_Game_ChangeSpeechVox(const RuntimeScriptValue *params, int32_t param_count) {
+	API_SCALL_BOOL_POBJ(Game_ChangeSpeechVox, const char);
 }
 
 // int (const char *token)
@@ -1663,6 +1662,10 @@ RuntimeScriptValue Sc_Game_GetTranslationFilename(const RuntimeScriptValue *para
 	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetTranslationFilename);
 }
 
+RuntimeScriptValue Sc_Game_GetSpeechVoxFilename(const RuntimeScriptValue *params, int32_t param_count) {
+	API_CONST_SCALL_OBJ(const char, _GP(myScriptStringImpl), Game_GetSpeechVoxFilename);
+}
+
 // int ()
 RuntimeScriptValue Sc_Game_GetUseNativeCoordinates(const RuntimeScriptValue *params, int32_t param_count) {
 	API_SCALL_INT(Game_GetUseNativeCoordinates);
@@ -1682,7 +1685,7 @@ RuntimeScriptValue Sc_Game_GetAudioClip(const RuntimeScriptValue *params, int32_
 }
 
 RuntimeScriptValue Sc_Game_IsPluginLoaded(const RuntimeScriptValue *params, int32_t param_count) {
-	API_SCALL_BOOL_OBJ(pl_is_plugin_loaded, const char);
+	API_SCALL_BOOL_POBJ(pl_is_plugin_loaded, const char);
 }
 
 RuntimeScriptValue Sc_Game_PlayVoiceClip(const RuntimeScriptValue *params, int32_t param_count) {
@@ -1759,9 +1762,11 @@ void RegisterGameAPI() {
 	ccAddExternalStaticFunction("Game::get_AudioClipCount",                     Sc_Game_GetAudioClipCount);
 	ccAddExternalStaticFunction("Game::geti_AudioClips",                        Sc_Game_GetAudioClip);
 	ccAddExternalStaticFunction("Game::IsPluginLoaded",                         Sc_Game_IsPluginLoaded);
+	ccAddExternalStaticFunction("Game::ChangeSpeechVox", Sc_Game_ChangeSpeechVox);
 	ccAddExternalStaticFunction("Game::PlayVoiceClip",                          Sc_Game_PlayVoiceClip);
 	ccAddExternalStaticFunction("Game::SimulateKeyPress",                       Sc_Game_SimulateKeyPress);
 	ccAddExternalStaticFunction("Game::get_BlockingWaitSkipped",                Sc_Game_BlockingWaitSkipped);
+	ccAddExternalStaticFunction("Game::get_SpeechVoxFilename", Sc_Game_GetSpeechVoxFilename);
 
 	ccAddExternalStaticFunction("Game::get_Camera",                             Sc_Game_GetCamera);
 	ccAddExternalStaticFunction("Game::get_CameraCount",                        Sc_Game_GetCameraCount);

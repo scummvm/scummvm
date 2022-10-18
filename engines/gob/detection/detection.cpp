@@ -47,11 +47,11 @@ class GobMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	GobMetaEngineDetection();
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "gob";
 	}
 
-	const char *getName() const override;
+	const char *getEngineName() const override;
 	const char *getOriginalCopyright() const override;
 
 	const DebugChannelDef *getDebugChannels() const override {
@@ -168,7 +168,7 @@ const Gob::GOBGameDescription *GobMetaEngineDetection::detectOnceUponATime(const
 	return &Gob::fallbackOnceUpon[gameType][platform];
 }
 
-const char *GobMetaEngineDetection::getName() const {
+const char *GobMetaEngineDetection::getEngineName() const {
 	return "Gob";
 }
 

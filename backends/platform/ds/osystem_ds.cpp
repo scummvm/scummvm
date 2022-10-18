@@ -136,8 +136,29 @@ void OSystem_DS::quit() {
 
 void OSystem_DS::logMessage(LogMessageType::Type type, const char *message) {
 #ifndef DISABLE_TEXT_CONSOLE
-	printf("%s", message);
+	if (type == LogMessageType::kError) {
+		printf("\x1b[41m%s\x1b[39m", message);
+	} else {
+		printf("%s", message);
+	}
 #endif
+}
+
+void OSystem_DS::messageBox(LogMessageType::Type type, const char *message) {
+	if (type == LogMessageType::kError) {
+#ifdef DISABLE_TEXT_CONSOLE
+		consoleDemoInit();
+		printf("\x1b[41m%s\x1b[39m", message);
+#endif
+
+		printf("\nPress any button to continue\n");
+
+		while(1) {
+			swiWaitForVBlank();
+			scanKeys();
+			if (keysDown()) break;
+		}
+	}
 }
 
 static const Common::HardwareInputTableEntry ndsJoystickButtons[] = {

@@ -24,6 +24,8 @@
 
 #include "ags/shared/core/types.h"
 
+#if defined (OBSOLETE)
+
 namespace AGS3 {
 
 #define MAXBUTTON       20
@@ -39,5 +41,7 @@ struct InterfaceButton {
 };
 
 } // namespace AGS3
+
+#endif // OBSOLETE
 
 #endif

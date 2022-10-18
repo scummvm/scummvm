@@ -300,7 +300,7 @@ static const char *const k1GUIStringsAmigaGerman[49] = {
 	"\x01""[""\xA2",
 	"\x01""[""\xBA",
 	"\x01""[""\xC2",
-	"\x01""[""\xDA""Schrittempo",
+	"Schrittempo",
 	"Textgeschwindigkeit",
 	"Die Musik ist",
 	"Die Soundeffekte sind"

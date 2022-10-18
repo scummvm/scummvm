@@ -114,14 +114,6 @@ public:
 	inline bool isSaving() { return (_saveStream != 0); }
 	inline bool isLoading() { return (_loadStream != 0); }
 
-	// WORKAROUND for bugs #4698 "BeOS: tinsel does not compile" and
-	// #4697 "BeOS: Cruise does not compile". gcc 2.95.3, which is used
-	// for BeOS fails due to an internal compiler error, when we place the
-	// following function definitions in another place. Before this work-
-	// around the following SYNC_AS definitions were placed at the end
-	// of the class declaration. This caused an internal compiler error
-	// in the line "syncAsUint32LE(_version);" of
-	// "bool syncVersion(Version currentVersion)".
 	SYNC_AS(Byte, byte, 1)
 	SYNC_AS(SByte, int8, 1)
 
@@ -136,8 +128,9 @@ public:
 	SYNC_AS(Sint32BE, int32, 4)
 	SYNC_AS(FloatLE, float, 4)
 	SYNC_AS(FloatBE, float, 4)
-	SYNC_AS(DoubleLE, double, 4)
-	SYNC_AS(DoubleBE, double, 4)
+
+	SYNC_AS(DoubleLE, double, 8)
+	SYNC_AS(DoubleBE, double, 8)
 
 	/**
 	 * Returns true if an I/O failure occurred.
@@ -287,6 +280,7 @@ public:
 			for (uint i = 0; i < len; i++)
 				syncAsUint32LE(sl[i]);
 			str = U32String(sl, len);
+			delete[] sl;
 		} else {
 			for (uint i = 0; i < len; i++)
 				_saveStream->writeUint32LE(str[i]);

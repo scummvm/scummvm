@@ -188,7 +188,7 @@ bool ProtoObj::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
 //  UseOn location command
 bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, const Location &loc) {
 	assert(dObj != Nothing);
-	assert(loc != Nowhere && loc.context != Nothing);
+	assert(loc != Nowhere && loc._context != Nothing);
 
 	/*  int16   scrResult;
 
@@ -344,7 +344,7 @@ bool ProtoObj::drop(ObjectID dObj, ObjectID enactor, const Location &loc, int16 
 	scf.invokedObject   = dObj;
 	scf.enactor         = enactor;
 	scf.directObject    = dObj;
-	scf.indirectObject  = loc.context;
+	scf.indirectObject  = loc._context;
 	scf.coords          = loc;
 	scf.value           = 0;
 
@@ -412,7 +412,7 @@ bool ProtoObj::dropOn(
     int16           num) {
 	assert(dObj != Nothing);
 	assert(target != nullptr);
-	assert(isWorld(loc.context));
+	assert(isWorld(loc._context));
 
 	return dropOnAction(dObj, enactor, target, loc, num);
 }
@@ -1019,14 +1019,14 @@ bool InventoryProto::canDropAt(
 	assert(enactor != Nothing);
 
 	//  If we're not dropping it onto a world, we're okay
-	if (!isWorld(loc.context)) return true;
+	if (!isWorld(loc._context)) return true;
 
 	GameObject      *enactorPtr = GameObject::objectAddress(enactor);
 
 	//  If we're trying to drop it into a different world or if
 	//  we're dropping it more than 4 metatile widths away from the
 	//  enactor, fail
-	if (enactorPtr->IDParent() != loc.context
+	if (enactorPtr->IDParent() != loc._context
 	        || (loc - enactorPtr->getLocation()).quickHDistance()
 	        >   kTileUVSize * kPlatformWidth * 4)
 		return false;
@@ -1039,7 +1039,7 @@ bool InventoryProto::dropAction(
     ObjectID        enactor,
     const Location  &loc,
     int16           num) {
-	assert(loc.context != Nothing);
+	assert(loc._context != Nothing);
 	assert(dObj != Nothing);
 	assert(enactor != Nothing);
 
@@ -1047,7 +1047,7 @@ bool InventoryProto::dropAction(
 	Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 
 	/*      //  Determine if we're dropping an object from the actor's hands.
-	    if ( enactor != loc.context )
+	    if ( enactor != loc._context )
 	    {
 	        if ( dObj == enactorPtr->rightHandObject )
 	            enactorPtr->rightHandObject = Nothing;
@@ -1062,7 +1062,7 @@ bool InventoryProto::dropAction(
 		dObjPtr->_data.currentTAG = NoActiveItem;
 	}
 
-	if (isWorld(loc.context)) {
+	if (isWorld(loc._context)) {
 		ProtoObj            *enactorProto = enactorPtr->proto();
 		TilePoint           enactorLoc(enactorPtr->getLocation());
 		TilePoint           vector = loc - enactorLoc;
@@ -1116,7 +1116,7 @@ bool InventoryProto::dropAction(
 				return false;
 			}
 
-			dObjPtr->move(Location(startPt, loc.context));
+			dObjPtr->move(Location(startPt, loc._context));
 
 			//  Make sure the game engine knows that it may scavenge this
 			//  object if necessary
@@ -1126,7 +1126,7 @@ bool InventoryProto::dropAction(
 			MotionTask::throwObjectTo(*dObjPtr, loc);
 		}
 	} else {
-		GameObject  *targetObj = GameObject::objectAddress(loc.context);
+		GameObject  *targetObj = GameObject::objectAddress(loc._context);
 
 		return targetObj->acceptInsertionAt(enactor, dObj, loc, num);
 	}
@@ -1142,7 +1142,7 @@ bool InventoryProto::dropOnAction(
     int16           num) {
 	assert(dObj != Nothing);
 	assert(target != nullptr);
-	assert(isWorld(loc.context));
+	assert(isWorld(loc._context));
 
 	if (drop(dObj, enactor, loc, num)) {
 		GameObject  *dObjPtr = GameObject::objectAddress(dObj);
@@ -2501,7 +2501,7 @@ bool IntangibleObjProto::canDropAt(
     ObjectID,
     const Location  &loc) {
 	//  We can try dropping this object anywhere, except within a world
-	return !isWorld(loc.context);
+	return !isWorld(loc._context);
 }
 
 bool IntangibleObjProto::dropAction(
@@ -2510,10 +2510,10 @@ bool IntangibleObjProto::dropAction(
     const Location  &loc,
     int16) {
 	assert(isObject(dObj));
-	assert(loc.context != Nothing);
-	assert(!isWorld(loc.context));
+	assert(loc._context != Nothing);
+	assert(!isWorld(loc._context));
 
-	GameObject  *container = GameObject::objectAddress(loc.context);
+	GameObject  *container = GameObject::objectAddress(loc._context);
 
 	if (container->canContain(dObj)) {
 		GameObject  *dObjPtr = GameObject::objectAddress(dObj);
@@ -2666,7 +2666,7 @@ bool SkillProto::canDropAt(ObjectID, ObjectID, const Location &) {
 bool SkillProto::dropAction(ObjectID dObj,  ObjectID enactor, const Location &loc, int16 num) {
 	assert(isActor(enactor));
 
-	if (isWorld(loc.context)) {
+	if (isWorld(loc._context)) {
 		Actor       *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 
 		if (validTarget(enactorPtr, nullptr, nullptr, this))
@@ -2822,7 +2822,7 @@ void EncounterGeneratorProto::doBackgroundUpdate(GameObject *obj) {
 		a->getWorldLocation(actorLoc);
 
 		//  If actor is in the same world as the generator
-		if (actorLoc.context == generatorLoc.context) {
+		if (actorLoc._context == generatorLoc._context) {
 			int32   dist,
 			        mtRadius = obj->getHitPoints(),// Radius in metatiles
 			        ptRadius = mtRadius * kTileUVSize * kPlatformWidth,

@@ -91,7 +91,7 @@ enum {
 	SAVEGAME_HEADER_SIZE = 4 + 4 + 4 + SG_DESC_LEN + 7 + 4 + 1 + 1 + 2
 };
 
-#define SAVEGAME_ID (TinselV2 ? (uint32)DW2_SAVEGAME_ID : (uint32)DW1_SAVEGAME_ID)
+#define SAVEGAME_ID ((TinselVersion >= 2) ? (uint32)DW2_SAVEGAME_ID : (uint32)DW1_SAVEGAME_ID)
 
 enum {
 	// FIXME: Save file names in ScummVM can be longer than 8.3, overflowing the
@@ -208,7 +208,7 @@ static bool syncSaveGameHeader(Common::Serializer &s, SaveGameHeader &hdr) {
 		s.syncAsUint16LE(hdr.numInterpreters);
 	} else {
 		if(_vm) // See comment above about bug #5819
-			hdr.numInterpreters = (TinselV2 ? 70 : 64) - 20;
+			hdr.numInterpreters = ((TinselVersion >= 2) ? 70 : 64) - 20;
 		else
 			hdr.numInterpreters = 50; // This value doesn't matter since the saved game is being deleted.
 	}
@@ -243,7 +243,7 @@ static void syncSavedMover(Common::Serializer &s, SAVED_MOVER &sm) {
 			s.syncAsUint32LE(sm.talkReels[i][j]);
 
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		s.syncAsByte(sm.bHidden);
 
 		s.syncAsSint32LE(sm.brightness);
@@ -316,7 +316,7 @@ static void syncSavedData(Common::Serializer &s, SAVED_DATA &sd, int numInterp) 
 	s.syncAsUint32LE(sd.SavedNoScrollData.NumNoH);
 
 	// Tinsel 2 fields
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// SavedNoScrollData
 		s.syncAsUint32LE(sd.SavedNoScrollData.xTrigger);
 		s.syncAsUint32LE(sd.SavedNoScrollData.xDistance);
@@ -450,14 +450,15 @@ char *ListEntry(int i, letype which) {
 static bool DoSync(Common::Serializer &s, int numInterp) {
 	int	sg = 0;
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (s.isSaving())
 			g_restoreCD = GetCurrentCD();
 		s.syncAsSint16LE(g_restoreCD);
+
+		if (s.isLoading())
+			_vm->_dialogs->holdItem(INV_NOICON);
 	}
 
-	if (TinselV2 && s.isLoading())
-		_vm->_dialogs->HoldItem(INV_NOICON);
 
 	syncSavedData(s, *g_srsd, numInterp);
 	syncGlobInfo(s);		// Glitter globals
@@ -465,21 +466,21 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 
 	// Held object
 	if (s.isSaving())
-		sg = _vm->_dialogs->WhichItemHeld();
+		sg = _vm->_dialogs->whichItemHeld();
 	s.syncAsSint32LE(sg);
 	if (s.isLoading()) {
-		if (sg != -1 && !_vm->_dialogs->GetIsInvObject(sg))
+		if (sg != -1 && !_vm->_dialogs->getIsInvObject(sg))
 			// Not a valid inventory object, so return false
 			return false;
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			g_thingHeld = sg;
 		else
-			_vm->_dialogs->HoldItem(sg);
+			_vm->_dialogs->holdItem(sg);
 	}
 
 	syncTimerInfo(s);		// Timer data
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		syncPolyInfo(s);		// Dead polygon data
 	syncSCdata(s);			// Hook Scene and delayed scene
 
@@ -496,7 +497,7 @@ static bool DoSync(Common::Serializer &s, int numInterp) {
 		g_ASceneIsSaved = true;
 	}
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		_vm->_actor->syncAllActorsAlive(s);
 
 	return true;
@@ -680,7 +681,7 @@ void RequestSaveGame(char *name, char *desc, SAVED_DATA *sd, int *pSsCount, SAVE
 }
 
 void RequestRestoreGame(int num, SAVED_DATA *sd, int *pSsCount, SAVED_DATA *pSsData) {
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		if (num == -1)
 			return;
 		else if (num == -2) {

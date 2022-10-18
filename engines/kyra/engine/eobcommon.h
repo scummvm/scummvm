@@ -343,7 +343,7 @@ protected:
 	void runLoop();
 	void update() override { screen()->updateScreen(); }
 	bool checkPartyStatus(bool handleDeath);
-	void updateAnimTimers();
+	void updateAnimations();
 
 	bool _runFlag;
 
@@ -389,8 +389,6 @@ protected:
 	uint32 _restPartyElapsedTime;
 
 	uint32 _lastVIntTick;
-	uint32 _lastSecTick;
-	uint32 _totalPlaySecs;
 	uint32 _totalEnemiesKilled;
 	uint32 _totalSteps;
 
@@ -852,7 +850,7 @@ protected:
 	void drawSequenceBitmap(const char *file, int destRect, int x1, int y1, int flags);
 	int runDialogue(int dialogueTextId, int numStr, int loopButtonId, ...);
 
-	char _dialogueLastBitmap[13];
+	Common::String _dialogueLastBitmap;
 	int _moveCounter;
 
 	const char *const *_chargenStatStrings;

@@ -89,7 +89,7 @@ void Room91::xit(int16 eib_nr) {
 void Room91::setup_func() {
 	if (!_G(gameState).flags34_4) {
 		calc_person_look();
-		const int xyPos = _G(spieler_vector)[0].Xypos[0];
+		const int xyPos = _G(moveState)[0].Xypos[0];
 		if (xyPos < 130)
 			goAutoXy(40, 97, P_HOWARD, ANI_GO);
 		else if (xyPos < 312)
@@ -104,7 +104,7 @@ void Room91::setup_func() {
 		
 		_G(menu_item) = CUR_USE;
 		cur_2_inventory();
-		cursorChoice(CUR_22);
+		cursorChoice(CUR_BLASTER);
 
 		if (_G(mouseLeftClick) == 0 || _click)
 			return;
@@ -114,7 +114,7 @@ void Room91::setup_func() {
 		_click = 1;
 		const int aniNr = 1 + (g_events->_mousePos.y <= 100 ? 1 : 0);
 		hideCur();
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		startSetAILWait(aniNr, 1, ANI_FRONT);
 		_click = oldClick;
 		_G(det)->startDetail(0, 255, false);
@@ -124,7 +124,7 @@ void Room91::setup_func() {
 		_G(gameState).SVal3 += 1;
 		showCur();
 		if (_G(gameState).SVal3 == 4) {
-			_G(det)->stop_detail(0);
+			_G(det)->stopDetail(0);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			hideCur();
 			autoMove(1, P_CHEWY);

@@ -1355,7 +1355,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 	if (!voiceOver && _id != BladeRunnerEngine::kActorVoiceOver) {
 #if BLADERUNNER_ORIGINAL_BUGS
 		Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
-		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+		// pan:: map [0..640] to [-75..75]
+		pan = (75 * (2 *  CLIP<int>(screenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 #else
 		// There are a few situations whereby 
 		// the actor is not actually in the set when speaking, 
@@ -1377,8 +1378,8 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 			// x: 149 --> pan: -41
 			// PS05 TV
 			// x: 527 --> pan:  48
-			// These quotes only play in kSetMA04 and kSetPS05
-			pan = (_vm->_playerActor->getSetId() == kSetMA04) ? -41 : 48;
+			// These quotes only play in MA04 scene and kSetPS05
+			pan = (_vm->_playerActor->getSetId() == kSetPS05) ? 48 : -41;
 		} else if ((_id == kActorLucy     && sentenceId >= 500  && sentenceId <= 640)
 		        || (_id == kActorClovis   && sentenceId >= 310  && sentenceId <= 540)
 		        || (_id == kActorDektora  && sentenceId >= 220  && sentenceId <= 490)
@@ -1386,7 +1387,7 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 		        || (_id == kActorGuzza    && sentenceId >= 0    && sentenceId <= 70)) {
 			// MA04 phone
 			// x: 351 --> pan: 7
-			// These quotes only play in kSetMA04
+			// These quotes only play in MA04 scene
 			pan = 7;
 		} else if (_id == kActorGuzza     && sentenceId >= 1380 && sentenceId <= 1480) {
 			// NR02 phone (Taffy's)
@@ -1465,20 +1466,21 @@ void Actor::speechPlay(int sentenceId, bool voiceOver) {
 			default:
 				actorScreenPosition = _vm->_view->calculateScreenPosition(_position);
 			}
-			pan	= (75 * (2 *  CLIP<int>(actorScreenPosition.x, 0, 640) - 640)) / 640; // map [0..640] to [-75..75]
+			// map [0..640] to [-75..75]
+			pan	= (75 * (2 *  CLIP<int>(actorScreenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 		}
 		// debug("actor: %d, pan: %d", _id, pan);
 #endif // BLADERUNNER_ORIGINAL_BUGS
 	}
 
 	_vm->_subtitles->loadInGameSubsText(_id, sentenceId);
-	_vm->_subtitles->show();
+	_vm->_subtitles->show(BladeRunner::Subtitles::kSubtitlesPrimary);
 
 	_vm->_audioSpeech->playSpeech(name, pan);
 }
 
 void Actor::speechStop() {
-	_vm->_subtitles->hide();
+	_vm->_subtitles->hide(BladeRunner::Subtitles::kSubtitlesPrimary);
 	_vm->_audioSpeech->stopSpeech();
 }
 
@@ -1583,7 +1585,7 @@ int Actor::soundPan(uint8 overrideRange) const {
 	Vector3 screenPosition = _vm->_view->calculateScreenPosition(_position);
 	// By default map [0..640] to [-overrideRange..overrideRange] (default range [-35..35])
 	CLIP<int>(overrideRange, 35, 100);
-	return (overrideRange * (2 * CLIP<int>(screenPosition.x, 0, 640) - 640)) / 640;
+	return (overrideRange * (2 * CLIP<int>(screenPosition.x, 0, BladeRunnerEngine::kOriginalGameWidth) - BladeRunnerEngine::kOriginalGameWidth)) / BladeRunnerEngine::kOriginalGameWidth;
 }
 
 bool Actor::isObstacleBetween(const Vector3 &target) {

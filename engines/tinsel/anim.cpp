@@ -242,7 +242,7 @@ SCRIPTSTATE StepAnimScript(ANIM *pAnim) {
 		// re-init animation delta counter
 		pAnim->aniDelta = pAnim->aniRate;
 
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			state = DoNextFrame(pAnim);
 		else {
 			// move to next frame
@@ -266,7 +266,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 	// get a pointer to the script
 	const ANI_SCRIPT *pAni = (const ANI_SCRIPT *)_vm->_handle->LockMem(pAnim->hScript);
 
-	if (!TinselV2 && (numFrames <= 0))
+	if ((TinselVersion <= 1) && (numFrames <= 0))
 		// do nothing
 		return;
 
@@ -275,7 +275,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 		switch ((int32)FROM_32(pAni[pAnim->scriptIndex].op)) {
 		case ANI_END:	// end of animation script
 			// going off the end is probably a error, but only in Tinsel 1
-			if (!TinselV2)
+			if (TinselVersion <= 1)
 				error("SkipFrames(): formally 'assert(0)!'");
 			return;
 
@@ -287,7 +287,7 @@ void SkipFrames(ANIM *pAnim, int numFrames) {
 			// jump to new frame position
 			pAnim->scriptIndex += (int32)FROM_32(pAni[pAnim->scriptIndex].op);
 
-			if (TinselV2)
+			if (TinselVersion >= 2)
 				// Done if skip to jump
 				return;
 			break;

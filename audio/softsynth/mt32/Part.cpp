@@ -1,5 +1,5 @@
 /* Copyright (C) 2003, 2004, 2005, 2006, 2008, 2009 Dean Beeler, Jerome Fisher
- * Copyright (C) 2011-2021 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
+ * Copyright (C) 2011-2022 Dean Beeler, Jerome Fisher, Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -52,17 +52,19 @@ Part::Part(Synth *useSynth, unsigned int usePartNum) {
 	patchTemp = &synth->mt32ram.patchTemp[partNum];
 	if (usePartNum == 8) {
 		// Nasty hack for rhythm
-		timbreTemp = nullptr;
+		timbreTemp = NULL;
 	} else {
 		sprintf(name, "Part %d", partNum + 1);
 		timbreTemp = &synth->mt32ram.timbreTemp[partNum];
 	}
 	currentInstr[0] = 0;
 	currentInstr[10] = 0;
+	volumeOverride = 255;
 	modulation = 0;
 	expression = 100;
 	pitchBend = 0;
 	activePartialCount = 0;
+	activeNonReleasingPolyCount = 0;
 	memset(patchCache, 0, sizeof(patchCache));
 }
 
@@ -166,7 +168,7 @@ void Part::refresh() {
 		patchCache[t].reverb = patchTemp->patch.reverbSwitch > 0;
 	}
 	memcpy(currentInstr, timbreTemp->common.name, 10);
-	synth->newTimbreSet(partNum, patchTemp->patch.timbreGroup, patchTemp->patch.timbreNum, currentInstr);
+	synth->newTimbreSet(partNum);
 	updatePitchBenderRange();
 }
 
@@ -235,7 +237,7 @@ void Part::backupCacheToPartials(PatchCache cache[4]) {
 	// if so then duplicate the cached data from the part to the partial so that
 	// we can change the part's cache without affecting the partial.
 	// We delay this until now to avoid a copy operation with every note played
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		poly->backupCacheToPartials(cache);
 	}
 }
@@ -317,7 +319,21 @@ void Part::setVolume(unsigned int midiVolume) {
 }
 
 Bit8u Part::getVolume() const {
-	return patchTemp->outputLevel;
+	return volumeOverride <= 100 ? volumeOverride : patchTemp->outputLevel;
+}
+
+void Part::setVolumeOverride(Bit8u volume) {
+	volumeOverride = volume;
+	// When volume is 0, we want the part to stop producing any sound at all.
+	// For that to achieve, we have to actually stop processing NoteOn MIDI messages; merely
+	// returning 0 volume is not enough - the output may still be generated at a very low level.
+	// But first, we have to stop all the currently playing polys. This behaviour may also help
+	// with performance issues, because parts muted this way barely consume CPU resources.
+	if (volume == 0) allSoundOff();
+}
+
+Bit8u Part::getVolumeOverride() const {
+	return volumeOverride;
 }
 
 Bit8u Part::getExpression() const {
@@ -380,6 +396,7 @@ void RhythmPart::noteOn(unsigned int midiKey, unsigned int velocity) {
 		synth->printDebug("%s: Attempted to play invalid key %d (velocity %d)", name, midiKey, velocity);
 		return;
 	}
+	synth->rhythmNotePlayed();
 	unsigned int key = midiKey;
 	unsigned int drumNum = key - 24;
 	int drumTimbreNum = rhythmTemp[drumNum].timbre;
@@ -427,11 +444,11 @@ void Part::noteOn(unsigned int midiKey, unsigned int velocity) {
 	synth->printDebug(" PatchTemp: outputLevel %u, panpot %u", patchTemp->outputLevel, patchTemp->panpot);
 #endif
 #endif
-	playPoly(patchCache, nullptr, midiKey, key, velocity);
+	playPoly(patchCache, NULL, midiKey, key, velocity);
 }
 
 bool Part::abortFirstPoly(unsigned int key) {
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		if (poly->getKey() == key) {
 			return poly->startAbort();
 		}
@@ -440,7 +457,7 @@ bool Part::abortFirstPoly(unsigned int key) {
 }
 
 bool Part::abortFirstPoly(PolyState polyState) {
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		if (poly->getState() == polyState) {
 			return poly->startAbort();
 		}
@@ -486,7 +503,7 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 	if (synth->isAbortingPoly()) return;
 
 	Poly *poly = synth->partialManager->assignPolyToPart(this);
-	if (poly == nullptr) {
+	if (poly == NULL) {
 		synth->printDebug("%s (%s): No free poly to play key %d (velocity %d)", name, currentInstr, midiKey, velocity);
 		return;
 	}
@@ -503,13 +520,13 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 			partials[x] = synth->partialManager->allocPartial(partNum);
 			activePartialCount++;
 		} else {
-			partials[x] = nullptr;
+			partials[x] = NULL;
 		}
 	}
 	poly->reset(key, velocity, cache[0].sustain, partials);
 
 	for (int x = 0; x < 4; x++) {
-		if (partials[x] != nullptr) {
+		if (partials[x] != NULL) {
 #if MT32EMU_MONITOR_PARTIALS > 2
 			synth->printDebug("%s (%s): Allocated partial %d", name, currentInstr, partials[x]->debugGetPartialNum());
 #endif
@@ -525,7 +542,7 @@ void Part::playPoly(const PatchCache cache[4], const MemParams::RhythmTemp *rhyt
 void Part::allNotesOff() {
 	// The MIDI specification states - and Mok confirms - that all notes off (0x7B)
 	// should treat the hold pedal as usual.
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		// FIXME: This has special handling of key 0 in NoteOff that Mok has not yet confirmed applies to AllNotesOff.
 		// if (poly->canSustain() || poly->getKey() == 0) {
 		// FIXME: The real devices are found to be ignoring non-sustaining polys while processing AllNotesOff. Need to be confirmed.
@@ -539,13 +556,13 @@ void Part::allSoundOff() {
 	// MIDI "All sound off" (0x78) should release notes immediately regardless of the hold pedal.
 	// This controller is not actually implemented by the synths, though (according to the docs and Mok) -
 	// we're only using this method internally.
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		poly->startDecay();
 	}
 }
 
 void Part::stopPedalHold() {
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		poly->stopPedalHold();
 	}
 }
@@ -563,7 +580,7 @@ void Part::stopNote(unsigned int key) {
 	synth->printDebug("%s (%s): stopping key %d", name, currentInstr, key);
 #endif
 
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		// Generally, non-sustaining instruments ignore note off. They die away eventually anyway.
 		// Key 0 (only used by special cases on rhythm part) reacts to note off even if non-sustaining or pedal held.
 		if (poly->getKey() == key && (poly->canSustain() || key == 0)) {
@@ -588,7 +605,7 @@ const Poly *Part::getFirstActivePoly() const {
 
 unsigned int Part::getActiveNonReleasingPartialCount() const {
 	unsigned int activeNonReleasingPartialCount = 0;
-	for (Poly *poly = activePolys.getFirst(); poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = activePolys.getFirst(); poly != NULL; poly = poly->getNext()) {
 		if (poly->getState() != POLY_Releasing) {
 			activeNonReleasingPartialCount += poly->getActivePartialCount();
 		}
@@ -609,7 +626,28 @@ void Part::partialDeactivated(Poly *poly) {
 	}
 }
 
-PolyList::PolyList() : firstPoly(nullptr), lastPoly(nullptr) {}
+void RhythmPart::polyStateChanged(PolyState, PolyState) {}
+
+void Part::polyStateChanged(PolyState oldState, PolyState newState) {
+	switch (newState) {
+	case POLY_Playing:
+		if (activeNonReleasingPolyCount++ == 0) synth->voicePartStateChanged(partNum, true);
+		break;
+	case POLY_Releasing:
+	case POLY_Inactive:
+		if (oldState == POLY_Playing || oldState == POLY_Held) {
+			if (--activeNonReleasingPolyCount == 0) synth->voicePartStateChanged(partNum, false);
+		}
+		break;
+	default:
+		break;
+	}
+#ifdef MT32EMU_TRACE_POLY_STATE_CHANGES
+	synth->printDebug("Part %d: Changed poly state %d->%d, activeNonReleasingPolyCount=%d", partNum, oldState, newState, activeNonReleasingPolyCount);
+#endif
+}
+
+PolyList::PolyList() : firstPoly(NULL), lastPoly(NULL) {}
 
 bool PolyList::isEmpty() const {
 #ifdef MT32EMU_POLY_LIST_DEBUG
@@ -617,7 +655,7 @@ bool PolyList::isEmpty() const {
 		printf("PolyList: desynchronised firstPoly & lastPoly pointers\n");
 	}
 #endif
-	return firstPoly == nullptr && lastPoly == nullptr;
+	return firstPoly == NULL && lastPoly == NULL;
 }
 
 Poly *PolyList::getFirst() const {
@@ -636,7 +674,7 @@ void PolyList::prepend(Poly *poly) {
 #endif
 	poly->setNext(firstPoly);
 	firstPoly = poly;
-	if (lastPoly == nullptr) {
+	if (lastPoly == NULL) {
 		lastPoly = poly;
 	}
 }
@@ -647,8 +685,8 @@ void PolyList::append(Poly *poly) {
 		printf("PolyList: Non-NULL next field in a Poly being appended is ignored\n");
 	}
 #endif
-	poly->setNext(nullptr);
-	if (lastPoly != nullptr) {
+	poly->setNext(NULL);
+	if (lastPoly != NULL) {
 #ifdef MT32EMU_POLY_LIST_DEBUG
 		if (lastPoly->getNext() != NULL) {
 			printf("PolyList: Non-NULL next field in the lastPoly\n");
@@ -657,7 +695,7 @@ void PolyList::append(Poly *poly) {
 		lastPoly->setNext(poly);
 	}
 	lastPoly = poly;
-	if (firstPoly == nullptr) {
+	if (firstPoly == NULL) {
 		firstPoly = poly;
 	}
 }
@@ -665,15 +703,15 @@ void PolyList::append(Poly *poly) {
 Poly *PolyList::takeFirst() {
 	Poly *oldFirst = firstPoly;
 	firstPoly = oldFirst->getNext();
-	if (firstPoly == nullptr) {
+	if (firstPoly == NULL) {
 #ifdef MT32EMU_POLY_LIST_DEBUG
 		if (lastPoly != oldFirst) {
 			printf("PolyList: firstPoly != lastPoly in a list with a single Poly\n");
 		}
 #endif
-		lastPoly = nullptr;
+		lastPoly = NULL;
 	}
-	oldFirst->setNext(nullptr);
+	oldFirst->setNext(NULL);
 	return oldFirst;
 }
 
@@ -682,7 +720,7 @@ void PolyList::remove(Poly * const polyToRemove) {
 		takeFirst();
 		return;
 	}
-	for (Poly *poly = firstPoly; poly != nullptr; poly = poly->getNext()) {
+	for (Poly *poly = firstPoly; poly != NULL; poly = poly->getNext()) {
 		if (poly->getNext() == polyToRemove) {
 			if (polyToRemove == lastPoly) {
 #ifdef MT32EMU_POLY_LIST_DEBUG
@@ -693,7 +731,7 @@ void PolyList::remove(Poly * const polyToRemove) {
 				lastPoly = poly;
 			}
 			poly->setNext(polyToRemove->getNext());
-			polyToRemove->setNext(nullptr);
+			polyToRemove->setNext(NULL);
 			break;
 		}
 	}

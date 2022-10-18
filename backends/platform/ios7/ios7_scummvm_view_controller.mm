@@ -32,4 +32,9 @@
 	return YES;
 }
 
+- (BOOL)prefersPointerLocked {
+	/* This hides the OS cursor so ScummVM has to draw one */
+	return YES;
+}
+
 @end

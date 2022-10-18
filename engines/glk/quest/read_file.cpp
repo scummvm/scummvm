@@ -131,13 +131,11 @@ bool is_end_define(String s) {
 
 extern Common::Array<String> split_lines(String data);
 
-// FIXME: This requires global constructor
-reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) nullptr);
-
 void GeasFile::read_into(const Common::Array<String> &in_data,
 						 String in_parent, uint cur_line, bool recurse,
 						 const reserved_words &props,
-						 const reserved_words &actions) {
+						 const reserved_words &actions,
+						 const reserved_words &dir_tag_property) {
 	//cerr << "r_i: Reading in from" << cur_line << ": " << in_data[cur_line] << endl;
 	//output.push_back (GeasBlock());
 	//GeasBlock &out_block = output[output.size() - 1];
@@ -302,6 +300,7 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 	reserved_words recursive_passes("game", "room", (char *) nullptr),
 	               object_passes("game", "room", "objects", (char *) nullptr);
 
+	reserved_words dir_tag_property("north", "south", "east", "west", "northwest", "northeast", "southeast", "southwest", "up", "down", "out", (char *) nullptr);
 
 	//Common::Array <GeasBlock> outv;
 	for (uint pass = 0; pass < sizeof(pass_names) / sizeof(*pass_names);
@@ -333,14 +332,14 @@ GeasFile::GeasFile(const Common::Array<String> &v, GeasInterface *_gi) : gi(_gi)
 
 					// SENSITIVE?
 					if (blocktype == this_pass)
-						read_into(v, "", i, recursive, props, actions);
+						read_into(v, "", i, recursive, props, actions, dir_tag_property);
 				} else if (depth == 2 && blocktype == this_pass) {
 					// SENSITIVE?
 					if (this_pass == "object" && parenttype == "room")
-						read_into(v, parentname, i, false, props, actions);
+						read_into(v, parentname, i, false, props, actions, dir_tag_property);
 					// SENSITIVE?
 					else if (this_pass == "variable" && parenttype == "game")
-						read_into(v, "", i, false, props, actions);
+						read_into(v, "", i, false, props, actions, dir_tag_property);
 				}
 			} else if (is_end_define(v[i]))
 				-- depth;

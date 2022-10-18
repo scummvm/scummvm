@@ -31,13 +31,9 @@
 
 namespace AGS3 {
 
-// Font load flags, primarily for backward compatibility
-// REPORTREALHEIGHT: get_font_height should return real font's height,
-// otherwise returns formal height, equal to "font size" parameter
-#define FONT_LOAD_REPORTREALHEIGHT 0x01
-
 class IAGSFontRenderer;
 class IAGSFontRenderer2;
+class IAGSFontRendererInternal;
 struct FontInfo;
 struct FontRenderParams;
 
@@ -45,8 +41,12 @@ namespace AGS {
 namespace Shared {
 
 struct Font {
+	// Classic font renderer interface
 	IAGSFontRenderer *Renderer = nullptr;
+	// Extended font renderer interface (optional)
 	IAGSFontRenderer2 *Renderer2 = nullptr;
+	// Internal interface (only for built-in renderers)
+	IAGSFontRendererInternal *RendererInt = nullptr;
 	FontInfo            Info;
 	// Values received from the renderer and saved for the reference
 	FontMetrics       Metrics;
@@ -65,15 +65,12 @@ struct Font {
 
 using namespace AGS;
 
-class IAGSFontRenderer;
-class IAGSFontRenderer2;
-struct FontInfo;
-struct FontRenderParams;
-
 void init_font_renderer();
 void shutdown_font_renderer();
 void adjust_y_coordinate_for_text(int *ypos, size_t fontnum);
-IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer, int load_mode);
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer);
+IAGSFontRenderer2* font_replace_renderer(size_t fontNumber, IAGSFontRenderer2 *renderer);
+ void font_recalc_metrics(size_t fontNumber);
 bool font_first_renderer_loaded();
 bool is_font_loaded(size_t fontNumber);
 bool is_bitmap_font(size_t fontNumber);
@@ -93,6 +90,8 @@ void ensure_text_valid_for_font(char *text, size_t fontnum);
 int get_font_scaling_mul(size_t fontNumber);
 // Calculate actual width of a line of text
 int get_text_width(const char *texx, size_t fontNumber);
+// Get the maximal width of the given font, with corresponding outlining
+int get_text_width_outlined(const char *text, size_t font_number);
 // Get font's height; this value is used for logical arrangement of UI elements;
 // note that this is a "formal" font height, that may have different value
 // depending on compatibility mode (used when running old games);
@@ -116,11 +115,10 @@ int get_text_lines_height(size_t fontNumber, size_t numlines);
 // Gets the height of a graphic surface enough to accomodate this number of text lines;
 // note this accounts for the real pixel font height
 int get_text_lines_surf_height(size_t fontNumber, size_t numlines);
-// get the source font associated with an outline font
-int get_font_outline_font(size_t font_number);
 // Set font's outline type
 void set_font_outline(size_t font_number, int outline_type,
 	enum FontInfo::AutoOutlineStyle style = FontInfo::kSquared, int thickness = 1);
+bool is_font_antialiased(size_t font_number);
 // Outputs a single line of text on the defined position on bitmap, using defined font, color and parameters
 void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, const char *texx);
 // Assigns FontInfo to the font
@@ -128,17 +126,21 @@ void set_fontinfo(size_t fontNumber, const FontInfo &finfo);
 // Gets full information about the font
 FontInfo get_fontinfo(size_t font_number);
 // Loads a font from disk
-bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode);
-void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
+bool load_font_size(size_t fontNumber, const FontInfo &font_info); void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t text_color, char *fmt, ...);
 // Allocates two outline stencil buffers, or returns previously creates ones;
 // these buffers are owned by the font, they should not be deleted by the caller.
 void alloc_font_outline_buffers(size_t font_number,
 	Shared::Bitmap **text_stencil, Shared::Bitmap **outline_stencil,
 	int text_width, int text_height, int color_depth);
+// Perform necessary adjustments on all fonts in case the text render mode changed (anti-aliasing etc)
+void adjust_fonts_for_render_mode(bool aa_mode);
 // Free particular font's data
 void wfreefont(size_t fontNumber);
 // Free all fonts data
 void free_all_fonts();
+
+// Tells if the text should be antialiased when possible
+bool ShouldAntiAliasText();
 
 // SplitLines class represents a list of lines and is meant to reduce
 // subsequent memory (de)allocations if used often during game loops

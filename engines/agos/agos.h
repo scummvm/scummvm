@@ -199,6 +199,15 @@ class Debugger;
 
 class AGOSEngine : public Engine {
 protected:
+	// List of Simon 1 DOS floppy SFX which use rhythm notes.
+	static const byte SIMON1_RHYTHM_SFX[];
+
+	// Music index base for Simon 2 GM data.
+	static const uint16 MUSIC_INDEX_BASE_SIMON2_GM = 1128 / 4;
+	// Music index base for Simon 2 MT-32 data.
+	static const uint16 MUSIC_INDEX_BASE_SIMON2_MT32 = (1128 + 612) / 4;
+
+protected:
 	friend class Debugger;
 
 	// Engine APIs
@@ -214,6 +223,9 @@ protected:
 
 	bool hasFeature(EngineFeature f) const override;
 	void syncSoundSettings() override;
+	// Applies AGOS engine internal sound settings to ConfigManager, digital
+	// sound channels and MIDI.
+	void syncSoundSettingsIntern();
 	void pauseEngineIntern(bool pause) override;
 
 	virtual void setupOpcodes();
@@ -241,8 +253,6 @@ public:
 	const char *getFileName(int type) const;
 
 protected:
-	void playSting(uint16 a);
-
 	const byte *_vcPtr;								/* video code ptr */
 	uint16 _vcGetOutOfCode;
 
@@ -444,6 +454,7 @@ protected:
 	bool _bottomPalette;
 	uint16 _fastFadeCount;
 	volatile uint16 _fastFadeInFlag;
+	bool _neverFade;
 
 	uint16 _screenWidth, _screenHeight;
 	uint16 _internalWidth, _internalHeight;
@@ -578,9 +589,16 @@ protected:
 
 	Sound *_sound;
 
-	bool _effectsPaused;
-	bool _ambientPaused;
-	bool _musicPaused;
+	bool _effectsMuted;
+	bool _ambientMuted;
+	bool _musicMuted;
+	// The current music volume, or the last used music volume if music is
+	// currently muted.
+	uint16 _musicVolume;
+	// The current SFX and ambient volume, or the last used volume if SFX
+	// and/or ambient sounds are currently muted.
+	uint16 _effectsVolume;
+	bool _useDigitalSfx;
 
 	uint8 _saveGameNameLen;
 	uint16 _saveLoadRowCurPos;
@@ -635,8 +653,12 @@ protected:
 	void decompressPN(Common::Stack<uint32> &dataList, uint8 *&dataOut, int &dataOutSize);
 	void loadOffsets(const char *filename, int number, uint32 &file, uint32 &offset, uint32 &compressedSize, uint32 &size);
 	void loadSound(uint16 sound, int16 pan, int16 vol, uint16 type);
+	void playSfx(uint16 sound, uint16 freq, uint16 flags, bool digitalOnly = false, bool midiOnly = false);
 	void loadSound(uint16 sound, uint16 freq, uint16 flags);
+	void loadMidiSfx();
+	virtual void playMidiSfx(uint16 sound);
 	void loadVoice(uint speechId);
+	void stopAllSfx();
 
 	void loadSoundFile(const char *filename);
 
@@ -1276,7 +1298,11 @@ protected:
 	void windowScroll(WindowBlock *window);
 	virtual void windowDrawChar(WindowBlock *window, uint x, uint y, byte chr);
 
-	void loadMusic(uint16 track);
+	// Loads the MIDI data for the specified track. The forceSimon2Gm parameter
+	// forces loading the MIDI data from the GM data set and activates GM to
+	// MT-32 instrument remapping. This is useful only for a specific
+	// workaround (see AGOSEngine_Simon2::playMusic for more details).
+	void loadMusic(uint16 track, bool forceSimon2Gm = false);
 	void playModule(uint16 music);
 	virtual void playMusic(uint16 music, uint16 track);
 	void stopMusic();
@@ -1811,6 +1837,10 @@ protected:
 };
 
 class AGOSEngine_Simon1 : public AGOSEngine_Waxworks {
+private:
+	// Simon 1 DOS CD and Acorn CD GMF data sizes.
+	static const int SIMON1_GMF_SIZE[];
+
 public:
 	AGOSEngine_Simon1(OSystem *system, const AGOSGameDescription *gd);
 	//~AGOSEngine_Simon1();
@@ -1878,6 +1908,7 @@ protected:
 	int userGameGetKey(bool *b, uint maxChar) override;
 
 	void playMusic(uint16 music, uint16 track) override;
+	void playMidiSfx(uint16 sound) override;
 
 	void vcStopAnimation(uint16 zone, uint16 sprite) override;
 
@@ -1926,6 +1957,10 @@ protected:
 	void clearVideoWindow(uint16 windowNum, uint16 color) override;
 
 	void playSpeech(uint16 speechId, uint16 vgaSpriteId) override;
+	// This overload plays the music track specified in the second parameter.
+	// The first parameter is ignored; music data must be loaded using the
+	// loadMusic method before calling this method.
+	void playMusic(uint16 music, uint16 track) override;
 
 	Common::String genSaveName(int slot) const override;
 };

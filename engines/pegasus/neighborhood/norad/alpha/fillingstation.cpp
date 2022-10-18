@@ -127,7 +127,7 @@ enum {
 };
 
 NoradAlphaFillingStation::NoradAlphaFillingStation(Neighborhood *owner) : GameInteraction(kNoradFillingStationInteractionID, owner),
-		_rightSideMovie(kN01RightSideID), _rightSideNotification(kNoradFillingStationNotificationID, ((PegasusEngine *)g_engine)) {
+		_rightSideMovie(kN01RightSideID), _rightSideNotification(kNoradFillingStationNotificationID, g_vm) {
 	_state = kNoState;
 }
 

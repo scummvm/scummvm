@@ -22,6 +22,7 @@
 #include "ags/lib/std/algorithm.h"
 #include "ags/engine/ac/string.h"
 #include "ags/shared/ac/common.h"
+#include "ags/shared/util/utf8.h"
 #include "ags/engine/ac/display.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
@@ -58,13 +59,19 @@ const char *String_Append(const char *thisString, const char *extrabit) {
 	return CreateNewScriptString(buffer, false);
 }
 
-const char *String_AppendChar(const char *thisString, char extraOne) {
-	char *buffer = (char *)malloc(strlen(thisString) + 2);
-	sprintf(buffer, "%s%c", thisString, extraOne);
+const char *String_AppendChar(const char *thisString, int extraOne) {
+	size_t chw = 1;
+	char chr[Utf8::UtfSz + 1]{};
+	if (get_uformat() == U_UTF8)
+		chw = Utf8::SetChar(extraOne, chr, sizeof(chr));
+	else
+		chr[0] = extraOne;
+	char *buffer = (char *)malloc(strlen(thisString) + chw + 1);
+	sprintf(buffer, "%s%s", thisString, chr);
 	return CreateNewScriptString(buffer, false);
 }
 
-const char *String_ReplaceCharAt(const char *thisString, int index, char newChar) {
+const char *String_ReplaceCharAt(const char *thisString, int index, int newChar) {
 	size_t len = ustrlen(thisString);
 	if ((index < 0) || ((size_t)index >= len))
 		quit("!String.ReplaceCharAt: index outside range of string");
@@ -73,12 +80,17 @@ const char *String_ReplaceCharAt(const char *thisString, int index, char newChar
 	int uchar = ugetc(thisString + off);
 	size_t remain_sz = strlen(thisString + off);
 	size_t old_sz = ucwidth(uchar);
-	size_t new_sz = sizeof(char); // TODO: support unicode char in API
-	size_t total_sz = off + remain_sz + new_sz - old_sz + 1;
+	size_t new_chw = 1;
+	char new_chr[Utf8::UtfSz + 1]{};
+	if (get_uformat() == U_UTF8)
+		new_chw = Utf8::SetChar(newChar, new_chr, sizeof(new_chr));
+	else
+		new_chr[0] = newChar;
+	size_t total_sz = off + remain_sz + new_chw - old_sz + 1;
 	char *buffer = (char *)malloc(total_sz);
 	memcpy(buffer, thisString, off);
-	usetc(buffer + off, newChar);
-	memcpy(buffer + off + new_sz, thisString + off + old_sz, remain_sz - old_sz + 1);
+	memcpy(buffer + off, new_chr, new_chw);
+	memcpy(buffer + off + new_chw, thisString + off + old_sz, remain_sz - old_sz + 1);
 	return CreateNewScriptString(buffer, false);
 }
 
@@ -102,7 +114,7 @@ const char *String_Substring(const char *thisString, int index, int length) {
 	size_t strlen = ustrlen(thisString);
 	if ((index < 0) || ((size_t)index > strlen))
 		quit("!String.Substring: invalid index");
-	size_t sublen = std::min((size_t)length, strlen - index);
+	size_t sublen = MIN((size_t)length, strlen - index);
 	size_t start = uoffset(thisString, index);
 	size_t end = uoffset(thisString + start, sublen) + start;
 	size_t copysz = end - start;
@@ -194,11 +206,10 @@ const char *String_UpperCase(const char *thisString) {
 }
 
 int String_GetChars(const char *texx, int index) {
-	if ((index < 0) || (index >= (int)strlen(texx)))
+	if ((index < 0) || (index >= ustrlen(texx)))
 		return 0;
-	return texx[index];
+	return ugetat(texx, index);
 }
-
 int StringToInt(const char *stino) {
 	return atoi(stino);
 }
@@ -244,11 +255,10 @@ DynObjectRef CreateNewScriptStringObj(const char *fromText, bool reAllocate) {
 	ScriptString *str;
 	if (reAllocate) {
 		str = new ScriptString(fromText);
-	} else {
-		str = new ScriptString();
-		str->text = const_cast<char *>(fromText);
+	} else { // TODO: refactor to avoid const casts!
+		str = new ScriptString(const_cast<char *>(fromText), true);
 	}
-	void *obj_ptr = str->text;
+	void *obj_ptr = str->GetTextPtr();
 	int32_t handle = ccRegisterManagedObject(obj_ptr, str);
 	if (handle == 0) {
 		delete str;

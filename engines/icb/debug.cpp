@@ -61,8 +61,6 @@ bool8 terminate_debugging = FALSE8;
 // This flag indicates whether or not the debug simulated feature is activated or not.
 bool8 debug_auto_save = FALSE8;
 
-#if CD_MODE == 0
-
 void _game_session::Show_lit_unlit_diagnostics() {
 	uint32 j;
 	uint32 pitch; // backbuffer pitch
@@ -218,11 +216,5 @@ void _game_session::Show_lit_unlit_diagnostics() {
 		}
 	}
 }
-
-#else
-
-void _game_session::Show_lit_unlit_diagnostics() {}
-
-#endif // #if CD_MODE == 0
 
 } // End of namespace ICB

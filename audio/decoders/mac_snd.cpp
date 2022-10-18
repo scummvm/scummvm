@@ -21,7 +21,7 @@
 
 /*
  * The code in this file is based on information found at
- * http://developer.apple.com/legacy/mac/library/documentation/mac/Sound/Sound-60.html#HEADING60-15
+ * https://developer.apple.com/library/archive/documentation/mac/Sound/Sound-60.html#HEADING60-15
  *
  * We implement both type 1 and type 2 snd resources, but only those that are sampled
  */

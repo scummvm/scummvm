@@ -47,27 +47,37 @@ OuttakePlayer::~OuttakePlayer() {
 }
 
 void OuttakePlayer::play(const Common::String &name, bool noLocalization, int container) {
-	Common::String oldOuttakeFile = Common::String::format("OUTTAKE%d.MIX", _vm->_chapters->currentResourceId());
-	Common::String newOuttakeFile = Common::String::format("OUTTAKE%d.MIX", container);
-
+	Common::String oldOuttakeFile;
+	Common::String newOuttakeFile;
 	if (container > 0) {
-		if (_vm->isArchiveOpen(oldOuttakeFile)) {
+		oldOuttakeFile = Common::String::format("OUTTAKE%d.MIX", _vm->_chapters->currentResourceId());
+		newOuttakeFile = Common::String::format("OUTTAKE%d.MIX", container);
+
+		if (_vm->isArchiveOpen(oldOuttakeFile)
+		    && _vm->_chapters->currentResourceId() != container) {
 			_vm->closeArchive(oldOuttakeFile);
 		}
 
-		_vm->openArchive(newOuttakeFile);
+		if (!_vm->isArchiveOpen(newOuttakeFile)) {
+			_vm->openArchive(newOuttakeFile);
+		}
 	}
 
 	_vm->playerLosesControl();
 
-	Common::String resName = name;
+	Common::String resNameNoVQASuffix = name;
 	if (!noLocalization) {
-		resName = resName + "_" + _vm->_languageCode;
+		resNameNoVQASuffix = resNameNoVQASuffix + "_" + _vm->_languageCode;
 	}
-	Common::String resNameNoVQASuffix = resName;
-	resName = resName + ".VQA";
 
-	VQAPlayer vqaPlayer(_vm, &_surfaceVideo, resName); // in original game _surfaceFront is used here, but for proper subtitles rendering we need separate surface
+	VQAPlayer vqaPlayer(_vm, &_surfaceVideo, resNameNoVQASuffix + ".VQA"); // in original game _surfaceFront is used here, but for proper subtitles rendering we need separate surface
+
+	if (container == -2) {
+		// container value: -2 indicates potential existence of VQP file
+		if (!vqaPlayer.loadVQPTable(resNameNoVQASuffix + ".VQP")) {
+			debug("Unable to load VQP table");
+		}
+	}
 	vqaPlayer.open();
 
 	_vm->_vqaIsPlaying = true;
@@ -83,7 +93,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 		int frame = vqaPlayer.update();
 		blit(_surfaceVideo, _vm->_surfaceFront); // This helps to make subtitles disappear properly, if the video is rendered in separate surface and then pushed to the front surface
 		if (frame == -3) { // end of video
-			if (_vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+			if (_vm->_cutContent && resNameNoVQASuffix.equals("FLYTRU_E")) {
 				_vm->_ambientSounds->removeAllNonLoopingSounds(true);
 				_vm->_ambientSounds->removeAllLoopingSounds(1u);
 			}
@@ -94,7 +104,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 			_vm->_subtitles->loadOuttakeSubsText(resNameNoVQASuffix, frame);
 			_vm->_subtitles->tickOuttakes(_vm->_surfaceFront);
 			_vm->blitToScreen(_vm->_surfaceFront);
-			if (_vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+			if (_vm->_cutContent && resNameNoVQASuffix.equals("FLYTRU_E")) {
 				// This FLYTRU_E outtake has 150 frames
 				//
 				// We can have at most kLoopingSounds (3) looping ambient tracks
@@ -146,7 +156,7 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	}
 
 	if ((_vm->_vqaStopIsRequested || _vm->shouldQuit())
-		&& _vm->_cutContent && resName.equals("FLYTRU_E.VQA")) {
+		&& _vm->_cutContent && resNameNoVQASuffix.equals("FLYTRU_E")) {
 		_vm->_ambientSounds->removeAllNonLoopingSounds(true);
 		_vm->_ambientSounds->removeAllLoopingSounds(0u);
 		_vm->_audioPlayer->stopAll();
@@ -159,11 +169,14 @@ void OuttakePlayer::play(const Common::String &name, bool noLocalization, int co
 	_vm->playerGainsControl();
 
 	if (container > 0) {
-		if (_vm->isArchiveOpen(newOuttakeFile)) {
+		if (_vm->isArchiveOpen(newOuttakeFile)
+		    && _vm->_chapters->currentResourceId() != container) {
 			_vm->closeArchive(newOuttakeFile);
 		}
 
-		_vm->openArchive(oldOuttakeFile);
+		if (!_vm->isArchiveOpen(oldOuttakeFile)) {
+			_vm->openArchive(oldOuttakeFile);
+		}
 	}
 }
 

@@ -21,12 +21,13 @@
 
 #include "common/str.h"
 #include "ags/shared/ac/character_info.h"
+#include "ags/shared/ac/game_version.h"
 #include "ags/shared/util/stream.h"
+#include "ags/globals.h"
 
 namespace AGS3 {
 
 using AGS::Shared::Stream;
-
 
 void CharacterInfo::ReadFromFile(Stream *in) {
 	defview = in->ReadInt32();
@@ -57,7 +58,7 @@ void CharacterInfo::ReadFromFile(Stream *in) {
 	z = in->ReadInt32();
 	walkwait = in->ReadInt32();
 	speech_anim_speed = in->ReadInt16();
-	reserved1 = in->ReadInt16();
+	idle_anim_speed = in->ReadInt16();
 	blocking_width = in->ReadInt16();
 	blocking_height = in->ReadInt16();
 	index_id = in->ReadInt32();
@@ -75,6 +76,9 @@ void CharacterInfo::ReadFromFile(Stream *in) {
 	in->Read(name, 40);
 	in->Read(scrname, MAX_SCRIPT_NAME_LEN);
 	on = in->ReadInt8();
+
+	if (_G(loaded_game_file_version) < kGameVersion_360_16)
+		idle_anim_speed = animspeed + 5;
 }
 
 void CharacterInfo::WriteToFile(Stream *out) {
@@ -106,7 +110,7 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->WriteInt32(z);
 	out->WriteInt32(walkwait);
 	out->WriteInt16(speech_anim_speed);
-	out->WriteInt16(reserved1);
+	out->WriteInt16(idle_anim_speed);
 	out->WriteInt16(blocking_width);
 	out->WriteInt16(blocking_height);
 	out->WriteInt32(index_id);
@@ -125,6 +129,9 @@ void CharacterInfo::WriteToFile(Stream *out) {
 	out->Write(scrname, MAX_SCRIPT_NAME_LEN);
 	out->WriteInt8(on);
 }
+
+#if defined (OBSOLETE)
+#define COPY_CHAR_VAR(name) ci->name = oci->name
 
 void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	COPY_CHAR_VAR(defview);
@@ -153,12 +160,13 @@ void ConvertOldCharacterToNew(OldCharacterInfo *oci, CharacterInfo *ci) {
 	COPY_CHAR_VAR(actx);
 	COPY_CHAR_VAR(acty);
 	COPY_CHAR_VAR(on);
-	strcpy(ci->name, oci->name);
-	strcpy(ci->scrname, oci->scrname);
+	snprintf(ci->name, sizeof(CharacterInfo::name), "%s", oci->name);
+	snprintf(ci->scrname, sizeof(CharacterInfo::scrname), "%s", oci->scrname);
 	memcpy(&ci->inv[0], &oci->inv[0], sizeof(short) * 100);
 	// move the talking colour into the struct and remove from flags
 	ci->talkcolor = (oci->flags & OCHF_SPEECHCOL) >> OCHF_SPEECHCOLSHIFT;
 	ci->flags = ci->flags & (~OCHF_SPEECHCOL);
 }
+#endif // OBSOLETE
 
 } // namespace AGS3

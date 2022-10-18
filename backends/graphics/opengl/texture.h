@@ -22,7 +22,8 @@
 #ifndef BACKENDS_GRAPHICS_OPENGL_TEXTURE_H
 #define BACKENDS_GRAPHICS_OPENGL_TEXTURE_H
 
-#include "backends/graphics/opengl/opengl-sys.h"
+#include "graphics/opengl/system_headers.h"
+#include "graphics/opengl/context.h"
 
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
@@ -33,7 +34,12 @@ class Scaler;
 
 namespace OpenGL {
 
-class Shader;
+enum WrapMode {
+	kWrapModeBorder,
+	kWrapModeEdge,
+	kWrapModeRepeat,
+	kWrapModeMirroredRepeat
+};
 
 /**
  * A simple GL texture object abstraction.
@@ -65,6 +71,13 @@ public:
 	bool isLinearFilteringEnabled() const { return (_glFilter == GL_LINEAR); }
 
 	/**
+	 * Enable or disable linear texture filtering.
+	 *
+	 * @param enable true to enable and false to disable.
+	 */
+	void setWrapMode(WrapMode wrapMode);
+
+	/**
 	 * Destroy the OpenGL texture name.
 	 */
 	void destroy();
@@ -87,8 +100,9 @@ public:
 	 *
 	 * @param width  The desired logical width.
 	 * @param height The desired logical height.
+	 * @return Whether the call was successful
 	 */
-	void setSize(uint width, uint height);
+	bool setSize(uint width, uint height);
 
 	/**
 	 * Copy image data to the texture.
@@ -405,9 +419,9 @@ public:
 	virtual const GLTexture &getGLTexture() const;
 
 	static bool isSupportedByContext() {
-		return g_context.shadersSupported
-		    && g_context.multitextureSupported
-		    && g_context.framebufferObjectSupported;
+		return OpenGLContext.shadersSupported
+		    && OpenGLContext.multitextureSupported
+		    && OpenGLContext.framebufferObjectSupported;
 	}
 private:
 	void lookUpColors();

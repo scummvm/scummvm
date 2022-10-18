@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -110,16 +111,16 @@ void Room45::setup_func() {
 						x -= _G(r45_pinfo)[i][1];
 						if (x < -30) {
 							_G(r45_pinfo)[i][0] = 0;
-							_G(det)->stop_detail(3 + i);
+							_G(det)->stopDetail(3 + i);
 						}
 					} else {
 						x += _G(r45_pinfo)[i][1];
 						if (x > 540) {
 							_G(r45_pinfo)[i][0] = 0;
-							_G(det)->stop_detail(3 + i);
+							_G(det)->stopDetail(3 + i);
 						}
 					}
-					_G(det)->setSetailPos(3 + i, x, y);
+					_G(det)->setDetailPos(3 + i, x, y);
 				} else {
 					++_G(r45_pinfo)[i][2];
 
@@ -132,7 +133,7 @@ void Room45::setup_func() {
 						} else {
 							x = 0;
 						}
-						_G(det)->setSetailPos(3 + i, x, y);
+						_G(det)->setDetailPos(3 + i, x, y);
 						_G(det)->startDetail(3 + i, 255, ANI_FRONT);
 					}
 				}
@@ -143,7 +144,7 @@ void Room45::setup_func() {
 
 		if (_G(gameState)._personRoomNr[P_HOWARD] == 45 && _G(HowardMov) != 2) {
 			calc_person_look();
-			const int16 ch_x = _G(spieler_vector)[P_CHEWY].Xypos[0];
+			const int16 ch_x = _G(moveState)[P_CHEWY].Xypos[0];
 
 			if (ch_x < 95) {
 				x = 18;
@@ -170,7 +171,7 @@ int16 Room45::use_taxi() {
 	hideCur();
 	autoMove(1, P_CHEWY);
 
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		if (_G(gameState).ChewyAni == CHEWY_PUMPKIN) {
 			action_ret = true;
 			talk_taxi(254);
@@ -212,7 +213,7 @@ void Room45::taxi_mov() {
 	_G(HowardMov) = 2;
 	_G(room)->set_timer_status(12, TIMER_STOP);
 	_G(det)->del_static_ani(12);
-	g_engine->_sound->playSound(15, 1);
+	_G(det)->playSound(15, 1);
 	_G(det)->showStaticSpr(11);
 	autoMove(3, P_CHEWY);
 	_G(gameState)._personHide[P_CHEWY] = true;
@@ -226,11 +227,10 @@ void Room45::taxi_mov() {
 	}
 
 	_G(det)->hideStaticSpr(11);
-	g_engine->_sound->playSound(15, 2);
-	g_engine->_sound->playSound(15, 2, false);
-	g_engine->_sound->playSound(15, 0);
+	_G(det)->playSound(15, 2);
+	_G(det)->playSound(15, 0);
 	startSetAILWait(15, 1, ANI_FRONT);
-	g_engine->_sound->stopSound(0);
+	_G(det)->stopSound(0);
 	switchRoom(48);
 }
 

@@ -22,9 +22,11 @@
 #include "common/stream.h"
 #include "common/mutex.h"
 #include "common/textconsole.h"
+
 #include "audio/audiostream.h"
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
+
 #include "engines/grim/debug.h"
 #include "engines/grim/resource.h"
 #include "engines/grim/imuse/imuse_mcmp_mgr.h"

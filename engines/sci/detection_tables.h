@@ -310,6 +310,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "d97a96f1ab91b41cf46a02cc89b0a04e", 333091},
 		{"resource.006", 0, "c0881236945b1f61d4e11b23014eee41", 232696},
 		{"resource.007", 0, "8613c45fc771d658e5a505b9a4a54f31", 267741},
+		{"resource.008", 0, "7c9218530415363a6b12ea6d777e8290", 327775},
+		{"resource.009", 0, "46949391f9a5695d43757ccd02a98064", 323966},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -349,6 +351,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "1f2f79e399098859c73e49ac6a3545d8", 330657},
 		{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
 		{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267811},
+		{"resource.008", 0, "4e5c20d6942d97db9501a2110bb0d7db", 327461},
+		{"resource.009", 0, "27f3027aa41bdb0deff031ad0cc56f21", 324093},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -363,6 +367,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "dc7c5280e7acfaffe6ef2a6c963c5f94", 330653},
 		{"resource.006", 0, "08050329aa113a9f14ed99cbfe3536ec", 232942},
 		{"resource.007", 0, "64f342463f6f35ba71b3509ef696ae3f", 267702},
+		{"resource.008", 0, "4e5c20d6942d97db9501a2110bb0d7db", 327461},
+		{"resource.009", 0, "27f3027aa41bdb0deff031ad0cc56f21", 324091},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -382,6 +388,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "088c4ee2dcd4df1e60c629ee2fb96cad", 281861},
 		{"resource.006", 0, "7a2eebdba905f24c2828f749a38060db", 276073},
 		{"resource.007", 0, "00a71915aeacc15358fe12837c785e76", 281152},
+		{"resource.008", 0, "8f713368811e9db1f28cb605457ec6b4", 283407},
+		{"resource.009", 0, "ce96c10a6c9ebac2615792d167210e32", 284403},
+		{"resource.010", 0, "2a92f04973ee46716c9281759547431f", 265475},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -444,6 +453,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "8e1a3a8c588007404b532b8dfacc1460", 345734},
 		{"resource.006", 0, "8e1a3a8c588007404b532b8dfacc1460", 332446},
 		{"resource.007", 0, "8e1a3a8c588007404b532b8dfacc1460", 358182},
+		{"resource.008", 0, "8e1a3a8c588007404b532b8dfacc1460", 315865},
+		{"resource.009", 0, "8e1a3a8c588007404b532b8dfacc1460", 322948},
+		{"resource.010", 0, "8e1a3a8c588007404b532b8dfacc1460", 322781},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -993,7 +1005,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformWindows, ADGF_DEMO, GUIO_GK2_DEMO },
 
 	// Gabriel Knight 2 - English DOS (GOG version) - ressci.* merged in ressci.000
-	// using Enrico Rolfi's HD/DVD installer: http://gkpatches.vogons.zetafleet.com/
+	// using Enrico Rolfi's HD/DVD installer: https://gkpatches.vogons.org/english.php
 	{"gk2", "", {
 		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
 		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
@@ -1001,13 +1013,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 	
 	// Gabriel Knight 2 - Korean DOS (GOG version) (from swkim01)
-    // using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
-    {"gk2", "", {
-        {"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
-        {"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
-        {"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
-        AD_LISTEND},
-        Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
+	// using swkim01's SCI Message Editor: http://github.com/swkim01/scime/
+	{"gk2", "", {
+		{"resmap.000", 0, "b996fa1e57389a1e179a00a0049de1f4", 8110},
+		{"ressci.000", 0, "a19fc3604c6e5407abcf03d59ee87217", 168522221},
+		{"resource.msg", 0, "1c4439abcfda38be40090a37a91ad7d2", 331954},
+		AD_LISTEND},
+		Common::KO_KOR, Common::kPlatformDOS, ADGF_NO_FLAGS, GUIO_GK2 },
 
 	// Gabriel Knight 2 - English DOS (from jvprat)
 	// Executable scanning reports "2.100.002", VERSION file reports "1.1"
@@ -1589,9 +1601,133 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
+	// King's Quest 4 - English DOS Non-Interactive Demo
+	// Executable scanning reports "0.000.494"
+	{"kq4sci", "SCI/Demo", {
+		{"resource.map", 0, "992ac7cc31d3717fe53818a9bb6d1dae", 594},
+		{"resource.001", 0, "143e1c14f15ad0fbfc714f648a65f661", 205330},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
+	
+	// King's Quest 4 - English DOS (5 1/4" disks)
+	// Game version 1.000.106
+	// Executable scanning reports 0.000.253
+	// K4091988.QA file reports "SCI Version 0.000.247 (2nd rev)"
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "381d9dcb69c626f0a60631dbfec1d13a", 9474},
+		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 191559},
+		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 333345},
+		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 358513},
+		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 326297},
+		{"resource.005", 0, "0c8566848a76eea19a6d6220914030a7", 325102},
+		{"resource.006", 0, "0c8566848a76eea19a6d6220914030a7", 337288},
+		{"resource.007", 0, "0c8566848a76eea19a6d6220914030a7", 343882},
+		{"resource.008", 0, "0c8566848a76eea19a6d6220914030a7", 305329},
+		{"resource.009", 0, "0c8566848a76eea19a6d6220914030a7", 288132},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (3 1/2" disks)
+	// Game version 1.000.106
+	// Executable scanning reports 0.000.253
+	// K4091988.QA file reports "SCI Version 0.000.247 (2nd rev)"
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "1f253c0d649fb1da1eb8784b2df34284", 7416},
+		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 495006},
+		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 681749},
+		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 686821},
+		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 652398},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (5 1/4" disks)
+	// Game version 1.000.111
+	// Executable scanning reports 0.000.274
+	// Floppy disks are labeled 0.000.247 or 0.000.274. Both are real
+	// interpreter version numbers so it's unclear if these are typos
+	// or if there were versions of 1.000.111 that used 0.000.247.
+	// Released: September 24th, 1988 (Information from K4092488.QA file)
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "adbe267662a5915d3c89c9075ec8cf3e", 9474},
+		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 188239},
+		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 329895},
+		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 355385},
+		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 322951},
+		{"resource.005", 0, "851a62d00972dc4002f472cc0d84e71d", 321593},
+		{"resource.006", 0, "851a62d00972dc4002f472cc0d84e71d", 333777},
+		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
+		{"resource.008", 0, "851a62d00972dc4002f472cc0d84e71d", 301669},
+		{"resource.009", 0, "851a62d00972dc4002f472cc0d84e71d", 284690},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (3 1/2" disks)
+	// Game version 1.000.111
+	// Executable scanning reports 0.000.274
+	// Floppy disks are labeled 0.000.247 or 0.000.274. Both are real
+	// interpreter version numbers so it's unclear if these are typos
+	// or if there were versions of 1.000.111 that used 0.000.247.
+	// Released: September 24th, 1988 (Information from K4092488.QA file)
+	{"kq4sci", "SCI",{
+		{"resource.map", 0, "042d54434174d8f9faf926ade2ffd805", 7416},
+		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 491919},
+		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 678804},
+		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 683145},
+		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 649441},
+		AD_LISTEND },
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
+
+	// King's Quest 4 - English DOS (3 1/2" disks)
+	// Game version 1.003.006
+	// SCI interpreter version 0.000.409
+	// Released: January 24, 1989 (Information from QAFILE file)
+	// Resource files are identical to Atari ST 1.003.006
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "8800cd62b1eee93752099986dc704a16", 7416},
+		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 450790},
+		{"resource.002", 0, "a3cdb4848fb859fdd302976fff56490f", 535276},
+		{"resource.003", 0, "a3cdb4848fb859fdd302976fff56490f", 705074},
+		{"resource.004", 0, "a3cdb4848fb859fdd302976fff56490f", 478366},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (5 1/4" disks)
+	// Game version 1.006.003
+	// SCI interpreter version 0.000.502
+	// Released: June 12, 1989 (Information from About screen in scripts)
+	// Identical resources to 1.006.004 except for disk sizes and About screen
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "a22b66e6fa0d82460b985e9f7e562950", 9384},
+		{"resource.001", 0, "6db7de6f93c6ea62dca78abee677f8c0", 174852},
+		{"resource.002", 0, "6db7de6f93c6ea62dca78abee677f8c0", 356024},
+		{"resource.003", 0, "6db7de6f93c6ea62dca78abee677f8c0", 335716},
+		{"resource.004", 0, "6db7de6f93c6ea62dca78abee677f8c0", 312231},
+		{"resource.005", 0, "6db7de6f93c6ea62dca78abee677f8c0", 283466},
+		{"resource.006", 0, "6db7de6f93c6ea62dca78abee677f8c0", 324789},
+		{"resource.007", 0, "6db7de6f93c6ea62dca78abee677f8c0", 334441},
+		{"resource.008", 0, "6db7de6f93c6ea62dca78abee677f8c0", 274448},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// King's Quest 4 - English DOS (3 1/2" disks)
+	// Game version 1.006.004
+	// SCI interpreter version 0.000.502
+	// Released: August 7, 1989 (Information from About screen in scripts)
+	// Identical resources to 1.006.003 except for disk sizes and About screen
+	{"kq4sci", "SCI", {
+		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
+		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
+		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
+		{"resource.003", 0, "77615c595388acf3d1df8e107bfb6b52", 707591},
+		{"resource.004", 0, "77615c595388acf3d1df8e107bfb6b52", 479562},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
 	// King's Quest 4 - English Amiga (from www.back2roots.org)
-	// Executable scanning reports "1.002.032"
+	// Game version 1.023
+	// Executable scanning reports 1.002.032
 	// SCI interpreter version 0.000.685
+	// Released: August 7, 1989 (Information from About screen in scripts)
 	{"kq4sci", "SCI", {
 		{"resource.map", 0, "f88dd267fb9504d40a04d599c048d42b", 6354},
 		{"resource.000", 0, "77615c595388acf3d1df8e107bfb6b52", 138523},
@@ -1602,96 +1738,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_STD16_UNDITHER	},
 
-	// King's Quest 4 - English DOS Non-Interactive Demo
-	// Executable scanning reports "0.000.494"
-	{"kq4sci", "SCI/Demo", {
-		{"resource.map", 0, "992ac7cc31d3717fe53818a9bb6d1dae", 594},
-		{"resource.001", 0, "143e1c14f15ad0fbfc714f648a65f661", 205330},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (original boxed release, 3 1/2" disks)
-	// SCI interpreter version 0.000.247
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "042d54434174d8f9faf926ade2ffd805", 7416},
-		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 491919},
-		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 678804},
-		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 683145},
-		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 649441},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (original boxed release, 3 1/2" disks)
-	// Executable scanning reports "0.000.253"
-	// K4091988.QA file reports "SCI Version 0.000.247 (2nd rev)"
-	// Game version "1.000.106" according to K4091988.QA and scripts
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "1f253c0d649fb1da1eb8784b2df34284", 7416},
-		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 495006},
-		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 681749},
-		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 686821},
-		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 652398},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (from the King's Quest Collection)
-	// Executable scanning reports "0.000.502"
-	// SCI interpreter version 0.000.502
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "3164a39790b599c954ecf716d0b32be8", 7476},
-		{"resource.001", 0, "77615c595388acf3d1df8e107bfb6b52", 452523},
-		{"resource.002", 0, "77615c595388acf3d1df8e107bfb6b52", 536573},
-		{"resource.003", 0, "77615c595388acf3d1df8e107bfb6b52", 707591},
-		{"resource.004", 0, "77615c595388acf3d1df8e107bfb6b52", 479562},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS (supplied by ssburnout in bug report #5270)
-	// 1.006.003 8x5.25" (label: Int.#0.000.502)
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "a22b66e6fa0d82460b985e9f7e562950", 9384},
-		{"resource.001", 0, "6db7de6f93c6ea62dca78abee677f8c0", 174852},
-		{"resource.002", 0, "6db7de6f93c6ea62dca78abee677f8c0", 356024},
-		{"resource.003", 0, "6db7de6f93c6ea62dca78abee677f8c0", 335716},
-		{"resource.004", 0, "6db7de6f93c6ea62dca78abee677f8c0", 312231},
-		{"resource.005", 0, "6db7de6f93c6ea62dca78abee677f8c0", 283466},
-		{"resource.006", 0, "6db7de6f93c6ea62dca78abee677f8c0", 324789},
-		{"resource.007", 0, "6db7de6f93c6ea62dca78abee677f8c0", 334441},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS
-	// SCI interpreter version 0.000.274
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "adbe267662a5915d3c89c9075ec8cf3e", 9474},
-		{"resource.001", 0, "851a62d00972dc4002f472cc0d84e71d", 188239},
-		{"resource.002", 0, "851a62d00972dc4002f472cc0d84e71d", 329895},
-		{"resource.003", 0, "851a62d00972dc4002f472cc0d84e71d", 355385},
-		{"resource.004", 0, "851a62d00972dc4002f472cc0d84e71d", 322951},
-		{"resource.005", 0, "851a62d00972dc4002f472cc0d84e71d", 321593},
-		{"resource.006", 0, "851a62d00972dc4002f472cc0d84e71d", 333777},
-		{"resource.007", 0, "851a62d00972dc4002f472cc0d84e71d", 341038},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// King's Quest 4 - English DOS
-	// SCI interpreter version 0.000.253
-	{"kq4sci", "SCI", {
-		{"resource.map", 0, "381d9dcb69c626f0a60631dbfec1d13a", 9474},
-		{"resource.001", 0, "0c8566848a76eea19a6d6220914030a7", 191559},
-		{"resource.002", 0, "0c8566848a76eea19a6d6220914030a7", 333345},
-		{"resource.003", 0, "0c8566848a76eea19a6d6220914030a7", 358513},
-		{"resource.004", 0, "0c8566848a76eea19a6d6220914030a7", 326297},
-		{"resource.005", 0, "0c8566848a76eea19a6d6220914030a7", 325102},
-		{"resource.006", 0, "0c8566848a76eea19a6d6220914030a7", 337288},
-		{"resource.007", 0, "0c8566848a76eea19a6d6220914030a7", 343882},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
 	// King's Quest 4 - English Atari ST (double-sided diskettes)
-	// Game version 1.003.006 (January 12, 1989)
+	// Game version 1.003.006
 	// SCI interpreter version 1.001.008
 	// Provided by fischersfritz in bug report #5518
+	// Released:  January 12, 1989 (Information from KQ4_ST.QA file)
+	// Resource files are identical to DOS 1.003.006
 	{"kq4sci", "SCI", {
 		{"resource.map", 0, "8800cd62b1eee93752099986dc704a16", 7416},
 		{"resource.001", 0, "a3cdb4848fb859fdd302976fff56490f", 450790},
@@ -1746,6 +1798,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5aa3d59968b569cd509dde00d4eb8751", 754201},
 		{"resource.006", 0, "56546b20db11a4836f900efa6d3a3e74", 672099},
 		{"resource.007", 0, "56546b20db11a4836f900efa6d3a3e74", 794194},
+		{"resource.008", 0, "33243b85bf2be9e9a48cf1fd2c75eb07", 715664},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformAmiga, ADGF_ADDENGLISH, GUIO_STD16	},
 
@@ -1848,6 +1901,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "ef4f1166bc37b6cfab70234ea60ddc3d", 1032675},
 		{"resource.006", 0, "06cb3f689836086ebe08b1efc0126592", 921113},
 		{"resource.007", 0, "252249753c6e850eacceb8af634986d3", 1133608},
+		{"resource.008", 0, "aac7c26382088b1359ce88915187349c", 1128507},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
@@ -1864,6 +1918,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669919},
 		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666527},
 		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541743},
+		{"resource.008", 0, "6c6207420381574b874f45100362f8b4", 598932},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
@@ -1891,6 +1946,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "3cca5b2dae8afe94532edfdc98d7edbe", 669961},
 		{"resource.006", 0, "698c698570cde9015e4d51eb8d2e9db1", 666541},
 		{"resource.007", 0, "703d8df30e89541af337d7706540d5c4", 541762},
+		{"resource.008", 0, "d110b81016430eb12fe2e803e97e994a", 598814},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
@@ -1921,7 +1977,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// King's Quest 5 DOS Spanish Floppy 0.000.062 VGA (5 x 3.5" disks)
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
 	// Supplied by dianiu in bug report #6121
 	{"kq5", "", {
 		{"resource.map", 0, "c09896a2a30c9b002c5cbbc62f5a5c3a", 8169},
@@ -1933,6 +1991,24 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "4aaa2e9a69089b9afbaaccbbf2c4e647", 1202936},
 		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1141985},
 		{"resource.007", 0, "f42b0100f0a1c30806814f8648b6bc28", 1145583},
+		// MISSING: resource.008 wasn't included in the generated entries
+		// but was included in a directory listing
+		AD_LISTEND},
+		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
+
+	// King's Quest 5 DOS Spanish Floppy VGA (3.5" disks)
+	// Game version 0.000.162 from about box, 1.000 from VERSION file
+	// SCI interpreter version 1.000.784
+	{"kq5", "", {
+		{"resource.map", 0, "3e196254d84b228e735a605ca2fc3fc0", 8283},
+		{"resource.000", 0, "1f1d03aead44da46362ff40c0074a3ec", 335871},
+		{"resource.001", 0, "37770b6ed38fa45286388988752d2881", 1136316},
+		{"resource.002", 0, "66d46bdd8f017ff11db855e796c89921", 1339480},
+		{"resource.003", 0, "e5c88ef1d6cb02005a1676e1020e0786", 1323620},
+		{"resource.004", 0, "829c8caeff793f3cfcea2cb01aaa4150", 1331675},
+		{"resource.005", 0, "7c8476ebf77fd7fc9090ae01f4010095", 1266871},
+		{"resource.006", 0, "65b520e60c4217e6a6572d9edf77193b", 1208819},
+		{"resource.007", 0, "f719a33d9b3d2ee6d5fae4d182119af4", 1337045},
 		AD_LISTEND},
 		Common::ES_ESP, Common::kPlatformDOS, ADGF_ADDENGLISH, GUIO_STD16	},
 
@@ -2498,6 +2574,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 327465},
 		{"resource.006", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 328390},
 		{"resource.007", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 317687},
+		{"resource.008", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 352345},
+		{"resource.009", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 257355},
+		{"resource.010", 0, "e45c888d9c7c04aec0a20e9f820b79ff", 356093},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -2528,24 +2607,31 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16	},
 
-	// Laura Bow 2 - English DOS CD (from "The Roberta Williams Antology"/1996)
+	// Laura Bow 2 - English DOS CD
 	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
-	// SCI interpreter version 1.001.069 (just a guess)
 	{"laurabow2", "CD", {
 		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
-	// Laura Bow 2 - Korean fan translation, based on English DOS CD (from "The Roberta Williams Antology"/1996)
-	// Executable scanning reports "1.001.072", VERSION file reports "1.1" (from jvprat)
-	// SCI interpreter version 1.001.069 (just a guess)
+	// Laura Bow 2 - Korean fan translation, based on English DOS CD
+	// Executable scanning reports "1.001.072", VERSION file reports "1.1"
 	{"laurabow2", "CD", {
 		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
 		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
 		{"resource.msg", 0, "bdc2167ebe55612b8ff17347f70e2b83", 561801},
 		AD_LISTEND},
 		Common::KO_KOR, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+
+	// Laura Bow 2 - French fan translation, based on English DOS CD
+	// Executable scanning reports "1.001.072", VERSION file reports "1.1"
+	{"laurabow2", "CD", {
+		{"resource.map", 0, "a70945e61ba7ac7bfea6b7bd72c6aec5", 7274},
+		{"resource.000", 0, "82578b8d5a7e09c4c58891ca49fae35b", 5598672},
+		{"patch/0.fon",  0, "539b7c355c8b7915de2c0396790c46aa", 2767},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
 
 	// Laura Bow 2 v1.1 - French DOS Floppy (from Hkz)
 	{"laurabow2", "", {
@@ -2574,13 +2660,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16	},
 
 	// Laura Bow 2 - Spanish DOS CD (from jvprat)
+	// This is the floppy version (text-only) distributed on a CD.
 	// Executable scanning reports "2.000.274", VERSION file reports "1.000.000, May 10, 1994"
-	{"laurabow2", "CD", {
+	{"laurabow2", "", {
 		{"resource.map", 0, "3b6dfbcda210bbc3f23fd1927113bf98", 6483},
 		{"resource.000", 0, "57084910bc923bff5d6d9bc1b56e9604", 5028766},
 		{"resource.msg", 0, "71f1f0cd9f082da2e750c793a8ed9d84", 286141},
 		AD_LISTEND},
-		Common::ES_ESP, Common::kPlatformDOS, ADGF_CD, GUIO_STD16_SPEECH	},
+		Common::ES_ESP, Common::kPlatformDOS, 0, GUIO_STD16_SPEECH	},
 
 #define GUIO_LIGHTHOUSE_DEMO GUIO6(GUIO_NOSPEECH, \
 								   GUIO_NOMUSIC, \
@@ -2865,6 +2952,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16_PALETTEMODS	},
 
 	// Larry 2 - English DOS
+	// Game version 1.002.000
 	// SCI interpreter version 0.000.409
 	{"lsl2", "", {
 		{"resource.map", 0, "42258cf767a8ebaa9e66b6151a80e601", 5628},
@@ -2878,6 +2966,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_PALETTEMODS	},
 
 	// Larry 2 - English DOS
+	// Game version 1.000.011
 	// SCI interpreter version 0.000.343
 	{"lsl2", "", {
 		{"resource.map", 0, "6bd43c92eaf561f64818116eed683fcf", 5598},
@@ -2886,9 +2975,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.003", 0, "96033f57accfca903750413fd09193c8", 236676},
 		{"resource.004", 0, "96033f57accfca903750413fd09193c8", 204867},
 		{"resource.005", 0, "96033f57accfca903750413fd09193c8", 274953},
-		// TODO/FIXME: is the version with size 208739 corrupted?
-		//{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
-		{"resource.006", 0, "96033f57accfca903750413fd09193c8", -1},	// 345818 or 208739
+		{"resource.006", 0, "96033f57accfca903750413fd09193c8", 345818},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_PALETTEMODS	},
 
@@ -3009,10 +3096,12 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "f18441027154292836b973c655fa3175", 303905},
 		{"resource.006", 0, "f18441027154292836b973c655fa3175", 282649},
 		{"resource.007", 0, "f18441027154292836b973c655fa3175", 257178},
+		{"resource.008", 0, "f18441027154292836b973c655fa3175", 285874},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Larry 3 - English DOS
+	// Game version 1.003, 1989-10-27
 	// SCI interpreter version 0.000.572
 	{"lsl3", "", {
 		{"resource.map", 0, "0f429f5186f96d6c501838a1cb44bd43", 7452},
@@ -3023,6 +3112,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "f18441027154292836b973c655fa3175", 302946},
 		{"resource.006", 0, "f18441027154292836b973c655fa3175", 282465},
 		{"resource.007", 0, "f18441027154292836b973c655fa3175", 257174},
+		{"resource.008", 0, "f18441027154292836b973c655fa3175", 285888},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -3168,6 +3258,8 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_DEMO, GUIO_STD16	},
 
 	// Larry 5 - English DOS (from spookypeanut)
+	// Game version 1.000, 1991-09-11
+	// Executable scanning reports "T.A00.169"
 	// SCI interpreter version 1.000.510
 	{"lsl5", "", {
 		{"resource.map", 0, "be00ef895197754ae4eab021ca44cbcd", 6417},
@@ -4488,6 +4580,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "7288ed6d5da89b7a80b4af3897a7963a", 271185},
 		{"resource.006", 0, "69366c2a2f99917199fe1b60a4fee19d", 267852},
 		{"resource.007", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 272747},
+		{"resource.008", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 263728},
+		{"resource.009", 0, "5e35f434cf102c323a1adf999682e712", 273698},
+		{"resource.010", 0, "84602c36ecd9fb33d887e095f9300d82", 267913},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER },
 
@@ -4503,6 +4598,9 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "7288ed6d5da89b7a80b4af3897a7963a", 271185},
 		{"resource.006", 0, "69366c2a2f99917199fe1b60a4fee19d", 267852},
 		{"resource.007", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 272747},
+		{"resource.008", 0, "7ab2bf8e224b57f75e0cd6e4ba790761", 263728},
+		{"resource.009", 0, "5e35f434cf102c323a1adf999682e712", 273698},
+		{"resource.010", 0, "84602c36ecd9fb33d887e095f9300d82", 267913},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4591,6 +4689,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Quest for Glory 1 VGA Remake - English DOS
+	// VERSION file reports "2.000"
 	// Executable scanning reports "2.000.411"
 	{"qfg1vga", "VGA", {
 		{"resource.map", 0, "a731fb6c9c0b282443f7027bc8694d4c", 8469},
@@ -4646,6 +4745,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "a77d2576c842b2b06da57d4ac8fc51c0", 579975},
 		{"resource.006", 0, "ccf5dba33e5cab6d5872838c0f8db44c", 500039},
 		{"resource.007", 0, "4c9fc1587545879295cb9627f56a2cb8", 575056},
+		{"resource.008", 0, "3979394c0210ff404c6c59849dd8d865", 598338},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformAmiga, 0, GUIO_STD16_UNDITHER	},
 
@@ -4673,10 +4773,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "5f08242f962293be8fb852f183342350", 478071},
 		{"resource.006", 0, "5e9deacbdb17198ad844988e04833520", 498593},
 		{"resource.007", 0, "2ac1e6fea9aa1f5b91a06693a67b9766", 490151},
+		{"resource.008", 0, "5e85f6cf401eaad1bbd5dd978da81f47", 482914},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 480904},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
 	// Quest for Glory 2 - English (from FRG)
+	// 1.102 5x5.25" (label: INT#11.20.90)
 	// Executable scanning reports "1.000.072"
 	{"qfg2", "", {
 		{"resource.map", 0, "bc79c5685c00edab3ad6df18691703bc", 6906},
@@ -4685,21 +4788,6 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 790750},
 		{"resource.003", 0, "b192607c42f6960ecdf2ad2e4f90e9bc", 972804},
 		{"resource.004", 0, "cd2de58e27665d5853530de93fae7cd6", 983617},
-		AD_LISTEND},
-		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
-
-	// Quest for Glory 2 - English DOS
-	// Executable scanning reports "1.000.072"
-	{"qfg2", "", {
-		{"resource.map", 0, "be23af27e9557bf232efe213ac7f277c", 8166},
-		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
-		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331973},
-		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467505},
-		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
-		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
-		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
-		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
-		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4715,6 +4803,39 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478574},
 		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
 		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		{"resource.008", 0, "977a3706f90dd1b4770b6628a4af4530", 483289},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 485301},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Quest for Glory 2 - English DOS
+	// v1.105, 5x5.25"
+	// Executable scanning reports "1.000.087"
+	{"qfg2", "", {
+		{"resource.map", 0, "275abaeab8bcc20776c43e543c405832", 6906},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 867967},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 790794},
+		{"resource.003", 0, "b192607c42f6960ecdf2ad2e4f90e9bc", 972806},
+		{"resource.004", 0, "cd2de58e27665d5853530de93fae7cd6", 983617},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
+
+	// Quest for Glory 2 - English DOS
+	// v1.105, 9x3.5" (label: INT#12.7.90)
+	// Executable scanning reports "1.000.087"
+	{"qfg2", "", {
+		{"resource.map", 0, "be23af27e9557bf232efe213ac7f277c", 8166},
+		{"resource.000", 0, "a17e374c4d33b81208c862bc0ffc1a38", 212120},
+		{"resource.001", 0, "e08d7887e30b12008c40f9570447711a", 331973},
+		{"resource.002", 0, "df137dc7869cab07e1149ba2333c815c", 467505},
+		{"resource.003", 0, "df137dc7869cab07e1149ba2333c815c", 502560},
+		{"resource.004", 0, "df137dc7869cab07e1149ba2333c815c", 488541},
+		{"resource.005", 0, "df137dc7869cab07e1149ba2333c815c", 478688},
+		{"resource.006", 0, "b1944bd664ddbd2859cdaa0c4a0d6281", 507489},
+		{"resource.007", 0, "cd2de58e27665d5853530de93fae7cd6", 490794},
+		{"resource.008", 0, "977a3706f90dd1b4770b6628a4af4530", 483289},
+		{"resource.009", 0, "9fa9a4326a5026e13a3afdbabc1e2abd", 485303},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_STD16_UNDITHER	},
 
@@ -4763,6 +4884,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	{"qfg3", "", {
 		{"resource.map", 0, "19e2bf9b693932b5e2bb59b9f9ab86c9", 5958},
 		{"resource.000", 0, "6178ad2e83e58e4671ca03315f7a6498", 5868042},
+		{"resource.msg", 0, "b15bc88d223082ee676551569512e937", 279694},
 		AD_LISTEND},
 		Common::DE_DEU, Common::kPlatformDOS, 0, GUIO_STD16	},
 
@@ -4819,7 +4941,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 							   GAMEOPTION_HQ_VIDEO)
 
 	// Quest for Glory 4 1.1 Floppy - English DOS (supplied by markcool in bug report #4280)
-	// SCI interpreter version 2.000.000 (a guess?)
+	// SCI interpreter version 2.000.000
 	{"qfg4", "", {
 		{"resource.map", 0, "685bdb1ed47bbbb0e5e25db392da83ce", 9301},
 		{"resource.000", 0, "f64fd6aa3977939a86ff30783dd677e1", 11004993},
@@ -5175,6 +5297,18 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.004", 0, "424f08b7593e54aa0ae22478b73e628a", 1208608},
 		AD_LISTEND},
 		Common::RU_RUS, Common::kPlatformDOS, 0, GUIO_STD16	},
+
+	// Space Quest 1 VGA Remake - "Version 2.1" fan patch
+	// VERSION file reports "2.1"
+	{"sq1sci", "SCI", {
+		{"resource.map", 0, "67a6792a8384fca77150e3b6c42a6f1e", 5991},
+		{"resource.000", 0, "a5eaa1c8cb48dced9bee23dfafaae19e", 1059308},
+		{"resource.001", 0, "15798bab768651db66819779af4185f0", 1039102},
+		{"resource.002", 0, "6827e20dc7a4a98c3c0f0e0be5f78cfe", 1169366},
+		{"resource.003", 0, "eae18632e2b70bbb688d679fb3022052", 1215951},
+		{"resource.004", 0, "252b9bda620fb47ef65b6e2cca3e73be", 1206005},
+		AD_LISTEND},
+		Common::EN_ANY, Common::kPlatformDOS, 0, GUIO_SQ1_ENGLISH_PC },
 
 	// Space Quest 1 VGA Remake - English Mac (from Fingolfin)
 	{"sq1sci", "SCI", {
@@ -5592,6 +5726,14 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 		{"resource.000", 0, "231fd8421e1f211e1bcf9d7b8b6408e7", 9526423},
 		AD_LISTEND},
 		Common::EN_ANY, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
+
+	// Space Quest 4 - French DOS CD (fan translation and patch-set)
+	{"sq4", "CD", {
+		{"resource.map", 0, "ed90a8e3ccc53af6633ff6ab58392bae", 7054},
+		{"resource.000", 0, "63247e3901ab8963d4eece73747832e0", 5157378},
+		{"0.fon",        0, "ff0d61807398a6928222ebbfc233adde", 2431},
+		AD_LISTEND},
+		Common::FR_FRA, Common::kPlatformDOS, ADGF_CD, GUIO_SQ4_CD	},
 
 	// Space Quest 4 - Spanish DOS Floppy version distributed on a CD (from jvprat, also includes english language)
 	// Executable scanning reports "1.SQ4.057", VERSION file reports "1.000"
@@ -6049,11 +6191,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("Curt's Quest 1.1", "54084c29346683296e45ef32d7ae74f3", 1128, "c851182cdf6fc6a81b840f4d4875f1a0", 302000),
 	FANMADE("Demo Quest", "c89a0c9e0a4e4af0ecedb300a3b31dbf", 384, "a32f3495ba24764cba091119cc3f1e13", 160098),
 	FANMADE("Dr. Jummybummy's Space Adventure 2", "6ae6cb7de423f51736d9487b4ca0c6da", 810, "26e5b563f578e104d79689f36568b7cf", 394670),
+	FANMADE("Dr. Jummybummy's Space Adventure 2 v1.0", "d689721ebf598b5ed84993057c7bd8d9", 4782, "9f748aac2f78a70a89d417f31989daea", 2247273),
 	FANMADE("Edy Oliver into the Cave of Whistling Skulls Demo", "eba0a0e86768ee3f14e78fecbc5af011", 2388, "4f6eab79a0f7980960eed101ab8122ad", 2601551),
 	FANMADE("Footsteps Sound Demo", "d9dabee6e1550b1fdb793f442f227738", 372, "06561df40dea49c6e84184e0ba6f19cb", 114212),
 	FANMADE_L("Grostesteing: Plus Mechant que Jamais", "ec9a97ccb134f69249f6ea8b16c13d8e", 1500, "b869f5f11bfe2ab5f67f4f0c618f2ce1", 464657, "resource.001", Common::FR_FRA), // FIXME: Accent
 	FANMADE("Humanoid Demo", "97d8331293a6d57e8bad58c1efc89a63", 624, "fb354b9abe64011b12159e45d724633f", 452320),
 	FANMADE("Island of Secrets Demo 0.3", "61279176c3e4530fec9b578877aecda7", 504, "7f4ed7a81b86bea22c62bc98e6d9ec39", 197790),
+	FANMADE("Island of Secrets Demo 0.4", "a8ec7759c8014cf1383a3fe0f0897d0e", 786, "89c61a9d00c63fd94621879a927aad17", 303359),
 	FANMADE("Jim's Quest 1: The Phantom Thesis", "0af50be1d3f0cb77a09137709a76ef4f", 960, "9c042c136548b20d9183495668e03526", 496446),
 	FANMADE("King's Quest II SCI Pre-Alpha Version", "cdea1c081022e7697a1afffb1d2f9f6a", 2646, "fb2ce39002c3e05f3d83533638dea105", 2310356),
 	FANMADE("Knight's Quest Demo 1.0", "5e816edf993956752ed06fccfeeae6d9", 1260, "959321f88a22905fa1f8c6d897874744", 703836),
@@ -6064,7 +6208,7 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("New Year's Mystery", "e4dcab1b1d3cb4a2c070a07a9c9589e0", 708, "e00ca5e44fd4e98d8174b467b31b0f21", 295425),
 	FANMADE("New Year's Mystery (Updated)", "efd1beb5120293725065c95959144f81", 714, "b3bd3c2372ed6efa28adb12403c4c31a", 305027),
 	FANMADE("Ocean Battle", "c2304a0568e0eb84f8e9a0915f01170a", 408, "46c520c1ac9b63528854d0f58c7e1b74", 142234),
-	FANMADE("Osama", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827),
+	FANMADE("Osama Been Skatin'", "db8f1710453cfbecf4214b2946970043", 390, "7afd75d4620dedf97a84ae8f0a7523cf", 123827),
 	FANMADE("Quest for the Cheat", "a359d4cf27f98264b42b55c017671214", 882, "8a943029f73c4bc85d454b7f473455ba", 455209),
 	FANMADE("Robust Parse Demo 1.2", "c956d40b6eb42292ec328c510acb11d8", 540, "26f092bab5ec4490737d8463fd3ebbd5", 229044),
 	FANMADE("SCI Capture the Flag", "4cd679a51d93b8b27c6b38d81be24b8b", 432, "98ae1f6ed7b4c21f88addbf643dd1d2f", 147878),
@@ -6077,7 +6221,13 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	FANMADE("SCI Programming April 2010 Competition Template", "36e5c4011dd7c92e1ae4c6fede7d698d", 456, "20c87fbb7f73e2a3eb2c5dfab4d76b5a", 142221),
 	FANMADE("SCI Studio Template 3.0", "ca0dc8d586e0a8670b7621cde090b532", 354, "58a48ee692a86c0575e6bd0b00a92b9a", 113097),
 	FANMADE("SCI Quest", "9067e1f1e54436d2dbfce855524bc84a", 552, "ffa7d355cd9223f245289108a696bcd2", 149634),
+#if 0
+	// Disabled, this crashes into: [VM] kFGets[2b]: signature mismatch in method TitleScreen::init (room 3052, script 800, localCall ffffffff)!
+	FANMADE("SCI Tetris", "a268f84a293e6f8bbb55f6a41541c6cb", 384, "4da38a05d9752e787770e560a8f54fe6", 138974),
+#endif
+	FANMADE11("SCI VGA Demo Update-Remake", "8913c0855eac223de6a86b3fc1af67c1", 439, "31d4283d8a9d52833df0d1e91dd702ec", 299311),
 	FANMADE("SCI-Man", "3ab85bd39a86c11f85781764f9db09bb", 468, "bb8f9992f504a242bf0860e3588e150b", 131810),
+	FANMADE("Scene Builder", "981de9fc7ecfc26631a5aec5c4e09bfe", 1842, "8faf71a4f7d89618d1346c1d60cd3074", 820847),
 	FANMADE("Soulshade Asylum", "965a07e7fb6fd9563b94c969b72cfe2a", 546, "57401d18559985e569085a69edda691e", 244786),
 	FANMADE("Text Views Demo", "ad0485a96470566517f184ff5dd049f8", 372, "727b946b37588ed334737732c55007c4", 115788),
 	FANMADE("The Black Cauldron Demo", "5e1ff2833c7f33ebcfa456ba836e2067", 2592, "2f8e6264d2db91bb54982ab8aa18b3b4", 1881839),
@@ -6095,12 +6245,16 @@ static const struct ADGameDescription SciGameDescriptions[] = {
 	// Itch.IO 2019 release: more bug fixes and polish
 	FANMADE11("The Dating Pool Demo (Itch.IO 2019)", "1f7b68ed422eadbf373cc8611bc56f94", 1393, "094b9d3c841fe60076f06cdef3fb1383", 1555073),
 	// Reported in #11071
-	FANMADE11("The Dating Pool Demo (2019 One Day)", "736656f6debeaf8c8f53ef4f4825511a", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915171),
+	FANMADE11("The Dating Pool Demo (2016 One Day)", "736656f6debeaf8c8f53ef4f4825511a", 1303, "4d6f521253ec67d0f1bd38c29c91c806", 915171),
 	FANMADE("The Farm Nightmare", "fb6cbfddaa7c055e2c3d8cf4c683a7db", 906, "50655e8b8925f717e698e08f006f40be", 338303),
 	FANMADE("The Gem Scenario", "ef5f61f4d2c6d31122d3e2baf89ad976", 642, "2f16be390dd90c3d7ca1c8a594ac0bfa", 244794),
 	FANMADE("The Legend of the Lost Jewel", "ba1bca315e3818c5626eda51bcfbcccf", 636, "9b0736d69924af0cff32a0f78db96855", 300398),
 	FANMADE("The Sect of Achturan", "130ee6a9137005cdd4a26c38fa21576a", 1626, "1faf42afbfdb782f61ceaa1ee6243b76", 961705),
 	FANMADE("Winter Wonderland", "c1ffaf8327462effd4ad21eeed9eea59", 504, "5d48666dc62f90d852a1d0de6e69195f", 305076),
+#if 0
+	// Disabled, this crashes into: ERROR: Uninitialized read for temp 2 from method ::export 1 (room 516, script 505, localCall ffffffff)!
+	FANMADE("Zork Demo", "1e449214ed0738cb868e09249a24dbb6", 3480, "0f24d70ab8a51155a3a62f4495847afd", 335957),
+#endif
 	FANMADE11("Zork: The Great Underground Empire", "65f0731485faca4ee568b74e2f59d850", 3518, "e5d4790b6e8fa1b9a9691b22d541012b", 2460903),
 
 	// FIXME: The vga demo does not have a resource.000/001 file.

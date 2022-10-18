@@ -115,7 +115,7 @@ public:
 
 void FinishPrehistoricAction::performAIAction(AIRule *rule) {
 	AIPlayMessageAction::performAIAction(rule);
-	((PegasusEngine *)g_engine)->die(kPlayerWonGame);
+	g_vm->die(kPlayerWonGame);
 }
 
 void Prehistoric::setUpAIRules() {

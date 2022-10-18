@@ -200,8 +200,7 @@ void SetMoverInEffect(int index, bool tf) {
 void KillMover(MOVER *pMover) {
 	if (pMover->bActive) {
 		pMover->bActive = false;
-		MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), pMover->actorObj);
-		pMover->actorObj = nullptr;
+		MultiDeleteObjectIfExists(FIELD_WORLD, &pMover->actorObj);
 		assert(CoroScheduler.getCurrentProcess() != pMover->pProc);
 		CoroScheduler.killProcess(pMover->pProc);
 	}
@@ -224,7 +223,7 @@ void HideMover(MOVER *pMover, int sf) {
 
 	pMover->bHidden = true;
 
-	if (!TinselV2) {
+	if (TinselVersion <= 1) {
 		// sf is only passed in Tinsel v1
 		pMover->SlowFactor = sf;
 	} else {
@@ -254,7 +253,7 @@ bool MoverHidden(MOVER *pMover) {
  * To be or not to be? If it be, then it is.
  */
 bool MoverIs(MOVER *pMover) {
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		return pMover->actorObj ? true : false;
 	else
 		return getMActorState(pMover);
@@ -271,7 +270,7 @@ bool MoverIsSWalking(MOVER *pMover) {
  * MoverMoving()
  */
 bool MoverMoving(MOVER *pMover) {
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		return pMover->bMoving;
 
 	if (pMover->UtargetX == -1 && pMover->UtargetY == -1)
@@ -299,7 +298,7 @@ int GetMoverId(MOVER *pMover) {
  */
 void SetMoverZ(MOVER *pMover, int y, uint32 zFactor) {
 	if (!pMover->bHidden) {
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			_vm->_actor->AsetZPos(pMover->actorObj, y, zFactor);
 		else if (MoverIsSWalking(pMover) && pMover->zOverride != -1) {
 			// Special for SWalk()
@@ -321,7 +320,7 @@ void SetMoverZoverride(MOVER *pMover, uint32 zFactor) {
 void UnHideMover(MOVER *pMover) {
 	assert(pMover); // unHiding null moving actor
 
-	if (!TinselV2 || pMover->bHidden) {
+	if ((TinselVersion <= 1) || pMover->bHidden) {
 		pMover->bHidden = false;
 
 		// Make visible on the screen
@@ -570,7 +569,7 @@ void AlterMover(MOVER *pMover, SCNHANDLE film, AR_FUNCTION fn) {
 		assert(pfilm != NULL);
 
 		InitStepAnimScript(&pMover->actorAnim, pMover->actorObj, FROM_32(pfilm->reels[0].script), ONE_SECOND / FROM_32(pfilm->frate));
-		if (!TinselV2)
+		if (TinselVersion <= 1)
 			pMover->stepCount = 0;
 
 		// If no path, just use first path in the scene
@@ -624,7 +623,7 @@ void SetMoverDirection(MOVER *pMover, DIRECTION dirn) {
  * Get actor to adopt its appropriate standing reel.
  */
 void SetMoverStanding(MOVER *pMover) {
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		warning("TODO: Finish implementation of GetMoverStanding() for Noir");
 		return;
 	}
@@ -710,7 +709,7 @@ static void InitialPathChecks(MOVER *pMover, int xpos, int ypos) {
 
 		z = GetScale(FirstPathPoly(), pMover->objY);
 	}
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		warning("TODO: Finish implementation of InitialPathChecks() for Noir");
 	} else {
 		SetMoverWalkReel(pMover, FORWARD, z, false);
@@ -719,7 +718,7 @@ static void InitialPathChecks(MOVER *pMover, int xpos, int ypos) {
 
 static void MoverProcessHelper(int X, int Y, int id, MOVER *pMover) {
 	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(pMover->walkReels[0][FORWARD]);
-	const MULTI_INIT *pmi = (const MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pfilm->reels[0].mobj));
+	const MULTI_INIT *pmi = pfilm->reels[0].GetMultiInit();
 
 	assert(_vm->_bg->BgPal()); // Can't start actor without a background palette
 	assert(pMover->walkReels[0][FORWARD]); // Starting actor process without walk reels
@@ -769,7 +768,16 @@ void T1MoverProcess(CORO_PARAM, const void *param) {
 	CORO_BEGIN_CONTEXT;
 	CORO_END_CONTEXT(_ctx);
 
+	// FIXME: Code without typedef emits -Wcast-qual GCC warning.
+	//        However, adding const casts break compilation with -fpermissive.
+	//        Reverted to local typedef for now until this can be avoided.
+#if 0
 	MOVER *pActor = *(MOVER **)param;
+	//const MOVER *pActor = *(const MOVER **)param;
+#else
+	typedef MOVER *PMOVER;
+	const PMOVER pActor = *(const PMOVER *)param;
+#endif
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -804,7 +812,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	MOVER *pMover = rpos->pMover;
 	int i;
 	FILM *pFilm;
-	MULTI_INIT *pmi;
+	const MULTI_INIT *pmi;
 
 	CORO_BEGIN_CODE(_ctx);
 
@@ -818,7 +826,7 @@ void T2MoverProcess(CORO_PARAM, const void *param) {
 	InitialPathChecks(pMover, rpos->X, rpos->Y);
 
 	pFilm = (FILM *)_vm->_handle->LockMem(pMover->walkReels[i][FORWARD]); // Any old reel
-	pmi = (MULTI_INIT *)_vm->_handle->LockMem(FROM_32(pFilm->reels[0].mobj));
+	pmi = pFilm->reels[0].GetMultiInit();
 
 	// Poke in the background palette
 	PokeInPalette(pmi);
@@ -901,13 +909,13 @@ void T3MoverProcess(CORO_PARAM, const void *param) {
  * Creates a handling process for a moving actor
  */
 void MoverProcessCreate(int X, int Y, int id, MOVER *pMover) {
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		MAINIT iStruct;
 		iStruct.X = X;
 		iStruct.Y = Y;
 		iStruct.pMover = pMover;
 
-		CoroScheduler.createProcess(PID_MOVER, TinselV3 ? T3MoverProcess : T2MoverProcess, &iStruct, sizeof(MAINIT));
+		CoroScheduler.createProcess(PID_MOVER, (TinselVersion == 3) ? T3MoverProcess : T2MoverProcess, &iStruct, sizeof(MAINIT));
 	} else {
 		MoverProcessHelper(X, Y, id, pMover);
 		pMover->pProc = CoroScheduler.createProcess(PID_MOVER, T1MoverProcess, &pMover, sizeof(MOVER *));
@@ -932,8 +940,8 @@ MOVER *InMoverBlock(MOVER *pMover, int x, int y) {
 
 	for (int i = 0; i < MAX_MOVERS; i++) {
 		if (pMover == &g_Movers[i] ||
-				(TinselV2 && (g_Movers[i].actorObj == NULL)) ||
-				(!TinselV2 && !g_Movers[i].bActive))
+				((TinselVersion >= 2) && (g_Movers[i].actorObj == NULL)) ||
+				((TinselVersion <= 1) && !g_Movers[i].bActive))
 			continue;
 
 		// At around the same height?
@@ -964,13 +972,13 @@ MOVER *InMoverBlock(MOVER *pMover, int x, int y) {
  */
 void SaveMovers(SAVED_MOVER *sMoverInfo) {
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		sMoverInfo[i].bActive = !TinselV2 ? g_Movers[i].bActive : g_Movers[i].actorObj != NULL;
+		sMoverInfo[i].bActive = (TinselVersion <= 1) ? g_Movers[i].bActive : g_Movers[i].actorObj != NULL;
 		sMoverInfo[i].actorID	= g_Movers[i].actorID;
 		sMoverInfo[i].objX	= g_Movers[i].objX;
 		sMoverInfo[i].objY	= g_Movers[i].objY;
 		sMoverInfo[i].hLastfilm	= g_Movers[i].hLastFilm;
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			sMoverInfo[i].bHidden = g_Movers[i].bHidden;
 			sMoverInfo[i].brightness = g_Movers[i].brightness;
 			sMoverInfo[i].startColor = g_Movers[i].startColor;
@@ -985,7 +993,7 @@ void SaveMovers(SAVED_MOVER *sMoverInfo) {
 
 void RestoreAuxScales(SAVED_MOVER *sMoverInfo) {
 	for (int i = 0; i < MAX_MOVERS; i++) {
-		if (TinselV2)
+		if (TinselVersion >= 2)
 			g_Movers[i].actorID = sMoverInfo[i].actorID;
 
 		memcpy(g_Movers[i].walkReels, sMoverInfo[i].walkReels, TOTAL_SCALES * 4 * sizeof(SCNHANDLE));

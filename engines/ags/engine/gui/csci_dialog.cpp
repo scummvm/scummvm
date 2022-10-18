@@ -19,7 +19,7 @@
  *
  */
 
-//include <cctype>
+#include "ags/engine/gui/csci_dialog.h"
 #include "ags/shared/ac/common.h"
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/game_setup.h"
@@ -137,6 +137,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 		KeyInput ki;
 		if (run_service_key_controls(ki) && !_GP(play).IsIgnoringInput()) {
 			int keywas = ki.Key;
+			int uchar = ki.UChar;
 			if (keywas == eAGSKeyCodeReturn) {
 				cscim->id = finddefaultcontrol(CNF_DEFAULT);
 				cscim->code = CM_COMMAND;
@@ -147,7 +148,7 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 			else if ((keywas >= eAGSKeyCodeUpArrow) & (keywas <= eAGSKeyCodePageDown) & (finddefaultcontrol(CNT_LISTBOX) >= 0))
 				_G(vobjs)[finddefaultcontrol(CNT_LISTBOX)]->processmessage(CTB_KEYPRESS, keywas, 0);
 			else if (finddefaultcontrol(CNT_TEXTBOX) >= 0)
-				_G(vobjs)[finddefaultcontrol(CNT_TEXTBOX)]->processmessage(CTB_KEYPRESS, keywas, 0);
+				_G(vobjs)[finddefaultcontrol(CNT_TEXTBOX)]->processmessage(CTB_KEYPRESS, keywas, uchar);
 
 			if (cscim->id < 0) {
 				cscim->code = CM_KEYPRESS;
@@ -155,8 +156,9 @@ int CSCIWaitMessage(CSCIMessage *cscim) {
 			}
 		}
 
-		int mbut, mwheelz;
-		if (run_service_mb_controls(mbut, mwheelz) && mbut >= 0 && !_GP(play).IsIgnoringInput()) {
+		eAGSMouseButton mbut;
+		int mwheelz;
+		if (run_service_mb_controls(mbut, mwheelz) && (mbut > kMouseNone) && !_GP(play).IsIgnoringInput()) {
 			if (checkcontrols()) {
 				cscim->id = _G(controlid);
 				cscim->code = CM_COMMAND;

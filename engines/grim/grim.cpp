@@ -78,10 +78,8 @@
 #include "engines/grim/remastered/overlay.h"
 #include "engines/grim/remastered/lua_remastered.h"
 #include "engines/grim/remastered/commentary.h"
-
 #include "engines/grim/imuse/imuse.h"
 #include "engines/grim/emi/sound/emisound.h"
-
 #include "engines/grim/lua/lua.h"
 
 namespace Grim {
@@ -110,7 +108,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	g_movie = nullptr;
 	g_imuse = nullptr;
 
-	//Set default settings
+	// Set default settings
 	ConfMan.registerDefault("use_arb_shaders", true);
 
 	_showFps = ConfMan.getBool("show_fps");
@@ -186,7 +184,7 @@ GrimEngine::GrimEngine(OSystem *syst, uint32 gameFlags, GrimGameType gameType, C
 	SearchMan.addSubDirectoryMatching(gameDataDir, "widescreen");
 
 
-	//Remastered:
+	// Remastered:
 	if (isRemastered()) {
 		for (uint32 i = 0; i < kNumCutscenes; i++) {
 			_cutsceneEnabled[i] = false;
@@ -261,8 +259,29 @@ LuaBase *GrimEngine::createLua() {
 
 GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	uint32 availableRendererTypes = Graphics::Renderer::getAvailableTypes();
+
+	availableRendererTypes &=
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0;
+
+	// For Grim Fandango, OpenGL renderer without shaders is preferred if available
+	if (desiredRendererType == Graphics::kRendererTypeDefault &&
+		(availableRendererTypes & Graphics::kRendererTypeOpenGL) &&
+	    getGameType() == GType_GRIM) {
+		availableRendererTypes &= ~Graphics::kRendererTypeOpenGLShaders;
+	}
+
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingType(desiredRendererType, availableRendererTypes);
 
 	_softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!_softRenderer) {
@@ -271,37 +290,14 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		initGraphics(screenW, screenH, nullptr);
 	}
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
-
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-
-	// For Grim Fandango, OpenGL renderer without shaders is preferred
-	if (desiredRendererType == Graphics::kRendererTypeDefault &&
-	    matchingRendererType == Graphics::kRendererTypeOpenGLShaders &&
-	    getGameType() == GType_GRIM) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-
 	GfxBase *renderer = nullptr;
 #if defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
 		renderer = CreateGfxOpenGLShader();
 	}
 #endif
 #if defined(USE_OPENGL_GAME)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
 		renderer = CreateGfxOpenGL();
 	}
 #endif
@@ -310,8 +306,10 @@ GfxBase *GrimEngine::createRenderer(int screenW, int screenH) {
 		renderer = CreateGfxTinyGL();
 	}
 #endif
+
 	if (!renderer) {
-		error("Unable to create a '%s' renderer", rendererConfig.c_str());
+		/* We should never end up here, getBestMatchingRendererType would have failed before */
+		error("Unable to create a renderer");
 	}
 
 	renderer->setupScreen(screenW, screenH);
@@ -349,11 +347,11 @@ Common::Error GrimEngine::run() {
 		MD5CheckDialog d;
 		if (!d.runModal()) {
 			Common::U32String confirmString = Common::U32String::format(_(
-				"ScummVM found some problems with your game data files.\n"
-				"Running ScummVM nevertheless may cause game bugs or even crashes.\n"
-				"Do you still want to run %s?"),
-			GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
-			 );
+			        "ScummVM found some problems with your game data files.\n"
+			        "Running ScummVM nevertheless may cause game bugs or even crashes.\n"
+			        "Do you still want to run %s?"),
+			        GType_MONKEY4 == getGameType() ? "Escape From Monkey Island" : "Grim Fandango"
+			        );
 			GUI::MessageDialog msg(confirmString, _("Yes"), _("No"));
 			if (msg.runModal() != GUI::kMessageOK) {
 				return Common::kUserCanceled;
@@ -1127,23 +1125,22 @@ void GrimEngine::mainLoop() {
 			g_imuseState = -1;
 		}
 
-#if defined(__EMSCRIPTEN__)
-		// If SDL_HINT_EMSCRIPTEN_ASYNCIFY is enabled, SDL pauses the application and gives
-		// back control to the browser automatically by calling emscripten_sleep via SDL_Delay.
-		// Without this the page would completely lock up.
-		g_system->delayMillis(0);
-#endif
-
 		uint32 endTime = g_system->getMillis();
 		if (startTime > endTime)
 			continue;
 		uint32 diffTime = endTime - startTime;
-		if (_speedLimitMs == 0)
-			continue;
 		if (diffTime < _speedLimitMs) {
 			uint32 delayTime = _speedLimitMs - diffTime;
 			g_system->delayMillis(delayTime);
 		}
+#if defined(__EMSCRIPTEN__)
+		else {
+			// If SDL_HINT_EMSCRIPTEN_ASYNCIFY is enabled, SDL pauses the application and gives
+			// back control to the browser automatically by calling emscripten_sleep via SDL_Delay.
+			// Without this the page would completely lock up.
+			g_system->delayMillis(0);
+		}
+#endif
 	}
 }
 
@@ -1162,7 +1159,7 @@ void GrimEngine::loadGame(const Common::String &file) {
 }
 
 void GrimEngine::savegameRestore() {
-	debug("GrimEngine::savegameRestore() started.");
+	debug(2, "GrimEngine::savegameRestore() started.");
 	_savegameLoadRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1182,7 +1179,7 @@ void GrimEngine::savegameRestore() {
 		g_imuse->pause(true);
 	g_movie->pause(true);
 	if (g_registry)
-	    g_registry->save();
+		g_registry->save();
 
 	_selectedActor = nullptr;
 	delete _currSet;
@@ -1249,7 +1246,7 @@ void GrimEngine::savegameRestore() {
 	if (g_imuse)
 		g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameRestore() finished.");
+	debug(2, "GrimEngine::savegameRestore() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1312,7 +1309,7 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	int width = 250, height = 188;
 	Bitmap *screenshot;
 
-	debug("GrimEngine::StoreSaveGameImage() started.");
+	debug(2, "GrimEngine::StoreSaveGameImage() started.");
 
 	screenshot = g_driver->getScreenshot(width, height, true);
 	state->beginSection('SIMG');
@@ -1329,11 +1326,11 @@ void GrimEngine::storeSaveGameImage(SaveGame *state) {
 	}
 	state->endSection();
 	delete screenshot;
-	debug("GrimEngine::StoreSaveGameImage() finished.");
+	debug(2, "GrimEngine::StoreSaveGameImage() finished.");
 }
 
 void GrimEngine::savegameSave() {
-	debug("GrimEngine::savegameSave() started.");
+	debug(2, "GrimEngine::savegameSave() started.");
 	_savegameSaveRequest = false;
 	Common::String filename;
 	if (_savegameFileName.size() == 0) {
@@ -1411,7 +1408,7 @@ void GrimEngine::savegameSave() {
 	if (g_imuse)
 		g_imuse->pause(false);
 	g_movie->pause(false);
-	debug("GrimEngine::savegameSave() finished.");
+	debug(2, "GrimEngine::savegameSave() finished.");
 
 	_shortFrame = true;
 	clearEventQueue();
@@ -1573,8 +1570,7 @@ void GrimEngine::buildActiveActorsList() {
 
 	_activeActors.clear();
 	foreach (Actor *a, Actor::getPool()) {
-		if (((_mode == NormalMode || _mode == DrawMode) && a->isDrawableInSet(_currSet->getName())) ||
-		    a->isInOverworld()) {
+		if (((_mode == NormalMode || _mode == DrawMode) && a->isDrawableInSet(_currSet->getName())) || a->isInOverworld()) {
 			_activeActors.push_back(a);
 		}
 	}

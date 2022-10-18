@@ -24,6 +24,7 @@
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/translation.h"
+#include "common/text-to-speech.h"
 
 #include "engines/util.h"
 
@@ -87,6 +88,10 @@ Common::Error LureEngine::init() {
 
 	// Setup mixer
 	syncSoundSettings();
+
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr)
+		ttsMan->enable(ConfMan.getBool("tts_narrator"));
 
 	return Common::kNoError;
 }

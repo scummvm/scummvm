@@ -23,6 +23,9 @@
 #define FORBIDDEN_SYMBOL_ALLOW_ALL
 
 #include "backends/platform/ios7/ios7_video.h"
+#include "backends/platform/ios7/ios7_touch_controller.h"
+#include "backends/platform/ios7/ios7_mouse_controller.h"
+#include "backends/platform/ios7/ios7_gamepad_controller.h"
 
 #include "backends/platform/ios7/ios7_app_delegate.h"
 
@@ -95,6 +98,8 @@ uint getSizeNextPOT(uint size) {
 }
 
 @implementation iPhoneView
+
+@synthesize pointerPosition;
 
 + (Class)layerClass {
 	return [CAEAGLLayer class];
@@ -419,6 +424,12 @@ uint getSizeNextPOT(uint size) {
 
 	[self setupGestureRecognizers];
 
+	if (@available(iOS 14.0, *)) {
+		_controllers.push_back([[MouseController alloc] initWithView:self]);
+		_controllers.push_back([[GamepadController alloc] initWithView:self]);
+	}
+	_controllers.push_back([[TouchController alloc] initWithView:self]);
+
 	[self setContentScaleFactor:[[UIScreen mainScreen] scale]];
 
 	_keyboardView = nil;
@@ -429,9 +440,6 @@ uint getSizeNextPOT(uint size) {
 
 	_scaledShakeXOffset = 0;
 	_scaledShakeYOffset = 0;
-
-	_firstTouch = NULL;
-	_secondTouch = NULL;
 
 	_eventLock = [[NSLock alloc] init];
 
@@ -810,6 +818,39 @@ uint getSizeNextPOT(uint size) {
 	return true;
 }
 
+- (BOOL)isControllerTypeConnected:(Class)controller {
+	for (GameController *c : _controllers) {
+		if ([c isConnected]) {
+			if ([c isKindOfClass:controller]) {
+				return YES;
+			}
+		}
+	}
+	return NO;
+}
+
+- (BOOL)isTouchControllerConnected {
+	return [self isControllerTypeConnected:TouchController.class];
+}
+
+- (BOOL)isMouseControllerConnected {
+	if (@available(iOS 14.0, *)) {
+		return [self isControllerTypeConnected:MouseController.class];
+	} else {
+		// Fallback on earlier versions
+		return NO;
+	}
+}
+
+- (BOOL)isGamepadControllerConnected {
+	if (@available(iOS 14.0, *)) {
+		return [self isControllerTypeConnected:GamepadController.class];
+	} else {
+		// Fallback on earlier versions
+		return NO;
+	}
+}
+
 - (void)deviceOrientationChanged:(UIDeviceOrientation)orientation {
 	[self addEvent:InternalEvent(kInputOrientationChanged, orientation, 0)];
 
@@ -835,89 +876,36 @@ uint getSizeNextPOT(uint size) {
 	return _keyboardVisible;
 }
 
-- (UITouch *)secondTouchOtherTouchThan:(UITouch *)touch in:(NSSet *)set {
-	NSArray *all = [set allObjects];
-	for (UITouch *t in all) {
-		if (t != touch) {
-			return t;
-		}
-	}
-	return nil;
-}
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event {
-	int x, y;
-
-	NSSet *allTouches = [event allTouches];
-	if (allTouches.count == 1) {
-		_firstTouch = [allTouches anyObject];
-		CGPoint point = [_firstTouch locationInView:self];
-		if (![self getMouseCoords:point eventX:&x eventY:&y])
-			return;
-
-		[self addEvent:InternalEvent(kInputMouseDown, x, y)];
-	}
-	else if (allTouches.count == 2) {
-		_secondTouch = [self secondTouchOtherTouchThan:_firstTouch in:allTouches];
-		if (_secondTouch) {
-			CGPoint point = [_secondTouch locationInView:self];
-			if (![self getMouseCoords:point eventX:&x eventY:&y])
-				return;
-
-			[self addEvent:InternalEvent(kInputMouseSecondDown, x, y)];
+	for (GameController *c : _controllers) {
+		if ([c isKindOfClass:TouchController.class]) {
+			[(TouchController *)c touchesBegan:touches withEvent:event];
 		}
 	}
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event {
-	int x, y;
-
-	NSSet *allTouches = [event allTouches];
-	for (UITouch *touch in allTouches) {
-		if (touch == _firstTouch) {
-			CGPoint point = [touch locationInView:self];
-			if (![self getMouseCoords:point eventX:&x eventY:&y])
-				return;
-
-			[self addEvent:InternalEvent(kInputMouseDragged, x, y)];
-		} else if (touch == _secondTouch) {
-			CGPoint point = [touch locationInView:self];
-			if (![self getMouseCoords:point eventX:&x eventY:&y])
-				return;
-
-			[self addEvent:InternalEvent(kInputMouseSecondDragged, x, y)];
+	for (GameController *c : _controllers) {
+		if ([c isKindOfClass:TouchController.class]) {
+			[(TouchController *)c touchesMoved:touches withEvent:event];
 		}
 	}
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event {
-	int x, y;
-
-	NSSet *allTouches = [event allTouches];
-	if (allTouches.count == 1) {
-		UITouch *touch = [allTouches anyObject];
-		CGPoint point = [touch locationInView:self];
-		if (![self getMouseCoords:point eventX:&x eventY:&y]) {
-			return;
+	for (GameController *c : _controllers) {
+		if ([c isKindOfClass:TouchController.class]) {
+			[(TouchController *)c touchesEnded:touches withEvent:event];
 		}
-
-		[self addEvent:InternalEvent(kInputMouseUp, x, y)];
 	}
-	else if (allTouches.count == 2) {
-		UITouch *touch = [[allTouches allObjects] objectAtIndex:1];
-		CGPoint point = [touch locationInView:self];
-		if (![self getMouseCoords:point eventX:&x eventY:&y])
-			return;
-
-		[self addEvent:InternalEvent(kInputMouseSecondUp, x, y)];
-	}
-	_firstTouch = nil;
-	_secondTouch = nil;
 }
 
 - (void)touchesCancelled:(NSSet *)touches withEvent:(UIEvent *)event {
-	_firstTouch = nil;
-	_secondTouch = nil;
+	for (GameController *c : _controllers) {
+		if ([c isKindOfClass:TouchController.class]) {
+			[(TouchController *)c touchesEnded:touches withEvent:event];
+		}
+	}
 }
 
 - (void)keyboardPinch:(UIPinchGestureRecognizer *)recognizer {

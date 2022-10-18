@@ -3,7 +3,10 @@ MODULE := engines/hypno
 MODULE_OBJS := \
 	actions.o \
 	arcade.o \
+	boyz/arcade.o \
 	boyz/boyz.o \
+	boyz/hard.o \
+	boyz/scene.o \
 	cursors.o \
 	grammar_mis.o \
 	grammar_arc.o \

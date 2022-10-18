@@ -116,7 +116,7 @@ void dumpGBASE(char *msg);
 void setLostroMode() {
 	abortFlag = false;
 	allPlayerActorsDead = false;
-	if (GameMode::newmodeFlag)
+	if (GameMode::_newmodeFlag)
 		GameMode::update();
 
 	if (!abortFlag) {

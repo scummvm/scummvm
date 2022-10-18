@@ -49,6 +49,7 @@ QuickTimeParser::QuickTimeParser() {
 	_scaleFactorY = 1;
 	_resFork = new MacResManager();
 	_disposeFileHandle = DisposeAfterUse::YES;
+	_timeScale = 1;
 
 	initParseTable();
 }
@@ -804,6 +805,34 @@ void QuickTimeParser::close() {
 		delete _fd;
 
 	_fd = nullptr;
+}
+
+void QuickTimeParser::flattenEditLists() {
+	// This flattens the movie edit list, collapsing everything into a single edit.
+	// This is necessary to work around sound popping in Obsidian on certain movies:
+	//
+	// For some reason, numerous movies have audio tracks with edit lists consisting
+	// off numerous 0.5-second duration chunks, which is 22050 audio examples at the
+	// 44100Hz media rate, but the edit media times are spaced out 22080 apart.
+	//
+	// The QuickTime File Format reference seems to suggest that this means the audio
+	// would skip ahead 30 samples every half-second, which is what the playback code
+	// currently does, and that causes audible popping in some movies (such as the
+	// cube maze greeter vidbot when she says "Take take take, that's all you ever do!"
+	// after repeatedly visiting her.)
+	//
+	// Other players seem to just play the audio track chunks consecutively without the
+	// 30-sample skips, which produces the correct results, not sure why.
+
+	for (Track *track : _tracks) {
+		if (track->editList.size()) {
+			EditListEntry &lastEntry = track->editList.back();
+			EditListEntry &firstEntry = track->editList.front();
+			firstEntry.trackDuration = (lastEntry.timeOffset + lastEntry.trackDuration);
+
+			track->editList.resize(1);
+		}
+	}
 }
 
 QuickTimeParser::SampleDesc::SampleDesc(Track *parentTrack, uint32 codecTag) {

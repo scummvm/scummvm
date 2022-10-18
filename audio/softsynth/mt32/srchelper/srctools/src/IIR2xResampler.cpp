@@ -1,4 +1,4 @@
-/* Copyright (C) 2015-2021 Sergey V. Mikayev
+/* Copyright (C) 2015-2022 Sergey V. Mikayev
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Lesser General Public License as published by
@@ -119,7 +119,7 @@ IIRResampler::Constants::Constants(const unsigned int useSectionsCount, const II
 }
 
 IIRResampler::IIRResampler(const Quality quality) :
-	constants(0, 0.0f, nullptr, quality)
+	constants(0, 0.0f, NULL, quality)
 {}
 
 IIRResampler::IIRResampler(const unsigned int useSectionsCount, const IIRCoefficient useFIR, const IIRSection useSections[]) :

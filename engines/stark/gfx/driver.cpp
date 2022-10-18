@@ -44,49 +44,43 @@ namespace Gfx {
 
 Driver *Driver::create() {
 	Common::String rendererConfig = ConfMan.get("renderer");
-	Graphics::RendererType desiredRendererType = Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingAvailableType(desiredRendererType,
+#if defined(USE_OPENGL_GAME)
+			Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_OPENGL_SHADERS)
+			Graphics::kRendererTypeOpenGLShaders |
+#endif
+#if defined(USE_TINYGL)
+			Graphics::kRendererTypeTinyGL |
+#endif
+			0);
 
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	bool softRenderer = matchingRendererType == Graphics::kRendererTypeTinyGL;
 	if (!softRenderer) {
 		initGraphics3d(kOriginalWidth, kOriginalHeight);
 	} else {
-#endif
 		initGraphics(kOriginalWidth, kOriginalHeight, nullptr);
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS)
 	}
-#endif
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to match a '%s' renderer", rendererConfig.c_str());
-	}
-
-	Driver *driver = nullptr;
 
 #if defined(USE_OPENGL_SHADERS)
-	bool backendCapableOpenGLShaders = g_system->hasFeature(OSystem::kFeatureOpenGLForGame) && OpenGLContext.shadersSupported;
-	if (backendCapableOpenGLShaders && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-		driver = new OpenGLSDriver();
+	if (matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+		return new OpenGLSDriver();
 	}
 #endif
 #if defined(USE_OPENGL_GAME)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		driver = new OpenGLDriver();
+	if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+		return new OpenGLDriver();
 	}
 #endif
 #if defined(USE_TINYGL)
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		driver = new TinyGLDriver();
+		return new TinyGLDriver();
 	}
 #endif
-	if (driver)
-		return driver;
-	warning("No renderers have been found for this game");
-	GUI::displayErrorDialog(Common::U32String::format(_("No renderers have been found for this game")));
-	return driver;
+	/* We should never end up here, getBestMatchingRendererType would have failed before */
+	error("Unable to create a renderer");
 }
 
 const Graphics::PixelFormat Driver::getRGBAPixelFormat() {

@@ -87,7 +87,7 @@ ObjectID            viewCenterObject;       // ID of object that view tracks
 hResContext         *listRes;               // object list resource handle
 extern hResContext  *tileRes;
 
-uint8               *ProtoObj::nextAvailObj;
+uint8               *ProtoObj::_nextAvailObj;
 
 
 // trio ready container consts
@@ -180,7 +180,7 @@ struct GameObjectArchive {
 //	Default constructor
 
 GameObject::GameObject() {
-	prototype   = nullptr;
+	_prototype   = nullptr;
 	_data.projectDummy = 0;
 	_data.location    = Nowhere;
 	_data.nameIndex   = 0;
@@ -207,7 +207,7 @@ GameObject::GameObject() {
 //	Constructor -- initial object construction
 
 GameObject::GameObject(const ResourceGameObject &res) {
-	prototype           = g_vm->_objectProtos[res.protoIndex];
+	_prototype           = g_vm->_objectProtos[res.protoIndex];
 	_data.projectDummy = 0;
 	_data.location            = res.location;
 	_data.nameIndex           = res.nameIndex;
@@ -217,8 +217,8 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	_data.script              = res.script;
 	_data.objectFlags         = res.objectFlags;
 	_data.hitPoints           = res.hitPoints;
-	_data.bParam              = prototype->getChargeType() ? prototype->maxCharges : 0;
-	_data.massCount           = res.misc; //prototype->getInitialItemCount();
+	_data.bParam              = _prototype->getChargeType() ? _prototype->maxCharges : 0;
+	_data.massCount           = res.misc; //_prototype->getInitialItemCount();
 	_data.missileFacing       = missileRt;
 	_data.currentTAG          = NoActiveItem;
 	_data.sightCtr            = 0;
@@ -241,7 +241,7 @@ void GameObject::read(Common::InSaveFile *in, bool expandProto) {
 	if (expandProto)
 		in->readSint16LE();
 	//  Convert the protoype index into an object proto pointer
-	prototype = pInd != -1
+	_prototype = pInd != -1
 	            ?   g_vm->_objectProtos[pInd]
 	            :   nullptr;
 
@@ -291,7 +291,7 @@ int32 GameObject::archiveSize() {
 void GameObject::write(Common::MemoryWriteStreamDynamic *out, bool expandProto) {
 	debugC(2, kDebugSaveload, "Saving object %d", thisID());
 
-	int16 pInd = prototype != nullptr ? getProtoNum() : -1;
+	int16 pInd = _prototype != nullptr ? getProtoNum() : -1;
 	out->writeSint16LE(pInd);
 	if (expandProto)
 		out->writeSint16LE(0);
@@ -385,7 +385,7 @@ GameObject *GameObject::objectAddress(ObjectID id) {
 ProtoObj *GameObject::protoAddress(ObjectID id) {
 	GameObject      *obj = objectAddress(id);
 
-	return obj ? obj->prototype : nullptr ;
+	return obj ? obj-> _prototype : nullptr ;
 }
 
 int32 GameObject::nameIndexToID(uint16 ind) {
@@ -393,7 +393,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (objectList[i]._data.nameIndex == ind)
 			return objectList[i].thisID();
 
-		if (objectList[i].prototype && objectList[i].prototype->nameIndex == ind)
+		if (objectList[i]._prototype && objectList[i]._prototype->nameIndex == ind)
 			return objectList[i].thisID();
 	}
 
@@ -401,7 +401,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (g_vm->_act->_actorList[i]->_data.nameIndex == ind)
 			return g_vm->_act->_actorList[i]->thisID();
 
-		if (g_vm->_act->_actorList[i]->prototype && g_vm->_act->_actorList[i]->prototype->nameIndex == ind)
+		if (g_vm->_act->_actorList[i]-> _prototype && g_vm->_act->_actorList[i]->_prototype->nameIndex == ind)
 			return g_vm->_act->_actorList[i]->thisID();
 	}
 
@@ -409,7 +409,7 @@ int32 GameObject::nameIndexToID(uint16 ind) {
 		if (worldList[i]._data.nameIndex == ind)
 			return worldList[i].thisID();
 
-		if (worldList[i].prototype && worldList[i].prototype->nameIndex == ind)
+		if (worldList[i]._prototype && worldList[i]._prototype->nameIndex == ind)
 			return worldList[i].thisID();
 	}
 
@@ -446,7 +446,7 @@ Common::Array<ObjectID> GameObject::nameToID(Common::String name) {
 
 
 uint16 GameObject::containmentSet() {
-	return  prototype->containmentSet();
+	return  _prototype->containmentSet();
 }
 
 //  Calculates the ID of an object, given it's (implicit) address
@@ -471,8 +471,8 @@ ObjectID *GameObject::getHeadPtr(ObjectID parentID, TilePoint &l) {
 		int16       u = clamp(0, l.u / kSectorSize, sectors.u - 1),
 		            v = clamp(0, l.v / kSectorSize, sectors.v - 1);
 
-		return  &(world->sectorArray)[
-		     v * world->sectorArraySize + u].childID;
+		return  &(world->_sectorArray)[
+		     v * world->_sectorArraySize + u]._childID;
 	} else return &parentObj->_data.childID;
 }
 
@@ -564,18 +564,18 @@ ObjectID GameObject::possessor() {
 bool GameObject::getWorldLocation(Location &loc) {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			loc = obj->_data.location;
-			loc.z += (obj->prototype->height - objHeight) / 2;
-			loc.context = id;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
+			loc._context = id;
 			return true;
 		} else if (id == Nothing) {
 			loc = Nowhere;
-			loc.context = Nothing;
+			loc._context = Nothing;
 			return false;
 		}
 
@@ -590,14 +590,14 @@ Location GameObject::notGetLocation() {
 Location GameObject::notGetWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			TilePoint       loc = obj->_data.location;
 
-			loc.z += (obj->prototype->height - objHeight) / 2;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
 			return Location(loc, obj->_data.parentID);
 		} else if (id == Nothing) return Location(Nowhere, Nothing);
 
@@ -616,10 +616,10 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
-	if (prototype->containmentSet() & ProtoObj::isTangible) {
+	if (_prototype->containmentSet() & ProtoObj::isTangible) {
 		// display charges if item is a chargeable item
-		if (prototype->chargeType != 0
-		        &&  prototype->maxCharges != Permanent
+		if (_prototype->chargeType != 0
+		        &&  _prototype->maxCharges != Permanent
 		        &&  _data.bParam != Permanent) {
 			uint16 charges = _data.bParam;
 
@@ -630,7 +630,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			}
 		}
 
-		if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 			// make a buffer that contains the name of
 			// the object and it's count
 			// add only if a mergable item
@@ -649,7 +649,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 		int16 manaCost = 0;
 
 		// figure out if it's a skill or spell
-		if (prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+		if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 			// get skill proto for this spell or skill
 			SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -698,7 +698,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 bool GameObject::isTrueSkill() {
 	// figure out if it's a skill or spell
-	if (prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+	if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
 		// get skill proto for this spell or skill
 		SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -715,14 +715,14 @@ bool GameObject::isTrueSkill() {
 TilePoint GameObject::getWorldLocation() {
 	GameObject      *obj = this;
 	ObjectID        id;
-	uint8           objHeight = prototype->height;
+	uint8           objHeight = _prototype->height;
 
 	for (;;) {
 		id = obj->_data.parentID;
 		if (isWorld(id)) {
 			TilePoint       loc = obj->_data.location;
 
-			loc.z += (obj->prototype->height - objHeight) / 2;
+			loc.z += (obj->_prototype->height - objHeight) / 2;
 			return loc;
 		} else if (id == Nothing) return Nowhere;
 
@@ -766,7 +766,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	}
 
 	// if this is a mergeable object
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		if (units >= spriteNumFew) {
 			value = 1;
 		}
@@ -797,8 +797,8 @@ bool GameObject::unstack() {
 	        ||  isWorld(parent())
 	        ||  IDParent() == Nothing
 	        ||  _data.location.z == 1
-	        ||  prototype == nullptr
-	        || (prototype->containmentSet() & ProtoObj::isIntangible)) return false;
+	        ||  _prototype == nullptr
+	        || (_prototype->containmentSet() & ProtoObj::isIntangible)) return false;
 
 	ContainerIterator   iter(parent());
 
@@ -808,7 +808,7 @@ bool GameObject::unstack() {
 	while (iter.next(&item) != Nothing) {
 		if (item->_data.location.u == _data.location.u
 		        &&  item->_data.location.v == _data.location.v
-		        &&  item->prototype  == prototype) {
+		        &&  item-> _prototype  == _prototype) {
 			count++;
 			if (item->_data.location.z != 0) base = item;
 			else zero = item;
@@ -832,13 +832,13 @@ bool GameObject::unstack() {
 
 //  Move the object to a new _data.location, and change context if needed.
 void GameObject::setLocation(const Location &l) {
-	if (l.context != _data.parentID) {
+	if (l._context != _data.parentID) {
 		unstack();                          // if it's in a stack, unstack it.
 		remove();                           // remove from old list
 		_data.location = (TilePoint)l;            // change _data.location
-		append(l.context);                  // append to new list
-	} else if (isWorld(l.context)) {
-		GameWorld   *world = (GameWorld *)objectAddress(l.context);
+		append(l._context);                  // append to new list
+	} else if (isWorld(l._context)) {
+		GameWorld   *world = (GameWorld *)objectAddress(l._context);
 		TilePoint   sectors = world->sectorSize();
 
 		int16       u0 = clamp(0, _data.location.u / kSectorSize, sectors.u - 1),
@@ -849,7 +849,7 @@ void GameObject::setLocation(const Location &l) {
 		if (u0 != u1 || v0 != v1) {         // If sector changed
 			remove();                       //  Remove from old list
 			_data.location = (TilePoint)l;        //  Set object coords
-			append(l.context);              //  append to appropriate list
+			append(l._context);              //  append to appropriate list
 		} else {
 			_data.location = (TilePoint)l;        //  Set object coords
 		}
@@ -916,9 +916,9 @@ void GameObject::move(const Location &location, int16 num) {
 
 
 int16 GameObject::getChargeType() {
-	assert(prototype);
+	assert(_prototype);
 
-	return prototype->getChargeType();
+	return _prototype->getChargeType();
 }
 
 // this function recharges an object
@@ -1089,7 +1089,7 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		// get the number requested or all that's there...
 		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
@@ -1117,7 +1117,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
 		Location    loc(0, 0, 0, 0);
 
 		// get the number requested or all that's there...
@@ -1182,7 +1182,7 @@ ObjectID GameObject::copy(const Location &l) {
 	} else {
 		if ((newObj = newObject()) == nullptr) return Nothing;
 
-		newObj->prototype   = prototype;
+		newObj->_prototype   = _prototype;
 		newObj->_data.nameIndex   = _data.nameIndex;
 		newObj->_data.script      = _data.script;
 		newObj->_data.objectFlags = _data.objectFlags;
@@ -1210,7 +1210,7 @@ ObjectID GameObject::copy(const Location &l, int16 num) {
 		if ((newObj = newObject()) == nullptr) return Nothing;
 
 
-		newObj->prototype   = prototype;
+		newObj-> _prototype   = _prototype;
 		newObj->_data.nameIndex   = _data.nameIndex;
 		newObj->_data.script      = _data.script;
 		newObj->_data.objectFlags = _data.objectFlags;
@@ -1270,7 +1270,7 @@ GameObject *GameObject::newObject() {   // get a newly created object
 	}
 
 	obj->remove();
-	obj->prototype      = nullptr;
+	obj-> _prototype      = nullptr;
 	obj->_data.nameIndex      = 0;
 	obj->_data.script         = 0;
 	obj->_data.objectFlags    = 0;
@@ -1354,7 +1354,7 @@ void GameObject::deleteObjectRecursive() {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
-		assert((prototype->containmentSet() & ProtoObj::isTangible) != 0);
+		assert((_prototype->containmentSet() & ProtoObj::isTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
 		if (isWorld(_data.parentID))
@@ -1503,7 +1503,7 @@ void GameObject::updateState() {
 
 	tHeight = tileSlopeHeight(_data.location, this, &sti);
 
-	if (!(_data.location.z >= 0 || prototype->height > 8 - _data.location.z))
+	if (!(_data.location.z >= 0 || _prototype->height > 8 - _data.location.z))
 		drown(this);
 
 	TilePoint subTile((_data.location.u >> kSubTileShift) & kSubTileMask,
@@ -1564,8 +1564,8 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ObjectID        objID;
 	GameObject      *item = nullptr;
 	TilePoint       newLoc, temp;
-	uint16          numRows = prototype->getMaxRows(),
-	                numCols = prototype->getMaxCols();
+	uint16          numRows = _prototype->getMaxRows(),
+	                numCols = _prototype->getMaxCols();
 	ProtoObj        *mObjProto = obj->proto();
 	bool            objIsEnchantment = (mObjProto->containmentSet() & INTANGIBLE_MASK);
 	bool            isReadyCont = isActor(this);
@@ -1629,7 +1629,7 @@ bool GameObject::getAvailableSlot(
 	assert(tp != nullptr);
 	assert(!canMerge || mergeObj != nullptr);
 
-	if (prototype == nullptr) return false;
+	if (_prototype == nullptr) return false;
 
 	ProtoObj        *objProto = obj->proto();
 
@@ -1649,7 +1649,7 @@ bool GameObject::getAvailableSlot(
 
 	//  Only actors or containers may contain other objects
 	if (isActor(this)
-	        || (prototype->containmentSet() & ProtoObj::isContainer)) {
+	        || (_prototype->containmentSet() & ProtoObj::isContainer)) {
 		TilePoint       firstEmptySlot;
 
 		if (canMerge) {
@@ -1711,9 +1711,9 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 	assert(isWorld(_data.parentID));
 
 	int16           dist;
-	int16           mapNum = getMapNum();
+	int16           _mapNum = getMapNum();
 
-	dist = prototype->crossSection + obj->proto()->crossSection;
+	dist = _prototype->crossSection + obj->proto()->crossSection;
 
 	//  Iterate until the object is placed
 	for (;;) {
@@ -1730,10 +1730,10 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			probeLoc = _data.location + incDirTable[dir] * dist;
 			probeLoc.u += g_vm->_rnd->getRandomNumber(3) - 2;
 			probeLoc.v += g_vm->_rnd->getRandomNumber(3) - 2;
-			probeLoc.z = tileSlopeHeight(probeLoc, mapNum, obj, &sti);
+			probeLoc.z = tileSlopeHeight(probeLoc, _mapNum, obj, &sti);
 
 			//  If _data.location is not blocked, drop the object
-			if (checkBlocked(obj, mapNum, probeLoc) == blockageNone) {
+			if (checkBlocked(obj, _mapNum, probeLoc) == blockageNone) {
 				//  If we're dropping the object on a TAI, make sure
 				//  we call the correct drop function
 				if (sti.surfaceTAG == nullptr) {
@@ -1779,13 +1779,13 @@ GameObject *GameObject::getIntangibleContainer(int containerType) {
 //	Generic range checking function
 
 bool GameObject::inRange(const TilePoint &tp, uint16 range) {
-	uint8       crossSection = prototype->crossSection;
+	uint8       crossSection = _prototype->crossSection;
 	TilePoint   loc = getLocation();
 
 	loc =   TilePoint(
 	            clamp(loc.u - crossSection, tp.u, loc.u + crossSection),
 	            clamp(loc.v - crossSection, tp.v, loc.v + crossSection),
-	            clamp(loc.z, tp.z, loc.z + prototype->height));
+	            clamp(loc.z, tp.z, loc.z + _prototype->height));
 
 	TilePoint   vector = tp - loc;
 
@@ -2203,12 +2203,12 @@ bool GameObject::canSenseObjectProperty(
 
 int32 GameObject::getProtoNum() {
 	for (uint i = 0; i < g_vm->_actorProtos.size(); ++i) {
-		if (prototype == g_vm->_actorProtos[i])
+		if (_prototype == g_vm->_actorProtos[i])
 			return i;
 	}
 
 	for (uint i = 0; i < g_vm->_objectProtos.size(); ++i) {
-		if (prototype == g_vm->_objectProtos[i])
+		if (_prototype == g_vm->_objectProtos[i])
 			return i;
 	}
 
@@ -2220,12 +2220,12 @@ int32 GameObject::getProtoNum() {
 
 void GameObject::setProtoNum(int32 nProto) {
 	if (isActor(this))
-		prototype = g_vm->_actorProtos[nProto];
+		_prototype = g_vm->_actorProtos[nProto];
 	else {
 		ObjectID    oldParentID = _data.parentID;
 		bool        wasStacked = unstack(); //  Unstack if it was in a stack
 
-		prototype = g_vm->_objectProtos[nProto];
+		_prototype = g_vm->_objectProtos[nProto];
 
 		if (wasStacked) {
 			ObjectID    pos = possessor();
@@ -2362,7 +2362,7 @@ uint16 GameObject::totalContainedMass() {
 		if (!(childObj->containmentSet() & ProtoObj::isTangible))
 			continue;
 
-		objMass = childObj->prototype->mass;
+		objMass = childObj->_prototype->mass;
 		if (childObj->isMergeable())
 			objMass *= childObj->getExtra();
 		total += objMass;
@@ -2388,7 +2388,7 @@ uint16 GameObject::totalContainedBulk() {
 		if (!(childObj->containmentSet() & ProtoObj::isTangible))
 			continue;
 
-		objBulk = childObj->prototype->bulk;
+		objBulk = childObj->_prototype->bulk;
 		if (childObj->isMergeable())
 			objBulk *= childObj->getExtra();
 		total += objBulk;
@@ -2410,57 +2410,57 @@ GameWorld::GameWorld(int16 map) {
 		int16   mapSize;    //  Size of map in MetaTiles
 
 		mapSize = stream->readSint16LE();
-		size.u = (mapSize << kPlatShift) << kTileUVShift;
-		size.v = size.u;
+		_size.u = (mapSize << kPlatShift) << kTileUVShift;
+		_size.v = _size.u;
 
-		sectorArraySize = size.u / kSectorSize;
-		sectorArray = new Sector[sectorArraySize * sectorArraySize]();
+		_sectorArraySize = _size.u / kSectorSize;
+		_sectorArray = new Sector[_sectorArraySize * _sectorArraySize]();
 
-		if (sectorArray == nullptr)
+		if (_sectorArray == nullptr)
 			error("Unable to allocate world %d sector array", map);
 
-		mapNum = map;
+		_mapNum = map;
 		delete stream;
 	} else {
-		size.u = size.v = 0;
-		sectorArraySize = 0;
-		sectorArray = nullptr;
+		_size.u = _size.v = 0;
+		_sectorArraySize = 0;
+		_sectorArray = nullptr;
 
-		mapNum = -1;
+		_mapNum = -1;
 	}
 }
 
 GameWorld::GameWorld(Common::SeekableReadStream *stream) {
-	size.u = size.v = stream->readSint16LE();
-	mapNum = stream->readSint16LE();
+	_size.u = _size.v = stream->readSint16LE();
+	_mapNum = stream->readSint16LE();
 
-	debugC(3, kDebugSaveload, "... size.u = size.v = %d", size.u);
-	debugC(3, kDebugSaveload, "... mapNum = %d", mapNum);
+	debugC(3, kDebugSaveload, "... _size.u = _size.v = %d", _size.u);
+	debugC(3, kDebugSaveload, "... _mapNum = %d", _mapNum);
 
-	if (size.u != 0) {
-		int32 sectorArrayCount;
+	if (_size.u != 0) {
+		int32 _sectorArrayCount;
 
-		sectorArraySize = size.u / kSectorSize;
-		sectorArrayCount = sectorArraySize * sectorArraySize;
-		sectorArray = new Sector[sectorArrayCount]();
+		_sectorArraySize = _size.u / kSectorSize;
+		_sectorArrayCount = _sectorArraySize * _sectorArraySize;
+		_sectorArray = new Sector[_sectorArrayCount]();
 
-		if (sectorArray == nullptr)
-			error("Unable to allocate world %d sector array", mapNum);
+		if (_sectorArray == nullptr)
+			error("Unable to allocate world %d sector array", _mapNum);
 
-		for (int i = 0; i < sectorArrayCount; ++i) {
-			sectorArray[i].read(stream);
-			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", i, sectorArray[i].activationCount);
-			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", i, sectorArray[i].childID);
+		for (int i = 0; i < _sectorArrayCount; ++i) {
+			_sectorArray[i].read(stream);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", i, _sectorArray[i]._activationCount);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", i, _sectorArray[i]._childID);
 		}
 	} else {
-		sectorArraySize = 0;
-		sectorArray = nullptr;
+		_sectorArraySize = 0;
+		_sectorArray = nullptr;
 	}
 }
 
 GameWorld::~GameWorld() {
-	if (sectorArray)
-		delete[] sectorArray;
+	if (_sectorArray)
+		delete[] _sectorArray;
 }
 
 //-------------------------------------------------------------------
@@ -2469,9 +2469,9 @@ GameWorld::~GameWorld() {
 int32 GameWorld::archiveSize() {
 	int32   bytes = 0;
 
-	bytes +=    sizeof(size.u)
-	            +   sizeof(mapNum)
-	            +   sectorArraySize * sectorArraySize * sizeof(Sector);
+	bytes +=    sizeof(_size.u)
+	            +   sizeof(_mapNum)
+	            +   _sectorArraySize * _sectorArraySize * sizeof(Sector);
 
 	return bytes;
 }
@@ -2480,9 +2480,9 @@ int32 GameWorld::archiveSize() {
 //	Cleanup
 
 void GameWorld::cleanup() {
-	if (sectorArray != nullptr) {
-		delete[] sectorArray;
-		sectorArray = nullptr;
+	if (_sectorArray != nullptr) {
+		delete[] _sectorArray;
+		_sectorArray = nullptr;
 	}
 }
 
@@ -2837,7 +2837,7 @@ void initWorlds() {
 	}
 
 	currentWorld = &worldList[0];
-	setCurrentMap(currentWorld->mapNum);
+	setCurrentMap(currentWorld->_mapNum);
 }
 
 void saveWorlds(Common::OutSaveFile *outS) {
@@ -2850,20 +2850,20 @@ void saveWorlds(Common::OutSaveFile *outS) {
 	debugC(3, kDebugSaveload, "... currentWorld->thisID() = %d", currentWorld->thisID());
 
 	for (int i = 0; i < worldCount; ++i) {
-		Sector *sectArray = worldList[i].sectorArray;
-		int32 sectorArrayCount = worldList[i].sectorArraySize *
-		                         worldList[i].sectorArraySize;
+		Sector *sectArray = worldList[i]._sectorArray;
+		int32 _sectorArrayCount = worldList[i]._sectorArraySize *
+		                         worldList[i]._sectorArraySize;
 
-		out->writeSint16LE(worldList[i].size.u);
-		out->writeSint16LE(worldList[i].mapNum);
+		out->writeSint16LE(worldList[i]._size.u);
+		out->writeSint16LE(worldList[i]._mapNum);
 
-		debugC(3, kDebugSaveload, "... worldList[%d].size.u = %d", i, worldList[i].size.u);
-		debugC(3, kDebugSaveload, "... worldList[%d].mapNum = %d", i, worldList[i].mapNum);
+		debugC(3, kDebugSaveload, "... worldList[%d]._size.u = %d", i, worldList[i]._size.u);
+		debugC(3, kDebugSaveload, "... worldList[%d]._mapNum = %d", i, worldList[i]._mapNum);
 
-		for (int j = 0; j < sectorArrayCount; ++j) {
+		for (int j = 0; j < _sectorArrayCount; ++j) {
 			sectArray[j].write(out);
-			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", j, sectArray[j].activationCount);
-			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", j, sectArray[j].childID);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].activationCount = %d", j, sectArray[j]._activationCount);
+			debugC(4, kDebugSaveload, "...... sectArray[%d].childID = %d", j, sectArray[j]._childID);
 		}
 	}
 	CHUNK_END;
@@ -2892,7 +2892,7 @@ void loadWorlds(Common::InSaveFile *in) {
 
 	//  Reset the current world
 	currentWorld = (GameWorld *)GameObject::objectAddress(currentWorldID);
-	setCurrentMap(currentWorld->mapNum);
+	setCurrentMap(currentWorld->_mapNum);
 }
 
 //-------------------------------------------------------------------
@@ -3126,8 +3126,8 @@ GameObject *getViewCenterObject() {
 //	Activate all actors in sector if sector is not alreay active
 
 void Sector::activate() {
-	if (activationCount++ == 0) {
-		ObjectID        id = childID;
+	if (_activationCount++ == 0) {
+		ObjectID        id = _childID;
 
 		while (id != Nothing) {
 			GameObject      *obj = GameObject::objectAddress(id);
@@ -3144,19 +3144,19 @@ void Sector::activate() {
 //	actors in sector if activation count has reached zero.
 
 void Sector::deactivate() {
-	assert(activationCount != 0);
+	assert(_activationCount != 0);
 
-	activationCount--;
+	_activationCount--;
 }
 
 void Sector::read(Common::InSaveFile *in) {
-	activationCount = in->readUint16LE();
-	childID = in->readUint16LE();
+	_activationCount = in->readUint16LE();
+	_childID = in->readUint16LE();
 }
 
 void Sector::write(Common::MemoryWriteStreamDynamic *out) {
-	out->writeUint16LE(activationCount);
-	out->writeUint16LE(childID);
+	out->writeUint16LE(_activationCount);
+	out->writeUint16LE(_childID);
 }
 
 
@@ -3168,64 +3168,64 @@ void Sector::write(Common::MemoryWriteStreamDynamic *out) {
 //	Update this active region
 
 void ActiveRegion::read(Common::InSaveFile *in) {
-	anchor = in->readUint16LE();
-	anchorLoc.load(in);
-	worldID = in->readUint16LE();
-	region.read(in);
+	_anchor = in->readUint16LE();
+	_anchorLoc.load(in);
+	_worldID = in->readUint16LE();
+	_region.read(in);
 
-	debugC(4, kDebugSaveload, "... anchor = %d", anchor);
-	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", anchorLoc.u, anchorLoc.v, anchorLoc.z);
-	debugC(4, kDebugSaveload, "... worldID = %d", worldID);
+	debugC(4, kDebugSaveload, "... anchor = %d", _anchor);
+	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", _anchorLoc.u, _anchorLoc.v, _anchorLoc.z);
+	debugC(4, kDebugSaveload, "... worldID = %d", _worldID);
 	debugC(4, kDebugSaveload, "... region = (min: (%d, %d, %d), max: (%d, %d, %d))",
-	       region.min.u, region.min.v, region.min.z, region.max.u, region.max.v, region.max.z);
+	       _region.min.u, _region.min.v, _region.min.z, _region.max.u, _region.max.v, _region.max.z);
 }
 
 void ActiveRegion::write(Common::MemoryWriteStreamDynamic *out) {
-	out->writeUint16LE(anchor);
-	anchorLoc.write(out);
-	out->writeUint16LE(worldID);
-	region.write(out);
+	out->writeUint16LE(_anchor);
+	_anchorLoc.write(out);
+	out->writeUint16LE(_worldID);
+	_region.write(out);
 
-	debugC(4, kDebugSaveload, "... anchor = %d", anchor);
-	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", anchorLoc.u, anchorLoc.v, anchorLoc.z);
-	debugC(4, kDebugSaveload, "... worldID = %d", worldID);
+	debugC(4, kDebugSaveload, "... anchor = %d", _anchor);
+	debugC(4, kDebugSaveload, "... anchorLoc = (%d, %d, %d)", _anchorLoc.u, _anchorLoc.v, _anchorLoc.z);
+	debugC(4, kDebugSaveload, "... worldID = %d", _worldID);
 	debugC(4, kDebugSaveload, "... region = (min: (%d, %d, %d), max: (%d, %d, %d))",
-	       region.min.u, region.min.v, region.min.z, region.max.u, region.max.v, region.max.z);
+	       _region.min.u, _region.min.v, _region.min.z, _region.max.u, _region.max.v, _region.max.z);
 }
 
 void ActiveRegion::update() {
-	GameObject  *obj = GameObject::objectAddress(anchor);
-	GameWorld   *world = (GameWorld *)GameObject::objectAddress(worldID);
+	GameObject  *obj = GameObject::objectAddress(_anchor);
+	GameWorld   *world = (GameWorld *)GameObject::objectAddress(_worldID);
 	ObjectID    objWorldID = obj->world()->thisID();
 
 	//  Determine if the world for this active region has changed
-	if (worldID != objWorldID) {
+	if (_worldID != objWorldID) {
 		int16   u, v;
 
 		//  Deactivate all of the old sectors
-		for (u = region.min.u; u < region.max.u; u++) {
-			for (v = region.min.v; v < region.max.v; v++) {
+		for (u = _region.min.u; u < _region.max.u; u++) {
+			for (v = _region.min.v; v < _region.max.v; v++) {
 				world->getSector(u, v)->deactivate();
 			}
 		}
 
 		//  Initialize active region for new world
-		worldID = objWorldID;
-		world = (GameWorld *)GameObject::objectAddress(worldID);
-		anchorLoc = Nowhere;
-		region.min = Nowhere;
-		region.max = Nowhere;
+		_worldID = objWorldID;
+		world = (GameWorld *)GameObject::objectAddress(_worldID);
+		_anchorLoc = Nowhere;
+		_region.min = Nowhere;
+		_region.max = Nowhere;
 	}
 
 	TilePoint   loc = obj->getLocation();
 
 	//  Determine if anchor has moved since the last time
-	if (loc != anchorLoc) {
+	if (loc != _anchorLoc) {
 		TileRegion  ptRegion,
 		            newRegion;
 
 		//  Update the anchor _data.location
-		anchorLoc = loc;
+		_anchorLoc = loc;
 
 		//  Determine the active region in points
 		ptRegion.min.u = loc.u - kSectorSize / 2;
@@ -3239,20 +3239,20 @@ void ActiveRegion::update() {
 		newRegion.max.u = (ptRegion.max.u + kSectorMask) >> kSectorShift;
 		newRegion.max.v = (ptRegion.max.v + kSectorMask) >> kSectorShift;
 
-		if (region.min.u != newRegion.min.u
-		        ||  region.min.v != newRegion.min.v
-		        ||  region.max.u != newRegion.max.u
-		        ||  region.max.v != newRegion.max.v) {
+		if (_region.min.u != newRegion.min.u
+		        ||  _region.min.v != newRegion.min.v
+		        ||  _region.max.u != newRegion.max.u
+		        ||  _region.max.v != newRegion.max.v) {
 			int16   u, v;
 
 			//  Deactivate all sectors from the old region which are
 			//  not in the new region
-			for (u = region.min.u; u < region.max.u; u++) {
+			for (u = _region.min.u; u < _region.max.u; u++) {
 				bool    uOutOfRange;
 
 				uOutOfRange = u < newRegion.min.u || u >= newRegion.max.u;
 
-				for (v = region.min.v; v < region.max.v; v++) {
+				for (v = _region.min.v; v < _region.max.v; v++) {
 					if (uOutOfRange
 					        ||  v < newRegion.min.v
 							||  v >= newRegion.max.v) {
@@ -3270,12 +3270,12 @@ void ActiveRegion::update() {
 			for (u = newRegion.min.u; u < newRegion.max.u; u++) {
 				bool    uOutOfRange;
 
-				uOutOfRange = u < region.min.u || u >= region.max.u;
+				uOutOfRange = u < _region.min.u || u >= _region.max.u;
 
 				for (v = newRegion.min.v; v < newRegion.max.v; v++) {
 					if (uOutOfRange
-					        ||  v < region.min.v
-							||  v >= region.max.v) {
+					        ||  v < _region.min.v
+							||  v >= _region.max.v) {
 
 						if(Sector *sect = world->getSector(u, v))
 							sect->activate();
@@ -3286,10 +3286,10 @@ void ActiveRegion::update() {
 			}
 
 			//  Update the region coordinates
-			region.min.u = newRegion.min.u;
-			region.min.v = newRegion.min.v;
-			region.max.u = newRegion.max.u;
-			region.max.v = newRegion.max.v;
+			_region.min.u = newRegion.min.u;
+			_region.min.v = newRegion.min.v;
+			_region.max.u = newRegion.max.u;
+			_region.max.v = newRegion.max.v;
 		}
 	}
 }
@@ -3335,11 +3335,11 @@ void initActiveRegions() {
 		ActiveRegion    *reg = &g_vm->_activeRegionList[i];
 		ObjectID        actorID = getPlayerActorAddress(playerIDArray[i])->getActorID();
 
-		reg->anchor = actorID;
-		reg->anchorLoc = Nowhere;
-		reg->worldID = Nothing;
-		reg->region.min = Nowhere;
-		reg->region.max = Nowhere;
+		reg->_anchor = actorID;
+		reg->_anchorLoc = Nowhere;
+		reg->_worldID = Nothing;
+		reg->_region.min = Nowhere;
+		reg->_region.max = Nowhere;
 	}
 }
 
@@ -3372,12 +3372,12 @@ void loadActiveRegions(Common::InSaveFile *in) {
 //	Constructor
 
 SectorRegionObjectIterator::SectorRegionObjectIterator(GameWorld *world) :
-	searchWorld(world), _currentObject(nullptr) {
-	assert(searchWorld != nullptr);
-	assert(isWorld(searchWorld));
+	_searchWorld(world), _currentObject(nullptr) {
+	assert(_searchWorld != nullptr);
+	assert(isWorld(_searchWorld));
 
-	minSector = TilePoint(0, 0, 0);
-	maxSector = searchWorld->sectorSize();
+	_minSector = TilePoint(0, 0, 0);
+	_maxSector = _searchWorld->sectorSize();
 }
 
 //------------------------------------------------------------------------
@@ -3388,40 +3388,40 @@ ObjectID SectorRegionObjectIterator::first(GameObject **obj) {
 
 	_currentObject = nullptr;
 
-	sectorCoords = minSector;
-	currentSector = searchWorld->getSector(sectorCoords.u, sectorCoords.v);
+	_sectorCoords = _minSector;
+	currentSector = _searchWorld->getSector(_sectorCoords.u, _sectorCoords.v);
 
 	if (currentSector == nullptr)
 		return Nothing;
 
-	while (currentSector->childID == Nothing) {
-		if (++sectorCoords.v >= maxSector.v) {
-			sectorCoords.v = minSector.v;
-			if (++sectorCoords.u >= maxSector.u) {
+	while (currentSector->_childID == Nothing) {
+		if (++_sectorCoords.v >= _maxSector.v) {
+			_sectorCoords.v = _minSector.v;
+			if (++_sectorCoords.u >= _maxSector.u) {
 				if (obj != nullptr) *obj = nullptr;
 				return Nothing;
 			}
 		}
 
-		currentSector = searchWorld->getSector(
-		                    sectorCoords.u,
-		                    sectorCoords.v);
+		currentSector = _searchWorld->getSector(
+		                    _sectorCoords.u,
+		                    _sectorCoords.v);
 	}
 
-	_currentObject = GameObject::objectAddress(currentSector->childID);
+	_currentObject = GameObject::objectAddress(currentSector->_childID);
 
 	if (obj != nullptr) *obj = _currentObject;
-	return currentSector->childID;
+	return currentSector->_childID;
 }
 
 //------------------------------------------------------------------------
 //	Return the next object found
 
 ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
-	assert(sectorCoords.u >= minSector.u);
-	assert(sectorCoords.v >= minSector.v);
-	assert(sectorCoords.u < maxSector.u);
-	assert(sectorCoords.v < maxSector.v);
+	assert(_sectorCoords.u >= _minSector.u);
+	assert(_sectorCoords.v >= _minSector.v);
+	assert(_sectorCoords.u < _maxSector.u);
+	assert(_sectorCoords.v < _maxSector.v);
 
 	ObjectID        currentObjectID;
 
@@ -3431,21 +3431,21 @@ ObjectID SectorRegionObjectIterator::next(GameObject **obj) {
 		Sector      *currentSector;
 
 		do {
-			if (++sectorCoords.v >= maxSector.v) {
-				sectorCoords.v = minSector.v;
-				if (++sectorCoords.u >= maxSector.u) {
+			if (++_sectorCoords.v >= _maxSector.v) {
+				_sectorCoords.v = _minSector.v;
+				if (++_sectorCoords.u >= _maxSector.u) {
 					if (obj != nullptr) *obj = nullptr;
 					return Nothing;
 				}
 			}
 
-			currentSector = searchWorld->getSector(
-			                    sectorCoords.u,
-			                    sectorCoords.v);
+			currentSector = _searchWorld->getSector(
+			                    _sectorCoords.u,
+			                    _sectorCoords.v);
 
-		} while (currentSector->childID == Nothing);
+		} while (currentSector->_childID == Nothing);
 
-		currentObjectID = currentSector->childID;
+		currentObjectID = currentSector->_childID;
 	}
 
 	_currentObject = GameObject::objectAddress(currentObjectID);
@@ -3500,7 +3500,7 @@ ObjectID RadialObjectIterator::first(GameObject **obj, int16 *dist) {
 	while (currentObjectID != Nothing
 	        && (currentDist =
 	                computeDist(currentObject->getLocation()))
-	        >   radius) {
+	        >   _radius) {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	}
 
@@ -3520,7 +3520,7 @@ ObjectID RadialObjectIterator::next(GameObject **obj, int16 *dist) {
 	do {
 		currentObjectID = SectorRegionObjectIterator::next(&currentObject);
 	} while (currentObjectID != Nothing
-	         && (currentDist = computeDist(currentObject->getLocation())) > radius);
+	         && (currentDist = computeDist(currentObject->getLocation())) > _radius);
 
 	if (dist != nullptr)
 		*dist = currentDist;
@@ -3551,7 +3551,7 @@ ObjectID RingObjectIterator::first(GameObject **obj) {
 
 	currentObjectID = CircularObjectIterator::first(&currentObject);
 	while (currentObjectID != Nothing
-	        &&  computeDist(currentObject->getLocation()) < innerDist) {
+	        &&  computeDist(currentObject->getLocation()) < _innerDist) {
 		currentObjectID = CircularObjectIterator::next(&currentObject);
 	}
 
@@ -3567,7 +3567,7 @@ ObjectID RingObjectIterator::next(GameObject **obj) {
 	do {
 		currentObjectID = CircularObjectIterator::next(&currentObject);
 	} while (currentObjectID != Nothing
-	         &&  computeDist(currentObject->getLocation()) < innerDist);
+	         &&  computeDist(currentObject->getLocation()) < _innerDist);
 
 	if (obj != nullptr) *obj = currentObject;
 	return currentObjectID;
@@ -3827,7 +3827,7 @@ TilePoint CenterRegionObjectIterator::MaxCenterRegion() {
 //------------------------------------------------------------------------
 
 bool ActiveRegionObjectIterator::firstActiveRegion() {
-	activeRegionIndex = -1;
+	_activeRegionIndex = -1;
 
 	return nextActiveRegion();
 }
@@ -3840,22 +3840,22 @@ bool ActiveRegionObjectIterator::nextActiveRegion() {
 	TilePoint           currentRegionSize;
 
 	do {
-		if (++activeRegionIndex >= kPlayerActors)
+		if (++_activeRegionIndex >= kPlayerActors)
 			return false;
 
 		int16               prevRegionIndex;
 
-		currentRegion = &g_vm->_activeRegionList[activeRegionIndex];
+		currentRegion = &g_vm->_activeRegionList[_activeRegionIndex];
 
-		sectorBitMask = 0;
-		currentRegionSize.u =       currentRegion->region.max.u
-		                            -   currentRegion->region.min.u;
-		currentRegionSize.v =       currentRegion->region.max.v
-		                            -   currentRegion->region.min.v;
+		_sectorBitMask = 0;
+		currentRegionSize.u =       currentRegion->_region.max.u
+		                            -   currentRegion->_region.min.u;
+		currentRegionSize.v =       currentRegion->_region.max.v
+		                            -   currentRegion->_region.min.v;
 		currentRegionSectors = currentRegionSize.u * currentRegionSize.v;
 
 		for (prevRegionIndex = 0;
-		        prevRegionIndex < activeRegionIndex;
+		        prevRegionIndex < _activeRegionIndex;
 		        prevRegionIndex++) {
 			ActiveRegion    *prevRegion;
 
@@ -3863,32 +3863,32 @@ bool ActiveRegionObjectIterator::nextActiveRegion() {
 
 			//  Determine if the current region and the previous region
 			//  overlap.
-			if (currentRegion->worldID != prevRegion->worldID
-			        ||  prevRegion->region.min.u >= currentRegion->region.max.u
-			        ||  currentRegion->region.min.u >= prevRegion->region.max.u
-			        ||  prevRegion->region.min.v >= currentRegion->region.max.v
-			        ||  currentRegion->region.min.v >= prevRegion->region.max.v)
+			if (currentRegion->_worldID != prevRegion->_worldID
+			        ||  prevRegion->_region.min.u >= currentRegion->_region.max.u
+			        ||  currentRegion->_region.min.u >= prevRegion->_region.max.u
+			        ||  prevRegion->_region.min.v >= currentRegion->_region.max.v
+			        ||  currentRegion->_region.min.v >= prevRegion->_region.max.v)
 				continue;
 
 			TileRegion      intersection;
 			int16           u, v;
 
 			intersection.min.u =    MAX(
-			                            currentRegion->region.min.u,
-			                            prevRegion->region.min.u)
-			                        -   currentRegion->region.min.u;
+			                            currentRegion->_region.min.u,
+			                            prevRegion->_region.min.u)
+			                        -   currentRegion->_region.min.u;
 			intersection.max.u =    MIN(
-			                            currentRegion->region.max.u,
-			                            prevRegion->region.max.u)
-			                        -   currentRegion->region.min.u;
+			                            currentRegion->_region.max.u,
+			                            prevRegion->_region.max.u)
+			                        -   currentRegion->_region.min.u;
 			intersection.min.v =    MAX(
-			                            currentRegion->region.min.v,
-			                            prevRegion->region.min.v)
-			                        -   currentRegion->region.min.v;
+			                            currentRegion->_region.min.v,
+			                            prevRegion->_region.min.v)
+			                        -   currentRegion->_region.min.v;
 			intersection.max.v =    MIN(
-			                            currentRegion->region.max.v,
-			                            prevRegion->region.max.v)
-			                        -   currentRegion->region.min.v;
+			                            currentRegion->_region.max.v,
+			                            prevRegion->_region.max.v)
+			                        -   currentRegion->_region.min.v;
 
 			for (u = intersection.min.u;
 			        u < intersection.max.u;
@@ -3900,13 +3900,13 @@ bool ActiveRegionObjectIterator::nextActiveRegion() {
 
 					sectorBit = 1 << (u * currentRegionSize.v + v);
 
-					if (!(sectorBitMask & sectorBit)) {
+					if (!(_sectorBitMask & sectorBit)) {
 						currentRegionSectors--;
 						assert(currentRegionSectors >= 0);
 
 						//  Set the bit in the bit mask indicating that this
 						//  sector overlaps with a previouse active region
-						sectorBitMask |= sectorBit;
+						_sectorBitMask |= sectorBit;
 					}
 				}
 			}
@@ -3919,12 +3919,12 @@ bool ActiveRegionObjectIterator::nextActiveRegion() {
 
 	} while (currentRegionSectors == 0);
 
-	baseSectorCoords.u = currentRegion->region.min.u;
-	baseSectorCoords.v = currentRegion->region.min.v;
-	size.u = currentRegionSize.u;
-	size.v = currentRegionSize.v;
-	currentWorld = (GameWorld *)GameObject::objectAddress(
-	                   currentRegion->worldID);
+	_baseSectorCoords.u = currentRegion->_region.min.u;
+	_baseSectorCoords.v = currentRegion->_region.min.v;
+	_size.u = currentRegionSize.u;
+	_size.v = currentRegionSize.v;
+	_currentWorld = (GameWorld *)GameObject::objectAddress(
+	                   currentRegion->_worldID);
 
 	return true;
 }
@@ -3935,10 +3935,10 @@ bool ActiveRegionObjectIterator::firstSector() {
 	if (!firstActiveRegion())
 		return false;
 
-	sectorCoords.u = baseSectorCoords.u;
-	sectorCoords.v = baseSectorCoords.v;
+	_sectorCoords.u = _baseSectorCoords.u;
+	_sectorCoords.v = _baseSectorCoords.v;
 
-	if (sectorBitMask & 1) {
+	if (_sectorBitMask & 1) {
 		if (!nextSector())
 			return false;
 	}
@@ -3952,23 +3952,23 @@ bool ActiveRegionObjectIterator::nextSector() {
 	int16       u, v;
 
 	do {
-		sectorCoords.v++;
+		_sectorCoords.v++;
 
-		if (sectorCoords.v >= baseSectorCoords.v + size.v) {
-			sectorCoords.v = baseSectorCoords.v;
-			sectorCoords.u++;
+		if (_sectorCoords.v >= _baseSectorCoords.v + _size.v) {
+			_sectorCoords.v = _baseSectorCoords.v;
+			_sectorCoords.u++;
 
-			if (sectorCoords.u >= baseSectorCoords.u + size.u) {
+			if (_sectorCoords.u >= _baseSectorCoords.u + _size.u) {
 				if (!nextActiveRegion()) return false;
 
-				sectorCoords.u = baseSectorCoords.u;
-				sectorCoords.v = baseSectorCoords.v;
+				_sectorCoords.u = _baseSectorCoords.u;
+				_sectorCoords.v = _baseSectorCoords.v;
 			}
 		}
 
-		u = sectorCoords.u - baseSectorCoords.u;
-		v = sectorCoords.v - baseSectorCoords.v;
-	} while (sectorBitMask & (1 << (u * size.v + v)));
+		u = _sectorCoords.u - _baseSectorCoords.u;
+		v = _sectorCoords.v - _baseSectorCoords.v;
+	} while (_sectorBitMask & (1 << (u * _size.v + v)));
 
 	return true;
 }
@@ -3984,13 +3984,13 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 	if (firstSector()) {
 		Sector      *currentSector;
 
-		currentSector = currentWorld->getSector(
-		                    sectorCoords.u,
-		                    sectorCoords.v);
+		currentSector = _currentWorld->getSector(
+		                    _sectorCoords.u,
+		                    _sectorCoords.v);
 
 		assert(currentSector != nullptr);
 
-		currentObjectID = currentSector->childID;
+		currentObjectID = currentSector->_childID;
 		_currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
 		                :   nullptr;
@@ -3998,13 +3998,13 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 		while (currentObjectID == Nothing) {
 			if (!nextSector()) break;
 
-			currentSector = currentWorld->getSector(
-			                    sectorCoords.u,
-			                    sectorCoords.v);
+			currentSector = _currentWorld->getSector(
+			                    _sectorCoords.u,
+			                    _sectorCoords.v);
 
 			assert(currentSector != nullptr);
 
-			currentObjectID = currentSector->childID;
+			currentObjectID = currentSector->_childID;
 			_currentObject = currentObjectID != Nothing
 			                ?   GameObject::objectAddress(currentObjectID)
 			                :   nullptr;
@@ -4019,8 +4019,8 @@ ObjectID ActiveRegionObjectIterator::first(GameObject **obj) {
 //	Return the next object within the specified region
 
 ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
-	assert(activeRegionIndex >= 0);
-	assert(activeRegionIndex < kPlayerActors);
+	assert(_activeRegionIndex >= 0);
+	assert(_activeRegionIndex < kPlayerActors);
 
 	ObjectID        currentObjectID;
 
@@ -4034,13 +4034,13 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 
 		if (!nextSector()) break;
 
-		currentSector = currentWorld->getSector(
-		                    sectorCoords.u,
-		                    sectorCoords.v);
+		currentSector = _currentWorld->getSector(
+		                    _sectorCoords.u,
+		                    _sectorCoords.v);
 
 		assert(currentSector != nullptr);
 
-		currentObjectID = currentSector->childID;
+		currentObjectID = currentSector->_childID;
 		_currentObject = currentObjectID != Nothing
 		                ?   GameObject::objectAddress(currentObjectID)
 		                :   nullptr;
@@ -4058,19 +4058,19 @@ ObjectID ActiveRegionObjectIterator::next(GameObject **obj) {
 
 ContainerIterator::ContainerIterator(GameObject *container) {
 	//  Get the ID of the 1st object in the sector list
-	nextID = container->_data.childID;
-	object = nullptr;
+	_nextID = container->_data.childID;
+	_object = nullptr;
 }
 
 ObjectID ContainerIterator::next(GameObject **obj) {
-	ObjectID        id = nextID;
+	ObjectID        id = _nextID;
 
 	if (id == Nothing) return Nothing;
 
-	object = GameObject::objectAddress(id);
-	nextID = object->_data.siblingID;
+	_object = GameObject::objectAddress(id);
+	_nextID = _object->_data.siblingID;
 
-	if (obj) *obj = object;
+	if (obj) *obj = _object;
 	return id;
 }
 
@@ -4135,44 +4135,44 @@ ObjectID RecursiveContainerIterator::next(GameObject **obj) {
 //  This class iterates through every object within a container
 
 ObjectID RecursiveContainerIterator::first(GameObject **obj) {
-	GameObject      *rootObj = GameObject::objectAddress(root);
+	GameObject      *rootObj = GameObject::objectAddress(_root);
 
-	id = rootObj->IDChild();
+	_id = rootObj->IDChild();
 
 	if (obj != nullptr)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
+		*obj = _id != Nothing ? GameObject::objectAddress(_id) : nullptr;
 
-	return id;
+	return _id;
 }
 
 ObjectID RecursiveContainerIterator::next(GameObject **obj) {
-	GameObject  *currentObj = GameObject::objectAddress(id);
+	GameObject  *currentObj = GameObject::objectAddress(_id);
 
 	//  If this object has a child, then the next object (id) is the child.
 	//  If it has no child, then check for sibling.
-	if ((id = currentObj->IDChild()) == 0) {
+	if ((_id = currentObj->IDChild()) == 0) {
 		//  If this object has a sibling, then the next object (id) is the sibling.
 		//  If it has no sibling, then check for parent.
-		while ((id = currentObj->IDNext()) == 0) {
+		while ((_id = currentObj->IDNext()) == 0) {
 			//  If this object has a parent, then the get the parent.
-			if ((id = currentObj->IDParent()) != 0) {
+			if ((_id = currentObj->IDParent()) != 0) {
 				//  If the parent is the root, then we're done.
-				if (id == Nothing || id == root) return 0;
+				if (_id == Nothing || _id == _root) return 0;
 
 				//  Set the current object to the parent, and then
 				//  Go around the loop once again and get the sibling of the parent.
 
 				//  The loop will keep going up until we either find an object that
 				//  has a sibling, or we hit the original root object.
-				currentObj = GameObject::objectAddress(id);
+				currentObj = GameObject::objectAddress(_id);
 			}
 		}
 	}
 
 	if (obj != nullptr)
-		*obj = id != Nothing ? GameObject::objectAddress(id) : nullptr;
+		*obj = _id != Nothing ? GameObject::objectAddress(_id) : nullptr;
 
-	return id;
+	return _id;
 }
 
 /* ======================================================================= *
@@ -4257,7 +4257,7 @@ bool lineOfSight(GameObject *obj1, GameObject *obj2, uint32 terrainMask) {
 	obj2Loc.z += obj2proto->height * 7 / 8;
 
 	return (lineTerrain(
-	            world->mapNum,
+	            world->_mapNum,
 	            obj1Loc,
 	            obj2Loc,
 	            opaqueTerrain)
@@ -4278,7 +4278,7 @@ bool lineOfSight(GameObject *obj, const TilePoint &loc, uint32 terrainMask) {
 	objLoc.z += proto->height * 7 / 8;
 
 	return (lineTerrain(
-	            world->mapNum,
+	            world->_mapNum,
 	            objLoc,
 	            loc,
 	            opaqueTerrain)
@@ -4299,7 +4299,7 @@ bool lineOfSight(
 	uint32      opaqueTerrain = ~terrainMask;
 
 	return (lineTerrain(
-	            world->mapNum,
+	            world->_mapNum,
 	            loc1,
 	            loc2,
 	            opaqueTerrain)
@@ -4368,13 +4368,13 @@ APPFUNC(cmdBrain) {
 	if (ev.eventType == gEventNewValue) {
 		//WriteStatusF( 4, "Brain Attempt " );
 
-		GameObject          *container = indivCviewTop->containerObject;
+		GameObject          *container = indivCviewTop->_containerObject;
 		ContainerIterator   iter(container);
 		GameObject          *item;
 
 		openMindType = part;
 
-		assert(container == indivCviewBot->containerObject);
+		assert(container == indivCviewBot->_containerObject);
 
 		//  Get the actor's mind container
 		while (iter.next(&item) != Nothing) {
@@ -4410,7 +4410,7 @@ void readyContainerSetup() {
 	indivReadyNode = CreateReadyContainerNode(0);
 
 	for (i = 0; i < kNumViews && i < kPlayerActors ; i++) {
-		g_vm->_playerList[i]->readyNode = CreateReadyContainerNode(i);
+		g_vm->_playerList[i]->_readyNode = CreateReadyContainerNode(i);
 
 		TrioCviews[i] = new ReadyContainerView(
 		                      *trioControls,
@@ -4418,7 +4418,7 @@ void readyContainerSetup() {
 		                             trioReadyContInfo[i].yPos + 8,
 		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[i].cols + iconSpacingY * (trioReadyContInfo[i].cols - 1),
 		                             iconOriginY + (iconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * iconHeight) - 23),
-		                      *g_vm->_playerList[i]->readyNode,
+		                      *g_vm->_playerList[i]->_readyNode,
 		                      backImages,
 		                      numReadyContRes,
 		                      trioReadyContInfo[i].rows,
@@ -4474,8 +4474,8 @@ void cleanupReadyContainers() {
 		delete TrioCviews[i];
 		TrioCviews[i] = nullptr;
 
-		delete g_vm->_playerList[i]->readyNode;
-		g_vm->_playerList[i]->readyNode = nullptr;
+		delete g_vm->_playerList[i]->_readyNode;
+		g_vm->_playerList[i]->_readyNode = nullptr;
 	}
 	delete indivReadyNode;
 

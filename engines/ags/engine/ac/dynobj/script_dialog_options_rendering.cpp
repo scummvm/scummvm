@@ -20,21 +20,27 @@
  */
 
 #include "ags/engine/ac/dynobj/script_dialog_options_rendering.h"
+#include "ags/shared/util/stream.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *ScriptDialogOptionsRendering::GetType() {
 	return "DialogOptionsRendering";
 }
 
-// serialize the object into BUFFER (which is BUFSIZE bytes)
-// return number of bytes used
-int ScriptDialogOptionsRendering::Serialize(const char *address, char *buffer, int bufsize) {
+size_t ScriptDialogOptionsRendering::CalcSerializeSize() {
 	return 0;
 }
 
-void ScriptDialogOptionsRendering::Unserialize(int index, const char *serializedData, int dataSize) {
+// serialize the object into BUFFER (which is BUFSIZE bytes)
+// return number of bytes used
+void ScriptDialogOptionsRendering::Serialize(const char *address, Stream *out) {
+}
+
+void ScriptDialogOptionsRendering::Unserialize(int index, Stream *in, size_t data_sz) {
 	ccRegisterUnserializedObject(index, this, this);
 }
 

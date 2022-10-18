@@ -137,24 +137,29 @@ void KyraEngine_MR::showMessageFromCCode(int string, uint8 c0, int) {
 }
 
 void KyraEngine_MR::updateItemCommand(Item item, int str, uint8 c0) {
-	char buffer[100];
+	Common::String buffer;
 	char *src = (char *)getTableEntry(_itemFile, item);
 
-	if (_lang != 3) {
-		while (*src != ' ')
+	if (_flags.lang != Common::HE_ISR) {
+		if (_lang != 3) {
+			while (*src != ' ')
+				++src;
 			++src;
-		++src;
-		*src = toupper(*src);
+			*src = toupper(*src);
+		}
+
+		buffer = src;
+
+		if (_lang != 3)
+			buffer += " ";
+
+		buffer += (const char *)getTableEntry(_cCodeFile, str);
+	} else {
+		buffer = (const char *)getTableEntry(_cCodeFile, str);
+		buffer = buffer + " " + src + ".";
 	}
 
-	strcpy(buffer, src);
-
-	if (_lang != 3)
-		strcat(buffer, " ");
-
-	strcat(buffer, (const char *)getTableEntry(_cCodeFile, str));
-
-	showMessage(buffer, c0, 0xF0);
+	showMessage(buffer.c_str(), c0, 0xF0);
 }
 
 void KyraEngine_MR::updateCommandLine() {
@@ -352,7 +357,7 @@ void KyraEngine_MR::drawMalcolmsMoodText() {
 		_text->printText(string, x + 1, y, 0xFF, 0x00, 0x00);
 		_screen->setFontStyles(_screen->_currentFont, Font::kStyleBorder);
 	} else {
-		_text->printText(string, x, y + (_flags.hasExtraLanguage ? 3 : 1), 0xFF, 0xF0, 0x00);
+		_text->printText(string, x, y + (_flags.extraLang != Common::UNK_LANG ? 3 : 1), 0xFF, 0xF0, 0x00);
 	}
 	_screen->_curPage = pageBackUp;
 }
@@ -445,6 +450,8 @@ int KyraEngine_MR::getScoreX(const char *str) {
 
 	int width = _screen->getTextWidth(str);
 	int x = 160 + (width / 2) - 32;
+	if (_flags.lang == Common::HE_ISR)
+		x = 140 - 32;
 
 	_screen->setFont(oldFont);
 	_screen->_charSpacing = 0;
@@ -611,23 +618,35 @@ int KyraEngine_MR::buttonMoodChange(Button *button) {
 }
 
 int KyraEngine_MR::buttonShowScore(Button *button) {
-	strcpy(_stringBuffer, (const char *)getTableEntry(_cCodeFile, 18));
+	Common::strlcpy(_stringBuffer, (const char *)getTableEntry(_cCodeFile, 18), 500);
 
 	char *buffer = _stringBuffer;
 
 	while (*buffer != '%')
 		++buffer;
 
-	buffer[0] = (_score / 100) + '0';
-	buffer[1] = ((_score % 100) / 10) + '0';
-	buffer[2] = (_score % 10) + '0';
+	if (_flags.lang != Common::HE_ISR) {
+		buffer[0] = (_score / 100) + '0';
+		buffer[1] = ((_score % 100) / 10) + '0';
+		buffer[2] = (_score % 10) + '0';
+	} else {
+		buffer[0] = (_score % 10) + '0';
+		buffer[1] = ((_score % 100) / 10) + '0';
+		buffer[2] = (_score / 100) + '0';
+	}
 
 	while (*buffer != '%')
 		++buffer;
 
-	buffer[0] = (_scoreMax / 100) + '0';
-	buffer[1] = ((_scoreMax % 100) / 10) + '0';
-	buffer[2] = (_scoreMax % 10) + '0';
+	if (_flags.lang != Common::HE_ISR) {
+		buffer[0] = (_scoreMax / 100) + '0';
+		buffer[1] = ((_scoreMax % 100) / 10) + '0';
+		buffer[2] = (_scoreMax % 10) + '0';
+	} else {
+		buffer[0] = (_scoreMax % 10) + '0';
+		buffer[1] = ((_scoreMax % 100) / 10) + '0';
+		buffer[2] = (_scoreMax / 100) + '0';
+	}
 
 	showMessage(_stringBuffer, 0xFF, 0xF0);
 	return 0;
@@ -802,6 +821,16 @@ void KyraEngine_MR::printAlbumText(int page, const char *str, int x, int y, uint
 	if (_lang == 3) {
 		_screen->setFont(Screen::FID_CHINESE_FNT);
 		_screen->setFontStyles(_screen->_currentFont, Font::kStyleNone);
+	}
+
+	Common::String strr((const char *)str);
+	Common::String revBuffer;
+	if (_flags.lang == Common::HE_ISR) {
+		for (int i = strr.size() - 1; i >= 0; --i)
+			revBuffer += str[i];
+		str = revBuffer.c_str();
+
+		x += 120 - _screen->getTextWidth(str);
 	}
 
 	_screen->printText(str, x, y, c0, 0);

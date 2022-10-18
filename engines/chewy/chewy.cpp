@@ -23,9 +23,9 @@
 #include "common/fs.h"
 #include "common/system.h"
 #include "engines/util.h"
-#include "graphics/palette.h"
 #include "chewy/chewy.h"
-#include "chewy/debugger.h"
+#include "chewy/cursor.h"
+#include "chewy/console.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
@@ -73,7 +73,9 @@ void ChewyEngine::initialize() {
 	_sound = new Sound(_mixer);
 	_video = new VideoPlayer();
 
-	setDebugger(new Debugger());
+	setDebugger(new Console());
+
+	syncSoundSettings();
 }
 
 Common::Error ChewyEngine::run() {
@@ -89,6 +91,12 @@ Common::Error ChewyEngine::run() {
 }
 
 #define SCUMMVM_TAG MKTAG('S', 'C', 'V', 'M')
+
+void ChewyEngine::syncSoundSettings() {
+	_sound->syncSoundSettings();
+
+	Engine::syncSoundSettings();
+}
 
 Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 	exit_room(-1);
@@ -106,24 +114,31 @@ Common::Error ChewyEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
 		_G(flags).LoadGame = true;
 
-		if (_G(gameState).inv_cur && _G(gameState).AkInvent != -1) {
+		if (_G(cur)->usingInventoryCursor()) {
 			_G(menu_item) = CUR_USE;
 		}
 
-		if (_G(gameState).AkInvent != -1)
-			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = -1;
+		if (_G(cur)->usingInventoryCursor())
+			_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].RoomNr = -1;
 		_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
 		load_chewy_taf(_G(gameState).ChewyAni);
 
 		_G(fx_blend) = BLEND1;
 		_G(room)->calc_invent(&_G(room_blk), &_G(gameState));
 
-		if (_G(gameState).AkInvent != -1)
-			_G(gameState).room_m_obj[_G(gameState).AkInvent].RoomNr = 255;
+		if (_G(cur)->usingInventoryCursor())
+			_G(gameState).room_m_obj[_G(cur)->getInventoryCursor()].RoomNr = 255;
 		_G(obj)->sort();
 
 		for (int i = 0; i < MAX_PERSON; i++) {
 			setPersonPos(_G(gameState).X[i], _G(gameState).Y[i], i, _G(gameState).Phase[i]);
+		}
+
+		// WORKAROUND: The original doesn't allow saving in room 47
+		// (combination lock close-up). This workaround fixes loading
+		if (_G(gameState)._personRoomNr[P_CHEWY] == 47) {
+			_G(gameState)._personHide[P_CHEWY] = false;
+			_G(gameState)._personHide[P_HOWARD] = false;
 		}
 
 		_G(auto_obj) = 0;
@@ -139,8 +154,8 @@ Common::Error ChewyEngine::saveGameStream(Common::WriteStream *stream, bool isAu
 	Common::Serializer s(nullptr, stream);
 
 	for (int i = 0; i < MAX_PERSON; i++) {
-		_G(gameState).X[i] = _G(spieler_vector)[i].Xypos[0];
-		_G(gameState).Y[i] = _G(spieler_vector)[i].Xypos[1];
+		_G(gameState).X[i] = _G(moveState)[i].Xypos[0];
+		_G(gameState).Y[i] = _G(moveState)[i].Xypos[1];
 		_G(gameState).Phase[i] = _G(person_end_phase)[i];
 	}
 

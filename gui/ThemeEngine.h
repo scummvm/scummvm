@@ -36,7 +36,7 @@
 #include "graphics/pixelformat.h"
 
 
-#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.3"
+#define SCUMMVM_THEME_VERSION_STR "SCUMMVM_STX0.9.6"
 
 class OSystem;
 
@@ -165,6 +165,10 @@ enum TextColor {
 	kTextColorAlternativeInverted,
 	kTextColorAlternativeHover,
 	kTextColorAlternativeDisabled,
+	kTextColorOverride,
+	kTextColorOverrideInverted,
+	kTextColorOverrideHover,
+	kTextColorOverrideDisabled,
 	kTextColorButton,
 	kTextColorButtonHover,
 	kTextColorButtonDisabled,
@@ -279,8 +283,10 @@ public:
 
 	/// Font color selector
 	enum FontColor {
+		kFontColorFormatting = -1,	///< Use color from formatting
 		kFontColorNormal = 0,       ///< The default color of the theme
 		kFontColorAlternate = 1,    ///< Alternative font color
+		kFontColorOverride = 2,     ///< Color of overwritten text
 		kFontColorMax
 	};
 
@@ -426,9 +432,9 @@ public:
 
 	int getStringWidth(const Common::U32String &str, FontStyle font = kFontStyleBold) const;
 
-	int getCharWidth(byte c, FontStyle font = kFontStyleBold) const;
+	int getCharWidth(uint32 c, FontStyle font = kFontStyleBold) const;
 
-	int getKerningOffset(byte left, byte right, FontStyle font = kFontStyleBold) const;
+	int getKerningOffset(uint32 left, uint32 right, FontStyle font = kFontStyleBold) const;
 
 	//@}
 
@@ -465,7 +471,7 @@ public:
 	void drawSlider(const Common::Rect &r, int width, WidgetStateInfo state = kStateEnabled, bool rtl = false);
 
 	void drawCheckbox(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
-	                  WidgetStateInfo state = kStateEnabled, bool rtl = false);
+	                  WidgetStateInfo state = kStateEnabled, bool override = false, bool rtl = false);
 
 	void drawRadiobutton(const Common::Rect &r, int spacing, const Common::U32String &str, bool checked,
 	                     WidgetStateInfo state = kStateEnabled, bool rtl = false);
@@ -578,7 +584,9 @@ public:
 	 * Interface for the ThemeParser class: adds a text color value.
 	 *
 	 * @param colorId Identifier for the color type.
-	 * @param r, g, b Color of the font.
+	 * @param r Red color component
+	 * @param g Green color component
+	 * @param b Blue color component
 	 */
 	bool addTextColor(TextColor colorId, int r, int g, int b);
 

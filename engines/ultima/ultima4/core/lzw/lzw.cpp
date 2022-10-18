@@ -30,7 +30,8 @@
  * But since U4 uses a hash table in the decoder, this C version must do the same (or it won't be
  * able to decode the U4 files).
  * An article on LZW data (de)compression can be found here:
- * http://dogma.net/markn/articles/lzw/lzw.htm
+ * https://marknelson.us/posts/1989/10/01/lzw-data-compression.html
+ * https://marknelson.us/posts/2011/11/08/lzw-revisited.html
  */
 
 #include "ultima/ultima4/core/lzw/lzw.h"

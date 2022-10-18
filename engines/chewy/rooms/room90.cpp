@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -65,10 +66,9 @@ void Room90::entry(int16 eib_nr) {
 	_G(HowardMov) = 1;
 
 	if (_G(gameState).flags34_40 && !_G(gameState).flags33_40) {
-		_G(det)->setSetailPos(12, 329, 15);
+		_G(det)->setDetailPos(12, 329, 15);
 		_G(det)->startDetail(12, 255, false);
-		g_engine->_sound->playSound(12, 0);
-		g_engine->_sound->playSound(12);
+		_G(det)->playSound(12, 0);
 	}
 
 	if (_G(gameState).flags33_40 && !_G(gameState).flags34_10) {
@@ -128,16 +128,16 @@ void Room90::setup_func() {
 					destX += _G(gameState).r90_Array187030[i][1];
 					if (destX > 540) {
 						_G(gameState).r90_Array187030[i][0] = 0;
-						_G(det)->stop_detail(i + 4);
+						_G(det)->stopDetail(i + 4);
 					}
 				} else {
 					destX -= _G(gameState).r90_Array187030[i][1];
 					if (destX < -30) {
 						_G(gameState).r90_Array187030[i][0] = 0;
-						_G(det)->stop_detail(i + 4);
+						_G(det)->stopDetail(i + 4);
 					}
 				}
-				_G(det)->setSetailPos(i + 4, destX, destY);
+				_G(det)->setDetailPos(i + 4, destX, destY);
 			} else {
 				++_G(gameState).r90_Array187030[i][2];
 				if (_G(gameState).r90_Array187030[i][2] < _G(gameState).r90_Array187030[i][3])
@@ -150,7 +150,7 @@ void Room90::setup_func() {
 				else
 					destX = 500;
 
-				_G(det)->setSetailPos(i + 4, destX, _G(Adi)[i + 4].y);
+				_G(det)->setDetailPos(i + 4, destX, _G(Adi)[i + 4].y);
 				
 				if (!_G(gameState).flags34_40)
 					_G(det)->startDetail(i + 4, 255, false);
@@ -162,7 +162,7 @@ void Room90::setup_func() {
 		return;
 
 	calc_person_look();
-	int xyPos = _G(spieler_vector)[P_CHEWY].Xypos[0];
+	int xyPos = _G(moveState)[P_CHEWY].Xypos[0];
 	int destX;
 
 	if (xyPos > 400)
@@ -234,7 +234,7 @@ void Room90::proc2() {
 }
 
 int Room90::getHubcaps() {
-	if (_G(gameState).inv_cur)
+	if (_G(cur)->usingInventoryCursor())
 		return 0;
 
 	hideCur();
@@ -244,7 +244,7 @@ int Room90::getHubcaps() {
 	start_spz_wait(43, 1, false, P_CHEWY);
 	load_chewy_taf(CHEWY_ANI7);
 
-	while (_G(spieler_vector)[P_HOWARD].Xypos[0] != 176) {
+	while (_G(moveState)[P_HOWARD].Xypos[0] != 176) {
 		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
@@ -256,24 +256,23 @@ int Room90::getHubcaps() {
 	_G(gameState).flags35_1 = true;
 	autoMove(4, P_CHEWY);
 	auto_scroll(176, 0);
-	_G(det)->setSetailPos(12, 495, 15);
+	_G(det)->setDetailPos(12, 495, 15);
 	_G(det)->startDetail(12, 255, false);
-	g_engine->_sound->playSound(12, 0);
-	g_engine->_sound->playSound(12);
+	_G(det)->playSound(12, 0);
 
 	int destX = 495;
 
 	while (destX > 329) {
 		destX -= 2;
-		_G(det)->setSetailPos(12, destX, 15);
+		_G(det)->setDetailPos(12, destX, 15);
 		setupScreen(DO_SETUP);
 		SHOULD_QUIT_RETURN0;
 	}
 
 	startAadWait(517);
 	_G(gameState).flags35_1 = false;
-	_G(atds)->setControlBit(517, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(519, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(517, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(519, ATS_ACTIVE_BIT);
 	showCur();
 
 	return 1;
@@ -284,7 +283,7 @@ int Room90::shootControlUnit() {
 		return 0;
 
 	hideCur();
-	delInventory(_G(gameState).AkInvent);
+	delInventory(_G(cur)->getInventoryCursor());
 	_G(HowardMov) = 2;
 	_G(flags).ZoomMov = false;
 	autoMove(5, P_CHEWY);
@@ -306,9 +305,9 @@ int Room90::shootControlUnit() {
 	_G(flags).NoScroll = false;
 	_G(HowardMov) = 0;
 	_G(gameState).flags33_40 = true;
-	_G(det)->stop_detail(12);
-	_G(atds)->setControlBit(519, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(520, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(det)->stopDetail(12);
+	_G(atds)->setControlBit(519, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(520, ATS_ACTIVE_BIT);
 	_G(flags).ZoomMov = true;
 
 	showCur();
@@ -334,7 +333,7 @@ int Room90::useSurimyOnWreck() {
 	_G(gameState).scrollx = 176;
 	start_spz(45, 255, false, P_CHEWY);
 	startAadWait(519);
-	_G(atds)->setControlBit(520, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(520, ATS_ACTIVE_BIT);
 
 	showCur();
 	return 1;

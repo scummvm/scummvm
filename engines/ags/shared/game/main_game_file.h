@@ -63,7 +63,6 @@ enum MainGameFileErrorType {
 	kMGFErr_CapsNotSupported,
 	kMGFErr_InvalidNativeResolution,
 	kMGFErr_TooManySprites,
-	kMGFErr_TooManyCursors,
 	kMGFErr_InvalidPropertySchema,
 	kMGFErr_InvalidPropertyValues,
 	kMGFErr_CreateGlobalScriptFailed,
@@ -80,11 +79,7 @@ String GetMainGameFileErrorText(MainGameFileErrorType err);
 
 typedef TypedCodeError<MainGameFileErrorType, GetMainGameFileErrorText> MainGameFileError;
 typedef ErrorHandle<MainGameFileError> HGameFileError;
-#ifdef AGS_PLATFORM_SCUMMVM
-typedef std::shared_ptr<Stream> UStream;
-#else
 typedef std::unique_ptr<Stream> UStream;
-#endif
 
 // MainGameSource defines a successfully opened main game file
 struct MainGameSource {
@@ -116,7 +111,7 @@ struct MainGameSource {
 // code refactoring.
 struct LoadedGameEntities {
 	GameSetupStruct &Game;
-	DialogTopic *&Dialogs;
+	std::vector<DialogTopic> Dialogs;
 	std::vector<ViewStruct> Views;
 	PScript                 GlobalScript;
 	PScript                 DialogScript;
@@ -136,9 +131,11 @@ struct LoadedGameEntities {
 	// speech texts displayed during dialog
 	std::vector<String>     OldSpeechLines;
 
-	LoadedGameEntities(GameSetupStruct &game, DialogTopic *&dialogs);
+	LoadedGameEntities(GameSetupStruct &game);
 	~LoadedGameEntities();
 };
+
+class AssetManager;
 
 // Tells if the given path (library filename) contains main game file
 bool               IsMainGameLibrary(const String &filename);
@@ -147,8 +144,8 @@ String             FindGameData(const String &path);
 String             FindGameData(const String &path, bool(*fn_testfile)(const String &));
 // Opens main game file for reading from an arbitrary file
 HGameFileError     OpenMainGameFile(const String &filename, MainGameSource &src);
-// Opens main game file for reading from the asset library (uses default asset name)
-HGameFileError     OpenMainGameFileFromDefaultAsset(MainGameSource &src);
+// Opens main game file for reading using the current Asset Manager (uses default asset name)
+HGameFileError     OpenMainGameFileFromDefaultAsset(MainGameSource &src, AssetManager *mgr);
 // Reads game data, applies necessary conversions to match current format version
 HGameFileError     ReadGameData(LoadedGameEntities &ents, Stream *in, GameDataVersion data_ver);
 // Pre-reads the heading game data, just enough to identify the game and its special file locations

@@ -82,7 +82,7 @@ struct OBJECT {
 	Common::Rect rcPrev;		///< previous screen coordinates of object bounding rectangle
 	int flags;			///< object flags - see above for list
 	PALQ *pPal;			///< objects palette Q position
-	short isRLE;		///< TinselV3, if image is using run-length encoding
+	short isRLE;		///< TinselVersion == 3, if image is using run-length encoding
 	short colorFlags;	/// TinselV3, type of color blending
 	int constant;		///< which color in palette for monochrome objects
 	int width;			///< width of object
@@ -121,8 +121,6 @@ struct OBJECT {
 	OBJECT() { reset(); }
 };
 
-#include "common/pack-start.h"	// START STRUCT PACKING
-
 // object initialisation structure
 struct OBJ_INIT {
 	SCNHANDLE hObjImg;	// objects shape - handle to IMAGE structure
@@ -131,10 +129,7 @@ struct OBJ_INIT {
 	int32 objX;		// objects initial x position
 	int32 objY;		// objects initial y position
 	int32 objZ;		// objects initial z position
-} PACKED_STRUCT;
-
-#include "common/pack-end.h"	// END STRUCT PACKING
-
+};
 
 /*----------------------------------------------------------------------*\
 |*			Object Function Prototypes			*|

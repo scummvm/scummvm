@@ -50,13 +50,13 @@ public:
 	 *                  read the longest vlc code
 	 *                  = (max_vlc_length + bits - 1) / bits
 	 */
-	template <int maxDepth>
-	int getVLC2(int16 (*table)[2], int bits) {
+	template <int maxDepth, int bits>
+	int getVLC2(int16 (*table)[2]) {
 		int code;
 		int n, nbBits;
 		unsigned int index;
 
-		index = peekBits(bits);
+		index = peekBits<bits>();
 		code  = table[index][0];
 		n     = table[index][1];
 

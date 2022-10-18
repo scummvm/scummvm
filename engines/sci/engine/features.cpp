@@ -355,15 +355,23 @@ bool GameFeatures::autoDetectGfxFunctionsType(int methodNum) {
 
 		if (opcode == op_callk) {
 			uint16 kFuncNum = opparams[0];
-			uint16 argc = opparams[1];
+			uint16 argc = opparams[1] / 2;
 
 			if (kFuncNum == 8) {	// kDrawPic	(SCI0 - SCI11)
-				// If kDrawPic is called with 6 parameters from the overlay
-				// selector, the game is using old graphics functions.
-				// Otherwise, if it's called with 8 parameters (e.g. SQ3) or 4 parameters
-				// (e.g. Hoyle 1/2), it's using new graphics functions.
-				_gfxFunctionsType = (argc == 6) ? SCI_VERSION_0_EARLY : SCI_VERSION_0_LATE;
-				return true;
+				// If kDrawPic is called with 3 parameters from the overlay
+				// method then the game is using old graphics functions.
+				// If instead it's called with 4 parameters then it's using
+				// the newer ones. (KQ4 late, SQ3 1.018)
+				// Ignore other arg counts as those are unrelated to overlays
+				// and this detection gets run on all Rm methods when the
+				// overlay selector doesn't exist.
+				if (argc == 3) {
+					_gfxFunctionsType = SCI_VERSION_0_EARLY;
+					return true;
+				} else if (argc == 4) {
+					_gfxFunctionsType = SCI_VERSION_0_LATE;
+					return true;
+				}
 			}
 		}
 	}
@@ -424,9 +432,9 @@ SciVersion GameFeatures::detectGfxFunctionsType() {
 				}
 
 				if (!found) {
-					// No method of the Rm object is calling kDrawPic, thus the
-					// game doesn't have overlays and is using older graphics
-					// functions
+					// No method of the Rm object is calling kDrawPic with
+					// 3 or 4 parameters, thus we assume that the game doesn't
+					// have overlays and is using older graphics functions.
 					_gfxFunctionsType = SCI_VERSION_0_EARLY;
 				}
 			}
@@ -882,6 +890,73 @@ bool GameFeatures::canSaveFromGMM() const {
 		return false;
 	default:
 		return true;
+	}
+}
+
+uint16 GameFeatures::getGameFlagsGlobal() const {
+	Common::Platform platform = g_sci->getPlatform();
+	bool isCD = g_sci->isCD();
+	switch (g_sci->getGameId()) {
+	case GID_CAMELOT: return 250;
+	case GID_CASTLEBRAIN: return 250;
+	case GID_ECOQUEST: return isCD ? 152 : 150;
+	case GID_ECOQUEST2: return 110;
+	case GID_FAIRYTALES: return 250;
+	case GID_FREDDYPHARKAS: return 186;
+	case GID_GK1: return 127;
+	case GID_GK2: return 150;
+	// ICEMAN uses object properties
+	case GID_ISLANDBRAIN: return 250;
+	case GID_KQ1: return 150;
+	// KQ4 has no flags
+	case GID_KQ5: return 129;
+	case GID_KQ6: return 137;
+	case GID_KQ7: return 127;
+	case GID_LAURABOW: return 440;
+	case GID_LAURABOW2: return 186;
+	case GID_LIGHTHOUSE: return 116;
+	case GID_LONGBOW: return 200;
+	case GID_LSL1: return 111;
+	// LSL2 has no flags
+	case GID_LSL3: return 111;
+	case GID_LSL5: return 186;
+	case GID_LSL6: return 137;
+	// LSL6HIRES uses a flags object
+	case GID_PEPPER: return 134;
+	case GID_PHANTASMAGORIA: return 250;
+	case GID_PHANTASMAGORIA2: return 101;
+	case GID_PQ1: return 134;
+	case GID_PQ2: return (platform != Common::kPlatformPC98) ? 250 : 245;
+	case GID_PQ3: return 165;
+	// PQ4 uses object properties
+	case GID_PQSWAT: return 150;
+	case GID_QFG1: return 350;
+	case GID_QFG1VGA: return 290;
+	case GID_QFG2: return 700;
+	case GID_QFG3: return 500;
+	case GID_QFG4: return 500;
+	case GID_RAMA: return 300;
+	case GID_SHIVERS: return 209;
+	case GID_SQ1: return 118;
+	case GID_SQ4: return 114;
+	case GID_SQ5: return 183;
+	case GID_SQ6: return 250;
+	// TORIN uses a flags object
+	default: return 0;
+	}
+}
+
+bool GameFeatures::isGameFlagBitOrderNormal() const {
+	// Most games store flags in reverse bit order
+	switch (g_sci->getGameId()) {
+	case GID_KQ5:
+	case GID_LAURABOW:
+	case GID_PEPPER:
+	case GID_PQ1:
+	case GID_PQ3:
+		return true;
+	default:
+		return false;
 	}
 }
 

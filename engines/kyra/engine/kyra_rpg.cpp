@@ -30,16 +30,16 @@
 #include "common/func.h"
 #include "common/system.h"
 
+#include "base/version.h"
+
 namespace Kyra {
 
 KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngine_v1(system, flags), _numFlyingObjects(_flags.gameID == GI_LOL ? 8 : 10) {
 	_txt = 0;
 	_mouseClick = 0;
 	_preserveEvents = _buttonListChanged = false;
-
 	_sceneXoffset = 0;
 	_sceneShpDim = 5;
-
 	_activeButtons = 0;
 
 	_currentLevel = 0;
@@ -108,7 +108,13 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 	_dscDoorFrameIndex2 = 0;
 
 	_shpDmX1 = _shpDmX2 = 0;
+	_itemIconShapes = nullptr;
+	_itemInHand = _sceneDrawPage1 = _sceneDrawPage2 = _dscDoorShpIndexSize = 0;
+	_levelDecorationDataSize = _dialogueButtonWidth = 0;
+	 _dialogueButtonLabelColor1 = _dialogueButtonLabelColor2 = 0;
+	_moreStrings = nullptr;
 
+	memset(_visibleBlocks, 0, sizeof(_visibleBlocks));
 	memset(_openDoorState, 0, sizeof(_openDoorState));
 	memset(_dialogueButtonString, 0, 3 * sizeof(const char *));
 	_dialogueButtonPosX = 0;
@@ -128,6 +134,13 @@ KyraRpgEngine::KyraRpgEngine(OSystem *system, const GameFlags &flags) : KyraEngi
 
 	_environmentSfx = _environmentSfxVol = _envSfxDistThreshold = 0;
 	_monsterStepCounter = _monsterStepMode = 0;
+
+	uint slen = Common::String(gScummVMVersion).size();
+	for (uint i = 0; i < slen; ++i) {
+		if (!(gScummVMVersion[i] >= '0' && gScummVMVersion[i] <= '9') && gScummVMVersion[i] != '.')
+			break;
+		_versionString += gScummVMVersion[i];
+	}
 
 	_buttonFont = Screen::FID_6_FNT;
 	if (_flags.use16ColorMode)

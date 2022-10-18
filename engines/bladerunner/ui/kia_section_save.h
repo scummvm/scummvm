@@ -83,6 +83,8 @@ public:
 	void handleMouseUp(bool mainButton) override;
 	void handleMouseScroll(int direction) override;
 
+	void handleCustomEventStart(const Common::Event &evt) override;
+	void handleCustomEventStop(const Common::Event &evt) override;
 private:
 	static void scrollBoxCallback(void *callbackData, void *source, int lineData, int mouseButton);
 	static void inputBoxCallback(void *callbackData, void *source);

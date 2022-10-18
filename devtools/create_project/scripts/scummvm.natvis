@@ -130,12 +130,21 @@
     </Expand>
   </Type>
 
+  <Type Name="Common::WeakPtr&lt;*&gt;">
+    <DisplayString Condition="_pointer == 0">nullptr</DisplayString>
+    <DisplayString Condition="_pointer != 0">{*_pointer}</DisplayString>
+    <Expand>
+      <Item Condition="_pointer != 0" Name="[ptr]">_pointer</Item>
+      <Item Condition="_tracker != 0" Name="[refCount]">_tracker->_strongRefCount</Item>
+    </Expand>
+  </Type>
+
   <Type Name="Common::SharedPtr&lt;*&gt;">
     <DisplayString Condition="_pointer == 0">nullptr</DisplayString>
     <DisplayString Condition="_pointer != 0">{*_pointer}</DisplayString>
     <Expand>
       <Item Condition="_pointer != 0" Name="[ptr]">_pointer</Item>
-      <Item Condition="_refCount != 0" Name="[refCount]">*_refCount</Item>
+      <Item Condition="_tracker != 0" Name="[refCount]">_tracker->_strongRefCount</Item>
     </Expand>
   </Type>
 </AutoVisualizer>

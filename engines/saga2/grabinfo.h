@@ -58,24 +58,24 @@ private:
 protected:
 
 	// bitmaps for pointer
-	gPixelMap   pointerMap;
-	Point16     pointerOffset;          // mouse ptr hotspot
+	gPixelMap   _pointerMap;
+	Point16     _pointerOffset;          // mouse ptr hotspot
 
-	Location    from;                   // where the item was last
+	Location    _from;                   // where the item was last
 
-	ObjectID    grabId;                 // which object picked by mouse
-	GameObject  *grabObj;               // object being dragged
-	Intent      intention;              // pickup state
-	bool        intentDoable;           // is intention doable?
+	ObjectID    _grabId;                 // which object picked by mouse
+	GameObject  *_grabObj;               // object being dragged
+	Intent      _intention;              // pickup state
+	bool        _intentDoable;           // is intention doable?
 	// (i.e. display red X cursor)
-	bool        displayGauge;           // indicates wether or not to show
+	bool        _displayGauge;           // indicates wether or not to show
 	// the gauge
-	int16       gaugeNumerator,         // values to be displayed on the
-	            gaugeDenominator;       // gauge
+	int16       _gaugeNumerator,         // values to be displayed on the
+	            _gaugeDenominator;       // gauge
 
-	int16       moveCount;              // number of items being moved in cursor
+	int16       _moveCount;              // number of items being moved in cursor
 
-	char        textBuf[bufSize];
+	char        _textBuf[bufSize];
 
 	// internal grab commonality
 	void setIcon();
@@ -96,7 +96,7 @@ public:
 	// mergeable or not.
 	void    setMoveCount(int16 val);
 	int16   getMoveCount() {
-		return moveCount;
+		return _moveCount;
 	}
 
 	// put object into mouse ptr
@@ -108,26 +108,26 @@ public:
 
 	// non-destructive reads of the state
 	uint8       getIntent()       {
-		return intention;
+		return _intention;
 	}
 	bool        getDoable()       {
-		return intentDoable;
+		return _intentDoable;
 	}
 
 	// changes to GrabInfo state
 	uint8       setIntent(uint8 in);
 	void        setDoable(bool doable) {
-		if (doable != intentDoable) {
-			intentDoable = doable;
+		if (doable != _intentDoable) {
+			_intentDoable = doable;
 			setCursor();
 		}
 	}
 
 	GameObject  *getObject()  {
-		return grabObj;
+		return _grabObj;
 	}
 	ObjectID    getObjectId() {
-		return grabId;
+		return _grabId;
 	}
 
 	// free the cursor

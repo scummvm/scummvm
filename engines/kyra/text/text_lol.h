@@ -43,7 +43,7 @@ public:
 	void setupField(bool mode);
 	void expandField();
 
-	void printDialogueText2(int dim, char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	void printDialogueText2(int dim, const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void printMessage(uint16 type, const char *str, ...) GCC_PRINTF(3, 4);
 
 	int16 _scriptTextParameter;
@@ -52,7 +52,7 @@ private:
 	KyraRpgEngine *vm() override;
 	Screen *screen() override;
 
-	void preprocessString(char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
+	void preprocessString(const char *str, EMCState *script, const uint16 *paramList, int16 paramIndex);
 	void textPageBreak() override;
 
 	char *_stringParameters[15];

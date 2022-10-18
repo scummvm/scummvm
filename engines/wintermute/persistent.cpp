@@ -100,7 +100,7 @@
 #include "engines/wintermute/ad/ad_path3d.h"
 #include "engines/wintermute/ad/ad_path_point3d.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #endif
 
 // SystemClass adds these objects to the registry, thus they aren't as leaked as they look
@@ -193,7 +193,7 @@ void SystemClassRegistry::register3DClasses() {
 	REGISTER_CLASS(AdPath3D, false)
 	REGISTER_CLASS(AdPathPoint3D, false)
 	REGISTER_CLASS(AdSceneGeometry, false)
-	REGISTER_CLASS(ModelX, false)
+	REGISTER_CLASS(XModel, false)
 }
 #endif
 

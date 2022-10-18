@@ -54,7 +54,7 @@ void Background::InitBackground() {
 	_pCurBgnd->bAutoErase = false;
 
 	int numPlayFields = 2;
-	if (TinselV3) {
+	if (TinselVersion == 3) {
 		numPlayFields = 9;
 	}
 	for (int i = 0; i < numPlayFields; ++i) {
@@ -237,7 +237,7 @@ void Background::DrawBackgnd() {
 		}
 	}
 
-	if (!TinselV3) {
+	if (TinselVersion != 3) {
 		// transfer any new palettes to the video DAC
 		PalettesToVideoDAC();
 	}
@@ -273,7 +273,7 @@ void Background::SetBackPal(SCNHANDLE hPal) {
 void Background::DropBackground() {
 	_pBG[0] = nullptr;	// No background
 
-	if (!TinselV2)
+	if (TinselVersion <= 1)
 		_hBgPal = 0;	// No background palette
 }
 

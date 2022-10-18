@@ -100,28 +100,6 @@ void msetcursorlimit(int x1, int y1, int x2, int y2) {
 	_G(boundy2) = y2;
 }
 
-void domouse(int str) {
-	int poow = _G(mousecurs)[(int)_G(currentcursor)]->GetWidth();
-	int pooh = _G(mousecurs)[(int)_G(currentcursor)]->GetHeight();
-	//int smx = _G(mousex) - _G(hotxwas), smy = _G(mousey) - _G(hotywas);
-	const Rect &viewport = _GP(play).GetMainViewport();
-
-	mgetgraphpos();
-	_G(mousex) -= _G(hotx);
-	_G(mousey) -= _G(hoty);
-
-	if (_G(mousex) + poow >= viewport.GetWidth())
-		poow = viewport.GetWidth() - _G(mousex);
-
-	if (_G(mousey) + pooh >= viewport.GetHeight())
-		pooh = viewport.GetHeight() - _G(mousey);
-
-	_G(mousex) += _G(hotx);
-	_G(mousey) += _G(hoty);
-	_G(hotxwas) = _G(hotx);
-	_G(hotywas) = _G(hoty);
-}
-
 void msetgraphpos(int xa, int ya) {
 	_G(real_mouse_x) = xa;
 	_G(real_mouse_y) = ya;
@@ -182,7 +160,7 @@ float Mouse::GetSpeedUnit() {
 }
 
 void Mouse::SetSpeed(float speed) {
-	SpeedVal = Math::Max(0.f, speed);
+	SpeedVal = MAX(0.f, speed);
 	Speed = SpeedUnit * SpeedVal;
 }
 

@@ -46,12 +46,9 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 	if (stream == nullptr)
 		Fatal_error(pxVString("Failed to open cluster: %s", clustername.c_str()));
 
-	// Read in first 16 bytes so we can get the header size
-	uint32 data[4];
-	stream->read(data, sizeof(uint32) * 4);
-
 	// Get the size in bytes of the cluster header
-	uint32 clustersize = data[2];
+	stream->skip(8);
+	uint32 clustersize = stream->readUint32LE();
 
 	// Seek to beginning of file
 	stream->seek(0, SEEK_SET);
@@ -70,12 +67,12 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 	Cluster_API *clu = (Cluster_API *)memory;
 
 	// Look for the file in the cluster
-	int32 nFiles = (int32)clu->ho.noFiles;
+	int32 nFiles = (int32)FROM_LE_32(clu->ho.noFiles);
 
 	int32 i;
 	for (i = 0; i < nFiles; i++) {
 		// Have we found it
-		if (hash_to_find == clu->hn[i].hash)
+		if (hash_to_find == FROM_LE_32(clu->hn[i].hash))
 			break;
 	}
 
@@ -88,8 +85,8 @@ bool8 DoesClusterContainFile(pxString clustername, uint32 hash_to_find, uint32 &
 	}
 
 	// Get the figures we need for streaming
-	filesize = clu->hn[i].size;
-	fileoffset = clu->hn[i].offset;
+	filesize = FROM_LE_32(clu->hn[i].size);
+	fileoffset = FROM_LE_32(clu->hn[i].offset);
 
 	// Tidy up
 	delete[] memory;

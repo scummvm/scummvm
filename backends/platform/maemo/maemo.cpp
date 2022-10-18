@@ -50,7 +50,7 @@ OSystem_SDL_Maemo::~OSystem_SDL_Maemo() {
 void OSystem_SDL_Maemo::init() {
 	// Use an iconless window for Maemo
 	// also N900 is hit by SDL_WM_SetIcon bug (window cannot receive input)
-	// http://bugzilla.libsdl.org/show_bug.cgi?id=586
+	// https://github.com/libsdl-org/SDL-1.2/issues/403
 	initSDL();
 	_window = new SdlIconlessWindow();
 

@@ -20,7 +20,7 @@
  */
 
 // ROQ video player based on this specification by Dr. Tim Ferguson:
-// http://www.csse.monash.edu.au/~timf/videocodec/idroq.txt
+// https://multimedia.cx/mirror/idroq.txt
 
 #include "groovie/video/roq.h"
 #include "groovie/graphics.h"
@@ -43,7 +43,7 @@
 #include "audio/mixer.h"
 #include "audio/decoders/raw.h"
 
-#include <common/file.h>
+#include "common/file.h"
 #ifdef USE_PNG
 #include "image/png.h"
 #else
@@ -496,7 +496,7 @@ bool ROQPlayer::processBlock() {
 	}
 
 	// Calculate where the block should end
-	int32 endpos = _file->pos() + blockHeader.size;
+	int64 endpos = _file->pos() + blockHeader.size;
 
 	// Detect the end of the video
 	if (_file->eos()) {
@@ -544,10 +544,10 @@ bool ROQPlayer::processBlock() {
 		_file->skip(blockHeader.size);
 	}
 
-	if (endpos != _file->pos()) {
-		warning("Groovie::ROQ: BLOCK %04x Should have ended at %d, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
+	if (endpos != _file->pos() && !_file->eos()) {
+		warning("Groovie::ROQ: BLOCK %04x Should have ended at %ld, and has ended at %d", blockHeader.type, endpos, (int)_file->pos());
 		warning("Ensure you've copied the files correctly according to the wiki.");
-		_file->seek(endpos);
+		_file->seek(MIN(_file->pos(), endpos));
 	}
 	// End the frame when the graphics have been modified or when there's an error
 	return endframe || !ok;
@@ -674,7 +674,7 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	_motionOffY = blockHeader.param & 0xFF;
 
 	// Calculate where the block should end
-	int32 endpos =_file->pos() + blockHeader.size;
+	int64 endpos =_file->pos() + blockHeader.size;
 
 	// Reset the coding types
 	_codingTypeCount = 0;
@@ -692,11 +692,14 @@ bool ROQPlayer::processBlockQuadVector(ROQBlockHeader &blockHeader) {
 	}
 
 	// HACK: Skip the remaining bytes
-	int32 skipBytes = endpos -_file->pos();
+	int64 skipBytes = endpos -_file->pos();
 	if (skipBytes > 0) {
+		if (_file->eos()) {
+			return false;
+		}
 		_file->skip(skipBytes);
 		if (skipBytes != 2) {
-			warning("Groovie::ROQ: Skipped %d bytes", skipBytes);
+			warning("Groovie::ROQ: Skipped %ld bytes", skipBytes);
 		}
 	}
 	return true;

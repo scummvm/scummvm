@@ -64,9 +64,9 @@ void Room9::gtuer() {
 	_G(det)->showStaticSpr(5);
 	startSetAILWait(6, 1, ANI_FRONT);
 	setPersonPos(74, 93, P_CHEWY, P_LEFT);
-	_G(atds)->delControlBit(74, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(75, ATS_ACTIVE_BIT, ATS_DATA);
-	_G(atds)->delControlBit(76, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->delControlBit(74, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(75, ATS_ACTIVE_BIT);
+	_G(atds)->delControlBit(76, ATS_ACTIVE_BIT);
 	_G(obj)->show_sib(34);
 	_G(atds)->set_ats_str(73, 1, ATS_DATA);
 }
@@ -74,17 +74,17 @@ void Room9::gtuer() {
 void Room9::surimy() {
 	hideCur();
 	_G(gameState).R9Surimy = true;
-	const int16 tmp = _G(spieler_vector)[P_CHEWY].Count;
+	const int16 tmp = _G(moveState)[P_CHEWY].Count;
 	stopPerson(P_CHEWY);
-	_G(atds)->setControlBit(75, ATS_ACTIVE_BIT, ATS_DATA);
+	_G(atds)->setControlBit(75, ATS_ACTIVE_BIT);
 	_G(det)->hideStaticSpr(4);
 	_G(room)->set_timer_status(7, TIMER_STOP);
 	surimy_ani();
 	start_spz(CH_TALK11, 255, false, P_CHEWY);
 	startAadWait(56);
 	_G(gameState).room_e_obj[17].Attribut = EXIT_RIGHT;
-	_G(spieler_vector)[P_CHEWY].Count = tmp;
-	get_phase(&_G(spieler_vector)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
+	_G(moveState)[P_CHEWY].Count = tmp;
+	get_phase(&_G(moveState)[P_CHEWY], &_G(spieler_mi)[P_CHEWY]);
 	_G(mov)->continue_auto_go();
 	showCur();
 }

@@ -29,6 +29,7 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/shared/ac/game_version.h"
 #include "ags/engine/media/audio/audio_system.h"
+#include "ags/shared/util/math.h"
 #include "ags/shared/debugging/out.h"
 #include "ags/engine/script/script_api.h"
 #include "ags/engine/script/script_runtime.h"
@@ -36,8 +37,7 @@
 
 namespace AGS3 {
 
-using AGS::Shared::Bitmap;
-using AGS::Shared::Graphics;
+using namespace AGS::Shared;
 
 int ViewFrame_GetFlipped(ScriptViewFrame *svf) {
 	if (_GP(views)[svf->view].loops[svf->loop].frames[svf->frame].flags & VFLG_FLIPSPRITE)
@@ -117,15 +117,15 @@ void precache_view(int view) {
 	}
 }
 
-// the specified frame has just appeared, see if we need
-// to play a sound or whatever
+// Handle the new animation frame (play linked sounds, etc)
 void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 	ScriptAudioChannel *channel = nullptr;
+	// Play a sound, if one is linked to this frame
 	if (_GP(game).IsLegacyAudioSystem()) {
 		// sound field contains legacy sound num, so we also need an actual clip index
 		const int sound = _GP(views)[view].loops[loop].frames[frame].sound;
-		int &clip_id = _GP(views)[view].loops[loop].frames[frame].audioclip;
 		if (sound > 0) {
+			int &clip_id = _GP(views)[view].loops[loop].frames[frame].audioclip;
 			if (clip_id < 0) {
 				ScriptAudioClip *clip = GetAudioClipForOldStyleNumber(_GP(game), false, sound);
 				if (!clip)
@@ -136,13 +136,12 @@ void CheckViewFrame(int view, int loop, int frame, int sound_volume) {
 		}
 	} else {
 		if (_GP(views)[view].loops[loop].frames[frame].sound >= 0) {
-			// play this sound (eg. footstep)
 			channel = play_audio_clip_by_index(_GP(views)[view].loops[loop].frames[frame].sound);
 		}
 	}
-	if (sound_volume != SCR_NO_VALUE && channel != nullptr) {
+	if (channel && (sound_volume >= 0)) {
+		sound_volume = Math::Clamp(sound_volume, 0, 100);
 		auto *ch = AudioChans::GetChannel(channel->id);
-
 		if (ch)
 			ch->set_volume100(ch->get_volume100() * sound_volume / 100);
 	}
@@ -157,14 +156,14 @@ void DrawViewFrame(Bitmap *ds, const ViewFrame *vframe, int x, int y, bool alpha
 		Bitmap *src = vf_bmp;
 		if (vframe->flags & VFLG_FLIPSPRITE) {
 			src = new Bitmap(vf_bmp->GetWidth(), vf_bmp->GetHeight(), vf_bmp->GetColorDepth());
-			src->FlipBlt(vf_bmp, 0, 0, Shared::kBitmap_HFlip);
+			src->FlipBlt(vf_bmp, 0, 0, Shared::kFlip_Horizontal);
 		}
 		draw_sprite_support_alpha(ds, true, x, y, src, (_GP(game).SpriteInfos[vframe->pic].Flags & SPF_ALPHACHANNEL) != 0);
 		if (src != vf_bmp)
 			delete src;
 	} else {
 		if (vframe->flags & VFLG_FLIPSPRITE)
-			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_HFlip);
+			ds->FlipBlt(_GP(spriteset)[vframe->pic], x, y, Shared::kFlip_Horizontal);
 		else
 			ds->Blit(_GP(spriteset)[vframe->pic], x, y, Shared::kBitmap_Transparency);
 	}

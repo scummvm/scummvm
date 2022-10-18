@@ -220,14 +220,14 @@ public:
 	void ParseText(ScriptMethodParams &params);
 	void PauseGame(ScriptMethodParams &params);
 	void PlayAmbientSound(ScriptMethodParams &params);
-	void play_flc_file(ScriptMethodParams &params);
+	void PlayFlic(ScriptMethodParams &params);
 	void PlayMP3File(ScriptMethodParams &params);
 	void PlayMusicResetQueue(ScriptMethodParams &params);
 	void PlayMusicQueued(ScriptMethodParams &params);
 	void PlaySilentMIDI(ScriptMethodParams &params);
 	void play_sound(ScriptMethodParams &params);
 	void PlaySoundEx(ScriptMethodParams &params);
-	void scrPlayVideo(ScriptMethodParams &params);
+	void PlayVideo(ScriptMethodParams &params);
 	void RoomProcessClick(ScriptMethodParams &params);
 	void QuitGame(ScriptMethodParams &params);
 	void __Rand(ScriptMethodParams &params);
@@ -394,6 +394,7 @@ public:
 	void scrWait(ScriptMethodParams &params);
 	void WaitKey(ScriptMethodParams &params);
 	void WaitMouseKey(ScriptMethodParams &params);
+	void WaitInput(ScriptMethodParams &params);
 };
 
 } // namespace Core

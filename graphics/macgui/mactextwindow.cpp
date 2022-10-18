@@ -111,6 +111,17 @@ void MacTextWindow::resize(int w, int h, bool inner) {
 	_mactext->resize(_maxWidth, h);
 }
 
+void MacTextWindow::setDimensions(const Common::Rect &r) {
+	resize(r.width(), r.height());
+	_dims.moveTo(r.left, r.top);
+	updateInnerDims();
+
+	_contentIsDirty = true;
+	_wm->setFullRefresh(true);
+
+	_mactext->setDimensions(Common::Rect(_innerDims.width(), _innerDims.height()));
+}
+
 void MacTextWindow::appendText(const Common::U32String &str, const MacFont *macFont, bool skipAdd) {
 	// the reason we put undrawInput here before appendText, is we don't want the appended text affect our input
 	// thus, we first delete all of out input, and we append new text, and we redraw the input
@@ -215,6 +226,9 @@ bool MacTextWindow::draw(bool forceRedraw) {
 
 	// Compose
 	_mactext->draw(_composeSurface, true);
+
+	if (_cursorState)
+		_composeSurface->blitFrom(*_cursorSurface, *_cursorRect, Common::Point(_cursorX, _cursorY));
 
 	return true;
 }
@@ -535,6 +549,8 @@ void MacTextWindow::scroll(int delta) {
 	_cursorY -= (_scrollPos - oldScrollPos);
 	_contentIsDirty = true;
 	_borderIsDirty = true;
+
+	_mactext->scroll(delta);
 }
 
 void MacTextWindow::startMarking(int x, int y) {
@@ -621,7 +637,7 @@ static void cursorTimerHandler(void *refCon) {
 
 void MacTextWindow::updateCursorPos() {
 	_cursorY = _mactext->getTextHeight() - _scrollPos - kCursorHeight;
-
+	_cursorY += _inputText.empty() ? 3 : 0;
 	_cursorDirty = true;
 }
 

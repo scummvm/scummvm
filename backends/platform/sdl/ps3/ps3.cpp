@@ -88,6 +88,10 @@ void OSystem_PS3::initBackend() {
 	ConfMan.registerDefault("fullscreen", true);
 	ConfMan.registerDefault("aspect_ratio", true);
 
+	ConfMan.setBool("fullscreen", true);
+	if (!ConfMan.hasKey("aspect_ratio"))
+		ConfMan.setBool("aspect_ratio", true);
+
 	// Create the savefile manager
 	if (_savefileManager == 0)
 		_savefileManager = new DefaultSaveFileManager(PREFIX "/saves");
@@ -119,4 +123,15 @@ Common::HardwareInputSet *OSystem_PS3::getHardwareInputSet() {
 	inputSet->addHardwareInputSet(new JoystickHardwareInputSet(playstationJoystickButtons, playstationJoystickAxes));
 
 	return inputSet;
+}
+
+bool OSystem_PS3::hasFeature(Feature f) {
+	if (f == kFeatureDisplayLogFile ||
+	    f == kFeatureOpenUrl ||
+	    f == kFeatureSystemBrowserDialog ||
+	    f == kFeatureClipboardSupport) {
+		return false;
+	}
+
+	return OSystem_SDL::hasFeature(f);
 }

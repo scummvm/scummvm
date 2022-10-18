@@ -182,8 +182,17 @@ public:
 	/** Returns whether there is a SavesSyncRequest running. */
 	virtual bool isSyncing();
 
-	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
+	/** Returns a number in [0, 1] range which represents current sync downloading progress (1 = complete). */
 	virtual double getSyncDownloadingProgress();
+
+	struct SyncDownloadingInfo {
+		uint64 bytesDownloaded = 0, bytesToDownload = 0;
+		uint64 filesDownloaded = 0, filesToDownload = 0;
+		bool inProgress = false;
+	};
+
+	/** Fills a struct with numbers about current sync downloading progress. */
+	virtual void getSyncDownloadingInfo(SyncDownloadingInfo &info);
 
 	/** Returns a number in [0, 1] range which represents current sync progress (1 = complete). */
 	virtual double getSyncProgress();
@@ -193,9 +202,6 @@ public:
 
 	/** Cancels running sync. */
 	virtual void cancelSync();
-
-	/** Sets SavesSyncRequest's target to given CommandReceiver. */
-	virtual void setSyncTarget(GUI::CommandReceiver *target);
 
 protected:
 	/** Finishes the sync. Shows an OSD message. */

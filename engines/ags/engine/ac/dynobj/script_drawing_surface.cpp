@@ -74,41 +74,42 @@ const char *ScriptDrawingSurface::GetType() {
 	return "DrawingSurface";
 }
 
-int ScriptDrawingSurface::Serialize(const char *address, char *buffer, int bufsize) {
-	StartSerialize(buffer);
+size_t ScriptDrawingSurface::CalcSerializeSize() {
+	return sizeof(int32_t) * 9;
+}
+
+void ScriptDrawingSurface::Serialize(const char *address, Stream *out) {
 	// pack mask type in the last byte of a negative integer
 	// note: (-1) is reserved for "unused", for backward compatibility
 	if (roomMaskType > 0)
-		SerializeInt(0xFFFFFF00 | roomMaskType);
+		out->WriteInt32(0xFFFFFF00 | roomMaskType);
 	else
-		SerializeInt(roomBackgroundNumber);
-	SerializeInt(dynamicSpriteNumber);
-	SerializeInt(dynamicSurfaceNumber);
-	SerializeInt(currentColour);
-	SerializeInt(currentColourScript);
-	SerializeInt(highResCoordinates);
-	SerializeInt(modified);
-	SerializeInt(hasAlphaChannel);
-	SerializeInt(isLinkedBitmapOnly ? 1 : 0);
-	return EndSerialize();
+		out->WriteInt32(roomBackgroundNumber);
+	out->WriteInt32(dynamicSpriteNumber);
+	out->WriteInt32(dynamicSurfaceNumber);
+	out->WriteInt32(currentColour);
+	out->WriteInt32(currentColourScript);
+	out->WriteInt32(highResCoordinates);
+	out->WriteInt32(modified);
+	out->WriteInt32(hasAlphaChannel);
+	out->WriteInt32(isLinkedBitmapOnly ? 1 : 0);
 }
 
-void ScriptDrawingSurface::Unserialize(int index, const char *serializedData, int dataSize) {
-	StartUnserialize(serializedData, dataSize);
-	int room_ds = UnserializeInt();
+void ScriptDrawingSurface::Unserialize(int index, Stream *in, size_t data_sz) {
+	int room_ds = in->ReadInt32();
 	if (room_ds >= 0)
 		roomBackgroundNumber = room_ds;
 	// negative value may contain a mask type
 	else if ((room_ds & 0xFF) != 0xFF)
 		roomMaskType = (RoomAreaMask)(room_ds & 0xFF);
-	dynamicSpriteNumber = UnserializeInt();
-	dynamicSurfaceNumber = UnserializeInt();
-	currentColour = UnserializeInt();
-	currentColourScript = UnserializeInt();
-	highResCoordinates = UnserializeInt();
-	modified = UnserializeInt();
-	hasAlphaChannel = UnserializeInt();
-	isLinkedBitmapOnly = (UnserializeInt() != 0);
+	dynamicSpriteNumber = in->ReadInt32();
+	dynamicSurfaceNumber = in->ReadInt32();
+	currentColour = in->ReadInt32();
+	currentColourScript = in->ReadInt32();
+	highResCoordinates = in->ReadInt32();
+	modified = in->ReadInt32();
+	hasAlphaChannel = in->ReadInt32();
+	isLinkedBitmapOnly = (in->ReadInt32() != 0);
 	ccRegisterUnserializedObject(index, this, this);
 }
 

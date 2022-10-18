@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_DYNOBJ__CCAUDIOCHANNEL_H
-#define AGS_ENGINE_DYNOBJ__CCAUDIOCHANNEL_H
+#ifndef AGS_ENGINE_DYNOBJ_CC_AUDIO_CHANNEL_H
+#define AGS_ENGINE_DYNOBJ_CC_AUDIO_CHANNEL_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
@@ -28,8 +28,12 @@ namespace AGS3 {
 
 struct CCAudioChannel final : AGSCCDynamicObject {
 	const char *GetType() override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
+protected:
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize() override;
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 };
 
 } // namespace AGS3

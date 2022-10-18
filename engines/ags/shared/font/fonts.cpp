@@ -38,7 +38,7 @@ using namespace AGS::Shared;
 
 FontInfo::FontInfo()
 	: Flags(0)
-	, SizePt(0)
+	, Size(0)
 	, SizeMultiplier(1)
 	, Outline(FONT_OUTLINE_NONE)
 	, YOffset(0)
@@ -73,54 +73,96 @@ bool is_font_loaded(size_t fontNumber) {
 }
 
 // Finish font's initialization
-static void post_init_font(size_t fontNumber, int load_mode) {
+static void font_post_init(size_t fontNumber) {
 	Font &font = _GP(fonts)[fontNumber];
-	if (font.Metrics.Height == 0) {
-		// There is no explicit method for getting maximal possible height of any
-		// random font renderer at the moment; the implementations of GetTextHeight
-		// are allowed to return varied results depending on the text parameter.
-		// We use special line of text to get more or less reliable font height.
-		const char *height_test_string = "ZHwypgfjqhkilIK";
-		int height = font.Renderer->GetTextHeight(height_test_string, fontNumber);
-		font.Metrics.Height = height;
-		font.Metrics.RealHeight = height;
+	// If no font height property was provided, then try several methods,
+	// depending on which interface is available
+	if (font.Metrics.Height == 0 && font.Renderer) {
+		int height = 0;
+		if (font.Renderer2)
+			height = font.Renderer2->GetFontHeight(fontNumber);
+		if (height <= 0) {
+			// With the old renderer we have to rely on GetTextHeight;
+			// the implementations of GetTextHeight are allowed to return varied
+			// results depending on the text parameter.
+			// We use special line of text to get more or less reliable font height.
+			const char *height_test_string = "ZHwypgfjqhkilIK";
+			height = font.Renderer->GetTextHeight(height_test_string, fontNumber);
+		}
+
+		font.Metrics.Height = std::max(0, height);
+		font.Metrics.RealHeight = font.Metrics.Height;
 	}
-	font.Metrics.CompatHeight = (load_mode & FONT_LOAD_REPORTREALHEIGHT) == 0 ?
+	// Use either nominal or real pixel height to define font's logical height
+	// and default linespacing; logical height = nominal height is compatible with the old games
+	font.Metrics.CompatHeight = (font.Info.Flags & FFLG_REPORTNOMINALHEIGHT) != 0 ?
 		font.Metrics.Height : font.Metrics.RealHeight;
 
 	if (font.Info.Outline != FONT_OUTLINE_AUTO) {
 		font.Info.AutoOutlineThickness = 0;
 	}
 
-	// If there's no explicit linespacing property set, then calculate
-	// default linespacing from the font height + outline thickness.
+	// If no linespacing property was provided, then try several methods,
+	// depending on which interface is available
 	font.LineSpacingCalc = font.Info.LineSpacing;
 	if (font.Info.LineSpacing == 0) {
-		font.Info.Flags |= FFLG_DEFLINESPACING;
-		const int height = font.Metrics.Height;
-		font.LineSpacingCalc = height + 2 * font.Info.AutoOutlineThickness;
-		// NOTE: we use formal font height to define default linespacing;
-		// this is compatible with the old games and also seem to give nicer
-		// looks (plus user may always setup custom linespacing).
-		// If real height will be wanted, check for FONT_LOAD_REPORTREALHEIGHT
-		// flag in "load_mode" to know when to apply real or formal height.
+		int linespacing = 0;
+		if (font.Renderer2)
+			linespacing = font.Renderer2->GetLineSpacing(fontNumber);
+		if (linespacing > 0) {
+			font.LineSpacingCalc = linespacing;
+		} else {
+			// Calculate default linespacing from the font height + outline thickness.
+			font.Info.Flags |= FFLG_DEFLINESPACING;
+			font.LineSpacingCalc = font.Metrics.CompatHeight + 2 * font.Info.AutoOutlineThickness;
+		}
 	}
 }
 
-IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer, int load_mode) {
+static void font_replace_renderer(size_t fontNumber, IAGSFontRenderer* renderer, IAGSFontRenderer2* renderer2) {
+	_GP(fonts)[fontNumber].Renderer = renderer;
+	_GP(fonts)[fontNumber].Renderer2 = renderer2;
+	// If this is one of our built-in font renderers, then correctly
+	// reinitialize interfaces and font metrics
+	if ((renderer == &_GP(ttfRenderer)) || (renderer == &_GP(wfnRenderer))) {
+		_GP(fonts)[fontNumber].RendererInt = static_cast<IAGSFontRendererInternal*>(renderer);
+		_GP(fonts)[fontNumber].RendererInt->GetFontMetrics(fontNumber, &_GP(fonts)[fontNumber].Metrics);
+	} else {
+		// Otherwise, this is probably coming from plugin
+		_GP(fonts)[fontNumber].RendererInt = nullptr;
+		_GP(fonts)[fontNumber].Metrics = FontMetrics(); // reset to defaults
+	}
+	font_post_init(fontNumber);
+}
+
+
+IAGSFontRenderer *font_replace_renderer(size_t fontNumber, IAGSFontRenderer *renderer) {
 	if (fontNumber >= _GP(fonts).size())
 		return nullptr;
-	IAGSFontRenderer *oldRender = _GP(fonts)[fontNumber].Renderer;
-	_GP(fonts)[fontNumber].Renderer = renderer;
-	_GP(fonts)[fontNumber].Renderer2 = nullptr;
-	post_init_font(fontNumber, load_mode);
-	return oldRender;
+	IAGSFontRenderer* old_render = _GP(fonts)[fontNumber].Renderer;
+	font_replace_renderer(fontNumber, renderer, nullptr);
+	return old_render;
+}
+
+IAGSFontRenderer2* font_replace_renderer(size_t fontNumber, IAGSFontRenderer2 *renderer) {
+	if (fontNumber >= _GP(fonts).size())
+		return nullptr;
+	IAGSFontRenderer2* old_render = _GP(fonts)[fontNumber].Renderer2;
+	font_replace_renderer(fontNumber, renderer, renderer);
+	return old_render;
+}
+
+void font_recalc_metrics(size_t fontNumber) {
+	if (fontNumber >= _GP(fonts).size())
+		return;
+	_GP(fonts)[fontNumber].Metrics = FontMetrics();
+	font_post_init(fontNumber);
 }
 
 bool is_bitmap_font(size_t fontNumber) {
-	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer2)
+	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].RendererInt)
 		return false;
-	return _GP(fonts)[fontNumber].Renderer2->IsBitmapFont();
+	return _GP(fonts)[fontNumber].RendererInt->IsBitmapFont();
 }
 
 bool font_supports_extended_characters(size_t fontNumber) {
@@ -132,7 +174,7 @@ bool font_supports_extended_characters(size_t fontNumber) {
 const char *get_font_name(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer2)
 		return "";
-	const char *name = _GP(fonts)[fontNumber].Renderer2->GetName(fontNumber);
+	const char *name = _GP(fonts)[fontNumber].Renderer2->GetFontName(fontNumber);
 	return name ? name : "";
 }
 
@@ -160,6 +202,18 @@ int get_text_width(const char *texx, size_t fontNumber) {
 	return _GP(fonts)[fontNumber].Renderer->GetTextWidth(texx, fontNumber);
 }
 
+int get_text_width_outlined(const char *text, size_t font_number) {
+	if (font_number >= _GP(fonts).size() || !_GP(fonts)[font_number].Renderer)
+		return 0;
+	int self_width = _GP(fonts)[font_number].Renderer->GetTextWidth(text, font_number);
+	int outline = _GP(fonts)[font_number].Info.Outline;
+	if (outline < 0 || static_cast<size_t>(outline) > _GP(fonts).size()) { // FONT_OUTLINE_AUTO or FONT_OUTLINE_NONE
+		return self_width + 2 * _GP(fonts)[font_number].Info.AutoOutlineThickness;
+	}
+	int outline_width = _GP(fonts)[outline].Renderer->GetTextWidth(text, outline);
+	return MAX(self_width, outline_width);
+}
+
 int get_font_outline(size_t font_number) {
 	if (font_number >= _GP(fonts).size())
 		return FONT_OUTLINE_NONE;
@@ -172,16 +226,6 @@ int get_font_outline_thickness(size_t font_number) {
 	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
 }
 
-int get_font_outline_font(size_t font_number) {
-	for (size_t fontNum = 0; fontNum < _GP(fonts).size(); ++fontNum) {
-		if (_GP(fonts)[fontNum].Info.Outline == (int)font_number)
-			return fontNum;
-	}
-
-	return FONT_OUTLINE_NONE;
-	return _GP(fonts)[font_number].Info.AutoOutlineThickness;
-}
-
 void set_font_outline(size_t font_number, int outline_type,
 		enum FontInfo::AutoOutlineStyle style, int thickness) {
 	if (font_number >= _GP(fonts).size())
@@ -189,6 +233,12 @@ void set_font_outline(size_t font_number, int outline_type,
 	_GP(fonts)[font_number].Info.Outline = outline_type;
 	_GP(fonts)[font_number].Info.AutoOutlineStyle = style;
 	_GP(fonts)[font_number].Info.AutoOutlineThickness = thickness;
+}
+
+bool is_font_antialiased(size_t font_number) {
+	if (font_number >= _GP(fonts).size())
+		return false;
+	return ShouldAntiAliasText() && !is_bitmap_font(font_number);
 }
 
 int get_font_height(size_t fontNumber) {
@@ -200,8 +250,13 @@ int get_font_height(size_t fontNumber) {
 int get_font_height_outlined(size_t fontNumber) {
 	if (fontNumber >= _GP(fonts).size() || !_GP(fonts)[fontNumber].Renderer)
 		return 0;
-	return _GP(fonts)[fontNumber].Metrics.CompatHeight
-		+ 2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness;
+	int self_height = _GP(fonts)[fontNumber].Metrics.CompatHeight;
+	int outline = _GP(fonts)[fontNumber].Info.Outline;
+	if (outline < 0 || static_cast<size_t>(outline) > _GP(fonts).size()) { // FONT_OUTLINE_AUTO or FONT_OUTLINE_NONE
+		return self_height + 2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness;
+	}
+	int outline_height = _GP(fonts)[outline].Metrics.CompatHeight;
+	return MAX(self_height, outline_height);
 }
 
 int get_font_surface_height(size_t fontNumber) {
@@ -239,15 +294,6 @@ int get_text_lines_surf_height(size_t fontNumber, size_t numlines) {
 		(_GP(fonts)[fontNumber].Metrics.RealHeight +
 			2 * _GP(fonts)[fontNumber].Info.AutoOutlineThickness);
 }
-
-// Project-dependent implementation
-extern int get_text_width_outlined(const char *tex, int font);
-
-namespace AGS {
-namespace Shared {
-SplitLines Lines;
-} // namespace Shared
-} // namespace AGS
 
 // Replaces AGS-specific linebreak tags with common '\n'
 void unescape_script_string(const char *cstr, std::vector<char> &out) {
@@ -380,8 +426,10 @@ void wouttextxy(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t
 }
 
 void set_fontinfo(size_t fontNumber, const FontInfo &finfo) {
-	if (fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer)
+	if (fontNumber < _GP(fonts).size() && _GP(fonts)[fontNumber].Renderer) {
 		_GP(fonts)[fontNumber].Info = finfo;
+		font_post_init(fontNumber);
+	}
 }
 
 FontInfo get_fontinfo(size_t font_number) {
@@ -391,21 +439,24 @@ FontInfo get_fontinfo(size_t font_number) {
 }
 
 // Loads a font from disk
-bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode) {
+bool load_font_size(size_t fontNumber, const FontInfo &font_info) {
 	if (_GP(fonts).size() <= fontNumber)
 		_GP(fonts).resize(fontNumber + 1);
 	else
 		wfreefont(fontNumber);
 	FontRenderParams params;
 	params.SizeMultiplier = font_info.SizeMultiplier;
+	params.LoadMode = (font_info.Flags & FFLG_LOADMODEMASK);
 	FontMetrics metrics;
 
-	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
+	if (_GP(ttfRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(ttfRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(ttfRenderer);
-	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.SizePt, &params, &metrics)) {
+		_GP(fonts)[fontNumber].RendererInt = &_GP(ttfRenderer);
+	} else if (_GP(wfnRenderer).LoadFromDiskEx(fontNumber, font_info.Size, &params, &metrics)) {
 		_GP(fonts)[fontNumber].Renderer = &_GP(wfnRenderer);
 		_GP(fonts)[fontNumber].Renderer2 = &_GP(wfnRenderer);
+		_GP(fonts)[fontNumber].RendererInt = &_GP(wfnRenderer);
 	}
 
 	if (!_GP(fonts)[fontNumber].Renderer)
@@ -413,7 +464,7 @@ bool load_font_size(size_t fontNumber, const FontInfo &font_info, int load_mode)
 
 	_GP(fonts)[fontNumber].Info = font_info;
 	_GP(fonts)[fontNumber].Metrics = metrics;
-	post_init_font(fontNumber, load_mode);
+	font_post_init(fontNumber);
 	return true;
 }
 
@@ -425,7 +476,7 @@ void wgtprintf(Shared::Bitmap *ds, int xxx, int yyy, size_t fontNumber, color_t 
 	va_list ap;
 
 	va_start(ap, fmt);
-	vsprintf(tbuffer, fmt, ap);
+	vsnprintf(tbuffer, sizeof(tbuffer), fmt, ap);
 	va_end(ap);
 	wouttextxy(ds, xxx, yyy, fontNumber, text_color, tbuffer);
 }
@@ -441,8 +492,8 @@ void alloc_font_outline_buffers(size_t font_number,
 		(f.TextStencil.GetWidth() < text_width) || (f.TextStencil.GetHeight() < text_height)) {
 		int sw = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetWidth();
 		int sh = f.TextStencil.IsNull() ? 0 : f.TextStencil.GetHeight();
-		sw = std::max(text_width, sw);
-		sh = std::max(text_height, sh);
+		sw = MAX(text_width, sw);
+		sh = MAX(text_height, sh);
 		f.TextStencil.Create(sw, sh, color_depth);
 		f.OutlineStencil.Create(sw, sh + thick, color_depth);
 		f.TextStencilSub.CreateSubBitmap(&f.TextStencil, RectWH(Size(text_width, text_height)));
@@ -453,6 +504,13 @@ void alloc_font_outline_buffers(size_t font_number,
 	}
 	*text_stencil = &f.TextStencilSub;
 	*outline_stencil = &f.OutlineStencilSub;
+}
+
+void adjust_fonts_for_render_mode(bool aa_mode) {
+	for (size_t i = 0; i < _GP(fonts).size(); ++i) {
+		if (_GP(fonts)[i].RendererInt != nullptr)
+			_GP(fonts)[i].RendererInt->AdjustFontForAntiAlias(i, aa_mode);
+	}
 }
 
 void wfreefont(size_t fontNumber) {

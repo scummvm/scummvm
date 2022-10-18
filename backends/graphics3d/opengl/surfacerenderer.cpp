@@ -178,14 +178,23 @@ static const char *boxVertex =
 	"uniform vec2 offsetXY;\n"
 	"uniform vec2 sizeWH;\n"
 	"uniform vec2 texcrop;\n"
+// OGLES2 on AmigaOS doesn't support uniform booleans
+#if defined(AMIGAOS)
+	"uniform mediump int flipY;\n"
+#else
 	"uniform bool flipY;\n"
+#endif
 	"varying vec2 Texcoord;\n"
 	"void main() {\n"
 		"Texcoord = texcoord * texcrop;\n"
 		"vec2 pos = offsetXY + position * sizeWH;\n"
 		"pos.x = pos.x * 2.0 - 1.0;\n"
 		"pos.y = pos.y * 2.0 - 1.0;\n"
+#if defined(AMIGAOS)
+		"if (flipY != 0)\n"
+#else
 		"if (flipY)\n"
+#endif
 			"pos.y *= -1.0;\n"
 		"gl_Position = vec4(pos, 0.0, 1.0);\n"
 	"}\n";
@@ -214,8 +223,8 @@ ShaderSurfaceRenderer::ShaderSurfaceRenderer() {
 
 	// Setup the box shader used to render the overlay
 	const char *attributes[] = { "position", "texcoord", nullptr };
-	_boxShader = ShaderGL::fromStrings("box", boxVertex, boxFragment, attributes);
-	_boxVerticesVBO = ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
+	_boxShader = Shader::fromStrings("box", boxVertex, boxFragment, attributes);
+	_boxVerticesVBO = Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(vertices), vertices);
 	_boxShader->enableVertexAttribute("position", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 	_boxShader->enableVertexAttribute("texcoord", _boxVerticesVBO, 2, GL_FLOAT, GL_TRUE, 2 * sizeof(float), 0);
 }
@@ -261,7 +270,7 @@ void ShaderSurfaceRenderer::restorePreviousState() {
 }
 
 ShaderSurfaceRenderer::~ShaderSurfaceRenderer() {
-	ShaderGL::freeBuffer(_boxVerticesVBO);
+	Shader::freeBuffer(_boxVerticesVBO);
 
 	delete _boxShader;
 }

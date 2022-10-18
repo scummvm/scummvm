@@ -78,7 +78,10 @@ public:
 	String(const char *beginP, const char *endP) : BaseString<char>(beginP, endP) {}
 
 	/** Construct a copy of the given string. */
-	String(const String &str) : BaseString<char>(str) {};
+	String(const String &str) : BaseString<char>(str) {}
+
+	/** Construct a string by moving an existing string. */
+	String(String &&str) : BaseString<char>(static_cast<BaseString<char> &&>(str)) {}
 
 	/** Construct a string consisting of the given character. */
 	explicit String(char c);
@@ -88,6 +91,7 @@ public:
 
 	String &operator=(const char *str);
 	String &operator=(const String &str);
+	String &operator=(String &&str);
 	String &operator=(char c);
 	String &operator+=(const char *str);
 	String &operator+=(const String &str);
@@ -246,13 +250,14 @@ public:
 	U32String decode(CodePage page = kUtf8) const;
 
 protected:
-	void encodeUTF8(const U32String &src);
-	void encodeWindows932(const U32String &src);
-	void encodeWindows949(const U32String &src);
-	void encodeWindows950(const U32String &src, bool translit = true);
-	void encodeOneByte(const U32String &src, CodePage page, bool translit = true);
-	void encodeInternal(const U32String &src, CodePage page);
-	void translitChar(U32String::value_type point);
+	StringEncodingResult encodeUTF8(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows932(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows949(const U32String &src, char errorChar);
+	StringEncodingResult encodeWindows950(const U32String &src, bool translit, char errorChar);
+	StringEncodingResult encodeJohab(const U32String &src, char errorChar);
+	StringEncodingResult encodeOneByte(const U32String &src, CodePage page, bool translit, char errorChar);
+	StringEncodingResult encodeInternal(const U32String &src, CodePage page, char errorChar);
+	StringEncodingResult translitChar(U32String::value_type point, char errorChar);
 
 	friend class U32String;
 };
@@ -374,7 +379,7 @@ String tag2string(uint32 tag, bool nonPrintable = false);
  * string.
  *
  * @note This is modeled after OpenBSD's strlcpy. See the manpage here:
- *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcpy
+ *       https://man.openbsd.org/strlcpy
  *
  * @param dst The destination buffer.
  * @param src The source string.
@@ -392,7 +397,7 @@ size_t strlcpy(char *dst, const char *src, size_t size);
  * the dst string will not be changed and size + strlen(src) is returned.
  *
  * @note This is modeled after OpenBSD's strlcat. See the manpage here:
- *       http://www.openbsd.org/cgi-bin/man.cgi?query=strlcat
+ *       https://man.openbsd.org/strlcat
  *
  * @param dst The string the source string should be appended to.
  * @param src The source string.

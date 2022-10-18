@@ -27,6 +27,7 @@
 #include "common/tokenizer.h"
 #include "common/zlib.h"
 
+#include "director/types.h"
 #include "graphics/macgui/macwindowmanager.h"
 #include "graphics/macgui/macfontmanager.h"
 
@@ -393,10 +394,13 @@ Common::String getPath(Common::String path, Common::String cwd) {
 
 bool testPath(Common::String &path, bool directory) {
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
+	Common::FSNode node;
 
 	// Test if we have it right in the SearchMan
 	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)))
 		return true;
+
+	debug(9, "testPath: %s  dir: %d", path.c_str(), directory);
 
 	// check for the game data dir
 	if (!path.contains(g_director->_dirSeparator) && path.equalsIgnoreCase(d.getName())) {
@@ -415,27 +419,38 @@ bool testPath(Common::String &path, bool directory) {
 		fslist.clear();
 		Common::FSNode::ListMode mode = Common::FSNode::kListDirectoriesOnly;
 		if (directory_list.empty() && !directory) {
-			mode = Common::FSNode::kListFilesOnly;
+			mode = Common::FSNode::kListAll;
 		}
-		d.getChildren(fslist, mode);
+		bool hasChildren = d.getChildren(fslist, mode);
+		if (!hasChildren)
+			continue;
 
 		bool exists = false;
 		for (Common::FSList::iterator i = fslist.begin(); i != fslist.end(); ++i) {
 			// for each element in the path, choose the first FSNode
 			// with a case-insensitive matcing name
 			if (i->getName().equalsIgnoreCase(token)) {
+				// If this the final path component, check if we're allowed to match with a directory
+				node = Common::FSNode(*i);
+				if (directory_list.empty() && !directory && node.isDirectory()) {
+					continue;
+				}
+
 				exists = true;
 				newPath += i->getName();
 				if (!directory_list.empty())
 					newPath += (g_director->_dirSeparator);
 
-				d = Common::FSNode(*i);
+				d = node;
 				break;
 			}
 		}
-		if (!exists)
+		if (!exists) {
+			debug(9, "testPath: Not exists");
 			return false;
+		}
 	}
+	debug(9, "testPath: ***** HAVE MATCH");
 	// write back path with correct case
 	path = newPath;
 	return true;
@@ -455,7 +470,19 @@ Common::String pathMakeRelative(Common::String path, bool recursive, bool addext
 			foundPath = wrappedPathMakeRelative(searchIn + path, recursive, addexts, directory);
 			if (testPath(foundPath))
 				return foundPath;
+
+			debug(9, "pathMakeRelative(): -- searchPath not found: %s", foundPath.c_str());
 		}
+	}
+
+	for (auto i = g_director->_extraSearchPath.begin(); i != g_director->_extraSearchPath.end(); ++i) {
+		debug(9, "pathMakeRelative(): extraSearchPath: %s", i->c_str());
+
+		foundPath = wrappedPathMakeRelative(*i + path, recursive, addexts, directory);
+		if (testPath(foundPath))
+			return foundPath;
+
+		debug(9, "pathMakeRelative(): -- extraSearchPath not found: %s", foundPath.c_str());
 	}
 
 	return wrappedPathMakeRelative(path, recursive, addexts, directory);
@@ -469,23 +496,25 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 
 	Common::String initialPath(path);
 
-	debug(9, "pathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s0 %s -> %s", path.c_str(), initialPath.c_str());
 
 	if (recursive) // first level
 		initialPath = convertPath(initialPath);
 
-	debug(9, "pathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s1 %s -> %s", path.c_str(), initialPath.c_str());
 
 	initialPath = Common::normalizePath(g_director->getCurrentPath() + initialPath, g_director->_dirSeparator);
 	Common::String convPath = initialPath;
 
-	debug(9, "pathMakeRelative(): s2 %s", convPath.c_str());
+	debug(9, "wrappedPathMakeRelative(): s2 %s", convPath.c_str());
 
 	// Strip the leading whitespace from the path
 	initialPath.trim();
 
 	if (testPath(initialPath, directory))
 		return initialPath;
+
+	debug(9, "wrappedPathMakeRelative(): s2.1 -- not found %s", initialPath.c_str());
 
 	// Now try to search the file
 	bool opened = false;
@@ -494,19 +523,21 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		int pos = convPath.find(g_director->_dirSeparator);
 		convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-		debug(9, "pathMakeRelative(): s3 try %s", convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s3 try %s", convPath.c_str());
 
 		if (!testPath(convPath, directory)) {
 			// If we were supplied with parh with subdirectories,
 			// attempt to combine it with the current movie path at every iteration
 			Common::String locPath = Common::normalizePath(g_director->getCurrentPath() + convPath, g_director->_dirSeparator);
-			debug(9, "pathMakeRelative(): s3.1 try %s", locPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s3.1 try %s", locPath.c_str());
 
-			if (!testPath(locPath, directory))
+			if (!testPath(locPath, directory)) {
+				debug(9, "wrappedPathMakeRelative(): s3.1 -- not found %s", locPath.c_str());
 				continue;
+			}
 		}
 
-		debug(9, "pathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s3 converted %s -> %s", path.c_str(), convPath.c_str());
 
 		opened = true;
 
@@ -517,22 +548,26 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 		// Try stripping all of the characters not allowed in FAT
 		convPath = stripMacPath(initialPath.c_str());
 
-		debug(9, "pathMakeRelative(): s4 %s", convPath.c_str());
+		debug(9, "wrappedPathMakeRelative(): s4 %s", convPath.c_str());
 
 		if (testPath(initialPath, directory))
 			return initialPath;
+
+		debug(9, "wrappedPathMakeRelative(): s4.1 -- not found %s", initialPath.c_str());
 
 		// Now try to search the file
 		while (convPath.contains(g_director->_dirSeparator)) {
 			int pos = convPath.find(g_director->_dirSeparator);
 			convPath = Common::String(&convPath.c_str()[pos + 1]);
 
-			debug(9, "pathMakeRelative(): s5 try %s", convPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s5 try %s", convPath.c_str());
 
-			if (!testPath(convPath, directory))
+			if (!testPath(convPath, directory)) {
+				debug(9, "wrappedPathMakeRelative(): s5 -- not found %s", convPath.c_str());
 				continue;
+			}
 
-			debug(9, "pathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
+			debug(9, "wrappedPathMakeRelative(): s5 converted %s -> %s", path.c_str(), convPath.c_str());
 
 			opened = true;
 
@@ -572,11 +607,13 @@ Common::String wrappedPathMakeRelative(Common::String path, bool recursive, bool
 				Common::String ext = component.substr(component.size() - 4);
 				Common::String newpath = convPath + convertMacFilename(nameWithoutExt.c_str()) + ext;
 
-				debug(9, "pathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
+				debug(9, "wrappedPathMakeRelative(): s6 %s -> try %s", initialPath.c_str(), newpath.c_str());
 				Common::String res = wrappedPathMakeRelative(newpath, false, false);
 
 				if (testPath(res))
 					return res;
+
+				debug(9, "wrappedPathMakeRelative(): s6 -- not found %s", res.c_str());
 			}
 		}
 
@@ -609,6 +646,15 @@ Common::String testExtensions(Common::String component, Common::String initialPa
 	const char *extsD4[] = { ".DIR", ".DXR", nullptr };
 
 	const char **exts = (g_director->getVersion() >= 400) ? extsD4 : extsD3;
+	for (int i = 0; exts[i]; ++i) {
+		Common::String newpath = convPath + component.c_str() + exts[i];
+
+		debug(9, "testExtensions(): sT %s -> try %s, comp: %s", initialPath.c_str(), newpath.c_str(), component.c_str());
+		Common::String res = wrappedPathMakeRelative(newpath, false, false);
+
+		if (testPath(res))
+			return res;
+	}
 	for (int i = 0; exts[i]; ++i) {
 		Common::String newpath = convPath + convertMacFilename(component.c_str()) + exts[i];
 
@@ -764,9 +810,7 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 
 	switch (type) {
 	case kNoneScript:
-	default:
 		typeName = "unknown";
-		warning("dumpScriptName(): Incorrect call (type %d)", type);
 		break;
 	case kMovieScript:
 		typeName = "movie";
@@ -780,9 +824,16 @@ Common::String dumpScriptName(const char *prefix, int type, int id, const char *
 	case kScoreScript:
 		typeName = "score";
 		break;
+	default:
+		error("dumpScriptName(): Incorrect call (type %d)", type);
+		break;
 	}
 
 	return Common::String::format("./dumps/%s-%s-%d.%s", prefix, typeName.c_str(), id, ext);
+}
+
+Common::String dumpFactoryName(const char *prefix, const char *name, const char *ext) {
+	return Common::String::format("./dumps/%s-factory-%s.%s", prefix, name, ext);
 }
 
 void RandomState::setSeed(int seed) {
@@ -965,11 +1016,14 @@ int compareStrings(const Common::String &s1, const Common::String &s2) {
 	Common::U32String u32S2 = s2.decode(Common::kUtf8);
 	const Common::u32char_type_t *p1 = u32S1.c_str();
 	const Common::u32char_type_t *p2 = u32S2.c_str();
+
 	uint32 c1, c2;
-	while ((c1 = charToNum(*p1)) && (c2 = charToNum(*p2)) && c1 == c2) {
+	do {
+		c1 = charToNum(*p1);
+		c2 = charToNum(*p2);
 		p1++;
 		p2++;
-	}
+	} while (c1 == c2 && c1);
 	return c1 - c2;
 }
 
@@ -983,7 +1037,7 @@ Common::String utf8ToPrintable(const Common::String &str) {
 
 Common::String castTypeToString(const CastType &type) {
 	Common::String res;
-	switch(type) {
+	switch (type) {
 	case kCastBitmap:
 		res = "bitmap";
 		break;

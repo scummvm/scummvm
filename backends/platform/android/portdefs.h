@@ -26,12 +26,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include <ctype.h>
+#include <stddef.h>
 #include <assert.h>
-#include <new>
-
+#include <ctype.h>
+#include <limits.h>
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include <new>
 
 // This is defined in snprintf.c
 #ifdef __cplusplus

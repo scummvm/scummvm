@@ -19,8 +19,10 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
+#include "chewy/font.h"
 #include "chewy/globals.h"
 #include "chewy/main.h"
 #include "chewy/room.h"
@@ -52,7 +54,6 @@ void Room0::entry() {
 
 	if (!_G(flags).LoadGame) {
 		setPersonPos(150, 100, P_CHEWY, P_RIGHT);
-		_G(cur_hide_flag) = 0;
 		hideCur();
 		_G(timer_nr)[0] = _G(room)->set_timer(255, 3);
 
@@ -73,7 +74,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 		if (_G(timer_action_ctr) > 0) {
 			_G(uhr)->resetTimer(timerNr, 0);
 			--_G(timer_action_ctr);
-		} else if (!is_chewy_busy()) {
+		} else if (!is_chewy_busy() && _G(flags).AutoAniPlay == 0) {
 			if (!_G(gameState).R0FueterLab)
 				_G(timer_action_ctr) = 2;
 
@@ -113,8 +114,9 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 			_G(uhr)->resetTimer(timerNr, 0);
 			_G(flags).AutoAniPlay = false;
 		}
-	} else if (timerNr == 3)
+	} else if (timerNr != 3) {
 		retval = true;
+	}
 
 	return retval;
 }
@@ -122,7 +124,7 @@ bool Room0::timer(int16 timerNr, int16 aniNr) {
 bool Room0::getPillow() {
 	bool retval = false;
 	
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		_G(flags).AutoAniPlay = true;
 		autoMove(1, P_CHEWY);
@@ -130,7 +132,7 @@ bool Room0::getPillow() {
 		invent_2_slot(0);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->setControlBit(174, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(174, ATS_ACTIVE_BIT);
 		_G(det)->hideStaticSpr(6);
 
 		_G(flags).AutoAniPlay = false;
@@ -143,7 +145,7 @@ bool Room0::getPillow() {
 
 bool Room0::pullSlime() {
 	bool retval = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		
 		_G(flags).AutoAniPlay = true;
@@ -156,7 +158,7 @@ bool Room0::pullSlime() {
 		invent_2_slot(1);
 		_G(menu_item) = CUR_WALK;
 		cursorChoice(CUR_WALK);
-		_G(atds)->setControlBit(175, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(175, ATS_ACTIVE_BIT);
 
 		_G(flags).AutoAniPlay = false;
 		showCur();
@@ -202,15 +204,15 @@ void Room0::eyeStart(EyeMode mode) {
 	_G(flags).AniUserAction = true;
 
 	if (mode == EYE_START) {
-		g_engine->_sound->playSound(FLAP_DETAIL, 0);
-		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(HOSE_DETAIL, 0);
-		g_engine->_sound->stopSound(2);
+		_G(det)->playSound(FLAP_DETAIL, 0);
+		_G(det)->stopSound(1);
+		_G(det)->playSound(HOSE_DETAIL, 0);
+		_G(det)->stopSound(2);
 	} else {
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(FLAP_DETAIL, 1);
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(HOSE_DETAIL, 2);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(FLAP_DETAIL, 1);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(HOSE_DETAIL, 2);
 	}
 
 	while (!ende) {
@@ -233,9 +235,9 @@ void Room0::eyeStart(EyeMode mode) {
 		setupScreen(NO_SETUP);
 		SHOULD_QUIT_RETURN;
 
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcEyeClick(3);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0)
 			--adi->delay_count;
@@ -278,9 +280,9 @@ void Room0::eyeWait() {
 		_G(spr_info)[2]._zLevel = 192;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcEyeClick(2);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 
 		if (adi->delay_count > 0) {
 			--adi->delay_count;
@@ -299,20 +301,20 @@ void Room0::eyeWait() {
 
 void Room0::calcEyeClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
-			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(172, TXT_MARK_NAME, &anz, ATS_DATA);
-			if (str_ != 0) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 172, ATS_DATA);
+			if (desc.size() > 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
-				calcTxtXy(&x, &y, str_, anz);
-				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
+				calcTxtXy(&x, &y, desc);
+				for (int16 i = 0; i < (int16)desc.size(); i++)
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(SLIME_INV)) {
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				_G(gameState).R0SlimeUsed = true;
 			} else if (isCurInventory(PILLOW_INV)) {
 				startAtsWait(172, TXT_MARK_WALK, 14, ATS_DATA);
@@ -457,15 +459,15 @@ void Room0::feederStart(int16 mode) {
 
 	if (!mode) {
 		trapDoorOpen();
-		g_engine->_sound->playSound(FLAP_DETAIL, 0);
-		g_engine->_sound->stopSound(1);
-		g_engine->_sound->playSound(FEEDER_HOSE, 0);
-		g_engine->_sound->stopSound(2);
+		_G(det)->playSound(FLAP_DETAIL, 0);
+		_G(det)->stopSound(1);
+		_G(det)->playSound(FEEDER_HOSE, 0);
+		_G(det)->stopSound(2);
 	} else {
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(FLAP_DETAIL, 1);
-		g_engine->_sound->stopSound(0);
-		g_engine->_sound->playSound(FEEDER_HOSE, 2);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(FLAP_DETAIL, 1);
+		_G(det)->stopSound(0);
+		_G(det)->playSound(FEEDER_HOSE, 2);
 	}
 
 	bool endLoopFl = false;
@@ -486,11 +488,11 @@ void Room0::feederStart(int16 mode) {
 		SHOULD_QUIT_RETURN;
 
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		if (!mode)
 			calcPillowClick(1);
 
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 		if (adi->delay_count > 0)
 			--adi->delay_count;
 		else {
@@ -527,9 +529,9 @@ void Room0::feederExtend() {
 		_G(spr_info)[1]._zLevel = 191;
 		get_user_key(NO_SETUP);
 		setupScreen(NO_SETUP);
-		_G(cur)->plot_cur();
+		_G(cur)->updateCursor();
 		calcPillowClick(1);
-		_G(out)->back2screen(_G(workpage));
+		_G(out)->copyToScreen();
 	}
 
 	clear_prog_ani();
@@ -537,20 +539,20 @@ void Room0::feederExtend() {
 
 void Room0::calcPillowClick(int16 aniNr) {
 	if (mouse_on_prog_ani() == aniNr) {
-		if (_G(minfo)._button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
-			int16 anz;
-			char *str_ = _G(atds)->ats_get_txt(173, TXT_MARK_NAME, &anz, ATS_DATA);
-			if (str_ != nullptr) {
+		if (_G(minfo).button != 1 && g_events->_kbInfo._keyCode != Common::KEYCODE_RETURN) {
+			const uint8 roomNum = _G(room)->_roomInfo->_roomNr;
+			Common::StringArray desc = _G(atds)->getTextArray(roomNum, 173, ATS_DATA);
+			if (desc.size() > 0) {
 				_G(fontMgr)->setFont(_G(font8));
 				int16 x = g_events->_mousePos.x;
 				int16 y = g_events->_mousePos.y;
-				calcTxtXy(&x, &y, str_, anz);
-				for (int16 i = 0; i < anz; i++)
-					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), _G(txt)->strPos((char *)str_, i));
+				calcTxtXy(&x, &y, desc);
+				for (int16 i = 0; i < (int16)desc.size(); i++)
+					printShadowed(x, y + i * 10, 255, 300, 0, _G(scr_width), desc[i].c_str());
 			}
-		} else if (_G(minfo)._button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
+		} else if (_G(minfo).button == 1 || g_events->_kbInfo._keyCode == Common::KEYCODE_RETURN) {
 			if (isCurInventory(PILLOW_INV) && _G(gameState).R0SlimeUsed) {
-				delInventory(_G(gameState).AkInvent);
+				delInventory(_G(cur)->getInventoryCursor());
 				_G(gameState).R0PillowThrow = true;
 			} else if (isCurInventory(SLIME_INV)) {
 				startAtsWait(173, TXT_MARK_WALK, 14, ATS_DATA);
@@ -577,7 +579,7 @@ void Room0::checkFeed() {
 		if (adi->ani_count == 136) {
 			_G(gameState)._personHide[P_CHEWY] = true;
 			if (!_G(gameState).R0SlimeUsed)
-				_G(det)->stop_detail(16);
+				_G(det)->stopDetail(16);
 		}
 
 		if (adi->ani_count > 138) {
@@ -747,11 +749,11 @@ void Room0::feederAni() {
 
 			_G(gameState)._personRoomNr[P_CHEWY] = 1;
 			_G(room)->loadRoom(&_G(room_blk), _G(gameState)._personRoomNr[P_CHEWY], &_G(gameState));
-			setPersonPos(_G(Rdi)->AutoMov[4]._x - CH_HOT_MOV_X,
-			               _G(Rdi)->AutoMov[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
-			_G(spieler_vector)[P_CHEWY]._delayCount = 0;
+			setPersonPos(_G(Rdi)->autoMove[4]._x - CH_HOT_MOV_X,
+			               _G(Rdi)->autoMove[4]._y - CH_HOT_MOV_Y, P_CHEWY, P_RIGHT);
+			_G(moveState)[P_CHEWY]._delayCount = 0;
 
-			check_shad(4, 0);
+			setShadowPalette(4, false);
 			_G(fx_blend) = BLEND1;
 			setupScreen(DO_SETUP);
 		} else {

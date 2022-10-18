@@ -234,7 +234,48 @@ MODULE_OBJS := \
 	quest/read_file.o \
 	quest/string.o \
 	quest/streams.o \
+	scott/c64_checksums.o \
+	scott/command_parser.o \
+	scott/decompress_text.o \
+	scott/decompress_z80.o \
+	scott/definitions.o \
+	scott/disk_image.o \
+	scott/load_game.o \
+	scott/game_info.o \
+	scott/game_specific.o \
+	scott/globals.o \
+	scott/gremlins.o \
+	scott/hulk.o \
+	scott/layout_text.o \
+	scott/line_drawing.o \
+	scott/load_ti99_4a.o \
+	scott/resource.o \
+	scott/restore_state.o \
+	scott/ring_buffer.o \
+	scott/robin_of_sherwood.o \
+	scott/saga_draw.o \
 	scott/scott.o \
+	scott/seas_of_blood.o \
+	scott/ti99_4a_terp.o \
+	scott/unp64/unp64.o \
+	scott/unp64/6502_emu.o \
+	scott/unp64/exo_util.o \
+	scott/unp64/scanners/scanners.o \
+	scott/unp64/scanners/action_packer.o \
+	scott/unp64/scanners/byte_boiler.o \
+	scott/unp64/scanners/caution.o \
+	scott/unp64/scanners/ccs.o \
+	scott/unp64/scanners/cruel.o \
+	scott/unp64/scanners/eca.o \
+	scott/unp64/scanners/exomizer.o \
+	scott/unp64/scanners/expert.o \
+	scott/unp64/scanners/master_compressor.o \
+	scott/unp64/scanners/megabyte.o \
+	scott/unp64/scanners/pu_crunch.o \
+	scott/unp64/scanners/section8.o \
+	scott/unp64/scanners/tbc_multicomp.o \
+	scott/unp64/scanners/tcs_crunch.o \
+	scott/unp64/scanners/xtc.o \
 	tads/os_banners.o \
 	tads/os_buffer.o \
 	tads/os_glk.o \

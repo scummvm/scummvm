@@ -33,9 +33,12 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdPathPoint3D, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdPathPoint3D::AdPathPoint3D() : BaseClass(),
-								 _origin(nullptr), _marked(false),
-								 _distance(0.0f), _pos(0.0f, 0.0f, 0.0f) {
+AdPathPoint3D::AdPathPoint3D() : BaseClass() {
+	_pos = Math::Vector3d(0.0f, 0.0f, 0.0f);
+	_distance = 0.0f;
+
+	_marked = false;
+	_origin = nullptr;
 }
 
 //////////////////////////////////////////////////////////////////////////

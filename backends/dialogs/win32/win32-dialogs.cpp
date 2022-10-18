@@ -48,7 +48,7 @@
 	// We use functionality introduced with Vista in this file.
 	// To assure that including the respective system headers gives us all
 	// required definitions we set Vista as minimum version we target.
-	// See: https://msdn.microsoft.com/en-us/library/windows/desktop/aa383745%28v=vs.85%29.aspx#macros_for_conditional_declarations
+	// See: https://docs.microsoft.com/en-us/windows/win32/winprog/using-the-windows-headers#macros-for-conditional-declarations
 #include <sdkddkver.h>
 #undef _WIN32_WINNT
 #define _WIN32_WINNT _WIN32_WINNT_VISTA

@@ -1,4 +1,4 @@
-	/* ScummVM - Graphic Adventure Engine
+/* ScummVM - Graphic Adventure Engine
  *
  * ScummVM is the legal property of its developers, whose names
  * are too numerous to list here. Please refer to the COPYRIGHT
@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -50,24 +51,27 @@ void Room37::entry() {
 		setPersonPos(219, 66, P_CHEWY, P_RIGHT);
 	}
 
-	if (!_G(gameState).R37Kloppe) {
+	if (!_G(gameState).R37RoosterFoughtWithDog) {
 		_G(timer_nr)[1] = _G(room)->set_timer(7, 5);
 		_G(det)->set_static_ani(7, -1);
 
-		if (!_G(gameState).R37HundScham) {
+		if (!_G(gameState).R37DogAshamed) {
 			_G(timer_nr)[0] = _G(room)->set_timer(3, 4);
 			_G(det)->set_static_ani(3, -1);
-			g_engine->_sound->playSound(3, 0);
+			_G(det)->playSound(3, 0);
 		}
 	}
 
-	if (_G(gameState).R37Gebiss) {
+	if (_G(gameState).R37TakenDenturesFromGlass) {
 		_G(det)->hideStaticSpr(9);
 
-		if (_G(gameState).R37Kloppe) {
+		if (_G(gameState).R37RoosterFoughtWithDog) {
 			_G(det)->hideStaticSpr(8);
-		} else if (_G(gameState).R37HundScham) {
+		} else if (_G(gameState).R37DogAshamed) {
 			_G(det)->showStaticSpr(0);
+			_G(atds)->set_ats_str(250, 1, ATS_DATA);
+			_G(atds)->set_ats_str(256, 1, ATS_DATA);
+			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 		}
 	}
 }
@@ -77,7 +81,7 @@ void Room37::gedAction(int index) {
 		dog_bell();
 
 	} else if (index == 1) {
-		if (_G(gameState).R37Kloppe && !_G(gameState).R37Mes) {
+		if (_G(gameState).R37RoosterFoughtWithDog && !_G(gameState).R37Mes) {
 			stopPerson(P_CHEWY);
 			_G(gameState).R37Mes = true;
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
@@ -87,7 +91,7 @@ void Room37::gedAction(int index) {
 }
 
 void Room37::setup_func() {
-	if (_G(mouseLeftClick) && !_G(gameState).R37Kloppe &&
+	if (_G(mouseLeftClick) && !_G(gameState).R37RoosterFoughtWithDog &&
 			_G(menu_item) == CUR_WALK) {
 		if ((g_events->_mousePos.x + _G(gameState).scrollx > 380 && g_events->_mousePos.y > 120) ||
 			(g_events->_mousePos.x + _G(gameState).scrollx > 482)) {
@@ -99,12 +103,8 @@ void Room37::setup_func() {
 	}
 }
 
-short Room37::use_wippe() {
-	int16 action_flag = false;
-
-	if (_G(gameState).inv_cur) {
-		action_flag = true;
-
+short Room37::useSeesaw() {
+	if (_G(cur)->usingInventoryCursor()) {
 		if (isCurInventory(H_FUTTER_INV)) {
 			hideCur();
 			autoMove(0, P_CHEWY);
@@ -112,7 +112,7 @@ short Room37::use_wippe() {
 			auto_scroll(129, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(159);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			flic_cut(FCUT_047);
 			_G(flags).NoScroll = false;
 			showCur();
@@ -125,17 +125,16 @@ short Room37::use_wippe() {
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(160);
 		}
-	}
 
-	return action_flag;
+		return true;
+	} else {
+		return false;
+	}
 }
 
-int16 Room37::use_glas() {
-	int16 action_flag = false;
-
-	if (!_G(gameState).R37Gebiss) {
-		action_flag = true;
-		if (isCurInventory(ANGEL2_INV)) {
+int16 Room37::useGlass() {
+	if (!_G(gameState).R37TakenDenturesFromGlass) {
+		if (isCurInventory(FISHING_ROD_INV)) {
 			_G(flags).NoScroll = true;
 			hideCur();
 			autoMove(5, P_CHEWY);
@@ -143,27 +142,29 @@ int16 Room37::use_glas() {
 			auto_scroll(146, 0);
 			start_spz(CH_TALK6, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(147);
-			delInventory(_G(gameState).AkInvent);
+			delInventory(_G(cur)->getInventoryCursor());
 			flic_cut(FCUT_048);
 			flic_cut(FCUT_049);
-			invent_2_slot(GEBISS_INV);
+			invent_2_slot(DENTURES_INV);
 			_G(det)->hideStaticSpr(9);
 			_G(atds)->set_ats_str(250, 1, ATS_DATA);
 			_G(atds)->set_ats_str(256, 1, ATS_DATA);
-			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->delControlBit(251, ATS_ACTIVE_BIT);
 			_G(obj)->show_sib(SIB_HFUTTER2_R37);
-			_G(gameState).R37Gebiss = true;
+			_G(gameState).R37TakenDenturesFromGlass = true;
 			start_spz(CH_TALK3, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(146);
 			showCur();
 			_G(flags).NoScroll = false;
-			g_engine->_sound->playSound(3);
+			_G(det)->playSound(3, 0);
 		} else {
 			autoMove(4, P_CHEWY);
 		}
-	}
 
-	return action_flag;
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void Room37::dog_bell() {
@@ -173,16 +174,16 @@ void Room37::dog_bell() {
 
 	if (!_G(flags).AutoAniPlay) {
 		_G(flags).AutoAniPlay = true;
-		g_engine->_sound->stopSound(0); // nr 3, sslot 0
+		_G(det)->stopSound(0); // nr 3, sslot 0
 
-		if (!_G(gameState).R37Gebiss) {
+		if (!_G(gameState).R37TakenDenturesFromGlass) {
 			stopPerson(P_CHEWY);
 			_G(flags).ChAutoMov = false;
 			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			disable_timer();
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			_G(det)->del_static_ani(3);
 			startSetAILWait(5, 1, ANI_FRONT);
 			_G(det)->hideStaticSpr(9);
@@ -191,26 +192,26 @@ void Room37::dog_bell() {
 			_G(det)->startDetail(11, 255, ANI_FRONT);
 			flic_cut(FCUT_050);
 			startSetAILWait(6, 1, ANI_BACK);
-			_G(det)->stop_detail(11);
+			_G(det)->stopDetail(11);
 			setPersonPos(326, 85, P_CHEWY, P_LEFT);
 			_G(gameState)._personHide[P_CHEWY] = false;
 			_G(det)->showStaticSpr(9);
 			startAniBlock(3, ABLOCK31);
 			_G(det)->set_static_ani(3, -1);
-			g_engine->_sound->playSound(3, 0);
-//			g_engine->_sound->playSound(3);
+			_G(det)->playSound(3, 0);
+//			_G(det)->playSound(3);
 			enable_timer();
 			dia_nr = 149;
 			ani_nr = CH_TALK12;
 
-		} else if (!_G(gameState).R37HundScham) {
+		} else if (!_G(gameState).R37DogAshamed) {
 			stopPerson(P_CHEWY);
 			setPersonSpr(P_LEFT, P_CHEWY);
 			_G(flags).NoScroll = true;
 			auto_scroll(178, 0);
 			_G(room)->set_timer_status(3, TIMER_STOP);
 			_G(det)->del_static_ani(3);
-			_G(det)->stop_detail(3);
+			_G(det)->stopDetail(3);
 			startSetAILWait(4, 1, ANI_FRONT);
 			flic_cut(FCUT_051);
 			_G(gameState).scrollx = 104;
@@ -218,7 +219,7 @@ void Room37::dog_bell() {
 			register_cutscene(10);
 			_G(det)->showStaticSpr(0);
 
-			_G(gameState).R37HundScham = true;
+			_G(gameState).R37DogAshamed = true;
 			dia_nr = 148;
 			ani_nr = CH_TALK6;
 		}
@@ -235,46 +236,44 @@ void Room37::dog_bell() {
 	showCur();
 }
 
-void Room37::talk_hahn() {
+void Room37::talkWithRooster() {
 	hideCur();
 	autoMove(7, P_CHEWY);
 	showCur();
 
-	if (!_G(gameState).R37TransHahn) {
-		_G(cur_hide_flag) = 0;
+	if (!_G(gameState).R37UsedTranslatorOnRooster) {
 		hideCur();
 		startAadWait(145);
 		showCur();
 	} else {
-		hahn_dia();
+		roosterDialog();
 	}
 }
 
-void Room37::use_hahn() {
+void Room37::useRooster() {
 	if (isCurInventory(TRANSLATOR_INV)) {
 		hideCur();
 		autoMove(7, P_CHEWY);
-		_G(gameState).R37TransHahn = true;
+		_G(gameState).R37UsedTranslatorOnRooster = true;
 		start_spz_wait(CH_TRANS, 1, false, P_CHEWY);
 		flic_cut(FCUT_052);
 		cur_2_inventory();
 		_G(menu_item) = CUR_TALK;
 		cursorChoice(_G(menu_item));
 		showCur();
-		hahn_dia();
-
-	} else if (_G(gameState).R37TransHahn) {
-		if (isCurInventory(GEBISS_INV)) {
-			_G(gameState).R37Kloppe = true;
+		roosterDialog();
+	} else if (_G(gameState).R37UsedTranslatorOnRooster) {
+		if (isCurInventory(DENTURES_INV)) {
+			_G(gameState).R37RoosterFoughtWithDog = true;
 			hideCur();
 			autoMove(6, P_CHEWY);
-			load_room_music(256);
+			g_engine->_sound->playRoomMusic(256);
 			_G(room)->set_timer_status(7, TIMER_STOP);
-			_G(det)->stop_detail(7);
+			_G(det)->stopDetail(7);
 			_G(det)->del_static_ani(7);
 			_G(det)->startDetail(9, 1, ANI_FRONT);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-			delInventory(GEBISS_INV);
+			delInventory(DENTURES_INV);
 			_G(flags).NoScroll = true;
 			auto_scroll(177, 0);
 
@@ -288,33 +287,33 @@ void Room37::use_hahn() {
 			_G(det)->startDetail(10, 10, ANI_FRONT);
 			autoMove(8, P_CHEWY);
 			flic_cut(FCUT_053);
-			_G(det)->stop_detail(10);
+			_G(det)->stopDetail(10);
 
 			_G(gameState).scrollx = 320;
 			_G(flags).NoScroll = false;
-			_G(atds)->setControlBit(251, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(250, ATS_ACTIVE_BIT, ATS_DATA);
-			_G(atds)->setControlBit(256, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(251, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(250, ATS_ACTIVE_BIT);
+			_G(atds)->setControlBit(256, ATS_ACTIVE_BIT);
 			_G(det)->hideStaticSpr(8);
 			start_spz(CH_TALK5, 255, ANI_FRONT, P_CHEWY);
 			startAadWait(141);
-			_G(obj)->addInventory(EIER_INV, &_G(room_blk));
-			inventory_2_cur(EIER_INV);
+			_G(obj)->addInventory(EGGS_INV, &_G(room_blk));
+			inventory_2_cur(EGGS_INV);
 			showCur();
 		}
-	} else if (_G(gameState).inv_cur) {
+	} else if (_G(cur)->usingInventoryCursor()) {
 		startAadWait(143);
 	}
 }
 
-void Room37::hahn_dia() {
+void Room37::roosterDialog() {
 	_G(gameState)._personHide[P_CHEWY] = true;
 	int16 tmp_scrollx = _G(gameState).scrollx;
 	int16 tmp_scrolly = _G(gameState).scrolly;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
 	switchRoom(38);
-	startAdsWait(9);
+	startDialogCloseupWait(9);
 	_G(gameState)._personHide[P_CHEWY] = false;
 	_G(flags).LoadGame = true;
 	_G(gameState).scrollx = tmp_scrollx;

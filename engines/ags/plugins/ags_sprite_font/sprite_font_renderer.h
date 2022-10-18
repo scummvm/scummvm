@@ -30,7 +30,7 @@ namespace AGS3 {
 namespace Plugins {
 namespace AGSSpriteFont {
 
-class SpriteFontRenderer : public IAGSFontRenderer {
+class SpriteFontRenderer : public IAGSFontRenderer2 {
 protected:
 	IAGSEngine *_engine;
 	SpriteFont *getFontFor(int fontNum);
@@ -41,17 +41,26 @@ public:
 	SpriteFontRenderer(IAGSEngine *engine);
 	virtual ~SpriteFontRenderer();
 
+	void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);
+
+	// IAGSFontRenderer implementation
 	bool LoadFromDisk(int fontNumber, int fontSize) override {
 		return true;
 	}
-	void FreeMemory(int fontNumber) override { }
+	void FreeMemory(int fontNumber) override;
 	bool SupportsExtendedCharacters(int fontNumber) override;
 	int GetTextWidth(const char *text, int fontNumber) override;
 	int GetTextHeight(const char *text, int fontNumber) override;
 	void RenderText(const char *text, int fontNumber, BITMAP *destination, int x, int y, int colour) override;
 	void AdjustYCoordinateForFont(int *ycoord, int fontNumber) override { }
 	void EnsureTextValidForFont(char *text, int fontNumber) override;
-	void SetSpriteFont(int fontNum, int sprite, int rows, int columns, int charWidth, int charHeight, int charMin, int charMax, bool use32bit);
+
+	// IAGSFontRenderer2 implementation
+	int GetVersion() override { return 26; /* compatible engine API ver */ }
+	const char *GetRendererName() override { return "SpriteFontRenderer"; }
+	const char *GetFontName(int fontNumber) override { return ""; /* not supported */ }
+	int GetFontHeight(int fontNumber) override;
+	int GetLineSpacing(int fontNumber) override { return 0; /* not specified */ }
 };
 
 } // namespace AGSSpriteFont

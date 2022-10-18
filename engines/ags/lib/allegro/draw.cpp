@@ -23,6 +23,18 @@
 
 namespace AGS3 {
 
+void drawing_mode(int mode, BITMAP *pattern, int x_anchor, int y_anchor) {
+	// TODO: Drawing mode
+}
+
+void xor_mode(int on) {
+	drawing_mode(on ? DRAW_MODE_XOR : DRAW_MODE_SOLID, NULL, 0, 0);
+}
+
+void solid_mode(void) {
+	drawing_mode(DRAW_MODE_SOLID, NULL, 0, 0);
+}
+
 void do_line(BITMAP *bmp, int x1, int y1, int x2, int y2, int d, DrawMethod proc) {
 	int dx = x2 - x1;
 	int dy = y2 - y1;

@@ -41,7 +41,6 @@
 #include "engines/grim/gfx_base.h"
 #include "engines/grim/model.h"
 #include "engines/grim/primitives.h"
-
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/luadebug.h"
 #include "engines/grim/lua/lualib.h"
@@ -79,6 +78,8 @@ void LuaObjects::add(const char *str) {
 void LuaObjects::addNil() {
 	Obj obj;
 	obj._type = Obj::Nil;
+	// Just set a value to avoid having uninitialized fields.
+	obj._value.object = nullptr;
 	_objects.push_back(obj);
 }
 
@@ -101,7 +102,6 @@ void LuaObjects::pushObjects() const {
 		}
 	}
 }
-
 
 LuaBase *LuaBase::s_instance = nullptr;
 
@@ -398,7 +398,7 @@ bool LuaBase::findCostume(lua_Object costumeObj, Actor *actor, Costume **costume
 	if (lua_isnil(costumeObj))
 		return true;
 	if (lua_isnumber(costumeObj)) {
-		/*		int num = (int)lua_getnumber(costumeObj);*/
+		//int num = (int)lua_getnumber(costumeObj);
 		error("findCostume: search by Id not implemented");
 		// TODO get costume by ID ?
 	}

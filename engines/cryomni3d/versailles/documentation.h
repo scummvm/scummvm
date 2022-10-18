@@ -39,7 +39,7 @@ namespace Versailles {
 class Versailles_Documentation {
 public:
 	Versailles_Documentation() : _engine(nullptr), _fontManager(nullptr), _sprites(nullptr),
-		_messages(nullptr), _linksData(nullptr), _linksSize(0),
+		_messages(nullptr), _multilineAttributes(false), _linksData(nullptr), _linksSize(0),
 		_currentInTimeline(false), _currentMapLayout(false), _currentHasMap(false) { }
 	~Versailles_Documentation() { delete [] _linksData; }
 

@@ -32,8 +32,8 @@
 namespace Image {
 
 // The PICT code is based off of the QuickDraw specs:
-// http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-461.html
-// http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-269.html
+// https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-461.html
+// https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-269.html
 
 PICTDecoder::PICTDecoder() {
 	_outputSurface = 0;
@@ -70,6 +70,7 @@ void PICTDecoder::setupOpcodesCommon() {
 	OPCODE(0x00A1, o_longComment, "LongComment");
 	OPCODE(0x00FF, o_opEndPic, "OpEndPic");
 	OPCODE(0x0C00, o_headerOp, "HeaderOp");
+	OPCODE(0x1101, o_versionOp1, "VersionOp1");
 }
 
 void PICTDecoder::setupOpcodesNormal() {
@@ -95,7 +96,20 @@ void PICTDecoder::o_nop(Common::SeekableReadStream &) {
 
 void PICTDecoder::o_clip(Common::SeekableReadStream &stream) {
 	// Ignore
-	stream.skip(stream.readUint16BE() - 2);
+	int size = stream.readUint16BE();
+	debug(3, "CLIP: size is %d", size);
+	if (size >= 10) {
+		int x1 = stream.readSint16BE();
+		int y1 = stream.readSint16BE();
+		int x2 = stream.readSint16BE();
+		int y2 = stream.readSint16BE();
+		debug(3, "CLIP: RECT encountered: %d %d %d %d", x1, y1, x2, y2);
+		stream.skip(size - 10);
+		debug(3, "CLIP: skipped %d bytes", size - 10);
+	} else {
+		stream.skip(size - 2);
+		debug(3, "CLIP: skipped %d bytes", size - 2);
+	}
 }
 
 void PICTDecoder::o_txFont(Common::SeekableReadStream &stream) {
@@ -131,6 +145,12 @@ void PICTDecoder::o_versionOp(Common::SeekableReadStream &stream) {
 	// We only support v2 extended
 	if (stream.readUint16BE() != 0x02FF)
 		error("Unknown PICT version");
+	else
+		_version = 2;
+}
+
+void PICTDecoder::o_versionOp1(Common::SeekableReadStream& stream) {
+	_version = 1;
 }
 
 void PICTDecoder::o_longText(Common::SeekableReadStream &stream) {
@@ -230,7 +250,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	_imageRect.left = stream.readUint16BE();
 	_imageRect.bottom = stream.readUint16BE();
 	_imageRect.right = stream.readUint16BE();
-	_imageRect.debugPrint(0, "PICT Rect:");
+	_imageRect.debugPrint(8, "PICTDecoder::loadStream(): loaded rect: ");
 
 	// NOTE: This is only a subset of the full PICT format.
 	//     - Only V2 (Extended) Images Supported
@@ -238,12 +258,17 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 	//     - DirectBitsRect/PackBitsRect compressed data is supported
 	for (uint32 opNum = 0; !stream.eos() && !stream.err() && stream.pos() < stream.size() && _continueParsing; opNum++) {
 		// PICT v2 opcodes are two bytes
-		uint16 opcode = stream.readUint16BE();
+		uint16 opcode;
 
-		if (opNum == 0 && opcode != 0x0011) {
+		if (_version != 1)
+			opcode = stream.readUint16BE();
+		else
+			opcode = stream.readByte();
+
+		if (opNum == 0 && (opcode != 0x0011 && opcode != 0x1101)) {
 			warning("Cannot find PICT version opcode");
 			return false;
-		} else if (opNum == 1 && opcode != 0x0C00) {
+		} else if (opNum == 1 && _version == 2 && opcode != 0x0C00) {
 			warning("Cannot find PICT header opcode");
 			return false;
 		}
@@ -264,7 +289,8 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 		}
 
 		// Align
-		stream.skip((stream.pos() - startPos) & 1);
+		if (_version == 2)
+			stream.skip((stream.pos() - startPos) & 1);
 	}
 
 	return _outputSurface;
@@ -273,7 +299,7 @@ bool PICTDecoder::loadStream(Common::SeekableReadStream &stream) {
 PICTDecoder::PixMap PICTDecoder::readPixMap(Common::SeekableReadStream &stream, bool hasBaseAddr) {
 	PixMap pixMap;
 	pixMap.baseAddr = hasBaseAddr ? stream.readUint32BE() : 0;
-	pixMap.rowBytes = stream.readUint16BE() & 0x3fff;
+	pixMap.rowBytes = stream.readUint16BE() & 0x7fff;
 	pixMap.bounds.top = stream.readUint16BE();
 	pixMap.bounds.left = stream.readUint16BE();
 	pixMap.bounds.bottom = stream.readUint16BE();
@@ -306,7 +332,7 @@ void PICTDecoder::unpackBitsRect(Common::SeekableReadStream &stream, bool withPa
 
 	// Read in the palette if there is one present
 	if (withPalette) {
-		// See http://developer.apple.com/legacy/mac/library/documentation/mac/QuickDraw/QuickDraw-267.html
+		// See https://developer.apple.com/library/archive/documentation/mac/QuickDraw/QuickDraw-267.html
 		stream.readUint32BE(); // seed
 		stream.readUint16BE(); // flags
 		_paletteColorCount = stream.readUint16BE() + 1;
@@ -520,7 +546,7 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool withPale
 			stream.skip((stream.readUint16BE() + 1) * 8);
 		}
 
-		rowBytes &= 0x3FFF;
+		rowBytes &= 0x7FFF;
 	} else {
 		// BitMap
 		packType = 0;
@@ -537,8 +563,8 @@ void PICTDecoder::skipBitsRect(Common::SeekableReadStream &stream, bool withPale
 }
 
 // Compressed QuickTime details can be found here:
-// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
-// http://developer.apple.com/legacy/mac/library/#documentation/QuickTime/Rm/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
+// https://developer.apple.com/library/archive/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/B-Chapter/2TheImageCompression.html
+// https://developer.apple.com/library/archive/documentation/QuickTime/RM/CompressDecompress/ImageComprMgr/F-Chapter/6WorkingwiththeImage.html
 void PICTDecoder::decodeCompressedQuickTime(Common::SeekableReadStream &stream) {
 	// First, read all the fields from the opcode
 	uint32 dataSize = stream.readUint32BE();

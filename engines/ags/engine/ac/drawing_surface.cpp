@@ -22,13 +22,11 @@
 #include "ags/engine/ac/draw.h"
 #include "ags/engine/ac/drawing_surface.h"
 #include "ags/shared/ac/common.h"
-#include "ags/engine/ac/character_cache.h"
 #include "ags/engine/ac/display.h"
 #include "ags/engine/ac/game.h"
 #include "ags/shared/ac/game_setup_struct.h"
 #include "ags/engine/ac/game_state.h"
 #include "ags/engine/ac/global_translation.h"
-#include "ags/engine/ac/object_cache.h"
 #include "ags/engine/ac/room_object.h"
 #include "ags/engine/ac/room_status.h"
 #include "ags/engine/ac/string.h"
@@ -66,7 +64,7 @@ void DrawingSurface_Release(ScriptDrawingSurface *sds) {
 	}
 	if (sds->roomMaskType > kRoomAreaNone) {
 		if (sds->roomMaskType == kRoomAreaWalkBehind) {
-			recache_walk_behinds();
+			walkbehinds_recalc();
 		}
 		sds->roomMaskType = kRoomAreaNone;
 	}
@@ -344,15 +342,8 @@ void DrawingSurface_DrawStringWrapped(ScriptDrawingSurface *sds, int xx, int yy,
 	color_t text_color = sds->currentColour;
 
 	for (size_t i = 0; i < _GP(Lines).Count(); i++) {
-		int drawAtX = xx;
-
-		if (alignment & kMAlignHCenter) {
-			drawAtX = xx + ((wid / 2) - get_text_width(_GP(Lines)[i].GetCStr(), font) / 2);
-		} else if (alignment & kMAlignRight) {
-			drawAtX = (xx + wid) - get_text_width(_GP(Lines)[i].GetCStr(), font);
-		}
-
-		wouttext_outline(ds, drawAtX, yy + linespacing * i, font, text_color, _GP(Lines)[i].GetCStr());
+		GUI::DrawTextAlignedHor(ds, _GP(Lines)[i].GetCStr(), font, text_color,
+			xx, xx + wid - 1, yy + linespacing * i, (FrameAlignment)alignment);
 	}
 
 	sds->FinishedDrawing();
@@ -405,8 +396,8 @@ void DrawingSurface_DrawPixel(ScriptDrawingSurface *sds, int x, int y) {
 int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 	sds->PointToGameResolution(&x, &y);
 	Bitmap *ds = sds->StartDrawing();
-	unsigned int rawPixel = ds->GetPixel(x, y);
-	unsigned int maskColor = ds->GetMaskColor();
+	int rawPixel = ds->GetPixel(x, y);
+	int maskColor = ds->GetMaskColor();
 	int colDepth = ds->GetColorDepth();
 
 	if (rawPixel == maskColor) {
@@ -415,12 +406,10 @@ int DrawingSurface_GetPixel(ScriptDrawingSurface *sds, int x, int y) {
 		int r = getr_depth(colDepth, rawPixel);
 		int g = getg_depth(colDepth, rawPixel);
 		int b = getb_depth(colDepth, rawPixel);
-
 		rawPixel = Game_GetColorFromRGB(r, g, b);
 	}
 
 	sds->FinishedDrawingReadOnly();
-
 	return rawPixel;
 }
 
@@ -557,7 +546,7 @@ RuntimeScriptValue Sc_DrawingSurface_GetWidth(void *self, const RuntimeScriptVal
 //
 //=============================================================================
 
-void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion compat_api) {
+void RegisterDrawingSurfaceAPI(ScriptAPIVersion base_api, ScriptAPIVersion /*compat_api */) {
 	ccAddExternalObjectFunction("DrawingSurface::Clear^1", Sc_DrawingSurface_Clear);
 	ccAddExternalObjectFunction("DrawingSurface::CreateCopy^0", Sc_DrawingSurface_CreateCopy);
 	ccAddExternalObjectFunction("DrawingSurface::DrawCircle^3", Sc_DrawingSurface_DrawCircle);

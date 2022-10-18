@@ -32,17 +32,14 @@ void Room80::entry() {
 	_G(mouseLeftClick) = false;
 	_G(gameState).scrollx = 0;
 	_G(gameState).scrolly = 0;
-	g_engine->_sound->playSound(0, 0);
-	g_engine->_sound->playSound(0, 1);
-	g_engine->_sound->playSound(0, 2);
-	g_engine->_sound->playSound(0);
-	g_engine->_sound->playSound(0, 1, false);
-	g_engine->_sound->playSound(0, 2, false);
+	_G(det)->playSound(0, 0);
+	_G(det)->playSound(0, 1);
+	_G(det)->playSound(0, 2);
 
 	if (_G(gameState).gottenDiary) {
-		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->delControlBit(476, ATS_ACTIVE_BIT);
 	} else {
-		_G(atds)->setControlBit(476, ATS_ACTIVE_BIT, ATS_DATA);
+		_G(atds)->setControlBit(476, ATS_ACTIVE_BIT);
 	}
 
 	if (_G(gameState).flags32_1) {
@@ -61,7 +58,7 @@ void Room80::entry() {
 	_G(gameState).ZoomXy[P_NICHELLE][1] = 40;
 	_G(zoom_horizont) = 0;
 
-	if (_G(gameState).r88DestRoom == 84)
+	if (_G(gameState).R88UsedMonkey)
 		_G(det)->showStaticSpr(3);
 	else
 		_G(det)->showStaticSpr(4);
@@ -78,7 +75,7 @@ void Room80::setup_func() {
 
 	_G(menu_item) = CUR_USE;
 	cur_2_inventory();
-	cursorChoice(CUR_ZEIGE);
+	cursorChoice(CUR_POINT);
 	int vec = _G(det)->maus_vector(_G(gameState).scrollx + g_events->_mousePos.x, g_events->_mousePos.y);
 	if (vec == -1)
 		return;

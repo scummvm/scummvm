@@ -20,9 +20,12 @@
  */
 
 #include "ags/lib/std/memory.h"
+#include "ags/shared/util/stream.h"
 #include "ags/engine/ac/dynobj/script_user_object.h"
 
 namespace AGS3 {
+
+using namespace AGS::Shared;
 
 // return the type name of the object
 const char *ScriptUserObject::GetType() {
@@ -40,12 +43,12 @@ ScriptUserObject::~ScriptUserObject() {
 
 /* static */ ScriptUserObject *ScriptUserObject::CreateManaged(size_t size) {
 	ScriptUserObject *suo = new ScriptUserObject();
-	suo->Create(nullptr, size);
+	suo->Create(nullptr, nullptr, size);
 	ccRegisterManagedObject(suo, suo);
 	return suo;
 }
 
-void ScriptUserObject::Create(const char *data, size_t size) {
+void ScriptUserObject::Create(const char *data, Stream *in, size_t size) {
 	delete[] _data;
 	_data = nullptr;
 
@@ -54,6 +57,8 @@ void ScriptUserObject::Create(const char *data, size_t size) {
 		_data = new char[size];
 		if (data)
 			memcpy(_data, data, _size);
+		else if (in)
+			in->Read(_data, _size);
 		else
 			memset(_data, 0, _size);
 	}
@@ -73,8 +78,8 @@ int ScriptUserObject::Serialize(const char *address, char *buffer, int bufsize) 
 	return _size;
 }
 
-void ScriptUserObject::Unserialize(int index, const char *serializedData, int dataSize) {
-	Create(serializedData, dataSize);
+void ScriptUserObject::Unserialize(int index, Stream *in, size_t data_sz) {
+	Create(nullptr, in, data_sz);
 	ccRegisterUnserializedObject(index, this, this);
 }
 

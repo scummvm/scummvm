@@ -4,7 +4,6 @@ MODULE_OBJS := \
 	combat.o \
 	debugger.o \
 	design.o \
-	dialog.o \
 	entities.o \
 	gui.o \
 	guiborders.o \

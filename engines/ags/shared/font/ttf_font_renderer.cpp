@@ -19,11 +19,12 @@
  *
  */
 
+#include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/lib/alfont/alfont.h"
 #include "ags/shared/core/platform.h"
+#include "ags/shared/ac/game_version.h"
 #include "ags/globals.h"
 #include "ags/shared/core/asset_manager.h"
-#include "ags/shared/font/ttf_font_renderer.h"
 #include "ags/shared/util/stream.h"
 #include "ags/shared/ac/game_struct_defines.h"
 #include "ags/shared/font/fonts.h"
@@ -32,11 +33,8 @@ namespace AGS3 {
 
 using namespace AGS::Shared;
 
-// project-specific implementation
-extern bool ShouldAntiAliasText();
-
 // ***** TTF RENDERER *****
-void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
+void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int /*fontNumber*/) {
 	// TTF fonts already have space at the top, so try to remove the gap
 	// TODO: adding -1 was here before (check the comment above),
 	// but how universal is this "space at the top"?
@@ -45,7 +43,7 @@ void TTFFontRenderer::AdjustYCoordinateForFont(int *ycoord, int fontNumber) {
 	ycoord[0]--;
 }
 
-void TTFFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
+void TTFFontRenderer::EnsureTextValidForFont(char * /*text*/, int /*fontNumber*/) {
 	// do nothing, TTF can handle all characters
 }
 
@@ -53,7 +51,7 @@ int TTFFontRenderer::GetTextWidth(const char *text, int fontNumber) {
 	return alfont_text_length(_fontData[fontNumber].AlFont, text);
 }
 
-int TTFFontRenderer::GetTextHeight(const char *text, int fontNumber) {
+int TTFFontRenderer::GetTextHeight(const char * /*text*/, int fontNumber) {
 	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
 }
 
@@ -61,18 +59,11 @@ void TTFFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	if (y > destination->cb)  // optimisation
 		return;
 
-	int srcFontNum = get_font_outline_font(fontNumber);
-	ALFONT_FONT *srcFont = nullptr;
-	if (srcFontNum != FONT_OUTLINE_NONE) {
-		// Get the font without outline (if it's loaded) for use in
-		// character widths, so it will match when non-outlined font
-		// is drawn on top of it.
-		srcFont = _fontData[srcFontNum].AlFont;
-	}
-
 	// Y - 1 because it seems to get drawn down a bit
-	alfont_textout(destination, _fontData[fontNumber].AlFont,
-		srcFont, text, x, y - 1, colour);
+	if ((ShouldAntiAliasText()) && (bitmap_color_depth(destination) > 8))
+		alfont_textout_aa(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
+	else
+		alfont_textout(destination, _fontData[fontNumber].AlFont, text, x, y - 1, colour);
 }
 
 bool TTFFontRenderer::LoadFromDisk(int fontNumber, int fontSize) {
@@ -83,67 +74,104 @@ bool TTFFontRenderer::IsBitmapFont() {
 	return false;
 }
 
+static int GetAlfontFlags(int load_mode) {
+	int flags = ALFONT_FLG_FORCE_RESIZE | ALFONT_FLG_SELECT_NOMINAL_SZ;
+	// Compatibility: font ascender is always adjusted to the formal font's height;
+	// EXCEPTION: not if it's a game made before AGS 3.4.1 with TTF anti-aliasing
+	// (the reason is uncertain, but this is to emulate old engine's behavior).
+	if (((load_mode & FFLG_ASCENDERFIXUP) != 0) &&
+		!(ShouldAntiAliasText() && (_G(loaded_game_file_version) < kGameVersion_341)))
+		flags |= ALFONT_FLG_ASCENDER_EQ_HEIGHT;
+	return flags;
+}
+
+// Loads a TTF font of a certain size
+static ALFONT_FONT *LoadTTF(const String &filename, int fontSize, int alfont_flags) {
+	std::unique_ptr<Stream> reader(_GP(AssetMgr)->OpenAsset(filename));
+	if (!reader)
+		return nullptr;
+
+	const size_t lenof = reader->GetLength();
+	std::vector<char> buf; buf.resize(lenof);
+	reader->Read(&buf.front(), lenof);
+	reader.reset();
+
+	ALFONT_FONT *alfptr = alfont_load_font_from_mem(&buf.front(), lenof);
+	if (!alfptr)
+		return nullptr;
+	alfont_set_font_size_ex(alfptr, fontSize, alfont_flags);
+	return alfptr;
+}
+
+// Fill the FontMetrics struct from the given ALFONT
+static void FillMetrics(ALFONT_FONT *alfptr, FontMetrics *metrics) {
+	metrics->Height = alfont_get_font_height(alfptr);
+	metrics->RealHeight = alfont_get_font_real_height(alfptr);
+	metrics->CompatHeight = metrics->Height; // just set to default here
+}
+
 bool TTFFontRenderer::LoadFromDiskEx(int fontNumber, int fontSize,
-		const FontRenderParams *params, FontMetrics *metrics) {
-	String file_name = String::FromFormat("agsfnt%d.ttf", fontNumber);
-	Stream *reader = _GP(AssetMgr)->OpenAsset(file_name);
-	byte *membuffer;
-
-	if (reader == nullptr)
-		return false;
-
-	size_t lenof = reader->GetLength();
-	membuffer = (byte *)malloc(lenof);
-	reader->ReadArray(membuffer, lenof, 1);
-	delete reader;
-
-	ALFONT_FONT *alfptr = alfont_load_font_from_mem(membuffer, lenof);
-
-	if (alfptr == nullptr) {
-		free(membuffer);
-		return false;
-	}
-
-	// TODO: move this somewhere, should not be right here
-#if defined(AGS_OUTLINE_FONT_FIX) && AGS_OUTLINE_FONT_FIX
-	// FIXME: (!!!) this fix should be done differently:
-	// 1. Find out which OUTLINE font was causing troubles;
-	// 2. Replace outline method ONLY if that troublesome font is used as outline.
-	// 3. Move this fix somewhere else!! (right after game load routine?)
-	//
-	// Check for the LucasFan font since it comes with an outline font that
-	// is drawn incorrectly with Freetype versions > 2.1.3.
-	// A simple workaround is to disable outline fonts for it and use
-	// automatic outline drawing.
-	if (get_font_outline(fontNumber) >= 0 &&
-	        strcmp(alfont_get_name(alfptr), "LucasFan-Font") == 0)
-		set_font_outline(fontNumber, FONT_OUTLINE_AUTO);
-#endif
-	if (fontSize == 0)
+	const FontRenderParams *params, FontMetrics *metrics) {
+	String filename = String::FromFormat("agsfnt%d.ttf", fontNumber);
+	if (fontSize <= 0)
 		fontSize = 8; // compatibility fix
 	if (params && params->SizeMultiplier > 1)
 		fontSize *= params->SizeMultiplier;
-	if (fontSize > 0)
-		alfont_set_font_size(alfptr, fontSize);
+
+	ALFONT_FONT *alfptr = LoadTTF(filename, fontSize,
+		GetAlfontFlags(params->LoadMode));
+	if (!alfptr)
+		return false;
 
 	_fontData[fontNumber].AlFont = alfptr;
 	_fontData[fontNumber].Params = params ? *params : FontRenderParams();
-
-	if (metrics) {
-		metrics->Height = alfont_get_font_height(alfptr);
-		metrics->RealHeight = alfont_get_font_real_height(alfptr);
-	}
-
+	if (metrics)
+		FillMetrics(alfptr, metrics);
 	return true;
 }
 
-const char *TTFFontRenderer::GetName(int fontNumber) {
+const char *TTFFontRenderer::GetFontName(int fontNumber) {
 	return alfont_get_name(_fontData[fontNumber].AlFont);
+}
+
+int TTFFontRenderer::GetFontHeight(int fontNumber) {
+	return alfont_get_font_real_height(_fontData[fontNumber].AlFont);
+}
+
+void TTFFontRenderer::GetFontMetrics(int fontNumber, FontMetrics *metrics) {
+	FillMetrics(_fontData[fontNumber].AlFont, metrics);
+}
+
+void TTFFontRenderer::AdjustFontForAntiAlias(int fontNumber, bool /*aa_mode*/) {
+	if (_G(loaded_game_file_version) < kGameVersion_341) {
+		ALFONT_FONT *alfptr = _fontData[fontNumber].AlFont;
+		const FontRenderParams &params = _fontData[fontNumber].Params;
+		int old_height = alfont_get_font_height(alfptr);
+		alfont_set_font_size_ex(alfptr, old_height, GetAlfontFlags(params.LoadMode));
+	}
 }
 
 void TTFFontRenderer::FreeMemory(int fontNumber) {
 	alfont_destroy_font(_fontData[fontNumber].AlFont);
 	_fontData.erase(fontNumber);
+}
+
+bool TTFFontRenderer::MeasureFontOfPointSize(const String &filename, int size_pt, FontMetrics *metrics) {
+	ALFONT_FONT *alfptr = LoadTTF(filename, size_pt, ALFONT_FLG_FORCE_RESIZE | ALFONT_FLG_SELECT_NOMINAL_SZ);
+	if (!alfptr)
+		return false;
+	FillMetrics(alfptr, metrics);
+	alfont_destroy_font(alfptr);
+	return true;
+}
+
+bool TTFFontRenderer::MeasureFontOfPixelHeight(const String &filename, int pixel_height, FontMetrics *metrics) {
+	ALFONT_FONT *alfptr = LoadTTF(filename, pixel_height, ALFONT_FLG_FORCE_RESIZE);
+	if (!alfptr)
+		return false;
+	FillMetrics(alfptr, metrics);
+	alfont_destroy_font(alfptr);
+	return true;
 }
 
 } // namespace AGS3

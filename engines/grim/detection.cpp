@@ -19,10 +19,10 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 #include "engines/grim/detection.h"
-
-#include "common/translation.h"
 #include "engines/grim/debug.h"
 
 static const DebugChannelDef debugFlagList[] = {
@@ -69,7 +69,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Load user patch (unsupported)"),
 			_s("Load an user patch. Please note that the ScummVM team doesn't provide support for using such patches."),
 			"datausr_load",
-			false
+			false,
+			0,
+			0
 		}
 	},
 	{
@@ -78,7 +80,9 @@ static const ADExtraGuiOptionsMap gameGuiOptions[] = {
 			_s("Show FPS"),
 			_s("Show the current FPS-rate, while you play."),
 			"show_fps",
-			false
+			false,
+			0,
+			0
 		}
 	},
 
@@ -173,6 +177,19 @@ static const GrimGameDescription gameDescriptions[] = {
 			Common::DE_DEU,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
+			GUI_OPTIONS_GRIME
+		},
+		GType_GRIM
+	},
+	{
+		// Grim Fandango German version (CD protected) - unsupported
+		{
+			"grim",
+			"",
+			AD_ENTRY1s("VOX0001.LAB", "88e8e13a8164c0df62b1f2f4e9ab4583", 388753408),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSUPPORTED,
 			GUI_OPTIONS_GRIME
 		},
 		GType_GRIM
@@ -624,11 +641,11 @@ public:
 		return Engines::findGameID(gameid, _gameIds, obsoleteGameIDsTable);
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Grim";
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "grim";
 	}
 

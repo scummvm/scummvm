@@ -271,6 +271,7 @@ private:
 
 	static const uint8 _fontRegular[];
 	static const uint8 _fontHebrew[];
+	static const uint8 _fontHebrewAdvBrew[];
 	static const uint8 _fontRussian[];
 	static const uint8 _fontGreek[];
 	static const uint8 _palJoeClothes[];

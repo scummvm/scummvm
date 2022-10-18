@@ -24,7 +24,8 @@
 
 namespace AGS3 {
 
-bool AreRectsIntersecting(const Rect &r1, const Rect &r2) { // NOTE: remember that in AGS Y axis is pointed downwards
+bool AreRectsIntersecting(const Rect &r1, const Rect &r2) {
+	// NOTE: remember that in AGS Y axis is pointed downwards (top < bottom)
 	return r1.Left <= r2.Right && r1.Right >= r2.Left &&
 	       r1.Top <= r2.Bottom && r1.Bottom >= r2.Top;
 }
@@ -37,13 +38,13 @@ bool IsRectInsideRect(const Rect &place, const Rect &item) {
 float DistanceBetween(const Rect &r1, const Rect &r2) {
 	// https://gamedev.stackexchange.com/a/154040
 	Rect rect_outer(
-	    std::min(r1.Left, r2.Left),
-	    std::min(r1.Top, r2.Top),
-	    std::max(r1.Right, r2.Right),
-	    std::max(r1.Bottom, r2.Bottom)
+	    MIN(r1.Left, r2.Left),
+	    MIN(r1.Top, r2.Top),
+	    MAX(r1.Right, r2.Right),
+	    MAX(r1.Bottom, r2.Bottom)
 	);
-	int inner_width = std::max(0, rect_outer.GetWidth() - r1.GetWidth() - r2.GetWidth());
-	int inner_height = std::max(0, rect_outer.GetHeight() - r1.GetHeight() - r2.GetHeight());
+	int inner_width = MAX(0, rect_outer.GetWidth() - r1.GetWidth() - r2.GetWidth());
+	int inner_height = MAX(0, rect_outer.GetHeight() - r1.GetHeight() - r2.GetHeight());
 	return static_cast<float>(std::sqrt((inner_width ^ 2) + (inner_height ^ 2)));
 }
 
@@ -117,6 +118,16 @@ Rect PlaceInRect(const Rect &place, const Rect &item, const RectPlacement &place
 	default:
 		return RectWH(place.Left + item.Left, place.Top + item.Top, item.GetWidth(), item.GetHeight());
 	}
+}
+
+Rect SumRects(const Rect &r1, const Rect &r2) { // NOTE: remember that in AGS Y axis is pointed downwards (top < bottom)
+	return Rect(MIN(r1.Left, r2.Left), MIN(r1.Top, r2.Top),
+		MAX(r1.Right, r2.Right), MAX(r1.Bottom, r2.Bottom));
+}
+
+Rect IntersectRects(const Rect &r1, const Rect &r2) { // NOTE: the result may be empty (negative) rect if there's no intersection
+	return Rect(MAX(r1.Left, r2.Left), MAX(r1.Top, r2.Top),
+		MIN(r1.Right, r2.Right), MIN(r1.Bottom, r2.Bottom));
 }
 
 } // namespace AGS3

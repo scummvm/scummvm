@@ -4,19 +4,20 @@ Graphics
 
 Use the Graphics tab to change how games look when they are played.
 
+
 **To change settings globally:**
 
-	From the Launcher, select **Options**. The **Graphics** tab is the first tab shown.
+ 	From the Launcher, select **Global Options**. The Global Options menu opens on the **Graphics** tab.
 
 **To change settings for a specific game:**
 
-	Highlight the game in the games list, select **Edit Game** then select the **Graphics** tab.
+	From the Launcher, highlight the game in the games list, and select the **Game Options** button. If the Launcher is in grid view, select the game and then select the gear icon in the popup window. Select the **Graphics** tab.
 
 For a comprehensive look at how to use these settings, check out our :doc:`../advanced_topics/understand_graphics` guide.
 
 .. figure:: ../images/settings/graphics.png
 
-    The Graphics tab in the global settings
+    The Graphics tab in the Global Options menu
 
 All settings can also be changed in the :doc:`../advanced_topics/configuration_file`. The configuration key is listed in italics after each setting description.
 
@@ -61,7 +62,7 @@ Aspect ratio correction
 .. _fullscreen:
 
 Fullscreen mode
-	Switches between playing games in a window, or playing them in fullscreen mode. Switch between the two by using :kbd:`Alt+F5` while in a game.
+	If ticked, games are played using the entire screen, instead of a window. The actual apperance is defined by the other graphics settings.
 
 	*fullscreen*
 

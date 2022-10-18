@@ -7,7 +7,7 @@ This page contains all the information you need to get ScummVM up and running on
 What you'll need
 ===================
 
-- Either a homebrew-enabled Nintendo DSi or an unofficial card reader. How to enable homebrew is outside the scope of this documentation.
+- A homebrew-enabled Nintendo DSi or DSi XL. Note that the original DS and DS Lite are not currently supported. How to enable homebrew is outside the scope of this documentation.
 
 Installing ScummVM
 ======================================

@@ -19,12 +19,6 @@
  *
  */
 
-#if defined(WIN32) && !defined(__SYMBIAN32__)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#include "backends/platform/sdl/win32/win32_wrapper.h"
-#endif
-
 #include "engines/engine.h"
 #include "engines/dialogs.h"
 #include "engines/util.h"
@@ -146,6 +140,7 @@ Engine::Engine(OSystem *syst)
 		_eventMan(_system->getEventManager()),
 		_saveFileMan(_system->getSavefileManager()),
 		_targetName(ConfMan.getActiveDomainName()),
+		_metaEngine(nullptr),
 		_pauseLevel(0),
 		_pauseStartTime(0),
 		_saveSlotToLoad(-1),
@@ -176,7 +171,7 @@ Engine::Engine(OSystem *syst)
 	//
 	// If an engine only used CursorMan.replaceCursor and no cursor has
 	// been setup before, then replaceCursor just uses pushCursor. This
-	// means that that the engine's cursor is never again removed from
+	// means that the engine's cursor is never again removed from
 	// CursorMan. Hence we setup a fake cursor here and remove it again
 	// in the destructor.
 	CursorMan.pushCursor(NULL, 0, 0, 0, 0, 0);
@@ -224,7 +219,7 @@ void initCommonGFX() {
 			g_system->setScaler(ConfMan.get("scaler").c_str(), ConfMan.getInt("scale_factor"));
 
 		if (gameDomain->contains("shader"))
-			g_system->setShader(ConfMan.get("shader").c_str());
+			g_system->setShader(ConfMan.get("shader"));
 	}
 }
 
@@ -424,6 +419,7 @@ void initGraphics3d(int width, int height) {
 		g_system->initSize(width, height);
 		g_system->setFeatureState(OSystem::kFeatureFullscreenMode, ConfMan.getBool("fullscreen")); // TODO: Replace this with initCommonGFX()
 		g_system->setFeatureState(OSystem::kFeatureAspectRatioCorrection, ConfMan.getBool("aspect_ratio")); // TODO: Replace this with initCommonGFX()
+		g_system->setStretchMode(ConfMan.get("stretch_mode").c_str()); // TODO: Replace this with initCommonGFX()
 	g_system->endGFXTransaction();
 }
 
@@ -495,28 +491,13 @@ bool Engine::existExtractedCDAudioFiles(uint track) {
  * @return			true, if this case is applicable and the warning is displayed
  */
 bool Engine::isDataAndCDAudioReadFromSameCD() {
-#if defined(WIN32) && !defined(__SYMBIAN32__)
-	// It is a known bug under Windows that games that play CD audio cause
-	// ScummVM to crash if the data files are read from the same CD. Check
-	// if this appears to be the case and issue a warning.
-
 	// If we can find a compressed audio track, then it should be ok even
 	// if it's running from CD.
-	char driveLetter;
-	const Common::FSNode gameDataDir(ConfMan.get("path"));
-	if (!gameDataDir.getPath().empty()) {
-		driveLetter = gameDataDir.getPath()[0];
-	} else {
-		// That's it! I give up!
-		Common::FSNode currentDir(".");
-		if (!currentDir.getPath().empty()) {
-			driveLetter = currentDir.getPath()[0];
-		} else {
-			return false;
-		}
+	if (existExtractedCDAudioFiles()) {
+		return false;
 	}
 
-	if (Win32::isDriveCD(driveLetter)) {
+	if (g_system->getAudioCDManager()->isDataAndCDAudioReadFromSameCD()) {
 		GUI::MessageDialog dialog(
 			_("You appear to be playing this game directly\n"
 			"from the CD. This is known to cause problems,\n"
@@ -526,7 +507,6 @@ bool Engine::isDataAndCDAudioReadFromSameCD() {
 		dialog.runModal();
 		return true;
 	}
-#endif // defined(WIN32) && !defined(__SYMBIAN32__)
 	return false;
 }
 
@@ -566,7 +546,7 @@ void Engine::handleAutoSave() {
 bool Engine::warnBeforeOverwritingAutosave() {
 	SaveStateDescriptor desc = getMetaEngine()->querySaveMetaInfos(
 		_targetName.c_str(), getAutosaveSlot());
-	if (!desc.isValid() || desc.hasAutosaveName())
+	if (!desc.isValid() || desc.isAutosave())
 		return true;
 	Common::U32StringArray altButtons;
 	altButtons.push_back(_("Overwrite"));
@@ -707,21 +687,41 @@ void Engine::openMainMenuDialog() {
 
 bool Engine::warnUserAboutUnsupportedGame(Common::String msg) {
 	if (ConfMan.getBool("enable_unsupported_game_warning")) {
+		Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+		if (ttsMan != nullptr) {
+			ttsMan->pushState();
+			g_gui.initTextToSpeech();
+		}
+
 		GUI::MessageDialog alert(!msg.empty() ? _("WARNING: ") + Common::U32String(msg) + _(" Shall we still run the game?") :
 				 _("WARNING: The game you are about to start is"
 			" not yet fully supported by ScummVM. As such, it is likely to be"
 			" unstable, and any saved game you make might not work in future"
 			" versions of ScummVM."), _("Start anyway"), _("Cancel"));
-		return alert.runModal() == GUI::kMessageOK;
+		int status = alert.runModal();
+
+		if (ttsMan != nullptr)
+			ttsMan->popState();
+
+		return status == GUI::kMessageOK;
 	}
 	return true;
 }
 
 void Engine::errorUnsupportedGame(Common::String extraMsg) {
+	Common::TextToSpeechManager *ttsMan = g_system->getTextToSpeechManager();
+	if (ttsMan != nullptr) {
+		ttsMan->pushState();
+		g_gui.initTextToSpeech();
+	}
+
 	Common::String message = extraMsg.empty() ? _("This game is not supported.") : _("This game is not supported for the following reason:\n\n");
 	message += _(extraMsg);
 	message += "\n\n";
 	GUI::MessageDialog(message).runModal();
+
+	if (ttsMan != nullptr)
+		ttsMan->popState();
 }
 
 uint32 Engine::getTotalPlayTime() const {

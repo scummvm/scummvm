@@ -112,7 +112,7 @@ int SaveLoadChooser::runModalWithMetaEngineAndTarget(const MetaEngine *engine, c
 	return ret;
 }
 
-const Common::U32String &SaveLoadChooser::getResultString() const {
+const Common::U32String SaveLoadChooser::getResultString() const {
 	assert(_impl);
 	return _impl->getResultString();
 }

@@ -30,9 +30,9 @@
 #include "engines/wintermute/ad/ad_scene.h"
 #include "engines/wintermute/ad/ad_scene_geometry.h"
 #include "engines/wintermute/base/gfx/base_renderer.h"
-#include "engines/wintermute/base/gfx/shadow_volume.h"
+#include "engines/wintermute/base/gfx/3dshadow_volume.h"
 #include "engines/wintermute/base/gfx/opengl/base_render_opengl3d.h"
-#include "engines/wintermute/base/gfx/x/modelx.h"
+#include "engines/wintermute/base/gfx/xmodel.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
 #include "engines/wintermute/dcgf.h"
@@ -43,24 +43,31 @@ namespace Wintermute {
 IMPLEMENT_PERSISTENT(AdObject3D, false)
 
 //////////////////////////////////////////////////////////////////////////
-AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame),
-										   _tempSkelAnim(nullptr),
-										   _lastPosVector(0.0f, 0.0f, 0.0f),
-										   _dropToFloor(true),
-										   _velocity(1.0f),
-										   _angVelocity(1.0f),
-										   _ambientLightColor(0x00000000),
-										   _hasAmbientLightColor(false),
-										   _shadowVolume(nullptr) {
+AdObject3D::AdObject3D(BaseGame *inGame) : AdObject(inGame) {
 	_is3D = true;
+
+	_velocity = 1.0f;
+	_angVelocity = 1.0f;
+	_lastPosVector = Math::Vector3d(0.0f, 0.0f, 0.0f);
+
 	_state = _nextState = STATE_READY;
+
+	_dropToFloor = true;
 	_shadowType = SHADOW_STENCIL;
+
+	_tempSkelAnim = nullptr;
+
+	_shadowVolume = nullptr;
+
+	_ambientLightColor = 0x00000000;
+	_hasAmbientLightColor = false;
 }
 
 //////////////////////////////////////////////////////////////////////////
 AdObject3D::~AdObject3D() {
 	_tempSkelAnim = nullptr; // ref only
 	delete _shadowVolume;
+	_shadowVolume = nullptr;
 
 	clearIgnoredLights();
 }
@@ -583,7 +590,7 @@ ShadowVolume *AdObject3D::getShadowVolume() {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
@@ -592,7 +599,7 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 	if (!adGame->_scene || !adGame->_scene->_sceneGeometry)
 		return false;
 
-	Math::Matrix4 *boneMat = _modelX->getBoneMatrix(boneName);
+	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
 
 	if (!boneMat) {
 		return false;
@@ -610,11 +617,11 @@ bool AdObject3D::getBonePosition2D(const char *boneName, int32 *x, int32 *y) {
 
 //////////////////////////////////////////////////////////////////////////
 bool AdObject3D::getBonePosition3D(const char *boneName, Math::Vector3d *pos, Math::Vector3d *offset) {
-	if (!_modelX) {
+	if (!_xmodel) {
 		return false;
 	}
 
-	Math::Matrix4 *boneMat = _modelX->getBoneMatrix(boneName);
+	Math::Matrix4 *boneMat = _xmodel->getBoneMatrix(boneName);
 	if (!boneMat) {
 		return false;
 	}

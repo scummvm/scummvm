@@ -19,6 +19,7 @@
  *
  */
 
+#include "chewy/cursor.h"
 #include "chewy/defines.h"
 #include "chewy/events.h"
 #include "chewy/globals.h"
@@ -67,7 +68,7 @@ void Room67::setup_func() {
 	calc_person_look();
 	const int16 y = 117;
 	int16 x;
-	if (_G(spieler_vector)[P_CHEWY].Xypos[0] > 320) {
+	if (_G(moveState)[P_CHEWY].Xypos[0] > 320) {
 		x = 178;
 	} else {
 		x = 137;
@@ -90,7 +91,7 @@ int16 Room67::use_grammo() {
 			startAadWait(614);
 
 		start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
-		_G(det)->stop_detail(0);
+		_G(det)->stopDetail(0);
 		showCur();
 	}
 	return action_flag;
@@ -105,7 +106,7 @@ void Room67::look_brief() {
 
 int16 Room67::use_kommode() {
 	int16 action_flag = false;
-	if (!_G(gameState).inv_cur) {
+	if (!_G(cur)->usingInventoryCursor()) {
 		hideCur();
 		if (!_G(gameState).R67KommodeAuf) {
 			action_flag = true;
@@ -138,7 +139,7 @@ void Room67::kostuem_aad(int16 aad_nr) {
 
 int16 Room67::talk_papagei() {
 	int16 action_flag = false;
-	if (!_G(gameState).R67PapageiWeg && !_G(gameState).inv_cur) {
+	if (!_G(gameState).R67PapageiWeg && !_G(cur)->usingInventoryCursor()) {
 		action_flag = true;
 		hideCur();
 		_G(room)->set_timer_status(1, TIMER_STOP);
@@ -146,7 +147,7 @@ int16 Room67::talk_papagei() {
 			showCur();
 
 			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
-			startAdsWait(19);
+			startDialogCloseupWait(19);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_NICHELLE) {
 			startAadWait(380);
@@ -156,19 +157,19 @@ int16 Room67::talk_papagei() {
 			showCur();
 
 			_G(atds)->set_split_win(2, 270 - _G(gameState).scrollx, 10);
-			startAdsWait(18);
+			startDialogCloseupWait(18);
 			_G(room)->set_timer_status(1, TIMER_START);
 		} else if (_G(menu_item) == CUR_USE) {
 			hideCur();
 			autoMove(4, P_CHEWY);
 			start_spz_wait(CH_LGET_O, 1, false, P_CHEWY);
 			_G(gameState).R67PapageiWeg = true;
-			_G(det)->stop_detail(1);
+			_G(det)->stopDetail(1);
 			_G(det)->del_static_ani(1);
 			_G(det)->showStaticSpr(0);
-			invent_2_slot(PAPAGEI_INV);
+			invent_2_slot(PARROT_INV);
 			showCur();
-			_G(atds)->setControlBit(394, ATS_ACTIVE_BIT, ATS_DATA);
+			_G(atds)->setControlBit(394, ATS_ACTIVE_BIT);
 		}
 		showCur();
 	}

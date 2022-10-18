@@ -36,7 +36,7 @@ static const TinselGameDescription gameDescriptions[] = {
 
 	// ==== Discworld 1 early (TinselV0) entries ==============================
 
-	{	// Floppy Demo V0 from http://www.adventure-treff.de/specials/dl_demos.php
+	{	// Floppy Demo V0 from https://web.archive.org/web/20100415160943/http://www.adventure-treff.de/specials/dl_demos.php
 		{
 			"dw",
 			"Floppy Demo",

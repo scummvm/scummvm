@@ -23,13 +23,14 @@
 #define CHEWY_GLOBALS_H
 
 #include "common/array.h"
+#include "common/rect.h"
 #include "chewy/chewy.h"
 #include "chewy/types.h"
 #include "chewy/atds.h"
 #include "chewy/room.h"
 #include "chewy/movclass.h"
 #include "chewy/timer.h"
-#include "chewy/gedclass.h"
+#include "chewy/barriers.h"
 #include "chewy/text.h"
 #include "chewy/object.h"
 #include "chewy/effect.h"
@@ -45,8 +46,6 @@ extern const uint8 RAND_NO_USE[MAX_RAND_NO_USE];
 class ChewyFont;
 class Cursor;
 class FontMgr;
-class InputMgr;
-class IOGame;
 class McgaGraphics;
 class Memory;
 
@@ -86,7 +85,6 @@ public:
 
 	int16 _pfeil_ani = 0;
 	int16 _pfeil_delay = 0;
-	int16 _cur_hide_flag = 0;
 	int16 _auto_p_nr = 0;
 
 	int16 _zoom_horizont = 0;
@@ -94,7 +92,6 @@ public:
 
 	int16 _auto_obj = 0;
 
-	bool _cur_display = false;
 	int16 _mouseLeftClick = 0;
 	Common::String _calc_inv_text_str1, _calc_inv_text_str2;
 	bool _stopAutoMove[3] = { false };
@@ -119,7 +116,6 @@ public:
 	const uint8 *_chewy_ph_nr;
 	const uint8 *_chewy_ph;
 	byte *_pal = nullptr;
-	byte *_screen0 = nullptr;
 	int16 _scr_width = 0;
 	BlendMode _fx_blend = BLEND_NONE;
 	void (*_SetUpScreenFunc)() = nullptr;
@@ -130,9 +126,8 @@ public:
 	byte **_ablage = nullptr;
 	byte *_workpage = nullptr;
 	byte *_workptr = nullptr;
-	byte **_ged_mem = nullptr;
 	byte *_spblende = nullptr;
-	char **_ads_item_ptr = nullptr;
+	char **_dialogCloseupItemPtr = nullptr;
 
 	int16 _ads_dia_nr = 0;
 	int16 _ads_item_nr = 0;
@@ -154,7 +149,6 @@ public:
 
 	int16 _talk_start_ani = -1;
 	int16 _talk_hide_static = -1;
-	int16 _currentSong = -1;
 	bool _savegameFlag = false;
 	int _timer_action_ctr = 0;
 
@@ -180,12 +174,10 @@ public:
 	RoomDetailInfo *_Rdi = nullptr;
 	StaticDetailInfo *_Sdi = nullptr;
 	AniDetailInfo *_Adi = nullptr;
-	TafInfo *_curtaf = nullptr;
 	TafInfo *_menutaf = nullptr;
 	TafSeqInfo *_howard_taf = nullptr;
 	TafInfo *_chewy = nullptr;
-	int16 *_chewy_kor = nullptr;
-	GedClass *_ged = nullptr;
+	Barriers *_barriers = nullptr;
 	Text *_txt = nullptr;
 	Room *_room = nullptr;
 	Object *_obj = nullptr;
@@ -195,7 +187,7 @@ public:
 	Atdsys *_atds = nullptr;
 	MovClass *_mov = nullptr;
 
-	ObjMov _spieler_vector[MAX_PERSON];
+	ObjMov _moveState[MAX_PERSON];
 	SprInfo _spr_info[MAX_PROG_ANI];
 	MovInfo _spieler_mi[MAX_PERSON];
 	ObjMov _auto_mov_vector[MAX_OBJ_MOV];
@@ -208,13 +200,12 @@ public:
 	bool _ani_stand_flag[MAX_PERSON] = { false };
 
 	MouseInfo _minfo;
-	CurBlk _curblk;
-	CurAni _curani;
 	RaumBlk _room_blk;
 	Flags _flags = { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-					0, 0, 0, 0, 0, 0, 0, 0, 0 };
-	CustomInfo _Ci;
+					0, 0, 0, 0, 0, 0, 0, 0 };
+	byte *_tempArea = nullptr;
 	GotoPkt _gpkt;
+	bool _disableScreen = false;
 
 	int16 _r45_pinfo[R45_MAX_PERSON][4] = {
 	   { 0, 4, 1490, 1500 },
@@ -229,7 +220,6 @@ public:
 	};
 
 	// main.cpp
-	int16 _menu_flag = 0;
 	bool _inv_disp_ok = 0;
 	int16 _txt_aus_click = 0;
 	int16 _txt_nummer = 0;
@@ -237,9 +227,7 @@ public:
 	int16 _cur_ausgang_flag = 0;
 	int16 _room_start_nr = 0;
 	int16 _TmpFrameSpeed = 0;
-	InputMgr *_in = nullptr;
 	Memory *_mem = nullptr;
-	IOGame *_iog = nullptr;
 	McgaGraphics *_out = nullptr;
 	Cursor *_cur = nullptr;
 	ChewyFont *_font6 = nullptr;
@@ -251,7 +239,6 @@ public:
 	int _spriteWidth = 0;
 
 	// mcga_graphics.cpp
-	int16 _clipx1 = 0, _clipx2 = 0, _clipy1 = 0, _clipy2 = 0;
 	int16 _gcurx = 0, _gcury = 0;
 
 	// menus.cpp
@@ -268,6 +255,48 @@ public:
 	bool _timer_int = false;
 	int _timer_count = 0;
 	bool _timer_suspend = false;
+
+	// Hotspot rect arrays
+	const Common::Rect _cinematicsHotspots[4] = {
+		{ 10,  80,  32, 105 },
+		{ 10, 150,  32, 175 },
+		{ 36,  64, 310, 188 },
+		{ -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _fileHotspots[9] = {
+		{  14,  73,  32,  94 },
+		{  14,  96,  32, 118 },
+		{  36,  64, 310, 128 },
+		{  16, 143,  76, 193 },
+		{  78, 143, 130, 193 },
+		{ 132, 143, 178, 193 },
+		{ 180, 143, 228, 193 },
+		{ 232, 143, 310, 193 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _inventoryHotspots[9] = {
+		{  21,  25,  51,  39 },
+		{  53,  25,  83,  39 },
+		{  -2,  -2,  -2,  -2 },
+		{ 213,  25, 243,  39 },
+		{ 253,  25, 283,  39 },
+		{  21,  45, 283, 135 },
+		{ 257, 151, 307, 165 },
+		{ 257, 171, 307, 185 },
+		{  -1,  -1,  -1,  -1 }
+	};
+	const Common::Rect _optionHotspots[10] = {
+		{  18,   61,   40,   76 },
+		{ 112,   61,  130,   76 },
+		{  82,  104,  144,  139 },
+		{ 164,   93,  194,  115 },
+		{ 198,   80,  206,  115 },
+		{ 210,   55,  302,  138 },
+		{ 126,  146,  210,  198 },
+		{  22,   92,   44,  136 },
+		{  50,   92,   72,  136 },
+		{  -1,   -1,   -1,   -1 }
+	};
 };
 
 extern Globals *g_globals;
@@ -291,7 +320,7 @@ void kb_mov(int16 mode);
 void kb_cur_action(int16 key, int16 mode);
 void mouseAction();
 
-void evaluateObj(int16 testNr, int16 txt_nr);
+void evaluateObj(int16 objectId, int16 txt_nr);
 
 void swap_if_l(int16 *x1, int16 *x2);
 
@@ -308,7 +337,7 @@ void delInventory(int16 nr);
 
 bool isCurInventory(int16 nr);
 
-void check_shad(int16 palIdx, int16 mode);
+void setShadowPalette(int16 palIdx, bool setPartialPalette);
 
 void get_scroll_off(int16 x, int16 y, int16 pic_x, int16 pic_y,
                     int16 *sc_x, int16 *sc_y);
@@ -322,7 +351,7 @@ int16 calc_mouse_mov_obj(int16 *auto_nr);
 
 void check_mouse_ausgang(int16 x, int16 y);
 
-void calc_ausgang(int16 x, int16 y);
+void calcExit(int16 x, int16 y);
 
 void goAutoXy(int16 x, int16 y, int16 personNum, int16 mode);
 
@@ -355,12 +384,9 @@ void init_load();
 void var_init();
 
 void new_game();
-void sound_init();
 void show_intro();
 void register_cutscene(int cutsceneNum);
 void getCutscenes(Common::Array<int> &cutscenes);
-
-void init_atds();
 
 void init_room();
 
@@ -383,17 +409,16 @@ void remove_inventory(int16 nr);
 
 void getDisplayCoord(int16 *x, int16 *y, int16 nr);
 void calcTxtXy(int16 *x, int16 *y, char *txtAdr, int16 txtNr);
-void adsMenu();
+void calcTxtXy(int16 *x, int16 *y, Common::StringArray &desc);
+void handleDialogCloseupMenu();
 
-void stop_ads_dialog();
+void stopDialogCloseupDialog();
 
-void play_scene_ani(int16 nr, int16 mode);
+void play_scene_ani(int16 nr, int16 direction);
 
 void timer_action(int16 t_nr);
 
 void check_ged_action(int16 index);
-
-int16 ged_user_func(int16 idx_nr);
 
 void enter_room(int16 eib_nr);
 
@@ -409,7 +434,7 @@ uint16 exit_flip_flop(int16 ani_nr, int16 eib_nr1, int16 eib_nr2,
                         int16 ats_nr1, int16 ats_nr2, int16 sib_nr,
                         int16 spr_nr1, int16 spr_nr2, int16 flag);
 
-int16 loadAdsDia(int16 diaNr);
+void loadDialogCloseup(int16 diaNr);
 
 void setSsiPos();
 
@@ -417,11 +442,11 @@ int16 atsAction(int16 txtNr, int16 txtMode, int16 MODE);
 
 void selectDialogOption(int16 diaNr, int16 blkNr, int16 strEndNr);
 
-void ads_ende(int16 diaNr, int16 blkNr, int16 strEndNr);
+void endDialogCloseup(int16 diaNr, int16 blkNr, int16 strEndNr);
 
 void atdsStringStart(int16 diaNr, int16 strNr, int16 personNr,
                        int16 mode);
-void calc_inv_use_txt(int16 test_nr);
+void useItemWithInvItem(int16 itemId);
 bool calc_inv_no_use(int16 test_nr, int16 mode);
 int16 calc_person_txt(int16 p_nr);
 int16 calc_person_click(int16 p_nr);
@@ -451,8 +476,8 @@ void startAadWait(int16 diaNr);
 
 void start_aad(int16 diaNr);
 void aadWait(int16 strNr);
-void startAdsWait(int16 diaNr);
-void start_aad(int16 diaNr, int16 ssiNr);
+void startDialogCloseupWait(int16 diaNr);
+void start_aad(int16 diaNr, int16 ssiNr, bool continueWhenSpeechEnds = false);
 void wait_auto_obj(int16 nr);
 
 void stop_auto_obj(int16 nr);
@@ -496,8 +521,6 @@ void get_lr_phase(ObjMov *om, int16 obj_mode);
 void load_person_ani(int16 ani_id, int16 p_nr);
 
 void calc_person_ani();
-
-void load_room_music(int16 room_nr);
 
 } // namespace Chewy
 

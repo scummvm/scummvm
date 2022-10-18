@@ -42,7 +42,8 @@ namespace GUI {
 enum {
 	kDownloadProceedCmd = 'Dlpr',
 	kListDownloadFinishedCmd = 'DlLE',
-	kCleanupCmd = 'DlCL'
+	kCleanupCmd = 'DlCL',
+	kClearCacheCmd = 'DlCC'
 };
 
 struct DialogState {
@@ -56,7 +57,101 @@ struct DialogState {
 	uint32 startTime;
 
 	DialogState() { state = kDownloadStateNone; downloadedSize = totalSize = totalFiles = startTime = 0; dialog = nullptr; }
+
+	void downloadList();
+	void proceedDownload();
+
+	void downloadListCallback(Networking::DataResponse response);
+	void downloadFileCallback(Networking::DataResponse response);
+	void errorCallback(Networking::ErrorResponse error);
+
+private:
+	bool takeOneFile();
 } static *g_state;
+
+
+void DialogState::downloadList() {
+	Networking::SessionRequest *rq = session.get("https://downloads.scummvm.org/frs/icons/LIST", "",
+		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadListCallback),
+		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback),
+		true);
+
+	rq->start();
+}
+
+void DialogState::proceedDownload() {
+	startTime = g_system->getMillis();
+	takeOneFile();
+}
+
+bool DialogState::takeOneFile() {
+	auto f = fileHash.begin();
+	if (f == fileHash.end())
+		return false;
+
+	Common::String fname = f->_key;
+	fileHash.erase(fname);
+
+	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", fname.c_str());
+	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
+
+	Networking::SessionRequest *rq = session.get(url, localFile,
+		new Common::Callback<DialogState, Networking::DataResponse>(this, &DialogState::downloadFileCallback),
+		new Common::Callback<DialogState, Networking::ErrorResponse>(this, &DialogState::errorCallback));
+
+	rq->start();
+	return true;
+}
+
+void DialogState::downloadListCallback(Networking::DataResponse r) {
+	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
+	Common::MemoryReadStream stream(response->buffer, response->len);
+
+	int nline = 0;
+	while (!stream.eos()) {
+		Common::String s = stream.readString('\n');
+		nline++;
+		if (s.empty())
+			continue;
+
+		size_t pos = s.findFirstOf(',');
+		if (pos == Common::String::npos) {
+			warning("DownloadIconsDialog: wrong string format at line %d: <%s>", nline, s.c_str());
+			continue;
+		}
+
+		fileHash.setVal(s.substr(0, pos), atol(s.substr(pos + 1).c_str()));
+	}
+
+	state = kDownloadStateListDownloaded;
+	if (dialog)
+		dialog->sendCommand(kListDownloadFinishedCmd, 0);
+}
+
+void DialogState::downloadFileCallback(Networking::DataResponse r) {
+	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
+
+	downloadedSize += response->len;
+	if (response->eos) {
+		if (!takeOneFile()) {
+			state = kDownloadComplete;
+			g_gui.initIconsSet();
+			if (dialog)
+				dialog->sendCommand(kDownloadEndedCmd, 0);
+			return;
+		}
+	}
+
+	if (dialog)
+		dialog->sendCommand(kDownloadProgressCmd, 0);
+}
+
+void DialogState::errorCallback(Networking::ErrorResponse error) {
+	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
+
+	if (dialog)
+		dialog->setError(message);
+}
 
 static uint32 getDownloadingProgress() {
 	if (!g_state || g_state->totalSize == 0)
@@ -92,6 +187,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 	_downloadSpeedLabel = new StaticTextWidget(this, "GlobalOptions_DownloadIconsDialog.DownloadSpeed", Common::U32String());
 	_cancelButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.MainButton", _("Cancel download"), Common::U32String(), kCleanupCmd);
 	_closeButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.CloseButton", _("Hide"), Common::U32String(), kCloseCmd);
+	_clearCacheButton = new ButtonWidget(this, "GlobalOptions_DownloadIconsDialog.ResetButton", _("Clear Cache"), Common::U32String(), kClearCacheCmd);
 
 	if (!g_state) {
 		g_state = new DialogState;
@@ -101,7 +197,7 @@ DownloadIconsDialog::DownloadIconsDialog() :
 		setState(kDownloadStateList);
 		refreshWidgets();
 
-		downloadList();
+		g_state->downloadList();
 	} else {
 		g_state->dialog = this;
 
@@ -135,7 +231,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_statusText->setLabel(_("Downloading icons list..."));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
-		_closeButton->setVisible(false);
+		_closeButton->setVisible(true);
 
 		g_state->totalSize = 0;
 		g_state->fileHash.clear();
@@ -145,7 +241,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_statusText->setLabel(Common::U32String::format(_("Downloading icons list... %d entries"), g_state->fileHash.size()));
 		_cancelButton->setLabel(_("Cancel download"));
 		_cancelButton->setCmd(kCleanupCmd);
-		_closeButton->setVisible(false);
+		_closeButton->setVisible(true);
 		break;
 
 	case kDownloadStateListCalculated: {
@@ -172,6 +268,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 		_closeButton->setLabel(_("Hide"));
 		_closeButton->setCmd(kCloseCmd);
 		_closeButton->setEnabled(true);
+		_clearCacheButton->setEnabled(false);
 		break;
 
 	case kDownloadComplete: {
@@ -186,6 +283,7 @@ void DownloadIconsDialog::setState(IconProcessState state) {
 			_closeButton->setLabel(_("Close"));
 			_closeButton->setCmd(kCleanupCmd);
 			_closeButton->setEnabled(true);
+			_clearCacheButton->setEnabled(true);
 			break;
 		}
 	}
@@ -210,8 +308,6 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kDownloadEndedCmd:
 		setState(kDownloadComplete);
-		g_gui.initIconsSet();
-		setResult(1); // Need tell the options to refresh launcher
 		break;
 	case kListDownloadFinishedCmd:
 		setState(kDownloadStateListDownloaded);
@@ -219,7 +315,11 @@ void DownloadIconsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 	case kDownloadProceedCmd:
 		setState(kDownloadStateDownloading);
-		proceedDownload();
+		g_state->proceedDownload();
+		break;
+	case kClearCacheCmd:
+		_clearCacheButton->setEnabled(false);
+		clearCache();
 		break;
 	default:
 		Dialog::handleCommand(sender, cmd, data);
@@ -269,34 +369,6 @@ void DownloadIconsDialog::refreshWidgets() {
 	_progressBar->setValue(progress);
 }
 
-void DownloadIconsDialog::downloadListCallback(Networking::DataResponse r) {
-	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
-
-	Common::MemoryReadStream stream(response->buffer, response->len);
-
-	int nline = 0;
-
-	while (!stream.eos()) {
-		Common::String s = stream.readString('\n');
-
-		nline++;
-
-		if (s.empty())
-			continue;
-
-		size_t pos = s.findFirstOf(',');
-
-		if (pos == Common::String::npos) {
-			warning("DownloadIconsDialog: wrong string format at line %d: <%s>", nline, s.c_str());
-			continue;
-		}
-
-		g_state->fileHash.setVal(s.substr(0, pos), atol(s.substr(pos + 1).c_str()));
-	}
-
-	sendCommand(kListDownloadFinishedCmd, 0);
-}
-
 void DownloadIconsDialog::setError(Common::U32String &msg) {
 	_errorText->setLabel(msg);
 
@@ -304,40 +376,29 @@ void DownloadIconsDialog::setError(Common::U32String &msg) {
 	_cancelButton->setCmd(kCleanupCmd);
 }
 
-void DownloadIconsDialog::errorCallback(Networking::ErrorResponse error) {
-	Common::U32String message = Common::U32String::format(_("ERROR %d: %s"), error.httpResponseCode, error.response.c_str());
-
-	if (g_state->dialog)
-		g_state->dialog->setError(message);
-}
-
-void DownloadIconsDialog::downloadList() {
-	Networking::SessionRequest *rq = g_state->session.get("https://downloads.scummvm.org/frs/icons/LIST", "",
-		new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadListCallback),
-		new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback),
-		true);
-
-	rq->start();
-}
-
 void DownloadIconsDialog::calculateList() {
-	if (!ConfMan.hasKey("iconspath")) {
+	Common::String iconsPath = ConfMan.get("iconspath");
+	if (iconsPath.empty()) {
 		Common::U32String str(_("ERROR: No icons path set"));
 		setError(str);
 		return;
 	}
 
-	// Scan all files in iconspath and remove present ones from the
+	// Scan all files in iconspath and remove present and incomplete ones from the
 	// donwloaded files list
-	Common::FSDirectory *iconDir = new Common::FSDirectory(ConfMan.get("iconspath"));
+	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+
 	Common::ArchiveMemberList iconFiles;
 
 	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
 
 	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
 		Common::String fname = (*ic)->getName();
+		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		uint32 size = str->size();
+		delete str;
 
-		if (g_state->fileHash.contains(fname))
+		if (g_state->fileHash.contains(fname) && size == g_state->fileHash[fname])
 			g_state->fileHash.erase(fname);
 	}
 
@@ -353,6 +414,7 @@ void DownloadIconsDialog::calculateList() {
 
 	if (g_state->totalSize == 0) {
 		Common::U32String error(_("No new icons packs available"));
+		_closeButton->setEnabled(false);
 		setError(error);
 		return;
 	}
@@ -360,48 +422,58 @@ void DownloadIconsDialog::calculateList() {
 	setState(kDownloadStateListCalculated);
 }
 
-bool DownloadIconsDialog::takeOneFile() {
-	auto f = g_state->fileHash.begin();
-
-	if (f == g_state->fileHash.end())
-		return false;
-
-	Common::String fname = f->_key;
-
-	g_state->fileHash.erase(fname);
-
-	Common::String url = Common::String::format("https://downloads.scummvm.org/frs/icons/%s", fname.c_str());
-	Common::String localFile = normalizePath(ConfMan.get("iconspath") + "/" + fname, '/');
-
-	Networking::SessionRequest *rq = g_state->session.get(url, localFile,
-		new Common::Callback<DownloadIconsDialog, Networking::DataResponse>(this, &DownloadIconsDialog::downloadFileCallback),
-		new Common::Callback<DownloadIconsDialog, Networking::ErrorResponse>(this, &DownloadIconsDialog::errorCallback));
-
-	rq->start();
-
-	return true;
-}
-
-void DownloadIconsDialog::downloadFileCallback(Networking::DataResponse r) {
-	Networking::SessionFileResponse *response = static_cast<Networking::SessionFileResponse *>(r.value);
-
-	g_state->downloadedSize += response->len;
-
-	if (response->eos) {
-		if (!takeOneFile()) {
-			sendCommand(kDownloadEndedCmd, 0);
-			return;
-		}
+void DownloadIconsDialog::clearCache() {
+	Common::String iconsPath = ConfMan.get("iconspath");
+	if (iconsPath.empty()) {
+		Common::U32String str(_("ERROR: No icons path set"));
+		setError(str);
+		return;
 	}
 
-	sendCommand(kDownloadProgressCmd, 0);
+	Common::FSDirectory *iconDir = new Common::FSDirectory(iconsPath);
+
+	Common::ArchiveMemberList iconFiles;
+
+	iconDir->listMatchingMembers(iconFiles, "gui-icons*.dat");
+	int totalSize = 0;
+
+	for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+		Common::String fname = (*ic)->getName();
+		Common::SeekableReadStream *str = (*ic)->createReadStream();
+		uint32 size = str->size();
+		delete str;
+
+		totalSize += size;
+	}
+
+	Common::String sizeUnits;
+	Common::String size = getHumanReadableBytes(totalSize, sizeUnits);
+
+	GUI::MessageDialog dialog(Common::U32String::format(_("You are about to remove %s %s of data, deleting all previously downloaded icon files. Do you want to proceed?"), size.c_str(), sizeUnits.c_str()), _("Proceed"), _("Cancel"));
+	if (dialog.runModal() == ::GUI::kMessageOK) {
+
+		// Build list of previously downloaded icon files
+		for (auto ic = iconFiles.begin(); ic != iconFiles.end(); ++ic) {
+			Common::String fname = (*ic)->getName();
+			Common::FSNode fs(Common::Path(iconsPath).join(fname));
+			Common::WriteStream *str = fs.createWriteStream();
+
+			// Overwrite previously downloaded icon files with dummy data
+			str->writeByte(0);
+			str->finalize();
+		}
+		g_state->fileHash.clear();
+
+		// Reload (now empty) icons set
+		g_gui.initIconsSet();
+
+		// Fetch current icons list file and re-trigger downloads
+		g_state->downloadList();
+		calculateList();
+		_cancelButton->setVisible(true);
+	} else {
+		_clearCacheButton->setEnabled(true);
+	}
 }
-
-void DownloadIconsDialog::proceedDownload() {
-	g_state->startTime = g_system->getMillis();
-
-	takeOneFile();
-}
-
 
 } // End of namespace GUI

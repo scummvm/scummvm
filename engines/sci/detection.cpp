@@ -130,8 +130,6 @@ static const PlainGameDescriptor s_sciGameTitles[] = {
 	{"gk1demo",         "Gabriel Knight: Sins of the Fathers"},
 	{"qfg4demo",        "Quest for Glory IV: Shadows of Darkness"},
 	{"pq4demo",         "Police Quest IV: Open Season"},
-	// === SCI1.1+ games ======================================================
-	{"catdate",         "The Dating Pool"},
 	// === SCI2 games =========================================================
 	{"gk1",             "Gabriel Knight: Sins of the Fathers"},
 	{"pq4",             "Police Quest IV: Open Season"}, // floppy is SCI2, CD SCI2.1
@@ -192,11 +190,11 @@ public:
 		return debugFlagList;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "sci";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "SCI ["
 #ifdef ENABLE_SCI32
 			"all games"
@@ -226,7 +224,7 @@ ADDetectedGame SciMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 		}
 	}
 
-	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getEngineId());
+	const Plugin *metaEnginePlugin = EngineMan.findPlugin(getName());
 
 	if (metaEnginePlugin) {
 		const Plugin *enginePlugin = PluginMan.getEngineFromMetaEngine(metaEnginePlugin);

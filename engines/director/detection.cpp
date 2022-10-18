@@ -57,6 +57,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugFewFramesOnly, "fewframesonly", "Only run the first 10 frames"},
 	{Director::kDebugImages, "images", "Image drawing"},
 	{Director::kDebugLingoExec, "lingoexec", "Lingo Execution"},
+	{Director::kDebugLingoStrict, "lingostrict", "Drop into debugger on Lingo error"},
 	{Director::kDebugLoading, "loading", "Loading"},
 	{Director::kDebugNoBytecode, "nobytecode", "Do not execute Lscr bytecode"},
 	{Director::kDebugNoLoop, "noloop", "Do not loop the playback"},
@@ -64,6 +65,7 @@ static const DebugChannelDef debugFlagList[] = {
 	{Director::kDebugPreprocess, "preprocess", "Lingo preprocessing"},
 	{Director::kDebugScreenshot, "screenshot", "screenshot each frame"},
 	{Director::kDebugSlow, "slow", "Slow playback"},
+	{Director::kDebugSound, "sound", "Sound playback"},
 	{Director::kDebugText, "text", "Text rendering"},
 	DEBUG_CHANNEL_END
 };
@@ -83,11 +85,11 @@ public:
 			_customTarget[customTargetList[i].name] = true;
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "director";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Macromedia Director";
 	}
 

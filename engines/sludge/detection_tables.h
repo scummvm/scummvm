@@ -104,7 +104,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"outoforder",
 			"",
-			AD_ENTRY1s("gamedata", "4d72dbad0ff170169cd7e4e7e389a90d", 21122647),
+			AD_ENTRY2s("gamedata",         "4d72dbad0ff170169cd7e4e7e389a90d", 21122647,
+					   "out-of-order.xpm", "407086751ac167884c6585c4cad5b664", 2601),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
@@ -117,7 +118,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"frasse",
 			"v1.03",
-			AD_ENTRY1s("gamedata", "5a985d772f9909a8cc98e1e9edf0875d", 38186227),
+			AD_ENTRY2s("gamedata",   "5a985d772f9909a8cc98e1e9edf0875d", 38186227,
+					   "frasse.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
@@ -130,7 +132,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"frasse",
 			"v1.04",
-			AD_ENTRY1s("gamedata", "13934872c16391de3ddd6644e3bfcd15", 38154596),
+			AD_ENTRY2s("gamedata",   "13934872c16391de3ddd6644e3bfcd15", 38154596,
+					   "frasse.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,
@@ -193,9 +196,24 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"life",
+			"",
+			AD_ENTRY2s("gamedata",   "a471759e071e5d2c0e8e6887607df778", 163794266,
+					   "sludge.bmp", "69db99963fb7e93af6d48dfd7f4246ee", 13846),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
 			"tgttpoacs",
 			"",
-			AD_ENTRY1s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368),
+			AD_ENTRY2s("gamedata", "d5ec4d7d8440f7744335d25d25e1e943", 40368,
+					   "gert.ico", "b76b5b38e8d5cd6843636085947bfd29", 3638),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -221,7 +239,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.2",
-			AD_ENTRY1s("data", "df4a0c113b93b89ff2fe7991fb018bae", 7099447),
+			AD_ENTRY2s("data",      "df4a0c113b93b89ff2fe7991fb018bae", 7099447,
+					   "Mandy.exe", "596478e1a7b4445fc0bd7f5ec2696125", 71168),
 			Common::SK_SVK,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -234,7 +253,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.2",
-			AD_ENTRY1s("data", "df4a0c113b93b89ff2fe7991fb018bae", 7099447),
+			AD_ENTRY2s("data",      "df4a0c113b93b89ff2fe7991fb018bae", 7099447,
+					   "Mandy.exe", "596478e1a7b4445fc0bd7f5ec2696125", 71168),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -247,7 +267,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.3",
-			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			AD_ENTRY2s("data",      "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976,
+					   "Mandy.exe", "596478e1a7b4445fc0bd7f5ec2696125", 71168),
 			Common::SK_SVK,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -260,7 +281,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.3",
-			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			AD_ENTRY2s("data",      "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976,
+					   "Mandy.exe", "596478e1a7b4445fc0bd7f5ec2696125", 71168),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -273,7 +295,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.3",
-			AD_ENTRY1s("data", "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976),
+			AD_ENTRY2s("data",      "b732ffe04367c787c6ce70fbcb7aa6aa", 7100976,
+					   "Mandy.exe", "596478e1a7b4445fc0bd7f5ec2696125", 71168),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -286,7 +309,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.4",
-			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			AD_ENTRY2s("data",      "705f6ca5f5da0c40c1f547231dd5139f", 7141292,
+					   "Mandy.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::SK_SVK,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -299,7 +323,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.4",
-			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			AD_ENTRY2s("data",      "705f6ca5f5da0c40c1f547231dd5139f", 7141292,
+					   "Mandy.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -312,7 +337,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.4",
-			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			AD_ENTRY2s("data",      "705f6ca5f5da0c40c1f547231dd5139f", 7141292,
+					   "Mandy.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::IT_ITA,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -325,7 +351,8 @@ static const SludgeGameDescription gameDescriptions[] = {
 		{
 			"mandy",
 			"v1.4",
-			AD_ENTRY1s("data", "705f6ca5f5da0c40c1f547231dd5139f", 7141292),
+			AD_ENTRY2s("data",      "705f6ca5f5da0c40c1f547231dd5139f", 7141292,
+					   "Mandy.exe", "7016ef8ab67133a1d6fce20b8b70cd1d", 83968),
 			Common::PL_POL,
 			Common::kPlatformWindows,
 			ADGF_UNSTABLE,
@@ -388,9 +415,36 @@ static const SludgeGameDescription gameDescriptions[] = {
 
 	{
 		{
+			"cubert",
+			"",
+			AD_ENTRY1s("cubert.dat", "cabc424d4e39ecdba4b0afd4033b5ea8", 19696514),
+			Common::DE_DEU,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		3
+	},
+
+	{
+		{
 			"nsc",
 			"v1.03",
-			AD_ENTRY1s("gamedata", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
+			AD_ENTRY1s("gamedata.slg", "57f318cc09e93a1e0685b790a956ebdc", 12733871),
+			Common::EN_ANY,
+			Common::kPlatformUnknown,
+			ADGF_UNSTABLE,
+			GUIO1(GUIO_NOMIDI)
+		},
+		0
+	},
+
+	{
+		{
+			"nsc",
+			"v1.03",
+			AD_ENTRY2s("gamedata", "57f318cc09e93a1e0685b790a956ebdc", 12733871,
+					   "Nathan's Second Chance.exe", "9bb4492fc7f7fc38bc1772bb9f15f787", 71680),
 			Common::EN_ANY,
 			Common::kPlatformUnknown,
 			ADGF_UNSTABLE,

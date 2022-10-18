@@ -49,18 +49,13 @@ inline TilePoint rightVector(TilePoint tp, bool which = 0) {
 // Routine to force the magnitude of a vector to a value
 
 inline void setMagnitude(TilePoint &tp, int32 newMag) {
-#if DEBUG
-	assert(tp.magnitude());
-#else
-	if (tp.magnitude() == 0)
+	if (tp.magnitude()) {
+		int32 nu = (tp.u * newMag) / tp.magnitude();
+		int32 nv = (tp.v * newMag) / tp.magnitude();
+		tp = TilePoint(nu, nv, tp.z);
+	} else {
 		tp = TilePoint(1, 1, 0);
-#endif
-	//if ( tp.magnitude() )
-	//{
-	int32 nu = (tp.u * newMag) / tp.magnitude();
-	int32 nv = (tp.v * newMag) / tp.magnitude();
-	tp = TilePoint(nu, nv, tp.z);
-	//}
+	}
 }
 
 // returns an arbitrary 'side' designation for a line and a point

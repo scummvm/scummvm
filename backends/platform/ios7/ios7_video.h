@@ -32,6 +32,7 @@
 
 #include "backends/platform/ios7/ios7_keyboard.h"
 #include "backends/platform/ios7/ios7_common.h"
+#include "backends/platform/ios7/ios7_game_controller.h"
 
 #include "common/list.h"
 
@@ -47,6 +48,7 @@ typedef struct {
 	NSLock *_eventLock;
 	SoftKeyboard *_keyboardView;
 	BOOL _keyboardVisible;
+	Common::List<GameController*> _controllers;
 
 	UIBackgroundTaskIdentifier _backgroundSaveStateTask;
 
@@ -87,10 +89,9 @@ typedef struct {
 
 	int _scaledShakeXOffset;
 	int _scaledShakeYOffset;
-
-	UITouch *_firstTouch;
-	UITouch *_secondTouch;
 }
+
+@property (nonatomic, assign) CGPoint pointerPosition;
 
 - (id)initWithFrame:(struct CGRect)frame;
 
@@ -128,8 +129,13 @@ typedef struct {
 - (void) beginBackgroundSaveStateTask;
 - (void) endBackgroundSaveStateTask;
 
+- (void)addEvent:(InternalEvent)event;
 - (bool)fetchEvent:(InternalEvent *)event;
 
+- (bool)getMouseCoords:(CGPoint)point eventX:(int *)x eventY:(int *)y;
+- (BOOL)isTouchControllerConnected;
+- (BOOL)isMouseControllerConnected;
+- (BOOL)isGamepadControllerConnected;
 @end
 
 #endif

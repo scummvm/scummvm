@@ -55,13 +55,6 @@ extern int g_newestString;	// The overrun counter, in STRRES.C
 
 //----------------- LOCAL DEFINES --------------------
 
-#define LPOSX	295		// X-co-ord of lead actor's position display
-#define CPOSX	24		// X-co-ord of cursor's position display
-#define OPOSX	SCRN_CENTER_X	// X-co-ord of overrun counter's display
-#define SPOSX	SCRN_CENTER_X	// X-co-ord of string numbner's display
-
-#define POSY	0		// Y-co-ord of these position displays
-
 enum HotSpotTag {
 	NO_HOTSPOT_TAG,
 	POLY_HOTSPOT_TAG,
@@ -398,7 +391,7 @@ static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 	bool	newActor;
 	char tagBuffer[64];
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		// Tinsel 2 version
 		// Get the foremost pointed to actor
 		int actor = _vm->_actor->FrontTaggedActor();
@@ -415,8 +408,7 @@ static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 			SaveTaggedActor(actor);		// This actor tagged
 			SaveTaggedPoly(NOPOLY);		// No tagged polygon
 
-			if (*ppText)
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
+			MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 
 			if (_vm->_actor->ActorTagIsWanted(actor)) {
 				_vm->_actor->GetActorTagPos(actor, &tagX, &tagY, false);
@@ -460,8 +452,7 @@ static bool ActorTag(int curX_, int curY_, HotSpotTag *pTag, OBJECT **ppText) {
 			if (newActor) {
 				// Display actor's tag
 
-				if (*ppText)
-					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
+				MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 
 				*pTag = ACTOR_HOTSPOT_TAG;
 				SaveTaggedActor(ano);	// This actor tagged
@@ -515,27 +506,24 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 	for (int i = 0; i < MAX_POLY; i++) {
 		hp = GetPolyHandle(i);
 
-		if (TinselV2 && (hp == NOPOLY))
+		if ((TinselVersion >= 2) && (hp == NOPOLY))
 			continue;
 
 		// Added code for un-tagged tags
 		if ((hp != NOPOLY) && (PolyPointState(hp) == PS_POINTING) && (PolyTagState(hp) != TAG_ON)) {
 			// This poly is entitled to be tagged
 			if (hp != GetTaggedPoly()) {
-				if (*ppText) {
-					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
-					*ppText = nullptr;
-				}
+				MultiDeleteObjectIfExists(FIELD_STATUS, ppText);
 				*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
 			}
 			return true;
-		} else if ((TinselV2 && PolyTagIsWanted(hp)) ||
-			(!TinselV2 && hp != NOPOLY && PolyTagState(hp) == TAG_ON)) {
+		} else if (((TinselVersion >= 2) && PolyTagIsWanted(hp)) ||
+			((TinselVersion <= 1) && hp != NOPOLY && PolyTagState(hp) == TAG_ON)) {
 			// Put up or maintain polygon tag
 			newPoly = false;
-			if (TinselV2) {
+			if (TinselVersion >= 2) {
 				if (hp != GetTaggedPoly())
 					newPoly = true;		// Different polygon
 			} else {
@@ -549,7 +537,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 				if (*ppText)
 					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), *ppText);
 
-				if (!TinselV2)
+				if (TinselVersion <= 1)
 					*pTag = POLY_HOTSPOT_TAG;
 				SaveTaggedActor(0);	// No tagged actor
 				SaveTaggedPoly(hp);	// This polygon tagged
@@ -566,14 +554,14 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 				if (strLen == 0)
 					// No valid string returned, so leave ppText as NULL
 					ppText = nullptr;
-				else if (TinselV2 && !PolyTagFollowsCursor(hp)) {
+				else if ((TinselVersion >= 2) && !PolyTagFollowsCursor(hp)) {
 					// May have buggered cursor
 					_vm->_cursor->EndCursorFollowed();
 
 					*ppText = ObjectTextOut(_vm->_bg->GetPlayfieldList(FIELD_STATUS),
 							_vm->_font->TextBufferAddr(), 0, tagx - Loffset, tagy - Toffset,
 							_vm->_font->GetTagFontHandle(), TXT_CENTER, 0);
-				} else if (TinselV2) {
+				} else if (TinselVersion >= 2) {
 					// Bugger cursor
 					const char *tagPtr = _vm->_font->TextBufferAddr();
 					if (tagPtr[0] < ' ' && tagPtr[1] == EOS_CHAR)
@@ -607,7 +595,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 					if (shift > _vm->_bg->BgHeight())			// Not off bottom
 						MultiMoveRelXY(*ppText, 0, _vm->_bg->BgHeight() - shift);
 				}
-			} else if (TinselV2 && (*ppText)) {
+			} else if ((TinselVersion >= 2) && (*ppText)) {
 				if (!PolyTagFollowsCursor(hp)) {
 					_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 					if (nLoff != Loffset || nToff != Toffset) {
@@ -623,7 +611,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 						curY = tagy;
 					}
 				}
-			} else if (!TinselV2) {
+			} else if (TinselVersion <= 1) {
 				_vm->_bg->PlayfieldGetPos(FIELD_WORLD, &nLoff, &nToff);
 				if (nLoff != Loffset || nToff != Toffset) {
 					MultiMoveRelXY(*ppText, Loffset - nLoff, Toffset - nToff);
@@ -636,7 +624,7 @@ static bool PolyTag(HotSpotTag *pTag, OBJECT **ppText) {
 	}
 
 	// No tagged polygon
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		SaveTaggedPoly(NOPOLY);
 	else if (*pTag == POLY_HOTSPOT_TAG) {
 		*pTag = NO_HOTSPOT_TAG;
@@ -677,7 +665,7 @@ void TagProcess(CORO_PARAM, const void *) {
 					MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
 					_ctx->pText = nullptr;
 
-					if (TinselV2)
+					if (TinselVersion >= 2)
 						// May have buggered cursor
 						_vm->_cursor->EndCursorFollowed();
 				}
@@ -689,8 +677,7 @@ void TagProcess(CORO_PARAM, const void *) {
 			// Remove tag, if there is one
 			if (_ctx->pText) {
 				// kill current text objects
-				MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pText);
-				_ctx->pText = nullptr;
+				MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pText);
 				_ctx->Tag = NO_HOTSPOT_TAG;
 			}
 		}
@@ -712,7 +699,7 @@ static void enteringpoly(CORO_PARAM, HPOLYGON hp) {
 
 	SetPolyPointState(hp, PS_POINTING);
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, hp, POINTED, 0, false, 0));
 	else
 		RunPolyTinselCode(hp, POINTED, PLR_NOEVENT, false);
@@ -731,7 +718,7 @@ static void leavingpoly(CORO_PARAM, HPOLYGON hp) {
 
 	SetPolyPointState(hp, PS_NOT_POINTING);
 
-	if (TinselV2) {
+	if (TinselVersion >= 2) {
 		CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, hp, UNPOINT, 0, false, 0));
 		SetPolyTagWanted(hp, false, false, 0);
 
@@ -758,7 +745,7 @@ void PointProcess(CORO_PARAM, const void *) {
 
 	CORO_BEGIN_CODE(_ctx);
 
-	if (TinselV2)
+	if (TinselVersion >= 2)
 		EnablePointing();
 
 	while (1) {
@@ -776,7 +763,7 @@ void PointProcess(CORO_PARAM, const void *) {
 
 			if (!PolyIsPointedTo(_ctx->hPoly)) {
 				if (IsInPolygon(_ctx->curX, _ctx->curY, _ctx->hPoly)) {
-					if (TinselV2) {
+					if (TinselVersion >= 2) {
 						SetPolyPointedTo(_ctx->hPoly, true);
 						CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->hPoly, POINTED, 0, false, 0));
 					} else {
@@ -785,7 +772,7 @@ void PointProcess(CORO_PARAM, const void *) {
 				}
 			} else {
 				if (!IsInPolygon(_ctx->curX, _ctx->curY, _ctx->hPoly)) {
-					if (TinselV2) {
+					if (TinselVersion >= 2) {
 						SetPolyPointedTo(_ctx->hPoly, false);
 						SetPolyTagWanted(_ctx->hPoly, false, false, 0);
 						CORO_INVOKE_ARGS(PolygonEvent, (CORO_SUBCTX, _ctx->hPoly, UNPOINT, 0, false, 0));
@@ -796,7 +783,7 @@ void PointProcess(CORO_PARAM, const void *) {
 			}
 		}
 
-		if (TinselV2) {
+		if (TinselVersion >= 2) {
 			// For each tagged actor
 			for (_ctx->i = 0; (_ctx->i = _vm->_actor->NextTaggedActor(_ctx->i)) != 0;) {
 				if (!_vm->_actor->ActorIsPointedTo(_ctx->i)) {

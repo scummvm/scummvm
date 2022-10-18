@@ -22,9 +22,10 @@
 #ifndef SHARED_CONF_XML_TREE_H
 #define SHARED_CONF_XML_TREE_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "common/stream.h"
-#include "ultima/shared/std/containers.h"
+#include "common/util.h"
 
 namespace Ultima {
 namespace Shared {
@@ -81,7 +82,7 @@ public:
 
 	Common::Array<Common::String> listKeys(const Common::String &key, bool longformat = false);
 
-	typedef Std::pair<Common::String, Common::String> KeyType;
+	typedef Common::Pair<Common::String, Common::String> KeyType;
 	typedef Common::Array<KeyType> KeyTypeList;
 
 	void getSubkeys(KeyTypeList &ktl, const Common::String &basekey);

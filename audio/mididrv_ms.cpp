@@ -37,21 +37,23 @@ MidiDriver_Multisource::MidiSource::MidiSource() :
 	fadeDuration(0) { }
 
 MidiDriver_Multisource::ControllerDefaults::ControllerDefaults() :
-	// The -1 value indicates no default value should be set on the controller.
-	program(-1),
-	instrumentBank(-1),
-	drumkit(-1),
-	channelPressure(-1),
-	pitchBend(-1),
-	modulation(-1),
-	volume(-1),
-	panning(-1),
-	expression(-1),
-	sustain(-1),
-	rpn(-1),
-	pitchBendSensitivity(-1) { }
+		// The -1 value indicates no default value should be set on the controller.
+		instrumentBank(-1),
+		drumkit(-1),
+		channelPressure(-1),
+		pitchBend(-1),
+		modulation(-1),
+		volume(-1),
+		panning(-1),
+		expression(-1),
+		sustain(-1),
+		rpn(-1),
+		pitchBendSensitivity(-1) {
+	Common::fill(program, program + ARRAYSIZE(program), -1);
+}
 
 MidiDriver_Multisource::MidiDriver_Multisource() :
+		_instrumentRemapping(nullptr),
 		_userVolumeScaling(false),
 		_userMusicVolume(192),
 		_userSfxVolume(192),
@@ -237,7 +239,7 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 	// corresponding to the specified controller.
 	switch (type) {
 	case CONTROLLER_DEFAULT_PROGRAM:
-		_controllerDefaults.program = value;
+		Common::fill(_controllerDefaults.program, _controllerDefaults.program + ARRAYSIZE(_controllerDefaults.program), value);
 		break;
 	case CONTROLLER_DEFAULT_INSTRUMENT_BANK:
 		_controllerDefaults.instrumentBank = value;
@@ -274,6 +276,19 @@ void MidiDriver_Multisource::setControllerDefault(ControllerDefaultType type, in
 		break;
 	default:
 		warning("MidiDriver_Multisource::setControllerDefault - Unknown controller default type %i", type);
+		break;
+	}
+}
+
+void MidiDriver_Multisource::setControllerDefaults(ControllerDefaultType type, int16 *value) {
+	// Set the specified default values on _controllerDefaults on the field
+	// corresponding to the specified controller.
+	switch (type) {
+	case CONTROLLER_DEFAULT_PROGRAM:
+		Common::copy(value, value + ARRAYSIZE(_controllerDefaults.program), _controllerDefaults.program);
+		break;
+	default:
+		warning("MidiDriver_Multisource::setControllerDefaults - Unsupported controller default type %i", type);
 		break;
 	}
 }
@@ -346,6 +361,10 @@ void MidiDriver_Multisource::setSourceNeutralVolume(uint8 source, uint16 volume)
 	_sources[source].neutralVolume = volume;
 }
 
+void MidiDriver_Multisource::setInstrumentRemapping(const byte *instrumentRemapping) {
+	_instrumentRemapping = instrumentRemapping;
+}
+
 void MidiDriver_Multisource::syncSoundSettings() {
 	// Get user volume settings.
 	_userMusicVolume = MIN(256, ConfMan.getInt("music_volume"));
@@ -363,16 +382,16 @@ void MidiDriver_Multisource::onTimer() {
 		_timer_proc(_timer_param);
 }
 
-MidiDriver_NULL_Multisource::~MidiDriver_NULL_Multisource() {
-	g_system->getTimerManager()->removeTimerProc(timerCallback);
-}
-
 int MidiDriver_NULL_Multisource::open() {
 	// Setup a timer callback so "fades" will end after the specified time
 	// (effectively becoming timers, because there is no audio).
 	_timerRate = getBaseTempo();
 	g_system->getTimerManager()->installTimerProc(timerCallback, _timerRate, this, "MidiDriver_NULL_Multisource");
 	return 0;
+}
+
+void MidiDriver_NULL_Multisource::close() {
+	g_system->getTimerManager()->removeTimerProc(timerCallback);
 }
 
 void MidiDriver_NULL_Multisource::timerCallback(void *data) {

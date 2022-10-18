@@ -40,7 +40,7 @@ OpenGLSPropRenderer::OpenGLSPropRenderer(Driver *gfx) :
 		_faceVBO(0),
 		_modelIsDirty(true) {
 	static const char* attributes[] = { "position", "normal", "texcoord", nullptr };
-	_shader = OpenGL::ShaderGL::fromFiles("stark_prop", attributes);
+	_shader = OpenGL::Shader::fromFiles("stark_prop", attributes);
 }
 
 OpenGLSPropRenderer::~OpenGLSPropRenderer() {
@@ -109,10 +109,10 @@ void OpenGLSPropRenderer::render(const Math::Vector3d &position, float direction
 }
 
 void OpenGLSPropRenderer::clearVertices() {
-	OpenGL::ShaderGL::freeBuffer(_faceVBO);
+	OpenGL::Shader::freeBuffer(_faceVBO);
 
 	for (FaceBufferMap::iterator it = _faceEBO.begin(); it != _faceEBO.end(); ++it) {
-		OpenGL::ShaderGL::freeBuffer(it->_value);
+		OpenGL::Shader::freeBuffer(it->_value);
 	}
 
 	_faceEBO.clear();
@@ -130,11 +130,11 @@ void OpenGLSPropRenderer::uploadVertices() {
 GLuint OpenGLSPropRenderer::createFaceVBO() {
 	const Common::Array<Formats::BiffMesh::Vertex> &vertices = _model->getVertices();
 
-	return OpenGL::ShaderGL::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
+	return OpenGL::Shader::createBuffer(GL_ARRAY_BUFFER, sizeof(float) * 9 * vertices.size(), &vertices.front());
 }
 
 GLuint OpenGLSPropRenderer::createFaceEBO(const Face *face) {
-	return OpenGL::ShaderGL::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
+	return OpenGL::Shader::createBuffer(GL_ELEMENT_ARRAY_BUFFER, sizeof(uint32) * face->vertexIndices.size(), &face->vertexIndices.front());
 }
 
 void OpenGLSPropRenderer::setLightArrayUniform(const LightEntryArray &lights) {

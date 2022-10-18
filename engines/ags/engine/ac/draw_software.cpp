@@ -231,23 +231,23 @@ void invalidate_rect_on_surf(int x1, int y1, int x2, int y2, DirtyRects &rects) 
 			dirtyRow[a].numSpans++;
 		} else {
 			// didn't fit in an existing span, and there are none spare
-			int nearestDist = 99999, nearestWas = -1, extendLeft = false;
-			int tleft, tright;
+			int nearestDist = 99999, nearestWas = -1, extendLeft = 0;
 			// find the nearest span, and enlarge that to include this rect
 			for (s = 0; s < dirtyRow[a].numSpans; s++) {
-				tleft = dirtyRow[a].span[s].x1 - x2;
+				int tleft = dirtyRow[a].span[s].x1 - x2;
 				if ((tleft > 0) && (tleft < nearestDist)) {
 					nearestDist = tleft;
 					nearestWas = s;
 					extendLeft = 1;
 				}
-				tright = x1 - dirtyRow[a].span[s].x2;
+				int tright = x1 - dirtyRow[a].span[s].x2;
 				if ((tright > 0) && (tright < nearestDist)) {
 					nearestDist = tright;
 					nearestWas = s;
 					extendLeft = 0;
 				}
 			}
+			assert(nearestWas >= 0);
 			if (extendLeft)
 				dirtyRow[a].span[nearestWas].x1 = x1;
 			else

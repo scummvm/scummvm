@@ -79,7 +79,7 @@ public:
 	void setSwayAngle(const Math::Angle &angle);
 	Math::Angle getSwayAngle() const;
 
-	/** Get the axis for the the sway actor rotation, in world coordinates */
+	/** Get the axis for the sway actor rotation, in world coordinates */
 	Math::Vector3d getSwayDirection() const;
 
 	/** Access the float up / down current Z offset for the actors */

@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPTCAMERA_H
-#define AGS_ENGINE_AC_DYNOBJ_SCRIPTCAMERA_H
+#ifndef AGS_ENGINE_AC_DYNOBJ_SCRIPT_CAMERA_H
+#define AGS_ENGINE_AC_DYNOBJ_SCRIPT_CAMERA_H
 
 #include "ags/engine/ac/dynobj/cc_ags_dynamic_object.h"
 
@@ -45,15 +45,19 @@ public:
 
 	const char *GetType() override;
 	int Dispose(const char *address, bool force) override;
-	int Serialize(const char *address, char *buffer, int bufsize) override;
-	void Unserialize(int index, const char *serializedData, int dataSize) override;
+	void Unserialize(int index, AGS::Shared::Stream *in, size_t data_sz) override;
+protected:
+	// Calculate and return required space for serialization, in bytes
+	size_t CalcSerializeSize() override;
+	// Write object data into the provided stream
+	void Serialize(const char *address, AGS::Shared::Stream *out) override;
 
 private:
 	int _id = -1; // index of camera in the game state array
 };
 
 // Unserialize camera from the memory stream
-ScriptCamera *Camera_Unserialize(int handle, const char *serializedData, int dataSize);
+ScriptCamera *Camera_Unserialize(int handle, AGS::Shared::Stream *in, size_t data_sz);
 
 } // namespace AGS3
 

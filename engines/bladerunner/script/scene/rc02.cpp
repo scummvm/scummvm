@@ -309,7 +309,10 @@ void SceneScriptRC02::dialogueWithRunciter() {
 			Actor_Face_Actor(kActorMcCoy, kActorRunciter, true);
 			Actor_Says(kActorMcCoy, 395, 14);
 			Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-			Actor_Says(kActorRunciter, 1680, 13);
+			// Runciter's 1680 quote is *boop* (placeholder sound effect) in DEU version
+			if (_vm->_language != Common::DE_DEU) {
+				Actor_Says(kActorRunciter, 1680, 13);
+			}
 			Actor_Says(kActorMcCoy, 400, 14);
 			Voight_Kampff_Activate(kActorRunciter, 20);
 			Actor_Modify_Friendliness_To_Other(kActorRunciter, kActorMcCoy, -10);
@@ -380,7 +383,8 @@ bool SceneScriptRC02::ClickedOnActor(int actorId) {
 				Actor_Says(kActorMcCoy, 4690, 11);
 				Actor_Says(kActorMcCoy, 4695, 13);
 				Actor_Face_Actor(kActorRunciter, kActorMcCoy, true);
-				if (_vm->_cutContent) {
+				if (_vm->_cutContent && _vm->_language != Common::DE_DEU) {
+					// This quote is *boop* (placeholder sound effect) in DEU version.
 					Actor_Says(kActorRunciter, 1670, 14);
 				} else {
 					Actor_Says(kActorRunciter, 1610, 14);

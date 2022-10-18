@@ -49,10 +49,6 @@
 
 namespace Saga2 {
 
-#define TEST1           1           //  enable test code
-#define TEST2           1
-#define TEST3           1
-
 #define CHEATMOVE       1           // For moving with keypad in 8 directions
 
 /* ===================================================================== *
@@ -60,16 +56,16 @@ namespace Saga2 {
  * ===================================================================== */
 
 class gStickyDragControl : public gGenericControl {
-	bool    sticky;
+	bool    _sticky;
 
 public:
 	gStickyDragControl(gPanelList &, const Rect16 &, uint16, AppFunc *cmd = nullptr);
 
 	void setSticky(bool s) {
-		sticky = s;
+		_sticky = s;
 	}
 	bool isSticky() {
-		return sticky;
+		return _sticky;
 	}
 
 private:
@@ -110,13 +106,6 @@ void navigatePath(TilePoint pick);
 void moveActors(int32 deltaTime);
 
 void updateMainDisplay();
-
-#if DEBUG
-void soundTest1();
-void soundTest2();
-void voiceTest1();
-void voiceTest2();
-#endif
 
 void toggleMusic();
 
@@ -666,7 +655,7 @@ void TileModeSetup() {
 	lastUpdateTime = gameTime;
 
 	setCurrentWorld(WorldBaseID);
-	setCurrentMap(currentWorld->mapNum);
+	setCurrentMap(currentWorld->_mapNum);
 }
 
 //-----------------------------------------------------------------------
@@ -687,7 +676,7 @@ void TileModeCleanup() {
 	delete tileMapControl;
 
 //	This Fixes the mousePanel That's not set up
-	g_vm->_toolBase->mousePanel = nullptr;
+	g_vm->_toolBase->_mousePanel = nullptr;
 
 	mainWindow->removeDecorations();
 }
@@ -990,19 +979,10 @@ void TileModeHandleKey(int16 key, int16 qual) {
 		toggleMusic();
 		break;
 
-
-#if DEBUG
-	case 'q':
-	case 0x1b:
-		endGame();
-		break;
-
-#else
-	case 0x1b:
+	case 0x1b: // Escape key
 		if (uiKeysEnabled)
 			OptionsDialog();
 		break;
-#endif
 
 	default:
 		if (uiKeysEnabled)
@@ -1010,19 +990,6 @@ void TileModeHandleKey(int16 key, int16 qual) {
 
 	}
 }
-
-//  A debugging function to show the queue of recent mouse events.
-
-#if DEBUG
-static char mouseHistory[33];
-
-void showMouseEvent(char eventType) {
-	memmove(mouseHistory + 1, mouseHistory, 31);
-	mouseHistory[0] = eventType;
-	mouseHistory[32] = '\0';
-	WriteStatusF(5, mouseHistory);
-}
-#endif
 
 //-----------------------------------------------------------------------
 //	Handle mouse actions on the tile map "control".
@@ -1226,12 +1193,6 @@ static APPFUNC(cmdClickTileMap) {
 						((gGenericControl *)ev.panel)->disableDblClick();
 					}
 				}
-
-#if DEBUG && TEST1
-				if (isActor(pickedObject))
-					pickedActor = pickedObject;
-#endif
-
 			}
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
@@ -1440,18 +1401,18 @@ void cheatMove(int16 key) {
 #endif
 
 /* ===================================================================== *
-   gStickyDragControl class: a gGenericControl with a sticky mouse
+   gStickyDragControl class: a gGenericControl with a _sticky mouse
  * ===================================================================== */
 
 gStickyDragControl::gStickyDragControl(gPanelList &list, const Rect16 &box,
                                        uint16 ident, AppFunc *cmd)
 	: gGenericControl(list, box, ident, cmd) {
-	sticky = false;
+	_sticky = false;
 }
 
 void gStickyDragControl::deactivate() {
-	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = false;
+	if (_sticky) setMouseImage(kMouseArrowImage, 0, 0);
+	_sticky = false;
 	gGenericControl::deactivate();
 }
 
@@ -1461,13 +1422,13 @@ void gStickyDragControl::deactivate() {
 //}
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {
-	if (sticky) setMouseImage(kMouseArrowImage, 0, 0);
-	sticky = false;
+	if (_sticky) setMouseImage(kMouseArrowImage, 0, 0);
+	_sticky = false;
 	return gGenericControl::pointerHit(msg);
 }
 
 void gStickyDragControl::pointerRelease(gPanelMessage &msg) {
-	if (sticky == false)
+	if (_sticky == false)
 		gGenericControl::pointerRelease(msg);
 }
 

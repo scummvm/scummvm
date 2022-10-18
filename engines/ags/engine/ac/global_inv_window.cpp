@@ -41,10 +41,10 @@ void SetInvDimensions(int ww, int hh) {
 	_GP(play).inv_item_hit = hh;
 	_GP(play).inv_numdisp = 0;
 	// backwards compatibility
-	for (int i = 0; i < _G(numguiinv); i++) {
-		_GP(guiinv)[i].ItemWidth = ww;
-		_GP(guiinv)[i].ItemHeight = hh;
-		_GP(guiinv)[i].OnResized();
+	for (auto &inv : _GP(guiinv)) {
+		inv.ItemWidth = ww;
+		inv.ItemHeight = hh;
+		inv.OnResized();
 	}
 }
 

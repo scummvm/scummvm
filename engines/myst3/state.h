@@ -424,8 +424,8 @@ private:
 	void engineSet(const Common::String &varName, int32 value);
 
 	static void syncFloat(Common::Serializer &s, float &val,
-			Common::Serializer::Version minVersion = 0,
-			Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
+	                      Common::Serializer::Version minVersion = 0,
+	                      Common::Serializer::Version maxVersion = Common::Serializer::kLastVersion);
 
 	void updateTickCounters();
 };

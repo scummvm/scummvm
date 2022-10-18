@@ -24,8 +24,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_exit
 
-#include <limits.h>
-
+#include "engines/advancedDetector.h"
 #include "engines/metaengine.h"
 #include "base/commandLine.h"
 #include "base/plugins.h"
@@ -33,6 +32,8 @@
 
 #include "common/config-manager.h"
 #include "common/fs.h"
+#include "common/macresman.h"
+#include "common/md5.h"
 #include "common/rendermode.h"
 #include "common/savefile.h"
 #include "common/system.h"
@@ -52,6 +53,7 @@ namespace Base {
 
 #ifndef DISABLE_COMMAND_LINE
 
+#ifndef DISABLE_HELP_STRINGS
 static const char USAGE_STRING[] =
 	"%s: %s\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
@@ -60,10 +62,7 @@ static const char USAGE_STRING[] =
 ;
 
 // DONT FIXME: DO NOT ORDER ALPHABETICALLY, THIS IS ORDERED BY IMPORTANCE/CATEGORY! :)
-#if defined(__SYMBIAN32__) || defined(ANDROID) || defined(__DS__) || defined(__3DS__)
-static const char HELP_STRING[] = "NoUsageString"; // save more data segment space
-#else
-static const char HELP_STRING[] =
+static const char HELP_STRING1[] =
 	"ScummVM - Graphical Adventure Game Interpreter\n"
 	"Usage: %s [OPTIONS]... [GAME]\n"
 	"  -v, --version            Display ScummVM version information and exit\n"
@@ -91,7 +90,7 @@ static const char HELP_STRING[] =
 	"  --auto-detect            Display a list of games from current or specified directory\n"
 	"                           and start the first one. Use --path=PATH to specify a directory.\n"
 	"  --recursive              In combination with --add or --detect recurse down all subdirectories\n"
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 	"  --console                Enable the console window (default:enabled)\n"
 #endif
 	"\n"
@@ -120,9 +119,19 @@ static const char HELP_STRING[] =
 	"  --themepath=PATH         Path to where GUI themes are stored\n"
 	"  --list-themes            Display list of all usable GUI themes\n"
 	"  -e, --music-driver=MODE  Select music driver (see README for details)\n"
-	"  --list-audio-devices     List all available audio devices\n"
-	"  -q, --language=LANG      Select language (en,de,fr,it,pt,es,jp,zh,kr,se,gb,\n"
-	"                           hb,ru,cz)\n"
+	"  --list-audio-devices     List all available audio devices\n";
+
+// Make it match the indentation of the main list
+#define kCommandLineIndent \
+	"                           "
+#define kCommandMaxWidth 79
+static const char HELP_STRING2[] =
+	"  -q, --language=LANG      Select language (";
+
+static const char HELP_STRING3[] =
+	"  --platform=WORD          Specify platform of game (allowed values: ";
+
+static const char HELP_STRING4[] =
 	"  -m, --music-volume=NUM   Set the music volume, 0-255 (default: 192)\n"
 	"  -s, --sfx-volume=NUM     Set the sfx volume, 0-255 (default: 192)\n"
 	"  -r, --speech-volume=NUM  Set the speech volume, 0-255 (default: 192)\n"
@@ -141,11 +150,9 @@ static const char HELP_STRING[] =
 	"                           drive, path, or numeric index (default: 0 = best\n"
 	"                           choice drive)\n"
 	"  --joystick[=NUM]         Enable joystick input (default: 0 = first joystick)\n"
-	"  --platform=WORD          Specify platform of game (allowed values: 2gs, 3do,\n"
-	"                           acorn, amiga, atari, c64, fmtowns, nes, mac, pc, pc98,\n"
-	"                           pce, segacd, wii, windows)\n"
 	"  --savepath=PATH          Path to where saved games are stored\n"
 	"  --extrapath=PATH         Extra path to additional game data\n"
+	"  --iconspath=PATH         Path to additional icons for the launcher grid view\n"
 	"  --soundfont=FILE         Select the SoundFont for MIDI playback (only\n"
 	"                           supported by some MIDI drivers)\n"
 	"  --multi-midi             Enable combination AdLib and native MIDI\n"
@@ -207,6 +214,23 @@ static const char HELP_STRING[] =
 	"  --engine-speed=NUM       Set frame per second limit (0 - 100), 0 = no limit\n"
 	"                           (default: 60)\n"
 	"                           Grim Fandango or Escape from Monkey Island\n"
+	"  --md5                    Shows MD5 hash of the file given by --md5-path=PATH\n"
+	"                           If --md5-length=NUM is passed then it shows the MD5 hash of\n"
+	"                           the first or last NUM bytes of the file given by PATH\n"
+	"                           If --md5-engine=ENGINE_ID is passed, it fetches the MD5 length\n"
+	"                           automatically, overriding --md5-length\n"
+	"  --md5mac                 Shows MD5 hash for both the resource fork and data fork of the\n"
+	"                           mac file given by --md5-path=PATH. If --md5-length=NUM is passed\n"
+	"                           then it shows the MD5 hash of the first or last NUM bytes of each\n"
+	"                           fork.\n"
+	"  --md5-path=PATH          Used with --md5 or --md5mac to specify path of file to calculate\n"
+	"                           MD5 hash of\n"
+	"  --md5-length=NUM         Used with --md5 or --md5mac to specify the number of bytes to be\n"
+	"                           hashed. Use negative number for calculating tail md5.\n"
+	"                           Is overriden when used with --md5-engine\n"
+	"  --md5-engine=ENGINE_ID   Used with --md5 to specify the engine for which number of bytes\n"
+	"                           to be hashed must be calculated. This option overrides --md5-length\n"
+	"                           if used along with it. Use --list-engines to find all engineIds\n"
 	"\n"
 	"The meaning of boolean long options can be inverted by prefixing them with\n"
 	"\"no-\", e.g. \"--no-aspect-ratio\".\n"
@@ -218,6 +242,7 @@ static const char *s_appName = "scummvm";
 static void NORETURN_PRE usage(MSVC_PRINTF const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
 static void usage(const char *s, ...) {
+#ifndef DISABLE_HELP_STRINGS
 	char buf[STRINGBUFLEN];
 	va_list va;
 
@@ -225,7 +250,6 @@ static void usage(const char *s, ...) {
 	vsnprintf(buf, STRINGBUFLEN, s, va);
 	va_end(va);
 
-#if !(defined(__SYMBIAN32__) || defined(__DS__))
 	printf(USAGE_STRING, s_appName, buf, s_appName, s_appName);
 #endif
 	exit(1);
@@ -294,6 +318,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("dump_scripts", false);
 	ConfMan.registerDefault("save_slot", -1);
 	ConfMan.registerDefault("autosave_period", 5 * 60); // By default, trigger autosave every 5 minutes
+	ConfMan.registerDefault("engine_speed", 60); // FPS limit for 3D games
 
 #if defined(ENABLE_SCUMM) || defined(ENABLE_SWORD2)
 	ConfMan.registerDefault("object_labels", true);
@@ -328,6 +353,7 @@ void registerDefaults() {
 	ConfMan.registerDefault("gui_browser_native", true);
 	ConfMan.registerDefault("gui_return_to_launcher_at_exit", false);
 	ConfMan.registerDefault("gui_launcher_chooser", "list");
+	ConfMan.registerDefault("grid_items_per_row", 4);
 	// Specify threshold for scanning directories in the launcher
 	// If number of game entries in scummvm.ini exceeds the specified
 	// number, then skip scanning. -1 = scan always
@@ -581,6 +607,12 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_COMMAND("auto-detect")
 			END_COMMAND
 
+			DO_LONG_COMMAND("md5")
+			END_COMMAND
+
+			DO_LONG_COMMAND("md5mac")
+			END_COMMAND
+
 #ifdef DETECTOR_TESTING_HACK
 			// HACK FIXME TODO: This command is intentionally *not* documented!
 			DO_LONG_COMMAND("test-detector")
@@ -783,7 +815,7 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			END_OPTION
 
 			DO_LONG_OPTION("renderer")
-				Graphics::RendererType renderer = Graphics::parseRendererTypeCode(option);
+				Graphics::RendererType renderer = Graphics::Renderer::parseTypeCode(option);
 				if (renderer == Graphics::kRendererTypeDefault)
 					usage("Unrecognized renderer type '%s'", option);
 			END_OPTION
@@ -807,6 +839,23 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 				} else if (!path.isReadable()) {
 					usage("Non-readable extra path '%s'", option);
 				}
+			END_OPTION
+
+			DO_LONG_OPTION("iconspath")
+			Common::FSNode path(option);
+			if (!path.exists()) {
+				usage("Non-existent icons path '%s'", option);
+			} else if (!path.isReadable()) {
+				usage("Non-readable icons path '%s'", option);
+			}
+			END_OPTION
+
+			DO_LONG_OPTION("md5-path")
+				// While the --md5 command expect a file name, the --md5mac may take a base name.
+				// Thus we do not check that the file exists here.
+			END_OPTION
+
+			DO_LONG_OPTION("md5-engine")
 			END_OPTION
 
 			DO_LONG_OPTION_INT("talkspeed")
@@ -860,13 +909,16 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 			DO_LONG_OPTION_INT("engine-speed")
 			END_OPTION
 
+			DO_LONG_OPTION_INT("md5-length")
+			END_OPTION
+
 #ifdef IPHONE
 			// This is automatically set when launched from the Springboard.
 			DO_LONG_OPTION_OPT("launchedFromSB", 0)
 			END_OPTION
 #endif
 
-#if defined(WIN32) && !defined(__SYMBIAN32__)
+#if defined(WIN32)
 			// Optional console window on Windows (default: enabled)
 			DO_LONG_OPTION_BOOL("console")
 			END_OPTION
@@ -901,10 +953,10 @@ static void listGames(const Common::String &engineID) {
 			continue;
 		}
 
-		if (all || (p->getEngineId() == engineID)) {
+		if (all || (p->getName() == engineID)) {
 			PlainGameList list = p->get<MetaEngineDetection>().getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(p->get<MetaEngineDetection>().getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -921,10 +973,10 @@ static void listAllGames(const Common::String &engineID) {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 
-		if (any || (metaEngine.getEngineId() == engineID)) {
+		if (any || (metaEngine.getName() == engineID)) {
 			PlainGameList list = metaEngine.getSupportedGames();
 			for (PlainGameList::const_iterator v = list.begin(); v != list.end(); ++v) {
-				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getEngineId(), v->gameId).c_str(), v->description);
+				printf("%-30s %s\n", buildQualifiedGameName(metaEngine.getName(), v->gameId).c_str(), v->description);
 			}
 		}
 	}
@@ -943,7 +995,7 @@ static void listEngines() {
 			continue;
 		}
 
-		printf("%-15s %s\n", p->get<MetaEngineDetection>().getEngineId(), p->get<MetaEngineDetection>().getName());
+		printf("%-15s %s\n", p->get<MetaEngineDetection>().getName(), p->get<MetaEngineDetection>().getEngineName());
 	}
 }
 
@@ -955,7 +1007,7 @@ static void listAllEngines() {
 	const PluginList &plugins = EngineMan.getPlugins();
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-		printf("%-15s %s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("%-15s %s\n", metaEngine.getName(), metaEngine.getEngineName());
 	}
 }
 
@@ -1009,10 +1061,10 @@ static void listDebugFlags(const Common::String &engineID) {
 		const PluginList &plugins = EngineMan.getPlugins();
 		for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 			const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
-			if (metaEngine.getEngineId() == engineID) {
+			if (metaEngine.getName() == engineID) {
 				printf("Flag name       Flag description                                           \n");
 				printf("--------------- ------------------------------------------------------\n");
-				printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+				printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 				printDebugFlags(metaEngine.getDebugChannels());
 				return;
 			}
@@ -1029,7 +1081,7 @@ static void listAllEngineDebugFlags() {
 	for (PluginList::const_iterator iter = plugins.begin(); iter != plugins.end(); ++iter) {
 		const MetaEngineDetection &metaEngine = (*iter)->get<MetaEngineDetection>();
 		printf("--------------- ------------------------------------------------------\n");
-		printf("ID=%-12s Name=%s\n", metaEngine.getEngineId(), metaEngine.getName());
+		printf("ID=%-12s Name=%s\n", metaEngine.getName(), metaEngine.getEngineName());
 		printDebugFlags(metaEngine.getDebugChannels());
 	}
 }
@@ -1339,6 +1391,85 @@ static int recAddGames(const Common::FSNode &dir, const Common::String &engineId
 	return count;
 }
 
+static void calcMD5(Common::FSNode &path, int32 length) {
+	if (!path.exists()) {
+		usage("File '%s' does not exist", path.getName().c_str());
+		return;
+	} else if (!path.isReadable()) {
+		usage("Non-readable file path '%s'", path.getName().c_str());
+	}
+	Common::SeekableReadStream *stream = path.createReadStream();
+
+	if (stream) {
+		bool tail = false;
+
+		if (length < 0) {// Tail md5 is requested
+			length = -length;
+			tail = true;
+
+			if (stream->size() > length)
+				stream->seek(-length, SEEK_END);
+		}
+
+		Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
+		if (length != 0 && length < stream->size())
+			md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+		printf("%s: %s, %llu bytes\n", path.getName().c_str(), md5.c_str(), (unsigned long long)stream->size());
+		delete stream;
+	} else {
+		printf("Usage : --md5 --md5-path=<PATH> [--md5-length=NUM]\n");
+	}
+}
+
+static void calcMD5Mac(Common::Path &filePath, int32 length) {
+	// We need to split the path into the file name and a SearchSet
+	Common::SearchSet dir;
+	char nativeSeparator = '/';
+#ifdef WIN32
+	nativeSeparator = '\\';
+#endif
+	Common::FSNode dirNode(filePath.getParent().toString(nativeSeparator));
+	dir.addDirectory(dirNode.getPath(), dirNode);
+	Common::String fileName = filePath.getLastComponent().toString();
+
+	Common::MacResManager macResMan;
+	// FIXME: There currently isn't any way to tell the Mac resource
+	// manager to open a specific file. Instead, it takes a "base name"
+	// and constructs a file name out of that. While usually a desirable
+	// thing, it's not ideal here.
+	if (!macResMan.open(fileName, dir)) {
+		printf("Mac resource file '%s' not found or could not be open\n", filePath.toString(nativeSeparator).c_str());
+	} else {
+		if (!macResMan.hasResFork() && !macResMan.hasDataFork()) {
+			printf("'%s' has neither data not resource fork\n", macResMan.getBaseFileName().toString().c_str());
+		} else {
+			bool tail = false;
+			if (length < 0) {// Tail md5 is requested
+				length = -length;
+				tail = true;
+			}
+
+			// The resource fork is probably the most relevant one.
+			if (macResMan.hasResFork()) {
+				Common::String md5 = macResMan.computeResForkMD5AsString(length, tail);
+				if (length != 0 && length < (int32)macResMan.getResForkDataSize())
+					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+				printf("%s (resource): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)macResMan.getResForkDataSize());
+			}
+			if (macResMan.hasDataFork()) {
+				Common::SeekableReadStream *stream = macResMan.getDataFork();
+				if (tail && stream->size() > length)
+					stream->seek(-length, SEEK_END);
+				Common::String md5 = Common::computeStreamMD5AsString(*stream, length);
+				if (length != 0 && length < stream->size())
+					md5 += Common::String::format(" (%s %d bytes)", tail ? "last" : "first", length);
+				printf("%s (data): %s, %llu bytes\n", macResMan.getBaseFileName().toString().c_str(), md5.c_str(), (unsigned long long)stream->size());
+			}
+		}
+		macResMan.close();
+	}
+}
+
 static bool addGames(const Common::String &path, const Common::String &engineId, const Common::String &gameId, bool recursive) {
 	//Current directory
 	Common::FSNode dir(path);
@@ -1550,7 +1681,6 @@ Common::String parseCommandLine(Common::StringMap &settings, int argc, const cha
 
 #endif // DISABLE_COMMAND_LINE
 
-
 bool processSettings(Common::String &command, Common::StringMap &settings, Common::Error &err) {
 	err = Common::kNoError;
 
@@ -1608,7 +1738,44 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		printf("Features compiled in: %s\n", gScummVMFeatures);
 		return true;
 	} else if (command == "help") {
-		printf(HELP_STRING, s_appName);
+#ifndef DISABLE_HELP_STRINGS
+		printf(HELP_STRING1, s_appName);
+
+		Common::String s = HELP_STRING2;
+		Common::List<Common::String> langs = Common::getLanguageList();
+
+		s += langs.front();
+		langs.pop_front();
+
+		for (auto &l : langs) {
+			if (s.size() + l.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + l;
+			} else {
+				s += ", " + l;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		s = HELP_STRING3;
+		Common::List<Common::String> platforms = Common::getPlatformList();
+		s += platforms.front();
+		langs.pop_front();
+
+		for (auto &p : platforms) {
+			if (s.size() + p.size() + 2 >= kCommandMaxWidth) {
+				printf("%s,\n", s.c_str());
+				s = kCommandLineIndent + p;
+			} else {
+				s += ", " + p;
+			}
+		}
+
+		printf("%s)\n", s.c_str());
+
+		printf(HELP_STRING4);
+#endif
 		return true;
 	} else if (command == "auto-detect") {
 		bool resursive = settings["recursive"] == "true";
@@ -1634,6 +1801,48 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		return true;
 	} else if (command == "add") {
 		addGames(settings["path"], gameOption.engineId, gameOption.gameId, settings["recursive"] == "true");
+		return true;
+	} else if (command == "md5" || command == "md5mac") {
+		Common::String filename = settings.getValOrDefault("md5-path", "scummvm");
+		// Assume '/' separator except on Windows if the path contain at least one `\`
+		char sep = '/';
+#ifdef WIN32
+		if (filename.contains('\\'))
+			sep = '\\';
+#endif
+		Common::Path Filename(filename, sep);
+		int32 md5Length = 0;
+
+		if (settings.contains("md5-length"))
+			md5Length = strtol(settings["md5-length"].c_str(), nullptr, 10);
+
+		if (command == "md5" && settings.contains("md5-engine")) {
+			Common::String engineID = settings["md5-engine"];
+			if (engineID == "scumm") {
+				// Hardcoding value as scumm doesn't use AdvancedMetaEngineDetection
+				md5Length = 1024 * 1024;
+			} else {
+				const Plugin *plugin = EngineMan.findPlugin(engineID);
+				if (!plugin) {
+					warning("'%s' is an invalid engine ID. Use the --list-engines command to list supported engine IDs", engineID.c_str());
+					return true;
+				}
+
+				const AdvancedMetaEngineDetection* advEnginePtr = dynamic_cast<AdvancedMetaEngineDetection*>(&(plugin->get<MetaEngineDetection>()));
+				if (advEnginePtr == nullptr) {
+					warning("The requested engine (%s) doesn't support MD5-based detection", engineID.c_str());
+					return true;
+				}
+				md5Length = (int32)advEnginePtr->getMD5Bytes();
+			}
+		}
+
+		if (command == "md5") {
+			Common::FSNode path(Filename);
+			calcMD5(path, md5Length);
+		} else
+			calcMD5Mac(Filename, md5Length);
+
 		return true;
 #ifdef DETECTOR_TESTING_HACK
 	} else if (command == "test-detector") {
@@ -1669,8 +1878,36 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 		}
 	}
 
-
 	// Finally, store the command line settings into the config manager.
+	static const char * const sessionSettings[] = {
+		"config",
+		"fullscreen",
+		"gfx-mode",
+		"stretch-mode",
+		"scaler",
+		"scale-factor",
+		"filtering",
+		"gui-theme",
+		"themepath",
+		"music-volume",
+		"sfx-volume",
+		"speech-volume",
+		"midi-gain",
+		"subtitles",
+		"savepath",
+		"extrapath",
+		"iconspath",
+		"screenshotpath",
+		"soundfont",
+		"multi-midi",
+		"native-mt32",
+		"enable-gs",
+		"opl-driver",
+		"talkspeed",
+		"render-mode",
+		nullptr
+	};
+
 	for (Common::StringMap::const_iterator x = settings.begin(); x != settings.end(); ++x) {
 		Common::String key(x->_key);
 		Common::String value(x->_value);
@@ -1681,7 +1918,10 @@ bool processSettings(Common::String &command, Common::StringMap &settings, Commo
 				*c = '_';
 
 		// Store it into ConfMan.
-		ConfMan.set(key, value, Common::ConfigManager::kTransientDomain);
+		bool useSessionDomain = false;
+		for (auto sessionKey = sessionSettings; *sessionKey && !useSessionDomain; ++sessionKey)
+			useSessionDomain = (x->_key == *sessionKey);
+		ConfMan.set(key, value, useSessionDomain ? Common::ConfigManager::kSessionDomain : Common::ConfigManager::kTransientDomain);
 	}
 
 	return false;

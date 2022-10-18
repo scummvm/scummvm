@@ -125,6 +125,7 @@ endif
 # The build rule for the ScummVM executable
 $(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
 	+$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	+$(QUIET)$(LS) $@
 
 ifdef SPLIT_DWARF
 $(EXECUTABLE).dwp: $(EXECUTABLE)
@@ -140,7 +141,7 @@ else
 manual:
 endif
 
-distclean: clean clean-devtools
+distclean: clean clean-devtools clean-test
 	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h "ScummVM Manual"*.pdf
 
 clean: clean-toplevel
@@ -192,7 +193,7 @@ base/version.o: base/version.cpp
 else
 
 # Dumb compile rule, for C++ compilers that don't allow dependency tracking or
-# where it is broken (such as GCC 2.95).
+# where it is broken
 %.o: %.cpp
 	$(QUIET)$(MKDIR) $(*D)
 	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@

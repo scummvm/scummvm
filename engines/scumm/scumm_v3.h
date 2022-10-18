@@ -39,6 +39,8 @@ public:
 protected:
 	void setupOpcodes() override;
 
+	void scummLoop_handleSaveLoad() override;
+
 	void readRoomsOffsets() override;
 	void loadCharset(int no) override;
 

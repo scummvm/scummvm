@@ -30,9 +30,6 @@
 
 namespace Saga2 {
 
-// enable the following to display startup states
-#define DEBUG_INIT 0
-
 /* ===================================================================== *
    Imports
  * ===================================================================== */

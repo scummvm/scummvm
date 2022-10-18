@@ -20,9 +20,11 @@
  */
 
 #include "twine/renderer/screens.h"
+#include "common/file.h"
 #include "common/system.h"
 #include "graphics/managed_surface.h"
 #include "graphics/surface.h"
+#include "image/bmp.h"
 #include "twine/audio/music.h"
 #include "twine/resources/hqr.h"
 #include "twine/resources/resources.h"
@@ -97,6 +99,33 @@ bool Screens::loadImageDelay(TwineImage image, int32 seconds) {
 	return false;
 }
 
+bool Screens::loadBitmapDelay(const char *image, int32 seconds) {
+	Common::File fileHandle;
+	if (!fileHandle.open(image)) {
+		warning("Failed to open %s", image);
+		return false;
+	}
+
+	Image::BitmapDecoder bitmap;
+	if (!bitmap.loadStream(fileHandle)) {
+		warning("Failed to load %s", image);
+		return false;
+	}
+	const Graphics::Surface *src = bitmap.getSurface();
+	if (src == nullptr) {
+		warning("Failed to decode %s", image);
+		return false;
+	}
+	Graphics::ManagedSurface &target = _engine->_frontVideoBuffer;
+	Common::Rect rect(src->w, src->h);
+	_engine->setPalette(bitmap.getPaletteStartIndex(), bitmap.getPaletteColorCount(), bitmap.getPalette());
+	target.transBlitFrom(*src, rect, target.getBounds(), 0, false, 0, 0xff, nullptr, true);
+	if (_engine->delaySkip(1000 * seconds)) {
+		return true;
+	}
+	return false;
+}
+
 void Screens::fadeIn(const uint32 *pal) {
 	fadeToPal(pal);
 
@@ -107,11 +136,11 @@ void Screens::fadeOut(const uint32 *pal) {
 	fadeToBlack(pal);
 }
 
-int32 Screens::lerp(int32 value, int32 start, int32 end, int32 t) {
-	if (!end) {
-		return start;
+int32 Screens::lerp(int32 val1, int32 val2, int32 nbstep, int32 step) {  // RegleTrois32
+	if (nbstep < 0) {
+		return val2;
 	}
-	return (((start - value) * t) / end) + value;
+	return (((val2 - val1) * step) / nbstep) + val1;
 }
 
 void Screens::adjustPalette(uint8 r, uint8 g, uint8 b, const uint32 *rgbaPal, int32 intensity) {
@@ -154,7 +183,7 @@ void Screens::adjustCrossPalette(const uint32 *pal1, const uint32 *pal2) {
 	const uint8 *pal2p = (const uint8 *)pal2;
 	uint8 *paletteOut = (uint8 *)pal;
 	do {
-		FrameMarker frame(_engine, 50);
+		FrameMarker frame(_engine, DEFAULT_HZ);
 		counter = 0;
 
 		uint8 *newR = &paletteOut[counter];
@@ -188,7 +217,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 	}
 
 	for (int32 i = 100; i >= 0; i -= 3) {
-		FrameMarker frame(_engine, 50);
+		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0, 0, 0, pal, i);
 	}
 
@@ -197,7 +226,7 @@ void Screens::fadeToBlack(const uint32 *pal) {
 
 void Screens::fadeToPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 3) {
-		FrameMarker frame(_engine, 50);
+		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0, 0, 0, pal, i);
 	}
 
@@ -247,14 +276,14 @@ void Screens::setBackPal() {
 
 void Screens::fadePalRed(const uint32 *pal) {
 	for (int32 i = 100; i >= 0; i -= 2) {
-		FrameMarker frame(_engine, 50);
+		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0xFF, 0, 0, pal, i);
 	}
 }
 
 void Screens::fadeRedPal(const uint32 *pal) {
 	for (int32 i = 0; i <= 100; i += 2) {
-		FrameMarker frame(_engine, 50);
+		FrameMarker frame(_engine, DEFAULT_HZ);
 		adjustPalette(0xFF, 0, 0, pal, i);
 	}
 }
