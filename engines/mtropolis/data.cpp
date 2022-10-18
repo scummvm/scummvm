@@ -1385,7 +1385,7 @@ bool PathMotionModifier::PointDef::load(DataReader &reader, bool haveMessageSpec
 	if (!point.load(reader) || !reader.readU32(frame) || !reader.readU32(frameFlags))
 		return false;
 
-	if (haveMessageSpec && messageSpec.load(reader))
+	if (haveMessageSpec && !messageSpec.load(reader))
 		return false;
 
 	return true;
