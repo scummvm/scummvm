@@ -275,12 +275,20 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	// Fetch the translated string for the message...
 	convertMessageToString((const byte *)msg, (byte *)bannerMsg, sizeof(bannerMsg));
 
-	// Backup the text surface...
-	if (!_mainMenuIsActive) {
-		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen)
-			restoreCharsetBg();
-	}
+	// Backup the surfaces...
+	int x = 70;
+	int y = 189;
+	int w = 499;
+	int h = 22;
+
+	Graphics::Surface backupTextSurface;
+	Graphics::Surface backupMacScreen;
+
+	backupTextSurface.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
+	backupMacScreen.create(w + 1, h, Graphics::PixelFormat::createFormatCLUT8());
+
+	backupTextSurface.copyRectToSurface(_textSurface, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
+	backupMacScreen.copyRectToSurface(*_macScreen, 0, 0, Common::Rect(x, y, x + w + 1, y + h));
 
 	// Pause shake effect
 	_shakeTempSavedState = _shakeEnabled;
@@ -293,20 +301,6 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	int oldId = _charset->getCurID();
 	_charset->setCurID(1 | 0x80);
 	_charset->setColor(0);
-
-	int x = 70;
-	int y = 189;
-	int w = 499;
-	int h = 22;
-
-	Graphics::Surface backupTextSurface;
-	Graphics::Surface backupMacScreen;
-
-	backupTextSurface.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-	backupMacScreen.create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-
-	backupTextSurface.copyRectToSurface(_textSurface, 0, 0, Common::Rect(x, y, x + w, y + h));
-	backupMacScreen.copyRectToSurface(*_macScreen, 0, 0, Common::Rect(x, y, x + w, y + h));
 
 	_textSurface.fillRect(Common::Rect(x, y, x + w + 1, y + h), 0);
 	_macScreen->fillRect(Common::Rect(x + 1, y + 1, x + w, y + h - 1), 15);
@@ -332,29 +326,24 @@ Common::KeyState ScummEngine::mac_showOldStyleBannerAndPause(const char *msg, in
 	bool leftBtnPressed = false, rightBtnPressed = false;
 	if (waitTime) {
 		waitForBannerInput(waitTime, ks, leftBtnPressed, rightBtnPressed);
-		clearBanner();
 	}
 
-	// Restore the text surface...
-	if (!_mainMenuIsActive) {
-		restoreSurfacesPostGUI();
-	}
-
-	_textSurface.copyRectToSurface(backupTextSurface, x, y, Common::Rect(0, 0, w, h));
-	_macScreen->copyRectToSurface(backupMacScreen, x, y, Common::Rect(0, 0, w, h));
+	// Restore the surfaces...
+	_textSurface.copyRectToSurface(backupTextSurface, x, y, Common::Rect(0, 0, w + 1, h));
+	_macScreen->copyRectToSurface(backupMacScreen, x, y, Common::Rect(0, 0, w + 1, h));
 
 	backupTextSurface.free();
 	backupMacScreen.free();
+
+	// Notify the gfx system that we restored the surfaces...
+	mac_markScreenAsDirty(x, y, w + 1, h);
+	ScummEngine::drawDirtyScreenParts();
 
 	// Finally, resume the engine, clear the input state, and restore the charset.
 	pt.clear();
 	clearClickedStatus();
 
 	_charset->setCurID(oldId);
-
-	// Deactivate this, so it does not trigger as invalid click target inside
-	// getInternalGUIControlFromCoordinates() (which can cause serious errors)
-	_internalGUIControls[0].relativeCenterX = -1;
 
 	_messageBannerActive = false;
 
