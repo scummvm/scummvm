@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 163
+
 void Map08::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < _data[50]; ++i) {
@@ -36,7 +38,6 @@ void Map08::special() {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
 			if (g_maps->_forwardMask & _data[75 + i]) {
-				
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,15 +45,65 @@ void Map08::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+
+	if (g_maps->_mapPos.x == 0 || g_maps->_mapPos.x == 15) {
+		g_globals->_encounters.execute();
+	} else {
+		g_globals->_treasure[6] = getRandomNumber(150) + 100;
+		g_globals->_treasure[8] = getRandomNumber(4);
+		g_events->addAction(KEYBIND_SEARCH);
+	}
 }
 
 void Map08::special00() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.stairs_up"],
+		[]() {
+			g_maps->_mapPos = Common::Point(15, 7);
+			g_maps->changeMap(0xb1a, 1);
+		}
+	));
 }
+
+void Map08::special01() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.stairs_up"],
+		[]() {
+			g_maps->_mapPos = Common::Point(0, 14);
+			g_maps->changeMap(0xa00, 2);
+		}
+	));
+}
+
+void Map08::special02() {
+	if (_data[VAL1]) {
+		g_events->addView("AccessCode");
+	} else {
+		checkPartyDead();
+	}
+}
+
+void Map08::special04() {
+}
+
+void Map08::special05() {
+}
+
+void Map08::special06() {
+}
+
+void Map08::special08() {
+}
+
+void Map08::special20() {
+}
+
+
 
 } // namespace Maps
 } // namespace MM1

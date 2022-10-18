@@ -156,7 +156,7 @@ void Map04::special09() {
 
 		Sound::sound(SOUND_2);
 		send(InfoMessage(
-			STRING["maps.map04.stairs"],
+			STRING["maps.stairs_down"],
 			[]() {
 				g_maps->_mapPos.x = 0;
 				g_maps->_mapPos.y = 7;
