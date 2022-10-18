@@ -25,11 +25,11 @@ echo.
 
 :command_help
 echo Valid command parameters are:
-echo   stable   Generated stable engines project files
-echo   all      Generate all engines project files
-echo   tools    Generate project files for the devtools
-echo   clean    Clean generated project files
-echo   help     Show help message
+echo   /stable   Generated stable engines project files
+echo   /all      Generate all engines project files
+echo   /tools    Generate project files for the devtools
+echo   /clean    Clean generated project files
+echo   /help     Show help message
 goto done
 
 :check_tool
