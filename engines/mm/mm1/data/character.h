@@ -71,11 +71,17 @@ enum CharFlags0 {
 	CHARFLAG0_ZAM_CLUE = 0x10
 };
 
+enum CharFlags5 {
+	CHARFLAG5_8 = 8
+};
+
 enum CharFlags11 {
 	CHARFLAG11_1 = 1,
 	CHARFLAG11_2 = 2,
 	CHARFLAG11_4 = 4,
-	CHARFLAG11_GOT_MIGHT = 8
+	CHARFLAG11_GOT_MIGHT = 8,
+	CHARFLAG11_GOT_ACCURACY = 0x10,
+	CHARFLAG11_GOT_SPEED = 0x20
 };
 
 class Inventory {

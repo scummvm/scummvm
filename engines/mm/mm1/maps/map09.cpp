@@ -29,14 +29,17 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+static const byte MAP_DEST_X[4] = { 8, 15, 15, 7 };
+static const byte MAP_DEST_Y[4] = { 5, 1, 0, 0 };
+static const uint16 MAP_DEST_ID[4] = { 0x604, 0x51b, 0x601, 0xa00 };
+
 void Map09::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 28; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[79 + i]) {	
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +47,164 @@ void Map09::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map09::special00() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.stairs_up"],
+		[]() {
+			g_maps->changeMap(0x802, 1);
+		}
+	));
+}
+
+void Map09::special01() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map09.passage_outside"],
+		[]() {
+			g_maps->_mapPos = Common::Point(0, 0);
+			g_maps->changeMap(0xf05, 3);
+		}
+	));
+}
+
+void Map09::special02() {
+	portal(0);
+}
+
+void Map09::special03() {
+	portal(1);
+}
+
+void Map09::special04() {
+	portal(2);
+}
+
+void Map09::special05() {
+	portal(3);
+}
+
+void Map09::special06() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._flags[11] & CHARFLAG11_GOT_ACCURACY)) {
+			c._flags[11] |= CHARFLAG11_GOT_ACCURACY;
+			c._might._base = MIN((int)c._accuracy._base + 4, 255);
+		}
+	}
+
+	Sound::sound(SOUND_2);
+	g_events->send(InfoMessage(0, 1, STRING["maps.map07.accuracy"]));
+}
+
+void Map09::special07() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._flags[11] & CHARFLAG11_GOT_SPEED)) {
+			c._flags[11] |= CHARFLAG11_GOT_SPEED;
+			c._might._base = MIN((int)c._speed._base + 4, 255);
+		}
+	}
+
+	Sound::sound(SOUND_2);
+	g_events->send(InfoMessage(0, 1, STRING["maps.map07.speed"]));
+}
+
+void Map09::special08() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._flags[5] |= CHARFLAG5_8;
+	}
+
+	const Character &leader = g_globals->_party[0];
+	Sound::sound(SOUND_2);
+
+	if (leader._alignment == leader._alignmentInitial) {
+		send(InfoMessage(
+			0, 1, STRING["maps.map09.shrine1"],
+			0, 2, STRING["maps.map09.shrine2"]
+		));
+
+		g_globals->_treasure[5] = getRandomNumber(26) + 120;
+		g_globals->_treasure[6] = 120;
+		g_events->addAction(KEYBIND_SEARCH);
+
+	} else {
+		send(InfoMessage(
+			0, 1, STRING["maps.map09.shrine1"],
+			0, 2, STRING["maps.map09.shrine3"]
+		));
+
+		// TODO: Check this is right. Original set y twice
+		g_maps->_mapPos = Common::Point(5, 13);
+		g_maps->changeMap(0x201, 3);
+	}
+}
+
+void Map09::special09() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map09.stalactities"]));
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._hpBase /= 2;
+	}
+}
+
+void Map09::special14() {
+	g_maps->clearSpecial();
+	Sound::sound(SOUND_2);
+
+	if (g_globals->_activeSpells._s.levitate) {
+		send(InfoMessage(
+			0, 1, STRING["maps.map09.map"],
+			0, 2, STRING["maps.map09.levitation"]
+		));
+	} else {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			if (!g_globals->_activeSpells._s.poison &&
+				!(c._condition & BAD_CONDITION))
+				c._condition = POISONED;
+			c._hpBase /= 2;
+		}
+
+		send(InfoMessage(
+			0, 1, STRING["maps.map09.map"]
+		));
+	}
+}
+
+void Map09::special18() {
+}
+
+void Map09::special25() {
+}
+
+void Map09::special26() {
+}
+
+void Map09::special27() {
+}
+
+void Map09::portal(int index) {
+	_portalIndex = index;
+
+	Sound::sound(SOUND_2);
+	send(InfoMessage(
+		STRING["maps.map09.portal"],
+		[]() {
+			int index = static_cast<Map09 *>(g_maps->_currentMap)->_portalIndex;
+			g_maps->_mapPos = Common::Point(MAP_DEST_X[index], MAP_DEST_Y[index]);
+			g_maps->changeMap(MAP_DEST_ID[index], 1);
+		}
+	));
 }
 
 } // namespace Maps
