@@ -302,7 +302,7 @@ dgFloat32 NewtonUserJoint::GetRowForce(dgInt32 row) const
 
 void NewtonUserJoint::GetInfo(dgConstraintInfo* const info) const
 {
-  memset(info, 0, sizeof(dgConstraintInfo));
+  info->clear();
   if (m_getInfoCallback)
   {
     InitInfo(info);
