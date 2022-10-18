@@ -22,6 +22,8 @@
 #if !defined(AFX_DGCONSTRAINT_H__F9EC24E0_6E0F_4CD5_909E_A5F5E1AC7C0B__INCLUDED_)
 #define AFX_DGCONSTRAINT_H__F9EC24E0_6E0F_4CD5_909E_A5F5E1AC7C0B__INCLUDED_
 
+#define ARRAYSIZE(x) ((int)(sizeof(x) / sizeof(x[0])))
+
 #include "dgBodyMasterList.h"
 
 #define DG_MAX_BOUND						dgFloat32 (1.0e15f)
@@ -58,6 +60,21 @@ class dgConstraintInfo
 	dgFloat32 m_extraParameters[16];
 	dgInt32 m_collideCollisionOn;
 	char m_discriptionType[16];
+
+	void clear()
+	{
+		m_attachMatrix_0 = dgGetZeroMatrix();
+		m_attachMatrix_1 = dgGetZeroMatrix();
+		for (uint i = 0; i < ARRAYSIZE(m_minLinearDof); i++) m_minLinearDof[i] = dgFloat32(0.0);
+		for (uint i = 0; i < ARRAYSIZE(m_maxLinearDof); i++) m_maxLinearDof[i] = dgFloat32(0.0);
+		for (uint i = 0; i < ARRAYSIZE(m_minAngularDof); i++) m_minAngularDof[i] = dgFloat32(0.0);
+		for (uint i = 0; i < ARRAYSIZE(m_maxAngularDof); i++) m_maxAngularDof[i] = dgFloat32(0.0);
+		m_attachBody_0 = nullptr;
+		m_attachBody_1 = nullptr;
+		for (uint i = 0; i < ARRAYSIZE(m_extraParameters); i++) m_extraParameters[i] = dgFloat32(0.0);
+		m_collideCollisionOn = dgInt32(0);
+		for (uint i = 0; i < ARRAYSIZE(m_discriptionType); i++) m_discriptionType[i] = 0;
+	}
 };
 
 
