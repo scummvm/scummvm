@@ -294,7 +294,7 @@ void Text::updateFormat() {
 	} else {
         if (isRTL) {
             _lines[0].text = Common::convertBiDiString(_text, Common::kWindows1255);
-        }else {
+        } else {
             // No auto format, so all the text is copied to a single line.
             _lines[0].text = _text;
         }
