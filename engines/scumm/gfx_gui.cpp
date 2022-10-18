@@ -136,10 +136,21 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		int palOffset = (_game.version == 8) ? 0 : 11;
 		normalFillColor = getBannerColor(6 * bannerId + 15 + palOffset);
 		normalTextColor = getBannerColor(6 * bannerId + 14 + palOffset);
-		topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
-		bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
-		leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
-		rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+
+		if (_game.version == 5 && _game.platform == Common::kPlatformMacintosh) {
+			// Mac versions of MI1, MI2 and INDY4 invert the colors of the bottom
+			// and left lines, which means they have the brightest colors on the top
+			// and bottom lines, and the darker colors on the left and right lines.
+			topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
+			bottomLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
+			leftLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
+			rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+		} else {
+			topLineColor = getBannerColor(6 * bannerId + 16 + palOffset);
+			bottomLineColor = getBannerColor(6 * bannerId + 17 + palOffset);
+			leftLineColor = getBannerColor(6 * bannerId + 18 + palOffset);
+			rightLineColor = getBannerColor(6 * bannerId + 19 + palOffset);
+		}
 	}
 
 	// Backup the current charsetId, since we're going to switch
