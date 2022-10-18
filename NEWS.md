@@ -2633,7 +2633,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  New Games:
    - Added Cinematique evo 1 engine. Currently only Future Wars is supported.
-   - Added Touche: The Adventures of the Fifth Musketeer engine.
+   - Added Touché: The Adventures of the Fifth Musketeer engine.
    - Added support for Gobliins 2.
    - Added support for Simon the Sorcerer's Puzzle Pack.
    - Added support for Ween: The Prophecy.
