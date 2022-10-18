@@ -721,12 +721,12 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 		break;
 	}
 
-	if (!img) {
+	if (!img || !img->loadStream(*pic)) {
+		warning("Cast::loadBitmapData():: Unable to load id: %d", imgId);
 		delete pic;
+		delete img;
 		return;
 	}
-
-	img->loadStream(*pic);
 
 	bitmapCast->_img = img;
 	const Graphics::Surface *surf = img->getSurface();
