@@ -722,7 +722,7 @@ void Cast::loadBitmapData(int key, BitmapCastMember *bitmapCast) {
 	}
 
 	if (!img || !img->loadStream(*pic)) {
-		warning("Cast::loadBitmapData():: Unable to load id: %d", imgId);
+		warning("Cast::loadBitmapData(): Unable to load id: %d", imgId);
 		delete pic;
 		delete img;
 		return;
