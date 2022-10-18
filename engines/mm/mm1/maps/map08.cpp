@@ -52,9 +52,7 @@ void Map08::special() {
 	if (g_maps->_mapPos.x == 0 || g_maps->_mapPos.x == 15) {
 		g_globals->_encounters.execute();
 	} else {
-		g_globals->_treasure[6] = getRandomNumber(150) + 100;
-		g_globals->_treasure[8] = getRandomNumber(4);
-		g_events->addAction(KEYBIND_SEARCH);
+		addTreasure();
 	}
 }
 
@@ -89,21 +87,49 @@ void Map08::special02() {
 }
 
 void Map08::special04() {
+	g_maps->_mapPos = Common::Point(15, 9);
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map08::special05() {
+	g_maps->_mapPos = Common::Point(0, 9);
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map08::special06() {
+	if (_data[VAL1]) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i)
+			g_globals->_party[i]._hpBase /= 2;
+
+		send(InfoMessage(18, 2, STRING["maps.map08.zap"]));
+		Sound::sound(SOUND_3);
+	} else {
+		checkPartyDead();
+	}
 }
 
 void Map08::special08() {
+	if (_data[VAL1]) {
+		send(InfoMessage(0, 1, STRING["maps.map08.dancing_lights"]));
+		Sound::sound(SOUND_3);
+	} else {
+		checkPartyDead();
+	}
 }
 
 void Map08::special20() {
+	g_maps->clearSpecial();
+	g_globals->_treasure[5] = getRandomNumber(48);
+	g_globals->_treasure[1] = 1;
+	g_globals->_treasure[2] = 6;
+	addTreasure();
 }
 
-
+void Map08::addTreasure() {
+	g_globals->_treasure[6] = getRandomNumber(150) + 100;
+	g_globals->_treasure[8] = getRandomNumber(4);
+	g_events->addAction(KEYBIND_SEARCH);
+}
 
 } // namespace Maps
 } // namespace MM1
