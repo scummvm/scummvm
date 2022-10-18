@@ -74,14 +74,17 @@ bool DIBDecoder::loadStream(Common::SeekableReadStream &stream) {
 	if (headerSize != 40)
 		return false;
 
-	uint32 width = stream.readUint32LE();
-	uint32 height = stream.readUint32LE();
+	int32 width = stream.readSint32LE();
+	int32 height = stream.readSint32LE();
+	if (height < 0) {
+		warning("BUILDBOT: height < 0 for DIB");
+	}
 	stream.readUint16LE(); // planes
 	uint16 bitsPerPixel = stream.readUint16LE();
 	uint32 compression = stream.readUint32BE();
 	/* uint32 imageSize = */ stream.readUint32LE();
-	/* uint32 pixelsPerMeterX = */ stream.readUint32LE();
-	/* uint32 pixelsPerMeterY = */ stream.readUint32LE();
+	/* int32 pixelsPerMeterX = */ stream.readSint32LE();
+	/* int32 pixelsPerMeterY = */ stream.readSint32LE();
 	_paletteColorCount = stream.readUint32LE();
 	/* uint32 colorsImportant = */ stream.readUint32LE();
 
