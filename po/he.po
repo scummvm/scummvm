@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-17 17:36+0000\n"
-"PO-Revision-Date: 2022-10-14 19:33+0000\n"
+"PO-Revision-Date: 2022-10-18 23:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -5936,6 +5936,7 @@ msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
+"הפעלת מערבל MIDI דינמי, האיכות משופרת, אך ההתנהגות פחות דומה לנגן mTropolis ."
 
 #: engines/mtropolis/detection.cpp:66
 msgid "Autosave at progress points"
@@ -5952,7 +5953,7 @@ msgstr "הפעלת מעברים קצרים"
 #: engines/mtropolis/detection.cpp:78
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
-msgstr ""
+msgstr "הפעלת מעברים שנקבעו לקצב מרבי במקום דילוג עליהם."
 
 #: engines/mtropolis/detection.cpp:88
 msgid "Enable subtitles for important sound effects"
@@ -5963,6 +5964,8 @@ msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
 msgstr ""
+"הפעלת כתוביות עבור אפקטים קוליים חשובים.  זה עשוי להפחית את רמת הקושי של "
+"חידות ומשחקונים שתלויים בזיהוי קולי."
 
 #: engines/mtropolis/detection.cpp:99
 msgid "Start with debugger"
@@ -5979,15 +5982,15 @@ msgstr "נכשל בקריאת מידע הגרסה מקובץ השמירה"
 #: engines/mtropolis/saveload.cpp:150
 msgid ""
 "Failed to load save, the save file doesn't contain valid version information."
-msgstr ""
+msgstr "טעינת השמירה נכשלה, קובץ השמירה אינו מכיל מידע גרסה תקף."
 
 #: engines/mtropolis/saveload.cpp:166
 msgid "Failed to load save, an error occurred when reading the save game data."
-msgstr ""
+msgstr "טעינת השמירה נכשלה, אירעה שגיאה בקריאת נתוני המשחק שנשמר."
 
 #: engines/mtropolis/saveload.cpp:226
 msgid "An internal error occurred while attempting to write save game data"
-msgstr ""
+msgstr "אירעה שגיאה פנימית בעת כתיבת נתוני המשחק שנשמר"
 
 #: engines/mtropolis/saveload.cpp:234
 msgid "An error occurred while writing the save game"
@@ -6008,7 +6011,7 @@ msgstr "טלאי מסך רחב"
 
 #: engines/myst3/detection.cpp:213
 msgid "Enable widescreen rendering in fullscreen mode."
-msgstr ""
+msgstr "הפעלת מסירת מסך רחב במצב מסך מלא."
 
 #: engines/myst3/myst3.cpp:364
 #, c-format
@@ -6019,6 +6022,10 @@ msgid ""
 "The updates can be downloaded from:\n"
 "%s"
 msgstr ""
+"גרסה זו של Myst III אינה מעודכנת באמצעות הטלאי הרשמי האחרון.\n"
+"נא להתקין את העדכון הרשמי המתאים לשפת המשחק.\n"
+"את העדכונים ניתן להוריד מכאן:\n"
+"%s"
 
 #: engines/myst3/myst3.cpp:1578 engines/pegasus/pegasus.cpp:748
 msgid "Invalid file name for saving"
@@ -6073,8 +6080,9 @@ msgid "Open general cheat menu"
 msgstr "פתיחת תפריט רמאויות כללי"
 
 #: engines/nancy/input.cpp:255
+#, fuzzy
 msgid "Open event flags cheat menu"
-msgstr ""
+msgstr "פתיחת תפריט רמאויות של דגלי אירועים"
 
 #: engines/nancy/dialogs.cpp:40
 msgid "Player Speech"
@@ -6083,16 +6091,16 @@ msgstr "דיבור שחקן"
 #: engines/nancy/dialogs.cpp:40
 msgid ""
 "Enable player speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "הפעלת דיבור שחקן. פעיל רק כאשר הדיבור מופעל בהגדרות שמע."
 
 #: engines/nancy/dialogs.cpp:41
 msgid "Character Speech"
-msgstr ""
+msgstr "דיבור דמויות"
 
 #: engines/nancy/dialogs.cpp:41
 msgid ""
 "Enable NPC speech. Only works if speech is enabled in the Audio settings."
-msgstr ""
+msgstr "הפעלת דיבור דמויות שאינן השחקן. פעיל רק כאשר הדיבור מופעל בהגדרות שמע."
 
 #: engines/nancy/dialogs.cpp:42
 msgid "Use original menus"
@@ -6103,6 +6111,8 @@ msgid ""
 "Use the original engine's main, save/load, and setup menus. ScummVM's Global "
 "Main Menu can still be accessed through its keymap."
 msgstr ""
+"שימוש בתפריט הראשי ותפריטי התקנה, שמירה/טעינה מקוריים. ניתן לגשת לתפריט "
+"הראשי המקיף של ScummVM באמצעות מיפוי המקשים."
 
 #. I18N: Second Chance is the name of the original engine's autosave system
 #: engines/nancy/dialogs.cpp:45
@@ -6114,6 +6124,8 @@ msgid ""
 "Enable the Second Chance feature, which automatically saves at specific "
 "scenes. Enabling this disables timed autosaves."
 msgstr ""
+"הפעלת תכונת הזדמנות שניה, שמאפשרת שמירה אוטומטית במסכים מסוימים. הפעלת תכונה "
+"זו מבטלת שמירות אוטומטיות מתוזמנות."
 
 #: engines/nancy/dialogs.cpp:47
 msgid "Speech Options"
@@ -6146,7 +6158,7 @@ msgstr "מספר תמונה"
 #. I18N: The Y position (a.k.a vertical scroll) of the background
 #: engines/nancy/dialogs.cpp:114
 msgid "Background Top (Y)"
-msgstr ""
+msgstr "היסט רקע אנכי (Y)"
 
 #: engines/nancy/dialogs.cpp:116
 msgid "Hints Remaining"
@@ -6360,6 +6372,9 @@ msgid ""
 "%s and %s. Without these files,\n"
 "the music will not sound the same as the original game."
 msgstr ""
+"לא נמצאו קבצי הגדרות כלי נגינה של AdLib\n"
+"%s וגם %s. ללא קבצים אלה,\n"
+"המוזיקה לא תהיה זהה לזו שמשחק המקורי."
 
 #: engines/saga/saga.cpp:228
 msgid "Error loading game resources."
@@ -6453,15 +6468,15 @@ msgstr "שימוש במסירת RGB"
 
 #: engines/sci/detection_options.h:183
 msgid "Use RGB rendering to improve screen transitions"
-msgstr ""
+msgstr "שימוש במסירת RGB לשיפור המעברים בין מסכים"
 
 #: engines/sci/detection_options.h:195
 msgid "Use per-resource modified palettes"
-msgstr ""
+msgstr "שימוש בערכות צבעים מותאמות לפי-משאב"
 
 #: engines/sci/detection_options.h:196
 msgid "Use custom per-resource palettes to improve visuals"
-msgstr ""
+msgstr "שימוש בערכות צבעים מותאמות לפי-משאב כדי לשפר את הנראות"
 
 #: engines/sci/detection_options.h:208
 msgid "Enable bearded musicians"
@@ -6469,7 +6484,7 @@ msgstr "הפעלת מוזיקאים מזוקנים"
 
 #: engines/sci/detection_options.h:209
 msgid "Enable graphics that were disabled for legal reasons"
-msgstr ""
+msgstr "הפעלת גרפיקה שבוטלה מסיבות משפטיות"
 
 #: engines/sci/detection_options.h:237
 msgid "MIDI mode:"
@@ -6480,6 +6495,7 @@ msgid ""
 "When using external MIDI devices (e.g. through USB-MIDI), select your device "
 "here"
 msgstr ""
+"כאשר משתמשים בהתקני MIDI חיצוניים (כגון USB-MIDI), יש לבחור את ההתקן כאן"
 
 #: engines/sci/detection_options.h:243
 msgid "Standard (GM / MT-32)"
@@ -6495,7 +6511,7 @@ msgstr "Yamaha FB-01"
 
 #: engines/sci/detection_tables.h:4489
 msgid "Incomplete game detected. You have to copy data from all the CDs."
-msgstr ""
+msgstr "נתגלה משחק שאינו שלם. יש להעתיק את הנתונים מכל התקליטורים."
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
 msgid "(Autosave)"
@@ -6512,6 +6528,8 @@ msgid ""
 "There exists some dummy logic for now, where opponent actions are chosen "
 "randomly"
 msgstr ""
+"הלוגיקה עבור פוקר מובנית בתוך DLL חיצוני, ואינה ממומשת עדיין. כרגע יש לוגיקה "
+"גולמית, בה פעולות היריב נבחרות באקראי"
 
 #: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
@@ -6532,7 +6550,7 @@ msgstr "המשחק שנשמר זה נוצר עם גרסה אחרת של המשח
 #, c-format
 msgid ""
 "Cannot play back %dbpp video on a system with maximum color depth of 8bpp"
-msgstr ""
+msgstr "לא ניתן לנגן וידאו %dbpp על מערכת בעומק צבע מרבי של 8bpp"
 
 #: engines/sci/metaengine.cpp:300
 msgid "SCI32 support not compiled in"
@@ -7859,11 +7877,11 @@ msgstr "הפעלת הפרדה גבוהה יותר עבור המשחק"
 
 #: engines/twine/metaengine.cpp:104
 msgid "Debug Next Room"
-msgstr ""
+msgstr "ניפוי תקלים בחדר הבא"
 
 #: engines/twine/metaengine.cpp:109
 msgid "Debug Previous Room"
-msgstr ""
+msgstr "ניפוי תקלים בחדר הקודם"
 
 #: engines/twine/metaengine.cpp:114
 msgid "Debug Apply Celling Grid"
@@ -7963,12 +7981,12 @@ msgstr "בריחה"
 
 #: engines/twine/metaengine.cpp:313
 msgid "Accept"
-msgstr ""
+msgstr "אישור"
 
 #: engines/twine/metaengine.cpp:321 engines/twine/metaengine.cpp:373
 #: engines/twine/metaengine.cpp:389
 msgid "Abort"
-msgstr ""
+msgstr "ביטול"
 
 #: engines/twine/metaengine.cpp:359
 msgid "Next Page"
@@ -8445,7 +8463,7 @@ msgstr "הדפסת ניפוי תקלים"
 #: engines/wintermute/keymapper_tables.h:720
 #: engines/wintermute/keymapper_tables.h:1772
 msgid "Exit"
-msgstr ""
+msgstr "יציאה"
 
 #. I18N: Displays a debug interface that changes light settings
 #: engines/wintermute/keymapper_tables.h:726
@@ -8495,7 +8513,7 @@ msgstr "עוצמה כבויה"
 
 #: engines/wintermute/keymapper_tables.h:840
 msgid "Change font size"
-msgstr ""
+msgstr "שינוי גודל גופן"
 
 #: engines/wintermute/keymapper_tables.h:920
 msgid "Save game"
@@ -8503,15 +8521,15 @@ msgstr "שמירת משחק"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
-msgstr ""
+msgstr "מהירות הליכה: נמוכה"
 
 #: engines/wintermute/keymapper_tables.h:940
 msgid "Walking speed: Medium"
-msgstr ""
+msgstr "מהירות הליכה: בינונית"
 
 #: engines/wintermute/keymapper_tables.h:945
 msgid "Walking speed: High"
-msgstr ""
+msgstr "מהירות הליכה: גבוהה"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1286
@@ -8530,7 +8548,7 @@ msgstr "דף אחרון"
 #. I18N: ultra_super_mega_fast_walk is the name of the variable used at game script for this speed
 #: engines/wintermute/keymapper_tables.h:978
 msgid "Walking speed: Ultra Super Mega Fast"
-msgstr ""
+msgstr "מהירות הליכה: אולטרא סופר מגה מהירה"
 
 #: engines/wintermute/keymapper_tables.h:994
 msgid "Show game credits"
@@ -8574,35 +8592,35 @@ msgstr "ניגון תו 7: סי"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
-msgstr ""
+msgstr "יכולת: טלקינזיס"
 
 #: engines/wintermute/keymapper_tables.h:1057
 msgid "Ability: Push"
-msgstr ""
+msgstr "יכולת: דחיפה"
 
 #: engines/wintermute/keymapper_tables.h:1062
 msgid "Ability: Lightning"
-msgstr ""
+msgstr "יכולת: ברק"
 
 #: engines/wintermute/keymapper_tables.h:1067
 msgid "Ability: Light"
-msgstr ""
+msgstr "יכולת: אור"
 
 #: engines/wintermute/keymapper_tables.h:1072
 msgid "Ability: Wind"
-msgstr ""
+msgstr "יכולת: רוח"
 
 #: engines/wintermute/keymapper_tables.h:1077
 msgid "Ability: Sound"
-msgstr ""
+msgstr "יכולת: צליל"
 
 #: engines/wintermute/keymapper_tables.h:1082
 msgid "Ability: Esence"
-msgstr ""
+msgstr "יכולת: תמצית"
 
 #: engines/wintermute/keymapper_tables.h:1087
 msgid "Ability: Exorcist"
-msgstr ""
+msgstr "יכולת: גירוש שדים"
 
 #: engines/wintermute/keymapper_tables.h:1200
 msgid "Show hints / Dance move"
@@ -8635,7 +8653,7 @@ msgstr "מיתוג כתוביות"
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1387
 msgid "Shift key"
-msgstr ""
+msgstr "מקש Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
@@ -8647,23 +8665,23 @@ msgstr "פעולת צ'פאייב"
 #: engines/wintermute/keymapper_tables.h:1790
 #: engines/wintermute/keymapper_tables.h:1886
 msgid "Settings"
-msgstr ""
+msgstr "הגדרות"
 
 #: engines/wintermute/keymapper_tables.h:1542
 msgid "Dialogue answer 1"
-msgstr ""
+msgstr "תשובת שיחה 1"
 
 #: engines/wintermute/keymapper_tables.h:1547
 msgid "Dialogue answer 2"
-msgstr ""
+msgstr "תשובת שיחה 2"
 
 #: engines/wintermute/keymapper_tables.h:1552
 msgid "Dialogue answer 3"
-msgstr ""
+msgstr "תשובת שיחה 3"
 
 #: engines/wintermute/keymapper_tables.h:1557
 msgid "Dialogue answer 4"
-msgstr ""
+msgstr "תשובת שיחה 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1568
@@ -8751,7 +8769,7 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:2109
 msgid "Key i"
-msgstr ""
+msgstr "Key i"
 
 #: engines/xeen/detection.cpp:55
 msgid "Show item costs in standard inventory mode"
@@ -8826,15 +8844,15 @@ msgstr "מבט למטה"
 
 #: engines/zvision/metaengine.cpp:169
 msgid "Spellbook"
-msgstr ""
+msgstr "ספר לחשים"
 
 #: engines/zvision/metaengine.cpp:175
 msgid "Score"
-msgstr ""
+msgstr "ניקוד"
 
 #: engines/zvision/metaengine.cpp:181
 msgid "Put away object"
-msgstr ""
+msgstr "סילוק חפץ"
 
 #: engines/zvision/metaengine.cpp:187
 msgid "Extract coin"
