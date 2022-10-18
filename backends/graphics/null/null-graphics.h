@@ -60,7 +60,6 @@ public:
 
 	int16 getHeight() const override { return _height; }
 	int16 getWidth() const override { return _width; }
-	Common::Rect getScreenRect() const override { return Common::Rect(0, 0, _width, _height); }
 	void setPalette(const byte *colors, uint start, uint num) override {}
 	void grabPalette(byte *colors, uint start, uint num) const override {}
 	void copyRectToScreen(const void *buf, int pitch, int x, int y, int w, int h) override {}
@@ -81,7 +80,6 @@ public:
 	void copyRectToOverlay(const void *buf, int pitch, int x, int y, int w, int h) override {}
 	int16 getOverlayHeight() const override { return _height; }
 	int16 getOverlayWidth() const override { return _width; }
-	Common::Rect getOverlayRect() const override { return Common::Rect(0, 0, _width, _height); }
 
 	bool showMouse(bool visible) override { return !visible; }
 	void warpMouse(int x, int y) override {}
