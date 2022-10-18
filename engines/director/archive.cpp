@@ -439,8 +439,11 @@ Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id
 	const Resource &res = resMap[id];
 
 	// Adjust to skip the resource header
+	// FourCC, size and id (all 4 bytes each)
+	// Resource size excludes FourCC and size.
 	uint32 offset = res.offset + 12;
 	uint32 size = res.size - 4;
+
 	// Skip the Pascal string
 	_stream->seek(_startOffset + offset);
 	byte stringSize = _stream->readByte(); // 1 for this byte
@@ -448,12 +451,15 @@ Common::SeekableReadStreamEndian *RIFFArchive::getResource(uint32 tag, uint16 id
 	offset += stringSize + 1;
 	size -= stringSize + 1;
 
-	// Align to nearest word boundary
-	if (offset & 1) {
+	// 'DIB ' was observed to always have two 0 bytes
+	// other resources such as 'SND ' need alignment to nearest word boundary.
+	bool needsAlignment = offset & 1;
+	if (needsAlignment || tag == MKTAG('D', 'I', 'B', ' ')) {
 		offset++;
 		size--;
 	}
 
+	debugC(4, kDebugLoading, "RIFFArchive::getResource() tag: %s id: %i offset: %i size: %i", tag2str(tag), id, res.offset, res.size);
 	return new Common::SeekableSubReadStreamEndian(_stream, _startOffset + offset, _startOffset + offset + size, true, DisposeAfterUse::NO);
 }
 
