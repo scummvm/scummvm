@@ -231,8 +231,8 @@ public:
 	// -------------------
 	bool persist(OutputPersistenceBlock &writer) override;
 	bool unpersist(InputPersistenceBlock &reader) override;
-    bool isRTL();
-    static void ARGBColorToLuaColor(lua_State *L, uint color);
+	bool isRTL();
+	static void ARGBColorToLuaColor(lua_State *L, uint color);
 	static uint luaColorToARGBColor(lua_State *L, int stackIndex);
 
 protected:

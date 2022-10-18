@@ -456,7 +456,7 @@ bool GraphicEngine::unpersist(InputPersistenceBlock &reader) {
 	return reader.isGood();
 }
 
-bool GraphicEngine::isRTL(){
+bool GraphicEngine::isRTL() {
     return _isRTL;
 }
 
