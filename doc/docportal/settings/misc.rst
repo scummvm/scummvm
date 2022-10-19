@@ -76,10 +76,12 @@ Ask for confirmation on exit
 
 Update Icons
 	Click on the Update Icons button to download new or updated artwork for game icons. ScummVM will scan to find applicable icons; once these have been found, click on the **Download** button in the pop up window to start the download. Click the **Hide** button to close the window and continue the download in the background. Use the **Cancel download** button to cancel the download.
-	
+
 .. figure:: ../images/settings/update_icons.png
-	
+
 	The Update Icons window
 
+	The icon packs can also be downloaded manually from https://downloads.scummvm.org/frs/icons/ and must be placed in the :ref:`Icon Path <iconspath>`. The packs are incremental and you need all of them to have all the available icons and not just the most recent pack.
+
 Enable Discord Integration
-	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates. 
+	Use this option to automatically check for updates to ScummVM. Click the Check now button to manually check for updates.
