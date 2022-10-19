@@ -266,6 +266,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		}
 	} else if (_renderMode == "ega") {
 		loadBundledImages();
+		_title = _border;
 		file = gameDir.createReadStreamForMember("DRILLE.EXE");
 
 		if (file == nullptr)
@@ -277,6 +278,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(file, 0x9b40, 16);
 	} else if (_renderMode == "cga") {
 		loadBundledImages();
+		_title = _border;
 		file = gameDir.createReadStreamForMember("DRILLC.EXE");
 
 		if (file == nullptr)
