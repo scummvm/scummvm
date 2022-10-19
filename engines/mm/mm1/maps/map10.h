@@ -32,9 +32,55 @@ class Map10 : public Map {
 	typedef void (Map10:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special17();
+	void special18();
+	void special19();
+	void special20();
+	void special23();
+	void special29();
+	void special30();
+	void special31();
+	void special32();
+	void special33();
+	void reduceHP();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map10::special00
+	const SpecialFn SPECIAL_FN[34] = {
+		&Map10::special00,
+		&Map10::special01,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special02,
+		&Map10::special17,
+		&Map10::special18,
+		&Map10::special19,
+		&Map10::special20,
+		&Map10::special20,
+		&Map10::special20,
+		&Map10::special23,
+		&Map10::special23,
+		&Map10::special23,
+		&Map10::special23,
+		&Map10::special23,
+		&Map10::special23,
+		&Map10::special29,
+		&Map10::special30,
+		&Map10::special31,
+		&Map10::special32,
+		&Map10::special33
 	};
 public:
 	Map10() : Map(10, "cave6", 0x51B) {}
