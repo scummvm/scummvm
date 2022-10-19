@@ -99,6 +99,7 @@ struct InfoMessage : public Message {
 	YNCallback _ynCallback = nullptr;
 	KeyCallback _keyCallback = nullptr;
 	bool _largeMessage = false;
+	bool _sound = false;
 
 	InfoMessage();
 	InfoMessage(const Common::String &str);
@@ -121,6 +122,40 @@ struct InfoMessage : public Message {
 	InfoMessage(int x1, int y1, const Common::String &str1,
 		int x2, int y2, const Common::String &str2,
 		KeyCallback keyCallback);
+};
+
+struct SoundMessage : public InfoMessage {
+public:
+	SoundMessage() : InfoMessage() { _sound = true; }
+	SoundMessage(const Common::String &str) :
+		InfoMessage(0, 1, str) { _sound = true; }
+	SoundMessage(int x, int y, const Common::String &str) :
+		InfoMessage(x, y, str) { _sound = true; }
+	SoundMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2) :
+		InfoMessage(x1, y1, str1, x2, y2, str2) { _sound = true; }
+
+	SoundMessage(const Common::String &str,
+		YNCallback ynCallback) :
+		InfoMessage(0, 1, str, ynCallback) { _sound = true; }
+	SoundMessage(int x, int y, const Common::String &str,
+		YNCallback ynCallback) :
+		InfoMessage(x, y, str, ynCallback) { _sound = true; }
+	SoundMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2,
+		YNCallback ynCallback) :
+		InfoMessage(x1, y1, str1, x2, y2, str2, ynCallback) { _sound = true; }
+
+	SoundMessage(const Common::String &str,
+		KeyCallback keyCallback) :
+		InfoMessage(0, 1, str, keyCallback) { _sound = true; }
+	SoundMessage(int x, int y, const Common::String &str,
+		KeyCallback keyCallback) :
+		InfoMessage(x, y, str, keyCallback) { _sound = true; }
+	SoundMessage(int x1, int y1, const Common::String &str1,
+		int x2, int y2, const Common::String &str2,
+		KeyCallback keyCallback) :
+		InfoMessage(x1, y1, str1, x2, y2, str2, keyCallback) { _sound = true; }
 };
 
 enum LocationType {

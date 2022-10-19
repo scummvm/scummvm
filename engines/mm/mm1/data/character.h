@@ -71,6 +71,10 @@ enum CharFlags0 {
 	CHARFLAG0_ZAM_CLUE = 0x10
 };
 
+enum CharFlags1 {
+	 CHARFLAG1_1 = 1
+};
+
 enum CharFlags5 {
 	CHARFLAG5_8 = 8
 };

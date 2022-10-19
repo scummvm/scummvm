@@ -22,6 +22,7 @@
 #include "common/util.h"
 #include "mm/mm1/views/game_messages.h"
 #include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
@@ -67,6 +68,9 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 		_bounds = getLineBounds(17, 24);
 	else
 		_bounds = getLineBounds(21, 24);
+
+	if (msg._sound)
+		Sound::sound(SOUND_2);
 
 	redraw();
 	return true;

@@ -182,15 +182,47 @@ void Map09::special14() {
 }
 
 void Map09::special18() {
+	if (g_globals->_activeSpells._s.psychic_protection) {
+		Sound::sound(SOUND_2);
+		send(InfoMessage(
+			0, 1, STRING["maps.map09.psychic_blast"],
+			0, 2, STRING["maps.map09.protection"]
+		));
+	} else {
+		g_globals->_currCharacter = &g_globals->_party[
+			getRandomNumber(g_globals->_party.size()) - 1
+		];
+
+
+		if (!(g_globals->_currCharacter->_condition & BAD_CONDITION)) {
+			// Chosen character is okay, so blast them
+			g_globals->_currCharacter->_condition = BAD_CONDITION | DEAD;
+		} else {
+			// Chosen character is disabled, so instead
+			// remove the SP from all members of the party
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				g_globals->_currCharacter = &g_globals->_party[i];
+				g_globals->_currCharacter->_sp._current = 0;
+			}
+		}
+
+		g_globals->_encounters.execute();
+	}
 }
 
 void Map09::special25() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map09.scrawl"]));
 }
 
 void Map09::special26() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map09.corak_was_here"]));
 }
 
 void Map09::special27() {
+	Sound::sound(SOUND_2);
+	send(InfoMessage(0, 1, STRING["maps.map09.message"]));
 }
 
 void Map09::portal(int index) {
