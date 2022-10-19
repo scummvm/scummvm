@@ -53,10 +53,10 @@ iMaterial::iMaterial(const tString &asName, iLowLevelGraphics *apLowLevelGraphic
 	: iResourceBase(asName, 0) {
 	if (aPicture == eMaterialPicture_Image) {
 		mvImage.resize(eMaterialTexture_LastEnum);
-		mvImage.assign(mvImage.size(), NULL);
+		Common::fill(mvImage.begin(), mvImage.end(), nullptr);
 	} else {
 		mvTexture.resize(eMaterialTexture_LastEnum);
-		mvTexture.assign(mvTexture.size(), NULL);
+		Common::fill(mvTexture.begin(), mvTexture.end(), nullptr);
 	}
 
 	mType = eMaterialType_Null;

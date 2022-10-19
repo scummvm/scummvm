@@ -44,7 +44,7 @@
 #include "common/ptr.h"
 #include "common/array.h"
 #include "common/rect.h"
-
+#include "hpl1/algorithms.h"
 
 namespace hpl {
 
@@ -143,8 +143,8 @@ void FontData::loadNextGlyph(const TiXmlElement *charIt, BitmapArray &bitmaps, c
 
 void FontData::loadGlyphs(const TiXmlElement *charsRoot, BitmapArray &bitmaps, const cVector2l &fontSize) {
 	const TiXmlElement *charIt = charsRoot->FirstChildElement("char");
-	_glyphs.resize(3000, nullptr);
-	for (; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
+	Hpl1::resizeAndFill(_glyphs, 3000, nullptr);
+	for(; charIt != nullptr; charIt = charIt->NextSiblingElement("char"))
 		loadNextGlyph(charIt, bitmaps, fontSize);
 }
 

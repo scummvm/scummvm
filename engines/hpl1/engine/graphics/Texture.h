@@ -33,7 +33,7 @@
 #include "hpl1/engine/graphics/LowLevelPicture.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "graphics/pixelformat.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -196,7 +196,7 @@ protected:
 	cVector2l mvMinLevelSize;
 };
 
-typedef std::vector<iTexture *> tTextureVec;
+typedef Common::Array<iTexture *> tTextureVec;
 typedef tTextureVec::iterator tTextureVecIt;
 
 }     // namespace hpl

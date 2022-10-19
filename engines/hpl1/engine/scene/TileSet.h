@@ -32,7 +32,7 @@
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/scene/TileData.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <vector>
+#include "common/array.h"
 
 class TiXmlElement;
 
@@ -40,7 +40,7 @@ namespace hpl {
 
 #define kMaxTileFrameWidth (9)
 
-typedef std::vector<iTileData *> tTileDataVec;
+typedef Common::Array<iTileData *> tTileDataVec;
 typedef tTileDataVec::iterator tTileDataVecIt;
 
 class cResources;

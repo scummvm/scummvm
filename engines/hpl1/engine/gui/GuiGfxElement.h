@@ -62,7 +62,7 @@ public:
 
 private:
 	tString msName;
-	std::vector<int> mvFrames;
+	Common::Array<int> mvFrames;
 	float mfFrameLength;
 	eGuiGfxAnimationType mType;
 };
@@ -120,9 +120,9 @@ private:
 	iTexture *mvTextures[kMaxGuiTextures];
 	cResourceImage *mvImages[kMaxGuiTextures];
 
-	std::vector<cResourceImage *> mvImageBufferVec;
+	Common::Array<cResourceImage *> mvImageBufferVec;
 
-	std::vector<cGuiGfxAnimation *> mvAnimations;
+	Common::Array<cGuiGfxAnimation *> mvAnimations;
 	int mlCurrentAnimation;
 	float mfCurrentFrame;
 	int mlActiveImage;

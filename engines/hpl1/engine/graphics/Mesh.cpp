@@ -293,7 +293,7 @@ iPhysicsJoint *cMesh::CreateJointInWorld(const tString &sNamePrefix, cMeshJoint 
 
 //-----------------------------------------------------------------------
 
-void cMesh::CreateNodeBodies(iPhysicsBody **apRootBodyPtr, std::vector<iPhysicsBody *> *apBodyVec,
+void cMesh::CreateNodeBodies(iPhysicsBody **apRootBodyPtr, Common::Array<iPhysicsBody *> *apBodyVec,
 							 cMeshEntity *apEntity, iPhysicsWorld *apPhysicsWorld,
 							 const cMatrixf &a_mtxTransform) {
 	cMatrixf mtxOldOffset;
@@ -404,10 +404,10 @@ void cMesh::CreateNodeBodies(iPhysicsBody **apRootBodyPtr, std::vector<iPhysicsB
 
 //-----------------------------------------------------------------------
 
-void cMesh::CreateJointsAndBodies(std::vector<iPhysicsBody *> *apBodyVec, cMeshEntity *apEntity,
-								  std::vector<iPhysicsJoint *> *apJointVec,
+void cMesh::CreateJointsAndBodies(Common::Array<iPhysicsBody *> *apBodyVec, cMeshEntity *apEntity,
+								  Common::Array<iPhysicsJoint *> *apJointVec,
 								  const cMatrixf &a_mtxOffset, iPhysicsWorld *apPhysicsWorld) {
-	std::vector<iPhysicsBody *> vBodies;
+	Common::Array<iPhysicsBody *> vBodies;
 
 	//////////////////////////////////
 	// If the mesh has a skeleton, attach the bodies to the bones

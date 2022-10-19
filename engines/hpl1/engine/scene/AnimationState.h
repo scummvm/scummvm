@@ -164,7 +164,7 @@ private:
 
 	cAnimation *mpAnimation;
 
-	std::vector<cAnimationEvent *> mvEvents;
+	Common::Array<cAnimationEvent *> mvEvents;
 
 	// Properties of the animation
 	float mfLength;

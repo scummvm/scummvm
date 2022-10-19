@@ -35,7 +35,7 @@
 #include "hpl1/engine/resources/ResourceImage.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
-#include <vector>
+#include "common/array.h"
 
 class TiXmlElement;
 
@@ -384,7 +384,7 @@ protected:
 	// void Destroy();
 };
 
-typedef std::vector<iMaterial *> tMaterialVec;
+typedef Common::Array<iMaterial *> tMaterialVec;
 typedef tMaterialVec::iterator tMaterialVecIt;
 
 class iMaterialType {

@@ -124,7 +124,7 @@ void iResourceManager::DestroyUnused(int alMaxToKeep) {
 		return;
 
 	// Add resources to a vector
-	std::vector<iResourceBase *> vResources;
+	Common::Array<iResourceBase *> vResources;
 	vResources.reserve(m_mapHandleResources.size());
 
 	tResourceHandleMapIt it = m_mapHandleResources.begin();

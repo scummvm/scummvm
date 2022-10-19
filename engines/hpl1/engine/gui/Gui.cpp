@@ -363,7 +363,7 @@ cGuiGfxElement *cGui::CreateGfxImageBuffer(const tString &asFile, eGuiMaterial a
 	tString sName = cString::SetFileExt(asFile, "");
 	tString sExt = cString::GetFileExt(asFile);
 
-	std::vector<cResourceImage *> vImages;
+	Common::Array<cResourceImage *> vImages;
 
 	int lFileNum = 0;
 	while (true) {

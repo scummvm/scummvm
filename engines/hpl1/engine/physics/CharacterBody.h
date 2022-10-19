@@ -407,7 +407,7 @@ protected:
 	iPhysicsBody *mpBody;
 	iPhysicsWorld *mpWorld;
 
-	std::vector<iPhysicsBody *> mvExtraBodies;
+	Common::Array<iPhysicsBody *> mvExtraBodies;
 };
 
 }     // namespace hpl

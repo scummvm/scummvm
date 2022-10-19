@@ -33,6 +33,7 @@
 
 #include "hpl1/engine/physics/PhysicsWorld.h"
 #include "common/list.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -56,7 +57,7 @@ public:
 	cAINode *mpNode;
 };
 
-typedef std::vector<cAINodeEdge> tAINodeEdgeVec;
+typedef Common::Array<cAINodeEdge> tAINodeEdgeVec;
 typedef tAINodeEdgeVec::iterator tAINodeEdgeVecIt;
 
 //--------------------------------
@@ -85,7 +86,7 @@ private:
 	tAINodeEdgeVec mvEdges;
 };
 
-typedef std::vector<cAINode *> tAINodeVec;
+typedef Common::Array<cAINode *> tAINodeVec;
 typedef tAINodeVec::iterator tAINodeVecIt;
 
 typedef Common::List<cAINode *> tAINodeList;
@@ -288,7 +289,7 @@ private:
 	cVector2f mvMaxGridPos;
 	int mlNodesPerGrid;
 
-	std::vector<cAIGridNode> mvGrids;
+	Common::Array<cAIGridNode> mvGrids;
 
 	// properties
 	int mlMaxNodeEnds;

@@ -102,12 +102,12 @@ public:
 
 	eHudModelState GetState() { return mState; }
 
-	std::vector<cParticleSystem3D *> mvParticleSystems;
-	std::vector<cBillboard *> mvBillboards;
-	std::vector<iLight3D *> mvLights;
-	std::vector<cColor> mvLightColors;
-	std::vector<float> mvLightRadii;
-	std::vector<cSoundEntity *> mvSoundEntities;
+	Common::Array<cParticleSystem3D *> mvParticleSystems;
+	Common::Array<cBillboard *> mvBillboards;
+	Common::Array<iLight3D *> mvLights;
+	Common::Array<cColor> mvLightColors;
+	Common::Array<float> mvLightRadii;
+	Common::Array<cSoundEntity *> mvSoundEntities;
 
 	virtual void LoadData(TiXmlElement *apRootElem) = 0;
 

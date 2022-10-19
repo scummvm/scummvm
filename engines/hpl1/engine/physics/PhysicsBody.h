@@ -292,7 +292,7 @@ protected:
 
 	iCharacterBody *mpCharacterBody;
 
-	std::vector<iPhysicsJoint *> mvJoints;
+	Common::Array<iPhysicsJoint *> mvJoints;
 
 	Common::List<iCharacterBody *> mlstAttachedCharacters;
 

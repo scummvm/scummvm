@@ -29,6 +29,7 @@
 #define HPL_PID_CONTROLLER_H
 
 #include "hpl1/engine/math/MathTypes.h"
+#include "hpl1/algorithms.h"
 
 namespace hpl {
 
@@ -82,7 +83,7 @@ public:
 
 	void SetErrorNum(int alErrorNum) {
 		mvErrors.resize(alErrorNum);
-		mvTimeSteps.resize(alErrorNum, 0);
+		Hpl1::resizeAndFill(mvTimeSteps, alErrorNum, 0.f);
 	}
 
 	//------------------------------------
@@ -90,7 +91,7 @@ public:
 	void Reset() {
 		mlErrorNum = 0;
 		mlLastNum = -1;
-		mvTimeSteps.assign(mvTimeSteps.size(), 0);
+		Common::fill(mvTimeSteps.begin(), mvTimeSteps.end(), 0);
 
 		integral = 0;
 		derivative = 0;
@@ -115,8 +116,8 @@ public:
 	//------------------------------------
 
 private:
-	std::vector<T> mvErrors;
-	std::vector<float> mvTimeSteps;
+	Common::Array<T> mvErrors;
+	Common::Array<float> mvTimeSteps;
 
 	T integral, derivative;
 

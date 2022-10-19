@@ -61,10 +61,10 @@ class cPlayerBodyCallback;
 
 class cHapticGameCamera;
 
-typedef std::vector<iPlayerState *> tPlayerStateVec;
+typedef Common::Array<iPlayerState *> tPlayerStateVec;
 typedef tPlayerStateVec::iterator tPlayerStateVecIt;
 
-typedef std::vector<iPlayerMoveState *> tPlayerMoveStateVec;
+typedef Common::Array<iPlayerMoveState *> tPlayerMoveStateVec;
 typedef tPlayerMoveStateVec::iterator tPlayerMoveStateVecIt;
 
 class cInventoryItem;
@@ -428,7 +428,7 @@ private:
 
 	iPhysicsBody *mpPushBody;
 
-	std::vector<cGfxObject *> mvCrossHairs;
+	Common::Array<cGfxObject *> mvCrossHairs;
 
 	iHapticForce *mpDamageForce;
 	iHapticForce *mpDamageDirForce;

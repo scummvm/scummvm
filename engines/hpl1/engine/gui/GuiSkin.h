@@ -74,9 +74,9 @@ private:
 	tString msName;
 	cGui *mpGui;
 
-	std::vector<cGuiGfxElement *> mvGfxElements;
-	std::vector<cGuiSkinFont *> mvFonts;
-	std::vector<cVector3f> mvAttributes;
+	Common::Array<cGuiGfxElement *> mvGfxElements;
+	Common::Array<cGuiSkinFont *> mvFonts;
+	Common::Array<cVector3f> mvAttributes;
 };
 
 }     // namespace hpl

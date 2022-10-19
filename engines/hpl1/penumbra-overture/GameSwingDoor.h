@@ -87,8 +87,8 @@ public:
 	void LoadFromSaveData(iGameEntity_SaveData *apSaveData);
 
 private:
-	std::vector<iPhysicsController *> mvStopControllers;
-	std::vector<cGameSwingJointDefault> mvJointDefaults;
+	Common::Array<iPhysicsController *> mvStopControllers;
+	Common::Array<cGameSwingJointDefault> mvJointDefaults;
 
 	bool mbLocked;
 

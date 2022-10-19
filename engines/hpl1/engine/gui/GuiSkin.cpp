@@ -67,8 +67,8 @@ cGuiSkin::cGuiSkin(const tString &asName, cGui *apGui) {
 	mpGui = apGui;
 	msName = asName;
 
-	mvGfxElements.resize(eGuiSkinGfx_LastEnum, NULL);
-	mvFonts.resize(eGuiSkinFont_LastEnum, NULL);
+	Hpl1::resizeAndFill(mvGfxElements, eGuiSkinGfx_LastEnum, nullptr);
+	Hpl1::resizeAndFill(mvFonts, eGuiSkinGfx_LastEnum, nullptr);
 	mvAttributes.resize(eGuiSkinAttribute_LastEnum);
 }
 

@@ -1208,8 +1208,8 @@ bool cMath::CreateTriTangentVectors(float *apDestArray,
 	// Log("Num of indices: %d\n",alIndexNum);
 	// Log("Num of vertrices: %d\n",alVertexNum);
 
-	vTempTangents1.resize(alVertexNum, cVector3f(0, 0, 0));
-	vTempTangents2.resize(alVertexNum, cVector3f(0, 0, 0));
+	Hpl1::resizeAndFill(vTempTangents1, alVertexNum, cVector3f(0,0,0));
+	Hpl1::resizeAndFill(vTempTangents2, alVertexNum, cVector3f(0,0,0));
 
 	// Iterate through the triangles
 	for (int triIdx = 0; triIdx < alIndexNum; triIdx += 3) {

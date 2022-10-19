@@ -353,7 +353,7 @@ kBeginSerializeBase(cEngineSound_SaveData)
 		mfFarAttenuation = apLight->GetFarAttenuation();
 	}
 
-	std::vector<cBillboard *> *pBillboardVec = apLight->GetBillboardVec();
+	Common::Array<cBillboard *> *pBillboardVec = apLight->GetBillboardVec();
 	for (size_t i = 0; i < pBillboardVec->size(); ++i) {
 		cBillboard *pBillboard = (*pBillboardVec)[i];
 		cEngineLightAttachBB_SaveData attachedBB;

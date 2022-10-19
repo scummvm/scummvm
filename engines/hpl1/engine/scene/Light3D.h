@@ -170,7 +170,7 @@ public:
 
 	void AttachBillboard(cBillboard *apBillboard);
 	void RemoveBillboard(cBillboard *apBillboard);
-	std::vector<cBillboard *> *GetBillboardVec() { return &mvBillboards; }
+	Common::Array<cBillboard *> *GetBillboardVec() { return &mvBillboards; }
 
 	inline iTexture *GetTempTexture(size_t alIdx) { return mvTempTextures[alIdx]; }
 	inline void SetTempTexture(size_t alIdx, iTexture *apTex) { mvTempTextures[alIdx] = apTex; }
@@ -203,7 +203,7 @@ protected:
 
 	iTexture *mvTempTextures[3];
 
-	std::vector<cBillboard *> mvBillboards;
+	Common::Array<cBillboard *> mvBillboards;
 
 	cMatrixf mtxTemp;
 

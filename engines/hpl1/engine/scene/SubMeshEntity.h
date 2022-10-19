@@ -29,7 +29,6 @@
 #define HPL_SUB_MESH_ENTITY_H
 
 #include <map>
-#include <vector>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
@@ -38,6 +37,7 @@
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/SectorVisibility.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -56,13 +56,13 @@ class cBoneState;
 
 //-----------------------------------------------------------------------
 
-typedef std::vector<cAnimationState *> tAnimationStateVec;
+typedef Common::Array<cAnimationState *> tAnimationStateVec;
 typedef tAnimationStateVec::iterator tAnimationStateVecIt;
 
 typedef std::map<tString, int> tAnimationStateIndexMap;
 typedef tAnimationStateIndexMap::iterator tAnimationStateIndexMapIt;
 
-typedef std::vector<cBoneState *> tNodeStateVec;
+typedef Common::Array<cBoneState *> tNodeStateVec;
 typedef tNodeStateVec::iterator tNodeStateVecIt;
 
 typedef std::map<tString, int> tNodeStateIndexMap;
@@ -174,8 +174,8 @@ private:
 	iPhysicsBody *mpBody;
 };
 
-typedef std::vector<cSubMeshEntity *> tSubMeshEntityVec;
-typedef std::vector<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
+typedef Common::Array<cSubMeshEntity *> tSubMeshEntityVec;
+typedef Common::Array<cSubMeshEntity *>::iterator tSubMeshEntityVecIt;
 
 typedef std::multimap<tString, cSubMeshEntity *> tSubMeshEntityMap;
 typedef tSubMeshEntityMap::iterator tSubMeshEntityMapIt;

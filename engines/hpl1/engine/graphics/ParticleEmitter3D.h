@@ -141,7 +141,7 @@ protected:
 
 	iVertexBuffer *mpVtxBuffer;
 
-	std::vector<cPESubDivision> mvSubDivUV;
+	Common::Array<cPESubDivision> mvSubDivUV;
 
 	cVector3f mvDirection;
 	int mlDirectionUpdateCount;

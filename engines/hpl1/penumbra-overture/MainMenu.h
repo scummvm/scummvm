@@ -418,12 +418,12 @@ private:
 	tWString msButtonTip;
 	FontData *mpTipFont;
 
-	std::vector<cMainMenuParticle> mvRainDrops;
+	Common::Array<cMainMenuParticle> mvRainDrops;
 	float mfRainDropCount;
 
-	std::vector<cMainMenuParticle> mvRainSplashes;
+	Common::Array<cMainMenuParticle> mvRainSplashes;
 
-	std::vector<cMainMenuParticle> mvSnowFlakes;
+	Common::Array<cMainMenuParticle> mvSnowFlakes;
 
 	bool mbMouseIsDown;
 
@@ -444,7 +444,7 @@ private:
 	tMainMenuWidgetList mlstWidgets;
 
 	eMainMenuState mState;
-	std::vector<tMainMenuWidgetList> mvState;
+	Common::Array<tMainMenuWidgetList> mvState;
 
 	bool mbGameActive;
 

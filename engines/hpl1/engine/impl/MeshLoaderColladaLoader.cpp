@@ -545,7 +545,7 @@ static void SaveControllerVec(TiXmlElement *apRootElem, tColladaControllerVec *a
 			pPairVecElem->SetAttribute("Size", (int)pController->mvPairs.size());
 
 			tIntVec vPairNumVec;
-			vPairNumVec.resize(pController->mvPairs.size(), 0);
+			Hpl1::resizeAndFill(vPairNumVec, pController->mvPairs.size(), 0);
 
 			////////////////////////////////
 			// The pair connections
@@ -677,7 +677,7 @@ static void SaveGeometryVec(TiXmlElement *apRootElem, tColladaGeometryVec *apCol
 			pExtraVertexVecElem->SetAttribute("Size", (int)pGeometry->mvExtraVtxVec.size());
 
 			tUIntVec vExtraNum;
-			vExtraNum.resize(pGeometry->mvExtraVtxVec.size(), 0);
+			Hpl1::resizeAndFill(vExtraNum, pGeometry->mvExtraVtxVec.size(), 0);
 
 			////////////////////////////
 			// Extra vertices

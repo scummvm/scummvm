@@ -81,7 +81,7 @@ public:
 	int AddPortalVisibility(cPortal *apPortal);
 
 private:
-	std::vector<cPortalVisibility *> mvVisibility;
+	Common::Array<cPortalVisibility *> mvVisibility;
 	cPortalVisibilitySet *mpParent;
 
 	cSectorVisibilityContainer *mpContainer;
@@ -111,7 +111,7 @@ public:
 
 private:
 	cSector *mpSector;
-	std::vector<cPortalVisibilitySet *> mvVisibiltySets;
+	Common::Array<cPortalVisibilitySet *> mvVisibiltySets;
 	bool bStart;
 
 	cSectorVisibilityContainer *mpContainer;

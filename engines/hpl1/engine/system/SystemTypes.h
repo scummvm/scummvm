@@ -31,11 +31,12 @@
 #include <set>
 #include <stdio.h>
 #include <string>
-#include <vector>
 
 #include "hpl1/engine/system/Container.h"
 #include "common/list.h"
 #include "common/str.h"
+#include "common/array.h"
+#include "hpl1/algorithms.h"
 
 namespace hpl {
 
@@ -81,7 +82,7 @@ typedef Common::String tString;
 typedef Common::List<tString> tStringList;
 typedef tStringList::iterator tStringListIt;
 
-typedef std::vector<tString> tStringVec;
+typedef Common::Array<tString> tStringVec;
 typedef tStringVec::iterator tStringVecIt;
 
 typedef std::set<tString> tStringSet;
@@ -93,7 +94,7 @@ typedef Common::U32String tWString;
 typedef Common::List<tWString> tWStringList;
 typedef tWStringList::iterator tWStringListIt;
 
-typedef std::vector<tWString> tWStringVec;
+typedef Common::Array<tWString> tWStringVec;
 typedef tWStringVec::iterator tWStringVecIt;
 
 typedef std::set<tWString> tWStringSet;
@@ -101,22 +102,22 @@ typedef tWStringSet::iterator tWStringSetIt;
 
 //--------------------------------------------------------
 
-typedef std::vector<unsigned char> tByteVec;
+typedef Common::Array<unsigned char> tByteVec;
 typedef tByteVec::iterator tByteVecIt;
 
-typedef std::vector<unsigned int> tUIntVec;
+typedef Common::Array<unsigned int> tUIntVec;
 typedef tUIntVec::iterator tUIntVecIt;
 
-typedef std::vector<int> tIntVec;
+typedef Common::Array<int> tIntVec;
 typedef tIntVec::iterator tIntVecIt;
 
-typedef std::vector<int> tIntList;
+typedef Common::Array<int> tIntList;
 typedef tIntVec::iterator tIntListIt;
 
-typedef std::vector<float> tFloatVec;
+typedef Common::Array<float> tFloatVec;
 typedef tFloatVec::iterator tFloatVecIt;
 
-typedef std::vector<float *> tFloatPtrVec;
+typedef Common::Array<float *> tFloatPtrVec;
 typedef tFloatPtrVec::iterator tFloatPtrVecIt;
 
 typedef Common::List<float *> tFloatPtrList;
@@ -266,7 +267,7 @@ public:
 	//---------------------------------
 
 	cMemoryPool(size_t alSize, T *(*apCreateFunc)()) {
-		mvData.resize(alSize, NULL);
+		Hpl1::resizeAndFill(mvData, alSize, nullptr);
 		mlCurrentData = 0;
 
 		mpCreateFunc = apCreateFunc;
@@ -333,7 +334,7 @@ public:
 	//---------------------------------
 
 private:
-	std::vector<T *> mvData;
+	Common::Array<T *> mvData;
 
 	size_t mlCurrentData;
 

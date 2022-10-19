@@ -377,7 +377,7 @@ protected:
 
 	cLineOfSightRayCallback mRayCallback;
 
-	std::vector<iGameEnemyState *> mvStates;
+	Common::Array<iGameEnemyState *> mvStates;
 	int mlCurrentState;
 
 	cEnemyCheckForDoor mDoorCheck;
@@ -422,7 +422,7 @@ protected:
 	tString msOnDeathCallback;
 	tString msOnAttackCallback;
 
-	std::vector<cEnemyPatrolNode> mvPatrolNodes;
+	Common::Array<cEnemyPatrolNode> mvPatrolNodes;
 
 	int mlCurrentPatrolNode;
 	float mfWaitTime;

@@ -46,7 +46,7 @@ public:
 	}
 };
 
-typedef std::vector<cTriangleData> tTriangleDataVec;
+typedef Common::Array<cTriangleData> tTriangleDataVec;
 typedef tTriangleDataVec::iterator tTriangleDataVecIt;
 
 //----------------------------------------------
@@ -66,7 +66,7 @@ public:
 	}
 };
 
-typedef std::vector<cTriEdge> tTriEdgeVec;
+typedef Common::Array<cTriEdge> tTriEdgeVec;
 typedef tTriEdgeVec::iterator tTriEdgeVecIt;
 
 //----------------------------------------------

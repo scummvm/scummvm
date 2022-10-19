@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 class cMesh2DEdge {
@@ -45,7 +45,7 @@ public:
 	unsigned int mlEndIndex;
 };
 
-typedef std::vector<cMesh2DEdge> tMesh2DEdgeVec;
+typedef Common::Array<cMesh2DEdge> tMesh2DEdgeVec;
 typedef tMesh2DEdgeVec::iterator tMesh2DEdgeVecIt;
 
 class cCollisionMesh2D {

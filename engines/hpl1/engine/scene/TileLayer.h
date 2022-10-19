@@ -31,7 +31,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Tile.h"
 #include "hpl1/engine/system/SystemTypes.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -40,7 +40,7 @@ enum eTileLayerType {
 	eTileLayerType_LastEnum
 };
 
-typedef std::vector<cTile *> tTileVec;
+typedef Common::Array<cTile *> tTileVec;
 typedef tTileVec::iterator tTileVecIt;
 
 class cTileLayer {

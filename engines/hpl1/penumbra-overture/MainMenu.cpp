@@ -1136,7 +1136,7 @@ public:
 		}
 	}
 
-	std::vector<tString> mvFiles;
+	Common::Array<tString> mvFiles;
 	int mlCurrentFile;
 };
 

@@ -32,6 +32,7 @@
 #include "hpl1/engine/resources/Resources.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "hpl1/engine/system/String.h"
+#include "common/algorithm.h"
 
 namespace hpl {
 
@@ -48,7 +49,7 @@ cImageEntityManager::cImageEntityManager(cGraphics *apGraphics, cResources *apRe
 	mpResources = apResources;
 
 	mvImageHandle.resize(eMaterialTexture_LastEnum);
-	mvImageHandle.assign(mvImageHandle.size(), -1);
+	Common::fill(mvImageHandle.begin(), mvImageHandle.end(), -1);
 }
 
 cImageEntityManager::~cImageEntityManager() {

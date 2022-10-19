@@ -74,16 +74,16 @@ protected:
 
 	tString msFileName;
 
-	std::vector<iPhysicsBody *> mvBodies;
-	std::vector<iPhysicsJoint *> mvJoints;
+	Common::Array<iPhysicsBody *> mvBodies;
+	Common::Array<iPhysicsJoint *> mvJoints;
 
-	std::vector<iHapticShape *> mvHapticShapes;
+	Common::Array<iHapticShape *> mvHapticShapes;
 
-	std::vector<iLight3D *> mvLights;
-	std::vector<cParticleSystem3D *> mvParticleSystems;
-	std::vector<cBillboard *> mvBillboards;
-	std::vector<cBeam *> mvBeams;
-	std::vector<cSoundEntity *> mvSoundEntities;
+	Common::Array<iLight3D *> mvLights;
+	Common::Array<cParticleSystem3D *> mvParticleSystems;
+	Common::Array<cBillboard *> mvBillboards;
+	Common::Array<cBeam *> mvBeams;
+	Common::Array<cSoundEntity *> mvSoundEntities;
 
 	cMeshEntity *mpEntity;
 	cMesh *mpMesh;

@@ -350,7 +350,7 @@ private:
 
 	static bool mbDataSetup;
 	static tSerializeSavedClassMap m_mapSavedClasses;
-	static std::vector<iSerializableType *> mvValueTypes;
+	static Common::Array<iSerializableType *> mvValueTypes;
 };
 
 //-------------------------------------------------

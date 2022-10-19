@@ -30,7 +30,7 @@
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/scene/Entity2D.h"
-#include <vector>
+#include "common/array.h"
 
 class TiXmlElement;
 
@@ -132,7 +132,7 @@ private:
 	tString msTempString;
 };
 
-typedef std::vector<cImageEntity *> tImageEntityVec;
+typedef Common::Array<cImageEntity *> tImageEntityVec;
 typedef tImageEntityVec::iterator tImageEntityVecIt;
 
 }     // namespace hpl

@@ -94,7 +94,7 @@ public:
 	int mlIndex;
 };
 
-typedef std::vector<cTempAnimData> tTempAnimDataVec;
+typedef Common::Array<cTempAnimData> tTempAnimDataVec;
 
 typedef std::set<float> tTempTimesSet;
 typedef std::set<float>::iterator tTempTimesSetIt;
@@ -1580,7 +1580,7 @@ public:
 	tString msData;
 };
 
-tString *GetFinalSource(std::vector<cEffectNewParam> &avParams, tString &asId) {
+tString *GetFinalSource(Common::Array<cEffectNewParam> &avParams, tString &asId) {
 	for (size_t i = 0; i < avParams.size(); ++i) {
 		if (asId == avParams[i].msId) {
 			return GetFinalSource(avParams, avParams[i].msData);
@@ -1602,7 +1602,7 @@ void cMeshLoaderCollada::LoadTextures(TiXmlElement *apRootElem, tColladaTextureV
 		// COLLADA 1.4
 		TiXmlElement *pProfileCommon = pTextureElem->FirstChildElement("profile_COMMON");
 		if (pProfileCommon) {
-			std::vector<cEffectNewParam> vNewParams;
+			Common::Array<cEffectNewParam> vNewParams;
 			//////////////////////////
 			// Iterate all newparams
 			TiXmlElement *pNewParamElem = pProfileCommon->FirstChildElement("newparam");

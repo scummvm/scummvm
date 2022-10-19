@@ -268,7 +268,7 @@ private:
 	cGameEnemy_Worm_MeshCallback *mpMeshCallback;
 
 	cWormTailSegment *mpRootSegment;
-	std::vector<cWormTailSegment *> mvTailSegments;
+	Common::Array<cWormTailSegment *> mvTailSegments;
 };
 
 //-----------------------------------------

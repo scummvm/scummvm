@@ -73,8 +73,8 @@ private:
 	bool _isSurfaceActive;
 };
 
-typedef std::vector<Bitmap2D *> tBitmap2DVec;
-typedef std::vector<Bitmap2D *>::iterator tBitmap2DVecIt;
+typedef Common::Array<Bitmap2D *> tBitmap2DVec;
+typedef Common::Array<Bitmap2D *>::iterator tBitmap2DVecIt;
 
 }     // namespace hpl
 

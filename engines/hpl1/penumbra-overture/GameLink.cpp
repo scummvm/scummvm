@@ -60,7 +60,7 @@ iEntity3D *cAreaLoader_GameLink::Load(const tString &asName, const cVector3f &av
 	// Create physics data
 	iPhysicsWorld *pPhysicsWorld = apWorld->GetPhysicsWorld();
 	iCollideShape *pShape = pPhysicsWorld->CreateBoxShape(avSize, NULL);
-	std::vector<iPhysicsBody *> vBodies;
+	Common::Array<iPhysicsBody *> vBodies;
 	vBodies.push_back(pPhysicsWorld->CreateBody(asName, pShape));
 
 	vBodies[0]->SetCollide(false);

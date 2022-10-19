@@ -40,7 +40,7 @@ public:
 	float mfDepth;
 };
 
-typedef std::vector<cCollidePoint> tCollidePointVec;
+typedef Common::Array<cCollidePoint> tCollidePointVec;
 typedef tCollidePointVec::iterator tCollidePointVecIt;
 
 class cCollideData {

@@ -70,7 +70,7 @@ private:
 
 	int mlCurrentImage;
 
-	std::vector<iTexture *> mvTextures;
+	Common::Array<iTexture *> mvTextures;
 };
 
 //---------------------------------------------

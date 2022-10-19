@@ -47,7 +47,7 @@ class cGameItem;
 typedef std::multimap<tString, iGameEntity *> tGameEntityMap;
 typedef tGameEntityMap::iterator tGameEntityMapIt;
 
-typedef std::vector<iGameEntity *> tGameEntityVec;
+typedef Common::Array<iGameEntity *> tGameEntityVec;
 typedef tGameEntityVec::iterator tGameEntityVecIt;
 
 typedef Common::List<iGameEnemy *> tGameEnemyList;
@@ -246,7 +246,7 @@ private:
 	tString msCurrentMap;
 	tWString msMapGameName;
 
-	std::vector<cLoadedMap> mvLoadedMaps;
+	Common::Array<cLoadedMap> mvLoadedMaps;
 
 	tGameTimerList mlstTimers;
 

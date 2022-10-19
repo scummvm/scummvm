@@ -66,8 +66,8 @@ namespace hpl {
 		bool mbShareObjects;
 		iLowLevelGraphics* mpLowLevelGraphics;
 
-		std::vector<int> mvAttribBuffer;
-		std::vector<int> mvAttribFormat;
+		Common::Array<int> mvAttribBuffer;
+		Common::Array<int> mvAttribFormat;
 	};
 
 };
