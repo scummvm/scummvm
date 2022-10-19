@@ -57,8 +57,7 @@ void Map07::special() {
 }
 
 void Map07::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 15);
@@ -68,8 +67,7 @@ void Map07::special00() {
 }
 
 void Map07::special01() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map07.portal"],
 		[]() {
 			g_maps->_mapPos = Common::Point(2, 7);
@@ -90,15 +88,13 @@ void Map07::special02() {
 		}
 	}
 
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map07.gate"]));
+	send(SoundMessage(0, 1, STRING["maps.map07.gate"]));
 	g_maps->_mapPos.y--;
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map07::special03() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map07.do_not_disturb"]));
+	send(SoundMessage(0, 1, STRING["maps.map07.do_not_disturb"]));
 }
 
 void Map07::special04() {
@@ -164,9 +160,8 @@ void Map07::special13() {
 				c._sex = (c._sex == MALE) ? FEMALE : MALE;
 			}
 
-			Sound::sound(SOUND_2);
+			g_events->send(SoundMessage(0, 1, STRING["maps.map07.reversal"]));
 			Sound::sound(SOUND_3);
-			g_events->send(InfoMessage(0, 1, STRING["maps.map07.reversal"]));
 		}
 	);
 }
@@ -184,9 +179,8 @@ void Map07::special15() {
 		}
 	}
 
-	Sound::sound(SOUND_2);
+	g_events->send(SoundMessage(0, 1, STRING["maps.map07.might"]));
 	Sound::sound(SOUND_3);
-	g_events->send(InfoMessage(0, 1, STRING["maps.map07.might"]));
 }
 
 void Map07::special16() {
@@ -213,8 +207,7 @@ void Map07::setMonsters(int id1, int id2) {
 }
 
 void Map07::poolYN(YNCallback callback) {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(STRING["maps.map07.pool"], callback));
+	send(SoundMessage(STRING["maps.map07.pool"], callback));
 }
 
 void Map07::applyCondition(Condition cond) {

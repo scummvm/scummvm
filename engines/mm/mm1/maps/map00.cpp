@@ -61,8 +61,6 @@ void Map00::special00() {
 }
 
 void Map00::special01() {
-	Sound::sound(SOUND_2);
-
 	Common::String line2;
 	int x = 5;
 
@@ -79,7 +77,7 @@ void Map00::special01() {
 		break;
 	}
 
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 0, STRING["maps.sign"],
 		x, 1, line2
 	));
@@ -94,8 +92,7 @@ void Map00::special03() {
 }
 
 void Map00::special04() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map00.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(10, 10);
@@ -117,8 +114,7 @@ void Map00::special07() {
 }
 
 void Map00::special08() {
-	Sound::sound(SOUND_2);
-	InfoMessage msg(
+	SoundMessage msg(
 		STRING["maps.map00.leprechaun"],
 		[](const Common::KeyState &keyState) {
 			Maps &maps = *g_maps;
@@ -168,8 +164,7 @@ void Map00::special08() {
 }
 
 void Map00::special09() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->changeMap(0xa11, 1);
@@ -226,31 +221,27 @@ void Map00::special17() {
 }
 
 void Map00::special18() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.temple"]
 	));
 }
 
 void Map00::special19() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.jail"]
 	));
 }
 
 void Map00::special20() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.tavern"]
 	));
 }
 void Map00::special21() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 0, STRING["maps.map00.sign"],
 		6, 1, STRING["maps.map00.training"]
 	));
@@ -264,12 +255,11 @@ void Map00::special22() {
 }
 
 void Map00::special23() {
-	Sound::sound(SOUND_2);
 	Common::String msg = STRING["maps.map00.trapdoor"];
 	if (g_globals->_activeSpells._s.levitate)
 		msg += STRING["maps.map00.levitate"];
 
-	send(InfoMessage(msg,
+	send(SoundMessage(msg,
 		[](const Common::KeyState &keyState) {
 			g_events->focusedView()->close();
 			if (!g_globals->_activeSpells._s.levitate)
@@ -279,8 +269,7 @@ void Map00::special23() {
 }
 
 void Map00::searchStatue() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map00.statue"],
 		[]() {
 			Map &map = *g_maps->_currentMap;

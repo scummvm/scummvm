@@ -30,8 +30,7 @@ namespace MM1 {
 namespace Maps {
 
 void MapTown::blacksmith() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.blacksmith_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Blacksmith");
@@ -40,8 +39,7 @@ void MapTown::blacksmith() {
 }
 
 void MapTown::inn() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.inn_inside", _mapIndex)],
 		[]() {
 			g_events->replaceView("Inn");
@@ -50,8 +48,7 @@ void MapTown::inn() {
 }
 
 void MapTown::market() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.market_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Market");
@@ -60,8 +57,7 @@ void MapTown::market() {
 }
 
 void MapTown::tavern() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.tavern_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Tavern");
@@ -70,8 +66,7 @@ void MapTown::tavern() {
 }
 
 void MapTown::temple() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.temple_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Temple");
@@ -80,8 +75,7 @@ void MapTown::temple() {
 }
 
 void MapTown::training() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING[Common::String::format("maps.map%.2u.training_inside", _mapIndex)],
 		[]() {
 			g_events->addView("Training");
@@ -90,8 +84,7 @@ void MapTown::training() {
 }
 
 void MapTown::showSign(const Common::String &msg) {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 1, STRING["maps.sign"],
 		6, 2, msg
 	));
