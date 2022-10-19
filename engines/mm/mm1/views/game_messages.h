@@ -41,6 +41,7 @@ public:
 	void draw() override;
 	bool msgInfo(const InfoMessage &msg) override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
 };
 
 } // namespace Views

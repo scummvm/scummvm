@@ -127,7 +127,35 @@ void Map10::special20() {
 }
 
 void Map10::special23() {
+	g_maps->clearSpecial();
 
+	if (g_globals->_activeSpells._s.levitate) {
+		Common::String msg = Common::String::format("%s %s",
+			STRING["maps.map10.pit"].c_str(),
+			STRING["maps.map10.levitation"].c_str());
+		send(SoundMessage(msg));
+		Sound::sound(SOUND_3);
+
+	} else {
+		reduceHP();
+
+		if (getRandomNumber(4) == 4) {
+			Sound::sound(SOUND_2);
+			Sound::sound(SOUND_3);
+			InfoMessage msg(
+				0, 1, STRING["maps.map10.pit"],
+				[]() {
+					g_globals->_encounters.execute();
+				}
+			);
+			msg._delaySeconds = 2;
+			send(msg);
+
+		} else {
+			send(SoundMessage(0, 1, STRING["maps.map10.pit"]));
+			Sound::sound(SOUND_3);
+		}
+	}
 }
 
 void Map10::special29() {
