@@ -1068,6 +1068,10 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			&& _game.platform != Common::kPlatformFMTowns && _game.version > 3) {
 			showMainMenu();
 			return;
+		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version == 3 && _game.platform == Common::kPlatformMacintosh) {
+			// We don't have original menus for Mac versions of LOOM and INDY3, so let's just open the GMM...
+			openMainMenuDialog();
+			return;
 		}
 
 		if (snapScrollKeyEnabled) {
