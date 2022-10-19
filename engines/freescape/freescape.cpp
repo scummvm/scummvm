@@ -161,7 +161,6 @@ void FreescapeEngine::drawUI() {
 	_gfx->setViewport(_viewArea);
 }
 
-
 void FreescapeEngine::drawFrame() {
 	_gfx->updateProjectionMatrix(60.0, _nearClipPlane, _farClipPlane);
 	_gfx->positionCamera(_position, _position + _cameraFront);
@@ -347,7 +346,6 @@ Common::Error FreescapeEngine::run() {
 	}
 
 	if (_border) {
-
 		_borderTexture = nullptr;
 		_border->fillRect(_viewArea, 0xA0A0A0FF);
 	}
@@ -359,6 +357,13 @@ Common::Error FreescapeEngine::run() {
 	debugC(1, kFreescapeDebugMove, "Starting area %d", _currentArea->getAreaID());
 	_system->lockMouse(true);
 	bool endGame = false;
+	// Draw first frame
+
+	rotate(_lastMousePos, _lastMousePos);
+	drawFrame();
+	_gfx->flipBuffer();
+	g_system->updateScreen();
+
 	while (!shouldQuit() && !endGame) {
 		drawFrame();
 		if (_demoMode)
@@ -387,28 +392,28 @@ void FreescapeEngine::initGameState() {
 }
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
-	if (lastMousePos == Common::Point(0, 0))
-		return;
-	//debug("x: %d, y: %d", mousePos.x, mousePos.y);
-	float xoffset = mousePos.x - lastMousePos.x;
-	float yoffset = mousePos.y - lastMousePos.y;
+	if (lastMousePos != Common::Point(0, 0)) {
+		//debug("x: %d, y: %d", mousePos.x, mousePos.y);
+		float xoffset = mousePos.x - lastMousePos.x;
+		float yoffset = mousePos.y - lastMousePos.y;
 
-	xoffset *= _mouseSensitivity;
-	yoffset *= _mouseSensitivity;
+		xoffset *= _mouseSensitivity;
+		yoffset *= _mouseSensitivity;
 
-	_yaw -= xoffset;
-	_pitch += yoffset;
+		_yaw -= xoffset;
+		_pitch += yoffset;
 
-	// Make sure that when pitch is out of bounds, screen doesn't get flipped
-	if (_pitch > 360.0f)
-		_pitch -= 360.0f;
-	if (_pitch < 0.0f)
-		_pitch += 360.0f;
+		// Make sure that when pitch is out of bounds, screen doesn't get flipped
+		if (_pitch > 360.0f)
+			_pitch -= 360.0f;
+		if (_pitch < 0.0f)
+			_pitch += 360.0f;
 
-	if (_yaw > 360.0f)
-		_yaw -= 360.0f;
-	if (_yaw < 0.0f)
-		_yaw += 360.0f;
+		if (_yaw > 360.0f)
+			_yaw -= 360.0f;
+		if (_yaw < 0.0f)
+			_yaw += 360.0f;
+	}
 
 	_cameraFront = directionToVector(_pitch, _yaw);
 
