@@ -128,9 +128,9 @@ private:
 	float mfFlickerOffFadeLength;
 
 	// Init data
-	std::vector<cColor> mvLightColors;
-	std::vector<cColor> mvBBColors;
-	std::vector<cGameLamp_PS> mvParticleSystemNames;
+	Common::Array<cColor> mvLightColors;
+	Common::Array<cColor> mvBBColors;
+	Common::Array<cGameLamp_PS> mvParticleSystemNames;
 };
 
 //--------------------------------------

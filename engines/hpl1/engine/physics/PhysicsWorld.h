@@ -57,7 +57,7 @@ class cBoundingVolume;
 typedef Common::List<iCollideShape *> tCollideShapeList;
 typedef tCollideShapeList::iterator tCollideShapeListIt;
 
-typedef std::vector<iCollideShape *> tCollideShapeVec;
+typedef Common::Array<iCollideShape *> tCollideShapeVec;
 typedef tCollideShapeVec::iterator tCollideShapeVecIt;
 
 typedef Common::List<iPhysicsBody *> tPhysicsBodyList;

@@ -28,12 +28,11 @@
 #ifndef HPL_RESOURCE_IMAGE_H
 #define HPL_RESOURCE_IMAGE_H
 
-#include <vector>
-
 #include "hpl1/engine/resources/ResourceBase.h"
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -84,7 +83,7 @@ private:
 	int mlHandle;
 };
 
-typedef std::vector<cResourceImage *> tResourceImageVec;
+typedef Common::Array<cResourceImage *> tResourceImageVec;
 typedef tResourceImageVec::iterator tResourceImageVecIt;
 
 } // namespace hpl

@@ -29,7 +29,7 @@
 #define HPL_GFX_OBJECT_H
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -57,7 +57,7 @@ private:
 	tString msSourceFile;
 };
 
-typedef std::vector<cGfxObject> tGfxObjectVec;
+typedef Common::Array<cGfxObject> tGfxObjectVec;
 typedef tGfxObjectVec::iterator tGfxObjectVecIt;
 
 }     // namespace hpl

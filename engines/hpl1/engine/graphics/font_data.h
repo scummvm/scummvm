@@ -35,7 +35,6 @@
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/array.h"
 #include "common/ptr.h"
-#include <vector>
 
 class TiXmlElement;
 
@@ -62,7 +61,7 @@ public:
 	float _advance;
 };
 
-typedef std::vector<Glyph *> tGlyphVec;
+typedef Common::Array<Glyph *> tGlyphVec;
 typedef tGlyphVec::iterator tGlyphVecIt;
 
 class FontData : public iResourceBase {

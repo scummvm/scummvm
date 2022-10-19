@@ -29,10 +29,10 @@
 #define HPL_GRIDMAP2D_H
 
 #include <map>
-#include <vector>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -43,7 +43,7 @@ class iLowLevelGraphics;
 class cGrid2D;
 class cGridMap2D;
 
-typedef std::vector<cGrid2D *> tGrid2DPtrVec;
+typedef Common::Array<cGrid2D *> tGrid2DPtrVec;
 typedef tGrid2DPtrVec::iterator tGrid2DPtrVecIt;
 
 class cGrid2DObject {
@@ -142,7 +142,7 @@ private:
 
 /////////// GRID MAP ////////////
 
-typedef std::vector<cGrid2D> tGrid2DVec;
+typedef Common::Array<cGrid2D> tGrid2DVec;
 typedef tGrid2DVec::iterator tGrid2DVecIt;
 
 class cGridMap2D {

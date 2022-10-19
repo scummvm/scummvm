@@ -483,7 +483,7 @@ void iGameEntity::OnUpdate(float afTimeStep) {
 
 	////////////////
 	// If entity has character body add it to the array and then remove.
-	std::vector<iPhysicsBody *> vTempBodies;
+	Common::Array<iPhysicsBody *> vTempBodies;
 	if (mpCharBody) {
 		for (size_t i = 0; i < mvBodies.size(); ++i) {
 			vTempBodies.push_back(mvBodies[i]);
@@ -994,7 +994,7 @@ void iGameEntity::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 
 	// Particle Systems
 	int lCount = 0;
-	for (std::vector<cParticleSystem3D *>::iterator it = mvParticleSystems.begin();
+	for (Common::Array<cParticleSystem3D *>::iterator it = mvParticleSystems.begin();
 		 it != mvParticleSystems.end();) {
 		cParticleSystem3D *pPS = *it;
 
@@ -1024,7 +1024,7 @@ void iGameEntity::LoadFromSaveData(iGameEntity_SaveData *apSaveData) {
 	}
 
 	// Sounds
-	for (std::vector<cSoundEntity *>::iterator it = mvSoundEntities.begin();
+	for (Common::Array<cSoundEntity *>::iterator it = mvSoundEntities.begin();
 		 it != mvSoundEntities.end();) {
 		cSoundEntity *pSound = *it;
 		cEngineSound_SaveData *pSaveSound = apSaveData->GetSoundEntity(pSound);

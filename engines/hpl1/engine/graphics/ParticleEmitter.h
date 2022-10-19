@@ -34,7 +34,7 @@
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
 #include <map>
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -115,12 +115,12 @@ public:
 
 	int mlLowFreqPoints;
 	int mlHighFreqPoints;
-	std::vector<cVector3f> mvBeamPoints;
+	Common::Array<cVector3f> mvBeamPoints;
 
 	// ---
 };
 
-typedef std::vector<cParticle *> tParticleVec;
+typedef Common::Array<cParticle *> tParticleVec;
 typedef tParticleVec::iterator tParticleVecIt;
 
 //////////////////////////////////////////////////////

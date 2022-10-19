@@ -34,7 +34,7 @@
 #include "hpl1/engine/system/SystemTypes.h"
 #include <cmath>
 #include <cstdlib>
-#include <vector>
+#include "common/array.h"
 #include "common/list.h"
 
 namespace hpl {
@@ -199,7 +199,7 @@ public:
 };
 
 typedef cPlane<float> cPlanef;
-typedef std::vector<cPlanef> tPlanefVec;
+typedef Common::Array<cPlanef> tPlanefVec;
 typedef tPlanefVec tPlanefVecIt;
 
 //-------------------------------------------
@@ -272,7 +272,7 @@ typedef cVector2<int> cVector2l;
 
 typedef cMatrix<float> cMatrixf;
 
-typedef std::vector<cMatrixf> tMatrixfVec;
+typedef Common::Array<cMatrixf> tMatrixfVec;
 typedef tMatrixfVec::iterator tMatrixfVecIt;
 
 typedef Common::List<cMatrixf> tMatrixfList;
@@ -287,10 +287,10 @@ typedef cVector3<int> cVector3l;
 typedef Common::List<cVector3f> tVector3fList;
 typedef tVector3fList::iterator tVector3fListIt;
 
-typedef std::vector<cVector2f> tVector2fVec;
+typedef Common::Array<cVector2f> tVector2fVec;
 typedef tVector2fVec::iterator tVector2fVecIt;
 
-typedef std::vector<cVector3f> tVector3fVec;
+typedef Common::Array<cVector3f> tVector3fVec;
 typedef tVector3fList::iterator tVector3fVecIt;
 
 //-------------------------------------------

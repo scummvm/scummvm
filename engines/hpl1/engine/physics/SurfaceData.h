@@ -67,7 +67,7 @@ private:
 	int mlPSPrio;
 };
 
-typedef std::vector<cSurfaceImpactData *> tSurfaceImpactDataVec;
+typedef Common::Array<cSurfaceImpactData *> tSurfaceImpactDataVec;
 typedef tSurfaceImpactDataVec::iterator tSurfaceImpactDataVecIt;
 
 //----------------------------------------

@@ -521,7 +521,7 @@ void iLight3D::AttachBillboard(cBillboard *apBillboard) {
 }
 
 void iLight3D::RemoveBillboard(cBillboard *apBillboard) {
-	std::vector<cBillboard *>::iterator it = mvBillboards.begin();
+	Common::Array<cBillboard *>::iterator it = mvBillboards.begin();
 	for (; it != mvBillboards.end(); ++it) {
 		if (*it == apBillboard) {
 			mvBillboards.erase(it);

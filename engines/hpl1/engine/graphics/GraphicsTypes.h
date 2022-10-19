@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/Color.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "common/list.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -100,10 +100,10 @@ public:
 	float time;
 };
 
-typedef std::vector<cKeyFrame *> tKeyFramePtrVec;
+typedef Common::Array<cKeyFrame *> tKeyFramePtrVec;
 typedef tKeyFramePtrVec::iterator tKeyFramePtrVecIt;
 
-typedef std::vector<cKeyFrame> tKeyFrameVec;
+typedef Common::Array<cKeyFrame> tKeyFrameVec;
 typedef tKeyFrameVec::iterator tKeyFrameVecIt;
 
 //---------------------------------------
@@ -129,7 +129,7 @@ public:
 	float weight;
 };
 
-typedef std::vector<cVertexBonePair> tVertexBonePairVec;
+typedef Common::Array<cVertexBonePair> tVertexBonePairVec;
 typedef tVertexBonePairVec::iterator tVertexBonePairVecIt;
 
 //---------------------------------------
@@ -158,7 +158,7 @@ public:
 typedef Common::List<cVertex> tVertexList;
 typedef tVertexList::iterator tVertexListIt;
 
-typedef std::vector<cVertex> tVertexVec;
+typedef Common::Array<cVertex> tVertexVec;
 typedef tVertexVec::iterator tVertexVecIt;
 } // namespace hpl
 

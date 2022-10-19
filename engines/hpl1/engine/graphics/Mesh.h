@@ -29,7 +29,6 @@
 #define HPL_MESH_H
 
 #include <map>
-#include <vector>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
@@ -40,6 +39,7 @@
 #include "hpl1/engine/physics/PhysicsJoint.h"
 
 #include "hpl1/engine/scene/Light3D.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -62,19 +62,19 @@ class cWorld3D;
 
 //--------------------------------------------------
 
-typedef std::vector<cAnimation *> tAnimationVec;
+typedef Common::Array<cAnimation *> tAnimationVec;
 typedef tAnimationVec::iterator tAnimationVecIt;
 
 typedef std::map<tString, int> tAnimationIndexMap;
 typedef tAnimationIndexMap::iterator tAnimationIndexMapIt;
 
-typedef std::vector<cSubMesh *> tSubMeshVec;
-typedef std::vector<cSubMesh *>::iterator tSubMeshVecIt;
+typedef Common::Array<cSubMesh *> tSubMeshVec;
+typedef Common::Array<cSubMesh *>::iterator tSubMeshVecIt;
 
 typedef std::multimap<tString, cSubMesh *> tSubMeshMap;
 typedef tSubMeshMap::iterator tSubMeshMapIt;
 
-typedef std::vector<cNode3D *> tNode3DVec;
+typedef Common::Array<cNode3D *> tNode3DVec;
 typedef tNode3DVec::iterator tNode3DVecIt;
 
 //--------------------------------------------------
@@ -88,7 +88,7 @@ public:
 	cMatrixf m_mtxOffset;
 };
 
-typedef std::vector<cMeshCollider *> tMeshColliderVec;
+typedef Common::Array<cMeshCollider *> tMeshColliderVec;
 typedef tMeshColliderVec::iterator tMeshColliderVecIt;
 
 //--------------------------------------------------
@@ -111,7 +111,7 @@ public:
 	tString msParentBody;
 };
 
-typedef std::vector<cMeshJoint *> tMeshJointVec;
+typedef Common::Array<cMeshJoint *> tMeshJointVec;
 typedef tMeshJointVec::iterator tMeshJointVecIt;
 
 //--------------------------------------------------
@@ -130,7 +130,7 @@ public:
 	bool mbCastShadows;
 };
 
-typedef std::vector<cMeshLight *> tMeshLightVec;
+typedef Common::Array<cMeshLight *> tMeshLightVec;
 typedef tMeshLightVec::iterator tMeshLightVecIt;
 
 //--------------------------------------------------
@@ -147,7 +147,7 @@ public:
 	cVector3f mvEndPosition;
 };
 
-typedef std::vector<cMeshBeam *> tMeshBeamVec;
+typedef Common::Array<cMeshBeam *> tMeshBeamVec;
 typedef tMeshBeamVec::iterator tMeshBeamVecIt;
 
 //--------------------------------------------------
@@ -164,7 +164,7 @@ public:
 	float mfOffset;
 };
 
-typedef std::vector<cMeshBillboard *> tMeshBillboardVec;
+typedef Common::Array<cMeshBillboard *> tMeshBillboardVec;
 typedef tMeshBillboardVec::iterator tMeshBillboardVecIt;
 
 //--------------------------------------------------
@@ -179,7 +179,7 @@ public:
 	cVector3f mvSize;
 };
 
-typedef std::vector<cMeshParticleSystem *> tMeshParticleSystemVec;
+typedef Common::Array<cMeshParticleSystem *> tMeshParticleSystemVec;
 typedef tMeshParticleSystemVec::iterator tMeshParticleSystemVecIt;
 
 //--------------------------------------------------
@@ -193,7 +193,7 @@ public:
 	cVector3f mvPosition;
 };
 
-typedef std::vector<cMeshSoundEntity *> tMeshSoundEntityVec;
+typedef Common::Array<cMeshSoundEntity *> tMeshSoundEntityVec;
 typedef tMeshSoundEntityVec::iterator tMeshSoundEntityVecIt;
 
 //--------------------------------------------------
@@ -207,7 +207,7 @@ public:
 	cMatrixf m_mtxTransform;
 };
 
-typedef std::vector<cMeshReference *> tMeshReferenceVec;
+typedef Common::Array<cMeshReference *> tMeshReferenceVec;
 typedef tMeshReferenceVec::iterator tMeshReferenceVecIt;
 
 //--------------------------------------------------
@@ -252,12 +252,12 @@ public:
 									  iPhysicsBody *apParentBody, iPhysicsBody *apChildBody,
 									  const cMatrixf &a_mtxOffset, iPhysicsWorld *apWorld);
 
-	void CreateNodeBodies(iPhysicsBody **apRootBodyPtr, std::vector<iPhysicsBody *> *apSubBodyVec,
+	void CreateNodeBodies(iPhysicsBody **apRootBodyPtr, Common::Array<iPhysicsBody *> *apSubBodyVec,
 						  cMeshEntity *apEntity, iPhysicsWorld *apWorld,
 						  const cMatrixf &a_mtxTransform);
 
-	void CreateJointsAndBodies(std::vector<iPhysicsBody *> *apBodyVec, cMeshEntity *apEntity,
-							   std::vector<iPhysicsJoint *> *apJointVec,
+	void CreateJointsAndBodies(Common::Array<iPhysicsBody *> *apBodyVec, cMeshEntity *apEntity,
+							   Common::Array<iPhysicsJoint *> *apJointVec,
 							   const cMatrixf &a_mtxOffset, iPhysicsWorld *apWorld);
 
 	bool HasSeveralBodies();

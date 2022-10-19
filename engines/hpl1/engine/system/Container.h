@@ -29,10 +29,10 @@
 #define HPL_CONTAINER_H
 
 #include <map>
-#include <vector>
 
 #include "hpl1/engine/system/MemoryManager.h"
 #include "common/list.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -87,7 +87,7 @@ class cContainerVecIterator : public iContainerIterator {
 	}
 
 public:
-	cContainerVecIterator(std::vector<T> *apVec) {
+	cContainerVecIterator(Common::Array<T> *apVec) {
 		mpVec = apVec;
 		mIt = apVec->begin();
 	}
@@ -112,8 +112,8 @@ public:
 	}
 
 private:
-	std::vector<T> *mpVec;
-	typename std::vector<T>::iterator mIt;
+	Common::Array<T> *mpVec;
+	typename Common::Array<T>::iterator mIt;
 };
 
 ////////////////////////////
@@ -171,7 +171,7 @@ public:
 
 	//////////////////////
 
-	std::vector<T> mvVector;
+	Common::Array<T> mvVector;
 };
 
 //---------------------------------

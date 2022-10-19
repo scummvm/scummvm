@@ -230,7 +230,7 @@ private:
 	bool mbUseBeamNoise;
 
 	int mlLowFreqPoints;
-	std::vector<unsigned int> mvLFIndices;
+	Common::Array<unsigned int> mvLFIndices;
 	cVector3f mvMinLowFreqNoise;
 	cVector3f mvMaxLowFreqNoise;
 
@@ -238,7 +238,7 @@ private:
 	cVector3f mvMinHighFreqNoise;
 	cVector3f mvMaxHighFreqNoise;
 
-	std::vector<tBeamNoisePoint> mvBeamNoisePoints;
+	Common::Array<tBeamNoisePoint> mvBeamNoisePoints;
 
 	// ---
 };

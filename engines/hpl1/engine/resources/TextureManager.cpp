@@ -332,7 +332,7 @@ iTexture *cTextureManager::CreateAttenuation(const tString &asFallOffName) {
 	cVector3f vCentre = ((float)lSize) / 2.0f;
 	float fMaxDist = ((float)lSize) / 2.0f; // radius of sphere
 
-	std::vector<unsigned char> vAttenMap;
+	Common::Array<unsigned char> vAttenMap;
 	vAttenMap.resize(lSize * lSize * lSize * lAttChannels);
 
 	// Log("CREATTING ATTENUTAION MAP\n");

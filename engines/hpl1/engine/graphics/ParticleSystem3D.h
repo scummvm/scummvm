@@ -63,7 +63,7 @@ private:
 	cResources *mpResources;
 	cGraphics *mpGraphics;
 
-	std::vector<iParticleEmitterData *> mvEmitterData;
+	Common::Array<iParticleEmitterData *> mvEmitterData;
 };
 
 //----------------------------------------------------
@@ -135,7 +135,7 @@ private:
 	cParticleManager *mpParticleManager;
 	cParticleSystemData3D *mpData;
 
-	std::vector<iParticleEmitter3D *> mvEmitters;
+	Common::Array<iParticleEmitter3D *> mvEmitters;
 
 	tString msDataName;
 	cVector3f mvDataSize;

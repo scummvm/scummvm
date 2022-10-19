@@ -164,24 +164,24 @@ public:
 
 	iPhysicsBody *GetBody(int alNum) { return mvBodies[alNum]; }
 	int GetBodyNum() { return (int)mvBodies.size(); }
-	void SetBodies(std::vector<iPhysicsBody *> &avBodies) { mvBodies = avBodies; }
+	void SetBodies(Common::Array<iPhysicsBody *> &avBodies) { mvBodies = avBodies; }
 
 	iPhysicsJoint *GetJoint(int alNum) { return mvJoints[alNum]; }
 	int GetJointNum() { return (int)mvJoints.size(); }
-	void SetJoints(std::vector<iPhysicsJoint *> &avJoints) { mvJoints = avJoints; }
+	void SetJoints(Common::Array<iPhysicsJoint *> &avJoints) { mvJoints = avJoints; }
 
 	int GetLightNum() { return (int)mvLights.size(); }
 	iLight3D *GetLight(int alX) { return mvLights[alX]; }
-	void SetLights(std::vector<iLight3D *> &avLights) { mvLights = avLights; }
+	void SetLights(Common::Array<iLight3D *> &avLights) { mvLights = avLights; }
 
-	void SetParticleSystems(std::vector<cParticleSystem3D *> &avParticleSystems) { mvParticleSystems = avParticleSystems; }
-	void SetBillboards(std::vector<cBillboard *> &avBillboards) { mvBillboards = avBillboards; }
-	void SetBeams(std::vector<cBeam *> &avBeams) { mvBeams = avBeams; }
-	void SetSoundEntities(std::vector<cSoundEntity *> &avSoundEntities) { mvSoundEntities = avSoundEntities; }
+	void SetParticleSystems(Common::Array<cParticleSystem3D *> &avParticleSystems) { mvParticleSystems = avParticleSystems; }
+	void SetBillboards(Common::Array<cBillboard *> &avBillboards) { mvBillboards = avBillboards; }
+	void SetBeams(Common::Array<cBeam *> &avBeams) { mvBeams = avBeams; }
+	void SetSoundEntities(Common::Array<cSoundEntity *> &avSoundEntities) { mvSoundEntities = avSoundEntities; }
 
 	size_t GetHapticShapeNum() { return mvHapticShapes.size(); }
 	iHapticShape *GetHapticShape(size_t alNum) { return mvHapticShapes[alNum]; }
-	void SetHapticShapes(std::vector<iHapticShape *> &avShapes) { mvHapticShapes = avShapes; }
+	void SetHapticShapes(Common::Array<iHapticShape *> &avShapes) { mvHapticShapes = avShapes; }
 
 	void DestroyLight(iLight3D *apLight);
 	void DestroyParticleSystem(cParticleSystem3D *apPS);
@@ -316,29 +316,29 @@ protected:
 
 	iGameEntity_SaveData *mpSaveData;
 
-	std::vector<iPhysicsBody *> mvBodies;
-	std::vector<iPhysicsJoint *> mvJoints;
+	Common::Array<iPhysicsBody *> mvBodies;
+	Common::Array<iPhysicsJoint *> mvJoints;
 
-	std::vector<iHapticShape *> mvHapticShapes;
+	Common::Array<iHapticShape *> mvHapticShapes;
 
-	std::vector<iLight3D *> mvLights;
-	std::vector<cParticleSystem3D *> mvParticleSystems;
-	std::vector<cBillboard *> mvBillboards;
-	std::vector<cBeam *> mvBeams;
-	std::vector<cSoundEntity *> mvSoundEntities;
+	Common::Array<iLight3D *> mvLights;
+	Common::Array<cParticleSystem3D *> mvParticleSystems;
+	Common::Array<cBillboard *> mvBillboards;
+	Common::Array<cBeam *> mvBeams;
+	Common::Array<cSoundEntity *> mvSoundEntities;
 
 	bool mbSaveLights;
 
 	cMeshEntity *mpMeshEntity;
 
-	std::vector<iMaterial *> mvNormalMaterials;
-	std::vector<iMaterial *> mvTransMaterials;
+	Common::Array<iMaterial *> mvNormalMaterials;
+	Common::Array<iMaterial *> mvTransMaterials;
 	bool mbTransActive;
 	bool mbTransShadow;
 
 	cVector3f mvLastImpulse;
 
-	std::vector<cMesh *> mvPreloadedBreakMeshes;
+	Common::Array<cMesh *> mvPreloadedBreakMeshes;
 
 	iCharacterBody *mpCharBody;
 

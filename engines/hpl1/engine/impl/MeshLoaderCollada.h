@@ -65,7 +65,7 @@ public:
 	tString msSource;
 };
 
-typedef std::vector<cColladaImage> tColladaImageVec;
+typedef Common::Array<cColladaImage> tColladaImageVec;
 
 //------------------------------------------------
 
@@ -77,7 +77,7 @@ public:
 	tString msImage;
 };
 
-typedef std::vector<cColladaTexture> tColladaTextureVec;
+typedef Common::Array<cColladaTexture> tColladaTextureVec;
 
 //------------------------------------------------
 
@@ -90,7 +90,7 @@ public:
 	cColor mDiffuseColor;
 };
 
-typedef std::vector<cColladaMaterial> tColladaMaterialVec;
+typedef Common::Array<cColladaMaterial> tColladaMaterialVec;
 
 //------------------------------------------------
 
@@ -104,7 +104,7 @@ public:
 	float mfAngle;
 };
 
-typedef std::vector<cColladaLight> tColladaLightVec;
+typedef Common::Array<cColladaLight> tColladaLightVec;
 
 //------------------------------------------------
 
@@ -119,7 +119,7 @@ public:
 	tVector3fVec mvArray;
 };
 
-typedef std::vector<cColladaVtxArray> tColladaVtxArrayVec;
+typedef Common::Array<cColladaVtxArray> tColladaVtxArrayVec;
 
 class cColladaVtxIndex {
 public:
@@ -128,7 +128,7 @@ public:
 	int mlTex;
 };
 
-typedef std::vector<cColladaVtxIndex> tColladaVtxIndexVec;
+typedef Common::Array<cColladaVtxIndex> tColladaVtxIndexVec;
 
 //------------------------------------------------
 
@@ -161,7 +161,7 @@ public:
 typedef Common::List<cColladaExtraVtx> tColladaExtraVtxList;
 typedef tColladaExtraVtxList::iterator tColladaExtraVtxListIt;
 
-typedef std::vector<tColladaExtraVtxList> tColladaExtraVtxListVec;
+typedef Common::Array<tColladaExtraVtxList> tColladaExtraVtxListVec;
 
 //------------------------------------------------
 
@@ -204,7 +204,7 @@ public:
 	int mlTexArrayIdx;  // The index for array containing texcoords
 };
 
-typedef std::vector<cColladaGeometry> tColladaGeometryVec;
+typedef Common::Array<cColladaGeometry> tColladaGeometryVec;
 
 //------------------------------------------------
 
@@ -223,7 +223,7 @@ public:
 typedef Common::List<cColladaJointPair> tColladaJointPairList;
 typedef tColladaJointPairList::iterator tColladaJointPairListIt;
 
-typedef std::vector<tColladaJointPairList> tColladaJointPairListVec;
+typedef Common::Array<tColladaJointPairList> tColladaJointPairListVec;
 
 class cColladaController {
 public:
@@ -244,7 +244,7 @@ public:
 	tColladaJointPairListVec mvPairs;
 };
 
-typedef std::vector<cColladaController> tColladaControllerVec;
+typedef Common::Array<cColladaController> tColladaControllerVec;
 
 //------------------------------------------------
 
@@ -255,7 +255,7 @@ public:
 	tString msSource;
 };
 
-typedef std::vector<cColladaChannel> tColladaChannelVec;
+typedef Common::Array<cColladaChannel> tColladaChannelVec;
 
 class cColladaSampler {
 public:
@@ -266,7 +266,7 @@ public:
 	tString msTarget;
 };
 
-typedef std::vector<cColladaSampler> tColladaSamplerVec;
+typedef Common::Array<cColladaSampler> tColladaSamplerVec;
 
 class cColladaAnimSource {
 public:
@@ -274,7 +274,7 @@ public:
 	tFloatVec mvValues;
 };
 
-typedef std::vector<cColladaAnimSource> tColladaAnimSourceVec;
+typedef Common::Array<cColladaAnimSource> tColladaAnimSourceVec;
 
 class cColladaAnimation {
 public:
@@ -298,7 +298,7 @@ public:
 	}
 };
 
-typedef std::vector<cColladaAnimation> tColladaAnimationVec;
+typedef Common::Array<cColladaAnimation> tColladaAnimationVec;
 
 //------------------------------------------------
 

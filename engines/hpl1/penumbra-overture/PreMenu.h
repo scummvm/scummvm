@@ -75,7 +75,7 @@ private:
 	cInit *mpInit;
 	cGraphicsDrawer *mpDrawer;
 
-	std::vector<iTexture *> mvTextures;
+	Common::Array<iTexture *> mvTextures;
 	tStringVec mvTexNames;
 
 	iTexture *mpLogoTexture;
@@ -131,7 +131,7 @@ private:
 	iSoundChannel *mpRainSound;
 	iSoundChannel *mpWindSound;
 
-	std::vector<cRaindrop> mvRaindropVector;
+	Common::Array<cRaindrop> mvRaindropVector;
 	cGfxObject *mpRaindropGfx;
 	cGfxObject *mpFlashGfx;
 };

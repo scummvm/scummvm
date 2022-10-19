@@ -89,7 +89,7 @@ private:
 	cInit *mpInit;
 	cMusicHandler *mpMusicHandler;
 
-	std::vector<cGameMusic> mvGameMusic;
+	Common::Array<cGameMusic> mvGameMusic;
 	int mlMaxPrio;
 
 	int mlCurrentMaxPrio;

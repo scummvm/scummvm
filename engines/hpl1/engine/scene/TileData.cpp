@@ -41,7 +41,7 @@ cTileDataNormal::cTileDataNormal(cImageManager *apImageManager, cVector2f avTile
 	mpImageManager = apImageManager;
 
 	mvImage.resize(eMaterialTexture_LastEnum);
-	mvImage.assign(mvImage.size(), NULL);
+	Common::fill(mvImage.begin(), mvImage.end(), nullptr);
 
 	mvTileSize = avTileSize;
 	mCollisionType = eTileCollisionType_Normal;

@@ -38,7 +38,7 @@ class cInit;
 class cInventory_GlobalSave;
 
 class cGameItemType;
-typedef std::vector<cGameItemType *> tGameItemTypeVec;
+typedef Common::Array<cGameItemType *> tGameItemTypeVec;
 typedef tGameItemTypeVec::iterator tGameItemTypeVecIt;
 
 //--------------------------------------------
@@ -427,7 +427,7 @@ private:
 	tInventoryWidgetList mlstWidgets;
 	tInventoryItemMap m_mapItems;
 	tInventorySlotList mlstSlots;
-	std::vector<cInventorySlot *> mvEquipSlots;
+	Common::Array<cInventorySlot *> mvEquipSlots;
 
 	tInventoryPickupCallbackMap m_mapPickupCallbacks;
 	tInventoryUseCallbackMap m_mapUseCallbacks;

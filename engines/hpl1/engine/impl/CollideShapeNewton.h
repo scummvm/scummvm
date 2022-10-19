@@ -38,7 +38,7 @@ namespace hpl {
 class iVertexBuffer;
 class iCollideShape;
 
-typedef std::vector<iCollideShape *> tCollideShapeVec;
+typedef Common::Array<iCollideShape *> tCollideShapeVec;
 typedef tCollideShapeVec::iterator tCollideShapeVecIt;
 
 class cCollideShapeNewton : public iCollideShape {

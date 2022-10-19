@@ -51,7 +51,7 @@ public:
 	tVertexVec mvVtx;
 };
 
-typedef std::vector<cImageFrame> tImageFrameVec;
+typedef Common::Array<cImageFrame> tImageFrameVec;
 typedef tImageFrameVec::iterator tImageFrameVecIt;
 
 class cImageAnimation {

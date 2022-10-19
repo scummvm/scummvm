@@ -206,7 +206,7 @@ cVector3f cCollideShapeNewton::GetInertia(float afMass) {
 //-----------------------------------------------------------------------
 
 void cCollideShapeNewton::CreateFromShapeVec(tCollideShapeVec &avShapes) {
-	std::vector<NewtonCollision *> vNewtonColliders;
+	Common::Array<NewtonCollision *> vNewtonColliders;
 
 	vNewtonColliders.reserve(avShapes.size());
 	mvSubShapes.reserve(avShapes.size());

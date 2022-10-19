@@ -28,10 +28,10 @@
 #ifndef HPL_HAPTIC_TYPES_H
 #define HPL_HAPTIC_TYPES_H
 
-#include <vector>
 #include <map>
 #include "hpl1/engine/system/SystemTypes.h"
 #include "common/list.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -76,7 +76,7 @@ class iHapticSurface;
 
 //----------------------------------------------
 
-typedef std::vector<iHapticShape *> tHapticShapeVec;
+typedef Common::Array<iHapticShape *> tHapticShapeVec;
 typedef tHapticShapeVec::iterator tHapticShapeVecIt;
 
 typedef Common::List<iHapticShape *> tHapticShapeList;

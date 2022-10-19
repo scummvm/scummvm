@@ -1292,7 +1292,7 @@ void iCharacterBody::SaveToSaveData(iSaveData *apSaveData) {
 	// Pointers
 	kSaveData_SaveObject(mpEntity, mlEntityId);
 	kSaveData_SaveObject(mpBody, mlBodyId);
-	kSaveData_SaveIdList(mvExtraBodies, std::vector<iPhysicsBody *>::iterator, mvExtraBodyIds);
+	kSaveData_SaveIdList(mvExtraBodies, Common::Array<iPhysicsBody *>::iterator, mvExtraBodyIds);
 }
 
 //-----------------------------------------------------------------------

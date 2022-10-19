@@ -31,7 +31,7 @@
 #include "hpl1/engine/graphics/BackgroundImage.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "common/list.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -57,7 +57,7 @@ public:
 	float GetZ() const { return mvTransform.z; }
 };
 
-typedef std::vector<cGfxObject> tGfxObjectVec;
+typedef Common::Array<cGfxObject> tGfxObjectVec;
 typedef tGfxObjectVec::iterator tGfxObjectVecIt;
 
 class cGfxBufferCompare {

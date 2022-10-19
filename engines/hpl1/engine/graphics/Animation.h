@@ -32,12 +32,13 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/resources/ResourceBase.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "common/array.h"
 
 namespace hpl {
 
 class cAnimationTrack;
 
-typedef std::vector<cAnimationTrack *> tAnimationTrackVec;
+typedef Common::Array<cAnimationTrack *> tAnimationTrackVec;
 typedef tAnimationTrackVec::iterator tAnimationTrackVecIt;
 
 class cAnimation : public iResourceBase {

@@ -269,7 +269,7 @@ void cPlayerPickRayCallback::CalculateResults() {
 
 		if (mpPickedBody) {
 			iGameEntity *pEntity = (iGameEntity *)mpPickedBody->GetUserData();
-			//cGameArea *pArea = (cGameArea *)mpPickedAreaBody->GetUserData();
+			// cGameArea *pArea = (cGameArea *)mpPickedAreaBody->GetUserData();
 
 			if (pEntity) {
 				// Too for from object
@@ -1302,7 +1302,7 @@ void cPlayerGlowStick::SetActive(bool abX) {
 		return;
 	mbActive = abX;
 
-	/*cSoundHandler *pSoundHanlder = */mpInit->mpGame->GetSound()->GetSoundHandler();
+	/*cSoundHandler *pSoundHanlder = */ mpInit->mpGame->GetSound()->GetSoundHandler();
 
 	if (mbActive) {
 		// Log("Setting the glowstick to TRUE\n");
@@ -1424,7 +1424,7 @@ void cPlayerFlare::SetActive(bool abX) {
 		return;
 	mbActive = abX;
 
-	/*cSoundHandler *pSoundHanlder = */mpInit->mpGame->GetSound()->GetSoundHandler();
+	/*cSoundHandler *pSoundHanlder = */ mpInit->mpGame->GetSound()->GetSoundHandler();
 
 	if (mbActive) {
 		mpInit->mpPlayerHands->SetCurrentModel(0, "Flare");
@@ -1507,7 +1507,7 @@ cPlayerNoiseFilter::cPlayerNoiseFilter(cInit *apInit) {
 		mvGfxNoise.push_back(pObject);
 	}
 
-	mvCurrentGfx.resize(20 * 15, cMath::RandRectl(0, mlAmount - 1));
+	Hpl1::resizeAndFill(mvCurrentGfx, 20 * 15, cMath::RandRectl(0, mlAmount - 1));
 
 	mfAlpha = 0.3f;
 	mfTimeCount = 0;
@@ -2174,7 +2174,7 @@ void cPlayerHidden::UpdateEnemyTooClose(float afTimeStep) {
 	{
 		if (mfCheckEnemyCloseCount <= 0) {
 			// FIXME: Change value of FMaxDist when hidden?
-			//float fMaxDist = mbHidden ? 11.0f : 11.0f;
+			// float fMaxDist = mbHidden ? 11.0f : 11.0f;
 			float fMaxDist = 11.0f;
 			float fMaxDistSqr = fMaxDist * fMaxDist;
 

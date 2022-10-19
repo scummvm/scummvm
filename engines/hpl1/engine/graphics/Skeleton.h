@@ -38,7 +38,7 @@ namespace hpl {
 
 class cBone;
 
-typedef std::vector<cBone *> tBoneVec;
+typedef Common::Array<cBone *> tBoneVec;
 typedef tBoneVec::iterator tBoneVecIt;
 
 typedef std::map<tString, int> tBoneIdxNameMap;

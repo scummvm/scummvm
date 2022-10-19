@@ -1513,7 +1513,7 @@ void cPlayer::OnDraw() {
 	// DEBUG: sounds playing
 	if (mbShowSoundsPlaying) {
 		tStringVec vSoundNames;
-		std::vector<cSoundEntry *> vEntries;
+		Common::Array<cSoundEntry *> vEntries;
 
 		//////////////////////////////
 		// Sound channels

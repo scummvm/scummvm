@@ -29,7 +29,6 @@
 #define HPL_MESH_ENTITY_H
 
 #include <map>
-#include <vector>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Renderable.h"
@@ -41,6 +40,7 @@
 #include "hpl1/engine/scene/SubMeshEntity.h"
 
 #include "hpl1/engine/scene/AnimationState.h"
+#include "common/array.h"
 
 namespace hpl {
 
@@ -242,7 +242,7 @@ private:
 	tNodeStateIndexMap m_mapBoneStateIndices;
 	tNodeStateVec mvTempBoneStates;
 
-	std::vector<cMatrixf> mvBoneMatrices;
+	Common::Array<cMatrixf> mvBoneMatrices;
 
 	bool mbSkeletonPhysics;
 	bool mbSkeletonPhysicsFading;

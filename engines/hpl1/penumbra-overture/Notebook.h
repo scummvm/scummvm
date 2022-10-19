@@ -125,7 +125,7 @@ public:
 	cGfxObject *mpTextBack;
 
 	FontData *mpFrontFont;
-	std::vector<cNoteBook_Option> mvOptions;
+	Common::Array<cNoteBook_Option> mvOptions;
 	int mlSelected;
 	cVector2f mvFontSize;
 };
@@ -160,10 +160,10 @@ public:
 	float mfFontSize;
 
 	int mlCurrentPage;
-	std::vector<cNotebook_TaskPage> mvTaskPages;
+	Common::Array<cNotebook_TaskPage> mvTaskPages;
 
 	int mlSelected;
-	std::vector<cNoteBook_Option> mvOptions;
+	Common::Array<cNoteBook_Option> mvOptions;
 	cGraphicsDrawer *mpDrawer;
 	cGfxObject *mpOptionsImage[2];
 };
@@ -196,7 +196,7 @@ public:
 	cVector2f mvSize;
 	cNotebook_Note *mpSelectedNote;
 
-	std::vector<cNoteBook_Option> mvOptions;
+	Common::Array<cNoteBook_Option> mvOptions;
 	cGfxObject *mpOptionsImage[2];
 };
 
@@ -224,14 +224,14 @@ public:
 	FontData *mpNavigateFont;
 	tWStringVec mvRows;
 
-	std::vector<cNotePage> mvPages;
+	Common::Array<cNotePage> mvPages;
 
 	int mlCurrentPage;
 	int mlMaxRows;
 	cVector2f mvSize;
 
 	int mlSelected;
-	std::vector<cNoteBook_Option> mvOptions;
+	Common::Array<cNoteBook_Option> mvOptions;
 	cGraphicsDrawer *mpDrawer;
 	cGfxObject *mpOptionsImage[2];
 };
@@ -318,7 +318,7 @@ private:
 	bool mbActive;
 	float mfAlpha;
 
-	std::vector<cNotebook_BookType> mvBookTypes;
+	Common::Array<cNotebook_BookType> mvBookTypes;
 
 	eNotebookType mBookType;
 

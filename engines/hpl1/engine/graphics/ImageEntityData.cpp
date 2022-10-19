@@ -113,7 +113,7 @@ bool cImageEntityData::CreateFromFile(const tString &asFile, tIntVec &avImageHan
 	TiXmlElement *RootElem = pDoc->RootElement();
 
 	// Temp test::
-	avImageHandle.assign(avImageHandle.size(), -1);
+	Common::fill(avImageHandle.begin(), avImageHandle.end(), -1);
 
 	///////// MAIN ///////////////
 	TiXmlElement *MainElem = RootElem->FirstChildElement("MAIN");

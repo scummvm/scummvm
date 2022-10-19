@@ -34,14 +34,14 @@
 #include "hpl1/engine/scene/TileLayer.h"
 #include "hpl1/engine/scene/TileMapIt.h"
 #include "hpl1/engine/scene/TileSet.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
-typedef std::vector<cTileSet *> tTileSetVec;
+typedef Common::Array<cTileSet *> tTileSetVec;
 typedef tTileSetVec::iterator tTileSetVecIt;
 
-typedef std::vector<cTileLayer *> tTileLayerVec;
+typedef Common::Array<cTileLayer *> tTileLayerVec;
 typedef tTileLayerVec::iterator tTileLayerVecIt;
 
 class cTileMap {

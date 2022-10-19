@@ -45,7 +45,7 @@ cTileLayer::cTileLayer(unsigned int alW, unsigned int alH, bool abCollision, boo
 	mfZ = afZ;
 
 	mvTile.resize(alW * alH);
-	mvTile.assign(mvTile.size(), NULL);
+	Common::fill(mvTile.begin(), mvTile.end(), nullptr);
 }
 
 //-----------------------------------------------------------------------

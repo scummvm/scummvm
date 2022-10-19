@@ -31,7 +31,7 @@
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "hpl1/engine/system/low_level_system.h"
 #include "common/list.h"
-#include <vector>
+#include "common/array.h"
 
 namespace hpl {
 
@@ -233,7 +233,7 @@ private:
 	void SetMouseIsOver(bool abX) { mbMouseIsOver = abX; }
 	bool ProcessCallbacks(eGuiMessage aMessage, cGuiMessageData &aData);
 
-	std::vector<tWidgetCallbackList> mvCallbackLists;
+	Common::Array<tWidgetCallbackList> mvCallbackLists;
 
 	bool mbPositionIsUpdated;
 };

@@ -427,7 +427,7 @@ private:
 	cInit *mpInit;
 	cGraphicsDrawer *mpDrawer;
 
-	std::vector<cGfxObject *> mvGfxNoise;
+	Common::Array<cGfxObject *> mvGfxNoise;
 	tIntVec mvCurrentGfx;
 };
 

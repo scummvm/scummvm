@@ -188,7 +188,7 @@ int iPhysicsBody::GetJointNum() {
 }
 
 void iPhysicsBody::RemoveJoint(iPhysicsJoint *apJoint) {
-	std::vector<iPhysicsJoint *>::iterator it = mvJoints.begin();
+	Common::Array<iPhysicsJoint *>::iterator it = mvJoints.begin();
 	for (; it != mvJoints.end(); ++it) {
 		if (*it == apJoint) {
 			mvJoints.erase(it);
