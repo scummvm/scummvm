@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	mm1/views/maps/access_code.o \
 	mm1/views/maps/arrested.o \
 	mm1/views/maps/resistances.o \
+	mm1/views/maps/volcano_god.o \
 	mm1/views/spells/spell_view.o \
 	mm1/views/spells/cast_spell.o \
 	mm1/views/spells/detect_magic.o \

@@ -108,6 +108,12 @@ private:
 	 * Load the map's overlay file
 	 */
 	void loadOverlay();
+protected:
+	/**
+	 * Divides all the party's Hp in half
+	 */
+	void reduceHP();
+
 public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];

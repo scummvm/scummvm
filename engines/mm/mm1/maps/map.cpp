@@ -99,6 +99,11 @@ void Map::dataWord(uint16 ofs, uint16 val) {
 	WRITE_LE_UINT16(&_data[ofs], val);
 }
 
+void Map::reduceHP() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i)
+		g_globals->_party[i]._hpBase /= 2;
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
