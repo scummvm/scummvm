@@ -100,6 +100,7 @@ struct InfoMessage : public Message {
 	KeyCallback _keyCallback = nullptr;
 	bool _largeMessage = false;
 	bool _sound = false;
+	int _delaySeconds = 0;
 
 	InfoMessage();
 	InfoMessage(const Common::String &str);

@@ -73,11 +73,15 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 		Sound::sound(SOUND_2);
 
 	redraw();
+
+	if (msg._delaySeconds)
+		delaySeconds(msg._delaySeconds);
+
 	return true;
 }
 
 bool GameMessages::msgKeypress(const KeypressMessage &msg) {
-	if (g_events->focusedView() == this) {
+	if (g_events->focusedView() == this && !isDelayActive()) {
 		if (_keyCallback) {
 			_keyCallback(msg);
 		} else if (msg.keycode == Common::KEYCODE_n) {
@@ -91,6 +95,11 @@ bool GameMessages::msgKeypress(const KeypressMessage &msg) {
 	}
 
 	return false;
+}
+
+void GameMessages::timeout() {
+	if (_ynCallback)
+		_ynCallback();
 }
 
 } // namespace Views
