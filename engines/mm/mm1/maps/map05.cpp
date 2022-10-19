@@ -54,8 +54,7 @@ void Map05::special() {
 }
 
 void Map05::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->changeMap(0x604, 1);
@@ -94,8 +93,7 @@ void Map05::special05() {
 
 void Map05::special06() {
 	if (!hasScroll()) {
-		Sound::sound(SOUND_2);
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING[!hasFlag() ? "maps.map05.man1" : "maps.map05.man2"],
 			[]() {
 				if (addScroll()) {
@@ -108,8 +106,7 @@ void Map05::special06() {
 }
 
 void Map05::special07() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map05.portal"],
 		[]() {
 			g_maps->_mapPos.x = 8;
@@ -120,16 +117,14 @@ void Map05::special07() {
 }
 
 void Map05::special08() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		2, 1, STRING["maps.sign"],
 		10, 2, STRING["maps.map05.arena"]
 	));
 }
 
 void Map05::special09() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		0, 1, STRING["maps.map05.arena_inside"],
 		[](const Common::KeyState &keyState) {
 			if (keyState.keycode == Common::KEYCODE_y) {
@@ -187,8 +182,7 @@ void Map05::encounter(int monsterId) {
 }
 
 void Map05::showMessage(const Common::String &msg) {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		0, 1, STRING["maps.map05.message1"],
 		0, 2, msg
 	));
@@ -215,8 +209,7 @@ bool Map05::addScroll() {
 		}
 	}
 
-	Sound::sound(SOUND_2);
-	g_events->send(InfoMessage(8, 2, STRING["maps.map05.backpacks_full"]));
+	g_events->send(SoundMessage(8, 2, STRING["maps.map05.backpacks_full"]));
 	return false;
 }
 

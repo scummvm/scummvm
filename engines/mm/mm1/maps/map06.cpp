@@ -91,8 +91,7 @@ void Map06::special() {
 }
 
 void Map06::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map06.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 11);
@@ -102,8 +101,7 @@ void Map06::special00() {
 }
 
 void Map06::special01() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map06.portal"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 0);
@@ -132,8 +130,7 @@ void Map06::special03() {
 void Map06::special04() {
 	if (_data[VAL2]) {
 		_data[VAL2] = 0;
-		Sound::sound(SOUND_2);
-		send(InfoMessage(0, 1, STRING["maps.map06.acid"]));
+		send(SoundMessage(0, 1, STRING["maps.map06.acid"]));
 
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
@@ -150,8 +147,7 @@ void Map06::special04() {
 }
 
 void Map06::special06() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map06.button"],
 		[]() {
 			byte &val1 = (*static_cast<Map06 *>(g_maps->_currentMap))[VAL1];
@@ -162,16 +158,14 @@ void Map06::special06() {
 }
 
 void Map06::special07() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(17, 1, STRING["maps.poof"]));
+	send(SoundMessage(17, 1, STRING["maps.poof"]));
 	g_maps->_mapPos.x = 10;
 	g_maps->_mapPos.y = 11;
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map06::special09() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map06.banner"]));
+	send(SoundMessage(0, 1, STRING["maps.map06.banner"]));
 }
 
 void Map06::special10() {
@@ -199,8 +193,7 @@ void Map06::special13() {
 
 void Map06::special26() {
 	if (_data[VAL3]) {
-		Sound::sound(SOUND_2);
-		send(InfoMessage(STRING["maps.map06.wizard"]));
+		send(SoundMessage(STRING["maps.map06.wizard"]));
 	} else {
 		g_globals->_treasure[6] = 224;
 		g_globals->_treasure[7] = 46;
@@ -211,8 +204,7 @@ void Map06::special26() {
 }
 
 void Map06::slide() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(16, 1, STRING["maps.map06.slide"]));
+	send(SoundMessage(16, 1, STRING["maps.map06.slide"]));
 	_data[VAL2]++;
 
 	g_events->send("Game", GameMessage("UPDATE"));

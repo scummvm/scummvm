@@ -93,8 +93,7 @@ void Map02::special03() {
 }
 
 void Map02::special04() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map02.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(7, 7);
@@ -136,13 +135,11 @@ void Map02::special12() {
 }
 
 void Map02::special13() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map01.zom0"]));
+	send(SoundMessage(0, 1, STRING["maps.map01.zom0"]));
 }
 
 void Map02::special14() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map02.pit"],
 		[]() {
 			g_maps->_mapPos.x++;
@@ -152,8 +149,7 @@ void Map02::special14() {
 }
 
 void Map02::special15() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map02.portal"],
 		[]() {
 			int index = g_maps->_mapPos.x - 9;

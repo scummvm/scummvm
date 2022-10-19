@@ -46,8 +46,7 @@ void Map04::special() {
 	}
 
 	// Stealable treasure
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map04.treasure"],
 		[]() {
 			g_maps->clearSpecial();
@@ -113,8 +112,7 @@ void Map04::special03() {
 
 void Map04::special04() {
 	if (_data[MAP04_PASSAGE_OVERRIDE] || _data[MAP04_TREASURE_STOLEN] == 0) {
-		Sound::sound(SOUND_2);
-		send(InfoMessage(
+		send(SoundMessage(
 			STRING["maps.map04.passage_outside"],
 			[]() {
 				g_maps->_mapPos.x = 13;
@@ -154,8 +152,7 @@ void Map04::special09() {
 		if (_data[MAP04_STAIRS_OVERRIDE] < 255)
 			_data[MAP04_STAIRS_OVERRIDE]++;
 
-		Sound::sound(SOUND_2);
-		send(InfoMessage(
+		send(SoundMessage(
 			STRING["maps.stairs_down"],
 			[]() {
 				g_maps->_mapPos.x = 0;

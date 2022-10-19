@@ -54,8 +54,7 @@ void Map09::special() {
 }
 
 void Map09::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->changeMap(0x802, 1);
@@ -64,8 +63,7 @@ void Map09::special00() {
 }
 
 void Map09::special01() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map09.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 0);
@@ -99,8 +97,7 @@ void Map09::special06() {
 		}
 	}
 
-	Sound::sound(SOUND_2);
-	g_events->send(InfoMessage(0, 1, STRING["maps.map07.accuracy"]));
+	g_events->send(SoundMessage(0, 1, STRING["maps.map07.accuracy"]));
 }
 
 void Map09::special07() {
@@ -112,8 +109,7 @@ void Map09::special07() {
 		}
 	}
 
-	Sound::sound(SOUND_2);
-	g_events->send(InfoMessage(0, 1, STRING["maps.map07.speed"]));
+	g_events->send(SoundMessage(0, 1, STRING["maps.map07.speed"]));
 }
 
 void Map09::special08() {
@@ -123,10 +119,9 @@ void Map09::special08() {
 	}
 
 	const Character &leader = g_globals->_party[0];
-	Sound::sound(SOUND_2);
 
 	if (leader._alignment == leader._alignmentInitial) {
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING["maps.map09.shrine1"],
 			0, 2, STRING["maps.map09.shrine2"]
 		));
@@ -136,7 +131,7 @@ void Map09::special08() {
 		g_events->addAction(KEYBIND_SEARCH);
 
 	} else {
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING["maps.map09.shrine1"],
 			0, 2, STRING["maps.map09.shrine3"]
 		));
@@ -148,8 +143,7 @@ void Map09::special08() {
 }
 
 void Map09::special09() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map09.stalactities"]));
+	send(SoundMessage(0, 1, STRING["maps.map09.stalactities"]));
 
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
@@ -159,10 +153,9 @@ void Map09::special09() {
 
 void Map09::special14() {
 	g_maps->clearSpecial();
-	Sound::sound(SOUND_2);
 
 	if (g_globals->_activeSpells._s.levitate) {
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING["maps.map09.map"],
 			0, 2, STRING["maps.map09.levitation"]
 		));
@@ -175,7 +168,7 @@ void Map09::special14() {
 			c._hpBase /= 2;
 		}
 
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING["maps.map09.map"]
 		));
 	}
@@ -183,8 +176,7 @@ void Map09::special14() {
 
 void Map09::special18() {
 	if (g_globals->_activeSpells._s.psychic_protection) {
-		Sound::sound(SOUND_2);
-		send(InfoMessage(
+		send(SoundMessage(
 			0, 1, STRING["maps.map09.psychic_blast"],
 			0, 2, STRING["maps.map09.protection"]
 		));
@@ -211,25 +203,21 @@ void Map09::special18() {
 }
 
 void Map09::special25() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map09.scrawl"]));
+	send(SoundMessage(0, 1, STRING["maps.map09.scrawl"]));
 }
 
 void Map09::special26() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map09.corak_was_here"]));
+	send(SoundMessage(0, 1, STRING["maps.map09.corak_was_here"]));
 }
 
 void Map09::special27() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(0, 1, STRING["maps.map09.message"]));
+	send(SoundMessage(0, 1, STRING["maps.map09.message"]));
 }
 
 void Map09::portal(int index) {
 	_portalIndex = index;
 
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map09.portal"],
 		[]() {
 			int index = static_cast<Map09 *>(g_maps->_currentMap)->_portalIndex;

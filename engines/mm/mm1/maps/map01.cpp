@@ -86,8 +86,7 @@ void Map01::special03() {
 }
 
 void Map01::special04() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map01.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(3, 3);
@@ -120,8 +119,7 @@ void Map01::special08() {
 	g_events->send("GameParty", GameMessage("UPDATE"));
 
 	// Show the message and wait for a keypress
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map01.secret"],
 		[]() {
 			Game::Encounter &enc = g_globals->_encounters;
@@ -140,10 +138,7 @@ void Map01::special08() {
 }
 
 void Map01::special09() {
-	Sound::sound(SOUND_2);
-
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.map01.passage_outside"],
 		[]() {
 			g_maps->_mapPos = Common::Point(8, 0);
@@ -169,8 +164,7 @@ void Map01::special13() {
 }
 
 void Map01::special14() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		0, 1, STRING["maps.map00.zam0"]
 	));
 }

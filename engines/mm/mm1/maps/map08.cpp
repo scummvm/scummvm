@@ -56,8 +56,7 @@ void Map08::special() {
 }
 
 void Map08::special00() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(15, 7);
@@ -67,8 +66,7 @@ void Map08::special00() {
 }
 
 void Map08::special01() {
-	Sound::sound(SOUND_2);
-	send(InfoMessage(
+	send(SoundMessage(
 		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->_mapPos = Common::Point(0, 14);
