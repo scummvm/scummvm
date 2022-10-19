@@ -159,18 +159,44 @@ void Map10::special23() {
 }
 
 void Map10::special29() {
+	send(SoundMessage(STRING["maps.map10.sign1"]));
 }
 
 void Map10::special30() {
+	Game::Encounter &enc = g_globals->_encounters;
+	int monsterCount = getRandomNumber(4) + 3;
+	g_globals->_treasure[5] = 252;
+
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(9, 9);
+
+	enc._levelIndex = 64;
+	enc._flag = true;
+	enc.execute();
 }
 
 void Map10::special31() {
+	send(SoundMessage(STRING["maps.map10.sign2"]));
 }
 
 void Map10::special32() {
+	Game::Encounter &enc = g_globals->_encounters;
+	int monsterCount = getRandomNumber(4) + 3;
+	g_globals->_treasure[5] = 243;
+
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(8, 12);
+
+	enc._levelIndex = 64;
+	enc._flag = true;
+	enc.execute();
 }
 
 void Map10::special33() {
+	g_maps->_mapPos.x = 15;
+	g_events->send("Game", GameMessage("UPDATE"));
 }
 
 void Map10::reduceHP() {
