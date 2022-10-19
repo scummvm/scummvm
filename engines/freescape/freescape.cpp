@@ -71,6 +71,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
+	_demoIndex = 0;
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
@@ -173,15 +174,54 @@ void FreescapeEngine::pressedKey(const int keycode) {}
 
 void FreescapeEngine::generateInput() {
 	Common::Event event;
-	event.type = Common::EVENT_KEYDOWN;
-	event.kbd.keycode = Common::KEYCODE_UP;
+
+	g_system->getEventManager()->purgeKeyboardEvents();
+	if (isDOS()) {
+		byte repetition = 1;
+		byte keyIndex = _demoData[_demoIndex++];
+
+		if (keyIndex >= 0x80) {
+			repetition = keyIndex / 32;
+			keyIndex = _demoData[_demoIndex++];
+		}
+
+		event = Common::Event();
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = (Common::KeyCode)decodeDOSKey(keyIndex);
+		event.customType = 0xde00;
+
+		while(repetition-- > 0) {
+			debug("Pushing key: %x", event.kbd.keycode);
+			g_system->getEventManager()->pushEvent(event);
+		}
+		g_system->delayMillis(100);
+		return;
+	}
+
+	int mouseX = _demoData[_demoIndex++] << 1;
+	int mouseY = _demoData[_demoIndex++];
+	debug("Mouse moved to: %d, %d", mouseX, mouseY);
+
+	event.type = Common::EVENT_MOUSEMOVE;
+	event.mouse = Common::Point(mouseX, mouseY);
 	event.customType = 0xde00;
 	g_system->getEventManager()->pushEvent(event);
 
-	event.type = Common::EVENT_KEYDOWN;
-	g_system->getEventManager()->pushEvent(event);
+	byte nextKeyCode = _demoData[_demoIndex++];
+	while(nextKeyCode != 0) {
 
-	g_system->delayMillis(500);
+		event = Common::Event();
+		event.type = Common::EVENT_KEYDOWN;
+		event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
+		debug("Pushing key: %x", nextKeyCode);
+		event.customType = 0xde00;
+		g_system->getEventManager()->pushEvent(event);
+		g_system->getEventManager()->pushEvent(event);
+
+		nextKeyCode = _demoData[_demoIndex++];
+	}
+
+	g_system->delayMillis(200);
 }
 
 void FreescapeEngine::processInput() {

@@ -95,6 +95,7 @@ public:
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
 	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str() ,"*-amiga-#"); }
 	bool isAtariST() { return _targetName.hasSuffix("-st") || Common::matchString(_targetName.c_str() ,"*-st-#"); }
+	bool isDOS() { return !isAmiga() && !isAtariST(); }
 
 	Common::Error run() override;
 
@@ -125,7 +126,10 @@ public:
 	Common::HashMap<uint16, byte*> _paletteByArea;
 	void loadColorPalette();
 	Common::Array<byte> _demoData;
+	int _demoIndex;
 	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
+	int decodeAmigaAtariKey(int code);
+	int decodeDOSKey(int code);
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
 	Common::Array<uint8> readArray(Common::SeekableReadStream *file, int size);
