@@ -438,13 +438,15 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	else
 		file->seek(offset + 0x46);
 
-	uint16 globalSomething;
-	globalSomething = readField(file, 16);
-	debugC(1, kFreescapeDebugParser, "Pointer to something: %x\n", globalSomething);
+	uint16 demoDataTable;
+	demoDataTable = readField(file, 16);
+	debugC(1, kFreescapeDebugParser, "Pointer to demo data: %x\n", demoDataTable);
 
 	uint16 globalByteCodeTable;
 	globalByteCodeTable = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "GBCT: %x\n", globalByteCodeTable);
+
+	loadDemoData(file, offset + demoDataTable, 128); // TODO: check this size
 
 	file->seek(offset + globalByteCodeTable);
 	debugC(1, kFreescapeDebugParser, "Position: %lx\n", file->pos());
@@ -545,6 +547,17 @@ void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, in
 
 void FreescapeEngine::loadDemoData(Common::SeekableReadStream *file, int offset, int size) {
 	file->seek(offset);
+	if (isAmiga()) {
+		_demoData.push_back(0x50);
+		_demoData.push_back(0x64);
+		_demoData.push_back(0x30);
+		_demoData.push_back(0x00);
+		_demoData.push_back(0x64);
+		_demoData.push_back(0x64);
+		_demoData.push_back(0x5F);
+		_demoData.push_back(0x00);
+	}
+
 	debugC(1, kFreescapeDebugParser, "Reading demo data");
 	for (int i = 0; i < size; i++) {
 		byte b = file->readByte();
