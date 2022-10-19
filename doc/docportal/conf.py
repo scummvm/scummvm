@@ -33,8 +33,7 @@ import sphinx_rtd_theme
 extensions = [
 
     "sphinx_rtd_theme",
-    "sphinx_panels",
-    "m2r2"
+    "sphinx_panels"
 ]
 extensions.append('sphinx_tabs.tabs')
 souce_suffix = ['.rst','.md']
