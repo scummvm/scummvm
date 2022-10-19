@@ -64,8 +64,13 @@ bool AccessCode::msgKeypress(const KeypressMessage &msg) {
 			(msg.keycode >= Common::KEYCODE_0 &&
 				msg.keycode <= Common::KEYCODE_z)) {
 			_code += toupper(msg.ascii);
+			redraw();
+
 			if (_code.size() == MAX_CODE_LENGTH)
 				codeEntered();
+		} else if (msg.keycode == Common::KEYCODE_BACKSPACE && !_code.empty()) {
+			_code.deleteLastChar();
+			redraw();
 		}
 	}
 
@@ -118,7 +123,7 @@ void AccessCode::incorrectCode() {
 	delaySeconds(2);
 }
 
-} // namespace Spells
+} // namespace Maps
 } // namespace Views
 } // namespace MM1
 } // namespace MM

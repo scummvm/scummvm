@@ -95,8 +95,7 @@ void Map08::special05() {
 
 void Map08::special06() {
 	if (_data[VAL1]) {
-		for (uint i = 0; i < g_globals->_party.size(); ++i)
-			g_globals->_party[i]._hpBase /= 2;
+		reduceHP();
 
 		send(InfoMessage(18, 2, STRING["maps.map08.zap"]));
 		Sound::sound(SOUND_3);

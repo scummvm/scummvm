@@ -199,13 +199,6 @@ void Map10::special33() {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
-void Map10::reduceHP() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		g_globals->_currCharacter = &g_globals->_party[i];
-		g_globals->_currCharacter->_hpBase /= 2;
-	}
-}
-
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

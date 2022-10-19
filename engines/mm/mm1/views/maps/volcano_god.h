@@ -19,55 +19,37 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP11_H
-#define MM1_MAPS_MAP11_H
+#ifndef MM1_VIEWS_MAPS_VOLCANO_GOD_H
+#define MM1_VIEWS_MAPS_VOLCANO_GOD_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map11 : public Map {
-	typedef void (Map11:: *SpecialFn)();
+class VolcanoGod : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special04();
-	void special05();
-	void special06();
-	void special07();
-	void special08();
-	void pit();
+	enum Mode { CHOOSE_OPTION, ENTER_RESPONSE };
+	Mode _mode = CHOOSE_OPTION;
+	Common::String _answer;
 
-	const SpecialFn SPECIAL_FN[14] = {
-		&Map11::special00,
-		&Map11::special01,
-		&Map11::special02,
-		&Map11::special03,
-		&Map11::special04,
-		&Map11::special05,
-		&Map11::special06,
-		&Map11::special07,
-		&Map11::special08,
-		&Map11::special08,
-		&Map11::special08,
-		&Map11::special02,
-		&Map11::special02,
-		&Map11::special02
-	};
+	void challenge();
+	void riddle();
+	void clue();
+	void responseEntered();
 public:
-	Map11() : Map(11, "cave7", 0x212) {}
+	VolcanoGod();
+	virtual ~VolcanoGod() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

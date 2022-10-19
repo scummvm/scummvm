@@ -44,7 +44,6 @@ private:
 	void special31();
 	void special32();
 	void special33();
-	void reduceHP();
 
 	const SpecialFn SPECIAL_FN[34] = {
 		&Map10::special00,

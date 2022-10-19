@@ -144,11 +144,7 @@ void Map09::special08() {
 
 void Map09::special09() {
 	send(SoundMessage(0, 1, STRING["maps.map09.stalactities"]));
-
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		c._hpBase /= 2;
-	}
+	reduceHP();
 }
 
 void Map09::special14() {
