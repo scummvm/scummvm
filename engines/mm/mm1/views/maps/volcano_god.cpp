@@ -103,17 +103,7 @@ bool VolcanoGod::msgKeypress(const KeypressMessage &msg) {
 }
 
 void VolcanoGod::challenge() {
-	Game::Encounter &enc = g_globals->_encounters;
-	close();
-
-	enc.clearMonsters();
-	enc.addMonster(10, 12);
-	for (int i = 1; i < 10; ++i)
-		enc.addMonster(7, 8);
-
-	enc._levelIndex = 96;
-	enc._flag = true;
-	enc.execute();
+	static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap)->challenge();
 }
 
 void VolcanoGod::riddle() {

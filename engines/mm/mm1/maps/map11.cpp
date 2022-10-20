@@ -86,24 +86,51 @@ void Map11::special01() {
 }
 
 void Map11::special02() {
+	g_maps->clearSpecial();
+	pit();
 }
 
 void Map11::special03() {
+	send(SoundMessage(STRING["maps.map11.sign"]));
 }
 
 void Map11::special04() {
+	send(SoundMessage(STRING["maps.map11.virgin"],
+		[](const Common::KeyState &ks) {
+			switch (ks.keycode) {
+			case Common::KEYCODE_a:
+				g_events->close();
+				g_events->send(SoundMessage(STRING["maps.map11.tip1"]));
+				break;
+			case Common::KEYCODE_b:
+				static_cast<MM1::Maps::Map11 *>(g_maps->_currentMap)->challenge();
+				break;
+			case Common::KEYCODE_c:
+			case Common::KEYCODE_ESCAPE:
+				g_events->close();
+				break;
+			default:
+				break;
+			}
+		}
+	));
 }
 
 void Map11::special05() {
+	send(SoundMessage(STRING["maps.map11.tip2"]));
 }
 
 void Map11::special06() {
+	selectDial(0);
 }
 
 void Map11::special07() {
+	selectDial(1);
 }
 
 void Map11::special08() {
+	g_maps->clearSpecial();
+	g_globals->_encounters.execute();
 }
 
 void Map11::pit() {
@@ -120,6 +147,41 @@ void Map11::pit() {
 		send(SoundMessage(STRING["maps.map10.pit"]));
 		Sound::sound(SOUND_3);
 	}
+}
+
+void Map11::selectDial(int dialIndex) {
+	_dialIndex = dialIndex;
+	Common::String msg = Common::String::format(
+		STRING["maps.map11.dial"].c_str(), '1' + dialIndex);
+
+	send(SoundMessage(msg,
+		[](const Common::KeyState &ks) {
+			if (ks.keycode >= Common::KEYCODE_a &&
+					ks.keycode <= Common::KEYCODE_z) {
+				g_events->close();
+				static_cast<Map11 *>(g_maps->_currentMap)->setDialChar(ks.ascii);
+				g_events->addAction(KEYBIND_SEARCH);
+			}
+		}
+	));
+}
+
+void Map11::challenge() {
+	Game::Encounter &enc = g_globals->_encounters;
+	g_events->close();
+
+	enc.clearMonsters();
+	enc.addMonster(10, 12);
+	for (int i = 1; i < 10; ++i)
+		enc.addMonster(7, 8);
+
+	enc._levelIndex = 96;
+	enc._flag = true;
+	enc.execute();
+}
+
+void Map11::setDialChar(char c) {
+	_data[VAL2 + _dialIndex] = c;
 }
 
 } // namespace Maps
