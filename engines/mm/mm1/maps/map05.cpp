@@ -138,7 +138,7 @@ void Map05::special09() {
 				(*g_maps->_currentMap)[MAP_47] = 1;
 				(*g_maps->_currentMap)[MAP_33] = 4;
 				(*g_maps->_currentMap)[MAP_MAX_MONSTERS] = 10;
-				Common::fill(&g_globals->_treasure[0], &g_globals->_treasure[TREASURE_COUNT], 0);
+				g_globals->_treasure.clear();
 
 				// TODO: Space key - is it used in-game?
 				g_events->addKeypress(Common::KEYCODE_SPACE);
