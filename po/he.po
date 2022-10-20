@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-17 17:36+0000\n"
-"PO-Revision-Date: 2022-10-20 12:33+0000\n"
+"PO-Revision-Date: 2022-10-21 01:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -7436,6 +7436,9 @@ msgid ""
 "Aspect ratio correction can be achieved by trimming the resolution to "
 "320x200, under 'engine' tab."
 msgstr ""
+"מצב 'תיקון יחס ממדים' מופעל. אולם הרזולוציה הטבעית של FM-TOWNS היא 320x240, "
+"שאינה מאפשרת תיקון יחס ממדים.\n"
+"ניתן להשיג תיקון יחס ממדים על ידי חיתוך הרזולוציה ל-320x200, בלשונית 'מנוע'."
 
 #: engines/scumm/scumm.cpp:1099
 msgid ""
@@ -8330,7 +8333,7 @@ msgstr "נוסח GUI ב'"
 #: engines/wintermute/keymapper_tables.h:547
 #: engines/wintermute/keymapper_tables.h:1117
 msgid "Phone cancel button"
-msgstr ""
+msgstr "לחצן טלפון ביטול"
 
 #: engines/wintermute/keymapper_tables.h:288
 #: engines/wintermute/keymapper_tables.h:419
@@ -8344,7 +8347,7 @@ msgstr "לחצן טלפון למעלה"
 #: engines/wintermute/keymapper_tables.h:558
 #: engines/wintermute/keymapper_tables.h:1128
 msgid "Phone down button"
-msgstr ""
+msgstr "לחצן טלפון למטה"
 
 #. I18N: Some items are scripted to have alternative "Use" action, when MiddleClick is used
 #. It may result in actor saying different text or item being decomposed to it's parts
@@ -8462,7 +8465,7 @@ msgstr "גלילה מטה"
 
 #: engines/wintermute/keymapper_tables.h:690
 msgid "Change shadow type"
-msgstr ""
+msgstr "שינוי סוג צללית"
 
 #: engines/wintermute/keymapper_tables.h:700
 #: engines/wintermute/keymapper_tables.h:819
@@ -8580,11 +8583,11 @@ msgstr "הצגת כתוביות סיום של המשחק"
 
 #: engines/wintermute/keymapper_tables.h:999
 msgid "Play selected music record"
-msgstr ""
+msgstr "בחירת תקליט המוזיקה הנבחר"
 
 #: engines/wintermute/keymapper_tables.h:1004
 msgid "Select next music record"
-msgstr ""
+msgstr "בחירת תקליט המוזיקה הבא"
 
 #: engines/wintermute/keymapper_tables.h:1009
 msgid "Play note 1: A"
@@ -8710,12 +8713,12 @@ msgstr "תשובת שיחה 4"
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1568
 msgid "Spin wheel slower"
-msgstr ""
+msgstr "סיבוב גלגל לאט יותר"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
 #: engines/wintermute/keymapper_tables.h:1576
 msgid "Spin wheel faster"
-msgstr ""
+msgstr "סיבוב גלגל מהר יותר"
 
 #: engines/wintermute/keymapper_tables.h:1654
 msgid "Zoom out"
@@ -8789,7 +8792,7 @@ msgstr "ניפוי תקלים של תמונות בשניה"
 
 #: engines/wintermute/keymapper_tables.h:2104
 msgid "F1"
-msgstr ""
+msgstr "F1"
 
 #: engines/wintermute/keymapper_tables.h:2109
 msgid "Key i"
@@ -8880,7 +8883,7 @@ msgstr "סילוק חפץ"
 
 #: engines/zvision/metaengine.cpp:187
 msgid "Extract coin"
-msgstr ""
+msgstr "חילוץ מטבעות"
 
 #: engines/zvision/metaengine.cpp:208
 msgid "Preferences"
