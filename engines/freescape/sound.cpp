@@ -19,8 +19,11 @@
  *
  */
 
-#include "freescape/freescape.h"
 #include "audio/decoders/raw.h"
+#include "audio/decoders/vorbis.h"
+#include "common/file.h"
+
+#include "freescape/freescape.h"
 
 namespace Freescape {
 
@@ -29,8 +32,8 @@ namespace Freescape {
 const double kFreescapeSweepTuneFactor = 10.0;
 
 void FreescapeEngine::playSound(int index, bool sync) {
-	//if (!_mixer->isSoundHandleActive(_handle))
-	//	_mixer->stopHandle(_handle);
+	//if (!_mixer->isSoundHandleActive(_soundFxHandle))
+	//	_mixer->stopHandle(_soundFxHandle);
 
 	debugC(1, kFreescapeDebugMedia, "Playing sound %d with sync: %d", index, sync);
 	if (isAmiga() || isAtariST()) {
@@ -223,7 +226,21 @@ void FreescapeEngine::playWav(const Common::String filename) {
 	Common::SeekableReadStream *s = _dataBundle->createReadStreamForMember(filename);
 	assert(s);
 	Audio::AudioStream *stream = Audio::makeWAVStream(s, DisposeAfterUse::YES);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
+}
+
+void FreescapeEngine::playMusic(const Common::String filename) {
+	Common::File *file = new Common::File();
+
+	if (!file->open(filename)) {
+		debugC(1, kFreescapeDebugMedia, "Unable to find sound file %s", filename.c_str());
+		return;
+	}
+
+	Audio::LoopingAudioStream *stream;
+	stream = new Audio::LoopingAudioStream(Audio::makeVorbisStream(file, DisposeAfterUse::YES), 0);
+	_mixer->playStream(Audio::Mixer::kMusicSoundType, &_musicHandle, stream);
+	_mixer->setVolumeForSoundType(Audio::Mixer::kMusicSoundType, Audio::Mixer::kMaxMixerVolume / 4);
 }
 
 void FreescapeEngine::playSoundFx(int index, bool sync) {
@@ -240,7 +257,7 @@ void FreescapeEngine::playSoundFx(int index, bool sync) {
 	if (size > 4) {
 		Audio::SeekableAudioStream *s = Audio::makeRawStream(data, size, sampleRate, Audio::FLAG_16BITS, DisposeAfterUse::NO);
 		Audio::AudioStream *stream = new Audio::LoopingAudioStream(s, loops);
-		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, stream);
+		_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, stream);
 	}
 }
 
@@ -248,7 +265,7 @@ void FreescapeEngine::playSoundConst(double hzFreq, int duration, bool sync) {
 	Audio::PCSpeaker *speaker = new Audio::PCSpeaker();
 	speaker->setVolume(50);
 	speaker->play(Audio::PCSpeaker::kWaveFormSquare, hzFreq, duration);
-	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_handle, speaker);
+	_mixer->playStream(Audio::Mixer::kSFXSoundType, &_soundFxHandle, speaker);
 	if (sync) {
 		_system->delayMillis(duration);
 	}
@@ -300,7 +317,7 @@ void FreescapeEngine::playSoundSweepIncWL(double hzFreq1, double hzFreq2, double
 		playSoundConst((1193180.0 / inv1), resolution, sync);
 		inv1 += wlStep;
 	}
-	_mixer->stopHandle(_handle);
+	_mixer->stopHandle(_soundFxHandle);
 }
 
 void FreescapeEngine::playTeleporter(int totalIters, bool sync) {

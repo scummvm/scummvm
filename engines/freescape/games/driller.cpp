@@ -208,6 +208,9 @@ void DrillerEngine::loadAssetsDemo() {
 	}
 	else
 		error("Unsupported demo for Driller");
+
+	// Start playing music, if any
+	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
 }
 
 
@@ -286,6 +289,9 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(file, 0x7bb0, 4);
 	} else
 		error("Invalid render mode %s for Driller", _renderMode.c_str());
+
+	// Start playing music, if any
+	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
 }
 
 void DrillerEngine::drawUI() {
