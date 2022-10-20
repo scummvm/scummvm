@@ -99,6 +99,11 @@ MODULE_OBJS += \
 	networking/sdl_net/uploadfileclienthandler.o
 endif
 
+ifdef USE_ENET
+MODULE_OBJS += \
+	networking/enet/enet.o
+endif
+
 ifdef USE_ELF_LOADER
 MODULE_OBJS += \
 	plugins/elf/arm-loader.o \
