@@ -32,9 +32,37 @@ class Map13 : public Map {
 	typedef void (Map13:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special06();
+	void special10();
+	void special18();
+	void special22();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map13::special00
+	const SpecialFn SPECIAL_FN[23] = {
+		&Map13::special00,
+		&Map13::special01,
+		&Map13::special02,
+		&Map13::special02,
+		&Map13::special02,
+		&Map13::special02,
+		&Map13::special06,
+		&Map13::special06,
+		&Map13::special06,
+		&Map13::special06,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special10,
+		&Map13::special18,
+		&Map13::special18,
+		&Map13::special18,
+		&Map13::special18,
+		&Map13::special22
 	};
 public:
 	Map13() : Map(13, "cave9", 0xA00) {}
@@ -43,6 +71,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Start an encounter
+	 */
+	void encounter(size_t count, byte id1, byte id2);
 };
 
 } // namespace Maps
