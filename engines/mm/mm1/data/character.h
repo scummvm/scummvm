@@ -75,12 +75,19 @@ enum CharFlags1 {
 	 CHARFLAG1_1 = 1
 };
 
+enum CharFlags2 {
+	CHARFLAG2_1 = 1,
+	CHARFLAG2_2 = 2,
+	CHARFLAG2_4 = 4,
+	CHARFLAG2_8 = 8
+};
+
 enum CharFlags5 {
 	CHARFLAG5_8 = 8
 };
 
 enum CharFlags11 {
-	CHARFLAG11_1 = 1,
+	CHARFLAG11_GOT_ENDURANCE = 1,
 	CHARFLAG11_2 = 2,
 	CHARFLAG11_4 = 4,
 	CHARFLAG11_GOT_MIGHT = 8,

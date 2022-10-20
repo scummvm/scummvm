@@ -29,14 +29,19 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 75
+#define VAL2 148
+#define VAL3 395
+
 void Map14::special() {
+	Game::Encounter &enc = g_globals->_encounters;
+
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 6; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[57 + i]) {
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +49,128 @@ void Map14::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
+
 	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+	int monsterCount = getRandomNumber(3);
+	int id1 = getRandomNumber(16);
+
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(id1, 7);
+
+	enc._levelIndex = 5;
+	enc._flag = true;
+	enc.execute();
 }
 
 void Map14::special00() {
+	if (_data[VAL1]) {
+		g_maps->clearSpecial();
+		for (uint i = 0; i < g_globals->_party.size(); ++i)
+			g_globals->_party[i]._flags[2] |= CHARFLAG2_8;
+		g_events->addAction(KEYBIND_SEARCH);
+
+	} else {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			if (g_globals->_party[i]._flags[2] & CHARFLAG2_8) {
+				g_maps->clearSpecial();
+				g_events->addAction(KEYBIND_SEARCH);
+				return;
+			}
+		}
+
+		send(SoundMessage(STRING["maps.map14.surrounded"],
+			[](const Common::KeyState &ks) {
+				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
+				Game::Encounter &enc = g_globals->_encounters;
+
+				if (ks.keycode == Common::KEYCODE_y ||
+						ks.keycode == Common::KEYCODE_n) {
+					g_events->close();
+
+					// TODO: The original seems to be backwards
+					if (ks.keycode == Common::KEYCODE_n &&
+							getRandomNumber(3) == 3) {
+						g_maps->_mapPos = Common::Point(15, 10);
+					} else {
+						map[VAL1]++;
+						enc.clearMonsters();
+						enc.addMonster(2, 12);
+						for (int i = 1; i < 12; ++i)
+							enc.addMonster(13, 8);
+
+						enc._levelIndex = 80;
+						enc._flag = true;
+						enc.execute();
+					}
+				}
+			}
+		));
+	}
+}
+
+void Map14::special01() {
+	_data[VAL1] = 0;
+	_data[VAL2]++;
+	g_events->addAction(KEYBIND_SEARCH);
+}
+
+void Map14::special02() {
+	if (_data[VAL3] & 0x80) {
+		g_maps->_mapPos = Common::Point(7, 0);
+		g_maps->changeMap(0x706, 3);
+	} else if (_data[VAL3]) {
+		_data[VAL3] = 0;
+	} else {
+		g_events->findView("View")->redraw();
+
+		send(SoundMessage(
+			STRING["maps.map14.castle"],
+			[](const Common::KeyState &ks) {
+				Map14 &map = *static_cast<Map14 *>(g_maps->_currentMap);
+				if (ks.keycode == Common::KEYCODE_y) {
+					g_events->close();
+					map[VAL3]++;
+				} else if (ks.keycode == Common::KEYCODE_n) {
+					g_events->close();
+					map[VAL3] = 0xff;
+				}
+			}
+		));
+	}
+}
+
+void Map14::special03() {
+	send(SoundMessage(STRING["maps.map14.words"]));
+}
+
+void Map14::special04() {
+	if (_data[VAL2]) {
+		send(SoundMessage(
+			STRING["maps.map14.passage"],
+			[]() {
+				g_maps->_mapPos = Common::Point(4, 4);
+				g_maps->changeMap(0x706, 3);
+			}
+		));
+	} else {
+		g_events->addAction(KEYBIND_SEARCH);
+	}
+}
+
+void Map14::special05() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._flags[11] & CHARFLAG11_GOT_ENDURANCE)) {
+			c._flags[11] |= CHARFLAG11_GOT_ENDURANCE;
+			int endurance = c._endurance._base + 4;
+			if (endurance < 30) {
+				c._endurance._base = c._endurance._current = endurance;
+			}
+		}
+	}
+
+	send(SoundMessage(STRING["maps.map14.pool"]));
 }
 
 } // namespace Maps
