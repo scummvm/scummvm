@@ -51,7 +51,7 @@ public:
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
 	Monsters _monsters;
-	byte _treasure[TREASURE_COUNT];
+	Treasure _treasure;
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
 	bool _inCombat = false;

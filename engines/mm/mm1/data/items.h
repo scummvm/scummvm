@@ -89,6 +89,24 @@ struct ItemsArray : public Common::Array<Item>, public TextParser {
 	Item *getItem(byte index) const;
 };
 
+class Treasure {
+private:
+	byte _data[TREASURE_COUNT];
+public:
+	Treasure() {
+		clear();
+	}
+
+	byte &operator[](uint i) {
+		assert(i < TREASURE_COUNT);
+		return _data[i];
+	}
+
+	void clear() {
+		Common::fill(&_data[0], &_data[TREASURE_COUNT], 0);
+	}
+};
+
 inline bool isWeapon(byte id) {
 	return id >= 1 && id <= 60;
 };

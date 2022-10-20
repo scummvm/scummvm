@@ -180,8 +180,7 @@ void ViewBase::forward(KeybindingAction action) {
 		}
 	}
 
-	Common::fill(&g_globals->_treasure[0],
-		&g_globals->_treasure[TREASURE_COUNT], 0);
+	g_globals->_treasure.clear();
 
 	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)
@@ -209,8 +208,7 @@ void ViewBase::backwards() {
 		}
 	}
 
-	Common::fill(&g_globals->_treasure[0],
-		&g_globals->_treasure[TREASURE_COUNT], 0);
+	g_globals->_treasure.clear();
 
 	int maxVal = map[Maps::MAP_29];
 	if (g_engine->getRandomNumber(maxVal) == maxVal)

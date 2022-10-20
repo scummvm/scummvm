@@ -32,9 +32,25 @@ class Map15 : public Map {
 	typedef void (Map15:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special08();
+	void cove();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map15::special00
+	const SpecialFn SPECIAL_FN[9] = {
+		&Map15::special00,
+		&Map15::special01,
+		&Map15::special02,
+		&Map15::special03,
+		&Map15::special04,
+		&Map15::special05,
+		&Map15::special06,
+		&Map15::special00,
+		&Map15::special08
 	};
 public:
 	Map15() : Map(15, "areaa2", 0x502) {}

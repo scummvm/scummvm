@@ -29,14 +29,20 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 350
+#define VAL2 118
+#define VAL3 361
+#define VAL4 362
+
 void Map15::special() {
+	Game::Encounter &enc = g_globals->_encounters;
+
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 9; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[60 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +50,157 @@ void Map15::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
-	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+
+	if (g_maps->_mapPos.y >= 3) {
+		g_globals->_treasure.clear();
+
+		if (getRandomNumber(20) == 20) {
+			if (_data[VAL1] > 14)
+				_data[VAL1] = 14;
+
+			g_globals->_activeSpells._s.fire = 0;
+			enc.clearMonsters();
+			for (uint i = 0; i < _data[VAL1]; ++i)
+				enc.addMonster(7, 8);
+
+			enc._flag = true;
+			enc._levelIndex = 80;
+			enc.execute();
+
+		} else {
+			send(SoundMessage(16, 1, STRING["maps.map15.its_hot"]));
+
+			if (!g_globals->_activeSpells._s.fire) {
+				for (uint i = 0; i < g_globals->_party.size(); ++i) {
+					Character &c = g_globals->_party[i];
+					c._hpBase = MAX((int)c._hpBase - 15, 0);
+				}
+			}
+		}
+	} else if (getRandomNumber(100) != 100) {
+		g_events->addAction(KEYBIND_SEARCH);
+	} else {
+		Character &c = g_globals->_party[0];
+		g_globals->_currCharacter = &c;
+		int id1 = getRandomNumber(2 + ((c._level < 12) ? c._level : 14));
+		int monsterCount = getRandomNumber((id1 < 15) ? 13 : 4);
+
+		enc.clearMonsters();
+		for (int i = 0; i < monsterCount; ++i)
+			enc.addMonster(id1, 11);
+
+		enc._flag = true;
+		enc._levelIndex = 80;
+		enc.execute();
+	}
 }
 
 void Map15::special00() {
+	send(SoundMessage(STRING["maps.map15.lava"]));
+}
+
+void Map15::special01() {
+	Game::Encounter &enc = g_globals->_encounters;
+
+	if (_data[VAL2]) {
+		send(SoundMessage(STRING["maps.map15.dragon"]));
+		g_globals->_treasure[5] = 244;
+		g_events->addAction(KEYBIND_SEARCH);
+
+	} else {
+		_data[VAL2]++;
+
+		enc.clearMonsters();
+		enc.addMonster(15, 9);
+		enc._levelIndex = 5;
+		enc._flag = true;
+		enc.execute();
+	}
+}
+
+void Map15::special02() {
+	Game::Encounter &enc = g_globals->_encounters;
+	g_maps->clearSpecial();
+	_data[VAL2]++;
+
+	int monsterCount = getRandomNumber(4) + 1;
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(15, 9);
+
+	enc._levelIndex = 48;
+	enc._flag = true;
+	enc.execute();
+}
+
+void Map15::special03() {
+	Game::Encounter &enc = g_globals->_encounters;
+	g_maps->clearSpecial();
+	_data[VAL2]++;
+
+	enc.clearMonsters();
+	for (int i = 0; i < 10; ++i)
+		enc.addMonster(15, 9);
+
+	enc._levelIndex = 48;
+	enc._flag = true;
+}
+
+void Map15::special04() {
+	_data[VAL3] = 250;
+	_data[VAL4] = 100;
+	cove();
+}
+
+void Map15::special05() {
+	_data[VAL3] = 251;
+	_data[VAL4] = 200;
+	cove();
+}
+
+void Map15::special06() {
+	g_maps->clearSpecial();
+	send(SoundMessage(STRING["maps.map15.percella1"],
+		[](const Common::KeyState &ks) {
+			if (ks.keycode == Common::KEYCODE_y) {
+				g_events->close();
+				g_globals->_treasure[5] = 233;
+				g_events->addAction(KEYBIND_SEARCH);
+			} else if (ks.keycode == Common::KEYCODE_n) {
+				g_events->send(SoundMessage(STRING["maps.map15.percella1"]));
+				g_maps->_mapPos = Common::Point(14, 2);
+				g_events->send("Game", GameMessage("UPDATE"));
+			}
+		}
+	));
+}
+
+void Map15::special08() {
+	_data[VAL2] = 0;
+	g_events->addAction(KEYBIND_SEARCH);
+}
+
+void Map15::cove() {
+	send(SoundMessage(STRING["maps.map15.cove"],
+		[]() {
+			Map15 &map = *static_cast<Map15 *>(g_maps->_currentMap);
+			g_maps->clearSpecial();
+
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				int idx = c._backpack.indexOf(map[VAL3]);
+				if (idx != -1) {
+					c._backpack.removeAt(idx);
+					g_globals->_treasure[8] = map[VAL4];
+					g_globals->_treasure[7] = 7;
+					g_globals->_treasure[6] = 208;
+					break;
+				}
+			}
+
+			g_events->addAction(KEYBIND_SEARCH);
+		}
+	));
 }
 
 } // namespace Maps
