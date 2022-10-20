@@ -307,6 +307,8 @@ void DreamWebEngine::oldToNames() {
 }
 
 void DreamWebEngine::saveLoad() {
+	if (ConfMan.getBool("originalsaveload"))
+		createThumbnail(_thumbnail);
 	if (_vars._watchingTime || (_pointerMode == 2)) {
 		blank();
 		return;
@@ -563,7 +565,11 @@ void DreamWebEngine::savePosition(unsigned int slot, const char *descbuf) {
 	outSaveFile->writeUint32LE(saveDate);
 	outSaveFile->writeUint32LE(saveTime);
 	outSaveFile->writeUint32LE(playTime);
-	Graphics::saveThumbnail(*outSaveFile);
+
+	if (ConfMan.getBool("originalsaveload"))
+		Graphics::saveThumbnail(*outSaveFile, _thumbnail);
+	else
+		Graphics::saveThumbnail(*outSaveFile);
 
 	outSaveFile->finalize();
 	if (outSaveFile->err()) {

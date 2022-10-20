@@ -270,6 +270,8 @@ DreamWebEngine::DreamWebEngine(OSystem *syst, const DreamWebGameDescription *gam
 
 DreamWebEngine::~DreamWebEngine() {
 	delete _sound;
+	if (_thumbnail.getPixels())
+		_thumbnail.free();
 }
 
 void DreamWebEngine::pauseEngineIntern(bool pause) {

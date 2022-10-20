@@ -31,6 +31,8 @@
 
 #include "engines/engine.h"
 
+#include "graphics/surface.h"
+
 #include "dreamweb/console.h"
 
 #include "dreamweb/structs.h"
@@ -157,6 +159,7 @@ private:
 	void setSpeed(uint speed);
 
 	const DreamWebGameDescription	*_gameDescription;
+	Graphics::Surface				_thumbnail;
 	Common::RandomSource			_rnd;
 	Common::String _datafilePrefix;
 	Common::String _speechDirName;
