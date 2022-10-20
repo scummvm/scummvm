@@ -50,7 +50,7 @@ void FreescapeEngine::traverseEntrance(uint16 entranceID) {
 
 void FreescapeEngine::shoot() {
 	playSound(1, true);
-	_mixer->stopAll();
+	_mixer->stopHandle(_soundFxHandle);
 	_gfx->renderShoot(0);
 	Math::Vector3d direction = directionToVector(_pitch, _yaw);
 	Math::Ray ray(_position, direction);

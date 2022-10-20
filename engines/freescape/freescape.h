@@ -225,10 +225,12 @@ public:
 	void executePrint(FCLInstruction &instruction);
 
 	// Sound
-	Audio::SoundHandle _handle;
+	Audio::SoundHandle _soundFxHandle;
+	Audio::SoundHandle _musicHandle;
 	bool _usePrerecordedSounds;
 	void playSound(int index, bool sync);
 	void playWav(const Common::String filename);
+	void playMusic(const Common::String filename);
 	void playSoundConst(double hzFreq, int duration, bool sync);
 	void playSoundSweepIncWL(double hzFreq1, double hzFreq2, double wlStepPerMS, int resolution, bool sync);
 	void playTeleporter(int totalIters, bool sync);
