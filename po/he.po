@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-17 17:36+0000\n"
-"PO-Revision-Date: 2022-10-19 22:33+0000\n"
+"PO-Revision-Date: 2022-10-20 12:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -6786,6 +6786,12 @@ msgid ""
 "for some guides which can help you recover valid files from the KryoFlux "
 "dumps that Limited Run Games also provided."
 msgstr ""
+"לא ניתן לשחק בגרסה זו של אי הקופים, כי Limited Run Games סיפקו קבצים פגומים "
+"עבור DISK04.LEC ו-903.LFL.\n"
+"\n"
+"נא ליצור קשר עם התמיכה הטכנית שלהם כדי להשיג קבצים חלופיים, או לחפש ברשת "
+"מדריכים שיסייעו להשיג קבצים תקינים מדמויות KyroFlux ש-Limited Run Games "
+"סיפקו גם כן."
 
 #. I18N: Previous page button
 #: engines/scumm/dialogs.cpp:273
@@ -6869,7 +6875,7 @@ msgstr ""
 
 #: engines/scumm/dialogs.cpp:1111
 msgid "Outlook Adjust:"
-msgstr ""
+msgstr "התאמת תצפית:"
 
 #: engines/scumm/dialogs.cpp:1115
 msgid ""
@@ -6877,6 +6883,8 @@ msgid ""
 "track at which it starts playing. Use this if the music is cut off, or if "
 "you hear part of the previous music."
 msgstr ""
+"מוזיקת התצפית היא חלק מרצועת ההקדמה. התאמת המיקום בתוך הרצועה שבו היא מתחילה "
+"להתנגן. מומלץ להשתמש אם המוזיקה קטועה, או אם ניתן לשמוע חלק מהמוזיקה הקודמת."
 
 #: engines/scumm/help.cpp:72
 msgid "Common keyboard commands:"
