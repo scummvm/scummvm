@@ -31,6 +31,8 @@ namespace Maps {
 class Map11 : public Map {
 	typedef void (Map11:: *SpecialFn)();
 private:
+	int _dialIndex = 0;
+
 	void special00();
 	void special01();
 	void special02();
@@ -41,6 +43,7 @@ private:
 	void special07();
 	void special08();
 	void pit();
+	void selectDial(int dialIndex);
 
 	const SpecialFn SPECIAL_FN[14] = {
 		&Map11::special00,
@@ -65,6 +68,16 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Creates a challenge encounter
+	 */
+	void challenge();
+
+	/**
+	 * Set the alphabetic character for the current dial
+	 */
+	void setDialChar(char c);
 };
 
 } // namespace Maps
