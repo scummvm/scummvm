@@ -68,6 +68,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
 	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
+	_upVector =	Math::Vector3d(0, 1.0f, 0);
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
@@ -241,12 +242,20 @@ void FreescapeEngine::processInput() {
 				move(FORWARD, _scaleVector.x(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
 				move(BACKWARD, _scaleVector.x(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_q || event.kbd.keycode == Common::KEYCODE_LEFT)
+			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
 				move(LEFT, _scaleVector.y(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_w || event.kbd.keycode == Common::KEYCODE_RIGHT)
+			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
 				move(RIGHT, _scaleVector.y(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_KP5 || event.kbd.keycode == Common::KEYCODE_KP0)
 				shoot();
+			else if (event.kbd.keycode == Common::KEYCODE_p)
+				rotate(0, 5);
+			else if (event.kbd.keycode == Common::KEYCODE_l)
+				rotate(0, -5);
+			else if (event.kbd.keycode == Common::KEYCODE_q)
+				rotate(5, 0);
+			else if (event.kbd.keycode == Common::KEYCODE_w)
+				rotate(-5, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_r)
 				rise();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
@@ -391,6 +400,24 @@ void FreescapeEngine::initGameState() {
 		_gameStateBits[it->_key] = 0;
 }
 
+void FreescapeEngine::rotate(float xoffset, float yoffset) {
+	_yaw -= xoffset;
+	_pitch += yoffset;
+
+	// Make sure that when pitch is out of bounds, screen doesn't get flipped
+	if (_pitch > 360.0f)
+		_pitch -= 360.0f;
+	if (_pitch < 0.0f)
+		_pitch += 360.0f;
+
+	if (_yaw > 360.0f)
+		_yaw -= 360.0f;
+	if (_yaw < 0.0f)
+		_yaw += 360.0f;
+
+	updateCamera();
+}
+
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
 	if (lastMousePos != Common::Point(0, 0)) {
 		//debug("x: %d, y: %d", mousePos.x, mousePos.y);
@@ -414,12 +441,13 @@ void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos)
 		if (_yaw < 0.0f)
 			_yaw += 360.0f;
 	}
+	updateCamera();
+}
 
+void FreescapeEngine::updateCamera() {
 	_cameraFront = directionToVector(_pitch, _yaw);
-
-	// // _right = _front x _up;
-	Math::Vector3d up(0, 1, 0); // this should be const
-	Math::Vector3d v = Math::Vector3d::crossProduct(_cameraFront, up);
+	// _right = _front x _up;
+	Math::Vector3d v = Math::Vector3d::crossProduct(_cameraFront, _upVector);
 	v.normalize();
 	_cameraRight = v;
 }

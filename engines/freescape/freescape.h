@@ -168,22 +168,25 @@ public:
 	bool tryStepDown(Math::Vector3d currentPosition);
 
 	void rotate(Common::Point lastMousePos, Common::Point mousePos);
+	void rotate(float xoffset, float yoffset);
 	// Input state
 	float _lastFrame;
 	Common::Point _lastMousePos;
 
 	// Interaction
 	void shoot();
+	void traverseEntrance(uint16 entranceID);
 
 	// Euler Angles
 	float _yaw;
 	float _pitch;
-	void traverseEntrance(uint16 entranceID);
 	Math::Vector3d directionToVector(float pitch, float heading);
+	void updateCamera();
 
 	// Camera options
 	float _mouseSensitivity;
 	float _movementSpeed;
+	Math::Vector3d _upVector; // const
 	Math::Vector3d _cameraFront, _cameraRight;
 	// Spacial attributes
 	Math::Vector3d _position, _rotation, _velocity;
