@@ -90,6 +90,7 @@ const PlainGameDescriptor SCOTT_GAME_LIST[] = {
 	{ "gremlins",		   "Gremlins" },
 	{ "seasofblood",	   "Seas Of Blood" },
 	{ "supergran",		   "Super Gran" },
+	{ "ghostking",		   "Ghost King" },
 
 	{ nullptr, nullptr }
 };
@@ -166,6 +167,7 @@ const GlkDetectionEntry SCOTT_GAMES[] = {
 	DT_ENTRY0("minersadv",        "0000d9da5a13701601fb3e7399daa128", 11898),
 	DT_ENTRY0("romulanadv",       "d97b5cb5ed66eb276ef9f1c1bae0b8dd", 13959),
 	DT_ENTRY0("topsecretadv",     "effb411e74dfe3a8d69b57b9bc3a2cef", 15575),
+	DT_ENTRY0("ghostking",		  "28d433d9f5d2de99dac460c5e1dfa9c5", 14206),
 
 	// ZX Spectrum games
 	DT_ENTRYP1("marveladventure", "ZXSpectrum", "0eec511d3cde815c73e5464ab0cdbef9", 40727, Common::kPlatformZX),
