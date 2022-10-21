@@ -93,7 +93,10 @@ bool ScottMetaEngine::detectGames(const Common::FSList &fslist, DetectedGames &g
 			++p;
 
 		if (!p->_gameId) {
-			if (!isBlorb && filename.hasSuffixIgnoreCase(".dat"))
+
+			// ignore possible variants for common extensions to prevent flooding in mass-add
+			if (!isBlorb && (filename.hasSuffixIgnoreCase(".z80") || filename.hasSuffixIgnoreCase(".dat") ||
+				filename.hasSuffixIgnoreCase(".d64") || filename.hasSuffixIgnoreCase(".t64")))
 				continue;
 
 			const PlainGameDescriptor &desc = SCOTT_GAME_LIST[0];
