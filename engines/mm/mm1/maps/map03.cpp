@@ -114,6 +114,8 @@ void Map03::special01() {
 			0, 1, STRING["maps.map03.telgoran4"]
 		));
 	}
+
+	g_events->addKeypress((Common::KeyCode)160);
 }
 
 void Map03::special02() {

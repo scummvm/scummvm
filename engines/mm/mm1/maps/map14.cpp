@@ -68,13 +68,13 @@ void Map14::special00() {
 		g_maps->clearSpecial();
 		for (uint i = 0; i < g_globals->_party.size(); ++i)
 			g_globals->_party[i]._flags[2] |= CHARFLAG2_8;
-		g_events->addAction(KEYBIND_SEARCH);
+		g_events->addKeypress((Common::KeyCode)160);
 
 	} else {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			if (g_globals->_party[i]._flags[2] & CHARFLAG2_8) {
 				g_maps->clearSpecial();
-				g_events->addAction(KEYBIND_SEARCH);
+				g_events->addKeypress((Common::KeyCode)160);
 				return;
 			}
 		}
@@ -112,7 +112,7 @@ void Map14::special00() {
 void Map14::special01() {
 	_data[VAL1] = 0;
 	_data[VAL2]++;
-	g_events->addAction(KEYBIND_SEARCH);
+	g_events->addKeypress((Common::KeyCode)160);
 }
 
 void Map14::special02() {
@@ -154,7 +154,7 @@ void Map14::special04() {
 			}
 		));
 	} else {
-		g_events->addAction(KEYBIND_SEARCH);
+		g_events->addKeypress((Common::KeyCode)160);
 	}
 }
 

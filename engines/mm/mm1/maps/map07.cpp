@@ -82,9 +82,11 @@ void Map07::special02() {
 
 		for (uint j = 0; j < c._equipped.size(); ++j) {
 			if (c._equipped[j]._id >= BRONZE_KEY_ID &&
-				c._equipped[j]._id <= DIAMOND_KEY_ID)
+				c._equipped[j]._id <= DIAMOND_KEY_ID) {
 				// Someone has a key
+				g_events->addKeypress((Common::KeyCode)160);
 				return;
+			}
 		}
 	}
 
