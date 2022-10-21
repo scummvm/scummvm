@@ -619,6 +619,9 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (   !_forceRedraw
 		&& !_cursorNeedsRedraw
 	    && !_gameScreen->isDirty()
+#if !USE_FORCED_GLES
+	    && !(_libretroPipeline && _libretroPipeline->isAnimated())
+#endif
 	    && !(_overlayVisible && _overlay->isDirty())
 	    && !(_cursorVisible && _cursor && _cursor->isDirty())
 #ifdef USE_OSD

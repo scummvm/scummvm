@@ -62,6 +62,7 @@ public:
 	void close();
 
 	bool isInitialized() const { return _shaderPreset != nullptr; }
+	bool isAnimated() const { return _isAnimated; }
 
 	static bool isSupportedByContext() {
 		return OpenGLContext.shadersSupported
@@ -91,6 +92,8 @@ private:
 	uint _outputWidth;
 	uint _outputHeight;
 
+	/* Determines if preset depends on frameCount or from previous frames */
+	bool _isAnimated;
 	uint _frameCount;
 
 	struct Texture {

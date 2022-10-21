@@ -118,13 +118,15 @@ static const char *g_compatFragment =
 LibRetroPipeline::LibRetroPipeline()
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _shaderPreset(nullptr), _applyProjectionChanges(false),
-	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0), _frameCount(0) {
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0),
+	  _isAnimated(false), _frameCount(0) {
 }
 
 LibRetroPipeline::LibRetroPipeline(const Common::FSNode &shaderPreset)
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kDefault)),
 	  _shaderPreset(nullptr), _applyProjectionChanges(false),
-	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0), _frameCount(0) {
+	  _inputWidth(0), _inputHeight(0), _outputWidth(0), _outputHeight(0),
+	  _isAnimated(false), _frameCount(0) {
 	open(shaderPreset);
 }
 
@@ -295,6 +297,8 @@ bool LibRetroPipeline::loadPasses() {
 		}
 	}
 
+	_isAnimated = false;
+
 	// parameters are shared among all passes so we load them first and apply them to all shaders
 	UniformsMap uniformParams;
 	for (LibRetro::ShaderPreset::PassArray::const_iterator
@@ -394,6 +398,8 @@ bool LibRetroPipeline::loadPasses() {
 		const uint passId = _passes.size() - 1;
 
 		pass.hasFrameCount = shader->getUniformLocation("FrameCount") != -1;
+		// If pass has FrameCount uniform, preset is animated and must be redrawn on a regular basis
+		_isAnimated |= pass.hasFrameCount;
 
 		pass.buildTexCoords(passId, aliases);
 		pass.buildTexSamplers(passId, _textures, aliases);
