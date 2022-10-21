@@ -206,7 +206,7 @@ void Map12::setPolyhedron(int polyIndex) {
 					g_events->close();
 					static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(
 						ks.ascii | 0x80);
-					g_events->addKeypress((Common::KeyCode)160);
+					none160();
 				}	
 			}
 		));

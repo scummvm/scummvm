@@ -114,6 +114,14 @@ protected:
 	 */
 	void reduceHP();
 
+	/**
+	 * Many special methods return a 160 key, but it
+	 * doesn't look like the game uses. My current
+	 * assumption is that this is just a convenient
+	 * 'do nothing' return value
+	 */
+	static void none160() {}
+
 public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];

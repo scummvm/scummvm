@@ -104,6 +104,10 @@ enum CharFlags11 {
 	CHARFLAG11_GOT_SPEED = 0x20
 };
 
+enum CharFlags14 {
+	CHARFLAG14_80 = 0x80
+};
+
 class Inventory {
 public:
 	struct Entry {

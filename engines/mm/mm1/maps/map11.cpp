@@ -160,7 +160,7 @@ void Map11::selectDial(int dialIndex) {
 					ks.keycode <= Common::KEYCODE_z) {
 				g_events->close();
 				static_cast<Map11 *>(g_maps->_currentMap)->setDialChar(ks.ascii);
-				g_events->addKeypress((Common::KeyCode)160);
+				none160();
 			}
 		}
 	));

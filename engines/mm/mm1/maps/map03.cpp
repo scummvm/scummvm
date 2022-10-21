@@ -115,7 +115,7 @@ void Map03::special01() {
 		));
 	}
 
-	g_events->addKeypress((Common::KeyCode)160);
+	none160();
 }
 
 void Map03::special02() {

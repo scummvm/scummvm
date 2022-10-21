@@ -78,7 +78,7 @@ void Map15::special() {
 			}
 		}
 	} else if (getRandomNumber(100) != 100) {
-		g_events->addKeypress((Common::KeyCode)160);
+		none160();
 
 	} else {
 		Character &c = g_globals->_party[0];
@@ -178,7 +178,7 @@ void Map15::special06() {
 
 void Map15::special08() {
 	_data[VAL2] = 0;
-	g_events->addKeypress((Common::KeyCode)160);
+	none160();
 }
 
 void Map15::cove() {
