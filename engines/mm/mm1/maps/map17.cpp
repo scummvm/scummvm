@@ -79,6 +79,11 @@ void Map17::special00() {
 }
 
 void Map17::special01() {
+	send(SoundMessage(STRING["maps.map17.bridge"],
+		[]() {
+			static_cast<Map17 *>(g_maps->_currentMap)->askQuestion();
+		}
+	));
 }
 
 void Map17::special02() {
@@ -93,6 +98,64 @@ void Map17::special02() {
 void Map17::special03() {
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
+}
+
+void Map17::askQuestion(uint partyIndex) {
+	if (partyIndex >= g_globals->_party.size()) {
+		if (_data[VAL3]) {
+			g_maps->_mapPos.y = 2;
+			g_events->send("Game", GameMessage("UPDATE"));
+		} else {
+			g_events->addKeypress((Common::KeyCode)160);
+		}
+		return;
+	}
+
+	_data[VAL1] = partyIndex;
+	Character &c = g_globals->_party[partyIndex];
+	g_globals->_currCharacter = &c;
+
+	if (!(c._condition & BAD_CONDITION)) {
+		InfoMessage msg(
+			0, 0, STRING["maps.map17.color"],
+			0, 2, STRING["maps.map17.options"],
+			[](const Common::KeyState &ks) {
+				Map17 &map = *static_cast<Map17 *>(g_maps->_currentMap);
+				if (ks.keycode >= Common::KEYCODE_1 &&
+						ks.keycode <= Common::KEYCODE_9) {
+					map[VAL2] = ks.ascii - '1';
+
+					Common::String msg;
+					Character &c = *g_globals->_currCharacter;
+					int val = c._flags[2] & 0xf;
+					if (!val || (val & 7) != map[VAL2]) {
+						c._condition = ERADICATED;
+						msg = STRING["maps.map17.wrong"];
+					} else {
+						map[VAL3]++;
+						c._flags[4] |= CHARFLAG4_80;
+						msg = STRING["maps.map17.correct"];
+					}
+
+					Sound::sound(SOUND_3);
+					InfoMessage msg2;
+					msg2._largeMessage = true;
+					msg2._delaySeconds = 1;
+					msg2._lines.push_back(Line(0, 0, STRING["maps.map17.color"]));
+					msg2._lines.push_back(Line(0, 2, STRING["maps.map17.options"]));
+					msg2._lines.push_back(Line(16, 5, msg));
+					msg2._ynCallback = []() {
+						Map17 &map = *static_cast<Map17 *>(g_maps->_currentMap);
+						map.askQuestion(map[VAL1] + 1);
+					};
+
+					g_events->send(msg2);
+				}
+			}
+		);
+		msg._largeMessage = true;
+		send(msg);
+	}
 }
 
 } // namespace Maps
