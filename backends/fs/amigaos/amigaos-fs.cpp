@@ -33,26 +33,23 @@
  * @return Pointer to the first char of the last component inside str
  */
 const char *lastPathComponent(const Common::String &str) {
-	int offset = str.size();
+	int pathOffset = str.size();
 
-	if (offset <= 0) {
-		debug(6, "lastPathComponent() failed -> Bad offset!");
+	if (pathOffset <= 0) {
+		debug(6, "lastPathComponent() failed -> Bad offset (Empty path received)!");
 		return 0;
 	}
 
 	const char *p = str.c_str();
 
-	while (offset > 0 && (p[offset-1] == '/' || p[offset-1] == ':'))
-		offset--;
-
-	while (offset > 0 && (p[offset-1] != '/' && p[offset-1] != ':'))
-		offset--;
-
-	return p + offset;
+	while (pathOffset > 0 && (p[pathOffset-1] == '/' || p[pathOffset-1] == ':'))
+		pathOffset--;
+	while (pathOffset > 0 && (p[pathOffset-1] != '/' && p[pathOffset-1] != ':'))
+		pathOffset--;
+	return p + pathOffset;
 }
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
-
 	_sDisplayName = "Available HDDs/Partitions";
 	_bIsValid = true;
 	_bIsDirectory = true;
@@ -63,11 +60,10 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode() {
 }
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
+	int nodeOffset = p.size();
 
-	int offset = p.size();
-
-	if (offset <= 0) {
-		debug(6, "AmigaOSFileSystemNode() failed -> Bad offset!");
+	if (nodeOffset <= 0) {
+		debug(6, "AmigaOSFileSystemNode() failed -> Bad offset (No Path received)!");
 		return;
 	}
 
@@ -87,19 +83,16 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const Common::String &p) {
 			_bIsValid = (_pFileLock != 0);
 
 			// Add a trailing slash, if needed
-			const char c = _sPath.lastChar();
-			if (c != '/' && c != ':')
+			if (_sPath.lastChar() != '/' && _sPath.lastChar() != ':')
 				_sPath += '/';
 		} else {
 			_bIsValid = true;
 		}
-
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	}
 }
 
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayName) {
-
 	int bufSize = MAXPATHLEN;
 	_pFileLock = 0;
 
@@ -114,7 +107,7 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		if (IDOS->IoErr() != ERROR_LINE_TOO_LONG) {
 			_bIsValid = false;
-			debug(6, "IDOS->IoErr() failed -> ERROR_LINE_TOO_LONG not matched!");
+			debug(6, "IDOS->IoErr() failed -> MAXPATHLEN exceeded!");
 			delete[] n;
 			return;
 		}
@@ -134,10 +127,8 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 			_bIsDirectory = true;
 			_pFileLock = IDOS->DupLock(pLock);
 			_bIsValid = _pFileLock != 0;
-
 			// Add a trailing slash, if needed
-			const char c = _sPath.lastChar();
-			if (c != '/' && c != ':')
+			if (_sPath.lastChar() != '/' && _sPath.lastChar() != ':')
 				_sPath += '/';
 		} else {
 			_bIsValid = true;
@@ -145,14 +136,13 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(BPTR pLock, const char *pDisplayNam
 
 		IDOS->FreeDosObject(DOS_EXAMINEDATA, pExd);
 	} else {
-		debug(6, "IDOS->ExamineObjectTags() failed -> ExamineDosObject returned NULL!");
+		debug(6, "IDOS->ExamineObjectTags() failed -> Not a directory (or it doesn't exist!");
 	}
 }
 
 // We need the custom copy constructor because of DupLock()
 AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode& node)
 : AbstractFSNode() {
-
 	_sDisplayName = node._sDisplayName;
 	_bIsValid = node._bIsValid;
 	_bIsDirectory = node._bIsDirectory;
@@ -162,16 +152,13 @@ AmigaOSFilesystemNode::AmigaOSFilesystemNode(const AmigaOSFilesystemNode& node)
 }
 
 AmigaOSFilesystemNode::~AmigaOSFilesystemNode() {
-
 	if (_pFileLock)
 		IDOS->UnLock(_pFileLock);
 }
 
 bool AmigaOSFilesystemNode::exists() const {
-
 	if (_sPath.empty())
 		return false;
-
 	bool nodeExists = false;
 
 	BPTR pLock = IDOS->Lock(_sPath.c_str(), SHARED_LOCK);
@@ -184,26 +171,22 @@ bool AmigaOSFilesystemNode::exists() const {
 }
 
 AbstractFSNode *AmigaOSFilesystemNode::getChild(const Common::String &n) const {
-
 	if (!_bIsDirectory) {
 		debug(6, "AmigaOSFileSystemNode::getChild() failed -> Not a directory!");
 		return 0;
 	}
 
 	Common::String newPath(_sPath);
-
 	if (_sPath.lastChar() != '/')
 		newPath += '/';
-
 	newPath += n;
 
 	return new AmigaOSFilesystemNode(newPath);
 }
 
 bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, bool hidden) const {
-
 	if (!_bIsValid) {
-		debug(6, "AmigaOSFileSystemNode::getChildren() failed -> Invalid node (Empty list)!");
+		debug(6, "AmigaOSFileSystemNode::getChildren() failed -> Invalid node (Not a Volume)!");
 		return false;
 	}
 
@@ -213,7 +196,6 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 	}
 
 	if (isRootNode()) {
-		debug(6, "AmigaOSFileSystemNode::getChildren() -> Root node obtained!");
 		myList = listVolumes();
 		return true;
 	}
@@ -223,8 +205,8 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 							EX_DataFields,	(EXF_NAME|EXF_LINK|EXF_TYPE),
 							TAG_END);
 	if (context) {
-		// No need to free the value after usage, everything will be dealt with by the
-		// DirContext release
+		// No need to free the value after usage, everything will be dealt with
+		// by the DirContext release
 		struct ExamineData * pExd = NULL;
 
 		AmigaOSFilesystemNode *entry;
@@ -234,9 +216,9 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			|| Common::FSNode::kListAll == mode
 			)
 			{
-				BPTR pLock = IDOS->Lock( pExd->Name, SHARED_LOCK );
+				BPTR pLock = IDOS->Lock(pExd->Name, SHARED_LOCK);
 				if (pLock) {
-					entry = new AmigaOSFilesystemNode( pLock, pExd->Name );
+					entry = new AmigaOSFilesystemNode(pLock, pExd->Name);
 					if (entry) {
 						myList.push_back(entry);
 					}
@@ -246,8 +228,8 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 			}
 		}
 
-		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr() ) {
-			debug(6, "IDOS->IoErr() failed -> ERROR_NO_MORE_ENTRIES not matched!");
+		if (ERROR_NO_MORE_ENTRIES != IDOS->IoErr()) {
+			debug(6, "IDOS->ExamineDir() failed -> End of list exceeded!");
 			return false;
 		}
 
@@ -261,14 +243,11 @@ bool AmigaOSFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 }
 
 AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
-
 	if (isRootNode()) {
-		debug(6, "AmigaOSFileSystemNode::getParent() -> Root node obtained!");
 		return new AmigaOSFilesystemNode(*this);
 	}
 
 	BPTR pLock = _pFileLock;
-
 	if (!_bIsDirectory) {
 		assert(!pLock);
 		pLock = IDOS->Lock((CONST_STRPTR)_sPath.c_str(), SHARED_LOCK);
@@ -277,7 +256,7 @@ AbstractFSNode *AmigaOSFilesystemNode::getParent() const {
 
 	AmigaOSFilesystemNode *node;
 
-	BPTR parentDir = IDOS->ParentDir( pLock );
+	BPTR parentDir = IDOS->ParentDir(pLock);
 	if (parentDir) {
 		node = new AmigaOSFilesystemNode(parentDir);
 		IDOS->UnLock(parentDir);
@@ -316,7 +295,6 @@ bool AmigaOSFilesystemNode::isWritable() const {
 }
 
 AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
-
 	AbstractFSList myList;
 
 	const uint32 kLockFlags = LDF_READ | LDF_VOLUMES;
@@ -324,36 +302,29 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 
 	struct DosList *dosList = IDOS->LockDosList(kLockFlags);
 	if (!dosList) {
-		debug(6, "IDOS->LockDOSList() failed!");
+		debug(6, "IDOS->LockDOSList() failed! -> No Volumes found!");
 		return myList;
 	}
 
 	dosList = IDOS->NextDosEntry(dosList, LDF_VOLUMES);
 	while (dosList) {
 		if (dosList->dol_Type == DLT_VOLUME &&
-			dosList->dol_Name &&
-			dosList->dol_Port) {
-
+			dosList->dol_Name && dosList->dol_Port) {
 			// Copy name to buffer
 			IDOS->CopyStringBSTRToC(dosList->dol_Name, buffer, MAXPATHLEN);
 
 			// Volume name + '\0'
 			char *volName = new char [strlen(buffer) + 1];
-
 			strcpy(volName, buffer);
-
 			strcat(buffer, ":");
 
 			BPTR volumeLock = IDOS->Lock((STRPTR)buffer, SHARED_LOCK);
 			if (volumeLock) {
-
 				char *devName = new char [MAXPATHLEN];
 
 				// Find device name
 				IDOS->DevNameFromLock(volumeLock, devName, MAXPATHLEN, DN_DEVICEONLY);
-
 				snprintf(buffer, MAXPATHLEN, "%s (%s)", volName, devName);
-
 				delete[] devName;
 
 				AmigaOSFilesystemNode *entry = new AmigaOSFilesystemNode(volumeLock, buffer);
@@ -370,7 +341,6 @@ AbstractFSList AmigaOSFilesystemNode::listVolumes() const {
 	}
 
 	IDOS->UnLockDosList(kLockFlags);
-
 	return myList;
 }
 
@@ -384,19 +354,18 @@ Common::SeekableWriteStream *AmigaOSFilesystemNode::createWriteStream() {
 }
 
 bool AmigaOSFilesystemNode::createDirectory() {
-	Common::String temp = _sPath;
-	if (temp.lastChar() == '/') {
-		temp = temp.substr(0, temp.size() - 1);
+	Common::String createPath = _sPath;
+	if (createPath.lastChar() == '/') {
+		createPath = createPath.substr(0, createPath.size() - 1);
 	}
 
-	BPTR lock = IDOS->CreateDir(temp.c_str());
-	if (lock) {
-		IDOS->UnLock(lock);
-		debug(6, "AmigaOSFilesystemNode::createDirectory() -> Directory '%s' created", temp.c_str());
+	BPTR dirLock = IDOS->CreateDir(createPath.c_str());
+	if (dirLock) {
+		IDOS->UnLock(dirLock);
 		_bIsValid = true;
 		_bIsDirectory = true;
 	} else {
-		debug(6, "AmigaOSFilesystemNode::createDirectory() failed -> Directory '%s' not created", temp.c_str());
+		debug(6, "AmigaOSFilesystemNode::createDirectory() failed -> Directory '%s' could not be created!", createPath.c_str());
 	}
 
 	return _bIsValid && _bIsDirectory;
