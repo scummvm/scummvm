@@ -32,9 +32,19 @@ class Map16 : public Map {
 	typedef void (Map16:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map16::special00
+	const SpecialFn SPECIAL_FN[8] = {
+		&Map16::special00,
+		&Map16::special01,
+		&Map16::special02,
+		&Map16::special03,
+		&Map16::special03,
+		&Map16::special03,
+		&Map16::special03,
+		&Map16::special03
 	};
 public:
 	Map16() : Map(16, "areaa3", 0xB02) {}
@@ -43,6 +53,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Spins the wheel and grants each party member a result
+	 */
+	void wheelSpin();
 };
 
 } // namespace Maps
