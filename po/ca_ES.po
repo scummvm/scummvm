@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-17 17:36+0000\n"
-"PO-Revision-Date: 2022-08-12 15:37+0000\n"
+"PO-Revision-Date: 2022-10-22 04:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ca/>\n"
@@ -1083,8 +1083,6 @@ msgstr "Petita"
 
 #: gui/options.cpp:429 gui/options.cpp:719 gui/options.cpp:817
 #: gui/options.cpp:843 gui/options.cpp:1048 gui/options.cpp:1540
-#, fuzzy
-#| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Cap"
@@ -1120,10 +1118,8 @@ msgid "the filtering setting could not be changed"
 msgstr "no s'han pogut canviar els ajustos de filtratge"
 
 #: gui/options.cpp:826
-#, fuzzy
-#| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
-msgstr "No s'ha pogut canviar el mode de redimensionament"
+msgstr "no s'ha pogut canviar el shader"
 
 #: gui/options.cpp:1335
 msgid "Touchpad mouse mode"
@@ -1186,23 +1182,18 @@ msgid "Scaler:"
 msgstr "Escalat:"
 
 #: gui/options.cpp:1537
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Ombreig"
+msgstr "Shader:"
 
 #: gui/options.cpp:1537 gui/options.cpp:1539 gui/options.cpp:1540
-#, fuzzy
-#| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
-msgstr "Indica el camí de dades addicionals utilitzades pel joc"
+msgstr ""
+"Especifica el camí al shader utilitzat per a escalar la pantalla del joc"
 
 #: gui/options.cpp:1539
-#, fuzzy
-#| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
-msgstr "Camí de partides:"
+msgstr "Camí del shader:"
 
 #: gui/options.cpp:1546 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
@@ -1983,10 +1974,8 @@ msgid "Select directory for Files Manager /root/"
 msgstr "Selecciona el directori /arrel/ per al gestor d'arxius"
 
 #: gui/options.cpp:3068
-#, fuzzy
-#| msgid "Select a Theme"
 msgid "Select shader"
-msgstr "Seleccioneu un Tema"
+msgstr "Seleccioneu un shader"
 
 #: gui/options.cpp:3161
 msgid ""
@@ -5880,9 +5869,8 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:44
-#, fuzzy
 msgid "16:9 widescreen mod"
-msgstr "Mod de pantalla panoràmica"
+msgstr "Mod de pantalla panoràmica 16:9"
 
 #: engines/mtropolis/detection.cpp:45
 msgid ""
@@ -5909,9 +5897,8 @@ msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:77
-#, fuzzy
 msgid "Enable short transitions"
-msgstr "Habilita la integració amb Discord"
+msgstr "Activa transicions curtes"
 
 #: engines/mtropolis/detection.cpp:78
 msgid ""
@@ -5929,9 +5916,8 @@ msgid ""
 msgstr ""
 
 #: engines/mtropolis/detection.cpp:99
-#, fuzzy
 msgid "Start with debugger"
-msgstr "Inicia el depurador"
+msgstr "Inicia amb el depurador"
 
 #: engines/mtropolis/detection.cpp:100
 msgid "Starts with the debugger dashboard active."
@@ -5955,10 +5941,8 @@ msgid "An internal error occurred while attempting to write save game data"
 msgstr ""
 
 #: engines/mtropolis/saveload.cpp:234
-#, fuzzy
-#| msgid ", error while mounting the share"
 msgid "An error occurred while writing the save game"
-msgstr ", error al muntar la compartició"
+msgstr "S'ha produït un error en escriure la partida desada"
 
 #: engines/mutationofjb/util.cpp:32
 #, c-format
@@ -6298,10 +6282,8 @@ msgid "Use an alternative game intro (CD version only)"
 msgstr "Utilitza una introducció del joc alternativa (només per la versió CD)"
 
 #: engines/queen/detection.cpp:56
-#, fuzzy
-#| msgid "Improved mode"
 msgid "Improved font"
-msgstr "Mode millorat"
+msgstr "Tipus de lletra millorat"
 
 #: engines/queen/detection.cpp:57
 msgid "Use an easier to read custom font"
@@ -6678,9 +6660,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
 msgid "Load modded audio"
-msgstr "Carrega els arxius modificats"
+msgstr "Carrega l'àudio modificat"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
@@ -6689,10 +6670,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:247
-#, fuzzy
-#| msgid "Enable undithering in EGA games"
 msgid "Enable the original GUI and Menu"
-msgstr "Activa l'eliminació del tramat en els jocs EGA"
+msgstr "Activa la interfície gràfica i el menú originals"
 
 #: engines/scumm/detection.cpp:248
 msgid ""
@@ -7705,7 +7684,6 @@ msgid "Could not quick load the saved game #%d"
 msgstr "No s'ha pogut carregar ràpidament la partida desada #%d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
 msgid "Are you sure you want to exit?"
 msgstr "Esteu segur que voleu sortir?"
 
@@ -7880,9 +7858,8 @@ msgid "Change Behaviour"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:223
-#, fuzzy
 msgid "Options Menu"
-msgstr "Opcions"
+msgstr "Menú d'opcions"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Use Selected Object"
@@ -7893,9 +7870,8 @@ msgid "Throw Magic Ball"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:255
-#, fuzzy
 msgid "Move Backward"
-msgstr "Mou enrere"
+msgstr "Mou cap enrere"
 
 #: engines/twine/metaengine.cpp:276
 msgid "Use Protopack"
@@ -7906,14 +7882,12 @@ msgid "Open Holomap"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:294
-#, fuzzy
 msgid "Special Action"
-msgstr "Actiu"
+msgstr "Acció especial"
 
 #: engines/twine/metaengine.cpp:300 engines/wintermute/keymapper_tables.h:60
-#, fuzzy
 msgid "Escape"
-msgstr "Tecla d'escapada"
+msgstr "Tecla Escapa"
 
 #: engines/twine/metaengine.cpp:313
 msgid "Accept"
@@ -7925,19 +7899,16 @@ msgid "Abort"
 msgstr ""
 
 #: engines/twine/metaengine.cpp:359
-#, fuzzy
 msgid "Next Page"
-msgstr "Següent"
+msgstr "Pàgina següent"
 
 #: engines/twine/metaengine.cpp:426
-#, fuzzy
 msgid "Previous location"
-msgstr "~A~nterior"
+msgstr "Ubicació anterior"
 
 #: engines/twine/metaengine.cpp:431
-#, fuzzy
 msgid "Next location"
-msgstr "~A~nterior"
+msgstr "Ubicació següent"
 
 #: engines/twine/parser/text.cpp:33
 #, fuzzy
