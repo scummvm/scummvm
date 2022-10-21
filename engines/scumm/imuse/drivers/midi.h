@@ -93,6 +93,7 @@ public:
 
 private:
 	void initDevice() override;
+	void deinitDevice() override;
 	void createChannels() override;
 	void createParts() override;
 	void releaseChannels() override;
