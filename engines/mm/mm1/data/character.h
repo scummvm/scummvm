@@ -86,6 +86,11 @@ enum CharFlags2 {
 	CHARFLAG2_80 = 0x80
 };
 
+enum CharFlags4 {
+	CHARFLAG4_COLOR = 0xf,
+	CHARFLAG4_80 = 0x80
+};
+
 enum CharFlags5 {
 	CHARFLAG5_8 = 8
 };
