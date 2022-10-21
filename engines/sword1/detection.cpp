@@ -39,6 +39,11 @@ static const PlainGameDescriptor swordGames[] = {
 
 static const char *const directoryGlobs[] = {
 	"clusters",
+	"music",
+	"smackshi",
+	"english",
+	"italian",
+	"speech",
 	nullptr
 };
 
