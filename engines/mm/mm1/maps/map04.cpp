@@ -183,7 +183,7 @@ void Map04::special13() {
 		g_maps->clearSpecial();
 		g_events->addView("Arrested");
 	} else {
-		g_events->addKeypress((Common::KeyCode)160);
+		none160();
 	}
 }
 

@@ -32,9 +32,28 @@ class Map18 : public Map {
 	typedef void (Map18:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void wonGame();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map18::special00
+	const SpecialFn SPECIAL_FN[10] = {
+		&Map18::special00,
+		&Map18::special01,
+		&Map18::special02,
+		&Map18::special03,
+		&Map18::special04,
+		&Map18::special05,
+		&Map18::special06,
+		&Map18::special07,
+		&Map18::special08,
+		&Map18::special09
 	};
 public:
 	Map18() : Map(18, "areab1", 0xA00) {}

@@ -106,7 +106,7 @@ void Map17::askQuestion(uint partyIndex) {
 			g_maps->_mapPos.y = 2;
 			g_events->send("Game", GameMessage("UPDATE"));
 		} else {
-			g_events->addKeypress((Common::KeyCode)160);
+			none160();
 		}
 		return;
 	}
