@@ -52,6 +52,8 @@ public:
 	Common::String getDefaultIconsPath() override;
 	Common::String getScreenshotsPath() override;
 
+	bool isConnectionLimited() override;
+
 protected:
 	Common::String getDefaultConfigFileName() override;
 	Common::String getDefaultLogFileName() override;

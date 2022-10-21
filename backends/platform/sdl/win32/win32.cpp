@@ -26,6 +26,7 @@
 
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
+#include <iphlpapi.h>
 #include <shellapi.h>
 #if defined(__GNUC__) && defined(__MINGW32__) && !defined(__MINGW64_VERSION_MAJOR)
 // required for SHGFP_TYPE_CURRENT in shlobj.h
@@ -301,6 +302,36 @@ Common::String OSystem_Win32::getScreenshotsPath() {
 	}
 
 	return Win32::tcharToString(picturesPath);
+}
+
+typedef NETIO_STATUS(NETIOAPI_API_ *GetNetHintProcPtr)(NL_NETWORK_CONNECTIVITY_HINT *);
+
+bool OSystem_Win32::isConnectionLimited() {
+	HMODULE lib = LoadLibrary(TEXT("iphlpapi.dll"));
+
+	if (lib == nullptr) {
+		return false;
+	}
+
+	GetNetHintProcPtr getFindFunc = (GetNetHintProcPtr)(void *)GetProcAddress(lib, "GetNetworkConnectivityHint");
+
+	if (!getFindFunc) {
+		FreeLibrary(lib);
+		return false;
+	}
+
+	NL_NETWORK_CONNECTIVITY_HINT hint;
+
+	NETIO_STATUS success=getFindFunc(&hint);
+
+	FreeLibrary(lib);
+
+	if (success != NO_ERROR) {
+		warning("Failed to check network connectivity");
+		return false;
+	}
+
+	return hint.ConnectivityCost != NetworkConnectivityCostHintUnrestricted && hint.ConnectivityCost != NetworkConnectivityCostHintUnknown;
 }
 
 Common::String OSystem_Win32::getDefaultConfigFileName() {
