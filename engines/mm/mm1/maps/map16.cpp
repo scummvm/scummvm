@@ -66,7 +66,7 @@ void Map16::special() {
 		enc.execute();
 		
 	} else {
-		g_events->addAction(KEYBIND_SEARCH);
+		g_events->addKeypress((Common::KeyCode)160);
 	}
 }
 
@@ -79,7 +79,7 @@ void Map16::special00() {
 			c._flags[2] |= CHARFLAG2_1;
 		}
 
-		g_events->addAction(KEYBIND_SEARCH);
+		g_events->addKeypress((Common::KeyCode)160);
 
 	} else {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {

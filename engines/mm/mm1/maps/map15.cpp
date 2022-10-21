@@ -78,7 +78,8 @@ void Map15::special() {
 			}
 		}
 	} else if (getRandomNumber(100) != 100) {
-		g_events->addAction(KEYBIND_SEARCH);
+		g_events->addKeypress((Common::KeyCode)160);
+
 	} else {
 		Character &c = g_globals->_party[0];
 		g_globals->_currCharacter = &c;
@@ -177,7 +178,7 @@ void Map15::special06() {
 
 void Map15::special08() {
 	_data[VAL2] = 0;
-	g_events->addAction(KEYBIND_SEARCH);
+	g_events->addKeypress((Common::KeyCode)160);
 }
 
 void Map15::cove() {

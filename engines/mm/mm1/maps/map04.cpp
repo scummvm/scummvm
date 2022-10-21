@@ -183,8 +183,7 @@ void Map04::special13() {
 		g_maps->clearSpecial();
 		g_events->addView("Arrested");
 	} else {
-		// TODO: Sends key 160 to game_keypress, which doesn't seem to handle it
-		//g_events->addAction();
+		g_events->addKeypress((Common::KeyCode)160);
 	}
 }
 
