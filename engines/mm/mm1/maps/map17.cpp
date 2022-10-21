@@ -29,14 +29,19 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 509
+#define VAL2 510
+#define VAL3 511
+
 void Map17::special() {
+	Game::Encounter &enc = g_globals->_encounters;
+
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 9; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[60 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +49,50 @@ void Map17::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
-	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+
+	if (getRandomNumber(100) == 100) {
+		Character &c = g_globals->_party[0];
+		g_globals->_currCharacter = &c;
+		int id1 = getRandomNumber(c._level >= 12 ? 14 : c._level) + 2;
+		int monsterCount = getRandomNumber(id1 < 15 ? 13 : 4);
+
+		enc.clearMonsters();
+		for (int i = 0; i < monsterCount; ++i)
+			enc.addMonster(id1, 11);
+
+		enc._flag = true;
+		enc._levelIndex = 80;
+		enc.execute();
+
+	} else if (getRandomNumber(30) == 10) {
+		g_maps->_mapPos = Common::Point(15, 15);
+		send(SoundMessage(STRING["maps.map17.wave"]));
+		g_events->send("Game", GameMessage("UPDATE"));
+
+	} else {
+		g_events->addAction(KEYBIND_SEARCH);
+	}
 }
 
 void Map17::special00() {
+	send(SoundMessage("maps.map17.islands"));
+}
+
+void Map17::special01() {
+}
+
+void Map17::special02() {
+	if (_data[VAL3]) {
+		g_globals->_treasure[5] = 236;
+		g_events->addAction(KEYBIND_SEARCH);
+	} else {
+		g_events->addKeypress((Common::KeyCode)211);
+	}
+}
+
+void Map17::special03() {
+	g_maps->clearSpecial();
+	g_globals->_encounters.execute();
 }
 
 } // namespace Maps
