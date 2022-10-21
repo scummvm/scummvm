@@ -1328,10 +1328,16 @@ void LB::b_go(int nargs) {
 			Datum movie;
 			Datum frame;
 
-			if (nargs > 0) {
+			if (nargs > 0 && firstArg.type == STRING) {
 				movie = firstArg;
 				TYPECHECK(movie, STRING);
 
+				frame = g_lingo->pop();
+				nargs -= 1;
+			// Even if there's more than one argument, if the first
+			// arg is an int, Director discards the remainder and
+			// treats it as the frame.
+			} else if (nargs > 0 && firstArg.type == INT) {
 				frame = g_lingo->pop();
 				nargs -= 1;
 			} else {
