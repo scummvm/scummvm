@@ -64,11 +64,6 @@ MaterialPtr rAddMaterial(gMaterial &Material, const Common::String &TextName, in
 	return nullptr;
 }
 
-MaterialPtr rAddMaterial(MaterialTable &MList, const Common::String &TextName, int NumFaces, unsigned int LoaderFlags) {
-	MaterialPtr &Material=MList[0];
-	rAddMaterial(*Material, TextName, NumFaces, LoaderFlags);
-}
-
 void gMaterial::addProperty(int flag) {
 	this->Flags |= flag;
 }
@@ -245,7 +240,7 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 		return;
 #endif
 	if ((mat.Flags & T3D_MATERIAL_MOVIE))
-		gUpdateMovie(mat);
+		mat.Movie->updateMovie();
 
 	if ((mat.NumFaces() >= 3) && (mat.VBO)) {
 		bb = rNewBatchBlock(mat.Texture->ID, mat.Flags, 0, 0);

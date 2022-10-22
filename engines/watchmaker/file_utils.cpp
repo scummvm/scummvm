@@ -38,3 +38,13 @@ bool hasFileExtension(const char *str, Common::String extension) {
 	Common::String string(str);
 	return hasFileExtension(string, extension);
 }
+
+Common::String replaceExtension(const char *str, const Common::String &extension) {
+	Common::String baseStr(str);
+	auto separator = baseStr.findLastOf('.');
+	if (separator == Common::String::npos) {
+		return baseStr + "." + extension;
+	} else {
+		return baseStr.substr(0, separator + 1) + extension;
+	}
+}

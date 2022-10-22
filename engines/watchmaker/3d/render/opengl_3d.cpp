@@ -458,7 +458,7 @@ void gBuildAlternateName(char *AltName, char *Name) {
 }
 
 //*********************************************************************************************
-gTexture *gUserTexture(unsigned int dimx, unsigned int dimy) {
+gTexture *gUserTexture(Texture *texture, unsigned int dimx, unsigned int dimy) {
 	bool        AlreadyLoaded = FALSE, bAlpha = FALSE;
 	gTexture    *Texture;
 	int         pos;
@@ -516,8 +516,6 @@ gTexture *gUserTexture(unsigned int dimx, unsigned int dimy) {
 					dimy = 32;
 			else
 				dimy = 16;
-
-		Texture->surface = gCreateSurface(dimx, dimy, nullptr);
 #if 0
 		DDSurfDesc.dwWidth = dimx;
 		DDSurfDesc.dwHeight = dimy;
@@ -541,197 +539,94 @@ gTexture *gUserTexture(unsigned int dimx, unsigned int dimy) {
 #endif
 	}
 
+	Texture->texture = texture;
 	return Texture;
 }
 
-int createTextureFromData(int width, int height, int dataSize, void *data, int texFormat) {
-	unsigned int texId = 0;
-	glGenTextures(1, &texId);
-
-	glBindTexture(GL_TEXTURE_2D, texId);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
-
-	bool compressed = false;
-	// TODO: Check both compiletime and runtime for the existence of EXT_texture_compression_s3tc
-
-	switch (texFormat) {
-	case GL_COMPRESSED_RGBA_S3TC_DXT1_EXT:
-	case GL_COMPRESSED_RGBA_S3TC_DXT3_EXT:
-	case GL_COMPRESSED_RGBA_S3TC_DXT5_EXT:
-		compressed = true;
-		break;
-	case GL_RGBA:
-	case GL_RGB:
-		compressed = false;
-		break;
-	default:
-		warning("Texture format not handled: %d", texFormat);
+GLuint dxtCompressionToTextureFormat(DxtCompression compression) {
+	switch (compression) {
+	case DxtCompression::UNCOMPRESSED:
+		return GL_RGBA;
+	case DxtCompression::DXT1:
+		return GL_COMPRESSED_RGBA_S3TC_DXT1_EXT;
+	case DxtCompression::DXT2:
+		error("DXT2 Support is not implemented");
+	case DxtCompression::DXT3:
+		return GL_COMPRESSED_RGBA_S3TC_DXT3_EXT;
+	case DxtCompression::DXT4:
+		error("DXT4 Support is not implemented");
+	case DxtCompression::DXT5:
+		return GL_COMPRESSED_RGBA_S3TC_DXT5_EXT;
 	}
-
-	if (compressed) {
-		glCompressedTexImage2D(GL_TEXTURE_2D, // target
-							   0, // level
-							   texFormat, // internalFormat
-							   width, // width
-							   height, // height
-							   0, // border
-							   dataSize,
-							   data
-							   );
-		checkGlError("glCompressedTexImage");
-	} else {
-		glTexImage2D(GL_TEXTURE_2D, 0, texFormat, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, data);
-	}
-
-	return texId;
 }
 
-struct DDSHeader {
-	int height = 0;
-	int width = 0;
+class OpenGLTexture : public Texture {
+public:
+	unsigned int _texId;
+	OpenGLTexture() {
+		glGenTextures(1, &_texId);
+	}
+	OpenGLTexture(unsigned int texId) : _texId(texId) {}
+	void assignData(const TextureData &data) override {
+		glBindTexture(GL_TEXTURE_2D, _texId);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP);
+
+		// TODO: Check both compiletime and runtime for the existence of EXT_texture_compression_s3tc
+		GLuint texFormat = dxtCompressionToTextureFormat(data._compression);
+		bool compressed = data._compression != DxtCompression::UNCOMPRESSED;
+
+		if (compressed) {
+			glCompressedTexImage2D(GL_TEXTURE_2D, // target
+								   0, // level
+								   texFormat, // internalFormat
+								   data.getWidth(), // width
+								   data.getHeight(), // height
+								   0, // border
+								   data.getDataSize(),
+								   data.getData()
+			);
+			checkGlError("glCompressedTexImage");
+		} else {
+			glTexImage2D(GL_TEXTURE_2D, 0, texFormat, data.getWidth(), data.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.getData());
+		}
+	}
+	void bind() override {
+		glBindTexture(GL_TEXTURE_2D, _texId);
+	};
 };
 
-DDSHeader parseDDSHeader(Common::SeekableReadStream &stream) {
-	DDSHeader header;
-	//warning("TODO: Implement DDS Header parsing");
-	uint32 retv = ' SDD'; //MAKEFOURCC( 'D','D','S',' ' );
-	uint32 magic = stream.readUint32LE();
-	if (magic != retv) {
-		error("parseDDSHeader: Wrong Magic, expected %08X, got %08X\n", retv, magic);
+class SurfaceBackedTextureData : public TextureData {
+	bool _owned = true;
+public:
+	Graphics::Surface *_surface;
+	SurfaceBackedTextureData(Graphics::Surface *surface, bool owned = true) : TextureData(DxtCompression::UNCOMPRESSED), _surface(surface), _owned(owned) {}
+	~SurfaceBackedTextureData() override {
+		if (_owned) {
+			_surface->free();
+			delete _surface;
+		}
 	}
-	uint32 size = stream.readUint32LE();
-	uint32 flags = stream.readUint32LE();
-	header.height = stream.readUint32LE();
-	header.width = stream.readUint32LE();
-	stream.seek(size + 4, SEEK_SET);
-	return header;
-}
-
-struct DDSurface {
-	int width;
-	int height;
-	int dataSize;
-	void *data;
+	int getWidth() const override { return _surface->w; }
+	int getHeight() const override { return _surface->h; }
+	int getDataSize() const override { return _surface->w * _surface->h * _surface->format.bytesPerPixel; }
+	const void *getData() const override { return _surface->getPixels(); }
 };
 
-DDSurface *parseDDS(Common::SeekableReadStream &stream) {
-	DDSHeader header = parseDDSHeader(stream);
-	auto dataSize = stream.size() - stream.pos();
-	auto data = new unsigned char[dataSize]();
-	stream.read(data, dataSize);
-	DDSurface *result = new DDSurface;
-	result->width = header.width;
-	result->height = header.height;
-	result->data = data;
-	result->dataSize = dataSize;
-	return result;
+Texture *createGLTexture() {
+	return new OpenGLTexture();
 }
 
-int createTextureFromSurface(Graphics::Surface &surface, int texFormat) {
-	return createTextureFromData(surface.w, surface.h, surface.pitch * surface.h, surface.getPixels(), texFormat);
-}
-
-int createCompressedTextureFromSurface(DDSurface &surface) {
-	return createTextureFromData(surface.width, surface.height, surface.dataSize, surface.data, GL_COMPRESSED_RGBA_S3TC_DXT1_EXT);
-}
-
-//*********************************************************************************************
-Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName) {
-	bool        AlreadyLoaded = FALSE, bAlpha = FALSE;
-	uint32 i;
-	char finalName[MAX_PATH];
-
-	auto Movie = Common::SharedPtr<gMovie>(new gMovie());
-	if (!Movie) {
-		DebugLogFile("gLoadMovie FAILED: Can't alloc Movie struct");
-		return nullptr;
-	}
-	*Movie = gMovie();
-
-	//convert .avi name in .wmm
-	strcpy(finalName, TextName);
-	{
-		int i = strlen(finalName) - 1;
-		while (i > 0) {
-			if (finalName[i] == '.') {
-				finalName[i] = '\0';
-				break;
-			}
-			i--;
-		}
-		strcat(finalName, ".wmm");
-	}
-
-
-	//load movie file
-	Movie->stream = workDirs.resolveFile(finalName);
-//	Movie->fp=fopen("c:\\wm\\TMaps2DDS\\fiammata.wmm","rb");
-//	Movie->fp=fopen("c:\\wm\\TMaps2DDS\\medicalshow.wmm","rb");
-	if (!Movie->stream) {
-		DebugLogFile("gLoadMovie FAILED: Can't find movie file\n");
-		return nullptr;
-	}
-
-	Movie->numFrames = Movie->stream->readUint16LE();
-	Movie->width = Movie->stream->readUint16LE();
-	Movie->height = Movie->stream->readUint16LE();
-	Movie->keyFrame = Movie->stream->readByte();
-	Movie->frameRate = Movie->stream->readByte();
-	//uint32 readMagic = Movie->stream->readUint32LE();
-
-	DDSHeader header = parseDDSHeader(*Movie->stream);
-	Movie->numBlocks = Movie->width * Movie->height / 16;
-	Movie->curFrame = 0xFFFF;
-
-	Movie->frameOffsets = (uint32 *)t3dMalloc(sizeof(uint32) * Movie->numFrames);
-	if (!Movie->frameOffsets) {
-		DebugLogFile("gLoadMovie FAILED: Can't alloc Movie->frameOffsets struct");
-		return nullptr;
-	}
-
-	uint16 maxlen = (Movie->numBlocks / 8) + 8 * Movie->numBlocks; //bit array + max different blocks
-	Movie->buffer = (uint8 *)t3dMalloc(maxlen);
-	if (!Movie->buffer) {
-		DebugLogFile("gLoadMovie FAILED: Can't alloc Movie->buffer struct");
-		return nullptr;
-	}
-
-	//read frame offsets
-	for (i = 0; i < Movie->numFrames; i++) {
-		Movie->frameOffsets[i] = Movie->stream->readUint32LE();
-	}
-
-	//check if the files are ok
-
-	{
-		//create surface
-		//warning("TODO: Create compressed surface");
-#if 0
-		DDSURFACEDESC2 ddsd2;
-
-		//create compressed surface
-		memcpy(&ddsd2, &Movie->surfDesc, sizeof(DDSURFACEDESC2));
-
-		ddsd2.ddsCaps.dwCaps |= DDSCAPS_SYSTEMMEMORY;
-
-		if (!(Movie->surf = gCreateSurface(&ddsd2, Movie->surf))) {
-			DebugLogFile("gLoadMovie: gCreateSurface FAILED: Can't create surface DDS");
-			return NULL;
-		}
-#endif
-	}
-
-//	Movie->frameRate=240;
-	return Movie;
+Common::SharedPtr<TextureData> createTextureFromSurface(Graphics::Surface &surface, int texFormat) {
+	return Common::SharedPtr<TextureData>(new SurfaceBackedTextureData(&surface, false));
 }
 
 //*********************************************************************************************
 gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int LoaderFlags) {
 	bool        bAlpha = FALSE, bUseAlternate = FALSE;
-	gTexture    *Texture = nullptr;
+	gTexture    *texture = nullptr;
 	int32      pos = 0;
 	char        AlternateName[500] {};
 	uint32      date1 = 0, date2 = 0, time1 = 0, time2 = 0;
@@ -748,9 +643,9 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	for (uint32 i = 0; i < gNumTextureList; i++) {
 		if (gTextureList[i].name.equalsIgnoreCase(TextName)) {
 			//Texture already loaded; just assign pointers
-			Texture = &gTextureList[i];
-			Texture->ID = i;
-			return Texture;
+			texture = &gTextureList[i];
+			texture->ID = i;
+			return texture;
 		}
 	}
 
@@ -793,8 +688,9 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		DebugLogFile("gLoadTexture: Can't create more textures");
 		return nullptr;
 	}
-	Texture = &gTextureList[pos];
-	*Texture = gTexture();
+	texture = &gTextureList[pos];
+	*texture = gTexture();
+	texture->texture = new OpenGLTexture();
 
 	if (bUseAlternate) {
 		auto stream = workDirs.resolveFile(AlternateName);
@@ -802,11 +698,10 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 			DebugLogFile("gAddMaterial:gLoadTexture: Cannot find %s.\n", AlternateName);
 			return nullptr;
 		}
-		auto compressed = parseDDS(*stream);
-		dwWidth = compressed->width;
-		dwHeight = compressed->height;
-		Texture->texId = createCompressedTextureFromSurface(*compressed);
-		delete compressed;
+		auto ddsTextureData = loadDdsTexture(*stream);
+		texture->texture->assignData(*ddsTextureData);
+		dwWidth = ddsTextureData->getWidth();
+		dwHeight = ddsTextureData->getHeight();
 		lpSSource = nullptr;
 #if 0
 		if (gRenderFlags & gDXT1SUPPORTED) {
@@ -843,7 +738,9 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	} else { // TGA
 		auto stream = workDirs.resolveFile(TextName);
 		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), 0); // TODO Flags
-		createTextureFromSurface(*image, GL_RGBA);
+		SurfaceBackedTextureData texData(image);
+
+		texture->texture->assignData(texData);
 #if 0
 		//warning("TODO: Handle TGA");
 		if (!t3dOpenFile(TextName)) {
@@ -881,7 +778,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		}
 	}
 #endif
-	Texture->name = TextName;
+	texture->name = TextName;
 
 	if (bUseAlternate) {
 #if 0
@@ -909,8 +806,8 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		Texture->lpDDSurface->Unlock(NULL);
 #endif
 	}
-	Texture->RealDimX = dwWidth;
-	Texture->RealDimY = dwHeight;
+	texture->RealDimX = dwWidth;
+	texture->RealDimY = dwHeight;
 
 	if (LoaderFlags & rSURFACEHALF) {
 		warning("Half-res loading not implemented");
@@ -954,13 +851,13 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 #endif
 	}
 
-	Texture->ID = pos;
+	texture->ID = pos;
 
-	Texture->Flags = CurLoaderFlags;
-	Texture->DimX = dwWidth;
-	Texture->DimY = dwHeight;
+	texture->Flags = CurLoaderFlags;
+	texture->DimX = dwWidth;
+	texture->DimY = dwHeight;
 
-	return Texture;
+	return texture;
 }
 
 
@@ -968,10 +865,10 @@ bool Renderer::addMaterial(gMaterial &material, const Common::String &name, int 
 	bool            AlreadyLoaded = FALSE;
 	//warning("AddMaterial(%s)", name.c_str());
 	if (hasFileExtension(name, "avi")) {
-		if ((material.Movie = gLoadMovie(*_workDirs, name.c_str())) == nullptr)
+		auto tex = createGLTexture();
+		if ((material.Movie = gLoadMovie(*_workDirs, name.c_str(), tex)) == nullptr)
 			return false;
-		if ((material.Texture = gUserTexture(64,
-		                                      128)) == nullptr)
+		if ((material.Texture = gUserTexture(tex, 64, 128)) == nullptr)
 //		if( (Material->Texture=gUserTexture(    Material->Movie->g_psiStreamInfo.rcFrame.right,
 //										Material->Movie->g_psiStreamInfo.rcFrame.bottom)) == NULL )
 			return false;

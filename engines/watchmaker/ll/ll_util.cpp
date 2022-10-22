@@ -567,7 +567,7 @@ void ChangeRoom(WGame &game, Common::String n, uint8 pos, int32 an) {
 				for (j = 0; j < T3D_MAX_SHADOWBOX_PER_CHAR; j++) {
 					if (Character[i]->ShadowBox[j]) {
 						for (k = 0; k < MAX_SHADOWS_PER_LIGHT; k++) {
-							Character[i]->ShadowBox[j]->ShadowsList[k].ProjectiveTexture.surface = nullptr;
+							Character[i]->ShadowBox[j]->ShadowsList[k].ProjectiveTexture.clear();
 						}
 					}
 				}

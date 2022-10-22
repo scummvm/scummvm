@@ -386,8 +386,6 @@ void t3dReleaseBody(t3dBODY *b) {
 	b->LightmapTable.clear();
 
 	if (b->MirrorMatTable.size() > 0) {
-		for (int i = 0; i < b->NumMirrorMaterials(); i++)
-			b->MirrorMatTable[i]->Movie = nullptr;
 		rRemoveMaterials(b->MirrorMatTable);
 	}
 	b->MirrorMatTable.clear();

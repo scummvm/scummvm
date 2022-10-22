@@ -534,9 +534,9 @@ bool rRenderScene(void) {
 				continue;
 			}
 
-			if (lpLogos->Material->Texture)
+			if (lpLogos->Material->Texture) {
 				g_renderer->setTexture(0, lpLogos->Material->Texture);
-
+			}
 #if 0 // TODO!
 			hres = g_renderer->DrawIndexedPrimitive(D3DPT_TRIANGLELIST,
 			                                        D3DFVF_TLVERTEX,
