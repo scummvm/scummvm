@@ -38,6 +38,8 @@ static const PlainGameDescriptor sword2Games[] = {
 
 static const char *const directoryGlobs[] = {
 	"clusters",
+	"smacks",
+	"video",
 	nullptr
 };
 
