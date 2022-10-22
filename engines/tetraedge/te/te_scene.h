@@ -57,8 +57,10 @@ public:
 
 	void update();
 
-	Common::Array<TeIntrusivePtr<TeCamera>> &cameras() { return _cameras; }
 	Common::Array<TeIntrusivePtr<TeModel>> &models() { return _models; }
+
+protected:
+	Common::Array<TeIntrusivePtr<TeCamera>> &cameras() { return _cameras; }
 
 private:
 	uint _currentCameraIndex;

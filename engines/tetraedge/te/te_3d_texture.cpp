@@ -268,6 +268,4 @@ void Te3DTexture::update(const TeImage &img, uint xoff, uint yoff) {
 	return;
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

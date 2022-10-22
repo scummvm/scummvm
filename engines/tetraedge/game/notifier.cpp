@@ -32,14 +32,14 @@ Notifier::Notifier() {
 void Notifier::launchNextnotifier() {
 	TeCurveAnim2<Te3DObject2, TeColor> *colorAnim = _gui.colorLinearAnimation("fadeIn");
 	assert(colorAnim);
-	if (!colorAnim->_runTimer._stopped)
+	if (colorAnim->_runTimer.running())
 		return;
 
 	colorAnim = _gui.colorLinearAnimation("fadeOut");
-	if (!colorAnim->_runTimer._stopped) {
+	if (!colorAnim->_runTimer.running()) {
 		colorAnim = _gui.colorLinearAnimation("visible");
 		bool abort = true;
-		if (!colorAnim->_runTimer._stopped) {
+		if (!colorAnim->_runTimer.running()) {
 			abort = _notifierDataArray.empty();
 		}
 		if (abort)

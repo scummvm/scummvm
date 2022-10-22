@@ -45,14 +45,17 @@ public:
 	TeSpriteLayout _blackFadeSprite;
 	TeButtonLayout _buttonLayout;
 
-	bool fading() const { return !_animateFadeCurveAnim._runTimer._stopped; }
+	bool fading() const { return _fadeCurveAnim._runTimer.running(); }
+	bool blackFading() const { return _blackFadeCurveAnim._runTimer.running(); }
+
+	TeCurveAnim2<Te3DObject2, TeColor> blackFadeCurveAnim() { return _blackFadeCurveAnim; }
 
 private:
 
 	TeIntrusivePtr<Te3DTexture> _texturePtr;
-	TeCurveAnim2<Te3DObject2, TeColor> _animateFadeCurveAnim;
+	TeCurveAnim2<Te3DObject2, TeColor> _fadeCurveAnim;
+	TeCurveAnim2<Te3DObject2, TeColor> _blackFadeCurveAnim;
 	TeImage _image;
-	// TODO add private members
 
 };
 

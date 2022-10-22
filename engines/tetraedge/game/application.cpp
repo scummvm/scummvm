@@ -60,7 +60,8 @@ _captureFade(false), _difficulty(1), _created(false), _tutoActivated(false) {
 
 	// TODO: Configure sound manager here?
 	// TODO: Configure freemium things here?
-	// TODO: Start some timer here?
+
+	// Note: original has an app run timer, but it's never used?
 
 	loadOptions("options.xml");
 }
@@ -72,6 +73,7 @@ void Application::create() {
 	const int winHeight = g_engine->getDefaultScreenHeight();
 	// See TeMainWindowBase::initCamera
 	_mainWindowCamera.reset(new TeCamera());
+	_mainWindowCamera->setName("_mainWinCam");
 	_mainWindowCamera->_projectionMatrixType = 4;
 	_mainWindowCamera->viewport(0, 0, winWidth, winHeight);
 	_mainWindowCamera->orthogonalParams(winWidth * -0.5f, winWidth * 0.5f, winHeight * 0.5f, winHeight * -0.5f);
@@ -234,6 +236,7 @@ void Application::create() {
 	_autoSaveIconAnim1.pause();
 	_autoSaveIconAnim1._startVal = TeColor(255, 255, 255, 0);
 	_autoSaveIconAnim1._endVal = TeColor(255, 255, 255, 255);
+	_autoSaveIconAnim1._repeatCount = -1;
 	Common::Array<float> curve;
 	curve.push_back(0.0f);
 	curve.push_back(1.0f);
@@ -256,12 +259,13 @@ void Application::create() {
 	_autoSaveIconAnim2.pause();
 	_autoSaveIconAnim2._startVal = TeColor(255, 255, 255, 0);
 	_autoSaveIconAnim2._endVal = TeColor(255, 255, 255, 255);
+	_autoSaveIconAnim2._repeatCount = 1;
 	_autoSaveIconAnim2.setCurve(curve);
 	_autoSaveIconAnim2._duration = 4000.0f;
 	_autoSaveIconAnim2._callbackObj = &_autoSaveIcon2;
 	_autoSaveIconAnim2._callbackMethod = &Te3DObject2::setColor;
 
-	_blackFadeAnimationFinishedSignal.add<Application>(this, &Application::onBlackFadeAnimationFinished);
+	_visFade.blackFadeCurveAnim().onFinished().add(this, &Application::onBlackFadeAnimationFinished);
 
 	g_engine->getInputMgr()->_mouseMoveSignal.add(this, &Application::onMousePositionChanged);
 
@@ -394,7 +398,6 @@ void Application::performRender() {
 
 	renderer->renderTransparentMeshes();
 	renderer->clearBuffer(GL_ACCUM);
-
 	if (game->running()) {
 		if (game->scene()._character
 			&& game->scene()._shadowLightNo != -1
@@ -403,7 +406,7 @@ void Application::performRender() {
 			if (currentCamera) {
 				currentCamera->apply();
 				renderer->shadowMode(TeRenderer::ShadowMode2);
-				game->scene()._charactersShadow->createTexture(&game->scene());
+				game->scene()._charactersShadow->draw(&game->scene());
 				renderer->shadowMode(TeRenderer::ShadowMode0);
 			}
 		}
@@ -438,10 +441,7 @@ void Application::captureFade() {
 }
 
 bool Application::isFading() {
-	warning("Application::isFading: Check field here.");
-	if (true /* field_0xb1e1? */)
-		return _visFade.fading();
-	return false;
+	return _visFade.blackFading() || _visFade.fading();
 }
 
 bool Application::onBlackFadeAnimationFinished() {

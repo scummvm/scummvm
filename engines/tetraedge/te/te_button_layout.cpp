@@ -60,7 +60,7 @@ _hitZoneLayout(nullptr)
 	inputmgr->_mouseLUpSignal.insert(_onMouseLeftUpMaxPriorityCallback);
 
 	setEditionColor(TeColor(128, 128, 128, 255));
-	if (getDoubleValidationProtectionTimer()->_stopped)
+	if (!getDoubleValidationProtectionTimer()->running())
 		getDoubleValidationProtectionTimer()->start();
 }
 
@@ -202,7 +202,7 @@ void TeButtonLayout::reset() {
 
 void TeButtonLayout::resetTimeFromLastValidation() {
 	TeTimer *timer = getDoubleValidationProtectionTimer();
-	if (timer->_stopped) {
+	if (!timer->running()) {
 		timer->start();
 	}
 	timer->timeElapsed();

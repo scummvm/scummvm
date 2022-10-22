@@ -105,4 +105,14 @@ void TeOBP::updateTransformed() {
 	_boundsNeedUpdate = false;
 }
 
+/*static*/
+void TeOBP::deserialize(Common::ReadStream &stream, TeOBP &dest) {
+	dest._boundsNeedUpdate = true;
+	Te3DObject2::deserialize(stream, dest);
+	TeVector3f32::deserialize(stream, dest._corner1);
+	TeVector3f32::deserialize(stream, dest._corner2);
+	TeVector3f32::deserialize(stream, dest._corner3);
+	TeVector3f32::deserialize(stream, dest._corner4);
+}
+
 } // end namespace Tetraedge

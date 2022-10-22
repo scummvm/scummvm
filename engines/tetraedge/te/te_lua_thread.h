@@ -69,7 +69,6 @@ private:
 	bool _released;
 
 	static Common::Array<TeLuaThread *> _threadList;
-	// TODO add private members
 
 };
 

@@ -48,6 +48,4 @@ void HelpOptionMenu::leave() {
 	_entered = false;
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

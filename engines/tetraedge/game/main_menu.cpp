@@ -52,7 +52,7 @@ void MainMenu::enter() {
 	Application *app = g_engine->getApplication();
 	TeSpriteLayout &appSpriteLayout = app->appSpriteLayout();
 	appSpriteLayout.setVisible(true);
-	if (appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer._stopped) {
+	if (!appSpriteLayout._tiledSurfacePtr->_frameAnim._runTimer.running()) {
 		appSpriteLayout.load("menus/menu.ogv");
 		appSpriteLayout._tiledSurfacePtr->_frameAnim._loopCount = -1;
 		appSpriteLayout._tiledSurfacePtr->play();

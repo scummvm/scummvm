@@ -108,7 +108,6 @@ private:
 	int _useNMOArrays; // TODO: probably a bad name?
 	int _numNMOFrames;
 	float _speed;
-	// TODO add private members
 
 };
 

@@ -48,7 +48,6 @@ private:
 	};
 	Common::Array<notifierData> _notifierDataArray;
 	TeLuaGUI _gui;
-	// TODO add private members
 
 };
 

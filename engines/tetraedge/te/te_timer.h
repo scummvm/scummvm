@@ -50,7 +50,7 @@ public:
 	static void resumeAll();
 	static void updateAll();
 
-	bool _stopped;
+	bool running() const { return !_stopped; }
 
 private:
 	static TeRealTimer *realTimer();
@@ -62,6 +62,7 @@ private:
 	bool _pausable;
 	bool _alarmSet;
 	bool _updated;
+	bool _stopped;
 
 	TeSignal0Param _alarmSignal;
 

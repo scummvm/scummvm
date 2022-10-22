@@ -455,10 +455,10 @@ void TeRenderer::renderTransparentMeshes() {
 		}
 		glTexEnvi(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 		if (meshProperties._scissorEnabled) {
-		  	glDisable(GL_SCISSOR_TEST);
+			glDisable(GL_SCISSOR_TEST);
 		}
 		if (texture) {
-		  	glDisable(GL_TEXTURE_2D);
+			glDisable(GL_TEXTURE_2D);
 			_textureEnabled = false;
 		}
 		glPopMatrix();

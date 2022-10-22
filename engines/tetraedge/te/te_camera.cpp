@@ -31,8 +31,16 @@ namespace Tetraedge {
 TeCamera::TeCamera() : _projectionMatrixType(0), _orthogonalParamL(1.0f),
 	_orthogonalParamR(0.0f), _orthogonalParamT(1.0f), _orthogonalParamB(0.0f),
 	_orthNearVal(10.0f), _orthFarVal(4000.0f), _transformA(0), _transformB(0),
-	_focalLenMaybe(40.0f), _somePerspectiveVal(1.0f)
+	_fov(40.0f), _somePerspectiveVal(1.0f)
 {
+}
+
+void TeCamera::apply() {
+	/*debug("TeCamera::apply %13s mtype %d fov %.2f persp %.2f orth(%.2f %.2f) pos %s scale %s", name().c_str(),
+			_projectionMatrixType, _fov, _somePerspectiveVal, _orthNearVal, _orthFarVal,
+			position().dump().c_str(), scale().dump().c_str());*/
+	applyProjection();
+	applyTransformations();
 }
 
 void TeCamera::applyProjection() {
@@ -50,7 +58,7 @@ void TeCamera::applyProjection() {
 void TeCamera::applyTransformations() {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->setMatrixMode(TeRenderer::MatrixMode::MM_GL_MODELVIEW);
-	TeMatrix4x4 matrix = transformationMatrix();
+	TeMatrix4x4 matrix = worldTransformationMatrix();
 	matrix.inverse();
 	renderer->loadMatrix(matrix);
 	renderer->loadCurrentMatrixToGL();
@@ -92,23 +100,60 @@ void TeCamera::buildOrthoMatrix() {
 }
 
 void TeCamera::buildPerspectiveMatrix() {
-	error("TODO: Implement TeCamera::buildPerspectiveMatrix");
+	_projectionMatrix = TeMatrix4x4();
+	float f = tanf(_fov * 0.5);
+	_projectionMatrix.setValue(0, 0, (1.0 / f) / ((float)_viewportW / _viewportH));
+	_projectionMatrix.setValue(1, 1, 1.0 / f);
+	_projectionMatrix.setValue(2, 2, (_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(2, 2, (_orthNearVal * _orthFarVal) / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(2, 3, -1);
+	_projectionMatrix.setValue(3, 3, 0.0);
 }
 
 void TeCamera::buildPerspectiveMatrix2() {
-	error("TODO: Implement TeCamera::buildPerspectiveMatrix2");
+	_projectionMatrix = TeMatrix4x4();
+	float f = tanf(_fov * 0.5);
+	_projectionMatrix.setValue(0, 0, 1.0 / f);
+	_projectionMatrix.setValue(1, 1, _somePerspectiveVal / f);
+	_projectionMatrix.setValue(2, 2, -(_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(3, 2, 1.0);
+	_projectionMatrix.setValue(2, 3, (_orthFarVal * 2) * _orthNearVal / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(3, 3, 0.0);
 }
 
 void TeCamera::buildPerspectiveMatrix3() {
-	error("TODO: Implement TeCamera::buildPerspectiveMatrix3");
+	_projectionMatrix = TeMatrix4x4();
+	float f = tanf(_fov * 0.5);
+	_projectionMatrix.setValue(0, 0, (1.0 / f) / _somePerspectiveVal);
+	_projectionMatrix.setValue(1, 1, 1.0 / f);
+	_projectionMatrix.setValue(2, 2, -(_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(3, 2, 1.0);
+	_projectionMatrix.setValue(2, 3, (_orthFarVal * 2) * _orthNearVal / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(3, 3, 0.0);
 }
 
 void TeCamera::draw() {
 	error("TODO: Implement TeCamera::draw");
 }
 
-void TeCamera::getRay(const TeVector2s32 &param_1, TeVector3f32 &out1, TeVector3f32 &out2) {
-	error("TODO: Implement TeCamera::getRay");
+void TeCamera::getRay(const TeVector2s32 &pxloc, TeVector3f32 &out1, TeVector3f32 &out2) {
+	float xval = (pxloc._x - _viewportX) / fabs(_viewportW);
+	out2.x() = xval * 2 - 1;
+	float yval = (pxloc._y - _viewportY) / fabs(_viewportH);
+	out2.y() = yval * 2 - 1;
+	out2.z() = 1.0;
+
+	TeMatrix4x4 inverse = projectionMatrix();
+	inverse.inverse();
+	out2 = inverse * out2;
+	out2.normalize();
+
+	TeVector3f32 pos = position();
+	TeQuaternion rot = rotation();
+	out1 = pos;
+	rot.normalize();
+	TeMatrix4x4 rotmatrix = rot.toMatrix();
+	out2 = rotmatrix * out2;
 }
 
 void TeCamera::loadBin(const Common::String &path) {

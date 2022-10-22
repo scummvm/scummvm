@@ -72,11 +72,13 @@ public:
 	bool parse(const Common::String &val);
 
 	Common::String dump() const {
-		return Common::String::format("TeVector3f32(%.02f %.02f %.02f)", x(), y(), z());
+		return Common::String::format("TeVec3f32(%.02f %.02f %.02f)", x(), y(), z());
 	}
 
 	void rotate(const TeQuaternion &rot);
 };
+
+TeVector3f32 operator^(const TeVector3f32 &left, const TeVector3f32 &right);
 
 } // end namespace Tetraedge
 

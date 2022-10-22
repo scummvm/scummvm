@@ -68,6 +68,9 @@ public:
 	void setPosition3d(const TeVector3f32 &pos) { _position3d = pos; }
 	void setPositionRadial(const TeVector2f32 &pos) { _positionRadial = pos; }
 
+	const TeVector2f32 &positionRadial() const { return _positionRadial; }
+	const TeVector3f32 &position3d() const { return _position3d; }
+
 private:
 	TeVector3f32 _position3d;
 	TeVector2f32 _positionRadial;

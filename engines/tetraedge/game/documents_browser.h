@@ -88,7 +88,6 @@ private:
 	TeTimer _timer;
 	TeLayout _zoomedLayout;
 	unsigned long _curPage;
-	// TODO add private members
 	// TiXmlDocument _xmldoc;
 };
 

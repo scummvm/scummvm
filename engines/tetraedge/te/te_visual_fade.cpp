@@ -30,24 +30,47 @@ TeVisualFade::TeVisualFade() {
 }
 
 void TeVisualFade::animateBlackFade() {
-	error("TODO: Implement TeVisualFade::animateBlackFade.");
+	_fadeCaptureSprite.setVisible(false);
+	_fadeCurveAnim.stop();
+	_fadeCurveAnim._startVal = TeColor(255, 255, 255, 0);
+	_fadeCurveAnim._endVal = TeColor(255, 255, 255, 255);
+	Common::Array<float> curve;
+	curve.push_back(0.0);
+	curve.push_back(0.0);
+	curve.push_back(1.0);
+	curve.push_back(1.0);
+	curve.push_back(1.0);
+	_fadeCurveAnim.setCurve(curve);
+	_fadeCurveAnim._duration = 2000.0;
+	_fadeCurveAnim._callbackObj = &_fadeCaptureSprite;
+	_fadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_fadeCurveAnim.play();
+
+	_blackFadeSprite.setVisible(true);
+	_blackFadeCurveAnim.stop();
+	_blackFadeCurveAnim._startVal = TeColor(255, 255, 255, 255);
+	_blackFadeCurveAnim._endVal = TeColor(255, 255, 255, 0);
+	_blackFadeCurveAnim.setCurve(curve);
+	_blackFadeCurveAnim._duration = 2000.0;
+	_blackFadeCurveAnim._callbackObj = &_blackFadeSprite;
+	_blackFadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_blackFadeCurveAnim.play();
 }
 
 void TeVisualFade::animateFade() {
-	//debug("visual fade %p animate", this);
-	_animateFadeCurveAnim.stop();
-	_animateFadeCurveAnim._runTimer.pausable(false);
+	_fadeCurveAnim.stop();
+	_fadeCurveAnim._runTimer.pausable(false);
 	_fadeCaptureSprite.setVisible(true);
-	_animateFadeCurveAnim._startVal = TeColor(255, 255, 255, 255);
-	_animateFadeCurveAnim._endVal = TeColor(255, 255, 255, 0);
+	_fadeCurveAnim._startVal = TeColor(255, 255, 255, 255);
+	_fadeCurveAnim._endVal = TeColor(255, 255, 255, 0);
 	Common::Array<float> curve;
 	curve.push_back(0.0);
 	curve.push_back(1.0);
-	_animateFadeCurveAnim.setCurve(curve);
-	_animateFadeCurveAnim._duration = 400.0;
-	_animateFadeCurveAnim._callbackObj = &_fadeCaptureSprite;
-	_animateFadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
-	_animateFadeCurveAnim.play();
+	_fadeCurveAnim.setCurve(curve);
+	_fadeCurveAnim._duration = 400.0;
+	_fadeCurveAnim._callbackObj = &_fadeCaptureSprite;
+	_fadeCurveAnim._callbackMethod = &Te3DObject2::setColor;
+	_fadeCurveAnim.play();
 }
 
 void TeVisualFade::captureFrame() {

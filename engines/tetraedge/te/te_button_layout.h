@@ -88,6 +88,9 @@ public:
 	void setState(State newState);
 
 	TeSignal0Param &onMouseClickValidated() { return _onMouseClickValidatedSignal; };
+	TeSignal0Param &onButtonChangedToStateUpSignal() { return _onButtonChangedToStateUpSignal; };
+	TeSignal0Param &onButtonChangedToStateDownSignal() { return _onButtonChangedToStateDownSignal; };
+	TeSignal0Param &onButtonChangedToStateRolloverSignal() { return _onButtonChangedToStateRolloverSignal; };
 
 	bool _someClickFlag;
 	TeLayout *_upLayout;

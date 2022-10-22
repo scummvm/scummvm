@@ -58,7 +58,6 @@ private:
 	int _baseFontSize;
 
 	TeTextBase2 _base;
-	// TODO add private members
 
 };
 

@@ -69,7 +69,9 @@ public:
 		Common::String _name;
 	};
 
-	class TeMarker {
+	struct TeMarker {
+		Common::String _name;
+		Common::String _val;
 	};
 
 	struct Dummy {
@@ -85,7 +87,7 @@ public:
 		_blockingObjects.push_back(obj);
 	}
 	void addCallbackAnimation2D(const Common::String &param_1, const Common::String &param_2, float param_3);
-	void addMarker(const Common::String &name, const Common::String &param_2, float param_3, float param_4, const Common::String &param_5, const Common::String &param_6);
+	void addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal);
 	static float angularDistance(float a1, float a2);
 	bool aroundAnchorZone(const AnchorZone *zone);
 	TeLayout *background();
@@ -93,6 +95,14 @@ public:
 	void loadBackground(const Common::Path &path);
 	void loadInteractions(const Common::Path &path);
 	void initScroll();
+	bool isObjectBlocking(const Common::String &name);
+	bool isMarker(const Common::String &name);
+	TeFreeMoveZone *pathZone(const Common::String &name);
+	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);
+	TeIntrusivePtr<TeBezierCurve> curve(const Common::String &curveName);
+	void setPositionCharacter(const Common::String &charName, const Common::String &freeMoveZoneName, const TeVector3f32 &position);
+	void setVisibleMarker(const Common::String &markerName, bool val);
+	void deleteMarker(const Common::String &markerName);
 
 	void draw();
 	void drawPath();
@@ -120,6 +130,7 @@ public:
 	void deleteAllCallback();
 
 	void setStep(const Common::String &scene, const Common::String &step1, const Common::String &step2);
+	TeLight *shadowLight();
 
 	Common::Path getActZoneFileName() const;
 	Common::Path getBlockersFileName() const;
@@ -134,9 +145,20 @@ public:
 	Common::Array<Character *> _characters;
 
 	TeLuaGUI &bgGui() { return _bgGui; }
+	TeLuaGUI &hitObjectGui() { return _hitObjectGui; }
+	TeLuaGUI &markerGui() { return _markerGui; }
+
+	Common::Array<TePickMesh2 *> &pickMeshes() { return _pickMeshes; }
+
+	float shadowFarPlane() const { return _shadowFarPlane; }
+	float shadowNearPlane() const { return _shadowNearPlane; }
+	float shadowFov() const { return _shadowFov; }
+	const TeColor &shadowColor() const { return _shadowColor; }
 
 	int _shadowLightNo;
 	CharactersShadow *_charactersShadow;
+	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
+	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { c = _curve; }
 
 private:
 	TeColor _shadowColor;
@@ -154,6 +176,7 @@ private:
 	Common::Array<Object3D *> _object3Ds;
 	Common::Array<Billboard *> _billboards;
 	Common::Array<TeSpriteLayout *> _sprites;
+	Common::Array<TePickMesh2 *> _pickMeshes;
 
 	Common::HashMap<Common::String, SoundStep> _soundSteps;
 
@@ -163,10 +186,11 @@ private:
 	Common::Array<Dummy> _dummies;
 
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
+	TeIntrusivePtr<TeBezierCurve> _curve;
 	Common::Array<Common::String> _blockingObjects;
 	TeLuaGUI _bgGui;
-	TeLuaGUI _gui2; // TODO: find a better name.
-	TeLuaGUI _gui3; // TODO: find a better name.
+	TeLuaGUI _markerGui;
+	TeLuaGUI _hitObjectGui;
 
 	Common::Array<TeLight> _lights;
 
