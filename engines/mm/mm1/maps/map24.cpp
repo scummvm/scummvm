@@ -29,6 +29,8 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 91
+
 void Map24::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 10; ++i) {
@@ -49,21 +51,104 @@ void Map24::special() {
 }
 
 void Map24::special00() {
+	send(SoundMessage(STRING["maps.map24.roadsign"]));
 }
 
 void Map24::special01() {
+	send(SoundMessage(
+		STRING["maps.map24.kilburn"],
+		[]() {
+			Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
+			if (!map.addItem(MAP_OF_DESERT_ID))
+				none160();
+		}
+	));
 }
 
 void Map24::special02() {
+	send(SoundMessage(
+		STRING["maps.map24.lair"],
+		[]() {
+			Game::Encounter &enc = g_globals->_encounters;
+			int monsterCount = getRandomNumber(4) + 3;
+
+			enc.clearMonsters();
+			enc.addMonster(6, 8);
+			for (int i = 1; i < monsterCount; ++i)
+				enc.addMonster(14, 7);
+
+			enc._flag = true;
+			enc._encounterType = Game::FORCE_SURPRISED;
+			enc._levelIndex = 40;
+			enc.execute();
+		}
+	));
 }
 
 void Map24::special03() {
+	g_maps->clearSpecial();
+
+	SoundMessage msg(
+		STRING["maps.map24.wyverns"],
+		[]() {
+			Game::Encounter &enc = g_globals->_encounters;
+			int monsterCount = getRandomNumber(4) + 3;
+			enc.clearMonsters();
+			for (int i = 1; i < monsterCount; ++i)
+				enc.addMonster(14, 7);
+
+			enc._flag = true;
+			enc._encounterType = Game::FORCE_SURPRISED;
+			enc._levelIndex = 40;
+			enc.execute();
+		}
+	);
+	msg._delaySeconds = 3;
+	send(msg);
 }
 
 void Map24::special08() {
+	send(SoundMessage(STRING["maps.map24.sign"]));
 }
 
 void Map24::special09() {
+	send(SoundMessage(
+		STRING["maps.map24.hermit"],
+		[]() {
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				g_globals->_currCharacter = &c;
+
+				c._backpack.clear();
+				for (int j = 0; j < INVENTORY_COUNT; ++j)
+					c._backpack.add(USELESS_ITEM_ID, 0);
+			}
+
+			Character &c = g_globals->_party[0];
+			g_globals->_currCharacter = &c;
+			c._backpack[0]._id = PIRATES_MAP_A_ID;
+			c._backpack[1]._id = PIRATES_MAP_B_ID;
+
+			g_maps->clearSpecial();
+			none160();
+		}
+	));
+}
+
+bool Map24::addItem(byte itemId) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		g_globals->_currCharacter = &c;
+
+		if (!c._backpack.full()) {
+			c._backpack.add(itemId, 20);
+			return false;
+		}
+	}
+
+	g_events->send(SoundMessage(STRING["maps.map24.backpacks_full"]));
+	Sound::sound(SOUND_3);
+	return true;
 }
 
 } // namespace Maps
