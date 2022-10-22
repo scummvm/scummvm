@@ -22,6 +22,7 @@
 #include "tetraedge/tetraedge.h"
 
 #include "tetraedge/game/application.h"
+#include "tetraedge/game/character.h"
 #include "tetraedge/game/game.h"
 #include "tetraedge/game/lua_binds.h"
 #include "tetraedge/to_lua.h"
@@ -161,6 +162,105 @@ static int tolua_ExportedFunctions_ChangeWarp00(lua_State *L) {
 	error("#ferror in function 'ChangeWarp': %d %d %s", err.index, err.array, err.type);
 }
 
+static void SetCharacterPlayerVisible(bool val) {
+	Game *game = g_engine->getGame();
+	game->scene()._character->_model->setVisible(val);
+}
+
+static int tolua_ExportedFunctions_SetCharacterPlayerVisible00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		SetCharacterPlayerVisible(tolua_toboolean(L, 1, 0));
+		return 0;
+	}
+	error("#ferror in function 'SetCharacterPlayerVisible': %d %d %s", err.index, err.array, err.type);
+}
+
+static void MoveCharacterPlayerDisabled(bool val) {
+	Game *game = g_engine->getGame();
+	game->_movePlayerCharacterDisabled = val;
+}
+
+static int tolua_ExportedFunctions_MoveCharacterPlayerDisabled00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		MoveCharacterPlayerDisabled(tolua_toboolean(L, 1, 0));
+		return 0;
+	}
+	error("#ferror in function 'MoveCharacterPlayerDisabled': %d %d %s", err.index, err.array, err.type);
+}
+
+static void AddMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y,
+				const Common::String &loctype, const Common::String &markerVal) {
+	Game *game = g_engine->getGame();
+	game->scene().addMarker(markerName, imgPath, x, y, loctype, markerVal);
+}
+
+static int tolua_ExportedFunctions_AddMarker00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isstring(L, 2, 0, &err)
+			&& tolua_isnumber(L, 3, 0, &err) && tolua_isnumber(L, 4, 0, &err)
+			&& tolua_isstring(L, 5, 1, &err) && tolua_isstring(L, 6, 1, &err)
+			&& tolua_isnoobj(L, 7, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		Common::String s2(tolua_tostring(L, 2, nullptr));
+		double n1 = tolua_tonumber(L, 3, 0.0);
+		double n2 = tolua_tonumber(L, 4, 0.0);
+		Common::String s3(tolua_tostring(L, 5, ""));
+		Common::String s4(tolua_tostring(L, 6, ""));
+		AddMarker(s1, s2, n1, n2, s3, s4);
+		return 0;
+	}
+	error("#ferror in function 'AddMarker': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetVisibleMarker(const Common::String &markerName, bool val) {
+	Game *game = g_engine->getGame();
+	game->scene().setVisibleMarker(markerName, val);
+}
+
+static int tolua_ExportedFunctions_SetVisibleMarker00(lua_State *L) {
+tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isboolean(L, 2, 0, &err) && tolua_isnoobj(L, 3, &err)) {
+		Common::String s(tolua_tostring(L, 1, nullptr));
+		bool b = tolua_toboolean(L, 1, 0);
+		SetVisibleMarker(s, b);
+		return 0;
+	}
+	error("#ferror in function 'SetVisibleMarker': %d %d %s", err.index, err.array, err.type);
+}
+
+static void DeleteMarker(const Common::String &markerName) {
+	Game *game = g_engine->getGame();
+	game->scene().deleteMarker(markerName);
+}
+
+static int tolua_ExportedFunctions_DeleteMarker00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isstring(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		Common::String s1(tolua_tostring(L, 1, nullptr));
+		DeleteMarker(s1);
+		return 0;
+	}
+	error("#ferror in function 'DeleteMarker': %d %d %s", err.index, err.array, err.type);
+}
+
+static void SetVisibleCellphone(bool visible) {
+	Game *game = g_engine->getGame();
+	game->inventory().cellphone()->setVisible(visible);
+}
+
+static int tolua_ExportedFunctions_SetVisibleCellphone00(lua_State *L) {
+	tolua_Error err;
+	if (tolua_isboolean(L, 1, 0, &err) && tolua_isnoobj(L, 2, &err)) {
+		SetVisibleCellphone(tolua_toboolean(L, 1, 0));
+		return 0;
+	}
+	error("#ferror in function 'SetVisibleCellphone': %d %d %s", err.index, err.array, err.type);
+}
+
+
+// ////////////////////////////////////////////////////////////////////////
 
 void LuaOpenBinds(lua_State *L) {
 	tolua_open(L);
@@ -184,12 +284,12 @@ void LuaOpenBinds(lua_State *L) {
 				 tolua_ExportedFunctions_StartAnimationAndWaitForEnd00);
 	tolua_function(L, "AddAnimToSet", tolua_ExportedFunctions_AddAnimToSet00);
 	tolua_function(L, "RequestAutoSave", tolua_ExportedFunctions_RequestAutoSave00);
-	tolua_function(L, "SetVisibleButtonZoomed", tolua_ExportedFunctions_SetVisibleButtonZoomed00);
+	tolua_function(L, "SetVisibleButtonZoomed", tolua_ExportedFunctions_SetVisibleButtonZoomed00);*/
 	tolua_function(L, "AddMarker", tolua_ExportedFunctions_AddMarker00);
 	tolua_function(L, "SetVisibleMarker", tolua_ExportedFunctions_SetVisibleMarker00);
 	tolua_function(L, "DeleteMarker", tolua_ExportedFunctions_DeleteMarker00);
 	tolua_function(L, "SetVisibleCellphone", tolua_ExportedFunctions_SetVisibleCellphone00);
-	tolua_function(L, "DisabledZone", tolua_ExportedFunctions_DisabledZone00);
+	/*tolua_function(L, "DisabledZone", tolua_ExportedFunctions_DisabledZone00);
 	tolua_function(L, "DisabledInt", tolua_ExportedFunctions_DisabledInt00);
 	tolua_function(L, "LockCursor", tolua_ExportedFunctions_LockCursor00);
 	tolua_function(L, "SetCondition", tolua_ExportedFunctions_SetCondition00);
@@ -243,11 +343,11 @@ void LuaOpenBinds(lua_State *L) {
 	tolua_function(L, "BlendCharacterAnimation", tolua_ExportedFunctions_BlendCharacterAnimation00);
 	tolua_function(L, "BlendCharacterAnimationAndWaitForEnd",
 				 tolua_ExportedFunctions_BlendCharacterAnimationAndWaitForEnd00);
-	tolua_function(L, "CurrentCharacterAnimation", tolua_ExportedFunctions_CurrentCharacterAnimation00);
+	tolua_function(L, "CurrentCharacterAnimation", tolua_ExportedFunctions_CurrentCharacterAnimation00);*/
 	tolua_function(L, "SetCharacterPlayerVisible", tolua_ExportedFunctions_SetCharacterPlayerVisible00);
 	tolua_function(L, "MoveCharacterPlayerDisabled",
 				 tolua_ExportedFunctions_MoveCharacterPlayerDisabled00);
-	tolua_function(L, "SetRunMode", tolua_ExportedFunctions_SetRunMode00);
+	/*tolua_function(L, "SetRunMode", tolua_ExportedFunctions_SetRunMode00);
 	tolua_function(L, "SetRunMode2", tolua_ExportedFunctions_SetRunMode200);
 	tolua_function(L, "SetCharacterColor", tolua_ExportedFunctions_SetCharacterColor00);
 	tolua_function(L, "SetCharacterSound", tolua_ExportedFunctions_SetCharacterSound00);

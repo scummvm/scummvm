@@ -332,7 +332,7 @@ int spriteLayoutBindings(lua_State *L) {
 	TeSpriteLayout *layout = new TeSpriteLayout();
 	lua_pushnil(L);
 
-	bool playNow = !layout->_tiledSurfacePtr->_frameAnim._runTimer._stopped;
+	bool playNow = layout->_tiledSurfacePtr->_frameAnim._runTimer.running();
 	int startingFrame = 0;
 	int endingFrame = -1;
 	Common::Path imgFullPath;

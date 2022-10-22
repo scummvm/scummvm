@@ -103,8 +103,6 @@ private:
 
 	Common::Path _path;
 
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

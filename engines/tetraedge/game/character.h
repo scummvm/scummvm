@@ -67,8 +67,8 @@ public:
 
 		TeVector3f32 _cutSceneCurveDemiPosition;
 		Common::String _defaultEyes;	// Note: Engine supports more, but in practice only one ever used.
-		Common::String _defaultMouth; 	// Note: Engine supports more, but in practice only one ever used.
-		Common::String _defaultBody; 	// Note: Engine supports more, but in practice only one ever used.
+		Common::String _defaultMouth;	// Note: Engine supports more, but in practice only one ever used.
+		Common::String _defaultBody;	// Note: Engine supports more, but in practice only one ever used.
 
 		void clear();
 	};
@@ -150,15 +150,19 @@ public:
 	TeSignal1Param<const Common::String &> _onCharacterAnimFinishedSignal;
 
 	const CharacterSettings &characterSettings() const { return _characterSettings; }
-	const Common::String walkModeStr() const { return _walkModeStr; }
-	const Common::String curAnimName() const { return _curAnimName; }
+	const Common::String &walkModeStr() const { return _walkModeStr; }
+	const Common::String &curAnimName() const { return _curAnimName; }
+	TeFreeMoveZone *freeMoveZone() { return _freeMoveZone; }
+	const Common::String &freeMoveZoneName() const { return _freeMoveZoneName; }
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
+	void setNeedsSomeUpdate(bool val) { _needsSomeUpdate = val; }
 	void setCharLookingAt(Character *other) { _charLookingAt = other; }
 
 private:
 	float _curveOffset;
 	TeIntrusivePtr<TeBezierCurve> _curve;
 	TeFreeMoveZone *_freeMoveZone;
+	Common::String _freeMoveZoneName;
 	Common::String _stepSound1;
 	Common::String _stepSound2;
 	Common::String _walkModeStr; // Walk or Jog

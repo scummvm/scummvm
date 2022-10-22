@@ -19,22 +19,26 @@
  *
  */
 
-#ifndef TETRAEDGE_TE_TE_FEE_MOVE_ZONE_H
-#define TETRAEDGE_TE_TE_FEE_MOVE_ZONE_H
+#ifndef TETRAEDGE_TE_TE_RAY_INTERSECTION_H
+#define TETRAEDGE_TE_TE_RAY_INTERSECTION_H
+
+#include "common/array.h"
+#include "tetraedge/te/te_vector3f32.h"
 
 namespace Tetraedge {
 
-class TeFeeMoveZone {
-public:
-	TeFeeMoveZone();
+class TePickMesh;
 
-	// TODO add public members
+namespace TeRayIntersection {
 
-private:
-	// TODO add private members
+TePickMesh *getMesh(const TeVector3f32 &param_1, const TeVector3f32 &param_2, const Common::Array<TePickMesh *> &pickMeshes,
+			float param_4, float param_5, TeVector3f32 *param_6);
 
-};
+int intersect(const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3,
+              const TeVector3f32 &v4, const TeVector3f32 &v5, TeVector3f32 &vout, float &fout);
+
+} // end namespace TeRayIntersection
 
 } // end namespace Tetraedge
 
-#endif // TETRAEDGE_TE_TE_FEE_MOVE_ZONE_H
+#endif // TETRAEDGE_TE_TE_RAY_INTERSECTION_H

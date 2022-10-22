@@ -99,9 +99,9 @@ bool Dialog2::onMinimumTimeTimer() {
 
 bool Dialog2::onSkipButton() {
 	const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimUp = _gui.layoutAnchorLinearAnimation("dialogAnimationUp");
-	if (!dialogAnimUp->_runTimer._stopped) {
+	if (dialogAnimUp->_runTimer.running()) {
 		const TeCurveAnim2<TeLayout,TeVector3f32> *dialogAnimDown = _gui.layoutAnchorLinearAnimation("dialogAnimationDown");
-		if (dialogAnimDown->_runTimer._stopped) {
+		if (!dialogAnimDown->_runTimer.running()) {
 			startDownAnimation();
 			_music.stop();
 		}
@@ -110,7 +110,7 @@ bool Dialog2::onSkipButton() {
 }
 
 bool Dialog2::onSoundFinished() {
-	if (_minimumTimeTimer._stopped)
+	if (!_minimumTimeTimer.running())
 		startDownAnimation();
 	return false;
 }

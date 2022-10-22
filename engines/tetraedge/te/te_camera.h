@@ -36,11 +36,7 @@ class TeCamera : public Te3DObject2, public TeReferencesCounter {
 public:
 	TeCamera();
 
-	void apply() {
-		applyProjection();
-		applyTransformations();
-	}
-
+	void apply();
 	void applyProjection();
 	void applyTransformations();
 	void buildOrthoMatrix();
@@ -69,11 +65,12 @@ public:
 	void updateProjectionMatrix();
 
 	void viewport(int x, int y, uint width, uint height);
+	TeVector2f32 viewportSize() const { return TeVector2f32(_viewportW, _viewportH); }
 
 	int _projectionMatrixType;
 	float _orthNearVal;
 	float _orthFarVal;
-	float _focalLenMaybe;
+	float _fov;
 	float _somePerspectiveVal;
 
 private:

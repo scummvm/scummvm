@@ -32,6 +32,10 @@ void DocumentsBrowser::enter() {
 	currentPage(_curPage);
 }
 
+void DocumentsBrowser::hideDocument() {
+	error("TODO: Implement DocumentsBrowser::hideDocument");
+}
+
 void DocumentsBrowser::leave() {
 	_timer.stop();
 	setVisible(false);
@@ -106,7 +110,9 @@ void DocumentsBrowser::showDocument(const Common::String &str, long n) {
 	error("TODO: Implement DocumentsBrowser::showDocument");
 }
 
-
-// TODO: Add more functions here.
+void DocumentsBrowser::unload() {
+	hideDocument();
+	error("TODO: Implement DocumentsBrowser::unload");
+}
 
 } // end namespace Tetraedge

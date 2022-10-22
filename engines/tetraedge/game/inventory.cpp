@@ -227,7 +227,7 @@ bool Inventory::onMainMenuButton() {
 
 bool Inventory::onObjectSelected(InventoryObject &obj) {
 	selectedObject(obj);
-	if (!_selectedTimer._stopped) {
+	if (_selectedTimer.running()) {
 		if (_selectedTimer.timeElapsed() < 300000)
 			g_engine->getGame()->inventoryMenu().leave();
 	} else {

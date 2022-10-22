@@ -42,5 +42,20 @@ void TeVector3f32::rotate(const TeQuaternion &rot) {
 	matrix.transform(this, false);
 }
 
+TeVector3f32 operator^(const TeVector3f32 &left, const TeVector3f32 &right) {
+	TeVector3f32 retval;
+	float rx = right.x();
+	float ry = right.y();
+	float rz = right.z();
+	float lx = left.x();
+	float ly = left.y();
+	float lz = left.z();
+	retval.x() = ly * rz - lz * ry;
+	retval.y() = lz * rx - rz * lx;
+	retval.z() = ry * lx - ly * rx;
+	return retval;
+}
+
+
 
 } // end namespace Tetraedge

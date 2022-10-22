@@ -50,7 +50,6 @@ public:
 	// void save()
 	void setVisibleButtonHelp(bool visible);
 	void setVisibleObjectif(bool visible);
-	// TODO add public members
 	void unload();
 	void update();
 

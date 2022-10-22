@@ -323,7 +323,7 @@ void TeModelAnimation::update(double proportion) {
 	}
 
 	if (frames) {
-	  	_curFrameValFresh = false;
+		_curFrameValFresh = false;
 		_curFrame2 = calcCurrentFrame(proportion);
 		if (_finishedSignalPending) {
 			_finishedSignalPending = false;

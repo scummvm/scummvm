@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/stream.h"
+
 #include "tetraedge/te/te_vector2s32.h"
 
 namespace Tetraedge {
@@ -26,6 +28,10 @@ namespace Tetraedge {
 TeVector2s32::TeVector2s32() : _x(0), _y(0) {
 }
 
-// TODO: Add more functions here.
+/*static*/
+void TeVector2s32::deserialize(Common::ReadStream &stream, TeVector2s32 &dest) {
+	dest._x = stream.readSint32LE();
+	dest._y = stream.readSint32LE();
+}
 
 } // end namespace Tetraedge

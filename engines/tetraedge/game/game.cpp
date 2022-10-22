@@ -32,15 +32,19 @@
 #include "tetraedge/game/game_achievements.h"
 #include "tetraedge/game/lua_binds.h"
 #include "tetraedge/game/object3d.h"
+
+#include "tetraedge/te/te_camera.h"
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
+#include "tetraedge/te/te_ray_intersection.h"
 #include "tetraedge/te/te_variant.h"
 
 namespace Tetraedge {
 
 Game::Game() : _objectsTakenVal(0), _score(0), _entered(false), _gameLoadState(0),
 _noScaleLayout(nullptr), _noScaleLayout2(nullptr), _warped(false), _saveRequested(false),
-_firstInventory(true), _movePlayerCharacterDisabled(false) {
+_firstInventory(true), _movePlayerCharacterDisabled(false), _enteredFlag2(false),
+_luaShowOwnerError(false), _markersVisible(true), _running(false), _loadName("save.xml") {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
@@ -135,8 +139,16 @@ void Game::addNoScaleChildren() {
 	_noScaleLayout->addChild(&_documentsBrowser.zoomedLayout());
 }
 
-void Game::addRandomSound(const Common::String &s1, const Common::String &s2, float f1, float f2) {
-	warning("TODO: Implemet Game::addRandomSound %s %s %f %f", s1.c_str(), s1.c_str(), f1, f2);
+void Game::addRandomSound(const Common::String &name, const Common::String &path, float f1, float f2) {
+	if (!_randomSounds.contains(name)) {
+		_randomSounds[name] = Common::Array<RandomSound*>();
+	}
+	RandomSound *randsound = new RandomSound();
+	randsound->_path = path;
+	randsound->_f1 = f1;
+	randsound->_f2 = f2;
+	randsound->_name = name;
+	_randomSounds[name].push_back(randsound);
 }
 
 void Game::addToBag(const Common::String &objname) {
@@ -169,6 +181,7 @@ void Game::addToScore(int score) {
 }
 
 bool Game::changeWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
+	debug("Game::changeWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	Application *app = g_engine->getApplication();
 	if (fadeFlag) {
 		app->blackFade();
@@ -183,6 +196,7 @@ bool Game::changeWarp(const Common::String &zone, const Common::String &scene, b
 }
 
 bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
+	debug("Game::changeWarp2(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	_warped = false;
 	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = false;
@@ -191,7 +205,7 @@ bool Game::changeWarp2(const Common::String &zone, const Common::String &scene, 
 	luapath.joinInPlace(zone);
 	luapath.joinInPlace(scene);
 	luapath.joinInPlace("Logic");
-	luapath.appendInPlace(zone);
+	luapath.appendInPlace(scene);
 	luapath.appendInPlace(".lua");
 
 	if (Common::File::exists(luapath)) {
@@ -243,7 +257,7 @@ void Game::draw() {
 }
 
 void Game::enter(bool newgame) {
-	warning("TODO: Game::enter set field_0x42f0 true here");
+	_enteredFlag2 = true;
 	_entered = true;
 	_luaShowOwnerError = false;
 	_score = 0;
@@ -322,7 +336,7 @@ void Game::enter(bool newgame) {
 }
 
 /*static*/ TeI3DObject2 *Game::findLayoutByName(TeLayout *parent, const Common::String &name) {
-	error("TODO: Implement me - although maybe this is never used?");
+	error("TODO: Implement Game::findLayoutByName - although maybe never used?");
 }
 
 /*static*/ TeSpriteLayout *Game::findSpriteLayoutByName(TeLayout *parent, const Common::String &name) {
@@ -407,6 +421,7 @@ void Game::initScene(bool fade, const Common::String &scenePath) {
 }
 
 bool Game::initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
+	debug("Game::initWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	_inventoryMenu.unload();
 	_gui4.unload();
 	_movePlayerCharacterDisabled = false;
@@ -465,8 +480,9 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	_scene.reset();
 	_scene.bgGui().unload();
-	_gui2.unload();
-	Common::Path geomPath(Common::String::format("scenes/%s/Geometry/%s.bin",
+	_scene.markerGui().unload();
+	_scene.hitObjectGui().unload();
+	Common::Path geomPath(Common::String::format("scenes/%s/Geometry%s.bin",
 												 zone.c_str(), zone.c_str()));
 	_scene.load(geomPath);
 	_scene.loadBackground(setLuaPath);
@@ -485,7 +501,18 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	if (intLuaExists) {
 		_scene.loadInteractions(intLuaPath);
-		warning("TODO: Game::initWarp: Finish interactions.");
+		TeLuaGUI::StringMap<TeButtonLayout *> &blayouts = _scene.hitObjectGui().buttonLayouts();
+		for (auto &entry : blayouts) {
+			HitObject *hobj = new HitObject();
+			TeButtonLayout *btn = entry._value;
+			hobj->_game = this;
+			hobj->_button = btn;
+			hobj->_name = btn->name();
+			btn->onMouseClickValidated().add(hobj, &HitObject::onValidated);
+			btn->onButtonChangedToStateDownSignal().add(hobj, &HitObject::onDown);
+			btn->onButtonChangedToStateUpSignal().add(hobj, &HitObject::onUp);
+			_gameHitObjects.push_back(hobj);
+		}
 	}
 
 	_inventoryMenu.load();
@@ -541,7 +568,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		if (_inventory.selectedObject().size()) {
 			_inventory.selectedObject(*_inventory.selectedInventoryObject());
 		}
-		_inventory.setVisible(true);
+		_inventory.setVisible(false);
 		_objectif.setVisibleObjectif(false);
 		_objectif.setVisibleButtonHelp(true);
 		_running = true;
@@ -561,13 +588,13 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	// Special hacks for certain scenes (don't blame me, original does this..)
 	if (scene == "14050") {
 		TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
-		const TeVector3f32 coords(1200.6f,-1937.5f,1544.1f);
+		const TeVector3f32 coords(1200.6f, -1937.5f, 1544.1f);
 		curcamera->setPosition(coords);
 	} else if (scene == "34610") {
 		TeIntrusivePtr<TeCamera> curcamera = _scene.currentCamera();
-		const TeVector3f32 coords(-328.243f,340.303f,-1342.84f);
+		const TeVector3f32 coords(-328.243f, 340.303f, -1342.84f);
 		curcamera->setPosition(coords);
-		const TeQuaternion rot(0.003194, 0.910923, -0.009496, -0.412389);
+		const TeQuaternion rot(0.003194f, 0.910923f, -0.009496f, -0.412389f);
 		curcamera->setRotation(rot);
 	}
 
@@ -582,15 +609,21 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		//for (auto & sound : _gameSounds) {
 		warning("TODO: Game::initWarp: Do game sound stuff here");
 	}
-	// TODO: Also do random sound stuff here.
+
+	for (auto &randsoundlist : _randomSounds) {
+		for (auto *randsound : randsoundlist._value) {
+			delete randsound;
+		}
+		randsoundlist._value.clear();
+	}
+	_randomSounds.clear();
 
 	_scene.initScroll();
 	return true;
 }
 
 bool Game::isDocumentOpened() {
-	TeLayout *layout = _documentsBrowser.layout("zoomed");
-	return layout->visible();
+	return _documentsBrowser.layoutChecked("zoomed")->visible();
 }
 
 bool Game::isMoviePlaying() {
@@ -600,17 +633,62 @@ bool Game::isMoviePlaying() {
 	return false;
 }
 
-bool Game::launchDialog(const Common::String &param_1, uint param_2, const Common::String &param_3,
-				  const Common::String &param_4, float param_5) {
-	error("TODO: Implemet Game::launchDialog");
+bool Game::launchDialog(const Common::String &param_1, uint param_2, const Common::String &charname,
+				  const Common::String &animfile, float param_5) {
+	error("TODO: Implemet Game::launchDialog %s %d %s %s %f", param_1.c_str(),
+			param_2, charname.c_str(), animfile.c_str(), param_5);
 }
 
 void Game::leave(bool flag) {
-	error("TODO: Implemet Game::leave");
+	if (!_enteredFlag2)
+		return;
+
+	deleteNoScale();
+	_entered = false;
+	_running = false;
+	_notifier.unload();
+	g_engine->getInputMgr()->_mouseLUpSignal.remove(this, &Game::onMouseClick);
+	_question2.unload();
+	_inventory.cellphone()->unload();
+	_dialog2.unload();
+	_inventory.unload();
+	_documentsBrowser.unload();
+	_inventoryMenu.unload();
+	_gui1.unload();
+	_scene.close();
+	_gui3.unload();
+	if (_scene._character) {
+		_scene._character->deleteAllCallback();
+		_scene._character->stop();
+		_scene.unloadCharacter(_scene._character->_model->name());
+	}
+	warning("TODO: Game::leave: clear game sounds");
+
+	for (auto *hitobj : _gameHitObjects) {
+		delete hitobj;
+	}
+	_gameHitObjects.clear();
+
+	// TODO: clear Game::HitObject tree here?
+
+	_luaContext.destroy();
+	_running = false;
+	_gui4.buttonLayoutChecked("skipVideoButton")->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
+	_gui4.buttonLayoutChecked("videoBackgroundButton")->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
+	_gui4.spriteLayoutChecked("video")->_tiledSurfacePtr->_frameAnim.onFinished().remove(this, &Game::onSkipVideoButtonValidated);
+	_gui4.buttonLayoutChecked("inventoryButton")->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
+	_gui4.unload();
+	_playedTimer.stop();
+
+	Application *app = g_engine->getApplication();
+	app->_lockCursorButton.setVisible(false);
+	app->_lockCursorFromActionButton.setVisible(false);
+	// TODO: Set some inputmgr flag here?
+	Character::animCacheFreeAll();
 }
 
 bool Game::loadBackup(const Common::String &path) {
-	error("TODO: Implemet Game::loadBackup");
+	error("TODO: Implemet Game::loadBackup %s", path.c_str());
 }
 
 bool Game::loadCharacter(const Common::String &name) {
@@ -661,19 +739,19 @@ bool Game::onCallNumber(Common::String val) {
 }
 
 bool Game::onCharacterAnimationFinished(const Common::String &val) {
-	error("TODO: Implemet me");
+	error("TODO: Implemet Game::onCharacterAnimationFinished %s", val.c_str());
 }
 
 bool Game::onCharacterAnimationPlayerFinished(const Common::String &val) {
-	error("TODO: Implemet me");
+	error("TODO: Implemet Game::onCharacterAnimationPlayerFinished %s", val.c_str());
 }
 
 bool Game::onDialogFinished(const Common::String &val) {
-	error("TODO: Implemet me");
+	error("TODO: Implemet Game::onDialogFinished %s", val.c_str());
 }
 
 bool Game::onDisplacementFinished() {
-	error("TODO: Implemet me");
+	error("TODO: Implemet Game::onDisplacementFinished");
 }
 
 bool Game::onFinishedCheckBackup(bool result) {
@@ -718,6 +796,57 @@ bool Game::onMarkersVisible(TeCheckboxLayout::State state) {
 	return false;
 }
 
+static
+TePickMesh2 *findNearestMesh(TeIntrusivePtr<TeCamera> &camera, const TeVector2s32 &frompt,
+			Common::Array<TePickMesh2*> &pickMeshes, TeVector3f32 *outloc, bool lastHitFirst) {
+	TeVector3f32 locresult;
+	TePickMesh2 *nearest = nullptr;
+	float furthest = camera->_orthFarVal;
+	if (!pickMeshes.empty()) {
+		TeVector3f32 v1;
+		TeVector3f32 v2;
+		for (unsigned int i = 0; i < pickMeshes.size(); i++) {
+			TePickMesh2 *mesh = pickMeshes[i];
+			const TeMatrix4x4 transform = mesh->worldTransformationMatrix();
+			if (lastHitFirst) {
+				unsigned int tricount = mesh->verticies().size() / 3;
+				unsigned int vert = mesh->lastTriangleHit() * 3;
+				if (mesh->lastTriangleHit() >= tricount)
+					vert = 0;
+				const TeVector3f32 v3 = transform * mesh->verticies()[vert];
+				const TeVector3f32 v4 = transform * mesh->verticies()[vert + 1];
+				const TeVector3f32 v5 = transform * mesh->verticies()[vert + 2];
+				TeVector3f32 result;
+				float fresult;
+				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
+				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal)
+					return mesh;
+			}
+			for (unsigned int tri = 0; tri < mesh->verticies().size() / 3; tri++) {
+				const TeVector3f32 v3 = transform * mesh->verticies()[tri * 3];
+				const TeVector3f32 v4 = transform * mesh->verticies()[tri * 3 + 1];
+				const TeVector3f32 v5 = transform * mesh->verticies()[tri * 3 + 1];
+				camera->getRay(frompt, v1, v2);
+				TeVector3f32 result;
+				float fresult;
+				int intresult = TeRayIntersection::intersect(v1, v2, v3, v4, v5, result, fresult);
+				if (intresult == 1 && fresult < furthest && fresult >= camera->_orthNearVal) {
+					mesh->setLastTriangleHit(tri);
+					locresult = result;
+					furthest = fresult;
+					nearest = mesh;
+					if (lastHitFirst)
+						break;
+				}
+			}
+		}
+	}
+	if (outloc) {
+		*outloc = locresult;
+	}
+	return nearest;
+}
+
 bool Game::onMouseClick(const Common::Point &pt) {
 	Application *app = g_engine->getApplication();
 
@@ -734,7 +863,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		float xdist = pt.x / winSize.x() - lastMousePos._x / winSize.x();
 		float ydist = pt.y / winSize.y() - lastMousePos._y / winSize.y();
 		float sqrdist = xdist * xdist + ydist * ydist;
-		if (sqrdist > 0.0001 && (_walkTimer._stopped || _walkTimer.timeElapsed() > 300000.0
+		if (sqrdist > 0.0001 && (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000.0
 						 || (_scene._character && _scene._character->walkModeStr() != "Walk"))) {
 			return false;
 			// Double-click, but already jogging
@@ -744,10 +873,79 @@ bool Game::onMouseClick(const Common::Point &pt) {
 	if (!app->_frontLayout.isMouseIn(pt))
 		return false;
 
+	Common::String nearestMeshName = "None";
 	TeIntrusivePtr<TeCamera> curCamera = _scene.currentCamera();
-	//TePickMesh2 *nearestMesh = findNearestMesh(curCamera, _scene._pickMeshes, nullptr, false);
+	Common::Array<TePickMesh2*> pickMeshes = _scene.pickMeshes();
+	TePickMesh2 *nearestMesh = findNearestMesh(curCamera, pt, pickMeshes, nullptr, false);
+	if (nearestMesh) {
+		nearestMeshName = nearestMesh->name();
+		_lastCharMoveMousePos = TeVector2s32(0, 0);
+	}
 
-	warning("TODO: Finish Game::onMouseClick");
+	if (app->isLockCursor() || _movePlayerCharacterDisabled)
+		return false;
+	
+	Character *character = _scene._character;
+	const Common::String &charAnim = character->curAnimName();
+	
+	if (charAnim == character->characterSettings()._walkFileName
+		|| charAnim == character->walkAnim(Character::WalkPart_Start)
+		|| charAnim == character->walkAnim(Character::WalkPart_Loop)
+		|| charAnim == character->walkAnim(Character::WalkPart_EndD)
+		|| charAnim == character->walkAnim(Character::WalkPart_EndG)) {
+		_luaScript.execute("On");
+		if (!_scene.isObjectBlocking(nearestMeshName)) {
+			if (character->freeMoveZone()) {
+				TeVector3f32 charPos = character->_model->position();
+				TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(charPos, TeVector2s32(pt), 8.0, true);
+				if (curve) {
+					_scene.setCurve(curve);
+					// TODO: set character field_0x214 to TeVector3f32(0,0,0)
+					if (curve->controlPoints().size() == 1) {
+						character->endMove();
+					} else {
+						if (!_walkTimer.running() || _walkTimer.timeElapsed() > 300000) {
+							_walkTimer.stop();
+							_walkTimer.start();
+							character->walkMode("Walk");
+						} else {
+							// Note: original checks the timer elapsed again here.. why?
+							_walkTimer.stop();
+							character->walkMode("Jog");
+						}
+						character->placeOnCurve(curve);
+						character->setCurveOffset(0.0);
+						if (charAnim != character->walkAnim(Character::WalkPart_Start)) {
+							character->setAnimation(character->walkAnim(Character::WalkPart_Start), false, false, false, -1, 9999);
+						}
+						character->walkTo(1.0, false);
+						_sceneCharacterVisibleFromLoad = false;
+						_lastCharMoveMousePos = pt;
+					}
+				} else {
+					return false;
+				}
+			}
+			// TOOD: Finis this (line ~180 onward)
+			warning("TODO: Finish Game::onMouseClick");
+		}
+		TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
+		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true, false, false, -1, 9999);
+		character->walkTo(1.0, false);
+		// TODO: Set app field field_0x910b
+		_posPlayer = lastPoint;
+	}
+	
+	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._walkFileName)) {
+		_lastCharMoveMousePos = TeVector2s32(0, 0);
+		_movePlayerCharacterDisabled = true;
+		// TODO: Set field 	0x4249 to false
+		if (nearestMesh) {
+			character->stop();
+			_luaScript.execute("OnWarpObjectHit", nearestMeshName);
+		}
+	}
+
 	return false;
 }
 
@@ -786,6 +984,16 @@ bool Game::onMouseMove() {
 		return false;
 	}
 
+	// TODO: All the logic below is a bit suspicious and unfinished.
+	//
+	// The original game goes through a series of checks of mouseIn and
+	// visible before deciding whether to do a full search for a mouse
+	// cursor to apply.  But after all that, in practice, none of the
+	// mouse cursors above actually exist in the game data.
+	//
+	// So maybe all this is useless?
+
+#if ENABLE_CUSTOM_CURSOR_CHECKS
 	TeVector2s32 mouseLoc = g_engine->getInputMgr()->lastMousePos();
 	bool skipFullSearch = false;
 
@@ -798,29 +1006,37 @@ bool Game::onMouseMove() {
 			return false;
 		}
 	}
-	if (_dialog2.gui().layout("imgDialog")) {
-		warning("TODO: Finish Game::onMouseMove");
+	TeLayout *imgDialog = _dialog2.gui().layoutChecked("imgDialog");
+	bool mouseInImgDialog = imgDialog->isMouseIn(mouseLoc);
+	if (mouseInImgDialog || !imgDialog->visible()) {
+		if (!mouseInImgDialog)
+			skipFullSearch = true;
+		//warning("TODO: Finish Game::onMouseMove");
 	}
 
 	bool checkedCursor = false;
-	for (unsigned int i = 0; i < cellbg->childCount(); i++) {
-		TeLayout *childlayout = dynamic_cast<TeLayout *>(cellbg->child(i));
-		if (childlayout && childlayout->isMouseIn(mouseLoc) && childlayout->visible()) {
-			for (int i = 0; i < ARRAYSIZE(cursorsTable); i++) {
-				if (childlayout->name().contains(cursorsTable[i][0])) {
-					app->mouseCursorLayout().load(cursorsTable[i][1]);
-					if (Common::String(cursorsTable[i][0]).contains(".anim")) {
-						app->mouseCursorLayout()._tiledSurfacePtr->_frameAnim._loopCount = -1;
-						app->mouseCursorLayout()._tiledSurfacePtr->_frameAnim.play();
+	if (!skipFullSearch && _scene.gui2().loaded()) {
+		TeLayout *bglayout = _scene.gui2().layoutChecked("background");
+		for (unsigned int i = 0; i < bglayout->childCount(); i++) {
+			TeLayout *childlayout = dynamic_cast<TeLayout *>(bglayout->child(i));
+			if (childlayout && childlayout->isMouseIn(mouseLoc) && childlayout->visible()) {
+				for (int i = 0; i < ARRAYSIZE(cursorsTable); i++) {
+					if (childlayout->name().contains(cursorsTable[i][0])) {
+						app->mouseCursorLayout().load(cursorsTable[i][1]);
+						if (Common::String(cursorsTable[i][0]).contains(".anim")) {
+							app->mouseCursorLayout()._tiledSurfacePtr->_frameAnim._loopCount = -1;
+							app->mouseCursorLayout()._tiledSurfacePtr->_frameAnim.play();
+						}
 					}
 				}
+				checkedCursor = true;
 			}
-			checkedCursor = true;
 		}
 	}
 
 	if (!checkedCursor)
 		app->mouseCursorLayout().load(DEFAULT_CURSOR);
+#endif // ENABLE_CUSTOM_CURSOR_CHECKS
 	return false;
 }
 
@@ -848,7 +1064,7 @@ bool Game::onVideoFinished() {
 	video->setVisible(false);
 	_music.stop();
 	_running = true;
-	warning("TODO: Game::onVideoFinished: update yieldedCallbacks");
+	warning("TODO: Game::onVideoFinished: update yieldedCallbacks %s", video->_tiledSurfacePtr->path().toString().c_str());
 	_luaScript.execute("OnMovieFinished", video->_tiledSurfacePtr->path().toString());
 	app->fade();
 	return false;
@@ -892,7 +1108,11 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 }
 
 void Game::playRandomSound(const Common::String &name) {
-	error("TODO: Implemet Game::playRandomSound");
+	if (!_randomSounds.contains(name)) {
+		warning("Game::playRandomSound: can't find sound list %s", name.c_str());
+		return;
+    }
+    error("TODO: Implemet Game::playRandomSound");
 }
 
 void Game::playSound(const Common::String &name, int param_2, float param_3) {
@@ -1049,7 +1269,17 @@ void Game::update() {
 				if (_scene._character->needsSomeUpdate()) {
 					Game *game = g_engine->getGame();
 					game->_sceneCharacterVisibleFromLoad = false;
-					error("TODO: Game::update: Finish bit after permanentUpdate");
+					TeVector3f32 charPos = _scene._character->_model->position();
+					const Common::String charName = _scene._character->_model->name();
+					TeFreeMoveZone *zone = _scene.pathZone(_scene._character->freeMoveZoneName());
+					if (zone) {
+						TeIntrusivePtr<TeCamera> cam = _scene.currentCamera();
+						zone->setCamera(cam, false);
+						_scene._character->setFreeMoveZone(zone);
+						_scene.setPositionCharacter(charName, _scene._character->freeMoveZoneName(), charPos);
+						error("TODO: Game::update: Finish bit after permanentUpdate");
+					}
+					_scene._character->setNeedsSomeUpdate(false);
 				}
 
 				const Common::String &charAnim = _scene._character->curAnimName();
@@ -1085,6 +1315,33 @@ void Game::update() {
 		warning("TODO: Game::update: Stop sounds before warping");
 		changeWarp2(_warpZone, _warpScene, _warpFadeFlag);
 	}
+}
+
+
+bool Game::HitObject::onChangeWarp() {
+	// Seems like this function is never used?
+	error("TODO: Implement Game::HitObject::onChangeWarp");
+	return false;
+}
+
+bool Game::HitObject::onDown() {
+	_game->luaScript().execute("OnButtonDown", _name);
+	// TODO: set this field _game->field_0x4249 = 1;
+	return false;
+}
+
+bool Game::HitObject::onUp() {
+	_game->luaScript().execute("OnButtonUp", _name);
+	// TODO: set this field _game->field_0x4249 = 1;
+	return false;
+}
+
+bool Game::HitObject::onValidated() {
+	if (!g_engine->getApplication()->isLockCursor()) {
+		_game->luaScript().execute("OnWarpObjectHit", _name);
+		// TODO: set this field _game->field_0x4249 = 1;
+	}
+	return false;
 }
 
 } // end namespace Tetraedge

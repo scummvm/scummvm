@@ -94,8 +94,8 @@ public:
 	bool parserCallback_walk(ParserNode *node);
 	bool parserCallback_animationFileName(ParserNode *node);
 	bool parserCallback_walkType(ParserNode *node);
-	bool parserCallback_start(ParserNode *node);  	// walk anim
-	bool parserCallback_loop(ParserNode *node);	  	// walk anim
+	bool parserCallback_start(ParserNode *node);	// walk anim
+	bool parserCallback_loop(ParserNode *node);		// walk anim
 	bool parserCallback_endD(ParserNode *node);		// for walk anim
 	bool parserCallback_endG(ParserNode *node);		// for walk anim
 	bool parserCallback_speed(ParserNode *node);	// walk speed
@@ -122,7 +122,6 @@ private:
 	};
 
 	TextTagType _curTextTag;
-	// TODO add private members
 	Character::CharacterSettings *_curCharacter;
 	Character::WalkSettings *_curWalkSettings;
 	Common::HashMap<Common::String, Character::CharacterSettings> *_characterSettings;

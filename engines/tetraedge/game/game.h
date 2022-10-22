@@ -46,12 +46,12 @@ public:
 	Game();
 
 	struct HitObject {
-		byte OnChangeWarp();
-		byte OnDown();
-		byte OnUp();
-		byte OnValidated();
+		bool onChangeWarp();
+		bool onDown();
+		bool onUp();
+		bool onValidated();
 		//byte OnVisible(); empty never used?
-		
+
 		Common::String _name;
 		Game *_game;
 		TeButtonLayout *_button;
@@ -60,10 +60,10 @@ public:
 	class RandomSound {
 	public:
 		Common::Path _path;
-		Common::String _str;
+		Common::String _name;
 		TeMusic _music;
-		float f1;
-		float f2;
+		float _f1;
+		float _f2;
 		byte onSoundFinished();
 	};
 
@@ -158,6 +158,7 @@ public:
 
 	bool _returnToMainMenu;
 	bool _firstInventory;
+	bool _movePlayerCharacterDisabled;
 
 	const Common::String &currentZone() { return _currentZone; }
 	const Common::String &currentScene() { return _currentScene; }
@@ -171,6 +172,7 @@ private:
 	bool _luaShowOwnerError;
 	bool _running;
 	bool _entered;
+	bool _enteredFlag2;
 
 	TeLuaGUI _gui1;
 	TeLuaGUI _gui2;
@@ -188,6 +190,7 @@ private:
 	static char **_objectsTakenIDs;
 
 	TeVector2s32 _previousMousePos;
+	TeVector2s32 _lastCharMoveMousePos;
 
 	Common::String _warpZone;
 	Common::String _warpScene;
@@ -203,8 +206,10 @@ private:
 	Common::String _loadName;
 
 	Common::Array<GameSound *> _gameSounds;
+	Common::Array<HitObject *> _gameHitObjects;
 
 	Common::HashMap<Common::String, bool> _unlockedArtwork;
+	Common::HashMap<Common::String, Common::Array<RandomSound*>> _randomSounds;
 
 	int _gameLoadState;
 
@@ -229,7 +234,6 @@ private:
 	bool _sceneCharacterVisibleFromLoad;
 	bool _markersVisible;
 	bool _saveRequested;
-	bool _movePlayerCharacterDisabled;
 
 	TeLayout *_noScaleLayout;
 	TeLayout *_noScaleLayout2;

@@ -33,7 +33,7 @@ void TeScrollingLayout::setContentLayout(TeLayout *layout) {
 	_contentLayout = layout;
 	if (layout) {
 		_contentLayoutUserPos = layout->userPosition();
-		// TODO: original seems to call addChildBefore(layout this) which doesn't make sense?
+		// TODO: original seems to call addChildBefore(layout, this) which doesn't make sense?
 		addChild(_contentLayout);
 	}
 }

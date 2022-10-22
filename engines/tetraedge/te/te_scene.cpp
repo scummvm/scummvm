@@ -90,10 +90,13 @@ void TeScene::setCurrentCamera(const Common::String &name) {
 		}
 	}
 	if (i == n) {
-		//warning("TeScene::setCurrentCamera: Couldn't find camera %s", name.c_str());
+		debug("TeScene::setCurrentCamera: Couldn't find camera %s", name.c_str());
 		return;
 	}
 	_currentCameraIndex = i;
+	TeCamera *c = _cameras[i].get();
+	assert(c);
+	debug("TeScene::setCurrentCamera: Set %s", c->name().c_str());
 }
 
 void TeScene::update() {

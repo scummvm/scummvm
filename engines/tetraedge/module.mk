@@ -53,7 +53,6 @@ MODULE_OBJS := \
 	te/te_color.o \
 	te/te_core.o \
 	te/te_extended_text_layout.o \
-	te/te_fee_move_zone.o \
 	te/te_font3.o \
 	te/te_frame_anim.o \
 	te/te_free_move_zone.o \
@@ -87,6 +86,7 @@ MODULE_OBJS := \
 	te/te_pick_mesh2.o \
 	te/te_png.o \
 	te/te_quaternion.o \
+	te/te_ray_intersection.o \
 	te/te_real_timer.o \
 	te/te_renderer.o \
 	te/te_resource.o \

@@ -47,6 +47,8 @@ public:
 	static void serialize(Common::WriteStream &stream, const TeBezierCurve &curve);
 	static void deserialize(Common::ReadStream &stream, TeBezierCurve &curve);
 
+	const Common::Array<TeVector3f32> &controlPoints() { return _controlPoints; }
+
 private:
 	unsigned int _numiterations;
 	float _length;

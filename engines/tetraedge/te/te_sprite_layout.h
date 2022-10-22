@@ -66,8 +66,6 @@ private:
 	bool _sizeSet;
 	bool _allowFloatTranslate;
 
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

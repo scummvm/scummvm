@@ -62,7 +62,7 @@ void InGameScene::draw() {
 	for (unsigned int i = 0; i < _lights.size(); i++)
 		_lights[i].update(i);
 
-	currentCamera()->restore();
+	TeCamera::restore();
 }
 
 void InGameScene::drawPath() {
@@ -72,9 +72,8 @@ void InGameScene::drawPath() {
 	currentCamera()->apply();
 	g_engine->getRenderer()->disableZBuffer();
 
-	warning("TODO: Do free move zones in InGameScene::drawPath");
-	//for (unsigned int i = 0; i < _freeMoveZones.size(); i++)
-	//	_freeMoveZones[i]->
+	for (unsigned int i = 0; i < _freeMoveZones.size(); i++)
+		_freeMoveZones[i]->draw();
 
 	g_engine->getRenderer()->enableZBuffer();
 }
@@ -116,8 +115,8 @@ void InGameScene::reset() {
 	freeSceneObjects();
 	_bgGui.unload();
 	unloadSpriteLayouts();
-	_gui2.unload();
-	_gui3.unload();
+	_markerGui.unload();
+	_hitObjectGui.unload();
 }
 
 void InGameScene::deleteAllCallback() {
@@ -215,6 +214,8 @@ bool InGameScene::load(const Common::Path &path) {
 		return false;
 
 	uint32 ncameras = scenefile.readUint32LE();
+	if (ncameras > 1024)
+		error("Improbable number of cameras %d", ncameras);
 	for (unsigned int i = 0; i < ncameras; i++) {
 		TeIntrusivePtr<TeCamera> cam = new TeCamera();
 		deserializeCam(scenefile, cam);
@@ -222,6 +223,8 @@ bool InGameScene::load(const Common::Path &path) {
 	}
 
 	uint32 nobjects = scenefile.readUint32LE();
+	if (nobjects > 1024)
+		error("Improbable number of objects %d", nobjects);
 	for (unsigned int i = 0; i < nobjects; i++) {
 		TeIntrusivePtr<TeModel> model = new TeModel();
 		const Common::String modelname = Te3DObject2::deserializeString(scenefile);
@@ -254,6 +257,8 @@ bool InGameScene::load(const Common::Path &path) {
 	}
 
 	uint32 nfreemovezones = scenefile.readUint32LE();
+	if (nfreemovezones > 1024)
+		error("Improbable number of free move zones %d", nfreemovezones);
 	for (unsigned int i = 0; i < nfreemovezones; i++) {
 		TeFreeMoveZone *zone = new TeFreeMoveZone();
 		TeFreeMoveZone::deserialize(scenefile, *zone, &_blockers, &_rectBlockers, &_actZones);
@@ -261,6 +266,8 @@ bool InGameScene::load(const Common::Path &path) {
 	}
 
 	uint32 ncurves = scenefile.readUint32LE();
+	if (ncurves > 1024)
+		error("Improbable number of curves %d", ncurves);
 	for (unsigned int i = 0; i < ncurves; i++) {
 		TeIntrusivePtr<TeBezierCurve> curve = new TeBezierCurve();
 		TeBezierCurve::deserialize(scenefile, *curve);
@@ -269,6 +276,8 @@ bool InGameScene::load(const Common::Path &path) {
 	}
 
 	uint32 ndummies = scenefile.readUint32LE();
+	if (ndummies > 1024)
+		error("Improbable number of dummies %d", ndummies);
 	for (unsigned int i = 0; i < ndummies; i++) {
 		InGameScene::Dummy dummy;
 		TeVector3f32 vec;
@@ -297,7 +306,12 @@ void InGameScene::convertPathToMesh(TeFreeMoveZone *zone) {
 }
 
 void InGameScene::onMainWindowSizeChanged() {
-	error("TODO: Implement InGameScene::onMainWindowSizeChanged");
+	TeCamera *mainWinCam = g_engine->getApplication()->mainWindowCamera();
+	_viewportSize = mainWinCam->viewportSize();
+	Common::Array<TeIntrusivePtr<TeCamera>> &cams = cameras();
+	for (unsigned int i = 0; i < cams.size(); i++) {
+		cams[i]->viewport(0, 0, _viewportSize.getX(), _viewportSize.getY());
+	}
 }
 
 bool InGameScene::loadLights(const Common::Path &path) {
@@ -326,10 +340,13 @@ bool InGameScene::loadCharacter(const Common::String &name) {
 void InGameScene::deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCamera> &cam) {
 	cam->_projectionMatrixType = 2;
 	cam->viewport(0, 0, _viewportSize.getX(), _viewportSize.getY());
+	// load name/position/rotation/scale
 	Te3DObject2::deserialize(stream, *cam);
-	cam->_focalLenMaybe = stream.readFloatLE();
+	cam->_fov = stream.readFloatLE();
 	cam->_somePerspectiveVal = stream.readFloatLE();
 	cam->_orthNearVal = stream.readFloatLE();
+	// Original loads the val then ignores it and sets 3000.
+	stream.readFloatLE();
 	cam->_orthFarVal = 3000.0;
 }
 
@@ -413,6 +430,13 @@ bool InGameScene::findKate() {
 	return false;
 }
 
+TeLight *InGameScene::shadowLight() {
+	if (_shadowLightNo == -1) {
+		return nullptr;
+	}
+	return &_lights[_shadowLightNo];
+}
+
 static Common::Path _sceneFileNameBase() {
 	Game *game = g_engine->getGame();
 	Common::Path retval("scenes");
@@ -494,11 +518,11 @@ void InGameScene::loadBackground(const Common::Path &path) {
 }
 
 void InGameScene::loadInteractions(const Common::Path &path) {
-	_gui3.load(path);
+	_hitObjectGui.load(path);
 	TeLayout *bgbackground = _bgGui.layoutChecked("background");
 	Game *game = g_engine->getGame();
 	TeSpriteLayout *root = game->findSpriteLayoutByName(bgbackground, "root");
-	TeLayout *background = _gui3.layoutChecked("background");
+	TeLayout *background = _hitObjectGui.layoutChecked("background");
 	// TODO: For all TeButtonLayout childen of background, call
 	// setDoubleValidationProtectionEnabled(false)
 	// For now our button doesn't implement that.
@@ -516,6 +540,84 @@ void InGameScene::setStep(const Common::String &scene, const Common::String &ste
 void InGameScene::initScroll() {
 	_someScrollVector = TeVector2f32(0.5f, 0.0f);
 }
+
+bool InGameScene::isObjectBlocking(const Common::String &name) {
+	for (const Common::String &b: _blockingObjects) {
+		if (name == b)
+			return true;
+	}
+	return false;
+}
+
+void InGameScene::addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal) {
+	error("TODO: Implement InGameScene::addMarker");
+}
+
+void InGameScene::setVisibleMarker(const Common::String &markerName, bool val) {
+	if (!isMarker(markerName))
+		return;
+
+	error("TODO: Implement InGameScene::setVisibleMarker");
+}
+
+
+void InGameScene::deleteMarker(const Common::String &markerName) {
+	if (!isMarker(markerName))
+		return;
+
+	error("TODO: Implement InGameScene::deleteMarker");
+}
+
+
+bool InGameScene::isMarker(const Common::String &name) {
+	for (const TeMarker *marker : _markers) {
+		if (marker->_name == name)
+			return true;
+	}
+	return false;
+}
+
+TeFreeMoveZone *InGameScene::pathZone(const Common::String &name) {
+	for (TeFreeMoveZone *zone: _freeMoveZones) {
+		if (zone->name() == name)
+			return zone;
+	}
+	return nullptr;
+}
+
+void InGameScene::moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd) {
+	Character *c = character(charName);
+	if (c != nullptr && c != _character) {
+		Game *game = g_engine->getGame();
+		if (!game->_movePlayerCharacterDisabled) {
+			// TODO: c->field_0x214 = c->characterSettings()._cutSceneCurveDemiPosition;
+			TeIntrusivePtr<TeBezierCurve> crve = curve(curveName);
+			c->placeOnCurve(crve);
+			c->setCurveOffset(curveOffset);
+			const Common::String walkStartAnim = c->walkAnim(Character::WalkPart_Start);
+			if (walkStartAnim.empty()) {
+				c->setAnimation(c->walkAnim(Character::WalkPart_Loop), true, false, false, -1, 9999);
+			} else {
+				c->setAnimation(c->walkAnim(Character::WalkPart_Start), false, false, false, -1, 9999);
+			}
+			c->walkTo(curveEnd, false);
+			error("TODO: Finish InGameScene::moveCharacterTo");
+		}
+	}
+}
+
+TeIntrusivePtr<TeBezierCurve> InGameScene::curve(const Common::String &curveName) {
+	for (TeIntrusivePtr<TeBezierCurve> &c : _bezierCurves) {
+		if (c->name() == curveName)
+			return c;
+	}
+	return TeIntrusivePtr<TeBezierCurve>();
+}
+
+void InGameScene::setPositionCharacter(const Common::String &charName, const Common::String &freeMoveZoneName, const TeVector3f32 &position) {
+	error("TODO: Implement InGameScene::setPositionCharacter");
+}
+
 
 bool InGameScene::AnimObject::onFinished() {
 	error("TODO: Implement InGameScene::AnimObject::onFinished");

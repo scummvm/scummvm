@@ -22,6 +22,7 @@
 #include "graphics/opengl/system_headers.h"
 
 #include "tetraedge/tetraedge.h"
+#include "tetraedge/game/character.h"
 #include "tetraedge/game/characters_shadow.h"
 #include "tetraedge/te/te_light.h"
 #include "tetraedge/te/te_renderer.h"
@@ -42,7 +43,8 @@ void CharactersShadow::create(InGameScene *scene) {
 	renderer->enableTexture();
 	_camera = new TeCamera();
 	_camera->_projectionMatrixType = 2;
-	// TODO: set camera field 0x130 to 1.0?
+	_camera->_somePerspectiveVal = 1.0;
+	_camera->setName("_shadowCam");
 	_camera->viewport(0, 0, _texSize, _texSize);
 	Te3DTexture::unbind();
 	glGenTextures(1, &_glTex);
@@ -58,8 +60,33 @@ void CharactersShadow::create(InGameScene *scene) {
 void CharactersShadow::createTexture(InGameScene *scene) {
 	TeRenderer *renderer = g_engine->getRenderer();
 	renderer->enableTexture();
-	//TeLight *light = scene->shadowLight();
-	error("TODO: Implement CharactersShadow::createTexture");
+	TeLight *light = scene->shadowLight();
+	if (light) {
+		TeQuaternion q1 = TeQuaternion::fromAxisAndAngle(TeVector3f32(0, 1, 0), light->positionRadial().getX() - M_PI_2);
+		TeQuaternion q2 = TeQuaternion::fromAxisAndAngle(TeVector3f32(1, 0, 0), light->positionRadial().getY());
+		_camera->rotate(q2 * q1);
+		_camera->setPosition(light->position3d());
+	}
+	_camera->_fov = scene->shadowFov() * M_PI / 180.0;
+	_camera->_orthNearVal = scene->shadowNearPlane();
+	_camera->_orthFarVal = scene->shadowFarPlane();
+	_camera->apply();
+
+	glClearColor(0.0, 0.0, 0.0, 0.0);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+
+	for (Character *character : scene->_characters) {
+		character->_model->draw();
+	}
+	scene->_character->_model->draw();
+	Te3DTexture::unbind();
+	glBindTexture(GL_TEXTURE_2D, _glTex);
+	glCopyTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, 0, 0, _texSize, _texSize);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	TeCamera::restore();
+	TeCamera::restore();
 }
 
 void CharactersShadow::destroy() {
@@ -76,7 +103,69 @@ void CharactersShadow::destroy() {
 }
 
 void CharactersShadow::draw(InGameScene *scene) {
-	error("TODO: Implement CharactersShadow::draw");
+	TeRenderer *renderer = g_engine->getRenderer();
+	glDepthMask(false);
+	renderer->disableZBuffer();
+	renderer->enableTexture();
+	glBindTexture(GL_TEXTURE_2D, _glTex);
+	Te3DTexture::unbind();
+	glBindTexture(GL_TEXTURE_2D, _glTex);
+	glEnable(GL_BLEND);
+	renderer->setCurrentColor(scene->shadowColor());
+
+	TeMatrix4x4 matrix;
+	matrix.translate(TeVector3f32(0.5f, 0.5f, 0.5f));
+	matrix.scale(TeVector3f32(0.5f, 0.5f, 0.5f));
+	matrix = matrix * _camera->projectionMatrix();
+
+	TeMatrix4x4 cammatrix = _camera->worldTransformationMatrix();
+	cammatrix.inverse();
+
+	matrix = matrix * cammatrix;
+
+	glTexGeni(GL_S, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+
+	float f[4];
+	for (unsigned int i = 0; i < 4; i++)
+		f[i] = matrix(i, 0);
+
+	glTexGenfv(GL_S, GL_EYE_PLANE, f);
+	glTexGeni(GL_T, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+
+	for (unsigned int i = 0; i < 4; i++)
+		f[i] = matrix(i, 1);
+
+	glTexGenfv(GL_T, GL_EYE_PLANE, f);
+	glTexGeni(GL_R, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+
+	for (unsigned int i = 0; i < 4; i++)
+		f[i] = matrix(i, 2);
+
+	glTexGenfv(GL_R, GL_EYE_PLANE, f);
+	glTexGeni(GL_Q, GL_TEXTURE_GEN_MODE, GL_EYE_LINEAR);
+
+	for (unsigned int i = 0; i < 4; i++)
+		f[i] = matrix(i, 3);
+
+	glTexGenfv(GL_Q, GL_EYE_PLANE, f);
+
+	Te3DTexture::unbind();
+	glBindTexture(GL_TEXTURE_2D, _glTex);
+	glEnable(GL_BLEND);
+	renderer->setCurrentColor(scene->shadowColor());
+
+	for (TeIntrusivePtr<TeModel> model : scene->models()) {
+		if (model->_meshes.size() > 0 && model->_meshes[0].materials().empty()) {
+			model->_meshes[0].defaultMaterial(TeIntrusivePtr<Te3DTexture>());
+			model->_meshes[0].materials()[0]._enableSomethingDefault0 = true;
+			model->_meshes[0].materials()[0]._diffuseColor = scene->shadowColor();
+		}
+		model->draw();
+	}
+
+	renderer->disableTexture();
+	glDepthMask(true);
+	renderer->enableZBuffer();
 }
 
 } // end namespace Tetraedge

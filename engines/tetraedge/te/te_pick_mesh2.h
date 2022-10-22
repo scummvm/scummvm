@@ -51,6 +51,7 @@ public:
 	static void deserialize(Common::ReadStream &stream, TePickMesh2 &mesh);
 
 	Common::Array<TeVector3f32> &verticies() { return _verticies; }
+	const Common::Array<TeVector3f32> &verticies() const { return _verticies; }
 private:
 	Common::Array<TeVector3f32> _verticies;
 	unsigned long _lastTriangleHit;

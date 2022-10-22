@@ -88,23 +88,6 @@ long Te3DObject2::childIndex(Te3DObject2 *c) const {
 }
 
 /*static*/
-Common::String Te3DObject2::deserializeString(Common::ReadStream &stream) {
-	uint slen = stream.readUint32LE();
-	if (slen > 1024 * 1024)
-		error("Improbable string size %d", slen);
-
-	if (slen) {
-		char *buf = new char[slen + 1];
-		buf[slen] = '\0';
-		stream.read(buf, slen);
-		Common::String str(buf);
-		delete[] buf;
-		return str;
-	}
-	return Common::String();
-}
-
-/*static*/
 void Te3DObject2::deserialize(Common::ReadStream &stream, Te3DObject2 &dest) {
 	Common::String str = deserializeString(stream);
 	dest.setName(str);
@@ -328,5 +311,43 @@ bool Te3DObject2::loadAndCheckFourCC(Common::ReadStream &stream, const char *str
 	stream.read(buf, 4);
 	return !strncmp(buf, str, 4);
 }
+
+/*static*/
+Common::String Te3DObject2::deserializeString(Common::ReadStream &stream) {
+	uint slen = stream.readUint32LE();
+	if (slen > 1024 * 1024)
+		error("Improbable string size %d", slen);
+
+	if (slen) {
+		char *buf = new char[slen + 1];
+		buf[slen] = '\0';
+		stream.read(buf, slen);
+		Common::String str(buf);
+		delete[] buf;
+		return str;
+	}
+	return Common::String();
+}
+
+/*static*/
+void Te3DObject2::deserializeVectorArray(Common::ReadStream &stream, Common::Array<TeVector3f32> &dest) {
+	uint32 nentries = stream.readUint32LE();
+	if (nentries > 1000000)
+		error("TeFreeMoveZone improbable number of vectors %d", nentries);
+	dest.resize(nentries);
+	for (unsigned int i = 0; i < nentries; i++)
+		TeVector3f32::deserialize(stream, dest[i]);
+}
+
+/*static*/
+void Te3DObject2::deserializeUintArray(Common::ReadStream &stream, Common::Array<unsigned int> &dest) {
+	uint32 nentries = stream.readUint32LE();
+	if (nentries > 1000000)
+		error("TeFreeMoveZone improbable number of ints %d", nentries);
+	dest.resize(nentries);
+	for (unsigned int i = 0; i < nentries; i++)
+		dest[i] = stream.readUint32LE();
+}
+
 
 } // end namespace Tetraedge

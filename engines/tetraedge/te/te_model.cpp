@@ -214,6 +214,8 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	_meshes.resize(stream.readUint32LE());
 	_weightElements.resize(stream.readUint32LE());
 	uint32 bonecount = stream.readUint32LE();
+	if (bonecount > 100000)
+		error("TeModel::load: Unexpected number of bones %d", bonecount);
 	_bones.resize(bonecount);
 	_boneMatrices.resize(bonecount);
 
@@ -248,10 +250,8 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		loadWeights(stream, _weightElements[i]);
 	}
 
-	//if (*(long *)(*(long *)&(_bones).field_0x8 + 0x68) != 0) {
-	//	return true;
-	//}
-	_bones.resize(1);
+	if (_bones.empty())
+		_bones.resize(1);
 	return true;
 }
 
@@ -313,6 +313,10 @@ bool TeModel::loadMesh(Common::SeekableReadStream &stream, TeMesh &mesh) {
 	uint32 matcount = stream.readUint32LE();
 	uint32 matidxcount = stream.readUint32LE();
 	uint32 idxcount = stream.readUint32LE();
+
+	if (vertcount > 100000 || matcount > 100000 || matidxcount > 100000 || idxcount > 100000)
+		error("Improbable mesh sizes %d %d %d %d", vertcount, matcount, matidxcount, idxcount);
+
 	mesh.setConf(vertcount, idxcount, TeMesh::MeshMode_TriangleFan, matcount, matidxcount);
 
 	uint32 flags = stream.readUint32LE();

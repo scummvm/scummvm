@@ -107,6 +107,7 @@ public:
 	TeLayout _frontOrientationLayout;
 	TeLayout _backLayout;
 	TeButtonLayout _lockCursorButton;
+	TeButtonLayout _lockCursorFromActionButton;
 	LocFile _loc;
 	Common::String _firstWarpPath;
 	Common::String _firstZone;
@@ -117,7 +118,6 @@ private:
 	TeMusic _music;
 	TeSpriteLayout _appSpriteLayout;
 	TeSpriteLayout _mouseCursorLayout;
-	TeButtonLayout _lockCursorFromActionButton;
 	TeSpriteLayout _autoSaveIcon1;
 	TeSpriteLayout _autoSaveIcon2;
 
@@ -128,8 +128,6 @@ private:
 
 	TeCurveAnim2<Te3DObject2, TeColor> _autoSaveIconAnim1;
 	TeCurveAnim2<Te3DObject2, TeColor> _autoSaveIconAnim2;
-
-	TeSignal0Param _blackFadeAnimationFinishedSignal;
 
 	Common::SharedPtr<TeCamera> _mainWindowCamera; // TODO: should be part of TeMainWindow.
 	TeLayout _mainWindow; // TODO: should be a specialised class.

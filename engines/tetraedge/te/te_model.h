@@ -146,7 +146,6 @@ protected:
 
 	TeIntrusivePtr<TeModelAnimation> _modelAnim;
 	TeIntrusivePtr<TeModelVertexAnimation> _modelVertexAnim;
-	// TODO add private members
 
 };
 

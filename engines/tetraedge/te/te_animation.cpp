@@ -40,7 +40,7 @@ TeAnimation::~TeAnimation() {
 }
 
 void TeAnimation::cont() {
-	if (_runTimer._stopped) {
+	if (!_runTimer.running()) {
 		_runTimer.start();
 		animations()->push_back(this);
 		update(_runTimer.getTimeFromStart() / 1000.0);
@@ -60,14 +60,14 @@ void TeAnimation::removeThisFromAnimations() {
 }
 
 void TeAnimation::pause() {
-	if (!_runTimer._stopped) {
+	if (_runTimer.running()) {
 		removeThisFromAnimations();
 		_runTimer.pause();
 	}
 }
 
 void TeAnimation::stop() {
-	if (!_runTimer._stopped) {
+	if (_runTimer.running()) {
 		removeThisFromAnimations();
 		_runTimer.stop();
 		_onStopSignal.call();
@@ -75,7 +75,7 @@ void TeAnimation::stop() {
 }
 
 void TeAnimation::reset() {
-	if (!_runTimer._stopped) {
+	if (_runTimer.running()) {
 		removeThisFromAnimations();
 		stop();
 	}
@@ -87,30 +87,32 @@ void TeAnimation::seekToStart() {
 	update(_runTimer.getTimeFromStart() / 1000.0);
 }
 
-/*static*/ void TeAnimation::pauseAll() {
+/*static*/
+void TeAnimation::pauseAll() {
 	for (auto &anim : *animations()) {
-		if (!anim->_runTimer._stopped)
+		if (anim->_runTimer.running())
 			anim->pause();
 	}
 }
 
-/*static*/ void TeAnimation::resumeAll() {
+/*static*/
+void TeAnimation::resumeAll() {
 	for (auto &anim : *animations()) {
 		anim->cont();
 	}
 }
 
-/*static*/ void TeAnimation::updateAll() {
+/*static*/
+void TeAnimation::updateAll() {
 	Common::Array<TeAnimation *> &anims = *animations();
 	// Note: update can cause events which cascade into animtaions
 	// getting deleted, so be careful about the numbers.
 	for (unsigned int i = 0; i < anims.size(); i++) {
-		if (!anims[i]->_runTimer._stopped) {
+		if (anims[i]->_runTimer.running()) {
 			float msFromStart = anims[i]->_runTimer.getTimeFromStart() / 1000.0;
 			anims[i]->update(msFromStart);
 		}
 	}
-
 }
 
 } // end namespace Tetraedge

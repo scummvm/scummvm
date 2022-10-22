@@ -72,7 +72,6 @@ private:
 	Confirm _tutoConfirm;
 	Confirm _quitConfirm;
 
-	// TODO add private members
 	TeSignal0Param onFacebookLoggedSignal;
 
 	bool _entered;

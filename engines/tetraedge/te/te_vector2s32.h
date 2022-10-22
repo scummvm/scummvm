@@ -23,6 +23,7 @@
 #define TETRAEDGE_TE_TE_VECTOR2S32_H
 
 #include "common/rect.h"
+#include "common/stream.h"
 
 namespace Tetraedge {
 
@@ -44,6 +45,8 @@ public:
 		_y += other._y;
 		return *this;
 	}
+
+	static void deserialize(Common::ReadStream &stream, TeVector2s32 &dest);
 
 public:
 	int _x;

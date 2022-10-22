@@ -37,11 +37,8 @@ public:
 
 	void load(const Common::Path &path);
 
-	// TODO add public members
-
 private:
 	Common::StringMap _map;
-	// TODO add private members
 
 };
 
