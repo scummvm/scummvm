@@ -36,15 +36,15 @@ const char *lastPathComponent(const Common::String &str) {
 	int pathOffset = str.size();
 
 	if (pathOffset <= 0) {
-		debug(6, "lastPathComponent() failed -> Bad offset (Empty path received)!");
+		debug(0, "lastPathComponent() failed -> Bad offset (Empty path received)!");
 		return 0;
 	}
 
 	const char *p = str.c_str();
 
-	while (pathOffset > 0 && (p[pathOffset-1] == '/' || p[pathOffset-1] == ':'))
+	while (pathOffset > 0 && (p[pathOffset - 1] == '/' || p[pathOffset - 1] == ':'))
 		pathOffset--;
-	while (pathOffset > 0 && (p[pathOffset-1] != '/' && p[pathOffset-1] != ':'))
+	while (pathOffset > 0 && (p[pathOffset - 1] != '/' && p[pathOffset - 1] != ':'))
 		pathOffset--;
 	return p + pathOffset;
 }
