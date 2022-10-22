@@ -101,6 +101,10 @@ enum CharFlags5 {
 	CHARFLAG5_8 = 8
 };
 
+enum CharFlags7 {
+	CHARFLAG7_20 = 0x20
+};
+
 enum CharFlags11 {
 	CHARFLAG11_GOT_ENDURANCE = 1,
 	CHARFLAG11_2 = 2,

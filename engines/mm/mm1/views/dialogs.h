@@ -46,6 +46,7 @@
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/resistances.h"
+#include "mm/mm1/views/maps/trivia.h"
 #include "mm/mm1/views/maps/volcano_god.h"
 #include "mm/mm1/views/maps/won_game.h"
 #include "mm/mm1/views/spells/cast_spell.h"
@@ -86,6 +87,7 @@ private:
 	Views::Maps::Arrested _arrested;
 	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Resistances _resistances;
+	Views::Maps::Trivia _trivia;
 	Views::Maps::VolcanoGod _volcanoGod;
 	Views::Maps::WonGame _wonGame;
 
