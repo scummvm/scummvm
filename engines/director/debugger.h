@@ -36,6 +36,7 @@ enum BreakpointType {
 	kBreakpointMovie = 2,
 	kBreakpointMovieFrame = 3,
 	kBreakpointVariable = 4,
+	kBreakpointEntity = 5,
 };
 
 struct Breakpoint {
@@ -49,6 +50,8 @@ struct Breakpoint {
 	Common::String moviePath;
 	uint frameOffset = 0;
 	Common::String varName;
+	int entity = 0;
+	int field = 0;
 	bool varRead = false;
 	bool varWrite = false;
 
@@ -64,14 +67,24 @@ struct Breakpoint {
 				result += Common::String::format(" [%5d]", funcOffset);
 			break;
 		case kBreakpointMovie:
-			result += Common::String::format("Movie %s", moviePath.c_str());
+			result += "Movie " + moviePath;
 			break;
 		case kBreakpointMovieFrame:
 			result += Common::String::format("Movie %s:%d", moviePath.c_str(), frameOffset);
 			break;
 		case kBreakpointVariable:
-			result += Common::String::format("Variable %s:%s%s", varName.c_str(), varRead ? "r" : "", varWrite ? "w" : "");
+			result += "Variable "+ varName + ":";
+			result += varRead ? "r" : "";
+			result += varWrite ? "w" : "";
 			break;
+		case kBreakpointEntity:
+			result += "Entity ";
+			result += g_lingo->entity2str(entity);
+			result += field ? ":" : "";
+			result += field ? g_lingo->field2str(field) : "";
+			result += ":";
+			result += varRead ? "r" : "";
+			result += varWrite ? "w" : "";
 		default:
 			break;
 		}
@@ -93,6 +106,8 @@ public:
 	void builtinHook(const Symbol &funcSym);
 	void varReadHook(const Common::String &varName);
 	void varWriteHook(const Common::String &varName);
+	void entityReadHook(int entity, int field);
+	void entityWriteHook(int entity, int field);
 
 private:
 	bool cmdHelp(int argc, const char **argv);
@@ -119,6 +134,7 @@ private:
 	bool cmdBpSet(int argc, const char **argv);
 	bool cmdBpMovie(int argc, const char **argv);
 	bool cmdBpFrame(int argc, const char **argv);
+	bool cmdBpEntity(int argc, const char **argv);
 	bool cmdBpVar(int argc, const char **argv);
 	bool cmdBpDel(int argc, const char **argv);
 	bool cmdBpEnable(int argc, const char **argv);
@@ -159,6 +175,8 @@ private:
 	Common::HashMap<uint, void *> _bpMatchFrameOffsets;
 	bool _bpCheckVarRead;
 	bool _bpCheckVarWrite;
+	bool _bpCheckEntityRead;
+	bool _bpCheckEntityWrite;
 };
 
 
