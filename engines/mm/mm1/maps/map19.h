@@ -37,6 +37,7 @@ private:
 	void special03();
 	void special04();
 	void special05();
+	void encounter();
 
 	const SpecialFn SPECIAL_FN[6] = {
 		&Map19::special00,

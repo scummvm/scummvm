@@ -30,6 +30,12 @@ namespace MM1 {
 namespace Maps {
 
 #define VAL1 123
+#define VAL2 161
+#define VAL3 162
+#define VAL4 163
+#define VAL5 164
+#define VAL6 165
+#define VAL7 166
 
 void Map19::special() {
 	// Scan for special actions on the map cell
@@ -56,18 +62,65 @@ void Map19::special00() {
 }
 
 void Map19::special01() {
+	send(SoundMessage(
+		STRING["maps.map19.cave"],
+		[]() {
+			g_maps->_mapPos = Common::Point(8, 0);
+			g_maps->changeMap(0xa00, 1);
+		}
+	));
 }
 
 void Map19::special02() {
+	send(SoundMessage(
+		STRING["maps.map19.stairs_down"],
+		[]() {
+			g_maps->_mapPos = Common::Point(7, 1);
+			g_maps->changeMap(0xf02, 3);
+		}
+	));
 }
 
 void Map19::special03() {
+	send(SoundMessage(STRING["maps.map19.carving"]));
 }
 
 void Map19::special04() {
+	if (_data[VAL2])
+		g_maps->clearSpecial();
+
+	_data[VAL2]++;
+	_data[VAL4] = 10;
+	_data[VAL5] = 10;
+	_data[VAL7] = 10;
+	_data[VAL6] = 7;
+	encounter();
 }
 
 void Map19::special05() {
+	if (_data[VAL3])
+		g_maps->clearSpecial();
+
+	_data[VAL3]++;
+	_data[VAL4] = 10;
+	_data[VAL6] = 7;
+	_data[VAL5] = 1;
+	_data[VAL7] = 1;
+	encounter();
+}
+
+void Map19::encounter() {
+	Game::Encounter &enc = g_globals->_encounters;
+	int monsterCount = getRandomNumber(5) + 3;
+
+	enc.clearMonsters();
+	for (int i = 0; i < monsterCount; ++i)
+		enc.addMonster(_data[VAL7], _data[VAL6]);
+	enc.addMonster(_data[VAL5], _data[VAL4]);
+
+	enc._flag = true;
+	enc._levelIndex = 80;
+	enc.execute();
 }
 
 } // namespace Maps
