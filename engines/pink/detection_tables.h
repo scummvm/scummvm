@@ -136,6 +136,18 @@ static const ADGameDescription gameDescriptions[] = {
 		GUIO1(GUIO_NOMIDI)
 	},
 
+	// Polish Original CD layout
+	{
+		"peril",
+		"Compressed",
+		AD_ENTRY2s("PPTP.ORB", "3b987bb529e131b92c3eb912871dedbd", 644839372,
+				   "Data1.cab", "a2d2dd8f68f6e3cc335b566fbfcea0b2", 3699395),
+		Common::PL_POL,
+		Common::kPlatformWindows,
+		ADGF_TESTING | ADGF_DROPPLATFORM | GF_COMPRESSED,
+		GUIO1(GUIO_NOMIDI)
+	},
+
 	// Portuguese
 	{
 		"peril",

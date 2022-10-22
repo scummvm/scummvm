@@ -22,6 +22,7 @@
 #include "common/debug-channels.h"
 #include "common/winexe_pe.h"
 #include "common/config-manager.h"
+#include "common/installshield_cab.h"
 
 #include "engines/advancedDetector.h"
 #include "engines/util.h"
@@ -73,6 +74,17 @@ Common::Error PinkEngine::init() {
 
 	_exeResources = new Common::PEResources();
 	Common::String fileName = isPeril() ? "pptp.exe" : "hpp.exe";
+
+	if ((_desc->flags & GF_COMPRESSED) && isPeril()) {
+		fileName = "pptp.ex_";
+
+		Common::Archive *cabinet = Common::makeInstallShieldArchive("data");
+		if (!cabinet)
+			error("Failed to open the InstallShield cabinet");
+
+		SearchMan.add("data1.cab", cabinet);
+	}
+
 	if (!_exeResources->loadFromEXE(fileName)) {
 		return Common::kNoGameDataFoundError;
 	}
