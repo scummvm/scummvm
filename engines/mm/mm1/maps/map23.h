@@ -32,9 +32,32 @@ class Map23 : public Map {
 	typedef void (Map23:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void fountain();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map23::special00
+	const SpecialFn SPECIAL_FN[14] = {
+		&Map23::special00,
+		&Map23::special01,
+		&Map23::special02,
+		&Map23::special03,
+		&Map23::special03,
+		&Map23::special03,
+		&Map23::special03,
+		&Map23::special03,
+		&Map23::special08,
+		&Map23::special09,
+		&Map23::special10,
+		&Map23::special11,
+		&Map23::special12,
+		&Map23::special13
 	};
 public:
 	Map23() : Map(23, "areac2", 0xA11) {}

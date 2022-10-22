@@ -292,14 +292,8 @@ union Resistances {
 	void synchronize(Common::Serializer &s);
 };
 
-struct Character {
-	char _name[16] = { 0 };
-	Sex _sex = MALE;
-	Alignment _alignmentInitial = GOOD;
-	Alignment _alignment = GOOD;
-	Race _race = HUMAN;
-	CharacterClass _class = NONE;
-
+struct PrimaryAttributes {
+public:
 	AttributePair _intelligence;
 	AttributePair _might;
 	AttributePair _personality;
@@ -307,8 +301,26 @@ struct Character {
 	AttributePair _speed;
 	AttributePair _accuracy;
 	AttributePair _luck;
-
 	AttributePair _level;
+
+	AttributePair &getAttribute(uint i) {
+		return *_attributes[i];
+	}
+private:
+	AttributePair *_attributes[8] = {
+		&_intelligence, &_might, &_personality, &_endurance,
+		&_speed, &_accuracy, &_luck, &_level
+	};
+};
+
+struct Character : public PrimaryAttributes {
+	char _name[16] = { 0 };
+	Sex _sex = MALE;
+	Alignment _alignmentInitial = GOOD;
+	Alignment _alignment = GOOD;
+	Race _race = HUMAN;
+	CharacterClass _class = NONE;
+
 	AttributePair _age;
 	AttributePair16 _sp;
 	AttributePair _spellLevel;
