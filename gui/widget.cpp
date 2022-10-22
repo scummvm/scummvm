@@ -214,9 +214,6 @@ void Widget::setVisible(bool e) {
 }
 
 bool Widget::isVisible() const {
-	if (g_gui.xmlEval()->getVar("Dialog." + _name + ".Visible", 1) == 0)
-		return false;
-
 	return !(_flags & WIDGET_INVISIBLE);
 }
 
