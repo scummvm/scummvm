@@ -84,7 +84,7 @@ static const Sword2GameDescription gameDescriptions[] = {
 			"",
 			AD_ENTRY3s("general.clu",  "31db8564f9187538f24d9fda0677f666", 7059728,
 			           "resource.tab", "ee4c0a8a2b8821ca113ea4176968b857", 16584,
-					   "speech1.clu",  "a403904a0e825356107d228f8f74092e", 176260048),
+			           "speech1.clu",  "a403904a0e825356107d228f8f74092e", 176260048),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,
