@@ -1095,3 +1095,25 @@ maps:
 		peak: "ATOP THIS PEAK LOOKING:\n\nN= A CAVE BEYOND WHITE WOLF.\nE= LARGE BEASTS ABOVE WYVERN PEAKS!\nS= DISTANT UNCHARTED ISLES.\nW= A PIRATE SHIP BEYOND KORIN BLUFFS."
 		sign1: "A SIGN POINTING N. READS: WHITE WOLF"
 		sign2: "A SIGN POINTING S. READS: PORTSMITH"
+
+	map21:
+		trivia_island: "TRIVIA ISLAND! 500 GOLD, ENTER (Y/N)?"
+		not_enough_gold: "NOT ENOUGH GOLD!"
+		ghostship: "PIRATE GHOSTSHIP ANARCHIST!"
+		who_be_ye: "WHO BE YE?"
+		free_trivia: "FREE TRIVIA CHANCE, PULL BRANCH (Y/N)?"
+		questions:
+			0: "WHO RULES CASTLE W.W.?"
+			1: "WHO IS THE VOLUPTUOUS ONE?"
+			2: "WHO'S LOST SIGHT?"
+			3: "WHERE'S THE VERY LATEST?"
+			4: "WHO BE YE?"
+		answers:
+			0: "LORD IRONFIST"
+			1: "LAURA"
+			2: "OG"
+			3: "ERLIQUIN"
+			4: "I BE ME"
+		correct: "CORRECT! +50 GEMS"
+		incorrect: "WRONG!"
+		answer: "ANSWER:> .............."
