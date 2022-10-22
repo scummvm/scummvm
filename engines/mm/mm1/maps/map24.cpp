@@ -31,7 +31,7 @@ namespace Maps {
 
 void Map24::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < 14; ++i) {
+	for (uint i = 0; i < 10; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
@@ -45,38 +45,16 @@ void Map24::special() {
 	}
 
 	g_maps->clearSpecial();
-	InfoMessage msg(
-		14, 2, STRING["maps.map24.look_out"],
-		[]() {
-			g_globals->_encounters.execute();
-		}
-	);
-	msg._delaySeconds = 2;
-	send(msg);
+	g_globals->_encounters.execute();
 }
 
 void Map24::special00() {
-	send(SoundMessage(
-		STRING["maps.map24.passage"],
-		[]() {
-			g_maps->_mapPos = Common::Point(12, 0);
-			g_maps->changeMap(0x604, 1);
-		}
-	));
 }
 
 void Map24::special01() {
-	send(SoundMessage(
-		STRING["maps.map24.cave"],
-		[]() {
-			g_maps->_mapPos = Common::Point(2, 0);
-			g_maps->changeMap(1, 1);
-		}
-	));
 }
 
 void Map24::special02() {
-	g_events->addView("Gypsy");
 }
 
 void Map24::special03() {
@@ -86,18 +64,6 @@ void Map24::special08() {
 }
 
 void Map24::special09() {
-}
-
-void Map24::special10() {
-}
-
-void Map24::special11() {
-}
-
-void Map24::special12() {
-}
-
-void Map24::special13() {
 }
 
 } // namespace Maps

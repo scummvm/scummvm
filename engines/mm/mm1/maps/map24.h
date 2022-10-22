@@ -37,12 +37,8 @@ private:
 	void special03();
 	void special08();
 	void special09();
-	void special10();
-	void special11();
-	void special12();
-	void special13();
 
-	const SpecialFn SPECIAL_FN[14] = {
+	const SpecialFn SPECIAL_FN[10] = {
 		&Map24::special00,
 		&Map24::special01,
 		&Map24::special02,
@@ -52,11 +48,7 @@ private:
 		&Map24::special03,
 		&Map24::special03,
 		&Map24::special08,
-		&Map24::special09,
-		&Map24::special10,
-		&Map24::special11,
-		&Map24::special12,
-		&Map24::special13
+		&Map24::special09
 	};
 public:
 	Map24() : Map(24, "areac3", 0x904) {}
