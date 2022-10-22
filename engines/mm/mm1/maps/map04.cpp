@@ -73,7 +73,7 @@ void Map04::special01() {
 	bool hasScroll = false;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		if (c.hasItem(VELLUM_SCROLL_ID) != -1) {
+		if (c.hasItem(VELLUM_SCROLL_ID)) {
 			hasScroll = true;
 			c._gold += 1500;
 			break;
