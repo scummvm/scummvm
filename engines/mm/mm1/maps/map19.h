@@ -32,9 +32,19 @@ class Map19 : public Map {
 	typedef void (Map19:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map19::special00
+	const SpecialFn SPECIAL_FN[6] = {
+		&Map19::special00,
+		&Map19::special01,
+		&Map19::special02,
+		&Map19::special03,
+		&Map19::special04,
+		&Map19::special05
 	};
 public:
 	Map19() : Map(19, "areab2", 0x703) {}

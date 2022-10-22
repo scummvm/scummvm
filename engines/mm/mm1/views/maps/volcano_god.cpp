@@ -100,7 +100,7 @@ void VolcanoGod::clue() {
 void VolcanoGod::answerEntered() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	Common::String properAnswer;
-	for (int i = 0; i < 8 && map[MAX_ANSWER_LENGTH + i]; ++i)
+	for (int i = 0; i < 8 && map[ANSWER_OFFSET + i]; ++i)
 		properAnswer += map[ANSWER_OFFSET + i] + 30;
 
 	if (_answer == properAnswer) {

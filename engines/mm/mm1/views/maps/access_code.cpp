@@ -30,7 +30,7 @@ namespace Views {
 namespace Maps {
 
 #define MAX_CODE_LENGTH 10
-#define CODE_OFFSET 147
+#define ANSWER_OFFSET 147
 #define VAL1 163
 #define VAL2 408
 
@@ -51,8 +51,8 @@ void AccessCode::draw() {
 void AccessCode::answerEntered() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	Common::String properCode;
-	for (int i = 0; i < 10 && map[CODE_OFFSET + i]; ++i)
-		properCode += map[CODE_OFFSET + i] + 0x1f;
+	for (int i = 0; i < 10 && map[ANSWER_OFFSET + i]; ++i)
+		properCode += map[ANSWER_OFFSET + i] + 0x1f;
 
 	if (_answer == properCode)
 		correctCode();

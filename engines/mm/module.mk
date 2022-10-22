@@ -53,6 +53,7 @@ MODULE_OBJS := \
 	mm1/views/maps/access_code.o \
 	mm1/views/maps/answer_entry.o \
 	mm1/views/maps/arrested.o \
+	mm1/views/maps/ice_princess.o \
 	mm1/views/maps/resistances.o \
 	mm1/views/maps/volcano_god.o \
 	mm1/views/maps/won_game.o \

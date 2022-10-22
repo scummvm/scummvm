@@ -117,7 +117,6 @@ void Map18::special02() {
 void Map18::special03() {
 	send(SoundMessage(STRING["maps.map18.ruins"],
 		[]() {
-			Map18 &map = *static_cast<Map18 *>(g_maps->_currentMap);
 			g_maps->_mapPos = Common::Point(2, 2);
 			g_maps->changeMap(0xf03, 3);
 		}

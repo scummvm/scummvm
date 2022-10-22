@@ -19,57 +19,30 @@
  *
  */
 
-#include "mm/mm1/maps/map19.h"
-#include "mm/mm1/maps/maps.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_MAPS_ICE_PRINCESS_H
+#define MM1_VIEWS_MAPS_ICE_PRINCESS_H
+
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-#define VAL1 123
+class IcePrincess : public AnswerEntry {
+protected:
+	void answerEntered() override;
 
-void Map19::special() {
-	// Scan for special actions on the map cell
-	for (uint i = 0; i < 6; ++i) {
-		if (g_maps->_mapOffset == _data[51 + i]) {
-			// Found a specially handled cell, but it
-			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[57 + i]) {	
-				(this->*SPECIAL_FN[i])();
-			} else {
-				checkPartyDead();
-			}
-			return;
-		}
-	}
+public:
+	IcePrincess();
+	virtual ~IcePrincess() {}
 
-	// All other cells on the map are encounters
-	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-}
-
-void Map19::special00() {
-	g_events->addView("IcePrincess");
-}
-
-void Map19::special01() {
-}
-
-void Map19::special02() {
-}
-
-void Map19::special03() {
-}
-
-void Map19::special04() {
-}
-
-void Map19::special05() {
-}
+	void draw() override;
+};
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif
