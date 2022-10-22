@@ -92,7 +92,7 @@ void Map07::special02() {
 
 	send(SoundMessage(0, 1, STRING["maps.map07.gate"]));
 	g_maps->_mapPos.y--;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map07::special03() {

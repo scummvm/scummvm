@@ -84,7 +84,7 @@ void Map06::special() {
 			pos.y++;
 		}
 
-		g_events->send("Game", GameMessage("UPDATE"));
+		updateGame();
 	} else {
 		checkPartyDead();
 	}
@@ -161,7 +161,7 @@ void Map06::special07() {
 	send(SoundMessage(17, 1, STRING["maps.poof"]));
 	g_maps->_mapPos.x = 10;
 	g_maps->_mapPos.y = 11;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map06::special09() {
@@ -207,7 +207,7 @@ void Map06::slide() {
 	send(SoundMessage(16, 1, STRING["maps.map06.slide"]));
 	_data[VAL2]++;
 
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 } // namespace Maps

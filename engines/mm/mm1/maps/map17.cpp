@@ -67,7 +67,7 @@ void Map17::special() {
 	} else if (getRandomNumber(30) == 10) {
 		g_maps->_mapPos = Common::Point(15, 15);
 		send(SoundMessage(STRING["maps.map17.wave"]));
-		g_events->send("Game", GameMessage("UPDATE"));
+		updateGame();
 
 	} else {
 		g_events->addAction(KEYBIND_SEARCH);
@@ -104,7 +104,7 @@ void Map17::askQuestion(uint partyIndex) {
 	if (partyIndex >= g_globals->_party.size()) {
 		if (_data[VAL3]) {
 			g_maps->_mapPos.y = 2;
-			g_events->send("Game", GameMessage("UPDATE"));
+			updateGame();
 		} else {
 			none160();
 		}

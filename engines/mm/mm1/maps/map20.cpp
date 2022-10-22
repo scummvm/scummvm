@@ -139,12 +139,12 @@ void Map20::special06() {
 
 void Map20::special07() {
 	g_maps->_mapPos.y = 6;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map20::special08() {
 	g_maps->_mapPos.x = 9;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 } // namespace Maps

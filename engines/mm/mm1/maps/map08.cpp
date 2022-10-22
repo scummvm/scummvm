@@ -85,12 +85,12 @@ void Map08::special02() {
 
 void Map08::special04() {
 	g_maps->_mapPos = Common::Point(15, 9);
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map08::special05() {
 	g_maps->_mapPos = Common::Point(0, 9);
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map08::special06() {
