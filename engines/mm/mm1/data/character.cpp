@@ -575,5 +575,10 @@ void Character::rest() {
 	}
 }
 
+bool Character::hasItem(byte itemId) const {
+	return _backpack.indexOf(itemId) != -1 ||
+		_equipped.indexOf(itemId) != -1;
+}
+
 } // namespace MM1
 } // namespace MM

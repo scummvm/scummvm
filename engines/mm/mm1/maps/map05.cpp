@@ -191,7 +191,7 @@ void Map05::showMessage(const Common::String &msg) {
 bool Map05::hasScroll() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
-		if (c._equipped.indexOf(VELLUM_SCROLL_ID) != -1)
+		if (c.hasItem(VELLUM_SCROLL_ID))
 			return true;
 	}
 

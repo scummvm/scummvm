@@ -33,6 +33,7 @@ namespace MM1 {
 
 enum ItemId {
 	VELLUM_SCROLL_ID = 231,
+	RUBY_WHISTLE_ID = 232,
 	BRONZE_KEY_ID = 237,
 	DIAMOND_KEY_ID = 240
 };
