@@ -57,6 +57,11 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Adds an item to the party
+	 */
+	static bool addItem(byte itemId);
 };
 
 } // namespace Maps
