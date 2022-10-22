@@ -62,7 +62,7 @@ void Map11::special() {
 		}
 
 		send(SoundMessage(STRING["maps.map11.poof"]));
-		g_events->send("Game", GameMessage("UPDATE"));
+		updateGame();
 	}
 }
 

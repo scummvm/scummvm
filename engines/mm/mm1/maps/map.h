@@ -112,7 +112,7 @@ protected:
 	/**
 	 * Divides all the party's Hp in half
 	 */
-	void reduceHP();
+	static void reduceHP();
 
 	/**
 	 * Many special methods return a 160 key, but it
@@ -121,6 +121,11 @@ protected:
 	 * 'do nothing' return value
 	 */
 	static void none160() {}
+
+	/**
+	 * Updates the game display
+	 */
+	static void updateGame();
 
 public:
 	byte _walls[MAP_SIZE];

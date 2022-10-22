@@ -90,7 +90,7 @@ void Map10::special01() {
 			} else if (ks.keycode == Common::KEYCODE_n) {
 				g_events->send(SoundMessage(STRING["maps.map10.ranalou3"]));
 				g_maps->_mapPos = Common::Point(15, 0);
-				g_events->send("Game", GameMessage("UPDATE"));
+				updateGame();
 			}
 		}
 	));
@@ -105,17 +105,17 @@ void Map10::special02() {
 
 void Map10::special17() {
 	g_maps->_mapPos.y++;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map10::special18() {
 	g_maps->_mapPos.x++;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map10::special19() {
 	g_maps->_mapPos.x--;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Map10::special20() {
@@ -196,7 +196,7 @@ void Map10::special32() {
 
 void Map10::special33() {
 	g_maps->_mapPos.x = 15;
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 } // namespace Maps

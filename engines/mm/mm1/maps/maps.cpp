@@ -424,7 +424,7 @@ void Maps::changeMap(uint16 id, byte section) {
 	select(id, section);
 	loadTiles();
 
-	g_events->send("Game", GameMessage("UPDATE"));
+	updateGame();
 }
 
 void Maps::clearSpecial() {

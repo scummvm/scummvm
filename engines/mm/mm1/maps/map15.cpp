@@ -170,7 +170,7 @@ void Map15::special06() {
 			} else if (ks.keycode == Common::KEYCODE_n) {
 				g_events->send(SoundMessage(STRING["maps.map15.percella1"]));
 				g_maps->_mapPos = Common::Point(14, 2);
-				g_events->send("Game", GameMessage("UPDATE"));
+				updateGame();
 			}
 		}
 	));

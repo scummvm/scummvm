@@ -193,7 +193,7 @@ void Map12::setPolyhedron(int polyIndex) {
 			msg,
 			[]() {
 				static_cast<Map12 *>(g_maps->_currentMap)->spinPolyhedron(0);
-				g_events->send("Game", GameMessage("UPDATE"));
+				updateGame();
 			}
 		));
 

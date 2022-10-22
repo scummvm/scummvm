@@ -104,6 +104,10 @@ void Map::reduceHP() {
 		g_globals->_party[i]._hpBase /= 2;
 }
 
+void Map::updateGame() {
+	g_events->send("Game", GameMessage("UPDATE"));
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
