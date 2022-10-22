@@ -115,6 +115,10 @@ void Map20::special02() {
 }
 
 void Map20::special03() {
+	bool hasWhistle = false;
+	for (uint i = 0; i < g_globals->_party.size() && !hasWhistle; ++i)
+		hasWhistle = g_globals->_party[i].hasItem(RUBY_WHISTLE_ID);
+
 	// TODO
 }
 

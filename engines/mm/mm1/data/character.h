@@ -398,6 +398,11 @@ struct Character {
 	 * Rest the character
 	 */
 	void rest();
+
+	/**
+	 * Returns true if the character has a given item
+	 */
+	bool hasItem(byte itemId) const;
 };
 
 } // namespace MM1

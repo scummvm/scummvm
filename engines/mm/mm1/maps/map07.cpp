@@ -80,9 +80,9 @@ void Map07::special02() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		const Character &c = g_globals->_party[i];
 
-		for (uint j = 0; j < c._equipped.size(); ++j) {
-			if (c._equipped[j]._id >= BRONZE_KEY_ID &&
-				c._equipped[j]._id <= DIAMOND_KEY_ID) {
+		for (byte itemId = BRONZE_KEY_ID;
+				itemId <= DIAMOND_KEY_ID; ++itemId) {
+			if (c.hasItem(itemId)) {
 				// Someone has a key
 				none160();
 				return;

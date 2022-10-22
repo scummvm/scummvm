@@ -66,12 +66,9 @@ void Map03::special01() {
 	bool hasScroll = false;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		for (uint j = 0; j < c._equipped.size() && !hasScroll; ++j) {
-			if (c._equipped[i]._id == 231) {
-				hasScroll = true;
-				c._gold += 1500;
-				break;
-			}
+		if (c.hasItem(VELLUM_SCROLL_ID)) {
+			hasScroll = true;
+			c._gold += 1500;
 		}
 	}
 
@@ -81,12 +78,12 @@ void Map03::special01() {
 			g_globals->_currCharacter = &c;
 			c._exp += 2500;
 
-			for (uint j = 0; j < c._equipped.size(); ++j) {
-				if (c._equipped[j]._id == 231) {
-					c._equipped.removeAt(j);
-					break;
-				}
-			}
+			int idx = c._equipped.indexOf(VELLUM_SCROLL_ID);
+			if (idx != -1)
+				c._equipped.removeAt(idx);
+			idx = c._backpack.indexOf(VELLUM_SCROLL_ID);
+			if (idx != -1)
+				c._backpack.removeAt(idx);
 		}
 
 		InfoMessage info1(
