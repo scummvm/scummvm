@@ -116,8 +116,6 @@ void Map21::special02() {
 	send(SoundMessage(
 		STRING["maps.map21.trivia_island"],
 		[](const Common::KeyState &ks) {
-			Map21 &map = *static_cast<Map21 *>(g_maps->_currentMap);
-
 			if (ks.keycode == Common::KEYCODE_y) {
 				g_events->close();
 
