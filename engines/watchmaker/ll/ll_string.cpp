@@ -67,7 +67,7 @@ void ClearText(void) {
 /*-----------------17/02/95 09.53-------------------
  TextLen - calcola lunghezza str dal car 0 a num
 --------------------------------------------------*/
-uint16 TextLen(char *sign, uint16 num) {
+uint16 TextLen(Fonts &fonts, char *sign, uint16 num) {
 	uint16 Len, b, c;
 	b = 0;
 
@@ -80,15 +80,15 @@ uint16 TextLen(char *sign, uint16 num) {
 		Len = num;
 
 	for (c = 0; c < Len; c++)
-		b += (StandardFont.Table[(uint16)((uint8)sign[c]) * 4 + 2]);
+		b += (fonts.StandardFont.table[(uint16)((uint8)sign[c]) * 4 + 2]);
 
 	return (b);
 }
 
 /*-----------------14/05/95 12.12-------------------
-   CheckText - ritorna in quante righe scrivera'
+   CheckText - returns how many lines it will write
 --------------------------------------------------*/
-uint16 CheckText(uint16 dx, char *sign) {
+uint16 CheckText(Fonts &fonts, uint16 dx, char *sign) {
 	uint16 a, b;
 	uint16 CurInit;
 	uint16 LastSpace;
@@ -104,7 +104,7 @@ uint16 CheckText(uint16 dx, char *sign) {
 	CurLine = 0;
 
 //	Caso piu' semplice: sta tutto su una riga
-	if (TextLen(sign, 0) <= dx) {
+	if (TextLen(fonts, sign, 0) <= dx) {
 		strcpy((char *)TextLines[CurLine], sign);
 		return (1);
 	}
@@ -112,9 +112,9 @@ uint16 CheckText(uint16 dx, char *sign) {
 	while (a < strlen(sign)) {
 		a++;
 		if (sign[a] == ' ') {
-			if (TextLen((char *)(sign + CurInit), (uint16)(a - CurInit)) <= dx)
+			if (TextLen(fonts, (char *)(sign + CurInit), (uint16)(a - CurInit)) <= dx)
 				LastSpace = a;
-			else if (TextLen((char *)(sign + CurInit), (uint16)(LastSpace - CurInit)) <= dx) {
+			else if (TextLen(fonts, (char *)(sign + CurInit), (uint16)(LastSpace - CurInit)) <= dx) {
 				for (b = CurInit; b < LastSpace; b++)
 					TextLines[CurLine][b - CurInit] = sign[b];
 
@@ -125,7 +125,7 @@ uint16 CheckText(uint16 dx, char *sign) {
 			} else
 				return (0);
 		} else if (sign[a] == '\0') {
-			if (TextLen((char *)(sign + CurInit), (uint16)(a - CurInit)) <= dx) {
+			if (TextLen(fonts, (char *)(sign + CurInit), (uint16)(a - CurInit)) <= dx) {
 				for (b = CurInit; b < a; b++)
 					TextLines[CurLine][b - CurInit] = sign[b];
 				TextLines[CurLine][b - CurInit] = '\0';
@@ -133,7 +133,7 @@ uint16 CheckText(uint16 dx, char *sign) {
 				CurLine++;
 				CurInit = a + 1;
 				return (CurLine);
-			} else if (TextLen((char *)(sign + CurInit), (uint16)(LastSpace - CurInit)) <= dx) {
+			} else if (TextLen(fonts, (char *)(sign + CurInit), (uint16)(LastSpace - CurInit)) <= dx) {
 				for (b = CurInit; b < LastSpace; b++)
 					TextLines[CurLine][b - CurInit] = sign[b];
 
@@ -163,7 +163,7 @@ uint16 CheckText(uint16 dx, char *sign) {
 void PaintText(WGame &game) {
 	uint16 lines, i;
 	int32 dx, obj;
-	uint8 color;
+	FontColor color;
 	Init &init = game.init;
 
 	if (bTitoliCodaStatic || bTitoliCodaScrolling)  return;
@@ -177,9 +177,9 @@ void PaintText(WGame &game) {
 				Character[obj]->Mesh->ExpressionFrame = VisemaTimeRecon(TheTime - LastTextTime);
 		}
 
-		lines = (uint16)CheckText((uint16)game._renderer->rFitY((int32)TheString.dx), TheString.text);
+		lines = (uint16)CheckText(game._fonts, (uint16)game._renderer->rFitY((int32)TheString.dx), TheString.text);
 		for (i = 0; i < lines; i++) {
-			dx = (TheString.dx - (TextLen(TextLines[i], 0) * SCREEN_RES_X) / game._renderer->rFitX(SCREEN_RES_X)) / 2;
+			dx = (TheString.dx - (TextLen(game._fonts, TextLines[i], 0) * SCREEN_RES_X) / game._renderer->rFitX(SCREEN_RES_X)) / 2;
 			obj = init.Anim[TimeAnim].obj;
 			color = WHITE_FONT;
 			if ((obj >= ocCUOCO) && (obj <= ocCURPLAYER)) {
@@ -226,7 +226,7 @@ void PaintText(WGame &game) {
 					break;
 				}
 			}
-			DisplayDDText(*game._renderer, TextLines[i], &StandardFont, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
+			DisplayDDText(*game._renderer, TextLines[i], FontKind::Standard, color, TheString.x + dx, TheString.y + i * 12, 0, 0, 0, 0);
 		}
 	}
 }
@@ -293,9 +293,9 @@ void PaintInventory(WGame &game) {
 			for (a = 0; a < MAX_SHOWN_ICONS; a++) {
 				if (ci = Inv[CurPlayer][InvBase[CurPlayer] + a]) {
 					if (CurInvObj == ci)
-						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], &StandardFont, RED_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
+						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], FontKind::Standard, RED_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
 					else
-						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], &StandardFont, WHITE_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
+						DisplayDDText(renderer, ObjName[init.InvObj[ci].name], FontKind::Standard, WHITE_FONT, INV_MARG_SX, INV_MARG_UP + ICON_DY * a, 0, 0, 0, 0);
 				}
 			}
 		}

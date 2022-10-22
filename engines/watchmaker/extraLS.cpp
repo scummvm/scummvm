@@ -92,8 +92,8 @@ void CheckExtraLocalizationStrings(Renderer &renderer, uint32 id) {
 
 		if (newID) {
 			int x, y;
-			rGetTextDim(ExtraLS[newID], StandardFont.Table, &x, &y);
-			extraLS_BMP = CreateTooltipBitmap(renderer, ExtraLS[newID], &StandardFont, WHITE_FONT, EXTRALS_BKG_COLOR_R, EXTRALS_BKG_COLOR_G, EXTRALS_BKG_COLOR_B);
+			renderer._fonts->getTextDim(ExtraLS[newID], FontKind::Standard, &x, &y);
+			extraLS_BMP = CreateTooltipBitmap(renderer, ExtraLS[newID], WHITE_FONT, EXTRALS_BKG_COLOR_R, EXTRALS_BKG_COLOR_G, EXTRALS_BKG_COLOR_B);
 			extraLS_bmpPosX = (800 - x) / 2;
 			extraLS_bmpPosY = 600 - (y + 12);
 		}

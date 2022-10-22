@@ -26,15 +26,21 @@
 #include "graphics/opengl/system_headers.h"
 
 #include "common/system.h"
+#include "math/glmath.h"
+#include "watchmaker/fonts.h"
+#include "watchmaker/game.h"
 #include "watchmaker/globvar.h"
 #include "watchmaker/ll/ll_system.h"
-#include "math/glmath.h"
 #include "watchmaker/rect.h"
-#include "watchmaker/renderer.h"
 #include "watchmaker/render.h"
+#include "watchmaker/renderer.h"
 #include "watchmaker/windows_hacks.h"
 
 namespace Watchmaker {
+
+Renderer::Renderer(WGame *game, sdl_wrapper *wrapper) : sdl(wrapper), _game(game) {
+	_workDirs = &game->workDirs;
+}
 
 // blitter info
 Rect            gBlitterViewport;
@@ -131,6 +137,37 @@ int Renderer::rInvFitX(int x) {
 }
 int Renderer::rInvFitY(int y) {
 	return (int)ceil(((float)(y)) * gInvAspectY);
+}
+
+void gPrintText(WGame &game, const char *s, uint32 d, uint32 src, uint16 *FontTable, short x, short y) {
+	int16 	i=0,nextx,nexty;
+	unsigned char c;
+
+	uint32 AddFlag=0,NumRetries=0;
+
+	nextx = nexty = 0;
+	while ( (c=s[i])!=0) {
+		i++;
+		int16 posx, posy, dimx, dimy;
+		posx = FontTable[c*4+0];
+		posy = FontTable[c*4+1];
+		dimx = FontTable[c*4+2];
+		dimy = FontTable[c*4+3];
+
+		rBlitter(game, d, src, x + nextx,y + nexty, posx, posy, dimx, dimy);
+
+		nextx += dimx;
+	}
+}
+
+void Renderer::printText(const char *s, unsigned int dst, FontKind font, FontColor color, uint16 x, uint16 y) {
+	auto f = _fonts->fontForKind(font);
+	uint32 src = f->color[color];
+
+	if (dst==0)
+		gPrintText(*_game, s, NULL, src, f->table, x, y);
+	else
+		gPrintText(*_game, s, dst, src, f->table, x, y);
 }
 
 } // End of namespace Watchmaker

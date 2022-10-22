@@ -227,13 +227,14 @@ int16 getRoomFromStr(Init &init, const Common::String &s) {
 /* -----------------19/01/99 11.03-------------------
  *              CreateTooltipBitmap
  * --------------------------------------------------*/
-int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, struct SFont *f, uint8 color, uint8 r, uint8 g, uint8 b) {
+int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, uint8 r, uint8 g, uint8 b) {
 	int32 dimx, dimy, surf, enlarge = 5;
 	char info[100];
 
 	if (!tooltip || !strcmp(tooltip, "")) return -1;
+	FontKind font = FontKind::Standard;
 
-	rGetTextDim(tooltip, f->Table, &dimx, &dimy);
+	renderer._fonts->getTextDim(tooltip, font, &dimx, &dimy);
 	dimx += renderer.rFitX(enlarge * 2);
 	dimy += renderer.rFitY(enlarge * 2);
 
@@ -245,38 +246,8 @@ int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, struct SFont *f, ui
 	rSetBitmapName(surf, info);
 	rClear(surf, 0, 0, dimx, dimy, 18, 18, 18);                                                  // Bordino nero
 	rClear(surf, 1, 1, dimx - 2, dimy - 2, r, g, b);                                             // Sfondo colorato
-	rPrintText(tooltip, surf, f->Color[color], f->Table, (uint16)renderer.rFitX(enlarge), (uint16)renderer.rFitY(enlarge));
+	renderer.printText(tooltip, surf, font, color, (uint16)renderer.rFitX(enlarge), (uint16)renderer.rFitY(enlarge));
 	return surf;
-}
-
-/* -----------------27/10/98 15.33-------------------
- *                  LoadFont
- * --------------------------------------------------*/
-void LoadFont(struct SFont *f, const char *n) {
-	warning("STUBBED: LoadFont(%s)", n);
-#if 0
-	char name[100], a;
-
-	memset(name, 0, 100);
-	strcpy(name, WmMiscDir);
-	strcat(name, n);
-	if ((f->Table = rSetupFontTable(name)) == nullptr) {
-		DebugLogFile("Failed to load Font. Quitting ...");
-		CloseSys();
-	}
-
-	name[strlen(name) - 3] = '.';
-	name[strlen(name) - 2] = 't';
-	name[strlen(name) - 1] = 'g';
-	name[strlen(name) - 0] = 'a';
-	for (a = 0; a < MAX_FONT_COLORS; a++) {
-		name[strlen(name) - 5] = a + '0';
-		if ((f->Color[a] = rLoadBitmapImage(name, rBITMAPSURFACE | rSURFACEFLIP)) <= 0) {
-			DebugLogFile("Failed to load Font2. Quitting ...");
-			CloseSys();
-		}
-	}
-#endif
 }
 
 /* -----------------27/10/98 15.31-------------------
@@ -754,7 +725,7 @@ void DisplayDDBitmap_NoFit(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, i
 /* -----------------15/11/00 12.16-------------------
  *                  RendDDText
  * --------------------------------------------------*/
-int32 RendDDText(char *text, struct SFont *f, uint8 color) {
+int32 RendDDText(Renderer &renderer, char *text, FontKind font, FontColor color) {
 	struct SDDText *r;
 	int32 c, tdx, tdy;
 	char info[100];
@@ -763,22 +734,21 @@ int32 RendDDText(char *text, struct SFont *f, uint8 color) {
 
 	for (c = 0, r = &RendText[0]; c < MAX_REND_TEXTS; c++, r++) {
 		if (r->text[0]) continue;
-
 //		Prende dimesioni della scritta da renderizzare
-		rGetTextDim(text, f->Table, &tdx, &tdy);
+		renderer._fonts->getTextDim(text, font, &tdx, &tdy);
 //		Crea una surface che la contenga
 		r->tnum = rCreateSurface(tdx, tdy, rBITMAPSURFACE);
 		rClear(r->tnum, 0, 0, tdx, tdy, 0, 0, 0);
 //		Renderizza la scritta nella surface
 //DebugLogWindow("Creo testo %s | %d %d",text,tdx,tdy );
-		rPrintText(text, r->tnum,  f->Color[color], f->Table, 0, 0);
+		renderer.printText(text, r->tnum,  font, color, 0, 0);
 		strcpy(info, "text: ");
 		strncat(info, text, 15);
 //DebugLogWindow("Creato %s",info);
 		rSetBitmapName(r->tnum, info);
 		strcpy(r->text, text);
 		r->color = color;
-		r->font = f;
+		r->font = font;
 		return r->tnum;
 	}
 
@@ -788,7 +758,7 @@ int32 RendDDText(char *text, struct SFont *f, uint8 color) {
 /* -----------------24/04/98 10.33-------------------
  *                  DisplayDDText
  * --------------------------------------------------*/
-void DisplayDDText(Renderer &renderer, char *text, struct SFont *f, uint8 color, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
+void DisplayDDText(Renderer &renderer, char *text, FontKind font, FontColor color, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
 	struct SDDText *t, *r;
 	int32 a, c;
 
@@ -805,7 +775,7 @@ void DisplayDDText(Renderer &renderer, char *text, struct SFont *f, uint8 color,
 
 	strcpy(DDTextsList[a].text, text);
 	DDTextsList[a].tnum  = -1;
-	DDTextsList[a].font  = f;
+	DDTextsList[a].font  = font;
 	DDTextsList[a].color = color;
 
 	t = &DDTextsList[a];
@@ -825,7 +795,7 @@ void DisplayDDText(Renderer &renderer, char *text, struct SFont *f, uint8 color,
 		            DisplayDDBitmap( r->tnum, px, py, ox, oy, dx, dy );*/
 
 		int32 tn;
-		if ((tn = RendDDText(t->text, t->font, t->color)) > 0)
+		if ((tn = RendDDText(renderer, t->text, t->font, t->color)) > 0)
 //          Aggiunge il bitmap con la scritta pre-renderizzata da visualizzare
 			DisplayDDBitmap(renderer, tn, px, py, ox, oy, dx, dy);
 	}
@@ -860,7 +830,7 @@ void DebugVideo(Renderer &renderer, int32 px, int32 py, const char *format, ...)
 	vsprintf(str, format, args);
 	va_end(args);
 
-	DisplayDDText(renderer, str, &StandardFont, WHITE_FONT, px, py, 0, 0, 0, 0);
+	DisplayDDText(renderer, str, FontKind::Standard, WHITE_FONT, px, py, 0, 0, 0, 0);
 //	rPrintText( str, 0, StandardFont.Color[WHITE_FONT], StandardFont.Table, px, py );
 }
 

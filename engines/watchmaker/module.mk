@@ -66,6 +66,7 @@ MODULE_OBJS = \
 	console.o \
 	extraLS.o \
 	file_utils.o \
+	fonts.o \
 	game.o \
 	game_options.o \
 	globvar.o \

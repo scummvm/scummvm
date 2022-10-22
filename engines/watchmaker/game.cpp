@@ -206,7 +206,7 @@ WGame::WGame() : workDirs(WATCHMAKER_CFG_NAME) {
 
 	sdl = new sdl_wrapper();
 
-	_renderer = new Renderer(&workDirs, sdl);
+	_renderer = new Renderer(this, sdl);
 
 	// Don't forget to register your random source
 	_rnd = new Common::RandomSource("Watchmaker");
@@ -554,19 +554,7 @@ void WGame::LoadMisc() {
 	    rShowFrame();
 
 	*/
-	if ((windowInfo.width >= 1024) || (windowInfo.height >= 768)) {
-		LoadFont(&StandardFont, "1024NlFont.fnt");
-		LoadFont(&ComputerFont, "1024ComputerFont.fnt");
-		LoadFont(&PDAFont,      "1024PDAFont.fnt");
-	} else if ((windowInfo.width >= 800) || (windowInfo.height >= 600)) {
-		LoadFont(&StandardFont, "800NlFont.fnt");
-		LoadFont(&ComputerFont, "800ComputerFont.fnt");
-		LoadFont(&PDAFont,      "800PDAFont.fnt");
-	} else if ((windowInfo.width >= 640) || (windowInfo.height >= 480)) {
-		LoadFont(&StandardFont, "640NlFont.fnt");
-		LoadFont(&ComputerFont, "640ComputerFont.fnt");
-		LoadFont(&PDAFont,      "640PDAFont.fnt");
-	}
+	_fonts.loadFonts(*this, windowInfo);
 
 	Console1 = LoadDDBitmap(*this, "Console1.tga", rSURFACESTRETCH);
 	ConsoleFrecciaGiu = LoadDDBitmap(*this, "consoleFrecciaGiu.tga", rSURFACESTRETCH);

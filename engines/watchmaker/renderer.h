@@ -40,11 +40,14 @@ struct WindowInfo {
 	unsigned int bpp;
 };
 
+class Fonts;
 class Renderer {
 	WorkDirs *_workDirs;
+	WGame *_game;
 public:
+	Fonts *_fonts = nullptr;
 	Rect _viewport;
-	Renderer(WorkDirs *workDirs, sdl_wrapper *wrapper) : sdl(wrapper), _workDirs(workDirs) {}
+	Renderer(WGame *game, sdl_wrapper *wrapper);
 	bool addMaterial(gMaterial &material, const Common::String &name, int NumFaces, unsigned int LoaderFlags);
 
 	void initGL();
@@ -60,6 +63,7 @@ public:
 	void setCurCameraViewport(t3dF32 fov, uint8 sup);
 
 	void renderBitmap(SDDBitmap &bitmap);
+	void printText(const char *s, unsigned int dst, FontKind font, FontColor color, uint16 x, uint16 y);
 
 	int rFitX(int x);
 	int rFitY(int y);

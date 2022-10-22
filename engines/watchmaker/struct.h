@@ -448,10 +448,6 @@ struct SRect {
 	SRect(int32 x1, int32 y1, int32 x2, int32 y2): x1(x1), y1(y1), x2(x2), y2(y2) {}
 };
 
-struct SFont {
-	uint16 *Table = nullptr;
-	int32 Color[MAX_FONT_COLORS] = {};
-};
 struct SD3DRect {
 	int32 px = 0, py = 0, dx = 0, dy = 0;
 	uint8 r = 0, g = 0, b = 0, a = 0;
@@ -469,10 +465,12 @@ struct SDDBitmap {
 	int32 tnum = 0;
 	int32 px = 0, py = 0, ox = 0, oy = 0, dx = 0, dy = 0;
 };
+
+enum class FontKind;
 struct SDDText {
 	char text[MAX_STRING_LEN] = {};
-	struct SFont *font = nullptr;
-	uint8 color = 0;
+	FontKind font; // TODO: Move elsewhere so we can initalize
+	FontColor color;
 	int32 tnum = 0;
 };
 
@@ -556,7 +554,7 @@ struct SRoomInfo {
 	int32 tnum = 0;               //bitmap
 	char *letter_ptr = nullptr;    //puntatore alla lettera corrente
 	int16 t_next_letter = 0;      //quando deve apparire la nuova lettera
-	struct SFont *f = nullptr;     //il font
+	FontKind f;     //il font
 };
 
 } // End of namespace Watchmaker

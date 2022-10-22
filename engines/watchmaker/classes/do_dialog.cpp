@@ -494,7 +494,7 @@ void UpdateDialogMenu(WGame &game, int16 dmx, int16 dmy, uint8 db) {
 void PaintDialog(WGame &game) {
 	int32 a, ca1, ca2;
 	int32 tx, ty;
-	uint8 tc;
+	FontColor tc;
 	Init &init = game.init;
 
 	if ((bDialogActive == FALSE) || (CurDialog == dNULL) || (bDialogMenuActive == FALSE))
@@ -530,7 +530,7 @@ void PaintDialog(WGame &game) {
 		}
 		if (CurDlgItem == a) tc = RED_FONT;
 
-		DisplayDDText(*game._renderer, Sentence[init.DlgMenu[a].titolo], &StandardFont, tc, tx, ty, 0, 0, 0, 0);
+		DisplayDDText(*game._renderer, Sentence[init.DlgMenu[a].titolo], FontKind::Standard, tc, tx, ty, 0, 0, 0, 0);
 	}
 
 

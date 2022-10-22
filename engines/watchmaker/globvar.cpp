@@ -57,9 +57,6 @@ int32 ConsoleD1, ConsoleD2, StartPic, EndPic, NewLogImage, LoadingImage;
 int32 CurMousePointer, MousePointerDefault, MousePointerPlus, TrecLogo;
 int32 GopherMap, GopherPos[MAX_GOPHERS], GopherBall;
 struct SRect MousePointerLim;
-struct SFont StandardFont;
-struct SFont ComputerFont;
-struct SFont PDAFont;
 
 // LOADER VARS
 char LoaderName[T3D_NAMELEN] = "rxt.t3d";

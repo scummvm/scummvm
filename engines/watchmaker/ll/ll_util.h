@@ -31,7 +31,7 @@
 namespace Watchmaker {
 
 int32 LoadDDBitmap(WGame &game, const char *n, uint8 flags);
-void LoadFont(struct SFont *f, const char *n);
+void LoadFont(WGame &game, struct SFont *f, const char *n);
 void UpdateRoomVisibility(Init &init);
 t3dMESH *LinkMeshToStr(Init &init, const Common::String &str);
 int16 getRoomFromStr(Init &init, const Common::String &s);
@@ -45,8 +45,8 @@ void UpdateRoomInfo(Init &init);
 bool CheckRect(Renderer &renderer, struct SRect p, int32 cmx, int32 cmy);
 void DisplayD3DTriangle(Renderer &, int32 x1, int32 y1, int32 x2, int32 y2, int32 x3, int32 y3, uint8 r, uint8 g, uint8 b, uint8 al);
 void DisplayD3DRect(Renderer &, int32 px, int32 py, int32 dx, int32 dy, uint8 r, uint8 g, uint8 b, uint8 al);
-void DisplayDDText(Renderer &, char *text, struct SFont *f, uint8 color, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy);
-int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, struct SFont *f, uint8 color, uint8 r, uint8 g, uint8 b);
+void DisplayDDText(Renderer &, char *text, FontKind font, FontColor color, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy);
+int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, uint8 r, uint8 g, uint8 b);
 int32 WhatObj(WGame &game, int32 mx, int32 my, uint8 op);
 void DebugVideo(Renderer &renderer, int32 px, int32 py, const char *format, ...);
 
