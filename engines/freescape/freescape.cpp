@@ -73,6 +73,8 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
 	_demoIndex = 0;
+	_currentDemoInputCode = 0;
+	_currentDemoInputRepetition = 0;
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
@@ -174,31 +176,42 @@ void FreescapeEngine::pressedKey(const int keycode) {}
 
 void FreescapeEngine::generateInput() {
 	Common::Event event;
-
-	g_system->getEventManager()->purgeKeyboardEvents();
+	//g_system->getEventManager()->purgeKeyboardEvents();
 	if (isDOS()) {
-		byte repetition = 1;
-		byte keyIndex = _demoData[_demoIndex++];
 
-		if (keyIndex >= 0x80) {
-			repetition = keyIndex / 32;
-			keyIndex = _demoData[_demoIndex++];
+		if (_currentDemoInputRepetition == 0) {
+			_currentDemoInputRepetition = 1;
+			_currentDemoInputCode = _demoData[_demoIndex++];
+			if (_currentDemoInputCode >= 0x80) {
+				_currentDemoInputRepetition = _currentDemoInputCode - 0x80;
+				assert(_currentDemoInputRepetition > 0);
+				_currentDemoInputCode = _demoData[_demoIndex++];
+			}
 		}
 
-		event = Common::Event();
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = (Common::KeyCode)decodeDOSKey(keyIndex);
-		event.customType = 0xde00;
-
-		while(repetition-- > 0) {
-			debug("Pushing key: %x", event.kbd.keycode);
+		if (_currentDemoInputCode >= 0x16 && _currentDemoInputCode <= 0x1a) {
+			// 0x16 -> left click / shoot
+			// 0x17 -> right?
+			// 0x18 -> left
+			// 0x19 -> down?
+			// 0x1a -> up
+			// TODO: mouse events
+		} else if (_currentDemoInputCode == 0x7f) {
+			// TODO: wait?
+		} else {
+			event = Common::Event();
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = (Common::KeyCode)decodeDOSKey(_currentDemoInputCode);
+			event.customType = 0xde00;
 			g_system->getEventManager()->pushEvent(event);
+			debug("Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
 		}
-		g_system->delayMillis(100);
+		_currentDemoInputRepetition--;
+		g_system->delayMillis(50);
 		return;
 	}
 
-	int mouseX = _demoData[_demoIndex++] << 1;
+	/*int mouseX = _demoData[_demoIndex++] << 1;
 	int mouseY = _demoData[_demoIndex++];
 	debug("Mouse moved to: %d, %d", mouseX, mouseY);
 
@@ -219,7 +232,7 @@ void FreescapeEngine::generateInput() {
 		g_system->getEventManager()->pushEvent(event);
 
 		nextKeyCode = _demoData[_demoIndex++];
-	}
+	}*/
 
 	g_system->delayMillis(200);
 }
@@ -232,12 +245,13 @@ void FreescapeEngine::processInput() {
 	while (g_system->getEventManager()->pollEvent(event)) {
 		Common::Point mousePos = g_system->getEventManager()->getMousePos();
 
+		if (_demoMode) {
+			if (event.customType != 0xde00)
+				continue;
+		}
+
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (_demoMode && event.customType != 0xde00) {
-				continue;
-			}
-
 			if (event.kbd.keycode == Common::KEYCODE_o || event.kbd.keycode == Common::KEYCODE_UP)
 				move(FORWARD, _scaleVector.x(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
@@ -253,9 +267,9 @@ void FreescapeEngine::processInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_l)
 				rotate(0, -5);
 			else if (event.kbd.keycode == Common::KEYCODE_q)
-				rotate(5, 0);
+				rotate(-5.3, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_w)
-				rotate(-5, 0);
+				rotate(5.3, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_r)
 				rise();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
