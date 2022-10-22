@@ -1132,6 +1132,22 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		updateScaleFactors(data);
 		g_gui.scheduleTopDialogRedraw();
 		break;
+	case kChooseShaderCmd: {
+		BrowserDialog browser(_("Select shader"), false);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode file(browser.getResult());
+			_shader->setLabel(file.getPath());
+
+			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
+				_shaderClearButton->setEnabled(true);
+			else
+				_shaderClearButton->setEnabled(false);
+
+			g_gui.scheduleTopDialogRedraw();
+		}
+		break;
+	}
 	case kApplyCmd:
 		apply();
 		break;
@@ -1199,7 +1215,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
 	} else {
-		// Happens when we switch to backend that deosn't support shaders
+		// Happens when we switch to backend that doesn't support shaders
 		if (_shader) {
 			_shaderButton->setEnabled(false);
 			_shader->setEnabled(false);
@@ -3064,22 +3080,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 #endif
 #endif
-	case kChooseShaderCmd: {
-		BrowserDialog browser(_("Select shader"), false);
-		if (browser.runModal() > 0) {
-			// User made his choice...
-			Common::FSNode file(browser.getResult());
-			_shader->setLabel(file.getPath());
-
-			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
-				_shaderClearButton->setEnabled(true);
-			else
-				_shaderClearButton->setEnabled(false);
-
-			g_gui.scheduleTopDialogRedraw();
-		}
-		break;
-	}
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {
