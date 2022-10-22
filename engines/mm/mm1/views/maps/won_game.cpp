@@ -19,52 +19,33 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP18_H
-#define MM1_MAPS_MAP18_H
-
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/maps/won_game.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map18 : public Map {
-	typedef void (Map18:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special04();
-	void special05();
-	void special06();
-	void special07();
-	void special08();
-	void special09();
+WonGame::WonGame() : TextView("WonGame") {
+	Common::Rect r = getLineBounds(5, 11);
+	r.right = 30 * 8;
+	_bounds = r;
+}
 
-	const SpecialFn SPECIAL_FN[10] = {
-		&Map18::special00,
-		&Map18::special01,
-		&Map18::special02,
-		&Map18::special03,
-		&Map18::special04,
-		&Map18::special05,
-		&Map18::special06,
-		&Map18::special07,
-		&Map18::special08,
-		&Map18::special09
-	};
-public:
-	Map18() : Map(18, "areab1", 0xA00) {}
+void WonGame::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map18.congratulations"]);
+	Sound::sound(SOUND_3);
+}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-};
+bool WonGame::msgKeypress(const KeypressMessage &msg) {
+	close();
+	return true;
+}
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

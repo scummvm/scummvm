@@ -149,7 +149,7 @@ void Map18::special07() {
 	}
 
 	if (hasWonGame)
-		wonGame();
+		g_events->addView("WonGame");
 }
 
 void Map18::special08() {
@@ -170,10 +170,6 @@ void Map18::special09() {
 	g_globals->_treasure[6] = 96;
 	g_globals->_treasure[7] = 9;
 	g_events->addAction(KEYBIND_SEARCH);
-}
-
-void Map18::wonGame() {
-	// TODO: display win message
 }
 
 } // namespace Maps

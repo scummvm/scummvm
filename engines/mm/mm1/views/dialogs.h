@@ -46,6 +46,7 @@
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/maps/volcano_god.h"
+#include "mm/mm1/views/maps/won_game.h"
 #include "mm/mm1/views/spells/cast_spell.h"
 #include "mm/mm1/views/spells/detect_magic.h"
 #include "mm/mm1/views/spells/duplication.h"
@@ -84,7 +85,7 @@ private:
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Resistances _resistances;
 	Views::Maps::VolcanoGod _volcanoGod;
-
+	Views::Maps::WonGame _wonGame;
 	Views::Spells::CastSpell _castSpell;
 	Views::Spells::DetectMagic _detectMagicSpell;
 	Views::Spells::Duplication _duplicationSpell;
