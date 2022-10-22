@@ -44,6 +44,7 @@
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
 #include "mm/mm1/views/maps/arrested.h"
+#include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/maps/volcano_god.h"
 #include "mm/mm1/views/maps/won_game.h"
@@ -83,9 +84,11 @@ private:
 	Views::Locations::Training _training;
 
 	Views::Maps::Arrested _arrested;
+	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Resistances _resistances;
 	Views::Maps::VolcanoGod _volcanoGod;
 	Views::Maps::WonGame _wonGame;
+
 	Views::Spells::CastSpell _castSpell;
 	Views::Spells::DetectMagic _detectMagicSpell;
 	Views::Spells::Duplication _duplicationSpell;
