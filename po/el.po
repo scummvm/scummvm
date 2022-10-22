@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-22 16:17+0000\n"
+"POT-Creation-Date: 2022-10-22 16:40+0000\n"
 "PO-Revision-Date: 2022-10-10 14:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -8148,11 +8148,11 @@ msgstr ""
 "Βρέθηκαν βίντεο PSX αλλά το ScummVM δημιουργήθηκε χωρίς υποστήριξη χρώματος "
 "RGB"
 
-#: engines/sword2/detection.cpp:32
+#: engines/sword2/detection.cpp:52
 msgid "Show object labels"
 msgstr "Προβολή ετικετών αντικειμένων"
 
-#: engines/sword2/detection.cpp:33
+#: engines/sword2/detection.cpp:53
 msgid "Show labels for objects on mouse hover"
 msgstr "Προβολή ετικετών για αντικείμενα κατά την αιώρηση του ποντικιού"
 

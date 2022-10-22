@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-22 16:17+0000\n"
+"POT-Creation-Date: 2022-10-22 16:40+0000\n"
 "PO-Revision-Date: 2022-10-02 04:37+0000\n"
 "Last-Translator: Einar Johan Trøan Sømåen <einarjohants@gmail.com>\n"
 "Language-Team: Swedish <https://translations.scummvm.org/projects/scummvm/"
@@ -7914,11 +7914,11 @@ msgid ""
 "PSX cutscenes found but ScummVM has been built without RGB color support"
 msgstr "PSX-filmscener hittades men ScummVM har byggts utan stöd för RGB-färg"
 
-#: engines/sword2/detection.cpp:32
+#: engines/sword2/detection.cpp:52
 msgid "Show object labels"
 msgstr "Visa etiketter"
 
-#: engines/sword2/detection.cpp:33
+#: engines/sword2/detection.cpp:53
 msgid "Show labels for objects on mouse hover"
 msgstr "Visar etiketter för objekten som musen pekar på"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-22 16:17+0000\n"
+"POT-Creation-Date: 2022-10-22 16:40+0000\n"
 "PO-Revision-Date: 2022-10-22 04:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -7630,11 +7630,11 @@ msgstr ""
 "S'han trobat escenes de PSX, però s'ha compilat el ScummVM sense suport de "
 "color RGB"
 
-#: engines/sword2/detection.cpp:32
+#: engines/sword2/detection.cpp:52
 msgid "Show object labels"
 msgstr "Mostra les etiquetes dels objectes"
 
-#: engines/sword2/detection.cpp:33
+#: engines/sword2/detection.cpp:53
 msgid "Show labels for objects on mouse hover"
 msgstr "Mostra etiquetes al posar el ratolí sobre els objectes"
 
