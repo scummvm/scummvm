@@ -92,6 +92,9 @@ enum CharFlags4 {
 };
 
 enum CharFlags5 {
+	CHARFLAG5_1 = 1,
+	CHARFLAG5_2 = 2,
+	CHARFLAG5_4 = 4,
 	CHARFLAG5_8 = 8
 };
 
