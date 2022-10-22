@@ -643,6 +643,7 @@ public:
 	~IMuseChannel_MT32() override {}
 
 	bool allocate() override;
+	void reset();
 
 	// Regular messages
 	void programChange(byte program) override;
@@ -698,13 +699,15 @@ IMuseChannel_MT32::IMuseChannel_MT32(IMuseDriver_MT32 *drv, int number) : IMuseC
 bool IMuseChannel_MT32::allocate() {
 	bool res = IMuseChannel_Midi::allocate();
 
-	if (res && !_newSystem) {
-		byte msg[] = { (byte)(_timbre >> 6), (byte)(_timbre & 0x3F), 0x18, 0x32, 0x10, 0x00, _reverbSwitch};
-		sendSysexPatchData(0, msg, sizeof(msg));
+	if (res && !_newSystem)
 		_program = _number;
-	}
 
 	return res;
+}
+
+void IMuseChannel_MT32::reset() {
+	byte msg[] = { (byte)(_timbre >> 6), (byte)(_timbre & 0x3F), 0x18, 0x32, 0x10, 0x00, _reverbSwitch};
+	sendSysexPatchData(0, msg, sizeof(msg));
 }
 
 void IMuseChannel_MT32::programChange(byte program)  {
@@ -894,6 +897,11 @@ void IMuseDriver_MT32::initDevice() {
 		send(0x007BB0 | i);
 		send(0x3F0AB0 | i);
 		send(0x4000E0 | i);
+	}
+
+	for (int i = 0; i < _numChannels; ++i) {
+		static_cast<IMuseChannel_MT32*>(_imsParts[i])->reset();
+		g_system->delayMillis(5);
 	}
 }
 

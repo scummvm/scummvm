@@ -296,6 +296,7 @@ public:
 	// MidiDriver interface
 	void send(uint32 b) override;
 	void sysEx(const byte *msg, uint16 length) override;
+	uint16 sysExNoDelay(const byte *msg, uint16 length) override;
 	void metaEvent(byte type, byte *data, uint16 length) override;
 };
 
