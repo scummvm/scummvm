@@ -1117,3 +1117,13 @@ maps:
 		correct: "CORRECT! +50 GEMS"
 		incorrect: "WRONG!"
 		answer: "ANSWER:> .............."
+
+	map22:
+		ambush: "AMBUSH!"
+		wagons: "DESERTED MERCHANT WAGONS, SEARCH (Y/N)?"
+		poison: "ARGHHH... POISON!"
+		today_spells: "TODAY SPELLS!"
+		today_might: "TODAY MIGHT!"
+		fountain: "A FOUNTAIN SPEAKS:\n""WILL THE PARTY DRINK (Y/N)?"""
+		chest: "YOU FOUND A CHEST UPON WHICH AN\nINSCRIPTION READS: PROPERTY OF XX!XX!\nINSIDE YOU FOUND A RUBY WHISTLE, 2000\nGOLD AND A NOTE:\nTHE STRONGHOLD LIES AT B-3,14-2\nBLOW TWICE TO ENTER."
+		roadsign: "ROADSIGN: SORPIGAL S.17, W.1, N.2"
