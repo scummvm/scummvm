@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map24::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 14; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[65 + i]) {		
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,61 @@ void Map24::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
+
 	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+	InfoMessage msg(
+		14, 2, STRING["maps.map24.look_out"],
+		[]() {
+			g_globals->_encounters.execute();
+		}
+	);
+	msg._delaySeconds = 2;
+	send(msg);
 }
 
 void Map24::special00() {
+	send(SoundMessage(
+		STRING["maps.map24.passage"],
+		[]() {
+			g_maps->_mapPos = Common::Point(12, 0);
+			g_maps->changeMap(0x604, 1);
+		}
+	));
+}
+
+void Map24::special01() {
+	send(SoundMessage(
+		STRING["maps.map24.cave"],
+		[]() {
+			g_maps->_mapPos = Common::Point(2, 0);
+			g_maps->changeMap(1, 1);
+		}
+	));
+}
+
+void Map24::special02() {
+	g_events->addView("Gypsy");
+}
+
+void Map24::special03() {
+}
+
+void Map24::special08() {
+}
+
+void Map24::special09() {
+}
+
+void Map24::special10() {
+}
+
+void Map24::special11() {
+}
+
+void Map24::special12() {
+}
+
+void Map24::special13() {
 }
 
 } // namespace Maps
