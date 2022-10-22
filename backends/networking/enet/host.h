@@ -19,27 +19,30 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_ENET_ENET_H
-#define BACKENDS_NETWORKING_ENET_ENET_H
+#ifndef BACKENDS_NETWORKING_ENET_HOST_H
+#define BACKENDS_NETWORKING_ENET_HOST_H
+
+typedef struct _ENetHost ENetHost;
+typedef struct _ENetPeer ENetPeer;
+
+typedef struct _ENetAddress ENetAddress;
+typedef struct _ENetEvent ENetEvent;
 
 #include "common/str.h"
 
 namespace Networking {
 
-class Host;
-
-class ENet {
+class Host {
 public:
-	ENet();
-	~ENet();
+	Host(ENetHost *host);
+	~Host();
 
-	bool initalize();
-	Host* create_host(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand);
+	ENetEvent service(int timeout = 0);
 private:
-	bool _initialized;
+	ENetHost *_host;
+
 };
 	
 } // End of namespace Networking
-
 
 #endif

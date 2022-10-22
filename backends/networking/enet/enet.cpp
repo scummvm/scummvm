@@ -23,6 +23,7 @@
 
 #include <enet/enet.h>
 #include "backends/networking/enet/enet.h"
+#include "backends/networking/enet/host.h"
 #include "common/debug.h"
 
 namespace Networking {
@@ -45,12 +46,28 @@ bool ENet::initalize() {
 	}
 
 	if (enet_initialize() != 0) {
-		warning("ENet: ENet library failed to initalize.");
+		warning("ENet: ENet library failed to initalize");
 		return false;
 	}
 	debug(1, "ENet: Initalized.");
 	_initialized = true;
 	return true;
+}
+
+Host* ENet::create_host(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand) {
+	ENetAddress _address;
+	ENetHost *_host;
+
+	enet_address_set_host(&_address, address.c_str());
+	_address.port = port;
+
+	_host = enet_host_create(&_address, numClients, numChannels, incBand, outBand);
+	if (_host == nullptr) {
+		warning("ENet: An error occured when trying to create host with address %s:%d", address.c_str(), port);
+		return nullptr;
+	}
+
+	return new Host(_host);
 }
 
 } // End of namespace Networking
