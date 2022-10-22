@@ -25,8 +25,15 @@
 typedef struct _ENetHost ENetHost;
 typedef struct _ENetPeer ENetPeer;
 
-typedef struct _ENetAddress ENetAddress;
 typedef struct _ENetEvent ENetEvent;
+typedef struct _ENetPacket ENetPacket;
+
+
+// Event types
+#define ENET_EVENT_TYPE_NONE 0
+#define ENET_EVENT_TYPE_CONNECT 1
+#define ENET_EVENT_TYPE_DISCONNECT 2
+#define ENET_EVENT_TYPE_RECEIVE 3
 
 #include "common/str.h"
 
@@ -35,11 +42,20 @@ namespace Networking {
 class Host {
 public:
 	Host(ENetHost *host);
+	Host(ENetHost *host, ENetPeer *serverPeer);
 	~Host();
 
-	ENetEvent service(int timeout = 0);
+	uint8 service(int timeout = 0);
+
+	Common::String get_host();
+	int get_port();
+	void destroy_packet();
 private:
 	ENetHost *_host;
+	ENetPeer *_serverPeer; // Only used for clients.
+	ENetEvent *_recentEvent;
+	ENetPacket *_recentPacket;
+
 
 };
 	

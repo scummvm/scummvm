@@ -28,16 +28,57 @@ namespace Networking {
 
 Host::Host(ENetHost *host) {
 	_host = host;
+	_serverPeer = nullptr;
+	_recentEvent = nullptr;
+	_recentPacket = nullptr;
+}
+
+Host::Host(ENetHost *host, ENetPeer *serverPeer) {
+	_host = host;
+	_serverPeer = serverPeer;
+	_recentEvent = nullptr;
+	_recentPacket = nullptr;
 }
 
 Host::~Host() {
+	if (_recentPacket)
+		destroy_packet();
 	enet_host_destroy(_host);
 }
 
-ENetEvent Host::service(int timeout) {
+uint8 Host::service(int timeout) {
 	ENetEvent event;
 	enet_host_service(_host, &event, timeout);
-	return event;
+	_recentEvent = &event;
+	if (event.type == ENET_EVENT_TYPE_RECEIVE) {
+		if (_recentPacket)
+			destroy_packet();
+		_recentPacket = event.packet;
+	}
+	return event.type;
+}
+
+Common::String Host::get_host() {
+	if (!_recentEvent)
+		return "";
+
+	char _hostName[50];
+	if (enet_address_get_host_ip(&_recentEvent->peer->address, _hostName, 50) == 0)
+		return Common::String(_hostName);
+	return "";
+}
+
+int Host::get_port() {
+	if (!_recentEvent || !_recentEvent->peer)
+		return 0;
+	return _recentEvent->peer->address.port;
+}
+
+void Host::destroy_packet() {
+	if (!_recentPacket)
+		return;
+	enet_packet_destroy(_recentPacket);
+	_recentPacket = nullptr;
 }
 	
 } // End of namespace Networking
