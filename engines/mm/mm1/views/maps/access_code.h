@@ -22,22 +22,15 @@
 #ifndef MM1_VIEWS_MAPS_ACCESS_CODE_H
 #define MM1_VIEWS_MAPS_ACCESS_CODE_H
 
-#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-class AccessCode : public TextView {
+class AccessCode : public AnswerEntry {
 private:
-	Common::String _code;
-
-	/**
-	 * Called when the code has been entered
-	 */
-	void codeEntered();
-
 	/**
 	 * Correct code entered
 	 */
@@ -48,13 +41,16 @@ private:
 	 */
 	void incorrectCode();
 
+protected:
+	/**
+	 * Called when the code has been entered
+	 */
+	void answerEntered() override;
 public:
 	AccessCode();
 	virtual ~AccessCode() {}
 
-	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps

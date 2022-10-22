@@ -33,15 +33,8 @@ namespace Maps {
 #define ANSWER_OFFSET 636
 #define VAL1 641
 
-VolcanoGod::VolcanoGod() : TextView("VolcanoGod") {
-	_bounds = getLineBounds(20, 24);
-}
-
-bool VolcanoGod::msgFocus(const FocusMessage &msg) {
-	_answer = "";
-	_mode = CHOOSE_OPTION;
-	Sound::sound(SOUND_2);
-	return TextView::msgFocus(msg);
+VolcanoGod::VolcanoGod() :
+		AnswerEntry("VolcanoGod", Common::Point(9, 3), 8) {
 }
 
 void VolcanoGod::draw() {
@@ -54,7 +47,7 @@ void VolcanoGod::draw() {
 
 	case ENTER_RESPONSE:
 		writeString(0, 1, STRING["maps.map11.question"]);
-		writeString(9, 3, _answer);
+		AnswerEntry::draw();
 		break;
 
 	default:
@@ -81,21 +74,7 @@ bool VolcanoGod::msgKeypress(const KeypressMessage &msg) {
 			}
 
 		case ENTER_RESPONSE:
-			if (msg.keycode == Common::KEYCODE_RETURN) {
-				responseEntered();
-			} else if (msg.keycode == Common::KEYCODE_SPACE ||
-				(msg.keycode >= Common::KEYCODE_0 &&
-					msg.keycode <= Common::KEYCODE_z)) {
-				_answer += toupper(msg.ascii);
-				redraw();
-
-				if (_answer.size() == MAX_ANSWER_LENGTH)
-					responseEntered();
-			} else if (msg.keycode == Common::KEYCODE_BACKSPACE && !_answer.empty()) {
-				_answer.deleteLastChar();
-				redraw();
-			}
-			break;
+			return AnswerEntry::msgKeypress(msg);
 		}
 	}
 
@@ -118,7 +97,7 @@ void VolcanoGod::clue() {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
-void VolcanoGod::responseEntered() {
+void VolcanoGod::answerEntered() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	Common::String properAnswer;
 	for (int i = 0; i < 8 && map[MAX_ANSWER_LENGTH + i]; ++i)
