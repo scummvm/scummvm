@@ -135,55 +135,32 @@ int FreescapeEngine::decodeAmigaAtariKey(int code) {
 	}
 }
 
-static const int dosKeyTable[] = {
-	0,
-	Common::KEYCODE_r,
-	Common::KEYCODE_f,
-	Common::KEYCODE_UP,
-	Common::KEYCODE_DOWN,
-	Common::KEYCODE_LEFT,
-	Common::KEYCODE_RIGHT,
-	Common::KEYCODE_p,
-	Common::KEYCODE_l,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	0,
-	Common::KEYCODE_d
-};
-
 int FreescapeEngine::decodeDOSKey(int index) {
-	if (index <= 40)
-		return dosKeyTable[index];
-	error("Invalid key index: %d", index);
+	switch (index) {
+		case 1:
+			return 	Common::KEYCODE_r;
+		case 2:
+			return Common::KEYCODE_f;
+		case 3:
+			return Common::KEYCODE_UP;
+		case 4:
+			return Common::KEYCODE_DOWN;
+		case 5:
+			return Common::KEYCODE_q;
+		case 6:
+			return Common::KEYCODE_w;
+		case 7:
+			return Common::KEYCODE_p;
+		case 8:
+			return Common::KEYCODE_l;
+		case 30:
+			return Common::KEYCODE_SPACE;
+		case 40:
+			return Common::KEYCODE_d;
+		default:
+			error("Invalid key index: %x", index);
+	}
+	return 0;
 }
 
 } // End of namespace Freescape

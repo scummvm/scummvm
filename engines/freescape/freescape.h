@@ -127,6 +127,8 @@ public:
 	void loadColorPalette();
 	Common::Array<byte> _demoData;
 	int _demoIndex;
+	int _currentDemoInputCode;
+	int _currentDemoInputRepetition;
 	void loadDemoData(Common::SeekableReadStream *file, int offset, int size);
 	int decodeAmigaAtariKey(int code);
 	int decodeDOSKey(int code);
