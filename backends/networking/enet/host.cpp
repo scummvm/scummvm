@@ -19,27 +19,25 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_ENET_ENET_H
-#define BACKENDS_NETWORKING_ENET_ENET_H
+#define FORBIDDEN_SYMBOL_ALLOW_ALL
 
-#include "common/str.h"
+#include <enet/enet.h>
+#include "backends/networking/enet/host.h"
 
 namespace Networking {
 
-class Host;
+Host::Host(ENetHost *host) {
+	_host = host;
+}
 
-class ENet {
-public:
-	ENet();
-	~ENet();
+Host::~Host() {
+	enet_host_destroy(_host);
+}
 
-	bool initalize();
-	Host* create_host(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand);
-private:
-	bool _initialized;
-};
+ENetEvent Host::service(int timeout) {
+	ENetEvent event;
+	enet_host_service(_host, &event, timeout);
+	return event;
+}
 	
 } // End of namespace Networking
-
-
-#endif
