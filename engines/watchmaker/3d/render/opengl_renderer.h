@@ -67,7 +67,8 @@ enum class PrimitiveType {
 	TRIANGLE
 };
 
-int createTextureFromSurface(Graphics::Surface &surface, int texFormat);
+Common::SharedPtr<TextureData> createTextureFromSurface(Graphics::Surface &surface, int texFormat);
+Texture *createGLTexture();
 
 class OpenGLRenderer {
 public:

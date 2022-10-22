@@ -57,7 +57,7 @@ unsigned int CurLoaderFlags;
 unsigned int gGetBitmapListPosition() {
 	unsigned int pos = 1;
 
-	while (gBitmapList[pos].surface != nullptr) {
+	while (!gBitmapList[pos].isEmpty()) {
 		pos++;
 	}
 
@@ -202,7 +202,7 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 		glEnable(GL_ALPHA_TEST);
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		glBindTexture(GL_TEXTURE_2D, bitmap.texId);
+		bitmap.texture->bind();
 		glLoadIdentity();
 		glTranslatef(0, 0, -1.0);
 		//glTranslatef((2.0 / dposx) - 1.0, (2.0 / dposy) - 1.0, 0.0f);
@@ -295,9 +295,11 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	gTexture *Texture = &gBitmapList[pos];
 	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
-	Texture->surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
-	applyColorKey(*Texture->surface, 0, 0, 0, false);
-	Texture->texId = createTextureFromSurface(*Texture->surface, GL_RGBA);
+	auto surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
+	applyColorKey(*surface, 0, 0, 0, false);
+	auto texData = createTextureFromSurface(*surface, GL_RGBA);
+	Texture->texture = createGLTexture();
+	Texture->texture->assignData(*texData);
 	Texture->name = TextName;
 
 	if (flags & rSURFACESTRETCH) { // Also rSURFACEFLIP
@@ -307,52 +309,21 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 			warned = true;
 		}
 		// HACK: Just set a dimension at all:
-		Texture->DimX = Texture->surface->w;
-		Texture->DimY = Texture->surface->h;
+		Texture->DimX = surface->w;
+		Texture->DimY = surface->h;
 	} else {
-		Texture->DimX = Texture->surface->w;
-		Texture->DimY = Texture->surface->h;
+		Texture->DimX = surface->w;
+		Texture->DimY = surface->h;
 	}
 
-	Texture->RealDimX = Texture->surface->w;
-	Texture->RealDimY = Texture->surface->h;
+	Texture->RealDimX = surface->w;
+	Texture->RealDimY = surface->h;
 	// TODO: Colour-keying
 	return pos;
 }
 
 void rSetLoaderFlags(unsigned int NewLoaderFlags) {
 	CurLoaderFlags = NewLoaderFlags;
-}
-
-bool gUpdateMovie(gMaterial &mat) {
-	WORD newFrame = 0;
-	DWORD curTime;
-
-	if (mat.Flags & T3D_MATERIAL_MOVIEPAUSED)
-		return TRUE;
-
-	auto mv = mat.Movie;
-
-	if ((mv->curFrame == 0xFFFF) || (!mv->startTime)) {
-		mv->startTime = timeGetTime();
-		newFrame = 0;
-	} else {
-		// Use the time to find which frame we should be drawing
-		curTime = timeGetTime();
-		DWORD elapsedTime = curTime - mv->startTime;
-		newFrame = (WORD)((float)elapsedTime / (1000.f / (float)mv->frameRate));
-
-		if (newFrame >= mv->numFrames) {
-			mv->startTime = curTime;
-			newFrame = 0;
-		}
-	}
-#if 0
-	bool retv=gMovie_SetFrame(mat,newFrame);
-
-	return(retv);
-#endif
-	return true;
 }
 
 } // End of namespace Watchmaker

@@ -2,6 +2,7 @@ MODULE := engines/watchmaker
 
 MODULE_OBJS = \
 	3d/animation.o \
+	3d/dds_header.o \
 	3d/geometry.o \
 	3d/light.o \
 	3d/loader.o \

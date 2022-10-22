@@ -27,8 +27,6 @@
 
 namespace Watchmaker {
 
-const Graphics::PixelFormat RGBA8888(32, 8, 8, 8, 8, 24, 16, 8, 0);
-
 Graphics::Surface *ReadTgaImage(const char *Name, Common::SeekableReadStream &stream, Graphics::PixelFormat format, unsigned int flag) {
 	Image::TGADecoder tgaDecoder;
 	if (!tgaDecoder.loadStream(stream)) {

@@ -153,7 +153,7 @@ void OpenGLRenderer::setTexture(int stage, void *texture) {
 	}
 }
 void OpenGLRenderer::setTexture(int stage, const gTexture &texture) {
-	glBindTexture(GL_TEXTURE_2D, texture.texId);
+	texture.texture->bind();
 }
 
 void setGlFeature(GLint feature, bool state) {
