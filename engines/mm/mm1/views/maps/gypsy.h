@@ -19,55 +19,36 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP24_H
-#define MM1_MAPS_MAP24_H
+#ifndef MM1_VIEWS_MAPS_GYPSY_H
+#define MM1_VIEWS_MAPS_GYPSY_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map24 : public Map {
-	typedef void (Map24:: *SpecialFn)();
+class Gypsy : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special08();
-	void special09();
-	void special10();
-	void special11();
-	void special12();
-	void special13();
+	Character *_character = nullptr;
 
-	const SpecialFn SPECIAL_FN[14] = {
-		&Map24::special00,
-		&Map24::special01,
-		&Map24::special02,
-		&Map24::special03,
-		&Map24::special03,
-		&Map24::special03,
-		&Map24::special03,
-		&Map24::special03,
-		&Map24::special08,
-		&Map24::special09,
-		&Map24::special10,
-		&Map24::special11,
-		&Map24::special12,
-		&Map24::special13
-	};
+	void charSelected(uint charIndex);
+	void modeChanged(bool allowSelection);
 public:
-	Map24() : Map(24, "areac3", 0x904) {}
+	Gypsy();
+	virtual ~Gypsy() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+	bool msgFocus(const FocusMessage &msg) override;
+	bool msgUnfocus(const UnfocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	bool msgAction(const ActionMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

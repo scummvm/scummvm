@@ -90,6 +90,8 @@ enum CharFlags2 {
 };
 
 enum CharFlags4 {
+	CHARFLAG4_ASSIGNED = 8,
+	CHARFLAG4_SIGN = 7,
 	CHARFLAG4_COLOR = 0xf,
 	CHARFLAG4_80 = 0x80
 };
