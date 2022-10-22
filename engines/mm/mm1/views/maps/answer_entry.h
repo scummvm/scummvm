@@ -19,32 +19,35 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_VOLCANO_GOD_H
-#define MM1_VIEWS_MAPS_VOLCANO_GOD_H
+#ifndef MM1_VIEWS_MAPS_ANSWER_ENTRY_H
+#define MM1_VIEWS_MAPS_ANSWER_ENTRY_H
 
-#include "mm/mm1/views/maps/answer_entry.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-class VolcanoGod : public AnswerEntry {
+class AnswerEntry : public TextView {
 private:
-	enum Mode { CHOOSE_OPTION, ENTER_RESPONSE };
-	Mode _mode = CHOOSE_OPTION;
-
-	void challenge();
-	void riddle();
-	void clue();
-
+	Common::Point _pos;
+	size_t _maxLength;
+	char _blank = '.';
 protected:
-	void answerEntered() override;
+	Common::String _answer;
+
+	/**
+	 * Called when Enter pressed, or maximum length reached
+	 */
+	virtual void answerEntered() = 0;
 
 public:
-	VolcanoGod();
-	virtual ~VolcanoGod() {}
+	AnswerEntry(const Common::String &name,
+		const Common::Point &pos, size_t maxLength);
+	virtual ~AnswerEntry() {}
 
+	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
 };

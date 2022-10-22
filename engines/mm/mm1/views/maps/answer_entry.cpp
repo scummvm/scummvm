@@ -19,39 +19,56 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_VOLCANO_GOD_H
-#define MM1_VIEWS_MAPS_VOLCANO_GOD_H
-
 #include "mm/mm1/views/maps/answer_entry.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-class VolcanoGod : public AnswerEntry {
-private:
-	enum Mode { CHOOSE_OPTION, ENTER_RESPONSE };
-	Mode _mode = CHOOSE_OPTION;
+AnswerEntry::AnswerEntry(const Common::String &name,
+	const Common::Point &pos, size_t maxLength) :
+		TextView(name), _pos(pos), _maxLength(maxLength) {
+	_bounds = getLineBounds(20, 24);
+}
 
-	void challenge();
-	void riddle();
-	void clue();
+bool AnswerEntry::msgFocus(const FocusMessage &msg) {
+	_answer = "";
+	Sound::sound(SOUND_2);
+	return TextView::msgFocus(msg);
+}
 
-protected:
-	void answerEntered() override;
+void AnswerEntry::draw() {
+	writeString(_pos.x, _pos.y, _answer);
+	for (uint i = 0; i < (_maxLength - _answer.size()); ++i)
+		writeChar(_blank);
+}
 
-public:
-	VolcanoGod();
-	virtual ~VolcanoGod() {}
+bool AnswerEntry::msgKeypress(const KeypressMessage &msg) {
+	if (!isDelayActive()) {
+		if (msg.keycode == Common::KEYCODE_RETURN) {
+			answerEntered();
+		} else if (msg.keycode == Common::KEYCODE_SPACE ||
+			(msg.keycode >= Common::KEYCODE_0 &&
+				msg.keycode <= Common::KEYCODE_z)) {
+			_answer += toupper(msg.ascii);
+			redraw();
 
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
-};
+			if (_answer.size() == _maxLength)
+				answerEntered();
+
+		} else if (msg.keycode == Common::KEYCODE_BACKSPACE && !_answer.empty()) {
+			_answer.deleteLastChar();
+			redraw();
+		}
+	}
+
+	return true;
+}
 
 } // namespace Maps
 } // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

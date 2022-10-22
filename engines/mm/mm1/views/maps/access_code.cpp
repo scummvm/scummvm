@@ -37,53 +37,24 @@ namespace Maps {
 static const byte OFFSETS1[8] = { 146, 98, 150, 102, 153, 105, 157, 109 };
 static const byte OFFSETS2[8] = { 130, 82, 134, 86, 137, 89, 141, 93 };
 
-AccessCode::AccessCode() : TextView("AccessCode") {
+AccessCode::AccessCode() :
+		AnswerEntry("AccessCode", Common::Point(16, 3), 8) {
 	_bounds = getLineBounds(20, 24);
-}
-
-bool AccessCode::msgFocus(const FocusMessage &msg) {
-	_code = "";
-	Sound::sound(SOUND_2);
-	return TextView::msgFocus(msg);
 }
 
 void AccessCode::draw() {
 	clearSurface();
-
 	writeString(0, 1, STRING["maps.map08.enter_code"]);
-	writeString(16, 3, _code);
-	for (uint i = 0; i < (MAX_CODE_LENGTH - _code.size()); ++i)
-		writeChar('.');
+	AnswerEntry::draw();
 }
 
-bool AccessCode::msgKeypress(const KeypressMessage &msg) {
-	if (!isDelayActive()) {
-		if (msg.keycode == Common::KEYCODE_RETURN) {
-			codeEntered();
-		} else if (msg.keycode == Common::KEYCODE_SPACE ||
-			(msg.keycode >= Common::KEYCODE_0 &&
-				msg.keycode <= Common::KEYCODE_z)) {
-			_code += toupper(msg.ascii);
-			redraw();
-
-			if (_code.size() == MAX_CODE_LENGTH)
-				codeEntered();
-		} else if (msg.keycode == Common::KEYCODE_BACKSPACE && !_code.empty()) {
-			_code.deleteLastChar();
-			redraw();
-		}
-	}
-
-	return true;
-}
-
-void AccessCode::codeEntered() {
+void AccessCode::answerEntered() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	Common::String properCode;
 	for (int i = 0; i < 10 && map[CODE_OFFSET + i]; ++i)
 		properCode += map[CODE_OFFSET + i] + 0x1f;
 
-	if (_code == properCode)
+	if (_answer == properCode)
 		correctCode();
 	else
 		incorrectCode();
