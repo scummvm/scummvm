@@ -119,9 +119,6 @@ extern int32 ConsoleD1, ConsoleD2, StartPic, EndPic, NewLogImage, LoadingImage;
 extern int32 CurMousePointer, MousePointerDefault, MousePointerPlus, TrecLogo;
 extern int32 GopherMap, GopherPos[], GopherBall;
 extern struct SRect MousePointerLim;
-extern struct SFont StandardFont;
-extern struct SFont ComputerFont;
-extern struct SFont PDAFont;
 
 // 3D INTERFACE
 extern t3dF32 CurFloorY;

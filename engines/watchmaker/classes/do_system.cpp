@@ -107,15 +107,13 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 	int32 y_offs;  //offset verticale dall'inizio dello schermo (praticamente l'altezza delle bande orizzontali sopra e sotto)
 	char visibile;
 	STitoliCoda *c;
-	struct SFont *f;
+	FontKind f;
 	int32 width, height, bpp;
 	Init &init = game.init;
 
 	rGetScreenInfos((unsigned int *)&width, (unsigned int *)&height, (unsigned int *)&bpp);
 
-//	f = &ComputerFont;
-	f = &PDAFont;
-//	f = &StandardFont;
+	f = FontKind::PDA;
 	y_offs = (width - (width * 74 / 100)) / 2; //circa 1.35:1
 
 	if (initialize) {
@@ -159,7 +157,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			game.CleanUpAndPostQuit();
 		}
 
-		rGetTextDim("{", f->Table, &x, &y);
+		game._fonts.getTextDim("{", f, &x, &y);
 		text_y_inc = y;
 		additional_text_y_inc = (int32)((t3dF32)y * 50.f / 100.f);
 		empty_x_space = x * 2;
@@ -178,7 +176,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			if (init._creditsNames[j].flags & CF_IMG) {
 
 				c->s = init._creditsNames[j].name;
-				rGetTextDim(c->s, f->Table, &c->dx, &c->dy);
+				game._fonts.getTextDim(c->s, f, &c->dx, &c->dy);
 				c->px = width / 2 + empty_x_space;
 				c->py = next_y + 32 - c->dy / 2;
 				c->tnum = -1;
@@ -219,7 +217,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 				next_y += additional_text_y_inc;
 
 				c->s = init._creditsRoles[k].role;
-				rGetTextDim(c->s, f->Table, &c->dx, &c->dy);
+				game._fonts.getTextDim(c->s, f, &c->dx, &c->dy);
 				c->px = width / 2 - c->dx - empty_x_space;
 				c->py = next_y;
 				c->tnum = -1;
@@ -227,7 +225,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			}
 
 			c->s = init._creditsNames[j].name;
-			rGetTextDim(c->s, f->Table, &c->dx, &c->dy);
+			game._fonts.getTextDim(c->s, f, &c->dx, &c->dy);
 			c->px = width / 2 + empty_x_space;
 			c->py = next_y;
 			next_y += text_y_inc;
@@ -267,7 +265,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 				rClear(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
 
 				//Renderizza la scritta nella surface
-				rPrintText(c->s, c->tnum,  f->Color[WHITE_FONT], f->Table, 0, 0);
+				game._renderer->printText(c->s, c->tnum, f, WHITE_FONT, 0, 0);
 				rSetBitmapName(c->tnum, "tit di coda");
 
 				if (TitoliCoda_End == c) {
@@ -355,7 +353,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 	uint16 j, k;
 	int32 y_offs;  //offset verticale dall'inizio dello schermo (praticamente l'altezza delle bande orizzontali sopra e sotto)
 	STitoliCoda *c;
-	struct SFont *f;
+	FontKind f;
 	int32 width, height, bpp;
 	uint32 next_time;
 	uint32 cur_time;
@@ -364,8 +362,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 
 	rGetScreenInfos((unsigned int *)&width, (unsigned int *)&height, (unsigned int *)&bpp);
 
-//	f = &ComputerFont;
-	f = &PDAFont;
+	f = FontKind::PDA;
 	y_offs = (width - (width * 74 / 100)) / 2; //circa 1.35:1
 	time_inc = 2500;
 
@@ -382,7 +379,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 			game.CleanUpAndPostQuit();
 		}
 
-		rGetTextDim("{", f->Table, &x, &y);
+		game._fonts.getTextDim("{", f, &x, &y);
 		text_y_inc = y;
 		additional_text_y_inc = (int32)((t3dF32)y * 40.f / 100.f);
 
@@ -399,7 +396,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 				k = init._creditsNames[j].role;
 
 				c->s = init._creditsRoles[k].role;
-				rGetTextDim(c->s, f->Table, &c->dx, &c->dy);
+				game._fonts.getTextDim(c->s, f, &c->dx, &c->dy);
 				c->px = (width - c->dx) / 2;
 				c->py = y_offs + ((height - y_offs * 2) - (c->dy * 4)) / 2; //4 numero di comodo
 				c->tnum = -1;
@@ -410,7 +407,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 			}
 
 			c->s = init._creditsNames[j].name;
-			rGetTextDim(c->s, f->Table, &c->dx, &c->dy);
+			game._fonts.getTextDim(c->s, f, &c->dx, &c->dy);
 			c->px = (width - c->dx) / 2;
 			c->py = next_y;
 			next_y += text_y_inc;
@@ -458,7 +455,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 			rClear(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
 
 			//Renderizza la scritta nella surface
-			rPrintText(c->s, c->tnum,  f->Color[WHITE_FONT], f->Table, 0, 0);
+			game._renderer->printText(c->s, c->tnum, f, WHITE_FONT, 0, 0);
 			rSetBitmapName(c->tnum, "tit di coda");
 
 			DebugLogFile("tcStart %s", c->s);
@@ -508,11 +505,11 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 void PaintIntroText(Renderer &renderer) {
 	if (T1t) {
 		DisplayD3DRect(renderer, rT1.px, rT1.py, rT1.dx, rT1.dy, rT1.r, rT1.g, rT1.b, rT1.a);
-		DisplayDDText(renderer, T1t, &ComputerFont, CYAN_FONT, T1.px, T1.py, 0, 0, 0, 0);
+		DisplayDDText(renderer, T1t, FontKind::Computer, CYAN_FONT, T1.px, T1.py, 0, 0, 0, 0);
 	}
 	if (T2t) {
 		DisplayD3DRect(renderer, rT2.px, rT2.py, rT2.dx, rT2.dy, rT2.r, rT2.g, rT2.b, rT2.a);
-		DisplayDDText(renderer, T2t, &ComputerFont, CYAN_FONT, T2.px, T2.py, 0, 0, 0, 0);
+		DisplayDDText(renderer, T2t, FontKind::Computer, CYAN_FONT, T2.px, T2.py, 0, 0, 0, 0);
 	}
 }
 
@@ -838,7 +835,7 @@ void doSystem(WGame &game) {
 			T1t = nullptr;
 			if (TheMessage->lparam[2] > 0) {
 				T1t = SysSent[TheMessage->lparam[2]];
-				rGetTextDim(T1t, ComputerFont.Table, &T1.dx, &T1.dy);
+				game._fonts.getTextDim(T1t, FontKind::Computer, &T1.dx, &T1.dy);
 				rT1.dx = T1.dx + INTRO_TEXT_BORDER_X * 2;
 				rT1.dy = T1.dy + INTRO_TEXT_BORDER_Y * 2;
 				rT1.r = R_BASE;
@@ -855,7 +852,7 @@ void doSystem(WGame &game) {
 			T2t = nullptr;
 			if (TheMessage->lparam[2] > 0) {
 				T2t = SysSent[TheMessage->lparam[2]];
-				rGetTextDim(T2t, ComputerFont.Table, &T2.dx, &T2.dy);
+				game._fonts.getTextDim(T2t, FontKind::Computer, &T2.dx, &T2.dy);
 				rT2.dx = T2.dx + INTRO_TEXT_BORDER_X * 2;
 				rT2.dy = T2.dy + INTRO_TEXT_BORDER_Y * 2;
 				rT2.r = R_BASE;
@@ -884,7 +881,7 @@ void doSystem(WGame &game) {
 
 			//RoomInfo.f = &StandardFont;
 			//RoomInfo.f = &ComputerFont;
-			RoomInfo.f = &PDAFont;
+			RoomInfo.f = FontKind::PDA;
 
 			strcpy(RoomInfo.name, game.getCurRoom().desc);
 
@@ -897,7 +894,7 @@ void doSystem(WGame &game) {
 			}
 
 			rGetScreenInfos((unsigned int *)&width, (unsigned int *)&height, (unsigned int *)&bpp);
-			rGetTextDim(RoomInfo.fullstring, RoomInfo.f->Table, &RoomInfo.dx, &RoomInfo.dy);
+			game._fonts.getTextDim(RoomInfo.fullstring, RoomInfo.f, &RoomInfo.dx, &RoomInfo.dy);
 			RoomInfo.tnum = rCreateSurface(RoomInfo.dx, RoomInfo.dy, rBITMAPSURFACE);
 			if ((!RoomInfo.tnum) || (RoomInfo.tnum == -1)) {
 				DebugLogWindow("EFFECT_ROOMINFO: can't create surface");

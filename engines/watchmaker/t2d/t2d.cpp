@@ -729,12 +729,12 @@ void FormattaLogs(WGame &game) {
 		for (t = 0; t < MAX_PDA_INFO; t++) {
 			if (init.PDALog[PDALogSorted[i].PDALogInd].text[t] == 0) break;
 
-			rGetTextDim(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]], StandardFont.Table, &init.PDALog[PDALogSorted[i].PDALogInd].dx, &init.PDALog[PDALogSorted[i].PDALogInd].dy);
+			game._fonts.getTextDim(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]], FontKind::Standard, &init.PDALog[PDALogSorted[i].PDALogInd].dx, &init.PDALog[PDALogSorted[i].PDALogInd].dy);
 			Dx = init.PDALog[PDALogSorted[i].PDALogInd].dx;
 			CurInit = 0;
 			while (Dx + PDALogSorted[i].IndentX > renderer.rFitX(T2D_PDA_LOG_TEXT_XF - T2D_PDA_LOG_TEXT_XI)) {
 				for (Dx = (signed)strlen((char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]])) - 1; Dx >= 0; Dx--) {
-					if ((Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]][CurInit + Dx] == ' ') && (TextLen((char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit), (int16)Dx) + PDALogSorted[i].IndentX < renderer.rFitX(T2D_PDA_LOG_TEXT_XF - T2D_PDA_LOG_TEXT_XI))) {
+					if ((Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]][CurInit + Dx] == ' ') && (TextLen(game._fonts, (char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit), (int16)Dx) + PDALogSorted[i].IndentX < renderer.rFitX(T2D_PDA_LOG_TEXT_XF - T2D_PDA_LOG_TEXT_XI))) {
 						Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]][CurInit + Dx] = 0;
 						strcpy(init.PDALog[PDALogSorted[i].PDALogInd].formatted[j].c_str(), (char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit));
 						Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]][CurInit + Dx] = ' ';
@@ -744,7 +744,7 @@ void FormattaLogs(WGame &game) {
 					}
 				}
 
-				rGetTextDim((char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit), StandardFont.Table, &Dx, &init.PDALog[PDALogSorted[i].PDALogInd].dy);
+				game._fonts.getTextDim((char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit), FontKind::Standard, &Dx, &init.PDALog[PDALogSorted[i].PDALogInd].dy);
 			}
 
 			strcpy(init.PDALog[PDALogSorted[i].PDALogInd].formatted[j].c_str(), (char *)(Sentence[init.PDALog[PDALogSorted[i].PDALogInd].text[t]] + CurInit));
@@ -2679,7 +2679,7 @@ void doT2DMouse(WGame &game) {
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_TONE, T2D_BM_PDA_TONE_HELP_ON,
 						  FALSE, nullptr, nullptr, nullptr);
 					//Setta e Apre finestra Help
-					SetHelpWin(nullptr, 5, Sentence[init.Obj[oTONERHELP].text[0]],
+					SetHelpWin(game._fonts, nullptr, 5, Sentence[init.Obj[oTONERHELP].text[0]],
 							   Sentence[init.Obj[oTONERHELP].text[1]], Sentence[init.Obj[oTONERHELP].text[2]],
 							   Sentence[init.Obj[oTONERHELP].text[3]], Sentence[init.Obj[oTONERHELP].text[4]]);
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_HELP, 0, TRUE, nullptr, nullptr,
@@ -3344,28 +3344,28 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_SCRITTE_1].py = 100;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_1].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SCRITTE_1].text, "");
-			w->text[T2D_TEXT_COMPUTER_SCRITTE_1].font = &StandardFont;
+			w->text[T2D_TEXT_COMPUTER_SCRITTE_1].font = FontKind::Standard;
 			w->text[T2D_TEXT_COMPUTER_SCRITTE_1].color = WHITE_FONT;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_2].tnum = (T2D_TEXT_COMPUTER_SCRITTE_2 << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_COMPUTER_SCRITTE_2].px = 50;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_2].py = 130;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_2].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SCRITTE_2].text, "");
-			w->text[T2D_TEXT_COMPUTER_SCRITTE_2].font = &StandardFont;
+			w->text[T2D_TEXT_COMPUTER_SCRITTE_2].font = FontKind::Standard;
 			w->text[T2D_TEXT_COMPUTER_SCRITTE_2].color = WHITE_FONT;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_3].tnum = (T2D_TEXT_COMPUTER_SCRITTE_3 << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_COMPUTER_SCRITTE_3].px = 50;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_3].py = 160;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_3].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SCRITTE_3].text, "");
-			w->text[T2D_TEXT_COMPUTER_SCRITTE_3].font = &StandardFont;
+			w->text[T2D_TEXT_COMPUTER_SCRITTE_3].font = FontKind::Standard;
 			w->text[T2D_TEXT_COMPUTER_SCRITTE_3].color = WHITE_FONT;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_4].tnum = (T2D_TEXT_COMPUTER_SCRITTE_4 << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_COMPUTER_SCRITTE_4].px = 50;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_4].py = 190;
 			w->bm[T2D_BM_COMPUTER_SCRITTE_4].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SCRITTE_4].text, "");
-			w->text[T2D_TEXT_COMPUTER_SCRITTE_4].font = &StandardFont;
+			w->text[T2D_TEXT_COMPUTER_SCRITTE_4].font = FontKind::Standard;
 			w->text[T2D_TEXT_COMPUTER_SCRITTE_4].color = WHITE_FONT;
 
 			//ExtraLS
@@ -3591,7 +3591,7 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_DIALUP_NUMBER].px = 50;
 			w->bm[T2D_BM_COMPUTER_DIALUP_NUMBER].py = 76;
 			strcpy(w->text[T2D_TEXT_COMPUTER_DIALUP_NUMBER].text, "");
-			w->text[T2D_TEXT_COMPUTER_DIALUP_NUMBER].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_DIALUP_NUMBER].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_DIALUP_NUMBER].color = BLACK_FONT;
 
 			//Gestione variabili
@@ -3719,14 +3719,14 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_SEARCH_NAME].px = 140;
 			w->bm[T2D_BM_COMPUTER_SEARCH_NAME].py = 154;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SEARCH_NAME].text, "");
-			w->text[T2D_TEXT_COMPUTER_SEARCH_NAME].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_SEARCH_NAME].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_SEARCH_NAME].color = BLACK_FONT;
 
 			w->bm[T2D_BM_COMPUTER_SEARCH_SURNAME].tnum = (T2D_TEXT_COMPUTER_SEARCH_SURNAME << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_COMPUTER_SEARCH_SURNAME].px = 420;
 			w->bm[T2D_BM_COMPUTER_SEARCH_SURNAME].py = 154;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SEARCH_SURNAME].text, "");
-			w->text[T2D_TEXT_COMPUTER_SEARCH_SURNAME].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_SEARCH_SURNAME].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_SEARCH_SURNAME].color = BLACK_FONT;
 
 			w->bm[T2D_BM_COMPUTER_SEARCH_CASENAME].tnum = (T2D_TEXT_COMPUTER_SEARCH_CASENAME << T2D_BM2TEXT_SHIFT);
@@ -3734,7 +3734,7 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_SEARCH_CASENAME].py = 154;
 			w->bm[T2D_BM_COMPUTER_SEARCH_CASENAME].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SEARCH_CASENAME].text, "");
-			w->text[T2D_TEXT_COMPUTER_SEARCH_CASENAME].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_SEARCH_CASENAME].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_SEARCH_CASENAME].color = BLACK_FONT;
 
 			w->bm[T2D_BM_COMPUTER_SEARCH_YEAR].tnum = (T2D_TEXT_COMPUTER_SEARCH_YEAR << T2D_BM2TEXT_SHIFT);
@@ -3742,7 +3742,7 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_SEARCH_YEAR].py = 154;
 			w->bm[T2D_BM_COMPUTER_SEARCH_YEAR].tnum |= T2D_BM_OFF;
 			strcpy(w->text[T2D_TEXT_COMPUTER_SEARCH_YEAR].text, "");
-			w->text[T2D_TEXT_COMPUTER_SEARCH_YEAR].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_SEARCH_YEAR].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_SEARCH_YEAR].color = BLACK_FONT;
 
 			//Gestione Variabili
@@ -3853,14 +3853,14 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_1].px = 150;
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_1].py = 125;
 			strcpy(w->text[T2D_TEXT_COMPUTER_EMAIL_1].text, Sentence[init.Obj[oCOMPUTEREMAIL1].text[0]]);
-			w->text[T2D_TEXT_COMPUTER_EMAIL_1].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_EMAIL_1].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_EMAIL_1].color = BLACK_FONT;
 
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_2].tnum = (T2D_TEXT_COMPUTER_EMAIL_2 << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_2].px = 150;
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_2].py = 185;
 			strcpy(w->text[T2D_TEXT_COMPUTER_EMAIL_2].text, Sentence[init.Obj[oCOMPUTEREMAIL2].text[0]]);
-			w->text[T2D_TEXT_COMPUTER_EMAIL_2].font = &ComputerFont;
+			w->text[T2D_TEXT_COMPUTER_EMAIL_2].font = FontKind::Computer;
 			w->text[T2D_TEXT_COMPUTER_EMAIL_2].color = BLACK_FONT;
 
 			//ExtraLS
@@ -4049,7 +4049,7 @@ void doT2D(WGame &game) {
 				w->bm[T2D_BM_COMPUTER_DOCLIST_LINES_START + i].py = 65 + 20 * i;
 
 				strcpy(w->text[T2D_TEXT_COMPUTER_DOCLIST_LINES_START + i].text, "");
-				w->text[T2D_TEXT_COMPUTER_DOCLIST_LINES_START + i].font = &PDAFont;
+				w->text[T2D_TEXT_COMPUTER_DOCLIST_LINES_START + i].font = FontKind::PDA;
 				w->text[T2D_TEXT_COMPUTER_DOCLIST_LINES_START + i].color = BLUE_FONT;
 			}
 
@@ -4410,7 +4410,7 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_PDA_MAIN_TIME].tnum |= ((T2D_TEXT_PDA_MAIN_TIME) << T2D_BM2TEXT_SHIFT);
 			w->bm[T2D_BM_PDA_MAIN_TIME].px = 690;
 			w->bm[T2D_BM_PDA_MAIN_TIME].py = 360;
-			w->text[T2D_TEXT_PDA_MAIN_TIME].font = &PDAFont;
+			w->text[T2D_TEXT_PDA_MAIN_TIME].font = FontKind::PDA;
 			w->text[T2D_TEXT_PDA_MAIN_TIME].color = GREEN_FONT;
 			if (t3dCurTime >= 1300) {
 				sprintf(w->text[T2D_TEXT_PDA_MAIN_TIME].text, "%04d", t3dCurTime - 1200);
@@ -4490,7 +4490,7 @@ void doT2D(WGame &game) {
 				w->bm[T2D_BM_PDA_LOG_DATA_START + i].px = T2D_PDA_LOG_DATA_XI;
 				w->bm[T2D_BM_PDA_LOG_DATA_START + i].py = 0;
 				strcpy(w->text[T2D_TEXT_PDA_LOG_DATA_START + i].text, "");
-				w->text[T2D_TEXT_PDA_LOG_DATA_START + i].font = &PDAFont;
+				w->text[T2D_TEXT_PDA_LOG_DATA_START + i].font = FontKind::PDA;
 				w->text[T2D_TEXT_PDA_LOG_DATA_START + i].color = GRAY_FONT;
 			}
 
@@ -4500,7 +4500,7 @@ void doT2D(WGame &game) {
 				w->bm[T2D_BM_PDA_LOG_TEXT_START + i].py = 0;
 				w->bm[T2D_BM_PDA_LOG_TEXT_START].tnum |= T2D_BM_OFF;
 				strcpy(w->text[T2D_TEXT_PDA_LOG_TEXT_START + i].text, "");
-				w->text[T2D_TEXT_PDA_LOG_TEXT_START + i].font = &PDAFont;
+				w->text[T2D_TEXT_PDA_LOG_TEXT_START + i].font = FontKind::PDA;
 			}
 
 			//ExtraLS
@@ -4637,7 +4637,7 @@ void doT2D(WGame &game) {
 				w->bm[T2D_BM_PDA_HELP_TEXT_START + i].py = T2D_PDA_HELP_TEXT_YI + 20 * i;
 				w->bm[T2D_BM_PDA_HELP_TEXT_START].tnum |= T2D_BM_OFF;
 				strcpy(w->text[T2D_TEXT_PDA_HELP_START + i].text, "");
-				w->text[T2D_TEXT_PDA_HELP_START + i].font = &PDAFont;
+				w->text[T2D_TEXT_PDA_HELP_START + i].font = FontKind::PDA;
 				w->text[T2D_TEXT_PDA_HELP_START + i].color = GREEN_FONT;
 			}
 
@@ -4922,7 +4922,7 @@ void doT2D(WGame &game) {
 					w->bm[T2D_BM_OPTIONS_TEXT_SAVE_START + j * 3 + i].py = w->bm[T2D_BM_OPTIONS_SAVE_START + j * 3 + i].py + 105;
 					w->bm[T2D_BM_OPTIONS_TEXT_SAVE_START + j * 3 + i].tnum |= T2D_BM_OFF;
 					strcpy(w->text[T2D_TEXT_OPTIONS_SAVE_START + j * 3 + i].text, "");
-					w->text[T2D_TEXT_OPTIONS_SAVE_START + j * 3 + i].font = &StandardFont;
+					w->text[T2D_TEXT_OPTIONS_SAVE_START + j * 3 + i].font = FontKind::Standard;
 					w->text[T2D_TEXT_OPTIONS_SAVE_START + j * 3 + i].color = WHITE_FONT;
 				}
 
@@ -5356,7 +5356,7 @@ void doT2D(WGame &game) {
 						b = &w->bt[T2D_BT_PDA_TONE_PROCESS];
 						b->on = false;
 
-						SetHelpWin(&PDA_Tone_Acquire_Help_Func, 2, Sentence[init.Obj[oTONERHELP].text[4]], " ");
+						SetHelpWin(game._fonts, &PDA_Tone_Acquire_Help_Func, 2, Sentence[init.Obj[oTONERHELP].text[4]], " ");
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_PDA_HELP, 0, true, nullptr, nullptr, nullptr);
 					}
 					break;
@@ -5624,7 +5624,7 @@ void PDA_Tone_Acquire_Help_Func(void) {
 //	Event( EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_TONE, 0, FALSE, NULL, NULL, NULL );
 }
 
-void SetHelpWin(void (*Func)(void), int NArg, ...) {
+void SetHelpWin(Fonts &fonts, void (*Func)(void), int NArg, ...) {
 	va_list vl;
 	char *Text = nullptr;
 	int i, Dx = 0, Dy = 0;
@@ -5637,7 +5637,7 @@ void SetHelpWin(void (*Func)(void), int NArg, ...) {
 
 		if (Text == nullptr) break;
 
-		rGetTextDim(Text, StandardFont.Table, &Dx, &Dy);
+		fonts.getTextDim(Text, FontKind::Standard, &Dx, &Dy);
 		w->bm[T2D_BM_PDA_HELP_TEXT_START + i].px = T2D_PDA_HELP_TEXT_XI + (T2D_PDA_HELP_TEXT_XF - T2D_PDA_HELP_TEXT_XI - Dx) / 2;
 		w->bm[T2D_BM_PDA_HELP_TEXT_START + i].py = T2D_PDA_HELP_TEXT_YI + (Dy + 5) * i;
 		w->bm[T2D_BM_PDA_HELP_TEXT_START + i].tnum &= ~T2D_BM_OFF;

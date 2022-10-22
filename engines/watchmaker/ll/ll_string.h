@@ -31,7 +31,8 @@ class WGame;
 
 void ClearText();
 void Text(uint16 x, uint16 y, uint16 dx, char *text);
-uint16 TextLen(char *sign, uint16 num);
+class Fonts;
+uint16 TextLen(Fonts &fonts, char *sign, uint16 num);
 void PaintInventory(WGame &game);
 void PaintText(WGame &game);
 

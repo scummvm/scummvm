@@ -200,7 +200,6 @@ bool                    rSetRenderMode(int state);
 bool                    rClearBuffers(char flags);
 void                    rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b);
 void                    rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bpp);
-unsigned short         *rSetupFontTable(char *s);
 void                    rRelaseFontTable(unsigned short *ft);
 void                    rRelaseAllFontTable();
 void                    rGetBlitterViewport(unsigned int *left, unsigned int *top, unsigned int *right, unsigned int *bottom);
@@ -215,7 +214,6 @@ bool                    rGetStencilBitDepth();
 void                    rBlitScreenBuffer();
 void                    rPrintText(const char *s, unsigned int dst,  unsigned int src, unsigned short *FontTable, unsigned short x, unsigned short y);
 void                    rBlitter(WGame &game, int dst, int src, int dposx, int dposy, int sposx, int sposy, int sdimx, int sdimy);
-void                    rGetTextDim(const char *s, unsigned short *FontTable, int *x, int *y);
 
 //D3d specific geometry trasf. functions
 bool rSetProjectionMatrix(float width, float height, float fAspect,

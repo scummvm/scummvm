@@ -532,7 +532,7 @@ struct SavesS {
 void ChangeExclusiveMouseMode();
 
 void PDA_Tone_Acquire_Help_Func();
-void SetHelpWin(void (*Func)(void), int NArg, ...);
+void SetHelpWin(Fonts &fonts, void (*Func)(void), int NArg, ...);
 void CaricaSaves(WGame &game);
 void SortSaves();
 void RefreshSaveImg(WGame &game, int Pos, uint8 Type);

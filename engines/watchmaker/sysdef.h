@@ -151,16 +151,18 @@ namespace Watchmaker {
 #define CAMERA_FOV_1ST              74.0f
 #define CAMERA_FOV_ICON             50.0f
 // Colori predefiniti del font
-#define WHITE_FONT                  0
-#define RED_FONT                    1
-#define GREEN_FONT                  2
-#define BLUE_FONT                   3
-#define CYAN_FONT                   4
-#define MAGENTA_FONT                5
-#define YELLOW_FONT                 6
-#define GRAY_FONT                   7
-#define BLACK_FONT                  8
-#define MAX_FONT_COLORS             9
+enum FontColor {
+	WHITE_FONT = 0,
+	RED_FONT = 1,
+	GREEN_FONT = 2,
+	BLUE_FONT = 3,
+	CYAN_FONT = 4,
+	MAGENTA_FONT = 5,
+	YELLOW_FONT = 6,
+	GRAY_FONT = 7,
+	BLACK_FONT = 8,
+	MAX_FONT_COLORS = 9
+};
 
 #define MAX_GOPHERS                 3
 

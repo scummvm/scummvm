@@ -23,6 +23,7 @@
 #define WATCHMAKER_GAME_H
 
 #include "common/random.h"
+#include "fonts.h"
 #include "watchmaker/3d/loader.h"
 #include "watchmaker/game_options.h"
 #include "watchmaker/ll/ll_ffile.h"
@@ -61,6 +62,7 @@ public:
 	Init init;
 	sdl_wrapper *sdl;
 	GameVars _gameVars;
+	Fonts _fonts;
 	WGame();
 	~WGame();
 
