@@ -58,13 +58,14 @@ FastFile::FastFile(const char *path) : _path(path) {
 }
 
 Common::SharedPtr<Common::SeekableReadStream> FastFile::resolve(const char *filename) {
+	Common::String converted = filename;
 	int index = -1;
 	//HACK
-	if (strlen(filename) >= 2 && filename[0] == '.' && filename[1] == '/') {
-		filename = filename + 2;
+	if (converted.size() >= 2 && converted[0] == '.' && converted[1] == '/') {
+		converted = converted.substr(2, converted.size() - 2);
 	}
 	for (int i = 0; i < _numFiles; i++) {
-		if (_files[i].name.equalsIgnoreCase(filename)) {
+		if (_files[i].name.equalsIgnoreCase(converted)) {
 			index = i;
 			break;
 		}

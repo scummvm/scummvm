@@ -27,16 +27,12 @@
 namespace Watchmaker {
 
 Common::SharedPtr<Common::SeekableReadStream> WorkDirs::resolveFile(const Common::String &path, bool noFastFile) {
-	char *convertedFilename = new char[path.size() + 1]{};
-	strcpy(convertedFilename, path.c_str());
+	Common::String converted = path;
 	for (int i = 0; i < path.size(); i++) {
-		if (convertedFilename[i] == '\\') {
-			convertedFilename[i] = '/';
+		if (converted[i] == '\\') {
+			converted.setChar('/', i);
 		}
 	}
-	Common::String converted = convertedFilename;
-	delete[] convertedFilename;
-	//warning("Resolve: %s", path);
 	Common::SharedPtr<Common::SeekableReadStream> stream = nullptr;
 	if (!noFastFile) {
 		stream = _fastFile->resolve(converted.c_str());
