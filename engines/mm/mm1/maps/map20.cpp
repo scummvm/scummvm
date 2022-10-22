@@ -119,7 +119,46 @@ void Map20::special03() {
 	for (uint i = 0; i < g_globals->_party.size() && !hasWhistle; ++i)
 		hasWhistle = g_globals->_party[i].hasItem(RUBY_WHISTLE_ID);
 
-	// TODO
+	if (!hasWhistle) {
+		send(SoundMessage(STRING["maps.map20.castle"]));
+		return;
+	}
+
+	send(
+		SoundMessage(STRING["maps.map20.castle"],
+		[](const Common::KeyState &) {
+			g_events->close();
+			g_events->send(SoundMessage(
+				STRING["maps.map20.whistle"],
+				[](const Common::KeyState &ks) {
+					if (ks.keycode == Common::KEYCODE_0) {
+						g_events->close();
+						none160();
+					} else if (ks.keycode == Common::KEYCODE_2) {
+						g_events->close();
+						g_events->send(SoundMessage(
+							STRING["maps.map20.stairs_down"],
+							[]() {
+								for (uint i = 0; i < g_globals->_party.size(); ++i) {
+									g_globals->_currCharacter = &g_globals->_party[i];
+									g_globals->_currCharacter->_flags[0] |= CHARFLAG0_20 | CHARFLAG0_40;
+								}
+
+								g_maps->_mapPos = Common::Point(8, 8);
+								g_maps->changeMap(0xf04, 3);
+							}
+						));
+
+					} else if (ks.keycode >= Common::KEYCODE_1 &&
+							ks.keycode <= Common::KEYCODE_9) {
+						g_events->close();
+						g_maps->_mapPos = Common::Point(8, 5);
+						g_maps->changeMap(0x604, 1);
+					}
+				}
+			));
+		}
+	));
 }
 
 void Map20::special04() {
