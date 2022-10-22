@@ -19,49 +19,32 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP22_H
-#define MM1_MAPS_MAP22_H
+#ifndef MM1_VIEWS_MAPS_TRIVIA_H
+#define MM1_VIEWS_MAPS_TRIVIA_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map22 : public Map {
-	typedef void (Map22:: *SpecialFn)();
+class Trivia : public AnswerEntry {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special08();
+	Common::String _question, _correctAnswer;
+protected:
+	void answerEntered() override;
 
-	const SpecialFn SPECIAL_FN[14] = {
-		&Map22::special00,
-		&Map22::special01,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08
-	};
 public:
-	Map22() : Map(22, "areac1", 0x304) {}
+	Trivia();
+	virtual ~Trivia() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+	bool msgValue(const ValueMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

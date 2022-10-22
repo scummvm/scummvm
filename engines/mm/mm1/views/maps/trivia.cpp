@@ -19,50 +19,52 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP22_H
-#define MM1_MAPS_MAP22_H
-
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/maps/trivia.h"
+#include "mm/mm1/maps/map21.h"
+#include "mm/mm1/globals.h"
+#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map22 : public Map {
-	typedef void (Map22:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special08();
+#define VAL1 159
+#define VAL2 160
 
-	const SpecialFn SPECIAL_FN[14] = {
-		&Map22::special00,
-		&Map22::special01,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special02,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08,
-		&Map22::special08
-	};
-public:
-	Map22() : Map(22, "areac1", 0x304) {}
+Trivia::Trivia() :
+		AnswerEntry("Trivia", Common::Point(9, 5), 14) {
+}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-};
+bool Trivia::msgValue(const ValueMessage &msg) {
+	_question = STRING[Common::String::format(
+		"maps.map21.questions.%d", msg._value)];
+	_correctAnswer = STRING[Common::String::format(
+		"maps.map21.questions.%d", msg._value)];
+
+	open();
+	return true;
+}
+
+void Trivia::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+}
+
+void Trivia::answerEntered() {
+	if (_answer == _correctAnswer) {
+		send(InfoMessage(STRING["maps.map21.correct"]));
+		g_globals->_party[0]._gems += 50;
+		Sound::sound(SOUND_3);
+
+	} else {
+		g_maps->_mapPos.x = 15;
+		g_events->send("Game", GameMessage("UPDATE"));
+		send(InfoMessage(STRING["maps.map19.incorrect"]));
+	}
+}
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

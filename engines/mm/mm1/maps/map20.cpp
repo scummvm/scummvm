@@ -141,7 +141,7 @@ void Map20::special03() {
 							[]() {
 								for (uint i = 0; i < g_globals->_party.size(); ++i) {
 									g_globals->_currCharacter = &g_globals->_party[i];
-									g_globals->_currCharacter->_flags[0] |= CHARFLAG0_20 | CHARFLAG0_40;
+									g_globals->_currCharacter->_flags[0] |= CHARFLAG0_FOUND_CHEST | CHARFLAG0_40;
 								}
 
 								g_maps->_mapPos = Common::Point(8, 8);
