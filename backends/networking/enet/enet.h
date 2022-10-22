@@ -34,7 +34,8 @@ public:
 	~ENet();
 
 	bool initalize();
-	Host* create_host(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand);
+	Host* create_host(Common::String address, int port, int numClients, int numChannels = 1, int incBand = 0, int outBand = 0);
+	Host* connect_to_host(Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
 private:
 	bool _initialized;
 };
