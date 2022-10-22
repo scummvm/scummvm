@@ -41,6 +41,7 @@ struct Library *AslBase;
 Common::DialogManager::DialogResult AmigaOSDialogManager::showFileBrowser(const Common::U32String &title, Common::FSNode &choice, bool isDirBrowser) {
 
 	char pathBuffer[MAXPATHLEN];
+	strcpy(pathBuffer, "SYS:");
 
 	Common::String newTitle = title.encode(Common::kISO8859_1);
 
