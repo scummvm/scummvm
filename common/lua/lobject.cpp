@@ -6,6 +6,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
 #include "common/util.h"
 
