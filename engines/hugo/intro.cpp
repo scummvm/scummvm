@@ -133,7 +133,7 @@ bool intro_v1d::introPlay() {
 			_font.drawString(&_surf, _vm->getCopyrightString(), 0, 176, 320, _TLIGHTMAGENTA, Graphics::kTextAlignCenter);
 
 			if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
-				sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+				Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 				_font.drawString(&_surf, buffer, 0, 75, 320, _TMAGENTA, Graphics::kTextAlignCenter);
 			}
 
@@ -255,15 +255,15 @@ void intro_v2d::introInit() {
 		error("Unable to load font TMSRB.FON, face 'Tms Rmn', size 8");
 
 	if (_vm->_boot._registered)
-		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer, "%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Shareware Version", _vm->getCopyrightString());
 
 	_font.drawString(&_surf, buffer, 0, 186, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
 		// TROMAN, size 10-5
-		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 1, 320, _TLIGHTRED, Graphics::kTextAlignCenter);
 	}
 
@@ -292,9 +292,9 @@ void intro_v3d::introInit() {
 
 	char buffer[128];
 	if (_vm->_boot._registered)
-		sprintf(buffer, "%s  Registered Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer, "%s  Registered Version", _vm->getCopyrightString());
 	else
-		sprintf(buffer,"%s  Shareware Version", _vm->getCopyrightString());
+		Common::sprintf_s(buffer,"%s  Shareware Version", _vm->getCopyrightString());
 
 	// TROMAN, size 10-5
 	if (!_font.loadFromFON("TMSRB.FON", Graphics::WinFontDirEntry("Tms Rmn", 8)))
@@ -303,7 +303,7 @@ void intro_v3d::introInit() {
 	_font.drawString(&_surf, buffer, 0, 190, 320, _TBROWN, Graphics::kTextAlignCenter);
 
 	if ((*_vm->_boot._distrib != '\0') && (scumm_stricmp(_vm->_boot._distrib, "David P. Gray"))) {
-		sprintf(buffer, "Distributed by %s.", _vm->_boot._distrib);
+		Common::sprintf_s(buffer, "Distributed by %s.", _vm->_boot._distrib);
 		_font.drawString(&_surf, buffer, 0, 0, 320, _TBROWN, Graphics::kTextAlignCenter);
 	}
 
