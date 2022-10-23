@@ -399,7 +399,7 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	drawCompressedImage(port, pos, g_vm->_cnm->_selImage);
 
 	// draw the number of items selected thus far
-	num = sprintf(buf, " %d ", g_vm->_cnm->_numPicked);
+	num = Common::sprintf_s(buf, " %d ", g_vm->_cnm->_numPicked);
 
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
@@ -428,7 +428,7 @@ void ContainerView::drawQuantity(
 		char buf[8];
 
 		// draw the number of items selected thus far
-		sprintf(buf, "%d", quantity);
+		Common::sprintf_s(buf, "%d", quantity);
 
 		port.moveTo(x - 1,  y + 22);
 		port.setFont(&Helv11Font);
@@ -1837,15 +1837,15 @@ APPFUNC(cmdMindContainerFunc) {
 
 			switch (_mindType) {
 			case 0:
-				sprintf(textBuffer, IDEAS_MENTAL);
+				Common::sprintf_s(textBuffer, IDEAS_MENTAL);
 				break;
 
 			case 1:
-				sprintf(textBuffer, SPELL_MENTAL);
+				Common::sprintf_s(textBuffer, SPELL_MENTAL);
 				break;
 
 			case 2:
-				sprintf(textBuffer, SKILL_MENTAL);
+				Common::sprintf_s(textBuffer, SKILL_MENTAL);
 				break;
 
 			case -1:

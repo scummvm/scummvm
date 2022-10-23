@@ -121,7 +121,7 @@ void ModalDialogWindow::positionText(
 		int16   fontHeight = mainFont->height;
 
 		// make a copy of the window text string
-		vsprintf(_titleBuf, windowText, args);
+		Common::vsprintf_s(_titleBuf, windowText, args);
 
 		//  break up the title text string
 		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');

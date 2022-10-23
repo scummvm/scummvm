@@ -711,7 +711,7 @@ void buildText(uint16 textScript) {
 		//  Run the script
 		runScript(textScript, scf);
 	} else {
-		sprintf(bookText, "Invalid textScript: %d", textScript);
+		Common::sprintf_s(bookText, "Invalid textScript: %d", textScript);
 	}
 }
 

@@ -118,7 +118,7 @@ extern gPanelList   *speakButtonControls;   // controls for embedded speech butt
 static char convBuf[5];
 
 inline uint32 extendID(int16 smallID) {
-	sprintf(convBuf, "%4.4d", smallID);
+	Common::sprintf_s(convBuf, "%4.4d", smallID);
 	return smallID ? MKTAG(convBuf[0] + 'A' - '0', convBuf[1], convBuf[2], convBuf[3]) : 0 ;
 }
 
