@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-23 13:43+0000\n"
+"POT-Creation-Date: 2022-10-23 20:46+0000\n"
 "PO-Revision-Date: 2022-10-10 13:25+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4859,7 +4859,7 @@ msgstr "[ 何かキーを押すと終了します ]"
 msgid "Untitled Savegame"
 msgstr "無題のセーブ"
 
-#: engines/glk/adrift/os_glk.cpp:2813
+#: engines/glk/adrift/os_glk.cpp:2815
 msgid "Loading game...\n"
 msgstr "ロード中...\n"
 

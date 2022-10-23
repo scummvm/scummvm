@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-23 13:43+0000\n"
+"POT-Creation-Date: 2022-10-23 20:46+0000\n"
 "PO-Revision-Date: 2021-03-21 08:24+0000\n"
 "Last-Translator: Aashwin Vaish <aashwin.vaish@research.iiit.ac.in>\n"
 "Language-Team: Hindi <https://translations.scummvm.org/projects/scummvm/"
@@ -4773,7 +4773,7 @@ msgstr ""
 msgid "Untitled Savegame"
 msgstr ""
 
-#: engines/glk/adrift/os_glk.cpp:2813
+#: engines/glk/adrift/os_glk.cpp:2815
 msgid "Loading game...\n"
 msgstr ""
 

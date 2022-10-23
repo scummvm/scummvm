@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-23 13:43+0000\n"
+"POT-Creation-Date: 2022-10-23 20:46+0000\n"
 "PO-Revision-Date: 2022-10-11 09:33+0000\n"
 "Last-Translator: Lothar Serra Mari <lothar.serramari@scummvm.org>\n"
 "Language-Team: German <https://translations.scummvm.org/projects/scummvm/"
@@ -4952,7 +4952,7 @@ msgstr "[ zum Beenden beliebige Taste drücken ]"
 msgid "Untitled Savegame"
 msgstr "Unbenannter Spielstand"
 
-#: engines/glk/adrift/os_glk.cpp:2813
+#: engines/glk/adrift/os_glk.cpp:2815
 msgid "Loading game...\n"
 msgstr "Spiel wird geladen...\n"
 
