@@ -1300,7 +1300,7 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 	// Draw  FPS
 	setCursor(0, 0);
 	char buff[64];
-	sprintf(buff, "FPS: %d", fps);
+	Common::sprintf_s(buff, "FPS: %d", fps);
 	drawText(buff);
 
 	// Draw Player Info
@@ -1308,22 +1308,22 @@ void Gfx::drawDebugInfo(Tile *_debugLogo, int fps) {
 
 	int x, y;
 	g_hdb->_ai->getPlayerXY(&x, &y);
-	sprintf(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
+	Common::sprintf_s(buff, "Player X: %d, Y: %d", x / kTileWidth, y / kTileHeight);
 	drawText(buff);
 
 	setCursor(0, 32);
 	AIEntity *p = g_hdb->_ai->getPlayer();
 	if (p) {
-		sprintf(buff, "Player height level: %d", p->level);
+		Common::sprintf_s(buff, "Player height level: %d", p->level);
 		drawText(buff);
 	}
 
 	setCursor(0, 48);
-	sprintf(buff, "Map Name: %s", g_hdb->getInMapName());
+	Common::sprintf_s(buff, "Map Name: %s", g_hdb->getInMapName());
 	drawText(buff);
 
 	setCursor(0, 64);
-	g_hdb->getActionMode() ? sprintf(buff, "Action Mode") : sprintf(buff, "Puzzle Mode");
+	g_hdb->getActionMode() ? Common::sprintf_s(buff, "Action Mode") : Common::sprintf_s(buff, "Puzzle Mode");
 	drawText(buff);
 }
 
