@@ -392,7 +392,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 						luzahl = intzahl[0];
 					}
 					if (luzahl != 0)
-						sprintf(zstring, "%u", luzahl);
+						Common::sprintf_s(zstring, "%u", luzahl);
 					else {
 						zstring[0] = '0';
 						zstring[1] = 0 ;
@@ -412,7 +412,7 @@ int16 McgaGraphics::scanxy(int16 x, int16 y, int16 fcol, int16 bcol, int16 cur_c
 					longzahl = va_arg(parptr, uint32 *);
 					luzahl = longzahl[0];
 					if (luzahl != 0)
-						sprintf(zstring, "%u", luzahl);
+						Common::sprintf_s(zstring, "%u", luzahl);
 					else {
 						zstring[0] = '0';
 						zstring[1] = 0 ;
