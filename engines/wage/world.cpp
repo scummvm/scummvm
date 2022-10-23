@@ -537,7 +537,7 @@ const char *World::getAboutMenuItemName() {
 	*menu = '\0';
 
 	if (_aboutMenuItemName.empty()) {
-		sprintf(menu, "About %s...", _name.c_str());
+		Common::sprintf_s(menu, "About %s...", _name.c_str());
 	} else { // Replace '@' with name
 		const char *str = _aboutMenuItemName.c_str();
 		const char *pos = strchr(str, '@');
