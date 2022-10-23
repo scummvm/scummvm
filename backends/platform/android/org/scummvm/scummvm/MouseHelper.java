@@ -99,6 +99,23 @@ public class MouseHelper implements View.OnHoverListener {
 
 	}
 
+	// "Checking against SOURCE_STYLUS only indicates "an input device is capable of obtaining input
+	// from a stylus. To determine whether a given touch event was produced by a stylus, examine
+	// the tool type returned by MotionEvent#getToolType(int) for each individual pointer."
+	// https://developer.android.com/reference/android/view/InputDevice#SOURCE_STYLUS
+	public static boolean isStylus(MotionEvent e){
+		if (e == null) {
+			return false;
+		}
+
+		for(int idx = 0; idx < e.getPointerCount(); idx++) {
+			if (e.getToolType(idx) == MotionEvent.TOOL_TYPE_STYLUS)
+				return true;
+		}
+
+		return false;
+	}
+
 	public static boolean isMouse(KeyEvent e) {
 		if (e == null) {
 			return false;
@@ -131,9 +148,10 @@ public class MouseHelper implements View.OnHoverListener {
 
 		// SOURCE_MOUSE_RELATIVE is sent when mouse is detected as trackball
 		// TODO: why does this happen? Do we need to also check for SOURCE_TRACKBALL here?
+		// TODO: should these all be checks against TOOL_TYPEs instead of SOURCEs?
 		return ((sources & InputDevice.SOURCE_MOUSE) == InputDevice.SOURCE_MOUSE)
-		       || ((sources & InputDevice.SOURCE_STYLUS) == InputDevice.SOURCE_STYLUS)
 		       || ((sources & InputDevice.SOURCE_TOUCHPAD) == InputDevice.SOURCE_TOUCHPAD)
+		       ||  isStylus(e)
 		       ||  isTrackball(e);
 	}
 
