@@ -132,7 +132,7 @@ void DrasculaEngine::converse(int index) {
 	debug(4, "converse(%d)", index);
 
 	char fileName[20];
-	sprintf(fileName, "op_%d.cal", index);
+	Common::sprintf_s(fileName, "op_%d.cal", index);
 	Common::SeekableReadStream *stream = _archives.open(fileName);
 	if (!stream)
 		error("missing data file %s", fileName);
