@@ -51,7 +51,7 @@ static void displaySaveResult(vmsaveResult res)
 
   switch(res) {
   case VMSAVE_OK:
-	sprintf(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
+	Common::sprintf_s(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
 	break;
   case VMSAVE_NOVM:
 	Common::strcpy_s(buf, "No memory card present!");

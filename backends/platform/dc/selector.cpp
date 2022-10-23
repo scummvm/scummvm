@@ -71,13 +71,13 @@ static bool isIcon(const Common::FSNode &entry)
 static bool loadIcon(Game &game, Dir *dirs, int num_dirs)
 {
   char icofn[520];
-  sprintf(icofn, "%s%s.ICO", game.dir, game.filename_base);
+  Common::sprintf_s(icofn, "%s%s.ICO", game.dir, game.filename_base);
   if (game.icon.load(icofn))
 	return true;
   for (int i=0; i<num_dirs; i++)
 	if (!strcmp(dirs[i].name, game.dir) &&
 	   dirs[i].deficon[0]) {
-	  sprintf(icofn, "%s%s", game.dir, dirs[i].deficon);
+	  Common::sprintf_s(icofn, "%s%s", game.dir, dirs[i].deficon);
 	  if (game.icon.load(icofn))
 	return true;
 	  break;
