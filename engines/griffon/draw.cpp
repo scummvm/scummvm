@@ -305,10 +305,10 @@ void GriffonEngine::drawHud() {
 		}
 
 		char line[128];
-		sprintf(line, "Health: %i/%i", _player.hp, _player.maxHp);
+		Common::sprintf_s(line, "Health: %i/%i", _player.hp, _player.maxHp);
 		drawString(_videoBuffer, line, sx, sy, _player.hp <= _player.maxHp * 0.25 ? (int)_player.hpflash : 0);
 
-		sprintf(line, "Level : %i", _player.level);
+		Common::sprintf_s(line, "Level : %i", _player.level);
 		if (_player.level == _player.maxLevel)
 			Common::strcpy_s(line, "Level : MAX");
 		drawString(_videoBuffer, line, sx, sy + 8, 0);
@@ -336,7 +336,7 @@ void GriffonEngine::drawHud() {
 		int m = ((ase - (ase % 60)) / 60);
 		int s = (ase - m * 60);
 
-		sprintf(line, "%02i:%02i:%02i", h, m, s);
+		Common::sprintf_s(line, "%02i:%02i:%02i", h, m, s);
 		drawString(_videoBuffer, line, 46 + 38 - strlen(line) * 4, 46 + 49, 0);
 
 		drawString(_videoBuffer, "Use", 193, 55, 0);
@@ -378,7 +378,7 @@ void GriffonEngine::drawHud() {
 			else if (i == 4)
 				_itemImg[14]->blit(*_videoBuffer, rcSrc.left, rcSrc.top);
 
-			sprintf(line, "x%i", _player.inventory[i]);
+			Common::sprintf_s(line, "x%i", _player.inventory[i]);
 			drawString(_videoBuffer, line, sx + 17, sy + 7, 0);
 		}
 
