@@ -752,14 +752,14 @@ void Sound::startTalkSound(uint32 offset, uint32 b, int mode, Audio::SoundHandle
 		if (!file)
 			error("startTalkSound: Out of memory");
 
-		sprintf(filename, "audio/%s.%u/%u.voc", roomname, offset, b);
+		Common::sprintf_s(filename, "audio/%s.%u/%u.voc", roomname, offset, b);
 		if (!_vm->openFile(*file, filename)) {
-			sprintf(filename, "audio/%s_%u/%u.voc", roomname, offset, b);
+			Common::sprintf_s(filename, "audio/%s_%u/%u.voc", roomname, offset, b);
 			_vm->openFile(*file, filename);
 		}
 
 		if (!file->isOpen()) {
-			sprintf(filename, "%u.%u.voc", offset, b);
+			Common::sprintf_s(filename, "%u.%u.voc", offset, b);
 			_vm->openFile(*file, filename);
 		}
 

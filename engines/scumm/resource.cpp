@@ -221,9 +221,9 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		_imuseDigital->stopAllSounds();
 
 #ifdef MACOSX
-		sprintf(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nPlease insert disc %d.\nPress OK to retry, Quit to exit", filename, disknum);
 #else
-		sprintf(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
+		Common::sprintf_s(buf, "Cannot find file: '%s'\nInsert disc %d into drive %s\nPress OK to retry, Quit to exit", filename, disknum, ConfMan.get("path").c_str());
 #endif
 
 		result = displayMessage("Quit", "%s", buf);
@@ -232,7 +232,7 @@ void ScummEngine::askForDisk(const char *filename, int disknum) {
 		}
 #endif
 	} else {
-		sprintf(buf, "Cannot find file: '%s'", filename);
+		Common::sprintf_s(buf, "Cannot find file: '%s'", filename);
 		InfoDialog dialog(this, Common::U32String(buf));
 		runDialog(dialog);
 		error("Cannot find file: '%s'", filename);
@@ -1445,7 +1445,7 @@ void ScummEngine::dumpResource(const char *tag, int id, const byte *ptr, int len
 	else
 		size = READ_BE_UINT32(ptr + 4);
 
-	sprintf(buf, "dumps/%s%d.dmp", tag, id);
+	Common::sprintf_s(buf, "dumps/%s%d.dmp", tag, id);
 
 	out.open(buf);
 	if (out.isOpen() == false)
@@ -1662,7 +1662,7 @@ const char *nameOfResType(ResType type) {
 	case rtSpoolBuffer:
 		return "SpoolBuffer";
 	default:
-		sprintf(buf, "rt%d", type);
+		Common::sprintf_s(buf, "rt%d", type);
 		return buf;
 	}
 }

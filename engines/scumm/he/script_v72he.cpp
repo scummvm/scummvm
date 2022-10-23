@@ -349,13 +349,13 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 			chr = string[num++];
 			switch (chr) {
 			case 'b':
-				//dst += sprintf((char *)dst, "%b", args[val++]);
+				//dst += Common::sprintf_s((char *)dst, "%b", args[val++]);
 				break;
 			case 'c':
 				*dst++ = args[val++];
 				break;
 			case 'd':
-				dst += sprintf((char *)dst, "%d", args[val++]);
+				dst += Common::sprintf_s((char *)dst, sizeof(string) - (dst - dst0), "%d", args[val++]);
 				break;
 			case 's':
 				src = getStringAddress(args[val++]);
@@ -365,7 +365,7 @@ void ScummEngine_v72he::decodeScriptString(byte *dst, bool scriptString) {
 				}
 				break;
 			case 'x':
-				dst += sprintf((char *)dst, "%x", args[val++]);
+				dst += Common::sprintf_s((char *)dst, sizeof(string) - (dst - dst0), "%x", args[val++]);
 				break;
 			default:
 				*dst++ = '%';
