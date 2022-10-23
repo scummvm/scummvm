@@ -86,11 +86,7 @@ void SaveStateDescriptor::setAutosave(bool autosave) {
 }
 
 bool SaveStateDescriptor::isAutosave() const {
-	if (hasAutosaveName()) {
-		return true;
-	} else {
-		return _saveType == kSaveTypeAutosave;
-	}
+	return hasAutoSaveName() || _saveType == kSaveTypeAutosave;
 }
 
 bool SaveStateDescriptor::hasAutosaveName() const
