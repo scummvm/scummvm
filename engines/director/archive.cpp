@@ -568,7 +568,7 @@ bool RIFXArchive::openStream(Common::SeekableReadStream *stream, uint32 startOff
 		Common::DumpFile out;
 
 		char buf[256];
-		sprintf(buf, "./dumps/%s-%08x", encodePathForDump(g_director->getEXEName()).c_str(), startOffset);
+		Common::sprintf_s(buf, "./dumps/%s-%08x", encodePathForDump(g_director->getEXEName()).c_str(), startOffset);
 
 		if (out.open(buf, true)) {
 			out.write(dumpData, sz);
@@ -753,7 +753,7 @@ bool RIFXArchive::readAfterburnerMap(Common::SeekableReadStreamEndian &stream, u
 		Common::DumpFile out;
 
 		char buf[256];
-		sprintf(buf, "./dumps/%s-%s", encodePathForDump(g_director->getEXEName()).c_str(), "ABMP");
+		Common::sprintf_s(buf, "./dumps/%s-%s", encodePathForDump(g_director->getEXEName()).c_str(), "ABMP");
 
 		if (out.open(buf, true)) {
 			byte *data = (byte *)malloc(abmpStream->size());
