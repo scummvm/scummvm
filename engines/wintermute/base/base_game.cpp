@@ -641,7 +641,7 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	Common::vsprintf_s(buff, fmt, va);
 	va_end(va);
 
 	// redirect to an engine's own callback
@@ -1803,7 +1803,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int fileNum = 0;
 
 		while (true) {
-			sprintf(filename, "%s%03d.bmp", val->isNULL() ? getName() : val->getString(), fileNum);
+			Common::sprintf_s(filename, "%s%03d.bmp", val->isNULL() ? getName() : val->getString(), fileNum);
 			if (!Common::File::exists(filename)) {
 				break;
 			}
@@ -2124,7 +2124,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			if (asHex) {
 				char hex[100];
-				sprintf(hex, "%x", checksum);
+				Common::sprintf_s(hex, "%x", checksum);
 				stack->pushString(hex);
 			} else {
 				stack->pushInt(checksum);
@@ -2958,7 +2958,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 			gameVersion = fileManager->getPackageVersion("data.dcp");
 		}
 		char tmp[16];
-		sprintf(tmp,"%u",gameVersion);
+		Common::sprintf_s(tmp,"%u",gameVersion);
 		_scValue->setString(tmp);
 		return _scValue;
 	}
@@ -3294,7 +3294,7 @@ void BaseGame::quickMessageForm(char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	Common::vsprintf_s(buff, fmt, va);
 	va_end(va);
 
 	quickMessage(buff);
@@ -4587,15 +4587,15 @@ bool BaseGame::displayDebugInfo() {
 	char str[strLength];
 
 	if (_debugShowFPS) {
-		sprintf(str, "FPS: %d", _gameRef->_fps);
+		Common::sprintf_s(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
 	if (_gameRef->_debugDebugMode) {
 		if (!_gameRef->_renderer->isWindowed()) {
-			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
+			Common::sprintf_s(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
 		} else {
-			sprintf(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
+			Common::sprintf_s(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
 		}
 
 		Common::strlcat(str, " (", strLength);
@@ -4607,18 +4607,18 @@ bool BaseGame::displayDebugInfo() {
 
 		int scrTotal, scrRunning, scrWaiting, scrPersistent;
 		scrTotal = _scEngine->getNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
-		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
+		Common::sprintf_s(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
-		sprintf(str, "Timer: %d", getTimer()->getTime());
+		Common::sprintf_s(str, "Timer: %d", getTimer()->getTime());
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
 			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
-		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
+		Common::sprintf_s(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
 		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
 
 	}

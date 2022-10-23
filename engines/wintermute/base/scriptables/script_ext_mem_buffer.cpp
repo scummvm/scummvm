@@ -482,7 +482,7 @@ bool SXMemBuffer::scSetProperty(const char *name, ScValue *value) {
 	    char propName[20];
 	    if (_length < origLength) {
 	        for(int i=_length; i < origLength; i++) {
-	            sprintf(propName, "%d", i);
+	            Common::sprintf_s(propName, "%d", i);
 	            _values->DeleteProp(propName);
 	        }
 	    }

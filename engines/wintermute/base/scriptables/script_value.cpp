@@ -656,14 +656,14 @@ const char *ScValue::getString() {
 
 	case VAL_INT: {
 		char dummy[50];
-		sprintf(dummy, "%d", _valInt);
+		Common::sprintf_s(dummy, "%d", _valInt);
 		setStringVal(dummy);
 		break;
 	}
 
 	case VAL_FLOAT: {
 		char dummy[50];
-		sprintf(dummy, "%f", _valFloat);
+		Common::sprintf_s(dummy, "%f", _valFloat);
 		setStringVal(dummy);
 		break;
 	}
