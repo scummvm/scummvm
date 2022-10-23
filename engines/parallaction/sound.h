@@ -56,7 +56,7 @@ public:
 	virtual ~SoundMan() { delete _impl; }
 	void execute(int command, int32 parm) {
 		char n[12];
-		sprintf(n, "%i", parm);
+		Common::sprintf_s(n, "%i", parm);
 		execute(command, n);
 	}
 	void execute(int command, const char *parm = 0) {

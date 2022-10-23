@@ -947,8 +947,8 @@ void CharacterName::bind(const char *name) {
 
 	memset(_baseName, 0, 30);
 	strncpy(_baseName, begin, end - begin);
-	sprintf(_name, "%s%s", _prefix, _baseName);
-	sprintf(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
+	Common::sprintf_s(_name, "%s%s", _prefix, _baseName);
+	Common::sprintf_s(_fullName, "%s%s%s", _prefix, _baseName, _suffix);
 }
 
 const char *CharacterName::getName() const {
