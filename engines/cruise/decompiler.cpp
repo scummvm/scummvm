@@ -81,17 +81,17 @@ char decompSaveOpcodeVar[256];
 uint8 *getStringNameFromIdx(uint16 stringTypeIdx, char *offset) {
 	switch (stringTypeIdx & 7) {
 	case 2: {
-		sprintf(stringName, "\"%s\"",
+		Common::sprintf_s(stringName, "\"%s\"",
 		        currentScript->dataPtr +
 		        currentScript->offsetToSubData3 + atoi(offset));
 		break;
 	}
 	case 5: {
-		sprintf(stringName, "vars[%s]", offset);
+		Common::sprintf_s(stringName, "vars[%s]", offset);
 		break;
 	}
 	default: {
-		sprintf(stringName, "string[%d][%s]",
+		Common::sprintf_s(stringName, "string[%d][%s]",
 		        stringTypeIdx & 7, offset);
 		break;
 	}
@@ -105,7 +105,7 @@ char *resolveMessage(char *messageIdxString) {
 	int variable;
 
 	variable = atoi(messageIdxString);
-	sprintf(buffer, "%d", variable);
+	Common::sprintf_s(buffer, "%d", variable);
 
 	if (strcmp(buffer, messageIdxString)) {
 		return messageIdxString;
@@ -119,7 +119,7 @@ void pushDecomp(char *string, ...) {
 	va_list va;
 
 	va_start(va, string);
-	vsprintf(decompileStack[decompileStackPosition], string, va);
+	Common::vsprintf_s(decompileStack[decompileStackPosition], string, va);
 	va_end(va);
 
 	// fprintf(fHandle, "----> %s\n",decompileStack[decompileStackPosition]);
@@ -141,7 +141,7 @@ void resolveDecompShort(char *buffer) {
 		case 40:
 		case 50: {
 			if (importEntry->offset == currentDecompScriptPtr->var4 - 3) {	// param1
-				sprintf(buffer,
+				Common::sprintf_s(buffer,
 				        data3Ptr->dataPtr +
 				        data3Ptr->
 				        offsetToImportName +
@@ -149,7 +149,7 @@ void resolveDecompShort(char *buffer) {
 				return;
 			}
 			if (importEntry->offset == currentDecompScriptPtr->var4 - 6) {	// param2
-				sprintf(buffer, "linkedIdx");
+				Common::sprintf_s(buffer, "linkedIdx");
 				return;
 			}
 			break;
@@ -157,7 +157,7 @@ void resolveDecompShort(char *buffer) {
 		default: {
 			if (importEntry->offset ==
 			        currentDecompScriptPtr->var4 - 4) {
-				sprintf(buffer,
+				Common::sprintf_s(buffer,
 				        data3Ptr->dataPtr +
 				        data3Ptr->
 				        offsetToImportName +
@@ -185,7 +185,7 @@ void resolveDecompChar(char *buffer) {
 		default: {
 			if (importEntry->offset ==
 			        currentDecompScriptPtr->var4 - 2) {
-				sprintf(buffer,
+				Common::sprintf_s(buffer,
 				        data3Ptr->dataPtr +
 				        data3Ptr->
 				        offsetToImportName +
@@ -225,7 +225,7 @@ void getByteFromDecompScript(char *buffer) {
 			return;
 	}
 
-	sprintf(buffer, "%d", var);
+	Common::sprintf_s(buffer, "%d", var);
 }
 
 char getByteFromDecompScriptReal() {
@@ -248,7 +248,7 @@ void getShortFromDecompScript(char *buffer) {
 			return;
 	}
 
-	sprintf(buffer, "%d", var);
+	Common::sprintf_s(buffer, "%d", var);
 }
 
 int16 getShortFromDecompScriptReal() {
@@ -280,7 +280,7 @@ void addDecomp(char *string, ...) {
 	pLineStruct->pendingElse = 0;
 
 	va_start(va, string);
-	vsprintf(pLineStruct->line, string, va);
+	Common::vsprintf_s(pLineStruct->line, string, va);
 	va_end(va);
 
 	currentLineIdx = currentDecompScriptPtr->var4;
@@ -308,7 +308,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 		return;
 	}
 	if (varType == 1) {
-		sprintf(outputName, "localVar_%s", varIdxString);
+		Common::sprintf_s(outputName, "localVar_%s", varIdxString);
 		return;
 	}
 
@@ -331,7 +331,7 @@ void resolveVarName(char *ovlIdxString, int varType, char *varIdxString,
 				}
 			}
 		}
-		sprintf(outputName, "ovl(%s).[%d][%s]", ovlIdxString, varType,
+		Common::sprintf_s(outputName, "ovl(%s).[%d][%s]", ovlIdxString, varType,
 		        varIdxString);
 	} else {
 		Common::strcpy_s(outputName, 256,  ovlIdxString);
@@ -535,44 +535,44 @@ int decompMath() {
 
 	switch (currentScriptOpcodeType) {
 	case 0: {
-		sprintf(tempbuffer, "%s+%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s+%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 1: {
-		sprintf(tempbuffer, "%s/%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s/%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 2: {
-		sprintf(tempbuffer, "%s-%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s-%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 3: {
-		sprintf(tempbuffer, "%s*%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s*%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 4: {
-		sprintf(tempbuffer, "%s % %s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s % %s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 5:
 	case 7: {
-		sprintf(tempbuffer, "%s|%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s|%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 6: {
-		sprintf(tempbuffer, "%s&%s", param1, param2);
+		Common::sprintf_s(tempbuffer, "%s&%s", param1, param2);
 		pushDecomp(tempbuffer);
 		break;
 	}
 
 	default: {
-		sprintf(tempbuffer, "decompMath(%d,%s,%s)",
+		Common::sprintf_s(tempbuffer, "decompMath(%d,%s,%s)",
 		        currentScriptOpcodeType, param1, param2);
 		pushDecomp(tempbuffer);
 		break;
@@ -588,7 +588,7 @@ int decompBoolCompare() {
 	param1 = popDecomp();
 	param2 = popDecomp();
 
-	sprintf(tempbuffer, "compare(%s,%s)", param1, param2);
+	Common::sprintf_s(tempbuffer, "compare(%s,%s)", param1, param2);
 	pushDecomp(tempbuffer);
 
 	return 0;
@@ -707,17 +707,17 @@ int decompFunction() {
 		break;
 
 	case 0x3:
-		sprintf(tempbuffer, "Op_loadBackground(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_loadBackground(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x4:
-		sprintf(tempbuffer, "Op_LoadAbs(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_LoadAbs(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x5:
-		sprintf(tempbuffer, "Op_AddCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_AddCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -729,7 +729,7 @@ int decompFunction() {
 		char *ovlStr = popDecomp();
 
 		resolveVarName(ovlStr, 0x20, idxStr, functionName);
-		sprintf(tempbuffer, "Op_AddProc(%s", functionName);
+		Common::sprintf_s(tempbuffer, "Op_AddProc(%s", functionName);
 
 		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
@@ -747,13 +747,13 @@ int decompFunction() {
 		char *objIdxStr = popDecomp();
 		char *ovlStr = popDecomp();
 
-		sprintf(tempbuffer, "Op_InitializeState(ovl:%s,dataIdx:%s,%s)", ovlStr, objIdxStr, var1);
+		Common::sprintf_s(tempbuffer, "Op_InitializeState(ovl:%s,dataIdx:%s,%s)", ovlStr, objIdxStr, var1);
 		pushDecomp(tempbuffer);
 		break;
 		}
 
 	case 0x8:
-		sprintf(tempbuffer, "Op_RemoveCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveCell(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -762,48 +762,48 @@ int decompFunction() {
 		break;
 
 	case 0xA:
-		sprintf(tempbuffer, "Op_RemoveProc(ovl(%s),%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveProc(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0xB:
-		sprintf(tempbuffer, "Op_RemoveFrame(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveFrame(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0xC:
-		sprintf(tempbuffer, "Op_LoadOverlay(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_LoadOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0xD:
-		sprintf(tempbuffer, "Op_SetColor(%s,%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_SetColor(%s,%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0xE:
-		sprintf(tempbuffer, "Op_PlayFX(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_PlayFX(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x10:
-		sprintf(tempbuffer, "Op_FreeOverlay(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_FreeOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x11:
-		sprintf(tempbuffer, "Op_FindOverlay(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_FindOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x13:
-		sprintf(tempbuffer, "Op_AddMessage(%s,\"%s\",%s,%s,%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "Op_AddMessage(%s,\"%s\",%s,%s,%s,%s)", popDecomp(),
 			resolveMessage(popDecomp()), popDecomp(),  popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x14:
-		sprintf(tempbuffer, "Op_RemoveMessage(ovl(%s),%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveMessage(ovl(%s),%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -812,66 +812,66 @@ int decompFunction() {
 		break;
 
 	case 0x16:
-		sprintf(tempbuffer, "Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+		Common::sprintf_s(tempbuffer, "Op_FreezeCell(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
 			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x17:
-		sprintf(tempbuffer, "Op_LoadCt(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_LoadCt(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x18:
-		sprintf(tempbuffer, "Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+		Common::sprintf_s(tempbuffer, "Op_AddAnimation(%s,%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
 			popDecomp(), popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x19:
-		sprintf(tempbuffer, "Op_RemoveAnimation(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveAnimation(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x1A:
-		sprintf(tempbuffer, "Op_SetZoom(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_SetZoom(%s,%s,%s,%s)", popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x1E:
-		sprintf(tempbuffer, "Op_TrackAnim(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
+		Common::sprintf_s(tempbuffer, "Op_TrackAnim(%s,%s,%s,%s,%s,%s)", popDecomp(), popDecomp(),
 			popDecomp(), popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x21:
-		sprintf(tempbuffer, "Op_EndAnim(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_EndAnim(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x22:
-		sprintf(tempbuffer, "Op_GetZoom(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_GetZoom(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x23:
-		sprintf(tempbuffer, "Op_GetStep(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_GetStep(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x24:
-		sprintf(tempbuffer, "Op_SetStringColors(%s,%s,%s,%s)", popDecomp(), popDecomp(),
+		Common::sprintf_s(tempbuffer, "Op_SetStringColors(%s,%s,%s,%s)", popDecomp(), popDecomp(),
 			popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x27:
-		sprintf(tempbuffer, "Op_getPixel(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_getPixel(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x28:
-		sprintf(tempbuffer, "Op_UserOn(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_UserOn(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
@@ -880,33 +880,33 @@ int decompFunction() {
 		break;
 
 	case 0x2B:
-		sprintf(tempbuffer, "Op_FindProc(%s,%s)", popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_FindProc(%s,%s)", popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x2C:
-		sprintf(tempbuffer, "Op_WriteObject(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_WriteObject(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x2E:
-		sprintf(tempbuffer, "Op_RemoveOverlay(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_RemoveOverlay(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x2F:
-		sprintf(tempbuffer, "Op_AddBackgroundIncrust(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
+		Common::sprintf_s(tempbuffer, "Op_AddBackgroundIncrust(%s,%s,%s)", popDecomp(), popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 
 	case 0x30: {
-		sprintf(tempbuffer, "_removeBackgroundIncrust(%s,%s)",
+		Common::sprintf_s(tempbuffer, "_removeBackgroundIncrust(%s,%s)",
 		        popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x31: {
-		sprintf(tempbuffer, "_op_31(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op_31(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -916,30 +916,30 @@ int decompFunction() {
 		break;
 	}
 	case 0x35: {
-		sprintf(tempbuffer, "_op35(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_op35(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x37: {
-		sprintf(tempbuffer, "_op37(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op37(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x38: {
-		sprintf(tempbuffer, "_removeBackground(%s)",
+		Common::sprintf_s(tempbuffer, "_removeBackground(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x39: {
-		sprintf(tempbuffer, "_SetActiveBackgroundPlane(%s)",
+		Common::sprintf_s(tempbuffer, "_SetActiveBackgroundPlane(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x3A: {
-		sprintf(tempbuffer, "_setVar49(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_setVar49(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
@@ -948,12 +948,12 @@ int decompFunction() {
 		break;
 	}
 	case 0x3C: {
-		sprintf(tempbuffer, "_rand(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_rand(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x3D: {
-		sprintf(tempbuffer, "_loadMusic(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_loadMusic(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
@@ -970,7 +970,7 @@ int decompFunction() {
 		break;
 	}
 	case 0x41: {
-		sprintf(tempbuffer, "_isFileLoaded2(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_isFileLoaded2(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
@@ -979,17 +979,17 @@ int decompFunction() {
 		break;
 	}
 	case 0x49: {
-		sprintf(tempbuffer, "_op49(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_op49(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x54: {
-		sprintf(tempbuffer, "_setFontVar(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_setFontVar(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x56: {
-		sprintf(tempbuffer, "_changeCutSceneState(%s)",
+		Common::sprintf_s(tempbuffer, "_changeCutSceneState(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -1007,7 +1007,7 @@ int decompFunction() {
 		break;
 	}
 	case 0x5A: {
-		sprintf(tempbuffer, "_isFileLoaded(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_isFileLoaded(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
@@ -1016,25 +1016,25 @@ int decompFunction() {
 		break;
 	}
 	case 0x5C: {
-		sprintf(tempbuffer, "_Op_AddCellC(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_Op_AddCellC(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x5E: {
-		sprintf(tempbuffer, "_Op_AddCellE(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_Op_AddCellE(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x60: {
-		sprintf(tempbuffer, "_op_60(%s,%s,%s,%s,%s)",
+		Common::sprintf_s(tempbuffer, "_op_60(%s,%s,%s,%s,%s)",
 		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x61: {
-		sprintf(tempbuffer, "_op61(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op61(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -1058,7 +1058,7 @@ int decompFunction() {
 
 		resolveVarName(ovlStr, 0x20, idxStr, functionName);
 
-		sprintf(tempbuffer, "%s(", functionName);
+		Common::sprintf_s(tempbuffer, "%s(", functionName);
 
 		for (int i = 0; i < numArg; i++) {
 			if (i)
@@ -1072,7 +1072,7 @@ int decompFunction() {
 		break;
 	}
 	case 0x65: {
-		sprintf(tempbuffer,
+		Common::sprintf_s(tempbuffer,
 		        "_addWaitObject(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
 		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
 		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
@@ -1081,13 +1081,13 @@ int decompFunction() {
 		break;
 	}
 	case 0x66: {
-		sprintf(tempbuffer, "_op_66(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op_66(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x67: {
-		sprintf(tempbuffer, "_loadAudioResource(%s,%s)",
+		Common::sprintf_s(tempbuffer, "_loadAudioResource(%s,%s)",
 		        popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -1097,31 +1097,31 @@ int decompFunction() {
 		break;
 	}
 	case 0x6A: {
-		sprintf(tempbuffer, "_op_6A(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_op_6A(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x6B: {
-		sprintf(tempbuffer, "_loadData(%s,%s,%s,%s)",
+		Common::sprintf_s(tempbuffer, "_loadData(%s,%s,%s,%s)",
 		        popDecomp(), popDecomp(), popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x6C: {
-		sprintf(tempbuffer, "_op_6C(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op_6C(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x6D: {
-		sprintf(tempbuffer, "_strcpy(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_strcpy(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x6E: {
-		sprintf(tempbuffer, "_op_6E(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op_6E(%s,%s)", popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -1134,7 +1134,7 @@ int decompFunction() {
 		idxStr = popDecomp();
 		ovlStr = popDecomp();
 
-		sprintf(tempbuffer, "_op_6F(%s,%s", idxStr, ovlStr);
+		Common::sprintf_s(tempbuffer, "_op_6F(%s,%s", idxStr, ovlStr);
 
 		for (int i = 0; i < numArg; i++) {
 			strcatuint8(tempbuffer, ",");
@@ -1147,65 +1147,65 @@ int decompFunction() {
 		break;
 	}
 	case 0x70: {
-		sprintf(tempbuffer, "_comment(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_comment(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x71: {
-		sprintf(tempbuffer, "_op71(%s,%s,%s,%s,%s)",
+		Common::sprintf_s(tempbuffer, "_op71(%s,%s,%s,%s,%s)",
 		        popDecomp(), popDecomp(), popDecomp(), popDecomp(),
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x72: {
-		sprintf(tempbuffer, "_op72(%s,%s)", popDecomp(),
+		Common::sprintf_s(tempbuffer, "_op72(%s,%s)", popDecomp(),
 		        popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x73: {
-		sprintf(tempbuffer, "_op73(%s)", popDecomp());
+		Common::sprintf_s(tempbuffer, "_op73(%s)", popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x74: {
-		sprintf(tempbuffer, "_getlowMemory()");
+		Common::sprintf_s(tempbuffer, "_getlowMemory()");
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x76: {
-		sprintf(tempbuffer, "_Op_InitializeState6(%s,%s)",
+		Common::sprintf_s(tempbuffer, "_Op_InitializeState6(%s,%s)",
 		        popDecomp(), popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x77: {
-		sprintf(tempbuffer, "_Op_InitializeState7(%s)",
+		Common::sprintf_s(tempbuffer, "_Op_InitializeState7(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x78: {
-		sprintf(tempbuffer, "_Op_InitializeState8(%s)",
+		Common::sprintf_s(tempbuffer, "_Op_InitializeState8(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x79: {
-		sprintf(tempbuffer, "_EnterPlayerMenu(%s)",
+		Common::sprintf_s(tempbuffer, "_EnterPlayerMenu(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x7B: {
-		sprintf(tempbuffer, "_Op_InitializeStateB(%s)",
+		Common::sprintf_s(tempbuffer, "_Op_InitializeStateB(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
 	}
 	case 0x7C: {
-		sprintf(tempbuffer, "_Op_InitializeStateC(%s)",
+		Common::sprintf_s(tempbuffer, "_Op_InitializeStateC(%s)",
 		        popDecomp());
 		pushDecomp(tempbuffer);
 		break;
@@ -1285,7 +1285,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 	char temp[256];
 	char scriptName[256];
 
-	sprintf(temp, "%d", idx);
+	Common::sprintf_s(temp, "%d", idx);
 
 	failed = 0;
 
@@ -1314,7 +1314,7 @@ void dumpScript(uint8 *ovlName, ovlDataStruct *ovlData, int idx) {
 
 	stop = 0;
 
-	sprintf(buffer, "%s-%02d-%s.txt", ovlName, idx, scriptName);
+	Common::sprintf_s(buffer, "%s-%02d-%s.txt", ovlName, idx, scriptName);
 	fHandle = fopen(buffer, "w+");
 
 	decompileStackPosition = 0;
