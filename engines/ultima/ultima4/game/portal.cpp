@@ -95,13 +95,13 @@ int usePortalAt(Location *location, MapCoords coords, PortalTriggerAction action
 
 		switch (action) {
 		case ACTION_DESCEND:
-			sprintf(msg, "Descend down to level %d\n", portal->_start.z + 1);
+			Common::sprintf_s(msg, "Descend down to level %d\n", portal->_start.z + 1);
 			break;
 		case ACTION_KLIMB:
 			if (portal->_exitPortal)
-				sprintf(msg, "Klimb up!\nLeaving...\n");
+				Common::sprintf_s(msg, "Klimb up!\nLeaving...\n");
 			else
-				sprintf(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
+				Common::sprintf_s(msg, "Klimb up!\nTo level %d\n", portal->_start.z + 1);
 			break;
 		case ACTION_ENTER:
 			switch (destination->_type) {

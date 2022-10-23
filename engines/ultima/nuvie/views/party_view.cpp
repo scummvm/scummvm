@@ -332,7 +332,7 @@ void PartyView::Display(bool full_redraw) {
 				y_offset = -3;
 			// FIXME: Martian Dreams text is somewhat center aligned
 			font->drawString(screen, actor_name, area.left + x_offset + 24, area.top + y_offset + (i - row_offset) * rowH + 8);
-			sprintf(hp_string, "%3d", actor->get_hp());
+			Common::sprintf_s(hp_string, "%3d", actor->get_hp());
 			hp_text_color = actor->get_hp_text_color();
 			if (SE) {
 				x_offset = -7;

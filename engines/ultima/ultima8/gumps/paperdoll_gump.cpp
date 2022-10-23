@@ -154,7 +154,7 @@ void PaperdollGump::PaintStat(RenderSurface *surf, unsigned int n,
 
 	if (!_cachedText[2 * n + 1] || _cachedVal[n] != val) {
 		delete _cachedText[2 * n + 1];
-		sprintf(buf, "%d", val);
+		Common::sprintf_s(buf, "%d", val);
 		_cachedText[2 * n + 1] = font->renderText(buf, remaining,
 		                         statwidth, statheight,
 		                         Font::TEXT_RIGHT);

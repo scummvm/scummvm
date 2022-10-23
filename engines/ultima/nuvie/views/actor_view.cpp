@@ -212,46 +212,46 @@ void ActorView::display_actor_stats() {
 
 	hp_text_color = actor->get_hp_text_color();
 
-	sprintf(buf, "%d", Game::get_game()->get_script()->call_actor_str_adj(actor)); //actor->get_strength());
+	Common::sprintf_s(buf, "%d", Game::get_game()->get_script()->call_actor_str_adj(actor)); //actor->get_strength());
 	uint8 str_len = font->drawString(screen, "STR:", area.left + 5 * 16 + x_off, area.top + y_off + 16);
 	font->drawString(screen, buf, area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16, actor->get_str_text_color(), 0);
 
-	sprintf(buf, "%d", Game::get_game()->get_script()->call_actor_dex_adj(actor));
+	Common::sprintf_s(buf, "%d", Game::get_game()->get_script()->call_actor_dex_adj(actor));
 	str_len = font->drawString(screen, "DEX:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 8);
 	font->drawString(screen, buf, area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16 + 8, actor->get_dex_text_color(), 0);
 
-	sprintf(buf, "INT:%d", Game::get_game()->get_script()->call_actor_int_adj(actor));
+	Common::sprintf_s(buf, "INT:%d", Game::get_game()->get_script()->call_actor_int_adj(actor));
 	font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 2 * 8);
 
 	if (MD || Game::get_game()->get_game_type() == NUVIE_GAME_SE) {
-		sprintf(buf, "%3d", actor->get_hp());
+		Common::sprintf_s(buf, "%3d", actor->get_hp());
 		str_len = font->drawString(screen, "HP:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 3 * 8);
 		font->drawString(screen, buf, strlen(buf), area.left + 5 * 16 + x_off + str_len, area.top + y_off + 16 + 3 * 8, hp_text_color, 0);
 
-		sprintf(buf, "HM:%3d", actor->get_maxhp());
+		Common::sprintf_s(buf, "HM:%3d", actor->get_maxhp());
 		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 4 * 8);
 
-		sprintf(buf, "Lev:%2d", actor->get_level());
+		Common::sprintf_s(buf, "Lev:%2d", actor->get_level());
 		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 5 * 8);
 
 		font->drawString(screen, "Exper:", area.left + 5 * 16 + x_off, area.top + y_off + 16 + 6 * 8);
-		sprintf(buf, "%6d", actor->get_exp());
+		Common::sprintf_s(buf, "%6d", actor->get_exp());
 		font->drawString(screen, buf, area.left + 5 * 16 + x_off, area.top + y_off + 16 + 7 * 8);
 		return;
 	}
 
 	font->drawString(screen, "Magic", area.left + 5 * 16, area.top + 16 + 4 * 8);
-	sprintf(buf, "%d/%d", actor->get_magic(), actor->get_maxmagic());
+	Common::sprintf_s(buf, "%d/%d", actor->get_magic(), actor->get_maxmagic());
 	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 5 * 8);
 
 	font->drawString(screen, "Health", area.left + 5 * 16, area.top + 16 + 6 * 8);
-	sprintf(buf, "%3d", actor->get_hp());
+	Common::sprintf_s(buf, "%3d", actor->get_hp());
 	font->drawString(screen, buf, strlen(buf), area.left + 5 * 16, area.top + 16 + 7 * 8, hp_text_color, 0);
-	sprintf(buf, "   /%d", actor->get_maxhp());
+	Common::sprintf_s(buf, "   /%d", actor->get_maxhp());
 	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 7 * 8);
 
 	font->drawString(screen, "Lev/Exp", area.left + 5 * 16, area.top + 16 + 8 * 8);
-	sprintf(buf, "%d/%d", actor->get_level(), actor->get_exp());
+	Common::sprintf_s(buf, "%d/%d", actor->get_level(), actor->get_exp());
 	font->drawString(screen, buf, area.left + 5 * 16, area.top + 16 + 9 * 8);
 
 	return;

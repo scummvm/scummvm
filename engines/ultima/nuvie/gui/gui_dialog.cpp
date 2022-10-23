@@ -60,7 +60,7 @@ void GUI_Dialog::loadBorderImages() {
 	Std::string imagefile;
 
 	for (i = 0; i < 8; i++) {
-		sprintf(filename, "Border%s_%d.bmp", "U6", i + 1);
+		Common::sprintf_s(filename, "Border%s_%d.bmp", "U6", i + 1);
 		build_path(datadir, filename, imagefile);
 		border[i] = SDL_LoadBMP(imagefile.c_str());
 		if (border[i] == NULL) {

@@ -547,7 +547,7 @@ Graphics::ManagedSurface *ViewManager::loadAvatarDollImage(Graphics::ManagedSurf
 	Std::string imagefile;
 	uint8 portrait_num = Game::get_game()->get_portrait()->get_avatar_portrait_num();
 
-	sprintf(filename, "avatar_%s_%02d.bmp", get_game_tag(Game::get_game()->get_game_type()), portrait_num);
+	Common::sprintf_s(filename, "avatar_%s_%02d.bmp", get_game_tag(Game::get_game()->get_game_type()), portrait_num);
 	if (orig) {
 		build_path(getDollDataDirString(), "orig_style", imagefile);
 		build_path(imagefile, filename, imagefile);
@@ -570,7 +570,7 @@ Graphics::ManagedSurface *ViewManager::loadCustomActorDollImage(Graphics::Manage
 	if (actor_doll != NULL)
 		SDL_FreeSurface(actor_doll);
 
-	sprintf(filename, "actor_%s_%03d.bmp", get_game_tag(Game::get_game()->get_game_type()), actor_num);
+	Common::sprintf_s(filename, "actor_%s_%03d.bmp", get_game_tag(Game::get_game()->get_game_type()), actor_num);
 	if (orig) {
 		build_path(getDollDataDirString(), "orig_style", imagefile);
 		build_path(imagefile, filename, imagefile);
@@ -589,7 +589,7 @@ Graphics::ManagedSurface *ViewManager::loadGenericDollImage(bool orig) {
 	char filename[14]; //avatar_nn.bmp\0
 	Std::string imagefile;
 
-	sprintf(filename, "actor_%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
+	Common::sprintf_s(filename, "actor_%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 	if (orig) {
 		build_path(getDollDataDirString(), "orig_style", imagefile);
 		build_path(imagefile, filename, imagefile);
