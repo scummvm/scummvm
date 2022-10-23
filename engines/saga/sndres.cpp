@@ -207,12 +207,12 @@ bool SndRes::load(ResourceContext *context, uint32 resourceId, SoundBuffer &buff
 
 		if ((context->fileType() & GAME_VOICEFILE) != 0) {
 			if (_voiceSerial == 0) {
-				sprintf(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%03x", dirIndex, resourceId);
+				Common::sprintf_s(soundFileName, "Voices/VoicesS/Voices%d/VoicesS%03x", dirIndex, resourceId);
 			} else {
-				sprintf(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%03x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
+				Common::sprintf_s(soundFileName, "Voices/Voices%d/Voices%d/Voices%d%03x", _voiceSerial, dirIndex, _voiceSerial, resourceId);
 			}
 		} else {
-			sprintf(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
+			Common::sprintf_s(soundFileName, "SFX/SFX%d/SFX%03x", dirIndex, resourceId);
 		}
 
 		file = new Common::File();
