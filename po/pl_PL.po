@@ -5636,8 +5636,8 @@ msgid ""
 msgstr ""
 "Pomyślnie zaimportowano %d oryginalny zapis(y) gry do ScummVM.\n"
 "Jeśli później zechcesz ręcznie zaimportować oryginalne zapisy, będziesz "
-"musiał otworzyć konsolę debugowania ScummVM i użyć komendy 'import_savefile'."
-"\n"
+"musiał otworzyć konsolę debugowania ScummVM i użyć komendy "
+"'import_savefile'.\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
