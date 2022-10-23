@@ -706,6 +706,8 @@ bool IMuseChannel_MT32::allocate() {
 }
 
 void IMuseChannel_MT32::reset() {
+	if (_newSystem)
+		return;
 	byte msg[] = { (byte)(_timbre >> 6), (byte)(_timbre & 0x3F), 0x18, 0x32, 0x10, 0x00, _reverbSwitch};
 	sendSysexPatchData(0, msg, sizeof(msg));
 }
