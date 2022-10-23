@@ -1196,13 +1196,14 @@ bool Debugger::Cmd_ShowCompact(int argc, const char **argv) {
 								debugPrintf("%s\n", line);
 								linePos = line;
 							} else
-								linePos += sprintf(linePos, ", ");
+								linePos += Common::sprintf_s(linePos, sizeof(line) - (linePos - line), ", ");
 						}
 						uint16 cptId = (uint16)((sec << 12) | cpt);
 						uint16 type, size;
 						char name[256];
 						_skyCompact->fetchCptInfo(cptId, &size, &type, name, sizeof(name));
-						linePos += sprintf(linePos, "%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
+						linePos += Common::sprintf_s(linePos, sizeof(line) - (linePos - line),
+								"%04X: %10s %22s", cptId, _skyCompact->nameForType(type), name);
 					}
 					if (linePos != line)
 						debugPrintf("%s\n", line);
