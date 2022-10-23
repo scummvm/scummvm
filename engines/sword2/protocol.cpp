@@ -275,7 +275,7 @@ byte *Sword2Engine::fetchTextLine(byte *file, uint32 text_line) {
 	text_header.read(file + ResHeader::size());
 
 	if (text_line >= text_header.noOfLines) {
-		sprintf((char *)errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, _resman->fetchName(file), text_header.noOfLines - 1);
+		Common::sprintf_s(errorLine, "xxMissing line %d of %s (only 0..%d)", text_line, _resman->fetchName(file), text_header.noOfLines - 1);
 
 		// first 2 chars are NULL so that actor-number comes out as '0'
 		errorLine[0] = 0;
