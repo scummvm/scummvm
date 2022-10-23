@@ -19,41 +19,30 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP29_H
-#define MM1_MAPS_MAP29_H
+#ifndef MM1_VIEWS_MAPS_CHESS_H
+#define MM1_VIEWS_MAPS_CHESS_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map29 : public Map {
-	typedef void (Map29:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
+class Chess : public AnswerEntry {
+protected:
+	void answerEntered() override;
 
-	const SpecialFn SPECIAL_FN[4] = {
-		&Map29::special00,
-		&Map29::special01,
-		&Map29::special02,
-		&Map29::special03
-	};
 public:
-	Map29() : Map(29, "aread4", 0x801) {}
+	Chess();
+	virtual ~Chess() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	void begone();
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 
