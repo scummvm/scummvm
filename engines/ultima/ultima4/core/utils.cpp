@@ -76,7 +76,7 @@ Common::String &uppercase(Common::String &val) {
 
 Common::String xu4_to_string(int val) {
 	char buffer[16];
-	sprintf(buffer, "%d", val);
+	Common::sprintf_s(buffer, "%d", val);
 	return buffer;
 }
 

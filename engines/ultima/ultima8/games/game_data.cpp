@@ -207,7 +207,7 @@ FrameID GameData::translate(FrameID f) {
 	}
 
 	char buf[100];
-	sprintf(buf, "%d,%d", f._shapeNum, f._frameNum);
+	Common::sprintf_s(buf, "%d,%d", f._shapeNum, f._frameNum);
 
 	istring key = buf;
 	Std::string trans;

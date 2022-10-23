@@ -101,7 +101,7 @@ void CustomSfxManager::playSoundSample(uint16 sample_num, Audio::SoundHandle *lo
 	Std::string filename;
 	char wavefile[10]; // "nnnnn.wav\0"
 
-	sprintf(wavefile, "%d.wav", sample_num);
+	Common::sprintf_s(wavefile, "%d.wav", sample_num);
 
 	build_path(custom_filepath, wavefile, filename);
 

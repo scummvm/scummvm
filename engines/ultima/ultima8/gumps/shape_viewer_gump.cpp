@@ -106,11 +106,11 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		char buf1[50];
 		char buf2[200];
 		if (!shape) {
-			sprintf(buf1, "NULL");
+			Common::sprintf_s(buf1, "NULL");
 		} else {
-			sprintf(buf1, "Frame %d of %d", _curFrame+1, shape->frameCount());
+			Common::sprintf_s(buf1, "Frame %d of %d", _curFrame+1, shape->frameCount());
 		}
-		sprintf(buf2, "%s:  Shape %d, %s", _flexes[_curFlex].first.c_str(),
+		Common::sprintf_s(buf2, "%s:  Shape %d, %s", _flexes[_curFlex].first.c_str(),
 				_curShape, buf1);
 		rendtext = font->renderText(buf2, remaining);
 		rendtext->draw(surf, 20, 10);
@@ -139,7 +139,7 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 				uint8 px_g = shape->getPalette()->_palette[rawpx * 3 + 1];
 				uint8 px_b = shape->getPalette()->_palette[rawpx * 3 + 2];
 
-				sprintf(buf2, "px: (%d, %d)(%d, %d): %d (%d, %d, %d)", relx, rely, frame->_xoff, frame->_yoff, rawpx, px_r, px_g, px_b);
+				Common::sprintf_s(buf2, "px: (%d, %d)(%d, %d): %d (%d, %d, %d)", relx, rely, frame->_xoff, frame->_yoff, rawpx, px_r, px_g, px_b);
 				rendtext = font->renderText(buf2, remaining);
 				rendtext->draw(surf, 20, 25);
 				delete rendtext;
@@ -159,13 +159,13 @@ void ShapeViewerGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool /*s
 		char buf6[512];
 		const ShapeInfo *info = mainshapes->getShapeInfo(_curShape);
 		if (info) {
-			sprintf(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
+			Common::sprintf_s(buf3, "x: %d, y: %d, z: %d\n flags: 0x%04X, family: %d",
 					info->_x, info->_y, info->_z, info->_flags, info->_family);
-			sprintf(buf4, "equip type: %d, weight: %d, vol: %d",
+			Common::sprintf_s(buf4, "equip type: %d, weight: %d, vol: %d",
 					info->_equipType, info->_weight, info->_volume);
-			sprintf(buf5, "anim:  type: %d, data: %d, speed: %d",
+			Common::sprintf_s(buf5, "anim:  type: %d, data: %d, speed: %d",
 					info->_animType, info->_animData, info->_animSpeed);
-			sprintf(buf6, "ShapeInfo: %s\n%s\n%s\nUsecode: %s",
+			Common::sprintf_s(buf6, "ShapeInfo: %s\n%s\n%s\nUsecode: %s",
 					buf3, buf4, buf5, GameData::get_instance()->getMainUsecode()->get_class_name(_curShape));
 			rendtext = font->renderText(buf6, remaining);
 			rendtext->draw(surf, 20, _dims.height() - 58);

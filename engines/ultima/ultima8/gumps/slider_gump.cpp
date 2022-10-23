@@ -99,7 +99,7 @@ void SliderGump::drawText(RenderSurface *surf) {
 		Font *font;
 		font = FontManager::get_instance()->getGameFont(labelfont);
 		char buf[10]; // more than enough for a int16
-		sprintf(buf, "%d", _value);
+		Common::sprintf_s(buf, "%d", _value);
 
 		unsigned int remaining;
 		delete _renderedText;

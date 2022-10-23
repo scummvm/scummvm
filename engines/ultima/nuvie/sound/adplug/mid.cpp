@@ -522,8 +522,8 @@ void CmidPlayer::rewind(int subsong) {
 	}
 
 
-	/*        sprintf(info,"%s\r\nTicks/Quarter Note: %ld\r\n",info,deltas);
-	        sprintf(info,"%sms/Quarter Note: %ld",info,msqtr); */
+	/*        Common::sprintf_s(info,"%s\r\nTicks/Quarter Note: %ld\r\n",info,deltas);
+	        Common::sprintf_s(info,"%sms/Quarter Note: %ld",info,msqtr); */
 
 	for (i = 0; i < 16; i++)
 		if (track[i].on) {

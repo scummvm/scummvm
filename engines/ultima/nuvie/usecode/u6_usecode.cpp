@@ -2348,7 +2348,7 @@ bool U6UseCode::use_sextant(Obj *obj, UseCodeEvent ev) {
 			lat = 'N';
 		}
 
-		sprintf(buf, "\n%d{%c, %d{%c\n", y, lat, x, lon);
+		Common::sprintf_s(buf, "\n%d{%c, %d{%c\n", y, lat, x, lon);
 		scroll->display_string(buf);
 	} else
 		scroll->display_string("\nNot usable\n");
