@@ -432,6 +432,55 @@ FORCEINLINE void strcat_s(T (&dst)[N], const char *src) {
 }
 
 /**
+ * A sprintf shim which warns when the buffer overruns and null terminates in this case
+ *
+ * @param dst Where the resulting string will be storeyyd.
+ * @param size The (total) size of the destination buffer.
+ * @param format The format string.
+ */
+int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) GCC_PRINTF(3, 0);
+
+/**
+ * A sprintf shim which warns when the buffer overruns and null terminates in this case
+ * The size of the buffer is automatically determined.
+ *
+ * @param dst Where the resulting string will be storeyyd.
+ * @param format The format string.
+ */
+template<typename T, size_t N>
+FORCEINLINE GCC_PRINTF(2, 0) int vsprintf_s(T (&dst)[N], const char *format, va_list ap) {
+	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	return vsprintf_s((char *)dst, N, format, ap);
+}
+
+/**
+ * A sprintf shim which warns when the buffer overruns and null terminates in this case
+ *
+ * @param dst Where the resulting string will be storeyyd.
+ * @param size The (total) size of the destination buffer.
+ * @param format The format string.
+ */
+int sprintf_s(char *dst, size_t size, MSVC_PRINTF const char *format, ...) GCC_PRINTF(3, 4);
+
+/**
+ * A sprintf shim which warns when the buffer overruns and null terminates in this case
+ * The size of the buffer is automatically determined.
+ *
+ * @param dst Where the resulting string will be storeyyd.
+ * @param format The format string.
+ */
+template<typename T, size_t N>
+inline GCC_PRINTF(2, 3) int sprintf_s(T (&dst)[N], MSVC_PRINTF const char *format, ...) {
+	STATIC_ASSERT(sizeof(T) == sizeof(char), T_is_not_compatible_with_char);
+	int ret;
+	va_list ap;
+	va_start(ap, format);
+	ret = vsprintf_s((char *)dst, N, format, ap);
+	va_end(ap);
+	return ret;
+}
+
+/**
  * Copy up to size - 1 characters from src to dst and also zero terminate the
  * result. Note that src must be a zero terminated string.
  *

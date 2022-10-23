@@ -818,6 +818,46 @@ void strcat_s(char *dst, size_t size, const char *src) {
 	dst[-1] = '\0';
 }
 
+int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return 0;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return 0;
+	}
+	if (!format) {
+		warning("%s: format is nullptr", __func__);
+		dst[0] = '\0';
+		return 0;
+	}
+
+	int ret = vsnprintf(dst, size, format, ap);
+
+	if ((size_t)ret < size
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+		&& ret != -1
+#endif
+		) {
+		// Nominal case: no truncation
+		return ret;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[size - 1] = '\0';
+	return size - 1;
+}
+
+int sprintf_s(char *dst, size_t size, const char *format, ...) {
+	int ret;
+	va_list ap;
+	va_start(ap, format);
+	ret = vsprintf_s(dst, size, format, ap);
+	va_end(ap);
+	return ret;
+}
+
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
