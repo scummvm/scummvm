@@ -199,11 +199,11 @@ void AGOSEngine::playModule(uint16 music) {
 	}
 
 	if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO)
-		sprintf(filename, "elvira2");
+		Common::sprintf_s(filename, "elvira2");
 	else if (getPlatform() == Common::kPlatformAcorn)
-		sprintf(filename, "%dtune.DAT", music);
+		Common::sprintf_s(filename, "%dtune.DAT", music);
 	else
-		sprintf(filename, "%dtune", music);
+		Common::sprintf_s(filename, "%dtune", music);
 
 	f.open(filename);
 	if (f.isOpen() == false) {
@@ -287,7 +287,7 @@ void AGOSEngine_Simon1::playMusic(uint16 music, uint16 track) {
 		// GMF music data is in separate MODxx.MUS files.
 		char filename[15];
 		Common::File f;
-		sprintf(filename, "MOD%d.MUS", music);
+		Common::sprintf_s(filename, "MOD%d.MUS", music);
 		f.open(filename);
 		if (f.isOpen() == false)
 			error("playMusic: Can't load music from '%s'", filename);
@@ -325,7 +325,7 @@ void AGOSEngine_Simon1::playMidiSfx(uint16 sound) {
 	char filename[16];
 	Common::File mus_file;
 
-	sprintf(filename, "STINGS%i.MUS", _soundFileId);
+	Common::sprintf_s(filename, "STINGS%i.MUS", _soundFileId);
 	mus_file.open(filename);
 	if (!mus_file.isOpen())
 		error("playSting: Can't load sound effect from '%s'", filename);
@@ -413,26 +413,26 @@ bool AGOSEngine::loadVGASoundFile(uint16 id, uint8 type) {
 	if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
 		if (getGameType() == GType_ELVIRA1 && (getFeatures() & GF_DEMO) &&
 			getPlatform() == Common::kPlatformAmiga) {
-			sprintf(filename, "%c%d.out", 48 + id, type);
+			Common::sprintf_s(filename, "%c%d.out", 48 + id, type);
 		} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-			sprintf(filename, "%.2d%d.out", id, type);
+			Common::sprintf_s(filename, "%.2d%d.out", id, type);
 		} else if (getGameType() == GType_PN) {
-			sprintf(filename, "%c%d.in", id + 48, type);
+			Common::sprintf_s(filename, "%c%d.in", id + 48, type);
 		} else {
-			sprintf(filename, "%.3d%d.out", id, type);
+			Common::sprintf_s(filename, "%.3d%d.out", id, type);
 		}
 	} else {
 		if (getGameType() == GType_ELVIRA1) {
 			if (elvira1_soundTable[id] == 0)
 				return false;
 
-			sprintf(filename, "%.2d.SND", elvira1_soundTable[id]);
+			Common::sprintf_s(filename, "%.2d.SND", elvira1_soundTable[id]);
 		} else if (getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-			sprintf(filename, "%.2d%d.VGA", id, type);
+			Common::sprintf_s(filename, "%.2d%d.VGA", id, type);
 		} else if (getGameType() == GType_PN) {
-			sprintf(filename, "%c%d.out", id + 48, type);
+			Common::sprintf_s(filename, "%c%d.out", id + 48, type);
 		} else {
-			sprintf(filename, "%.3d%d.VGA", id, type);
+			Common::sprintf_s(filename, "%.3d%d.VGA", id, type);
 		}
 	}
 
@@ -530,7 +530,7 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		char filename[15];
 
 		assert(sound >= 1 && sound <= 32);
-		sprintf(filename, "%s.wav", dimpSoundList[sound - 1]);
+		Common::sprintf_s(filename, "%s.wav", dimpSoundList[sound - 1]);
 
 		if (!in.open(filename))
 			error("loadSound: Can't load %s", filename);
@@ -550,9 +550,9 @@ void AGOSEngine::loadSound(uint16 sound, int16 pan, int16 vol, uint16 type) {
 		}
 
 		if (getPlatform() == Common::kPlatformAmiga)
-			sprintf(filename, "sfx%u.wav", file);
+			Common::sprintf_s(filename, "sfx%u.wav", file);
 		else
-			sprintf(filename, "effects.wav");
+			Common::sprintf_s(filename, "effects.wav");
 
 		dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);
@@ -691,9 +691,9 @@ void AGOSEngine::loadVoice(uint speechId) {
 		}
 
 		if (getPlatform() == Common::kPlatformAmiga)
-			sprintf(filename, "sp%u.wav", file);
+			Common::sprintf_s(filename, "sp%u.wav", file);
 		else
-			sprintf(filename, "speech.wav");
+			Common::sprintf_s(filename, "speech.wav");
 
 		byte *dst = (byte *)malloc(dstSize);
 		decompressData(filename, dst, offset, srcSize, dstSize);

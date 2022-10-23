@@ -236,7 +236,7 @@ void AGOSEngine_PN::opn_opcode11() {
 void AGOSEngine_PN::opn_opcode12() {
 	char bf[8];
 	int a = 0;
-	sprintf(bf,"%d", varval());
+	Common::sprintf_s(bf,"%d", varval());
 	while (bf[a])
 		pcf(bf[a++]);
 	setScriptReturn(true);
@@ -245,7 +245,7 @@ void AGOSEngine_PN::opn_opcode12() {
 void AGOSEngine_PN::opn_opcode13() {
 	char bf[8];
 	int a = 0;
-	sprintf(bf,"%d", varval());
+	Common::sprintf_s(bf,"%d", varval());
 	while (bf[a])
 		pcf(bf[a++]);
 	pcf((uint8)'\n');

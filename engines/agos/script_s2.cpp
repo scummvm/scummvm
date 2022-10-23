@@ -422,11 +422,11 @@ void AGOSEngine_Simon2::os2_screenTextPObj() {
 				k = (j % 10) * 10;
 				k += j / 10;
 				if (!(j % 10))
-					sprintf(buf,"0%d%s", k, stringPtr);
+					Common::sprintf_s(buf,"0%d%s", k, stringPtr);
 				else
-					sprintf(buf,"%d%s", k, stringPtr);
+					Common::sprintf_s(buf,"%d%s", k, stringPtr);
 			} else {
-				sprintf(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
+				Common::sprintf_s(buf,"%d%s", subObject->objectFlagValue[getOffsetOfChild2Param(subObject, kOFNumber)], stringPtr);
 			}
 			stringPtr = buf;
 		}
