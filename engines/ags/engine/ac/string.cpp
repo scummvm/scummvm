@@ -67,8 +67,9 @@ const char *String_AppendChar(const char *thisString, int extraOne) {
 		chw = Utf8::SetChar(extraOne, chr, sizeof(chr));
 	else
 		chr[0] = extraOne;
-	char *buffer = (char *)malloc(strlen(thisString) + chw + 1);
-	sprintf(buffer, "%s%s", thisString, chr);
+	size_t ln = strlen(thisString) + chw + 1;
+	char *buffer = (char *)malloc(ln);
+	Common::sprintf_s(buffer, ln, "%s%s", thisString, chr);
 	return CreateNewScriptString(buffer, false);
 }
 
