@@ -449,22 +449,22 @@ void KyraEngine_HoF::loadBookBkgd() {
 void KyraEngine_HoF::showBookPage() {
 	char filename[16];
 
-	sprintf(filename, "PAGE%.01X.%s", _bookCurPage, _languageExtension[_lang]);
+	Common::sprintf_s(filename, "PAGE%.01X.%s", _bookCurPage, _languageExtension[_lang]);
 	uint8 *leftPage = _res->fileData(filename, nullptr);
 	if (!leftPage) {
 		// some floppy version use a TXT extension
-		sprintf(filename, "PAGE%.01X.TXT", _bookCurPage);
+		Common::sprintf_s(filename, "PAGE%.01X.TXT", _bookCurPage);
 		leftPage = _res->fileData(filename, nullptr);
 	}
 
 	int leftPageY = _bookPageYOffset[_bookCurPage];
 
-	sprintf(filename, "PAGE%.01X.%s", _bookCurPage+1, _languageExtension[_lang]);
+	Common::sprintf_s(filename, "PAGE%.01X.%s", _bookCurPage+1, _languageExtension[_lang]);
 	uint8 *rightPage = nullptr;
 	if (_bookCurPage != _bookMaxPage) {
 		rightPage = _res->fileData(filename, nullptr);
 		if (!rightPage) {
-			sprintf(filename, "PAGE%.01X.TXT", _bookCurPage);
+			Common::sprintf_s(filename, "PAGE%.01X.TXT", _bookCurPage);
 			rightPage = _res->fileData(filename, nullptr);
 		}
 	}
