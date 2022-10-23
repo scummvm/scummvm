@@ -1520,10 +1520,10 @@ void DreamWebEngine::useCashCard() {
 	y = 98;
 	printDirect(&obText, 36, &y, 36, 36 & 1);
 	char amountStr[10];
-	sprintf(amountStr, "%04d", _vars._card1Money / 10);
+	Common::sprintf_s(amountStr, "%04d", _vars._card1Money / 10);
 	_charShift = 91 * 2 + 75;
 	printDirect((const uint8 *)amountStr, 160, 155, 240, 240 & 1);
-	sprintf(amountStr, "%02d", (_vars._card1Money % 10) * 10);
+	Common::sprintf_s(amountStr, "%02d", (_vars._card1Money % 10) * 10);
 	_charShift = 91 * 2 + 85;
 	printDirect((const uint8 *)amountStr, 187, 155, 240, 240 & 1);
 	_charShift = 0;
