@@ -1274,7 +1274,7 @@ void CPlacardWindow::positionText(
 		int16   fontHeight = _textFont->height;
 
 		// make a copy of the window text string
-		sprintf(_titleBuf, "%s", windowText);
+		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
 		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');
@@ -1385,7 +1385,7 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		int16   fontHeight = _buttonFont->height;
 
 		// make a copy of the window text string
-		sprintf(_titleBuf, "%s", windowText);
+		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
 		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');

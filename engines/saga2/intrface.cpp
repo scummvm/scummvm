@@ -1348,7 +1348,7 @@ void writePlaqText(gPort            &port,
 	gFont           *_oldFont = port._font;
 
 	va_start(argptr, msg);
-	cnt = vsprintf(lineBuf, msg, argptr);
+	cnt = Common::vsprintf_s(lineBuf, msg, argptr);
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
@@ -1399,7 +1399,7 @@ void writePlaqTextPos(gPort         &port,
 	gFont           *_oldFont = port._font;
 
 	va_start(argptr, msg);
-	vsprintf(lineBuf, msg, argptr);
+	Common::vsprintf_s(lineBuf, msg, argptr);
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
@@ -2155,13 +2155,13 @@ APPFUNC(cmdPortrait) {
 
 				switch (brotherID) {
 				case uiJulian:
-					sprintf(buf, "%s %s", JULIAN_BROSTATE, state);
+					Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 					break;
 				case uiPhillip:
-					sprintf(buf, "%s %s", PHILLIP_BROSTATE, state);
+					Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 					break;
 				case uiKevin:
-					sprintf(buf, "%s %s", KEVIN_BROSTATE, state);
+					Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 					break;
 				}
 				// set the text in the cursor
@@ -2241,7 +2241,7 @@ APPFUNC(cmdArmor) {
 			        &&  gai->_attr.defenseBonus == 0) {
 				g_vm->_mouseInfo->setText(NO_ARMOR);
 			} else {
-				sprintf(buf,
+				Common::sprintf_s(buf,
 				        DESC_ARMOR,
 				        gai->_attr.damageAbsorbtion,
 				        gai->_attr.damageDivider,
@@ -2345,13 +2345,13 @@ APPFUNC(cmdBroChange) {
 
 			switch (brotherID) {
 			case uiJulian:
-				sprintf(buf, "%s %s", JULIAN_BROSTATE, state);
+				Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 				break;
 			case uiPhillip:
-				sprintf(buf, "%s %s", PHILLIP_BROSTATE, state);
+				Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 				break;
 			case uiKevin:
-				sprintf(buf, "%s %s", KEVIN_BROSTATE, state);
+				Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 				break;
 			}
 			// set the text in the cursor
@@ -2381,7 +2381,7 @@ APPFUNC(cmdHealthStar) {
 
 		char buf[40];
 
-		sprintf(buf, "%s %d/%d", HEALTH_HINT, currVitality, baseVitality);
+		Common::sprintf_s(buf, "%s %d/%d", HEALTH_HINT, currVitality, baseVitality);
 		g_vm->_mouseInfo->setText(buf);
 	}
 }
@@ -2413,7 +2413,7 @@ APPFUNC(cmdMassInd) {
 			curWeight = getWeightRatio(_containerObject, baseWeight);
 
 			if (baseWeight != unlimitedCapacity) {
-				sprintf(buf, "%s %d/%d", WEIGHT_HINT, curWeight, baseWeight);
+				Common::sprintf_s(buf, "%s %d/%d", WEIGHT_HINT, curWeight, baseWeight);
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
@@ -2451,7 +2451,7 @@ APPFUNC(cmdBulkInd) {
 			curBulk = getBulkRatio(_containerObject, baseBulk);
 
 			if (baseBulk != unlimitedCapacity) {
-				sprintf(buf, "%s %d/%d", BULK_HINT, curBulk, baseBulk);
+				Common::sprintf_s(buf, "%s %d/%d", BULK_HINT, curBulk, baseBulk);
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
@@ -2494,27 +2494,27 @@ APPFUNC(cmdManaInd) {
 
 			switch (manaType) {
 			case 0:
-				sprintf(textBuffer, "%s %d/%d", "Red Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Red Mana:", curMana, baseMana);
 				break;
 
 			case 1:
-				sprintf(textBuffer, "%s %d/%d", "Orange Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Orange Mana:", curMana, baseMana);
 				break;
 
 			case 2:
-				sprintf(textBuffer, "%s %d/%d", "Yellow Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Yellow Mana:", curMana, baseMana);
 				break;
 
 			case 3:
-				sprintf(textBuffer, "%s %d/%d", "Green Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Green Mana:", curMana, baseMana);
 				break;
 
 			case 4:
-				sprintf(textBuffer, "%s %d/%d", "Blue Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Blue Mana:", curMana, baseMana);
 				break;
 
 			case 5:
-				sprintf(textBuffer, "%s %d/%d", "Purple Mana:", curMana, baseMana);
+				Common::sprintf_s(textBuffer, "%s %d/%d", "Purple Mana:", curMana, baseMana);
 				break;
 
 			case -1:
@@ -2618,17 +2618,17 @@ void gArmorIndicator::drawClipped(gPort &port,
 			port.setMode(drawModeMatte);
 
 			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
-				sprintf(buf, "-");
+				Common::sprintf_s(buf, "-");
 			else if (_attr.damageDivider > 1)
-				sprintf(buf, "%d/%d", _attr.damageAbsorbtion, _attr.damageDivider);
-			else sprintf(buf, "%d", _attr.damageAbsorbtion);
+				Common::sprintf_s(buf, "%d/%d", _attr.damageAbsorbtion, _attr.damageDivider);
+			else Common::sprintf_s(buf, "%d", _attr.damageAbsorbtion);
 
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
 			                   textPosRight | textPosHigh, Point16(0,  2));
 
 			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
-				sprintf(buf, "-");
-			else sprintf(buf, "%d", _attr.defenseBonus);
+				Common::sprintf_s(buf, "-");
+			else Common::sprintf_s(buf, "%d", _attr.defenseBonus);
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
 			                   textPosRight | textPosLow, Point16(0,  2));
 		}
@@ -2671,8 +2671,8 @@ void gEnchantmentDisplay::pointerMove(gPanelMessage &msg) {
 					char    buf[128];
 
 					if (_iconFlags[i] == 255)
-						sprintf(buf, "%s", enchantmentNames[i]);
-					else sprintf(buf, "%s : %d", enchantmentNames[i], _iconFlags[i]);
+						Common::sprintf_s(buf, "%s", enchantmentNames[i]);
+					else Common::sprintf_s(buf, "%s : %d", enchantmentNames[i], _iconFlags[i]);
 					g_vm->_mouseInfo->setText(buf);
 					return;
 				}
@@ -2954,7 +2954,7 @@ void StatusMsg(const char *msg, ...) { // frametime def
 
 	if (StatusLine) {
 		va_start(argptr, msg);
-		vsprintf(buffer, msg, argptr);
+		Common::vsprintf_s(buffer, msg, argptr);
 		va_end(argptr);
 
 		StatusLine->setLine(buffer, 500);

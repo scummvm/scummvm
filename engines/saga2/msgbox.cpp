@@ -277,7 +277,7 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
 	Rect16          r2 = r;
 
 	va_start(argptr, msg);
-	int cnt = vsprintf(textBuf, msg, argptr);
+	int cnt = Common::vsprintf_s(textBuf, msg, argptr);
 	va_end(argptr);
 
 	char *text = &textBuf[0];

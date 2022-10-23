@@ -624,9 +624,9 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			uint16 charges = _data.bParam;
 
 			if (charges == 1) {
-				sprintf(nameBuf, SINGLE_CHARGE, objName(), charges);
+				Common::sprintf_s(nameBuf, size, SINGLE_CHARGE, objName(), charges);
 			} else {
-				sprintf(nameBuf, MULTI_CHARGE, objName(), charges);      // get the count
+				Common::sprintf_s(nameBuf, size, MULTI_CHARGE, objName(), charges);      // get the count
 			}
 		}
 
@@ -637,10 +637,10 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			if (_data.massCount != 1) {
 				if (count != -1) {
 					if (count != 1) {
-						sprintf(nameBuf, PLURAL_DESC, count, objName());     // get the count
+						Common::sprintf_s(nameBuf, size, PLURAL_DESC, count, objName());     // get the count
 					}
 				} else {
-					sprintf(nameBuf, PLURAL_DESC, _data.massCount, objName());     // get the count
+					Common::sprintf_s(nameBuf, size, PLURAL_DESC, _data.massCount, objName());     // get the count
 				}
 			}
 		}
@@ -674,7 +674,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 				level = g_vm->_playerList[brotherID - ActorBaseID]->getSkillLevel(sProto);
 
 				// normalize and output
-				sprintf(nameBuf, "%s-%d", objName(), ++level);
+				Common::sprintf_s(nameBuf, size, "%s-%d", objName(), ++level);
 			}
 		} else if (manaColor >= sManaIDRed
 		           &&  manaColor <= sManaIDViolet  //  A spell
@@ -690,7 +690,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 				manaAmount      = player->getEffStats()->mana(manaColor);
 
-				sprintf(nameBuf, "%s [x%d]", objName(), manaAmount / manaCost);
+				Common::sprintf_s(nameBuf, size, "%s [x%d]", objName(), manaAmount / manaCost);
 			}
 		}
 	}

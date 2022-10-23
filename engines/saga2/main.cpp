@@ -736,11 +736,11 @@ bool initGUIMessagers() {
 	initUserDialog();
 	for (int i = 0; i < 10; i++) {
 		char debItem[16];
-		sprintf(debItem, "Status%1.1d", i);
+		Common::sprintf_s(debItem, "Status%1.1d", i);
 		Status[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort);
 		if (Status[i] == nullptr)
 			return false;
-		sprintf(debItem, "Status%2.2d", i + 10);
+		Common::sprintf_s(debItem, "Status%2.2d", i + 10);
 		Status2[i] = new StatusLineMessager(debItem, i, &g_vm->_mainPort, 20, 21 + (11 * i));
 	}
 	for (int j = 0; j < 3; j++)
