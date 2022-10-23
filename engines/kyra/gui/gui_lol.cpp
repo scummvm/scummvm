@@ -158,7 +158,7 @@ void LoLEngine::gui_displayCharInventory(int charNum) {
 
 	if (id != _lastCharInventory) {
 		char file[13];
-		sprintf(file, "invent%d.cps", inventoryTypes[id]);
+		Common::sprintf_s(file, "invent%d.cps", inventoryTypes[id]);
 		_screen->loadBitmap(file, 3, 3, 0);
 		_screen->copyRegion(0, 0, 112, 0, 208, 120, 2, 6);
 	} else {

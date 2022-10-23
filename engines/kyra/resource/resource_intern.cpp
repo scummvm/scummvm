@@ -962,7 +962,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	Common::SeekableReadStream *tmpFile = nullptr;
 
 	for (int8 currentFile = 1; currentFile; currentFile++) {
-		sprintf(filenameExt, extension.c_str(), currentFile);
+		Common::sprintf_s(filenameExt, extension.c_str(), currentFile);
 		filenameTemp = filenameBase + Common::String(filenameExt);
 
 		if (!(tmpFile = owner->createReadStream(filenameTemp))) {
@@ -1040,7 +1040,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 	for (Common::List<InsArchive>::iterator a = archives.begin(); a != archives.end(); ++a) {
 		startFile = true;
 		for (uint32 i = a->firstFile; i != (a->lastFile + 1); i++) {
-			sprintf(filenameExt, extension.c_str(), i);
+			Common::sprintf_s(filenameExt, extension.c_str(), i);
 			filenameTemp = a->filename + Common::String(filenameExt);
 
 			if (!(tmpFile = owner->createReadStream(filenameTemp))) {
@@ -1115,7 +1115,7 @@ Common::Archive *InstallerLoader::load(Resource *owner, const Common::String &fi
 						}
 					}
 
-					sprintf(filenameExt, extension.c_str(), i + 1);
+					Common::sprintf_s(filenameExt, extension.c_str(), i + 1);
 					filenameTemp = a->filename + Common::String(filenameExt);
 
 					Common::SeekableReadStream *tmpFile2 = owner->createReadStream(filenameTemp);

@@ -1412,7 +1412,7 @@ void KyraEngine_HoF::openTalkFile(int newFile) {
 void KyraEngine_HoF::snd_playVoiceFile(int id) {
 	char vocFile[9];
 	assert(id >= 0 && id <= 9999999);
-	sprintf(vocFile, "%07d", id);
+	Common::sprintf_s(vocFile, "%07d", id);
 	if (_sound->isVoicePresent(vocFile)) {
 		// Unlike the original I have added a timeout here. I have chosen a size that makes sure that it
 		// won't get triggered in bug #11309 or similiar situations, but still avoids infinite hangups
