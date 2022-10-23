@@ -32,9 +32,15 @@ class Map28 : public Map {
 	typedef void (Map28:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void setCondition(byte condition);
+	void reduceHpBase();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map28::special00
+	const SpecialFn SPECIAL_FN[3] = {
+		&Map28::special00,
+		&Map28::special01,
+		&Map28::special02
 	};
 public:
 	Map28() : Map(28, "aread3", 0x106) {}

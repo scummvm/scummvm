@@ -59,6 +59,7 @@ void Map26::special() {
 		lost();
 	}
 
+	_data[VAL1] = 0;
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 
