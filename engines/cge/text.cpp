@@ -209,7 +209,7 @@ void Text::sayTime(Sprite *spr) {
 	_vm->_system->getTimeAndDate(curTime);
 
 	char t[6];
-	sprintf(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
+	Common::sprintf_s(t, "%d:%02d", curTime.tm_hour, curTime.tm_min);
 	say(t, spr);
 }
 
