@@ -324,7 +324,7 @@ AbstractFSList MorphOSFilesystemNode::listVolumes() const {
 			volumeLock = Lock(buffer, SHARED_LOCK);
 			if (volumeLock) {
 
-				sprintf(buffer, "%s (%s)", volName, devName);
+				Common::sprintf_s(buffer, "%s (%s)", volName, devName);
 
 				entry = new MorphOSFilesystemNode(volumeLock, buffer);
 				if (entry) {
