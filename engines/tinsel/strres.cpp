@@ -97,7 +97,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 	if (!f.open(_vm->getTextFile(newLang))) {
 		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH))) {
 			char buf[50];
-			sprintf(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
+			Common::sprintf_s(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 			GUI::MessageDialog dialog(buf, "OK");
 			dialog.runModal();
 
