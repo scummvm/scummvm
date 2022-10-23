@@ -2451,6 +2451,7 @@ int ScummEngine::readSoundResourceSmallHeader(ResId idx) {
 				_fileHandle->read(_res->createResource(rtSound, idx, wa_size + 6), wa_size + 6);
 			}
 		}
+		return 1;
 	} else if (ad_offs != 0) {
 		// AD resources have a header, instrument definitions and one MIDI track.
 		// We build an 'ADL ' resource from that:
