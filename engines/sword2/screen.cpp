@@ -537,7 +537,7 @@ void Screen::processLayer(byte *file, uint32 layer_number) {
 
 	if (current_layer_area > _largestLayerArea) {
 		_largestLayerArea = current_layer_area;
-		sprintf(_largestLayerInfo,
+		Common::sprintf_s(_largestLayerInfo,
 			"largest layer:  %s layer(%d) is %dx%d",
 			_vm->_resman->fetchName(_thisScreen.background_layer_id),
 			layer_number, layer_head.width, layer_head.height);
@@ -642,7 +642,7 @@ void Screen::processImage(BuildUnit *build_unit) {
 
 	if (current_sprite_area > _largestSpriteArea) {
 		_largestSpriteArea = current_sprite_area;
-		sprintf(_largestSpriteInfo,
+		Common::sprintf_s(_largestSpriteInfo,
 			"largest sprite: %s frame(%d) is %dx%d",
 			_vm->_resman->fetchName(build_unit->anim_resource),
 			build_unit->anim_pc,

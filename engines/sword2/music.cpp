@@ -79,13 +79,13 @@ static Audio::AudioStream *getAudioStream(SoundFileHandle *fh, const char *base,
 		char filename[20];
 
 		for (int i = 0; i < ARRAYSIZE(file_types); i++) {
-			sprintf(filename, "%s%d.%s", base, cd, file_types[i].ext);
+			Common::sprintf_s(filename, "%s%d.%s", base, cd, file_types[i].ext);
 			if (Common::File::exists(filename)) {
 				soundMode = file_types[i].mode;
 				break;
 			}
 
-			sprintf(filename, "%s.%s", base, file_types[i].ext);
+			Common::sprintf_s(filename, "%s.%s", base, file_types[i].ext);
 			if (Common::File::exists(filename)) {
 				soundMode = file_types[i].mode;
 				break;
