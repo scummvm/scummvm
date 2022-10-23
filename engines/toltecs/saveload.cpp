@@ -220,7 +220,7 @@ Common::String ToltecsEngine::getSavegameFilename(const Common::String &target, 
 	assert(num >= 0 && num <= 999);
 
 	char extension[5];
-	sprintf(extension, "%03d", num);
+	Common::sprintf_s(extension, "%03d", num);
 
 	return target + "." + extension;
 }
