@@ -462,7 +462,7 @@ void CineEngine::makeSystemMenu() {
 					if (!makeMenuChoice(confirmMenu, 2, mouseX, mouseY + 8, 100)) {
 						char loadString[256];
 
-						sprintf(loadString, otherMessages[3], currentSaveName[selectedSave]);
+						Common::sprintf_s(loadString, otherMessages[3], currentSaveName[selectedSave]);
 						renderer->drawString(loadString, 0);
 
 						loadGameState(selectedSave);
@@ -530,7 +530,7 @@ void CineEngine::makeSystemMenu() {
 					fHandle->write(currentSaveName, sizeof(currentSaveName));
 					delete fHandle;
 
-					sprintf(saveString, otherMessages[3], currentSaveName[selectedSave]);
+					Common::sprintf_s(saveString, otherMessages[3], currentSaveName[selectedSave]);
 					renderer->drawString(saveString, 0);
 
 					makeSave(saveFileName, getTotalPlayTime() / 1000, Common::String((const char *)currentSaveName), false);
