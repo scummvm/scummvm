@@ -451,7 +451,7 @@ void GnapEngine::updateCursorByHotspot() {
 		if (_debugger->_showHotspotNumber) {
 			// NOTE This causes some display glitches
 			char t[256];
-			sprintf(t, "hotspot = %2d", hotspotIndex);
+			Common::sprintf_s(t, "hotspot = %2d", hotspotIndex);
 			if (!_font)
 				_gameSys->fillSurface(nullptr, 10, 10, 80, 16, 0, 0, 0);
 			else
