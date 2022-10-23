@@ -486,7 +486,7 @@ static Common::MemoryReadStream *convertToMod(const char *filename, int version)
 		// iname is not stored in the mod file. Just set it to 'instrument#'
 		// finetune is not stored either. Assume 0.
 		memset(instr[i].iname, 0, 22);
-		sprintf(instr[i].iname, "instrument%d", i+1);
+		Common::sprintf_s(instr[i].iname, "instrument%d", i+1);
 		instr[i].length = 0;
 		instr[i].finetune = 0;
 		instr[i].volume = 0;
