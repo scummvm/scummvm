@@ -256,13 +256,13 @@ void FreescapeEngine::processInput() {
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
 			if (event.kbd.keycode == Common::KEYCODE_o || event.kbd.keycode == Common::KEYCODE_UP)
-				move(FORWARD, _scaleVector.x(), deltaTime);
+				move(kForwardMovement, _scaleVector.x(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
-				move(BACKWARD, _scaleVector.x(), deltaTime);
+				move(kBackwardMovement, _scaleVector.x(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
-				move(LEFT, _scaleVector.y(), deltaTime);
+				move(kLeftMovement, _scaleVector.y(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
-				move(RIGHT, _scaleVector.y(), deltaTime);
+				move(kRightMovement, _scaleVector.y(), deltaTime);
 			else if (event.kbd.keycode == Common::KEYCODE_KP5 || event.kbd.keycode == Common::KEYCODE_KP0)
 				shoot();
 			else if (event.kbd.keycode == Common::KEYCODE_p)

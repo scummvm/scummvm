@@ -46,10 +46,10 @@ class Renderer;
 #define FREESCAPE_DATA_BUNDLE Common::String("freescape.dat")
 
 enum CameraMovement {
-    FORWARD,
-    BACKWARD,
-    LEFT,
-    RIGHT
+	kForwardMovement,
+	kBackwardMovement,
+	kLeftMovement,
+	kRightMovement
 };
 
 typedef Common::HashMap<uint16, Area*> AreaMap;
