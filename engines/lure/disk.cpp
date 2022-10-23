@@ -90,7 +90,7 @@ void Disk::openFile(uint8 fileNum) {
 	if (_fileNum == 0)
 		Common::strcpy_s(sFilename, SUPPORT_FILENAME);
 	else
-		sprintf(sFilename, "disk%d.%s", _fileNum, isEGA ? "ega" : "vga");
+		Common::sprintf_s(sFilename, "disk%d.%s", _fileNum, isEGA ? "ega" : "vga");
 
 	_fileHandle->open(sFilename);
 	if (!_fileHandle->isOpen())

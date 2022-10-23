@@ -937,7 +937,7 @@ uint16 Script::execute(uint16 startOffset) {
 			error("Script failure in script %d - invalid offset %d", startOffset, offset);
 
 		if (gDebugLevel >= ERROR_DETAILED)
-			sprintf(debugInfo, "%xh - ", offset);
+			Common::sprintf_s(debugInfo, "%xh - ", offset);
 
 		// Get opcode byte and separate into opcode and has parameter bit flag
 		opcode = scripts[offset++];
@@ -956,10 +956,12 @@ uint16 Script::execute(uint16 startOffset) {
 			param = READ_LE_UINT16(scripts + offset);
 			offset += 2;
 
-			if (gDebugLevel >= ERROR_DETAILED)
-				sprintf(debugInfo + strlen(debugInfo), " [%d]",
+			if (gDebugLevel >= ERROR_DETAILED) {
+				size_t pos = strlen(debugInfo);
+				Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " [%d]",
 					((opcode == S_OPCODE_GET_FIELD) || (opcode == S_OPCODE_SET_FIELD)) ?
 					param >> 1 : param);
+			}
 		}
 
 		if (gDebugLevel >= ERROR_DETAILED) {
@@ -977,15 +979,17 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_AND:
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
-			case S_OPCODE_LOGICAL_OR:
-				sprintf(debugInfo + strlen(debugInfo),
+			case S_OPCODE_LOGICAL_OR: {
+				size_t pos = strlen(debugInfo);
+				Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos,
 					" %d, %d", stack[stack.size() - 1], stack[stack.size() - 2]);
 				break;
-
-			case S_OPCODE_SET_FIELD:
-				sprintf(debugInfo + strlen(debugInfo), " <= ST (%d)", stack[stack.size() - 1]);
+			}
+			case S_OPCODE_SET_FIELD: {
+				size_t pos = strlen(debugInfo);
+				Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " <= ST (%d)", stack[stack.size() - 1]);
 				break;
-
+			}
 			default:
 				break;
 			}
@@ -1110,14 +1114,15 @@ uint16 Script::execute(uint16 startOffset) {
 				}
 
 				// Any params
+				size_t pos = strlen(debugInfo);
 				if (stack.size() >= 3)
-					sprintf(debugInfo + strlen(debugInfo), " (%d,%d,%d)",
+					Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " (%d,%d,%d)",
 						stack[stack.size()-1], stack[stack.size()-2], stack[stack.size()-3]);
-				if (stack.size() == 2)
-					sprintf(debugInfo + strlen(debugInfo), " (%d,%d)",
+				else if (stack.size() == 2)
+					Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " (%d,%d)",
 						stack[stack.size()-1], stack[stack.size()-2]);
 				else if (stack.size() == 1)
-					sprintf(debugInfo + strlen(debugInfo), " (%d)", stack[stack.size()-1]);
+					Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " (%d)", stack[stack.size()-1]);
 				Common::strcat_s(debugInfo, ")");
 
 				debugC(ERROR_DETAILED, kLureDebugScripts, "%s", debugInfo);
@@ -1178,10 +1183,11 @@ uint16 Script::execute(uint16 startOffset) {
 			case S_OPCODE_OR:
 			case S_OPCODE_LOGICAL_AND:
 			case S_OPCODE_LOGICAL_OR:
-			case S_OPCODE_GET_FIELD:
-				sprintf(debugInfo + strlen(debugInfo), " => ST (%d)", stack[stack.size()-1]);
+			case S_OPCODE_GET_FIELD: {
+				size_t pos = strlen(debugInfo);
+				Common::sprintf_s(debugInfo + pos, sizeof(debugInfo) - pos, " => ST (%d)", stack[stack.size()-1]);
 				break;
-
+			}
 			case S_OPCODE_PUSH:
 				Common::strcat_s(debugInfo, " => ST");
 				break;

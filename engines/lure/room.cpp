@@ -292,7 +292,7 @@ void Room::addAnimation(Hotspot &h) {
 		int16 x = h.x();
 		int16 y = h.y();
 		if ((x >= 0) && (x < FULL_SCREEN_WIDTH) && (y >= 0) && (y < FULL_SCREEN_HEIGHT))
-			sprintf(buffer, "%xh", h.hotspotId());
+			Common::sprintf_s(buffer, "%xh", h.hotspotId());
 
 	}
 }
@@ -521,7 +521,7 @@ void Room::update() {
 */
 				uint16 v = tempLayer[(yctr + 1) * DECODED_PATHS_WIDTH + xctr + 1];
 				if ((v != 0) && (v < 100)) {
-					sprintf(buffer, "%d", v % 10);
+					Common::sprintf_s(buffer, "%d", v % 10);
 					s.writeString(xctr * 8, yctr * 8 + 8, buffer, true);
 //				} else if (v == 0xffff) {
 				} else if (_roomData->paths.isOccupied(xctr, yctr)) {
@@ -531,7 +531,7 @@ void Room::update() {
 		}
 
 		Mouse &m = Mouse::getReference();
-		sprintf(buffer, "Room %d Pos (%d,%d) @ (%d,%d)", _roomNumber, m.x(), m.y(),
+		Common::sprintf_s(buffer, "Room %d Pos (%d,%d) @ (%d,%d)", _roomNumber, m.x(), m.y(),
 			m.x() / RECT_SIZE, (m.y() - MENUBAR_Y_SIZE) / RECT_SIZE);
 		s.writeString(FULL_SCREEN_WIDTH / 2, 0, buffer, false, white);
 	}
