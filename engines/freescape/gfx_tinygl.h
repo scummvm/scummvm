@@ -45,8 +45,8 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) override;
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b);
 
-	virtual void renderCrossair(byte color) override;
-	virtual void renderShoot(byte color) override;
+	virtual void renderCrossair(byte color, const Common::Point position) override;
+	virtual void renderShoot(byte color, const Common::Point position) override;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) override;
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) override;

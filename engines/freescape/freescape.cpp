@@ -72,6 +72,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
+	_shootMode = false;
+	_crossairPosition.x = _screenW / 2;
+	_crossairPosition.y = _screenH / 2;
 	_demoIndex = 0;
 	_currentDemoInputCode = 0;
 	_currentDemoInputRepetition = 0;
@@ -160,7 +163,7 @@ Math::Vector3d FreescapeEngine::directionToVector(float pitch, float heading) {
 }
 
 void FreescapeEngine::drawUI() {
-	_gfx->renderCrossair(0);
+	_gfx->renderCrossair(0, _crossairPosition);
 	_gfx->setViewport(_viewArea);
 }
 
@@ -279,7 +282,13 @@ void FreescapeEngine::processInput() {
 				_flyMode = _noClipMode;
 			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
 				openMainMenuDialog();
-			else
+			else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+				_shootMode = !_shootMode;
+				if (!_shootMode) {
+					_crossairPosition.x = _screenW / 2;
+					_crossairPosition.y = _screenH / 2;
+				}
+			} else
 				pressedKey(event.kbd.keycode);
 			break;
 
@@ -290,6 +299,11 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
+			if (_shootMode) {
+				_crossairPosition = mousePos;
+				break;
+			}
+
 			if (mousePos.x <= 5 || mousePos.x >= _screenW - 5) {
 				g_system->warpMouse(_screenW / 2, mousePos.y);
 

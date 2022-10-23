@@ -116,7 +116,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 
 
 void DarkEngine::drawUI() {
-	_gfx->renderCrossair(0);
+	_gfx->renderCrossair(0, _crossairPosition);
 
 	if (_currentAreaMessages.size() == 1) {
 		_gfx->setViewport(_fullscreenViewArea);

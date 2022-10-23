@@ -175,7 +175,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 
 void EclipseEngine::drawUI() {
-	_gfx->renderCrossair(0);
+	_gfx->renderCrossair(0, _crossairPosition);
 	_gfx->setViewport(_fullscreenViewArea);
 
 	Graphics::Surface *surface = new Graphics::Surface();

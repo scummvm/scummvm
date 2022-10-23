@@ -295,7 +295,7 @@ void DrillerEngine::loadAssetsFullGame() {
 }
 
 void DrillerEngine::drawUI() {
-	_gfx->renderCrossair(0);
+	_gfx->renderCrossair(0, _crossairPosition);
 
 	if (_currentAreaMessages.size() == 2) {
 		_gfx->setViewport(_fullscreenViewArea);
