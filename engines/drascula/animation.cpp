@@ -761,7 +761,7 @@ void DrasculaEngine::animation_16_2() {
 
 	for (int i = 1; i <= 4; i++) {
 		if (i < 4)
-			sprintf(curPic, "his%i.alg", i);
+			Common::sprintf_s(curPic, "his%i.alg", i);
 		else
 			Common::strcpy_s(curPic, "his4_2.alg");
 

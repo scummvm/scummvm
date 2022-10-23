@@ -1106,7 +1106,7 @@ void DrasculaEngine::updateRefresh() {
 
 	// Call room-specific updater
 	char rm[20];
-	sprintf(rm, "update_%d", _roomNumber);
+	Common::sprintf_s(rm, "update_%d", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomUpdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomUpdaters[i]->desc)) {
 			debug(8, "Calling room updater %d", _roomNumber);
@@ -1144,7 +1144,7 @@ void DrasculaEngine::updateRefresh_pre() {
 
 	// Call room-specific preupdater
 	char rm[20];
-	sprintf(rm, "update_%d_pre", _roomNumber);
+	Common::sprintf_s(rm, "update_%d_pre", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomPreupdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomPreupdaters[i]->desc)) {
 			debug(8, "Calling room preupdater %d", _roomNumber);
@@ -1642,7 +1642,7 @@ bool DrasculaEngine::room(int rN, int fl) {
 	if (!roomParse(rN, fl)) {
 		// Call room-specific parser
 		char rm[20];
-		sprintf(rm, "room_%d", rN);
+		Common::sprintf_s(rm, "room_%d", rN);
 		for (uint i = 0; i < _roomHandlers->roomParsers.size(); i++) {
 			if (!strcmp(rm, _roomHandlers->roomParsers[i]->desc)) {
 				debug(4, "Calling room parser %d", rN);
@@ -1663,7 +1663,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	showCursor();
 
 	char fileName[20];
-	sprintf(fileName, "%d.ald", roomIndex);
+	Common::sprintf_s(fileName, "%d.ald", roomIndex);
 	int soc, l, overridenWidth = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char surfaceName[20];
