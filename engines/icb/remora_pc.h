@@ -146,7 +146,7 @@ inline uint32 GetPen(uint8 nPalette, int32 eCI, uint8 nAlpha = 255) {
 inline const char *_remora::MakeRemoraGraphicsPath(const char *pcBitmapName) const {
 	static char pcRemoraGraphicsPath[MAXLEN_URL];
 
-	sprintf(pcRemoraGraphicsPath, REMORA_GRAPHICS_PATH);
+	Common::sprintf_s(pcRemoraGraphicsPath, REMORA_GRAPHICS_PATH);
 	Common::strcat_s(pcRemoraGraphicsPath, pcBitmapName);
 	Common::strcat_s(pcRemoraGraphicsPath, ".");
 	Common::strcat_s(pcRemoraGraphicsPath, PX_BITMAP_EXT);

@@ -351,7 +351,7 @@ mcodeFunctionReturnCodes _game_session::fn_test(int32 & /*result*/, int32 * /*pa
 #if 0
 	char buf[256];
 
-	sprintf(buf, "z_%s.txt", object->GetName());
+	Common::sprintf_s(buf, "z_%s.txt", object->GetName());
 
 	if (params[0] < 256)
 		Tdebug(buf, "%d", params[0]);
@@ -1624,9 +1624,9 @@ mcodeFunctionReturnCodes _game_session::fn_message_var(int32 &, int32 *params) {
 	char txt[100];
 
 	if (CGameObject::IsVariableString(object, var))
-		sprintf(txt, "%s=\"%s\"", var_name, CGameObject::GetStringVariable(object, var));
+		Common::sprintf_s(txt, "%s=\"%s\"", var_name, CGameObject::GetStringVariable(object, var));
 	else
-		sprintf(txt, "%s=%d", var_name, CGameObject::GetIntegerVariable(object, var));
+		Common::sprintf_s(txt, "%s=%d", var_name, CGameObject::GetIntegerVariable(object, var));
 
 	Message_box(txt);
 

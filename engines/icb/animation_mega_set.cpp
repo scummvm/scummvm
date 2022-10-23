@@ -183,7 +183,7 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 	HashFile(set, set_hash);
 
 	// Make the cluster name "\c\<#character>\<#outfit>\outfit.clu"
-	len = sprintf(base_path, CHR_PATH, chr_hash, set_hash);
+	len = Common::sprintf_s(base_path, CHR_PATH, chr_hash, set_hash);
 	if (len > BASE_PATH_STR_LEN)
 		Fatal_error("_vox_image::___init base_path string too long");
 	base_path_hash = NULL_HASH;
@@ -192,15 +192,15 @@ void _vox_image::___init(const char *chr, const char *set, __weapon weapon) {
 
 	// In the clustered version the image path is the path inside the cluster
 
-	len = sprintf(image_path, "%s\\", weapon_text[weapon]);
+	len = Common::sprintf_s(image_path, "%s\\", weapon_text[weapon]);
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::___init image_path [%s] string too long", image_path);
 
-	len = sprintf(shadow_mesh_name, "%s", "mesh_shadow.rap");
+	len = Common::sprintf_s(shadow_mesh_name, "%s", "mesh_shadow.rap");
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::___init shadow_mesh_name [%s] string too long", shadow_mesh_name);
 
-	len = sprintf(pose_name, "%s\\pose.rap", weapon_text[weapon]);
+	len = Common::sprintf_s(pose_name, "%s\\pose.rap", weapon_text[weapon]);
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::___init pose_name [%s] string too long", pose_name);
 
@@ -283,20 +283,20 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 	if (custom == FALSE8 /*__NONE*/) {
 // custom must be in the current weapon set - bah, shouldnt have done it like this - its daft
 		// rav (or equiverlant always come from pcp directory...
-		len = sprintf(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
+		len = Common::sprintf_s(custom_image_path_rav, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		// rai (or equiverlant always come from base path...
-		len = sprintf(custom_image_path_rai, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
+		len = Common::sprintf_s(custom_image_path_rai, "%s\\", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		// pose mesh name
-		len = sprintf(custom_pose_name, "%s\\pose.rap", weapon_text[MS->Fetch_cur_megas_pose()]);
+		len = Common::sprintf_s(custom_pose_name, "%s\\pose.rap", weapon_text[MS->Fetch_cur_megas_pose()]);
 
 		custom_pose_hash = HashString(custom_pose_name);
 	} else {
 // we have specified a custom type - i.e. the anim is not part of the current weapon set, but instead sits parallel to weapon directory
-		len = sprintf(custom_image_path_rav, "%s\\", MS->Fetch_cur_megas_custom_text());
-		len = sprintf(custom_image_path_rai, "%s\\", MS->Fetch_cur_megas_custom_text());
-		len = sprintf(custom_pose_name, "%s\\pose.rap", MS->Fetch_cur_megas_custom_text());
+		len = Common::sprintf_s(custom_image_path_rav, "%s\\", MS->Fetch_cur_megas_custom_text());
+		len = Common::sprintf_s(custom_image_path_rai, "%s\\", MS->Fetch_cur_megas_custom_text());
+		len = Common::sprintf_s(custom_pose_name, "%s\\pose.rap", MS->Fetch_cur_megas_custom_text());
 
 		if (len > 128)
 			Fatal_error("Init_custom_animation string error");
@@ -304,13 +304,13 @@ bool8 _vox_image::Init_custom_animation(const char *anim) {
 
 	}
 
-	len = sprintf(anim_name[__NON_GENERIC], "%s%s.rab", (const char *)custom_image_path_rav, (const char *)anim);
+	len = Common::sprintf_s(anim_name[__NON_GENERIC], "%s%s.rab", (const char *)custom_image_path_rav, (const char *)anim);
 
 	if (len > ANIM_NAME_STR_LEN)
 		Fatal_error("Init_custom_animation string error");
 	anim_name_hash[__NON_GENERIC] = HashString(anim_name[__NON_GENERIC]);
 
-	len = sprintf(info_name[__NON_GENERIC], "%s%s.raj", (const char *)custom_image_path_rai, (const char *)anim);
+	len = Common::sprintf_s(info_name[__NON_GENERIC], "%s%s.raj", (const char *)custom_image_path_rai, (const char *)anim);
 	if (len > ANIM_NAME_STR_LEN)
 		Fatal_error("Init_custom_animation string error");
 	info_name_hash[__NON_GENERIC] = HashString(info_name[__NON_GENERIC]);
@@ -406,7 +406,7 @@ void PreRegisterTexture(const char *, uint32, const char *, uint32, const char *
 bool8 _vox_image::Set_texture(const char *tex_name) {
 	int32 len;
 
-	len = sprintf(texture_name, "%s.revtex", tex_name);
+	len = Common::sprintf_s(texture_name, "%s.revtex", tex_name);
 
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::Set_texture [%s] string too long", tex_name);
@@ -431,7 +431,7 @@ bool8 _vox_image::Set_mesh(const char *m_name) {
 	Common::strcpy_s(name, m_name);
 	Common::strcat_s(name, ".rap");
 
-	len = sprintf(mesh_name, "%s", name);
+	len = Common::sprintf_s(mesh_name, "%s", name);
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::___init mesh_name [%s] string too long", mesh_name);
 
@@ -448,7 +448,7 @@ bool8 _vox_image::Set_palette(const char *pal_name) {
 
 	int32 len;
 
-	len = sprintf(palette_name, "%s.revtex", pal_name);
+	len = Common::sprintf_s(palette_name, "%s.revtex", pal_name);
 
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::Set_palette [%s] string too long", pal_name);
@@ -462,7 +462,7 @@ bool8 _vox_image::Set_palette(const char *pal_name) {
 }
 
 bool8 _vox_image::Set_override_pose(const char *p_name) {
-	int len = sprintf(override_pose_name, "%s\\pose.rap", p_name);
+	int len = Common::sprintf_s(override_pose_name, "%s\\pose.rap", p_name);
 
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::Set_override_pose [%s] string too long", override_pose_name);
@@ -484,7 +484,7 @@ bool8 _vox_image::Cancel_override_pose() {
 // Return 1 - file is in memory
 int _vox_image::Preload_file(const char *file) {
 	char file_name[ENGINE_STRING_LEN];
-	int len = sprintf(file_name, "%s", file);
+	int len = Common::sprintf_s(file_name, "%s", file);
 
 	if (len > IMAGE_PATH_STR_LEN)
 		Fatal_error("_vox_image::Preload_file [%s] string too long", file_name);

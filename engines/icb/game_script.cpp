@@ -57,8 +57,8 @@ bool8 _game_script::Init_game_script() {
 
 	// build name
 
-	sprintf(fname, GAMESCRIPT_PATH);
-	sprintf(cluster, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(fname, GAMESCRIPT_PATH);
+	Common::sprintf_s(cluster, GLOBAL_CLUSTER_PATH);
 	fn_hash = HashString(fname);
 	cluster_hash = HashString(cluster);
 

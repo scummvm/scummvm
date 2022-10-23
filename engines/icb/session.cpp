@@ -106,16 +106,16 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 	char h_mission_name[8];
 	HashFile(mission, h_mission_name);
 
-	sprintf(speech_font_one, FONT_PATH, "font.pcfont");
-	sprintf(remora_font, FONT_PATH, "futura.pcfont");
+	Common::sprintf_s(speech_font_one, FONT_PATH, "font.pcfont");
+	Common::sprintf_s(remora_font, FONT_PATH, "futura.pcfont");
 
-	if (sprintf(session_name, "%s\\%s\\", mission, new_session_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(session_name, "%s\\%s\\", mission, new_session_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_name);
 
-	if (sprintf(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(h_session_name, "%s\\%s", h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", h_session_name);
 
-	if (sprintf(session_cluster, SESSION_CLUSTER_PATH, h_mission_name, session_h_name) > ENGINE_STRING_LEN)
+	if (Common::sprintf_s(session_cluster, SESSION_CLUSTER_PATH, h_mission_name, session_h_name) > ENGINE_STRING_LEN)
 		Fatal_error("_game_session::_game_session [%s] string overflow", session_cluster);
 
 	session_cluster_hash = HashString(session_cluster);
@@ -266,7 +266,7 @@ void _game_session::___init(const char *mission, const char *new_session_name) {
 
 	uint32 global_cluster_hash = HashString(global_cluster);
 
-	sprintf(textFileName, GLOBAL_TEXT_FILE);
+	Common::sprintf_s(textFileName, GLOBAL_TEXT_FILE);
 
 	buf_hash = HashString(textFileName);
 

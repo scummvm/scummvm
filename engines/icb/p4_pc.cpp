@@ -101,9 +101,9 @@ void ReadConfigFromIniFile() {
 	uint32 temp;
 
 	if (g_icb->getGameType() == GType_ICB)
-		sprintf(configFile, "engine\\icb.ini");
+		Common::sprintf_s(configFile, "engine\\icb.ini");
 	else if (g_icb->getGameType() == GType_ELDORADO)
-		sprintf(configFile, "engine\\eldorado.ini");
+		Common::sprintf_s(configFile, "engine\\eldorado.ini");
 	else
 		assert(false);
 
@@ -171,7 +171,7 @@ void Save_config_file() {
 		// Only write a setting when it's been achieved
 		if (g_movieLibrary[i].visible) {
 			char temp[1024];
-			sprintf(temp, "%X", HashString(g_movieLibrary[i].filename));
+			Common::sprintf_s(temp, "%X", HashString(g_movieLibrary[i].filename));
 			Common::String movie = Common::String("movie_") + temp;
 			ConfMan.setBool(movie, true);
 		}
