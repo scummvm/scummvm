@@ -89,8 +89,8 @@ public:
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
 
-	virtual void renderCrossair(byte color) = 0;
-	virtual void renderShoot(byte color) = 0;
+	virtual void renderCrossair(byte color, const Common::Point position) = 0;
+	virtual void renderShoot(byte color, const Common::Point position) = 0;
 	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
 	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;

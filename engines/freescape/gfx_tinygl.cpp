@@ -136,7 +136,7 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 	tglDisable(TGL_BLEND);
 }
 
-void TinyGLRenderer::renderCrossair(byte color) {
+void TinyGLRenderer::renderCrossair(byte color, const Common::Point position) {
 	uint8 r, g, b;
 	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
 
@@ -152,18 +152,18 @@ void TinyGLRenderer::renderCrossair(byte color) {
 	tglColor3ub(r, g, b);
 
 	tglBegin(TGL_LINES);
-	tglVertex2f(_screenW / 2 - 1, _screenH / 2);
-	tglVertex2f(_screenW / 2 + 3, _screenH / 2);
+	tglVertex2f(position.x - 1, position.y);
+	tglVertex2f(position.x + 3, position.y);
 
-	tglVertex2f(_screenW / 2, _screenH / 2 - 3);
-	tglVertex2f(_screenW / 2, _screenH / 2 + 3);
+	tglVertex2f(position.x, position.y - 3);
+	tglVertex2f(position.x, position.y + 3);
 	tglEnd();
 
 	tglDepthMask(TGL_TRUE);
 	tglEnable(TGL_DEPTH_TEST);
 }
 
-void TinyGLRenderer::renderShoot(byte color) {
+void TinyGLRenderer::renderShoot(byte color, const Common::Point position) {
 	uint8 r, g, b;
 	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
 
@@ -183,16 +183,16 @@ void TinyGLRenderer::renderShoot(byte color) {
 
 	tglBegin(TGL_LINES);
 	tglVertex2f(0, _screenH - 2);
-	tglVertex2f(_screenW / 2, _screenH / 2);
+	tglVertex2f(position.x, position.y);
 
 	tglVertex2f(0, _screenH - 2);
-	tglVertex2f(_screenW / 2, _screenH / 2);
+	tglVertex2f(position.x, position.y);
 
 	tglVertex2f(_screenW, _screenH - 2);
-	tglVertex2f(_screenW / 2, _screenH / 2);
+	tglVertex2f(position.x, position.y);
 
 	tglVertex2f(_screenW, _screenH);
-	tglVertex2f(_screenW / 2, _screenH / 2);
+	tglVertex2f(position.x, position.y);
 
 	tglEnd();
 

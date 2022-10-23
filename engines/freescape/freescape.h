@@ -157,6 +157,7 @@ public:
 	// Input
 	bool _demoMode;
 	bool _flyMode;
+	bool _shootMode;
 	bool _noClipMode;
 	void processInput();
 	void generateInput();
@@ -186,6 +187,7 @@ public:
 	void updateCamera();
 
 	// Camera options
+	Common::Point _crossairPosition;
 	float _mouseSensitivity;
 	float _movementSpeed;
 	Math::Vector3d _upVector; // const
