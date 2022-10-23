@@ -961,13 +961,13 @@ void Inter_v1::o1_printText(OpFuncParams &params) {
 			switch (_vm->_game->_script->peekByte()) {
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 					(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
-				sprintf(buf + i, "%s",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%s",
 					GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 
