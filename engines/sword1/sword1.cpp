@@ -369,16 +369,17 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId],
+			Common::sprintf_s(msg, errorMsgs[msgId],
 			        _macCdFileList[missNum].name, (_macCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_macCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
-					pos += sprintf(pos, "\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\" (CD %d)\n", _macCdFileList[i].name, (_macCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
 	} else if (SwordEngine::isPsx()) {
@@ -391,15 +392,16 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId], _psxCdFileList[missNum].name, 1);
+			Common::sprintf_s(msg, errorMsgs[msgId], _psxCdFileList[missNum].name, 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_psxCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\"", _macCdFileList[i].name);
-					pos += sprintf(pos, "\"%s\"\n", _macCdFileList[i].name);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\"\n", _macCdFileList[i].name);
 				}
 		}
 	} else {
@@ -412,16 +414,17 @@ void SwordEngine::showFileErrorMsg(uint8 type, bool *fileExists) {
 		warning("%d files missing", missCnt);
 		int msgId = (type == TYPE_IMMED) ? 0 : 2;
 		if (missCnt == 1) {
-			sprintf(msg, errorMsgs[msgId],
+			Common::sprintf_s(msg, errorMsgs[msgId],
 			        _pcCdFileList[missNum].name, (_pcCdFileList[missNum].flags & FLAG_CD2) ? 2 : 1);
 			warning("%s", msg);
 		} else {
-			char *pos = msg + sprintf(msg, errorMsgs[msgId + 1], missCnt);
+			char *pos = msg + Common::sprintf_s(msg, errorMsgs[msgId + 1], missCnt);
 			warning("%s", msg);
 			for (int i = 0; i < ARRAYSIZE(_pcCdFileList); i++)
 				if (!fileExists[i]) {
 					warning("\"%s\" (CD %d)", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
-					pos += sprintf(pos, "\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
+					pos += Common::sprintf_s(pos, sizeof(msg) - (pos - msg),
+						"\"%s\" (CD %d)\n", _pcCdFileList[i].name, (_pcCdFileList[i].flags & FLAG_CD2) ? 2 : 1);
 				}
 		}
 	}
