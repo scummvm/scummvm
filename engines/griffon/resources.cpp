@@ -84,7 +84,7 @@ void GriffonEngine::initialize() {
 	for (int i = 0; i <= 3; i++) {
 		char name[128];
 
-		sprintf(name, "art/map%i.bmp", i + 1);
+		Common::sprintf_s(name, "art/map%i.bmp", i + 1);
 		mapImg[i] = loadImage(name, true);
 	}
 
@@ -210,7 +210,7 @@ void GriffonEngine::loadMap(int mapnum) {
 
 	char name[256];
 	// read *.map file
-	sprintf(name, "mapdb/%04i.map", mapnum);
+	Common::sprintf_s(name, "mapdb/%04i.map", mapnum);
 	debug(1, "Reading %s", name);
 
 	Common::File file;
@@ -232,7 +232,7 @@ void GriffonEngine::loadMap(int mapnum) {
 	}
 
 	// read *.trg file
-	sprintf(name, "mapdb/%04i.trg", mapnum);
+	Common::sprintf_s(name, "mapdb/%04i.trg", mapnum);
 	debug(1, "Reading %s", name);
 	file.open(name);
 
@@ -480,7 +480,7 @@ void GriffonEngine::loadMap(int mapnum) {
 		_roomLock = true;
 
 	// read *.npc file
-	sprintf(name, "mapdb/%04i.npc", mapnum);
+	Common::sprintf_s(name, "mapdb/%04i.npc", mapnum);
 	debug(1, "Reading %s", name);
 	file.open(name);
 
