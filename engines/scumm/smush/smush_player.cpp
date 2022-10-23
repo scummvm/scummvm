@@ -982,7 +982,7 @@ SmushFont *SmushPlayer::getFont(int font) {
 	} else {
 		int numFonts = (_vm->_game.id == GID_CMI && !(_vm->_game.features & GF_DEMO)) ? 5 : 4;
 		assert(font >= 0 && font < numFonts);
-		sprintf(file_font, "font%d.nut", font);
+		Common::sprintf_s(file_font, "font%d.nut", font);
 		_sf[font] = new SmushFont(_vm, file_font, _vm->_game.id == GID_DIG && font != 0);
 	}
 

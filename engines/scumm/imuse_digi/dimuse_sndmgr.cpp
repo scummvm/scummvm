@@ -81,7 +81,7 @@ bool ImuseDigiSndMgr::openMusicBundle(SoundDesc *sound, int &disk) {
 			char musicfile[20];
 			if (disk == -1)
 				disk = _vm->VAR(_vm->VAR_CURRENTDISK);
-			sprintf(musicfile, "musdisk%d.bun", disk);
+			Common::sprintf_s(musicfile, "musdisk%d.bun", disk);
 //			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_DiMUSE_v1->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_DiMUSE_v1->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);
@@ -117,7 +117,7 @@ bool ImuseDigiSndMgr::openVoiceBundle(SoundDesc *sound, int &disk) {
 			char voxfile[20];
 			if (disk == -1)
 				disk = _vm->VAR(_vm->VAR_CURRENTDISK);
-			sprintf(voxfile, "voxdisk%d.bun", disk);
+			Common::sprintf_s(voxfile, "voxdisk%d.bun", disk);
 //			if (_disk != _vm->VAR(_vm->VAR_CURRENTDISK)) {
 //				_vm->_DiMUSE_v1->parseScriptCmds(0x1000, 0, 0, 0, 0, 0, 0, 0);
 //				_vm->_DiMUSE_v1->parseScriptCmds(0x2000, 0, 0, 0, 0, 0, 0, 0);

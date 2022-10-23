@@ -163,7 +163,7 @@ void ScummEngine_v4::loadCharset(int no) {
 	char buf[20];
 	byte *data;
 
-	sprintf(buf, "%03d.LFL", 900 + no);
+	Common::sprintf_s(buf, "%03d.LFL", 900 + no);
 	file.open(buf);
 
 	if (file.isOpen() == false) {

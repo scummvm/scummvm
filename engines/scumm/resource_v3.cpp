@@ -108,7 +108,7 @@ void ScummEngine_v3::loadCharset(int no) {
 	Common::File file;
 	char buf[20];
 
-	sprintf(buf, "%02d.LFL", 99 - no);
+	Common::sprintf_s(buf, "%02d.LFL", 99 - no);
 	file.open(buf);
 
 	if (file.isOpen() == false) {

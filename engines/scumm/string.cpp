@@ -1656,7 +1656,7 @@ void ScummEngine_v7::loadLanguageBundle() {
 				}
 
 				// The tag is the basetag, followed by a dot and then the index
-				sprintf(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
+				Common::sprintf_s(_languageIndex[_languageIndexSize].tag, "%s.%03d", baseTag, idx);
 
 				// That was another index entry
 				_languageIndexSize++;
