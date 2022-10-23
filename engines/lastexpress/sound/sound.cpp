@@ -1364,7 +1364,7 @@ void SoundManager::playAmbientSound(int param) {
 			}
 
 			if (partNumber != 99)
-				sprintf(tmp, "LOOP%d%c.SND", partNumber, (char)(_engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A'));
+				Common::sprintf_s(tmp, "LOOP%d%c.SND", partNumber, (char)(_engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A'));
 		}
 
 		if (getFlags()->flag_3)
