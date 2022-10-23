@@ -309,7 +309,7 @@ void _icon_menu::PreloadIcon(const char *pcIconPath, const char *pcIconName) {
 
 	// Make the full URL for the icon.
 	char pcFullIconName[MAXLEN_URL];
-	sprintf(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_EXT);
+	Common::sprintf_s(pcFullIconName, "%s%s.%s", pcIconPath, pcIconName, PX_BITMAP_EXT);
 
 	// Open the icon resource.
 	nFullIconNameHash = NULL_HASH;

@@ -211,7 +211,7 @@ mcodeFunctionReturnCodes _game_session::fn_remora_add_icon(int32 &, int32 *param
 	g_oIconListManager->AddIconToList(ICON_LIST_REMORA, icon_name);
 
 	// Preload the icon for PSX smoothing.
-	sprintf(pcIconPath, ICON_PATH);
+	Common::sprintf_s(pcIconPath, ICON_PATH);
 	g_oIconMenu->PreloadIcon(pcIconPath, icon_name);
 
 	// Calling script can continue.

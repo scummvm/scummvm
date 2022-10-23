@@ -149,12 +149,12 @@ void InitialiseGlobalColours() {
 
 void MakeFullSaveFilename(uint32 slot_id, char *buff) {
 	// Construct full actual filename
-	sprintf(buff, "saves/ICBgame%02d.index", slot_id);
+	Common::sprintf_s(buff, 128, "saves/ICBgame%02d.index", slot_id);
 }
 
 void MakeFullThumbFilename(uint32 slot_id, char *buff) {
 	// Construct full actual filename
-	sprintf(buff, "saves/ICBgame%02d.thumb", slot_id);
+	Common::sprintf_s(buff, 128, "saves/ICBgame%02d.thumb", slot_id);
 }
 
 void InitialiseMovieLibrary() {
@@ -326,9 +326,9 @@ void LoadAMovieShot(uint32 slot_id, uint32 to_surface_id) {
 
 	// Make the correct filename for this pic when clustered up
 	if (slot_id < 10)
-		sprintf(thbFile, "images\\pc\\movie0%d.thb", slot_id);
+		Common::sprintf_s(thbFile, "images\\pc\\movie0%d.thb", slot_id);
 	else
-		sprintf(thbFile, "images\\pc\\movie%d.thb", slot_id);
+		Common::sprintf_s(thbFile, "images\\pc\\movie%d.thb", slot_id);
 
 	uint32 fo, fs;
 
@@ -340,7 +340,7 @@ void LoadAMovieShot(uint32 slot_id, uint32 to_surface_id) {
 	}
 
 	// Set this up for resman and open the thb file
-	sprintf(art2DCluster, ICON_CLUSTER_PATH);
+	Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 	uint8 *data = (uint8 *)rs1->Res_open(thbFile, thbFileHash, art2DCluster, art2DClusterHash);
 
 	// First off, check the thumb surface is valid
@@ -737,7 +737,7 @@ void OptionsManager::StartGameOverOptions() {
 	if (g_missionNumber < 9)
 		ds = GetDeathText();
 
-	sprintf(deathSpeech, "player_death%d", ds);
+	Common::sprintf_s(deathSpeech, "player_death%d", ds);
 
 	SayLineOfSpeech(HashString(deathSpeech));
 
@@ -4802,7 +4802,7 @@ void OptionsManager::DrawVideoSettings() {
 		temp = CalculateStringWidth(msg);
 		DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == FRAMELIMITER) ? SELECTEDFONT : NORMALFONT, FALSE8);
 		char msg2[6];
-		sprintf(msg2, "%d%%", g_stub->cycle_speed);
+		Common::sprintf_s(msg2, "%d%%", g_stub->cycle_speed);
 		DisplayText(ad, pitch, msg2, halfScreen, hite, NORMALFONT, FALSE8);
 	}
 
@@ -5591,7 +5591,7 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 }
 
 void OptionsManager::LoadBitmapFont() {
-	sprintf(m_fontName, FONT_PATH, OPTIONS_FONT_NAME);
+	Common::sprintf_s(m_fontName, FONT_PATH, OPTIONS_FONT_NAME);
 	uint32 hashedname = NULL_HASH;
 
 	pxString font_cluster = FONT_CLUSTER_PATH;
@@ -5606,14 +5606,14 @@ void OptionsManager::LoadBitmapFont() {
 void OptionsManager::LoadGlobalTextFile() {
 	// Set this up for resman
 	char globalClusterFile[MAXLEN_CLUSTER_URL];
-	sprintf(globalClusterFile, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(globalClusterFile, GLOBAL_CLUSTER_PATH);
 	uint32 globalClusterHash = NULL_HASH;
 
 	char textFileName[100];
 	uint32 buf_hash = NULL_HASH;
 
 	// Has a language been specified
-	sprintf(textFileName, GLOBAL_TEXT_FILE);
+	Common::sprintf_s(textFileName, GLOBAL_TEXT_FILE);
 
 	// Special text loading code so the translators can test their stuff
 
@@ -6001,8 +6001,8 @@ void OptionsManager::DoCredits() {
 		char textFileName[128];
 		char movieFileName[128];
 
-		sprintf(textFileName, "%s.crd", gamelanguage);
-		sprintf(movieFileName, "gmovies\\title.bik");
+		Common::sprintf_s(textFileName, "%s.crd", gamelanguage);
+		Common::sprintf_s(movieFileName, "gmovies\\title.bik");
 
 		// Free the sequence manager
 		UnloadTitleScreenMovie();
@@ -6044,9 +6044,9 @@ void OptionsManager::DoScrollingText() {
 bool8 IsAValidSlide(uint32 num, char *slideFile) {
 	// Make the correct filename for this pic when clustered up
 	if (num < 10)
-		sprintf(slideFile, "images\\pc\\slide_0%d.bink", num);
+		Common::sprintf_s(slideFile, 128, "images\\pc\\slide_0%d.bink", num);
 	else
-		sprintf(slideFile, "images\\pc\\slide_%d.bink", num);
+		Common::sprintf_s(slideFile, 128, "images\\pc\\slide_%d.bink", num);
 
 	uint32 fo, fs;
 
@@ -6175,7 +6175,7 @@ void OptionsManager::DrawSlideShow() {
 			Fatal_error("Trying to display a non-existent slide image!");
 
 		// Set this up for resman and open the thb file
-		sprintf(art2DCluster, ICON_CLUSTER_PATH);
+		Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 
 		uint8 *slideptr = rs1->Res_open(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
 		uint32 slideLen = rs_bg->Fetch_size(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
@@ -6286,10 +6286,10 @@ void LoadLogo(uint32 to_surface_id) {
 	uint32 art2DClusterHash = NULL_HASH;
 
 	// Make the correct filename for this pic when clustered up
-	sprintf(thbFile, "images\\pc\\binklogo.thb");
+	Common::sprintf_s(thbFile, "images\\pc\\binklogo.thb");
 
 	// Set this up for resman and open the thb file
-	sprintf(art2DCluster, ICON_CLUSTER_PATH);
+	Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 	uint8 *data = (uint8 *)rs1->Res_open(thbFile, thbFileHash, art2DCluster, art2DClusterHash);
 
 	// First off, check the thumb surface is valid
@@ -6358,7 +6358,7 @@ void Crediter::Initialise(const char *textFileName, const char *movieFileName, b
 
 	// Set this up for resman and open the file
 	char globalClusterFile[MAXLEN_CLUSTER_URL];
-	sprintf(globalClusterFile, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(globalClusterFile, GLOBAL_CLUSTER_PATH);
 	uint32 globalClusterHash = NULL_HASH;
 	uint32 buf_hash = NULL_HASH;
 

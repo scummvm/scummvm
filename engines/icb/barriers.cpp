@@ -496,7 +496,7 @@ void _barrier_handler::___init() {
 
 	// load the raw barrier file for this session
 	// When clustered the session files have the base stripped
-	len = sprintf(temp_buf, "%s", PX_FILENAME_BARRIERLIST);
+	len = Common::sprintf_s(temp_buf, "%s", PX_FILENAME_BARRIERLIST);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("_barrier_handler::___init string len error");
 
@@ -513,7 +513,7 @@ void _barrier_handler::___init() {
 
 	// load in the routing wrapper
 	// When clustered the session files have the base stripped
-	len = sprintf(temp_buf, "%s", PX_FILENAME_ROUTING);
+	len = Common::sprintf_s(temp_buf, "%s", PX_FILENAME_ROUTING);
 	if (len > ENGINE_STRING_LEN)
 		Fatal_error("_barrier_handler::___init string len error");
 
