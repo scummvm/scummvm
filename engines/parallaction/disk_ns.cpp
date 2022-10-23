@@ -260,7 +260,7 @@ Common::SeekableReadStream *DosDisk_ns::tryOpenFile(const char* name) {
 		return stream;
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.pp", name);
+	Common::sprintf_s(path, "%s.pp", name);
 	return _sset.createReadStreamForMember(path);
 }
 
@@ -274,12 +274,12 @@ Script* Disk_ns::loadLocation(const char *name) {
 	if (!strcmp(charName, "Dinor"))
 		charName = "dino";
 
-	sprintf(path, "%s%s/%s.loc", charName, _language.c_str(), name);
+	Common::sprintf_s(path, "%s%s/%s.loc", charName, _language.c_str(), name);
 	debugC(3, kDebugDisk, "Disk_ns::loadLocation(%s): trying '%s'", name, path);
 	Common::SeekableReadStream *stream = tryOpenFile(path);
 
 	if (!stream) {
-		sprintf(path, "%s/%s.loc", _language.c_str(), name);
+		Common::sprintf_s(path, "%s/%s.loc", _language.c_str(), name);
 		debugC(3, kDebugDisk, "DosDisk_ns::loadLocation(%s): trying '%s'", name, path);
 		stream = openFile(path);
 	}
@@ -289,7 +289,7 @@ Script* Disk_ns::loadLocation(const char *name) {
 Script* Disk_ns::loadScript(const char* name) {
 	debugC(1, kDebugDisk, "Disk_ns::loadScript '%s'", name);
 	char path[PATH_LEN];
-	sprintf(path, "%s.script", name);
+	Common::sprintf_s(path, "%s.script", name);
 	Common::SeekableReadStream *stream = openFile(path);
 	return new Script(stream, true);
 }
@@ -339,9 +339,9 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
 	char v20[30];
 	if (g_engineFlags & kEngineTransformedDonna) {
-		sprintf(v20, "%stta.cnv", name);
+		Common::sprintf_s(v20, "%stta.cnv", name);
 	} else {
-		sprintf(v20, "%stal.cnv", name);
+		Common::sprintf_s(v20, "%stal.cnv", name);
 	}
 
 	return new GfxObj(0, loadCnv(v20), name);
@@ -350,7 +350,7 @@ GfxObj* DosDisk_ns::loadTalk(const char *name) {
 
 GfxObj* DosDisk_ns::loadHead(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%shead", name);
+	Common::sprintf_s(path, "%shead", name);
 	path[8] = '\0';
 	Common::strcat_s(path, ".cnv");
 	return new GfxObj(0, loadCnv(path));
@@ -359,21 +359,21 @@ GfxObj* DosDisk_ns::loadHead(const char* name) {
 
 Frames* DosDisk_ns::loadPointer(const char *name) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.cnv", name);
+	Common::sprintf_s(path, "%s.cnv", name);
 	return loadCnv(path);
 }
 
 
 Font* DosDisk_ns::loadFont(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%scnv.cnv", name);
+	Common::sprintf_s(path, "%scnv.cnv", name);
 	return createFont(name, loadCnv(path));
 }
 
 
 GfxObj* DosDisk_ns::loadObjects(const char *name, uint8 part) {
 	char path[PATH_LEN];
-	sprintf(path, "%sobj.cnv", name);
+	Common::sprintf_s(path, "%sobj.cnv", name);
 	return new GfxObj(0, loadCnv(path), name);
 }
 
@@ -491,13 +491,13 @@ void DosDisk_ns::loadBackground(BackgroundInfo& info, const char *filename) {
 
 void DosDisk_ns::loadSlide(BackgroundInfo& info, const char *filename) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.slide", filename);
+	Common::sprintf_s(path, "%s.slide", filename);
 	loadBackground(info, path);
 }
 
 void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char *mask, const char* path) {
 	char filename[PATH_LEN];
-	sprintf(filename, "%s.dyn", name);
+	Common::sprintf_s(filename, "%s.dyn", name);
 
 	// load bitmap
 	loadBackground(info, filename);
@@ -508,7 +508,7 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 
 	// load external mask and path if present (overwriting the ones loaded by loadBackground)
 	char maskPath[PATH_LEN];
-	sprintf(maskPath, "%s.msk", mask);
+	Common::sprintf_s(maskPath, "%s.msk", mask);
 
 	Common::SeekableReadStream *stream = openFile(maskPath);
 	assert(stream);
@@ -524,13 +524,13 @@ void DosDisk_ns::loadScenery(BackgroundInfo& info, const char *name, const char 
 
 Table* DosDisk_ns::loadTable(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.tab", name);
+	Common::sprintf_s(path, "%s.tab", name);
 	return createTableFromStream(100, openFile(path));
 }
 
 Common::SeekableReadStream* DosDisk_ns::loadMusic(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.mid", name);
+	Common::sprintf_s(path, "%s.mid", name);
 	return openFile(path);
 }
 
@@ -868,7 +868,7 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 		return stream;
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.pp", name);
+	Common::sprintf_s(path, "%s.pp", name);
 	stream = _sset.createReadStreamForMember(path);
 	if (stream) {
 		ret = new PowerPackerStream(*stream);
@@ -876,7 +876,7 @@ Common::SeekableReadStream *AmigaDisk_ns::tryOpenFile(const char* name) {
 		return ret;
 	}
 
-	sprintf(path, "%s.dd", name);
+	Common::sprintf_s(path, "%s.dd", name);
 	stream = _sset.createReadStreamForMember(path);
 	if (stream) {
 		ret = new PowerPackerStream(*stream);
@@ -952,7 +952,7 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 	debugC(5, kDebugDisk, "AmigaDisk_ns::loadMask_internal(%s)", name);
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.mask", name);
+	Common::sprintf_s(path, "%s.mask", name);
 
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s) {
@@ -984,7 +984,7 @@ void AmigaDisk_ns::loadMask_internal(BackgroundInfo& info, const char *name) {
 void AmigaDisk_ns::loadPath_internal(BackgroundInfo& info, const char *name) {
 
 	char path[PATH_LEN];
-	sprintf(path, "%s.path", name);
+	Common::sprintf_s(path, "%s.path", name);
 
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s) {
@@ -1007,7 +1007,7 @@ void AmigaDisk_ns::loadScenery(BackgroundInfo& info, const char* background, con
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadScenery '%s', '%s'", background, mask);
 
 	char filename[PATH_LEN];
-	sprintf(filename, "%s.bkgnd", background);
+	Common::sprintf_s(filename, "%s.bkgnd", background);
 
 	loadBackground(info, filename);
 
@@ -1032,7 +1032,7 @@ Frames* AmigaDisk_ns::loadFrames(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadFrames '%s'", name);
 
 	char path[PATH_LEN];
-	sprintf(path, "anims/%s", name);
+	Common::sprintf_s(path, "anims/%s", name);
 
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s)
@@ -1044,7 +1044,7 @@ Frames* AmigaDisk_ns::loadFrames(const char* name) {
 GfxObj* AmigaDisk_ns::loadHead(const char* name) {
 	debugC(1, kDebugDisk, "AmigaDisk_ns::loadHead '%s'", name);
 	char path[PATH_LEN];
-	sprintf(path, "%s.head", name);
+	Common::sprintf_s(path, "%s.head", name);
 	Common::SeekableReadStream *s = openFile(path);
 	return new GfxObj(0, makeCnv(s), name);
 }
@@ -1055,9 +1055,9 @@ GfxObj* AmigaDisk_ns::loadObjects(const char *name, uint8 part) {
 
 	char path[PATH_LEN];
 	if (_vm->getFeatures() & GF_DEMO)
-		sprintf(path, "%s.objs", name);
+		Common::sprintf_s(path, "%s.objs", name);
 	else
-		sprintf(path, "objs/%s.objs", name);
+		Common::sprintf_s(path, "objs/%s.objs", name);
 
 	Common::SeekableReadStream *s = openFile(path);
 	return new GfxObj(0, makeCnv(s), name);
@@ -1069,9 +1069,9 @@ GfxObj* AmigaDisk_ns::loadTalk(const char *name) {
 
 	char path[PATH_LEN];
 	if (_vm->getFeatures() & GF_DEMO)
-		sprintf(path, "%s.talk", name);
+		Common::sprintf_s(path, "%s.talk", name);
 	else
-		sprintf(path, "talk/%s.talk", name);
+		Common::sprintf_s(path, "talk/%s.talk", name);
 
 	Common::SeekableReadStream *s = tryOpenFile(path);
 	if (!s) {
@@ -1085,12 +1085,12 @@ Table* AmigaDisk_ns::loadTable(const char* name) {
 
 	char path[PATH_LEN];
 	if (!scumm_stricmp(name, "global")) {
-		sprintf(path, "%s.table", name);
+		Common::sprintf_s(path, "%s.table", name);
 	} else {
 		if (!(_vm->getFeatures() & GF_DEMO))
-			sprintf(path, "objs/%s.table", name);
+			Common::sprintf_s(path, "objs/%s.table", name);
 		else
-			sprintf(path, "%s.table", name);
+			Common::sprintf_s(path, "%s.table", name);
 	}
 
 	return createTableFromStream(100, openFile(path));
@@ -1100,7 +1100,7 @@ Font* AmigaDisk_ns::loadFont(const char* name) {
 	debugC(1, kDebugDisk, "AmigaFullDisk::loadFont '%s'", name);
 
 	char path[PATH_LEN];
-	sprintf(path, "%sfont", name);
+	Common::sprintf_s(path, "%sfont", name);
 
 	Common::SeekableReadStream *stream = openFile(path);
 	Font *font = createFont(name, *stream);
@@ -1116,7 +1116,7 @@ Common::SeekableReadStream* AmigaDisk_ns::loadMusic(const char* name) {
 
 Common::SeekableReadStream* AmigaDisk_ns::loadSound(const char* name) {
 	char path[PATH_LEN];
-	sprintf(path, "%s.snd", name);
+	Common::sprintf_s(path, "%s.snd", name);
 
 	return tryOpenFile(path);
 }

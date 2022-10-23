@@ -45,7 +45,7 @@ Common::String SaveLoad::genSaveFileName(uint slot) {
 	assert(slot < NUM_SAVESLOTS || slot == SPECIAL_SAVESLOT);
 
 	char s[20];
-	sprintf(s, "%s.%.3u", _saveFilePrefix.c_str(), slot);
+	Common::sprintf_s(s, "%s.%.3u", _saveFilePrefix.c_str(), slot);
 
 	return Common::String(s);
 }
@@ -119,7 +119,7 @@ void SaveLoad_ns::doLoadGame(uint16 slot) {
 	Common::strcpy_s(_vm->_characterName1, "null");
 
 	char tmp[PATH_LEN];
-	sprintf(tmp, "%s.%s" , location.c_str(), character.c_str());
+	Common::sprintf_s(tmp, "%s.%s" , location.c_str(), character.c_str());
 	_vm->scheduleLocationSwitch(tmp);
 }
 
@@ -136,7 +136,7 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	memset(s, 0, sizeof(s));
 
 	if (!name || name[0] == '\0') {
-		sprintf(s, "default_%i", slot);
+		Common::sprintf_s(s, "default_%i", slot);
 	} else {
 		strncpy(s, name, 199);
 	}
@@ -144,31 +144,31 @@ void SaveLoad_ns::doSaveGame(uint16 slot, const char* name) {
 	f->writeString(s);
 	f->writeString("\n");
 
-	sprintf(s, "%s\n", _vm->_char.getFullName());
+	Common::sprintf_s(s, "%s\n", _vm->_char.getFullName());
 	f->writeString(s);
 
-	sprintf(s, "%s\n", g_saveData1);
+	Common::sprintf_s(s, "%s\n", g_saveData1);
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._ani->getX());
+	Common::sprintf_s(s, "%d\n", _vm->_char._ani->getX());
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_char._ani->getY());
+	Common::sprintf_s(s, "%d\n", _vm->_char._ani->getY());
 	f->writeString(s);
-	sprintf(s, "%d\n", _vm->_score);
+	Common::sprintf_s(s, "%d\n", _vm->_score);
 	f->writeString(s);
-	sprintf(s, "%u\n", g_globalFlags);
+	Common::sprintf_s(s, "%u\n", g_globalFlags);
 	f->writeString(s);
 
-	sprintf(s, "%d\n", _vm->_numLocations);
+	Common::sprintf_s(s, "%d\n", _vm->_numLocations);
 	f->writeString(s);
 	for (uint16 _si = 0; _si < _vm->_numLocations; _si++) {
-		sprintf(s, "%s\n%u\n", _vm->_locationNames[_si], _vm->_localFlags[_si]);
+		Common::sprintf_s(s, "%s\n%u\n", _vm->_locationNames[_si], _vm->_localFlags[_si]);
 		f->writeString(s);
 	}
 
 	const InventoryItem *item;
 	for (uint16 _si = 0; _si < 30; _si++) {
 		item = _vm->getInventoryItem(_si);
-		sprintf(s, "%u\n%d\n", item->_id, item->_index);
+		Common::sprintf_s(s, "%u\n%d\n", item->_id, item->_index);
 		f->writeString(s);
 	}
 
