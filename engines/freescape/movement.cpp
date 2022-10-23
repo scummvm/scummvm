@@ -143,16 +143,16 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 	float velocity = _movementSpeed * deltaTime * areaScale;
 	float positionY = _position.y();
 	switch (direction) {
-	case FORWARD:
+	case kForwardMovement:
 		_position = _position + _cameraFront * velocity;
 		break;
-	case BACKWARD:
+	case kBackwardMovement:
 		_position = _position - _cameraFront * velocity;
 		break;
-	case RIGHT:
+	case kRightMovement:
 		_position = _position - _cameraRight * velocity;
 		break;
-	case LEFT:
+	case kLeftMovement:
 		_position = _position + _cameraRight * velocity;
 		break;
 	}
