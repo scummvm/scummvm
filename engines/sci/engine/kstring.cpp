@@ -388,7 +388,7 @@ reg_t kFormat(EngineState *s, int argc, reg_t *argv) {
 				if (!unsignedVar)
 					val = (int16)arguments[paramindex];
 
-				target += sprintf(target, format_string, val);
+				target += Common::sprintf_s(target, sizeof(targetbuf) - (target - targetbuf), format_string, val);
 				paramindex++;
 				assert((target - targetbuf) <= maxsize);
 
