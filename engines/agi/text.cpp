@@ -1217,7 +1217,7 @@ char *TextMgr::stringPrintf(const char *originalText) {
 				i = strtoul(originalText, nullptr, 10);
 				while (*originalText >= '0' && *originalText <= '9')
 					originalText++;
-				sprintf(z, "%015i", _vm->getVar(i));
+				Common::sprintf_s(z, "%015i", _vm->getVar(i));
 
 				i = 99;
 				if (*originalText == '|') {
