@@ -8,8 +8,8 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-23 13:43+0000\n"
-"PO-Revision-Date: 2022-02-18 18:47+0000\n"
-"Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
+"PO-Revision-Date: 2022-10-23 18:43+0000\n"
+"Last-Translator: aquadran <aquadran@gmail.com>\n"
 "Language-Team: Polish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/pl/>\n"
 "Language: pl_PL\n"
@@ -27,9 +27,9 @@ msgstr ""
 
 #. I18N: built on <build date> with <compiler>
 #: gui/about.cpp:103
-#, fuzzy, c-format
+#, c-format
 msgid "(built on %s with %s)"
-msgstr "(skompilowany %s)"
+msgstr "(skompilowane %s przy użyciu %s)"
 
 #: gui/about.cpp:110
 msgid "Features compiled in:"
@@ -231,9 +231,9 @@ msgid "Clear Cache"
 msgstr "Wyczyść"
 
 #: gui/downloadiconsdialog.cpp:241
-#, fuzzy, c-format
+#, c-format
 msgid "Downloading icons list... %d entries"
-msgstr "Wczytywanie stanu gry..."
+msgstr "Pobieranie listy ikon... %d elementów"
 
 #: gui/downloadiconsdialog.cpp:251
 #, c-format
@@ -246,11 +246,9 @@ msgid "Download"
 msgstr "Pobierz"
 
 #: gui/downloadiconsdialog.cpp:277
-#, fuzzy, c-format
+#, c-format
 msgid "Download complete, downloaded %d packs, %s %S"
-msgstr ""
-"Pobieranie ukończone.\n"
-"Nie udało się pobrać %u plik(u/ów)."
+msgstr "Pobieranie ukończone. Pobrano %d pakiet(y/ów), %s-%S"
 
 #: gui/downloadiconsdialog.cpp:283 gui/downloadiconsdialog.cpp:375
 #: gui/gui-manager.cpp:228 gui/unknown-game-dialog.cpp:53
@@ -771,17 +769,15 @@ msgstr "Wydawca"
 
 #. I18N: Group name for the game list, grouped by language
 #: gui/launcher.cpp:109
-#, fuzzy
 msgctxt "group"
 msgid "Language"
-msgstr "Język:"
+msgstr "Język"
 
 #. I18N: Group name for the game list, grouped by game platform
 #: gui/launcher.cpp:111
-#, fuzzy
 msgctxt "group"
 msgid "Platform"
-msgstr "Platforma:"
+msgstr "Platforma"
 
 #: gui/launcher.cpp:215
 msgid "Select Group by"
@@ -804,9 +800,8 @@ msgid "Quit ScummVM"
 msgstr "Zakończ ScummVM"
 
 #: gui/launcher.cpp:247
-#, fuzzy
 msgid "A~b~out"
-msgstr "I~n~formacje..."
+msgstr "I~n~formacje"
 
 #: gui/launcher.cpp:247 backends/platform/sdl/macosx/appmenu_osx.mm:223
 msgid "About ScummVM"
@@ -1208,10 +1203,8 @@ msgid "Scaler:"
 msgstr "Skaler:"
 
 #: gui/options.cpp:1552
-#, fuzzy
-#| msgid "Shader"
 msgid "Shader:"
-msgstr "Shader"
+msgstr "Shader:"
 
 #: gui/options.cpp:1552 gui/options.cpp:1554 gui/options.cpp:1555
 #, fuzzy
@@ -1251,9 +1244,8 @@ msgid "Game 3D Renderer:"
 msgstr "Renderer graficzny 3D:"
 
 #: gui/options.cpp:1583
-#, fuzzy
 msgid "3D Anti-aliasing:"
-msgstr "Wygładzany"
+msgstr "Wygładzanie 3D:"
 
 #: gui/options.cpp:1587 engines/mohawk/dialogs.cpp:365
 #, fuzzy
@@ -1462,7 +1454,7 @@ msgstr "Gł. efekt. dźw.:"
 
 #: gui/options.cpp:1811 gui/options.cpp:1813 gui/options.cpp:1816
 msgid "Special sound effects volume"
-msgstr "Głośność efektów dźw."
+msgstr "Głośność efektów dźwiękowych"
 
 #: gui/options.cpp:1813
 msgctxt "lowres"
@@ -1593,9 +1585,8 @@ msgid "Theme:"
 msgstr "Styl:"
 
 #: gui/options.cpp:2405
-#, fuzzy
 msgid "GUI scale:"
-msgstr "Powiększaj filmy"
+msgstr "Skalowanie graficznego interfejsu:"
 
 #: gui/options.cpp:2412
 msgid "GUI renderer:"
@@ -1687,9 +1678,8 @@ msgid "Check now"
 msgstr "Sprawdź teraz"
 
 #: gui/options.cpp:2526
-#, fuzzy
 msgid "Update Icons"
-msgstr "Sprawdź aktualizacje:"
+msgstr "Zaktualizuj ikony"
 
 #: gui/options.cpp:2534
 msgid "Active storage:"
@@ -1773,7 +1763,7 @@ msgstr "Zsynchronizuj teraz"
 
 #: gui/options.cpp:2560
 msgid "Start saved games sync"
-msgstr "Rozpocznij synchronizację zapisanych gier."
+msgstr "Rozpocznij synchronizację zapisanych gier"
 
 #: gui/options.cpp:2563
 msgctxt "lowres"
@@ -1941,11 +1931,12 @@ msgstr ""
 "Lista gier:\n"
 
 #: gui/options.cpp:2714
-#, fuzzy
 msgid ""
 "\n"
 "And more..."
-msgstr "Dodaj grę..."
+msgstr ""
+"\n"
+"Dodaj więcej..."
 
 #: gui/options.cpp:2715 engines/engine.cpp:559
 #, fuzzy
@@ -2250,7 +2241,7 @@ msgstr "Wygładzany"
 
 #: gui/unknown-game-dialog.cpp:48
 msgid "Add anyway"
-msgstr "Dodaj mimo tego "
+msgstr "Dodaj mimo tego"
 
 #: gui/unknown-game-dialog.cpp:57
 msgid "Copy to clipboard"
@@ -2656,7 +2647,6 @@ msgid "Error"
 msgstr "Błąd"
 
 #: engines/engine.cpp:502
-#, fuzzy
 msgid ""
 "You appear to be playing this game directly\n"
 "from the CD. This is known to cause problems,\n"
@@ -2664,12 +2654,12 @@ msgid ""
 "the data files to your hard disk instead.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Wygląda na to, że uruchamiasz grę bezpośrednio z płyty CD, co powoduje pewne "
-"znane problemów. Stąd zalecane jest skopiowanie plików gry na twardy dysk.\n"
-"Dalsze informacje są dostępne w pliku README."
+"Wygląda na to, że uruchamiasz grę bezpośrednio z płyty CD,\n"
+"co powodować pewne problemy.\n"
+"Stąd zalecane jest skopiowanie plików gry na twardy dysk.\n"
+"Dalsze informacje są dostępne w dokementacji (audio CD)."
 
 #: engines/engine.cpp:525
-#, fuzzy
 msgid ""
 "This game has audio tracks on its CD. These\n"
 "tracks need to be ripped from the CD using\n"
@@ -2677,9 +2667,10 @@ msgid ""
 "order to listen to the game's music.\n"
 "See the documentation (CD audio) for details."
 msgstr ""
-"Gra zawiera na swojej płycie ścieżki audio. Aby słyszeć muzykę, należy je "
-"skopiować na dysk za pomocą odpowiedniego rippera CD audio.\n"
-"Dalsze informacje są dostępne w pliku README."
+"Gra zawiera na swojej płycie ścieżki audio.\n"
+"Aby słyszeć muzykę, należy je skopiować na dysk\n"
+"za pomocą odpowiedniego rippera CD audio.\n"
+"Dalsze informacje są dostępne w dokumentacji (audio CD)."
 
 #: engines/engine.cpp:552
 msgid "Overwrite"
@@ -2729,9 +2720,8 @@ msgid "WARNING: "
 msgstr "UWAGA: "
 
 #: engines/engine.cpp:696
-#, fuzzy
 msgid " Shall we still run the game?"
-msgstr "Pełny tytuł gry"
+msgstr " Uruchomić grę mimo wszystko?"
 
 #: engines/engine.cpp:697
 msgid ""
@@ -2748,16 +2738,16 @@ msgid "Start anyway"
 msgstr "Włącz mimo tego"
 
 #: engines/engine.cpp:718
-#, fuzzy
 msgid "This game is not supported."
-msgstr "Identyfikator gry nie jest wspierany"
+msgstr "Ta grae nie jest wspierana."
 
 #: engines/engine.cpp:718
-#, fuzzy
 msgid ""
 "This game is not supported for the following reason:\n"
 "\n"
-msgstr "Ta gra nie wspiera wczytywania z launchera."
+msgstr ""
+"Ta gra nie wspierana z powodu:\n"
+"\n"
 
 #: engines/engine.cpp:860
 msgid "Loading game is currently unavailable"
@@ -3039,20 +3029,20 @@ msgid "Download failed."
 msgstr "Pobieranie nie powiodło się."
 
 #: backends/events/default/default-events.cpp:193
-#, fuzzy
 msgid ""
 "Do you really want to return to the Launcher?\n"
 "Any unsaved progress will be lost."
 msgstr ""
-"Czy na pewno chcesz zacząć nową grę? Wszystkie niezapisane postępy zostaną "
+"Czy na pewno chcesz zamknąć grę? Wszystkie niezapisane postępy zostaną "
 "utracone."
 
 #: backends/events/default/default-events.cpp:217
-#, fuzzy
 msgid ""
 "Do you really want to quit?\n"
 "Any unsaved progress will be lost."
-msgstr "   Na pewno chcesz wyjść?   "
+msgstr ""
+"Na pewno chcesz wyjść?\n"
+"Wszystkie niezapisane postępy zostaną utracone."
 
 #: backends/events/default/default-events.cpp:217
 #: backends/events/default/default-events.cpp:358
@@ -3207,9 +3197,9 @@ msgid "Active graphics filter:"
 msgstr "Aktywny filtr graficzny:"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:360
-#, fuzzy, c-format
+#, c-format
 msgid "Saved screenshot '%s'"
-msgstr "Zapisz zrzut ekranu"
+msgstr "Zapisano zrzut ekranu '%s'"
 
 #: backends/graphics/sdl/sdl-graphics.cpp:369
 #, fuzzy
@@ -3585,9 +3575,8 @@ msgid "The parent directory doesn't exist!"
 msgstr "Katalog nadrzędny nie istnieje!"
 
 #: backends/networking/sdl_net/handlers/uploadfilehandler.cpp:70
-#, fuzzy
 msgid "Can't upload into a file!"
-msgstr "Ścieżka nie jest plikiem"
+msgstr "Ścieżka nie jest katalogiem!"
 
 #: backends/networking/sdl_net/handlerutils.cpp:197
 #, fuzzy
@@ -3609,18 +3598,16 @@ msgid "Invalid request: headers are too long!"
 msgstr "Błędne zapytanie: nagłówki zbyt długie!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:154
-#, fuzzy
 msgid "Failed to upload the file!"
-msgstr "Nie udało się usunąć pliku."
+msgstr "Nie udało się wgrać pliku!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:183
 msgid "No file was passed!"
 msgstr "Nie podano pliku!"
 
 #: backends/networking/sdl_net/uploadfileclienthandler.cpp:201
-#, fuzzy
 msgid "Uploaded successfully!"
-msgstr "DVD zamontowane pomyślnie"
+msgstr "Wgrano pomyślnie!"
 
 #: backends/platform/3ds/options-dialog.cpp:44 engines/scumm/dialogs.cpp:276
 msgid "~C~lose"
@@ -3635,9 +3622,8 @@ msgid "Snap to edges"
 msgstr "Przyciąganie do krawędzi"
 
 #: backends/platform/3ds/options-dialog.cpp:53
-#, fuzzy
 msgid "Stretch to fit"
-msgstr "Tryb rozciągania:"
+msgstr "Rozciągnij"
 
 #: backends/platform/3ds/options-dialog.cpp:56
 #, fuzzy
@@ -4363,9 +4349,8 @@ msgid "Cutscene file '%s' not found!"
 msgstr "Nie znaleziono pliku przerywnika '%s'!"
 
 #: engines/agos/metaengine.cpp:103
-#, fuzzy
 msgid "AGOS 2 support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Silnik AGOS 2 nie jest wbudowany"
 
 #: engines/agos/midi.cpp:184 engines/kyra/sound/sound_pc_midi.cpp:76
 msgid ""
@@ -4499,9 +4484,8 @@ msgid ""
 msgstr ""
 
 #: engines/asylum/asylum.cpp:201 engines/cine/saveload.cpp:863
-#, fuzzy
 msgid "Load anyway"
-msgstr "Dodaj mimo tego "
+msgstr "Wczytaj mimo tego"
 
 #: engines/bladerunner/bladerunner.cpp:397
 msgid "Failed to initialize resources"
@@ -4606,9 +4590,8 @@ msgstr ""
 #: engines/teenagent/detection.cpp:117 engines/toltecs/detection.cpp:212
 #: engines/trecision/detection.cpp:199 engines/zvision/detection_tables.h:200
 #: engines/zvision/detection_tables.h:220
-#, fuzzy
 msgid "Missing game code"
-msgstr "Główne sterowanie gry:"
+msgstr "Brakuje implementacji gry"
 
 #. I18N: Blade Runner Enhanced Edition is a trademark, so please keep the capitalization
 #. for Enhanced Edition as is.
@@ -4625,9 +4608,8 @@ msgstr ""
 
 #. I18N: These are keymaps which work only in the main gameplay and not within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:111
-#, fuzzy
 msgid "main game shortcuts"
-msgstr "Główne sterowanie gry:"
+msgstr "Główne skróty klawiszowe gry"
 
 #. I18N: These are keymaps that work only within KIA's (Knowledge Integration Assistant) screens.
 #: engines/bladerunner/metaengine.cpp:113
@@ -4669,9 +4651,8 @@ msgstr "Pomiń linię"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. GAME OPTIONS
 #: engines/bladerunner/metaengine.cpp:163
-#, fuzzy
 msgid "Game Options"
-msgstr "~O~pcje..."
+msgstr "~O~pcje gry"
 
 #. I18N: This keymap opens the KIA database on one of the investigation tabs,
 #. CRIME SCENE DATABASE, SUSPECT DATABASE and CLUES DATABASE.
@@ -4712,18 +4693,16 @@ msgstr "Wycisz dźwięk"
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. SAVE GAME
 #: engines/bladerunner/metaengine.cpp:240 engines/pegasus/pegasus.cpp:2824
-#, fuzzy
 msgid "Save Game"
-msgstr "Zapis:"
+msgstr "Zapis gry"
 
 #. I18N: This keymap opens KIA's LOAD GAME tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. LOAD GAME
 #: engines/bladerunner/metaengine.cpp:249 engines/pegasus/pegasus.cpp:2830
-#, fuzzy
 msgid "Load Game"
-msgstr "Wczytaj grę:"
+msgstr "Wczytaj grę"
 
 #. I18N: This keymap opens KIA's CRIME SCENE DATABASE tab.
 #. In Blade Runner's official localizations, there is a description of this keymap
@@ -4754,14 +4733,12 @@ msgstr ""
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. QUIT GAME
 #: engines/bladerunner/metaengine.cpp:285 engines/dragons/metaengine.cpp:225
-#, fuzzy
 msgid "Quit Game"
-msgstr " (Gra)"
+msgstr "Zamknij grę"
 
 #: engines/buried/buried.cpp:580
-#, fuzzy
 msgid "Are you sure you want to quit?"
-msgstr "   Na pewno chcesz wyjść?   "
+msgstr "Na pewno chcesz wyjść?"
 
 #: engines/buried/buried.cpp:590
 #, fuzzy
@@ -4844,9 +4821,8 @@ msgid ""
 msgstr ""
 
 #: engines/cryomni3d/metaengine.cpp:145
-#, fuzzy
 msgid "Versailles 1685 support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Wsparcie dla Versailles 1685 nie jest wbudowane"
 
 #: engines/director/events.cpp:90
 msgid ""
@@ -4953,19 +4929,16 @@ msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Użyj CD audio zamiast muzyki w grze, jeśli jest dostępne"
 
 #: engines/glk/detection.cpp:239
-#, fuzzy
 msgid "Use TTS to read the text"
-msgstr "Nie udało się odczytać pliku!"
+msgstr "Używaj TTS by odczytywać tekst"
 
 #: engines/glk/detection.cpp:246
-#, fuzzy
 msgid "Also read input text"
-msgstr "Nie udało się odczytać pliku!"
+msgstr "Także wpisany tekst"
 
 #: engines/glk/detection.cpp:247
-#, fuzzy
 msgid "Use TTS to read the input text"
-msgstr "Nie udało się odczytać pliku!"
+msgstr "Używaj TTS by odczytywać wpisany tekst"
 
 #: engines/glk/glk_api.cpp:62
 msgid "[ press any key to exit ]"
@@ -4976,9 +4949,8 @@ msgid "Untitled Savegame"
 msgstr "Nienazwany zapis stanu gry"
 
 #: engines/glk/adrift/os_glk.cpp:2813
-#, fuzzy
 msgid "Loading game...\n"
-msgstr "Wczytywanie stanu gry..."
+msgstr "Wczytywanie stanu gry...\n"
 
 #: engines/glk/advsys/advsys.cpp:34
 msgid "Could not start AdvSys game"
@@ -5014,9 +4986,8 @@ msgid "This is not a valid Alan2 file."
 msgstr "Niepoprawny plik Alan2."
 
 #: engines/glk/comprehend/game.cpp:321
-#, fuzzy
 msgid "Savegame"
-msgstr "Zapis:"
+msgstr "Zapis gry"
 
 #: engines/glk/comprehend/game.cpp:860
 msgid "Picture window toggled\n"
@@ -5161,9 +5132,8 @@ msgid "Examine/Look"
 msgstr "Zbadaj"
 
 #: engines/grim/grim.cpp:1347
-#, fuzzy
 msgid "Error: the game could not be saved."
-msgstr "Niestety, nie udało się utworzyć zapisu stanu gry"
+msgstr "Błąd: nie udało się utworzyć zapisu stanu gry"
 
 #: engines/grim/inputdialog.cpp:79
 #, fuzzy
@@ -5197,9 +5167,8 @@ msgid ""
 msgstr ""
 
 #: engines/grim/metaengine.cpp:61
-#, fuzzy
 msgid "Escape from Monkey Island support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Gra 'Escape from Monkey Island' nie jest wbudowana"
 
 #: engines/grim/resource.cpp:102
 #, c-format
@@ -5267,9 +5236,8 @@ msgid "Affects the controls for fast forwarding the game"
 msgstr ""
 
 #: engines/groovie/metaengine.cpp:52
-#, fuzzy
 msgid "GroovieV2 support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Silnik GroovieV2 nie jest wkompilowany"
 
 #: engines/groovie/script.cpp:650
 msgid "Failed to save game"
@@ -5498,9 +5466,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:118
-#, fuzzy
 msgid "Lands of Lore support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Gra 'Lands of Lore' nie jest wkompilowana"
 
 #: engines/kyra/metaengine.cpp:128
 msgid ""
@@ -5509,9 +5476,8 @@ msgid ""
 msgstr ""
 
 #: engines/kyra/metaengine.cpp:134
-#, fuzzy
 msgid "Eye of Beholder support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Gra 'Eye of Beholder' nie jest wkompilowana"
 
 #: engines/kyra/engine/eobcommon.cpp:368 engines/kyra/engine/lol.cpp:468
 #: engines/ultima/ultima4/meta_engine.cpp:224
@@ -5660,7 +5626,7 @@ msgstr ""
 "\n"
 
 #: engines/kyra/gui/saveload_eob.cpp:663
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%d original saved games have been successfully imported into\n"
 "ScummVM. If you want to manually import original saved game later you will\n"
@@ -5668,9 +5634,10 @@ msgid ""
 "'import_savefile'.\n"
 "\n"
 msgstr ""
-"Pomyślnie zaimportowano %d oryginalny zapis gry do ScummVM. Jeśli później "
-"zechcesz zaimportować oryginalne zapisy, będziesz musiał otworzyć konsolę "
-"debugowania ScummVM i użyć komendy 'import_savefile'.\n"
+"Pomyślnie zaimportowano %d oryginalny zapis(y) gry do ScummVM.\n"
+"Jeśli później zechcesz ręcznie zaimportować oryginalne zapisy, będziesz "
+"musiał otworzyć konsolę debugowania ScummVM i użyć komendy 'import_savefile'."
+"\n"
 "\n"
 
 #: engines/kyra/graphics/screen_eob_amiga.cpp:279
@@ -5722,11 +5689,8 @@ msgid ""
 msgstr ""
 
 #: engines/lab/speciallocks.cpp:148
-#, fuzzy
 msgid "This puzzle is not available in the trial version of the game"
-msgstr ""
-"Dalsza eksploracja jest dostępna tylko w pełnej wersji\n"
-"tej gry."
+msgstr "Ta układanka jest dostępna tylko w pełnej wersji tej gry."
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
 #: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:1137
@@ -5854,9 +5818,8 @@ msgid ""
 msgstr ""
 
 #: engines/mohawk/dialogs.cpp:361
-#, fuzzy
 msgid "Transitions:"
-msgstr "~P~rzejścia włączone"
+msgstr "Przejścia:"
 
 #: engines/mohawk/dialogs.cpp:361
 msgid ""
@@ -5879,24 +5842,20 @@ msgid "Best"
 msgstr "Najlepsza"
 
 #: engines/mohawk/metaengine.cpp:292
-#, fuzzy
 msgid "Myst ME support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gry 'Myst ME' nie jest wkompilowana"
 
 #: engines/mohawk/metaengine.cpp:297
-#, fuzzy
 msgid "Myst support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gra 'Myst' nie jest wkompilowana"
 
 #: engines/mohawk/metaengine.cpp:304
-#, fuzzy
 msgid "Riven support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gry 'Riven' nie jest wkompilowana"
 
 #: engines/mohawk/metaengine.cpp:318
-#, fuzzy
 msgid "CSTime support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gry 'CSTime' nie jest skompilowana"
 
 #: engines/mohawk/mohawk.cpp:51
 #, fuzzy
@@ -5909,14 +5868,12 @@ msgid "Open main menu"
 msgstr "~P~owrót do launchera"
 
 #: engines/mohawk/myst.cpp:579 engines/mohawk/riven.cpp:843
-#, fuzzy
 msgid "Load game state"
-msgstr "Wczytaj grę:"
+msgstr "Wczytaj stan gry"
 
 #: engines/mohawk/myst.cpp:584 engines/mohawk/riven.cpp:848
-#, fuzzy
 msgid "Save game state"
-msgstr "Zapis:"
+msgstr "Zapis stanu gry"
 
 #: engines/mohawk/myst.cpp:589 engines/mohawk/riven.cpp:853
 #, fuzzy
@@ -5950,9 +5907,8 @@ msgstr ""
 #: engines/mohawk/myst_stacks/menu.cpp:283
 #: engines/mohawk/riven_stacks/aspit.cpp:349
 #: engines/wintermute/keymapper_tables.h:925
-#, fuzzy
 msgid "Load game"
-msgstr "Wczytaj grę:"
+msgstr "Wczytaj grę"
 
 #: engines/mohawk/myst_stacks/menu.cpp:299
 #: engines/mohawk/riven_stacks/aspit.cpp:370
@@ -5970,9 +5926,8 @@ msgstr "Nowy zapis"
 
 #: engines/mohawk/myst_stacks/menu.cpp:317
 #: engines/mohawk/riven_stacks/aspit.cpp:454
-#, fuzzy
 msgid "Are you sure you want to quit? All unsaved progress will be lost."
-msgstr "   Na pewno chcesz wyjść?   "
+msgstr "Na pewno chcesz wyjść? Wszystkie niezapisane postępy zostaną utracone."
 
 #: engines/mohawk/myst_stacks/preview.cpp:89
 msgid "You can't leave the library in the demo."
@@ -6133,14 +6088,12 @@ msgid "Start with debugger"
 msgstr "Włącz debugger"
 
 #: engines/mtropolis/detection.cpp:100
-#, fuzzy
 msgid "Starts with the debugger dashboard active."
-msgstr "Włącz debugger"
+msgstr "Uruchom z włączonym panelem debuggera."
 
 #: engines/mtropolis/saveload.cpp:142
-#, fuzzy
 msgid "Failed to read version information from save file"
-msgstr "Nie udało się wczytać stanu gry z pliku."
+msgstr "Nie udało się odczytać wersji z pliku stany gry"
 
 #: engines/mtropolis/saveload.cpp:150
 msgid ""
@@ -6162,9 +6115,9 @@ msgid "An error occurred while writing the save game"
 msgstr ", błąd podczas montowania udziału"
 
 #: engines/mutationofjb/util.cpp:32
-#, fuzzy, c-format
+#, c-format
 msgid "Unable to locate the '%s' engine data file"
-msgstr "Nie udało się znaleźć plików silnika %s."
+msgstr "Nie udało się znaleźć %s pliku gry"
 
 #: engines/myst3/detection.cpp:179 engines/myst3/detection.cpp:193
 #, fuzzy
@@ -6260,9 +6213,8 @@ msgid "Open event flags cheat menu"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:40
-#, fuzzy
 msgid "Player Speech"
-msgstr "Czas gry: "
+msgstr "Mowa głównego bohatera gry"
 
 #: engines/nancy/dialogs.cpp:40
 msgid ""
@@ -6350,14 +6302,12 @@ msgid "Hard"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:124
-#, fuzzy
 msgid "Player Data"
-msgstr "Czas gry: "
+msgstr "Dane gracza"
 
 #: engines/nancy/dialogs.cpp:125
-#, fuzzy
 msgid "Player Time:"
-msgstr "Czas gry: "
+msgstr "Czas grania w grę:"
 
 #: engines/nancy/dialogs.cpp:127
 msgid "Days"
@@ -6380,9 +6330,8 @@ msgid "Software Timer"
 msgstr ""
 
 #: engines/nancy/dialogs.cpp:136
-#, fuzzy
 msgid "Timer On"
-msgstr "Czas: "
+msgstr "Zegar właczony"
 
 #: engines/nancy/dialogs.cpp:143
 #, fuzzy
@@ -6552,9 +6501,8 @@ msgid "Pocket PC Trial version is not supported"
 msgstr "Identyfikator gry nie jest wspierany"
 
 #: engines/saga/metaengine.cpp:112
-#, fuzzy
 msgid "I Have No Mouth support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Wsparcie dla gry 'I Have No Mouth' nie wkompilowane"
 
 #: engines/saga/music.cpp:95
 #, c-format
@@ -6565,9 +6513,8 @@ msgid ""
 msgstr ""
 
 #: engines/saga/saga.cpp:228
-#, fuzzy
 msgid "Error loading game resources."
-msgstr "Błąd przy odczycie pliku zapisu gry"
+msgstr "Błąd przy odczycie danych gry."
 
 #: engines/sci/detection_options.h:31
 msgid "Skip EGA dithering pass (full color backgrounds)"
@@ -6713,9 +6660,8 @@ msgid "Incomplete game detected. You have to copy data from all the CDs."
 msgstr ""
 
 #: engines/sci/engine/kfile.cpp:484 engines/sci/metaengine.cpp:368
-#, fuzzy
 msgid "(Autosave)"
-msgstr "Autozapis:"
+msgstr "(Autozapis)"
 
 #: engines/sci/engine/kgraphics32.cpp:361
 #, c-format
@@ -6731,7 +6677,7 @@ msgstr ""
 
 #: engines/sci/engine/savegame.cpp:1467
 msgid "The format of this saved game is obsolete, unable to load it"
-msgstr "Format tego zapisu gry jest przestarzały. Nie można go wczytać."
+msgstr "Format tego zapisu gry jest przestarzały. Nie można go wczytać"
 
 #: engines/sci/engine/savegame.cpp:1469
 #, c-format
@@ -6752,9 +6698,8 @@ msgid ""
 msgstr ""
 
 #: engines/sci/metaengine.cpp:300
-#, fuzzy
 msgid "SCI32 support not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla silnika 'SCI32' nie jest wkompilowana"
 
 #: engines/sci/resource/resource.cpp:863
 msgid ""
@@ -6843,10 +6788,10 @@ msgid ""
 "was saved in: 'qfg1-' for Quest for Glory 1, 'qfg2-' for Quest for Glory 2. "
 "Example: 'qfg2-thief.sav'."
 msgstr ""
-"Postacie zapisane przez ScummVM są pokazywane automatycznie. Pliki postaci, "
-"zapisane oryginalnym programem, muszą być umieszczone f folderze zapisanych "
+"Postacie zapisane przez ScummVM są pokazywane automatycznie. Pliki postaci "
+"zapisane oryginalnym programem, muszą być umieszczone w folderze zapisanych "
 "gier ScummVM i należy dodać do nich przedrostek, zależny od gry, w której "
-"zostały utworzone:  \"qfg1-\" dla Quest for Glory 1, \"qfg2-\" dla Quest for "
+"zostały utworzone: \"qfg1-\" dla Quest for Glory 1, \"qfg2-\" dla Quest for "
 "Glory 2. Przykład: 'qfg2-thief.sav'."
 
 #: engines/sci/sound/music.cpp:160
@@ -6941,9 +6886,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/detection.cpp:238
-#, fuzzy
 msgid "Load modded audio"
-msgstr "Wczytaj grę:"
+msgstr "Wczytaj zmodyfikowaną ściężkę dźwiękową"
 
 #: engines/scumm/detection.cpp:239
 msgid ""
@@ -7027,9 +6971,8 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/dialogs.cpp:1022
-#, fuzzy
 msgid "Playback Adjust:"
-msgstr "Odtwarzaj"
+msgstr "Korekcja odtwarzania:"
 
 #: engines/scumm/dialogs.cpp:1026
 msgid ""
@@ -7597,14 +7540,12 @@ msgstr ""
 "Pełną wersję można nabyć w sklepie iTunes."
 
 #: engines/scumm/metaengine.cpp:431
-#, fuzzy
 msgid "HE v71+ support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Wsparcie dla silnika 'HE v71+' nie jest wkompilowana"
 
 #: engines/scumm/metaengine.cpp:455
-#, fuzzy
 msgid "SCUMM v7-8 support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Wsparcie dla silnika 'SCUMM v7-8' nie jest wkompilowane"
 
 #: engines/scumm/scumm.cpp:261
 msgid ""
@@ -7615,30 +7556,30 @@ msgid ""
 msgstr ""
 
 #: engines/scumm/scumm.cpp:1099
-#, fuzzy
 msgid ""
 "Could not find the 'Indy' Macintosh executable. High-resolution fonts will\n"
 "be disabled."
 msgstr ""
-"Nie znaleziono pliku wykonywalnego \"Loom\" dla Macintosha do odczytania "
-"instrumentów. Muzyka będzie wyłączona."
+"Nie znaleziono pliku wykonywalnego \"Indy\". Wysokiej rozdzielczości "
+"czcionki\n"
+"będą wyłączone."
 
 #: engines/scumm/scumm.cpp:1125
-#, fuzzy
 msgid ""
 "Could not find the 'Loom' Macintosh executable. Music and high-resolution\n"
 "versions of font and cursor will be disabled."
 msgstr ""
-"Nie znaleziono pliku wykonywalnego \"Loom\" dla Macintosha do odczytania "
-"instrumentów. Muzyka będzie wyłączona."
+"Nie znaleziono pliku wykonywalnego \"Loom\". Muzyka, wysokiej "
+"rozdzielczości\n"
+"czcionka i kursor nie będa właczone."
 
 #: engines/scumm/scumm.cpp:1147
 msgid ""
 "Could not find the 'Monkey Island' Macintosh executable to read the\n"
 "instruments from. Music will be disabled."
 msgstr ""
-"Nie znaleziono pliku wykonywalnego \"Monkey Island\" dla Macintosha do "
-"odczytania instrumentów. Muzyka będzie wyłączona."
+"Nie znaleziono pliku wykonywalnego \"Monkey Island\". Muzyka będzie "
+"wyłączona."
 
 #: engines/scumm/scumm.cpp:1443
 msgid ""
@@ -7769,9 +7710,8 @@ msgid "WARNING: Deleting the autosave slot is not supported by this engine"
 msgstr ""
 
 #: engines/stark/detection.cpp:387
-#, fuzzy
 msgid "Load modded assets"
-msgstr "Wczytaj grę:"
+msgstr "Wczytaj zmodyfikowane pliki gry"
 
 #: engines/stark/detection.cpp:388
 msgid "Enable loading of external replacement assets."
@@ -7802,9 +7742,8 @@ msgid "Software renderer does not support modded assets"
 msgstr "Silnik nie wspiera zapisywania stanu gry"
 
 #: engines/stark/stark.cpp:291
-#, fuzzy
 msgid "You are missing recommended data files:"
-msgstr "Brakuje ci następujących, wymaganych plików gry Riven:\n"
+msgstr "Brakuje zalecanych następujących plików gry 'Riven':"
 
 #: engines/stark/stark.cpp:305
 msgid ""
@@ -7959,7 +7898,7 @@ msgstr "Użyj angielskich głosów"
 msgid ""
 "Use English speech instead of German for every language other than German"
 msgstr ""
-"Użyj angielskich głosów zamiast niemieckich, dla każdego języka, poza "
+"Użyj angielskich głosów zamiast niemieckich dla każdego języka poza "
 "niemieckim."
 
 #: engines/teenagent/resources.cpp:120
@@ -7981,11 +7920,9 @@ msgid "Font variant not present in '%s' engine data file."
 msgstr "Wariant fontu nieobecny w pliku silnika \"%s\"."
 
 #: engines/toon/toon.cpp:244
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game in slot #%d "
-msgstr ""
-"Nie można zapisać w slocie %i\n"
-"\n"
+msgstr "Nie można zapisać stanu gry w slocie %i "
 
 #: engines/toon/toon.cpp:248
 #, c-format
@@ -7993,21 +7930,18 @@ msgid "Could not quick save into slot #%d"
 msgstr "Szybki zapis w slocie #%d nie powiódł się"
 
 #: engines/toon/toon.cpp:261
-#, fuzzy, c-format
+#, c-format
 msgid "Saved game #%d quick loaded"
-msgstr ""
-"Nie można zapisać w slocie %i\n"
-"\n"
+msgstr "Nie można zapisać szybkiego stany gry w slocie %i"
 
 #: engines/toon/toon.cpp:265
-#, fuzzy, c-format
+#, c-format
 msgid "Could not quick load the saved game #%d"
-msgstr "Chcesz wczytać zapis stanu gry?"
+msgstr "Nie można wczytać szybkiego stany gry #%d"
 
 #: engines/toon/toon.cpp:1502
-#, fuzzy
 msgid "Are you sure you want to exit?"
-msgstr "   Na pewno chcesz wyjść?   "
+msgstr "Czy na pewno chcesz wyjść?"
 
 #: engines/toon/toon.cpp:1906
 #, c-format
@@ -8015,9 +7949,10 @@ msgid "Unable to locate the '%s' data file."
 msgstr "Nie udało się odnaleźć '%s' pliku."
 
 #: engines/twine/detection.cpp:272
-#, fuzzy
 msgid "This version requires Giflib which was not compiled into ScummVM"
-msgstr "Ta gra wymaga silnika FoxTail który nie jest zgodny z programem."
+msgstr ""
+"Ta wersja gry wymaga obsługi dla 'Giflib' które nie jest wkompilowane w "
+"ScummVM"
 
 #: engines/twine/detection.cpp:1014
 msgid "Enable wall collisions"
@@ -8358,9 +8293,9 @@ msgid "Could not find correct ultima.dat datafile"
 msgstr ""
 
 #: engines/ultima/shared/engine/data_archive.cpp:80
-#, fuzzy, c-format
+#, c-format
 msgid "Could not locate engine data %s"
-msgstr "Nie udało się znaleźć plików silnika %s."
+msgstr "Nie udało się znaleźć plików silnika %s"
 
 #: engines/ultima/shared/engine/data_archive.cpp:98
 #, c-format
@@ -8442,19 +8377,16 @@ msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
 
 #: engines/wintermute/metaengine.cpp:64
-#, fuzzy
 msgid "FoxTail support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gry 'FoxTail' nie jest wkompilowana"
 
 #: engines/wintermute/metaengine.cpp:70
-#, fuzzy
 msgid "Hero Craft support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gry 'Hero Craft' nie jest wkompilowana"
 
 #: engines/wintermute/metaengine.cpp:76
-#, fuzzy
 msgid "Wintermute3D support is not compiled in"
-msgstr "Wkompilowane funkcje:"
+msgstr "Obsługa dla gier 3D dla silnika Wintermute nie jest wkompilowana"
 
 #: engines/wintermute/wintermute.cpp:148
 msgid "This game requires PNG, JPEG and Vorbis support."
@@ -8827,9 +8759,8 @@ msgid "Change font size"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:920
-#, fuzzy
 msgid "Save game"
-msgstr "Zapis:"
+msgstr "Zapis gry"
 
 #: engines/wintermute/keymapper_tables.h:935
 msgid "Walking speed: Low"
@@ -8879,39 +8810,32 @@ msgid "Select next music record"
 msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:1009
-#, fuzzy
 msgid "Play note 1: A"
-msgstr "Czas gry: "
+msgstr "Odtwórcz utwór 1: A"
 
 #: engines/wintermute/keymapper_tables.h:1014
-#, fuzzy
 msgid "Play note 2: F#"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 2: F#"
 
 #: engines/wintermute/keymapper_tables.h:1019
-#, fuzzy
 msgid "Play note 3: D#"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 3: D#"
 
 #: engines/wintermute/keymapper_tables.h:1024
-#, fuzzy
 msgid "Play note 4: C#"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 4: C#"
 
 #: engines/wintermute/keymapper_tables.h:1029
-#, fuzzy
 msgid "Play note 5: E"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 5: E"
 
 #: engines/wintermute/keymapper_tables.h:1034
-#, fuzzy
 msgid "Play note 6: G#"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 6: G#"
 
 #: engines/wintermute/keymapper_tables.h:1039
-#, fuzzy
 msgid "Play note 7: B"
-msgstr "Czas gry: "
+msgstr "Odtwórz utwór 7: B"
 
 #: engines/wintermute/keymapper_tables.h:1052
 msgid "Ability: Telekinesis"
@@ -9064,39 +8988,32 @@ msgid "Drop"
 msgstr "~O~puść stronę"
 
 #: engines/wintermute/keymapper_tables.h:1966
-#, fuzzy
 msgid "Player 1: Up"
-msgstr "Czas gry: "
+msgstr "Gracz 1: W górę"
 
 #: engines/wintermute/keymapper_tables.h:1971
-#, fuzzy
 msgid "Player 1: Left"
-msgstr "Czas gry: "
+msgstr "Gracz 1: W lewo"
 
 #: engines/wintermute/keymapper_tables.h:1976
-#, fuzzy
 msgid "Player 1: Down"
-msgstr "Czas gry: "
+msgstr "Gracz 1: W dół"
 
 #: engines/wintermute/keymapper_tables.h:1981
-#, fuzzy
 msgid "Player 1: Right"
-msgstr "Czas gry: "
+msgstr "Gracz 1: W prawo"
 
 #: engines/wintermute/keymapper_tables.h:1986
-#, fuzzy
 msgid "Player 2: Up"
-msgstr "Czas gry: "
+msgstr "Gracz 2: W górę"
 
 #: engines/wintermute/keymapper_tables.h:1991
-#, fuzzy
 msgid "Player 2: Left"
-msgstr "Czas gry: "
+msgstr "Gracz 2: W lewo"
 
 #: engines/wintermute/keymapper_tables.h:1996
-#, fuzzy
 msgid "Player 2: Down"
-msgstr "Czas gry: "
+msgstr "Gracz 2: W dół"
 
 #: engines/wintermute/keymapper_tables.h:2001
 #, fuzzy
@@ -9127,7 +9044,7 @@ msgid ""
 "be compared"
 msgstr ""
 "Pokazuje koszt przedmiotów w standardowym trybie ekwipunku, co pozwala na "
-"porównywanie ich wartości."
+"porównywanie ich wartości"
 
 #: engines/xeen/detection.cpp:67
 msgid "More durable armor"
@@ -9213,9 +9130,8 @@ msgid "Extract coin"
 msgstr ""
 
 #: engines/zvision/metaengine.cpp:208
-#, fuzzy
 msgid "Preferences"
-msgstr "Pref. urządzenie:"
+msgstr "Preferencje"
 
 #: engines/zvision/zvision.cpp:309
 msgid ""
