@@ -47,7 +47,7 @@ bool ImageViewer::load(int imageNum) {
 
 	// build string
 	char number[8];
-	sprintf(number, "%d", imageNum);
+	Common::sprintf_s(number, "%d", imageNum);
 	Common::String imageNameStr(imageName);
 	Common::String specificImageName = imageNameStr + Common::String(number) + Common::String(".png");
 
@@ -74,19 +74,19 @@ bool ImageViewer::load(int imageNum) {
 
 	char error[100];
 	if (status == PngLoader::BAD_FILE) {
-		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
+		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	} else if (status == PngLoader::OUT_OF_MEMORY) {
-		sprintf(error, "Out of memory loading %s. Try making the image smaller", specificImageName.c_str());
+		Common::sprintf_s(error, "Out of memory loading %s. Try making the image smaller", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
 	}
 	// try to load the image file
 	if (!image.load()) {
-		sprintf(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
+		Common::sprintf_s(error, "Cannot display %s. Not a proper PNG file", specificImageName.c_str());
 		GUI::TimedMessageDialog dialog(Common::U32String(error), 4000);
 		dialog.runModal();
 		return false;
