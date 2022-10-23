@@ -385,6 +385,17 @@ Graphics::Surface *BitmapCastMember::getMatte(Common::Rect &bbox) {
 	return _matte ? _matte->getMask() : nullptr;
 }
 
+Common::String BitmapCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, regX: %d, regY: %d, pitch: %d, bitsPerPixel: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_regX, _regY, _pitch, _bitsPerPixel
+	);
+}
 
 /////////////////////////////////////
 // DigitalVideo
@@ -665,6 +676,20 @@ void DigitalVideoCastMember::setFrameRate(int rate) {
 	warning("STUB: DigitalVideoCastMember::setFrameRate(%d)", rate);
 }
 
+Common::String DigitalVideoCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, filename: \"%s\", duration: %d, enableVideo: %d, enableSound: %d, looping: %d, crop: %d, center: %d, showControls: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_filename.c_str(), _duration,
+		_enableVideo, _enableSound,
+		_looping, _crop, _center, _showControls
+	);
+}
+
+
 /////////////////////////////////////
 // MovieCasts
 /////////////////////////////////////
@@ -690,6 +715,17 @@ MovieCastMember::MovieCastMember(Cast *cast, uint16 castId, Common::SeekableRead
 
 }
 
+Common::String MovieCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, enableScripts: %d, enableSound: %d, looping: %d, crop: %d, center: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_enableScripts, _enableSound, _looping,
+		_crop, _center
+	);
+}
 
 /////////////////////////////////////
 // Film loops
@@ -907,6 +943,17 @@ void FilmLoopCastMember::loadFilmLoopData(Common::SeekableReadStreamEndian &stre
 
 }
 
+Common::String FilmLoopCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, frameCount: %d, subchannelCount: %d, enableSound: %d, looping: %d, crop: %d, center: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		_frames.size(), _subchannels.size(), _enableSound, _looping,
+		_crop, _center
+	);
+}
 
 /////////////////////////////////////
 // Sound
@@ -924,6 +971,11 @@ SoundCastMember::~SoundCastMember() {
 		delete _audio;
 }
 
+Common::String SoundCastMember::formatInfo() {
+	return Common::String::format(
+		"looping: %d", _looping
+	);
+}
 
 /////////////////////////////////////
 // Text
@@ -1243,6 +1295,19 @@ void TextCastMember::updateFromWidget(Graphics::MacWidget *widget) {
 	}
 }
 
+Common::String TextCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, editable: %d, text: \"%s\"",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_editable, _ptext.encode().c_str()
+	);
+
+}
+
 
 /////////////////////////////////////
 // Shape
@@ -1312,6 +1377,18 @@ void ShapeCastMember::setForeColor(uint32 fgCol) {
 	_modified = true;
 }
 
+Common::String ShapeCastMember::formatInfo() {
+	return Common::String::format(
+		"initialRect: %dx%d@%d,%d, boundingRect: %dx%d@%d,%d, foreColor: %d, backColor: %d, shapeType: %d, pattern: %d, fillType: %d, lineThickness: %d, lineDirection: %d, ink: %d",
+		_initialRect.width(), _initialRect.height(),
+		_initialRect.left, _initialRect.top,
+		_boundingRect.width(), _boundingRect.height(),
+		_boundingRect.left, _boundingRect.top,
+		getForeColor(), getBackColor(),
+		_shapeType, _pattern, _fillType,
+		_lineThickness, _lineDirection, _ink
+	);
+}
 
 /////////////////////////////////////
 // Script

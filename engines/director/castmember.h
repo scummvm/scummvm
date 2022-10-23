@@ -96,6 +96,8 @@ public:
 	// release the control to widget, this happens when we are changing sprites. Because we are having the new cast member and the old one shall leave
 	void releaseWidget() { _widget = nullptr; }
 
+	virtual Common::String formatInfo() { return Common::String(); };
+
 	CastType _type;
 	Common::Rect _initialRect;
 	Common::Rect _boundingRect;
@@ -130,6 +132,8 @@ public:
 	bool hasField(int field) override;
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
+
+	Common::String formatInfo() override;
 
 	Image::ImageDecoder *_img;
 	Graphics::Surface *_ditheredImg;
@@ -173,6 +177,8 @@ public:
 	Datum getField(int field) override;
 	bool setField(int field, const Datum &value) override;
 
+	Common::String formatInfo() override;
+
 	Common::String _filename;
 
 	uint32 _vflags;
@@ -215,6 +221,8 @@ public:
 
 	void loadFilmLoopData(Common::SeekableReadStreamEndian &stream);
 
+	Common::String formatInfo() override;
+
 	bool _enableSound;
 	bool _looping;
 	bool _crop;
@@ -227,6 +235,8 @@ public:
 class MovieCastMember : public CastMember {
 public:
 	MovieCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
+
+	Common::String formatInfo() override;
 
 	uint32 _flags;
 	bool _looping;
@@ -241,6 +251,8 @@ public:
 	SoundCastMember(Cast *cast, uint16 castId, Common::SeekableReadStreamEndian &stream, uint16 version);
 	~SoundCastMember();
 
+	Common::String formatInfo() override;
+
 	bool _looping;
 	AudioDecoder *_audio;
 };
@@ -252,6 +264,8 @@ public:
 	uint32 getBackColor() override { return _bgCol; }
 	void setBackColor(uint32 bgCol) override;
 	void setForeColor(uint32 fgCol) override;
+
+	Common::String formatInfo() override;
 
 	ShapeType _shapeType;
 	uint16 _pattern;
@@ -295,6 +309,8 @@ public:
 
 	int getTextSize();
 	void setTextSize(int textSize);
+
+	Common::String formatInfo() override;
 
 	SizeType _borderSize;
 	SizeType _gutterSize;
