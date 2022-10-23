@@ -36,7 +36,7 @@ const char *lastPathComponent(const Common::String &str) {
 	int pathOffset = str.size();
 
 	if (pathOffset <= 0) {
-		debug(0, "lastPathComponent() failed -> Bad offset (Empty path received)!");
+		debug(6, "lastPathComponent() failed -> Bad offset (Empty path received)!");
 		return 0;
 	}
 
