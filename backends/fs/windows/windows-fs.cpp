@@ -179,7 +179,7 @@ bool WindowsFilesystemNode::getChildren(AbstractFSList &myList, ListMode mode, b
 		HANDLE handle;
 		char searchPath[MAX_PATH + 10];
 
-		sprintf(searchPath, "%s*", _path.c_str());
+		Common::sprintf_s(searchPath, "%s*", _path.c_str());
 
 		handle = FindFirstFile(charToTchar(searchPath), &desc);
 
