@@ -101,10 +101,10 @@ void Display::dynalumInit(const char *roomName, uint16 roomNum) {
 
 	if (!isPalFadingDisabled(roomNum)) {
 		char filename[20];
-		sprintf(filename, "%s.MSK", roomName);
+		Common::sprintf_s(filename, "%s.MSK", roomName);
 		if (_vm->resource()->fileExists(filename)) {
 			_dynalum.mskBuf = (uint8 *)_vm->resource()->loadFile(filename, 0, &_dynalum.mskSize);
-			sprintf(filename, "%s.LUM", roomName);
+			Common::sprintf_s(filename, "%s.LUM", roomName);
 			if (_vm->resource()->fileExists(filename)) {
 				_dynalum.lumBuf = (int8 *)_vm->resource()->loadFile(filename, 0, &_dynalum.lumSize);
 				_dynalum.valid = true;
@@ -702,7 +702,7 @@ void Display::setupPanel() {
 
 	uint32 dataSize;
 	char dataName[20];
-	sprintf(dataName, "PANEL.%s", _imageExt);
+	Common::sprintf_s(dataName, "PANEL.%s", _imageExt);
 	uint8 *data = _vm->resource()->loadFile(dataName, 0, &dataSize);
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {
@@ -721,7 +721,7 @@ void Display::setupNewRoom(const char *name, uint16 room) {
 
 	uint32 dataSize;
 	char dataName[20];
-	sprintf(dataName, "%s.%s", name, _imageExt);
+	Common::sprintf_s(dataName, "%s.%s", name, _imageExt);
 	uint8 *data = _vm->resource()->loadFile(dataName, 0, &dataSize);
 
 	if (_vm->resource()->getPlatform() == Common::kPlatformAmiga) {

@@ -132,13 +132,13 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 
 		if (hasTalkedTo() && head == 1)
-			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
+			Common::sprintf_s(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
 		else
-			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
+			Common::sprintf_s(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 
 		if (_talkString[0][0] == '\0' && retval > 1) {
 			findDialogueString(_person1PtrOff, retval, _pMax, _talkString[0]);
-			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
+			Common::sprintf_s(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
@@ -151,7 +151,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (index < 0 && _vm->logic()->gameState(ABS(index)) != _dialogueTree[level][i].gameStateValue)
 				_talkString[i][0] = '\0';
 
-			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
+			Common::sprintf_s(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
 		}
 
 		// Check to see if (all the dialogue options have been selected.
@@ -247,7 +247,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (-1 == retval) {
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
-				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
+				Common::sprintf_s(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 				speak(_talkString[0], &person, otherVoiceFilePrefix);
 			}
 		}
@@ -435,14 +435,14 @@ void Talk::initialTalk() {
 		// Not yet talked to this person
 		if (joeString[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
+			Common::sprintf_s(voiceFilePrefix, "%2dSSSSJ", _talkKey);
 			speak(joeString, nullptr, voiceFilePrefix);
 		}
 	} else {
 		// Already spoken to them, choose second response
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
+			Common::sprintf_s(voiceFilePrefix, "%2dXXXXJ", _talkKey);
 			speak(joe2String, nullptr, voiceFilePrefix);
 		}
 	}
@@ -789,7 +789,7 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 
 	char voiceFileName[MAX_STRING_SIZE];
-	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
+	Common::sprintf_s(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
 
 	// French talkie version has a useless voice file ;	c30e_102 file is the same as c30e_101,
 	// so there is no need to play it. This voice was used in room 30 (N8) when talking to Klunk.
