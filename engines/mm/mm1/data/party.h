@@ -65,6 +65,11 @@ struct Party : public Common::Array<Character> {
 	 * Called to update the party after combat is done
 	 */
 	void combatDone();
+
+	/**
+	 * Returns true if any of the party has an item
+	 */
+	bool hasItem(byte itemId) const;
 };
 
 } // namespace MM1

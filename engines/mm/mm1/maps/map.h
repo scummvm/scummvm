@@ -122,11 +122,6 @@ protected:
 	 */
 	static void none160() {}
 
-	/**
-	 * Updates the game display
-	 */
-	static void updateGame();
-
 public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];
@@ -188,6 +183,10 @@ public:
 		return g_events->send(name, msg);
 	}
 
+	/**
+	 * Updates the game display
+	 */
+	static void updateGame();
 };
 
 } // namespace Maps

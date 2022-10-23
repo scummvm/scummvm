@@ -91,5 +91,16 @@ void Party::combatDone() {
 	}
 }
 
+bool Party::hasItem(byte itemId) const {
+	for (uint i = 0; i < size(); ++i) {
+		const Character &c = (*this)[i];
+		if (c._equipped.indexOf(itemId) != -1 ||
+			c._backpack.indexOf(itemId) != -1)
+			return true;
+	}
+
+	return false;
+}
+
 } // namespace MM1
 } // namespace MM

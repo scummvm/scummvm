@@ -50,10 +50,7 @@ void Map26::special() {
 	msg._lines.push_back(Line(0, 1, STRING["maps.map26.its_hot"]));
 
 	// Check whether party has the desert map
-	bool hasMap = false;
-	for (uint i = 0; i < g_globals->_party.size() && !hasMap; ++i) {
-		hasMap = g_globals->_party[i].hasItem(MAP_OF_DESERT_ID);
-	}
+	bool hasMap = g_globals->_party.hasItem(MAP_OF_DESERT_ID);
 	if (!hasMap) {
 		msg._lines.push_back(Line(0, 2, STRING["maps.map26.lost"]));
 		lost();
