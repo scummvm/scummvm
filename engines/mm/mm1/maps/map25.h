@@ -32,9 +32,14 @@ class Map25 : public Map {
 	typedef void (Map25:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void nativesAttack();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map25::special00
+	const SpecialFn SPECIAL_FN[3] = {
+		&Map25::special00,
+		&Map25::special01,
+		&Map25::special02
 	};
 public:
 	Map25() : Map(25, "areac4", 0xF04) {}
