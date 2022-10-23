@@ -32,9 +32,17 @@ class Map26 : public Map {
 	typedef void (Map26:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void lost();
+	void addFlag();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map26::special00
+	const SpecialFn SPECIAL_FN[4] = {
+		&Map26::special00,
+		&Map26::special01,
+		&Map26::special02,
+		&Map26::special03
 	};
 public:
 	Map26() : Map(26, "aread1", 0x505) {}
