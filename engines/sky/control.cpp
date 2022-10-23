@@ -1074,10 +1074,10 @@ void Control::setUpGameSprites(const Common::StringArray &saveGameNames, DataFil
 		char nameBuf[MAX_TEXT_LEN + 10];
 
 		if (firstNum + cnt == selectedGame) {
-			sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, dirtyString.c_str());
+			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, dirtyString.c_str());
 			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 0);
 		} else {
-			sprintf(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
+			Common::sprintf_s(nameBuf, "%3d: %s", firstNum + cnt + 1, saveGameNames[firstNum + cnt].c_str());
 			textSpr = _skyText->displayText(nameBuf, NULL, false, PAN_LINE_WIDTH, 37);
 		}
 		nameSprites[cnt] = (DataFileHeader *)textSpr.textData;
@@ -1180,7 +1180,7 @@ void Control::saveDescriptions(const Common::StringArray &list) {
 uint16 Control::saveGameToFile(bool fromControlPanel, const char *filename, bool isAutosave) {
 	char fName[20];
 	if (!filename) {
-		sprintf(fName,"SKY-VM.%03d", isAutosave ? 0 : _selectedGame + 1);
+		Common::sprintf_s(fName,"SKY-VM.%03d", isAutosave ? 0 : _selectedGame + 1);
 		filename = fName;
 	}
 

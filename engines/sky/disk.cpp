@@ -319,7 +319,7 @@ void Disk::dumpFile(uint16 fileNr) {
 	byte* filePtr;
 
 	filePtr = loadFile(fileNr);
-	sprintf(buf, "dumps/file-%d.dmp", fileNr);
+	Common::sprintf_s(buf, "dumps/file-%d.dmp", fileNr);
 
 	if (!Common::File::exists(buf)) {
 		if (out.open(buf))
