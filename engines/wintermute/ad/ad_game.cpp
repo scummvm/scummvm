@@ -1899,11 +1899,10 @@ bool AdGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *st
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::startDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
-	char *name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
-	if (name) {
-		sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
-		_dlgPendingBranches.add(name);
-	}
+	size_t sz = strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1;
+	char *name = new char[sz];
+	Common::sprintf_s(name, sz, "%s.%s.%s", branchName, scriptName, eventName);
+	_dlgPendingBranches.add(name);
 	return STATUS_OK;
 }
 
@@ -1916,11 +1915,10 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 		name = _dlgPendingBranches[_dlgPendingBranches.size() - 1];
 	} else {
 		if (branchName != nullptr) {
-			name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
-			if (name) {
-				sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
-				deleteName = true;
-			}
+			size_t sz = strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1;
+			name = new char[sz];
+			Common::sprintf_s(name, sz, "%s.%s.%s", branchName, scriptName, eventName);
+			deleteName = true;
 		}
 	}
 
@@ -2327,12 +2325,12 @@ char *AdGame::findSpeechFile(char *stringID) {
 	char *ret = new char[MAX_PATH_LENGTH];
 
 	for (uint32 i = 0; i < _speechDirs.size(); i++) {
-		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
+		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.ogg", _speechDirs[i], stringID);
 		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
 
-		sprintf(ret, "%s%s.wav", _speechDirs[i], stringID);
+		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.wav", _speechDirs[i], stringID);
 		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
@@ -2486,10 +2484,10 @@ bool AdGame::onMouseRightUp() {
 bool AdGame::displayDebugInfo() {
 	char str[100];
 	if (_gameRef->_debugDebugMode) {
-		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
+		Common::sprintf_s(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 
-		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
+		Common::sprintf_s(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
 		_systemFont->drawText((byte *)str, 0, 110, _renderer->getWidth(), TAL_RIGHT);
 	}
 	return BaseGame::displayDebugInfo();

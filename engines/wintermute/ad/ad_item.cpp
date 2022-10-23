@@ -443,7 +443,7 @@ bool AdItem::display(int x, int y) {
 				font->drawText((byte *)_amountString, amountX, amountY, width, _amountAlign);
 			} else {
 				char str[256];
-				sprintf(str, "%d", _amount);
+				Common::sprintf_s(str, "%d", _amount);
 				font->drawText((byte *)str, amountX, amountY, width, _amountAlign);
 			}
 		}
