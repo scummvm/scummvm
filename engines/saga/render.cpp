@@ -170,7 +170,7 @@ void Render::drawScene() {
 	// Display rendering information
 	if (_flags & RF_SHOW_FPS) {
 		char txtBuffer[20];
-		sprintf(txtBuffer, "%d", _fps);
+		Common::sprintf_s(txtBuffer, "%d", _fps);
 		textPoint.x = _vm->_gfx->getBackBufferWidth() - _vm->_font->getStringWidth(kKnownFontSmall, txtBuffer, 0, kFontOutline);
 		textPoint.y = 2;
 

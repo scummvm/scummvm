@@ -163,7 +163,7 @@ void SagaMetaEngine::removeSaveState(const char *target, int slot) const {
 
 SaveStateDescriptor SagaMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
 	static char fileName[MAX_FILE_NAME];
-	sprintf(fileName, "%s.s%02d", target, slot);
+	Common::sprintf_s(fileName, "%s.s%02d", target, slot);
 	char title[TITLESIZE];
 
 	Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(fileName);
