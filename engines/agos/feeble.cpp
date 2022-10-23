@@ -268,7 +268,7 @@ void AGOSEngine_FeebleDemo::handleWobble() {
 
 	if (_currentBox && (_currentBox->id >= 11 && _currentBox->id <= 19)) {
 		char filename[15];
-		sprintf(filename, "wobble%d.smk", _currentBox->id - 10);
+		Common::sprintf_s(filename, "wobble%d.smk", _currentBox->id - 10);
 
 		startInteractiveVideo(filename);
 	}

@@ -545,25 +545,25 @@ MoviePlayer *makeMoviePlayer(AGOSEngine_Feeble *vm, const char *name) {
 		memset(shortName, 0, sizeof(shortName));
 		memcpy(shortName, baseName, 6);
 
-		sprintf(filename, "%s~1.dxa", shortName);
+		Common::sprintf_s(filename, "%s~1.dxa", shortName);
 		if (Common::File::exists(filename)) {
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, filename, 8);
 		}
 
-		sprintf(filename, "%s~1.smk", shortName);
+		Common::sprintf_s(filename, "%s~1.smk", shortName);
 		if (Common::File::exists(filename)) {
 			memset(baseName, 0, sizeof(baseName));
 			memcpy(baseName, filename, 8);
 		}
 	}
 
-	sprintf(filename, "%s.dxa", baseName);
+	Common::sprintf_s(filename, "%s.dxa", baseName);
 	if (Common::File::exists(filename)) {
 		return new MoviePlayerDXA(vm, baseName);
 	}
 
-	sprintf(filename, "%s.smk", baseName);
+	Common::sprintf_s(filename, "%s.smk", baseName);
 	if (Common::File::exists(filename)) {
 		return new MoviePlayerSMK(vm, baseName);
 	}
