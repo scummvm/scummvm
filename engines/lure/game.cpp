@@ -550,7 +550,7 @@ void Game::handleRightClickMenu() {
 		action = PopupMenu::Show(actions);
 
 		if (action != NONE) {
-			sprintf(statusLine, "%s ", stringList.getString(action));
+			Common::sprintf_s(statusLine, MAX_DESC_SIZE, "%s ", stringList.getString(action));
 			statusLine += strlen(statusLine);
 		}
 
@@ -664,7 +664,7 @@ void Game::handleLeftClick() {
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {
 		// Handle look at hotspot
-		sprintf(room.statusLine(), "%s ", stringList.getString(LOOK_AT));
+		Common::sprintf_s(room.statusLine(), MAX_DESC_SIZE, "%s ", stringList.getString(LOOK_AT));
 		HotspotData *hotspot = res.getHotspot(room.hotspotId());
 		assert(hotspot);
 		strings.getString(hotspot->nameId, room.statusLine() + strlen(room.statusLine()));
@@ -723,7 +723,7 @@ bool Game::GetTellActions() {
 			screen.update();
 
 			switch (paramIndex) {
-			case 0:
+			case 0: {
 				// Prompt for selection of action to perform
 				action = PopupMenu::Show(0x6A07FD);
 				if (action == NONE) {
@@ -740,7 +740,8 @@ bool Game::GetTellActions() {
 				}
 
 				// Add the action to the status line
-				sprintf(statusLine + strlen(statusLine), "%s ", stringList.getString(action));
+				size_t pos = strlen(statusLine);
+				Common::sprintf_s(statusLine + pos, MAX_DESC_SIZE - (statusLine - origStatusLine) - pos, "%s ", stringList.getString(action));
 
 				// Handle any processing for the action
 				commands[_numTellCommands * 3] = (uint16) action;
@@ -748,7 +749,7 @@ bool Game::GetTellActions() {
 				commands[_numTellCommands * 3 + 2] = 0;
 				++paramIndex;
 				break;
-
+			}
 			case 1:
 				// First parameter
 				action = (Action) commands[_numTellCommands * 3];
@@ -829,13 +830,14 @@ bool Game::GetTellActions() {
 					selectionId = PopupMenu::Show(2, continueStrsList);
 
 					switch (selectionId) {
-					case 0:
+					case 0: {
 						// Get ready for next command
-						sprintf(statusLine + strlen(statusLine), " %s ", continueStrsList[0]);
+						size_t pos = strlen(statusLine);
+						Common::sprintf_s(statusLine + pos, MAX_DESC_SIZE - (statusLine - origStatusLine) - pos, " %s ", continueStrsList[0]);
 						++_numTellCommands;
 						paramIndex = 0;
 						break;
-
+					}
 					case 1:
 						// Increment for just selected command, and add a large amount
 						// to signal that the command sequence is complete
