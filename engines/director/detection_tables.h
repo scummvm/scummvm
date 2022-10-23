@@ -2812,7 +2812,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("3datlas97", "Demo", "ATLAS97.EXE", "b5da314bdfd9344530a24093f2e0b566", 8300357, 404),
 
-	MACGAME1_l("4sight", "", "four-sight", "0c7bbb4b24823e5ab871cb4c1d6f3710", 508347, Common::JA_JPN, 404),
+	MACGAME1_l("4sight", "", "four-sight", "0c7bbb4b24823e5ab871cb4c1d6f3710", 508091, Common::JA_JPN, 404),
 	WINGAME1_l("4sight", "", "4_SIGHT.EXE", "26c279f80434c0a641d28cec198c783f", 740581, Common::JA_JPN, 404),
 
 	MACGAME1("9worlds", "", "Nine Worlds", "3930940b5b4b2ae2563cc29b812855a6", 482838, 400),
