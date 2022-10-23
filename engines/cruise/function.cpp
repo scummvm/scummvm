@@ -1524,13 +1524,13 @@ int16 Op_Itoa() {
 	char* pDest = (char *)popPtr();
 
 	if (!nbp)
-		sprintf(txt, "%d", val);
+		Common::sprintf_s(txt, "%d", val);
 	else {
 		char format[30];
 		format[0] = '%';
-		sprintf(&format[1], "%d", param[0]);
+		Common::sprintf_s(&format[1], sizeof(format) - 1, "%d", param[0]);
 		Common::strcat_s(format, "d");
-		sprintf(txt, format, val);
+		Common::sprintf_s(txt, format, val);
 	}
 
 	for (int i = 0; txt[i]; i++)
