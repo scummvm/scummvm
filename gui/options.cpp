@@ -699,7 +699,6 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("scaler", _domain);
 			ConfMan.removeKey("scale_factor", _domain);
-			ConfMan.removeKey("shader", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 			ConfMan.removeKey("renderer", _domain);
 			ConfMan.removeKey("antialiasing", _domain);
@@ -721,7 +720,11 @@ void OptionsDialog::apply() {
 
 		if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
 			graphicsModeChanged = true;
-		ConfMan.set("shader", shader.encode(), _domain);
+
+		if (_enableGraphicSettings)
+			ConfMan.set("shader", shader.encode(), _domain);
+		else
+			ConfMan.removeKey("shader", _domain);
 
 		_shader->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 	}
