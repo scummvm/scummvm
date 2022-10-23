@@ -32,9 +32,21 @@ class Map27 : public Map {
 	typedef void (Map27:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void lost();
+	Common::String clerics(char name);
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map27::special00
+	const SpecialFn SPECIAL_FN[6] = {
+		&Map27::special00,
+		&Map27::special01,
+		&Map27::special02,
+		&Map27::special03,
+		&Map27::special04,
+		&Map27::special05
 	};
 public:
 	Map27() : Map(27, "aread2", 0xB05) {}
