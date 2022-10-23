@@ -621,9 +621,9 @@ static char *classNameAndId(int classId) {
 	static char buffer[1000] = "";
 
 	if (classId != -1)
-		sprintf(buffer, "%s[%d]", idOfClass(classId), classId);
+		Common::sprintf_s(buffer, "%s[%d]", idOfClass(classId), classId);
 	else
-		sprintf(buffer, "Container");
+		Common::sprintf_s(buffer, "Container");
 	return buffer;
 }
 
@@ -635,9 +635,9 @@ static char *parameterNumberAndName(int parameterNumber) {
 	char *parameterName = parameterNameInSyntax(current.syntax, parameterNumber);
 
 	if (parameterName != nullptr)
-		sprintf(buffer, "%s(#%d)", parameterName, parameterNumber);
+		Common::sprintf_s(buffer, "%s(#%d)", parameterName, parameterNumber);
 	else
-		sprintf(buffer, "#%d", parameterNumber);
+		Common::sprintf_s(buffer, "#%d", parameterNumber);
 	return buffer;
 }
 
@@ -892,7 +892,7 @@ static void checkRestrictedParameters(CONTEXT, ParameterPosition parameterPositi
 						/* It wasn't ALL, we need to say something about it, so
 						 * prepare a printout with $1/2/3
 						 */
-						sprintf(marker, "($%ld)", (unsigned long) restriction->parameterNumber);
+						Common::sprintf_s(marker, "($%ld)", (unsigned long) restriction->parameterNumber);
 						setGlobalParameters(localParameters);
 						output(marker);
 						CALL2(runRestriction, restriction, localParameters)

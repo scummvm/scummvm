@@ -137,10 +137,10 @@ void score(Aword sc) {
 
 	if (sc == 0) {
 		prmsg(M_SCORE1);
-		sprintf(buf, "%d", cur.score);
+		Common::sprintf_s(buf, "%d", cur.score);
 		output(buf);
 		prmsg(M_SCORE2);
-		sprintf(buf, "%ld.", (unsigned long) header->maxscore);
+		Common::sprintf_s(buf, "%ld.", (unsigned long) header->maxscore);
 		output(buf);
 	} else {
 		cur.score += scores[sc - 1];
@@ -304,7 +304,7 @@ void make(Aword id, Aword atr, Aword val) {
 	else if (isAct(id))
 		makact(id, atr, val);
 	else {
-		sprintf(str, "Can't MAKE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't MAKE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 }
@@ -339,7 +339,7 @@ void set(Aword id, Aword atr, Aword val) {
 	else if (isAct(id))
 		setact(id, atr, val);
 	else {
-		sprintf(str, "Can't SET item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't SET item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 }
@@ -398,7 +398,7 @@ void incr(Aword id, Aword atr, Aword step) {
 	else if (isAct(id))
 		incract(id, atr, step);
 	else {
-		sprintf(str, "Can't INCR item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't INCR item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 }
@@ -415,7 +415,7 @@ void decr(Aword id, Aword atr, Aword step) {
 	else if (isAct(id))
 		incract(id, atr, static_cast<uint>(-(int)step));
 	else {
-		sprintf(str, "Can't DECR item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't DECR item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 }
@@ -445,7 +445,7 @@ static Aptr litatr(Aword lit, Aword atr) {
 	if (atr == 1)
 		return litValues[lit - LITMIN].value;
 	else {
-		sprintf(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
+		Common::sprintf_s(str, "Unknown attribute for literal (%ld).", (unsigned long) atr);
 		syserr(str);
 	}
 	return (Aptr)EOD;
@@ -463,7 +463,7 @@ Aptr attribute(Aword id, Aword atr) {
 	else if (isLit(id))
 		return litatr(id, atr);
 	else {
-		sprintf(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't ATTRIBUTE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 	return (Aptr)EOD;
@@ -502,7 +502,7 @@ Aword where(Aword id) {
 	else if (isAct(id))
 		return actloc(id);
 	else {
-		sprintf(str, "Can't WHERE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't WHERE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 	return (Aptr)EOD;
@@ -619,7 +619,7 @@ void locate(Aword id, Aword whr) {
 	else if (isAct(id))
 		locact(id, whr);
 	else {
-		sprintf(str, "Can't LOCATE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't LOCATE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 }
@@ -654,7 +654,7 @@ Abool isHere(Aword id) {
 	else if (isAct(id))
 		return acthere(id);
 	else {
-		sprintf(str, "Can't HERE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't HERE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 	return (Abool)EOD;
@@ -688,7 +688,7 @@ Abool isNear(Aword id) {
 	else if (isAct(id))
 		return actnear(id);
 	else {
-		sprintf(str, "Can't NEAR item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't NEAR item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 	return (Abool)EOD;
@@ -733,7 +733,7 @@ void sayint(Aword val) {
 	char buf[25];
 
 	if (isHere(HERO)) {
-		sprintf(buf, "%ld", (unsigned long) val);
+		Common::sprintf_s(buf, "%ld", (unsigned long) val);
 		output(buf);
 	}
 }
@@ -777,7 +777,7 @@ void say(Aword id) {
 		else if (isLit(id))
 			saylit(id);
 		else {
-			sprintf(str, "Can't SAY item (%ld).", (unsigned long) id);
+			Common::sprintf_s(str, "Can't SAY item (%ld).", (unsigned long) id);
 			syserr(str);
 		}
 	}
@@ -848,7 +848,7 @@ void describe(Aword id) {
 	else if (isAct(id))
 		dscract(id);
 	else {
-		sprintf(str, "Can't DESCRIBE item (%ld).", (unsigned long) id);
+		Common::sprintf_s(str, "Can't DESCRIBE item (%ld).", (unsigned long) id);
 		syserr(str);
 	}
 
@@ -866,7 +866,7 @@ void use(Aword act, Aword scr) {
 	char str[80];
 
 	if (!isAct(act)) {
-		sprintf(str, "Item is not an Actor (%ld).", (unsigned long) act);
+		Common::sprintf_s(str, "Item is not an Actor (%ld).", (unsigned long) act);
 		syserr(str);
 	}
 

@@ -29,7 +29,7 @@ void dbgprintf(const char *fmt, ...) {
 	char buff[300];
 
 	va_start(vp, fmt);
-	vsprintf(buff, fmt, vp);
+	Common::vsprintf_s(buff, fmt, vp);
 	va_end(vp);
 
 	debugout(buff);

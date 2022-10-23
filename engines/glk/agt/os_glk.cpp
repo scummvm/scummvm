@@ -3234,7 +3234,7 @@ static void gagt_display_debug() {
 		gagt_paragraphref_t paragraph;
 
 		paragraph = line->paragraph;
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "%2d:%2d->%2ld A=%-3d L=%-2d I=%-2d O=%-2d R=%-2d %c%c| ",
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
@@ -3256,7 +3256,7 @@ static void gagt_display_debug() {
 	}
 
 	if (gagt_current_buffer.length > 0) {
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "__,__->__ A=%-3d L=%-2d I=__ O=__ R=__ %s| ",
 		        gagt_current_buffer.allocation, gagt_current_buffer.length,
 		        gagt_help_requested ? "HR" : "__");
@@ -4097,7 +4097,7 @@ static void gagt_command_width(const char *argument) {
 	}
 
 	gagt_normal_string("Glk's current display width is approximately ");
-	sprintf(buffer, "%d", status_width);
+	Common::sprintf_s(buffer, "%d", status_width);
 	gagt_normal_string(buffer);
 	gagt_normal_string(status_width == 1 ? " character" : " characters");
 	gagt_normal_string(".\n");
@@ -4216,7 +4216,7 @@ static void gagt_command_statusline(const char *argument) {
 static void gagt_command_print_version_number(glui32 version) {
 	char buffer[64];
 
-	sprintf(buffer, "%u.%u.%u",
+	Common::sprintf_s(buffer, "%u.%u.%u",
 	        version >> 16, (version >> 8) & 0xff, version & 0xff);
 	gagt_normal_string(buffer);
 }

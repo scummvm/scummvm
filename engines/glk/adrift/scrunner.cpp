@@ -602,12 +602,12 @@ static void run_notify_score_change(sc_gameref_t game) {
 	/* Note any change in the score. */
 	if (game->score > undo->score) {
 		if_print_string("(Your score has increased by ");
-		sprintf(buffer, "%ld", game->score - undo->score);
+		Common::sprintf_s(buffer, "%ld", game->score - undo->score);
 		if_print_string(buffer);
 		if_print_string(")\n");
 	} else if (game->score < undo->score) {
 		if_print_string("(Your score has decreased by ");
-		sprintf(buffer, "%ld", undo->score - game->score);
+		Common::sprintf_s(buffer, "%ld", undo->score - game->score);
 		if_print_string(buffer);
 		if_print_string(")\n");
 	}

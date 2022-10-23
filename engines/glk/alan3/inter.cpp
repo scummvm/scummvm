@@ -321,7 +321,7 @@ static const char *booleanValue(Abool value) {
 static const char *stringValue(Aptr address) {
 	static char string[1000];
 
-	sprintf(string, "0x%lx (\"%s\")\t\t", (unsigned long) address, (char *)fromAptr(address));
+	Common::sprintf_s(string, "0x%lx (\"%s\")\t\t", (unsigned long) address, (char *)fromAptr(address));
 	return string;
 }
 
@@ -329,7 +329,7 @@ static const char *stringValue(Aptr address) {
 static const char *pointerValue(Aptr address) {
 	static char string[100];
 
-	sprintf(string, "@%6lx", (unsigned long) address);
+	Common::sprintf_s(string, "@%6lx", (unsigned long) address);
 	return string;
 }
 

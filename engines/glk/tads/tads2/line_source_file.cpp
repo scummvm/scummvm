@@ -378,7 +378,7 @@ void linfppos(lindef *lin, char *buf, uint buflen)
 {
 	VARUSED(buflen);
 
-	sprintf(buf, "%s(%lu): ", ((linfdef *)lin)->linfnam,
+	Common::sprintf_s(buf, buflen, "%s(%lu): ", ((linfdef *)lin)->linfnam,
 			((linfdef *)lin)->linfnum);
 }
 

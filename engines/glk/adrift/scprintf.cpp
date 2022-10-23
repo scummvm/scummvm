@@ -237,7 +237,7 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 		case VAR_INTEGER: {
 			sc_char value[32];
 
-			sprintf(value, "%ld", vt_rvalue.integer);
+			Common::sprintf_s(value, "%ld", vt_rvalue.integer);
 			size_t ln = strlen(buffer) + strlen(value) + 1;
 			buffer = (sc_char *)sc_realloc(buffer, ln);
 			Common::strcat_s(buffer, ln, value);

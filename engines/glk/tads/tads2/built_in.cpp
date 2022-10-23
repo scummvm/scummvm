@@ -517,7 +517,7 @@ void bifsay(bifcxdef *ctx, int argc)
 	{
 	case DAT_NUMBER:
 		num = runpopnum(ctx->bifcxrun);
-		sprintf(numbuf, "%ld", num);
+		Common::sprintf_s(numbuf, "%ld", num);
 		tioputs(ctx->bifcxtio, numbuf);
 		break;
 
@@ -1208,7 +1208,7 @@ void bifcvs(bifcxdef *ctx, int argc)
 		break;
 
 	case DAT_NUMBER:
-		sprintf(buf, "%ld", runpopnum(ctx->bifcxrun));
+		Common::sprintf_s(buf, "%ld", runpopnum(ctx->bifcxrun));
 		p = buf;
 		len = strlen(buf);
 		break;

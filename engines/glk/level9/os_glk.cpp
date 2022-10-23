@@ -3013,11 +3013,11 @@ static void gln_command_graphics(const char *argument) {
 
 				gln_normal_string("There is a picture loaded, ");
 
-				sprintf(buffer, "%d", width);
+				Common::sprintf_s(buffer, "%d", width);
 				gln_normal_string(buffer);
 				gln_normal_string(" by ");
 
-				sprintf(buffer, "%d", height);
+				Common::sprintf_s(buffer, "%d", height);
 				gln_normal_string(buffer);
 
 				gln_normal_string(" pixels.\n");
@@ -3038,7 +3038,7 @@ static void gln_command_graphics(const char *argument) {
 				gln_normal_string("Graphics are ");
 				gln_normal_string(is_active ? "active, " : "displayed, ");
 
-				sprintf(buffer, "%d", color_count);
+				Common::sprintf_s(buffer, "%d", color_count);
 				gln_normal_string(buffer);
 				gln_normal_string(" colours");
 
@@ -3210,7 +3210,7 @@ static void gln_command_prompts(const char *argument) {
 static void gln_command_print_version_number(glui32 version) {
 	char buffer[64];
 
-	sprintf(buffer, "%lu.%lu.%lu",
+	Common::sprintf_s(buffer, "%lu.%lu.%lu",
 	        (unsigned long) version >> 16,
 	        (unsigned long)(version >> 8) & 0xff,
 	        (unsigned long) version & 0xff);

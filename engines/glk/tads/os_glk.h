@@ -1609,7 +1609,7 @@ int os_get_status();
  *.  void os_score(int score, int turncount)
  *.  {
  *.     char buf[40];
- *.     sprintf(buf, "%d/%d", score, turncount);
+ *.     Common::sprintf_s(buf, "%d/%d", score, turncount);
  *.     os_strsc(buf);
  *.  }
  */

@@ -2296,7 +2296,7 @@ void Magnetic::gms_hint_display_text(const ms_hint hints_[],
 	for (index = 0; index < hints_[node].elcount; index++) {
 		char buf[16];
 
-		sprintf(buf, "%3d.  ", index + 1);
+		Common::sprintf_s(buf, "%3d.  ", index + 1);
 		gms_hint_text_print(buf);
 
 		gms_hint_text_print(index < cursor[node]
@@ -2839,11 +2839,11 @@ void Magnetic::gms_command_graphics(const char *argument) {
 				gms_normal_string(is_animated ? "an animated" : "a");
 				gms_normal_string(" picture loaded, ");
 
-				sprintf(buf, "%d", width);
+				Common::sprintf_s(buf, "%d", width);
 				gms_normal_string(buf);
 				gms_normal_string(" by ");
 
-				sprintf(buf, "%d", height);
+				Common::sprintf_s(buf, "%d", height);
 				gms_normal_string(buf);
 
 				gms_normal_string(" pixels.\n");
@@ -2864,7 +2864,7 @@ void Magnetic::gms_command_graphics(const char *argument) {
 				gms_normal_string("Graphics are ");
 				gms_normal_string(is_active ? "active, " : "displayed, ");
 
-				sprintf(buf, "%d", color_count);
+				Common::sprintf_s(buf, "%d", color_count);
 				gms_normal_string(buf);
 				gms_normal_string(" colours");
 

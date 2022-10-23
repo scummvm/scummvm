@@ -96,7 +96,7 @@ void Hugo::AddPossibleObject(int obj, char type, unsigned int w) {
 #ifdef DEBUG_PARSER
 {
 	char buf[100];
-	sprintf(buf, "AddPossibleObject(%d:\"%s\")", obj, Name(obj));
+	Common::sprintf_s(buf, "AddPossibleObject(%d:\"%s\")", obj, Name(obj));
 	Printout(buf);
 }
 #endif
@@ -1302,7 +1302,7 @@ Clarify:
 					if (strcmp(Name(i), ""))
 					{
 						pobj = i;
-						sprintf(line, "(%s)", Name(i));
+						Common::sprintf_s(line, "(%s)", Name(i));
 						AP(line);
 						goto RestoreTempArrays;
 					}
@@ -1656,7 +1656,7 @@ CheckWord:
 		/* a number */
 		case NUMBER_T:
 			if ((STARTS_AS_NUMBER(word[*wordnum])) &&
-				!strcmp(itoa(atoi(word[*wordnum]), num, 10), word[*wordnum]))
+				!strcmp(itoa(atoi(word[*wordnum]), num, 10, sizeof(num)), word[*wordnum]))
 			{
 				if (obj_match_state==1)
 					var[xobject] = atoi(word[*wordnum]);
@@ -1739,7 +1739,7 @@ CheckWordorString:
 
 					/* or a number */
 					else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-						!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10)))
+						!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 					{
 						grammaraddr = nextsyntax;
 						if (*wordnum != objstart)
@@ -1852,7 +1852,7 @@ CheckXobjectFinish:
 							goto CheckXobjectFinish;
 						}
 						else if ((p==NUMBER_T && STARTS_AS_NUMBER(word[*wordnum])) &&
-							!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10)))
+							!strcmp(word[*wordnum], itoa(atoi(word[*wordnum]), num, 10, sizeof(num))))
 						{
 							objfinish = i;
 							break;
@@ -1984,7 +1984,7 @@ int Hugo::Parse() {
 			wd[i] = FindWord(word[i]);
 
 			/* Numbers -32768 to 32767 are valid...*/
-			if (!strcmp(word[i], itoa(atoi(word[i]), num, 10)))
+			if (!strcmp(word[i], itoa(atoi(word[i]), num, 10, sizeof(num))))
 			{
 #if !defined (MATH_16BIT)
 				if (atoi(word[i]) > 32767 || atoi(word[i]) < -32768)
@@ -2169,7 +2169,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 1:
-			sprintf(line, "You can't use the word \"%s\".", parseerr);
+			Common::sprintf_s(line, "You can't use the word \"%s\".", parseerr);
 			AP(line);
 			break;
 
@@ -2178,7 +2178,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 3:
-			sprintf(line, "You can't %s multiple objects.", parseerr);
+			Common::sprintf_s(line, "You can't %s multiple objects.", parseerr);
 			AP(line);
 			break;
 
@@ -2187,7 +2187,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 5:
-			sprintf(line, "You haven't seen any \"%s\", nor are you likely to in the near future even if such a thing exists.", parseerr);
+			Common::sprintf_s(line, "You haven't seen any \"%s\", nor are you likely to in the near future even if such a thing exists.", parseerr);
 			AP(line);
 			break;
 
@@ -2201,7 +2201,7 @@ void Hugo::ParseError(int e, int a) {
 
 		case 8:
 		{
-			sprintf(line, "Which %s do you mean, ", !parse_called_twice?parseerr:"exactly");
+			Common::sprintf_s(line, "Which %s do you mean, ", !parse_called_twice?parseerr:"exactly");
 			count = 1;
 			for (k=0; k<pobjcount; k++)
 			{
@@ -2227,7 +2227,7 @@ void Hugo::ParseError(int e, int a) {
 						if (!strcmp(w, "a") || !strcmp(w, "an"))
 							Common::strcat_s(line, "the ");
 						else
-							sprintf(line+strlen(line), "%s ", w);
+							Common::sprintf_s(line+strlen(line), "%s ", w);
 						*/
 						/* We'll just use "the" */
 						if (w) Common::strcat_s(line, "the ");
@@ -2242,7 +2242,7 @@ void Hugo::ParseError(int e, int a) {
 		}
 
 		case 9:
-			sprintf(line, "Nothing to %s.", parseerr);
+			Common::sprintf_s(line, "Nothing to %s.", parseerr);
 			AP(line);
 			break;
 
@@ -2255,7 +2255,7 @@ void Hugo::ParseError(int e, int a) {
 			break;
 
 		case 12:
-			sprintf(line, "You can't do that with the %s.", Name(a));
+			Common::sprintf_s(line, "You can't do that with the %s.", Name(a));
 			AP(line);
 			break;
 
@@ -2415,10 +2415,12 @@ void Hugo::SeparateWords() {
 			   as the modified word, storing the original hh:mm
 			   in parse$:
 			*/
-			if (!strcmp(w1, itoa((int)n1, temp, 10)) && !strcmp(w2, itoa((int)n2, temp, 10)) && (n1 > 0 && n1 < 25) && (n2 >= 0 && n2 < 60))
+			if (!strcmp(w1, itoa((int)n1, temp, 10, sizeof(temp))) &&
+				!strcmp(w2, itoa((int)n2, temp, 10, sizeof(temp))) &&
+				(n1 > 0 && n1 < 25) && (n2 >= 0 && n2 < 60))
 			{
 				Common::strcpy_s(parseerr, word[i]);
-				itoa(n1 * 60 + n2, word[i], 10);
+				itoa(n1 * 60 + n2, word[i], 10, strlen(word[i]) + 1);
 			}
 		}
 	}
@@ -2457,7 +2459,7 @@ void Hugo::SubtractPossibleObject(int obj) {
 #ifdef DEBUG_PARSER
 {
 	char buf[100];
-	sprintf(buf, "SubtractPossibleObject(%d:\"%s\")", obj, Name(obj));
+	Common::sprintf_s(buf, "SubtractPossibleObject(%d:\"%s\")", obj, Name(obj));
 	Printout(buf);
 }
 #endif

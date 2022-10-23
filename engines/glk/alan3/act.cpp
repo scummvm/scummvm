@@ -99,7 +99,7 @@ void action(CONTEXT, int verb, Parameter parameters[], Parameter multipleMatches
 
 	multiplePosition = findMultiplePosition(parameters);
 	if (multiplePosition != -1) {
-		sprintf(marker, "($%d)", multiplePosition + 1); /* Prepare a printout with $1/2/3 */
+		Common::sprintf_s(marker, "($%d)", multiplePosition + 1); /* Prepare a printout with $1/2/3 */
 		for (int i = 0; !isEndOfArray(&multipleMatches[i]); i++) {
 			copyParameter(&parameters[multiplePosition], &multipleMatches[i]);
 			setGlobalParameters(parameters); /* Need to do this here since the marker use them */

@@ -1844,7 +1844,7 @@ startover:
 			int     cnt;
 
 			(void)tioshow(ctx->voccxtio);
-			sprintf(buf, "... %s (", cmd[cur]);
+			Common::sprintf_s(buf, "... %s (", cmd[cur]);
 			p = buf + strlen(buf);
 			cnt = 0;
 			for (i = 0 ; i < sizeof(type_names)/sizeof(type_names[0]) ; ++i)
@@ -2045,7 +2045,7 @@ static int vocgol(voccxdef *ctx, objnum *list, uint *flags, char **wrdlst,
 	{
 		char buf[128];
 
-		sprintf(buf, "... %s (treating as %s%s)\\n", wrd,
+		Common::sprintf_s(buf, "... %s (treating as %s%s)\\n", wrd,
 				(wrdtyp == PRP_ADJ ? "adjective" :
 				 wrdtyp == PRP_NOUN ? "noun" :
 				 wrdtyp == PRP_INVALID ? "unknown" : "plural"),
@@ -7123,7 +7123,7 @@ static int vocready(voccxdef *ctx, char *cmd[], int *typelist, int cur,
 		{
 			char buf[128];
 
-			sprintf(buf, ". executing verb:  %s %s\\n",
+			Common::sprintf_s(buf, ". executing verb:  %s %s\\n",
 					vverb, vprep ? vprep : "");
 			tioputs(ctx->vocxtio, buf);
 		}
@@ -8144,7 +8144,7 @@ void *voc_stk_alo(voccxdef *ctx, uint siz)
 		char buf[20];
 
 		maxsiz = ctx->voc_stk_cur - ctx->voc_stk_ptr;
-		sprintf(buf, "%u\n", maxsiz);
+		Common::sprintf_s(buf, "%u\n", maxsiz);
 		os_printz(buf);
 	}
 }

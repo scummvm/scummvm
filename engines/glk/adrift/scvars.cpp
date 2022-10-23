@@ -1137,7 +1137,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 				retval = VAR_NUMBERS[number];
 			else {
 				vars->temporary = (sc_char *)sc_realloc(vars->temporary, 32);
-				sprintf(vars->temporary, "%ld", number);
+				Common::sprintf_s(vars->temporary, 32, "%ld", number);
 				retval = vars->temporary;
 			}
 
@@ -1171,7 +1171,7 @@ static sc_bool var_get_system(sc_var_setref_t vars, const sc_char *name,
 				retval = VAR_NUMBERS[number];
 			else {
 				vars->temporary = (sc_char *)sc_realloc(vars->temporary, 32);
-				sprintf(vars->temporary, "%ld", number);
+				Common::sprintf_s(vars->temporary, 32, "%ld", number);
 				retval = vars->temporary;
 			}
 

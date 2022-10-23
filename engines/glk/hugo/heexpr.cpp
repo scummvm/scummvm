@@ -245,7 +245,7 @@ ReturnResult:
 #if defined (DEBUG_EXPR_EVAL)
 	if (p==0 && exprt)
 	{
-		sprintf(line, " = %d", result);
+		Common::sprintf_s(line, " = %d", result);
 		AP(line);
 	}
 #endif
@@ -968,7 +968,7 @@ char Hugo::IsIncrement(long addr) {
 	if (t && debug_eval)
 	{
 		debug_eval_error = true;
-		sprintf(debug_line, "'%s%s' illegal in watch/assignment", token[a], token[MEM(addr+1)]);
+		Common::sprintf_s(debug_line, "'%s%s' illegal in watch/assignment", token[a], token[MEM(addr+1)]);
 		DebugMessageBox("Expression Error", debug_line);
 		t = 0;
 	}
@@ -1027,7 +1027,7 @@ void PrintExpr(void)
 		{
 			case 0:
 			{
-				sprintf(line, "%d ", eval[i + 1]);
+				Common::sprintf_s(line, "%d ", eval[i + 1]);
 				strcat(e, line);
 				break;
 			}

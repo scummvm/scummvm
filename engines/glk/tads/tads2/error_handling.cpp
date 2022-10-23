@@ -77,13 +77,13 @@ int errfmt(char *outbuf, int outbufl, char *fmt, int argc, erradef *argv)
 				break;
 
 			case 'd':
-				sprintf(buf, "%d", argv[argi].erraint);
+				Common::sprintf_s(buf, "%d", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;
 
 			case 'u':
-				sprintf(buf, "%u", argv[argi].erraint);
+				Common::sprintf_s(buf, "%u", argv[argi].erraint);
 				len = strlen(buf);
 				p = buf;
 				break;

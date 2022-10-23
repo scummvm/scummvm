@@ -865,7 +865,7 @@ static void gsc_status_update() {
 			/* Get the game's status line, or if none, format score. */
 			status = sc_get_game_status_line(gsc_game);
 			if (!gsc_is_string_usable(status)) {
-				sprintf(score, "Score: %ld", sc_get_game_score(gsc_game));
+				Common::sprintf_s(score, "Score: %ld", sc_get_game_score(gsc_game));
 				status = score;
 			}
 
@@ -927,7 +927,7 @@ static void gsc_status_print() {
 		/* Get the game's status line, or if none, format score. */
 		status = sc_get_game_status_line(gsc_game);
 		if (!gsc_is_string_usable(status)) {
-			sprintf(score, "Score: %ld", sc_get_game_score(gsc_game));
+			Common::sprintf_s(score, "Score: %ld", sc_get_game_score(gsc_game));
 			status = score;
 		}
 
@@ -1631,7 +1631,7 @@ void os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 		 */
 		assert(gsclinux_game_file);
 		buffer = gsc_malloc(strlen(gsclinux_game_file) + 128);
-		sprintf(buffer, "dd if=%s ibs=1c skip=%ld count=%ld obs=100k"
+		Common::sprintf_s(buffer, "dd if=%s ibs=1c skip=%ld count=%ld obs=100k"
 		        " of=/tmp/scare.jpg 2>/dev/null",
 		        gsclinux_game_file, offset, length);
 		system(buffer);
@@ -1908,7 +1908,7 @@ static void gsc_command_abbreviations(const char *argument) {
 static void gsc_command_print_version_number(glui32 version) {
 	char buffer[64];
 
-	sprintf(buffer, "%lu.%lu.%lu",
+	Common::sprintf_s(buffer, "%lu.%lu.%lu",
 	        (unsigned long) version >> 16,
 	        (unsigned long)(version >> 8) & 0xff,
 	        (unsigned long) version & 0xff);
