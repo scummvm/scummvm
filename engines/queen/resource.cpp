@@ -254,7 +254,7 @@ void Resource::seekResourceFile(int num, uint32 offset) {
 		debug(7, "Opening resource file %d, current %d", num, _currentResourceFileNum);
 		_resourceFile.close();
 		char name[20];
-		sprintf(name, "queen.%d", num);
+		Common::sprintf_s(name, "queen.%d", num);
 		if (!_resourceFile.open(name)) {
 			error("Could not open resource file '%s'", name);
 		}

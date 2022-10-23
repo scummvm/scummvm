@@ -608,7 +608,7 @@ void AmigaSound::updateMusic() {
 void AmigaSound::playSound(const char *base) {
 	debug(7, "AmigaSound::playSound(%s)", base);
 	char soundName[20];
-	sprintf(soundName, "%s.AMR", base);
+	Common::sprintf_s(soundName, "%s.AMR", base);
 
 	uint32 soundSize;
 	Common::File *f = _vm->resource()->findSound(soundName, &soundSize);
@@ -629,13 +629,13 @@ Audio::AudioStream *AmigaSound::loadModule(const char *base, int num) {
 
 	// load song/pattern data
 	uint32 sngDataSize;
-	sprintf(name, "%s.SNG", base);
+	Common::sprintf_s(name, "%s.SNG", base);
 	uint8 *sngData = _vm->resource()->loadFile(name, 0, &sngDataSize);
 	Common::MemoryReadStream sngStr(sngData, sngDataSize);
 
 	// load instruments/wave data
 	uint32 insDataSize;
-	sprintf(name, "%s.INS", base);
+	Common::sprintf_s(name, "%s.INS", base);
 	uint8 *insData = _vm->resource()->loadFile(name, 0, &insDataSize);
 	Common::MemoryReadStream insStr(insData, insDataSize);
 
