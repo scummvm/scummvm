@@ -557,7 +557,7 @@ ContextCommandLoop:
 		strncpy(context_command[context_commands], cc = GetWord(n), 64);
 		context_command[context_commands][63] = '\0';
 		if (strlen(cc)>=64)
-			sprintf(context_command[context_commands]+60, "...");
+			Common::sprintf_s(context_command[context_commands]+60, 4, "...");
 		context_commands++;
 	}
 #endif
@@ -614,7 +614,7 @@ unsigned int Hugo::Dict() {
 	if ((long)(pos+strlen(line)) > (long)(codeend-dicttable*16L))
 	{
 #ifdef DEBUGGER
-		sprintf(debug_line, "$MAXDICTEXTEND dictionary space exceeded");
+		Common::sprintf_s(debug_line, "$MAXDICTEXTEND dictionary space exceeded");
 		RuntimeWarning(debug_line);
 #endif
 		defseg = gameseg;
@@ -650,39 +650,39 @@ void Hugo::FatalError(int n) {
 	switch (n)
 	{
 		case MEMORY_E:
-			{sprintf(line, "Out of memory\n");
+			{Common::sprintf_s(line, "Out of memory\n");
 			break;}
 
 		case OPEN_E:
-			{sprintf(line, "Cannot open file\n");
+			{Common::sprintf_s(line, "Cannot open file\n");
 			break;}
 
 		case READ_E:
-			{sprintf(line, "Cannot read from file\n");
+			{Common::sprintf_s(line, "Cannot read from file\n");
 			break;}
 
 		case WRITE_E:
-			{sprintf(line, "Cannot write to save file\n");
+			{Common::sprintf_s(line, "Cannot write to save file\n");
 			break;}
 
 		case EXPECT_VAL_E:
-			{sprintf(line, "Expecting value at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Expecting value at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case UNKNOWN_OP_E:
-			{sprintf(line, "Unknown operation at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Unknown operation at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case ILLEGAL_OP_E:
-			{sprintf(line, "Illegal operation at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Illegal operation at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case OVERFLOW_E:
-			{sprintf(line, "Overflow at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Overflow at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case DIVIDE_E:
-			{sprintf(line, "Divide by zero at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Divide by zero at $%s\n", PrintHex(codeptr));
 			break;}
 	}
 
@@ -1023,7 +1023,7 @@ void Hugo::HandleTailRecursion(long addr) {
 	call[window[VIEW_CALLS].count-1].addr = currentroutine;
 	call[window[VIEW_CALLS].count-1].param = true;
 
-	sprintf(debug_line, "Calling:  %s", RoutineName(currentroutine));
+	Common::sprintf_s(debug_line, "Calling:  %s", RoutineName(currentroutine));
 	/* Don't duplicate blank separator line in code window */
 	if (codeline[window[CODE_WINDOW].count-1][0] != 0)
 		AddStringtoCodeWindow("");
@@ -1149,9 +1149,11 @@ void Hugo::LoadGame() {
 		hugo_cleanup_screen();
 		hugo_clearfullscreen();
 #endif
-		sprintf(line, "Hugo Compiler v%d.%d or later required.\n", HEVERSION, HEREVISION);
-		if (game_version>0)
-			sprintf(line+strlen(line), "File \"%s\" is v%d.%d.\n", gamefile, game_version/10, game_version%10);
+		Common::sprintf_s(line, "Hugo Compiler v%d.%d or later required.\n", HEVERSION, HEREVISION);
+		if (game_version>0) {
+			size_t ln = strlen(line);
+			Common::sprintf_s(line+ln, sizeof(line)-ln, "File \"%s\" is v%d.%d.\n", gamefile, game_version/10, game_version%10);
+		}
 
 #if defined (DEBUGGER_PRINTFATALERROR)
 		DEBUGGER_PRINTFATALERROR(line);
@@ -1170,7 +1172,7 @@ void Hugo::LoadGame() {
 		hugo_cleanup_screen();
 		hugo_clearfullscreen();
 #endif
-		sprintf(line, "File \"%s\" is incorrect or unknown version.\n", gamefile);
+		Common::sprintf_s(line, "File \"%s\" is incorrect or unknown version.\n", gamefile);
 
 #if defined (DEBUGGER_PRINTFATALERROR)
 		DEBUGGER_PRINTFATALERROR(line);
@@ -1462,7 +1464,7 @@ const char *Hugo::PrintHex(long a) {
 	if (a < 256L) hex[h++] = '0';
 	if (a < 16L) hex[h++] = '0';
 
-	sprintf(hex+h, "%lX", a);
+	Common::sprintf_s(hex+h, sizeof(hex)-h, "%lX", a);
 
 	return hex;
 }

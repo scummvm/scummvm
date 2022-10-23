@@ -355,7 +355,7 @@ ResfileError:
 
 #if defined (DEBUGGER)
 	SwitchtoDebugger();
-	sprintf(debug_line, "Unable to find \"%s\" in \"%s\"", resname, filename);
+	Common::sprintf_s(debug_line, "Unable to find \"%s\" in \"%s\"", resname, filename);
 	DebugMessageBox("Resource Error", debug_line);
 	SwitchtoGame();
 #endif

@@ -87,9 +87,9 @@ static long ask_for_number(int n1, int n2) {
 	int n;
 
 	if (n1 != n2)
-		sprintf(s, "Enter a number from %d to %d: ", n1, n2);
+		Common::sprintf_s(s, "Enter a number from %d to %d: ", n1, n2);
 	else
-		sprintf(s, "Enter a number: ");
+		Common::sprintf_s(s, "Enter a number: ");
 	for (;;) {
 		writestr(s);
 		n = read_number();

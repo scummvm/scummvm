@@ -345,7 +345,7 @@ int os_get_status()
 void os_score(int score, int turncount)
 {
 	char buf[40];
-	sprintf(buf, "%d/%d", score, turncount);
+	Common::sprintf_s(buf, "%d/%d", score, turncount);
 	os_strsc(buf);
 }
 
@@ -368,8 +368,8 @@ static void os_status_redraw(void) {
 	g_vm->glk_window_get_size(statuswin, &wid, nullptr);
 	div = wid - strlen(rbuf) - 3;
 
-	sprintf(fmt, " %%%ds %%s ", - (int)div);
-	sprintf(buf, fmt, lbuf, rbuf);
+	Common::sprintf_s(fmt, " %%%ds %%s ", - (int)div);
+	Common::sprintf_s(buf, fmt, lbuf, rbuf);
 
 	g_vm->glk_window_clear(statuswin);
 	g_vm->glk_set_window(statuswin);

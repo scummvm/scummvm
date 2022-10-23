@@ -42,7 +42,7 @@ int Hugo::loadres(HUGO_FILE infile, int reslen, int type) {
 		return -1;
 
 	idVal = numres[type]++;
-	sprintf(buf, "%s%d", type == PIC ? "PIC" : "SND", idVal);
+	Common::sprintf_s(buf, "%s%d", type == PIC ? "PIC" : "SND", idVal);
 	resids[type][idVal] = offset;
 
 	fileref = glk_fileref_create_by_name(fileusage_Data, buf, 0);

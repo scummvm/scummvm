@@ -1063,7 +1063,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 	        !strcmp(label_word, "noun4") ||
 	        !strcmp(label_word, "objects") ||
 	        validate(label_word)) {
-		sprintf(error_buffer, ILLEGAL_LABEL, line, label_word);
+		Common::sprintf_s(error_buffer, 1024, ILLEGAL_LABEL, line, label_word);
 		log_error(error_buffer, PLUS_STDERR);
 
 		return (TRUE);
@@ -1071,7 +1071,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	if (type == CSTR_TYPE) {
 		if (!strcmp(label_word, "command_prompt")) {
-			sprintf(error_buffer, USED_LABEL_STR, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_STR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1080,7 +1080,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	while (integer_pointer != nullptr && type != INT_TYPE) {
 		if (!strcmp(label_word, integer_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_INT, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_INT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1091,7 +1091,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	while (cinteger_pointer != nullptr && type != CINT_TYPE) {
 		if (!strcmp(label_word, cinteger_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_CINT, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_CINT, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1101,7 +1101,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	while (string_pointer != nullptr && type != STR_TYPE) {
 		if (!strcmp(label_word, string_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_STR, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_STR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1111,7 +1111,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	while (cstring_pointer != nullptr && type != CSTR_TYPE) {
 		if (!strcmp(label_word, cstring_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_CSTR, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_CSTR, line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
 			return (TRUE);
@@ -1122,7 +1122,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 	/* DON'T CHECK FOR ATT_TYPE AS YOU CAN'T HAVE ATTRIBUTE ARRAYS. */
 	while (attribute_pointer != nullptr) {
 		if (!strcmp(label_word, attribute_pointer->name)) {
-			sprintf(error_buffer, USED_LABEL_ATT, line, label_word);
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_ATT, line, label_word);
 			write_text(error_buffer);
 
 			return (TRUE);
@@ -1132,7 +1132,7 @@ int legal_label_check(const char *label_word, int line, int type) {
 
 	for (index = 1; index <= objects; index++) {
 		if (!strcmp(label_word, object[index]->label)) {
-			sprintf(error_buffer, USED_LABEL_OBJ,
+			Common::sprintf_s(error_buffer, 1024, USED_LABEL_OBJ,
 			        line, label_word);
 			log_error(error_buffer, PLUS_STDERR);
 
@@ -1170,7 +1170,7 @@ void restart_game() {
 
 			/* STORE A COPY OF THE CURRENT VOLUME FOR ACCESS
 			 * FROM JACL CODE */
-			sprintf(temp_buffer, "volume[%d]", index);
+			Common::sprintf_s(temp_buffer, 1024, "volume[%d]", index);
 			cinteger_resolve(temp_buffer)->value = 100;
 		}
 	}

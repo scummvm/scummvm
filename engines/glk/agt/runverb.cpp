@@ -1131,7 +1131,7 @@ static void exec_verb_info(void) {
 	a = objname(dobj);
 	b = objname(iobj);
 	c = objname(actor);
-	sprintf(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[ syntbl[auxsyn[vb]] ],
+	Common::sprintf_s(buff, "\t\t]]%s, %s %s(%ld) %s %s(%ld)", c, dict[ syntbl[auxsyn[vb]] ],
 	        a, dobj_rec->num, prep == 0 ? "->" : dict[prep], b, iobj_rec->num);
 	writeln(buff);
 	rfree(a);

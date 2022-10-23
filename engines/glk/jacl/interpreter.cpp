@@ -325,7 +325,7 @@ void cb1(void *s, size_t i, void *not_used) {
 	//sprintf (temp_buffer, "Trying to set field %d to equal %s^", field_no, (const char *) s);
 	//write_text(temp_buffer);
 
-	sprintf(temp_buffer, "field[%d]", field_no);
+	Common::sprintf_s(temp_buffer, 1024, "field[%d]", field_no);
 
 	if ((resolved_cstring = cstring_resolve(temp_buffer)) != nullptr) {
 		//write_text("Resolved ");
@@ -440,7 +440,7 @@ int execute(const char *funcname) {
 				// THIS ENDWHILE COMMAND WAS BEING EXECUTED,
 				// NOT JUST COUNTED.
 				if (top_of_while == FALSE) {
-					sprintf(error_buffer, NO_WHILE, executing_function->name);
+					Common::sprintf_s(error_buffer, 1024, NO_WHILE, executing_function->name);
 					log_error(error_buffer, PLUS_STDOUT);
 				} else {
 #ifdef GLK
@@ -457,7 +457,7 @@ int execute(const char *funcname) {
 				// THIS ENDITERATE COMMAND WAS BEING EXECUTED,
 				// NOT JUST COUNTED.
 				if (top_of_iterate == FALSE) {
-					sprintf(error_buffer, NO_ITERATE, executing_function->name);
+					Common::sprintf_s(error_buffer, 1024, NO_ITERATE, executing_function->name);
 					log_error(error_buffer, PLUS_STDOUT);
 				} else {
 #ifdef GLK
@@ -474,7 +474,7 @@ int execute(const char *funcname) {
 				// THIS ENDUPDATE COMMAND WAS BEING EXECUTED,
 				// NOT JUST COUNTED.
 				if (top_of_update == FALSE) {
-					sprintf(error_buffer, NO_UPDATE, executing_function->name);
+					Common::sprintf_s(error_buffer, 1024, NO_UPDATE, executing_function->name);
 					log_error(error_buffer, PLUS_STDOUT);
 				} else {
 #ifdef GLK
@@ -545,7 +545,7 @@ int execute(const char *funcname) {
 					return (exit_function(TRUE));
 				} else {
 					if (top_of_do_loop == FALSE) {
-						sprintf(error_buffer, NO_REPEAT, executing_function->name);
+						Common::sprintf_s(error_buffer, 1024, NO_REPEAT, executing_function->name);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else if (!condition()) {
 #ifdef GLK
@@ -562,7 +562,7 @@ int execute(const char *funcname) {
 					return (exit_function(TRUE));
 				} else {
 					if (top_of_do_loop == FALSE) {
-						sprintf(error_buffer, NO_REPEAT, executing_function->name);
+						Common::sprintf_s(error_buffer, 1024, NO_REPEAT, executing_function->name);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else if (!and_condition()) {
 #ifdef GLK
@@ -603,7 +603,7 @@ int execute(const char *funcname) {
 				}
 
 				if (infile == nullptr) {
-					sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
+					Common::sprintf_s(error_buffer, 1024, "Failed to open file %s\n", temp_buffer);
 					log_error(error_buffer, LOG_ONLY);
 					infile = nullptr;
 				} else {
@@ -621,7 +621,7 @@ int execute(const char *funcname) {
 							//sprintf (temp_buffer, "Read ~%s~ with %d bytes.^", csv_buffer, i);
 							//write_text(temp_buffer);
 							if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (void *) nullptr) != (uint)i) {
-								sprintf(error_buffer, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
+								Common::sprintf_s(error_buffer, 1024, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
 								log_error(error_buffer, PLUS_STDOUT);
 								delete infile;
 								infile = nullptr;
@@ -685,7 +685,7 @@ int execute(const char *funcname) {
 				}
 
 				if (infile == nullptr) {
-					sprintf(error_buffer, "Failed to open input CSV file ~%s\n", in_name);
+					Common::sprintf_s(error_buffer, 1024, "Failed to open input CSV file ~%s\n", in_name);
 					log_error(error_buffer, LOG_ONLY);
 					if (outfile != nullptr) {
 						delete outfile;
@@ -694,7 +694,7 @@ int execute(const char *funcname) {
 					return (exit_function(TRUE));
 				} else {
 					if (outfile == nullptr) {
-						sprintf(error_buffer, "Failed to open output CSV file ~%s~\n", out_name);
+						Common::sprintf_s(error_buffer, 1024, "Failed to open output CSV file ~%s~\n", out_name);
 						log_error(error_buffer, LOG_ONLY);
 						if (infile != nullptr) {
 							delete infile;
@@ -714,7 +714,7 @@ int execute(const char *funcname) {
 									jacl_sleep(1000);
 									continue;
 								}
-								sprintf(error_buffer, "File busy unable to get lock on output file.\n");
+								Common::sprintf_s(error_buffer, 1024, "File busy unable to get lock on output file.\n");
 								log_error(error_buffer, PLUS_STDOUT);
 								return (exit_function(TRUE));
 							}
@@ -732,7 +732,7 @@ int execute(const char *funcname) {
 									jacl_sleep(1000);
 									continue;
 								}
-								sprintf(error_buffer, "File busy unable to get lock on input file.\n");
+								Common::sprintf_s(error_buffer, 1024, "File busy unable to get lock on input file.\n");
 								log_error(error_buffer, PLUS_STDOUT);
 								return (exit_function(TRUE));
 							}
@@ -749,7 +749,7 @@ int execute(const char *funcname) {
 							if (infile->pos() < infile->size()) {
 								i = strlen(csv_buffer);
 								if (csv_parse(&parser_csv, csv_buffer, i, cb1, cb2, (int *) &field_no) != (uint)i) {
-									sprintf(error_buffer, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
+									Common::sprintf_s(error_buffer, 1024, "Error parsing file: %s\n", csv_strerror(csv_error(&parser_csv)));
 									log_error(error_buffer, PLUS_STDOUT);
 									read_lck.l_type = F_UNLCK;  // SETTING A READ LOCK
 									fcntl(read_fd, F_SETLK, &read_lck);
@@ -826,7 +826,7 @@ int execute(const char *funcname) {
 
 			} else if (!strcmp(word[0], "endloop")) {
 				if (top_of_loop == FALSE) {
-					sprintf(error_buffer, NO_LOOP, executing_function->name);
+					Common::sprintf_s(error_buffer, 1024, NO_LOOP, executing_function->name);
 					log_error(error_buffer, PLUS_STDOUT);
 				} else {
 					*loop_integer += 1;
@@ -936,7 +936,7 @@ int execute(const char *funcname) {
 				}
 			} else if (!strcmp(word[0], "endselect")) {
 				if (top_of_select == FALSE) {
-					sprintf(error_buffer, NO_LOOP, executing_function->name);
+					Common::sprintf_s(error_buffer, 1024, NO_LOOP, executing_function->name);
 					log_error(error_buffer, PLUS_STDOUT);
 				} else {
 					if (select_next(/* select_integer, criterion_type, criterion_value, scope_criterion */)) {
@@ -1017,7 +1017,7 @@ int execute(const char *funcname) {
 
 						/* STORE A COPY OF THE CURRENT VOLUME FOR ACCESS
 						 * FROM JACL CODE */
-						sprintf(temp_buffer, "volume[%d]", channel);
+						Common::sprintf_s(temp_buffer, 1024, "volume[%d]", channel);
 						cinteger_resolve(temp_buffer)->value = volume;
 
 						/* NOW SCALE THE 0-100 VOLUME TO THE 0-65536 EXPECTED
@@ -1081,7 +1081,7 @@ int execute(const char *funcname) {
 							 * NOTIFICATION EVENT CAN USE THE INFORMATION
 							 * IT HAS 1 ADDED TO IT SO THAT IT IS A NON-ZERO
 							 * NUMBER AND THE EVENT IS ACTIVATED */
-							sprintf(error_buffer, "Unable to play sound: %ld", value_of(word[1], FALSE));
+							Common::sprintf_s(error_buffer, 1024, "Unable to play sound: %ld", value_of(word[1], FALSE));
 							log_error(error_buffer, PLUS_STDERR);
 						}
 					}
@@ -1094,7 +1094,7 @@ int execute(const char *funcname) {
 						return (exit_function(TRUE));
 					} else {
 						if (!g_vm->loadingSavegame() && g_vm->glk_image_draw(mainwin, (glui32) value_of(word[1], TRUE), imagealign_InlineDown, 0) == 0) {
-							sprintf(error_buffer, "Unable to draw image: %ld", value_of(word[1], FALSE));
+							Common::sprintf_s(error_buffer, 1024, "Unable to draw image: %ld", value_of(word[1], FALSE));
 							log_error(error_buffer, PLUS_STDERR);
 						}
 					}
@@ -1368,11 +1368,11 @@ int execute(const char *funcname) {
 				} else {
 					index = value_of(word[1]);
 					if (word[2] != NULL) {
-						sprintf(option_buffer, "<option value=\"%d\">",
+						Common::sprintf_s(option_buffer, "<option value=\"%d\">",
 						        index);
 					} else {
 						object_names(index, temp_buffer);
-						sprintf(option_buffer, "<option value=\"%s\">", temp_buffer);
+						Common::sprintf_s(option_buffer, "<option value=\"%s\">", temp_buffer);
 					}
 
 					write_text(option_buffer);
@@ -1409,16 +1409,16 @@ int execute(const char *funcname) {
 					return (TRUE);
 				}
 				if (word[2] != NULL) {
-					sprintf(option_buffer, "<input class=~button~ type=~image~ src=~%s~ name=~verb~ value=~", text_of_word(2));
+					Common::sprintf_s(option_buffer, "<input class=~button~ type=~image~ src=~%s~ name=~verb~ value=~", text_of_word(2));
 					strcat(option_buffer, text_of_word(1));
 					strcat(option_buffer, "~>");
 					write_text(option_buffer);
 				} else {
-					sprintf(option_buffer, "<input class=~button~ type=~submit~ style=~width: 90px; margin: 5px;~ name=~verb~ value=~%s~>", text_of_word(1));
+					Common::sprintf_s(option_buffer, "<input class=~button~ type=~submit~ style=~width: 90px; margin: 5px;~ name=~verb~ value=~%s~>", text_of_word(1));
 					write_text(option_buffer);
 				}
 			} else if (!strcmp(word[0], "hidden")) {
-				sprintf(temp_buffer, "<INPUT TYPE=\"hidden\" NAME=\"user_id\" VALUE=\"%s\">", user_id);
+				Common::sprintf_s(temp_buffer, 1024, "<INPUT TYPE=\"hidden\" NAME=\"user_id\" VALUE=\"%s\">", user_id);
 				write_text(temp_buffer);
 			} else if (!strcmp(word[0], "control")) {
 				/* USED TO CREATE A HYPERLINK THAT IS AN IMAGE */
@@ -1427,7 +1427,7 @@ int execute(const char *funcname) {
 					pop_stack();
 					return (TRUE);
 				} else {
-					sprintf(option_buffer, "<a href=\"?command=%s&amp;user_id=%s\"><img border=0 SRC=\"", text_of_word(2), user_id);
+					Common::sprintf_s(option_buffer, "<a href=\"?command=%s&amp;user_id=%s\"><img border=0 SRC=\"", text_of_word(2), user_id);
 					strcat(option_buffer, text_of_word(1));
 					strcat(option_buffer, "\"></a>");
 					write_text(option_buffer);
@@ -1450,13 +1450,13 @@ int execute(const char *funcname) {
 					}
 
 					if (word[3] == NULL) {
-						sprintf(string_buffer, "<a href=\"?command=%s&amp;user_id=%s\">", encoded, user_id);
+						Common::sprintf_s(string_buffer, "<a href=\"?command=%s&amp;user_id=%s\">", encoded, user_id);
 						strcat(string_buffer, text_of_word(1));
 						strcat(string_buffer, "</a>");
 					} else {
-						sprintf(string_buffer, "<a class=\"%s\" href=\"?command=", text_of_word(3));
+						Common::sprintf_s(string_buffer, "<a class=\"%s\" href=\"?command=", text_of_word(3));
 						strcat(string_buffer, encoded);
-						sprintf(option_buffer, "&amp;user_id=%s\">%s</a>", user_id, text_of_word(1));
+						Common::sprintf_s(option_buffer, "&amp;user_id=%s\">%s</a>", user_id, text_of_word(1));
 						strcat(string_buffer, option_buffer);
 					}
 
@@ -1469,13 +1469,13 @@ int execute(const char *funcname) {
 			} else if (!strcmp(word[0], "prompt")) {
 				/* USED TO OUTPUT A HTML INPUT CONTROL THAT CONTAINS SESSION INFORMATION */
 				if (word[1] != NULL) {
-					sprintf(temp_buffer, "<input id=\"JACLCommandPrompt\" type=text name=~command~ onKeyPress=~%s~>\n", word[1]);
+					Common::sprintf_s(temp_buffer, 1024, "<input id=\"JACLCommandPrompt\" type=text name=~command~ onKeyPress=~%s~>\n", word[1]);
 					write_text(temp_buffer);
 				} else {
-					sprintf(temp_buffer, "<input id=\"JACLCommandPrompt\" type=text name=~command~>\n");
+					Common::sprintf_s(temp_buffer, 1024, "<input id=\"JACLCommandPrompt\" type=text name=~command~>\n");
 					write_text(temp_buffer);
 				}
-				sprintf(temp_buffer, "<input type=hidden name=\"user_id\" value=\"%s\">", user_id);
+				Common::sprintf_s(temp_buffer, 1024, "<input type=hidden name=\"user_id\" value=\"%s\">", user_id);
 				write_text(temp_buffer);
 			} else if (!strcmp(word[0], "style")) {
 				/* THIS COMMAND IS USED TO OUTPUT ANSI CODES OR SET GLK
@@ -1549,9 +1549,9 @@ int execute(const char *funcname) {
 					return (exit_function(TRUE));
 				} else {
 					if (word[2] == NULL) {
-						sprintf(option_buffer, "<img src=~%s~>", text_of_word(1));
+						Common::sprintf_s(option_buffer, "<img src=~%s~>", text_of_word(1));
 					} else {
-						sprintf(option_buffer, "<img class=~%s~ src=~%s~>", text_of_word(2), text_of_word(1));
+						Common::sprintf_s(option_buffer, "<img class=~%s~ src=~%s~>", text_of_word(2), text_of_word(1));
 					}
 
 					write_text(option_buffer);
@@ -1564,7 +1564,7 @@ int execute(const char *funcname) {
 				} else {
 					write_text("<audio autoplay=~autoplay~>");
 					if (word[3] == NULL) {
-						sprintf(option_buffer, "<source src=~%s~ type=~%s~>", text_of_word(1), text_of_word(2));
+						Common::sprintf_s(option_buffer, "<source src=~%s~ type=~%s~>", text_of_word(1), text_of_word(2));
 						write_text(option_buffer);
 					}
 					write_text("</audio>");
@@ -1641,7 +1641,7 @@ int execute(const char *funcname) {
 						if (argstart != nullptr)
 							*argstart = 0;
 
-						sprintf(error_buffer, UNDEFINED_FUNCTION, executing_function->name, string_buffer);
+						Common::sprintf_s(error_buffer, 1024, UNDEFINED_FUNCTION, executing_function->name, string_buffer);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else {
 						execute(string_buffer);
@@ -1663,7 +1663,7 @@ int execute(const char *funcname) {
 #endif
 #endif
 						write_text(cstring_resolve("SCORE_UP")->value);
-						sprintf(temp_buffer, "%ld", value_of(word[1], TRUE));
+						Common::sprintf_s(temp_buffer, 1024, "%ld", value_of(word[1], TRUE));
 						write_text(temp_buffer);
 						if (value_of(word[1], TRUE) == 1) {
 							write_text(cstring_resolve("POINT")->value);
@@ -1862,7 +1862,7 @@ int execute(const char *funcname) {
 							*match = 0;
 							Common::strcpy_s(container_buffer, var_text_of_word(4));
 							Common::strcat_s(container_buffer, "[");
-							sprintf(integer_buffer, "%d", *split_container);
+							Common::sprintf_s(integer_buffer, "%d", *split_container);
 							Common::strcat_s(container_buffer, integer_buffer);
 							Common::strcat_s(container_buffer, "]");
 
@@ -1877,7 +1877,7 @@ int execute(const char *funcname) {
 						}
 						Common::strcpy_s(container_buffer, var_text_of_word(4));
 						Common::strcat_s(container_buffer, "[");
-						sprintf(integer_buffer, "%d", *split_container);
+						Common::sprintf_s(integer_buffer, "%d", *split_container);
 						Common::strcat_s(container_buffer, integer_buffer);
 						Common::strcat_s(container_buffer, "]");
 
@@ -2112,7 +2112,7 @@ int execute(const char *funcname) {
 								*container = *container % counter;
 							else if (word[mark][0] == '/') {
 								if (counter == 0) {
-									sprintf(error_buffer, DIVIDE_BY_ZERO,
+									Common::sprintf_s(error_buffer, 1024, DIVIDE_BY_ZERO,
 									        executing_function->name);
 									log_error(error_buffer, PLUS_STDOUT);
 								} else
@@ -2124,7 +2124,7 @@ int execute(const char *funcname) {
 							} else if (word[mark][0] == '=') {
 								*container = counter;
 							} else {
-								sprintf(error_buffer, ILLEGAL_OPERATOR,
+								Common::sprintf_s(error_buffer, 1024, ILLEGAL_OPERATOR,
 								        executing_function->name,
 								        word[2]);
 								log_error(error_buffer, PLUS_STDOUT);
@@ -2193,7 +2193,7 @@ int execute(const char *funcname) {
 					outfile = File::openForWriting(temp_buffer);
 
 					if (outfile == nullptr) {
-						sprintf(error_buffer, "Failed to open file %s\n", temp_buffer);
+						Common::sprintf_s(error_buffer, 1024, "Failed to open file %s\n", temp_buffer);
 						log_error(error_buffer, PLUS_STDOUT);
 					} else {
 						for (counter = 2; word[counter] != nullptr && counter < MAX_WORDS; counter++) {
@@ -2336,7 +2336,7 @@ int execute(const char *funcname) {
 					executionLevel++;
 				}
 			} else {
-				sprintf(error_buffer, UNKNOWN_COMMAND,
+				Common::sprintf_s(error_buffer, 1024, UNKNOWN_COMMAND,
 				        executing_function->name, word[0]);
 				log_error(error_buffer, PLUS_STDOUT);
 			}
@@ -3054,7 +3054,7 @@ int logic_test(int first) {
 			}
 		}
 	} else {
-		sprintf(error_buffer,
+		Common::sprintf_s(error_buffer, 1024,
 		        "ERROR: In function \"%s\", illegal operator \"%s\".^",
 		        executing_function->name, word[2]);
 		write_text(error_buffer);
@@ -3142,7 +3142,7 @@ int str_test(int first) {
 		else
 			return (FALSE);
 	} else {
-		sprintf(error_buffer,
+		Common::sprintf_s(error_buffer, 1024,
 		        "ERROR: In function \"%s\", illegal operator \"%s\".^",
 		        executing_function->name, word[2]);
 		write_text(error_buffer);
@@ -3323,12 +3323,12 @@ void inspect(int object_num)  {
 		while (location_elements[index] != nullptr) {
 			if (index < 12) {
 				if (object[object_num]->integer[index] < 1 || object[object_num]->integer[index] > objects) {
-					sprintf(temp_buffer, "%s: nowhere (%d)^", location_elements[index], object[object_num]->integer[index]);
+					Common::sprintf_s(temp_buffer, 1024, "%s: nowhere (%d)^", location_elements[index], object[object_num]->integer[index]);
 				} else {
-					sprintf(temp_buffer, "%s: %s (%d)^", location_elements[index], object[object[object_num]->integer[index]]->label, object[object_num]->integer[index]);
+					Common::sprintf_s(temp_buffer, 1024, "%s: %s (%d)^", location_elements[index], object[object[object_num]->integer[index]]->label, object[object_num]->integer[index]);
 				}
 			} else {
-				sprintf(temp_buffer, "%s: %d^", location_elements[index], object[object_num]->integer[index]);
+				Common::sprintf_s(temp_buffer, 1024, "%s: %d^", location_elements[index], object[object_num]->integer[index]);
 			}
 			write_text(temp_buffer);
 			index++;
@@ -3336,9 +3336,9 @@ void inspect(int object_num)  {
 	} else {
 		while (object_elements[index] != nullptr) {
 			if (index == 0) {
-				sprintf(temp_buffer, "%s: %s (%d)^", object_elements[index], object[object[object_num]->integer[index]]->label, object[object_num]->integer[index]);
+				Common::sprintf_s(temp_buffer, 1024, "%s: %s (%d)^", object_elements[index], object[object[object_num]->integer[index]]->label, object[object_num]->integer[index]);
 			} else {
-				sprintf(temp_buffer, "%s: %d^", object_elements[index], object[object_num]->integer[index]);
+				Common::sprintf_s(temp_buffer, 1024, "%s: %d^", object_elements[index], object[object_num]->integer[index]);
 			}
 			write_text(temp_buffer);
 			index++;

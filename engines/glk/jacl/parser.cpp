@@ -183,7 +183,7 @@ void parser() {
 					if (last_exact == -1) {
 						write_text(cstring_resolve("NO_MULTI_START")->value);
 					} else {
-						sprintf(error_buffer, cstring_resolve("NO_MULTI_VERB")->value, word[last_exact]);
+						Common::sprintf_s(error_buffer, 1024, cstring_resolve("NO_MULTI_VERB")->value, word[last_exact]);
 						write_text(error_buffer);
 					}
 
@@ -684,7 +684,7 @@ int build_object_list(struct word_type *scope_word, int noun_number) {
 				 * RESOLVED LIST */
 				noun_number = noun_number + 2;
 			} else {
-				sprintf(error_buffer, cstring_resolve("DOUBLE_EXCEPT")->value, except_word);
+				Common::sprintf_s(error_buffer, 1024, cstring_resolve("DOUBLE_EXCEPT")->value, except_word);
 				write_text(error_buffer);
 				custom_error = TRUE;
 				return (FALSE);
@@ -1031,9 +1031,9 @@ int verify_from_object(int from_object) {
 	if (object[from_object]->attributes & CONTAINER && object[from_object]->attributes & CLOSED) {
 		//printf("--- container is concealing\n");
 		if (object[from_object]->attributes & FEMALE) {
-			sprintf(error_buffer, cstring_resolve("CONTAINER_CLOSED_FEM")->value, sentence_output(from_object, TRUE));
+			Common::sprintf_s(error_buffer, 1024, cstring_resolve("CONTAINER_CLOSED_FEM")->value, sentence_output(from_object, TRUE));
 		} else {
-			sprintf(error_buffer, cstring_resolve("CONTAINER_CLOSED")->value, sentence_output(from_object, TRUE));
+			Common::sprintf_s(error_buffer, 1024, cstring_resolve("CONTAINER_CLOSED")->value, sentence_output(from_object, TRUE));
 		}
 		write_text(error_buffer);
 		custom_error = TRUE;
@@ -1675,7 +1675,7 @@ int noun_resolve(struct word_type *scope_word, int finding_from, int noun_number
 	for (index = 1; index <= objects; index++) {
 		if (confidence[index] != FALSE) {
 			possible_objects[counter] = index;
-			sprintf(text_buffer, "  [%d] ", counter);
+			Common::sprintf_s(text_buffer, 1024, "  [%d] ", counter);
 			write_text(text_buffer);
 			sentence_output(index, 0);
 			write_text(temp_buffer);
@@ -1830,7 +1830,7 @@ int find_parent(int index) {
 
 		if (index == parent) {
 			/* THIS OBJECT HAS ITS PARENT SET TO ITSELF */
-			sprintf(error_buffer, SELF_REFERENCE, executing_function->name, object[index]->label);
+			Common::sprintf_s(error_buffer, 1024, SELF_REFERENCE, executing_function->name, object[index]->label);
 			log_error(error_buffer, PLUS_STDOUT);
 			return (FALSE);
 		} else  if (!(object[parent]->attributes & LOCATION)
@@ -1881,7 +1881,7 @@ int parent_of(int parent_, int child, int restricted) {
 
 		if (index == child) {
 			/* THIS CHILD HAS IT'S PARENT SET TO ITSELF */
-			sprintf(error_buffer, SELF_REFERENCE, executing_function->name, object[index]->label);
+			Common::sprintf_s(error_buffer, 1024, SELF_REFERENCE, executing_function->name, object[index]->label);
 			log_error(error_buffer, PLUS_STDOUT);
 			//printf("--- self parent_.\n");
 			return (FALSE);

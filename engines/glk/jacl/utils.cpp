@@ -141,9 +141,9 @@ void create_paths(char *full_path) {
 		/* THIS ADDITION OF ./ TO THE FRONT OF THE GAMEFILE IF IT IS IN THE
 		 * CURRENT DIRECTORY IS REQUIRED TO KEEP Gargoyle HAPPY. */
 #ifdef __NDS__
-		sprintf(temp_buffer, "%c%s", DIR_SEPARATOR, game_file);
+		Common::sprintf_s(temp_buffer, "%c%s", DIR_SEPARATOR, game_file);
 #else
-		sprintf(temp_buffer, ".%c%s", DIR_SEPARATOR, game_file);
+		Common::sprintf_s(temp_buffer, ".%c%s", DIR_SEPARATOR, game_file);
 #endif
 		strcpy(game_file, temp_buffer);
 	} else {
@@ -157,13 +157,13 @@ void create_paths(char *full_path) {
 
 #ifdef GLK
 	/* SET DEFAULT WALKTHRU FILE NAME */
-	sprintf(walkthru, "%s.walkthru", prefix);
+	Common::sprintf_s(walkthru, "%s.walkthru", prefix);
 
 	/* SET DEFAULT SAVED GAME FILE NAME */
-	sprintf(bookmark, "%s.bookmark", prefix);
+	Common::sprintf_s(bookmark, "%s.bookmark", prefix);
 
 	/* SET DEFAULT BLORB FILE NAME */
-	sprintf(blorb, "%s.blorb", prefix);
+	Common::sprintf_s(blorb, "%s.blorb", prefix);
 #endif
 
 	/* SET DEFAULT FILE LOCATIONS IF NOT SET BY THE USER IN CONFIG */

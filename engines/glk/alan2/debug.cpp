@@ -40,7 +40,7 @@ static void showatrs(Aword atradr) {
 
 	i = 1;
 	for (at = (AtrElem *) addrTo(atradr); !endOfTable(at); at++) {
-		sprintf(str, "$i%3ld: %ld (%s)", (long) i, (unsigned long) at->val, (char *) addrTo(at->stradr));
+		Common::sprintf_s(str, "$i%3ld: %ld (%s)", (long) i, (unsigned long) at->val, (char *) addrTo(at->stradr));
 		output(str);
 		i++;
 	}
@@ -52,7 +52,7 @@ static void showobjs() {
 
 	output("OBJECTS:");
 	for (obj = OBJMIN; obj <= OBJMAX; obj++) {
-		sprintf(str, "$i%3ld: ", (long) obj);
+		Common::sprintf_s(str, "$i%3ld: ", (long) obj);
 		output(str);
 		say(obj);
 	}
@@ -64,16 +64,16 @@ static void showobj(int obj) {
 
 
 	if (!isObj(obj)) {
-		sprintf(str, "Object number out of range. Between %ld and %ld, please.", (unsigned long) OBJMIN, (unsigned long) OBJMAX);
+		Common::sprintf_s(str, "Object number out of range. Between %ld and %ld, please.", (unsigned long) OBJMIN, (unsigned long) OBJMAX);
 		output(str);
 		return;
 	}
 
-	sprintf(str, "OBJECT %d :", obj);
+	Common::sprintf_s(str, "OBJECT %d :", obj);
 	output(str);
 	say(obj);
 
-	sprintf(str, "$iLocation = %ld", (unsigned long) where(obj));
+	Common::sprintf_s(str, "$iLocation = %ld", (unsigned long) where(obj));
 	output(str);
 	if (isLoc(objs[OBJ].loc))
 		say(objs[OBJ].loc);
@@ -105,7 +105,7 @@ static void showcnts() {
 
 	output("CONTAINERS:");
 	for (cnt = CNTMIN; cnt <= CNTMAX; cnt++) {
-		sprintf(str, "$i%3ld: ", (long) cnt);
+		Common::sprintf_s(str, "$i%3ld: ", (long) cnt);
 		output(str);
 		if (cnts[CNT].nam != 0)
 			interpret(cnts[CNT].nam);
@@ -123,19 +123,19 @@ static void showcnt(int cnt) {
 #define  CNT (int)(cnt - CNTMIN)
 
 	if (cnt < (int)CNTMIN || cnt >(int)CNTMAX) {
-		sprintf(str, "Container number out of range. Between %ld and %ld, please.", (unsigned long) CNTMIN, (unsigned long) CNTMAX);
+		Common::sprintf_s(str, "Container number out of range. Between %ld and %ld, please.", (unsigned long) CNTMIN, (unsigned long) CNTMAX);
 		output(str);
 		return;
 	}
 
-	sprintf(str, "CONTAINER %d :", cnt);
+	Common::sprintf_s(str, "CONTAINER %d :", cnt);
 	output(str);
 	if (cnts[CNT].nam != 0)
 		interpret(cnts[CNT].nam);
 	if (cnts[CNT].parent != 0) {
 		cnt = cnts[CNT].parent;
 		say(cnt);
-		sprintf(str, "$iLocation = %ld", (unsigned long) where(cnt));
+		Common::sprintf_s(str, "$iLocation = %ld", (unsigned long) where(cnt));
 		output(str);
 	}
 	output("$iContains ");
@@ -145,7 +145,7 @@ static void showcnt(int cnt) {
 				output("$n");
 				found = TRUE;
 			}
-			sprintf(str, "$t$t%d: ", i);
+			Common::sprintf_s(str, "$t$t%d: ", i);
 			output(str);
 			say(i);
 		}
@@ -162,7 +162,7 @@ static void showlocs() {
 
 	output("LOCATIONS:");
 	for (loc = LOCMIN; loc <= LOCMAX; loc++) {
-		sprintf(str, "$i%3ld: ", (long) loc);
+		Common::sprintf_s(str, "$i%3ld: ", (long) loc);
 		output(str);
 		say(loc);
 	}
@@ -173,12 +173,12 @@ static void showloc(int loc) {
 
 
 	if (!isLoc(loc)) {
-		sprintf(str, "Location number out of range. Between %ld and %ld, please.", (unsigned long) LOCMIN, (unsigned long) LOCMAX);
+		Common::sprintf_s(str, "Location number out of range. Between %ld and %ld, please.", (unsigned long) LOCMIN, (unsigned long) LOCMAX);
 		output(str);
 		return;
 	}
 
-	sprintf(str, "LOCATION %d :", loc);
+	Common::sprintf_s(str, "LOCATION %d :", loc);
 	output(str);
 	say(loc);
 
@@ -192,7 +192,7 @@ static void showacts() {
 
 	output("ACTORS:");
 	for (act = ACTMIN; act <= ACTMAX; act++) {
-		sprintf(str, "$i%3ld:", (long) act);
+		Common::sprintf_s(str, "$i%3ld:", (long) act);
 		output(str);
 		say(act);
 	}
@@ -203,19 +203,19 @@ static void showact(int act) {
 	Boolean oldstp;
 
 	if (!isAct(act)) {
-		sprintf(str, "Actor number out of range. Between %ld and %ld, please.", (unsigned long) ACTMIN, (unsigned long) ACTMAX);
+		Common::sprintf_s(str, "Actor number out of range. Between %ld and %ld, please.", (unsigned long) ACTMIN, (unsigned long) ACTMAX);
 		output(str);
 		return;
 	}
 
-	sprintf(str, "ACTOR %d :", act);
+	Common::sprintf_s(str, "ACTOR %d :", act);
 	output(str);
 	oldstp = stpflg;
 	stpflg = FALSE; /* Make sure not to trace this! */
 	say(act);
 	stpflg = oldstp;
 
-	sprintf(str, "$iLocation = %ld", (unsigned long) acts[act - ACTMIN].loc);
+	Common::sprintf_s(str, "$iLocation = %ld", (unsigned long) acts[act - ACTMIN].loc);
 	output(str);
 	if (isLoc(acts[act - ACTMIN].loc))
 		say(acts[act - ACTMIN].loc);
@@ -224,10 +224,10 @@ static void showact(int act) {
 	else
 		output("Illegal location!");
 
-	sprintf(str, "$iScript = %ld", (unsigned long) acts[act - ACTMIN].script);
+	Common::sprintf_s(str, "$iScript = %ld", (unsigned long) acts[act - ACTMIN].script);
 	output(str);
 
-	sprintf(str, "$iStep = %ld", (unsigned long) acts[act - ACTMIN].step);
+	Common::sprintf_s(str, "$iStep = %ld", (unsigned long) acts[act - ACTMIN].step);
 	output(str);
 
 	output("$iAttributes =");
@@ -241,14 +241,14 @@ static void showevts() {
 
 	output("EVENTS:");
 	for (uint evt = EVTMIN; evt <= EVTMAX; evt++) {
-		sprintf(str, "$i%d (%s):", evt, (char *)addrTo(evts[evt - EVTMIN].stradr));
+		Common::sprintf_s(str, "$i%d (%s):", evt, (char *)addrTo(evts[evt - EVTMIN].stradr));
 		output(str);
 		scheduled = FALSE;
 		for (i = 0; i < etop; i++)
 			if ((scheduled = (eventq[i].event == (int)evt)))
 				break;
 		if (scheduled) {
-			sprintf(str, "Scheduled for +%d, at ", eventq[i].time - cur.tick);
+			Common::sprintf_s(str, "Scheduled for +%d, at ", eventq[i].time - cur.tick);
 			output(str);
 			say(eventq[i].where);
 		} else

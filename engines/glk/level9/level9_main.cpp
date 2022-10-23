@@ -327,7 +327,7 @@ void printstring(const char *buf) {
 
 void printdecimald0(int d0) {
 	char temp[12];
-	sprintf(temp, "%d", d0);
+	Common::sprintf_s(temp, "%d", d0);
 	printstring(temp);
 }
 

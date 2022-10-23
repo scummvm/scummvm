@@ -304,7 +304,7 @@ FreshInput:
 */
 								while (buffer[strlen(buffer)-1]==0x0d || buffer[strlen(buffer)-1]==0x0a)
 									buffer[strlen(buffer)-1] = '\0';
-								sprintf(line, "\n%s%s", GetWord(var[prompt]), buffer);
+								Common::sprintf_s(line, "\n%s%s", GetWord(var[prompt]), buffer);
 								if (script)
 									/* fprintf() this way for Glk */
 									script->putBuffer("\n", 1);
@@ -559,7 +559,7 @@ NextPerform:
 								*/
 								if (objcount > 1)
 								{
-									sprintf(line, "%s:  \\;", Name(var[object]));
+									Common::sprintf_s(line, "%s:  \\;", Name(var[object]));
 									AP(line);
 								}
 
@@ -1045,11 +1045,11 @@ void Hugo::RunPrint() {
 							itoa((unsigned int)a, line, 10);
 						else
 #endif
-							itoa(a, line, 10);
+							itoa(a, line, 10, sizeof(line));
 						capital = 0;
 					}
 					else
-						sprintf(line, "%X", a);
+						Common::sprintf_s(line, "%X", a);
 
 					number = 0;
 					hexnumber = 0;
@@ -1256,7 +1256,7 @@ void Hugo::RunRoutine(long addr) {
 	{
 		if (codeptr != addr)
 		{
-			sprintf(line, "[ROUTINE:  $%6s]", PrintHex(addr));
+			Common::sprintf_s(line, "[ROUTINE:  $%6s]", PrintHex(addr));
 			AP(line);
 			wascalled = 1;
 		}
@@ -1306,7 +1306,7 @@ void Hugo::RunRoutine(long addr) {
 			   already holds the calling information
 			*/
 			if (!trace_complex_prop_routine)
-				sprintf(debug_line, "Calling:  %s", RoutineName(currentroutine));
+				Common::sprintf_s(debug_line, "Calling:  %s", RoutineName(currentroutine));
 			else
 				trace_comp_prop = true;
 			trace_complex_prop_routine = false;
@@ -1332,7 +1332,7 @@ void Hugo::RunRoutine(long addr) {
 				Common::strcat_s(debug_line, "(");
 				for (i=0; i<arguments_passed; i++)
 				{
-					sprintf(debug_line+strlen(debug_line), "%d", var[MAXGLOBALS+i]);
+					Common::sprintf_s(debug_line+strlen(debug_line), "%d", var[MAXGLOBALS+i]);
 					if (i<arguments_passed-1)
 						Common::strcat_s(debug_line, ", ");
 				}
@@ -1390,7 +1390,7 @@ ContinueRunning:
 #if defined (DEBUG_CODE)
 		if (!inwindow)
 		{
-			sprintf(line, "[%6s:  %s]", PrintHex(codeptr), token[t]);
+			Common::sprintf_s(line, "[%6s:  %s]", PrintHex(codeptr), token[t]);
 			AP(line);
 		}
 #endif
@@ -1400,7 +1400,7 @@ ContinueRunning:
 #if defined (DEBUGGER)
 		if (++runaway_counter>=65535 && runtime_warnings)
 		{
-			sprintf(debug_line, "Possible runaway loop (65535 unchecked steps)");
+			Common::sprintf_s(debug_line, "Possible runaway loop (65535 unchecked steps)");
 			RuntimeWarning(debug_line);
 			buffered_code_lines = FORCE_REDRAW;
 			runaway_counter = 0;
@@ -1485,7 +1485,7 @@ ContinueRunning:
 		   reason, the line array was altered (see above)
 		*/
 		if (!trace_complex_prop_routine)
-			sprintf(debug_line, "Calling:  %s", RoutineName(currentroutine));
+			Common::sprintf_s(debug_line, "Calling:  %s", RoutineName(currentroutine));
 		trace_complex_prop_routine = false;
 
 
@@ -1633,8 +1633,8 @@ ProcessToken:
 Printcharloop:
 				codeptr++;
 				i = GetValue();
-				if (capital) sprintf(line, "%c\\;", toupper(i));
-				else sprintf(line, "%c\\;", i);
+				if (capital) Common::sprintf_s(line, "%c\\;", toupper(i));
+				else Common::sprintf_s(line, "%c\\;", i);
 				capital = 0;
 				AP(line);
 				if (Peek(codeptr)==COMMA_T)
@@ -2090,19 +2090,19 @@ LeaveRunRoutine:
 		else if (!debugger_step_over)
 		{
 ReturnfromRoutine:
-			sprintf(debug_line, "(Returning %d", ret);
+			Common::sprintf_s(debug_line, "(Returning %d", ret);
 
 			/* Since a complex property routine will give "<Routine>" as the
 			   routine name, skip those
 			*/
 			called_from = RoutineName(currentroutine);
 			if (!trace_comp_prop && called_from[0]!='<')
-				sprintf(debug_line+strlen(debug_line), " from %s", called_from);
+				Common::sprintf_s(debug_line+strlen(debug_line), " from %s", called_from);
 
 			if (old_currentroutine!=mainaddr && old_currentroutine!=initaddr
 				&& currentroutine!=mainaddr && currentroutine!=initaddr)
 			{
-				sprintf(debug_line+strlen(debug_line), " to %s", RoutineName(old_currentroutine));
+				Common::sprintf_s(debug_line+strlen(debug_line), " to %s", RoutineName(old_currentroutine));
 			}
 			Common::strcat_s(debug_line, ")");
 			AddStringtoCodeWindow(debug_line);
@@ -2349,7 +2349,7 @@ int Hugo::RunSystem() {
 #ifndef NO_STRFTIME
 			TimeDate td;
 			g_system->getTimeAndDate(td);
-			sprintf(parseerr, "%d-%.2d-%.2d %d:%.2d:%.2d", td.tm_year, td.tm_mon, td.tm_mday,
+			Common::sprintf_s(parseerr, "%d-%.2d-%.2d %d:%.2d:%.2d", td.tm_year, td.tm_mon, td.tm_mday,
 				td.tm_hour, td.tm_min, td.tm_sec);
 #else
 			hugo_gettimeformatted(parseerr);

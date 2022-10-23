@@ -535,7 +535,7 @@ void use(CONTEXT, int actor, int script) {
 	StepEntry *step;
 
 	if (!isAActor(actor)) {
-		sprintf(str, "Instance is not an Actor (%d).", actor);
+		Common::sprintf_s(str, "Instance is not an Actor (%d).", actor);
 		syserr(str);
 	}
 
@@ -554,7 +554,7 @@ void stop(int act) {
 	char str[80];
 
 	if (!isAActor(act)) {
-		sprintf(str, "Instance is not an Actor (%d).", act);
+		Common::sprintf_s(str, "Instance is not an Actor (%d).", act);
 		syserr(str);
 	}
 

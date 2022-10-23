@@ -39,7 +39,7 @@ void glkio_printf(const char *fmt, ...) {
 	va_start(argp, fmt);
 	if (glkMainWin) {
 		char buf[1024]; /* FIXME: buf size should be foolproof */
-		vsprintf(buf, fmt, argp);
+		Common::vsprintf_s(buf, fmt, argp);
 		g_vm->glk_put_string(buf);
 	} else {
 		// assume stdio is available in this case only
