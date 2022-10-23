@@ -132,26 +132,26 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 			switch (_vm->_game->_script->peekByte()) {
 			case TYPE_VAR_INT8:
 			case TYPE_ARRAY_INT8:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int8) READ_VARO_UINT8(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT16:
 			case TYPE_VAR_INT32_AS_INT16:
 			case TYPE_ARRAY_INT16:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int16) READ_VARO_UINT16(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_INT32:
 			case TYPE_ARRAY_INT32:
-				sprintf(buf + i, "%d",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%d",
 						(int32)VAR_OFFSET(_vm->_game->_script->readVarIndex()));
 				break;
 
 			case TYPE_VAR_STR:
 			case TYPE_ARRAY_STR:
-				sprintf(buf + i, "%s",
+				Common::sprintf_s(buf + i, sizeof(buf) - i, "%s",
 						GET_VARO_STR(_vm->_game->_script->readVarIndex()));
 				break;
 
