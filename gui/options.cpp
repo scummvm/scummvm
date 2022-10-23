@@ -699,6 +699,7 @@ void OptionsDialog::apply() {
 			ConfMan.removeKey("stretch_mode", _domain);
 			ConfMan.removeKey("scaler", _domain);
 			ConfMan.removeKey("scale_factor", _domain);
+			ConfMan.removeKey("shader", _domain);
 			ConfMan.removeKey("render_mode", _domain);
 			ConfMan.removeKey("renderer", _domain);
 			ConfMan.removeKey("antialiasing", _domain);
