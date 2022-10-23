@@ -696,7 +696,7 @@ void Redraw::renderOverlays() {
 				const int32 range = _engine->_collision->clampedLerp(overlay->info1, overlay->info0, 100, overlay->lifeTime - _engine->_lbaTime - 50);
 
 				char text[10];
-				sprintf(text, "%d", range);
+				Common::sprintf_s(text, "%d", range);
 
 				const int32 textLength = _engine->_text->getTextSize(text);
 				const int32 textHeight = 48;
