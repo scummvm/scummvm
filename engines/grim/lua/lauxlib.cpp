@@ -8,6 +8,7 @@
 ** Any function declared here could be written as an application
 ** function. With care, these functions can be used by other libraries.
 */
+#define FORBIDDEN_SYMBOL_EXCEPTION_vsprintf
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/lua.h"

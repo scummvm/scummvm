@@ -257,7 +257,7 @@ void Lua_V1::LocalizeString() {
 		// we've been given
 		if (str[0] == '/') {
 			Common::String msg = parseMsgText(str, msgId);
-			sprintf(buf, "/%s/%s", msgId, msg.c_str());
+			Common::sprintf_s(buf, "/%s/%s", msgId, msg.c_str());
 			str = buf;
 		}
 		lua_pushstring(str);

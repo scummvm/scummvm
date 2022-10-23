@@ -6,6 +6,7 @@
 #define FORBIDDEN_SYMBOL_EXCEPTION_setjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_longjmp
 #define FORBIDDEN_SYMBOL_EXCEPTION_strcpy
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
 #include "engines/grim/lua/lauxlib.h"
 #include "engines/grim/lua/ldo.h"
