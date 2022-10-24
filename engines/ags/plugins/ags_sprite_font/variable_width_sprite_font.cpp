@@ -103,13 +103,15 @@ void VariableWidthSpriteFontRenderer::SetLineHeightAdjust(int fontNum, int LineH
 void VariableWidthSpriteFontRenderer::EnsureTextValidForFont(char *text, int fontNumber) {
 	VariableWidthFont *font = getFontFor(fontNumber);
 	Common::String s(text);
+	size_t ln = s.size();
 
 	for (int i = (int)s.size() - 1; i >= 0 ; i--) {
 		if (font->characters.count(s[i]) == 0) {
 			s.erase(i, 1);
 		}
 	}
-	text = strcpy(text, s.c_str());
+	// We never grow the text
+	Common::strcpy_s(text, ln + 1, s.c_str());
 
 }
 

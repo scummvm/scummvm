@@ -51,7 +51,7 @@ void freeCTP() {
 	ctpVar17 = nullptr;
 	_vm->_polyStruct = nullptr;
 
-	strcpy((char *)currentCtpName, "");
+	currentCtpName[0] = '\0';
 }
 
 int pathVar0;

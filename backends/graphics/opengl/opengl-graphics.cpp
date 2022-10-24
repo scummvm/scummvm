@@ -619,6 +619,9 @@ void OpenGLGraphicsManager::updateScreen() {
 	if (   !_forceRedraw
 		&& !_cursorNeedsRedraw
 	    && !_gameScreen->isDirty()
+#if !USE_FORCED_GLES
+	    && !(_libretroPipeline && _libretroPipeline->isAnimated())
+#endif
 	    && !(_overlayVisible && _overlay->isDirty())
 	    && !(_cursorVisible && _cursor && _cursor->isDirty())
 #ifdef USE_OSD
@@ -656,14 +659,25 @@ void OpenGLGraphicsManager::updateScreen() {
 		Framebuffer *lastFramebuffer = Pipeline::getActivePipeline()->setFramebuffer(_gameScreenTarget);
 		_gameScreenTarget->enableBlend(Framebuffer::kBlendModeDisabled);
 		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
-		Pipeline::getActivePipeline()->drawTexture(gameScreenTexture, 0, 0, gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight());
+		const uint retroWidth = gameScreenTexture.getLogicalWidth(),
+		           retroHeight = gameScreenTexture.getLogicalHeight();
+		Pipeline::getActivePipeline()->drawTexture(gameScreenTexture, 0, 0, retroWidth, retroHeight);
 
 		// Draw the cursor if necessary.
+		// If overlay is visible we draw it later to have the cursor above overlay
 		if (needsCursor && !_overlayVisible) {
-			int gameScreenCursorX = (_cursorX - _gameDrawRect.left) * _gameScreen->getWidth() / _gameDrawRect.width() - _cursorHotspotX;
-			int gameScreenCursorY = (_cursorY - _gameDrawRect.top) * _gameScreen->getHeight() / _gameDrawRect.height() - _cursorHotspotY;
+			// Do all calculations in window coordinates
+			int gameScreenCursorX = _cursorX - _gameDrawRect.left - _cursorHotspotXScaled + _shakeOffsetScaled.x;
+			int gameScreenCursorY = _cursorY - _gameDrawRect.top - _cursorHotspotYScaled + _shakeOffsetScaled.y;
+			// Scale to come back to libretro input surface coordinates
+			gameScreenCursorX = gameScreenCursorX * retroWidth / _gameDrawRect.width();
+			gameScreenCursorY = gameScreenCursorY * retroHeight / _gameDrawRect.height();
+
+			int cursorWidth = _cursorWidthScaled * retroWidth / _gameDrawRect.width();
+			int cursorHeight = _cursorHeightScaled * retroHeight / _gameDrawRect.height();
+
 			_gameScreenTarget->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
-			Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(), gameScreenCursorX, gameScreenCursorY, _cursor->getWidth(), _cursor->getHeight());
+			Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(), gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
 			needsCursor = false;
 		}
 		Pipeline::getActivePipeline()->setFramebuffer(lastFramebuffer);

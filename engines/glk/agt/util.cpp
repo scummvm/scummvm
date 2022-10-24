@@ -100,7 +100,7 @@ void rprintf(const char *fmt, ...) {
 	va_list args;
 
 	va_start(args, fmt);
-	vsprintf(s, fmt, args);
+	Common::vsprintf_s(s, fmt, args);
 	va_end(args);
 	i = strlen(s) - 1;
 	if (i >= 0 && s[i] == '\n') {
@@ -316,8 +316,9 @@ void build_trans_ascii(void) {
 
 void print_error(const char *fname, filetype ext, const char *err, rbool ferr) {
 	char *estring; /* Hold error string */
-	estring = (char *)rmalloc(strlen(err) + strlen(fname) + 2);
-	sprintf(estring, err, fname);
+	size_t ln = strlen(err) + strlen(fname) + 2;
+	estring = (char *)rmalloc(ln);
+	Common::sprintf_s(estring, ln, err, fname);
 	if (ferr) fatal(estring);
 	else writeln(estring);
 	rfree(estring);
@@ -568,7 +569,7 @@ buffreopen will be called before any major file activity
 	if (agx_file) block_size = minbuff; /* Just for the beginning */
 
 	if (block_size % recnum != 0) {
-		sprintf(ebuff, "Fractional record count in %s file.", rectype);
+		Common::sprintf_s(ebuff, "Fractional record count in %s file.", rectype);
 		agtwarn(ebuff, 0);
 	}
 	buff_rsize = recsize = block_size / recnum;
@@ -647,7 +648,7 @@ static void buffreopen(long f_ofs, long file_recsize, long recnum,
 	block_size = bl_size; /* Size of the entire block (all records) */
 	if (block_size % recnum != 0) {
 		/* Check that the number of records divides the block size evenly */
-		sprintf(ebuff, "Fractional record count in %s block.", rectype);
+		Common::sprintf_s(ebuff, "Fractional record count in %s block.", rectype);
 		agtwarn(ebuff, 0);
 	}
 	buff_rsize = recsize = block_size / recnum;
@@ -1444,7 +1445,7 @@ void startwatch(void) {
 
 static char watchbuff[81];
 char *timestring(void) {
-	sprintf(watchbuff, "User:%ld.%02ld   Sys:%ld.%02ld   Total:%ld.%02ld"
+	Common::sprintf_s(watchbuff, "User:%ld.%02ld   Sys:%ld.%02ld   Total:%ld.%02ld"
 	        "   Real:%ld.%02ld",
 	        delta.tms_utime / 100, delta.tms_utime % 100,
 	        delta.tms_stime / 100, delta.tms_stime % 100,

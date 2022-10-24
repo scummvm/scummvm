@@ -46,6 +46,9 @@ DialogInterface::DialogInterface() {
 	_sender = nullptr;
 	_reaction = nullptr;
 	_firstTime = true;
+
+	_savedCursorId = _savedCursorActType = 0;
+	_wasCursorAnim = _wasCursorShown = false;
 }
 
 DialogInterface::~DialogInterface() {

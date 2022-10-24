@@ -35,6 +35,8 @@ enum BreakpointType {
 	kBreakpointFunction = 1,
 	kBreakpointMovie = 2,
 	kBreakpointMovieFrame = 3,
+	kBreakpointVariable = 4,
+	kBreakpointEntity = 5,
 };
 
 struct Breakpoint {
@@ -47,6 +49,11 @@ struct Breakpoint {
 	uint funcOffset = 0;
 	Common::String moviePath;
 	uint frameOffset = 0;
+	Common::String varName;
+	int entity = 0;
+	int field = 0;
+	bool varRead = false;
+	bool varWrite = false;
 
 	Common::String format() {
 		Common::String result = Common::String::format("Breakpoint %d, ", id);
@@ -60,14 +67,24 @@ struct Breakpoint {
 				result += Common::String::format(" [%5d]", funcOffset);
 			break;
 		case kBreakpointMovie:
-			result += "Movie ";
-			result += moviePath;
+			result += "Movie " + moviePath;
 			break;
 		case kBreakpointMovieFrame:
-			result += "Movie ";
-			result += moviePath;
-			result += Common::String::format(":%d", frameOffset);
+			result += Common::String::format("Movie %s:%d", moviePath.c_str(), frameOffset);
 			break;
+		case kBreakpointVariable:
+			result += "Variable "+ varName + ":";
+			result += varRead ? "r" : "";
+			result += varWrite ? "w" : "";
+			break;
+		case kBreakpointEntity:
+			result += "Entity ";
+			result += g_lingo->entity2str(entity);
+			result += field ? ":" : "";
+			result += field ? g_lingo->field2str(field) : "";
+			result += ":";
+			result += varRead ? "r" : "";
+			result += varWrite ? "w" : "";
 		default:
 			break;
 		}
@@ -87,6 +104,10 @@ public:
 	void pushContextHook();
 	void popContextHook();
 	void builtinHook(const Symbol &funcSym);
+	void varReadHook(const Common::String &varName);
+	void varWriteHook(const Common::String &varName);
+	void entityReadHook(int entity, int field);
+	void entityWriteHook(int entity, int field);
 
 private:
 	bool cmdHelp(int argc, const char **argv);
@@ -98,13 +119,14 @@ private:
 	bool cmdCast(int argc, const char **argv);
 	bool cmdNextFrame(int argc, const char **argv);
 	bool cmdNextMovie(int argc, const char **argv);
+	bool cmdPrint(int argc, const char **argv);
 	bool cmdRepl(int argc, const char **argv);
 	bool cmdBacktrace(int argc, const char **argv);
 	bool cmdDisasm(int argc, const char **argv);
 	bool cmdStack(int argc, const char **argv);
 	bool cmdScriptFrame(int argc, const char **argv);
 	bool cmdFuncs(int argc, const char **argv);
-	bool cmdVars(int argc, const char **argv);
+	bool cmdVar(int argc, const char **argv);
 	bool cmdStep(int argc, const char **argv);
 	bool cmdNext(int argc, const char **argv);
 	bool cmdFinish(int argc, const char **argv);
@@ -112,6 +134,8 @@ private:
 	bool cmdBpSet(int argc, const char **argv);
 	bool cmdBpMovie(int argc, const char **argv);
 	bool cmdBpFrame(int argc, const char **argv);
+	bool cmdBpEntity(int argc, const char **argv);
+	bool cmdBpVar(int argc, const char **argv);
 	bool cmdBpDel(int argc, const char **argv);
 	bool cmdBpEnable(int argc, const char **argv);
 	bool cmdBpDisable(int argc, const char **argv);
@@ -121,6 +145,7 @@ private:
 	void bpTest(bool forceCheck = false);
 
 	bool lingoCommandProcessor(const char *inputOrig);
+	bool lingoEval(const char *inputOrig);
 
 
 	Common::DumpFile _out;
@@ -135,6 +160,8 @@ private:
 	int _finishCounter;
 	bool _next;
 	int _nextCounter;
+	bool _lingoEval;
+	bool _lingoReplMode;
 
 	Common::Array<Breakpoint> _breakpoints;
 	int _bpNextId;
@@ -146,6 +173,10 @@ private:
 	Common::String _bpMatchMoviePath;
 	Common::HashMap<uint, void *> _bpMatchFuncOffsets;
 	Common::HashMap<uint, void *> _bpMatchFrameOffsets;
+	bool _bpCheckVarRead;
+	bool _bpCheckVarWrite;
+	bool _bpCheckEntityRead;
+	bool _bpCheckEntityWrite;
 };
 
 

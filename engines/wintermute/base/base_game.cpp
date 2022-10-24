@@ -641,7 +641,7 @@ void BaseGame::LOG(bool res, const char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	Common::vsprintf_s(buff, fmt, va);
 	va_end(va);
 
 	// redirect to an engine's own callback
@@ -1228,8 +1228,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ExpandString") == 0) {
 		stack->correctParams(1);
 		ScValue *val = stack->pop();
-		char *str = new char[strlen(val->getString()) + 1];
-		strcpy(str, val->getString());
+		size_t strSize = strlen(val->getString()) + 1;
+		char *str = new char[strSize];
+		Common::strcpy_s(str, strSize, val->getString());
 		expandStringByStringTable(&str);
 		stack->pushString(str);
 		delete[] str;
@@ -1460,8 +1461,9 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		const char *xdesc = stack->pop()->getString();
 		bool quick = stack->pop()->getBool(false);
 
-		char *desc = new char[strlen(xdesc) + 1];
-		strcpy(desc, xdesc);
+		size_t descSize = strlen(xdesc) + 1;
+		char *desc = new char[descSize];
+		Common::strcpy_s(desc, descSize, xdesc);
 		stack->pushBool(true);
 		if (DID_FAIL(saveGame(slot, desc, quick))) {
 			stack->pop();
@@ -1801,7 +1803,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 		int fileNum = 0;
 
 		while (true) {
-			sprintf(filename, "%s%03d.bmp", val->isNULL() ? getName() : val->getString(), fileNum);
+			Common::sprintf_s(filename, "%s%03d.bmp", val->isNULL() ? getName() : val->getString(), fileNum);
 			if (!Common::File::exists(filename)) {
 				break;
 			}
@@ -2122,7 +2124,7 @@ bool BaseGame::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisStack
 
 			if (asHex) {
 				char hex[100];
-				sprintf(hex, "%x", checksum);
+				Common::sprintf_s(hex, "%x", checksum);
 				stack->pushString(hex);
 			} else {
 				stack->pushInt(checksum);
@@ -2956,7 +2958,7 @@ ScValue *BaseGame::scGetProperty(const Common::String &name) {
 			gameVersion = fileManager->getPackageVersion("data.dcp");
 		}
 		char tmp[16];
-		sprintf(tmp,"%u",gameVersion);
+		Common::sprintf_s(tmp,"%u",gameVersion);
 		_scValue->setString(tmp);
 		return _scValue;
 	}
@@ -3292,7 +3294,7 @@ void BaseGame::quickMessageForm(char *fmt, ...) {
 	va_list va;
 
 	va_start(va, fmt);
-	vsprintf(buff, fmt, va);
+	Common::vsprintf_s(buff, fmt, va);
 	va_end(va);
 
 	quickMessage(buff);
@@ -3633,8 +3635,9 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "ToString") == 0) {
 		stack->correctParams(1);
 		const char *str = stack->pop()->getString();
-		char *str2 = new char[strlen(str) + 1];
-		strcpy(str2, str);
+		size_t strSize = strlen(str) + 1;
+		char *str2 = new char[strSize];
+		Common::strcpy_s(str2, strSize, str);
 		stack->pushString(str2);
 		delete[] str2;
 	}
@@ -3703,7 +3706,7 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 
 		// Let's make copies before modifying stack
 		char *copy = new char[size];
-		strcpy(copy, str);
+		Common::strcpy_s(copy, size, str);
 
 		// There is no way to makeSXArray() with exactly 1 given element
 		// That's why we are creating empty Array and SXArray::push() later
@@ -3737,8 +3740,9 @@ bool BaseGame::externalCall(ScScript *script, ScStack *stack, ScStack *thisStack
 	else if (strcmp(name, "Trim") == 0 || strcmp(name, "lTrim") == 0 || strcmp(name, "rTrim") == 0) {
 		stack->correctParams(1);
 		const char *str = stack->pop()->getString();
-		char *copy = new char[strlen(str) + 1];
-		strcpy(copy, str);
+		size_t copySize = strlen(str) + 1;
+		char *copy = new char[copySize];
+		Common::strcpy_s(copy, copySize, str);
 
 		char *ptr = copy;
 		if (strcmp(name, "rTrim") != 0) {
@@ -4583,15 +4587,15 @@ bool BaseGame::displayDebugInfo() {
 	char str[strLength];
 
 	if (_debugShowFPS) {
-		sprintf(str, "FPS: %d", _gameRef->_fps);
+		Common::sprintf_s(str, "FPS: %d", _gameRef->_fps);
 		_systemFont->drawText((byte *)str, 0, 0, 100, TAL_LEFT);
 	}
 
 	if (_gameRef->_debugDebugMode) {
 		if (!_gameRef->_renderer->isWindowed()) {
-			sprintf(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
+			Common::sprintf_s(str, "Mode: %dx%dx%d", _renderer->getWidth(), _renderer->getHeight(), _renderer->getBPP());
 		} else {
-			sprintf(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
+			Common::sprintf_s(str, "Mode: %dx%d windowed", _renderer->getWidth(), _renderer->getHeight());
 		}
 
 		Common::strlcat(str, " (", strLength);
@@ -4603,18 +4607,18 @@ bool BaseGame::displayDebugInfo() {
 
 		int scrTotal, scrRunning, scrWaiting, scrPersistent;
 		scrTotal = _scEngine->getNumScripts(&scrRunning, &scrWaiting, &scrPersistent);
-		sprintf(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
+		Common::sprintf_s(str, "Running scripts: %d (r:%d w:%d p:%d)", scrTotal, scrRunning, scrWaiting, scrPersistent);
 		_systemFont->drawText((byte *)str, 0, 70, _renderer->getWidth(), TAL_RIGHT);
 
 
-		sprintf(str, "Timer: %d", getTimer()->getTime());
+		Common::sprintf_s(str, "Timer: %d", getTimer()->getTime());
 		_gameRef->_systemFont->drawText((byte *)str, 0, 130, _renderer->getWidth(), TAL_RIGHT);
 
 		if (_activeObject != nullptr) {
 			_systemFont->drawText((const byte *)_activeObject->getName(), 0, 150, _renderer->getWidth(), TAL_RIGHT);
 		}
 
-		sprintf(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
+		Common::sprintf_s(str, "GfxMem: %dMB", _usedMem / (1024 * 1024));
 		_systemFont->drawText((byte *)str, 0, 170, _renderer->getWidth(), TAL_RIGHT);
 
 	}

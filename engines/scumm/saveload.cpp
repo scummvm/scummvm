@@ -1431,8 +1431,8 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	if (s.isLoading()) {
 		char md5str1[32+1], md5str2[32+1];
 		for (i = 0; i < 16; i++) {
-			sprintf(md5str1 + i*2, "%02x", (int)_gameMD5[i]);
-			sprintf(md5str2 + i*2, "%02x", (int)md5Backup[i]);
+			Common::sprintf_s(md5str1 + i*2, 3, "%02x", (int)_gameMD5[i]);
+			Common::sprintf_s(md5str2 + i*2, 3, "%02x", (int)md5Backup[i]);
 		}
 
 		debug(2, "Save version: %d", s.getVersion());

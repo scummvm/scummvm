@@ -41,6 +41,7 @@ MODULE_OBJS = \
 	lingo/lingo-utils.o \
 	lingo/xlibs/aiff.o \
 	lingo/xlibs/applecdxobj.o \
+	lingo/xlibs/askuser.o \
 	lingo/xlibs/barakeobj.o \
 	lingo/xlibs/cdromxobj.o \
 	lingo/xlibs/fileio.o \
@@ -61,6 +62,7 @@ MODULE_OBJS = \
 	lingo/xlibs/registercomponent.o \
 	lingo/xlibs/serialportxobj.o \
 	lingo/xlibs/soundjam.o \
+	lingo/xlibs/spacemgr.o \
 	lingo/xlibs/videodiscxobj.o \
 	lingo/xlibs/widgetxobj.o \
 	lingo/xlibs/winxobj.o \

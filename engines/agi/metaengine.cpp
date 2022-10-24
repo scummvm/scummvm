@@ -205,10 +205,10 @@ SaveStateList AgiMetaEngine::listSaves(const char *target) const {
 							break;
 					}
 					if (descriptionPos >= sizeof(description)) {
-						strcpy(description, "[broken saved game]");
+						Common::strcpy_s(description, "[broken saved game]");
 					}
 				} else {
-					strcpy(description, "[not an AGI saved game]");
+					Common::strcpy_s(description, "[not an AGI saved game]");
 				}
 
 				delete in;

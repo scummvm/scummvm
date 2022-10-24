@@ -616,7 +616,7 @@ void StageDrawPoly(SDactor *actors, uint32 actorQty) {
 	}
 
 	uint32 nl = set->GetPRig()->nLamps;
-	if ((nl == 0) || (nl > MAX_NUMBER_LIGHTS)) {
+	if ((nl == 0) || (nl >= MAX_NUMBER_LIGHTS)) {
 		Fatal_error("Illegal number of lights %d in rlp file", nl);
 	}
 

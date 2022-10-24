@@ -223,7 +223,7 @@ bool XModel::mergeFromFile(const Common::String &filename) {
 	}
 	if (!found) {
 		char *path = new char[filename.size() + 1];
-		strcpy(path, filename.c_str());
+		Common::strcpy_s(path, filename.size() + 1, filename.c_str());
 		_mergedModels.add(path);
 	}
 

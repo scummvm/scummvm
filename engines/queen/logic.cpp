@@ -853,7 +853,7 @@ void Logic::makeJoeSpeak(uint16 descNum, bool objectType) {
 		descNum += JOE_RESPONSE_MAX;
 	}
 	char descFilePrefix[10];
-	sprintf(descFilePrefix, "JOE%04i", descNum);
+	Common::sprintf_s(descFilePrefix, "JOE%04i", descNum);
 	makePersonSpeak(text, nullptr, descFilePrefix);
 }
 

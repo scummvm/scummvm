@@ -811,9 +811,9 @@ static char *build_position(word prep_, word name)
 	leng = strlen(dict[prep_]) + strlen(dict[name]) + 6; /* includes final '\0' */
 	s = (char *)rmalloc(leng * sizeof(char));
 
-	strcpy(s, dict[prep_]);
-	strcat(s, " the ");
-	strcat(s, dict[name]);
+	Common::strcpy_s(s, leng, dict[prep_]);
+	Common::strcat_s(s, leng, " the ");
+	Common::strcat_s(s, leng, dict[name]);
 	assert((int)strlen(s) + 1 == leng);
 	return s;
 }

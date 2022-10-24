@@ -372,6 +372,8 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 		return d;
 	}
 
+	g_debugger->entityReadHook(entity, field);
+
 	LingoArchive *mainArchive = movie->getMainLingoArch();
 	Score *score = movie->getScore();
 
@@ -708,7 +710,7 @@ Datum Lingo::getTheEntity(int entity, Datum &id, int field) {
 	case kTheMoviePath:
 	case kThePathName:
 		d.type = STRING;
-		d.u.s = new Common::String(_vm->getCurrentPath());
+		d.u.s = new Common::String(_vm->getCurrentAbsolutePath());
 		break;
 	case kTheMultiSound:
 		// We always support multiple sound channels!
@@ -1203,6 +1205,7 @@ void Lingo::setTheEntity(int entity, Datum &id, int field, Datum &d) {
 	default:
 		warning("Lingo::setTheEntity(): Unprocessed setting field \"%s\" of entity %s", field2str(field), entity2str(entity));
 	}
+	g_debugger->entityWriteHook(entity, field);
 }
 
 int Lingo::getMenuNum() {

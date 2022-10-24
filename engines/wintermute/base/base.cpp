@@ -116,26 +116,20 @@ bool BaseClass::parseEditorProperty(char *buffer, bool complete) {
 
 	while ((cmd = parser.getCommand(&buffer, commands, &params)) > 0) {
 		switch (cmd) {
-		case TOKEN_NAME:
+		case TOKEN_NAME: {
 			delete[] propName;
-			propName = new char[strlen(params) + 1];
-			if (propName) {
-				strcpy(propName, params);
-			} else {
-				cmd = PARSERR_GENERIC;
-			}
+			size_t propNameSize = strlen(params) + 1;
+			propName = new char[propNameSize];
+			Common::strcpy_s(propName, propNameSize, params);
 			break;
-
-		case TOKEN_VALUE:
+		}
+		case TOKEN_VALUE: {
 			delete[] propValue;
-			propValue = new char[strlen(params) + 1];
-			if (propValue) {
-				strcpy(propValue, params);
-			} else {
-				cmd = PARSERR_GENERIC;
-			}
+			size_t propValueSize = strlen(params) + 1;
+			propValue = new char[propValueSize];
+			Common::strcpy_s(propValue, propValueSize, params);
 			break;
-
+		}
 		default:
 			break;
 		}

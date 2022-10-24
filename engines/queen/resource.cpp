@@ -143,12 +143,11 @@ bool Resource::detectVersion(DetectedGameVersion *ver, Common::File *f) {
 			warning("Unknown/unsupported FOTAQ version");
 			return false;
 		}
-		strcpy(ver->str, gameVersion->str);
+		Common::strcpy_s(ver->str, gameVersion->str);
 		ver->compression = COMPRESSION_NONE;
 		ver->features = 0;
 		ver->queenTblVersion = gameVersion->queenTblVersion;
 		ver->queenTblOffset = gameVersion->queenTblOffset;
-		strcpy(ver->str, gameVersion->str);
 
 		// Handle game versions for which versionStr information is irrevelant
 		if (gameVersion == &_gameVersions[VER_AMI_DEMO]) { // CE101
@@ -255,7 +254,7 @@ void Resource::seekResourceFile(int num, uint32 offset) {
 		debug(7, "Opening resource file %d, current %d", num, _currentResourceFileNum);
 		_resourceFile.close();
 		char name[20];
-		sprintf(name, "queen.%d", num);
+		Common::sprintf_s(name, "queen.%d", num);
 		if (!_resourceFile.open(name)) {
 			error("Could not open resource file '%s'", name);
 		}

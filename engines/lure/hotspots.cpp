@@ -3024,7 +3024,7 @@ void HotspotTickHandlers::playerAnimHandler(Hotspot &h) {
 		h.setDestHotspot(0);
 		h.updateMovement2(CHARMODE_IDLE);
 		h.doNothing(nullptr);
-		strcpy(room.statusLine(), "");
+		room.statusLine()[0] = '\0';
 		break;
 
 	case DISPATCH_ACTION:

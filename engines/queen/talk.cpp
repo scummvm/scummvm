@@ -127,18 +127,18 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		_talkString[0][0] = '\0';
 
 		if (hasTalkedTo() && head == 1)
-			strcpy(_talkString[0], _person2String);
+			Common::strcpy_s(_talkString[0], _person2String);
 		else
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 
 		if (hasTalkedTo() && head == 1)
-			sprintf(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
+			Common::sprintf_s(otherVoiceFilePrefix, "%2dXXXXP", _talkKey);
 		else
-			sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
+			Common::sprintf_s(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 
 		if (_talkString[0][0] == '\0' && retval > 1) {
 			findDialogueString(_person1PtrOff, retval, _pMax, _talkString[0]);
-			sprintf(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
+			Common::sprintf_s(otherVoiceFilePrefix,"%2d%4xP", _talkKey, retval);
 		}
 
 		// Joe dialogue
@@ -151,7 +151,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 			if (index < 0 && _vm->logic()->gameState(ABS(index)) != _dialogueTree[level][i].gameStateValue)
 				_talkString[i][0] = '\0';
 
-			sprintf(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
+			Common::sprintf_s(_joeVoiceFilePrefix[i], "%2d%4xJ", _talkKey, _dialogueTree[level][i].head);
 		}
 
 		// Check to see if (all the dialogue options have been selected.
@@ -247,7 +247,7 @@ void Talk::talk(const char *filename, int personInRoom, char *cutawayFilename) {
 		if (-1 == retval) {
 			findDialogueString(_person1PtrOff, head, _pMax, _talkString[0]);
 			if (_talkString[0][0] != '\0') {
-				sprintf(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
+				Common::sprintf_s(otherVoiceFilePrefix, "%2d%4xP", _talkKey, head);
 				speak(_talkString[0], &person, otherVoiceFilePrefix);
 			}
 		}
@@ -435,14 +435,14 @@ void Talk::initialTalk() {
 		// Not yet talked to this person
 		if (joeString[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			sprintf(voiceFilePrefix, "%2dSSSSJ", _talkKey);
+			Common::sprintf_s(voiceFilePrefix, "%2dSSSSJ", _talkKey);
 			speak(joeString, nullptr, voiceFilePrefix);
 		}
 	} else {
 		// Already spoken to them, choose second response
 		if (joe2String[0] != '0') {
 			char voiceFilePrefix[MAX_STRING_SIZE];
-			sprintf(voiceFilePrefix, "%2dXXXXJ", _talkKey);
+			Common::sprintf_s(voiceFilePrefix, "%2dXXXXJ", _talkKey);
 			speak(joe2String, nullptr, voiceFilePrefix);
 		}
 	}
@@ -789,7 +789,7 @@ void Talk::speakSegment(
 	segment[length] = '\0';
 
 	char voiceFileName[MAX_STRING_SIZE];
-	sprintf(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
+	Common::sprintf_s(voiceFileName, "%s%1x", voiceFilePrefix, index + 1);
 
 	// French talkie version has a useless voice file ;	c30e_102 file is the same as c30e_101,
 	// so there is no need to play it. This voice was used in room 30 (N8) when talking to Klunk.
@@ -1077,7 +1077,7 @@ TalkSelected *Talk::talkSelected() {
 
 int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	char option[MAX_STRING_SIZE];
-	strcpy(option, str);
+	Common::strcpy_s(option, str);
 	// option text ends at '*' char
 	char *p = strchr(option, '*');
 	if (p) {
@@ -1086,7 +1086,7 @@ int Talk::splitOption(const char *str, char optionText[5][MAX_STRING_SIZE]) {
 	int lines;
 	memset(optionText, 0, 5 * MAX_STRING_SIZE);
 	if (_vm->resource()->getLanguage() == Common::EN_ANY || _vm->display()->textWidth(option) <= MAX_TEXT_WIDTH) {
-		strcpy(optionText[0], option);
+		Common::strcpy_s(optionText[0], option);
 		lines = 1;
 	} else if (_vm->resource()->getLanguage() == Common::HE_ISR) {
 		lines = splitOptionHebrew(option, optionText);
@@ -1119,10 +1119,10 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 				width = wordWidth;
 				maxTextLen = MAX_TEXT_WIDTH - OPTION_TEXT_MARGIN;
 			} else {
-				strcpy(tmpString, optionText[optionLines]);
+				Common::strcpy_s(tmpString, optionText[optionLines]);
 				strncpy(optionText[optionLines], p, len);
 				optionText[optionLines][len] = '\0';
-				strcat(optionText[optionLines], tmpString);
+				Common::strcat_s(optionText[optionLines], tmpString);
 			}
 			--p;
 			len = 1;
@@ -1132,10 +1132,10 @@ int Talk::splitOptionHebrew(const char *str, char optionText[5][MAX_STRING_SIZE]
 				if (width + _vm->display()->textWidth(p + 1, len) > maxTextLen) {
 					++optionLines;
 				}
-				strcpy(tmpString, optionText[optionLines]);
+				Common::strcpy_s(tmpString, optionText[optionLines]);
 				strncpy(optionText[optionLines], p + 1, len);
 				optionText[optionLines][len] = '\0';
-				strcat(optionText[optionLines], tmpString);
+				Common::strcat_s(optionText[optionLines], tmpString);
 			}
 			++optionLines;
 		}
@@ -1171,7 +1171,7 @@ int Talk::splitOptionDefault(const char *str, char optionText[5][MAX_STRING_SIZE
 				if (width + _vm->display()->textWidth(str) > maxTextLen) {
 					++optionLines;
 				}
-				strcat(optionText[optionLines], str);
+				Common::strcat_s(optionText[optionLines], str);
 			}
 			++optionLines;
 		}

@@ -182,9 +182,9 @@ bool SlotControl::process(uint32 deltaTimeInMillis) {
 
 				char buf[16];
 				if (_engine->getGameId() == GID_NEMESIS)
-					sprintf(buf, "%d%cobj.tga", curItem, _distanceId);
+					Common::sprintf_s(buf, "%d%cobj.tga", curItem, _distanceId);
 				else
-					sprintf(buf, "g0z%cu%2.2x1.tga", _distanceId, curItem);
+					Common::sprintf_s(buf, "g0z%cu%2.2x1.tga", _distanceId, curItem);
 
 				Graphics::Surface *srf = _engine->getRenderManager()->loadImage(buf);
 

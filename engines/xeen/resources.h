@@ -51,9 +51,10 @@ class Resources {
 
 		void syncString(const char *&str) {
 			str = _buffer;
-			strcpy(_buffer, readString().c_str());
-			_buffer += strlen(_buffer) + 1;
-			assert((_buffer - _buffStart) < STRING_BUFFER_SIZE);
+			size_t available = STRING_BUFFER_SIZE - (_buffer - _buffStart);
+			size_t ln = Common::strlcpy(_buffer, readString().c_str(), available);
+			assert(available > ln);
+			_buffer += ln + 1;
 		}
 		void syncStrings(const char **str, int count) {
 			uint tag = readUint32LE();

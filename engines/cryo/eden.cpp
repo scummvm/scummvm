@@ -5294,7 +5294,7 @@ void EdenGame::load() {
 //	if(OpenDialog(0, 0)) //TODO: write me
 	{
 		// TODO
-		strcpy(name, "edsave1.000");
+		Common::strcpy_s(name, "edsave1.000");
 		loadgame(name);
 	}
 	_vm->hideMouse();
@@ -5363,7 +5363,7 @@ void EdenGame::save() {
 	FlushEvents(-1, 0);
 	//SaveDialog(byte_37150, byte_37196->ff_A);
 	//TODO
-	strcpy(name, "edsave1.000");
+	Common::strcpy_s(name, "edsave1.000");
 	saveGame(name);
 	_vm->hideMouse();
 	CLBlitter_FillScreenView(0xFFFFFFFF);

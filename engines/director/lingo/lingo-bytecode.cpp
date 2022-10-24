@@ -1101,11 +1101,11 @@ ScriptContext *LingoCompiler::compileLingoV4(Common::SeekableReadStreamEndian &s
 		int16 index = stream.readSint16();
 		if (0 <= index && index < (int16)archive->names.size()) {
 			const char *name = archive->names[index].c_str();
-			debugC(5, kDebugLoading, "%d: %s", i, name);
 			if (!g_lingo->_globalvars.contains(name)) {
 				g_lingo->_globalvars[name] = Datum();
+				debugC(5, kDebugLoading, "%d: %s", i, name);
 			} else {
-				warning("Global %d (%s) already defined", i, name);
+				debugC(5, kDebugLoading, "%d: %s (already defined)", i, name);
 			}
 		} else {
 			warning("Global %d has unknown name id %d, skipping define", i, index);

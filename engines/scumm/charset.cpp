@@ -2072,7 +2072,7 @@ void CharsetRendererNut::setCurID(int32 id) {
 	_curId = id;
 	if (!_fr[id]) {
 		char fontname[11];
-		sprintf(fontname, "font%d.nut", id);
+		Common::sprintf_s(fontname, "font%d.nut", id);
 		_fr[id] = new NutRenderer(_vm, fontname);
 	}
 	_current = _fr[id];

@@ -127,7 +127,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_inventory_item(int32 &, int32 *pa
 	g_oIconListManager->AddIconToList(ICON_LIST_INVENTORY, item_name);
 
 	// Preload the icon for PSX smoothing.
-	sprintf(pcIconPath, ICON_PATH);
+	Common::sprintf_s(pcIconPath, ICON_PATH);
 	g_oIconMenu->PreloadIcon(pcIconPath, item_name);
 
 	// Calling script can continue.
@@ -166,7 +166,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_medipacks(int32 &result, int32 *p
 	player.AddMediPacks(1, bFlashIcons);
 
 	// Preload the icon for PSX smoothing.
-	sprintf(pcIconPath, ICON_PATH);
+	Common::sprintf_s(pcIconPath, ICON_PATH);
 	g_oIconMenu->PreloadIcon(pcIconPath, ARMS_HEALTH_NAME);
 	// Calling script can continue.
 
@@ -212,7 +212,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_ammo_clips(int32 &result, int32 *
 	}
 
 	// Preload the icon for PSX smoothing.
-	sprintf(pcIconPath, ICON_PATH);
+	Common::sprintf_s(pcIconPath, ICON_PATH);
 	g_oIconMenu->PreloadIcon(pcIconPath, ARMS_AMMO_NAME);
 
 	// Calling script can continue.
@@ -237,7 +237,7 @@ mcodeFunctionReturnCodes _game_session::fn_add_icon_to_icon_list(int32 &, int32 
 	g_oIconListManager->AddIconToList(list_name, icon_name);
 
 	// Preload the icon for PSX smoothing.
-	sprintf(pcIconPath, ICON_PATH);
+	Common::sprintf_s(pcIconPath, ICON_PATH);
 	g_oIconMenu->PreloadIcon(pcIconPath, icon_name);
 
 	// Calling script can continue.

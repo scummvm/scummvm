@@ -830,8 +830,9 @@ static void gagt_status_print() {
 
 	/* Save the details of the printed status buffer. */
 	free(gagt_status_buffer_printed);
-	gagt_status_buffer_printed = (char *)gagt_malloc(strlen(gagt_status_buffer) + 1);
-	strcpy(gagt_status_buffer_printed, gagt_status_buffer);
+	size_t ln = strlen(gagt_status_buffer) + 1;
+	gagt_status_buffer_printed = (char *)gagt_malloc(ln);
+	Common::strcpy_s(gagt_status_buffer_printed, ln, gagt_status_buffer);
 }
 
 
@@ -3233,7 +3234,7 @@ static void gagt_display_debug() {
 		gagt_paragraphref_t paragraph;
 
 		paragraph = line->paragraph;
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "%2d:%2d->%2ld A=%-3d L=%-2d I=%-2d O=%-2d R=%-2d %c%c| ",
 		        paragraph ? paragraph->id + 1 : 0,
 		        paragraph ? paragraph->line_count : 0,
@@ -3255,7 +3256,7 @@ static void gagt_display_debug() {
 	}
 
 	if (gagt_current_buffer.length > 0) {
-		sprintf(buffer,
+		Common::sprintf_s(buffer,
 		        "__,__->__ A=%-3d L=%-2d I=__ O=__ R=__ %s| ",
 		        gagt_current_buffer.allocation, gagt_current_buffer.length,
 		        gagt_help_requested ? "HR" : "__");
@@ -4096,7 +4097,7 @@ static void gagt_command_width(const char *argument) {
 	}
 
 	gagt_normal_string("Glk's current display width is approximately ");
-	sprintf(buffer, "%d", status_width);
+	Common::sprintf_s(buffer, "%d", status_width);
 	gagt_normal_string(buffer);
 	gagt_normal_string(status_width == 1 ? " character" : " characters");
 	gagt_normal_string(".\n");
@@ -4215,7 +4216,7 @@ static void gagt_command_statusline(const char *argument) {
 static void gagt_command_print_version_number(glui32 version) {
 	char buffer[64];
 
-	sprintf(buffer, "%u.%u.%u",
+	Common::sprintf_s(buffer, "%u.%u.%u",
 	        version >> 16, (version >> 8) & 0xff, version & 0xff);
 	gagt_normal_string(buffer);
 }
@@ -4523,8 +4524,9 @@ static int gagt_command_escape(const char *string) {
 		return FALSE;
 
 	/* Take a copy of the string, without any leading space or introducer. */
-	string_copy = (char *)gagt_malloc(strlen(string + posn) + 1 - strlen("glk"));
-	strcpy(string_copy, string + posn + strlen("glk"));
+	size_t ln = strlen(string + posn) + 1 - 3 /*strlen("glk")*/;
+	string_copy = (char *)gagt_malloc(ln);
+	Common::strcpy_s(string_copy, ln, string + posn + 3 /*strlen("glk")*/);
 
 	/*
 	 * Find the subcommand; the first word in the string copy.  Find its end,

@@ -128,8 +128,8 @@ ErrorWindow::ErrorWindow(const char *msg, const char *btnMsg1, const char *btnMs
 	_rInfo.result    = -1;
 	_rInfo.running   = true;
 
-	strcpy(_mbChs1Text, "\x13");
-	strcpy(_mbChs2Text, "\x1B");
+	Common::strcpy_s(_mbChs1Text, "\x13");
+	Common::strcpy_s(_mbChs2Text, "\x1B");
 	const char *eq;
 	// button one
 	if (btnMsg1) {
@@ -277,7 +277,7 @@ void SimpleWindow::writeWrappedPlaqText(gPort           &port,
 	Rect16          r2 = r;
 
 	va_start(argptr, msg);
-	int cnt = vsprintf(textBuf, msg, argptr);
+	int cnt = Common::vsprintf_s(textBuf, msg, argptr);
 	va_end(argptr);
 
 	char *text = &textBuf[0];

@@ -391,13 +391,13 @@ void Room::love2Tick1() {
 
 	switch (_awayMission->love.canister1) {
 	case CANTYPE_O2:
-		strcpy(canName, "o2can");
+		Common::strcpy_s(canName, "o2can");
 		break;
 	case CANTYPE_H2:
-		strcpy(canName, "h2can");
+		Common::strcpy_s(canName, "h2can");
 		break;
 	case CANTYPE_N2:
-		strcpy(canName, "n2can");
+		Common::strcpy_s(canName, "n2can");
 		break;
 	default:
 		break;
@@ -408,13 +408,13 @@ void Room::love2Tick1() {
 
 	switch (_awayMission->love.canister2) {
 	case CANTYPE_O2:
-		strcpy(canName, "o2can");
+		Common::strcpy_s(canName, "o2can");
 		break;
 	case CANTYPE_H2:
-		strcpy(canName, "h2can");
+		Common::strcpy_s(canName, "h2can");
 		break;
 	case CANTYPE_N2:
-		strcpy(canName, "n2can");
+		Common::strcpy_s(canName, "n2can");
 		break;
 	default:
 		break;
@@ -445,37 +445,37 @@ void Room::love2Tick1() {
 
 	switch (_awayMission->love.synthesizerContents) {
 	case SYNTHITEM_PBC:
-		strcpy(_roomVar.love.chamberInputAnim, "pbcanm");
+		Common::strcpy_s(_roomVar.love.chamberInputAnim, "pbcanm");
 		_roomVar.love.chamberObject = OBJECT_POLYBERYLCARBONATE;
 		break;
 	case SYNTHITEM_VIRUS_SAMPLE:
-		strcpy(_roomVar.love.chamberInputAnim, "dishes");
+		Common::strcpy_s(_roomVar.love.chamberInputAnim, "dishes");
 		_roomVar.love.chamberObject = OBJECT_VIRUSSAMPLE;
 		break;
 	case SYNTHITEM_CURE_SAMPLE:
-		strcpy(_roomVar.love.chamberInputAnim, "dishes");
+		Common::strcpy_s(_roomVar.love.chamberInputAnim, "dishes");
 		_roomVar.love.chamberObject = OBJECT_CURESAMPLE;
 		break;
 	case SYNTHITEM_BOTTLE:
 		switch (_awayMission->love.synthesizerBottleIndex) {
 		case 1:
-			strcpy(_roomVar.love.chamberOutputAnim, "btle1");
+			Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle1");
 			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 2:
-			strcpy(_roomVar.love.chamberOutputAnim, "btle2");
+			Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle2");
 			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 3:
-			strcpy(_roomVar.love.chamberOutputAnim, "btle3");
+			Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle3");
 			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		case 4:
-			strcpy(_roomVar.love.chamberOutputAnim, "btle4");
+			Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle4");
 			_roomVar.love.chamberObject = OBJECT_SYNTHESIZER_OUTPUT;
 			break;
 		default:
-			strcpy(_roomVar.love.chamberOutputAnim, "cure");
+			Common::strcpy_s(_roomVar.love.chamberOutputAnim, "cure");
 			_roomVar.love.chamberObject = OBJECT_CURE;
 			break;
 		}
@@ -707,21 +707,21 @@ void Room::love2ChangedGasFeed() {
 
 void Room::love2UseO2GasOnCanisterSlot() {
 	_roomVar.love.canisterType = CANTYPE_O2;
-	strcpy(_roomVar.love.canisterAnim, "o2can");
+	Common::strcpy_s(_roomVar.love.canisterAnim, "o2can");
 	_roomVar.love.canisterItem = OBJECT_IO2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
 
 void Room::love2UseH2GasOnCanisterSlot() {
 	_roomVar.love.canisterType = CANTYPE_H2;
-	strcpy(_roomVar.love.canisterAnim, "h2can");
+	Common::strcpy_s(_roomVar.love.canisterAnim, "h2can");
 	_roomVar.love.canisterItem = OBJECT_IH2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
 
 void Room::love2UseN2GasOnCanisterSlot() {
 	_roomVar.love.canisterType = CANTYPE_N2;
-	strcpy(_roomVar.love.canisterAnim, "n2can");
+	Common::strcpy_s(_roomVar.love.canisterAnim, "n2can");
 	_roomVar.love.canisterItem = OBJECT_IN2GAS;
 	walkCrewman(OBJECT_KIRK, 0xa8, 0xb7, 3);
 }
@@ -926,7 +926,7 @@ void Room::love2UseSynthesizer() {
 				case SYNTHITEM_NONE: // Water
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_H2O;
-					strcpy(_roomVar.love.chamberOutputAnim, "btle3");
+					Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle3");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(kSfxDoor);
@@ -968,7 +968,7 @@ void Room::love2UseSynthesizer() {
 				case SYNTHITEM_NONE: // Ammonia
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_NH3;
-					strcpy(_roomVar.love.chamberOutputAnim, "btle2");
+					Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle2");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(kSfxDoor);
@@ -1013,7 +1013,7 @@ void Room::love2UseSynthesizer() {
 				case SYNTHITEM_NONE: // Laughing gas
 				default:
 					_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_N2O;
-					strcpy(_roomVar.love.chamberOutputAnim, "btle1");
+					Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle1");
 					// Produce bottle
 					loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 					playSoundEffectIndex(kSfxDoor);
@@ -1075,7 +1075,7 @@ void Room::love2SynthesizerFinished() {
 
 void Room::love2ClosedSynthesizerDoorMakingRLG() {
 	_awayMission->love.synthesizerBottleIndex = BOTTLETYPE_RLG;
-	strcpy(_roomVar.love.chamberOutputAnim, "btle4");
+	Common::strcpy_s(_roomVar.love.chamberOutputAnim, "btle4");
 	loadActorAnim(OBJECT_SYNTHESIZER_DOOR, "s3r3d2", 0x8a, 0x8d, 3); // -> love2SynthesizerDoorClosed
 	playSoundEffectIndex(kSfxDoor);
 }

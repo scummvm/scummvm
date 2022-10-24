@@ -564,7 +564,7 @@ void Light::load(TextSplitter &ts) {
 		ts.scanString(" light %256s", 1, buf);
 	else {
 		ts.nextLine();
-		strcpy(buf, "");
+		buf[0] = '\0';
 	}
 	_name = buf;
 

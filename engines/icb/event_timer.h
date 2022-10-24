@@ -106,7 +106,7 @@ inline _event_timer::_event_timer(const _event_timer &oX) {
 	m_nEnd = oX.m_nEnd;
 	m_nInterval = oX.m_nInterval;
 	m_nCurrentTime = oX.m_nCurrentTime;
-	strcpy(m_pcEventName, oX.m_pcEventName);
+	Common::strcpy_s(m_pcEventName, oX.m_pcEventName);
 }
 
 inline const _event_timer &_event_timer::operator=(const _event_timer &oOpB) {
@@ -115,7 +115,7 @@ inline const _event_timer &_event_timer::operator=(const _event_timer &oOpB) {
 	m_nEnd = oOpB.m_nEnd;
 	m_nInterval = oOpB.m_nInterval;
 	m_nCurrentTime = oOpB.m_nCurrentTime;
-	strcpy(m_pcEventName, oOpB.m_pcEventName);
+	Common::strcpy_s(m_pcEventName, oOpB.m_pcEventName);
 
 	return (*this);
 }
@@ -124,7 +124,7 @@ inline void _event_timer::SetEventName(const char *pcEventName) {
 	if (strlen(pcEventName) >= MAXLEN_EVENT_NAME)
 		Fatal_error("Event name [%s] too long (max %d) in _event_timer::SetEventName()", pcEventName, MAXLEN_EVENT_NAME - 1);
 
-	strcpy(m_pcEventName, pcEventName);
+	Common::strcpy_s(m_pcEventName, pcEventName);
 }
 
 } // End of namespace ICB

@@ -587,7 +587,7 @@ void SystemUI::createSavedGameDisplayText(char *destDisplayText, const char *act
 	memset(destDisplayText, fillUpChar, SYSTEMUI_SAVEDGAME_DISPLAYTEXT_LEN);
 
 	// create fixed prefix (" 1:", "10:", etc.)
-	sprintf(slotIdChar, "%02d", slotId);
+	Common::sprintf_s(slotIdChar, "%02d", slotId);
 	memcpy(destDisplayText, slotIdChar, 2);
 	destDisplayText[2] = ':';
 

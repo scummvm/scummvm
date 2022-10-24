@@ -101,7 +101,7 @@ void _surface_manager::PrintTimer(char label, uint32 time, uint32 limit) {
 		if (percIndex > 5)
 			percIndex = 5;
 		char message[64];
-		sprintf(message, "%c%3.1f", label, perc);
+		Common::sprintf_s(message, "%c%3.1f", label, perc);
 		/*      Get_surface_DC( working_buffer_id, dc );
 		        SetBkColor( dc, colours[percIndex] );
 		        SetTextColor( dc, 0x01010101 );

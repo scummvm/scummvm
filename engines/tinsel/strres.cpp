@@ -97,7 +97,7 @@ void ChangeLanguage(LANGUAGE newLang) {
 	if (!f.open(_vm->getTextFile(newLang))) {
 		if ((newLang == TXT_ENGLISH) || !f.open(_vm->getTextFile(TXT_ENGLISH))) {
 			char buf[50];
-			sprintf(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
+			Common::sprintf_s(buf, CANNOT_FIND_FILE, _vm->getTextFile(newLang));
 			GUI::MessageDialog dialog(buf, "OK");
 			dialog.runModal();
 
@@ -234,7 +234,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 	byte *pText = FindStringBase(id);
 
 	if (pText == NULL) {
-		strcpy(pBuffer, "!! HIGH STRING !!");
+		Common::strcpy_s(pBuffer, bufferMax, "!! HIGH STRING !!");
 		return 0;
 	}
 
@@ -310,7 +310,7 @@ int LoadStringResource(int id, int sub, char *pBuffer, int bufferMax) {
 	}
 
 	// TEMPORARY DIRTY BODGE
-	strcpy(pBuffer, "!! NULL STRING !!");
+	Common::strcpy_s(pBuffer, bufferMax, "!! NULL STRING !!");
 
 	// string does not exist
 	return 0;

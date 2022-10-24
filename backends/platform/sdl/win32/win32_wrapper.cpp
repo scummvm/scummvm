@@ -19,6 +19,9 @@
  *
  */
 
+// For _tcscat
+#define FORBIDDEN_SYMBOL_EXCEPTION_strcat
+
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #include <shellapi.h> // for CommandLineToArgvW()
@@ -171,7 +174,7 @@ char *unicodeToAnsi(const wchar_t *s) {
 TCHAR *stringToTchar(const Common::String& s) {
 #ifndef UNICODE
 	char *t = (char *)malloc(s.size() + 1);
-	strcpy(t, s.c_str());
+	Common::strcpy_s(t, s.size() + 1, s.c_str());
 	return t;
 #else
 	return ansiToUnicode(s.c_str());

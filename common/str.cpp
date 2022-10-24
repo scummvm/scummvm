@@ -736,6 +736,128 @@ String tag2string(uint32 tag, bool nonPrintable) {
 
 #endif
 
+// When str.cpp is used in devtools warning is not defined
+#ifdef SCUMMVM_UTIL
+#define warning(msg, ...)
+#endif
+
+// Our simple implementation of strcpy_s and strcat_s
+// We don't check for overlapping strings and we issue warnings instead of erroring out
+void strcpy_s(char *dst, size_t size, const char *src) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return;
+	}
+	if (!src) {
+		warning("%s: src is nullptr", __func__);
+		return;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return;
+	}
+
+	if (dst == src) {
+		// Nothing to do
+		return;
+	}
+
+	// Copy over (size - 1) bytes at max.
+	while (size != 0) {
+		*dst = *src;
+		if (*dst == '\0') {
+			return;
+		}
+		++dst;
+		++src;
+		--size;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[-1] = '\0';
+}
+
+void strcat_s(char *dst, size_t size, const char *src) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return;
+	}
+	if (!src) {
+		warning("%s: src is nullptr", __func__);
+		return;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return;
+	}
+
+	// Search the end of the destination, but do not
+	// move past the terminating zero.
+	while(*dst != '\0') {
+		++dst;
+		--size;
+		if (!size) {
+			warning("%s: dst is unterminated", __func__);
+			return;
+		}
+	}
+
+	// Copy over all of the source that fits
+	// the destination buffer.
+	while (size != 0) {
+		*dst = *src;
+		if (*dst == '\0') {
+			return;
+		}
+		++dst;
+		++src;
+		--size;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[-1] = '\0';
+}
+
+int vsprintf_s(char *dst, size_t size, const char *format, va_list ap) {
+	if (!dst) {
+		warning("%s: dst is nullptr", __func__);
+		return 0;
+	}
+	if (!size) {
+		warning("%s: size is zero", __func__);
+		return 0;
+	}
+	if (!format) {
+		warning("%s: format is nullptr", __func__);
+		dst[0] = '\0';
+		return 0;
+	}
+
+	int ret = vsnprintf(dst, size, format, ap);
+
+	if ((size_t)ret < size
+#if defined(_MSC_VER) && _MSC_VER <= 1800
+		&& ret != -1
+#endif
+		) {
+		// Nominal case: no truncation
+		return ret;
+	}
+
+	warning("%s: truncating string", __func__);
+	dst[size - 1] = '\0';
+	return size - 1;
+}
+
+int sprintf_s(char *dst, size_t size, const char *format, ...) {
+	int ret;
+	va_list ap;
+	va_start(ap, format);
+	ret = vsprintf_s(dst, size, format, ap);
+	va_end(ap);
+	return ret;
+}
+
 size_t strlcpy(char *dst, const char *src, size_t size) {
 	// Our backup of the source's start, we need this
 	// to calculate the source's length.
@@ -918,7 +1040,7 @@ char *scumm_strdup(const char *in) {
 	const size_t len = strlen(in) + 1;
 	char *out = (char *)malloc(len);
 	if (out) {
-		strcpy(out, in);
+		Common::strcpy_s(out, len, in);
 	}
 	return out;
 }

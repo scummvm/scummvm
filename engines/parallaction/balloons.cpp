@@ -161,7 +161,7 @@ protected:
 		} else
 		if (token.compareToIgnoreCase("%s") == 0) {
 			char buf[20];
-			sprintf(buf, "%i", _vm->_score);
+			Common::sprintf_s(buf, "%i", _vm->_score);
 			return Common::String(buf);
 		}
 

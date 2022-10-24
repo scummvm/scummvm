@@ -890,7 +890,7 @@ static void scan_dbg(int vcode) {
 	else w = syntbl[auxsyn[vcode]];
 
 	if (strlen(dict[w]) > 200) return; /* Just in case... */
-	sprintf(buff, "+++++Scanning %s\n", dict[w]);
+	Common::sprintf_s(buff, "+++++Scanning %s\n", dict[w]);
 	debugout(buff);
 }
 

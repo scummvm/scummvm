@@ -290,7 +290,7 @@ AddFontCode:
 			bufferbreak = 0;
 			bufferbreaklen = 0;
 #endif
-			strcpy(pbuffer, "");
+			pbuffer[0] = '\0';
 			plen = 0;
 			linebreak = 0;
 			linebreaklen = 0;
@@ -435,7 +435,7 @@ AddFontCode:
 		hugo_font(currentfont = lastfont);
 		Printout(pbuffer, 0);
 		lastfont = currentfont;
-		strcpy(pbuffer, "");
+		pbuffer[0] = '\0';
 		linebreak = 0;
 		linebreaklen = 0;
 		thisline = 0;
@@ -557,7 +557,7 @@ ContextCommandLoop:
 		strncpy(context_command[context_commands], cc = GetWord(n), 64);
 		context_command[context_commands][63] = '\0';
 		if (strlen(cc)>=64)
-			sprintf(context_command[context_commands]+60, "...");
+			Common::sprintf_s(context_command[context_commands]+60, 4, "...");
 		context_commands++;
 	}
 #endif
@@ -573,7 +573,7 @@ unsigned int Hugo::Dict() {
 	codeptr += 2;                           /* "(" */
 
 	if (MEM(codeptr)==PARSE_T || MEM(codeptr)==WORD_T)
-		strcpy(line, GetWord(GetValue()));
+		Common::strcpy_s(line, GetWord(GetValue()));
 	else
 	{
 		/* Get the array address to read the to-be-
@@ -614,7 +614,7 @@ unsigned int Hugo::Dict() {
 	if ((long)(pos+strlen(line)) > (long)(codeend-dicttable*16L))
 	{
 #ifdef DEBUGGER
-		sprintf(debug_line, "$MAXDICTEXTEND dictionary space exceeded");
+		Common::sprintf_s(debug_line, "$MAXDICTEXTEND dictionary space exceeded");
 		RuntimeWarning(debug_line);
 #endif
 		defseg = gameseg;
@@ -650,39 +650,39 @@ void Hugo::FatalError(int n) {
 	switch (n)
 	{
 		case MEMORY_E:
-			{sprintf(line, "Out of memory\n");
+			{Common::sprintf_s(line, "Out of memory\n");
 			break;}
 
 		case OPEN_E:
-			{sprintf(line, "Cannot open file\n");
+			{Common::sprintf_s(line, "Cannot open file\n");
 			break;}
 
 		case READ_E:
-			{sprintf(line, "Cannot read from file\n");
+			{Common::sprintf_s(line, "Cannot read from file\n");
 			break;}
 
 		case WRITE_E:
-			{sprintf(line, "Cannot write to save file\n");
+			{Common::sprintf_s(line, "Cannot write to save file\n");
 			break;}
 
 		case EXPECT_VAL_E:
-			{sprintf(line, "Expecting value at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Expecting value at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case UNKNOWN_OP_E:
-			{sprintf(line, "Unknown operation at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Unknown operation at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case ILLEGAL_OP_E:
-			{sprintf(line, "Illegal operation at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Illegal operation at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case OVERFLOW_E:
-			{sprintf(line, "Overflow at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Overflow at $%s\n", PrintHex(codeptr));
 			break;}
 
 		case DIVIDE_E:
-			{sprintf(line, "Divide by zero at $%s\n", PrintHex(codeptr));
+			{Common::sprintf_s(line, "Divide by zero at $%s\n", PrintHex(codeptr));
 			break;}
 	}
 
@@ -760,7 +760,7 @@ void Hugo::FileIO() {
 	ioerror = 0;
 
 	/* Make sure the filename is legal, 8 alphanumeric characters or less */
-	strcpy(line, GetWord(fnameval));
+	Common::strcpy_s(line, GetWord(fnameval));
 	if (strlen(line) > 8) goto LeaveFileIO;
 	for (i=0; i<(int)strlen(line); i++)
 	{
@@ -779,7 +779,7 @@ void Hugo::FileIO() {
 	hugo_splitpath(program_path, drive, dir, fname, ext);
 	hugo_makepath(fileiopath, drive, dir, GetWord(fnameval), "");
 #else
-	strcpy(fileiopath, GetWord(fnameval));
+	Common::strcpy_s(fileiopath, GetWord(fnameval));
 #endif
 
 	if (iotype==WRITEFILE_T)        /* "writefile" */
@@ -863,7 +863,7 @@ void Hugo::Flushpbuffer() {
 	pbuffer[strlen(pbuffer)] = (char)NO_NEWLINE;
 	Printout(Ltrim(pbuffer), 0);
 	currentpos = hugo_textwidth(pbuffer);	/* -charwidth; */
-	strcpy(pbuffer, "");
+	pbuffer[0] = '\0';
 }
 
 void Hugo::GetCommand() {
@@ -918,9 +918,9 @@ void Hugo::GetCommand() {
 	hugo_getline(a);
 #endif
 	during_player_input = false;
-	strcpy(buffer, Rtrim(buffer));
+	Common::strcpy_s(buffer, Rtrim(buffer));
 
-	strcpy(parseerr, "");
+	parseerr[0] = '\0';
 
 	full = 1;
 	remaining = 0;
@@ -1023,7 +1023,7 @@ void Hugo::HandleTailRecursion(long addr) {
 	call[window[VIEW_CALLS].count-1].addr = currentroutine;
 	call[window[VIEW_CALLS].count-1].param = true;
 
-	sprintf(debug_line, "Calling:  %s", RoutineName(currentroutine));
+	Common::sprintf_s(debug_line, "Calling:  %s", RoutineName(currentroutine));
 	/* Don't duplicate blank separator line in code window */
 	if (codeline[window[CODE_WINDOW].count-1][0] != 0)
 		AddStringtoCodeWindow("");
@@ -1072,7 +1072,7 @@ void Hugo::InitGame() {
 	if (_savegameSlot == -1) {
 #endif
 #if defined (DEBUGGER)
-	for (i=0; i<MAXLOCALS; i++) strcpy(localname[i], "");
+	for (i=0; i<MAXLOCALS; i++) localname[i][0] = '\0';
 	window[VIEW_LOCALS].count = current_locals = 0;
 
 	PassLocals(0);
@@ -1103,7 +1103,7 @@ void Hugo::LoadGame() {
 	if (!strcmp(gamefile, ""))
 	{
 		game = nullptr;
-		strcpy(gamefile, "(no file)");
+		Common::strcpy_s(gamefile, "(no file)");
 		return;
 	}
 #endif
@@ -1149,9 +1149,11 @@ void Hugo::LoadGame() {
 		hugo_cleanup_screen();
 		hugo_clearfullscreen();
 #endif
-		sprintf(line, "Hugo Compiler v%d.%d or later required.\n", HEVERSION, HEREVISION);
-		if (game_version>0)
-			sprintf(line+strlen(line), "File \"%s\" is v%d.%d.\n", gamefile, game_version/10, game_version%10);
+		Common::sprintf_s(line, "Hugo Compiler v%d.%d or later required.\n", HEVERSION, HEREVISION);
+		if (game_version>0) {
+			size_t ln = strlen(line);
+			Common::sprintf_s(line+ln, sizeof(line)-ln, "File \"%s\" is v%d.%d.\n", gamefile, game_version/10, game_version%10);
+		}
 
 #if defined (DEBUGGER_PRINTFATALERROR)
 		DEBUGGER_PRINTFATALERROR(line);
@@ -1170,7 +1172,7 @@ void Hugo::LoadGame() {
 		hugo_cleanup_screen();
 		hugo_clearfullscreen();
 #endif
-		sprintf(line, "File \"%s\" is incorrect or unknown version.\n", gamefile);
+		Common::sprintf_s(line, "File \"%s\" is incorrect or unknown version.\n", gamefile);
 
 #if defined (DEBUGGER_PRINTFATALERROR)
 		DEBUGGER_PRINTFATALERROR(line);
@@ -1303,15 +1305,15 @@ void Hugo::LoadGame() {
 
 	/* build punctuation string (additional user-specified punctuation) */
 	synptr = 2;
-	strcpy(punc_string, "");
+	punc_string[0] = '\0';
 	for (i=1; i<=syncount; i++)
 	{
 		defseg = syntable;
 		if (Peek(synptr)==3)	/* 3 = punctuation */
 		{
-			strcpy(line, GetWord(PeekWord(synptr+1)));
+			Common::strcpy_s(line, GetWord(PeekWord(synptr+1)));
 			if (strlen(line) + strlen(punc_string) > 63) break;
-			strcat(punc_string, line);
+			Common::strcat_s(punc_string, line);
 		}
 		synptr+=5;
 	}
@@ -1452,7 +1454,7 @@ const char *Hugo::PrintHex(long a) {
 	static char hex[7];
 	int h = 0;
 
-	strcpy(hex, "");
+	hex[0] = '\0';
 
 	if (a < 0L) a = 0;
 
@@ -1462,7 +1464,7 @@ const char *Hugo::PrintHex(long a) {
 	if (a < 256L) hex[h++] = '0';
 	if (a < 16L) hex[h++] = '0';
 
-	sprintf(hex+h, "%lX", a);
+	Common::sprintf_s(hex+h, sizeof(hex)-h, "%lX", a);
 
 	return hex;
 }

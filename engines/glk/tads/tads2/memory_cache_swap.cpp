@@ -57,8 +57,9 @@ void mcsini(mcscxdef *ctx, mcmcx1def *gmemctx, ulong maxsiz,
 	 *   have to retain the original copy (in case it's on the stack)
 	 */
 	if (swapfilename != nullptr) {
-		ctx->mcscxfname = (char *)mchalo(errctx, (strlen(swapfilename) + 1), "mcsini");
-		strcpy(ctx->mcscxfname, swapfilename);
+		size_t ln = strlen(swapfilename) + 1;
+		ctx->mcscxfname = (char *)mchalo(errctx, ln, "mcsini");
+		Common::strcpy_s(ctx->mcscxfname, ln, swapfilename);
 	} else {
 		ctx->mcscxfname = nullptr;
 	}

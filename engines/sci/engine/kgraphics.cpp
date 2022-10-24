@@ -375,7 +375,7 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 		warning("kTextSize: string would be too big to fit on screen. Trimming it");
 		text.trim();
 		// Copy over the trimmed string...
-		s->_segMan->strcpy(argv[1], text.c_str());
+		s->_segMan->strcpy_(argv[1], text.c_str());
 		// ...and recalculate bounding box dimensions
 		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
 	}
@@ -1044,7 +1044,7 @@ reg_t kDrawControl(EngineState *s, int argc, reg_t *argv) {
 				// The french version of Quest For Glory 3 uses "gloire3.sauv". It seems a translator translated the filename.
 				text.deleteChar(0);
 				text.deleteChar(0);
-				s->_segMan->strcpy(textReference, text.c_str());
+				s->_segMan->strcpy_(textReference, text.c_str());
 			}
 		}
 	}

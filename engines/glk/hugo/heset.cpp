@@ -137,14 +137,14 @@ GetNextWord:
 			/* Have to (rather unfortunately) rebuild the entire
 			   input buffer and word array here
 			*/
-			strcpy(buffer, "");
+			buffer[0] = '\0';
 			t = 0;
 			for (a=1; a<=(int)MAXWORDS; a++)
 			{
 				if ((unsigned short)wd[a]!=UNKNOWN_WORD)
-					strcpy(buffer+t, GetWord(wd[a]));
+					Common::strcpy_s(buffer+t, sizeof(buffer) - t, GetWord(wd[a]));
 				else
-					itoa(parsed_number, buffer+t, 10);
+					itoa(parsed_number, buffer+t, 10, sizeof(buffer) - t);
 			        word[a] = buffer + t;
 				t+=strlen(word[a])+1;
 			}

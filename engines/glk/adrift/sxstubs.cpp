@@ -194,10 +194,10 @@ os_play_sound(const sc_char *filepath,
 		stub_print_string("<<Sound: id=\"");
 		stub_print_string(stub_notnull(filepath));
 		stub_print_string("\", offset=");
-		sprintf(buffer, "%ld", offset);
+		Common::sprintf_s(buffer, "%ld", offset);
 		stub_print_string(buffer);
 		stub_print_string(", length=");
-		sprintf(buffer, "%ld", length);
+		Common::sprintf_s(buffer, "%ld", length);
 		stub_print_string(buffer);
 		stub_print_string(", looping=");
 		stub_print_string(is_looping ? "true" : "false");
@@ -226,10 +226,10 @@ os_show_graphic(const sc_char *filepath, sc_int offset, sc_int length) {
 		stub_print_string("<<Graphic: id=\"");
 		stub_print_string(stub_notnull(filepath));
 		stub_print_string("\", offset=");
-		sprintf(buffer, "%ld", offset);
+		Common::sprintf_s(buffer, "%ld", offset);
 		stub_print_string(buffer);
 		stub_print_string(", length=");
-		sprintf(buffer, "%ld", length);
+		Common::sprintf_s(buffer, "%ld", length);
 		stub_print_string(buffer);
 		stub_print_string(">>");
 	}
@@ -243,7 +243,7 @@ os_read_line(sc_char *buffer, sc_int length) {
 		status = stub_read_line(buffer, length);
 	else {
 		assert(buffer && length > 4);
-		sprintf(buffer, "%s", "quit");
+		Common::sprintf_s(buffer, "%s", "quit");
 		status = TRUE;
 	}
 
@@ -260,7 +260,7 @@ os_read_line(sc_char *buffer, sc_int length) {
 sc_bool
 os_read_line_debug(sc_char *buffer, sc_int length) {
 	assert(buffer && length > 8);
-	sprintf(buffer, "%s", "continue");
+	Common::sprintf_s(buffer, "%s", "continue");
 
 	if (stub_trace)
 		sx_trace("os_read_line_debug (\"%s\", %ld) -> true\n", buffer, length);

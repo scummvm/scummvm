@@ -51,19 +51,19 @@ static void displaySaveResult(vmsaveResult res)
 
   switch(res) {
   case VMSAVE_OK:
-	sprintf(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
+	Common::sprintf_s(buf, "Game saved on unit %c%d", 'A'+(lastvm/6), lastvm%6);
 	break;
   case VMSAVE_NOVM:
-	strcpy(buf, "No memory card present!");
+	Common::strcpy_s(buf, "No memory card present!");
 	break;
   case VMSAVE_NOSPACE:
-	strcpy(buf, "Not enough space available!");
+	Common::strcpy_s(buf, "Not enough space available!");
 	break;
   case VMSAVE_WRITEERROR:
-	strcpy(buf, "Write error!!!");
+	Common::strcpy_s(buf, "Write error!!!");
 	break;
   default:
-	strcpy(buf, "Unknown error!!!");
+	Common::strcpy_s(buf, "Unknown error!!!");
 	break;
   }
 

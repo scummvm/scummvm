@@ -88,6 +88,8 @@ enum {
 	kDebugEndVideo		= 1 << 17,
 	kDebugLingoStrict	= 1 << 18,
 	kDebugSound			= 1 << 19,
+	kDebugConsole		= 1 << 20,
+	kDebugXObj			= 1 << 21,
 };
 
 struct MovieReference {
@@ -174,6 +176,7 @@ public:
 	Movie *getCurrentMovie() const;
 	void setCurrentMovie(Movie *movie);
 	Common::String getCurrentPath() const;
+	Common::String getCurrentAbsolutePath();
 	Common::String getStartupPath() const;
 
 	// graphics.cpp

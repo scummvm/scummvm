@@ -345,7 +345,7 @@ public:
 
 	void loadPic(int roomNum, byte *targetSurface, int colorCount = 1) {
 		char rm[20];
-		sprintf(rm, "%i.alg", roomNum);
+		Common::sprintf_s(rm, "%i.alg", roomNum);
 		loadPic(rm, targetSurface, colorCount);
 	}
 

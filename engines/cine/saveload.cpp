@@ -710,7 +710,7 @@ bool CineEngine::loadPlainSaveFW(Common::SeekableReadStream &in, CineSaveGameFor
 	if (strlen(bgName)) {
 		if (g_cine->getGameType() == GType_FW && (g_cine->getFeatures() & GF_CD)) {
 			char buffer[20];
-			removeExtention(buffer, bgName);
+			removeExtention(buffer, bgName, sizeof(buffer));
 			g_sound->setBgMusic(atoi(buffer + 1));
 		}
 		loadBg(bgName);
@@ -1049,7 +1049,7 @@ void loadResourcesFromSave(Common::SeekableReadStream &fHandle, enum CineSaveGam
 	int16 foundFileIdx;
 	char *animName, part[256], name[10];
 
-	strcpy(part, currentPartName);
+	Common::strcpy_s(part, currentPartName);
 
 	// We only support these variations of the savegame format at the moment.
 	assert(saveGameFormat == ANIMSIZE_23 || saveGameFormat == ANIMSIZE_30_PTRS_INTACT);

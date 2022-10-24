@@ -658,7 +658,7 @@ bool Scene50::updateCountdown() {
 
 void Scene50::drawCountdown(int value) {
 	char str[8];
-	sprintf(str, "%02d", value);
+	Common::sprintf_s(str, "%02d", value);
 	_vm->_gameSys->fillSurface(nullptr, 371, 505, 50, 27, 0, 0, 0);
 	_vm->_gameSys->drawTextToSurface(nullptr, 381, 504, 255, 255, 255, str);
 }
@@ -2636,7 +2636,7 @@ void Scene52::initAnims() {
 
 void Scene52::drawScore(int score) {
 	char str[4];
-	sprintf(str, "%03d", score);
+	Common::sprintf_s(str, "%03d", score);
 	_vm->_gameSys->fillSurface(nullptr, 420, 80, 48, 30, 0, 0, 0);
 	_vm->_gameSys->drawTextToSurface(nullptr, 420, 80, 255, 255, 255, str);
 }

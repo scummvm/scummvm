@@ -831,7 +831,7 @@ void ScummEngine_v3::processKeyboard(Common::KeyState lastKeyHit) {
 
 		updateIQPoints();
 
-		sprintf(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
+		Common::sprintf_s(text, "IQ Points: Episode = %d, Series = %d", _scummVars[244], _scummVars[245]);
 		Indy3IQPointsDialog indy3IQPointsDialog(this, text);
 		runDialog(indy3IQPointsDialog);
 	}

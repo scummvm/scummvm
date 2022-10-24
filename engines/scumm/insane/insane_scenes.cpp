@@ -1055,17 +1055,17 @@ void Insane::postCase16(byte *renderBitmap, int32 codecparam, int32 setupsan12,
 	int32 tmp;
 
 	turnBen(true);
-	sprintf(buf, "^f01%02o", curFrame & 0x3f);
+	Common::sprintf_s(buf, "^f01%02o", curFrame & 0x3f);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 180, 168, 1, 2, 0, "%s", buf);
 	tmp = 400-curFrame;
 
 	if (tmp < 0)
 		tmp += 1300;
 
-	sprintf(buf, "^f01%04d", tmp);
+	Common::sprintf_s(buf, "^f01%04d", tmp);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 202, 168, 1, 2, 0, "%s", buf);
 
-	sprintf(buf, "^f01%02o", curFrame & 0xff);
+	Common::sprintf_s(buf, "^f01%02o", curFrame & 0xff);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 240, 168, 1, 2, 0, "%s", buf);
 	smlayer_showStatusMsg(-1, renderBitmap, codecparam, 170, 43, 1, 2, 0, "%s", buf);
 

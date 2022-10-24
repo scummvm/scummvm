@@ -47,7 +47,7 @@ Text::Text(CGE2Engine *vm, const char *fname) : _vm(vm) {
 
 	_cache[_txtCount - 1]._ref = -1;
 	_cache[_txtCount - 1]._text = new char[3];
-	strcpy(_cache[_txtCount - 1]._text, "");
+	_cache[_txtCount - 1]._text[0] = '\0';
 }
 
 Text::~Text() {
@@ -113,8 +113,9 @@ void Text::load() {
 			++s;
 
 		_cache[idx]._ref = r;
-		_cache[idx]._text = new char[strlen(s) + 1];
-		strcpy(_cache[idx]._text, s);
+		size_t ln = strlen(s) + 1;
+		_cache[idx]._text = new char[ln];
+		Common::strcpy_s(_cache[idx]._text, ln, s);
 		idx++;
 	}
 }

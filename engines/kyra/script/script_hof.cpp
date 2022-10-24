@@ -783,16 +783,16 @@ int KyraEngine_HoF::o2_showLetter(EMCState *script) {
 	_screen->clearPage(3);
 	_screen->loadBitmap("_NOTE.CPS", 3, 3, nullptr);
 
-	sprintf(filename, "_NTEPAL%.1d.COL", letter+1);
+	Common::sprintf_s(filename, "_NTEPAL%.1d.COL", letter+1);
 	_screen->loadPalette(filename, _screen->getPalette(0));
 
 	_screen->fadeToBlack(0x14);
 
-	sprintf(filename, "LETTER%.1d.%s", letter, _languageExtension[_lang]);
+	Common::sprintf_s(filename, "LETTER%.1d.%s", letter, _languageExtension[_lang]);
 	uint8 *letterBuffer = _res->fileData(filename, nullptr);
 	if (!letterBuffer) {
 		// some floppy versions use a TXT extension
-		sprintf(filename, "LETTER%.1d.TXT", letter);
+		Common::sprintf_s(filename, "LETTER%.1d.TXT", letter);
 		letterBuffer = _res->fileData(filename, nullptr);
 	}
 

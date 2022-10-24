@@ -33,6 +33,8 @@ struct Perspective {
 	int y0;
 	int y1;
 	double f1;
+
+	Perspective() { f0 = f1 = 1.0; k = 0.0; y0 = 0; y1 = 480; }
 };
 
 class QObjectBG : public QMessageObject {

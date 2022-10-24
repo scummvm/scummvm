@@ -60,11 +60,6 @@ public:
 	virtual float frameStat(int statID = grFramesPerSecond) {
 		return _instantFrameCount;
 	}
-
-	virtual void whatDoYouKnow(char *buf) {
-		sprintf(buf, "FPS: %02.2f", frameStat());
-	}
-
 };
 
 
@@ -205,18 +200,6 @@ public:
 		default:
 			return frameCounter::frameStat(statID);
 		}
-	}
-
-	virtual void whatDoYouKnow(char *buf) {
-		float f[15];
-		for (int i = 0; i < 15; i++) {
-			f[i] = MAX((float) -99, MIN((float)99, (float)(((float) frameStat(i + 1)) / ((float) 1000))));
-		}
-		sprintf(buf, "Imm: %02.2f  1 Sec %02.2f | %02.2f  5 Sec %02.2f | %02.2f"
-		        //"  -(%2.2f  %2.2f  %2.2f,%2.2f,%2.2f,%2.2f,%2.2f)",
-		        , f[0],  f[1], f[8], f[6], f[13]);
-		//, f[3], f[4], f[5],
-		//                  f[13],f[14], f[8],f[9],f[10],f[11],f[12]);
 	}
 };
 

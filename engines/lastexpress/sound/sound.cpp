@@ -1314,7 +1314,7 @@ void SoundManager::playAmbientSound(int param) {
 
 	if (_queue->getAmbientState() & kAmbientSoundEnabled && param >= 0x45 && param <= 0x46) {
 		if (_queue->getAmbientState() & kAmbientSoundSteam) {
-			strcpy(tmp, "STEAM.SND");
+			Common::strcpy_s(tmp, "STEAM.SND");
 
 			_ambientSoundDuration = 32767;
 		} else {
@@ -1364,7 +1364,7 @@ void SoundManager::playAmbientSound(int param) {
 			}
 
 			if (partNumber != 99)
-				sprintf(tmp, "LOOP%d%c.SND", partNumber, (char)(_engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A'));
+				Common::sprintf_s(tmp, "LOOP%d%c.SND", partNumber, (char)(_engine->getRandom().getRandomNumber(numLoops[partNumber] - 1) + 'A'));
 		}
 
 		if (getFlags()->flag_3)

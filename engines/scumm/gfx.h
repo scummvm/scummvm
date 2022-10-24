@@ -490,9 +490,13 @@ public:
 	void fillLayerRect(int layer, int x, int y, int w, int h, int col);
 	void addDirtyRect(int x, int y, int w, int h);
 	void toggleLayers(int flags);
-	void scrollLayers(int flags, int offset, bool fast);
+	void scrollLayer(int layer, int offset, int top, int bottom, bool fast);
 	void update();
-	bool isScrolling(int direction, int threshold = 0) const { return (direction == 0) ? _scrollRemainder != threshold : (direction == 1 ? _scrollRemainder > threshold : _scrollRemainder < threshold); }
+	bool isScrolling(int layer, int direction, int threshold = 0) const {
+		return (layer & ~1) ? false :
+			(direction == 0 ? (_layers[layer].scrollRemainder != threshold) :
+				(direction == 1 ? (_layers[layer].scrollRemainder > threshold) : (_layers[layer].scrollRemainder < threshold)));
+	}
 
 	uint8 *getLayerPixels(int layer, int x, int y) const;
 	int getLayerPitch(int layer) const { assert (layer >= 0 && layer < 2); return _layers[layer].pitch; }
@@ -504,21 +508,21 @@ public:
 
 private:
 	struct TownsScreenLayer {
-		uint8 *pixels;
-		uint8 *palette;
-		int pitch;
-		int width;
-		int height;
-		int bpp;
-		int numCol;
-		int hScroll;
-		uint8 scaleW;
-		uint8 scaleH;
-		bool onBottom;
-		bool enabled;
-		bool ready;
-
-		uint16 *bltTmpPal;
+		uint8 *pixels = nullptr;
+		uint8 *palette = nullptr;
+		int pitch = 0;
+		int width = 0;
+		int height = 0;
+		int bpp = 0;
+		int numCol = 0;
+		uint16 hScroll = 0;
+		uint8 scaleW = 0;
+		uint8 scaleH = 0;
+		int scrollRemainder = 0;
+		bool onBottom = false;
+		bool enabled = false;
+		bool ready = false;
+		uint16 *bltTmpPal= nullptr;
 	} _layers[2];
 
 	template<typename dstPixelType, typename srcPixelType, int scaleW, int scaleH, bool col4bit> void transferRect(uint8 *dst, TownsScreenLayer *l, int x, int y, int w, int h);
@@ -532,8 +536,6 @@ private:
 	int _height;
 	int _width;
 	int _pitch;
-	uint16 _scrollOffset;
-	int _scrollRemainder;
 	bool _semiSmoothScroll;
 	Graphics::PixelFormat _pixelFormat;
 

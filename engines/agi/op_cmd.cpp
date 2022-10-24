@@ -921,7 +921,7 @@ void cmdObjStatusF(AgiGame *state, AgiEngine *vm, uint8 *parameter) {
 		break;
 	}
 
-	sprintf(msg,
+	Common::sprintf_s(msg,
 	        "Object %d:\n" \
 	        "x: %d  xsize: %d\n" \
 	        "y: %d  ysize: %d\n" \

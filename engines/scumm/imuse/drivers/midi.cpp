@@ -435,11 +435,6 @@ MidiChannel *IMuseDriver_GMidi::getPercussionChannel() {
 		return nullptr;
 
 	IMuseChannel_Midi *ch = getPart(9);
-	if (ch) {
-		ch->release();
-		ch->allocate();
-	}
-
 	return ch;
 }
 
@@ -648,6 +643,7 @@ public:
 	~IMuseChannel_MT32() override {}
 
 	bool allocate() override;
+	void reset();
 
 	// Regular messages
 	void programChange(byte program) override;
@@ -703,13 +699,17 @@ IMuseChannel_MT32::IMuseChannel_MT32(IMuseDriver_MT32 *drv, int number) : IMuseC
 bool IMuseChannel_MT32::allocate() {
 	bool res = IMuseChannel_Midi::allocate();
 
-	if (res && !_newSystem) {
-		byte msg[] = { (byte)(_timbre >> 6), (byte)(_timbre & 0x3F), 0x18, 0x32, 0x10, 0x00, _reverbSwitch};
-		sendSysexPatchData(0, msg, sizeof(msg));
+	if (res && !_newSystem)
 		_program = _number;
-	}
 
 	return res;
+}
+
+void IMuseChannel_MT32::reset() {
+	if (_newSystem)
+		return;
+	byte msg[] = { (byte)(_timbre >> 6), (byte)(_timbre & 0x3F), 0x18, 0x32, 0x10, 0x00, _reverbSwitch};
+	sendSysexPatchData(0, msg, sizeof(msg));
 }
 
 void IMuseChannel_MT32::programChange(byte program)  {
@@ -862,21 +862,29 @@ IMuseDriver_MT32::IMuseDriver_MT32(MidiDriver::DeviceHandle dev, bool newSystem)
 }
 
 void IMuseDriver_MT32::initDevice() {
+	// Display a welcome message on MT-32 displays. Compute version string (truncated to 20 chars max.)
+	Common::String infoStr = gScummVMVersion;
+	infoStr = "ScummVM " + infoStr.substr(0, MIN<uint32>(infoStr.findFirstNotOf("0123456789."), 12));
+	for (int i = (20 - (int)infoStr.size()) >> 1; i > 0; --i)
+		infoStr = ' ' + infoStr + ' ';
+	sendMT32Sysex(0x80000, (const byte*)infoStr.c_str(), MIN<uint32>(infoStr.size(), 20));
+	
 	// Reset the MT-32
 	sendMT32Sysex(0x1FC000, 0, 0);
+
 	g_system->delayMillis(250);
 
-	// Setup master tune, reverb mode, reverb time, reverb level,
-	// channel mapping, partial reserve and master volume
+	// Setup master tune, reverb mode, reverb time, reverb level, channel mapping, partial reserve and master volume
 	static const char initSysex1[] = "\x40\x00\x04\x04\x04\x04\x04\x04\x04\x04\x04\x04\x00\x01\x02\x03\x04\x05\x06\x07\x08\x09\x64";
 	sendMT32Sysex(0x40000, (const byte*)initSysex1, sizeof(initSysex1) - 1);
-	g_system->delayMillis(250);
+	g_system->delayMillis(40);
 
 	if (!_newSystem) {
 		// Map percussion to notes 24 - 34 without reverb. It still happens in the DOTT driver, but not in the SAMNMAX one.
-		static const char initSysex2[] = "\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00";
+		static const char initSysex2[] = "\x40\x64\x07\x00\x4a\x64\x06\x00\x41\x64\x07\x00\x4b\x64\x08\x00\x45\x64\x06\x00\x44\x64"
+										 "\x0b\x00\x51\x64\x05\x00\x43\x64\x08\x00\x50\x64\x07\x00\x42\x64\x03\x00\x4c\x64\x07\x00";
 		sendMT32Sysex(0xC090, (const byte*)initSysex2, sizeof(initSysex2) - 1);
-		g_system->delayMillis(250);
+		g_system->delayMillis(40);
 	}
 
 	const byte pbRange = 0x10;
@@ -889,16 +897,23 @@ void IMuseDriver_MT32::initDevice() {
 		send(0x0000C0 | i);
 		send(0x0040B0 | i);
 		send(0x007BB0 | i);
+		send(0x3F0AB0 | i);
+		send(0x4000E0 | i);
 	}
 
-	// Display a welcome message on MT-32 displays. Compute version string (truncated to 20 chars max.)
-	Common::String infoStr = gScummVMVersion;
-	infoStr = "ScummVM " + infoStr.substr(0, MIN<uint32>(infoStr.findFirstNotOf("0123456789."), 12));
+	for (int i = 0; i < _numChannels; ++i) {
+		static_cast<IMuseChannel_MT32*>(_imsParts[i])->reset();
+		g_system->delayMillis(5);
+	}
+}
 
-	for (int i = (20 - (int)infoStr.size()) >> 1; i > 0; --i)
-		infoStr = ' ' + infoStr + ' ';
-	sendMT32Sysex(0x80000, (const byte*)infoStr.c_str(), MIN<uint32>(infoStr.size(), 20));
-	g_system->delayMillis(1000);
+void IMuseDriver_MT32::deinitDevice() {
+	for (int i = 0; i < 16; ++i) {
+		send(0x0040B0 | i);
+		send(0x007BB0 | i);
+	}
+	// Reset the MT-32
+	sendMT32Sysex(0x1FC000, 0, 0);
 }
 
 void IMuseDriver_MT32::createChannels() {
@@ -963,7 +978,8 @@ void IMuseDriver_MT32::sendMT32Sysex(uint32 addr, const byte *data, uint32 dataS
 
 	*dst++ = checkSum & 0x7F;
 
-	sysEx(msg, dst - msg);
+	dataSize = dst - msg;
+	sysEx(msg, dataSize);
 
 	delete[] msg;
 }

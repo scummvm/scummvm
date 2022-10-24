@@ -238,7 +238,7 @@ ADDetectedGame AgiMetaEngineDetection::fallbackDetect(const FileMap &allFilesXXX
 		bool agipal = false;
 		char agipalFile[] = "pal.xxx";
 		for (uint i = 100; i <= 109; i++) {
-			sprintf(agipalFile, "pal.%d", i);
+			Common::sprintf_s(agipalFile, "pal.%d", i);
 			if (allFiles.contains(agipalFile)) {
 				agipal = true; // We found a file "pal.x" where 100 <= x <= 109 so it's AGIPAL
 				break;

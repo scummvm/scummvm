@@ -237,18 +237,19 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 		case VAR_INTEGER: {
 			sc_char value[32];
 
-			sprintf(value, "%ld", vt_rvalue.integer);
-			buffer = (sc_char *)sc_realloc(buffer, strlen(buffer) + strlen(value) + 1);
-			strcat(buffer, value);
+			Common::sprintf_s(value, "%ld", vt_rvalue.integer);
+			size_t ln = strlen(buffer) + strlen(value) + 1;
+			buffer = (sc_char *)sc_realloc(buffer, ln);
+			Common::strcat_s(buffer, ln, value);
 			break;
 		}
 
-		case VAR_STRING:
-			buffer = (sc_char *)sc_realloc(buffer,
-			                               strlen(buffer) + strlen(vt_rvalue.string) + 1);
-			strcat(buffer, vt_rvalue.string);
+		case VAR_STRING: {
+			size_t ln = strlen(buffer) + strlen(vt_rvalue.string) + 1;
+			buffer = (sc_char *)sc_realloc(buffer, ln);
+			Common::strcat_s(buffer, ln, vt_rvalue.string);
 			break;
-
+		}
 		default:
 			sc_fatal("pf_interpolate_vars: invalid variable type, %ld\n", type);
 		}
@@ -266,8 +267,9 @@ static sc_char *pf_interpolate_vars(const sc_char *string, sc_var_setref_t vars)
 	 */
 	if (buffer) {
 		if (is_interpolated) {
-			buffer = (sc_char *)sc_realloc(buffer, strlen(buffer) + strlen(marker) + 1);
-			strcat(buffer, marker);
+			size_t ln = strlen(buffer) + strlen(marker) + 1;
+			buffer = (sc_char *)sc_realloc(buffer, ln);
+			Common::strcat_s(buffer, ln, marker);
 		} else {
 			sc_free(buffer);
 			buffer = nullptr;
@@ -318,15 +320,16 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 		 * copy; else append to the existing buffer: basic copy-on-write.
 		 */
 		if (!buffer_) {
-			buffer_ = (sc_char *)sc_malloc(cursor - marker + strlen(replacement) + 1);
+			size_t ln = cursor - marker + strlen(replacement) + 1;
+			buffer_ = (sc_char *)sc_malloc(ln);
 			memcpy(buffer_, marker, cursor - marker);
 			buffer_[cursor - marker] = NUL;
-			strcat(buffer_, replacement);
+			Common::strcat_s(buffer_, ln, replacement);
 		} else {
-			buffer_ = (sc_char *)sc_realloc(buffer_, strlen(buffer_) +
-			                                cursor - marker + strlen(replacement) + 1);
+			size_t ln = strlen(buffer_) + cursor - marker + strlen(replacement) + 1;
+			buffer_ = (sc_char *)sc_realloc(buffer_, ln);
 			strncat(buffer_, marker, cursor - marker);
-			strcat(buffer_, replacement);
+			Common::strcat_s(buffer_, ln, replacement);
 		}
 
 		/* Advance over the original. */
@@ -335,8 +338,9 @@ static sc_bool pf_replace_alr(const sc_char *string, sc_char **buffer, sc_int al
 
 	/* If any pending text, append it to the buffer. */
 	if (replacement) {
-		buffer_ = (sc_char *)sc_realloc(buffer_, strlen(buffer_) + strlen(marker) + 1);
-		strcat(buffer_, marker);
+		size_t ln = strlen(buffer_) + strlen(marker) + 1;
+		buffer_ = (sc_char *)sc_realloc(buffer_, ln);
+		Common::strcat_s(buffer_, ln, marker);
 	}
 
 	/* Write back buffer, and if replacement set, the buffer was altered. */
@@ -739,8 +743,9 @@ sc_char *pf_filter(const sc_char *string, sc_var_setref_t vars, sc_prop_setref_t
 
 	/* Our contract is to return an allocated string; copy if required. */
 	if (!current) {
-		current = (sc_char *)sc_malloc(strlen(string) + 1);
-		strcpy(current, string);
+		size_t ln = strlen(string) + 1;
+		current = (sc_char *)sc_malloc(ln);
+		Common::strcpy_s(current, ln, string);
 	}
 
 	return current;
@@ -763,8 +768,9 @@ sc_char *pf_filter_for_info(const sc_char *string, sc_var_setref_t vars) {
 
 	/* Our contract is to return an allocated string; copy if required. */
 	if (!current) {
-		current = (sc_char *)sc_malloc(strlen(string) + 1);
-		strcpy(current, string);
+		size_t ln = strlen(string) + 1;
+		current = (sc_char *)sc_malloc(ln);
+		Common::strcpy_s(current, ln, string);
 	}
 
 	return current;
@@ -845,7 +851,7 @@ static void pf_append_string(sc_filterref_t filter, const sc_char *string) {
 		filter->buffer[0] = NUL;
 
 	/* Append the string to the buffer and extend length. */
-	strcat(filter->buffer, string);
+	Common::strcat_s(filter->buffer, filter->buffer_allocation, string);
 	filter->buffer_length += length;
 }
 
@@ -1020,7 +1026,7 @@ void pf_prepend_string(sc_filterref_t filter, const sc_char *string) {
 			/* Take a copy of the current buffered string. */
 			assert(filter->buffer[filter->buffer_length] == NUL);
 			copy = (sc_char *)sc_malloc(filter->buffer_length + 1);
-			strcpy(copy, filter->buffer);
+			Common::strcpy_s(copy, filter->buffer_length + 1, filter->buffer);
 
 			/*
 			 * Now restart buffering with the input string passed in.  Removing
@@ -1218,8 +1224,9 @@ sc_char *pf_escape(const sc_char *string) {
 			escape = escape_buffer;
 		}
 
-		buffer = (sc_char *)sc_realloc(buffer, strlen(buffer) + strlen(escape) + 1);
-		strcat(buffer, escape);
+		size_t ln = strlen(buffer) + strlen(escape) + 1;
+		buffer = (sc_char *)sc_realloc(buffer, ln);
+		Common::strcat_s(buffer, ln, escape);
 
 		/* Pass over character escaped and continue. */
 		cursor++;
@@ -1354,7 +1361,7 @@ sc_char *pf_filter_input(const sc_char *string, sc_prop_setref_t bundle) {
 			if (!buffer) {
 				buffer_allocation = strlen(string) + 1;
 				buffer = (sc_char *)sc_malloc(buffer_allocation);
-				strcpy(buffer, string);
+				Common::strcpy_s(buffer, buffer_allocation, string);
 				current = buffer + (current - string);
 			}
 

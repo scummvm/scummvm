@@ -1628,8 +1628,11 @@ void MenuMan::printMessageAfterReplacements(const char *str) {
 				replacementString = championMan._champions[_vm->ordinalToIndex(championMan._actingChampionOrdinal)]._name;
 
 			*curCharacter = '\0';
-			strcat(outputString, replacementString);
-			curCharacter += strlen(replacementString);
+			size_t ln = Common::strlcat(outputString, replacementString, sizeof(outputString));
+			if (ln >= sizeof(outputString)) {
+				error("Not enough space in outputString");
+			}
+			curCharacter = outputString + ln;
 			*curCharacter++ = ' ';
 		} else {
 			*curCharacter++ = *str;

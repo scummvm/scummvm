@@ -363,7 +363,7 @@ void memo_save_command(sc_memo_setref_t memento, const sc_char *command, sc_int 
 	}
 
 	/* Save the string into this slot, and normalize it for neatness. */
-	strcpy(history->command, command);
+	Common::strcpy_s(history->command, history->allocation, command);
 	sc_normalize_string(history->command);
 	history->sequence = memento->history_count + 1;
 	history->timestamp = timestamp;

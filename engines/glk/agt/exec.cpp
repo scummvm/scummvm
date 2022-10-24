@@ -63,12 +63,13 @@ static void time_out(char *s) {
 	hr = curr_time / 100;
 	min = curr_time % 100;
 
+	// s is minimum 20 bytes large
 	if (milltime_mode)
-		sprintf(s, "%02d:%02d", hr, min);
+		Common::sprintf_s(s, 20, "%02d:%02d", hr, min);
 	else {
 		if (hr > 12) hr = hr - 12;
 		if (hr == 0) hr = 12;
-		sprintf(s, "%2d:%02d %s", hr, min, (curr_time >= 1200) ? "pm" : "am");
+		Common::sprintf_s(s, 20, "%2d:%02d %s", hr, min, (curr_time >= 1200) ? "pm" : "am");
 	}
 }
 
@@ -88,22 +89,22 @@ void set_statline() {
 
 	switch (statusmode) {
 	case 0:
-		sprintf(r_stat, "Score: %ld  Moves: %d", tscore, turncnt);
+		Common::sprintf_s(r_stat, "Score: %ld  Moves: %d", tscore, turncnt);
 		break;
 	case 1:
-		sprintf(r_stat, "Score: %ld   %s", tscore, timestr);
+		Common::sprintf_s(r_stat, "Score: %ld   %s", tscore, timestr);
 		break;
 	case 2:
-		sprintf(r_stat, "Moves: %d", turncnt);
+		Common::sprintf_s(r_stat, "Moves: %d", turncnt);
 		break;
 	case 3:
-		sprintf(r_stat, "%s", timestr);
+		Common::sprintf_s(r_stat, "%s", timestr);
 		break;
 	case 4:
 		r_stat[0] = '\0';
 		break;  /* 'Trinity style' status line */
 	case 5:
-		sprintf(r_stat, "Score: %ld", tscore);
+		Common::sprintf_s(r_stat, "Score: %ld", tscore);
 		break;
 	default:
 		break;
@@ -219,9 +220,9 @@ static word it_pronoun(int item, rbool ind_form)
 /* (In particular, proper nouns shouldn't have a "the") */
 static void theset(char *buff, int item) {
 	if (it_proper(item))
-		strcpy(buff, "");
+		buff[0] = '\0';
 	else
-		strcpy(buff, "the ");
+		Common::strcpy_s(buff, FILL_SIZE, "the ");
 }
 
 
@@ -236,7 +237,7 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 	word w;
 
 	if (obj_rec == nullptr) {
-		strcpy(fill_buff, "");
+		fill_buff[0] = '\0';
 		return;
 	}
 
@@ -246,10 +247,10 @@ static void num_name_func(parse_rec *obj_rec, char *fill_buff, word prev_adj)
 		w = it_name(obj_rec->obj);
 
 	if (w == 0) {
-		if (obj_rec->info == D_NUM) sprintf(fill_buff, "%ld", (long)obj_rec->num);
-		else strcpy(fill_buff, "");
+		if (obj_rec->info == D_NUM) Common::sprintf_s(fill_buff, FILL_SIZE, "%ld", (long)obj_rec->num);
+		else fill_buff[0] = '\0';
 #if 0
-		strcpy(fill_buff, "that"); /* We can try and hope */
+		Common::strcpy_s(fill_buff, FILL_SIZE, "that"); /* We can try and hope */
 #endif
 		return;
 	}
@@ -269,7 +270,7 @@ static word get_adj(parse_rec *obj_rec, char *buff) {
 	if (obj_rec->adj != 0) w = obj_rec->adj;
 	else w = it_adj(obj_rec->obj);
 
-	if (w == 0) strcpy(buff, "");
+	if (w == 0) buff[0] = '\0';
 	else {
 		rstrncpy(buff, dict[w], FILL_SIZE);
 		if (it_proper(obj_rec->obj)) buff[0] = toupper(buff[0]);
@@ -283,7 +284,7 @@ static word get_adj(parse_rec *obj_rec, char *buff) {
 #define d2buff(i) {rstrncpy(fill_buff,dict[i],FILL_SIZE);return 1;}
 #define num_name(obj_rec,jsa)  {num_name_func(obj_rec,fill_buff,jsa);return 1;}
 /* jsa= Just seen adj */
-#define youme(mestr,youstr) {strcpy(fill_buff,irun_mode?mestr:youstr);\
+#define youme(mestr,youstr) {Common::strcpy_s(fill_buff,FILL_SIZE,irun_mode?mestr:youstr);\
 		return 1;}
 
 word just_seen_adj;  /* This determines if we just saw $adjective$; if so,
@@ -345,15 +346,15 @@ static int wordcode_match(const char **pvarname, char *fill_buff,
 		return 1;
 	} else if (match_str(pvarname, "OPEN")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_open(hold_val) ? "open" : "closed");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_open(hold_val) ? "open" : "closed");
 		return 1;
 	} else if (match_str(pvarname, "ON")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_on(hold_val) ? "on" : "off");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_on(hold_val) ? "on" : "off");
 		return 1;
 	} else if (match_str(pvarname, "LOCKED")) {
 		hold_val = extract_number(pvarname, maxnoun, '$');
-		strcpy(fill_buff, it_locked(hold_val, 0) ? "locked" : "unlocked");
+		Common::strcpy_s(fill_buff, FILL_SIZE, it_locked(hold_val, 0) ? "locked" : "unlocked");
 		return 1;
 	}
 
@@ -519,7 +520,7 @@ static char *wordvar_match(const char **pvarname, char match_type,
 			return nullptr;
 
 		/* Now to convert hold_val into a string */
-		sprintf(fill_buff, "%d", hold_val);
+		Common::sprintf_s(fill_buff, "%d", hold_val);
 
 	}
 	return fill_buff;
@@ -936,8 +937,8 @@ void print_score(void) {
 
 	if (score_mode < 5) {
 		if (score_mode == 0 || score_mode == 1 || score_mode == 4)
-			sprintf(s, "Your score is %ld (out of %ld possible).", tscore, max_score);
-		else sprintf(s, "Your score is %ld.", tscore);
+			Common::sprintf_s(s, "Your score is %ld (out of %ld possible).", tscore, max_score);
+		else Common::sprintf_s(s, "Your score is %ld.", tscore);
 		writeln(s);
 	}
 
@@ -953,9 +954,9 @@ void print_score(void) {
 				totroom++;
 			}
 		if (score_mode % 2 == 0)
-			sprintf(s, "You have visited %d locations (out of %d in the game)", rmcnt,
+			Common::sprintf_s(s, "You have visited %d locations (out of %d in the game)", rmcnt,
 			        totroom);
-		else sprintf(s, "You have visited %d locations.", rmcnt);
+		else Common::sprintf_s(s, "You have visited %d locations.", rmcnt);
 		writeln(s);
 	}
 }

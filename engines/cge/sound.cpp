@@ -151,7 +151,7 @@ void Fx::preload(int ref0) {
 	char filename[12];
 
 	for (int ref = ref0; ref < ref0 + 10; ref++) {
-		sprintf(filename, "FX%05d.WAV", ref);
+		Common::sprintf_s(filename, "FX%05d.WAV", ref);
 		EncryptedStream file(_vm->_resman, filename);
 		DataCk *wav = loadWave(&file);
 		if (wav) {
@@ -171,7 +171,7 @@ void Fx::preload(int ref0) {
 
 DataCk *Fx::load(int idx, int ref) {
 	char filename[12];
-	sprintf(filename, "FX%05d.WAV", ref);
+	Common::sprintf_s(filename, "FX%05d.WAV", ref);
 
 	EncryptedStream file(_vm->_resman, filename);
 	DataCk *wav = loadWave(&file);

@@ -34,10 +34,11 @@ size_t Messager::va(const char *format, va_list argptr) {
 		char tempBuf[256];
 		size_t size;
 
-		size = vsprintf((char *) tempBuf, format, argptr);
+		size = Common::vsprintf_s(tempBuf, format, argptr);
 
 		if (size) {
-			if (tempBuf[size - 1] != '\n') {
+			if ((size < sizeof(tempBuf) - 2) &&
+				tempBuf[size - 1] != '\n') {
 				tempBuf[size++] = '\n';
 				tempBuf[size] = '\0';
 			}

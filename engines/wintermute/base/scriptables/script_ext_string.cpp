@@ -83,7 +83,7 @@ void SXString::setStringVal(const char *val) {
 		_string = nullptr;
 		_string = new char[_capacity]();
 	}
-	strcpy(_string, val);
+	Common::strcpy_s(_string, _capacity, val);
 }
 
 
@@ -396,7 +396,7 @@ bool SXString::scSetProperty(const char *name, ScValue *value) {
 		} else if (newCap != _capacity) {
 			char *newStr = new char[newCap]();
 			if (newStr) {
-				strcpy(newStr, _string);
+				Common::strcpy_s(newStr, newCap, _string);
 				delete[] _string;
 				_string = newStr;
 				_capacity = newCap;

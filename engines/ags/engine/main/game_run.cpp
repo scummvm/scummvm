@@ -344,7 +344,8 @@ bool run_service_key_controls(KeyInput &out_key) {
 	if ((agskey == eAGSKeyCodeCtrlD) && (_GP(play).debug_mode > 0)) {
 		// ctrl+D - show info
 		char infobuf[900];
-		sprintf(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
+		size_t ln = 0;
+		ln += Common::sprintf_s(infobuf, "In room %d %s[Player at %d, %d (view %d, loop %d, frame %d)%s%s%s",
 		        _G(displayed_room), (_G(noWalkBehindsAtAll) ? "(has no walk-behinds)" : ""), _G(playerchar)->x, _G(playerchar)->y,
 		        _G(playerchar)->view + 1, _G(playerchar)->loop, _G(playerchar)->frame,
 		        (IsGamePaused() == 0) ? "" : "[Game paused.",
@@ -352,7 +353,7 @@ bool run_service_key_controls(KeyInput &out_key) {
 		        (IsInterfaceEnabled() == 0) ? "[Game in Wait state" : "");
 		for (uint32_t ff = 0; ff < _G(croom)->numobj; ff++) {
 			if (ff >= 8) break; // buffer not big enough for more than 7
-			sprintf(&infobuf[strlen(infobuf)],
+			ln += Common::sprintf_s(&infobuf[ln], sizeof(infobuf) - ln,
 			        "[Object %d: (%d,%d) size (%d x %d) on:%d moving:%s animating:%d slot:%d trnsp:%d clkble:%d",
 			        ff, _G(objs)[ff].x, _G(objs)[ff].y,
 			        (_GP(spriteset)[_G(objs)[ff].num] != nullptr) ? _GP(game).SpriteInfos[_G(objs)[ff].num].Width : 0,
@@ -368,12 +369,13 @@ bool run_service_key_controls(KeyInput &out_key) {
 		for (int ff = 0; ff < _GP(game).numcharacters; ff++) {
 			if (_GP(game).chars[ff].room != _G(displayed_room)) continue;
 			if (strlen(bigbuffer) > 430) {
-				strcat(bigbuffer, "and more...");
+				Common::strcat_s(bigbuffer, "and more...");
 				Display(bigbuffer);
-				strcpy(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
+				Common::strcpy_s(bigbuffer, "CHARACTERS IN THIS ROOM (cont'd):[");
 			}
 			chd = ff;
-			sprintf(&bigbuffer[strlen(bigbuffer)],
+			ln = strlen(bigbuffer);
+			Common::sprintf_s(&bigbuffer[ln], sizeof(bigbuffer) - ln,
 			        "%s (view/loop/frm:%d,%d,%d  x/y/z:%d,%d,%d  idleview:%d,time:%d,left:%d walk:%d anim:%d follow:%d flags:%X wait:%d zoom:%d)[",
 			        _GP(game).chars[chd].scrname, _GP(game).chars[chd].view + 1, _GP(game).chars[chd].loop, _GP(game).chars[chd].frame,
 			        _GP(game).chars[chd].x, _GP(game).chars[chd].y, _GP(game).chars[chd].z,

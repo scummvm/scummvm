@@ -5,6 +5,7 @@
 
 #define FORBIDDEN_SYMBOL_EXCEPTION_iscntrl
 #define FORBIDDEN_SYMBOL_EXCEPTION_ispunct
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 
 #include "common/util.h"
 

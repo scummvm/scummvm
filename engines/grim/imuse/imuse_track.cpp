@@ -135,7 +135,7 @@ bool Imuse::startSound(const char *soundName, int volGroupId, int hookId, int vo
 
 	int bits = 0, freq = 0, channels = 0;
 
-	strcpy(track->soundName, soundName);
+	Common::strcpy_s(track->soundName, soundName);
 	track->soundDesc = _sound->openSound(soundName, volGroupId);
 
 	if (!track->soundDesc)

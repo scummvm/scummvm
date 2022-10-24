@@ -547,6 +547,11 @@ void LB::b_value(int nargs) {
 	Common::String code = "return " + expr;
 	// Compile the code to an anonymous function and call it
 	ScriptContext *sc = g_lingo->_compiler->compileAnonymous(code);
+	if (!sc) {
+		warning("b_value(): Failed to parse expression \"%s\", returning 0", expr.c_str());
+		g_lingo->push(Datum(0));
+		return;
+	}
 	Symbol sym = sc->_eventHandlers[kEventGeneric];
 	LC::call(sym, 0, true);
 }
@@ -1328,10 +1333,16 @@ void LB::b_go(int nargs) {
 			Datum movie;
 			Datum frame;
 
-			if (nargs > 0) {
+			if (nargs > 0 && firstArg.type == STRING) {
 				movie = firstArg;
 				TYPECHECK(movie, STRING);
 
+				frame = g_lingo->pop();
+				nargs -= 1;
+			// Even if there's more than one argument, if the first
+			// arg is an int, Director discards the remainder and
+			// treats it as the frame.
+			} else if (nargs > 0 && firstArg.type == INT) {
 				frame = g_lingo->pop();
 				nargs -= 1;
 			} else {

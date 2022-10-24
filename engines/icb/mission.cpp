@@ -130,7 +130,7 @@ bool8 Setup_new_mission(const char *mission_name, const char *session_name) {
 		h_session_name[i] = (char)tolower(h_session_name[i]);
 	}
 
-	sprintf(temp_buf, SESSION_TEST_PATH, h_mission_name, h_session_name);
+	Common::sprintf_s(temp_buf, SESSION_TEST_PATH, h_mission_name, h_session_name);
 
 #if 1 // was #ifdef FROM_PC_CD
 	// Need the mission data present on hard-disk for it to destruct properly
@@ -205,7 +205,7 @@ void _mission::___init_mission(const char *new_mission_name, const char *session
 
 	// When using clusters keep items withouth the root so the correct hashing
 	// start point can be maintained
-	strcpy(mission_name, new_mission_name);
+	Common::strcpy_s(mission_name, new_mission_name);
 
 	Set_string(new_mission_name, tiny_mission_name, TINY_NAME_LEN);
 	Set_string(session_name, tiny_session_name, TINY_NAME_LEN);

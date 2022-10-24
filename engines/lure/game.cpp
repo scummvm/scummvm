@@ -254,7 +254,7 @@ void Game::execute() {
 			destRoom = fields.getField(NEW_ROOM_NUMBER);
 			if (destRoom != 0) {
 				// Need to change the current room
-				strcpy(room.statusLine(), "");
+				room.statusLine()[0] = '\0';
 				bool remoteFlag = fields.getField(OLD_ROOM_NUMBER) != 0;
 				room.setRoomNumber(destRoom, remoteFlag);
 				fields.setField(NEW_ROOM_NUMBER, 0);
@@ -543,14 +543,14 @@ void Game::handleRightClickMenu() {
 	bool breakFlag = false;
 	while (!breakFlag) {
 		statusLine = room.statusLine();
-		strcpy(statusLine, "");
+		statusLine[0] = '\0';
 		room.update();
 		screen.update();
 
 		action = PopupMenu::Show(actions);
 
 		if (action != NONE) {
-			sprintf(statusLine, "%s ", stringList.getString(action));
+			Common::sprintf_s(statusLine, MAX_DESC_SIZE, "%s ", stringList.getString(action));
 			statusLine += strlen(statusLine);
 		}
 
@@ -644,7 +644,7 @@ void Game::handleRightClickMenu() {
 		}
 	} else {
 		// Clear the status line
-		strcpy(room.statusLine(), "");
+		room.statusLine()[0] = '\0';
 	}
 }
 
@@ -660,11 +660,11 @@ void Game::handleLeftClick() {
 	player->stopWalking();
 	player->setDestHotspot(0);
 	player->setActionCtr(0);
-	strcpy(room.statusLine(), "");
+	room.statusLine()[0] = '\0';
 
 	if ((room.destRoomNumber() == 0) && (room.hotspotId() != 0)) {
 		// Handle look at hotspot
-		sprintf(room.statusLine(), "%s ", stringList.getString(LOOK_AT));
+		Common::sprintf_s(room.statusLine(), MAX_DESC_SIZE, "%s ", stringList.getString(LOOK_AT));
 		HotspotData *hotspot = res.getHotspot(room.hotspotId());
 		assert(hotspot);
 		strings.getString(hotspot->nameId, room.statusLine() + strlen(room.statusLine()));
@@ -689,7 +689,8 @@ bool Game::GetTellActions() {
 	Room &room = Room::getReference();
 	StringData &strings = StringData::getReference();
 	StringList &stringList = res.stringList();
-	char *statusLine = room.statusLine();
+	char *origStatusLine = room.statusLine();
+	char *statusLine = origStatusLine;
 	uint16 *commands = &_tellCommands[1];
 	char *statusLinePos[MAX_TELL_COMMANDS][4];
 	int paramIndex = 0;
@@ -722,7 +723,7 @@ bool Game::GetTellActions() {
 			screen.update();
 
 			switch (paramIndex) {
-			case 0:
+			case 0: {
 				// Prompt for selection of action to perform
 				action = PopupMenu::Show(0x6A07FD);
 				if (action == NONE) {
@@ -739,7 +740,8 @@ bool Game::GetTellActions() {
 				}
 
 				// Add the action to the status line
-				sprintf(statusLine + strlen(statusLine), "%s ", stringList.getString(action));
+				size_t pos = strlen(statusLine);
+				Common::sprintf_s(statusLine + pos, MAX_DESC_SIZE - (statusLine - origStatusLine) - pos, "%s ", stringList.getString(action));
 
 				// Handle any processing for the action
 				commands[_numTellCommands * 3] = (uint16) action;
@@ -747,7 +749,7 @@ bool Game::GetTellActions() {
 				commands[_numTellCommands * 3 + 2] = 0;
 				++paramIndex;
 				break;
-
+			}
 			case 1:
 				// First parameter
 				action = (Action) commands[_numTellCommands * 3];
@@ -778,7 +780,7 @@ bool Game::GetTellActions() {
 
 					// Store selected entry
 					commands[_numTellCommands * 3 + 1] = selectionId;
-					strcat(statusLine, selectionName);
+					Common::strcat_s(statusLine, MAX_DESC_SIZE - (statusLine - origStatusLine), selectionName);
 				}
 
 				++paramIndex;
@@ -810,7 +812,7 @@ bool Game::GetTellActions() {
 					hotspot = res.getHotspot(selectionId);
 					assert(hotspot);
 					strings.getString(hotspot->nameId, selectionName);
-					strcat(statusLine, selectionName);
+					Common::strcat_s(statusLine, MAX_DESC_SIZE - (statusLine - origStatusLine), selectionName);
 
 					commands[_numTellCommands * 3 + 2] = selectionId;
 					++paramIndex;
@@ -828,13 +830,14 @@ bool Game::GetTellActions() {
 					selectionId = PopupMenu::Show(2, continueStrsList);
 
 					switch (selectionId) {
-					case 0:
+					case 0: {
 						// Get ready for next command
-						sprintf(statusLine + strlen(statusLine), " %s ", continueStrsList[0]);
+						size_t pos = strlen(statusLine);
+						Common::sprintf_s(statusLine + pos, MAX_DESC_SIZE - (statusLine - origStatusLine) - pos, " %s ", continueStrsList[0]);
 						++_numTellCommands;
 						paramIndex = 0;
 						break;
-
+					}
 					case 1:
 						// Increment for just selected command, and add a large amount
 						// to signal that the command sequence is complete
@@ -872,7 +875,7 @@ bool Game::GetTellActions() {
 	if (result) {
 		_numTellCommands &= 0xff;
 		assert((_numTellCommands > 0) && (_numTellCommands <= MAX_TELL_COMMANDS));
-		strcpy(statusLinePos[0][0], "..");
+		Common::strcpy_s(statusLinePos[0][0], MAX_DESC_SIZE - (statusLinePos[0][0] - origStatusLine), "..");
 		room.update();
 		screen.update();
 	}

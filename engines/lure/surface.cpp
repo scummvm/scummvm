@@ -793,12 +793,12 @@ TalkDialog::TalkDialog(uint16 characterId, uint16 destCharacterId, uint16 active
 
 	strings.getString(talkingChar->nameId & 0x1fff, srcCharName);
 
-	strcpy(destCharName, "");
+	destCharName[0] = '\0';
 	if (destCharacter != nullptr) {
 		strings.getString(destCharacter->nameId, destCharName);
 		characterArticle = getArticle(descId, destCharacter->nameId);
 	}
-	strcpy(itemName, "");
+	itemName[0] = '\0';
 	if (itemHotspot != nullptr) {
 		strings.getString(itemHotspot->nameId & 0x1fff, itemName);
 		hotspotArticle = getArticle(descId, itemHotspot->nameId);

@@ -83,7 +83,7 @@ void ConverseSpeech::play_speech(uint16 actor_num, uint16 sample_num) {
 
 	sample_num--;
 
-	sprintf(filename, "speech%cchar%u.sam", U6PATH_DELIMITER, actor_num);
+	Common::sprintf_s(filename, "speech%cchar%u.sam", U6PATH_DELIMITER, actor_num);
 
 	config->pathFromValue("config/townsdir", filename, sample_file);
 

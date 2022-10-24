@@ -595,7 +595,7 @@ reg_t DirSeeker::nextFile(SegManager *segMan) {
 	}
 	if (string.size() > 12)
 		string = Common::String(string.c_str(), 12);
-	segMan->strcpy(_outbuffer, string.c_str());
+	segMan->strcpy_(_outbuffer, string.c_str());
 
 	// Return the result and advance the list iterator :)
 	++_iter;

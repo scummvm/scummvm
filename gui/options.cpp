@@ -425,7 +425,7 @@ void OptionsDialog::build() {
 			if (ConfMan.isKeyTemporary("shader")) {
 				_shader->setFontColor(ThemeEngine::FontColor::kFontColorOverride);
 			}
-			if (shader.empty() || !ConfMan.hasKey("shader", _domain)) {
+			if (shader.empty() || shader == "default" || !ConfMan.hasKey("shader", _domain)) {
 				_shader->setLabel(_c("None", "shader"));
 				_shaderClearButton->setEnabled(false);
 			} else {
@@ -710,26 +710,21 @@ void OptionsDialog::apply() {
 
 	// Shader options
 	if (_shader) {
-		bool isSet;
-
 		if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
 			previousShader = ConfMan.get("shader", _domain);
 
 		Common::U32String shader(_shader->getLabel());
-		if (shader.empty() || (shader == _c("None", "shader")))
-			isSet = false;
-		else
-			isSet = true;
 
-		if (isSet) {
-			if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
-				graphicsModeChanged = true;
+		if (shader == _c("None", "shader"))
+			shader = "default";
+
+		if (!ConfMan.hasKey("shader", _domain) || shader != ConfMan.get("shader", _domain))
+			graphicsModeChanged = true;
+
+		if (_enableGraphicSettings)
 			ConfMan.set("shader", shader.encode(), _domain);
-		} else {
-			if (ConfMan.hasKey("shader", _domain) && !ConfMan.get("shader", _domain).empty())
-				graphicsModeChanged = true;
+		else
 			ConfMan.removeKey("shader", _domain);
-		}
 
 		_shader->setFontColor(ThemeEngine::FontColor::kFontColorNormal);
 	}
@@ -812,12 +807,14 @@ void OptionsDialog::apply() {
 			}
 
 			if (gfxError & OSystem::kTransactionShaderChangeFailed) {
+				if (previousShader == _c("None", "shader"))
+					previousShader = "default";
+
+				ConfMan.set("shader", previousShader.encode(), _domain);
 				if (previousShader.empty()) {
-					ConfMan.removeKey("shader", _domain);
 					_shader->setLabel(_c("None", "shader"));
 					_shaderClearButton->setEnabled(false);
 				} else {
-					ConfMan.set("shader", previousShader.encode(), _domain);
 					_shader->setLabel(previousShader);
 					_shaderClearButton->setEnabled(true);
 				}
@@ -838,12 +835,14 @@ void OptionsDialog::apply() {
 			// If shader was changed, show the test dialog
 			if (previousShader != shader && !shader.empty()) {
 				if (!testGraphicsSettings()) {
+					if (previousShader == _c("None", "shader"))
+						previousShader = "default";
+
+					ConfMan.set("shader", previousShader.encode(), _domain);
 					if (previousShader.empty()) {
-						ConfMan.removeKey("shader", _domain);
 						_shader->setLabel(_c("None", "shader"));
 						_shaderClearButton->setEnabled(false);
 					} else {
-						ConfMan.set("shader", previousShader.encode(), _domain);
 						_shader->setLabel(previousShader);
 						_shaderClearButton->setEnabled(true);
 					}
@@ -1132,6 +1131,22 @@ void OptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint32 data
 		updateScaleFactors(data);
 		g_gui.scheduleTopDialogRedraw();
 		break;
+	case kChooseShaderCmd: {
+		BrowserDialog browser(_("Select shader"), false);
+		if (browser.runModal() > 0) {
+			// User made his choice...
+			Common::FSNode file(browser.getResult());
+			_shader->setLabel(file.getPath());
+
+			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
+				_shaderClearButton->setEnabled(true);
+			else
+				_shaderClearButton->setEnabled(false);
+
+			g_gui.scheduleTopDialogRedraw();
+		}
+		break;
+	}
 	case kApplyCmd:
 		apply();
 		break;
@@ -1199,7 +1214,7 @@ void OptionsDialog::setGraphicSettingsState(bool enabled) {
 		_shader->setEnabled(enabled);
 		_shaderClearButton->setEnabled(enabled);
 	} else {
-		// Happens when we switch to backend that deosn't support shaders
+		// Happens when we switch to backend that doesn't support shaders
 		if (_shader) {
 			_shaderButton->setEnabled(false);
 			_shader->setEnabled(false);
@@ -3064,22 +3079,6 @@ void GlobalOptionsDialog::handleCommand(CommandSender *sender, uint32 cmd, uint3
 		break;
 #endif
 #endif
-	case kChooseShaderCmd: {
-		BrowserDialog browser(_("Select shader"), false);
-		if (browser.runModal() > 0) {
-			// User made his choice...
-			Common::FSNode file(browser.getResult());
-			_shader->setLabel(file.getPath());
-
-			if (!file.getPath().empty() && (file.getPath().decode() != _c("None", "path")))
-				_shaderClearButton->setEnabled(true);
-			else
-				_shaderClearButton->setEnabled(false);
-
-			g_gui.scheduleTopDialogRedraw();
-		}
-		break;
-	}
 	case kChooseSoundFontCmd: {
 		BrowserDialog browser(_("Select SoundFont"), false);
 		if (browser.runModal() > 0) {

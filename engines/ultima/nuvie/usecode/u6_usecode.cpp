@@ -528,7 +528,7 @@ bool U6UseCode::use_passthrough(Obj *obj, UseCodeEvent ev) {
 			new_x--;
 
 		new_frame_n = 2; // open the pass through
-		strcpy(action_string, "Open");
+		Common::strcpy_s(action_string, "Open");
 	} else { // the pass through is currently open.
 		if (obj->obj_n == OBJ_U6_V_PASSTHROUGH)
 			new_y++;
@@ -536,7 +536,7 @@ bool U6UseCode::use_passthrough(Obj *obj, UseCodeEvent ev) {
 			new_x++;
 
 		new_frame_n = 0; // close the pass through
-		strcpy(action_string, "Close");
+		Common::strcpy_s(action_string, "Close");
 	}
 
 	if (!map->actor_at_location(new_x, new_y, obj->z)) {
@@ -729,8 +729,9 @@ bool U6UseCode::use_rune(Obj *obj, UseCodeEvent ev) {
 	} else if (ev == USE_EVENT_MESSAGE && items.string_ref) {
 		scroll->display_string("\n");
 
-		char *mantra = new char[items.string_ref->size() + 1];
-		strcpy(mantra, items.string_ref->c_str());
+		size_t mantraSize = items.string_ref->size() + 1;
+		char *mantra = new char[mantraSize];
+		Common::strcpy_s(mantra, mantraSize, items.string_ref->c_str());
 
 		if (scumm_stricmp(mantra,  mantras[rune_obj_offset]) == 0) {
 			// find the matching force field for this shrine. match rune offset against force field quality
@@ -1386,8 +1387,9 @@ bool U6UseCode::use_fountain(Obj *obj, UseCodeEvent ev) {
 		} else { // answered with wish
 			get_wish = false;
 			bool wished_for_food = false;
-			char *wish = (char *)malloc(items.string_ref->size() + 1);
-			strcpy(wish, items.string_ref->c_str());
+			size_t wishSize = items.string_ref->size() + 1;
+			char *wish = (char *)malloc(wishSize);
+			Common::strcpy_s(wish, wishSize, items.string_ref->c_str());
 			if (scumm_stricmp(wish, "Food") == 0 || scumm_stricmp(wish, "Mutton") == 0
 			        || scumm_stricmp(wish, "Wine") == 0 || scumm_stricmp(wish, "Fruit") == 0
 			        || scumm_stricmp(wish, "Mead") == 0)
@@ -2346,7 +2348,7 @@ bool U6UseCode::use_sextant(Obj *obj, UseCodeEvent ev) {
 			lat = 'N';
 		}
 
-		sprintf(buf, "\n%d{%c, %d{%c\n", y, lat, x, lon);
+		Common::sprintf_s(buf, "\n%d{%c, %d{%c\n", y, lat, x, lon);
 		scroll->display_string(buf);
 	} else
 		scroll->display_string("\nNot usable\n");

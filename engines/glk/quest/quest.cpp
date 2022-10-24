@@ -77,7 +77,7 @@ void Quest::playGame() {
 		else
 			glk_put_cstring("\n");
 
-		sprintf(cur_buf, "> ");
+		Common::sprintf_s(cur_buf, "> ");
 		glk_put_string_stream(inputwinstream, cur_buf);
 
 		glk_request_line_event(inputwin, buf, (sizeof buf) - 1, 0);

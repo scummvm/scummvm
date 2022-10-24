@@ -312,7 +312,7 @@ typedef Common::Functor0Mem<void, LocationParser_br> OpcodeV2;
 DECLARE_LOCATION_PARSER(location)  {
 	debugC(7, kDebugParser, "LOCATION_PARSER(location) ");
 
-	strcpy(_vm->_location._name, _tokens[1]);
+	Common::strcpy_s(_vm->_location._name, _tokens[1]);
 
 	bool flip = false;
 	int nextToken;

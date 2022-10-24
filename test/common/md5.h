@@ -39,7 +39,7 @@ class MD5TestSuite : public CxxTest::TestSuite {
 			Common::computeStreamMD5(stream, md5sum);
 
 			for (j = 0; j < 16; j++) {
-				sprintf(output + j * 2, "%02x", md5sum[j]);
+				snprintf(output + j * 2, 3, "%02x", md5sum[j]);
 			}
 
 			Common::String tmp(output);

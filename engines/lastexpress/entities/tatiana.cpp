@@ -1011,8 +1011,8 @@ IMPLEMENT_FUNCTION(32, Tatiana, playChess)
 
 			if (getState()->timeDelta > parameters->param1) {
 
-				getEntities()->drawSequenceLeft(kEntityTatiana, (char *)&parameters1->seq);
-				getSound()->playSound(kEntityTatiana, (char *)&parameters->seq);
+				getEntities()->drawSequenceLeft(kEntityTatiana, parameters1->seq);
+				getSound()->playSound(kEntityTatiana, parameters->seq);
 
 				if (parameters->param3 == 4 && getEntities()->isInSalon(kEntityPlayer))
 					getProgress().field_90 = 1;
@@ -1045,41 +1045,41 @@ IMPLEMENT_FUNCTION(32, Tatiana, playChess)
 		case 1:
 			parameters->param1 = 900;
 			getEntities()->drawSequenceLeft(kEntityTatiana, "110A");
-			strcpy((char *)&parameters->seq, "Tat3160B");
-			strcpy((char *)&parameters1->seq, "110A");
+			Common::strcpy_s(parameters->seq, "Tat3160B");
+			Common::strcpy_s(parameters1->seq, "110A");
 			break;
 
 		case 2:
 			parameters->param1 = 9000;
-			strcpy((char *)&parameters->seq, "Tat3160C");
-			strcpy((char *)&parameters1->seq, "110C");
+			Common::strcpy_s(parameters->seq, "Tat3160C");
+			Common::strcpy_s(parameters1->seq, "110C");
 			break;
 
 		case 3:
 			parameters->param1 = 13500;
 			getEntities()->drawSequenceLeft(kEntityTatiana, "110B");
-			strcpy((char *)&parameters->seq, "Tat3160D");
-			strcpy((char *)&parameters1->seq, "110D");
+			Common::strcpy_s(parameters->seq, "Tat3160D");
+			Common::strcpy_s(parameters1->seq, "110D");
 			break;
 
 		case 4:
 			parameters->param1 = 9000;
 			getEntities()->drawSequenceLeft(kEntityTatiana, "110B");
-			strcpy((char *)&parameters->seq, "Tat3160E");
-			strcpy((char *)&parameters1->seq, "110D");
+			Common::strcpy_s(parameters->seq, "Tat3160E");
+			Common::strcpy_s(parameters1->seq, "110D");
 			break;
 
 		case 5:
 			parameters->param1 = 4500;
 			getEntities()->drawSequenceLeft(kEntityTatiana, "110B");
-			strcpy((char *)&parameters->seq, "Tat3160G");
-			strcpy((char *)&parameters1->seq, "110D");
+			Common::strcpy_s(parameters->seq, "Tat3160G");
+			Common::strcpy_s(parameters1->seq, "110D");
 			break;
 
 		case 6:
 			parameters->param1 = 4500;
 			getEntities()->drawSequenceLeft(kEntityTatiana, "110B");
-			strcpy((char *)&parameters->seq, "Tat3160F");
+			Common::strcpy_s(parameters->seq, "Tat3160F");
 			break;
 		}
 		break;
@@ -1767,7 +1767,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, withAlexei)
 			parameters->param1 -= getState()->timeDelta;
 
 			if (parameters->param1 < getState()->timeDelta) {
-				getSound()->playSound(kEntityTatiana, (char *)&parameters->seq);
+				getSound()->playSound(kEntityTatiana, parameters->seq);
 
 				if (getEntities()->isDistanceBetweenEntities(kEntityTatiana, kEntityPlayer, 2000)) {
 					if (parameters->param4 == 4)
@@ -1818,37 +1818,37 @@ IMPLEMENT_FUNCTION(46, Tatiana, withAlexei)
 
 		case 1:
 			parameters->param1 = 900;
-			strcpy((char *)&parameters->seq, "Tat4165F");
+			Common::strcpy_s(parameters->seq, "Tat4165F");
 			break;
 
 		case 2:
 			parameters->param1 = 900;
-			strcpy((char *)&parameters->seq, "Tat4165B");
+			Common::strcpy_s(parameters->seq, "Tat4165B");
 			break;
 
 		case 3:
 			parameters->param1 = 1800;
-			strcpy((char *)&parameters->seq, "Tat4165G");
+			Common::strcpy_s(parameters->seq, "Tat4165G");
 			break;
 
 		case 4:
 			parameters->param1 = 900;
-			strcpy((char *)&parameters->seq, "Tat4165H");
+			Common::strcpy_s(parameters->seq, "Tat4165H");
 			break;
 
 		case 5:
 			parameters->param1 = 2700;
-			strcpy((char *)&parameters->seq, "Tat4165C");
+			Common::strcpy_s(parameters->seq, "Tat4165C");
 			break;
 
 		case 6:
 			parameters->param1 = 900;
-			strcpy((char *)&parameters->seq, "Tat4165D");
+			Common::strcpy_s(parameters->seq, "Tat4165D");
 			break;
 
 		case 7:
 			parameters->param1 = 900;
-			strcpy((char *)&parameters->seq, "Tat4165E");
+			Common::strcpy_s(parameters->seq, "Tat4165E");
 			break;
 		}
 		break;
@@ -1856,7 +1856,7 @@ IMPLEMENT_FUNCTION(46, Tatiana, withAlexei)
 	case kActionDefault:
 		getEntities()->drawSequenceLeft(kEntityTatiana, "306E");
 		parameters->param1 = 450;
-		strcpy((char *)&parameters->seq, "Tat4165A");
+		Common::strcpy_s(parameters->seq, "Tat4165A");
 		break;
 
 	case kActionDrawScene:

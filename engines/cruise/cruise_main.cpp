@@ -309,18 +309,18 @@ void printInfoBlackBox(const char *string) {
 void waitForPlayerInput() {
 }
 
-void getFileExtention(const char *name, char *buffer) {
+void getFileExtention(const char *name, char *buffer, size_t ln) {
 	while (*name != '.' && *name) {
 		name++;
 	}
 
-	strcpy(buffer, name);
+	Common::strcpy_s(buffer, ln, name);
 }
 
-void removeExtention(const char *name, char *buffer) {	// not like in original
+void removeExtention(const char *name, char *buffer, size_t ln) {	// not like in original
 	char *ptr;
 
-	strcpy(buffer, name);
+	Common::strcpy_s(buffer, ln, name);
 
 	ptr = strchr(buffer, '.');
 
@@ -344,19 +344,19 @@ int loadFileSub1(uint8 **ptr, const char *name, uint8 *ptr2) {
 		}
 	}
 
-	getFileExtention(name, buffer);
+	getFileExtention(name, buffer, sizeof(buffer));
 
 	if (!strcmp(buffer, ".SPL")) {
-		removeExtention(name, buffer);
+		removeExtention(name, buffer, sizeof(buffer));
 
 		/* if (useH32)
 		 *{
-		 *	strcat(buffer, ".H32");
+		 *	Common::strcat_s(buffer,".H32");
 		 *}
 		 * else
 		 * if (useAdLib)
 		 * { */
-		 strcat(buffer,".ADL");
+		Common::strcat_s(buffer,".ADL");
 		/* }
 		 * else
 		 * {
@@ -563,7 +563,7 @@ void CruiseEngine::initAllData() {
 		scriptFunc2(bootOverlayNumber, &procHead, 1, 0);
 	}
 
-	strcpy(lastOverlay, "AUTO00");
+	Common::strcpy_s(lastOverlay, "AUTO00");
 
 	_gameSpeed = GAME_FRAME_DELAY_1;
 	_speedFlag = false;
@@ -1622,9 +1622,9 @@ int CruiseEngine::processInput() {
 							changeCursor(CURSOR_NORMAL);
 						} else { // else create the message for the linked relation
 							char text[80];
-							strcpy(text, menuTable[0]->stringPtr);
-							strcat(text, ":");
-							strcat(text, currentMenuElement->string);
+							Common::strcpy_s(text, menuTable[0]->stringPtr);
+							Common::strcat_s(text, ":");
+							Common::strcat_s(text, currentMenuElement->string);
 							linkedMsgList = renderText(320, (const char *)text);
 							changeCursor(CURSOR_CROSS);
 						}
@@ -1761,9 +1761,9 @@ void CruiseEngine::mainLoop() {
 
 	int enableUser = 0;
 
-	strcpy(nextOverlay, "");
-	strcpy(lastOverlay, "");
-	strcpy(cmdLine, "");
+	nextOverlay[0] = '\0';
+	lastOverlay[0] = '\0';
+	cmdLine[0] = '\0';
 
 	currentActiveMenu = -1;
 	autoMsg = -1;

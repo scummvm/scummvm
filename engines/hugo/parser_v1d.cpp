@@ -88,13 +88,13 @@ bool Parser_v1d::isNear_v1(const char *verb, const char *noun, Object *obj, char
 		return true;
 	} else if (obj->_screenIndex != *_vm->_screenPtr) { // Not in same screen
 		if (obj->_objValue)
-			strcpy (comment, _vm->_text->getTextParser(kCmtAny4));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny4));
 		return false;
 	}
 
 	if (obj->_cycling == kCycleInvisible) {
 		if (obj->_seqNumb) {                         // There is an image
-			strcpy(comment, _vm->_text->getTextParser(kCmtAny5));
+			Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny5));
 			return false;
 		} else {                                    // No image, assume visible
 			if ((obj->_radius < 0) ||
@@ -106,9 +106,9 @@ bool Parser_v1d::isNear_v1(const char *verb, const char *noun, Object *obj, char
 				// or is not carrying it (small, portable objects of value)
 				if (noun) {                         // Don't say unless object specified
 					if (obj->_objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
-						strcpy(comment, _vm->_text->getTextParser(kCmtAny4));
+						Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny4));
 					else
-						strcpy(comment, _vm->_text->getTextParser(kCmtClose));
+						Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtClose));
 					}
 				return false;
 			}
@@ -124,9 +124,9 @@ bool Parser_v1d::isNear_v1(const char *verb, const char *noun, Object *obj, char
 		// or is not carrying it (small, portable objects of value)
 		if (noun) {                                 // Don't say unless object specified
 			if (obj->_objValue && (verb != _vm->_text->getVerb(_vm->_take, 0)))
-				strcpy(comment, _vm->_text->getTextParser(kCmtAny4));
+				Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtAny4));
 			else
-				strcpy(comment, _vm->_text->getTextParser(kCmtClose));
+				Common::strcpy_s(comment, kCompLineSize * 5, _vm->_text->getTextParser(kCmtClose));
 		}
 		return false;
 	}

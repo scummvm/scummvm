@@ -149,12 +149,12 @@ void InitialiseGlobalColours() {
 
 void MakeFullSaveFilename(uint32 slot_id, char *buff) {
 	// Construct full actual filename
-	sprintf(buff, "saves/ICBgame%02d.index", slot_id);
+	Common::sprintf_s(buff, 128, "saves/ICBgame%02d.index", slot_id);
 }
 
 void MakeFullThumbFilename(uint32 slot_id, char *buff) {
 	// Construct full actual filename
-	sprintf(buff, "saves/ICBgame%02d.thumb", slot_id);
+	Common::sprintf_s(buff, 128, "saves/ICBgame%02d.thumb", slot_id);
 }
 
 void InitialiseMovieLibrary() {
@@ -167,67 +167,67 @@ void InitialiseMovieLibrary() {
 	}
 
 	// Setup filename mappings (only done here)
-	strcpy(g_movieLibrary[0].filename, "m01int2");
-	strcpy(g_movieLibrary[1].filename, "m01intro");
-	strcpy(g_movieLibrary[2].filename, "m01accel");
-	strcpy(g_movieLibrary[3].filename, "m01cable");
-	strcpy(g_movieLibrary[4].filename, "m01chasm");
-	strcpy(g_movieLibrary[5].filename, "m01cut");
-	strcpy(g_movieLibrary[6].filename, "m01robot");
-	strcpy(g_movieLibrary[7].filename, "m01robt2");
-	strcpy(g_movieLibrary[8].filename, "m01robt3");
-	strcpy(g_movieLibrary[9].filename, "m01outro");
+	Common::strcpy_s(g_movieLibrary[0].filename, "m01int2");
+	Common::strcpy_s(g_movieLibrary[1].filename, "m01intro");
+	Common::strcpy_s(g_movieLibrary[2].filename, "m01accel");
+	Common::strcpy_s(g_movieLibrary[3].filename, "m01cable");
+	Common::strcpy_s(g_movieLibrary[4].filename, "m01chasm");
+	Common::strcpy_s(g_movieLibrary[5].filename, "m01cut");
+	Common::strcpy_s(g_movieLibrary[6].filename, "m01robot");
+	Common::strcpy_s(g_movieLibrary[7].filename, "m01robt2");
+	Common::strcpy_s(g_movieLibrary[8].filename, "m01robt3");
+	Common::strcpy_s(g_movieLibrary[9].filename, "m01outro");
 
-	strcpy(g_movieLibrary[10].filename, "m02tortu");
-	strcpy(g_movieLibrary[11].filename, "m02intro");
-	strcpy(g_movieLibrary[12].filename, "m02outro");
+	Common::strcpy_s(g_movieLibrary[10].filename, "m02tortu");
+	Common::strcpy_s(g_movieLibrary[11].filename, "m02intro");
+	Common::strcpy_s(g_movieLibrary[12].filename, "m02outro");
 
-	strcpy(g_movieLibrary[13].filename, "m03tortu");
-	strcpy(g_movieLibrary[14].filename, "m03intro");
-	strcpy(g_movieLibrary[15].filename, "m03bomb");
-	strcpy(g_movieLibrary[16].filename, "m03cord");
-	strcpy(g_movieLibrary[17].filename, "m03shoot");
-	strcpy(g_movieLibrary[18].filename, "m03c1sep");
-	strcpy(g_movieLibrary[19].filename, "m03outro");
+	Common::strcpy_s(g_movieLibrary[13].filename, "m03tortu");
+	Common::strcpy_s(g_movieLibrary[14].filename, "m03intro");
+	Common::strcpy_s(g_movieLibrary[15].filename, "m03bomb");
+	Common::strcpy_s(g_movieLibrary[16].filename, "m03cord");
+	Common::strcpy_s(g_movieLibrary[17].filename, "m03shoot");
+	Common::strcpy_s(g_movieLibrary[18].filename, "m03c1sep");
+	Common::strcpy_s(g_movieLibrary[19].filename, "m03outro");
 
-	strcpy(g_movieLibrary[20].filename, "m04tortu");
-	strcpy(g_movieLibrary[21].filename, "m04intro");
-	strcpy(g_movieLibrary[22].filename, "m04lift1");
-	strcpy(g_movieLibrary[23].filename, "m04lift2");
-	strcpy(g_movieLibrary[24].filename, "m04spec");
-	strcpy(g_movieLibrary[25].filename, "m04zapp");
-	strcpy(g_movieLibrary[26].filename, "m04tube");
-	strcpy(g_movieLibrary[27].filename, "m04nag");
-	strcpy(g_movieLibrary[28].filename, "m04outro");
+	Common::strcpy_s(g_movieLibrary[20].filename, "m04tortu");
+	Common::strcpy_s(g_movieLibrary[21].filename, "m04intro");
+	Common::strcpy_s(g_movieLibrary[22].filename, "m04lift1");
+	Common::strcpy_s(g_movieLibrary[23].filename, "m04lift2");
+	Common::strcpy_s(g_movieLibrary[24].filename, "m04spec");
+	Common::strcpy_s(g_movieLibrary[25].filename, "m04zapp");
+	Common::strcpy_s(g_movieLibrary[26].filename, "m04tube");
+	Common::strcpy_s(g_movieLibrary[27].filename, "m04nag");
+	Common::strcpy_s(g_movieLibrary[28].filename, "m04outro");
 
-	strcpy(g_movieLibrary[29].filename, "m05tortu");
-	strcpy(g_movieLibrary[30].filename, "m05intro");
-	strcpy(g_movieLibrary[31].filename, "m05outro");
+	Common::strcpy_s(g_movieLibrary[29].filename, "m05tortu");
+	Common::strcpy_s(g_movieLibrary[30].filename, "m05intro");
+	Common::strcpy_s(g_movieLibrary[31].filename, "m05outro");
 
-	strcpy(g_movieLibrary[32].filename, "m07tortu");
-	strcpy(g_movieLibrary[33].filename, "m07intro");
-	strcpy(g_movieLibrary[34].filename, "m07sam");
-	strcpy(g_movieLibrary[35].filename, "m07doors");
-	strcpy(g_movieLibrary[36].filename, "m07outro");
+	Common::strcpy_s(g_movieLibrary[32].filename, "m07tortu");
+	Common::strcpy_s(g_movieLibrary[33].filename, "m07intro");
+	Common::strcpy_s(g_movieLibrary[34].filename, "m07sam");
+	Common::strcpy_s(g_movieLibrary[35].filename, "m07doors");
+	Common::strcpy_s(g_movieLibrary[36].filename, "m07outro");
 
-	strcpy(g_movieLibrary[37].filename, "m08intro");
-	strcpy(g_movieLibrary[38].filename, "m08betr");
-	strcpy(g_movieLibrary[39].filename, "m08tortu");
-	strcpy(g_movieLibrary[40].filename, "m08outro");
+	Common::strcpy_s(g_movieLibrary[37].filename, "m08intro");
+	Common::strcpy_s(g_movieLibrary[38].filename, "m08betr");
+	Common::strcpy_s(g_movieLibrary[39].filename, "m08tortu");
+	Common::strcpy_s(g_movieLibrary[40].filename, "m08outro");
 
-	strcpy(g_movieLibrary[41].filename, "m10intro");
-	strcpy(g_movieLibrary[42].filename, "m10luk");
-	strcpy(g_movieLibrary[43].filename, "m10exp");
-	strcpy(g_movieLibrary[44].filename, "m10miss");
-	strcpy(g_movieLibrary[45].filename, "m10coptr");
-	strcpy(g_movieLibrary[46].filename, "m10outro");
+	Common::strcpy_s(g_movieLibrary[41].filename, "m10intro");
+	Common::strcpy_s(g_movieLibrary[42].filename, "m10luk");
+	Common::strcpy_s(g_movieLibrary[43].filename, "m10exp");
+	Common::strcpy_s(g_movieLibrary[44].filename, "m10miss");
+	Common::strcpy_s(g_movieLibrary[45].filename, "m10coptr");
+	Common::strcpy_s(g_movieLibrary[46].filename, "m10outro");
 }
 
 void Movie_ID_to_name(uint32 id, char *buff) {
 	if (id >= TOTAL_NUMBER_OF_MOVIES)
 		Fatal_error("Movies information out-of-date!");
 
-	strcpy(buff, g_movieLibrary[id].filename);
+	Common::strcpy_s(buff, 32, g_movieLibrary[id].filename);
 }
 
 int32 Movie_name_to_ID(char *name) {
@@ -326,9 +326,9 @@ void LoadAMovieShot(uint32 slot_id, uint32 to_surface_id) {
 
 	// Make the correct filename for this pic when clustered up
 	if (slot_id < 10)
-		sprintf(thbFile, "images\\pc\\movie0%d.thb", slot_id);
+		Common::sprintf_s(thbFile, "images\\pc\\movie0%d.thb", slot_id);
 	else
-		sprintf(thbFile, "images\\pc\\movie%d.thb", slot_id);
+		Common::sprintf_s(thbFile, "images\\pc\\movie%d.thb", slot_id);
 
 	uint32 fo, fs;
 
@@ -340,7 +340,7 @@ void LoadAMovieShot(uint32 slot_id, uint32 to_surface_id) {
 	}
 
 	// Set this up for resman and open the thb file
-	sprintf(art2DCluster, ICON_CLUSTER_PATH);
+	Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 	uint8 *data = (uint8 *)rs1->Res_open(thbFile, thbFileHash, art2DCluster, art2DClusterHash);
 
 	// First off, check the thumb surface is valid
@@ -737,7 +737,7 @@ void OptionsManager::StartGameOverOptions() {
 	if (g_missionNumber < 9)
 		ds = GetDeathText();
 
-	sprintf(deathSpeech, "player_death%d", ds);
+	Common::sprintf_s(deathSpeech, "player_death%d", ds);
 
 	SayLineOfSpeech(HashString(deathSpeech));
 
@@ -3132,7 +3132,7 @@ void OptionsManager::DoChoice() {
 			// If the slot contains data, copy the label into our editing buffer else use default name
 			if (m_slots[m_slotOffset + m_GAMESLOT_selected] != nullptr) {
 				// Wish to edit an existing slot label
-				strcpy(m_editBuffer, m_slots[m_slotOffset + m_GAMESLOT_selected]->label);
+				Common::strcpy_s(m_editBuffer, m_slots[m_slotOffset + m_GAMESLOT_selected]->label);
 				// Record this ex-time played so we restore if if the action is cancelled
 				m_emptySlotFlag = m_slots[m_slotOffset + m_GAMESLOT_selected]->secondsPlayed;
 				// Overwrite with current timeplayed
@@ -3143,7 +3143,7 @@ void OptionsManager::DoChoice() {
 				m_slots[m_slotOffset + m_GAMESLOT_selected] = new _SLOT;
 				m_slots[m_slotOffset + m_GAMESLOT_selected]->secondsPlayed = m_timePlayed;
 				memset(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, 0, MAX_LABEL_LENGTH);
-				strcpy(m_editBuffer, m_defaultSlotName);
+				Common::strcpy_s(m_editBuffer, m_defaultSlotName);
 				m_defaultWiper = TRUE8;
 				// By setting this to zero it can be used to identify this newly created slot on cencel (ie need a delete)
 				m_emptySlotFlag = 0;
@@ -3196,7 +3196,7 @@ void OptionsManager::DoChoice() {
 			m_editBuffer[m_cursorPos] = '\0';
 
 			// Then set the label to equal the buffer
-			strcpy(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, m_editBuffer);
+			Common::strcpy_s(m_slots[m_slotOffset + m_GAMESLOT_selected]->label, m_editBuffer);
 
 			// Now actually save the game
 			MakeFullSaveFilename(m_slotOffset + m_GAMESLOT_selected, buff);
@@ -3418,7 +3418,7 @@ void OptionsManager::EditSlotLabel() {
 			m_editBuffer[m_cursorPos] = '\0';
 
 			// Then set the label to equal the buffer
-			strcpy(m_slots[id]->label, m_editBuffer);
+			Common::strcpy_s(m_slots[id]->label, m_editBuffer);
 
 			// Now actually save the game
 			g_mission->Save_game_position(buff, m_slots[id]->label, m_slots[id]->secondsPlayed);
@@ -4802,7 +4802,7 @@ void OptionsManager::DrawVideoSettings() {
 		temp = CalculateStringWidth(msg);
 		DisplayText(ad, pitch, msg, halfScreen - temp - 10, hite, (m_VIDEO_selected == FRAMELIMITER) ? SELECTEDFONT : NORMALFONT, FALSE8);
 		char msg2[6];
-		sprintf(msg2, "%d%%", g_stub->cycle_speed);
+		Common::sprintf_s(msg2, "%d%%", g_stub->cycle_speed);
 		DisplayText(ad, pitch, msg2, halfScreen, hite, NORMALFONT, FALSE8);
 	}
 
@@ -5591,7 +5591,7 @@ const char *OptionsManager::GetTextFromReference(uint32 hashRef) {
 }
 
 void OptionsManager::LoadBitmapFont() {
-	sprintf(m_fontName, FONT_PATH, OPTIONS_FONT_NAME);
+	Common::sprintf_s(m_fontName, FONT_PATH, OPTIONS_FONT_NAME);
 	uint32 hashedname = NULL_HASH;
 
 	pxString font_cluster = FONT_CLUSTER_PATH;
@@ -5606,14 +5606,14 @@ void OptionsManager::LoadBitmapFont() {
 void OptionsManager::LoadGlobalTextFile() {
 	// Set this up for resman
 	char globalClusterFile[MAXLEN_CLUSTER_URL];
-	sprintf(globalClusterFile, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(globalClusterFile, GLOBAL_CLUSTER_PATH);
 	uint32 globalClusterHash = NULL_HASH;
 
 	char textFileName[100];
 	uint32 buf_hash = NULL_HASH;
 
 	// Has a language been specified
-	sprintf(textFileName, GLOBAL_TEXT_FILE);
+	Common::sprintf_s(textFileName, GLOBAL_TEXT_FILE);
 
 	// Special text loading code so the translators can test their stuff
 
@@ -6001,8 +6001,8 @@ void OptionsManager::DoCredits() {
 		char textFileName[128];
 		char movieFileName[128];
 
-		sprintf(textFileName, "%s.crd", gamelanguage);
-		sprintf(movieFileName, "gmovies\\title.bik");
+		Common::sprintf_s(textFileName, "%s.crd", gamelanguage);
+		Common::sprintf_s(movieFileName, "gmovies\\title.bik");
 
 		// Free the sequence manager
 		UnloadTitleScreenMovie();
@@ -6044,9 +6044,9 @@ void OptionsManager::DoScrollingText() {
 bool8 IsAValidSlide(uint32 num, char *slideFile) {
 	// Make the correct filename for this pic when clustered up
 	if (num < 10)
-		sprintf(slideFile, "images\\pc\\slide_0%d.bink", num);
+		Common::sprintf_s(slideFile, 128, "images\\pc\\slide_0%d.bink", num);
 	else
-		sprintf(slideFile, "images\\pc\\slide_%d.bink", num);
+		Common::sprintf_s(slideFile, 128, "images\\pc\\slide_%d.bink", num);
 
 	uint32 fo, fs;
 
@@ -6175,7 +6175,7 @@ void OptionsManager::DrawSlideShow() {
 			Fatal_error("Trying to display a non-existent slide image!");
 
 		// Set this up for resman and open the thb file
-		sprintf(art2DCluster, ICON_CLUSTER_PATH);
+		Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 
 		uint8 *slideptr = rs1->Res_open(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
 		uint32 slideLen = rs_bg->Fetch_size(slideFile, slideFileHash, art2DCluster, art2DClusterHash);
@@ -6286,10 +6286,10 @@ void LoadLogo(uint32 to_surface_id) {
 	uint32 art2DClusterHash = NULL_HASH;
 
 	// Make the correct filename for this pic when clustered up
-	sprintf(thbFile, "images\\pc\\binklogo.thb");
+	Common::sprintf_s(thbFile, "images\\pc\\binklogo.thb");
 
 	// Set this up for resman and open the thb file
-	sprintf(art2DCluster, ICON_CLUSTER_PATH);
+	Common::sprintf_s(art2DCluster, ICON_CLUSTER_PATH);
 	uint8 *data = (uint8 *)rs1->Res_open(thbFile, thbFileHash, art2DCluster, art2DClusterHash);
 
 	// First off, check the thumb surface is valid
@@ -6358,7 +6358,7 @@ void Crediter::Initialise(const char *textFileName, const char *movieFileName, b
 
 	// Set this up for resman and open the file
 	char globalClusterFile[MAXLEN_CLUSTER_URL];
-	sprintf(globalClusterFile, GLOBAL_CLUSTER_PATH);
+	Common::sprintf_s(globalClusterFile, GLOBAL_CLUSTER_PATH);
 	uint32 globalClusterHash = NULL_HASH;
 	uint32 buf_hash = NULL_HASH;
 

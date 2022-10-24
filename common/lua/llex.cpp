@@ -4,6 +4,7 @@
 ** See Copyright Notice in lua.h
 */
 
+#define FORBIDDEN_SYMBOL_EXCEPTION_sprintf
 #include "common/util.h"
 
 #define llex_c

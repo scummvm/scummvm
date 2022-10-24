@@ -21,7 +21,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "engines/metaengine.h"
+#include "engines/advancedDetector.h"
+#include "engines/obsolete.h"
 
 #include "common/config-manager.h"
 #include "common/events.h"
@@ -33,9 +34,9 @@
 
 #include "sword2/sword2.h"
 #include "sword2/saveload.h"
-#include "sword2/detection_internal.h"
+#include "sword2/obsolete.h"
 
-class Sword2MetaEngine : public MetaEngine {
+class Sword2MetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sword2";
@@ -47,7 +48,11 @@ public:
 	int getMaximumSaveSlot() const override;
 	void removeSaveState(const char *target, int slot) const override;
 
-	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+	Common::Error createInstance(OSystem *syst, Engine **engine) override {
+		Engines::upgradeTargetIfNecessary(obsoleteGameIDsTable);
+		return AdvancedMetaEngine::createInstance(syst, engine);
+	}
+	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 };
 
 bool Sword2MetaEngine::hasFeature(MetaEngineFeature f) const {
@@ -105,28 +110,10 @@ void Sword2MetaEngine::removeSaveState(const char *target, int slot) const {
 	g_system->getSavefileManager()->removeSavefile(filename);
 }
 
-Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine) {
-	assert(syst);
-	assert(engine);
-
-	Common::FSList fslist;
-	Common::FSNode dir(ConfMan.get("path"));
-	if (!dir.getChildren(fslist, Common::FSNode::kListAll)) {
-		return Common::kNoGameDataFoundError;
-	}
-
-	// Invoke the detector
-	Common::String gameid = ConfMan.get("gameid");
-	DetectedGames detectedGames = detectGamesImpl(fslist);
-
-	for (uint i = 0; i < detectedGames.size(); i++) {
-		if (detectedGames[i].gameId == gameid) {
-			*engine = new Sword2::Sword2Engine(syst);
-			return Common::kNoError;
-		}
-	}
-
-	return Common::kNoGameDataFoundError;
+Common::Error Sword2MetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
+	const Sword2::Sword2GameDescription *gd = (const Sword2::Sword2GameDescription *)desc;
+	*engine = new Sword2::Sword2Engine(syst, gd);
+	return Common::kNoError;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SWORD2)

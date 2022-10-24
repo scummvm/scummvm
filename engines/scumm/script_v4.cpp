@@ -418,7 +418,7 @@ void ScummEngine_v4::o4_saveLoadGame() {
 			char name[32];
 			if (_game.version <= 2) {
 				// use generic name
-				sprintf(name, "Game %c", 'A'+slot-1);
+				Common::sprintf_s(name, "Game %c", 'A'+slot-1);
 			} else {
 				// use name entered by the user
 				char* ptr;

@@ -146,7 +146,7 @@ void initSystem() {
 	subColor = 10;
 
 	for (i = 0; i < 64; i++) {
-		strcpy(preloadData[i].name, "");
+		preloadData[i].name[0] = '\0';
 		preloadData[i].ptr = nullptr;
 		preloadData[i].nofree = 0;
 	}
@@ -161,7 +161,7 @@ void initSystem() {
 	changeCursor(CURSOR_NORMAL);
 	mouseOn();
 
-	strcpy(cmdLine, "");
+	cmdLine[0] = '\0';
 
 	loadFNT("system.fnt");
 }

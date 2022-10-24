@@ -98,7 +98,7 @@ bool save_game(strid_t save) {
 
 	// Save the current volume of each of the sound channels
 	for (index = 0; index < 8; index++) {
-		sprintf(temp_buffer, "volume[%d]", index);
+		Common::sprintf_s(temp_buffer, 1024, "volume[%d]", index);
 		write_integer(save, cinteger_resolve(temp_buffer)->value);
 	}
 
@@ -168,7 +168,7 @@ bool restore_game(strid_t save, bool warn) {
 
 	// Restore the current volume of each of the sound channels
 	for (index = 0; index < 8; index++) {
-		sprintf(temp_buffer, "volume[%d]", index);
+		Common::sprintf_s(temp_buffer, 1024, "volume[%d]", index);
 		counter = read_integer(save);
 		cinteger_resolve(temp_buffer)->value = counter;
 

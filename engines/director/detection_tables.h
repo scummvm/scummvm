@@ -928,6 +928,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "murphystv",			"Murphy's TV" },
 	{ "negi1",				"ねぎ Vol. 1" }, // Negi
 	{ "negi3",				"ねぎ3世" }, // Negi the 3rd
+	{ "nemurenu",			"眠れぬ夜の小さなお話" }, // A Small Story on a Sleepless Night
 	{ "nihonchiri",			"Visual日本地理" },									// Japan Geography
 	{ "niningashi",			"ににんがし" },
 	{ "noahsark",			"Noah's Ark" },
@@ -2415,6 +2416,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is 建築見積ｿﾌﾄ Movie
 	MACDEMO1_l("negishihomes", "Demo", "Kenchiku Mitsumori Sofuto Movie", "276bee761e48a6fd709df77d5c2f60dd", 1880339, Common::JA_JPN, 313),
 
+	PIPGAME1_l("nemurenu", "", "Sleepless", "5ac60d4dafefa00dd8060b6a4f9c4c4c", 48184, Common::JA_JPN, 404),
+
 	MACDEMO1("newton", "Demo", "Complete Newton Demo", "7f443f2e63fd497a9ad85b10dc880a91", 383575, 313),
 
 	MACGAME1("nightrider", "", "Night Rider", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 351573, 301),
@@ -2812,7 +2815,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	WINDEMO1("3datlas97", "Demo", "ATLAS97.EXE", "b5da314bdfd9344530a24093f2e0b566", 8300357, 404),
 
-	MACGAME1_l("4sight", "", "four-sight", "0c7bbb4b24823e5ab871cb4c1d6f3710", 508347, Common::JA_JPN, 404),
+	MACGAME1_l("4sight", "", "four-sight", "0c7bbb4b24823e5ab871cb4c1d6f3710", 508091, Common::JA_JPN, 404),
 	WINGAME1_l("4sight", "", "4_SIGHT.EXE", "26c279f80434c0a641d28cec198c783f", 740581, Common::JA_JPN, 404),
 
 	MACGAME1("9worlds", "", "Nine Worlds", "3930940b5b4b2ae2563cc29b812855a6", 482838, 400),

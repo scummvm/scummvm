@@ -540,7 +540,7 @@ void Sound::playVoice(uint sound) {
 
 			char filename[16];
 			_lastVoiceFile = _filenums[sound];
-			sprintf(filename, "voices%d.dat", _filenums[sound]);
+			Common::sprintf_s(filename, "voices%d.dat", _filenums[sound]);
 			if (!Common::File::exists(filename))
 				error("playVoice: Can't load voice file %s", filename);
 
@@ -718,7 +718,7 @@ void Sound::switchVoiceFile(const GameSpecificSettings *gss, uint disc) {
 
 	char filename[16];
 
-	sprintf(filename, "%s%u", gss->speech_filename, disc);
+	Common::sprintf_s(filename, "%s%u", gss->speech_filename, disc);
 	_voice = makeSound(_mixer, filename);
 	_hasVoiceFile = (_voice != nullptr);
 

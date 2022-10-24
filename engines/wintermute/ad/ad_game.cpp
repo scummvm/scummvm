@@ -1559,10 +1559,9 @@ void AdGame::setPrevSceneName(const char *name) {
 	delete[] _prevSceneName;
 	_prevSceneName = nullptr;
 	if (name) {
-		_prevSceneName = new char[strlen(name) + 1];
-		if (_prevSceneName) {
-			strcpy(_prevSceneName, name);
-		}
+		size_t nameSize = strlen(name) + 1;
+		_prevSceneName = new char[nameSize];
+		Common::strcpy_s(_prevSceneName, nameSize, name);
 	}
 }
 
@@ -1572,10 +1571,9 @@ void AdGame::setPrevSceneFilename(const char *name) {
 	delete[] _prevSceneFilename;
 	_prevSceneFilename = nullptr;
 	if (name) {
-		_prevSceneFilename = new char[strlen(name) + 1];
-		if (_prevSceneFilename) {
-			strcpy(_prevSceneFilename, name);
-		}
+		size_t nameSize = strlen(name) + 1;
+		_prevSceneFilename = new char[nameSize];
+		Common::strcpy_s(_prevSceneFilename, nameSize, name);
 	}
 }
 
@@ -1588,8 +1586,9 @@ bool AdGame::scheduleChangeScene(const char *filename, bool fadeIn) {
 	if (_scene && !_scene->_initialized) {
 		return changeScene(filename, fadeIn);
 	} else {
-		_scheduledScene = new char [strlen(filename) + 1];
-		strcpy(_scheduledScene, filename);
+		size_t filenameSize = strlen(filename) + 1;
+		_scheduledScene = new char [filenameSize];
+		Common::strcpy_s(_scheduledScene, filenameSize, filename);
 
 		_scheduledFadeIn = fadeIn;
 
@@ -1736,8 +1735,9 @@ bool AdGame::loadItemsFile(const char *filename, bool merge) {
 
 	bool ret;
 
-	//_filename = new char [strlen(filename)+1];
-	//strcpy(_filename, filename);
+	//size_t filenameSize = strlen(filename) + 1;
+	//_filename = new char [filenameSize];
+	//Common::strcpy_s(_filename, filenameSize, filename);
 
 	if (DID_FAIL(ret = loadItemsBuffer(buffer, merge))) {
 		_gameRef->LOG(0, "Error parsing ITEMS file '%s'", filename);
@@ -1807,8 +1807,9 @@ bool AdGame::loadItemsBuffer(char *buffer, bool merge) {
 
 //////////////////////////////////////////////////////////////////////////
 AdSceneState *AdGame::getSceneState(const char *filename, bool saving) {
-	char *filenameCor = new char[strlen(filename) + 1];
-	strcpy(filenameCor, filename);
+	size_t filenameSize = strlen(filename) + 1;
+	char *filenameCor = new char[filenameSize];
+	Common::strcpy_s(filenameCor, filenameSize, filename);
 	for (uint32 i = 0; i < strlen(filenameCor); i++) {
 		if (filenameCor[i] == '/') {
 			filenameCor[i] = '\\';
@@ -1898,11 +1899,10 @@ bool AdGame::windowScriptMethodHook(UIWindow *win, ScScript *script, ScStack *st
 
 //////////////////////////////////////////////////////////////////////////
 bool AdGame::startDlgBranch(const char *branchName, const char *scriptName, const char *eventName) {
-	char *name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
-	if (name) {
-		sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
-		_dlgPendingBranches.add(name);
-	}
+	size_t sz = strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1;
+	char *name = new char[sz];
+	Common::sprintf_s(name, sz, "%s.%s.%s", branchName, scriptName, eventName);
+	_dlgPendingBranches.add(name);
 	return STATUS_OK;
 }
 
@@ -1915,11 +1915,10 @@ bool AdGame::endDlgBranch(const char *branchName, const char *scriptName, const 
 		name = _dlgPendingBranches[_dlgPendingBranches.size() - 1];
 	} else {
 		if (branchName != nullptr) {
-			name = new char[strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1];
-			if (name) {
-				sprintf(name, "%s.%s.%s", branchName, scriptName, eventName);
-				deleteName = true;
-			}
+			size_t sz = strlen(branchName) + 1 + strlen(scriptName) + 1 + strlen(eventName) + 1;
+			name = new char[sz];
+			Common::sprintf_s(name, sz, "%s.%s.%s", branchName, scriptName, eventName);
+			deleteName = true;
 		}
 	}
 
@@ -2274,10 +2273,11 @@ bool AdGame::addSpeechDir(const char *dir) {
 		return STATUS_FAILED;
 	}
 
-	char *temp = new char[strlen(dir) + 2];
-	strcpy(temp, dir);
-	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/') {
-		strcat(temp, "\\");
+	size_t dirSize = strlen(dir) + 2;
+	char *temp = new char[dirSize];
+	Common::strcpy_s(temp, dirSize, dir);
+	if (temp[dirSize - 2 - 1] != '\\' && temp[dirSize - 2 - 1] != '/') {
+		Common::strcat_s(temp, dirSize, "\\");
 	}
 
 	for (uint32 i = 0; i < _speechDirs.size(); i++) {
@@ -2298,10 +2298,11 @@ bool AdGame::removeSpeechDir(const char *dir) {
 		return STATUS_FAILED;
 	}
 
-	char *temp = new char[strlen(dir) + 2];
-	strcpy(temp, dir);
-	if (temp[strlen(temp) - 1] != '\\' && temp[strlen(temp) - 1] != '/') {
-		strcat(temp, "\\");
+	size_t dirSize = strlen(dir) + 2;
+	char *temp = new char[dirSize];
+	Common::strcpy_s(temp, dirSize, dir);
+	if (temp[dirSize - 2 - 1] != '\\' && temp[dirSize - 2 - 1] != '/') {
+		Common::strcat_s(temp, dirSize, "\\");
 	}
 
 	bool found = false;
@@ -2324,12 +2325,12 @@ char *AdGame::findSpeechFile(char *stringID) {
 	char *ret = new char[MAX_PATH_LENGTH];
 
 	for (uint32 i = 0; i < _speechDirs.size(); i++) {
-		sprintf(ret, "%s%s.ogg", _speechDirs[i], stringID);
+		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.ogg", _speechDirs[i], stringID);
 		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
 
-		sprintf(ret, "%s%s.wav", _speechDirs[i], stringID);
+		Common::sprintf_s(ret, MAX_PATH_LENGTH, "%s%s.wav", _speechDirs[i], stringID);
 		if (BaseFileManager::getEngineInstance()->hasFile(ret)) {
 			return ret;
 		}
@@ -2483,10 +2484,10 @@ bool AdGame::onMouseRightUp() {
 bool AdGame::displayDebugInfo() {
 	char str[100];
 	if (_gameRef->_debugDebugMode) {
-		sprintf(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
+		Common::sprintf_s(str, "Mouse: %d, %d (scene: %d, %d)", _mousePos.x, _mousePos.y, _mousePos.x + (_scene ? _scene->getOffsetLeft() : 0), _mousePos.y + (_scene ? _scene->getOffsetTop() : 0));
 		_systemFont->drawText((byte *)str, 0, 90, _renderer->getWidth(), TAL_RIGHT);
 
-		sprintf(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
+		Common::sprintf_s(str, "Scene: %s (prev: %s)", (_scene && _scene->getName()) ? _scene->getName() : "???", _prevSceneName ? _prevSceneName : "???");
 		_systemFont->drawText((byte *)str, 0, 110, _renderer->getWidth(), TAL_RIGHT);
 	}
 	return BaseGame::displayDebugInfo();

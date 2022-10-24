@@ -183,7 +183,7 @@ void _icon_list::RemoveIcon(const char *pcIconName, bool8 bForceRemove) {
 			// swings and roundabouts: other code ends up less efficient if I don't remove holes, and it's not like
 			// we're dealing with thousands of array elements.
 			for (j = i + 1; j < m_nItemCount; ++j) {
-				strcpy(m_ppcIconList[j - 1], m_ppcIconList[j]);
+				Common::strcpy_s(m_ppcIconList[j - 1], m_ppcIconList[j]);
 				m_pnIconListHash[j - 1] = m_pnIconListHash[j];
 				m_pnDuplicateCount[j - 1] = m_pnDuplicateCount[j];
 			}

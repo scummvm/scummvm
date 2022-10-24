@@ -334,9 +334,9 @@ const char *TileManager::lookAtTile(uint16 tile_num, uint16 qty, bool show_prefi
 
 	if (qty > 0 &&
 	        (plural || Game::get_game()->get_game_type() == NUVIE_GAME_SE))
-		sprintf(desc_buf, "%u %s", qty, desc);
+		Common::sprintf_s(desc_buf, look->get_max_len() + 6, "%u %s", qty, desc);
 	else
-		sprintf(desc_buf, "%s%s", article_tbl[tileP->article_n], desc);
+		Common::sprintf_s(desc_buf, look->get_max_len() + 6, "%s%s", article_tbl[tileP->article_n], desc);
 
 	DEBUG(0, LEVEL_DEBUGGING, "%s (%x): flags1:", desc_buf, tile_num);
 	print_b(LEVEL_INFORMATIONAL, tileP->flags1);

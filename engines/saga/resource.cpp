@@ -193,7 +193,7 @@ bool Resource::createContexts() {
 		for (SoundFileInfo *curSoundFile = sfxFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 			if (curSoundFile->gameId != _vm->getGameId()) continue;
 			if (!Common::File::exists(curSoundFile->fileName)) continue;
-			strcpy(_soundFileName, curSoundFile->fileName);
+			Common::strcpy_s(_soundFileName, curSoundFile->fileName);
 			uint32 flags = GAME_SOUNDFILE;
 
 			if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)
@@ -230,7 +230,7 @@ bool Resource::createContexts() {
 		if (curSoundFile->gameId != _vm->getGameId()) continue;
 		if (!Common::File::exists(curSoundFile->fileName)) continue;
 
-		strcpy(_voicesFileName[0], curSoundFile->fileName);
+		Common::strcpy_s(_voicesFileName[0], curSoundFile->fileName);
 		addContext(_voicesFileName[0], GAME_VOICEFILE | curSoundFile->voiceFileAddType, curSoundFile->isCompressed);
 
 		// Special cases
@@ -238,7 +238,7 @@ bool Resource::createContexts() {
 			!scumm_stricmp(curSoundFile->fileName, "voicess.cmp")) {
 				// IHNM has multiple voice files
 				for (size_t i = 1; i <= 6; i++) { // voices1-voices6
-					sprintf(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
+					Common::sprintf_s(_voicesFileName[i], "voices%i.%s", (uint)i, curSoundFile->isCompressed ? "cmp" : "res");
 					if (i == 4) {
 						// The German and French versions of IHNM don't have Nimdok's chapter,
 						// therefore the voices file for that chapter is missing
@@ -283,7 +283,7 @@ bool Resource::createContexts() {
 	for (SoundFileInfo *curSoundFile = musicFiles; (curSoundFile->gameId != -1); curSoundFile++) {
 		if (curSoundFile->gameId != _vm->getGameId()) continue;
 		if (!Common::File::exists(curSoundFile->fileName)) continue;
-		strcpy(_musicFileName, curSoundFile->fileName);
+		Common::strcpy_s(_musicFileName, curSoundFile->fileName);
 		uint32 flags = GAME_DIGITALMUSICFILE;
 
 		if (_vm->getFeatures() & GF_SOME_MAC_RESOURCES)

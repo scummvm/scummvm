@@ -173,7 +173,7 @@ GLuint Shader::createCompatShader(const char *shaderSource, GLenum shaderType, c
 		return 0;
 	}
 
-	sprintf(versionSource, "#version %d\n", compatGLSLVersion);
+	Common::sprintf_s(versionSource, "#version %d\n", compatGLSLVersion);
 
 	const GLchar *compatSource =
 			shaderType == GL_VERTEX_SHADER ? compatVertex : compatFragment;

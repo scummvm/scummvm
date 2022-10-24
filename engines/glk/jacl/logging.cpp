@@ -37,7 +37,7 @@ void log_error(const char *message, int console) {
 	event_t         event;
 
 	// BUILD A STRING SUITABLE FOR DISPLAY ON THE CONSOLE.
-	sprintf(consoleMessage, "ERROR: %s^", message);
+	Common::sprintf_s(consoleMessage, "ERROR: %s^", message);
 
 	g_vm->glk_set_style(style_Alert);
 	write_text(consoleMessage);

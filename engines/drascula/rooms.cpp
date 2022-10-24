@@ -403,7 +403,7 @@ bool DrasculaEngine::room_13(int fl) {
 		talk(411);
 		trackProtagonist = 3;
 		talk(412);
-		strcpy(objName[1], _textmisc[4]); // "yoda"
+		Common::strcpy_s(objName[1], _textmisc[4]); // "yoda"
 	} else if (pickedObject == kVerbTalk && fl == 51) {
 		converse(7);
 	} else if (pickedObject == 19 && fl == 51) {
@@ -1106,7 +1106,7 @@ void DrasculaEngine::updateRefresh() {
 
 	// Call room-specific updater
 	char rm[20];
-	sprintf(rm, "update_%d", _roomNumber);
+	Common::sprintf_s(rm, "update_%d", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomUpdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomUpdaters[i]->desc)) {
 			debug(8, "Calling room updater %d", _roomNumber);
@@ -1144,7 +1144,7 @@ void DrasculaEngine::updateRefresh_pre() {
 
 	// Call room-specific preupdater
 	char rm[20];
-	sprintf(rm, "update_%d_pre", _roomNumber);
+	Common::sprintf_s(rm, "update_%d_pre", _roomNumber);
 	for (uint i = 0; i < _roomHandlers->roomPreupdaters.size(); i++) {
 		if (!strcmp(rm, _roomHandlers->roomPreupdaters[i]->desc)) {
 			debug(8, "Calling room preupdater %d", _roomNumber);
@@ -1642,7 +1642,7 @@ bool DrasculaEngine::room(int rN, int fl) {
 	if (!roomParse(rN, fl)) {
 		// Call room-specific parser
 		char rm[20];
-		sprintf(rm, "room_%d", rN);
+		Common::sprintf_s(rm, "room_%d", rN);
 		for (uint i = 0; i < _roomHandlers->roomParsers.size(); i++) {
 			if (!strcmp(rm, _roomHandlers->roomParsers[i]->desc)) {
 				debug(4, "Calling room parser %d", rN);
@@ -1663,7 +1663,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 	showCursor();
 
 	char fileName[20];
-	sprintf(fileName, "%d.ald", roomIndex);
+	Common::sprintf_s(fileName, "%d.ald", roomIndex);
 	int soc, l, overridenWidth = 0, objIsExit = 0;
 	float chiquez = 0, pequegnez = 0;
 	char surfaceName[20];
@@ -1671,7 +1671,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 
 	_hasName = false;
 
-	strcpy(currentData, fileName);
+	Common::strcpy_s(currentData, fileName);
 
 	Common::SeekableReadStream *stream = _archives.open(fileName);
 	if (!stream)
@@ -1706,7 +1706,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			p.parseString(surfaceName);
 			loadPic(surfaceName, backSurface);
 
-			strcpy(menuBackground, surfaceName);
+			Common::strcpy_s(menuBackground, surfaceName);
 		} else {
 			curWidth = CHARACTER_WIDTH;
 			curHeight = CHARACTER_HEIGHT;
@@ -1718,7 +1718,7 @@ void DrasculaEngine::enterRoom(int roomIndex) {
 			loadPic(96, frontSurface);
 			loadPic(99, backSurface);
 
-			strcpy(menuBackground, "99.alg");
+			Common::strcpy_s(menuBackground, "99.alg");
 		}
 	}
 

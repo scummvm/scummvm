@@ -70,7 +70,7 @@ int closeBase() {
 
 		MemFree(volumePtrToFileDescriptor);
 
-		strcpy(currentBaseName, "");
+		currentBaseName[0] = '\0';
 	}
 
 	if (_vm->_PAL_file.isOpen()) {
@@ -91,7 +91,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 
 	askDisk(-1);
 
-	strcpy(buffer, entry->ident);
+	Common::strcpy_s(buffer, entry->ident);
 
 	_vm->_currentVolumeFile.open(buffer);
 
@@ -125,7 +125,7 @@ int getVolumeDataEntry(volumeDataStruct *entry) {
 		volumePtrToFileDescriptor[i].unk3 = _vm->_currentVolumeFile.readSint32BE();
 	}
 
-	strcpy(currentBaseName, entry->ident);
+	Common::strcpy_s(currentBaseName, entry->ident);
 
 	loadPal(entry);
 
@@ -206,8 +206,8 @@ void askDisk(int16 discNumber) {
 		currentDiskNumber = discNumber;
 	}
 
-	sprintf(fileName, "VOL.%d", currentDiskNumber);
-	sprintf(string, "INSERER LE DISQUE %d EN ", currentDiskNumber);
+	Common::sprintf_s(fileName, "VOL.%d", currentDiskNumber);
+	Common::sprintf_s(string, "INSERER LE DISQUE %d EN ", currentDiskNumber);
 
 #if 0 // skip drive selection stuff
 	bool messageDrawn = false;
@@ -371,7 +371,7 @@ int16 readVolCnf() {
 		char nameBuffer[256];
 		fileEntry *buffer;
 
-		sprintf(nameBuffer, "D%d.", i + 1);
+		Common::sprintf_s(nameBuffer, "D%d.", i + 1);
 
 		fileHandle.open(nameBuffer);
 
@@ -400,7 +400,7 @@ int16 readVolCnf() {
 
 			char nameBuffer[256];
 
-			sprintf(nameBuffer, "%s", buffer[j].name);
+			Common::sprintf_s(nameBuffer, "%s", buffer[j].name);
 
 			if (buffer[j].size == buffer[j].extSize) {
 				Common::DumpFile fout;

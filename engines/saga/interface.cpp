@@ -1208,7 +1208,7 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 			if (_textInputPos != _textInputStringLength) {
 				strncat(tempString, &_textInputString[_textInputPos], _textInputStringLength - _textInputPos);
 			}
-			strcpy(_textInputString, tempString);
+			Common::strcpy_s(_textInputString, tempString);
 			_textInputStringLength = strlen(_textInputString);
 		}
 		break;
@@ -1244,16 +1244,16 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 				}
 				if (_textInputPos != 1) {
 					strncpy(tempString, _textInputString, _textInputPos - 1);
-					strcat(tempString, ch);
+					Common::strcat_s(tempString, ch);
 				}
 				if ((_textInputStringLength == 0) || (_textInputPos == 1)) {
-					strcpy(tempString, ch);
+					Common::strcpy_s(tempString, ch);
 				}
 				if ((_textInputStringLength != 0) && (_textInputPos != _textInputStringLength)) {
 					strncat(tempString, &_textInputString[_textInputPos - 1], _textInputStringLength - _textInputPos + 1);
 				}
 
-				strcpy(_textInputString, tempString);
+				Common::strcpy_s(_textInputString, tempString);
 				_textInputStringLength = strlen(_textInputString);
 				_textInputPos++;
 			}
@@ -1633,7 +1633,7 @@ void Interface::setOption(PanelButton *panelButton) {
 		if (!_vm->isSaveListFull() && (_optionSaveFileTitleNumber == 0)) {
 			_textInputString[0] = 0;
 		} else {
-			strcpy(_textInputString, _vm->getSaveFile(_optionSaveFileTitleNumber)->name);
+			Common::strcpy_s(_textInputString, _vm->getSaveFile(_optionSaveFileTitleNumber)->name);
 		}
 		setMode(kPanelSave);
 		break;

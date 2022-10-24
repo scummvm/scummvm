@@ -54,7 +54,7 @@ void MickeyEngine::readExe(int ofs, uint8 *buffer, long buflen) {
 }
 
 void MickeyEngine::getDatFileName(int iRoom, char *szFile) {
-	sprintf(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
+	Common::sprintf_s(szFile, 256, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[getDat(iRoom)]);
 }
 
 void MickeyEngine::readDatHdr(char *szFile, MSA_DAT_HEADER *hdr) {
@@ -189,7 +189,7 @@ void MickeyEngine::printDatString(int iStr) {
 	MSA_DAT_HEADER hdr;
 	char szFile[256] = {0};
 
-	sprintf(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
+	Common::sprintf_s(szFile, IDS_MSA_PATH_DAT, IDS_MSA_NAME_DAT[iDat]);
 	readDatHdr(szFile, &hdr);
 
 	Common::File infile;
@@ -614,7 +614,7 @@ void MickeyEngine::patchMenu(MSA_MENU *menu) {
 
 	// change planet name in ship airlock menu
 	if (_gameStateMickey.iRoom == IDI_MSA_PIC_SHIP_AIRLOCK) {
-		strcpy((char *)menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
+		Common::strcpy_s(menu->row[1].entry[2].szText, IDS_MSA_NAME_PLANET[_gameStateMickey.iPlanet]);
 	}
 
 	// exit if fix unnecessary
@@ -724,7 +724,7 @@ void MickeyEngine::playSound(ENUM_MSA_SOUND iSound) {
 
 void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 	char szFile[255] = {0};
-	sprintf(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
+	Common::sprintf_s(szFile, IDS_MSA_PATH_OBJ, IDS_MSA_NAME_OBJ[iObj]);
 
 	Common::File file;
 	if (!file.open(szFile))
@@ -746,7 +746,7 @@ void MickeyEngine::drawObj(ENUM_MSA_OBJECT iObj, int x0, int y0) {
 
 void MickeyEngine::drawPic(int iPic) {
 	char szFile[255] = {0};
-	sprintf(szFile, IDS_MSA_PATH_PIC, iPic);
+	Common::sprintf_s(szFile, IDS_MSA_PATH_PIC, iPic);
 
 	Common::File file;
 	if (!file.open(szFile))
@@ -988,7 +988,7 @@ bool MickeyEngine::loadGame() {
 			return false;
 
 		// load game
-		sprintf(szFile, "%s.s%02d", getTargetName().c_str(), sel);
+		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
 		if (!(infile = getSaveFileMan()->openForLoading(szFile))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
@@ -1105,7 +1105,7 @@ void MickeyEngine::saveGame() {
 			return;
 
 		// save game
-		sprintf(szFile, "%s.s%02d", getTargetName().c_str(), sel);
+		Common::sprintf_s(szFile, "%s.s%02d", getTargetName().c_str(), sel);
 		if (!(outfile = getSaveFileMan()->openForSaving(szFile))) {
 			printLine("PLEASE CHECK THE DISK DRIVE");
 
@@ -1371,7 +1371,7 @@ void MickeyEngine::inventory() {
 	int iRow = IDI_MSA_ROW_INV_ITEMS;
 	char szCrystals[12] = {0};
 
-	sprintf(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[_gameStateMickey.nXtals]);
+	Common::sprintf_s(szCrystals, IDS_MSA_CRYSTALS, IDS_MSA_CRYSTAL_NO[_gameStateMickey.nXtals]);
 
 	CursorMan.showMouse(false);
 

@@ -153,13 +153,14 @@ public:
 		const char *versionStr = "<?xml version=\"1.0\"?>";
 		uint fileSize;
 		char *data = (char *)getFile(fileName, &fileSize);
-		char *result = (char *)malloc(fileSize + strlen(versionStr) + 1);
+		size_t resultSize = fileSize + strlen(versionStr) + 1;
+		char *result = (char *)malloc(resultSize);
 		if (!result)
 			error("[PackageManager::getXmlFile] Cannot allocate memory");
 
-		strcpy(result, versionStr);
+		Common::strcpy_s(result, resultSize, versionStr);
 		Common::copy(data, data + fileSize, result + strlen(versionStr));
-		result[fileSize + strlen(versionStr)] = '\0';
+		result[resultSize - 1] = '\0';
 
 		delete[] data;
 		if (pFileSize)

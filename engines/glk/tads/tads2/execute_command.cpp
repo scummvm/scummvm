@@ -2444,8 +2444,8 @@ static void voc_askobj_indirect(voccxdef *ctx, vocoldef *dolist,
  */
 int execmd(voccxdef *ctx, objnum actor, objnum prep,
 		   char *vverb, char *vprep, vocoldef *dolist, vocoldef *iolist,
-		   char **cmd, int *typelist,
-		   char *cmdbuf, int wrdcnt, uchar **preparse_list, int *next_word)
+		   char **cmd, int *typelist, char *cmdbuf, size_t cmdlen,
+		   int wrdcnt, uchar **preparse_list, int *next_word)
 {
 	objnum    verb;
 	objnum    iobj;
@@ -2776,7 +2776,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/* disambiguate the direct object list, now that we can */
 				if (vocdisambig(ctx, dolist1, dolist, PRP_DODEFAULT,
 								PRP_VALIDDO, voctplvd(tpl), cmd, MCMONINV,
-								actor, verb, prep, cmdbuf, FALSE))
+								actor, verb, prep, cmdbuf, cmdlen, FALSE))
 				{
 					err = -1;
 					goto exit_error;
@@ -2880,7 +2880,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 											PRP_DODEFAULT, PRP_VALIDDO,
 											voctplvd(tpl), cmd, MCMONINV,
 											actor, verb, prep, cmdbuf,
-											FALSE))
+											cmdlen, FALSE))
 							{
 								err = -1;
 								goto exit_error;
@@ -3058,7 +3058,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				/* disambiguate the direct object list */
 				if (vocdisambig(ctx, dolist1, dolist, PRP_DODEFAULT,
 								PRP_VALIDDO, voctplvd(tpl), cmd, otherobj,
-								actor, verb, prep, cmdbuf, FALSE))
+								actor, verb, prep, cmdbuf, cmdlen, FALSE))
 				{
 					err = -1;
 					goto exit_error;
@@ -3083,7 +3083,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			/* disambiguate the indirect object list */
 			if (vocdisambig(ctx, iolist1, iolist, PRP_IODEFAULT,
 							PRP_VALIDIO, voctplvi(tpl), cmd, otherobj,
-							actor, verb, prep, cmdbuf, FALSE))
+							actor, verb, prep, cmdbuf, cmdlen, FALSE))
 			{
 				err = -1;
 				goto exit_error;
@@ -3107,7 +3107,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 			if (!(tplflags & VOCTPLFLG_DOBJ_FIRST)
 				&& vocdisambig(ctx, dolist1, dolist, PRP_DODEFAULT,
 							   PRP_VALIDDO, voctplvd(tpl), cmd, otherobj,
-							   actor, verb, prep, cmdbuf, FALSE))
+							   actor, verb, prep, cmdbuf, cmdlen, FALSE))
 			{
 				err = -1;
 				goto exit_error;
@@ -3582,7 +3582,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				 *   new command line - copy the new text to the command
 				 *   buffer, set the 'redo' flag, and give up
 				 */
-				strcpy(cmdbuf, exenewcmd);
+				Common::strcpy_s(cmdbuf, cmdlen, exenewcmd);
 				ctx->voccxredo = TRUE;
 				VOC_RETVAL(ctx, save_sp, 1);
 			}
@@ -3613,7 +3613,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 
 			/* get the types */
 			exenewlist[cnt] = nullptr;
-			if (vocgtyp(ctx, exenewlist, exenewtype, cmdbuf))
+			if (vocgtyp(ctx, exenewlist, exenewtype, cmdbuf, cmdlen))
 			{
 				/*
 				 *   clear the unknown word count so that we fail with
@@ -3661,7 +3661,7 @@ int execmd(voccxdef *ctx, objnum actor, objnum prep,
 				|| (exenewlist[next] && !vocspec(exenewlist[next], VOCW_THEN)
 					&& *exenewlist[next] != '\0'))
 			{
-				strcpy(cmdbuf, exenewcmd);
+				Common::strcpy_s(cmdbuf, cmdlen, exenewcmd);
 				ctx->voccxredo = TRUE;
 				VOC_RETVAL(ctx, save_sp, 1);
 			}

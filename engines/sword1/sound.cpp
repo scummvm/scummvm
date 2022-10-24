@@ -607,7 +607,7 @@ void Sound::initCowSystem() {
 	*/
 #ifdef USE_FLAC
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "SPEECH%d.CLF", SwordEngine::_systemVars.currentCD);
+		Common::sprintf_s(cowName, "SPEECH%d.CLF", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
 			debug(1, "Using FLAC compressed Speech Cluster");
@@ -617,7 +617,7 @@ void Sound::initCowSystem() {
 #endif
 #ifdef USE_VORBIS
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);
+		Common::sprintf_s(cowName, "SPEECH%d.CLV", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
 			debug(1, "Using Vorbis compressed Speech Cluster");
@@ -627,7 +627,7 @@ void Sound::initCowSystem() {
 #endif
 #ifdef USE_MAD
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
+		Common::sprintf_s(cowName, "SPEECH%d.CL3", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (_cowFile.isOpen()) {
 			debug(1, "Using MP3 compressed Speech Cluster");
@@ -636,7 +636,7 @@ void Sound::initCowSystem() {
 	}
 #endif
 	if (!_cowFile.isOpen()) {
-		sprintf(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
+		Common::sprintf_s(cowName, "SPEECH%d.CLU", SwordEngine::_systemVars.currentCD);
 		_cowFile.open(cowName);
 		if (!_cowFile.isOpen()) {
 			_cowFile.open("speech.clu");

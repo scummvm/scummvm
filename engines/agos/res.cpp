@@ -777,11 +777,11 @@ void AGOSEngine::loadVGABeardFile(uint16 id) {
 
 		if (getPlatform() == Common::kPlatformAmiga) {
 			if (getFeatures() & GF_TALKIE)
-				sprintf(filename, "0%d.out", id);
+				Common::sprintf_s(filename, "0%d.out", id);
 			else
-				sprintf(filename, "0%d.pkd", id);
+				Common::sprintf_s(filename, "0%d.pkd", id);
 		} else {
-			sprintf(filename, "0%d.VGA", id);
+			Common::sprintf_s(filename, "0%d.VGA", id);
 		}
 
 		if (!in.open(filename))
@@ -924,39 +924,39 @@ void AGOSEngine::loadVGAVideoFile(uint16 id, uint8 type, bool useError) {
 		loadOffsets(getFileName(GAME_GFXIDXFILE), id * 3 + type, file, offs, srcSize, dstSize);
 
 		if (getPlatform() == Common::kPlatformAmiga)
-			sprintf(filename, "GFX%d.VGA", file);
+			Common::sprintf_s(filename, "GFX%d.VGA", file);
 		else
-			sprintf(filename, "graphics.vga");
+			Common::sprintf_s(filename, "graphics.vga");
 
 		dst = allocBlock(dstSize + extraBuffer);
 		decompressData(filename, dst, offs, srcSize, dstSize);
 	} else if (getFeatures() & GF_OLD_BUNDLE) {
 		if (getPlatform() == Common::kPlatformAcorn) {
-			sprintf(filename, "%.3d%d.DAT", id, type);
+			Common::sprintf_s(filename, "%.3d%d.DAT", id, type);
 		} else if (getPlatform() == Common::kPlatformAmiga || getPlatform() == Common::kPlatformAtariST) {
 			if (getFeatures() & GF_TALKIE) {
-				sprintf(filename, "%.3d%d.out", id, type);
+				Common::sprintf_s(filename, "%.3d%d.out", id, type);
 			} else if (getGameType() == GType_ELVIRA1 && getFeatures() & GF_DEMO) {
 				if (getPlatform() == Common::kPlatformAtariST)
-					sprintf(filename, "%.2d%d.out", id, type);
+					Common::sprintf_s(filename, "%.2d%d.out", id, type);
 				else
-					sprintf(filename, "%c%d.out", 48 + id, type);
+					Common::sprintf_s(filename, "%c%d.out", 48 + id, type);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2) {
-				sprintf(filename, "%.2d%d.pkd", id, type);
+				Common::sprintf_s(filename, "%.2d%d.pkd", id, type);
 			} else if (getGameType() == GType_PN) {
-				sprintf(filename, "%c%d.in", id + 48, type);
+				Common::sprintf_s(filename, "%c%d.in", id + 48, type);
 			} else {
-				sprintf(filename, "%.3d%d.pkd", id, type);
+				Common::sprintf_s(filename, "%.3d%d.pkd", id, type);
 			}
 		} else {
 			if (getGameType() == GType_ELVIRA1 && getPlatform() == Common::kPlatformPC98) {
-				sprintf(filename, "%.2d.GR2", id);
+				Common::sprintf_s(filename, "%.2d.GR2", id);
 			} else if (getGameType() == GType_ELVIRA1 || getGameType() == GType_ELVIRA2 || getGameType() == GType_WW) {
-				sprintf(filename, "%.2d%d.VGA", id, type);
+				Common::sprintf_s(filename, "%.2d%d.VGA", id, type);
 			} else if (getGameType() == GType_PN) {
-				sprintf(filename, "%c%d.out", id + 48, type);
+				Common::sprintf_s(filename, "%c%d.out", id + 48, type);
 			} else {
-				sprintf(filename, "%.3d%d.VGA", id, type);
+				Common::sprintf_s(filename, "%.3d%d.VGA", id, type);
 			}
 		}
 

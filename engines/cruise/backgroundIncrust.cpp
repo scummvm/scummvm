@@ -138,7 +138,7 @@ backgroundIncrustStruct *addBackgroundIncrust(int16 overlayIdx,	int16 objectIdx,
 	newElement->frame = params.fileIdx;
 	newElement->spriteId = filesDatabase[params.fileIdx].subData.index;
 	newElement->ptr = nullptr;
-	strcpy(newElement->name, filesDatabase[params.fileIdx].subData.name);
+	Common::strcpy_s(newElement->name, filesDatabase[params.fileIdx].subData.name);
 
 	if (filesDatabase[params.fileIdx].subData.resourceType == OBJ_TYPE_SPRITE) {
 		// sprite

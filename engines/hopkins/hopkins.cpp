@@ -2419,7 +2419,7 @@ void HopkinsEngine::loadCredits() {
 		_globals->_creditsItem[0]._color = '1';
 		_globals->_creditsItem[0]._actvFl = true;
 		_globals->_creditsItem[0]._linePosY = _globals->_creditsPosY;
-		strcpy((char *)_globals->_creditsItem[0]._line, "The End");
+		Common::strcpy_s(_globals->_creditsItem[0]._line, "The End");
 		_globals->_creditsItem[0]._lineSize = 7;
 		return;
 	}

@@ -163,7 +163,7 @@ bool FontManager::initConvFonts(nuvie_game_t game_type) {
 	datadir = path;
 
 	Std::string imagefile;
-	sprintf(filename, "%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
+	Common::sprintf_s(filename, "%s.bmp", get_game_tag(Game::get_game()->get_game_type()));
 
 	build_path(datadir, filename, imagefile);
 
@@ -174,7 +174,7 @@ bool FontManager::initConvFonts(nuvie_game_t game_type) {
 	conv_font_data = bmp.getRawIndexedDataCopy();
 
 	Std::string widthfile;
-	sprintf(filename, "%s.dat", get_game_tag(Game::get_game()->get_game_type()));
+	Common::sprintf_s(filename, "%s.dat", get_game_tag(Game::get_game()->get_game_type()));
 
 	build_path(datadir, filename, widthfile);
 

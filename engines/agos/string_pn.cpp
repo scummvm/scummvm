@@ -67,6 +67,8 @@ void AGOSEngine_PN::uncomstr(char *c, uint32 x) {
 	*c = 0;
 }
 
+#define OBJECT_NAME_SIZE 15
+
 static const char *const objectNames[30] = {
 	"\0",
 	"Take \0",
@@ -108,7 +110,7 @@ void AGOSEngine_PN::getObjectName(char *v, uint16 x) {
 		uncomstr(v, ftext(getlong(27), x * _dataBase[47]));
 	} else {
 		assert(x < 30);
-		strcpy(v, objectNames[x]);
+		Common::strcpy_s(v, OBJECT_NAME_SIZE, objectNames[x]);
 	}
 }
 
@@ -117,7 +119,7 @@ void AGOSEngine_PN::pcl(const char *s) {
 	if (strchr(s, '\n') == nullptr) {
 		for (char *str = _sb; *str; str++)
 			windowPutChar(_windowArray[_curWindow], *str);
-		strcpy(_sb, "");
+		_sb[0] = '\0'; // Reset to empty string
 	}
 }
 

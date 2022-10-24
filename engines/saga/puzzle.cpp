@@ -554,7 +554,7 @@ void Puzzle::giveHint() {
 		if (i >= 0) {
 			static char hintBuf[64];
 			static const char *hintPtr = hintBuf;
-			sprintf(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
+			Common::sprintf_s(hintBuf, optionsStr[_lang][kROHint], pieceNames[_lang][piece]);
 
 			_vm->_actor->nonActorSpeech(_hintBox, &hintPtr, 1, PUZZLE_TOOL_SOUNDS + _hintSpeaker + piece * 3, 0);
 		} else {

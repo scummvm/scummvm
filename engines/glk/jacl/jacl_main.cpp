@@ -239,7 +239,7 @@ void glk_main() {
 	if ((resolved_string = cstring_resolve("game_title")) != NULL) {
 		wing_vm->glk_window_set_title(resolved_string->value);
 	} else {
-		sprintf(temp_buffer, "JACL v%d.%d.%d ", J_VERSION, J_RELEASE, J_BUILD);
+		Common::sprintf_s(temp_buffer, "JACL v%d.%d.%d ", J_VERSION, J_RELEASE, J_BUILD);
 		wing_vm->glk_window_set_title(temp_buffer);
 	}
 #endif
@@ -283,7 +283,7 @@ void glk_main() {
 		status_line();
 
 		if (current_command != nullptr) {
-			strcpy(last_command, current_command);
+			Common::strcpy_s(last_command, current_command);
 		}
 
 		if (inputwin == promptwin) {
@@ -342,7 +342,7 @@ void glk_main() {
 					/* A SOUND HAS FINISHED PLAYING CALL +sound_finished
 					 * WITH THE RESOUCE NUMBER AS THE FIRST ARGUMENT
 					 * AND THE CHANNEL NUMBER AS THE SECOND ARGUMENT */
-					sprintf(temp_buffer, "+sound_finished<%d<%d", (int) ev.val1, (int) ev.val2 - 1);
+					Common::sprintf_s(temp_buffer, "+sound_finished<%d<%d", (int) ev.val1, (int) ev.val2 - 1);
 					execute(temp_buffer);
 					break;
 
@@ -404,7 +404,7 @@ void glk_main() {
 		if (text_buffer[0] == 0) {
 			/* NO COMMAND WAS SPECIFIED, FILL THE COMMAND IN AS 'blankjacl'
 			 * FOR THE GAME TO PROCESS AS DESIRED */
-			strcpy(text_buffer, "blankjacl");
+			Common::strcpy_s(text_buffer, 1024, "blankjacl");
 			current_command = blank_command;
 		}
 
@@ -438,7 +438,7 @@ void glk_main() {
 		} else {
 			/* NO COMMAND WAS SPECIFIED, FILL THE COMMAND IN AS 'blankjacl'
 			 * FOR THE GAME TO PROCESS AS DESIRED */
-			strcpy(text_buffer, "blankjacl");
+			Common::strcpy_s(text_buffer, 1024, "blankjacl");
 			command_encapsulate();
 			preparse();
 		}
@@ -530,8 +530,8 @@ void word_check() {
 					TIME->value = FALSE;
 				}
 			} else {
-				strcpy(oops_buffer, word[wp]);
-				strcpy(text_buffer, last_command);
+				Common::strcpy_s(oops_buffer, word[wp]);
+				Common::strcpy_s(text_buffer, 1024, last_command);
 				command_encapsulate();
 				//printf("--- trying to replace %s with %s\n", word[oops_word], oops_buffer);
 				jacl_truncate();
@@ -543,10 +543,10 @@ void word_check() {
 
 				while (word[index] != nullptr) {
 					if (oopsed_current[0] != 0) {
-						strcat(oopsed_current, " ");
+						Common::strcat_s(oopsed_current, " ");
 					}
 
-					strcat(oopsed_current, word[index]);
+					Common::strcat_s(oopsed_current, word[index]);
 
 					index++;
 				}
@@ -570,7 +570,7 @@ void word_check() {
 			write_text(cstring_resolve("NOT_CLEVER")->value);
 			TIME->value = FALSE;
 		} else {
-			strcpy(text_buffer, last_command);
+			Common::strcpy_s(text_buffer, 1024, last_command);
 			current_command = last_command;
 			command_encapsulate();
 			jacl_truncate();
@@ -607,7 +607,7 @@ void word_check() {
 		write_text("Public License along with this program; if not, write ");
 		write_text("to the Free Software Foundation, Inc., 675 Mass Ave, ");
 		write_text("Cambridge, MA 02139, USA.^^");
-		sprintf(temp_buffer, "OBJECTS DEFINED:   %d^", objects);
+		Common::sprintf_s(temp_buffer, "OBJECTS DEFINED:   %d^", objects);
 		write_text(temp_buffer);
 		TIME->value = FALSE;
 	} else {
@@ -624,10 +624,10 @@ void word_check() {
 void version_info() {
 	char            buffer[80];
 
-	sprintf(buffer, "JACL Interpreter v%d.%d.%d ", J_VERSION, J_RELEASE,
+	Common::sprintf_s(buffer, "JACL Interpreter v%d.%d.%d ", J_VERSION, J_RELEASE,
 	        J_BUILD);
 	write_text(buffer);
-	sprintf(buffer, "/ %d object.^", MAX_OBJECTS);
+	Common::sprintf_s(buffer, "/ %d object.^", MAX_OBJECTS);
 	write_text(buffer);
 	write_text("Copyright (c) 1992-2010 Stuart Allen.^^");
 }
@@ -802,7 +802,7 @@ void status_line() {
 
 		/* BUILD THE SCORE/ MOVES STRING */
 		temp_buffer[0] = 0;
-		sprintf(temp_buffer, "Score: %d  Moves: %d", SCORE->value, TOTAL_MOVES->value);
+		Common::sprintf_s(temp_buffer, "Score: %d  Moves: %d", SCORE->value, TOTAL_MOVES->value);
 
 		cursor = status_width - strlen(temp_buffer);
 		cursor--;
@@ -868,7 +868,7 @@ int get_number(int insist, int low, int high) {
 
 	status_line();
 
-	sprintf(temp_buffer, cstring_resolve("TYPE_NUMBER")->value, low, high);
+	Common::sprintf_s(temp_buffer, cstring_resolve("TYPE_NUMBER")->value, low, high);
 
 	/* THIS LOOP IS IDENTICAL TO THE MAIN COMMAND LOOP IN g_vm->glk_main(). */
 
@@ -1186,7 +1186,7 @@ void walking_thru() {
 		}
 	}
 
-	strcpy(script_line, text_buffer);
+	Common::strcpy_s(script_line, text_buffer);
 
 	while (result && INTERRUPTED->value == FALSE) {
 		/* THERE COULD BE A LOT OF PROCESSING GOING ON HERE BEFORE GETTING
@@ -1222,7 +1222,7 @@ void walking_thru() {
 			}
 		}
 
-		strcpy(script_line, text_buffer);
+		Common::strcpy_s(script_line, text_buffer);
 	}
 
 	/* CLOSE THE STREAM */

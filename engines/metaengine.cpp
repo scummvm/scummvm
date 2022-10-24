@@ -193,7 +193,7 @@ void MetaEngine::appendExtendedSaveToStream(Common::WriteStream *saveFile, uint3
 
 	uint headerPos = saveFile->pos() + posoffset;
 
-	strcpy(header.id, "SVMCR");
+	Common::strcpy_s(header.id, "SVMCR");
 	header.version = EXTENDED_SAVE_VERSION;
 
 	TimeDate curTime;

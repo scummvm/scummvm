@@ -360,7 +360,7 @@ void setMouseTextF(char *format, ...) {
 		va_list     argptr;
 
 		va_start(argptr, format);
-		vsprintf(lineBuf, format, argptr);
+		Common::vsprintf_s(lineBuf, format, argptr);
 		va_end(argptr);
 
 		setMouseText(lineBuf);

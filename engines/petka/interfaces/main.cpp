@@ -43,8 +43,12 @@ namespace Petka {
 
 InterfaceMain::InterfaceMain() {
 	Common::ScopedPtr<Common::SeekableReadStream> stream(g_vm->openFile("backgrnd.bg", true));
+	_hasTextDesc = false;
+	_roomId = 0;
+
 	if (!stream)
 		return;
+
 	_bgs.resize(stream->readUint32LE());
 	for (uint i = 0; i < _bgs.size(); ++i) {
 		_bgs[i].objId = stream->readUint16LE();
