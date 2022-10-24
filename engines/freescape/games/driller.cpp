@@ -211,6 +211,12 @@ void DrillerEngine::loadAssetsDemo() {
 		if (file == nullptr)
 			error("Failed to open 'x.prg' file");
 		loadMessagesFixedSize(file, 0x3b90, 14, 20);
+
+		file = gameDir.createReadStreamForMember("soundfx");
+		if (file == nullptr)
+			error("Failed to open 'soundfx' executable for AtariST demo");
+
+		loadSoundsFx(file, 0, 25);
 	}
 	else
 		error("Unsupported demo for Driller");
