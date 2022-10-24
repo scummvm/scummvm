@@ -23,19 +23,68 @@ namespace QDEngine {
 
 const PlainGameDescriptor GAME_NAMES[] = {
 	{ "qdengine", "QDEngine game" },
+	{ "karliknos", "Little Longnose" }, // Карлик Нос
+	{ "nupogodi3", "Wait for it! Issue 3. Song for a hare" }, // Ну, погоди! Выпуск 3. Песня для зайца
+	{ "pilots3", "Pilot Brothers 3: Back Side of the Earth" }, // Братья Пилоты. Обратная сторона Земли
+	{ "pilots3d", "Pilot Brothers 3D. The Case of Garden Pests" }, // Братья Пилоты 3D. Дело об Огородных вредителях
+	{ "pilots3d-2", "Pilot Brothers 3D-2. Kennel Club Secrets" }, // Братья Пилоты 3D-2. Тайны Клуба Собаководов
+	{ "mamane", "Mom don't worry" }, // Мама не горюй
+	{ "3mice1", "Three little white mice. Visit of the Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
+	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
+	{ "3mice2", "Three little white mice. Sea rat birthday" }, // Три маленькие белые мышки. День рождения морской крысы
 	{ 0, 0 }
 };
 
+#define GAMEel(id,extra,md5,size,lang) { \
+		id, \
+		nullptr, \
+		AD_ENTRY1s("qd_game.qml", md5, size), \
+		lang, \
+		Common::kPlatformWindows, \
+		ADGF_UNSTABLE | ADGF_DROPPLATFORM, \
+		GUIO1(GUIO_NONE) \
+	}
+
+#define GAME(id,md5,size) GAMEel(id,nullptr,md5,size,Common::RU_RUS)
+#define GAMEe(id,extra,md5,size) GAMEel(id,extra,md5,size,Common::RU_RUS)
+
 const ADGameDescription GAME_DESCRIPTIONS[] = {
-	{
-		"qdengine",
-		nullptr,
-		AD_ENTRY1s("file1.bin", "00000000000000000000000000000000", 11111),
-		Common::EN_ANY,
-		Common::kPlatformDOS,
-		ADGF_UNSTABLE,
-		GUIO1(GUIO_NONE)
-	},
+	// Карлик Нос
+	// 2003/10/03. K D-Lab / Melnitsa
+	GAME("karliknos", "a3f1b86c07bf72f688e7f2b5f20aa7f9", 3225385),
+
+	// Ну, погоди! Выпуск 3. Песня для зайца
+	// 2003/12/11. K D-Lab
+	GAME("nupogodi3", "7394a5d28590680cfeb6a037101a9c81", 1675230),
+
+	// Братья Пилоты. Обратная сторона Земли
+	// 2004/06/11. K D-Lab / Pipe Studio
+	GAME("pilots3", "33dfc61046e5af85b570eda24e0afe6d", 14452732),
+
+	// Братья Пилоты 3D. Дело об Огородных вредителях
+	// 2004/10/22. K D-Lab
+	GAME("pilots3d", "c836992c240990f199947e8a362ea867", 5741533),
+
+	// Братья Пилоты 3D-2. Тайны Клуба Собаководов
+	// 2005/04/29. K D-Lab
+	GAMEe("pilots3d-2", "cd1", "7f9eeee513eadbd0f2431bca880df1d1", 4266775),
+	GAMEe("pilots3d-2", "cd2", "dbf676d0d9f4f8d968352918e7ecaffe", 9689557),
+
+	// Мама не горюй
+	// 2005/08/05. Melnitsa / Lazy Games
+	GAME("mamane", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
+
+	// Три маленькие белые мышки. Визит Морской крысы
+	// 2007/03/01. Lazy Games
+	GAME("3mice1", "63e79178e66c520a9094622ccdcaf9c5", 10006622),
+
+	// Похождения бравого солдата Швейка
+	// 2007/09/07. Lazy Games
+	GAME("shveik", "3877afbb780996a5608a5b358dd59726", 30233418),
+
+	// Три маленькие белые мышки. День рождения морской крысы
+	// 2007/12/27. Lazy Games
+	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962),
 
 	AD_TABLE_END_MARKER
 };
