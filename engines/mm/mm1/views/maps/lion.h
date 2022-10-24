@@ -19,47 +19,29 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP32_H
-#define MM1_MAPS_MAP32_H
+#ifndef MM1_VIEWS_MAPS_LION_H
+#define MM1_VIEWS_MAPS_LION_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map32 : public Map {
-	typedef void (Map32:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special04();
-	void special05();
+class Lion : public AnswerEntry {
+protected:
+	void answerEntered() override;
 
-	const SpecialFn SPECIAL_FN[6] = {
-		&Map32::special00,
-		&Map32::special01,
-		&Map32::special02,
-		&Map32::special01,
-		&Map32::special04,
-		&Map32::special05
-	};
 public:
-	Map32() : Map(32, "areae3", 0xB1A) {}
+	Lion();
+	virtual ~Lion() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	/**
-	 * Password given to lion
-	 */
-	void passwordEntered(const Common::String &password);
+	void draw() override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

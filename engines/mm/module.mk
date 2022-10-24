@@ -58,6 +58,7 @@ MODULE_OBJS := \
 	mm1/views/maps/giant.o \
 	mm1/views/maps/gypsy.o \
 	mm1/views/maps/ice_princess.o \
+	mm1/views/maps/lion.o \
 	mm1/views/maps/resistances.o \
 	mm1/views/maps/trivia.o \
 	mm1/views/maps/volcano_god.o \
