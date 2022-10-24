@@ -65,6 +65,11 @@ QMessageObject::QMessageObject() {
 	_loopedSound = false;
 	_startSound = false;
 	_reaction = nullptr;
+
+	_x = _y = _walkX = _walkY = 0;
+	_frame = 0;
+	_sound = nullptr;
+	_reactionId = 0;
 }
 
 void QMessageObject::processMessage(const QMessage &msg) {
