@@ -24,6 +24,7 @@
 #include <enet/enet.h>
 #include "backends/networking/enet/enet.h"
 #include "backends/networking/enet/host.h"
+#include "backends/networking/enet/socket.h"
 #include "common/debug.h"
 
 namespace Networking {
@@ -92,15 +93,39 @@ Host* ENet::connect_to_host(Common::String address, int port, int timeout, int n
 	ENetEvent event;
 	if (enet_host_service(_host, &event, timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
 		debug(1, "ENet: Connection to %s:%d succeeded.", address.c_str(), port);
-		
-		ENetPacket *packet = enet_packet_create("Hello, world!", strlen("Hello, world!") + 1, ENET_PACKET_FLAG_RELIABLE);
-		enet_peer_send(_peer, 0, packet);
-		enet_host_flush(_host);
-
 		return new Host(_host, _peer);
 	}
 	warning("ENet: Connection to %s:%d failed", address.c_str(), port);
 	return nullptr;
+}
+
+Socket* ENet::create_socket(Common::String address, int port) {
+	ENetAddress _address;
+	if (address == "255.255.255.255") {
+		_address.host = ENET_HOST_BROADCAST;
+	} else {
+		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
+		enet_address_set_host(&_address, address.c_str());
+	}
+	_address.port = port;
+
+	ENetSocket _socket = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+	if (_socket == ENET_SOCKET_NULL) {
+		warning("ENet: Unable to create socket");
+		return nullptr;
+	}
+	if (enet_socket_bind(_socket, &_address) < 0) {
+		warning("ENet: Unable to bind socket to address %s:%d", address.c_str(), port);
+		enet_socket_destroy(_socket);
+		return nullptr;
+	}
+
+	enet_socket_set_option (_socket, ENET_SOCKOPT_NONBLOCK, 1);
+    enet_socket_set_option (_socket, ENET_SOCKOPT_BROADCAST, 1);
+	enet_socket_set_option (_socket, ENET_SOCKOPT_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
+    enet_socket_set_option (_socket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
+
+	return new Socket(_socket);
 }
 
 } // End of namespace Networking

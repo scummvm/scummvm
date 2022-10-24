@@ -102,7 +102,8 @@ endif
 ifdef USE_ENET
 MODULE_OBJS += \
 	networking/enet/enet.o \
-	networking/enet/host.o
+	networking/enet/host.o \
+	networking/enet/socket.o
 endif
 
 ifdef USE_ELF_LOADER
