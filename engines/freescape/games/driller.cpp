@@ -193,6 +193,12 @@ void DrillerEngine::loadAssetsDemo() {
 		file = gameDir.createReadStreamForMember("console.neo");
 		_border = loadAndConvertNeoImage(file, 0);
 
+		file = gameDir.createReadStreamForMember("demo.cmd");
+		if (file == nullptr)
+			error("Failed to open 'demo.cmd' file");
+
+		loadDemoData(file, 0, 0x1000);
+
 		file = gameDir.createReadStreamForMember("data");
 
 		if (file == nullptr)
