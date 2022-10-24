@@ -2688,7 +2688,7 @@ bool GlobalOptionsDialog::updateAutosavePeriod(int newValue) {
 				if (autoSaveSlot < 0)
 					continue;
 				SaveStateDescriptor desc = metaEngine.querySaveMetaInfos(target.c_str(), autoSaveSlot);
-				if (desc.getSaveSlot() != -1 && !desc.getDescription().empty() && !desc.hasAutosaveName()) {
+				if (desc.getSaveSlot() != -1 && !desc.getDescription().empty() && !desc.isAutosave()) {
 					if (saveList.size() >= maxListSize) {
 						hasMore = true;
 						break;
