@@ -96,7 +96,11 @@ enum Opcode {
 class QMessageObject;
 
 struct QMessage {
-	QMessage() {}
+	QMessage() {
+		objId = opcode = arg1 = arg2 = arg3 = 0;
+		sender = nullptr;
+		unk = 0;
+	}
 	QMessage(uint16 _objId, uint16 _opcode, uint16 _arg1, int16 _arg2, int16 _arg3, QMessageObject *_sender, int _unk) {
 		this->objId = _objId;
 		this->opcode = _opcode;
