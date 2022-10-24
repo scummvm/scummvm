@@ -29,7 +29,7 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 247
+#define VAL1 67
 
 void Map26::special() {
 	// Scan for special actions on the map cell
@@ -46,67 +46,7 @@ void Map26::special() {
 		}
 	}
 
-	SoundMessage msg;
-	msg._lines.push_back(Line(0, 1, STRING["maps.map26.its_hot"]));
-
-	// Check whether party has the desert map
-	bool hasMap = g_globals->_party.hasItem(MAP_OF_DESERT_ID);
-	if (!hasMap) {
-		msg._lines.push_back(Line(0, 2, STRING["maps.map26.lost"]));
-		lost();
-	}
-
-	_data[VAL1] = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-
-		if (c._food) {
-			// Take away food first
-			c._food--;
-
-		} else if (c._endurance) {
-			// Then decrease endurance when the food runs out
-			c._endurance._current--;
-
-		} else {
-			// When endurance reaches, character becomes living impaired
-			c._condition = DEAD | BAD_CONDITION;
-			_data[VAL1]++;
-		}
-	}
-
-	if (_data[VAL1])
-		g_events->findView("GameParty")->redraw();
-
-	switch (getRandomNumber(200)) {
-	case 20:
-		msg._lines.push_back(Line(0, msg._lines.back().y + 1,
-			STRING["maps.map26.whirlwind"]));
-		Sound::sound(SOUND_3);
-		g_maps->_mapPos = Common::Point(
-			getRandomNumber(15), getRandomNumber(15));
-
-		send(msg);
-		updateGame();
-		return;
-
-	case 30:
-		msg._lines.push_back(Line(0, msg._lines.back().y + 1,
-			STRING["maps.map26.sandstorm"]));
-		Sound::sound(SOUND_3);
-		reduceHP();
-		break;
-
-	case 199:
-	case 200:
-		g_globals->_encounters.execute();
-		break;
-
-	default:
-		break;
-	}
-
-	send(msg);
+	desert();
 }
 
 void Map26::special00() {
@@ -167,14 +107,6 @@ void Map26::special02() {
 
 void Map26::special03() {
 	send(SoundMessage(STRING["maps.map26.kilburn"]));
-}
-
-void Map26::lost() {
-	if (getRandomNumber(2) == 1) {
-		g_maps->turnLeft();
-	} else {
-		g_maps->turnRight();
-	}
 }
 
 void Map26::addFlag() {

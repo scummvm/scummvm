@@ -22,13 +22,13 @@
 #ifndef MM1_MAPS_MAP27_H
 #define MM1_MAPS_MAP27_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/maps/map_desert.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map27 : public Map {
+class Map27 : public MapDesert {
 	typedef void (Map27:: *SpecialFn)();
 private:
 	void special00();
@@ -37,7 +37,6 @@ private:
 	void special03();
 	void special04();
 	void special05();
-	void lost();
 	Common::String clerics(char name);
 
 	const SpecialFn SPECIAL_FN[6] = {
@@ -49,7 +48,8 @@ private:
 		&Map27::special05
 	};
 public:
-	Map27() : Map(27, "aread2", 0xB05) {}
+	Map27() : MapDesert(27, "aread2", 0xB05,
+		_data[66], MapDesert::RND_BASIC) {}
 
 	/**
 	 * Handles all special stuff that happens on the map
