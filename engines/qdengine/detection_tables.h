@@ -29,9 +29,9 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pilots3d", "Pilot Brothers 3D. The Case of Garden Pests" }, // Братья Пилоты 3D. Дело об Огородных вредителях
 	{ "pilots3d-2", "Pilot Brothers 3D-2. Kennel Club Secrets" }, // Братья Пилоты 3D-2. Тайны Клуба Собаководов
 	{ "mamane", "Mom don't worry" }, // Мама не горюй
-	{ "3mice1", "Three little white mice. Visit of the Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
+	{ "3mice1", "Marvellous Mice Adventures: Meeting Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
-	{ "3mice2", "Three little white mice. Sea rat birthday" }, // Три маленькие белые мышки. День рождения морской крысы
+	{ "3mice2", "Marvellous Mice Adventures: Sea Rat's Birthday" }, // Три маленькие белые мышки. День рождения морской крысы
 	{ 0, 0 }
 };
 
@@ -46,16 +46,22 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	}
 
 #define GAME(id,md5,size) GAMEel(id,nullptr,md5,size,Common::RU_RUS)
+#define GAMEl(id,md5,size,lang) GAMEel(id,nullptr,md5,size,lang)
 #define GAMEe(id,extra,md5,size) GAMEel(id,extra,md5,size,Common::RU_RUS)
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Карлик Нос
 	// 2003/10/03. K D-Lab / Melnitsa
 	GAME("karliknos", "a3f1b86c07bf72f688e7f2b5f20aa7f9", 3225385),
+	// Nykštukas Nosis
+	//GAMEl("karliknos", "???", 3225385, Common::LT_LIT),
 
 	// Ну, погоди! Выпуск 3. Песня для зайца
 	// 2003/12/11. K D-Lab
 	GAME("nupogodi3", "7394a5d28590680cfeb6a037101a9c81", 1675230),
+	// Na, palauk! Zuikio dainos
+	// FIXME. Add language
+	GAME("nupogodi3", "3fbcdd27bf0a3defb6195c92b9b0a95f", 1675036), //Common::LT_LIT),
 
 	// Братья Пилоты. Обратная сторона Земли
 	// 2004/06/11. K D-Lab / Pipe Studio
@@ -77,6 +83,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Три маленькие белые мышки. Визит Морской крысы
 	// 2007/03/01. Lazy Games
 	GAME("3mice1", "63e79178e66c520a9094622ccdcaf9c5", 10006622),
+	// Příběhy myší rodinky I
+	//GAMEl("3mice1", "???", 10006622, Common::CZ_CZE),
 
 	// Похождения бравого солдата Швейка
 	// 2007/09/07. Lazy Games
@@ -85,6 +93,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Три маленькие белые мышки. День рождения морской крысы
 	// 2007/12/27. Lazy Games
 	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962),
+	// Příběhy myší rodinky II
+	//GAMEl("3mice2", "???", 8176962, Common::CZ_CZE),
 
 	AD_TABLE_END_MARKER
 };
