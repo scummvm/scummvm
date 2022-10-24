@@ -19,30 +19,40 @@
  *
  */
 
-#ifndef BACKENDS_NETWORKING_ENET_ENET_H
-#define BACKENDS_NETWORKING_ENET_ENET_H
+#ifndef BACKENDS_NETWORKING_ENET_SOCKET_H
+#define BACKENDS_NETWORKING_ENET_SOCKET_H
+
+#ifdef WIN32
+// TODO: Test me.
+#include <winsock2.h>
+typedef SOCKET ENetSocket;
+#else
+typedef int ENetSocket;
+#endif
 
 #include "common/str.h"
 
 namespace Networking {
 
-class Host;
-class Socket;
-
-class ENet {
+class Socket {
 public:
-	ENet();
-	~ENet();
+	Socket(ENetSocket socket);
+	~Socket();
 
-	bool initalize();
-	Host* create_host(Common::String address, int port, int numClients, int numChannels = 1, int incBand = 0, int outBand = 0);
-	Host* connect_to_host(Common::String address, int port, int timeout = 5000, int numChannels = 1, int incBand = 0, int outBand = 0);
-	Socket* create_socket(Common::String address, int port);
+	bool send(Common::String address, int port, const char *data);
+	bool receive();
+
+	Common::String get_data();
+
+	Common::String get_host();
+	int get_port();
 private:
-	bool _initialized;
+	ENetSocket _socket;
+	Common::String _recentData;
+	Common::String _recentHost;
+	int _recentPort;
 };
-	
-} // End of namespace Networking
 
+} // End of namespace Networking
 
 #endif
