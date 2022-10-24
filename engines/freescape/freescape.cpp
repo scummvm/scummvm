@@ -218,19 +218,19 @@ void FreescapeEngine::generateInput() {
 	int mouseY = _demoData[_demoIndex++];
 	debug("Mouse moved to: %d, %d", mouseX, mouseY);
 
-	/*event.type = Common::EVENT_MOUSEMOVE;
+	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(mouseX, mouseY);
 	event.customType = 0xde00;
-	g_system->getEventManager()->pushEvent(event);*/
+	g_system->getEventManager()->pushEvent(event);
 
 	byte nextKeyCode = _demoData[_demoIndex++];
 
 	if (nextKeyCode == 0x30) {
-		//left click / shoot
+		event.type = Common::EVENT_LBUTTONDOWN; // Keep same event fields
+		g_system->getEventManager()->pushEvent(event);
 		nextKeyCode = _demoData[_demoIndex++];
 	} else {
 		while(nextKeyCode != 0) {
-
 			event = Common::Event();
 			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
@@ -250,9 +250,8 @@ void FreescapeEngine::processInput() {
 	float deltaTime = 20.0;
 	_lastFrame = currentFrame;
 	Common::Event event;
+	Common::Point mousePos;
 	while (g_system->getEventManager()->pollEvent(event)) {
-		Common::Point mousePos = g_system->getEventManager()->getMousePos();
-
 		if (_demoMode) {
 			if (event.customType != 0xde00)
 				continue;
@@ -304,6 +303,11 @@ void FreescapeEngine::processInput() {
 			break;
 
 		case Common::EVENT_MOUSEMOVE:
+			mousePos = event.mouse;
+
+			if (_demoMode)
+				g_system->warpMouse(mousePos.x, mousePos.y);
+
 			if (_shootMode) {
 				_crossairPosition = mousePos;
 				break;

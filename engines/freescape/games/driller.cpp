@@ -211,6 +211,7 @@ void DrillerEngine::loadAssetsDemo() {
 
 	// Start playing music, if any
 	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
+	_demoMode = true;
 }
 
 

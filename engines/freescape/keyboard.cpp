@@ -29,33 +29,22 @@ int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	switch (index) {
 	case 0x30:
 		return 0; // shoot?
-
 	case 0x44:
 		return Common::KEYCODE_d;
-
-
 	case 0x4c:
 		return Common::KEYCODE_l;
-
 	case 0x50:
 		return Common::KEYCODE_p;
-
 	case 0x55:
 		return 0; // turn around
-
-
 	case 0x96:
 		return Common::KEYCODE_UP;
-
 	case 0x97:
 		return Common::KEYCODE_DOWN;
-
 	case 0x98:
 		return Common::KEYCODE_w;
-
 	case 0x99:
 		return Common::KEYCODE_q;
-
 	default:
 		error("Invalid key index: %x", index);
 	}
