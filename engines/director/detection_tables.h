@@ -928,6 +928,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "murphystv",			"Murphy's TV" },
 	{ "negi1",				"ねぎ Vol. 1" }, // Negi
 	{ "negi3",				"ねぎ3世" }, // Negi the 3rd
+	{ "nemurenu",			"眠れぬ夜の小さなお話" }, // A Small Story on a Sleepless Night
 	{ "nihonchiri",			"Visual日本地理" },									// Japan Geography
 	{ "niningashi",			"ににんがし" },
 	{ "noahsark",			"Noah's Ark" },
@@ -2414,6 +2415,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is 建築見積ｿﾌﾄ Movie
 	MACDEMO1_l("negishihomes", "Demo", "Kenchiku Mitsumori Sofuto Movie", "276bee761e48a6fd709df77d5c2f60dd", 1880339, Common::JA_JPN, 313),
+
+	PIPGAME1_l("nemurenu", "", "Sleepless", "5ac60d4dafefa00dd8060b6a4f9c4c4c", 48184, Common::JA_JPN, 404),
 
 	MACDEMO1("newton", "Demo", "Complete Newton Demo", "7f443f2e63fd497a9ad85b10dc880a91", 383575, 313),
 
