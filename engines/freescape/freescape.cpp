@@ -214,30 +214,35 @@ void FreescapeEngine::generateInput() {
 		return;
 	}
 
-	/*int mouseX = _demoData[_demoIndex++] << 1;
+	int mouseX = _demoData[_demoIndex++] << 1;
 	int mouseY = _demoData[_demoIndex++];
 	debug("Mouse moved to: %d, %d", mouseX, mouseY);
 
-	event.type = Common::EVENT_MOUSEMOVE;
+	/*event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(mouseX, mouseY);
 	event.customType = 0xde00;
-	g_system->getEventManager()->pushEvent(event);
+	g_system->getEventManager()->pushEvent(event);*/
 
 	byte nextKeyCode = _demoData[_demoIndex++];
-	while(nextKeyCode != 0) {
 
-		event = Common::Event();
-		event.type = Common::EVENT_KEYDOWN;
-		event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
-		debug("Pushing key: %x", nextKeyCode);
-		event.customType = 0xde00;
-		g_system->getEventManager()->pushEvent(event);
-		g_system->getEventManager()->pushEvent(event);
-
+	if (nextKeyCode == 0x30) {
+		//left click / shoot
 		nextKeyCode = _demoData[_demoIndex++];
-	}*/
+	} else {
+		while(nextKeyCode != 0) {
 
-	g_system->delayMillis(200);
+			event = Common::Event();
+			event.type = Common::EVENT_KEYDOWN;
+			event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
+			debug("Pushing key: %x", nextKeyCode);
+			event.customType = 0xde00;
+			g_system->getEventManager()->pushEvent(event);
+			nextKeyCode = _demoData[_demoIndex++];
+		}
+	}
+	assert(!nextKeyCode);
+	//_currentDemoInputRepetition = 0;
+	g_system->delayMillis(100);
 }
 
 void FreescapeEngine::processInput() {
