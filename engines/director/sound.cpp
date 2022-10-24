@@ -801,7 +801,12 @@ Audio::AudioStream *AudioFileDecoder::getAudioStream(bool looping, bool forPuppe
 	Common::SeekableReadStream *file = nullptr;
 
 	if (_macresman->open(filePath)) {
-		file = _macresman->getDataFork();
+		// Data has to be copied out instead of using the stream from
+		// getDataFork() directly because it's possible for this audio
+		// to outlive the owning MacResMan, which would otherwise free
+		// the stream while it's still being read from.
+		Common::SeekableReadStream *stream = _macresman->getDataFork();
+		file = stream->readStream(stream->size());
 	}
 
 	if (file == nullptr) {
