@@ -97,7 +97,8 @@ void Map12::special01() {
 					for (i = 0; i < (int)g_globals->_party.size(); ++i) {
 						Character &c = g_globals->_party[i];
 						if (c._intelligence._base < 25) {
-							c._intelligence._current = c._intelligence._base += 2;
+							c._intelligence._current = c._intelligence._base =
+								c._intelligence._base + 2;
 						}
 
 						c._gems = MIN((int)c._gems + 20, 0xffff);

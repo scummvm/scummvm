@@ -19,64 +19,49 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP31_H
-#define MM1_MAPS_MAP31_H
-
-#include "mm/mm1/maps/map_desert.h"
+#include "mm/mm1/views/maps/alien.h"
+#include "mm/mm1/maps/map31.h"
+#include "mm/mm1/globals.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map31 : public MapDesert {
-	typedef void (Map31:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special06();
+Alien::Alien() : TextView("Alien") {
+	_bounds = getLineBounds(20, 24);
+}
 
-	const SpecialFn SPECIAL_FN[7] = {
-		&Map31::special00,
-		&Map31::special01,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special06
-	};
-public:
-	Map31() : MapDesert(31, "areae2", 0x706, _data[80],
-		MapDesert::RND_BASIC) {}
+void Alien::draw() {
+	clearSurface();
+	writeString(0, 1, STRING["maps.map31.alien"]);
+}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
+bool Alien::msgKeypress(const KeypressMessage &msg) {
+	MM1::Maps::Map31 &map = *static_cast<MM1::Maps::Map31 *>(
+		g_maps->_currentMap);
 
-	/**
-	 * Starts an encounter
-	 */
-	void encounter();
+	switch (msg.keycode) {
+	case Common::KEYCODE_a:
+		close();
+		map.hostile();
+		break;
+	case Common::KEYCODE_b:
+		close();
+		map.neutral();
+		break;
+	case Common::KEYCODE_c:
+		close();
+		map.friendly();
+		break;
+	default:
+		break;
+	}
 
-	/**
-	 * Called if you attack the alien
-	 */
-	void hostile();
-
-	/**
-	 * Called if you specify neutral for alien
-	 */
-	void neutral();
-
-	/**
-	 * Called if you select to act friendly to the alien
-	 */
-	void friendly();
-};
+	return true;
+}
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
-
-#endif

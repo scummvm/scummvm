@@ -95,7 +95,8 @@ void Map27::special00() {
 		if (!(c._flags[11] & CHARFLAG11_PERSONALITY)) {
 			c._flags[11] |= CHARFLAG11_PERSONALITY;
 			if (c._personality._base < 30) {
-				c._personality._current = c._personality._base += 4;
+				c._personality._current = c._personality._base =
+					c._personality._base + 4;
 			}
 		}
 	}

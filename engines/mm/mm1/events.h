@@ -99,6 +99,13 @@ protected:
 	}
 
 	/**
+	 * Cancels any active delay
+	 */
+	void cancelDelay() {
+		_timeoutCtr = 0;
+	}
+
+	/**
 	 * Called when an active timeout countdown expired
 	 */
 	virtual void timeout();

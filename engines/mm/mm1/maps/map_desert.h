@@ -19,60 +19,41 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP31_H
-#define MM1_MAPS_MAP31_H
+#ifndef MM1_MAPS_MAP_DESERT_H
+#define MM1_MAPS_MAP_DESERT_H
 
-#include "mm/mm1/maps/map_desert.h"
+#include "mm/mm1/maps/map.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map31 : public MapDesert {
-	typedef void (Map31:: *SpecialFn)();
+class MapDesert : public Map {
+protected:
+	enum RandomMode { RND_BASIC, RND_FULL };
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special06();
+	byte &_deadCount;
+	RandomMode _randomMode;
 
-	const SpecialFn SPECIAL_FN[7] = {
-		&Map31::special00,
-		&Map31::special01,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special06
-	};
+	/**
+	 * Randomly turns the party left or right
+	 */
+	void lost();
+
+protected:
+	/**
+	 * Handles the common part of special from desert maps
+	 * dealing with being lost, and dying
+	 */
+	void desert();
+
 public:
-	Map31() : MapDesert(31, "areae2", 0x706, _data[80],
-		MapDesert::RND_BASIC) {}
-
 	/**
-	 * Handles all special stuff that happens on the map
+	 * Constructor
 	 */
-	void special() override;
-
-	/**
-	 * Starts an encounter
-	 */
-	void encounter();
-
-	/**
-	 * Called if you attack the alien
-	 */
-	void hostile();
-
-	/**
-	 * Called if you specify neutral for alien
-	 */
-	void neutral();
-
-	/**
-	 * Called if you select to act friendly to the alien
-	 */
-	void friendly();
+	MapDesert(uint index, const Common::String &name, uint16 id,
+		byte &deadCount, RandomMode rndMode) :
+		Map(index, name, id), _deadCount(deadCount), _randomMode(rndMode) {}
 };
 
 } // namespace Maps
