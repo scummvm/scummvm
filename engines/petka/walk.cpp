@@ -85,6 +85,15 @@ Walk::Walk(int id) { // CHECKED
 	_vertices = nullptr;
 	field_190 = 0;
 	resId = 0;
+
+	field_170 = field_178 = 0.0;
+	field_180 = field_181 = field_182 = field_183 = field_184 = field_185 =
+	field_186 = field_187 = field_188 = field_189 = field_18A = field_18B =
+	field_18C = field_18D = field_18E = field_18F = 0;
+	field_194 = 0;
+	field_198 = 0.0;
+	destX = destY = 0;
+	field_1C4 = field_1C5 = field_1C6 = field_1C7 = 0;
 }
 
 Walk::~Walk() { // CHECKED
