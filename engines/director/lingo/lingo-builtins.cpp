@@ -1106,7 +1106,7 @@ void LB::b_closeXlib(int nargs) {
 	}
 
 	Datum d = g_lingo->pop();
-	Common::String xlibName = d.asString();
+	Common::String xlibName = getFileName(d.asString());
 	g_lingo->closeXLib(xlibName);
 }
 
@@ -1220,7 +1220,7 @@ void LB::b_openXlib(int nargs) {
 		}
 	}
 
-	xlibName = d.asString();
+	xlibName = getFileName(d.asString());
 	g_lingo->openXLib(xlibName, kXObj);
 }
 
