@@ -273,6 +273,8 @@ void FreescapeEngine::processInput() {
 				rotate(0, 5);
 			else if (event.kbd.keycode == Common::KEYCODE_l)
 				rotate(0, -5);
+			else if (event.kbd.keycode == Common::KEYCODE_u)
+				rotate(180, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_q)
 				rotate(-5.3, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_w)
