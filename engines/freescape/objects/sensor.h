@@ -37,8 +37,8 @@ public:
 		const Math::Vector3d &rotation);
 	virtual ~Sensor();
 
-	bool isDrawable();
-	bool isPlanar();
+	bool isDrawable() override;
+	bool isPlanar() override;
 	Type getType() override { return Type::Sensor; };
 	Math::Vector3d getRotation() { return rotation; }
 

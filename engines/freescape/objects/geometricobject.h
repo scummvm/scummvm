@@ -53,8 +53,8 @@ public:
 	void computeBoundingBox();
 	bool collides(const Math::AABB &boundingBox);
 	void draw(Freescape::Renderer *gfx) override;
-	bool isDrawable();
-	bool isPlanar();
+	bool isDrawable() override;
+	bool isPlanar() override;
 
 	Common::String *conditionSource;
 	FCLInstructionVector condition;
