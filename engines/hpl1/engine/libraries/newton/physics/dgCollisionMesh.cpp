@@ -42,7 +42,7 @@ dgCollisionMesh::dgCollisionConvexPolygon::dgCollisionConvexPolygon(dgMemoryAllo
 	m_isEdgeIntersection = false;
 
 	m_rtti |= dgCollisionConvexPolygon_RTTI;
-	memset(m_localPoly, 0, sizeof(m_localPoly));
+	for(uint i = 0; i < (sizeof(m_localPoly)/sizeof(m_localPoly[0])); i++) m_localPoly[i] = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	m_normal = dgVector(dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f), dgFloat32(0.0f));
 	//	m_aabbP0 = dgVector (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
 	//	m_aabbP1 = dgVector (dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f), dgFloat32 (0.0f));
