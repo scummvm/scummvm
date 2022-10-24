@@ -19,63 +19,27 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP31_H
-#define MM1_MAPS_MAP31_H
+#ifndef MM1_VIEWS_MAPS_ALIEN_H
+#define MM1_VIEWS_MAPS_ALIEN_H
 
-#include "mm/mm1/maps/map_desert.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map31 : public MapDesert {
-	typedef void (Map31:: *SpecialFn)();
-private:
-	void special00();
-	void special01();
-	void special02();
-	void special06();
-
-	const SpecialFn SPECIAL_FN[7] = {
-		&Map31::special00,
-		&Map31::special01,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special02,
-		&Map31::special06
-	};
+class Alien : public TextView {
 public:
-	Map31() : MapDesert(31, "areae2", 0x706, _data[80],
-		MapDesert::RND_BASIC) {}
+	Alien();
+	virtual ~Alien() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	/**
-	 * Starts an encounter
-	 */
-	void encounter();
-
-	/**
-	 * Called if you attack the alien
-	 */
-	void hostile();
-
-	/**
-	 * Called if you specify neutral for alien
-	 */
-	void neutral();
-
-	/**
-	 * Called if you select to act friendly to the alien
-	 */
-	void friendly();
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

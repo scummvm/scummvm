@@ -43,6 +43,7 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/maps/alien.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
 #include "mm/mm1/views/maps/ice_princess.h"
@@ -85,6 +86,7 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
+	Views::Maps::Alien _alien;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
 	Views::Maps::IcePrincess _icePrincess;

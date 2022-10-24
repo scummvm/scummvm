@@ -51,9 +51,11 @@ MODULE_OBJS := \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
 	mm1/views/maps/access_code.o \
+	mm1/views/maps/alien.o \
 	mm1/views/maps/answer_entry.o \
 	mm1/views/maps/arrested.o \
 	mm1/views/maps/chess.o \
+	mm1/views/maps/giant.o \
 	mm1/views/maps/gypsy.o \
 	mm1/views/maps/ice_princess.o \
 	mm1/views/maps/resistances.o \
@@ -105,6 +107,7 @@ MODULE_OBJS := \
 	mm1/views_enh/locations/temple.o \
 	mm1/maps/maps.o \
 	mm1/maps/map.o \
+	mm1/maps/map_desert.o \
 	mm1/maps/map_town.o \
 	mm1/maps/map00.o \
 	mm1/maps/map01.o \
