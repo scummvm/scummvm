@@ -22,20 +22,19 @@
 #ifndef MM1_MAPS_MAP30_H
 #define MM1_MAPS_MAP30_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/maps/map_desert.h"
 
 namespace MM {
 namespace MM1 {
 namespace Maps {
 
-class Map30 : public Map {
+class Map30 : public MapDesert {
 	typedef void (Map30:: *SpecialFn)();
 private:
 	void special00();
 	void special01();
 	void special02();
 	void special03();
-	void lost();
 
 	const SpecialFn SPECIAL_FN[4] = {
 		&Map30::special00,
@@ -44,7 +43,8 @@ private:
 		&Map30::special03
 	};
 public:
-	Map30() : Map(30, "areae1", 0x112) {}
+	Map30() : MapDesert(30, "areae1", 0x112,
+		_data[137], MapDesert::RND_FULL) {}
 
 	/**
 	 * Handles all special stuff that happens on the map

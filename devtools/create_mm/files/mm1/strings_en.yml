@@ -822,6 +822,8 @@ maps:
 	desert:
 		its_hot: "IT'S HOT... "
 		youre_lost: "YOU'RE LOST!!!"
+		whirlwind: "A WHIRLWIND SWOOPS THE PARTY AWAY!"
+		sandstorm: "A VIOLENT SANDSTORM BLASTS THE PARTY!"
 
 	map00:
 		blacksmith: """B AND B BLACKSMITHING"""
@@ -1182,10 +1184,6 @@ maps:
 		trading_post: "A SMALL TRIBE OF DESERT NOMADS HAVE\nESTABLISHED A TRADING POST HERE.\nTRADE ITEM (Y/N)?"
 		leader_nothing: "YOUR LEADER HAS NOTHING TO TRADE!"
 		kilburn: "KILBURN, C-3 6-14"
-		its_hot: "IT'S HOT... "
-		lost: "YOU'RE LOST!!!"
-		whirlwind: "A WHIRLWIND SWOOPS THE PARTY AWAY!"
-		sandstorm: "A VIOLENT SANDSTORM BLASTS THE PARTY!"
 
 	map27:
 		pool: "THE POOL OF WISDOM GRANTS THOSE WHO ARE\nWORTHY +4 PERSONALITY."
@@ -1195,8 +1193,6 @@ maps:
 		alignment: "YOUR ALIGNMENT IS RESTORED!"
 		curses: "ALL CURSES ARE REMOVED!"
 		sign: "THE CLERICS OF THE S. SHALL DEEM YOU\nWORTHY, IF YOU CAN FIND THEM!"
-		its_hot: "IT'S HOT... "
-		lost: "YOU'RE LOST!!!"
 
 	map28:
 		cave: "A CAVE, ENTER (Y/N)?"
@@ -1226,10 +1222,6 @@ maps:
 	map30:
 		passage: "PASSAGE TO DUSK, ENTER (Y/N)?"
 		ruins: "RUINS OF CASTLE DRAGADUNE, ENTER (Y/N)?"
-		its_hot: "IT'S HOT... "
-		youre_lost: "YOU'RE LOST!!!"
-		whirlwind: "A WHIRLWIND SWOOPS THE PARTY AWAY!"
-		sandstorm: "A VIOLENT SANDSTORM BLASTS THE PARTY!"
 		hourglass: "AT THE CENTER OF THE LAND THAT TIME\nFORGOT STANDS AN HOURGLASS,TURN IT(Y/N)?"
 		unworthy: "NOT WORTHY!"
 		worthy: "YOUR ACTIONS REFLECT YOUR VIEWS %d OF 6\n+"

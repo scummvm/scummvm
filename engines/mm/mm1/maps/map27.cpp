@@ -29,8 +29,6 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
-#define VAL1 66
-
 void Map27::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 6; ++i) {
@@ -46,45 +44,7 @@ void Map27::special() {
 		}
 	}
 
-	SoundMessage msg;
-	msg._lines.push_back(Line(0, 1, STRING["maps.map27.its_hot"]));
-
-	// Check whether party has the desert map
-	bool hasMap = g_globals->_party.hasItem(MAP_OF_DESERT_ID);
-	if (!hasMap) {
-		msg._lines.push_back(Line(0, 2, STRING["maps.map27.lost"]));
-		lost();
-	}
-
-	_data[VAL1] = 0;
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-
-		if (c._food) {
-			// Take away food first
-			c._food--;
-
-		} else if (c._endurance) {
-			// Then decrease endurance when the food runs out
-			c._endurance._current--;
-
-		} else {
-			// When endurance reaches, character becomes living impaired
-			c._condition = DEAD | BAD_CONDITION;
-			_data[VAL1]++;
-		}
-	}
-
-	if (_data[VAL1])
-		g_events->findView("GameParty")->redraw();
-
-	if (getRandomNumber(100) == 100) {
-		msg._keyCallback = [](const Common::KeyState &ks) {
-			g_globals->_encounters.execute();
-		};
-	}
-
-	send(msg);
+	desert();
 }
 
 void Map27::special00() {
@@ -161,14 +121,6 @@ void Map27::special04() {
 
 void Map27::special05() {
 	send(SoundMessage(STRING["maps.map27.sign"]));
-}
-
-void Map27::lost() {
-	if (getRandomNumber(2) == 1) {
-		g_maps->turnLeft();
-	} else {
-		g_maps->turnRight();
-	}
 }
 
 Common::String Map27::clerics(char name) {
