@@ -124,6 +124,12 @@ void DrillerEngine::loadAssets() {
 		loadAssetsDemo();
 	else
 		loadAssetsFullGame();
+
+	_angleRotations.push_back(5.3);
+	_angleRotations.push_back(9.5);
+
+	// Start playing music, if any
+	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
 }
 
 void DrillerEngine::loadAssetsDemo() {
@@ -209,9 +215,8 @@ void DrillerEngine::loadAssetsDemo() {
 	else
 		error("Unsupported demo for Driller");
 
-	// Start playing music, if any
-	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
 	_demoMode = true;
+	_angleRotationIndex = 1;
 }
 
 
@@ -290,9 +295,6 @@ void DrillerEngine::loadAssetsFullGame() {
 		load8bitBinary(file, 0x7bb0, 4);
 	} else
 		error("Invalid render mode %s for Driller", _renderMode.c_str());
-
-	// Start playing music, if any
-	playMusic("Matt Gray - The Best Of Reformation - 07 Driller Theme.ogg");
 }
 
 void DrillerEngine::drawUI() {

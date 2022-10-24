@@ -81,7 +81,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_flyMode = false;
 	_noClipMode = false;
 	_playerHeightNumber = 1;
-
+	_angleRotationIndex = 0;
 	_border = nullptr;
 	_title = nullptr;
 	_titleTexture = nullptr;
@@ -276,9 +276,9 @@ void FreescapeEngine::processInput() {
 			else if (event.kbd.keycode == Common::KEYCODE_u)
 				rotate(180, 0);
 			else if (event.kbd.keycode == Common::KEYCODE_q)
-				rotate(-5.3, 0);
+				rotate(-_angleRotations[_angleRotationIndex], 0);
 			else if (event.kbd.keycode == Common::KEYCODE_w)
-				rotate(5.3, 0);
+				rotate(_angleRotations[_angleRotationIndex], 0);
 			else if (event.kbd.keycode == Common::KEYCODE_r)
 				rise();
 			else if (event.kbd.keycode == Common::KEYCODE_f)
