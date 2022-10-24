@@ -183,6 +183,9 @@ public:
 	// Euler Angles
 	float _yaw;
 	float _pitch;
+	int _angleRotationIndex;
+	Common::Array<float> _angleRotations;
+
 	Math::Vector3d directionToVector(float pitch, float heading);
 	void updateCamera();
 
