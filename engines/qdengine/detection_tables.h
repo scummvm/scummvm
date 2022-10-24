@@ -28,7 +28,8 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pilots3", "Pilot Brothers 3: Back Side of the Earth" }, // Братья Пилоты. Обратная сторона Земли
 	{ "pilots3d", "Pilot Brothers 3D. The Case of Garden Pests" }, // Братья Пилоты 3D. Дело об Огородных вредителях
 	{ "pilots3d-2", "Pilot Brothers 3D-2. Kennel Club Secrets" }, // Братья Пилоты 3D-2. Тайны Клуба Собаководов
-	{ "mamane", "Mom don't worry" }, // Мама не горюй
+	{ "mng", "Mom don't worry" }, // Мама не горюй
+	{ "maski", "Mask show" }, // Маски-шоу
 	{ "3mice1", "Marvellous Mice Adventures: Meeting Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
 	{ "3mice2", "Marvellous Mice Adventures: Sea Rat's Birthday" }, // Три маленькие белые мышки. День рождения морской крысы
@@ -78,7 +79,11 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Мама не горюй
 	// 2005/08/05. Melnitsa / Lazy Games
-	GAME("mamane", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
+	GAME("mng", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
+
+	// Маски-шоу
+	// 2005/12/16. Lazy Games
+	GAME("maski", "9a40b7491cac0dd80657cfe52e28ea74", 23128230),
 
 	// Три маленькие белые мышки. Визит Морской крысы
 	// 2007/03/01. Lazy Games
