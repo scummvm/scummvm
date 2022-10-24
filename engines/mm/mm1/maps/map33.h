@@ -32,9 +32,17 @@ class Map33 : public Map {
 	typedef void (Map33:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map33::special00
+	const SpecialFn SPECIAL_FN[5] = {
+		&Map33::special00,
+		&Map33::special01,
+		&Map33::special02,
+		&Map33::special03,
+		&Map33::special04
 	};
 public:
 	Map33() : Map(33, "areae4", 0x11B) {}

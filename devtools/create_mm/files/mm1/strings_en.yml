@@ -1261,3 +1261,14 @@ maps:
 			6: "WORTHY"
 		trespassing: "TRESPASSING!"
 		correct: "CORRECT! YOU MAY PASS."
+
+	map33:
+		building: "THE FABLED BUILDING OF GOLD,\nENTER (Y/N)?"
+		slime: "ECTOPLASMIC SLIME SLUSHES BENEATH YOU!\n"
+		tombstones: "TOPPLED TOMBSTONES ABOUND!"
+		coffin: "UNEARTHED COFFIN! EXAMINE (Y/N)?"
+		crypt: "OPEN CRYPT! EXAMINE (Y/N)?"
+		corpse: "HALF BURIED CORPSE ASKS FOR HELP!\nASSIST (Y/N)?"
+		meeting: "DRAGON CITY, TOWN MEETING...\nDISRUPT (Y/N)?"
+		quicksand: "QUICKSAND!"
+		thanks: "THANKS! IT AIN'T EASY BEING A CORPSE!\nTAKE THESE..."
