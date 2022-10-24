@@ -36,6 +36,7 @@ private:
 	void special02();
 	void special03();
 	void special04();
+	void search(const Common::String &msg);
 
 	const SpecialFn SPECIAL_FN[5] = {
 		&Map33::special00,

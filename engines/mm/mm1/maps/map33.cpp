@@ -29,6 +29,9 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 71
+#define VAL2 72
+
 static const byte MONSTER_IDS11[10] = {
 	15, 16, 15, 16, 14, 15,  4,  5,  3,  2
 };
@@ -125,19 +128,75 @@ void Map33::special() {
 }
 
 void Map33::special00() {
+	send(SoundMessage(
+		STRING["maps.map33.meeting"],
+		[]() {
+			Game::Encounter &enc = g_globals->_encounters;
+			g_maps->clearSpecial();
 
+			enc.clearMonsters();
+			for (int i = 0; i < 10; ++i)
+				enc.addMonster(MONSTER_IDS11[i], MONSTER_IDS12[i]);
+
+			enc._flag = true;
+			enc._levelIndex = 80;
+			enc.execute();
+		}
+	));
 }
 
 void Map33::special01() {
+	send(SoundMessage(
+		STRING["maps.map33.building"],
+		[]() {
+			g_maps->_mapPos = Common::Point(0, 0);
+			g_maps->changeMap(0xf01, 3);
+		}
+	));
 }
 
 void Map33::special02() {
+	_data[VAL1] = 12;
+	_data[VAL2] = 8;
+	search(STRING["maps.map33.coffin"]);
 }
 
 void Map33::special03() {
+	_data[VAL1] = 10;
+	_data[VAL2] = 10;
+	search(STRING["maps.map33.crypt"]);
 }
 
 void Map33::special04() {
+	send(SoundMessage(
+		STRING["maps.map33.corpse"],
+		[]() {
+			g_events->send(SoundMessage(STRING["maps.map33.thanks"]));
+			g_globals->_treasure[8] = 50;
+			g_events->addAction(KEYBIND_SEARCH);
+		}
+	));
+}
+
+void Map33::search(const Common::String &msg) {
+	send(SoundMessage(
+		msg,
+		[]() {
+			Map33 &map = *static_cast<Map33 *>(g_maps->_currentMap);
+			Game::Encounter &enc = g_globals->_encounters;
+			int monsterCount = getRandomNumber(6) + 7;
+
+			enc.clearMonsters();
+			enc.addMonster(map[VAL1], map[VAL2]);
+
+			for (int i = 1; i < monsterCount; ++i)
+				enc.addMonster(10, 7);
+
+			enc._flag = true;
+			enc._levelIndex = 80;
+			enc.execute();
+		}
+	));
 }
 
 } // namespace Maps
