@@ -29,6 +29,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "pilots3d", "Pilot Brothers 3D. The Case of Garden Pests" }, // Братья Пилоты 3D. Дело об Огородных вредителях
 	{ "pilots3d-2", "Pilot Brothers 3D-2. Kennel Club Secrets" }, // Братья Пилоты 3D-2. Тайны Клуба Собаководов
 	{ "mng", "Mom don't worry" }, // Мама не горюй
+	{ "rybalka", "Features of national fishing" }, // Особенности национальной рыбалки
 	{ "maski", "Mask show" }, // Маски-шоу
 	{ "3mice1", "Marvellous Mice Adventures: Meeting Sea Rat" }, // Три маленькие белые мышки. Визит Морской крысы
 	{ "shveik", "The Adventures of the Good Soldier Schweik" }, // Похождения бравого солдата Швейка
@@ -83,6 +84,10 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// 2005/08/05. Melnitsa / Lazy Games
 	GAME("mng", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
 	GAMEd("mng", "da3a6e591d4896ca3176c5866aef278f", 2541094),
+
+	// Особенности национальной рыбалки
+	// 2004/09/15. Melnitsa / Lazy Games
+	GAME("rybalka", "4113d7f0f67cf9563f4c62f999898426", 16892191),
 
 	// Маски-шоу
 	// 2005/12/16. Lazy Games
