@@ -27,8 +27,6 @@ namespace Freescape {
 
 int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	switch (index) {
-	case 0x30:
-		return 0; // shoot?
 	case 0x44:
 		return Common::KEYCODE_d;
 	case 0x4c:
@@ -36,7 +34,7 @@ int FreescapeEngine::decodeAmigaAtariKey(int index) {
 	case 0x50:
 		return Common::KEYCODE_p;
 	case 0x55:
-		return 0; // turn around
+		return Common::KEYCODE_u;
 	case 0x96:
 		return Common::KEYCODE_UP;
 	case 0x97:
