@@ -45,8 +45,8 @@ public:
 		const Math::Vector3d &rotation);
 	virtual ~Entrance();
 
-	bool isDrawable();
-	bool isPlanar();
+	bool isDrawable() override;
+	bool isPlanar() override;
 	Type getType() override { return Type::Entrance; };
 	Math::Vector3d getRotation() { return rotation; }
 
