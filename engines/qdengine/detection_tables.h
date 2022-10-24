@@ -36,7 +36,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ 0, 0 }
 };
 
-#define GAMEel(id,extra,md5,size,lang) { \
+#define GAMEelf(id,extra,md5,size,lang,flags) { \
 		id, \
 		nullptr, \
 		AD_ENTRY1s("qd_game.qml", md5, size), \
@@ -46,9 +46,10 @@ const PlainGameDescriptor GAME_NAMES[] = {
 		GUIO1(GUIO_NONE) \
 	}
 
-#define GAME(id,md5,size) GAMEel(id,nullptr,md5,size,Common::RU_RUS)
-#define GAMEl(id,md5,size,lang) GAMEel(id,nullptr,md5,size,lang)
-#define GAMEe(id,extra,md5,size) GAMEel(id,extra,md5,size,Common::RU_RUS)
+#define GAME(id,md5,size) GAMEelf(id,nullptr,md5,size,Common::RU_RUS,0)
+#define GAMEd(id,md5,size) GAMEelf(id,nullptr,md5,size,Common::RU_RUS,ADGF_DEMO)
+#define GAMEl(id,md5,size,lang) GAMEelf(id,nullptr,md5,size,lang,0)
+#define GAMEe(id,extra,md5,size) GAMEelf(id,extra,md5,size,Common::RU_RUS,0)
 
 const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Карлик Нос
@@ -66,6 +67,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 
 	// Братья Пилоты. Обратная сторона Земли
 	// 2004/06/11. K D-Lab / Pipe Studio
+	// GOG release is NOT on this engine
 	GAME("pilots3", "33dfc61046e5af85b570eda24e0afe6d", 14452732),
 
 	// Братья Пилоты 3D. Дело об Огородных вредителях
@@ -80,6 +82,7 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	// Мама не горюй
 	// 2005/08/05. Melnitsa / Lazy Games
 	GAME("mng", "9a1b9134f914f22682fbc0604f4eed81", 20704192),
+	GAMEd("mng", "da3a6e591d4896ca3176c5866aef278f", 2541094),
 
 	// Маски-шоу
 	// 2005/12/16. Lazy Games
@@ -100,6 +103,8 @@ const ADGameDescription GAME_DESCRIPTIONS[] = {
 	GAME("3mice2", "93d8311ff9c00453f25192743c9e98d9", 8176962),
 	// Příběhy myší rodinky II
 	//GAMEl("3mice2", "???", 8176962, Common::CZ_CZE),
+	GAMEd("3mice2", "dfd98feb2e7d3345a7babdeb3ed3e9a7", 800666), // Demo1
+	GAMEd("3mice2", "6af4c6f11cf0994670bedb78efe22267", 1124576), // Demo2
 
 	AD_TABLE_END_MARKER
 };
