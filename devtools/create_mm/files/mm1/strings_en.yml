@@ -1242,3 +1242,22 @@ maps:
 		flash: "A BRIGHT FLASH!"
 		varnlings: """VARNLINGS TAKE HEED! OUR PRISONER HAS\nESCAPED AND MAY BE DISGUISED AS A NOBLE.\nFIND HIS COUNTERPART TO EXPOSE HIM!"""
 		poof: "POOF!"
+
+	map32:
+		castle: "KING ALAMAR'S CASTLE, ENTER (Y/N)?"
+		door: "A DIAMOND DOOR!"
+		key: " USE YOUR KEY (Y/N)?"
+		statue: "STATUE OF A LION GROWLS, ""PASSWORD?""\nRESPONSE:> .........."
+		password: "IS THE PASSWORD FOR TODAY,\nLEAVE THE AREA AND CHANGE IT I MAY!"""
+		heratio: "HERATIO HARPER SINGS:"
+		music: "DISTANT HARP MUSIC..."
+		passwords:
+			0: "MUSICAL"
+			1: "TONES"
+			2: "TOGETHER"
+			3: "CLERICS"
+			4: "SOUTH"
+			5: "DEEM"
+			6: "WORTHY"
+		trespassing: "TRESPASSING!"
+		correct: "CORRECT! YOU MAY PASS."

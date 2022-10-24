@@ -47,6 +47,7 @@
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
 #include "mm/mm1/views/maps/ice_princess.h"
+#include "mm/mm1/views/maps/lion.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/maps/trivia.h"
 #include "mm/mm1/views/maps/volcano_god.h"
@@ -90,6 +91,7 @@ private:
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
 	Views::Maps::IcePrincess _icePrincess;
+	Views::Maps::Lion _lion;
 	Views::Maps::Resistances _resistances;
 	Views::Maps::Trivia _trivia;
 	Views::Maps::VolcanoGod _volcanoGod;
