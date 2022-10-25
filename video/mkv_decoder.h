@@ -55,6 +55,10 @@ class QueuingAudioStream;
 
 namespace mkvparser {
 class MkvReader;
+class Cluster;
+class Tracks;
+class BlockEntry;
+class Segment;
 }
 
 namespace Video {
@@ -161,6 +165,19 @@ private:
 
 	vpx_codec_ctx_t *_codec;
 	mkvparser::MkvReader *_reader;
+
+	const mkvparser::Cluster *_cluster = nullptr;
+	const mkvparser::Tracks *_tracks = nullptr;
+	const mkvparser::BlockEntry *pBlockEntry = nullptr;
+	mkvparser::Segment *pSegment = nullptr;
+
+	byte *frame = nullptr;
+	int frameCounter = 0;
+
+	int videoTrack = -1;
+	int audioTrack = -1;
+
+	vorbis_block vorbisBlock;
 };
 
 } // End of namespace Video
