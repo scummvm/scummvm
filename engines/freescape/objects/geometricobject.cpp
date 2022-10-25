@@ -133,12 +133,12 @@ GeometricObject::GeometricObject(
 	colours = nullptr;
 
 	if (_colours)
-		colours = new Common::Array<uint8>(*_colours);
+		colours = _colours;
 
 	ordinates = nullptr;
 
 	if (_ordinates)
-		ordinates = new Common::Array<uint16>(*_ordinates);
+		ordinates = _ordinates;
 	condition = _conditionInstructions;
 	conditionSource = _conditionSource;
 
