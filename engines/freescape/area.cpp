@@ -24,6 +24,7 @@
 #include "freescape/freescape.h"
 #include "freescape/area.h"
 #include "freescape/objects/geometricobject.h"
+#include "freescape/objects/global.h"
 #include "freescape/objects/entrance.h"
 #include "common/algorithm.h"
 
@@ -246,7 +247,7 @@ void Area::addStructure(Area *global) {
 		drawableObjects.insert_at(0, obj);
 		return;
 	}
-	RoomStructure *rs = (RoomStructure*) (*entrancesByID)[255];
+	GlobalStructure *rs = (GlobalStructure*) (*entrancesByID)[255];
 
 	for (int i = 0; i < int(rs->structure.size()); i++) {
 		int16 id = rs->structure[i];

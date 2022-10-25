@@ -19,32 +19,15 @@
  *
  */
 
-// Based on Phantasma code by Thomas Harte (2013)
+#include "common/array.h"
 
-#ifndef FREESCAPE_ENTRANCE_H
-#define FREESCAPE_ENTRANCE_H
-
-#include "freescape/objects/object.h"
+#include "freescape/objects/global.h"
 
 namespace Freescape {
 
-class Entrance : public Object {
-public:
-
-	Entrance(
-		uint16 objectID,
-		const Math::Vector3d &origin,
-		const Math::Vector3d &rotation);
-	virtual ~Entrance();
-
-	bool isDrawable() override;
-	bool isPlanar() override;
-	Type getType() override { return Type::Entrance; };
-	Math::Vector3d getRotation() { return rotation; }
-
-	void draw(Freescape::Renderer *gfx) override { error("cannot render Entrance"); };
-};
+GlobalStructure::GlobalStructure(const Common::Array<byte> _structure) {
+	objectID = 255;
+	structure = _structure;
+}
 
 } // End of namespace Freescape
-
-#endif

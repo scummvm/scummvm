@@ -26,6 +26,7 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/objects/global.h"
 #include "freescape/objects/sensor.h"
 #include "freescape/neo.h"
 
@@ -112,7 +113,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		if (byteSizeOfObject > 0)
 			file->read(structureData+6, byteSizeOfObject);
 		Common::Array<uint8> structureArray(structureData, byteSizeOfObject + 6);
-		return new RoomStructure(structureArray);
+		return new GlobalStructure(structureArray);
 	}
 
 	debugC(1, kFreescapeDebugParser, "Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
