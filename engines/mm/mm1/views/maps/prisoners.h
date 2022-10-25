@@ -19,23 +19,56 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_CHILD_H
-#define MM1_VIEWS_MAPS_CHILD_H
+#ifndef MM1_VIEWS_MAPS_PRISONERS_H
+#define MM1_VIEWS_MAPS_PRISONERS_H
 
 #include "mm/mm1/views/text_view.h"
+#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-class Child : public TextView {
+class Prisoner : public TextView {
+private:
+	Common::String _line1;
+	byte _flag;
+	Alignment _freeAlignment;
+	Alignment _leaveAlignment;
 public:
-	Child();
-	virtual ~Child() {}
+	Prisoner(const Common::String &name, const Common::String &line1,
+		byte flag, Alignment freeAlignment, Alignment leaveAlignment);
+	virtual ~Prisoner() {}
 
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
+};
+
+class ChildPrisoner : public Prisoner {
+public:
+	ChildPrisoner();
+	virtual ~ChildPrisoner() {}
+};
+
+class ManPrisoner : public Prisoner {
+public:
+	ManPrisoner();
+	virtual ~ManPrisoner() {}
+};
+
+class CloakedPrisoner : public Prisoner {
+public:
+	CloakedPrisoner();
+	virtual ~CloakedPrisoner() {
+	}
+};
+
+class DemonPrisoner : public Prisoner {
+public:
+	DemonPrisoner();
+	virtual ~DemonPrisoner() {
+	}
 };
 
 } // namespace Maps

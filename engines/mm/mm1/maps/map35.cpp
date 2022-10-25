@@ -31,11 +31,11 @@ namespace Maps {
 
 void Map35::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 11; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
+			if (g_maps->_forwardMask & _data[62 + i]) {
 				
 				(this->*SPECIAL_FN[i])();
 			} else {
@@ -44,14 +44,38 @@ void Map35::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map35::special00() {
+	g_events->addView("ManPrisoner");
+}
+
+void Map35::special01() {
+}
+
+void Map35::special02() {
+}
+
+void Map35::special03() {
+}
+
+void Map35::special04() {
+}
+
+void Map35::special05() {
+}
+
+void Map35::special06() {
+}
+
+void Map35::special07() {
+}
+
+void Map35::special09() {
 }
 
 } // namespace Maps
