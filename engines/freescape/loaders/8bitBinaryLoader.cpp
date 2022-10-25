@@ -518,6 +518,7 @@ void FreescapeEngine::loadBundledImages() {
 		decoder.loadStream(*borderFile);
 		_border = new Graphics::Surface();
 		_border->copyFrom(*decoder.getSurface());
+		decoder.destroy();
 	} else
 		error("Missing border file '%s' in data bundle", borderFilename.c_str());
 }
