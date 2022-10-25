@@ -115,6 +115,7 @@ FreescapeEngine::~FreescapeEngine() {
 		delete it->_value;
 
 	delete _gfx;
+	delete _dataBundle;
 }
 
 void FreescapeEngine::drawBorder() {

@@ -305,6 +305,9 @@ void GeometricObject::computeBoundingBox() {
 }
 
 GeometricObject::~GeometricObject() {
+	delete conditionSource;
+	delete colours;
+	delete ordinates;
 }
 
 bool GeometricObject::isDrawable() { return true; }
