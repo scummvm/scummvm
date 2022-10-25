@@ -52,7 +52,7 @@ void Map34::special() {
 }
 
 void Map34::special00() {
-	g_events->addView("Child");
+	g_events->addView("ChildPrisoner");
 }
 
 void Map34::special01() {

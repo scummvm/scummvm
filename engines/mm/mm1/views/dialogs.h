@@ -46,9 +46,9 @@
 #include "mm/mm1/views/maps/alien.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
-#include "mm/mm1/views/maps/child.h"
 #include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/lion.h"
+#include "mm/mm1/views/maps/prisoners.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/maps/trivia.h"
 #include "mm/mm1/views/maps/volcano_god.h"
@@ -91,7 +91,10 @@ private:
 	Views::Maps::Alien _alien;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
-	Views::Maps::Child _child;
+	Views::Maps::ChildPrisoner _childPrisoner;
+	Views::Maps::CloakedPrisoner _cloakedPrisoner;
+	Views::Maps::DemonPrisoner _demonPrisoner;
+	Views::Maps::ManPrisoner _manPrisoner;
 	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Lion _lion;
 	Views::Maps::Resistances _resistances;

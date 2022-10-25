@@ -19,8 +19,7 @@
  *
  */
 
-#include "mm/mm1/views/maps/Child.h"
-#include "mm/mm1/maps/map34.h"
+#include "mm/mm1/views/maps/prisoners.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
@@ -29,19 +28,24 @@ namespace MM1 {
 namespace Views {
 namespace Maps {
 
-Child::Child() : TextView("Child") {
+Prisoner::Prisoner(const Common::String &name, const Common::String &line1,
+		byte flag, Alignment freeAlignment, Alignment leaveAlignment) :
+		TextView(name), _line1(line1), _flag(flag),
+		_freeAlignment(freeAlignment), _leaveAlignment(leaveAlignment) {
 	_bounds = getLineBounds(17, 24);
 }
 
-void Child::draw() {
+void Prisoner::draw() {
 	clearSurface();
-	writeString(0, 0, STRING["maps.map34.child"]);
-	writeString(0, 3, STRING["maps.map34.options1"]);
-	writeString(10, 4, STRING["maps.map34.options2"]);
-	writeString(10, 5, STRING["maps.map34.options3"]);
+	writeString(0, 0, _line1);
+	writeString(0, 3, STRING["maps.prisoners.options1"]);
+	_textPos.x = 10;
+	writeString(STRING["maps.prisoners.options2"]);
+	_textPos.x = 10;
+	writeString(STRING["maps.prisoners.options3"]);
 }
 
-bool Child::msgKeypress(const KeypressMessage &msg) {
+bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	if (msg.keycode < Common::KEYCODE_1 || msg.keycode > Common::KEYCODE_3)
 		return true;
 
@@ -49,13 +53,13 @@ bool Child::msgKeypress(const KeypressMessage &msg) {
 	int align;
 	switch (msg.keycode) {
 	case Common::KEYCODE_1:
-		line = STRING["maps.map34.prisoner_flees"];
-		align = GOOD;
+		line = STRING["maps.prisoners.flees"];
+		align = _freeAlignment;
 		break;
 
 	case Common::KEYCODE_2:
-		line = STRING["maps.map34.prisoner_cowers"];
-		align = EVIL;
+		line = STRING["maps.prisoners.cowers"];
+		align = _leaveAlignment;
 		break;
 
 	default:
@@ -66,8 +70,8 @@ bool Child::msgKeypress(const KeypressMessage &msg) {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 
-		if (!(c._flags[1] & CHARFLAG1_4)) {
-			c._flags[1] |= CHARFLAG1_4;
+		if (!(c._flags[1] & _flag)) {
+			c._flags[1] |= _flag;
 			if (align == c._alignment)
 				c._v6e += 32;
 		}
@@ -82,6 +86,28 @@ bool Child::msgKeypress(const KeypressMessage &msg) {
 
 	close();
 	return true;
+}
+
+/*------------------------------------------------------------------------*/
+
+ChildPrisoner::ChildPrisoner() :
+		Prisoner("ChildPrisoner", STRING["maps.prisoners.child"],
+		CHARFLAG1_4, GOOD, EVIL) {
+}
+
+ManPrisoner::ManPrisoner() :
+	Prisoner("ManPrisoner", STRING["maps.prisoners.man"],
+	CHARFLAG1_20, EVIL, GOOD) {
+}
+
+CloakedPrisoner::CloakedPrisoner() :
+	Prisoner("CloakedPrisoner", STRING["maps.prisoners.cloaked"],
+		CHARFLAG1_40, EVIL, GOOD) {
+}
+
+DemonPrisoner::DemonPrisoner() :
+	Prisoner("DemonPrisoner", STRING["maps.prisoners.demon"],
+		CHARFLAG1_10, EVIL, GOOD) {
 }
 
 } // namespace Maps
