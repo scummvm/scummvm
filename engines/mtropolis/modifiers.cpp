@@ -497,6 +497,25 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 	return true;
 }
 
+bool SetModifier::respondsToEvent(const Event &evt) const {
+	if (_executeWhen.respondsTo(evt))
+		return true;
+
+	return false;
+}
+
+VThreadState SetModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+		if (Debugger *debugger = runtime->debugGetDebugger())
+			debugger->notifyFmt(kDebugSeverityError, "Set modifier is not yet implemented");
+#endif
+		warning("Set modifier is not yet implemented!");
+		return kVThreadReturn;
+	}
+	return kVThreadReturn;
+}
+
 Common::SharedPtr<Modifier> SetModifier::shallowClone() const {
 	return Common::SharedPtr<Modifier>(new SetModifier(*this));
 }

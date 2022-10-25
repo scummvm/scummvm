@@ -235,6 +235,9 @@ class SetModifier : public Modifier {
 public:
 	bool load(ModifierLoaderContext &context, const Data::SetModifier &data);
 
+	bool respondsToEvent(const Event &evt) const override;
+	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
+
 	void disable(Runtime *runtime) override {}
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
