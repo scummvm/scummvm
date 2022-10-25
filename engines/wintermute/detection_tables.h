@@ -112,6 +112,7 @@ static const PlainGameDescriptor wintermuteGames[] = {
 	{"juliastars",      "J.U.L.I.A.: Among the Stars"},
 	{"juliauntold",     "J.U.L.I.A.: Untold"},
 	{"lotl",            "Limbo of the Lost"},
+	{"lostbride",       "Tale of The Lost Bride and A Hidden Treasure"},
 	{"machumayu",       "Machu Mayu"},
 	{"mentalrepairs",   "Mental Repairs Inc"},
 	{"mirage",          "Mirage"},
@@ -1731,6 +1732,10 @@ static const WMEGameDescription gameDescriptions[] = {
 	// Limbo of the Lost (Russian)
 	WME_WINENTRY("lotl", "",
 		WME_ENTRY1s("data.dcp", "2042ea14f2d7c52a139d768e962040c1", 354370575), Common::RU_RUS, ADGF_UNSTABLE | GF_3D, WME_1_7_2),
+
+    // Tale of The Lost Bride and A Hidden Treasure (Russian)
+    WME_WINENTRY("lostbride", "",
+		WME_ENTRY1s("data.dcp", "cb45b579c6d5767341a9b07bc807df5f", 106683613), Common::RU_RUS, ADGF_UNSTABLE, WME_1_9_1),
 
 	// Machu Mayu (Demo)
 	WME_WINENTRY("machumayu", "Demo",
