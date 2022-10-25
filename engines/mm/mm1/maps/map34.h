@@ -32,9 +32,49 @@ class Map34 : public Map {
 	typedef void (Map34:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special12();
+	void special13();
+	void special16();
+	void special17();
+	void special18();
+	void special19();
+	void special20();
+	void special21();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map34::special00
+	const SpecialFn SPECIAL_FN[23] = {
+		&Map34::special00,
+		&Map34::special01,
+		&Map34::special02,
+		&Map34::special03,
+		&Map34::special04,
+		&Map34::special05,
+		&Map34::special06,
+		&Map34::special07,
+		&Map34::special08,
+		&Map34::special09,
+		&Map34::special10,
+		&Map34::special10,
+		&Map34::special12,
+		&Map34::special13,
+		&Map34::special13,
+		&Map34::special13,
+		&Map34::special16,
+		&Map34::special17,
+		&Map34::special18,
+		&Map34::special19,
+		&Map34::special20,
+		&Map34::special21,
+		&Map34::special01
 	};
 public:
 	Map34() : Map(34, "doom", 0x706) {}

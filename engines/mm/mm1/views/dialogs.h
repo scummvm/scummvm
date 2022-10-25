@@ -46,6 +46,7 @@
 #include "mm/mm1/views/maps/alien.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
+#include "mm/mm1/views/maps/child.h"
 #include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/lion.h"
 #include "mm/mm1/views/maps/resistances.h"
@@ -90,6 +91,7 @@ private:
 	Views::Maps::Alien _alien;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
+	Views::Maps::Child _child;
 	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Lion _lion;
 	Views::Maps::Resistances _resistances;

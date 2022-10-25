@@ -121,6 +121,39 @@ enum CharFlags7 {
 	CHARFLAG7_80 = 0x80
 };
 
+enum CharFlags8 {
+	CHARFLAG8_1 = 1,
+	CHARFLAG8_2 = 2,
+	CHARFLAG8_4 = 4,
+	CHARFLAG8_8 = 8,
+	CHARFLAG8_10 = 0x10,
+	CHARFLAG8_20 = 0x20,
+	CHARFLAG8_40 = 0x40,
+	CHARFLAG8_80 = 0x80
+};
+
+enum CharFlags9 {
+	CHARFLAG9_1 = 1,
+	CHARFLAG9_2 = 2,
+	CHARFLAG9_4 = 4,
+	CHARFLAG9_8 = 8,
+	CHARFLAG9_10 = 0x10,
+	CHARFLAG9_20 = 0x20,
+	CHARFLAG9_40 = 0x40,
+	CHARFLAG9_80 = 0x80
+};
+
+enum CharFlags10 {
+	CHARFLAG10_1 = 1,
+	CHARFLAG10_2 = 2,
+	CHARFLAG10_4 = 4,
+	CHARFLAG10_8 = 8,
+	CHARFLAG10_10 = 0x10,
+	CHARFLAG10_20 = 0x20,
+	CHARFLAG10_40 = 0x40,
+	CHARFLAG10_80 = 0x80
+};
+
 enum CharFlags11 {
 	CHARFLAG11_GOT_ENDURANCE = 1,
 	CHARFLAG11_PERSONALITY = 2,
@@ -128,6 +161,28 @@ enum CharFlags11 {
 	CHARFLAG11_GOT_MIGHT = 8,
 	CHARFLAG11_GOT_ACCURACY = 0x10,
 	CHARFLAG11_GOT_SPEED = 0x20
+};
+
+enum CharFlags12 {
+	CHARFLAG12_1 = 1,
+	CHARFLAG12_2 = 2,
+	CHARFLAG12_4 = 4,
+	CHARFLAG12_8 = 8,
+	CHARFLAG12_10 = 0x10,
+	CHARFLAG12_20 = 0x20,
+	CHARFLAG12_40 = 0x40,
+	CHARFLAG12_80 = 0x80
+};
+
+enum CharFlags13 {
+	CHARFLAG13_1 = 1,
+	CHARFLAG13_2 = 2,
+	CHARFLAG13_4 = 4,
+	CHARFLAG13_8 = 8,
+	CHARFLAG13_10 = 0x10,
+	CHARFLAG13_20 = 0x20,
+	CHARFLAG13_40 = 0x40,
+	CHARFLAG13_80 = 0x80
 };
 
 enum CharFlags14 {
@@ -352,9 +407,9 @@ struct Character : public PrimaryAttributes {
 
 	// TODO: Figure out what these are
 	AttributePair _physicalAttr, _missileAttr;
-	int _v6c;
+	byte _v6c;
 	byte _quest = 0;
-	int _v6e;
+	byte _v6e;
 	int _alignmentCtr;
 	byte _flags[14];
 
