@@ -111,6 +111,9 @@ FreescapeEngine::~FreescapeEngine() {
 	delete _uiTexture;
 	delete _titleTexture;
 
+	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
+		delete it->_value;
+
 	delete _gfx;
 }
 

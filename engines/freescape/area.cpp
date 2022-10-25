@@ -93,14 +93,21 @@ Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap
 }
 
 Area::~Area() {
-	for (ObjectMap::iterator iterator = entrancesByID->begin(); iterator != entrancesByID->end(); iterator++)
-		delete iterator->_value;
+	if (entrancesByID) {
+		for (ObjectMap::iterator iterator = entrancesByID->begin(); iterator != entrancesByID->end(); iterator++)
+			delete iterator->_value;
+	}
 
-	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
-		delete iterator->_value;
+	if (objectsByID) {
+		for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
+			delete iterator->_value;
+	}
 
 	delete entrancesByID;
 	delete objectsByID;
+
+	for (Common::Array<Common::String*>::iterator iterator = conditionSources.begin(); iterator != conditionSources.end(); iterator++)
+		delete *iterator;
 }
 
 void Area::show() {
