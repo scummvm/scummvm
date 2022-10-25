@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.6.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-23 20:46+0000\n"
+"POT-Creation-Date: 2022-10-24 23:37+0000\n"
 "PO-Revision-Date: 2022-10-22 04:33+0000\n"
 "Last-Translator: Xaviu <xaviu@xaviu.com>\n"
 "Language-Team: Catalan <https://translations.scummvm.org/projects/scummvm/"
@@ -2671,7 +2671,7 @@ msgstr ""
 msgid "ERROR: Could not copy the savegame to a new slot"
 msgstr "ERROR: No s'ha pogut copiar la partida desada a una ranura nova"
 
-#: engines/engine.cpp:589 engines/metaengine.cpp:380 engines/savestate.cpp:98
+#: engines/engine.cpp:589 engines/metaengine.cpp:380 engines/savestate.cpp:94
 #: backends/platform/ios7/ios7_osys_main.cpp:255 engines/sky/metaengine.cpp:185
 #: engines/xeen/saves.cpp:289
 msgid "Autosave"
