@@ -96,9 +96,20 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 
 FreescapeEngine::~FreescapeEngine() {
 	delete _rnd;
-	delete _border;
+
+	if (_title && _title != _border) {
+		_title->free();
+		delete _title;
+	}
+
+	if (_border) {
+		_border->free();
+		delete _border;
+	}
+
 	delete _borderTexture;
 	delete _uiTexture;
+	delete _titleTexture;
 
 	delete _gfx;
 }
