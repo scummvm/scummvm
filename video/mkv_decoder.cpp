@@ -106,9 +106,6 @@ MKVDecoder::MKVDecoder() {
 	_videoTrack = 0;
 	_audioTrack = 0;
 	_hasVideo = _hasAudio = false;
-
-	_codec = nullptr;
-	_reader = nullptr;
 }
 
 MKVDecoder::~MKVDecoder() {
@@ -145,6 +142,8 @@ int movieAudioIndex;
 bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	close();
 
+	warning("MKVDecoder::loadStream()");
+
 	_fileStream = stream;
 
 	_codec = new vpx_codec_ctx_t;
@@ -156,8 +155,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 	ebmlHeader.Parse(_reader, pos);
 
-	mkvparser::Segment *pSegment;
-
 	long long ret = mkvparser::Segment::CreateInstance(_reader, pos, pSegment);
 	if (ret) {
 		error("MKVDecoder::loadStream(): Segment::CreateInstance() failed (%lld).", ret);
@@ -168,32 +165,30 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		error("MKVDecoder::loadStream(): Segment::Load() failed (%lld).", ret);
 	}
 
-	const mkvparser::Tracks *pTracks = pSegment->GetTracks();
+	_tracks = pSegment->GetTracks();
 
 	unsigned long i = 0;
-	const unsigned long j = pTracks->GetTracksCount();
+	const unsigned long j = _tracks->GetTracksCount();
 
 	warning("Number of tracks: %ld", j);
 
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
-	int videoTrack = -1;
-	int audioTrack = -1;
+	videoTrack = -1;
+	audioTrack = -1;
 	long long audioBitDepth;
 	double audioSampleRate;
-	ogg_packet oggPacket;
 	vorbis_info vorbisInfo;
 	vorbis_comment vorbisComment;
-	vorbis_block vorbisBlock;
 
 	while (i != j) {
-		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
+		const mkvparser::Track *const pTrack = _tracks->GetTrackByIndex(i++);
 
 		if (pTrack == NULL)
 			continue;
 
 		const long long trackType = pTrack->GetType();
 		//const unsigned long long trackUid = pTrack->GetUid();
-		//const char* pTrackName = pTrack->GetNameAsUTF8();
+		//const char* _trackName = pTrack->GetNameAsUTF8();
 
 		if (trackType == mkvparser::Track::kVideo && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
@@ -254,18 +249,18 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 			memset(&vorbisDspState, 0, sizeof(vorbisDspState));
 			memset(&vorbisBlock, 0, sizeof(vorbisBlock));
 
-			oggPacket.e_o_s = false;
-			oggPacket.granulepos = 0;
-			oggPacket.packetno = 0;
+			_oggPacket.e_o_s = false;
+			_oggPacket.granulepos = 0;
+			_oggPacket.packetno = 0;
 			int r;
 			for (int s = 0; s < 3; s++) {
-				oggPacket.packet = p;
-				oggPacket.bytes = sizes[s];
-				oggPacket.b_o_s = oggPacket.packetno == 0;
-				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &oggPacket);
+				_oggPacket.packet = p;
+				_oggPacket.bytes = sizes[s];
+				_oggPacket.b_o_s = _oggPacket.packetno == 0;
+				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &_oggPacket);
 				if (r)
 					warning("vorbis_synthesis_headerin failed, error: %d", r);
-				oggPacket.packetno++;
+				_oggPacket.packetno++;
 				p += sizes[s];
 			}
 
@@ -311,39 +306,31 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	if (vpx_codec_dec_init(_codec, &vpx_codec_vp8_dx_algo, NULL, 0))
 		error("Failed to initialize decoder for movie.");
 
-	byte *frame = new byte[256 * 1024];
+	frame = new byte[256 * 1024];
 	if (!frame)
 		return false;
 
-	const mkvparser::Cluster *pCluster = pSegment->GetFirst();
+	_cluster = pSegment->GetFirst();
 
 #if 0
 	movieIsPlaying = playing;
 	movieIsEnding = 0;
 #endif
 
-	//const long long timeCode = pCluster->GetTimeCode();
-	long long time_ns = pCluster->GetTime();
+	//const long long timeCode = _cluster->GetTimeCode();
+	long long time_ns = _cluster->GetTime();
 
-	const mkvparser::BlockEntry *pBlockEntry;
-	if (pCluster->GetFirst(pBlockEntry))
-		error("pCluster::GetFirst() failed");
+	if (_cluster->GetFirst(pBlockEntry))
+		error("_cluster::GetFirst() failed");
 
 	if ((pBlockEntry == NULL) || pBlockEntry->EOS()) {
-		pCluster = pSegment->GetNext(pCluster);
-		if ((pCluster == NULL) || pCluster->EOS()) {
+		_cluster = pSegment->GetNext(_cluster);
+		if ((_cluster == NULL) || _cluster->EOS()) {
 			error("Error: No movie found in the movie file.");
 		}
-		if (pCluster->GetFirst(pBlockEntry))
-			error("oCluster::GetFirst() failed");
+		if (_cluster->GetFirst(pBlockEntry))
+			error("_cluster::GetFirst() failed");
 	}
-	const mkvparser::Block *pBlock = pBlockEntry->GetBlock();
-	long long trackNum = pBlock->GetTrackNumber();
-	unsigned long tn = static_cast<unsigned long>(trackNum);
-	const mkvparser::Track *pTrack = pTracks->GetTrackByNumber(tn);
-	long long trackType = pTrack->GetType();
-	int frameCount = pBlock->GetFrameCount();
-	time_ns = pBlock->GetTime(pCluster);
 
 	return true;
 }
@@ -356,26 +343,206 @@ void MKVDecoder::close() {
 }
 
 void MKVDecoder::readNextPacket() {
-	// First, let's get our frame
-	if (_hasVideo) {
-		while (!_videoTrack->endOfTrack()) {
-			// theora is one in, one out...
-			if (ogg_stream_packetout(&_theoraOut, &_oggPacket) > 0) {
-				if (_videoTrack->decodePacket(_oggPacket))
-					break;
-			} else if (_theoraOut.e_o_s || _fileStream->eos()) {
-				// If we can't get any more frames, we're done.
-				_videoTrack->setEndOfVideo();
-			} else {
-				// Queue more data
-				bufferData();
-				while (ogg_sync_pageout(&_oggSync, &_oggPage) > 0)
-					queuePage(&_oggPage);
-			}
+	warning("MKVDecoder::readNextPacket()");
 
-			// Update audio if we can
-			queueAudio();
+	const mkvparser::Block *pBlock = pBlockEntry->GetBlock();
+	long long trackNum = pBlock->GetTrackNumber();
+	unsigned long tn = static_cast<unsigned long>(trackNum);
+	const mkvparser::Track *pTrack = _tracks->GetTrackByNumber(tn);
+	long long trackType = pTrack->GetType();
+	int frameCount = pBlock->GetFrameCount();
+	long long time_ns = pBlock->GetTime(_cluster);
+
+
+	// First, let's get our frame
+	while (_cluster != nullptr && !_cluster->EOS()) {
+		if (frameCounter >= frameCount) {
+
+			int res = _cluster->GetNext(pBlockEntry, pBlockEntry);
+			if  ((res != -1) || pBlockEntry->EOS())
+			{
+				_cluster = pSegment->GetNext(_cluster);
+				if ((_cluster == NULL) || _cluster->EOS()) {
+					_videoTrack->setEndOfVideo();
+					break;
+				}
+				int ret = _cluster->GetFirst(pBlockEntry);
+
+				if (ret == -1)
+					error("MKVDecoder::readNextPacket(): GetFirst() failed");
+			}
+			pBlock  = pBlockEntry->GetBlock();
+			trackNum = pBlock->GetTrackNumber();
+			tn = static_cast<unsigned long>(trackNum);
+			pTrack = _tracks->GetTrackByNumber(tn);
+			trackType = pTrack->GetType();
+			frameCount = pBlock->GetFrameCount();
+			time_ns = pBlock->GetTime(_cluster);
+
+			frameCounter = 0;
 		}
+
+		const mkvparser::Block::Frame &theFrame = pBlock->GetFrame(frameCounter);
+		const long size = theFrame.len;
+		//                const long long offset = theFrame.pos;
+
+		if (size > sizeof(frame)) {
+			if (frame)
+				delete[] frame;
+			frame = new unsigned char[size];
+			if (!frame)
+				return;
+		}
+
+		if (trackNum == videoTrack) {
+			theFrame.Read(_reader, frame);
+
+			/* Decode the frame */
+			if (vpx_codec_decode(_codec, frame, size, NULL, 0))
+				error("Failed to decode frame");
+
+			// Let's decode an image frame!
+			vpx_codec_iter_t  iter = NULL;
+			vpx_image_t      *img;
+
+			/* Get frame data */
+			while ((img = vpx_codec_get_frame(_codec, &iter))) {
+				if (img->fmt != VPX_IMG_FMT_I420)
+					error("Movie error. The movie is not in I420 colour format, which is the only one I can hanlde at the moment.");
+
+				unsigned int y;
+#if 0
+				GLubyte *ytex = NULL;
+				GLubyte *utex = NULL;
+				GLubyte *vtex = NULL;
+
+				if (! ytex) {
+					ytex = new GLubyte[img->d_w * img->d_h];
+					utex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
+					vtex = new GLubyte[(img->d_w >> 1) * (img->d_h >> 1)];
+					if (!ytex || !utex || !vtex)
+						error("MKVDecoder: Out of memory"
+
+				}
+
+				unsigned char *buf =img->planes[0];
+				for (y = 0; y < img->d_h; y++) {
+					memcpy(ytex + y * img->d_w, buf, img->d_w);
+					buf += img->stride[0];
+				}
+				buf = img->planes[1];
+				for (y = 0; y < img->d_h >> 1; y++) {
+					memcpy(utex + y * (img->d_w >> 1), buf, img->d_w >> 1);
+					buf += img->stride[1];
+				}
+				buf = img->planes[2];
+				for (y = 0; y < img->d_h >> 1; y++) {
+					memcpy(vtex + y * (img->d_w >> 1), buf, img->d_w >> 1);
+					buf += img->stride[2];
+				}
+				video_queue_put(&videoQ, ytex, utex, vtex,
+								img->d_w, img->d_h, time_ns/1000000);
+#endif
+
+
+			}
+		} else if (trackNum == audioTrack) {
+			// Use this Audio Track
+			if (size > 0) {
+				theFrame.Read(_reader, frame);
+				_oggPacket.packet = frame;
+				_oggPacket.bytes = size;
+				_oggPacket.b_o_s = false;
+				_oggPacket.packetno++;
+				_oggPacket.granulepos = -1;
+				if(!vorbis_synthesis(&vorbisBlock, &_oggPacket) ) {
+					if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
+						warning("Vorbis Synthesis block in error");
+
+				} else {
+					warning("Vorbis Synthesis error");
+				}
+
+				float **pcm;
+
+				int numSamples = vorbis_synthesis_pcmout(&vorbisDspState, &pcm);
+
+				if (numSamples > 0) {
+					int word = 2;
+					int sgned = 1;
+					int i, j;
+					long bytespersample=audioChannels * word;
+					//vorbis_fpu_control fpu;
+
+					char *buffer = new char[bytespersample * numSamples];
+					if (!buffer)
+						error("MKVDecoder::readNextPacket(): buffer allocation failed");
+
+					/* a tight loop to pack each size */
+					{
+						int val;
+						if (word == 1) {
+							int off = (sgned ? 0 : 128);
+							//vorbis_fpu_setround(&fpu);
+							for (j = 0; j < numSamples; j++)
+								for (i = 0;i < audioChannels; i++) {
+									val = (int)(pcm[i][j] * 128.f);
+									val = CLIP(val, -128, 127);
+
+									*buffer++ = val + off;
+								}
+							//vorbis_fpu_restore(fpu);
+						} else {
+							int off = (sgned ? 0 : 32768);
+
+							if (sgned) {
+								//vorbis_fpu_setround(&fpu);
+								for (i = 0; i < audioChannels; i++) { /* It's faster in this order */
+									float *src = pcm[i];
+									short *dest = ((short *)buffer) + i;
+									for (j = 0; j < numSamples; j++) {
+										val = (int)(src[j] * 32768.f);
+										val = CLIP(val, -32768, 32767);
+
+										*dest = val;
+										dest += audioChannels;
+									}
+								}
+								//vorbis_fpu_restore(fpu);
+							} else { // unsigned
+								//vorbis_fpu_setround(&fpu);
+
+								for (i = 0; i < audioChannels; i++) {
+									float *src = pcm[i];
+									short *dest = ((short *)buffer) + i;
+									for (j = 0; j < numSamples; j++) {
+										val = (int)(src[j] * 32768.f);
+										val = CLIP(val, -32768, 32767);
+
+										*dest = val + off;
+										dest += audioChannels;
+									}
+								}
+								//vorbis_fpu_restore(fpu);
+							}
+						}
+					}
+
+					vorbis_synthesis_read(&vorbisDspState, numSamples);
+					audioBufferLen = bytespersample * numSamples;
+					//audio_queue_put(&audioQ, buffer, audioBufferLen, time_ns / 1000000);
+
+					//warning("Audio buffered: %lld byte %lld ns",audioBufferLen, audioNsPerByte*audioBufferLen);
+
+					if (!movieSoundPlaying && size > 1) {
+						warning("** starting sound **");
+						//playMovieStream(movieAudioIndex);
+						movieSoundPlaying = true;
+					}
+				}
+			}
+		}
+		++frameCounter;
 	}
 
 	// Then make sure we have enough audio buffered
@@ -413,8 +580,8 @@ MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
 	_displaySurface.setPixels(0);
 }
 
-bool MKVDecoder::VPXVideoTrack::decodePacket(ogg_packet &oggPacket) {
-	if (th_decode_packetin(_theoraDecode, &oggPacket, 0) == 0) {
+bool MKVDecoder::VPXVideoTrack::decodePacket(ogg_packet &_oggPacket) {
+	if (th_decode_packetin(_theoraDecode, &_oggPacket, 0) == 0) {
 		_curFrame++;
 
 		// Convert YUV data to RGB data
@@ -422,7 +589,7 @@ bool MKVDecoder::VPXVideoTrack::decodePacket(ogg_packet &oggPacket) {
 		th_decode_ycbcr_out(_theoraDecode, yuv);
 		translateYUVtoRGBA(yuv);
 
-		double time = th_granule_time(_theoraDecode, oggPacket.granulepos);
+		double time = th_granule_time(_theoraDecode, _oggPacket.granulepos);
 
 		// We need to calculate when the next frame should be shown
 		// This is all in floating point because that's what the Ogg code gives us
@@ -563,8 +730,8 @@ bool MKVDecoder::VorbisAudioTrack::needsAudio() const {
 	return !_endOfAudio && _audStream->numQueuedStreams() < 5;
 }
 
-void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &oggPacket) {
-	if (vorbis_synthesis(&_vorbisBlock, &oggPacket) == 0) // test for success
+void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &_oggPacket) {
+	if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success
 		vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
 }
 
