@@ -55,13 +55,13 @@ bool ENet::initalize() {
 	return true;
 }
 
-Host* ENet::create_host(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand) {
-	ENetAddress _address;
+Host* ENet::createHost(Common::String address, int port, int numClients, int numChannels, int incBand, int outBand) {
+	ENetAddress enetAddress;
 	// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
-	enet_address_set_host(&_address, address.c_str());
-	_address.port = port;
+	enet_address_set_host(&enetAddress, address.c_str());
+	enetAddress.port = port;
 
-	ENetHost *_host = enet_host_create(&_address, numClients, numChannels, incBand, outBand);
+	ENetHost *_host = enet_host_create(&enetAddress, numClients, numChannels, incBand, outBand);
 	if (_host == nullptr) {
 		warning("ENet: An error occured when trying to create host with address %s:%d", address.c_str(), port);
 		return nullptr;
@@ -70,62 +70,62 @@ Host* ENet::create_host(Common::String address, int port, int numClients, int nu
 	return new Host(_host);
 }
 
-Host* ENet::connect_to_host(Common::String address, int port, int timeout, int numChannels, int incBand, int outBand) {
+Host* ENet::connectToHost(Common::String address, int port, int timeout, int numChannels, int incBand, int outBand) {
 	// NOTE: Number of channels must match with the server's.
-	ENetHost *_host = enet_host_create(nullptr, 1, numChannels, incBand, outBand);
-	if (_host == nullptr) {
+	ENetHost *enetHost = enet_host_create(nullptr, 1, numChannels, incBand, outBand);
+	if (enetHost == nullptr) {
 		warning("ENet: An error occured when trying to create client host");
 		return nullptr;
 	}
 
-	ENetAddress _address;
+	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
-		_address.host = ENET_HOST_BROADCAST;
+		enetAddress.host = ENET_HOST_BROADCAST;
 	} else {
 		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
-		enet_address_set_host(&_address, address.c_str());
+		enet_address_set_host(&enetAddress, address.c_str());
 	}
-	_address.port = port;
+	enetAddress.port = port;
 
 	// Connect to server address
-	ENetPeer *_peer = enet_host_connect(_host, &_address, numChannels, 0);
+	ENetPeer *enetPeer = enet_host_connect(enetHost, &enetAddress, numChannels, 0);
 
 	ENetEvent event;
-	if (enet_host_service(_host, &event, timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
+	if (enet_host_service(enetHost, &event, timeout) > 0 && event.type == ENET_EVENT_TYPE_CONNECT) {
 		debug(1, "ENet: Connection to %s:%d succeeded.", address.c_str(), port);
-		return new Host(_host, _peer);
+		return new Host(enetHost, enetPeer);
 	}
 	warning("ENet: Connection to %s:%d failed", address.c_str(), port);
 	return nullptr;
 }
 
-Socket* ENet::create_socket(Common::String address, int port) {
-	ENetAddress _address;
+Socket* ENet::createSocket(Common::String address, int port) {
+	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
-		_address.host = ENET_HOST_BROADCAST;
+		enetAddress.host = ENET_HOST_BROADCAST;
 	} else {
 		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
-		enet_address_set_host(&_address, address.c_str());
+		enet_address_set_host(&enetAddress, address.c_str());
 	}
-	_address.port = port;
+	enetAddress.port = port;
 
-	ENetSocket _socket = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
-	if (_socket == ENET_SOCKET_NULL) {
+	ENetSocket enetSocket = enet_socket_create(ENET_SOCKET_TYPE_DATAGRAM);
+	if (enetSocket == ENET_SOCKET_NULL) {
 		warning("ENet: Unable to create socket");
 		return nullptr;
 	}
-	if (enet_socket_bind(_socket, &_address) < 0) {
+	if (enet_socket_bind(enetSocket, &enetAddress) < 0) {
 		warning("ENet: Unable to bind socket to address %s:%d", address.c_str(), port);
-		enet_socket_destroy(_socket);
+		enet_socket_destroy(enetSocket);
 		return nullptr;
 	}
 
-	enet_socket_set_option (_socket, ENET_SOCKOPT_NONBLOCK, 1);
-    enet_socket_set_option (_socket, ENET_SOCKOPT_BROADCAST, 1);
-	enet_socket_set_option (_socket, ENET_SOCKOPT_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
-    enet_socket_set_option (_socket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
+	enet_socket_set_option (enetSocket, ENET_SOCKOPT_NONBLOCK, 1);
+    enet_socket_set_option (enetSocket, ENET_SOCKOPT_BROADCAST, 1);
+	enet_socket_set_option (enetSocket, ENET_SOCKOPT_RCVBUF, ENET_HOST_RECEIVE_BUFFER_SIZE);
+    enet_socket_set_option (enetSocket, ENET_SOCKOPT_SNDBUF, ENET_HOST_SEND_BUFFER_SIZE);
 
-	return new Socket(_socket);
+	return new Socket(enetSocket);
 }
 
 } // End of namespace Networking
