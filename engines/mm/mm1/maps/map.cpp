@@ -108,6 +108,10 @@ void Map::updateGame() {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
+void Map::redrawGame() {
+	g_events->findView("Game")->redraw();
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

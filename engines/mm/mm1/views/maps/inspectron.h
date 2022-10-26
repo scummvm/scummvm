@@ -19,63 +19,30 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP35_H
-#define MM1_MAPS_MAP35_H
+#ifndef MM1_VIEWS_MAPS_INSPECTRON_H
+#define MM1_VIEWS_MAPS_INSPECTRON_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map35 : public Map {
-	typedef void (Map35:: *SpecialFn)();
+class Inspectron : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special04();
-	void special05();
-	void special06();
-	void special07();
-	void special09();
-	void updateFlags();
-
-	const SpecialFn SPECIAL_FN[11] = {
-		&Map35::special00,
-		&Map35::special01,
-		&Map35::special02,
-		&Map35::special03,
-		&Map35::special04,
-		&Map35::special05,
-		&Map35::special06,
-		&Map35::special07,
-		&Map35::special07,
-		&Map35::special09,
-		&Map35::special09
-	};
+	bool _canAccept;
 public:
-	Map35() : Map(35, "blackrn", 0xF08) {}
+	Inspectron();
+	virtual ~Inspectron() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	/**
-	 * Accepts a quest from Inspectron
-	 */
-	void acceptQuest();
-
-	/**
-	 * Does a check for the party's current quest is one
-	 * of Inspectron's, and if it's complete
-	 */
-	bool matchQuest(Common::String &line);
+	bool msgFocus(const FocusMessage &msg) override;	
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 
