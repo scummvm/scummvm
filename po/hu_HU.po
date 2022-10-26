@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-25 21:05+0000\n"
-"PO-Revision-Date: 2022-10-11 09:33+0000\n"
+"PO-Revision-Date: 2022-10-26 11:33+0000\n"
 "Last-Translator: George Kormendi <grubycza@hotmail.com>\n"
 "Language-Team: Hungarian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/hu/>\n"
@@ -8883,10 +8883,8 @@ msgid "Toggle subtitles"
 msgstr "Felirat váltása"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Többi elrejtése"
+msgstr "Tippek elrejtése"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
