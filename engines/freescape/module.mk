@@ -20,8 +20,6 @@ MODULE_OBJS := \
 	objects/sensor.o \
 	loaders/8bitBinaryLoader.o \
 	language/8bitDetokeniser.o \
-	loaders/16bitBinaryLoader.o \
-	language/16bitDetokeniser.o \
 	language/instruction.o \
 	movement.o \
 	neo.o \

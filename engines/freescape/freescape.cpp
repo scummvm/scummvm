@@ -157,25 +157,7 @@ void FreescapeEngine::drawTitle() {
 }
 
 void FreescapeEngine::loadAssets() {
-	Common::SeekableReadStream *file = nullptr;
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
-
-	if (_targetName.hasPrefix("3dkit") || _targetName == "menace") {
-		Common::ArchiveMemberList files;
-        gameDir.listMatchingMembers(files, "*.RUN");
-
-		if (files.size() == 0) {
-			error("No .RUN was found in %s", path.c_str());
-		} else if (files.size() > 1) {
-			debugC(1, kFreescapeDebugParser, "More than one .RUN file found, only the first one will be used!");
-		}
-
-		file = files.begin()->get()->createReadStream();
-		load16bitBinary(file);
-	} else
-		error("'%s' is an invalid game", _targetName.c_str());
-
+	error("Function \"%s\" not implemented", __FUNCTION__);
 }
 
 // Taken from the Myst 3 codebase, it should be abstracted
@@ -397,15 +379,6 @@ Common::Error FreescapeEngine::run() {
 	loadColorPalette();
 
 	// Simple main event loop
-	if (_binaryBits == 16) {
-		// Do not render face if color is zero
-		_gfx->_keyColor = 0;
-		// the 16-bit kit permits the range 0-8192 to be used along all three axes and from that comes the far plane distance of 14189.
-		_farClipPlane = 14189.f;
-		_startArea = 1;
-	} else {
-		_farClipPlane = 8192.f;
-	}
 	int saveSlot = ConfMan.getInt("save_slot");
 
 	if (_title) {

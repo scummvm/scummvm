@@ -135,8 +135,6 @@ public:
 
 	uint16 readField(Common::SeekableReadStream *file, int nbits);
 	Common::Array<uint8> readArray(Common::SeekableReadStream *file, int size);
-	// 16-bit
-	void load16bitBinary(Common::SeekableReadStream *file);
 
 	// 8-bit
 	void load8bitBinary(Common::SeekableReadStream *file, int offset, int ncolors);
