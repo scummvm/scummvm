@@ -35,9 +35,11 @@ namespace Maps {
 static const byte MATCH_ITEMS[7] = {
 	0,  0,241,  0,  0,  0,  0
 };
-static const byte MATCH_FLAGS[7] = {
-	CHARFLAG5_1, CHARFLAG5_2, CHARFLAG5_4, CHARFLAG5_8,
-	CHARFLAG5_10, CHARFLAG5_20, CHARFLAG5_40
+static const byte MATCH_FLAGS[8] = {
+	1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80
+};
+static const uint16 QUEST_EXPERIENCE[7] = {
+	1000, 2000, 3000, 4000, 6000, 8000, 10000
 };
 
 void Map35::special() {
@@ -166,9 +168,26 @@ void Map35::acceptQuest() {
 	redrawGame();
 }
 
-bool Map35::matchQuest(Common::String &line) {
-	// TODO
-	return false;
+Common::String Map35::checkQuestComplete() {
+	Character &leader = g_globals->_party[0];
+	int qIndex = leader._quest - 7;
+
+	if (leader._flags[5] & MATCH_FLAGS[qIndex]) {
+		// The quest was complete
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._quest = 0;
+			c._flags[8] |= MATCH_FLAGS[qIndex];
+			c._exp += QUEST_EXPERIENCE[qIndex];
+		}
+
+		return Common::String::format(
+			STRING["maps.map35.inspectron5"].c_str(),
+			QUEST_EXPERIENCE[qIndex]);
+	} else {
+		// The quest isn't yet complete
+		return STRING["maps.map35.inspectron3"];
+	}
 }
 
 } // namespace Maps
