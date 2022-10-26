@@ -227,7 +227,6 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 }
 
 void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
-	// assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 	uint8 r, g, b;
 	if (ordinates->size() % 3 > 0 && ordinates->size() > 0)
 		error("Invalid polygon with size %f %f %f and ordinates %d", size.x(), size.y(), size.z(), ordinates->size());
@@ -325,16 +324,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 }
 
 void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) {
-	Math::Vector3d vertices[8] = {
-		origin,
-		origin,
-		origin,
-		origin,
-		origin,
-		origin,
-		origin,
-		origin,
-	};
+	Math::Vector3d vertices[8] = { origin, origin, origin, origin, origin, origin, origin, origin };
 	PyramidType pyramidType = (PyramidType)type;
 	switch (pyramidType) {
 	default:
@@ -478,15 +468,8 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 }
 
 void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector3d &size, Common::Array<uint8> *colours) {
-	/*assert(size.x() > 0);
-	assert(size.y() > 0);
-	assert(size.z() > 0);*/
-
-	// debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
-	// debug("with size %f, %f, %f", size.x(), size.y(), size.z());
 	uint8 r, g, b;
 
-	// Face 0
 	if (getRGBAt((*colours)[0], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -500,7 +483,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
-	// Face 1
 	if (getRGBAt((*colours)[1], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -514,7 +496,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
-	// Face 2
 	if (getRGBAt((*colours)[2], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -528,7 +509,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
-	// Face 3
 	if (getRGBAt((*colours)[3], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -542,7 +522,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
-	// Face 1
 	if (getRGBAt((*colours)[4], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
@@ -556,7 +535,6 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 		tglEnd();
 	}
 
-	// Face 0
 	if (getRGBAt((*colours)[5], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
