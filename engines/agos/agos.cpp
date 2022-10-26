@@ -58,6 +58,7 @@ static const GameSpecificSettings simon2_settings = {
 	"SIMON2",                               // speech_filename
 };
 
+#ifdef ENABLE_AGOS2
 static const GameSpecificSettings dimp_settings = {
 	"Gdimp",                                // base_filename
 	"",                                     // restore_filename
@@ -90,7 +91,6 @@ static const GameSpecificSettings swampy_settings = {
 	"MUSIC",                                // speech_filename
 };
 
-#ifdef ENABLE_AGOS2
 AGOSEngine_DIMP::AGOSEngine_DIMP(OSystem *system, const AGOSGameDescription *gd)
 	: AGOSEngine_PuzzlePack(system, gd) {
 
