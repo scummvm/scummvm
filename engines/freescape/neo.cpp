@@ -102,12 +102,16 @@ bool NeoDecoder::loadStream(Common::SeekableReadStream &stream) {
 			for (int z = 0; z < 16; z++) {
 				// Work out the colour index:
 				int idx = 0;
-				if (uW0 & uBit) idx += 1;
-				if (uW1 & uBit) idx += 2;
-				if (uW2 & uBit) idx += 4;
-				if (uW3 & uBit) idx += 8;
+				if (uW0 & uBit)
+					idx += 1;
+				if (uW1 & uBit)
+					idx += 2;
+				if (uW2 & uBit)
+					idx += 4;
+				if (uW3 & uBit)
+					idx += 8;
 
-				_surface->setPixel(x*16 + z, y, idx);
+				_surface->setPixel(x * 16 + z, y, idx);
 				uBit >>= 1;
 			}
 		}

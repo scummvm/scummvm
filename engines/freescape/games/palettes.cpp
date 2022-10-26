@@ -39,8 +39,7 @@ byte dos_EGA_palette[16][3] = {
 	{0xff, 0x55, 0x55},
 	{0xff, 0x55, 0xff},
 	{0xff, 0xff, 0x55},
-	{0xff, 0xff, 0xff}
-};
+	{0xff, 0xff, 0xff}};
 
 byte dos_CGA_palette[4][3] = {
 	{0x00, 0x00, 0x00},
@@ -49,13 +48,12 @@ byte dos_CGA_palette[4][3] = {
 	{0x00, 0xa8, 0xa8},
 };
 
-
 void FreescapeEngine::loadColorPalette() {
 	Graphics::PixelBuffer *palette = nullptr;
 	if (_renderMode == "ega")
-		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_EGA_palette);
+		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_EGA_palette);
 	else if (_renderMode == "cga")
-		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte*)&dos_CGA_palette);
+		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_CGA_palette);
 	else if (_renderMode == "amiga" || _renderMode == "atari")
 		palette = nullptr; // palette depends on the area
 	else
@@ -86,7 +84,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 		}
 
 		assert(!_paletteByArea.contains(label));
-		_paletteByArea[label] = (byte*) palette;
+		_paletteByArea[label] = (byte *)palette;
 	}
 }
 
@@ -96,6 +94,5 @@ void FreescapeEngine::swapPalette(uint16 levelID) {
 
 	_gfx->_palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, _paletteByArea[levelID]);
 }
-
 
 } // End of namespace Freescape

@@ -359,7 +359,6 @@ void FreescapeEngine::processInput() {
 
 		default:
 			break;
-
 		}
 	}
 }
@@ -487,7 +486,6 @@ void FreescapeEngine::updateCamera() {
 	_cameraRight = v;
 }
 
-
 bool FreescapeEngine::hasFeature(EngineFeature f) const {
 	return (f == kSupportsReturnToLauncher) ||
 		   (f == kSupportsLoadingDuringRuntime) ||
@@ -502,16 +500,14 @@ void FreescapeEngine::drawStringInSurface(const Common::String &str, int x, int 
 	for (uint32 c = 0; c < ustr.size(); c++) {
 		for (int j = 0; j < 6; j++) {
 			for (int i = 0; i < 8; i++) {
-				if (_font.get(48*(ustr[c] - 32) + 1 + j*8 + i))
-					surface->setPixel(x + 8 - i + 8*c, y + j, fontColor);
+				if (_font.get(48 * (ustr[c] - 32) + 1 + j * 8 + i))
+					surface->setPixel(x + 8 - i + 8 * c, y + j, fontColor);
 				else
-					surface->setPixel(x + 8 - i + 8*c, y + j, backColor);
-
+					surface->setPixel(x + 8 - i + 8 * c, y + j, backColor);
 			}
 		}
 	}
 }
-
 
 Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream) {
 
@@ -587,7 +583,7 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 void FreescapeEngine::loadDataBundle() {
 	_dataBundle = Common::makeZipArchive(FREESCAPE_DATA_BUNDLE);
 	if (!_dataBundle) {
-			error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
+		error("ENGINE: Couldn't load data bundle '%s'.", FREESCAPE_DATA_BUNDLE.c_str());
 	}
 }
 
@@ -595,13 +591,12 @@ byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream
 	stream->seek(offset);
 	Image::NeoDecoder decoder;
 	decoder.loadStream(*stream);
-	byte *palette = (byte*) malloc(16 * 3 * sizeof(byte));
+	byte *palette = (byte *)malloc(16 * 3 * sizeof(byte));
 	memcpy(palette, decoder.getPalette(), 16 * 3 * sizeof(byte));
 	return palette;
 }
 
-
-Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte* palette) {
+Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette) {
 	stream->seek(offset);
 	Image::NeoDecoder decoder(palette);
 	decoder.loadStream(*stream);
@@ -610,6 +605,5 @@ Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadS
 	surface->convertToInPlace(_gfx->_currentPixelFormat, decoder.getPalette());
 	return surface;
 }
-
 
 } // namespace Freescape

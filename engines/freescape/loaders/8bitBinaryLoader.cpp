@@ -26,9 +26,9 @@
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
+#include "freescape/neo.h"
 #include "freescape/objects/global.h"
 #include "freescape/objects/sensor.h"
-#include "freescape/neo.h"
 
 namespace Freescape {
 
@@ -62,7 +62,7 @@ uint16 FreescapeEngine::readField(Common::SeekableReadStream *file, int bits) {
 }
 
 Common::Array<uint8> FreescapeEngine::readArray(Common::SeekableReadStream *file, int size) {
-	byte *data = (byte*)malloc(size);
+	byte *data = (byte *)malloc(size);
 	for (int i = 0; i < size; i++) {
 		data[i] = readField(file, 8);
 	}
@@ -101,7 +101,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	byteSizeOfObject = byteSizeOfObject - 9;
 	if (objectID == 255 && objectType == Object::Type::Entrance) {
 		debugC(1, kFreescapeDebugParser, "Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
-		byte *structureData = (byte*)malloc(byteSizeOfObject + 6);
+		byte *structureData = (byte *)malloc(byteSizeOfObject + 6);
 		structureData[0] = int(position.x());
 		structureData[1] = int(position.y());
 		structureData[2] = int(position.z());
@@ -111,36 +111,36 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		structureData[5] = int(v.z());
 
 		if (byteSizeOfObject > 0)
-			file->read(structureData+6, byteSizeOfObject);
+			file->read(structureData + 6, byteSizeOfObject);
 		Common::Array<uint8> structureArray(structureData, byteSizeOfObject + 6);
 		return new GlobalStructure(structureArray);
 	}
 
 	debugC(1, kFreescapeDebugParser, "Object %d ; type %d ; size %d", objectID, (int)objectType, byteSizeOfObject);
-    debugC(1, kFreescapeDebugParser, "pos: %f %f %f", position.x(), position.y(), position.z());
+	debugC(1, kFreescapeDebugParser, "pos: %f %f %f", position.x(), position.y(), position.z());
 	switch (objectType) {
 	default: {
 		debugC(1, kFreescapeDebugParser, "size: %f %f %f", v.x(), v.y(), v.z());
 		// read the appropriate number of colours
 		int numberOfColours = GeometricObject::numberOfColoursForObjectOfType(objectType);
 		Common::Array<uint8> *colours = new Common::Array<uint8>;
-		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours/2);
+		debugC(1, kFreescapeDebugParser, "Number of colors: %d", numberOfColours / 2);
 		uint8 entry;
-		for (uint8 colour = 0; colour < numberOfColours/2; colour++) {
+		for (uint8 colour = 0; colour < numberOfColours / 2; colour++) {
 			uint8 data = readField(file, 8);
 			entry = data & 0xf;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
-			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour, entry);
+			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour, entry);
 
 			entry = data >> 4;
 			if (_renderMode == "cga")
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
-			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2*colour+1, entry);
+			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour + 1, entry);
 			byteSizeOfObject--;
 		}
 
@@ -154,8 +154,8 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			uint16 ord = 0;
 			if (byteSizeOfObject < numberOfOrdinates) {
 				error("Not enough bytes to read all the ordinates");
-				//file->seek(byteSizeOfObject, SEEK_CUR);
-				//return nullptr;
+				// file->seek(byteSizeOfObject, SEEK_CUR);
+				// return nullptr;
 			}
 			for (int ordinate = 0; ordinate < numberOfOrdinates; ordinate++) {
 				ord = readField(file, 8);
@@ -171,7 +171,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		if (byteSizeOfObject) {
 			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
 			conditionSource = detokenise8bitCondition(conditionArray, instructions);
-			//instructions = getInstructions(conditionSource);
+			// instructions = getInstructions(conditionSource);
 			debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
@@ -251,8 +251,7 @@ static const char *eclipseRoomName[] = {
 	"PHARAOHS",
 	" SHABAKA",
 	"ILLUSION",
-	"????????"
-};
+	"????????"};
 
 Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 ncolors) {
 
@@ -286,20 +285,20 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	ci4 = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Colors: %d %d %d %d %d %d", ci1, ci2, ci3, ci4, skyColor, groundColor);
 	// CPC
-	//groundColor = file->readByte() & 15;
-	//skyColor = file->readByte() & 15;
-	//debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
+	// groundColor = file->readByte() & 15;
+	// skyColor = file->readByte() & 15;
+	// debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
 
 	if (_renderMode == "cga") {
 		skyColor = skyColor % 4;
 		groundColor = groundColor % 4;
 	}
 
-	//Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
+	// Graphics::PixelBuffer *palette = getPalette(areaNumber, ci1, ci2, skyColor, groundColor, ncolors);
 
 	debugC(1, kFreescapeDebugParser, "Area %d", areaNumber);
 	debugC(1, kFreescapeDebugParser, "Flags: %d Objects: %d", areaFlags, numberOfObjects);
-	//debug("Condition Ptr: %x", cPtr);
+	// debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
 
 	if (areaNumber == 192)
@@ -414,7 +413,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	debugC(1, kFreescapeDebugParser, "Color map:");
 	uint8 data;
 	for (int i = 0; i < 15; i++) {
-		byte *entry = (byte*) malloc(4 * sizeof(byte));
+		byte *entry = (byte *)malloc(4 * sizeof(byte));
 		data = readField(file, 8);
 		*entry = data;
 		entry++;
@@ -462,7 +461,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		debugC(1, kFreescapeDebugParser, "length of condition: %d at %lx", lengthOfCondition, file->pos());
 		// get the condition
 		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-		//debug("Global condition %d", numConditions + 1);
+		// debug("Global condition %d", numConditions + 1);
 		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		_conditions.push_back(instructions);
 		_conditionSources.push_back(conditionSource);
@@ -473,7 +472,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		file->seek(offset + 0x190);
 	else
 		file->seek(offset + 0xc8);
-	//file->seek(offset + 0x4f); //CPC
+	// file->seek(offset + 0x4f); //CPC
 
 	debugC(1, kFreescapeDebugParser, "areas index at: %lx", file->pos());
 	uint16 *fileOffsetForArea = new uint16[numberOfAreas];
@@ -543,7 +542,7 @@ void FreescapeEngine::loadMessagesFixedSize(Common::SeekableReadStream *file, in
 
 	for (int i = 0; i < number; i++) {
 		file->read(buffer, size);
-		Common::String message = (const char*) buffer;
+		Common::String message = (const char *)buffer;
 		_messagesList.push_back(message);
 		debugC(1, kFreescapeDebugParser, "%s", _messagesList[i].c_str());
 	}

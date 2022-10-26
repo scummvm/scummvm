@@ -43,6 +43,7 @@ public:
 	TGLuint id;
 	TGLuint internalFormat;
 	TGLuint sourceFormat;
+
 private:
 	TinyGL::BlitImage *_blitImage;
 };

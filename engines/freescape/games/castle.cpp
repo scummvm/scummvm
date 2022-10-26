@@ -43,18 +43,17 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 
 	Common::SeekableReadStream *file = gameDir.createReadStreamForMember(filename);
 	int size = file->size();
-	byte *encryptedBuffer = (byte*) malloc(size);
+	byte *encryptedBuffer = (byte *)malloc(size);
 	file->read(encryptedBuffer, size);
 
 	int seed = 24;
 	for (int i = 0; i < size; i++) {
 		encryptedBuffer[i] ^= seed;
 		seed = (seed + 1) & 0xff;
-    }
+	}
 
 	return (new Common::MemoryReadStream(encryptedBuffer, size));
 }
-
 
 void CastleEngine::loadAssets() {
 	Common::SeekableReadStream *file = nullptr;
@@ -70,10 +69,10 @@ void CastleEngine::loadAssets() {
 		iterator->_value->addStructure(_areaMap[255]);
 
 	// CPC
-	//file = gameDir.createReadStreamForMember("cm.bin");
-	//if (file == nullptr)
+	// file = gameDir.createReadStreamForMember("cm.bin");
+	// if (file == nullptr)
 	//	error("Failed to open cm.bin");
-	//load8bitBinary(file, 0x791a, 16);
+	// load8bitBinary(file, 0x791a, 16);
 }
 
 void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -97,6 +96,5 @@ void CastleEngine::gotoArea(uint16 areaID, int entranceID) {
 	} else
 		_gfx->_keyColor = 255;
 }
-
 
 } // End of namespace Freescape

@@ -24,20 +24,20 @@
 
 #include "common/bitarray.h"
 #include "common/random.h"
-#include "engines/engine.h"
 #include "engines/advancedDetector.h"
+#include "engines/engine.h"
 #include "graphics/palette.h"
 #include "graphics/surface.h"
 #include "graphics/tinygl/pixelbuffer.h"
 
-#include "audio/mixer.h"
 #include "audio/decoders/wave.h"
+#include "audio/mixer.h"
 #include "audio/softsynth/pcspk.h"
 
 #include "freescape/area.h"
-#include "freescape/objects/geometricobject.h"
-#include "freescape/objects/entrance.h"
 #include "freescape/gfx.h"
+#include "freescape/objects/entrance.h"
+#include "freescape/objects/geometricobject.h"
 
 namespace Freescape {
 
@@ -52,8 +52,8 @@ enum CameraMovement {
 	kRightMovement
 };
 
-typedef Common::HashMap<uint16, Area*> AreaMap;
-typedef Common::Array<byte*> ColorMap;
+typedef Common::HashMap<uint16, Area *> AreaMap;
+typedef Common::Array<byte *> ColorMap;
 typedef Common::HashMap<uint16, int32> StateVars;
 typedef Common::HashMap<uint16, uint32> StateBits;
 
@@ -93,8 +93,8 @@ public:
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
-	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str() ,"*-amiga-#"); }
-	bool isAtariST() { return _targetName.hasSuffix("-st") || Common::matchString(_targetName.c_str() ,"*-st-#"); }
+	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str(), "*-amiga-#"); }
+	bool isAtariST() { return _targetName.hasSuffix("-st") || Common::matchString(_targetName.c_str(), "*-st-#"); }
 	bool isDOS() { return !isAmiga() && !isAtariST(); }
 
 	Common::Error run() override;
@@ -120,10 +120,10 @@ public:
 	void loadDataBundle();
 	void loadBundledImages();
 	byte *getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset);
-	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte* palette = nullptr);
+	Graphics::Surface *loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette = nullptr);
 	void loadPalettes(Common::SeekableReadStream *file, int offset);
 	void swapPalette(uint16 areaID);
-	Common::HashMap<uint16, byte*> _paletteByArea;
+	Common::HashMap<uint16, byte *> _paletteByArea;
 	void loadColorPalette();
 	Common::Array<byte> _demoData;
 	int _demoIndex;
@@ -150,7 +150,7 @@ public:
 	virtual void gotoArea(uint16 areaID, int entranceID);
 	// Entrance
 	uint16 _startEntrance;
-	Common::HashMap<int, const struct entrancesTableEntry*> _entranceTable;
+	Common::HashMap<int, const struct entrancesTableEntry *> _entranceTable;
 
 	// Input
 	bool _demoMode;
@@ -203,7 +203,7 @@ public:
 	uint16 _playerDepth;
 
 	// Effects
-	Common::Array<Common::String*> _conditionSources;
+	Common::Array<Common::String *> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
 	bool checkCollisions(bool executeCode);
@@ -245,7 +245,7 @@ public:
 
 	void playSoundFx(int index, bool sync);
 	void loadSoundsFx(Common::SeekableReadStream *file, int offset, int number);
-	Common::HashMap<uint16, soundFx*> _soundsFx;
+	Common::HashMap<uint16, soundFx *> _soundsFx;
 
 	// Rendering
 	int _screenW, _screenH;
@@ -270,7 +270,6 @@ public:
 	Common::BitArray _font;
 	bool _fontLoaded;
 	void drawStringInSurface(const Common::String &str, int x, int y, uint32 fontColor, uint32 backColor, Graphics::Surface *surface);
-
 
 	// Game state
 	virtual void initGameState();

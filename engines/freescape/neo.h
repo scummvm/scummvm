@@ -30,7 +30,7 @@
 Atari-ST Neochrome decoder based on NEOLoad by Jason "Joefish" Railton
 */
 
-namespace Common{
+namespace Common {
 class SeekableReadStream;
 }
 

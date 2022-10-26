@@ -22,10 +22,10 @@
 // Based on Phantasma code by Thomas Harte (2013)
 
 #include "common/config-manager.h"
-#include "common/rect.h"
-#include "math/glmath.h"
 #include "common/math.h"
+#include "common/rect.h"
 #include "graphics/tinygl/tinygl.h"
+#include "math/glmath.h"
 
 #include "engines/freescape/gfx_tinygl.h"
 #include "engines/freescape/gfx_tinygl_texture.h"
@@ -53,7 +53,7 @@ void TinyGLRenderer::freeTexture(Texture *texture) {
 }
 
 void TinyGLRenderer::init() {
-	//debug("Initializing Software 3D Renderer");
+	// debug("Initializing Software 3D Renderer");
 
 	computeScreenViewport();
 
@@ -98,11 +98,11 @@ void TinyGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, floa
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
 
-	float aspectRatio = _screenW / (float) _screenH;
+	float aspectRatio = _screenW / (float)_screenH;
 
 	float xmaxValue = nearClipPlane * tan(Common::deg2rad(fov) / 2);
 	float ymaxValue = xmaxValue / aspectRatio;
-	//debug("max values: %f %f", xmaxValue, ymaxValue);
+	// debug("max values: %f %f", xmaxValue, ymaxValue);
 
 	tglFrustum(xmaxValue, -xmaxValue, -ymaxValue, ymaxValue, nearClipPlane, farClipPlane);
 	tglMatrixMode(TGL_MODELVIEW);
@@ -127,10 +127,10 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 	}
 
 	tglBegin(TGL_TRIANGLE_STRIP);
-		tglVertex3f(rect.left, rect.bottom, 0.0f);
-		tglVertex3f(rect.right, rect.bottom, 0.0f);
-		tglVertex3f(rect.left, rect.top, 0.0f);
-		tglVertex3f(rect.right, rect.top, 0.0f);
+	tglVertex3f(rect.left, rect.bottom, 0.0f);
+	tglVertex3f(rect.right, rect.bottom, 0.0f);
+	tglVertex3f(rect.left, rect.top, 0.0f);
+	tglVertex3f(rect.right, rect.top, 0.0f);
 	tglEnd();
 
 	tglDisable(TGL_BLEND);
@@ -209,8 +209,8 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		if (v0 == v1)
 			return;
 		tglBegin(TGL_LINES);
-		tglVertex3f(v0.x(), v0.y(),	v0.z());
-		tglVertex3f(v1.x(), v1.y(),	v1.z());
+		tglVertex3f(v0.x(), v0.y(), v0.z());
+		tglVertex3f(v1.x(), v1.y(), v1.z());
 		tglEnd();
 		return;
 	}
@@ -218,16 +218,16 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	tglBegin(TGL_TRIANGLES);
 	for (int i = 1; i < int(vertices.size()) - 1; i++) {
 		const Math::Vector3d &v1 = vertices[i];
-		const Math::Vector3d &v2 = vertices[i+1];
-		tglVertex3f(v0.x(), v0.y(),	v0.z());
-		tglVertex3f(v1.x(), v1.y(),	v1.z());
-		tglVertex3f(v2.x(), v2.y(),	v2.z());
+		const Math::Vector3d &v2 = vertices[i + 1];
+		tglVertex3f(v0.x(), v0.y(), v0.z());
+		tglVertex3f(v1.x(), v1.y(), v1.z());
+		tglVertex3f(v2.x(), v2.y(), v2.z());
 	}
 	tglEnd();
 }
 
 void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {
-	//assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
+	// assert(size.x() == 0 || size.y() == 0 || size.z() == 0);
 	uint8 r, g, b;
 	if (ordinates->size() % 3 > 0 && ordinates->size() > 0)
 		error("Invalid polygon with size %f %f %f and ordinates %d", size.x(), size.y(), size.z(), ordinates->size());
@@ -236,18 +236,18 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	tglEnable(TGL_POLYGON_OFFSET_FILL);
 	tglPolygonOffset(-2.0f, 1.f);
 
-	if (ordinates->size() == 6) { // Line
+	if (ordinates->size() == 6) {                 // Line
 		assert(getRGBAt((*colours)[0], r, g, b)); // It will never return false?
 		tglColor3ub(r, g, b);
 		for (int i = 0; i < int(ordinates->size()); i = i + 3)
-			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1],	(*ordinates)[i + 2]));
+			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		renderFace(vertices);
 
 		vertices.clear();
 		assert(getRGBAt((*colours)[1], r, g, b)); // It will never return false?
 		tglColor3ub(r, g, b);
 		for (int i = ordinates->size(); i > 0; i = i - 3)
-			vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2],	(*ordinates)[i-1]));
+			vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
 		renderFace(vertices);
 
 	} else {
@@ -262,7 +262,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 		if (getRGBAt((*colours)[1], r, g, b)) {
 			tglColor3ub(r, g, b);
 			for (int i = ordinates->size(); i > 0; i = i - 3) {
-				vertices.push_back(Math::Vector3d((*ordinates)[i-3], (*ordinates)[i-2], (*ordinates)[i-1]));
+				vertices.push_back(Math::Vector3d((*ordinates)[i - 3], (*ordinates)[i - 2], (*ordinates)[i - 1]));
 			}
 			renderFace(vertices);
 		}
@@ -283,7 +283,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 	Common::Array<Math::Vector3d> vertices;
 	for (int i = 0; i < 2; i++) {
 
-		//debug("rec color: %d", (*colours)[i]);
+		// debug("rec color: %d", (*colours)[i]);
 		if (getRGBAt((*colours)[i], r, g, b)) {
 			tglColor3ub(r, g, b);
 			vertices.clear();
@@ -298,7 +298,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 				dx = size.x();
 			}
 
-			vertices.push_back(Math::Vector3d(origin.x() + dx,	origin.y() + dy, origin.z() + dz));
+			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
 
@@ -314,7 +314,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 				dy = size.y();
 			}
 
-			vertices.push_back(Math::Vector3d(origin.x() + dx,	origin.y() + dy, origin.z() + dz));
+			vertices.push_back(Math::Vector3d(origin.x() + dx, origin.y() + dy, origin.z() + dz));
 			vertices.push_back(Math::Vector3d(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z()));
 			renderFace(vertices);
 		}
@@ -326,80 +326,87 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 
 void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) {
 	Math::Vector3d vertices[8] = {
-		origin,		origin,		origin,		origin,
-		origin,		origin,		origin,		origin,
+		origin,
+		origin,
+		origin,
+		origin,
+		origin,
+		origin,
+		origin,
+		origin,
 	};
 	PyramidType pyramidType = (PyramidType)type;
-	switch(pyramidType) {
-		default: break;
-		case EastPyramid:
-			vertices[0] += Math::Vector3d(0, 0, size.z());
-			vertices[1] += Math::Vector3d(0, size.y(), size.z());
-			vertices[2] += Math::Vector3d(0, size.y(), 0);
+	switch (pyramidType) {
+	default:
+		break;
+	case EastPyramid:
+		vertices[0] += Math::Vector3d(0, 0, size.z());
+		vertices[1] += Math::Vector3d(0, size.y(), size.z());
+		vertices[2] += Math::Vector3d(0, size.y(), 0);
 
-			vertices[4] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[3]);
-			vertices[5] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[3]);
-			vertices[6] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]);
-			vertices[7] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]);
-			break;
-		case WestPyramid:
+		vertices[4] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[3]);
+		vertices[5] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[3]);
+		vertices[6] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]);
+		vertices[7] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]);
+		break;
+	case WestPyramid:
 
-			vertices[0] += Math::Vector3d(size.x(), 0, 0);
-			vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
-			vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
-			vertices[3] += Math::Vector3d(size.x(), 0, size.z());
+		vertices[0] += Math::Vector3d(size.x(), 0, 0);
+		vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
+		vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
+		vertices[3] += Math::Vector3d(size.x(), 0, size.z());
 
-			vertices[4] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[1]);
-			vertices[5] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[1]);
-			vertices[6] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[3]);
-			vertices[7] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]);
-			break;
+		vertices[4] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[1]);
+		vertices[5] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[1]);
+		vertices[6] += Math::Vector3d(0, (*ordinates)[2], (*ordinates)[3]);
+		vertices[7] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]);
+		break;
 
-		case UpPyramid:
-			vertices[1] += Math::Vector3d(size.x(), 0, 0);
-			vertices[2] += Math::Vector3d(size.x(), 0, size.z());
-			vertices[3] += Math::Vector3d(0, 0, size.z());
+	case UpPyramid:
+		vertices[1] += Math::Vector3d(size.x(), 0, 0);
+		vertices[2] += Math::Vector3d(size.x(), 0, size.z());
+		vertices[3] += Math::Vector3d(0, 0, size.z());
 
-			vertices[4] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[1]);
-			vertices[5] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[1]);
-			vertices[6] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[3]);
-			vertices[7] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]);
-			break;
+		vertices[4] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[1]);
+		vertices[5] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[1]);
+		vertices[6] += Math::Vector3d((*ordinates)[2], size.y(), (*ordinates)[3]);
+		vertices[7] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]);
+		break;
 
-		case DownPyramid:
+	case DownPyramid:
 
-			vertices[0] += Math::Vector3d(size.x(), size.y(), 0);
-			vertices[1] += Math::Vector3d(0, size.y(), 0);
-			vertices[2] += Math::Vector3d(0, size.y(), size.z());
-			vertices[3] += Math::Vector3d(size.x(), size.y(), size.z());
+		vertices[0] += Math::Vector3d(size.x(), size.y(), 0);
+		vertices[1] += Math::Vector3d(0, size.y(), 0);
+		vertices[2] += Math::Vector3d(0, size.y(), size.z());
+		vertices[3] += Math::Vector3d(size.x(), size.y(), size.z());
 
-			vertices[4] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[1]);
-			vertices[5] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[1]);
-			vertices[6] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[3]);
-			vertices[7] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]);
-			break;
+		vertices[4] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[1]);
+		vertices[5] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[1]);
+		vertices[6] += Math::Vector3d((*ordinates)[0], 0, (*ordinates)[3]);
+		vertices[7] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]);
+		break;
 
-		case NorthPyramid:
-			vertices[0] += Math::Vector3d(0, size.y(), 0);
-			vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
-			vertices[2] += Math::Vector3d(size.x(), 0, 0);
+	case NorthPyramid:
+		vertices[0] += Math::Vector3d(0, size.y(), 0);
+		vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
+		vertices[2] += Math::Vector3d(size.x(), 0, 0);
 
-			vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], size.z());
-			vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], size.z());
-			vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z());
-			vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z());
-			break;
-		case SouthPyramid:
-			vertices[0] += Math::Vector3d(0, 0, size.z());
-			vertices[1] += Math::Vector3d(size.x(), 0, size.z());
-			vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
+		vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], size.z());
+		vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], size.z());
+		vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z());
+		vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z());
+		break;
+	case SouthPyramid:
+		vertices[0] += Math::Vector3d(0, 0, size.z());
+		vertices[1] += Math::Vector3d(size.x(), 0, size.z());
+		vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
 
-			vertices[3] += Math::Vector3d(0, size.y(), size.z());
-			vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], 0);
-			vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], 0);
-			vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], 0);
-			vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], 0);
-			break;
+		vertices[3] += Math::Vector3d(0, size.y(), size.z());
+		vertices[4] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], 0);
+		vertices[5] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], 0);
+		vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[3], 0);
+		vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[3], 0);
+		break;
 	}
 
 	Common::Array<Math::Vector3d> face;
@@ -475,21 +482,21 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	assert(size.y() > 0);
 	assert(size.z() > 0);*/
 
-	//debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
-	//debug("with size %f, %f, %f", size.x(), size.y(), size.z());
+	// debug("Rendering cube at %f, %f, %f", origin.x(), origin.y(), origin.z());
+	// debug("with size %f, %f, %f", size.x(), size.y(), size.z());
 	uint8 r, g, b;
 
 	// Face 0
 	if (getRGBAt((*colours)[0], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),	origin.y(),				origin.z());
-		tglVertex3f(origin.x(),	origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z() + size.z());
 
-		tglVertex3f(origin.x(),	origin.y(),				origin.z());
-		tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x(),	origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z());
 		tglEnd();
 	}
 
@@ -497,13 +504,13 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	if (getRGBAt((*colours)[1], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z() + size.z());
 
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z());
 		tglEnd();
 	}
 
@@ -511,13 +518,13 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	if (getRGBAt((*colours)[2], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x(),			origin.y(),		origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z() + size.z());
 
-		tglVertex3f(origin.x() + size.x(),	origin.y(),	origin.z());
-		tglVertex3f(origin.x(),			origin.y(),		origin.z() + size.z());
-		tglVertex3f(origin.x(),			origin.y(),		origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z());
 		tglEnd();
 	}
 
@@ -525,13 +532,13 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	if (getRGBAt((*colours)[3], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
 
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z());
 		tglEnd();
 	}
 
@@ -539,13 +546,13 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	if (getRGBAt((*colours)[4], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z());
 
-		tglVertex3f(origin.x(),				origin.y() + size.y(),	origin.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z());
-		tglVertex3f(origin.x(),				origin.y(),				origin.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z());
 		tglEnd();
 	}
 
@@ -553,13 +560,13 @@ void TinyGLRenderer::renderCube(const Math::Vector3d &origin, const Math::Vector
 	if (getRGBAt((*colours)[5], r, g, b)) {
 		tglColor3ub(r, g, b);
 		tglBegin(TGL_TRIANGLES);
-		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
 
-		tglVertex3f(origin.x(),		        origin.y(),				origin.z() + size.z());
-		tglVertex3f(origin.x() + size.x(),	origin.y() + size.y(),	origin.z() + size.z());
-		tglVertex3f(origin.x(),		        origin.y() + size.y(),	origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y(), origin.z() + size.z());
+		tglVertex3f(origin.x() + size.x(), origin.y() + size.y(), origin.z() + size.z());
+		tglVertex3f(origin.x(), origin.y() + size.y(), origin.z() + size.z());
 		tglEnd();
 	}
 }
@@ -593,7 +600,7 @@ void TinyGLRenderer::flipBuffer() {
 	if (!dirtyAreas.empty()) {
 		for (Common::List<Common::Rect>::iterator itRect = dirtyAreas.begin(); itRect != dirtyAreas.end(); ++itRect) {
 			g_system->copyRectToScreen(glBuffer.getBasePtr((*itRect).left, (*itRect).top), glBuffer.pitch,
-			                           (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
+									   (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
 		}
 	}
 }

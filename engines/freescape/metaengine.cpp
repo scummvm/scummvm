@@ -34,11 +34,11 @@ public:
 Common::Error FreescapeMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const {
 	if (Common::String(gd->gameId) == "driller" || Common::String(gd->gameId) == "spacestationoblivion") {
 		*engine = (Engine *)new Freescape::DrillerEngine(syst, gd);
-	} else 	if (Common::String(gd->gameId) == "darkside") {
+	} else if (Common::String(gd->gameId) == "darkside") {
 		*engine = (Engine *)new Freescape::DarkEngine(syst, gd);
-	} else 	if (Common::String(gd->gameId) == "totaleclipse") {
+	} else if (Common::String(gd->gameId) == "totaleclipse") {
 		*engine = (Engine *)new Freescape::EclipseEngine(syst, gd);
-	} else 	if (Common::String(gd->gameId) == "castlemaster") {
+	} else if (Common::String(gd->gameId) == "castlemaster") {
 		*engine = (Engine *)new Freescape::CastleEngine(syst, gd);
 	} else
 		*engine = new Freescape::FreescapeEngine(syst, gd);
@@ -52,7 +52,7 @@ bool FreescapeEngine::isDemo() const {
 	return (bool)(_gameDescription->flags & ADGF_DEMO);
 }
 
-} // End of namespace freescape
+} // namespace Freescape
 
 #if PLUGIN_ENABLED_DYNAMIC(FREESCAPE)
 REGISTER_PLUGIN_DYNAMIC(FREESCAPE, PLUGIN_TYPE_ENGINE, FreescapeMetaEngine);

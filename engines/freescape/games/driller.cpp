@@ -29,9 +29,9 @@
 namespace Freescape {
 
 DrillerEngine::DrillerEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
-	//if (isAmiga())
+	// if (isAmiga())
 	//	_viewArea = Common::Rect(72, 66, 567, 269);
-	//else
+	// else
 	_viewArea = Common::Rect(40, 16, 279, 116);
 	_playerHeightNumber = 1;
 	_playerHeights.push_back(16);
@@ -72,8 +72,8 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
 		Math::Vector3d diff = _lastPosition - _position;
-		//debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
-		// diff should be used to determinate which entrance to use
+		// debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
+		//  diff should be used to determinate which entrance to use
 		int newPos = -1;
 		if (abs(diff.x()) < abs(diff.z())) {
 			if (diff.z() > 0)
@@ -161,7 +161,7 @@ void DrillerEngine::loadAssetsDemo() {
 		if (file == nullptr)
 			error("Failed to open 'data' file");
 
-		//loadGlobalObjects(file, 0xbd62);
+		// loadGlobalObjects(file, 0xbd62);
 		/*file->seek(0x29efe);
 		load8bitArea(file, 16);
 		file->seek(0x2a450);
@@ -204,7 +204,7 @@ void DrillerEngine::loadAssetsDemo() {
 		if (file == nullptr)
 			error("Failed to open 'data' file");
 
-		//loadGlobalObjects(file, 0xbd62);
+		// loadGlobalObjects(file, 0xbd62);
 		/*file->seek(0x29efe);
 		load8bitArea(file, 16);
 		file->seek(0x2a450);
@@ -223,14 +223,12 @@ void DrillerEngine::loadAssetsDemo() {
 			error("Failed to open 'soundfx' executable for AtariST demo");
 
 		loadSoundsFx(file, 0, 25);
-	}
-	else
+	} else
 		error("Unsupported demo for Driller");
 
 	_demoMode = true;
 	_angleRotationIndex = 1;
 }
-
 
 void DrillerEngine::loadAssetsFullGame() {
 	Common::SeekableReadStream *file = nullptr;
@@ -246,7 +244,7 @@ void DrillerEngine::loadAssetsFullGame() {
 				error("Failed to open 'driller' executable for Amiga");
 
 			_border = loadAndConvertNeoImage(file, 0x137f4);
-			byte *palette = (byte*) malloc(16 * 3);
+			byte *palette = (byte *)malloc(16 * 3);
 			for (int i = 0; i < 16; i++) { // gray scale palette
 				palette[i * 3 + 0] = i * (255 / 16);
 				palette[i * 3 + 1] = i * (255 / 16);
@@ -331,7 +329,6 @@ void DrillerEngine::drawUI() {
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
 
-
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 
 		if (!_uiTexture)
@@ -347,7 +344,7 @@ void DrillerEngine::drawUI() {
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
 	if (_renderMode == "ega" && _border) {
-		//Common::Rect black(20, 177, 87, 191);
+		// Common::Rect black(20, 177, 87, 191);
 		//_gfx->drawRect2D(black, 255, 0, 0, 0);
 
 		if (energy >= 0) {
@@ -394,7 +391,7 @@ void DrillerEngine::pressedKey(const int keycode) {
 		_gameStateVars[32]++;
 		// TODO: check if there is space for the drill
 		Math::Vector3d drillPosition = _cameraFront;
-		drillPosition =  _position + 256 * drillPosition;
+		drillPosition = _position + 256 * drillPosition;
 
 		debugC(1, kFreescapeDebugMove, "Current position at %f %f %f", _position.x(), _position.y(), _position.z());
 		drillPosition.setValue(1, _position.y() - _playerHeight * _currentArea->getScale());
@@ -439,7 +436,7 @@ bool DrillerEngine::drillDeployed() {
 }
 
 void DrillerEngine::addDrill(const Math::Vector3d position) {
-	//int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
+	// int drillObjectIDs[8] = {255, 254, 253, 252, 251, 250, 248, 247};
 	GeometricObject *obj = nullptr;
 	Math::Vector3d origin = position;
 
@@ -448,11 +445,11 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 255;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 	obj->setOrigin(origin);
-	//offset.setValue(1, offset.y() + obj->getSize().y());
+	// offset.setValue(1, offset.y() + obj->getSize().y());
 	obj->makeVisible();
 	_currentArea->addObject(obj);
 
@@ -460,7 +457,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 254;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	// Set position for object
 	origin.setValue(0, origin.x() - obj->getSize().x() / 5);
@@ -479,7 +476,7 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 
 	id = 253;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 
@@ -492,13 +489,13 @@ void DrillerEngine::addDrill(const Math::Vector3d position) {
 	_currentArea->addObject(obj);
 
 	// Undo offset
-	//origin.setValue(0, origin.x() - obj->getSize().x() / 5);
+	// origin.setValue(0, origin.x() - obj->getSize().x() / 5);
 	heightLastObject = obj->getSize().y();
-	//origin.setValue(2, origin.z() - obj->getSize().z() / 5);
+	// origin.setValue(2, origin.z() - obj->getSize().z() / 5);
 
 	id = 252;
 	debugC(1, kFreescapeDebugParser, "Adding object %d to room structure", id);
-	obj = (GeometricObject*) _areaMap[255]->objectWithID(id);
+	obj = (GeometricObject *)_areaMap[255]->objectWithID(id);
 	assert(obj);
 	obj = obj->duplicate();
 	origin.setValue(1, origin.y() + heightLastObject);

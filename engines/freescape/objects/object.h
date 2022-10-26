@@ -24,8 +24,8 @@
 #ifndef FREESCAPE_OBJECT_H
 #define FREESCAPE_OBJECT_H
 
-#include "math/vector3d.h"
 #include "math/aabb.h"
+#include "math/vector3d.h"
 
 #include "freescape/gfx.h"
 

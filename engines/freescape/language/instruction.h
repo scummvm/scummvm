@@ -49,6 +49,7 @@ public:
 
 	FCLInstructionVector *thenInstructions;
 	FCLInstructionVector *elseInstructions;
+
 private:
 	enum Token::Type type;
 };

@@ -28,7 +28,7 @@ void FreescapeEngine::gotoArea(uint16 areaID, int entranceID) {
 }
 
 void FreescapeEngine::traverseEntrance(uint16 entranceID) {
-	Entrance *entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+	Entrance *entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
 	assert(entrance);
 
 	int scale = _currentArea->getScale();
@@ -60,7 +60,7 @@ void FreescapeEngine::shoot() {
 	Math::Ray ray(_position, direction);
 	Object *shot = _currentArea->shootRay(ray);
 	if (shot) {
-		GeometricObject *gobj = (GeometricObject*) shot;
+		GeometricObject *gobj = (GeometricObject *)shot;
 		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
 
 		if (gobj->conditionSource != nullptr)
@@ -134,7 +134,6 @@ void FreescapeEngine::lower() {
 	debugC(1, kFreescapeDebugMove, "new player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 }
 
-
 void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTime) {
 	debugC(1, kFreescapeDebugMove, "old player position: %f, %f, %f", _position.x(), _position.y(), _position.z());
 	int previousAreaID = _currentArea->getAreaID();
@@ -172,7 +171,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 
 	if (!collided) {
 		bool hasFloor = checkFloor(_position);
-		if (!hasFloor  && !_flyMode) {
+		if (!hasFloor && !_flyMode) {
 			int fallen;
 			for (fallen = 1; fallen < 65 + 1; fallen++) {
 				_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
@@ -182,7 +181,7 @@ void FreescapeEngine::move(CameraMovement direction, uint8 scale, float deltaTim
 			fallen++;
 			fallen++;
 			if (fallen >= 67) {
-				_position = _lastPosition; //error("NASTY FALL!");
+				_position = _lastPosition; // error("NASTY FALL!");
 				return;
 			}
 			_position.set(_position.x(), positionY - fallen * areaScale, _position.z());
@@ -256,15 +255,14 @@ bool FreescapeEngine::tryStepDown(Math::Vector3d currentPosition) {
 	}
 }
 
-
 bool FreescapeEngine::checkCollisions(bool executeCode) {
 	if (_noClipMode)
 		return false;
 	int areaScale = _currentArea->getScale();
 	Math::AABB boundingBox(_lastPosition, _lastPosition);
 
-	Math::Vector3d v1(_position.x() - areaScale, _position.y() - areaScale * _playerHeight , _position.z() - areaScale);
-	Math::Vector3d v2(_position.x() + areaScale, _position.y() + areaScale                 , _position.z() + areaScale);
+	Math::Vector3d v1(_position.x() - areaScale, _position.y() - areaScale * _playerHeight, _position.z() - areaScale);
+	Math::Vector3d v2(_position.x() + areaScale, _position.y() + areaScale, _position.z() + areaScale);
 
 	boundingBox.expand(v1);
 	boundingBox.expand(v2);
@@ -272,7 +270,7 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 
 	if (obj != nullptr) {
 		debugC(1, kFreescapeDebugMove, "Collided with object id %d of size %f %f %f", obj->getObjectID(), obj->getSize().x(), obj->getSize().y(), obj->getSize().z());
-		GeometricObject *gobj = (GeometricObject*) obj;
+		GeometricObject *gobj = (GeometricObject *)obj;
 		if (!executeCode) // Avoid executing code
 			return true;
 
@@ -282,4 +280,4 @@ bool FreescapeEngine::checkCollisions(bool executeCode) {
 	return false;
 }
 
-} // End of namespace
+} // namespace Freescape

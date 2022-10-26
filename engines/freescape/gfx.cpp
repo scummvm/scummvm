@@ -26,15 +26,15 @@
 #include "graphics/opengl/context.h"
 #endif
 
-#include "math/glmath.h"
 #include "engines/util.h"
+#include "math/glmath.h"
 
 #include "engines/freescape/gfx.h"
 
 namespace Freescape {
 
 Renderer::Renderer(OSystem *system, int screenW, int screenH)
-		: _system(system) {
+	: _system(system) {
 
 	_screenW = screenW;
 	_screenH = screenH;
@@ -51,7 +51,7 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH)
 Renderer::~Renderer() {}
 
 Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) {
-	Graphics::Surface * surf = new Graphics::Surface();
+	Graphics::Surface *surf = new Graphics::Surface();
 	surf->create(_screenW, _screenH, _originalPixelFormat);
 	surf->copyRectToSurface(rawsurf->getRawBuffer(), surf->w, 0, 0, surf->w, surf->h);
 	surf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
@@ -73,8 +73,8 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		return true;
 	}
 
-	//assert(index-1 < _colorMap->size());
-	byte *entry = (*_colorMap)[index-1];
+	// assert(index-1 < _colorMap->size());
+	byte *entry = (*_colorMap)[index - 1];
 	uint8 color = 0;
 	uint8 acc = 1;
 	for (int i = 0; i < 4; i++) {
@@ -96,7 +96,6 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	return true;
 }
 
-
 Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
@@ -108,10 +107,10 @@ void Renderer::computeScreenViewport() {
 Renderer *createRenderer(OSystem *system, int screenW, int screenH) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL; //Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::kRendererTypeTinyGL; //Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL;  // Graphics::parseRendererTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::kRendererTypeTinyGL; // Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
 
-	bool isAccelerated = 0; //matchingRendererType != Graphics::kRendererTypeTinyGL;
+	bool isAccelerated = 0; // matchingRendererType != Graphics::kRendererTypeTinyGL;
 
 	if (isAccelerated) {
 		initGraphics3d(screenW, screenH);
@@ -119,32 +118,32 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH) {
 		initGraphics(screenW, screenH, &pixelFormat);
 	}
 
-/*#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-	bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-#endif
+	/*#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+		bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
+	#endif
 
-#if defined(USE_OPENGL_GAME)
-	// Check the OpenGL context actually supports shaders
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-		matchingRendererType = Graphics::kRendererTypeOpenGL;
-	}
-#endif*/
+	#if defined(USE_OPENGL_GAME)
+		// Check the OpenGL context actually supports shaders
+		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
+			matchingRendererType = Graphics::kRendererTypeOpenGL;
+		}
+	#endif*/
 
 	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
 		// Display a warning if unable to use the desired renderer
 		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
 	}
-/*
-#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-		return CreateGfxOpenGLShader(system);
-	}
-#endif
-#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-	if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-		return CreateGfxOpenGL(system);
-	}
-#endif*/
+	/*
+	#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
+		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
+			return CreateGfxOpenGLShader(system);
+		}
+	#endif
+	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
+			return CreateGfxOpenGL(system);
+		}
+	#endif*/
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
 		return CreateGfxTinyGL(system, screenW, screenH);
 	}
