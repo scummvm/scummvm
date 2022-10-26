@@ -42,12 +42,11 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	else
 		_renderMode = ConfMan.get("render_mode");
 
+	_binaryBits = 0;
 	_screenW = 320;
 	_screenH = 200;
 
 	if (isAmiga()) {
-		//_screenW = 640;
-		//_screenH = 480;
 		_renderMode = "amiga";
 	} else if (isAtariST()) {
 		_renderMode = "atari";
@@ -61,14 +60,18 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");
 
+	_startArea = 0;
+	_startEntrance = 0;
 	_currentArea = nullptr;
-	_rotation = Math::Vector3d(0.f, 0.f, 0.f);
-	_position = Math::Vector3d(0.f, 0.f, 0.f);
-	_lastPosition = Math::Vector3d(0.f, 0.f, 0.f);
-	_velocity = Math::Vector3d(0.f, 0.f, 0.f);
-	_cameraFront = Math::Vector3d(0.f, 0.f, 0.f);
-	_cameraRight = Math::Vector3d(0.f, 0.f, 0.f);
-	_upVector =	Math::Vector3d(0, 1.0f, 0);
+	_rotation = Math::Vector3d(0, 0, 0);
+	_position = Math::Vector3d(0, 0, 0);
+	_lastPosition = Math::Vector3d(0, 0, 0);
+	_velocity = Math::Vector3d(0, 0, 0);
+	_cameraFront = Math::Vector3d(0, 0, 0);
+	_cameraRight = Math::Vector3d(0, 0, 0);
+	_yaw = 0;
+	_pitch = 0;
+	_upVector = Math::Vector3d(0, 1, 0);
 	_movementSpeed = 1.5f;
 	_mouseSensitivity = 0.25f;
 	_demoMode = false;
@@ -88,10 +91,23 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_borderTexture = nullptr;
 	_uiTexture = nullptr;
 	_fontLoaded = false;
+	_dataBundle = nullptr;
+
+	_lastMousePos = Common::Point(0, 0);
+	_lastFrame = 0;
+	_nearClipPlane = 1;
+
+	// These depends on the specific game
+	_farClipPlane = 0;
+	_playerHeight = 0;
+	_playerWidth = 0;
+	_playerDepth = 0;
+	_colorNumber = 0;
 
 	_fullscreenViewArea = Common::Rect(0, 0, _screenW, _screenH);
 	_viewArea = _fullscreenViewArea;
 	_rnd = new Common::RandomSource("freescape");
+	_gfx = nullptr;
 }
 
 FreescapeEngine::~FreescapeEngine() {
@@ -383,11 +399,6 @@ Common::Error FreescapeEngine::run() {
 	loadColorPalette();
 
 	// Simple main event loop
-	_lastMousePos = Common::Point(0, 0);
-	_lastFrame = 0.f;
-	// used to create a projection matrix;
-	_nearClipPlane = 1.f;
-
 	if (_binaryBits == 16) {
 		// Do not render face if color is zero
 		_gfx->_keyColor = 0;
