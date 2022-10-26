@@ -32,9 +32,31 @@ class Map36 : public Map {
 	typedef void (Map36:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special11();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map36::special00
+	const SpecialFn SPECIAL_FN[15] = {
+		&Map36::special00,
+		&Map36::special01,
+		&Map36::special02,
+		&Map36::special03,
+		&Map36::special04,
+		&Map36::special05,
+		&Map36::special06,
+		&Map36::special07,
+		&Map36::special07,
+		&Map36::special07,
+		&Map36::special07,
+		&Map36::special11,
+		&Map36::special11,
+		&Map36::special11,
+		&Map36::special11
 	};
 public:
 	Map36() : Map(36, "blackrs", 0x508) {}
