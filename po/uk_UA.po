@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.9.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-25 21:05+0000\n"
-"PO-Revision-Date: 2022-10-10 13:25+0000\n"
+"PO-Revision-Date: 2022-10-26 11:42+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Ukrainian <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/uk/>\n"
@@ -8891,10 +8891,8 @@ msgid "Toggle subtitles"
 msgstr "Перемкнути субтитри"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Сховати Інші"
+msgstr "Сховати підказки"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
