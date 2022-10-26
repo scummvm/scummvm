@@ -188,6 +188,8 @@ void ScummEngine_v80he::o80_readConfigFile() {
 	case SO_DWORD: // number
 		if (!strcmp((char *)option, "Benchmark"))
 			push(2);
+		else if (!strcmp((char *)option, "hostip"))
+			push(ConfMan.getBool("host_game"));
 		else
 			push(atoi(entry.c_str()));
 		break;
