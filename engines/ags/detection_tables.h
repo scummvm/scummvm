@@ -3684,6 +3684,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN_STEAM("richardandalice", "richardandalice.exe", "1023d348f67ba958f78ed62d029565c7", 109164768),
 	GAME_ENTRY_EN_STEAM("richardandalice", "richardandalice.exe", "f47d11397e2059a25b11057ea6cf3409", 108264256),
 	GAME_ENTRY_EN_GOG("richardandalice", "richardandalice.exe", "9a7e38a1810e6a1839601fb5c6bd42e6", 108602238), // Desura - GOG v1.0
+	GAME_ENTRY_EN_STEAM("rnrneverdies", "Rock 'n' Roll Will Never Die.exe", "28456c6a3a38874b833651c4433e22b4", 37722884),
 	GAME_ENTRY_EN_STEAM("roguestate", "roguestate.exe", "981a1c4d5a64b8ebe300f9769acf0fe5", 895486573),
 	GAME_ENTRY_GOG("samaritan", "samaritan.exe", "79dd677433bbb10d4970367eb68b243c", 78070237), // Groupees, v1.1 - GOG
 	GAME_ENTRY_STEAM("samaritan", "samaritan.exe", "5fb404a4a7c9cd1449dfdd3d23fa0250", 78753952),
