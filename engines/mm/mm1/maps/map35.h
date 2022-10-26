@@ -69,10 +69,10 @@ public:
 	void acceptQuest();
 
 	/**
-	 * Does a check for the party's current quest is one
-	 * of Inspectron's, and if it's complete
+	 * Does a check for whether Inspectron's current quest
+	 * is complete or not
 	 */
-	bool matchQuest(Common::String &line);
+	Common::String checkQuestComplete();
 };
 
 } // namespace Maps

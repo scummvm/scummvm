@@ -36,7 +36,8 @@ Inspectron::Inspectron() : TextView("Inspectron") {
 }
 
 bool Inspectron::msgFocus(const FocusMessage &msg) {
-	_canAccept = !g_globals->_party[0]._quest;
+	g_globals->_currCharacter = &g_globals->_party[0];
+	_canAccept = !g_globals->_currCharacter->_quest;
 	return TextView::msgFocus(msg);
 }
 
@@ -53,7 +54,9 @@ void Inspectron::draw() {
 		int questNum = g_globals->_party[0]._quest;
 		Common::String line;
 
-		if (questNum < 8 || questNum > 14 || !map.matchQuest(line))
+		if (questNum >= 8 || questNum <= 14)
+			line = map.checkQuestComplete();
+		else
 			line = STRING["maps.map35.inspectron4"];
 
 		g_maps->_mapPos.y++;
