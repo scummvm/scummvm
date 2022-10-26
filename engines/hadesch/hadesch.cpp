@@ -174,9 +174,9 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 }
 #endif
 
-Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources *exe) {
+Common::ErrorCode HadeschEngine::loadWindowsCursors(const Common::ScopedPtr<Common::PEResources>& exe) {
 	for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
-		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, cursorids[i]);
+		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe.get(), cursorids[i]);
 
 		if (!group) {
 			debug("Cannot find cursor group %d", cursorids[i]);
@@ -193,13 +193,11 @@ Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources *exe) {
 Common::ErrorCode HadeschEngine::loadCursors() {
 	debug("HadeschEngine: loading cursors");
 
-	Common::PEResources *exe = new Common::PEResources();
-	if (exe->loadFromEXE("HADESCH.EXE")) {
-		Common::ErrorCode status = loadWindowsCursors(exe);
-		delete exe;
-		return status;
-	} else {
-		delete exe;
+	{
+		Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
+		if (exe->loadFromEXE("HADESCH.EXE")) {
+			return loadWindowsCursors(exe);
+		}
 	}
 
 	const char *const macPaths[] = {
@@ -214,7 +212,8 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 		}
 
 		for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
-			Common::SeekableReadStream *stream = resMan.getResource(MKTAG('c','r','s','r'), cursorids[i]);
+			Common::ScopedPtr<Common::SeekableReadStream> stream = Common::ScopedPtr<Common::SeekableReadStream>(
+				resMan.getResource(MKTAG('c','r','s','r'), cursorids[i]));
 			if (!stream) {
 				debug("Couldn't load cursor %d", cursorids[i]);
 				return Common::kUnsupportedGameidError;
@@ -222,7 +221,6 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 			Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 			macCursor->readFromStream(*stream);
 			_cursors.push_back(macCursor);
-			delete stream;
 			_macCursors.push_back(macCursor);
 		}
 		return Common::kNoError;
@@ -249,13 +247,10 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 					return Common::kUnsupportedGameidError;
 				}
 
-				exe = new Common::PEResources();
+				Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
 				if (exe->loadFromEXE(hadeschExe)) {
 					Common::ErrorCode status = loadWindowsCursors(exe);
-					delete exe;
 					return status;
-				} else {
-					delete exe;
 				}
 			}
 		}
