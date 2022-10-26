@@ -1764,7 +1764,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("backgrounds", "Demo", "Backgrounds Demo", "d029fcb13fd2f0944f3c04577ad3b848", 2410386, 200),
 
 	// Movies called from HyperCard with external MacroMind Player 2.0
-	MACGAME1("beyondcyberpunk", "v1.5", "1984", "026bda630919f3692e649c00b1b52dd9", 34425, 200),
+	MACGAME1("beyondcyberpunk", "v1.5", "1984", "026bda630919f3692e649c00b1b52dd9", 34169, 200),
 
 	MACDEMO1("illustrator", "v3.0 Demo", "a double click please", "cfa68a1bc49251497ebde18e5fc9c217", 194065, 200),
 
@@ -1780,8 +1780,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Movies called from HyperCard with external MacroMind Player 2.0
 	MACGAME1("spelunx", "v1.2", "Spelunx", "3eb3598b7f6bb09de4dd31aca3683d8f", 371154, 200),
 
-	MACGAME2("system7smash", "", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 226177,
-								 "Smash", "7c11c3c07b87188cdf6260f922bb9e3c", 9287, 201),
+	MACGAME2("system7smash", "", "Double Click", "e54ec74aeb4355b0acd46320327c1bed", 225921,
+								 "Smash", "7c11c3c07b87188cdf6260f922bb9e3c", 9031, 201),
 
 	MACGAME1_l("tri3dtrial", "", "Tri-3D-Trial", "cfa68a1bc49251497ebde18e5fc9c217", 270967, Common::JA_JPN, 200),
 
