@@ -38,20 +38,20 @@ Socket::~Socket() {
 }
 
 bool Socket::send(Common::String address, int port, const char *data) {
-	ENetAddress _address;
+	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
-		_address.host = ENET_HOST_BROADCAST;
+		enetAddress.host = ENET_HOST_BROADCAST;
 	} else {
 		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
-		enet_address_set_host(&_address, address.c_str());
+		enet_address_set_host(&enetAddress, address.c_str());
 	}
-	_address.port = port;
+	enetAddress.port = port;
 
-	ENetBuffer _buffer;
-	_buffer.data = const_cast<char *>(data);
-	_buffer.dataLength = strlen(data);
+	ENetBuffer buffer;
+	buffer.data = const_cast<char *>(data);
+	buffer.dataLength = strlen(data);
 
-	int sentLength = enet_socket_send(_socket, &_address, &_buffer, 1);
+	int sentLength = enet_socket_send(_socket, &enetAddress, &buffer, 1);
 	if (sentLength < 0)
 		return false;
 	
@@ -59,15 +59,15 @@ bool Socket::send(Common::String address, int port, const char *data) {
 }
 
 bool Socket::receive() {
-	ENetBuffer _buffer;
+	ENetBuffer buffer;
 
 	char data[4096]; // ENET_PROTOCOL_MAXIMUM_MTU
-	_buffer.data = data;
-	_buffer.dataLength = sizeof(data);
+	buffer.data = data;
+	buffer.dataLength = sizeof(data);
 
 	ENetAddress _address;
 
-	int receivedLength = enet_socket_receive(_socket, &_address, &_buffer, 1);
+	int receivedLength = enet_socket_receive(_socket, &_address, &buffer, 1);
 	if (receivedLength < 0) {
 		warning("ENet: An error has occured when receiving data from socket");
 		return false;
@@ -78,9 +78,9 @@ bool Socket::receive() {
 	
 	_recentData = Common::String((const char*)data, receivedLength);
 
-	char _hostName[15];
-	if (enet_address_get_host_ip(&_address, _hostName, sizeof(_hostName)) == 0)
-		_recentHost = _hostName;
+	char hostName[15];
+	if (enet_address_get_host_ip(&_address, hostName, sizeof(hostName)) == 0)
+		_recentHost = hostName;
 	else
 		_recentHost = "";
 	_recentPort = _address.port;
@@ -88,15 +88,15 @@ bool Socket::receive() {
 	return true;
 }
 
-Common::String Socket::get_data() {
+Common::String Socket::getData() {
 	return _recentData;
 }
 
-Common::String Socket::get_host() {
+Common::String Socket::getHost() {
 	return _recentHost;
 }
 
-int Socket::get_port() {
+int Socket::getPort() {
 	return _recentPort;
 }
 

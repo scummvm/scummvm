@@ -49,15 +49,15 @@ public:
 	uint8 service(int timeout = 0);
 
 	bool send(const char *data, int peerIndex, int channel = 0, bool reliable = true);
-	bool send_raw_data(Common::String address, int port, const char *data);
+	bool sendRawData(Common::String address, int port, const char *data);
 
-	Common::String get_host();
-	int get_port();
+	Common::String getHost();
+	int getPort();
 
-	int get_peer_index_from_host(Common::String host, int port);
+	int getPeerIndexFromHost(Common::String host, int port);
 
-	Common::String get_packet_data();
-	void destroy_packet();
+	Common::String getPacketData();
+	void destroyPacket();
 private:
 	ENetHost *_host;
 	ENetPeer *_serverPeer; // Only used for clients.

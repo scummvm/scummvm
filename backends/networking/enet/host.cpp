@@ -42,7 +42,7 @@ Host::Host(ENetHost *host, ENetPeer *serverPeer) {
 
 Host::~Host() {
 	if (_recentPacket)
-		destroy_packet();
+		destroyPacket();
 	enet_host_destroy(_host);
 }
 
@@ -52,13 +52,13 @@ uint8 Host::service(int timeout) {
 	_recentEvent = &event;
 	if (event.type == ENET_EVENT_TYPE_RECEIVE) {
 		if (_recentPacket)
-			destroy_packet();
+			destroyPacket();
 		_recentPacket = event.packet;
 	}
 	return event.type;
 }
 
-Common::String Host::get_host() {
+Common::String Host::getHost() {
 	if (!_recentEvent)
 		return "";
 
@@ -68,13 +68,13 @@ Common::String Host::get_host() {
 	return "";
 }
 
-int Host::get_port() {
+int Host::getPort() {
 	if (!_recentEvent || !_recentEvent->peer)
 		return 0;
 	return _recentEvent->peer->address.port;
 }
 
-int Host::get_peer_index_from_host(Common::String host, int port) {
+int Host::getPeerIndexFromHost(Common::String host, int port) {
 	for (int i = 0; i < (int)_host->peerCount; i++) {
 		char _hostName[50];
 		if (enet_address_get_host_ip(&_host->peers[i].address, _hostName, 50) == 0) {
@@ -86,13 +86,13 @@ int Host::get_peer_index_from_host(Common::String host, int port) {
 	return -1;
 }
 
-Common::String Host::get_packet_data() {
+Common::String Host::getPacketData() {
 	if (!_recentPacket)
 		return "";
 	return Common::String((const char*)_recentPacket->data, (uint32)_recentPacket->dataLength);
 }
 
-void Host::destroy_packet() {
+void Host::destroyPacket() {
 	if (!_recentPacket)
 		return;
 	enet_packet_destroy(_recentPacket);
@@ -118,21 +118,21 @@ bool Host::send(const char *data, int peerIndex, int channel, bool reliable) {
 	return true;
 }
 
-bool Host::send_raw_data(Common::String address, int port, const char *data) {
-	ENetAddress _address;
+bool Host::sendRawData(Common::String address, int port, const char *data) {
+	ENetAddress enetAddress;
 	if (address == "255.255.255.255") {
-		_address.host = ENET_HOST_BROADCAST;
+		enetAddress.host = ENET_HOST_BROADCAST;
 	} else {
 		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
-		enet_address_set_host(&_address, address.c_str());
+		enet_address_set_host(&enetAddress, address.c_str());
 	}
-	_address.port = port;
+	enetAddress.port = port;
 
 	ENetBuffer _buffer;
 	_buffer.data = const_cast<char *>(data);
 	_buffer.dataLength = strlen(data);
 
-	int sentLength = enet_socket_send(_host->socket, &_address, &_buffer, 1);
+	int sentLength = enet_socket_send(_host->socket, &enetAddress, &_buffer, 1);
 	if (sentLength < 0)
 		return false;
 	

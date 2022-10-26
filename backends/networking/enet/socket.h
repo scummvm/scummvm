@@ -42,10 +42,10 @@ public:
 	bool send(Common::String address, int port, const char *data);
 	bool receive();
 
-	Common::String get_data();
+	Common::String getData();
 
-	Common::String get_host();
-	int get_port();
+	Common::String getHost();
+	int getPort();
 private:
 	ENetSocket _socket;
 	Common::String _recentData;
