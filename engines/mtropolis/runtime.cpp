@@ -695,88 +695,6 @@ bool DynamicListContainer<void>::compareEqual(const DynamicListContainerBase &ot
 DynamicListContainerBase *DynamicListContainer<void>::clone() const {
 	return new DynamicListContainer<void>(*this);
 }
-
-bool DynamicListContainer<VarReference>::setAtIndex(size_t index, const DynamicValue &dynValue) {
-	if (dynValue.getType() != DynamicValueTypes::kVariableReference)
-		return false;
-
-	size_t requiredSize = index + 1;
-
-	if (_array.size() < requiredSize) {
-		size_t prevSize = _array.size();
-		_array.resize(requiredSize);
-
-		for (size_t i = prevSize; i < index; i++) {
-			_array[i].guid = 0;
-		}
-
-		const VarReference &varRef = dynValue.getVarReference();
-		_array[index].guid = varRef.guid;
-		_array[index].source = varRef.source;
-	} else {
-		const VarReference &varRef = dynValue.getVarReference();
-		_array[index].guid = varRef.guid;
-		_array[index].source = varRef.source;
-	}
-
-	return true;
-}
-
-void DynamicListContainer<VarReference>::truncateToSize(size_t sz) {
-	if (_array.size() > sz)
-		_array.resize(sz);
-}
-
-bool DynamicListContainer<VarReference>::expandToMinimumSize(size_t sz) {
-	if (_array.size() < sz) {
-		size_t prevSize = _array.size();
-		_array.resize(sz);
-
-		for (size_t i = prevSize; i < sz; i++) {
-			_array[i].guid = 0;
-			_array[i].source = "";
-		}
-	}
-
-	return true;
-}
-
-bool DynamicListContainer<VarReference>::getAtIndex(size_t index, DynamicValue &dynValue) const {
-	// TODO: Refactor this whole thing to use linkInternalReferences
-	if (index >= _array.size())
-		return false;
-
-	assert(false);
-	return false;
-}
-
-void DynamicListContainer<VarReference>::setFrom(const DynamicListContainerBase &other) {
-	const DynamicListContainer<VarReference> &otherTyped = static_cast<const DynamicListContainer<VarReference> &>(other);
-
-	_array = otherTyped._array;
-}
-
-const void *DynamicListContainer<VarReference>::getConstArrayPtr() const {
-	return &_array;
-}
-
-void *DynamicListContainer<VarReference>::getArrayPtr() {
-	return &_array;
-}
-
-size_t DynamicListContainer<VarReference>::getSize() const {
-	return _array.size();
-}
-
-bool DynamicListContainer<VarReference>::compareEqual(const DynamicListContainerBase &other) const {
-	const DynamicListContainer<VarReference> &otherTyped = static_cast<const DynamicListContainer<VarReference> &>(other);
-	return _array == otherTyped._array;
-}
-
-DynamicListContainerBase *DynamicListContainer<VarReference>::clone() const {
-	return new DynamicListContainer<VarReference>(*this);
-}
-
 DynamicList::DynamicList() : _type(DynamicValueTypes::kEmpty), _container(nullptr) {
 }
 
@@ -825,11 +743,6 @@ const Common::Array<Label> &DynamicList::getLabel() const {
 const Common::Array<Event> &DynamicList::getEvent() const {
 	assert(_type == DynamicValueTypes::kEvent);
 	return *static_cast<const Common::Array<Event> *>(_container->getConstArrayPtr());
-}
-
-const Common::Array<VarReference> &DynamicList::getVarReference() const {
-	assert(_type == DynamicValueTypes::kVariableReference);
-	return *static_cast<const Common::Array<VarReference> *>(_container->getConstArrayPtr());
 }
 
 const Common::Array<Common::String> &DynamicList::getString() const {
@@ -885,11 +798,6 @@ Common::Array<Label> &DynamicList::getLabel() {
 Common::Array<Event> &DynamicList::getEvent() {
 	assert(_type == DynamicValueTypes::kEvent);
 	return *static_cast<Common::Array<Event> *>(_container->getArrayPtr());
-}
-
-Common::Array<VarReference> &DynamicList::getVarReference() {
-	assert(_type == DynamicValueTypes::kVariableReference);
-	return *static_cast<Common::Array<VarReference> *>(_container->getArrayPtr());
 }
 
 Common::Array<Common::String> &DynamicList::getString() {
@@ -1057,12 +965,6 @@ bool DynamicList::changeToType(DynamicValueTypes::DynamicValueType type) {
 	case DynamicValueTypes::kEvent:
 		_container = new DynamicListContainer<Event>();
 		break;
-	case DynamicValueTypes::kVariableReference:
-		_container = new DynamicListContainer<VarReference>();
-		break;
-	case DynamicValueTypes::kIncomingData:
-		_container = new DynamicListContainer<void>();
-		break;
 	case DynamicValueTypes::kString:
 		_container = new DynamicListContainer<Common::String>();
 		break;
@@ -1211,15 +1113,12 @@ DynamicValue::~DynamicValue() {
 	clear();
 }
 
-bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString) {
+bool DynamicValue::loadConstant(const Data::InternalTypeTaggedValue &data, const Common::String &varString) {
 	clear();
 
 	switch (data.type) {
 	case Data::InternalTypeTaggedValue::kNull:
 		_type = DynamicValueTypes::kNull;
-		break;
-	case Data::InternalTypeTaggedValue::kIncomingData:
-		_type = DynamicValueTypes::kIncomingData;
 		break;
 	case Data::InternalTypeTaggedValue::kInteger:
 		_type = DynamicValueTypes::kInteger;
@@ -1247,10 +1146,6 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 		_type = DynamicValueTypes::kBoolean;
 		_value.construct<bool, &ValueUnion::asBool>(data.value.asBool != 0);
 		break;
-	case Data::InternalTypeTaggedValue::kVariableReference:
-		_type = DynamicValueTypes::kVariableReference;
-		_value.construct<VarReference, &ValueUnion::asVarReference>(VarReference(data.value.asVariableReference.guid, varSource));
-		break;
 	case Data::InternalTypeTaggedValue::kLabel:
 		_type = DynamicValueTypes::kLabel;
 		_value.construct<Label, &ValueUnion::asLabel>(Label());
@@ -1265,15 +1160,12 @@ bool DynamicValue::load(const Data::InternalTypeTaggedValue &data, const Common:
 	return true;
 }
 
-bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
+bool DynamicValue::loadConstant(const Data::PlugInTypeTaggedValue &data) {
 	clear();
 
 	switch (data.type) {
 	case Data::PlugInTypeTaggedValue::kNull:
 		_type = DynamicValueTypes::kNull;
-		break;
-	case Data::PlugInTypeTaggedValue::kIncomingData:
-		_type = DynamicValueTypes::kIncomingData;
 		break;
 	case Data::PlugInTypeTaggedValue::kInteger:
 		_type = DynamicValueTypes::kInteger;
@@ -1308,11 +1200,6 @@ bool DynamicValue::load(const Data::PlugInTypeTaggedValue &data) {
 	case Data::PlugInTypeTaggedValue::kString:
 		_type = DynamicValueTypes::kString;
 		_value.construct<Common::String, &ValueUnion::asString>(data.value.asString);
-		break;
-	case Data::PlugInTypeTaggedValue::kVariableReference:
-		_type = DynamicValueTypes::kVariableReference;
-		// Extra data doesn't seem to correlate with var source string in this case
-		_value.construct<VarReference, &ValueUnion::asVarReference>(VarReference(data.value.asVarRefGUID, ""));
 		break;
 	case Data::PlugInTypeTaggedValue::kPoint:
 		_type = DynamicValueTypes::kPoint;
@@ -1365,11 +1252,6 @@ const Label &DynamicValue::getLabel() const {
 const Event &DynamicValue::getEvent() const {
 	assert(_type == DynamicValueTypes::kEvent);
 	return _value.asEvent;
-}
-
-const VarReference &DynamicValue::getVarReference() const {
-	assert(_type == DynamicValueTypes::kVariableReference);
-	return _value.asVarReference;
 }
 
 const Common::String &DynamicValue::getString() const {
@@ -1444,13 +1326,6 @@ void DynamicValue::setEvent(const Event &value) {
 		clear();
 	_type = DynamicValueTypes::kEvent;
 	_value.construct<Event, &ValueUnion::asEvent>(value);
-}
-
-void DynamicValue::setVarReference(const VarReference &value) {
-	if (_type != DynamicValueTypes::kVariableReference)
-		clear();
-	_type = DynamicValueTypes::kVariableReference;
-	_value.construct<VarReference, &ValueUnion::asVarReference>(value);
 }
 
 void DynamicValue::setString(const Common::String &value) {
@@ -1553,10 +1428,6 @@ bool DynamicValue::operator==(const DynamicValue &other) const {
 		return _value.asLabel == other._value.asLabel;
 	case DynamicValueTypes::kEvent:
 		return _value.asEvent == other._value.asEvent;
-	case DynamicValueTypes::kVariableReference:
-		return _value.asVarReference == other._value.asVarReference;
-	case DynamicValueTypes::kIncomingData:
-		return true;
 	case DynamicValueTypes::kString:
 		return _value.asString == other._value.asString;
 	case DynamicValueTypes::kBoolean:
@@ -1577,7 +1448,6 @@ void DynamicValue::clear() {
 	switch (_type) {
 	case DynamicValueTypes::kNull:
 	case DynamicValueTypes::kEmpty:
-	case DynamicValueTypes::kIncomingData:
 		_value.destruct<uint64, &ValueUnion::asUnset>();
 		break;
 	case DynamicValueTypes::kInteger:
@@ -1603,9 +1473,6 @@ void DynamicValue::clear() {
 		break;
 	case DynamicValueTypes::kEvent:
 		_value.destruct<Event, &ValueUnion::asEvent>();
-		break;
-	case DynamicValueTypes::kVariableReference:
-		_value.destruct<VarReference, &ValueUnion::asVarReference>();
 		break;
 	case DynamicValueTypes::kString:
 		_value.destruct<Common::String, &ValueUnion::asString>();
@@ -1695,7 +1562,6 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 
 	switch (other._type) {
 	case DynamicValueTypes::kNull:
-	case DynamicValueTypes::kIncomingData:
 	case DynamicValueTypes::kEmpty:
 		clear();
 		_type = other._type;
@@ -1721,9 +1587,6 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 	case DynamicValueTypes::kEvent:
 		setEvent(other._value.asEvent);
 		break;
-	case DynamicValueTypes::kVariableReference:
-		setVarReference(other._value.asVarReference);
-		break;
 	case DynamicValueTypes::kString:
 		setString(other._value.asString);
 		break;
@@ -1745,6 +1608,185 @@ void DynamicValue::setFromOther(const DynamicValue &other) {
 	}
 
 	assert(_type == other._type);
+}
+
+
+DynamicValueSource::DynamicValueSource() : _sourceType(DynamicValueSourceTypes::kInvalid) {
+}
+
+DynamicValueSource::DynamicValueSource(const DynamicValueSource &other) : _sourceType(DynamicValueSourceTypes::kInvalid) {
+	initFromOther(other);
+}
+
+DynamicValueSource::DynamicValueSource(DynamicValueSource &&other) : _sourceType(DynamicValueSourceTypes::kInvalid) {
+	initFromOther(static_cast<DynamicValueSource &&>(other));
+}
+
+DynamicValueSource::~DynamicValueSource() {
+	destructValue();
+}
+
+DynamicValueSource &DynamicValueSource::operator=(const DynamicValueSource &other) {
+	if (this == &other)
+		return *this;
+
+	destructValue();
+	initFromOther(other);
+	return *this;
+}
+
+DynamicValueSource &DynamicValueSource::operator=(DynamicValueSource &&other) {
+	if (this == &other)
+		return *this;
+
+	destructValue();
+	initFromOther(static_cast<DynamicValueSource &&>(other));
+	return *this;
+}
+
+DynamicValueSourceTypes::DynamicValueSourceType DynamicValueSource::getSourceType() const {
+	return _sourceType;
+}
+
+const DynamicValue &DynamicValueSource::getConstant() const {
+	assert(_sourceType == DynamicValueSourceTypes::kConstant);
+	return _valueUnion._constValue;
+}
+const VarReference &DynamicValueSource::getVarReference() const {
+	assert(_sourceType == DynamicValueSourceTypes::kVariableReference);
+	return _valueUnion._varReference;
+}
+
+bool DynamicValueSource::load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString) {
+	destructValue();
+
+	switch (data.type)
+	{
+	case Data::InternalTypeTaggedValue::kIncomingData:
+		_sourceType = DynamicValueSourceTypes::kIncomingData;
+		return true;
+	case Data::InternalTypeTaggedValue::kVariableReference:
+		_sourceType = DynamicValueSourceTypes::kVariableReference;
+		new (&_valueUnion._varReference) VarReference(data.value.asVariableReference.guid, varSource);
+		return true;
+	default:
+		_sourceType = DynamicValueSourceTypes::kConstant;
+		new (&_valueUnion._constValue) DynamicValue();
+		return _valueUnion._constValue.loadConstant(data, varString);
+	}
+
+	assert(false);
+	return false;
+}
+
+bool DynamicValueSource::load(const Data::PlugInTypeTaggedValue &data) {
+	destructValue();
+
+	switch (data.type) {
+	case Data::PlugInTypeTaggedValue::kIncomingData:
+		_sourceType = DynamicValueSourceTypes::kIncomingData;
+		return true;
+	case Data::PlugInTypeTaggedValue::kVariableReference:
+		_sourceType = DynamicValueSourceTypes::kVariableReference;
+		new (&_valueUnion._varReference) VarReference(data.value.asVarRefGUID, "");
+		return true;
+	default:
+		_sourceType = DynamicValueSourceTypes::kConstant;
+		new (&_valueUnion._constValue) DynamicValue();
+		return _valueUnion._constValue.loadConstant(data);
+	}
+}
+
+
+void DynamicValueSource::linkInternalReferences(ObjectLinkingScope *scope) {
+	if (_sourceType == DynamicValueSourceTypes::kVariableReference) {
+		_valueUnion._varReference.linkInternalReferences(scope);
+	}
+}
+
+void DynamicValueSource::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	if (_sourceType == DynamicValueSourceTypes::kVariableReference) {
+		_valueUnion._varReference.visitInternalReferences(visitor);
+	}
+}
+
+DynamicValue DynamicValueSource::produceValue(const DynamicValue &incomingData) const {
+	switch (_sourceType) {
+	case DynamicValueSourceTypes::kConstant:
+		return _valueUnion._constValue;
+	case DynamicValueSourceTypes::kIncomingData:
+		return incomingData;
+	case DynamicValueSourceTypes::kVariableReference: {
+			Common::SharedPtr<Modifier> resolution = _valueUnion._varReference.resolution.lock();
+			if (resolution->isVariable()) {
+				DynamicValue result;
+				static_cast<VariableModifier *>(resolution.get())->varGetValue(result);
+				return result;
+			} else {
+				warning("Dynamic value source wasn't a variable");
+				return DynamicValue();
+			}
+		} break;
+	default:
+		warning("Dynamic value couldn't be resolved");
+		return DynamicValue();
+	}
+}
+
+
+DynamicValueSource::ValueUnion::ValueUnion() {
+}
+
+DynamicValueSource::ValueUnion::~ValueUnion() {
+}
+
+void DynamicValueSource::destructValue() {
+	switch (_sourceType) {
+	case DynamicValueSourceTypes::kConstant:
+		_valueUnion._constValue.~DynamicValue();
+		break;
+	case DynamicValueSourceTypes::kVariableReference:
+		_valueUnion._varReference.~VarReference();
+		break;
+	default:
+		break;
+	}
+
+	_sourceType = DynamicValueSourceTypes::kInvalid;
+}
+
+void DynamicValueSource::initFromOther(const DynamicValueSource &other) {
+	assert(_sourceType == DynamicValueSourceTypes::kInvalid);
+
+	switch (other._sourceType) {
+	case DynamicValueSourceTypes::kConstant:
+		new (&_valueUnion._constValue) DynamicValue(other._valueUnion._constValue);
+		break;
+	case DynamicValueSourceTypes::kVariableReference:
+		new (&_valueUnion._varReference) VarReference(other._valueUnion._varReference);
+		break;
+	default:
+		break;
+	}
+
+	_sourceType = other._sourceType;
+}
+
+void DynamicValueSource::initFromOther(DynamicValueSource &&other) {
+	assert(_sourceType == DynamicValueSourceTypes::kInvalid);
+
+	switch (other._sourceType) {
+	case DynamicValueSourceTypes::kConstant:
+		new (&_valueUnion._constValue) DynamicValue(static_cast<DynamicValue &&>(other._valueUnion._constValue));
+		break;
+	case DynamicValueSourceTypes::kVariableReference:
+		new (&_valueUnion._varReference) VarReference(static_cast<VarReference &&>(other._valueUnion._varReference));
+		break;
+	default:
+		break;
+	}
+
+	_sourceType = other._sourceType;
 }
 
 MiniscriptInstructionOutcome DynamicValueWriteStringHelper::write(MiniscriptThread *thread, const DynamicValue &value, void *objectRef, uintptr ptrOrOffset) {
@@ -1954,19 +1996,7 @@ void MessengerSendSpec::linkInternalReferences(ObjectLinkingScope *outerScope) {
 		} break;
 	}
 
-	if (this->with.getType() == DynamicValueTypes::kVariableReference) {
-		const VarReference &varRef = this->with.getVarReference();
-
-		Common::WeakPtr<RuntimeObject> resolution = outerScope->resolve(varRef.guid, varRef.source, false);
-		if (!resolution.expired()) {
-			Common::SharedPtr<RuntimeObject> obj = resolution.lock();
-			if (obj->isModifier())
-				_resolvedVarSource = obj.staticCast<Modifier>();
-			else {
-				warning("Messenger variable source wasn't a variable");
-			}
-		}
-	}
+	with.linkInternalReferences(outerScope);
 }
 
 void MessengerSendSpec::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
@@ -2097,18 +2127,7 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 }
 
 void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const {
-	const DynamicValueTypes::DynamicValueType withType = with.getType();
-	if (withType == DynamicValueTypes::kIncomingData)
-		sendFromMessengerWithCustomData(runtime, sender, incomingData, customDestination);
-	else if (withType == DynamicValueTypes::kVariableReference) {
-		DynamicValue payload;
-		Modifier *modifier = _resolvedVarSource.lock().get();
-		if (modifier && modifier->isVariable())
-			static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, payload);
-
-		sendFromMessengerWithCustomData(runtime, sender, payload, customDestination);
-	} else
-		sendFromMessengerWithCustomData(runtime, sender, this->with, customDestination);
+	sendFromMessengerWithCustomData(runtime, sender, this->with.produceValue(incomingData), customDestination);
 }
 
 void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const {
@@ -2225,6 +2244,26 @@ bool VarReference::resolve(Modifier *modifierScope, Common::WeakPtr<RuntimeObjec
 	}
 
 	return false;
+}
+
+void VarReference::linkInternalReferences(ObjectLinkingScope *scope) {
+	if (guid) {
+		Common::WeakPtr<RuntimeObject> obj = scope->resolve(guid, source, false);
+		if (obj.expired()) {
+			warning("VarReference to '%s' failed to resolve a valid object", source.c_str());
+		} else {
+			Common::SharedPtr<RuntimeObject> objShr = obj.lock();
+			if (objShr->isModifier() && static_cast<Modifier *>(objShr.get())->isVariable()) {
+				this->resolution = obj.staticCast<Modifier>();
+			} else {
+				error("VarReference referenced a non-variable");
+			}
+		}
+	}
+}
+
+void VarReference::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	visitor->visitWeakModifierRef(this->resolution);
 }
 
 bool VarReference::resolveContainer(IModifierContainer *modifierContainer, Common::WeakPtr<RuntimeObject> &outObject) const {
@@ -8440,7 +8479,7 @@ bool VariableModifier::isVariable() const {
 
 bool VariableModifier::readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) {
 	if (attrib == "value") {
-		varGetValue(thread, result);
+		varGetValue(result);
 		return true;
 	}
 

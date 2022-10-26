@@ -790,7 +790,7 @@ void ObsidianAutoSaveVarsState::resyncAllVars(Runtime *runtime) {
 		const VariableModifier *var = findVar(runtime, it->_key);
 		if (var) {
 			DynamicValue varValue;
-			var->varGetValue(nullptr, varValue);
+			var->varGetValue(varValue);
 			assert(varValue.getType() == DynamicValueTypes::kBoolean);
 
 			it->_value = varValue.getBool();
@@ -852,7 +852,7 @@ void ObsidianAutoSaveSceneTransitionHooks::onSceneTransitionEnded(Runtime *runti
 			const VariableModifier *var = _varsState->findVar(runtime, varName);
 			if (var) {
 				DynamicValue varValue;
-				var->varGetValue(nullptr, varValue);
+				var->varGetValue(varValue);
 				assert(varValue.getType() == DynamicValueTypes::kBoolean);
 
 				passedLatchTest = varValue.getBool();
@@ -983,7 +983,7 @@ bool ObsidianSaveLoadMechanism::canSaveNow(Runtime *runtime) {
 		return false;
 
 	DynamicValue bEscValue;
-	static_cast<VariableModifier *>(bEscVar)->varGetValue(nullptr, bEscValue);
+	static_cast<VariableModifier *>(bEscVar)->varGetValue(bEscValue);
 
 	if (bEscValue.getType() != DynamicValueTypes::kBoolean || !bEscValue.getBool())
 		return false;

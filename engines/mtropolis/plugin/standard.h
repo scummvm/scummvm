@@ -178,7 +178,7 @@ public:
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier"; }
@@ -325,7 +325,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	bool readAttributeIndexed(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib, const DynamicValue &index) override;

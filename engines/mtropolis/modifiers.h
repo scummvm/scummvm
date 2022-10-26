@@ -200,7 +200,7 @@ private:
 	Event _saveWhen;
 	Event _restoreWhen;
 
-	DynamicValue _saveOrRestoreValue;
+	DynamicValueSource _saveOrRestoreValue;
 
 	Common::String _filePath;
 	Common::String _fileName;
@@ -249,8 +249,8 @@ private:
 	const char *getDefaultName() const override;
 
 	Event _executeWhen;
-	DynamicValue _source;
-	DynamicValue _target;
+	DynamicValueSource _source;
+	DynamicValueSource _target;
 };
 
 class AliasModifier : public Modifier {
@@ -439,8 +439,7 @@ private:
 	Event _enableWhen;
 	Event _disableWhen;
 
-	DynamicValue _vec;
-	Common::WeakPtr<Modifier> _vecVar;
+	DynamicValueSource _vec;
 
 	AngleMagVector _resolvedVector;
 	uint16 _subpixelX;
@@ -943,7 +942,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Boolean Variable Modifier"; }
@@ -980,7 +979,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Integer Variable Modifier"; }
@@ -1015,7 +1014,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
@@ -1053,7 +1052,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &result, const Common::String &attrib) override;
@@ -1091,7 +1090,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;
 	MiniscriptInstructionOutcome writeRefAttribute(MiniscriptThread *thread, DynamicValueWriteProxy &writeProxy, const Common::String &attrib) override;
@@ -1131,7 +1130,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Floating Point Variable Modifier"; }
@@ -1166,7 +1165,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "String Variable Modifier"; }
@@ -1204,7 +1203,7 @@ public:
 	Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override;
 
 	bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) override;
-	void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const override;
+	void varGetValue(DynamicValue &dest) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Object Reference Variable Modifier V1"; }
