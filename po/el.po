@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-24 23:37+0000\n"
+"POT-Creation-Date: 2022-10-25 21:05+0000\n"
 "PO-Revision-Date: 2022-10-10 14:47+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
@@ -671,9 +671,10 @@ msgstr "Αλληλεπίδραση"
 #: engines/grim/grim.cpp:453 engines/grim/grim.cpp:534
 #: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
 #: engines/wintermute/keymapper_tables.h:1262
-#: engines/wintermute/keymapper_tables.h:1372
-#: engines/wintermute/keymapper_tables.h:1843
-#: engines/wintermute/keymapper_tables.h:2077
+#: engines/wintermute/keymapper_tables.h:1345
+#: engines/wintermute/keymapper_tables.h:1421
+#: engines/wintermute/keymapper_tables.h:1892
+#: engines/wintermute/keymapper_tables.h:2126
 msgid "Up"
 msgstr "Πάνω"
 
@@ -682,9 +683,10 @@ msgstr "Πάνω"
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:539
 #: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
 #: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1379
-#: engines/wintermute/keymapper_tables.h:1849
-#: engines/wintermute/keymapper_tables.h:2083
+#: engines/wintermute/keymapper_tables.h:1351
+#: engines/wintermute/keymapper_tables.h:1428
+#: engines/wintermute/keymapper_tables.h:1898
+#: engines/wintermute/keymapper_tables.h:2132
 msgid "Down"
 msgstr "Κάτω"
 
@@ -694,9 +696,10 @@ msgstr "Κάτω"
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1274
-#: engines/wintermute/keymapper_tables.h:1831
-#: engines/wintermute/keymapper_tables.h:1941
-#: engines/wintermute/keymapper_tables.h:2065
+#: engines/wintermute/keymapper_tables.h:1357
+#: engines/wintermute/keymapper_tables.h:1880
+#: engines/wintermute/keymapper_tables.h:1990
+#: engines/wintermute/keymapper_tables.h:2114
 msgid "Left"
 msgstr "Αριστερά"
 
@@ -706,9 +709,10 @@ msgstr "Αριστερά"
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1280
-#: engines/wintermute/keymapper_tables.h:1837
-#: engines/wintermute/keymapper_tables.h:1949
-#: engines/wintermute/keymapper_tables.h:2071
+#: engines/wintermute/keymapper_tables.h:1363
+#: engines/wintermute/keymapper_tables.h:1886
+#: engines/wintermute/keymapper_tables.h:1998
+#: engines/wintermute/keymapper_tables.h:2120
 msgid "Right"
 msgstr "Δεξιά"
 
@@ -725,12 +729,14 @@ msgstr "Δεξιά"
 #: engines/wintermute/keymapper_tables.h:986
 #: engines/wintermute/keymapper_tables.h:1194
 #: engines/wintermute/keymapper_tables.h:1241
-#: engines/wintermute/keymapper_tables.h:1497
-#: engines/wintermute/keymapper_tables.h:1707
-#: engines/wintermute/keymapper_tables.h:1761
-#: engines/wintermute/keymapper_tables.h:1812
-#: engines/wintermute/keymapper_tables.h:1867
-#: engines/wintermute/keymapper_tables.h:1925
+#: engines/wintermute/keymapper_tables.h:1369
+#: engines/wintermute/keymapper_tables.h:1375
+#: engines/wintermute/keymapper_tables.h:1546
+#: engines/wintermute/keymapper_tables.h:1756
+#: engines/wintermute/keymapper_tables.h:1810
+#: engines/wintermute/keymapper_tables.h:1861
+#: engines/wintermute/keymapper_tables.h:1916
+#: engines/wintermute/keymapper_tables.h:1974
 msgid "???"
 msgstr "???"
 
@@ -2823,7 +2829,7 @@ msgstr "Αριστερό Click"
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
-#: engines/wintermute/keymapper_tables.h:2089
+#: engines/wintermute/keymapper_tables.h:2138
 msgid "Middle Click"
 msgstr "Μεσαίο Click"
 
@@ -2836,7 +2842,7 @@ msgstr "Δεξί Click"
 #: engines/metaengine.cpp:77 engines/grim/grim.cpp:521
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:122
-#: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1531
+#: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1580
 msgid "Pause"
 msgstr "Παύση"
 
@@ -2849,9 +2855,9 @@ msgstr "Μενού παιχνιδιού"
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1524
-#: engines/wintermute/keymapper_tables.h:1639
-#: engines/wintermute/keymapper_tables.h:2033
+#: engines/wintermute/keymapper_tables.h:1573
+#: engines/wintermute/keymapper_tables.h:1688
+#: engines/wintermute/keymapper_tables.h:2082
 msgid "Skip"
 msgstr "Παράλειψη"
 
@@ -3254,11 +3260,11 @@ msgstr "Εναλλαγή κράτησης ποντικιού"
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
 #: engines/wintermute/keymapper_tables.h:1312
-#: engines/wintermute/keymapper_tables.h:1402
-#: engines/wintermute/keymapper_tables.h:1562
-#: engines/wintermute/keymapper_tables.h:1767
-#: engines/wintermute/keymapper_tables.h:1785
-#: engines/wintermute/keymapper_tables.h:1818
+#: engines/wintermute/keymapper_tables.h:1451
+#: engines/wintermute/keymapper_tables.h:1611
+#: engines/wintermute/keymapper_tables.h:1816
+#: engines/wintermute/keymapper_tables.h:1834
+#: engines/wintermute/keymapper_tables.h:1867
 msgid "Save screenshot"
 msgstr "Αποθήκευση στιγμιότυπου"
 
@@ -5386,7 +5392,7 @@ msgstr "Κίνηση δεξιά"
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:223 engines/scumm/help.cpp:249
 #: engines/sky/metaengine.cpp:91 engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1475
+#: engines/wintermute/keymapper_tables.h:1524
 msgid "Use"
 msgstr "Χρήση"
 
@@ -6030,12 +6036,12 @@ msgstr "Προβολή μενού επιλογών"
 msgid "Drop page"
 msgstr "Ρίξιμο σελίδας"
 
-#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1449
-#: engines/wintermute/keymapper_tables.h:1596
+#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1498
 #: engines/wintermute/keymapper_tables.h:1645
-#: engines/wintermute/keymapper_tables.h:1668
-#: engines/wintermute/keymapper_tables.h:1687
-#: engines/wintermute/keymapper_tables.h:1720
+#: engines/wintermute/keymapper_tables.h:1694
+#: engines/wintermute/keymapper_tables.h:1717
+#: engines/wintermute/keymapper_tables.h:1736
+#: engines/wintermute/keymapper_tables.h:1769
 msgid "Show map"
 msgstr "Προβολή χάρτη"
 
@@ -6124,15 +6130,15 @@ msgstr "Προχώρησε προς τα πίσω"
 
 #: engines/mohawk/riven.cpp:885 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2045
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2094
+#: engines/wintermute/keymapper_tables.h:2195
 msgid "Turn left"
 msgstr "Στρίψε αριστερά"
 
 #: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2051
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2100
+#: engines/wintermute/keymapper_tables.h:2202
 msgid "Turn right"
 msgstr "Στρίψε δεξιά"
 
@@ -7246,7 +7252,7 @@ msgstr "Παράλειψη γραμμής κειμένου"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
+#: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2108
 msgid "Space"
 msgstr "Space"
 
@@ -7288,7 +7294,7 @@ msgstr "Ταχύτητα κειμένου πιο αργή / πιο γρήγορ�
 msgid "Simulate left mouse button"
 msgstr "Εξομοίωση αριστερού κουμπιού ποντικιού"
 
-#: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2114
+#: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2163
 msgid "Tab"
 msgstr "Tab"
 
@@ -7405,14 +7411,14 @@ msgid "Turn off"
 msgstr "Σβήσε"
 
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1463
+#: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1512
 msgid "Walk to"
 msgstr "Περπάτησε σε"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:209
 #: engines/scumm/help.cpp:226 engines/wintermute/keymapper_tables.h:134
-#: engines/wintermute/keymapper_tables.h:1469
+#: engines/wintermute/keymapper_tables.h:1518
 msgid "Pick up"
 msgstr "Μάζεψε"
 
@@ -7499,13 +7505,13 @@ msgstr "Τράβηξε"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:247 engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1481
+#: engines/wintermute/keymapper_tables.h:1530
 msgid "Talk to"
 msgstr "Μίλα με"
 
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:210
 #: engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1457
+#: engines/wintermute/keymapper_tables.h:1506
 msgid "Look at"
 msgstr "Κοίτα προς"
 
@@ -8661,21 +8667,21 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2039
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2088
+#: engines/wintermute/keymapper_tables.h:2188
 msgid "Walk forward"
 msgstr "Περπάτα μπροστά"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
-#: engines/wintermute/keymapper_tables.h:2161
+#: engines/wintermute/keymapper_tables.h:2210
 msgid "Walk backward"
 msgstr "Οπισθοχώρησε"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
-#: engines/wintermute/keymapper_tables.h:1778
+#: engines/wintermute/keymapper_tables.h:1827
 msgid "Show scene geometry"
 msgstr "Προβολή γεωμετρίας της σκηνής"
 
@@ -8712,15 +8718,15 @@ msgstr "Επόμενη σελίδα"
 #: engines/wintermute/keymapper_tables.h:885
 #: engines/wintermute/keymapper_tables.h:1045
 #: engines/wintermute/keymapper_tables.h:1291
-#: engines/wintermute/keymapper_tables.h:1338
-#: engines/wintermute/keymapper_tables.h:1395
-#: engines/wintermute/keymapper_tables.h:1421
-#: engines/wintermute/keymapper_tables.h:1583
+#: engines/wintermute/keymapper_tables.h:1387
+#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1470
 #: engines/wintermute/keymapper_tables.h:1632
-#: engines/wintermute/keymapper_tables.h:1680
-#: engines/wintermute/keymapper_tables.h:1713
-#: engines/wintermute/keymapper_tables.h:1906
-#: engines/wintermute/keymapper_tables.h:2026
+#: engines/wintermute/keymapper_tables.h:1681
+#: engines/wintermute/keymapper_tables.h:1729
+#: engines/wintermute/keymapper_tables.h:1762
+#: engines/wintermute/keymapper_tables.h:1955
+#: engines/wintermute/keymapper_tables.h:2075
 msgid "Show hints"
 msgstr "Προβολή υποδείξεων"
 
@@ -8728,12 +8734,12 @@ msgstr "Προβολή υποδείξεων"
 #: engines/wintermute/keymapper_tables.h:396
 #: engines/wintermute/keymapper_tables.h:658
 #: engines/wintermute/keymapper_tables.h:864
-#: engines/wintermute/keymapper_tables.h:1365
-#: engines/wintermute/keymapper_tables.h:1442
-#: engines/wintermute/keymapper_tables.h:1590
-#: engines/wintermute/keymapper_tables.h:1602
-#: engines/wintermute/keymapper_tables.h:1611
-#: engines/wintermute/keymapper_tables.h:1873
+#: engines/wintermute/keymapper_tables.h:1414
+#: engines/wintermute/keymapper_tables.h:1491
+#: engines/wintermute/keymapper_tables.h:1639
+#: engines/wintermute/keymapper_tables.h:1651
+#: engines/wintermute/keymapper_tables.h:1660
+#: engines/wintermute/keymapper_tables.h:1922
 msgid "Show inventory"
 msgstr "Προβολή υπαρχόντων"
 
@@ -8743,8 +8749,8 @@ msgstr "Προβολή υπαρχόντων"
 #: engines/wintermute/keymapper_tables.h:402
 #: engines/wintermute/keymapper_tables.h:506
 #: engines/wintermute/keymapper_tables.h:533
-#: engines/wintermute/keymapper_tables.h:1855
-#: engines/wintermute/keymapper_tables.h:1913
+#: engines/wintermute/keymapper_tables.h:1904
+#: engines/wintermute/keymapper_tables.h:1962
 msgid "GUI variant A"
 msgstr "Α' εκδοχή διεπαφής"
 
@@ -8754,8 +8760,8 @@ msgstr "Α' εκδοχή διεπαφής"
 #: engines/wintermute/keymapper_tables.h:408
 #: engines/wintermute/keymapper_tables.h:513
 #: engines/wintermute/keymapper_tables.h:540
-#: engines/wintermute/keymapper_tables.h:1861
-#: engines/wintermute/keymapper_tables.h:1919
+#: engines/wintermute/keymapper_tables.h:1910
+#: engines/wintermute/keymapper_tables.h:1968
 msgid "GUI variant B"
 msgstr "Β' εκδοχή διεπαφής"
 
@@ -8795,21 +8801,21 @@ msgstr "Τηλέφωνο: Κουμπί 0"
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
-#: engines/wintermute/keymapper_tables.h:1740
+#: engines/wintermute/keymapper_tables.h:1789
 msgid "Phone 1 button"
 msgstr "Τηλέφωνο: Κουμπί 1"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
-#: engines/wintermute/keymapper_tables.h:1745
+#: engines/wintermute/keymapper_tables.h:1794
 msgid "Phone 2 button"
 msgstr "Τηλέφωνο: Κουμπί 2"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
-#: engines/wintermute/keymapper_tables.h:1750
+#: engines/wintermute/keymapper_tables.h:1799
 msgid "Phone 3 button"
 msgstr "Τηλέφωνο: Κουμπί 3"
 
@@ -8862,7 +8868,8 @@ msgid "Phone # button"
 msgstr "Τηλέφωνο: Κουμπί #"
 
 #: engines/wintermute/keymapper_tables.h:664
-#: engines/wintermute/keymapper_tables.h:1345
+#: engines/wintermute/keymapper_tables.h:1338
+#: engines/wintermute/keymapper_tables.h:1394
 msgid "Show help"
 msgstr "Προβολή βοήθειας"
 
@@ -8871,12 +8878,12 @@ msgstr "Προβολή βοήθειας"
 #: engines/wintermute/keymapper_tables.h:892
 #: engines/wintermute/keymapper_tables.h:1298
 #: engines/wintermute/keymapper_tables.h:1324
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1407
-#: engines/wintermute/keymapper_tables.h:1428
-#: engines/wintermute/keymapper_tables.h:1618
-#: engines/wintermute/keymapper_tables.h:1892
-#: engines/wintermute/keymapper_tables.h:2094
+#: engines/wintermute/keymapper_tables.h:1400
+#: engines/wintermute/keymapper_tables.h:1456
+#: engines/wintermute/keymapper_tables.h:1477
+#: engines/wintermute/keymapper_tables.h:1667
+#: engines/wintermute/keymapper_tables.h:1941
+#: engines/wintermute/keymapper_tables.h:2143
 msgid "Scroll up"
 msgstr "Κύλιση πάνω"
 
@@ -8885,12 +8892,12 @@ msgstr "Κύλιση πάνω"
 #: engines/wintermute/keymapper_tables.h:899
 #: engines/wintermute/keymapper_tables.h:1305
 #: engines/wintermute/keymapper_tables.h:1331
-#: engines/wintermute/keymapper_tables.h:1358
-#: engines/wintermute/keymapper_tables.h:1414
-#: engines/wintermute/keymapper_tables.h:1435
-#: engines/wintermute/keymapper_tables.h:1625
-#: engines/wintermute/keymapper_tables.h:1899
-#: engines/wintermute/keymapper_tables.h:2099
+#: engines/wintermute/keymapper_tables.h:1407
+#: engines/wintermute/keymapper_tables.h:1463
+#: engines/wintermute/keymapper_tables.h:1484
+#: engines/wintermute/keymapper_tables.h:1674
+#: engines/wintermute/keymapper_tables.h:1948
+#: engines/wintermute/keymapper_tables.h:2148
 msgid "Scroll down"
 msgstr "Κύλιση κάτω"
 
@@ -8911,15 +8918,15 @@ msgstr "Προβολή εργαλείου αποσφαλμάτωσης"
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
 #: engines/wintermute/keymapper_tables.h:853
-#: engines/wintermute/keymapper_tables.h:1504
-#: engines/wintermute/keymapper_tables.h:1756
-#: engines/wintermute/keymapper_tables.h:1801
+#: engines/wintermute/keymapper_tables.h:1553
+#: engines/wintermute/keymapper_tables.h:1805
+#: engines/wintermute/keymapper_tables.h:1850
 msgid "Debug print"
 msgstr "Εκτύπωση πληροφορίας αποσφαλμάτωσης"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
-#: engines/wintermute/keymapper_tables.h:1772
+#: engines/wintermute/keymapper_tables.h:1821
 msgid "Exit"
 msgstr "Έξοδος"
 
@@ -8950,18 +8957,18 @@ msgid "Show blueprint"
 msgstr "Προβολή προσχεδίου"
 
 #: engines/wintermute/keymapper_tables.h:792
-#: engines/wintermute/keymapper_tables.h:1510
-#: engines/wintermute/keymapper_tables.h:1693
-#: engines/wintermute/keymapper_tables.h:1726
-#: engines/wintermute/keymapper_tables.h:2012
+#: engines/wintermute/keymapper_tables.h:1559
+#: engines/wintermute/keymapper_tables.h:1742
+#: engines/wintermute/keymapper_tables.h:1775
+#: engines/wintermute/keymapper_tables.h:2061
 msgid "Next action"
 msgstr "Επόμενη ενέργεια"
 
 #: engines/wintermute/keymapper_tables.h:799
-#: engines/wintermute/keymapper_tables.h:1518
-#: engines/wintermute/keymapper_tables.h:1700
-#: engines/wintermute/keymapper_tables.h:1733
-#: engines/wintermute/keymapper_tables.h:2020
+#: engines/wintermute/keymapper_tables.h:1567
+#: engines/wintermute/keymapper_tables.h:1749
+#: engines/wintermute/keymapper_tables.h:1782
+#: engines/wintermute/keymapper_tables.h:2069
 msgid "Previous action"
 msgstr "Προηγούμενη ενέργεια"
 
@@ -8991,7 +8998,7 @@ msgstr "Ρυθμός περπατήματος: Γρήγορος"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1286
-#: engines/wintermute/keymapper_tables.h:1795
+#: engines/wintermute/keymapper_tables.h:1844
 msgid "Cancel waiting"
 msgstr "Ακύρωση αναμονής"
 
@@ -9108,124 +9115,130 @@ msgstr "Ακύρωση εντολής"
 msgid "Toggle subtitles"
 msgstr "Εναλλαγή υποτίτλων"
 
+#: engines/wintermute/keymapper_tables.h:1381
+#, fuzzy
+#| msgid "Hide Others"
+msgid "Hide hints"
+msgstr "Απόκρυψη Άλλων"
+
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
-#: engines/wintermute/keymapper_tables.h:1387
+#: engines/wintermute/keymapper_tables.h:1436
 msgid "Shift key"
 msgstr "Πλήκτρο Shift"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
-#: engines/wintermute/keymapper_tables.h:1489
+#: engines/wintermute/keymapper_tables.h:1538
 msgid "Chapayev's action"
 msgstr "Ενέργεια του Chapayev"
 
-#: engines/wintermute/keymapper_tables.h:1537
-#: engines/wintermute/keymapper_tables.h:1790
-#: engines/wintermute/keymapper_tables.h:1886
+#: engines/wintermute/keymapper_tables.h:1586
+#: engines/wintermute/keymapper_tables.h:1839
+#: engines/wintermute/keymapper_tables.h:1935
 msgid "Settings"
 msgstr "Ρυθμίσεις"
 
-#: engines/wintermute/keymapper_tables.h:1542
+#: engines/wintermute/keymapper_tables.h:1591
 msgid "Dialogue answer 1"
 msgstr "1η απάντηση διαλόγου"
 
-#: engines/wintermute/keymapper_tables.h:1547
+#: engines/wintermute/keymapper_tables.h:1596
 msgid "Dialogue answer 2"
 msgstr "2η απάντηση διαλόγου"
 
-#: engines/wintermute/keymapper_tables.h:1552
+#: engines/wintermute/keymapper_tables.h:1601
 msgid "Dialogue answer 3"
 msgstr "3η απάντηση διαλόγου"
 
-#: engines/wintermute/keymapper_tables.h:1557
+#: engines/wintermute/keymapper_tables.h:1606
 msgid "Dialogue answer 4"
 msgstr "4η απάντηση διαλόγου"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1568
+#: engines/wintermute/keymapper_tables.h:1617
 msgid "Spin wheel slower"
 msgstr "Περιστροφή τροχού πιο αργά"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1576
+#: engines/wintermute/keymapper_tables.h:1625
 msgid "Spin wheel faster"
 msgstr "Περιστροφή τροχού πιο γρήγορα"
 
-#: engines/wintermute/keymapper_tables.h:1654
+#: engines/wintermute/keymapper_tables.h:1703
 msgid "Zoom out"
 msgstr "Μεγέθυνση"
 
-#: engines/wintermute/keymapper_tables.h:1661
+#: engines/wintermute/keymapper_tables.h:1710
 msgid "Zoom in"
 msgstr "Σμίκρυνση"
 
-#: engines/wintermute/keymapper_tables.h:1674
-#: engines/wintermute/keymapper_tables.h:1880
+#: engines/wintermute/keymapper_tables.h:1723
+#: engines/wintermute/keymapper_tables.h:1929
 msgid "Show journal"
 msgstr "Προβολή ημερολογίου"
 
 #. I18N: Displays a debug interface with Bezier curves
-#: engines/wintermute/keymapper_tables.h:1807
+#: engines/wintermute/keymapper_tables.h:1856
 msgid "Bezier window"
 msgstr "Παράθυρο Bezier"
 
 #. I18N: Use droid to perform an action
-#: engines/wintermute/keymapper_tables.h:1824
+#: engines/wintermute/keymapper_tables.h:1873
 msgid "Droid's action"
 msgstr "Ενέργεια του ρομπότ"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
-#: engines/wintermute/keymapper_tables.h:1932
+#: engines/wintermute/keymapper_tables.h:1981
 msgid "Rotate"
 msgstr "Περιστροφή"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
-#: engines/wintermute/keymapper_tables.h:1958
+#: engines/wintermute/keymapper_tables.h:2007
 msgid "Drop"
 msgstr "Απόρριψη"
 
-#: engines/wintermute/keymapper_tables.h:1966
+#: engines/wintermute/keymapper_tables.h:2015
 msgid "Player 1: Up"
 msgstr "Πακτης 1: Πάνω"
 
-#: engines/wintermute/keymapper_tables.h:1971
+#: engines/wintermute/keymapper_tables.h:2020
 msgid "Player 1: Left"
 msgstr "Πακτης 1: Αριστερά"
 
-#: engines/wintermute/keymapper_tables.h:1976
+#: engines/wintermute/keymapper_tables.h:2025
 msgid "Player 1: Down"
 msgstr "Πακτης 1: Κάτω"
 
-#: engines/wintermute/keymapper_tables.h:1981
+#: engines/wintermute/keymapper_tables.h:2030
 msgid "Player 1: Right"
 msgstr "Πακτης 1: Δεξιά"
 
-#: engines/wintermute/keymapper_tables.h:1986
+#: engines/wintermute/keymapper_tables.h:2035
 msgid "Player 2: Up"
 msgstr "Πακτης 2: Πάνω"
 
-#: engines/wintermute/keymapper_tables.h:1991
+#: engines/wintermute/keymapper_tables.h:2040
 msgid "Player 2: Left"
 msgstr "Πακτης 2: Αριστερά"
 
-#: engines/wintermute/keymapper_tables.h:1996
+#: engines/wintermute/keymapper_tables.h:2045
 msgid "Player 2: Down"
 msgstr "Πακτης 2: Κάτω"
 
-#: engines/wintermute/keymapper_tables.h:2001
+#: engines/wintermute/keymapper_tables.h:2050
 msgid "Player 2: Right"
 msgstr "Παίκτης 2: Δεξιά"
 
 #. I18N: Displays a debug FPS counter
-#: engines/wintermute/keymapper_tables.h:2007
+#: engines/wintermute/keymapper_tables.h:2056
 msgid "Debug FPS"
 msgstr "Αποσφαλμάτωση FPS"
 
-#: engines/wintermute/keymapper_tables.h:2104
+#: engines/wintermute/keymapper_tables.h:2153
 msgid "F1"
 msgstr "F1"
 
-#: engines/wintermute/keymapper_tables.h:2109
+#: engines/wintermute/keymapper_tables.h:2158
 msgid "Key i"
 msgstr "Πλήκτρο i"
 
