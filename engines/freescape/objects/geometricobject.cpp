@@ -93,7 +93,6 @@ bool GeometricObject::isPyramid(Type type) {
 	case SouthPyramid:
 		return true;
 	}
-
 }
 
 bool GeometricObject::isPolygon(Type type) {
@@ -157,7 +156,7 @@ GeometricObject::GeometricObject(
 			ordinates->push_back(origin.x() + size.x());
 			ordinates->push_back(origin.y() + size.y());
 			ordinates->push_back(origin.z() + size.z());
-		   }
+		}
 	}
 
 	computeBoundingBox();
@@ -186,7 +185,7 @@ void GeometricObject::computeBoundingBox() {
 	Math::Vector3d v;
 	switch (type) {
 	default:
-	break;
+		break;
 	case Cube:
 		boundingBox.expand(origin);
 		for (int i = 0; i < 3; i++) {
@@ -320,7 +319,7 @@ bool GeometricObject::collides(const Math::AABB &_boundingBox) {
 	if (isDestroyed() || isInvisible() || !boundingBox.isValid() || !_boundingBox.isValid())
 		return false;
 
-	return(	boundingBox.getMax().x() > _boundingBox.getMin().x() &&
+	return (boundingBox.getMax().x() > _boundingBox.getMin().x() &&
 			boundingBox.getMin().x() < _boundingBox.getMax().x() &&
 			boundingBox.getMax().y() > _boundingBox.getMin().y() &&
 			boundingBox.getMin().y() < _boundingBox.getMax().y() &&
@@ -329,7 +328,7 @@ bool GeometricObject::collides(const Math::AABB &_boundingBox) {
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
-	//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
+	// debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 	if (this->getType() == Cube) {
 		gfx->renderCube(origin, size, colours);
 	} else if (this->getType() == Rectangle) {
@@ -340,7 +339,7 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		if (this->getType() == Triangle)
 			assert(ordinates->size() == 9);
 
-		//debug("Drawing %d of type %d", this->getObjectID(), this->getType());
+		// debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 		gfx->renderPolygon(origin, size, ordinates, colours);
 	}
 }

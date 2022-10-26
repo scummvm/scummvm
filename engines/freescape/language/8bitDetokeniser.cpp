@@ -47,13 +47,13 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 	// this lookup table tells us how many argument bytes to read per opcode
 	uint8 argumentsRequiredByOpcode[49] =
-		{ 0, 3, 1, 1, 1, 1, 2, 2,
-		  2, 1, 1, 2, 1, 1, 2, 1,
-		  1, 2, 2, 1, 2, 0, 0, 0,
-		  1, 1, 0, 1, 1, 1, 1, 1,
-		  2, 2, 1, 1, 0, 0, 0, 0,
-		  0, 0, 0, 0, 0, 0, 2, 2,
-		  1};
+		{0, 3, 1, 1, 1, 1, 2, 2,
+		 2, 1, 1, 2, 1, 1, 2, 1,
+		 1, 2, 2, 1, 2, 0, 0, 0,
+		 1, 1, 0, 1, 1, 1, 1, 1,
+		 2, 2, 1, 1, 0, 0, 0, 0,
+		 0, 0, 0, 0, 0, 0, 2, 2,
+		 1};
 
 	while (bytePointer < sizeOfTokenisedContent) {
 		// get the conditional type of the next operation
@@ -144,7 +144,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 			detokenisedStream += Common::String::format("(%d, v%d)", (int8)tokenisedCondition[bytePointer], k8bitVariableShield);
 			currentInstruction = FCLInstruction(Token::ADDVAR);
 			currentInstruction.setSource(k8bitVariableShield);
-			currentInstruction.setDestination((int8) tokenisedCondition[bytePointer]);
+			currentInstruction.setDestination((int8)tokenisedCondition[bytePointer]);
 			conditionalInstructions->push_back(currentInstruction);
 			currentInstruction = FCLInstruction(Token::UNKNOWN);
 			bytePointer++;
@@ -328,7 +328,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 25:
 			// this should toggle border colour or the room palette
 			detokenisedStream += "SPFX (";
-		break;
+			break;
 
 		case 20:
 			detokenisedStream += "SETVAR ";
@@ -394,10 +394,10 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		detokenisedStream += "\n";
 	}
 
-	//if (!conditionalInstructions)
+	// if (!conditionalInstructions)
 	//	conditionalInstructions = new FCLInstructionVector();
 
-	//conditionalInstructions->push_back(currentInstruction);
+	// conditionalInstructions->push_back(currentInstruction);
 
 	FCLInstruction branch;
 	if (conditionalIsShot)

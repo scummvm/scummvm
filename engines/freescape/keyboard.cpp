@@ -52,7 +52,7 @@ int FreescapeEngine::decodeAmigaAtariKey(int index) {
 int FreescapeEngine::decodeDOSKey(int index) {
 	switch (index) {
 	case 1:
-		return 	Common::KEYCODE_r;
+		return Common::KEYCODE_r;
 	case 2:
 		return Common::KEYCODE_f;
 	case 3:

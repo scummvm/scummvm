@@ -24,11 +24,11 @@
 #ifndef FREESCAPE_AREA_H
 #define FREESCAPE_AREA_H
 
-#include "math/vector3d.h"
 #include "math/ray.h"
+#include "math/vector3d.h"
 
-#include "freescape/objects/object.h"
 #include "freescape/language/instruction.h"
+#include "freescape/objects/object.h"
 
 namespace Freescape {
 
@@ -55,7 +55,7 @@ public:
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 
-	Common::Array<Common::String*> conditionSources;
+	Common::Array<Common::String *> conditionSources;
 	Common::Array<FCLInstructionVector> conditions;
 
 	// Serialization

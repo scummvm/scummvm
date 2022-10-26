@@ -30,7 +30,6 @@ namespace Freescape {
 
 class Entrance : public Object {
 public:
-
 	Entrance(
 		uint16 objectID,
 		const Math::Vector3d &origin,

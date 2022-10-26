@@ -35,7 +35,7 @@ static const entrancesTableEntry rawEntranceTable[] = {
 	{187, {36, 137, 13}}, // TODO
 	{188, {352, 105, 204}},
 	{190, {36, 137, 13}}, // TODO
-	{191, {49, 7, 23}}, // TODO
+	{191, {49, 7, 23}},   // TODO
 	{192, {36, 137, 13}}, // TODO
 	{193, {36, 137, 13}}, // TODO
 	{194, {36, 137, 13}}, // TODO
@@ -50,10 +50,10 @@ static const entrancesTableEntry rawEntranceTable[] = {
 	{203, {207, 25, 384}},
 	{204, {33, 48, 366}},
 	{206, {25, 8, 200}},
-	{0, {0, 0, 0}},        // NULL
+	{0, {0, 0, 0}}, // NULL
 };
 
-static const char* rawMessagesTable[] = {
+static const char *rawMessagesTable[] = {
 	"HEART  FAILURE",
 	"SUN ECLIPSED",
 	"CRUSHED TO DEATH",
@@ -72,8 +72,7 @@ static const char* rawMessagesTable[] = {
 	"REMOVE LID",
 	"POISON AIR",
 	"MATCH MADE",
-	NULL
-};
+	NULL};
 
 EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEngine(syst, gd) {
 	_viewArea = Common::Rect(40, 32, 280, 132);
@@ -128,7 +127,6 @@ void EclipseEngine::loadAssets() {
 		load8bitBinary(file, 0x7bb0, 4); // TODO
 	} else
 		error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
-
 }
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
@@ -152,7 +150,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	assert(entranceID > 0);
 
-	entrance = (Entrance*) _currentArea->entranceWithID(entranceID);
+	entrance = (Entrance *)_currentArea->entranceWithID(entranceID);
 
 	if (!entrance) {
 		assert(_entranceTable.contains(entranceID));
@@ -172,7 +170,6 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	} else
 		_gfx->_keyColor = 255;
 }
-
 
 void EclipseEngine::drawUI() {
 	_gfx->renderCrossair(0, _crossairPosition);
@@ -203,6 +200,5 @@ void EclipseEngine::drawUI() {
 
 	_gfx->setViewport(_viewArea);
 }
-
 
 } // End of namespace Freescape

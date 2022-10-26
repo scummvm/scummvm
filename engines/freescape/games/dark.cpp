@@ -84,8 +84,8 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		traverseEntrance(entranceID);
 	} else if (entranceID == 0) {
 		Math::Vector3d diff = _lastPosition - _position;
-		//debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
-		// diff should be used to determinate which entrance to use
+		// debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
+		//  diff should be used to determinate which entrance to use
 		int newPos = -1;
 		if (abs(diff.x()) < abs(diff.z())) {
 			if (diff.z() > 0)
@@ -114,7 +114,6 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		_gfx->_keyColor = 255;
 }
 
-
 void DarkEngine::drawUI() {
 	_gfx->renderCrossair(0, _crossairPosition);
 
@@ -135,7 +134,6 @@ void DarkEngine::drawUI() {
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 201, 145, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 201, 153, yellow, black, surface);
 
-
 		drawStringInSurface(Common::String::format("%07d", score), 95, 8, yellow, black, surface);
 
 		if (!_uiTexture)
@@ -150,6 +148,5 @@ void DarkEngine::drawUI() {
 
 	_gfx->setViewport(_viewArea);
 }
-
 
 } // End of namespace Freescape

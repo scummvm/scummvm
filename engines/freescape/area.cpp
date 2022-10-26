@@ -21,19 +21,19 @@
 
 // Based on Phantasma code by Thomas Harte (2013)
 
-#include "freescape/freescape.h"
 #include "freescape/area.h"
+#include "common/algorithm.h"
+#include "freescape/freescape.h"
+#include "freescape/objects/entrance.h"
 #include "freescape/objects/geometricobject.h"
 #include "freescape/objects/global.h"
-#include "freescape/objects/entrance.h"
-#include "common/algorithm.h"
 
 namespace Freescape {
 
 Object *Area::objectWithIDFromMap(ObjectMap *map, uint16 objectID) {
 	if (!map)
 		return nullptr;
-	if(!map->contains(objectID))
+	if (!map->contains(objectID))
 		return nullptr;
 	return (*map)[objectID];
 }
@@ -106,7 +106,7 @@ Area::~Area() {
 	delete entrancesByID;
 	delete objectsByID;
 
-	for (Common::Array<Common::String*>::iterator iterator = conditionSources.begin(); iterator != conditionSources.end(); iterator++)
+	for (Common::Array<Common::String *>::iterator iterator = conditionSources.begin(); iterator != conditionSources.end(); iterator++)
 		delete *iterator;
 }
 
@@ -134,7 +134,7 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 		} else {
 			obj = global->objectWithID(key);
 			assert(obj);
-			obj = (Object*) ((GeometricObject*) obj)->duplicate();
+			obj = (Object *)((GeometricObject *)obj)->duplicate();
 			addObject(obj);
 		}
 		obj->setObjectFlags(flags);
@@ -170,10 +170,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 	Object *collided = nullptr;
 	for (int i = 0; i < int(drawableObjects.size()); i++) {
 		float objSize = drawableObjects[i]->getSize().length();
-		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()
-		  && drawableObjects[i]->boundingBox.isValid()
-		  && ray.intersectAABB(drawableObjects[i]->boundingBox)
-		  && size >= objSize) {
+		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->boundingBox) && size >= objSize) {
 			debugC(1, kFreescapeDebugMove, "shot obj id: %d", drawableObjects[i]->getObjectID());
 			collided = drawableObjects[i];
 			size = objSize;
@@ -187,7 +184,7 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	Object *collided = nullptr;
 	for (int i = 0; i < int(drawableObjects.size()); i++) {
 		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
-			GeometricObject *obj = (GeometricObject*) drawableObjects[i];
+			GeometricObject *obj = (GeometricObject *)drawableObjects[i];
 			float objSize = obj->getSize().length();
 			if (obj->collides(boundingBox) && size > objSize) {
 				collided = obj;
@@ -240,21 +237,20 @@ void Area::addStructure(Area *global) {
 		for (int i = 0; i < 6; i++)
 			gColors->push_back(groundColor);
 
-		obj = (Object*) new GeometricObject(
+		obj = (Object *)new GeometricObject(
 			Object::Type::Cube,
 			id,
-			0, // flags
-			Math::Vector3d(0, -1, 0), // Position
+			0,                             // flags
+			Math::Vector3d(0, -1, 0),      // Position
 			Math::Vector3d(4128, 1, 4128), // size
 			gColors,
 			nullptr,
-			FCLInstructionVector()
-		);
+			FCLInstructionVector());
 		(*objectsByID)[id] = obj;
 		drawableObjects.insert_at(0, obj);
 		return;
 	}
-	GlobalStructure *rs = (GlobalStructure*) (*entrancesByID)[255];
+	GlobalStructure *rs = (GlobalStructure *)(*entrancesByID)[255];
 
 	for (int i = 0; i < int(rs->structure.size()); i++) {
 		int16 id = rs->structure[i];

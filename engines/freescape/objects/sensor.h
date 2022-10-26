@@ -30,7 +30,6 @@ namespace Freescape {
 
 class Sensor : public Object {
 public:
-
 	Sensor(
 		uint16 objectID,
 		const Math::Vector3d &origin,

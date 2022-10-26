@@ -25,21 +25,21 @@
 #include "common/rect.h"
 #include "common/system.h"
 
+#include "graphics/tinygl/pixelbuffer.h"
 #include "math/frustum.h"
 #include "math/matrix4.h"
 #include "math/vector3d.h"
-#include "graphics/tinygl/pixelbuffer.h"
 
 namespace Freescape {
 
-typedef Common::Array<byte*> ColorMap;
+typedef Common::Array<byte *> ColorMap;
 
 class Renderer;
 
 class Texture {
 public:
-	Texture() {};
-	virtual ~Texture() {};
+	Texture(){};
+	virtual ~Texture(){};
 
 	uint width;
 	uint height;
@@ -60,11 +60,10 @@ public:
 	Graphics::PixelFormat _originalPixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
 
-    /**
+	/**
 	 *   Convert from paletted surface
-     */
+	 */
 	Graphics::Surface *convertFromPalette(Graphics::PixelBuffer *rawsurf);
-
 
 	virtual void init() = 0;
 	virtual void clear() = 0;
@@ -82,7 +81,7 @@ public:
 	/**
 	 *  Swap the buffers, making the drawn screen visible
 	 */
-	virtual void flipBuffer() { }
+	virtual void flipBuffer() {}
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
 	virtual void freeTexture(Texture *texture) = 0;
@@ -155,6 +154,7 @@ public:
 
 	void startFrame();
 	void delayBeforeSwap();
+
 private:
 	OSystem *_system;
 

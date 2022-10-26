@@ -21,8 +21,8 @@
 
 // Based on Phantasma code by Thomas Harte (2013)
 
-#include "freescape/language/8bitDetokeniser.h"
 #include "freescape/freescape.h"
+#include "freescape/language/8bitDetokeniser.h"
 
 namespace Freescape {
 
@@ -98,71 +98,71 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 		FCLInstruction &instruction = code[ip];
 		debugC(1, kFreescapeDebugCode, "Executing ip: %d in code with size: %d", ip, codeSize);
 		switch (instruction.getType()) {
-			default:
+		default:
 			break;
-			case Token::COLLIDEDQ:
+		case Token::COLLIDEDQ:
 			if (collided)
 				executeCode(*instruction.thenInstructions, shot, collided);
 			// else branch is always empty
 			assert(instruction.elseInstructions == nullptr);
 			break;
-			case Token::SHOTQ:
+		case Token::SHOTQ:
 			if (shot)
 				executeCode(*instruction.thenInstructions, shot, collided);
 			// else branch is always empty
 			assert(instruction.elseInstructions == nullptr);
 			break;
-			case Token::VARNOTEQ:
+		case Token::VARNOTEQ:
 			if (executeEndIfNotEqual(instruction))
 				ip = codeSize;
 			break;
-			case Token::SWAPJET:
+		case Token::SWAPJET:
 			executeSwapJet(instruction);
 			break;
-			case Token::ADDVAR:
+		case Token::ADDVAR:
 			executeIncrementVariable(instruction);
 			break;
-			case Token::SUBVAR:
+		case Token::SUBVAR:
 			executeDecrementVariable(instruction);
 			break;
-			case Token::GOTO:
+		case Token::GOTO:
 			executeGoto(instruction);
 			break;
-			case Token::TOGVIS:
+		case Token::TOGVIS:
 			executeToggleVisibility(instruction);
 			break;
-			case Token::INVIS:
+		case Token::INVIS:
 			executeMakeInvisible(instruction);
 			break;
-			case Token::VIS:
+		case Token::VIS:
 			executeMakeVisible(instruction);
 			break;
-			case Token::DESTROY:
+		case Token::DESTROY:
 			executeDestroy(instruction);
 			break;
-			case Token::REDRAW:
+		case Token::REDRAW:
 			executeRedraw(instruction);
 			break;
-			case Token::DELAY:
+		case Token::DELAY:
 			executeDelay(instruction);
 			break;
-			case Token::SOUND:
+		case Token::SOUND:
 			executeSound(instruction);
 			break;
-			case Token::SETBIT:
+		case Token::SETBIT:
 			executeSetBit(instruction);
 			break;
-			case Token::CLEARBIT:
+		case Token::CLEARBIT:
 			executeClearBit(instruction);
 			break;
-			case Token::PRINT:
+		case Token::PRINT:
 			executePrint(instruction);
 			break;
-			case Token::BITNOTEQ:
+		case Token::BITNOTEQ:
 			if (executeEndIfBitNotEqual(instruction))
 				ip = codeSize;
 			break;
-			case Token::INVISQ:
+		case Token::INVISQ:
 			if (executeEndIfVisibilityIsEqual(instruction))
 				ip = codeSize;
 			break;
@@ -171,7 +171,6 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 	}
 	return;
 }
-
 
 void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 	debugC(1, kFreescapeDebugCode, "Redrawing screen");
@@ -235,14 +234,14 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 	switch (variable) {
 	case k8bitVariableScore:
 		debugC(1, kFreescapeDebugCode, "Score incremented by %d up to %d", increment, _gameStateVars[variable]);
-	break;
+		break;
 	case k8bitVariableEnergy:
 		if (_gameStateVars[variable] > k8bitMaxEnergy)
 			_gameStateVars[variable] = k8bitMaxEnergy;
 		else if (_gameStateVars[variable] < 0)
 			_gameStateVars[variable] = 0;
 		debugC(1, kFreescapeDebugCode, "Energy incremented by %d up to %d", increment, _gameStateVars[variable]);
-	break;
+		break;
 	case k8bitVariableShield:
 		if (_gameStateVars[variable] > k8bitMaxShield)
 			_gameStateVars[variable] = k8bitMaxShield;
@@ -250,10 +249,10 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 			_gameStateVars[variable] = 0;
 
 		debugC(1, kFreescapeDebugCode, "Shield incremented by %d up to %d", increment, _gameStateVars[variable]);
-	break;
+		break;
 	default:
 		debugC(1, kFreescapeDebugCode, "Variable %d by %d incremented up to %d!", variable, increment, _gameStateVars[variable]);
-	break;
+		break;
 	}
 }
 
@@ -346,7 +345,6 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 		obj = _areaMap[areaID]->objectWithID(objectID);
 		obj->makeVisible();
 	}
-
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
@@ -360,7 +358,7 @@ void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
 	assert(index < 32);
 	_gameStateBits[_currentArea->getAreaID()] |= (1 << index);
 	debugC(1, kFreescapeDebugCode, "Setting bit %d", index);
-	//debug("v: %d", (_gameStateBits[_currentArea->getAreaID()] & (1 << index)));
+	// debug("v: %d", (_gameStateBits[_currentArea->getAreaID()] & (1 << index)));
 }
 
 void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
