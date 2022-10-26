@@ -301,7 +301,7 @@ void ScreenPalette::updatePalette() {
 void ScreenPalette::updateFaderPalette() {
 	if (_newFaderValue >= 255) {
 		_newFaderValue -= 256;
-		for (int i = _firstFaderIndex; i <= _lastFaderIndex; ++i) {
+		for (int i = _firstFaderIndex; i < _lastFaderIndex; ++i) {
 			byte r = _mainPalette[i * 3 + 0];
 			byte g = _mainPalette[i * 3 + 1];
 			byte b = _mainPalette[i * 3 + 2];
@@ -310,7 +310,7 @@ void ScreenPalette::updateFaderPalette() {
 			_faderPalette[i * 3 + 2] = b - (((_newFaderValue * (255 - b)) >> 8) & 0xFF);
 		}
 	} else {
-		for (int i = _firstFaderIndex; i <= _lastFaderIndex; ++i) {
+		for (int i = _firstFaderIndex; i < _lastFaderIndex; ++i) {
 			byte r = _mainPalette[i * 3 + 0];
 			byte g = _mainPalette[i * 3 + 1];
 			byte b = _mainPalette[i * 3 + 2];
