@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map36::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 15; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[66 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,49 @@ void Map36::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map36::special00() {
+	g_events->addView("CloakedPrisoner");
+}
+
+void Map36::special01() {
+	send(SoundMessage(
+		STRING["maps.map36.exit"],
+		[]() {
+			g_maps->_mapPos = Common::Point(11, 2);
+			g_maps->changeMap(0xa00, 2);
+		}
+	));
+}
+
+void Map36::special02() {
+	send(SoundMessage(STRING["maps.map36.slide"]));
+	g_maps->_mapPos = Common::Point(12, 2);
+	g_maps->changeMap(0xa00, 2);
+}
+
+void Map36::special03() {
+	send(SoundMessage(STRING["maps.map36.message"]));
+}
+
+void Map36::special04() {
+}
+
+void Map36::special05() {
+}
+
+void Map36::special06() {
+}
+
+void Map36::special07() {
+}
+
+void Map36::special11() {
 }
 
 } // namespace Maps
