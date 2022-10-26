@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-25 21:05+0000\n"
-"PO-Revision-Date: 2022-10-21 01:33+0000\n"
+"PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/he/>\n"
@@ -6087,7 +6087,6 @@ msgid "Open general cheat menu"
 msgstr "פתיחת תפריט רמאויות כללי"
 
 #: engines/nancy/input.cpp:255
-#, fuzzy
 msgid "Open event flags cheat menu"
 msgstr "פתיחת תפריט רמאויות של דגלי אירועים"
 
@@ -7477,6 +7476,9 @@ msgid ""
 "compression is not supported anymore for this game, audio will be disabled.\n"
 "Please copy the game from the original media without compression."
 msgstr ""
+"נתגלו קבצי שמע שנדחסו באמצעות ScummVM Tools; *.BUN/*.SOU\n"
+"הדחיסה עבור משחק זה כבר אינה נתמכת, השמע ינוטרל.\n"
+"נא להעתיק את המשחק מהמדיה המקורית ללא הדחיסה."
 
 #: engines/scumm/scumm.cpp:1917
 #, c-format
@@ -7492,6 +7494,8 @@ msgid ""
 "This particular version of Monkey Island 1 is known to miss some\n"
 "required resources for MT-32. Using AdLib instead."
 msgstr ""
+"גרסה זו של אי הקופים 1 ידועה כחסרה\n"
+"משאבים מסוים שנדרשים עבור MT-32. משתמשים ב-AdLib במקום."
 
 #: engines/scumm/scumm.cpp:3242
 msgid ""
@@ -7609,13 +7613,15 @@ msgstr "הפעלת טעינה של משאבים חלופיים חיצוניים.
 
 #: engines/stark/detection.cpp:398
 msgid "Enable linear filtering of the backgrounds images"
-msgstr ""
+msgstr "הפעלת סינון לינארי של תמונות הרקע"
 
 #: engines/stark/detection.cpp:399
 msgid ""
 "When linear filtering is enabled the background graphics are smoother in "
 "full screen mode, at the cost of some details."
 msgstr ""
+"כאשר סינון לינארי מופעל תמונות הרקע יהיו חלקות יותר במצב מסך מלא, על חשבון "
+"פרטים מסוימים."
 
 #: engines/stark/detection.cpp:409 engines/ultima/detection.cpp:143
 msgid "Enable font anti-aliasing"
@@ -7623,7 +7629,7 @@ msgstr "הפעלת החלקת עקומות עבור גופנים"
 
 #: engines/stark/detection.cpp:410 engines/ultima/detection.cpp:144
 msgid "When font anti-aliasing is enabled, the text is smoother."
-msgstr ""
+msgstr "כאשר החלקת-עקומות של גופנים מופעלת, הטקסט חלק יותר."
 
 #: engines/stark/stark.cpp:106
 msgid "Software renderer does not support modded assets"
@@ -7639,20 +7645,22 @@ msgid ""
 "designed. The Steam release is known to be missing it. You can get the fonts "
 "from the demo version of the game."
 msgstr ""
+"התיקיה 'fonts' נדרשת כדי לחוות את סגנון הטקסט כפי שעוצב. גרסת Stream ידועה "
+"כחסרה תיקיה זו. ניתן להשיג את הגופנים מגרסת ההדגמה של המשחק."
 
 #: engines/stark/stark.cpp:312
 msgid ""
 "'gui.ini' is recommended to get proper font settings for the game "
 "localization."
-msgstr ""
+msgstr "מומלץ להשתמש ב-'gui.ini' עבור הגדרות גופן ראויות לגיור המשחק."
 
 #: engines/stark/stark.cpp:318
 msgid "'language.ini' is recommended to get localized confirmation dialogs."
-msgstr ""
+msgstr "מומלץ להשתמש ב-'language.ini' עבור שיחות אישור מגוירות."
 
 #: engines/stark/stark.cpp:324
 msgid "'game.exe' is recommended to get styled confirmation dialogs."
-msgstr ""
+msgstr "מומלץ להשתמש ב-'game.exe' עבור שיחות אישור מסוגננות."
 
 #: engines/supernova/supernova.cpp:192
 #, c-format
@@ -7680,6 +7688,8 @@ msgid ""
 "Failed to save temporary game state. Make sure your save game directory is "
 "set in ScummVM and that you can write to it."
 msgstr ""
+"נכשל בשמירת מצב משחק זמני. נא לוודא שתיקית השמירות נקבעה וש-ScummVM מסוגל "
+"לכתוב אליה."
 
 #: engines/supernova/supernova.cpp:834
 msgid "Failed to load temporary game state."
@@ -7822,11 +7832,11 @@ msgstr "גרסה זו דורשת את הספריה Giflib שלא נבנתה אל
 
 #: engines/twine/detection.cpp:1014
 msgid "Enable wall collisions"
-msgstr ""
+msgstr "הפעלת התנגשות עם קירות"
 
 #: engines/twine/detection.cpp:1015
 msgid "Enable the original wall collision damage"
-msgstr ""
+msgstr "הפעלת הנזק המקורי בהתנגשות עם קירות"
 
 #: engines/twine/detection.cpp:1026
 msgid "Disable save menu"
@@ -7835,7 +7845,7 @@ msgstr "כיבוי תפריט שמירה"
 #: engines/twine/detection.cpp:1027
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
-msgstr ""
+msgstr "במקור היו רק שמירות אוטומטיות. אפשרות זו מאפשרת לשמור בכל עת."
 
 #: engines/twine/detection.cpp:1037
 msgid "Enable debug mode"
@@ -7919,35 +7929,35 @@ msgstr "ניפוי תקלים בחדר הקודם"
 
 #: engines/twine/metaengine.cpp:114
 msgid "Debug Apply Celling Grid"
-msgstr ""
+msgstr "ניפוי תקלים החלת רשת תאים"
 
 #: engines/twine/metaengine.cpp:119
 msgid "Debug Increase Celling Grid Index"
-msgstr ""
+msgstr "ניפוי תקלים הגברת מיקום רשת תאים"
 
 #: engines/twine/metaengine.cpp:124
 msgid "Debug Decrease Celling Grid Index"
-msgstr ""
+msgstr "ניפוי תקלים הפחתת מיקום רשת תאים"
 
 #: engines/twine/metaengine.cpp:129
 msgid "Debug Grid Camera Up"
-msgstr ""
+msgstr "ניפוי תקלים רשת מצלמה למעלה"
 
 #: engines/twine/metaengine.cpp:134
 msgid "Debug Grid Camera Down"
-msgstr ""
+msgstr "ניפוי תקלים רשת מצלמה למטה"
 
 #: engines/twine/metaengine.cpp:139
 msgid "Debug Grid Camera Left"
-msgstr ""
+msgstr "ניפוי תקלים רשת מצלמה שמאלה"
 
 #: engines/twine/metaengine.cpp:145
 msgid "Debug Grid Camera Right"
-msgstr ""
+msgstr "ניפוי תקלים רשת מצלמה ימינה"
 
 #: engines/twine/metaengine.cpp:150
 msgid "Place actor at center of screen"
-msgstr ""
+msgstr "מיקום השחקן במרכז המסך"
 
 #: engines/twine/metaengine.cpp:155
 msgid "Debug Menu"
@@ -7959,19 +7969,19 @@ msgstr "הרצת תפריט ניפוי תקלים"
 
 #: engines/twine/metaengine.cpp:165 engines/twine/metaengine.cpp:185
 msgid "Normal Behaviour"
-msgstr ""
+msgstr "התנהגות רגילה"
 
 #: engines/twine/metaengine.cpp:170 engines/twine/metaengine.cpp:190
 msgid "Athletic Behaviour"
-msgstr ""
+msgstr "התנהגות ספורטיבית"
 
 #: engines/twine/metaengine.cpp:175 engines/twine/metaengine.cpp:195
 msgid "Aggressive Behaviour"
-msgstr ""
+msgstr "התנהגות תוקפנית"
 
 #: engines/twine/metaengine.cpp:180 engines/twine/metaengine.cpp:200
 msgid "Discreet Behaviour"
-msgstr ""
+msgstr "התנהגות התגנבותית"
 
 #: engines/twine/metaengine.cpp:205
 msgid "Behaviour Action"
@@ -7979,7 +7989,7 @@ msgstr "פעולת התנהגות"
 
 #: engines/twine/metaengine.cpp:211
 msgid "Change Behaviour"
-msgstr ""
+msgstr "החלפת התנהגות"
 
 #: engines/twine/metaengine.cpp:223
 msgid "Options Menu"
@@ -7987,11 +7997,11 @@ msgstr "תפריט אפשרויות"
 
 #: engines/twine/metaengine.cpp:235
 msgid "Use Selected Object"
-msgstr ""
+msgstr "שימוש בחפץ שנבחר"
 
 #: engines/twine/metaengine.cpp:241
 msgid "Throw Magic Ball"
-msgstr ""
+msgstr "הטלת כדור קסם"
 
 #: engines/twine/metaengine.cpp:255
 msgid "Move Backward"
@@ -7999,11 +8009,11 @@ msgstr "תזוזה לאחור"
 
 #: engines/twine/metaengine.cpp:276
 msgid "Use Protopack"
-msgstr ""
+msgstr "שימוש בפרוטו-פק"
 
 #: engines/twine/metaengine.cpp:281
 msgid "Open Holomap"
-msgstr ""
+msgstr "פתיחת הולומפ"
 
 #: engines/twine/metaengine.cpp:294
 msgid "Special Action"
@@ -8047,7 +8057,7 @@ msgstr "הפרדה גבוהה כבויה"
 #: engines/twine/parser/text.cpp:35
 msgctxt "Options menu"
 msgid "Wall collision on"
-msgstr ""
+msgstr "התנגשות בקירות מופעלת"
 
 #: engines/twine/parser/text.cpp:36
 msgctxt "Options menu"
@@ -8056,11 +8066,11 @@ msgstr "התנגשות בקירות כבויה"
 
 #: engines/ultima/detection.cpp:66
 msgid "Enable frame skipping"
-msgstr ""
+msgstr "הפעלת דילוג על תמונות"
 
 #: engines/ultima/detection.cpp:67
 msgid "Allow the game to skip animation frames when running too slow."
-msgstr ""
+msgstr "המשחק ידלג על תמונות בהנפשה כאשר הוא רץ לאט מדי."
 
 #: engines/ultima/detection.cpp:77
 msgid "Enable frame limiting"
@@ -8068,7 +8078,7 @@ msgstr "הפעלת מגבלת תמונות"
 
 #: engines/ultima/detection.cpp:78
 msgid "Limits the speed of the game to prevent running too fast."
-msgstr ""
+msgstr "הגבלת מהירות המשחק כדי שלא ירוץ מהר מדי."
 
 #: engines/ultima/detection.cpp:88
 msgid "Enable cheats"
@@ -8076,15 +8086,15 @@ msgstr "הפעלת רמאויות"
 
 #: engines/ultima/detection.cpp:89
 msgid "Allow cheats by commands and a menu when player is clicked."
-msgstr ""
+msgstr "אפשור רמאויות באמצעות פקודות ותפריט כאשר לוחצים על שחקן."
 
 #: engines/ultima/detection.cpp:110
 msgid "Play foot step sounds"
-msgstr ""
+msgstr "השמעת צלילי צעדים"
 
 #: engines/ultima/detection.cpp:111
 msgid "Plays sound when the player moves."
-msgstr ""
+msgstr "השמעת צלילם כאשר השחקן זז."
 
 #: engines/ultima/detection.cpp:121
 msgid "Enable jump to mouse position"
@@ -8093,7 +8103,7 @@ msgstr "הפעלת קפיצה למיקום הסמן"
 #: engines/ultima/detection.cpp:122
 msgid ""
 "Jumping while not moving targets the mouse cursor rather than direction only."
-msgstr ""
+msgstr "קפיצה ללא תנועה ממקדת את סמן העכבר במקום כיוון בלבד."
 
 #: engines/ultima/detection.cpp:132
 msgid "Enable font replacement"
@@ -8101,29 +8111,29 @@ msgstr "הפעלת החלפת גופנים"
 
 #: engines/ultima/detection.cpp:133
 msgid "Replaces game fonts with rendered fonts"
-msgstr ""
+msgstr "החלפת גופני המשחק בגופני מסירה"
 
 #. I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
 #: engines/ultima/detection.cpp:155
 msgid "Camera moves with Silencer"
-msgstr ""
+msgstr "תנועת מצלמה עם המשתיק"
 
 #: engines/ultima/detection.cpp:156
 msgid ""
 "Camera tracks the player movement rather than snapping to defined positions."
-msgstr ""
+msgstr "המצלמה תעקוב אחר תנועת השחק במקום להיצמד למיקומים מוגדרים."
 
 #: engines/ultima/detection.cpp:166
 msgid "Always enable Christmas easter-egg"
-msgstr ""
+msgstr "הפעלת תכמין חג המולד תמיד"
 
 #: engines/ultima/detection.cpp:167
 msgid "Enable the Christmas music at any time of year."
-msgstr ""
+msgstr "הפעלת מוזיקת חג המולד בכל ימות השנה."
 
 #: engines/ultima/shared/early/ultima_early.cpp:70
 msgid "Could not find correct ultima.dat datafile"
-msgstr ""
+msgstr "לא ניתן למצוא קובץ נתונים ultima.dat תקין"
 
 #: engines/ultima/shared/engine/data_archive.cpp:80
 #, c-format
@@ -8147,7 +8157,7 @@ msgstr "שומר שמירה מהירה %d"
 
 #: engines/ultima/nuvie/meta_engine.cpp:38
 msgid "Original Save"
-msgstr ""
+msgstr "שמירה מקורית"
 
 #: engines/ultima/nuvie/save/save_game.cpp:211
 msgid "Transfer Character"
@@ -8155,27 +8165,27 @@ msgstr "העברת דמות"
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Ultima VIII"
-msgstr ""
+msgstr "Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:135
 msgid "Crusader"
-msgstr ""
+msgstr "צלבן"
 
 #: engines/ultima/ultima8/meta_engine.cpp:178
 msgid "Ultima VIII Cheats"
-msgstr ""
+msgstr "רמאויות עבור Ultima VIII"
 
 #: engines/ultima/ultima8/meta_engine.cpp:193
 msgid "Ultima VIII Debug"
-msgstr ""
+msgstr "ניפוי תקלים עבור Ultima VIII"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:299
 msgid "[corrupt]"
-msgstr ""
+msgstr "[פגום]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:302
 msgid "[outdated]"
-msgstr ""
+msgstr "[פג תוקף]"
 
 #: engines/ultima/ultima8/gumps/u8_save_gump.cpp:305
 msgid "[too modern]"
@@ -8199,11 +8209,12 @@ msgstr "החל סינון בי-לינארי על דמויות בודדות"
 
 #: engines/wintermute/detection.cpp:77
 msgid "Force to use 2D renderer (2D games only)"
-msgstr ""
+msgstr "אילוץ מסירת דו-מימד (משחקים דו-ממדיים בלבד)"
 
 #: engines/wintermute/detection.cpp:78
 msgid "This setting forces ScummVM to use 2D renderer while running 2D games"
 msgstr ""
+"הגדרה זו מאלצת את ScummVM להשתמש במסירת דו-ממד כאשר מריצים משחקים דו-ממדיים"
 
 #: engines/wintermute/metaengine.cpp:64
 msgid "FoxTail support is not compiled in"
@@ -8234,6 +8245,8 @@ msgid ""
 "This game requires 3D capabilities, which is not compiled in. As such, it is "
 "likely to be unplayable totally or partially."
 msgstr ""
+"משחק זה דורש יכולות תחת ממד, שלא נבנו. לכן, סביר להניח שלא ניתן לשחק בכלל או "
+"שניתן לשחק רק באופן חלקי."
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
@@ -8686,10 +8699,8 @@ msgid "Toggle subtitles"
 msgstr "מיתוג כתוביות"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "הסתרת אחרים"
+msgstr "הסתרת רמזים"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
@@ -8914,6 +8925,12 @@ msgid ""
 "LiberationSans and LiberationSerif, or FreeMono, FreeSans and FreeSerif "
 "respectively."
 msgstr ""
+"לפני שאפשר לשחק במשחק זה, יש להעתיק את הגופנים הנדרשים אל תיקית התוספות של "
+"ScummVM, או אל תיקית המשחק. בחלונות, יש להעתיק את הגופנים להלן מתוך תיקית "
+"הגופנים של חלונות: Times New Roman, Century Schoolbook, Garamond, Courier "
+"New ו-Arial. לחלופין,ניתן להוריד את חבילת GNU FreeFont או גופני Liberation. "
+"יש להעתיק את כל הגופנים מהחבילה שנבחרה, לדוגמה, FreeMono, FreeSans ו-"
+"FreeSerif או LiberationMono, LiberationSans ו-LiberationSerif בהתאמה."
 
 #~ msgid "Override global shader settings"
 #~ msgstr "דרוס הגדרות shader גלובליות"
