@@ -29,6 +29,17 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 29
+#define VAL2 47
+
+static const byte MATCH_ITEMS[7] = {
+	0,  0,241,  0,  0,  0,  0
+};
+static const byte MATCH_FLAGS[7] = {
+	CHARFLAG5_1, CHARFLAG5_2, CHARFLAG5_4, CHARFLAG5_8,
+	CHARFLAG5_10, CHARFLAG5_20, CHARFLAG5_40
+};
+
 void Map35::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 11; ++i) {
@@ -55,27 +66,109 @@ void Map35::special00() {
 }
 
 void Map35::special01() {
+	send(SoundMessage(
+		STRING["maps.map35.exit"],
+		[]() {
+			g_maps->_mapPos = Common::Point(14, 10);
+			g_maps->changeMap(0xa00, 2);
+		}
+	));
 }
 
 void Map35::special02() {
+	send(SoundMessage(STRING["maps.map35.slide"]));
+	g_maps->_mapPos = Common::Point(14, 9);
+	g_maps->changeMap(0xa00, 2);
 }
 
 void Map35::special03() {
+	send(SoundMessage(STRING["maps.map35.message"]));
 }
 
 void Map35::special04() {
+	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
+		send(SoundMessage(STRING["maps.map35.merchants"]));
+		g_maps->_mapPos.y++;
+		updateGame();
+	}
 }
 
 void Map35::special05() {
+	updateFlags();
+	warning("TODO: drawMonster");
+	g_events->addView("Inspectron");
 }
 
 void Map35::special06() {
+	g_maps->clearSpecial();
+	g_globals->_treasure[8] = 30;
+	g_events->addAction(KEYBIND_SEARCH);
 }
 
 void Map35::special07() {
+	send(SoundMessage(STRING["maps.map35.vault"]));
+	_data[VAL1] = 30;
+	_data[VAL2] = 7;
 }
 
 void Map35::special09() {
+	g_maps->clearSpecial();
+	g_globals->_treasure[8] = 50;
+	special07();
+}
+
+void Map35::updateFlags() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		int counte = c._equipped.size();
+		int count = counte + c._backpack.size();
+		for (int itemIdx = 0; itemIdx < count; ++itemIdx) {
+			byte itemId = (itemIdx < counte) ?
+				c._equipped[itemIdx]._id : c._backpack[itemIdx - counte]._id;
+
+			// Scan list of items to match against
+			for (int arrIdx = 0; arrIdx < 7; ++arrIdx) {
+				if (itemId == MATCH_ITEMS[arrIdx]) {
+					c._flags[5] |= MATCH_FLAGS[arrIdx];
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Map35::acceptQuest() {
+	Character &leader = g_globals->_party[0];
+	byte flags = leader._flags[8];
+
+	// Find quest that hasn't been done yet
+	int questNum;
+	for (questNum = 8; flags && questNum < 15; ++questNum, flags >>= 1) {
+		if (!(flags & 1))
+			break;
+	}
+	if (questNum == 15) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._flags[8] = CHARFLAG8_80;
+			c._flags[5] = CHARFLAG5_80;
+		}
+	}
+
+	// Assign the quest to all party characters
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._quest = questNum;
+	}
+
+	// Draw the scene
+	g_maps->_mapPos.y++;
+	redrawGame();
+}
+
+bool Map35::matchQuest(Common::String &line) {
+	// TODO
+	return false;
 }
 
 } // namespace Maps

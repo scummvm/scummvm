@@ -71,7 +71,7 @@ void Map18::special01() {
 		_data[VAL1] = 0;
 
 	} else {
-		g_events->findView("Game")->redraw();
+		redrawGame();
 		send(SoundMessage(
 			STRING["maps.map18.blackridge_south"],
 			[](const Common::KeyState &ks) {
@@ -97,7 +97,7 @@ void Map18::special02() {
 		_data[VAL2] = 0;
 
 	} else {
-		g_events->findView("Game")->redraw();
+		redrawGame();
 		send(SoundMessage(
 			STRING["maps.map18.blackridge_north"],
 			[](const Common::KeyState &ks) {

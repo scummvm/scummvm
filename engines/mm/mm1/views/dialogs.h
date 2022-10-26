@@ -47,6 +47,7 @@
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
 #include "mm/mm1/views/maps/ice_princess.h"
+#include "mm/mm1/views/maps/inspectron.h"
 #include "mm/mm1/views/maps/lion.h"
 #include "mm/mm1/views/maps/prisoners.h"
 #include "mm/mm1/views/maps/resistances.h"
@@ -96,6 +97,7 @@ private:
 	Views::Maps::DemonPrisoner _demonPrisoner;
 	Views::Maps::ManPrisoner _manPrisoner;
 	Views::Maps::IcePrincess _icePrincess;
+	Views::Maps::Inspectron _inspectron;
 	Views::Maps::Lion _lion;
 	Views::Maps::Resistances _resistances;
 	Views::Maps::Trivia _trivia;

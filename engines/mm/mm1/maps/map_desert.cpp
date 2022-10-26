@@ -29,8 +29,6 @@ namespace MM1 {
 namespace Maps {
 
 void MapDesert::desert() {
-	Game::Encounter &enc = g_globals->_encounters;
-
 	SoundMessage msg;
 	msg._lines.push_back(Line(0, 1, STRING["maps.desert.its_hot"]));
 

@@ -187,6 +187,11 @@ public:
 	 * Updates the game display
 	 */
 	static void updateGame();
+
+	/**
+	 * Redraw the game display
+	 */
+	static void redrawGame();
 };
 
 } // namespace Maps
