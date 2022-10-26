@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-25 21:05+0000\n"
-"PO-Revision-Date: 2022-10-10 13:25+0000\n"
+"PO-Revision-Date: 2022-10-26 11:33+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/ja/>\n"
@@ -8774,10 +8774,8 @@ msgid "Toggle subtitles"
 msgstr "字幕の切替"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "他を隠す"
+msgstr "ヒントを隠す"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
