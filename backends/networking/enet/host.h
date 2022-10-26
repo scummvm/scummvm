@@ -36,6 +36,7 @@ typedef struct _ENetPacket ENetPacket;
 #define ENET_EVENT_TYPE_RECEIVE 3
 
 #include "common/str.h"
+#include "common/debug.h"
 
 namespace Networking {
 
@@ -47,8 +48,15 @@ public:
 
 	uint8 service(int timeout = 0);
 
+	bool send(const char *data, int peerIndex, int channel = 0, bool reliable = true);
+	bool send_raw_data(Common::String address, int port, const char *data);
+
 	Common::String get_host();
 	int get_port();
+
+	int get_peer_index_from_host(Common::String host, int port);
+
+	Common::String get_packet_data();
 	void destroy_packet();
 private:
 	ENetHost *_host;

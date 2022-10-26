@@ -74,11 +74,70 @@ int Host::get_port() {
 	return _recentEvent->peer->address.port;
 }
 
+int Host::get_peer_index_from_host(Common::String host, int port) {
+	for (int i = 0; i < (int)_host->peerCount; i++) {
+		char _hostName[50];
+		if (enet_address_get_host_ip(&_host->peers[i].address, _hostName, 50) == 0) {
+			if (host == _hostName && port == _host->peers[i].address.port) {
+				return i;
+			}
+		}
+	}
+	return -1;
+}
+
+Common::String Host::get_packet_data() {
+	if (!_recentPacket)
+		return "";
+	return Common::String((const char*)_recentPacket->data, (uint32)_recentPacket->dataLength);
+}
+
 void Host::destroy_packet() {
 	if (!_recentPacket)
 		return;
 	enet_packet_destroy(_recentPacket);
 	_recentPacket = nullptr;
+}
+
+bool Host::send(const char *data, int peerIndex, int channel, bool reliable) {
+	ENetPeer *peer;
+	if (_serverPeer) {
+		peer = _serverPeer;
+	} else {
+		if (peerIndex > (int)_host->peerCount) {
+			warning("ENet: Peer index (%d) is too high", peerIndex);
+			return false;
+		}
+		peer = &_host->peers[peerIndex];
+	}
+
+	ENetPacket *packet = enet_packet_create(const_cast<char *>(data), strlen(data), (reliable) ? ENET_PACKET_FLAG_RELIABLE : 0);
+	enet_peer_send(peer, channel, packet);
+
+	enet_host_flush(_host);
+	return true;
+}
+
+bool Host::send_raw_data(Common::String address, int port, const char *data) {
+	ENetAddress _address;
+	if (address == "255.255.255.255") {
+		_address.host = ENET_HOST_BROADCAST;
+	} else {
+		// NOTE: 0.0.0.0 returns ENET_HOST_ANY normally.
+		enet_address_set_host(&_address, address.c_str());
+	}
+	_address.port = port;
+
+	ENetBuffer _buffer;
+	_buffer.data = const_cast<char *>(data);
+	_buffer.dataLength = strlen(data);
+
+	int sentLength = enet_socket_send(_host->socket, &_address, &_buffer, 1);
+	if (sentLength < 0)
+		return false;
+	
+	return true;
+
 }
 	
 } // End of namespace Networking
