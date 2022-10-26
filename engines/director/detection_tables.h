@@ -1666,10 +1666,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 //
 //////////////////////////////////////////////////
 
-	MACGAME1("bigsound", "", "BigSound VW Player", "4b42e95a6e75cf440abcfeeeee8d622f", 19456, 0),
+	MACGAME1("bigsound", "", "BigSound VW Player", "4b42e95a6e75cf440abcfeeeee8d622f", 19200, 0),
 
 	// Touring Engine Ver 1.00
-	MACDEMO1("illustrator", "v1 Tour", "Adobe Illustrator Tour", "4d331ce05dbec4a84465ed33fa5538fa", 64948, 0),
+	MACDEMO1("illustrator", "v1 Tour", "Adobe Illustrator Tour", "4d331ce05dbec4a84465ed33fa5538fa", 64692, 0),
 
 	MACGAME2_l("madmac", "", "VW Player", "16034c0db4619552e4fe7e108cb98dae", 17070,
 							 "Vieux", "3555a71c668ce58018bc0863bdc18022", 14341, Common::FR_FRA, 0),
@@ -1678,8 +1678,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("mazewars", "", "Maze Wars+2", "24874b31f1f7f0adc3e8bc1efdc155e7", 128335, 0),
 
 	// No projector provided. Files appear to be incomplete.
-	MACDEMO2("shatter", "Scenes", "TITLE", "e0e1c08c5fd90678ba550a93bc47e261", 14119,
-								  "CITY", "5fcc134c1252f25a31752e4cd6307c8c", 25544, 0),
+	MACDEMO2("shatter", "Scenes", "TITLE", "e0e1c08c5fd90678ba550a93bc47e261", 13863,
+								  "CITY", "5fcc134c1252f25a31752e4cd6307c8c", 25288, 0),
 
 //////////////////////////////////////////////////
 //
@@ -1695,8 +1695,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is FutureView™(O.L.)
 	MACGAME1("futureview", "", "FutureView (O.L.)", "f2dd4c1bacdb1ad0226ac14762a2bd56", 262089, 0),
-	MACDEMO1("ideacomm", "Demo", "IDEAcomm Mac Demo", "b36cb9e6e36e7cb569d9af571d2dd1bd", 21006, 0),
-	MACDEMO1("osmo", "Demo", "Cosmic Osmo Demo", "eba9620282bd39ff4ba2a9190e72880b", 127941, 0),
+	MACDEMO1("ideacomm", "Demo", "IDEAcomm Mac Demo", "b36cb9e6e36e7cb569d9af571d2dd1bd", 20750, 0),
+	MACDEMO1("osmo", "Demo", "Cosmic Osmo Demo", "eba9620282bd39ff4ba2a9190e72880b", 127685, 0),
 
 /*****************************************************************
 	VideoWorks movies built using MacroMind Touring Engine
@@ -1704,15 +1704,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Touring Engine V2.2B12
 	// Original filename is GeoQuery® Tour
-	MACDEMO1("freehand", "Demo", "FreeHand 2.0 demo", "1c6bb186e709e88fdcf9279e8799eab5", 74308, 0),
-	MACDEMO1("geoquery", "Demo", "GeoQuery Tour", "48476e45e1bd9d67806ebe09b959679b", 74262, 0),
-	MACDEMO1("musicpublisher", "Demo", "Music Publisher Demo", "1c6bb186e709e88fdcf9279e8799eab5", 74308, 0),
-	MACDEMO2("pspice", "Demo", "Tour Engine", "1c6bb186e709e88fdcf9279e8799eab5", 74308,
-							   "TOUR LIST", "1efdd9c0455c4e90466ee6a6dda182d1", 22642, 0),
+	MACDEMO1("freehand", "Demo", "FreeHand 2.0 demo", "1c6bb186e709e88fdcf9279e8799eab5", 74052, 0),
+	MACDEMO1("geoquery", "Demo", "GeoQuery Tour", "48476e45e1bd9d67806ebe09b959679b", 74006, 0),
+	MACDEMO1("musicpublisher", "Demo", "Music Publisher Demo", "1c6bb186e709e88fdcf9279e8799eab5", 74052, 0),
+	MACDEMO2("pspice", "Demo", "Tour Engine", "1c6bb186e709e88fdcf9279e8799eab5", 74052,
+							   "TOUR LIST", "1efdd9c0455c4e90466ee6a6dda182d1", 22386, 0),
 
 	// Touring Engine 3.8 © Apple Computer, Inc. & MacroMind 1985-1988
-	MACGAME2("macportable", "", "Double Click Me", "341b6ae632d9e52979e478ce27ffc42c", 114679,
-								"MAIN MENU", "5bfdbf8b0fc6698c9724cd7634427fe1", 30327, 0),
+	MACGAME2("macportable", "", "Double Click Me", "341b6ae632d9e52979e478ce27ffc42c", 114423,
+								"MAIN MENU", "5bfdbf8b0fc6698c9724cd7634427fe1", 30071, 0),
 
 //////////////////////////////////////////////////
 //
