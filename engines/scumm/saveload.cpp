@@ -1355,7 +1355,7 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			uint16 *pos = (uint16*)_grabbedCursor;
 			for (i = 0; i < 4096; ++i)
 				s.syncAsUint16LE(*pos++, VER(20));
-		} else {
+		} else if (s.getVersion() >= VER(20)) {
 			s.syncBytes(_grabbedCursor, 8192, VER(20));
 			// Patch older savegames if they were saved on a system with a
 			// different endianness than the current system's endianness
@@ -1365,18 +1365,14 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 			// where actual cursor data would never get stored (at least not
 			// for the games concerned).
 			uint16 transCol = (_game.heversion >= 80) ? 5 : 255;
-#ifdef SCUMM_LITTLE_ENDIAN
-			if (READ_BE_UINT16(&_grabbedCursor[2046]) == transCol) {
-#else
-			if (READ_LE_UINT16(&_grabbedCursor[2046]) == transCol) {
-#endif
+			if (READ_UINT16(&_grabbedCursor[2046]) == (transCol << 8)) {
 				uint16 *pos = (uint16*)_grabbedCursor;
 				for (i = 0; i < 4096; ++i) {
 					*pos = SWAP_BYTES_16(*pos);
 					pos++;
-				}
 			}
 		}
+	}
 	} else {
 		s.syncBytes(_grabbedCursor, 8192, VER(20));
 	}
