@@ -210,7 +210,6 @@ void FreescapeEngine::pressedKey(const int keycode) {}
 
 void FreescapeEngine::generateInput() {
 	Common::Event event;
-	//g_system->getEventManager()->purgeKeyboardEvents();
 	if (isDOS()) {
 
 		if (_currentDemoInputRepetition == 0) {
@@ -238,7 +237,7 @@ void FreescapeEngine::generateInput() {
 			event.kbd.keycode = (Common::KeyCode)decodeDOSKey(_currentDemoInputCode);
 			event.customType = 0xde00;
 			g_system->getEventManager()->pushEvent(event);
-			debug("Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
+			debugC(1, kFreescapeDebugMove, "Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
 		}
 		_currentDemoInputRepetition--;
 		g_system->delayMillis(50);
@@ -247,7 +246,7 @@ void FreescapeEngine::generateInput() {
 
 	int mouseX = _demoData[_demoIndex++] << 1;
 	int mouseY = _demoData[_demoIndex++];
-	debug("Mouse moved to: %d, %d", mouseX, mouseY);
+	debugC(1, kFreescapeDebugMove, "Mouse moved to: %d, %d", mouseX, mouseY);
 
 	event.type = Common::EVENT_MOUSEMOVE;
 	event.mouse = Common::Point(mouseX, mouseY);
@@ -261,19 +260,18 @@ void FreescapeEngine::generateInput() {
 		g_system->getEventManager()->pushEvent(event);
 		nextKeyCode = _demoData[_demoIndex++];
 	} else {
-		while(nextKeyCode != 0) {
+		while (nextKeyCode != 0) {
 			event = Common::Event();
 			event.type = Common::EVENT_KEYDOWN;
 			event.kbd.keycode = (Common::KeyCode)decodeAmigaAtariKey(nextKeyCode);
-			debug("Pushing key: %x", nextKeyCode);
+			debugC(1, kFreescapeDebugMove, "Pushing key: %x", event.kbd.keycode);
 			event.customType = 0xde00;
 			g_system->getEventManager()->pushEvent(event);
 			nextKeyCode = _demoData[_demoIndex++];
 		}
 	}
 	assert(!nextKeyCode);
-	//_currentDemoInputRepetition = 0;
-	g_system->delayMillis(100);
+	g_system->delayMillis(50);
 }
 
 void FreescapeEngine::processInput() {
@@ -485,7 +483,6 @@ void FreescapeEngine::rotate(float xoffset, float yoffset) {
 
 void FreescapeEngine::rotate(Common::Point lastMousePos, Common::Point mousePos) {
 	if (lastMousePos != Common::Point(0, 0)) {
-		//debug("x: %d, y: %d", mousePos.x, mousePos.y);
 		float xoffset = mousePos.x - lastMousePos.x;
 		float yoffset = mousePos.y - lastMousePos.y;
 
