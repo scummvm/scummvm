@@ -193,17 +193,22 @@ Common::ErrorCode HadeschEngine::loadWindowsCursors(const Common::ScopedPtr<Comm
 Common::ErrorCode HadeschEngine::loadCursors() {
 	debug("HadeschEngine: loading cursors");
 
-	{
-		Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
-		if (exe->loadFromEXE("HADESCH.EXE")) {
-			return loadWindowsCursors(exe);
-		}
-	}
+	const char *const winPaths[] = {
+		"HADESCH.EXE",
+		"WIN95/HADESCH.EXE"
+	};
 
 	const char *const macPaths[] = {
 		"Hades_-_Copy_To_Hard_Drive/Hades_Challenge/Hades_Challenge_PPC",
 		"Hades - Copy To Hard Drive/Hades Challenge/Hades Challenge PPC"
 	};
+
+	for (uint j = 0; j < ARRAYSIZE(macPaths); ++j) {
+		Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
+		if (exe->loadFromEXE(winPaths[j])) {
+			return loadWindowsCursors(exe);
+		}
+	}
 
 	for (uint j = 0; j < ARRAYSIZE(macPaths); ++j) {
 	  	Common::MacResManager resMan = Common::MacResManager();
@@ -484,9 +489,10 @@ Common::Error HadeschEngine::run() {
 
 	if (!_wdPodFile) {
 		const char *const wdpodpaths[] = {
-			"WIN9x/WORLD/WD.POD", "WD.POD",
+			"WIN9x/WORLD/WD.POD", "WIN95/WORLD/WD.POD", "WD.POD",
 			"Hades_-_Copy_To_Hard_Drive/Hades_Challenge/World/wd.pod",
-			"Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod"};
+			"Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod"
+		};
 		debug("HadeschEngine: loading wd.pod");
 		for (uint i = 0; i < ARRAYSIZE(wdpodpaths); ++i) {
 			Common::SharedPtr<Common::File> file(new Common::File());
