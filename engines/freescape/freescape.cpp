@@ -96,9 +96,9 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	_lastMousePos = Common::Point(0, 0);
 	_lastFrame = 0;
 	_nearClipPlane = 1;
+	_farClipPlane = 8192 + 1802; // Added some extra distance to avoid flickering
 
 	// These depends on the specific game
-	_farClipPlane = 0;
 	_playerHeight = 0;
 	_playerWidth = 0;
 	_playerDepth = 0;
