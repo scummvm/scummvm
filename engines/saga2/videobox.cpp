@@ -180,9 +180,6 @@ int16 openVidBox(char *fileName) {
 	// open this video box
 	int16 result = videoBox.openVidBox(fileName);
 
-	// get rid of the box when done
-	videoBox.~CVideoBox();
-
 	g_vm->_pal->quickRestorePalette();
 	// replace the damaged area
 	mainWindow->invalidate(&area);
