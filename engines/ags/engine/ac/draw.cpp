@@ -1036,7 +1036,7 @@ void apply_tint_or_light(int actspsindex, int light_level,
                          int tint_blue, int tint_light, int coldept,
                          Bitmap *blitFrom) {
 
-	// In a 256-colour game, we cannot do tinting or lightening
+	// In a 256-colour game, we cannot do tinting or lightning
 	// (but we can do darkening, if light_level < 0)
 	if (_GP(game).color_depth == 1) {
 		if ((light_level > 0) || (tint_amount != 0))
@@ -1603,7 +1603,7 @@ void prepare_characters_for_drawing() {
 
 			if (((light_level != 0) || (tint_amount != 0)) &&
 			        (!_G(gfxDriver)->HasAcceleratedTransform())) {
-				// apply the lightening or tinting
+				// apply the lightning or tinting
 				Bitmap *comeFrom = nullptr;
 				// if possible, direct read from the source image
 				if (!actspsUsed)
