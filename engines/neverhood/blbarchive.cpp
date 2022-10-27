@@ -26,7 +26,7 @@ namespace Neverhood {
 
 /**
  * A special variant of SafeSeekableSubReadStream which locks a mutex during each read.
- * This is neccessary because the music is streamed from disk and it could happen
+ * This is necessary because the music is streamed from disk and it could happen
  * that a sound effect or another music track is played from the same read stream
  * while the first music track is updated/read.
  */
