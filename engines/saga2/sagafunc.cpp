@@ -1687,7 +1687,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 }
 
 //-----------------------------------------------------------------------
-//	Assign a patrol route and specify the begining and ending waypoints
+//	Assign a patrol route and specify the beginning and ending waypoints
 //		int "c" assignPartialPatrolRoute(
 //			int untilHour,
 //			int routeNo,
