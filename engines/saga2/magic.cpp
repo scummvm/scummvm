@@ -153,7 +153,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		if (isActor(target)) {
 			Actor *a = (Actor *) target;
 			Actor *e = (Actor *) enactor;
-			if (a->hasEffect(actorInvisible) && !e->hasEffect(actorSeeInvis))
+			if (a->hasEffect(kActorInvisible) && !e->hasEffect(kActorSeeInvis))
 				return false;
 		}
 		if (target->thisID() == enactor->thisID())

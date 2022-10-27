@@ -58,20 +58,20 @@ class GameObject;
 //
 
 enum effectTypes {
-	effectNone          = 0, // no functional effect
-	effectAttrib,            // (enchant) affects attributes of actors
-	effectResist,            // (enchant) Enable resistance to various things
-	effectImmune,            // (enchant) Enable immunity to various things
-	effectOthers,            // (enchant) Enable immunity to various things
-	effectNonActor,          // (enchant) change an object
-	effectPoison,            // (enchant) change an object
+	kEffectNone          = 0, // no functional effect
+	kEffectAttrib,            // (enchant) affects attributes of actors
+	kEffectResist,            // (enchant) Enable resistance to various things
+	kEffectImmune,            // (enchant) Enable immunity to various things
+	kEffectOthers,            // (enchant) Enable immunity to various things
+	kEffectNonActor,          // (enchant) change an object
+	kEffectPoison,            // (enchant) change an object
 //  Effect types greater than 8 cannot be enchantments
-	effectDamage        = 8,   // does damage of various types
-	effectDrains,            // mana drain, money drain
-	effectTAG,               // mana drain, money drain
-	effectLocation,          // mana drain, money drain
-	effectSpecial,
-	effectStrike            // weapon strike effect
+	kEffectDamage        = 8,   // does damage of various types
+	kEffectDrains,            // mana drain, money drain
+	kEffectTAG,               // mana drain, money drain
+	kEffectLocation,          // mana drain, money drain
+	kEffectSpecial,
+	kEffectStrike            // weapon strike effect
 };
 
 
@@ -82,26 +82,26 @@ enum effectTypes {
 //
 
 enum effectResistTypes {
-	resistOther     = kDamageOther,
+	kResistOther     = kDamageOther,
 	// Combat resist
-	resistImpact    = kDamageImpact,
-	resistSlash     = kDamageSlash,
-	resistProjectile = kDamageProjectile,
+	kResistImpact    = kDamageImpact,
+	kResistSlash     = kDamageSlash,
+	kResistProjectile = kDamageProjectile,
 	// Magic resist
-	resistFire      = kDamageFire,
-	resistAcid      = kDamageAcid,
-	resistHeat      = kDamageHeat,
-	resistCold      = kDamageCold,
-	resistLightning = kDamageLightning,
-	resistPoison    = kDamagePoison,
+	kResistFire      = kDamageFire,
+	kResistAcid      = kDamageAcid,
+	kResistHeat      = kDamageHeat,
+	kResistCold      = kDamageCold,
+	kResistLightning = kDamageLightning,
+	kResistPoison    = kDamagePoison,
 	// Other magic resist
-	resistMental    = kDamageMental,
-	resistToUndead  = kDamageToUndead,
-	resistDirMagic  = kDamageDirMagic,
+	kResistMental    = kDamageMental,
+	kResistToUndead  = kDamageToUndead,
+	kResistDirMagic  = kDamageDirMagic,
 	// Physiological Damage
-	resistStarve    = kDamageStarve,
+	kResistStarve    = kDamageStarve,
 	// other
-	resistEnergy    = kDamageEnergy
+	kResistEnergy    = kDamageEnergy
 };
 
 //
@@ -110,26 +110,26 @@ enum effectResistTypes {
 
 // Types of damage an effect can give immunity to
 enum effectImmuneTypes {
-	immuneOther     = resistOther,
+	kImmuneOther     = kResistOther,
 	// Combat imm
-	immuneImpact    = resistImpact,
-	immuneSlash     = resistSlash,
-	immuneProjectile = resistProjectile,
+	kImmuneImpact    = kResistImpact,
+	kImmuneSlash     = kResistSlash,
+	kImmuneProjectile = kResistProjectile,
 	// Magic immu
-	immuneFire      = resistFire,
-	immuneAcid      = resistAcid,
-	immuneHeat      = resistHeat,
-	immuneCold      = resistCold,
-	immuneLightning = resistLightning,
-	immunePoison    = resistPoison,
+	kImmuneFire      = kResistFire,
+	kImmuneAcid      = kResistAcid,
+	kImmuneHeat      = kResistHeat,
+	kImmuneCold      = kResistCold,
+	kImmuneLightning = kResistLightning,
+	kImmunePoison    = kResistPoison,
 	// Other magimune
-	immuneMental    = resistMental,
-	immuneToUndead  = resistToUndead,
-	immuneDirMagic  = resistDirMagic,
+	kImmuneMental    = kResistMental,
+	kImmuneToUndead  = kResistToUndead,
+	kImmuneDirMagic  = kResistDirMagic,
 	// PhysiologiDamage
-	immuneStarve    = resistStarve,
+	kImmuneStarve    = kResistStarve,
 	// other
-	immuneEnergy    = resistEnergy
+	kImmuneEnergy    = kResistEnergy
 };
 
 //
@@ -139,42 +139,42 @@ enum effectImmuneTypes {
 
 enum effectOthersTypes {
 	// Movement flags
-	actorNoncorporeal   = 1,    // The creature can walk through things
-	actorWaterBreathe   = 2,    // death spell
-	actorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
-	actorLevitate       = 4,    // flying with no height control ?
-	actorFlying         = 5,    // the creature flys
+	kActorNoncorporeal   = 1,    // The creature can walk through things
+	kActorWaterBreathe   = 2,    // death spell
+	kActorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
+	kActorLevitate       = 4,    // flying with no height control ?
+	kActorFlying         = 5,    // the creature flys
 	// speed flags
-	actorFastMove       = 6,    //
-	actorFastAttack     = 7,    //
-	actorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
+	kActorFastMove       = 6,    //
+	kActorFastAttack     = 7,    //
+	kActorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
 
-	actorImmobile       = 9,    // I thought I told you to leave the piano at home
+	kActorImmobile       = 9,    // I thought I told you to leave the piano at home
 	// ill effects
-	actorAsleep         = 10,   // Zzzzzzzzzzz
-	actorParalyzed      = 11,   // the creature can't move an inch
-	actorFear           = 12,   // run away! run away
-	actorDiseased       = 13,   // cannot heal
-	actorPoisoned       = 14,   // death spell
+	kActorAsleep         = 10,   // Zzzzzzzzzzz
+	kActorParalyzed      = 11,   // the creature can't move an inch
+	kActorFear           = 12,   // run away! run away
+	kActorDiseased       = 13,   // cannot heal
+	kActorPoisoned       = 14,   // death spell
 	// perception & perceivability flags
-	actorBlind          = 15,   // can't see
-	actorSeeInvis       = 16,   // can see invisible
-	actorClairvoyant    = 17,  // unknown effects
-	actorInvisible      = 18,   // is invisible
-	actorUndetectable   = 19,   // can't be seen, smelled
-	actorDetPoison      = 20,   // poison things glow green
+	kActorBlind          = 15,   // can't see
+	kActorSeeInvis       = 16,   // can see invisible
+	kActorClairvoyant    = 17,  // unknown effects
+	kActorInvisible      = 18,   // is invisible
+	kActorUndetectable   = 19,   // can't be seen, smelled
+	kActorDetPoison      = 20,   // poison things glow green
 	// flags preventing changes to other flags
-	actorNoEnchant      = 21,   // no bad enchantments
-	actorNoDrain        = 22,   // no mana / food drains
+	kActorNoEnchant      = 21,   // no bad enchantments
+	kActorNoDrain        = 22,   // no mana / food drains
 	// flags that make things run away
-	actorRepelEvil      = 23,   // death spell
-	actorRepelGood      = 24,   // death spell
-	actorRepelUndead    = 25,   // death spell
+	kActorRepelEvil      = 23,   // death spell
+	kActorRepelGood      = 24,   // death spell
+	kActorRepelUndead    = 25,   // death spell
 	// miscellaneous
-	actorNotDefenseless = 26,   // forgo defenselessness check
-	actorDisappearOnDeath = 27, // gets deleted on death and spews inventory
+	kActorNotDefenseless = 26,   // forgo defenselessness check
+	kActorDisappearOnDeath = 27, // gets deleted on death and spews inventory
 	// dead or moved flags
-	actorWaterWalk           // can walk on water (same as float ?)
+	kActorWaterWalk           // can walk on water (same as float ?)
 };
 
 //
@@ -184,15 +184,15 @@ enum effectOthersTypes {
 
 enum effectDrainsTypes {
 	// mana pools
-	drainsManaRed       = 1,
-	drainsManaOrange,
-	drainsManaYellow,
-	drainsManaGreen,
-	drainsManaBlue,
-	drainsManaViolet,
-	drainsLifeLevel,
-	drainsVitality,
-	drainsMoney
+	kDrainsManaRed       = 1,
+	kDrainsManaOrange,
+	kDrainsManaYellow,
+	kDrainsManaGreen,
+	kDrainsManaBlue,
+	kDrainsManaViolet,
+	kDrainsLifeLevel,
+	kDrainsVitality,
+	kDrainsMoney
 };
 
 
@@ -201,8 +201,8 @@ enum effectDrainsTypes {
 //
 
 enum effectTAGTypes {
-	settagLocked        = 1,
-	settagOpen          = 2
+	kSettagLocked        = 1,
+	kSettagOpen          = 2
 };
 
 
@@ -210,26 +210,26 @@ enum effectTAGTypes {
 // Location Effects - effects that apply when a Location is the target
 //
 
-enum effectLocationTypes {
-	locateDummy         = 1
+enum kEffectLocationTypes {
+	kLocateDummy         = 1
 };
 
 enum objectFlags {
-	objectOpen          = (1 << 0),     // object is in the "open" state
-	objectLocked        = (1 << 1),     // object cannot be opened
-	objectImportant     = (1 << 2),     // object must be recycled when trashed
-	objectGhosted       = (1 << 3),     // object drawn translucent
-	objectInvisible     = (1 << 4),     // object cannot be seen
-	objectObscured      = (1 << 5),     // object obscured by terrain
-	objectMoving        = (1 << 6),     // object has attached motion task
-	objectScavengable   = (1 << 7),     // object can be deleted
-	objectFloating      = (1 << 8),     // object not affected by Gravity
-	objectNoRecycle     = (1 << 9),     // object is referred to by script, don't delete
-	objectActivated     = (1 << 10),    // object is activated
-	objectAlias         = (1 << 11),    // object is not real, just a copy of another object
-	objectTriggeringTAG = (1 << 12),    // object has triggerred TAG upon which it rests
-	objectOnScreen      = (1 << 13),    // object is on display list
-	objectSightedByCenter = (1 << 14)   // there is a line of sight to center actor
+	kObjectOpen          = (1 << 0),     // object is in the "open" state
+	kObjectLocked        = (1 << 1),     // object cannot be opened
+	kObjectImportant     = (1 << 2),     // object must be recycled when trashed
+	kObjectGhosted       = (1 << 3),     // object drawn translucent
+	kObjectInvisible     = (1 << 4),     // object cannot be seen
+	kObjectObscured      = (1 << 5),     // object obscured by terrain
+	kObjectMoving        = (1 << 6),     // object has attached motion task
+	kObjectScavengable   = (1 << 7),     // object can be deleted
+	kObjectFloating      = (1 << 8),     // object not affected by Gravity
+	kObjectNoRecycle     = (1 << 9),     // object is referred to by script, don't delete
+	kObjectActivated     = (1 << 10),    // object is activated
+	kObjectAlias         = (1 << 11),    // object is not real, just a copy of another object
+	kObjectTriggeringTAG = (1 << 12),    // object has triggerred TAG upon which it rests
+	kObjectOnScreen      = (1 << 13),    // object is on display list
+	kObjectSightedByCenter = (1 << 14)   // there is a line of sight to center actor
 };
 
 
@@ -238,18 +238,18 @@ enum objectFlags {
 //
 
 enum effectSpecialTypes {
-	specialDispellHelpfulEnch = 1,   // clears helpful enchantments
-	specialDispellHarmfulEnch,       // clears harmful enchantments
-	specialKill,                     // death spell
-	specialRessurect,                // raise dead spell
-	specialTeleport,                 // Teleportation
-	specialCreateActor,              // Create an actor or wall
-	specialSagaFunc,                 // calls a saga function
-	specialCreateWWisp,              // calls a saga function
-	specialCreateFWisp,              // calls a saga function
-	specialCreateWraith,             // calls a saga function
-	specialCreateFood,               // calls a saga function
-	specialRejoin
+	kSpecialDispellHelpfulEnch = 1,   // clears helpful enchantments
+	kSpecialDispellHarmfulEnch,       // clears harmful enchantments
+	kSpecialKill,                     // death spell
+	kSpecialRessurect,                // raise dead spell
+	kSpecialTeleport,                 // Teleportation
+	kSpecialCreateActor,              // Create an actor or wall
+	kSpecialSagaFunc,                 // calls a saga function
+	kSpecialCreateWWisp,              // calls a saga function
+	kSpecialCreateFWisp,              // calls a saga function
+	kSpecialCreateWraith,             // calls a saga function
+	kSpecialCreateFood,               // calls a saga function
+	kSpecialRejoin
 };
 
 // ------------------------------------------------------------------
@@ -270,27 +270,27 @@ inline uint16 makeEnchantmentID(uint16 type, uint16 damtyp, int16 damamt) {
 
 /* skill*  are now in the spellid enum ;AS;
 inline uint16 makeEnchantmentID(effectAttribTypes atttyp, int16 damamt)
-    {   return (effectAttrib << 13) | (atttyp << 8) + (damamt+128); }
+    {   return (kEffectAttrib << 13) | (atttyp << 8) + (damamt+128); }
 */
 
 inline uint16 makeEnchantmentID(effectResistTypes restyp, bool damamt) {
-	return ((effectResist << 13) | (restyp << 8)) + (damamt + 128);
+	return ((kEffectResist << 13) | (restyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(effectImmuneTypes immtyp, bool damamt) {
-	return ((effectImmune << 13) | (immtyp << 8)) + (damamt + 128);
+	return ((kEffectImmune << 13) | (immtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(effectOthersTypes othtyp, bool damamt) {
-	return ((effectOthers << 13) | (othtyp << 8)) + (damamt + 128);
+	return ((kEffectOthers << 13) | (othtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(objectFlags othtyp, bool damamt) {
-	return ((effectNonActor << 13) | (othtyp << 8)) + (damamt + 128);
+	return ((kEffectNonActor << 13) | (othtyp << 8)) + (damamt + 128);
 }
 
 inline uint16 makeEnchantmentID(uint8 damamt) {
-	return ((effectPoison << 13) | (0 << 8)) + damamt;
+	return ((kEffectPoison << 13) | (0 << 8)) + damamt;
 }
 
 inline effectTypes getEnchantmentType(uint16 eID) {
@@ -312,9 +312,9 @@ inline bool isHarmful(uint16 enchID) {
 	int16 typ = getEnchantmentType(enchID);
 	int16 sub = getEnchantmentSubType(enchID);
 	int16 amt = getEnchantmentAmount(enchID);
-	if (typ == effectAttrib)  return amt < 0;
-	if (typ == effectOthers)
-		return (sub >= actorSlowAttack && sub <= actorBlind);
+	if (typ == kEffectAttrib)  return amt < 0;
+	if (typ == kEffectOthers)
+		return (sub >= kActorSlowAttack && sub <= kActorBlind);
 	return false;
 }
 
@@ -323,7 +323,7 @@ inline bool isHarmful(uint16 enchID) {
 
 inline bool isSaveable(uint16 enchID) {
 	int16 typ = getEnchantmentType(enchID);
-	return (typ == effectOthers && isHarmful(enchID));
+	return (typ == kEffectOthers && isHarmful(enchID));
 }
 
 // ------------------------------------------------------------------
@@ -506,11 +506,11 @@ public:
 // is where they'll be
 
 class ProtoLocationEffect: public ProtoEffect {
-	effectLocationTypes _affectBit;
+	kEffectLocationTypes _affectBit;
 	int16               _value;
 
 public:
-	ProtoLocationEffect(effectLocationTypes elt, int16 v) {
+	ProtoLocationEffect(kEffectLocationTypes elt, int16 v) {
 		_affectBit = elt;
 		_value = v;
 	}

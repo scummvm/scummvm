@@ -298,7 +298,7 @@ public:
 
 	//  Determine if this object is an alias for another object
 	bool isAlias() {
-		return (_data.objectFlags & objectAlias) != 0;
+		return (_data.objectFlags & kObjectAlias) != 0;
 	}
 
 	//  check to see if item can be contained by this object
@@ -494,77 +494,77 @@ public:
 
 	//  Flag test functions
 	bool isOpen() {
-		return (int16)(_data.objectFlags & objectOpen);
+		return (int16)(_data.objectFlags & kObjectOpen);
 	}
 	bool isLocked() {
-		return (int16)(_data.objectFlags & objectLocked);
+		return (int16)(_data.objectFlags & kObjectLocked);
 	}
 	bool isImportant() {
-		return (int16)(_data.objectFlags & objectImportant);
+		return (int16)(_data.objectFlags & kObjectImportant);
 	}
 	bool isGhosted() {
-		return (_data.objectFlags & objectGhosted)
+		return (_data.objectFlags & kObjectGhosted)
 		       || (_prototype->flags & ResourceObjectPrototype::objPropGhosted);
 	}
 	bool isInvisible() {
-		return (_data.objectFlags & objectInvisible)
+		return (_data.objectFlags & kObjectInvisible)
 		       || (_prototype->flags & ResourceObjectPrototype::objPropHidden);
 	}
 	bool isMoving() {
-		return (int16)(_data.objectFlags & objectMoving);
+		return (int16)(_data.objectFlags & kObjectMoving);
 	}
 	bool isActivated() {
-		return (int16)(_data.objectFlags & objectActivated);
+		return (int16)(_data.objectFlags & kObjectActivated);
 	}
 
 	void setScavengable(bool val) {
 		if (val)
-			_data.objectFlags |= objectScavengable;
+			_data.objectFlags |= kObjectScavengable;
 		else
-			_data.objectFlags &= ~objectScavengable;
+			_data.objectFlags &= ~kObjectScavengable;
 	}
 	bool isScavengable() {
-		return (_data.objectFlags & objectScavengable) != 0;
+		return (_data.objectFlags & kObjectScavengable) != 0;
 	}
 
 	void setObscured(bool val) {
 		if (val)
-			_data.objectFlags |= objectObscured;
+			_data.objectFlags |= kObjectObscured;
 		else
-			_data.objectFlags &= ~objectObscured;
+			_data.objectFlags &= ~kObjectObscured;
 	}
 	bool isObscured() {
-		return (_data.objectFlags & objectObscured) != 0;
+		return (_data.objectFlags & kObjectObscured) != 0;
 	}
 
 	void setTriggeringTAG(bool val) {
 		if (val)
-			_data.objectFlags |= objectTriggeringTAG;
+			_data.objectFlags |= kObjectTriggeringTAG;
 		else
-			_data.objectFlags &= ~objectTriggeringTAG;
+			_data.objectFlags &= ~kObjectTriggeringTAG;
 	}
 	bool isTriggeringTAG() {
-		return (_data.objectFlags & objectTriggeringTAG) != 0;
+		return (_data.objectFlags & kObjectTriggeringTAG) != 0;
 	}
 
 	void setOnScreen(bool val) {
 		if (val)
-			_data.objectFlags |= objectOnScreen;
+			_data.objectFlags |= kObjectOnScreen;
 		else
-			_data.objectFlags &= ~objectOnScreen;
+			_data.objectFlags &= ~kObjectOnScreen;
 	}
 	bool isOnScreen() {
-		return (_data.objectFlags & objectOnScreen) != 0;
+		return (_data.objectFlags & kObjectOnScreen) != 0;
 	}
 
 	void setSightedByCenter(bool val) {
 		if (val)
-			_data.objectFlags |= objectSightedByCenter;
+			_data.objectFlags |= kObjectSightedByCenter;
 		else
-			_data.objectFlags &= ~objectSightedByCenter;
+			_data.objectFlags &= ~kObjectSightedByCenter;
 	}
 	bool isSightedByCenter() {
-		return (_data.objectFlags & objectSightedByCenter) != 0;
+		return (_data.objectFlags & kObjectSightedByCenter) != 0;
 	}
 
 	bool isMissile() {

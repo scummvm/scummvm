@@ -157,7 +157,7 @@ bool ActorProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false, openMindType);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= kObjectOpen;         //  Set open bit;
 	return true;
 }
 
@@ -177,7 +177,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->_data.objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~kObjectOpen;
 	return true;
 }
 
@@ -463,7 +463,7 @@ bool ActorProto::acceptHealingAction(
 	int16       maxVitality = (a->getBaseStats())->vitality;
 	PlayerActorID   pID;
 
-	if (vitality > 0 && !a->hasEffect(actorDiseased)) {
+	if (vitality > 0 && !a->hasEffect(kActorDiseased)) {
 
 		//  If we've just lost all vitality, we're dead, else make a
 		//  morale check
@@ -1506,7 +1506,7 @@ void Actor::deleteActor() {
 	}
 
 	//  Place in limbo
-	if (!(_data.objectFlags & objectNoRecycle)) {
+	if (!(_data.objectFlags & kObjectNoRecycle)) {
 		append(ActorLimbo);
 		actorLimboCount++;
 	}
@@ -1783,9 +1783,9 @@ bool Actor::inUseRange(const TilePoint &tp, GameObject *obj) {
 
 bool Actor::isImmobile() {
 	return      isDead()
-	            ||  hasEffect(actorImmobile)
-	            ||  hasEffect(actorAsleep)
-	            ||  hasEffect(actorParalyzed);
+	            ||  hasEffect(kActorImmobile)
+	            ||  hasEffect(kActorAsleep)
+	            ||  hasEffect(kActorParalyzed);
 }
 
 //-----------------------------------------------------------------------
@@ -2443,7 +2443,7 @@ void Actor::evaluateNeeds() {
 		} else {
 			if (_disposition == kDispositionEnemy
 			        &&  _appearance != nullptr
-			        &&  !hasEffect(actorNotDefenseless)) {
+			        &&  !hasEffect(kActorNotDefenseless)) {
 				GameObject              *obj;
 				bool                    foundWeapon = false;
 				ContainerIterator       iter(this);
@@ -2467,7 +2467,7 @@ void Actor::evaluateNeeds() {
 					_flags |= kAFAfraid;
 			}
 
-			if (_flags & kAFAfraid || hasEffect(actorFear) || hasEffect(actorRepelUndead)) {
+			if (_flags & kAFAfraid || hasEffect(kActorFear) || hasEffect(kActorRepelUndead)) {
 				setGoal(kActorGoalPreserveSelf);
 			} else if (_leader != nullptr && inBandingRange()) {
 				setGoal(_leader->evaluateFollowerNeeds(this));
@@ -2743,15 +2743,15 @@ void Actor::handleDamageTaken(uint8 damage) {
 	if (offensiveObject() == this
 	        &&  !isActionAvailable(kActionSwingHigh)
 	        &&  !isActionAvailable(kActionTwoHandSwingHigh)
-	        &&  !hasEffect(actorNotDefenseless)) {
+	        &&  !hasEffect(kActorNotDefenseless)) {
 		_flags |= kAFAfraid;
 		return;
 	}
 
 	if (combatBehavior != kBehaviorHungry
 	        && (_flags & kAFTemporary)
-	        &&  !hasEffect(actorFear)
-	        &&  !hasEffect(actorRepelUndead)) {
+	        &&  !hasEffect(kActorFear)
+	        &&  !hasEffect(kActorRepelUndead)) {
 		if (_flags & kAFAfraid) {
 			//  Let's give monsters a small chance of regaining their courage
 			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= 0x3fff)

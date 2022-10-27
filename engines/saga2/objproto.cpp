@@ -1231,7 +1231,7 @@ bool PhysicalContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->_data.objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & kObjectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -1256,7 +1256,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= kObjectOpen;         //  Set open bit;
 	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
@@ -1273,7 +1273,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->_data.objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~kObjectOpen;
 	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
@@ -1296,7 +1296,7 @@ bool PhysicalContainerProto::acceptLockToggleAction(
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Toggle locked bit
-	dObjPtr->_data.objectFlags ^= objectLocked;
+	dObjPtr->_data.objectFlags ^= kObjectLocked;
 
 	return true;
 }
@@ -1314,7 +1314,7 @@ bool PhysicalContainerProto::acceptInsertionAction(
 	GameObject  *itemPtr = GameObject::objectAddress(item);
 
 	//  Place the object in the container (if possible)
-	if ((dObjPtr->_data.objectFlags & objectLocked)
+	if ((dObjPtr->_data.objectFlags & kObjectLocked)
 	        ||  !dObjPtr->placeObject(enactor, item, true, num)) {
 		if (isWorld(dObjPtr->IDParent()))
 			dObjPtr->dropInventoryObject(itemPtr, num);
@@ -2757,7 +2757,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 		uint16  type = getEnchantmentType(flgs),
 		        subType = getEnchantmentSubType(flgs);
 
-		if (type == effectOthers && subType == actorPoisoned) {
+		if (type == kEffectOthers && subType == kActorPoisoned) {
 			// get the damage amount for this poison
 			int16 damage = getEnchantmentAmount(flgs);
 
@@ -2898,7 +2898,7 @@ bool IntangibleContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->_data.objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & kObjectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);

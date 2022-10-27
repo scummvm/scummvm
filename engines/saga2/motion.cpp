@@ -449,7 +449,7 @@ MotionTask *MotionTaskList::newTask(GameObject *obj) {
 			((Actor *)obj)->_moveTask = mt;
 	}
 
-	obj->_data.objectFlags |= objectMoving;
+	obj->_data.objectFlags |= kObjectMoving;
 
 	return mt;
 }
@@ -1070,11 +1070,11 @@ void MotionTask::remove(int16 returnVal) {
 	if (g_vm->_mTaskList->_nextMT != g_vm->_mTaskList->_list.end() && *(g_vm->_mTaskList->_nextMT) == this)
 		++g_vm->_mTaskList->_nextMT;
 
-	_object->_data.objectFlags &= ~objectMoving;
+	_object->_data.objectFlags &= ~kObjectMoving;
 	if (objObscured(_object))
-		_object->_data.objectFlags |= objectObscured;
+		_object->_data.objectFlags |= kObjectObscured;
 	else
-		_object->_data.objectFlags &= ~objectObscured;
+		_object->_data.objectFlags &= ~kObjectObscured;
 
 	if (isActor(_object)) {
 		Actor   *a = (Actor *)_object;
@@ -4511,7 +4511,7 @@ void MotionTask::updatePositions() {
 				} else {
 					moveTaskDone = true;
 					a->setInterruptablity(true);
-					if (!a->hasEffect(actorDisappearOnDeath)) {
+					if (!a->hasEffect(kActorDisappearOnDeath)) {
 						a->setAction(kActionDead, 0);
 						a->die();
 					} else {
@@ -4523,7 +4523,7 @@ void MotionTask::updatePositions() {
 			} else if (a->nextAnimationFrame()) {
 				moveTaskDone = true;
 				a->setInterruptablity(true);
-				if (!a->hasEffect(actorDisappearOnDeath)) {
+				if (!a->hasEffect(kActorDisappearOnDeath)) {
 					a->setAction(kActionDead, 0);
 					a->die();
 				} else {
@@ -4550,7 +4550,7 @@ bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 
 	tHeight = tileSlopeHeight(newPos, _object, &sti);
 
-	if (_object->_data.objectFlags & objectFloating) return false;
+	if (_object->_data.objectFlags & kObjectFloating) return false;
 
 	_velocity.u = (newPos.u - _object->_data.location.u) * 2 / 3;
 	_velocity.v = (newPos.v - _object->_data.location.v) * 2 / 3;

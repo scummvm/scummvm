@@ -618,7 +618,7 @@ int16 scriptActorSetOpen( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectOpen );
+        kObjectOpen );
     return 0;
 }
 
@@ -626,7 +626,7 @@ int16 scriptActorSetLocked( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectLocked );
+        kObjectLocked );
     return 0;
 }
 */
@@ -635,7 +635,7 @@ int16 scriptActorSetImportant(int16 *args) {
 	OBJLOG(SetImportant);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectImportant);
+	    kObjectImportant);
 	return 0;
 }
 
@@ -643,7 +643,7 @@ int16 scriptActorSetScavengable(int16 *args) {
 	OBJLOG(SetScavengable);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectScavengable);
+	    kObjectScavengable);
 	return 0;
 }
 

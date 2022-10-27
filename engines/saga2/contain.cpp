@@ -1533,7 +1533,7 @@ void ContainerManager::doDeferredActions() {
 			if (obj->world() != world
 			        || (obj->getWorldLocation() - tp).quickHDistance() > kMaxOpenDistance) {
 				//  Close object image and window (silently)
-				obj->setFlags(0, objectOpen);
+				obj->setFlags(0, kObjectOpen);
 				delete n;
 				continue;
 			}

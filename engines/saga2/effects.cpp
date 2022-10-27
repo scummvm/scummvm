@@ -109,17 +109,17 @@ void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage)
 
 int16 ProtoDrainage::currentLevel(Actor *a, effectDrainsTypes edt) {
 	switch (edt) {
-	case drainsManaRed:
-	case drainsManaOrange:
-	case drainsManaYellow:
-	case drainsManaGreen:
-	case drainsManaBlue:
-	case drainsManaViolet:
-		return (&a->_effectiveStats.redMana)[edt - drainsManaRed];
+	case kDrainsManaRed:
+	case kDrainsManaOrange:
+	case kDrainsManaYellow:
+	case kDrainsManaGreen:
+	case kDrainsManaBlue:
+	case kDrainsManaViolet:
+		return (&a->_effectiveStats.redMana)[edt - kDrainsManaRed];
 
-	case drainsLifeLevel:
+	case kDrainsLifeLevel:
 		return (a->getBaseStats())->vitality;
-	case drainsVitality:
+	case kDrainsVitality:
 		return a->_effectiveStats.vitality;
 	default:
 		return 0;
@@ -128,14 +128,14 @@ int16 ProtoDrainage::currentLevel(Actor *a, effectDrainsTypes edt) {
 
 void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt, int16 amt) {
 	switch (edt) {
-	case drainsManaRed:
-	case drainsManaOrange:
-	case drainsManaYellow:
-	case drainsManaGreen:
-	case drainsManaBlue:
-	case drainsManaViolet:
+	case kDrainsManaRed:
+	case kDrainsManaOrange:
+	case kDrainsManaYellow:
+	case kDrainsManaGreen:
+	case kDrainsManaBlue:
+	case kDrainsManaViolet:
 		{
-			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - drainsManaRed));
+			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - kDrainsManaRed));
 			(&a->_effectiveStats.redMana)[aType] =
 				clamp(
 					0,
@@ -143,14 +143,14 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 					(&(a->getBaseStats())->redMana)[aType]);
 		}
 		break;
-	case drainsLifeLevel:
+	case kDrainsLifeLevel:
 		{
 			int16 &maxVit = (a->getBaseStats())->vitality;
 			maxVit = clamp(0, maxVit - amt, absoluteMaximumVitality);
 			a->acceptDamage(cst->thisID(), amt > 0 ? 1 : -1, kDamageOther);
 		}
 		break;
-	case drainsVitality:
+	case kDrainsVitality:
 		a->acceptDamage(cst->thisID(), amt, kDamageOther);
 		break;
 	default:
@@ -188,7 +188,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 	if (!isActor(target))
 		return;
 	a = (Actor *) target;
-	if (a->hasEffect(actorNoDrain))
+	if (a->hasEffect(kActorNoDrain))
 		return;
 
 	if (totalDamage > 0 && target->makeSavingThrow())
@@ -229,7 +229,7 @@ void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 		}
 
 
-		if (((Actor *)(trg->getObject()))->hasEffect(actorNoEnchant) &&
+		if (((Actor *)(trg->getObject()))->hasEffect(kActorNoEnchant) &&
 		        isHarmful(_enchID))
 			return;
 		if (canFail() && realSavingThrow((Actor *)(trg->getObject())))
@@ -247,11 +247,11 @@ void ProtoEnchantment::implement(GameObject *cst, SpellTarget *trg, int8) {
 void ProtoTAGEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
 	ActiveItem *tag = trg->getTAG();
 	assert(tag);
-	if (_affectBit == settagLocked) {
+	if (_affectBit == kSettagLocked) {
 		//if ( tag->builtInBehavior()==ActiveItem::builtInDoor )
 		if (tag->isLocked() != _onOff)
 			tag->acceptLockToggle(cst->thisID(), tag->lockType());
-	} else if (_affectBit == settagOpen) {
+	} else if (_affectBit == kSettagOpen) {
 		tag->trigger(cst->thisID(), _onOff);
 	}
 }
@@ -301,7 +301,7 @@ bool ProtoEnchantment::applicable(SpellTarget &trg) {
 	return (trg.getType() == SpellTarget::spellTargetObject ||
 	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
 	       (isActor(trg.getObject()) ||
-	        getEnchantmentSubType(_enchID) == actorInvisible);
+	        getEnchantmentSubType(_enchID) == kActorInvisible);
 }
 
 bool ProtoTAGEffect::applicable(SpellTarget &trg) {
@@ -458,7 +458,7 @@ SPECIALSPELL(Resurrect) {
 SPECIALSPELL(DispellPoison) {
 	if (isActor(trg->getObject())) {
 		Actor *a = (Actor *) trg->getObject();
-		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(actorPoisoned, true));
+		DispelObjectEnchantment(a->thisID(), makeEnchantmentID(kActorPoisoned, true));
 
 	}
 }

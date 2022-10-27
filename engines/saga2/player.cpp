@@ -103,15 +103,15 @@ void PlayerActor::recalcPortraitType() {
 
 	if (a->isDead())
 		pType = kPortraitDead;
-	else if (a->_enchantmentFlags & (1 << actorAsleep))
+	else if (a->_enchantmentFlags & (1 << kActorAsleep))
 		pType = kPortraitAsleep;
 	else if (stats.vitality >= a->_effectiveStats.vitality * 3)
 		pType = kPortraitWounded;
-	else if (a->_enchantmentFlags & ((1 << actorDiseased) | (1 << actorPoisoned)))
+	else if (a->_enchantmentFlags & ((1 << kActorDiseased) | (1 << kActorPoisoned)))
 		pType = kPortraitSick;
 	else if (stats.vitality * 2 > a->_effectiveStats.vitality * 3)
 		pType = kPortraitOuch;
-	else if (a->_enchantmentFlags & ((1 << actorParalyzed) | (1 << actorFear) | (1 << actorBlind)))
+	else if (a->_enchantmentFlags & ((1 << kActorParalyzed) | (1 << kActorFear) | (1 << kActorBlind)))
 		pType = kPortraitConfused;
 	else if (isAggressive())
 		pType = kPortraitAngry;

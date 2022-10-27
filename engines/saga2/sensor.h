@@ -28,7 +28,7 @@
 
 namespace Saga2 {
 
-const uint32 nonActorSenseFlags = actorSeeInvis;
+const uint32 nonActorSenseFlags = kActorSeeInvis;
 
 //const size_t maxSensorSize = 24;
 const size_t maxSensorSize = 48;

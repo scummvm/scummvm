@@ -520,9 +520,9 @@ void DisplayNode::drawObject() {
 				return;
 			}
 
-			if (a->hasEffect(actorInvisible)) {
+			if (a->hasEffect(kActorInvisible)) {
 				if (!isPlayerActor(a)
-				        &&  !(getCenterActor()->hasEffect(actorSeeInvis))) {
+				        &&  !(getCenterActor()->hasEffect(kActorSeeInvis))) {
 					_hitBox.width = -1;
 					_hitBox.height = -1;
 					return;
@@ -998,7 +998,7 @@ void Effectron::drawEffect() {
 	    1,
 	    drawPos,
 	    objCoords,
-	    ((obscured) &&    //objectFlags & GameObject::objectObscured ) &&
+	    ((obscured) &&    //objectFlags & GameObject::kObjectObscured ) &&
 	     0
 	     ? sprFXGhosted : sprFXTerrainMask));
 

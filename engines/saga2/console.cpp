@@ -463,9 +463,9 @@ bool Console::cmdInvisibility(int argc, const char **argv) {
 		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
 			Actor *p = (Actor *)GameObject::objectAddress(id);
 			if (inv)
-				p->setEffect(actorInvisible, true);
+				p->setEffect(kActorInvisible, true);
 			else
-				p->setEffect(actorInvisible, false);
+				p->setEffect(kActorInvisible, false);
 		}
 	}
 
