@@ -32,9 +32,46 @@ class Map37 : public Map {
 	typedef void (Map37:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special15();
+	void special16();
+	void special19();
+	void encounter(const byte *id1, const byte *id2);
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map37::special00
+	const SpecialFn SPECIAL_FN[20] = {
+		&Map37::special00,
+		&Map37::special01,
+		&Map37::special02,
+		&Map37::special03,
+		&Map37::special04,
+		&Map37::special05,
+		&Map37::special06,
+		&Map37::special07,
+		&Map37::special08,
+		&Map37::special09,
+		&Map37::special10,
+		&Map37::special11,
+		&Map37::special12,
+		&Map37::special13,
+		&Map37::special14,
+		&Map37::special15,
+		&Map37::special16,
+		&Map37::special16,
+		&Map37::special16,
+		&Map37::special19
 	};
 public:
 	Map37() : Map(37, "qvl1", 0xF03) {}
