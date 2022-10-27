@@ -5960,7 +5960,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("yokai200", "", "xn--1-we0by4fq4jlr4e", "5b6db61d580e40b903a7f0797b0bdad7", 719012, Common::JA_JPN, 501),
 	WINGAME1_l("yokai200", "", "YOUKAI1.EXE", "38b75ecdedf662326fe4931a68ae60cd", 1411170, Common::JA_JPN, 501),
 
-	MACGAME1("zerozero", "", "ZeroMac", "667b7ed544734f910bb9d9f4e47f76b1", 972761, 500),
+	MACGAME1("zerozero", "", "ZeroMac", "eb3ff85d5e34918bb3ad54d90a21c567", 972761, 500),
+	MACGAME1("zerozero", "Uplink rerelease", "ZeroMac", "667b7ed544734f910bb9d9f4e47f76b1", 972761, 500),
+	// Original release and Uplink rerelease have the same executable on Windows
 	WINGAME1t("zerozero", "", "ZERO95.EXE", "b81561a42d11d5533fc9e93bfa3d4cfd", 1394631, 500),
 
 //////////////////////////////////////////////////
