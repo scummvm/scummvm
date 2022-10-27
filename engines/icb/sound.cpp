@@ -518,7 +518,7 @@ void CRegisteredSound::UpdateGameCycle(int32 newVol, int32 newPan) {
 			} else {                                // sample is looping or sound isn't on so just reset wave
 				m_position -= MAX_ENV_POSITION; // reset wave
 
-				if (m_position <= 0) // definately don't restart accidently
+				if (m_position <= 0) // definitely don't restart accidently
 					m_position = 1;
 			}
 		}
@@ -662,7 +662,7 @@ void CRegisteredSound::SetUnhearable() {
 
 	Tdebug("sounds.txt", "Sound is now unhearable");
 
-	// start turning off sound... (we are definately playing it...)
+	// start turning off sound... (we are definitely playing it...)
 	m_turnOff = TRUE8;
 	// don't remove though
 }
