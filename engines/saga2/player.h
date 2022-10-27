@@ -86,7 +86,7 @@ public:
 	// vitality pool
 	uint8 _vitalityMemory;
 
-	//  Flag indicating wether the user has been notified that this player
+	//  Flag indicating whether the user has been notified that this player
 	//  actor has been attacked since the last combat
 	bool _notifiedOfAttack;
 
