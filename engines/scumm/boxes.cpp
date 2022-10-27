@@ -329,7 +329,7 @@ int ScummEngine::getBoxScale(int box) {
  * and in fact the lack of it caused various bugs in the past.
  *
  * Hence, we decided to switch all games to use the more powerful scale slots.
- * To accomodate old savegames, we attempt here to convert rtScaleTable
+ * To accommodate old savegames, we attempt here to convert rtScaleTable
  * resources to scale slots.
  */
 void ScummEngine::convertScaleTableToScaleSlot(int slot) {
