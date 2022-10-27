@@ -236,6 +236,7 @@ public:
 	MESSAGE(Game);
 	MESSAGE(Info);
 	MESSAGE(Value);
+	MESSAGE(DrawMonster);
 	#undef MESSAGE
 };
 
@@ -266,6 +267,7 @@ protected:
 	MESSAGE(Keypress);
 	MESSAGE(MouseDown);
 	MESSAGE(MouseUp);
+	MESSAGE(DrawMonster);
 	#undef MESSAGE
 public:
 	Events(bool enhancedMode);

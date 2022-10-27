@@ -94,7 +94,7 @@ void Map36::special04() {
 
 void Map36::special05() {
 	updateFlags();
-	warning("TODO: drawMonster");
+	send("GameView", DrawMonsterMessage(7));
 	g_events->addView("Hacker");
 }
 

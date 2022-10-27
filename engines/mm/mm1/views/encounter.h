@@ -43,11 +43,6 @@ private:
 	Common::String _bribeTypeStr;
 
 	/**
-	 * Draws a monster
-	 */
-	void drawMonster(int monsterNum);
-
-	/**
 	 * Handles the end of the encounter
 	 */
 	void encounterEnded();

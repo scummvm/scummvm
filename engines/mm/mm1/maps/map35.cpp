@@ -97,7 +97,7 @@ void Map35::special04() {
 
 void Map35::special05() {
 	updateFlags();
-	warning("TODO: drawMonster");
+	send("GameView", DrawMonsterMessage(7));
 	g_events->addView("Inspectron");
 }
 
