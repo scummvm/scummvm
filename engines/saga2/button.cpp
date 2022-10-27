@@ -191,7 +191,7 @@ void GfxCompImage::pointerMove(gPanelMessage &msg) {
 	// call the superclass's pointerMove
 	gControl::pointerMove(msg);
 
-	notify(gEventMouseMove, (msg._pointerEnter ? enter : 0) | (msg._pointerLeave ? leave : 0));
+	notify(gEventMouseMove, (msg._pointerEnter ? kEnter : 0) | (msg._pointerLeave ? kLeave : 0));
 }
 
 void GfxCompImage::enable(bool abled) {

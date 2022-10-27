@@ -2124,7 +2124,7 @@ APPFUNC(cmdPortrait) {
 
 	case gEventMouseMove:
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			g_vm->_mouseInfo->setDoable(true);
 			break;
@@ -2200,12 +2200,12 @@ APPFUNC(cmdAggressive) {
 //		}
 //		else setAggression( transBroID, !wasAggressive );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isAggressive(transBroID)
 			                  ? ON_AGRESS
 			                  : OFF_AGRESS);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2233,7 +2233,7 @@ APPFUNC( cmdJump )
 APPFUNC(cmdArmor) {
 	if (ev.eventType == gEventMouseMove) {
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			gArmorIndicator *gai = (gArmorIndicator *)ev.panel;
 			char    buf[128];
 
@@ -2250,7 +2250,7 @@ APPFUNC(cmdArmor) {
 				// set the text in the cursor
 				g_vm->_mouseInfo->setText(buf);
 			}
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2265,12 +2265,12 @@ APPFUNC(cmdCenter) {
 		else setCenterBrother(transBroID);
 	}
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
 			                  ? ON_CENTER
 			                  : OFF_CENTER);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2299,12 +2299,12 @@ APPFUNC(cmdBand) {
 //		}
 //		else setBanded( transBroID, !wasBanded );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isBanded(transBroID)
 			                  ? ON_BANDED
 			                  : OFF_BANDED);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2315,8 +2315,8 @@ APPFUNC(cmdOptions) {
 		OptionsDialog();
 		//openOptionsPanel();
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
-		else if (ev.value == GfxCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
+		if (ev.value == GfxCompImage::kEnter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
+		else if (ev.value == GfxCompImage::kLeave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
@@ -2335,7 +2335,7 @@ APPFUNC(cmdBroChange) {
 
 		uint16  panID = ev.panel->_id;
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// working buffer
 			char buf[bufSize];
 			char state[stateBufSize];
@@ -2356,7 +2356,7 @@ APPFUNC(cmdBroChange) {
 			}
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(buf);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2366,12 +2366,12 @@ APPFUNC(cmdHealthStar) {
 	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			return;
 		}
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			ev.panel->setMousePoll(true);
 		}
 
@@ -2391,7 +2391,7 @@ APPFUNC(cmdMassInd) {
 	GameObject      *_containerObject = nullptr;
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			int     curWeight;
 			uint16  baseWeight;
@@ -2417,7 +2417,7 @@ APPFUNC(cmdMassInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2429,7 +2429,7 @@ APPFUNC(cmdBulkInd) {
 
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			uint16  baseBulk    = 100;
 			char    buf[bufSize];
@@ -2455,7 +2455,7 @@ APPFUNC(cmdBulkInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2463,7 +2463,7 @@ APPFUNC(cmdBulkInd) {
 
 APPFUNC(cmdManaInd) {
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value != GfxCompImage::leave) {
+		if (ev.value != GfxCompImage::kLeave) {
 			const   int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];
 			int     manaType = -1;

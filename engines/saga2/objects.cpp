@@ -4386,7 +4386,7 @@ APPFUNC(cmdBrain) {
 			}
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor

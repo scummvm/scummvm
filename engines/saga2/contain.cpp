@@ -1861,7 +1861,7 @@ APPFUNC(cmdMindContainerFunc) {
 			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -1883,9 +1883,9 @@ APPFUNC(cmdCloseButtonFunc) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -1903,9 +1903,9 @@ APPFUNC(cmdScrollFunc) {
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
