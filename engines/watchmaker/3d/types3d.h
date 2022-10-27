@@ -23,6 +23,7 @@
 #define WATCHMAKER_TYPES3D_H
 
 #include "common/stream.h"
+#include "math/vector3d.h"
 #include "watchmaker/types.h"
 
 namespace Watchmaker {
@@ -39,6 +40,11 @@ struct t3dV3F {
 public:
 	t3dV3F() {}
 	t3dV3F(float x, float y, float z) : x(x), y(y), z(z) {}
+	t3dV3F(const Math::Vector3d &vector) {
+		x = vector.x();
+		y = vector.y();
+		z = vector.z();
+	}
 	t3dV3F(Common::SeekableReadStream &stream) {
 		x = stream.readFloatLE();                                                    // Legge Pos
 		y = stream.readFloatLE();

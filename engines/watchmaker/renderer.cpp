@@ -27,6 +27,8 @@
 
 #include "common/system.h"
 #include "math/glmath.h"
+#include "watchmaker/3d/geometry.h"
+#include "watchmaker/3d/math/llmath.h"
 #include "watchmaker/fonts.h"
 #include "watchmaker/game.h"
 #include "watchmaker/globvar.h"
@@ -119,7 +121,41 @@ bool Renderer::initBlitterViewPort() {
 }
 
 void Renderer::setCurCameraViewport(t3dF32 fov, uint8 sup) {
+	auto windowInfo = getScreenInfos();
+	int32 cx = windowInfo.width / 2;
+	int32 cy = windowInfo.height / 2;
+	int32 sx = windowInfo.width;
+	int32 sy = windowInfo.height;
 
+	t3dF32 SuperView = 50.0f * (sup^1);
+
+	t3dCurCamera->Center.x = (t3dF32)(cx);
+	t3dCurCamera->Center.y = (t3dF32)(cy);
+
+	t3dCurCamera->NearClipPlane = fov;
+	t3dCurCamera->FarClipPlane = 89000.0f;
+
+	warning("TODO: Set projection matrix");
+
+	setProjectionMatrix( (float)(sx),
+						 (float)(sy),
+						 fov,
+						 10.0f + SuperView, 90000.0f);
+
+	//Set Clipplanes
+	t3dV3F c0;
+	t3dVectFill(&c0,0.0f);
+	t3dV3F v1(screenSpaceToCameraSpace(0.0f,  0.0f));
+	t3dV3F v2(screenSpaceToCameraSpace((t3dF32)sx, 0.0f));
+	t3dV3F v3(screenSpaceToCameraSpace(0.0f,  (t3dF32)sy));
+	t3dV3F v4(screenSpaceToCameraSpace((t3dF32)sx, (t3dF32)sy));
+
+#if 0
+	t3dPlaneNormal(&ClipPlanes[LEFTCLIP],	&c0, &v1, &v3);
+	t3dPlaneNormal(&ClipPlanes[RIGHTCLIP],	&c0, &v4, &v2);
+	t3dPlaneNormal(&ClipPlanes[TOPCLIP],	&c0, &v2, &v1);
+	t3dPlaneNormal(&ClipPlanes[BOTTOMCLIP],	&c0, &v3, &v4);
+#endif
 }
 
 void Renderer::showFrame() {
@@ -169,6 +205,46 @@ void Renderer::printText(const char *s, unsigned int dst, FontKind font, FontCol
 	else
 		gPrintText(*_game, s, dst, src, f->table, x, y);
 }
+
+bool Renderer::setProjectionMatrix(float width, float height, float fAspect, float fNearPlane, float fFarPlane) {
+	// Not sure if fAspect is Y here though
+	glMatrixMode(GL_PROJECTION);
+	_nearPlane = fNearPlane;
+	_projectionMatrix = Math::makePerspectiveMatrix(fAspect, width / height, fNearPlane, fFarPlane);
+	glLoadMatrixf(_projectionMatrix.getData());
+
+	glMatrixMode(GL_MODELVIEW);
+	return false;
+}
+
+Math::Vector3d vector3Matrix4Mult(Math::Vector3d &vec, const Math::Matrix4 &m) {
+	// Since the query functions return a 4x4 Matrix, but we only really care
+	// about the 3D vector, we make our own version of the Vector-Matrix mult.
+	// In practice we could perhaps introduce an operator* in Vector4d, but
+	// since the w component is un-interesting that would be 4 unneccesary mults.
+	const float *d = m.getData();
+	return Math::Vector3d(vec.x() * d[0] + vec.y() * d[3] + vec.z() * d[6],
+						  vec.x() * d[1] + vec.y() * d[4] + vec.z() * d[7],
+						  vec.x() * d[2] + vec.y() * d[5] + vec.z() * d[8]);
+}
+
+Math::Vector3d Renderer::screenSpaceToCameraSpace(float x, float y) {
+	unsigned int width, height, bpp;
+
+	rGetScreenInfos(&width, &height, &bpp);
+
+	auto matrix = _projectionMatrix;
+	matrix.inverse();
+
+	Math::Vector3d v;
+	v.x() = (x - width / 2) / (width / 2);
+	v.y() = -(y - height / 2) / (height / 2);
+	v.z() = 1.0f;
+	Math::Vector3d d = vector3Matrix4Mult(v, matrix);
+
+	return Math::Vector3d(d.x(), d.y(), d.z() - _nearPlane);
+}
+
 
 } // End of namespace Watchmaker
 

@@ -164,7 +164,7 @@ void Render3DEnvironment(WGame &game) {
 	// Update mouse coordinates and project them in 3D
 	HandleMouseChanges();
 
-	t3dCalc2dTo3dPos(&t3d3dMousePos, (t3dF32)mPosx, (t3dF32)mPosy);
+	t3d3dMousePos = t3dV3F(game._renderer->screenSpaceToCameraSpace((t3dF32)mPosx, (t3dF32)mPosy));
 	if (bT2DActive  /*&& ( bT2DActive != tOPTIONS )*/) {
 	} else if (((InvStatus & INV_MODE2) && (InvStatus & INV_ON)) /*|| ( bT2DActive == tOPTIONS )*/) { // Se sono nell'inventario
 		t3dCAMERA *tmp = t3dCurCamera;                                                          // Salvo camera attuale in tmp
@@ -173,7 +173,7 @@ void Render3DEnvironment(WGame &game) {
 		t3dCurCamera->Fov = CAMERA_FOV_ICON;
 		game._renderer->setCurCameraViewport(t3dCurCamera->Fov, bSuperView);
 		auto windowInfo = game._renderer->getScreenInfos();
-		rSetProjectionMatrix((float)(windowInfo.width), (float)(windowInfo.height), t3dCurCamera->Fov, 5000.0f, 15000.0f);
+		game._renderer->setProjectionMatrix((float)(windowInfo.width), (float)(windowInfo.height), t3dCurCamera->Fov, 5000.0f, 15000.0f);
 		t3dVectInit(&t3dCurCamera->Source, 1000.0f, 0.0f, 10000.0f);
 		t3dVectInit(&t3dCurCamera->Target, 1000.0f, 0.0f, 0.0f);
 		t3dMatView(&t3dCurViewMatrix, &t3dCurCamera->Source, &t3dCurCamera->Target);   // Creo matrice

@@ -143,41 +143,6 @@ void rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bp
 	*bpp = 32;
 }
 
-//D3d specific geometry trasf. functions
-bool rSetProjectionMatrix(float width, float height, float fAspect,
-                          float fNearPlane, float fFarPlane) {
-	// Not sure if fAspect is Y here though
-	glMatrixMode(GL_PROJECTION);
-	auto perspectiveMatrix = Math::makePerspectiveMatrix(fAspect, width / height, fNearPlane, fFarPlane);
-	glLoadMatrixf(perspectiveMatrix.getData());
-
-	glMatrixMode(GL_MODELVIEW);
-	return false;
-}
-
-
-void rScreenSpaceToCameraSpace(float *dx, float *dy, float *dz, float x, float y) {
-	//warning("STUBBED: rScreenSpaceToCameraSpace");
-#if 0
-	D3DMATRIX   m;
-	D3DVECTOR   v, d;
-	unsigned int width, height, bpp;
-
-	rGetScreenInfos(&width, &height, &bpp);
-
-	D3DMath_MatrixInvert(m, rProjectionMatrix);
-
-	v.x = (x - width / 2) / (width / 2);
-	v.y = -(y - height / 2) / (height / 2);
-	v.z = 1.0f;
-	D3DMath_VectorMatrixMultiply(d, v, m);
-
-	*dx = d.x;
-	*dy = d.y;
-	*dz = d.z - gNearPlane;
-#endif
-}
-
 gTexture *gLoadTexture(char *TextName, unsigned int LoaderFlags) {
 	warning("STUBBED gLoadTexture");
 	return nullptr;
@@ -221,12 +186,6 @@ void rPrintText(const char *s, unsigned int dst,  unsigned int src, unsigned sho
 
 void rGetTextDim(const char *s, unsigned short *FontTable, int *x, int *y) {
 	warning("STUBBED: rGetTextDim");
-	return;
-}
-
-
-void rResetPipeline() {
-	//warning("STUBBED: rResetPipeline");
 	return;
 }
 

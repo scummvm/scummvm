@@ -216,8 +216,6 @@ void                    rPrintText(const char *s, unsigned int dst,  unsigned in
 void                    rBlitter(WGame &game, int dst, int src, int dposx, int dposy, int sposx, int sposy, int sdimx, int sdimy);
 
 //D3d specific geometry trasf. functions
-bool rSetProjectionMatrix(float width, float height, float fAspect,
-                          float fNearPlane, float fFarPlane);
 struct t3dM3X3F;
 struct t3dV3F;
 void rSetViewMatrix(const t3dM3X3F &viewMatrix, const t3dV3F &translation);
@@ -230,7 +228,6 @@ void rSetLinesViewMatrix();
 
 bool checkGlError(const char *when = "");
 
-void                    rScreenSpaceToCameraSpace(float *dx, float *dy, float *dz, float x, float y);
 } // End of namespace Watchmaker
 
 #endif // WATCHMAKER_RENDER_H
