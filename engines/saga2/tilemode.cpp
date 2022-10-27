@@ -173,9 +173,9 @@ bool                tileLockFlag;           // true if tile mode is locked
 GameObject          *mouseObject = nullptr;    // object being dragged
 StaticPoint32       lastMousePos = {0, 0};           // Last mouse position over map
 static bool         mousePressed,           // State of mouse button
-       clickActionDone = true; // Flag indication wether current
+       clickActionDone = true; // Flag indication whether current
 // mouse click action is done
-static bool         runFlag = false;        // Reflexs wether the mouse is
+static bool         runFlag = false;        // Reflexs whether the mouse is
 // the run zone
 
 static bool         uiKeysEnabled = true;
@@ -196,7 +196,7 @@ extern uint32 frames;
 extern hResContext          *imageRes;              // image resource handle
 
 //  Combat related data
-static bool         aggressiveActFlag = false;  //  Indicates wether or not
+static bool         aggressiveActFlag = false;  //  Indicates whether or not
 static bool         inCombat,
        combatPaused;
 
@@ -410,8 +410,8 @@ static void evalMouseState() {
 
 		//  If the mouse pointer has an object and the intention
 		//  is set to use, modify the doable setting depending
-		//  on wether the mouse is pointing at another object
-		//  and if so, wether the other object is within the
+		//  on whether the mouse is pointing at another object
+		//  and if so, whether the other object is within the
 		//  use range of the center actor
 		if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
 			assert(obj != nullptr);
@@ -443,7 +443,7 @@ static void evalMouseState() {
 		//  Determine if the mouse is being dragged
 		if (mousePressed) {
 			//  Adjust the intention and doable settings based
-			//  factors such as center actor aggression, wether
+			//  factors such as center actor aggression, whether
 			//  the mouse is pointing at an object, etc...
 			//  Determine if the center actor is aggressive
 			if (isCenterActorAggressive()) {
@@ -468,7 +468,7 @@ static void evalMouseState() {
 					//  The mouse is not pointing at an object
 				{
 					//  Since there is no picked object,
-					//  determine wether the center actor has
+					//  determine whether the center actor has
 					//  finished can initiate a new action, if so, set
 					//  the intention to walk to the mouse pointer
 					if (interruptable) {
