@@ -126,7 +126,7 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 }
 
 //-----------------------------------------------------------------------
-//	Given the builtin object type (SAGA segment number), and the adress
+//	Given the builtin object type (SAGA segment number), and the address
 //	from builtinObjectAddress(), return the address of the virtual
 //	function table for the class associated with this object. Also
 //	return the address of the C function call table for this builtin
