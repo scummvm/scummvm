@@ -40,6 +40,8 @@ private:
 	void special06();
 	void special07();
 	void special11();
+	void updateFlags();
+	void brewComplete();
 
 	const SpecialFn SPECIAL_FN[15] = {
 		&Map36::special00,
@@ -65,6 +67,17 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Accepts a quest from Inspectron
+	 */
+	void acceptQuest();
+
+	/**
+	 * Does a check for whether Inspectron's current quest
+	 * is complete or not
+	 */
+	Common::String checkQuestComplete();
 };
 
 } // namespace Maps

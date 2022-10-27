@@ -114,6 +114,17 @@ enum CharFlags5 {
 	CHARFLAG5_80 = 0x80
 };
 
+enum CharFlags6 {
+	CHARFLAG6_1 = 1,
+	CHARFLAG6_2 = 2,
+	CHARFLAG6_4 = 4,
+	CHARFLAG6_8 = 8,
+	CHARFLAG6_10 = 0x10,
+	CHARFLAG6_20 = 0x20,
+	CHARFLAG6_40 = 0x40,
+	CHARFLAG6_80 = 0x80
+};
+
 enum CharFlags7 {
 	CHARFLAG7_1 = 1,
 	CHARFLAG7_2 = 2,

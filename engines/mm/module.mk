@@ -57,6 +57,7 @@ MODULE_OBJS := \
 	mm1/views/maps/chess.o \
 	mm1/views/maps/giant.o \
 	mm1/views/maps/gypsy.o \
+	mm1/views/maps/hacker.o \
 	mm1/views/maps/ice_princess.o \
 	mm1/views/maps/inspectron.o \
 	mm1/views/maps/lion.o \
