@@ -444,7 +444,7 @@ __barrier_result _game_session::Check_this_barrier(RouteBarrier *bar, PXreal new
 				*ignoreThis = 0;
 
 				// we are going to hit this barrier
-				// but, if the angle is narrow we can aquire the barriers pan and continue unmolested
+				// but, if the angle is narrow we can acquire the barriers pan and continue unmolested
 				delta = remainder(L->pan - bar->m_pan, FULL_TURN, HALF_TURN);
 				delta2 = delta;
 
