@@ -188,7 +188,7 @@ bool SpriteDrawQueue::calcItemRect(SpriteDrawQueueItem *item, Common::Rect &srcR
 	if (dstRect.left >= _screen->getScreenWidth() || dstRect.right <= 0 || dstRect.top >= _screen->getScreenHeight() || dstRect.bottom <= 0)
 		return false;
 
-	// Clip the sprite rect if neccessary
+	// Clip the sprite rect if necessary
 
 	if (dstRect.left < 0) {
 		srcRect.left += -100 * dstRect.left / item->_scale;
