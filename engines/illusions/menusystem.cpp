@@ -88,7 +88,7 @@ MenuItem *BaseMenu::getMenuItem(uint index) {
 }
 
 void BaseMenu::enterMenu() {
-	// Empty, implemented if neccessary by the inherited class when the menu is entered
+	// Empty, implemented if necessary by the inherited class when the menu is entered
 }
 
 // BaseMenuSystem
@@ -222,7 +222,7 @@ void BaseMenuSystem::setMousePos(Common::Point &mousePos) {
 
 void BaseMenuSystem::activateMenu(BaseMenu *menu) {
 	_activeMenu = menu;
-	// TODO Run menu enter callback if neccessary
+	// TODO: Run menu enter callback if necessary
 	_menuLinesCount = menu->getHeaderLinesCount();
 	menu->_field2C18 = menu->getMenuItemsCount();
 	_hoveredMenuItemIndex3 = 1;
