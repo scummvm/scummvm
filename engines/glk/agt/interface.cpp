@@ -696,7 +696,7 @@ void set_test_mode(fc_type fc) {
 
 #ifndef REPLACE_GETFILE
 
-/* This opens the file refered to by fname and returns it */
+/* This opens the file referred to by fname and returns it */
 static genfile uf_open(fc_type fc, filetype ext, rbool rw) {
 	char *errstr;
 	genfile f;
