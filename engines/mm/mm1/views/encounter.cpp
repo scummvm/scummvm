@@ -123,7 +123,7 @@ void Encounter::draw() {
 
 	if (_mode != ALERT) {
 		// Display the monster
-		drawMonster(enc._monsterImgNum);
+		msgDrawMonster(DrawMonsterMessage(enc._monsterImgNum));
 
 		// Write the monster list
 		for (uint i = 0; i < enc._monsterList.size(); ++i) {
@@ -143,12 +143,6 @@ void Encounter::draw() {
 
 		_mode = BATTLE;
 	}
-}
-
-void Encounter::drawMonster(int monsterNum) {
-	Graphics::ManagedSurface img =
-		g_globals->_monsters.getMonsterImage(monsterNum);
-	getSurface().blitFrom(img, Common::Point(64, 16));
 }
 
 void Encounter::timeout() {

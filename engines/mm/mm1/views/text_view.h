@@ -101,6 +101,8 @@ public:
 	TextView(const Common::String &name);
 	TextView(const Common::String &name, UIElement *owner);
 	virtual ~TextView() {}
+
+	bool msgDrawMonster(const DrawMonsterMessage &msg) override;
 };
 
 } // namespace Views

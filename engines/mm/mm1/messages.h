@@ -172,6 +172,14 @@ struct ValueMessage : public Message {
 		_value(value) {}
 };
 
+struct DrawMonsterMessage : public Message {
+	int _monsterNum;
+
+	DrawMonsterMessage() : Message(), _monsterNum(0) {}
+	explicit DrawMonsterMessage(int monsterNum) : Message(),
+		_monsterNum(monsterNum) {}
+};
+
 } // namespace MM1
 } // namespace MM
 

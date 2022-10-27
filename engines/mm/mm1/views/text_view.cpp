@@ -139,6 +139,13 @@ void TextView::timeout() {
 	redraw();
 }
 
+bool TextView::msgDrawMonster(const DrawMonsterMessage &msg) {
+	Graphics::ManagedSurface img =
+		g_globals->_monsters.getMonsterImage(msg._monsterNum);
+	getSurface().blitFrom(img, Common::Point(64, 16));
+	return true;
+}
+
 } // namespace Views
 } // namespace MM1
 } // namespace MM
