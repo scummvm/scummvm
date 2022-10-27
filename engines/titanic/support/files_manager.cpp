@@ -136,7 +136,7 @@ void CFilesManager::preload(const CString &name) {
 Common::SeekableReadStream *CFilesManager::getResource(const CString &str) {
 	ResourceEntry resEntry = _resources[str];
 
-	// If we're running the German version, check for the existance of
+	// If we're running the German version, check for the existence of
 	// a German specific version of the given resource
 	if (_vm->isGerman() && _resources.contains(str + "/DE"))
 		resEntry = _resources[str + "/DE"];
