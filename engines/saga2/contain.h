@@ -69,8 +69,8 @@ class ContainerView : public gControl {
 protected:
 
 	enum imageData {
-		selectorX = 10,
-		selectorY = 25
+		kSelectorX = 10,
+		kSelectorY = 25
 	};
 
 public:
@@ -359,22 +359,22 @@ class ContainerNode {
 
 public:
 	enum ContainerNodeOwnerType {
-		readyType   = 0,                    //  This is a player ready container
-		deadType,                           //  The "dead" container
-		mentalType,                         //  A player's mental container
-		physicalType,                       //  Physical container
-		enchantType                         //  Enchantment container
+		kReadyType   = 0,                    //  This is a player ready container
+		kDeadType,                           //  The "dead" container
+		kMentalType,                         //  A player's mental container
+		kPhysicalType,                       //  Physical container
+		kEnchantType                         //  Enchantment container
 	};
 
 	enum ContainerNodeOwners {
-		nobody = 255                        //  owner = 255 means it's on the ground
+		kNobody = 255                        //  owner = 255 means it's on the ground
 	};
 
 	enum containerAction {
-		actionUpdate    = (1 << 0),         //  Refresh this window
-		actionDelete    = (1 << 1),         //  Delete this window
-		actionHide      = (1 << 2),         //  Refresh this window
-		actionShow      = (1 << 3)          //  Refresh this window
+		kActionUpdate    = (1 << 0),         //  Refresh this window
+		kActionDelete    = (1 << 1),         //  Delete this window
+		kActionHide      = (1 << 2),         //  Refresh this window
+		kActionShow      = (1 << 3)          //  Refresh this window
 	};
 
 private:
@@ -424,18 +424,18 @@ public:
 
 	//  Set for lazy deletion
 	void markForDelete()   {
-		_action |= actionDelete;
+		_action |= kActionDelete;
 	}
 	void markForShow() {
-		_action |= actionShow;
-		_action &= ~actionHide;
+		_action |= kActionShow;
+		_action &= ~kActionHide;
 	}
 	void markForHide() {
-		_action |= actionHide;
-		_action &= ~actionShow;
+		_action |= kActionHide;
+		_action &= ~kActionShow;
 	}
 	void markForUpdate()   {
-		_action |= actionUpdate;
+		_action |= kActionUpdate;
 	}
 
 	//  Find the address of the window and/or view

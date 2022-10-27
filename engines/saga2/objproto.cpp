@@ -1264,7 +1264,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::physicalType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::kPhysicalType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -2926,7 +2926,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::mentalType);
+	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::kMentalType);
 
 	assert(cn);
 

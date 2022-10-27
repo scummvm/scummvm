@@ -168,7 +168,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	assert(isActor(dObj));
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::deadType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::kDeadType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
