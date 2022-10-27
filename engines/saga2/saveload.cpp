@@ -78,7 +78,7 @@ void SaveFileHeader::write(Common::OutSaveFile *out) {
 //	The following resources are included in the save file
 //		GLOB -  miscellaneous globals
 //		TIME -  game timer
-//		CALE -  game calender
+//		CALE -  game calendar
 //		WRLD -  worlds
 //		ACTR -  actors
 //		OBJS -  objects
@@ -473,7 +473,7 @@ void loadSavedGameState(int16 saveNo) {
 		error("Timer not loaded");
 
 	if (!(loadFlags & loadCalenderFlag))
-		error("Game calender not loaded");
+		error("Game calendar not loaded");
 
 	if (!(loadFlags & loadWorldsFlag))
 		error("Worlds not loaded");
