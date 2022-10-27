@@ -29,6 +29,17 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+static const byte MATCH_ITEMS[7] = {
+	GARLIC_ID, WOLFSBANE_ID, BELLADONNA_ID, MEDUSA_HEAD_ID,
+	WYVERN_EYE_ID, DRAGONS_TOOTH_ID, RING_OF_OKRIM_ID
+};
+static const byte MATCH_FLAGS[8] = {
+	1, 2, 4, 8, 0x10, 0x20, 0x40, 0x80
+};
+static const uint16 QUEST_EXPERIENCE[7] = {
+	1000, 2000, 3000, 4000, 6000, 8000, 10000
+};
+
 void Map36::special() {
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 15; ++i) {
@@ -74,18 +85,123 @@ void Map36::special03() {
 }
 
 void Map36::special04() {
+	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
+		send(SoundMessage(STRING["maps.map36.begone"]));
+		g_maps->_mapPos.x--;
+		updateGame();
+	}
 }
 
 void Map36::special05() {
+	updateFlags();
+	warning("TODO: drawMonster");
+	g_events->addView("Hacker");
 }
 
 void Map36::special06() {
+	send(SoundMessage(STRING["maps.map36.pit"]));
+	g_maps->_mapPos = Common::Point(7, 4);
+	g_maps->changeMap(0x705, 3);
 }
 
 void Map36::special07() {
+	send(SoundMessage(STRING["maps.map36.vault"]));
+	_data[MAP_47] = 7;
+	_data[MAP_29] = 30;
+	for (int i = 0; i < 3; ++i)
+		Sound::sound(SOUND_2);
 }
 
 void Map36::special11() {
+	g_globals->_treasure[8] = 30;
+	special07();
+}
+
+void Map36::updateFlags() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		int counte = c._equipped.size();
+		int count = counte + c._backpack.size();
+		for (int itemIdx = 0; itemIdx < count; ++itemIdx) {
+			byte itemId = (itemIdx < counte) ?
+				c._equipped[itemIdx]._id : c._backpack[itemIdx - counte]._id;
+
+			// Scan list of items to match against
+			for (int arrIdx = 0; arrIdx < 7; ++arrIdx) {
+				if (itemId == MATCH_ITEMS[arrIdx]) {
+					c._flags[6] |= MATCH_FLAGS[arrIdx];
+					break;
+				}
+			}
+		}
+	}
+}
+
+void Map36::acceptQuest() {
+	Character &leader = g_globals->_party[0];
+	byte flags = leader._flags[8];
+
+	// Find quest that hasn't been done yet
+	int questNum;
+	for (questNum = 8; flags && questNum < 15; ++questNum, flags >>= 1) {
+		if (!(flags & 1))
+			break;
+	}
+	if (questNum == 15) {
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._flags[8] = CHARFLAG8_80;
+			c._flags[5] = CHARFLAG5_80;
+		}
+	}
+
+	// Assign the quest to all party characters
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._quest = questNum;
+	}
+
+	// Draw the scene
+	g_maps->_mapPos.y++;
+	redrawGame();
+}
+
+Common::String Map36::checkQuestComplete() {
+	Character &leader = g_globals->_party[0];
+	int qIndex = leader._quest - 14;
+
+	if (leader._flags[6] & MATCH_FLAGS[qIndex] & 0x7f) {
+		// The quest was complete
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			Character &c = g_globals->_party[i];
+			c._quest = 0;
+			c._flags[9] |= MATCH_FLAGS[qIndex];
+			c._exp += QUEST_EXPERIENCE[qIndex];
+		}
+
+		return Common::String::format(
+			STRING["maps.map36.inspectron6"].c_str(),
+			QUEST_EXPERIENCE[qIndex]);
+	} else {
+		// The quest isn't yet complete
+		return STRING["maps.map36.hacker5"];
+	}
+}
+
+void Map36::brewComplete() {
+	// Nuke the entire party's backpack contents
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._flags[9] = CHARFLAG9_80;
+		c._flags[6] = CHARFLAG6_80;
+
+		c._backpack.clear();
+	}
+
+	send(SoundMessage(STRING["maps.map36.hacker6"]));
+	g_maps->_mapPos = Common::Point(12, 5);
+	g_maps->_mapPos.x--;
+	redrawGame();
 }
 
 } // namespace Maps

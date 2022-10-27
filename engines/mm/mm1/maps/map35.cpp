@@ -172,7 +172,7 @@ Common::String Map35::checkQuestComplete() {
 	Character &leader = g_globals->_party[0];
 	int qIndex = leader._quest - 7;
 
-	if (leader._flags[5] & MATCH_FLAGS[qIndex]) {
+	if (leader._flags[5] & MATCH_FLAGS[qIndex] & 0x7f) {
 		// The quest was complete
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
