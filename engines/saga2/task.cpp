@@ -1133,7 +1133,7 @@ TaskResult GotoTask::update() {
 	}
 
 	Actor *const   a = _stack->getActor();
-	//  Compute the immediate destination based upon wether or not the
+	//  Compute the immediate destination based upon whether or not the
 	//  actor has a line of sight to the target.
 	TilePoint       immediateDest = lineOfSight()
 	                                ?   destination()
@@ -1148,7 +1148,7 @@ TaskResult GotoTask::update() {
 		}
 
 		//  Determine if there is aready a motion task, and if so,
-		//  wether or not it needs to be modified.
+		//  whether or not it needs to be modified.
 		MotionTask  *actorMotion = a->_moveTask;
 		TilePoint   actorLoc = a->getLocation();
 
