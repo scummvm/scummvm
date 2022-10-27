@@ -542,13 +542,13 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 
 	buf[0] = '\0';
 
-	if (a->_enchantmentFlags & (1 << actorAsleep)) {
+	if (a->_enchantmentFlags & (1 << kActorAsleep)) {
 		Common::strlcat(buf, asleepStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorParalyzed)) {
+	} else if (a->_enchantmentFlags & (1 << kActorParalyzed)) {
 		Common::strlcat(buf, paralysedStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorBlind)) {
+	} else if (a->_enchantmentFlags & (1 << kActorBlind)) {
 		Common::strlcat(buf, blindStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorFear)) {
+	} else if (a->_enchantmentFlags & (1 << kActorFear)) {
 		Common::strlcat(buf, afraidStr, size);
 	} else if (pa->isAggressive()) {
 		Common::strlcat(buf, angryStr, size);
@@ -566,12 +566,12 @@ void CPortrait::getStateString(char buf[], int8 size, uint16 brotherID) {
 		Common::strlcat(buf, hurtStr, size);
 	}
 
-	if (a->_enchantmentFlags & (1 << actorPoisoned)) {
+	if (a->_enchantmentFlags & (1 << kActorPoisoned)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
 		Common::strlcat(buf, poisonedStr, size);
-	} else if (a->_enchantmentFlags & (1 << actorDiseased)) {
+	} else if (a->_enchantmentFlags & (1 << kActorDiseased)) {
 		if (buf[0] != '\0')	// strlen(buf) > 0
 			Common::strlcat(buf, commaStr, size);
 
@@ -2124,7 +2124,7 @@ APPFUNC(cmdPortrait) {
 
 	case gEventMouseMove:
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			g_vm->_mouseInfo->setDoable(true);
 			break;
@@ -2200,12 +2200,12 @@ APPFUNC(cmdAggressive) {
 //		}
 //		else setAggression( transBroID, !wasAggressive );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isAggressive(transBroID)
 			                  ? ON_AGRESS
 			                  : OFF_AGRESS);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2233,7 +2233,7 @@ APPFUNC( cmdJump )
 APPFUNC(cmdArmor) {
 	if (ev.eventType == gEventMouseMove) {
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			gArmorIndicator *gai = (gArmorIndicator *)ev.panel;
 			char    buf[128];
 
@@ -2250,7 +2250,7 @@ APPFUNC(cmdArmor) {
 				// set the text in the cursor
 				g_vm->_mouseInfo->setText(buf);
 			}
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2265,12 +2265,12 @@ APPFUNC(cmdCenter) {
 		else setCenterBrother(transBroID);
 	}
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
 			                  ? ON_CENTER
 			                  : OFF_CENTER);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2299,12 +2299,12 @@ APPFUNC(cmdBand) {
 //		}
 //		else setBanded( transBroID, !wasBanded );
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isBanded(transBroID)
 			                  ? ON_BANDED
 			                  : OFF_BANDED);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2315,8 +2315,8 @@ APPFUNC(cmdOptions) {
 		OptionsDialog();
 		//openOptionsPanel();
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
-		else if (ev.value == GfxCompImage::leave) g_vm->_mouseInfo->setText(nullptr);
+		if (ev.value == GfxCompImage::kEnter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
+		else if (ev.value == GfxCompImage::kLeave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
@@ -2335,7 +2335,7 @@ APPFUNC(cmdBroChange) {
 
 		uint16  panID = ev.panel->_id;
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			// working buffer
 			char buf[bufSize];
 			char state[stateBufSize];
@@ -2356,7 +2356,7 @@ APPFUNC(cmdBroChange) {
 			}
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(buf);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2366,12 +2366,12 @@ APPFUNC(cmdHealthStar) {
 	uint16 transBroID = translatePanID(ev.panel->_id);
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			return;
 		}
 
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			ev.panel->setMousePoll(true);
 		}
 
@@ -2391,7 +2391,7 @@ APPFUNC(cmdMassInd) {
 	GameObject      *_containerObject = nullptr;
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			int     curWeight;
 			uint16  baseWeight;
@@ -2417,7 +2417,7 @@ APPFUNC(cmdMassInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_WEIGHT_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2429,7 +2429,7 @@ APPFUNC(cmdBulkInd) {
 
 
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			uint16  baseBulk    = 100;
 			char    buf[bufSize];
@@ -2455,7 +2455,7 @@ APPFUNC(cmdBulkInd) {
 				g_vm->_mouseInfo->setText(buf);
 			} else
 				g_vm->_mouseInfo->setText(UNK_BULK_HINT);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -2463,7 +2463,7 @@ APPFUNC(cmdBulkInd) {
 
 APPFUNC(cmdManaInd) {
 	if (ev.eventType == gEventMouseMove) {
-		if (ev.value != GfxCompImage::leave) {
+		if (ev.value != GfxCompImage::kLeave) {
 			const   int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];
 			int     manaType = -1;
@@ -2708,29 +2708,29 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		uint8   duration = obj->getHitPoints();             // get hitpoints of enchant
 
 		switch (eType) {
-		case effectAttrib:
+		case kEffectAttrib:
 			switch (eSubType) {
-//			case skillIDArchery:
-//			case skillIDShieldcraft:
+//			case kSkillIDArchery:
+//			case kSkillIDShieldcraft:
 
-			case skillIDBludgeon:
-			case skillIDSwordcraft:
+			case kSkillIDBludgeon:
+			case kSkillIDSwordcraft:
 				if (eAmount > 0) newIconFlags[iconSurestrike] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDAgility:
+			case kSkillIDAgility:
 				if (eAmount > 0) newIconFlags[iconInnerBalance] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDBrawn:
+			case kSkillIDBrawn:
 				newIconFlags[iconBattleFever] = duration;
 				break;
 			}
 			break;
 
-		case effectResist:
+		case kEffectResist:
 
 			switch (eSubType) {
 			case kDamageImpact:
@@ -2769,7 +2769,7 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 			}
 			break;
 
-		case effectImmune:
+		case kEffectImmune:
 			switch (eSubType) {
 			case kDamageImpact:
 				newIconFlags[iconIronskin] = duration;
@@ -2801,47 +2801,47 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 			}
 			break;
 
-		case effectOthers:
+		case kEffectOthers:
 			switch (eSubType) {
-			case actorPoisoned:
-			case actorDiseased:
+			case kActorPoisoned:
+			case kActorDiseased:
 				newIconFlags[iconPoisoned] = duration;
 				break;
 
-			case actorFear:
+			case kActorFear:
 				newIconFlags[iconAfraid] = duration;
 				break;
-			case actorParalyzed:
+			case kActorParalyzed:
 				newIconFlags[iconParalysed] = duration;
 				break; // iconFrozen ??
-			case actorSlowFall:
+			case kActorSlowFall:
 				newIconFlags[iconCushionAir] = duration;
 				break;
-			case actorImmobile:
+			case kActorImmobile:
 				newIconFlags[iconConstrained] = duration;
 				break;
-			case actorSeeInvis:
+			case kActorSeeInvis:
 				newIconFlags[iconSoulSight] = duration;
 				break;
-			case actorInvisible:
+			case kActorInvisible:
 				newIconFlags[iconInvisible] = duration;
 				break;
-			case actorUndetectable:
+			case kActorUndetectable:
 				newIconFlags[iconNumbscent] = duration;
 				break;
-			case actorDetPoison:
+			case kActorDetPoison:
 				newIconFlags[iconDetectPoison] = duration;
 				break;
-			case actorNoDrain:
+			case kActorNoDrain:
 				newIconFlags[iconNetherWard] = duration;
 				break;
-			case actorWaterBreathe:
+			case kActorWaterBreathe:
 				newIconFlags[iconSeawalk] = duration;
 				break;
-			case actorRepelEvil:
+			case kActorRepelEvil:
 				newIconFlags[iconProtectEvil] = duration;
 				break;
-//			case actorRepelUndead: newIconFlags[iconProtectUndead] = duration; break;
+//			case kActorRepelUndead: newIconFlags[iconProtectUndead] = duration; break;
 //			case actorRepelGhosts: newIconFlags[iconProtectGhosts] = duration; break;
 			}
 		}
@@ -2853,38 +2853,38 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 
 		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
-			if (proto->immunity & (1 << resistImpact))            newIconFlags[iconResistImpact] = 255;
-			else if (proto->resistance & (1 << resistImpact)) newIconFlags[iconResistImpact] = 255;
+			if (proto->immunity & (1 << kResistImpact))            newIconFlags[iconResistImpact] = 255;
+			else if (proto->resistance & (1 << kResistImpact)) newIconFlags[iconResistImpact] = 255;
 
-			if (proto->immunity & (1 << resistSlash))         newIconFlags[iconResistSlash] = 255;
-			else if (proto->resistance & (1 << resistSlash))  newIconFlags[iconResistSlash] = 255;
+			if (proto->immunity & (1 << kResistSlash))         newIconFlags[iconResistSlash] = 255;
+			else if (proto->resistance & (1 << kResistSlash))  newIconFlags[iconResistSlash] = 255;
 
-			if (proto->immunity & (1 << resistProjectile))        newIconFlags[iconResistProjectile] = 255;
-			else if (proto->resistance & (1 << resistProjectile)) newIconFlags[iconResistProjectile] = 255;
+			if (proto->immunity & (1 << kResistProjectile))        newIconFlags[iconResistProjectile] = 255;
+			else if (proto->resistance & (1 << kResistProjectile)) newIconFlags[iconResistProjectile] = 255;
 
-			if (proto->immunity & (1 << immuneFire))          newIconFlags[iconImmuneFire] = 255;
-			else if (proto->resistance & (1 << resistFire))   newIconFlags[iconResistFire] = 255;
+			if (proto->immunity & (1 << kImmuneFire))          newIconFlags[iconImmuneFire] = 255;
+			else if (proto->resistance & (1 << kResistFire))   newIconFlags[iconResistFire] = 255;
 
-			if (proto->immunity & (1 << immuneAcid))          newIconFlags[iconImmuneAcid] = 255;
-			else if (proto->resistance & (1 << resistAcid))   newIconFlags[iconResistAcid] = 255;
+			if (proto->immunity & (1 << kImmuneAcid))          newIconFlags[iconImmuneAcid] = 255;
+			else if (proto->resistance & (1 << kResistAcid))   newIconFlags[iconResistAcid] = 255;
 
-			if (proto->immunity & (1 << immuneHeat))          newIconFlags[iconImmuneHeat] = 255;
-			else if (proto->resistance & (1 << resistHeat))   newIconFlags[iconResistHeat] = 255;
+			if (proto->immunity & (1 << kImmuneHeat))          newIconFlags[iconImmuneHeat] = 255;
+			else if (proto->resistance & (1 << kResistHeat))   newIconFlags[iconResistHeat] = 255;
 
-			if (proto->immunity & (1 << immuneCold))          newIconFlags[iconImmuneCold] = 255;
-			else if (proto->resistance & (1 << resistCold))   newIconFlags[iconResistCold] = 255;
+			if (proto->immunity & (1 << kImmuneCold))          newIconFlags[iconImmuneCold] = 255;
+			else if (proto->resistance & (1 << kResistCold))   newIconFlags[iconResistCold] = 255;
 
-			if (proto->immunity & (1 << immuneLightning))     newIconFlags[iconImmuneLightning] = 255;
-			else if (proto->resistance & (1 << resistLightning)) newIconFlags[iconResistLightning] = 255;
+			if (proto->immunity & (1 << kImmuneLightning))     newIconFlags[iconImmuneLightning] = 255;
+			else if (proto->resistance & (1 << kResistLightning)) newIconFlags[iconResistLightning] = 255;
 
-			if (proto->immunity & (1 << immunePoison))        newIconFlags[iconImmunePoison] = 255;
-			else if (proto->resistance & (1 << resistPoison)) newIconFlags[iconResistPoison] = 255;
+			if (proto->immunity & (1 << kImmunePoison))        newIconFlags[iconImmunePoison] = 255;
+			else if (proto->resistance & (1 << kResistPoison)) newIconFlags[iconResistPoison] = 255;
 
-			if (proto->immunity & (1 << immuneMental))        newIconFlags[iconImmunePsionic] = 255;
-			else if (proto->resistance & (1 << resistMental)) newIconFlags[iconResistPsionic] = 255;
+			if (proto->immunity & (1 << kImmuneMental))        newIconFlags[iconImmunePsionic] = 255;
+			else if (proto->resistance & (1 << kResistMental)) newIconFlags[iconResistPsionic] = 255;
 
-			if (proto->immunity & (1 << resistDirMagic))      newIconFlags[iconResistDirectMagic] = 255;
-			else if (proto->resistance & (1 << resistDirMagic))newIconFlags[iconResistDirectMagic] = 255;
+			if (proto->immunity & (1 << kResistDirMagic))      newIconFlags[iconResistDirectMagic] = 255;
+			else if (proto->resistance & (1 << kResistDirMagic))newIconFlags[iconResistDirectMagic] = 255;
 		}
 	}
 
@@ -2893,41 +2893,41 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 #if 0
 	enum effectOthersTypes {
 		// Movement flags
-		o   actorNoncorporeal   = 1,    // The creature can walk through things
-		x   actorWaterBreathe   = 2,    // death spell
-		x   actorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
-		-   actorLevitate       = 4,    // flying with no height control ?
-		-   actorFlying         = 5,    // the creature flys
+		o   kActorNoncorporeal   = 1,    // The creature can walk through things
+		x   kActorWaterBreathe   = 2,    // death spell
+		x   kActorSlowFall       = 3,    // the creature is not harmed by falling (but falls none the less)
+		-   kActorLevitate       = 4,    // flying with no height control ?
+		-   kActorFlying         = 5,    // the creature flys
 		// speed flags
-		-   actorFastMove       = 6,    //
-		-   actorFastAttack     = 7,    //
-		actorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
+		-   kActorFastMove       = 6,    //
+		-   kActorFastAttack     = 7,    //
+		kActorSlowAttack     = 8,    // come... back... here... lit... tle... bun... ny...
 		x   actorSlowMove       = 9,    // I thought I told you to leave the piano at home
 		// ill effects
-		-   actorAsleep         = 10,   // Zzzzzzzzzzz
-		x   actorParalyzed      = 11,   // the creature can't move an inch
-		x   actorFear           = 12,   // run away! run away
-		x   actorDiseased       = 13,   // cannot heal
-		x   actorPoisoned       = 14,   // death spell
+		-   kActorAsleep         = 10,   // Zzzzzzzzzzz
+		x   kActorParalyzed      = 11,   // the creature can't move an inch
+		x   kActorFear           = 12,   // run away! run away
+		x   kActorDiseased       = 13,   // cannot heal
+		x   kActorPoisoned       = 14,   // death spell
 		// perception & perceivability flags
-		x   actorBlind          = 15,   // can't see
-		x   actorSeeInvis       = 16,   // can see invisible
-		-   actorClairvoyant    = 17,  // unknown effects
-		x   actorInvisible      = 18,   // is invisible
-		x   actorUndetectable   = 19,   // can't be seen, smelled
-		x   actorDetPoison      = 20,   // poison things glow green
+		x   kActorBlind          = 15,   // can't see
+		x   kActorSeeInvis       = 16,   // can see invisible
+		-   kActorClairvoyant    = 17,  // unknown effects
+		x   kActorInvisible      = 18,   // is invisible
+		x   kActorUndetectable   = 19,   // can't be seen, smelled
+		x   kActorDetPoison      = 20,   // poison things glow green
 		// flags preventing changes to other flags
-		actorNoEnchant      = 21,   // no bad enchantments
-		x   actorNoDrain        = 22,   // no mana / food drains
+		kActorNoEnchant      = 21,   // no bad enchantments
+		x   kActorNoDrain        = 22,   // no mana / food drains
 		// flags that make things run away
-		x   actorRepelEvil      = 23,   // death spell
-		x   actorRepelGood      = 24,   // death spell
-		x   actorRepelUndead    = 25,   // death spell
+		x   kActorRepelEvil      = 23,   // death spell
+		x   kActorRepelGood      = 24,   // death spell
+		x   kActorRepelUndead    = 25,   // death spell
 		// dead or moved flags
 //		actorMapping        =15,    //
 //		actorLandWalk       =0 ,    // someone else had this I have no idea what it is
 //		actorFloat          =2 ,    // the creature can travel through malts shakes & sundaes
-		actorWaterWalk,          // can walk on water (same as float ?)
+		kActorWaterWalk,          // can walk on water (same as float ?)
 //		actorPanic          =13,    // creature takes off randomly
 //		actorSpotHidden     =17,    // can see hidden
 //		actorDetTraps       =22,    // traps glow green

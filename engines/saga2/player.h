@@ -78,10 +78,10 @@ public:
 	int16   _manaMemory[numManas];
 
 	// attrib recovery pools
-	uint8   _attribRecPools[numSkills];
+	uint8   _attribRecPools[kNumSkills];
 
 	// skills 'expericene' pool
-	uint8   _attribMemPools[numSkills];
+	uint8   _attribMemPools[kNumSkills];
 
 	// vitality pool
 	uint8 _vitalityMemory;
@@ -94,14 +94,14 @@ public:
 	PlayerActor(ObjectID a) :  _actorID(a), _portraitType(0), _flags(0), _readyNode(NULL),
 			_vitalityMemory(0), _notifiedOfAttack(false) {
 
-		assert(ActorAttributes::skillFracPointsPerLevel > 0);    // this is used in a divide
+		assert(ActorAttributes::kSkillFracPointsPerLevel > 0);    // this is used in a divide
 
 		memset(&_baseStats, 0, sizeof(_baseStats));
 
 		for (int i = 0; i < numManas; i++)
 			_manaMemory[i] = 0;
 
-		for (int i = 0; i < numSkills; i++) {
+		for (int i = 0; i < kNumSkills; i++) {
 			_attribRecPools[i] = 0;
 			_attribMemPools[i] = 0;
 		}

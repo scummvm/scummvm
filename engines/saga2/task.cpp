@@ -2974,7 +2974,7 @@ void HuntToKillTask::abortTask() {
 
 	Actor       *a = _stack->getActor();
 
-	a->_flags &= ~Actor::specialAttack;
+	a->_flags &= ~Actor::kAFSpecialAttack;
 
 	a->setFightStance(false);
 }
@@ -2983,7 +2983,7 @@ void HuntToKillTask::abortTask() {
 
 TaskResult HuntToKillTask::update() {
 	if (_specialAttackCtr == 0) {
-		_stack->getActor()->_flags |= Actor::specialAttack;
+		_stack->getActor()->_flags |= Actor::kAFSpecialAttack;
 		//  A little hack to make monsters with 99 spellcraft cast spells more often
 		if (_stack->getActor()->getStats()->spellcraft >= 99)
 			_specialAttackCtr = 3;
@@ -3024,7 +3024,7 @@ void HuntToKillTask::evaluateTarget() {
 		getTarget()->actor(a->world(), a->getLocation(), taa);
 
 		switch (proto->combatBehavior) {
-		case behaviorHungry:
+		case kBehaviorHungry:
 			//  Iterate through each actor in the array and determine if
 			//  there is a line of sight to that actor
 			for (i = 0; i < taa.actors; i++) {
@@ -3045,7 +3045,7 @@ void HuntToKillTask::evaluateTarget() {
 			}
 			break;
 
-		case behaviorCowardly: {
+		case kBehaviorCowardly: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
@@ -3074,7 +3074,7 @@ void HuntToKillTask::evaluateTarget() {
 		}
 		break;
 
-		case behaviorBerserk: {
+		case kBehaviorBerserk: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
@@ -3103,7 +3103,7 @@ void HuntToKillTask::evaluateTarget() {
 		}
 		break;
 
-		case behaviorSmart: {
+		case kBehaviorSmart: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {

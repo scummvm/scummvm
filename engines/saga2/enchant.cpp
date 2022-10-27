@@ -160,22 +160,22 @@ void addEnchantment(Actor *a, uint16 enchantmentID) {
 	int16  eAmount = getEnchantmentAmount(enchantmentID);
 
 	switch (eType) {
-	case effectAttrib:
+	case kEffectAttrib:
 		stats[eSubType] = clamp(0, stats[eSubType] + eAmount, 100);
 		break;
-	case effectResist:
+	case kEffectResist:
 		a->setResist((effectResistTypes) eSubType, eAmount);
 		break;
-	case effectImmune:
+	case kEffectImmune:
 		a->setImmune((effectImmuneTypes) eSubType, eAmount);
 		break;
-	case effectOthers:
+	case kEffectOthers:
 		a->setEffect((effectOthersTypes) eSubType, eAmount);
 		break;
-	case effectSpecial:           // damage shouldn't be an enchantment
+	case kEffectSpecial:           // damage shouldn't be an enchantment
 	// Special code needed
-	case effectDamage:           // damage shouldn't be an enchantment
-	case effectNone:
+	case kEffectDamage:           // damage shouldn't be an enchantment
+	case kEffectNone:
 		break;
 	}
 
@@ -230,12 +230,12 @@ void evalObjectEnchantments(GameObject *obj) {
 	//  If more enchantment types are added, then we'll
 	//  have to do this a bit differently...
 
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectInvisible, true)))
-		obj->setFlags((uint8) - 1, objectInvisible);
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(kEffectNonActor, kObjectInvisible, true)))
+		obj->setFlags((uint8) - 1, kObjectInvisible);
 	else
-		obj->setFlags(0, objectInvisible);
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectLocked, false)))
-		obj->setFlags((uint8) - 1, objectLocked);
+		obj->setFlags(0, kObjectInvisible);
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(kEffectNonActor, kObjectLocked, false)))
+		obj->setFlags((uint8) - 1, kObjectLocked);
 }
 
 //-------------------------------------------------------------------

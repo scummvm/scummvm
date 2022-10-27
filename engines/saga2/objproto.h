@@ -378,10 +378,10 @@ class ProtoObj : public ResourceObjectPrototype {
 	// at appropriate subclasses
 private:
 	enum {
-		ViewableRows    = 6,
-		ViewableCols    = 4,
-		maxRows         = 8,
-		maxCols         = 4
+		kViewableRows    = 6,
+		kViewableCols    = 4,
+		kMaxRows         = 8,
+		kMaxCols         = 4
 	};
 
 public:
@@ -717,16 +717,16 @@ public:
 	// this is to determine size of containers
 public:
 	virtual uint16 getViewableRows() {
-		return ViewableRows;
+		return kViewableRows;
 	}
 	virtual uint16 getViewableCols() {
-		return ViewableCols;
+		return kViewableCols;
 	}
 	virtual uint16 getMaxRows() {
-		return maxRows;
+		return kMaxRows;
 	}
 	virtual uint16 getMaxCols() {
-		return maxCols;
+		return kMaxCols;
 	}
 
 	// this returns the type of charge an item can have

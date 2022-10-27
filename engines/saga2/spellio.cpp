@@ -91,9 +91,9 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 	ProtoEffect *pe = nullptr;
 	assert(rse && rse->spell == _master);
 	switch (rse->effectGroup) {
-	case effectNone     :
+	case kEffectNone     :
 		return;
-	case effectAttrib   :
+	case kEffectAttrib   :
 		pe = new ProtoEnchantment(
 		         makeEnchantmentID(
 		             rse->effectGroup,
@@ -102,10 +102,10 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         rse->enchTimeLo,
 		         rse->enchTimeHi);
 		break;
-	case effectResist   :
-	case effectImmune   :
-	case effectOthers   :
-	case effectNonActor :
+	case kEffectResist   :
+	case kEffectImmune   :
+	case kEffectOthers   :
+	case kEffectNonActor :
 		pe = new ProtoEnchantment(
 		         makeEnchantmentID(
 		             rse->effectGroup,
@@ -114,7 +114,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         rse->enchTimeLo,
 		         rse->enchTimeHi);
 		break;
-	case effectDamage   :
+	case kEffectDamage   :
 		pe = new ProtoDamage(
 		         rse->baseDice,
 		         rse->diceSides ? rse->diceSides : 6,
@@ -124,7 +124,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         0,
 		         rse->targeting & spellTargCaster);
 		break;
-	case effectDrains   :
+	case kEffectDrains   :
 		pe = new ProtoDrainage(
 		         rse->baseDice,
 		         rse->diceSides ? rse->diceSides : 6,
@@ -134,53 +134,53 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         0,
 		         rse->targeting & spellTargCaster);
 		break;
-	case effectTAG      :
+	case kEffectTAG      :
 		pe = new ProtoTAGEffect(
 		         (effectTAGTypes) rse->effectType,
 		         rse->flagSet,
 		         rse->attribModifier);
 		break;
-	case effectLocation :
+	case kEffectLocation :
 		pe = new ProtoLocationEffect(
-		         (effectLocationTypes) rse->effectType,
+		         (kEffectLocationTypes) rse->effectType,
 		         rse->attribModifier);
 		break;
-	case effectSpecial  : {
+	case kEffectSpecial  : {
 		switch (rse->effectType) {
-		case    specialDispellHelpfulEnch :   // clears helpful enchantments
+		case    kSpecialDispellHelpfulEnch :   // clears helpful enchantments
 			pe = new ProtoSpecialEffect(DispellProtections, rse->attribModifier);
 			break;
-		case    specialDispellHarmfulEnch :   // clears harmful enchantments
+		case    kSpecialDispellHarmfulEnch :   // clears harmful enchantments
 			pe = new ProtoSpecialEffect(DispellCurses,      rse->attribModifier);
 			break;
-		case    specialKill               :   // death spell
+		case    kSpecialKill               :   // death spell
 			pe = new ProtoSpecialEffect(DeathSpell,         rse->attribModifier);
 			break;
-		case    specialRessurect          :   // raise dead spell
+		case    kSpecialRessurect          :   // raise dead spell
 			pe = new ProtoSpecialEffect(Resurrect,          rse->attribModifier);
 			break;
-		case    specialTeleport           :   // Teleportation
+		case    kSpecialTeleport           :   // Teleportation
 			pe = new ProtoSpecialEffect(TeleportToLocation, rse->attribModifier);
 			break;
-		case    specialCreateActor        :   // Create an actor or wall
+		case    kSpecialCreateActor        :   // Create an actor or wall
 			pe = new ProtoSpecialEffect(CreateWraith,       rse->attribModifier);
 			break;
-		case    specialSagaFunc           :    // calls a saga function
+		case    kSpecialSagaFunc           :    // calls a saga function
 			pe = new ProtoSpecialEffect(SagaSpellCall,      rse->attribModifier);
 			break;
-		case    specialRejoin        :   // Create an actor or wall
+		case    kSpecialRejoin        :   // Create an actor or wall
 			pe = new ProtoSpecialEffect(Rejoin,      rse->attribModifier);
 			break;
-		case    specialCreateWWisp  :  // calls a saga function
+		case    kSpecialCreateWWisp  :  // calls a saga function
 			pe = new ProtoSpecialEffect(CreateWWisp,      rse->attribModifier);
 			break;
-		case    specialCreateFWisp  :   // calls a saga function
+		case    kSpecialCreateFWisp  :   // calls a saga function
 			pe = new ProtoSpecialEffect(CreateFWisp,      rse->attribModifier);
 			break;
-		case    specialCreateWraith :   // calls a saga function
+		case    kSpecialCreateWraith :   // calls a saga function
 			pe = new ProtoSpecialEffect(CreateWraith,      rse->attribModifier);
 			break;
-		case    specialCreateFood   :   // calls a saga function
+		case    kSpecialCreateFood   :   // calls a saga function
 			pe = new ProtoSpecialEffect(CreateFood,      rse->attribModifier);
 			break;
 		}

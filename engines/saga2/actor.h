@@ -46,20 +46,20 @@ const int   actorScriptVars = 4;
 //  Defines the colors of MANA
 
 enum ActorSkillID {
-	skillIDArchery      =  0,
-	skillIDSwordcraft,
-	skillIDShieldcraft,
-	skillIDBludgeon,
-	skillIDThrowing,    //  gone
-	skillIDSpellcraft,
-	skillIDStealth,     //  gone
-	skillIDAgility,
-	skillIDBrawn,
-	skillIDLockpick,    //  gone
-	skillIDPilfer,      //  gone
-	skillIDFirstAid,    //  gone
-	skillIDSpotHidden,  //  gone
-	numSkills
+	kSkillIDArchery      =  0,
+	kSkillIDSwordcraft,
+	kSkillIDShieldcraft,
+	kSkillIDBludgeon,
+	kSkillIDThrowing,    //  gone
+	kSkillIDSpellcraft,
+	kSkillIDStealth,     //  gone
+	kSkillIDAgility,
+	kSkillIDBrawn,
+	kSkillIDLockpick,    //  gone
+	kSkillIDPilfer,      //  gone
+	kSkillIDFirstAid,    //  gone
+	kSkillIDSpotHidden,  //  gone
+	kNumSkills
 };
 
 enum ArmorObjectTypes {
@@ -95,14 +95,14 @@ struct ArmorAttributes {
 //  This defines the basic skills possessed by an actor
 struct ActorAttributes {
 	enum skillInfo {
-		skillBasePercent            = 100,
-		skillFracPointsPerLevel     = 5,    // this being twenty and levels at 5
-		skillLevels                 = 20,   // will make the advancement calc quick & easy
-		skillMaxLevel               = skillFracPointsPerLevel * skillLevels
+		kSkillBasePercent            = 100,
+		kSkillFracPointsPerLevel     = 5,    // this being twenty and levels at 5
+		kSkillLevels                 = 20,   // will make the advancement calc quick & easy
+		kSkillMaxLevel               = kSkillFracPointsPerLevel * kSkillLevels
 	};
 
 	enum vitalityInfo {
-		vitalityLimit               = 256
+		kVitalityLimit               = 256
 	};
 
 	//  Automatic skills
@@ -138,19 +138,19 @@ struct ActorAttributes {
 
 	uint8 &skill(int16 id) {
 		switch (id) {
-		case skillIDArchery: return archery;
-		case skillIDSwordcraft: return swordcraft;
-		case skillIDShieldcraft: return shieldcraft;
-		case skillIDBludgeon: return bludgeon;
-		case skillIDThrowing: return throwing;
-		case skillIDSpellcraft: return spellcraft;
-		case skillIDStealth: return stealth;
-		case skillIDAgility: return agility;
-		case skillIDBrawn: return brawn;
-		case skillIDLockpick: return lockpick;
-		case skillIDPilfer: return pilfer;
-		case skillIDFirstAid: return firstAid;
-		case skillIDSpotHidden: return spotHidden;
+		case kSkillIDArchery: return archery;
+		case kSkillIDSwordcraft: return swordcraft;
+		case kSkillIDShieldcraft: return shieldcraft;
+		case kSkillIDBludgeon: return bludgeon;
+		case kSkillIDThrowing: return throwing;
+		case kSkillIDSpellcraft: return spellcraft;
+		case kSkillIDStealth: return stealth;
+		case kSkillIDAgility: return agility;
+		case kSkillIDBrawn: return brawn;
+		case kSkillIDLockpick: return lockpick;
+		case kSkillIDPilfer: return pilfer;
+		case kSkillIDFirstAid: return firstAid;
+		case kSkillIDSpotHidden: return spotHidden;
 		}
 		error("Incorrect skill id: %d", id);
 	}
@@ -167,7 +167,7 @@ struct ActorAttributes {
 	}
 
 	uint8 getSkillLevel(int16 id) {
-		return skill(id) / skillFracPointsPerLevel + 1;
+		return skill(id) / kSkillFracPointsPerLevel + 1;
 	}
 
 	void read(Common::InSaveFile *in) {
@@ -221,17 +221,17 @@ struct ActorAttributes {
 
 
 const int baseCarryingCapacity = 100;
-const int carryingCapacityBonusPerBrawn = 200 / ActorAttributes::skillLevels;
+const int carryingCapacityBonusPerBrawn = 200 / ActorAttributes::kSkillLevels;
 
 /* ===================================================================== *
    ResourceActorProtoExtension structure
  * ===================================================================== */
 
 enum combatBehaviorTypes {
-	behaviorHungry,
-	behaviorCowardly,
-	behaviorBerserk,
-	behaviorSmart
+	kBehaviorHungry,
+	kBehaviorCowardly,
+	kBehaviorBerserk,
+	kBehaviorSmart
 };
 
 //  This defines the additional data fields needed for actor prototypes
@@ -290,10 +290,10 @@ class ActorProto : public ProtoObj, public ResourceActorProtoExtension {
 
 private:
 	enum {
-		ViewableRows    = 3,
-		ViewableCols    = 3,
-		maxRows         = 3,
-		maxCols         = 3
+		kViewableRows    = 3,
+		kViewableCols    = 3,
+		kMaxRows         = 3,
+		kMaxCols         = 3
 	};
 
 public:
@@ -393,16 +393,16 @@ public:
 
 public:
 	virtual uint16 getViewableRows() {
-		return ViewableRows;
+		return kViewableRows;
 	}
 	virtual uint16 getViewableCols() {
-		return ViewableCols;
+		return kViewableCols;
 	}
 	virtual uint16 getMaxRows() {
-		return maxRows;
+		return kMaxRows;
 	}
 	virtual uint16 getMaxCols() {
-		return maxCols;
+		return kMaxCols;
 	}
 
 	virtual bool canFitBulkwise(GameObject *container, GameObject *obj);
@@ -417,36 +417,36 @@ public:
  * ============================================================================ */
 
 enum actorCreationFlags {
-	actorPermanent = (1 << 0)
+	kActorPermanent = (1 << 0)
 };
 
 enum DispositionType {
-	dispositionFriendly,
-	dispositionEnemy,
+	kDispositionFriendly,
+	kDispositionEnemy,
 
-	dispositionPlayer
+	kDispositionPlayer
 };
 
 enum actionSequenceOptions {
 
 	//  Flags set by call to setAction
-	animateRepeat   = (1 << 0),             // repeat animation when done
-	animateReverse  = (1 << 1),             // animate in reverse direction
-	animateAlternate = (1 << 2),            // both directions, back & forth
-	animateRandom   = (1 << 3),             // pick a random frame
-	animateNoRestart = (1 << 4),            // don't reset from start
+	kAnimateRepeat    = (1 << 0),            // repeat animation when done
+	kAnimateReverse   = (1 << 1),            // animate in reverse direction
+	kAnimateAlternate = (1 << 2),            // both directions, back & forth
+	kAnimateRandom    = (1 << 3),            // pick a random frame
+	kAnimateNoRestart = (1 << 4),            // don't reset from start
 
 	//  This flag is set if the animation has been put on hold until
 	//  the actor's appearance is reloaded.
-	animateOnHold   = (1 << 5),
+	kAnimateOnHold   = (1 << 5),
 
 	//  This flag is set if the final frame of the animation has
 	//  been reached.
-	animateFinished = (1 << 6),
+	kAnimateFinished = (1 << 6),
 
 	//  This flag gets set if the sprite could not be displayed
 	//  because it's bank hasn't been loaded yet.
-	animateNotLoaded = (1 << 7)
+	kAnimateNotLoaded = (1 << 7)
 };
 
 //  Various types of action sequences
@@ -455,87 +455,87 @@ enum actionSequenceOptions {
 enum ActorAnimationTypes {
 
 	//  Various types of stands
-	actionStand = 0,                        // standing still
-	actionWaitAgressive,                    // an aggressive wait cycle
-	actionWaitImpatient,                    // an impatient wait cycle
-	actionWaitFriendly,                     // a a friendly wait cycle
+	kActionStand = 0,                        // standing still
+	kActionWaitAgressive,                    // an aggressive wait cycle
+	kActionWaitImpatient,                    // an impatient wait cycle
+	kActionWaitFriendly,                     // a a friendly wait cycle
 
 	//  Walking and running
-	actionWalk,                             // walking motion
-	actionRun,                              // running motion
+	kActionWalk,                             // walking motion
+	kActionRun,                              // running motion
 
 	//  Squatting
-	actionDuck,                             // stoop to dodge sword
-	actionStoop,                            // stoop to pick up object
+	kActionDuck,                             // stoop to dodge sword
+	kActionStoop,                            // stoop to pick up object
 
 	//  Jumping
-	actionFreeFall,                         // how he looks in ballistic
-	actionFreeFallRunning,                  // a running leap (free fall)
-	actionJumpUp,                           // begin jump straight up
-	actionJumpFwd,                          // begin jump forward
-	actionJumpBack,                         // begin jump back in surprise
-	actionLand,                             // land after jump
-	actionFallBadly,                        // after a very long fall
+	kActionFreeFall,                         // how he looks in ballistic
+	kActionFreeFallRunning,                  // a running leap (free fall)
+	kActionJumpUp,                           // begin jump straight up
+	kActionJumpFwd,                          // begin jump forward
+	kActionJumpBack,                         // begin jump back in surprise
+	kActionLand,                             // land after jump
+	kActionFallBadly,                        // after a very long fall
 
 	//  Climbing
-	actionClimbLadder,                      // climb a ladder (2 directions)
+	kActionClimbLadder,                      // climb a ladder (2 directions)
 
 	//  Talking & interacting
-	actionTalk,                             // talking
-	actionGesture,                          // gesture with hands or body
-	actionGiveItem,                         // give or take item
+	kActionTalk,                             // talking
+	kActionGesture,                          // gesture with hands or body
+	kActionGiveItem,                         // give or take item
 
 	//  Two-handed weapon use
-	actionTwoHandSwingHigh,                 // full overhead swing aim high
-	actionTwoHandSwingLow,                  // full overhead swing aim low
-	actionTwoHandSwingLeftHigh,             // partial swing on left (high)
-	actionTwoHandSwingLeftLow,              // partial swing on left (low)
-	actionTwoHandSwingRightHigh,            // partial swing on rgt (high)
-	actionTwoHandSwingRightLow,             // partial swing on rgt (low)
-	actionTwoHandParry,                     // hold sword up to parry
+	kActionTwoHandSwingHigh,                 // full overhead swing aim high
+	kActionTwoHandSwingLow,                  // full overhead swing aim low
+	kActionTwoHandSwingLeftHigh,             // partial swing on left (high)
+	kActionTwoHandSwingLeftLow,              // partial swing on left (low)
+	kActionTwoHandSwingRightHigh,            // partial swing on rgt (high)
+	kActionTwoHandSwingRightLow,             // partial swing on rgt (low)
+	kActionTwoHandParry,                     // hold sword up to parry
 
 	//  One-handed weapon use
-	actionSwingHigh,                        // one-handed swing (high)
-	actionSwingLow,                         // one-handed swing (low)
-	actionParryHigh,                        // one-handed parry (high)
-	actionParryLow,                         // one-handed parry (low)
-	actionShieldParry,                      // parry with shield
+	kActionSwingHigh,                        // one-handed swing (high)
+	kActionSwingLow,                         // one-handed swing (low)
+	kActionParryHigh,                        // one-handed parry (high)
+	kActionParryLow,                         // one-handed parry (low)
+	kActionShieldParry,                      // parry with shield
 
-	actionThrowObject,                      // throw
+	kActionThrowObject,                      // throw
 
 	//  Other combat actions
-	actionFireBow,                          // fire an arrow
-	actionCastSpell,                        // cast a magic spell
-	actionUseWand,                          // cast a magic spell w/wand
-	actionUseStaff,                         // cast a magic spell w/staff
-	actionHit,                              // show impact of blow
-	actionKnockedDown,                      // knocked down by opponent
-	actionDie,                              // death agony
+	kActionFireBow,                          // fire an arrow
+	kActionCastSpell,                        // cast a magic spell
+	kActionUseWand,                          // cast a magic spell w/wand
+	kActionUseStaff,                         // cast a magic spell w/staff
+	kActionHit,                              // show impact of blow
+	kActionKnockedDown,                      // knocked down by opponent
+	kActionDie,                              // death agony
 
 	//  Passive actions
-	actionSleep,                            // sleeping
-	actionDead,                             // dead body on ground
-	actionSit,                              // sitting at table
+	kActionSleep,                            // sleeping
+	kActionDead,                             // dead body on ground
+	kActionSit,                              // sitting at table
 
 	//  Misc actions built from other frames
-	actionListenAtDoor,                     // listening at doors
-	actionShoveDoor,                        // try to force a door open
-	actionSpecial1,                         // special Action
-	actionSpecial2,                         // special Action
-	actionSpecial3,                         // special Action
-	actionSpecial4,                         // special Action
-	actionSpecial5,                         // special Action
-	actionSpecial6,                         // special Action
-	actionSpecial7,                         // special Action
-	actionSpecial8                          // special Action
+	kActionListenAtDoor,                     // listening at doors
+	kActionShoveDoor,                        // try to force a door open
+	kActionSpecial1,                         // special Action
+	kActionSpecial2,                         // special Action
+	kActionSpecial3,                         // special Action
+	kActionSpecial4,                         // special Action
+	kActionSpecial5,                         // special Action
+	kActionSpecial6,                         // special Action
+	kActionSpecial7,                         // special Action
+	kActionSpecial8                          // special Action
 };
 
 enum ActorGoalTypes {
-	actorGoalFollowAssignment,
-	actorGoalPreserveSelf,
-	actorGoalAttackEnemy,
-	actorGoalFollowLeader,
-	actorGoalAvoidEnemies
+	kActorGoalFollowAssignment,
+	kActorGoalPreserveSelf,
+	kActorGoalAttackEnemy,
+	kActorGoalFollowLeader,
+	kActorGoalAvoidEnemies
 };
 
 //  The actor structure will be divided into two parts.  The
@@ -641,12 +641,12 @@ public:
 
 	//  Various actor flags
 	enum {
-		lobotomized     = (1 << 0),
-		temporary       = (1 << 1),
-		afraid          = (1 << 2),
-		hasAssignment   = (1 << 3),
-		specialAttack   = (1 << 4),
-		fightStance     = (1 << 5)
+		kAFLobotomized     = (1 << 0),
+		kAFTemporary       = (1 << 1),
+		kAFAfraid          = (1 << 2),
+		kAFHasAssignment   = (1 << 3),
+		kAFSpecialAttack   = (1 << 4),
+		kAFFightStance     = (1 << 5)
 	};
 
 	uint8           _flags;
@@ -693,7 +693,7 @@ public:
 	int16           _currentRecoveryPoints;  // fraction left from last recovery
 
 	enum vitalityRecovery {
-		recPointsPerVitality        = 10
+		kRecPointsPerVitality        = 10
 	};
 
 
@@ -791,7 +791,7 @@ public:
 
 	//  Return a pointer to the actor's current assignment
 	ActorAssignment *getAssignment() {
-		return  _flags & hasAssignment
+		return  _flags & kAFHasAssignment
 		        ? _assignment
 		        : nullptr;
 	}
@@ -866,7 +866,7 @@ public:
 	//  Give the actor a new disposition
 	int16 setDisposition(int16 newDisp) {
 		int16   oldDisp = _disposition;
-		if (newDisp < dispositionPlayer)
+		if (newDisp < kDispositionPlayer)
 			_disposition = newDisp;
 		return oldDisp;
 	}
@@ -1055,14 +1055,14 @@ public:
 
 	void setFightStance(bool val) {
 		if (val)
-			_flags |= fightStance;
+			_flags |= kAFFightStance;
 		else
-			_flags &= ~fightStance;
+			_flags &= ~kAFFightStance;
 	}
 };
 
 inline bool isPlayerActor(Actor *a) {
-	return a->_disposition >= dispositionPlayer;
+	return a->_disposition >= kDispositionPlayer;
 }
 
 inline bool isPlayerActor(ObjectID obj) {
@@ -1071,7 +1071,7 @@ inline bool isPlayerActor(ObjectID obj) {
 }
 
 inline bool isEnemy(Actor *a) {
-	return !a->isDead() && a->_disposition == dispositionEnemy;
+	return !a->isDead() && a->_disposition == kDispositionEnemy;
 }
 
 inline bool isEnemy(ObjectID obj) {
@@ -1097,11 +1097,11 @@ void addEnchantment(Actor *a, uint16 enchantmentID);
  * ============================================================================ */
 
 enum factionTallyTypes {
-	factionNumKills = 0,            // # of times faction member killed by PC
-	factionNumThefts,               // # of times PC steals from faction member
-	factionNumFavors,               // accumulated by SAGA script.
+	kFactionNumKills = 0,            // # of times faction member killed by PC
+	kFactionNumThefts,               // # of times PC steals from faction member
+	kFactionNumFavors,               // accumulated by SAGA script.
 
-	factionNumColumns
+	kFactionNumColumns
 };
 
 //  Get the attitude a particular faction has for a char.
@@ -1109,9 +1109,9 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act);
 
 //  Increment / Decrement faction attitude
 //  Whenever an actor is killed, call:
-//      AddFactionAttitude( actor.faction, factionNumKills, 1 );
+//      AddFactionAttitude( actor.faction, kFactionNumKills, 1 );
 //  Whenever an actor is robbed, call:
-//      AddFactionAttitude( actor.faction, factionNumThefts, 1 );
+//      AddFactionAttitude( actor.faction, kFactionNumThefts, 1 );
 int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt);
 
 //  Initialize the faction tally table
@@ -1138,7 +1138,7 @@ public:
 
 	int32 _updatesViaScript;
 	int32 _baseActorIndex;
-	int16 _factionTable[kMaxFactions][factionNumColumns];
+	int16 _factionTable[kMaxFactions][kFactionNumColumns];
 	bool _actorStatesPaused;
 	bool _combatBehaviorEnabled;
 

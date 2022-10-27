@@ -375,14 +375,14 @@ void ContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
-				                              y + ((iconHeight - selectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((iconWidth - kSelectorX) >> 1),
+				                              y + ((iconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) - 12;
+				g_vm->_cnm->_amountIndY = y - (kSelectorY >> 1) - 12;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -1040,14 +1040,14 @@ void ReadyContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - selectorX) >> 1),
-				                              y + ((iconHeight - selectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((iconWidth - kSelectorX) >> 1),
+				                              y + ((iconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);
 
 				// set the position of the inc center
-				g_vm->_cnm->_amountIndY = y - (selectorY >> 1) + 28;   // extent.y;
+				g_vm->_cnm->_amountIndY = y - (kSelectorY >> 1) + 28;   // extent.y;
 			} else drawQuantity(port, item, objProto, x, y);
 		}
 	}
@@ -1117,7 +1117,7 @@ TangibleContainerWindow::TangibleContainerWindow(
 
 	const int weightIndicatorType = 2;
 	_objRect = app.iconRect;
-	_deathFlag = nd.getType() == ContainerNode::deadType;
+	_deathFlag = nd.getType() == ContainerNode::kDeadType;
 	_containerSpriteImg = nullptr;
 
 	// setup the mass and weight indicator
@@ -1268,33 +1268,33 @@ ContainerNode::ContainerNode(ContainerManager &cl, ObjectID id, int typ) {
 	//  if it is indeed a player actor; Else set to "nobody".
 	if (isActor(id)) {
 		if (actorIDToPlayerID(id, ownerID) == false)
-			ownerID = ContainerNode::nobody;
+			ownerID = ContainerNode::kNobody;
 	} else {
 		ObjectID        possessor = obj->possessor();
 
 		if (possessor == Nothing || actorIDToPlayerID(possessor, ownerID) == false)
-			ownerID = ContainerNode::nobody;
+			ownerID = ContainerNode::kNobody;
 	}
 
 	//  Compute the initial position of the container window
 	switch (typ) {
-	case readyType:
+	case kReadyType:
 		break;
 
-	case deadType:
+	case kDeadType:
 		_position = deathContainerAppearance.defaultWindowPos;
 		break;
 
-	case mentalType:
+	case kMentalType:
 		_mindType = 0; //protoClassIdeaContainer;
 		_position = mentalContainerAppearance.defaultWindowPos;
 		break;
 
-	case physicalType:
+	case kPhysicalType:
 		_position = physicalContainerAppearance.defaultWindowPos;
 		break;
 
-	case enchantType:
+	case kEnchantType:
 		_position = enchantmentContainerAppearance.defaultWindowPos;
 		break;
 	}
@@ -1374,7 +1374,7 @@ void ContainerNode::write(Common::MemoryWriteStreamDynamic *out) {
 //  Close the container window, but leave the node.
 void ContainerNode::hide() {
 	//  close the window, but don't close the object.
-	if (_type != readyType && _window != nullptr) {
+	if (_type != kReadyType && _window != nullptr) {
 		_position = _window->getExtent();     //  Save old window position
 		_window->close();
 		delete _window;
@@ -1391,29 +1391,29 @@ void ContainerNode::show() {
 	//  open the window; Object should already be "open"
 	if (_window == nullptr) {
 		switch (_type) {
-		case physicalType:
+		case kPhysicalType:
 			physicalContainerAppearance.rows    = proto->getViewableRows();
 			physicalContainerAppearance.cols    = proto->getViewableCols();
 			physicalContainerAppearance.totRows = proto->getMaxRows();
 			_window = new TangibleContainerWindow(*this, physicalContainerAppearance);
 			break;
 
-		case deadType:
+		case kDeadType:
 			deathContainerAppearance.rows       = proto->getViewableRows();
 			deathContainerAppearance.cols       = proto->getViewableCols();
 			deathContainerAppearance.totRows    = proto->getMaxRows();
 			_window = new TangibleContainerWindow(*this, deathContainerAppearance);
 			break;
 
-		case mentalType:
+		case kMentalType:
 			_window = new IntangibleContainerWindow(*this, mentalContainerAppearance);
 			break;
 
-		case enchantType:
+		case kEnchantType:
 			_window = new EnchantmentContainerWindow(*this, enchantmentContainerAppearance);
 			break;
 
-		case readyType:
+		case kReadyType:
 		default:
 			return;
 		}
@@ -1423,7 +1423,7 @@ void ContainerNode::show() {
 }
 
 void ContainerNode::update() {
-	if (_type == readyType) {
+	if (_type == kReadyType) {
 		//  Update ready containers if they are enabled
 		if (TrioCviews[_owner]->getEnabled())  TrioCviews[_owner]->invalidate();
 		if (indivCviewTop->getEnabled())        indivCviewTop->invalidate();
@@ -1499,7 +1499,7 @@ void ContainerManager::setPlayerNum(PlayerActorID playerNum) {
 	for (Common::List<ContainerNode *>::iterator it = _list.begin(); it != _list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->_owner != ContainerNode::nobody && n->_owner != playerNum)
+		if (n->_owner != ContainerNode::kNobody && n->_owner != playerNum)
 			n->hide();
 	}
 
@@ -1526,29 +1526,29 @@ void ContainerManager::doDeferredActions() {
 		ContainerNode *n = *it;
 
 		//  If the object is not in a player inventory (i.e. on the ground)
-		if (n->_owner == ContainerNode::nobody) {
+		if (n->_owner == ContainerNode::kNobody) {
 			//  If the object is in a different world, or too far away
 			//  from the protagonist, then quietly close the object.
 			GameObject  *obj = GameObject::objectAddress(n->_object);
 			if (obj->world() != world
 			        || (obj->getWorldLocation() - tp).quickHDistance() > kMaxOpenDistance) {
 				//  Close object image and window (silently)
-				obj->setFlags(0, objectOpen);
+				obj->setFlags(0, kObjectOpen);
 				delete n;
 				continue;
 			}
 		}
 
-		if (n->_action & ContainerNode::actionDelete) {
+		if (n->_action & ContainerNode::kActionDelete) {
 			delete n;
 			continue;
 		}
 
-		if (n->_action & ContainerNode::actionHide) {
+		if (n->_action & ContainerNode::kActionHide) {
 			n->hide();
 		} else {
-			if (n->_action & ContainerNode::actionShow) n->show();
-			if (n->_action & ContainerNode::actionUpdate) n->update();
+			if (n->_action & ContainerNode::kActionShow) n->show();
+			if (n->_action & ContainerNode::kActionUpdate) n->update();
 		}
 
 		n->_action = 0;
@@ -1563,7 +1563,7 @@ void ContainerManager::setUpdate(ObjectID id) {
 
 		if (n->_object == id)
 			n->update();
-		else if (n->_type == ContainerNode::mentalType    //  Special case for mind containers
+		else if (n->_type == ContainerNode::kMentalType    //  Special case for mind containers
 		         &&  n->_object == GameObject::objectAddress(id)->IDParent())
 			n->update();
 	}
@@ -1581,30 +1581,30 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 
 	if (isActor(id)) {
 		if (actorIDToPlayerID(id, owner) == false)
-			owner = ContainerNode::nobody;
+			owner = ContainerNode::kNobody;
 
 		if (((Actor *)obj)->isDead()) {
 			//  Open dead container for dead actor
-			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::deadType)))
-				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::deadType);
-		} else if (owner != ContainerNode::nobody) {
+			if (!(cn = g_vm->_cnm->find(owner, ContainerNode::kDeadType)))
+				cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kDeadType);
+		} else if (owner != ContainerNode::kNobody) {
 			return OpenMindContainer(owner, open, /*mType*/ openMindType);
 		} else {
 			error("Attempt to open non-dead actor as a container");
 		}
 	} else {
 		if (actorIDToPlayerID(obj->possessor(), owner) == false)
-			owner = ContainerNode::nobody;
+			owner = ContainerNode::kNobody;
 
-		if (!(cn = g_vm->_cnm->find(id, ContainerNode::physicalType)))
-			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::physicalType);
+		if (!(cn = g_vm->_cnm->find(id, ContainerNode::kPhysicalType)))
+			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kPhysicalType);
 	}
 
 	//  If node was successfully created, and we wanted it open, and the owner
 	//  is the center actor or no-actor then make the container window visible.
 	if (cn != nullptr
 	        &&  open
-	        && (owner == getCenterActorID() || owner == ContainerNode::nobody)) {
+	        && (owner == getCenterActorID() || owner == ContainerNode::kNobody)) {
 		cn->show();
 	}
 
@@ -1614,15 +1614,15 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 ContainerNode *CreateReadyContainerNode(PlayerActorID player) {
 	return new ContainerNode(*g_vm->_cnm,
 	                            getPlayerActorAddress(player)->getActorID(),
-	                            ContainerNode::readyType);
+	                            ContainerNode::kReadyType);
 }
 
 ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 	ContainerNode   *cn;
 	ObjectID        id = getPlayerActorAddress(player)->getActorID();
 
-	if (!(cn = g_vm->_cnm->find(id, ContainerNode::mentalType))) {
-		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::mentalType);
+	if (!(cn = g_vm->_cnm->find(id, ContainerNode::kMentalType))) {
+		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kMentalType);
 		cn->_mindType = type;
 
 		//  If node was successfully created, and we wanted it open, and the owner
@@ -1674,8 +1674,8 @@ void initContainerNodes() {
 	Common::List<ContainerNode *>::iterator it;
 
 	for (it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
-		if ((*it)->getType() != ContainerNode::readyType) {
-			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::readyType);
+		if ((*it)->getType() != ContainerNode::kReadyType) {
+			error("initContainerNodes: ContainerNode type not readyType (%d != %d)", (*it)->getType(), ContainerNode::kReadyType);
 		}
 	}
 }
@@ -1693,7 +1693,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType)
+		if (n->getType() != ContainerNode::kReadyType)
 			numNodes++;
 	}
 
@@ -1708,7 +1708,7 @@ void saveContainerNodes(Common::OutSaveFile *outS) {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType) {
+		if (n->getType() != ContainerNode::kReadyType) {
 			debugC(3, kDebugSaveload, "Saving ContainerNode %d", i++);
 			n->write(out);
 		}
@@ -1751,7 +1751,7 @@ void cleanupContainerNodes() {
 	for (Common::List<ContainerNode *>::iterator it = g_vm->_cnm->_list.begin(); it != g_vm->_cnm->_list.end(); ++it) {
 		ContainerNode *n = *it;
 
-		if (n->getType() != ContainerNode::readyType)
+		if (n->getType() != ContainerNode::kReadyType)
 			deletionArray.push_back(*it);
 	}
 
@@ -1861,7 +1861,7 @@ APPFUNC(cmdMindContainerFunc) {
 			g_vm->_mouseInfo->setText(textBuffer);
 		}
 
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -1871,7 +1871,7 @@ APPFUNC(cmdCloseButtonFunc) {
 	if (ev.eventType == gEventNewValue && ev.value == 1) {
 		ContainerWindow     *win = (ContainerWindow *)ev.window;
 
-		if (win->getView()._node.getType() == ContainerNode::mentalType) {
+		if (win->getView()._node.getType() == ContainerNode::kMentalType) {
 			win->getView()._node.markForDelete();
 		} else {
 			win->containerObject()->close(getCenterActorID());
@@ -1883,9 +1883,9 @@ APPFUNC(cmdCloseButtonFunc) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}
@@ -1903,9 +1903,9 @@ APPFUNC(cmdScrollFunc) {
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::enter) {
+		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
-		} else if (ev.value == GfxCompImage::leave) {
+		} else if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
 	}

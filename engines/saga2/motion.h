@@ -275,7 +275,7 @@ private:
 		Actor   *a = (Actor *)_object;
 
 		if (_flags & reset) {
-			a->setAction(actionStand, 0);
+			a->setAction(kActionStand, 0);
 			_flags &= ~reset;
 		}
 

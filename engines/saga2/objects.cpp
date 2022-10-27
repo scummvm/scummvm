@@ -1046,9 +1046,9 @@ void GameObject::updateImage(ObjectID oldParentID) {
 
 		if (!isMoving()) {
 			if (objObscured(this)) {
-				_data.objectFlags |= objectObscured;
+				_data.objectFlags |= kObjectObscured;
 			} else {
-				_data.objectFlags &= ~objectObscured;
+				_data.objectFlags &= ~kObjectObscured;
 			}
 		}
 		int u = _data.location.u >> kSectorShift;
@@ -1062,7 +1062,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		else
 			warning("GameObject::updateImage: Invalid Sector (%d, %d))", u, v);
 	} else {
-		_data.objectFlags &= ~objectObscured;
+		_data.objectFlags &= ~kObjectObscured;
 
 		if ((isActor(_data.parentID)
 		        &&  isPlayerActor((Actor *)parent))
@@ -1234,7 +1234,7 @@ ObjectID GameObject::makeAlias(const Location &l) {
 	if (newObjID != Nothing) {
 		GameObject  *newObject = objectAddress(newObjID);
 
-		newObject->_data.objectFlags |= objectAlias;
+		newObject->_data.objectFlags |= kObjectAlias;
 	}
 
 	return newObjID;
@@ -1336,11 +1336,11 @@ void GameObject::deleteObject() {
 
 	if (isActor(this))
 		((Actor *)this)->deleteActor();
-	else if (_data.objectFlags & objectImportant) {
+	else if (_data.objectFlags & kObjectImportant) {
 		append(ImportantLimbo);
 		_data.parentID = ImportantLimbo;
 		importantLimboCount++;
-	} else if (!(_data.objectFlags & objectNoRecycle)) {
+	} else if (!(_data.objectFlags & kObjectNoRecycle)) {
 		append(ObjectLimbo);
 		_data.parentID = ObjectLimbo;
 		objectLimboCount++;
@@ -1407,7 +1407,7 @@ void GameObject::deleteObjectRecursive() {
 //	Activate this object
 
 void GameObject::activate() {
-	if (_data.objectFlags & objectActivated)
+	if (_data.objectFlags & kObjectActivated)
 		return;
 
 	debugC(1, kDebugActors, "GameObject::activate %d (%s)", thisID(), objName());
@@ -1415,7 +1415,7 @@ void GameObject::activate() {
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
-	_data.objectFlags |= objectActivated;
+	_data.objectFlags |= kObjectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1436,7 +1436,7 @@ void GameObject::activate() {
 //	Deactivate this object
 
 void GameObject::deactivate() {
-	if (!(_data.objectFlags & objectActivated))
+	if (!(_data.objectFlags & kObjectActivated))
 		return;
 
 	debugC(1, kDebugActors, "GameObject::deactivate %d (%s)", thisID(), objName());
@@ -1445,7 +1445,7 @@ void GameObject::deactivate() {
 	scriptCallFrame scf;
 
 	//  Clear activated flag
-	_data.objectFlags &= ~objectActivated;
+	_data.objectFlags &= ~kObjectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1531,7 +1531,7 @@ void GameObject::updateState() {
 	//  currently at, then raise us up a bit.
 	if (isMoving()) return;
 
-	if (_data.objectFlags & objectFloating) return;
+	if (_data.objectFlags & kObjectFloating) return;
 
 	if (tHeight > _data.location.z + kMaxStepHeight) {
 		unstickObject(this);
@@ -2254,11 +2254,11 @@ void GameObject::evalEnchantments() {
 	}
 }
 
-#define noMergeFlags    (objectImportant|\
-                         objectGhosted|\
-                         objectInvisible|\
-                         objectFloating|\
-                         objectNoRecycle)
+#define noMergeFlags    (kObjectImportant|\
+                         kObjectGhosted|\
+                         kObjectInvisible|\
+                         kObjectFloating|\
+                         kObjectNoRecycle)
 
 int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 	int32       cSet = dropObj->proto()->containmentSet();
@@ -4233,12 +4233,12 @@ bool lineOfSight(GameObject *obj1, GameObject *obj2, uint32 terrainMask) {
 #if 0
 	if (isActor(obj1)) {
 		Actor *a1 = (Actor *) obj1;
-		if (!a1->hasEffect(actorSeeInvis)) {
+		if (!a1->hasEffect(kActorSeeInvis)) {
 			if (!isActor(obj2) && obj2->isInvisible())
 				return false;
 			else if (isActor(obj2)) {
 				Actor *a2 = (Actor *) obj2;
-				if (a2->hasEffect(actorInvisible))
+				if (a2->hasEffect(kActorInvisible))
 					return false;
 			}
 		}
@@ -4386,7 +4386,7 @@ APPFUNC(cmdBrain) {
 			}
 		}
 	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor

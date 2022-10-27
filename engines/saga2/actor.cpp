@@ -157,7 +157,7 @@ bool ActorProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false, openMindType);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= kObjectOpen;         //  Set open bit;
 	return true;
 }
 
@@ -168,7 +168,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	assert(isActor(dObj));
 
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::deadType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::kDeadType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -177,7 +177,7 @@ bool ActorProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->_data.objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~kObjectOpen;
 	return true;
 }
 
@@ -197,7 +197,7 @@ bool ActorProto::strikeAction(
 	ObjectSoundFXs  *soundFXs;
 	Location        al = Location(a->getLocation(), a->IDParent());
 
-	if (itemPtr->acceptStrike(enactor, dObj, effStats->getSkillLevel(skillIDBludgeon)))
+	if (itemPtr->acceptStrike(enactor, dObj, effStats->getSkillLevel(kSkillIDBludgeon)))
 		return true;
 
 	soundFXs = &objectSoundFXTable[soundFXClass];
@@ -232,7 +232,7 @@ bool ActorProto::damageAction(
 	    a,
 	    GameObject::objectAddress(target),
 	    GameObject::objectAddress(dObj),
-	    effStats->getSkillLevel(skillIDBrawn));
+	    effStats->getSkillLevel(kSkillIDBrawn));
 
 	return true;
 }
@@ -415,7 +415,7 @@ bool ActorProto::acceptDamageAction(
 		//  morale check
 		if (damageScore >= vitality) {
 			MotionTask::die(*a);
-			AddFactionTally(a->_faction, factionNumKills, 1);
+			AddFactionTally(a->_faction, kFactionNumKills, 1);
 			if (enactorPtr != nullptr)
 				enactorPtr->handleSuccessfulKill(a);
 		} else
@@ -463,7 +463,7 @@ bool ActorProto::acceptHealingAction(
 	int16       maxVitality = (a->getBaseStats())->vitality;
 	PlayerActorID   pID;
 
-	if (vitality > 0 && !a->hasEffect(actorDiseased)) {
+	if (vitality > 0 && !a->hasEffect(kActorDiseased)) {
 
 		//  If we've just lost all vitality, we're dead, else make a
 		//  morale check
@@ -497,8 +497,8 @@ bool ActorProto::acceptStrikeAction(
 	const int       avgHitChance = toHitBase / 2;
 	const int       skillScalingFactor =
 	    (avgHitChance
-	     +   ActorAttributes::skillLevels - 1)
-	    /   ActorAttributes::skillLevels;
+	     +   ActorAttributes::kSkillLevels - 1)
+	    /   ActorAttributes::kSkillLevels;
 	const int       dodgingBonus = 10;
 
 	Actor           *a = (Actor *)GameObject::objectAddress(dObj);
@@ -523,7 +523,7 @@ bool ActorProto::acceptStrikeAction(
 	//  Determine "to hit" percentage
 	hitChance =     avgHitChance
 	                + ((int)skillIndex
-	                   - (int)effStats->getSkillLevel(skillIDAgility))
+	                   - (int)effStats->getSkillLevel(kSkillIDAgility))
 	                *   skillScalingFactor;
 
 	//  Factor in armor bonus
@@ -590,7 +590,7 @@ bool ActorProto::acceptStrikeAction(
 		if (actorIDToPlayerID(dObj, playerID)) {
 			PlayerActor     *player = getPlayerActorAddress(playerID);
 
-			player->skillAdvance(skillIDAgility, 1);
+			player->skillAdvance(kSkillIDAgility, 1);
 		}
 	}
 
@@ -708,9 +708,9 @@ void ActorProto::initiateAttack(ObjectID attacker, ObjectID target) {
 
 	//  Start the attack motion
 	if (attackerPtr->_appearance != nullptr) {
-		if (attackerPtr->isActionAvailable(actionSwingHigh))
+		if (attackerPtr->isActionAvailable(kActionSwingHigh))
 			MotionTask::oneHandedSwing(*attackerPtr, *targetPtr);
-		else if (attackerPtr->isActionAvailable(actionTwoHandSwingHigh))
+		else if (attackerPtr->isActionAvailable(kActionTwoHandSwingHigh))
 			MotionTask::twoHandedSwing(*attackerPtr, *targetPtr);
 	} else
 		MotionTask::oneHandedSwing(*attackerPtr, *targetPtr);
@@ -745,7 +745,7 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 			//  If this is a temporary actor waiting for expiration,
 			//  then decrement the expiration counter and possibly
 			//  delete the actor
-			if ((a->_flags & Actor::temporary) || a->isDead()) {
+			if ((a->_flags & Actor::kAFTemporary) || a->isDead()) {
 				if (a->_deactivationCounter <= 0) {
 					a->deleteObjectRecursive();
 					return;
@@ -753,8 +753,8 @@ void ActorProto::doBackgroundUpdate(GameObject *obj) {
 			} else {
 				//  If the actor has failed morale there is a random
 				//  chance of him regaining his courage
-				if ((a->_flags & Actor::afraid) && g_vm->_rnd->getRandomNumber(127) == 0)
-					a->_flags &= ~Actor::afraid;
+				if ((a->_flags & Actor::kAFAfraid) && g_vm->_rnd->getRandomNumber(127) == 0)
+					a->_flags &= ~Actor::kAFAfraid;
 			}
 		}
 
@@ -803,10 +803,10 @@ void ActorProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 	if (actorIDToPlayerID(enactor, playerID)) {
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 
-		player->skillAdvance(skillIDBludgeon, points);
+		player->skillAdvance(kSkillIDBludgeon, points);
 
 		if (g_vm->_rnd->getRandomNumber(1))
-			player->skillAdvance(skillIDBrawn, points);
+			player->skillAdvance(kSkillIDBrawn, points);
 	}
 }
 
@@ -861,7 +861,7 @@ uint16 ActorProto::massCapacity(GameObject *container) {
 	ActorAttributes *effStats = a->getStats();
 
 	return      baseCarryingCapacity
-	            +       effStats->getSkillLevel(skillIDBrawn)
+	            +       effStats->getSkillLevel(kSkillIDBrawn)
 	            *   carryingCapacityBonusPerBrawn;
 }
 
@@ -939,7 +939,7 @@ void Actor::init(
     uint8   colorSchemeIndex,
     uint8   factionNum,
     uint8   initFlags) {
-	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & actorPermanent);
+	debugC(1, kDebugActors, "Actor init flags: %d, permanent: %d", initFlags, initFlags & kActorPermanent);
 
 	//  Fixup the prototype pointer to point to an actor prototype
 	_prototype           = (ProtoObj *)g_vm->_actorProtos[protoIndex];
@@ -976,12 +976,12 @@ void Actor::init(
 	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
 		_conversationMemory[i] = 0;
 
-	_currentAnimation    = actionStand;
+	_currentAnimation    = kActionStand;
 	_currentPose         = 0;
 	_animationFlags      = 0;
 	_flags               = 0;
-	if (!(initFlags & actorPermanent))
-		_flags |= temporary;
+	if (!(initFlags & kActorPermanent))
+		_flags |= kAFTemporary;
 
 	_poseInfo.flags = 0;
 	_poseInfo.actorFrameIndex = 0;
@@ -997,7 +997,7 @@ void Actor::init(
 	_moveTask            = nullptr;
 	_enchantmentFlags    = 0L;
 	_curTask             = nullptr;
-	_currentGoal         = actorGoalFollowAssignment;
+	_currentGoal         = kActorGoalFollowAssignment;
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
@@ -1048,7 +1048,7 @@ Actor::Actor() {
 	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
 		_conversationMemory[i] = 0;
 
-	_currentAnimation    = actionStand;
+	_currentAnimation    = kActionStand;
 	_currentPose         = 0;
 	_animationFlags      = 0;
 	_flags               = 0;
@@ -1067,7 +1067,7 @@ Actor::Actor() {
 	_moveTask            = nullptr;
 	_enchantmentFlags    = 0L;
 	_curTask             = nullptr;
-	_currentGoal         = actorGoalFollowAssignment;
+	_currentGoal         = kActorGoalFollowAssignment;
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
@@ -1117,7 +1117,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	for (uint i = 0; i < ARRAYSIZE(_conversationMemory); ++i)
 		_conversationMemory[i] = 0;
 
-	_currentAnimation    = actionStand;
+	_currentAnimation    = kActionStand;
 	_currentPose         = 0;
 	_animationFlags      = 0;
 	_flags               = 0;
@@ -1136,7 +1136,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 	_moveTask            = nullptr;
 	_enchantmentFlags    = 0L;
 	_curTask             = nullptr;
-	_currentGoal         = actorGoalFollowAssignment;
+	_currentGoal         = kActorGoalFollowAssignment;
 	_deactivationCounter = 0;
 	_assignment = nullptr;
 
@@ -1225,7 +1225,7 @@ Actor::Actor(Common::InSaveFile *in) : GameObject(in) {
 	for (int i = 0; i < ARRAYSIZE(_scriptVar); ++i)
 		_scriptVar[i] = in->readSint16LE();
 
-	if (_flags & hasAssignment) {
+	if (_flags & kAFHasAssignment) {
 		readAssignment(this, in);
 	} else {
 		_assignment = nullptr;
@@ -1290,7 +1290,7 @@ int32 Actor::archiveSize() {
 	int32   size = GameObject::archiveSize();
 
 	size += sizeof(ActorArchive);
-	if (_flags & hasAssignment)
+	if (_flags & kAFHasAssignment)
 		size += assignmentArchiveSize(this);
 
 	return size;
@@ -1361,7 +1361,7 @@ void Actor::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(_currentTargetID);
 	out->write(_scriptVar, sizeof(_scriptVar));
 
-	if (_flags & hasAssignment)
+	if (_flags & kAFHasAssignment)
 		writeAssignment(this, out);
 
 	debugC(4, kDebugSaveload, "... _faction = %d", _faction);
@@ -1426,7 +1426,7 @@ Actor *Actor::newActor(
 		for (i = kPlayerActors; i < kActorCount; i++) {
 			a = g_vm->_act->_actorList[i];
 
-			if ((a->_flags & temporary)
+			if ((a->_flags & kAFTemporary)
 			        &&  !a->isActivated()
 			        &&  isWorld(a->IDParent()))
 				break;
@@ -1455,7 +1455,7 @@ Actor *Actor::newActor(
 	    factionNum,
 	    initFlags);
 
-	if (a->_flags & temporary) {
+	if (a->_flags & kAFTemporary) {
 		incTempActorCount(protoNum);
 		debugC(1, kDebugActors, "Actors: Created temp actor %d (%s) new count:%d", a->thisID() - 32768, a->objName(), getTempActorCount(protoNum));
 	}
@@ -1467,7 +1467,7 @@ Actor *Actor::newActor(
 //	Delete this actor
 
 void Actor::deleteActor() {
-	if (_flags & temporary) {
+	if (_flags & kAFTemporary) {
 		uint16      protoNum = getProtoNum();
 
 		decTempActorCount(protoNum);
@@ -1506,7 +1506,7 @@ void Actor::deleteActor() {
 	}
 
 	//  Place in limbo
-	if (!(_data.objectFlags & objectNoRecycle)) {
+	if (!(_data.objectFlags & kObjectNoRecycle)) {
 		append(ActorLimbo);
 		actorLimboCount++;
 	}
@@ -1594,16 +1594,16 @@ void Actor::vitalityUpdate() {
 		int16 fractionRecover;
 
 		// get the whole number first
-		recover = _recPointsPerUpdate / recPointsPerVitality;
+		recover = _recPointsPerUpdate / kRecPointsPerVitality;
 
 		// get the fraction
-		fractionRecover = _recPointsPerUpdate % recPointsPerVitality;
+		fractionRecover = _recPointsPerUpdate % kRecPointsPerVitality;
 
 		// if there is an overrun
-		if (_currentRecoveryPoints + fractionRecover > recPointsPerVitality) {
+		if (_currentRecoveryPoints + fractionRecover > kRecPointsPerVitality) {
 			// add the overrun to the whole number
 			recover++;
-			_currentRecoveryPoints = (_currentRecoveryPoints + fractionRecover) - recPointsPerVitality;
+			_currentRecoveryPoints = (_currentRecoveryPoints + fractionRecover) - kRecPointsPerVitality;
 		} else {
 			_currentRecoveryPoints += fractionRecover;
 		}
@@ -1657,7 +1657,7 @@ void Actor::deactivateActor() {
 	}
 
 	//  Temporary actors get deleted upon deactivation
-	if ((_flags & temporary) || isDead()) {
+	if ((_flags & kAFTemporary) || isDead()) {
 		_deactivationCounter = 10;       // actor lasts for 50 seconds
 	}
 }
@@ -1666,12 +1666,12 @@ void Actor::deactivateActor() {
 //	Delobotomize this actor
 
 void Actor::delobotomize() {
-	if (!(_flags & lobotomized)) return;
+	if (!(_flags & kAFLobotomized)) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
-	_flags &= ~lobotomized;
+	_flags &= ~kAFLobotomized;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1688,7 +1688,7 @@ void Actor::delobotomize() {
 //	Lobotomize this actor
 
 void Actor::lobotomize() {
-	if (_flags & lobotomized) return;
+	if (_flags & kAFLobotomized) return;
 
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
@@ -1704,7 +1704,7 @@ void Actor::lobotomize() {
 	if (_moveTask != nullptr)
 		_moveTask->remove();
 
-	_flags |= lobotomized;
+	_flags |= kAFLobotomized;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1722,10 +1722,10 @@ void Actor::lobotomize() {
 //	structure.
 
 ActorAttributes *Actor::getBaseStats() {
-	if (_disposition < dispositionPlayer)
+	if (_disposition < kDispositionPlayer)
 		return &((ActorProto *)_prototype)->baseStats;
 	else
-		return &g_vm->_playerList[_disposition - dispositionPlayer]->_baseStats;
+		return &g_vm->_playerList[_disposition - kDispositionPlayer]->_baseStats;
 }
 
 //-----------------------------------------------------------------------
@@ -1733,7 +1733,7 @@ ActorAttributes *Actor::getBaseStats() {
 //	is a non-player actor, the base stats are in the prototype.
 
 uint32 Actor::getBaseEnchantmentEffects() {
-	//if ( disposition < dispositionPlayer )
+	//if ( disposition < kDispositionPlayer )
 	return ((ActorProto *)_prototype)->baseEffectFlags;
 }
 
@@ -1742,7 +1742,7 @@ uint32 Actor::getBaseEnchantmentEffects() {
 //	is a non-player actor, the base stats are in the prototype.
 
 uint16 Actor::getBaseResistance() {
-	//if ( disposition < dispositionPlayer )
+	//if ( disposition < kDispositionPlayer )
 	return ((ActorProto *)_prototype)->resistance;
 }
 
@@ -1751,7 +1751,7 @@ uint16 Actor::getBaseResistance() {
 //	is a non-player actor, the base stats are in the prototype.
 
 uint16 Actor::getBaseImmunity() {
-	//if ( disposition < dispositionPlayer )
+	//if ( disposition < kDispositionPlayer )
 	return ((ActorProto *)_prototype)->immunity;
 }
 
@@ -1783,9 +1783,9 @@ bool Actor::inUseRange(const TilePoint &tp, GameObject *obj) {
 
 bool Actor::isImmobile() {
 	return      isDead()
-	            ||  hasEffect(actorImmobile)
-	            ||  hasEffect(actorAsleep)
-	            ||  hasEffect(actorParalyzed);
+	            ||  hasEffect(kActorImmobile)
+	            ||  hasEffect(kActorAsleep)
+	            ||  hasEffect(kActorParalyzed);
 }
 
 //-----------------------------------------------------------------------
@@ -2056,8 +2056,8 @@ int16 Actor::setAction(int16 newState, int16 flags) {
 	_animationFlags = flags;
 
 	//  If they haven't set the "no reset" flag, then
-	if (!(flags & animateNoRestart)) {
-		if (flags & animateReverse) _currentPose = numPoses - 1;
+	if (!(flags & kAnimateNoRestart)) {
+		if (flags & kAnimateReverse) _currentPose = numPoses - 1;
 		else _currentPose = 0;
 	} else {
 		_currentPose = clamp(0, _currentPose, numPoses - 1);
@@ -2127,22 +2127,22 @@ bool Actor::nextAnimationFrame() {
 //  RUnlockHandle( appearance->animations );
 
 	if (_appearance == nullptr) {
-		if (_animationFlags & animateOnHold) {
+		if (_animationFlags & kAnimateOnHold) {
 			return false;
-		} else if (_animationFlags & animateRepeat) {
-			_animationFlags |= animateOnHold;
+		} else if (_animationFlags & kAnimateRepeat) {
+			_animationFlags |= kAnimateOnHold;
 			return false;
 		} else {
-			_animationFlags |= animateFinished;
+			_animationFlags |= kAnimateFinished;
 			return true;
 		}
-	} else _animationFlags &= ~animateOnHold;
+	} else _animationFlags &= ~kAnimateOnHold;
 
 	//  Get the number of frames in the animation
 	anim = _appearance->animation(_currentAnimation);
 	numPoses = anim->count[_currentFacing];
 	if (numPoses <= 0) {
-		_animationFlags |= animateFinished;
+		_animationFlags |= kAnimateFinished;
 		return true;                    // no poses, return DONE
 	}
 
@@ -2150,15 +2150,15 @@ bool Actor::nextAnimationFrame() {
 	//  been loaded, then don't update the animation state --
 	//  wait until the sprite gets loaded, and then continue
 	//  with the action.
-	if (_animationFlags & animateNotLoaded) return false;
+	if (_animationFlags & kAnimateNotLoaded) return false;
 
 	//  If the animation has reached the last frame, then exit.
-	if (_animationFlags & animateFinished) return true;
+	if (_animationFlags & kAnimateFinished) return true;
 
-	if (_animationFlags & animateRandom) {
+	if (_animationFlags & kAnimateRandom) {
 		//  Select a random frame from the series.
 		_currentPose = g_vm->_rnd->getRandomNumber(numPoses - 1);
-	} else if (_animationFlags & animateReverse) {
+	} else if (_animationFlags & kAnimateReverse) {
 		//  Note that the logic for forward repeats is slightly
 		//  different for reverse repeats. Specifically, the
 		//  "alternate" flag is always checked when going forward,
@@ -2170,16 +2170,16 @@ bool Actor::nextAnimationFrame() {
 			_currentPose--;
 
 			//  Check if this is the last frame
-			if (_currentPose <= 0 && !(_animationFlags & animateRepeat)) {
-				_animationFlags |= animateFinished;
+			if (_currentPose <= 0 && !(_animationFlags & kAnimateRepeat)) {
+				_animationFlags |= kAnimateFinished;
 			}
-		} else if (_animationFlags & animateRepeat) {
+		} else if (_animationFlags & kAnimateRepeat) {
 			//  If we're repeating, check for a back & forth,
 			//  or for a wraparound. Also checks for case of
 			//  a degenerate series (1 frame only)
 
-			if (_animationFlags & animateAlternate) {
-				_animationFlags &= ~animateReverse;
+			if (_animationFlags & kAnimateAlternate) {
+				_animationFlags &= ~kAnimateReverse;
 				_currentPose = MIN(1, numPoses - 1);
 			} else {
 				_currentPose = numPoses - 1;
@@ -2192,17 +2192,17 @@ bool Actor::nextAnimationFrame() {
 
 			//  Check if this is the last frame
 			if (_currentPose >= numPoses - 1 &&
-			        !(_animationFlags & (animateAlternate | animateRepeat)))
-				_animationFlags |= animateFinished;
-		} else if (_animationFlags & animateAlternate) {
+			        !(_animationFlags & (kAnimateAlternate | kAnimateRepeat)))
+				_animationFlags |= kAnimateFinished;
+		} else if (_animationFlags & kAnimateAlternate) {
 			//  At the end of the sequence, reverse direction
-			_animationFlags |= animateReverse;
+			_animationFlags |= kAnimateReverse;
 			_currentPose = MAX(_currentPose - 1, 0);
-		} else if (_animationFlags & animateRepeat) {
+		} else if (_animationFlags & kAnimateRepeat) {
 			//  Wrap back to beginning
 			_currentPose = 0;
 		} else //If Last Frame And Not Animate Repeat or Alternate
-			_animationFlags |= animateFinished;
+			_animationFlags |= kAnimateFinished;
 	}
 	return false;
 }
@@ -2291,7 +2291,7 @@ void Actor::updateAppearance(int32) {
 //    static uint16    count;
 //    count++;
 
-	if (isDead() || !isActivated() || (_flags & lobotomized)) return;
+	if (isDead() || !isActivated() || (_flags & kAFLobotomized)) return;
 
 #if DEBUG*0
 	WriteStatusF(4, "Wait Count %d Attitude %d", cycleCount, attitude);
@@ -2305,8 +2305,8 @@ void Actor::updateAppearance(int32) {
 #endif
 
 	if (_appearance) {
-		if (animationFrames(actionStand, _currentFacing) == 1) {
-			if (_flags & fightStance) {
+		if (animationFrames(kActionStand, _currentFacing) == 1) {
+			if (_flags & kAFFightStance) {
 				GameObject      *weapon = offensiveObject();
 
 				if (weapon == this) weapon = nullptr;
@@ -2316,10 +2316,10 @@ void Actor::updateAppearance(int32) {
 
 					setAction(weaponProto->fightStanceAction(thisID()), 0);
 				} else {
-					if (isActionAvailable(actionSwingHigh))
-						setAction(actionSwingHigh, 0);
+					if (isActionAvailable(kActionSwingHigh))
+						setAction(kActionSwingHigh, 0);
 					else
-						setAction(actionTwoHandSwingHigh, 0);
+						setAction(kActionTwoHandSwingHigh, 0);
 				}
 
 				_cycleCount = 0;
@@ -2327,7 +2327,7 @@ void Actor::updateAppearance(int32) {
 				if (_cycleCount > 0) { //If In Wait State Between Wait Animation
 					_cycleCount--;
 
-					setAction(actionStand, 0);   //Just stand still
+					setAction(kActionStand, 0);   //Just stand still
 				} else { // Wait Animation
 					if (_cycleCount == 0) { //If Just Starting Wait Animation
 						_cycleCount--;
@@ -2335,24 +2335,24 @@ void Actor::updateAppearance(int32) {
 						//Currently Attitude Not Set So Always Hits Zero
 						case 0:
 							//Returns True If Successful No Checking Yet
-							setAvailableAction(actionWaitAgressive,
-							                   actionWaitImpatient,
-							                   actionWaitFriendly,
-							                   actionStand); // This is default
+							setAvailableAction(kActionWaitAgressive,
+							                   kActionWaitImpatient,
+							                   kActionWaitFriendly,
+							                   kActionStand); // This is default
 							break;
 
 						case 1:
-							setAvailableAction(actionWaitImpatient,
-							                   actionWaitFriendly,
-							                   actionWaitAgressive,
-							                   actionStand);
+							setAvailableAction(kActionWaitImpatient,
+							                   kActionWaitFriendly,
+							                   kActionWaitAgressive,
+							                   kActionStand);
 							break;
 
 						case 2:
-							setAvailableAction(actionWaitFriendly,
-							                   actionWaitImpatient,
-							                   actionWaitAgressive,
-							                   actionStand);
+							setAvailableAction(kActionWaitFriendly,
+							                   kActionWaitImpatient,
+							                   kActionWaitAgressive,
+							                   kActionStand);
 
 						}
 					} else //Assume -1
@@ -2361,9 +2361,9 @@ void Actor::updateAppearance(int32) {
 				}
 			}
 		} else {
-			if (_currentAnimation != actionStand
-			        || (_animationFlags & animateRepeat) == 0)
-				setAction(actionStand, animateRepeat);
+			if (_currentAnimation != kActionStand
+			        || (_animationFlags & kAnimateRepeat) == 0)
+				setAction(kActionStand, kAnimateRepeat);
 			else
 				nextAnimationFrame();
 		}
@@ -2407,8 +2407,8 @@ void Actor::setGoal(uint8 newGoal) {
 void Actor::evaluateNeeds() {
 	if (!isDead()
 	        &&  isActivated()
-	        &&  !(_flags & lobotomized)) {
-		if (_disposition >= dispositionPlayer) {
+	        &&  !(_flags & kAFLobotomized)) {
+		if (_disposition >= kDispositionPlayer) {
 			if (g_vm->_act->_combatBehaviorEnabled) {
 				SenseInfo       info;
 
@@ -2420,30 +2420,30 @@ void Actor::evaluateNeeds() {
 				            info,
 				            maxSenseRange,
 				            actorPropIDEnemy)) {
-					PlayerActorID   playerID = _disposition - dispositionPlayer;
+					PlayerActorID   playerID = _disposition - kDispositionPlayer;
 
 					if (isAggressive(playerID))
-						setGoal(actorGoalAttackEnemy);
+						setGoal(kActorGoalAttackEnemy);
 					else {
 						if (_leader != nullptr && inBandingRange())
-							setGoal(actorGoalAvoidEnemies);
+							setGoal(kActorGoalAvoidEnemies);
 						else
-							setGoal(actorGoalPreserveSelf);
+							setGoal(kActorGoalPreserveSelf);
 					}
 				} else if (_leader != nullptr && inBandingRange()) {
-					setGoal(actorGoalFollowLeader);
+					setGoal(kActorGoalFollowLeader);
 				} else {
-					setGoal(actorGoalFollowAssignment);
+					setGoal(kActorGoalFollowAssignment);
 				}
 			} else if (_leader != nullptr && inBandingRange()) {
-				setGoal(actorGoalFollowLeader);
+				setGoal(kActorGoalFollowLeader);
 			} else {
-				setGoal(actorGoalFollowAssignment);
+				setGoal(kActorGoalFollowAssignment);
 			}
 		} else {
-			if (_disposition == dispositionEnemy
+			if (_disposition == kDispositionEnemy
 			        &&  _appearance != nullptr
-			        &&  !hasEffect(actorNotDefenseless)) {
+			        &&  !hasEffect(kActorNotDefenseless)) {
 				GameObject              *obj;
 				bool                    foundWeapon = false;
 				ContainerIterator       iter(this);
@@ -2459,22 +2459,22 @@ void Actor::evaluateNeeds() {
 				}
 
 				if (!foundWeapon
-				        && (isActionAvailable(actionSwingHigh)
-				            ||  isActionAvailable(actionTwoHandSwingHigh)))
+				        && (isActionAvailable(kActionSwingHigh)
+				            ||  isActionAvailable(kActionTwoHandSwingHigh)))
 					foundWeapon = true;
 
 				if (!foundWeapon)
-					_flags |= afraid;
+					_flags |= kAFAfraid;
 			}
 
-			if (_flags & afraid || hasEffect(actorFear) || hasEffect(actorRepelUndead)) {
-				setGoal(actorGoalPreserveSelf);
+			if (_flags & kAFAfraid || hasEffect(kActorFear) || hasEffect(kActorRepelUndead)) {
+				setGoal(kActorGoalPreserveSelf);
 			} else if (_leader != nullptr && inBandingRange()) {
 				setGoal(_leader->evaluateFollowerNeeds(this));
 			} else {
 				SenseInfo       info;
 
-				if (_disposition == dispositionEnemy
+				if (_disposition == kDispositionEnemy
 				        && (getAssignment() == nullptr
 				            ||  canSenseProtaganist(
 				                info,
@@ -2482,9 +2482,9 @@ void Actor::evaluateNeeds() {
 				            ||  canSenseProtaganistIndirectly(
 				                info,
 				                maxSenseRange))) {
-					setGoal(actorGoalAttackEnemy);
+					setGoal(kActorGoalAttackEnemy);
 				} else {
-					setGoal(actorGoalFollowAssignment);
+					setGoal(kActorGoalFollowAssignment);
 				}
 			}
 		}
@@ -2498,7 +2498,7 @@ void Actor::updateState() {
 
 	GameObject::updateState();
 
-	if (_flags & lobotomized)
+	if (_flags & kAFLobotomized)
 		return;
 
 	//  Update the action counter
@@ -2510,11 +2510,11 @@ void Actor::updateState() {
 	        &&  isInterruptable()
 	        && (_moveTask == nullptr
 	            ||  _moveTask->_motionType != MotionTask::motionTypeDie)) {
-		int16       deadState = isActionAvailable(actionDead)
-		                        ?   actionDead
-		                        :   isActionAvailable(actionDie)
-		                        ?   actionDie
-		                        :   actionStand;
+		int16       deadState = isActionAvailable(kActionDead)
+		                        ?   kActionDead
+		                        :   isActionAvailable(kActionDie)
+		                        ?   kActionDie
+		                        :   kActionStand;
 
 		if (_currentAnimation != deadState)
 			MotionTask::die(*this);
@@ -2524,8 +2524,8 @@ void Actor::updateState() {
 	if (!isDead()) {
 		if (this == getCenterActor()) return;
 
-		if (_flags & specialAttack) {
-			_flags &= ~specialAttack;
+		if (_flags & kAFSpecialAttack) {
+			_flags &= ~kAFSpecialAttack;
 
 			if (_currentTarget != nullptr) {
 				scriptCallFrame scf;
@@ -2541,13 +2541,13 @@ void Actor::updateState() {
 
 				//  If this actor is now deactivated or lobotomized
 				//  return immediately
-				if (isDead() || !isActivated() || (_flags & lobotomized))
+				if (isDead() || !isActivated() || (_flags & kAFLobotomized))
 					return;
 			}
 		}
 
 		switch (_currentGoal) {
-		case actorGoalFollowAssignment: {
+		case kActorGoalFollowAssignment: {
 			ActorAssignment     *assign = getAssignment();
 
 			//  Iterate until there is no assignment, or the current
@@ -2568,9 +2568,9 @@ void Actor::updateState() {
 
 				runObjectMethod(dObj, Method_Actor_onEndAssignment, scf);
 
-				//  If this actor is now deactivated or lobotomized
+				//  If this actor is now deactivated or kAFLobotomized
 				//  return immediately
-				if (isDead() || !isActivated() || (_flags & lobotomized))
+				if (isDead() || !isActivated() || (_flags & kAFLobotomized))
 					return;
 
 				//  Re-get the assignment
@@ -2603,7 +2603,7 @@ void Actor::updateState() {
 		}
 		break;
 
-		case actorGoalPreserveSelf:
+		case kActorGoalPreserveSelf:
 
 			if (_leader != nullptr || _followers != nullptr)
 				disband();
@@ -2613,7 +2613,7 @@ void Actor::updateState() {
 					Task    *task = new GoAwayFromActorTask(
 					                    _curTask,
 					                    ActorPropertyTarget(
-					                        _disposition == dispositionEnemy
+					                        _disposition == kDispositionEnemy
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy),
 					                    true);
@@ -2628,7 +2628,7 @@ void Actor::updateState() {
 			}
 			break;
 
-		case actorGoalAttackEnemy:
+		case kActorGoalAttackEnemy:
 
 			if (_curTask == nullptr) {
 				if ((_curTask = newTaskStack(this)) != nullptr) {
@@ -2639,7 +2639,7 @@ void Actor::updateState() {
 					Task    *task = new    HuntToKillTask(
 					                    _curTask,
 					                    ActorPropertyTarget(
-					                        disp == dispositionEnemy
+					                        disp == kDispositionEnemy
 					                        ?   actorPropIDPlayerActor
 					                        :   actorPropIDEnemy));
 
@@ -2653,7 +2653,7 @@ void Actor::updateState() {
 			}
 			break;
 
-		case actorGoalFollowLeader:
+		case kActorGoalFollowLeader:
 
 			assert(isActor(_leader));
 			assert(_followers == nullptr);
@@ -2663,7 +2663,7 @@ void Actor::updateState() {
 
 			break;
 
-		case actorGoalAvoidEnemies:
+		case kActorGoalAvoidEnemies:
 
 			assert(isActor(_leader));
 			assert(_followers == nullptr);
@@ -2694,7 +2694,7 @@ void Actor::handleTaskCompletion(TaskResult result) {
 	_curTask = nullptr;
 
 	switch (_currentGoal) {
-	case actorGoalFollowAssignment: {
+	case kActorGoalFollowAssignment: {
 		ActorAssignment     *assign = getAssignment();
 
 		//  If we've gotten to this point, there had better be an
@@ -2723,9 +2723,9 @@ void Actor::handleOffensiveAct(Actor *attacker) {
 
 	runObjectMethod(dObj, Method_Actor_onAttacked, scf);
 
-	if (_disposition == dispositionFriendly) {
-		if (attacker->_disposition >= dispositionPlayer) {
-			_disposition = dispositionEnemy;
+	if (_disposition == kDispositionFriendly) {
+		if (attacker->_disposition >= kDispositionPlayer) {
+			_disposition = kDispositionEnemy;
 			evaluateNeeds();
 		}
 	}
@@ -2738,24 +2738,24 @@ void Actor::handleOffensiveAct(Actor *attacker) {
 void Actor::handleDamageTaken(uint8 damage) {
 	uint8       combatBehavior = ((ActorProto *)_prototype)->combatBehavior;
 
-	if (combatBehavior == behaviorHungry) return;
+	if (combatBehavior == kBehaviorHungry) return;
 
 	if (offensiveObject() == this
-	        &&  !isActionAvailable(actionSwingHigh)
-	        &&  !isActionAvailable(actionTwoHandSwingHigh)
-	        &&  !hasEffect(actorNotDefenseless)) {
-		_flags |= afraid;
+	        &&  !isActionAvailable(kActionSwingHigh)
+	        &&  !isActionAvailable(kActionTwoHandSwingHigh)
+	        &&  !hasEffect(kActorNotDefenseless)) {
+		_flags |= kAFAfraid;
 		return;
 	}
 
-	if (combatBehavior != behaviorHungry
-	        && (_flags & temporary)
-	        &&  !hasEffect(actorFear)
-	        &&  !hasEffect(actorRepelUndead)) {
-		if (_flags & afraid) {
+	if (combatBehavior != kBehaviorHungry
+	        && (_flags & kAFTemporary)
+	        &&  !hasEffect(kActorFear)
+	        &&  !hasEffect(kActorRepelUndead)) {
+		if (_flags & kAFAfraid) {
 			//  Let's give monsters a small chance of regaining their courage
 			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= 0x3fff)
-				_flags &= ~afraid;
+				_flags &= ~kAFAfraid;
 		} else {
 			int16       i,
 			            fellowBandMembers,
@@ -2768,9 +2768,9 @@ void Actor::handleDamageTaken(uint8 damage) {
 			moraleBase /= 3;
 
 			//  Adjust morale base according to the combat behavior
-			if (combatBehavior == behaviorCowardly)
+			if (combatBehavior == kBehaviorCowardly)
 				moraleBase += moraleBase / 2;
-			else if (combatBehavior == behaviorBerserk)
+			else if (combatBehavior == kBehaviorBerserk)
 				moraleBase -= moraleBase / 2;
 
 			//  Determine how many fellow band members this actor has.
@@ -2791,7 +2791,7 @@ void Actor::handleDamageTaken(uint8 damage) {
 
 			//  Test this actor's morale
 			if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
-				_flags |= afraid;
+				_flags |= kAFAfraid;
 		}
 	}
 }
@@ -2924,7 +2924,7 @@ void Actor::evaluateMeleeAttack(Actor *attacker) {
 			    thisID(),
 			    attacker->thisID());
 		} else {
-			if (isActionAvailable(actionJumpUp))
+			if (isActionAvailable(kActionJumpUp))
 				MotionTask::dodge(*this, *attacker);
 		}
 	}
@@ -3048,20 +3048,20 @@ void Actor::removeFollower(Actor *bandMember) {
 			ActorProto  *proto = (ActorProto *)follower->_prototype;
 			uint8       combatBehavior = proto->combatBehavior;
 
-			if (follower->_currentGoal == actorGoalAttackEnemy
-			        &&  combatBehavior != behaviorHungry) {
+			if (follower->_currentGoal == kActorGoalAttackEnemy
+			        &&  combatBehavior != kBehaviorHungry) {
 				uint32      moraleBase;
 
-				moraleBase =    combatBehavior == behaviorCowardly
+				moraleBase =    combatBehavior == kBehaviorCowardly
 				                ? (1 << 16) / 4
-				                :   combatBehavior == behaviorSmart
+				                :   combatBehavior == kBehaviorSmart
 				                ? (1 << 16) / 8
 				                : (1 << 16) / 16;
 
 				moraleBase -= moraleBase * moraleBonus >> 16;
 
 				if ((uint16)g_vm->_rnd->getRandomNumber(0xffff) <= moraleBase)
-					follower->_flags |= afraid;
+					follower->_flags |= kAFAfraid;
 			}
 		}
 	}
@@ -3098,16 +3098,16 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 
 	SenseInfo       info;
 
-	if ((_disposition == dispositionEnemy
+	if ((_disposition == kDispositionEnemy
 	        &&  follower->canSenseProtaganist(info, maxSenseRange))
-	        || (_disposition >= dispositionPlayer
+	        || (_disposition >= kDispositionPlayer
 	            &&  follower->canSenseActorProperty(
 	                info,
 	                maxSenseRange,
 	                actorPropIDEnemy)))
-		return actorGoalAttackEnemy;
+		return kActorGoalAttackEnemy;
 
-	return actorGoalFollowLeader;
+	return kActorGoalFollowLeader;
 }
 
 //  Returns 0 if not moving, 1 if path being calculated,
@@ -3489,9 +3489,9 @@ void initActors() {
 		g_vm->_act->_actorList.push_back(a);
 	}
 
-	g_vm->_act->_actorList[0]->_disposition = dispositionPlayer + 0;
-	g_vm->_act->_actorList[1]->_disposition = dispositionPlayer + 1;
-	g_vm->_act->_actorList[2]->_disposition = dispositionPlayer + 2;
+	g_vm->_act->_actorList[0]->_disposition = kDispositionPlayer + 0;
+	g_vm->_act->_actorList[1]->_disposition = kDispositionPlayer + 1;
+	g_vm->_act->_actorList[2]->_disposition = kDispositionPlayer + 2;
 }
 
 void saveActors(Common::OutSaveFile *outS) {
@@ -3566,14 +3566,14 @@ int16 AddFactionTally(int faction, enum factionTallyTypes act, int amt) {
 		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
-	assert(act < factionNumColumns);
+	assert(act < kFactionNumColumns);
 #endif
 	/*
 	        //  If faction attitude counts get to big then down-scale all of them
 	        //  in proportion.
 	    if ( g_vm->_act->_factionTable[faction][act] + amt > maxint16 )
 	    {
-	        for (int i = 0; i < factionNumColumns; i++)
+	        for (int i = 0; i < kFactionNumColumns; i++)
 	            g_vm->_act->_factionTable[faction][i] >>= 1;
 	    }
 
@@ -3597,7 +3597,7 @@ int16 GetFactionTally(int faction, enum factionTallyTypes act) {
 		error("Scripter: Tell Talin to increase kMaxFactions!\n");
 	assert(faction >= 0);
 	assert(act >= 0);
-	assert(act < factionNumColumns);
+	assert(act < kFactionNumColumns);
 #endif
 
 	return g_vm->_act->_factionTable[faction][act];
@@ -3616,7 +3616,7 @@ void saveFactionTallies(Common::OutSaveFile *outS) {
 	outS->write("FACT", 4);
 	CHUNK_BEGIN;
 	for (int i = 0; i < kMaxFactions; ++i) {
-		for (int j = 0; j < factionNumColumns; ++j)
+		for (int j = 0; j < kFactionNumColumns; ++j)
 			out->writeSint16LE(g_vm->_act->_factionTable[i][j]);
 	}
 	CHUNK_END;
@@ -3626,7 +3626,7 @@ void loadFactionTallies(Common::InSaveFile *in) {
 	debugC(2, kDebugSaveload, "Loading Faction Tallies");
 
 	for (int i = 0; i < kMaxFactions; ++i) {
-		for (int j = 0; j < factionNumColumns; ++j)
+		for (int j = 0; j < kFactionNumColumns; ++j)
 			g_vm->_act->_factionTable[i][j] = in->readSint16LE();
 	}
 }

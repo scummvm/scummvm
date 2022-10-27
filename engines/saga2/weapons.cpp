@@ -67,44 +67,44 @@ ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 		diceSides = 6;
 
 	switch (effectGroup) {
-	case effectNone:
+	case kEffectNone:
 		return nullptr;
 
-	case effectAttrib:
+	case kEffectAttrib:
 		pe = new ProtoEnchantment(makeEnchantmentID(effectGroup, effectType, baseDamage), reserved0, reserved1);
 		break;
 
-	case effectResist:
-	case effectImmune:
-	case effectOthers:
-	case effectNonActor:
+	case kEffectResist:
+	case kEffectImmune:
+	case kEffectOthers:
+	case kEffectNonActor:
 		pe = new ProtoEnchantment(makeEnchantmentID(effectGroup, effectType, skillDamage), reserved0, reserved1);
 		break;
 
-	case effectDamage:
+	case kEffectDamage:
 		pe = new ProtoDamage(baseDice, diceSides, skillDice, baseDamage,
 					(effectDamageTypes)effectType, 0, targeting & spellTargCaster, skillDamage);
 		break;
 
-	case effectDrains:
+	case kEffectDrains:
 		pe = new ProtoDrainage(baseDice, diceSides, skillDice, baseDamage,
 					(effectDrainsTypes)effectType, 0, targeting & spellTargCaster);
 		break;
 
-	case effectPoison:
+	case kEffectPoison:
 		pe = new ProtoEnchantment(makeEnchantmentID(baseDamage),      // poison
 					reserved0, reserved1);
 		break;
 
-	case effectTAG:
+	case kEffectTAG:
 		pe = new ProtoTAGEffect((effectTAGTypes)effectType, skillDamage, baseDamage);
 		break;
 
-	case effectLocation:
-		pe = new ProtoLocationEffect((effectLocationTypes)effectType, baseDamage);
+	case kEffectLocation:
+		pe = new ProtoLocationEffect((kEffectLocationTypes)effectType, baseDamage);
 		break;
 
-	case effectSpecial:
+	case kEffectSpecial:
 		pe = new ProtoSpecialEffect(SagaSpellCall, baseDamage);
 		break;
 	}
@@ -211,7 +211,7 @@ void WeaponStuff::addEffect(Common::SeekableReadStream *stream) {
 	/*int16 item = */stream->readSint16LE();		// spell ID
 	int16 effectGroup = stream->readSint16LE();	// effect group
 
-	if (effectGroup == effectStrike) {
+	if (effectGroup == kEffectStrike) {
 		effectDamageTypes effectType = (effectDamageTypes)stream->readSint16LE();	// effect ID
 		/*int16 targeting = */stream->readSint16LE();	// targeting
 		int16 baseDice = stream->readSint16LE();	// base dice

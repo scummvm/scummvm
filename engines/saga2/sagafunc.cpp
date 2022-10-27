@@ -328,7 +328,7 @@ int16 scriptActorSetProto(int16 *args) {
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 	int16           oldProto = obj->getProtoNum();
 
-	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::temporary)) {
+	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::kAFTemporary)) {
 		decTempActorCount(oldProto);
 		incTempActorCount(args[0]);
 	}
@@ -618,7 +618,7 @@ int16 scriptActorSetOpen( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectOpen );
+        kObjectOpen );
     return 0;
 }
 
@@ -626,7 +626,7 @@ int16 scriptActorSetLocked( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectLocked );
+        kObjectLocked );
     return 0;
 }
 */
@@ -635,7 +635,7 @@ int16 scriptActorSetImportant(int16 *args) {
 	OBJLOG(SetImportant);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectImportant);
+	    kObjectImportant);
 	return 0;
 }
 
@@ -643,7 +643,7 @@ int16 scriptActorSetScavengable(int16 *args) {
 	OBJLOG(SetScavengable);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectScavengable);
+	    kObjectScavengable);
 	return 0;
 }
 
@@ -2674,7 +2674,7 @@ int16 scriptMissionMakeActor(int16 *args) {
 
 	//  Call the regular make-actor function. Add in the "permanent"
 	//  flag, since actor will be deleted at mission end.
-	args[6] |= actorPermanent;
+	args[6] |= kActorPermanent;
 	id = scriptMakeActor(args);
 
 	//  And record it in the mission object

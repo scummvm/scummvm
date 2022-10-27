@@ -1472,7 +1472,7 @@ void PathRequest::initialize() {
 		//  obstacles.
 		if (isActor(obj)
 		        && (((Actor *)obj)->isDead()
-		            || ((Actor *)obj)->hasEffect(actorInvisible)))
+		            || ((Actor *)obj)->hasEffect(kActorInvisible)))
 			continue;
 
 		//  Compute the objects volume

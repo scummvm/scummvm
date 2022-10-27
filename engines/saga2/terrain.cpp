@@ -45,7 +45,7 @@ static MetaTilePtr  prevMeta = nullptr;
 void drown(GameObject *obj) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
-		if (!a->hasEffect(actorWaterBreathe)) {
+		if (!a->hasEffect(kActorWaterBreathe)) {
 			if (g_vm->_rnd->getRandomNumber(drowningDamageOddsYes + drowningDamageOddsNo - 1) > drowningDamageOddsNo - 1) {
 				a->acceptDamage(a->thisID(), drowningDamagePerFrame);
 			}
@@ -57,7 +57,7 @@ void drown(GameObject *obj) {
 void lavaDamage(GameObject *obj) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
-		if (a->resists(resistHeat))
+		if (a->resists(kResistHeat))
 			return;
 	}
 	if (g_vm->_rnd->getRandomNumber(heatDamageOddsYes + heatDamageOddsNo - 1) > heatDamageOddsNo - 1) {
@@ -68,7 +68,7 @@ void lavaDamage(GameObject *obj) {
 void coldDamage(GameObject *obj) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
-		if (a->resists(resistCold))
+		if (a->resists(kResistCold))
 			return;
 	}
 	if (g_vm->_rnd->getRandomNumber(coldDamageOddsYes + coldDamageOddsNo - 1) > coldDamageOddsNo - 1) {
@@ -91,7 +91,7 @@ void terrainDamageBash(GameObject *obj) {
 void fallingDamage(GameObject *obj, int16 speed) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
-		if (!a->hasEffect(actorSlowFall)) {
+		if (!a->hasEffect(kActorSlowFall)) {
 			a->acceptDamage(a->thisID(), (MAX(0, speed - 16)*fallingDamageMult) / fallingDamageDiv);
 		}
 	}
@@ -792,7 +792,7 @@ int16 checkBlocked(
 
 
 	//  check to make sure the actor recognizes terrain
-	if (!isActor(obj) || !((Actor *) obj)->hasEffect(actorNoncorporeal)) {
+	if (!isActor(obj) || !((Actor *) obj)->hasEffect(kActorNoncorporeal)) {
 		TilePoint       testLoc = loc;
 
 		testLoc.z = MAX<int16>(loc.z, 8);

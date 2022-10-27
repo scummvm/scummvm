@@ -289,7 +289,7 @@ bool Speech::setupActive() {
 	//Turn Actor Towards Person They Are Talking To
 //	MotionTask::turnObject( *obj, GameObject::objectAddress(32794)->getLocation());
 //	Actor    *a = (Actor *)obj;
-//	if(!a->setAction( actionJumpUp, animateRandom ))
+//	if(!a->setAction( kActionJumpUp, kAnimateRandom ))
 //		throw gError( "Could Not Set Talk Animation");
 
 	// Set up temp gport for blitting to bitmap
@@ -511,8 +511,8 @@ bool Speech::displayText() {
 void Speech::dispose() {
 	if (speechList.currentActive() == this) {
 //		Actor   *a = (Actor *)sp->obj;
-//		a->animationFlags |= animateFinished;
-//		a->setAction( actionStand, animateRandom );
+//		a->animationFlags |= kAnimateFinished;
+//		a->setAction( kActionStand, kAnimateRandom );
 
 		if (!longEnough())
 			playVoice(0);

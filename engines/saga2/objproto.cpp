@@ -924,7 +924,7 @@ uint8 ProtoObj::adjustDamage(uint8 damage) {
 //	Return the fight stance approriate to this weapon
 
 int16 ProtoObj::fightStanceAction(ObjectID actor) {
-	return actionStand;
+	return kActionStand;
 }
 
 // ------------------------------------------------------------------------
@@ -1231,7 +1231,7 @@ bool PhysicalContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->_data.objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & kObjectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -1256,7 +1256,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 	cn = CreateContainerNode(dObj, false);
 	cn->markForShow();                                      //  Deferred open
-	dObjPtr->_data.objectFlags |= objectOpen;         //  Set open bit;
+	dObjPtr->_data.objectFlags |= kObjectOpen;         //  Set open bit;
 	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
@@ -1264,7 +1264,7 @@ bool PhysicalContainerProto::openAction(ObjectID dObj, ObjectID) {
 
 bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	GameObject      *dObjPtr = GameObject::objectAddress(dObj);
-	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::physicalType);
+	ContainerNode   *cn = g_vm->_cnm->find(dObj, ContainerNode::kPhysicalType);
 
 	assert(dObjPtr->isOpen());
 	assert(cn);
@@ -1273,7 +1273,7 @@ bool PhysicalContainerProto::closeAction(ObjectID dObj, ObjectID) {
 	cn->markForDelete();
 
 	//  Clear open bit
-	dObjPtr->_data.objectFlags &= ~objectOpen;
+	dObjPtr->_data.objectFlags &= ~kObjectOpen;
 	g_vm->_cnm->setUpdate(dObjPtr->IDParent());
 
 	return true;
@@ -1296,7 +1296,7 @@ bool PhysicalContainerProto::acceptLockToggleAction(
 	GameObject *dObjPtr = GameObject::objectAddress(dObj);
 
 	//  Toggle locked bit
-	dObjPtr->_data.objectFlags ^= objectLocked;
+	dObjPtr->_data.objectFlags ^= kObjectLocked;
 
 	return true;
 }
@@ -1314,7 +1314,7 @@ bool PhysicalContainerProto::acceptInsertionAction(
 	GameObject  *itemPtr = GameObject::objectAddress(item);
 
 	//  Place the object in the container (if possible)
-	if ((dObjPtr->_data.objectFlags & objectLocked)
+	if ((dObjPtr->_data.objectFlags & kObjectLocked)
 	        ||  !dObjPtr->placeObject(enactor, item, true, num)) {
 		if (isWorld(dObjPtr->IDParent()))
 			dObjPtr->dropInventoryObject(itemPtr, num);
@@ -1619,7 +1619,7 @@ bool MeleeWeaponProto::damageAction(
 	    a,
 	    targetPtr,
 	    GameObject::objectAddress(dObj),
-	    effStats->getSkillLevel(skillIDBrawn));
+	    effStats->getSkillLevel(kSkillIDBrawn));
 
 	return true;
 }
@@ -1646,7 +1646,7 @@ bool MeleeWeaponProto::isTwoHanded(ObjectID attackerID) {
 	//  This weapon must be wielded in two hands if its bulk is greater
 	//  than a quarter of the bulk of the wielder or if the actor does not
 	//  have one handed fighing animation.
-	return      !attackerPtr->isActionAvailable(actionSwingHigh)
+	return      !attackerPtr->isActionAvailable(kActionSwingHigh)
 	            ||  bulk > attackerProto->bulk / 4;
 }
 
@@ -1728,7 +1728,7 @@ uint8 MeleeWeaponProto::weaponRating(
 //	Return the fight stance approriate to this weapon
 
 int16 MeleeWeaponProto::fightStanceAction(ObjectID actor) {
-	return isTwoHanded(actor) ? actionTwoHandSwingHigh : actionSwingHigh;
+	return isTwoHanded(actor) ? kActionTwoHandSwingHigh : kActionSwingHigh;
 }
 
 // ------------------------------------------------------------------------
@@ -1780,7 +1780,7 @@ uint8 BludgeoningWeaponProto::getSkillValue(ObjectID enactor) {
 	a = (Actor *)GameObject::objectAddress(enactor);
 	effStats = a->getStats();
 
-	return effStats->getSkillLevel(skillIDBludgeon);
+	return effStats->getSkillLevel(kSkillIDBludgeon);
 }
 
 // ------------------------------------------------------------------------
@@ -1794,10 +1794,10 @@ void BludgeoningWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 	if (actorIDToPlayerID(enactor, playerID)) {
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 
-		player->skillAdvance(skillIDBludgeon, points);
+		player->skillAdvance(kSkillIDBludgeon, points);
 
 		if (g_vm->_rnd->getRandomNumber(1))
-			player->skillAdvance(skillIDBrawn, points);
+			player->skillAdvance(kSkillIDBrawn, points);
 	}
 }
 
@@ -1817,7 +1817,7 @@ uint8 SlashingWeaponProto::getSkillValue(ObjectID enactor) {
 	a = (Actor *)GameObject::objectAddress(enactor);
 	effStats = a->getStats();
 
-	return effStats->getSkillLevel(skillIDSwordcraft);
+	return effStats->getSkillLevel(kSkillIDSwordcraft);
 }
 
 // ------------------------------------------------------------------------
@@ -1831,10 +1831,10 @@ void SlashingWeaponProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 	if (actorIDToPlayerID(enactor, playerID)) {
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 
-		player->skillAdvance(skillIDSwordcraft, points);
+		player->skillAdvance(kSkillIDSwordcraft, points);
 
 		if (g_vm->_rnd->getRandomNumber(1))
-			player->skillAdvance(skillIDBrawn, points);
+			player->skillAdvance(kSkillIDBrawn, points);
 	}
 }
 
@@ -1944,7 +1944,7 @@ uint8 BowProto::weaponRating(
 
 	if (dist < maximumRange && !wielder->inReach(target->getLocation()))
 		rating += inRangeRatingBonus;
-	rating += wielder->getStats()->getSkillLevel(skillIDArchery);
+	rating += wielder->getStats()->getSkillLevel(kSkillIDArchery);
 
 	return rating;
 }
@@ -1953,7 +1953,7 @@ uint8 BowProto::weaponRating(
 //	Return the fight stance approriate to this weapon
 
 int16 BowProto::fightStanceAction(ObjectID actor) {
-	return actionFireBow;
+	return kActionFireBow;
 }
 
 /* ==================================================================== *
@@ -2044,7 +2044,7 @@ uint8 WeaponWandProto::weaponRating(
 
 	if (dist < maximumRange && !wielder->inReach(target->getLocation()))
 		rating += inRangeRatingBonus;
-	rating += wielder->getStats()->getSkillLevel(skillIDSpellcraft);
+	rating += wielder->getStats()->getSkillLevel(kSkillIDSpellcraft);
 
 	return rating;
 }
@@ -2053,7 +2053,7 @@ uint8 WeaponWandProto::weaponRating(
 //	Return the fight stance approriate to this weapon
 
 int16 WeaponWandProto::fightStanceAction(ObjectID actor) {
-	return actionUseWand;
+	return kActionUseWand;
 }
 
 /* ==================================================================== *
@@ -2114,7 +2114,7 @@ bool ArrowProto::strikeAction(
 	return  itemPtr->acceptStrike(
 	            enactor,
 	            dObj,
-	            a->getStats()->getSkillLevel(skillIDArchery));
+	            a->getStats()->getSkillLevel(kSkillIDArchery));
 }
 
 bool ArrowProto::damageAction(
@@ -2142,7 +2142,7 @@ bool ArrowProto::damageAction(
 	    a,
 	    GameObject::objectAddress(target),
 	    GameObject::objectAddress(dObj),
-	    effStats->getSkillLevel(skillIDBrawn));
+	    effStats->getSkillLevel(kSkillIDBrawn));
 
 	return true;
 }
@@ -2158,10 +2158,10 @@ void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 	if (actorIDToPlayerID(enactor, playerID)) {
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 
-		player->skillAdvance(skillIDArchery, points);
+		player->skillAdvance(kSkillIDArchery, points);
 
 		if (g_vm->_rnd->getRandomNumber(1))
-			player->skillAdvance(skillIDBrawn, points);
+			player->skillAdvance(kSkillIDBrawn, points);
 	}
 }
 
@@ -2368,7 +2368,7 @@ uint8 ShieldProto::getSkillValue(ObjectID enactor) {
 	a = (Actor *)GameObject::objectAddress(enactor);
 	effStats = a->getStats();
 
-	return effStats->getSkillLevel(skillIDShieldcraft);
+	return effStats->getSkillLevel(kSkillIDShieldcraft);
 }
 
 // ------------------------------------------------------------------------
@@ -2382,10 +2382,10 @@ void ShieldProto::applySkillGrowth(ObjectID enactor, uint8 points) {
 	if (actorIDToPlayerID(enactor, playerID)) {
 		PlayerActor     *player = getPlayerActorAddress(playerID);
 
-		player->skillAdvance(skillIDShieldcraft, points);
+		player->skillAdvance(kSkillIDShieldcraft, points);
 
 		if (g_vm->_rnd->getRandomNumber(1))
-			player->skillAdvance(skillIDBrawn, points);
+			player->skillAdvance(kSkillIDBrawn, points);
 	}
 }
 
@@ -2757,7 +2757,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
 		uint16  type = getEnchantmentType(flgs),
 		        subType = getEnchantmentSubType(flgs);
 
-		if (type == effectOthers && subType == actorPoisoned) {
+		if (type == kEffectOthers && subType == kActorPoisoned) {
 			// get the damage amount for this poison
 			int16 damage = getEnchantmentAmount(flgs);
 
@@ -2898,7 +2898,7 @@ bool IntangibleContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
 	bool          result;
 	GameObject    *dObjPtr = GameObject::objectAddress(dObj);
 
-	if (dObjPtr->_data.objectFlags & objectOpen)
+	if (dObjPtr->_data.objectFlags & kObjectOpen)
 		result = close(dObj, enactor);
 	else
 		result = open(dObj, enactor);
@@ -2926,7 +2926,7 @@ bool IntangibleContainerProto::openAction(ObjectID dObj, ObjectID enactor) {
 }
 
 bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
-	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::mentalType);
+	ContainerNode *cn = g_vm->_cnm->find(dObj, ContainerNode::kMentalType);
 
 	assert(cn);
 

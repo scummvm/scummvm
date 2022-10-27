@@ -430,15 +430,15 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		if (protag->isDead())
 			continue;
 
-		if (senseFlags & (1 << actorBlind))
+		if (senseFlags & (1 << kActorBlind))
 			continue;
 
 		//  This extra test is a HACK to ensure that the center actor
 		//  will be able to sense a protaganist even if the protaganist
 		//  is invisible.
 		if (!objIsActor || getObject() != getCenterActor()) {
-			if (!(senseFlags & actorSeeInvis)
-			        &&  protag->hasEffect(actorInvisible))
+			if (!(senseFlags & kActorSeeInvis)
+			        &&  protag->hasEffect(kActorInvisible))
 				continue;
 		}
 
@@ -487,7 +487,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	for (iter.first(&objToTest);
 	        objToTest != nullptr;
 	        iter.next(&objToTest)) {
-		if (senseFlags & (1 << actorBlind))
+		if (senseFlags & (1 << kActorBlind))
 			continue;
 		bool objToTestIsActor = isActor(objToTest);
 
@@ -499,7 +499,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		            ||  getObject() != getCenterActor()
 		            ||  !isPlayerActor((Actor *)objToTest))) {
 			Actor *a = (Actor *) objToTest;
-			if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
+			if (!(senseFlags & kActorSeeInvis) && a->hasEffect(kActorInvisible))
 				continue;
 		}
 		//  Skip if object is out of _range
@@ -571,7 +571,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	GameObject      *soughtObject = GameObject::objectAddress(_soughtObjID);
 	bool            objIsActor = isActor(getObject());
 
-	if (senseFlags & (1 << actorBlind))
+	if (senseFlags & (1 << kActorBlind))
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
@@ -582,7 +582,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	            ||  getObject() != getCenterActor()
 	            ||  !isPlayerActor((Actor *)soughtObject))) {
 		Actor *a = (Actor *) soughtObject;
-		if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
+		if (!(senseFlags & kActorSeeInvis) && a->hasEffect(kActorInvisible))
 			return false;
 	}
 
@@ -700,7 +700,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	assert(isActor(_soughtActor));
 	bool        objIsActor = isActor(getObject());
 
-	if (senseFlags & (1 << actorBlind))
+	if (senseFlags & (1 << kActorBlind))
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
@@ -709,7 +709,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	if (!objIsActor
 	        ||  getObject() != getCenterActor()
 	        ||  !isPlayerActor(_soughtActor)) {
-		if (!(senseFlags & actorSeeInvis) && _soughtActor->hasEffect(actorInvisible))
+		if (!(senseFlags & kActorSeeInvis) && _soughtActor->hasEffect(kActorInvisible))
 			return false;
 	}
 
