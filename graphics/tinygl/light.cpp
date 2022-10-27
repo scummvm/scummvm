@@ -188,7 +188,7 @@ void GLContext::gl_enable_disable_light(int light, int v) {
 	}
 }
 
-// non optimized lightening model
+// non optimized lightning model
 void GLContext::gl_shade_vertex(GLVertex *v) {
 	float R, G, B, A;
 	GLMaterial *m;
