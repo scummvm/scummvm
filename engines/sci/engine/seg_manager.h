@@ -39,8 +39,8 @@ namespace Sci {
  */
 enum ScriptLoadType {
 	SCRIPT_GET_DONT_LOAD = 0, /**< Fail if not loaded */
-	SCRIPT_GET_LOAD = 1, /**< Load, if neccessary */
-	SCRIPT_GET_LOCK = 3 /**< Load, if neccessary, and lock */
+	SCRIPT_GET_LOAD = 1, /**< Load, if necessary */
+	SCRIPT_GET_LOCK = 3 /**< Load, if necessary, and lock */
 };
 
 class Script;
