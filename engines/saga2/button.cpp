@@ -169,9 +169,9 @@ GfxCompImage::GfxCompImage(gPanelList &list, const StaticRect &box, void **image
 
 GfxCompImage::~GfxCompImage() {
 	// delete any allocated image pointers
-	// for JEFFL: I took out the winklude #ifdefs becuase I belive
+	// for JEFFL: I took out the winklude #ifdefs because I believe
 	// I fixed the problem that was causing the crash under win32
-	// 11-14-95, I should talk to you tommorow. This is note is
+	// 11-14-95, I should talk to you tomorrow. This note is
 	// a precaution
 
 	// if we LoadRes'ed image internally RDispose those
