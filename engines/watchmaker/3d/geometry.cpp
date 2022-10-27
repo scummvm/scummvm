@@ -64,12 +64,6 @@ t3dBODY     *t3dSky = nullptr;
 uint32      t3d_NumMeshesVisible;
 t3dMESH     *t3d_VisibleMeshes[255];
 
-#define LEFTCLIP        0
-#define RIGHTCLIP       1
-#define TOPCLIP         2
-#define BOTTOMCLIP      3
-#define NUMCLIPPLANES   4
-
 t3dNORMAL   ClipPlanes[NUMCLIPPLANES];
 
 t3dMESH     *t3dPortalList[MAX_RECURSION_LEVEL];
@@ -481,59 +475,6 @@ uint16 t3dBackfaceCulling(NormalList &normals, uint32 NumNormals, t3dV3F  *eye) 
 	}
 
 	return NumVisiNorm;
-}
-
-/* -----------------10/06/99 15.50-------------------
- *                  t3dCalc2dTo3dPos
- * --------------------------------------------------*/
-void t3dCalc2dTo3dPos(t3dV3F *pos, t3dF32 posx, t3dF32 posy) {
-	rScreenSpaceToCameraSpace(&pos->x, &pos->y, &pos->z, posx, posy);
-}
-
-/* -----------------10/06/99 15.41-------------------
- *                  t3dSetViewport
- * --------------------------------------------------*/
-void t3dSetViewport(t3dCAMERA *cam, uint32 cx, uint32 cy, uint32 sx, uint32 sy, t3dF32 fov, uint8 sup) {
-	t3dV3F v1, v2, v3, v4, c0;
-	t3dF32 SuperView = 50.0f * (sup ^ 1);
-	t3dF32 fx = (t3dF32)sx, fy = (t3dF32)sy, asp;
-	asp = (fy * fy) / (fx * fx);
-
-//	fov=((fov/2.0f)/180.0f)*T3D_PI;
-
-//	cam->Focus=90;
-//	cam->Factor.x = ((fx/2.0f) / (t3dF32)tan(fov));
-//	cam->Factor.y = -( cam->Factor.x * asp);
-
-
-	cam->Center.x = (t3dF32)(cx);
-	cam->Center.y = (t3dF32)(cy);
-
-
-
-	cam->NearClipPlane = fov;
-	cam->FarClipPlane = 89000.0f;
-	rSetProjectionMatrix((float)(sx),
-	                     (float)(sy),
-	                     fov,
-	                     10.0f + SuperView, 90000.0f);
-
-	//Set Clipplanes
-	t3dVectFill(&c0, 0.0f);
-	t3dCalc2dTo3dPos(&v1, 0.0f,  0.0f);
-	t3dCalc2dTo3dPos(&v2, (t3dF32)sx, 0.0f);
-	t3dCalc2dTo3dPos(&v3, 0.0f, (t3dF32)sy);
-	t3dCalc2dTo3dPos(&v4, (t3dF32)sx, (t3dF32)sy);
-
-	t3dPlaneNormal(&ClipPlanes[LEFTCLIP],   &c0, &v1, &v3);
-	t3dPlaneNormal(&ClipPlanes[RIGHTCLIP],  &c0, &v4, &v2);
-	t3dPlaneNormal(&ClipPlanes[TOPCLIP],    &c0, &v2, &v1);
-	t3dPlaneNormal(&ClipPlanes[BOTTOMCLIP], &c0, &v3, &v4);
-
-}
-
-void t3dSetViewport(t3dCAMERA *cam, WindowInfo &info, t3dF32 fov, uint8 sup) {
-	t3dSetViewport(t3dCurCamera, info.width / 2, info.height / 2, info.width, info.height, fov, sup);
 }
 
 /* -----------------10/06/99 15.55-------------------

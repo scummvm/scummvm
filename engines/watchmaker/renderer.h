@@ -22,6 +22,7 @@
 #ifndef WATCHMAKER_RENDERER_H
 #define WATCHMAKER_RENDERER_H
 
+#include "math/matrix4.h"
 #include "watchmaker/utils.h"
 #include "watchmaker/sdl_wrapper.h"
 #include "watchmaker/types.h"
@@ -69,11 +70,16 @@ public:
 	int rFitY(int y);
 	int rInvFitX(int x);
 	int rInvFitY(int y);
+
+	bool setProjectionMatrix(float width, float height, float fAspect, float fNearPlane, float fFarPlane);
+	Math::Vector3d screenSpaceToCameraSpace(float x, float y);
 private:
 	sdl_wrapper *sdl;
 	// aspect correction
 	float gAspectX = 1, gAspectY = 1;
 	float gInvAspectX = 1, gInvAspectY = 1;
+	float _nearPlane;
+	Math::Matrix4 _projectionMatrix;
 };
 
 

@@ -116,11 +116,51 @@ void rResetExtends(void) {
 	gBlitterExtends.bottom = -99999999;
 }
 
+// TODO: Move this to Renderer
+extern Rect gBlitterViewport;
+bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
+							int *dposx, int *dposy )
+{
+	int dwWidth, dwHeight;
+
+	dwWidth=(gBlitterViewport.right-gBlitterViewport.left);
+	dwHeight=(gBlitterViewport.bottom-gBlitterViewport.top);
+
+	if ( ((*dposx)+(*sdimx))>dwWidth)
+	{
+		(*sdimx)=(*sdimx)-((*dposx)+(*sdimx)-dwWidth);
+	}
+	if ( ((*dposy)+(*sdimy))>dwHeight)
+	{
+		(*sdimy)=(*sdimy)-((*dposy)+(*sdimy)-dwHeight);
+	}
+
+	if ( (*dposx)<gBlitterViewport.left)
+	{
+		(*sposx)+=gBlitterViewport.left-(*dposx);
+		(*sdimx)-=gBlitterViewport.left-(*dposx);
+		(*dposx)=gBlitterViewport.left;
+	}
+	if ( (*dposy)<gBlitterViewport.top)
+	{
+		(*sposy)+=gBlitterViewport.top-(*dposy);
+		(*sdimy)-=gBlitterViewport.top-(*dposy);
+		(*dposy)=gBlitterViewport.top;
+	}
+
+	if(((*sdimx)<=0) || ((*sdimy)<=0))
+	{
+		return false;
+	}
+
+	return true;
+}
+
 //************************************************************************************************************************
 void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
               int sposx, int sposy, int sdimx, int sdimy) {
 	// TODO: This currently gets called a bit too much.
-	//warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gBitmapList[src].Name, dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
+	warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gBitmapList[src].name.c_str(), dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
 	auto &bitmap = gBitmapList[src];
 
 	checkGlError("rBlitter Start");

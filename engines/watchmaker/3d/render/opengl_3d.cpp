@@ -36,6 +36,7 @@
 #ifdef USE_OPENGL_GAME
 
 #include "graphics/opengl/system_headers.h"
+#include "watchmaker/3d/render/shadows.h"
 #include "watchmaker/file_utils.h"
 #include "watchmaker/tga_util.h"
 
@@ -300,6 +301,15 @@ int rAddUserViewMatrix(const t3dM3X3F &viewMatrix, const t3dV3F &translation) {
 							  viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
 							  viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
 							  translation.x, translation.y, translation.z);
+}
+
+void rResetPipeline() {
+	gNumLinesArray = 0;
+	gNumPointsBuffer = 0;
+	gNumShadowBoxesList = 0;
+	rNumUserViewMatrices = 0;
+	g_dwD3DUserVertexBufferCounter = 0;
+	return;
 }
 
 //*********************************************************************************************

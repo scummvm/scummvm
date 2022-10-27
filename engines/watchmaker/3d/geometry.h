@@ -30,6 +30,14 @@
 
 namespace Watchmaker {
 
+#define LEFTCLIP        0
+#define RIGHTCLIP       1
+#define TOPCLIP         2
+#define BOTTOMCLIP      3
+#define NUMCLIPPLANES   4
+
+extern t3dNORMAL   ClipPlanes[NUMCLIPPLANES];
+
 extern t3dBODY      *t3dCurRoom, *t3dOrigRoom;
 extern t3dCAMERA    *t3dCurCamera;
 extern t3dM3X3F     t3dCurViewMatrix;
@@ -58,7 +66,6 @@ void t3dCalcRejectedMeshFromPortal(t3dBODY *body);
 void t3dSetViewport(t3dCAMERA *cam, WindowInfo &info, t3dF32 fov, uint8 sup);
 t3dF32 t3dCheckWithFloor();
 void t3dCreateProceduralSky();
-void t3dCalc2dTo3dPos(t3dV3F *pos, t3dF32 posx, t3dF32 posy);
 void t3dCalcMeshBones(t3dMESH *mesh, int32 last);
 void t3dResetPipeline();
 void t3dRotateMoveCamera(t3dCAMERA *cam, t3dF32 AngleX, t3dF32 AngleY, t3dF32 AngleSpeed);
