@@ -1427,7 +1427,7 @@ bool BladeRunnerEngine::isAllowedRepeatedCustomEvent(const Common::Event &currev
 // F-keys are not repeated.
 bool BladeRunnerEngine::isAllowedRepeatedKey(const Common::KeyState &currKeyState) {
 	// Return and KP_Enter keys are repeatable in KIA.
-	// This is noticable when choosing an already saved game to overwrite
+	// This is noticeable when choosing an already saved game to overwrite
 	// and holding down Enter would cause the confirmation dialogue to pop up
 	// and it would subsequently confirm it as well.
 	return  currKeyState.keycode == Common::KEYCODE_BACKSPACE
