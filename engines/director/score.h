@@ -120,6 +120,8 @@ public:
 
 	void playSoundChannel(uint16 frameId, bool puppetOnly);
 
+	Common::String formatChannelInfo();
+
 private:
 	void update();
 	void playQueuedSound();
