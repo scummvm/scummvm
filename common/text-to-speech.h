@@ -217,7 +217,7 @@ public:
 	/**
 	 * Resumes the speech
 	 *
-	 * @note On linux, the speech resumes from the begining of the last speech being
+	 * @note On linux, the speech resumes from the beginning of the last speech being
 	 * said, when pause() was called. On other platforms the speech resumes from
 	 * exactly where it was paused();
 	 */
