@@ -374,7 +374,7 @@ void FontManager::calculateWordWrap(const Common::U32String &text,
 		uint width = getStrWidth(word);
 		if (width + offset >= lineWidth) {
 			wordWrap = true;
-			// word is too long: just put pointer back at begining
+			// word is too long: just put pointer back at beginning
 			ptr = begin;
 		} else {
 			words.push_back(word);
