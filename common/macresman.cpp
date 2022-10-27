@@ -133,7 +133,7 @@ bool MacResManager::hasDataFork() const {
 }
 
 bool MacResManager::hasResFork() const {
-	return !_baseFileName.empty() && _mode != kResForkNone;
+	return !_baseFileName.empty() && _mode != kResForkNone && _resForkSize != 0;
 }
 
 uint32 MacResManager::getResForkDataSize() const {
@@ -446,13 +446,15 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream *stream) {
 			_resForkOffset = MBI_INFOHDR + dataSizePad;
 			_resForkSize = rsrcSize;
 		}
+
+		if (_resForkOffset < 0)
+			return false;
+
+		_mode = kResForkMacBinary;
+		return load(stream);
 	}
 
-	if (_resForkOffset < 0)
-		return false;
-
-	_mode = kResForkMacBinary;
-	return load(stream);
+	return false;
 }
 
 bool MacResManager::loadFromRawFork(SeekableReadStream *stream) {
@@ -471,6 +473,11 @@ bool MacResManager::load(SeekableReadStream *stream) {
 
 	if (_mode == kResForkNone)
 		return false;
+
+	if (_resForkSize == 0) {
+		_stream = stream;
+		return true;
+	}
 
 	stream->seek(_resForkOffset);
 
