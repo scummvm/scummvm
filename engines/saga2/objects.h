@@ -313,7 +313,7 @@ public:
 	//  this object
 	bool isContaining(ObjectTarget *objTarget);
 
-	//  determine wether this object has a specified property
+	//  determine whether this object has a specified property
 	bool hasProperty(const ObjectProperty &objProp) {
 		return objProp.operator()(this);
 	}
