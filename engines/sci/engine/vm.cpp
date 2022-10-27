@@ -280,7 +280,7 @@ ExecStack *send_selector(EngineState *s, reg_t send_obj, reg_t work_obj, StackPt
 		argp++;
 		argc = argp->requireUint16();
 
-		if (argc > 0x800)	// More arguments than the stack could possibly accomodate for
+		if (argc > 0x800)	// More arguments than the stack could possibly accommodate for
 			error("send_selector(): More than 0x800 arguments to function call");
 
 #ifdef ENABLE_SCI32
