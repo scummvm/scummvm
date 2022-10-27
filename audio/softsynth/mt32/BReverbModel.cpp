@@ -588,7 +588,7 @@ public:
 				}
 			} else {
 				DelayWithLowPassFilter<Sample> * const entranceDelay = static_cast<DelayWithLowPassFilter<Sample> *>(combs[0]);
-				// If the output position is equal to the comb size, get it now in order not to loose it
+				// If the output position is equal to the comb size, get it now in order not to lose it
 				Sample link = entranceDelay->getOutputAt(currentSettings.combSizes[0] - 1);
 
 				// Entrance LPF. Note, comb.process() differs a bit here.
@@ -598,7 +598,7 @@ public:
 				link = allpasses[1]->process(link);
 				link = allpasses[2]->process(link);
 
-				// If the output position is equal to the comb size, get it now in order not to loose it
+				// If the output position is equal to the comb size, get it now in order not to lose it
 				Sample outL1 = combs[1]->getOutputAt(currentSettings.outLPositions[0] - 1);
 
 				combs[1]->process(link);
