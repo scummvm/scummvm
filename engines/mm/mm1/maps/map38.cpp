@@ -55,57 +55,94 @@ void Map38::special00() {
 }
 
 void Map38::special01() {
+	send(SoundMessage(STRING["maps.map38.wall"]));
 }
 
 void Map38::special02() {
+	special03();
 }
 
 void Map38::special03() {
+	send(SoundMessage(
+		STRING["maps.stairs_up"],
+		[]() {
+			g_maps->_mapPos.x = 0;
+			g_maps->changeMap(0xf03, 3);
+		}
+	));
 }
 
 void Map38::special04() {
+	send(SoundMessage(STRING["maps.map38.banner"]));
 }
 
 void Map38::special05() {
+	encounter(&_data[669], &_data[682]);
 }
 
 void Map38::special06() {
+	encounter(&_data[690], &_data[705]);
 }
 
 void Map38::special07() {
+	encounter(&_data[715], &_data[724]);
 }
 
 void Map38::special08() {
+	encounter(&_data[733], &_data[743]);
 }
 
 void Map38::special09() {
+	encounter(&_data[753], &_data[764]);
 }
 
 void Map38::special10() {
+	encounter(&_data[775], &_data[788]);
 }
 
 void Map38::special11() {
+	encounter(&_data[801], &_data[816]);
 }
 
 void Map38::special12() {
+	encounter(&_data[831], &_data[840]);
 }
 
 void Map38::special13() {
+	encounter(&_data[849], &_data[862]);
 }
 
 void Map38::special14() {
+	encounter(&_data[875], &_data[890]);
 }
 
 void Map38::special15() {
+	send(SoundMessage(STRING["maps.map38.face1"]));
 }
 
 void Map38::special16() {
+	send(SoundMessage(STRING["maps.map38.face2"]));
 }
 
 void Map38::special17() {
+	send(SoundMessage(STRING["maps.map38.face3"]));
 }
 
 void Map38::special18() {
+	send(SoundMessage(STRING["maps.map38.face4"]));
+}
+
+void Map38::encounter(const byte *id1, const byte *id2) {
+	Game::Encounter &enc = g_globals->_encounters;
+	g_maps->clearSpecial();
+
+	enc.clearMonsters();
+	for (int i = 0; i < 14 && *id1; ++i, ++id1, ++id2)
+		enc.addMonster(*id1, *id2);
+
+	enc._flag = true;
+	enc._levelIndex = 64;
+	enc.execute();
 }
 
 } // namespace Maps
