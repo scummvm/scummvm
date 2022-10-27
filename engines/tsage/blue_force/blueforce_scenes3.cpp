@@ -950,9 +950,9 @@ void Scene315::Action1::signal() {
 		if (scene->_sceneMode == 3169) {
 			T2_GLOBALS._uiElements.addScore(30);
 			BF_INVENTORY.setObjectScene(INV_MUG_SHOT, 1);
-			//HACK: This has to be checked wether or not it occurs in the original.
-			//When the _sceneMode is set to 3169, the value desn't change.
-			//If you show the forest rapsheet, it gives points (and again... and again...)
+			// HACK: This has to be checked whether or not it occurs in the original.
+			// When the _sceneMode is set to 3169, the value doesn't change.
+			// If you show the forest rapsheet, it gives points (and again... and again...)
 			scene->_sceneMode = 3154;
 		}
 
