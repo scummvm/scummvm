@@ -142,7 +142,7 @@ void _game_session::Render_3d_nicos() {
 		feature = (_feature_info *)LinkedDataObject::Fetch_item_by_number(MS->features, j);
 
 		// setup camera : have to do this once per frame because
-		// clip_text_print does a Res_open and in principal this
+		// clip_text_print does a Res_open and in principle this
 		// could move the camera about due to defragging etc.
 		PXcamera &camera = GetCamera();
 
