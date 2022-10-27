@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map38::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 19; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[70 + i]) {
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,69 @@ void Map38::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
-	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+
+	send(SoundMessage(STRING["maps.map38.ringing"]));
+	g_maps->_mapPos = Common::Point(getRandomNumber(16) - 1,
+		getRandomNumber(16) - 1);
+	updateGame();
 }
 
 void Map38::special00() {
+	send(SoundMessage(STRING["maps.map38.message4"]));
+}
+
+void Map38::special01() {
+}
+
+void Map38::special02() {
+}
+
+void Map38::special03() {
+}
+
+void Map38::special04() {
+}
+
+void Map38::special05() {
+}
+
+void Map38::special06() {
+}
+
+void Map38::special07() {
+}
+
+void Map38::special08() {
+}
+
+void Map38::special09() {
+}
+
+void Map38::special10() {
+}
+
+void Map38::special11() {
+}
+
+void Map38::special12() {
+}
+
+void Map38::special13() {
+}
+
+void Map38::special14() {
+}
+
+void Map38::special15() {
+}
+
+void Map38::special16() {
+}
+
+void Map38::special17() {
+}
+
+void Map38::special18() {
 }
 
 } // namespace Maps
