@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.4.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-25 21:05+0000\n"
-"PO-Revision-Date: 2022-10-10 14:31+0000\n"
+"PO-Revision-Date: 2022-10-27 16:30+0000\n"
 "Last-Translator: IlDucci <pajaroloco_2@hotmail.com>\n"
 "Language-Team: Spanish <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/es/>\n"
@@ -8995,10 +8995,8 @@ msgid "Toggle subtitles"
 msgstr "Subtítulos"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Ocultar otros"
+msgstr "Ocultar pistas"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
