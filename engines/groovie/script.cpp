@@ -1205,7 +1205,7 @@ void Script::o_inputloopend() {
 		}
 		_vm->_grvCursorMan->show(true);
 
-		// Go back to the begining of the loop
+		// Go back to the beginning of the loop
 		_currentInstruction = _inputLoopAddress;
 
 		// There's nothing to do until we get some input
