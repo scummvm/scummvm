@@ -1089,7 +1089,7 @@ bool MacMenu::draw(ManagedSurface *g, bool forceRedraw) {
 		}
 	}
 
-	if ((_wm->_mode & kWMModalMenuMode) | !_wm->_screen)
+	if ((_wm->_mode & kWMModalMenuMode) || !_wm->_screen)
 		g_system->copyRectToScreen(_screen.getBasePtr(_bbox.left, _bbox.top), _screen.pitch, _bbox.left, _bbox.top, _bbox.width(), _bbox.height());
 
 
