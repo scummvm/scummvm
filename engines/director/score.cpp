@@ -1373,4 +1373,41 @@ void Score::loadActions(Common::SeekableReadStreamEndian &stream) {
 	free(scriptRefs);
 }
 
+Common::String Score::formatChannelInfo() {
+	Frame &frame = *_frames[_currentFrame]; 
+	Common::String result;
+	result += Common::String::format("TMPO:   tempo: %d, skipFrameFlag: %d, blend: %d\n",
+		frame._tempo, frame._skipFrameFlag, frame._blend);
+	if (frame._palette.paletteId) {
+		result += Common::String::format("PAL:    paletteId: %d, firstColor: %d, lastColor: %d, flags: %d, cycleCount: %d, speed: %d, frameCount: %d, fade: %d, delay: %d, style: %d\n",
+			frame._palette.paletteId, frame._palette.firstColor, frame._palette.lastColor, frame._palette.flags,
+			frame._palette.cycleCount, frame._palette.speed, frame._palette.frameCount,
+			frame._palette.fade, frame._palette.delay, frame._palette.style);
+	} else {
+		result += Common::String::format("PAL:    paletteId: 000\n");
+	}
+	result += Common::String::format("TRAN:   transType: %d, transDuration: %d, transChunkSize: %d\n",
+		frame._transType, frame._transDuration, frame._transChunkSize);
+	result += Common::String::format("SND: 1  sound1: %d, soundType1: %d\n", frame._sound1.member, frame._soundType1);
+	result += Common::String::format("SND: 2  sound2: %d, soundType2: %d\n", frame._sound2.member, frame._soundType2);
+	result += Common::String::format("LSCR:   actionId: %d\n", frame._actionId.member);
+
+	for (int i = 0; i < frame._numChannels; i++) {
+		Channel &channel = *_channels[i + 1];
+		Sprite &sprite = *channel._sprite;
+		if (sprite._castId.member) {
+			result += Common::String::format("CH: %-3d castId: %s, visible:%d,[inkData:%02x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x, constraint: %d, puppet: %d, stretch: %d\n",
+				i + 1, sprite._castId.asString().c_str(), channel._visible, sprite._inkData,
+				sprite._ink, sprite._trails, sprite._thickness, channel._width, channel._height,
+				channel._currentPoint.x, channel._currentPoint.y,
+				sprite._spriteType, sprite._foreColor, sprite._backColor, sprite._scriptId.asString().c_str(), sprite._colorcode, sprite._blendAmount, sprite._unk3, channel._constraint, sprite._puppet, sprite._stretch);
+		} else {
+			result += Common::String::format("CH: %-3d castId: 000\n", i + 1);
+		}
+	}
+
+	return result;
+
+}
+
 } // End of namespace Director

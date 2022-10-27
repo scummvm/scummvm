@@ -230,6 +230,12 @@ bool Debugger::cmdChannels(int argc, const char **argv) {
 
 	int maxSize = (int)score->_frames.size();
 	int frameId = score->getCurrentFrame();
+	if (argc == 1) {
+		debugPrintf("Channel info for current frame %d of %d\n", frameId, maxSize);
+		debugPrintf("%s\n", score->formatChannelInfo().c_str());
+		return true;
+	}
+
 	if (argc == 2)
 		frameId = atoi(argv[1]);
 
