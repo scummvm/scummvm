@@ -45,15 +45,15 @@ const uint32    bookGroupID     = MKTAG('B', 'O', 'O', 'K');
 const int maxVisiblePages = 2;
 
 enum {
-	pageLeft = 0,
-	pageRight,
-	pageUp,
-	pageDown
+	kPageLeft = 0,
+	kPageRight,
+	kPageUp,
+	kPageDown
 };
 
 enum pageOrientation {
-	pageOrientVertical = 0,
-	pageOrientHorizontal
+	kPageOrientVertical = 0,
+	kPageOrientHorizontal
 };
 
 struct CDocumentAppearance {
@@ -78,10 +78,10 @@ class CDocument : public ModalWindow {
 
 private:
 	enum {
-		maxPages            = 32,
-		maxLines            = 32,
-		maxChars            = 32,
-		textPictureOffset   = 1
+		kMaxPages            = 32,
+		kMaxLines            = 32,
+		kMaxChars            = 32,
+		kTextPictureOffset   = 1
 	};
 
 	struct ImageHeader {
@@ -93,7 +93,7 @@ private:
 	CDocumentAppearance &_app;
 
 	// image poiner array
-	void            *_images[maxPages];
+	void            *_images[kMaxPages];
 
 	uint16          _currentPage,
 	                _lineWidth,
@@ -104,10 +104,10 @@ private:
 	gFont           *_textFont;
 	uint16          _textHeight;
 	uint16          _pages;
-	uint16          _numLines[maxPages];
-	uint16          _lineLen[maxPages][maxLines];
-	uint16          _lineOffset[maxPages];
-	Extent16        _imageSizes[maxPages];
+	uint16          _numLines[kMaxPages];
+	uint16          _lineLen[kMaxPages][kMaxLines];
+	uint16          _lineOffset[kMaxPages];
+	Extent16        _imageSizes[kMaxPages];
 	bool            _pageBreakSet;
 
 	char            *_scan;                  // for parsing book text.

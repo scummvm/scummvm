@@ -112,7 +112,7 @@ void  DisplayNodeList::init(uint16 s) {
 		_displayList[i]._efx = nullptr;
 		_displayList[i]._nextDisplayed = nullptr;
 		_displayList[i]._object = nullptr;
-		_displayList[i]._type = nodeTypeObject;
+		_displayList[i]._type = kNodeTypeObject;
 	}
 }
 //-----------------------------------------------------------------------
@@ -123,7 +123,7 @@ DisplayNode::DisplayNode() {
 	_sortDepth = 0;
 	_object = nullptr;
 	_flags = 0;                  // various flags
-	_type = nodeTypeObject;
+	_type = kNodeTypeObject;
 	_efx = nullptr;
 }
 
@@ -172,7 +172,7 @@ void DisplayNodeList::draw() {
 	}
 
 	for (dn = DisplayNodeList::_head; dn; dn = dn->_nextDisplayed) {
-		if (dn->_type == nodeTypeEffect)
+		if (dn->_type == kNodeTypeEffect)
 			dn->drawEffect();
 		else
 			dn->drawObject();
@@ -291,13 +291,13 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 		dn->_nextDisplayed = nullptr;
 		dn->_object = ob;
 
-		dn->_type = nodeTypeObject;
+		dn->_type = kNodeTypeObject;
 
 		dn->_flags = 0;
 		if (centerActorIndicatorEnabled
 		        &&  isActor(dn->_object)
 		        && ((Actor *)dn->_object) == centerActor)
-			dn->_flags |= DisplayNode::displayIndicator;
+			dn->_flags |= DisplayNode::kDisplayIndicator;
 
 		//  Various test data
 //		dn->spriteFrame = 0;
@@ -789,7 +789,7 @@ void DisplayNode::drawObject() {
 	_hitBox.width = bodySprite->size.x;
 	_hitBox.height = bodySprite->size.y;
 
-	if (_flags & displayIndicator) {
+	if (_flags & kDisplayIndicator) {
 		Point16     indicatorCoords;
 		gPixelMap   &indicator = *mouseCursors[kMouseCenterActorIndicatorImage];
 
@@ -814,7 +814,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 		error("Object sprites have been dumped!");
 
 	for (dn = DisplayNodeList::_head; dn; dn = dn->_nextDisplayed) {
-		if (dn->_type == nodeTypeObject) {
+		if (dn->_type == kNodeTypeObject) {
 			GameObject  *obj = dn->_object;
 
 			if (obj->parent() == currentWorld && dn->_hitBox.ptInside(mouse.x, mouse.y)) {
@@ -907,7 +907,7 @@ void DisplayNodeList::buildEffects(bool) {
 			if (_displayList[i]._efx->isHidden() || _displayList[i]._efx->isDead())
 				continue;
 			// make sure it knows it's not a real object
-			_displayList[i]._type = nodeTypeEffect;
+			_displayList[i]._type = kNodeTypeEffect;
 
 			_displayList[i]._sortDepth = _displayList[i]._efx->_screenCoords.y + _displayList[i]._efx->_current.z / 2;
 			if (dn) {

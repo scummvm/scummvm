@@ -38,8 +38,8 @@ struct StaticTilePoint;
 class Effectron;
 
 enum nodeType {
-	nodeTypeObject = 0,
-	nodeTypeEffect
+	kNodeTypeObject = 0,
+	kNodeTypeEffect
 };
 
 
@@ -58,7 +58,7 @@ private:
 	uint8                   _flags;                  // various flags
 
 	enum {
-		displayIndicator = (1 << 0)
+		kDisplayIndicator = (1 << 0)
 	};
 
 public:
