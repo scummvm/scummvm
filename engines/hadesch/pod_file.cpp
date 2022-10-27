@@ -22,6 +22,7 @@
  */
 #include "common/debug.h"
 #include "common/file.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 
 #include "hadesch/hadesch.h"
@@ -75,12 +76,16 @@ bool PodFile::openStore(const Common::SharedPtr<Common::SeekableReadStream> &par
 }
 
 bool PodFile::openStore(const Common::String &name) {
-	Common::SharedPtr<Common::File> file(new Common::File());
-	if (name.empty() || !file->open(name)) {
+  	if (name.empty()) {
 		return false;
 	}
 
-	return openStore(file);
+	Common::SharedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(name));
+	if (!stream) {
+		return false;
+	}
+
+	return openStore(stream);
 }
 
 // It's tempting to use substream but substream is not thread safe

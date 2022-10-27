@@ -495,10 +495,10 @@ Common::Error HadeschEngine::run() {
 		};
 		debug("HadeschEngine: loading wd.pod");
 		for (uint i = 0; i < ARRAYSIZE(wdpodpaths); ++i) {
-			Common::SharedPtr<Common::File> file(new Common::File());
-			if (file->open(wdpodpaths[i])) {
+			Common::SharedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(wdpodpaths[i]));
+			if (stream) {
 				_wdPodFile = Common::SharedPtr<PodFile>(new PodFile("WD.POD"));
-				_wdPodFile->openStore(file);
+				_wdPodFile->openStore(stream);
 				break;
 			}
 		}
@@ -516,8 +516,8 @@ Common::Error HadeschEngine::run() {
 	// on cdScenePath
 	const char *const scenepaths[] = {"CDAssets/", "Scenes/"};
 	for (uint i = 0; i < ARRAYSIZE(scenepaths); ++i) {
-		Common::ScopedPtr<Common::File> file(new Common::File());
-		if (file->open(Common::String(scenepaths[i]) + "OLYMPUS/OL.POD")) {
+		Common::ScopedPtr<Common::SeekableReadStream> stream(Common::MacResManager::openFileOrDataFork(Common::String(scenepaths[i]) + "OLYMPUS/OL.POD"));
+		if (stream) {
 			_cdScenesPath = scenepaths[i];
 			break;
 		}

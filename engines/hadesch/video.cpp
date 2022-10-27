@@ -32,6 +32,7 @@
 #include "hadesch/pod_file.h"
 #include "hadesch/baptr.h"
 #include "common/translation.h"
+#include "common/macresman.h"
 
 static const int kVideoMaxW = 1280;
 static const int kVideoMaxH = 480;
@@ -758,12 +759,13 @@ void VideoRoom::playVideo(const Common::String &name, int zValue,
 	Common::SharedPtr<Video::SmackerDecoder> decoder
 	  = Common::SharedPtr<Video::SmackerDecoder>(new Video::SmackerDecoder());
 
-	Common::File *file = new Common::File;
 	Common::String mappedName = _assetMap.get(name, 1);
 	if (mappedName == "") {
 		mappedName = name;
 	}
-	if (!file->open(_smkPath + "/" + mappedName + ".SMK") || !decoder->loadStream(file)) {
+	Common::SeekableReadStream *stream = Common::MacResManager::openFileOrDataFork(_smkPath + "/" + mappedName + ".SMK");
+
+	if (!stream || !decoder->loadStream(stream)) {
 		debug("Video file %s can't be opened", name.c_str());
 		g_vm->handleEvent(callbackEvent);
 		return;
