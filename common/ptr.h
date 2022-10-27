@@ -374,7 +374,7 @@ private:
 
 
 /**
- * Implements a smart pointer that holds a non-owning ("weak") refrence to
+ * Implements a smart pointer that holds a non-owning ("weak") reference to
  * a pointer. It needs to be converted to a SharedPtr to access it.
  */
 template<class T>
