@@ -750,7 +750,7 @@ int8 MaxTrax::noteOn(ChannelContext &channel, const byte note, uint16 volume, ui
 		// adjust precalculated value
 		voice.preCalcNote = plainNote - (useOctave << 16);
 
-		// next calculate the actual period which depends on wether porta is enabled
+		// next calculate the actual period which depends on whether porta is enabled
 		if (&channel < &_channelCtx[kNumChannels] && (channel.flags & ChannelContext::kFlagPortamento) != 0) {
 			if ((channel.flags & ChannelContext::kFlagMono) != 0 && channel.lastNote < 0x80 && channel.lastNote != note) {
 				voice.portaTicks = 0;
