@@ -205,7 +205,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // Note: the bulk of the Initialization & cleanup routines have
 //   been moved to TOWERFTA.CPP. This file together with
 //   TOWER.CPP automate initialization & cleanup. This is needed
-//   to accomodate differences in system startup between
+//   to accommodate differences in system startup between
 //   the windows & DOS versions
 //
 //
