@@ -134,7 +134,7 @@ bool Imuse::getSoundStatus(const char *soundName) {
 	// Warn the user if the track was not found
 	if (track == nullptr || !g_system->getMixer()->isSoundHandleActive(track->handle)) {
 		// This debug warning should be "light" since this function gets called
-		// on occassion to see if a sound has stopped yet
+		// on occasion to see if a sound has stopped yet
 		Debug::debug(Debug::Sound, "Sound '%s' could not be found to get status, assume inactive.", soundName);
 		return false;
 	}
