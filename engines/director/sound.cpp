@@ -576,7 +576,7 @@ void DirectorSound::playFPlaySound(const Common::Array<Common::String> &fplayLis
 	for (uint i = 0; i < fplayList.size(); i++)
 		_fplayQueue.push(fplayList[i]);
 
-	// stop the previous sound, because new one is comming
+	// stop the previous sound, because new one is coming
 	if (isChannelActive(1))
 		stopSound(1);
 
