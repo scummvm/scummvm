@@ -106,7 +106,7 @@ public:
 	char *globaldata;
 	int32_t globaldatasize;
 	// Executed byte-code. Unlike ccScript's code array which is int32_t, the one
-	// in ccInstance must be intptr_t to accomodate real pointers placed after
+	// in ccInstance must be intptr_t to accommodate real pointers placed after
 	// performing fixups.
 	intptr_t *code;
 	ccInstance *runningInst;  // might point to another instance if in far call
