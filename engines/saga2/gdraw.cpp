@@ -61,7 +61,7 @@ void gPort::setMap(gPixelMap *newmap, bool inverted) {
 *       This function restores the state of a gPort from a gPenState
 *       record. The record should have been filled in by an earlier
 *       call to gPort::getState. These two functions are intended for
-*       situations where it is neccessary to save and restore the
+*       situations where it is necessary to save and restore the
 *       drawing state of a gPort.
 *
 *   INPUTS
