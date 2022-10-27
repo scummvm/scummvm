@@ -697,7 +697,7 @@ void OSystem_Android::pushEvent(int type, int arg1, int arg2, int arg3,
 
 			if (_touch_mode != TOUCH_MODE_TOUCHPAD) {
 				// In this case the mouse move is done in "direct mode"
-				// ie. the cursor jumps to where the tap occured
+				// ie. the cursor jumps to where the tap occurred
 				// so we don't have relMouse coordinates to set for the event
 				_event_queue.push(e);
 			}
