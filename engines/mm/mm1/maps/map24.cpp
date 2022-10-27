@@ -66,23 +66,35 @@ void Map24::special01() {
 }
 
 void Map24::special02() {
-	send(SoundMessage(
-		STRING["maps.map24.lair"],
-		[]() {
-			Game::Encounter &enc = g_globals->_encounters;
-			int monsterCount = getRandomNumber(4) + 3;
+	if (_data[VAL1]) {
+		send(SoundMessage(
+			STRING["maps.map24.wyvern_eye"],
+			[]() {
+				Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
+				map.addItem(WYVERN_EYE_ID);
+			}
+		));
+	} else {
+		send(SoundMessage(
+			STRING["maps.map24.lair"],
+			[]() {
+				Map24 &map = *static_cast<Map24 *>(g_maps->_currentMap);
+				Game::Encounter &enc = g_globals->_encounters;
+				map[VAL1]++;
 
-			enc.clearMonsters();
-			enc.addMonster(6, 8);
-			for (int i = 1; i < monsterCount; ++i)
-				enc.addMonster(14, 7);
+				int monsterCount = getRandomNumber(4) + 3;
+				enc.clearMonsters();
+				enc.addMonster(6, 8);
+				for (int i = 1; i < monsterCount; ++i)
+					enc.addMonster(14, 7);
 
-			enc._flag = true;
-			enc._encounterType = Game::FORCE_SURPRISED;
-			enc._levelIndex = 40;
-			enc.execute();
-		}
-	));
+				enc._flag = true;
+				enc._encounterType = Game::FORCE_SURPRISED;
+				enc._levelIndex = 40;
+				enc.execute();
+			}
+		));
+	}
 }
 
 void Map24::special03() {
