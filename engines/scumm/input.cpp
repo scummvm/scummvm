@@ -187,7 +187,7 @@ void ScummEngine::parseEvent(Common::Event event) {
 
 
 	// We update the mouse position whenever the mouse moves or a click occurs.
-	// The latter is done to accomodate systems with a touchpad / pen controller.
+	// The latter is done to accommodate systems with a touchpad / pen controller.
 	case Common::EVENT_LBUTTONDOWN:
 	case Common::EVENT_RBUTTONDOWN:
 	case Common::EVENT_MOUSEMOVE:
