@@ -486,7 +486,7 @@
 	#define CONSTANT_LE_64(a) SWAP_CONSTANT_64(a)
 	#define CONSTANT_BE_64(a) ((uint64)(a))
 
-// if the unaligned load and the byteswap take alot instructions its better to directly read and invert
+// if the unaligned load and the byteswap take a lot instructions its better to directly read and invert
 #	if defined(SCUMM_NEED_ALIGNMENT) && !defined(__mips__)
 
 	inline uint16 READ_LE_UINT16(const void *ptr) {
