@@ -456,7 +456,7 @@ enum ActorAnimationTypes {
 
 	//  Various types of stands
 	actionStand = 0,                        // standing still
-	actionWaitAgressive,                    // an agressive wait cycle
+	actionWaitAgressive,                    // an aggressive wait cycle
 	actionWaitImpatient,                    // an impatient wait cycle
 	actionWaitFriendly,                     // a a friendly wait cycle
 
@@ -796,7 +796,7 @@ public:
 		        : nullptr;
 	}
 
-	//  determine wether this actor has a specified property
+	//  determine whether this actor has a specified property
 	bool hasProperty(const ActorProperty &actorProp) {
 		//  The function call operator is used explicitly because
 		//  Visual C++ 4.0 doesn't like it otherwise.
