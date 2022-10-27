@@ -1387,7 +1387,7 @@ long new_str(char *buff, int max_leng, rbool pasc)
 			}
 		}
 
-	p = ss_end; /* Remember begining of string */
+	p = ss_end; /* Remember beginning of string */
 	for (i = 0; i < leng;)
 		static_str[ss_end++] = fixchar[(uchar)buff[pasc + (i++)]];
 	static_str[ss_end++] = 0;
