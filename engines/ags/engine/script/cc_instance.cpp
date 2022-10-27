@@ -798,9 +798,9 @@ int ccInstance::Run(int32_t curpc) {
 					cc_error("!Script appears to be hung (a while loop ran %d times). The problem may be in a calling function; check the call stack.", (int)loopIterations);
 					return -1;
 				} else if (test_dur > timeout) {
-					// minimal timeout occured
+					// minimal timeout occurred
 					if ((timeout_abort.count() > 0) && (test_dur.count() > timeout_abort.count())) {
-						// critical timeout occured
+						// critical timeout occurred
 						/* CHECKME: disabled, because not working well
 						if (loopIterationCheckDisabled == 0) {
 							cc_error("!Script appears to be hung (no game update for %lld ms). The problem may be in a calling function; check the call stack.", test_dur.count());
