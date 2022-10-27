@@ -2710,21 +2710,21 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		switch (eType) {
 		case effectAttrib:
 			switch (eSubType) {
-//			case skillIDArchery:
-//			case skillIDShieldcraft:
+//			case kSkillIDArchery:
+//			case kSkillIDShieldcraft:
 
-			case skillIDBludgeon:
-			case skillIDSwordcraft:
+			case kSkillIDBludgeon:
+			case kSkillIDSwordcraft:
 				if (eAmount > 0) newIconFlags[iconSurestrike] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDAgility:
+			case kSkillIDAgility:
 				if (eAmount > 0) newIconFlags[iconInnerBalance] = duration;
 				else newIconFlags[iconClumsy] = duration;
 				break;
 
-			case skillIDBrawn:
+			case kSkillIDBrawn:
 				newIconFlags[iconBattleFever] = duration;
 				break;
 			}

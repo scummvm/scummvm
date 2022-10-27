@@ -349,7 +349,7 @@ bool areThereActiveEnemies() {
 	for (iter.first(&obj); obj != nullptr; iter.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->_disposition == dispositionEnemy)
+		        && ((Actor *)obj)->_disposition == kDispositionEnemy)
 			return true;
 	}
 
@@ -385,8 +385,8 @@ void CheckCombatMood() {
 	for (iter8.first(&obj); obj != nullptr; iter8.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->_disposition == dispositionEnemy) {
-			if (agress || !(((Actor *)obj)->_flags & Actor::afraid)) {
+		        && ((Actor *)obj)->_disposition == kDispositionEnemy) {
+			if (agress || !(((Actor *)obj)->_flags & Actor::kAFAfraid)) {
 				incrementActiveFaction((Actor *) obj);
 				wasHostile = true;
 			}

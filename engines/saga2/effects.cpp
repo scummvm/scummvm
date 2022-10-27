@@ -52,7 +52,7 @@ int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 	case kDamageImpact     :
 	case kDamageSlash      :
 	case kDamageProjectile :
-		return a->getStats()->getSkillLevel(skillIDBrawn);
+		return a->getStats()->getSkillLevel(kSkillIDBrawn);
 	case kDamageFire       :
 	case kDamageAcid       :
 	case kDamageHeat       :
@@ -61,7 +61,7 @@ int16 ProtoDamage::getRelevantStat(effectDamageTypes dt, Actor *a) {
 	case kDamagePoison     :
 	case kDamageMental     :
 	case kDamageToUndead   :
-		return a->getStats()->getSkillLevel(skillIDSpellcraft);
+		return a->getStats()->getSkillLevel(kSkillIDSpellcraft);
 	case kDamageDirMagic   :
 	case kDamageOther      :
 	case kDamageStarve     :

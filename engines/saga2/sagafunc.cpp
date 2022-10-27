@@ -328,7 +328,7 @@ int16 scriptActorSetProto(int16 *args) {
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 	int16           oldProto = obj->getProtoNum();
 
-	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::temporary)) {
+	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::kAFTemporary)) {
 		decTempActorCount(oldProto);
 		incTempActorCount(args[0]);
 	}
@@ -2674,7 +2674,7 @@ int16 scriptMissionMakeActor(int16 *args) {
 
 	//  Call the regular make-actor function. Add in the "permanent"
 	//  flag, since actor will be deleted at mission end.
-	args[6] |= actorPermanent;
+	args[6] |= kActorPermanent;
 	id = scriptMakeActor(args);
 
 	//  And record it in the mission object

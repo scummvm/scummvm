@@ -51,7 +51,7 @@ enum AssignmentTypes {
 class ActorAssignment {
 
 	enum {
-		hasAssignment   = (1 << 3)
+		kAFHasAssignment   = (1 << 3)
 	};
 
 	uint16  _startFrame,     //  Time in day when this was constructed

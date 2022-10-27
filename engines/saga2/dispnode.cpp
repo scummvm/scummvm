@@ -608,13 +608,13 @@ void DisplayNode::drawObject() {
 				aa->requestBank(pose->actorFrameBank);
 
 				//  Indicate that animation is OK.
-				a->_animationFlags &= ~animateNotLoaded;
+				a->_animationFlags &= ~kAnimateNotLoaded;
 
 				//  Set up which bank and frame to use.
 				a->_poseInfo = pTemp;
 			} else {
 				//  Indicate that animation isn't loaded
-				a->_animationFlags |= animateNotLoaded;
+				a->_animationFlags |= kAnimateNotLoaded;
 
 				//  Initiate a load of the sprite bank needed.
 				/*  if (!RHandleLoading(

@@ -1281,7 +1281,7 @@ void MotionTask::walkTo(
 			mt->_flags = pathFind | reset;
 			mt->_runCount = 12;          // # of frames until we can run
 
-			if (run && actor.isActionAvailable(actionRun))
+			if (run && actor.isActionAvailable(kActionRun))
 				mt->_flags |= requestRun;
 			if (canAgitate)
 				mt->_flags |= agitatable;
@@ -1314,7 +1314,7 @@ void MotionTask::walkToDirect(
 			mt->_flags = reset;
 			mt->_runCount = 12;
 
-			if (run && actor.isActionAvailable(actionRun))
+			if (run && actor.isActionAvailable(kActionRun))
 				mt->_flags |= requestRun;
 			if (canAgitate)
 				mt->_flags |= agitatable;
@@ -1343,7 +1343,7 @@ void MotionTask::wander(
 			mt->_flags = reset | wandering;
 			mt->_runCount = 12;
 
-			if (run && actor.isActionAvailable(actionRun))
+			if (run && actor.isActionAvailable(kActionRun))
 				mt->_flags |= requestRun;
 
 			RequestWanderPath(mt, getPathFindIQ(&actor));
@@ -1377,7 +1377,7 @@ void MotionTask::tetheredWander(
 			mt->_flags = reset | wandering | tethered;
 			mt->_runCount = 12;
 
-			if (run && actor.isActionAvailable(actionRun))
+			if (run && actor.isActionAvailable(kActionRun))
 				mt->_flags |= requestRun;
 
 			RequestWanderPath(mt, getPathFindIQ(&actor));
@@ -1963,7 +1963,7 @@ void MotionTask::changeTarget(const TilePoint &newPos, bool run) {
 		//  Set run flag if requested
 		if (run
 		        //  Check if actor capable of running...
-		        && ((Actor *)_object)->isActionAvailable(actionRun))
+		        && ((Actor *)_object)->isActionAvailable(kActionRun))
 
 			_flags |= requestRun;
 		else
@@ -1990,7 +1990,7 @@ void MotionTask::changeDirectTarget(const TilePoint &newPos, bool run) {
 		//  Set run flag if requested
 		if (run
 		        //  Check if actor capable of running...
-		        && ((Actor *)_object)->isActionAvailable(actionRun))
+		        && ((Actor *)_object)->isActionAvailable(kActionRun))
 
 			_flags |= requestRun;
 		else
@@ -2020,8 +2020,8 @@ void MotionTask::finishTalking() {
 	if (_motionType == motionTypeTalk) {
 		if (isActor(_object)) {
 			Actor   *a = (Actor *)_object;
-			if (a->_currentAnimation != actionStand)
-				a->setAction(actionStand, 0);
+			if (a->_currentAnimation != kActionStand)
+				a->setAction(kActionStand, 0);
 		}
 		remove();
 	}
@@ -2105,8 +2105,8 @@ void MotionTask::ballisticAction() {
 	if (isActor(obj) && _velocity.magnitude() > 16) {
 		Actor       *a = (Actor *)obj;
 
-		if (a->isActionAvailable(actionFreeFall))
-			a->setAction(actionFreeFall, 0);
+		if (a->isActionAvailable(kActionFreeFall))
+			a->setAction(kActionFreeFall, 0);
 	}
 
 	for (int i = 0; i < vectorSteps; i++) {
@@ -2704,7 +2704,7 @@ void MotionTask::walkAction() {
 	if (moveTaskDone) {
 		remove(motionCompleted);
 	} else if (moveBlocked) {
-		a->setAction(actionStand, 0);
+		a->setAction(kActionStand, 0);
 		if (_flags & agitatable) {
 			if (freeFall(_object->_data.location, sti)) return;
 
@@ -2730,7 +2730,7 @@ void MotionTask::walkAction() {
 		//  When he starts running again, then have him walk only.
 		_runCount = MAX<int16>(_runCount, 8);
 
-		a->setAction(actionStand, 0);
+		a->setAction(kActionStand, 0);
 		freeFall(_object->_data.location, sti);
 	} else {
 		if (a == getCenterActor() && checkLadder(a, newPos)) return;
@@ -2758,7 +2758,7 @@ void MotionTask::walkAction() {
 
 			if (sti.surfaceTile != nullptr
 			        && (sti.surfaceTile->combinedTerrainMask() & terrainStair)
-			        &&  a->isActionAvailable(actionSpecial7)) {
+			        &&  a->isActionAvailable(kActionSpecial7)) {
 				Direction   stairsDir;
 				uint8       *cornerHeight;
 
@@ -2775,21 +2775,21 @@ void MotionTask::walkAction() {
 
 				if (a->_currentFacing == stairsDir) {
 					//  walk up stairs
-					newAction = actionSpecial7;
+					newAction = kActionSpecial7;
 					_flags |= onStairs;
 				} else if (a->_currentFacing == ((stairsDir - 4) & 0x7)) {
 					//  walk down stairs
-					newAction = actionSpecial8;
+					newAction = kActionSpecial8;
 					_flags |= onStairs;
 				} else {
 					_flags &= ~onStairs;
 					if (walkType == walkStairs) walkType = walkNormal;
-					newAction = (walkType == walkRun) ? actionRun : actionWalk;
+					newAction = (walkType == walkRun) ? kActionRun : kActionWalk;
 				}
 			} else {
 				_flags &= ~onStairs;
 				if (walkType == walkStairs) walkType = walkNormal;
-				newAction = (walkType == walkRun) ? actionRun : actionWalk;
+				newAction = (walkType == walkRun) ? kActionRun : kActionWalk;
 			}
 
 
@@ -2808,15 +2808,15 @@ void MotionTask::walkAction() {
 						a->nextAnimationFrame();
 					_flags ^= nextAnim;
 				}
-			} else if (a->_currentAnimation == actionWalk
-			           ||  a->_currentAnimation == actionRun
-			           ||  a->_currentAnimation == actionSpecial7
-			           ||  a->_currentAnimation == actionSpecial8) {
+			} else if (a->_currentAnimation == kActionWalk
+			           ||  a->_currentAnimation == kActionRun
+			           ||  a->_currentAnimation == kActionSpecial7
+			           ||  a->_currentAnimation == kActionSpecial8) {
 				//  If we are running instead of walking or
 				//  vice versa, then change to the new action
 				//  but don't break stride
 				a->setAction(newAction,
-				             animateRepeat | animateNoRestart);
+				             kAnimateRepeat | kAnimateNoRestart);
 
 				if (walkType != walkSlow)
 					a->nextAnimationFrame();
@@ -2828,7 +2828,7 @@ void MotionTask::walkAction() {
 			} else {
 				// If we weren't walking or running before, then start
 				// walking/running and reset the sequence.
-				a->setAction(newAction, animateRepeat);
+				a->setAction(newAction, kAnimateRepeat);
 				if (walkType == walkSlow) _flags |= nextAnim;
 			}
 
@@ -2845,7 +2845,7 @@ void MotionTask::upLadderAction() {
 	Actor               *a = (Actor *)_object;
 
 	if (_flags & reset) {
-		a->setAction(actionClimbLadder, animateRepeat);
+		a->setAction(kActionClimbLadder, kAnimateRepeat);
 		_flags &= ~reset;
 	} else {
 		TilePoint           loc = a->getLocation();
@@ -2959,7 +2959,7 @@ void MotionTask::upLadderAction() {
 			}
 		}
 
-		a->setAction(actionStand, 0);
+		a->setAction(kActionStand, 0);
 
 		remove();
 	}
@@ -2972,7 +2972,7 @@ void MotionTask::downLadderAction() {
 	Actor               *a = (Actor *)_object;
 
 	if (_flags & reset) {
-		a->setAction(actionClimbLadder, animateRepeat | animateReverse);
+		a->setAction(kActionClimbLadder, kAnimateRepeat | kAnimateReverse);
 		_flags &= ~reset;
 	} else {
 		TilePoint           loc = a->getLocation();
@@ -3080,7 +3080,7 @@ void MotionTask::downLadderAction() {
 			}
 		}
 
-		a->setAction(actionStand, 0);
+		a->setAction(kActionStand, 0);
 
 		remove();
 	}
@@ -3093,7 +3093,7 @@ void MotionTask::giveAction() {
 	                         -   a->getLocation()).quickDir();
 
 	if (_flags & reset) {
-		a->setAction(actionGiveItem, 0);
+		a->setAction(kActionGiveItem, 0);
 		_flags &= ~reset;
 	}
 
@@ -3183,12 +3183,12 @@ void MotionTask::twoHandedSwingAction() {
 
 		//  Create an animation type lookup table
 		static const uint8  animationTypeArray[] = {
-			actionTwoHandSwingHigh,
-			actionTwoHandSwingLow,
-			actionTwoHandSwingLeftHigh,
-			actionTwoHandSwingLeftLow,
-			actionTwoHandSwingRightHigh,
-			actionTwoHandSwingRightLow,
+			kActionTwoHandSwingHigh,
+			kActionTwoHandSwingLow,
+			kActionTwoHandSwingLeftHigh,
+			kActionTwoHandSwingLeftLow,
+			kActionTwoHandSwingRightHigh,
+			kActionTwoHandSwingRightLow,
 		};
 
 		Actor               *a = (Actor *)_object;
@@ -3297,8 +3297,8 @@ void MotionTask::oneHandedSwingAction() {
 
 		//  Create an animation type lookup table
 		static const uint8  animationTypeArray[] = {
-			actionSwingHigh,
-			actionSwingLow,
+			kActionSwingHigh,
+			kActionSwingLow,
 		};
 
 		Actor *const       a = (Actor *)_object;
@@ -3415,11 +3415,11 @@ void MotionTask::fireBowAction() {
 		_direction = (_targetObj->getLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionFireBow)) {
+		        &&  a->isActionAvailable(kActionFireBow)) {
 			//  Calculate the number of frames in the animation before the
 			//  projectile is actually fired
-			actionCounter = a->animationFrames(actionFireBow, _direction) - 1;
-			a->setAction(actionFireBow, 0);
+			actionCounter = a->animationFrames(kActionFireBow, _direction) - 1;
+			a->setAction(kActionFireBow, 0);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3510,11 +3510,11 @@ void MotionTask::castSpellAction() {
 	else {
 		if (_flags & reset) {
 			if (a->_appearance != nullptr
-			        &&  a->isActionAvailable(actionCastSpell)) {
+			        &&  a->isActionAvailable(kActionCastSpell)) {
 				//  Calculate the number of frames in the animation before the
 				//  spell is case
-				actionCounter = a->animationFrames(actionCastSpell, _direction) - 1;
-				a->setAction(actionCastSpell, 0);
+				actionCounter = a->animationFrames(kActionCastSpell, _direction) - 1;
+				a->setAction(kActionCastSpell, 0);
 
 				//  Set this flag to indicate that the animation is actually
 				//  being played
@@ -3577,9 +3577,9 @@ void MotionTask::useWandAction() {
 		_direction = (_targetObj->getLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionUseWand)) {
-			actionCounter = a->animationFrames(actionUseWand, _direction) - 1;
-			a->setAction(actionUseWand, 0);
+		        &&  a->isActionAvailable(kActionUseWand)) {
+			actionCounter = a->animationFrames(kActionUseWand, _direction) - 1;
+			a->setAction(kActionUseWand, 0);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3612,9 +3612,9 @@ void MotionTask::twoHandedParryAction() {
 		_direction = (_d.attacker->getLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionTwoHandParry)) {
-			a->setAction(actionTwoHandParry, 0);
-			animationFrames = a->animationFrames(actionTwoHandParry, _direction);
+		        &&  a->isActionAvailable(kActionTwoHandParry)) {
+			a->setAction(kActionTwoHandParry, 0);
+			animationFrames = a->animationFrames(kActionTwoHandParry, _direction);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3648,9 +3648,9 @@ void MotionTask::oneHandedParryAction() {
 
 		_combatMotionType = oneHandedParryHigh;
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionParryHigh)) {
-			a->setAction(actionParryHigh, 0);
-			animationFrames = a->animationFrames(actionParryHigh, _direction);
+		        &&  a->isActionAvailable(kActionParryHigh)) {
+			a->setAction(kActionParryHigh, 0);
+			animationFrames = a->animationFrames(kActionParryHigh, _direction);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3683,9 +3683,9 @@ void MotionTask::shieldParryAction() {
 		_direction = (_d.attacker->getLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionShieldParry)) {
-			a->setAction(actionShieldParry, 0);
-			animationFrames = a->animationFrames(actionShieldParry, _direction);
+		        &&  a->isActionAvailable(kActionShieldParry)) {
+			a->setAction(kActionShieldParry, 0);
+			animationFrames = a->animationFrames(kActionShieldParry, _direction);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3728,9 +3728,9 @@ void MotionTask::dodgeAction() {
 			int16       animationFrames;
 
 			if (a->_appearance != nullptr
-			        &&  a->isActionAvailable(actionJumpUp, a->_currentFacing)) {
-				a->setAction(actionJumpUp, 0);
-				animationFrames = a->animationFrames(actionJumpUp, a->_currentFacing);
+			        &&  a->isActionAvailable(kActionJumpUp, a->_currentFacing)) {
+				a->setAction(kActionJumpUp, 0);
+				animationFrames = a->animationFrames(kActionJumpUp, a->_currentFacing);
 
 				//  Set this flag to indicate that the animation is actually
 				//  being played
@@ -3784,9 +3784,9 @@ void MotionTask::acceptHitAction() {
 		    (_d.attacker->getWorldLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionHit, a->_currentFacing)) {
-			a->setAction(actionHit, 0);
-			animationFrames = a->animationFrames(actionHit, a->_currentFacing);
+		        &&  a->isActionAvailable(kActionHit, a->_currentFacing)) {
+			a->setAction(kActionHit, 0);
+			animationFrames = a->animationFrames(kActionHit, a->_currentFacing);
 
 			//  Set this flag to indicate that the animation is actually
 			//  being played
@@ -3842,10 +3842,10 @@ void MotionTask::fallDownAction() {
 		    (_d.attacker->getWorldLocation() - a->getLocation()).quickDir();
 
 		if (a->_appearance != nullptr
-		        &&  a->isActionAvailable(actionKnockedDown, a->_currentFacing)) {
-			a->setAction(actionKnockedDown, 0);
+		        &&  a->isActionAvailable(kActionKnockedDown, a->_currentFacing)) {
+			a->setAction(kActionKnockedDown, 0);
 			animationFrames =   a->animationFrames(
-			                        actionKnockedDown,
+			                        kActionKnockedDown,
 			                        a->_currentFacing);
 
 			//  Set this flag to indicate that the animation is actually
@@ -4081,17 +4081,17 @@ void MotionTask::updatePositions() {
 		case motionTypeTalk:
 
 			if (mt->_flags & reset) {
-				a->setAction(actionStand, 0);
+				a->setAction(kActionStand, 0);
 				a->_cycleCount = g_vm->_rnd->getRandomNumber(3);
 				mt->_flags &= ~(reset | nextAnim);
 			}
 			if (a->_cycleCount == 0) {
-				a->setAction(actionTalk, 0);
+				a->setAction(kActionTalk, 0);
 				mt->_flags |= nextAnim;
 				a->_cycleCount = -1;
 			} else if (mt->_flags & nextAnim) {
 				if (a->nextAnimationFrame()) {
-					a->setAction(actionStand, 0);
+					a->setAction(kActionStand, 0);
 					a->_cycleCount = g_vm->_rnd->getRandomNumber(3);
 					mt->_flags &= ~nextAnim;
 				}
@@ -4104,8 +4104,8 @@ void MotionTask::updatePositions() {
 
 			if (mt->_flags & reset) {
 				int16   newAction = mt->_motionType == motionTypeLand
-				                    ?   actionJumpUp
-				                    :   actionFallBadly;
+				                    ?   kActionJumpUp
+				                    :   kActionFallBadly;
 
 				if (!a->isActionAvailable(newAction)) {
 					if (mt->_prevMotionType == motionTypeWalk) {
@@ -4167,12 +4167,12 @@ void MotionTask::updatePositions() {
 		case motionTypeJump:
 
 			if (mt->_flags & reset) {
-				a->setAction(actionJumpUp, 0);
+				a->setAction(kActionJumpUp, 0);
 				a->setInterruptablity(false);
 				mt->_flags &= ~reset;
 			} else if (a->nextAnimationFrame()) {
 				mt->_motionType = motionTypeThrown;
-				a->setAction(actionFreeFall, 0);
+				a->setAction(kActionFreeFall, 0);
 			}
 			break;
 
@@ -4504,15 +4504,15 @@ void MotionTask::updatePositions() {
 
 		case motionTypeDie:
 			if (mt->_flags & reset) {
-				if (a->isActionAvailable(actionDie)) {
-					a->setAction(actionDie, 0);
+				if (a->isActionAvailable(kActionDie)) {
+					a->setAction(kActionDie, 0);
 					a->setInterruptablity(false);
 					mt->_flags &= ~reset;
 				} else {
 					moveTaskDone = true;
 					a->setInterruptablity(true);
 					if (!a->hasEffect(actorDisappearOnDeath)) {
-						a->setAction(actionDead, 0);
+						a->setAction(kActionDead, 0);
 						a->die();
 					} else {
 						a->die();
@@ -4524,7 +4524,7 @@ void MotionTask::updatePositions() {
 				moveTaskDone = true;
 				a->setInterruptablity(true);
 				if (!a->hasEffect(actorDisappearOnDeath)) {
-					a->setAction(actionDead, 0);
+					a->setAction(kActionDead, 0);
 					a->die();
 				} else {
 					a->die();

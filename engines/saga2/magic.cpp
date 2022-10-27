@@ -295,7 +295,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 		if (actorIDToPlayerID(enactor->thisID(), playerID)) {
 			PlayerActor     *player = getPlayerActorAddress(playerID);
 
-			player->skillAdvance(skillIDSpellcraft, sProto.getManaAmt() / 10);
+			player->skillAdvance(kSkillIDSpellcraft, sProto.getManaAmt() / 10);
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
@@ -335,7 +335,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		if (actorIDToPlayerID(enactor->thisID(), playerID)) {
 			PlayerActor     *player = getPlayerActorAddress(playerID);
 
-			player->skillAdvance(skillIDSpellcraft, sProto.getManaAmt() / 10);
+			player->skillAdvance(kSkillIDSpellcraft, sProto.getManaAmt() / 10);
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
@@ -373,7 +373,7 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 		if (actorIDToPlayerID(enactor->thisID(), playerID)) {
 			PlayerActor     *player = getPlayerActorAddress(playerID);
 
-			player->skillAdvance(skillIDSpellcraft, sProto.getManaAmt() / 10);
+			player->skillAdvance(kSkillIDSpellcraft, sProto.getManaAmt() / 10);
 		}
 	} else {
 		if (!enactor->deductCharge(ami, sProto.getManaAmt())) {
