@@ -72,10 +72,10 @@ protected:
 	/* Flag - whether or not the GUI needs to be displayed */
 	int display;
 
-	/* Flag - wether we are preforming a drag and drop */
+	/* Flag - whether we are performing a drag and drop */
 	bool dragging;
 
-	bool full_redraw; //this forces all widgets to redraw on the next call to Display()
+	bool full_redraw; // this forces all widgets to redraw on the next call to Display()
 
 	// some default colours
 	GUI_Color *selected_color;
