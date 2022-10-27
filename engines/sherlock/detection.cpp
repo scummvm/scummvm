@@ -26,7 +26,7 @@
 #include "sherlock/sherlock.h"
 
 static const PlainGameDescriptor sherlockGames[] = {
-	{ "scalpel", "The Lost Files of Sherlock Holmes" }, //also called The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel
+	{ "scalpel", "The Lost Files of Sherlock Holmes: The Case of the Serrated Scalpel" },
 	{ "rosetattoo", "The Lost Files of Sherlock Holmes: Case of the Rose Tattoo" },
 	{nullptr, nullptr}
 };
