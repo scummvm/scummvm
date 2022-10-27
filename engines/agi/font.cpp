@@ -906,7 +906,7 @@ void GfxFont::loadFontAtariST(Common::String fontFilename) {
 	fontFile.skip(2); // right offset cel
 	fontFile.skip(2); // number of pixels to thicken pixels
 	fontFile.skip(2); // underline width
-	fontFile.skip(2); // lightening mask
+	fontFile.skip(2); // lightning mask
 	fontFile.skip(2); // skewing mask
 	header_Flags = fontFile.readUint16BE();
 	// bit 0 - default system font
