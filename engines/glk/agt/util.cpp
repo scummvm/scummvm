@@ -739,7 +739,7 @@ static void bw_flush(void) {
 static void bw_setblock(long fofs, long recnum, long rsize)
 /* Set parameters for current block */
 {
-	/* First, flush old block if neccessary */
+	/* First, flush old block if necessary */
 	if (buffer != nullptr) {
 		bw_flush();
 		rfree(buffer);
@@ -923,7 +923,7 @@ static int agx_decode_version(int vercode) {
 }
 
 /* The following reads a section of a file into variables, doing
-   the neccessary conversions. It is the foundation of all the generic
+   the necessary conversions. It is the foundation of all the generic
    file reading code */
 
 #define p(t)  ((t*)(rec_desc->ptr))
