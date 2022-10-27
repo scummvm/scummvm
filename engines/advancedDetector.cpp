@@ -469,7 +469,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 		return;
 
 	for (Common::FSList::const_iterator file = fslist.begin(); file != fslist.end(); ++file) {
-		Common::String efname = Common::punycode_encodefilename(file->getName());
+		Common::String efname = file->getName();
 		Common::String tstr = ((_flags & kADFlagMatchFullPaths) && !parentName.empty() ? parentName + "/" : "") + efname;
 
 		if (file->isDirectory()) {
@@ -601,7 +601,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 				continue;
 
 			FileProperties tmp;
-			if (getFileProperties(allFiles, *g, fname, tmp)) {
+			if (getFileProperties(allFiles, *g, Common::punycode_decodefilename(fname), tmp)) {
 				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), long(tmp.size));
 			}
 
