@@ -153,6 +153,13 @@ public:
 	bool open(const Path &fileName, Archive &archive);
 
 	/**
+	 * Opens file named fileName or data fork extracted as macbin
+	 * @return The stream if found, 0 otherwise
+	 */
+	static SeekableReadStream *openFileOrDataFork(const Path &fileName, Archive &archive);
+	static SeekableReadStream *openFileOrDataFork(const Path &fileName);
+
+	/**
 	 * See if a Mac data/resource fork pair exists.
 	 * @param fileName The base file name of the file
 	 * @return True if either a data fork or resource fork with this name exists
