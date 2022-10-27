@@ -36,12 +36,12 @@ class TaskStack;
 
 //  Constants representing the non-virtual ActorAssignment classes
 enum AssignmentTypes {
-	patrolRouteAssignment,
-	huntToBeNearLocationAssignment,
-	huntToBeNearActorAssignment,
-	huntToKillAssignment,
-	tetheredWanderAssignment,
-	attendAssignment
+	kPatrolRouteAssignment,
+	kHuntToBeNearLocationAssignment,
+	kHuntToBeNearActorAssignment,
+	kHuntToKillAssignment,
+	kTetheredWanderAssignment,
+	kAttendAssignment
 };
 
 /* ===================================================================== *
@@ -114,7 +114,7 @@ class PatrolRouteAssignment : public ActorAssignment {
 	//  assignment
 
 	enum {
-		routeCompleted  = (1 << 0)
+		kRouteCompleted  = (1 << 0)
 	};
 
 public:
@@ -225,7 +225,7 @@ class HuntToBeNearActorAssignment : public ActorAssignment {
 	uint8               _flags;
 
 	enum {
-		track           = (1 << 0)  //  This hunt is a track.
+		kTrack           = (1 << 0)  //  This hunt is a track.
 	};
 
 	//  An initialization function which provides a common ground for
@@ -303,8 +303,8 @@ class HuntToKillAssignment : public ActorAssignment {
 	uint8               _flags;
 
 	enum {
-		track           = (1 << 0), //  This hunt is a track.
-		specificActor   = (1 << 1)  //  The actor target is a specific actor
+		kTrack           = (1 << 0), //  This hunt is a track.
+		kSpecificActor   = (1 << 1)  //  The actor target is a specific actor
 	};
 
 	//  An initialization function which provides a common ground for
