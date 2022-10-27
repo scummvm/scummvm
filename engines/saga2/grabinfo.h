@@ -68,7 +68,7 @@ protected:
 	Intent      _intention;              // pickup state
 	bool        _intentDoable;           // is intention doable?
 	// (i.e. display red X cursor)
-	bool        _displayGauge;           // indicates wether or not to show
+	bool        _displayGauge;           // indicates whether or not to show
 	// the gauge
 	int16       _gaugeNumerator,         // values to be displayed on the
 	            _gaugeDenominator;       // gauge
