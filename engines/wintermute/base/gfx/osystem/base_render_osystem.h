@@ -55,7 +55,7 @@ class RenderTicket;
  * which will then create a need for redrawing, as we draw with an alpha-channel here.
  *
  * There is also a draw path that draws without tickets, for debugging purposes,
- * as well as to accomodate situations with large enough amounts of draw calls,
+ * as well as to accommodate situations with large enough amounts of draw calls,
  * that there will be too much overhead involved with comparing the generated tickets.
  */
 class BaseRenderOSystem : public BaseRenderer {
