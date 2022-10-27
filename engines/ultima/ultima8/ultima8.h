@@ -344,7 +344,7 @@ public:
 
 	//! save a game
 	//! \param filename the file to save to
-	//! \return true if succesful
+	//! \return true if successful
 	bool saveGame(int slot, const Std::string &desc);
 
 	//! start a new game
