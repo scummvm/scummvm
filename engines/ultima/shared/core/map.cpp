@@ -130,7 +130,7 @@ Point Map::MapBase::getViewportPosition(const Point &viewportSize) {
 		topLeft.y = _playerWidget->_position.y - (viewportSize.y - 1) / 2;
 
 		// Fixed maps, so constrain top left corner so the map fills the viewport.
-		// This will accomodate future renderings with more tiles, or greater tile size
+		// This will accommodate future renderings with more tiles, or greater tile size
 		topLeft.x = CLIP((int)topLeft.x, 0, (int)(width() - viewportSize.x));
 		topLeft.y = CLIP((int)topLeft.y, 0, (int)(height() - viewportSize.y));
 	}
