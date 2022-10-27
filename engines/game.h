@@ -105,7 +105,7 @@ enum GameSupportLevel {
 enum MD5Properties {
 	kMD5Head		= 0 << 1,	// the MD5 is calculated from the head, default
 	kMD5Tail		= 1 << 1,	// the MD5 is calculated from the tail
-	kMD5MacResFork	= 1 << 2	// the MD5 is calculated from the Mac Resource fork (head or tail)
+	kMD5MatchedByMacResFork = 1 << 2        // the File was matched by MD5 from the Mac Resource fork (head or tail)
 };
 
 /**
@@ -113,11 +113,11 @@ enum MD5Properties {
  * files while detecting a game.
  */
 struct FileProperties {
-	int64 size;
-	Common::String md5;
+	int64 size, res_size;
+	Common::String md5, res_md5;
 	MD5Properties md5prop;
 
-	FileProperties() : size(-1), md5prop(kMD5Head) {}
+	FileProperties() : size(-1), res_size(-1), md5prop(kMD5Head) {}
 };
 
 /**

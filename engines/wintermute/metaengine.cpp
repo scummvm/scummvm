@@ -178,8 +178,8 @@ public:
 			if (!file->getName().hasSuffixIgnoreCase(".dcp")) continue;
 
 			FileProperties tmp;
-			if (AdvancedMetaEngine::getFilePropertiesExtern(md5Bytes, allFiles, s_fallbackDesc, file->getName(), tmp)) {
-				game.hasUnknownFiles = true;
+			if (AdvancedMetaEngine::getFilePropertiesExtern(md5Bytes, allFiles, kFilePropertiesNone, file->getName(), tmp)) {
+				game.hasMismatchedFiles = true;
 				game.matchedFiles[file->getName()] = tmp;
 			}
 		}

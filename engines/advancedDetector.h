@@ -101,7 +101,7 @@ enum ADGameFlags {
 	ADGF_WARNING         = (1u << 22), /*!< Flag to mark certain versions to show confirmation warning before proceeding.
 	                                        A custom message should be provided in the @ref ADGameDescription::extra field. */
 	ADGF_ADDENGLISH      = (1u << 23), ///< Always add English as a language option.
-	ADGF_MACRESFORK      = (1u << 24), ///< Calculate the MD5 for this entry from the resource fork.
+	ADGF_MACRESFORK      = (1u << 24), ///< Calculate the MD5 for this entry from the resource fork. Equivalent to addint r: refix in all md5s
 	ADGF_USEEXTRAASTITLE = (1u << 25), ///< Use @ref ADGameDescription::extra as the main game title, not gameid.
 	ADGF_DROPLANGUAGE    = (1u << 26), ///< Do not add language to gameid.
 	ADGF_DROPPLATFORM    = (1u << 27), ///< Do not add platform to gameid.
@@ -181,15 +181,18 @@ struct ADDetectedGameExtraInfo {
  * A game installation matching an AD game description.
  */
 struct ADDetectedGame {
-	bool hasUnknownFiles;           /*!< Whether the game has unknown files. */
+	bool hasMismatchedFiles;        /*!< Whether the game has mismatched files. */
+	bool hasMissingResourceFork;    /*!< Whether the game has files with missing resource forks.  */
 	FilePropertiesMap matchedFiles; /*!< List of the files that were used to match the game. */
 	const ADGameDescription *desc;  /*!< Human-readable game title. */
 
-	ADDetectedGame() : desc(nullptr), hasUnknownFiles(false) {}
+	bool getHasUnknownFiles() const { return hasMismatchedFiles || hasMissingResourceFork; }
+
+	ADDetectedGame() : desc(nullptr), hasMismatchedFiles(false), hasMissingResourceFork(false) {}
 	/**
 	 * Construct an ADDetectedGame object.
 	 */
-	explicit ADDetectedGame(const ADGameDescription *d) : desc(d), hasUnknownFiles(false) {}
+	explicit ADDetectedGame(const ADGameDescription *d) : desc(d), hasMismatchedFiles(false), hasMissingResourceFork(false) {}
 };
 
 /** A list of games detected by the AD. */
@@ -255,6 +258,12 @@ struct ADExtraGuiOptionsMap {
 };
 
 #define AD_EXTRA_GUI_OPTIONS_TERMINATOR { 0, { 0, 0, 0, 0, 0, 0 } }
+
+enum FilePropertiesFlags {
+	kFilePropertiesNone = 0,
+	kUseTail = 1,
+	kUseMacForks = 2,
+};
 
 /**
  * A @ref MetaEngineDetection implementation based on the Advanced Detector code.
@@ -460,13 +469,15 @@ protected:
 	void composeFileHashMap(FileMap &allFiles, const Common::FSList &fslist, int depth, const Common::String &parentName = Common::String()) const;
 
 	/** Get the properties (size and MD5) of this file. */
-	bool getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFileProperties(const FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps) const;
 
 	/** Convert an AD game description into the shared game description format. */
 	virtual DetectedGame toDetectedGame(const ADDetectedGame &adGame, ADDetectedGameExtraInfo *extraInfo = nullptr) const;
 
 	/** Check for pirated games in the given detected games */
 	bool cleanupPirated(ADDetectedGames &matched) const;
+
+	bool cleanupMissingResource(ADDetectedGames &matched) const;
 
 	friend class FileMapArchive;
 };
@@ -529,7 +540,7 @@ public:
 	 *
 	 * Based on @ref MetaEngine::getFileProperties.
 	 */
-	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const;
+	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps) const;
 };
 
 /**

@@ -569,18 +569,18 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 
 			game.matchedFiles[fileName] = filesProps[fileName];
 
-			if (game.hasUnknownFiles)
+			if (game.getHasUnknownFiles())
 				continue;
 
 			if (fDesc.md5 && fDesc.md5 != filesProps[fileName].md5) {
 				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fDesc.md5, filesProps[fileName].md5.c_str());
-				game.hasUnknownFiles = true;
+				game.hasMismatchedFiles = true;
 				continue;
 			}
 
 			if (fDesc.fileSize != -1 && fDesc.fileSize != filesProps[fileName].size) {
 				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping");
-				game.hasUnknownFiles = true;
+				game.hasMismatchedFiles = true;
 				continue;
 			}
 
@@ -589,7 +589,7 @@ ADDetectedGames AdlMetaEngineDetection::detectGame(const Common::FSNode &parent,
 
 		// This assumes that the detection table groups together games that have the same gameId and platform
 		if (allFilesPresent) {
-			if (!game.hasUnknownFiles) {
+			if (!game.getHasUnknownFiles()) {
 				debugC(2, kDebugGlobalDetection, "Found game: %s (%s/%s) (%d)", game.desc->gameId, getPlatformDescription(game.desc->platform), getLanguageDescription(game.desc->language), g);
 				// If we just added an unknown variant for this game and platform, remove it
 				if (!matched.empty() && strcmp(matched.back().desc->gameId, game.desc->gameId) == 0 && matched.back().desc->platform == game.desc->platform)

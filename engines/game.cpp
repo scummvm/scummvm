@@ -167,11 +167,6 @@ Common::U32String DetectionResults::generateUnknownGameReport(bool translate, ui
 
 // Sync with engines/advancedDetector.cpp
 static char flagsToMD5Prefix(uint32 flags) {
-	if (flags & kMD5MacResFork) {
-		if (flags & kMD5Tail)
-			return 'e';
-		return 'm';
-	}
 	if (flags & kMD5Tail)
 		return 't';
 
@@ -236,16 +231,19 @@ Common::U32String generateUnknownGameReport(const DetectedGames &detectedGames, 
 	report += Common::U32String("\n\n");
 
 	for (FilePropertiesMap::const_iterator file = matchedFiles.begin(); file != matchedFiles.end(); ++file) {
-		Common::String addon;
+		Common::String addon, md5;
 
-		if (file->_value.md5prop & kMD5MacResFork)
-			addon += ", ADGF_MACRESFORK";
 		if (file->_value.md5prop & kMD5Tail)
 			addon += ", ADGF_TAILMD5";
 
+		if (file->_value.md5prop & kMD5MatchedByMacResFork)
+			md5 = "r:" + file->_value.res_md5;
+		else
+			md5 = file->_value.md5;
+
 		report += Common::String::format("  {\"%s\", 0, \"%s\", %lld}%s,\n",
 			Common::punycode_encodefilename(Common::U32String(&file->_key.c_str()[2])).c_str(), // Skip the md5 prefix
-			file->_value.md5.c_str(), (long long)file->_value.size, addon.c_str());
+			md5.c_str(), (long long)file->_value.size, addon.c_str());
 	}
 
 	report += Common::U32String("\n");

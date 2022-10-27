@@ -184,7 +184,8 @@ ADDetectedGame AGSMetaEngineDetection::fallbackDetect(const FileMap &allFiles, c
 			game.matchedFiles[_filename].md5 = _md5;
 			game.matchedFiles[_filename].size = f.size();
 
-			game.hasUnknownFiles = hasUnknownFiles;
+			game.hasMismatchedFiles = hasUnknownFiles;
+			game.hasMissingResourceFork = false;
 			return game;
 		}
 	}

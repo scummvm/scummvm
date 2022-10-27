@@ -187,17 +187,26 @@ DetectedGame AdvancedMetaEngineDetection::toDetectedGame(const ADDetectedGame &a
 	}
 
 	DetectedGame game(getName(), desc->gameId, title, desc->language, desc->platform, extra, ((desc->flags & (ADGF_UNSUPPORTED | ADGF_WARNING)) != 0));
-	game.hasUnknownFiles = adGame.hasUnknownFiles;
+	game.hasUnknownFiles = adGame.getHasUnknownFiles();
 	game.matchedFiles = adGame.matchedFiles;
+
+	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> usesResourceFork;
+
+	for (const ADGameFileDescription *fileDesc = desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (fileDesc->md5[0] == 'r' && fileDesc->md5[1] == ':') {
+			usesResourceFork[fileDesc->fileName] = true;
+			break;
+		}
+	}
 
 	// Now specify the computation method for each file entry.
 	// TODO: This could be potentially overridden by use of upper part of adGame.fileType
 	// so, individual files could have their own computation method
 	for (FilePropertiesMap::iterator file = game.matchedFiles.begin(); file != game.matchedFiles.end(); ++file) {
-		if (desc->flags & ADGF_MACRESFORK)
-			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5MacResFork);
 		if (desc->flags & ADGF_TAILMD5)
 			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5Tail);
+		if (usesResourceFork[file->_key])
+			file->_value.md5prop = (MD5Properties)(file->_value.md5prop | kMD5MatchedByMacResFork);
 	}
 
 	if (extraInfo && !extraInfo->targetID.empty()) {
@@ -252,6 +261,30 @@ bool AdvancedMetaEngineDetection::cleanupPirated(ADDetectedGames &matched) const
 	return false;
 }
 
+bool AdvancedMetaEngineDetection::cleanupMissingResource(ADDetectedGames &matched) const {
+	// OKay, now let's sense presence of missing resource forks
+	if (!matched.empty()) {
+		for (uint j = 0; j < matched.size();) {
+			if (matched[j].hasMissingResourceFork)
+				matched.remove_at(j);
+			else
+				++j;
+		}
+
+		// We ruled out all variants and now have nothing
+		if (matched.empty()) {
+			warning("The dump is missing required resource forks. Please use dumper-companion.py or a similar tool");
+			if (GUI::GuiManager::hasInstance()) {
+				GUI::MessageDialog dialog(_("The dump is missing required resource forks. Please use dumper-companion.py or a similar tool"));
+				dialog.runModal();
+			};
+			return true;
+		}
+	}
+
+	return false;
+}
+
 DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fslist, uint32 skipADFlags, bool skipIncomplete) {
 	FileMap allFiles;
 
@@ -269,6 +302,8 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	ADDetectedGames matches = detectGame(fslist.begin()->getParent(), allFiles, Common::UNK_LANG, Common::kPlatformUnknown, "", skipADFlags, skipIncomplete);
 
 	cleanupPirated(matches);
+
+	cleanupMissingResource(matches);
 
 	DetectedGames detectedGames;
 	for (uint i = 0; i < matches.size(); i++) {
@@ -391,7 +426,7 @@ Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine 
 
 	ADDetectedGame agdDesc;
 	for (uint i = 0; i < matches.size(); i++) {
-		if (matches[i].desc->gameId == gameid && (!matches[i].hasUnknownFiles || canPlayUnknownVariants())) {
+		if (matches[i].desc->gameId == gameid && (!matches[i].getHasUnknownFiles() || canPlayUnknownVariants())) {
 			agdDesc = matches[i];
 			break;
 		}
@@ -505,45 +540,62 @@ namespace Common {
 }
 
 // Sync with engines/game.cpp
-static char flagsToMD5Prefix(uint32 flags) {
-	if (flags & ADGF_MACRESFORK) {
-		if (flags & ADGF_TAILMD5)
+static char flagsToMD5Prefix(FilePropertiesFlags flags) {
+	if (flags & kUseMacForks) {
+		if (flags & kUseTail)
 			return 'e';
 		return 'm';
 	}
-	if (flags & ADGF_TAILMD5)
+	if (flags & kUseTail)
 		return 't';
 
 	return 'f';
 }
 
-static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps);
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps);
 
-bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const {
-	Common::String hashname = Common::String::format("%c:%s:%d", flagsToMD5Prefix(game.flags), fname.c_str(), _md5Bytes);
+bool AdvancedMetaEngineDetection::getFileProperties(const FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps) const {
+	Common::String hashname = Common::String::format("%c:%s:%d", flagsToMD5Prefix(flags), fname.c_str(), _md5Bytes);
 
-	if (MD5Man.contains(hashname)) {
+	// It's tempting to merge datafork: one with prefixless but in case of extensionless macbinary plain file and datafork have different checksums
+
+	if ((flags & kUseMacForks) && MD5Man.contains("resfork:" + hashname) && MD5Man.contains("datafork:" + hashname) && MD5Man.contains(hashname)) {
+		fileProps.md5 = MD5Man.getMD5("datafork:" + hashname);
+		fileProps.size = MD5Man.getSize("datafork:" + hashname);
+		fileProps.res_md5 = MD5Man.getMD5("resfork:" + hashname);
+		fileProps.res_size = MD5Man.getSize("resfork:" + hashname);
+		return true;
+	}
+
+	if (!(flags & kUseMacForks) && MD5Man.contains(hashname)) {
 		fileProps.md5 = MD5Man.getMD5(hashname);
 		fileProps.size = MD5Man.getSize(hashname);
 		return true;
 	}
 
-	bool res = getFilePropertiesIntern(_md5Bytes, allFiles, game, fname, fileProps);
+	bool res = getFilePropertiesIntern(_md5Bytes, allFiles, flags, fname, fileProps);
 
 	if (res) {
-		MD5Man.setMD5(hashname, fileProps.md5);
-		MD5Man.setSize(hashname, fileProps.size);
+		if (flags & kUseMacForks) {
+			MD5Man.setMD5("datafork:" + hashname, fileProps.md5);
+			MD5Man.setSize("datafork:" + hashname, fileProps.size);
+			MD5Man.setMD5("resfork:" + hashname, fileProps.res_md5);
+			MD5Man.setSize("resfork:" + hashname, fileProps.res_size);
+		} else {
+			MD5Man.setMD5(hashname, fileProps.md5);
+			MD5Man.setSize(hashname, fileProps.size);
+		}
 	}
 
 	return res;
 }
 
-bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const {
-	return getFilePropertiesIntern(md5Bytes, allFiles, game, fname, fileProps);
+bool AdvancedMetaEngine::getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps) const {
+	return getFilePropertiesIntern(md5Bytes, allFiles, flags, fname, fileProps);
 }
 
-static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) {
-	if (game.flags & ADGF_MACRESFORK) {
+static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::FileMap &allFiles, FilePropertiesFlags flags, const Common::String &fname, FileProperties &fileProps) {
+	if (flags & kUseMacForks) {
 		FileMapArchive fileMapArchive(allFiles);
 
 		Common::MacResManager macResMan;
@@ -551,11 +603,22 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 		if (!macResMan.open(fname, fileMapArchive))
 			return false;
 
-		fileProps.md5 = macResMan.computeResForkMD5AsString(md5Bytes, ((game.flags & ADGF_TAILMD5) != 0));
-		fileProps.size = macResMan.getResForkDataSize();
+		fileProps.res_md5 = macResMan.computeResForkMD5AsString(md5Bytes, ((flags & kUseTail) != 0));
+		fileProps.res_size = macResMan.getResForkDataSize();
 
-		if (fileProps.size != 0)
-			return true;
+		Common::SeekableReadStream *stream = macResMan.getDataFork();
+
+		fileProps.size = stream->size();
+
+		if ((flags & kUseTail) != 0) {
+			if (stream->size() > md5Bytes)
+				stream->seek(-(int64)md5Bytes, SEEK_END);
+		}
+		fileProps.md5 = Common::computeStreamMD5AsString(*stream, md5Bytes);
+
+		delete stream;
+
+		return true;
 	}
 
 	if (!allFiles.contains(fname))
@@ -566,7 +629,7 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	if (!testFile.open(allFiles[fname]))
 		return false;
 
-	if (game.flags & ADGF_TAILMD5) {
+	if ((flags & kUseTail) != 0) {
 		if (testFile.size() > md5Bytes)
 			testFile.seek(-(int64)md5Bytes, SEEK_END);
 	}
@@ -574,6 +637,85 @@ static bool getFilePropertiesIntern(uint md5Bytes, const AdvancedMetaEngine::Fil
 	fileProps.size = testFile.size();
 	fileProps.md5 = Common::computeStreamMD5AsString(testFile, md5Bytes);
 	return true;
+}
+
+struct ParsedFileDesc {
+	const char *fileName;
+	const char *md5;
+	int64 fileSize;
+
+	bool is_tailmd5;
+	bool is_macresfork;
+	bool is_macdatafork;
+};
+
+static ParsedFileDesc parseFileDesc(const ADGameFileDescription *fileDesc, const ADGameDescription *g, bool use_macforks) {
+	struct ParsedFileDesc ret;
+	ret.fileName = fileDesc->fileName;
+	ret.fileSize = fileDesc->fileSize;
+	ret.is_tailmd5 = ((g->flags & ADGF_TAILMD5) != 0);
+	ret.is_macresfork = ((g->flags & ADGF_MACRESFORK) != 0);
+	ret.is_macdatafork = false;;
+	if (fileDesc->md5 && strchr(fileDesc->md5, ':')) {
+		const char *ptr;
+		for (ptr = fileDesc->md5; *ptr && *ptr != ':'; ptr++) {
+			switch (*ptr) {
+			case 'f':
+				ret.is_tailmd5 = false;
+				break;
+			case 't':
+				ret.is_tailmd5 = true;
+				break;
+			case 'r':
+				ret.is_macresfork = true;
+				ret.is_macdatafork = false;
+				break;
+			case 'd':
+				ret.is_macresfork = false;
+				ret.is_macdatafork = true;
+				break;
+			}
+		}
+		if (*ptr == ':')
+			ptr++;
+		if (*ptr)
+			ret.md5 = ptr;
+		else
+			ret.md5 = nullptr;
+	} else {
+		ret.md5 = nullptr;
+	}
+
+	if (use_macforks && !ret.is_macresfork && !ret.is_macdatafork)
+		ret.is_macdatafork = true;
+
+	return ret;
+}
+
+static FilePropertiesFlags makeFlags(const ParsedFileDesc& parsed_desc) {
+	FilePropertiesFlags ret = (parsed_desc.is_macdatafork || parsed_desc.is_macresfork) ? kUseMacForks : kFilePropertiesNone;
+
+	if (parsed_desc.is_tailmd5)
+		ret = (FilePropertiesFlags) (ret | kUseTail);
+
+	return ret;
+}
+
+static bool doesGameUsesMacForks(const ADGameDescription *g) {
+	if (g->flags & ADGF_MACRESFORK)
+		return true;
+	for (const ADGameFileDescription *fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
+		if (!fileDesc->md5)
+			continue;
+		if (!strchr(fileDesc->md5, ':'))
+			continue;
+		for (const char *ptr = fileDesc->md5; *ptr && *ptr != ':'; ptr++) {
+			if (*ptr == 'r' || *ptr == 'd')
+				return true;
+		}
+	}
+
+	return false;
 }
 
 ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &parent, const FileMap &allFiles, Common::Language language, Common::Platform platform, const Common::String &extra, uint32 skipADFlags, bool skipIncomplete) {
@@ -592,16 +734,19 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 	// they are present. Compute MD5s and file sizes for the available files.
 	for (descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
 		g = (const ADGameDescription *)descPtr;
+		bool use_macforks = doesGameUsesMacForks(g);
 
 		for (fileDesc = g->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String fname = fileDesc->fileName;
-			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), fname.c_str());
+			ParsedFileDesc parsedFileDesc = parseFileDesc(fileDesc, g, use_macforks);
+			FilePropertiesFlags flags = makeFlags(parsedFileDesc);
+			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(flags), fname.c_str());
 
 			if (filesProps.contains(key))
 				continue;
 
 			FileProperties tmp;
-			if (getFileProperties(allFiles, *g, fname, tmp)) {
+			if (getFileProperties(allFiles, flags, fname, tmp)) {
 				debugC(3, kDebugGlobalDetection, "> '%s': '%s' %ld", key.c_str(), tmp.md5.c_str(), long(tmp.size));
 			}
 
@@ -638,11 +783,14 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		ADDetectedGame game(g);
 		bool allFilesPresent = true;
 		int curFilesMatched = 0;
+		bool use_macforks = doesGameUsesMacForks(g);
 
 		// Try to match all files for this game
 		for (fileDesc = game.desc->filesDescriptions; fileDesc->fileName; fileDesc++) {
 			Common::String tstr = fileDesc->fileName;
-			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(g->flags), tstr.c_str());
+			ParsedFileDesc parsedFileDesc = parseFileDesc(fileDesc, g, use_macforks);
+			FilePropertiesFlags flags = makeFlags(parsedFileDesc);
+			Common::String key = Common::String::format("%c:%s", flagsToMD5Prefix(flags), tstr.c_str());
 
 			if (!filesProps.contains(key) || filesProps[key].size == -1) {
 				allFilesPresent = false;
@@ -651,19 +799,40 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 
 			game.matchedFiles[tstr] = filesProps[key];
 
-			if (game.hasUnknownFiles)
+			if (game.getHasUnknownFiles())
 				continue;
 
-			if (fileDesc->md5 != nullptr && fileDesc->md5 != filesProps[key].md5) {
-				debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[key].md5.c_str());
-				game.hasUnknownFiles = true;
-				continue;
-			}
+			if (parsedFileDesc.is_macresfork) {
+				if (filesProps[key].res_size == 0 && parsedFileDesc.fileSize != -1 && parsedFileDesc.fileSize != 0
+				    && parsedFileDesc.md5 != nullptr && strcmp(parsedFileDesc.md5, "d41d8cd98f00b204e9800998ecf8427e") != 0) {
+					debugC(3, kDebugGlobalDetection, "Resource fork is missing. Skipping (%s) (%s)", fileDesc->md5, filesProps[key].res_md5.c_str());
+					game.hasMissingResourceFork = true;
+					continue;
+				}
 
-			if (fileDesc->fileSize != -1 && fileDesc->fileSize != filesProps[key].size) {
-				debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", long(fileDesc->fileSize), long(filesProps[key].size));
-				game.hasUnknownFiles = true;
-				continue;
+				if (parsedFileDesc.md5 != nullptr && parsedFileDesc.md5 != filesProps[key].res_md5) {
+					debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", fileDesc->md5, filesProps[key].res_md5.c_str());
+					game.hasMismatchedFiles = true;
+					continue;
+				}
+
+				if (parsedFileDesc.fileSize != -1 && parsedFileDesc.fileSize != filesProps[key].res_size) {
+					debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", long(fileDesc->fileSize), long(filesProps[key].res_size));
+					game.hasMismatchedFiles = true;
+					continue;
+				}
+			} else {
+				if (parsedFileDesc.md5 != nullptr && parsedFileDesc.md5 != filesProps[key].md5) {
+					debugC(3, kDebugGlobalDetection, "MD5 Mismatch. Skipping (%s) (%s)", parsedFileDesc.md5, filesProps[key].md5.c_str());
+					game.hasMismatchedFiles = true;
+					continue;
+				}
+
+				if (parsedFileDesc.fileSize != -1 && fileDesc->fileSize != filesProps[key].size) {
+					debugC(3, kDebugGlobalDetection, "Size Mismatch. Skipping (%ld) (%ld)", long(fileDesc->fileSize), long(filesProps[key].size));
+					game.hasMismatchedFiles = true;
+					continue;
+				}
 			}
 
 			debugC(3, kDebugGlobalDetection, "Matched file: %s", tstr.c_str());
@@ -681,7 +850,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 		// cases.
 		if (allFilesPresent && !gotAnyMatchesWithAllFiles) {
 			// Do sanity check
-			if (game.hasUnknownFiles && (skipIncomplete || isEntryGrayListed(g))) {
+			if (game.getHasUnknownFiles() && (skipIncomplete || isEntryGrayListed(g))) {
 				debugC(3, kDebugGlobalDetection, "Skipping game: %s (%s %s/%s) (%d), %s %s", g->gameId, g->extra, getPlatformDescription(g->platform),
 					getLanguageDescription(g->language), i, skipIncomplete ? "(ignore incomplete matches)" : "", isEntryGrayListed(g) ? "(didn't pass sanity test)" : "");
 				continue;
@@ -691,7 +860,7 @@ ADDetectedGames AdvancedMetaEngineDetection::detectGame(const Common::FSNode &pa
 				matched.push_back(game);
 		}
 
-		if (allFilesPresent && !game.hasUnknownFiles) {
+		if (allFilesPresent && !game.getHasUnknownFiles()) {
 			debugC(2, kDebugGlobalDetection, "Found game: %s (%s %s/%s) (%d)", g->gameId, g->extra,
 			 getPlatformDescription(g->platform), getLanguageDescription(g->language), i);
 
@@ -731,6 +900,8 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 		int numMatchedFiles = 0;
 		bool fileMissing = false;
 
+		bool use_macforks = doesGameUsesMacForks(agdesc);
+
 		for (filenames = ptr->filenames; *filenames; ++filenames) {
 			debugC(3, kDebugGlobalDetection, "++ %s", *filenames);
 			if (!allFiles.contains(*filenames)) {
@@ -742,6 +913,10 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 		}
 
 		if (!fileMissing) {
+			FilePropertiesFlags flags = use_macforks ? kUseMacForks : kFilePropertiesNone;
+			if (agdesc->flags & ADGF_TAILMD5)
+				flags = (FilePropertiesFlags) (flags | kUseTail);
+
 			debugC(4, kDebugGlobalDetection, "Matched: %s", agdesc->gameId);
 
 			if (numMatchedFiles > maxNumMatchedFiles) {
@@ -750,12 +925,13 @@ ADDetectedGame AdvancedMetaEngineDetection::detectGameFilebased(const FileMap &a
 				debugC(4, kDebugGlobalDetection, "and overridden");
 
 				ADDetectedGame game(agdesc);
-				game.hasUnknownFiles = true;
+				game.hasMismatchedFiles = true;
 
 				for (filenames = ptr->filenames; *filenames; ++filenames) {
 					FileProperties tmp;
 
-					if (getFileProperties(allFiles, *agdesc, *filenames, tmp))
+
+					if (getFileProperties(allFiles, flags, *filenames, tmp))
 						game.matchedFiles[*filenames] = tmp;
 				}
 

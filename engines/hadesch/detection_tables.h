@@ -47,14 +47,14 @@ static const ADGameDescription gameDescriptions[] = {
 		"hadesch",
 		0,
 		{
-			{"Hades Challenge PPC", 0, "0a1dd550e5efe7f36370e689811fac73", 28945},
-			{"WD.POD", 0, "be7030fc4229e69e719ee2c756eb6ba1", 7479768},
-			{"ol.pod", 0, "7cabba8d1d4f1239e312e045ef4e9735", 5621074},
+			{"Hades Challenge PPC", 0, "r:0a1dd550e5efe7f36370e689811fac73", 28945},
+			{"WD.POD", 0, "d:be7030fc4229e69e719ee2c756eb6ba1", 7479768},
+			{"ol.pod", 0, "d:7cabba8d1d4f1239e312e045ef4e9735", 5621074},
 			AD_LISTEND
 		},
 		Common::EN_ANY,
 		Common::kPlatformMacintosh,
-		ADGF_DROPPLATFORM | ADGF_MACRESFORK,
+		ADGF_DROPPLATFORM,
 		GUIO1(GUIO_NOMIDI)
 
 	},
