@@ -117,7 +117,7 @@ void Events::pollEventsAndWait() {
 		gameManager->_sound.updateMixer();
 
 		// WORKAROUND: If in the Star Control view, update the camera
-		// frequently, to accomodate that the original had a higher
+		// frequently, to accommodate that the original had a higher
 		// draw rate than the ScummVM implementation does
 		CViewItem *view = gameManager->getView();
 		if (view->getFullViewName() == "Bridge.Node 4.N") {
