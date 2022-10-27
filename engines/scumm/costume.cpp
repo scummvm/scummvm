@@ -746,7 +746,7 @@ void ClassicCostumeLoader::loadCostume(int id) {
 
 	// In GF_OLD_BUNDLE games, there is no actual palette, just a single color byte.
 	// Don't forget, these games were designed around a fixed 16 color HW palette :-)
-	// In addition, all offsets are shifted by 2; we accomodate that via a separate
+	// In addition, all offsets are shifted by 2; we accommodate that via a separate
 	// _baseptr value (instead of adding tons of if's throughout the code).
 	if (_vm->_game.features & GF_OLD_BUNDLE) {
 		_numColors = (_format == 0x57) ? 0 : 1;
