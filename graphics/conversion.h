@@ -70,7 +70,7 @@ inline static void convertPaletteToMap(uint32 *dst, const byte *src, uint colors
 /**
  * Blits a rectangle.
  *
- * @param dst			the buffer which will recieve the converted graphics data
+ * @param dst			the buffer which will receive the converted graphics data
  * @param src			the buffer containing the original graphics data
  * @param dstPitch		width in bytes of one full line of the dest buffer
  * @param srcPitch		width in bytes of one full line of the source buffer
@@ -86,7 +86,7 @@ void copyBlit(byte *dst, const byte *src,
 /**
  * Blits a rectangle with a transparent color key.
  *
- * @param dst			the buffer which will recieve the converted graphics data
+ * @param dst			the buffer which will receive the converted graphics data
  * @param src			the buffer containing the original graphics data
  * @param dstPitch		width in bytes of one full line of the dest buffer
  * @param srcPitch		width in bytes of one full line of the source buffer
@@ -103,7 +103,7 @@ bool keyBlit(byte *dst, const byte *src,
 /**
  * Blits a rectangle from one graphical format to another.
  *
- * @param dst		the buffer which will recieve the converted graphics data
+ * @param dst		the buffer which will receive the converted graphics data
  * @param src		the buffer containing the original graphics data
  * @param dstPitch	width in bytes of one full line of the dest buffer
  * @param srcPitch	width in bytes of one full line of the source buffer
@@ -130,7 +130,7 @@ bool crossBlit(byte *dst, const byte *src,
 /**
  * Blits a rectangle from one graphical format to another with a transparent color key.
  *
- * @param dst		the buffer which will recieve the converted graphics data
+ * @param dst		the buffer which will receive the converted graphics data
  * @param src		the buffer containing the original graphics data
  * @param dstPitch	width in bytes of one full line of the dest buffer
  * @param srcPitch	width in bytes of one full line of the source buffer
