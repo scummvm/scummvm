@@ -48,7 +48,7 @@ bool                        paletteMayHaveChanged = false;
    Locals
  * ===================================================================== */
 
-static uint32 displayStatus = GraphicsInit;
+static uint32 displayStatus = kDisGraphicsInit;
 static bool paletteSuspendFlag = false;
 
 
@@ -68,7 +68,7 @@ static void switchOff();
 
 void endGame() {
 	blackOut();
-	displayDisable(GameEnded);
+	displayDisable(kDisGameEnded);
 	g_vm->_gameRunning = false;
 }
 
@@ -165,14 +165,14 @@ bool displayOkay() {
 // Main on/off swiotch for display
 
 void mainEnable() {
-	displayEnable(GameNotInitialized);
+	displayEnable(kDisGameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
 // This is a check to see if blitting is enabled
 
 void mainDisable() {
-	displayDisable(GameNotInitialized);
+	displayDisable(kDisGameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
