@@ -290,10 +290,10 @@ class ActorProto : public ProtoObj, public ResourceActorProtoExtension {
 
 private:
 	enum {
-		ViewableRows    = 3,
-		ViewableCols    = 3,
-		maxRows         = 3,
-		maxCols         = 3
+		kViewableRows    = 3,
+		kViewableCols    = 3,
+		kMaxRows         = 3,
+		kMaxCols         = 3
 	};
 
 public:
@@ -393,16 +393,16 @@ public:
 
 public:
 	virtual uint16 getViewableRows() {
-		return ViewableRows;
+		return kViewableRows;
 	}
 	virtual uint16 getViewableCols() {
-		return ViewableCols;
+		return kViewableCols;
 	}
 	virtual uint16 getMaxRows() {
-		return maxRows;
+		return kMaxRows;
 	}
 	virtual uint16 getMaxCols() {
-		return maxCols;
+		return kMaxCols;
 	}
 
 	virtual bool canFitBulkwise(GameObject *container, GameObject *obj);
