@@ -115,7 +115,7 @@ int16               objectLimboCount,       // the number of objects in object l
                     actorLimboCount,        // the number of actors in actor limbo
                     importantLimboCount;    // the number of objects in important limbo
 
-//  Indicates wether object states should be paused
+//  Indicates whether object states should be paused
 bool                objectStatesPaused;
 
 ObjectSoundFXs      *objectSoundFXTable;    // the global object sound effects table
