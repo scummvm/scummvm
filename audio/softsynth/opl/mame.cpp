@@ -893,11 +893,11 @@ void OPLWriteReg(FM_OPL *OPL, int r, int v) {
 		case 0xbd:
 			/* amsep,vibdep,r,bd,sd,tom,tc,hh */
 			{
-			uint8 rkey = OPL->rythm ^ v;
+			uint8 rkey = OPL->rhythm ^ v;
 			OPL->ams_table = &AMS_TABLE[v & 0x80 ? AMS_ENT : 0];
 			OPL->vib_table = &VIB_TABLE[v & 0x40 ? VIB_ENT : 0];
-			OPL->rythm  = v & 0x3f;
-			if (OPL->rythm & 0x20) {
+			OPL->rhythm  = v & 0x3f;
+			if (OPL->rhythm & 0x20) {
 				/* BD key on/off */
 				if (rkey & 0x10) {
 					if (v & 0x10) {
@@ -1069,8 +1069,8 @@ void YM3812UpdateOne(FM_OPL *OPL, int16 *buffer, int length) {
 		/* FM part */
 		for (CH = S_CH; CH < R_CH; CH++)
 			OPL_CALC_CH(CH);
-		/* Rythn part */
-		if (rythm)
+		/* Rhythm part */
+		if (rhythm)
 			OPL_CALC_RH(OPL, S_CH);
 		/* limit check */
 		data = CLIP(outd[0], OPL_MINOUT, OPL_MAXOUT);
