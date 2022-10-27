@@ -1600,7 +1600,7 @@ ContainerNode *CreateContainerNode(ObjectID id, bool open, int16) {
 			cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kPhysicalType);
 	}
 
-	//  If node was successfull created, and we wanted it open, and the owner
+	//  If node was successfully created, and we wanted it open, and the owner
 	//  is the center actor or no-actor then make the container window visible.
 	if (cn != nullptr
 	        &&  open
@@ -1625,7 +1625,7 @@ ContainerNode *OpenMindContainer(PlayerActorID player, int16 open, int16 type) {
 		cn = new ContainerNode(*g_vm->_cnm, id, ContainerNode::kMentalType);
 		cn->_mindType = type;
 
-		//  If node was successfull created, and we wanted it open, and the owner
+		//  If node was successfully created, and we wanted it open, and the owner
 		//  is the center actor or no-actor then make the container window visible.
 		if (open && id == getCenterActorID()) {
 			cn->show();
