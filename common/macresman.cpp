@@ -210,6 +210,37 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	return false;
 }
 
+SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName) {
+	return openFileOrDataFork(fileName, SearchMan);
+}
+
+SeekableReadStream * MacResManager::openFileOrDataFork(const Path &fileName, Archive &archive) {
+	SeekableReadStream *stream = archive.createReadStreamForMember(fileName);
+	// Check the basename for Macbinary
+	if (stream && isMacBinary(*stream)) {
+		stream->seek(MBI_DFLEN);
+		uint32 dataSize = stream->readUint32BE();
+		return new SeekableSubReadStream(stream, MBI_INFOHDR, MBI_INFOHDR + dataSize, DisposeAfterUse::YES);
+	}
+	// All formats other than Macbinary and AppleSingle (not supported) use
+	// basename-named file as data fork holder.
+	if (stream)
+		return stream;
+
+	// Check .bin for MacBinary next
+	stream = archive.createReadStreamForMember(fileName.append(".bin"));
+	if (stream && isMacBinary(*stream)) {
+		stream->seek(MBI_DFLEN);
+		uint32 dataSize = stream->readUint32BE();
+		return new SeekableSubReadStream(stream, MBI_INFOHDR, MBI_INFOHDR + dataSize, DisposeAfterUse::YES);
+	}
+	delete stream;
+
+	// The file doesn't exist
+	return nullptr;
+}
+
+
 bool MacResManager::exists(const Path &fileName) {
 	// Try the file name by itself
 	if (File::exists(fileName))
