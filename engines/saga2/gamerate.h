@@ -29,7 +29,7 @@
 namespace Saga2 {
 
 enum {
-	grFramesPerSecond = 0
+	kGRFramesPerSecond = 0
 };
 
 class frameCounter {
@@ -57,28 +57,28 @@ public:
 		_instantFrameCount = frameTime ? _ticksPerSecond / frameTime : 100;
 	}
 
-	virtual float frameStat(int statID = grFramesPerSecond) {
+	virtual float frameStat(int statID = kGRFramesPerSecond) {
 		return _instantFrameCount;
 	}
 };
 
 
 enum {
-	grFramesPerKilosecond   = 1,
-	grFPKS1SecAvgNewest     = 2,
-	grFPKS1SecAvgNew        = 3,
-	grFPKS1SecAvg           = 4,
-	grFPKS1SecAvgOld        = 5,
-	grFPKS1SecAvgOldest     = 6,
-	grFPKS5SecAvg           = 7,
-	grFPKSAvg1SecAvg        = 8,
-	grFPKS1SecVarNewest     = 9,
-	grFPKS1SecVarNew        = 10,
-	grFPKS1SecVar           = 11,
-	grFPKS1SecVarOld        = 12,
-	grFPKS1SecVarOldest     = 13,
-	grFPKS5SecVar           = 14,
-	grFPKSVar1SecAvg        = 15
+	kGRFramesPerKilosecond   = 1,
+	kGRFPKS1SecAvgNewest     = 2,
+	kGRFPKS1SecAvgNew        = 3,
+	kGRFPKS1SecAvg           = 4,
+	kGRFPKS1SecAvgOld        = 5,
+	kGRFPKS1SecAvgOldest     = 6,
+	kGRFPKS5SecAvg           = 7,
+	kGRFPKSAvg1SecAvg        = 8,
+	kGRFPKS1SecVarNewest     = 9,
+	kGRFPKS1SecVarNew        = 10,
+	kGRFPKS1SecVar           = 11,
+	kGRFPKS1SecVarOld        = 12,
+	kGRFPKS1SecVarOldest     = 13,
+	kGRFPKS5SecVar           = 14,
+	kGRFPKSVar1SecAvg        = 15
 };
 
 class frameSmoother: public frameCounter {
@@ -164,38 +164,38 @@ public:
 		}
 	}
 
-	virtual float frameStat(int statID = grFramesPerSecond) {
+	virtual float frameStat(int statID = kGRFramesPerSecond) {
 		int oldestOffset = (_frames % _historySize) / _desiredFPS;
 		switch (statID) {
-		case grFramesPerKilosecond  :
+		case kGRFramesPerKilosecond  :
 			return 1000 * _instantFrameCount;
-		case grFPKS1SecAvgNewest    :
+		case kGRFPKS1SecAvgNewest    :
 			return _avg1Sec[4 + oldestOffset];
-		case grFPKS1SecAvgNew       :
+		case kGRFPKS1SecAvgNew       :
 			return _avg1Sec[3 + oldestOffset];
-		case grFPKS1SecAvg          :
+		case kGRFPKS1SecAvg          :
 			return _avg1Sec[2 + oldestOffset];
-		case grFPKS1SecAvgOld       :
+		case kGRFPKS1SecAvgOld       :
 			return _avg1Sec[1 + oldestOffset];
-		case grFPKS1SecAvgOldest    :
+		case kGRFPKS1SecAvgOldest    :
 			return _avg1Sec[0 + oldestOffset];
-		case grFPKS5SecAvg          :
+		case kGRFPKS5SecAvg          :
 			return _avg5Sec;
-		case grFPKSAvg1SecAvg       :
+		case kGRFPKSAvg1SecAvg       :
 			return _secAvg;
-		case grFPKS1SecVarNewest    :
+		case kGRFPKS1SecVarNewest    :
 			return _dif1Sec[4 + oldestOffset];
-		case grFPKS1SecVarNew       :
+		case kGRFPKS1SecVarNew       :
 			return _dif1Sec[3 + oldestOffset];
-		case grFPKS1SecVar          :
+		case kGRFPKS1SecVar          :
 			return _dif1Sec[2 + oldestOffset];
-		case grFPKS1SecVarOld       :
+		case kGRFPKS1SecVarOld       :
 			return _dif1Sec[1 + oldestOffset];
-		case grFPKS1SecVarOldest    :
+		case kGRFPKS1SecVarOldest    :
 			return _dif1Sec[0 + oldestOffset];
-		case grFPKS5SecVar          :
+		case kGRFPKS5SecVar          :
 			return _dif5Sec;
-		case grFPKSVar1SecAvg       :
+		case kGRFPKSVar1SecAvg       :
 			return _secDif;
 		default:
 			return frameCounter::frameStat(statID);

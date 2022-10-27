@@ -807,11 +807,11 @@ void WriteStatusF2(int16, const char *, ...) {}
 int32 currentGamePerformance() {
 	int32 framePer = 100;
 	int32 lval = int(g_vm->_lrate->frameStat());
-	int32 fval = int(g_vm->_lrate->frameStat(grFramesPerSecond));
+	int32 fval = int(g_vm->_lrate->frameStat(kGRFramesPerSecond));
 	if (fval >= frameRate && lval > fval) {
 		framePer += (50 * ((lval - fval) / fval));
 	} else {
-		framePer = (100 * g_vm->_frate->frameStat(grFramesPerSecond)) / frameRate;
+		framePer = (100 * g_vm->_frate->frameStat(kGRFramesPerSecond)) / frameRate;
 	}
 	framePer = clamp(10, framePer, 240);
 	return framePer;
