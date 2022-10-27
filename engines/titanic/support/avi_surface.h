@@ -190,7 +190,7 @@ public:
 	}
 
 	/**
-	 * Handle any movie events relevent for the frame
+	 * Handle any movie events relevant for the frame
 	 */
 	virtual bool handleEvents(CMovieEventList &events);
 
