@@ -51,7 +51,7 @@
 /*
  At the beginning the reverse engineers were happy, and did rejoice at
  their task, for the engine before them did shineth and was full of
- promise. But then they did look closer and see'th the aweful truth;
+ promise. But then they did look closer and see'th the awful truth;
  its code was assembly and messy (rareth was its comments). And so large
  were its includes that did at first seem small; queereth also was its
  compact(s). Then they did findeth another version, and this was slightly
