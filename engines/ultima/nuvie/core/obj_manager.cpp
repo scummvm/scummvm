@@ -392,7 +392,7 @@ bool ObjManager::save_obj(NuvieIO *save_buf, Obj *obj, uint16 parent_objblk_n) {
 void ObjManager::clean() {
 	uint8 i;
 
-	egg_manager->clean(Game::get_game()->are_cheats_enabled() ? show_eggs : false); //show_eggs determines wether we delete the actual Objs from egg manager.
+	egg_manager->clean(Game::get_game()->are_cheats_enabled() ? show_eggs : false); //show_eggs determines whether we delete the actual Objs from egg manager.
 
 	for (i = 0; i < 64; i++)
 		iAVLCleanTree(surface[i], clean_obj_tree_node);
