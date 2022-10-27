@@ -157,7 +157,7 @@ void WidgetFiles::render(FilesRenderMode mode) {
 		yp += _surface.fontHeight() + 1;
 	}
 
-	// Draw the Scrollbar if neccessary
+	// Draw the Scrollbar if necessary
 	if (mode != RENDER_NAMES)
 		drawScrollBar(_savegameIndex, FILES_LINES_COUNT, _savegames.size());
 }
