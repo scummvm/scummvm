@@ -88,7 +88,7 @@ void WFNFontRenderer::RenderText(const char *text, int fontNumber, BITMAP *desti
 	Bitmap ds(destination, true);
 
 	// NOTE: allegro's putpixel ignores clipping (optimization),
-	// so we'll have to accomodate for that ourselves
+	// so we'll have to accommodate for that ourselves
 	Rect clip = ds.GetClip();
 	for (; *text; ++text)
 		x += RenderChar(&ds, x, y, clip, font->GetChar(GetCharCode(*text, font)), params.SizeMultiplier, colour);
