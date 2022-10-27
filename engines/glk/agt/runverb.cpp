@@ -159,7 +159,7 @@ static void v_noun(int vc, parse_rec *nounrec) {
 		sysmsgd(tcreat(dobj_) ? 180 : 181, "Nothing happens.", nounrec);
 		return;
 	}
-	/* otherwise, print out relevent description. */
+	/* otherwise, print out relevant description. */
 	if (vc == 0) /* Push */
 		runptr(dobj_ - first_noun, push_ptr,
 		       "$You$ $verb$ $the_n$$noun$ for a while, but nothing happens.",
