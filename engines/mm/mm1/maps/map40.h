@@ -32,9 +32,51 @@ class Map40 : public Map {
 	typedef void (Map40:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special15();
+	void special16();
+	void special17();
+	void special18();
+	void special19();
+	void special20();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map40::special00
+	const SpecialFn SPECIAL_FN[23] = {
+		&Map40::special00,
+		&Map40::special01,
+		&Map40::special02,
+		&Map40::special03,
+		&Map40::special04,
+		&Map40::special05,
+		&Map40::special06,
+		&Map40::special07,
+		&Map40::special08,
+		&Map40::special09,
+		&Map40::special10,
+		&Map40::special11,
+		&Map40::special12,
+		&Map40::special13,
+		&Map40::special14,
+		&Map40::special15,
+		&Map40::special16,
+		&Map40::special17,
+		&Map40::special18,
+		&Map40::special19,
+		&Map40::special20,
+		&Map40::special02,
+		&Map40::special02
 	};
 public:
 	Map40() : Map(40, "rwl2", 0x702) {}
@@ -43,6 +85,16 @@ public:
 	 * Handles all special stuff that happens on the map
 	 */
 	void special() override;
+
+	/**
+	 * Called when party chooses to resist Lord Archer
+	 */
+	void archerResist();
+
+	/**
+	 * Called when party chooses to submit to Lord Archer
+	 */
+	void archerSubmit();
 };
 
 } // namespace Maps
