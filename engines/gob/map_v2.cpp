@@ -58,6 +58,10 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 
 	if (((uint16) id) >= 65520) {
 		switch ((uint16) id) {
+			case 65529:
+				warning("Map_v2::loadMapObjects(): ID == 65529"); // TODO: unimplemented case
+				break;
+
 			case 65530:
 				for (int i = 0; i < _mapWidth * _mapHeight; i++)
 					_passMap[i] -= READ_VARO_UINT8(var + i);

@@ -919,6 +919,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 		break;
 
 	default:
+		warning("unkown operation %d in Draw_v2::spriteOperation", operation);
 		break;
 	}
 
