@@ -936,7 +936,7 @@ void Inter_v7::o7_loadIFFPalette() {
 
 void Inter_v7::o7_opendBase() {
 	Common::String dbFile = getFile(_vm->_game->_script->evalString());
-	Common::String id     = getFile(_vm->_game->_script->evalString());
+	Common::String id     = _vm->_game->_script->evalString();
 
 	dbFile += ".DBF";
 
@@ -950,7 +950,7 @@ void Inter_v7::o7_opendBase() {
 }
 
 void Inter_v7::o7_closedBase() {
-	Common::String id = getFile(_vm->_game->_script->evalString());
+	Common::String id = _vm->_game->_script->evalString();
 
 	if (_databases.close(id))
 		WRITE_VAR(27, 1); // Success
@@ -959,7 +959,7 @@ void Inter_v7::o7_closedBase() {
 }
 
 void Inter_v7::o7_getDBString() {
-	Common::String id      = getFile(_vm->_game->_script->evalString());
+	Common::String id      = _vm->_game->_script->evalString();
 	Common::String group   = _vm->_game->_script->evalString();
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String keyword = _vm->_game->_script->evalString();
