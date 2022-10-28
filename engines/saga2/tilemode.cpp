@@ -242,7 +242,7 @@ char luckyKey(char *choices) {
 //	This function performs all combat pausing tasks
 
 static void pauseCombat() {
-	pauseCalender();
+	pauseCalendar();
 	pauseBackgroundSimulation();
 	pauseInterruptableMotions();
 	pauseObjectStates();
@@ -263,7 +263,7 @@ static void resumeCombat() {
 	resumeObjectStates();
 	resumeInterruptableMotions();
 	resumeBackgroundSimulation();
-	resumeCalender();
+	resumeCalendar();
 }
 
 //-----------------------------------------------------------------------
@@ -327,7 +327,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 			handlePlayerActorAttacked(playerID);
 
 		aggressiveActFlag = true;
-		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calender;
+		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calendar;
 	}
 }
 
@@ -336,7 +336,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 //	involving a player actor
 
 uint16 timeSinceLastAggressiveAct() {
-	return aggressiveActFlag ? *g_vm->_calender - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
+	return aggressiveActFlag ? *g_vm->_calendar - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
 }
 
 //-----------------------------------------------------------------------
@@ -1438,7 +1438,7 @@ void noStickyMap() {
 }
 
 TileModeManager::TileModeManager() {
-	_timeOfLastAggressiveAct = new CalenderTime;
+	_timeOfLastAggressiveAct = new CalendarTime;
 }
 
 TileModeManager::~TileModeManager() {
