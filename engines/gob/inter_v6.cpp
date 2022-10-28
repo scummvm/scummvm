@@ -297,6 +297,26 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 	} else
 		loopCount = 1;
 
+	// WORKAROUND for a bug in Adibou 2 scripts for cooking activity: bananas count is not updated correctly.
+	// The banana balance equation should be: "remaining bananas = previous remaining bananas - bananas used for cake"
+	// but scripts do instead "remaining bananas = previous remaining *cherries* - bananas used for cake" :p
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		loopCount == 1
+		&&
+		_vm->_game->_script->pos() == 18631 // same offset in all versions
+		&&
+		(dest == 40956 // bananas in v2.10, v2.11
+		 ||
+		 dest == 40916) // bananas in v2.12, v2.13
+		&&
+		_vm->isCurrentTot("cuisine.tot")) {
+		uint16 bananasInCakesVar = (dest == 40956) ? 22820 : 22828;
+		WRITE_VAR_OFFSET(dest, VAR_OFFSET(dest) - VAR_OFFSET(bananasInCakesVar) /* bananas used for cake */);
+		_vm->_game->_script->skipExpr(99);
+		return;
+	}
+
 	for (int i = 0; i < loopCount; i++) {
 		int16 result;
 		int16 srcType = _vm->_game->_script->evalExpr(&result);
