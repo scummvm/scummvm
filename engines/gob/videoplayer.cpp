@@ -393,11 +393,18 @@ void VideoPlayer::updateLive(int slot, bool force) {
 	if (!video || !video->live)
 		return;
 
+	int nbrOfLiveVideos = 0;
+	for (int i = 0; i < kVideoSlotCount; i++) {
+		Video *otherVideo = getVideoBySlot(i);
+		if (otherVideo && otherVideo->live)
+			++nbrOfLiveVideos;
+	}
+
 	if (video->properties.startFrame >= (int32)(video->decoder->getFrameCount() - 1)) {
 		// Video ended
 
 		if (!video->properties.loop) {
-			if (!(video->properties.flags & kFlagNoVideo))
+			if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
 				WRITE_VAR_OFFSET(212, (uint32)-1);
 			_vm->_vidPlayer->closeVideo(slot);
 			return;
@@ -414,7 +421,7 @@ void VideoPlayer::updateLive(int slot, bool force) {
 	if (!force && (video->decoder->getTimeToNextFrame() > 0))
 		return;
 
-	if (!(video->properties.flags & kFlagNoVideo))
+	if (!(video->properties.flags & kFlagNoVideo) || nbrOfLiveVideos == 1)
 		WRITE_VAR_OFFSET(212, video->properties.startFrame + 1);
 
 	bool backwards = video->properties.startFrame > video->properties.lastFrame;
