@@ -9,7 +9,7 @@ MODULE_OBJS := \
 	beegee.o \
 	blitters.o \
 	button.o \
-	calender.o \
+	calendar.o \
 	console.o \
 	contain.o \
 	display.o \
