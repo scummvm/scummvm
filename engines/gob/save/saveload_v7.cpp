@@ -815,6 +815,8 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"adibour.pal",  kSaveModeSave, 0, "drawing on floppy disk (thumbnail)" },
 	{"test.dob",     kSaveModeSave, 0, "test floppy disk file" },
 
+	{"TEMP\\liste.$$$", kSaveModeSave, 0, "exercise list" },
+
     // Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
 	{"statev00.inf", kSaveModeSave, nullptr, nullptr        },
@@ -1341,6 +1343,7 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 																											   writer,
 																											   true);
 	_saveFiles[index++].handler = _adibou2TestDobHandler = new FakeFileHandler(_vm);
+	_saveFiles[index++].handler = _adibou2ExerciseListHandler = new FakeFileHandler(_vm);
 
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
@@ -1416,6 +1419,7 @@ SaveLoad_v7::~SaveLoad_v7() {
 	delete _adibou2DrawingOnFloppyDiskHandler;
 	delete _adibou2DrawingThumbnailOnFloppyDiskHandler;
 	delete _adibou2TestDobHandler;
+	delete _adibou2ExerciseListHandler;
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
