@@ -64,6 +64,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 	OPCODEDRAW(0x0C, o7_draw0x0C);
 	OPCODEDRAW(0x0D, o7_loadCursorFromExec);
+	OPCODEDRAW(0x15, o7_freeMult);
 	OPCODEDRAW(0x17, o7_loadMultObject);
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_logString);
@@ -341,6 +342,10 @@ void Inter_v7::o7_loadCursorFromExec() {
 
 	delete cursorGroup;
 	delete defaultCursor;
+}
+
+void Inter_v7::o7_freeMult() {
+	_vm->_mult->freeMult(true);
 }
 
 void Inter_v7::o7_loadMultObject() {

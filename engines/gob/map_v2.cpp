@@ -76,7 +76,7 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 				break;
 			case 65533: {
 				int index = READ_VARO_UINT16(var);
-				_vm->_mult->_objects[index].field_6E = 0;
+				_vm->_mult->_objects[index].ownAnimVariables = false;
 				_vm->_mult->_objects[index].animVariables = (int16*) variables;
 				break;
 			}
