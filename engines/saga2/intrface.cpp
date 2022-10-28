@@ -398,7 +398,7 @@ CPlaqText::CPlaqText(gPanelList     &list,
                      int16         ident,
                      AppFunc       *cmd)
 	: gControl(list, box, msg, ident, cmd) {
-	if (strlen(msg) < bufSize) {
+	if (strlen(msg) < kBufSize) {
 		Common::strcpy_s(_lineBuf, msg);
 	} else {
 		*_lineBuf = '\0';
@@ -486,7 +486,7 @@ void CPortrait::setPortrait(uint16 brotherID) {
 	assert(brotherID < _numViews + 1);
 
 	// tell button to select and display new image
-	if (brotherID == uiIndiv) {
+	if (brotherID == kUiIndiv) {
 		WriteStatusF(4, " Brother id %d", brotherID);
 
 		_indivButton->setCurrent(_currentState[brotherID]);
@@ -650,8 +650,8 @@ void CStatusLine::experationCheck() {
 		_minWaitAlarm.set(_lineQueue[_queueTail].frameTime / 5);
 
 		// copy upto the buffer's size in chars
-		Common::strlcpy(_lineBuf, _lineQueue[_queueTail].text, bufSize);
-		_lineBuf[bufSize - 1] = '\0';
+		Common::strlcpy(_lineBuf, _lineQueue[_queueTail].text,kBufSize);
+		_lineBuf[kBufSize - 1] = '\0';
 
 		//  free the queue text buffer
 		delete[] _lineQueue[_queueTail].text;
@@ -688,10 +688,10 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	_massPiePos      = _backImagePos;
 	_bulkPiePos      = _backImagePos;
 
-	_massPiePos.x    += massPieXOffset;
-	_massPiePos.y    += massPieYOffset;
-	_bulkPiePos.x    += bulkPieXOffset;
-	_bulkPiePos.y    += bulkPieYOffset;
+	_massPiePos.x    += kMassPieXOffset;
+	_massPiePos.y    += kMassPieYOffset;
+	_bulkPiePos.x    += kBulkPieXOffset;
+	_bulkPiePos.y    += kBulkPieYOffset;
 
 	_bRedraw         = true; // this MUST be true or the indicators will not draw the first time
 
@@ -713,7 +713,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	// attach controls to the indivControls panel
 	// these butttons will get deactivated along with the panel
 	_pieMass = new GfxCompImage(*panel,
-	                                       Rect16(_massPiePos.x, _massPiePos.y, pieXSize, pieYSize),
+	                                       Rect16(_massPiePos.x, _massPiePos.y, kPieXSize, kPieYSize),
 	                                       _pieIndImag,
 	                                       numPieIndImages,
 	                                       0,
@@ -721,7 +721,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	                                       cmdMassInd);
 
 	_pieBulk = new GfxCompImage(*panel,
-	                                       Rect16(_bulkPiePos.x, _bulkPiePos.y, pieXSize, pieYSize),
+	                                       Rect16(_bulkPiePos.x, _bulkPiePos.y, kPieXSize, kPieYSize),
 	                                       _pieIndImag,
 	                                       numPieIndImages,
 	                                       0,
@@ -730,9 +730,9 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// mass/bulk back image
 	new GfxCompImage(*panel,
-	                             Rect16(_backImagePos.x, _backImagePos.y, backImageXSize, backImageYSize),
+	                             Rect16(_backImagePos.x, _backImagePos.y, kBackImageXSize, kBackImageYSize),
 	                             _massBulkImag,
-	                             uiIndiv,
+	                             kUiIndiv,
 	                             nullptr);
 
 	// release resource context
@@ -805,7 +805,7 @@ void CMassWeightIndicator::update() {
  * ===================================================================== */
 
 // setup the mana color tables
-static uint8 manaColorMap[CManaIndicator::numManaTypes][CManaIndicator::numManaColors + 9] = {
+static uint8 manaColorMap[CManaIndicator::kManaNumManaTypes][CManaIndicator::kResNumManaColors + 9] = {
 	// each row has 9 leading zero's to acount for windows colors
 	{ 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x18, 0x74, 0x73, 0x72, 0x80, 0x84, 0x83, 0x82, 0x82, 0x81, 0x81, 0xF4, 0xE9 }, // Red
 
@@ -822,7 +822,7 @@ static uint8 manaColorMap[CManaIndicator::numManaTypes][CManaIndicator::numManaC
 
 
 CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
-	        Rect16(x, y, xSize, ySize),
+	        Rect16(kAreaX, kAreaY, kAreaXSize, kAreaYSize),
 	        nullptr,
 	        0,
 	        cmdManaInd) {
@@ -832,38 +832,38 @@ CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
 	_resContext  = resFile->newContext(MKTAG('M', 'A', 'N', 'A'), "mana context");
 
 	// load star images
-	_starImages = loadImageRes(_resContext, starResNum, numStars, 'S', 'T', 'A');
+	_starImages = loadImageRes(_resContext, kResStarResNum, kResNumStars, 'S', 'T', 'A');
 
 	// load in the ring images
-	_ringImages = loadImageRes(_resContext, ringResNum, numRings, 'R', 'N', 'G');
+	_ringImages = loadImageRes(_resContext, kResRingResNum, kResNumRings, 'R', 'N', 'G');
 
 	_backImage = g_vm->_imageCache->requestImage(_resContext, MKTAG('B', 'A', 'C', 'K'));
 
 	_wellImage = g_vm->_imageCache->requestImage(_resContext, MKTAG('W', 'E', 'L', 'L'));
 
 	// hmm this could be cleaner...
-	_starRingEndPos[0] = Point16(redEndX,    redEndY);
-	_starRingEndPos[1] = Point16(orangeEndX, orangeEndY);
-	_starRingEndPos[2] = Point16(yellowEndX, yellowEndY);
-	_starRingEndPos[3] = Point16(greenEndX,  greenEndY);
-	_starRingEndPos[4] = Point16(blueEndX,   blueEndY);
-	_starRingEndPos[5] = Point16(violetEndX, violetEndY);
+	_starRingEndPos[0] = Point16(kManaRedEndX,    kManaRedEndY);
+	_starRingEndPos[1] = Point16(kManaOrangeEndX, kManaOrangeEndY);
+	_starRingEndPos[2] = Point16(kManaYellowEndX, kManaYellowEndY);
+	_starRingEndPos[3] = Point16(kManaGreenEndX,  kManaGreenEndY);
+	_starRingEndPos[4] = Point16(kManaBlueEndX,   kManaBlueEndY);
+	_starRingEndPos[5] = Point16(kManaVioletEndX, kManaVioletEndY);
 
-	_starSizes[0] = Point16(star1XSize, star1YSize);
-	_starSizes[1] = Point16(star2XSize, star2YSize);
-	_starSizes[2] = Point16(star3XSize, star3YSize);
-	_starSizes[3] = Point16(star4XSize, star4YSize);
-	_starSizes[4] = Point16(star5XSize, star5YSize);
-	_starSizes[5] = Point16(star6XSize, star6YSize);
-	_starSizes[6] = Point16(star7XSize, star7YSize);
+	_starSizes[0] = Point16(kStar1XSize, kStar1YSize);
+	_starSizes[1] = Point16(kStar2XSize, kStar2YSize);
+	_starSizes[2] = Point16(kStar3XSize, kStar3YSize);
+	_starSizes[3] = Point16(kStar4XSize, kStar4YSize);
+	_starSizes[4] = Point16(kStar5XSize, kStar5YSize);
+	_starSizes[5] = Point16(kStar6XSize, kStar6YSize);
+	_starSizes[6] = Point16(kStar7XSize, kStar7YSize);
 
-	_ringSizes[0] = Point16(ring1XSize, ring1YSize);
-	_ringSizes[1] = Point16(ring2XSize, ring2YSize);
-	_ringSizes[2] = Point16(ring3XSize, ring3YSize);
-	_ringSizes[3] = Point16(ring4XSize, ring4YSize);
-	_ringSizes[4] = Point16(ring5XSize, ring5YSize);
-	_ringSizes[5] = Point16(ring6XSize, ring6YSize);
-	_ringSizes[6] = Point16(ring7XSize, ring7YSize);
+	_ringSizes[0] = Point16(kRing1XSize, kRing1YSize);
+	_ringSizes[1] = Point16(kRing2XSize, kRing2YSize);
+	_ringSizes[2] = Point16(kRing3XSize, kRing3YSize);
+	_ringSizes[3] = Point16(kRing4XSize, kRing4YSize);
+	_ringSizes[4] = Point16(kRing5XSize, kRing5YSize);
+	_ringSizes[5] = Point16(kRing6XSize, kRing6YSize);
+	_ringSizes[6] = Point16(kRing7XSize, kRing7YSize);
 
 
 	// get rid of resource context
@@ -871,20 +871,20 @@ CManaIndicator::CManaIndicator(gPanelList &list) : GfxCompImage(list,
 	_resContext = nullptr;
 
 	// set update checks to nominal values
-	for (uint16 i = 0; i < numManaTypes; i++) {
+	for (uint16 i = 0; i < kManaNumManaTypes; i++) {
 		_currentMana[i]        = -1;
 		_currentBaseMana[i]    = -1;
 	}
 
 	// init the save map
-	_savedMap._size = Extent16(xSize, ySize);
+	_savedMap._size = Extent16(kAreaXSize, kAreaYSize);
 	_savedMap._data = new uint8[_savedMap.bytes()];
 }
 
 CManaIndicator::~CManaIndicator() {
 	// release images
-	unloadImageRes(_starImages, numStars);
-	unloadImageRes(_ringImages, numRings);
+	unloadImageRes(_starImages, kResNumStars);
+	unloadImageRes(_ringImages, kResNumRings);
 
 	// release back image
 	g_vm->_imageCache->releaseImage(_backImage);
@@ -903,18 +903,18 @@ CManaIndicator::~CManaIndicator() {
 //  -------
 
 Rect16 CManaIndicator::getManaRegionRect(int8 nRegion) {
-	assert(nRegion >= 0 && nRegion < numManaRegions);
+	assert(nRegion >= 0 && nRegion < kManaNumManaRegions);
 
-	int boxSizeX = xSize / 3;
-	int boxSizeY = ySize / 2;
+	int boxSizeX = kAreaXSize / 3;
+	int boxSizeY = kAreaYSize / 2;
 
-	static Rect16 manaRegionRects[numManaRegions] = {
-		Rect16(x, y, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX, y, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX * 2, y, boxSizeX, boxSizeY),
-		Rect16(x, y + boxSizeY, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX, y + boxSizeY, boxSizeX, boxSizeY),
-		Rect16(x + boxSizeX * 2, y + boxSizeY, boxSizeX, boxSizeY)
+	static Rect16 manaRegionRects[kManaNumManaRegions] = {
+		Rect16(kAreaX, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX * 2, kAreaY, boxSizeX, boxSizeY),
+		Rect16(kAreaX, kAreaY + boxSizeY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX, kAreaY + boxSizeY, boxSizeX, boxSizeY),
+		Rect16(kAreaX + boxSizeX * 2, kAreaY + boxSizeY, boxSizeX, boxSizeY)
 	};
 
 	return manaRegionRects[nRegion];
@@ -932,7 +932,7 @@ void CManaIndicator::draw() {
 	port.setMode(kDrawModeMatte);
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
-	drawClipped(port, Point16(0, 0), Rect16(0, 0, xSize, ySize));
+	drawClipped(port, Point16(0, 0), Rect16(0, 0, kAreaXSize, kAreaYSize));
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
 
@@ -955,7 +955,7 @@ void CManaIndicator::drawClipped(gPort &port,
 		port.setMode(kDrawModeMatte);
 		port.bltPixels(_savedMap, 0, 0,
 		               _extent.x - offset.x, _extent.y - offset.y,
-		               xSize, ySize);
+		               kAreaXSize, kAreaYSize);
 
 		// draw the frame
 		drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), _backImage);
@@ -972,20 +972,20 @@ void CManaIndicator::drawClipped(gPort &port,
 	gPixelMap   ringMap, starMap, mixMap, tempMap;
 
 
-	if (!NewTempPort(tempPort, xSize, ySize))
+	if (!NewTempPort(tempPort, kAreaXSize, kAreaYSize))
 		return;
 
 	// set the blit surface to a flat black
 	memset(tempPort._map->_data, 24, tempPort._map->bytes());
 
 	// draw the well
-	drawCompressedImage(tempPort, Point16(wellX, wellY), _wellImage);
+	drawCompressedImage(tempPort, Point16(kWellX, kWellY), _wellImage);
 
 	// make a mixing plane and blank it
-	mixMap._size = Extent16(xSize, ySize);
+	mixMap._size = Extent16(kAreaXSize, kAreaYSize);
 	mixMap._data = new uint8[mixMap.bytes()]();
 	// make a temp plane and blank it
-	tempMap._size = Extent16(xSize, ySize);
+	tempMap._size = Extent16(kAreaXSize, kAreaYSize);
 	tempMap._data = new uint8[tempMap.bytes()]();
 
 	// clear out the blit surfaces
@@ -996,7 +996,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	tempPort.setMode(kDrawModeMatte);
 
 	// draw each star and ring with color remap
-	for (uint16 i = 0; i < numManaTypes; i++) {
+	for (uint16 i = 0; i < kManaNumManaTypes; i++) {
 		// get the header for the image pointer passed
 		ImageHeader *starHdr = (ImageHeader *)_starImages[_manaLines[i].starImageIndex];
 		ImageHeader *ringHdr = (ImageHeader *)_ringImages[_manaLines[i].ringImageIndex];
@@ -1073,7 +1073,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	port.setMode(kDrawModeMatte);
 	port.bltPixels(*tempPort._map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
-	               xSize, ySize);
+	               kAreaXSize, kAreaYSize);
 
 	// now blit the frame on top of it all.
 	drawCompressedImage(port, Point16(_extent.x - offset.x, _extent.y - offset.y), _backImage);
@@ -1100,7 +1100,7 @@ bool CManaIndicator::needUpdate(PlayerActor *player) {
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
-	for (i = 0; i < numManaTypes; i++) {
+	for (i = 0; i < kManaNumManaTypes; i++) {
 		manaAmount      = stats->mana(i);
 		baseManaAmount  = baseStatsRef.mana(i);
 
@@ -1127,7 +1127,7 @@ bool CManaIndicator::update(PlayerActor *player) {
 
 	// this could do more array checking, but
 	// the number of mana type should remain stable
-	for (i = 0; i < numManaTypes; i++) {
+	for (i = 0; i < kManaNumManaTypes; i++) {
 		manaAmount      = stats->mana(i);
 		baseManaAmount  = baseStatsRef.mana(i);
 
@@ -1164,7 +1164,7 @@ void CManaIndicator::getManaLineInfo(uint16 index,
                                      int16 manaAmount,
                                      int16 baseManaAmount,
                                      manaLineInfo *info) {
-	Point16 basePos = Point16(xSize / 2, ySize / 2);
+	Point16 basePos = Point16(kAreaXSize / 2, kAreaYSize / 2);
 
 	// div zero prevention
 	if (manaAmount == 0) manaAmount = 1;
@@ -1175,16 +1175,16 @@ void CManaIndicator::getManaLineInfo(uint16 index,
 	//  Calculate the positions of the mana stars, and which images to use.
 	manaInfo.starPos        = LERP(basePos,
 	                               _starRingEndPos[index],
-	                               (int32)maxLevel,
+	                               (int32)kManaMaxLevel,
 	                               (int32)manaAmount);
 
 	manaInfo.ringPos        = LERP(basePos,
 	                               _starRingEndPos[index],
-	                               (int32)maxLevel,
+	                               (int32)kManaMaxLevel,
 	                               (int32)baseManaAmount);
 
-	manaInfo.starImageIndex = clamp(0,     manaAmount * numStars / maxLevel, numStars - 1);
-	manaInfo.ringImageIndex = clamp(0, baseManaAmount * numStars / maxLevel, numRings - 1);
+	manaInfo.starImageIndex = clamp(0,     manaAmount * kResNumStars / kManaMaxLevel, kResNumStars - 1);
+	manaInfo.ringImageIndex = clamp(0, baseManaAmount * kResNumStars / kManaMaxLevel, kResNumRings - 1);
 
 	// now do centering correct for images
 	manaInfo.starPos.x -= _starSizes[manaInfo.starImageIndex].x / 2;
@@ -1207,43 +1207,43 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	_healthRes = resFile->newContext(imageGroupID, "health imagery context");
 
 	// load in health star imagery
-	_starImag = loadButtonRes(_healthRes, starStart, starNum, 'S', 'T', 'A');
+	_starImag = loadButtonRes(_healthRes, kHealthStarStart, kHealthStarNum, 'S', 'T', 'A');
 
 	// load in the health star border
-	_starFrameImag    = g_vm->_imageCache->requestImage(_healthRes, MKTAG('B', 'T', 'N', starFrameResNum));
+	_starFrameImag    = g_vm->_imageCache->requestImage(_healthRes, MKTAG('B', 'T', 'N', kHealthStarFrameResNum));
 
 	// set the image indexes to nominal startup values
-	for (i = 0; i < numControls + 1; i++) {
+	for (i = 0; i < kHealthNumControls + 1; i++) {
 		_imageIndexMemory[i] = -1;
 	}
 
 	// setup the id's for each of the stars
-	_starIDs[0] = uiJulian;
-	_starIDs[1] = uiPhillip;
-	_starIDs[2] = uiKevin;
+	_starIDs[0] = kUiJulian;
+	_starIDs[1] = kUiPhillip;
+	_starIDs[2] = kUiKevin;
 
 
 	// health controls for the trio view
 	// deallocated with panel
-	for (i = 0; i < numControls; i++) {
+	for (i = 0; i < kHealthNumControls; i++) {
 		_starBtns[i] = new GfxCompImage(*trioControls,
-		                           Rect16(starXPos,
-		                                  starYPos + starYOffset * i,
-		                                  starXSize,
-		                                  starYSize),
+		                           Rect16(kHealthStarXPos,
+		                                  kHealthStarYPos + kHealthStarYOffset * i,
+		                                  kHealthStarXSize,
+		                                  kHealthStarYSize),
 		                           _starImag,
-		                           starNum,
-		                           starInitial,
+		                           kHealthStarNum,
+		                           kHealthStarInitial,
 		                           _starIDs[i],
 		                           cmd);
 
 
 		// image control for the star border/frame trio mode
 		new GfxCompImage(*trioControls,
-		                             Rect16(frameXPos,
-		                                    frameYPos + starYOffset * i,
-		                                    frameXSize,
-		                                    frameYSize),
+		                             Rect16(kHealthFrameXPos,
+		                                    kHealthFrameYPos + kHealthStarYOffset * i,
+		                                    kHealthFrameXSize,
+		                                    kHealthFrameYSize),
 		                             _starFrameImag,
 		                             0,
 		                             nullptr);
@@ -1253,22 +1253,22 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 	// health control for individual mode
 	// deallocated with panel
 	_indivStarBtn = new GfxCompImage(*indivControls,
-	                          Rect16(starXPos,
-	                                 starYPos,
-	                                 starXSize,
-	                                 starYSize),
+	                          Rect16(kHealthStarXPos,
+	                                 kHealthStarYPos,
+	                                 kHealthStarXSize,
+	                                 kHealthStarYSize),
 	                          _starImag,
-	                          starNum,
-	                          starInitial,
-	                          uiIndiv,
+	                          kHealthStarNum,
+	                          kHealthStarInitial,
+	                          kUiIndiv,
 	                          cmd);
 
 	// image control for the star border/frame indiv mode
 	new GfxCompImage(*indivControls,
-	                             Rect16(frameXPos,
-	                                    frameYPos,
-	                                    frameXSize,
-	                                    frameYSize),
+	                             Rect16(kHealthFrameXPos,
+	                                    kHealthFrameYPos,
+	                                    kHealthFrameXSize,
+	                                    kHealthFrameYSize),
 	                             _starFrameImag,
 	                             0,
 	                             nullptr);
@@ -1283,7 +1283,7 @@ CHealthIndicator::CHealthIndicator(AppFunc *cmd) {
 
 CHealthIndicator::~CHealthIndicator() {
 	// release star imagery
-	unloadImageRes(_starImag, starNum);
+	unloadImageRes(_starImag, kHealthStarNum);
 
 	// release star frame imagery
 	g_vm->_imageCache->releaseImage(_starFrameImag);
@@ -1299,7 +1299,7 @@ void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVi
 	// prevent div zero
 	if (baseVitality == 0) baseVitality = 1;
 
-	maxStar = clamp(0, baseVitality / 10 + 14, starLevels - 1);
+	maxStar = clamp(0, baseVitality / 10 + 14, kHealthStarLevels - 1);
 //	imageIndex = (int16)( sqrt( sqrt( (double)curVitality ) ) * maxStar) / sqrt( sqrt( (double)baseVitality ) );
 	imageIndex = (int16)(sqrt((double)MAX((int32)0, curVitality)) * maxStar) / sqrt((double)baseVitality);
 
@@ -1315,13 +1315,13 @@ void CHealthIndicator::updateStar(GfxCompImage *starCtl, int32 bro, int32 baseVi
 void CHealthIndicator::update() {
 	if (g_vm->_indivControlsFlag) {
 		// get the stats for the selected brother
-		int16 baseVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getBaseStats().vitality;
-		int16 currVitality  = g_vm->_playerList[translatePanID(uiIndiv)]->getEffStats()->vitality;
+		int16 baseVitality  = g_vm->_playerList[translatePanID(kUiIndiv)]->getBaseStats().vitality;
+		int16 currVitality  = g_vm->_playerList[translatePanID(kUiIndiv)]->getEffStats()->vitality;
 
-		updateStar(_indivStarBtn, uiIndiv, baseVitality, currVitality);
+		updateStar(_indivStarBtn, kUiIndiv, baseVitality, currVitality);
 	} else {
 
-		for (uint16 i = 0; i < numControls; i++) {
+		for (uint16 i = 0; i < kHealthNumControls; i++) {
 			// get the stats for the selected brother
 			int16 baseVitality  = g_vm->_playerList[i]->getBaseStats().vitality;
 			int16 currVitality  = g_vm->_playerList[i]->getEffStats()->vitality;
@@ -1523,7 +1523,7 @@ void SetupUserControls() {
 	hResContext *imageRes;
 
 	// brother panel id's
-	uint16  brotherIDs[kNumViews]   =  { uiJulian, uiPhillip, uiKevin };
+	uint16  brotherIDs[kNumViews]   =  { kUiJulian, kUiPhillip, kUiKevin };
 
 	// portrait resource indexes
 	int16   portResNum[]    = { 0, 0, 0 };
@@ -1618,22 +1618,22 @@ void SetupUserControls() {
 
 	// portrait button
 	indivPortBtn = new GfxMultCompButton(*indivControls, views[0][index++],
-	                          portImag[0], numPortImages, 0, false, uiIndiv, cmdPortrait);
+	                          portImag[0], numPortImages, 0, false, kUiIndiv, cmdPortrait);
 	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
 	indivAggressBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              aggressImag, numBtnImages, uiIndiv, cmdAggressive);
+	                              aggressImag, numBtnImages, kUiIndiv, cmdAggressive);
 
 	indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
-	                              armorImag, uiIndiv, cmdArmor);
+	                              armorImag, kUiIndiv, cmdArmor);
 	// center on brother
 	indivCenterBtn   = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              centerImag, numBtnImages, uiIndiv, cmdCenter);
+	                              centerImag, numBtnImages, kUiIndiv, cmdCenter);
 
 	// banding
 	indivBandingBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              bandingImag, numBtnImages, uiIndiv, cmdBand);
+	                              bandingImag, numBtnImages, kUiIndiv, cmdBand);
 
 	// name plates that go under the portraits
 	indivNamePlate  = new GfxCompImage(*indivControls, views[0][index++],
@@ -1651,15 +1651,15 @@ void SetupUserControls() {
 
 
 	// mental container button
-	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, uiIndiv, cmdBrain);
+	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, kUiIndiv, cmdBrain);
 
 	// brother selection _buttons >>> need to replace these with sticky _buttons
-	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, uiJulian, cmdBroChange);
-	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, uiPhillip, cmdBroChange);
-	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, uiKevin, cmdBroChange);
+	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, kUiJulian, cmdBroChange);
+	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, kUiPhillip, cmdBroChange);
+	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, kUiKevin, cmdBroChange);
 
 	// frame for brother _buttons
-	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, uiIndiv, nullptr);
+	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, kUiIndiv, nullptr);
 
 	// make the mana indicator
 	ManaIndicator = new CManaIndicator(*indivControls);
@@ -1843,7 +1843,7 @@ void setIndivBtns(uint16 brotherID) {    // top = 0, mid = 1, bot = 2
 	//_indivStarBtn->setCurrent( ( uint16 )_starBtns[brotherID]->getCurrent() );
 	indivPortBtn->setImages(portImag[brotherID]);
 	indivNamePlate->setImage(namePlateImages[brotherID]);
-	Portrait->set(uiIndiv, Portrait->getCurrentState(brotherID));
+	Portrait->set(kUiIndiv, Portrait->getCurrentState(brotherID));
 	indivBandingBtn->select(bandingBtns[brotherID]->isSelected());
 	indivBandingBtn->ghost(bandingBtns[brotherID]->isGhosted());
 	indivAggressBtn->select(aggressBtns[brotherID]->isSelected());
@@ -1877,7 +1877,7 @@ void setTrioBtns() {
 	// reset any value that might have changed in idividual mode
 	centerBtns[indivBrother]->select(indivCenterBtn->isSelected());
 	bandingBtns[indivBrother]->select(indivBandingBtn->isSelected());
-	Portrait->set(indivBrother, Portrait->getCurrentState(uiIndiv));
+	Portrait->set(indivBrother, Portrait->getCurrentState(kUiIndiv));
 	aggressBtns[indivBrother]->select(indivAggressBtn->isSelected());
 
 	armorInd[indivBrother]->setValue(indivBrother);
@@ -1916,7 +1916,7 @@ void setCenterBrother(uint16 whichBrother) {
 
 uint16 translatePanID(uint16 panID) {
 	// individual mode brother id translation
-	if (panID == uiIndiv) {
+	if (panID == kUiIndiv) {
 		panID = indivBrother;
 	}
 
@@ -1928,7 +1928,7 @@ void updateBrotherPortrait(uint16 brotherID, int16 pType) {
 		Portrait->set(brotherID, (PortraitType)pType);
 
 		if (brotherID == indivBrother)
-			Portrait->set(uiIndiv, (PortraitType)pType);
+			Portrait->set(kUiIndiv, (PortraitType)pType);
 	}
 }
 
@@ -1961,27 +1961,27 @@ void updateBrotherBandingButton(uint16 brotherID, bool banded) {
 
 void updateBrotherRadioButtons(uint16 brotherID) {
 	if (g_vm->_userControlsSetup) {
-		bool    jul = (uiJulian == brotherID);
-		bool    phi = (uiPhillip == brotherID);
-		bool    kev = (uiKevin == brotherID);
+		bool    jul = (kUiJulian == brotherID);
+		bool    phi = (kUiPhillip == brotherID);
+		bool    kev = (kUiKevin == brotherID);
 
 		// set the selection _buttons to the correct states
 		julBtn->select(jul);
 		phiBtn->select(phi);
 		kevBtn->select(kev);
 
-		julBtn->ghost(isBrotherDead(uiJulian));
-		phiBtn->ghost(isBrotherDead(uiPhillip));
-		kevBtn->ghost(isBrotherDead(uiKevin));
+		julBtn->ghost(isBrotherDead(kUiJulian));
+		phiBtn->ghost(isBrotherDead(kUiPhillip));
+		kevBtn->ghost(isBrotherDead(kUiKevin));
 
 		// set the center brother _buttons
-		centerBtns[uiJulian]->select(jul);
-		centerBtns[uiPhillip]->select(phi);
-		centerBtns[uiKevin]->select(kev);
+		centerBtns[kUiJulian]->select(jul);
+		centerBtns[kUiPhillip]->select(phi);
+		centerBtns[kUiKevin]->select(kev);
 
-		centerBtns[uiJulian]->ghost(isBrotherDead(uiJulian));
-		centerBtns[uiPhillip]->ghost(isBrotherDead(uiPhillip));
-		centerBtns[uiKevin]->ghost(isBrotherDead(uiKevin));
+		centerBtns[kUiJulian]->ghost(isBrotherDead(kUiJulian));
+		centerBtns[kUiPhillip]->ghost(isBrotherDead(kUiPhillip));
+		centerBtns[kUiKevin]->ghost(isBrotherDead(kUiKevin));
 
 		if (brotherID == indivBrother) {
 			indivCenterBtn->select(true);
@@ -2112,12 +2112,12 @@ APPFUNC(cmdPortrait) {
 				g_vm->_mouseInfo->replaceObject();
 //				clickActionDone = true;
 			}
-		} else if (panID != uiIndiv) {
+		} else if (panID != kUiIndiv) {
 			if (!isBrotherDead(panID)) {
 				setCenterBrother(panID);
 				setControlPanelsToIndividualMode(panID);
 			}
-		} else if (panID == uiIndiv) {
+		} else if (panID == kUiIndiv) {
 			setControlPanelsToTrioMode();
 		}
 		break;
@@ -2154,13 +2154,13 @@ APPFUNC(cmdPortrait) {
 				Portrait->getStateString(state, stateBufSize, brotherID);
 
 				switch (brotherID) {
-				case uiJulian:
+				case kUiJulian:
 					Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 					break;
-				case uiPhillip:
+				case kUiPhillip:
 					Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 					break;
-				case uiKevin:
+				case kUiKevin:
 					Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 					break;
 				}
@@ -2344,13 +2344,13 @@ APPFUNC(cmdBroChange) {
 			Portrait->getStateString(state, stateBufSize, brotherID);
 
 			switch (brotherID) {
-			case uiJulian:
+			case kUiJulian:
 				Common::sprintf_s(buf, "%s %s", JULIAN_BROSTATE, state);
 				break;
-			case uiPhillip:
+			case kUiPhillip:
 				Common::sprintf_s(buf, "%s %s", PHILLIP_BROSTATE, state);
 				break;
-			case uiKevin:
+			case kUiKevin:
 				Common::sprintf_s(buf, "%s %s", KEVIN_BROSTATE, state);
 				break;
 			}

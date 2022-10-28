@@ -141,10 +141,10 @@ struct ResName {
 };
 
 enum uiBrotherName {
-	uiJulian = 0,
-	uiPhillip,
-	uiKevin,
-	uiIndiv
+	kUiJulian = 0,
+	kUiPhillip,
+	kUiKevin,
+	kUiIndiv
 };
 
 // compressed button resource indexes
@@ -183,11 +183,11 @@ class CPlaqText : public gControl {
 protected:
 
 	enum {
-		bufSize = 128
+		kBufSize = 128
 	};
 
 
-	char            _lineBuf[bufSize]; // text to render on button
+	char            _lineBuf[kBufSize]; // text to render on button
 	textPallete     _textFacePal;    // contains info about coloring for multi-depth text rendering
 	Rect16          _textRect;       // rect for the text
 	int16           _textPosition;
@@ -300,16 +300,16 @@ public:
 private:
 	enum {
 		// background image coords
-		backImageXSize  = 88,
-		backImageYSize  = 43,
+		kBackImageXSize  = 88,
+		kBackImageYSize  = 43,
 
 		// pie image coords
-		massPieXOffset  = 8,
-		massPieYOffset  = 9,
-		bulkPieXOffset  = 53,
-		bulkPieYOffset  = 9,
-		pieXSize        = 28,
-		pieYSize        = 26
+		kMassPieXOffset  = 8,
+		kMassPieYOffset  = 9,
+		kBulkPieXOffset  = 53,
+		kBulkPieYOffset  = 9,
+		kPieXSize        = 28,
+		kPieYSize        = 26
 	};
 
 	// xy positions of this indicator
@@ -367,113 +367,113 @@ public:
 
 	// sizes of the mana star images
 	enum startSize {
-		star1XSize = 10,
-		star1YSize = 9,
-		star2XSize = 16,
-		star2YSize = 15,
-		star3XSize = 20,
-		star3YSize = 19,
-		star4XSize = 28,
-		star4YSize = 27,
-		star5XSize = 32,
-		star5YSize = 31,
-		star6XSize = 36,
-		star6YSize = 35,
-		star7XSize = 46,
-		star7YSize = 45
+		kStar1XSize = 10,
+		kStar1YSize = 9,
+		kStar2XSize = 16,
+		kStar2YSize = 15,
+		kStar3XSize = 20,
+		kStar3YSize = 19,
+		kStar4XSize = 28,
+		kStar4YSize = 27,
+		kStar5XSize = 32,
+		kStar5YSize = 31,
+		kStar6XSize = 36,
+		kStar6YSize = 35,
+		kStar7XSize = 46,
+		kStar7YSize = 45
 	};
 
 	// sizes of the rings
 	enum ringSize {
-		ring1XSize = 8,
-		ring1YSize = 7,
-		ring2XSize = 12,
-		ring2YSize = 11,
-		ring3XSize = 16,
-		ring3YSize = 15,
-		ring4XSize = 22,
-		ring4YSize = 21,
-		ring5XSize = 26,
-		ring5YSize = 25,
-		ring6XSize = 32,
-		ring6YSize = 31,
-		ring7XSize = 40,
-		ring7YSize = 39
+		kRing1XSize = 8,
+		kRing1YSize = 7,
+		kRing2XSize = 12,
+		kRing2YSize = 11,
+		kRing3XSize = 16,
+		kRing3YSize = 15,
+		kRing4XSize = 22,
+		kRing4YSize = 21,
+		kRing5XSize = 26,
+		kRing5YSize = 25,
+		kRing6XSize = 32,
+		kRing6YSize = 31,
+		kRing7XSize = 40,
+		kRing7YSize = 39
 	};
 
 	// area of control
 	enum area {
-		x       = 475,
-		y       = 315,
-		xSize   = 152,
-		ySize   = 135
+		kAreaX       = 475,
+		kAreaY       = 315,
+		kAreaXSize   = 152,
+		kAreaYSize   = 135
 	};
 
 	// coordinates
 	enum {
-		centerX     = x + xSize / 2,
-		centerY     = y + ySize / 2,
-		wellXSize   = 108,
-		wellYSize   = 123,
-		wellX       = (xSize / 2 - wellXSize / 2) + 1,
-		wellY       = ySize / 2 - wellYSize / 2
+		kCenterX     = kAreaX + kAreaXSize / 2,
+		kCenterY     = kAreaY + kAreaYSize / 2,
+		kWellXSize   = 108,
+		kWellYSize   = 123,
+		kWellX       = (kAreaXSize / 2 - kWellXSize / 2) + 1,
+		kWellY       = kAreaYSize / 2 - kWellYSize / 2
 	};
 
 	// manas end points
 
 	enum manaEndCoordsBase { // based on quadrants
-		xOffset = 9,
-		yOffset = -10,
+		kManaXOffset = 9,
+		kManaYOffset = -10,
 
-		upperLeftX  = 16    + xOffset,
-		upperLeftY  = 45    + yOffset,
-		upperMidX   = 70    + xOffset,
-		upperMidY   = 13    + yOffset,
-		upperRightX = 122   + xOffset,
-		upperRightY = 45    + yOffset,
-		lowerLeftX  = 16    + xOffset,
-		lowerLeftY  = 106   + yOffset,
-		lowerMidX   = 70    + xOffset,
-		lowerMidY   = 135   + yOffset,
-		lowerRightX = 122   + xOffset,
-		lowerRightY = 106   + yOffset
+		kManaUpperLeftX  = 16    + kManaXOffset,
+		kManaUpperLeftY  = 45    + kManaYOffset,
+		kManaUpperMidX   = 70    + kManaXOffset,
+		kManaUpperMidY   = 13    + kManaYOffset,
+		kManaUpperRightX = 122   + kManaXOffset,
+		kManaUpperRightY = 45    + kManaYOffset,
+		kManaLowerLeftX  = 16    + kManaXOffset,
+		kManaLowerLeftY  = 106   + kManaYOffset,
+		kManaLowerMidX   = 70    + kManaXOffset,
+		kManaLowerMidY   = 135   + kManaYOffset,
+		kManaLowerRightX = 122   + kManaXOffset,
+		kManaLowerRightY = 106   + kManaYOffset
 	};
 
 	enum manaEndCoords {
-		redEndX         = upperLeftX,   //a // these are just dup tags
-		redEndY         = upperLeftY,   //b
-		orangeEndX      = upperMidX,    //c
-		orangeEndY      = upperMidY,
-		yellowEndX      = upperRightX,  //d
-		yellowEndY      = upperRightY,  //b
-		greenEndX       = lowerLeftX,   //a
-		greenEndY       = lowerLeftY,   //e
-		blueEndX        = lowerMidX,    //c
-		blueEndY        = lowerMidY,
-		violetEndX      = lowerRightX,  //d
-		violetEndY      = lowerRightY,  //e
-		numXYCoords     = 12,
-		numManaTypes    = numXYCoords / 2
+		kManaRedEndX         = kManaUpperLeftX,   //a // these are just dup tags
+		kManaRedEndY         = kManaUpperLeftY,   //b
+		kManaOrangeEndX      = kManaUpperMidX,    //c
+		kManaOrangeEndY      = kManaUpperMidY,
+		kManaYellowEndX      = kManaUpperRightX,  //d
+		kManaYellowEndY      = kManaUpperRightY,  //b
+		kManaGreenEndX       = kManaLowerLeftX,   //a
+		kManaGreenEndY       = kManaLowerLeftY,   //e
+		kManaBlueEndX        = kManaLowerMidX,    //c
+		kManaBlueEndY        = kManaLowerMidY,
+		kManaVioletEndX      = kManaLowerRightX,  //d
+		kManaVioletEndY      = kManaLowerRightY,  //e
+		kManaNumXYCoords     = 12,
+		kManaNumManaTypes    = kManaNumXYCoords / 2
 	};
 
 	// mana star display offset from well center
 	enum startOffset {
-		startOffset = 12
+		kManaStartOffset = 12
 	};
 
 	// mana information
 	enum manainfo {
-		maxLevel = 200,
-		numManaRegions = numManaTypes
+		kManaMaxLevel = 200,
+		kManaNumManaRegions = kManaNumManaTypes
 	};
 
 	// resource data
 	enum resourceInfo {
-		numStars        = 7,
-		numRings        = 7,
-		starResNum      = 0,
-		ringResNum      = 0,
-		numManaColors   = 13
+		kResNumStars        = 7,
+		kResNumRings        = 7,
+		kResStarResNum      = 0,
+		kResRingResNum      = 0,
+		kResNumManaColors   = 13
 	};
 
 	// this describes a star
@@ -502,17 +502,17 @@ private:
 	gPixelMap   _savedMap;
 
 	// array of manaLine infos for blitting
-	manaLineInfo _manaLines[numManaTypes];
+	manaLineInfo _manaLines[kManaNumManaTypes];
 
 	// array of ring and star end positions
 	// this is initialized via constructor
-	Point16 _starRingEndPos[numManaTypes];
+	Point16 _starRingEndPos[kManaNumManaTypes];
 
-	Point16 _starSizes[numStars];
-	Point16 _ringSizes[numRings];
+	Point16 _starSizes[kResNumStars];
+	Point16 _ringSizes[kResNumRings];
 
 	// these are checks against redundent updates
-	int32   _currentMana[numManaTypes], _currentBaseMana[numManaTypes];
+	int32   _currentMana[kManaNumManaTypes], _currentBaseMana[kManaNumManaTypes];
 protected:
 
 	// these do line and position calculations
@@ -540,7 +540,7 @@ public:
 	//  -------
 	Rect16  getManaRegionRect(int8 region);
 	int     getNumManaRegions() {
-		return numManaRegions;
+		return kManaNumManaRegions;
 	}
 
 	// drawing routines
@@ -558,32 +558,32 @@ private:
 	static const char *_hintText;
 
 	enum {
-		starFrameResNum     = 14,
-		starFrameNum        = 1,
-		starStart           = 0,
-		starNum             = 23,
-		starInitial         = 0,
-		starLevels          = 24,
-		numControls         = kNumViews
+		kHealthStarFrameResNum     = 14,
+		kHealthStarFrameNum        = 1,
+		kHealthStarStart           = 0,
+		kHealthStarNum             = 23,
+		kHealthStarInitial         = 0,
+		kHealthStarLevels          = 24,
+		kHealthNumControls         = kNumViews
 	};
 
 	enum {
-		starXPos    = 572,
-		starYPos    = 21,
-		starXSize   = 32,
-		starYSize   = 32,
-		starYOffset = 150,
-		frameXPos   = 571,
-		frameYPos   = 20,
-		frameXSize  = 32,
-		frameYSize  = 32
+		kHealthStarXPos    = 572,
+		kHealthStarYPos    = 21,
+		kHealthStarXSize   = 32,
+		kHealthStarYSize   = 32,
+		kHealthStarYOffset = 150,
+		kHealthFrameXPos   = 571,
+		kHealthFrameYPos   = 20,
+		kHealthFrameXSize  = 32,
+		kHealthFrameYSize  = 32
 	};
 
 	// resource handle
 	hResContext *_healthRes;
 
 	// buttons
-	GfxCompImage          *_starBtns[numControls];
+	GfxCompImage          *_starBtns[kHealthNumControls];
 	GfxCompImage          *_indivStarBtn;
 
 	// array of pointer to the star imagery
