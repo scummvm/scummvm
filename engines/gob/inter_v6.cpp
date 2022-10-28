@@ -381,9 +381,6 @@ void Inter_v6::o6_fillRect(OpFuncParams &params) {
 	_vm->_draw->_backColor = patternColor & 0xFFFF;
 	_vm->_draw->_pattern   = patternColor >> 16;
 
-	if (_vm->_draw->_pattern != 0)
-		warning("Urban Stub: o6_fillRect(), _pattern = %d", _vm->_draw->_pattern);
-
 	if (_vm->_draw->_spriteRight < 0) {
 		_vm->_draw->_destSpriteX += _vm->_draw->_spriteRight - 1;
 		_vm->_draw->_spriteRight = -_vm->_draw->_spriteRight + 2;

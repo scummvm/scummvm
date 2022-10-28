@@ -25,6 +25,7 @@
 #include "common/scummsys.h"
 #include "common/ptr.h"
 #include "common/rational.h"
+#include "common/rect.h"
 
 namespace Common {
 class SeekableReadStream;
@@ -121,6 +122,7 @@ public:
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
 	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
+	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 color);
 	void fill(uint32 color);
 	void clear();
 

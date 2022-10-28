@@ -86,6 +86,8 @@ void Inter_Playtoons::setupOpcodesFunc() {
 	OPCODEFUNC(0x1B, oPlaytoons_F_1B);
 	OPCODEFUNC(0x24, oPlaytoons_putPixel);
 	OPCODEFUNC(0x27, oPlaytoons_freeSprite);
+	OPCODEFUNC(0x34, oPlaytoons_drawLine);
+	OPCODEFUNC(0x36, oPlaytoons_invalidate);
 	OPCODEFUNC(0x3F, oPlaytoons_checkData);
 	OPCODEFUNC(0x4D, oPlaytoons_readData);
 }
@@ -207,6 +209,35 @@ void Inter_Playtoons::oPlaytoons_freeSprite(OpFuncParams &params) {
 	else
 		index = _vm->_game->_script->readValExpr();
 	_vm->_draw->freeSprite(index);
+}
+
+void Inter_Playtoons::oPlaytoons_drawLine(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
+
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteBottom = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->readExpr(99, 0);
+	//unk_var is always set to 0 in Playtoons
+	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+	_vm->_draw->spriteOperation(DRAW_DRAWLINE);
+}
+
+void Inter_Playtoons::oPlaytoons_invalidate(OpFuncParams &params) {
+	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
+	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
+	_vm->_draw->_destSpriteY = _vm->_game->_script->readValExpr();
+	_vm->_draw->_spriteRight = _vm->_game->_script->readValExpr();
+
+	_vm->_game->_script->readExpr(99, 0);
+	//unk_var is always set to 0 in Playtoons
+	_vm->_draw->_frontColor = _vm->_game->_script->getResultInt() & 0xFFFF; // + unk_var;
+	_vm->_draw->_pattern = _vm->_game->_script->getResultInt()>>16;
+
+	_vm->_draw->spriteOperation(DRAW_INVALIDATE);
 }
 
 void Inter_Playtoons::oPlaytoons_checkData(OpFuncParams &params) {
