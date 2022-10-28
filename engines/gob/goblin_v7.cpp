@@ -104,6 +104,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 					case 34:
 					case 35:
 					case 36:
+					case 37:
 						animState -= 10;
 						break;
 					default: // 3, 7, 9-30, > 36
@@ -162,24 +163,86 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	case 21:
 		Common::strlcat(str, "COG", 128);
 		break;
-	case 22:
-		warning("Goblin_v7::setGoblinState: animState == 22 not implemented");
+	case 22:{
+		uint animIndex = _vm->_rnd.getRandomNumber(1);
+		switch (animIndex) {
+		case 0:
+			Common::strlcat(str, "EFR", 128); // scared (EFFRAYE)
+			break;
+		case 1:
+			Common::strlcat(str, "EF1", 128);
+			break;
+		default:
+			break;
+		}
+
 		break;
+	}
 	case 23:
 		Common::strlcat(str, "EXP", 128);
 		break;
 	case 24:
 		Common::strlcat(str, "FRA", 128);
 		break;
-	case 25:
-		warning("Goblin_v7::setGoblinState: animState == 25 not implemented");
+	case 25: {
+		uint animIndex = _vm->_rnd.getRandomNumber(3);
+		switch (animIndex) {
+		case 0:
+			Common::strlcat(str, "PAR", 128); // talking (PARLE)
+			break;
+		case 1:
+			Common::strlcat(str, "PA1", 128);
+			break;
+		case 2:
+			Common::strlcat(str, "PA2", 128);
+			break;
+		case 3:
+			Common::strlcat(str, "PA3", 128);
+			break;
+		default:
+			break;
+		}
+
 		break;
-	case 26:
-		warning("Goblin_v7::setGoblinState: animState == 26 not implemented");
+	}
+
+
+	case 26: {
+		uint animIndex = _vm->_rnd.getRandomNumber(3);
+		switch (animIndex) {
+		case 0:
+			Common::strlcat(str, "PAU", 128); // taking a break (PAUSE)
+			break;
+		case 1:
+			Common::strlcat(str, "P1", 128);
+			break;
+		case 2:
+			Common::strlcat(str, "P2", 128);
+			break;
+		case 3:
+			Common::strlcat(str, "P3", 128);
+			break;
+		default:
+			break;
+		}
+
 		break;
-	case 27:
-		warning("Goblin_v7::setGoblinState: animState == 27 not implemented");
+	}
+	case 27: {
+		uint animIndex = _vm->_rnd.getRandomNumber(1);
+		switch (animIndex) {
+		case 0:
+			Common::strlcat(str, "RIR", 128); // laughing (RIRE)
+			break;
+		case 1:
+			Common::strlcat(str, "RI1", 128);
+			break;
+		default:
+			break;
+		}
+
 		break;
+	}
 
 	default:
 		Common::strlcat(str, Common::String::format("%02d", animState).c_str(), 128);
