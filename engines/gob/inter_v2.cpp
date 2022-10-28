@@ -617,7 +617,7 @@ void Inter_v2::o2_pushVars() {
 			if (_vm->_game->_script->evalExpr(&value) != 20)
 				value = 0;
 
-			_varStack.pushInt((uint16)value);
+			_varStack.pushInt((uint32)value);
 		}
 	}
 }
