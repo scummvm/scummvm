@@ -585,9 +585,9 @@ void Inter_v7::o7_playVmdOrMusic() {
 		}
 
 		props.flags  = VideoPlayer::kFlagOtherSurface;
-		props.sprite = -1;
 
 		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
+		props.sprite = 50 - _vm->_mult->_objects[props.startFrame].pAnimData->animation - 1;
 
 		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
 			_vm->_mult->closeObjVideo(_vm->_mult->_objects[props.startFrame]);

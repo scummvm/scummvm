@@ -670,7 +670,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 						props.flags      = 0;
 						props.palStart   = 0;
 						props.palEnd     = 0;
-						props.sprite     = -1;
+						props.sprite     = 50 - obj.pAnimData->animation - 1;
 
 
 						_vm->_mult->openObjVideo(obj.animName, props, animation);
@@ -695,7 +695,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 										props.flags      = 0;
 										props.palStart   = 0;
 										props.palEnd     = 0;
-										props.sprite = -obj.pAnimData->animation - 1;
+										props.sprite = 50 - obj.pAnimData->animation - 1;
 
 										_vm->_mult->openObjVideo(obj.animName, props, animation);
 
@@ -773,7 +773,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 							props.flags = 0;
 							props.palStart = 0;
 							props.palEnd = 0;
-							props.sprite = -obj.pAnimData->animation - 1;
+							props.sprite = 50 - obj.pAnimData->animation - 1;
 
 							if (obj.videoSlot > 0)
 								_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
