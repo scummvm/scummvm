@@ -679,8 +679,8 @@ protected:
 	void setupOpcodesGob() override;
 
 	void o7_draw0x0C();
-	void o7_loadCursor(OpFuncParams &params);
 	void o7_loadCursorFromExec();
+	void o7_freeMult();
 	void o7_loadMultObject();
 	void o7_displayWarning();
 	void o7_logString();
@@ -708,6 +708,7 @@ protected:
 	void o7_closedBase();
 	void o7_getDBString();
 
+	void o7_loadCursor(OpFuncParams &params);
 	void o7_printText(OpFuncParams &params);
 	void o7_fillRect(OpFuncParams &params);
 	void o7_checkData(OpFuncParams &params);

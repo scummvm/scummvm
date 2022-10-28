@@ -116,7 +116,7 @@ public:
 		char animName[16];
 		int8 field_50;
 		int16* animVariables;
-		int8 field_6E;
+		bool ownAnimVariables;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {
@@ -252,7 +252,7 @@ public:
 	void initAll();
 	void freeAll();
 	void checkFreeMult();
-	void freeMult();
+	void freeMult(bool freeObjectSprites = false);
 	void zeroMultData();
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			char handleMouse);
