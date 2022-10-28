@@ -27,7 +27,7 @@
 #define SAGA2_SCRIPT_H
 
 #include "saga2/objects.h"
-#include "saga2/calender.h"
+#include "saga2/calendar.h"
 
 namespace Saga2 {
 
