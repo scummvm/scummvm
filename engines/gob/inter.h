@@ -678,6 +678,8 @@ protected:
 	void o7_loadCursor();
 	void o7_displayWarning();
 	void o7_logString();
+	void o7_moveGoblin();
+	void o7_setGoblinState();
 	void o7_intToString();
 	void o7_callFunction();
 	void o7_loadFunctions();

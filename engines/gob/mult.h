@@ -110,10 +110,12 @@ public:
 		int16 newRight;
 		int16 newBottom;
 		uint32 videoSlot;
-		void* field_38;
-		char* animName;
-		byte* field_6A;
-		byte field_6E;
+		uint32* field_38;
+		byte* field_3C;
+		char animName[16];
+		int8 field_50;
+		int16* animVariables;
+		int8 field_6E;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {

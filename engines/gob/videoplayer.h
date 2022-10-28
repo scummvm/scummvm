@@ -84,9 +84,9 @@ public:
 		int16 breakKey; ///< Keycode of the break/abort key.
 
 		uint16 palCmd;      ///< Palette command.
-		 int16 palStart;    ///< Palette entry to start with.
-		 int16 palEnd;      ///< Palette entry to end at.
-		 int32 palFrame;    ///< Frame to apply the palette command at.
+		int16 palStart;    ///< Palette entry to start with.
+		int16 palEnd;      ///< Palette entry to end at.
+		int32 palFrame;    ///< Frame to apply the palette command at.
 
 		bool noBlock; ///< Non-blocking "live" video?
 

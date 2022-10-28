@@ -1917,4 +1917,8 @@ void Goblin::updateLayer2(Mult::Mult_AnimData *animData) {
 	}
 }
 
+void Goblin::changeDirection(Mult::Mult_Object *obj, int16 animState) {
+	warning("Goblin::changeDirection not implemented !");
+}
+
 } // End of namespace Gob
