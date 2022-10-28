@@ -120,16 +120,16 @@ extern gFont        *mainFont;
 *       flag        Various flags which control operation of the
 *                   text box:
 *
-*       /i/         textBoxAlignRight causes the text to
+*       /i/         kTextBoxAlignRight causes the text to
 *                   be right-justified within the box.
 *
-*       /i/         textBoxAlignCenter causes the text to be centered within the box.
+*       /i/         kTextBoxAlignCenter causes the text to be centered within the box.
 *
-*       /i/         textBoxNoFilter indicates that non-edit keys
+*       /i/         kTextBoxNoFilter indicates that non-edit keys
 *                   (such as ESC and TAB) should be passed on to the
 *                   application's AppFunc.
 *
-*       /i/         textBoxStayActive tells the text box not to
+*       /i/         kTextBoxStayActive tells the text box not to
 *                   deactivate when the user hits return.
 *
 *       id          A 16-bit Application-specific ID for this panel.
@@ -670,7 +670,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	if (key == Common::ASCII_RETURN) { // return key
 		if (_editing) {
 			commitEdit();
-			if (!(_flags & textBoxStayActive))
+			if (!(_flags & kTextBoxStayActive))
 				deactivate();                       // deactivate the text box
 		}
 
@@ -695,7 +695,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			(*_onEscape)(ev);
 		}
 
-		if (_flags & textBoxNoFilter)
+		if (_flags & kTextBoxNoFilter)
 			return false;
 		return true;
 	} else if (_editing) {
@@ -776,7 +776,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			return false;
 
 		default:
-			if (_flags & textBoxNoFilter)
+			if (_flags & kTextBoxNoFilter)
 				return false;
 
 			if (key >= Common::KEYCODE_SPACE &&     // 32 (First printable character)
