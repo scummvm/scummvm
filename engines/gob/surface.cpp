@@ -533,7 +533,42 @@ void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
-Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 color) {
+// Fill rectangle with fillColor, except pixels with backgroundColor
+void Surface::fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor) {
+	// Just in case those are swapped
+	if (left > right)
+		SWAP(left, right);
+	if (top  > bottom)
+		SWAP(top, bottom);
+
+	if ((left >= _width) || (top >= _height))
+		// Nothing to do
+		return;
+
+	left   = CLIP<int32>(left  , 0, _width  - 1);
+	top    = CLIP<int32>(top   , 0, _height - 1);
+	right  = CLIP<int32>(right , 0, _width  - 1);
+	bottom = CLIP<int32>(bottom, 0, _height - 1);
+
+	// Area to actually fill
+	uint16 width  = CLIP<int32>(right  - left + 1, 0, _width  - left);
+	uint16 height = CLIP<int32>(bottom - top  + 1, 0, _height - top);
+
+	if ((width == 0) || (height == 0))
+		// Nothing to do
+		return;
+
+	Pixel p = get(left, top);
+	while (height-- > 0) {
+		for (uint16 i = 0; i < width; i++, ++p)
+			if (p.get() != backgroundColor)
+				p.set(fillColor);
+
+		p += _width - width;
+	}
+}
+
+Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 fillColor) {
 	Common::Rect modifiedArea;
 	if (left < 0 || left >= _width || top < 0  || top >= _height)
 		// Nothing to do
@@ -541,10 +576,10 @@ Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 color) {
 
 	Pixel pixel = get(left, top);
 	uint32 initialColor = pixel.get();
-	if (initialColor == color)
+	if (initialColor == fillColor)
 		return modifiedArea;
 
-	pixel.set(color);
+	pixel.set(fillColor);
 	modifiedArea.extend(Common::Rect(left, top, left + 1, top + 1));
 	Common::Stack<Common::Point> pointsToScan;
 	pointsToScan.push(Common::Point(left, top));
@@ -560,7 +595,7 @@ Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 color) {
 
 			Pixel p = get(x, y);
 			if (p.get() == initialColor) {
-				p.set(color);
+				p.set(fillColor);
 				if (!modifiedArea.contains(x, y))
 					modifiedArea.extend(Common::Rect(x, y, x + 1, y + 1));
 				pointsToScan.push(Common::Point(x, y));

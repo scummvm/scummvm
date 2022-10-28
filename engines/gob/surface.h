@@ -122,7 +122,8 @@ public:
 	void blitScaled(const Surface &from, Common::Rational scale, int32 transp = -1);
 
 	void fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 color);
-	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 color);
+	void fillArea(int16 left, int16 top, int16 right, int16 bottom, uint32 fillColor, uint32 backgroundColor);
+	Common::Rect fillAreaAtPoint(int16 left, int16 top, uint32 fillColor);
 	void fill(uint32 color);
 	void clear();
 
