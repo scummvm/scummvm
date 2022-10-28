@@ -300,8 +300,12 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 static int8 deltaXFromDirection[10] = {0, -1, 0, 1, 1, 1, 0, -1, -1, 0};
 static int8 deltaYFromDirection[10] = {0, -1, -1, -1, 0, 1, 1, 1, 0, 0};
 
+static bool positionWalkable(Map *map, int8 x, int8 y) {
+	return !map->getPass(x, y, map->getMapWidth());
+}
+
 static void updateGobDest(Map *map, Mult::Mult_Object &obj) {
-	if (map->getPass(obj.gobDestX, obj.gobDestY, map->getMapWidth())) {
+	if (!positionWalkable(map, obj.gobDestX, obj.gobDestY)) {
 		int8 newGobDestX = 0;
 		int32 var_8 = 1000;
 		int8 newGobDestY = 0;
@@ -322,7 +326,7 @@ static void updateGobDest(Map *map, Mult::Mult_Object &obj) {
 					break;
 				}
 
-				if (!map->getPass(tempGobDestX, tempGobDestY, map->getMapWidth())) {
+				if (positionWalkable(map, tempGobDestX, tempGobDestY)) {
 					if (nbrOfStepsDir < var_8) {
 						newGobDestX = tempGobDestX;
 						newGobDestY = tempGobDestY;
@@ -350,19 +354,19 @@ int8 directionFromDeltaXY(int8 deltaX, int8 deltaY) {
 }
 
 bool Goblin_v7::directionWalkable(int8 x, int8 y, int8 direction) {
-	int8 newX = x + deltaXFromDirection[direction];
-	int8 newY = y + deltaYFromDirection[direction];
-	if (newX >= 0 &&
-		newX < _vm->_map->getMapWidth() &&
-		newY >= 0 &&
-		newY < _vm->_map->getMapHeight()) {
-		return _vm->_map->getPass(x, y, direction);
+	int8 nextX = x + deltaXFromDirection[direction];
+	int8 nextY = y + deltaYFromDirection[direction];
+	if (nextX >= 0 &&
+		nextX < _vm->_map->getMapWidth() &&
+		nextY >= 0 &&
+		nextY < _vm->_map->getMapHeight()) {
+		return positionWalkable(_vm->_map, nextX, nextY);
 	}
 	else
 		return false;
 }
 
-int32 Goblin_v7::directionFromOriginAndDest(int8 x, int8 y, int8 destX, int8 destY) {
+int32 Goblin_v7::bestWalkableDirectionFromOriginAndDest(int8 x, int8 y, int8 destX, int8 destY) {
 	int8 deltaX = 0;
 	int8 deltaY = 0;
 
@@ -410,59 +414,59 @@ int32 Goblin_v7::directionFromOriginAndDest(int8 x, int8 y, int8 destX, int8 des
 
 
 int32 Goblin_v7::findPath(int8 x, int8 y, int8 destX, int8 destY) {
-	int8 newX = x;
-	int8 newY = y;
-	int8 previousDir = -1;
+	int8 currentX = x;
+	int8 currentY = y;
+	int8 returnToPreviousStepDir = -1;
 	int8 var_8 = 0;
-	int8 var_18 = 0;
+	int8 firstDirection = 0;
 	int8 var_1C = 0;
 
 	while (true)
 	{
-		int8 direction = directionFromOriginAndDest(newX, newY , destX, destY);
-		if (direction == 0)
+		int8 currentDirection = bestWalkableDirectionFromOriginAndDest(currentX, currentY, destX, destY);
+		if (currentDirection == 0)
 			return 0;
 
-		if (direction >= 0) {
+		if (currentDirection >= 0) {
 			if (var_8 == 1) {
 				var_8 = 2;
-				var_1C = findPath(x, y, newX, newY);
+				var_1C = findPath(x, y, currentX, currentY);
 				if (var_1C > 0)
-					var_18 = var_1C;
+					firstDirection = var_1C;
 			}
 		}
 		else {
-			direction = -direction;
+			currentDirection = -currentDirection;
 			if (var_8 == 0)
 				var_8 = 1;
 		}
 
-		if (previousDir > 0) {
-			previousDir += 4;
-			if (previousDir > 8)
-				previousDir -= 8;
+		if (returnToPreviousStepDir > 0) {
+			returnToPreviousStepDir += 4;
+			if (returnToPreviousStepDir > 8)
+				returnToPreviousStepDir -= 8;
 		}
 
-		if (direction == previousDir) {
-			direction += 4;
-			if (direction > 8)
-				direction -= 8;
+		if (currentDirection == returnToPreviousStepDir) {
+			currentDirection += 4;
+			if (currentDirection > 8)
+				currentDirection -= 8;
 
-			if (!directionWalkable(newX, newY, direction))
+			if (!directionWalkable(currentX, currentY, currentDirection))
 				return 0;
 		}
 
-		if (var_18 == 0)
-			var_18 = direction;
+		if (firstDirection == 0)
+			firstDirection = currentDirection;
 
-		previousDir = direction;
-		newX += deltaXFromDirection[direction];
-		newY += deltaYFromDirection[direction];
+		returnToPreviousStepDir = currentDirection; // Will be inverted later
+		currentX += deltaXFromDirection[currentDirection];
+		currentY += deltaYFromDirection[currentDirection];
 
-		if (newX != destX || newY != destY)
+		if (currentX != destX || currentY != destY)
 			continue;
 		else
-			return var_18;
+			return firstDirection;
 	}
 }
 
@@ -476,7 +480,7 @@ int32 Goblin_v7::computeObjNextDirection(Mult::Mult_Object &obj) {
 		updateGobDest(_vm->_map, obj);
 		int32 direction = findPath(obj.goblinX, obj.goblinY, obj.gobDestX, obj.gobDestY);
 		if (direction == 0) {
-			direction = directionFromOriginAndDest(obj.goblinX, obj.goblinY, obj.gobDestX, obj.gobDestY);
+			direction = bestWalkableDirectionFromOriginAndDest(obj.goblinX, obj.goblinY, obj.gobDestX, obj.gobDestY);
 			if (direction < 0)
 				direction = -direction;
 		}
