@@ -1150,6 +1150,17 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 		memset((char *)_vm->_draw->_vgaPalette, 0, 768);
 		break;
 
+	case 55:
+		// TODO case 55 implementation
+		_vm->_game->_script->skip(2);
+		_vm->_draw->_applyPal = false;
+		return;
+
+	case 56:
+		// TODO case 56 implementation
+		_vm->_game->_script->skip(2);
+		break;
+
 	case 61:
 		index1 =  _vm->_game->_script->readByte();
 		index2 = (_vm->_game->_script->readByte() - index1 + 1) * 3;
