@@ -176,6 +176,7 @@ public:
 
 	uint16 getWidth()  const;
 	uint16 getHeight() const;
+	virtual uint32 getFlags() const = 0;
 	virtual Graphics::PixelFormat getPixelFormat() const = 0;
 
 	uint32 getFrameCount() const;
@@ -288,6 +289,8 @@ public:
 
 	const Graphics::Surface *decodeNextFrame();
 
+	uint32 getFlags() const;
+
 	Graphics::PixelFormat getPixelFormat() const;
 
 private:
@@ -319,6 +322,8 @@ public:
 	bool isVideoLoaded() const;
 
 	const Graphics::Surface *decodeNextFrame();
+
+	uint32 getFlags() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
@@ -424,6 +429,8 @@ public:
 	bool isVideoLoaded() const;
 
 	const Graphics::Surface *decodeNextFrame();
+
+	uint32 getFlags() const;
 
 	Graphics::PixelFormat getPixelFormat() const;
 
