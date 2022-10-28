@@ -660,7 +660,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 				if (obj.animVariables && obj.animName[0] != '\0') { // TODO: obj.animVariables hack
 					if (!obj.field_38) {
-						warning("updateAnim Adibou2 stub obj.field_38 == nullptr");
+						//warning("updateAnim Adibou2 stub obj.field_38 == nullptr");
 					}
 
 					if (obj.field_38 != nullptr && obj.field_38[4] & 0x800) {
@@ -688,7 +688,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 						if (obj.field_38 != nullptr && obj.field_38[4] & 0x8000) {
 							warning("updateAnim Adibou2 stub obj.field_38 & 0x8000 != 0");
 						}
-						else {
+						else if (obj.field_38 != nullptr) {
 							sprite_dest_left = *obj.pPosX ;
 							sprite_dest_top = *obj.pPosY;
 							sprite_dest_right = sprite_dest_left + obj.field_38[5] - 1;
