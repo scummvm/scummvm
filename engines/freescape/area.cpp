@@ -105,8 +105,8 @@ Area::~Area() {
 	delete entrancesByID;
 	delete objectsByID;
 
-	for (Common::Array<Common::String *>::iterator iterator = conditionSources.begin(); iterator != conditionSources.end(); iterator++)
-		delete *iterator;
+	for (auto &it : conditionSources)
+		delete it;
 }
 
 void Area::show() {
@@ -157,9 +157,9 @@ void Area::saveObjects(Common::WriteStream *stream) {
 void Area::draw(Freescape::Renderer *gfx) {
 	gfx->clear();
 	assert(drawableObjects.size() > 0);
-	for (Common::Array<Object *>::iterator it = drawableObjects.begin(); it != drawableObjects.end(); it++) {
-		if (!(*it)->isDestroyed() && !(*it)->isInvisible()) {
-			(*it)->draw(gfx);
+	for (auto &obj : drawableObjects) {
+		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			obj->draw(gfx);
 		}
 	}
 }
@@ -167,11 +167,11 @@ void Area::draw(Freescape::Renderer *gfx) {
 Object *Area::shootRay(const Math::Ray &ray) {
 	float size = 16.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (int i = 0; i < int(drawableObjects.size()); i++) {
-		float objSize = drawableObjects[i]->getSize().length();
-		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible() && drawableObjects[i]->boundingBox.isValid() && ray.intersectAABB(drawableObjects[i]->boundingBox) && size >= objSize) {
-			debugC(1, kFreescapeDebugMove, "shot obj id: %d", drawableObjects[i]->getObjectID());
-			collided = drawableObjects[i];
+	for (auto &obj : drawableObjects) {
+		float objSize = obj->getSize().length();
+		if (!obj->isDestroyed() && !obj->isInvisible() && obj->boundingBox.isValid() && ray.intersectAABB(obj->boundingBox) && size >= objSize) {
+			debugC(1, kFreescapeDebugMove, "shot obj id: %d", obj->getObjectID());
+			collided = obj;
 			size = objSize;
 		}
 	}
@@ -181,12 +181,12 @@ Object *Area::shootRay(const Math::Ray &ray) {
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	float size = 3.0 * 8192.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (int i = 0; i < int(drawableObjects.size()); i++) {
-		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
-			GeometricObject *obj = (GeometricObject *)drawableObjects[i];
-			float objSize = obj->getSize().length();
-			if (obj->collides(boundingBox) && size > objSize) {
-				collided = obj;
+	for (auto &obj : drawableObjects) {
+		if (!obj->isDestroyed() && !obj->isInvisible()) {
+			GeometricObject *gobj = (GeometricObject *)obj;
+			float objSize = gobj->getSize().length();
+			if (gobj->collides(boundingBox) && size > objSize) {
+				collided = gobj;
 				size = objSize;
 			}
 		}
@@ -206,7 +206,7 @@ void Area::addObject(Object *obj) {
 
 void Area::removeObject(int16 id) {
 	assert(objectsByID->contains(id));
-	for (int i = 0; i < int(drawableObjects.size()); i++) {
+	for (uint i = 0; i < drawableObjects.size(); i++) {
 		if (drawableObjects[i]->getObjectID() == id) {
 			drawableObjects.remove_at(i);
 			break;
