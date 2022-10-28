@@ -22,6 +22,7 @@
 #include "common/endian.h"
 
 #include "gob/draw.h"
+#include "gob/inter.h"
 #include "gob/game.h"
 #include "gob/resources.h"
 
@@ -148,6 +149,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		switch (_pattern & 0xFF) {
 		case 0xFF:
 			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
+			WRITE_VAR(0, 1);
 			break;
 		case 1:
 			_spritesArray[_destSurface]->fillRect(destSpriteX,
