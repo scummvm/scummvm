@@ -151,7 +151,7 @@ public:
 
 	bool copyFrame(int slot, Surface &dest,
 			uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-			int32 transp = -1) const;
+			int32 transp = -1, bool yAxisReflexion = false) const;
 
 private:
 	struct Video {

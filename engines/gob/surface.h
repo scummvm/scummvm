@@ -111,7 +111,7 @@ public:
 	ConstPixel get(uint16 x = 0, uint16 y = 0) const;
 
 	void blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-	          int16 x, int16 y, int32 transp = -1);
+	          int16 x, int16 y, int32 transp = -1, bool yAxisReflexion = false);
 	void blit(const Surface &from, int16 x, int16 y, int32 transp = -1);
 	void blit(const Surface &from, int32 transp = -1);
 

@@ -725,7 +725,7 @@ void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 v
 
 bool VideoPlayer::copyFrame(int slot, Surface &dest,
 		uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
-		int32 transp) const {
+		int32 transp, bool yAxisReflection) const {
 
 	const Video *video = getVideoBySlot(slot);
 	if (!video)
@@ -741,7 +741,7 @@ bool VideoPlayer::copyFrame(int slot, Surface &dest,
 	// of the frame data which is undesirable.
 	Surface src(surface->w, surface->h, surface->format.bytesPerPixel, (byte *)const_cast<void *>(surface->getPixels()));
 
-	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp);
+	dest.blit(src, left, top, left + width - 1, top + height - 1, x, y, transp, yAxisReflection);
 	return true;
 }
 

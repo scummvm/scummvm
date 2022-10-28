@@ -318,7 +318,7 @@ bool Surface::clipBlitRect(int16 &left, int16 &top, int16 &right, int16 &bottom,
 }
 
 void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int16 bottom,
-		int16 x, int16 y, int32 transp) {
+		int16 x, int16 y, int32 transp, bool yAxisReflection) {
 
 	// Color depths have to fit
 	assert(_bpp == from._bpp);
@@ -335,7 +335,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		// Nothing to do
 		return;
 
-	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1)) {
+	if ((left == 0) && (_width == from._width) && (_width == width) && (transp == -1) && !yAxisReflection) {
 		// If these conditions are met, we can directly use memmove
 
 		// Pointers to the blit destination and source start points
@@ -346,7 +346,7 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		return;
 	}
 
-	if (transp == -1) {
+	if (transp == -1 && !yAxisReflection) {
 		// We don't have to look for transparency => we can use memmove line-wise
 
 		// Pointers to the blit destination and source start points
@@ -373,9 +373,17 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 		     Pixel dstRow = dst;
 		ConstPixel srcRow = src;
 
-		for (uint16 i = 0; i < width; i++, dstRow++, srcRow++)
-			if (srcRow.get() != ((uint32) transp))
-				dstRow.set(srcRow.get());
+		if (yAxisReflection) {
+			srcRow += width - 1;
+			for (uint16 i = 0; i < width; i++, dstRow++, srcRow--)
+				if (srcRow.get() != ((uint32) transp))
+					dstRow.set(srcRow.get());
+		}
+		else {
+			for (uint16 i = 0; i < width; i++, dstRow++, srcRow++)
+				if (srcRow.get() != ((uint32) transp))
+					dstRow.set(srcRow.get());
+		}
 
 		dst +=      _width;
 		src += from._width;
