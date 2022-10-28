@@ -961,6 +961,7 @@ protected:
 	FakeFileHandler    *_debilHandler;
 	GameFileHandler    *_configHandler;
 	GameFileHandler    *_adibou2EnvHandler[kChildrenCount];
+	SpriteHandler      *_adibou2WeatherHandler[kChildrenCount];
 	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
 	GameFileHandler    *_adibou2MemoHandler[kChildrenCount];
 	GameFileHandler    *_adibou2DiploHandler[kChildrenCount];
@@ -977,7 +978,9 @@ protected:
 	SpriteHandler      *_adibou2DrawingMailboxHandler[kChildrenCount];
 	SpriteHandler      *_adibou2CakePhotoHandler[kChildrenCount];
 	SpriteHandler      *_adibou2FlowerPhotoHandler[kChildrenCount];
-	SpriteHandler      *_adibou2FlowerPhoto2Handler[kChildrenCount];
+	SpriteHandler      *_adibou2FlowerInVaseHandler[kChildrenCount];
+	SpriteHandler      *_adibou2FadedFlowerInVaseHandler[kChildrenCount];
+	SpriteHandler      *_adibou2PosterHandler[kChildrenCount];
 
 	FakeFileHandler    *_addy4BaseHandler[2];
 	FakeFileHandler    *_addy4GrundschuleHandler[11];
