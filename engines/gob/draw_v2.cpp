@@ -301,6 +301,11 @@ void Draw_v2::printTotText(int16 id) {
 	_backColor = *ptr++;
 	_transparency = 1;
 
+	if ((_vm->getGameType() == kGameTypeAdibou2 ||
+		 _vm->getGameType() == kGameTypeAdi4) &&
+		_backColor == 16)
+		_backColor = -1;
+
 	spriteOperation(DRAW_CLEARRECT);
 
 	_backColor = 0;
