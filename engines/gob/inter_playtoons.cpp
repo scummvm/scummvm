@@ -97,7 +97,6 @@ void Inter_Playtoons::setupOpcodesGob() {
 
 void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 	char buf[60];
-	int i;
 	int16 oldTransparency;
 
 	_vm->_draw->_destSpriteX = _vm->_game->_script->readValExpr();
@@ -123,8 +122,9 @@ void Inter_Playtoons::oPlaytoons_printText(OpFuncParams &params) {
 //	_vm->_draw->_frontColor += colMod;
 
 	oldTransparency = _vm->_draw->_transparency;
+	int i = 0;
 	do {
-		for (i = 0; (_vm->_game->_script->peekChar() != '.') &&
+		for (; (_vm->_game->_script->peekChar() != '.') &&
 				(_vm->_game->_script->peekByte() != 200); i++) {
 			buf[i] = _vm->_game->_script->readChar();
 		}
