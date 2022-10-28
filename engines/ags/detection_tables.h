@@ -231,6 +231,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "alemmoanozira", "Al Emmo's Postcards from Anozira" },
 	{ "alum", "Alum" },
 	{ "apotheosis", "The Apotheosis Project" },
+	{ "ashinaredwitch", "Ashina: The Red Witch" },
 	{ "astroloco", "Astroloco: Worst Contact"},
 	{ "atotk", "A Tale Of Two Kingdoms" },
 	{ "avcsurvivalguide", "AVC's Survival Guide / Guía de supervivencia en CAV" },
@@ -541,7 +542,6 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "armageddonmargaret", "Armageddon Margaret" },
 	{ "artofdying", "The Art of Dying" },
 	{ "asecondface", "A Second Face: The Eye of Geltz is Watching You" },
-	{ "ashinaredwitch", "Ashina: The Red Witch" },
 	{ "ashpines", "Ash Pines" },
 	{ "ashortnightmare", "A Short Nightmare" },
 	{ "asimplefix", "A Simple Fix" },
@@ -3468,6 +3468,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51054188),  // Original (rollback 0.0)
 	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51056669),  // v1.1 (rollback 0.1)
 	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51089445),  // v1.2
+	GAME_ENTRY_STEAM("ashinaredwitch", "ATRW.exe", "7a24f662d686135f73c844231a5287bc", 51063519),  // v1.3 updated
 	GAME_ENTRY_EN_STEAM("astroloco", "astroloco1.exe", "c71919e3b0cc415ef725cf1a9818a515", 42894919),
 	GAME_ENTRY_EN("astroloco", "astroloco1.exe", "06e70a826fde73b3f86f974885d31abe", 42492070),
 	GAME_ENTRY_EN_STEAM("beer", "beer!.exe", "6f201fd7a19869c85f49c7c471d0479a", 5055091), // Windows
