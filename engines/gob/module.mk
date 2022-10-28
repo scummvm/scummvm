@@ -105,6 +105,7 @@ MODULE_OBJS := \
 	save/saveload_v4.o \
 	save/saveload_v6.o \
 	save/saveload_v7.o \
+	save/saveload_adibou1.o \
 	save/saveload_geisha.o \
 	save/saveload_fascin.o \
 	save/saveload_ajworld.o \

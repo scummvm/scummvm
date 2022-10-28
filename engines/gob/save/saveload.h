@@ -282,6 +282,33 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
+/** Save/Load class for Adibou 1 */
+class SaveLoad_Adibou1 : public SaveLoad {
+public:
+	SaveLoad_Adibou1(GobEngine *vm, const char *targetName);
+	~SaveLoad_Adibou1() override;
+
+	SaveMode getSaveMode(const char *fileName) const override;
+
+protected:
+	struct SaveFile {
+		const char *sourceName;
+		SaveMode mode;
+		SaveHandler *handler;
+		const char *description;
+	};
+
+	static SaveFile _saveFiles[];
+
+	FakeFileHandler *_bouHandler;
+
+	SaveHandler *getHandler(const char *fileName) const override;
+	const char *getDescription(const char *fileName) const override;
+
+	const SaveFile *getSaveFile(const char *fileName) const;
+	SaveFile *getSaveFile(const char *fileName);
+};
+
 /** Save/Load class for Goblins 3 and Lost in Time. */
 class SaveLoad_v3 : public SaveLoad {
 public:
