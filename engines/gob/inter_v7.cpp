@@ -111,14 +111,11 @@ void Inter_v7::resizeCursors(int16 width, int16 height, int16 count, bool transp
 	if (height <= 0)
 		height = _vm->_draw->_cursorHeight;
 
-	width  = MAX<uint16>(width , _vm->_draw->_cursorWidth);
-	height = MAX<uint16>(height, _vm->_draw->_cursorHeight);
-
 	_vm->_draw->_transparentCursor = transparency;
 
 	// Cursors sprite already big enough
-	if ((_vm->_draw->_cursorWidth >= width) && (_vm->_draw->_cursorHeight >= height) &&
-	    (_vm->_draw->_cursorCount >= count))
+	if ((_vm->_draw->_cursorWidth == width) && (_vm->_draw->_cursorHeight == height) &&
+	    (_vm->_draw->_cursorCount >= count) && _vm->_draw->_doCursorPalettes != nullptr)
 		return;
 
 	_vm->_draw->_cursorCount  = count;
