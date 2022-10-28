@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/endian.h"
 #include "common/archive.h"
 #include "common/translation.h"
@@ -686,17 +687,25 @@ void Inter_v7::o7_setActiveCD() {
 	for (Common::ArchiveMemberPtr file : files) {
 		auto *node = dynamic_cast<Common::FSNode *>(file.get());
 		if (node != nullptr) {
-			Common::String path = node->getParent().getName();
-			if (path.equalsIgnoreCase("applis")
-				|| path.equalsIgnoreCase("envir"))
+			Common::String dirname = node->getParent().getName();
+			Common::FSNode gameDataDir(ConfMan.get("path"));
+			bool newDirIsGameDir = (node->getParent().getPath() == gameDataDir.getPath());
+
+			if (!newDirIsGameDir &&
+				(dirname.equalsIgnoreCase("applis")
+				 || dirname.equalsIgnoreCase("envir")))
 				continue;
 
-			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s",  _currentCDPath.c_str(), path.c_str());
+			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s",  _currentCDPath.c_str(), dirname.c_str());
 			if (!_currentCDPath.empty())
 				SearchMan.setPriority(_currentCDPath, 0);
 
-			_currentCDPath = path;
-			SearchMan.setPriority(path, 1);
+			if (newDirIsGameDir)
+				_currentCDPath = "";
+			else {
+				_currentCDPath = dirname;
+				SearchMan.setPriority(dirname, 1);
+			}
 			storeValue(1);
 			return;
 		}
