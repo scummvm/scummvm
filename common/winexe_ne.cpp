@@ -103,10 +103,64 @@ uint32 NEResources::getResourceTableOffset() {
 	return offsetResourceTable;
 }
 
+/**
+ * A "resource ID -> name" mapping found in some NE executables, stored as a resource.
+ * Not described by any documentation I could find, but the corresponding #define can be encountered in some old header files.
+ * Mentioned by this blog post https://www.toptensoftware.com/blog/win3mu-5/ (section "The Mysterious Resource Type #15")
+ *
+ * The name table records have the following layout:
+ *
+ * struct
+ * {
+ *  WORD lengthEntry;        // length of this entry (including this field)
+ *  WORD resourceType;       // see WinResourceType constants
+ *  WORD resourceId;         // ordinal of resource | 0x8000
+ *  BYTE paddingZero;        // maybe ??
+ *  CHAR szName[];           // null-terminated name
+ * }
+ *
+*/
+
+bool NEResources::readNameTable(uint32 offset, uint32 size) {
+	if (!_exe)
+		return false;
+
+	uint32 curPos = _exe->pos();
+	if (!_exe->seek(offset)) {
+		_exe->seek(curPos);
+		return false;
+	}
+
+	uint32 offsetEnd = offset + size;
+	while (_exe->pos() < offsetEnd) {
+		uint16 lengthEntry = _exe->readUint16LE();
+		if (lengthEntry == 0)
+			break;
+
+		uint16 resourceType = _exe->readUint16LE();
+		uint16 resourceId   = _exe->readUint16LE();
+		resourceId &= 0x7FFF;
+		_exe->skip(1); // paddingZero
+
+		Common::String name = _exe->readString('\0', lengthEntry - 7);
+		if (name.size() + 8 != lengthEntry) {
+			warning("NEResources::readNameTable(): unexpected string length in name table (expected = %d, found = %d, string = %s)",
+					lengthEntry - 7, name.size() + 1, name.c_str());
+		}
+
+		debug(2, "NEResources::readNameTable(): resourceType = %d, resourceId = %d, name = %s",
+			  resourceType, resourceId, name.c_str());
+		_nameTable[resourceType][resourceId] = name;
+	}
+
+	_exe->seek(curPos);
+	return true;
+}
+
 static const char *s_resTypeNames[] = {
 	"", "cursor", "bitmap", "icon", "menu", "dialog", "string",
 	"font_dir", "font", "accelerator", "rc_data", "msg_table",
-	"group_cursor", "", "group_icon", "", "version", "dlg_include",
+	"group_cursor", "", "group_icon", "name_table", "version", "dlg_include",
 	"", "plug_play", "vxd", "ani_cursor", "ani_icon", "html",
 	"manifest"
 };
@@ -158,6 +212,8 @@ bool NEResources::readResourceTable(uint32 offset) {
 				debug(2, "Found resource %s %s", type.toString().c_str(), res.id.toString().c_str());
 
 			_resources.push_back(res);
+			if (type == kWinNameTable)
+				readNameTable(res.offset, res.size);
 		}
 
 		typeID = _exe->readUint16LE();
@@ -185,9 +241,15 @@ String NEResources::getResourceString(SeekableReadStream &exe, uint32 offset) {
 }
 
 const NEResources::Resource *NEResources::findResource(const WinResourceID &type, const WinResourceID &id) const {
-	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it)
-		if (it->type == type && it->id == id)
+	for (List<Resource>::const_iterator it = _resources.begin(); it != _resources.end(); ++it) {
+		if (it->type == type &&
+			(it->id == id ||
+			 (!_nameTable.empty() &&
+			  _nameTable.contains(it->type) &&
+			  _nameTable[it->type].contains(it->id) &&
+			  _nameTable[it->type][it->id] == id.toString())))
 			return &*it;
+	}
 
 	return nullptr;
 }

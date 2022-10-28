@@ -93,10 +93,17 @@ private:
 	/** All resources. */
 	List<Resource> _resources;
 
+	typedef HashMap<WinResourceID, Common::String, WinResourceID_Hash, WinResourceID_EqualTo> IDMap;
+	typedef HashMap<WinResourceID, IDMap, WinResourceID_Hash, WinResourceID_EqualTo> TypeMap;
+	TypeMap _nameTable;
+
 	/** Read the offset to the resource table. */
 	uint32 getResourceTableOffset();
 	/** Read the resource table. */
 	bool readResourceTable(uint32 offset);
+
+	/** Read the name table. */
+	bool readNameTable(uint32 offset, uint32 size);
 
 	/** Find a specific resource. */
 	const Resource *findResource(const WinResourceID &type, const WinResourceID &id) const;

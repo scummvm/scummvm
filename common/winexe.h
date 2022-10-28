@@ -54,6 +54,7 @@ enum WinResourceType {
 	kWinMessageTable = 0x0B,
 	kWinGroupCursor  = 0x0C,
 	kWinGroupIcon    = 0x0E,
+	kWinNameTable    = 0x0F,
 	kWinVersion      = 0x10,
 	kWinDlgInclude   = 0x11,
 	kWinPlugPlay     = 0x13,
