@@ -41,6 +41,11 @@ const char *SaveLoad::stripPath(const char *fileName) {
 	return fileName;
 }
 
+Common::List<Common::String> SaveLoad::getFilesMatchingPattern(const char *pattern) const {
+	warning("SaveLoad::getFilesMatchingPattern not implemented");
+	return Common::List<Common::String>();
+}
+
 int32 SaveLoad::getSize(const char *fileName) {
 	debugC(3, kDebugSaveLoad, "Requested size of save file \"%s\"", fileName);
 

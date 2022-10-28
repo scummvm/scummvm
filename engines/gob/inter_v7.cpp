@@ -73,6 +73,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
 	OPCODEDRAW(0x60, o7_copyFile);
+	OPCODEDRAW(0x61, o7_deleteFile);
 	OPCODEDRAW(0x62, o7_moveFile);
 	OPCODEDRAW(0x80, o7_initScreen);
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
@@ -537,34 +538,58 @@ void Inter_v7::o7_copyFile() {
 
 	debugC(2, kDebugFileIO, "Copy file \"%s\" to \"%s", path1.c_str(), path2.c_str());
 
-	Common::String file1 = getFile(path1.c_str());
-	Common::String file2 = getFile(path2.c_str());
-	if (file1.equalsIgnoreCase(file2)) {
+	if (path1.equalsIgnoreCase(path2)) {
 		warning("o7_copyFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(file1, file2);
+	copyFile(path1, path2);
+}
+
+void Inter_v7::o7_deleteFile() {
+	Common::String file =_vm->_game->_script->evalString();
+
+	debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
+
+	bool isPattern = file.contains('*') || file.contains('?');
+	Common::List<Common::String> files;
+	if (isPattern) {
+		files = _vm->_saveLoad->getFilesMatchingPattern(file.c_str());
+		debugC(2, kDebugFileIO, "Delete file matching pattern \"%s\" (%d matching file(s))", file.c_str(), files.size());
+		for (const Common::String &matchingFile : files)
+			debugC(5, kDebugFileIO, "Matching file: %s", matchingFile.c_str());
+	}
+	else {
+		files.push_back(file);
+		debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
+	}
+
+	for (const Common::String &fileToDelete : files) {
+		SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(fileToDelete.c_str());
+		if (mode == SaveLoad::kSaveModeSave) {
+			if (!_vm->_saveLoad->deleteFile(fileToDelete.c_str())) {
+				warning("Cannot delete file \"%s\"", fileToDelete.c_str());
+			}
+		} else if (mode == SaveLoad::kSaveModeNone)
+			warning("Attempted to delete file \"%s\"", fileToDelete.c_str());
+	}
 }
 
 void Inter_v7::o7_moveFile() {
 	Common::String path1 = _vm->_game->_script->evalString();
 	Common::String path2 = _vm->_game->_script->evalString();
 
-	Common::String file1 = getFile(path1.c_str());
-	Common::String file2 = getFile(path2.c_str());
-
-	if (file1.equalsIgnoreCase(file2)) {
+	if (path1.equalsIgnoreCase(path2)) {
 		warning("o7_moveFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(file1, file2);
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file1.c_str());
+	copyFile(path1, path2);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(path1.c_str());
 	if (mode == SaveLoad::kSaveModeSave) {
-		_vm->_saveLoad->deleteFile(file1.c_str());
+		_vm->_saveLoad->deleteFile(path1.c_str());
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to delete file \"%s\" while moving it to \"%s\"", file1.c_str(), file2.c_str());
+		warning("Attempted to delete file \"%s\" while moving it to \"%s\"", path1.c_str(), path2.c_str());
 }
 
 
@@ -1178,7 +1203,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 }
 
 void Inter_v7::o7_readData(OpFuncParams &params) {
-	Common::String file = getFile(_vm->_game->_script->evalString());
+	Common::String file = _vm->_game->_script->evalString();
 
 	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32  size    = _vm->_game->_script->readValExpr();
@@ -1255,7 +1280,7 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 }
 
 void Inter_v7::o7_writeData(OpFuncParams &params) {
-	Common::String file = getFile(_vm->_game->_script->evalString());
+	Common::String file = _vm->_game->_script->evalString();
 
 	int16 dataVar = _vm->_game->_script->readVarIndex();
 	int32 size    = _vm->_game->_script->readValExpr();
