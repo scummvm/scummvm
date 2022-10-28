@@ -748,7 +748,7 @@ void Draw_v2::spriteOperation(int16 operation) {
 				_spriteLeft, spriteTop,
 				_spriteLeft + _spriteRight - 1,
 				_spriteTop + _spriteBottom - 1,
-				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0);
+				_destSpriteX, _destSpriteY, (_transparency == 0) ? -1 : 0, _transparency & 0x80);
 
 		dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
 				_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);

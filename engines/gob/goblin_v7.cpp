@@ -96,6 +96,9 @@ void Goblin_v7::changeDirection(Mult::Mult_Object *obj, int16 animState) {
 				newYCorrection = animVariablesForState[2];
 			} else {
 				if (animVariablesForState[0] == -2) {
+					// Reflexion relative to Y axis:
+					// Some videos exist only for "west" directions (W, NW, SW, N S),
+					// "east" directions (E, NE, SE) are then obtained by symmetry
 					switch (animState) {
 					case 1:
 						animState = 5;
