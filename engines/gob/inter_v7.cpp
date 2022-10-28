@@ -168,7 +168,7 @@ void Inter_v7::o7_loadCursor() {
 			_vm->_draw->_cursorHeight - 1, 0);
 
 	// If the cursor name is empty, that cursor will be drawn by the scripts
-	if (cursorName.empty()) {
+	if (cursorName.empty() || cursorName == "VIDE") { // "VIDE" is "empty" in french
 		// Make sure the cursors sprite is big enough and set to non-extern palette
 		resizeCursors(-1, -1, cursorIndex + 1, true);
 		_vm->_draw->_doCursorPalettes[cursorIndex] = false;
