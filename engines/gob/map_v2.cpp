@@ -86,8 +86,6 @@ void Map_v2::loadMapObjects(const char *avjFile) {
 				_mapWidth       = READ_VARO_UINT8(var + 2);
 				_mapHeight      = READ_VARO_UINT8(var + 3);
 				_mapUnknownBool = READ_VARO_UINT8(var + 4) ? true : false;
-				if (_mapUnknownBool)
-					warning("Map_v2::loadMapObjects(): _mapUnknownBool == true");
 				break;
 			case 65535:
 				_passMap = (int8 *)_vm->_inter->_variables->getAddressOff8(var);
