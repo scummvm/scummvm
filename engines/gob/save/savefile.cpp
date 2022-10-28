@@ -333,7 +333,7 @@ bool SavePartSprite::read(Common::ReadStream &stream) {
 	uint32 width = stream.readUint32LE();
 	uint32 height = stream.readUint32LE();
 
-	if (width*height != _width*_height)
+	if (width * height != _width * _height)
 		return false;
 
 	// If it's in the current format, the true color flag has to be the same too
@@ -380,7 +380,7 @@ bool SavePartSprite::readPalette(const byte *palette) {
 
 bool SavePartSprite::readSprite(const Surface &sprite) {
 	// The sprite's dimensions have to fit
-	if (((uint32)sprite.getWidth()*sprite.getHeight()) != _width*_height)
+	if (((uint32)sprite.getWidth() * sprite.getHeight()) != _width * _height)
 		return false;
 
 	if (_trueColor) {
