@@ -96,6 +96,9 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 
 	uint16 data;
 
+	if (c == '\r' || c == '\n')
+		return;
+
 	const byte *src = getCharData(c);
 	if (!src) {
 		warning("Font::drawLetter(): getCharData() == 0");
