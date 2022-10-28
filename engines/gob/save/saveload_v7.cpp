@@ -853,6 +853,15 @@ bool SaveLoad_v7::SpriteHandler::saveFromRaw(const byte *ptr, int32 size, int32 
 	return writer.writePart(0, _sprite);
 }
 
+bool SaveLoad_v7::SpriteHandler::deleteFile() {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	return writer.deleteFile();
+}
+
 SaveLoad_v7::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
 SlotFileStatic(vm, base, ext) {
 }
@@ -1018,6 +1027,15 @@ Common::String fileName = _file.build();
 
 bool SaveLoad_v7::GameFileHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
 	return save(ptr, 0, size, offset);
+}
+
+bool SaveLoad_v7::GameFileHandler::deleteFile() {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	return writer.deleteFile();
 }
 
 SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :

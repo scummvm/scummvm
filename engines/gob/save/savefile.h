@@ -340,6 +340,7 @@ public:
 	bool writePart(uint32 partN, const SavePart *part);
 
 	bool save(Common::WriteStream &stream);
+	bool deleteFile();
 
 protected:
 	bool save();

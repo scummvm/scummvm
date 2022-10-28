@@ -1009,6 +1009,14 @@ bool SaveWriter::save(Common::WriteStream &stream) {
 	return SaveContainer::write(stream);
 }
 
+bool SaveWriter::deleteFile() {
+	if (_fileName.empty())
+		return false;
+
+	Common::SaveFileManager *saveMan = g_system->getSavefileManager();
+	return saveMan->removeSavefile(_fileName);
+}
+
 bool SaveWriter::save() {
 	Common::OutSaveFile *out = openSave();
 
