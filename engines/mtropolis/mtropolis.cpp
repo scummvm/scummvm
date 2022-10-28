@@ -145,6 +145,13 @@ Common::Error MTropolisEngine::run() {
 		enhancedColorDepthMode = kColorDepthMode32Bit;
 	}
 
+	if (_gameDescription->gameID == GID_SPQR) {
+		preferredWidth = 640;
+		preferredHeight = 480;
+		preferredColorDepthMode = kColorDepthMode8Bit;
+		enhancedColorDepthMode = kColorDepthMode32Bit;
+	}
+
 	if (ConfMan.getBool("mtropolis_mod_minimum_transition_duration"))
 		_runtime->getHacks().minTransitionDuration = 75;
 

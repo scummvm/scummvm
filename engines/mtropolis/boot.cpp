@@ -779,6 +779,19 @@ const char *mtiRetailWinDirectories[] = {
 	nullptr
 };
 
+const ManifestFile spqrRetailWinEnFiles[] = {
+	{"SPQR32.EXE", MTFT_PLAYER},
+	{"MCURSORS.C95", MTFT_EXTENSION},
+	{"SPQR.MPL", MTFT_MAIN},
+	{"S_6842.MPX", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *spqrRetailWinDirectories[] = {
+	"RESOURCE",
+	nullptr
+};
+
 const Game games[] = {
 	// Obsidian - Retail - Macintosh - English
 	{
@@ -891,6 +904,14 @@ const Game games[] = {
 		nullptr,
 		nullptr,
 		GameDataHandlerFactory<MTIGameDataHandler>::create
+	},
+	// SPQR: The Empire's Darkest Hour - Retail - Windows
+	{
+		MTBOOT_SPQR_RETAIL_WIN,
+		spqrRetailWinEnFiles,
+		spqrRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<GameDataHandler>::create
 	},
 };
 
@@ -1212,9 +1233,11 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 		Boot::FileIdentification *mainSegmentFile = nullptr;
 		Common::Array<Boot::FileIdentification *> segmentFiles;
 
+		int addlSegments = 0;
+
 		// Bin segments
-		for (Boot::FileIdentification &macFile : winFiles) {
-			switch (macFile.category) {
+		for (Boot::FileIdentification &winFile : winFiles) {
+			switch (winFile.category) {
 			case Boot::MTFT_PLAYER:
 				// Case handled below after cursor loading
 				break;
@@ -1222,17 +1245,16 @@ Common::SharedPtr<ProjectDescription> bootProject(const MTropolisGameDescription
 				// Case handled below after cursor loading
 				break;
 			case Boot::MTFT_MAIN:
-				mainSegmentFile = &macFile;
+				mainSegmentFile = &winFile;
 				break;
 			case Boot::MTFT_ADDITIONAL: {
-				int segmentID = Boot::resolveFileSegmentID(macFile.fileName);
-				if (segmentID < 2)
-					error("Unusual segment numbering scheme");
+				addlSegments++;
+				int segmentID = addlSegments + 1;
 
 				size_t segmentIndex = static_cast<size_t>(segmentID - 1);
 				while (segmentFiles.size() <= segmentIndex)
 					segmentFiles.push_back(nullptr);
-				segmentFiles[segmentIndex] = &macFile;
+				segmentFiles[segmentIndex] = &winFile;
 			} break;
 			case Boot::MTFT_VIDEO:
 				break;

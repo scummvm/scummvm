@@ -30,6 +30,7 @@ enum MTropolisGameID {
 	GID_OBSIDIAN			= 0,
 	GID_LEARNING_MTROPOLIS	= 1,
 	GID_MTI    				= 2,
+	GID_SPQR                = 3,
 };
 
 // Boot IDs - These can be shared across different variants if the file list and other properties are identical.
@@ -53,6 +54,8 @@ enum MTropolisGameBootID {
 	MTBOOT_MTI_RETAIL_MAC,
 	MTBOOT_MTI_RETAIL_WIN,
 	MTBOOT_MTI_DEMO_WIN,
+
+	MTBOOT_SPQR_RETAIL_WIN,
 };
 
 struct MTropolisGameDescription {

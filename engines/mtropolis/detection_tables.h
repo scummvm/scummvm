@@ -449,6 +449,26 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_MTI_DEMO_WIN,
 	},
 
+	{ // SPQR: The Empire's Darkest Hour Windows CD-ROM
+		{
+			"spqr",
+			"",
+			{
+				{ "SPQR.MPL", 0, "da778ae00dd3e7596ba970a4dccd0a44", 3292503 },
+				{ "S_6842.MPX", 0, "506c04751bee9482f76333b0cf3c0e52", 577095784 },
+				{ "SPQR32.EXE", 0, "af2a7889779243c0d25392598e893137", 759296 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformWindows,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_SPQR,
+		0,
+		MTBOOT_SPQR_RETAIL_WIN,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 
