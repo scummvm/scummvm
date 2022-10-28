@@ -838,31 +838,36 @@ void Mult_v2::animate() {
 			}
 
 			for (int j = 0; j < i; j++) {
-				Mult_Object &animObject2 = _objects[j];
-				Mult_AnimData &animData2 = *(animObject2.pAnimData);
+				Mult_Object &previousAnimObject = _objects[j];
+				Mult_AnimData &previousAnimData = *(previousAnimObject.pAnimData);
 
-				if (animData2.isStatic || animData2.order == 100)
+				if (previousAnimData.isStatic || previousAnimData.order == 100)
 					continue;
 
 				int8 orderCorrection = 0;
-				if (animData2.destY <= animData.destY || animData2.destX > animData.destX) {
-					if (animData2.destY >= animData.destY || animData2.destX <= animData.destX) {
-						if (animData.destX + animData.field_1F <= animData2.destX || animData.destY - animData.field_20 < animData2.destY) {
-							if (animData2.destX + animData2.field_1F > animData.destX && animData2.destY - animData2.field_20 >= animData.destY) {
+				if (previousAnimData.destY <= animData.destY
+					|| previousAnimData.destX >= animData.destX) {
+					if (previousAnimData.destY >= animData.destY
+						|| previousAnimData.destX <= animData.destX) {
+						if (animData.destX + animData.field_1F <= previousAnimData.destX
+							|| animData.destY - animData.field_20 >= previousAnimData.destY) {
+							if (previousAnimData.destX + previousAnimData.field_1F > animData.destX
+								&& previousAnimData.destY - previousAnimData.field_20 < animData.destY) {
 								orderCorrection = 1;
-							} else {
-								orderCorrection = -1;
 							}
 						} else {
-							orderCorrection = 1;
+							orderCorrection = -1;
 						}
 					} else {
-						orderCorrection = -1;
+						orderCorrection = 1;
 					}
-
-					animData.order += orderCorrection;
-					animData2.order -= orderCorrection;
 				}
+				else
+					orderCorrection = -1;
+
+
+				animData.order += orderCorrection;
+				previousAnimData.order -= orderCorrection;
 			}
 		}
 
