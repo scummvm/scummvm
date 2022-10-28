@@ -375,12 +375,12 @@ void Surface::blit(const Surface &from, int16 left, int16 top, int16 right, int1
 
 		if (yAxisReflection) {
 			srcRow += width - 1;
-			for (uint16 i = 0; i < width; i++, dstRow++, srcRow--)
+			for (uint16 i = 0; i < width; i++, ++dstRow, --srcRow)
 				if (srcRow.get() != ((uint32) transp))
 					dstRow.set(srcRow.get());
 		}
 		else {
-			for (uint16 i = 0; i < width; i++, dstRow++, srcRow++)
+			for (uint16 i = 0; i < width; i++, ++dstRow, ++srcRow)
 				if (srcRow.get() != ((uint32) transp))
 					dstRow.set(srcRow.get());
 		}
