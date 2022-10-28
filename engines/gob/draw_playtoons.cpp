@@ -176,11 +176,23 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 		break;
 	case DRAW_FILLRECT:
 		switch (_pattern & 0xFF) {
-		case 1:
 		case 3:
 		case 4:
 			warning("oPlaytoons_spriteOperation: operation DRAW_FILLRECT, pattern %d", _pattern & 0xFF);
 			break;
+
+		case 1: {
+			_spritesArray[_destSurface]->fillArea(destSpriteX,
+												  _destSpriteY,
+												  _destSpriteX + _spriteRight - 1,
+												  _destSpriteY + _spriteBottom - 1,
+												  _backColor & 0xFF,
+												  (_backColor >> 8) & 0xFF);
+
+			dirtiedRect(_destSurface, _destSpriteX, _destSpriteY,
+						_destSpriteX + _spriteRight - 1, _destSpriteY + _spriteBottom - 1);
+			break;
+		}
 		case 2: {
 			Common::Rect dirtyRect = _spritesArray[_destSurface]->fillAreaAtPoint(destSpriteX,
 																				  _destSpriteY,
