@@ -709,6 +709,13 @@ void Inter_v1::o1_callSub(OpFuncParams &params) {
 		return;
 	}
 
+	// Skipping the copy protection screen in Adibou2
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && (offset == 1746) &&
+		_vm->isCurrentTot("base.tot")) {
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
+		return;
+	}
+
 	_vm->_game->_script->call(offset);
 
 	if ((params.counter == params.cmdCount) && (params.retFlag == 2)) {
