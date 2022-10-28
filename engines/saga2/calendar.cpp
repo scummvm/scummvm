@@ -24,7 +24,7 @@
  */
 
 #include "saga2/saga2.h"
-#include "saga2/calender.h"
+#include "saga2/calendar.h"
 #include "saga2/intrface.h"
 #include "saga2/localize.h"
 #include "saga2/saveload.h"
@@ -36,7 +36,7 @@ namespace Saga2 {
    FrameAlarm member functions
  * ===================================================================== */
 
-void CalenderTime::read(Common::InSaveFile *in) {
+void CalendarTime::read(Common::InSaveFile *in) {
 	_years = in->readUint16LE();
 	_weeks = in->readUint16LE();
 	_days = in->readUint16LE();
@@ -54,7 +54,7 @@ void CalenderTime::read(Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "... _frameInHour = %d", _frameInHour);
 }
 
-void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
+void CalendarTime::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeUint16LE(_years);
 	out->writeUint16LE(_weeks);
 	out->writeUint16LE(_days);
@@ -72,7 +72,7 @@ void CalenderTime::write(Common::MemoryWriteStreamDynamic *out) {
 	debugC(3, kDebugSaveload, "... _frameInHour = %d", _frameInHour);
 }
 
-void CalenderTime::update() {
+void CalendarTime::update() {
 	const char *text = nullptr;
 
 	if (++_frameInHour >= kFramesPerHour) {
@@ -120,7 +120,7 @@ void CalenderTime::update() {
 	}
 }
 
-int CalenderTime::lightLevel(int maxLevel) {
+int CalendarTime::lightLevel(int maxLevel) {
 	int16       solarAngle,
 	            season,
 	            solarLevel;
@@ -168,112 +168,112 @@ void FrameAlarm::read(Common::InSaveFile *in) {
 }
 
 void FrameAlarm::set(uint16 dur) {
-	_baseFrame = g_vm->_calender->frameInDay();
+	_baseFrame = g_vm->_calendar->frameInDay();
 	_duration = dur;
 }
 
 bool FrameAlarm::check() {
-	uint16      frameInDay = g_vm->_calender->frameInDay();
+	uint16      frameInDay = g_vm->_calendar->frameInDay();
 
-	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
+	return  _baseFrame + _duration < CalendarTime::kFramesPerDay
 	        ?   frameInDay >= _baseFrame + _duration
 	        :       frameInDay < _baseFrame
 	        &&  frameInDay >=       _baseFrame
 	        +   _duration
-	        -   CalenderTime::kFramesPerDay;
+	        -   CalendarTime::kFramesPerDay;
 }
 
 // time elapsed since alarm set
 
 uint16 FrameAlarm::elapsed() {
-	uint16      frameInDay = g_vm->_calender->frameInDay();
+	uint16      frameInDay = g_vm->_calendar->frameInDay();
 
-	return  _baseFrame + _duration < CalenderTime::kFramesPerDay
+	return  _baseFrame + _duration < CalendarTime::kFramesPerDay
 	        ?   frameInDay - _baseFrame
 	        :   frameInDay >= _baseFrame
 	        ?   frameInDay - _baseFrame
-	        :   frameInDay + CalenderTime::kFramesPerDay - _baseFrame;
+	        :   frameInDay + CalendarTime::kFramesPerDay - _baseFrame;
 }
 
 /* ===================================================================== *
-   Calender management functions
+   Calendar management functions
  * ===================================================================== */
 
 //-----------------------------------------------------------------------
-//	Pause the global calender
+//	Pause the global calendar
 
-void pauseCalender() {
-	g_vm->_calender->_calenderPaused = true;
+void pauseCalendar() {
+	g_vm->_calendar->_calendarPaused = true;
 }
 
 //-----------------------------------------------------------------------
-//	Restart the paused global calender
+//	Restart the paused global calendar
 
-void resumeCalender() {
-	g_vm->_calender->_calenderPaused = false;
+void resumeCalendar() {
+	g_vm->_calendar->_calendarPaused = false;
 }
 
 //-----------------------------------------------------------------------
-//	Update the global calender
+//	Update the global calendar
 
 void updateCalendar() {
-	if (!g_vm->_calender->_calenderPaused) g_vm->_calender->update();
+	if (!g_vm->_calendar->_calendarPaused) g_vm->_calendar->update();
 }
 
 //-----------------------------------------------------------------------
-//	CalenderTime subtraction operator
+//	CalendarTime subtraction operator
 
-uint32 operator - (const CalenderTime &time1, const CalenderTime &time2) {
+uint32 operator - (const CalendarTime &time1, const CalendarTime &time2) {
 	uint32      time1Frame,
 	            time2Frame;
 
-	time1Frame =    time1._days * CalenderTime::kFramesPerDay
-	                +   time1._hour * CalenderTime::kFramesPerHour
+	time1Frame =    time1._days * CalendarTime::kFramesPerDay
+	                +   time1._hour * CalendarTime::kFramesPerHour
 	                +   time1._frameInHour;
-	time2Frame =    time2._days * CalenderTime::kFramesPerDay
-	                +   time2._hour * CalenderTime::kFramesPerHour
+	time2Frame =    time2._days * CalendarTime::kFramesPerDay
+	                +   time2._hour * CalendarTime::kFramesPerHour
 	                +   time2._frameInHour;
 
 	return time1Frame - time2Frame;
 }
 
 //-----------------------------------------------------------------------
-//	Initialize the game calender
+//	Initialize the game calendar
 
-void initCalender() {
-	g_vm->_calender->_calenderPaused          = false;
-	g_vm->_calender->_years          = 0;
-	g_vm->_calender->_weeks          = 0;
-	g_vm->_calender->_days           = 0;
-	g_vm->_calender->_dayInYear      = 0;
-	g_vm->_calender->_dayInWeek      = 0;
-	g_vm->_calender->_hour           = CalenderTime::kGameStartHour;
-	g_vm->_calender->_frameInHour    = 0;
+void initCalendar() {
+	g_vm->_calendar->_calendarPaused          = false;
+	g_vm->_calendar->_years          = 0;
+	g_vm->_calendar->_weeks          = 0;
+	g_vm->_calendar->_days           = 0;
+	g_vm->_calendar->_dayInYear      = 0;
+	g_vm->_calendar->_dayInWeek      = 0;
+	g_vm->_calendar->_hour           = CalendarTime::kGameStartHour;
+	g_vm->_calendar->_frameInHour    = 0;
 }
 
-void saveCalender(Common::OutSaveFile *outS) {
-	debugC(2, kDebugSaveload, "Saving calender");
+void saveCalendar(Common::OutSaveFile *outS) {
+	debugC(2, kDebugSaveload, "Saving calendar");
 
 	outS->write("CALE", 4);
 	CHUNK_BEGIN;
-	out->writeUint16LE(g_vm->_calender->_calenderPaused);
-	debugC(3, kDebugSaveload, "... _calenderPaused = %d", g_vm->_calender->_calenderPaused);
-	g_vm->_calender->write(out);
+	out->writeUint16LE(g_vm->_calendar->_calendarPaused);
+	debugC(3, kDebugSaveload, "... _calendarPaused = %d", g_vm->_calendar->_calendarPaused);
+	g_vm->_calendar->write(out);
 	CHUNK_END;
 }
 
-void loadCalender(Common::InSaveFile *in) {
-	debugC(2, kDebugSaveload, "Loading calender");
+void loadCalendar(Common::InSaveFile *in) {
+	debugC(2, kDebugSaveload, "Loading calendar");
 
-	g_vm->_calender->_calenderPaused = in->readUint16LE();
+	g_vm->_calendar->_calendarPaused = in->readUint16LE();
 
-	debugC(3, kDebugSaveload, "... _calenderPaused = %d", g_vm->_calender->_calenderPaused);
+	debugC(3, kDebugSaveload, "... _calendarPaused = %d", g_vm->_calendar->_calendarPaused);
 
-	g_vm->_calender->read(in);
+	g_vm->_calendar->read(in);
 }
 
 bool isDayTime() {
-	return g_vm->_calender->lightLevel(MAX_LIGHT) >= (MAX_LIGHT / 2);
+	return g_vm->_calendar->lightLevel(MAX_LIGHT) >= (MAX_LIGHT / 2);
 }
 
 }

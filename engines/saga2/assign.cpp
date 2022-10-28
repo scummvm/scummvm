@@ -26,13 +26,13 @@
 #include "saga2/saga2.h"
 #include "saga2/actor.h"
 #include "saga2/assign.h"
-#include "saga2/calender.h"
+#include "saga2/calendar.h"
 #include "saga2/task.h"
 #include "saga2/tile.h"
 
 namespace Saga2 {
 
-const uint16 kIndefiniteTime = CalenderTime::kFramesPerDay;
+const uint16 kIndefiniteTime = CalendarTime::kFramesPerDay;
 
 /* ===================================================================== *
    ActorAssignment member functions
@@ -40,7 +40,7 @@ const uint16 kIndefiniteTime = CalenderTime::kFramesPerDay;
 
 //  Constructor
 ActorAssignment::ActorAssignment(Actor *a, uint16 until) :
-	_startFrame(g_vm->_calender->frameInDay()),
+	_startFrame(g_vm->_calendar->frameInDay()),
 	_endFrame(until) {
 	_actor = a;
 	debugC(2, kDebugActors, "New assignment for %p (%s) from %d until %d: %p",
@@ -95,7 +95,7 @@ void ActorAssignment::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Determine if the time limit for this assignment has been exceeded
 
 bool ActorAssignment::isValid() {
-	uint16  frame = g_vm->_calender->frameInDay();
+	uint16  frame = g_vm->_calendar->frameInDay();
 
 	return      frame < _endFrame
 	            || (_startFrame >= _endFrame && frame >= _startFrame);

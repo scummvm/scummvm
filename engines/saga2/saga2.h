@@ -81,7 +81,7 @@ class CMapFeature;
 class AudioInterface;
 class PaletteManager;
 class ActorManager;
-class CalenderTime;
+class CalendarTime;
 class TileModeManager;
 struct SAGA2GameDescription;
 
@@ -144,7 +144,7 @@ public:
 	AudioInterface *_audio;
 	PaletteManager *_pal;
 	ActorManager *_act;
-	CalenderTime *_calender;
+	CalendarTime *_calendar;
 	TileModeManager *_tmm;
 	ContainerManager *_cnm;
 

@@ -1673,7 +1673,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            thisThread->_argCount >= 4
@@ -1705,7 +1705,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            args[3],
@@ -1849,7 +1849,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 
 		if (new TetheredWanderAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            tetherReg)
 		        !=  nullptr)
 			return true;
@@ -1871,9 +1871,9 @@ int16 scriptActorAssignAttend(int16 *args) {
 		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new AttendAssignment(a,
-		            (g_vm->_calender->frameInDay()
+		            (g_vm->_calendar->frameInDay()
 		             + (uint16)args[0])
-		            %   CalenderTime::kFramesPerDay,
+		            %   CalendarTime::kFramesPerDay,
 		            GameObject::objectAddress(args[1]))
 		        !=  nullptr)
 			return true;
@@ -3079,7 +3079,7 @@ int16 scriptPlayVoice(int16 *args) {
 
 int16 scriptGetHour(int16 *) {
 	MONOLOG(GetHour);
-	return g_vm->_calender->_hour;
+	return g_vm->_calendar->_hour;
 }
 
 //-----------------------------------------------------------------------
@@ -3087,7 +3087,7 @@ int16 scriptGetHour(int16 *) {
 
 int16 scriptGetFrameInHour(int16 *) {
 	MONOLOG(GetFrameInHour);
-	return g_vm->_calender->_frameInHour;
+	return g_vm->_calendar->_frameInHour;
 }
 
 //-----------------------------------------------------------------------

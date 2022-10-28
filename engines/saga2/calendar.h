@@ -23,16 +23,16 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#ifndef SAGA2_CALENDER_H
-#define SAGA2_CALENDER_H
+#ifndef SAGA2_CALENDAR_H
+#define SAGA2_CALENDAR_H
 
 namespace Saga2 {
 
 /* ===================================================================== *
-   CalenderTime class
+   CalendarTime class
  * ===================================================================== */
 
-class CalenderTime {
+class CalendarTime {
 public:
 	enum {
 		//  Basic constants
@@ -61,11 +61,11 @@ public:
 	            _hour,
 	            _frameInHour;
 
-	bool _calenderPaused;
+	bool _calendarPaused;
 
-	CalenderTime() {
+	CalendarTime() {
 		_years = _weeks = _days = _dayInYear = _dayInWeek = _hour = _frameInHour = 0;
-		_calenderPaused = false;
+		_calendarPaused = false;
 	}
 
 	void read(Common::InSaveFile *in);
@@ -96,19 +96,19 @@ public:
 };
 
 /* ===================================================================== *
-   Calender management functions
+   Calendar management functions
  * ===================================================================== */
 
 void updateCalendar();
-void pauseCalender();
-void resumeCalender();
+void pauseCalendar();
+void resumeCalendar();
 
-uint32 operator - (const CalenderTime &time1, const CalenderTime &time2);
+uint32 operator - (const CalendarTime &time1, const CalendarTime &time2);
 
-void initCalender();
+void initCalendar();
 
-void saveCalender(Common::OutSaveFile *outS);
-void loadCalender(Common::InSaveFile *in);
+void saveCalendar(Common::OutSaveFile *outS);
+void loadCalendar(Common::InSaveFile *in);
 
 bool isDayTime();
 
