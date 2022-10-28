@@ -578,7 +578,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 		if (mouseObject != nullptr) {
 			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
-			if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop) {
+			if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntDrop) {
 				if (mouseSet & ProtoObj::isTangible) {
 					dropPhysical(msg, mouseObject, slotObject, g_vm->_mouseInfo->getMoveCount());
 				}
@@ -593,7 +593,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 					// !!!! bad state, reset cursor
 					g_vm->_mouseInfo->replaceObject();
 				}
-			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 				if (mouseSet & ProtoObj::isTangible) {
 					usePhysical(msg, mouseObject, slotObject);
 				} else if ((mouseSet & ProtoObj::isSpell) ||

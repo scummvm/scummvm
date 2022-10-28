@@ -397,7 +397,7 @@ bool Speech::setupActive() {
 
 	if (speechButtonCount > 0) {
 		//  REM: Also set pointer to arrow shape.
-		g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+		g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 		speakButtonControls->enable(true);
 
 		speechList.SetLock(false);

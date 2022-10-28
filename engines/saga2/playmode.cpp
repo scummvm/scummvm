@@ -226,7 +226,7 @@ void PlayModeSetup() {
 
 	//  Set up mouse cursor
 	g_vm->_mouseInfo = new GrabInfo;
-	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 
 	//  Start by displaying first frame stright off, no delay
 	frameAlarm.set(0);

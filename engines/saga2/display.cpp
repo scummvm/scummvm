@@ -109,7 +109,7 @@ void niceScreenStartup() {
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
 	g_vm->_mouseInfo->setText(nullptr);
-	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 	resetInputDevices();
 }
 

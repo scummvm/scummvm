@@ -2082,7 +2082,7 @@ APPFUNC(cmdPortrait) {
 				int16   intent = g_vm->_mouseInfo->getIntent();
 
 				g_vm->_mouseInfo->replaceObject();
-				if (intent == GrabInfo::Use) {
+				if (intent == GrabInfo::kIntUse) {
 					//  If we are using an intangible object (spell) then consider
 					//  the owner of the spell to be the center actor for the rest
 					//  of this action.
@@ -2098,7 +2098,7 @@ APPFUNC(cmdPortrait) {
 					    *centerActorPtr,
 					    *mouseObject,
 					    *pa->getActor());
-				} else if (intent == GrabInfo::Drop) {
+				} else if (intent == GrabInfo::kIntDrop) {
 					MotionTask::dropObjectOnObject(
 					    *centerActorPtr,
 					    *mouseObject,
@@ -2108,7 +2108,7 @@ APPFUNC(cmdPortrait) {
 
 //				( ( gGenericControl * )ev.panel )->disableDblClick();
 				//  clickActionDone = true;
-			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 				g_vm->_mouseInfo->replaceObject();
 //				clickActionDone = true;
 			}
