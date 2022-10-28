@@ -1277,11 +1277,11 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 			_vm->_util->forceMouseUp(true);
 
 		// FIXME This is a hack to fix an issue with "text" tool in Adibou2 paint game.
-		// keyPress() is called twice in a loop before testing its return value.
-		// If the first keyPress call catches the key event, the second call will reset
+		// keyFunc() is called twice in a loop before testing its return value.
+		// If the first keyFunc call catches the key event, the second call will reset
 		// the key buffer, and the loop continues.
 		// Strangely in the original game it seems that the event is always caught by the
-		// second keyPress.
+		// second keyFunc.
 		if (_vm->getGameType() == kGameTypeAdibou2
 			&&
 			(_vm->_game->_script->pos() == 18750 || _vm->_game->_script->pos() == 18955)
