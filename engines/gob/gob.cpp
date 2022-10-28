@@ -629,7 +629,7 @@ Common::Error GobEngine::initGameParts() {
 		_mult     = new Mult_v2(this);
 		_draw     = new Draw_v2(this);
 		_map      = new Map_v2(this);
-		_goblin   = new Goblin_v4(this);
+		_goblin   = new Goblin_v7(this);
 		_scenery  = new Scenery_v2(this);
 		_saveLoad = new SaveLoad_v7(this, _targetName.c_str());
 		break;

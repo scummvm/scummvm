@@ -60,6 +60,8 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x0D, o7_loadCursor);
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_logString);
+	OPCODEDRAW(0x52, o7_moveGoblin);
+	OPCODEDRAW(0x55, o7_setGoblinState);
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
@@ -235,6 +237,62 @@ void Inter_v7::o7_logString() {
 			t.tm_hour, t.tm_min, t.tm_sec, str1.c_str());
 }
 
+void Inter_v7::o7_moveGoblin() {
+	int16 destX, destY;
+	int16 index;
+
+	destX = _vm->_game->_script->readValExpr();
+	destY = _vm->_game->_script->readValExpr();
+	index = _vm->_game->_script->readValExpr();
+
+	Mult::Mult_Object &obj = _vm->_mult->_objects[index];
+	Mult::Mult_AnimData &animData = *(obj.pAnimData);
+
+	if (animData.animType < 10 || animData.animType > 12)
+		return;
+
+	animData.pathExistence = 0;
+	animData.animTypeBak = 0;
+	animData.framesLeft = 0;
+	animData.isBusy = 0;
+	animData.redrawFrame = destX;
+	animData.field_1D = destX;
+	animData.field_1B = destY;
+	animData.field_1E = destY;
+	animData.newState = 0;
+	animData.stateType = animData.destX;
+	animData.animTypeBak = animData.destY;
+
+	if (animData.animType == 10 && animData.curLookDir <= 10)
+		return;
+
+	animData.field_1B = animData.destX;
+	animData.field_1C = animData.destY;
+	animData.animType = 10;
+
+	_vm->_goblin->initiateMove(&obj);
+}
+
+void Inter_v7::o7_setGoblinState() {
+	int16 index = _vm->_game->_script->readValExpr();
+	int16 state = _vm->_game->_script->readValExpr();
+	int16 type = _vm->_game->_script->readValExpr();
+
+	Mult::Mult_Object &obj = _vm->_mult->_objects[index];
+	Mult::Mult_AnimData &animData = *(obj.pAnimData);
+
+	if (animData.animType < 10 || animData.animType > 12)
+		return;
+
+	animData.pathExistence = 1;
+	animData.animType = 10;
+	animData.redrawAnimation = animData.stateType;
+	animData.redrawLayer = animData.animTypeBak;
+
+	_vm->_goblin->changeDirection(&obj, state + type*100);
+}
+
+
 void Inter_v7::o7_intToString() {
 	uint16 valueIndex = _vm->_game->_script->readVarIndex();
 	uint16 destIndex  = _vm->_game->_script->readVarIndex();
@@ -340,6 +398,8 @@ void Inter_v7::o7_playVmdOrMusic() {
 			*_vm->_mult->_objects[props.startFrame].pPosX = x;
 			*_vm->_mult->_objects[props.startFrame].pPosY = y;
 		}
+
+		Common::strlcpy(_vm->_mult->_objects[props.startFrame].animName, file.c_str(), 16);
 
 		return;
 	} else if (props.lastFrame == -4) {

@@ -718,8 +718,20 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.animType = 11;
 
 	if (animData.animType == 11) {
-		if (animData.isBusy != 0)
-			warning("Woodruff Stub: AnimType 11");
+		if (animData.isBusy != 0) {
+			if (animData.animTypeBak == 1) {
+				if (animData.framesLeft != 0) {
+					--animData.framesLeft;
+				}
+				else {
+					_vm->_goblin->changeDirection(&animObj, animData.isBusy);
+					animData.isBusy = 0;
+					animData.animTypeBak = 0;
+					animData.animType = 10;
+				}
+
+			}
+		}
 		return;
 	}
 
@@ -790,7 +802,15 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		break;
 
 	case 10:
-		warning("Woodruff Stub: AnimType 10");
+		if (_vm->_map->_mapUnknownBool) {
+			int8 deltaY = animObj.destY - animObj.goblinY;
+			if (deltaY == -1) {
+				*animObj.pPosX = *animObj.pPosX - _vm->_map->getTilesWidth();
+			}
+			else if (deltaY == 1) {
+				*animObj.pPosX = *animObj.pPosX + _vm->_map->getTilesWidth();
+			}
+		}
 		break;
 
 	default:

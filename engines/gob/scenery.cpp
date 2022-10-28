@@ -651,7 +651,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				if (!(flags & 4))
 					_toRedrawLeft = -12345;
 
-				if (obj.animName != nullptr) {
+				if (obj.animName[0] != '\0') {
 					warning("updateAnim Adibou2 stub (obj.animName=%s)", obj.animName);
 				} else {
 					auto &sprite = _vm->_draw->_spritesArray[50 - animation - 1];
