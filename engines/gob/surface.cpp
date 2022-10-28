@@ -26,6 +26,7 @@
 #include "common/util.h"
 #include "common/frac.h"
 #include "common/textconsole.h"
+#include "common/stack.h"
 
 #include "graphics/primitives.h"
 #include "graphics/pixelformat.h"
@@ -532,6 +533,44 @@ void Surface::fillRect(int16 left, int16 top, int16 right, int16 bottom, uint32 
 	}
 }
 
+Common::Rect Surface::fillAreaAtPoint(int16 left, int16 top, uint32 color) {
+	Common::Rect modifiedArea;
+	if (left < 0 || left >= _width || top < 0  || top >= _height)
+		// Nothing to do
+		return modifiedArea;
+
+	Pixel pixel = get(left, top);
+	uint32 initialColor = pixel.get();
+	if (initialColor == color)
+		return modifiedArea;
+
+	pixel.set(color);
+	modifiedArea.extend(Common::Rect(left, top, left + 1, top + 1));
+	Common::Stack<Common::Point> pointsToScan;
+	pointsToScan.push(Common::Point(left, top));
+	int16 directions[4] = {1, 0, -1, 0};
+
+	while (!pointsToScan.empty()) {
+		Common::Point point = pointsToScan.pop();
+		for (int i = 0; i < 4; i++) {
+			int16 x = point.x + directions[i];
+			int16 y = point.y + directions[(i + 1) % 4];
+			if (x < 0 || x >= _width || y < 0 || y >= _height)
+				continue;
+
+			Pixel p = get(x, y);
+			if (p.get() == initialColor) {
+				p.set(color);
+				if (!modifiedArea.contains(x, y))
+					modifiedArea.extend(Common::Rect(x, y, x + 1, y + 1));
+				pointsToScan.push(Common::Point(x, y));
+			}
+		}
+	}
+
+	return modifiedArea;
+}
+
 void Surface::fill(uint32 color) {
 	if (_bpp == 1) {
 		// We can directly use memset
@@ -660,13 +699,21 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 	int16 x = 0;
 	int16 y = radius;
 
-	if (pattern == 0) {
+	switch (pattern) {
+	case 0xFF:
+		fillRect(x0, y0 + radius, x0, y0 - radius, color);
+		fillRect(x0 + radius, y0, x0 - radius, y0, color);
+		break ;
+	case 0:
 		putPixel(x0, y0 + radius, color);
 		putPixel(x0, y0 - radius, color);
 		putPixel(x0 + radius, y0, color);
 		putPixel(x0 - radius, y0, color);
-	} else
-		warning("Surface::drawCircle - pattern %d", pattern);
+		break;
+	default:
+		break;
+	}
+
 
 	while (x < y) {
 		if (f >= 0) {
@@ -679,7 +726,8 @@ void Surface::drawCircle(uint16 x0, uint16 y0, uint16 radius, uint32 color, int1
 		f += ddFx + 1;
 
 		switch (pattern) {
-		case -1:
+		case 0xFF:
+			// Fill circle
 			fillRect(x0 - y, y0 + x, x0 + y, y0 + x, color);
 			fillRect(x0 - x, y0 + y, x0 + x, y0 + y, color);
 			fillRect(x0 - y, y0 - x, x0 + y, y0 - x, color);
