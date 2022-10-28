@@ -288,7 +288,13 @@ void inkDrawPixel(int x, int y, int src, void *data) {
 
  	switch (p->ink) {
 	case kInkTypeBackgndTrans:
-		*dst = (src == (int)p->backColor) ? *dst : src;
+		if (p->oneBitImage) {
+			// One-bit images have a slightly different rendering algorithm for BackgndTrans.
+			// Foreground colour is used, and background colour is ignored.
+			*dst = (src == (int)p->colorBlack) ? p->foreColor : *dst;
+		} else {
+			*dst = (src == (int)p->backColor) ? *dst : src;
+		}
 		break;
 	case kInkTypeMatte:
 		// fall through

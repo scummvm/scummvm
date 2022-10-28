@@ -112,6 +112,12 @@ DirectorPlotData Channel::getPlotData() {
 	pd.dst = nullptr;
 
 	pd.srf = getSurface();
+	if (_sprite->_spriteType == kBitmapSprite &&
+		_sprite->_cast && _sprite->_cast->_type == kCastBitmap &&
+		((BitmapCastMember *)_sprite->_cast)->_bitsPerPixel == 1) {
+		// Add override flag for 1-bit images
+		pd.oneBitImage = true;
+	}
 	if (!pd.srf && _sprite->_spriteType != kBitmapSprite) {
 		// Shapes come colourized from macDrawPixel
 		pd.ms = _sprite->getShape();

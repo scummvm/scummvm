@@ -285,24 +285,25 @@ public:
 // An extension of MacPlotData for interfacing with inks and patterns without
 // needing extra surfaces.
 struct DirectorPlotData {
-	DirectorEngine *d;
-	Graphics::ManagedSurface *dst;
+	DirectorEngine *d = nullptr;
+	Graphics::ManagedSurface *dst = nullptr;
 
 	Common::Rect destRect;
 	Common::Point srcPoint;
 
-	Graphics::ManagedSurface *srf;
-	MacShape *ms;
+	Graphics::ManagedSurface *srf = nullptr;
+	MacShape *ms = nullptr;
 
-	SpriteType sprite;
-	InkType ink;
+	SpriteType sprite = kInactiveSprite;
+	bool oneBitImage = false;
+	InkType ink = kInkTypeCopy;
 	uint32 colorWhite;
 	uint32 colorBlack;
-	int alpha;
+	int alpha = 0;
 
 	uint32 backColor;
 	uint32 foreColor;
-	bool applyColor;
+	bool applyColor = false;
 
 	// graphics.cpp
 	void setApplyColor();
@@ -312,12 +313,8 @@ struct DirectorPlotData {
 	void inkBlitStretchSurface(Common::Rect &srcRect, const Graphics::Surface *mask);
 
 	DirectorPlotData(DirectorEngine *d_, SpriteType s, InkType i, int a, uint32 b, uint32 f) : d(d_), sprite(s), ink(i), alpha(a), backColor(b), foreColor(f) {
-		srf = nullptr;
-		ms = nullptr;
-		dst = nullptr;
 		colorWhite = d->_wm->_colorWhite;
 		colorBlack = d->_wm->_colorBlack;
-		applyColor = false;
 	}
 
 	DirectorPlotData(const DirectorPlotData &old) : d(old.d), sprite(old.sprite),

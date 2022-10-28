@@ -127,7 +127,7 @@ void Frame::readChannel(Common::SeekableReadStreamEndian &stream, uint16 offset,
 	}
 }
 
-void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
+void Frame::readChannels(Common::SeekableReadStreamEndian *stream, uint16 version) {
 	byte unk[24];
 
 	if (version < kFileVer400) {
@@ -181,6 +181,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		debugC(8, kDebugLoading, "Frame::readChannels(): STUB: unk1: %02x %02x %02x %02x %02x %02x", unk[0],
 			unk[1], unk[2], unk[3], unk[4], unk[5]);
 	} else if (version >= kFileVer400 && version < kFileVer500) {
+		if (debugChannelSet(8, kDebugLoading)) {
+			debugC(8, kDebugLoading, "Frame::readChannels(): 40 byte header");
+			stream->hexdump(40);
+		}
 		// Sound/Tempo/Transition
 		int unk1 = stream->readByte();
 		if (unk1) {
@@ -272,6 +276,10 @@ void Frame::readChannels(Common::ReadStreamEndian *stream, uint16 version) {
 		Sprite &sprite = *_sprites[i + 1];
 
 		if (version < kFileVer500) {
+			if (debugChannelSet(8, kDebugLoading)) {
+				debugC(8, kDebugLoading, "Frame::readChannels(): channel %d, 22 bytes", i);
+				stream->hexdump(22);
+			}
 			sprite._scriptId = CastMemberID(stream->readByte(), 0);
 			sprite._spriteType = (SpriteType)stream->readByte();
 			sprite._enabled = sprite._spriteType != kInactiveSprite;
@@ -402,7 +410,7 @@ Common::String Frame::formatChannelInfo() {
 	for (int i = 0; i < _numChannels; i++) {
 		Sprite &sprite = *_sprites[i + 1];
 		if (sprite._castId.member) {
-			result += Common::String::format("CH: %-3d castId: %s [inkData:%02x [ink: %x trails: %d line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d] script: %s, flags2: %x, unk2: %x, unk3: %x\n",
+			result += Common::String::format("CH: %-3d castId: %s, [inkData: 0x%02x [ink: %d, trails: %d, line: %d], %dx%d@%d,%d type: %d fg: %d bg: %d], script: %s, flags2: 0x%x, unk2: 0x%x, unk3: 0x%x\n",
 				i + 1, sprite._castId.asString().c_str(), sprite._inkData,
 				sprite._ink, sprite._trails, sprite._thickness, sprite._width, sprite._height,
 				sprite._startPoint.x, sprite._startPoint.y,
