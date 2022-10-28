@@ -1382,7 +1382,7 @@ PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	_actor       = a;
 	_smartness   = howSmart;
 	_mTask       = _actor->_moveTask;
-	_flags       = _mTask->_flags & MotionTask::requestRun ? run : 0;
+	_flags       = _mTask->_flags & MotionTask::kMfRequestRun ? run : 0;
 
 	if (_path == nullptr)
 		_path = new TilePoint[kPathSize]();
@@ -1658,8 +1658,8 @@ void PathRequest::finish() {
 		memcpy(_mTask->_pathList, _path, _pathLength * sizeof(_path[0]));
 		_mTask->_pathCount = _pathLength;
 		_mTask->_pathIndex = 0;
-		_mTask->_flags |= MotionTask::reset;
-		if (_flags & completed) _mTask->_flags |= MotionTask::finalPath;
+		_mTask->_flags |= MotionTask::kMfReset;
+		if (_flags & completed) _mTask->_flags |= MotionTask::kMfFinalPath;
 		_mTask->_pathFindTask = nullptr;
 	}
 }
@@ -2175,7 +2175,7 @@ WanderPathRequest::WanderPathRequest(
     Actor *a,
     int16 howSmart) :
 	PathRequest(a, howSmart) {
-	if (_mTask->_flags & MotionTask::tethered) {
+	if (_mTask->_flags & MotionTask::kMfTethered) {
 		_tethered = true;
 		_tetherMinU = _mTask->_tetherMinU;
 		_tetherMinV = _mTask->_tetherMinV;

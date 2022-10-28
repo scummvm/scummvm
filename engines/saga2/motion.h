@@ -116,22 +116,22 @@ class MotionTask {
 	uint16          _flags;                  // various flags
 
 	enum motionFlags {
-		pathFind        = (1 << 0),         // walk is using path finding
-		finalPath       = (1 << 1),         // current path is final
-		inWater         = (1 << 2),         // handle motion as in water
-		reset           = (1 << 3),         // target has been reset
-		blocked         = (1 << 4),         // target was blocked
-		requestRun      = (1 << 5),         // caller has requested running
-		wandering       = (1 << 6),         // wander
-		tethered        = (1 << 7),         // stay within tether
-		nextAnim        = (1 << 8),         // update animation for this frame
-		turnDelay       = (1 << 9),         // Delay While Turning
-		TAGTarg         = (1 << 10),        // The target is not an object but a TAG
-		LocTarg         = (1 << 11),        // The target is not an object but a TAG
-		agitated        = (1 << 12),        // Walking around blockage
-		agitatable      = (1 << 13),        // Will agitate when blocked
-		onStairs        = (1 << 14),        // actor is climbing stairs
-		privledged      = (1 << 15)         // don't let AI interrupt this
+		kMfPathFind        = (1 << 0),         // walk is using path finding
+		kMfFinalPath       = (1 << 1),         // current path is final
+		kMfInWater         = (1 << 2),         // handle motion as in water
+		kMfReset           = (1 << 3),         // target has been reset
+		kMfBlocked         = (1 << 4),         // target was blocked
+		kMfRequestRun      = (1 << 5),         // caller has requested running
+		kMfWandering       = (1 << 6),         // wander
+		kMfTethered        = (1 << 7),         // stay within tether
+		kMfNextAnim        = (1 << 8),         // update animation for this frame
+		kMfTurnDelay       = (1 << 9),         // Delay While Turning
+		kMfTAGTarg         = (1 << 10),        // The target is not an object but a TAG
+		kMfLocTarg         = (1 << 11),        // The target is not an object but a TAG
+		kMfAgitated        = (1 << 12),        // Walking around blockage
+		kMfAgitatable      = (1 << 13),        // Will agitate when blocked
+		kMfOnStairs        = (1 << 14),        // actor is climbing stairs
+		kMfPrivledged      = (1 << 15)         // don't let AI interrupt this
 	};
 
 	Direction       _direction;              // direction of movement
@@ -161,7 +161,7 @@ class MotionTask {
 	};
 
 	enum defenseMotionFlags {
-		blocking    = (1 << 0)             // actor is blocking an attack
+		kDfBlocking    = (1 << 0)             // actor is blocking an attack
 	};
 
 	union {
@@ -274,9 +274,9 @@ private:
 	void turnAction() {
 		Actor   *a = (Actor *)_object;
 
-		if (_flags & reset) {
+		if (_flags & kMfReset) {
 			a->setAction(kActionStand, 0);
-			_flags &= ~reset;
+			_flags &= ~kMfReset;
 		}
 
 		if (a->_currentFacing != _direction)
@@ -453,21 +453,21 @@ public:
 
 	//  Determine if the motion task is walking to a destination
 	bool isWalkToDest() {
-		return isWalk() && !(_flags & wandering);
+		return isWalk() && !(_flags & kMfWandering);
 	}
 
 	//  Determine if the motion task is a wandering motion
 	bool isWander() {
-		return isWalk() && (_flags & wandering);
+		return isWalk() && (_flags & kMfWandering);
 	}
 
 	//  Determine if the motion task is tethered
 	bool isTethered() {
-		return isWander() && (_flags & tethered);
+		return isWander() && (_flags & kMfTethered);
 	}
 
 	bool isRunning() {
-		return (_flags & requestRun) && _runCount == 0;
+		return (_flags & kMfRequestRun) && _runCount == 0;
 	}
 
 	bool isTurn() {
@@ -529,7 +529,7 @@ public:
 	static void initMotionTasks();
 
 	bool isPrivledged() {
-		return _flags & privledged;
+		return _flags & kMfPrivledged;
 	}
 };
 
