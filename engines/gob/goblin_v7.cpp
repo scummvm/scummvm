@@ -188,6 +188,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	if (strcmp(str, obj->animName) != 0) {
 		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
 		obj->videoSlot = 0;
+		_vm->_draw->freeSprite(50 - obj->pAnimData->animation - 1);
 		Common::strlcpy(obj->animName, str, 16);
 	}
 
@@ -220,6 +221,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	if (var_4 == 0) {
 		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
 		obj->videoSlot = 0;
+		_vm->_draw->freeSprite(50 - obj->pAnimData->animation - 1);
 
 		VideoPlayer::Properties props;
 		props.x          = -1;
