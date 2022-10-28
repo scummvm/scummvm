@@ -1286,7 +1286,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 	if (_game.version < 3 || _game.version > 6)
 		return;
 
-	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * sizeof(byte));
+	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * _textSurfaceMultiplier * sizeof(byte));
 	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
 	_tempVerbSurface = (byte *)malloc(_virtscr[kVerbVirtScreen].w * _virtscr[kVerbVirtScreen].h * sizeof(byte));
 
@@ -1316,7 +1316,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 				for (int x = 0; x < _screenWidth; x++) {
 					// Only draw non transparent pixels
 					if (_tempTextSurface[x + y * _screenWidth] != 0xFD) {
-						_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
+						if (x < _virtscr[kMainVirtScreen].pitch && y < _virtscr[kMainVirtScreen].h)
+							_virtscr[kMainVirtScreen].setPixel(_virtscr[kMainVirtScreen].xstart + x, y, _tempTextSurface[x + y * _screenWidth]);
 					}
 				}
 			}
