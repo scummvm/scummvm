@@ -242,13 +242,15 @@ void Inter_v7::o7_loadMultObject() {
 	}
 
 	if (((int32)*obj.pPosX == -1234) && ((int32)*obj.pPosY == -4321)) {
-		if (obj.videoSlot > 0)
+		if (obj.videoSlot > 0) {
 			_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
+			obj.videoSlot = 0;
+			_vm->_draw->freeSprite(50 - obj.pAnimData->animation - 1);
+		}
 
 		objAnim.isStatic = 1;
 
 		obj.animVariables = nullptr;
-		obj.videoSlot  = 0;
 		obj.lastLeft   = -1;
 		obj.lastTop    = -1;
 		obj.lastBottom = -1;
@@ -585,7 +587,11 @@ void Inter_v7::o7_playVmdOrMusic() {
 		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
 
 		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
+		{
 			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
+			_vm->_mult->_objects[props.startFrame].videoSlot = 0;
+			_vm->_draw->freeSprite(50 - _vm->_mult->_objects[props.startFrame].pAnimData->animation - 1);
+		}
 
 		uint32 x = props.x;
 		uint32 y = props.y;
