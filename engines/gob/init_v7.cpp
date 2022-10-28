@@ -35,7 +35,7 @@ Init_v7::~Init_v7() {
 void Init_v7::initGame() {
 	const Common::FSNode gameDataDir(ConfMan.get("path"));
 	// That way, an application can be added simply by copying it as a separate subdirectory, in the main game directory
-	SearchMan.addSubDirectoryMatching(gameDataDir, "*");
+	SearchMan.addSubDirectoryMatching(gameDataDir, "*", 0, 4, true);
 	Init::initGame();
 }
 

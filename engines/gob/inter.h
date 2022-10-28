@@ -710,6 +710,7 @@ protected:
 
 	void o7_printText(OpFuncParams &params);
 	void o7_fillRect(OpFuncParams &params);
+	void o7_checkData(OpFuncParams &params);
 	void o7_readData(OpFuncParams &params);
 	void o7_writeData(OpFuncParams &params);
 
@@ -729,6 +730,9 @@ private:
 
 	bool loadCursorFile();
 	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
+
+	bool setCurrentCDPath(const Common::FSNode &dir);
+	Common::Array<uint32> getAdibou2InstalledApplications();
 };
 
 } // End of namespace Gob
