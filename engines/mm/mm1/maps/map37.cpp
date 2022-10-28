@@ -170,19 +170,6 @@ void Map37::special19() {
 	send(SoundMessage(STRING["maps.map37.archway"]));
 }
 
-void Map37::encounter(const byte *id1, const byte *id2) {
-	Game::Encounter &enc = g_globals->_encounters;
-	g_maps->clearSpecial();
-
-	enc.clearMonsters();
-	for (int i = 0; i < 14 && *id1; ++i, ++id1, ++id2)
-		enc.addMonster(*id1, *id2);
-
-	enc._flag = true;
-	enc._levelIndex = 64;
-	enc.execute();
-}
-
 } // namespace Maps
 } // namespace MM1
 } // namespace MM
