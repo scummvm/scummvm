@@ -687,9 +687,9 @@ protected:
 	void o7_moveFile();
 	void o7_playVmdOrMusic();
 	void o7_initScreen();
-	void o7_draw0x89();
+	void o7_setActiveCD();
 	void o7_findFile();
-	void o7_findCDFile();
+	void o7_findNextFile();
 	void o7_getSystemProperty();
 	void o7_loadImage();
 	void o7_setVolume();
@@ -711,8 +711,10 @@ private:
 	Databases _databases;
 
 	Common::PEResources *_cursors;
+	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
+	Common::String _currentCDPath;
 
-	Common::String findFile(const Common::String &mask);
+	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
 
 	bool loadCursorFile();
 	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);
