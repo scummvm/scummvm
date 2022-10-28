@@ -945,15 +945,41 @@ protected:
 		File _file;
 	};
 
+	class EnvironmentHandler : public SaveHandler {
+	public:
+		EnvironmentHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~EnvironmentHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		static const int kNbrOfParts = 6;
+		static const Common::Array<int> kPartOffsets;
+		static int offset_to_part(int offset);
+
+		File _file;
+		SaveReader _reader;
+		SaveWriter _writer;
+	};
+
 	static SaveFile _saveFiles[];
 
-	FaceHandler *_faceHandler[kChildrenCount];
-	FakeFileHandler   *_childrenHandler;
-	FakeFileHandler   *_debilHandler;
-	GameFileHandler   *_configHandler;
-	GameFileHandler   *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
-	FakeFileHandler   *_addy4BaseHandler[2];
-	FakeFileHandler   *_addy4GrundschuleHandler[11];
+	FaceHandler        *_faceHandler[kChildrenCount];
+	FakeFileHandler    *_childrenHandler;
+	FakeFileHandler    *_debilHandler;
+	GameFileHandler    *_configHandler;
+	EnvironmentHandler *_adibou2EnvHandler[kChildrenCount];
+	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
+	FakeFileHandler    *_addy4BaseHandler[2];
+	FakeFileHandler    *_addy4GrundschuleHandler[11];
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;
