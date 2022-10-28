@@ -724,7 +724,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 					--animData.framesLeft;
 				}
 				else {
-					_vm->_goblin->changeDirection(&animObj, animData.isBusy);
+					_vm->_goblin->setGoblinState(&animObj, animData.isBusy);
 					animData.isBusy = 0;
 					animData.animTypeBak = 0;
 					animData.animType = 10;
