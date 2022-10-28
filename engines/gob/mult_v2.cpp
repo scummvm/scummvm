@@ -781,9 +781,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animData.isStatic = 1;
 		animData.frame = 0;
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
-			_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
-			animObj.videoSlot = 0;
-			_vm->_draw->freeSprite(50 - animObj.pAnimData->animation - 1);
+			closeObjVideo(animObj);
 		}
 
 		break;
@@ -795,9 +793,7 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
-				_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
-				animObj.videoSlot = 0;
-				_vm->_draw->freeSprite(50 - animObj.pAnimData->animation - 1);
+				closeObjVideo(animObj);
 			}
 		}
 

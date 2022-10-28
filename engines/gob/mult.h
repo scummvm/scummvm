@@ -22,6 +22,7 @@
 #ifndef GOB_MULT_H
 #define GOB_MULT_H
 
+#include "gob/videoplayer.h"
 #include "gob/video.h"
 #include "gob/variables.h"
 
@@ -256,6 +257,8 @@ public:
 	void playMult(int16 startFrame, int16 endFrame, char checkEscape,
 			char handleMouse);
 
+	int openObjVideo(const Common::String &file, VideoPlayer::Properties &properties, int animation);
+	void closeObjVideo(Mult_Object &object);
 	void clearObjectVideos();
 
 	virtual void loadMult(int16 resId) = 0;

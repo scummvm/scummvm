@@ -659,7 +659,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				int16 sprite_dest_bottom = 0;
 				int16 sprite_width = 0;
 
-				if (obj.animName[0] != '\0' && obj.animVariables) {
+				if (obj.animName[0] != '\0') {
 					if (obj.videoSlot == 0) {
 						VideoPlayer::Properties props;
 						props.x          = 0;
@@ -672,8 +672,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 						props.palEnd     = 0;
 						props.sprite     = -1;
 
-						int slot = _vm->_vidPlayer->openVideo(false, obj.animName, props);
-						obj.videoSlot = slot  + 1;
+
+						_vm->_mult->openObjVideo(obj.animName, props, animation);
 					}
 
 					if (obj.videoSlot != 0 &&  _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800) {
@@ -697,11 +697,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 										props.palEnd     = 0;
 										props.sprite = -obj.pAnimData->animation - 1;
 
-										if (obj.videoSlot > 0)
-											_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
-
-										int slot = _vm->_vidPlayer->openVideo(false, obj.animName, props);
-										obj.videoSlot = slot  + 1;
+										_vm->_mult->openObjVideo(obj.animName, props, animation);
 
 										sprite_dest_left = obj.spriteDestLeft;
 										sprite_dest_top = obj.spriteDestTop;
