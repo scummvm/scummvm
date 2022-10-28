@@ -69,9 +69,9 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x62, o7_moveFile);
 	OPCODEDRAW(0x80, o7_initScreen);
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
-	OPCODEDRAW(0x89, o7_draw0x89);
+	OPCODEDRAW(0x89, o7_setActiveCD);
 	OPCODEDRAW(0x8A, o7_findFile);
-	OPCODEDRAW(0x8B, o7_findCDFile);
+	OPCODEDRAW(0x8B, o7_findNextFile);
 	OPCODEDRAW(0x8C, o7_getSystemProperty);
 	OPCODEDRAW(0x90, o7_loadImage);
 	OPCODEDRAW(0x93, o7_setVolume);
@@ -617,33 +617,95 @@ void Inter_v7::o7_playVmdOrMusic() {
 	}
 
 }
-void Inter_v7::o7_draw0x89() {
+void Inter_v7::o7_setActiveCD() {
 	Common::String str0 = _vm->_game->_script->evalString();
 	Common::String str1 = _vm->_game->_script->evalString();
 
-	warning("Addy Stub Draw 0x89: \"%s\", \"%s\"", str0.c_str(), str1.c_str());
+	Common::ArchiveMemberList files;
+	SearchMan.listMatchingMembers(files, str0);
 
-	if (findFile(str0).empty()) {
-		storeValue(0);
-		return;
+	for (Common::ArchiveMemberPtr file : files) {
+		auto *node = dynamic_cast<Common::FSNode *>(file.get());
+		if (node != nullptr) {
+			Common::String path = node->getParent().getName();
+			if (path.equalsIgnoreCase("applis")
+				|| path.equalsIgnoreCase("envir"))
+				continue;
+
+			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s",  _currentCDPath.c_str(), path.c_str());
+			if (!_currentCDPath.empty())
+				SearchMan.setPriority(_currentCDPath, 0);
+
+			_currentCDPath = path;
+			SearchMan.setPriority(path, 1);
+			storeValue(1);
+			return;
+		}
 	}
 
-	storeValue(1);
+	storeValue(0);
 }
 
 void Inter_v7::o7_findFile() {
-	Common::String file = findFile(getFile(_vm->_game->_script->evalString()));
+	Common::String file_pattern = getFile(_vm->_game->_script->evalString());
+	Common::ArchiveMemberList files;
 
-	storeString(file.c_str());
-	storeValue(file.empty() ? 0 : 1);
+	SearchMan.listMatchingMembers(files, file_pattern);
+	Common::ArchiveMemberList filesWithoutDuplicates;
+	for (Common::ArchiveMemberPtr file : files)
+	{
+		bool found = false;
+		for (Common::ArchiveMemberPtr fileWithoutDuplicates : filesWithoutDuplicates)
+		{
+			if (file->getName() == fileWithoutDuplicates->getName())
+			{
+				found = true;
+				break;
+			}
+		}
+
+		if (!found)
+			filesWithoutDuplicates.push_back(file);
+	}
+
+	debugC(5, kDebugFileIO, "o7_findFile(%s): %d matches (%d including duplicates)",
+		   file_pattern.c_str(),
+		   filesWithoutDuplicates.size(),
+		   files.size());
+
+	if (filesWithoutDuplicates.empty()) {
+		storeString("");
+		storeValue(0);
+	}
+	else {
+		Common::String file = files.front()->getName();
+		filesWithoutDuplicates.pop_front();
+		debugC(5, kDebugFileIO, "o7_findFile(%s): first match = %s",
+			   file_pattern.c_str(),
+			   file.c_str());
+
+		storeString(file.c_str());
+		storeValue(1);
+	}
+
+	_remainingFilesFromPreviousSearch = filesWithoutDuplicates;
 }
 
-void Inter_v7::o7_findCDFile() {
-	Common::String mask = getFile(GET_VARO_STR(_vm->_game->_script->readVarIndex()));
-	Common::String file = findFile(mask);
+void Inter_v7::o7_findNextFile() {
+	uint16 type;
+	uint16 varIndex = _vm->_game->_script->readVarIndex(0, &type);
 
-	warning("Addy Stub: Find CD file \"%s\"", mask.c_str());
-	storeValue(0);
+	Common::String file;
+	if (!_remainingFilesFromPreviousSearch.empty()) {
+		file = _remainingFilesFromPreviousSearch.front()->getName();
+		_remainingFilesFromPreviousSearch.pop_front();
+	}
+
+	debugC(5, kDebugFileIO, "o7_findNextFile: new match = %s",
+		   file.c_str());
+
+	storeString(varIndex, type, file.c_str());
+	storeValue(file.empty() ? 0 : 1);
 }
 
 void Inter_v7::o7_getSystemProperty() {
@@ -671,7 +733,7 @@ void Inter_v7::o7_getSystemProperty() {
 }
 
 void Inter_v7::o7_loadImage() {
-	Common::String file = _vm->_game->_script->evalString();
+	Common::String file = getFile(_vm->_game->_script->evalString());
 	if (!file.contains('.'))
 		file += ".TGA";
 
@@ -805,8 +867,8 @@ void Inter_v7::o7_loadIFFPalette() {
 }
 
 void Inter_v7::o7_opendBase() {
-	Common::String dbFile = _vm->_game->_script->evalString();
-	Common::String id     = _vm->_game->_script->evalString();
+	Common::String dbFile = getFile(_vm->_game->_script->evalString());
+	Common::String id     = getFile(_vm->_game->_script->evalString());
 
 	dbFile += ".DBF";
 
@@ -820,7 +882,7 @@ void Inter_v7::o7_opendBase() {
 }
 
 void Inter_v7::o7_closedBase() {
-	Common::String id = _vm->_game->_script->evalString();
+	Common::String id = getFile(_vm->_game->_script->evalString());
 
 	if (_databases.close(id))
 		WRITE_VAR(27, 1); // Success
@@ -829,7 +891,7 @@ void Inter_v7::o7_closedBase() {
 }
 
 void Inter_v7::o7_getDBString() {
-	Common::String id      = _vm->_game->_script->evalString();
+	Common::String id      = getFile(_vm->_game->_script->evalString());
 	Common::String group   = _vm->_game->_script->evalString();
 	Common::String section = _vm->_game->_script->evalString();
 	Common::String keyword = _vm->_game->_script->evalString();
@@ -930,17 +992,6 @@ void Inter_v7::o7_gob0x201(OpGobParams &params) {
 	uint16 varIndex = _vm->_game->_script->readUint16();
 
 	WRITE_VAR(varIndex, 1);
-}
-
-Common::String Inter_v7::findFile(const Common::String &mask) {
-	Common::ArchiveMemberList files;
-
-	SearchMan.listMatchingMembers(files, mask);
-
-	if (files.empty())
-		return "";
-
-	return files.front()->getName();
 }
 
 bool Inter_v7::loadCursorFile() {

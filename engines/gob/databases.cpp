@@ -92,7 +92,7 @@ bool Databases::open(const Common::String &id, const Common::String &file) {
 bool Databases::close(const Common::String &id) {
 	DBMap::iterator db = _databases.find(id);
 	if (db == _databases.end()) {
-		warning("Databases::open(): A database with the ID \"%s\" does not exist", id.c_str());
+		warning("Databases::close(): A database with the ID \"%s\" does not exist", id.c_str());
 		return false;
 	}
 
