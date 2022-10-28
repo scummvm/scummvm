@@ -24,6 +24,7 @@
 #include "common/archive.h"
 #include "common/translation.h"
 #include "common/winexe_pe.h"
+#include "common/winexe_ne.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
@@ -1179,10 +1180,16 @@ bool Inter_v7::loadCursorFile() {
 	if (_cursors)
 		return true;
 
-	_cursors = new Common::PEResources();
-
-	if (_cursors->loadFromEXE("cursor32.dll"))
-		return true;
+	if (_vm->_dataIO->hasFile("cursor32.dll")) {
+		_cursors = new Common::PEResources();
+		if (_cursors->loadFromEXE("cursor32.dll"))
+			return true;
+	}
+	else if (_vm->_dataIO->hasFile("cursor.dll")) {
+		_cursors = new Common::NEResources();
+		if (_cursors->loadFromEXE("cursor.dll"))
+			return true;
+	}
 
 	delete _cursors;
 	_cursors = nullptr;
