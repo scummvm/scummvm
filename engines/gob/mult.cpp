@@ -443,6 +443,31 @@ void Mult::doSoundAnim(bool &stop, int16 frame) {
 	}
 }
 
+int Mult::openObjVideo(const Common::String &file, VideoPlayer::Properties &properties, int animation) {
+	if (animation < 0) {
+		Mult_Object &object = _objects[-animation - 1];
+		if (object.videoSlot > 0)
+			_vm->_vidPlayer->closeVideo(object.videoSlot - 1);
+
+		Common::strlcpy(object.animName, file.c_str(), 16);
+		int slot = _vm->_vidPlayer->openVideo(false, file, properties);
+		object.videoSlot = slot + 1;
+		return slot;
+	}
+
+	return -1;
+}
+
+void Mult::closeObjVideo(Mult_Object &object) {
+	if (object.videoSlot > 0) {
+		_vm->_draw->freeSprite(50 - object.pAnimData->animation - 1);
+
+		_vm->_vidPlayer->closeVideo(object.videoSlot - 1);
+		object.videoSlot = 0;
+		object.animName[0] = 0;
+	}
+}
+
 void Mult::clearObjectVideos() {
 	if (!_objects)
 		return;

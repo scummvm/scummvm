@@ -243,9 +243,7 @@ void Inter_v7::o7_loadMultObject() {
 
 	if (((int32)*obj.pPosX == -1234) && ((int32)*obj.pPosY == -4321)) {
 		if (obj.videoSlot > 0) {
-			_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
-			obj.videoSlot = 0;
-			_vm->_draw->freeSprite(50 - obj.pAnimData->animation - 1);
+			_vm->_mult->closeObjVideo(obj);
 		}
 
 		objAnim.isStatic = 1;
@@ -576,8 +574,13 @@ void Inter_v7::o7_playVmdOrMusic() {
 	} else if (props.lastFrame == -3) {
 
 		if (file.empty()) {
-			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
-			_vm->_mult->_objects[props.startFrame].videoSlot = 0;
+			if (props.flags & 0x400) {
+				if (!_vm->_mult->_objects[props.startFrame].pAnimData->isStatic) {
+					if (_vm->_mult->_objects[props.startFrame].videoSlot > 0) {
+						//_vm->_vidPlayer->pauseVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1, true);
+					}
+				}
+			}
 			return;
 		}
 
@@ -587,18 +590,12 @@ void Inter_v7::o7_playVmdOrMusic() {
 		_vm->_mult->_objects[props.startFrame].pAnimData->animation = -props.startFrame - 1;
 
 		if (_vm->_mult->_objects[props.startFrame].videoSlot > 0)
-		{
-			_vm->_vidPlayer->closeVideo(_vm->_mult->_objects[props.startFrame].videoSlot - 1);
-			_vm->_mult->_objects[props.startFrame].videoSlot = 0;
-			_vm->_draw->freeSprite(50 - _vm->_mult->_objects[props.startFrame].pAnimData->animation - 1);
-		}
+			_vm->_mult->closeObjVideo(_vm->_mult->_objects[props.startFrame]);
 
 		uint32 x = props.x;
 		uint32 y = props.y;
 
-		int slot = _vm->_vidPlayer->openVideo(false, file, props);
-
-		_vm->_mult->_objects[props.startFrame].videoSlot = slot + 1;
+		int slot = _vm->_mult->openObjVideo(file, props, -props.startFrame - 1);
 
 		if (x == 0xFFFFFFFF) {
 			*_vm->_mult->_objects[props.startFrame].pPosX = _vm->_vidPlayer->getDefaultX(slot);
@@ -607,8 +604,6 @@ void Inter_v7::o7_playVmdOrMusic() {
 			*_vm->_mult->_objects[props.startFrame].pPosX = x;
 			*_vm->_mult->_objects[props.startFrame].pPosY = y;
 		}
-
-		Common::strlcpy(_vm->_mult->_objects[props.startFrame].animName, file.c_str(), 16);
 
 		return;
 	} else if (props.lastFrame == -4) {

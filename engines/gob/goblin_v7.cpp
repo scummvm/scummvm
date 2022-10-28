@@ -186,9 +186,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	}
 
 	if (strcmp(str, obj->animName) != 0) {
-		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
-		obj->videoSlot = 0;
-		_vm->_draw->freeSprite(50 - obj->pAnimData->animation - 1);
+		_vm->_mult->closeObjVideo(*obj);
 		Common::strlcpy(obj->animName, str, 16);
 	}
 
@@ -219,9 +217,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	*obj->pPosY = newY + newYCorrection;
 	obj->pAnimData->frame = 0;
 	if (var_4 == 0) {
-		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
-		obj->videoSlot = 0;
-		_vm->_draw->freeSprite(50 - obj->pAnimData->animation - 1);
+		_vm->_mult->closeObjVideo(*obj);
 
 		VideoPlayer::Properties props;
 		props.x          = -1;
@@ -234,8 +230,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 		props.palEnd     = 0;
 		props.sprite = -1;
 
-		int slot = _vm->_vidPlayer->openVideo(false, str, props);
-		obj->videoSlot = slot + 1;
+		_vm->_mult->openObjVideo(str, props, obj->pAnimData->animation);
 	} else {
 		if (obj->videoSlot == 0 ||
 			strcmp(obj->animName, str) != 0 ||
@@ -252,15 +247,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 			props.palEnd     = 0;
 			props.sprite     = -1;
 
-			if (obj->videoSlot > 0)
-				_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
-
-			int slot = _vm->_vidPlayer->openVideo(false, str, props);
-			debugC(1, kDebugVideo, "Playing video \"%s\" (change directions 2) @ %d+%d, frames %d - %d, "
-								   "paletteCmd %d (%d - %d), flags %X, slot = %d", str,
-								   props.x, props.y, props.startFrame, props.lastFrame,
-								   props.palCmd, props.palStart, props.palEnd, props.flags, slot);
-			obj->videoSlot = slot + 1;
+			_vm->_mult->openObjVideo(str, props, obj->pAnimData->animation);
 		}
 	}
 }
