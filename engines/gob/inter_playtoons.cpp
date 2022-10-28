@@ -477,10 +477,6 @@ Common::String Inter_Playtoons::getFile(const char *path) {
 bool Inter_Playtoons::readSprite(Common::String file, int32 dataVar,
 		int32 size, int32 offset) {
 
-	// WORKAROUND: Adibou copies TEMP.CSA to TEMP01.CSA, which isn't yet implemented
-	if (file.equalsIgnoreCase("TEMP01.CSA"))
-		file = "TEMP.CSA";
-
 	bool palette = false;
 	if (size < -1000) {
 		palette = true;
