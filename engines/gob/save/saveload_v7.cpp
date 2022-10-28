@@ -83,6 +83,24 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"temp15.csa"  , kSaveModeSave, 0, "weather" },
 	{"temp16.csa"  , kSaveModeSave, 0, "weather" },
 
+	// Adibou brekout game progress
+	{"brique01.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique02.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique03.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique04.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique05.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique06.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique07.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique08.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique09.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique10.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique11.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique12.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique13.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique14.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique15.inf"  , kSaveModeSave, 0, "breakout game progress" },
+	{"brique16.inf"  , kSaveModeSave, 0, "breakout game progress" },
+
 	// Adibou Applications 1-5
     {"Gsa01_01.inf", kSaveModeSave, 0, "app progress" }, // Child 01
     {"Gsa02_01.inf", kSaveModeSave, 0, "app progress" },
@@ -1068,6 +1086,13 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{
+		_saveFiles[index++].handler = _adibou2BreakoutGameProgressHandler[i] = new GameFileHandler(_vm,
+																								   targetName,
+																								   Common::String::format("breakout_%02d", i + 1));
+	}
+
+	for (uint32 i = 0; i < kChildrenCount; i++)
+	{
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
 		{
 			Common::String ext = Common::String::format("gsa%02d_%02d", j + 1, i + 1);
@@ -1160,6 +1185,7 @@ SaveLoad_v7::~SaveLoad_v7() {
 	{
 		delete _adibou2EnvHandler[i];
 		delete _adibou2WeatherHandler[i];
+		delete _adibou2BreakoutGameProgressHandler[i];
 
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
 			delete _adibou2AppProgressHandler[i][j];
