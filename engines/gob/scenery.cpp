@@ -919,6 +919,14 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		return;
 	}
 
+
+	if ((_vm->getGameType() == kGameTypeAdibou2) && animation >= 0) {
+		_toRedrawRight = 1000;
+		_toRedrawBottom = 1000;
+		_toRedrawLeft = 1000;
+		_toRedrawTop = 1000;
+	}
+
 	if ((animation < 0) || (animation >= 10))
 		return;
 	if ((_animPictCount[animation] == 0) || (layer < 0))
