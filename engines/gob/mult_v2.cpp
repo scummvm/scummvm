@@ -865,7 +865,7 @@ void Mult_v2::animate() {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
-		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order <= 100) {
+		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order < 100) {
 			animData.order = currentOrder;
 			animData.field_22 = 0;
 			animData.field_21 = 0;
@@ -884,26 +884,19 @@ void Mult_v2::animate() {
 					continue;
 
 				int8 orderCorrection = 0;
-				if (previousAnimData.destY <= animData.destY
-					|| previousAnimData.destX >= animData.destX) {
-					if (previousAnimData.destY >= animData.destY
-						|| previousAnimData.destX <= animData.destX) {
-						if (animData.destX + animData.field_1F <= previousAnimData.destX
-							|| animData.destY - animData.field_20 >= previousAnimData.destY) {
-							if (previousAnimData.destX + previousAnimData.field_1F > animData.destX
-								&& previousAnimData.destY - previousAnimData.field_20 < animData.destY) {
-								orderCorrection = 1;
-							}
-						} else {
-							orderCorrection = -1;
-						}
-					} else {
-						orderCorrection = 1;
-					}
-				}
-				else
+				if (previousAnimData.destY > animData.destY
+					&& previousAnimData.destX < animData.destX) {
 					orderCorrection = -1;
-
+				} else if (previousAnimData.destY < animData.destY
+						   && previousAnimData.destX > animData.destX) {
+					orderCorrection = 1;
+				} else if (animData.destX + animData.field_1F > previousAnimData.destX
+							&& animData.destY - animData.field_20 < previousAnimData.destY) {
+					orderCorrection = -1;
+				} else if (previousAnimData.destX + previousAnimData.field_1F > animData.destX
+						   && previousAnimData.destY - previousAnimData.field_20 < animData.destY) {
+					orderCorrection = 1;
+				}
 
 				animData.order += orderCorrection;
 				previousAnimData.order -= orderCorrection;
