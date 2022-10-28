@@ -102,6 +102,8 @@ public:
 		int16 newRight;
 		int16 newBottom;
 		uint32 videoSlot;
+		byte* field_6A;
+		byte field_6E;
 	} PACKED_STRUCT;
 
 	struct Mult_StaticKey {
