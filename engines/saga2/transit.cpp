@@ -28,7 +28,7 @@
 #include "saga2/tile.h"
 #include "saga2/vpal.h"
 #include "saga2/palette.h"
-#include "saga2/calender.h"
+#include "saga2/calendar.h"
 #include "saga2/modal.h"
 #include "saga2/display.h"
 
@@ -62,7 +62,7 @@ void dayNightUpdate() {
 
 	audioEnvironmentSetDaytime(isDayTime());
 
-	uint32 lightLevel = g_vm->_calender->lightLevel(MAX_LIGHT);
+	uint32 lightLevel = g_vm->_calendar->lightLevel(MAX_LIGHT);
 
 	//  Code to avoid unneccessary fades.
 	if (lightLevel != g_vm->_pal->_prevLightLevel) {
