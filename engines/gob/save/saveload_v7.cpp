@@ -708,8 +708,6 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"mfleur13.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mfleud13.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mtable13.inf", kSaveModeSave, 0, "poster" },
-	{"pal12_13.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal13_13.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	// Child14
 	{"cart0114.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0214.inf", kSaveModeSave, 0, "drawing" },
@@ -742,9 +740,6 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"mfleur14.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mfleud14.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mtable14.inf", kSaveModeSave, 0, "poster" },
-	{"pal12_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal13_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal14_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	// Child15
 	{"cart0115.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0215.inf", kSaveModeSave, 0, "drawing" },
@@ -777,10 +772,6 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"mfleur15.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mfleud15.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mtable15.inf", kSaveModeSave, 0, "poster" },
-	{"pal12_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal13_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal14_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
-	{"pal15_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	// Child16
 	{"cart0116.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0216.inf", kSaveModeSave, 0, "drawing" },
