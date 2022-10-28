@@ -1255,10 +1255,6 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 	int16 key;
 
 	switch (cmd) {
-	case -1:
-		warning("o1_keyFunc: stub for command %d", cmd);
-		break;
-
 	case 0:
 		_vm->_draw->_showCursor &= ~2;
 		_vm->_util->longDelay(1);
@@ -1268,6 +1264,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		_vm->_util->clearKeyBuf();
 		break;
 
+	case -1:
 	case 1:
 		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
 			_vm->_util->forceMouseUp(true);
