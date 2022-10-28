@@ -214,7 +214,7 @@ void Inter_v5::o5_initScreen() {
 }
 
 void Inter_v5::o5_istrlen(OpFuncParams &params) {
-	int16 strVar1, strVar2;
+	uint16 strVar1, strVar2;
 	int16 len;
 	uint16 type;
 

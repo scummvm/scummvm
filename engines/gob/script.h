@@ -74,7 +74,7 @@ public:
 	char  *peekString(int32 offset = 0);
 
 	// Expression parsing functions
-	int16 readVarIndex(uint16 *size = 0, uint16 *type = 0);
+	uint16 readVarIndex(uint16 *size = 0, uint16 *type = 0);
 	int16 readValExpr(byte stopToken = 99);
 	int16 readExpr(byte stopToken, byte *type);
 	void  skipExpr(char stopToken);

@@ -261,7 +261,7 @@ char *Script::peekString(int32 offset) {
 	return (char *)(_totPtr + offset);
 }
 
-int16 Script::readVarIndex(uint16 *size, uint16 *type) {
+uint16 Script::readVarIndex(uint16 *size, uint16 *type) {
 	return _expression->parseVarIndex(size, type);
 }
 

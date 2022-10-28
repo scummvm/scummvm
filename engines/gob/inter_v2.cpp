@@ -616,7 +616,7 @@ void Inter_v2::o2_pushVars() {
 void Inter_v2::o2_popVars() {
 	uint8 count = _vm->_game->_script->readByte();
 	for (int i = 0; i < count; i++) {
-		int16 varOff = _vm->_game->_script->readVarIndex();
+		uint16 varOff = _vm->_game->_script->readVarIndex();
 
 		_varStack.pop(*_variables, varOff);
 	}
@@ -977,11 +977,11 @@ void Inter_v2::o2_playImd() {
 void Inter_v2::o2_getImdInfo() {
 	Common::String imd = _vm->_game->_script->evalString();
 
-	int16 varX      = _vm->_game->_script->readVarIndex();
-	int16 varY      = _vm->_game->_script->readVarIndex();
-	int16 varFrames = _vm->_game->_script->readVarIndex();
-	int16 varWidth  = _vm->_game->_script->readVarIndex();
-	int16 varHeight = _vm->_game->_script->readVarIndex();
+	uint16 varX      = _vm->_game->_script->readVarIndex();
+	uint16 varY      = _vm->_game->_script->readVarIndex();
+	uint16 varFrames = _vm->_game->_script->readVarIndex();
+	uint16 varWidth  = _vm->_game->_script->readVarIndex();
+	uint16 varHeight = _vm->_game->_script->readVarIndex();
 
 	// WORKAROUND: The nut rolling animation in the administration center
 	// in Woodruff is called "noixroul", but the scripts think it's "noixroule".
