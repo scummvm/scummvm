@@ -694,8 +694,8 @@ int32 VideoPlayer::getSubtitleIndex(int slot) const {
 	return video->decoder->getSubtitleIndex();
 }
 
-void VideoPlayer::writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-		int16 varFrames, int16 varWidth, int16 varHeight) {
+void VideoPlayer::writeVideoInfo(const Common::String &file, uint16 varX, uint16 varY,
+		uint16 varFrames, uint16 varWidth, uint16 varHeight) {
 
 	Properties properties;
 

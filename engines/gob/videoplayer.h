@@ -148,8 +148,8 @@ public:
 
 	int32 getSubtitleIndex(int slot = 0) const;
 
-	void writeVideoInfo(const Common::String &file, int16 varX, int16 varY,
-			int16 varFrames, int16 varWidth, int16 varHeight);
+	void writeVideoInfo(const Common::String &file, uint16 varX, uint16 varY,
+						uint16 varFrames, uint16 varWidth, uint16 varHeight);
 
 	bool copyFrame(int slot, Surface &dest,
 			uint16 left, uint16 top, uint16 width, uint16 height, uint16 x, uint16 y,
