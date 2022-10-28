@@ -661,7 +661,6 @@ protected:
 
 	Common::String getFile(const char *path);
 
-private:
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
 
@@ -697,6 +696,8 @@ protected:
 	void o7_opendBase();
 	void o7_closedBase();
 	void o7_getDBString();
+
+	void o7_readData(OpFuncParams &params);
 
 	void o7_oemToANSI(OpGobParams &params);
 	void o7_gob0x201(OpGobParams &params);

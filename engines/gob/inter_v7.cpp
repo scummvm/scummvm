@@ -37,6 +37,7 @@
 #include "gob/expression.h"
 #include "gob/videoplayer.h"
 #include "gob/sound/sound.h"
+#include "gob/save/saveload.h"
 
 namespace Gob {
 
@@ -81,6 +82,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 void Inter_v7::setupOpcodesFunc() {
 	Inter_Playtoons::setupOpcodesFunc();
+	OPCODEFUNC(0x4D, o7_readData);
 }
 
 void Inter_v7::setupOpcodesGob() {
@@ -633,6 +635,83 @@ void Inter_v7::o7_getDBString() {
 
 	storeString(result.c_str());
 	WRITE_VAR(27, 1); // Success
+}
+
+void Inter_v7::o7_readData(OpFuncParams &params) {
+	Common::String file = getFile(_vm->_game->_script->evalString());
+
+	uint16 dataVar = _vm->_game->_script->readVarIndex();
+	int32  size    = _vm->_game->_script->readValExpr();
+	int32  offset  = _vm->_game->_script->evalInt();
+	int32  retSize = 0;
+
+	debugC(2, kDebugFileIO, "Read from file \"%s\" (%d, %d bytes at %d)",
+		   file.c_str(), dataVar, size, offset);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		WRITE_VAR(1, 1);
+
+		if (!_vm->_saveLoad->load(file.c_str(), dataVar, size, offset)) {
+			// Too noisy, the scripts often try to load "save" file not existing (yet)
+			// GUI::MessageDialog dialog(_("Failed to load saved game from file."));
+			// dialog.runModal();
+		} else
+			WRITE_VAR(1, 0);
+
+		return;
+
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return;
+
+	if (size < 0) {
+		if (readSprite(file, dataVar, size, offset))
+			WRITE_VAR(1, 0);
+		return;
+	} else if (size == 0) {
+		dataVar = 0;
+		size = _vm->_game->_script->getVariablesCount() * 4;
+	}
+
+	byte *buf = _variables->getAddressOff8(dataVar);
+
+	if (file[0] == 0) {
+		WRITE_VAR(1, size);
+		return;
+	}
+
+	WRITE_VAR(1, 1);
+	Common::SeekableReadStream *stream = _vm->_dataIO->getFile(file);
+	if (!stream)
+		return;
+
+	_vm->_draw->animateCursor(4);
+	if (offset > stream->size()) {
+		warning("oPlaytoons_readData: File \"%s\", Offset (%d) > file size (%d)",
+				file.c_str(), offset, (int)stream->size());
+		delete stream;
+		return;
+	}
+
+	if (offset < 0)
+		stream->seek(offset + 1, SEEK_END);
+	else
+		stream->seek(offset);
+
+	if (((dataVar >> 2) == 59) && (size == 4)) {
+		WRITE_VAR(59, stream->readUint32LE());
+		// The scripts in some versions divide through 256^3 then,
+		// effectively doing a LE->BE conversion
+		if ((_vm->getPlatform() != Common::kPlatformDOS) && (VAR(59) < 256))
+			WRITE_VAR(59, SWAP_BYTES_32(VAR(59)));
+	} else
+		retSize = stream->read(buf, size);
+
+	if (retSize == size)
+		WRITE_VAR(1, 0);
+
+	delete stream;
 }
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {

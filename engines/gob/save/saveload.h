@@ -888,10 +888,11 @@ protected:
 	SaveFile *getSaveFile(const char *fileName);
 };
 
-/** Save/Load class for Playtoons. */
+/** Save/Load class for Adibou 2/Adi. */
 class SaveLoad_v7: public SaveLoad {
 public:
 	static const uint32 kChildrenCount = 16;
+	static const uint32 kAdibou2NbrOfApplications = 5;
 
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
@@ -906,12 +907,51 @@ protected:
 		const char *description;
 	};
 
+	class FaceHandler : public TempSpriteHandler {
+	public:
+		FaceHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~FaceHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		File _file;
+	};
+
+	class GameFileHandler : public SaveHandler {
+	public:
+		GameFileHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~GameFileHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		File _file;
+	};
+
 	static SaveFile _saveFiles[];
 
-	TempSpriteHandler *_faceHandler[kChildrenCount];
+	FaceHandler *_faceHandler[kChildrenCount];
 	FakeFileHandler   *_childrenHandler;
 	FakeFileHandler   *_debilHandler;
-	FakeFileHandler   *_configHandler;
+	GameFileHandler   *_configHandler;
+	GameFileHandler   *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
 	FakeFileHandler   *_addy4BaseHandler[2];
 	FakeFileHandler   *_addy4GrundschuleHandler[11];
 
