@@ -506,14 +506,50 @@ bool SetModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState SetModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (_target.getSourceType() != DynamicValueSourceTypes::kVariableReference) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
-		if (Debugger *debugger = runtime->debugGetDebugger())
-			debugger->notifyFmt(kDebugSeverityError, "Set modifier is not yet implemented");
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notifyFmt(kDebugSeverityError, "Set modifier target isn't a variable reference");
 #endif
-		warning("Set modifier is not yet implemented!");
-		return kVThreadReturn;
+			return kVThreadError;
+		} else {
+			Common::SharedPtr<Modifier> targetModifier = _target.getVarReference().resolution.lock();
+			if (!targetModifier) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Set modifier target was invalid");
+#endif
+				return kVThreadError;
+			} else if (!targetModifier->isVariable()) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Set modifier target was invalid");
+#endif
+				return kVThreadError;
+			} else {
+				DynamicValue srcValue = _source.produceValue(msg->getValue());
+				VariableModifier *targetVar = static_cast<VariableModifier *>(targetModifier.get());
+				if (!targetVar->varSetValue(nullptr, srcValue)) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+					if (Debugger *debugger = runtime->debugGetDebugger())
+						debugger->notifyFmt(kDebugSeverityError, "Set modifier failed to set target value");
+#endif
+					return kVThreadError;
+				}
+			}
+		}
 	}
 	return kVThreadReturn;
+}
+
+void SetModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	_source.linkInternalReferences(outerScope);
+	_target.linkInternalReferences(outerScope);
+}
+
+void SetModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_source.visitInternalReferences(visitor);
+	_target.visitInternalReferences(visitor);
 }
 
 Common::SharedPtr<Modifier> SetModifier::shallowClone() const {
