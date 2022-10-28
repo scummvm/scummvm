@@ -3658,6 +3658,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_GOG("primordia", "ac2game.dat", "7755b4df8706de91f31ddeee98bd20e9", 976475347), // Mac v2.7a
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "f2edc9c3161f1f538df9b4c59fc89e24", 978377182),
 	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979602678),  // with Ita translation
+	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 979603766),
+	GAME_ENTRY_STEAM("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 981119056),  // Hun-Tur translation release
 	GAME_ENTRY("primordia", "primordia.exe", "22313e59c3233001488c26f18c80cc08", 973154021), // DVD version
 	GAME_ENTRY("primordia", "primordia.exe", "8f717a5a14ceda815292ce4065348afb", 978722743),
 	GAME_ENTRY_STEAM("projectorface", "Projector Face.exe", "d26528c4933649f147c6c4338bcb9e0a", 42610502),  // En-De-It
