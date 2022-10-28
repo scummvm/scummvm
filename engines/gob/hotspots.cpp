@@ -2022,7 +2022,7 @@ void Hotspots::setCurrentHotspot(const uint16 *ids, uint16 id) const {
 	}
 
 	if (Hotspot::getState(id) == kStateFilled)
-		WRITE_VAR(16, ids[id & 0xFFF]);
+		WRITE_VAR(16, (int16) ids[id & 0xFFF]);
 	else
 		WRITE_VAR(16, id & 0xFFF);
 }
