@@ -538,12 +538,14 @@ void Inter_v7::o7_copyFile() {
 
 	debugC(2, kDebugFileIO, "Copy file \"%s\" to \"%s", path1.c_str(), path2.c_str());
 
-	if (path1.equalsIgnoreCase(path2)) {
+	Common::String file1 = getFile(path1.c_str(), false);
+	Common::String file2 = getFile(path2.c_str(), false);
+	if (file1.equalsIgnoreCase(file2)) {
 		warning("o7_copyFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(path1, path2);
+	copyFile(file1, file2);
 }
 
 void Inter_v7::o7_deleteFile() {
@@ -594,17 +596,20 @@ void Inter_v7::o7_moveFile() {
 	Common::String path1 = _vm->_game->_script->evalString();
 	Common::String path2 = _vm->_game->_script->evalString();
 
-	if (path1.equalsIgnoreCase(path2)) {
+	Common::String file1 = getFile(path1.c_str(), false);
+	Common::String file2 = getFile(path2.c_str(), false);
+
+	if (file1.equalsIgnoreCase(file2)) {
 		warning("o7_moveFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
 		return;
 	}
 
-	copyFile(path1, path2);
-	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(path1.c_str());
+	copyFile(file1, file2);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file1.c_str());
 	if (mode == SaveLoad::kSaveModeSave) {
-		_vm->_saveLoad->deleteFile(path1.c_str());
+		_vm->_saveLoad->deleteFile(file1.c_str());
 	} else if (mode == SaveLoad::kSaveModeNone)
-		warning("Attempted to delete file \"%s\" while moving it to \"%s\"", path1.c_str(), path2.c_str());
+		warning("Attempted to delete file \"%s\" while moving it to \"%s\"", file1.c_str(), file2.c_str());
 }
 
 
@@ -1218,7 +1223,7 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 }
 
 void Inter_v7::o7_readData(OpFuncParams &params) {
-	Common::String file = _vm->_game->_script->evalString();
+	Common::String file = getFile(_vm->_game->_script->evalString(), false);
 
 	uint16 dataVar = _vm->_game->_script->readVarIndex();
 	int32  size    = _vm->_game->_script->readValExpr();
@@ -1295,7 +1300,7 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 }
 
 void Inter_v7::o7_writeData(OpFuncParams &params) {
-	Common::String file = _vm->_game->_script->evalString();
+	Common::String file = getFile(_vm->_game->_script->evalString(), false);
 
 	int16 dataVar = _vm->_game->_script->readVarIndex();
 	int32 size    = _vm->_game->_script->readValExpr();
