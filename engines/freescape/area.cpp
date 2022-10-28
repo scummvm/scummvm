@@ -78,8 +78,7 @@ Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap
 	}
 
 	// sort so that those that are planar are drawn last
-	struct
-	{
+	struct {
 		bool operator()(Object *object1, Object *object2) {
 			if (!object1->isPlanar() && object2->isPlanar())
 				return true;
