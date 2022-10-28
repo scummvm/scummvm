@@ -566,6 +566,39 @@ void Scenery::freeAnim(int16 index) {
 	_animPictCount[index] = 0;
 }
 
+void clipInRect(int16 left, int16 top, int16 width, int16 height, int16 *deltaX, int16 *deltaY,
+				int16 *leftPtr, int16 *topPtr, int16 *rightPtr, int16 *bottomPtr,
+				int16 layer) {
+	int16 posX = (int16)*leftPtr;
+	if (posX < left) {
+		if (!(layer & 0x80)) {
+			*deltaX += left - posX;
+		}
+
+		*leftPtr = left;
+	}
+
+	int16 right = left + width;
+	if (*rightPtr >= right) {
+		if (layer & 0x80) {
+			*deltaX += *rightPtr - (right - 1);
+		}
+
+		*rightPtr = right - 1;
+	}
+
+	int16 posY = (int16)*topPtr;
+	if (posY < top) {
+		*deltaY += top - posY;
+		*topPtr = top;
+	}
+
+	int16 bottom = top + height;
+	if (*bottomPtr >= bottom) {
+		*bottomPtr = bottom - 1;
+	}
+}
+
 // flags & 1 - do capture all area animation is occupying
 // flags & 4 == 0 - calculate animation final size
 // flags & 2 != 0 - don't check with "toRedraw"'s
@@ -614,138 +647,231 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		Mult::Mult_Object &obj = _vm->_mult->_objects[-animation - 1];
 
 		if ((obj.videoSlot == 0) || !_vm->_vidPlayer->slotIsOpen(obj.videoSlot - 1)) {
-			_toRedrawLeft = -12345;
-			return;
-		}
+			if (_vm->getGameType() == kGameTypeAdibou2) {
+				if (!(flags & 4))
+					_toRedrawLeft = -12345;
 
-		if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
-			frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
+				if (obj.animName != nullptr) {
+					warning("updateAnim Adibou2 stub (obj.animName=%s)", obj.animName);
+				} else {
+					auto &sprite = _vm->_draw->_spritesArray[50 - animation - 1];
+					if (sprite != nullptr) {
+						int16 sprite_top = 0;
+						int16 sprite_left = 0;
+						int16 sprite_dest_left = *obj.pPosX;
+						int16 sprite_dest_top = *obj.pPosY;
+						int16 sprite_dest_right = sprite_dest_left + sprite->getWidth() - 1;
+						int16 sprite_dest_bottom = sprite_dest_top + sprite->getHeight() - 1;
 
-		if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) >= 255) {
-			// Allow for object videos with more than 255 frames, although the
-			// object frame counter is just a byte.
+						if (flags & 2) {
+							clipInRect(_vm->_mult->_animLeft,
+									   _vm->_mult->_animTop,
+									   _vm->_mult->_animWidth,
+									   _vm->_mult->_animHeight,
+									   &sprite_left,
+									   &sprite_top,
+									   &sprite_dest_left,
+									   &sprite_dest_top,
+									   &sprite_dest_right,
+									   &sprite_dest_bottom,
+									   layer);
+						} else if (flags & 4) {
+							clipInRect(_toRedrawLeft,
+									   _toRedrawTop,
+									   _toRedrawRight - _toRedrawLeft + 1,
+									   _toRedrawBottom - _toRedrawTop + 1,
+									   &sprite_left,
+									   &sprite_top,
+									   &sprite_dest_left,
+									   &sprite_dest_top,
+									   &sprite_dest_right,
+									   &sprite_dest_bottom,
+									   layer);
+						} else {
+							_toRedrawRight = sprite_dest_right;
+							_toRedrawBottom = sprite_dest_bottom;
+							_toRedrawLeft = sprite_dest_left;
+							_toRedrawTop = sprite_dest_top;
+						}
 
-			uint32 curFrame  = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
-			uint16 frameWrap = curFrame / 256;
+						if (doDraw) {
+							if ((int32)*obj.pPosX > sprite_dest_right)
+								return;
 
-			frame = ((frame + 1) % 256) + frameWrap * 256;
-		}
+							if ((int32)*obj.pPosY > sprite_dest_bottom)
+								return;
 
-		if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
-			// Seek to frame
+							_vm->_draw->_sourceSurface = 50 - animation - 1;
+							_vm->_draw->_destSurface = Draw::kBackSurface;
 
-			VideoPlayer::Properties props;
+							clipInRect(_vm->_mult->_animLeft,
+									   _vm->_mult->_animTop,
+									   _vm->_mult->_animWidth,
+									   _vm->_mult->_animHeight,
+									   &sprite_left,
+									   &sprite_top,
+									   &sprite_dest_left,
+									   &sprite_dest_top,
+									   &sprite_dest_right,
+									   &sprite_dest_bottom,
+									   layer);
 
-			props.forceSeek    = true;
-			props.waitEndFrame = false;
-			props.lastFrame    = frame;
+							_vm->_draw->_spriteLeft = sprite_left;
+							_vm->_draw->_spriteTop = sprite_top;
+							_vm->_draw->_spriteRight = sprite_dest_right - sprite_dest_left + 1;
+							_vm->_draw->_spriteBottom = sprite_dest_bottom - sprite_dest_top + 1;
+							_vm->_draw->_destSpriteX = sprite_dest_left,
+							_vm->_draw->_destSpriteY = sprite_dest_top,
 
-			if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < frame)
-				props.startFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
-			else
-				props.startFrame = frame;
+							_vm->_draw->_transparency = layer;
+							_vm->_draw->spriteOperation(DRAW_BLITSURF);
+						}
 
-			_vm->_vidPlayer->play(obj.videoSlot - 1, props);
-		}
+						if (!(flags & 4)) {
+							_toRedrawLeft = sprite_dest_left;
+							_toRedrawTop = sprite_dest_top;
+							_toRedrawRight = sprite_dest_right;
+							_toRedrawBottom = sprite_dest_bottom;
+							// TODO word_4F6AF0 etc.
+						}
+					}
+				}
 
-		int32 subtitle = _vm->_vidPlayer->getSubtitleIndex(obj.videoSlot - 1);
-		if (subtitle != -1)
-			_vm->_draw->printTotText(subtitle);
-
-		destX  = 0;
-		destY  = 0;
-		left   = *(obj.pPosX);
-		top    = *(obj.pPosY);
-		right  = left + _vm->_vidPlayer->getWidth(obj.videoSlot  - 1) - 1;
-		bottom = top  + _vm->_vidPlayer->getHeight(obj.videoSlot - 1) - 1;
-
-		if (flags & 2) {
-			if (left < _vm->_mult->_animLeft) {
-				destX += _vm->_mult->_animLeft - left;
-				left   = _vm->_mult->_animLeft;
-			}
-
-			if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
-				right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
-
-			if (top < _vm->_mult->_animTop) {
-				destY += _vm->_mult->_animTop - top;
-				top    = _vm->_mult->_animTop;
-			}
-
-			if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
-				bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
-
-		} else if (flags & 4) {
-			if (left < _toRedrawLeft) {
-				destX += _toRedrawLeft - left;
-				left   = _toRedrawLeft;
-			}
-
-			if (right > _toRedrawRight)
-				right = _toRedrawRight;
-
-			if (top < _toRedrawTop) {
-				destY += _toRedrawTop - top;
-				top    = _toRedrawTop;
-			}
-
-			if (bottom > _toRedrawBottom)
-				bottom = _toRedrawBottom;
-
-		} else {
-			_toRedrawTop    = top;
-			_toRedrawLeft   = left;
-			_toRedrawRight  = right;
-			_toRedrawBottom = bottom;
-		}
-
-		if (doDraw) {
-			if ((left > right) || (top > bottom))
 				return;
+			} else {
+				_toRedrawLeft = -12345;
+				return;
+			}
+		} else {
+			if (frame >= (int32)_vm->_vidPlayer->getFrameCount(obj.videoSlot - 1))
+				frame = _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1;
 
-			if (left < _vm->_mult->_animLeft) {
-				destX += _vm->_mult->_animLeft - left;
-				left   = _vm->_mult->_animLeft;
+			if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) >= 255) {
+				// Allow for object videos with more than 255 frames, although the
+				// object frame counter is just a byte.
+
+				uint32 curFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+				uint16 frameWrap = curFrame / 256;
+
+				frame = ((frame + 1) % 256) + frameWrap * 256;
 			}
 
-			if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
-				right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
+			if (frame != (int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1)) {
+				// Seek to frame
 
-			if (top < _vm->_mult->_animTop) {
-				destY += _vm->_mult->_animTop - top;
-				top    = _vm->_mult->_animTop;
+				VideoPlayer::Properties props;
+
+				props.forceSeek = true;
+				props.waitEndFrame = false;
+				props.lastFrame = frame;
+
+				if ((int32)_vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) < frame)
+					props.startFrame = _vm->_vidPlayer->getCurrentFrame(obj.videoSlot - 1) + 1;
+				else
+					props.startFrame = frame;
+
+				_vm->_vidPlayer->play(obj.videoSlot - 1, props);
 			}
 
-			if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
-				bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
+			int32 subtitle = _vm->_vidPlayer->getSubtitleIndex(obj.videoSlot - 1);
+			if (subtitle != -1)
+				_vm->_draw->printTotText(subtitle);
 
-			_vm->_draw->_spriteLeft   = destX;
-			_vm->_draw->_spriteTop    = destY;
-			_vm->_draw->_spriteRight  = right  - left + 1;
-			_vm->_draw->_spriteBottom = bottom - top  + 1;
-			_vm->_draw->_destSpriteX  = left;
-			_vm->_draw->_destSpriteY  = top;
-			_vm->_draw->_transparency = layer;
-			if (layer & 0x80)
-				_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1)  -
-					(destX + _vm->_draw->_spriteRight);
+			destX = 0;
+			destY = 0;
+			left = *(obj.pPosX);
+			top = *(obj.pPosY);
+			right = left + _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - 1;
+			bottom = top + _vm->_vidPlayer->getHeight(obj.videoSlot - 1) - 1;
 
-			_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, *_vm->_draw->_backSurface,
-					_vm->_draw->_spriteLeft,  _vm->_draw->_spriteTop,
-					_vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
-					_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
-					(_vm->_draw->_transparency != 0) ? 0 : -1);
+			if (flags & 2) {
+				if (left < _vm->_mult->_animLeft) {
+					destX += _vm->_mult->_animLeft - left;
+					left = _vm->_mult->_animLeft;
+				}
 
-			_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
-					_vm->_draw->_destSpriteX + _vm->_draw->_spriteRight  - 1,
-					_vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
+				if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
+					right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
+
+				if (top < _vm->_mult->_animTop) {
+					destY += _vm->_mult->_animTop - top;
+					top = _vm->_mult->_animTop;
+				}
+
+				if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
+					bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
+
+			} else if (flags & 4) {
+				if (left < _toRedrawLeft) {
+					destX += _toRedrawLeft - left;
+					left = _toRedrawLeft;
+				}
+
+				if (right > _toRedrawRight)
+					right = _toRedrawRight;
+
+				if (top < _toRedrawTop) {
+					destY += _toRedrawTop - top;
+					top = _toRedrawTop;
+				}
+
+				if (bottom > _toRedrawBottom)
+					bottom = _toRedrawBottom;
+
+			} else {
+				_toRedrawTop = top;
+				_toRedrawLeft = left;
+				_toRedrawRight = right;
+				_toRedrawBottom = bottom;
+			}
+
+			if (doDraw) {
+				if ((left > right) || (top > bottom))
+					return;
+
+				if (left < _vm->_mult->_animLeft) {
+					destX += _vm->_mult->_animLeft - left;
+					left = _vm->_mult->_animLeft;
+				}
+
+				if ((_vm->_mult->_animLeft + _vm->_mult->_animWidth) <= right)
+					right = _vm->_mult->_animLeft + _vm->_mult->_animWidth - 1;
+
+				if (top < _vm->_mult->_animTop) {
+					destY += _vm->_mult->_animTop - top;
+					top = _vm->_mult->_animTop;
+				}
+
+				if ((_vm->_mult->_animTop + _vm->_mult->_animHeight) <= bottom)
+					bottom = _vm->_mult->_animTop + _vm->_mult->_animHeight - 1;
+
+				_vm->_draw->_spriteLeft = destX;
+				_vm->_draw->_spriteTop = destY;
+				_vm->_draw->_spriteRight = right - left + 1;
+				_vm->_draw->_spriteBottom = bottom - top + 1;
+				_vm->_draw->_destSpriteX = left;
+				_vm->_draw->_destSpriteY = top;
+				_vm->_draw->_transparency = layer;
+				if (layer & 0x80)
+					_vm->_draw->_spriteLeft = _vm->_vidPlayer->getWidth(obj.videoSlot - 1) -
+											  (destX + _vm->_draw->_spriteRight);
+
+				_vm->_vidPlayer->copyFrame(obj.videoSlot - 1, *_vm->_draw->_backSurface,
+										   _vm->_draw->_spriteLeft, _vm->_draw->_spriteTop,
+										   _vm->_draw->_spriteRight, _vm->_draw->_spriteBottom,
+										   _vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
+										   (_vm->_draw->_transparency != 0) ? 0 : -1);
+
+				_vm->_draw->invalidateRect(_vm->_draw->_destSpriteX, _vm->_draw->_destSpriteY,
+										   _vm->_draw->_destSpriteX + _vm->_draw->_spriteRight - 1,
+										   _vm->_draw->_destSpriteY + _vm->_draw->_spriteBottom - 1);
+			}
 		}
 
 		if (!(flags & 4)) {
-			_animLeft   = _toRedrawLeft   = left;
-			_animTop    = _toRedrawTop    = top;
-			_animRight  = _toRedrawRight  = right;
+			_animLeft = _toRedrawLeft = left;
+			_animTop = _toRedrawTop = top;
+			_animRight = _toRedrawRight = right;
 			_animBottom = _toRedrawBottom = bottom;
 		}
 

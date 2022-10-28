@@ -110,6 +110,8 @@ public:
 		int16 newRight;
 		int16 newBottom;
 		uint32 videoSlot;
+		void* field_38;
+		char* animName;
 		byte* field_6A;
 		byte field_6E;
 	} PACKED_STRUCT;
