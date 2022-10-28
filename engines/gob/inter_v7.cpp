@@ -62,6 +62,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
+	OPCODEDRAW(0x62, o7_moveFile);
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
 	OPCODEDRAW(0x89, o7_draw0x89);
 	OPCODEDRAW(0x8A, o7_findFile);
@@ -261,6 +262,21 @@ void Inter_v7::o7_loadFunctions() {
 		tot += ".TOT";
 
 	_vm->_game->loadFunctions(tot, flags);
+}
+
+void Inter_v7::o7_moveFile() {
+	Common::String path1 = _vm->_game->_script->evalString();
+	Common::String path2 = _vm->_game->_script->evalString();
+
+	Common::String file1 = getFile(path1.c_str());
+	Common::String file2 = getFile(path2.c_str());
+
+	if (file1.equalsIgnoreCase(file2)) {
+		warning("o7_moveFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
+		return;
+	}
+
+	warning("Adibou2 Stub: move file from \"%s\" to \"%s\"", file1.c_str(), file2.c_str());
 }
 
 void Inter_v7::o7_playVmdOrMusic() {
