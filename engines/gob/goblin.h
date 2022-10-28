@@ -334,6 +334,12 @@ public:
 
 	void initiateMove(Mult::Mult_Object *obj);
 	void changeDirection(Mult::Mult_Object *obj, int16 animState);
+
+private:
+	int32 computeObjNextDirection(Mult::Mult_Object &obj);
+	int32 findPath(int8 x, int8 y, int8 destX, int8 destY);
+	bool directionWalkable(int8 x, int8 y, int8 direction);
+	int32 directionFromOriginAndDest(int8 x, int8 y, int8 destX, int8 destY);
 };
 
 } // End of namespace Gob

@@ -255,20 +255,22 @@ void Inter_v7::o7_moveGoblin() {
 	animData.animTypeBak = 0;
 	animData.framesLeft = 0;
 	animData.isBusy = 0;
-	animData.redrawFrame = destX;
-	animData.field_1D = destX;
-	animData.field_1B = destY;
-	animData.field_1E = destY;
+	obj.gobDestX = destX;
+	animData.gobDestX_maybe = destX;
+	obj.gobDestY = destY;
+	animData.gobDestY_maybe = destY;
 	animData.newState = 0;
-	animData.stateType = animData.destX;
-	animData.animTypeBak = animData.destY;
+	obj.goblinX = animData.destX;
+	obj.goblinY = animData.destY;
 
 	if (animData.animType == 10 && animData.curLookDir <= 10)
 		return;
 
-	animData.field_1B = animData.destX;
-	animData.field_1C = animData.destY;
+	animData.destXBak = animData.destX;
+	animData.destYBak = animData.destY;
 	animData.animType = 10;
+
+	debugC(1, kDebugVideo, "o7_moveGoblin Obj %s destX = %d, destY = %d (gobX = %d, gobY = %d) ", obj.animName, destX,  destY, obj.goblinX, obj.goblinY);
 
 	_vm->_goblin->initiateMove(&obj);
 }
@@ -286,10 +288,17 @@ void Inter_v7::o7_setGoblinState() {
 
 	animData.pathExistence = 1;
 	animData.animType = 10;
-	animData.redrawAnimation = animData.stateType;
-	animData.redrawLayer = animData.animTypeBak;
+	obj.destX = obj.goblinX;
+	obj.destY = obj.goblinY;
+
+	debugC(1, kDebugVideo, "o7_setGoblinState Obj %s state = %d, type = %d = %d ", obj.animName, state, type, state + type*100);
 
 	_vm->_goblin->changeDirection(&obj, state + type*100);
+	if (type != 0) {
+		animData.pathExistence = 3;
+		animData.animType = 12;
+		animData.frame = 0;
+	}
 }
 
 

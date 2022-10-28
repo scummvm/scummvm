@@ -806,11 +806,29 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 			int8 deltaY = animObj.destY - animObj.goblinY;
 			if (deltaY == -1) {
 				*animObj.pPosX = *animObj.pPosX - _vm->_map->getTilesWidth();
-			}
-			else if (deltaY == 1) {
+			} else if (deltaY == 1) {
 				*animObj.pPosX = *animObj.pPosX + _vm->_map->getTilesWidth();
 			}
 		}
+		else {
+			warning("Adibou2 newCycleAnim _mapUnknownBool == false stub");
+		}
+
+
+		animData.frame = 0;
+		animData.destXBak = animData.destX;
+		animData.destYBak = animData.destY;
+		animObj.goblinX = animObj.destX;
+		animData.destX = animObj.goblinX;
+		animObj.goblinY = animObj.destY;
+		animData.destY = animObj.goblinY;
+		if (animData.pathExistence) {
+			animObj.gobDestX = animObj.goblinX;
+			animObj.gobDestY = animObj.goblinY;
+		}
+
+		_vm->_goblin->initiateMove(&animObj);
+
 		break;
 
 	default:
