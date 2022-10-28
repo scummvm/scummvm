@@ -165,7 +165,7 @@ void Area::draw(Freescape::Renderer *gfx) {
 }
 
 Object *Area::shootRay(const Math::Ray &ray) {
-	float size = 16 * 8192; // TODO: check if this is max size
+	float size = 16.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
 	for (int i = 0; i < int(drawableObjects.size()); i++) {
 		float objSize = drawableObjects[i]->getSize().length();
@@ -179,7 +179,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 }
 
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
-	float size = 3 * 8192 * 8192; // TODO: check if this is max size
+	float size = 3.0 * 8192.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
 	for (int i = 0; i < int(drawableObjects.size()); i++) {
 		if (!drawableObjects[i]->isDestroyed() && !drawableObjects[i]->isInvisible()) {
