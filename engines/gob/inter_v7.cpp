@@ -1241,7 +1241,7 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 
 	byte *buf = _variables->getAddressOff8(dataVar);
 
-	if (file[0] == 0) {
+	if (file.empty()) {
 		WRITE_VAR(1, size);
 		return;
 	}
