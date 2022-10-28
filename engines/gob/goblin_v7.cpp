@@ -247,7 +247,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 		props.flags      = 0x1201;
 		props.palStart   = 0;
 		props.palEnd     = 0;
-		props.sprite = -obj->pAnimData->animation - 1;
+		props.sprite = -1;
 
 		Common::strlcpy(obj->animName, str, 16);
 		if (obj->videoSlot > 0)
@@ -269,7 +269,7 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 			props.flags      = 0x1601;
 			props.palStart   = 0;
 			props.palEnd     = 0;
-			props.sprite = -obj->pAnimData->animation - 1;
+			props.sprite     = -1;
 
 			if (obj->videoSlot > 0)
 				_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
