@@ -125,7 +125,7 @@ void Font::drawLetter(Surface &surf, uint8 c, uint16 x, uint16 y,
 						dst.set(color2);
 				}
 
-				dst++;
+				++dst;
 				data <<= 1;
 			}
 
@@ -327,7 +327,7 @@ void Video::drawPacked(byte *sprBuf, int16 width, int16 height,
 				if (!transp || val)
 					dst.set(val);
 
-			dst++;
+			++dst;
 			curx++;
 			if (curx == destRight) {
 				dst += dest.getWidth() + x - curx;

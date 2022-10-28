@@ -1028,7 +1028,7 @@ void Draw_Fascination::drawWinTrace(int16 left, int16 top, int16 width, int16 he
 
 	Pixel pixelTop = _frontSurface->get(left, top);
 	Pixel pixelBottom = _frontSurface->get(left, bottom);
-	for (int16 i = 0; i < width; i++, pixelTop++, pixelBottom++) {
+	for (int16 i = 0; i < width; i++, ++pixelTop, ++pixelBottom) {
 		pixelTop.set((pixelTop.get() + 128) & 0xFF);
 		pixelBottom.set((pixelBottom.get() + 128) & 0xFF);
 	}
