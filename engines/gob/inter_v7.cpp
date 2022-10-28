@@ -564,6 +564,21 @@ void Inter_v7::o7_deleteFile() {
 		debugC(2, kDebugFileIO, "Delete file \"%s\"", file.c_str());
 	}
 
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&& isPattern
+		&& file.hasPrefix("DATA\\??????")) {
+		// WORKAROUND a bug in original game: files APPLI_<N>.INF and CRITE_<N>.INF should not be deleted when removing character <N>
+		// Those files contain *application <N>* data, not "character <N>" data
+		for (Common::List<Common::String>::iterator it = files.begin(); it != files.end(); ++it) {
+			if (it->matchString("DATA\\\\appli_??.inf", true) || it->matchString("DATA\\\\crite_??.inf", true)) {
+				debugC(2, kDebugFileIO, "o7_deleteFile: ignoring deletion of file \"%s\" when processing pattern %s (delete character bug workaround)",
+					   it->c_str(),
+					   file.c_str());
+				it = files.reverse_erase(it);
+			}
+		}
+	}
+
 	for (const Common::String &fileToDelete : files) {
 		SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(fileToDelete.c_str());
 		if (mode == SaveLoad::kSaveModeSave) {
