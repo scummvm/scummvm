@@ -91,6 +91,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 void Inter_v7::setupOpcodesFunc() {
 	Inter_Playtoons::setupOpcodesFunc();
+	OPCODEFUNC(0x11, o7_printText);
 	OPCODEFUNC(0x33, o7_fillRect);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
@@ -975,6 +976,9 @@ void Inter_v7::o7_getDBString() {
 	WRITE_VAR(27, 1); // Success
 }
 
+void Inter_v7::o7_printText(OpFuncParams &params) {
+	oPlaytoons_printText(params);
+}
 void Inter_v7::o7_fillRect(OpFuncParams &params) {
 	_vm->_draw->_destSurface = _vm->_game->_script->readInt16();
 
