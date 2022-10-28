@@ -232,12 +232,12 @@ void gPanel::drawTitle(enum text_positions placement) {
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 
 	if (_imageLabel) {
-		port.setIndirectColor(blackPen);     // pen color black
+		port.setIndirectColor(kBlackPen);     // pen color black
 		port.setMode(drawModeColor);         // draw as glyph
 		port.bltPixels(*img, 0, 0, r.x, r.y, r.width, r.height);
 	} else {
 		port.setMode(drawModeMatte);         // draw as glyph
-		port.setIndirectColor(blackPen);     // pen color black
+		port.setIndirectColor(kBlackPen);     // pen color black
 		port.setStyle(textStyleUnderBar);    // set style to do underbars
 		port.moveTo(r.x, r.y);           // move to new text pos
 

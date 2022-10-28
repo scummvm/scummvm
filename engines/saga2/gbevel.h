@@ -36,88 +36,40 @@ namespace Saga2 {
 
 enum bevelPens {
 
-	transpPen = 0,                          // transparent pen for mouse
+	kTranspPen = 0,                          // transparent pen for mouse
 
 	//  color pens
 
-	blackPen,                               // black
-	whitePen,                               // white
+	kBlackPen,                               // black
+	kWhitePen,                               // white
 
 	//  Background pens
 
-	backPen,                                // background fill
-	backLtPen,                              // background highlight
-	backDkPen,                              // background shadow
+	kBackPen,                                // background fill
+	kBackLtPen,                              // background highlight
+	kBackDkPen,                              // background shadow
 
 	//  Button pens
 
-	buttonPen,                              // button fill color
-	buttonLtPen,                            // button highlight
-	buttonDkPen,                            // button shadow
+	kButtonPen,                              // button fill color
+	kButtonLtPen,                            // button highlight
+	kButtonDkPen,                            // button shadow
 
 	//  UI highlighting pens
 
-	hilitePen,                              // text highlight color
+	kHilitePen,                              // text highlight color
 
-	cStdPenCount
+	kCStdPenCount
 };
-
-//  Pen array definition
-
-extern gPen         mainPens[];         // the array of pens
-
-#if 0
-#define transpPen   mainPens[0]       // transparent pen for mouse
-
-//  color pens
-
-#define blackPen    mainPens[1]       // black
-#define whitePen    mainPens[2]       // white
-
-//  Background pens
-
-#define backPen     mainPens[3]       // background fill
-#define backLtPen   mainPens[4]       // background highlight
-#define backDkPen   mainPens[5]       // background shadow
-
-//  Button pens
-
-#define buttonPen   mainPens[6]       // button fill color
-#define buttonLtPen mainPens[7]       // button highlight
-#define buttonDkPen mainPens[8]       // button shadow
-
-#define transpPen   mainPens[0]       // transparent pen for mouse
-
-//  color pens
-
-#define blackPen    mainPens[1]       // black
-#define whitePen    mainPens[2]       // white
-
-//  Background pens
-
-#define backPen     mainPens[3]       // background fill
-#define backLtPen   mainPens[4]       // background highlight
-#define backDkPen   mainPens[5]       // background shadow
-
-//  Button pens
-
-#define buttonPen   mainPens[6]       // button fill color
-#define buttonLtPen mainPens[7]       // button highlight
-#define buttonDkPen mainPens[8]       // button shadow
-
-//  Text pens
-
-#define hilitePen   mainPens[9]       // text highlight color
-#endif
 
 /* ===================================================================== *
                               Bevel Boxes
  * ===================================================================== */
 
 enum bevelOptions {
-	bevelRecessed   = (1 << 0),         // bevel is pushed in
-	bevelFilled     = (1 << 1),         // bevel filled with approp. color
-	bevelInverted   = (1 << 2)          // pushed in w/slightly diff. look
+	kBevelRecessed   = (1 << 0),         // bevel is pushed in
+	kBevelFilled     = (1 << 1),         // bevel filled with approp. color
+	kBevelInverted   = (1 << 2)          // pushed in w/slightly diff. look
 };
 
 void DrawBevelFrame(gPort &port, const Rect16 &r, uint16 flags);

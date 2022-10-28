@@ -309,18 +309,18 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
 		int16       bottom = r.y + r.height - 2,
 		            right  = r.x + r.width - 2;
 
-		port.setIndirectColor(whitePen);
+		port.setIndirectColor(kWhitePen);
 		port.vLine(r.x + 1, r.y + 1, r.height - 3);
 		port.hLine(r.x + 2, r.y + 1, r.width  - 3);
 
-		port.setIndirectColor(blackPen);
+		port.setIndirectColor(kBlackPen);
 		port.frameRect(r, 1);
 
-		port.setIndirectColor(buttonDkPen);
+		port.setIndirectColor(kButtonDkPen);
 		port.hLine(r.x + 1,   bottom, r.width - 2);
 		port.vLine(right, r.y + 1,    r.height - 2);
 
-		port.setIndirectColor(buttonPen);
+		port.setIndirectColor(kButtonPen);
 		port.setPixel(r.x + 1, bottom);
 		port.setPixel(right,   r.y + 1);
 
