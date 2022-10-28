@@ -964,6 +964,7 @@ protected:
 	GameFileHandler    *_configHandler;
 	GameFileHandler    *_adibou2EnvHandler[kChildrenCount];
 	SpriteHandler      *_adibou2WeatherHandler[kChildrenCount];
+	GameFileHandler    *_adibou2BreakoutGameProgressHandler[kChildrenCount];
 	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
 	GameFileHandler    *_adibou2MemoHandler[kChildrenCount];
 	GameFileHandler    *_adibou2DiploHandler[kChildrenCount];
