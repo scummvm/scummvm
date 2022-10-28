@@ -186,6 +186,21 @@
 	0, 0, 0
 },
 
+// -- English: Adiboo --
+{
+	{
+		"adibou2",
+		"ADIBOO 2",
+		AD_ENTRY1s("intro.stk", "718a51862406136c28639489a9ba950a", 956350),
+		EN_ANY,
+		kPlatformDOS,
+		ADGF_NO_FLAGS,
+		GUIO0()},
+	kGameTypeAdibou2,
+	kFeaturesNone,
+	0, 0, 0
+},
+
 // -- Demos --
 
 {
