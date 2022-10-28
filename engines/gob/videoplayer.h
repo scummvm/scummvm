@@ -123,6 +123,7 @@ public:
 
 	bool play(int slot, Properties &properties);
 	void waitEndFrame(int slot, bool onlySound = false);
+	int32 getExpectedFrameFromCurrentTime(int slot);
 
 	bool isPlayingLive() const;
 

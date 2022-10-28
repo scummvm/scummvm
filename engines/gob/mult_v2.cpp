@@ -737,7 +737,26 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	}
 
 	if (animData.animType != 8)
+	{
 		animData.frame++;
+		if (_vm->getGameType() == kGameTypeAdibou2
+			&&
+			animData.animation < 0
+			&&
+			animObj.videoSlot > 0)
+		{
+			// Workaround to improve audio sync of video objects in Adibou 2
+			// They easily get out of sync when the timing is done by hotspots::evaluate, which sometimes does not call animate()
+			// as often as needed for good sync (mouse events processing, in particular, can delay the call).
+			// The original game seems to use also some kind of frame skipping to address this problem.
+			int32 expectedFrame = _vm->_vidPlayer->getExpectedFrameFromCurrentTime(animObj.videoSlot - 1);
+			expectedFrame = CLIP<int32>(expectedFrame, -1, _vm->_vidPlayer->getFrameCount(animObj.videoSlot - 1) - 1);
+			if (expectedFrame > animData.frame + 5) {
+				// We are too far behind, skip frames
+				animData.frame = expectedFrame;
+			}
+		}
+	}
 
 	if (animData.animation < 0) {
 		if ((animObj.videoSlot > 0) &&
