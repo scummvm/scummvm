@@ -145,6 +145,38 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"Gsa03_16.inf", kSaveModeSave, 0, "app progress" },
 	{"Gsa04_16.inf", kSaveModeSave, 0, "app progress" },
 	{"Gsa05_16.inf", kSaveModeSave, 0, "app progress" },
+	{"memo_01.inf", kSaveModeSave, 0, "memo" }, // Child 01
+	{"memo_02.inf", kSaveModeSave, 0, "memo" }, // Child 02
+	{"memo_03.inf", kSaveModeSave, 0, "memo" }, // Child 03
+	{"memo_04.inf", kSaveModeSave, 0, "memo" }, // Child 04
+	{"memo_05.inf", kSaveModeSave, 0, "memo" }, // Child 05
+	{"memo_06.inf", kSaveModeSave, 0, "memo" }, // Child 06
+	{"memo_07.inf", kSaveModeSave, 0, "memo" }, // Child 07
+	{"memo_08.inf", kSaveModeSave, 0, "memo" }, // Child 08
+	{"memo_09.inf", kSaveModeSave, 0, "memo" }, // Child 09
+	{"memo_10.inf", kSaveModeSave, 0, "memo" }, // Child 10
+	{"memo_11.inf", kSaveModeSave, 0, "memo" }, // Child 11
+	{"memo_12.inf", kSaveModeSave, 0, "memo" }, // Child 12
+	{"memo_13.inf", kSaveModeSave, 0, "memo" }, // Child 13
+	{"memo_14.inf", kSaveModeSave, 0, "memo" }, // Child 14
+	{"memo_15.inf", kSaveModeSave, 0, "memo" }, // Child 15
+	{"memo_16.inf", kSaveModeSave, 0, "memo" }, // Child 16
+	{"diplo_01.inf", kSaveModeSave, 0, "diplo" }, // Child 01
+	{"diplo_02.inf", kSaveModeSave, 0, "diplo" }, // Child 02
+	{"diplo_03.inf", kSaveModeSave, 0, "diplo" }, // Child 03
+	{"diplo_04.inf", kSaveModeSave, 0, "diplo" }, // Child 04
+	{"diplo_05.inf", kSaveModeSave, 0, "diplo" }, // Child 05
+	{"diplo_06.inf", kSaveModeSave, 0, "diplo" }, // Child 06
+	{"diplo_07.inf", kSaveModeSave, 0, "diplo" }, // Child 07
+	{"diplo_08.inf", kSaveModeSave, 0, "diplo" }, // Child 08
+	{"diplo_09.inf", kSaveModeSave, 0, "diplo" }, // Child 09
+	{"diplo_10.inf", kSaveModeSave, 0, "diplo" }, // Child 10
+	{"diplo_11.inf", kSaveModeSave, 0, "diplo" }, // Child 11
+	{"diplo_12.inf", kSaveModeSave, 0, "diplo" }, // Child 12
+	{"diplo_13.inf", kSaveModeSave, 0, "diplo" }, // Child 13
+	{"diplo_14.inf", kSaveModeSave, 0, "diplo" }, // Child 14
+	{"diplo_15.inf", kSaveModeSave, 0, "diplo" }, // Child 15
+	{"diplo_16.inf", kSaveModeSave, 0, "diplo" }, // Child 16
 	{"appli_01.inf", kSaveModeSave, 0, "app info" },
 	{"appli_02.inf", kSaveModeSave, 0, "app info" },
 	{"appli_03.inf", kSaveModeSave, 0, "app info" },
@@ -165,6 +197,7 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"ico_03.inf", kSaveModeSave, 0, "app info" },
 	{"ico_04.inf", kSaveModeSave, 0, "app info" },
 	{"ico_05.inf", kSaveModeSave, 0, "app info" },
+	{"applis.inf", kSaveModeSave, 0, "app info" },
 
     // Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
@@ -183,22 +216,22 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{    "adi4.tmp", kSaveModeSave, nullptr, nullptr        }
 };
 
-SaveLoad_v7::FaceHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+SaveLoad_v7::SpriteHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
 SlotFileStatic(vm, base, ext) {
 }
 
-SaveLoad_v7::FaceHandler::File::~File() {
+SaveLoad_v7::SpriteHandler::File::~File() {
 }
 
 
-SaveLoad_v7::FaceHandler::FaceHandler(GobEngine *vm, const Common::String &target, const Common::String &ext)
+SaveLoad_v7::SpriteHandler::SpriteHandler(GobEngine *vm, const Common::String &target, const Common::String &ext)
 	: TempSpriteHandler(vm), _file(vm, target, ext) {
 }
 
-SaveLoad_v7::FaceHandler::~FaceHandler() {
+SaveLoad_v7::SpriteHandler::~SpriteHandler() {
 }
 
-int32 SaveLoad_v7::FaceHandler::getSize() {
+int32 SaveLoad_v7::SpriteHandler::getSize() {
 	Common::String fileName = _file.build();
 
 	if (fileName.empty())
@@ -217,7 +250,7 @@ int32 SaveLoad_v7::FaceHandler::getSize() {
 	return header.getSize();
 }
 
-bool SaveLoad_v7::FaceHandler::load(int16 dataVar, int32 size, int32 offset)
+bool SaveLoad_v7::SpriteHandler::load(int16 dataVar, int32 size, int32 offset)
 {
 	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
 		return false;
@@ -236,7 +269,7 @@ bool SaveLoad_v7::FaceHandler::load(int16 dataVar, int32 size, int32 offset)
 	return TempSpriteHandler::load(dataVar, size, offset);
 }
 
-bool SaveLoad_v7::FaceHandler::save(int16 dataVar, int32 size, int32 offset)
+bool SaveLoad_v7::SpriteHandler::save(int16 dataVar, int32 size, int32 offset)
 {
 	if (!TempSpriteHandler::save(dataVar, size, offset))
 		return false;
@@ -287,16 +320,19 @@ bool SaveLoad_v7::GameFileHandler::load(int16 dataVar, int32 size, int32 offset)
 	if (fileName.empty())
 		return false;
 
-	uint32 varSize = SaveHandler::getVarSize(_vm);
 	if (size == 0) {
+		uint32 varSize = SaveHandler::getVarSize(_vm);
 		// Indicator to load all variables
 		dataVar = 0;
 		size = (int32) varSize;
 	}
 
-	SaveReader reader(1, 0, fileName);
-	SavePartVars vars(_vm, size);
+	int32 fileSize = getSize();
+	if (fileSize < 0)
+		return false;
 
+	SaveReader reader(1, 0, fileName);
+	SavePartVars vars(_vm, fileSize);
 
 	if (!reader.load()) {
 		return false;
@@ -318,120 +354,51 @@ bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset)
 	if (fileName.empty())
 		return false;
 
-	uint32 varSize = SaveHandler::getVarSize(_vm);
 	if (size == 0) {
 		// Indicator to save all variables
 		dataVar = 0;
+		uint32 varSize = SaveHandler::getVarSize(_vm);
 		size = (int32) varSize;
 	}
 
-	SaveWriter writer(1, 0, fileName);
-	SavePartVars vars(_vm, size);
+	int32 fileSize = getSize();
+	int32 newFileSize = size;
+	if (fileSize > 0) {
+		newFileSize = MAX<int32>(fileSize, size + offset);
+	}
 
+	SavePartVars vars(_vm, newFileSize);
+	if (fileSize > 0
+		&&
+		(offset > 0 || size < fileSize)) {
+		// Load data from file, as some of it will not be overwritten
+		SaveReader reader(1, 0, fileName);
+		if (!reader.load()) {
+			return false;
+		}
+
+		if (fileSize == newFileSize) {
+			// We can use the same SavePartVars object
+			if (!reader.readPart(0, &vars)) {
+				return false;
+			}
+		} else {
+			// We need to use a temporary SavePartVars object to load data
+			SavePartVars vars_from_file(_vm, fileSize);
+			if (!reader.readPart(0, &vars_from_file)) {;
+				return false;
+			}
+
+			// Copy data from temporary SavePartVars object to the real one
+			vars.partialReadFromRaw(vars_from_file.data(), fileSize);
+		}
+	}
+
+	SaveWriter writer(1, 0, fileName);
 	if (!vars.readFrom((uint16) dataVar, offset, size))
 		return false;
 
 	return writer.writePart(0, &vars);
-}
-
-SaveLoad_v7::EnvironmentHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
-SlotFileStatic(vm, base, ext) {
-}
-
-SaveLoad_v7::EnvironmentHandler::File::~File() {
-}
-
-SaveLoad_v7::EnvironmentHandler::EnvironmentHandler(GobEngine *vm, const Common::String &target, const Common::String &ext) :
-SaveHandler(vm),
-_file(vm, target, ext),
-_reader(kNbrOfParts, 0, _file.build()),
-_writer(kNbrOfParts, 0, _file.build()) {
-}
-
-SaveLoad_v7::EnvironmentHandler::~EnvironmentHandler() {
-}
-
-const Common::Array<int> SaveLoad_v7::EnvironmentHandler::kPartOffsets = {0, 1764, 2564, 3284, 6684, 7192};
-int SaveLoad_v7::EnvironmentHandler::offset_to_part(int offset)
-{
-	for (int i = 0; i < kNbrOfParts; ++i) {
-		if (offset == kPartOffsets[i]) {
-			return i;
-		}
-	}
-
-	warning("No part with offset %d, defaults to part 0", offset);
-	return 0;
-}
-
-int32 SaveLoad_v7::EnvironmentHandler::getSize() {
-	Common::String fileName = _file.build();
-	if (fileName.empty())
-		return -1;
-
-	if (!_reader.load())
-		return -1;
-
-	int32 totalSize = 0;
-	for (int i = 0; i < kNbrOfParts; ++i)
-	{
-		SaveHeader header;
-		if (!_reader.readPartHeader(0, &header))
-			return -1;
-
-		totalSize += (int32) header.getSize();
-	}
-
-	return totalSize;
-}
-
-bool SaveLoad_v7::EnvironmentHandler::load(int16 dataVar, int32 size, int32 offset) {
-	Common::String fileName = _file.build();
-	if (fileName.empty())
-		return false;
-
-	uint32 varSize = SaveHandler::getVarSize(_vm);
-	if (size == 0) {
-		// Indicator to load all variables
-		dataVar = 0;
-		size = (int32) varSize;
-	}
-
-	SavePartVars vars(_vm, size);
-
-	if (!_reader.load()) {
-		return false;
-	}
-
-	if (!_reader.readPart(offset_to_part(offset), &vars)) {
-		return false;
-	}
-
-	if (!vars.writeInto((uint16) dataVar, 0, size)) {
-		return false;
-	}
-
-	return true;
-}
-
-bool SaveLoad_v7::EnvironmentHandler::save(int16 dataVar, int32 size, int32 offset) {
-	Common::String fileName = _file.build();
-	if (fileName.empty())
-		return false;
-
-	uint32 varSize = SaveHandler::getVarSize(_vm);
-	if (size == 0) {
-		// Indicator to save all variables
-		dataVar = 0;
-		size = (int32) varSize;
-	}
-
-	SavePartVars vars(_vm, size);
-
-	if (!vars.readFrom((uint16) dataVar, 0, size))
-		return false;
-
-	return _writer.writePart(offset_to_part(offset), &vars);
 }
 
 SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
@@ -439,7 +406,7 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	uint32 index = 0;
 	for (uint32 i = 0; i < kChildrenCount; i++) {
-		_saveFiles[index++].handler = _faceHandler[i] = new FaceHandler(_vm,
+		_saveFiles[index++].handler = _faceHandler[i] = new SpriteHandler(_vm,
 																		targetName,
 																		Common::String::format("vsg%02d", i + 1));
 	}
@@ -447,10 +414,12 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _childrenHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _debilHandler    = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _configHandler   = new GameFileHandler(_vm, targetName, "cfg");
+
+	//const Common::Array<int> environmentOffsets = {0, 1764, 2564, 3284, 6684, 7192};
 	for (uint32 i = 0; i < kChildrenCount; i++)
-		_saveFiles[index++].handler = _adibou2EnvHandler[i] = new EnvironmentHandler(_vm,
-																					 targetName,
-																					 Common::String::format("env%02d", i + 1));
+		_saveFiles[index++].handler = _adibou2EnvHandler[i] = new GameFileHandler(_vm,
+																				  targetName,
+																				  Common::String::format("env%02d", i + 1));
 
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{
@@ -463,15 +432,26 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		}
 	}
 
-	for (uint32 i = 0; i < kAdibou2NbrOfAppInfoFiles; i++) {
-		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++) {
-			_saveFiles[index++].handler = _adibou2AppInfoHandler[i][j] = new FakeFileHandler(_vm);
-		}
+	for (uint32 i = 0; i < kChildrenCount; i++)
+	{
+		_saveFiles[index++].handler = _adibou2MemoHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("memo%02d", i + 1));
+		_saveFiles[index++].handler = _adibou2DiploHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("diplo%02d", i + 1));
+	}
+
+
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
+		_saveFiles[index++].handler = _adibou2AppliHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("appli%02d", i + 1));
+		_saveFiles[index++].handler = _adibou2CriteHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("crite%02d", i + 1));
+		_saveFiles[index++].handler = _adibou2ExoHandler[i] = new GameFileHandler(_vm, targetName, Common::String::format("exo%02d", i + 1));
 	}
 
 	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
-		_saveFiles[index++].handler = _adibou2AppIcoHandler[i] = new TempSpriteHandler(_vm);
+		_saveFiles[index++].handler = _adibou2AppIcoHandler[i] = new SpriteHandler(_vm, targetName, Common::String::format("app_ico%02d", i + 1));
 	}
+
+	const Common::Array<int> applisOffsets = {0, 4, 8, 12, 16, 20};
+	_saveFiles[index++].handler = _adibou2ApplicationsInfoHandler = new GameFileHandler(_vm, targetName, "applis");
+
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
 
@@ -499,17 +479,23 @@ SaveLoad_v7::~SaveLoad_v7() {
 	}
 
 	for (uint32 i = 0; i < kChildrenCount; i++)
+	{
 		delete _faceHandler[i];
+		delete _adibou2MemoHandler[i];
+		delete _adibou2DiploHandler[i];
+	}
 
-	for (uint32 i = 0; i < kAdibou2NbrOfAppInfoFiles; i++) {
-		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++) {
-			delete _adibou2AppInfoHandler[i][j];
-		}
+	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
+		delete _adibou2AppliHandler[i];
+		delete _adibou2CriteHandler[i];
+		delete _adibou2ExoHandler[i];
 	}
 
 	for (uint32 i = 0; i < kAdibou2NbrOfApplications; i++) {
 		delete _adibou2AppIcoHandler[i];
 	}
+
+	delete _adibou2ApplicationsInfoHandler;
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
