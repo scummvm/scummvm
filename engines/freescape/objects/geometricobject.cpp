@@ -328,7 +328,6 @@ bool GeometricObject::collides(const Math::AABB &_boundingBox) {
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
-	// debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 	if (this->getType() == Cube) {
 		gfx->renderCube(origin, size, colours);
 	} else if (this->getType() == Rectangle) {
@@ -339,7 +338,6 @@ void GeometricObject::draw(Freescape::Renderer *gfx) {
 		if (this->getType() == Triangle)
 			assert(ordinates->size() == 9);
 
-		// debug("Drawing %d of type %d", this->getObjectID(), this->getType());
 		gfx->renderPolygon(origin, size, ordinates, colours);
 	}
 }
