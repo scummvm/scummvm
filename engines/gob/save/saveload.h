@@ -966,6 +966,9 @@ protected:
 	SpriteHandler      *_adibou2DrawingThumbnailHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
 	GameFileHandler    *_adibou2DrawingPaletteHandler[kChildrenCount];
 	SpriteHandler      *_adibou2DrawingMailboxHandler[kChildrenCount];
+	SpriteHandler      *_adibou2CakePhotoHandler[kChildrenCount];
+	SpriteHandler      *_adibou2FlowerPhotoHandler[kChildrenCount];
+	SpriteHandler      *_adibou2FlowerPhoto2Handler[kChildrenCount];
 
 	FakeFileHandler    *_addy4BaseHandler[2];
 	FakeFileHandler    *_addy4GrundschuleHandler[11];

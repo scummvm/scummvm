@@ -228,6 +228,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_01.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett01.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr01.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod01.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur01.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud01.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child2
 	{"cart0102.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0202.inf", kSaveModeSave, 0, "drawing" },
@@ -255,6 +258,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_02.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett02.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr02.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod02.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur02.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud02.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child3
 	{"cart0103.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0203.inf", kSaveModeSave, 0, "drawing" },
@@ -282,6 +288,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_03.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett03.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr03.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod03.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur03.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud03.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child4
 	{"cart0104.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0204.inf", kSaveModeSave, 0, "drawing" },
@@ -309,6 +318,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_04.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett04.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr04.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod04.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur04.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud04.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child5
 	{"cart0105.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0205.inf", kSaveModeSave, 0, "drawing" },
@@ -336,6 +348,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_05.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett05.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr05.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod05.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur05.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud05.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child6
 	{"cart0106.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0206.inf", kSaveModeSave, 0, "drawing" },
@@ -363,6 +378,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_06.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett06.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr06.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod06.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur06.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud06.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child7
 	{"cart0107.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0207.inf", kSaveModeSave, 0, "drawing" },
@@ -390,6 +408,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_07.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett07.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr07.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod07.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur07.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud07.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child8
 	{"cart0108.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0208.inf", kSaveModeSave, 0, "drawing" },
@@ -417,6 +438,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_08.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett08.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr08.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod08.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur08.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud08.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child9
 	{"cart0109.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0209.inf", kSaveModeSave, 0, "drawing" },
@@ -444,6 +468,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_09.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett09.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr09.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod09.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur09.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud09.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child10
 	{"cart0110.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0210.inf", kSaveModeSave, 0, "drawing" },
@@ -471,6 +498,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_10.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett10.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr10.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod10.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur10.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud10.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child11
 	{"cart0111.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0211.inf", kSaveModeSave, 0, "drawing" },
@@ -498,6 +528,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_11.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett11.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr11.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod11.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur11.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud11.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child12
 	{"cart0112.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0212.inf", kSaveModeSave, 0, "drawing" },
@@ -525,6 +558,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_12.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett12.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr12.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod12.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur12.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud12.inf", kSaveModeSave, 0, "photo of flowers" },	
 	// Child13
 	{"cart0113.inf", kSaveModeSave, 0, "drawing" },
 	{"cart0213.inf", kSaveModeSave, 0, "drawing" },
@@ -552,6 +588,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_13.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett13.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr13.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod13.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur13.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud13.inf", kSaveModeSave, 0, "photo of flowers" },	
 	{"pal12_13.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"pal13_13.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	// Child14
@@ -581,6 +620,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett14.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr14.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod14.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur14.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud14.inf", kSaveModeSave, 0, "photo of flowers" },	
 	{"pal12_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"pal13_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"pal14_14.inf", kSaveModeSave, 0, "drawing thumbnail" },
@@ -611,6 +653,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett15.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr15.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod15.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur15.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud15.inf", kSaveModeSave, 0, "photo of flowers" },	
 	{"pal12_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"pal13_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"pal14_15.inf", kSaveModeSave, 0, "drawing thumbnail" },
@@ -642,6 +687,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"pal11_16.inf", kSaveModeSave, 0, "drawing thumbnail" },
 	{"palett16.inf", kSaveModeSave, 0, "drawing palette" },
 	{"plettr16.inf", kSaveModeSave, 0, "drawing in mailbox" },
+	{"pgatod16.inf", kSaveModeSave, 0, "photo of cake" },
+	{"pfleur16.inf", kSaveModeSave, 0, "photo of flowers" },	
+	{"mfleud16.inf", kSaveModeSave, 0, "photo of flowers" },	
 
 
     // Addy 4 Base
@@ -915,6 +963,18 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		_saveFiles[index++].handler = _adibou2DrawingMailboxHandler[i] = new SpriteHandler(_vm,
 																						   targetName,
 																						   Common::String::format("draw_mailbox_%02d", i + 1));
+
+		_saveFiles[index++].handler = _adibou2CakePhotoHandler[i] = new SpriteHandler(_vm,
+																					  targetName,
+																					  Common::String::format("photo_cake_%02d", i + 1));
+
+		_saveFiles[index++].handler = _adibou2FlowerPhotoHandler[i] = new SpriteHandler(_vm,
+																						targetName,
+																						Common::String::format("photo_flower_%02d", i + 1));
+
+		_saveFiles[index++].handler = _adibou2FlowerPhoto2Handler[i] = new SpriteHandler(_vm,
+																						 targetName,
+																						 Common::String::format("photo_flower_2_%02d", i + 1));
 	}
 
 	for (int i = 0; i < 2; i++)
