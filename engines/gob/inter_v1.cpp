@@ -1234,6 +1234,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 
 	switch (cmd) {
 	case -1:
+		warning("o1_keyFunc: stub for command %d", cmd);
 		break;
 
 	case 0:
@@ -1246,7 +1247,7 @@ void Inter_v1::o1_keyFunc(OpFuncParams &params) {
 		break;
 
 	case 1:
-		if (_vm->getGameType() != kGameTypeFascination)
+		if (_vm->getGameType() != kGameTypeFascination && _vm->getGameType() != kGameTypeAdibou2)
 			_vm->_util->forceMouseUp(true);
 		key = _vm->_game->checkKeys(&_vm->_global->_inter_mouseX,
 				&_vm->_global->_inter_mouseY, &_vm->_game->_mouseButtons, 0);
