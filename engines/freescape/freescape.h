@@ -93,9 +93,9 @@ public:
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
 	bool isCastle() { return _targetName.hasPrefix("castle"); }
-	bool isAmiga() { return _targetName.hasSuffix("-amiga") || Common::matchString(_targetName.c_str(), "*-amiga-#"); }
-	bool isAtariST() { return _targetName.hasSuffix("-st") || Common::matchString(_targetName.c_str(), "*-st-#"); }
-	bool isDOS() { return !isAmiga() && !isAtariST(); }
+	bool isAmiga() { return _gameDescription->platform == Common::kPlatformAmiga; }
+	bool isAtariST() { return _gameDescription->platform == Common::kPlatformAtariST; }
+	bool isDOS() { return _gameDescription->platform == Common::kPlatformDOS; }
 
 	Common::Error run() override;
 
