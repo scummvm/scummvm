@@ -186,6 +186,7 @@ public:
 
 	uint32 getTimeToNextFrame() const;
 	uint32 getStaticTimeToNextFrame() const;
+	int32 getExpectedFrameFromCurrentTime() const;
 
 	void pauseVideo(bool pause);
 

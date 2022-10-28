@@ -369,6 +369,15 @@ void VideoPlayer::waitEndFrame(int slot, bool onlySound) {
 	}
 }
 
+int32 VideoPlayer::getExpectedFrameFromCurrentTime(int slot) {
+	Video *video = getVideoBySlot(slot);
+	if (!video)
+		return -1;
+
+	return video->decoder->getExpectedFrameFromCurrentTime();
+}
+
+
 bool VideoPlayer::isPlayingLive() const {
 	const Video *video = getVideoBySlot(0);
 	return video && video->live;

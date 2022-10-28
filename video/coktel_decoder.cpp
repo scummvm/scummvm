@@ -651,6 +651,17 @@ uint32 CoktelDecoder::getTimeToNextFrame() const {
 	return nextFrameStartTime - elapsedTime;
 }
 
+int32 CoktelDecoder::getExpectedFrameFromCurrentTime() const {
+	if (endOfVideo() || _curFrame < 0)
+		return -1;
+
+	int32 elapsedTime = g_system->getMillis() - _startTime;
+	if (elapsedTime < 0)
+		return -1;
+
+	return (Common::Rational(elapsedTime * getFrameRate()) / 1000).toInt();
+}
+
 uint32 CoktelDecoder::getStaticTimeToNextFrame() const {
 	return (1000 / _frameRate).toInt();
 }
