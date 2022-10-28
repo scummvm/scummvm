@@ -224,7 +224,8 @@ SurfacePtr Video::initSurfDesc(int16 width, int16 height, int16 flags) {
 	} else {
 		assert(!(flags & DISABLE_SPR_ALLOC));
 
-		if (!(flags & SCUMMVM_CURSOR))
+
+		if (!(flags & SCUMMVM_CURSOR) && _vm->getGameType() != kGameTypeAdibou2)
 			width = (width + 7) & 0xFFF8;
 
 		descPtr = SurfacePtr(new Surface(width, height, _vm->getPixelFormat().bytesPerPixel));
