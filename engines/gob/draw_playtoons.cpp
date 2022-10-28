@@ -148,8 +148,7 @@ void Draw_Playtoons::spriteOperation(int16 operation) {
 	case DRAW_PUTPIXEL:
 		switch (_pattern & 0xFF) {
 		case 0xFF:
-			warning("oPlaytoons_spriteOperation: operation DRAW_PUTPIXEL, pattern -1");
-			WRITE_VAR(0, 1);
+			WRITE_VAR(0, _spritesArray[_destSurface]->get(_destSpriteX, _destSpriteY).get());
 			break;
 		case 1:
 			_spritesArray[_destSurface]->fillRect(destSpriteX,
