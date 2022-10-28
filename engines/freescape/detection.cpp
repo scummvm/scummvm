@@ -30,16 +30,16 @@
 namespace Freescape {
 
 static const PlainGameDescriptor freescapeGames[] = {
-	{"3dkit", "The 3D Kit Game"},
+	{"3dkit", "3D Kit Game"},
 	{"driller", "Driller"},
 	{"spacestationoblivion", "Space Station Oblivion"},
 	{"darkside", "Dark Side"},
 	{"totaleclipse", "Total Eclipse"},
 	{"castlemaster", "Castle Master"},
-	{"menace", "Menace of Dr. Spoil Sport"},
 	{0, 0}};
 
 static const ADGameDescription gameDescriptions[] = {
+	// Original Freescape games
 	{"driller",
 	 "Driller",
 	 {
@@ -196,6 +196,31 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformDOS,
 	 ADGF_NO_FLAGS,
 	 GUIO1(GUIO_NOMIDI)},
+
+	// 3D Construction Kit games
+	{"3dkit",
+	 "The 3-D Kit Game",
+	 AD_ENTRY1s("3DKIT.RUN", "f35147729a2f5b6852a504223aeb6a57", 112158),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"3dkit",
+	 "Menace of Dr. Spoil Sport",
+	 AD_ENTRY1s("MODSS.RUN", "409ac1100a15447e742ec1415b2741c3", 91176),
+	 Common::EN_ANY,
+	 Common::kPlatformDOS,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+	{"3dkit",
+	 "Anarchy Academy",
+	 AD_ENTRY2s("ANARCHY.PRG", "78d543be4aad9608093c1e91bc100307", 270,
+	            "RUNNER.DAT", "1cf7c049ee59503dd7218b0f45828132", 42802),
+	 Common::EN_ANY,
+	 Common::kPlatformAtariST,
+	 ADGF_NO_FLAGS,
+	 GUIO1(GUIO_NOMIDI)},
+
 	AD_TABLE_END_MARKER};
 } // End of namespace Freescape
 
