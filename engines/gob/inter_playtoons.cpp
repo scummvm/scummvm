@@ -480,7 +480,7 @@ void Inter_Playtoons::oPlaytoons_openItk() {
 	_vm->_dataIO->openArchive(file, false);
 }
 
-Common::String Inter_Playtoons::getFile(const char *path) {
+Common::String Inter_Playtoons::getFile(const char *path, bool stripPath) {
 	const char *orig = path;
 
 	if      (!strncmp(path, "@:\\", 3))
@@ -494,10 +494,12 @@ Common::String Inter_Playtoons::getFile(const char *path) {
 	else if (!strncmp(path, "<ALLCD>", 7))
 		path += 7;
 
-	const char *backslash = strrchr(path, '\\');
-	if (backslash)
-		path = backslash + 1;
-
+	if (stripPath)
+	{
+		const char *backslash = strrchr(path, '\\');
+		if (backslash)
+			path = backslash + 1;
+	}
 
 	Common::String newPath = path;
 	// Comma in filenames tells this engine that the file handle may be reused for next read/write operations

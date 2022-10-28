@@ -663,7 +663,7 @@ protected:
 	void oPlaytoons_copyFile();
 	void oPlaytoons_openItk();
 
-	Common::String getFile(const char *path);
+	Common::String getFile(const char *path, bool stripPath = true);
 
 	bool readSprite(Common::String file, int32 dataVar, int32 size, int32 offset);
 };
