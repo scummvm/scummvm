@@ -54,7 +54,7 @@ static void sub_4309D3(Draw *draw, Mult::Mult_Object &obj) {
 	obj.animName[0] = '\0';
 }
 
-void Goblin_v7::changeDirection(Mult::Mult_Object *obj, int16 animState) {
+void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	char str[128];
 	obj->pAnimData->layer &= 3;
 	int32 var_4 = 0;
@@ -147,12 +147,10 @@ void Goblin_v7::changeDirection(Mult::Mult_Object *obj, int16 animState) {
 		break;
 	}
 
-	int32 var_A4 = 0;
 	if (obj->pAnimData->stateType == 1) {
-		var_A4 = animState;
-		if (var_A4 == 22)
+		if (animState == 22)
 			animState = 27;
-		else if (var_A4 == 25)
+		else if (animState == 25)
 			animState = 26;
 	}
 
@@ -185,7 +183,7 @@ void Goblin_v7::changeDirection(Mult::Mult_Object *obj, int16 animState) {
 		Common::strlcat(str, "COG", 128);
 		break;
 	case 22:
-		warning("Goblin_v7::changeDirection: animState == 22 not implemented");
+		warning("Goblin_v7::setGoblinState: animState == 22 not implemented");
 		break;
 	case 23:
 		Common::strlcat(str, "EXP", 128);
@@ -194,13 +192,13 @@ void Goblin_v7::changeDirection(Mult::Mult_Object *obj, int16 animState) {
 		Common::strlcat(str, "FRA", 128);
 		break;
 	case 25:
-		warning("Goblin_v7::changeDirection: animState == 25 not implemented");
+		warning("Goblin_v7::setGoblinState: animState == 25 not implemented");
 		break;
 	case 26:
-		warning("Goblin_v7::changeDirection: animState == 26 not implemented");
+		warning("Goblin_v7::setGoblinState: animState == 26 not implemented");
 		break;
 	case 27:
-		warning("Goblin_v7::changeDirection: animState == 27 not implemented");
+		warning("Goblin_v7::setGoblinState: animState == 27 not implemented");
 		break;
 
 	default:
@@ -522,7 +520,7 @@ void Goblin_v7::initiateMove(Mult::Mult_Object *obj) {
 
 	if (animState != 0) {
 		obj->pAnimData->newState = animState;
-		changeDirection(obj, animState);
+		setGoblinState(obj, animState);
 	} else {
 		if (obj->pAnimData->destX != obj->pAnimData->gobDestX_maybe || obj->pAnimData->destY != obj->pAnimData->gobDestY_maybe)
 			obj->pAnimData->pathExistence = 2;
@@ -535,15 +533,15 @@ void Goblin_v7::initiateMove(Mult::Mult_Object *obj) {
 				if (obj->pAnimData->curLookDir >= 40)
 					return;
 				else {
-					changeDirection(obj, 105);
+					setGoblinState(obj, 105);
 					obj->pAnimData->pathExistence = 3;
 				}
 			} else {
-				changeDirection(obj, 101);
+				setGoblinState(obj, 101);
 				obj->pAnimData->pathExistence = 3;
 			}
 		} else {
-			changeDirection(obj, obj->pAnimData->curLookDir + 100);
+			setGoblinState(obj, obj->pAnimData->curLookDir + 100);
 		}
 	}
 }

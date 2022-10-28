@@ -228,7 +228,7 @@ public:
 	virtual void initiateMove(Mult::Mult_Object *obj) = 0;
 	virtual void moveAdvance(Mult::Mult_Object *obj, Gob_Object *gobDesc,
 			int16 nextAct, int16 framesCount) = 0;
-	virtual void changeDirection(Mult::Mult_Object *obj, int16 animState);
+	virtual void setGoblinState(Mult::Mult_Object *obj, int16 animState);
 
 	Goblin(GobEngine *vm);
 	virtual ~Goblin();
@@ -333,7 +333,7 @@ public:
 	~Goblin_v7() override {}
 
 	void initiateMove(Mult::Mult_Object *obj);
-	void changeDirection(Mult::Mult_Object *obj, int16 animState);
+	void setGoblinState(Mult::Mult_Object *obj, int16 animState);
 
 private:
 	int32 computeObjNextDirection(Mult::Mult_Object &obj);

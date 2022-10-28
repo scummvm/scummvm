@@ -293,7 +293,7 @@ void Inter_v7::o7_setGoblinState() {
 
 	debugC(1, kDebugVideo, "o7_setGoblinState Obj %s state = %d, type = %d = %d ", obj.animName, state, type, state + type*100);
 
-	_vm->_goblin->changeDirection(&obj, state + type*100);
+	_vm->_goblin->setGoblinState(&obj, state + type * 100);
 	if (type != 0) {
 		animData.pathExistence = 3;
 		animData.animType = 12;
