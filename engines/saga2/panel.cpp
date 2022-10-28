@@ -1008,13 +1008,13 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 	uint16 qualifier = 0;
 
 	if (event.kbd.flags & Common::KBD_SHIFT)
-		qualifier |= qualifierShift;
+		qualifier |= kQualifierShift;
 
 	if (event.kbd.flags & Common::KBD_CTRL)
-		qualifier |= qualifierControl;
+		qualifier |= kQualifierControl;
 
 	if (event.kbd.flags & Common::KBD_ALT)
-		qualifier |= qualifierAlt;
+		qualifier |= kQualifierAlt;
 
 	_msg._pickAbsPos  = _pickPos;
 	_msg._pointerEnter = 0;

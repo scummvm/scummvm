@@ -31,12 +31,12 @@
 namespace Saga2 {
 
 enum keyQualifiers {
-	qualifierShift  = (1 << 0),
-	qualifierControl = (1 << 1),
-	qualifierAlt    = (1 << 2),
+	kQualifierShift  = (1 << 0),
+	kQualifierControl = (1 << 1),
+	kQualifierAlt    = (1 << 2),
 
 	// special qualifiers used internally
-	spQualifierFunc = (1 << 7)              // indicates function key
+	kSpQualifierFunc = (1 << 7)              // indicates function key
 };
 
 const int           homeKey     = (0x47 << 8),

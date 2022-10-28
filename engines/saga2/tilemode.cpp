@@ -934,11 +934,11 @@ void TileModeHandleKey(int16 key, int16 qual) {
 
 	case 'a':
 		if (uiKeysEnabled)
-			toggleAgression(getCenterActorPlayerID(), qual & qualifierShift);
+			toggleAgression(getCenterActorPlayerID(), qual & kQualifierShift);
 		break;
 	case 'b':
 		if (uiKeysEnabled)
-			toggleBanding(getCenterActorPlayerID(), qual & qualifierShift);
+			toggleBanding(getCenterActorPlayerID(), qual & kQualifierShift);
 		break;
 	case '\t':
 		if (uiKeysEnabled)

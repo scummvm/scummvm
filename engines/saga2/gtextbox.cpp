@@ -703,14 +703,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		case Common::KEYCODE_LEFT:
 			if (_anchorPos > 0)
 				_anchorPos--;
-			if (!(msg._qualifier & qualifierShift))
+			if (!(msg._qualifier & kQualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 			if (_anchorPos < _currentLen[_index])
 				_anchorPos++;
-			if (!(msg._qualifier & qualifierShift))
+			if (!(msg._qualifier & kQualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
@@ -725,7 +725,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			break;
 
 		case Common::KEYCODE_z: // Alt-Z
-			if (msg._qualifier & (qualifierControl | qualifierAlt)) {
+			if (msg._qualifier & (kQualifierControl | kQualifierAlt)) {
 				if (_undoBuffer) {
 					_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 					memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
