@@ -35,7 +35,7 @@
 
 namespace Gob {
 
-Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(600) {
+Inter::Inter(GobEngine *vm) : _vm(vm), _varStack(1000) {
 	_terminate = 0;
 	_break = false;
 
