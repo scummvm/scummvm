@@ -275,7 +275,7 @@ void VideoPlayer::finishVideoSound(int slot) {
 
 void VideoPlayer::waitSoundEnd(int slot) {
 	Video *video = getVideoBySlot(slot);
-	if (!video || !video->decoder)
+	if (!video || !video->decoder || video->live)
 		return;
 
 	video->decoder->finishSound();
