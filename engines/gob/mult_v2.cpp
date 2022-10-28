@@ -821,12 +821,49 @@ void Mult_v2::animate() {
 	advanceAllObjects();
 
 	// Find relevant objects
+	int8 currentOrder = (int8) _objCount;
 	for (int i = 0; i < _objCount; i++) {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
-		if (_vm->_map->_mapUnknownBool) {
-			// TODO!
+		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order != 100) {
+			animData.order = currentOrder;
+			animData.field_22 = 0;
+			animData.field_21 = 0;
+			if (animData.animType == 10 || animData.animType == 3) {
+				animData.field_21 = 1;
+				if (animData.curLookDir > 10 || animData.animType == 3) {
+					animData.field_22 = 1;
+				}
+			}
+
+			for (int j = 0; j < i; j++) {
+				Mult_Object &animObject2 = _objects[j];
+				Mult_AnimData &animData2 = *(animObject2.pAnimData);
+
+				if (animData2.isStatic || animData2.order == 100)
+					continue;
+
+				int8 orderCorrection = 0;
+				if (animData2.destY <= animData.destY || animData2.destX > animData.destX) {
+					if (animData2.destY >= animData.destY || animData2.destX <= animData.destX) {
+						if (animData.destX + animData.field_1F <= animData2.destX || animData.destY - animData.field_20 < animData2.destY) {
+							if (animData2.destX + animData2.field_1F > animData.destX && animData2.destY - animData2.field_20 >= animData.destY) {
+								orderCorrection = 1;
+							} else {
+								orderCorrection = -1;
+							}
+						} else {
+							orderCorrection = 1;
+						}
+					} else {
+						orderCorrection = -1;
+					}
+
+					animData.order += orderCorrection;
+					animData2.order -= orderCorrection;
+				}
+			}
 		}
 
 		animData.intersected = 200;

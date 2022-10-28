@@ -60,6 +60,14 @@ public:
 		int8 redrawAnimation;
 		uint8 redrawLayer;
 		uint8 redrawFrame;
+		uint8 field_1B;
+		uint8 field_1C;
+		uint8 field_1D;
+		uint8 field_1E;
+		uint8 field_1F;
+		uint8 field_20;
+		uint8 field_21;
+		uint8 field_22;
 	} PACKED_STRUCT;
 
 	struct Mult_GobState {
