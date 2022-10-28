@@ -255,6 +255,13 @@ bool SavePartVars::readFromRaw(const byte *data, uint32 size) {
 	return true;
 }
 
+bool SavePartVars::partialReadFromRaw(const byte *data, uint32 size) {
+	if (size > _size)
+		return false;
+	memcpy(_data, data, size);
+	return true;
+}
+
 bool SavePartVars::writeInto(uint32 var, uint32 offset, uint32 size) const {
 	if (!_vm->_inter->_variables)
 		return false;

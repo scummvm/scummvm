@@ -893,8 +893,6 @@ class SaveLoad_v7: public SaveLoad {
 public:
 	static const uint32 kChildrenCount = 16;
 	static const uint32 kAdibou2NbrOfApplications = 5;
-	static const uint32 kAdibou2NbrOfAppInfoFiles = 3; // app, crite, exo
-
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
 
@@ -908,10 +906,10 @@ protected:
 		const char *description;
 	};
 
-	class FaceHandler : public TempSpriteHandler {
+	class SpriteHandler : public TempSpriteHandler {
 	public:
-		FaceHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
-		~FaceHandler() override;
+		SpriteHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
+		~SpriteHandler() override;
 
 		int32 getSize() override;
 		bool load(int16 dataVar, int32 size, int32 offset) override;
@@ -946,40 +944,20 @@ protected:
 		File _file;
 	};
 
-	class EnvironmentHandler : public SaveHandler {
-	public:
-		EnvironmentHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
-		~EnvironmentHandler() override;
-
-		int32 getSize() override;
-		bool load(int16 dataVar, int32 size, int32 offset) override;
-		bool save(int16 dataVar, int32 size, int32 offset) override;
-
-	private:
-		class File : public SlotFileStatic {
-		public:
-			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
-			~File() override;
-		};
-
-		static const int kNbrOfParts = 6;
-		static const Common::Array<int> kPartOffsets;
-		static int offset_to_part(int offset);
-
-		File _file;
-		SaveReader _reader;
-		SaveWriter _writer;
-	};
-
 	static SaveFile _saveFiles[];
 
-	FaceHandler        *_faceHandler[kChildrenCount];
+	SpriteHandler *_faceHandler[kChildrenCount];
 	FakeFileHandler    *_childrenHandler;
 	FakeFileHandler    *_debilHandler;
 	GameFileHandler    *_configHandler;
-	EnvironmentHandler *_adibou2EnvHandler[kChildrenCount];
+	GameFileHandler    *_adibou2EnvHandler[kChildrenCount];
 	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
-	FakeFileHandler    *_adibou2AppInfoHandler[kAdibou2NbrOfAppInfoFiles][kAdibou2NbrOfApplications];
+	GameFileHandler    *_adibou2MemoHandler[kChildrenCount];
+	GameFileHandler    *_adibou2DiploHandler[kChildrenCount];
+	GameFileHandler    *_adibou2AppliHandler[kAdibou2NbrOfApplications];
+	GameFileHandler    *_adibou2CriteHandler[kAdibou2NbrOfApplications];
+	GameFileHandler    *_adibou2ExoHandler[kAdibou2NbrOfApplications];
+	GameFileHandler    *_adibou2ApplicationsInfoHandler;
 	TempSpriteHandler  *_adibou2AppIcoHandler[kAdibou2NbrOfApplications];
 	FakeFileHandler    *_addy4BaseHandler[2];
 	FakeFileHandler    *_addy4GrundschuleHandler[11];
