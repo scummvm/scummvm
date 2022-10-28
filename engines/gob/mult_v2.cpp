@@ -699,7 +699,8 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 		animLayer = _vm->_scenery->getAnimLayer(nAnim, nLayer);
 	} else {
 		if (animObj.videoSlot > 0) {
-			_vm->_video->retrace();
+			if (_vm->getGameType() != kGameTypeAdibou2)
+				_vm->_video->retrace();
 			_vm->_vidPlayer->waitEndFrame(animObj.videoSlot - 1, true);
 		}
 	}
