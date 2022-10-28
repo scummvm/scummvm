@@ -198,6 +198,8 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"ico_04.inf", kSaveModeSave, 0, "app info" },
 	{"ico_05.inf", kSaveModeSave, 0, "app info" },
 	{"applis.inf", kSaveModeSave, 0, "app info" },
+	{"lance.inf", kSaveModeSave, 0, "app info" },
+	{"retour.inf", kSaveModeSave, 0, "app info" },
 
     // Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
@@ -451,6 +453,8 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	const Common::Array<int> applisOffsets = {0, 4, 8, 12, 16, 20};
 	_saveFiles[index++].handler = _adibou2ApplicationsInfoHandler = new GameFileHandler(_vm, targetName, "applis");
+	_saveFiles[index++].handler = _adibou2RetourHandler = new FakeFileHandler(_vm);
+	_saveFiles[index++].handler = _adibou2LanceHandler = new FakeFileHandler(_vm);
 
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
@@ -496,6 +500,8 @@ SaveLoad_v7::~SaveLoad_v7() {
 	}
 
 	delete _adibou2ApplicationsInfoHandler;
+	delete _adibou2RetourHandler;
+	delete _adibou2LanceHandler;
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
