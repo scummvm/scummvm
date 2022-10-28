@@ -686,6 +686,7 @@ protected:
 	void o7_loadFunctions();
 	void o7_moveFile();
 	void o7_playVmdOrMusic();
+	void o7_initScreen();
 	void o7_draw0x89();
 	void o7_findFile();
 	void o7_findCDFile();
