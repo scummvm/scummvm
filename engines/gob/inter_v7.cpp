@@ -58,6 +58,7 @@ void Inter_v7::setupOpcodesDraw() {
 
 	OPCODEDRAW(0x0C, o7_draw0x0C);
 	OPCODEDRAW(0x0D, o7_loadCursor);
+	OPCODEDRAW(0x17, o7_loadMultObject);
 	OPCODEDRAW(0x44, o7_displayWarning);
 	OPCODEDRAW(0x45, o7_logString);
 	OPCODEDRAW(0x52, o7_moveGoblin);
@@ -213,6 +214,44 @@ void Inter_v7::o7_loadCursor() {
 
 	delete cursorGroup;
 	delete defaultCursor;
+}
+
+void Inter_v7::o7_loadMultObject() {
+	assert(_vm->_mult->_objects);
+
+	uint16 objIndex = _vm->_game->_script->readValExpr();
+
+	Mult::Mult_Object &obj = _vm->_mult->_objects[objIndex];
+	Mult::Mult_AnimData &objAnim = *(obj.pAnimData);
+
+	auto x = _vm->_game->_script->readValExpr();
+	auto y = _vm->_game->_script->readValExpr();
+	debugC(4, kDebugGameFlow, "Loading mult object %d -> x = %d, y = %d", objIndex, x ,y);
+
+	*obj.pPosX = x;
+	*obj.pPosY = y;
+
+	byte *multData = (byte *) &objAnim;
+	for (int i = 0; i < 11; i++) {
+		if (_vm->_game->_script->peekByte() != 99)
+			multData[i] = _vm->_game->_script->readValExpr();
+		else
+			_vm->_game->_script->skip(1);
+	}
+
+	if (((int32)*obj.pPosX == -1234) && ((int32)*obj.pPosY == -4321)) {
+		if (obj.videoSlot > 0)
+			_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
+
+		objAnim.isStatic = 1;
+
+		obj.animVariables = nullptr;
+		obj.videoSlot  = 0;
+		obj.lastLeft   = -1;
+		obj.lastTop    = -1;
+		obj.lastBottom = -1;
+		obj.lastRight  = -1;
+	}
 }
 
 void Inter_v7::o7_displayWarning() {
