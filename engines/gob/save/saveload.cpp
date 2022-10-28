@@ -89,6 +89,32 @@ bool SaveLoad::load(const char *fileName, int16 dataVar, int32 size, int32 offse
 	return true;
 }
 
+bool SaveLoad::loadToRaw(const char *fileName, byte *ptr, int32 size, int32 offset) {
+	debugC(3, kDebugSaveLoad, "Requested loading of save file \"%s\" - raw %p, %d, %d",
+		   fileName, ptr, size, offset);
+
+	SaveHandler *handler = getHandler(fileName);
+
+	if (!handler) {
+		warning("No save handler for \"%s\" (raw %p, %d, %d)", fileName, (void*) ptr, size, offset);
+		return false;
+	}
+
+	if (!handler->loadToRaw(ptr, size, offset)) {
+		const char *desc = getDescription(fileName);
+
+		if (!desc)
+			desc = "Unknown";
+
+		warning("Could not load %s (\"%s\" (raw %p, %d, %d))",
+				desc, fileName, (void*) ptr, size, offset);
+		return false;
+	}
+
+	debugC(3, kDebugSaveLoad, "Successfully loaded game");
+	return true;
+}
+
 bool SaveLoad::save(const char *fileName, int16 dataVar, int32 size, int32 offset) {
 	debugC(3, kDebugSaveLoad, "Requested saving of save file \"%s\" - %d, %d, %d",
 			fileName, dataVar, size, offset);

@@ -97,6 +97,7 @@ void Inter_v7::setupOpcodesFunc() {
 	OPCODEFUNC(0x03, o7_loadCursor);
 	OPCODEFUNC(0x11, o7_printText);
 	OPCODEFUNC(0x33, o7_fillRect);
+	OPCODEFUNC(0x3F, o7_checkData);
 	OPCODEFUNC(0x4D, o7_readData);
 	OPCODEFUNC(0x4E, o7_writeData);
 }
@@ -848,29 +849,13 @@ void Inter_v7::o7_setActiveCD() {
 
 	Common::ArchiveMemberList files;
 	SearchMan.listMatchingMembers(files, str0);
+	Common::String savedCDpath = _currentCDPath;
 
 	for (Common::ArchiveMemberPtr file : files) {
 		auto *node = dynamic_cast<Common::FSNode *>(file.get());
-		if (node != nullptr) {
-			Common::String dirname = node->getParent().getName();
-			Common::FSNode gameDataDir(ConfMan.get("path"));
-			bool newDirIsGameDir = (node->getParent().getPath() == gameDataDir.getPath());
-
-			if (!newDirIsGameDir &&
-				(dirname.equalsIgnoreCase("applis")
-				 || dirname.equalsIgnoreCase("envir")))
-				continue;
-
-			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s",  _currentCDPath.c_str(), dirname.c_str());
-			if (!_currentCDPath.empty())
-				SearchMan.setPriority(_currentCDPath, 0);
-
-			if (newDirIsGameDir)
-				_currentCDPath = "";
-			else {
-				_currentCDPath = dirname;
-				SearchMan.setPriority(dirname, 1);
-			}
+		if (node != nullptr &&
+			setCurrentCDPath(node->getParent())) {
+			debugC(5, kDebugFileIO, "o7_setActiveCD: %s -> %s", savedCDpath.c_str(),  _currentCDPath.c_str());
 			storeValue(1);
 			return;
 		}
@@ -1220,6 +1205,116 @@ void Inter_v7::o7_fillRect(OpFuncParams &params) {
 	else
 		_vm->_draw->spriteOperation(DRAW_FILLRECT);
 	_vm->_draw->_pattern = savedPattern;
+}
+
+bool Inter_v7::setCurrentCDPath(const Common::FSNode &newDir) {
+	Common::FSNode gameDataDir(ConfMan.get("path"));
+	bool newDirIsGameDir = (newDir.getPath() == gameDataDir.getPath());
+	Common::String newDirName = newDir.getName();
+
+	if (!newDirIsGameDir &&
+		(newDirName.equalsIgnoreCase("applis") || newDirName.equalsIgnoreCase("envir")))
+		return false;
+
+	if (!_currentCDPath.empty())
+		SearchMan.setPriority(_currentCDPath, 0);
+
+	if (newDirIsGameDir)
+		_currentCDPath = "";
+	else {
+		_currentCDPath = newDirName;
+		SearchMan.setPriority(newDirName, 1);
+	}
+
+	return true;
+}
+
+Common::Array<uint32> Inter_v7::getAdibou2InstalledApplications() {
+	byte buffer[4];
+	Common::Array<uint32> applicationNumbers;
+	if (_vm->_saveLoad->loadToRaw("applis.inf", buffer, 4, 0)) {
+		int numApplications = READ_LE_UINT32(buffer);
+		for (int i = 0; i < numApplications; i++) {
+			if (_vm->_saveLoad->loadToRaw("applis.inf", buffer, 4, 4 + i * 4)) {
+				uint32 applicationNumber = READ_LE_UINT32(buffer);
+				applicationNumbers.push_back(applicationNumber);
+			}
+		}
+	}
+
+	return applicationNumbers;
+}
+
+void Inter_v7::o7_checkData(OpFuncParams &params) {
+	Common::String file = getFile(_vm->_game->_script->evalString());
+
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		file == "CD.INF") {
+		// WORKAROUND: some versions of Adibou2 are only able to handle one CD at a time.
+		// In such versions, scripts always begin to look for CD.INF file in the CD, and check
+		// if its contents matches the selected application. We insert a hack here, to set
+		// the directory of the wanted application as "current CD" directory.
+		// This way, applications can be made available by copying them as a subdirectory of the
+		// game directory, just like in multi-cd-aware versions.
+		Common::Array<uint32> installedApplications = getAdibou2InstalledApplications();
+		int32 indexAppli = VAR_OFFSET(20196);
+		if (indexAppli == -1) {
+			// New appli, find the first directory containing an application still not installed, and set it as "current CD" path.
+			Common::ArchiveMemberList files;
+			SearchMan.listMatchingMembers(files, file); // Search for CD.INF files
+			for (Common::ArchiveMemberPtr &cdInfFile : files) {
+				Common::SeekableReadStream *stream = cdInfFile->createReadStream();
+				while (stream->pos() + 4 <= stream->size()) {
+					// CD.INF contains a list of applications, as uint32 LE values
+					uint32 applicationNumber = stream->readUint32LE();
+					if (Common::find(installedApplications.begin(), installedApplications.end(), applicationNumber) == installedApplications.end()) {
+						// Application not installed yet, set it as current CD path
+						Common::FSNode cdInfFileNode(cdInfFile->getName());
+						setCurrentCDPath(cdInfFileNode.getParent());
+						break;
+					}
+				}
+			}
+		} else if (indexAppli >= 0 && (size_t) indexAppli <= installedApplications.size()) {
+			// Already installed appli, find its directory and set it as "current CD" path
+			int32 applicationNumber = installedApplications[indexAppli - 1];
+			Common::String appliVmdName = Common::String::format("appli_%02d.vmd", applicationNumber);
+			Common::ArchiveMemberList files;
+			SearchMan.listMatchingMembers(files, appliVmdName);
+			for (Common::ArchiveMemberPtr &member : files) {
+				auto *node = dynamic_cast<Common::FSNode *>(member.get());
+				if (node != nullptr) {
+					if (setCurrentCDPath(node->getParent()))
+						break;
+				}
+			}
+		}
+	}
+
+	uint16 varOff = _vm->_game->_script->readVarIndex();
+
+	int32 size   = -1;
+	int16 handle = 1;
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file.c_str());
+	if (mode == SaveLoad::kSaveModeNone) {
+		size = _vm->_dataIO->fileSize(file);
+		if (size == -1)
+			warning("File \"%s\" not found", file.c_str());
+
+	} else if (mode == SaveLoad::kSaveModeSave)
+		size = _vm->_saveLoad->getSize(file.c_str());
+	else if (mode == SaveLoad::kSaveModeExists)
+		size = 23;
+
+	if (size == -1)
+		handle = -1;
+
+	debugC(2, kDebugFileIO, "Requested size of file \"%s\": %d",
+		   file.c_str(), size);
+
+	WRITE_VAR_OFFSET(varOff, handle);
+	WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_v7::o7_readData(OpFuncParams &params) {

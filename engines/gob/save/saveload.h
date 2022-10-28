@@ -60,6 +60,7 @@ public:
 	int32 getSize(const char *fileName);
 	/** Loads size bytes from offset into the variables starting with dataVar. */
 	bool load(const char *fileName, int16 dataVar, int32 size, int32 offset);
+	bool loadToRaw(const char *fileName, byte *ptr, int32 size, int32 offset);
 	/** Saves size bytes from the variables starting with data dataVar at offset. */
 	bool save(const char *fileName, int16 dataVar, int32 size, int32 offset);
 	bool saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 offset);
