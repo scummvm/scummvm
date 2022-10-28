@@ -864,7 +864,7 @@ void Mult_v2::animate() {
 		Mult_Object &animObj = _objects[i];
 		Mult_AnimData &animData = *(animObj.pAnimData);
 
-		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order != 100) {
+		if (_vm->_map->_mapUnknownBool && !animData.isStatic && animData.order <= 100) {
 			animData.order = currentOrder;
 			animData.field_22 = 0;
 			animData.field_21 = 0;
@@ -879,7 +879,7 @@ void Mult_v2::animate() {
 				Mult_Object &previousAnimObject = _objects[j];
 				Mult_AnimData &previousAnimData = *(previousAnimObject.pAnimData);
 
-				if (previousAnimData.isStatic || previousAnimData.order == 100)
+				if (previousAnimData.isStatic || previousAnimData.order > 100)
 					continue;
 
 				int8 orderCorrection = 0;
