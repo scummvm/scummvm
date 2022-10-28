@@ -47,6 +47,23 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{  "enfant.inf", kSaveModeSave, nullptr, "children"     },
 	{   "debil.tmp", kSaveModeSave, nullptr, nullptr        },
 	{  "config.inf", kSaveModeSave, nullptr, "configuration"},
+	// Adibou environment (flowers, vegetables...)
+	{"enviro01.inf", kSaveModeSave, nullptr, "environment" }, // Child 01
+	{"enviro02.inf", kSaveModeSave, nullptr, "environment" }, // Child 02
+	{"enviro03.inf", kSaveModeSave, nullptr, "environment" }, // Child 03
+	{"enviro04.inf", kSaveModeSave, nullptr, "environment" }, // Child 04
+	{"enviro05.inf", kSaveModeSave, nullptr, "environment" }, // Child 05
+	{"enviro06.inf", kSaveModeSave, nullptr, "environment" }, // Child 06
+	{"enviro07.inf", kSaveModeSave, nullptr, "environment" }, // Child 07
+	{"enviro08.inf", kSaveModeSave, nullptr, "environment" }, // Child 08
+    {"enviro09.inf", kSaveModeSave, nullptr, "environment" }, // Child 09
+	{"enviro10.inf", kSaveModeSave, nullptr, "environment" }, // Child 10
+	{"enviro11.inf", kSaveModeSave, nullptr, "environment" }, // Child 11
+	{"enviro12.inf", kSaveModeSave, nullptr, "environment" }, // Child 12
+    {"enviro13.inf", kSaveModeSave, nullptr, "environment" }, // Child 13
+	{"enviro14.inf", kSaveModeSave, nullptr, "environment" }, // Child 14
+	{"enviro15.inf", kSaveModeSave, nullptr, "environment" }, // Child 15
+	{"enviro16.inf", kSaveModeSave, nullptr, "environment" }, // Child 16
 	// Adibou Applications 1-5
     {"Gsa01_01.inf", kSaveModeSave, nullptr, "app progress" }, // Child 01
     {"Gsa02_01.inf", kSaveModeSave, nullptr, "app progress" },
@@ -297,7 +314,105 @@ bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset)
 	return writer.writePart(0, &vars);
 }
 
+SaveLoad_v7::EnvironmentHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+SlotFileStatic(vm, base, ext) {
+}
 
+SaveLoad_v7::EnvironmentHandler::File::~File() {
+}
+
+SaveLoad_v7::EnvironmentHandler::EnvironmentHandler(GobEngine *vm, const Common::String &target, const Common::String &ext) :
+SaveHandler(vm),
+_file(vm, target, ext),
+_reader(kNbrOfParts, 0, _file.build()),
+_writer(kNbrOfParts, 0, _file.build()) {
+}
+
+SaveLoad_v7::EnvironmentHandler::~EnvironmentHandler() {
+}
+
+const Common::Array<int> SaveLoad_v7::EnvironmentHandler::kPartOffsets = {0, 1764, 2564, 3284, 6684, 7192};
+int SaveLoad_v7::EnvironmentHandler::offset_to_part(int offset)
+{
+	for (int i = 0; i < kNbrOfParts; ++i) {
+		if (offset == kPartOffsets[i]) {
+			return i;
+		}
+	}
+
+	warning("No part with offset %d, defaults to part 0", offset);
+	return 0;
+}
+
+int32 SaveLoad_v7::EnvironmentHandler::getSize() {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return -1;
+
+	if (!_reader.load())
+		return -1;
+
+	int32 totalSize = 0;
+	for (int i = 0; i < kNbrOfParts; ++i)
+	{
+		SaveHeader header;
+		if (!_reader.readPartHeader(0, &header))
+			return -1;
+
+		totalSize += (int32) header.getSize();
+	}
+
+	return totalSize;
+}
+
+bool SaveLoad_v7::EnvironmentHandler::load(int16 dataVar, int32 size, int32 offset) {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	uint32 varSize = SaveHandler::getVarSize(_vm);
+	if (size == 0) {
+		// Indicator to load all variables
+		dataVar = 0;
+		size = (int32) varSize;
+	}
+
+	SavePartVars vars(_vm, size);
+
+	if (!_reader.load()) {
+		return false;
+	}
+
+	if (!_reader.readPart(offset_to_part(offset), &vars)) {
+		return false;
+	}
+
+	if (!vars.writeInto((uint16) dataVar, 0, size)) {
+		return false;
+	}
+
+	return true;
+}
+
+bool SaveLoad_v7::EnvironmentHandler::save(int16 dataVar, int32 size, int32 offset) {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	uint32 varSize = SaveHandler::getVarSize(_vm);
+	if (size == 0) {
+		// Indicator to save all variables
+		dataVar = 0;
+		size = (int32) varSize;
+	}
+
+	SavePartVars vars(_vm, size);
+
+	if (!vars.readFrom((uint16) dataVar, 0, size))
+		return false;
+
+	return _writer.writePart(offset_to_part(offset), &vars);
+}
 
 SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 		SaveLoad(vm) {
@@ -312,6 +427,11 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 	_saveFiles[index++].handler = _childrenHandler = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _debilHandler    = new FakeFileHandler(_vm);
 	_saveFiles[index++].handler = _configHandler   = new GameFileHandler(_vm, targetName, "cfg");
+	for (uint32 i = 0; i < kChildrenCount; i++)
+		_saveFiles[index++].handler = _adibou2EnvHandler[i] = new EnvironmentHandler(_vm,
+																					 targetName,
+																					 Common::String::format("env%02d", i + 1));
+
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
@@ -343,6 +463,8 @@ SaveLoad_v7::~SaveLoad_v7() {
 
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{
+		delete _adibou2EnvHandler[i];
+
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
 			delete _adibou2AppProgressHandler[i][j];
 	}
