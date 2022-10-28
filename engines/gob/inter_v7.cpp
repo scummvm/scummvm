@@ -564,7 +564,7 @@ void Inter_v7::o7_playVmdOrMusic() {
 			props.palCmd, props.palStart, props.palEnd, props.flags);
 
 	if (file == "RIEN") {
-		_vm->_vidPlayer->closeAll();
+		_vm->_vidPlayer->closeLiveSound();
 		return;
 	}
 
