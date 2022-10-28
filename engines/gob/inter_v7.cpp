@@ -1408,7 +1408,15 @@ void Inter_v7::o7_checkData(OpFuncParams &params) {
 		   file.c_str(), size);
 
 	WRITE_VAR_OFFSET(varOff, handle);
-	WRITE_VAR(16, (uint32) size);
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		_vm->isCurrentTot("BE_CD.TOT")) {
+		// WORKAROUND: in script BE_CD.TOT of Adibou 2, o7_checkData() can be called in the "leave" callback of a hotspot.
+		// This corrupts the "current hotspot" variable, which is also VAR(16) (!), and lead to an infinite loop.
+		// We skip writing the file size into VAR(16) here as a workarond (the value is not used anyway).
+	}
+	else
+		WRITE_VAR(16, (uint32) size);
 }
 
 void Inter_v7::o7_readData(OpFuncParams &params) {
