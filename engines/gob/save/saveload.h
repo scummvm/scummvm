@@ -53,6 +53,9 @@ public:
 	/** Returns how to handle that file. */
 	virtual SaveMode getSaveMode(const char *fileName) const;
 
+	/** Returns all files known by the saving system matching a pattern. */
+	virtual Common::List<Common::String> getFilesMatchingPattern(const char *pattern) const;
+
 	/** Returns the file's (virtual) size. */
 	int32 getSize(const char *fileName);
 	/** Loads size bytes from offset into the variables starting with dataVar. */
@@ -928,6 +931,7 @@ public:
 	~SaveLoad_v7() override;
 
 	SaveMode getSaveMode(const char *fileName) const override;
+	Common::List<Common::String> getFilesMatchingPattern(const char *pattern) const override;
 
 protected:
 	struct SaveFile {
@@ -1017,7 +1021,7 @@ protected:
 
 	SpriteHandler               *_faceHandler[kChildrenCount];
 	FakeFileHandler             *_childrenHandler;
-	FakeFileHandler             *_debilHandler;
+	FakeFileHandler             *_debilHandler[4];
 	GameFileHandler             *_configHandler;
 	GameFileHandler             *_adibou2EnvHandler[kChildrenCount];
 	SpriteHandler               *_adibou2WeatherHandler[kChildrenCount];
@@ -1054,7 +1058,6 @@ protected:
 	const char *getDescription(const char *fileName) const override;
 
 	const SaveFile *getSaveFile(const char *fileName) const;
-	SaveFile *getSaveFile(const char *fileName);
 };
 
 } // End of namespace Gob
