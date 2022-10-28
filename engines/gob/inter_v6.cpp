@@ -353,6 +353,21 @@ void Inter_v6::o6_assign(OpFuncParams &params) {
 			break;
 		}
 	}
+
+	// WORKAROUND for a bug in Adibou2 script of "pleasant/unpleasant" game
+	if (_vm->getGameType() == kGameTypeAdibou2
+		&&
+		loopCount == 1
+		&&
+		_vm->_game->_script->pos() == 6739
+		&&
+		dest == 508
+		&&
+		VAR_OFFSET(dest) == 0
+		&&
+		_vm->isCurrentTot("l6ex11.tot")) {
+		WRITE_VAR_OFFSET(dest, 1); // used as a loop index for an array initialized only from index 1, skip value 0
+	}
 }
 
 void Inter_v6::o6_removeHotspot(OpFuncParams &params) {
