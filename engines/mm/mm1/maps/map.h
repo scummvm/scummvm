@@ -122,6 +122,11 @@ protected:
 	 */
 	static void none160() {}
 
+	/**
+	 * Generates an encounter based on the passed id arrays
+	 */
+	void encounter(const byte *id1, const byte *id2);
+
 public:
 	byte _walls[MAP_SIZE];
 	byte _states[MAP_SIZE];

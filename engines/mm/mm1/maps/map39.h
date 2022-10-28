@@ -32,9 +32,42 @@ class Map39 : public Map {
 	typedef void (Map39:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special18();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map39::special00
+	const SpecialFn SPECIAL_FN[19] = {
+		&Map39::special00,
+		&Map39::special01,
+		&Map39::special02,
+		&Map39::special03,
+		&Map39::special04,
+		&Map39::special05,
+		&Map39::special06,
+		&Map39::special07,
+		&Map39::special08,
+		&Map39::special09,
+		&Map39::special10,
+		&Map39::special11,
+		&Map39::special12,
+		&Map39::special13,
+		&Map39::special14,
+		&Map39::special05,
+		&Map39::special05,
+		&Map39::special05,
+		&Map39::special18
 	};
 public:
 	Map39() : Map(39, "rwl1", 0xF02) {}

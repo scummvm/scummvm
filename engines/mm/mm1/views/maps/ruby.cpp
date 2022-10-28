@@ -19,67 +19,48 @@
  *
  */
 
-#include "mm/mm1/views/maps/ice_princess.h"
-#include "mm/mm1/maps/map19.h"
+#include "mm/mm1/views/maps/ruby.h"
+#include "mm/mm1/maps/map39.h"
 #include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-#define VAL1 123
-#define ANSWER_OFFSET 167
+#define ANSWER_OFFSET 477
 
-IcePrincess::IcePrincess() :
-		AnswerEntry("IcePrincess", Common::Point(9, 5), 10) {
+Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(2, 9), 12) {
 	_bounds = getLineBounds(17, 24);
 }
 
-void IcePrincess::draw() {
+void Ruby::draw() {
 	clearSurface();
-	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+	writeString(0, 1, STRING["maps.map39.ruby1"]);
 }
 
-void IcePrincess::answerEntered() {
+void Ruby::answerEntered() {
 	MM1::Maps::Map &map = *g_maps->_currentMap;
 	Common::String properAnswer;
-	map[VAL1] = _answer.size();
 	close();
 
-	for (int i = 0; i < 4; ++i)
-		properAnswer += map[ANSWER_OFFSET + i] & 0x7f - 64;
+	for (int i = 0; i < 12 && map[ANSWER_OFFSET + i]; ++i)
+		properAnswer += map[ANSWER_OFFSET + i] - 64;
 
 	if (_answer == properAnswer) {
-		InfoMessage msg(
-			16, 2, STRING["maps.map19.correct"],
-			[]() {
-				g_maps->clearSpecial();
+		for (uint i = 0; i < g_globals->_party.size(); ++i) {
+			g_globals->_party[i]._flags[5] |= CHARFLAG5_20;
+		}
 
-				for (uint i = 0; i < g_globals->_party.size(); ++i) {
-					g_globals->_currCharacter = &g_globals->_party[i];
-					if (g_globals->_currCharacter->_backpack.indexOf(DIAMOND_KEY_ID) != -1) {
-						g_globals->_treasure[5] = 237;
-						g_events->addAction(KEYBIND_SEARCH);
-						return;
-					}
-				}
-
-				g_globals->_treasure[5] = 240;
-				g_events->addAction(KEYBIND_SEARCH);
-			}
-		);
-
-		msg._delaySeconds = 2;
-		send(msg);
-		Sound::sound(SOUND_3);
-		Sound::sound(SOUND_3);
+		g_events->addAction(KEYBIND_SEARCH);
 
 	} else {
-		g_maps->_mapPos.x = 15;
-		g_events->send("Game", GameMessage("UPDATE"));
-		send(SoundMessage(STRING["maps.map19.incorrect"]));
+		g_maps->_mapPos.x = 9;
+		map.updateGame();
+
+		clearSurface();
+		writeString(0, 1, STRING["maps.map39.ruby2"]);
+		close();
 	}
 }
 

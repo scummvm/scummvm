@@ -50,7 +50,6 @@ private:
 	void special16();
 	void special17();
 	void special18();
-	void encounter(const byte *id1, const byte *id2);
 
 	const SpecialFn SPECIAL_FN[19] = {
 		&Map38::special00,

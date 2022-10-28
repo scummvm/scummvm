@@ -31,11 +31,11 @@ namespace Maps {
 
 void Map39::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 19; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
+			if (g_maps->_forwardMask & _data[70 + i]) {
 				
 				(this->*SPECIAL_FN[i])();
 			} else {
@@ -44,14 +44,95 @@ void Map39::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map39::special00() {
+	send(SoundMessage(STRING["maps.map39.message6"]));
+}
+
+void Map39::special01() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		g_globals->_party[i]._flags[7] |= CHARFLAG7_1;
+	}
+
+	send(SoundMessage(
+		STRING["maps.map39.stairs_up"],
+		[]() {
+			g_maps->_mapPos = Common::Point(9, 9);
+			g_maps->changeMap(0x703, 2);
+		}
+	));
+}
+
+void Map39::special02() {
+	send(SoundMessage(
+		STRING["maps.stairs_down"],
+		[]() {
+			g_maps->changeMap(0x702, 3);
+		}
+	));
+}
+
+void Map39::special03() {
+	g_events->addView("Ruby");
+}
+
+void Map39::special04() {
+	if (g_globals->_party.hasItem(SILVER_KEY_ID)) {
+		send(SoundMessage(STRING["maps.map39.door_glows"]));
+	} else {
+		g_maps->_mapPos.y++;
+		updateGame();
+		send(SoundMessage(STRING["maps.map39.door_repels"]));
+	}
+}
+
+void Map39::special05() {
+	encounter(&_data[615], &_data[622]);
+}
+
+void Map39::special06() {
+	encounter(&_data[629], &_data[637]);
+}
+
+void Map39::special07() {
+	encounter(&_data[645], &_data[656]);
+}
+
+void Map39::special08() {
+	encounter(&_data[667], &_data[676]);
+}
+
+void Map39::special09() {
+	encounter(&_data[685], &_data[696]);
+}
+
+void Map39::special10() {
+	encounter(&_data[707], &_data[718]);
+}
+
+void Map39::special11() {
+	encounter(&_data[729], &_data[742]);
+}
+
+void Map39::special12() {
+	encounter(&_data[755], &_data[762]);
+}
+
+void Map39::special13() {
+	encounter(&_data[769], &_data[782]);
+}
+
+void Map39::special14() {
+	encounter(&_data[795], &_data[807]);
+}
+
+void Map39::special18() {
+	send(SoundMessage(STRING["maps.map39.room"]));
 }
 
 } // namespace Maps
