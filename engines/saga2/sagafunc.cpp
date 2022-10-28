@@ -1585,12 +1585,12 @@ int16 scriptActorTurn(int16 *args) {
 
 		uint16      flags = args[1];
 
-		if (flags & moveWait) {
+		if (flags & kMoveWait) {
 			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, args[0] & 7);
 		} else {
 			MotionTask::turn(*a, args[0] & 7);
-			return motionStarted;
+			return kMotionStarted;
 		}
 	}
 
@@ -1616,12 +1616,12 @@ int16 scriptActorTurnTowards(int16 *args) {
 		dir = (GameObject::objectAddress(args[0])->getLocation()
 		       -   a->getLocation()).quickDir();
 
-		if (flags & moveWait) {
+		if (flags & kMoveWait) {
 			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, dir);
 		} else {
 			MotionTask::turn(*a, dir);
-			return motionStarted;
+			return kMotionStarted;
 		}
 	}
 
@@ -1641,13 +1641,13 @@ int16 scriptActorWalk(int16 *args) {
 		TilePoint   dest(args[0], args[1], args[2]);
 		uint16      flags = args[3];
 
-		if (flags & moveWait) {
+		if (flags & kMoveWait) {
 			thisThread->waitForEvent(Thread::waitOther, nullptr);
 			MotionTask::walkToDirect(
-			    getThreadID(thisThread), *a, dest, flags & moveRun);
+			    getThreadID(thisThread), *a, dest, flags & kMoveRun);
 		} else {
-			MotionTask::walkToDirect(*a, dest, flags & moveRun);
-			return motionStarted;
+			MotionTask::walkToDirect(*a, dest, flags & kMoveRun);
+			return kMotionStarted;
 		}
 	}
 

@@ -2509,7 +2509,7 @@ void Actor::updateState() {
 	        &&  isDead()
 	        &&  isInterruptable()
 	        && (_moveTask == nullptr
-	            ||  _moveTask->_motionType != MotionTask::motionTypeDie)) {
+	            ||  _moveTask->_motionType != MotionTask::kMotionTypeDie)) {
 		int16       deadState = isActionAvailable(kActionDead)
 		                        ?   kActionDead
 		                        :   isActionAvailable(kActionDie)
