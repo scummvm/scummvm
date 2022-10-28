@@ -23,8 +23,8 @@
  *   (c) 1993-1996 The Wyrmkeep Entertainment Co.
  */
 
-#ifndef SAGA2_Calendar_H
-#define SAGA2_Calendar_H
+#ifndef SAGA2_CALENDAR_H
+#define SAGA2_CALENDAR_H
 
 namespace Saga2 {
 
