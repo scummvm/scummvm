@@ -330,7 +330,7 @@ void GfxSpriteImage::drawClipped(gPort &port,
 	//  Render the sprite into the bitmap image sequence
 	ExpandColorMappedSprite(map, _sprPtr, _objColors);
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
 	               map._size.x, map._size.y);

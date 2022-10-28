@@ -41,7 +41,7 @@ void gDisplayPort::fillRect(const Rect16 r) {
 	sect.y += _origin.y;
 
 	if (!sect.empty()) {                    // if result is non-empty
-		if (_drawMode == drawModeComplement) // Complement drawing mode
+		if (_drawMode == kDrawModeComplement) // Complement drawing mode
 			_protoPage.invertRect(sect, _fgPen);
 		else
 			_protoPage.fillRect(sect, _fgPen);     // regular drawing mode
@@ -76,16 +76,16 @@ void gDisplayPort::bltPixels(
 		sect.y += _origin.y;
 
 		switch (_drawMode) {
-		case drawModeMatte:                     // use transparency
+		case kDrawModeMatte:                     // use transparency
 			_protoPage.writeTransPixels(sect, src_line, src._size.x);
 			break;
-		case drawModeReplace:                   // don't use transparency
+		case kDrawModeReplace:                   // don't use transparency
 			_protoPage.writePixels(sect, src_line, src._size.x);
 			break;
-		case drawModeColor:                     // solid color, use transparency
+		case kDrawModeColor:                     // solid color, use transparency
 			_protoPage.writeColorPixels(sect, src_line, src._size.x, _fgPen);
 			break;
-		case drawModeComplement:                // blit in complement mode
+		case kDrawModeComplement:                // blit in complement mode
 			_protoPage.writeComplementPixels(sect, src_line, src._size.x, _fgPen);
 			break;
 		default:
@@ -246,7 +246,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 		bank = offset >> 16;
 
 		_protoPage.setWriteBank(bank);
-		if (drawMode == drawModeComplement) _protoPage.setReadBank(bank);
+		if (drawMode == kDrawModeComplement) _protoPage.setReadBank(bank);
 		offset &= 0x0000ffff;
 
 		if (xAbs > yAbs) {
@@ -256,7 +256,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 					break;
 				}
 
-				if (drawMode == drawModeComplement) {
+				if (drawMode == kDrawModeComplement) {
 					svgaWriteAddr[offset]
 					    = svgaReadAddr[offset] ^ _fgPen;
 				} else svgaWriteAddr[offset] = _fgPen;
@@ -274,12 +274,12 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
 					_protoPage.setWriteBank(++bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
 					_protoPage.setWriteBank(--bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				}
 			}
@@ -290,7 +290,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 					break;
 				}
 
-				if (drawMode == drawModeComplement) {
+				if (drawMode == kDrawModeComplement) {
 					svgaWriteAddr[offset]
 					    = svgaReadAddr[offset] ^ _fgPen;
 				} else svgaWriteAddr[offset] = _fgPen;
@@ -308,12 +308,12 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
 					_protoPage.setWriteBank(++bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
 					_protoPage.setWriteBank(--bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				}
 			}
@@ -324,14 +324,14 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 		bank = offset >> 16;
 
 		_protoPage.setWriteBank(bank);
-		if (drawMode == drawModeComplement) _protoPage.setReadBank(bank);
+		if (drawMode == kDrawModeComplement) _protoPage.setReadBank(bank);
 		offset &= 0x0000ffff;
 
 		if (xAbs > yAbs) {
 			errTerm = yAbs - (xAbs >> 1);
 
 			for (i = xAbs + 1; i > 0; i--) {
-				if (drawMode == drawModeComplement) {
+				if (drawMode == kDrawModeComplement) {
 					svgaWriteAddr[offset]
 					    = svgaReadAddr[offset] ^ _fgPen;
 				} else svgaWriteAddr[offset] = _fgPen;
@@ -349,12 +349,12 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
 					_protoPage.setWriteBank(++bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
 					_protoPage.setWriteBank(--bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				}
 			}
@@ -362,7 +362,7 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = xAbs - (yAbs >> 1);
 
 			for (i = yAbs + 1; i > 0; i--) {
-				if (drawMode == drawModeComplement) {
+				if (drawMode == kDrawModeComplement) {
 					svgaWriteAddr[offset]
 					    = svgaReadAddr[offset] ^ _fgPen;
 				} else svgaWriteAddr[offset] = _fgPen;
@@ -380,12 +380,12 @@ void gDisplayPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 				if (offset >= cBytesPerBank) {
 					offset -= cBytesPerBank;
 					_protoPage.setWriteBank(++bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				} else if (offset < 0) {
 					offset += cBytesPerBank;
 					_protoPage.setWriteBank(--bank);
-					if (drawMode == drawModeComplement)
+					if (drawMode == kDrawModeComplement)
 						_protoPage.setReadBank(bank);
 				}
 			}

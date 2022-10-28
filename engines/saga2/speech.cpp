@@ -293,11 +293,11 @@ bool Speech::setupActive() {
 //		throw gError( "Could Not Set Talk Animation");
 
 	// Set up temp gport for blitting to bitmap
-	_textPort.setStyle(textStyleThickOutline);    // extra Thick Outline
+	_textPort.setStyle(kTextStyleThickOutline);    // extra Thick Outline
 	_textPort.setOutlineColor(_outlineColor);      // outline black
 	_textPort.setFont(&Amber13Font);              // speech font
 	_textPort.setColor(_penColor);                 // color of letters
-	_textPort.setMode(drawModeMatte);             // insure transparency
+	_textPort.setMode(kDrawModeMatte);             // insure transparency
 
 	setWidth();
 
@@ -494,7 +494,7 @@ bool Speech::displayText() {
 		return false;
 
 	//  Blit to the port
-	g_vm->_backPort.setMode(drawModeMatte);
+	g_vm->_backPort.setMode(kDrawModeMatte);
 	g_vm->_backPort.bltPixels(_speechImage,
 	                   0, 0,
 	                   p.x + fineScroll.x,

@@ -316,7 +316,7 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	} else
 		map._data = (uint8 *)hdr->data;
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
@@ -348,7 +348,7 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 		for (x = (y & 1); x < map._size.x; x += 2) row[x] = 0;
 	}
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
 	               map._size.x, map._size.y);

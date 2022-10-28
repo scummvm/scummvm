@@ -628,7 +628,7 @@ void CDocument::renderText() {
 			}
 		}
 
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 
 		g_vm->_pointer->hide();
 

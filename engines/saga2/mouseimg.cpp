@@ -311,11 +311,11 @@ void setNewText(char *text) {
 
 	//  Intialize the text image port
 	textImagePort.setMap(textImage);
-	textImagePort.setMode(drawModeReplace);
+	textImagePort.setMode(kDrawModeReplace);
 	textImagePort.setColor(11);
 	textImagePort.setOutlineColor(24);
 	textImagePort.setFont(mainFont);
-	textImagePort.setStyle(textStyleOutline);
+	textImagePort.setStyle(kTextStyleOutline);
 	textImagePort.moveTo(1, 1);
 
 	//  Draw the text

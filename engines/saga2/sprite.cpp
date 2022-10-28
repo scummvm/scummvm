@@ -332,7 +332,7 @@ void DrawSprite(
 	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Blit to the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(sprMap,
 	               0, 0,
 	               destPoint.x + sp->offset.x,
@@ -372,7 +372,7 @@ void DrawColorMappedSprite(
 	    colorTable);
 
 	//  Blit to the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(sprReMap,
 	               0, 0,
 	               destPoint.x + sp->offset.x,

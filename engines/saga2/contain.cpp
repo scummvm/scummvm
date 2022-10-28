@@ -404,9 +404,9 @@ void ContainerView::drawSelector(gPort &port, Point16 &pos) {
 	port.moveTo(Point16(pos.x - ((3 * (num - 3)) + 1),  pos.y + 7));
 	port.setFont(&Helv11Font);
 	port.setColor(11);                   // set color to white
-	port.setStyle(textStyleThickOutline);
+	port.setStyle(kTextStyleThickOutline);
 	port.setOutlineColor(24);                // set outline color to black
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	port.drawText(buf);
 }
@@ -433,9 +433,9 @@ void ContainerView::drawQuantity(
 		port.moveTo(x - 1,  y + 22);
 		port.setFont(&Helv11Font);
 		port.setColor(11);                   // set color to white
-		port.setStyle(textStyleThickOutline);
+		port.setStyle(kTextStyleThickOutline);
 		port.setOutlineColor(24);                // set outline color to black
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 
 		port.drawText(buf);
 	}

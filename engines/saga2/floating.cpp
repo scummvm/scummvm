@@ -508,13 +508,13 @@ void LabeledButton::drawClipped(
 	gImageButton::drawClipped(port, offset, r);
 
 	textOrigin.x = origin.x + ((_extent.width -
-	                            TextWidth(textFont, _title, -1, textStyleUnderBar)) >> 1);
+	                            TextWidth(textFont, _title, -1, kTextStyleUnderBar)) >> 1);
 	textOrigin.y = origin.y + ((_extent.height - textFont->height) >> 1);
 
 	port.setColor(2);
 	port.moveTo(textOrigin);
 	port.setFont(textFont);
-	port.setStyle(textStyleUnderBar);
+	port.setStyle(kTextStyleUnderBar);
 	port.drawText(_title, -1);
 }
 
@@ -640,7 +640,7 @@ void updateWindowSection(const Rect16 &r) {
 		return;
 
 	tempPort.setMap(&tempMap);
-	tempPort.setMode(drawModeReplace);
+	tempPort.setMode(kDrawModeReplace);
 
 	//  Compute the intersection of the animated area with the clip
 	//  rectangle. If they overlap, then copy part of the animated
@@ -686,13 +686,13 @@ void updateWindowSection(const Rect16 &r) {
 	}
 	//  Now, blit the temporary bitmap to the main screen.
 
-	g_vm->_mainPort.setMode(drawModeReplace);
+	g_vm->_mainPort.setMode(kDrawModeReplace);
 	g_vm->_pointer->hide(g_vm->_mainPort, clip);
 	g_vm->_mainPort.bltPixels(tempMap,
 	                   0, 0,
 	                   clip.x, clip.y, clip.width, clip.height);
 	g_vm->_pointer->show(g_vm->_mainPort, clip);
-	g_vm->_mainPort.setMode(drawModeMatte);
+	g_vm->_mainPort.setMode(kDrawModeMatte);
 	delete[] tempMap._data;
 }
 

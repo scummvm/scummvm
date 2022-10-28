@@ -45,7 +45,7 @@ gBackSave::gBackSave(const Rect16 &extent) {
 	//  Initialize the graphics port
 
 	setMap(&_savedPixels);
-	setMode(drawModeReplace);
+	setMode(kDrawModeReplace);
 
 	_saved = false;
 }

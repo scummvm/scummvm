@@ -28,7 +28,7 @@
 
 namespace Saga2 {
 
-#define textStyleBar    (textStyleUnderBar|textStyleHiLiteBar)
+#define textStyleBar    (kTextStyleUnderBar|kTextStyleHiLiteBar)
 
 /* ============================================================================ *
                             Text Blitting Routines
@@ -300,18 +300,18 @@ void gPort::drawStringChars(
 
 	// draw drop-shadow, if any
 
-	if (_textStyles & textStyleShadow) {
+	if (_textStyles & kTextStyleShadow) {
 		x = xpos - 1;
 		s = str;
 
-		if (_textStyles & textStyleOutline) { // if outlining
+		if (_textStyles & kTextStyleOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;            // draw thick drop shadow
 				x += _font->charKern[drawchar];
 				DrawChar3x3Outline(_font, drawchar, x, buffer, _shPen, drowMod);
 				x += _font->charSpace[drawchar] + _textSpacing;
 			}
-		} else if (_textStyles & textStyleThickOutline) { // if outlining
+		} else if (_textStyles & kTextStyleThickOutline) { // if outlining
 			for (i = 0; i < len; i++) {
 				drawchar = *s++;                // draw thick drop shadow
 				x += _font->charKern[drawchar];
@@ -331,7 +331,7 @@ void gPort::drawStringChars(
 
 	// draw outline, if any
 
-	if (_textStyles & textStyleOutline) { // if outlining
+	if (_textStyles & kTextStyleOutline) { // if outlining
 		x = xpos;
 		s = str;
 
@@ -342,7 +342,7 @@ void gPort::drawStringChars(
 			                   _olPen, drowMod);
 			x += _font->charSpace[drawchar] + _textSpacing;
 		}
-	} else if (_textStyles & textStyleThickOutline) { // if thick outlining
+	} else if (_textStyles & kTextStyleThickOutline) { // if thick outlining
 		x = xpos;
 		s = str;
 
@@ -359,7 +359,7 @@ void gPort::drawStringChars(
 
 	x = xpos;
 	s = str;
-	underscore = _textStyles & textStyleUnderScore ? true : false;
+	underscore = _textStyles & kTextStyleUnderScore ? true : false;
 
 	for (i = 0; i < len; i++) {
 		int16       last_x = x;
@@ -369,9 +369,9 @@ void gPort::drawStringChars(
 		if (drawchar == '_' && underbar) {
 			len--;
 			drawchar = *s++;
-			if (_textStyles & textStyleUnderBar)
+			if (_textStyles & kTextStyleUnderBar)
 				underscore = true;
-			if (_textStyles & textStyleHiLiteBar)
+			if (_textStyles & kTextStyleHiLiteBar)
 				color = _bgPen;
 		}
 		x += _font->charKern[drawchar];
@@ -386,7 +386,7 @@ void gPort::drawStringChars(
 				*put++ = color;
 			}
 
-			if (!(_textStyles & textStyleUnderScore))
+			if (!(_textStyles & kTextStyleUnderScore))
 				underscore = false;
 		}
 	}
@@ -475,13 +475,13 @@ int16 gPort::drawClippedString(
 	//  Adjust the size and positioning of the temp map due
 	//  to text style effects.
 
-	if (_textStyles & textStyleOutline) {
+	if (_textStyles & kTextStyleOutline) {
 		xoff = yoff = 1;
 		xpos--;
 		ypos--;
 		tempMap._size.x += 2;
 		tempMap._size.y += 2;
-	} else if (_textStyles & textStyleThickOutline) {
+	} else if (_textStyles & kTextStyleThickOutline) {
 		xoff = yoff = 2;
 		xpos -= 2;
 		ypos -= 2;
@@ -489,12 +489,12 @@ int16 gPort::drawClippedString(
 		tempMap._size.y += 4;
 	}
 
-	if (_textStyles & (textStyleShadow | textStyleUnderScore | textStyleUnderBar)) {
+	if (_textStyles & (kTextStyleShadow | kTextStyleUnderScore | kTextStyleUnderBar)) {
 		tempMap._size.x += 1;
 		tempMap._size.y += 1;
 	}
 
-	if (_textStyles & textStyleItalics) {
+	if (_textStyles & kTextStyleItalics) {
 		int n = (_font->height - _font->baseLine - 1) / 2;
 
 		if (n > 0) xpos += n;
@@ -511,7 +511,7 @@ int16 gPort::drawClippedString(
 		//  not doing a transparent blit.
 
 		memset(tempMap._data,
-		       (_drawMode == drawModeReplace) ? _bgPen : 0,
+		       (_drawMode == kDrawModeReplace) ? _bgPen : 0,
 		       tempMap.bytes());
 
 		//  Draw the characters into the buffer
@@ -520,7 +520,7 @@ int16 gPort::drawClippedString(
 
 		//  apply slant if italics
 
-		if (_textStyles & textStyleItalics) {
+		if (_textStyles & kTextStyleItalics) {
 			int n = (_font->height - _font->baseLine - 1) / 2;
 			int shift = (n > 0 ? n : 0);
 			int flag = (_font->height - _font->baseLine - 1) & 1;
@@ -657,13 +657,13 @@ void gPort::drawText(
 *                   string both horizontally and vertically; However,
 *                   the following flags will modify this:
 *
-*       /i/         textPosLeft -- draw text left-justified.
+*       /i/         kTextPosLeft -- draw text left-justified.
 *
-*       /i/         textPosRight -- draw text right-justified.
+*       /i/         kTextPosRight -- draw text right-justified.
 *
-*       /i/         textPosHigh -- draw text flush with top edge.
+*       /i/         kTextPosHigh -- draw text flush with top edge.
 *
-*       /i/         textPosLow -- draw text flush with bottom edge.
+*       /i/         kTextPosLow -- draw text flush with bottom edge.
 *
 *       borderSpace A Point16 object, which indicates how much space
 *                   (in both x and y) to place between the text and
@@ -695,25 +695,25 @@ void gPort::drawTextInBox(
 	height = _font->height;
 	width  = TextWidth(_font, str, length, _textStyles);
 
-	if (_textStyles & (textStyleUnderScore | textStyleUnderBar)) {
+	if (_textStyles & (kTextStyleUnderScore | kTextStyleUnderBar)) {
 		if (_font->baseLine + 2 >= _font->height)
 			height++;
 	}
 
 	//  Calculate x position of text string
 
-	if (pos & textPosLeft)
+	if (pos & kTextPosLeft)
 		x = r.x + borders.x;
-	else if (pos & textPosRight)
+	else if (pos & kTextPosRight)
 		x = r.x + r.width - width - borders.x;
 	else
 		x = r.x + (r.width - width) / 2;
 
 	//  Calculate y position of text string
 
-	if (pos & textPosHigh)
+	if (pos & kTextPosHigh)
 		y = r.y + borders.y;
-	else if (pos & textPosLow)
+	else if (pos & kTextPosLow)
 		y = r.y + r.height - height - borders.y;
 	else
 		y = r.y + (r.height - height) / 2;
@@ -778,15 +778,15 @@ int16 TextWidth(gFont *font, const char *s, int16 length, int16 styles) {
 		count += font->charKern[chr] + font->charSpace[chr];
 	}
 
-	if (styles & textStyleItalics) {
+	if (styles & kTextStyleItalics) {
 		count += (font->baseLine + 1) / 2 +
 		         (font->height - font->baseLine - 1) / 2;
 	}
-	if (styles & textStyleOutline)
+	if (styles & kTextStyleOutline)
 		count += 2;
-	else if (styles & textStyleThickOutline)
+	else if (styles & kTextStyleThickOutline)
 		count += 4;
-	if (styles & textStyleShadow)
+	if (styles & kTextStyleShadow)
 		count += 1;
 
 	return count;

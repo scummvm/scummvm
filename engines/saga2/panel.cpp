@@ -198,27 +198,27 @@ void gPanel::drawTitle(TextPositions placement) {
 		r.width = img->_size.x;
 		r.height = img->_size.y;
 	} else {
-		r.width = TextWidth(mainFont, _title, -1, textStyleUnderBar);
+		r.width = TextWidth(mainFont, _title, -1, kTextStyleUnderBar);
 		r.height = mainFont->height;
 	}
 
 	switch (placement) {
-	case textPosLeft:
+	case kTextPosLeft:
 		r.x -= r.width + 2;
 		r.y += (_extent.height - r.height) / 2 + 1;
 		break;
 
-	case textPosRight:
+	case kTextPosRight:
 		r.x += _extent.width + 3;
 		r.y += (_extent.height - r.height) / 2 + 1;
 		break;
 
-	case textPosHigh:
+	case kTextPosHigh:
 		r.x += (_extent.width - r.width) / 2;
 		r.y -= r.height + 1;
 		break;
 
-	case textPosLow:
+	case kTextPosLow:
 		r.x += (_extent.width - r.width) / 2;
 		r.y += _extent.height + 2;
 		break;
@@ -233,12 +233,12 @@ void gPanel::drawTitle(TextPositions placement) {
 
 	if (_imageLabel) {
 		port.setIndirectColor(kBlackPen);     // pen color black
-		port.setMode(drawModeColor);         // draw as glyph
+		port.setMode(kDrawModeColor);         // draw as glyph
 		port.bltPixels(*img, 0, 0, r.x, r.y, r.width, r.height);
 	} else {
-		port.setMode(drawModeMatte);         // draw as glyph
+		port.setMode(kDrawModeMatte);         // draw as glyph
 		port.setIndirectColor(kBlackPen);     // pen color black
-		port.setStyle(textStyleUnderBar);    // set style to do underbars
+		port.setStyle(kTextStyleUnderBar);    // set style to do underbars
 		port.moveTo(r.x, r.y);           // move to new text pos
 
 		g_vm->_pointer->hide(*globalPort, r);        // hide the pointer

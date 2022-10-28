@@ -418,7 +418,7 @@ void AutoMap::drawClipped(
 	createSmallMap();
 
 	//  Blit the pixelmap to the main screen
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(*_tPort._map,
 	               0, 0,
 	               _extent.x, _extent.y,

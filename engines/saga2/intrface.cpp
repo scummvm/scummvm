@@ -429,7 +429,7 @@ void CPlaqText::draw() {
 	_oldFont = port._font;
 
 	// setup the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.setFont(_buttonFont);
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
@@ -929,7 +929,7 @@ void CManaIndicator::draw() {
 	SAVE_GPORT_STATE(port);
 
 	// setup the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 	drawClipped(port, Point16(0, 0), Rect16(0, 0, xSize, ySize));
@@ -952,7 +952,7 @@ void CManaIndicator::drawClipped(gPort &port,
 		if (!_extent.overlap(clipRect)) return;
 
 		// draw the saved image to the port
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 		port.bltPixels(_savedMap, 0, 0,
 		               _extent.x - offset.x, _extent.y - offset.y,
 		               xSize, ySize);
@@ -993,7 +993,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	memset(tempMap._data, 0, tempMap.bytes());
 
 	// draw as glyph
-	tempPort.setMode(drawModeMatte);
+	tempPort.setMode(kDrawModeMatte);
 
 	// draw each star and ring with color remap
 	for (uint16 i = 0; i < numManaTypes; i++) {
@@ -1070,7 +1070,7 @@ void CManaIndicator::drawClipped(gPort &port,
 	TBlit(&_savedMap, tempPort._map, 0, 0);
 
 	//  Blit the pixelmap to the main screen
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(*tempPort._map, 0, 0,
 	               _extent.x - offset.x, _extent.y - offset.y,
 	               xSize, ySize);
@@ -1352,7 +1352,7 @@ void writePlaqText(gPort            &port,
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.setFont(font);
 
 	workRect = r;
@@ -1403,7 +1403,7 @@ void writePlaqTextPos(gPort         &port,
 	va_end(argptr);
 
 	SAVE_GPORT_STATE(port);
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.setFont(font);
 
 	drawPos = pos;
@@ -2613,9 +2613,9 @@ void gArmorIndicator::drawClipped(gPort &port,
 			// draw the armor numebrs
 			port.setFont(&Helv11Font);
 			port.setColor(11);                   // set color to white
-			port.setStyle(textStyleThickOutline);
+			port.setStyle(kTextStyleThickOutline);
 			port.setOutlineColor(24);                // set outline color to black
-			port.setMode(drawModeMatte);
+			port.setMode(kDrawModeMatte);
 
 			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
 				Common::sprintf_s(buf, "-");
@@ -2624,13 +2624,13 @@ void gArmorIndicator::drawClipped(gPort &port,
 			else Common::sprintf_s(buf, "%d", _attr.damageAbsorbtion);
 
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
-			                   textPosRight | textPosHigh, Point16(0,  2));
+			                   kTextPosRight | kTextPosHigh, Point16(0,  2));
 
 			if (_attr.damageAbsorbtion == 0 && _attr.defenseBonus == 0)
 				Common::sprintf_s(buf, "-");
 			else Common::sprintf_s(buf, "%d", _attr.defenseBonus);
 			port.drawTextInBox(buf, -1, Rect16(pos.x, pos.y, _extent.width, _extent.height),
-			                   textPosRight | textPosLow, Point16(0,  2));
+			                   kTextPosRight | kTextPosLow, Point16(0,  2));
 		}
 	}
 }

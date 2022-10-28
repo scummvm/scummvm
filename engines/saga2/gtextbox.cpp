@@ -973,7 +973,7 @@ void gTextBox::drawContents() {
 
 		//  Blit the pixelmap to the main screen
 
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 		port.bltPixels(*tPort._map, 0, 0,
 		               _editRect.x + 1, _editRect.y + 1,
 		               _editRect.width, _editRect.height);
@@ -1010,7 +1010,7 @@ void gTextBox::drawClipped() {
 
 	if (_editing) {
 		drawContents();                         // draw the string
-		drawTitle(textPosLeft);                  // draw the title
+		drawTitle(kTextPosLeft);                  // draw the title
 	} else if (_displayOnly && _hilit) {
 		drawContents();
 	} else {
@@ -1047,14 +1047,14 @@ void gTextBox::drawAll(gPort &port,
 
 		if (_endLine != _oldMark  || _fullRedraw) {
 			// setup the tempPort
-			tempPort.setMode(drawModeMatte);
+			tempPort.setMode(kDrawModeMatte);
 
 			// if the text is going to change
 			tempPort.setColor(_fontColorBack);
 			tempPort.fillRect(workRect);
 
 			// draw as glyph
-			tempPort.setMode(drawModeMatte);
+			tempPort.setMode(kDrawModeMatte);
 
 			// pen color black
 			tempPort.setColor(_fontColorFore);
@@ -1089,7 +1089,7 @@ void gTextBox::drawAll(gPort &port,
 
 			//  Blit the pixelmap to the main screen
 
-			port.setMode(drawModeMatte);
+			port.setMode(kDrawModeMatte);
 
 			port.bltPixels(*tempPort._map, 0, 0,
 			               _extent.x + 1, _extent.y + 1,

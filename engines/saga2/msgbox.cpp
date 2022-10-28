@@ -238,7 +238,7 @@ void SimpleWindow::drawClipped(
     const Rect16  &r) {
 	Rect16          box = _extent;
 	//gFont             *buttonFont=&Onyx10Font;
-	int16           textPos = textPosHigh;
+	int16           textPos = kTextPosHigh;
 	//textPallete       pal( 33+9, 36+9, 41+9, 34+9, 40+9, 43+9 );
 	textPallete     pal(33 + 9, 33 + 9, 41 + 9, 33 + 9, 33 + 9, 41 + 9);
 

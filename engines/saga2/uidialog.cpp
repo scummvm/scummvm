@@ -893,7 +893,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	                         textStrings[0], &Plate18Font, 0, pal, 0, nullptr);
 
 	for (int i = 1; i < kNumOptionsTexts; i++) {
-		new CPlaqText(*win, *optionsTextRects[i], textStrings[i], &SmallFont, textPosLeft, pal, 0, nullptr);
+		new CPlaqText(*win, *optionsTextRects[i], textStrings[i], &SmallFont, kTextPosLeft, pal, 0, nullptr);
 	}
 
 	win->setDecorations(optionsDecorations,
