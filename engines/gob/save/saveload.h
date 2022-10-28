@@ -893,6 +893,7 @@ class SaveLoad_v7: public SaveLoad {
 public:
 	static const uint32 kChildrenCount = 16;
 	static const uint32 kAdibou2NbrOfApplications = 5;
+	static const uint32 kAdibou2NbrOfSavedDrawings = 12;
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
 
@@ -961,6 +962,10 @@ protected:
 	FakeFileHandler    *_adibou2RetourHandler;
 	FakeFileHandler    *_adibou2LanceHandler;
 	TempSpriteHandler  *_adibou2AppIcoHandler[kAdibou2NbrOfApplications];
+	SpriteHandler      *_adibou2DrawingHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
+	SpriteHandler      *_adibou2DrawingThumbnailHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
+	GameFileHandler    *_adibou2DrawingPaletteHandler[kChildrenCount];
+
 	FakeFileHandler    *_addy4BaseHandler[2];
 	FakeFileHandler    *_addy4GrundschuleHandler[11];
 
