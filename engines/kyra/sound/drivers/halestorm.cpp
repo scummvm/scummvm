@@ -694,9 +694,9 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 	for (int i = 0; i < ARRAYSIZE(_partPrograms); ++i)
 		_partPrograms[i] = i;
 
-	Common::SeekableReadStream *midi = _driver->_res->getResource(song._midiResId, 'MIDI');
+	Common::SeekableReadStream *midi = _driver->_res->getResource(song._midiResId, MKTAG('M', 'I', 'D', 'I'));
 	if (!midi)
-		midi = _driver->_res->getResource(song._midiResId, 'Midi');
+		midi = _driver->_res->getResource(song._midiResId, MKTAG('M', 'i', 'd', 'i'));
 	assert(midi);
 
 	_data = midi;
@@ -705,7 +705,7 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 	_tracks.clear();
 
 	while (in < end) {
-		if (READ_BE_UINT32(in) == 'MThd')
+		if (READ_BE_UINT32(in) == MKTAG('M', 'T', 'h', 'd'))
 			break;
 		in += 2;
 	}
@@ -717,7 +717,7 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 		song.setTicksPerSecond(tps);
 
 	while (in < end) {
-		if (READ_BE_UINT32(in) == 'MTrk')
+		if (READ_BE_UINT32(in) == MKTAG('M', 'T', 'r', 'k'))
 			break;
 		++in;
 	}
@@ -728,7 +728,7 @@ bool HSMidiParser::loadTracks(HSSong &song) {
 		ShStBuffer track(in + 8, READ_BE_UINT32(in + 4));
 		_tracks.push_back(track);
 		in += (track.len + 8);
-	} while (in < end && READ_BE_UINT32(in) == 'MTrk');
+	} while (in < end && READ_BE_UINT32(in) == MKTAG('M', 'T', 'r', 'k'));
 
 	uint8 prg = 0;
 	for (Common::Array<ShStBuffer>::const_iterator i = _tracks.begin(); i != _tracks.end(); ++i) {
@@ -994,12 +994,12 @@ template<typename T> void HSLowLevelDriver::generateData(T *dst, uint32 len, Aud
 }
 
 int HSLowLevelDriver::cmd_startSong(va_list &arg) {
-	Common::SeekableReadStream *song = _res->getResource(va_arg(arg, int), 'SONG');
+	Common::SeekableReadStream *song = _res->getResource(va_arg(arg, int), MKTAG('S', 'O', 'N', 'G'));
 	Common::SeekableReadStream *midi = nullptr;
 	if (song) {
 		uint16 idm = song->readUint16BE();
-		if (!(midi = _res->getResource(idm, 'MIDI')))
-			midi = _res->getResource(idm, 'Midi');
+		if (!(midi = _res->getResource(idm, MKTAG('M', 'I', 'D', 'I'))))
+			midi = _res->getResource(idm, MKTAG('M', 'i', 'd', 'i'));
 	}
 	if (!song || !midi)
 		error("HSLowLevelDriver::cmd_startSong(): Error encountered while loading song.");
@@ -1975,7 +1975,7 @@ ShStBuffer HSLowLevelDriver::loadInstrumentSamples(int id, bool sharedBuffer) {
 		}
 	}
 
-	Common::SeekableReadStream *snd = _res->getResource(id, 'snd ');
+	Common::SeekableReadStream *snd = _res->getResource(id, MKTAG('s', 'n', 'd', ' '));
 	if (!snd) {
 		// This happens from time to time, but apparently not with resources that are actually
 		// meant to be used. So I don't see any value in throwing a warning here...
@@ -2442,7 +2442,7 @@ bool HSSoundSystem::loadSamplesIntoSlot(uint16 id, SampleSlot &slot, bool regist
 
 	slot.reverse = false;
 
-	Common::SeekableReadStream *in = _res->getResource(id, 'csnd');
+	Common::SeekableReadStream *in = _res->getResource(id, MKTAG('c', 's', 'n', 'd'));
 	if (in) {
 		uint32 inSize = (uint32)in->size() - 4;
 		uint32 outSize = in->readUint32BE();
@@ -2452,7 +2452,7 @@ bool HSSoundSystem::loadSamplesIntoSlot(uint16 id, SampleSlot &slot, bool regist
 		memset(data, 0, outSize);
 		deltaDecompress(data, tmp, outSize, inSize);
 		delete[] tmp;
-	} else if ((in = _res->getResource(id, 'snd '))) {
+	} else if ((in = _res->getResource(id, MKTAG('s', 'n', 'd', ' ')))) {
 		uint32 inSize = (uint32)in->size();
 		data = new uint8[inSize];
 		in->read(data, inSize);
@@ -2546,14 +2546,14 @@ uint32 HSSoundSystem::calculatePlaybackDuration(uint32 numSamples, uint32 sampli
 }
 
 int HSSoundSystem::startSong(int id, int loop) {
-	Common::SeekableReadStream *song = _res->getResource(id, 'SONG');
+	Common::SeekableReadStream *song = _res->getResource(id, MKTAG('S', 'O', 'N', 'G'));
 	if (!song)
 		return -192;
 	uint16 idm = song->readUint16BE();
 	delete song;
 
-	Common::SeekableReadStream *midi = _res->getResource(idm, 'MIDI');
-	if (!midi && !(midi = _res->getResource(idm, 'Midi')))
+	Common::SeekableReadStream *midi = _res->getResource(idm, MKTAG('M', 'I', 'D', 'I'));
+	if (!midi && !(midi = _res->getResource(idm, MKTAG('M', 'i', 'd', 'i'))))
 		return -1300;
 	delete midi;
 
