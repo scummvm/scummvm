@@ -140,11 +140,13 @@ void Inter_v2::setupOpcodesGob() {
 	OPCODEGOB(  2, o2_stopInfogrames);
 
 	OPCODEGOB( 10, o2_playInfogrames);
+	OPCODEGOB( 11, o2_gob0x0B);
 
 	OPCODEGOB(100, o2_handleGoblins);
 
 	OPCODEGOB(500, o2_playProtracker);
 	OPCODEGOB(501, o2_stopProtracker);
+	OPCODEGOB(1001, o2_gob1001);
 }
 
 void Inter_v2::checkSwitchTable(uint32 &offset) {
@@ -577,6 +579,13 @@ void Inter_v2::o2_totSub() {
 		totFile = "EMAP2011";
 
 	uint8 flags = _vm->_game->_script->readByte();
+
+	// Skipping the copy protection screen in Adibou2
+	if (!_vm->_copyProtection && (_vm->getGameType() == kGameTypeAdibou1) && totFile == "p_eleph") {
+		debugC(2, kDebugGameFlow, "Skipping copy protection screen");
+		_varStack.pushInt(1);
+		return;
+	}
 
 	_vm->_game->totSub(flags, totFile);
 }
@@ -1581,6 +1590,18 @@ void Inter_v2::o2_playInfogrames(OpGobParams &params) {
 
 	_vm->_sound->infogramesLoadSong(fileName);
 	_vm->_sound->infogramesPlay();
+}
+
+void Inter_v2::o2_gob0x0B(OpGobParams &params)
+{
+	_vm->_game->_script->skip(4);
+	warning("Adibou1 stub: o2_gob0x0B");
+}
+
+void Inter_v2::o2_gob1001(OpGobParams &params)
+{
+	_vm->_game->_script->skip(2);
+	warning("Adibou1 stub: o2_gob1001");
 }
 
 void Inter_v2::o2_startInfogrames(OpGobParams &params) {
