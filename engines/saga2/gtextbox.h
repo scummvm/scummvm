@@ -29,7 +29,7 @@
 namespace Saga2 {
 
 enum textBoxFlags {
-	//  First 4 flags are the text_positions flags for label placement
+	//  First 4 flags are the TextPositions flags for label placement
 	textBoxAlignRight   = (1 << 4),
 	textBoxAlignCenter  = (1 << 5),
 	textBoxNoFilter     = (1 << 6),     // let non-edit keys come through

@@ -153,7 +153,7 @@ bool gPanel::isActive() {
 	return (this == g_vm->_toolBase->_activePanel);
 }
 
-void gPanel::notify(enum gEventType type, int32 value) {
+void gPanel::notify(gEventType type, int32 value) {
 	gEvent          ev;
 
 	ev.panel = this;
@@ -185,7 +185,7 @@ void gPanel::invalidate(Rect16 *) {
 }
 
 
-void gPanel::drawTitle(enum text_positions placement) {
+void gPanel::drawTitle(TextPositions placement) {
 	gPort           &port = _window._windowPort;
 	Rect16          r = _extent;
 	const gPixelMap *img = nullptr;

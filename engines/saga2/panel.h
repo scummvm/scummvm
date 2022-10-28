@@ -92,7 +92,7 @@ enum gEventType {
 
 struct gEvent {
 	gPanel          *panel;                 // where event came from
-	enum gEventType eventType;              // type of event that occurred
+	gEventType      eventType;              // type of event that occurred
 	Point16         mouse;                  // mouse position
 	int32           value;                  // new value of control
 	gWindow         *window;                // active window
@@ -157,11 +157,11 @@ protected:
 	virtual void timerTick(gPanelMessage &msg);
 	virtual void onMouseHintDelay();
 
-	void notify(enum gEventType, int32 value);
+	void notify(gEventType, int32 value);
 	void notify(gEvent &ev) {
 		if (_command) _command(ev);
 	}
-	void drawTitle(enum text_positions placement);
+	void drawTitle(TextPositions placement);
 
 
 public:

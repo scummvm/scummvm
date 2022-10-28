@@ -416,7 +416,7 @@ void SimpleButton::drawClipped(
 	                               box,
 	                               buttonColor);
 
-	drawTitle((enum text_positions)0);
+	drawTitle((TextPositions)0);
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 

@@ -81,7 +81,7 @@ void gPort::setState(gPenState &state) {
 	setBgColor(state.bgPen);
 	setOutlineColor(state.olPen);
 	setShadowColor(state.shPen);
-	setMode((enum draw_modes) state.drawMode);
+	setMode((DrawModes)state.drawMode);
 }
 
 /****** gdraw.cpp/gPort::getState *********************************

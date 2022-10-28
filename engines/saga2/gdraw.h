@@ -148,7 +148,7 @@ struct gPenState {
    gPort: Facilitates redering operations on PixelMaps
  * ============================================================================ */
 
-enum draw_modes {
+enum DrawModes {
 	drawModeMatte = 0,                      // use transparency
 	drawModeColor,                          // solid color, use transparency
 	drawModeReplace,                        // don't use transparency
@@ -157,7 +157,7 @@ enum draw_modes {
 	numDrawModes
 };
 
-enum text_styles {
+enum {
 	textStyleOutline    = (1 << 0),         // outline the characters
 	textStyleShadow     = (1 << 1),         // drop shadow the characters
 	textStyleUnderScore = (1 << 2),         // underscore all chars
@@ -168,7 +168,7 @@ enum text_styles {
 	textStyleItalics    = (1 << 7)          // italic
 };
 
-enum text_positions {
+enum TextPositions {
 	textPosLeft         = (1 << 0),
 	textPosRight        = (1 << 1),
 	textPosHigh         = (1 << 2),
@@ -192,7 +192,7 @@ public:
 	                _olPen,                  // text outline pen
 	                _shPen;                  // text shadow pen
 	gPen            *_penMap;                // indirect pen map
-	enum draw_modes _drawMode;               // current drawing mode
+	DrawModes       _drawMode;               // current drawing mode
 	Point16         _penPos;                 // current pen position
 	gFont           *_font;                  // current font
 	int16           _textSpacing;            // extra space between characters
@@ -253,7 +253,7 @@ public:
 
 	//  modes & styles
 
-	void setMode(enum draw_modes mode) {
+	void setMode(DrawModes mode) {
 		_drawMode = mode;
 	}
 	void setStyle(int style)               {
