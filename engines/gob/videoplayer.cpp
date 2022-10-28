@@ -655,6 +655,13 @@ uint16 VideoPlayer::getDefaultY(int slot) const {
 	return video->decoder->getDefaultY();
 }
 
+uint32 VideoPlayer::getFlags(int slot) const {
+	const Video *video = getVideoBySlot(slot);
+	if (!video)
+		return 0;
+
+	return video->decoder->getFlags();
+}
 const Common::List<Common::Rect> *VideoPlayer::getDirtyRects(int slot) const {
 	const Video *video = getVideoBySlot(slot);
 	if (!video)

@@ -791,14 +791,14 @@ void Mult_v2::newCycleAnim(Mult_Object &animObj) {
 	case 7:
 		animData.frame--;
 		animData.isPaused = 1;
-/*
+
 		if ((animData.animation < 0) && (animObj.videoSlot > 0)) {
 			if (_vm->_vidPlayer->getFlags(animObj.videoSlot - 1) & 0x1000) {
 				_vm->_vidPlayer->closeVideo(animObj.videoSlot - 1);
 				animObj.videoSlot = 0;
 			}
 		}
-*/
+
 		break;
 
 	case 10:

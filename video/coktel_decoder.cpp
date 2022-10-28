@@ -875,6 +875,10 @@ void PreIMDDecoder::renderFrame() {
 	_dirtyRects.push_back(Common::Rect(_x, _y, _x + _width, _y + _height));
 }
 
+uint32 PreIMDDecoder::getFlags() const {
+	return 0;
+}
+
 Graphics::PixelFormat PreIMDDecoder::getPixelFormat() const {
 	return Graphics::PixelFormat::createFormatCLUT8();
 }
@@ -1533,6 +1537,10 @@ void IMDDecoder::emptySoundSlice(bool hasNextCmd) {
 	memset(soundBuf, 0, _soundSliceSize);
 
 	_audioStream->queueBuffer(soundBuf, _soundSliceSize, DisposeAfterUse::YES, 0);
+}
+
+uint32 IMDDecoder::getFlags() const {
+	return _flags;
 }
 
 Graphics::PixelFormat IMDDecoder::getPixelFormat() const {
@@ -2710,6 +2718,10 @@ private:
 
 Audio::AudioStream *VMDDecoder::create16bitADPCM(Common::SeekableReadStream *stream) {
 	return new VMD_ADPCMStream(stream, DisposeAfterUse::YES, _soundFreq, (_soundStereo == 0) ? 1 : 2);
+}
+
+uint32 VMDDecoder::getFlags() const {
+	return _flags;
 }
 
 Graphics::PixelFormat VMDDecoder::getPixelFormat() const {

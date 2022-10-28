@@ -138,6 +138,8 @@ public:
 	uint16 getHeight      (int slot = 0) const;
 	uint16 getDefaultX    (int slot = 0) const;
 	uint16 getDefaultY    (int slot = 0) const;
+	uint32 getFlags       (int slot = 0) const;
+
 
 	const Common::List<Common::Rect> *getDirtyRects(int slot = 0) const;
 
