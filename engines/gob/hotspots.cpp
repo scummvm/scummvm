@@ -811,12 +811,13 @@ uint16 Hotspots::check(uint8 handleMouse, int16 delay, uint16 &id, uint16 &index
 							  ((delay <= 0) || (_vm->_game->_mouseButtons == kMouseButtonsNone)))
 							_vm->_draw->blitCursor();
 
-
-						if ((key != _currentKey) && (_vm->getGameType() != kGameTypeFascination) &&
-						                            (_vm->getGameType() != kGameTypeGeisha))
-						// If the hotspot changed, leave the old one
-						// Code not present in Fascination executables
-								leave(_currentIndex);
+						if ((_currentKey != 0) &&
+							(key != _currentKey) &&
+							(_vm->getGameType() != kGameTypeFascination) &&
+							(_vm->getGameType() != kGameTypeGeisha))
+							// If the hotspot changed, leave the old one
+							// Code not present in Fascination executables
+							leave(_currentIndex);
 
 						_currentKey = 0;
 						break;
