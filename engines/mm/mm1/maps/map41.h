@@ -32,9 +32,56 @@ class Map41 : public Map {
 	typedef void (Map41:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special16();
+	void special17();
+	void special18();
+	void special19();
+	void special20();
+	void special21();
+	void special22();
+	void special23();
+	void showSign(const Common::String &line);
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map41::special00
+	const SpecialFn SPECIAL_FN[25] = {
+		&Map41::special00,
+		&Map41::special01,
+		&Map41::special02,
+		&Map41::special03,
+		&Map41::special04,
+		&Map41::special05,
+		&Map41::special06,
+		&Map41::special07,
+		&Map41::special08,
+		&Map41::special09,
+		&Map41::special10,
+		&Map41::special11,
+		&Map41::special12,
+		&Map41::special13,
+		&Map41::special14,
+		&Map41::special14,
+		&Map41::special16,
+		&Map41::special17,
+		&Map41::special18,
+		&Map41::special19,
+		&Map41::special20,
+		&Map41::special21,
+		&Map41::special22,
+		&Map41::special23,
+		&Map41::special04
 	};
 public:
 	Map41() : Map(41, "enf1", 0xF04) {}
