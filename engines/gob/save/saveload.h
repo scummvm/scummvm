@@ -958,6 +958,8 @@ protected:
 	GameFileHandler    *_adibou2CriteHandler[kAdibou2NbrOfApplications];
 	GameFileHandler    *_adibou2ExoHandler[kAdibou2NbrOfApplications];
 	GameFileHandler    *_adibou2ApplicationsInfoHandler;
+	FakeFileHandler    *_adibou2RetourHandler;
+	FakeFileHandler    *_adibou2LanceHandler;
 	TempSpriteHandler  *_adibou2AppIcoHandler[kAdibou2NbrOfApplications];
 	FakeFileHandler    *_addy4BaseHandler[2];
 	FakeFileHandler    *_addy4GrundschuleHandler[11];
