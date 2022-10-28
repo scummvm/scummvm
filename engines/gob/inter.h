@@ -31,7 +31,7 @@
 #include "gob/databases.h"
 
 namespace Common {
-	class PEResources;
+	class WinResources;
 }
 
 namespace Gob {
@@ -718,7 +718,7 @@ private:
 	INIConfig _inis;
 	Databases _databases;
 
-	Common::PEResources *_cursors;
+	Common::WinResources *_cursors;
 	Common::ArchiveMemberList _remainingFilesFromPreviousSearch;
 	Common::String _currentCDPath;
 
