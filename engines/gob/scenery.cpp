@@ -657,22 +657,10 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 				int16 sprite_dest_top = 0;
 				int16 sprite_dest_right = 0;
 				int16 sprite_dest_bottom = 0;
+				int16 sprite_width = 0;
 
-				if (obj.animVariables && obj.animName[0] != '\0') { // TODO: obj.animVariables hack
-					if (!obj.field_38) {
-						//warning("updateAnim Adibou2 stub obj.field_38 == nullptr");
-					}
-
-					if (obj.field_38 != nullptr && obj.field_38[4] & 0x800) {
-						warning("updateAnim Adibou2 stub obj.field_38 & 0x800 != 0");
-					}
-
-					// if (obj.field4F == 0)
-					if (frame != obj.field_30) {
-						if (obj.field_38 != nullptr && obj.field_38[4] & 0x800) {
-							warning("updateAnim Adibou2 stub obj.field_38 & 0x800 != 0 (2)");
-						}
-
+				if (obj.animName[0] != '\0' && obj.animVariables) {
+					if (obj.videoSlot == 0) {
 						VideoPlayer::Properties props;
 						props.x          = 0;
 						props.y          = 0;
@@ -684,17 +672,138 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 						props.palEnd     = 0;
 						props.sprite     = -1;
 
-						_vm->_vidPlayer->openVideo(false, obj.animName, props);
-						if (obj.field_38 != nullptr && obj.field_38[4] & 0x8000) {
-							warning("updateAnim Adibou2 stub obj.field_38 & 0x8000 != 0");
+						int slot = _vm->_vidPlayer->openVideo(false, obj.animName, props);
+						obj.videoSlot = slot  + 1;
+					}
+
+					if (obj.videoSlot != 0 &&  _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800) {
+						if (doDraw) {
+							if (frame == (int32) _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1 &&
+								(int16) *obj.pPosX >= _animLeft &&
+								(int16) *obj.pPosX <= _animTop) {
+								if ((int16) *obj.pPosY + _vm->_vidPlayer->getHeight(obj.videoSlot - 1) <= _animBottom
+									&& !(flags & 0x4)) {
+
+									if (frame != obj.lastFrameIndex) {
+										//_vm->_vidPlayer->setXY();
+										VideoPlayer::Properties props;
+										props.x          = *obj.pPosX;
+										props.y          = *obj.pPosY;
+										props.startFrame = 0;
+										props.lastFrame  = 0;
+										props.breakKey   = 0;
+										props.flags      = 0;
+										props.palStart   = 0;
+										props.palEnd     = 0;
+										props.sprite = -obj.pAnimData->animation - 1;
+
+										if (obj.videoSlot > 0)
+											_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
+
+										int slot = _vm->_vidPlayer->openVideo(false, obj.animName, props);
+										obj.videoSlot = slot  + 1;
+
+										sprite_dest_left = obj.spriteDestLeft;
+										sprite_dest_top = obj.spriteDestTop;
+										sprite_dest_right = obj.spriteDestRight;
+										sprite_dest_bottom = obj.spriteDestBottom;
+
+										if (flags & 0x2) {
+											clipInRect(_vm->_mult->_animLeft,
+													   _vm->_mult->_animTop,
+													   _vm->_mult->_animWidth,
+													   _vm->_mult->_animHeight,
+													   &deltaX,
+													   &deltaY,
+													   &sprite_dest_left,
+													   &sprite_dest_top,
+													   &sprite_dest_right,
+													   &sprite_dest_bottom,
+													   layer);
+										}
+									} else if (flags & 4) {
+										clipInRect(_toRedrawLeft,
+												   _toRedrawTop,
+												   _toRedrawRight - _toRedrawLeft + 1,
+												   _toRedrawBottom - _toRedrawTop + 1,
+												   &deltaX,
+												   &deltaY,
+												   &sprite_dest_left,
+												   &sprite_dest_top,
+												   &sprite_dest_right,
+												   &sprite_dest_bottom,
+												   layer);
+									} else {
+										_toRedrawRight = sprite_dest_right;
+										_toRedrawBottom = sprite_dest_bottom;
+										_toRedrawLeft = sprite_dest_left;
+										_toRedrawTop = sprite_dest_top;
+									}
+
+									if (!(flags & 4)) {
+										_toRedrawRight = sprite_dest_right;
+										_toRedrawBottom = sprite_dest_bottom;
+										_toRedrawLeft = sprite_dest_left;
+										_toRedrawTop = sprite_dest_top;
+									}
+								}
+							}
 						}
-						else if (obj.field_38 != nullptr) {
-							sprite_dest_left = *obj.pPosX ;
-							sprite_dest_top = *obj.pPosY;
-							sprite_dest_right = sprite_dest_left + obj.field_38[5] - 1;
-							sprite_dest_bottom = sprite_dest_top + obj.field_38[6] - 1;
+						else {
+							if (frame != (int16) _vm->_vidPlayer->getFrameCount(obj.videoSlot - 1) - 1) {
+								//getFrameCoords
+							}
+
+							sprite_dest_left = obj.spriteDestLeft;
+							sprite_dest_top = obj.spriteDestTop;
+							sprite_dest_right = obj.spriteDestRight;
+							sprite_dest_bottom = obj.spriteDestBottom;
 						}
 					}
+
+					// if (obj.field4F == 0)
+					if (frame != obj.lastFrameIndex) {
+						if ((obj.videoSlot != 0 && _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800) ||
+							doDraw) {
+							if (obj.videoSlot != 0 && _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x800)
+								warning("updateAnim Adibou2 stub obj.field_38 & 0x800 != 0");
+
+							VideoPlayer::Properties props;
+							props.x = 0;
+							props.y = 0;
+							props.startFrame = 0;
+							props.lastFrame = 0;
+							props.breakKey = 0;
+							props.flags = 0;
+							props.palStart = 0;
+							props.palEnd = 0;
+							props.sprite = -obj.pAnimData->animation - 1;
+
+							if (obj.videoSlot > 0)
+								_vm->_vidPlayer->closeVideo(obj.videoSlot - 1);
+
+							int slot = _vm->_vidPlayer->openVideo(false, obj.animName, props);
+							obj.videoSlot = slot + 1;
+						}
+					}
+
+					if (obj.videoSlot != 0 && _vm->_vidPlayer->getFlags(obj.videoSlot - 1) & 0x8000) {
+						deltaX = obj.spriteDestLeft;
+						deltaY = obj.spriteDestTop;
+						sprite_dest_left = *obj.pPosX + deltaX;
+						sprite_dest_top = *obj.pPosY + deltaY;
+						sprite_width = obj.spriteDestRight- obj.spriteDestLeft + 1;
+						if (layer & 0x80) {
+							sprite_dest_left = *obj.pPosX + _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - deltaX - sprite_width;
+						}
+					}
+					else {
+						sprite_dest_left = *obj.pPosX ;
+						sprite_dest_top = *obj.pPosY;
+						sprite_dest_right = sprite_dest_left +  _vm->_vidPlayer->getWidth(obj.videoSlot - 1) - 1;
+						sprite_dest_bottom = sprite_dest_top + _vm->_vidPlayer->getHeight(obj.videoSlot - 1) - 1;
+					}
+
 				} else {
 					auto &sprite = _vm->_draw->_spritesArray[50 - animation - 1];
 					if (sprite == nullptr)
@@ -946,8 +1055,8 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			return;
 
 		_vm->_game->capturePush(_toRedrawLeft, _toRedrawTop,
-		    _toRedrawRight  - _toRedrawLeft + 1,
-		    _toRedrawBottom - _toRedrawTop  + 1);
+								_toRedrawRight  - _toRedrawLeft + 1,
+								_toRedrawBottom - _toRedrawTop  + 1);
 
 		*_pCaptureCounter = *_pCaptureCounter + 1;
 	}
@@ -963,9 +1072,9 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 		_toRedrawLeft   = MAX(_toRedrawLeft, _vm->_mult->_animLeft);
 		_toRedrawTop    = MAX(_toRedrawTop, _vm->_mult->_animTop);
 		_toRedrawRight  = MIN(_toRedrawRight,
-		    (int16)(_vm->_mult->_animLeft + _vm->_mult->_animWidth - 1));
+							  (int16)(_vm->_mult->_animLeft + _vm->_mult->_animWidth - 1));
 		_toRedrawBottom = MIN(_toRedrawBottom,
-		    (int16)(_vm->_mult->_animTop + _vm->_mult->_animHeight - 1));
+							  (int16)(_vm->_mult->_animTop + _vm->_mult->_animHeight - 1));
 	} else
 		_toRedrawLeft = -12345;
 
@@ -1028,9 +1137,9 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			}
 
 			if ((left <= right) && ((destX + right - left) >=
-			    (_vm->_mult->_animLeft + _vm->_mult->_animWidth)))
+									(_vm->_mult->_animLeft + _vm->_mult->_animWidth)))
 				right -= (destX + right - left) -
-					(_vm->_mult->_animLeft + _vm->_mult->_animWidth) + 1;
+						 (_vm->_mult->_animLeft + _vm->_mult->_animWidth) + 1;
 
 			if (destY < _vm->_mult->_animTop) {
 				top  += _vm->_mult->_animTop - destY;
@@ -1038,9 +1147,9 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 			}
 
 			if ((top <= bottom) && ((destY + bottom - top) >=
-						(_vm->_mult->_animTop + _vm->_mult->_animHeight)))
+									(_vm->_mult->_animTop + _vm->_mult->_animHeight)))
 				bottom -= (destY + bottom - top) -
-					(_vm->_mult->_animTop + _vm->_mult->_animHeight) + 1;
+						  (_vm->_mult->_animTop + _vm->_mult->_animHeight) + 1;
 
 		} else if (flags & 4) {
 			if (destX < _toRedrawLeft) {
@@ -1065,7 +1174,7 @@ void Scenery::updateAnim(int16 layer, int16 frame, int16 animation, int16 flags,
 
 		if (doDraw) {
 			_vm->_draw->_sourceSurface =
-			    _animPictToSprite[animation * 7 + pictIndex];
+				_animPictToSprite[animation * 7 + pictIndex];
 			_vm->_draw->_destSurface   = Draw::kBackSurface;
 
 			_vm->_draw->_spriteLeft   = left;

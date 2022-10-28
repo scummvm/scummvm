@@ -34,26 +34,6 @@ namespace Gob {
 Goblin_v7::Goblin_v7(GobEngine *vm) : Goblin_v4(vm) {
 }
 
-static void sub_4309D3(Draw *draw, Mult::Mult_Object &obj) {
-	if (obj.field_38 != nullptr) {
-		Mult::Mult_AnimData animData = *obj.pAnimData;
-		draw->freeSprite(50 - animData.animation - 1);
-		// sub_473261()
-
-		if (obj.field_50)
-			obj.field_3C = nullptr;
-		else
-			obj.field_38[10] = 0;
-
-		if (obj.field_38[40] != 0) {
-
-		}
-	}
-
-	obj.field_38 = nullptr;
-	obj.animName[0] = '\0';
-}
-
 void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	char str[128];
 	obj->pAnimData->layer &= 3;
@@ -206,6 +186,8 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	}
 
 	if (strcmp(str, obj->animName) != 0) {
+		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
+		obj->videoSlot = 0;
 		Common::strlcpy(obj->animName, str, 16);
 	}
 
@@ -236,7 +218,8 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 	*obj->pPosY = newY + newYCorrection;
 	obj->pAnimData->frame = 0;
 	if (var_4 == 0) {
-		sub_4309D3(_vm->_draw, *obj);
+		_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
+		obj->videoSlot = 0;
 
 		VideoPlayer::Properties props;
 		props.x          = -1;
@@ -244,21 +227,17 @@ void Goblin_v7::setGoblinState(Mult::Mult_Object *obj, int16 animState) {
 		props.startFrame = 0;
 		props.lastFrame  = 0;
 		props.breakKey   = 0;
-		props.flags      = 0x1201;
+		props.flags      = 0x1601;
 		props.palStart   = 0;
 		props.palEnd     = 0;
 		props.sprite = -1;
 
-		Common::strlcpy(obj->animName, str, 16);
-		if (obj->videoSlot > 0)
-			_vm->_vidPlayer->closeVideo(obj->videoSlot - 1);
-
 		int slot = _vm->_vidPlayer->openVideo(false, str, props);
 		obj->videoSlot = slot + 1;
 	} else {
-		if (obj->field_38 == nullptr ||
+		if (obj->videoSlot == 0 ||
 			strcmp(obj->animName, str) != 0 ||
-			obj->field_38[4] & 0x800) {
+			(_vm->_vidPlayer->getFlags(obj->videoSlot - 1) & 0x800)) {
 
 			VideoPlayer::Properties props;
 			props.x          = -1;

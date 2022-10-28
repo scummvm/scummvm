@@ -497,7 +497,7 @@ void Inter_v1::o1_initMult() {
 			_vm->_mult->_objects[i].pAnimData->isStatic = 1;
 			_vm->_mult->_objects[i].tick = 0;
 			_vm->_mult->_objects[i].animName[0] = '\0';
-			_vm->_mult->_objects[i].field_38 = 0;
+			_vm->_mult->_objects[i].videoSlot = 0;
 			_vm->_mult->_objects[i].animVariables = nullptr;
 			_vm->_mult->_objects[i].field_6E = 0;
 			_vm->_mult->_objects[i].lastLeft = -1;
