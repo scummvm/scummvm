@@ -47,6 +47,7 @@ namespace Common {
 
 MacResManager::MacResManager() {
 	_stream = nullptr;
+	_dataForkStream = nullptr;
 	// _baseFileName cleared by String constructor
 
 	_mode = kResForkNone;
@@ -82,15 +83,16 @@ void MacResManager::close() {
 	delete[] _resLists; _resLists = nullptr;
 	delete[] _resTypes; _resTypes = nullptr;
 	delete _stream; _stream = nullptr;
+	delete _dataForkStream; _dataForkStream = nullptr;
 	_resMap.numTypes = 0;
 }
 
 bool MacResManager::hasDataFork() const {
-	return !_baseFileName.empty();
+	return !_baseFileName.empty() && (_mode == kResForkMacBinary || _dataForkStream != nullptr);
 }
 
 bool MacResManager::hasResFork() const {
-	return !_baseFileName.empty() && _mode != kResForkNone;
+	return !_baseFileName.empty() && _mode != kResForkNone && _stream != nullptr;
 }
 
 uint32 MacResManager::getResForkDataSize() const {
@@ -145,6 +147,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 		if (!isMacBinaryFile && macResForkRawStream && loadFromRawFork(macResForkRawStream)) {
 			_baseFileName = fileName;
+			_dataForkStream = archive.createReadStreamForMember(fileName);
 			return true;
 		}
 
@@ -162,11 +165,13 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 
 		if (appleDouble && loadFromAppleDouble(stream)) {
 			_baseFileName = fileName;
+			_dataForkStream = archive.createReadStreamForMember(fileName);
 			return true;
 		}
 
 		if (loadFromRawFork(stream)) {
 			_baseFileName = fileName;
+			_dataForkStream = archive.createReadStreamForMember(fileName);
 			return true;
 		}
 	}
@@ -176,6 +181,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
 	if (stream && loadFromAppleDouble(stream)) {
 		_baseFileName = fileName;
+		_dataForkStream = archive.createReadStreamForMember(fileName);
 		return true;
 	}
 	delete stream;
@@ -202,7 +208,8 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		}
 
 		stream->seek(0);
-		_stream = stream;
+		_dataForkStream = stream;
+		_stream = nullptr;
 		return true;
 	}
 
@@ -454,19 +461,15 @@ bool MacResManager::load(SeekableReadStream *stream) {
 }
 
 SeekableReadStream *MacResManager::getDataFork() {
-	if (!_stream)
-		return nullptr;
-
-	if (_mode == kResForkMacBinary) {
+	if (_mode == kResForkMacBinary && _stream != nullptr) {
 		_stream->seek(MBI_DFLEN);
 		uint32 dataSize = _stream->readUint32BE();
 		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
-	File *file = new File();
-	if (file->open(_baseFileName))
-		return file;
-	delete file;
+	if (_mode != kResForkMacBinary && _dataForkStream != nullptr) {
+		return new SeekableSubReadStream(_dataForkStream, 0, _dataForkStream->size());
+	}
 
 	return nullptr;
 }
