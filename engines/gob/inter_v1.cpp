@@ -1185,6 +1185,15 @@ void Inter_v1::o1_palLoad(OpFuncParams &params) {
 			_vm->_draw->_vgaPalette[0].blue  = 0;
 		}
 
+		if (_vm->getGameType() == kGameTypeAdibou2) {
+			_vm->_draw->_vgaPalette[0].red = 0;
+			_vm->_draw->_vgaPalette[0].green = 0;
+			_vm->_draw->_vgaPalette[0].blue = 0;
+			_vm->_draw->_vgaPalette[255].red = 63;
+			_vm->_draw->_vgaPalette[255].green = 63;
+			_vm->_draw->_vgaPalette[255].blue = 63;
+		}
+
 		if (_vm->_draw->_applyPal) {
 			_vm->_draw->_applyPal = false;
 			_vm->_video->setFullPalette(_vm->_global->_pPaletteDesc);
