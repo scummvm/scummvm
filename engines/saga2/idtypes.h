@@ -196,9 +196,9 @@ extern const StaticActiveItemID NoActiveItem;
 
 //  Task evaluation return types
 enum TaskResult {
-	taskFailed      = -1,   //  Task has ended in failure
-	taskNotDone     =  0,   //  Task has not ended yet
-	taskSucceeded   =  1    //  Task has ended in success
+	kTaskFailed      = -1,   //  Task has ended in failure
+	kTaskNotDone     =  0,   //  Task has not ended yet
+	kTaskSucceeded   =  1    //  Task has ended in success
 };
 
 typedef int16   TaskID;

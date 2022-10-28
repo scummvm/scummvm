@@ -211,7 +211,7 @@ protected:
 
 	//  Update function used while task is paused
 	TaskResult handlePaused() {
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 
 	//  Set this task into the paused state

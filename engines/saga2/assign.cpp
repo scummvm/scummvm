@@ -237,7 +237,8 @@ int16 PatrolRouteAssignment::type() const {
 //	of a task which the assignment had created.
 
 void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
-	if (result == taskSucceeded) _flags |= kRouteCompleted;
+	if (result == kTaskSucceeded)
+		_flags |= kRouteCompleted;
 }
 
 //----------------------------------------------------------------------
@@ -246,7 +247,8 @@ void PatrolRouteAssignment::handleTaskCompletion(TaskResult result) {
 bool PatrolRouteAssignment::isValid() {
 	//  If the route has already been completed, then the assignment is
 	//  no longer valid
-	if (_flags & kRouteCompleted) return false;
+	if (_flags & kRouteCompleted)
+		return false;
 
 	return ActorAssignment::isValid();
 }

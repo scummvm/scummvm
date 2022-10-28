@@ -295,7 +295,7 @@ void TaskStackList::updateTaskStacks() {
 			TaskResult  result;
 
 			//  Update the task stack and delete it if it is done
-			if ((result = ts->update()) != taskNotDone) {
+			if ((result = ts->update()) != kTaskNotDone) {
 				Actor *a = ts->getActor();
 				assert(a != nullptr);
 
@@ -827,7 +827,7 @@ void WanderTask::abortTask() {
 
 TaskResult WanderTask::evaluate() {
 	//  Wandering is never done.  It must be stopped manually.
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -863,7 +863,7 @@ TaskResult WanderTask::handleWander() {
 	        ||  !actorMotion->isWander())
 		MotionTask::wander(*_stack->getActor());
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -1042,7 +1042,7 @@ TaskResult TetheredWanderTask::handleWander() {
 		}
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -1117,10 +1117,10 @@ TaskResult GotoTask::evaluate() {
 	//  Determine if we have reach the target.
 	if (_stack->getActor()->getLocation() == destination()) {
 		abortTask();
-		return taskSucceeded;
+		return kTaskSucceeded;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -1129,7 +1129,7 @@ TaskResult GotoTask::update() {
 	//  Check to see if we have reached the target
 	{
 		TaskResult  result = evaluate();
-		if (result != taskNotDone) return result;
+		if (result != kTaskNotDone) return result;
 	}
 
 	Actor *const   a = _stack->getActor();
@@ -1198,10 +1198,10 @@ TaskResult GotoTask::update() {
 			if (_wander != nullptr)  _wander->update();
 		}
 
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -1711,7 +1711,7 @@ void GoAwayFromTask::abortTask() {
 
 TaskResult GoAwayFromTask::evaluate() {
 	//  Going away is never done, it must be stopped manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -1756,7 +1756,7 @@ TaskResult GoAwayFromTask::update() {
 			_goTask->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -2002,7 +2002,7 @@ TaskResult HuntTask::evaluate() {
 		return atTargetEvaluate();
 	} else
 		//  If we haven't reached the target, we know we're not done
-		return taskNotDone;
+		return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -2010,7 +2010,7 @@ TaskResult HuntTask::evaluate() {
 TaskResult HuntTask::update() {
 	Actor       *a = _stack->getActor();
 
-	if (a->_moveTask && a->_moveTask->isPrivledged()) return taskNotDone;
+	if (a->_moveTask && a->_moveTask->isPrivledged()) return kTaskNotDone;
 
 	//  Reevaluate the target
 	evaluateTarget();
@@ -2056,7 +2056,7 @@ TaskResult HuntTask::update() {
 
 		//  If we're not at the target, we know the hunt task is not
 		//  done
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 }
 
@@ -2237,14 +2237,14 @@ void HuntToBeNearLocationTask::atTargetabortTask() {}
 
 TaskResult HuntToBeNearLocationTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToBeNearLocationTask::atTargetUpdate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -2446,14 +2446,14 @@ void HuntToBeNearObjectTask::atTargetabortTask() {}
 
 TaskResult HuntToBeNearObjectTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToBeNearObjectTask::atTargetUpdate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -2575,16 +2575,16 @@ void HuntToPossessTask::atTargetabortTask() {}
 
 TaskResult HuntToPossessTask::atTargetEvaluate() {
 	if (_currentTarget && _stack->getActor()->isContaining(_currentTarget))
-		return taskSucceeded;
+		return kTaskSucceeded;
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToPossessTask::atTargetUpdate() {
 	//  Hunt to possess in not implemented yet
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -2853,7 +2853,7 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 
 	//  If we're not TOO close, we're done
 	if (_stack->getActor()->inRange(_targetLoc, tooClose))
-		return taskNotDone;
+		return kTaskNotDone;
 
 	if (_goAway != nullptr) {
 		_goAway->abortTask();
@@ -2861,7 +2861,7 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 		_goAway = nullptr;
 	}
 
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
@@ -2879,7 +2879,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 		} else
 			_goAway->update();
 
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 
 	//  Delete the go away task if it exists
@@ -2889,7 +2889,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 		_goAway = nullptr;
 	}
 
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -3172,7 +3172,7 @@ void HuntToKillTask::atTargetabortTask() {
 
 TaskResult HuntToKillTask::atTargetEvaluate() {
 	//  This task is never done and must be aborted manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3188,7 +3188,7 @@ TaskResult HuntToKillTask::atTargetUpdate() {
 		_flags |= evalWeapon;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3351,13 +3351,13 @@ void HuntToGiveTask::atTargetabortTask() {}
 //----------------------------------------------------------------------
 
 TaskResult HuntToGiveTask::atTargetEvaluate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToGiveTask::atTargetUpdate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -3631,7 +3631,7 @@ void BandTask::atTargetabortTask() {
 //----------------------------------------------------------------------
 
 TaskResult BandTask::atTargetEvaluate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3647,7 +3647,7 @@ TaskResult BandTask::atTargetUpdate() {
 			_attend->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3872,7 +3872,7 @@ void FollowPatrolRouteTask::abortTask() {
 TaskResult FollowPatrolRouteTask::evaluate() {
 	//  Simply check the patrol iterator to determine if there are
 	//  any more waypoints
-	return *_patrolIter == Nowhere ? taskSucceeded : taskNotDone;
+	return *_patrolIter == Nowhere ? kTaskSucceeded : kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3900,7 +3900,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 	TilePoint   currentWayPoint = *_patrolIter,
 	            actorLoc = _stack->getActor()->getLocation();
 
-	if (currentWayPoint == Nowhere) return taskSucceeded;
+	if (currentWayPoint == Nowhere) return kTaskSucceeded;
 
 	//  Determine if the actor has reached the waypoint tile position
 	if ((actorLoc.u >> kTileUVShift)
@@ -3919,18 +3919,18 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 		//  return success
 		if (_lastWayPointNum != -1
 		        &&  _patrolIter.wayPointNum() == _lastWayPointNum)
-			return taskSucceeded;
+			return kTaskSucceeded;
 
 		//  If there are no more way points in the patrol route, return
 		//  success
 		if ((currentWayPoint = *++_patrolIter) == Nowhere)
-			return taskSucceeded;
+			return kTaskSucceeded;
 
 		//  We are at a way point so randomly determine if we should
 		//  pause for a while.
 		if (g_vm->_rnd->getRandomNumber(3) == 0) {
 			pause();
-			return taskNotDone;
+			return kTaskNotDone;
 		}
 	}
 
@@ -3943,7 +3943,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 		if (_gotoWayPoint != nullptr) _gotoWayPoint->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3952,7 +3952,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 TaskResult FollowPatrolRouteTask::handlePaused() {
 	TaskResult      result;
 
-	if ((result = evaluate()) == taskNotDone) {
+	if ((result = evaluate()) == kTaskNotDone) {
 		if (_counter == 0)
 			followPatrolRoute();
 		else
@@ -4029,7 +4029,7 @@ void AttendTask::abortTask() {
 
 TaskResult AttendTask::evaluate() {
 	//  Attending must be stopped manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -4045,7 +4045,7 @@ TaskResult AttendTask::update() {
 			MotionTask::turnTowards(*a, _attendLoc);
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -4137,7 +4137,7 @@ TaskResult TaskStack::evaluate() {
 
 		return stackBottom->evaluate();
 	} else
-		return taskNotDone;
+		return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -4148,14 +4148,14 @@ TaskResult TaskStack::update() {
 
 	//  If the actor is currently uniterruptable then this task is _paused
 	if (!_actor->isInterruptable())
-		return taskNotDone;
+		return kTaskNotDone;
 
 	if (_stackBottomID != NoTask) {
 		Task    *stackBottom = getTaskAddress(_stackBottomID);
 
 		//  Determine if it is time to reevaluate the tasks
 		if (--_evalCount == 0) {
-			if ((result = stackBottom->evaluate()) != taskNotDone) {
+			if ((result = stackBottom->evaluate()) != kTaskNotDone) {
 				delete stackBottom;
 				_stackBottomID = NoTask;
 
@@ -4165,16 +4165,16 @@ TaskResult TaskStack::update() {
 		}
 
 		//  Update the tasks
-		if ((result = stackBottom->update()) != taskNotDone) {
+		if ((result = stackBottom->update()) != kTaskNotDone) {
 			delete stackBottom;
 			_stackBottomID = NoTask;
 
 			return result;
 		}
 	} else
-		return taskFailed;
+		return kTaskFailed;
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 } // end of namespace Saga2
