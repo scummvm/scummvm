@@ -101,30 +101,26 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 }
 
 void EclipseEngine::loadAssets() {
-	Common::SeekableReadStream *file = nullptr;
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
-
-	Common::File exe;
+	Common::File file;
 	if (_renderMode == "ega") {
 		loadBundledImages();
-		file = gameDir.createReadStreamForMember("TOTEE.EXE");
+		file.open("TOTEE.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open TOTEE.EXE");
 
-		loadFonts(file, 0xd403);
-		load8bitBinary(file, 0x3ce0, 16);
+		loadFonts(&file, 0xd403);
+		load8bitBinary(&file, 0x3ce0, 16);
 		for (auto &it : _areaMap)
 			it._value->addStructure(_areaMap[255]);
 
 	} else if (_renderMode == "cga") {
 		loadBundledImages();
-		file = gameDir.createReadStreamForMember("TOTEC.EXE");
+		file.open("TOTEC.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open TOTEC.EXE");
-		load8bitBinary(file, 0x7bb0, 4); // TODO
+		load8bitBinary(&file, 0x7bb0, 4); // TODO
 	} else
 		error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
 }
