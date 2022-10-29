@@ -41,12 +41,12 @@ CVideoBox::CVideoBox(const Rect16 &box,
                      uint16 ident,
                      AppFunc *cmd) : ModalWindow(box, ident, cmd) {
 	// set the size of the window panes
-	_vidPanRects[0] =  Rect16(x, y, xBrushSize, yBrushSize);
-	_vidPanRects[1] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
+	_vidPanRects[0] =  Rect16(kVBx, kVBy, kVBxBrushSize, kVByBrushSize);
+	_vidPanRects[1] =  Rect16(kVBx, kVBy + kVByBrushSize, kVBxBrushSize, kVByBrushSize);
 
 	// options dialog window decorations
-	_vidDec[0].set(_vidPanRects[0], vidPan1ResID);
-	_vidDec[1].set(_vidPanRects[1], vidPan2ResID);
+	_vidDec[0].set(_vidPanRects[0], kVBvidPan1ResID);
+	_vidDec[1].set(_vidPanRects[1], kVBvidPan2ResID);
 
 	// null out the _decRes pointer
 	_decRes = nullptr;
@@ -156,7 +156,7 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	ModalWindow::open();
 
 	// start the video playback
-	g_vm->startVideo(fileName, x + borderWidth, y + borderWidth);
+	g_vm->startVideo(fileName, kVBx + kVBborderWidth, kVBy + kVBborderWidth);
 
 	// run this modal event loop
 	//EventLoop( _rInfo.running, true );
