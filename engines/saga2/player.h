@@ -55,20 +55,20 @@ public:
 
 	ActorAttributes _baseStats;          // Base stats for this actor
 	enum PlayerActorFlags {
-		playerAggressive        = (1 << 0), // Player is in aggressive mode
-		playerBanded            = (1 << 1), // Player is banded
-		playerHasCartography    = (1 << 2)  // Player has ability to map
+		kPlayerAggressive        = (1 << 0), // Player is in aggressive mode
+		kPlayerBanded            = (1 << 1), // Player is banded
+		kPlayerHasCartography    = (1 << 2)  // Player has ability to map
 	};
 
 	// recovery information
 	enum Recovery {
-		baseManaRec             = 1,
-		attribPointsPerUpdate   = 1,
-		attribPointsPerValue    = 10
+		kBaseManaRec             = 1,
+		kAttribPointsPerUpdate   = 1,
+		kAttribPointsPerValue    = 10
 	};
 
 	enum {
-		vitalityLevelBump       = 50
+		kVitalityLevelBump       = 50
 	};
 
 	//  Container node for ready containers
@@ -144,32 +144,32 @@ public:
 
 	//  Set player to be aggressive
 	void setAggression() {
-		_flags |= playerAggressive;
+		_flags |= kPlayerAggressive;
 	}
 
 	//  Set player to not aggressive
 	void clearAggression() {
-		_flags &= ~playerAggressive;
+		_flags &= ~kPlayerAggressive;
 	}
 
 	//  Determine if actor is in aggressive state
 	bool isAggressive() {
-		return (_flags & playerAggressive) != 0;
+		return (_flags & kPlayerAggressive) != 0;
 	}
 
 	//  Set the player to be banded
 	void setBanded() {
-		_flags |= playerBanded;
+		_flags |= kPlayerBanded;
 	}
 
 	//  Set the player to not be banded
 	void clearBanded() {
-		_flags &= ~playerBanded;
+		_flags &= ~kPlayerBanded;
 	}
 
 	//  Determine if this player actor is banded
 	bool isBanded() {
-		return (_flags & playerBanded) != 0;
+		return (_flags & kPlayerBanded) != 0;
 	}
 
 	//  Resolve the banding state of this actor

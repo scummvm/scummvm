@@ -154,16 +154,16 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 		int16 fractionRecover;
 
 		// get the whole number first
-		recover = attribPointsPerUpdate / attribPointsPerValue;
+		recover = kAttribPointsPerUpdate / kAttribPointsPerValue;
 
 		// get the fraction
-		fractionRecover = attribPointsPerUpdate % attribPointsPerValue;
+		fractionRecover = kAttribPointsPerUpdate % kAttribPointsPerValue;
 
 		// if there is an overrun
-		if (_attribRecPools[index] + fractionRecover > attribPointsPerValue) {
+		if (_attribRecPools[index] + fractionRecover > kAttribPointsPerValue) {
 			// add the overrun to the whole number
 			recover++;
-			_attribRecPools[index] = (_attribRecPools[index] + fractionRecover) - attribPointsPerValue;
+			_attribRecPools[index] = (_attribRecPools[index] + fractionRecover) - kAttribPointsPerValue;
 		} else {
 			_attribRecPools[index] += fractionRecover;
 		}
@@ -344,8 +344,8 @@ void PlayerActor::skillAdvance(uint8 stat,
 void PlayerActor::vitalityAdvance(uint8 points) {
 	while (points-- > 0) {
 		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::kVitalityLimit - 1) > _baseStats.vitality) {
-			if (++_vitalityMemory >= vitalityLevelBump) {
-				_vitalityMemory -= vitalityLevelBump;
+			if (++_vitalityMemory >= kVitalityLevelBump) {
+				_vitalityMemory -= kVitalityLevelBump;
 				_baseStats.vitality++;
 				StatusMsg(VITALITY_STATUS, getActor()->objName());
 			}
