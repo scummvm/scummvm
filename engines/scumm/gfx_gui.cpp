@@ -464,7 +464,8 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	}
 
 	// Draw the GUI control
-	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, 0);
+	int boxColor = (_game.platform == Common::kPlatformFMTowns && _game.version == 3) ? 8 : 0;
+	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, boxColor);
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
 	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
 	drawGUIText(bannerMsg, 0, _screenWidth / 2, startingPointY + 2, color, true);
