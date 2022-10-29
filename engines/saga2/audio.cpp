@@ -40,10 +40,10 @@
 
 namespace Saga2 {
 
-static const StaticPoint32 VeryFarAway = {32767, 32766};
+static const StaticPoint32 kVeryFarAway = {32767, 32766};
 
-const uint32 fullVolumeDist = 75;
-const uint32 offVolumeDist = 200;
+const uint32 kFullVolumeDist = 75;
+const uint32 kOffVolumeDist = 200;
 
 const uint32        baseMusicID     = MKTAG('M', 'I', 'L', 'O'),
                     goodMusicID     = MKTAG('M', 'I', 'H', 'I'),
@@ -76,10 +76,10 @@ bool hResCheckResID(hResContext *hrc, uint32 s[]);
 static byte volumeFromDist(Point32 loc, byte maxVol) {
 	TilePoint tp(loc.x, loc.y, 0);
 	uint32 dist = tp.quickHDistance();
-	if (dist < fullVolumeDist) {
+	if (dist < kFullVolumeDist) {
 		return ABS(maxVol);
-	} else if (dist < offVolumeDist) {
-		return ABS((int)(maxVol * ((int)((offVolumeDist - fullVolumeDist) - (dist - fullVolumeDist))) / (offVolumeDist - fullVolumeDist)));
+	} else if (dist < kOffVolumeDist) {
+		return ABS((int)(maxVol * ((int)((kOffVolumeDist - kFullVolumeDist) - (dist - kFullVolumeDist))) / (kOffVolumeDist - kFullVolumeDist)));
 	}
 	return 0;
 }
@@ -269,7 +269,7 @@ Point32 translateLocation(Location playAt) {
 		Point32 p = Point32(playAt.u - cal.u, playAt.v - cal.v);
 		return p;
 	}
-	return VeryFarAway;
+	return kVeryFarAway;
 }
 
 //-----------------------------------------------------------------------
@@ -391,7 +391,7 @@ void playSoundAt(uint32 s, Point32 p) {
 
 void playSoundAt(uint32 s, Location playAt) {
 	Point32 p = translateLocation(playAt);
-	if (p != VeryFarAway)
+	if (p != kVeryFarAway)
 		playSoundAt(s, p);
 }
 
@@ -413,7 +413,7 @@ bool sayVoiceAt(uint32 s[], Point32 p) {
 
 bool sayVoiceAt(uint32 s[], Location playAt) {
 	Point32 p = translateLocation(playAt);
-	if (p != VeryFarAway)
+	if (p != kVeryFarAway)
 		return sayVoiceAt(s, p);
 	return false;
 }
@@ -453,7 +453,7 @@ void moveLoop(Point32 loc) {
 
 void moveLoop(Location loc) {
 	Point32 p = translateLocation(loc);
-	if (p != VeryFarAway) {
+	if (p != kVeryFarAway) {
 		moveLoop(p);
 	}
 }
