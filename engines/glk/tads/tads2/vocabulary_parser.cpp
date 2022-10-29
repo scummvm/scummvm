@@ -4753,8 +4753,7 @@ static void voc_get_spec_str(voccxdef *ctx, char vocw_id,
 	/* if we didn't find it, use the default */
 	if (!found)
 	{
-		strncpy(buf, default_name, (size_t)buflen);
-		buf[buflen - 1] = '\0';
+		Common::strlcpy(buf, default_name, (size_t)buflen);
 	}
 }
 

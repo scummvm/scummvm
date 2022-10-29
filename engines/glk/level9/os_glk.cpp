@@ -1289,8 +1289,8 @@ static void gln_graphics_locate_bitmaps(const char *gamefile) {
 	basename = gamefile;
 
 	/* Take a copy of the directory part of the filename. */
-	dirname = (char *)gln_malloc(basename - gamefile + 1);
-	strncpy(dirname, gamefile, basename - gamefile);
+	dirname = (char *)gln_malloc(/*basename - gamefile +*/ 1);
+	//strncpy(dirname, gamefile, basename - gamefile);
 	dirname[basename - gamefile] = '\0';
 
 	/*
