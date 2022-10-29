@@ -65,8 +65,8 @@ void CastleEngine::loadAssets() {
 
 	file = decryptFile("CMEDF");
 	load8bitBinary(file, 0, 16);
-	for (AreaMap::iterator iterator = _areaMap.begin(); iterator != _areaMap.end(); iterator++)
-		iterator->_value->addStructure(_areaMap[255]);
+	for (auto &it : _areaMap)
+		it._value->addStructure(_areaMap[255]);
 
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");

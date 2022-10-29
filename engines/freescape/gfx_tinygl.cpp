@@ -576,9 +576,9 @@ void TinyGLRenderer::flipBuffer() {
 	TinyGL::getSurfaceRef(glBuffer);
 
 	if (!dirtyAreas.empty()) {
-		for (Common::List<Common::Rect>::iterator itRect = dirtyAreas.begin(); itRect != dirtyAreas.end(); ++itRect) {
-			g_system->copyRectToScreen(glBuffer.getBasePtr((*itRect).left, (*itRect).top), glBuffer.pitch,
-									   (*itRect).left, (*itRect).top, (*itRect).width(), (*itRect).height());
+		for (auto &it : dirtyAreas) {
+			g_system->copyRectToScreen(glBuffer.getBasePtr(it.left, it.top), glBuffer.pitch,
+									   it.left, it.top, it.width(), it.height());
 		}
 	}
 }
