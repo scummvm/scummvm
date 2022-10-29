@@ -30,8 +30,6 @@ namespace MM1 {
 namespace Maps {
 
 void Map25::special() {
-	Game::Encounter &enc = g_globals->_encounters;
-
 	// Scan for special actions on the map cell
 	for (uint i = 0; i < 3; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
@@ -49,6 +47,7 @@ void Map25::special() {
 	switch (_states[g_maps->_mapOffset]) {
 	case 0:
 		if (getRandomNumber(100) == 100) {
+			Game::Encounter &enc = g_globals->_encounters;
 			Character &c = g_globals->_party[0];
 			g_globals->_currCharacter = &c;
 			int val = getRandomNumber((c._level >= 12 ? 14 : c._level) + 2);

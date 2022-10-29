@@ -72,6 +72,7 @@ bool VolcanoGod::msgKeypress(const KeypressMessage &msg) {
 			default:
 				break;
 			}
+			break;
 
 		case ENTER_RESPONSE:
 			return AnswerEntry::msgKeypress(msg);
