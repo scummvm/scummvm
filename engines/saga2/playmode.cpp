@@ -181,7 +181,7 @@ void PlayModeSetup() {
 
 	//  Create a control covering the map area.
 	speakButtonPanel = new gGenericControl(*speakButtonControls,
-	                   Rect16(0, 0, screenWidth, screenHeight),
+	                   Rect16(0, 0, kScreenWidth, kScreenHeight),
 	                   0,
 	                   cmdClickSpeech);
 	speakButtonControls->enable(false);

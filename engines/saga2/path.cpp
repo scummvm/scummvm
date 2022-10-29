@@ -1405,7 +1405,7 @@ void PathRequest::initialize() {
 	uint8 pCross = proto->crossSection;
 
 	_firstTick = gameTime,
-	_timeLimit = /*flags & run ? ticksPerSecond / 4 :*/ ticksPerSecond;
+	_timeLimit = /*flags & run ? kTicksPerSecond / 4 :*/ kTicksPerSecond;
 
 	_fetchRadius =
 	    ((kTileUVSize / 2 + pCross) >> kTileUVShift) + 1;

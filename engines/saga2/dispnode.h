@@ -81,7 +81,7 @@ public:
 //  This class is used to form a list of objects to display on
 //  the screen.
 
-const int           maxDisplayed = 100;
+const int           kMaxDisplayed = 100;
 
 class DisplayNodeList {
 	friend ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos);
@@ -97,8 +97,8 @@ public:
 		_count = 0;
 	}
 	DisplayNodeList() {
-		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * maxDisplayed);
-		init(maxDisplayed);
+		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * kMaxDisplayed);
+		init(kMaxDisplayed);
 		_count = 0;
 	}
 	~DisplayNodeList() {

@@ -36,8 +36,8 @@ class Band;
 class MotionTask;
 class TaskStack;
 
-const int   bandingDist = kSectorSize * 2;
-const int   actorScriptVars = 4;
+const int   kBandingDist = kSectorSize * 2;
+const int   kActorScriptVars = 4;
 
 /* ===================================================================== *
    Actor character attributes
@@ -220,8 +220,8 @@ struct ActorAttributes {
 };  // 28 bytes
 
 
-const int baseCarryingCapacity = 100;
-const int carryingCapacityBonusPerBrawn = 200 / ActorAttributes::kSkillLevels;
+const int kBaseCarryingCapacity = 100;
+const int kCarryingCapacityBonusPerBrawn = 200 / ActorAttributes::kSkillLevels;
 
 /* ===================================================================== *
    ResourceActorProtoExtension structure
@@ -707,7 +707,7 @@ public:
 	GameObject      *_currentTarget;
 	ObjectID        _currentTargetID;
 
-	int16           _scriptVar[actorScriptVars];   //  scratch variables for scripter use
+	int16           _scriptVar[kActorScriptVars];   //  scratch variables for scripter use
 
 	//  Member functions
 
@@ -978,7 +978,7 @@ public:
 
 		return      _leader->IDParent() == IDParent()
 		            && (_leader->getLocation() - getLocation()).quickHDistance()
-		            <=  bandingDist;
+		            <=  kBandingDist;
 	}
 
 private:

@@ -121,7 +121,7 @@ void initBackPanel() {
 		return;
 
 	mainWindow = new BackWindow(
-	                 Rect16(0, 0, screenWidth, screenHeight),
+	                 Rect16(0, 0, kScreenWidth, kScreenHeight),
 	                 0,
 	                 cmdWindowFunc);
 	if (mainWindow == nullptr)

@@ -570,7 +570,7 @@ static void evalMouseState() {
 					mt->changeDirectTarget(
 					    walkToPos,
 					    runFlag);
-					updateAlarm.set(ticksPerSecond / 2);
+					updateAlarm.set(kTicksPerSecond / 2);
 				}
 			}
 		} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntAttack) {
@@ -819,7 +819,7 @@ void TileModeHandleTask() {
 				//  If mouse in on object set alarm to determine when
 				//  to display the object's name
 				if (pickedObject != Nothing)
-					dispObjNameAlarm.set(ticksPerSecond / 2);
+					dispObjNameAlarm.set(kTicksPerSecond / 2);
 			}
 
 			if (pickedObject != Nothing) {
@@ -872,7 +872,7 @@ void TileModeHandleTask() {
 		moveActiveTerrain(0);            // for terrain with activity tasks.
 
 		//  Set the time of the next frame
-		frameAlarm.set(framePeriod);
+		frameAlarm.set(kFramePeriod);
 		updateMainDisplay();
 
 		if (inCombat || postDisplayFrame++ > 2)
@@ -1206,9 +1206,9 @@ static APPFUNC(cmdClickTileMap) {
 						navigationDelayed = true;
 						delayedNavigation.walkToPos = walkToPos;
 						delayedNavigation.pathFindFlag = false;
-						delayedNavigation.delay.set(ticksPerSecond / 2);
+						delayedNavigation.delay.set(kTicksPerSecond / 2);
 					}
-					pathFindAlarm.set(ticksPerSecond / 2);
+					pathFindAlarm.set(kTicksPerSecond / 2);
 				}
 			}
 		}
@@ -1233,7 +1233,7 @@ static APPFUNC(cmdClickTileMap) {
 				if (navigationDelayed) {
 					delayedNavigation.walkToPos = walkToPos;
 					delayedNavigation.pathFindFlag = true;
-					delayedNavigation.delay.set(ticksPerSecond / 2);
+					delayedNavigation.delay.set(kTicksPerSecond / 2);
 				} else {
 					Actor   *a = getCenterActor();
 
@@ -1305,7 +1305,7 @@ void navigateDirect(TilePoint pick, bool runFlag_) {
 	Actor   *a = getCenterActor();          // addr of actor we control
 
 	if (a) {
-		updateAlarm.set(ticksPerSecond / 2);
+		updateAlarm.set(kTicksPerSecond / 2);
 
 		//  REM: Do running here...
 

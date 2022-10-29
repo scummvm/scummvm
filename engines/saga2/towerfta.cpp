@@ -260,7 +260,7 @@ INITIALIZER(initPanelSystem) {
 	initPanels(g_vm->_mainPort);
 	if (g_vm->_mainPort._map == nullptr) {
 		gPixelMap *tmap = new gPixelMap;
-		tmap->_size = Point16(screenWidth, screenHeight);
+		tmap->_size = Point16(kScreenWidth, kScreenHeight);
 		tmap->_data = new uint8[tmap->bytes()];
 		g_vm->_mainPort.setMap(tmap);
 	}

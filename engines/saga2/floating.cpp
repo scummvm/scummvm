@@ -629,7 +629,7 @@ void updateWindowSection(const Rect16 &r) {
 	//  Since the floating windows can be dragged partly offscreen
 	//  we should make sure we're rendering only to on-screen pixels.
 
-	clip = intersect(r, Rect16(0, 0, screenWidth, screenHeight));
+	clip = intersect(r, Rect16(0, 0, kScreenWidth, kScreenHeight));
 
 	//  Allocate a temporary pixel map and gPort
 

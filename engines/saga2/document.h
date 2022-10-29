@@ -40,9 +40,9 @@ int16 openParchment(uint16);
 
 
 // constants
-const uint32    bookGroupID     = MKTAG('B', 'O', 'O', 'K');
+const uint32    kBookGroupID     = MKTAG('B', 'O', 'O', 'K');
 
-const int maxVisiblePages = 2;
+const int kMaxVisiblePages = 2;
 
 enum {
 	kPageLeft = 0,
@@ -61,7 +61,7 @@ struct CDocumentAppearance {
 	int16           numPages;                   //  Number of visible pages
 	int16           orientation;                //  Orientation of pages
 	uint8           *textColors;                //  Text color array
-	StaticRect      pageRect[maxVisiblePages];//  Array of visible page rects
+	StaticRect      pageRect[kMaxVisiblePages];//  Array of visible page rects
 	StaticRect      closeRect;                  //  Close-box rectangle
 	StaticWindow    *decoList;                 //  List of decorator panels
 	int16           numDecos;                   //  Number of decorator panels

@@ -329,8 +329,8 @@ void setNewText(char *text) {
 	textImageCenteredCol = textImage->_size.x / 2;
 	if (mouseImageCenter - textImageCenteredCol < 5) {
 		textImageCenteredCol = mouseImageCenter - 5;
-	} else if (mouseImageCenter + (textImage->_size.x - textImageCenteredCol) >= screenWidth - 5) {
-		textImageCenteredCol = textImage->_size.x - ((screenWidth - 5) - mouseImageCenter);
+	} else if (mouseImageCenter + (textImage->_size.x - textImageCenteredCol) >= kScreenWidth - 5) {
+		textImageCenteredCol = textImage->_size.x - ((kScreenWidth - 5) - mouseImageCenter);
 	}
 }
 

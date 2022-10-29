@@ -184,8 +184,8 @@ void DisplayNodeList::draw() {
 //	objects or actors which are closest to the center view point.
 
 void DisplayNodeList::buildObjects(bool fromScratch) {
-	GameObject      *sortList[maxDisplayed + 1];
-	int16           distList[maxDisplayed + 1];
+	GameObject      *sortList[kMaxDisplayed + 1];
+	int16           distList[kMaxDisplayed + 1];
 	int16           sortCount = 0;
 	int16           i;
 	int16           viewSize = kTileRectHeight;
@@ -270,11 +270,11 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				sortList[i + 1] = sortList[i];
 			}
 
-			if (i < maxDisplayed) {
+			if (i < kMaxDisplayed) {
 				distList[i] = dist;
 				sortList[i] = obj;
 
-				if (sortCount < maxDisplayed) sortCount++;
+				if (sortCount < kMaxDisplayed) sortCount++;
 			}
 		}
 	}

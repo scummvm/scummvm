@@ -60,7 +60,7 @@ ModalWindow::ModalWindow(const Rect16 &r, uint16 ident, AppFunc *cmd)
 		: DecoratedWindow(r, ident, "DialogWindow", cmd) {
 	_prevModeStackCtr = 0;
 
-	for (int i = 0; i < Max_Modes; i++)
+	for (int i = 0; i < kMax_Modes; i++)
 		_prevModeStackPtr[i] = nullptr;
 }
 

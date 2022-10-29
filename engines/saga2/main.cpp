@@ -214,7 +214,7 @@ static void mainLoop(bool &cleanExit_, int argc, char *argv[]) {
 // Game setup function
 
 bool setupGame() {
-	g_vm->_frate = new frameSmoother(frameRate, TICKSPERSECOND, gameTime);
+	g_vm->_frate = new frameSmoother(kFrameRate, TICKSPERSECOND, gameTime);
 	g_vm->_lrate = new frameCounter(TICKSPERSECOND, gameTime);
 
 	return programInit();
@@ -808,10 +808,10 @@ int32 currentGamePerformance() {
 	int32 framePer = 100;
 	int32 lval = int(g_vm->_lrate->frameStat());
 	int32 fval = int(g_vm->_lrate->frameStat(kGRFramesPerSecond));
-	if (fval >= frameRate && lval > fval) {
+	if (fval >= kFrameRate && lval > fval) {
 		framePer += (50 * ((lval - fval) / fval));
 	} else {
-		framePer = (100 * g_vm->_frate->frameStat(kGRFramesPerSecond)) / frameRate;
+		framePer = (100 * g_vm->_frate->frameStat(kGRFramesPerSecond)) / kFrameRate;
 	}
 	framePer = clamp(10, framePer, 240);
 	return framePer;
@@ -826,12 +826,12 @@ int32 eloopsPerSecond = 0;
 int32 framesPerSecond = 0;
 
 int32 gamePerformance() {
-	if (framesPerSecond < frameRate) {
-		return (100 * framesPerSecond) / frameRate;
+	if (framesPerSecond < kFrameRate) {
+		return (100 * framesPerSecond) / kFrameRate;
 	}
-	if (framesPerSecond == frameRate)
+	if (framesPerSecond == kFrameRate)
 		return 100;
-	return 100 + 50 * (eloopsPerSecond - frameRate) / frameRate;
+	return 100 + 50 * (eloopsPerSecond - kFrameRate) / kFrameRate;
 
 }
 

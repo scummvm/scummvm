@@ -4527,8 +4527,8 @@ APPFUNC(cmdControl) {
 //  actor or object to be visited
 //  Let's assume that we want each object and/or actor
 //  to be updated once every 10 seconds.
-const int32         objectCycleTime = (10 * frameRate),
-                    actorCycleTime = (5 * frameRate);
+const int32         objectCycleTime = (10 * kFrameRate),
+                    actorCycleTime = (5 * kFrameRate);
 
 //  Indexes into the array of actors and objects
 int32               objectIndex,

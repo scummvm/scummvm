@@ -284,7 +284,7 @@ bool Speech::setupActive() {
 
 	_speechFlags |= kSpActive;
 
-	speechFinished.set((_charCount * 4 / 2) + ticksPerSecond);
+	speechFinished.set((_charCount * 4 / 2) + kTicksPerSecond);
 
 	//Turn Actor Towards Person They Are Talking To
 //	MotionTask::turnObject( *obj, GameObject::objectAddress(32794)->getLocation());

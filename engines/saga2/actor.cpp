@@ -860,9 +860,9 @@ uint16 ActorProto::massCapacity(GameObject *container) {
 	Actor           *a = (Actor *)container;
 	ActorAttributes *effStats = a->getStats();
 
-	return      baseCarryingCapacity
+	return      kBaseCarryingCapacity
 	            +       effStats->getSkillLevel(kSkillIDBrawn)
-	            *   carryingCapacityBonusPerBrawn;
+	            *   kCarryingCapacityBonusPerBrawn;
 }
 
 // ------------------------------------------------------------------------
@@ -921,7 +921,7 @@ struct ActorArchive {
 	BandID              followersID;
 	ObjectID            _armorObjects[ARMOR_COUNT];
 	ObjectID            currentTargetID;
-	int16               scriptVar[actorScriptVars];
+	int16               scriptVar[kActorScriptVars];
 };
 
 /* ===================================================================== *
@@ -1016,7 +1016,7 @@ void Actor::init(
 	for (int i = 0; i < ARMOR_COUNT; i++)
 		_armorObjects[i] = Nothing;
 	_currentTarget       = nullptr;
-	for (int i = 0; i < actorScriptVars; i++)
+	for (int i = 0; i < kActorScriptVars; i++)
 		_scriptVar[i] = 0;
 
 	evalActorEnchantments(this);
@@ -1087,7 +1087,7 @@ Actor::Actor() {
 		_armorObjects[i] = Nothing;
 	_currentTarget       = nullptr;
 	_currentTargetID    = Nothing;
-	for (int i = 0; i < actorScriptVars; i++)
+	for (int i = 0; i < kActorScriptVars; i++)
 		_scriptVar[i] = 0;
 }
 
@@ -1158,7 +1158,7 @@ Actor::Actor(const ResourceActor &res) : GameObject(res) {
 		_armorObjects[i] = Nothing;
 	_currentTarget       = nullptr;
 	_currentTargetID    = Nothing;
-	for (int i = 0; i < actorScriptVars; i++)
+	for (int i = 0; i < kActorScriptVars; i++)
 		_scriptVar[i] = 0;
 
 	evalActorEnchantments(this);

@@ -843,7 +843,7 @@ void ContainerView::updateMouseText(Point16 &pickPos) {
 		g_vm->_cnm->_objTextAlarm = false;
 
 		// set the hint alarm
-		containerObjTextAlarm.set(ticksPerSecond / 2);
+		containerObjTextAlarm.set(kTicksPerSecond / 2);
 
 		// put the normalized text into mouseText
 		slotObject->objCursorText(g_vm->_cnm->_mouseText, ContainerManager::kBufSize);

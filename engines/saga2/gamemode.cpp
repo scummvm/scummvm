@@ -37,8 +37,8 @@ namespace Saga2 {
 GameMode    *GameMode::_currentMode = nullptr;  // pointer to current mode.
 GameMode    *GameMode::_newMode = nullptr;      // next mode to run
 
-GameMode       *GameMode::_modeStackPtr[Max_Modes] = { nullptr };
-GameMode       *GameMode::_newmodeStackPtr[Max_Modes] = { nullptr };
+GameMode       *GameMode::_modeStackPtr[kMax_Modes] = { nullptr };
+GameMode       *GameMode::_newmodeStackPtr[kMax_Modes] = { nullptr };
 int         GameMode::_modeStackCtr = 0;
 int         GameMode::_newmodeStackCtr = 0;
 int         GameMode::_newmodeFlag = false;
