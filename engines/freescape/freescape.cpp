@@ -313,7 +313,6 @@ void FreescapeEngine::processInput() {
 		case Common::EVENT_RETURN_TO_LAUNCHER:
 			quitGame();
 			return;
-			break;
 
 		case Common::EVENT_MOUSEMOVE:
 			mousePos = event.mouse;
