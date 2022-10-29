@@ -464,11 +464,36 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	}
 
 	// Draw the GUI control
-	int boxColor = (_game.platform == Common::kPlatformFMTowns && _game.version == 3) ? 8 : 0;
+	bool isV3Towns = (_game.platform == Common::kPlatformFMTowns && _game.version == 3);
+
+	int boxColor = 0;
+	int textXPos = _screenWidth / 2;
+	int textYPos = startingPointY + 2;
+
+	if (isV3Towns) {
+		boxColor = 8;
+		textXPos = (320 - bannerMsgWidth) / 2;
+		textYPos = 2 + (_virtscr[kMainVirtScreen].h + _virtscr[kMainVirtScreen].topline - (bannerMsgHeight - 6)) / 2;
+
+		// Game specific corrections
+		if (_game.id == GID_INDY3)
+			textXPos += 8;
+		if (_game.id == GID_LOOM)
+			textYPos -= 8;
+
+		startingPointY = textYPos - 2;
+
+		if (_useCJKMode) {
+			textXPos -= _game.id == GID_INDY3 ? 34 : 8;
+		}
+	}
+
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, boxColor);
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
 	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
-	drawGUIText(bannerMsg, 0, _screenWidth / 2, startingPointY + 2, color, true);
+
+	drawGUIText(bannerMsg, 0, textXPos, textYPos, color, !isV3Towns);
+
 	ScummEngine::drawDirtyScreenParts();
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
