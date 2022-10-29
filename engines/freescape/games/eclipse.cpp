@@ -102,7 +102,7 @@ EclipseEngine::EclipseEngine(OSystem *syst, const ADGameDescription *gd) : Frees
 
 void EclipseEngine::loadAssets() {
 	Common::File file;
-	if (_renderMode == "ega") {
+	if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("TOTEE.EXE");
 
@@ -114,7 +114,7 @@ void EclipseEngine::loadAssets() {
 		for (auto &it : _areaMap)
 			it._value->addStructure(_areaMap[255]);
 
-	} else if (_renderMode == "cga") {
+	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		file.open("TOTEC.EXE");
 
@@ -122,7 +122,7 @@ void EclipseEngine::loadAssets() {
 			error("Failed to open TOTEC.EXE");
 		load8bitBinary(&file, 0x7bb0, 4); // TODO
 	} else
-		error("Invalid render mode %s for Total Eclipse", _renderMode.c_str());
+		error("Invalid or unsupported render mode %s for Total Eclipse", Common::getRenderModeDescription(_renderMode));
 }
 
 void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {

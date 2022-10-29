@@ -24,6 +24,7 @@
 
 #include "common/bitarray.h"
 #include "common/random.h"
+#include "common/rendermode.h"
 #include "engines/advancedDetector.h"
 #include "engines/engine.h"
 #include "graphics/palette.h"
@@ -250,7 +251,7 @@ public:
 	// Rendering
 	int _screenW, _screenH;
 	Renderer *_gfx;
-	Common::String _renderMode;
+	Common::RenderMode _renderMode;
 	Graphics::PixelBuffer *getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors);
 	ColorMap _colorMap;
 	void drawFrame();

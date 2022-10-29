@@ -59,7 +59,6 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 
 void CastleEngine::loadAssets() {
 	Common::SeekableReadStream *stream = nullptr;
-	_renderMode = "ega";
 
 	stream = decryptFile("CMLE");
 	loadMessagesVariableSize(stream, 0, 172);
