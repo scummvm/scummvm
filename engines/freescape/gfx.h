@@ -23,7 +23,6 @@
 #define FREESCAPE_GFX_H
 
 #include "common/rect.h"
-#include "common/system.h"
 
 #include "graphics/tinygl/pixelbuffer.h"
 #include "math/frustum.h"
