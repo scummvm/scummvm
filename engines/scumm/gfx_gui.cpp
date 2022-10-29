@@ -1305,7 +1305,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 	}
 
 	if (_tempTextSurface) {
-		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h);
+		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h * _textSurfaceMultiplier);
 
 		// For each v4-v6 game (except for LOOM VGA which does its own thing), we take the text surface
 		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
@@ -1331,13 +1331,15 @@ void ScummEngine::restoreSurfacesPostGUI() {
 		return;
 
 	if (_tempTextSurface) {
-		memcpy(_textSurface.getBasePtr(0, 0), _tempTextSurface, _textSurface.pitch * _textSurface.h);
+		memcpy(_textSurface.getBasePtr(0, 0), _tempTextSurface, _textSurface.pitch * _textSurface.h * _textSurfaceMultiplier);
 
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
 		// text is displayed...
-		if (_game.version != 4 || _game.id != GID_LOOM)
+		if (!(_game.version == 3 && _game.platform == Common::kPlatformFMTowns) &&
+			!(_game.version == 4 && _game.id == GID_LOOM)) {
 			_postGUICharMask = true;
+		}
 
 		free(_tempTextSurface);
 		_tempTextSurface = nullptr;
@@ -1366,6 +1368,11 @@ void ScummEngine::restoreSurfacesPostGUI() {
 
 		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
 	}
+
+	// Immediately redraw the screen for v3 FMTowns games, to avoid rendering
+	// a black frame after clearing the GUI element...
+	if (_game.version == 3 && _game.platform == Common::kPlatformFMTowns)
+		ScummEngine::drawDirtyScreenParts();
 }
 
 void ScummEngine::toggleVoiceMode() {
