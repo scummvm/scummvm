@@ -58,7 +58,7 @@ void Chess::answerEntered() {
 		InfoMessage msg(
 			16, 2, STRING["maps.map19.correct"],
 			[]() {
-				MM1::Maps::Map29 &map = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
+				MM1::Maps::Map29 &map29 = *static_cast<MM1::Maps::Map29 *>(g_maps->_currentMap);
 
 				for (uint i = 0; i < g_globals->_party.size(); ++i) {
 					Character &c = g_globals->_party[i];
@@ -66,7 +66,7 @@ void Chess::answerEntered() {
 				}
 
 				g_maps->_mapPos.y = 7;
-				map.updateGame();
+				map29.updateGame();
 			}
 		);
 

@@ -50,7 +50,7 @@ void IcePrincess::answerEntered() {
 	close();
 
 	for (int i = 0; i < 4; ++i)
-		properAnswer += map[ANSWER_OFFSET + i] & 0x7f - 64;
+		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) - 64;
 
 	if (_answer == properAnswer) {
 		InfoMessage msg(
