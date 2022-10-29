@@ -206,12 +206,12 @@ static bool         inCombat,
 // inside a header.  GT 09/11/95
 
 static StaticWindow mainWindowDecorations[] = {
-	{{0,  0, 640, 20},     nullptr, MWTopBorder},       // top border
-	{{0, 440, 640, 40},    nullptr, MWBottomBorder},    // bottom border
-	{{0, 20, 20, 420},     nullptr, MWLeftBorder},      // left border
-	{{460, 20, 180, 142},  nullptr, MWRightBorder1},    // right border #1
-	{{460, 162, 180, 151}, nullptr, MWRightBorder2},    // right border #2
-	{{460, 313, 180, 127}, nullptr, MWRightBorder3},    // right border #3
+	{{0,  0, 640, 20},     nullptr, kMWTopBorder},       // top border
+	{{0, 440, 640, 40},    nullptr, kMWBottomBorder},    // bottom border
+	{{0, 20, 20, 420},     nullptr, kMWLeftBorder},      // left border
+	{{460, 20, 180, 142},  nullptr, kMWRightBorder1},    // right border #1
+	{{460, 162, 180, 151}, nullptr, kMWRightBorder2},    // right border #2
+	{{460, 313, 180, 127}, nullptr, kMWRightBorder3},    // right border #3
 };
 
 /* ===================================================================== *

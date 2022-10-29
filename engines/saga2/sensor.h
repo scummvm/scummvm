@@ -39,12 +39,12 @@ const int16 maxSenseRange = 0;
 
 //  Integers representing sensor types
 enum SensorType {
-	protaganistSensor,
-	specificObjectSensor,
-	objectPropertySensor,
-	specificActorSensor,
-	actorPropertySensor,
-	eventSensor
+	kProtaganistSensor,
+	kSpecificObjectSensor,
+	kObjectPropertySensor,
+	kSpecificActorSensor,
+	kActorPropertySensor,
+	kEventSensor
 };
 
 //  Sensors will be checked every 5 frames

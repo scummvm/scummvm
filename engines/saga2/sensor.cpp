@@ -88,27 +88,27 @@ void readSensor(int16 ctr, Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "type = %d", type);
 
 	switch (type) {
-	case protaganistSensor:
+	case kProtaganistSensor:
 		sensor = new ProtaganistSensor(in, ctr);
 		break;
 
-	case specificObjectSensor:
+	case kSpecificObjectSensor:
 		sensor = new SpecificObjectSensor(in, ctr);
 		break;
 
-	case objectPropertySensor:
+	case kObjectPropertySensor:
 		sensor = new ObjectPropertySensor(in, ctr);
 		break;
 
-	case specificActorSensor:
+	case kSpecificActorSensor:
 		sensor = new SpecificActorSensor(in, ctr);
 		break;
 
-	case actorPropertySensor:
+	case kActorPropertySensor:
 		sensor = new ActorPropertySensor(in, ctr);
 		break;
 
-	case eventSensor:
+	case kEventSensor:
 		sensor = new EventSensor(in, ctr);
 		break;
 	}
@@ -404,7 +404,7 @@ void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ProtaganistSensor::getType() {
-	return protaganistSensor;
+	return kProtaganistSensor;
 }
 
 //----------------------------------------------------------------------
@@ -558,7 +558,7 @@ void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 SpecificObjectSensor::getType() {
-	return specificObjectSensor;
+	return kSpecificObjectSensor;
 }
 
 //----------------------------------------------------------------------
@@ -636,7 +636,7 @@ void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ObjectPropertySensor::getType() {
-	return objectPropertySensor;
+	return kObjectPropertySensor;
 }
 
 //----------------------------------------------------------------------
@@ -690,7 +690,7 @@ void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 SpecificActorSensor::getType() {
-	return specificActorSensor;
+	return kSpecificActorSensor;
 }
 
 //----------------------------------------------------------------------
@@ -757,7 +757,7 @@ void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ActorPropertySensor::getType() {
-	return actorPropertySensor;
+	return kActorPropertySensor;
 }
 
 //----------------------------------------------------------------------
@@ -806,7 +806,7 @@ void EventSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 EventSensor::getType() {
-	return eventSensor;
+	return kEventSensor;
 }
 
 //----------------------------------------------------------------------

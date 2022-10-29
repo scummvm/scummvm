@@ -479,10 +479,10 @@ int16 scriptActorSay(int16 *args) {
 	//  Actor speech enums -- move these to include file
 	// MOVED TO SPEECH.H - EO
 //	enum {
-//		speakContinued  = (1<<0),           // Append next speech
-//		speakNoAnimate  = (1<<1),           // Don't animate speaking
-//		speakWait       = (1<<2),           // wait until speech finished
-//		speakLock       = (1<<3),           // LockUI while speaking
+//		kSpeakContinued  = (1<<0),           // Append next speech
+//		kSpeakNoAnimate  = (1<<1),           // Don't animate speaking
+//		kSpeakWait       = (1<<2),           // wait until speech finished
+//		kSpeakLock       = (1<<3),           // LockUI while speaking
 //	};
 
 	//  'obj' is the actor doing the speaking.
@@ -503,8 +503,8 @@ int16 scriptActorSay(int16 *args) {
 	if (sp == nullptr) {
 		uint16  spFlags = 0;
 
-		if (flags & speakNoAnimate) spFlags |= Speech::spNoAnimate;
-		if (flags & speakLock)      spFlags |= Speech::spLock;
+		if (flags & kSpeakNoAnimate) spFlags |= Speech::kSpNoAnimate;
+		if (flags & kSpeakLock)      spFlags |= Speech::kSpLock;
 
 		sp = speechList.newTask(obj->thisID(), spFlags);
 
@@ -522,9 +522,9 @@ int16 scriptActorSay(int16 *args) {
 	}
 
 	//  If we're ready to activate the speech
-	if (!(flags & speakContinued)) {
+	if (!(flags & kSpeakContinued)) {
 		//  If we're going to wait for it synchronously
-		if (flags & speakWait) {
+		if (flags & kSpeakWait) {
 			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			sp->setWakeUp(getThreadID(thisThread));
 		}
