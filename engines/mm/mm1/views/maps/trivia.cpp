@@ -49,6 +49,7 @@ bool Trivia::msgValue(const ValueMessage &msg) {
 void Trivia::draw() {
 	clearSurface();
 	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+	AnswerEntry::draw();
 }
 
 void Trivia::answerEntered() {

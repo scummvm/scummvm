@@ -37,6 +37,7 @@ Ruby::Ruby() : AnswerEntry("Ruby", Common::Point(2, 9), 12) {
 void Ruby::draw() {
 	clearSurface();
 	writeString(0, 1, STRING["maps.map39.ruby1"]);
+	AnswerEntry::draw();
 }
 
 void Ruby::answerEntered() {

@@ -30,12 +30,6 @@ namespace Maps {
 
 class Map48 : public Map {
 	typedef void (Map48:: *SpecialFn)();
-private:
-	void special00();
-
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map48::special00
-	};
 public:
 	Map48() : Map(48, "demon", 0x412) {}
 

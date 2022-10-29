@@ -44,6 +44,7 @@ bool Chess::msgFocus(const FocusMessage &msg) {
 void Chess::draw() {
 	clearSurface();
 	writeString(0, 0, STRING["maps.map29.chess"]);
+	AnswerEntry::draw();
 }
 
 void Chess::answerEntered() {
