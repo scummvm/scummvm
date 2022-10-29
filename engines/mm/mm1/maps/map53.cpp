@@ -29,14 +29,15 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 379
+
 void Map53::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 15; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[66 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +45,75 @@ void Map53::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map53::special00() {
+	send(SoundMessage(STRING["maps.wall_painted"]));
+	if (!_data[VAL1]) {
+		g_globals->_treasure[5] = W_QUEEN_IDOL_ID;
+		_data[VAL1]++;
+	}
+}
+
+void Map53::special01() {
+	send(SoundMessage(STRING["maps.map53.sign"]));
+}
+
+void Map53::special03() {
+	send(SoundMessage(
+		STRING["maps.map53.ladder_up"],
+		[]() {
+			g_maps->changeMap(0xf01, 3);
+		}
+	));
+}
+
+void Map53::special04() {
+	g_globals->_encounters.execute();
+}
+
+void Map53::special05() {
+	encounter(&_data[182], &_data[190]);
+}
+
+void Map53::special06() {
+	encounter(&_data[198], &_data[205]);
+}
+
+void Map53::special07() {
+	encounter(&_data[212], &_data[220]);
+}
+
+void Map53::special08() {
+	encounter(&_data[228], &_data[234]);
+}
+
+void Map53::special09() {
+	encounter(&_data[240], &_data[252]);
+}
+
+void Map53::special10() {
+	encounter(&_data[264], &_data[274]);
+}
+
+void Map53::special11() {
+	encounter(&_data[284], &_data[288]);
+}
+
+void Map53::special12() {
+	encounter(&_data[292], &_data[296]);
+}
+
+void Map53::special13() {
+	encounter(&_data[300], &_data[304]);
+}
+
+void Map53::special14() {
+	encounter(&_data[308], &_data[312]);
 }
 
 } // namespace Maps
