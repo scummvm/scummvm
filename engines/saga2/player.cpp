@@ -178,14 +178,14 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 }
 
 void PlayerActor::manaUpdate() {
-	const   int numManas        = 6;
+	const   int kNumManas        = 6;
 	const   int minMana         = 0;
 
 	// get the actor pointer for this character
 	Actor *actor = getActor();
 
 	// get indirections for each of the effective mana types
-	int16 *effectiveMana[numManas] = { &actor->_effectiveStats.redMana,
+	int16 *effectiveMana[kNumManas] = { &actor->_effectiveStats.redMana,
 	                                     &actor->_effectiveStats.orangeMana,
 	                                     &actor->_effectiveStats.yellowMana,
 	                                     &actor->_effectiveStats.greenMana,
@@ -194,7 +194,7 @@ void PlayerActor::manaUpdate() {
 	                                   };
 
 	// get indirections for each of the base mana types
-	int16 *baseMana[numManas] = { &_baseStats.redMana,
+	int16 *baseMana[kNumManas] = { &_baseStats.redMana,
 	                                &_baseStats.orangeMana,
 	                                &_baseStats.yellowMana,
 	                                &_baseStats.greenMana,
@@ -205,7 +205,7 @@ void PlayerActor::manaUpdate() {
 	uint16  diff;
 
 	// do each mana type
-	for (int16 i = 0; i < numManas; i++) {
+	for (int16 i = 0; i < kNumManas; i++) {
 		int     levelBump;
 		int     recRate;
 
@@ -885,7 +885,7 @@ struct PlayerActorArchive {
 	int16               _portraitType;
 	uint16              flags;
 	ActorAttributes     _baseStats;
-	int16               _manaMemory[numManas];
+	int16               _manaMemory[kNumManas];
 	uint8               _attribRecPools[kNumSkills];
 	uint8               _attribMemPools[kNumSkills];
 	uint8               _vitalityMemory;
@@ -961,7 +961,7 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 		p->_baseStats.write(out);
 
 		//  Store accumulation arrays
-		for (int j = 0; j < numManas; ++j)
+		for (int j = 0; j < kNumManas; ++j)
 			out->writeSint16LE(p->_manaMemory[j]);
 
 		for (int j = 0; j < kNumSkills; ++j)
@@ -1002,7 +1002,7 @@ void loadPlayerActors(Common::InSaveFile *in) {
 		p->_baseStats.read(in);
 
 		//  Restore the accumulation arrays
-		for (int j = 0; j < numManas; ++j)
+		for (int j = 0; j < kNumManas; ++j)
 			p->_manaMemory[j] = in->readSint16LE();
 
 		for (int j = 0; j < kNumSkills; ++j)

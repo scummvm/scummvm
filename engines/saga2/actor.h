@@ -156,12 +156,12 @@ struct ActorAttributes {
 	}
 	int16 &mana(int16 id) {
 		switch (id) {
-		case manaIDRed: return redMana;
-		case manaIDOrange: return orangeMana;
-		case manaIDYellow: return yellowMana;
-		case manaIDGreen: return greenMana;
-		case manaIDBlue: return blueMana;
-		case manaIDViolet: return violetMana;
+		case kManaIDRed: return redMana;
+		case kManaIDOrange: return orangeMana;
+		case kManaIDYellow: return yellowMana;
+		case kManaIDGreen: return greenMana;
+		case kManaIDBlue: return blueMana;
+		case kManaIDViolet: return violetMana;
 		}
 		error("Incorrect mana id: %d", id);
 	}

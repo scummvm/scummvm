@@ -190,12 +190,12 @@ bool canCast(GameObject *enactor, SkillProto *spell) {
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 	int amt = sProto.getManaAmt();
 
-	if (ami == numManas)
+	if (ami == kNumManas)
 		return true;
 #if NPC_MANA_CHECK
 	if (isActor(enactor)) {
 		Actor *a = (Actor *) enactor;
-		assert(ami >= manaIDRed && ami <= manaIDViolet);
+		assert(ami >= kManaIDRed && ami <= kManaIDViolet);
 		if ((&a->effectiveStats.redMana)[ami] < amt)
 			return false;
 		return true;

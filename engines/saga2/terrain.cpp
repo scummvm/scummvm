@@ -803,7 +803,7 @@ int16 checkBlocked(
 		                        height);
 
 		//  Check for intersection with a wall or obstacle
-		if (terrain & terrainRaised) return blockageTerrain;
+		if (terrain & terrainRaised) return kBlockageTerrain;
 	}
 
 	//  See if object collided with an object
@@ -811,10 +811,10 @@ int16 checkBlocked(
 	blockObj = objectCollision(obj, world, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;
-		return blockageObject;
+		return kBlockageObject;
 	}
 
-	return blockageNone;
+	return kBlockageNone;
 }
 
 //  return terrain that object is currently interacting with
@@ -835,13 +835,13 @@ int16 checkWalkable(
 	int16               supportHeight;
 	StandingTileInfo    sti;
 
-	if ((result = checkBlocked(obj, loc, blockResultObj)) != blockageNone)
+	if ((result = checkBlocked(obj, loc, blockResultObj)) != kBlockageNone)
 		return result;
 
 	supportHeight = tileSlopeHeight(loc, obj, &sti);
 
 	if (supportHeight < loc.z - kMaxStepHeight * 4)
-		return blockageTerrain;
+		return kBlockageTerrain;
 
 	if (sti.surfaceTile != nullptr) {
 		int16               subTileU,
@@ -854,10 +854,10 @@ int16 checkWalkable(
 
 		//  If the suporting subtile is funiture consider this blocked
 		if (sti.surfaceTile->attrs.testTerrain(mask) & terrainFurniture)
-			return blockageTerrain;
+			return kBlockageTerrain;
 	}
 
-	return blockageNone;
+	return kBlockageNone;
 }
 
 //  return terrain that object is currently interacting with
@@ -879,24 +879,24 @@ int16 checkContact(
 	                        proto->height);
 
 	//  Check for intersection with a wall or obstacle
-	if (terrain & terrainRaised) return blockageTerrain;
+	if (terrain & terrainRaised) return kBlockageTerrain;
 
 	//  Check for intersection with slope of the terrain.
 	if (((terrain & terrainSurface)
 	        &&  loc.z <= tileSlopeHeight(loc, obj))
 	        || (!(terrain & terrainWater)
 	            &&  loc.z <= 0))
-		return blockageTerrain;
+		return kBlockageTerrain;
 
 	//  See if object collided with an object
 	world = (GameWorld *)GameObject::objectAddress(mapList[mapNum].worldID);
 	blockObj = objectCollision(obj, world, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;
-		return blockageObject;
+		return kBlockageObject;
 	}
 
-	return blockageNone;
+	return kBlockageNone;
 }
 
 } // end of namespace Saga2

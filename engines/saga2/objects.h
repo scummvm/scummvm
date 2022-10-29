@@ -40,21 +40,21 @@ class GameWorld;
 const uint16 unlimitedCapacity = maxuint16;
 
 enum ActorManaID {
-	manaIDRed = 0,
-	manaIDOrange,
-	manaIDYellow,
-	manaIDGreen,
-	manaIDBlue,
-	manaIDViolet,
+	kManaIDRed = 0,
+	kManaIDOrange,
+	kManaIDYellow,
+	kManaIDGreen,
+	kManaIDBlue,
+	kManaIDViolet,
 
-	numManas
+	kNumManas
 };
 
 //  Used to indicate if objects can be stacked or merged
 enum {
-	cannotStackOrMerge = 0,
-	canStack,
-	canMerge
+	kCannotStackOrMerge = 0,
+	kCanStack,
+	kCanMerge
 };
 
 //  The ResourceGameObject structure represents the game object data as
@@ -150,8 +150,8 @@ private:
 
 	// container info
 	enum {
-		maxRow      = 20,
-		maxCol      = 4
+		kMaxRow      = 20,
+		kMaxCol      = 4
 	};
 
 public:
@@ -1303,29 +1303,29 @@ struct ObjectSoundFXs {
 //  Defines values for sixteen missile facings, plus a value for no
 //  missile facing.
 enum MissileFacings {
-	missileUp,
-	missileUpUpLf,
-	missileUpLf,
-	missileUpLfLf,
-	missileLf,
-	missileDnLfLf,
-	missileDnLf,
-	missileDnDnLf,
-	missileDn,
-	missileDnDnRt,
-	missileDnRt,
-	missileDnRtRt,
-	missileRt,
-	missileUpRtRt,
-	missileUpRt,
-	missileUpUpRt,
-	missileNoFacing
+	kMissileUp,
+	kMissileUpUpLf,
+	kMissileUpLf,
+	kMissileUpLfLf,
+	kMissileLf,
+	kMissileDnLfLf,
+	kMissileDnLf,
+	kMissileDnDnLf,
+	kMissileDn,
+	kMissileDnDnRt,
+	kMissileDnRt,
+	kMissileDnRtRt,
+	kMissileRt,
+	kMissileUpRtRt,
+	kMissileUpRt,
+	kMissileUpUpRt,
+	kMissileNoFacing
 };
 
 enum blockageType {
-	blockageNone = 0,
-	blockageTerrain,
-	blockageObject
+	kBlockageNone = 0,
+	kBlockageTerrain,
+	kBlockageObject
 };
 
 uint32 objectTerrain(GameObject *obj);

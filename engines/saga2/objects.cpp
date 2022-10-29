@@ -192,7 +192,7 @@ GameObject::GameObject() {
 	_data.hitPoints   = 0;
 	_data.bParam      = 0;
 	_data.massCount   = 0;
-	_data.missileFacing = missileRt;
+	_data.missileFacing = kMissileRt;
 	_data.currentTAG  = NoActiveItem;
 	_data.sightCtr    = 0;
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
@@ -219,7 +219,7 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	_data.hitPoints           = res.hitPoints;
 	_data.bParam              = _prototype->getChargeType() ? _prototype->maxCharges : 0;
 	_data.massCount           = res.misc; //_prototype->getInitialItemCount();
-	_data.missileFacing       = missileRt;
+	_data.missileFacing       = kMissileRt;
 	_data.currentTAG          = NoActiveItem;
 	_data.sightCtr            = 0;
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
@@ -1577,7 +1577,7 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ContainerIterator   iter(this);
 
 	//This Is The Largest The Row Column Can Be
-	static bool     slotTable[maxRow][maxCol];
+	static bool     slotTable[kMaxRow][kMaxCol];
 
 	memset(&slotTable, '\0', sizeof(slotTable));    //Initialize Table To false
 
@@ -1659,7 +1659,7 @@ bool GameObject::getAvailableSlot(
 			//  Iterate through the objects in this container
 			while (iter.next(&inventoryObj) != Nothing) {
 				if (canStackOrMerge(obj, inventoryObj)
-				        !=  cannotStackOrMerge) {
+				        !=  kCannotStackOrMerge) {
 					*tp = inventoryObj->getLocation();
 					*mergeObj = inventoryObj;
 					return true;
@@ -1733,7 +1733,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			probeLoc.z = tileSlopeHeight(probeLoc, _mapNum, obj, &sti);
 
 			//  If _data.location is not blocked, drop the object
-			if (checkBlocked(obj, _mapNum, probeLoc) == blockageNone) {
+			if (checkBlocked(obj, _mapNum, probeLoc) == kBlockageNone) {
 				//  If we're dropping the object on a TAI, make sure
 				//  we call the correct drop function
 				if (sti.surfaceTAG == nullptr) {
@@ -2277,17 +2277,17 @@ int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 			if (((dropObj->_data.objectFlags & noMergeFlags) == (target->_data.objectFlags & noMergeFlags))
 			        &&  dropObj->IDChild() == Nothing
 			        &&  target->IDChild() == Nothing) {
-				return canMerge;
+				return kCanMerge;
 			}
 		} else if (!(cSet & (ProtoObj::isWearable | ProtoObj::isWeapon | ProtoObj::isArmor))
 		           ||  !isActor(target->IDParent())) {
 			//  We can stack if the pile we are stacking on is in a container.
 			if (!isWorld(target->IDParent())
 			        &&  target->getLocation().z != 0)
-				return canStack;
+				return kCanStack;
 		}
 	}
-	return cannotStackOrMerge;
+	return kCannotStackOrMerge;
 }
 
 void GameObject::mergeWith(GameObject *dropObj, GameObject *target, int16 count) {

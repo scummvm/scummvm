@@ -764,7 +764,7 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 	GameObject *bumpy;
 	blockageType bt = checkNontact(e, nloc, &bumpy);
 
-	if (bt == blockageTerrain) {
+	if (bt == kBlockageTerrain) {
 		e->bump();
 	}
 
@@ -886,22 +886,22 @@ blockageType checkNontact(
 
 	//  Check for intersection with a wall or obstacle
 	if (terrain & terrainRaised)
-		return blockageTerrain;
+		return kBlockageTerrain;
 
 	//  Check for intersection with slope of the terrain.
 	if (((terrain & terrainSurface)
 	        || (!(terrain & terrainWater) && loc.z <= 0))
 	        &&  loc.z < tileNopeHeight(loc, obj))
-		return blockageTerrain;
+		return kBlockageTerrain;
 
 	//  See if object collided with an object
 	blockObj = objectNollision(obj, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;
-		return blockageObject;
+		return kBlockageObject;
 	}
 
-	return blockageNone;
+	return kBlockageNone;
 }
 
 int16 tileNopeHeight(

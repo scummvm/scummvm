@@ -75,7 +75,7 @@ public:
 	ContainerNode           *_readyNode;
 
 	// mana 'experience' pool
-	int16   _manaMemory[numManas];
+	int16   _manaMemory[kNumManas];
 
 	// attrib recovery pools
 	uint8   _attribRecPools[kNumSkills];
@@ -98,7 +98,7 @@ public:
 
 		memset(&_baseStats, 0, sizeof(_baseStats));
 
-		for (int i = 0; i < numManas; i++)
+		for (int i = 0; i < kNumManas; i++)
 			_manaMemory[i] = 0;
 
 		for (int i = 0; i < kNumSkills; i++) {

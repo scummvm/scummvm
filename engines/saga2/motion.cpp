@@ -225,7 +225,7 @@ bool unstickObject(GameObject *obj) {
 	mapNum = obj->getMapNum();
 	outside = objRoofID(obj, mapNum, obj->getLocation()) == 0;
 
-	if (checkBlocked(obj, obj->getLocation()) == blockageNone)
+	if (checkBlocked(obj, obj->getLocation()) == kBlockageNone)
 		return false;
 
 #if 1
@@ -262,7 +262,7 @@ bool unstickObject(GameObject *obj) {
 		//  If under the same roof, and no blockages...
 
 		if (outside == (objRoofID(obj, mapNum, pos) == 0)
-		        &&  checkBlocked(obj, pos) == blockageNone) {
+		        &&  checkBlocked(obj, pos) == kBlockageNone) {
 			int32   newRadius;
 
 			//  Then this is the best one found so far.
@@ -305,7 +305,7 @@ bool unstickObject(GameObject *obj) {
 				pos.z += height;
 
 				if (outside == (objRoofID(obj, mapNum, pos) == 0)
-				        &&  checkBlocked(obj, pos) == blockageNone) {
+				        &&  checkBlocked(obj, pos) == kBlockageNone) {
 					int16       tHeight;
 
 					tHeight = tileSlopeHeight(pos, obj);
@@ -1197,7 +1197,7 @@ void MotionTask::throwObject(GameObject &obj, const TilePoint &velocity) {
 	MotionTask      *mt;
 
 	if ((mt = g_vm->_mTaskList->newTask(&obj)) != nullptr) {
-		if (obj.isMissile()) obj._data.missileFacing = missileNoFacing;
+		if (obj.isMissile()) obj._data.missileFacing = kMissileNoFacing;
 		mt->_velocity = velocity;
 		mt->_motionType = kMotionTypeThrown;
 	}
@@ -1215,7 +1215,7 @@ void MotionTask::throwObjectTo(GameObject &obj, const TilePoint &where) {
 	const int16     turns = 15;
 
 	if ((mt = g_vm->_mTaskList->newTask(&obj)) != nullptr) {
-		if (obj.isMissile()) obj._data.missileFacing = missileNoFacing;
+		if (obj.isMissile()) obj._data.missileFacing = kMissileNoFacing;
 		mt->calcVelocity(where - obj.getLocation(), turns);
 		mt->_motionType = kMotionTypeThrown;
 	}
@@ -2571,7 +2571,7 @@ void MotionTask::walkAction() {
 			if ((blockageType = checkWalkable(_object, newPos)) != false) {
 				//  Try stepping up to a higher terrain too.
 				newPos.z = _object->_data.location.z + kMaxStepHeight;
-				if (checkWalkable(_object, newPos) != blockageNone) {
+				if (checkWalkable(_object, newPos) != kBlockageNone) {
 					//  If there is a path find task pending, put the walk action
 					//  on hold until it finishes, else, abort the walk action.
 					if (_pathFindTask)
@@ -4588,7 +4588,7 @@ supported:
 	//  by checking the contact of what he's about to fall on.
 	if (tPos.z > tHeight) tPos.z--;
 	//  See if we fell on something.
-	if (checkContact(_object, tPos) == blockageNone) {
+	if (checkContact(_object, tPos) == kBlockageNone) {
 falling:
 		if (_motionType != kMotionTypeWalk
 				||  newPos.z > gravity * 4

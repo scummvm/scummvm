@@ -1104,7 +1104,7 @@ bool InventoryProto::dropAction(
 				testDir = (vectorDir + dirOffsetTable[i]) & 0x7;
 				testPt = enactorLoc + incDirTable[testDir] * offsetDist;
 				testPt.z += enactorProto->height >> 1;
-				if (checkBlocked(dObjPtr, mapNum, testPt) == blockageNone) {
+				if (checkBlocked(dObjPtr, mapNum, testPt) == kBlockageNone) {
 					startPt = testPt;
 					break;
 				}
@@ -1168,9 +1168,9 @@ bool InventoryProto::acceptDropAction(
 	GameObject  *targetObject   = GameObject::objectAddress(dObj);
 	int         mergeState      = GameObject::canStackOrMerge(dropObject, targetObject);
 
-	if (mergeState == canMerge)
+	if (mergeState == kCanMerge)
 		return targetObject->merge(enactor, droppedObj, count);
-	else if (mergeState == canStack)
+	else if (mergeState == kCanStack)
 		return targetObject->stack(enactor, droppedObj);
 
 	return ProtoObj::acceptDropAction(dObj, enactor, droppedObj, count);

@@ -135,7 +135,7 @@ void ProtoDrainage::drainLevel(GameObject *cst, Actor *a, effectDrainsTypes edt,
 	case kDrainsManaBlue:
 	case kDrainsManaViolet:
 		{
-			ActorManaID aType = (ActorManaID)(edt + (manaIDRed - kDrainsManaRed));
+			ActorManaID aType = (ActorManaID)(edt + (kManaIDRed - kDrainsManaRed));
 			(&a->_effectiveStats.redMana)[aType] =
 				clamp(
 					0,
