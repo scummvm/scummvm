@@ -41,7 +41,7 @@ static const PlainGameDescriptor freescapeGames[] = {
 static const ADGameDescription gameDescriptions[] = {
 	// Original Freescape games
 	{"driller",
-	 "Driller",
+	 "",
 	 {
 		{"DRILLER.EXE", 0, "cafc0ea0d3424640a7723af87f8bfc0b", 17427},
 		{"DRILLC.EXE", 0, "908dd1f8732ebcbaece7d8f0cffd8830", 43864},
@@ -101,7 +101,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE | ADGF_DEMO,
 	 GUIO1(GUIO_NOMIDI)},
 	{"darkside",
-	 "Dark Side",
+	 "",
 	 {
 		{"DARKSIDE.EXE", 0, "c6c0d0186ec45e6cecd72bf5550c7f98", 1600},
 		{"DSIDEC.EXE", 0, "31e6c169d9270b6de8c1c2e746ac238e", 49504},
@@ -114,7 +114,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 	{"totaleclipse",
-	 "Total Eclipse",
+	 "",
 	 {
 		{"TOTAL.EXE", 0, "959703c1cd37b0d9744c492240a8178b", 13327},
 		{"TOTEH.EXE", 0, "c68d59874ab2a93cc9cc1b1d3aed8f17", 60628},
@@ -128,7 +128,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 	{"spacestationoblivion",
-	 "Space Station Oblivion",
+	 "",
 	 {
 		{"OBLIVION.EXE", 0, "80783622013750d7c88fd1d35dde919a", 6765},
 		{"DRILLC.EXE", 0, "56394eae69f535cbddaa463888086ac6", 43864},
@@ -141,7 +141,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO3(GUIO_NOMIDI, GUIO_RENDEREGA, GUIO_RENDERCGA)},
 	{"castlemaster",
-	 "Castle Master",
+	 "",
 	 {
 		{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
 		{"CMC.EXE", 0, "03af2b79b1aad690684cf89025c5f425", 60240},
@@ -155,7 +155,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"castlemaster",
-	 "Castle Master/VirtualWords",
+	 "VirtualWords",
 	 {
 		{"CASTLE.EXE", 0, "f1a141df0e47860246716db20d2ba061", 2806},
 		{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
@@ -169,7 +169,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"castlemaster",
-	 "Castle Master/DomarkPCCollection",
+	 "DomarkPCCollection",
 	 {
 		{"X.EXE", 0, "d51d7db1e06814cbf763c43f411df616", 2157},
 		{"CMC.EXE", 0, "7b9275df446f82fdd0c377f6ec2db546", 57168},
@@ -183,7 +183,7 @@ static const ADGameDescription gameDescriptions[] = {
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
 	{"castlemaster",
-	 "Castle Master",
+	 "",
 	 {
 		{"CASTLE.EXE", 0, "42a7d46b418d68e75e31c1cb9d89af14", 2678},
 		{"CMC.EXE", 0, "9015c244dc8a97fe55df7b235b31e00c", 57168},
