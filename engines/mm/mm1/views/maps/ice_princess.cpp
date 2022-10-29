@@ -40,6 +40,7 @@ IcePrincess::IcePrincess() :
 void IcePrincess::draw() {
 	clearSurface();
 	writeString(0, 1, STRING["maps.map19.ice_princess"]);
+	AnswerEntry::draw();
 }
 
 void IcePrincess::answerEntered() {

@@ -19,20 +19,30 @@
  *
  */
 
-#include "mm/mm1/maps/map48.h"
-#include "mm/mm1/maps/maps.h"
-#include "mm/mm1/events.h"
-#include "mm/mm1/globals.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_MAPS_ORANGO_H
+#define MM1_VIEWS_MAPS_ORANGO_H
+
+#include "mm/mm1/views/maps/answer_entry.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-void Map48::special() {
-	g_events->addView("Orango");
-}
+class Orango : public AnswerEntry {
+protected:
+	void answerEntered() override;
+
+public:
+	Orango();
+	virtual ~Orango() {}
+
+	void draw() override;
+};
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif
