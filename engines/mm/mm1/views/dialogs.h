@@ -52,6 +52,7 @@
 #include "mm/mm1/views/maps/giant.h"
 #include "mm/mm1/views/maps/ice_princess.h"
 #include "mm/mm1/views/maps/inspectron.h"
+#include "mm/mm1/views/maps/keeper.h"
 #include "mm/mm1/views/maps/lion.h"
 #include "mm/mm1/views/maps/lord_archer.h"
 #include "mm/mm1/views/maps/lord_ironfist.h"
@@ -112,6 +113,7 @@ private:
 	Views::Maps::Giant _giant;
 	Views::Maps::IcePrincess _icePrincess;
 	Views::Maps::Inspectron _inspectron;
+	Views::Maps::Keeper _keeper;
 	Views::Maps::Lion _lion;
 	Views::Maps::LordArcher _lordArcher;
 	Views::Maps::LordIronfist _lordIronfist;

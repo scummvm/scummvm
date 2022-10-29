@@ -63,6 +63,7 @@ MODULE_OBJS := \
 	mm1/views/maps/hacker.o \
 	mm1/views/maps/ice_princess.o \
 	mm1/views/maps/inspectron.o \
+	mm1/views/maps/keeper.o \
 	mm1/views/maps/lion.o \
 	mm1/views/maps/lord_archer.o \
 	mm1/views/maps/lord_ironfist.o \
