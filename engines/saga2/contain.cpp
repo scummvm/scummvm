@@ -157,8 +157,8 @@ static const ContainerAppearanceDef readyContainerAppearance = {
 	{0, 0, 0, 0},
 	{ 0, 0 },
 	{ 0, 0 },
-	{iconOriginX - 1, iconOriginY - 1 - 8},
-	{iconSpacingX, iconSpacingY},
+	{kIconOriginX - 1, kIconOriginY - 1 - 8},
+	{kIconSpacingX, kIconSpacingY},
 	1, 3,
 	3
 };
@@ -350,17 +350,17 @@ void ContainerView::drawClipped(
 
 			y =     originY
 			        + (objLoc.u - _scrollPosition)
-			        * (_iconSpacing.y + iconHeight);
+			        * (_iconSpacing.y + kIconHeight);
 			x =     originX
 			        +       objLoc.v
-			        * (_iconSpacing.x + iconWidth);
+			        * (_iconSpacing.x + kIconWidth);
 
 			//  Get the address of the sprite.
 			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
-			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
+			sprPos.x = x + ((kIconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
-			sprPos.y = y + ((iconHeight - spr->size.y) >> 1)
+			sprPos.y = y + ((kIconHeight - spr->size.y) >> 1)
 			           - spr->offset.y;
 
 			//  Build the color table.
@@ -375,8 +375,8 @@ void ContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - kSelectorX) >> 1),
-				                              y + ((iconHeight - kSelectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((kIconWidth - kSelectorX) >> 1),
+				                              y + ((kIconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);
@@ -454,8 +454,8 @@ TilePoint ContainerView::pickObjectSlot(const Point16 &pickPos) {
 
 	//  Compute the u/v of the slot that they clicked on.
 	temp   = pickPos + _iconSpacing / 2 - _iconOrigin;
-	slot.v = clamp(0, temp.x / (iconWidth  + _iconSpacing.x), _visibleCols - 1);
-	slot.u = clamp(0, temp.y / (iconHeight + _iconSpacing.y), _visibleRows - 1) + _scrollPosition;
+	slot.v = clamp(0, temp.x / (kIconWidth  + _iconSpacing.x), _visibleCols - 1);
+	slot.u = clamp(0, temp.y / (kIconHeight + _iconSpacing.y), _visibleRows - 1) + _scrollPosition;
 	slot.z = 1;
 	return slot;
 }
@@ -947,18 +947,18 @@ void ReadyContainerView::drawClipped(
 
 	if (_backImages) {
 		int16   i;
-		Point16 drawOrg(_extent.x - offset.x + backOriginX,
-		                _extent.y - offset.y + backOriginY);
+		Point16 drawOrg(_extent.x - offset.x + kBackOriginX,
+		                _extent.y - offset.y + kBackOriginY);
 
 		for (y = drawOrg.y, row = 0;
 		        row < _visibleRows;
-		        row++, y += _iconSpacing.y + iconHeight) {
+		        row++, y += _iconSpacing.y + kIconHeight) {
 			// reset y for background image stuff
 			//y = drawOrg.y;
 
 			for (i = 0, x = drawOrg.x, col = 0;
 			        col < _visibleCols;
-			        i++, col++, x += _iconSpacing.x + iconWidth) {
+			        i++, col++, x += _iconSpacing.x + kIconWidth) {
 				Point16 pos(x, y);
 
 				if (isGhosted()) drawCompressedImageGhosted(port, pos, _backImages[i % _numIm]);
@@ -969,16 +969,16 @@ void ReadyContainerView::drawClipped(
 	} else {
 		for (y = originY, row = 0;
 		        row < _visibleRows;
-		        row++, y += _iconSpacing.y + iconHeight) {
+		        row++, y += _iconSpacing.y + kIconHeight) {
 
 			for (x = originX, col = 0;
 			        col < _visibleCols;
-			        col++, x += _iconSpacing.x + iconWidth) {
+			        col++, x += _iconSpacing.x + kIconWidth) {
 				//  REM: We need to come up with some way of
 				//  indicating how to render the pattern data which
 				//  is behind the object...
 				port.setColor(14);
-				port.fillRect(x, y, iconWidth, iconHeight);
+				port.fillRect(x, y, kIconWidth, kIconHeight);
 
 			}
 
@@ -1009,15 +1009,15 @@ void ReadyContainerView::drawClipped(
 			ProtoObj    *proto = item->proto();
 			Point16     sprPos;
 
-			y = originY + (objLoc.u - _scrollPosition) * (_iconSpacing.y + iconHeight);
-			x = originX + objLoc.v * (_iconSpacing.x + iconWidth);
+			y = originY + (objLoc.u - _scrollPosition) * (_iconSpacing.y + kIconHeight);
+			x = originX + objLoc.v * (_iconSpacing.x + kIconWidth);
 
 			//  Get the address of the sprite.
 			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
-			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
+			sprPos.x = x + ((kIconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
-			sprPos.y = y + ((iconHeight - spr->size.y) >> 1)
+			sprPos.y = y + ((kIconHeight - spr->size.y) >> 1)
 			           - spr->offset.y;
 
 			if (isGhosted()) return;
@@ -1040,8 +1040,8 @@ void ReadyContainerView::drawClipped(
 
 			// check to see if selecting amount for this objec
 			if (g_vm->_cnm->_objToGet == item) {
-				Point16 selectorPos = Point16(x + ((iconWidth - kSelectorX) >> 1),
-				                              y + ((iconHeight - kSelectorY) >> 1));
+				Point16 selectorPos = Point16(x + ((kIconWidth - kSelectorX) >> 1),
+				                              y + ((kIconHeight - kSelectorY) >> 1));
 
 				// draw the selector thingy
 				drawSelector(port, selectorPos);

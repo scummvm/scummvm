@@ -230,37 +230,37 @@ APPFUNC(cmdManaInd);
  * ===================================================================== */
 
 // position arrays for all _buttons on the individual panels
-static const StaticRect topBox[numButtons] = {
-	/* portrait          */ { 489, 22 + (yContOffset * 0), 65, 72 },
-	/* agress            */ { 559, 86 + (yContOffset * 0), 28, 27 },
-	/* jump              */ { 592, 86 + (yContOffset * 0), 28, 27 },
-	/* center            */ { 559, 56 + (yContOffset * 0), 28, 27 },
-	/* banding           */ { 592, 56 + (yContOffset * 0), 28, 27 },
-	/* namePlates        */ { 488, 94 + (yFaceOffset * 0), 65, 15 },
-	/* namePlateFrames   */ { 487, 20 + (yFaceOffset * 0), 69, 92 }
+static const StaticRect topBox[kNumButtons] = {
+	/* portrait          */ { 489, 22 + (kYContOffset * 0), 65, 72 },
+	/* agress            */ { 559, 86 + (kYContOffset * 0), 28, 27 },
+	/* jump              */ { 592, 86 + (kYContOffset * 0), 28, 27 },
+	/* center            */ { 559, 56 + (kYContOffset * 0), 28, 27 },
+	/* banding           */ { 592, 56 + (kYContOffset * 0), 28, 27 },
+	/* namePlates        */ { 488, 94 + (kYFaceOffset * 0), 65, 15 },
+	/* namePlateFrames   */ { 487, 20 + (kYFaceOffset * 0), 69, 92 }
 };
 
 
-static const StaticRect midBox[numButtons] = {
-	{ 489, 22 + (yContOffset * 1), 65, 72 },
-	{ 559, 86 + (yContOffset * 1), 28, 27 },
-	{ 592, 86 + (yContOffset * 1), 28, 27 },
-	{ 559, 56 + (yContOffset * 1), 28, 27 },
-	{ 592, 56 + (yContOffset * 1), 28, 27 },
-	{ 488, 94 + (yFaceOffset * 1), 65, 15 },
-	{ 487, 20 + (yFaceOffset * 1), 69, 92 }
+static const StaticRect midBox[kNumButtons] = {
+	{ 489, 22 + (kYContOffset * 1), 65, 72 },
+	{ 559, 86 + (kYContOffset * 1), 28, 27 },
+	{ 592, 86 + (kYContOffset * 1), 28, 27 },
+	{ 559, 56 + (kYContOffset * 1), 28, 27 },
+	{ 592, 56 + (kYContOffset * 1), 28, 27 },
+	{ 488, 94 + (kYFaceOffset * 1), 65, 15 },
+	{ 487, 20 + (kYFaceOffset * 1), 69, 92 }
 };
 
 
 
-static const StaticRect botBox[numButtons] = {
-	{ 489, 22 + (yContOffset * 2), 65, 72 },
-	{ 559, 86 + (yContOffset * 2), 28, 27 },
-	{ 592, 86 + (yContOffset * 2), 28, 27 },
-	{ 559, 56 + (yContOffset * 2), 28, 27 },
-	{ 592, 56 + (yContOffset * 2), 28, 27 },
-	{ 488, 94 + (yFaceOffset * 2), 65, 15 },
-	{ 487, 20 + (yFaceOffset * 2), 69, 92 }
+static const StaticRect botBox[kNumButtons] = {
+	{ 489, 22 + (kYContOffset * 2), 65, 72 },
+	{ 559, 86 + (kYContOffset * 2), 28, 27 },
+	{ 592, 86 + (kYContOffset * 2), 28, 27 },
+	{ 559, 56 + (kYContOffset * 2), 28, 27 },
+	{ 592, 56 + (kYContOffset * 2), 28, 27 },
+	{ 488, 94 + (kYFaceOffset * 2), 65, 15 },
+	{ 487, 20 + (kYFaceOffset * 2), 69, 92 }
 };
 
 
