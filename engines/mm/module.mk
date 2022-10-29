@@ -64,6 +64,7 @@ MODULE_OBJS := \
 	mm1/views/maps/inspectron.o \
 	mm1/views/maps/lion.o \
 	mm1/views/maps/lord_archer.o \
+	mm1/views/maps/lord_ironfist.o \
 	mm1/views/maps/prisoners.o \
 	mm1/views/maps/resistances.o \
 	mm1/views/map/ruby.o \

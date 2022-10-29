@@ -19,61 +19,30 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP43_H
-#define MM1_MAPS_MAP43_H
+#ifndef MM1_VIEWS_MAPS_LORD_IRONFIST_H
+#define MM1_VIEWS_MAPS_LORD_IRONFIST_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map43 : public Map {
-	typedef void (Map43:: *SpecialFn)();
+class LordIronfist : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special04();
-	void special05();
-	void special06();
-	void special07();
-	void special08();
-	void updateFlags();
-
-	const SpecialFn SPECIAL_FN[9] = {
-		&Map43::special00,
-		&Map43::special01,
-		&Map43::special02,
-		&Map43::special03,
-		&Map43::special04,
-		&Map43::special05,
-		&Map43::special06,
-		&Map43::special07,
-		&Map43::special08
-	};
+	bool _canAccept;
 public:
-	Map43() : Map(43, "whitew", 0xA11) {}
+	LordIronfist();
+	virtual ~LordIronfist() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	/**
-	 * Accepts a quest from Inspectron
-	 */
-	void acceptQuest();
-
-	/**
-	 * Does a check for whether Inspectron's current quest
-	 * is complete or not
-	 */
-	Common::String checkQuestComplete();
+	bool msgFocus(const FocusMessage &msg) override;	
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 
