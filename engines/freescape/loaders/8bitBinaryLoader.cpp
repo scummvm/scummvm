@@ -366,14 +366,14 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	debugC(1, kFreescapeDebugParser, "%d area conditions at %x of area %d", numConditions, base + cPtr, areaNumber);
 
 	Area *area = new Area(areaNumber, areaFlags, objectsByID, entrancesByID);
-	area->name = name;
-	area->scale = scale;
-	area->skyColor = skyColor;
-	area->groundColor = groundColor;
+	area->_name = name;
+	area->_scale = scale;
+	area->_skyColor = skyColor;
+	area->_groundColor = groundColor;
 
 	// Driller specific
-	area->gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
-	area->gasPocketRadius = gasPocketRadius;
+	area->_gasPocketPosition = Common::Point(32 * gasPocketX, 32 * gasPocketY);
+	area->_gasPocketRadius = gasPocketRadius;
 
 	while (numConditions--) {
 		FCLInstructionVector instructions;
@@ -383,8 +383,8 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		// get the condition
 		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
 		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
-		area->conditions.push_back(instructions);
-		area->conditionSources.push_back(conditionSource);
+		area->_conditions.push_back(instructions);
+		area->_conditionSources.push_back(conditionSource);
 		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
 	}
 

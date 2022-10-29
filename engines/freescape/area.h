@@ -39,7 +39,7 @@ public:
 	Area(uint16 areaID, uint16 areaFlags, ObjectMap *objectsByID, ObjectMap *entrancesByID);
 	virtual ~Area();
 
-	Common::String name;
+	Common::String _name;
 	Object *objectWithID(uint16 objectID);
 	Object *entranceWithID(uint16 objectID);
 	uint16 getAreaID();
@@ -55,28 +55,28 @@ public:
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 
-	Common::Array<Common::String *> conditionSources;
-	Common::Array<FCLInstructionVector> conditions;
+	Common::Array<Common::String *> _conditionSources;
+	Common::Array<FCLInstructionVector> _conditions;
 
 	// Serialization
 	void saveObjects(Common::WriteStream *stream);
 	void loadObjects(Common::SeekableReadStream *stream, Area *global);
 
 	// Driller specific
-	Common::Point gasPocketPosition;
-	uint32 gasPocketRadius;
+	Common::Point _gasPocketPosition;
+	uint32 _gasPocketRadius;
 
-	uint8 scale;
-	Graphics::PixelBuffer *palette;
-	uint8 skyColor;
-	uint8 groundColor;
+	uint8 _scale;
+	Graphics::PixelBuffer *_palette;
+	uint8 _skyColor;
+	uint8 _groundColor;
 
 private:
-	uint16 areaID;
-	uint16 areaFlags;
-	ObjectMap *objectsByID;
-	ObjectMap *entrancesByID;
-	Common::Array<Object *> drawableObjects;
+	uint16 _areaID;
+	uint16 _areaFlags;
+	ObjectMap *_objectsByID;
+	ObjectMap *_entrancesByID;
+	Common::Array<Object *> _drawableObjects;
 	Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
 };
 

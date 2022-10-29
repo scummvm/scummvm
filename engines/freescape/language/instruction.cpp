@@ -78,9 +78,9 @@ void FreescapeEngine::executeLocalGlobalConditions(bool shot, bool collided) {
 	if (isCastle())
 		return;
 	debugC(1, kFreescapeDebugCode, "Executing room conditions");
-	for (int i = 0; i < int(_currentArea->conditions.size()); i++) {
-		debugC(1, kFreescapeDebugCode, "%s", _currentArea->conditionSources[i]->c_str());
-		executeCode(_currentArea->conditions[i], shot, collided);
+	for (int i = 0; i < int(_currentArea->_conditions.size()); i++) {
+		debugC(1, kFreescapeDebugCode, "%s", _currentArea->_conditionSources[i]->c_str());
+		executeCode(_currentArea->_conditions[i], shot, collided);
 	}
 
 	debugC(1, kFreescapeDebugCode, "Executing global conditions (%d)", _conditions.size());

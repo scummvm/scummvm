@@ -60,12 +60,12 @@ void DrillerEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	_currentAreaMessages.clear();
 	if (_messagesList.size() > 2) {
-		if (_currentArea->gasPocketRadius > 0)
+		if (_currentArea->_gasPocketRadius > 0)
 			_currentAreaMessages.push_back(_messagesList[1]);
 		else
 			_currentAreaMessages.push_back(_messagesList[2]);
 
-		_currentAreaMessages.push_back(_currentArea->name);
+		_currentAreaMessages.push_back(_currentArea->_name);
 	}
 
 	if (entranceID > 0 || areaID == 127) {
@@ -373,8 +373,8 @@ void DrillerEngine::drawUI() {
 
 void DrillerEngine::pressedKey(const int keycode) {
 	if (keycode == Common::KEYCODE_d) {
-		Common::Point gasPocket = _currentArea->gasPocketPosition;
-		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
+		Common::Point gasPocket = _currentArea->_gasPocketPosition;
+		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		if (gasPocketRadius == 0)
 			return;
 
@@ -407,12 +407,12 @@ void DrillerEngine::pressedKey(const int keycode) {
 		const Math::Vector3d gasPocket3D(gasPocket.x, 1, gasPocket.y);
 		addDrill(drillPosition);
 		float distance = (gasPocket3D - drillPosition).length();
-		debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->gasPocketRadius);
+		debugC(1, kFreescapeDebugMove, "length to gas pocket: %f with radius %d", distance, _currentArea->_gasPocketRadius);
 		// TODO: show the result of the drilling
 		_currentAreaMessages[0] = _messagesList[3];
 
 	} else if (keycode == Common::KEYCODE_c) {
-		uint32 gasPocketRadius = _currentArea->gasPocketRadius;
+		uint32 gasPocketRadius = _currentArea->_gasPocketRadius;
 		if (gasPocketRadius == 0)
 			return;
 
