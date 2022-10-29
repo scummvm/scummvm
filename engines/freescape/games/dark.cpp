@@ -40,27 +40,23 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 }
 
 void DarkEngine::loadAssets() {
-	Common::SeekableReadStream *file = nullptr;
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
-
-	Common::File exe;
+	Common::File file;
 	if (_renderMode == "ega") {
 		loadBundledImages();
-		file = gameDir.createReadStreamForMember("DSIDEE.EXE");
+		file.open("DSIDEE.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open DSIDEE.EXE");
 
-		loadFonts(file, 0xa113);
-		load8bitBinary(file, 0xa280, 16);
+		loadFonts(&file, 0xa113);
+		load8bitBinary(&file, 0xa280, 16);
 	} else if (_renderMode == "cga") {
 		loadBundledImages();
-		file = gameDir.createReadStreamForMember("DSIDEC.EXE");
+		file.open("DSIDEC.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open DSIDEC.EXE");
-		load8bitBinary(file, 0x7bb0, 4); // TODO
+		load8bitBinary(&file, 0x7bb0, 4); // TODO
 	} else
 		error("Invalid render mode %s for Dark Side", _renderMode.c_str());
 }
