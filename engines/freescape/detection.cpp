@@ -262,7 +262,7 @@ public:
 	}
 
 	const char *getOriginalCopyright() const override {
-		return "Copyright (C) Incentive Software";
+		return "Copyright (C) Incentive Software 1987";
 	}
 
 	const DebugChannelDef *getDebugChannels() const override {
