@@ -135,7 +135,7 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->show();
 
 	_currentAreaMessages.clear();
-	_currentAreaMessages.push_back(_currentArea->name);
+	_currentAreaMessages.push_back(_currentArea->_name);
 
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
@@ -160,9 +160,9 @@ void EclipseEngine::gotoArea(uint16 areaID, int entranceID) {
 
 	_lastPosition = _position;
 
-	if (_currentArea->skyColor > 0 && _currentArea->skyColor != 255) {
+	if (_currentArea->_skyColor > 0 && _currentArea->_skyColor != 255) {
 		_gfx->_keyColor = 0;
-		_gfx->setSkyColor(_currentArea->skyColor);
+		_gfx->setSkyColor(_currentArea->_skyColor);
 	} else
 		_gfx->_keyColor = 255;
 }

@@ -39,41 +39,41 @@ Object *Area::objectWithIDFromMap(ObjectMap *map, uint16 objectID) {
 }
 
 Object *Area::objectWithID(uint16 objectID) {
-	return objectWithIDFromMap(objectsByID, objectID);
+	return objectWithIDFromMap(_objectsByID, objectID);
 }
 
 Object *Area::entranceWithID(uint16 objectID) {
-	return objectWithIDFromMap(entrancesByID, objectID);
+	return objectWithIDFromMap(_entrancesByID, objectID);
 }
 
 uint16 Area::getAreaID() {
-	return areaID;
+	return _areaID;
 }
 
 uint16 Area::getAreaFlags() {
-	return areaFlags;
+	return _areaFlags;
 }
 
 uint8 Area::getScale() {
-	return scale;
+	return _scale;
 }
 
-Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap *_entrancesByID) {
-	areaID = _areaID;
-	areaFlags = _areaFlags;
-	objectsByID = _objectsByID;
-	entrancesByID = _entrancesByID;
+Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap *entrancesByID_) {
+	_areaID = areaID_;
+	_areaFlags = areaFlags_;
+	_objectsByID = objectsByID_;
+	_entrancesByID = entrancesByID_;
 
-	scale = 0;
-	palette = 0;
-	skyColor = 255;
-	groundColor = 255;
-	gasPocketRadius = 0;
+	_scale = 0;
+	_palette = 0;
+	_skyColor = 255;
+	_groundColor = 255;
+	_gasPocketRadius = 0;
 
 	// create a list of drawable objects only
-	for (auto &it : *objectsByID) {
+	for (auto &it : *_objectsByID) {
 		if (it._value->isDrawable()) {
-			drawableObjects.push_back(it._value);
+			_drawableObjects.push_back(it._value);
 		}
 	}
 
@@ -88,33 +88,33 @@ Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap
 		};
 	} compareObjects;
 
-	Common::sort(drawableObjects.begin(), drawableObjects.end(), compareObjects);
+	Common::sort(_drawableObjects.begin(), _drawableObjects.end(), compareObjects);
 }
 
 Area::~Area() {
-	if (entrancesByID) {
-		for (auto &it : *entrancesByID)
+	if (_entrancesByID) {
+		for (auto &it : *_entrancesByID)
 			delete it._value;
 	}
 
-	if (objectsByID) {
-		for (auto &it : *objectsByID)
+	if (_objectsByID) {
+		for (auto &it : *_objectsByID)
 			delete it._value;
 	}
 
-	delete entrancesByID;
-	delete objectsByID;
+	delete _entrancesByID;
+	delete _objectsByID;
 
-	for (auto &it : conditionSources)
+	for (auto &it : _conditionSources)
 		delete it;
 }
 
 void Area::show() {
-	debugC(1, kFreescapeDebugMove, "Area name: %s", name.c_str());
-	for (auto &it : *objectsByID)
+	debugC(1, kFreescapeDebugMove, "Area name: %s", _name.c_str());
+	for (auto &it : *_objectsByID)
 		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d", it._value->getObjectID(), it._value->getType());
 
-	for (auto &it : *entrancesByID)
+	for (auto &it : *_entrancesByID)
 		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d (entrance)", it._value->getObjectID(), it._value->getType());
 }
 
@@ -128,8 +128,8 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 		float y = stream->readFloatLE();
 		float z = stream->readFloatLE();
 		Object *obj = nullptr;
-		if (objectsByID->contains(key)) {
-			obj = (*objectsByID)[key];
+		if (_objectsByID->contains(key)) {
+			obj = (*_objectsByID)[key];
 		} else {
 			obj = global->objectWithID(key);
 			assert(obj);
@@ -142,9 +142,9 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 }
 
 void Area::saveObjects(Common::WriteStream *stream) {
-	stream->writeUint32LE(objectsByID->size());
+	stream->writeUint32LE(_objectsByID->size());
 
-	for (auto &it : *objectsByID) {
+	for (auto &it : *_objectsByID) {
 		Object *obj = it._value;
 		stream->writeUint32LE(it._key);
 		stream->writeUint32LE(obj->getObjectFlags());
@@ -156,8 +156,8 @@ void Area::saveObjects(Common::WriteStream *stream) {
 
 void Area::draw(Freescape::Renderer *gfx) {
 	gfx->clear();
-	assert(drawableObjects.size() > 0);
-	for (auto &obj : drawableObjects) {
+	assert(_drawableObjects.size() > 0);
+	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			obj->draw(gfx);
 		}
@@ -167,7 +167,7 @@ void Area::draw(Freescape::Renderer *gfx) {
 Object *Area::shootRay(const Math::Ray &ray) {
 	float size = 16.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (auto &obj : drawableObjects) {
+	for (auto &obj : _drawableObjects) {
 		float objSize = obj->getSize().length();
 		if (!obj->isDestroyed() && !obj->isInvisible() && obj->boundingBox.isValid() && ray.intersectAABB(obj->boundingBox) && size >= objSize) {
 			debugC(1, kFreescapeDebugMove, "shot obj id: %d", obj->getObjectID());
@@ -181,7 +181,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 	float size = 3.0 * 8192.0 * 8192.0; // TODO: check if this is max size
 	Object *collided = nullptr;
-	for (auto &obj : drawableObjects) {
+	for (auto &obj : _drawableObjects) {
 		if (!obj->isDestroyed() && !obj->isInvisible()) {
 			GeometricObject *gobj = (GeometricObject *)obj;
 			float objSize = gobj->getSize().length();
@@ -197,22 +197,22 @@ Object *Area::checkCollisions(const Math::AABB &boundingBox) {
 void Area::addObject(Object *obj) {
 	assert(obj);
 	int id = obj->getObjectID();
-	debugC(1, kFreescapeDebugParser, "Adding object %d to room %d", id, areaID);
-	assert(!objectsByID->contains(id));
-	(*objectsByID)[id] = obj;
+	debugC(1, kFreescapeDebugParser, "Adding object %d to room %d", id, _areaID);
+	assert(!_objectsByID->contains(id));
+	(*_objectsByID)[id] = obj;
 	if (obj->isDrawable())
-		drawableObjects.insert_at(0, obj);
+		_drawableObjects.insert_at(0, obj);
 }
 
 void Area::removeObject(int16 id) {
-	assert(objectsByID->contains(id));
-	for (uint i = 0; i < drawableObjects.size(); i++) {
-		if (drawableObjects[i]->getObjectID() == id) {
-			drawableObjects.remove_at(i);
+	assert(_objectsByID->contains(id));
+	for (uint i = 0; i < _drawableObjects.size(); i++) {
+		if (_drawableObjects[i]->getObjectID() == id) {
+			_drawableObjects.remove_at(i);
 			break;
 		}
 	}
-	objectsByID->erase(id);
+	_objectsByID->erase(id);
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
@@ -220,21 +220,21 @@ void Area::addObjectFromArea(int16 id, Area *global) {
 	Object *obj = global->objectWithID(id);
 	if (!obj) {
 		assert(global->entranceWithID(id));
-		(*entrancesByID)[id] = global->entranceWithID(id);
+		(*_entrancesByID)[id] = global->entranceWithID(id);
 	} else {
-		(*objectsByID)[id] = global->objectWithID(id);
+		(*_objectsByID)[id] = global->objectWithID(id);
 		if (obj->isDrawable())
-			drawableObjects.insert_at(0, obj);
+			_drawableObjects.insert_at(0, obj);
 	}
 }
 
 void Area::addStructure(Area *global) {
 	Object *obj = nullptr;
-	if (!global || !entrancesByID->contains(255)) {
+	if (!global || !_entrancesByID->contains(255)) {
 		int id = 254;
 		Common::Array<uint8> *gColors = new Common::Array<uint8>;
 		for (int i = 0; i < 6; i++)
-			gColors->push_back(groundColor);
+			gColors->push_back(_groundColor);
 
 		obj = (Object *)new GeometricObject(
 			Object::Type::Cube,
@@ -245,11 +245,11 @@ void Area::addStructure(Area *global) {
 			gColors,
 			nullptr,
 			FCLInstructionVector());
-		(*objectsByID)[id] = obj;
-		drawableObjects.insert_at(0, obj);
+		(*_objectsByID)[id] = obj;
+		_drawableObjects.insert_at(0, obj);
 		return;
 	}
-	GlobalStructure *rs = (GlobalStructure *)(*entrancesByID)[255];
+	GlobalStructure *rs = (GlobalStructure *)(*_entrancesByID)[255];
 
 	for (int i = 0; i < int(rs->structure.size()); i++) {
 		int16 id = rs->structure[i];

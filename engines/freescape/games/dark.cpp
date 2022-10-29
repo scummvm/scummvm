@@ -71,7 +71,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 	_currentArea->show();
 
 	_currentAreaMessages.clear();
-	_currentAreaMessages.push_back(_currentArea->name);
+	_currentAreaMessages.push_back(_currentArea->_name);
 
 	int scale = _currentArea->getScale();
 	assert(scale > 0);
