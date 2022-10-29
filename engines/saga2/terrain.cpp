@@ -46,8 +46,8 @@ void drown(GameObject *obj) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
 		if (!a->hasEffect(kActorWaterBreathe)) {
-			if (g_vm->_rnd->getRandomNumber(drowningDamageOddsYes + drowningDamageOddsNo - 1) > drowningDamageOddsNo - 1) {
-				a->acceptDamage(a->thisID(), drowningDamagePerFrame);
+			if (g_vm->_rnd->getRandomNumber(kDrowningDamageOddsYes + kDrowningDamageOddsNo - 1) > kDrowningDamageOddsNo - 1) {
+				a->acceptDamage(a->thisID(), kDrowningDamagePerFrame);
 			}
 		}
 	}
@@ -60,8 +60,8 @@ void lavaDamage(GameObject *obj) {
 		if (a->resists(kResistHeat))
 			return;
 	}
-	if (g_vm->_rnd->getRandomNumber(heatDamageOddsYes + heatDamageOddsNo - 1) > heatDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), heatDamagePerFrame, kDamageHeat, heatDamageDicePerFrame, 6);
+	if (g_vm->_rnd->getRandomNumber(kHeatDamageOddsYes + kHeatDamageOddsNo - 1) > kHeatDamageOddsNo - 1) {
+		obj->acceptDamage(obj->thisID(), kHeatDamagePerFrame, kDamageHeat, kHeatDamageDicePerFrame, 6);
 	}
 }
 
@@ -71,20 +71,20 @@ void coldDamage(GameObject *obj) {
 		if (a->resists(kResistCold))
 			return;
 	}
-	if (g_vm->_rnd->getRandomNumber(coldDamageOddsYes + coldDamageOddsNo - 1) > coldDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), coldDamagePerFrame, kDamageCold, coldDamageDicePerFrame, 6);
+	if (g_vm->_rnd->getRandomNumber(kColdDamageOddsYes + kColdDamageOddsNo - 1) > kColdDamageOddsNo - 1) {
+		obj->acceptDamage(obj->thisID(), kColdDamagePerFrame, kDamageCold, kColdDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageSlash(GameObject *obj) {
-	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, kDamageSlash, terrainDamageDicePerFrame, 6);
+	if (g_vm->_rnd->getRandomNumber(kTerrainDamageOddsYes + kTerrainDamageOddsNo - 1) > kTerrainDamageOddsNo - 1) {
+		obj->acceptDamage(obj->thisID(), kTerrainDamagePerFrame, kDamageSlash, kTerrainDamageDicePerFrame, 6);
 	}
 }
 
 void terrainDamageBash(GameObject *obj) {
-	if (g_vm->_rnd->getRandomNumber(terrainDamageOddsYes + terrainDamageOddsNo - 1) > terrainDamageOddsNo - 1) {
-		obj->acceptDamage(obj->thisID(), terrainDamagePerFrame, kDamageImpact, terrainDamageDicePerFrame, 6);
+	if (g_vm->_rnd->getRandomNumber(kTerrainDamageOddsYes + kTerrainDamageOddsNo - 1) > kTerrainDamageOddsNo - 1) {
+		obj->acceptDamage(obj->thisID(), kTerrainDamagePerFrame, kDamageImpact, kTerrainDamageDicePerFrame, 6);
 	}
 }
 
@@ -92,7 +92,7 @@ void fallingDamage(GameObject *obj, int16 speed) {
 	if (isActor(obj)) {
 		Actor *a = (Actor *) obj;
 		if (!a->hasEffect(kActorSlowFall)) {
-			a->acceptDamage(a->thisID(), (MAX(0, speed - 16)*fallingDamageMult) / fallingDamageDiv);
+			a->acceptDamage(a->thisID(), (MAX(0, speed - 16)*kFallingDamageMult) / kFallingDamageDiv);
 		}
 	}
 

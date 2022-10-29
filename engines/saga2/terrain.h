@@ -35,40 +35,40 @@ struct TileRegion;
 // the first two determine the chances of doing damage on a
 // each screen refresh
 // the third is the damage done
-#define drowningDamageOddsYes   (1)
-#define drowningDamageOddsNo    (3)
-#define drowningDamagePerFrame  (1)
+#define kDrowningDamageOddsYes   (1)
+#define kDrowningDamageOddsNo    (3)
+#define kDrowningDamagePerFrame  (1)
 
 // these control damage taken by falling
 // the magnatude of the velocity vector is multiplied by the first
 // then divided by the second.
 // as it turns out the velocity is a pretty reasonable damage amount
 
-#define fallingDamageMult       (2)
-#define fallingDamageDiv        (1)
+#define kFallingDamageMult       (2)
+#define kFallingDamageDiv        (1)
 
 // these control the rate of lava damage
 // the first two determine the chances of doing damage on a
 // each screen refresh
 // the last two are the damage done (absolute & d6)
-#define heatDamageOddsYes       (1)
-#define heatDamageOddsNo        (3)
-#define heatDamagePerFrame      (1)
-#define heatDamageDicePerFrame  (1)
+#define kHeatDamageOddsYes       (1)
+#define kHeatDamageOddsNo        (3)
+#define kHeatDamagePerFrame      (1)
+#define kHeatDamageDicePerFrame  (1)
 
 // these control the rate of freezing damage
 // the first two determine the chances of doing damage on a
 // each screen refresh
 // the last two are the damage done (absolute & d6)
-#define coldDamageOddsYes       (1)
-#define coldDamageOddsNo        (15)
-#define coldDamagePerFrame      (1)
-#define coldDamageDicePerFrame  (0)
+#define kColdDamageOddsYes       (1)
+#define kColdDamageOddsNo        (15)
+#define kColdDamagePerFrame      (1)
+#define kColdDamageDicePerFrame  (0)
 
-#define terrainDamageOddsYes        (1)
-#define terrainDamageOddsNo         (1)
-#define terrainDamagePerFrame       (1)
-#define terrainDamageDicePerFrame   (2)
+#define kTerrainDamageOddsYes        (1)
+#define kTerrainDamageOddsNo         (1)
+#define kTerrainDamagePerFrame       (1)
+#define kTerrainDamageDicePerFrame   (2)
 
 /* ===================================================================== *
    Classes referenced by this header
