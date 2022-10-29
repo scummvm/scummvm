@@ -286,7 +286,7 @@ bool ActorProto::acceptDropAction(
 	if (dropType & kIsIntangible) {
 		//  Set up the arguments we want to pass to the script
 
-		scf.value = droppedObj->proto()->lockType + senseIdeaGreeting;
+		scf.value = droppedObj->proto()->lockType + kSenseIdeaGreeting;
 
 		//  Invoke the script...
 
@@ -329,7 +329,7 @@ bool ActorProto::greetActor(
 	scf.enactor         = enactor;
 	scf.directObject    = Nothing;
 	scf.indirectObject  = Nothing;
-	scf.value           = senseIdeaGreeting;
+	scf.value           = kSenseIdeaGreeting;
 
 	return runObjectMethod(dObj, Method_Actor_onTalkTo, scf);
 }
