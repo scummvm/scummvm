@@ -139,7 +139,7 @@ void Map41::special20() {
 }
 
 void Map41::special21() {
-	send(SoundMessage(STRING["maps.map41.room"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map41::special22() {

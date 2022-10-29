@@ -32,9 +32,19 @@ class Map52 : public Map {
 	typedef void (Map52:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special03();
+	void special04();
+	void special06();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map52::special00
+	const SpecialFn SPECIAL_FN[7] = {
+		&Map52::special00,
+		&Map52::special01,
+		&Map52::special01,
+		&Map52::special03,
+		&Map52::special04,
+		&Map52::special01,
+		&Map52::special06
 	};
 public:
 	Map52() : Map(52, "pp3", 0xE00) {}

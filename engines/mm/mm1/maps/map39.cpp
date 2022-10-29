@@ -132,7 +132,7 @@ void Map39::special14() {
 }
 
 void Map39::special18() {
-	send(SoundMessage(STRING["maps.map39.room"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 } // namespace Maps

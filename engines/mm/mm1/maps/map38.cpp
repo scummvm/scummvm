@@ -55,7 +55,7 @@ void Map38::special00() {
 }
 
 void Map38::special01() {
-	send(SoundMessage(STRING["maps.map38.wall"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map38::special02() {
