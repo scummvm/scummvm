@@ -231,7 +231,7 @@ int16 scriptActorTransfer(int16 *args) {
 	//  Move the object to a new location
 	if ((isObject(args[0])
 	        && (GameObject::protoAddress(args[0])->containmentSet()
-	            &   ProtoObj::isContainer))
+	            &   ProtoObj::kIsContainer))
 	        ||  isActor(args[0])) {
 		ObjectID        targetID = args[0];
 		GameObject      *target = GameObject::objectAddress(targetID);
@@ -243,8 +243,8 @@ int16 scriptActorTransfer(int16 *args) {
 			uint16      cSet = target->proto()->containmentSet();
 
 			obj->move(Location(targetSlot, targetID));
-			if ((cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))
-			        == (ProtoObj::isIntangible | ProtoObj::isContainer))
+			if ((cSet & (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))
+			        == (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))
 				g_vm->_cnm->setUpdate(targetID);
 		}
 	} else {
@@ -966,7 +966,7 @@ int16 scriptGameObjectGetMass(int16 *) {
 	OBJLOG(GetMass);
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 
-	return (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+	return (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 	       ? obj->getExtra() : 1;
 }
 
@@ -978,9 +978,9 @@ int16 scriptGameObjectSetMass(int16 *args) {
 	OBJLOG(SetMass);
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 
-	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		obj->setExtra(args[0]);
-		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			g_vm->_cnm->setUpdate(obj->IDParent());
 		}
 		return true;
@@ -2068,7 +2068,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	GameObject  *obj, *delObj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
-	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;
+	    currencyProto->flags & ResourceObjectPrototype::kObjPropMergeable;
 
 	RecursiveContainerIterator  iter(a);
 
@@ -2145,7 +2145,7 @@ int16 scriptActorCountPayment(int16 *args) {
 	GameObject  *obj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
-	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;
+	    currencyProto->flags & ResourceObjectPrototype::kObjPropMergeable;
 
 	RecursiveContainerIterator  iter(a);
 
@@ -2923,7 +2923,7 @@ int16 scriptMakeObject(int16 *args) {
 	obj->setScript(args[2]);
 
 	//  If it's a mergeable object, have it's mass count default to 1.
-	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+	if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 		obj->setExtra(1);
 
 	return obj->thisID();

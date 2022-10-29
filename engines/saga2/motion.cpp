@@ -1584,7 +1584,7 @@ void MotionTask::dropObjectOnObject(
 	if (isActor(&target)
 	        &&  isPlayerActor((Actor *)&target)
 	        &&  dObj.IDParent() == target.thisID()
-	        &&  !(dObj.proto()->containmentSet() & ProtoObj::isContainer)) {
+	        &&  !(dObj.proto()->containmentSet() & ProtoObj::kIsContainer)) {
 		useObject(a, dObj);
 		return;
 	}
@@ -3956,7 +3956,7 @@ void MotionTask::useMagicWeaponAction() {
 				spell = GameObject::objectAddress(magicWeapon->IDChild());
 				spellProto = (SkillProto *)spell->proto();
 
-				assert(spellProto->containmentSet() & ProtoObj::isSkill);
+				assert(spellProto->containmentSet() & ProtoObj::kIsSkill);
 
 				//  use the spell
 				spellProto->implementAction(

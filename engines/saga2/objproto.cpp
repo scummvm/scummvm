@@ -790,11 +790,11 @@ uint16  ProtoObj::containmentSet() {
 
 //  return the sprite data
 ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int16 count) {
-	ObjectSpriteInfo    sprInfo = { nullptr, static_cast<bool>((flags & objPropFlipped) != 0) };
-	int16               openOffset = ((flags & objPropVisOpen) && obj->isOpen()) ? 1 : 0;
+	ObjectSpriteInfo    sprInfo = { nullptr, static_cast<bool>((flags & kObjPropFlipped) != 0) };
+	int16               openOffset = ((flags & kObjPropVisOpen) && obj->isOpen()) ? 1 : 0;
 
 	switch (spr) {
-	case objOnGround:
+	case kObjOnGround:
 
 		//  If the object is a moving missile return the correct missile
 		//  sprite
@@ -814,17 +814,17 @@ ObjectSpriteInfo ProtoObj::getSprite(GameObject *obj, enum spriteTypes spr, int1
 		} else {
 			sprInfo.sp = objectSprites->sprite(groundSprite + openOffset + obj->getSprOffset(count));
 			sprInfo.flipped =
-			    (flags & ResourceObjectPrototype::objPropFlipped) != 0;
+			    (flags & ResourceObjectPrototype::kObjPropFlipped) != 0;
 		}
 
 		break;
 
-	case objInContainerView:
-	case objAsMousePtr:
+	case kObjInContainerView:
+	case kObjAsMousePtr:
 
 		sprInfo.sp = objectSprites->sprite(iconSprite + openOffset + obj->getSprOffset(count));
 		sprInfo.flipped =
-		    (flags & ResourceObjectPrototype::objPropFlipped) != 0;
+		    (flags & ResourceObjectPrototype::kObjPropFlipped) != 0;
 		break;
 	}
 	return sprInfo;
@@ -1004,7 +1004,7 @@ uint16 ProtoObj::bulkCapacity(GameObject *) {
  * ==================================================================== */
 
 uint16 InventoryProto::containmentSet() {
-	return isTangible;
+	return kIsTangible;
 }
 
 bool InventoryProto::takeAction(ObjectID dObj, ObjectID enactor, int16 num) {
@@ -1201,7 +1201,7 @@ bool InventoryProto::acceptStrikeAction(
 //	};
 
 uint16 PhysicalContainerProto::containmentSet() {
-	return InventoryProto::containmentSet() | isContainer;
+	return InventoryProto::containmentSet() | kIsContainer;
 }
 
 bool PhysicalContainerProto::canContain(ObjectID dObj, ObjectID item) {
@@ -1216,7 +1216,7 @@ bool PhysicalContainerProto::canContain(ObjectID dObj, ObjectID item) {
 	}
 
 	return      dObj != item
-	            && (itemPtr->containmentSet() & ProtoObj::isTangible);
+	            && (itemPtr->containmentSet() & ProtoObj::kIsTangible);
 }
 
 bool PhysicalContainerProto::canContainAt(
@@ -1465,7 +1465,7 @@ bool KeyProto::useOnAction(ObjectID dObj, ObjectID enactor, ActiveItem *withTAI)
  * ==================================================================== */
 
 uint16 BottleProto::containmentSet() {
-	return InventoryProto::containmentSet() | isBottle;
+	return InventoryProto::containmentSet() | kIsBottle;
 }
 
 bool BottleProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -1479,7 +1479,7 @@ bool BottleProto::useAction(ObjectID dObj, ObjectID enactor) {
  * ==================================================================== */
 
 uint16 FoodProto::containmentSet() {
-	return InventoryProto::containmentSet() | isFood;
+	return InventoryProto::containmentSet() | kIsFood;
 }
 
 bool FoodProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -1491,7 +1491,7 @@ bool FoodProto::useAction(ObjectID dObj, ObjectID enactor) {
  * ==================================================================== */
 
 uint16 WearableProto::containmentSet() {
-	return InventoryProto::containmentSet() | isWearable;
+	return InventoryProto::containmentSet() | kIsWearable;
 }
 
 /* ==================================================================== *
@@ -1503,7 +1503,7 @@ weaponID WeaponProto::getWeaponID() {
 }
 
 uint16 WeaponProto::containmentSet() {
-	return InventoryProto::containmentSet() | isWeapon;
+	return InventoryProto::containmentSet() | kIsWeapon;
 }
 
 //  return the address of the sprite when held in hand
@@ -1717,7 +1717,7 @@ uint8 MeleeWeaponProto::weaponRating(
 	int16       dist = (target->getLocation() - wielder->getLocation()).quickHDistance();
 	uint8       rating = 0;
 
-	if (dist < maximumRange) rating += inRangeRatingBonus;
+	if (dist < maximumRange) rating += kInRangeRatingBonus;
 	//  Add in the value of the appropriate skill1
 	rating += getSkillValue(wielderID);
 
@@ -1943,7 +1943,7 @@ uint8 BowProto::weaponRating(
 	uint8       rating = 0;
 
 	if (dist < maximumRange && !wielder->inReach(target->getLocation()))
-		rating += inRangeRatingBonus;
+		rating += kInRangeRatingBonus;
 	rating += wielder->getStats()->getSkillLevel(kSkillIDArchery);
 
 	return rating;
@@ -2043,7 +2043,7 @@ uint8 WeaponWandProto::weaponRating(
 		return 0;
 
 	if (dist < maximumRange && !wielder->inReach(target->getLocation()))
-		rating += inRangeRatingBonus;
+		rating += kInRangeRatingBonus;
 	rating += wielder->getStats()->getSkillLevel(kSkillIDSpellcraft);
 
 	return rating;
@@ -2170,7 +2170,7 @@ void ArrowProto::applySkillGrowth(ObjectID enactor, uint8 points) {
  * ==================================================================== */
 
 uint16 ArmorProto::containmentSet() {
-	return InventoryProto::containmentSet() | isWearable | isArmor;
+	return InventoryProto::containmentSet() | kIsWearable | kIsArmor;
 }
 
 //  Compute how much damage this defensive object will absorb
@@ -2246,7 +2246,7 @@ bool ArmorProto::useAction(ObjectID dObj, ObjectID enactor) {
  * ==================================================================== */
 
 uint16 ShieldProto::containmentSet() {
-	return InventoryProto::containmentSet() | isWearable | isArmor;
+	return InventoryProto::containmentSet() | kIsWearable | kIsArmor;
 }
 
 //  Place shield into left hand
@@ -2417,7 +2417,7 @@ bool ToolProto::useOnAction(ObjectID, ObjectID, ObjectID) {
  * ==================================================================== */
 
 uint16 DocumentProto::containmentSet() {
-	return InventoryProto::containmentSet() | isDocument;
+	return InventoryProto::containmentSet() | kIsDocument;
 }
 
 /* ==================================================================== *
@@ -2468,7 +2468,7 @@ bool AutoMapProto::openAction(ObjectID, ObjectID) {
  * ==================================================================== */
 
 uint16 IntangibleObjProto::containmentSet() {
-	return isIntangible;
+	return kIsIntangible;
 }
 
 bool IntangibleObjProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -2576,12 +2576,12 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
 	ObjectSpriteInfo    sprInfo = { nullptr, false };
 
 	switch (spr) {
-	case objOnGround:
+	case kObjOnGround:
 		sprInfo.sp = mentalSprites->sprite(groundSprite);
 		break;
 
-	case objInContainerView:
-	case objAsMousePtr:
+	case kObjInContainerView:
+	case kObjAsMousePtr:
 		sprInfo.sp = mentalSprites->sprite(iconSprite);
 	}
 	return sprInfo;
@@ -2594,7 +2594,7 @@ ObjectSpriteInfo IntangibleObjProto::getSprite(
 
 uint16 IdeaProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
-	return isConcept | isIntangible;
+	return kIsConcept | kIsIntangible;
 }
 
 /* ==================================================================== *
@@ -2603,7 +2603,7 @@ uint16 IdeaProto::containmentSet() {
 
 uint16 MemoryProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
-	return isConcept | isIntangible;
+	return kIsConcept | kIsIntangible;
 }
 
 /* ==================================================================== *
@@ -2612,7 +2612,7 @@ uint16 MemoryProto::containmentSet() {
 
 uint16 PsychProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
-	return isPsych | isIntangible;
+	return kIsPsych | kIsIntangible;
 }
 
 /* ==================================================================== *
@@ -2622,7 +2622,7 @@ uint16 PsychProto::containmentSet() {
 
 uint16 SkillProto::containmentSet() {
 	//Maybe I Could Use This ID And Call IntanobjProt For Setting IsIntangible
-	return isSkill | isIntangible;
+	return kIsSkill | kIsIntangible;
 }
 
 bool SkillProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -2737,7 +2737,7 @@ bool SkillProto::implementAction(SpellID dObj, ObjectID enactor, Location &loc) 
  * ==================================================================== */
 
 uint16 EnchantmentProto::containmentSet() {
-	return isEnchantment;
+	return kIsEnchantment;
 }
 
 // ------------------------------------------------------------------------
@@ -2788,7 +2788,7 @@ void EnchantmentProto::doBackgroundUpdate(GameObject *obj) {
  * ======================================================================== */
 
 uint16 GeneratorProto::containmentSet() {
-	return isIntangible;
+	return kIsIntangible;
 }
 
 /* ======================================================================== *
@@ -2891,7 +2891,7 @@ bool IntangibleContainerProto::canContain(ObjectID dObj, ObjectID item) {
 
 	GameObject      *itemPtr = GameObject::objectAddress(item);
 
-	return (itemPtr->containmentSet() & (isSkill | isConcept)) != 0;
+	return (itemPtr->containmentSet() & (kIsSkill | kIsConcept)) != 0;
 }
 
 bool IntangibleContainerProto::useAction(ObjectID dObj, ObjectID enactor) {
@@ -2937,7 +2937,7 @@ bool IntangibleContainerProto::closeAction(ObjectID dObj, ObjectID) {
 }
 
 uint16 IntangibleContainerProto::containmentSet() {
-	return isContainer | isIntangible;
+	return kIsContainer | kIsIntangible;
 }
 /* ==================================================================== *
    IdeaContainerProto class

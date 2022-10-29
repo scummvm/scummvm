@@ -616,7 +616,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
-	if (_prototype->containmentSet() & ProtoObj::isTangible) {
+	if (_prototype->containmentSet() & ProtoObj::kIsTangible) {
 		// display charges if item is a chargeable item
 		if (_prototype->chargeType != 0
 		        &&  _prototype->maxCharges != Permanent
@@ -630,7 +630,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			}
 		}
 
-		if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			// make a buffer that contains the name of
 			// the object and it's count
 			// add only if a mergable item
@@ -649,7 +649,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 		int16 manaCost = 0;
 
 		// figure out if it's a skill or spell
-		if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+		if (_prototype->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 			// get skill proto for this spell or skill
 			SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -698,7 +698,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 bool GameObject::isTrueSkill() {
 	// figure out if it's a skill or spell
-	if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+	if (_prototype->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 		// get skill proto for this spell or skill
 		SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -766,7 +766,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	}
 
 	// if this is a mergeable object
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		if (units >= spriteNumFew) {
 			value = 1;
 		}
@@ -798,7 +798,7 @@ bool GameObject::unstack() {
 	        ||  IDParent() == Nothing
 	        ||  _data.location.z == 1
 	        ||  _prototype == nullptr
-	        || (_prototype->containmentSet() & ProtoObj::isIntangible)) return false;
+	        || (_prototype->containmentSet() & ProtoObj::kIsIntangible)) return false;
 
 	ContainerIterator   iter(parent());
 
@@ -1089,7 +1089,7 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		// get the number requested or all that's there...
 		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
@@ -1117,7 +1117,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		Location    loc(0, 0, 0, 0);
 
 		// get the number requested or all that's there...
@@ -1354,7 +1354,7 @@ void GameObject::deleteObjectRecursive() {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
-		assert((_prototype->containmentSet() & ProtoObj::isTangible) != 0);
+		assert((_prototype->containmentSet() & ProtoObj::kIsTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
 		if (isWorld(_data.parentID))
@@ -1558,7 +1558,7 @@ const char *GameObject::nameText(uint16 index) {
 	return g_vm->_nameList[index];
 }
 
-#define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
+#define INTANGIBLE_MASK (ProtoObj::kIsEnchantment|ProtoObj::kIsSpell|ProtoObj::kIsSkill)
 
 TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ObjectID        objID;
@@ -1637,8 +1637,8 @@ bool GameObject::getAvailableSlot(
 
 	//  Determine if the specified object is an intagible container
 	if ((objProto->containmentSet()
-	        & (ProtoObj::isContainer | ProtoObj::isIntangible))
-	        == (ProtoObj::isContainer | ProtoObj::isIntangible)) {
+	        & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
+	        == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) {
 //		assert( isActor( obj ) );
 
 		//  Set intangible container _data.locations to -1, -1.
@@ -1649,7 +1649,7 @@ bool GameObject::getAvailableSlot(
 
 	//  Only actors or containers may contain other objects
 	if (isActor(this)
-	        || (_prototype->containmentSet() & ProtoObj::isContainer)) {
+	        || (_prototype->containmentSet() & ProtoObj::kIsContainer)) {
 		TilePoint       firstEmptySlot;
 
 		if (canMerge) {
@@ -2269,9 +2269,9 @@ int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 
 	if (dropObj->getNameIndex() == target->getNameIndex()
 	        &&  dropObj->proto() == target->proto()
-	        &&  !(cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))) {
+	        &&  !(cSet & (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))) {
 		//  If it is a mergeable object
-		if (dropObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (dropObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			//  If the flags are the same, and neither object has children,
 			//  then we can merge
 			if (((dropObj->_data.objectFlags & noMergeFlags) == (target->_data.objectFlags & noMergeFlags))
@@ -2279,7 +2279,7 @@ int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 			        &&  target->IDChild() == Nothing) {
 				return kCanMerge;
 			}
-		} else if (!(cSet & (ProtoObj::isWearable | ProtoObj::isWeapon | ProtoObj::isArmor))
+		} else if (!(cSet & (ProtoObj::kIsWearable | ProtoObj::kIsWeapon | ProtoObj::kIsArmor))
 		           ||  !isActor(target->IDParent())) {
 			//  We can stack if the pile we are stacking on is in a container.
 			if (!isWorld(target->IDParent())
@@ -2359,7 +2359,7 @@ uint16 GameObject::totalContainedMass() {
 	while (iter.next(&childObj) != Nothing) {
 		uint16          objMass;
 
-		if (!(childObj->containmentSet() & ProtoObj::isTangible))
+		if (!(childObj->containmentSet() & ProtoObj::kIsTangible))
 			continue;
 
 		objMass = childObj->_prototype->mass;
@@ -2385,7 +2385,7 @@ uint16 GameObject::totalContainedBulk() {
 	while (iter.next(&childObj) != Nothing) {
 		uint16          objBulk;
 
-		if (!(childObj->containmentSet() & ProtoObj::isTangible))
+		if (!(childObj->containmentSet() & ProtoObj::kIsTangible))
 			continue;
 
 		objBulk = childObj->_prototype->bulk;
@@ -4328,7 +4328,7 @@ bool objObscured(GameObject *testObj) {
 		drawPos.x += fineScroll.x;
 		drawPos.y += fineScroll.y;
 
-		objSprInfo = proto->getSprite(testObj, ProtoObj::objOnGround);
+		objSprInfo = proto->getSprite(testObj, ProtoObj::kObjOnGround);
 
 		testObj->getColorTranslation(objColors);
 

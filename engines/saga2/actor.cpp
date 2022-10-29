@@ -75,7 +75,7 @@ extern bool     massAndBulkCount;
 
 uint16 ActorProto::containmentSet() {
 	//  All actors may also be weapons (indicating natural attacks)
-	return ProtoObj::containmentSet() | isWeapon;
+	return ProtoObj::containmentSet() | kIsWeapon;
 }
 
 //-----------------------------------------------------------------------
@@ -89,7 +89,7 @@ bool ActorProto::canContain(ObjectID dObj, ObjectID item) {
 
 	//  Actors can contain any object, except worlds and other actors
 	return      isObject(item)
-	            && ((itemPtr->containmentSet() & ProtoObj::isIntangible) == 0
+	            && ((itemPtr->containmentSet() & ProtoObj::kIsIntangible) == 0
 	                ||  itemPtr->possessor() == dObj);
 }
 
@@ -109,7 +109,7 @@ bool ActorProto::canContainAt(
 	//  Actors can contain any object, except worlds and other actors
 	//  REM: must add test to determine if specified slot is valid.
 	return      isObject(item)
-	            && ((itemPtr->containmentSet() & ProtoObj::isIntangible) == 0
+	            && ((itemPtr->containmentSet() & ProtoObj::kIsIntangible) == 0
 	                ||  itemPtr->possessor() == dObj);
 }
 
@@ -283,18 +283,18 @@ bool ActorProto::acceptDropAction(
 	scf.directObject    = droppedID;
 	scf.indirectObject  = dObj;
 
-	if (dropType & isIntangible) {
+	if (dropType & kIsIntangible) {
 		//  Set up the arguments we want to pass to the script
 
 		scf.value = droppedObj->proto()->lockType + senseIdeaGreeting;
 
 		//  Invoke the script...
 
-		if (dropType & isConcept) {
+		if (dropType & kIsConcept) {
 			runObjectMethod(dObj, Method_Actor_onTalkTo, scf);
-		} else if (dropType & isPsych) {
+		} else if (dropType & kIsPsych) {
 			//  What to do???
-		} else if (dropType & (isSpell | isSkill)) {
+		} else if (dropType & (kIsSpell | kIsSkill)) {
 			//  What to do???
 			//  Cast the spell on the actor?
 		}
@@ -401,7 +401,7 @@ bool ActorProto::acceptDamageAction(
 	if (vitality > 0) {
 		Location        al = Location(a->getLocation(), a->IDParent());
 		if (gruntStyle > 0
-		        && ((flags & ResourceObjectPrototype::objPropNoSurface)
+		        && ((flags & ResourceObjectPrototype::kObjPropNoSurface)
 		            || (damageScore > 2 && (int16)g_vm->_rnd->getRandomNumber(vitality - 1) < (damageScore * 2))))
 			makeGruntSound(gruntStyle, al);
 
@@ -505,7 +505,7 @@ bool ActorProto::acceptStrikeAction(
 	ActorAttributes *effStats = a->getStats();
 	GameObject      *weapon = GameObject::objectAddress(strikingObj);
 
-	assert(weapon->proto()->containmentSet() & ProtoObj::isWeapon);
+	assert(weapon->proto()->containmentSet() & ProtoObj::kIsWeapon);
 
 	Actor           *enactorPtr = (Actor *)GameObject::objectAddress(enactor);
 	ArmorAttributes armorAttribs;
@@ -721,8 +721,8 @@ void ActorProto::initiateAttack(ObjectID attacker, ObjectID target) {
 //	when this object is damaged
 
 uint8 ActorProto::getDamageSound(const ObjectSoundFXs &soundFXs) {
-	return  !(flags & ResourceObjectPrototype::objPropNoSurface)
-	        ?   !(flags & ResourceObjectPrototype::objPropHardSurface)
+	return  !(flags & ResourceObjectPrototype::kObjPropNoSurface)
+	        ?   !(flags & ResourceObjectPrototype::kObjPropHardSurface)
 	        ?   soundFXs.soundFXHitFlesh
 	        :   soundFXs.soundFXHitHard
 	        :   0;
@@ -1798,7 +1798,7 @@ GameObject *Actor::offensiveObject() {
 		GameObject  *obj = GameObject::objectAddress(_rightHandObject);
 
 		//  Any object in an actor's right hand should be a weapon
-		assert(obj->containmentSet() & ProtoObj::isWeapon);
+		assert(obj->containmentSet() & ProtoObj::kIsWeapon);
 
 		return obj;
 	}
@@ -1808,7 +1808,7 @@ GameObject *Actor::offensiveObject() {
 
 		GameObject  *obj = GameObject::objectAddress(_leftHandObject);
 
-		if (obj->containmentSet() & ProtoObj::isWeapon)
+		if (obj->containmentSet() & ProtoObj::kIsWeapon)
 			return obj;
 	}
 
@@ -2224,7 +2224,7 @@ void Actor::dropInventory() {
 		            :   nullptr;
 
 		//  Delete intangible objects and drop tangible objects
-		if (obj->containmentSet() & ProtoObj::isIntangible)
+		if (obj->containmentSet() & ProtoObj::kIsIntangible)
 			obj->deleteObjectRecursive();
 		else
 			dropInventoryObject(obj, obj->isMergeable() ? obj->getExtra() : 1);
@@ -2268,7 +2268,7 @@ void Actor::wear(ObjectID objID, uint8 where) {
 
 		GameObject      *obj = GameObject::objectAddress(objID);
 
-		assert(obj->proto()->containmentSet() & ProtoObj::isArmor);
+		assert(obj->proto()->containmentSet() & ProtoObj::kIsArmor);
 	}
 #endif
 
@@ -2451,7 +2451,7 @@ void Actor::evaluateNeeds() {
 				while (iter.next(&obj) != Nothing) {
 					ProtoObj            *proto = obj->proto();
 
-					if ((proto->containmentSet() & ProtoObj::isWeapon)
+					if ((proto->containmentSet() & ProtoObj::kIsWeapon)
 					        &&  isActionAvailable(proto->fightStanceAction(thisID()))) {
 						foundWeapon = true;
 						break;

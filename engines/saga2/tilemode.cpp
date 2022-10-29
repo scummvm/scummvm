@@ -416,7 +416,7 @@ static void evalMouseState() {
 		if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 			assert(obj != nullptr);
 
-			if (mObj->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+			if (mObj->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 				GameObject  *tob = pickedObject != Nothing ? obj : nullptr;
 				// If it's a spell we need to do more complex testing
 				//   to see if the current target is valid
@@ -1062,7 +1062,7 @@ static APPFUNC(cmdClickTileMap) {
 				//  If we are using an intangible object (spell) then consider
 				//  the owner of the spell to be the center actor for the rest
 				//  of this action.
-				if (mouseObject->proto()->containmentSet() & (ProtoObj::isIntangible | ProtoObj::isSpell | ProtoObj::isSkill)) {
+				if (mouseObject->proto()->containmentSet() & (ProtoObj::kIsIntangible | ProtoObj::kIsSpell | ProtoObj::kIsSkill)) {
 					ObjectID    possessor = mouseObject->possessor();
 
 					if (possessor != Nothing) {
@@ -1182,7 +1182,7 @@ static APPFUNC(cmdClickTileMap) {
 						    *centerActorPtr,
 						    GameObject::objectAddress(pickedObject)->getLocation());
 
-						if (pickedObjPtr->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+						if (pickedObjPtr->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 							quantity = pickedObjPtr->getExtra();
 
 						if (pickedObjPtr->take(centerActorID, quantity))

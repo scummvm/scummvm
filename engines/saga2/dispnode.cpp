@@ -445,7 +445,7 @@ void DisplayNode::drawObject() {
 		}
 
 		//  Figure out which sprite to show
-		sprInfo = proto->getSprite(obj, ProtoObj::objOnGround);
+		sprInfo = proto->getSprite(obj, ProtoObj::kObjOnGround);
 
 		//  Build the color translation table for the object
 		obj->getColorTranslation(mainColors);
@@ -837,7 +837,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 					if (isObject(obj)) {
 						ObjectSpriteInfo    sprInfo;
 
-						sprInfo = obj->proto()->getSprite(obj, ProtoObj::objOnGround);
+						sprInfo = obj->proto()->getSprite(obj, ProtoObj::kObjOnGround);
 						spr = sprInfo.sp;
 						flipped = sprInfo.flipped;
 					} else {

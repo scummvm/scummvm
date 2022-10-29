@@ -64,7 +64,7 @@ GrabInfo::~GrabInfo() {
 // mergeable or not.
 void GrabInfo::setMoveCount(int16 val) {
 	if (_grabObj) {
-		if (_grabObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_grabObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			_moveCount = val;
 		} else {
 			_moveCount = 1;
@@ -189,7 +189,7 @@ void GrabInfo::setIcon() {
 	proto = _grabObj->proto();
 
 	//  Get address of sprite
-	spr = proto->getSprite(_grabObj, ProtoObj::objAsMousePtr, _moveCount).sp;
+	spr = proto->getSprite(_grabObj, ProtoObj::kObjAsMousePtr, _moveCount).sp;
 	mapBytes = spr->size.x * spr->size.y;
 
 	if ((mapData

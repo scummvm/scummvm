@@ -504,11 +504,11 @@ public:
 	}
 	bool isGhosted() {
 		return (_data.objectFlags & kObjectGhosted)
-		       || (_prototype->flags & ResourceObjectPrototype::objPropGhosted);
+		       || (_prototype->flags & ResourceObjectPrototype::kObjPropGhosted);
 	}
 	bool isInvisible() {
 		return (_data.objectFlags & kObjectInvisible)
-		       || (_prototype->flags & ResourceObjectPrototype::objPropHidden);
+		       || (_prototype->flags & ResourceObjectPrototype::kObjPropHidden);
 	}
 	bool isMoving() {
 		return (int16)(_data.objectFlags & kObjectMoving);
@@ -645,7 +645,7 @@ public:
 	}
 
 	bool isMergeable() {
-		return (_prototype->flags & ResourceObjectPrototype::objPropMergeable) != 0;
+		return (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) != 0;
 	}
 
 	//  A timer for this object has ticked

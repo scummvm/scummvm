@@ -76,8 +76,8 @@ ObjectID EnchantObject(
 
 	//  Now, change the object base on enchantments
 	obj->evalEnchantments();
-	assert(enchProto->containmentSet() & ProtoObj::isEnchantment);
-	assert((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::isEnchantment);
+	assert(enchProto->containmentSet() & ProtoObj::kIsEnchantment);
+	assert((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::kIsEnchantment);
 	return ench->thisID();
 }
 
@@ -118,7 +118,7 @@ ObjectID FindObjectEnchantment(
 	while ((objID = iter.next(&containedObj)) != Nothing) {
 		ProtoObj *proto = containedObj->proto();
 
-		if ((proto->containmentSet() & ProtoObj::isEnchantment)
+		if ((proto->containmentSet() & ProtoObj::kIsEnchantment)
 		        && ((containedObj->getExtra() & 0xFF00) == (enchantmentType & 0xFF00))) {
 			return objID;
 		}
@@ -196,7 +196,7 @@ void evalActorEnchantments(Actor *a) {
 	for (id = iter.first(&obj); id != Nothing; id = iter.next(&obj)) {
 		ProtoObj *proto = obj->proto();
 
-		if (proto->containmentSet() & ProtoObj::isEnchantment) {
+		if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 			uint16 enchantmentID = obj->getExtra();
 			addEnchantment(a, enchantmentID);
 		}
@@ -206,7 +206,7 @@ void evalActorEnchantments(Actor *a) {
 		ProtoObj        *proto = obj->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
 			a->_effectiveResistance  |= proto->resistance;
 			a->_effectiveImmunity    |= proto->immunity;
@@ -278,7 +278,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 		ProtoObj        *proto = object->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  _wornObject == nullptr
 		        &&  proto->isObjectBeingUsed(object)) {
 			_wornObject = object;
@@ -288,7 +288,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 
 		_nextID = object->IDNext();
 
-		if (cSet & ProtoObj::isEnchantment) break;
+		if (cSet & ProtoObj::kIsEnchantment) break;
 	}
 
 	if (obj) *obj = object;

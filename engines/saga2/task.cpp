@@ -3233,13 +3233,13 @@ void HuntToKillTask::evaluateWeapon() {
 		uint16          cSet = proto->containmentSet();
 
 		//  Simply use all armor objects
-		if (!isPlayerActor(a) && (cSet & ProtoObj::isArmor)) {
+		if (!isPlayerActor(a) && (cSet & ProtoObj::kIsArmor)) {
 			if (proto->useSlotAvailable(obj, a))
 				obj->use(actorID);
 			continue;
 		}
 
-		if (cSet & ProtoObj::isWeapon) {
+		if (cSet & ProtoObj::kIsWeapon) {
 			WeaponProto     *weaponProto = (WeaponProto *)proto;
 			int             weaponRating;
 

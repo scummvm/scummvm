@@ -304,7 +304,7 @@ GfxSpriteImage::GfxSpriteImage(gPanelList &list, const Rect16 &box, GameObject *
 	object->getColorTranslation(_objColors);
 
 	// assing the sprite pointer
-	_sprPtr = proto->getSprite(object, ProtoObj::objInContainerView).sp;
+	_sprPtr = proto->getSprite(object, ProtoObj::kObjInContainerView).sp;
 }
 
 // getCurrentCompImage() is virtual function that should return

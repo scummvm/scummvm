@@ -2086,7 +2086,7 @@ APPFUNC(cmdPortrait) {
 					//  If we are using an intangible object (spell) then consider
 					//  the owner of the spell to be the center actor for the rest
 					//  of this action.
-					if (mouseObject->proto()->containmentSet() & ProtoObj::isIntangible) {
+					if (mouseObject->proto()->containmentSet() & ProtoObj::kIsIntangible) {
 						ObjectID    possessor = mouseObject->possessor();
 
 						if (possessor != Nothing) {
@@ -2851,7 +2851,7 @@ void gEnchantmentDisplay::setValue(PlayerActorID pID) {
 		ProtoObj        *proto = obj->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
 			if (proto->immunity & (1 << kResistImpact))            newIconFlags[iconResistImpact] = 255;
 			else if (proto->resistance & (1 << kResistImpact)) newIconFlags[iconResistImpact] = 255;

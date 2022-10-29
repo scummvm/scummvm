@@ -65,19 +65,19 @@ void grabObject(ObjectID pickedObject);      // turn object into mouse ptr
 void releaseObject();                    // restore mouse pointer
 
 /* Reference Types
-ProtoObj::isTangible
-ProtoObj::isContainer
-ProtoObj::isBottle
-ProtoObj::isFood
-ProtoObj::isWearable
-ProtoObj::isWeapon
-ProtoObj::isDocument
-ProtoObj::isIntangible
-ProtoObj::isConcept
-ProtoObj::isMemory
-ProtoObj::isPsych
-ProtoObj::isSpell
-ProtoObj::isEnchantment
+ProtoObj::kIsTangible
+ProtoObj::kIsContainer
+ProtoObj::kIsBottle
+ProtoObj::kIsFood
+ProtoObj::kIsWearable
+ProtoObj::kIsWeapon
+ProtoObj::kIsDocument
+ProtoObj::kIsIntangible
+ProtoObj::kIsConcept
+ProtoObj::kIsMemory
+ProtoObj::kIsPsych
+ProtoObj::kIsSpell
+ProtoObj::kIsEnchantment
 */
 
 //-----------------------------------------------------------------------
@@ -235,11 +235,11 @@ ContainerView::~ContainerView() {
 bool ContainerView::isVisible(GameObject *item) {
 	ProtoObj *proto = item->proto();
 
-	if (proto->containmentSet() & ProtoObj::isEnchantment)
+	if (proto->containmentSet() & ProtoObj::kIsEnchantment)
 		return false;
 
 	//  If Intangible Container then don't show it.
-	if ((proto->containmentSet() & (ProtoObj::isContainer | ProtoObj::isIntangible)) == (ProtoObj::isContainer | ProtoObj::isIntangible))
+	if ((proto->containmentSet() & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
 		return true;
 
 	return true;
@@ -272,7 +272,7 @@ void ContainerView::totalObjects() {
 			// if it's mergeable calc using the getExtra method of
 			// quantity calculation
 			// if not, then use the objLoc.z method
-			if (proto->flags & ResourceObjectPrototype::objPropMergeable)
+			if (proto->flags & ResourceObjectPrototype::kObjPropMergeable)
 				numItems = item->getExtra();
 			else numItems = 1;
 
@@ -356,7 +356,7 @@ void ContainerView::drawClipped(
 			        * (_iconSpacing.x + iconWidth);
 
 			//  Get the address of the sprite.
-			spr = proto->getSprite(item, ProtoObj::objInContainerView).sp;
+			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
 			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
@@ -419,7 +419,7 @@ void ContainerView::drawQuantity(
     int16           y) {
 	int16       quantity;
 
-	quantity = (objProto->flags & ResourceObjectPrototype::objPropMergeable)
+	quantity = (objProto->flags & ResourceObjectPrototype::kObjPropMergeable)
 	           ? item->getExtra()
 	           : item->getLocation().z;
 
@@ -478,7 +478,7 @@ GameObject *ContainerView::getObject(const TilePoint &slot) {
 			    (loc.u == slot.u) &&
 			    (loc.v == slot.v) &&
 			    //Skip The Enchantments
-			    (!(proto->containmentSet() & ProtoObj::isEnchantment))
+			    (!(proto->containmentSet() & ProtoObj::kIsEnchantment))
 			) {
 				return item;
 			}
@@ -579,25 +579,25 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 			g_vm->_cnm->_alreadyDone = true;    // if object then no doubleClick
 
 			if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntDrop) {
-				if (mouseSet & ProtoObj::isTangible) {
+				if (mouseSet & ProtoObj::kIsTangible) {
 					dropPhysical(msg, mouseObject, slotObject, g_vm->_mouseInfo->getMoveCount());
 				}
 
 				//  intangibles are used by dropping them
-				else if ((mouseSet & ProtoObj::isConcept) ||
-				         (mouseSet & ProtoObj::isPsych) ||
-				         (mouseSet & ProtoObj::isSpell) ||
-				         (mouseSet & ProtoObj::isSkill)) {
+				else if ((mouseSet & ProtoObj::kIsConcept) ||
+				         (mouseSet & ProtoObj::kIsPsych) ||
+				         (mouseSet & ProtoObj::kIsSpell) ||
+				         (mouseSet & ProtoObj::kIsSkill)) {
 					useConcept(msg, mouseObject, slotObject);
 				} else {
 					// !!!! bad state, reset cursor
 					g_vm->_mouseInfo->replaceObject();
 				}
 			} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
-				if (mouseSet & ProtoObj::isTangible) {
+				if (mouseSet & ProtoObj::kIsTangible) {
 					usePhysical(msg, mouseObject, slotObject);
-				} else if ((mouseSet & ProtoObj::isSpell) ||
-				           (mouseSet & ProtoObj::isSkill)) {
+				} else if ((mouseSet & ProtoObj::kIsSpell) ||
+				           (mouseSet & ProtoObj::kIsSkill)) {
 					g_vm->_mouseInfo->replaceObject();
 				} else {
 					useConcept(msg, mouseObject, slotObject);
@@ -670,7 +670,7 @@ void ContainerView::clickOn(
     GameObject *,
     GameObject *cObj) {
 	if (cObj != nullptr) {
-		if (cObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (cObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			if (!rightButtonState()) {
 				//  just get the object into the cursor
 				cObj->take(getCenterActorID(), cObj->getExtra());
@@ -724,7 +724,7 @@ void ContainerView::dropPhysical(
     GameObject      *cObj,
     int16           num) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsTangible);
 
 	//  Place object back where it came from, temporarily
 	g_vm->_mouseInfo->replaceObject();
@@ -755,7 +755,7 @@ void ContainerView::usePhysical(
     GameObject      *mObj,
     GameObject      *cObj) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isTangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsTangible);
 
 	if (cObj == nullptr) {
 		dropPhysical(msg, mObj, cObj);
@@ -772,7 +772,7 @@ void ContainerView::useConcept(
     GameObject      *mObj,
     GameObject      *cObj) {
 	assert(g_vm->_mouseInfo->getObject() == mObj);
-	assert(mObj->containmentSet() & ProtoObj::isIntangible);
+	assert(mObj->containmentSet() & ProtoObj::kIsIntangible);
 
 	g_vm->_mouseInfo->replaceObject();
 
@@ -993,7 +993,7 @@ void ReadyContainerView::drawClipped(
 		ProtoObj    *objProto = item->proto();
 
 		//  If Intangible Container then don't show it.
-		if ((objProto->containmentSet() & (ProtoObj::isContainer | ProtoObj::isIntangible)) == (ProtoObj::isContainer | ProtoObj::isIntangible))
+		if ((objProto->containmentSet() & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
 			continue;
 
 		objLoc = item->getLocation();
@@ -1013,7 +1013,7 @@ void ReadyContainerView::drawClipped(
 			x = originX + objLoc.v * (_iconSpacing.x + iconWidth);
 
 			//  Get the address of the sprite.
-			spr = proto->getSprite(item, ProtoObj::objInContainerView).sp;
+			spr = proto->getSprite(item, ProtoObj::kObjInContainerView).sp;
 
 			sprPos.x = x + ((iconWidth - spr->size.x) >> 1)
 			           - spr->offset.x;
@@ -1170,7 +1170,7 @@ void TangibleContainerWindow::setContainerSprite() {
 	char                dummy = '\0';
 
 	//  Get the address of the sprite.
-	spr = proto->getSprite(_view->_containerObject, ProtoObj::objInContainerView).sp;
+	spr = proto->getSprite(_view->_containerObject, ProtoObj::kObjInContainerView).sp;
 
 	sprPos.x = _objRect.x - (spr->size.x >> 1);  //_objRect.x + ( spr->size.x >> 1 );
 	sprPos.y = _objRect.y - (spr->size.y >> 1);

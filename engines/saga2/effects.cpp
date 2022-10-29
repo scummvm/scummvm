@@ -488,7 +488,7 @@ SPECIALSPELL(DispellProtections) {
 		while (iter.next(&obj) != Nothing) {
 			ProtoObj *proto = obj->proto();
 
-			if (proto->containmentSet() & ProtoObj::isEnchantment) {
+			if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 				uint16 enchantmentID = obj->getExtra();
 				if (!isHarmful(enchantmentID)) {
 					DispelObjectEnchantment(a->thisID(), enchantmentID);
@@ -510,7 +510,7 @@ SPECIALSPELL(DispellCurses) {
 		while (iter.next(&obj) != Nothing) {
 			ProtoObj *proto = obj->proto();
 
-			if (proto->containmentSet() & ProtoObj::isEnchantment) {
+			if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 				uint16 enchantmentID = obj->getExtra();
 				if (isHarmful(enchantmentID)) {
 					if (ToBeDeleted) ToBeDeleted->deleteObject();
