@@ -1689,7 +1689,7 @@ void MotionTask::fireBow(Actor &a, GameObject &target) {
 void MotionTask::castSpell(Actor &a, SkillProto &spell, GameObject &target) {
 	MotionTask      *mt;
 	motionTypes     type =
-	    (spellBook[spell.getSpellID()].getManaType() == sManaIDSkill) ?
+	    (spellBook[spell.getSpellID()].getManaType() == ksManaIDSkill) ?
 	    kMotionTypeGive :
 	    kMotionTypeCastSpell;
 
@@ -1709,7 +1709,7 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, GameObject &target) {
 void MotionTask::castSpell(Actor &a, SkillProto &spell, Location &target) {
 	MotionTask      *mt;
 	motionTypes     type =
-	    (spellBook[spell.getSpellID()].getManaType() == sManaIDSkill) ?
+	    (spellBook[spell.getSpellID()].getManaType() == ksManaIDSkill) ?
 	    kMotionTypeGive :
 	    kMotionTypeCastSpell;
 
@@ -1728,7 +1728,7 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, Location &target) {
 void MotionTask::castSpell(Actor &a, SkillProto &spell, ActiveItem &target) {
 	MotionTask      *mt;
 	motionTypes     type =
-	    (spellBook[spell.getSpellID()].getManaType() == sManaIDSkill) ?
+	    (spellBook[spell.getSpellID()].getManaType() == ksManaIDSkill) ?
 	    kMotionTypeGive :
 	    kMotionTypeCastSpell;
 

@@ -83,12 +83,12 @@ ProtoEffect *createNewProtoEffect(Common::SeekableReadStream *stream) {
 
 	case kEffectDamage:
 		pe = new ProtoDamage(baseDice, diceSides, skillDice, baseDamage,
-					(effectDamageTypes)effectType, 0, targeting & spellTargCaster, skillDamage);
+					(effectDamageTypes)effectType, 0, targeting & kSpellTargCaster, skillDamage);
 		break;
 
 	case kEffectDrains:
 		pe = new ProtoDrainage(baseDice, diceSides, skillDice, baseDamage,
-					(effectDrainsTypes)effectType, 0, targeting & spellTargCaster);
+					(effectDrainsTypes)effectType, 0, targeting & kSpellTargCaster);
 		break;
 
 	case kEffectPoison:

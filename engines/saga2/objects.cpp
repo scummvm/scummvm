@@ -658,7 +658,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			manaCost  = spellBook[sProto->getSpellID()].getManaAmt();
 		}
 
-		if (manaColor == sManaIDSkill) {     //  It's a skill
+		if (manaColor == ksManaIDSkill) {     //  It's a skill
 			// get the level of the skill for the brother in question
 			uint16  brotherID = getCenterActor()->thisID();
 			uint16  level;
@@ -676,8 +676,8 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 				// normalize and output
 				Common::sprintf_s(nameBuf, size, "%s-%d", objName(), ++level);
 			}
-		} else if (manaColor >= sManaIDRed
-		           &&  manaColor <= sManaIDViolet  //  A spell
+		} else if (manaColor >= ksManaIDRed
+		           &&  manaColor <= ksManaIDViolet  //  A spell
 		           &&  manaCost > 0) {
 			ObjectID        aID = possessor();      //  Who owns the spell
 			PlayerActorID   pID;
@@ -703,7 +703,7 @@ bool GameObject::isTrueSkill() {
 		SkillProto *sProto = skillProtoFromID(thisID());
 
 		// determine if this is a skill icon
-		if (spellBook[sProto->getSpellID()].getManaType() == sManaIDSkill) {
+		if (spellBook[sProto->getSpellID()].getManaType() == ksManaIDSkill) {
 			return true;
 		}
 	}

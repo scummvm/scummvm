@@ -122,7 +122,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         0,
 		         (effectDamageTypes) rse->effectType,
 		         0,
-		         rse->targeting & spellTargCaster);
+		         rse->targeting & kSpellTargCaster);
 		break;
 	case kEffectDrains   :
 		pe = new ProtoDrainage(
@@ -132,7 +132,7 @@ void SpellStuff::addEffect(ResourceSpellEffect *rse) {
 		         0,
 		         (effectDrainsTypes) rse->effectType,
 		         0,
-		         rse->targeting & spellTargCaster);
+		         rse->targeting & kSpellTargCaster);
 		break;
 	case kEffectTAG      :
 		pe = new ProtoTAGEffect(

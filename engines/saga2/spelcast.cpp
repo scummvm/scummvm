@@ -64,13 +64,13 @@ SpellStuff::SpellStuff() {
 	_master = nullSpell;
 	_display = nullSpell;
 	_prototype = nullptr;
-	_targetableTypes = spellTargNone;
-	_targetTypes = spellApplyNone;
+	_targetableTypes = kSpellTargNone;
+	_targetTypes = kSpellApplyNone;
 	_effects = nullptr;
 	_targets = nullptr;
-	_manaType = sManaIDSkill;
+	_manaType = ksManaIDSkill;
 	_manaUse = 0;
-	_shape = eAreaInvisible;
+	_shape = keAreaInvisible;
 	_size = 0;
 	_range = 0;
 	_sound = 0;
@@ -82,8 +82,8 @@ SpellStuff::SpellStuff() {
 //	is this spell harmful
 
 bool SpellStuff::isOffensive() {
-	return (canTarget(spellTargActor) || canTarget(spellTargObject)) &&
-	       (!canTarget(spellTargCaster));
+	return (canTarget(kSpellTargActor) || canTarget(kSpellTargObject)) &&
+	       (!canTarget(kSpellTargCaster));
 }
 
 //-----------------------------------------------------------------------
@@ -91,21 +91,21 @@ bool SpellStuff::isOffensive() {
 
 bool SpellStuff::safe() {
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
-	case eAreaSquare:
-	case eAreaBall:
-	case eAreaWall:
-	case eAreaStorm:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
+	case keAreaSquare:
+	case keAreaBall:
+	case keAreaWall:
+	case keAreaStorm:
 		return false;
-	case eAreaBolt:
-	case eAreaBeam:
-	case eAreaCone:
-	case eAreaWave:
+	case keAreaBolt:
+	case keAreaBeam:
+	case keAreaCone:
+	case keAreaWave:
 		return true;
 	}
 	return false;
@@ -154,7 +154,7 @@ void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 		implement(enactor, Location(target->getPoint(), Nothing));
 		break;
 	case SpellTarget::kSpellTargetObjectPoint:
-		if (_targetTypes == spellApplyObject)
+		if (_targetTypes == kSpellApplyObject)
 			implement(enactor, target->getObject());
 		else
 			implement(enactor, Location(target->getPoint(), Nothing));
@@ -177,7 +177,7 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 	SpellTarget st = SpellTarget(target);
 	if (safe() &&
 	        target->thisID() == enactor->thisID() &&
-	        !canTarget(spellTargCaster))
+	        !canTarget(kSpellTargCaster))
 		return;
 	if (_effects) {
 		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
@@ -209,7 +209,7 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 			if (safe() &&
 			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
-			        !canTarget(spellTargCaster))
+			        !canTarget(kSpellTargCaster))
 				continue;
 			for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 				if (pe->applicable(*t))
@@ -227,15 +227,15 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 	TilePoint tVect, orth, tBase;
 	show(caster, trg);
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		_targets = &trg;
 		break;
-	case eAreaSquare: {
+	case keAreaSquare: {
 		tVect = trg.getPoint();
 		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
 
@@ -252,7 +252,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBolt: {
+	case keAreaBolt: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -271,7 +271,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBeam: {
+	case keAreaBeam: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -290,7 +290,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBall: {
+	case keAreaBall: {
 		radius = ballSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
@@ -301,7 +301,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWall: {
+	case keAreaWall: {
 		radius = wallSpellRadius;
 		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, wallInnerRadius);
 		GameObject *go;
@@ -312,7 +312,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaStorm: {
+	case keAreaStorm: {
 		radius = stormSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
@@ -323,7 +323,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaCone: {
+	case keAreaCone: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -341,7 +341,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWave: {
+	case keAreaWave: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -381,21 +381,21 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 
 void SpellStuff::removeTargetList() {
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		_targets = nullptr;
 		break;
-	case eAreaWall:
-	case eAreaCone:
-	case eAreaBeam:
-	case eAreaBolt:
-	case eAreaBall:
-	case eAreaStorm:
-	case eAreaSquare:
+	case keAreaWall:
+	case keAreaCone:
+	case keAreaBeam:
+	case keAreaBolt:
+	case keAreaBall:
+	case keAreaStorm:
+	case keAreaSquare:
 		if (_targets) delete _targets;
 		_targets = nullptr;
 		break;
@@ -421,18 +421,18 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
 	switch (_shape) {
-	case eAreaInvisible:
+	case keAreaInvisible:
 		showTarg(trg.getPoint());
 		break;
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		TPLine(caster->getWorldLocation(), trg.getPoint(), DSPELL_AREA_COLOR);
 		showTarg(trg.getPoint());
 		break;
-	case eAreaSquare: {
+	case keAreaSquare: {
 		tVect = trg.getPoint();
 		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
 
@@ -454,7 +454,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBolt: {
+	case keAreaBolt: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -474,7 +474,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBeam: {
+	case keAreaBeam: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -494,7 +494,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBall: {
+	case keAreaBall: {
 		radius = ballSpellRadius;
 		TPCircle(trg.getPoint(), ballSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
@@ -506,7 +506,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWall: {
+	case keAreaWall: {
 		radius = wallSpellRadius;
 		TPCircle(trg.getPoint(), radius, DSPELL_AREA_COLOR);
 		TPCircle(trg.getPoint(), radius / 2, DSPELL_AREA_COLOR);
@@ -519,7 +519,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaStorm: {
+	case keAreaStorm: {
 		radius = stormSpellRadius;
 		TPCircle(trg.getPoint(), stormSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
@@ -531,7 +531,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaCone: {
+	case keAreaCone: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
@@ -550,7 +550,7 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWave: {
+	case keAreaWave: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));

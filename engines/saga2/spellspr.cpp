@@ -67,28 +67,28 @@ namespace Saga2 {
 int16 whichColorMap(EffectID eid, const Effectron *const effectron) {
 	int16 rval = 0;
 	switch (eid) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
-	case eAreaBeam:
-	case eAreaWall:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
+	case keAreaBeam:
+	case keAreaWall:
 		rval = 0;
 		break;
-	case eAreaSquare:
-	case eAreaBall:
-	case eAreaStorm:
+	case keAreaSquare:
+	case keAreaBall:
+	case keAreaStorm:
 		rval = (effectron->_parent->_effSeq == 0) ? 0 : 1;
 		break;
-	case eAreaBolt:
+	case keAreaBolt:
 		rval = ((effectron->_partno % 3) == 1) ? 0 : 1;
 		break;
-	case eAreaCone:
+	case keAreaCone:
 		rval = ((effectron->_partno / 9) == 0) ? 0 : 1;
 		break;
-	case eAreaWave:
+	case keAreaWave:
 		rval = ((effectron->_partno / 17) == 0) ? 0 : 1;
 		break;
 	}

@@ -215,9 +215,9 @@ static void loadMagicData() {
 	if (spellRes == nullptr || !spellRes->_valid)
 		error("Error accessing spell resource group.\n");
 	i = 1;
-	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
+	ADD_SHOW(keAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
 
-	spellBook[0].setManaType(sManaIDSkill);
+	spellBook[0].setManaType(ksManaIDSkill);
 
 	while (spellRes->size(
 	            MKTAG('I', 'N', 'F', i)) > 0) {

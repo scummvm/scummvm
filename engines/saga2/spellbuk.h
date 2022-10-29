@@ -37,13 +37,13 @@ class ProtoEffect;
 // Mana IDs as spells see them
 
 enum SpellManaID {
-	sManaIDRed      = 0,
-	sManaIDOrange   = 1,
-	sManaIDYellow   = 2,
-	sManaIDGreen    = 3,
-	sManaIDBlue     = 4,
-	sManaIDViolet   = 5,
-	sManaIDSkill    = 6         // skills are here for convenience
+	ksManaIDRed      = 0,
+	ksManaIDOrange   = 1,
+	ksManaIDYellow   = 2,
+	ksManaIDGreen    = 3,
+	ksManaIDBlue     = 4,
+	ksManaIDViolet   = 5,
+	ksManaIDSkill    = 6         // skills are here for convenience
 };
 
 //-------------------------------------------------------------------
@@ -56,25 +56,25 @@ enum SpellManaID {
 //-------------------------------------------------------------------
 // legal target selections
 enum SpellTargetingTypes {
-	spellTargNone       = 0,
-	spellTargWorld      = 1 << 0, // instant spell
-	spellTargLocation   = 1 << 1, // cast at any location on map
-	spellTargTAG        = 1 << 2, // cast at tileactivity inst.
-	spellTargObject     = 1 << 3, // cast at objects
-	spellTargActor      = 1 << 4,
-	spellTargCaster     = 1 << 5
+	kSpellTargNone       = 0,
+	kSpellTargWorld      = 1 << 0, // instant spell
+	kSpellTargLocation   = 1 << 1, // cast at any location on map
+	kSpellTargTAG        = 1 << 2, // cast at tileactivity inst.
+	kSpellTargObject     = 1 << 3, // cast at objects
+	kSpellTargActor      = 1 << 4,
+	kSpellTargCaster     = 1 << 5
 };
 
 //-------------------------------------------------------------------
 // target type the spell uses when implemented
 enum SpellApplicationTypes {
-	spellApplyNone      = spellTargNone,
-	spellApplyWorld     = spellTargWorld,
-	spellApplyLocation  = spellTargLocation,
-	spellApplyTAG       = spellTargTAG,
-	spellApplyObject    = spellTargObject,
-	spellApplyActor     = spellTargObject,
-	spellApplyTracking  = 1 << 6  // track object targets
+	kSpellApplyNone      = kSpellTargNone,
+	kSpellApplyWorld     = kSpellTargWorld,
+	kSpellApplyLocation  = kSpellTargLocation,
+	kSpellApplyTAG       = kSpellTargTAG,
+	kSpellApplyObject    = kSpellTargObject,
+	kSpellApplyActor     = kSpellTargObject,
+	kSpellApplyTracking  = 1 << 6  // track object targets
 };
 
 
@@ -83,20 +83,20 @@ enum SpellApplicationTypes {
 //   These are the shapes of the visible effects of spells
 
 enum effectAreas {
-	eAreaInvisible = 0,
-	eAreaAura,
-	eAreaProjectile,
-	eAreaExchange,
-	eAreaBolt,
-	eAreaCone,
-	eAreaBall,
-	eAreaSquare,
-	eAreaWave,
-	eAreaStorm,
-	eAreaMissle,
-	eAreaGlow,
-	eAreaBeam,
-	eAreaWall
+	keAreaInvisible = 0,
+	keAreaAura,
+	keAreaProjectile,
+	keAreaExchange,
+	keAreaBolt,
+	keAreaCone,
+	keAreaBall,
+	keAreaSquare,
+	keAreaWave,
+	keAreaStorm,
+	keAreaMissle,
+	keAreaGlow,
+	keAreaBeam,
+	keAreaWall
 };
 
 
@@ -150,14 +150,14 @@ public:
 	}
 
 	bool untargetable() {
-		return (_targetableTypes == spellTargNone);
+		return (_targetableTypes == kSpellTargNone);
 	}
 	bool untargeted() {
-		return false;    //(targetableTypes == spellTargWorld ) ||
+		return false;    //(targetableTypes == kSpellTargWorld ) ||
 	}
-	//(targetableTypes == spellTargCaster ) ||
+	//(targetableTypes == kSpellTargCaster ) ||
 	//(targetableTypes == targetableTypes &
-	//                   (spellTargWorld | spellTargCaster)); }
+	//                   (kSpellTargWorld | kSpellTargCaster)); }
 
 	void implement(GameObject *enactor, SpellTarget *target);
 	void implement(GameObject *enactor, GameObject *target);

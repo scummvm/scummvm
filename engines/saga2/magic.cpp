@@ -157,8 +157,8 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 				return false;
 		}
 		if (target->thisID() == enactor->thisID())
-			return sp.canTarget(spellTargCaster);
-		return sp.canTarget(spellTargObject);
+			return sp.canTarget(kSpellTargCaster);
+		return sp.canTarget(kSpellTargObject);
 	}
 	if (tag != nullptr) {
 		if (range > 0 &&
@@ -168,7 +168,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		        .magnitude()) {
 			return false;
 		}
-		return sp.canTarget(spellTargTAG);
+		return sp.canTarget(kSpellTargTAG);
 	}
 #if RANGE_CHECKING
 	if (sp.range > 0 &&
@@ -179,7 +179,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		return false;
 	}
 #endif
-	return sp.canTarget(spellTargLocation);
+	return sp.canTarget(kSpellTargLocation);
 }
 
 //-----------------------------------------------------------------------
@@ -278,7 +278,7 @@ bool implementSpell(GameObject *enactor, Location   &target, SkillProto *spell) 
 	SpellID s = spell->getSpellID();
 	SpellStuff &sProto = spellBook[s];
 
-	assert(sProto.shouldTarget(spellApplyLocation));
+	assert(sProto.shouldTarget(kSpellApplyLocation));
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 
@@ -314,10 +314,10 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 	SpellID s = spell->getSpellID();
 	SpellStuff &sProto = spellBook[s];
 	Location l = Location(TAGPos(target), enactor->world()->thisID());
-	if (sProto.shouldTarget(spellApplyLocation)) {
+	if (sProto.shouldTarget(kSpellApplyLocation)) {
 		return implementSpell(enactor, l, spell);
 	}
-	assert(sProto.shouldTarget(spellApplyTAG));
+	assert(sProto.shouldTarget(kSpellApplyTAG));
 	assert(target->_data.itemType == activeTypeInstance);
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
@@ -354,9 +354,9 @@ bool implementSpell(GameObject *enactor, GameObject *target, SkillProto *spell) 
 	SpellID s = spell->getSpellID();
 	SpellStuff &sProto = spellBook[s];
 	Location l = Location(target->getWorldLocation(), enactor->world()->thisID());
-	if (sProto.shouldTarget(spellApplyLocation))
+	if (sProto.shouldTarget(kSpellApplyLocation))
 		return implementSpell(enactor, l, spell);
-	assert(sProto.shouldTarget(spellApplyObject));
+	assert(sProto.shouldTarget(kSpellApplyObject));
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 
