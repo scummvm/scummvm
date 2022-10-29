@@ -38,13 +38,15 @@ CastleEngine::CastleEngine(OSystem *syst, const ADGameDescription *gd) : Freesca
 }
 
 Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filename) {
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
+	Common::File file;
+	file.open(filename);
+	if (!file.isOpen())
+		error("Failed to open %s", filename.c_str());
 
-	Common::SeekableReadStream *file = gameDir.createReadStreamForMember(filename);
-	int size = file->size();
+	int size = file.size();
 	byte *encryptedBuffer = (byte *)malloc(size);
-	file->read(encryptedBuffer, size);
+	file.read(encryptedBuffer, size);
+	file.close();
 
 	int seed = 24;
 	for (int i = 0; i < size; i++) {
@@ -56,17 +58,18 @@ Common::SeekableReadStream *CastleEngine::decryptFile(const Common::String filen
 }
 
 void CastleEngine::loadAssets() {
-	Common::SeekableReadStream *file = nullptr;
+	Common::SeekableReadStream *stream = nullptr;
 	_renderMode = "ega";
 
-	file = decryptFile("CMLE");
-	loadMessagesVariableSize(file, 0, 172);
-	delete file;
+	stream = decryptFile("CMLE");
+	loadMessagesVariableSize(stream, 0, 172);
+	delete stream;
 
-	file = decryptFile("CMEDF");
-	load8bitBinary(file, 0, 16);
+	stream = decryptFile("CMEDF");
+	load8bitBinary(stream, 0, 16);
 	for (auto &it : _areaMap)
 		it._value->addStructure(_areaMap[255]);
+	delete stream;
 
 	// CPC
 	// file = gameDir.createReadStreamForMember("cm.bin");
