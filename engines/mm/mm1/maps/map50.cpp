@@ -159,7 +159,7 @@ void Map50::special21() {
 }
 
 void Map50::special22() {
-	send(SoundMessage(STRING["maps.map50.sign6"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map50::special23() {

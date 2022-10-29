@@ -50,7 +50,7 @@ void Map46::special() {
 }
 
 void Map46::special00() {
-	send(SoundMessage(STRING["maps.map46.painted"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map46::special01() {
@@ -59,7 +59,7 @@ void Map46::special01() {
 
 void Map46::special02() {
 	send(SoundMessage(
-		STRING["maps.map46.painted"],
+		STRING["maps.stairs_down"],
 		[]() {
 			g_maps->changeMap(0x705, 3);
 		}
@@ -68,7 +68,7 @@ void Map46::special02() {
 
 void Map46::special03() {
 	send(SoundMessage(
-		STRING["maps.map46.painted"],
+		STRING["maps.stairs_up"],
 		[]() {
 			g_maps->changeMap(0xf05, 3);
 		}

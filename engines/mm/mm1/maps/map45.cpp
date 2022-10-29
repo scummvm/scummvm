@@ -146,7 +146,7 @@ void Map45::special20() {
 }
 
 void Map45::special21() {
-	send(SoundMessage(STRING["maps.map45.wall"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 }
 
 void Map45::showSign(const Common::String &line) {

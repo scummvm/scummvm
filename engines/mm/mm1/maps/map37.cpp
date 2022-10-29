@@ -152,7 +152,7 @@ void Map37::special14() {
 }
 
 void Map37::special15() {
-	send(SoundMessage(STRING["maps.map37.wall"]));
+	send(SoundMessage(STRING["maps.wall_painted"]));
 
 	if (!g_globals->_party.hasItem(B_QUEEN_IDOL_ID)) {
 		g_globals->_treasure[5] = B_QUEEN_IDOL_ID;
