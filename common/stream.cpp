@@ -244,6 +244,16 @@ SeekableSubReadStream::SeekableSubReadStream(SeekableReadStream *parentStream, u
 	_eos = false;
 }
 
+SeekableSubReadStream::SeekableSubReadStream(const SharedPtr<SeekableReadStream>& parentStream, uint32 begin, uint32 end)
+	: SubReadStream(parentStream.staticCast<ReadStream>(), end),
+	_parentStream(parentStream.get()),
+	_begin(begin) {
+	assert(_begin <= _end);
+	_pos = _begin;
+	_parentStream->seek(_pos);
+	_eos = false;
+}
+
 bool SeekableSubReadStream::seek(int64 offset, int whence) {
 	assert(_pos >= _begin);
 	assert(_pos <= _end);

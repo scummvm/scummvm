@@ -60,6 +60,14 @@ public:
 		assert(parentStream);
 	}
 
+	SubReadStream(const SharedPtr<ReadStream>& parentStream, uint32 end)
+		: _parentStream(parentStream),
+		  _pos(0),
+		  _end(end),
+		  _eos(false) {
+		assert(parentStream);
+	}
+
 	virtual bool eos() const { return _eos | _parentStream->eos(); }
 	virtual bool err() const { return _parentStream->err(); }
 	virtual void clearErr() { _eos = false; _parentStream->clearErr(); }
@@ -80,6 +88,8 @@ protected:
 	uint32 _begin;
 public:
 	SeekableSubReadStream(SeekableReadStream *parentStream, uint32 begin, uint32 end, DisposeAfterUse::Flag disposeParentStream = DisposeAfterUse::NO);
+
+	SeekableSubReadStream(const SharedPtr<SeekableReadStream>& parentStream, uint32 begin, uint32 end);
 
 	virtual int64 pos() const { return _pos - _begin; }
 	virtual int64 size() const { return _end - _begin; }
