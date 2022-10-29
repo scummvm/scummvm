@@ -31,30 +31,30 @@
 
 namespace Saga2 {
 
-const   int     defaultEvalRate = 10;
+const   int     kDefaultEvalRate = 10;
 
-const   size_t  maxTaskSize = 48;
+const   size_t  kMaxTaskSize = 48;
 
 //  Integers representing task types
 enum TaskType {
-	wanderTask,
-	tetheredWanderTask,
-	gotoLocationTask,
-	gotoRegionTask,
-	gotoObjectTask,
-	gotoActorTask,
-	goAwayFromObjectTask,
-	goAwayFromActorTask,
-	huntToBeNearLocationTask,
-	huntToBeNearObjectTask,
-	huntToPossessTask,
-	huntToBeNearActorTask,
-	huntToKillTask,
-	huntToGiveTask,
-	bandTask,
-	bandAndAvoidEnemiesTask,
-	followPatrolRouteTask,
-	attendTask
+	kWanderTask,
+	kTetheredWanderTask,
+	kGotoLocationTask,
+	kGotoRegionTask,
+	kGotoObjectTask,
+	kGotoActorTask,
+	kGoAwayFromObjectTask,
+	kGoAwayFromActorTask,
+	kHuntToBeNearLocationTask,
+	kHuntToBeNearObjectTask,
+	kHuntToPossessTask,
+	kHuntToBeNearActorTask,
+	kHuntToKillTask,
+	kHuntToGiveTask,
+	kBandTask,
+	kBandAndAvoidEnemiesTask,
+	kFollowPatrolRouteTask,
+	kAttendTask
 };
 
 /* ===================================================================== *
@@ -433,13 +433,13 @@ class GotoObjectTargetTask : public GotoTask {
 	uint8               _flags;
 
 	enum {
-		track       = (1 << 0),
-		inSight     = (1 << 1)
+		kTrack       = (1 << 0),
+		kInSight     = (1 << 1)
 	};
 
 	//  static const doesn't work in Visual C++
 	enum {
-		sightRate = 16
+		kSightRate = 16
 	};
 //	static const int16  sightRate = 16;
 
@@ -452,7 +452,7 @@ public:
 		GotoTask(ts),
 		_lastTestedLoc(Nowhere),
 		_sightCtr(0),
-		_flags(trackFlag ? track : 0),
+		_flags(trackFlag ? kTrack : 0),
 		_lastKnownLoc(Nowhere) {
 		debugC(2, kDebugTasks, " - GotoObjectTargetTask");
 		_type = "GotoObjectTargetTask";
@@ -475,10 +475,10 @@ private:
 
 protected:
 	bool tracking() const {
-		return (_flags & track) != 0;
+		return (_flags & kTrack) != 0;
 	}
 	bool isInSight() const {
-		return (_flags & inSight) != 0;
+		return (_flags & kInSight) != 0;
 	}
 };
 
@@ -575,7 +575,7 @@ class GoAwayFromTask : public Task {
 	uint8                   _flags;
 
 	enum {
-		run = (1 << 0)
+		kRun = (1 << 0)
 	};
 
 public:
@@ -593,7 +593,7 @@ public:
 		Task(ts),
 		_goTask(NULL),
 		_goTaskID(NoTask),
-		_flags(runFlag ? run : 0) {
+		_flags(runFlag ? kRun : 0) {
 		debugC(2, kDebugTasks, " - GoAwayFromTask2");
 		_type = "GoAwayFromTask";
 	}
@@ -696,8 +696,8 @@ class HuntTask : public Task {
 	uint8           _huntFlags;
 
 	enum HuntFlags {
-		huntWander  = (1 << 0), //  Indicates that subtask is a wander task
-		huntGoto    = (1 << 1)  //  Indicates that subtask is a goto task
+		kHuntWander  = (1 << 0), //  Indicates that subtask is a wander task
+		kHuntGoto    = (1 << 1)  //  Indicates that subtask is a goto task
 	};
 
 public:
@@ -782,9 +782,9 @@ class HuntToBeNearLocationTask : public HuntLocationTask {
 
 	//  static const doesn't work in Visual C++
 	enum {
-		targetEvaluateRate = 64
+		kTargetEvaluateRate = 64
 	};
-//	static const uint8  targetEvaluateRate;
+//	static const uint8  kTargetEvaluateRate;
 
 public:
 	//  Constructor -- initial construction
@@ -824,7 +824,7 @@ protected:
 	}
 };
 
-//const uint8 HuntToBeNearLocationTask::targetEvaluateRate = 64;
+//const uint8 HuntToBeNearLocationTask::kTargetEvaluateRate = 64;
 
 /* ===================================================================== *
    HuntObjectTask Class
@@ -868,9 +868,9 @@ class HuntToBeNearObjectTask : public HuntObjectTask {
 	uint8               _targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 64
+		kTargetEvaluateRate = 64
 	};
-//	static const uint8  targetEvaluateRate;
+//	static const uint8  kTargetEvaluateRate;
 
 public:
 	//  Constructor -- initial construction
@@ -913,7 +913,7 @@ protected:
 	}
 };
 
-//const uint8   HuntToBeNearObjectTask::targetEvaluateRate = 64;
+//const uint8   HuntToBeNearObjectTask::kTargetEvaluateRate = 64;
 
 /* ===================================================================== *
    HuntToPossessTask Class
@@ -923,9 +923,9 @@ class HuntToPossessTask : public HuntObjectTask {
 	uint8               _targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 64
+		kTargetEvaluateRate = 64
 	};
-//	static const uint8  targetEvaluateRate;
+//	static const uint8  kTargetEvaluateRate;
 
 	bool                _grabFlag;
 
@@ -962,7 +962,7 @@ protected:
 	TaskResult atTargetUpdate();
 };
 
-//const uint8 HuntToPossessTask::targetEvaluateRate = 16;
+//const uint8 HuntToPossessTask::kTargetEvaluateRate = 16;
 
 /* ===================================================================== *
    HuntActorTask Class
@@ -973,7 +973,7 @@ class HuntActorTask : public HuntTask {
 	uint8               _flags;
 
 	enum {
-		track   = (1 << 0)
+		kTrack   = (1 << 0)
 	};
 
 protected:
@@ -1004,7 +1004,7 @@ protected:
 	}
 
 	bool tracking() const {
-		return (_flags & track) != 0;
+		return (_flags & kTrack) != 0;
 	}
 };
 
@@ -1020,14 +1020,14 @@ class HuntToBeNearActorTask : public HuntActorTask {
 	uint8                   _targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 16
+		kTargetEvaluateRate = 16
 	};
-//	static const uint8  targetEvaluateRate;
+//	static const uint8  kTargetEvaluateRate;
 
 public:
 
 	enum {
-		tooClose = 12
+		kTooClose = 12
 	};
 
 	//  Constructor -- initial construction
@@ -1076,7 +1076,7 @@ protected:
 	}
 };
 
-//const uint8   HuntToBeNearActorTask::targetEvaluateRate = 64;
+//const uint8   HuntToBeNearActorTask::kTargetEvaluateRate = 64;
 
 /* ===================================================================== *
    HuntToKillTask Class
@@ -1087,19 +1087,19 @@ class HuntToKillTask : public HuntActorTask {
 	uint8               _specialAttackCtr;
 
 	enum {
-		targetEvaluateRate = 16
+		kTargetEvaluateRate = 16
 	};
 
 	enum {
-		currentWeaponBonus = 1
+		kCurrentWeaponBonus = 1
 	};
 
 	uint8               _flags;
 
 	enum {
-		evalWeapon      = (1 << 0)
+		kEvalWeapon      = (1 << 0)
 	};
-//	static const uint8  targetEvaluateRate;
+//	static const uint8  kTargetEvaluateRate;
 
 public:
 	//  Constructor -- initial construction
@@ -1137,7 +1137,7 @@ private:
 	void evaluateWeapon();
 };
 
-//const uint8 HuntToKillTask::targetEvaluateRate = 16;
+//const uint8 HuntToKillTask::kTargetEvaluateRate = 16;
 
 //  Utility function used for combat target selection
 inline int16 closenessScore(int16 dist) {
@@ -1201,7 +1201,7 @@ class BandTask : public HuntTask {
 	uint8               _targetEvaluateCtr;
 
 	enum {
-		targetEvaluateRate = 2
+		kTargetEvaluateRate = 2
 	};
 
 public:
@@ -1524,8 +1524,8 @@ class ParryTask : public Task {
 	uint8               _flags;
 
 	enum {
-		motionStarted   = (1 << 0),
-		blockStarted    = (1 << 1)
+		kMotionStarted   = (1 << 0),
+		kBlockStarted    = (1 << 1)
 	};
 
 public:
@@ -1579,8 +1579,8 @@ public:
 	TaskStack(Actor *a) :
 		_stackBottomID(NoTask),
 		_actor(a),
-		_evalCount(defaultEvalRate),
-		_evalRate(defaultEvalRate) {
+		_evalCount(kDefaultEvalRate),
+		_evalRate(kDefaultEvalRate) {
 
 		newTaskStack(this);
 	}

@@ -486,7 +486,7 @@ bool HuntToBeNearActorAssignment::taskNeeded() {
 	            targetLoc = getTarget()->where(a->world(), actorLoc);
 
 	return      !a->inRange(targetLoc, _range)
-	            ||  a->inRange(targetLoc, HuntToBeNearActorTask::tooClose);
+	            ||  a->inRange(targetLoc, HuntToBeNearActorTask::kTooClose);
 }
 
 //----------------------------------------------------------------------
