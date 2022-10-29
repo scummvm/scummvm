@@ -678,7 +678,7 @@ int16 FileDialog(int16 fileProcess) {
 	}
 #endif
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
@@ -823,7 +823,7 @@ int16 OptionsDialog(bool disableSaveResume) {
 	if (!fullInitialized) return -1;
 
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 	// get the graphics associated with the buttons
 	dialogPushImag   = loadButtonRes(decRes, dialogPushResNum, numBtnImages);
@@ -1003,7 +1003,7 @@ bool initUserDialog() {
 
 	const   int16   dialogPushResNum    = 4;
 	// init the resource context handle
-	udDecRes = resFile->newContext(dialogGroupID, "dialog resources");
+	udDecRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
@@ -1176,7 +1176,7 @@ int16 userDialog(const char *title, const char *msg, const char *bMsg1,
 		return -1;
 
 	// init the resource context handle
-	decRes = resFile->newContext(dialogGroupID, "dialog resources");
+	decRes = resFile->newContext(kDialogGroupID, "dialog resources");
 
 
 	// get the graphics associated with the buttons
@@ -1277,7 +1277,7 @@ void CPlacardWindow::positionText(
 		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, kMaxLines, '\n');
 
 		yPos = textArea.y +
 		       ((textArea.height - _titleCount * fontHeight) >> 1);
@@ -1388,7 +1388,7 @@ void CPlacardPanel::positionText(const char *windowText, const Rect16 &textArea)
 		Common::sprintf_s(_titleBuf, "%s", windowText);
 
 		//  break up the title text string
-		_titleCount = SplitString(_titleBuf, _titleStrings, maxLines, '\n');
+		_titleCount = SplitString(_titleBuf, _titleStrings, kMaxLines, '\n');
 
 		yPos = textArea.y +
 		       ((textArea.height - _titleCount * fontHeight) >> 1);
