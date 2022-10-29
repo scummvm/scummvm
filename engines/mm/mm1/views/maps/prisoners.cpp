@@ -110,6 +110,11 @@ DemonPrisoner::DemonPrisoner() :
 		CHARFLAG1_10, EVIL, GOOD) {
 }
 
+MutatedPrisoner::MutatedPrisoner() :
+	Prisoner("MutatedPrisoner", STRING["maps.prisoners.mutated"],
+		CHARFLAG1_2, GOOD, EVIL) {
+}
+
 } // namespace Maps
 } // namespace Views
 } // namespace MM1

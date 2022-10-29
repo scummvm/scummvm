@@ -102,6 +102,7 @@ private:
 	Views::Maps::CloakedPrisoner _cloakedPrisoner;
 	Views::Maps::DemonPrisoner _demonPrisoner;
 	Views::Maps::ManPrisoner _manPrisoner;
+	Views::Maps::MutatedPrisoner _mutatedPrisoner;
 	Views::Maps::DogStatue _dogStatue;
 	Views::Maps::Ghost _ghost;
 	Views::Maps::Giant _giant;

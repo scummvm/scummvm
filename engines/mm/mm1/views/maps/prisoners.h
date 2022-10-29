@@ -71,6 +71,13 @@ public:
 	}
 };
 
+class MutatedPrisoner : public Prisoner {
+public:
+	MutatedPrisoner();
+	virtual ~MutatedPrisoner() {
+	}
+};
+
 } // namespace Maps
 } // namespace Views
 } // namespace MM1

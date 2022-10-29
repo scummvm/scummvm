@@ -32,9 +32,26 @@ class Map44 : public Map {
 	typedef void (Map44:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map44::special00
+	const SpecialFn SPECIAL_FN[11] = {
+		&Map44::special00,
+		&Map44::special01,
+		&Map44::special02,
+		&Map44::special03,
+		&Map44::special04,
+		&Map44::special05,
+		&Map44::special06,
+		&Map44::special07,
+		&Map44::special07,
+		&Map44::special07,
+		&Map44::special07
 	};
 public:
 	Map44() : Map(44, "dragad", 0x107) {}

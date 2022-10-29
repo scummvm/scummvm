@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map44::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 11; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[62 + i]) {				
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,79 @@ void Map44::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map44::special00() {
+	g_events->addView("MutatedPrisoner");
+}
+
+void Map44::special01() {
+	send(SoundMessage(
+		STRING["maps.map44.exit"],
+		[]() {
+			g_maps->_mapPos = Common::Point(12, 12);
+			g_maps->changeMap(0x112, 2);
+		}
+	));
+}
+
+void Map44::special02() {
+	send(SoundMessage(
+		STRING["maps.stairs_down"],
+		[]() {
+			g_maps->changeMap(0xf05, 3);
+		}
+	));
+}
+
+void Map44::special03() {
+	send(SoundMessage(STRING["maps.map44.message_f"]));
+}
+
+void Map44::special04() {
+	send(SoundMessage(STRING["maps.map44.clover"]));
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (!(c._flags[11] & CHARFLAG11_GOT_LUCK)) {
+			c._flags[11] |= CHARFLAG11_GOT_LUCK;
+			c._luck._current = c._luck._base = c._luck._base + 4;
+		}
+	}
+}
+
+void Map44::special05() {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		c._flags[5] |= CHARFLAG5_10;
+	}
+
+	send(SoundMessage(
+		STRING["maps.map44.fountain"],
+		[]() {
+			Map44 &map = *static_cast<Map44 *>(g_maps->_currentMap);
+
+			for (uint i = 0; i < g_globals->_party.size(); ++i) {
+				Character &c = g_globals->_party[i];
+				c._exp += c._gold;
+				c._gold = 0;
+			}
+
+			map.none160();
+		}
+	));
+}
+
+void Map44::special06() {
+	send(SoundMessage(STRING["maps.map44.message"]));
+}
+
+void Map44::special07() {
+	send(SoundMessage(STRING["maps.map44.bones"]));
 }
 
 } // namespace Maps
