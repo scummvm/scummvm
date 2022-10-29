@@ -216,9 +216,9 @@ void Map09::portal(int index) {
 	send(SoundMessage(
 		STRING["maps.map09.portal"],
 		[]() {
-			int index = static_cast<Map09 *>(g_maps->_currentMap)->_portalIndex;
-			g_maps->_mapPos = Common::Point(MAP_DEST_X[index], MAP_DEST_Y[index]);
-			g_maps->changeMap(MAP_DEST_ID[index], 1);
+			int idx = static_cast<Map09 *>(g_maps->_currentMap)->_portalIndex;
+			g_maps->_mapPos = Common::Point(MAP_DEST_X[idx], MAP_DEST_Y[idx]);
+			g_maps->changeMap(MAP_DEST_ID[idx], 1);
 		}
 	));
 }

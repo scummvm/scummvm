@@ -112,10 +112,9 @@ void Map17::askQuestion(uint partyIndex) {
 	}
 
 	_data[VAL1] = partyIndex;
-	Character &c = g_globals->_party[partyIndex];
-	g_globals->_currCharacter = &c;
+	g_globals->_currCharacter = &g_globals->_party[partyIndex];
 
-	if (!(c._condition & BAD_CONDITION)) {
+	if (!(g_globals->_currCharacter->_condition & BAD_CONDITION)) {
 		InfoMessage msg(
 			0, 0, STRING["maps.map17.color"],
 			0, 2, STRING["maps.map17.options"],
@@ -125,16 +124,16 @@ void Map17::askQuestion(uint partyIndex) {
 						ks.keycode <= Common::KEYCODE_9) {
 					map[VAL2] = ks.ascii - '1';
 
-					Common::String msg;
+					Common::String line;
 					Character &c = *g_globals->_currCharacter;
 					int val = c._flags[2] & 0xf;
 					if (!val || (val & 7) != map[VAL2]) {
 						c._condition = ERADICATED;
-						msg = STRING["maps.map17.wrong"];
+						line = STRING["maps.map17.wrong"];
 					} else {
 						map[VAL3]++;
 						c._flags[4] |= CHARFLAG4_80;
-						msg = STRING["maps.map17.correct"];
+						line = STRING["maps.map17.correct"];
 					}
 
 					Sound::sound(SOUND_3);
@@ -143,10 +142,10 @@ void Map17::askQuestion(uint partyIndex) {
 					msg2._delaySeconds = 1;
 					msg2._lines.push_back(Line(0, 0, STRING["maps.map17.color"]));
 					msg2._lines.push_back(Line(0, 2, STRING["maps.map17.options"]));
-					msg2._lines.push_back(Line(16, 5, msg));
+					msg2._lines.push_back(Line(16, 5, line));
 					msg2._ynCallback = []() {
-						Map17 &map = *static_cast<Map17 *>(g_maps->_currentMap);
-						map.askQuestion(map[VAL1] + 1);
+						Map17 &map17 = *static_cast<Map17 *>(g_maps->_currentMap);
+						map17.askQuestion(map17[VAL1] + 1);
 					};
 
 					g_events->send(msg2);
