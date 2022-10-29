@@ -436,7 +436,7 @@ static void evalMouseState() {
 				                obj->getLocation(),
 				                mObj)
 				            && (a->inRange(obj->getLocation(), 8)
-				                ||  lineOfSight(a, obj, terrainTransparent)))));
+				                ||  lineOfSight(a, obj, kTerrainTransparent)))));
 			}
 		}
 	} else {
@@ -456,7 +456,7 @@ static void evalMouseState() {
 					//  to the picked object
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
-					            ||  lineOfSight(a, obj, terrainTransparent)))
+					            ||  lineOfSight(a, obj, kTerrainTransparent)))
 						g_vm->_mouseInfo->setIntent(GrabInfo::kIntAttack);
 					else {
 						g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
@@ -502,7 +502,7 @@ static void evalMouseState() {
 					//  to the object
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
-					            ||  lineOfSight(a, obj, terrainTransparent))) {
+					            ||  lineOfSight(a, obj, kTerrainTransparent))) {
 						g_vm->_mouseInfo->setIntent(GrabInfo::kIntAttack);
 						g_vm->_mouseInfo->setDoable(true);
 					} else {
@@ -535,7 +535,7 @@ static void evalMouseState() {
 						    interruptable
 						    &&  a->inReach(obj->getLocation())
 						    && (a->inRange(obj->getLocation(), 8)
-						        ||  lineOfSight(a, obj, terrainTransparent)));
+						        ||  lineOfSight(a, obj, kTerrainTransparent)));
 					}
 				}
 			} else
@@ -1121,7 +1121,7 @@ static APPFUNC(cmdClickTileMap) {
 								            ||  lineOfSight(
 								                centerActorPtr,
 								                TAILoc,
-								                terrainTransparent)))
+								                kTerrainTransparent)))
 									MotionTask::useObjectOnTAI(
 									    *centerActorPtr,
 									    *mouseObject,
@@ -1284,7 +1284,7 @@ static APPFUNC(cmdClickTileMap) {
 
 			if (a->inRange(TAILoc, 32)
 			        && (a->inRange(TAILoc, 8)
-			            ||  lineOfSight(a, TAILoc, terrainTransparent)))
+			            ||  lineOfSight(a, TAILoc, kTerrainTransparent)))
 				MotionTask::useTAI(*a, *pickedTAI);
 		} else {
 			tileMapControl->setSticky(true);

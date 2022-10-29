@@ -491,10 +491,10 @@ void AutoMap::createSmallMap() {
 		        v--, x += tileSumWidthHalved, y += 2) {
 			uint16  mtile = mapRow[v];
 
-			if (mtile & metaTileVisited)
-				if (_autoMapCheat || (mtile & metaTileVisited)) {
+			if (mtile & kMetaTileVisited)
+				if (_autoMapCheat || (mtile & kMetaTileVisited)) {
 					// get the tile data
-					map._data = &_summaryData[(mtile & ~metaTileVisited) << 6];
+					map._data = &_summaryData[(mtile & ~kMetaTileVisited) << 6];
 
 					// blit this tile onto the temp surface
 					TBlit(_tPort._map,

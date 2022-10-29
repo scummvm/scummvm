@@ -239,7 +239,7 @@ void updateMapFeatures(int16 cWorld) {
 			uint16   *mapRow;
 			mapRow = &mapData[(g_vm->_mapFeatures[i]->getU() >> (kTileUVShift + kPlatShift)) * wMap->mapSize];
 			uint16   mtile = mapRow[(g_vm->_mapFeatures[i]->getV() >> (kTileUVShift + kPlatShift))];
-			g_vm->_mapFeatures[i]->expose(mtile & metaTileVisited);
+			g_vm->_mapFeatures[i]->expose(mtile & kMetaTileVisited);
 		}
 	}
 }

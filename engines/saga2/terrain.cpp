@@ -134,13 +134,13 @@ uint32 tileTerrain(
 
 	if (metaPtr == nullptr) return 0L;
 
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		Platform    *p;
 
 		if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 			continue;
 
-		if (p->flags & plVisible) {
+		if (p->flags & kPlVisible) {
 			int16           height;
 			TileInfo        *ti;
 			int16           trFlags;
@@ -157,9 +157,9 @@ uint32 tileTerrain(
 				        tileMaxZ = height;
 				int32   combinedMask = ti->combinedTerrainMask();
 
-				if (combinedMask & terrainRaised)
+				if (combinedMask & kTerrainRaised)
 					tileMaxZ += ti->attrs.terrainHeight;
-				if (combinedMask & terrainWater)
+				if (combinedMask & kTerrainWater)
 					tileMinZ -= ti->attrs.terrainHeight;
 
 				if (tileMinZ <  maxZ
@@ -171,16 +171,16 @@ uint32 tileTerrain(
 					//  If only checking the top of raised terrain treat it
 					//  as if it were normal terrain.
 					if (minZ >= tileMaxZ) {
-						if (tileFgdTerrain & terrainSupportingRaised)
-							tileFgdTerrain = terrainNormal;
-						if (tileBgdTerrain & terrainSupportingRaised)
-							tileBgdTerrain = terrainNormal;
+						if (tileFgdTerrain & kTerrainSupportingRaised)
+							tileFgdTerrain = kTerrainNormal;
+						if (tileBgdTerrain & kTerrainSupportingRaised)
+							tileBgdTerrain = kTerrainNormal;
 					}
 
 					//  If this tile is sensitive to being walked on,
 					//  set the "sensitive" flag.
-					if (trFlags & trTileSensitive)
-						terrainResult |= terrainActive;
+					if (trFlags & kTrTileSensitive)
+						terrainResult |= kTerrainActive;
 
 					if (mask & ti->attrs.terrainMask)
 						terrainResult |= tileFgdTerrain;
@@ -191,9 +191,9 @@ uint32 tileTerrain(
 					//  This prevents actors from walking through
 					//  catwalks and other surfaces which have no bottom.
 
-					if ((terrainResult & terrainSolidSurface)
+					if ((terrainResult & kTerrainSolidSurface)
 					        &&  height > minZ + kMaxStepHeight) {
-						terrainResult |= terrainStone;
+						terrainResult |= kTerrainStone;
 					}
 
 					terrain |= terrainResult;
@@ -618,13 +618,13 @@ int16 tileSlopeHeight(
 		//  Search each platform until we find a tile which is under
 		//  the character.
 
-		for (i = 0; i < maxPlatforms; i++) {
+		for (i = 0; i < kMaxPlatforms; i++) {
 			Platform    *p;
 
 			if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 				continue;
 
-			if (p->flags & plVisible) {
+			if (p->flags & kPlVisible) {
 				TileInfo        *ti;
 				StandingTileInfo sti;
 
@@ -640,13 +640,13 @@ int16 tileSlopeHeight(
 					int32 subTileTerrain =
 					    ti->attrs.testTerrain(calcSubTileMask(subTile.u,
 					                          subTile.v));
-					if (subTileTerrain & terrainInsubstantial)
+					if (subTileTerrain & kTerrainInsubstantial)
 						continue;
-					else if (subTileTerrain & terrainSupportingRaised)
+					else if (subTileTerrain & kTerrainSupportingRaised)
 						// calculate height of raised surface
 						supportHeight = sti.surfaceHeight +
 						                ti->attrs.terrainHeight;
-					else if (subTileTerrain & terrainWater) {
+					else if (subTileTerrain & kTerrainWater) {
 						// calculate depth of water
 						supportHeight = sti.surfaceHeight -
 						                ti->attrs.terrainHeight;
@@ -663,14 +663,14 @@ int16 tileSlopeHeight(
 					if (tileBase < pt.z + objectHeight
 					        &&  supportHeight >= highestSupportHeight
 					        && (ti->combinedTerrainMask() &
-					            (terrainSurface | terrainRaised))) {
+					            (kTerrainSurface | kTerrainRaised))) {
 						highestTile = sti;
 						highestSupportHeight = supportHeight;
 						highestSupportPlatform = i;
 					} else if (highestTile.surfaceTile == nullptr &&
 					           supportHeight <= lowestSupportHeight &&
 					           (ti->combinedTerrainMask() &
-					            (terrainSurface | terrainRaised))) {
+					            (kTerrainSurface | kTerrainRaised))) {
 						lowestTile = sti;
 						lowestSupportHeight = supportHeight;
 						lowestSupportPlatform = i;
@@ -754,7 +754,7 @@ uint32 objectTerrain(GameObject *obj, StandingTileInfo &sti) {
 	//  If one of the tiles we're standing on is active,
 	//  double check to see if we're really standing on it.
 
-	if (terrain & terrainActive) {
+	if (terrain & kTerrainActive) {
 		int16       tHeight;
 
 		//  Determine the height of the landscape we're on
@@ -766,10 +766,10 @@ uint32 objectTerrain(GameObject *obj, StandingTileInfo &sti) {
 
 		if (sti.surfaceTile == nullptr
 		        ||  sti.surfaceTAG == nullptr
-		        ||  !(sti.surfaceRef.flags & trTileSensitive)
+		        ||  !(sti.surfaceRef.flags & kTrTileSensitive)
 		        ||  loc.z >= tHeight + 2
 		        /* ||   loc.z >= standingTile->attrs.terrainHeight */) {
-			terrain &= ~terrainActive;
+			terrain &= ~kTerrainActive;
 		}
 	}
 
@@ -803,7 +803,7 @@ int16 checkBlocked(
 		                        height);
 
 		//  Check for intersection with a wall or obstacle
-		if (terrain & terrainRaised) return kBlockageTerrain;
+		if (terrain & kTerrainRaised) return kBlockageTerrain;
 	}
 
 	//  See if object collided with an object
@@ -853,7 +853,7 @@ int16 checkWalkable(
 		mask = 1 << ((subTileU << kSubTileShift) + subTileV);
 
 		//  If the suporting subtile is funiture consider this blocked
-		if (sti.surfaceTile->attrs.testTerrain(mask) & terrainFurniture)
+		if (sti.surfaceTile->attrs.testTerrain(mask) & kTerrainFurniture)
 			return kBlockageTerrain;
 	}
 
@@ -879,12 +879,12 @@ int16 checkContact(
 	                        proto->height);
 
 	//  Check for intersection with a wall or obstacle
-	if (terrain & terrainRaised) return kBlockageTerrain;
+	if (terrain & kTerrainRaised) return kBlockageTerrain;
 
 	//  Check for intersection with slope of the terrain.
-	if (((terrain & terrainSurface)
+	if (((terrain & kTerrainSurface)
 	        &&  loc.z <= tileSlopeHeight(loc, obj))
-	        || (!(terrain & terrainWater)
+	        || (!(terrain & kTerrainWater)
 	            &&  loc.z <= 0))
 		return kBlockageTerrain;
 

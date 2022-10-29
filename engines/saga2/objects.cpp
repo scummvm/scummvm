@@ -1494,7 +1494,7 @@ bool GameObject::isContaining(ObjectTarget *objTarget) {
 	return false;
 }
 
-const int32 harmfulTerrain = terrainHot | terrainCold | terrainIce | terrainSlash | terrainBash;
+const int32 harmfulTerrain = kTerrainHot | kTerrainCold | kTerrainIce | kTerrainSlash | kTerrainBash;
 
 void GameObject::updateState() {
 	int16            tHeight;
@@ -1518,13 +1518,13 @@ void GameObject::updateState() {
 	    :   0;
 
 	if (isActor(this) && 0 != (subTileTerrain & harmfulTerrain)) {
-		if (subTileTerrain & terrainHot)
+		if (subTileTerrain & kTerrainHot)
 			lavaDamage(this);
-		if (subTileTerrain & (terrainCold | terrainIce))
+		if (subTileTerrain & (kTerrainCold | kTerrainIce))
 			coldDamage(this);
-		if (subTileTerrain & terrainSlash)
+		if (subTileTerrain & kTerrainSlash)
 			terrainDamageSlash(this);
-		if (subTileTerrain & terrainBash)
+		if (subTileTerrain & kTerrainBash)
 			terrainDamageBash(this);
 	}
 	//  If terrain is HIGHER (or even sligtly lower) than we are

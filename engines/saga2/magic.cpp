@@ -147,7 +147,7 @@ bool validTarget(GameObject *enactor, GameObject *target, ActiveItem *tag, Skill
 		if (target->IDParent() != enactor->IDParent()) {
 			return false;
 		}
-		if (!lineOfSight(enactor, target, terrainTransparent))
+		if (!lineOfSight(enactor, target, kTerrainTransparent))
 			return false;
 
 		if (isActor(target)) {
@@ -318,7 +318,7 @@ bool implementSpell(GameObject *enactor, ActiveItem *target, SkillProto *spell) 
 		return implementSpell(enactor, l, spell);
 	}
 	assert(sProto.shouldTarget(kSpellApplyTAG));
-	assert(target->_data.itemType == activeTypeInstance);
+	assert(target->_data.itemType == kActiveTypeInstance);
 
 	ActorManaID ami = (ActorManaID)(sProto.getManaType());
 

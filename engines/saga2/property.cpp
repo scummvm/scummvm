@@ -103,7 +103,7 @@ bool actorIsEnemy(Actor *a) {
 
 //  Determine if this tile has water
 bool tileHasWater(TileInfo *ti) {
-	return (ti->combinedTerrainMask() & terrainWater) ? true : false;
+	return (ti->combinedTerrainMask() & kTerrainWater) ? true : false;
 }
 
 /* ===================================================================== *
@@ -193,7 +193,7 @@ bool metaTileHasWater(
 	            tCoords;
 
 	tCoords.z = 0;
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		Platform *p = mt->fetchPlatform(mapNum, i);
 
 		if (p) {
@@ -209,7 +209,7 @@ bool metaTileHasWater(
 					            origin,
 					            height,
 					            trFlags);
-					if (ti->combinedTerrainMask() & terrainWater)
+					if (ti->combinedTerrainMask() & kTerrainWater)
 						return true;
 				}
 			}

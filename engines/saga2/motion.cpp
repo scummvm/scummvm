@@ -182,7 +182,7 @@ void setObjectSurface(GameObject *obj, StandingTileInfo &sti) {
 	                        ?   sti.surfaceTAG->thisID()
 	                        :   NoActiveItem;
 
-	if (!(sti.surfaceRef.flags & trTileSensitive))
+	if (!(sti.surfaceRef.flags & kTrTileSensitive))
 		tagID = NoActiveItem;
 
 	if (obj->_data.currentTAG != tagID) {
@@ -1735,7 +1735,7 @@ void MotionTask::castSpell(Actor &a, SkillProto &spell, ActiveItem &target) {
 	if ((mt = g_vm->_mTaskList->newTask(&a)) != nullptr) {
 		if (mt->_motionType != type) {
 			Location loc;
-			assert(target._data.itemType == activeTypeInstance);
+			assert(target._data.itemType == kActiveTypeInstance);
 			mt->_motionType = type;
 			mt->_spellObj = &spell;
 			mt->_targetTAG = &target;
@@ -2747,7 +2747,7 @@ void MotionTask::walkAction() {
 
 		if (tHeight >= _object->_data.location.z - kMaxSmoothStep
 		        * ((sti.surfaceTile != nullptr
-		            && (sti.surfaceTile->combinedTerrainMask() & terrainStair))
+		            && (sti.surfaceTile->combinedTerrainMask() & kTerrainStair))
 		           ?   4
 		           :   1)
 		        &&  tHeight <  newPos.z)
@@ -2757,7 +2757,7 @@ void MotionTask::walkAction() {
 			int16   newAction;
 
 			if (sti.surfaceTile != nullptr
-			        && (sti.surfaceTile->combinedTerrainMask() & terrainStair)
+			        && (sti.surfaceTile->combinedTerrainMask() & kTerrainStair)
 			        &&  a->isActionAvailable(kActionSpecial7)) {
 				Direction   stairsDir;
 				uint8       *cornerHeight;
@@ -2874,7 +2874,7 @@ void MotionTask::upLadderAction() {
 		for (ti = iter.first(&tileLoc, &sti);
 		        ti != nullptr;
 		        ti = iter.next(&tileLoc, &sti)) {
-			if (!(ti->combinedTerrainMask() & terrainLadder)) continue;
+			if (!(ti->combinedTerrainMask() & kTerrainLadder)) continue;
 
 			if (sti.surfaceHeight
 			        +   ti->attrs.terrainHeight
@@ -2914,7 +2914,7 @@ void MotionTask::upLadderAction() {
 				footPrintMask &=
 				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
-			ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
+			ladderMask =    ti->attrs.fgdTerrain == kTerrNumLadder
 			                ?   ti->attrs.terrainMask
 			                :   ~ti->attrs.terrainMask;
 
@@ -2998,7 +2998,7 @@ void MotionTask::downLadderAction() {
 		for (ti = iter.first(&tileLoc, &sti);
 		        ti != nullptr;
 		        ti = iter.next(&tileLoc, &sti)) {
-			if (!(ti->combinedTerrainMask() & terrainLadder)) continue;
+			if (!(ti->combinedTerrainMask() & kTerrainLadder)) continue;
 
 			if (sti.surfaceHeight + ti->attrs.terrainHeight <= loc.z
 			        ||  sti.surfaceHeight > loc.z)
@@ -3035,7 +3035,7 @@ void MotionTask::downLadderAction() {
 				footPrintMask &=
 				    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
-			ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
+			ladderMask =    ti->attrs.fgdTerrain == kTerrNumLadder
 			                ?   ti->attrs.terrainMask
 			                :   ~ti->attrs.terrainMask;
 
@@ -3538,7 +3538,7 @@ void MotionTask::castSpellAction() {
 		if (actionCounter == 0) {
 			if (_spellObj) {
 				if (_flags & kMfTAGTarg) {
-					assert(_targetTAG->_data.itemType == activeTypeInstance);
+					assert(_targetTAG->_data.itemType == kActiveTypeInstance);
 					_spellObj->implementAction(_spellObj->getSpellID(), a->thisID(), _targetTAG);
 				} else if (_flags & kMfLocTarg) {
 					_spellObj->implementAction(_spellObj->getSpellID(), a->thisID(), _targetLoc);
@@ -4707,7 +4707,7 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 	for (ti = iter.first(&tileLoc, &sti);
 	        ti != nullptr;
 	        ti = iter.next(&tileLoc, &sti)) {
-		if (!(ti->combinedTerrainMask() & terrainLadder)) continue;
+		if (!(ti->combinedTerrainMask() & kTerrainLadder)) continue;
 
 		if (sti.surfaceHeight + ti->attrs.terrainHeight < loc.z
 		        ||  sti.surfaceHeight > loc.z + height)
@@ -4744,7 +4744,7 @@ bool checkLadder(Actor *a, const TilePoint &loc) {
 			footPrintMask &=
 			    vMaxMasks[actorSubTileReg.max.v - subTileLoc.v];
 
-		ladderMask =    ti->attrs.fgdTerrain == terrNumLadder
+		ladderMask =    ti->attrs.fgdTerrain == kTerrNumLadder
 		                ?   ti->attrs.terrainMask
 		                :   ~ti->attrs.terrainMask;
 

@@ -2300,7 +2300,7 @@ void Actor::updateAppearance(int32) {
 #if DEBUG*0
 	extern void ShowObjectSection(GameObject * obj);
 	if (this != getCenterActor())
-		if (lineOfSight(getCenterActor(), this, terrainSurface))
+		if (lineOfSight(getCenterActor(), this, kTerrainSurface))
 			ShowObjectSection(this);
 #endif
 

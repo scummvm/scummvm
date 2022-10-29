@@ -248,7 +248,7 @@ void ProtoTAGEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
 	ActiveItem *tag = trg->getTAG();
 	assert(tag);
 	if (_affectBit == kSettagLocked) {
-		//if ( tag->builtInBehavior()==ActiveItem::builtInDoor )
+		//if ( tag->builtInBehavior()==ActiveItem::kBuiltInDoor )
 		if (tag->isLocked() != _onOff)
 			tag->acceptLockToggle(cst->thisID(), tag->lockType());
 	} else if (_affectBit == kSettagOpen) {

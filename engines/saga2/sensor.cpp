@@ -451,7 +451,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), protag)
-		            ||  !lineOfSight(getObject(), protag, terrainTransparent)))
+		            ||  !lineOfSight(getObject(), protag, kTerrainTransparent)))
 			continue;
 
 		info.sensedObject = protag;
@@ -515,7 +515,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), objToTest)
-		            ||  !lineOfSight(getObject(), objToTest, terrainTransparent)))
+		            ||  !lineOfSight(getObject(), objToTest, kTerrainTransparent)))
 			continue;
 
 		info.sensedObject = objToTest;
@@ -592,7 +592,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), soughtObject)
-	            ||  !lineOfSight(getObject(), soughtObject, terrainTransparent)))
+	            ||  !lineOfSight(getObject(), soughtObject, kTerrainTransparent)))
 		return false;
 
 	info.sensedObject = soughtObject;
@@ -719,7 +719,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), _soughtActor)
-	            ||  !lineOfSight(getObject(), _soughtActor, terrainTransparent)))
+	            ||  !lineOfSight(getObject(), _soughtActor, kTerrainTransparent)))
 		return false;
 
 	info.sensedObject = _soughtActor;
@@ -832,7 +832,7 @@ bool EventSensor::evaluateEvent(const GameEvent &event) {
 	                    &&  lineOfSight(
 	                        getObject(),
 	                        event.directObject,
-	                        terrainTransparent)));
+	                        kTerrainTransparent)));
 }
 
 } // end of namespace Saga2

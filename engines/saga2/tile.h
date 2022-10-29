@@ -114,17 +114,17 @@ struct TileAttrs {
 
 enum tile_flags {
 	//  This tile has been used in at least one activity group
-	tileInGroup     = (1 << 0),
+	kTileInGroup     = (1 << 0),
 
 	//  Indicates that an activity group should be placed in lieu
 	//  of the tile.
-	tileAutoGroup   = (1 << 1),
+	kTileAutoGroup   = (1 << 1),
 
 	//  Indicates that the tile is sensitive to being walked on
-	tileWalkSense   = (1 << 2),
+	kTileWalkSense   = (1 << 2),
 
 	//  Indicates that tile has been recently modified
-	tileModified    = (1 << 3)
+	kTileModified    = (1 << 3)
 };
 
 /* ===================================================================== *
@@ -132,104 +132,104 @@ enum tile_flags {
  * ===================================================================== */
 
 enum terrainTypes {
-	terrNumNormal   = 0,
-	terrNumEasy,
-	terrNumRough,
-	terrNumStone,
-	terrNumWood,
-	terrNumHedge,
-	terrNumTree,
-	terrNumWater,
-	terrNumFall,
-	terrNumRamp,
-	terrNumStair,
-	terrNumLadder,
-	terrNumObject,
-	terrNumActive,
-	terrNumSlash,
-	terrNumBash,
-	terrNumIce,
-	terrNumCold,
-	terrNumHot,
-	terrNumFurniture
+	kTerrNumNormal   = 0,
+	kTerrNumEasy,
+	kTerrNumRough,
+	kTerrNumStone,
+	kTerrNumWood,
+	kTerrNumHedge,
+	kTerrNumTree,
+	kTerrNumWater,
+	kTerrNumFall,
+	kTerrNumRamp,
+	kTerrNumStair,
+	kTerrNumLadder,
+	kTerrNumObject,
+	kTerrNumActive,
+	kTerrNumSlash,
+	kTerrNumBash,
+	kTerrNumIce,
+	kTerrNumCold,
+	kTerrNumHot,
+	kTerrNumFurniture
 };
 
 enum terrainBits {
-	terrainNormal       = (1 << terrNumNormal), // clear terrain
-	terrainEasy         = (1 << terrNumEasy),   // easy terrain (path)
-	terrainRough        = (1 << terrNumRough),  // rough terrain (shrub)
-	terrainStone        = (1 << terrNumStone),  // stone obstacle
-	terrainWood         = (1 << terrNumWood),   // wood obstacle
-	terrainHedge        = (1 << terrNumHedge),  // penetrable obstacle
-	terrainTree         = (1 << terrNumTree),   // tree obstacle
-	terrainWater        = (1 << terrNumWater),  // water (depth given by height)
-	terrainFall         = (1 << terrNumFall),   // does not support things
-	terrainRamp         = (1 << terrNumRamp),   // low friction slope
-	terrainStair        = (1 << terrNumStair),  // high friction slope
-	terrainLadder       = (1 << terrNumLadder), // vertical climb
-	terrainObject       = (1 << terrNumObject), // collision with other object
-	terrainActive       = (1 << terrNumActive), // tile is sensitive to walking on
-	terrainSlash        = (1 << terrNumSlash),  // Slide Down Slope Left
-	terrainBash         = (1 << terrNumBash),   // Slide Down Slope Left
-	terrainIce          = (1 << terrNumIce),
-	terrainCold         = (1 << terrNumCold),
-	terrainHot          = (1 << terrNumHot),
-	terrainFurniture    = (1 << terrNumFurniture)
+	kTerrainNormal       = (1 << kTerrNumNormal), // clear terrain
+	kTerrainEasy         = (1 << kTerrNumEasy),   // easy terrain (path)
+	kTerrainRough        = (1 << kTerrNumRough),  // rough terrain (shrub)
+	kTerrainStone        = (1 << kTerrNumStone),  // stone obstacle
+	kTerrainWood         = (1 << kTerrNumWood),   // wood obstacle
+	kTerrainHedge        = (1 << kTerrNumHedge),  // penetrable obstacle
+	kTerrainTree         = (1 << kTerrNumTree),   // tree obstacle
+	kTerrainWater        = (1 << kTerrNumWater),  // water (depth given by height)
+	kTerrainFall         = (1 << kTerrNumFall),   // does not support things
+	kTerrainRamp         = (1 << kTerrNumRamp),   // low friction slope
+	kTerrainStair        = (1 << kTerrNumStair),  // high friction slope
+	kTerrainLadder       = (1 << kTerrNumLadder), // vertical climb
+	kTerrainObject       = (1 << kTerrNumObject), // collision with other object
+	kTerrainActive       = (1 << kTerrNumActive), // tile is sensitive to walking on
+	kTerrainSlash        = (1 << kTerrNumSlash),  // Slide Down Slope Left
+	kTerrainBash         = (1 << kTerrNumBash),   // Slide Down Slope Left
+	kTerrainIce          = (1 << kTerrNumIce),
+	kTerrainCold         = (1 << kTerrNumCold),
+	kTerrainHot          = (1 << kTerrNumHot),
+	kTerrainFurniture    = (1 << kTerrNumFurniture)
 };
 
 //  A combination mask of all the terrain types which can have
 //  sloped surfaces. (Water is a negative sloped surface)
 
-const int           terrainSurface  = terrainNormal
-                                      | terrainEasy
-                                      | terrainRough
-                                      | terrainWater
-                                      | terrainRamp
-                                      | terrainCold
-                                      | terrainStair;
+const int           kTerrainSurface  = kTerrainNormal
+                                      | kTerrainEasy
+                                      | kTerrainRough
+                                      | kTerrainWater
+                                      | kTerrainRamp
+                                      | kTerrainCold
+                                      | kTerrainStair;
 
-const int           terrainSolidSurface
-    = terrainNormal
-      | terrainEasy
-      | terrainRough
-      | terrainRamp
-      | terrainCold
-      | terrainStair;
+const int           kTerrainSolidSurface
+    = kTerrainNormal
+      | kTerrainEasy
+      | kTerrainRough
+      | kTerrainRamp
+      | kTerrainCold
+      | kTerrainStair;
 
 //  A combination mask of all terrain types which can have
 //  raised surfaces.
 
-const int           terrainRaised   = terrainStone
-                                      | terrainWood
-                                      | terrainTree
-                                      | terrainHedge
-                                      | terrainFurniture;
+const int           kTerrainRaised   = kTerrainStone
+                                      | kTerrainWood
+                                      | kTerrainTree
+                                      | kTerrainHedge
+                                      | kTerrainFurniture;
 
-const int           terrainSupportingRaised = terrainStone
-        | terrainWood
-        | terrainFurniture;
+const int           kTerrainSupportingRaised = kTerrainStone
+        | kTerrainWood
+        | kTerrainFurniture;
 
-const int           terrainImpassable = terrainStone
-                                        | terrainWood
-                                        | terrainTree
-                                        | terrainHedge
-                                        | terrainFurniture;
+const int           kTerrainImpassable = kTerrainStone
+                                        | kTerrainWood
+                                        | kTerrainTree
+                                        | kTerrainHedge
+                                        | kTerrainFurniture;
 
-const int           terrainSlow     = terrainRough
-                                      | terrainWater
-                                      | terrainLadder;
+const int           kTerrainSlow     = kTerrainRough
+                                      | kTerrainWater
+                                      | kTerrainLadder;
 
-const int           terrainAverage  = terrainNormal
-                                      | terrainRamp
-                                      | terrainStair;
+const int           kTerrainAverage  = kTerrainNormal
+                                      | kTerrainRamp
+                                      | kTerrainStair;
 
-const int           terrainInsubstantial = terrainFall
-        | terrainLadder
-        | terrainSlash
-        | terrainBash;
+const int           kTerrainInsubstantial = kTerrainFall
+        | kTerrainLadder
+        | kTerrainSlash
+        | kTerrainBash;
 
-const int           terrainTransparent = terrainSurface
-        | terrainInsubstantial;
+const int           kTerrainTransparent = kTerrainSurface
+        | kTerrainInsubstantial;
 
 
 /* ===================================================================== *
@@ -287,10 +287,10 @@ struct TileRef {
 };
 
 enum tileRefFlags {
-	trTileTAG = (1 << 0),		// this tile part of a TAG
-	trTileHidden = (1 << 1),	// tile hidden when covered
-	trTileFlipped = (1 << 2),	// draw tile flipped horizontal
-	trTileSensitive = (1 << 3)	// tile is triggerable (TAG only)
+	kTrTileTAG = (1 << 0),		// this tile part of a TAG
+	kTrTileHidden = (1 << 1),	// tile hidden when covered
+	kTrTileFlipped = (1 << 2),	// draw tile flipped horizontal
+	kTrTileSensitive = (1 << 3)	// tile is triggerable (TAG only)
 };
 
 typedef TileRef *TileRefPtr, **TileRefHandle;
@@ -327,7 +327,7 @@ public:
 typedef TileCycleData *CyclePtr,            // pointer to cycle data
 					 **CycleHandle;         // handle to cycle data
 
-const int maxCycleRanges = 128;             // 128 should do for now...
+const int kMaxCycleRanges = 128;             // 128 should do for now...
 
 /* ===================================================================== *
    ActiveTileItem: This is the base class for all of the behavioral
@@ -335,8 +335,8 @@ const int maxCycleRanges = 128;             // 128 should do for now...
  * ===================================================================== */
 
 enum ActiveItemTypes {
-	activeTypeGroup = 0,
-	activeTypeInstance
+	kActiveTypeGroup = 0,
+	kActiveTypeInstance
 };
 
 //  A pointer to the array of active item state arrays
@@ -393,9 +393,9 @@ public:
 	ActiveItemData _data;
 
 	enum {
-		activeItemLocked    = (1 << 8),     // The door is locked
-		activeItemOpen      = (1 << 9),     // The door is open (not used)
-		activeItemExclusive = (1 << 10)     // Script semaphore
+		kActiveItemLocked    = (1 << 8),     // The door is locked
+		kActiveItemOpen      = (1 << 9),     // The door is open (not used)
+		kActiveItemExclusive = (1 << 10)     // Script semaphore
 	};
 
 	ActiveItem(ActiveItemList *parent, int ind, Common::SeekableReadStream *stream);
@@ -414,15 +414,15 @@ public:
 
 	//  Return a pointer to this TAI's group
 	ActiveItem *getGroup() {
-		assert(_data.itemType == activeTypeInstance);
+		assert(_data.itemType == kActiveTypeInstance);
 		return  activeItemAddress(ActiveItemID(getMapNum(), _data.instance.groupID));
 	}
 
 	enum BuiltInBehaviorType {
-		builtInNone = 0,                    // TAG handled by SAGA
-		builtInLamp,                        // TAG has lamp behavior
-		builtInDoor,                        // TAG has door behavior
-		builtInTransporter                  // TAG has transporter behavior
+		kBuiltInNone = 0,                    // TAG handled by SAGA
+		kBuiltInLamp,                        // TAG has lamp behavior
+		kBuiltInDoor,                        // TAG has door behavior
+		kBuiltInTransporter                  // TAG has transporter behavior
 	};
 
 	//  Return the state number of this active item instance
@@ -441,24 +441,24 @@ public:
 
 	//  Access to the locked bit
 	bool isLocked() {
-		return (bool)(_data.instance.scriptFlags & activeItemLocked);
+		return (bool)(_data.instance.scriptFlags & kActiveItemLocked);
 	}
 	void setLocked(bool val) {
 		if (val)
-			_data.instance.scriptFlags |= activeItemLocked;
+			_data.instance.scriptFlags |= kActiveItemLocked;
 		else
-			_data.instance.scriptFlags &= ~activeItemLocked;
+			_data.instance.scriptFlags &= ~kActiveItemLocked;
 	}
 
 	//  Access to the exclusion semaphore
 	bool isExclusive() {
-		return (bool)(_data.instance.scriptFlags & activeItemExclusive);
+		return (bool)(_data.instance.scriptFlags & kActiveItemExclusive);
 	}
 	void setExclusive(bool val) {
 		if (val)
-			_data.instance.scriptFlags |= activeItemExclusive;
+			_data.instance.scriptFlags |= kActiveItemExclusive;
 		else
-			_data.instance.scriptFlags &= ~activeItemExclusive;
+			_data.instance.scriptFlags &= ~kActiveItemExclusive;
 	}
 
 	uint8 lockType() {
@@ -574,12 +574,12 @@ class TileActivityTask {
 	ThreadID        _script;                 // script to wake up when task done
 
 	enum activityTypes {
-		activityTypeNone,                   // no activity
+		kActivityTypeNone,                   // no activity
 
-		activityTypeOpen,                   // open door
-		activityTypeClose,                  // close door
+		kActivityTypeOpen,                   // open door
+		kActivityTypeClose,                  // close door
 
-		activityTypeScript                  // scriptable activity
+		kActivityTypeScript                  // scriptable activity
 	};
 
 	void remove();                   // tile activity task is finished.
@@ -642,7 +642,7 @@ struct StandingTileInfo {
    Platform struct
  * ======================================================================= */
 
-const int           maxPlatforms = 8;
+const int           kMaxPlatforms = 8;
 
 struct Platform {
 	uint16          height,                 // height above ground
@@ -711,32 +711,32 @@ typedef Platform    *PlatformPtr,
         * *PlatformHandle;
 
 enum platformFlags {
-	plCutaway = (1 << 0),                   // remove when player underneath
+	kPlCutaway = (1 << 0),                   // remove when player underneath
 
 	//  Cutaway directions: When platform is cut away, also cut
 	//  away any adjacent platforms in these directions.
-	plVisible = (1 << 15),                      // platform is visible
-	plModified = (1 << 14),                     // platform has been changed
-	plCutUPos = (1 << 13),
-	plCutUNeg = (1 << 13),
-	plCutVPos = (1 << 13),
-	plCutVNeg = (1 << 13)
+	kPlVisible = (1 << 15),                      // platform is visible
+	kPlModified = (1 << 14),                     // platform has been changed
+	kPlCutUPos = (1 << 13),
+	kPlCutUNeg = (1 << 13),
+	kPlCutVPos = (1 << 13),
+	kPlCutVNeg = (1 << 13)
 };
 
 #ifdef OLDPLATFLAAGS
 enum platformFlags {
-	plCutaway = (1 << 0),                   // remove when player underneath
+	kPlCutaway = (1 << 0),                   // remove when player underneath
 
 	//  Cutaway directions: When platform is cut away, also cut
 	//  away any adjacent platforms in these directions.
 
-	plCutUPos = (1 << 1),
-	plCutUNeg = (1 << 2),
-	plCutVPos = (1 << 3),
-	plCutVNeg = (1 << 4),
+	kPlCutUPos = (1 << 1),
+	kPlCutUNeg = (1 << 2),
+	kPlCutVPos = (1 << 3),
+	kPlCutVNeg = (1 << 4),
 
-	plVisible = (1 << 5),                   // platform is visible
-	plEnabled = (1 << 6)                    // enforce platform terrain.
+	kPlVisible = (1 << 5),                   // platform is visible
+	kPlEnabled = (1 << 6)                    // enforce platform terrain.
 };
 #endif
 
@@ -805,7 +805,7 @@ class MetaTile {
 public:
 	uint16          _highestPixel;           // more drawing optimization
 	BankBits        _banksNeeded;            // which banks are needed
-	uint16          _stack[maxPlatforms];    // pointer to platforms
+	uint16          _stack[kMaxPlatforms];    // pointer to platforms
 	uint32          _properties;             // more drawing optimization
 	int             _index;
 	MetaTileList   *_parent;
@@ -864,11 +864,11 @@ struct MapHeader {
 };
 
 enum mapEdgeTypes {
-	edgeTypeBlack = 0,
-	edgeTypeFill0,
-	edgeTypeFill1,
-	edgeTypeRepeat,
-	edgeTypeWrap
+	kEdgeTypeBlack = 0,
+	kEdgeTypeFill0,
+	kEdgeTypeFill1,
+	kEdgeTypeRepeat,
+	kEdgeTypeWrap
 };
 
 typedef MapHeader   *MapPtr,
@@ -878,7 +878,7 @@ typedef MapHeader   *MapPtr,
    WorldMapData struct
  * ===================================================================== */
 
-const uint16            metaTileVisited = (1 << 15);
+const uint16            kMetaTileVisited = (1 << 15);
 
 struct WorldMapData {
 	ObjectID            worldID;            //  The number of this map

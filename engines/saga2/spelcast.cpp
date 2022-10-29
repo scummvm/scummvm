@@ -885,12 +885,12 @@ blockageType checkNontact(
 	                        obj->hgtCall());
 
 	//  Check for intersection with a wall or obstacle
-	if (terrain & terrainRaised)
+	if (terrain & kTerrainRaised)
 		return kBlockageTerrain;
 
 	//  Check for intersection with slope of the terrain.
-	if (((terrain & terrainSurface)
-	        || (!(terrain & terrainWater) && loc.z <= 0))
+	if (((terrain & kTerrainSurface)
+	        || (!(terrain & kTerrainWater) && loc.z <= 0))
 	        &&  loc.z < tileNopeHeight(loc, obj))
 		return kBlockageTerrain;
 
@@ -943,13 +943,13 @@ int16 tileNopeHeight(
 	//  Search each platform until we find a tile which is under
 	//  the character.
 
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		Platform    *p;
 
 		if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 			continue;
 
-		if (p->flags & plVisible) {
+		if (p->flags & kPlVisible) {
 			TileInfo        *ti;
 			StandingTileInfo sti;
 
@@ -964,13 +964,13 @@ int16 tileNopeHeight(
 				int32 subTileTerrain =
 				    ti->attrs.testTerrain(calcSubTileMask(subTile.u,
 				                          subTile.v));
-				if (subTileTerrain & terrainInsubstantial)
+				if (subTileTerrain & kTerrainInsubstantial)
 					continue;
-				else if (subTileTerrain & terrainRaised)
+				else if (subTileTerrain & kTerrainRaised)
 					// calculate height of raised surface
 					supportHeight = sti.surfaceHeight +
 					                ti->attrs.terrainHeight;
-				else if (subTileTerrain & terrainWater)
+				else if (subTileTerrain & kTerrainWater)
 					// calculate depth of water
 					supportHeight = sti.surfaceHeight -
 					                ti->attrs.terrainHeight;
@@ -986,13 +986,13 @@ int16 tileNopeHeight(
 				if (supportHeight <= pt.z + obj->hgtCall()
 				        &&  supportHeight >= highestSupportHeight
 				        && (ti->combinedTerrainMask() &
-				            (terrainSurface | terrainRaised))) {
+				            (kTerrainSurface | kTerrainRaised))) {
 					highestTile = sti;
 					highestSupportHeight = supportHeight;
 				} else if (highestTile.surfaceTile == nullptr &&
 				           supportHeight <= lowestSupportHeight &&
 				           (ti->combinedTerrainMask() &
-				            (terrainSurface | terrainRaised))) {
+				            (kTerrainSurface | kTerrainRaised))) {
 					lowestTile = sti;
 					lowestSupportHeight = supportHeight;
 				}

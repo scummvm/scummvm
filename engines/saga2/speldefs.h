@@ -114,7 +114,7 @@ typedef GameObject SpellCaster;
 
 inline TilePoint TAGPos(ActiveItem *ai) {
 	if (ai == NULL) return Nowhere;
-	assert(ai->_data.itemType == activeTypeInstance);
+	assert(ai->_data.itemType == kActiveTypeInstance);
 	return TilePoint(
 	           ai->_data.instance.u << kTileUVShift,
 	           ai->_data.instance.v << kTileUVShift,
