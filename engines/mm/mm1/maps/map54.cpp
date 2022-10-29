@@ -29,14 +29,18 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define PERF_TOTAL 1293
+#define VAL2 1296
+
+static byte FLAGS[5] = { 1, 2, 4, 8, 0x10 };
+
 void Map54::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 8; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[75 + i]) {				
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +48,115 @@ void Map54::special() {
 			return;
 		}
 	}
-/*
-	// All other cells on the map are encounters
-	g_maps->clearSpecial();
-	g_globals->_encounters.execute();
-	*/
+
+	checkPartyDead();
 }
 
 void Map54::special00() {
+	if (!g_globals->_party.hasItem(KEY_CARD_ID)) {
+		g_maps->_mapPos.y++;
+		updateGame();
+
+		send(SoundMessage(
+			0, 1, STRING["maps.map54.slot1"],
+			0, 1, STRING["maps.map54.slot2"]
+		));
+		return;
+	}
+
+	// Check for flag
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if ((c._flags[13] & (CHARFLAG13_1 or CHARFLAG13_2 or CHARFLAG13_4 or CHARFLAG13_8 or CHARFLAG13_10)) !=
+			(CHARFLAG13_1 or CHARFLAG13_2 or CHARFLAG13_4 or CHARFLAG13_8 or CHARFLAG13_10)) {
+			g_maps->_mapPos.y++;
+			updateGame();
+
+			send(SoundMessage(
+				0, 1, STRING["maps.map54.slot1"],
+				0, 1, STRING["maps.map54.slot3"]
+			));
+			return;
+		}
+	}
+
+	send(SoundMessage(
+		0, 1, STRING["maps.map54.slot1"],
+		0, 2, STRING["maps.map54.slot4"]
+	));
+}
+
+void Map54::special01() {
+	projector(0);
+}
+
+void Map54::special02() {
+	projector(1);
+}
+
+void Map54::special03() {
+	projector(2);
+}
+
+void Map54::special04() {
+	projector(3);
+}
+
+void Map54::special05() {
+	projector(4);
+}
+
+void Map54::special06() {
+	send(SoundMessage(STRING["maps.map54.glow"]));
+}
+
+void Map54::special07() {
+	send("GameView", DrawMonsterMessage(5));
+	g_events->addView("Keeper");
+}
+
+void Map54::projector(int index) {
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		g_globals->_party[i]._flags[13] |= FLAGS[index];
+	}
+
+	changeMap();
+
+	Common::String line = Common::String::format(
+		STRING["maps.map54.projector"].c_str(),
+		'1' + index);
+	send(SoundMessage(line));
+}
+
+bool Map54::isWorthy(uint32 &perfTotal) {
+	perfTotal = 0;
+
+	for (uint i = 0; i < g_globals->_party.size(); ++i) {
+		Character &c = g_globals->_party[i];
+		if (c._flags[13] & CHARFLAG13_80) {
+			_data[VAL2]++;
+		} else if (c._flags[13] & CHARFLAG13_ALAMAR) {
+			c._exp += 500000;
+			c._flags[13] = 0xff;
+			_data[VAL2]++;
+		}
+
+		// Calculate performance totals for party
+		perfTotal += c.getPerformanceTotal();
+		if (c._flags[13] & CHARFLAG13_80)
+			perfTotal += 65536;
+	}
+
+	_data[PERF_TOTAL + 0] = perfTotal & 0xff;
+	_data[PERF_TOTAL + 1] = (perfTotal >> 8) & 0xff;
+	_data[PERF_TOTAL + 2] = (perfTotal >> 16) & 0xff;
+
+	return perfTotal >= 65536;
+}
+
+void Map54::changeMap() {
+	g_maps->_mapPos = Common::Point(8, 5);
+	g_maps->changeMap(0x604, 1);
 }
 
 } // namespace Maps

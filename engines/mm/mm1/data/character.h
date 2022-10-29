@@ -307,6 +307,8 @@ public:
 	bool hasTwoHanded() const { return hasCategory(isTwoHanded); }
 	bool hasArmor() const { return hasCategory(isArmor); }
 	bool hasShield() const { return hasCategory(isShield); }
+
+	size_t getPerformanceTotal() const;
 };
 
 /**
@@ -338,6 +340,10 @@ struct AttributePair {
 		s.syncAsByte(_base);
 		s.syncAsByte(_current);
 	}
+
+	size_t getPerformanceTotal() const {
+		return (size_t)_base + (size_t)_current;
+	}
 };
 
 struct AttributePair16 {
@@ -352,6 +358,11 @@ struct AttributePair16 {
 	void synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_base);
 		s.syncAsUint16LE(_current);
+	}
+
+	size_t getPerformanceTotal() const {
+		return (_base & 0xff) + (_base >> 8) +
+			(_current & 0xff) + (_current >> 8);
 	}
 };
 
@@ -376,6 +387,8 @@ union Resistances {
 	 * Handles save/loading resistences
 	 */
 	void synchronize(Common::Serializer &s);
+
+	size_t getPerformanceTotal() const;
 };
 
 struct PrimaryAttributes {
@@ -429,6 +442,7 @@ struct Character : public PrimaryAttributes {
 	byte _v6e;
 	int _alignmentCtr;
 	byte _flags[14];
+	byte _lastField = 0;
 
 	// Non persistent fields
 	byte _numDrinks = 0;
@@ -510,6 +524,13 @@ struct Character : public PrimaryAttributes {
 	 * Returns true if the character has a given item
 	 */
 	bool hasItem(byte itemId) const;
+
+	/**
+	 * Gets the numeric value of every property a character
+	 * has and totals it up to give a stupid 'performance'
+	 * value for the party at the end of the game
+	 */
+	size_t getPerformanceTotal() const;
 };
 
 } // namespace MM1

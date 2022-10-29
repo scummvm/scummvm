@@ -19,58 +19,30 @@
  *
  */
 
-#ifndef MM1_MAPS_MAP54_H
-#define MM1_MAPS_MAP54_H
+#ifndef MM1_VIEWS_MAPS_KEEPER_H
+#define MM1_VIEWS_MAPS_KEEPER_H
 
-#include "mm/mm1/maps/map.h"
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 namespace Maps {
 
-class Map54 : public Map {
-	typedef void (Map54:: *SpecialFn)();
+class Keeper : public TextView {
 private:
-	void special00();
-	void special01();
-	void special02();
-	void special03();
-	void special04();
-	void special05();
-	void special06();
-	void special07();
-	void projector(int index);
-
-	const SpecialFn SPECIAL_FN[8] = {
-		&Map54::special00,
-		&Map54::special01,
-		&Map54::special02,
-		&Map54::special03,
-		&Map54::special04,
-		&Map54::special05,
-		&Map54::special06,
-		&Map54::special07
-	};
+	int _pageNum = 0;
 public:
-	Map54() : Map(54, "astral", 0xB1A) {}
+	Keeper();
+	virtual ~Keeper() {}
 
-	/**
-	 * Handles all special stuff that happens on the map
-	 */
-	void special() override;
-
-	/**
-	 * Determines whether the party is worthy
-	 */
-	bool isWorthy(uint32 &perfTotal);
-
-	/**
-	 * Changes the map
-	 */
-	void changeMap();
+	bool msgFocus(const FocusMessage &msg) override;	
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
 };
 
 } // namespace Maps
+} // namespace Views
 } // namespace MM1
 } // namespace MM
 

@@ -40,6 +40,13 @@ void Resistances::synchronize(Common::Serializer &s) {
 		_arr[i].synchronize(s);
 }
 
+size_t Resistances::getPerformanceTotal() const {
+	size_t total = 0;
+	for (int i = 0; i < 8; ++i)
+		total += _arr[i].getPerformanceTotal();
+	return total;
+}
+
 void Inventory::clear() {
 	_items.clear();
 	_items.resize(INVENTORY_COUNT);
@@ -137,6 +144,13 @@ void Inventory::removeCharge(Entry *e) {
 	}
 }
 
+size_t Inventory::getPerformanceTotal() const {
+	size_t total = 0;
+	for (uint i = 0; i < size(); ++i)
+		total += (size_t)(*this)[i]._id + (size_t)(*this)[i]._charges;
+
+	return total;
+}
 
 /*------------------------------------------------------------------------*/
 
@@ -578,6 +592,52 @@ void Character::rest() {
 bool Character::hasItem(byte itemId) const {
 	return _backpack.indexOf(itemId) != -1 ||
 		_equipped.indexOf(itemId) != -1;
+}
+
+#define PERF16(x) ((x & 0xff) + ((x >> 8) & 0xff))
+#define PERF32(x) ((x & 0xff) + ((x >> 8) & 0xff) + \
+	((x >> 16) & 0xff) + ((x >> 24) & 0xff))
+
+size_t Character::getPerformanceTotal() const {
+	size_t totalFlags = 0;
+	for (int i = 0; i < 14; ++i)
+		totalFlags += _flags[i];
+
+	return (int)_sex
+		+ _alignmentInitial
+		+ _alignment
+		+ _race
+		+ _class
+		+ _intelligence.getPerformanceTotal()
+		+ _might.getPerformanceTotal()
+		+ _personality.getPerformanceTotal()
+		+ _endurance.getPerformanceTotal()
+		+ _speed.getPerformanceTotal()
+		+ _accuracy.getPerformanceTotal()
+		+ _luck.getPerformanceTotal()
+		+ _level.getPerformanceTotal()
+		+ _age.getPerformanceTotal()
+		+ PERF32(_exp)
+		+ _sp.getPerformanceTotal()
+		+ _spellLevel.getPerformanceTotal()
+		+ PERF16(_gems)
+		+ PERF16(_hpBase)
+		+ PERF16(_hp)
+		+ PERF16(_hpMax)
+		+ PERF32(_gold)
+		+ _ac
+		+ _food
+		+ _condition
+		+ _equipped.getPerformanceTotal()
+		+ _backpack.getPerformanceTotal()
+		+ _resistances.getPerformanceTotal()
+		+ _physicalAttr.getPerformanceTotal()
+		+ _missileAttr.getPerformanceTotal()
+		+ _v6c
+		+ _quest
+		+ _v6e
+		+ _alignmentCtr
+		+ totalFlags;
 }
 
 } // namespace MM1
