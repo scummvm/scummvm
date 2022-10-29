@@ -656,10 +656,12 @@ public:
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
-	DisposablePtr(DisposablePtr<T>&& o) : _pointer(o._pointer), _dispose(o._dispose) {
+	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose), _shared() {}
+	explicit DisposablePtr(SharedPtr<T> o) : _pointer(o.get()), _dispose(DisposeAfterUse::NO), _shared(o) {}
+	DisposablePtr(DisposablePtr<T>&& o) : _pointer(o._pointer), _dispose(o._dispose), _shared(o._shared) {
 		o._pointer = nullptr;
 		o._dispose = DisposeAfterUse::NO;
+		o._shared.reset();
 	}
 
 	~DisposablePtr() {
@@ -682,6 +684,7 @@ public:
 		if (_dispose) DL()(_pointer);
 		_pointer = o;
 		_dispose = dispose;
+		_shared.reset();
 	}
 
 	/**
@@ -701,12 +704,15 @@ public:
  	 */
 	template <class T2, class DL2 = DefaultDeleter<T2> >
 	DisposablePtr<T2, DL2> moveAndDynamicCast() {
-		DisposablePtr<T2, DL2> ret(
-			dynamic_cast<T2 *>(_pointer), _dispose);
- 		_pointer = nullptr;
- 		_dispose = DisposeAfterUse::NO;
+		DisposablePtr<T2, DL2> ret(nullptr, DisposeAfterUse::NO);
+		ret._pointer = dynamic_cast<T2 *>(_pointer);
+		ret._dispose = _dispose;
+		ret._shared = _shared.template dynamicCast<T2>();
+		_pointer = nullptr;
+		_dispose = DisposeAfterUse::NO;
+		_shared.reset();
 		return ret;
- 	}
+	}
 
 	/**
 	 * Returns the plain pointer value.
@@ -719,8 +725,11 @@ public:
 	friend class DisposablePtr;
 
 private:
+	DisposablePtr() : _pointer(nullptr), _dispose(DisposeAfterUse::NO), _shared() {}
 	PointerType           _pointer;
 	DisposeAfterUse::Flag _dispose;
+	SharedPtr<T>          _shared;
+	bool                  _isvalid;
 };
 
 /** @} */
