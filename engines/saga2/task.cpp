@@ -3676,7 +3676,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 
 	int16                   actorDistArray[ARRAYSIZE(_actorArray)];
 	TargetActorArray        taa(ARRAYSIZE(_actorArray), _actorArray, actorDistArray);
-	ActorPropertyTarget     target(actorPropIDEnemy);
+	ActorPropertyTarget     target(kActorPropIDEnemy);
 
 	_numActors = target.actor(_a->world(), _a->getLocation(), taa);
 

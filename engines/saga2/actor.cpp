@@ -2415,11 +2415,11 @@ void Actor::evaluateNeeds() {
 				if (canSenseActorProperty(
 				            info,
 				            maxSenseRange,
-				            actorPropIDEnemy)
+				            kActorPropIDEnemy)
 				        ||  canSenseActorPropertyIndirectly(
 				            info,
 				            maxSenseRange,
-				            actorPropIDEnemy)) {
+				            kActorPropIDEnemy)) {
 					PlayerActorID   playerID = _disposition - kDispositionPlayer;
 
 					if (isAggressive(playerID))
@@ -2614,8 +2614,8 @@ void Actor::updateState() {
 					                    _curTask,
 					                    ActorPropertyTarget(
 					                        _disposition == kDispositionEnemy
-					                        ?   actorPropIDPlayerActor
-					                        :   actorPropIDEnemy),
+					                        ?   kActorPropIDPlayerActor
+					                        :   kActorPropIDEnemy),
 					                    true);
 
 					if (task != nullptr)
@@ -2640,8 +2640,8 @@ void Actor::updateState() {
 					                    _curTask,
 					                    ActorPropertyTarget(
 					                        disp == kDispositionEnemy
-					                        ?   actorPropIDPlayerActor
-					                        :   actorPropIDEnemy));
+					                        ?   kActorPropIDPlayerActor
+					                        :   kActorPropIDEnemy));
 
 					if (task != nullptr)
 						_curTask->setTask(task);
@@ -3104,7 +3104,7 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 	            &&  follower->canSenseActorProperty(
 	                info,
 	                maxSenseRange,
-	                actorPropIDEnemy)))
+	                kActorPropIDEnemy)))
 		return kActorGoalAttackEnemy;
 
 	return kActorGoalFollowLeader;
