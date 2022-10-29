@@ -32,9 +32,21 @@ class Map46 : public Map {
 	typedef void (Map46:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map46::special00
+	const SpecialFn SPECIAL_FN[7] = {
+		&Map46::special00,
+		&Map46::special01,
+		&Map46::special02,
+		&Map46::special03,
+		&Map46::special04,
+		&Map46::special05,
+		&Map46::special06
 	};
 public:
 	Map46() : Map(46, "udrag2", 0xA00) {}

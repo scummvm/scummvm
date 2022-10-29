@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map46::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 7; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[58 + i]) {		
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,49 @@ void Map46::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map46::special00() {
+	send(SoundMessage(STRING["maps.map46.painted"]));
+}
+
+void Map46::special01() {
+	send(SoundMessage(STRING["maps.map46.shakes"]));
+}
+
+void Map46::special02() {
+	send(SoundMessage(
+		STRING["maps.map46.painted"],
+		[]() {
+			g_maps->changeMap(0x705, 3);
+		}
+	));
+}
+
+void Map46::special03() {
+	send(SoundMessage(
+		STRING["maps.map46.painted"],
+		[]() {
+			g_maps->changeMap(0xf05, 3);
+		}
+	));
+}
+
+void Map46::special04() {
+	special03();
+}
+
+void Map46::special05() {
+	g_maps->_mapPos.x++;
+	updateGame();
+}
+
+void Map46::special06() {
+	send(SoundMessage(STRING["maps.map46.clerics"]));
 }
 
 } // namespace Maps
