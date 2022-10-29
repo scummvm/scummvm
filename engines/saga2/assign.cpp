@@ -281,7 +281,7 @@ Task *PatrolRouteAssignment::getTask(TaskStack *ts) {
 
 			if (dist < bestDist) {
 				bestDist = dist;
-				startPoint = (_routeFlags & patrolRouteReverse) ? i : (i + 1) % route.vertices();
+				startPoint = (_routeFlags & kPatrolRouteReverse) ? i : (i + 1) % route.vertices();
 			}
 		}
 	}
