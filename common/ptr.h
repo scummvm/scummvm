@@ -641,6 +641,7 @@ private:
 	PointerType _pointer;
 };
 
+
 template<typename T, class DL = DefaultDeleter<T> >
 class DisposablePtr : private NonCopyable, public SafeBool<DisposablePtr<T, DL> > {
 public:
@@ -648,7 +649,13 @@ public:
 	typedef T *PointerType;
 	typedef T &ReferenceType;
 
-	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose) {}
+	explicit DisposablePtr(PointerType o, DisposeAfterUse::Flag dispose) : _pointer(o), _dispose(dispose), _shared() {}
+	explicit DisposablePtr(SharedPtr<T> o) : _pointer(o.get()), _dispose(DisposeAfterUse::NO), _shared(o) {}
+	DisposablePtr(DisposablePtr<T>&& o) : _pointer(o._pointer), _dispose(o._dispose), _shared(o._shared) {
+		o._pointer = nullptr;
+		o._dispose = DisposeAfterUse::NO;
+		o._shared.reset();
+	}
 
 	~DisposablePtr() {
 		if (_dispose) DL()(_pointer);
@@ -670,6 +677,7 @@ public:
 		if (_dispose) DL()(_pointer);
 		_pointer = o;
 		_dispose = dispose;
+		_shared.reset();
 	}
 
 	/**
@@ -679,12 +687,24 @@ public:
 		reset(nullptr, DisposeAfterUse::NO);
 	}
 
+	template <class T2>
+	bool isDynamicallyCastable() {
+		return dynamic_cast<T2 *>(_pointer) != nullptr;
+	}
+
 	/**
-	 * Clears the pointer without destroying the old object.
+	 * Destroys the smart pointer while returning a pointer to assign to a new object.
 	 */
-	void disownPtr() {
+	template <class T2, class DL2 = DefaultDeleter<T2> >
+	DisposablePtr<T2, DL2> moveAndDynamicCast() {
+		DisposablePtr<T2, DL2> ret;
+		ret._pointer = dynamic_cast<T2 *>(_pointer);
+		ret._dispose = _dispose;
+		ret._shared = _shared.template dynamicCast<T2>();
 		_pointer = nullptr;
 		_dispose = DisposeAfterUse::NO;
+		_shared.reset();
+		return ret;
 	}
 
 	/**
@@ -694,14 +714,15 @@ public:
 	 */
 	PointerType get() const { return _pointer; }
 
-	/**
-	 * Returns the pointer's dispose flag.
-	 */
-	DisposeAfterUse::Flag getDispose() const { return _dispose; }
+	template <class T2, class DL2>
+	friend class DisposablePtr;
 
 private:
+	DisposablePtr() : _pointer(nullptr), _dispose(DisposeAfterUse::NO), _shared() {}
 	PointerType           _pointer;
 	DisposeAfterUse::Flag _dispose;
+	SharedPtr<T>          _shared;
+	bool                  _isvalid;
 };
 
 /** @} */

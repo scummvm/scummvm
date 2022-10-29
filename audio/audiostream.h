@@ -157,6 +157,20 @@ public:
 	 */
 	LoopingAudioStream(RewindableAudioStream *stream, uint loops, DisposeAfterUse::Flag disposeAfterUse = DisposeAfterUse::YES, bool rewind = true);
 
+	/**
+	 * Create a looping audio stream object.
+	 *
+	 * On creation of the LoopingAudioStream object, the underlying stream will be rewound.
+	 *
+	 * @see makeLoopingAudioStream
+	 *
+	 * @param stream  The stream to loop.
+	 * @param loops   How often to loop (0 = infinite).
+	 * @param disposeAfterUse  Destroy the stream after the LoopingAudioStream has finished playback.
+	 * @param rewind  If true, rewind the underlying stream.
+	 */
+	LoopingAudioStream(Common::DisposablePtr<RewindableAudioStream>&& stream, uint loops, bool rewind = true);
+
 	int readBuffer(int16 *buffer, const int numSamples);
 	bool endOfData() const;
 	bool endOfStream() const;
