@@ -68,7 +68,7 @@ void Map34::special01() {
 void Map34::special02() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		if ((c._flags[13] & CHARFLAG13_40) || c.hasItem(EYE_OF_GOROS_ID)) {
+		if ((c._flags[13] & CHARFLAG13_ALAMAR) || c.hasItem(EYE_OF_GOROS_ID)) {
 			g_maps->clearSpecial();
 			g_globals->_encounters.execute();
 			return;

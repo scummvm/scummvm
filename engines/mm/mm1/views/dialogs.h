@@ -43,6 +43,7 @@
 #include "mm/mm1/views/locations/tavern.h"
 #include "mm/mm1/views/locations/temple.h"
 #include "mm/mm1/views/locations/training.h"
+#include "mm/mm1/views/maps/alamar.h"
 #include "mm/mm1/views/maps/alien.h"
 #include "mm/mm1/views/maps/arrested.h"
 #include "mm/mm1/views/maps/chess.h"
@@ -96,12 +97,14 @@ private:
 	Views::Locations::Temple _temple;
 	Views::Locations::Training _training;
 
+	Views::Maps::Alamar _alamar;
 	Views::Maps::Alien _alien;
 	Views::Maps::Arrested _arrested;
 	Views::Maps::Chess _chess;
 	Views::Maps::ChildPrisoner _childPrisoner;
 	Views::Maps::CloakedPrisoner _cloakedPrisoner;
 	Views::Maps::DemonPrisoner _demonPrisoner;
+	Views::Maps::MaidenPrisoner _maidenPrisoner;
 	Views::Maps::ManPrisoner _manPrisoner;
 	Views::Maps::MutatedPrisoner _mutatedPrisoner;
 	Views::Maps::DogStatue _dogStatue;

@@ -51,6 +51,7 @@ MODULE_OBJS := \
 	mm1/views/locations/temple.o \
 	mm1/views/locations/training.o \
 	mm1/views/maps/access_code.o \
+	mm1/views/maps/alamar.o \
 	mm1/views/maps/alien.o \
 	mm1/views/maps/answer_entry.o \
 	mm1/views/maps/arrested.o \
