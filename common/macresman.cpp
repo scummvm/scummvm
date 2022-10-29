@@ -71,6 +71,7 @@ MacResManager::~MacResManager() {
 void MacResManager::close() {
 	_resForkOffset = -1;
 	_mode = kResForkNone;
+	_resForkSize = 0;
 
 	for (int i = 0; i < _resMap.numTypes; i++) {
 		for (int j = 0; j < _resTypes[i].items; j++)
@@ -92,7 +93,7 @@ bool MacResManager::hasDataFork() const {
 }
 
 bool MacResManager::hasResFork() const {
-	return !_baseFileName.empty() && _mode != kResForkNone && _stream != nullptr;
+	return !_baseFileName.empty() && _mode != kResForkNone && _stream != nullptr && _resForkSize != 0;
 }
 
 uint32 MacResManager::getResForkDataSize() const {
@@ -409,6 +410,25 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream *stream) {
 		if (MBI_INFOHDR + dataSizePad + rsrcSize <= (uint32)stream->size()) {
 			_resForkOffset = MBI_INFOHDR + dataSizePad;
 			_resForkSize = rsrcSize;
+		}
+
+		if (_resForkSize == 0) {
+			debug(7, "resource-less macbinary");
+
+			_mode = kResForkMacBinary;
+			_stream = stream;
+			_dataOffset = _resForkOffset;
+			_mapOffset = _resForkOffset;
+			_dataLength = 0;
+			_mapLength = 0;
+			_resMap.resAttr = 0;
+			_resMap.typeOffset = 0;
+			_resMap.nameOffset = 0;
+			_resMap.numTypes = 0;
+			_resTypes = nullptr;
+			_resLists = nullptr;
+
+			return true;
 		}
 	}
 
