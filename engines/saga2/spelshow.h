@@ -117,7 +117,7 @@ class EffectDisplayPrototype {
 		return 0;
 	}
 	static SPELLSTATUSFUNCTION(nullStatus) {
-		return effectronDead;
+		return kEffectronDead;
 	}
 	static SPELLHEIGHTFUNCTION(nullHeight) {
 		return 0;

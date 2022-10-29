@@ -545,8 +545,8 @@ public:
 
 	bool applicable(SpellTarget &) {
 		return true;
-		//return (trg.getType()==SpellTarget::spellTargetObject ||
-		//       trg.getType()==SpellTarget::spellTargetObjectPoint) &&
+		//return (trg.getType()==SpellTarget::kSpellTargetObject ||
+		//       trg.getType()==SpellTarget::kSpellTargetObjectPoint) &&
 		//     isActor(trg.getObject());
 	}
 

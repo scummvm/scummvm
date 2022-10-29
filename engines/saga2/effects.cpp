@@ -97,7 +97,7 @@ void ProtoDamage::implement(GameObject *cst, SpellTarget *trg, int8 deltaDamage)
 
 	totalBase -= deltaDamage;
 
-	assert(trg->getType() == SpellTarget::spellTargetObject);
+	assert(trg->getType() == SpellTarget::kSpellTargetObject);
 	if (_self)
 		cst->acceptDamage(cst->thisID(), totalBase, _type, totalDice, _sides);
 	else
@@ -182,7 +182,7 @@ void ProtoDrainage::implement(GameObject *cst, SpellTarget *trg, int8) {
 	int8 totalDamage = diceRoll(totalDice, 6, 0, 0);
 
 
-	if (!(trg->getType() == SpellTarget::spellTargetObject))
+	if (!(trg->getType() == SpellTarget::kSpellTargetObject))
 		return;
 	GameObject *target = _self ? cst : trg->getObject();
 	if (!isActor(target))
@@ -287,30 +287,30 @@ void ProtoSpecialEffect::implement(GameObject *cst, SpellTarget *trg, int8) {
  * ===================================================================== */
 
 bool ProtoDamage::applicable(SpellTarget &trg) {
-	return trg.getType() == SpellTarget::spellTargetObject ||
-	       trg.getType() == SpellTarget::spellTargetObjectPoint;
+	return trg.getType() == SpellTarget::kSpellTargetObject ||
+	       trg.getType() == SpellTarget::kSpellTargetObjectPoint;
 }
 
 bool ProtoDrainage::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       isActor(trg.getObject());
 }
 
 bool ProtoEnchantment::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       (isActor(trg.getObject()) ||
 	        getEnchantmentSubType(_enchID) == kActorInvisible);
 }
 
 bool ProtoTAGEffect::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetTAG);
+	return (trg.getType() == SpellTarget::kSpellTargetTAG);
 }
 
 bool ProtoObjectEffect::applicable(SpellTarget &trg) {
-	return (trg.getType() == SpellTarget::spellTargetObject ||
-	        trg.getType() == SpellTarget::spellTargetObjectPoint) &&
+	return (trg.getType() == SpellTarget::kSpellTargetObject ||
+	        trg.getType() == SpellTarget::kSpellTargetObjectPoint) &&
 	       !isActor(trg.getObject());
 }
 
@@ -331,20 +331,20 @@ void createSpellCallFrame(GameObject *go, SpellTarget *trg, scriptCallFrame &scf
 	scf.coords        = Nowhere;
 
 	switch (trg->getType()) {
-	case SpellTarget::spellTargetPoint      :
-	case SpellTarget::spellTargetObjectPoint:
+	case SpellTarget::kSpellTargetPoint      :
+	case SpellTarget::kSpellTargetObjectPoint:
 		scf.value = 1;
 		scf.coords = trg->getPoint();
 		break;
-	case SpellTarget::spellTargetObject     :
+	case SpellTarget::kSpellTargetObject     :
 		scf.value = 2;
 		scf.directObject = trg->getObject()->thisID();
 		break;
-	case SpellTarget::spellTargetTAG        :
+	case SpellTarget::kSpellTargetTAG        :
 		scf.value = 3;
 		scf.directTAI = trg->getTAG()->thisID();
 		break;
-	case SpellTarget::spellTargetNone       :
+	case SpellTarget::kSpellTargetNone       :
 	default                                 :
 		scf.value = 0;
 		break;

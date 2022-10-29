@@ -231,8 +231,8 @@ StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 	ActiveItem *ai;
 	type = st.getType();
 	loc = st.getPoint();
-	if (type == SpellTarget::spellTargetObject) {
-		if (type == SpellTarget::spellTargetObject)
+	if (type == SpellTarget::kSpellTargetObject) {
+		if (type == SpellTarget::kSpellTargetObject)
 			go = st.getObject();
 		else
 			go = nullptr;
@@ -243,7 +243,7 @@ StorageSpellTarget::StorageSpellTarget(SpellTarget &st) {
 	else
 		obj = Nothing;
 
-	if (type == SpellTarget::spellTargetTAG)
+	if (type == SpellTarget::kSpellTargetTAG)
 		ai = st.getTAG();
 	else
 		ai = nullptr;

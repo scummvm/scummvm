@@ -150,19 +150,19 @@ void SpellStuff::killEffects() {
 void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 	assert(target);
 	switch (target->getType()) {
-	case SpellTarget::spellTargetPoint:
+	case SpellTarget::kSpellTargetPoint:
 		implement(enactor, Location(target->getPoint(), Nothing));
 		break;
-	case SpellTarget::spellTargetObjectPoint:
+	case SpellTarget::kSpellTargetObjectPoint:
 		if (_targetTypes == spellApplyObject)
 			implement(enactor, target->getObject());
 		else
 			implement(enactor, Location(target->getPoint(), Nothing));
 		break;
-	case SpellTarget::spellTargetObject:
+	case SpellTarget::kSpellTargetObject:
 		implement(enactor, target->getObject());
 		break;
-	case SpellTarget::spellTargetTAG:
+	case SpellTarget::kSpellTargetTAG:
 		implement(enactor, target->getTAG());
 		break;
 	default:
@@ -781,7 +781,7 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 Effectron::Effectron() {
 	_age = 0;
 	_pos = 0;
-	_flags = effectronDead;
+	_flags = kEffectronDead;
 	_parent = nullptr;
 	_partno = 0;
 	_totalSteps = _stepNo = 0;
