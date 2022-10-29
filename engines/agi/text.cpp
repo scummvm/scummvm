@@ -889,7 +889,7 @@ void TextMgr::promptCommandWindow(bool recallLastCommand, uint16 newKey) {
 	if (_systemUI->askForCommand(commandText)) {
 		if (commandText.size()) {
 			// Something actually was entered?
-			strncpy((char *)&_prompt, commandText.c_str(), sizeof(_prompt));
+			Common::strcpy_s((char *)_prompt, sizeof(_prompt), commandText.c_str());
 			promptRememberForAutoComplete(true);
 			memcpy(&_promptPrevious, &_prompt, sizeof(_prompt));
 			// parse text
