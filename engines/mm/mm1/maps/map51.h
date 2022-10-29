@@ -32,9 +32,44 @@ class Map51 : public Map {
 	typedef void (Map51:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special17();
+	void special18();
+	void special19();
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map51::special00
+	const SpecialFn SPECIAL_FN[20] = {
+		&Map51::special00,
+		&Map51::special01,
+		&Map51::special02,
+		&Map51::special03,
+		&Map51::special01,
+		&Map51::special05,
+		&Map51::special06,
+		&Map51::special07,
+		&Map51::special08,
+		&Map51::special09,
+		&Map51::special10,
+		&Map51::special11,
+		&Map51::special12,
+		&Map51::special13,
+		&Map51::special14,
+		&Map51::special01,
+		&Map51::special01,
+		&Map51::special17,
+		&Map51::special18,
+		&Map51::special19
 	};
 public:
 	Map51() : Map(51, "pp2", 0x701) {}
