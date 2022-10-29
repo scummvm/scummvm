@@ -49,7 +49,7 @@ SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
 	_effParm2 = 0;                        //   effect setting 1
 	_effParm3 = 0;                        //   effect setting 1
 	_effParm4 = 0;                        //   effect setting 1
-	_scatter = diFlagZero;                // direction init mode
+	_scatter = kDiFlagZero;                // direction init mode
 	_elasticity = (effectCollisionCont) rsi->effectronElasticity; // collision flags
 	_maxAge = rsi->maxAge;                // auto self-destruct age
 	_implementAge = rsi->implAge;         // auto self-destruct age

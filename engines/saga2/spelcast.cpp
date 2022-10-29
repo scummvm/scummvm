@@ -836,16 +836,16 @@ void Effectron::updateEffect(int32 deltaTime) {
 //-----------------------------------------------------------------------
 void Effectron::bump() {
 	switch (_parent->_dProto->_elasticity) {
-	case ecFlagBounce:
+	case kEcFlagBounce:
 		_velocity = -_velocity;
 		break;
-	case ecFlagDie:
+	case kEcFlagDie:
 		kill();
 		break;
-	case ecFlagStop:
+	case kEcFlagStop:
 		_velocity = TilePoint(0, 0, 0);
 		break;
-	case ecFlagNone:
+	case kEcFlagNone:
 		break;
 	}
 }
