@@ -87,7 +87,7 @@ void DarkEngine::gotoArea(uint16 areaID, int entranceID) {
 		// debug("dif: %f %f %f", diff.x(), diff.y(), diff.z());
 		//  diff should be used to determinate which entrance to use
 		int newPos = -1;
-		if (abs(diff.x()) < abs(diff.z())) {
+		if (ABS(diff.x()) < ABS(diff.z())) {
 			if (diff.z() > 0)
 				newPos = 4000;
 			else
