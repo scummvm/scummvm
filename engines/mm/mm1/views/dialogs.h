@@ -53,6 +53,7 @@
 #include "mm/mm1/views/maps/inspectron.h"
 #include "mm/mm1/views/maps/lion.h"
 #include "mm/mm1/views/maps/lord_archer.h"
+#include "mm/mm1/views/maps/lord_ironfist.h"
 #include "mm/mm1/views/maps/prisoners.h"
 #include "mm/mm1/views/maps/resistances.h"
 #include "mm/mm1/views/maps/ruby.h"
@@ -108,6 +109,7 @@ private:
 	Views::Maps::Inspectron _inspectron;
 	Views::Maps::Lion _lion;
 	Views::Maps::LordArcher _lordArcher;
+	Views::Maps::LordIronfist _lordIronfist;
 	Views::Maps::Resistances _resistances;
 	Views::Maps::Ruby _ruby;
 	Views::Maps::Trivia _trivia;
