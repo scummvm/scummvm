@@ -83,17 +83,17 @@ void MacResManager::close() {
 
 	delete[] _resLists; _resLists = nullptr;
 	delete[] _resTypes; _resTypes = nullptr;
-	delete _stream; _stream = nullptr;
-	delete _dataForkStream; _dataForkStream = nullptr;
+	_stream.reset();
+	_dataForkStream.reset();
 	_resMap.numTypes = 0;
 }
 
 bool MacResManager::hasDataFork() const {
-	return !_baseFileName.empty() && (_mode == kResForkMacBinary || _dataForkStream != nullptr);
+	return !_baseFileName.empty() && (_mode == kResForkMacBinary || _dataForkStream);
 }
 
 bool MacResManager::hasResFork() const {
-	return !_baseFileName.empty() && _mode != kResForkNone && _stream != nullptr && _resForkSize != 0;
+	return !_baseFileName.empty() && _mode != kResForkNone && _stream && _resForkSize != 0;
 }
 
 uint32 MacResManager::getResForkDataSize() const {
@@ -148,7 +148,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		SeekableReadStream *macResForkRawStream = resFsNode.createReadStream();
 		if (!isMacBinaryFile && macResForkRawStream && loadFromRawFork(macResForkRawStream)) {
 			_baseFileName = fileName;
-			_dataForkStream = archive.createReadStreamForMember(fileName);
+			_dataForkStream = Common::SharedPtr<SeekableReadStream>(archive.createReadStreamForMember(fileName));
 			return true;
 		}
 
@@ -166,13 +166,13 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 
 		if (appleDouble && loadFromAppleDouble(stream)) {
 			_baseFileName = fileName;
-			_dataForkStream = archive.createReadStreamForMember(fileName);
+			_dataForkStream = Common::SharedPtr<SeekableReadStream>(archive.createReadStreamForMember(fileName));
 			return true;
 		}
 
 		if (loadFromRawFork(stream)) {
 			_baseFileName = fileName;
-			_dataForkStream = archive.createReadStreamForMember(fileName);
+			_dataForkStream = Common::SharedPtr<SeekableReadStream>(archive.createReadStreamForMember(fileName));
 			return true;
 		}
 	}
@@ -182,7 +182,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 	stream = archive.createReadStreamForMember(constructAppleDoubleName(fileName));
 	if (stream && loadFromAppleDouble(stream)) {
 		_baseFileName = fileName;
-		_dataForkStream = archive.createReadStreamForMember(fileName);
+		_dataForkStream = Common::SharedPtr<SeekableReadStream>(archive.createReadStreamForMember(fileName));
 		return true;
 	}
 	delete stream;
@@ -209,7 +209,7 @@ bool MacResManager::open(const Path &fileName, Archive &archive) {
 		}
 
 		stream->seek(0);
-		_dataForkStream = stream;
+		_dataForkStream = Common::SharedPtr<SeekableReadStream>(stream);
 		_stream = nullptr;
 		return true;
 	}
@@ -416,7 +416,7 @@ bool MacResManager::loadFromMacBinary(SeekableReadStream *stream) {
 			debug(7, "resource-less macbinary");
 
 			_mode = kResForkMacBinary;
-			_stream = stream;
+			_stream = Common::SharedPtr<SeekableReadStream>(stream);
 			_dataOffset = _resForkOffset;
 			_mapOffset = _resForkOffset;
 			_dataLength = 0;
@@ -474,20 +474,20 @@ bool MacResManager::load(SeekableReadStream *stream) {
 	debug(7, "got header: data %d [%d] map %d [%d]",
 		_dataOffset, _dataLength, _mapOffset, _mapLength);
 
-	_stream = stream;
+	_stream = Common::SharedPtr<SeekableReadStream>(stream);
 
 	readMap();
 	return true;
 }
 
 SeekableReadStream *MacResManager::getDataFork() {
-	if (_mode == kResForkMacBinary && _stream != nullptr) {
+	if (_mode == kResForkMacBinary && _stream) {
 		_stream->seek(MBI_DFLEN);
 		uint32 dataSize = _stream->readUint32BE();
 		return new SeekableSubReadStream(_stream, MBI_INFOHDR, MBI_INFOHDR + dataSize);
 	}
 
-	if (_mode != kResForkMacBinary && _dataForkStream != nullptr) {
+	if (_mode != kResForkMacBinary && _dataForkStream) {
 		return new SeekableSubReadStream(_dataForkStream, 0, _dataForkStream->size());
 	}
 

@@ -221,7 +221,7 @@ public:
 	static MacVers *parseVers(SeekableReadStream *vvers);
 
 private:
-	SeekableReadStream *_stream, *_dataForkStream;
+	Common::SharedPtr<SeekableReadStream> _stream, _dataForkStream;
 	Path _baseFileName;
 
 	bool load(SeekableReadStream *stream);
