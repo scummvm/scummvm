@@ -108,8 +108,8 @@ bool ProtoObj::use(ObjectID dObj, ObjectID enactor) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onUse,
 	                        dObj, enactor, Nothing))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return useAction(dObj, enactor);
 }
@@ -135,8 +135,8 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ObjectID item) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onUseOn,
 	                        dObj, enactor, item))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	//  If script has not aborted action call virtual useOnAction
 	//  function
@@ -169,12 +169,12 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, ActiveItem *item) {
 
 	//  If the script actually ran, and it didn't return a code
 	//  telling us to abort the action...
-	if (sResult == scriptResultFinished)
+	if (sResult == kScriptResultFinished)
 		scrResult = scf.returnVal;
 	else
-		scrResult = actionResultNotDone;
-	if (scrResult != actionResultNotDone)
-		return scrResult == actionResultSuccess;
+		scrResult = kActionResultNotDone;
+	if (scrResult != kActionResultNotDone)
+		return scrResult == kActionResultSuccess;
 
 	return useOnAction(dObj, enactor, item);
 
@@ -193,7 +193,7 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, const Location &loc) {
 	/*  int16   scrResult;
 
 	    scriptCallFrame scf;
-	    scriptResult    sResult=(scriptResult) actionResultNotDone;
+	    scriptResult    sResult=(scriptResult) kActionResultNotDone;
 
 	    scf.invokedObject   = dObj;
 	    scf.enactor         = enactor;
@@ -207,23 +207,23 @@ bool ProtoObj::useOn(ObjectID dObj, ObjectID enactor, const Location &loc) {
 
 	        //  If the script actually ran, and it didn't return a code
 	        //  telling us to abort the action...
-	    if ( sResult == scriptResultFinished )
+	    if ( sResult == kScriptResultFinished )
 	        scrResult=scf.returnVal;
 	    else
-	        scrResult=actionResultNotDone;
+	        scrResult=kActionResultNotDone;
 	*//*
         //  Handle object script in a standard fashion
     if (    ( scriptResult =    stdActionScript(
                                     Method_GameObject_useOnTAI,
                                     dObj, enactor, item->thisID() ) )
-                !=  actionResultNotDone )
-        return scriptResult == actionResultSuccess;
+                !=  kActionResultNotDone )
+        return scriptResult == kActionResultSuccess;
 
         //  If script has not aborted action call virtual useOnAction
         //  function
 *//*
-    if ( scrResult != actionResultNotDone )
-        return scrResult == actionResultSuccess;
+    if ( scrResult != kActionResultNotDone )
+        return scrResult == kActionResultSuccess;
 */
 	return useOnAction(dObj, enactor, loc);
 }
@@ -260,8 +260,8 @@ bool ProtoObj::open(ObjectID dObj, ObjectID enactor) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onOpen,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return openAction(dObj, enactor);
 }
@@ -289,8 +289,8 @@ bool ProtoObj::close(ObjectID dObj, ObjectID enactor) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onClose,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return closeAction(dObj, enactor);
 }
@@ -314,8 +314,8 @@ bool ProtoObj::take(ObjectID dObj, ObjectID enactor, int16 num) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onTake,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return takeAction(dObj, enactor, num);
 }
@@ -353,9 +353,9 @@ bool ProtoObj::drop(ObjectID dObj, ObjectID enactor, const Location &loc, int16 
 
 	//  If the script actually ran, and it didn't return a code
 	//  telling us to abort the action...
-	if (sResult == scriptResultFinished
-	        &&  scf.returnVal != actionResultNotDone)
-		return scf.returnVal == actionResultSuccess;
+	if (sResult == kScriptResultFinished
+	        &&  scf.returnVal != kActionResultNotDone)
+		return scf.returnVal == kActionResultSuccess;
 
 	return dropAction(dObj, enactor, loc, num);
 }
@@ -384,8 +384,8 @@ bool ProtoObj::dropOn(ObjectID dObj, ObjectID enactor, ObjectID target, int16 co
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onDropOn,
 	                        dObj, enactor, target, count))
-	        !=  actionResultNotDone) {
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone) {
+		return scriptResult == kActionResultSuccess;
 	}
 
 	//  At this point we should probably _split_ the object...
@@ -438,8 +438,8 @@ bool ProtoObj::strike(ObjectID dObj, ObjectID enactor, ObjectID item) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onStrike,
 	                        dObj, enactor, item))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return strikeAction(dObj, enactor, item);
 }
@@ -459,8 +459,8 @@ bool ProtoObj::damage(ObjectID dObj, ObjectID enactor, ObjectID target) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onDamage,
 	                        dObj, enactor, target))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return damageAction(dObj, enactor, target);
 }
@@ -481,8 +481,8 @@ bool ProtoObj::eat(ObjectID dObj, ObjectID enactor) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onEat,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return eatAction(dObj, enactor);
 }
@@ -504,8 +504,8 @@ bool ProtoObj::insert(ObjectID dObj, ObjectID enactor, ObjectID item) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onInsert,
 	                        dObj, enactor, item))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return insertAction(dObj, enactor, item);
 }
@@ -526,8 +526,8 @@ bool ProtoObj::remove(ObjectID dObj, ObjectID enactor) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onRemove,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return removeAction(dObj, enactor);
 }
@@ -552,8 +552,8 @@ bool ProtoObj::acceptDrop(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptDrop,
 	                        dObj, enactor, droppedObj, count))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return acceptDropAction(dObj, enactor, droppedObj, count);
 }
@@ -578,8 +578,8 @@ bool ProtoObj::acceptDamage(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptDamage,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return  acceptDamageAction(
 	            dObj,
@@ -644,8 +644,8 @@ bool ProtoObj::acceptStrike(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptStrike,
 	                        dObj, enactor, strikingObj))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return  acceptStrikeAction(
 	            dObj,
@@ -679,8 +679,8 @@ bool ProtoObj::acceptLockToggle(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptLockToggle,
 	                        dObj, enactor, Nothing))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return acceptLockToggleAction(dObj, enactor, keyCode);
 }
@@ -707,8 +707,8 @@ bool ProtoObj::acceptMix(ObjectID dObj, ObjectID enactor, ObjectID mixObj) {
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptMix,
 	                        dObj, enactor, mixObj))
-	        !=  actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        !=  kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return acceptMixAction(dObj, enactor, mixObj);
 }
@@ -735,8 +735,8 @@ bool ProtoObj::acceptInsertion(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptInsertion,
 	                        dObj, enactor, item, count))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return acceptInsertionAction(dObj, enactor, item, count);
 }
@@ -764,8 +764,8 @@ bool ProtoObj::acceptInsertionAt(
 	if ((scriptResult = stdActionScript(
 	                        Method_GameObject_onAcceptInsertion,
 	                        dObj, enactor, item))
-	        != actionResultNotDone)
-		return scriptResult == actionResultSuccess;
+	        != kActionResultNotDone)
+		return scriptResult == kActionResultSuccess;
 
 	return acceptInsertionAtAction(dObj, enactor, item, where, num);
 }
@@ -854,10 +854,10 @@ int16 ProtoObj::stdActionScript(
 
 	//  If the script actually ran, and it didn't return a code
 	//  telling us to abort the action...
-	if (sResult == scriptResultFinished)
+	if (sResult == kScriptResultFinished)
 		return scf.returnVal;
 
-	return actionResultNotDone;
+	return kActionResultNotDone;
 }
 
 int16 ProtoObj::stdActionScript(
@@ -880,10 +880,10 @@ int16 ProtoObj::stdActionScript(
 
 	//  If the script actually ran, and it didn't return a code
 	//  telling us to abort the action...
-	if (sResult == scriptResultFinished)
+	if (sResult == kScriptResultFinished)
 		return scf.returnVal;
 
-	return actionResultNotDone;
+	return kActionResultNotDone;
 }
 
 //  Initiate an attack using this type of object

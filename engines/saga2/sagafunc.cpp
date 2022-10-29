@@ -525,7 +525,7 @@ int16 scriptActorSay(int16 *args) {
 	if (!(flags & speakContinued)) {
 		//  If we're going to wait for it synchronously
 		if (flags & speakWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			sp->setWakeUp(getThreadID(thisThread));
 		}
 
@@ -1586,7 +1586,7 @@ int16 scriptActorTurn(int16 *args) {
 		uint16      flags = args[1];
 
 		if (flags & kMoveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, args[0] & 7);
 		} else {
 			MotionTask::turn(*a, args[0] & 7);
@@ -1617,7 +1617,7 @@ int16 scriptActorTurnTowards(int16 *args) {
 		       -   a->getLocation()).quickDir();
 
 		if (flags & kMoveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, dir);
 		} else {
 			MotionTask::turn(*a, dir);
@@ -1642,7 +1642,7 @@ int16 scriptActorWalk(int16 *args) {
 		uint16      flags = args[3];
 
 		if (flags & kMoveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::walkToDirect(
 			    getThreadID(thisThread), *a, dest, flags & kMoveRun);
 		} else {
@@ -2522,7 +2522,7 @@ int16 scriptTagSetAnimation(int16 *args) {
 	//  If we want to wait until finished
 	if (args[0] & tileAnimateWait) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, nullptr);
+		thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 
 		//  And start the tile animation
 		TileActivityTask::doScript(*ai, args[1], getThreadID(thisThread));
@@ -2545,7 +2545,7 @@ int16 scriptTagSetWait(int16 *args) {
 
 	if (TileActivityTask::setWait(ai, getThreadID(thisThread))) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, nullptr);
+		thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 	}
 
 	return 0;
@@ -2570,7 +2570,7 @@ int16 scriptTagObtainLock(int16 *) {
 		WriteStatusF(15, "Locked: %d\n", lockCount);
 #endif
 	} else {
-		thisThread->waitForEvent(Thread::waitTagSemaphore, ai);
+		thisThread->waitForEvent(Thread::kWaitTagSemaphore, ai);
 #if DEBUG*0
 		lockCount += 1;
 		WriteStatusF(15, "Locked: %d\n", lockCount);
@@ -2851,7 +2851,7 @@ int16 scriptSetGameMode(int16 *args) {
 int16 scriptWait(int16 *args) {
 	MONOLOG(Wait);
 	thisThread->_waitAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitDelay, nullptr);
+	thisThread->waitForEvent(Thread::kWaitDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -2859,7 +2859,7 @@ int16 scriptWait(int16 *args) {
 int16 scriptWaitFrames(int16 *args) {
 	MONOLOG(WaitFrames);
 	thisThread->_waitFrameAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitFrameDelay, nullptr);
+	thisThread->waitForEvent(Thread::kWaitFrameDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -3828,12 +3828,12 @@ int16 scriptFadeUp(int16 *) {
 int16 scriptSetSynchronous(int16 *args) {
 	MONOLOG(SetSynchronous);
 
-	int16       oldVal = (thisThread->_flags & Thread::synchronous) != 0;
+	int16       oldVal = (thisThread->_flags & Thread::kTFSynchronous) != 0;
 
 	if (args[0])
-		thisThread->_flags |= Thread::synchronous;
+		thisThread->_flags |= Thread::kTFSynchronous;
 	else
-		thisThread->_flags &= ~Thread::synchronous;
+		thisThread->_flags &= ~Thread::kTFSynchronous;
 
 	return oldVal;
 }

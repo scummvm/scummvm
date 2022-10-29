@@ -303,9 +303,9 @@ bool ActorProto::acceptDropAction(
 
 		result = runObjectMethod(dObj, Method_Actor_onReceive, scf);
 
-		if (result == scriptResultFinished
-		        &&  scf.returnVal != actionResultNotDone)
-			return scf.returnVal == actionResultSuccess;
+		if (result == kScriptResultFinished
+		        &&  scf.returnVal != kActionResultNotDone)
+			return scf.returnVal == kActionResultSuccess;
 
 		//  Place the object in the actor's inventory (if possible)
 		if (!a->placeObject(enactor, droppedID, true, count))
@@ -3173,14 +3173,14 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 			//  knowledge package
 
 			res = runMethod(_knowledge[i],
-			                builtinAbstract,
+			                kBuiltinAbstract,
 			                0,
 			                Method_KnowledgePackage_evalResponse,
 			                scf);
 
 			//  If script ran OK, then look at result
 
-			if (res == scriptResultFinished) {
+			if (res == kScriptResultFinished) {
 				//  break up return code into priority and
 				//  response code
 
@@ -3211,12 +3211,12 @@ void Actor::useKnowledge(scriptCallFrame &scf) {
 		scf.responseType = bestResponseCode;
 
 		runMethod(bestResponseClass,
-		          builtinAbstract,
+		          kBuiltinAbstract,
 		          0,
 		          Method_KnowledgePackage_executeResponse,
 		          scf);
 	} else {
-		scf.returnVal = actionResultNotDone;
+		scf.returnVal = kActionResultNotDone;
 	}
 }
 

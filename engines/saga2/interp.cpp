@@ -74,22 +74,22 @@ extern hResource    *scriptResFile;         // script resources
 hResContext         *scriptRes;             // script resource handle
 
 void script_error(const char *msg) {
-	thisThread->_flags |= Thread::aborted;
+	thisThread->_flags |= Thread::kTFAborted;
 	WriteStatusF(0, msg);
 }
 
 static Common::String seg2str(int16 segment) {
 	switch (segment) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return "GameObject";
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return "TAG";
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		return Common::String::format("Abstract%d", segment);
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return "Mission";
 
 	default:
@@ -104,20 +104,20 @@ uint8 *builtinObjectAddress(int16 segment, uint16 index) {
 	uint16          segNum, segOff;
 
 	switch (segment) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return (uint8 *)(&GameObject::objectAddress(index)->_data);
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return (uint8 *)(&ActiveItem::activeItemAddress(index)->_data);
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		assert(index > 0);
 		if (lookupExport(index, segNum, segOff) == false)
 			error("SAGA: Cannot take address of abtract class");
 
 		return segmentAddress(segNum, segOff);
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return (uint8 *)(&ActiveMission::missionAddress(index)->_data);
 
 	default:
@@ -140,7 +140,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 	                vtOffset;
 
 	switch (btype) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 
 		//  Get the address of a game object using the ID
 		obj = ((ObjectData *)addr)->obj;
@@ -152,7 +152,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		aItem = ((ActiveItemData *)addr)->aItem;
 		script = aItem->_data.scriptClassID;
 		*callTab = &tagCFuncs;
@@ -162,7 +162,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		aMission = ((ActiveMissionData *)addr)->aMission;
 		script = aMission->getScript();
 		*callTab = &missionCFuncs;
@@ -172,7 +172,7 @@ uint16 *builtinVTableAddress(int16 btype, uint8 *addr, CallTable **callTab) {
 
 		break;
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		*callTab = nullptr;
 
 		return (uint16 *)addr;
@@ -527,16 +527,16 @@ const char *objectName(int16 segNum, uint16 segOff) {
 		return "SagaObject";
 
 	switch (segNum) {
-	case builtinTypeObject:
+	case kBuiltinTypeObject:
 		return GameObject::objectAddress(segOff)->objName();
 
-	case builtinTypeTAG:
+	case kBuiltinTypeTAG:
 		return "Tag";
 
-	case builtinAbstract:
+	case kBuiltinAbstract:
 		return "@";
 
-	case builtinTypeMission:
+	case kBuiltinTypeMission:
 		return "Mission";
 	}
 	return "???";
@@ -700,7 +700,7 @@ bool Thread::interpret() {
 				//  Halt the thread here, wait for death
 				_programCounter.offset = (pc - (_codeSeg));
 				_stackPtr = (uint8 *)stack;
-				_flags |= finished;
+				_flags |= kTFFinished;
 				return true;
 			} else {
 				_programCounter.segment = *stack++;
@@ -781,11 +781,11 @@ bool Thread::interpret() {
 
 			if (op == kOpCcall) {           // push the return value
 				*--stack = _returnVal;       // onto the stack
-				_flags |= expectResult;      // script expecting result
-			} else _flags &= ~expectResult;  // script not expecting result
+				_flags |= kTFExpectResult;      // script expecting result
+			} else _flags &= ~kTFExpectResult;  // script not expecting result
 
 			//  if the thread is asleep, then no more instructions
-			if (_flags & asleep)
+			if (_flags & kTFAsleep)
 				instruction_count = maxTimeSlice;   // break out of loop!
 
 			break;
@@ -885,11 +885,11 @@ bool Thread::interpret() {
 					//  not a 'void' call.
 					if (op == kOpCallMember) {
 						*--stack = _returnVal;   // onto the stack
-						_flags |= expectResult;  // script expecting result
-					} else _flags &= ~expectResult; // script not expecting result
+						_flags |= kTFExpectResult;  // script expecting result
+					} else _flags &= ~kTFExpectResult; // script not expecting result
 
 					//  if the thread is asleep, then break interpret loop
-					if (_flags & asleep) instruction_count = maxTimeSlice;
+					if (_flags & kTFAsleep) instruction_count = maxTimeSlice;
 					break;
 				}
 				// else it's a NULL function (i.e. pure virtual)
@@ -1556,16 +1556,16 @@ void Thread::dispatch() {
 	                    numWaitOther = 0;
 
 	for (th = threadList.first(); th; th = threadList.next(th)) {
-		if (th->_flags & waiting) {
+		if (th->_flags & kTFWaiting) {
 			switch (th->_waitType) {
 
-			case waitDelay:
+			case kWaitDelay:
 				numWaitDelay++;
 				break;
-			case waitFrameDelay:
+			case kWaitFrameDelay:
 				numWaitFrames++;
 				break;
-			case waitTagSemaphore:
+			case kWaitTagSemaphore:
 				numWaitSemi++;
 				break;
 			default:
@@ -1581,31 +1581,31 @@ void Thread::dispatch() {
 	for (th = threadList.first(); th; th = nextThread) {
 		nextThread = threadList.next(th);
 
-		if (th->_flags & (finished | aborted)) {
+		if (th->_flags & (kTFFinished | kTFAborted)) {
 			delete th;
 			continue;
 		}
 
-		if (th->_flags & waiting) {
+		if (th->_flags & kTFWaiting) {
 			switch (th->_waitType) {
 
-			case waitDelay:
+			case kWaitDelay:
 
 				//  Wake up the thread!
 
 				if (th->_waitAlarm.check())
-					th->_flags &= ~waiting;
+					th->_flags &= ~kTFWaiting;
 				break;
 
-			case waitFrameDelay:
+			case kWaitFrameDelay:
 
 				if (th->_waitFrameAlarm.check())
-					th->_flags &= ~waiting;
+					th->_flags &= ~kTFWaiting;
 				break;
 
-			case waitTagSemaphore:
+			case kWaitTagSemaphore:
 				if (th->_waitParam->isExclusive() == false) {
-					th->_flags &= ~waiting;
+					th->_flags &= ~kTFWaiting;
 					th->_waitParam->setExclusive(true);
 				}
 				break;
@@ -1615,12 +1615,12 @@ void Thread::dispatch() {
 		}
 
 		do {
-			if (th->_flags & (waiting | finished | aborted))
+			if (th->_flags & (kTFWaiting | kTFFinished | kTFAborted))
 				break;
 
 			if (th->interpret())
 				goto break_thread_loop;
-		} while (th->_flags & synchronous);
+		} while (th->_flags & kTFSynchronous);
 	}
 break_thread_loop:
 	;
@@ -1641,10 +1641,10 @@ scriptResult Thread::run() {
 
 	while (i--) {
 		//  If script stopped, then return
-		if (_flags & (waiting | finished | aborted)) {
-			if (_flags & finished)   return scriptResultFinished;
-			if (_flags & waiting)    return scriptResultAsync;
-			return scriptResultAborted;
+		if (_flags & (kTFWaiting | kTFFinished | kTFAborted)) {
+			if (_flags & kTFFinished)   return kScriptResultFinished;
+			if (_flags & kTFWaiting)    return kScriptResultAsync;
+			return kScriptResultAborted;
 			// can't ever fall thru here...
 		}
 
@@ -1658,8 +1658,8 @@ scriptResult Thread::run() {
 //	Convert to extended thread
 
 void Thread::setExtended() {
-	if (!(_flags & extended)) {
-		_flags |= extended;
+	if (!(_flags & kTFExtended)) {
+		_flags |= kTFExtended;
 		extendedThreadLevel++;
 	}
 }
@@ -1668,8 +1668,8 @@ void Thread::setExtended() {
 //	Convert back to regular thread
 
 void Thread::clearExtended() {
-	if (_flags & extended) {
-		_flags &= ~extended;
+	if (_flags & kTFExtended) {
+		_flags &= ~kTFExtended;
 		extendedThreadLevel--;
 	}
 }
@@ -1780,10 +1780,10 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	// FIXME: We should probably just use an error(), but this will work for mass debugging
 	if (th == nullptr) {
 		debugC(4, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 	} else if (!th->_valid) {
 		debugC(4, kDebugScripts, "Scripts: %d is not valid", lastExport);
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 	}
 	print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(segNum, segOff));
 
@@ -1792,7 +1792,7 @@ scriptResult runScript(uint16 exportEntryNum, scriptCallFrame &args) {
 	args.returnVal = th->_returnVal;
 
 	//  If the thread is not still running, then delete it
-	if (result != scriptResultAsync) delete th;
+	if (result != kScriptResultAsync) delete th;
 
 	// restore "thisThread" ptr.
 	thisThread = saveThread;
@@ -1812,12 +1812,12 @@ scriptResult runMethod(
 	                segOff;
 	uint16          *vTable;
 	Thread          *th;
-	scriptResult    result = scriptResultNoScript;
+	scriptResult    result = kScriptResultNoScript;
 	Thread          *saveThread = thisThread;
 
 	//  For abstract classes, the object index is also the class
 	//  index.
-	if (bType == builtinAbstract)
+	if (bType == kBuiltinAbstract)
 		index = scriptClassID;
 
 	lookupExport(scriptClassID, segNum, segOff);
@@ -1831,7 +1831,7 @@ scriptResult runMethod(
 
 	if (segNum == 0xffff) {                 // it's a CFUNC or NULL func
 		if (segOff == 0xffff) {             // it's a NULL function
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		} else {                            //  It's a C function
 			int16   funcNum = segOff;       // function number
 			int16   stack[1];             // dummy stack argument
@@ -1846,9 +1846,9 @@ scriptResult runMethod(
 			th = new Thread(0, 0, args);
 			thisThread = th;
 			if (th == nullptr)
-				return scriptResultNoScript;
+				return kScriptResultNoScript;
 			else if (!th->_valid)
-				return scriptResultNoScript;
+				return kScriptResultNoScript;
 
 			result = (scriptResult)cfunc(stack);   // call the function
 			delete th;
@@ -1859,10 +1859,10 @@ scriptResult runMethod(
 		thisThread = th;
 		if (th == nullptr) {
 			debugC(3, kDebugScripts, "Couldn't allocate memory for Thread(%d, %d)", segNum, segOff);
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		} else if (!th->_valid) {
 			debugC(3, kDebugScripts, "Scripts: %d is not valid", lastExport);
-			return scriptResultNoScript;
+			return kScriptResultNoScript;
 		}
 		print_script_name((th->_codeSeg) + th->_programCounter.offset, objectName(bType, index));
 
@@ -1875,7 +1875,7 @@ scriptResult runMethod(
 		args.returnVal = th->_returnVal;
 		debugC(3, kDebugScripts, "return: %d", th->_returnVal);
 
-		if (result != scriptResultAsync) delete th;
+		if (result != kScriptResultAsync) delete th;
 	}
 
 	thisThread = saveThread;        // restore "thisThread" ptr.
@@ -1894,7 +1894,7 @@ scriptResult runObjectMethod(
 	obj = GameObject::objectAddress(id);
 
 	return runMethod(obj->scriptClass(),
-	                 builtinTypeObject,
+	                 kBuiltinTypeObject,
 	                 id,
 	                 methodNum,
 	                 args);
@@ -1911,10 +1911,10 @@ scriptResult runTagMethod(
 
 	aItem = ActiveItem::activeItemAddress(index);
 	if (!aItem->_data.scriptClassID)
-		return scriptResultNoScript;
+		return kScriptResultNoScript;
 
 	return runMethod(aItem->_data.scriptClassID,
-	                 builtinTypeTAG,
+	                 kBuiltinTypeTAG,
 	                 index,
 	                 methodNum,
 	                 args);
@@ -1927,7 +1927,7 @@ void wakeUpThread(ThreadID id) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		thread->_flags &= ~Thread::waiting;
+		thread->_flags &= ~Thread::kTFWaiting;
 	}
 }
 
@@ -1935,13 +1935,13 @@ void wakeUpThread(ThreadID id, int16 _returnVal) {
 	if (id != NoThread) {
 		Thread  *thread = getThreadAddress(id);
 
-		if (thread->_flags & Thread::expectResult) {
+		if (thread->_flags & Thread::kTFExpectResult) {
 			WriteStatusF(8, "Result %d", _returnVal);
 			thread->_returnVal = _returnVal;
 			*(int16 *)thread->_stackPtr = _returnVal;
 		} else WriteStatusF(8, "Thread not expecting result!");
 
-		thread->_flags &= ~(Thread::waiting | Thread::expectResult);
+		thread->_flags &= ~(Thread::kTFWaiting | Thread::kTFExpectResult);
 	}
 }
 

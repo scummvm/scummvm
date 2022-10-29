@@ -449,9 +449,9 @@ bool ActiveItem::use(ActiveItem *ins, ObjectID enactor) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onUse,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
@@ -511,7 +511,7 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onCanTrigger,
 		            scf)
-		        ==  scriptResultFinished) {
+		        ==  kScriptResultFinished) {
 			if (!scf.returnVal) return true;
 		}
 	}
@@ -561,9 +561,9 @@ bool ActiveItem::trigger(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onTrigger,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
@@ -647,9 +647,9 @@ bool ActiveItem::release(ActiveItem *ins, ObjectID enactor, ObjectID objID) {
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onRelease,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
@@ -677,9 +677,9 @@ bool ActiveItem::acceptLockToggle(ActiveItem *ins, ObjectID enactor, uint8 keyCo
 		            scf.invokedTAI,
 		            Method_TileActivityInstance_onAcceptLockToggle,
 		            scf)
-		        ==  scriptResultFinished) {
-			if (scf.returnVal != actionResultNotDone)
-				return scf.returnVal == actionResultSuccess;
+		        ==  kScriptResultFinished) {
+			if (scf.returnVal != kActionResultNotDone)
+				return scf.returnVal == kActionResultSuccess;
 		}
 	}
 
