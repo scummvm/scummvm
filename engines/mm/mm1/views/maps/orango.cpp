@@ -48,7 +48,7 @@ void Orango::answerEntered() {
 	close();
 
 	for (int i = 0; i < 15 && map[ANSWER_OFFSET + i]; ++i)
-		properAnswer += map[ANSWER_OFFSET + i] & 0x7f + 29;
+		properAnswer += (map[ANSWER_OFFSET + i] & 0x7f) + 29;
 
 	if (_answer == properAnswer) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {

@@ -68,7 +68,7 @@ MODULE_OBJS := \
 	mm1/views/maps/orango.o \
 	mm1/views/maps/prisoners.o \
 	mm1/views/maps/resistances.o \
-	mm1/views/map/ruby.o \
+	mm1/views/maps/ruby.o \
 	mm1/views/maps/trivia.o \
 	mm1/views/maps/volcano_god.o \
 	mm1/views/maps/won_game.o \
