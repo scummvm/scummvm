@@ -84,18 +84,18 @@ extern SpriteSet    *objectSprites,    // object sprites
  * ===================================================================== */
 
 enum spriteFacingDirections {
-	sprFaceDown = 0,
-	sprFaceDownLeft,
-	sprFaceLeft,
-	sprFaceUpLeft,
-	sprFaceUp
+	kSprFaceDown = 0,
+	kSprFaceDownLeft,
+	kSprFaceLeft,
+	kSprFaceUpLeft,
+	kSprFaceUp
 };
 
 /* ===================================================================== *
    ActorPose: Describes an element of a choreographed action
  * ===================================================================== */
 
-const int           numPoseFacings = 8;
+const int           kNumPoseFacings = 8;
 
 //  Describes a single entry in an actor sequence
 
@@ -107,15 +107,15 @@ struct ActorPose {
 		//  Indicates which of the sprites should be drawn flipped
 		//  left-to-right
 
-		actorFlipped        = (1 << 0),     // actor spr flipped left/right
-		leftObjectFlipped   = (1 << 1),     // left hand object flipped
-		rightObjectFlipped  = (1 << 2),     // right hand object flipped
+		kActorFlipped        = (1 << 0),     // actor spr flipped left/right
+		kLeftObjectFlipped   = (1 << 1),     // left hand object flipped
+		kRightObjectFlipped  = (1 << 2),     // right hand object flipped
 
 		//  Indicates the front-to-back priority of the objects
 
-		leftObjectInFront   = (1 << 3),     // left object in front of actor
-		rightObjectInFront  = (1 << 4),     // right object in front of actor
-		leftOverRight       = (1 << 5)      // left in front of right
+		kLeftObjectInFront   = (1 << 3),     // left object in front of actor
+		kRightObjectInFront  = (1 << 4),     // right object in front of actor
+		kLeftOverRight       = (1 << 5)      // left in front of right
 	};
 
 	uint16          flags;                  // sequence element flags
@@ -145,8 +145,8 @@ struct ActorAnimation {
 	//  table of poses for that sequence, and the number of poses
 	//  in the sequence.
 
-	uint16 start[numPoseFacings];
-	uint16 count[numPoseFacings];
+	uint16 start[kNumPoseFacings];
+	uint16 count[kNumPoseFacings];
 
 	ActorAnimation(Common::SeekableReadStream *stream);
 
@@ -200,9 +200,9 @@ struct SpriteComponent {
 };
 
 enum spriteEffectFlags {
-	sprFXGhosted            = (1 << 0),     // semi-translucent dither
-	sprFXTerrainMask        = (1 << 1),     // mask sprite to terrain
-	sprFXGhostIfObscured    = (1 << 2)      // apply ghosted effect if
+	kSprFXGhosted            = (1 << 0),     // semi-translucent dither
+	kSprFXTerrainMask        = (1 << 1),     // mask sprite to terrain
+	kSprFXGhostIfObscured    = (1 << 2)      // apply ghosted effect if
 	// obscured by terrain
 };
 
@@ -226,39 +226,39 @@ struct ObjectSpriteInfo {
 //  REM: I think we want more banks than this...
 
 enum spriteBankNums {
-	sprStandBankNum = 0,
-	sprWalkBankNum,
-	sprRunBankNum,
-	sprKneelBankNum,
-	sprLeapBankNum,
-	sprClimbBankNum,
-	sprTalkBankNum,
-	sprFight1HBankNum,
-	sprFight2HBankNum,
-	sprFireBankNum,
-	sprPassiveBankNum,
-	sprUpStairsBankNum,
-	sprDnStairsBankNum,
-	sprSitBankNum,
+	kSprStandBankNum = 0,
+	kSprWalkBankNum,
+	kSprRunBankNum,
+	kSprKneelBankNum,
+	kSprLeapBankNum,
+	kSprClimbBankNum,
+	kSprTalkBankNum,
+	kSprFight1HBankNum,
+	kSprFight2HBankNum,
+	kSprFireBankNum,
+	kSprPassiveBankNum,
+	kSprUpStairsBankNum,
+	kSprDnStairsBankNum,
+	kSprSitBankNum,
 
-	sprBankCount
+	kSprBankCount
 };
 
 enum spriteBankBits {
-	sprStandBank    = (1 << sprStandBankNum),
-	sprWalkBank     = (1 << sprWalkBankNum),
-	sprRunBank      = (1 << sprRunBankNum),
-	sprKneelBank    = (1 << sprKneelBankNum),
-	sprLeapBank     = (1 << sprLeapBankNum),
-	sprClimbBank    = (1 << sprClimbBankNum),
-	sprTalkBank     = (1 << sprTalkBankNum),
-	sprFight1HBank  = (1 << sprFight1HBankNum),
-	sprFight2HBank  = (1 << sprFight2HBankNum),
-	sprFireBank     = (1 << sprFireBankNum),
-	sprPassiveBank  = (1 << sprPassiveBankNum),
-	sprUpStairsBank = (1 << sprUpStairsBankNum),
-	sprDnStairsBank = (1 << sprDnStairsBankNum),
-	sprSitBank      = (1 << sprSitBankNum)
+	kSprStandBank    = (1 << kSprStandBankNum),
+	kSprWalkBank     = (1 << kSprWalkBankNum),
+	kSprRunBank      = (1 << kSprRunBankNum),
+	kSprKneelBank    = (1 << kSprKneelBankNum),
+	kSprLeapBank     = (1 << kSprLeapBankNum),
+	kSprClimbBank    = (1 << kSprClimbBankNum),
+	kSprTalkBank     = (1 << kSprTalkBankNum),
+	kSprFight1HBank  = (1 << kSprFight1HBankNum),
+	kSprFight2HBank  = (1 << kSprFight2HBankNum),
+	kSprFireBank     = (1 << kSprFireBankNum),
+	kSprPassiveBank  = (1 << kSprPassiveBankNum),
+	kSprUpStairsBank = (1 << kSprUpStairsBankNum),
+	kSprDnStairsBank = (1 << kSprDnStairsBankNum),
+	kSprSitBank      = (1 << kSprSitBankNum)
 };
 
 //  This structure is used to contain all of the items needed
@@ -276,7 +276,7 @@ public:
 	ActorAnimSet    *_poseList;             // list of action sequences
 	ColorSchemeList *_schemeList;           // color remapping info
 
-	SpriteSet       *_spriteBanks[sprBankCount];
+	SpriteSet       *_spriteBanks[kSprBankCount];
 
 	void loadSpriteBanks(int16 banksNeeded);
 

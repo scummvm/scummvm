@@ -257,7 +257,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				//  actor's appearance.
 				if (a->_appearance == nullptr) {
 					a->_appearance =
-					    LoadActorAppearance(a->_appearanceID, sprStandBank);
+					    LoadActorAppearance(a->_appearanceID, kSprStandBank);
 				}
 			}
 
@@ -643,7 +643,7 @@ void DisplayNode::drawObject() {
 			if (a->_leftHandObject != Nothing) {
 				partCount++;
 
-				if (poseFlags & ActorPose::leftObjectInFront) {
+				if (poseFlags & ActorPose::kLeftObjectInFront) {
 					leftIndex = 1;
 				} else {
 					leftIndex = 0;
@@ -654,9 +654,9 @@ void DisplayNode::drawObject() {
 			if (a->_rightHandObject != Nothing) {
 				partCount++;
 
-				if (poseFlags & ActorPose::rightObjectInFront) {
+				if (poseFlags & ActorPose::kRightObjectInFront) {
 					if (leftIndex == 1
-					        &&  poseFlags & ActorPose::leftOverRight) {
+					        &&  poseFlags & ActorPose::kLeftOverRight) {
 						leftIndex = 2;
 						rightIndex = 1;
 					} else {
@@ -664,7 +664,7 @@ void DisplayNode::drawObject() {
 					}
 				} else {
 					if (leftIndex == 0
-					        &&  poseFlags & ActorPose::leftOverRight) {
+					        &&  poseFlags & ActorPose::kLeftOverRight) {
 						rightIndex = 0;
 						leftIndex = 1;
 						bodyIndex = 2;
@@ -693,7 +693,7 @@ void DisplayNode::drawObject() {
 			//  Color remapping info
 			sc->colorTable = mainColors;
 			//          sc->colorTable = aa->schemeList ? mainColors : identityColors;
-			sc->flipped = (poseFlags & ActorPose::actorFlipped);
+			sc->flipped = (poseFlags & ActorPose::kActorFlipped);
 
 			assert(sc->sp != nullptr);
 			assert(sc->sp->size.x > 0);
@@ -720,7 +720,7 @@ void DisplayNode::drawObject() {
 				assert(sc->offset.y < 1000);
 				assert(sc->offset.y > -1000);
 				sc->colorTable = leftColors;
-				sc->flipped = (poseFlags & ActorPose::leftObjectFlipped);
+				sc->flipped = (poseFlags & ActorPose::kLeftObjectFlipped);
 			}
 
 			//  If we were carrying something in the right hand,
@@ -746,7 +746,7 @@ void DisplayNode::drawObject() {
 				assert(sc->offset.y < 1000);
 				assert(sc->offset.y > -1000);
 				sc->colorTable = rightColors;
-				sc->flipped = (poseFlags & ActorPose::rightObjectFlipped);
+				sc->flipped = (poseFlags & ActorPose::kRightObjectFlipped);
 			}
 		}
 	}
@@ -757,12 +757,12 @@ void DisplayNode::drawObject() {
 	int16       effectFlags = 0;
 	bool        obscured;
 
-	if (ghostIt) effectFlags |= sprFXGhosted;
+	if (ghostIt) effectFlags |= kSprFXGhosted;
 
 	if (obj->isSightedByCenter() && objRoofRipped(obj))
-		effectFlags |= sprFXGhostIfObscured;
+		effectFlags |= kSprFXGhostIfObscured;
 
-	effectFlags |= sprFXTerrainMask;
+	effectFlags |= kSprFXTerrainMask;
 
 	DrawCompositeMaskedSprite(
 	    g_vm->_backPort,
@@ -773,7 +773,7 @@ void DisplayNode::drawObject() {
 	    effectFlags,
 	    &obscured);
 
-	if (effectFlags & sprFXGhostIfObscured)
+	if (effectFlags & kSprFXGhostIfObscured)
 		obj->setObscured(obscured);
 
 	//  Record the extent box that the sprite was drawn
@@ -854,7 +854,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 
 						spr = ss->sprite(a->_poseInfo.actorFrameIndex);
 						flipped =
-						    (a->_poseInfo.flags & ActorPose::actorFlipped) ? 1 : 0;
+						    (a->_poseInfo.flags & ActorPose::kActorFlipped) ? 1 : 0;
 					}
 
 					if (GetSpritePixel(spr, flipped, testPoint)) {
@@ -1000,7 +1000,7 @@ void Effectron::drawEffect() {
 	    objCoords,
 	    ((obscured) &&    //objectFlags & GameObject::kObjectObscured ) &&
 	     0
-	     ? sprFXGhosted : sprFXTerrainMask));
+	     ? kSprFXGhosted : kSprFXTerrainMask));
 
 }
 

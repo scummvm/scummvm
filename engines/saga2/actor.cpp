@@ -2086,7 +2086,7 @@ bool Actor::isActionAvailable(int16 newState, bool anyDir) {
 		return false;
 
 	if (anyDir) {
-		for (int i = 0; i < numPoseFacings; i++) {
+		for (int i = 0; i < kNumPoseFacings; i++) {
 			if (anim->count[i] > 0) return true;
 		}
 	} else {

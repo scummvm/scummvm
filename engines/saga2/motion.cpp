@@ -2421,9 +2421,9 @@ void MotionTask::walkAction() {
 		//  If we can see this actor, and the actor's run frames
 		//  have not been loaded, then downgrade this action to
 		//  a walk (but request the run frames).
-		if (aa && !aa->isBankLoaded(sprRunBankNum)) {
+		if (aa && !aa->isBankLoaded(kSprRunBankNum)) {
 			walkType = walkNormal;
-			aa->requestBank(sprRunBankNum);
+			aa->requestBank(kSprRunBankNum);
 		}
 	}
 
@@ -2447,8 +2447,8 @@ void MotionTask::walkAction() {
 			//  If we can see this actor, and this actor's walk
 			//  frames have not been loaded, then downgrade this
 			//  action to a stand (i.e. do nothing).
-			if (aa && !aa->isBankLoaded(sprWalkBankNum)) {
-				aa->requestBank(sprWalkBankNum);
+			if (aa && !aa->isBankLoaded(kSprWalkBankNum)) {
+				aa->requestBank(kSprWalkBankNum);
 				return;
 			}
 		} else {
