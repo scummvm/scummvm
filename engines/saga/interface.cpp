@@ -1203,10 +1203,10 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 	case Common::KEYCODE_DELETE:
 		if (_textInputPos <= _textInputStringLength) {
 			if (_textInputPos != 1) {
-				strncpy(tempString, _textInputString, _textInputPos - 1);
+				Common::strlcpy(tempString, _textInputString, _textInputPos);
 			}
 			if (_textInputPos != _textInputStringLength) {
-				strncat(tempString, &_textInputString[_textInputPos], _textInputStringLength - _textInputPos);
+				Common::strlcat(tempString, &_textInputString[_textInputPos], _textInputStringLength + 1);
 			}
 			Common::strcpy_s(_textInputString, tempString);
 			_textInputStringLength = strlen(_textInputString);
@@ -1243,14 +1243,14 @@ bool Interface::processTextInput(Common::KeyState keystate) {
 					break;
 				}
 				if (_textInputPos != 1) {
-					strncpy(tempString, _textInputString, _textInputPos - 1);
+					Common::strlcpy(tempString, _textInputString, _textInputPos);
 					Common::strcat_s(tempString, ch);
 				}
 				if ((_textInputStringLength == 0) || (_textInputPos == 1)) {
 					Common::strcpy_s(tempString, ch);
 				}
 				if ((_textInputStringLength != 0) && (_textInputPos != _textInputStringLength)) {
-					strncat(tempString, &_textInputString[_textInputPos - 1], _textInputStringLength - _textInputPos + 1);
+					Common::strlcat(tempString, &_textInputString[_textInputPos - 1], _textInputStringLength + 1);
 				}
 
 				Common::strcpy_s(_textInputString, tempString);
@@ -2496,7 +2496,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 		}
 
 		_converseText[_converseTextCount].text.resize(i + 1);
-		strncpy(&_converseText[_converseTextCount].text.front(), _converseWorkString, i);
+		Common::strlcpy(&_converseText[_converseTextCount].text.front(), _converseWorkString, i + 1);
 
 		_converseText[_converseTextCount].strId = strId;
 		_converseText[_converseTextCount].text[i] = 0;
@@ -2512,7 +2512,7 @@ bool Interface::converseAddText(const char *text, int strId, int replyId, byte r
 		if (len == i)
 			break;
 
-		strncpy(_converseWorkString, &_converseWorkString[i + 1], len - i);
+		Common::strlcpy(_converseWorkString, &_converseWorkString[i + 1], CONVERSE_MAX_WORK_STRING);
 	}
 
 	_converseStrCount++;
