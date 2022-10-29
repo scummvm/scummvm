@@ -1107,9 +1107,9 @@ void Actor::drawSpeech() {
 	outputString.resize(stringLength + 1);
 
 	if (_activeSpeech.speechFlags & kSpeakSlow)
-		strncpy(&outputString.front(), _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 1);
+		Common::strlcpy(&outputString.front(), _activeSpeech.strings[0], _activeSpeech.slowModeCharIndex + 2);
 	else
-		strncpy(&outputString.front(), _activeSpeech.strings[0], stringLength);
+		Common::strlcpy(&outputString.front(), _activeSpeech.strings[0], stringLength + 1);
 
 	if (_activeSpeech.actorsCount > 1) {
 		height = _vm->_font->getHeight(kKnownFontScript);
