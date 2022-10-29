@@ -1285,8 +1285,8 @@ void LB::b_nothing(int nargs) {
 
 void LB::b_delay(int nargs) {
 	Datum d = g_lingo->pop();
-
 	g_director->getCurrentMovie()->getScore()->_nextFrameTime = g_system->getMillis() + (float)d.asInt() / 60 * 1000;
+	debugC(5, kDebugLoading, "b_delay(): delaying %d ticks, next frame time at %d", d.asInt(), g_director->getCurrentMovie()->getScore()->_nextFrameTime);
 }
 
 void LB::b_do(int nargs) {

@@ -325,6 +325,7 @@ void Score::update() {
 	if (!debugChannelSet(-1, kDebugFast)) {
 		bool keepWaiting = false;
 
+		debugC(8, kDebugLoading, "Score::update(): nextFrameTime: %d, time: %d", _nextFrameTime, g_system->getMillis(false));
 		if (_waitForChannel) {
 			if (_soundManager->isChannelActive(_waitForChannel)) {
 				keepWaiting = true;
@@ -421,7 +422,53 @@ void Score::update() {
 		}
 	}
 
-	debugC(1, kDebugImages, "******************************  Current frame: %d", _currentFrame);
+	byte tempo = _frames[_currentFrame]->_scoreCachedTempo;
+	// puppetTempo is overridden by changes in score tempo
+	if (_frames[_currentFrame]->_tempo || tempo != _lastTempo) {
+		_puppetTempo = 0;
+	} else if (_puppetTempo) {
+		tempo = _puppetTempo;
+	}
+
+	if (tempo) {
+		const bool waitForClickOnly = _vm->getVersion() < 300;
+		const int maxDelay = _vm->getVersion() < 400 ? 120 : 60;
+		if (tempo >= 256 - maxDelay) {
+			// Delay
+			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
+		} else if (tempo <= 120) {
+			// FPS
+			_currentFrameRate = tempo;
+			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+		} else {
+			if (tempo == 128) {
+				_waitForClick = true;
+				_waitForClickCursor = false;
+				renderCursor(_movie->getWindow()->getMousePos());
+			} else if (!waitForClickOnly && tempo == 135) {
+				// Wait for sound channel 1
+				_waitForChannel = 1;
+			} else if (!waitForClickOnly && tempo == 134) {
+				// Wait for sound channel 2
+				_waitForChannel = 2;
+
+			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
+				// Wait for a digital video in a channel to finish playing
+				_waitForVideoChannel = tempo - 135;
+			} else {
+				warning("Unhandled tempo instruction: %d", tempo);
+			}
+			_nextFrameTime = g_system->getMillis();
+		}
+	} else {
+		_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
+	}
+	_lastTempo = tempo;
+
+	if (debugChannelSet(-1, kDebugSlow))
+		_nextFrameTime += 1000;
+
+	debugC(1, kDebugLoading, "******************************  Current frame: %d, time: %d", _currentFrame, g_system->getMillis(false));
 	g_debugger->frameHook();
 
 	uint initialCallStackSize = _window->_callstack.size();
@@ -471,51 +518,6 @@ void Score::update() {
 		}
 	}
 
-	byte tempo = _frames[_currentFrame]->_scoreCachedTempo;
-	// puppetTempo is overridden by changes in score tempo
-	if (_frames[_currentFrame]->_tempo || tempo != _lastTempo) {
-		_puppetTempo = 0;
-	} else if (_puppetTempo) {
-		tempo = _puppetTempo;
-	}
-
-	if (tempo) {
-		const bool waitForClickOnly = _vm->getVersion() < 300;
-		const int maxDelay = _vm->getVersion() < 400 ? 120 : 60;
-		if (tempo >= 256 - maxDelay) {
-			// Delay
-			_nextFrameTime = g_system->getMillis() + (256 - tempo) * 1000;
-		} else if (tempo <= 120) {
-			// FPS
-			_currentFrameRate = tempo;
-			_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-		} else {
-			if (tempo == 128) {
-				_waitForClick = true;
-				_waitForClickCursor = false;
-				renderCursor(_movie->getWindow()->getMousePos());
-			} else if (!waitForClickOnly && tempo == 135) {
-				// Wait for sound channel 1
-				_waitForChannel = 1;
-			} else if (!waitForClickOnly && tempo == 134) {
-				// Wait for sound channel 2
-				_waitForChannel = 2;
-
-			} else if (!waitForClickOnly && tempo >= 136 && tempo <= 135 + _numChannelsDisplayed) {
-				// Wait for a digital video in a channel to finish playing
-				_waitForVideoChannel = tempo - 135;
-			} else {
-				warning("Unhandled tempo instruction: %d", tempo);
-			}
-			_nextFrameTime = g_system->getMillis();
-		}
-	} else {
-		_nextFrameTime = g_system->getMillis() + 1000.0 / (float)_currentFrameRate;
-	}
-	_lastTempo = tempo;
-
-	if (debugChannelSet(-1, kDebugSlow))
-		_nextFrameTime += 1000;
 }
 
 void Score::renderFrame(uint16 frameId, RenderMode mode) {
