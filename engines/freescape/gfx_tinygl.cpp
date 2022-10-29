@@ -289,7 +289,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
 
-			dx = dy = dz = 0;
+			dx = dy = dz = 0.0;
 			if (size.x() == 0) {
 				dy = size.y();
 			} else if (size.y() == 0) {
@@ -305,7 +305,7 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 			vertices.clear();
 			vertices.push_back(Math::Vector3d(origin.x(), origin.y(), origin.z()));
 
-			dx = dy = dz = 0;
+			dx = dy = dz = 0.0;
 			if (size.x() == 0) {
 				dz = size.z();
 			} else if (size.y() == 0) {
