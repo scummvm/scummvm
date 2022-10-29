@@ -119,4 +119,4 @@ private:
 
 } // End of namespace Freescape
 
-#endif /* defined(__Phantasma__Token__) */
+#endif // FREESCAPE_TOKEN_H

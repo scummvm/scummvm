@@ -170,4 +170,4 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH);
 
 } // End of namespace Freescape
 
-#endif // GFX_H_
+#endif // FREESCAPE_GFX_H
