@@ -364,9 +364,7 @@ void FreescapeEngine::processInput() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics
-	_gfx = createRenderer(_system, _screenW, _screenH);
-	_gfx->_isAmiga = isAmiga();
-	_gfx->_isAtariST = isAtariST();
+	_gfx = createRenderer(_system, _screenW, _screenH, _renderMode);
 	_gfx->init();
 	_gfx->clear();
 

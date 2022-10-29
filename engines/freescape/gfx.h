@@ -22,6 +22,7 @@
 #ifndef FREESCAPE_GFX_H
 #define FREESCAPE_GFX_H
 
+#include "common/rendermode.h"
 #include "common/rect.h"
 
 #include "graphics/tinygl/pixelbuffer.h"
@@ -52,7 +53,7 @@ public:
 
 class Renderer {
 public:
-	Renderer(OSystem *system, int screenW, int screenH);
+	Renderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 	virtual ~Renderer();
 
 	Graphics::PixelFormat _currentPixelFormat;
@@ -121,8 +122,7 @@ public:
 
 	int _screenW;
 	int _screenH;
-	bool _isAmiga;
-	bool _isAtariST;
+	Common::RenderMode _renderMode;
 
 	void computeScreenViewport();
 
@@ -162,10 +162,10 @@ private:
 	uint _startFrameTime;
 };
 
-Renderer *CreateGfxOpenGL(OSystem *system);
-Renderer *CreateGfxOpenGLShader(OSystem *system);
-Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH);
-Renderer *createRenderer(OSystem *system, int screenW, int screenH);
+Renderer *CreateGfxOpenGL(OSystem *system, Common::RenderMode renderMode);
+Renderer *CreateGfxOpenGLShader(OSystem *system, Common::RenderMode renderMode);
+Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
+Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 
 } // End of namespace Freescape
 

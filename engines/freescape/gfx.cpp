@@ -33,7 +33,7 @@
 
 namespace Freescape {
 
-Renderer::Renderer(OSystem *system, int screenW, int screenH)
+Renderer::Renderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode)
 	: _system(system) {
 
 	_screenW = screenW;
@@ -44,8 +44,7 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH)
 	_keyColor = -1;
 	_palette = nullptr;
 	_colorMap = nullptr;
-	_isAmiga = false;
-	_isAtariST = false;
+	_renderMode = renderMode;
 }
 
 Renderer::~Renderer() {}
@@ -68,7 +67,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		return true;
 	}
 
-	if (_isAmiga || _isAtariST) {
+	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
 		_palette->getRGBAt(index, r, g, b);
 		return true;
 	}
@@ -104,7 +103,7 @@ void Renderer::computeScreenViewport() {
 	_screenViewport = Common::Rect(_screenW, _screenH);
 }
 
-Renderer *createRenderer(OSystem *system, int screenW, int screenH) {
+Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
 	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL;  // Graphics::parseRendererTypeCode(rendererConfig);
@@ -145,7 +144,7 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH) {
 		}
 	#endif*/
 	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
-		return CreateGfxTinyGL(system, screenW, screenH);
+		return CreateGfxTinyGL(system, screenW, screenH, renderMode);
 	}
 
 	error("Unable to create a '%s' renderer", rendererConfig.c_str());
