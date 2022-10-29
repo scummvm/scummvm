@@ -961,7 +961,7 @@ void Actor::init(
 	_attitude            = 0;
 	_mood                = 0;
 	_disposition         = 0;
-	_currentFacing       = dirDown;
+	_currentFacing       = kDirDown;
 	_tetherLocU          = 0;
 	_tetherLocV          = 0;
 	_tetherDist          = 0;

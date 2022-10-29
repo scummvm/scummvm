@@ -1692,7 +1692,7 @@ bool MeleeWeaponProto::canBlock() {
 //  Return a mask of bits indicating the directions relative to the
 //  wielders facing in which this object can defend
 uint8 MeleeWeaponProto::defenseDirMask() {
-	return 1 << dirUp;
+	return 1 << kDirUp;
 }
 
 //-----------------------------------------------------------------------
@@ -2313,7 +2313,7 @@ bool ShieldProto::canBlock() {
 //  Return a mask of bits indicating the directions relative to the
 //  wielders facing in which this object can defend
 uint8 ShieldProto::defenseDirMask() {
-	return (1 << dirUp) | (1 << dirUpLeft);
+	return (1 << kDirUp) | (1 << kDirUpLeft);
 }
 
 //-----------------------------------------------------------------------

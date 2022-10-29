@@ -2649,20 +2649,20 @@ void MotionTask::walkAction() {
 
 		if (foundPath == false) {
 			if (targetVector.u > speed / 2
-			        &&  checkWalk(dirUpRight, speedScale, 0, newPos)) {
-				movementDirection = dirUpRight;
+			        &&  checkWalk(kDirUpRight, speedScale, 0, newPos)) {
+				movementDirection = kDirUpRight;
 				foundPath = true;
 			} else if (-targetVector.u > speed / 2
-			           &&  checkWalk(dirDownLeft, speedScale, 0, newPos)) {
-				movementDirection = dirDownLeft;
+			           &&  checkWalk(kDirDownLeft, speedScale, 0, newPos)) {
+				movementDirection = kDirDownLeft;
 				foundPath = true;
 			} else if (targetVector.v > speed / 2
-			           &&  checkWalk(dirUpLeft, speedScale, 0, newPos)) {
-				movementDirection = dirUpLeft;
+			           &&  checkWalk(kDirUpLeft, speedScale, 0, newPos)) {
+				movementDirection = kDirUpLeft;
 				foundPath = true;
 			} else if (-targetVector.v > speed / 2
-			           &&  checkWalk(dirDownRight, speedScale, 0, newPos)) {
-				movementDirection = dirDownRight;
+			           &&  checkWalk(kDirDownRight, speedScale, 0, newPos)) {
+				movementDirection = kDirDownRight;
 				foundPath = true;
 			}
 		}

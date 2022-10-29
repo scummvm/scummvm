@@ -1724,11 +1724,11 @@ int16 TilePoint::quickDir() {
 	                v2 = v * 2;
 
 	if (u < v2) {
-		if (v > -u2) return (v > u2 ? dirUpLeft : dirUp);
-		return (u > -v2 ? dirLeft : dirDownLeft);
+		if (v > -u2) return (v > u2 ? kDirUpLeft : kDirUp);
+		return (u > -v2 ? kDirLeft : kDirDownLeft);
 	} else {
-		if (v > -u2) return (u > -v2 ? dirUpRight : dirRight);
-		return (v > u2 ? dirDown : dirDownRight);
+		if (v > -u2) return (u > -v2 ? kDirUpRight : kDirRight);
+		return (v > u2 ? kDirDown : kDirDownRight);
 	}
 }
 

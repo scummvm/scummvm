@@ -1576,7 +1576,7 @@ big_break:
 			        quantizedCoords.z),
 			    platform,
 			    cost,
-			    dirInvalid,
+			    kDirInvalid,
 			    0);
 		}
 	}
@@ -1599,10 +1599,10 @@ void PathRequest::finish() {
 		cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 		assert(cell != nullptr);
 
-		if (cell->direction != dirInvalid) {
+		if (cell->direction != kDirInvalid) {
 			res = &tempResult[ARRAYSIZE(tempResult)];
 
-			prevDir = dirInvalid;
+			prevDir = kDirInvalid;
 
 			for (;;) {
 				int16       reverseDir;
@@ -1610,7 +1610,7 @@ void PathRequest::finish() {
 				cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 				assert(cell != nullptr);
 
-				if (cell->direction != dirInvalid) {
+				if (cell->direction != kDirInvalid) {
 					if (cell->direction != prevDir
 					        ||  ABS(cell->height - prevHeight) > kMaxStepHeight) {
 						if (res <= tempResult) break;
@@ -1710,7 +1710,7 @@ PathResult PathRequest::findPath() {
 		centerTileCoords.v = qi.v + _baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		if (qi.direction == dirInvalid) {
+		if (qi.direction == kDirInvalid) {
 			//  If this is the starting position, check all directions
 			i = dir = 0;
 			tDir = tDirTable2;
@@ -1976,7 +1976,7 @@ PathResult PathRequest::findPath() {
 			cost += costTable[
 			            7
 			            +   dir
-			            - (qi.direction != dirInvalid
+			            - (qi.direction != kDirInvalid
 			               ?   qi.direction
 			               :   _actor->_currentFacing)];
 
@@ -2425,10 +2425,10 @@ posVMask = 0x0770,
 negVMask = 0x0ee0;
 
 uint16 sTerrainMasks[8] = {
-	posUMask, negUMask,             //  dirUpLeft (U+)
-	negVMask, posVMask,             //  dirDownLeft (V-)
-	negUMask, posUMask,             //  dirDownRight (U-)
-	posVMask, negVMask,             //  dirUpRight (V+)
+	posUMask, negUMask,             //  kDirUpLeft (U+)
+	negVMask, posVMask,             //  kDirDownLeft (V-)
+	negUMask, posUMask,             //  kDirDownRight (U-)
+	posVMask, negVMask,             //  kDirUpRight (V+)
 };
 
 TilePoint selectNearbySite(
@@ -2575,8 +2575,8 @@ TilePoint selectNearbySite(
 
 		if (distFromCenter >= maxDist) continue;
 
-		for (dir = dirUpLeft;
-		        dir <= dirUpRight;
+		for (dir = kDirUpLeft;
+		        dir <= kDirUpRight;
 		        dir += 2) {
 			uint32          terrain;
 			uint8           *cell;
@@ -2804,8 +2804,8 @@ bool checkPath(
 
 		centerDistFromDest = (_centerPt - destCoords).quickHDistance();
 
-		for (dir = dirUpLeft;
-		        dir <= dirUpRight;
+		for (dir = kDirUpLeft;
+		        dir <= kDirUpRight;
 		        dir += 2) {
 			uint32          terrain;
 			uint8           *cell;
