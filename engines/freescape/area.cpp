@@ -71,9 +71,9 @@ Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap
 	gasPocketRadius = 0;
 
 	// create a list of drawable objects only
-	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
-		if (iterator->_value->isDrawable()) {
-			drawableObjects.push_back(iterator->_value);
+	for (auto &it : *objectsByID) {
+		if (it._value->isDrawable()) {
+			drawableObjects.push_back(it._value);
 		}
 	}
 
@@ -93,13 +93,13 @@ Area::Area(uint16 _areaID, uint16 _areaFlags, ObjectMap *_objectsByID, ObjectMap
 
 Area::~Area() {
 	if (entrancesByID) {
-		for (ObjectMap::iterator iterator = entrancesByID->begin(); iterator != entrancesByID->end(); iterator++)
-			delete iterator->_value;
+		for (auto &it : *entrancesByID)
+			delete it._value;
 	}
 
 	if (objectsByID) {
-		for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++)
-			delete iterator->_value;
+		for (auto &it : *objectsByID)
+			delete it._value;
 	}
 
 	delete entrancesByID;
@@ -111,11 +111,11 @@ Area::~Area() {
 
 void Area::show() {
 	debugC(1, kFreescapeDebugMove, "Area name: %s", name.c_str());
-	for (ObjectMap::iterator it = objectsByID->begin(); it != objectsByID->end(); it++)
-		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d", (*it)._value->getObjectID(), (*it)._value->getType());
+	for (auto &it : *objectsByID)
+		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d", it._value->getObjectID(), it._value->getType());
 
-	for (ObjectMap::iterator it = entrancesByID->begin(); it != entrancesByID->end(); it++)
-		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d (entrance)", (*it)._value->getObjectID(), (*it)._value->getType());
+	for (auto &it : *entrancesByID)
+		debugC(1, kFreescapeDebugMove, "objID: %d, type: %d (entrance)", it._value->getObjectID(), it._value->getType());
 }
 
 void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
@@ -144,9 +144,9 @@ void Area::loadObjects(Common::SeekableReadStream *stream, Area *global) {
 void Area::saveObjects(Common::WriteStream *stream) {
 	stream->writeUint32LE(objectsByID->size());
 
-	for (ObjectMap::iterator iterator = objectsByID->begin(); iterator != objectsByID->end(); iterator++) {
-		Object *obj = iterator->_value;
-		stream->writeUint32LE(iterator->_key);
+	for (auto &it : *objectsByID) {
+		Object *obj = it._value;
+		stream->writeUint32LE(it._key);
 		stream->writeUint32LE(obj->getObjectFlags());
 		stream->writeFloatLE(obj->getOrigin().x());
 		stream->writeFloatLE(obj->getOrigin().y());

@@ -515,8 +515,8 @@ void DrillerEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
-		_gameStateBits[it->_key] = 0;
+	for (auto &it : _areaMap)
+		_gameStateBits[it._key] = 0;
 
 	_gameStateVars[k8bitVariableEnergy] = _initialProveEnergy;
 	_gameStateVars[k8bitVariableShield] = _initialProveShield;

@@ -127,8 +127,8 @@ FreescapeEngine::~FreescapeEngine() {
 	delete _uiTexture;
 	delete _titleTexture;
 
-	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
-		delete it->_value;
+	for (auto &it : _areaMap)
+		delete it._value;
 
 	delete _gfx;
 	delete _dataBundle;
@@ -431,8 +431,8 @@ void FreescapeEngine::initGameState() {
 	for (int i = 0; i < k8bitMaxVariable; i++) // TODO: check maximum variable
 		_gameStateVars[i] = 0;
 
-	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it)
-		_gameStateBits[it->_key] = 0;
+	for (auto &it : _areaMap)
+		_gameStateBits[it._key] = 0;
 }
 
 void FreescapeEngine::rotate(float xoffset, float yoffset) {
@@ -561,19 +561,19 @@ Common::Error FreescapeEngine::saveGameStream(Common::WriteStream *stream, bool 
 	stream->writeFloatLE(_pitch);
 
 	// Level state
-	for (StateVars::iterator it = _gameStateVars.begin(); it != _gameStateVars.end(); ++it) {
-		stream->writeUint16LE(it->_key);
-		stream->writeUint32LE(it->_value);
+	for (auto &it : _gameStateVars) {
+		stream->writeUint16LE(it._key);
+		stream->writeUint32LE(it._value);
 	}
 
-	for (StateBits::iterator it = _gameStateBits.begin(); it != _gameStateBits.end(); ++it) {
-		stream->writeUint16LE(it->_key);
-		stream->writeUint32LE(it->_value);
+	for (auto &it : _gameStateBits) {
+		stream->writeUint16LE(it._key);
+		stream->writeUint32LE(it._value);
 	}
 
-	for (AreaMap::iterator it = _areaMap.begin(); it != _areaMap.end(); ++it) {
-		stream->writeUint16LE(it->_key);
-		it->_value->saveObjects(stream);
+	for (auto &it : _areaMap) {
+		stream->writeUint16LE(it._key);
+		it._value->saveObjects(stream);
 	}
 
 	stream->writeByte(_flyMode);
