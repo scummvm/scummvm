@@ -237,7 +237,7 @@ static const ADExtraGuiOptionsMap optionsList[] = {
 		GAMEOPTION_PRERECORDED_SOUNDS,
 		{
 			_s("Prerecorded sounds"),
-			_s("Use high-quality pre-recorded sounds instead of pc speaker emulation."),
+			_s("Use high-quality pre-recorded sounds instead of pc speaker emulation"),
 			"prerecorded_sounds",
 			true,
 			0,
