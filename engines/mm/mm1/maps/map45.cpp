@@ -31,12 +31,11 @@ namespace Maps {
 
 void Map45::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 22; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[73 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +43,117 @@ void Map45::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map45::special00() {
+	send(SoundMessage(STRING["maps.map45.message8"]));
+}
+
+void Map45::special01() {
+	send(SoundMessage(
+		STRING["maps.map45.passage"],
+		[]() {
+			g_maps->_mapPos = Common::Point(15, 12);
+			g_maps->changeMap(5, 1);
+		}
+	));
+}
+
+void Map45::special02() {
+	special04();
+}
+
+void Map45::special03() {
+	send(SoundMessage(
+		STRING["maps.stairs_up"],
+		[]() {
+			g_maps->changeMap(0x107, 1);
+		}
+	));
+}
+
+void Map45::special04() {
+	send(SoundMessage(
+		STRING["maps.stairs_down"],
+		[]() {
+			g_maps->changeMap(0xa00, 3);
+		}
+	));
+}
+
+void Map45::special05() {
+	encounter(&_data[600], &_data[611]);
+}
+
+void Map45::special06() {
+	encounter(&_data[622], &_data[633]);
+}
+
+void Map45::special07() {
+	encounter(&_data[644], &_data[657]);
+}
+
+void Map45::special08() {
+	encounter(&_data[670], &_data[683]);
+}
+
+void Map45::special09() {
+	encounter(&_data[696], &_data[710]);
+}
+
+void Map45::special10() {
+	encounter(&_data[724], &_data[737]);
+}
+
+void Map45::special11() {
+	encounter(&_data[750], &_data[761]);
+}
+
+void Map45::special12() {
+	encounter(&_data[772], &_data[786]);
+}
+
+void Map45::special13() {
+	encounter(&_data[800], &_data[814]);
+}
+
+void Map45::special14() {
+	encounter(&_data[828], &_data[837]);
+}
+
+void Map45::special15() {
+	send(SoundMessage(STRING["maps.map45.sign1"]));
+}
+
+void Map45::special16() {
+	showSign(STRING["maps.map45.sign2"]);
+}
+
+void Map45::special18() {
+	showSign(STRING["maps.map45.sign3"]);
+}
+
+void Map45::special19() {
+	send(SoundMessage(STRING["maps.map45.walls"]));
+}
+
+void Map45::special20() {
+	send(SoundMessage(STRING["maps.map45.message"]));
+}
+
+void Map45::special21() {
+	send(SoundMessage(STRING["maps.map45.wall"]));
+}
+
+void Map45::showSign(const Common::String &line) {
+	send(SoundMessage(
+		0, 1, STRING["maps.sign"],
+		0, 2, line
+	));
 }
 
 } // namespace Maps

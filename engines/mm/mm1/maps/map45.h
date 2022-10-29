@@ -32,9 +32,51 @@ class Map45 : public Map {
 	typedef void (Map45:: *SpecialFn)();
 private:
 	void special00();
+	void special01();
+	void special02();
+	void special03();
+	void special04();
+	void special05();
+	void special06();
+	void special07();
+	void special08();
+	void special09();
+	void special10();
+	void special11();
+	void special12();
+	void special13();
+	void special14();
+	void special15();
+	void special16();
+	void special18();
+	void special19();
+	void special20();
+	void special21();
+	void showSign(const Common::String &line);
 
-	const SpecialFn SPECIAL_FN[1] = {
-		&Map45::special00
+	const SpecialFn SPECIAL_FN[22] = {
+		&Map45::special00,
+		&Map45::special01,
+		&Map45::special02,
+		&Map45::special03,
+		&Map45::special04,
+		&Map45::special05,
+		&Map45::special06,
+		&Map45::special07,
+		&Map45::special08,
+		&Map45::special09,
+		&Map45::special10,
+		&Map45::special11,
+		&Map45::special12,
+		&Map45::special13,
+		&Map45::special14,
+		&Map45::special15,
+		&Map45::special16,
+		&Map45::special16,
+		&Map45::special18,
+		&Map45::special19,
+		&Map45::special20,
+		&Map45::special21
 	};
 public:
 	Map45() : Map(45, "udrag1", 0xF05) {}
