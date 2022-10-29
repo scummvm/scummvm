@@ -385,10 +385,10 @@ void call_functions(const char *base_name) {
 	 * PASS. IF THE COMMAND FAILS, 'TIME' WILL BE SET TO FALSE */
 	TIME->value = TRUE;
 
-	strncpy(base_function, base_name + 1, 80);
+	Common::strlcpy(base_function, base_name + 1, 81);
 	Common::strcat_s(base_function, "_");
 
-	strncpy(override_, base_function, 80);
+	Common::strlcpy(override_, base_function, 81);
 
 	Common::strcpy_s(before_function, "+before_");
 	Common::strcat_s(before_function, base_name + 1);

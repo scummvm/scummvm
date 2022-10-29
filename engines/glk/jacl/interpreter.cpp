@@ -331,8 +331,7 @@ void cb1(void *s, size_t i, void *not_used) {
 		//write_text("Resolved ");
 		//write_text(temp_buffer);
 		//write_text("^");
-		strncpy(resolved_cstring->value, (const char *)s, i);
-		resolved_cstring->value[i] = 0;
+		Common::strcpy_s(resolved_cstring->value, (const char *)s);
 		//sprintf(temp_buffer, "Setting field %d to ~%s~^", field_no, (const char *) s);
 		//write_text(temp_buffer);
 		// INCREMENT THE FIELD NUMBER SO THE NEXT ONE GETS STORED IN THE RIGHT CONSTANT
@@ -379,7 +378,7 @@ int execute(const char *funcname) {
 #endif
 
 
-	strncpy(called_name, funcname, 1023);
+	Common::strlcpy(called_name, funcname, 1024);
 
 	/* GET THE FUNCTION OBJECT BY THE FUNCTION NAME */
 	resolved_function = function_resolve(called_name);
@@ -412,8 +411,8 @@ int execute(const char *funcname) {
 
 	// SET function_name TO THE CORE NAME STORED IN THE FUNCTION OBJECT
 	// LEAVING called_name TO CONTAIN THE FULL ARGUMENT LIST
-	strncpy(function_name, executing_function->name, 80);
-	strncpy(cstring_resolve("function_name")->value, executing_function->name, 80);
+	Common::strlcpy(function_name, executing_function->name, 81);
+	Common::strlcpy(cstring_resolve("function_name")->value, executing_function->name, sizeof(((string_type *)0)->value));
 
 	//sprintf(temp_buffer, "--- starting to execute %s^", function_name);
 	//write_text(temp_buffer);
@@ -886,7 +885,7 @@ int execute(const char *funcname) {
 				        || !strcmp(argument_buffer, "*anywhere")
 				        || !strcmp(argument_buffer, "*present")) {
 					criterion_type = CRI_SCOPE;
-					strncpy(scope_criterion, argument_buffer, 20);
+					Common::strlcpy(scope_criterion, argument_buffer, sizeof(scope_criterion));
 				} else if ((criterion_value = attribute_resolve(argument_buffer))) {
 					criterion_type = CRI_ATTRIBUTE;
 				} else if ((criterion_value = user_attribute_resolve(argument_buffer))) {
@@ -1396,9 +1395,9 @@ int execute(const char *funcname) {
 
 					// COPY THE VARIABLE OF THE CGI VARIABLE INTO THE SPECIFIED STRING VARIABLE
 					if (getenv(text_of_word(2)) != NULL) {
-						strncpy(resolved_setstring->value, getenv(text_of_word(2)), 255);
+						Common::strlcpy(resolved_setstring->value, getenv(text_of_word(2)), 256);
 					} else {
-						strncpy(resolved_setstring->value, "", 255);
+						resolved_setstring->value[0] = '\0';
 					}
 				}
 			} else if (!strcmp(word[0], "button")) {
@@ -1595,7 +1594,7 @@ int execute(const char *funcname) {
 
 				// TEXT BUFFER IS THE NORMAL ARRAY FOR HOLDING THE PLAYERS
 				// MOVE FOR PROCESSING
-				strncpy(text_buffer, proxy_buffer, 1024);
+				Common::strlcpy(text_buffer, proxy_buffer, 1024);
 
 				command_encapsulate();
 
@@ -1914,12 +1913,10 @@ int execute(const char *funcname) {
 					/* setstring_buffer IS NOW FILLED, COPY THE UP TO 256 BYTES OF
 					 * IT INTO THE STRING */
 					if (!strcmp(word[0], "setstring")) {
-						strncpy(resolved_setstring->value, setstring_buffer, 255);
+						Common::strlcpy(resolved_setstring->value, setstring_buffer, 256);
 					} else {
-						/* CALCULATE HOW MUCH SPACE IS LEFT IN THE STRING */
-						counter = 255 - strlen(resolved_setstring->value);
 						/* THIS IS A addstring COMMAND, SO USE STRNCAT INSTEAD */
-						strncat(resolved_setstring->value, setstring_buffer, counter);
+						Common::strlcat(resolved_setstring->value, setstring_buffer, 256);
 					}
 				}
 			} else if (!strcmp(word[0], "padstring")) {
@@ -1946,7 +1943,7 @@ int execute(const char *funcname) {
 
 					/* setstring_buffer IS NOW FILLED, COPY THE UP TO 256 BYTES OF
 					 * IT INTO THE STRING */
-					strncpy(resolved_setstring->value, setstring_buffer, 255);
+					Common::strlcpy(resolved_setstring->value, setstring_buffer, 256);
 				}
 			} else if (!strcmp(word[0], "return")) {
 				/* RETURN FROM THIS FUNCTION, POSSIBLY RETURNING AN INTEGER VALUE */
@@ -2659,17 +2656,17 @@ void pop_stack() {
 	/* RESTORE THE CONTENTS OF called_name */
 	//for (counter = 0; counter < 256; counter++)
 	//called_name[counter] = backup[stack].called_name[counter];
-	strncpy(called_name, backup[stack].called_name, 1023);
+	Common::strlcpy(called_name, backup[stack].called_name, 1024);
 
 	/* RESTORE THE CONTENTS OF scope_criterion */
 	//for (counter = 0; counter < 21; counter++)
 	//  scope_criterion[counter] = backup[stack].scope_criterion[counter];
-	strncpy(scope_criterion, backup[stack].scope_criterion, 20);
+	Common::strlcpy(scope_criterion, backup[stack].scope_criterion, sizeof(scope_criterion));
 
 	/* RESTORE THE STORED FUNCTION NAMES THAT ARE USED WHEN AN
 	 * 'override' COMMAND IS ENCOUNTERED IN THE CURRENT FUNCTION */
-	strncpy(override_, backup[stack]._override, 80);
-	strncpy(default_function, backup[stack].default_function, 80);
+	Common::strlcpy(override_, backup[stack]._override, 81);
+	Common::strlcpy(default_function, backup[stack].default_function, 84);
 
 	/* RESTORE ALL THE WORD POINTERS */
 	for (counter = 0; counter < MAX_WORDS; counter++) {
@@ -2680,8 +2677,8 @@ void pop_stack() {
 	executing_function = backup[stack].function;
 
 	if (executing_function != nullptr) {
-		strncpy(function_name, executing_function->name, 80);
-		strncpy(cstring_resolve("function_name")->value, executing_function->name, 80);
+		Common::strlcpy(function_name, executing_function->name, 81);
+		Common::strlcpy(cstring_resolve("function_name")->value, executing_function->name, 81);
 	}
 
 	wp = backup[stack].wp;
@@ -2745,15 +2742,15 @@ void push_stack(int32 file_pointer) {
 			backup[stack].text_buffer[counter] = text_buffer[counter];
 
 		/* MAKE A COPY OF THE CURRENT CONTENTS OF called_name */
-		strncpy(backup[stack].called_name, called_name, 1023);
+		Common::strlcpy(backup[stack].called_name, called_name, 1024);
 
 		// MAKE A COPY OF THE CURRENT CONTENTS OF scope_criterion
-		strncpy(backup[stack].scope_criterion, scope_criterion, 20);
+		Common::strlcpy(backup[stack].scope_criterion, scope_criterion, 21);
 
 		/* COPY THE STORED FUNCTION NAMES THAT ARE USED WHEN AN
 		 * 'override' COMMAND IS ENCOUNTERED IN THE CURRENT FUNCTION */
-		strncpy(backup[stack]._override, override_, 80);
-		strncpy(backup[stack].default_function, default_function, 80);
+		Common::strlcpy(backup[stack]._override, override_, 81);
+		Common::strlcpy(backup[stack].default_function, default_function, 81);
 
 		/* PUSH ALL THE WORD POINTERS ONTO THE STACK */
 		for (counter = 0; counter < MAX_WORDS; counter++) {
@@ -2785,7 +2782,7 @@ void push_stack(int32 file_pointer) {
 		if (current_cstring != nullptr) {
 			do {
 				if (!strcmp(current_cstring->name, "string_arg")) {
-					strncpy(backup[stack].str_arguments[index++], current_cstring->value, 255);
+					Common::strlcpy(backup[stack].str_arguments[index++], current_cstring->value, 256);
 				}
 
 				current_cstring = current_cstring->next_string;
@@ -2893,10 +2890,10 @@ void push_proxy() {
 		if (current_cstring != nullptr) {
 			do {
 				if (!strcmp(current_cstring->name, "$string")) {
-					strncpy(proxy_backup[proxy_stack].text[text++], current_cstring->value, 255);
-					proxy_backup[proxy_stack].text[counter++][255] = 0;
+					Common::strlcpy(proxy_backup[proxy_stack].text[text++], current_cstring->value, 256);
+					counter++;
 				} else if (!strcmp(current_cstring->name, "$word")) {
-					strncpy(proxy_backup[proxy_stack].command[command++], current_cstring->value, 255);
+					Common::strlcpy(proxy_backup[proxy_stack].command[command++], current_cstring->value, 256);
 				}
 
 				current_cstring = current_cstring->next_string;
@@ -3167,8 +3164,7 @@ void add_cinteger(const char *name, int value) {
 			}
 			current_cinteger->next_cinteger = new_cinteger;
 		}
-		strncpy(new_cinteger->name, name, 40);
-		new_cinteger->name[40] = 0;
+		Common::strlcpy(new_cinteger->name, name, 41);
 		new_cinteger->value = value;
 		new_cinteger->next_cinteger = nullptr;
 	}
@@ -3225,10 +3221,8 @@ void add_cstring(const char *name, const char *value) {
 			}
 			current_cstring->next_string = new_string;
 		}
-		strncpy(new_string->name, name, 40);
-		new_string->name[40] = 0;
-		strncpy(new_string->value, value, 255);
-		new_string->value[255] = 0;
+		Common::strlcpy(new_string->name, name, 41);
+		Common::strlcpy(new_string->value, value, 256);
 		new_string->next_string = nullptr;
 	}
 }
