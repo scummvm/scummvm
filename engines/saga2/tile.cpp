@@ -94,7 +94,7 @@ void setAreaSound(const TilePoint &baseCoords);
    Bank switching interface
  * ===================================================================== */
 
-TileBankPtr tileBanks[maxBanks];
+TileBankPtr tileBanks[kMaxBanks];
 
 void updateHandleRefs(const TilePoint &pt);  //, StandingTileInfo *stiResult )
 void updateFrameCount();
@@ -1323,7 +1323,7 @@ void initMaps() {
 	const int activeItemSize = 28;
 
 	//  Load all of the tile terrain banks
-	for (i = 0; i < maxBanks; i++) {
+	for (i = 0; i < kMaxBanks; i++) {
 		stream = loadResourceToStream(tileRes, tileTerrainID + i, "tile terrain bank");
 		tileBanks[i] = new TileBank(stream);
 		delete stream;
@@ -1498,7 +1498,7 @@ void cleanupMaps() {
 	delete[] mapList;
 
 	//  Dump all of the tile terrain banks
-	for (i = 0; i < maxBanks; i++) {
+	for (i = 0; i < kMaxBanks; i++) {
 		if (tileBanks[i] != nullptr) {
 			delete tileBanks[i];
 			tileBanks[i] = nullptr;
