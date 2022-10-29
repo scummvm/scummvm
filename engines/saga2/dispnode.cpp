@@ -421,7 +421,7 @@ void DisplayNode::drawObject() {
 
 			obj->setOnScreen(true);
 
-			if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
+			if (getCenterActor()->canSenseSpecificObject(info, kMaxSenseRange, obj->thisID()))
 				obj->setSightedByCenter(true);
 			else {
 				obj->setSightedByCenter(false);
@@ -433,7 +433,7 @@ void DisplayNode::drawObject() {
 			if (--obj->_data.sightCtr == 0) {
 				SenseInfo   info;
 
-				if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
+				if (getCenterActor()->canSenseSpecificObject(info, kMaxSenseRange, obj->thisID()))
 					obj->setSightedByCenter(true);
 				else {
 					obj->setSightedByCenter(false);
@@ -535,7 +535,7 @@ void DisplayNode::drawObject() {
 
 				a->setOnScreen(true);
 
-				if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
+				if (getCenterActor()->canSenseSpecificActor(info, kMaxSenseRange, a))
 					a->setSightedByCenter(true);
 				else {
 					a->setSightedByCenter(false);
@@ -547,7 +547,7 @@ void DisplayNode::drawObject() {
 				if (--a->_data.sightCtr == 0) {
 					SenseInfo   info;
 
-					if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
+					if (getCenterActor()->canSenseSpecificActor(info, kMaxSenseRange, a))
 						a->setSightedByCenter(true);
 					else {
 						a->setSightedByCenter(false);

@@ -1537,7 +1537,7 @@ void GameObject::updateState() {
 		unstickObject(this);
 		tHeight = tileSlopeHeight(_data.location, this, &sti);
 	}
-	if (tHeight >= _data.location.z - gravity * 4) {
+	if (tHeight >= _data.location.z - kGravity * 4) {
 		setObjectSurface(this, sti);
 		_data.location.z = tHeight;
 		return;
@@ -1846,7 +1846,7 @@ void GameObject::senseEvent(
 //	Add a new timer to this objects's timer list
 
 bool GameObject::addTimer(TimerID id) {
-	return addTimer(id, sensorCheckRate);
+	return addTimer(id, kSensorCheckRate);
 }
 
 //-----------------------------------------------------------------------
@@ -2127,7 +2127,7 @@ bool GameObject::canSenseProtaganist(SenseInfo &info, int16 range) {
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2144,7 +2144,7 @@ bool GameObject::canSenseSpecificActor(
 		Actor *ac = (Actor *)this;
 		return sensor.check(info, ac->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2161,7 +2161,7 @@ bool GameObject::canSenseSpecificObject(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2178,7 +2178,7 @@ bool GameObject::canSenseActorProperty(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2195,7 +2195,7 @@ bool GameObject::canSenseObjectProperty(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-------------------------------------------------------------------

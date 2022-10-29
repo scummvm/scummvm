@@ -38,20 +38,20 @@ enum textBoxFlags {
 };
 
 // edit box defines
-const   int editLen         = 35;
-const   int numEditLines    = 50;
-const   int textPen         = 12;
-const   int textDisable     = 14;
-const   int textHilite      = 11;
-const   int textBackground  = 87;
-const   int textBackHilite  = 211;
-const   int cursorColor     = 174;
-const   int textHeight      = 10;
+const   int kEditLen         = 35;
+const   int kNumEditLines    = 50;
+const   int kTextPen         = 12;
+const   int kTextDisable     = 14;
+const   int kTextHilite      = 11;
+const   int kTextBackground  = 87;
+const   int kTextBackHilite  = 211;
+const   int kCursorColor     = 174;
+const   int kTextHeight      = 10;
 
-const int32 blinkTime   = 72 / 6;
-const int16 blinkColor0 = 137;
-const int16 blinkColor1 = 232;
-const int16 blinkWide   = 1;
+const int32 kBlinkTime   = 72 / 6;
+const int16 kBlinkColor0 = 137;
+const int16 kBlinkColor1 = 232;
+const int16 kBlinkWide   = 1;
 
 extern StaticRect editBaseRect;
 
@@ -70,8 +70,8 @@ private:
 
 	// editor values
 	uint16  _maxLen,
-	        _currentLen[numEditLines],
-	        _exists[numEditLines],
+	        _currentLen[kNumEditLines],
+	        _exists[kNumEditLines],
 	        _undoLen,
 	        _cursorPos,
 	        _anchorPos,

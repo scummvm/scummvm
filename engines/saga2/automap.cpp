@@ -554,14 +554,14 @@ int16 openAutoMap() {
 	_summaryData = LoadResource(decRes, MKTAG('S', 'U', 'M', g_vm->_currentMapNum), "summary data");
 
 	// get the graphics associated with the buttons
-	closeBtnImage = loadButtonRes(decRes, closeButtonResID, numBtnImages);
+	closeBtnImage = loadButtonRes(decRes, closeButtonResID, kNumBtnImages);
 	scrollBtnImage = loadButtonRes(decRes, scrollButtonResID, 2);
 
 	pAutoMap = new AutoMap(autoMapRect, (uint8 *)_summaryData, 0, nullptr);
 
-	new GfxCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, numBtnImages, 0, cmdAutoMapQuit);
+	new GfxCompButton(*pAutoMap, closeAutoMapBtnRect, closeBtnImage, kNumBtnImages, 0, cmdAutoMapQuit);
 
-	new GfxCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, numBtnImages, 0, cmdAutoMapScroll);
+	new GfxCompButton(*pAutoMap, scrollBtnRect, scrollBtnImage, kNumBtnImages, 0, cmdAutoMapScroll);
 
 	pAutoMap->setDecorations(autoMapDecorations,
 	                         ARRAYSIZE(autoMapDecorations),
@@ -579,7 +579,7 @@ int16 openAutoMap() {
 	// delete stuff
 	delete pAutoMap;
 
-	unloadImageRes(closeBtnImage, numBtnImages);
+	unloadImageRes(closeBtnImage, kNumBtnImages);
 	unloadImageRes(scrollBtnImage, 2);
 	free(_summaryData);
 	resFile->disposeContext(decRes);

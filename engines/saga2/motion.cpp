@@ -1144,7 +1144,7 @@ void MotionTask::calcVelocity(const TilePoint &vector,  int16 turns) {
 	_uErrorTerm = 0;
 	_vErrorTerm = 0;
 
-	veloc.z = ((gravity * turns) >> 1) + vector.z / turns;
+	veloc.z = ((kGravity * turns) >> 1) + vector.z / turns;
 	_velocity = veloc;
 }
 
@@ -2052,10 +2052,10 @@ void MotionTask::ballisticAction() {
 	//  Add the force of gravity to the acceleration.
 
 	if (!(_flags & kMfInWater)) {
-		_velocity.z -= gravity;
+		_velocity.z -= kGravity;
 	} else {
 		_velocity.u = _velocity.v = 0;
-		_velocity.z = -gravity;
+		_velocity.z = -kGravity;
 	}
 	location = obj->getLocation();
 
@@ -2374,10 +2374,10 @@ bool MotionTask::checkWalk(
 
 void MotionTask::walkAction() {
 	enum WalkType {
-		walkNormal  = 0,
-		walkSlow,
-		walkRun,
-		walkStairs
+		kWalkNormal  = 0,
+		kWalkSlow,
+		kWalkRun,
+		kWalkStairs
 	};
 
 	TilePoint       immediateTarget = getImmediateTarget(),
@@ -2387,7 +2387,7 @@ void MotionTask::walkAction() {
 	int16           movementDirection,
 	                directionAngle;
 	int16           moveBlocked,
-	                speed = walkSpeed,
+	                speed = kWalkSpeed,
 	                speedScale = 2;
 	Actor           *a;
 	ActorAppearance *aa;
@@ -2395,7 +2395,7 @@ void MotionTask::walkAction() {
 
 	bool            moveTaskWaiting = false,
 	                moveTaskDone = false;
-	WalkType        walkType = walkNormal;
+	WalkType        walkType = kWalkNormal;
 
 	assert(isActor(_object));
 	a = (Actor *)_object;
@@ -2414,31 +2414,31 @@ void MotionTask::walkAction() {
 	if (_flags & kMfRequestRun
 	        &&  _runCount == 0
 	        &&  !(_flags & (kMfInWater | kMfOnStairs))) {
-		speed = runSpeed;
+		speed = kRunSpeed;
 		speedScale = 4;
-		walkType = walkRun;
+		walkType = kWalkRun;
 
 		//  If we can see this actor, and the actor's run frames
 		//  have not been loaded, then downgrade this action to
 		//  a walk (but request the run frames).
 		if (aa && !aa->isBankLoaded(kSprRunBankNum)) {
-			walkType = walkNormal;
+			walkType = kWalkNormal;
 			aa->requestBank(kSprRunBankNum);
 		}
 	}
 
 	//  If for some reason we cannot run at this time, then
 	//  set up for a walk instead.
-	if (walkType != walkRun) {
+	if (walkType != kWalkRun) {
 		if (!(_flags & kMfOnStairs)) {
 			if (!(_flags & kMfInWater)) {
-				speed = walkSpeed;
+				speed = kWalkSpeed;
 				speedScale = 2;
-				walkType = walkNormal;
+				walkType = kWalkNormal;
 			} else {
-				speed = slowWalkSpeed;
+				speed = kSlowWalkSpeed;
 				speedScale = 1;
-				walkType = walkSlow;
+				walkType = kWalkSlow;
 
 				//  reset run count if actor walking slowly
 				_runCount = MAX<int16>(_runCount, 8);
@@ -2452,9 +2452,9 @@ void MotionTask::walkAction() {
 				return;
 			}
 		} else {
-			speed = slowWalkSpeed;
+			speed = kSlowWalkSpeed;
 			speedScale = 1;
-			walkType = walkStairs;
+			walkType = kWalkStairs;
 
 			//  reset run count if actor walking on stairs
 			_runCount = MAX<int16>(_runCount, 8);
@@ -2783,13 +2783,13 @@ void MotionTask::walkAction() {
 					_flags |= kMfOnStairs;
 				} else {
 					_flags &= ~kMfOnStairs;
-					if (walkType == walkStairs) walkType = walkNormal;
-					newAction = (walkType == walkRun) ? kActionRun : kActionWalk;
+					if (walkType == kWalkStairs) walkType = kWalkNormal;
+					newAction = (walkType == kWalkRun) ? kActionRun : kActionWalk;
 				}
 			} else {
 				_flags &= ~kMfOnStairs;
-				if (walkType == walkStairs) walkType = walkNormal;
-				newAction = (walkType == walkRun) ? kActionRun : kActionWalk;
+				if (walkType == kWalkStairs) walkType = kWalkNormal;
+				newAction = (walkType == kWalkRun) ? kActionRun : kActionWalk;
 			}
 
 
@@ -2801,7 +2801,7 @@ void MotionTask::walkAction() {
 			if (a->_currentAnimation == newAction) {
 				//  If we are already doing that action, then
 				//  just continue doing it.
-				if (walkType != walkSlow)
+				if (walkType != kWalkSlow)
 					a->nextAnimationFrame();
 				else {
 					if (_flags & kMfNextAnim)
@@ -2818,7 +2818,7 @@ void MotionTask::walkAction() {
 				a->setAction(newAction,
 				             kAnimateRepeat | kAnimateNoRestart);
 
-				if (walkType != walkSlow)
+				if (walkType != kWalkSlow)
 					a->nextAnimationFrame();
 				else {
 					if (_flags & kMfNextAnim)
@@ -2829,7 +2829,7 @@ void MotionTask::walkAction() {
 				// If we weren't walking or running before, then start
 				// walking/running and reset the sequence.
 				a->setAction(newAction, kAnimateRepeat);
-				if (walkType == walkSlow) _flags |= kMfNextAnim;
+				if (walkType == kWalkSlow) _flags |= kMfNextAnim;
 			}
 
 			if (_runCount > 0) _runCount--;
@@ -4560,7 +4560,7 @@ bool MotionTask::freeFall(TilePoint &newPos, StandingTileInfo &sti) {
 	//  If terrain is HIGHER (or even sligtly lower) than we are
 	//  currently at, then try climbing it.
 
-	if (tHeight >= newPos.z - gravity * 4) {
+	if (tHeight >= newPos.z - kGravity * 4) {
 supported:
 		if (_motionType != kMotionTypeWalk
 		        ||  tHeight <= newPos.z
@@ -4591,7 +4591,7 @@ supported:
 	if (checkContact(_object, tPos) == kBlockageNone) {
 falling:
 		if (_motionType != kMotionTypeWalk
-				||  newPos.z > gravity * 4
+				||  newPos.z > kGravity * 4
 				||  tHeight >= 0) {
 			_motionType = kMotionTypeThrown;
 
@@ -4637,7 +4637,7 @@ falling:
 	tPos.u += objCrossSection;
 	tHeight = tileSlopeHeight(tPos, _object, &sti);
 	if (tHeight <= tPos.z + kMaxStepHeight
-			&&  tHeight >= tPos.z - gravity * 4) {
+			&&  tHeight >= tPos.z - kGravity * 4) {
 		newPos = tPos;
 		goto supported;
 	}
@@ -4645,7 +4645,7 @@ falling:
 	tPos.u -= objCrossSection * 2;
 	tHeight = tileSlopeHeight(tPos, _object, &sti);
 	if (tHeight <= tPos.z + kMaxStepHeight
-			&&  tHeight >= tPos.z - gravity * 4) {
+			&&  tHeight >= tPos.z - kGravity * 4) {
 		newPos = tPos;
 		goto supported;
 	}
@@ -4654,7 +4654,7 @@ falling:
 	tPos.v += objCrossSection;
 	tHeight = tileSlopeHeight(tPos, _object, &sti);
 	if (tHeight <= tPos.z + kMaxStepHeight
-			&&  tHeight >= tPos.z - gravity * 4) {
+			&&  tHeight >= tPos.z - kGravity * 4) {
 		newPos = tPos;
 		goto supported;
 	}
@@ -4662,7 +4662,7 @@ falling:
 	tPos.v -= objCrossSection * 2;
 	tHeight = tileSlopeHeight(tPos, _object, &sti);
 	if (tHeight <= tPos.z + kMaxStepHeight
-			&&  tHeight >= tPos.z - gravity * 4) {
+			&&  tHeight >= tPos.z - kGravity * 4) {
 		newPos = tPos;
 		goto supported;
 	}

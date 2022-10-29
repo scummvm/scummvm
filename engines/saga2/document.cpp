@@ -738,13 +738,13 @@ int16 openScroll(uint16 textScript) {
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// get the graphics associated with the buttons
-	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
+	closeBtnImage = loadButtonRes(decRes, buttonResID, kNumBtnImages);
 
 	// create the window
 	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, nullptr);
 
 	// make the quit button
-	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, kNumBtnImages, 0, cmdDocumentQuit);
 
 	closeScroll->_accelKey = 0x1B;
 
@@ -759,7 +759,7 @@ int16 openScroll(uint16 textScript) {
 	delete  win;
 
 	// unload all image arrays
-	unloadImageRes(closeBtnImage, numBtnImages);
+	unloadImageRes(closeBtnImage, kNumBtnImages);
 
 	// remove the resource handle
 	if (decRes)

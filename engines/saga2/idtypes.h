@@ -110,11 +110,11 @@ extern const StaticMetaTileID NoMetaTile;
    ActiveItemID struct
  * ===================================================================== */
 
-const int   activeItemIndexMask = 0x1FFF;
-const int   activeItemMapMask = 0xE000;
-const int   activeItemMapShift = 13;
+const int   kActiveItemIndexMask = 0x1FFF;
+const int   kActiveItemMapMask = 0xE000;
+const int   kActiveItemMapShift = 13;
 
-const int16 activeItemIndexNullID = 0x1FFF;
+const int16 kActiveItemIndexNullID = 0x1FFF;
 
 struct StaticActiveItemID {
 	int16 val;
@@ -138,7 +138,7 @@ struct ActiveItemID {
 
 	//  Constructor
 	ActiveItemID(int16 m, int16 i) :
-		val((m << activeItemMapShift) | (i & activeItemIndexMask)) {
+		val((m << kActiveItemMapShift) | (i & kActiveItemIndexMask)) {
 	}
 
 	ActiveItemID(StaticActiveItemID a) {
@@ -168,21 +168,21 @@ struct ActiveItemID {
 	}
 
 	void setMapNum(int16 m) {
-		val &= ~activeItemMapMask;
-		val |= (m << activeItemMapShift);
+		val &= ~kActiveItemMapMask;
+		val |= (m << kActiveItemMapShift);
 	}
 
 	int16 getMapNum() {
-		return (uint16)val >> activeItemMapShift;
+		return (uint16)val >> kActiveItemMapShift;
 	}
 
 	void setIndexNum(int16 i) {
-		val &= ~activeItemIndexMask;
-		val |= i & activeItemIndexMask;
+		val &= ~kActiveItemIndexMask;
+		val |= i & kActiveItemIndexMask;
 	}
 
 	int16 getIndexNum() {
-		return val & activeItemIndexMask;
+		return val & kActiveItemIndexMask;
 	}
 } PACKED_STRUCT;
 #include "common/pack-end.h"

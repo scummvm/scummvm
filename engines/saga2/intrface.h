@@ -148,28 +148,28 @@ enum uiBrotherName {
 };
 
 // compressed button resource indexes
-const   int16   aggressResNum       = 0;
-const   int16   jumpResNum          = 6;
-const   int16   centerResNum        = 4;
-const   int16   bandingResNum       = 2;
-const   int16   menConBtnResNum     = 18;
-const   int16   massBulkResNum      = 0;
-const   int16   pieIndResNum        = 0;
-const   int16   julBtnResNum        = 22;
-const   int16   phiBtnResNum        = 24;
-const   int16   kevBtnResNum        = 26;
-const   int16   optBtnResNum        = 20;
+const   int16   kAggressResNum       = 0;
+const   int16   kJumpResNum          = 6;
+const   int16   kCenterResNum        = 4;
+const   int16   kBandingResNum       = 2;
+const   int16   kMenConBtnResNum     = 18;
+const   int16   kMassBulkResNum      = 0;
+const   int16   kPieIndResNum        = 0;
+const   int16   kJulBtnResNum        = 22;
+const   int16   kPhiBtnResNum        = 24;
+const   int16   kKevBtnResNum        = 26;
+const   int16   kOptBtnResNum        = 20;
 
 
 
 // standard number of images for push-buttons
-const   int16   numBtnImages    = 2;
+const   int16   kNumBtnImages    = 2;
 
 // standard number of images for portraits
-const   uint16  numPortImages   = 8;
+const   uint16  kNumPortImages   = 8;
 
 // number for pie indicators
-const   uint16  numPieIndImages = 16;
+const   uint16  kNumPieIndImages = 16;
 
 // object pointers
 extern CPortrait *Portrait;

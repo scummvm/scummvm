@@ -700,14 +700,14 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 
 	// setup mass/bulk indicator imagery
 	if (death) {
-		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('D', 'J', 'B', massBulkResNum));
+		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('D', 'J', 'B', kMassBulkResNum));
 
-		_pieIndImag = loadImageRes(_containerRes, pieIndResNum, numPieIndImages, 'D', 'A', 'J');
+		_pieIndImag = loadImageRes(_containerRes, kPieIndResNum, kNumPieIndImages, 'D', 'A', 'J');
 	} else {
 
-		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('G', 'J', 'B', massBulkResNum));
+		_massBulkImag = g_vm->_imageCache->requestImage(_containerRes, MKTAG('G', 'J', 'B', kMassBulkResNum));
 
-		_pieIndImag = loadImageRes(_containerRes, pieIndResNum, numPieIndImages, 'G', 'A', 'J');
+		_pieIndImag = loadImageRes(_containerRes, kPieIndResNum, kNumPieIndImages, 'G', 'A', 'J');
 	}
 
 	// attach controls to the indivControls panel
@@ -715,7 +715,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	_pieMass = new GfxCompImage(*panel,
 	                                       Rect16(_massPiePos.x, _massPiePos.y, kPieXSize, kPieYSize),
 	                                       _pieIndImag,
-	                                       numPieIndImages,
+	                                       kNumPieIndImages,
 	                                       0,
 	                                       type,
 	                                       cmdMassInd);
@@ -723,7 +723,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 	_pieBulk = new GfxCompImage(*panel,
 	                                       Rect16(_bulkPiePos.x, _bulkPiePos.y, kPieXSize, kPieYSize),
 	                                       _pieIndImag,
-	                                       numPieIndImages,
+	                                       kNumPieIndImages,
 	                                       0,
 	                                       type,
 	                                       cmdBulkInd);
@@ -757,7 +757,7 @@ CMassWeightIndicator::CMassWeightIndicator(gPanelList *panel, const Point16 &pos
 CMassWeightIndicator::~CMassWeightIndicator() {
 	g_vm->_indList.remove(this);
 
-	unloadImageRes(_pieIndImag, numPieIndImages);
+	unloadImageRes(_pieIndImag, kNumPieIndImages);
 	g_vm->_imageCache->releaseImage(_massBulkImag);
 }
 
@@ -1536,19 +1536,19 @@ void SetupUserControls() {
 
 
 	// set up the control button images
-	aggressImag      = loadButtonRes(imageRes, aggressResNum, numBtnImages);
+	aggressImag      = loadButtonRes(imageRes, kAggressResNum, kNumBtnImages);
 
-	centerImag       = loadButtonRes(imageRes, centerResNum, numBtnImages);
-	bandingImag      = loadButtonRes(imageRes, bandingResNum, numBtnImages);
-	menConBtnImag    = loadButtonRes(imageRes, menConBtnResNum, numBtnImages);
+	centerImag       = loadButtonRes(imageRes, kCenterResNum, kNumBtnImages);
+	bandingImag      = loadButtonRes(imageRes, kBandingResNum, kNumBtnImages);
+	menConBtnImag    = loadButtonRes(imageRes, kMenConBtnResNum, kNumBtnImages);
 
 	// setup the options button imagery
-	optBtnImag       = loadButtonRes(imageRes, optBtnResNum, numBtnImages);
+	optBtnImag       = loadButtonRes(imageRes, kOptBtnResNum, kNumBtnImages);
 
 	// setup the brother selector button imagery and button frame
-	julBtnImag       = loadButtonRes(imageRes, julBtnResNum, numBtnImages);
-	phiBtnImag       = loadButtonRes(imageRes, phiBtnResNum, numBtnImages);
-	kevBtnImag       = loadButtonRes(imageRes, kevBtnResNum, numBtnImages);
+	julBtnImag       = loadButtonRes(imageRes, kJulBtnResNum, kNumBtnImages);
+	phiBtnImag       = loadButtonRes(imageRes, kPhiBtnResNum, kNumBtnImages);
+	kevBtnImag       = loadButtonRes(imageRes, kKevBtnResNum, kNumBtnImages);
 	broBtnFrameImag  = g_vm->_imageCache->requestImage(imageRes, MKTAG('F', 'R', 'A', 'M'));
 
 
@@ -1570,12 +1570,12 @@ void SetupUserControls() {
 
 	// set up the portrait button images
 	for (n = 0; n < kNumViews; n++) {
-		portImag[n]    = loadButtonRes(imageRes, portResNum[n], numPortImages, broNames[n].a, broNames[n].b, broNames[n].c);
+		portImag[n]    = loadButtonRes(imageRes, portResNum[n], kNumPortImages, broNames[n].a, broNames[n].b, broNames[n].c);
 	}
 
 	// setup stand alone controls
 
-	optBtn = new GfxCompButton(*playControls, optBtnRect, optBtnImag, numBtnImages, 0, cmdOptions);
+	optBtn = new GfxCompButton(*playControls, optBtnRect, optBtnImag, kNumBtnImages, 0, cmdOptions);
 
 	enchDisp = new gEnchantmentDisplay(*playControls, 0);
 
@@ -1583,13 +1583,13 @@ void SetupUserControls() {
 	for (n = 0; n < kNumViews; n++) {
 		// portrait button
 		portBtns[n]        = new GfxMultCompButton(*trioControls, views[n][index++],
-		                                  portImag[n], numPortImages, 0, false, brotherIDs[n], cmdPortrait);
+		                                  portImag[n], kNumPortImages, 0, false, brotherIDs[n], cmdPortrait);
 
 		portBtns[n]->setMousePoll(true);
 
 		// aggressive button
 		aggressBtns[n]     = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  aggressImag, numBtnImages, brotherIDs[n], cmdAggressive);
+		                                  aggressImag, kNumBtnImages, brotherIDs[n], cmdAggressive);
 
 		// name plates that go under the portraits
 		armorInd[n]        = new gArmorIndicator(*trioControls, views[n][index++],
@@ -1597,11 +1597,11 @@ void SetupUserControls() {
 
 		// center on brother
 		centerBtns[n]      = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                                  centerImag, numBtnImages, brotherIDs[n], cmdCenter);
+		                                  centerImag, kNumBtnImages, brotherIDs[n], cmdCenter);
 
 		// banding
 		bandingBtns[n] = new GfxOwnerSelCompButton(*trioControls, views[n][index++],
-		                              bandingImag, numBtnImages, brotherIDs[n], cmdBand);
+		                              bandingImag, kNumBtnImages, brotherIDs[n], cmdBand);
 
 		// name plates that go under the portraits
 		namePlates[n]  = new GfxCompImage(*trioControls, views[n][index++],
@@ -1618,22 +1618,22 @@ void SetupUserControls() {
 
 	// portrait button
 	indivPortBtn = new GfxMultCompButton(*indivControls, views[0][index++],
-	                          portImag[0], numPortImages, 0, false, kUiIndiv, cmdPortrait);
+	                          portImag[0], kNumPortImages, 0, false, kUiIndiv, cmdPortrait);
 	indivPortBtn->setMousePoll(true);
 
 	// aggressive button
 	indivAggressBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              aggressImag, numBtnImages, kUiIndiv, cmdAggressive);
+	                              aggressImag, kNumBtnImages, kUiIndiv, cmdAggressive);
 
 	indivArmorInd    = new gArmorIndicator(*indivControls, views[0][index++],
 	                              armorImag, kUiIndiv, cmdArmor);
 	// center on brother
 	indivCenterBtn   = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              centerImag, numBtnImages, kUiIndiv, cmdCenter);
+	                              centerImag, kNumBtnImages, kUiIndiv, cmdCenter);
 
 	// banding
 	indivBandingBtn  = new GfxOwnerSelCompButton(*indivControls, views[0][index++],
-	                              bandingImag, numBtnImages, kUiIndiv, cmdBand);
+	                              bandingImag, kNumBtnImages, kUiIndiv, cmdBand);
 
 	// name plates that go under the portraits
 	indivNamePlate  = new GfxCompImage(*indivControls, views[0][index++],
@@ -1646,17 +1646,17 @@ void SetupUserControls() {
 	// setup the portrait object
 	Portrait = new CPortrait(portBtns,      // portrait _buttons
 	                                       indivPortBtn,
-	                                       numPortImages,// num of images per button
+	                                       kNumPortImages,// num of images per button
 	                                       kNumViews);   // number of brothers
 
 
 	// mental container button
-	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, numBtnImages, kUiIndiv, cmdBrain);
+	menConBtn = new GfxCompButton(*indivControls, menConBtnRect, menConBtnImag, kNumBtnImages, kUiIndiv, cmdBrain);
 
 	// brother selection _buttons >>> need to replace these with sticky _buttons
-	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, numBtnImages, kUiJulian, cmdBroChange);
-	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, numBtnImages, kUiPhillip, cmdBroChange);
-	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, numBtnImages, kUiKevin, cmdBroChange);
+	julBtn = new GfxOwnerSelCompButton(*indivControls, julBtnRect, julBtnImag, kNumBtnImages, kUiJulian, cmdBroChange);
+	phiBtn = new GfxOwnerSelCompButton(*indivControls, phiBtnRect, phiBtnImag, kNumBtnImages, kUiPhillip, cmdBroChange);
+	kevBtn = new GfxOwnerSelCompButton(*indivControls, kevBtnRect, kevBtnImag, kNumBtnImages, kUiKevin, cmdBroChange);
 
 	// frame for brother _buttons
 	broBtnFrame = new GfxCompImage(*indivControls, broBtnRect, broBtnFrameImag, kUiIndiv, nullptr);
@@ -1696,25 +1696,25 @@ void CleanupButtonImages() {
 	int16 i;
 
 	// deallocates the images in the array and the arrays themselves
-	unloadImageRes(aggressImag, numBtnImages);
-//	unloadImageRes( jumpImag   , numBtnImages );
-	unloadImageRes(centerImag, numBtnImages);
-	unloadImageRes(bandingImag, numBtnImages);
-	unloadImageRes(menConBtnImag, numBtnImages);
+	unloadImageRes(aggressImag, kNumBtnImages);
+//	unloadImageRes( jumpImag   , kNumBtnImages );
+	unloadImageRes(centerImag, kNumBtnImages);
+	unloadImageRes(bandingImag, kNumBtnImages);
+	unloadImageRes(menConBtnImag, kNumBtnImages);
 
 
 	// dealloc the imag for the option button
-	unloadImageRes(optBtnImag, numBtnImages);
+	unloadImageRes(optBtnImag, kNumBtnImages);
 
 	// dealloc brother's indiv mode _buttons
-	unloadImageRes(julBtnImag, numBtnImages);
-	unloadImageRes(phiBtnImag, numBtnImages);
-	unloadImageRes(kevBtnImag, numBtnImages);
+	unloadImageRes(julBtnImag, kNumBtnImages);
+	unloadImageRes(phiBtnImag, kNumBtnImages);
+	unloadImageRes(kevBtnImag, kNumBtnImages);
 
 
 	// portraits
 	for (i = 0; i < kNumViews; i++) {
-		unloadImageRes(portImag[i], numPortImages);
+		unloadImageRes(portImag[i], kNumPortImages);
 	}
 
 	// name plate frame

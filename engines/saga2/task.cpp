@@ -1462,11 +1462,11 @@ bool GotoObjectTargetTask::lineOfSight() {
 			        ||  ABS(_targetLoc.z - _lastTestedLoc.z) > 25) {
 				if (a->canSenseSpecificObject(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID)
 				        ||  a->canSenseSpecificObjectIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID))
 					_flags |= kInSight;
 				else
@@ -1480,11 +1480,11 @@ bool GotoObjectTargetTask::lineOfSight() {
 				_sightCtr = kSightRate;
 				if (a->canSenseSpecificObject(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID)
 				        ||  a->canSenseSpecificObjectIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID))
 					_flags |= kInSight;
 				else
@@ -2409,11 +2409,11 @@ void HuntToBeNearObjectTask::evaluateTarget() {
 
 			if (a->canSenseSpecificObject(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)
 			        ||  a->canSenseSpecificObjectIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)) {
 				_currentTarget = objArray[i];
 				break;
@@ -2538,11 +2538,11 @@ void HuntToPossessTask::evaluateTarget() {
 
 			if (a->canSenseSpecificObject(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)
 			        ||  a->canSenseSpecificObjectIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)) {
 				_currentTarget = objArray[i];
 				break;
@@ -2793,11 +2793,11 @@ void HuntToBeNearActorTask::evaluateTarget() {
 			if (tracking()
 			        ||  a->canSenseSpecificActor(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            _actorArray[i])
 			        ||  a->canSenseSpecificActorIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            _actorArray[i])) {
 				if (_currentTarget != _actorArray[i]) {
 					if (atTarget()) atTargetabortTask();
@@ -3033,11 +3033,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					bestTarget = _actorArray[i];
 					break;
@@ -3054,11 +3054,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 
@@ -3083,11 +3083,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 
@@ -3112,11 +3112,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 

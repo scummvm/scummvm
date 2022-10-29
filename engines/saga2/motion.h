@@ -37,13 +37,13 @@ extern const StaticTilePoint dirTable[];
 extern const StaticTilePoint incDirTable[];
 
 
-const int   gravity         = 2;
-const int   walkSpeed       = 4;
-const int   slowWalkSpeed   = 2;
-const int   runSpeed        = 8;
-const int   walkSpeedDiag   = 3;
-const int   runSpeedDiag    = 6;
-const int   angleThresh     = 24;
+const int   kGravity         = 2;
+const int   kWalkSpeed       = 4;
+const int   kSlowWalkSpeed   = 2;
+const int   kRunSpeed        = 8;
+const int   kWalkSpeedDiag   = 3;
+const int   kRunSpeedDiag    = 6;
+const int   kAngleThresh     = 24;
 
 enum MotionThreadReturnValues {
 	kMotionInterrupted,              //  MotionTask has been rudely

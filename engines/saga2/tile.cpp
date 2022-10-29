@@ -78,7 +78,7 @@ const int           slowScrollSpeed = 6,
 const StaticTilePoint Nowhere = {(int16)minint16, (int16)minint16, (int16)minint16};
 
 const StaticMetaTileID NoMetaTile = {nullID, nullID};
-const StaticActiveItemID  NoActiveItem = {activeItemIndexNullID};
+const StaticActiveItemID  NoActiveItem = {kActiveItemIndexNullID};
 
 enum SurfaceType {
 	surfaceHoriz,               //  Level surface
@@ -327,7 +327,7 @@ Location ActiveItem::getInstanceLocation() {
 //	Return the address of an active item, given its ID
 
 ActiveItem *ActiveItem::activeItemAddress(ActiveItemID id) {
-	return  id.getIndexNum() != activeItemIndexNullID
+	return  id.getIndexNum() != kActiveItemIndexNullID
 	        ?   mapList[id.getMapNum()].activeItemList->_items[id.getIndexNum()]
 	        :   nullptr;
 }

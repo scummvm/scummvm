@@ -59,7 +59,7 @@ void deleteSensorList(SensorList *s) {
 void newSensor(Sensor *s) {
 	g_vm->_sensorList.push_back(s);
 
-	s->_checkCtr = sensorCheckRate;
+	s->_checkCtr = kSensorCheckRate;
 }
 
 //----------------------------------------------------------------------
@@ -153,7 +153,7 @@ void checkSensors() {
 
 			SenseInfo   info;
 			GameObject  *senseobj = sensor->getObject();
-			uint32      sFlags = nonActorSenseFlags;
+			uint32      sFlags = kNonActorSenseFlags;
 			if (isActor(senseobj)) {
 				Actor *a = (Actor *)senseobj;
 				sFlags = a->_enchantmentFlags;
@@ -166,7 +166,7 @@ void checkSensors() {
 				sensor->getObject()->senseObject(sensor->thisID(), info.sensedObject->thisID());
 			}
 
-			sensor->_checkCtr = sensorCheckRate;
+			sensor->_checkCtr = kSensorCheckRate;
 		}
 	}
 
@@ -200,12 +200,12 @@ void assertEvent(const GameEvent &ev) {
 
 void initSensors() {
 	//  Nothing to do
-	assert(sizeof(ProtaganistSensor) <= maxSensorSize);
-	assert(sizeof(SpecificObjectSensor) <= maxSensorSize);
-	assert(sizeof(ObjectPropertySensor) <= maxSensorSize);
-	assert(sizeof(SpecificActorSensor) <= maxSensorSize);
-	assert(sizeof(ActorPropertySensor) <= maxSensorSize);
-	assert(sizeof(EventSensor) <= maxSensorSize);
+	assert(sizeof(ProtaganistSensor) <= kMaxSensorSize);
+	assert(sizeof(SpecificObjectSensor) <= kMaxSensorSize);
+	assert(sizeof(ObjectPropertySensor) <= kMaxSensorSize);
+	assert(sizeof(SpecificActorSensor) <= kMaxSensorSize);
+	assert(sizeof(ActorPropertySensor) <= kMaxSensorSize);
+	assert(sizeof(EventSensor) <= kMaxSensorSize);
 }
 
 static int getSensorListID(SensorList *t) {

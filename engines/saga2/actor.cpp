@@ -2414,11 +2414,11 @@ void Actor::evaluateNeeds() {
 
 				if (canSenseActorProperty(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            kActorPropIDEnemy)
 				        ||  canSenseActorPropertyIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            kActorPropIDEnemy)) {
 					PlayerActorID   playerID = _disposition - kDispositionPlayer;
 
@@ -2478,10 +2478,10 @@ void Actor::evaluateNeeds() {
 				        && (getAssignment() == nullptr
 				            ||  canSenseProtaganist(
 				                info,
-				                maxSenseRange)
+				                kMaxSenseRange)
 				            ||  canSenseProtaganistIndirectly(
 				                info,
-				                maxSenseRange))) {
+				                kMaxSenseRange))) {
 					setGoal(kActorGoalAttackEnemy);
 				} else {
 					setGoal(kActorGoalFollowAssignment);
@@ -3099,11 +3099,11 @@ uint8 Actor::evaluateFollowerNeeds(Actor *follower) {
 	SenseInfo       info;
 
 	if ((_disposition == kDispositionEnemy
-	        &&  follower->canSenseProtaganist(info, maxSenseRange))
+	        &&  follower->canSenseProtaganist(info, kMaxSenseRange))
 	        || (_disposition >= kDispositionPlayer
 	            &&  follower->canSenseActorProperty(
 	                info,
-	                maxSenseRange,
+	                kMaxSenseRange,
 	                kActorPropIDEnemy)))
 		return kActorGoalAttackEnemy;
 

@@ -188,7 +188,7 @@ gTextBox::gTextBox(
 	_fontColorBackHilite     = BGHLColor;
 	_cursorColor             = CRColor;
 	_linesPerPage            = (box.height / _fontOffset);
-	_endLine                 = clamp(0, (_index + _linesPerPage), numEditLines);
+	_endLine                 = clamp(0, (_index + _linesPerPage), kNumEditLines);
 	_oldMark                 = -1;
 
 	_displayOnly             = noEditing;
@@ -210,10 +210,10 @@ gTextBox::gTextBox(
 	_fieldStrings = stringBufs;
 
 	// get the size of each string
-	for (i = 0; i < numEditLines; i++) {
+	for (i = 0; i < kNumEditLines; i++) {
 		_exists[i] = ((stringBufs[i][0] & 0x80) == 0);
 		stringBufs[i][0] &= 0x7F;
-		_currentLen[i] = MIN<int>(editLen, strlen(stringBufs[i]));
+		_currentLen[i] = MIN<int>(kEditLen, strlen(stringBufs[i]));
 	}
 
 	_internalBuffer = false;
@@ -427,7 +427,7 @@ void gTextBox::scroll(int8 req) {
 	int16   visBase = _endLine;
 	int16   visIndex;
 
-	indexReq        = clamp(0, indexReq, numEditLines);
+	indexReq        = clamp(0, indexReq, kNumEditLines);
 	visIndex = (indexReq - (visBase - _linesPerPage));
 	if (ABS(oldIndex - indexReq) < 2) {
 		if (visIndex < 0) {
@@ -439,11 +439,11 @@ void gTextBox::scroll(int8 req) {
 		}
 	} else {
 		while (visIndex >= _linesPerPage) {
-			visBase = clamp(_linesPerPage, visBase + _linesPerPage, numEditLines);
+			visBase = clamp(_linesPerPage, visBase + _linesPerPage, kNumEditLines);
 			visIndex = (indexReq - (visBase - _linesPerPage));
 		}
 		while (visIndex < 0) {
-			visBase = clamp(_linesPerPage, visBase - _linesPerPage, numEditLines);
+			visBase = clamp(_linesPerPage, visBase - _linesPerPage, kNumEditLines);
 			visIndex = (indexReq - (visBase - _linesPerPage));
 		}
 	}
@@ -509,12 +509,12 @@ void gTextBox::reSelect(int which) {
 void gTextBox::selectionMove(int howMany) {
 	int8    newIndex;
 
-	newIndex = clamp(0, _index + howMany, numEditLines - 1);
+	newIndex = clamp(0, _index + howMany, kNumEditLines - 1);
 #ifndef ALLOW_BAD_LOADS
 	if (_displayOnly) {
 		int i = newIndex;
 		if (howMany > 0) {
-			while (!_exists[i] && i < numEditLines - 1) i++;
+			while (!_exists[i] && i < kNumEditLines - 1) i++;
 			if (!_exists[i]) {
 				i = newIndex;
 				while (!_exists[i] && i > 0) i--;
@@ -525,7 +525,7 @@ void gTextBox::selectionMove(int howMany) {
 			while (!_exists[i] && i > 0) i--;
 			if (!_exists[i]) {
 				i = newIndex;
-				while (!_exists[i] && i < numEditLines - 1) i++;
+				while (!_exists[i] && i < kNumEditLines - 1) i++;
 			}
 			if (_exists[i])
 				newIndex = i;
@@ -850,15 +850,15 @@ void gTextBox::handleTimerTick(int32 tick) {
 			_blinkStart = tick;
 			return;
 		}
-		if (tick - _blinkStart > blinkTime) {
+		if (tick - _blinkStart > kBlinkTime) {
 			gPort   &port = _window._windowPort;
 			SAVE_GPORT_STATE(port);                  // save pen color, etc.
 			g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
 			port.setPenMap(port._penMap);
 			port.setStyle(0);
-			port.setColor(_blinkState ? blinkColor0 : blinkColor1);
-			port.fillRect(_editRect.x + _blinkX - ((blinkWide + 1) / 2), _editRect.y + 1, blinkWide, _editRect.height - 1);
+			port.setColor(_blinkState ? kBlinkColor0 : kBlinkColor1);
+			port.fillRect(_editRect.x + _blinkX - ((kBlinkWide + 1) / 2), _editRect.y + 1, kBlinkWide, _editRect.height - 1);
 
 			g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
@@ -898,10 +898,10 @@ void gTextBox::drawContents() {
 		            anchorX = 0,
 		            _hiliteX,
 		            _hiliteWidth,
-		            textHeight_;
+		            kTextHeight_;
 
 
-		textHeight_ = _fontHeight;
+		kTextHeight_ = _fontHeight;
 
 
 		if (_hilit || _editing) {
@@ -968,7 +968,7 @@ void gTextBox::drawContents() {
 		tPort.setFont(_textFont);
 		tPort.setColor(_fontColorHilite);
 
-		tPort.moveTo(-_scrollPixels, (_editRect.height - textHeight_ + 1) / 2);
+		tPort.moveTo(-_scrollPixels, (_editRect.height - kTextHeight_ + 1) / 2);
 		tPort.drawText(_fieldStrings[_index], _currentLen[_index]);
 
 		//  Blit the pixelmap to the main screen
@@ -1066,13 +1066,13 @@ void gTextBox::drawAll(gPort &port,
 
 
 			for (i = (_endLine - _linesPerPage); i < _endLine; i++) {
-				assert(i >= 0 && i <= numEditLines);
+				assert(i >= 0 && i <= kNumEditLines);
 
 				// move to new text pos
 				tempPort.moveTo(workRect.x, workRect.y);
 
 				// pen color black
-				tempPort.setColor(((i != _index) && _exists[i]) ? _fontColorFore : textDisable);
+				tempPort.setColor(((i != _index) && _exists[i]) ? _fontColorFore : kTextDisable);
 
 				// draw the text
 				tempPort.drawText(_fieldStrings[i]);

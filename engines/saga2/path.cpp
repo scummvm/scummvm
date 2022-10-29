@@ -371,7 +371,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							TileRegion  subMetaTag;
 							TileRef     *stateData;
 
-							assert((uint16)tr->tile <= activeItemIndexNullID);
+							assert((uint16)tr->tile <= kActiveItemIndexNullID);
 							groupItem = ActiveItem::activeItemAddress(
 							                ActiveItemID(_mapNum, tr->tile));
 

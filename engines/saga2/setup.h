@@ -82,9 +82,6 @@ enum borderIDs {
 	kMWRightBorder3
 };
 
-const int   extraObjects  = 512,
-            extraActors   = 64;
-
 } // end of namespace Saga2
 
 #endif
