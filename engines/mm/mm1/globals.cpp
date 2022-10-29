@@ -32,7 +32,7 @@ Globals *g_globals;
 
 Globals::Globals() {
 	g_globals = this;
-	Common::fill(&_treasure[0], &_treasure[TREASURE_COUNT], 0);
+	_treasure.clear();
 }
 
 Globals::~Globals() {
