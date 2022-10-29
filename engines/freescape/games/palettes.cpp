@@ -50,11 +50,11 @@ byte dos_CGA_palette[4][3] = {
 
 void FreescapeEngine::loadColorPalette() {
 	Graphics::PixelBuffer *palette = nullptr;
-	if (_renderMode == "ega")
+	if (_renderMode == Common::kRenderEGA)
 		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_EGA_palette);
-	else if (_renderMode == "cga")
+	else if (_renderMode == Common::kRenderCGA)
 		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_CGA_palette);
-	else if (_renderMode == "amiga" || _renderMode == "atari")
+	else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST)
 		palette = nullptr; // palette depends on the area
 	else
 		error("Invalid render mode, no palette selected");

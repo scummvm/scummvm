@@ -129,14 +129,14 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 		for (uint8 colour = 0; colour < numberOfColours / 2; colour++) {
 			uint8 data = readField(file, 8);
 			entry = data & 0xf;
-			if (_renderMode == "cga")
+			if (_renderMode == Common::kRenderCGA)
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
 			debugC(1, kFreescapeDebugParser, "color[%d] = %x", 2 * colour, entry);
 
 			entry = data >> 4;
-			if (_renderMode == "cga")
+			if (_renderMode == Common::kRenderCGA)
 				entry = entry % 4; // TODO: use dithering
 
 			colours->push_back(entry);
@@ -289,7 +289,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	// skyColor = file->readByte() & 15;
 	// debugC(1, kFreescapeDebugParser, "Colors: %d %d", skyColor, groundColor);
 
-	if (_renderMode == "cga") {
+	if (_renderMode == Common::kRenderCGA) {
 		skyColor = skyColor % 4;
 		groundColor = groundColor % 4;
 	}
@@ -511,7 +511,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 
 void FreescapeEngine::loadBundledImages() {
 	Image::BitmapDecoder decoder;
-	Common::String borderFilename = _targetName + "_" + _renderMode + ".bmp";
+	Common::String borderFilename = _targetName + "_" + Common::getRenderModeDescription(_renderMode) + ".bmp";
 	if (_dataBundle->hasFile(borderFilename)) {
 		Common::SeekableReadStream *borderFile = _dataBundle->createReadStreamForMember(borderFilename);
 		decoder.loadStream(*borderFile);

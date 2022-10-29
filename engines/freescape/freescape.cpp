@@ -38,18 +38,18 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 	: Engine(syst), _gameDescription(gd), _gfx(nullptr) {
 	g_freescape = this;
 	if (!ConfMan.hasKey("render_mode") || ConfMan.get("render_mode").empty())
-		_renderMode = "ega";
+		_renderMode = Common::kRenderEGA;
 	else
-		_renderMode = ConfMan.get("render_mode");
+		_renderMode = Common::parseRenderMode(ConfMan.get("render_mode"));
 
 	_binaryBits = 0;
 	_screenW = 320;
 	_screenH = 200;
 
 	if (isAmiga()) {
-		_renderMode = "amiga";
+		_renderMode = Common::kRenderAmiga;
 	} else if (isAtariST()) {
-		_renderMode = "atari";
+		_renderMode = Common::kRenderAtariST;
 	}
 
 	if (gd->extra)

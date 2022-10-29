@@ -41,7 +41,7 @@ DarkEngine::DarkEngine(OSystem *syst, const ADGameDescription *gd) : FreescapeEn
 
 void DarkEngine::loadAssets() {
 	Common::File file;
-	if (_renderMode == "ega") {
+	if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		file.open("DSIDEE.EXE");
 
@@ -50,7 +50,7 @@ void DarkEngine::loadAssets() {
 
 		loadFonts(&file, 0xa113);
 		load8bitBinary(&file, 0xa280, 16);
-	} else if (_renderMode == "cga") {
+	} else if (_renderMode == Common::kRenderCGA) {
 		loadBundledImages();
 		file.open("DSIDEC.EXE");
 
@@ -58,7 +58,7 @@ void DarkEngine::loadAssets() {
 			error("Failed to open DSIDEC.EXE");
 		load8bitBinary(&file, 0x7bb0, 4); // TODO
 	} else
-		error("Invalid render mode %s for Dark Side", _renderMode.c_str());
+		error("Invalid or unsupported render mode %s for Dark Side", Common::getRenderModeDescription(_renderMode));
 }
 
 void DarkEngine::gotoArea(uint16 areaID, int entranceID) {

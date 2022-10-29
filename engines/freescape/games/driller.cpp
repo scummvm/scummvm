@@ -288,7 +288,7 @@ void DrillerEngine::loadAssetsFullGame() {
 
 			loadSoundsFx(&file, 0, 25);
 		}
-	} else if (_renderMode == "ega") {
+	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		_title = _border;
 		file.open("DRILLE.EXE");
@@ -300,7 +300,7 @@ void DrillerEngine::loadAssetsFullGame() {
 		loadFonts(&file, 0x99dd);
 		loadGlobalObjects(&file, 0x3b42);
 		load8bitBinary(&file, 0x9b40, 16);
-	} else if (_renderMode == "cga") {
+	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		_title = _border;
 		file.open("DRILLC.EXE");
@@ -309,7 +309,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			error("Failed to open DRILLC.EXE");
 		load8bitBinary(&file, 0x7bb0, 4);
 	} else
-		error("Invalid render mode %s for Driller", _renderMode.c_str());
+		error("Invalid or unsupported render mode %s for Driller", Common::getRenderModeDescription(_renderMode));
 }
 
 void DrillerEngine::drawUI() {
@@ -348,7 +348,7 @@ void DrillerEngine::drawUI() {
 
 	int energy = _gameStateVars[k8bitVariableEnergy];
 	int shield = _gameStateVars[k8bitVariableShield];
-	if (_renderMode == "ega" && _border) {
+	if (_renderMode == Common::kRenderEGA && _border) {
 		// Common::Rect black(20, 177, 87, 191);
 		//_gfx->drawRect2D(black, 255, 0, 0, 0);
 
