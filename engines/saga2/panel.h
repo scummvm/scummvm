@@ -69,21 +69,21 @@ void EventLoop(bool &running, bool modal = false);
  * ===================================================================== */
 
 enum gEventType {
-	gEventNone = 0,                         // no event occurred
-	gEventMouseDown,                        // left button pressed
-	gEventMouseUp,                          // left button released
-	gEventRMouseDown,                       // right button pressed
-	gEventRMouseUp,                         // right button released
-	gEventMouseMove,                        // mouse moved
-	gEventMouseDrag,                        // mouse dragged
-	gEventMouseOutside,                     // mouse click outside of window
-	gEventKeyDown,                          // keystroke
+	kEventNone = 0,                         // no event occurred
+	kEventMouseDown,                        // left button pressed
+	kEventMouseUp,                          // left button released
+	kEventRMouseDown,                       // right button pressed
+	kEventRMouseUp,                         // right button released
+	kEventMouseMove,                        // mouse moved
+	kEventMouseDrag,                        // mouse dragged
+	kEventMouseOutside,                     // mouse click outside of window
+	kEventKeyDown,                          // keystroke
 
-	gEventNewValue,                         // object had new value
-	gEventDoubleClick,                      // double-clicked on object
-	gEventAltValue,                         // for multi-function objects
+	kEventNewValue,                         // object had new value
+	kEventDoubleClick,                      // double-clicked on object
+	kEventAltValue,                         // for multi-function objects
 
-	gEventLast
+	kEventLast
 };
 
 /* ===================================================================== *
@@ -348,8 +348,8 @@ private:
 	//  Dragging modes for window -- private and static!
 
 	enum drag_modes {
-		dragNone = 0,
-		dragPosition
+		kDragNone = 0,
+		kDragPosition
 	};
 
 	static int      _dragMode;               // current dragging mode
@@ -440,8 +440,8 @@ public:
 	}
 
 	enum    controlValue {
-		enter = (1 << 0),
-		leave = (1 << 1)
+		kCVEnter = (1 << 0),
+		kCVLeave = (1 << 1)
 	};
 
 protected:

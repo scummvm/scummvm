@@ -243,7 +243,7 @@ void AutoMap::deactivate() {
 // activation
 
 bool AutoMap::activate(gEventType why) {
-	if (why == gEventMouseDown) {           // momentarily depress
+	if (why == kEventMouseDown) {           // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -307,7 +307,7 @@ void AutoMap::pointerMove(gPanelMessage &msg) {
 		char *mtext = getMapFeaturesText(viewRegion, currentWorld->_mapNum, _baseCoords, pos) ;
 		g_vm->_mouseInfo->setText(mtext);
 	} else {
-		notify(gEventMouseMove, 0);
+		notify(kEventMouseMove, 0);
 	}
 }
 
@@ -356,7 +356,7 @@ bool AutoMap::pointerHit(gPanelMessage &msg) {
 		}
 	}
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -365,7 +365,7 @@ bool AutoMap::pointerHit(gPanelMessage &msg) {
 
 void AutoMap::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
@@ -373,7 +373,7 @@ void AutoMap::pointerDrag(gPanelMessage &) {
 // mouse click release event handler
 
 void AutoMap::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -598,7 +598,7 @@ APPFUNC(cmdAutoMapQuit) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 
@@ -613,7 +613,7 @@ APPFUNC(cmdAutoMapQuit) {
 // event handler
 
 APPFUNC(cmdAutoMapScroll) {
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		static const Rect16             vPosRect(0, 0, scrollBtnWidth / 2, scrollBtnHeight / 2);
 		static const Rect16             uPosRect(scrollBtnWidth / 2, 0, scrollBtnWidth / 2, scrollBtnHeight / 2);
 		static const Rect16             uNegRect(0, scrollBtnHeight / 2, scrollBtnWidth / 2, scrollBtnHeight / 2);
@@ -629,7 +629,7 @@ APPFUNC(cmdAutoMapScroll) {
 }
 
 APPFUNC(cmdAutoMapAppFunc) {
-	if (ev.panel && ev.eventType == gEventMouseMove) {
+	if (ev.panel && ev.eventType == kEventMouseMove) {
 		// mouse moved
 
 		static const Rect16             vPosRect(0, 0, scrollBtnWidth / 2, scrollBtnHeight / 2);

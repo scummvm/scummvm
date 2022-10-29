@@ -63,7 +63,7 @@ static void handleRequestEvent(gEvent &ev) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 

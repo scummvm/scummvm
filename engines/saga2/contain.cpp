@@ -617,7 +617,7 @@ bool ContainerView::pointerHit(gPanelMessage &msg) {
 	totalObjects();
 	_window.update(_extent);
 
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void ContainerView::pointerRelease(gPanelMessage &) {
@@ -1798,7 +1798,7 @@ void setMindContainer(int index, IntangibleContainerWindow &cw) {
 }
 
 APPFUNC(cmdMindContainerFunc) {
-	if (ev.panel && ev.eventType == gEventNewValue /* && ev.value */) {
+	if (ev.panel && ev.eventType == kEventNewValue /* && ev.value */) {
 		IntangibleContainerWindow   *cw = (IntangibleContainerWindow *)ev.window;
 		ContainerNode   &nd = cw->getView()._node;
 		int             newMindType = nd._mindType;
@@ -1818,7 +1818,7 @@ APPFUNC(cmdMindContainerFunc) {
 			setMindContainer(nd._mindType, *cw);
 			cw->update(cw->getView().getExtent());
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		//if (ev.value == gCompImage::enter)
 		{
 			const Rect16 idea(0, 0, 22, 67),      // idea button click area
@@ -1868,7 +1868,7 @@ APPFUNC(cmdMindContainerFunc) {
 }
 
 APPFUNC(cmdCloseButtonFunc) {
-	if (ev.eventType == gEventNewValue && ev.value == 1) {
+	if (ev.eventType == kEventNewValue && ev.value == 1) {
 		ContainerWindow     *win = (ContainerWindow *)ev.window;
 
 		if (win->getView()._node.getType() == ContainerNode::kMentalType) {
@@ -1882,7 +1882,7 @@ APPFUNC(cmdCloseButtonFunc) {
 		if (g_vm->_mouseInfo->getObject() == nullptr) {
 			g_vm->_mouseInfo->setText(nullptr);
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(CLOSE_MOUSE);
 		} else if (ev.value == GfxCompImage::kLeave) {
@@ -1892,7 +1892,7 @@ APPFUNC(cmdCloseButtonFunc) {
 }
 
 APPFUNC(cmdScrollFunc) {
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		ScrollableContainerWindow *cw;
 		const Rect16 upArea(0, 0, 44, 22);
 
@@ -1902,7 +1902,7 @@ APPFUNC(cmdScrollFunc) {
 		else
 			cw->scrollDown();
 		ev.window->update(cw->getView().getExtent());
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			g_vm->_mouseInfo->setText(SCROLL_MOUSE);
 		} else if (ev.value == GfxCompImage::kLeave) {

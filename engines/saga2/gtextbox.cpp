@@ -66,12 +66,12 @@ extern gFont        *mainFont;
 *       that it is tab-selectable.
 *
 *   /h2/NOTIFICATIONS
-*       This class sends a gEventNewValue whenever the text box becomes
+*       This class sends a kEventNewValue whenever the text box becomes
 *       deactivated. If the deactivation occurred because of the user
 *       hitting return, then the value of the event will be 1; In all
 *       other cases it is zero.
 *
-*       In addition, a gEventAltValue is sent for each character
+*       In addition, a kEventAltValue is sent for each character
 *       typed. (Value is always 0). This is to allow other displays
 *       to be dynamically updated as the user types.
 *
@@ -347,7 +347,7 @@ void gTextBox::setEditExtent(const Rect16 &r) {
 //-----------------------------------------------------------------------
 
 bool gTextBox::activate(gEventType why) {
-	if (why == gEventAltValue) {            // momentarily depress
+	if (why == kEventAltValue) {            // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -359,7 +359,7 @@ bool gTextBox::activate(gEventType why) {
 	_selected = 1;
 	_fullRedraw = true;
 	draw();
-	if (why == gEventNone)
+	if (why == kEventNone)
 		return true;
 	return gPanel::activate(why);
 }
@@ -399,7 +399,7 @@ void gTextBox::commitEdit() {
 		memcpy(_undoBuffer, _fieldStrings[_index], _currentLen[_index] + 1);
 		_undoLen = _currentLen[_index];
 		_cursorPos = _anchorPos = _currentLen[_index];
-		notify(gEventNewValue, 1);       // tell app about new value
+		notify(kEventNewValue, 1);       // tell app about new value
 	}
 }
 
@@ -410,7 +410,7 @@ void gTextBox::revertEdit() {
 	if (_undoBuffer && changed()) {
 		_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 		memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
-		notify(gEventNewValue, 0);         // tell app about new value
+		notify(kEventNewValue, 0);         // tell app about new value
 	}
 }
 
@@ -541,7 +541,7 @@ void gTextBox::selectionMove(int howMany) {
 
 	draw();
 
-	//activate(gEventAltValue);
+	//activate(kEventAltValue);
 }
 
 
@@ -593,7 +593,7 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 			makeActive();
 		}
 	}
-	return true; //gControl::activate( gEventMouseDown );
+	return true; //gControl::activate( kEventMouseDown );
 }
 
 
@@ -676,7 +676,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 		if (_onEnter != nullptr) {
 			gEvent ev;
-			ev.eventType = gEventKeyDown ;
+			ev.eventType = kEventKeyDown ;
 			ev.value = 1;
 			ev.panel = _parent;
 			(*_onEnter)(ev);
@@ -688,7 +688,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		deactivate();                       // deactivate the text box
 		if (_onEscape != nullptr) {
 			gEvent ev;
-			ev.eventType = gEventKeyDown ;
+			ev.eventType = kEventKeyDown ;
 			ev.value = 1;
 			ev.value = 1;
 			ev.panel = this; //_parent;
@@ -729,14 +729,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 				if (_undoBuffer) {
 					_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 					memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
-					notify(gEventAltValue, 0);  // tell app about new value
+					notify(kEventAltValue, 0);  // tell app about new value
 				}
 			} else {
 				//  Insert text, if it will fit
 
 				if (insertText((char *)&key, 1) == false)
 					return false;
-				notify(gEventAltValue, 0);       // tell app about new value
+				notify(kEventAltValue, 0);       // tell app about new value
 			}
 			break;
 
@@ -753,7 +753,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 					_currentLen[_index] - (selStart + selWidth));
 			_cursorPos = _anchorPos = selStart;   // adjust cursor pos
 			_currentLen[_index] -= selWidth;                // adjust str len
-			notify(gEventAltValue, 0);       // tell app about new value
+			notify(kEventAltValue, 0);       // tell app about new value
 			break;
 
 		case Common::KEYCODE_DELETE:
@@ -769,7 +769,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 					_currentLen[_index] - (selStart + selWidth));
 			_cursorPos = _anchorPos = selStart;   // adjust cursor pos
 			_currentLen[_index] -= selWidth;    // adjust str len
-			notify(gEventAltValue, 0);       // tell app about new value
+			notify(kEventAltValue, 0);       // tell app about new value
 			break;
 
 		case Common::ASCII_TAB:
@@ -786,7 +786,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 				if (insertText((char *)&key, 1) == false)
 					return false;
-				notify(gEventAltValue, 0);       // tell app about new value
+				notify(kEventAltValue, 0);       // tell app about new value
 			}
 
 			break;

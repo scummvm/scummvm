@@ -104,7 +104,7 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 
@@ -353,10 +353,10 @@ bool SimpleButton::activate(gEventType why) {
 	_selected = 1;
 	draw();
 
-	if (why == gEventKeyDown) {             // momentarily depress
+	if (why == kEventKeyDown) {             // momentarily depress
 		//delay( 200 );
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	return false;
 }
@@ -364,7 +364,7 @@ bool SimpleButton::activate(gEventType why) {
 bool SimpleButton::pointerHit(gPanelMessage &) {
 	//if (ghosted) return false;
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -373,7 +373,7 @@ void SimpleButton::pointerRelease(gPanelMessage &) {
 
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 

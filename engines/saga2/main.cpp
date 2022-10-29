@@ -851,7 +851,7 @@ APPFUNC(cmdWindowFunc) {
 	int16           key, qual;
 
 	switch (ev.eventType) {
-	case gEventKeyDown:
+	case kEventKeyDown:
 		key = ev.value & 0xffff;
 		qual = ev.value >> 16;
 

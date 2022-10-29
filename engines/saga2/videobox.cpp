@@ -71,7 +71,7 @@ void CVideoBox::deactivate() {
 }
 
 bool CVideoBox::activate(gEventType why) {
-	if (why == gEventMouseDown) {        // momentarily depress
+	if (why == kEventMouseDown) {        // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -80,7 +80,7 @@ bool CVideoBox::activate(gEventType why) {
 }
 
 void CVideoBox::pointerMove(gPanelMessage &) {
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 bool CVideoBox::pointerHit(gPanelMessage &) {
@@ -96,18 +96,18 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 		ri->result  = _id;
 	}
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void CVideoBox::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
 void CVideoBox::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);    // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);    // notify App of successful hit
 	deactivate();
 }
 

@@ -535,7 +535,7 @@ void gWindow::deactivate() {
 }
 
 bool gWindow::activate(gEventType why) {
-	if (why == gEventMouseDown) {           // momentarily depress
+	if (why == kEventMouseDown) {           // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -544,22 +544,22 @@ bool gWindow::activate(gEventType why) {
 }
 
 void gWindow::pointerMove(gPanelMessage &) {
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 bool gWindow::pointerHit(gPanelMessage &) {
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void gWindow::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
 void gWindow::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -699,29 +699,29 @@ void gGenericControl::deactivate() {
 }
 
 void gGenericControl::pointerMove(gPanelMessage &msg) {
-	notify(gEventMouseMove, (msg._pointerEnter ? enter : 0) | (msg._pointerLeave ? leave : 0));
+	notify(kEventMouseMove, (msg._pointerEnter ? kCVEnter : 0) | (msg._pointerLeave ? kCVLeave : 0));
 }
 
 bool gGenericControl::pointerHit(gPanelMessage &msg) {
 	if (msg._rightButton)
-		notify(gEventRMouseDown, 0);
+		notify(kEventRMouseDown, 0);
 	else if (msg._doubleClick && !_dblClickFlag) {
 		_dblClickFlag = true;
-		notify(gEventDoubleClick, 0);
+		notify(kEventDoubleClick, 0);
 	} else {
 		_dblClickFlag = false;
-		notify(gEventMouseDown, 0);
+		notify(kEventMouseDown, 0);
 	}
 
 	return true;
 }
 
 void gGenericControl::pointerDrag(gPanelMessage &) {
-	notify(gEventMouseDrag, 0);
+	notify(kEventMouseDrag, 0);
 }
 
 void gGenericControl::pointerRelease(gPanelMessage &) {
-	notify(gEventMouseUp, 0);
+	notify(kEventMouseUp, 0);
 	deactivate();
 }
 
@@ -736,7 +736,7 @@ void gGenericControl::draw() {
 void gToolBase::setActive(gPanel *ctl) {
 	if (_activePanel && _activePanel == ctl)  return;
 	if (_activePanel) _activePanel->deactivate();
-	if (ctl == nullptr || ctl->activate(gEventNone)) _activePanel = ctl;
+	if (ctl == nullptr || ctl->activate(kEventNone)) _activePanel = ctl;
 }
 
 void gToolBase::handleMouse(Common::Event &event, uint32 time) {
@@ -1042,7 +1042,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 			if ((ctl = w->keyTest(k)) != nullptr) {
 				if (_activePanel == ctl) return;
 				if (_activePanel) _activePanel->deactivate();
-				if (ctl->activate(gEventKeyDown)) {
+				if (ctl->activate(kEventKeyDown)) {
 					_activePanel = ctl;
 					return;
 				}
@@ -1056,7 +1056,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 
 		// else send the message to the app.
 
-		w->notify(gEventKeyDown, (qualifier << 16) | key);
+		w->notify(kEventKeyDown, (qualifier << 16) | key);
 	}
 }
 

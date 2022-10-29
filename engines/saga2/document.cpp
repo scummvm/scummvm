@@ -228,7 +228,7 @@ void CDocument::deactivate() {
 }
 
 bool CDocument::activate(gEventType why) {
-	if (why == gEventMouseDown) {           // momentarily depress
+	if (why == kEventMouseDown) {           // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -292,12 +292,12 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 		setMouseImage(kMouseArrowImage, 0, 0);
 	}
 
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 void CDocument::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
@@ -331,7 +331,7 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 		}
 	}
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -347,7 +347,7 @@ void CDocument::gotoPage(int8 page) {
 }
 
 void CDocument::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -865,7 +865,7 @@ APPFUNC(cmdDocumentQuit) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 

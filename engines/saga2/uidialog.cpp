@@ -542,7 +542,7 @@ static bool deferredSaveFlag = false;
 static char deferredSaveName[64];
 
 inline bool isUserAction(gEvent ev) {
-	return (ev.eventType == gEventNewValue) || (ev.eventType == gEventKeyDown);
+	return (ev.eventType == kEventNewValue) || (ev.eventType == kEventKeyDown);
 }
 
 /* ===================================================================== *
@@ -1327,7 +1327,7 @@ bool CPlacardWindow::pointerHit(gPanelMessage &) {
 		ri->result  = _id;
 	}
 
-	//activate( gEventMouseDown );
+	//activate( kEventMouseDown );
 	return true;
 }
 

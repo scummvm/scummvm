@@ -191,7 +191,7 @@ void GfxCompImage::pointerMove(gPanelMessage &msg) {
 	// call the superclass's pointerMove
 	gControl::pointerMove(msg);
 
-	notify(gEventMouseMove, (msg._pointerEnter ? kEnter : 0) | (msg._pointerLeave ? kLeave : 0));
+	notify(kEventMouseMove, (msg._pointerEnter ? kEnter : 0) | (msg._pointerLeave ? kLeave : 0));
 }
 
 void GfxCompImage::enable(bool abled) {
@@ -534,9 +534,9 @@ bool GfxCompButton::activate(gEventType why) {
 	_selected = 1;
 	_window.update(_extent);
 
-	if (why == gEventKeyDown) { // momentarily depress
+	if (why == kEventKeyDown) { // momentarily depress
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	playMemSound(2);
 	return false;
@@ -546,7 +546,7 @@ void GfxCompButton::pointerMove(gPanelMessage &msg) {
 	if (_dimmed)
 		return;
 
-	//notify( gEventMouseMove, (msg.pointerEnter ? enter : 0)|(msg.pointerLeave ? leave : 0));
+	//notify( kEventMouseMove, (msg.pointerEnter ? enter : 0)|(msg.pointerLeave ? leave : 0));
 	GfxCompImage::pointerMove(msg);
 }
 
@@ -554,7 +554,7 @@ bool GfxCompButton::pointerHit(gPanelMessage &) {
 	if (_dimmed)
 		return false;
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -563,7 +563,7 @@ void GfxCompButton::pointerRelease(gPanelMessage &) {
 
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
@@ -614,18 +614,18 @@ GfxOwnerSelCompButton::GfxOwnerSelCompButton(gPanelList &list, const Rect16 &box
 }
 
 bool GfxOwnerSelCompButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 //		selected = !selected;
 //		window.update( extent );
 		gPanel::deactivate();
-		notify(gEventNewValue, _selected);    // notify App of successful hit
+		notify(kEventNewValue, _selected);    // notify App of successful hit
 		playMemSound(2);
 	}
 	return false;
 }
 
 bool GfxOwnerSelCompButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void GfxOwnerSelCompButton::select(uint16 val) {
@@ -723,7 +723,7 @@ GfxMultCompButton::~GfxMultCompButton() {
 }
 
 bool GfxMultCompButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 		if (_response) {
 			if (++_current > _max) {
 				_current = 0;
@@ -732,7 +732,7 @@ bool GfxMultCompButton::activate(gEventType why) {
 		}
 
 		gPanel::deactivate();
-		notify(gEventNewValue, _current);     // notify App of successful hit
+		notify(kEventNewValue, _current);     // notify App of successful hit
 		playMemSound(1);
 //		playSound( MKTAG('C','B','T',5) );
 	}
@@ -740,7 +740,7 @@ bool GfxMultCompButton::activate(gEventType why) {
 }
 
 bool GfxMultCompButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 void *GfxMultCompButton::getCurrentCompImage() {
@@ -837,11 +837,11 @@ void GfxSlider::drawClipped(gPort &port,
 }
 
 bool GfxSlider::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 		_selected = 1;
 		_window.update(_extent);
 		gPanel::deactivate();
-		notify(gEventNewValue, _slCurrent);   // notify App of successful hit
+		notify(kEventNewValue, _slCurrent);   // notify App of successful hit
 	}
 	return false;
 }
@@ -859,7 +859,7 @@ bool GfxSlider::pointerHit(gPanelMessage &msg) {
 	// redraw the control should any visual change hath occurred
 	_window.update(_extent);
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -871,7 +871,7 @@ void GfxSlider::pointerMove(gPanelMessage &msg) {
 		// redraw the control should any visual change hath occurred
 		_window.update(_extent);
 
-		notify(gEventMouseMove, _slCurrent);
+		notify(kEventMouseMove, _slCurrent);
 	}
 }
 
@@ -879,7 +879,7 @@ void GfxSlider::pointerRelease(gPanelMessage &) {
 	//  We have to test selected first because deactivate clears it.
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, _slCurrent);       // notify App of successful hit
+		notify(kEventNewValue, _slCurrent);       // notify App of successful hit
 	} else deactivate();
 }
 
@@ -887,7 +887,7 @@ void GfxSlider::pointerDrag(gPanelMessage &msg) {
 	// update the image index
 	updateSliderIndexes(msg._pickPos);
 
-	notify(gEventNewValue, _slCurrent);       // notify App of successful hit
+	notify(kEventNewValue, _slCurrent);       // notify App of successful hit
 	// redraw the control should any visual change hath occurred
 	_window.update(_extent);
 }

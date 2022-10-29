@@ -2071,7 +2071,7 @@ APPFUNC(cmdPortrait) {
 
 	switch (ev.eventType) {
 
-	case gEventNewValue:
+	case kEventNewValue:
 
 		if (mouseObject != nullptr) {
 			PlayerActor     *pa = getPlayerActorAddress(translatePanID(panID));
@@ -2122,7 +2122,7 @@ APPFUNC(cmdPortrait) {
 		}
 		break;
 
-	case gEventMouseMove:
+	case kEventMouseMove:
 
 		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
@@ -2189,7 +2189,7 @@ APPFUNC(cmdAggressive) {
 
 	// check for message update stuff
 	// and aggression update
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		toggleAgression(transBroID, rightButtonState());
 //		int16   wasAggressive = isAggressive( transBroID );
 
@@ -2199,7 +2199,7 @@ APPFUNC(cmdAggressive) {
 //				setAggression( i, !wasAggressive );
 //		}
 //		else setAggression( transBroID, !wasAggressive );
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isAggressive(transBroID)
@@ -2214,7 +2214,7 @@ APPFUNC(cmdAggressive) {
 /*
 APPFUNC( cmdJump )
 {
-    if( ev.eventType == gEventNewValue )
+    if( ev.eventType == kEventNewValue )
     {
         jump = !jump;
 
@@ -2231,7 +2231,7 @@ APPFUNC( cmdJump )
 */
 
 APPFUNC(cmdArmor) {
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 
 		if (ev.value == GfxCompImage::kEnter) {
 			gArmorIndicator *gai = (gArmorIndicator *)ev.panel;
@@ -2259,12 +2259,12 @@ APPFUNC(cmdArmor) {
 APPFUNC(cmdCenter) {
 	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		if (rightButtonState())
 			setCenterBrother((transBroID + 1) % kPlayerActors);
 		else setCenterBrother(transBroID);
 	}
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(getCenterActorPlayerID() == transBroID
@@ -2288,7 +2288,7 @@ void toggleBanding(PlayerActorID bro, bool all) {
 APPFUNC(cmdBand) {
 	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		toggleBanding(transBroID, rightButtonState());
 //		int16   wasBanded = isBanded( transBroID );
 //
@@ -2298,7 +2298,7 @@ APPFUNC(cmdBand) {
 //				setBanded( i, !wasBanded );
 //		}
 //		else setBanded( transBroID, !wasBanded );
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			// set the text in the cursor
 			g_vm->_mouseInfo->setText(isBanded(transBroID)
@@ -2311,17 +2311,17 @@ APPFUNC(cmdBand) {
 }
 
 APPFUNC(cmdOptions) {
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		OptionsDialog();
 		//openOptionsPanel();
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter)        g_vm->_mouseInfo->setText(OPTIONS_PANEL);
 		else if (ev.value == GfxCompImage::kLeave) g_vm->_mouseInfo->setText(nullptr);
 	}
 }
 
 APPFUNC(cmdBroChange) {
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		if (!isBrotherDead(ev.panel->_id)) {
 			setCenterBrother(ev.panel->_id);
 			// this sets up the _buttons in trio mode to the correct
@@ -2329,7 +2329,7 @@ APPFUNC(cmdBroChange) {
 			setTrioBtns();
 			setControlPanelsToIndividualMode(ev.panel->_id);
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		const int bufSize = 80;
 		const int stateBufSize = 60;
 
@@ -2365,7 +2365,7 @@ APPFUNC(cmdBroChange) {
 APPFUNC(cmdHealthStar) {
 	uint16 transBroID = translatePanID(ev.panel->_id);
 
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 			return;
@@ -2390,7 +2390,7 @@ APPFUNC(cmdMassInd) {
 	gWindow         *win = nullptr;
 	GameObject      *_containerObject = nullptr;
 
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			int     curWeight;
@@ -2428,7 +2428,7 @@ APPFUNC(cmdBulkInd) {
 	GameObject      *_containerObject = nullptr;
 
 
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kEnter) {
 			const   int bufSize     = 40;
 			uint16  baseBulk    = 100;
@@ -2462,7 +2462,7 @@ APPFUNC(cmdBulkInd) {
 }
 
 APPFUNC(cmdManaInd) {
-	if (ev.eventType == gEventMouseMove) {
+	if (ev.eventType == kEventMouseMove) {
 		if (ev.value != GfxCompImage::kLeave) {
 			const   int BUF_SIZE = 64;
 			char    textBuffer[BUF_SIZE];

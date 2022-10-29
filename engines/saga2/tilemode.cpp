@@ -1006,7 +1006,7 @@ static APPFUNC(cmdClickTileMap) {
 	if (!uiKeysEnabled) return;
 
 	switch (ev.eventType) {
-	case gEventRMouseDown:
+	case kEventRMouseDown:
 
 #if CHEATMOVE
 		selectedObject = pickedObject;
@@ -1028,9 +1028,9 @@ static APPFUNC(cmdClickTileMap) {
 		}
 		break;
 
-	case gEventMouseMove:
-	case gEventMouseDrag:
-		if (ev.value & gGenericControl::leave) {
+	case kEventMouseMove:
+	case kEventMouseDrag:
+		if (ev.value & gGenericControl::kCVLeave) {
 			mousePressed = false;
 
 			if (g_vm->_mouseInfo->getObject() == nullptr)
@@ -1045,7 +1045,7 @@ static APPFUNC(cmdClickTileMap) {
 		lastMousePos.set(ev.mouse.x, ev.mouse.y);
 		break;
 
-	case gEventMouseDown:
+	case kEventMouseDown:
 
 		mousePressed = true;
 
@@ -1214,7 +1214,7 @@ static APPFUNC(cmdClickTileMap) {
 		}
 		break;
 
-	case gEventMouseUp:
+	case kEventMouseUp:
 
 		mousePressed = false;
 
@@ -1246,7 +1246,7 @@ static APPFUNC(cmdClickTileMap) {
 		}
 		break;
 
-	case gEventDoubleClick:
+	case kEventDoubleClick:
 
 		dblClick = true;
 
@@ -1418,7 +1418,7 @@ void gStickyDragControl::deactivate() {
 
 //void gStickyDragControl::pointerMove( gPanelMessage & )
 //{
-//	notify( gEventMouseMove, 0 );
+//	notify( kEventMouseMove, 0 );
 //}
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {

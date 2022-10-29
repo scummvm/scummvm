@@ -1056,13 +1056,13 @@ APPFUNC(cmdClickSpeech) {
 	Speech          *sp;
 
 	switch (ev.eventType) {
-	case gEventMouseMove:
-	case gEventMouseDrag:
+	case kEventMouseMove:
+	case kEventMouseDrag:
 
 		g_vm->_mouseInfo->setDoable(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight).ptInside(ev.mouse));
 		break;
 
-	case gEventMouseDown:
+	case kEventMouseDown:
 
 		if ((sp = speechList.currentActive()) != nullptr) {
 			sp->_selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage._size.x, sp->_textPort);

@@ -4365,7 +4365,7 @@ APPFUNC(cmdBrain) {
 	if (!indivControls->getEnabled())
 		return;
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		//WriteStatusF( 4, "Brain Attempt " );
 
 		GameObject          *container = indivCviewTop->_containerObject;
@@ -4385,7 +4385,7 @@ APPFUNC(cmdBrain) {
 				break;
 			}
 		}
-	} else if (ev.eventType == gEventMouseMove) {
+	} else if (ev.eventType == kEventMouseMove) {
 		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
@@ -4502,7 +4502,7 @@ void objectTest() {
 APPFUNC(cmdControl) {
 	int newContainer = protoClassIdeaContainer;
 
-	if (ev.eventType == gEventMouseUp) {
+	if (ev.eventType == kEventMouseUp) {
 
 		GameObject *object = (GameObject *)getCenterActor();
 		ContainerIterator   iter(object);

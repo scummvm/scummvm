@@ -387,15 +387,15 @@ bool gButton::activate(gEventType why) {
 	_selected = 1;
 	draw();
 
-	if (why == gEventKeyDown) {             // momentarily depress
+	if (why == kEventKeyDown) {             // momentarily depress
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	return false;
 }
 
 bool gButton::pointerHit(gPanelMessage &) {
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -404,7 +404,7 @@ void gButton::pointerRelease(gPanelMessage &) {
 
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
@@ -449,17 +449,17 @@ void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 
  * ===================================================================== */
 
 bool gToggleButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 		_selected = !_selected;
 		draw();
 		gPanel::deactivate();
-		notify(gEventNewValue, _selected);    // notify App of successful hit
+		notify(kEventNewValue, _selected);    // notify App of successful hit
 	}
 	return false;
 }
 
 bool gToggleButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 /* ===================================================================== *
