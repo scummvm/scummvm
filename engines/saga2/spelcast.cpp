@@ -61,8 +61,8 @@ int32 scatterer(int32 i, int32 m, int32 s);
 //	ctor
 
 SpellStuff::SpellStuff() {
-	_master = nullSpell;
-	_display = nullSpell;
+	_master = kNullSpell;
+	_display = kNullSpell;
 	_prototype = nullptr;
 	_targetableTypes = kSpellTargNone;
 	_targetTypes = kSpellApplyNone;

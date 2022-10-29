@@ -368,9 +368,9 @@ int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats def
 	ActorAttributes *effStats = getEffStats();
 
 	// check to see if this is a special case
-	if (skillID == skillVitality) {
+	if (skillID == kSkillVitality) {
 		return effStats->vitality / ActorAttributes::kSkillFracPointsPerLevel;
-	} else if (skillID == skillCartography) {
+	} else if (skillID == kSkillCartography) {
 		// cartography has no levels
 		return 0;
 	}
@@ -401,55 +401,55 @@ uint8 PlayerActor::getStatIndex(SkillProto *proto) {
 	// now map the id gotten from spellid to the
 	// attributeskilll enum for the allSkills array
 	switch (skillID) {
-	case skillPickpocket:
+	case kSkillPickpocket:
 		stat = kSkillIDPilfer;
 		break;
 
-	case skillSeeHidden:
+	case kSkillSeeHidden:
 		stat = kSkillIDSpotHidden;
 		break;
 
-	case skillLockPick:
+	case kSkillLockPick:
 		stat = kSkillIDLockpick;
 		break;
 
-	case skillFirstAid:
+	case kSkillFirstAid:
 		stat = kSkillIDFirstAid;
 		break;
 
-	case skillArchery:
+	case kSkillArchery:
 		stat = kSkillIDArchery;
 		break;
 
-	case skillSwordcraft:
+	case kSkillSwordcraft:
 		stat = kSkillIDSwordcraft;
 		break;
 
-	case skillShieldcraft:
+	case kSkillShieldcraft:
 		stat = kSkillIDShieldcraft;
 		break;
 
-	case skillBludgeon:
+	case kSkillBludgeon:
 		stat = kSkillIDBludgeon;
 		break;
 
-	case skillThrowing:
+	case kSkillThrowing:
 		stat = kSkillIDThrowing;
 		break;
 
-	case skillSpellcraft:
+	case kSkillSpellcraft:
 		stat = kSkillIDSpellcraft;
 		break;
 
-	case skillStealth:
+	case kSkillStealth:
 		stat = kSkillIDStealth;
 		break;
 
-	case skillAgility:
+	case kSkillAgility:
 		stat = kSkillIDAgility;
 		break;
 
-	case skillBrawn:
+	case kSkillBrawn:
 		stat = kSkillIDBrawn;
 		break;
 

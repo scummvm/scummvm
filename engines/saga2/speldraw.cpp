@@ -65,7 +65,7 @@ EffectDisplayPrototype::EffectDisplayPrototype(
 	_breadth = newBreadth;
 	_init    = newInit;
 	_next = nullptr;
-	_ID = spellNone;
+	_ID = kSpellNone;
 }
 
 /* ===================================================================== *
@@ -142,7 +142,7 @@ SpellDisplayPrototype::SpellDisplayPrototype(
 	_secondarySpriteNo = sco; // sprites available
 	//_effCount=eco;      // effectrons to allocate
 
-	_ID = spellNone;
+	_ID = kSpellNone;
 	_implementAge = 0;
 }
 

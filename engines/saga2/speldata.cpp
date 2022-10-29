@@ -49,8 +49,8 @@ namespace Saga2 {
 
 const uint32                    spellSpriteID = MKTAG('S', 'P', 'F', 'X');
 
-const int32 maxSpells = totalSpellBookPages;
-const int32 maxSpellPrototypes = totalSpellBookPages;
+const int32 maxSpells = kTotalSpellBookPages;
+const int32 maxSpellPrototypes = kTotalSpellBookPages;
 const int32 maxEffectPrototypes = 16;
 
 const int32 maxSpellColorMaps = 32;

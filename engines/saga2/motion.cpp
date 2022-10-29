@@ -637,7 +637,7 @@ void MotionTask::read(Common::InSaveFile *in) {
 			//  restore the spell prototype
 			warning("MotionTask::read: Check SpellID size");
 			sid = (SpellID)in->readUint32LE();
-			_spellObj = sid != nullSpell
+			_spellObj = sid != kNullSpell
 			           ? skillProtoFromID(sid)
 			           : nullptr;
 
@@ -995,7 +995,7 @@ void MotionTask::write(Common::MemoryWriteStreamDynamic *out) {
 
 			SpellID sid         = _spellObj != nullptr
 			                      ? _spellObj->getSpellID()
-			                      : nullSpell;
+			                      : kNullSpell;
 
 			ObjectID toid       = _targetObj != nullptr
 			                      ? _targetObj->thisID()

@@ -62,7 +62,7 @@ SpellDisplayPrototype::SpellDisplayPrototype(ResourceSpellItem *rsi) {
 	_colorMap[1] = rsi->cm1;
 	_colorMap[2] = 0;
 	_colorMap[3] = 0;
-	_ID = spellNone;
+	_ID = kSpellNone;
 }
 
 /* ===================================================================== *
@@ -292,8 +292,8 @@ void StorageSpellTarget::write(Common::MemoryWriteStreamDynamic *out) {
 	out->writeSint16LE(tag.val);
 }
 
-StorageSpellInstance::StorageSpellInstance() : implementAge(0), effect(0), dProto(spellNone), caster(0),
-	world(0), age(0), spell(spellNone), maxAge(0), effSeq(0), eListSize(0) {
+StorageSpellInstance::StorageSpellInstance() : implementAge(0), effect(0), dProto(kSpellNone), caster(0),
+	world(0), age(0), spell(kSpellNone), maxAge(0), effSeq(0), eListSize(0) {
 }
 
 void StorageSpellInstance::read(Common::InSaveFile *in) {
