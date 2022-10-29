@@ -237,12 +237,12 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	case keAreaSquare: {
 		tVect = trg.getPoint();
-		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
+		orth = TilePoint(kSquareSpellSize / 2, kSquareSpellSize / 2, 0);
 
 		RectangularObjectIterator   it(currentWorld,
 		                               tVect - orth,
-		                               TilePoint(squareSpellSize, 0, 0),
-		                               TilePoint(0, squareSpellSize, 0));
+		                               TilePoint(kSquareSpellSize, 0, 0),
+		                               TilePoint(0, kSquareSpellSize, 0));
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -257,9 +257,9 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, boltSpellLength);
+		setMagnitude(tVect, kBoltSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, boltSpellWidth / 2);
+		setMagnitude(orth, kBoltSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
 		GameObject *go;
@@ -276,9 +276,9 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, beamSpellLength);
+		setMagnitude(tVect, kBeamSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, beamSpellWidth / 2);
+		setMagnitude(orth, kBeamSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
 		GameObject *go;
@@ -291,7 +291,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 	}
 
 	case keAreaBall: {
-		radius = ballSpellRadius;
+		radius = kBallSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -302,8 +302,8 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 	case keAreaWall: {
-		radius = wallSpellRadius;
-		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, wallInnerRadius);
+		radius = kWallSpellRadius;
+		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, kWallInnerRadius);
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -313,7 +313,7 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 	case keAreaStorm: {
-		radius = stormSpellRadius;
+		radius = kStormSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -328,9 +328,9 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, coneSpellLength);
+		setMagnitude(tVect, kConeSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, coneSpellWidth / 2);
+		setMagnitude(orth, kConeSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
 		GameObject *go;
@@ -346,9 +346,9 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, waveSpellLength);
+		setMagnitude(tVect, kWaveSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, waveSpellWidth / 2);
+		setMagnitude(orth, kWaveSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
 		GameObject *go;
@@ -434,17 +434,17 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	case keAreaSquare: {
 		tVect = trg.getPoint();
-		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
+		orth = TilePoint(kSquareSpellSize / 2, kSquareSpellSize / 2, 0);
 
 		TPRectangle(tVect - orth,
-		            tBase + TilePoint(squareSpellSize, 0, 0),
-		            tBase + TilePoint(0, squareSpellSize, 0) + TilePoint(squareSpellSize, 0, 0),
-		            tBase + TilePoint(0, squareSpellSize, 0),
+		            tBase + TilePoint(kSquareSpellSize, 0, 0),
+		            tBase + TilePoint(0, kSquareSpellSize, 0) + TilePoint(kSquareSpellSize, 0, 0),
+		            tBase + TilePoint(0, kSquareSpellSize, 0),
 		            DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld,
 		                               tVect - orth,
-		                               TilePoint(squareSpellSize, 0, 0),
-		                               TilePoint(0, squareSpellSize, 0));
+		                               TilePoint(kSquareSpellSize, 0, 0),
+		                               TilePoint(0, kSquareSpellSize, 0));
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -459,9 +459,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, boltSpellLength);
+		setMagnitude(tVect, kBoltSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, boltSpellWidth / 2);
+		setMagnitude(orth, kBoltSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPRectangle(tBase - orth, tBase + orth, tBase + tVect + orth, tBase + tVect - orth, DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
@@ -479,9 +479,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, beamSpellLength);
+		setMagnitude(tVect, kBeamSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, beamSpellWidth / 2);
+		setMagnitude(orth, kBeamSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPRectangle(tBase - orth, tBase + orth, tBase + tVect + orth, tBase + tVect - orth, DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
@@ -495,8 +495,8 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	}
 
 	case keAreaBall: {
-		radius = ballSpellRadius;
-		TPCircle(trg.getPoint(), ballSpellRadius, DSPELL_AREA_COLOR);
+		radius = kBallSpellRadius;
+		TPCircle(trg.getPoint(), kBallSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -507,10 +507,10 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 	case keAreaWall: {
-		radius = wallSpellRadius;
+		radius = kWallSpellRadius;
 		TPCircle(trg.getPoint(), radius, DSPELL_AREA_COLOR);
 		TPCircle(trg.getPoint(), radius / 2, DSPELL_AREA_COLOR);
-		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, wallInnerRadius);
+		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, kWallInnerRadius);
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -520,8 +520,8 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 	case keAreaStorm: {
-		radius = stormSpellRadius;
-		TPCircle(trg.getPoint(), stormSpellRadius, DSPELL_AREA_COLOR);
+		radius = kStormSpellRadius;
+		TPCircle(trg.getPoint(), kStormSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -536,9 +536,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, coneSpellLength);
+		setMagnitude(tVect, kConeSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, coneSpellWidth / 2);
+		setMagnitude(orth, kConeSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPTriangle(tBase, tBase + tVect - orth, tBase + tVect + orth, DSPELL_AREA_COLOR);
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
@@ -555,9 +555,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, waveSpellLength);
+		setMagnitude(tVect, kWaveSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, waveSpellWidth / 2);
+		setMagnitude(orth, kWaveSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPTriangle(tBase, tBase + tVect - orth, tBase + tVect + orth, DSPELL_AREA_COLOR);
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
