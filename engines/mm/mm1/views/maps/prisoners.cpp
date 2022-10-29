@@ -55,6 +55,7 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 	case Common::KEYCODE_1:
 		line = STRING["maps.prisoners.flees"];
 		align = _freeAlignment;
+		flee();
 		break;
 
 	case Common::KEYCODE_2:
@@ -113,6 +114,17 @@ DemonPrisoner::DemonPrisoner() :
 MutatedPrisoner::MutatedPrisoner() :
 	Prisoner("MutatedPrisoner", STRING["maps.prisoners.mutated"],
 		CHARFLAG1_2, GOOD, EVIL) {
+}
+
+MaidenPrisoner::MaidenPrisoner() :
+	Prisoner("MaidenPrisoner", STRING["maps.prisoners.maiden"],
+		CHARFLAG1_8, GOOD, EVIL) {
+}
+
+void MaidenPrisoner::flee() {
+	MM1::Maps::Map &map = *g_maps->_currentMap;
+	map._walls[48] &= 0x7f;
+	g_maps->clearSpecial();
 }
 
 } // namespace Maps

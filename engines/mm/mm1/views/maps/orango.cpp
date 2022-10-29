@@ -53,7 +53,7 @@ void Orango::answerEntered() {
 	if (_answer == properAnswer) {
 		for (uint i = 0; i < g_globals->_party.size(); ++i) {
 			Character &c = g_globals->_party[i];
-			c._flags[13] |= CHARFLAG13_40;
+			c._flags[13] |= CHARFLAG13_ALAMAR;
 		}
 
 		g_maps->_mapPos = Common::Point(8, 5);

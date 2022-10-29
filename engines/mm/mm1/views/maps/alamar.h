@@ -19,74 +19,26 @@
  *
  */
 
-#ifndef MM1_VIEWS_MAPS_PRISONERS_H
-#define MM1_VIEWS_MAPS_PRISONERS_H
+#ifndef MM1_VIEWS_MAPS_ALAMAR_H
+#define MM1_VIEWS_MAPS_ALAMAR_H
 
 #include "mm/mm1/views/text_view.h"
-#include "mm/mm1/data/character.h"
 
 namespace MM {
 namespace MM1 {
 namespace Views {
 namespace Maps {
 
-class Prisoner : public TextView {
+class Alamar : public TextView {
 private:
-	Common::String _line1;
-	byte _flag;
-	Alignment _freeAlignment;
-	Alignment _leaveAlignment;
-protected:
-	virtual void flee() {}
+	bool _succeeded = false;
 public:
-	Prisoner(const Common::String &name, const Common::String &line1,
-		byte flag, Alignment freeAlignment, Alignment leaveAlignment);
-	virtual ~Prisoner() {}
+	Alamar();
+	virtual ~Alamar() {}
 
+	bool msgFocus(const FocusMessage &msg) override;	
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;
-};
-
-class ChildPrisoner : public Prisoner {
-public:
-	ChildPrisoner();
-	virtual ~ChildPrisoner() {}
-};
-
-class ManPrisoner : public Prisoner {
-public:
-	ManPrisoner();
-	virtual ~ManPrisoner() {}
-};
-
-class CloakedPrisoner : public Prisoner {
-public:
-	CloakedPrisoner();
-	virtual ~CloakedPrisoner() {
-	}
-};
-
-class DemonPrisoner : public Prisoner {
-public:
-	DemonPrisoner();
-	virtual ~DemonPrisoner() {
-	}
-};
-
-class MutatedPrisoner : public Prisoner {
-public:
-	MutatedPrisoner();
-	virtual ~MutatedPrisoner() {
-	}
-};
-
-class MaidenPrisoner : public Prisoner {
-protected:
-	void flee() override;
-public:
-	MaidenPrisoner();
-	virtual ~MaidenPrisoner() {
-	}
 };
 
 } // namespace Maps

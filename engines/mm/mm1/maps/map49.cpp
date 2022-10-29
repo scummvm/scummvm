@@ -29,14 +29,16 @@ namespace MM {
 namespace MM1 {
 namespace Maps {
 
+#define VAL1 952
+#define VAL2 154
+
 void Map49::special() {
 	// Scan for special actions on the map cell
-	for (uint i = 0; i < _data[50]; ++i) {
+	for (uint i = 0; i < 23; ++i) {
 		if (g_maps->_mapOffset == _data[51 + i]) {
 			// Found a specially handled cell, but it
 			// only triggers in designated direction(s)
-			if (g_maps->_forwardMask & _data[75 + i]) {
-				
+			if (g_maps->_forwardMask & _data[74 + i]) {			
 				(this->*SPECIAL_FN[i])();
 			} else {
 				checkPartyDead();
@@ -44,14 +46,118 @@ void Map49::special() {
 			return;
 		}
 	}
-/*
+
 	// All other cells on the map are encounters
 	g_maps->clearSpecial();
 	g_globals->_encounters.execute();
-	*/
 }
 
 void Map49::special00() {
+	g_events->addView("MaidenPrisoner");
+}
+
+void Map49::special01() {
+	send(SoundMessage(
+		STRING["maps.map49.passage"],
+		[]() {
+			g_maps->_mapPos = Common::Point(14, 7);
+			g_maps->changeMap(0xb1a, 2);
+		}
+	));
+}
+
+void Map49::special02() {
+	g_maps->_mapPos = Common::Point(15, 7);
+	g_maps->changeMap(0xb1a, 2);
+	send(SoundMessage(STRING["maps.map49.chute"]));
+}
+
+void Map49::special03() {
+	send(SoundMessage(STRING["maps.map49.message_e"]));
+}
+
+void Map49::special04() {
+	if (!g_globals->_party.hasItem(MERCHANTS_PASS_ID)) {
+		g_maps->_mapPos = Common::Point(
+			_data[MAP_SURFACE_X], _data[MAP_SURFACE_Y]);
+		g_maps->changeMap(
+			READ_LE_UINT16(&_data[MAP_SURFACE_ID]),
+			_data[MAP_SURFACE_SECTION]
+		);
+
+		send(SoundMessage(STRING["maps.map49.guards2"]));
+	}
+}
+
+void Map49::special05() {
+	if (!g_globals->_party.hasItem(KINGS_PASS_ID)) {
+		g_maps->_mapPos.x++;
+		updateGame();
+		send(SoundMessage(STRING["maps.map49.guards2"]));
+
+	} else {
+		checkPartyDead();
+	}
+}
+
+void Map49::special06() {
+	if (_data[VAL1]) {
+		g_maps->_mapPos = Common::Point(6, 0);
+		g_maps->changeMap(0x412, 3);
+
+	} else {
+		send("GameView", DrawMonsterMessage(7));
+		g_events->addView("Alamar");
+	}
+}
+
+void Map49::special07() {
+	reduceHP();
+	reduceHP();
+	g_maps->_mapPos = Common::Point(4, 7);
+	g_maps->changeMap(0xb1a, 2);
+
+	send(SoundMessage(STRING["maps.map49.catapult"]));
+}
+
+void Map49::special08() {
+	if (!g_globals->_activeSpells._s.fire)
+		reduceHP();
+	reduceHP();
+
+	messageEncounter(STRING["maps.map49.trap"]);
+}
+
+void Map49::special09() {
+	if (!g_globals->_activeSpells._s.acid)
+		reduceHP();
+	reduceHP();
+
+	messageEncounter(STRING["maps.map49.explosion"]);
+}
+
+void Map49::special16() {
+	send(SoundMessage(STRING["maps.map49.scream"]));
+}
+
+void Map49::special20() {
+	g_globals->_treasure[7] = 46;
+	g_globals->_treasure[6] = 224;
+	g_events->addAction(KEYBIND_SEARCH);
+}
+
+void Map49::special22() {
+	send(SoundMessage(STRING["maps.map49.throne_room"]));
+}
+
+void Map49::messageEncounter(const Common::String &line) {
+	SoundMessage msg(line,
+		[]() {
+			g_globals->_encounters.execute();
+		}
+	);
+	msg._delaySeconds = 4;
+	send(msg);
 }
 
 } // namespace Maps
