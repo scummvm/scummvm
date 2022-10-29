@@ -133,32 +133,31 @@ void DrillerEngine::loadAssets() {
 }
 
 void DrillerEngine::loadAssetsDemo() {
-	Common::SeekableReadStream *file = nullptr;
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
-
-	Common::File exe;
+	Common::File file;
 	if (isAmiga()) {
-		file = gameDir.createReadStreamForMember("lift.neo");
-		if (file == nullptr)
+		file.open("lift.neo");
+		if (!file.isOpen())
 			error("Failed to open 'lift.neo' file");
 
-		_title = loadAndConvertNeoImage(file, 0);
+		_title = loadAndConvertNeoImage(&file, 0);
 
-		file = gameDir.createReadStreamForMember("console.neo");
-		if (file == nullptr)
+		file.close();
+		file.open("console.neo");
+		if (!file.isOpen())
 			error("Failed to open 'console.neo' file");
 
-		_border = loadAndConvertNeoImage(file, 0);
+		_border = loadAndConvertNeoImage(&file, 0);
 
-		file = gameDir.createReadStreamForMember("demo.cmd");
-		if (file == nullptr)
+		file.close();
+		file.open("demo.cmd");
+		if (!file.isOpen())
 			error("Failed to open 'demo.cmd' file");
 
-		loadDemoData(file, 0, 0x1000);
+		loadDemoData(&file, 0, 0x1000);
 
-		file = gameDir.createReadStreamForMember("data");
-		if (file == nullptr)
+		file.close();
+		file.open("data");
+		if (!file.isOpen())
 			error("Failed to open 'data' file");
 
 		// loadGlobalObjects(file, 0xbd62);
@@ -167,41 +166,46 @@ void DrillerEngine::loadAssetsDemo() {
 		file->seek(0x2a450);
 		load8bitArea(file, 16);*/
 
-		load8bitBinary(file, 0x442, 16);
-		loadPalettes(file, 0x0);
+		load8bitBinary(&file, 0x442, 16);
+		loadPalettes(&file, 0x0);
 
-		file = gameDir.createReadStreamForMember("driller");
-		if (file == nullptr)
+		file.close();
+		file.open("driller");
+		if (!file.isOpen())
 			error("Failed to open 'driller' file");
-		loadMessagesFixedSize(file, 0x3960, 14, 20);
+		loadMessagesFixedSize(&file, 0x3960, 14, 20);
 
-		file = gameDir.createReadStreamForMember("soundfx");
-		if (file == nullptr)
+		file.close();
+		file.open("soundfx");
+		if (!file.isOpen())
 			error("Failed to open 'soundfx' executable for Amiga");
 
-		loadSoundsFx(file, 0, 25);
+		loadSoundsFx(&file, 0, 25);
 	} else if (isAtariST()) {
-		file = gameDir.createReadStreamForMember("lift.neo");
-		if (file == nullptr)
+		file.open("lift.neo");
+		if (!file.isOpen())
 			error("Failed to open 'lift.neo' file");
 
-		_title = loadAndConvertNeoImage(file, 0);
+		_title = loadAndConvertNeoImage(&file, 0);
 
-		if (file == nullptr)
+		file.close();
+		file.open("console.neo");
+		if (!file.isOpen())
 			error("Failed to open 'console.neo' file");
 
-		file = gameDir.createReadStreamForMember("console.neo");
-		_border = loadAndConvertNeoImage(file, 0);
+		_border = loadAndConvertNeoImage(&file, 0);
 
-		file = gameDir.createReadStreamForMember("demo.cmd");
-		if (file == nullptr)
+		file.close();
+		file.open("demo.cmd");
+		if (!file.isOpen())
 			error("Failed to open 'demo.cmd' file");
 
-		loadDemoData(file, 0, 0x1000);
+		loadDemoData(&file, 0, 0x1000);
 
-		file = gameDir.createReadStreamForMember("data");
+		file.close();
+		file.open("data");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open 'data' file");
 
 		// loadGlobalObjects(file, 0xbd62);
@@ -210,19 +214,21 @@ void DrillerEngine::loadAssetsDemo() {
 		file->seek(0x2a450);
 		load8bitArea(file, 16);*/
 
-		load8bitBinary(file, 0x442, 16);
-		loadPalettes(file, 0x0);
+		load8bitBinary(&file, 0x442, 16);
+		loadPalettes(&file, 0x0);
 
-		file = gameDir.createReadStreamForMember("x.prg");
-		if (file == nullptr)
+		file.close();
+		file.open("x.prg");
+		if (!file.isOpen())
 			error("Failed to open 'x.prg' file");
-		loadMessagesFixedSize(file, 0x3b90, 14, 20);
+		loadMessagesFixedSize(&file, 0x3b90, 14, 20);
 
-		file = gameDir.createReadStreamForMember("soundfx");
-		if (file == nullptr)
+		file.close();
+		file.open("soundfx");
+		if (!file.isOpen())
 			error("Failed to open 'soundfx' executable for AtariST demo");
 
-		loadSoundsFx(file, 0, 25);
+		loadSoundsFx(&file, 0, 25);
 	} else
 		error("Unsupported demo for Driller");
 
@@ -231,78 +237,77 @@ void DrillerEngine::loadAssetsDemo() {
 }
 
 void DrillerEngine::loadAssetsFullGame() {
-	Common::SeekableReadStream *file = nullptr;
-	Common::String path = ConfMan.get("path");
-	Common::FSDirectory gameDir(path);
-
-	Common::File exe;
+	Common::File file;
 	if (isAmiga()) {
 		if (_variant == "Retail") {
-			file = gameDir.createReadStreamForMember("driller");
+			file.open("driller");
 
-			if (file == nullptr)
+			if (!file.isOpen())
 				error("Failed to open 'driller' executable for Amiga");
 
-			_border = loadAndConvertNeoImage(file, 0x137f4);
+			_border = loadAndConvertNeoImage(&file, 0x137f4);
 			byte *palette = (byte *)malloc(16 * 3);
 			for (int i = 0; i < 16; i++) { // gray scale palette
 				palette[i * 3 + 0] = i * (255 / 16);
 				palette[i * 3 + 1] = i * (255 / 16);
 				palette[i * 3 + 2] = i * (255 / 16);
 			}
-			_title = loadAndConvertNeoImage(file, 0x10, palette);
+			_title = loadAndConvertNeoImage(&file, 0x10, palette);
 
-			loadMessagesFixedSize(file, 0xc66e, 14, 20);
-			loadGlobalObjects(file, 0xbd62);
-			load8bitBinary(file, 0x29c16, 16);
-			loadPalettes(file, 0x297d4);
-			loadSoundsFx(file, 0x30e80, 25);
+			loadMessagesFixedSize(&file, 0xc66e, 14, 20);
+			loadGlobalObjects(&file, 0xbd62);
+			load8bitBinary(&file, 0x29c16, 16);
+			loadPalettes(&file, 0x297d4);
+			loadSoundsFx(&file, 0x30e80, 25);
 		} else if (_variant == "Kixx") {
-			file = gameDir.createReadStreamForMember("lift.neo");
-			if (file == nullptr)
+			file.open("lift.neo");
+			if (!file.isOpen())
 				error("Failed to open 'lift.neo' file");
 
-			_title = loadAndConvertNeoImage(file, 0);
+			_title = loadAndConvertNeoImage(&file, 0);
 
-			file = gameDir.createReadStreamForMember("console.neo");
-			if (file == nullptr)
+			file.close();
+			file.open("console.neo");
+			if (!file.isOpen())
 				error("Failed to open 'console.neo' file");
 
-			_border = loadAndConvertNeoImage(file, 0);
+			_border = loadAndConvertNeoImage(&file, 0);
 
-			file = gameDir.createReadStreamForMember("driller");
-			if (file == nullptr)
+			file.close();
+			file.open("driller");
+			if (!file.isOpen())
 				error("Failed to open 'driller' executable for Amiga");
 
-			load8bitBinary(file, 0x21a3e, 16);
-			loadPalettes(file, 0x215fc);
+			load8bitBinary(&file, 0x21a3e, 16);
+			loadPalettes(&file, 0x215fc);
 
-			file = gameDir.createReadStreamForMember("soundfx");
-			if (file == nullptr)
+			file.close();
+			file.open("soundfx");
+			if (!file.isOpen())
 				error("Failed to open 'soundfx' executable for Amiga");
 
-			loadSoundsFx(file, 0, 25);
+			loadSoundsFx(&file, 0, 25);
 		}
 	} else if (_renderMode == "ega") {
 		loadBundledImages();
 		_title = _border;
-		file = gameDir.createReadStreamForMember("DRILLE.EXE");
+		file.open("DRILLE.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open DRILLE.EXE");
 
-		loadMessagesFixedSize(file, 0x4135, 14, 20);
-		loadFonts(file, 0x99dd);
-		loadGlobalObjects(file, 0x3b42);
-		load8bitBinary(file, 0x9b40, 16);
+		loadMessagesFixedSize(&file, 0x4135, 14, 20);
+		loadFonts(&file, 0x99dd);
+		loadGlobalObjects(&file, 0x3b42);
+		load8bitBinary(&file, 0x9b40, 16);
 	} else if (_renderMode == "cga") {
 		loadBundledImages();
 		_title = _border;
-		file = gameDir.createReadStreamForMember("DRILLC.EXE");
+		file.open("DRILLC.EXE");
 
-		if (file == nullptr)
+		if (!file.isOpen())
 			error("Failed to open DRILLC.EXE");
-		load8bitBinary(file, 0x7bb0, 4);
+		load8bitBinary(&file, 0x7bb0, 4);
 	} else
 		error("Invalid render mode %s for Driller", _renderMode.c_str());
 }
