@@ -1499,3 +1499,7 @@ maps:
 
 	map52:
 		summoned: "YOU HAVE BEEN SUMMONED...POOF!"
+
+	map53:
+		sign: "DANGER! DUNGEON UNDER CONSTRUCTION."
+		ladder: "A LADDER GOING UP, CLIMB IT (Y/N)?"
