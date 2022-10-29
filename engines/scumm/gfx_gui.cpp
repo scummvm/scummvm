@@ -402,7 +402,8 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Backup the text surface...
 	if (!_mainMenuIsActive) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen)
+		if (_charset->_textScreenID == kMainVirtScreen &&
+			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns))
 			restoreCharsetBg();
 	}
 
