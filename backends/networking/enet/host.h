@@ -35,6 +35,7 @@ typedef struct _ENetPacket ENetPacket;
 #define ENET_EVENT_TYPE_DISCONNECT 2
 #define ENET_EVENT_TYPE_RECEIVE 3
 
+#include "common/system.h"
 #include "common/str.h"
 #include "common/debug.h"
 

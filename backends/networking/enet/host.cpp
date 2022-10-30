@@ -64,9 +64,10 @@ void Host::disconnectPeer(int peerIndex) {
 	enet_host_flush(_host);
 
 	if (_serverPeer) {
-		// Allow 3 second for disconnection to succeed and drop incoming packets
-		while(uint type = service(3000) > 0) {
-			switch(type) {
+		// Allow 3 seconds for disconnection to succeed and drop incoming packets
+		uint tickCount = 0;
+		while(tickCount < 3000) {
+			switch(service(0)) {
 			case ENET_EVENT_TYPE_RECEIVE:
 				destroyPacket();
 				break;
@@ -74,6 +75,8 @@ void Host::disconnectPeer(int peerIndex) {
 				// Disconnect succeeded.
 				return;
 			}
+			g_system->delayMillis(5);
+			tickCount += 1;
 		}
 	}
 }
