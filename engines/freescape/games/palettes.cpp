@@ -66,7 +66,7 @@ void FreescapeEngine::loadColorPalette() {
 void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset) {
 	file->seek(offset);
 	int r, g, b;
-	for (int i = 0; i < int(_areaMap.size()); i++) {
+	for (uint i = 0; i < _areaMap.size(); i++) {
 		int label = readField(file, 8);
 		auto palette = new byte[16][3];
 		debugC(1, kFreescapeDebugParser, "Loading palette for area: %d", label);
