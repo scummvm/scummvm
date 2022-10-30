@@ -69,15 +69,6 @@ public:
 	virtual void clear() = 0;
 	virtual void setViewport(const Common::Rect &rect) = 0;
 
-	typedef enum {
-		EastPyramid = 4,
-		WestPyramid = 5,
-		UpPyramid = 6,
-		DownPyramid = 7,
-		NorthPyramid = 8,
-		SouthPyramid = 9,
-	} PyramidType;
-
 	/**
 	 *  Swap the buffers, making the drawn screen visible
 	 */
