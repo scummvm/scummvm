@@ -97,7 +97,7 @@ void Map35::special04() {
 
 void Map35::special05() {
 	updateFlags();
-	send("GameView", DrawGraphicMessage(7));
+	send("View", DrawGraphicMessage(7));
 	g_events->addView("Inspectron");
 }
 

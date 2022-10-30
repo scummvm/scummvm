@@ -65,7 +65,7 @@ void Search::draw() {
 		line = STRING["dialogs.search.search"] +
 			STRING["dialogs.search.you_found"];
 		writeString(0, 1, line);
-		delaySeconds(3);
+		delaySeconds(2);
 		break;
 
 	case OPTIONS:
@@ -110,11 +110,11 @@ void Search::timeout() {
 
 	// Display a graphic for the container type
 	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 4 : 2;
-	send("GameView", DrawGraphicMessage(gfxNum));
+	send("View", DrawGraphicMessage(gfxNum));
 
 	// Show the name of the container type in the game view
-	send("GameView", GameMessage(
-		STRING[Common::String::format("views.search.containers.%d",
+	send("View", GameMessage(
+		STRING[Common::String::format("dialogs.search.containers.%d",
 			g_globals->_treasure._container)]
 	));
 
