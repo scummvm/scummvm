@@ -153,6 +153,9 @@
 			8: "  GOLD BOX  "
 			9: " GOLD CHEST "
 			10: " BLACK BOX  "
+		options1: "OPTIONS:           1) OPEN IT"
+		options2: "2) FIND/REMOVE TRAP"
+		options3: "3) DETECT MAGIC/TRAP"
 	statues:
 		stone: "ON THIS STONE STATUE OF "
 		plaque: "A PLAQUE READS..."

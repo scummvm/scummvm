@@ -29,8 +29,6 @@
 namespace MM {
 namespace MM1 {
 
-#define TREASURE_COUNT 9
-
 enum ItemId {
 	GARLIC_ID = 175,
 	WOLFSBANE_ID = 176,

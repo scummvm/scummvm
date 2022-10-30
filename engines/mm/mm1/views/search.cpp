@@ -31,42 +31,71 @@ Search::Search() : TextView("Search") {
 	_bounds = getLineBounds(20, 24);
 }
 
-bool Search::msgFocus(const FocusMessage &msg) {
-	_hasStuff = false;
-	for (int i = 0; i < 6 && !_hasStuff; ++i)
-		_hasStuff = g_globals->_treasure[i + 3] != 0;
-	_mode = INITIAL;
+bool Search::msgGame(const GameMessage &msg) {
+	if (msg._name != "SHOW")
+		return false;
+
+	bool hasStuff = g_globals->_treasure.present();
+	if (hasStuff) {
+		// Focus view to show what was found
+		open();
+
+	} else {
+		// Otherwise send an info message to say nothing was found
+		Common::String line = STRING["dialogs.search.search"] +
+			STRING["dialogs.search.nothing"];
+		send(InfoMessage(0, 1, line));
+	}
 
 	return true;
 }
 
+bool Search::msgFocus(const FocusMessage &msg) {
+	_mode = INITIAL;
+	return true;
+}
+
 void Search::draw() {
+	Common::String line;
 	clearSurface();
 
 	switch (_mode) {
 	case INITIAL:
-		if (!_hasStuff) {
-			Common::String line = STRING["views.search.search"] +
-				STRING["views.search.nothing"];
-			writeString(0, 1, line);
-			close();
-
-		} else {
-			Sound::sound(SOUND_2);
-			Common::String line = STRING["views.search.search"] +
-				STRING["views.search.you_found"];
-			writeString(0, 1, line);
-			delaySeconds(2);
-		}
+		Sound::sound(SOUND_2);
+		line = STRING["dialogs.search.search"] +
+			STRING["dialogs.search.you_found"];
+		writeString(0, 1, line);
+		delaySeconds(3);
 		break;
 
 	case OPTIONS:
+		writeString(1, 1, STRING["dialogs.search.options1"]);
+		writeString(20, 2, STRING["dialogs.search.options2"]);
+		writeString(20, 3, STRING["dialogs.search.options3"]);
+		escToGoBack(0, 3);
 		break;
 	}
 }
 
 bool Search::msgKeypress(const KeypressMessage &msg) {
-	close();
+	switch (_mode) {
+	case INITIAL:
+		cancelDelay();
+		timeout();
+		break;
+
+	case OPTIONS:
+		switch (msg.keycode) {
+		case Common::KEYCODE_ESCAPE:
+			close();
+			break;
+		case Common::KEYCODE_1:
+			// TODO: 1, 2, 3
+			break;
+		}
+		break;
+	}
+
 	return true;
 }
 
@@ -88,6 +117,9 @@ void Search::timeout() {
 		STRING[Common::String::format("views.search.containers.%d",
 			g_globals->_treasure._container)]
 	));
+
+	_mode = OPTIONS;
+	draw();
 }
 
 } // namespace Views

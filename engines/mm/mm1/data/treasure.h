@@ -22,7 +22,7 @@
 #ifndef MM1_DATA_TREASURE_H
 #define MM1_DATA_TREASURE_H
 
-#include "common/serializer.h"
+#include "common/scummsys.h"
 
 namespace MM {
 namespace MM1 {
@@ -36,7 +36,7 @@ enum ContainerType {
 
 class Treasure {
 private:
-	byte _data[TREASURE_COUNT];
+	byte _data[9];
 public:
 	byte &_container = _data[2];
 
@@ -44,14 +44,17 @@ public:
 		clear();
 	}
 
-	byte &operator[](uint i) {
-		assert(i < TREASURE_COUNT);
-		return _data[i];
-	}
+	byte &operator[](uint i);
 
-	void clear() {
-		Common::fill(&_data[0], &_data[TREASURE_COUNT], 0);
-	}
+	/**
+	 * Clears the treasure list
+	 */
+	void clear();
+
+	/**
+	 * Returns true if any treasure has been assigned
+	 */
+	bool present() const;
 };
 
 } // namespace MM1
