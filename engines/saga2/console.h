@@ -40,81 +40,56 @@ private:
 
 	TilePoint _savedLoc;
 
-    // Input: <None>. Kills the center actor.
+	// Input: <None>. Kills the center actor.
 	bool cmdKillProtag(int argc, const char **argv);
-
-    // Input: <Actor ID>. Kills an actor.
+	// Input: <Actor ID>. Kills an actor.
 	bool cmdKill(int argc, const char **argv);
-
-    // Input: <Object ID>. Prints an object's name.
+	// Input: <Object ID>. Prints an object's name.
 	bool cmdObjName(int argc, const char **argv);
-
-    // Input: <Name Index>. Prints an ObjectID corresponding to the name index.
+	// Input: <Name Index>. Prints an ObjectID corresponding to the name index.
 	bool cmdObjNameIndexToID(int argc, const char **argv);
-
-    // Input: <Object Name>. Prints a list of objects containing the string in their name.
+	// Input: <Object Name>. Prints a list of objects containing the string in their name.
 	bool cmdSearchObj(int argc, const char **argv);
-
-    // Input: <Object ID>. Adds the object to the center actor's inventory.
+	// Input: <Object ID>. Adds the object to the center actor's inventory.
 	bool cmdAddObj(int argc, const char **argv);
-
-    // Input: <1/0>. Sets godmode.
+	// Input: <1/0>. Sets godmode.
 	bool cmdGodmode(int argc, const char **argv);
-
-    // Input: <1/0>. Sets whether the position coordinates show.
+	// Input: <1/0>. Sets whether the position coordinates show.
 	bool cmdPosition(int argc, const char **argv);
-
-    // Input: <1/0>. Sets whether an item's stats show when holding it.
+	// Input: <1/0>. Sets whether an item's stats show when holding it.
 	bool cmdStats(int argc, const char **argv);
-
 	// Input: <1/0>. Sets whether the original debug status messages show.
 	bool cmdStatusMsg(int argc, const char **argv);
-
-    // Input: <1/0>. Sets whether you can teleport by right clicking on the screen.
+	// Input: <1/0>. Sets whether you can teleport by right clicking on the screen.
 	bool cmdTeleportOnClick(int argc, const char **argv);
-
-    // Input: <1/0>. Sets whether you can teleport by clicking on the map.
+	// Input: <1/0>. Sets whether you can teleport by clicking on the map.
 	bool cmdTeleportOnMap(int argc, const char **argv);
-
-    // Input: <u> <v> <z>. Teleports the center character to the given position.
+	// Input: <u> <v> <z>. Teleports the center character to the given position.
 	bool cmdTeleport(int argc, const char **argv);
-
-    // Input: <Actor ID>. Teleports the character to the npc.
+	// Input: <Actor ID>. Teleports the character to the npc.
 	bool cmdTeleportToNPC(int argc, const char **argv);
-
-    // Input: <Actor ID> <u> <v> <z>. Teleports the npc to the given position.
+	// Input: <Actor ID> <u> <v> <z>. Teleports the npc to the given position.
 	bool cmdTeleportNPC(int argc, const char **argv);
-
-    // Input: <Actor ID>. Teleports the npc to the center actor.
+	// Input: <Actor ID>. Teleports the npc to the center actor.
 	bool cmdTeleportNPCHere(int argc, const char **argv);
-
-    // Input: <None>. Teleport the three brothers to the center actor.
+	// Input: <None>. Teleport the three brothers to the center actor.
 	bool cmdTeleportPartyHere(int argc, const char **argv);
-
-    // Input: <None>. Saves the current location locally.
+	// Input: <None>. Saves the current location locally.
 	bool cmdSaveLoc(int argc, const char **argv);
-
-    // Input: <None>. Teleports the center actor to the location saved with cmdSaveLoc.
+	// Input: <None>. Teleports the center actor to the location saved with cmdSaveLoc.
 	bool cmdLoadLoc(int argc, const char **argv);
-
-    // Input: <Place ID>. Teleports to the given place.
+	// Input: <Place ID>. Teleports to the given place.
 	bool cmdGotoPlace(int argc, const char **argv);
-
-    // Input: <None>. Lists all of the place names along with their IDs.
+	// Input: <None>. Lists all of the place names along with their IDs.
 	bool cmdListPlaces(int argc, const char **argv);
-
-    // Input: <Map Scale Multiplier>. Dumps the map into a png.
+	// Input: <Map Scale Multiplier>. Dumps the map into a png.
 	bool cmdDumpMap(int argc, const char **argv);
-
-    // Input: <Music Index>. Plays a music track.
+	// Input: <Music Index>. Plays a music track.
 	bool cmdPlayMusic(int argc, const char **argv);
-
-    // Input: <Voice ID>. Plays a voice track.
+	// Input: <Voice ID>. Plays a voice track.
 	bool cmdPlayVoice(int argc, const char **argv);
-
 	// Input: <1/0>. Sets the invisibility effect on the party.
 	bool cmdInvisibility(int argc, const char **argv);
-
 	// Input: <1/0>. Sets state of Automap cheat for testing.
 	bool cmdMapCheat(int argc, const char **argv);
 };

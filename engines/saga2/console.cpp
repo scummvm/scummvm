@@ -43,55 +43,30 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	registerCmd("kill_protag", WRAP_METHOD(Console, cmdKillProtag));
-
 	registerCmd("kill", WRAP_METHOD(Console, cmdKill));
-
 	registerCmd("godmode", WRAP_METHOD(Console, cmdGodmode));
-
 	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
-
 	registerCmd("nid2id", WRAP_METHOD(Console, cmdObjNameIndexToID));
-
 	registerCmd("search", WRAP_METHOD(Console, cmdSearchObj));
-
 	registerCmd("add", WRAP_METHOD(Console, cmdAddObj));
-
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
-
 	registerCmd("teleport_on_click", WRAP_METHOD(Console, cmdTeleportOnClick));
-
 	registerCmd("teleport_on_map", WRAP_METHOD(Console, cmdTeleportOnMap));
-
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
-
 	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
-
 	registerCmd("teleport_npc", WRAP_METHOD(Console, cmdTeleportNPC));
-
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
-
 	registerCmd("teleport_party_here", WRAP_METHOD(Console, cmdTeleportPartyHere));
-
 	registerCmd("save_loc", WRAP_METHOD(Console, cmdSaveLoc));
-
 	registerCmd("load_loc", WRAP_METHOD(Console, cmdLoadLoc));
-
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
-
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
-
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
-
 	registerCmd("status_msg", WRAP_METHOD(Console, cmdStatusMsg));
-
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
-
 	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
-
 	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
-
 	registerCmd("invis", WRAP_METHOD(Console, cmdInvisibility));
-
 	registerCmd("map_cheat", WRAP_METHOD(Console, cmdMapCheat));
 }
 
