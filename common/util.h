@@ -23,7 +23,6 @@
 #define COMMON_UTIL_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
 
 /**
  * @defgroup common_util Util
@@ -122,6 +121,9 @@ template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &v
 /** @} */
 
 namespace Common {
+
+class String;
+class U32String;
 
 /**
  * @addtogroup common_util
