@@ -3172,34 +3172,34 @@ msgstr "Tiratu leihora"
 msgid "Fit to window (4:3)"
 msgstr "Doitu leihora (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:701
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:702
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Bereizmena: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa gaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
 msgstr "Formatu-ratio zuzenketa desgaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 #, fuzzy
 msgid "Filtering enabled"
 msgstr "Klikatzea gaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 #, fuzzy
 msgid "Filtering disabled"
 msgstr "Klikatzea desgaituta"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:759
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 #, fuzzy
 msgid "Stretch mode"

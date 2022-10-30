@@ -3135,32 +3135,32 @@ msgstr "Strekk til vinduet"
 msgid "Fit to window (4:3)"
 msgstr "Tilpass vinduet (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:701
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:702
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Oppløsning: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
 msgstr "Bildeformatskorrigering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
 msgstr "Bildeformatskorrigering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
 msgstr "Filtrering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
 msgstr "Filtrering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:759
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Stretch mode"
 msgstr "Strekkmodus"
