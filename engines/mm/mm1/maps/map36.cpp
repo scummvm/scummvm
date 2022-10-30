@@ -94,7 +94,7 @@ void Map36::special04() {
 
 void Map36::special05() {
 	updateFlags();
-	send("GameView", DrawGraphicMessage(7));
+	send("View", DrawGraphicMessage(7));
 	g_events->addView("Hacker");
 }
 

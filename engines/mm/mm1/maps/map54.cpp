@@ -111,7 +111,7 @@ void Map54::special06() {
 }
 
 void Map54::special07() {
-	send("GameView", DrawGraphicMessage(5));
+	send("View", DrawGraphicMessage(5));
 	g_events->addView("Keeper");
 }
 

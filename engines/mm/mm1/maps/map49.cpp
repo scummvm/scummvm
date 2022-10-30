@@ -106,7 +106,7 @@ void Map49::special06() {
 		g_maps->changeMap(0x412, 3);
 
 	} else {
-		send("GameView", DrawGraphicMessage(7));
+		send("View", DrawGraphicMessage(7));
 		g_events->addView("Alamar");
 	}
 }
