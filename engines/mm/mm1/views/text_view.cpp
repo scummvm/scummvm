@@ -139,9 +139,9 @@ void TextView::timeout() {
 	redraw();
 }
 
-bool TextView::msgDrawMonster(const DrawMonsterMessage &msg) {
+bool TextView::msgDrawGraphic(const DrawGraphicMessage &msg) {
 	Graphics::ManagedSurface img =
-		g_globals->_monsters.getMonsterImage(msg._monsterNum);
+		g_globals->_monsters.getMonsterImage(msg._gfxNum);
 	getSurface().blitFrom(img, Common::Point(64, 16));
 	return true;
 }

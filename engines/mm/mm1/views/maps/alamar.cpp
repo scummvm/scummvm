@@ -66,8 +66,8 @@ void Alamar::draw() {
 	} else if (map[HAS_EYE]) {
 		close();
 		map.redrawGame();
-		send("GameView", DrawMonsterMessage(7));
-		send("GameView", DrawMonsterMessage(6));
+		send("GameView", DrawGraphicMessage(7));
+		send("GameView", DrawGraphicMessage(6));
 
 		clearSurface();
 		writeString(0, 0, STRING["maps.map49.alamar1"]);
