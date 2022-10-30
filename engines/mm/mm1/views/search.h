@@ -32,12 +32,12 @@ class Search : public TextView {
 private:
 	enum Mode { INITIAL, OPTIONS };
 	Mode _mode = INITIAL;
-	bool _hasStuff = false;
 	byte _val1 = 0;
 public:
 	Search();
 	virtual ~Search() {}
 
+	bool msgGame(const GameMessage &msg) override;
 	bool msgFocus(const FocusMessage &msg) override;
 	void draw() override;
 	bool msgKeypress(const KeypressMessage &msg) override;

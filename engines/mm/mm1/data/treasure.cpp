@@ -19,10 +19,32 @@
  *
  */
 
+#include "common/algorithm.h"
 #include "mm/mm1/data/treasure.h"
 
 namespace MM {
 namespace MM1 {
+
+#define TREASURE_COUNT 6
+#define ARRAY_COUNT (TREASURE_COUNT + 3)
+
+void Treasure::clear() {
+	Common::fill(&_data[0], &_data[ARRAY_COUNT], 0);
+}
+
+byte &Treasure::operator[](uint i) {
+	assert(i < ARRAY_COUNT);
+	return _data[i];
+}
+
+bool Treasure::present() const {
+	for (int i = 0; i < TREASURE_COUNT; ++i) {
+		if (_data[i + 3])
+			return true;
+	}
+
+	return false;
+}
 
 } // namespace MM1
 } // namespace MM
