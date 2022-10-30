@@ -38,7 +38,7 @@ public:
 
 	bool isDrawable() override;
 	bool isPlanar() override;
-	Type getType() override { return Type::Sensor; };
+	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }
 
 	void draw(Freescape::Renderer *gfx) override { error("cannot render sensor"); };

@@ -31,31 +31,31 @@
 
 namespace Freescape {
 
+enum ObjectType {
+	kEntranceType = 0,
+	kCubeType = 1,
+	kSensorType = 2,
+	kRectangleType = 3,
+
+	kEastPyramidType = 4,
+	kWestPyramidType = 5,
+	kUpPyramidType = 6,
+	kDownPyramidType = 7,
+	kNorthPyramidType = 8,
+	kSouthPyramidType = 9,
+
+	kLineType = 10,
+	kTriangleType = 11,
+	kQuadrilateralType = 12,
+	kPentagonType = 13,
+	kHexagonType = 14,
+
+	kGroupType = 15
+};
+
 class Object {
 public:
-	typedef enum {
-		Entrance = 0,
-		Cube = 1,
-		Sensor = 2,
-		Rectangle = 3,
-
-		EastPyramid = 4,
-		WestPyramid = 5,
-		UpPyramid = 6,
-		DownPyramid = 7,
-		NorthPyramid = 8,
-		SouthPyramid = 9,
-
-		Line = 10,
-		Triangle = 11,
-		Quadrilateral = 12,
-		Pentagon = 13,
-		Hexagon = 14,
-
-		Group = 15
-	} Type;
-
-	virtual Type getType();
+	virtual ObjectType getType();
 	uint16 getObjectID();
 	uint16 getObjectFlags();
 	void setObjectFlags(uint32 flags);
@@ -77,7 +77,7 @@ public:
 	virtual ~Object();
 
 	uint16 _flags;
-	Type _type;
+	ObjectType _type;
 	uint16 _objectID;
 	Math::Vector3d _origin, _size, _rotation;
 	Math::AABB _boundingBox;

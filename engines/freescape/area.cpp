@@ -237,7 +237,7 @@ void Area::addStructure(Area *global) {
 			gColors->push_back(_groundColor);
 
 		obj = (Object *)new GeometricObject(
-			Object::Type::Cube,
+			ObjectType::kCubeType,
 			id,
 			0,                             // flags
 			Math::Vector3d(0, -1, 0),      // Position

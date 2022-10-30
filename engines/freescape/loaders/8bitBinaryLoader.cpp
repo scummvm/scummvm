@@ -74,7 +74,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	byte rawFlagsAndType = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Raw object data flags and type: %d", rawFlagsAndType);
-	Object::Type objectType = (Object::Type)(rawFlagsAndType & 0x1F);
+	ObjectType objectType = (ObjectType)(rawFlagsAndType & 0x1F);
 
 	Math::Vector3d position, v;
 
@@ -99,7 +99,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 	assert(byteSizeOfObject >= 9);
 	byteSizeOfObject = byteSizeOfObject - 9;
-	if (objectID == 255 && objectType == Object::Type::Entrance) {
+	if (objectID == 255 && objectType == ObjectType::kEntranceType) {
 		debugC(1, kFreescapeDebugParser, "Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
 		byte *structureData = (byte *)malloc(byteSizeOfObject + 6);
 		structureData[0] = int(position.x());
@@ -191,7 +191,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			instructions,
 			conditionSource);
 	} break;
-	case Object::Entrance: {
+	case kEntranceType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
@@ -210,7 +210,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			5 * v); // rotation
 	} break;
 
-	case Object::Sensor: {
+	case kSensorType: {
 		debugC(1, kFreescapeDebugParser, "rotation: %f %f %f", v.x(), v.y(), v.z());
 		if (byteSizeOfObject > 0) {
 			// TODO: there is something here
@@ -228,7 +228,7 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 			5 * v); // rotation
 	} break;
 
-	case Object::Group:
+	case kGroupType:
 		debugC(1, kFreescapeDebugParser, "Object of type 'group'");
 		file->seek(byteSizeOfObject, SEEK_CUR);
 		return new Sensor(
@@ -345,7 +345,7 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		Object *newObject = load8bitObject(file);
 
 		if (newObject) {
-			if (newObject->getType() == Object::Entrance) {
+			if (newObject->getType() == kEntranceType) {
 				if (entrancesByID->contains(newObject->getObjectID() & 0x7fff))
 					error("WARNING: replacing object id %d (%d)", newObject->getObjectID(), newObject->getObjectID() & 0x7fff);
 

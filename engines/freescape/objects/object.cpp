@@ -25,7 +25,7 @@
 
 namespace Freescape {
 
-Object::Type Object::getType() { return _type; }
+ObjectType Object::getType() { return _type; }
 uint16 Object::getObjectID() { return _objectID; }
 uint16 Object::getObjectFlags() { return _flags; }
 void Object::setObjectFlags(uint32 flags_) { _flags = flags_; }

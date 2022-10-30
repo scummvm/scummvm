@@ -31,13 +31,13 @@ namespace Freescape {
 
 class GeometricObject : public Object {
 public:
-	static int numberOfColoursForObjectOfType(Type type);
-	static int numberOfOrdinatesForType(Type type);
-	static bool isPyramid(Type type);
-	static bool isPolygon(Type type);
+	static int numberOfColoursForObjectOfType(ObjectType type);
+	static int numberOfOrdinatesForType(ObjectType type);
+	static bool isPyramid(ObjectType type);
+	static bool isPolygon(ObjectType type);
 
 	GeometricObject(
-		Type type,
+		ObjectType type,
 		uint16 objectID,
 		uint16 flags,
 		const Math::Vector3d &origin,
