@@ -1211,7 +1211,7 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 
 	_saveFiles[index++].handler = _childrenHandler = new FakeFileHandler(_vm);
 	for (int i = 0; i < 4; ++i) {
-		_saveFiles[index++].handler = _debilHandler[0] = new FakeFileHandler(_vm);
+		_saveFiles[index++].handler = _debilHandler[i] = new FakeFileHandler(_vm);
 	}
 
 	_saveFiles[index++].handler = _configHandler   = new GameFileHandler(_vm, targetName, "cfg");
