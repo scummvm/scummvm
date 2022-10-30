@@ -84,7 +84,6 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 	char *ptrToBreak;
 	int bannerMsgWidth, bannerMsgHeight, roundedWidth;
 	int startingPointX, startingPointY;
-	int bannerSaveYStart;
 	int xPos, yPos;
 	int rightLineColor, leftLineColor, bottomLineColor, topLineColor;
 	int normalTextColor, normalFillColor;
@@ -177,20 +176,20 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		startingPointY = _screenHeight / 2 - 10;
 		xPos = _screenWidth / 2 + roundedWidth + 3;
 		yPos = 1 - bannerMsgHeight;
-		bannerSaveYStart = startingPointY;
+		_bannerSaveYStart = startingPointY;
 	} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
 		bannerMsgWidth = getGUIStringWidth(bannerMsg) / 2;
 		startingPointX = ((160 - bannerMsgWidth) - 8) & 0xFFF8;
 		startingPointY = (bannerMsgWidth + 168) | 0x7;
 		xPos = startingPointX + 1; // Bogus value, since it is unused
 		yPos = startingPointY + 1; // Bogus value, since it is unused
-		bannerSaveYStart = 78;
+		_bannerSaveYStart = 78;
 	} else {
 		startingPointX = 156 - roundedWidth;
 		startingPointY = ((_game.version < 7) ? 80 : _screenHeight / 2 - 10);
 		xPos = roundedWidth + 163 + ((_game.version < 7) ? 1 : 0);
 		yPos = 1 - bannerMsgHeight; // For the normal font this will end up as -12, for CJK modes it will be appropriately adjusted.
-		bannerSaveYStart = startingPointY - ((_game.version < 7) ? 2 : 0);
+		_bannerSaveYStart = startingPointY - ((_game.version < 7) ? 2 : 0);
 	}
 
 	// Save the pixels which will be overwritten by the banner,
@@ -204,26 +203,26 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
 				rowSize *= _textSurfaceMultiplier;
-				bannerSaveYStart *= _textSurfaceMultiplier;
+				_bannerSaveYStart *= _textSurfaceMultiplier;
 				_textSurfBannerMemSize = bannerMsgHeight * rowSize * _textSurfaceMultiplier;
 				_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
 				if (_textSurfBannerMem) {
 					memcpy(
 						_textSurfBannerMem,
-						&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * bannerSaveYStart],
+						&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * _bannerSaveYStart],
 						_textSurfBannerMemSize);
 				}
 
 				// We're going to use these same values for saving the
 				// virtual screen surface, so let's un-multiply them...
 				rowSize /= _textSurfaceMultiplier;
-				bannerSaveYStart /= _textSurfaceMultiplier;
+				_bannerSaveYStart /= _textSurfaceMultiplier;
 			}
 #endif
 
 			memcpy(
 				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * bannerSaveYStart],
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * _bannerSaveYStart],
 				_bannerMemSize);
 		}
 	}
@@ -392,7 +391,9 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	char bannerMsg[512];
 	int bannerMsgWidth, bannerMsgHeight;
 	int startingPointY;
-	int bannerSaveYStart;
+	int boxColor;
+	int textXPos, textYPos;
+	bool isV3Towns = (_game.platform == Common::kPlatformFMTowns && _game.version == 3);
 
 	_messageBannerActive = true;
 
@@ -426,50 +427,10 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		bannerMsgWidth = 100;
 
 	startingPointY = 80;
-	bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
 
-	// Save the pixels which will be overwritten by the banner,
-	// so that we can restore them later...
-	if (!_bannerMem) {
-		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
-
-		// FM-Towns games draw the banner on the text surface, so let's save that
-#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
-		if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
-			rowSize *= _textSurfaceMultiplier;
-			bannerSaveYStart *= _textSurfaceMultiplier;
-			_textSurfBannerMemSize = bannerMsgHeight * rowSize * _textSurfaceMultiplier;
-			_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
-			if (_textSurfBannerMem) {
-				memcpy(
-					_textSurfBannerMem,
-					&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * bannerSaveYStart],
-					_textSurfBannerMemSize);
-			}
-
-			// We're going to use these same values for saving the
-			// virtual screen surface, so let's un-multiply them...
-			rowSize /= _textSurfaceMultiplier;
-			bannerSaveYStart /= _textSurfaceMultiplier;
-		}
-#endif
-
-		_bannerMemSize = (bannerMsgHeight + 2) * (rowSize);
-		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
-		if (_bannerMem) {
-			memcpy(
-				_bannerMem,
-				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * bannerSaveYStart],
-				_bannerMemSize);
-		}
-	}
-
-	// Draw the GUI control
-	bool isV3Towns = (_game.platform == Common::kPlatformFMTowns && _game.version == 3);
-
-	int boxColor = 0;
-	int textXPos = _screenWidth / 2;
-	int textYPos = startingPointY + 2;
+	boxColor = 0;
+	textXPos = _screenWidth / 2;
+	textYPos = startingPointY + 2;
 
 	if (isV3Towns) {
 		boxColor = 8;
@@ -489,6 +450,45 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		}
 	}
 
+	// Save the pixels which will be overwritten by the banner,
+	// so that we can restore them later...
+	_bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
+
+	if (!_bannerMem) {
+		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
+
+		// FM-Towns games draw the banner on the text surface, so let's save that
+#ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
+		if (_game.platform == Common::kPlatformFMTowns && !_textSurfBannerMem) {
+			rowSize *= _textSurfaceMultiplier;
+			startingPointY *= _textSurfaceMultiplier;
+			_textSurfBannerMemSize = (bannerMsgHeight + 2) * rowSize * _textSurfaceMultiplier;
+			_textSurfBannerMem = (byte *)malloc(_textSurfBannerMemSize * sizeof(byte));
+			if (_textSurfBannerMem) {
+				memcpy(
+					_textSurfBannerMem,
+					&((byte *)_textSurface.getBasePtr(0, _screenTop * _textSurfaceMultiplier))[rowSize * startingPointY],
+					_textSurfBannerMemSize);
+			}
+
+			// We're going to use these same values for saving the
+			// virtual screen surface, so let's un-multiply them...
+			rowSize /= _textSurfaceMultiplier;
+			startingPointY /= _textSurfaceMultiplier;
+		}
+#endif
+
+		_bannerMemSize = (bannerMsgHeight + 2) * (rowSize);
+		_bannerMem = (byte *)malloc(_bannerMemSize * sizeof(byte));
+		if (_bannerMem) {
+			memcpy(
+				_bannerMem,
+				&_virtscr[kMainVirtScreen].getPixels(0, _screenTop)[rowSize * startingPointY],
+				_bannerMemSize);
+		}
+	}
+
+	// Draw the GUI control
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY + bannerMsgHeight, boxColor);
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
 	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
@@ -528,6 +528,8 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 }
 
 void ScummEngine::clearBanner() {
+	int startingPointY = _bannerSaveYStart;
+
 	// Restore the GFX content which was under the banner,
 	// and then mark that part of the screen as dirty.
 	if (_bannerMem) {
@@ -537,17 +539,6 @@ void ScummEngine::clearBanner() {
 		// will take care of that for us automatically when updating the
 		// screen for next frame.
 		if (!isSmushActive()) {
-			int startingPointY;
-			if (_game.version == 8) {
-				startingPointY = _screenHeight / 2 - 10;
-			} else if (_game.version < 4) {
-				startingPointY = 80;
-			} else if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-				startingPointY = 78;
-			} else {
-				startingPointY = ((_game.version < 7) ? 80 - 2 : _screenHeight / 2 - 10);
-			}
-			startingPointY -= (_game.version >= 4 ? 0 : _virtscr[kMainVirtScreen].topline);
 			// FM-Towns games draw the banners on the text surface, so restore both surfaces...
 #ifndef DISABLE_TOWNS_DUAL_LAYER_MODE
 			if (_game.platform == Common::kPlatformFMTowns && _textSurfBannerMem) {
@@ -1310,10 +1301,11 @@ void ScummEngine::saveSurfacesPreGUI() {
 	// so the last line is being drawn on the verb surface; to address this, we
 	// save and restore that too.
 
-	if (_game.version < 3 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6 ||
+		(_game.version == 3 && _game.platform == Common::kPlatformFMTowns))
 		return;
 
-	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * _textSurfaceMultiplier * sizeof(byte));
+	_tempTextSurface = (byte *)malloc(_textSurface.pitch * _textSurface.h * sizeof(byte));
 	_tempMainSurface = (byte *)malloc(_virtscr[kMainVirtScreen].w * _virtscr[kMainVirtScreen].h * sizeof(byte));
 	_tempVerbSurface = (byte *)malloc(_virtscr[kVerbVirtScreen].w * _virtscr[kVerbVirtScreen].h * sizeof(byte));
 
@@ -1332,7 +1324,7 @@ void ScummEngine::saveSurfacesPreGUI() {
 	}
 
 	if (_tempTextSurface) {
-		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h * _textSurfaceMultiplier);
+		memcpy(_tempTextSurface, _textSurface.getBasePtr(0, 0), _textSurface.pitch * _textSurface.h);
 
 		// For each v4-v6 game (except for LOOM VGA which does its own thing), we take the text surface
 		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
@@ -1354,17 +1346,17 @@ void ScummEngine::saveSurfacesPreGUI() {
 
 void ScummEngine::restoreSurfacesPostGUI() {
 
-	if (_game.version < 3 || _game.version > 6)
+	if (_game.version < 3 || _game.version > 6 ||
+		(_game.version == 3 && _game.platform == Common::kPlatformFMTowns))
 		return;
 
 	if (_tempTextSurface) {
-		memcpy(_textSurface.getBasePtr(0, 0), _tempTextSurface, _textSurface.pitch * _textSurface.h * _textSurfaceMultiplier);
+		memcpy(_textSurface.getBasePtr(0, 0), _tempTextSurface, _textSurface.pitch * _textSurface.h);
 
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
 		// text is displayed...
-		if (!(_game.version == 3 && _game.platform == Common::kPlatformFMTowns) &&
-			!(_game.version == 4 && _game.id == GID_LOOM)) {
+		if (!(_game.version == 4 && _game.id == GID_LOOM)) {
 			_postGUICharMask = true;
 		}
 
@@ -1395,11 +1387,6 @@ void ScummEngine::restoreSurfacesPostGUI() {
 
 		_virtscr[kVerbVirtScreen].setDirtyRange(0, _virtscr[kVerbVirtScreen].h);
 	}
-
-	// Immediately redraw the screen for v3 FMTowns games, to avoid rendering
-	// a black frame after clearing the GUI element...
-	if (_game.version == 3 && _game.platform == Common::kPlatformFMTowns)
-		ScummEngine::drawDirtyScreenParts();
 }
 
 void ScummEngine::toggleVoiceMode() {
