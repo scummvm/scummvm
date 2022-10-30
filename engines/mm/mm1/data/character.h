@@ -355,6 +355,9 @@ struct AttributePair16 {
 		_base = _current = v;
 		return *this;
 	}
+	operator uint16() const {
+		return _current;
+	}
 	void synchronize(Common::Serializer &s) {
 		s.syncAsUint16LE(_base);
 		s.syncAsUint16LE(_current);

@@ -38,6 +38,7 @@ class Treasure {
 private:
 	byte _data[9];
 public:
+	byte &_trapType = _data[1];
 	byte &_container = _data[2];
 
 	Treasure() {

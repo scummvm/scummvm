@@ -156,6 +156,11 @@
 		options1: "OPTIONS:           1) OPEN IT"
 		options2: "2) FIND/REMOVE TRAP"
 		options3: "3) DETECT MAGIC/TRAP"
+		bad_class: "*** BAD CLASS ***"
+		no_sp: "*** NO SPELL POINTS ***"
+		magic_trap: "MAGIC (%c)  TRAP (%c)"
+		who_will_try: "WHO WILL TRY '1'-'%c'"
+		check_condition: "*** CHECK CONDITION ***"
 	statues:
 		stone: "ON THIS STONE STATUE OF "
 		plaque: "A PLAQUE READS..."

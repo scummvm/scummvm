@@ -30,9 +30,30 @@ namespace Views {
 
 class Search : public TextView {
 private:
-	enum Mode { INITIAL, OPTIONS };
+	enum Mode { INITIAL, OPTIONS, RESPONSE, WHO_WILL_TRY };
 	Mode _mode = INITIAL;
+	bool _removing = false;
 	byte _val1 = 0;
+
+	/**
+	 * Open the container
+	 */
+	void openContainer();
+	void openContainer2();
+
+	/**
+	 * Find/remove trap
+	 */
+	void findRemoveTrap();
+	void findRemoveTrap2();
+
+	/**
+	 * Detect magic/trap
+	 */
+	void detectMagicTrap();
+
+	bool whoWillTry();
+
 public:
 	Search();
 	virtual ~Search() {}
