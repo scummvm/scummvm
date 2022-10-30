@@ -155,9 +155,17 @@ int VideoPlayer::openVideo(bool primary, const Common::String &file, Properties 
 			bool screenSize = properties.flags & kFlagScreenSurface;
 
 			if (ownSurf) {
-				_vm->_draw->_spritesArray[properties.sprite] =
-					_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
-					                          screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+				uint16 height = screenSize ? _vm->_width  : video->decoder->getWidth();
+				uint16 width = screenSize ? _vm->_height : video->decoder->getHeight();
+
+				if (height > 0 && width > 0) {
+					_vm->_draw->_spritesArray[properties.sprite] =
+						_vm->_video->initSurfDesc(screenSize ? _vm->_width  : video->decoder->getWidth(),
+												  screenSize ? _vm->_height : video->decoder->getHeight(), 0);
+				} else {
+					warning("VideoPlayer::openVideo() file=%s:"
+							"Invalid surface dimensions (%dx%d)", file.c_str(), width, height);
+				}
 			}
 
 			if (!_vm->_draw->_spritesArray[properties.sprite] &&
