@@ -40,9 +40,9 @@ public:
 	void update(const Graphics::Surface *surface) override;
 	void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) override;
 
-	TGLuint id;
-	TGLuint internalFormat;
-	TGLuint sourceFormat;
+	TGLuint _id;
+	TGLuint _internalFormat;
+	TGLuint _sourceFormat;
 
 private:
 	TinyGL::BlitImage *_blitImage;
