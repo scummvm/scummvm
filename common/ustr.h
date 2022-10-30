@@ -23,6 +23,7 @@
 #define COMMON_USTR_H
 
 #include "common/scummsys.h"
+#include "common/util.h"
 #include "common/str-enc.h"
 #include "common/base-str.h"
 
@@ -206,7 +207,7 @@ private:
 
 template<class... TParam>
 inline U32String U32String::format(const U32String &fmt, TParam... param) {
-	return formatInternal(&fmt, param...);
+	return formatInternal(&fmt, Common::forward<TParam>(param)...);
 }
 
 /** Concatenate strings @p x and @p y. */
