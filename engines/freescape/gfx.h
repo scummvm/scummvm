@@ -41,9 +41,9 @@ public:
 	Texture(){};
 	virtual ~Texture(){};
 
-	uint width;
-	uint height;
-	Graphics::PixelFormat format;
+	uint _width;
+	uint _height;
+	Graphics::PixelFormat _format;
 
 	virtual void update(const Graphics::Surface *surface) = 0;
 	virtual void updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) = 0;
