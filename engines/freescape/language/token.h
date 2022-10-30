@@ -103,18 +103,18 @@ public:
 	Type getType();
 
 	Token() {
-		type = UNKNOWN;
-		value = 0;
+		_type = UNKNOWN;
+		_value = 0;
 	}
-	Token(Type _type) {
-		type = _type;
-		value = 0;
+	Token(Type type_) {
+		_type = type_;
+		_value = 0;
 	}
 
 private:
-	Type type;
-	int32 value;
-	Common::String string;
+	Type _type;
+	int32 _value;
+	Common::String _string;
 };
 
 } // End of namespace Freescape
