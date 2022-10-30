@@ -66,7 +66,7 @@ darkness:
 		_stepRandom = false;
 		g_globals->_encounters.execute();
 	} else {
-		map.checkPartyDead();
+		g_globals->_party.checkPartyDead();
 	}
 
 	// Flag to redraw the screen
@@ -202,12 +202,12 @@ void ViewBase::backwards() {
 	if (!g_globals->_intangible) {
 		if (maps._currentWalls & maps._backwardsMask) {
 			Sound::sound(SOUND_1);
-			map.checkPartyDead();
+			g_globals->_party.checkPartyDead();
 			return;
 		}
 		if (maps._currentState & 0x55 & maps._backwardsMask) {
 			Sound::sound(SOUND_1);
-			map.checkPartyDead();
+			g_globals->_party.checkPartyDead();
 			return;
 		}
 	}

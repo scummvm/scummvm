@@ -79,16 +79,8 @@ void Map::loadOverlay() {
 	f.read(&_data[0], dataSize);
 }
 
-void Map::checkPartyDead() {
-	for (uint i = 0; i < g_globals->_party.size(); ++i) {
-		Character &c = g_globals->_party[i];
-		if ((c._condition & (ASLEEP | STONE | DEAD | BAD_CONDITION)) == 0)
-			return;
-	}
-
-	// At this point, there's no good characters.
-	// So redirect to the death screen
-	g_events->replaceView("Dead");
+bool Map::checkPartyDead() {
+	return g_globals->_party.checkPartyDead();
 }
 
 uint16 Map::dataWord(uint16 ofs) const {
