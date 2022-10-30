@@ -132,6 +132,8 @@ add_steam 1133950
 add_steam 1142230
 add_steam 1147030
 add_steam 1181570
+add_steam 1182310
+add_steamlike_gog 1182310 1790032718
 add_steam 1196520
 add_steam 1220930
 add_steam 1259140
@@ -141,6 +143,7 @@ add_steam 1305500
 add_steam 1355910
 add_steam 1369520
 add_steamlike_gog 1369520 1392294208
+add_steam 1644080
 add_steam 1900280
 
 #TWINE games:
