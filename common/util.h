@@ -175,6 +175,23 @@ template<class T> struct remove_volatile<volatile T> {
 	typedef T type;
 };
 
+/**
+ * A set of templates which removes the reference over types.
+ * Use remove_reference_t<T> for this.
+ */
+template<class T>
+struct remove_reference {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &> {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &&> {
+	typedef T type;
+};
+
 template<class T>
 using remove_cv_t        = typename remove_cv<T>::type;
 template<class T>
@@ -184,6 +201,19 @@ using remove_volatile_t  = typename remove_volatile<T>::type;
 
 template<class T>
 using remove_reference_t = typename remove_reference<T>::type;
+
+/**
+ * A reimplementation of std::move.
+ */
+template<class T>
+constexpr remove_reference_t<T> &&move(T &&t) noexcept {
+  return static_cast<remove_reference_t<T> &&>(t);
+}
+
+template<class T>
+constexpr T&& forward(remove_reference_t<T> &t) noexcept {
+	return static_cast<T &&>(t);
+}
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is
