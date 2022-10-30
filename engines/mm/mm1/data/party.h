@@ -70,6 +70,12 @@ struct Party : public Common::Array<Character> {
 	 * Returns true if any of the party has an item
 	 */
 	bool hasItem(byte itemId) const;
+
+	/**
+	 * Checks whether the party is dead or out of action,
+	 * and if so, switches to the death screen
+	 */
+	bool checkPartyDead() const;
 };
 
 } // namespace MM1

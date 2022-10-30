@@ -176,7 +176,7 @@ public:
 	 * Checks whether the party is dead or out of action,
 	 * and if so, switches to the death screen
 	 */
-	void checkPartyDead();
+	bool checkPartyDead();
 
 	/**
 	 * Send a message to a UI element
