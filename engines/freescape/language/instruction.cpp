@@ -67,9 +67,9 @@ Token::Type FCLInstruction::getType() {
 
 void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided) {
 	assert(obj != nullptr);
-	if (obj->conditionSource != nullptr) {
-		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->conditionSource->c_str());
-		executeCode(obj->condition, shot, collided);
+	if (obj->_conditionSource != nullptr) {
+		debugC(1, kFreescapeDebugCode, "Executing with collision flag: %s", obj->_conditionSource->c_str());
+		executeCode(obj->_condition, shot, collided);
 	}
 }
 

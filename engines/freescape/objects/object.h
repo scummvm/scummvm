@@ -76,11 +76,11 @@ public:
 
 	virtual ~Object();
 
-	uint16 flags;
-	Type type;
-	uint16 objectID;
-	Math::Vector3d origin, size, rotation;
-	Math::AABB boundingBox;
+	uint16 _flags;
+	Type _type;
+	uint16 _objectID;
+	Math::Vector3d _origin, _size, _rotation;
+	Math::AABB _boundingBox;
 };
 
 } // End of namespace Freescape

@@ -169,7 +169,7 @@ Object *Area::shootRay(const Math::Ray &ray) {
 	Object *collided = nullptr;
 	for (auto &obj : _drawableObjects) {
 		float objSize = obj->getSize().length();
-		if (!obj->isDestroyed() && !obj->isInvisible() && obj->boundingBox.isValid() && ray.intersectAABB(obj->boundingBox) && size >= objSize) {
+		if (!obj->isDestroyed() && !obj->isInvisible() && obj->_boundingBox.isValid() && ray.intersectAABB(obj->_boundingBox) && size >= objSize) {
 			debugC(1, kFreescapeDebugMove, "shot obj id: %d", obj->getObjectID());
 			collided = obj;
 			size = objSize;
@@ -251,8 +251,8 @@ void Area::addStructure(Area *global) {
 	}
 	GlobalStructure *rs = (GlobalStructure *)(*_entrancesByID)[255];
 
-	for (uint i = 0; i < rs->structure.size(); i++) {
-		int16 id = rs->structure[i];
+	for (uint i = 0; i < rs->_structure.size(); i++) {
+		int16 id = rs->_structure[i];
 		if (id == 0)
 			continue;
 

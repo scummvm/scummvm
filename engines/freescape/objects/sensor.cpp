@@ -26,13 +26,13 @@
 namespace Freescape {
 
 Sensor::Sensor(
-	uint16 _objectID,
-	const Math::Vector3d &_origin,
-	const Math::Vector3d &_rotation) {
-	objectID = _objectID;
-	origin = _origin;
-	rotation = _rotation;
-	flags = 0;
+	uint16 objectID_,
+	const Math::Vector3d &origin_,
+	const Math::Vector3d &rotation_) {
+	_objectID = objectID_;
+	_origin = origin_;
+	_rotation = rotation_;
+	_flags = 0;
 }
 
 Sensor::~Sensor() {}
