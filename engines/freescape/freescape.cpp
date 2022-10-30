@@ -519,17 +519,17 @@ Common::Error FreescapeEngine::loadGameStream(Common::SeekableReadStream *stream
 	_pitch = stream->readFloatLE();
 
 	// Level state
-	for (int i = 0; i < int(_gameStateVars.size()); i++) {
+	for (uint i = 0; i < _gameStateVars.size(); i++) {
 		uint16 key = stream->readUint16LE();
 		_gameStateVars[key] = stream->readUint32LE();
 	}
 
-	for (int i = 0; i < int(_gameStateBits.size()); i++) {
+	for (uint i = 0; i < _gameStateBits.size(); i++) {
 		uint16 key = stream->readUint16LE();
 		_gameStateBits[key] = stream->readUint32LE();
 	}
 
-	for (int i = 0; i < int(_areaMap.size()); i++) {
+	for (uint i = 0; i < _areaMap.size(); i++) {
 		uint16 key = stream->readUint16LE();
 		assert(_areaMap.contains(key));
 		Area *area = _areaMap[key];

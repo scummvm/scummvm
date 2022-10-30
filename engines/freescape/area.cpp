@@ -251,7 +251,7 @@ void Area::addStructure(Area *global) {
 	}
 	GlobalStructure *rs = (GlobalStructure *)(*_entrancesByID)[255];
 
-	for (int i = 0; i < int(rs->structure.size()); i++) {
+	for (uint i = 0; i < rs->structure.size(); i++) {
 		int16 id = rs->structure[i];
 		if (id == 0)
 			continue;

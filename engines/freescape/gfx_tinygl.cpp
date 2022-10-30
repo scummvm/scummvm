@@ -217,7 +217,7 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 	}
 
 	tglBegin(TGL_TRIANGLES);
-	for (int i = 1; i < int(vertices.size()) - 1; i++) {
+	for (uint i = 1; i < vertices.size() - 1; i++) { // no underflow since vertices.size() > 2
 		const Math::Vector3d &v1 = vertices[i];
 		const Math::Vector3d &v2 = vertices[i + 1];
 		tglVertex3f(v0.x(), v0.y(), v0.z());
@@ -239,7 +239,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	if (ordinates->size() == 6) {                 // Line
 		assert(getRGBAt((*colours)[0], r, g, b)); // It will never return false?
 		tglColor3ub(r, g, b);
-		for (int i = 0; i < int(ordinates->size()); i = i + 3)
+		for (uint i = 0; i < ordinates->size(); i = i + 3)
 			vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		renderFace(vertices);
 
@@ -253,7 +253,7 @@ void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vec
 	} else {
 		if (getRGBAt((*colours)[0], r, g, b)) {
 			tglColor3ub(r, g, b);
-			for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+			for (uint i = 0; i < ordinates->size(); i = i + 3) {
 				vertices.push_back(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 			}
 			renderFace(vertices);

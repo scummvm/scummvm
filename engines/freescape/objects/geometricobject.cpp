@@ -207,7 +207,7 @@ void GeometricObject::computeBoundingBox() {
 		boundingBox.expand(origin + size);
 		break;
 	case Line:
-		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+		for (uint i = 0; i < ordinates->size(); i = i + 3) {
 			boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		}
 		int dx, dy, dz;
@@ -223,7 +223,7 @@ void GeometricObject::computeBoundingBox() {
 			dz = 2;
 		}
 
-		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+		for (uint i = 0; i < ordinates->size(); i = i + 3) {
 			boundingBox.expand(Math::Vector3d((*ordinates)[i] + dx, (*ordinates)[i + 1] + dy, (*ordinates)[i + 2] + dz));
 		}
 
@@ -232,7 +232,7 @@ void GeometricObject::computeBoundingBox() {
 	case Quadrilateral:
 	case Pentagon:
 	case Hexagon:
-		for (int i = 0; i < int(ordinates->size()); i = i + 3) {
+		for (uint i = 0; i < ordinates->size(); i = i + 3) {
 			boundingBox.expand(Math::Vector3d((*ordinates)[i], (*ordinates)[i + 1], (*ordinates)[i + 2]));
 		}
 		break;
