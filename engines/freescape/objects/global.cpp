@@ -25,9 +25,9 @@
 
 namespace Freescape {
 
-GlobalStructure::GlobalStructure(const Common::Array<byte> _structure) {
-	objectID = 255;
-	structure = _structure;
+GlobalStructure::GlobalStructure(const Common::Array<byte> structure_) {
+	_objectID = 255;
+	_structure = structure_;
 }
 
 } // End of namespace Freescape

@@ -63,8 +63,8 @@ void FreescapeEngine::shoot() {
 		GeometricObject *gobj = (GeometricObject *)shot;
 		debugC(1, kFreescapeDebugMove, "Shot object %d with flags %x", gobj->getObjectID(), gobj->getObjectFlags());
 
-		if (gobj->conditionSource != nullptr)
-			debugC(1, kFreescapeDebugMove, "Must use shot = true when executing: %s", gobj->conditionSource->c_str());
+		if (gobj->_conditionSource != nullptr)
+			debugC(1, kFreescapeDebugMove, "Must use shot = true when executing: %s", gobj->_conditionSource->c_str());
 
 		executeObjectConditions(gobj, true, false);
 	}

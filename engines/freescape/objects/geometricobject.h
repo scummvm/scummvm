@@ -56,12 +56,12 @@ public:
 	bool isDrawable() override;
 	bool isPlanar() override;
 
-	Common::String *conditionSource;
-	FCLInstructionVector condition;
+	Common::String *_conditionSource;
+	FCLInstructionVector _condition;
 
 private:
-	Common::Array<uint8> *colours;
-	Common::Array<uint16> *ordinates;
+	Common::Array<uint8> *_colours;
+	Common::Array<uint16> *_ordinates;
 };
 
 } // End of namespace Freescape
