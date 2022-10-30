@@ -619,6 +619,8 @@ protected:
 	int32 _bannerColors[50]; // Colors for the original GUI
 	byte *_bannerMem = nullptr;
 	uint32 _bannerMemSize = 0;
+	int _bannerSaveYStart = 0;
+
 	bool _messageBannerActive = false;
 	bool _comiQuitMenuIsOpen = false;
 	bool _closeBannerAndQueryQuitFlag = false;
