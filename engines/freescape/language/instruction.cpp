@@ -26,44 +26,43 @@
 
 namespace Freescape {
 
-FCLInstruction::FCLInstruction(Token::Type _type) {
-	source = 0;
-	destination = 0;
-	additional = 0;
-	// TODO: learn modern constructor syntax
-	type = _type;
-	thenInstructions = nullptr;
-	elseInstructions = nullptr;
+FCLInstruction::FCLInstruction(Token::Type type_) {
+	_source = 0;
+	_destination = 0;
+	_additional = 0;
+	_type = type_;
+	_thenInstructions = nullptr;
+	_elseInstructions = nullptr;
 }
 
 FCLInstruction::FCLInstruction() {
-	source = 0;
-	destination = 0;
-	additional = 0;
-	type = Token::UNKNOWN;
-	thenInstructions = nullptr;
-	elseInstructions = nullptr;
+	_source = 0;
+	_destination = 0;
+	_additional = 0;
+	_type = Token::UNKNOWN;
+	_thenInstructions = nullptr;
+	_elseInstructions = nullptr;
 }
 
-void FCLInstruction::setSource(int32 _source) {
-	source = _source;
+void FCLInstruction::setSource(int32 source_) {
+	_source = source_;
 }
 
-void FCLInstruction::setAdditional(int32 _additional) {
-	additional = _additional;
+void FCLInstruction::setAdditional(int32 additional_) {
+	_additional = additional_;
 }
 
-void FCLInstruction::setDestination(int32 _destination) {
-	destination = _destination;
+void FCLInstruction::setDestination(int32 destination_) {
+	_destination = destination_;
 }
 
 void FCLInstruction::setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch) {
-	thenInstructions = thenBranch;
-	elseInstructions = elseBranch;
+	_thenInstructions = thenBranch;
+	_elseInstructions = elseBranch;
 }
 
 Token::Type FCLInstruction::getType() {
-	return type;
+	return _type;
 }
 
 void FreescapeEngine::executeObjectConditions(GeometricObject *obj, bool shot, bool collided) {
@@ -102,15 +101,15 @@ void FreescapeEngine::executeCode(FCLInstructionVector &code, bool shot, bool co
 			break;
 		case Token::COLLIDEDQ:
 			if (collided)
-				executeCode(*instruction.thenInstructions, shot, collided);
+				executeCode(*instruction._thenInstructions, shot, collided);
 			// else branch is always empty
-			assert(instruction.elseInstructions == nullptr);
+			assert(instruction._elseInstructions == nullptr);
 			break;
 		case Token::SHOTQ:
 			if (shot)
-				executeCode(*instruction.thenInstructions, shot, collided);
+				executeCode(*instruction._thenInstructions, shot, collided);
 			// else branch is always empty
-			assert(instruction.elseInstructions == nullptr);
+			assert(instruction._elseInstructions == nullptr);
 			break;
 		case Token::VARNOTEQ:
 			if (executeEndIfNotEqual(instruction))
@@ -181,29 +180,29 @@ void FreescapeEngine::executeRedraw(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeSound(FCLInstruction &instruction) {
-	uint16 index = instruction.source;
-	bool sync = instruction.additional;
+	uint16 index = instruction._source;
+	bool sync = instruction._additional;
 	debugC(1, kFreescapeDebugCode, "Playing sound %d", index);
 	playSound(index, sync);
 }
 
 void FreescapeEngine::executeDelay(FCLInstruction &instruction) {
-	uint16 delay = instruction.source;
+	uint16 delay = instruction._source;
 	debugC(1, kFreescapeDebugCode, "Delaying %d * 1/50 seconds", delay);
 	g_system->delayMillis(20 * delay);
 }
 
 void FreescapeEngine::executePrint(FCLInstruction &instruction) {
-	uint16 index = instruction.source - 1;
+	uint16 index = instruction._source - 1;
 	debugC(1, kFreescapeDebugCode, "Printing message %d", index);
 	_currentAreaMessages.clear();
 	_currentAreaMessages.push_back(_messagesList[index]);
 }
 
 bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction) {
-	uint16 source = instruction.source;
-	uint16 additional = instruction.additional;
-	uint16 value = instruction.destination;
+	uint16 source = instruction._source;
+	uint16 additional = instruction._additional;
+	uint16 value = instruction._destination;
 
 	Object *obj = nullptr;
 	if (additional == 0) {
@@ -221,15 +220,15 @@ bool FreescapeEngine::executeEndIfVisibilityIsEqual(FCLInstruction &instruction)
 }
 
 bool FreescapeEngine::executeEndIfNotEqual(FCLInstruction &instruction) {
-	uint16 variable = instruction.source;
-	uint16 value = instruction.destination;
+	uint16 variable = instruction._source;
+	uint16 value = instruction._destination;
 	debugC(1, kFreescapeDebugCode, "End condition if variable %d is not equal to %d!", variable, value);
 	return (_gameStateVars[variable] != value);
 }
 
 void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
-	int32 variable = instruction.source;
-	int32 increment = instruction.destination;
+	int32 variable = instruction._source;
+	int32 increment = instruction._destination;
 	_gameStateVars[variable] = _gameStateVars[variable] + increment;
 	switch (variable) {
 	case k8bitVariableScore:
@@ -257,8 +256,8 @@ void FreescapeEngine::executeIncrementVariable(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeDecrementVariable(FCLInstruction &instruction) {
-	uint16 variable = instruction.source;
-	uint16 decrement = instruction.destination;
+	uint16 variable = instruction._source;
+	uint16 decrement = instruction._destination;
 	_gameStateVars[variable] = _gameStateVars[variable] - decrement;
 	if (variable == k8bitVariableEnergy) {
 		debugC(1, kFreescapeDebugCode, "Energy decrement by %d up to %d", decrement, _gameStateVars[variable]);
@@ -270,11 +269,11 @@ void FreescapeEngine::executeDestroy(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 
-	if (instruction.destination > 0) {
-		objectID = instruction.destination;
-		areaID = instruction.source;
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
 	} else {
-		objectID = instruction.source;
+		objectID = instruction._source;
 	}
 
 	debugC(1, kFreescapeDebugCode, "Destroying obj %d in area %d!", objectID, areaID);
@@ -290,11 +289,11 @@ void FreescapeEngine::executeMakeInvisible(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 
-	if (instruction.destination > 0) {
-		objectID = instruction.destination;
-		areaID = instruction.source;
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
 	} else {
-		objectID = instruction.source;
+		objectID = instruction._source;
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d invisible in area %d!", objectID, areaID);
@@ -306,11 +305,11 @@ void FreescapeEngine::executeMakeVisible(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 
-	if (instruction.destination > 0) {
-		objectID = instruction.destination;
-		areaID = instruction.source;
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
 	} else {
-		objectID = instruction.source;
+		objectID = instruction._source;
 	}
 
 	debugC(1, kFreescapeDebugCode, "Making obj %d visible in area %d!", objectID, areaID);
@@ -322,11 +321,11 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 	uint16 objectID = 0;
 	uint16 areaID = _currentArea->getAreaID();
 
-	if (instruction.destination > 0) {
-		objectID = instruction.destination;
-		areaID = instruction.source;
+	if (instruction._destination > 0) {
+		objectID = instruction._destination;
+		areaID = instruction._source;
 	} else {
-		objectID = instruction.source;
+		objectID = instruction._source;
 	}
 
 	debugC(1, kFreescapeDebugCode, "Toggling obj %d visibility in area %d!", objectID, areaID);
@@ -348,13 +347,13 @@ void FreescapeEngine::executeToggleVisibility(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeGoto(FCLInstruction &instruction) {
-	uint16 areaID = instruction.source;
-	uint16 entranceID = instruction.destination;
+	uint16 areaID = instruction._source;
+	uint16 entranceID = instruction._destination;
 	gotoArea(areaID, entranceID);
 }
 
 void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
-	uint16 index = instruction.source - 1; // Starts in 1
+	uint16 index = instruction._source - 1; // Starts in 1
 	assert(index < 32);
 	_gameStateBits[_currentArea->getAreaID()] |= (1 << index);
 	debugC(1, kFreescapeDebugCode, "Setting bit %d", index);
@@ -362,21 +361,21 @@ void FreescapeEngine::executeSetBit(FCLInstruction &instruction) {
 }
 
 void FreescapeEngine::executeClearBit(FCLInstruction &instruction) {
-	uint16 index = instruction.source - 1; // Starts in 1
+	uint16 index = instruction._source - 1; // Starts in 1
 	assert(index < 32);
 	_gameStateBits[_currentArea->getAreaID()] &= ~(1 << index);
 	debugC(1, kFreescapeDebugCode, "Clearing bit %d", index);
 }
 
 void FreescapeEngine::executeToggleBit(FCLInstruction &instruction) {
-	uint16 index = instruction.source - 1; // Starts in 1
+	uint16 index = instruction._source - 1; // Starts in 1
 	_gameStateBits[_currentArea->getAreaID()] ^= (1 << index);
 	debugC(1, kFreescapeDebugCode, "Toggling bit %d", index);
 }
 
 bool FreescapeEngine::executeEndIfBitNotEqual(FCLInstruction &instruction) {
-	uint16 index = instruction.source - 1; // Starts in 1
-	uint16 value = instruction.destination;
+	uint16 index = instruction._source - 1; // Starts in 1
+	uint16 value = instruction._destination;
 	assert(index < 32);
 	debugC(1, kFreescapeDebugCode, "End condition if bit %d is not equal to %d!", index, value);
 	return (((_gameStateBits[_currentArea->getAreaID()] >> index) & 1) != value);

@@ -36,22 +36,22 @@ class FCLInstruction {
 public:
 	FCLInstruction();
 	FCLInstruction(Token::Type type);
-	void setSource(int32 _source);
-	void setAdditional(int32 _additional);
-	void setDestination(int32 _destination);
+	void setSource(int32 source);
+	void setAdditional(int32 additional);
+	void setDestination(int32 destination);
 
 	Token::Type getType();
 	void setBranches(FCLInstructionVector *thenBranch, FCLInstructionVector *elseBranch);
 
-	int32 source;
-	int32 additional;
-	int32 destination;
+	int32 _source;
+	int32 _additional;
+	int32 _destination;
 
-	FCLInstructionVector *thenInstructions;
-	FCLInstructionVector *elseInstructions;
+	FCLInstructionVector *_thenInstructions;
+	FCLInstructionVector *_elseInstructions;
 
 private:
-	enum Token::Type type;
+	enum Token::Type _type;
 };
 
 } // End of namespace Freescape

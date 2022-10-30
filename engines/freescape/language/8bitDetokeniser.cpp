@@ -155,22 +155,22 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 		case 3:
 			detokenisedStream += "TOGVIS (";
 			currentInstruction = FCLInstruction(Token::TOGVIS);
-			currentInstruction.source = 0;
-			currentInstruction.destination = 0;
+			currentInstruction.setSource(0);
+			currentInstruction.setDestination(0);
 			break; // these all come in unary and binary versions,
 		case 7:
 		case 4:
 			detokenisedStream += "VIS (";
 			currentInstruction = FCLInstruction(Token::VIS);
-			currentInstruction.source = 0;
-			currentInstruction.destination = 0;
+			currentInstruction.setSource(0);
+			currentInstruction.setDestination(0);
 			break; // hence each getting two case statement entries
 		case 8:
 		case 5:
 			detokenisedStream += "INVIS (";
 			currentInstruction = FCLInstruction(Token::INVIS);
-			currentInstruction.source = 0;
-			currentInstruction.destination = 0;
+			currentInstruction.setSource(0);
+			currentInstruction.setDestination(0);
 			break;
 
 		case 9:
