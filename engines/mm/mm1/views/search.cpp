@@ -108,15 +108,15 @@ void Search::timeout() {
 		g_globals->_treasure[1] = (getRandomNumber(100) < _val1) ? 1 : 2;
 	}
 
-	// Display a graphic for the container type
-	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 4 : 2;
-	send("View", DrawGraphicMessage(gfxNum));
-
 	// Show the name of the container type in the game view
 	send("View", GameMessage(
 		STRING[Common::String::format("dialogs.search.containers.%d",
 			g_globals->_treasure._container)]
 	));
+
+	// Display a graphic for the container type
+	int gfxNum = g_globals->_treasure._container < WOODEN_BOX ? 4 : 2;
+	send("View", DrawGraphicMessage(gfxNum + 65));
 
 	_mode = OPTIONS;
 	draw();
