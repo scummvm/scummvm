@@ -48,12 +48,12 @@ void ImmortalEngine::drawUniv() {
 	_myUnivPointX = !(_myViewPortX & (kChrW - 1)) + kViewPortSpX;
 	_myUnivPointY = !(_myViewPortY & (kChrH - 1)) + kViewPortSpY;
 
-	makeMyCNM();
-	drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
-	addRows();								// Add rows to drawitem array
-	addSprites();							// Add all active sprites that are in the viewport, into a list that will be sorted by priority
-	sortDrawItems();						// Sort said items
-	drawItems();							// Draw the items over the background
+	//makeMyCNM();
+	//drawBGRND();							// Draw floor parts of leftmask rightmask and maskers
+	//addRows();								// Add rows to drawitem array
+	//addSprites();							// Add all active sprites that are in the viewport, into a list that will be sorted by priority
+	//sortDrawItems();						// Sort said items
+	//drawItems();							// Draw the items over the background
 }
 
 void ImmortalEngine::copyToScreen() {
@@ -466,17 +466,96 @@ void ImmortalEngine::cycleFreeAll() {
 void ImmortalEngine::loadMazeGraphics(int m) {
 	char mazeNum = m + '0';
 	loadUniv(mazeNum);
-	setColors(_palUniv);
+	//setColors(_palUniv);
 }
 
-void ImmortalEngine::loadUniv(char mazeNum) {
+int ImmortalEngine::loadUniv(char mazeNum) {
+	int lData = 0;
+	int lStuff = 0x26;
+
+	// We start by loading the mazeN.CNM file with loadIFF (a little silly since we know this isn't compressed)
 	Common::String sCNM = "MAZE" + Common::String(mazeNum) + ".CNM";
 	Common::SeekableReadStream *mazeCNM = loadIFF(sCNM);
+	if (!mazeCNM) {
+		debug("Error, couldn't load maze %d.CNM", mazeNum);
+		return -1;
+	}
 	debug("Size of maze CNM: %ld", mazeCNM->size());
 
+	// The logical CNM contains the contents of mazeN.CNM, with every entry being multiplied by two (why are these byte indexes instead of word indexes in the file?)
+	mazeCNM->seek(0);
+	for (int i = 0; i < mazeCNM->size(); i++) {
+		_LCNM.push_back(mazeCNM->readUint16LE() << 1);
+	}
+
+	// Next we load the mazeN.UNV file, which contains the compressed data but is not itself compressed (again, a little silly)
 	Common::String sUNV = "MAZE" + Common::String(mazeNum) + ".UNV";
 	Common::SeekableReadStream *mazeUNV = loadIFF(sUNV);
+	if (!mazeUNV) {
+		debug("Error, couldn't load maze %d.UNV", mazeNum);
+		return -1;
+	}
 	debug("Size of maze UNV: %ld", mazeUNV->size());
+
+	lData = mazeUNV->size();
+
+	mazeUNV->seek(0x20);
+	_univRectX = mazeUNV->readUint16LE() << 1;
+	_numCols   = _univRectX >> 6;
+	_num2Cols  = _numCols << 1;
+
+	// univRectY is mazeUNV[22]
+	_univRectY = mazeUNV->readUint16LE();
+	_numRows   = _univRectY >> 5;
+	_num2Rows  = _numRows << 1;
+
+	// If there are animations (are there ever?), the univ data is expanded from 26 to include them
+	if (mazeUNV->readUint16LE() != 0) {
+		mazeUNV->seek(0x2C);
+		lStuff += mazeUNV->readUint16LE();
+	}
+
+	// This is probably not how _univ is actually populated, but just to make sure I don't forget about, let's make sure it has the data
+	mazeUNV->seek(0);
+	for (int i = 0; i < lStuff; i++) {
+		_univ.push_back(mazeUNV->readUint16LE());
+	}
+
+	// lData is everything from the .UNV file after the universe variables
+	lData -= lStuff;
+
+	// The data to uncompress is after the universe data in the file
+	mazeUNV->seek(lStuff);
+	Common::SeekableReadStream *pCNM = unCompress((Common::File *) mazeUNV, lData);
+
+	// Now we move the data of the uncompressed CNM into it's actual location
+	// This data type will likely change, it's just unclear how the munge functions work currently
+	_CNM = (uint16 *)malloc(pCNM->size());
+	pCNM->seek(0);
+	pCNM->read(_CNM, pCNM->size());
+
+	_num2Cells = _num2Cols * _numRows;
+	_numChrs = 0;
+
+	// Check every entry in the CNM, with the highest number being the highest number of chrs?
+	for (int i = 0; i < _num2Cells; i++) {
+		if (_CNM[i] >= _numChrs) {
+			_numChrs = _CNM[i];
+		}
+	}
+
+	// Inc one more time being 0 counts
+	_numChrs++;
+	_num2Chrs = _numChrs << 1;
+
+	int lCNMCBM = mungeCBM(_num2Chrs);
+
+	// We don't actually want to blister any rooms yet, so we give it a POV of (0,0)
+	makeBlisters(0, 0);
+	return _LCNM.size() + /*_modCNM.size()*/ + /*_modLCNM.size()*/ + _univ.size() + lCNMCBM;
+}
+
+void ImmortalEngine::makeBlisters(int povX, int povY) {
 }
 
 void ImmortalEngine::loadSprites() {
@@ -599,6 +678,15 @@ void ImmortalEngine::loadFont() {
 }
 
 Common::SeekableReadStream *ImmortalEngine::loadIFF(Common::String fileName) {
+	/* Technically the way this works in the source is that it loads the file
+	 * to a destination address, and then checks the start of that address, and
+	 * if it needs to uncompress, it gives that same address to the uncompress
+	 * routine, overwriting the file in it's place. This is of course slightly
+	 * different here, for simplicity we are not overwriting the original file
+	 * pointer, instead just returning either a compressed or uncompressed
+	 * file pointer.
+	 */
+
 	Common::File f;
 	if (!f.open(fileName)) {
 		debug("*surprised pikachu face*");
