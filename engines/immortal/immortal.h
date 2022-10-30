@@ -382,11 +382,29 @@ public:
 	CArray2D<Motive>	   _programPtrs;
 	Common::Array<ObjType> _objTypePtrs;
 
-	// Screen members
-	  byte *_screenBuff;								// The final buffer that will transfer to the screen
+	// Universe members
+	uint16  _univRectX = 0;
+	uint16  _univRectY = 0;
+	uint16  _numAnims  = 0;
+	uint16  _numCols   = 0;
+	uint16  _numRows   = 0;
+	uint16  _numChrs   = 0;
+	uint16  _num2Cols  = 0;
+	uint16  _num2Rows  = 0;
+	uint16  _num2Cells = 0;
+	uint16  _num2Chrs  = 0;
+	Common::Array<uint16> _univ;						// This doesn't really need to exist in the way that it did in the source, but for now it will be utilized essentially the same way
+	uint16 *_CNM;
+	Common::Array<uint16> _LCNM;
+	uint16 *_modCNM;
+	uint16 *_modLCNM;
+
 	uint16  _myCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 	uint16  _myModCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
 	uint16  _myModLCNM[(kViewPortCW + 1)][(kViewPortCH + 1)];
+
+	// Screen members
+	  byte *_screenBuff;								// The final buffer that will transfer to the screen
 	uint16  _columnX[kViewPortCW + 1];
 	uint16  _columnTop[kViewPortCW + 1];
 	uint16  _columnIndex[kViewPortCW + 1];				// Why the heck is this an entire array, when it's just an index that gets zeroed before it gets used anyway...
@@ -490,8 +508,9 @@ GenericSprite _genSprites[6];
 	// Assets
 	Common::SeekableReadStream *loadIFF(Common::String fileName); // Loads a file and uncompresses if it is compressed
 	void initStoryStatic();								// Sets up all of the global static story elements
-	void loadUniv(char mazeNum);
-	void loadMazeGraphics(int m);							// Creates a universe with a maze
+	 int loadUniv(char mazeNum);						// Unpacks the .CNM and .UNV files into all the CNM stuff, returns the total length of everything
+	void loadMazeGraphics(int m);						// Creates a universe with a maze
+	void makeBlisters(int povX, int povY);				// Turns the unmodified CNM/CBM/LCNM etc into the modified ones to actually be used for drawing the game
 	void loadFont();									// Gets the font.spr file, and centers the sprite
 	void clearSprites();								// Clears all sprites before drawing the current frame
 	void loadSprites();									// Loads all the sprite files and centers their sprites (in spritelist, but called from kernal)
