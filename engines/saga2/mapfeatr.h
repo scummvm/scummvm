@@ -68,6 +68,9 @@ public:
 	int16 getV() {
 		return _featureCoords.v;
 	}
+	TilePoint getLocation() {
+		return _featureCoords;
+	}
 	char *getText() {
 		return _name;
 	}

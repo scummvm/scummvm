@@ -53,6 +53,7 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	registerCmd("teleport_on_click", WRAP_METHOD(Console, cmdTeleportOnClick));
 	registerCmd("teleport_on_map", WRAP_METHOD(Console, cmdTeleportOnMap));
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
+	registerCmd("teleport_place", WRAP_METHOD(Console, cmdTeleportPlace));
 	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
 	registerCmd("teleport_npc", WRAP_METHOD(Console, cmdTeleportNPC));
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
@@ -305,6 +306,41 @@ bool Console::cmdTeleportPartyHere(int argc, const char **argv) {
 			Actor *p = (Actor *)GameObject::objectAddress(id);
 			p->setLocation(loc);
 		}
+	}
+
+	return true;
+}
+
+bool Console::cmdTeleportPlace(int argc, const char **argv) {
+	if (argc < 1)
+		debugPrintf("Usage: %s <place id>/<place name>\n", argv[0]);
+	else {
+		int placenum = -1;
+
+		if (!Common::isDigit(argv[1][0])) {
+			// First, assemble the name
+			Common::String place = argv[1];
+
+			for (int i = 2; i < argc; i++)
+				place += Common::String(" ") + argv[i];
+
+			for (uint i = 0; i < g_vm->_mapFeatures.size(); ++i) {
+				if (g_vm->_mapFeatures[i] && !place.compareToIgnoreCase(g_vm->_mapFeatures[i]->getText())) {
+					placenum = i;
+					break;
+				}
+			}
+		} else {
+			placenum = atoi(argv[1]);
+		}
+
+		if (placenum == -1) {
+			debugPrintf("Unknown place\n");
+			return true;
+		}
+
+		Actor *a = getCenterActor();
+		a->setLocation(g_vm->_mapFeatures[placenum]->getLocation());
 	}
 
 	return true;

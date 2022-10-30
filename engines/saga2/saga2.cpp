@@ -39,6 +39,7 @@
 #include "saga2/band.h"
 #include "saga2/beegee.h"
 #include "saga2/calendar.h"
+#include "saga2/console.h"
 #include "saga2/contain.h"
 #include "saga2/detection.h"
 #include "saga2/dispnode.h"

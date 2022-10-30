@@ -74,6 +74,8 @@ private:
 	bool cmdTeleportNPCHere(int argc, const char **argv);
 	// Input: <None>. Teleport the three brothers to the center actor.
 	bool cmdTeleportPartyHere(int argc, const char **argv);
+	// Input: <place id>/<place name>. Teleports the center character to the given place name or number.
+	bool cmdTeleportPlace(int argc, const char **argv);
 	// Input: <None>. Saves the current location locally.
 	bool cmdSaveLoc(int argc, const char **argv);
 	// Input: <None>. Teleports the center actor to the location saved with cmdSaveLoc.
