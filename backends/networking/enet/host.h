@@ -48,6 +48,8 @@ public:
 
 	uint8 service(int timeout = 0);
 
+	void disconnectPeer(int peerIndex);
+
 	bool send(const char *data, int peerIndex, int channel = 0, bool reliable = true);
 	bool sendRawData(Common::String address, int port, const char *data);
 

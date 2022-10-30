@@ -58,6 +58,26 @@ uint8 Host::service(int timeout) {
 	return event.type;
 }
 
+void Host::disconnectPeer(int peerIndex) {
+	// calling _later will ensure that all the queued packets are sent before disconnecting.
+	enet_peer_disconnect_later(&_host->peers[peerIndex], 0);
+	enet_host_flush(_host);
+
+	if (_serverPeer) {
+		// Allow 3 second for disconnection to succeed and drop incoming packets
+		while(uint type = service(3000) > 0) {
+			switch(type) {
+			case ENET_EVENT_TYPE_RECEIVE:
+				destroyPacket();
+				break;
+			case ENET_EVENT_TYPE_DISCONNECT:
+				// Disconnect succeeded.
+				return;
+			}
+		}
+	}
+}
+
 Common::String Host::getHost() {
 	if (!_recentEvent)
 		return "";
