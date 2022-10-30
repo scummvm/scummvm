@@ -403,9 +403,9 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	// Backup the text surface...
 	if (!_mainMenuIsActive) {
 		saveSurfacesPreGUI();
-		if (_charset->_textScreenID == kMainVirtScreen &&
-			!(_game.id == GID_LOOM && _game.platform == Common::kPlatformFMTowns))
+		if (_charset->_textScreenID == kMainVirtScreen && _game.id != GID_LOOM) {
 			restoreCharsetBg();
+		}
 	}
 
 	// Pause shake effect
@@ -1341,6 +1341,16 @@ void ScummEngine::saveSurfacesPreGUI() {
 				}
 			}
 		}
+
+		// A bit of trickery to prevent in-game texts to be positioned on top of the GUI banners:
+		// draw transparent lines on the text surface, over the area of the main virtual screen.
+		if (_game.id == GID_LOOM && _game.version == 3 && _game.platform != Common::kPlatformFMTowns) {
+			int yBegin = _virtscr[kMainVirtScreen].topline;
+			int yEnd = _virtscr[kMainVirtScreen].topline + _virtscr[kMainVirtScreen].h;
+			for (int y = yBegin; y < yEnd; y++) {
+				memset(_textSurface.getBasePtr(0, y), 0xFD, _virtscr[kMainVirtScreen].w);
+			}
+		}
 	}
 }
 
@@ -1355,8 +1365,9 @@ void ScummEngine::restoreSurfacesPostGUI() {
 
 		// Signal the restoreCharsetBg() function that there's text
 		// on the text surface, so it gets deleted the next time another
-		// text is displayed...
-		if (!(_game.version == 4 && _game.id == GID_LOOM)) {
+		// text is displayed. Just don't do that for LOOM, or it might
+		// randomly cause the distaff to disappear on rare occasions. :-)
+		if (_game.id != GID_LOOM) {
 			_postGUICharMask = true;
 		}
 
