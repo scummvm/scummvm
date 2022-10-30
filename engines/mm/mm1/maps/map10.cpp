@@ -122,7 +122,7 @@ void Map10::special20() {
 	g_maps->clearSpecial();
 	g_globals->_treasure[5] = 252;
 	g_globals->_treasure[8] = 20;
-	g_globals->_treasure[2] = 6;
+	g_globals->_treasure._container = SILVER_CHEST;
 	g_events->addAction(KEYBIND_SEARCH);
 }
 

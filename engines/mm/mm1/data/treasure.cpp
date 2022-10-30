@@ -19,19 +19,10 @@
  *
  */
 
-#ifndef MM1_GAME_SEARCH_H
-#define MM1_GAME_SEARCH_H
+#include "mm/mm1/data/treasure.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
 
-struct Search {
-	static void execute();
-};
-
-} // namespace Game
 } // namespace MM1
 } // namespace MM
-
-#endif
