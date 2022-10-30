@@ -105,7 +105,7 @@ void Map43::special04() {
 
 void Map43::special05() {
 	updateFlags();
-	send("GameView", DrawMonsterMessage(7));
+	send("GameView", DrawGraphicMessage(7));
 	g_events->addView("LordIronfist");
 }
 
