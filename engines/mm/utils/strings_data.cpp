@@ -83,7 +83,8 @@ bool StringsData::load(const Common::String &filename) {
 				value.deleteChar(i);
 				value.deleteChar(i);
 				value.setChar((char)hexToInt(hex), i);
-			} else if (value[i] == '"' && value[i + 1] == '"') {
+			} else if (value[i] == '"' && i < (value.size() - 1) &&
+					value[i + 1] == '"') {
 				value.deleteChar(i);
 			}
 		}

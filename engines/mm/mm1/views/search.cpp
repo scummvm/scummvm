@@ -84,7 +84,10 @@ void Search::timeout() {
 	send("GameView", DrawGraphicMessage(gfxNum));
 
 	// Show the name of the container type in the game view
-	// TODO
+	send("GameView", GameMessage(
+		STRING[Common::String::format("views.search.containers.%d",
+			g_globals->_treasure._container)]
+	));
 }
 
 } // namespace Views

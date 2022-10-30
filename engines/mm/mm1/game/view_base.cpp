@@ -100,7 +100,8 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 }
 
 bool ViewBase::msgValue(const ValueMessage &msg) {
-	_businessDisplay = msg._value;
+	_descriptionLine = STRING[Common::String::format(
+		"dialogs.location.titles.%d", msg._value)];
 	draw();
 	return true;
 }
@@ -117,6 +118,9 @@ bool ViewBase::msgGame(const GameMessage &msg) {
 		replaceView("Game");
 		update();
 		return true;
+	} else {
+		_descriptionLine = msg._name;
+		draw();
 	}
 
 	return TextView::msgGame(msg);

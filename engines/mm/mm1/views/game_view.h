@@ -51,9 +51,10 @@ private:
 	void drawDialogMessage();
 
 	/**
-	 * Draws the business name line
+	 * Draws a business name or other information like
+	 * container container for searches
 	 */
-	void drawBusinessName();
+	void drawDescriptionLine();
 public:
 	GameView(UIElement *owner);
 	virtual ~GameView() {}

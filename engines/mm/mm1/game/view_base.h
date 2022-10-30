@@ -37,8 +37,8 @@ class ViewBase : public Views::TextView {
 protected:
 	bool _isDark = false;
 	Common::String _dialogMessage;
-	int _businessDisplay = -1;
 	bool _stepRandom = false;
+	Common::String _descriptionLine;
 private:
 	/**
 	 * Turn left
