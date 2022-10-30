@@ -141,6 +141,18 @@
 		search: "SEARCH: "
 		you_found: "YOU FOUND..."
 		nothing: "NOTHING"
+		containers:
+			0: " CLOTH SACK "
+			1: "LEATHER SACK"
+			2: " WOODEN BOX "
+			3: "WOODEN CHEST"
+			4: "  IRON BOX  "
+			5: " IRON CHEST "
+			6: " SILVER BOX "
+			7: "SILVER CHEST"
+			8: "  GOLD BOX  "
+			9: " GOLD CHEST "
+			10: " BLACK BOX  "
 	statues:
 		stone: "ON THIS STONE STATUE OF "
 		plaque: "A PLAQUE READS..."

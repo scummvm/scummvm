@@ -31,6 +31,7 @@
 #include "mm/mm1/data/items.h"
 #include "mm/mm1/data/monsters.h"
 #include "mm/mm1/data/roster.h"
+#include "mm/mm1/data/treasure.h"
 #include "mm/mm1/game/encounter.h"
 #include "mm/mm1/maps/maps.h"
 

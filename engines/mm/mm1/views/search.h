@@ -19,19 +19,33 @@
  *
  */
 
-#include "mm/mm1/events.h"
-#include "mm/mm1/sound.h"
-#include "mm/mm1/game/search.h"
+#ifndef MM1_VIEWS_SEARCH_H
+#define MM1_VIEWS_SEARCH_H
+
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
-namespace Game {
+namespace Views {
 
-void Search::execute() {
-	// TODO: Handle properly
-	g_events->send(InfoMessage("YOU FOUND...  NOTHING"));
-}
+class Search : public TextView {
+private:
+	enum Mode { INITIAL, OPTIONS };
+	Mode _mode = INITIAL;
+	bool _hasStuff = false;
+	byte _val1 = 0;
+public:
+	Search();
+	virtual ~Search() {}
 
-} // namespace Game
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+	void timeout() override;
+};
+
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

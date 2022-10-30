@@ -22,7 +22,6 @@
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/globals.h"
 #include "mm/mm1/meta_engine.h"
-#include "mm/mm1/game/search.h"
 
 namespace MM {
 namespace MM1 {
@@ -63,7 +62,7 @@ bool Game::msgAction(const ActionMessage &msg) {
 		g_events->send(GameMessage("REST"));
 		return true;
 	case KEYBIND_SEARCH:
-		MM1::Game::Search::execute();
+		addView("Search");
 		break;
 	case KEYBIND_VIEW_PARTY1:
 	case KEYBIND_VIEW_PARTY2:

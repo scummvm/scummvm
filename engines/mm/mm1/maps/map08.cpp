@@ -117,7 +117,7 @@ void Map08::special20() {
 	g_maps->clearSpecial();
 	g_globals->_treasure[5] = getRandomNumber(48);
 	g_globals->_treasure[1] = 1;
-	g_globals->_treasure[2] = 6;
+	g_globals->_treasure._container = SILVER_BOX;
 	addTreasure();
 }
 
