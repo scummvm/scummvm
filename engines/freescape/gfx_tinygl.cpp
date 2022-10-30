@@ -28,8 +28,9 @@
 #include "graphics/tinygl/tinygl.h"
 #include "math/glmath.h"
 
-#include "engines/freescape/gfx_tinygl.h"
-#include "engines/freescape/gfx_tinygl_texture.h"
+#include "freescape/objects/object.h"
+#include "freescape/gfx_tinygl.h"
+#include "freescape/gfx_tinygl_texture.h"
 
 namespace Freescape {
 
@@ -326,11 +327,10 @@ void TinyGLRenderer::renderRectangle(const Math::Vector3d &origin, const Math::V
 
 void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) {
 	Math::Vector3d vertices[8] = { origin, origin, origin, origin, origin, origin, origin, origin };
-	PyramidType pyramidType = (PyramidType)type;
-	switch (pyramidType) {
+	switch (type) {
 	default:
-		break;
-	case EastPyramid:
+		error("Invalid pyramid type: %d", type);
+	case kEastPyramidType:
 		vertices[0] += Math::Vector3d(0, 0, size.z());
 		vertices[1] += Math::Vector3d(0, size.y(), size.z());
 		vertices[2] += Math::Vector3d(0, size.y(), 0);
@@ -340,7 +340,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		vertices[6] += Math::Vector3d(size.x(), (*ordinates)[2], (*ordinates)[1]);
 		vertices[7] += Math::Vector3d(size.x(), (*ordinates)[0], (*ordinates)[1]);
 		break;
-	case WestPyramid:
+	case kWestPyramidType:
 
 		vertices[0] += Math::Vector3d(size.x(), 0, 0);
 		vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
@@ -353,7 +353,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		vertices[7] += Math::Vector3d(0, (*ordinates)[0], (*ordinates)[3]);
 		break;
 
-	case UpPyramid:
+	case kUpPyramidType:
 		vertices[1] += Math::Vector3d(size.x(), 0, 0);
 		vertices[2] += Math::Vector3d(size.x(), 0, size.z());
 		vertices[3] += Math::Vector3d(0, 0, size.z());
@@ -364,7 +364,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		vertices[7] += Math::Vector3d((*ordinates)[0], size.y(), (*ordinates)[3]);
 		break;
 
-	case DownPyramid:
+	case kDownPyramidType:
 
 		vertices[0] += Math::Vector3d(size.x(), size.y(), 0);
 		vertices[1] += Math::Vector3d(0, size.y(), 0);
@@ -377,7 +377,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		vertices[7] += Math::Vector3d((*ordinates)[2], 0, (*ordinates)[3]);
 		break;
 
-	case NorthPyramid:
+	case kNorthPyramidType:
 		vertices[0] += Math::Vector3d(0, size.y(), 0);
 		vertices[1] += Math::Vector3d(size.x(), size.y(), 0);
 		vertices[2] += Math::Vector3d(size.x(), 0, 0);
@@ -387,7 +387,7 @@ void TinyGLRenderer::renderPyramid(const Math::Vector3d &origin, const Math::Vec
 		vertices[6] += Math::Vector3d((*ordinates)[2], (*ordinates)[1], size.z());
 		vertices[7] += Math::Vector3d((*ordinates)[0], (*ordinates)[1], size.z());
 		break;
-	case SouthPyramid:
+	case kSouthPyramidType:
 		vertices[0] += Math::Vector3d(0, 0, size.z());
 		vertices[1] += Math::Vector3d(size.x(), 0, size.z());
 		vertices[2] += Math::Vector3d(size.x(), size.y(), size.z());
