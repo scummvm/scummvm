@@ -25,92 +25,92 @@
 
 namespace Freescape {
 
-int GeometricObject::numberOfColoursForObjectOfType(Type type) {
+int GeometricObject::numberOfColoursForObjectOfType(ObjectType type) {
 	switch (type) {
 	default:
-	case Entrance:
-	case Group:
-	case Sensor:
+	case kEntranceType:
+	case kGroupType:
+	case kSensorType:
 		return 0;
 
-	case Line:
+	case kLineType:
 		return 2;
 
-	case Rectangle:
-	case Triangle:
-	case Quadrilateral:
-	case Pentagon:
-	case Hexagon:
+	case kRectangleType:
+	case kTriangleType:
+	case kQuadrilateralType:
+	case kPentagonType:
+	case kHexagonType:
 		return 2;
 
-	case Cube:
-	case EastPyramid:
-	case WestPyramid:
-	case UpPyramid:
-	case DownPyramid:
-	case NorthPyramid:
-	case SouthPyramid:
+	case kCubeType:
+	case kEastPyramidType:
+	case kWestPyramidType:
+	case kUpPyramidType:
+	case kDownPyramidType:
+	case kNorthPyramidType:
+	case kSouthPyramidType:
 		return 6;
 	}
 }
 
-int GeometricObject::numberOfOrdinatesForType(Type type) {
+int GeometricObject::numberOfOrdinatesForType(ObjectType type) {
 	switch (type) {
 	default:
-	case Entrance:
-	case Group:
-	case Rectangle:
-	case Sensor:
+	case kEntranceType:
+	case kGroupType:
+	case kRectangleType:
+	case kSensorType:
 		return 0;
 
-	case EastPyramid:
-	case WestPyramid:
-	case UpPyramid:
-	case DownPyramid:
-	case NorthPyramid:
-	case SouthPyramid:
+	case kEastPyramidType:
+	case kWestPyramidType:
+	case kUpPyramidType:
+	case kDownPyramidType:
+	case kNorthPyramidType:
+	case kSouthPyramidType:
 		return 4;
 
-	case Line:
-	case Triangle:
-	case Quadrilateral:
-	case Pentagon:
-	case Hexagon:
-		return 3 * (2 + type - Line);
+	case kLineType:
+	case kTriangleType:
+	case kQuadrilateralType:
+	case kPentagonType:
+	case kHexagonType:
+		return 3 * (2 + type - kLineType);
 	}
 }
 
-bool GeometricObject::isPyramid(Type type) {
+bool GeometricObject::isPyramid(ObjectType type) {
 	switch (type) {
 	default:
 		return false;
 
-	case EastPyramid:
-	case WestPyramid:
-	case UpPyramid:
-	case DownPyramid:
-	case NorthPyramid:
-	case SouthPyramid:
+	case kEastPyramidType:
+	case kWestPyramidType:
+	case kUpPyramidType:
+	case kDownPyramidType:
+	case kNorthPyramidType:
+	case kSouthPyramidType:
 		return true;
 	}
 }
 
-bool GeometricObject::isPolygon(Type type) {
+bool GeometricObject::isPolygon(ObjectType type) {
 	switch (type) {
 	default:
 		return false;
 
-	case Line:
-	case Triangle:
-	case Quadrilateral:
-	case Pentagon:
-	case Hexagon:
+	case kLineType:
+	case kTriangleType:
+	case kQuadrilateralType:
+	case kPentagonType:
+	case kHexagonType:
 		return true;
 	}
 }
 
 GeometricObject::GeometricObject(
-	Type type_,
+	ObjectType type_,
 	uint16 objectID_,
 	uint16 flags_,
 	const Math::Vector3d &origin_,
@@ -141,12 +141,12 @@ GeometricObject::GeometricObject(
 	_condition = conditionInstructions_;
 	_conditionSource = conditionSource_;
 
-	if (_type == Type::Rectangle) {
+	if (_type == kRectangleType) {
 		if ((_size.x() == 0 && _size.y() == 0) ||
 			(_size.y() == 0 && _size.z() == 0) ||
 			(_size.x() == 0 && _size.z() == 0)) {
 
-			_type = Type::Line;
+			_type = kLineType;
 			assert(!_ordinates);
 			_ordinates = new Common::Array<uint16>();
 			_ordinates->push_back(_origin.x());
@@ -186,7 +186,7 @@ void GeometricObject::computeBoundingBox() {
 	switch (_type) {
 	default:
 		break;
-	case Cube:
+	case kCubeType:
 		_boundingBox.expand(_origin);
 		for (int i = 0; i < 3; i++) {
 			v = _origin;
@@ -202,11 +202,11 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + _size);
 		assert(_boundingBox.isValid());
 		break;
-	case Rectangle:
+	case kRectangleType:
 		_boundingBox.expand(_origin);
 		_boundingBox.expand(_origin + _size);
 		break;
-	case Line:
+	case kLineType:
 		for (uint i = 0; i < _ordinates->size(); i = i + 3) {
 			_boundingBox.expand(Math::Vector3d((*_ordinates)[i], (*_ordinates)[i + 1], (*_ordinates)[i + 2]));
 		}
@@ -228,16 +228,16 @@ void GeometricObject::computeBoundingBox() {
 		}
 
 		break;
-	case Triangle:
-	case Quadrilateral:
-	case Pentagon:
-	case Hexagon:
+	case kTriangleType:
+	case kQuadrilateralType:
+	case kPentagonType:
+	case kHexagonType:
 		for (uint i = 0; i < _ordinates->size(); i = i + 3) {
 			_boundingBox.expand(Math::Vector3d((*_ordinates)[i], (*_ordinates)[i + 1], (*_ordinates)[i + 2]));
 		}
 		break;
 
-	case EastPyramid:
+	case kEastPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
@@ -247,7 +247,7 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), (*_ordinates)[2], (*_ordinates)[1]));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), (*_ordinates)[0], (*_ordinates)[1]));
 		break;
-	case WestPyramid:
+	case kWestPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), _size.z()));
@@ -258,7 +258,7 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d(0, (*_ordinates)[2], (*_ordinates)[3]));
 		_boundingBox.expand(_origin + Math::Vector3d(0, (*_ordinates)[0], (*_ordinates)[3]));
 		break;
-	case UpPyramid:
+	case kUpPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
@@ -268,7 +268,7 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[2], _size.y(), (*_ordinates)[3]));
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[0], _size.y(), (*_ordinates)[3]));
 		break;
-	case DownPyramid:
+	case kDownPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), _size.z()));
@@ -279,7 +279,7 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[0], 0, (*_ordinates)[3]));
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[2], 0, (*_ordinates)[3]));
 		break;
-	case NorthPyramid:
+	case kNorthPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(0, _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), 0));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, 0));
@@ -289,7 +289,7 @@ void GeometricObject::computeBoundingBox() {
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[2], (*_ordinates)[1], _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d((*_ordinates)[0], (*_ordinates)[1], _size.z()));
 		break;
-	case SouthPyramid:
+	case kSouthPyramidType:
 		_boundingBox.expand(_origin + Math::Vector3d(0, 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), 0, _size.z()));
 		_boundingBox.expand(_origin + Math::Vector3d(_size.x(), _size.y(), _size.z()));
@@ -311,8 +311,8 @@ GeometricObject::~GeometricObject() {
 
 bool GeometricObject::isDrawable() { return true; }
 bool GeometricObject::isPlanar() {
-	Type t = this->getType();
-	return (t >= Object::Line) || t == Object::Rectangle || !_size.x() || !_size.y() || !_size.z();
+	ObjectType t = this->getType();
+	return (t >= kLineType) || t == kRectangleType || !_size.x() || !_size.y() || !_size.z();
 }
 
 bool GeometricObject::collides(const Math::AABB &boundingBox_) {
@@ -328,14 +328,14 @@ bool GeometricObject::collides(const Math::AABB &boundingBox_) {
 }
 
 void GeometricObject::draw(Freescape::Renderer *gfx) {
-	if (this->getType() == Cube) {
+	if (this->getType() == kCubeType) {
 		gfx->renderCube(_origin, _size, _colours);
-	} else if (this->getType() == Rectangle) {
+	} else if (this->getType() == kRectangleType) {
 		gfx->renderRectangle(_origin, _size, _colours);
 	} else if (isPyramid(this->getType())) {
 		gfx->renderPyramid(_origin, _size, _ordinates, _colours, this->getType());
 	} else if (this->isPlanar() && _type <= 14) {
-		if (this->getType() == Triangle)
+		if (this->getType() == kTriangleType)
 			assert(_ordinates->size() == 9);
 
 		gfx->renderPolygon(_origin, _size, _ordinates, _colours);

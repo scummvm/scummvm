@@ -30,7 +30,7 @@ class GlobalStructure : public Object {
 public:
 	Common::Array<byte> _structure;
 	GlobalStructure(const Common::Array<byte> _structure);
-	Type getType() override { return Type::Entrance; };
+	ObjectType getType() override { return ObjectType::kEntranceType; };
 	void draw(Freescape::Renderer *gfx) override { error("cannot render GlobalStructure"); };
 };
 
