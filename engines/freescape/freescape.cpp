@@ -52,10 +52,7 @@ FreescapeEngine::FreescapeEngine(OSystem *syst, const ADGameDescription *gd)
 		_renderMode = Common::kRenderAtariST;
 	}
 
-	if (gd->extra)
-		_variant = gd->extra;
-	else
-		_variant = "FullGame";
+	_variant = gd->flags;
 
 	if (!Common::parseBool(ConfMan.get("prerecorded_sounds"), _usePrerecordedSounds))
 		error("Failed to parse bool from prerecorded_sounds option");

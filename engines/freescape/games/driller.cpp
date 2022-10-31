@@ -239,7 +239,7 @@ void DrillerEngine::loadAssetsDemo() {
 void DrillerEngine::loadAssetsFullGame() {
 	Common::File file;
 	if (isAmiga()) {
-		if (_variant == "Retail") {
+		if (_variant & ADGF_AMIGA_RETAIL) {
 			file.open("driller");
 
 			if (!file.isOpen())
@@ -259,7 +259,7 @@ void DrillerEngine::loadAssetsFullGame() {
 			load8bitBinary(&file, 0x29c16, 16);
 			loadPalettes(&file, 0x297d4);
 			loadSoundsFx(&file, 0x30e80, 25);
-		} else if (_variant == "Kixx") {
+		} else if (_variant & ADGF_AMIGA_BUDGET) {
 			file.open("lift.neo");
 			if (!file.isOpen())
 				error("Failed to open 'lift.neo' file");
@@ -288,6 +288,8 @@ void DrillerEngine::loadAssetsFullGame() {
 
 			loadSoundsFx(&file, 0, 25);
 		}
+		else
+			error("Invalid or unknown Amiga release");
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		_title = _border;

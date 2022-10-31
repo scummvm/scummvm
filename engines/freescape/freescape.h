@@ -89,7 +89,7 @@ public:
 	bool isDemo() const;
 
 	// Game selection
-	Common::String _variant;
+	uint32 _variant;
 	bool isDriller() { return _targetName.hasPrefix("driller") || _targetName.hasPrefix("spacestationoblivion"); }
 	bool isDark() { return _targetName.hasPrefix("darkside"); }
 	bool isEclipse() { return _targetName.hasPrefix("totaleclipse"); }
@@ -284,6 +284,11 @@ public:
 	bool canSaveGameStateCurrently() override { return true; }
 	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
 	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override;
+};
+
+enum DrillerReleaseFlags {
+		ADGF_AMIGA_RETAIL = (1 << 0),
+		ADGF_AMIGA_BUDGET = (1 << 1),
 };
 
 class DrillerEngine : public FreescapeEngine {
