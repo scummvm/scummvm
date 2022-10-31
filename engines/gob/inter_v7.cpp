@@ -21,10 +21,13 @@
 
 #include "common/endian.h"
 #include "common/archive.h"
+#include "common/translation.h"
 #include "common/winexe_pe.h"
 
 #include "graphics/cursorman.h"
 #include "graphics/wincursor.h"
+
+#include "gui/message.h"
 
 #include "image/iff.h"
 
@@ -88,6 +91,7 @@ void Inter_v7::setupOpcodesDraw() {
 void Inter_v7::setupOpcodesFunc() {
 	Inter_Playtoons::setupOpcodesFunc();
 	OPCODEFUNC(0x4D, o7_readData);
+	OPCODEFUNC(0x4E, o7_writeData);
 }
 
 void Inter_v7::setupOpcodesGob() {
@@ -1040,6 +1044,36 @@ void Inter_v7::o7_readData(OpFuncParams &params) {
 
 	delete stream;
 }
+
+void Inter_v7::o7_writeData(OpFuncParams &params) {
+	Common::String file = getFile(_vm->_game->_script->evalString());
+
+	int16 dataVar = _vm->_game->_script->readVarIndex();
+	int32 size    = _vm->_game->_script->readValExpr();
+	int32 offset  = _vm->_game->_script->evalInt();
+
+	debugC(2, kDebugFileIO, "Write to file \"%s\" (%d, %d bytes at %d)",
+		   file.c_str(), dataVar, size, offset);
+
+	WRITE_VAR(1, 1);
+
+	SaveLoad::SaveMode mode = _vm->_saveLoad ? _vm->_saveLoad->getSaveMode(file.c_str()) : SaveLoad::kSaveModeNone;
+	if (mode == SaveLoad::kSaveModeSave) {
+
+		if (!_vm->_saveLoad->save(file.c_str(), dataVar, size, offset)) {
+
+			GUI::MessageDialog dialog(_("Failed to save game to file."));
+			dialog.runModal();
+
+		} else
+			WRITE_VAR(1, 0);
+
+	} else if (mode == SaveLoad::kSaveModeIgnore)
+		return;
+	else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to write to file \"%s\"", file.c_str());
+}
+
 
 void Inter_v7::o7_oemToANSI(OpGobParams &params) {
 	_vm->_game->_script->skip(2);

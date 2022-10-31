@@ -101,6 +101,60 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"brique15.inf"  , kSaveModeSave, 0, "breakout game progress" },
 	{"brique16.inf"  , kSaveModeSave, 0, "breakout game progress" },
 
+	// Adibou Playtoon-like minigame
+	{"construc.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"ptrecord.inf"  , kSaveModeSave, 0, "construction game progress" }, // PTRECORD = "Playtoons record" probably
+	{"aide.inf"      , kSaveModeSave, 0, "construction game progress" },
+
+	{"constr01.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 01
+	{"ptreco01.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide01.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr02.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 02
+	{"ptreco02.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide02.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr03.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 03
+	{"ptreco03.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide03.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr04.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 04
+	{"ptreco04.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide04.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr05.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 05
+	{"ptreco05.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide05.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr06.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 06
+	{"ptreco06.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide06.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr07.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 07
+	{"ptreco07.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide07.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr08.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 08
+	{"ptreco08.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide08.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr09.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 09
+	{"ptreco09.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide09.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr10.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 10
+	{"ptreco10.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide10.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr11.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 11
+	{"ptreco11.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide11.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr12.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 12
+	{"ptreco12.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide12.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr13.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 13
+	{"ptreco13.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide13.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr14.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 14
+	{"ptreco14.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide14.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr15.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 15
+	{"ptreco15.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide15.inf"    , kSaveModeSave, 0, "construction game progress" },
+	{"constr16.inf"  , kSaveModeSave, 0, "construction game progress" }, // Child 16
+	{"ptreco16.inf"  , kSaveModeSave, 0, "construction game progress" },
+	{"aide16.inf"    , kSaveModeSave, 0, "construction game progress" },
+
 	// Adibou Applications 1-5
     {"Gsa01_01.inf", kSaveModeSave, 0, "app progress" }, // Child 01
     {"Gsa02_01.inf", kSaveModeSave, 0, "app progress" },
@@ -1091,6 +1145,22 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 																								   Common::String::format("breakout_%02d", i + 1));
 	}
 
+	for (uint32 i = 0; i < kAdibou2NbrOfConstructionGameFiles; i++)
+	{
+		_saveFiles[index++].handler = _adibou2ConstructionGameTempFileHandler[i] = new FakeFileHandler(_vm);
+	}
+
+	for (uint32 i = 0; i < kChildrenCount; i++)
+	{
+		for (uint32 j = 0; j < kAdibou2NbrOfConstructionGameFiles; j++)
+		{
+			const char *fileName = (j == 0)?"construc":((j == 1)?"ptreco":"aide");
+			_saveFiles[index++].handler = _adibou2ConstructionGameProgressHandler[i][j] = new GameFileHandler(_vm,
+																											  targetName,
+																											  Common::String::format("%s_%02d", fileName, i + 1));
+		}
+	}
+
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
@@ -1187,9 +1257,15 @@ SaveLoad_v7::~SaveLoad_v7() {
 		delete _adibou2WeatherHandler[i];
 		delete _adibou2BreakoutGameProgressHandler[i];
 
+		for (uint32 j = 0; j < kAdibou2NbrOfConstructionGameFiles; j++)
+			delete _adibou2ConstructionGameProgressHandler[i][j];
+
 		for (uint32 j = 0; j < kAdibou2NbrOfApplications; j++)
 			delete _adibou2AppProgressHandler[i][j];
 	}
+
+	for (uint32 i = 0; i < kAdibou2NbrOfConstructionGameFiles; i++)
+		delete _adibou2ConstructionGameTempFileHandler[i];
 
 	for (uint32 i = 0; i < kChildrenCount; i++)
 	{

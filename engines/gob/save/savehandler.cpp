@@ -543,7 +543,7 @@ bool FakeFileHandler::load(int16 dataVar, int32 size, int32 offset) {
 	if ((uint32)(offset + size) > _data.size())
 		return false;
 
-	_vm->_inter->_variables->copyFrom(dataVar, &_data[0] + offset, size);
+	_vm->_inter->_variables->copyFrom((uint16) dataVar, &_data[0] + offset, size);
 
 	return true;
 }
@@ -555,7 +555,7 @@ bool FakeFileHandler::save(int16 dataVar, int32 size, int32 offset) {
 	if ((uint32)(offset + size) > _data.size())
 		_data.resize(offset + size);
 
-	_vm->_inter->_variables->copyTo(dataVar, &_data[0] + offset, size);
+	_vm->_inter->_variables->copyTo((uint16) dataVar, &_data[0] + offset, size);
 
 	return true;
 }
