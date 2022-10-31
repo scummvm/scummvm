@@ -816,7 +816,10 @@ void Inter_v7::o7_playVmdOrMusic() {
 		return;
 	}
 
-	if (props.startFrame == -2) {
+	if (props.startFrame == -2 ||
+		(props.startFrame == props.lastFrame && // /!\ Found partly from asm, partly by trial and errors. Reality may be more complex...
+		 props.lastFrame != -1 &&
+		 !(props.flags & VideoPlayer::kFlagOtherSurface))) {
 		props.startFrame = 0;
 		props.lastFrame  = -1;
 		props.noBlock    = true;
