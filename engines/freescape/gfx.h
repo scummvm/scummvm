@@ -60,11 +60,6 @@ public:
 	Graphics::PixelFormat _originalPixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
 
-	/**
-	 *   Convert from paletted surface
-	 */
-	Graphics::Surface *convertFromPalette(Graphics::PixelBuffer *rawsurf);
-
 	virtual void init() = 0;
 	virtual void clear() = 0;
 	virtual void setViewport(const Common::Rect &rect) = 0;
@@ -93,8 +88,9 @@ public:
 	Common::Rect viewport() const;
 
 	// palette
+	void readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b);
 	bool getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b);
-	Graphics::PixelBuffer *_palette;
+	byte *_palette;
 	ColorMap *_colorMap;
 	int _keyColor;
 

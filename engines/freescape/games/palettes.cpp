@@ -49,17 +49,15 @@ byte dos_CGA_palette[4][3] = {
 };
 
 void FreescapeEngine::loadColorPalette() {
-	Graphics::PixelBuffer *palette = nullptr;
-	if (_renderMode == Common::kRenderEGA)
-		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_EGA_palette);
-	else if (_renderMode == Common::kRenderCGA)
-		palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, (byte *)&dos_CGA_palette);
-	else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST)
-		palette = nullptr; // palette depends on the area
-	else
+	if (_renderMode == Common::kRenderEGA) {
+		_gfx->_palette = (byte *)&dos_EGA_palette;
+	} else if (_renderMode == Common::kRenderCGA) {
+		_gfx->_palette = (byte *)&dos_CGA_palette;
+	} else if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
+		_gfx->_palette = nullptr; // palette depends on the area
+	} else
 		error("Invalid render mode, no palette selected");
 
-	_gfx->_palette = palette;
 	_gfx->_colorMap = &_colorMap;
 }
 
@@ -89,10 +87,7 @@ void FreescapeEngine::loadPalettes(Common::SeekableReadStream *file, int offset)
 }
 
 void FreescapeEngine::swapPalette(uint16 levelID) {
-	if (_gfx->_palette)
-		delete _gfx->_palette;
-
-	_gfx->_palette = new Graphics::PixelBuffer(_gfx->_palettePixelFormat, _paletteByArea[levelID]);
+	_gfx->_palette = _paletteByArea[levelID];
 }
 
 } // End of namespace Freescape

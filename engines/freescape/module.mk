@@ -10,8 +10,6 @@ MODULE_OBJS := \
 	games/eclipse.o \
 	games/palettes.o \
 	gfx.o \
-	gfx_tinygl.o \
-	gfx_tinygl_texture.o \
 	keyboard.o \
 	objects/object.o \
 	objects/entrance.o \
@@ -25,6 +23,11 @@ MODULE_OBJS := \
 	neo.o \
 	sound.o
 
+ifdef USE_TINYGL
+MODULE_OBJS += \
+	gfx_tinygl.o \
+	gfx_tinygl_texture.o
+endif
 
 MODULE_DIRS += \
 	engines/freescape
