@@ -248,6 +248,10 @@
 		congrats: "CONGRATULATIONS! YOU ARE NOW LEVEL "
 		hp: "YOU GAINED %d HIT POINTS"
 		new_spells: "YOU GAINED NEW SPELLS!"
+	unlock:
+		who_will_try: "WHO WILL TRY '1'-'%c'?"
+		success: "SUCCESS!"
+		failed: "UNLOCK FAILED!"
 	view_characters:
 		title: "VIEW ALL CHARACTERS"
 		legend1: "'A'-'%c' TO VIEW A CHARACTER"

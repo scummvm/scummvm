@@ -104,6 +104,7 @@ MODULE_OBJS := \
 	mm1/views/title.o \
 	mm1/views/text_entry.o \
 	mm1/views/text_view.o \
+	mm1/views/unlock.o \
 	mm1/views_enh/button_container.o \
 	mm1/views_enh/character_info.o \
 	mm1/views_enh/dialogs.o \

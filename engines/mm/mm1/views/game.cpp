@@ -65,6 +65,9 @@ bool Game::msgAction(const ActionMessage &msg) {
 		g_globals->_treasure[5] = 240; //***DEBUG***
 		send("Search", GameMessage("SHOW"));
 		break;
+	case KEYBIND_UNLOCK:
+		send("Unlock", GameMessage("SHOW"));
+		break;
 	case KEYBIND_VIEW_PARTY1:
 	case KEYBIND_VIEW_PARTY2:
 	case KEYBIND_VIEW_PARTY3:

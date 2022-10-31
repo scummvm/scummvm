@@ -37,6 +37,7 @@
 #include "mm/mm1/views/characters.h"
 #include "mm/mm1/views/rest.h"
 #include "mm/mm1/views/search.h"
+#include "mm/mm1/views/unlock.h"
 #include "mm/mm1/views/locations/blacksmith.h"
 #include "mm/mm1/views/locations/inn.h"
 #include "mm/mm1/views/locations/market.h"
@@ -90,6 +91,7 @@ private:
 	Views::Rest _rest;
 	Views::Search _search;
 	Views::Title _title;
+	Views::Unlock _unlock;
 	Views::CharacterInfo _characterInfo;
 
 	Views::Locations::Blacksmith _blacksmith;
