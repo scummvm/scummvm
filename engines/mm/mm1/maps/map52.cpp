@@ -54,7 +54,7 @@ void Map52::special00() {
 }
 
 void Map52::special01() {
-	_walls[0x18] |= 0x80;
+	_states[0x18] |= 0x80;
 	g_maps->_mapPos = Common::Point(8, 1);
 	updateGame();
 

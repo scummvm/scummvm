@@ -49,7 +49,7 @@ void Map30::special() {
 		}
 	}
 
-	if (_states[g_maps->_mapOffset] != 0xff) {
+	if (_walls[g_maps->_mapOffset] != 0xff) {
 		g_maps->clearSpecial();
 		int monsterCount = getRandomNumber(8) + 6;
 		int idx = getRandomNumber(8) - 1;

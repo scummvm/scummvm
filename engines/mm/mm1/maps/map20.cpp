@@ -48,7 +48,7 @@ void Map20::special() {
 		}
 	}
 
-	if (_states[g_maps->_mapOffset] != 0xff) {
+	if (_walls[g_maps->_mapOffset] != 0xff) {
 		g_maps->clearSpecial();
 		enc.execute();
 

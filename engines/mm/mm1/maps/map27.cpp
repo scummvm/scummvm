@@ -44,7 +44,12 @@ void Map27::special() {
 		}
 	}
 
-	desert();
+	if (_walls[g_maps->_mapOffset] == 0xff) {
+		desert();
+	} else {
+		g_maps->clearSpecial();
+		g_globals->_encounters.execute();
+	}
 }
 
 void Map27::special00() {

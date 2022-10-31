@@ -48,7 +48,7 @@ void Map32::special() {
 		}
 	}
 
-	if (_states[g_maps->_mapOffset] == 0x55 && g_maps->_mapPos.x < 13) {
+	if (_walls[g_maps->_mapOffset] == 0x55 && g_maps->_mapPos.x < 13) {
 		send(SoundMessage(STRING["maps.map32.music"]));
 	} else {
 		g_maps->clearSpecial();

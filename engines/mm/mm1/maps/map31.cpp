@@ -47,7 +47,7 @@ void Map31::special() {
 	}
 
 
-	if (_states[g_maps->_mapOffset] != 0xff) {
+	if (_walls[g_maps->_mapOffset] != 0xff) {
 		if (getRandomNumber(100) < 25) {
 			g_maps->clearSpecial();
 			g_globals->_encounters.execute();

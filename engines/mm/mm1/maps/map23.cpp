@@ -169,8 +169,8 @@ void Map23::special11() {
 void Map23::special12() {
 	send(SoundMessage(14, 22, STRING["maps.map23.avalanche"]));
 	g_maps->_currentState = 209;
-	_walls[g_maps->_mapOffset] = 0xff;
-	_states[g_maps->_mapOffset] = 162;
+	_states[g_maps->_mapOffset] = 0xff;
+	_walls[g_maps->_mapOffset] = 162;
 
 	g_maps->clearSpecial();
 }
