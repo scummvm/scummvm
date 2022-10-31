@@ -50,11 +50,11 @@ class LibRetroPipeline : public ShaderPipeline {
 public:
 	LibRetroPipeline();
 	LibRetroPipeline(const Common::FSNode &shaderPreset);
-	virtual ~LibRetroPipeline();
+	~LibRetroPipeline() override;
 
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
+	void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
-	virtual void setProjectionMatrix(const Math::Matrix4 &projectionMatrix);
+	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
 	bool open(const Common::FSNode &shaderPreset);
 	void close();
@@ -68,8 +68,8 @@ public:
 			&& OpenGLContext.framebufferObjectSupported;
 	}
 private:
-	virtual void activateInternal();
-	virtual void deactivateInternal();
+	void activateInternal() override;
+	void deactivateInternal() override;
 
 	bool loadTextures();
 	bool loadPasses();
