@@ -379,6 +379,8 @@ public:
 
 	void playMedia(Runtime *runtime, Project *project) override;
 
+	bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const override;
+
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }

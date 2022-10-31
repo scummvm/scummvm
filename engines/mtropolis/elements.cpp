@@ -2166,14 +2166,14 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 				uint64 oldTimeRelative = _cueCheckTime - _startTime + _startTimestamp;
 				uint64 newTimeRelative = newTime - _startTime + _startTimestamp;
 
-				_cueCheckTime = newTime;
-
 				if (_subtitlePlayer)
 					_subtitlePlayer->update(oldTimeRelative, newTimeRelative);
 
-				// TODO: Check cue points and queue them here
-			}
+				for (MediaCueState *mediaCue : _mediaCues)
+					mediaCue->checkTimestampChange(runtime, oldTimeRelative * _metadata->sampleRate / 1000u, newTimeRelative * _metadata->sampleRate / 1000u, true, true);
 
+				_cueCheckTime = newTime;
+			}
 
 			if (!_loop && newTime >= _finishTime) {
 				// Don't throw out the handle - It can still be playing but we just treat it like it's not.
@@ -2194,6 +2194,19 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 		// Goal state is stopped
 		stopPlayer();
 	}
+}
+
+bool SoundElement::resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const {
+	if (_metadata) {
+		for (const AudioMetadata::CuePoint &cuePoint : _metadata->cuePoints) {
+			if (cuePoint.cuePointID == label.id) {
+				outResolution = cuePoint.position;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void SoundElement::stopPlayer() {
