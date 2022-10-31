@@ -76,6 +76,8 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 }
 
 void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+	assert(isActive());
+
 	texture.bind();
 
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _coordsVBO));
@@ -88,6 +90,8 @@ void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat
 }
 
 void ShaderPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
+	assert(isActive());
+
 	_activeShader->setUniform("projection", projectionMatrix);
 }
 #endif // !USE_FORCED_GLES

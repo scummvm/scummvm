@@ -42,7 +42,7 @@ class Framebuffer;
 class Pipeline {
 public:
 	Pipeline();
-	virtual ~Pipeline() {}
+	virtual ~Pipeline() { if (isActive()) deactivate(); }
 
 	/**
 	 * Activate the pipeline.
@@ -150,31 +150,13 @@ protected:
 
 	virtual void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
 
-	bool isActive() const { return _isActive; }
+	bool isActive() const { return activePipeline == this; }
 
 	Framebuffer *_activeFramebuffer;
 
 private:
-	bool _isActive;
-
 	/** Currently active rendering pipeline. */
 	static Pipeline *activePipeline;
-
-public:
-	/**
-	 * Set new pipeline.
-	 *
-	 * Client is responsible for any memory management related to pipelines.
-	 *
-	 * @param pipeline Pipeline to activate.
-	 * @return Formerly active pipeline.
-	 */
-	static Pipeline *setPipeline(Pipeline *pipeline);
-
-	/**
-	 * Query the currently active rendering pipeline.
-	 */
-	static Pipeline *getActivePipeline() { return activePipeline; }
 };
 
 } // End of namespace OpenGL

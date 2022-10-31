@@ -324,6 +324,8 @@ protected:
 
 	void updateLinearFiltering();
 
+	Pipeline *getPipeline() const { return _pipeline; }
+
 	/**
 	 * The default pixel format of the backend.
 	 */

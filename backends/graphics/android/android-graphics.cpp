@@ -206,8 +206,10 @@ void AndroidGraphicsManager::refreshScreen() {
 
 void AndroidGraphicsManager::touchControlDraw(int16 x, int16 y, int16 w, int16 h, const Common::Rect &clip) {
 	_backBuffer.enableBlend(OpenGL::Framebuffer::kBlendModeTraditionalTransparency);
-	OpenGL::Pipeline::getActivePipeline()->drawTexture(_touchcontrols->getGLTexture(),
-	                                                   x, y, w, h, clip);
+	OpenGL::Pipeline *pipeline = getPipeline();
+	pipeline->activate();
+	pipeline->drawTexture(_touchcontrols->getGLTexture(),
+	                      x, y, w, h, clip);
 }
 
 void AndroidGraphicsManager::touchControlNotifyChanged() {

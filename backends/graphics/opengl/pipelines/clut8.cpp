@@ -32,6 +32,8 @@ CLUT8LookUpPipeline::CLUT8LookUpPipeline()
 }
 
 void CLUT8LookUpPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+	assert(isActive());
+
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
 	if (_paletteTexture) {
