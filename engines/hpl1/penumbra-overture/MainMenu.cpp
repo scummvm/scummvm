@@ -2328,7 +2328,7 @@ public:
 	cDate mDate;
 };
 
-typedef std::multiset<cTempFileAndData, std::greater<cTempFileAndData> > tTempFileAndDataSet;
+typedef Hpl1::std::set<cTempFileAndData, std::greater<cTempFileAndData> > tTempFileAndDataSet;
 typedef tTempFileAndDataSet::iterator tTempFileAndDataSetIt;
 
 //-----------------------------------------------------------------------

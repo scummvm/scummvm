@@ -29,11 +29,11 @@
 #define HPL_RENDERER_POST_EFFECTS_H
 
 #include <math.h>
-#include <set>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "common/list.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 

@@ -37,6 +37,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Light3D.h"
 #include "hpl1/engine/system/SystemTypes.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -64,7 +65,7 @@ public:
 	bool operator()(cRenderNode *apNodeA, cRenderNode *apNodeB) const;
 };
 
-typedef std::set<cRenderNode *, cRenderNodeCompare> tRenderNodeSet;
+typedef Hpl1::std::set<cRenderNode *, cRenderNodeCompare> tRenderNodeSet;
 typedef tRenderNodeSet::iterator tRenderNodeSetIt;
 
 class cRenderNode {
@@ -122,7 +123,7 @@ public:
 	bool operator()(const cOcclusionQueryObject *pObjectA, const cOcclusionQueryObject *pObjectB) const;
 };
 
-typedef std::set<cOcclusionQueryObject *, cOcclusionQueryObject_Compare> tOcclusionQueryObjectSet;
+typedef Hpl1::std::set<cOcclusionQueryObject *, cOcclusionQueryObject_Compare> tOcclusionQueryObjectSet;
 typedef tOcclusionQueryObjectSet::iterator tOcclusionQueryObjectSetIt;
 
 typedef cSTLIterator<cOcclusionQueryObject *, tOcclusionQueryObjectSet,
@@ -131,10 +132,10 @@ typedef cSTLIterator<cOcclusionQueryObject *, tOcclusionQueryObjectSet,
 
 //-------------------------------------------------------------
 
-typedef std::set<iRenderable *> tRenderableSet;
+typedef Hpl1::std::set<iRenderable *> tRenderableSet;
 typedef tRenderableSet::iterator tRenderableSetIt;
 
-typedef std::set<iLight3D *> tLight3DSet;
+typedef Hpl1::std::set<iLight3D *> tLight3DSet;
 typedef tLight3DSet::iterator tLight3DSetIt;
 
 typedef cSTLIterator<iLight3D *, tLight3DSet, tLight3DSetIt> cLight3DIterator;

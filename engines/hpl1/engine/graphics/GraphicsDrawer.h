@@ -28,6 +28,7 @@
 #ifndef HPL_GRAPHICSDRAWER_H
 #define HPL_GRAPHICSDRAWER_H
 
+#include <set>
 #include "hpl1/engine/graphics/BackgroundImage.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "common/list.h"

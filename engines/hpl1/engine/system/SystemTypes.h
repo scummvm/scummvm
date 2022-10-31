@@ -28,7 +28,6 @@
 #ifndef HPL_SYSTEM_TYPES_H
 #define HPL_SYSTEM_TYPES_H
 
-#include <set>
 #include <stdio.h>
 #include <string>
 
@@ -37,6 +36,7 @@
 #include "common/str.h"
 #include "common/array.h"
 #include "hpl1/algorithms.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -85,7 +85,7 @@ typedef tStringList::iterator tStringListIt;
 typedef Common::Array<tString> tStringVec;
 typedef tStringVec::iterator tStringVecIt;
 
-typedef std::set<tString> tStringSet;
+typedef Hpl1::std::set<tString> tStringSet;
 typedef tStringSet::iterator tStringSetIt;
 
 //--------------------------------------------------------
@@ -97,7 +97,7 @@ typedef tWStringList::iterator tWStringListIt;
 typedef Common::Array<tWString> tWStringVec;
 typedef tWStringVec::iterator tWStringVecIt;
 
-typedef std::set<tWString> tWStringSet;
+typedef Hpl1::std::set<tWString> tWStringSet;
 typedef tWStringSet::iterator tWStringSetIt;
 
 //--------------------------------------------------------

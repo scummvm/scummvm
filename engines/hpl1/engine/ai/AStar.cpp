@@ -254,11 +254,12 @@ void cAStarHandler::AddOpenNode(cAINode *apAINode, cAStarNode *apParent, float a
 	}
 
 	// Try to add it to the open list
-	std::pair<tAStarNodeSetIt, bool> testPair = m_setOpenList.insert(pNode);
-	if (testPair.second == false) {
+	const auto test = m_setOpenList.find(pNode);
+	if (test == m_setOpenList.end()) {
 		hplDelete(pNode);
 		return;
 	}
+	m_setOpenList.insert(pNode);
 
 	pNode->mfDistance = afDistance;
 	pNode->mfCost = Cost(afDistance, apAINode, apParent) + Heuristic(pNode->mpAINode->GetPosition(), mvGoal);

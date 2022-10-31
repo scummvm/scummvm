@@ -1429,7 +1429,7 @@ public:
 	}
 };
 
-typedef std::set<cTriEdge, cEdgeCompare> tTriEdgeListMap;
+typedef Hpl1::std::set<cTriEdge, cEdgeCompare> tTriEdgeListMap;
 typedef tTriEdgeListMap::iterator tTriEdgeListMapIt;
 
 //////////////////////////////////////////////////////

@@ -57,7 +57,6 @@ cFileSearcher::~cFileSearcher() {
 //-----------------------------------------------------------------------
 
 void cFileSearcher::AddDirectory(tString asPath, tString asMask) {
-
 	tStringList lstFileNames;
 	// Make the path with only "/" and lower case.
 	asPath = cString::ToLowerCase(cString::ReplaceCharTo(asPath, "\\", "/"));

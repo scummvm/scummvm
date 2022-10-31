@@ -28,6 +28,8 @@
 #ifndef HPL_GUI_SET_H
 #define HPL_GUI_SET_H
 
+#include <set>
+
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "common/list.h"
