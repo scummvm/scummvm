@@ -1347,6 +1347,17 @@ Common::Rect MToonElement::getRelativeCollisionRect() const {
 	colRect.translate(_rect.left, _rect.top);
 	return colRect;
 }
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void MToonElement::debugInspect(IDebugInspectionReport *report) const {
+	VisualElement::debugInspect(report);
+
+	report->declareDynamic("cel", Common::String::format("%i", static_cast<int>(_cel)));
+	report->declareDynamic("assetID", Common::String::format("%i", static_cast<int>(_assetID)));
+	report->declareDynamic("isPlaying", Common::String::format("%s", _isPlaying ? "true" : "false"));
+	report->declareDynamic("renderedFrame", Common::String::format("%i", static_cast<int>(_renderedFrame)));
+	report->declareDynamic("playRange", Common::String::format("%i", static_cast<int>(_playRange.min), static_cast<int>(_playRange.max)));
+}
+#endif
 
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_rateTimes100000 < 0)

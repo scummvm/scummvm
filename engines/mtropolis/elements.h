@@ -234,6 +234,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "mToon Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
