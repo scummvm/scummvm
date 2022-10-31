@@ -959,6 +959,34 @@ protected:
 		File _file;
 	};
 
+	class DrawingOnFloppyDiskHandler : public TempSpriteHandler {
+	public:
+		DrawingOnFloppyDiskHandler(GobEngine *vm,
+								   SaveReader *reader,
+								   SaveWriter *writer,
+								   bool isThumbnail,
+								   uint32 chunkSize = 1);
+		~DrawingOnFloppyDiskHandler() override;
+
+		int32 getSize() override;
+		bool load(int16 dataVar, int32 size, int32 offset) override;
+		bool save(int16 dataVar, int32 size, int32 offset) override;
+		bool deleteFile() override;
+
+	private:
+		class File : public SlotFileStatic {
+		public:
+			File(GobEngine *vm, const Common::String &base, const Common::String &ext);
+			~File() override;
+		};
+
+		//File _file;
+		SaveWriter *_writer;
+		SaveReader *_reader;
+		bool _isThumbnail;
+		int32 _chunkSize;
+	};
+
 	class GameFileHandler : public SaveHandler {
 	public:
 		GameFileHandler(GobEngine *vm, const Common::String &target, const Common::String &ext);
@@ -984,39 +1012,43 @@ protected:
 		File _file;
 	};
 
+
 	static SaveFile _saveFiles[];
 
-	SpriteHandler *_faceHandler[kChildrenCount];
-	FakeFileHandler    *_childrenHandler;
-	FakeFileHandler    *_debilHandler;
-	GameFileHandler    *_configHandler;
-	GameFileHandler    *_adibou2EnvHandler[kChildrenCount];
-	SpriteHandler      *_adibou2WeatherHandler[kChildrenCount];
-	GameFileHandler    *_adibou2BreakoutGameProgressHandler[kChildrenCount];
-	FakeFileHandler    *_adibou2ConstructionGameTempFileHandler[kAdibou2NbrOfConstructionGameFiles];
-	GameFileHandler    *_adibou2ConstructionGameProgressHandler[kChildrenCount][kAdibou2NbrOfConstructionGameFiles];
-	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
-	GameFileHandler    *_adibou2MemoHandler[kChildrenCount];
-	GameFileHandler    *_adibou2DiploHandler[kChildrenCount];
-	GameFileHandler    *_adibou2AppliHandler[kAdibou2NbrOfApplications];
-	GameFileHandler    *_adibou2CriteHandler[kAdibou2NbrOfApplications];
-	GameFileHandler    *_adibou2ExoHandler[kAdibou2NbrOfApplications];
-	GameFileHandler    *_adibou2ApplicationsInfoHandler;
-	FakeFileHandler    *_adibou2RetourHandler;
-	FakeFileHandler    *_adibou2LanceHandler;
-	TempSpriteHandler  *_adibou2AppIcoHandler[kAdibou2NbrOfApplications];
-	SpriteHandler      *_adibou2DrawingHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
-	SpriteHandler      *_adibou2DrawingThumbnailHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
-	GameFileHandler    *_adibou2DrawingPaletteHandler[kChildrenCount];
-	SpriteHandler      *_adibou2DrawingMailboxHandler[kChildrenCount];
-	SpriteHandler      *_adibou2CakePhotoHandler[kChildrenCount];
-	SpriteHandler      *_adibou2FlowerPhotoHandler[kChildrenCount];
-	SpriteHandler      *_adibou2FlowerInVaseHandler[kChildrenCount];
-	SpriteHandler      *_adibou2FadedFlowerInVaseHandler[kChildrenCount];
-	SpriteHandler      *_adibou2PosterHandler[kChildrenCount];
+	SpriteHandler               *_faceHandler[kChildrenCount];
+	FakeFileHandler             *_childrenHandler;
+	FakeFileHandler             *_debilHandler;
+	GameFileHandler             *_configHandler;
+	GameFileHandler             *_adibou2EnvHandler[kChildrenCount];
+	SpriteHandler               *_adibou2WeatherHandler[kChildrenCount];
+	GameFileHandler             *_adibou2BreakoutGameProgressHandler[kChildrenCount];
+	FakeFileHandler             *_adibou2ConstructionGameTempFileHandler[kAdibou2NbrOfConstructionGameFiles];
+	GameFileHandler             *_adibou2ConstructionGameProgressHandler[kChildrenCount][kAdibou2NbrOfConstructionGameFiles];
+	GameFileHandler             *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
+	GameFileHandler             *_adibou2MemoHandler[kChildrenCount];
+	GameFileHandler             *_adibou2DiploHandler[kChildrenCount];
+	GameFileHandler             *_adibou2AppliHandler[kAdibou2NbrOfApplications];
+	GameFileHandler             *_adibou2CriteHandler[kAdibou2NbrOfApplications];
+	GameFileHandler             *_adibou2ExoHandler[kAdibou2NbrOfApplications];
+	GameFileHandler             *_adibou2ApplicationsInfoHandler;
+	FakeFileHandler             *_adibou2RetourHandler;
+	FakeFileHandler             *_adibou2LanceHandler;
+	TempSpriteHandler           *_adibou2AppIcoHandler[kAdibou2NbrOfApplications];
+	SpriteHandler               *_adibou2DrawingHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
+	SpriteHandler               *_adibou2DrawingThumbnailHandler[kChildrenCount][kAdibou2NbrOfSavedDrawings];
+	GameFileHandler             *_adibou2DrawingPaletteHandler[kChildrenCount];
+	SpriteHandler               *_adibou2DrawingMailboxHandler[kChildrenCount];
+	SpriteHandler               *_adibou2CakePhotoHandler[kChildrenCount];
+	SpriteHandler               *_adibou2FlowerPhotoHandler[kChildrenCount];
+	SpriteHandler               *_adibou2FlowerInVaseHandler[kChildrenCount];
+	SpriteHandler               *_adibou2FadedFlowerInVaseHandler[kChildrenCount];
+	SpriteHandler               *_adibou2PosterHandler[kChildrenCount];
+	DrawingOnFloppyDiskHandler  *_adibou2DrawingOnFloppyDiskHandler;
+	DrawingOnFloppyDiskHandler  *_adibou2DrawingThumbnailOnFloppyDiskHandler;
+	FakeFileHandler             *_adibou2TestDobHandler;
 
-	FakeFileHandler    *_addy4BaseHandler[2];
-	FakeFileHandler    *_addy4GrundschuleHandler[11];
+	FakeFileHandler             *_addy4BaseHandler[2];
+	FakeFileHandler             *_addy4GrundschuleHandler[11];
 
 	SaveHandler *getHandler(const char *fileName) const override;
 	const char *getDescription(const char *fileName) const override;

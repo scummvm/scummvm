@@ -805,6 +805,9 @@ SaveLoad_v7::SaveFile SaveLoad_v7::_saveFiles[] = {
 	{"mfleud16.inf", kSaveModeSave, 0, "photo of flowers (vase)" },
 	{"mtable16.inf", kSaveModeSave, 0, "poster" },
 
+	{"adibou.pal",   kSaveModeSave, 0, "drawing on floppy disk" },
+	{"adibour.pal",  kSaveModeSave, 0, "drawing on floppy disk (thumbnail)" },
+	{"test.dob",     kSaveModeSave, 0, "test floppy disk file" },
 
     // Addy 4 Base
 	{"config00.inf", kSaveModeSave, nullptr, nullptr        },
@@ -923,6 +926,93 @@ bool SaveLoad_v7::SpriteHandler::deleteFile() {
 
 	SaveWriter writer(1, 0, fileName);
 	return writer.deleteFile();
+}
+
+SaveLoad_v7::DrawingOnFloppyDiskHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
+	SlotFileStatic(vm, base, ext) {
+}
+
+SaveLoad_v7::DrawingOnFloppyDiskHandler::File::~File() {
+}
+
+
+SaveLoad_v7::DrawingOnFloppyDiskHandler::DrawingOnFloppyDiskHandler(GobEngine *vm,
+																	SaveReader *reader,
+																	SaveWriter *writer,
+																	bool isThumbnail,
+																	uint32 chunkSize)
+	: TempSpriteHandler(vm), _reader(reader), _writer(writer), _isThumbnail(isThumbnail), _chunkSize(chunkSize) {
+}
+
+SaveLoad_v7::DrawingOnFloppyDiskHandler::~DrawingOnFloppyDiskHandler() {
+	// Assume reader and writer are owned by the handler of the full picture
+	if (!_isThumbnail) {
+		delete _reader;
+		delete _writer;
+	}
+}
+
+int32 SaveLoad_v7::DrawingOnFloppyDiskHandler::getSize() {
+	if (_reader == nullptr || !_reader->load())
+		return -1;
+
+	if (_isThumbnail) {
+		// First part is the thumbnail
+		SaveHeader header;
+		if (!_reader->readPartHeader(0, &header))
+			return -1;
+
+		return header.getSize();
+	}
+	else {
+		// Following parts are the full picture chunks
+		int32 size = -1;
+		SaveHeader header;
+		for (int i = 1; _reader->readPartHeader(i, &header); i++) {
+			if (size == -1)
+				size = 0;
+			size += header.getSize();
+		}
+
+		return size;
+	}
+}
+
+bool SaveLoad_v7::DrawingOnFloppyDiskHandler::load(int16 dataVar, int32 size, int32 offset)
+{
+	if (!TempSpriteHandler::createFromSprite(dataVar, size, offset))
+		return false;
+
+	if (!_reader->load())
+		return false;
+
+	int32 part = 0;
+	if (_isThumbnail)
+		part = 0;
+	else
+		part = 1 + offset / _chunkSize;
+	if (!_reader->readPart(part, _sprite))
+		return false;
+
+	return TempSpriteHandler::load(dataVar, size, offset);
+}
+
+bool SaveLoad_v7::DrawingOnFloppyDiskHandler::save(int16 dataVar, int32 size, int32 offset)
+{
+	if (!TempSpriteHandler::save(dataVar, size, offset))
+		return false;
+
+	int32 part = 0;
+	if (_isThumbnail)
+		part = 0;
+	else
+		part = 1 + offset / _chunkSize;
+
+	return _writer->writePart(part, _sprite);
+}
+
+bool SaveLoad_v7::DrawingOnFloppyDiskHandler::deleteFile() {
+	return _writer->deleteFile();
 }
 
 SaveLoad_v7::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
@@ -1224,6 +1314,25 @@ SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
 																				   Common::String::format("poster_%02d", i + 1));
 	}
 
+	uint32 drawingOnFloppyDiskFullSize = 163200;
+	uint32 drawingOnFloppyDiskChunkSize = 4800;
+	uint32 nbrOfParts = 1 + drawingOnFloppyDiskFullSize / drawingOnFloppyDiskChunkSize; // 1 for the thumbnail, 34 for the drawing
+	Common::String drawingOnFloppyDiskName = "adibou2_my_drawing_on_floppy_disk"; // Fix filename to facilitate sharing
+
+	SaveReader *reader = new SaveReader(nbrOfParts, 0, drawingOnFloppyDiskName);
+	SaveWriter *writer = new SaveWriter(nbrOfParts, 0, drawingOnFloppyDiskName);
+
+	_saveFiles[index++].handler = _adibou2DrawingOnFloppyDiskHandler = new DrawingOnFloppyDiskHandler(_vm,
+																									  reader,
+																									  writer,
+																									  false,
+																									  drawingOnFloppyDiskChunkSize);
+	_saveFiles[index++].handler = _adibou2DrawingThumbnailOnFloppyDiskHandler = new DrawingOnFloppyDiskHandler(_vm,
+																											   reader,
+																											   writer,
+																											   true);
+	_saveFiles[index++].handler = _adibou2TestDobHandler = new FakeFileHandler(_vm);
+
 	for (int i = 0; i < 2; i++)
 		_saveFiles[index++].handler = _addy4BaseHandler[i] = new FakeFileHandler(_vm);
 
@@ -1293,6 +1402,10 @@ SaveLoad_v7::~SaveLoad_v7() {
 		delete _adibou2FadedFlowerInVaseHandler[i];
 		delete _adibou2PosterHandler[i];
 	}
+
+	delete _adibou2DrawingOnFloppyDiskHandler;
+	delete _adibou2DrawingThumbnailOnFloppyDiskHandler;
+	delete _adibou2TestDobHandler;
 }
 
 const SaveLoad_v7::SaveFile *SaveLoad_v7::getSaveFile(const char *fileName) const {
