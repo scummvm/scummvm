@@ -68,11 +68,11 @@ void AccessCode::correctCode() {
 
 	map[VAL1] = 0;
 	for (int i = 0; i < 8; ++i)
-		map._walls[OFFSETS1[i]] ^= 4;
+		map._states[OFFSETS1[i]] ^= 4;
 	for (int i = 0; i < 8; ++i)
-		map._walls[OFFSETS2[i]] ^= 0x40;
-	map._walls[119] ^= 0x10;
-	map._walls[120] ^= 1;
+		map._states[OFFSETS2[i]] ^= 0x40;
+	map._states[119] ^= 0x10;
+	map._states[120] ^= 1;
 }
 
 void AccessCode::incorrectCode() {

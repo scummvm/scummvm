@@ -44,7 +44,7 @@ void Map25::special() {
 		}
 	}
 
-	switch (_states[g_maps->_mapOffset]) {
+	switch (_walls[g_maps->_mapOffset]) {
 	case 0:
 		if (getRandomNumber(100) == 100) {
 			Game::Encounter &enc = g_globals->_encounters;

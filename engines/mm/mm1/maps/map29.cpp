@@ -48,7 +48,7 @@ void Map29::special() {
 		}
 	}
 
-	switch (_states[g_maps->_mapOffset]) {
+	switch (_walls[g_maps->_mapOffset]) {
 	case 0:
 		if (getRandomNumber(50) == 50) {
 			int id1 = getRandomNumber(16);

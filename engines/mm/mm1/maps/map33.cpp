@@ -62,7 +62,7 @@ void Map33::special() {
 		}
 	}
 
-	if (_states[g_maps->_mapOffset] == 0xff) {
+	if (_walls[g_maps->_mapOffset] == 0xff) {
 		if (g_maps->_mapPos.x >= 6 || g_maps->_mapPos.y < 5 ||
 				g_maps->_mapPos.y >= 8) {
 			if (g_maps->_mapPos.y < 5 && g_maps->_forwardMask != DIRMASK_N) {
