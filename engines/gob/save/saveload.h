@@ -896,6 +896,7 @@ public:
 	static const uint32 kChildrenCount = 16;
 	static const uint32 kAdibou2NbrOfApplications = 5;
 	static const uint32 kAdibou2NbrOfSavedDrawings = 12;
+	static const uint32 kAdibou2NbrOfConstructionGameFiles = 3;
 	SaveLoad_v7(GobEngine *vm, const char *targetName);
 	~SaveLoad_v7() override;
 
@@ -965,6 +966,8 @@ protected:
 	GameFileHandler    *_adibou2EnvHandler[kChildrenCount];
 	SpriteHandler      *_adibou2WeatherHandler[kChildrenCount];
 	GameFileHandler    *_adibou2BreakoutGameProgressHandler[kChildrenCount];
+	FakeFileHandler    *_adibou2ConstructionGameTempFileHandler[kAdibou2NbrOfConstructionGameFiles];
+	GameFileHandler    *_adibou2ConstructionGameProgressHandler[kChildrenCount][kAdibou2NbrOfConstructionGameFiles];
 	GameFileHandler    *_adibou2AppProgressHandler[kChildrenCount][kAdibou2NbrOfApplications];
 	GameFileHandler    *_adibou2MemoHandler[kChildrenCount];
 	GameFileHandler    *_adibou2DiploHandler[kChildrenCount];
