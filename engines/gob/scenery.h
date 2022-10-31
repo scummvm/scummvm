@@ -113,6 +113,8 @@ public:
 	void freeAnim(int16 index);
 	void updateAnim(int16 layer, int16 frame, int16 animation,
 			int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
+	void updateAnimObjectVideo(int16 layer, int16 frame, int16 animation,
+							   int16 flags, int16 drawDeltaX, int16 drawDeltaY, char doDraw);
 
 	void writeAnimLayerInfo(uint16 index, uint16 layer,
 			int16 varDX, int16 varDY, int16 varUnk0, int16 varFrames);
