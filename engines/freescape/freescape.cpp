@@ -197,9 +197,10 @@ void FreescapeEngine::generateInput() {
 		if (_currentDemoInputRepetition == 0) {
 			_currentDemoInputRepetition = 1;
 			_currentDemoInputCode = _demoData[_demoIndex++];
-			if (_currentDemoInputCode >= 0x80) {
-				_currentDemoInputRepetition = _currentDemoInputCode - 0x80;
-				assert(_currentDemoInputRepetition > 0);
+			if (_currentDemoInputCode & 0x80) {
+				_currentDemoInputRepetition = (_currentDemoInputCode & 0x7F) + 1;
+				if (_currentDemoInputRepetition == 1)
+					_currentDemoInputRepetition = 255;
 				_currentDemoInputCode = _demoData[_demoIndex++];
 			}
 		}
@@ -212,7 +213,7 @@ void FreescapeEngine::generateInput() {
 			// 0x1a -> up
 			// TODO: mouse events
 		} else if (_currentDemoInputCode == 0x7f) {
-			// TODO: wait?
+			// NOP
 		} else {
 			event = Common::Event();
 			event.type = Common::EVENT_KEYDOWN;
@@ -220,9 +221,9 @@ void FreescapeEngine::generateInput() {
 			event.customType = 0xde00;
 			g_system->getEventManager()->pushEvent(event);
 			debugC(1, kFreescapeDebugMove, "Pushing key: %x with repetition %d", event.kbd.keycode, _currentDemoInputRepetition);
+			g_system->delayMillis(100);
 		}
 		_currentDemoInputRepetition--;
-		g_system->delayMillis(50);
 		return;
 	}
 

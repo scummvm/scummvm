@@ -125,7 +125,7 @@ void DrillerEngine::loadAssets() {
 	else
 		loadAssetsFullGame();
 
-	_angleRotations.push_back(5.3);
+	_angleRotations.push_back(5.0);
 	_angleRotations.push_back(9.5);
 
 	// Start playing music, if any
