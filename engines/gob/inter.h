@@ -685,6 +685,7 @@ protected:
 	void o7_callFunction();
 	void o7_loadFunctions();
 	void o7_moveFile();
+	void o7_copyFile();
 	void o7_playVmdOrMusic();
 	void o7_initScreen();
 	void o7_setActiveCD();
@@ -715,6 +716,7 @@ private:
 	Common::String _currentCDPath;
 
 	Common::String findFile(const Common::String &mask, const Common::String &previousFile);
+	void copyFile(const Common::String &sourceFile, const Common::String &destFile);
 
 	bool loadCursorFile();
 	void resizeCursors(int16 width, int16 height, int16 count, bool transparency);

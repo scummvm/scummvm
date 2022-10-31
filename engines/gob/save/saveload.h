@@ -59,6 +59,8 @@ public:
 	bool load(const char *fileName, int16 dataVar, int32 size, int32 offset);
 	/** Saves size bytes from the variables starting with data dataVar at offset. */
 	bool save(const char *fileName, int16 dataVar, int32 size, int32 offset);
+	bool saveFromRaw(const char *fileName, byte *ptr, int32 size, int32 offset);
+	bool copySaveGame(const char *fileNameSrc, const char *fileNameDest);
 
 	/** Deletes the file. */
 	bool deleteFile(const char *fileName);
@@ -915,6 +917,8 @@ protected:
 		int32 getSize() override;
 		bool load(int16 dataVar, int32 size, int32 offset) override;
 		bool save(int16 dataVar, int32 size, int32 offset) override;
+		bool loadToRaw(byte *ptr, int32 size, int32 offset) override;
+		bool saveFromRaw(const byte* ptr, int32 size, int32 offset) override;
 
 	private:
 		class File : public SlotFileStatic {
@@ -934,8 +938,13 @@ protected:
 		int32 getSize() override;
 		bool load(int16 dataVar, int32 size, int32 offset) override;
 		bool save(int16 dataVar, int32 size, int32 offset) override;
+		bool loadToRaw(byte *ptr, int32 size, int32 offset) override;
+		bool saveFromRaw(const byte *ptr, int32 size, int32 offset) override;
 
 	private:
+		// Save from raw pointer if ptrRaw != nullptr, else save from game variables
+		bool save(const byte *ptrRaw, int16 dataVar, int32 size, int32 offset);
+
 		class File : public SlotFileStatic {
 		public:
 			File(GobEngine *vm, const Common::String &base, const Common::String &ext);

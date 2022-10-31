@@ -66,6 +66,7 @@ void Inter_v7::setupOpcodesDraw() {
 	OPCODEDRAW(0x57, o7_intToString);
 	OPCODEDRAW(0x59, o7_callFunction);
 	OPCODEDRAW(0x5A, o7_loadFunctions);
+	OPCODEDRAW(0x60, o7_copyFile);
 	OPCODEDRAW(0x62, o7_moveFile);
 	OPCODEDRAW(0x80, o7_initScreen);
 	OPCODEDRAW(0x83, o7_playVmdOrMusic);
@@ -373,6 +374,56 @@ void Inter_v7::o7_loadFunctions() {
 	_vm->_game->loadFunctions(tot, flags);
 }
 
+void Inter_v7::copyFile(const Common::String &sourceFile, const Common::String &destFile) {
+	SaveLoad::SaveMode mode1 = _vm->_saveLoad->getSaveMode(sourceFile.c_str());
+	SaveLoad::SaveMode mode2 = _vm->_saveLoad->getSaveMode(destFile.c_str());
+
+	if (mode2 == SaveLoad::kSaveModeIgnore || mode2 == SaveLoad::kSaveModeExists)
+		return;
+	else if (mode2 == SaveLoad::kSaveModeSave) {
+		if (mode1 == SaveLoad::kSaveModeNone) {
+			Common::SeekableReadStream *stream = _vm->_dataIO->getFile(sourceFile);
+			if (!stream)
+				return;
+
+			int32 size = stream->size();
+			byte *data = new byte[size];
+			stream->read(data, size);
+
+			_vm->_saveLoad->saveFromRaw(destFile.c_str(), data, size, 0);
+			delete[] data;
+			delete stream;
+		} else if (mode1 == SaveLoad::kSaveModeSave) {
+			_vm->_saveLoad->copySaveGame(sourceFile.c_str(), destFile.c_str());
+		} else
+			warning("o7_copyFile(): unsupported mode %d for source \"%s\" while copying to \"%s\" ",
+					mode1,
+					sourceFile.c_str(),
+					destFile.c_str());
+	}
+	else
+		warning("Attempted to write to file \"%s\" while copying from \"%s\"",
+				destFile.c_str(),
+				sourceFile.c_str());
+
+}
+
+void Inter_v7::o7_copyFile() {
+	Common::String path1 = _vm->_game->_script->evalString();
+	Common::String path2 = _vm->_game->_script->evalString();
+
+	debugC(2, kDebugFileIO, "Copy file \"%s\" to \"%s", path1.c_str(), path2.c_str());
+
+	Common::String file1 = getFile(path1.c_str());
+	Common::String file2 = getFile(path2.c_str());
+	if (file1.equalsIgnoreCase(file2)) {
+		warning("o7_copyFile(): \"%s\" == \"%s\"", path1.c_str(), path2.c_str());
+		return;
+	}
+
+	copyFile(file1, file2);
+}
+
 void Inter_v7::o7_moveFile() {
 	Common::String path1 = _vm->_game->_script->evalString();
 	Common::String path2 = _vm->_game->_script->evalString();
@@ -385,7 +436,12 @@ void Inter_v7::o7_moveFile() {
 		return;
 	}
 
-	warning("Adibou2 Stub: move file from \"%s\" to \"%s\"", file1.c_str(), file2.c_str());
+	copyFile(file1, file2);
+	SaveLoad::SaveMode mode = _vm->_saveLoad->getSaveMode(file1.c_str());
+	if (mode == SaveLoad::kSaveModeSave) {
+		_vm->_saveLoad->deleteFile(file1.c_str());
+	} else if (mode == SaveLoad::kSaveModeNone)
+		warning("Attempted to delete file \"%s\" while moving it to \"%s\"", file1.c_str(), file2.c_str());
 }
 
 
