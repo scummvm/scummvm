@@ -106,6 +106,9 @@ MKVDecoder::MKVDecoder() {
 	_videoTrack = 0;
 	_audioTrack = 0;
 	_hasVideo = _hasAudio = false;
+
+	_codec = nullptr;
+	_reader = nullptr;
 }
 
 MKVDecoder::~MKVDecoder() {
@@ -353,14 +356,12 @@ void MKVDecoder::readNextPacket() {
 	int frameCount = pBlock->GetFrameCount();
 	long long time_ns = pBlock->GetTime(_cluster);
 
-
 	// First, let's get our frame
 	while (_cluster != nullptr && !_cluster->EOS()) {
 		if (frameCounter >= frameCount) {
-
 			int res = _cluster->GetNext(pBlockEntry, pBlockEntry);
-			if  ((res != -1) || pBlockEntry->EOS())
-			{
+
+			if  ((res != -1) || pBlockEntry->EOS()) {
 				_cluster = pSegment->GetNext(_cluster);
 				if ((_cluster == NULL) || _cluster->EOS()) {
 					_videoTrack->setEndOfVideo();
