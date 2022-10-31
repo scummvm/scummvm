@@ -142,17 +142,21 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 
 	// Get back screen size from texture coordinates.
 	// FIXME: We assume a fixed set of triangle strip
-	GLfloat w, h;
-	w = coordinates[6] - coordinates[0];
-	h = coordinates[7] - coordinates[1];
-	setOutputSize(w, h);
+	GLfloat outputWidth, outputHeight;
+	outputWidth = coordinates[6] - coordinates[0];
+	outputHeight = coordinates[7] - coordinates[1];
+
+	bool outputSizeChanged = (_outputWidth != outputWidth || _outputHeight != outputHeight);
+	// Save output dimensions.
+	_outputWidth  = outputWidth;
+	_outputHeight = outputHeight;
+
 
 	// In case texture dimensions or viewport dimensions changed, we need to
 	// update the pipeline's state.
 	if (   texture.getLogicalWidth() != _inputWidth
 		|| texture.getLogicalHeight() != _inputHeight
-		|| _outputSizeChanged) {
-		_outputSizeChanged = false;
+		|| outputSizeChanged) {
 		_inputWidth  = texture.getLogicalWidth();
 		_inputHeight = texture.getLogicalHeight();
 
@@ -186,14 +190,6 @@ void LibRetroPipeline::activateInternal() {
 }
 
 void LibRetroPipeline::deactivateInternal() {
-}
-
-void LibRetroPipeline::setOutputSize(uint outputWidth, uint outputHeight) {
-	_outputSizeChanged = (_outputWidth != outputWidth || _outputHeight != outputHeight);
-
-	// Save output dimensions.
-	_outputWidth  = outputWidth;
-	_outputHeight = outputHeight;
 }
 
 bool LibRetroPipeline::open(const Common::FSNode &shaderPreset) {
@@ -425,11 +421,6 @@ bool LibRetroPipeline::loadPasses() {
 
 
 	// Now try to setup FBOs with some dummy size to make sure it could work
-	uint bakInputWidth = _inputWidth;
-	uint bakInputHeight = _inputHeight;
-	uint bakOutputWidth = _outputWidth;
-	uint bakOutputHeight = _outputHeight;
-
 	_inputWidth = 320;
 	_inputHeight = 200;
 	_outputWidth = 640;
@@ -437,12 +428,10 @@ bool LibRetroPipeline::loadPasses() {
 
 	bool ret = setupFBOs();
 
-	_inputWidth = bakInputWidth;
-	_inputHeight = bakInputHeight;
-	_outputWidth = bakOutputWidth;
-	_outputHeight = bakOutputHeight;
-	// Force to reset everything at next draw
-	_outputSizeChanged = true;
+	_inputWidth = 0;
+	_inputHeight = 0;
+	_outputWidth = 0;
+	_outputHeight = 0;
 
 	if (!ret) {
 		return false;
