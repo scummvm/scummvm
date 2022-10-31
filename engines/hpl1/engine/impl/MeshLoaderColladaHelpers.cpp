@@ -96,8 +96,8 @@ public:
 
 typedef Common::Array<cTempAnimData> tTempAnimDataVec;
 
-typedef std::set<float> tTempTimesSet;
-typedef std::set<float>::iterator tTempTimesSetIt;
+typedef Hpl1::std::set<float> tTempTimesSet;
+typedef Hpl1::std::set<float>::iterator tTempTimesSetIt;
 
 static cTempAnimData *GetTempAnimData(float afTime, tTempAnimDataVec &avTempData) {
 	for (size_t i = 0; i < avTempData.size(); ++i) {
@@ -1145,7 +1145,7 @@ public:
 
 ///////////////////////////////////////////
 
-typedef std::set<cColladaTestTri, cColladaTestTriCompare> tColladaTestTriMap;
+typedef Hpl1::std::set<cColladaTestTri, cColladaTestTriCompare> tColladaTestTriMap;
 typedef tColladaTestTriMap::iterator tColladaTestTriMapIt;
 
 ///////////////////////////////////////////
@@ -1423,8 +1423,9 @@ void cMeshLoaderCollada::LoadGeometry(TiXmlElement *apRootElem, tColladaGeometry
 					}
 				}
 
-				std::pair<tColladaTestTriMapIt, bool> TestPair = map_TestTris.insert(DataVec);
-				if (TestPair.second) {
+				const auto test = map_TestTris.find(DataVec);
+				if (test == map_TestTris.end()) {
+					map_TestTris.insert(DataVec);
 					// Add the data to the indices
 					for (int i = 0; i < 3; i++) {
 						Geometry.mvIndices.push_back(DataVec[i]);

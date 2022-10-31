@@ -58,7 +58,7 @@ private:
 
 //----------------------------------------
 
-typedef std::set<iGameEnemy *> tAttackerSet;
+typedef Hpl1::std::set<iGameEnemy *> tAttackerSet;
 typedef tAttackerSet::iterator tAttackerSetIt;
 
 class cGameMusicHandler : public iUpdateable {

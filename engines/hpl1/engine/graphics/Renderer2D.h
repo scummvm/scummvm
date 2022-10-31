@@ -37,6 +37,7 @@
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/scene/Light2D.h"
 #include "common/list.h"
+#include "hpl1/std/set.h"
 
 namespace hpl {
 

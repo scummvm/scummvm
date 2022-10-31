@@ -579,7 +579,7 @@ void cHudModel_WeaponMelee::Attack() {
 		}
 	}
 
-	std::set<iPhysicsBody *> m_setHitBodies;
+	Hpl1::std::set<iPhysicsBody *> m_setHitBodies;
 
 	////////////////////////////////
 	// Iterate bodies

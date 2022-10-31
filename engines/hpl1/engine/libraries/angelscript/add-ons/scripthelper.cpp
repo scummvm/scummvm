@@ -3,8 +3,9 @@
 #include <assert.h>
 #include <stdio.h>
 #include <fstream>
-#include <set>
 #include <stdlib.h>
+
+#include "hpl1/std/set.h"
 
 using namespace std;
 

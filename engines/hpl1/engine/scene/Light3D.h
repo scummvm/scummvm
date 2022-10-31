@@ -33,7 +33,7 @@
 #include "hpl1/engine/scene/Entity3D.h"
 #include "hpl1/engine/scene/Light.h"
 #include "common/list.h"
-#include <set>
+#include "hpl1/std/set.h"
 
 class TiXmlElement;
 
@@ -64,7 +64,7 @@ class cFileSearcher;
 class cBillboard;
 class cSectorVisibilityContainer;
 
-typedef std::set<iRenderable *> tCasterCacheSet;
+typedef Hpl1::std::set<iRenderable *> tCasterCacheSet;
 typedef tCasterCacheSet::iterator tCasterCacheSetIt;
 
 //------------------------------------------

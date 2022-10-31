@@ -33,7 +33,7 @@
 #include "hpl1/engine/scene/RenderableContainer.h"
 #include "common/list.h"
 #include <map>
-#include <set>
+#include "hpl1/std/set.h"
 
 namespace hpl {
 
@@ -43,11 +43,11 @@ class cSectorVisibilityContainer;
 typedef Common::List<iRenderable *> tRenderableList;
 typedef Common::List<iRenderable *>::iterator tRenderableListIt;
 
-typedef std::set<iRenderable *> tRenderableSet;
-typedef std::set<iRenderable *>::iterator tRenderableSetIt;
+typedef Hpl1::std::set<iRenderable *> tRenderableSet;
+typedef Hpl1::std::set<iRenderable *>::iterator tRenderableSetIt;
 
-typedef std::set<iEntity3D *> tEntity3DSet;
-typedef std::set<iEntity3D *>::iterator tEntity3DSetIt;
+typedef Hpl1::std::set<iEntity3D *> tEntity3DSet;
+typedef Hpl1::std::set<iEntity3D *>::iterator tEntity3DSetIt;
 
 //----------------------------------------------------
 
