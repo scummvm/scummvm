@@ -24,6 +24,7 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "backends/graphics/opengl/framebuffer.h"
 #include "backends/graphics/opengl/texture.h"
 
 #include "math/matrix4.h"
