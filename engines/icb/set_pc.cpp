@@ -1338,7 +1338,7 @@ void _set::InitWeather(int32 type, int32 particleQty, int32 lightning, int32 win
 	if (m_wParticleQty > WEATHER_MAX_PARTICLES)
 		m_wParticleQty = WEATHER_MAX_PARTICLES;
 
-	for (int32 i = WEATHER_MAX_PARTICLES; i >= 0; i--) {
+	for (int32 i = WEATHER_MAX_PARTICLES - 1; i >= 0; i--) {
 		m_wParticleX[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_WIDTH - 1)) - WEATHER_HALF_SCREEN_WIDTH);
 		m_wParticleY[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_HEIGHT - 1)) - WEATHER_HALF_SCREEN_HEIGHT);
 		m_wParticleZ[i] = (int16)((g_icb->getRandomSource()->getRandomNumber(WEATHER_SCREEN_DEPTH - 1)) - WEATHER_HALF_SCREEN_DEPTH);
