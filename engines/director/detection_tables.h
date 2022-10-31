@@ -1804,42 +1804,42 @@ static const DirectorGameDescription gameDescriptions[] = {
 #undef SUPPORT_STATUS
 #define SUPPORT_STATUS ADGF_UNSTABLE
 
-	MACDEMO1("aamn", "Demo", "AAMN", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 354645, 301),
+	MACDEMO1("aamn", "Demo", "AAMN", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 354389, 301),
 
 	// Found on ADAM The Inside Story v1.11 for Windows
 	WINGAME2("adamscholar", "", "MAIN.EXE",  "de06298eb65f392f4e736a1c6b0b889c", 1152807,
 								"SDEMO.DIR", "bfb9bd6de59c22f0c45da6ade0579384", 3158992, 311),
 
 	// Original Mac filename is *デモスタート
-	MACDEMO2_l("adamtis", "Demo", "Demo start",	  "1ae45c23586b41997ba52e2e7c771c4c", 1676945,
+	MACDEMO2_l("adamtis", "Demo", "Demo start",	  "1ae45c23586b41997ba52e2e7c771c4c", 1676689,
 								  "step1",		  "7e17288d51f610daf84941e318404518", 393530, Common::JA_JPN, 311),
 
-	MACDEMO1_l("adobedimensions", "Demo", "PD.Demo", "f5277c53bacd27936158dd3867e587e2", 1439492, Common::JA_JPN, 311),
+	MACDEMO1_l("adobedimensions", "Demo", "PD.Demo", "f5277c53bacd27936158dd3867e587e2", 1439236, Common::JA_JPN, 311),
 
 	// Original filename is Agfa CD-ROM Demo/B&W
 	MACDEMO1("agfa", "v3.1 Demo", "xn--Agfa CD-ROM DemoB&W-bba08g", "13ba95890bdaa1a07255c395499fe12e", 1283400, 300),
 
 	// Original filename is アラン・ケイ
-	MACDEMO1_l("alankay", "Demo", "Alan Kay", "276bee761e48a6fd709df77d5c2f60dd", 6188389, Common::JA_JPN, 311),
+	MACDEMO1_l("alankay", "Demo", "Alan Kay", "276bee761e48a6fd709df77d5c2f60dd", 6188133, Common::JA_JPN, 311),
 
-	MACGAME1_l("alexworld", "", "AlexWorld", "f5277c53bacd27936158dd3867e587e2", 391576, Common::JA_JPN, 300),
+	MACGAME1_l("alexworld", "", "AlexWorld", "f5277c53bacd27936158dd3867e587e2", 391320, Common::JA_JPN, 300),
 	WINGAME1_l("alexworld", "", "ALEX.EXE", "65d06b5fef155a2473434571aff5bc29", 369996, Common::JA_JPN, 300),
 
-	MACGAME1("alice2ocean", "", "From Alice to Ocean", "1ae45c23586b41997ba52e2e7c771c4c", 375466, 310),
+	MACGAME1("alice2ocean", "", "From Alice to Ocean", "1ae45c23586b41997ba52e2e7c771c4c", 375210, 310),
 
 	MACGAME1("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353729, 300),
-	MACDEMO1("amandastories", "Sampler", "AmandaStories Sampler", "60cc4ccbab898f1f444088fb5aad90c4", 1783515, 311),
+	MACDEMO1("amandastories", "Sampler", "AmandaStories Sampler", "60cc4ccbab898f1f444088fb5aad90c4", 1783259, 311),
 
 	// Uses audio tracks
 	MACGAME1("amhha", "", "All My Hummingbirds Have Alibis", "9c97c1cbf6f01697685d3aac1d882526", 1356802, 300),
 
 	// From Macintosh Demo Software Zenshuu CD-ROM '94 Disc 3
 	// Original filename is アニマルタウンデモ版
-	MACDEMO1_l("animaltown", "Demo", "Animal Town Demo Version", "f5277c53bacd27936158dd3867e587e2", 395177, Common::JA_JPN, 311),
+	MACDEMO1_l("animaltown", "Demo", "Animal Town Demo Version", "f5277c53bacd27936158dd3867e587e2", 394921, Common::JA_JPN, 311),
 
 	MACGAME1_l("aquaplanet", "", "click me!", "f5277c53bacd27936158dd3867e587e2", 392441, Common::JA_JPN, 310),
 
-	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038279, Common::JA_JPN, 313),
+	MACDEMO1_l("asylum300", "Demo", "ASYLUM 300 DEMO", "4c7fddccfe5ab2e9c6398efa5dbe37c1", 1038023, Common::JA_JPN, 313),
 
 	// Original filename is Babylon 5 Interactive/Mac
 	MACGAME1("babylon5int", "", "Babylon 5 Interactive-Mac", "7f443f2e63fd497a9ad85b10dc880a91", 1262641, 313),
