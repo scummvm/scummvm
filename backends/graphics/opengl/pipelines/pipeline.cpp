@@ -34,7 +34,7 @@ void Pipeline::activate() {
 	_isActive = true;
 
 	if (_activeFramebuffer) {
-		_activeFramebuffer->activate();
+		_activeFramebuffer->activate(this);
 	}
 
 	activateInternal();
@@ -58,7 +58,7 @@ Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {
 
 	_activeFramebuffer = framebuffer;
 	if (_isActive && _activeFramebuffer) {
-		_activeFramebuffer->activate();
+		_activeFramebuffer->activate(this);
 	}
 
 	return oldFramebuffer;

@@ -20,19 +20,20 @@
  */
 
 #include "backends/graphics/opengl/framebuffer.h"
-#include "backends/graphics/opengl/texture.h"
 #include "backends/graphics/opengl/pipelines/pipeline.h"
+#include "backends/graphics/opengl/texture.h"
 #include "graphics/opengl/debug.h"
 
 namespace OpenGL {
 
 Framebuffer::Framebuffer()
-	: _viewport(), _projectionMatrix(), _isActive(false), _clearColor(),
+	: _viewport(), _projectionMatrix(), _pipeline(nullptr), _clearColor(),
 	  _blendState(kBlendModeDisabled), _scissorTestState(false), _scissorBox() {
 }
 
-void Framebuffer::activate() {
-	_isActive = true;
+void Framebuffer::activate(Pipeline *pipeline) {
+	assert(pipeline);
+	_pipeline = pipeline;
 
 	applyViewport();
 	applyProjectionMatrix();
@@ -45,9 +46,9 @@ void Framebuffer::activate() {
 }
 
 void Framebuffer::deactivate() {
-	_isActive = false;
-
 	deactivateInternal();
+
+	_pipeline = nullptr;
 }
 
 void Framebuffer::setClearColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
@@ -97,7 +98,8 @@ void Framebuffer::applyViewport() {
 }
 
 void Framebuffer::applyProjectionMatrix() {
-	Pipeline::getActivePipeline()->setProjectionMatrix(_projectionMatrix);
+	assert(_pipeline);
+	_pipeline->setProjectionMatrix(_projectionMatrix);
 }
 
 void Framebuffer::applyClearColor() {

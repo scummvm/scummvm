@@ -28,11 +28,12 @@
 
 namespace OpenGL {
 
+class Pipeline;
+
 /**
  * Object describing a framebuffer OpenGL can render to.
  */
 class Framebuffer {
-	friend class Pipeline;
 public:
 	Framebuffer();
 	virtual ~Framebuffer() {};
@@ -86,7 +87,7 @@ public:
 	 */
 	const Math::Matrix4 &getProjectionMatrix() const { return _projectionMatrix; }
 protected:
-	bool isActive() const { return _isActive; }
+	bool isActive() const { return _pipeline != nullptr; }
 
 	GLint _viewport[4];
 	void applyViewport();
@@ -109,11 +110,11 @@ protected:
 	 */
 	virtual void deactivateInternal() {}
 
-private:
+public:
 	/**
 	 * Accessor to activate framebuffer for pipeline.
 	 */
-	void activate();
+	void activate(Pipeline *pipeline);
 
 	/**
 	 * Accessor to deactivate framebuffer from pipeline.
@@ -121,7 +122,7 @@ private:
 	void deactivate();
 
 private:
-	bool _isActive;
+	Pipeline *_pipeline;
 
 	GLfloat _clearColor[4];
 	void applyClearColor();
