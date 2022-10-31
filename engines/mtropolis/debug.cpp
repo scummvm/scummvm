@@ -1513,10 +1513,10 @@ void Debugger::openToolWindow(DebuggerTool tool) {
 		windowRef.reset(new DebugSceneTreeWindow(this, WindowParameters(_runtime, 32, 32, 250, 120, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolInspector:
-		windowRef.reset(new DebugInspectorWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugInspectorWindow(this, WindowParameters(_runtime, 32, 32, 320, 200, _runtime->getRenderPixelFormat())));
 		break;
 	case kDebuggerToolStepThrough:
-		windowRef.reset(new DebugStepThroughWindow(this, WindowParameters(_runtime, 32, 32, 100, 320, _runtime->getRenderPixelFormat())));
+		windowRef.reset(new DebugStepThroughWindow(this, WindowParameters(_runtime, 32, 32, 200, 100, _runtime->getRenderPixelFormat())));
 		break;
 	default:
 		assert(false);
