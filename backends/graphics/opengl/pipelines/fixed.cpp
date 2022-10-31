@@ -40,13 +40,23 @@ void FixedPipeline::activateInternal() {
 	}
 #endif
 	GL_CALL(glEnable(GL_TEXTURE_2D));
+	GL_CALL(glColor4f(_r, _g, _b, _a));
 }
 
 void FixedPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
-	GL_CALL(glColor4f(r, g, b, a));
+	_r = r;
+	_g = g;
+	_b = b;
+	_a = a;
+
+	if (isActive()) {
+		GL_CALL(glColor4f(r, g, b, a));
+	}
 }
 
 void FixedPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+	assert(isActive());
+
 	texture.bind();
 
 	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));
@@ -55,9 +65,7 @@ void FixedPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat 
 }
 
 void FixedPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
-	if (!isActive()) {
-		return;
-	}
+	assert(isActive());
 
 	GL_CALL(glMatrixMode(GL_PROJECTION));
 	GL_CALL(glLoadMatrixf(projectionMatrix.getData()));

@@ -796,13 +796,12 @@ void TextureCLUT8GPU::updateGLTexture() {
 
 void TextureCLUT8GPU::lookUpColors() {
 	// Setup pipeline to do color look up.
-	Pipeline *oldPipeline = Pipeline::setPipeline(_clut8Pipeline);
+	_clut8Pipeline->activate();
 
 	// Do color look up.
-	Pipeline::getActivePipeline()->drawTexture(_clut8Texture, _clut8Vertices);
+	_clut8Pipeline->drawTexture(_clut8Texture, _clut8Vertices);
 
-	// Restore old state.
-	Pipeline::setPipeline(oldPipeline);
+	_clut8Pipeline->deactivate();
 }
 #endif // !USE_FORCED_GLES
 

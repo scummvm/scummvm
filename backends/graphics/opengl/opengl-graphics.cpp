@@ -638,6 +638,8 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 	_overlay->updateGLTexture();
 
+	_pipeline->activate();
+
 	// Clear the screen buffer.
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
@@ -656,12 +658,15 @@ void OpenGLGraphicsManager::updateScreen() {
 	// First step: Draw the (virtual) game screen.
 #if !USE_FORCED_GLES
 	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
-		Framebuffer *lastFramebuffer = Pipeline::getActivePipeline()->setFramebuffer(_gameScreenTarget);
+		// Use the ShaderPipeline to draw the game screen and game cursor
+		_pipeline->setFramebuffer(_gameScreenTarget);
+
 		_gameScreenTarget->enableBlend(Framebuffer::kBlendModeDisabled);
+
 		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
 		const uint retroWidth = gameScreenTexture.getLogicalWidth(),
 		           retroHeight = gameScreenTexture.getLogicalHeight();
-		Pipeline::getActivePipeline()->drawTexture(gameScreenTexture, 0, 0, retroWidth, retroHeight);
+		_pipeline->drawTexture(gameScreenTexture, 0, 0, retroWidth, retroHeight);
 
 		// Draw the cursor if necessary.
 		// If overlay is visible we draw it later to have the cursor above overlay
@@ -678,18 +683,20 @@ void OpenGLGraphicsManager::updateScreen() {
 					   cursorHeight = cursorTexture.getLogicalHeight();
 
 			_gameScreenTarget->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
-			Pipeline::getActivePipeline()->drawTexture(cursorTexture, gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
+			_pipeline->drawTexture(cursorTexture, gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
 			needsCursor = false;
 		}
-		Pipeline::getActivePipeline()->setFramebuffer(lastFramebuffer);
 
-		Pipeline *lastPipeline = Pipeline::setPipeline(_libretroPipeline);
-		Pipeline::getActivePipeline()->drawTexture(*_gameScreenTarget->getTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
-		Pipeline::setPipeline(lastPipeline);
+		_libretroPipeline->activate();
+		_libretroPipeline->drawTexture(*_gameScreenTarget->getTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
+
+		// Restore ShaderPipeline for the next steps
+		_pipeline->setFramebuffer(&_backBuffer);
+		_pipeline->activate();
 	} else
 #endif
 	{
-		Pipeline::getActivePipeline()->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
+		_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 	}
 
 	// Second step: Draw the overlay if visible.
@@ -697,14 +704,14 @@ void OpenGLGraphicsManager::updateScreen() {
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
 		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
 		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
-		Pipeline::getActivePipeline()->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
+		_pipeline->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
 	// Third step: Draw the cursor if necessary.
 	if (needsCursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
-		Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(),
+		_pipeline->drawTexture(_cursor->getGLTexture(),
 		                         _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
 		                         _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
 		                         _cursorWidthScaled, _cursorHeightScaled);
@@ -734,17 +741,17 @@ void OpenGLGraphicsManager::updateScreen() {
 		}
 
 		// Set the OSD transparency.
-		Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
+		_pipeline->setColor(1.0f, 1.0f, 1.0f, _osdMessageAlpha / 100.0f);
 
 		int dstX = (_windowWidth - _osdMessageSurface->getWidth()) / 2;
 		int dstY = (_windowHeight - _osdMessageSurface->getHeight()) / 2;
 
 		// Draw the OSD texture.
-		Pipeline::getActivePipeline()->drawTexture(_osdMessageSurface->getGLTexture(),
+		_pipeline->drawTexture(_osdMessageSurface->getGLTexture(),
 		                                           dstX, dstY, _osdMessageSurface->getWidth(), _osdMessageSurface->getHeight());
 
 		// Reset color.
-		Pipeline::getActivePipeline()->setColor(1.0f, 1.0f, 1.0f, 1.0f);
+		_pipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
 
 		if (_osdMessageAlpha <= 0) {
 			delete _osdMessageSurface;
@@ -761,8 +768,8 @@ void OpenGLGraphicsManager::updateScreen() {
 		int dstY = kOSDIconTopMargin;
 
 		// Draw the OSD icon texture.
-		Pipeline::getActivePipeline()->drawTexture(_osdIconSurface->getGLTexture(),
-		                                           dstX, dstY, _osdIconSurface->getWidth(), _osdIconSurface->getHeight());
+		_pipeline->drawTexture(_osdIconSurface->getGLTexture(),
+		                       dstX, dstY, _osdIconSurface->getWidth(), _osdIconSurface->getHeight());
 	}
 #endif
 
@@ -1165,7 +1172,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	const Graphics::PixelFormat &defaultFormat,
 	const Graphics::PixelFormat &defaultFormatAlpha) {
 	// Initialize pipeline.
-	Pipeline::setPipeline(nullptr);
 	delete _pipeline;
 	_pipeline = nullptr;
 
@@ -1258,10 +1264,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 		_osdIconSurface->recreate();
 	}
 #endif
-
-	// Everything is ready: activate the pipeline
-	Pipeline::setPipeline(_pipeline);
-
 }
 
 void OpenGLGraphicsManager::notifyContextDestroy() {
@@ -1300,7 +1302,6 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 #endif
 
 	// Destroy rendering pipeline.
-	Pipeline::setPipeline(nullptr);
 	delete _pipeline;
 	_pipeline = nullptr;
 

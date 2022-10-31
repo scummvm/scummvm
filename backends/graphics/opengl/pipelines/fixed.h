@@ -29,6 +29,8 @@ namespace OpenGL {
 #if !USE_FORCED_GLES2
 class FixedPipeline : public Pipeline {
 public:
+	FixedPipeline() : _r(0.f), _g(0.f), _b(0.f), _a(0.f) {}
+
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
@@ -36,6 +38,8 @@ public:
 protected:
 	void activateInternal() override;
 	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
+
+	GLfloat _r, _g, _b, _a;
 };
 #endif // !USE_FORCED_GLES2
 
