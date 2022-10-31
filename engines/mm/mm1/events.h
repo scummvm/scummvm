@@ -146,6 +146,11 @@ public:
 	 */
 	void close();
 
+	/*
+	 * Returns true if the view is focused
+	 */
+	bool isFocused() const;
+
 	/**
 	 * Sets the focus to a new view
 	 */

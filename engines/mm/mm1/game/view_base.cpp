@@ -277,7 +277,7 @@ void ViewBase::bash() {
 			}
 
 			// Check for trap being triggered
-			if (g_engine->getRandomNumber(100) >= map[Maps::MAP_48]) {
+			if (g_engine->getRandomNumber(100) >= map[Maps::MAP_DARTS_THRESHOLD]) {
 				warning("TODO: trigger trap");
 
 			} else {

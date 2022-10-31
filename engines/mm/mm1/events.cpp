@@ -232,6 +232,10 @@ void UIElement::close() {
 	g_engine->popView();
 }
 
+bool UIElement::isFocused() const {
+	return g_events->focusedView() == this;
+}
+
 void UIElement::clearSurface() {
 	Graphics::ManagedSurface s = getSurface();
 	s.fillRect(Common::Rect(s.w, s.h), 0);
