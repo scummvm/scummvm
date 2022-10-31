@@ -469,6 +469,25 @@ static const MTropolisGameDescription gameDescriptions[] = {
 		MTBOOT_SPQR_RETAIL_WIN,
 	},
 
+	{ // SPQR: The Empire's Darkest Hour Macintosh CD-ROM
+		{
+			"spqr",
+			"",
+			{
+				{ "Install.vct", 0, "df8b7e964bf2ce4d32a38091836bdd75", 3539712 },
+				{ "S_6772", 0, "8f8e503fd5b6d0f7651149ff8d92a7a2", 576188928 },
+				AD_LISTEND
+			},
+			Common::EN_ANY,
+			Common::kPlatformMacintosh,
+			ADGF_UNSTABLE,
+			GUIO0()
+		},
+		GID_SPQR,
+		0,
+		MTBOOT_SPQR_RETAIL_MAC,
+	},
+
 	{ AD_TABLE_END_MARKER, 0, 0, MTBOOT_INVALID }
 };
 

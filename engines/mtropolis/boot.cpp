@@ -792,6 +792,17 @@ const char *spqrRetailWinDirectories[] = {
 	nullptr
 };
 
+const ManifestFile spqrRetailMacEnFiles[] = {
+	{"Install.vct", MTFT_SPECIAL},
+	{"S_6772", MTFT_ADDITIONAL},
+	{nullptr, MTFT_AUTO}
+};
+
+const char *spqrRetailMacDirectories[] = {
+	"GAME",
+	nullptr
+};
+
 const Game games[] = {
 	// Obsidian - Retail - Macintosh - English
 	{
@@ -905,11 +916,19 @@ const Game games[] = {
 		nullptr,
 		GameDataHandlerFactory<MTIGameDataHandler>::create
 	},
-	// SPQR: The Empire's Darkest Hour - Retail - Windows
+	// SPQR: The Empire's Darkest Hour - Retail - Windows - English
 	{
 		MTBOOT_SPQR_RETAIL_WIN,
 		spqrRetailWinEnFiles,
 		spqrRetailWinDirectories,
+		nullptr,
+		GameDataHandlerFactory<GameDataHandler>::create
+	},
+	// SPQR: The Empire's Darkest Hour - Retail - Macintosh - English
+	{
+		MTBOOT_SPQR_RETAIL_MAC,
+		spqrRetailMacEnFiles,
+		spqrRetailMacDirectories,
 		nullptr,
 		GameDataHandlerFactory<GameDataHandler>::create
 	},

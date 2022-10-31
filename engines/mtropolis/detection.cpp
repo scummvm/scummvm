@@ -115,6 +115,7 @@ static const char *directoryGlobs[] = {
 	"RESOURCE",
 	"Saved Games",
 	"MTPLAY32",
+	"GAME",
 	nullptr
 };
 

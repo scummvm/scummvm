@@ -56,6 +56,7 @@ enum MTropolisGameBootID {
 	MTBOOT_MTI_DEMO_WIN,
 
 	MTBOOT_SPQR_RETAIL_WIN,
+	MTBOOT_SPQR_RETAIL_MAC,
 };
 
 struct MTropolisGameDescription {
