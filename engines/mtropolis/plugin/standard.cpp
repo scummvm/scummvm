@@ -1924,6 +1924,14 @@ void MediaCueMessengerModifier::disable(Runtime *runtime) {
 	}
 }
 
+Modifier *MediaCueMessengerModifier::getMediaCueModifier() {
+	return this;
+}
+
+Common::WeakPtr<Modifier> MediaCueMessengerModifier::getMediaCueTriggerSource() const {
+	return _cueSourceModifier;
+}
+
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
 	Common::SharedPtr<MediaCueMessengerModifier> clone(new MediaCueMessengerModifier(*this));
 	clone->_isActive = false;

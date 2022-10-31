@@ -465,7 +465,7 @@ bool MessengerModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_when.respondsTo(msg->getEvent())) {
-		_sendSpec.sendFromMessenger(runtime, this, msg->getValue(), nullptr);
+		_sendSpec.sendFromMessenger(runtime, this, msg->getSource().lock().get(), msg->getValue(), nullptr);
 	}
 
 	return kVThreadReturn;
@@ -1439,6 +1439,7 @@ VThreadState IfMessengerModifier::consumeMessage(Runtime *runtime, const Common:
 		evalAndSendData->thread = thread;
 		evalAndSendData->runtime = runtime;
 		evalAndSendData->incomingData = msg->getValue();
+		evalAndSendData->triggerSource = msg->getSource();
 
 		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
 	}
@@ -1479,7 +1480,7 @@ VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskD
 		return kVThreadError;
 
 	if (isTrue)
-		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData, nullptr);
+		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.triggerSource.lock().get(), taskData.incomingData, nullptr);
 
 	return kVThreadReturn;
 }
@@ -1523,6 +1524,8 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		uint32 realMilliseconds = _milliseconds;
 		if (realMilliseconds == 0)
 			realMilliseconds = 1;
+
+		_triggerSource = msg->getSource();
 
 		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), realMilliseconds);
 
@@ -1578,7 +1581,7 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 	} else
 		_scheduledEvent.reset();
 
-	_sendSpec.sendFromMessenger(runtime, this, _incomingData, nullptr);
+	_sendSpec.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, nullptr);
 }
 
 BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
@@ -1627,6 +1630,7 @@ VThreadState BoundaryDetectionMessengerModifier::consumeMessage(Runtime *runtime
 		_incomingData = msg->getValue();
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
+		_triggerSource = msg->getSource();
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
 		disable(runtime);
@@ -1670,7 +1674,7 @@ void BoundaryDetectionMessengerModifier::getCollisionProperties(Modifier *&modif
 }
 
 void BoundaryDetectionMessengerModifier::triggerCollision(Runtime *runtime) {
-	_send.sendFromMessenger(runtime, this, _incomingData, nullptr);
+	_send.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, nullptr);
 }
 
 Common::SharedPtr<Modifier> BoundaryDetectionMessengerModifier::shallowClone() const {
@@ -1734,12 +1738,13 @@ VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtim
 		if (!_isActive) {
 			_isActive = true;
 			_runtime = runtime;
-			_incomingData = msg->getValue();
-			if (_incomingData.getType() == DynamicValueTypes::kList)
-				_incomingData.setList(_incomingData.getList()->clone());
 
 			runtime->addCollider(this);
 		}
+		_incomingData = msg->getValue();
+		if (_incomingData.getType() == DynamicValueTypes::kList)
+			_incomingData.setList(_incomingData.getList()->clone());
+		_triggerSource = msg->getSource();
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
 		disable(runtime);
@@ -1809,7 +1814,7 @@ void CollisionDetectionMessengerModifier::triggerCollision(Runtime *runtime, Str
 		customDestination = collidingElement;
 	}
 
-	_sendSpec.sendFromMessenger(runtime, this, _incomingData, customDestination);
+	_sendSpec.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, customDestination);
 }
 
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
@@ -2020,7 +2025,7 @@ void KeyboardMessengerModifier::dispatchMessage(Runtime *runtime, const Common::
 
 	DynamicValue charStrValue;
 	charStrValue.setString(charStr);
-	_sendSpec.sendFromMessenger(runtime, this, charStrValue, nullptr);
+	_sendSpec.sendFromMessenger(runtime, this, nullptr, charStrValue, nullptr);
 }
 
 void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {

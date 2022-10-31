@@ -1092,12 +1092,13 @@ struct MessengerSendSpec {
 
 	void linkInternalReferences(ObjectLinkingScope *outerScope);
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
-	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const;
+
+	void resolveDestination(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const;
 
 	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
-	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
-	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const;
+	void sendFromMessenger(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
+	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &data, RuntimeObject *customDestination) const;
 
 	enum LinkType {
 		kLinkTypeNotYetLinked,
@@ -2272,6 +2273,11 @@ struct IPostEffect : public IInterfaceBase {
 	virtual void renderPostEffect(Graphics::ManagedSurface &surface) const = 0;
 };
 
+struct IMediaCueModifier : public IInterfaceBase {
+	virtual Modifier *getMediaCueModifier() = 0;
+	virtual Common::WeakPtr<Modifier> getMediaCueTriggerSource() const = 0;
+};
+
 struct MediaCueState {
 	enum TriggerTiming {
 		kTriggerTimingStart = 0,
@@ -2282,7 +2288,7 @@ struct MediaCueState {
 	int32 minTime;
 	int32 maxTime;
 
-	Modifier *sourceModifier;
+	IMediaCueModifier *sourceModifier;
 	TriggerTiming triggerTiming;
 	MessengerSendSpec send;
 	DynamicValue incomingData;

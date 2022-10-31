@@ -2005,7 +2005,7 @@ void MessengerSendSpec::visitInternalReferences(IStructuralReferenceVisitor *vis
 	visitor->visitWeakModifierRef(_resolvedVarSource);
 }
 
-void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const {
+void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const {
 	outStructuralDest.reset();
 	outModifierDest.reset();
 
@@ -2085,9 +2085,14 @@ void MessengerSendSpec::resolveDestination(Runtime *runtime, Modifier *sender, C
 					outStructuralDest = sibling;
 			} break;
 		case kMessageDestSourcesParent: {
-				// This sends to the exact parent, e.g. if the sender is inside of a behavior, then it sends it to the behavior.
-				if (sender) {
-					Common::SharedPtr<RuntimeObject> parentObj = sender->getParent().lock();
+				// This sends to the exact parent, e.g. if the source is inside of a behavior, then it sends it to the behavior.
+				if (triggerSource) {
+					RuntimeObject *parentObj = nullptr;
+					if (triggerSource->isModifier())
+						parentObj = static_cast<Modifier *>(triggerSource)->getParent().lock().get();
+					else if (triggerSource->isStructural())
+						parentObj = static_cast<Structural *>(triggerSource)->getParent();
+
 					if (parentObj) {
 						if (parentObj->isModifier())
 							outModifierDest = parentObj->getSelfReference().staticCast<Modifier>();
@@ -2126,17 +2131,17 @@ void MessengerSendSpec::resolveVariableObjectType(RuntimeObject *obj, Common::We
 	}
 }
 
-void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const {
-	sendFromMessengerWithCustomData(runtime, sender, this->with.produceValue(incomingData), customDestination);
+void MessengerSendSpec::sendFromMessenger(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &incomingData, RuntimeObject *customDestination) const {
+	sendFromMessengerWithCustomData(runtime, sender, triggerSource, this->with.produceValue(incomingData), customDestination);
 }
 
-void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const {
+void MessengerSendSpec::sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &data, RuntimeObject *customDestination) const {
 	Common::SharedPtr<MessageProperties> props(new MessageProperties(this->send, data, sender->getSelfReference()));
 
 	Common::WeakPtr<Modifier> modifierDestRef;
 	Common::WeakPtr<Structural> structuralDestRef;
 
-	resolveDestination(runtime, sender, structuralDestRef, modifierDestRef, customDestination);
+	resolveDestination(runtime, sender, triggerSource, structuralDestRef, modifierDestRef, customDestination);
 
 	Common::SharedPtr<Modifier> modifierDest = modifierDestRef.lock();
 	Common::SharedPtr<Structural> structuralDest = structuralDestRef.lock();
@@ -6475,7 +6480,7 @@ void MediaCueState::checkTimestampChange(Runtime *runtime, uint32 oldTS, uint32 
 
 	// Given the positioning of this, there's not really a way for the immediate flag to have any effect?
 	if (shouldTrigger)
-		send.sendFromMessenger(runtime, sourceModifier, incomingData, nullptr);
+		send.sendFromMessenger(runtime, sourceModifier->getMediaCueModifier(), sourceModifier->getMediaCueTriggerSource().lock().get(), incomingData, nullptr);
 }
 
 
@@ -6861,8 +6866,6 @@ void Project::loadBootStream(size_t streamIndex, const Hacks &hacks) {
 
 	size_t numObjectsLoaded = 0;
 	while (stream.pos() != streamDesc.size) {
-		uint64 streamPos = stream.pos();
-
 		Common::SharedPtr<Data::DataObject> dataObject;
 		Data::loadDataObject(plugInDataLoaderRegistry, reader, dataObject);
 

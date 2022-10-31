@@ -105,7 +105,7 @@ private:
 	bool _fullScreen;
 };
 
-class MediaCueMessengerModifier : public Modifier {
+class MediaCueMessengerModifier : public Modifier, public IMediaCueModifier {
 public:
 	MediaCueMessengerModifier();
 	~MediaCueMessengerModifier();
@@ -115,6 +115,9 @@ public:
 	bool respondsToEvent(const Event &evt) const override;
 	VThreadState consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) override;
 	void disable(Runtime *runtime) override;
+
+	Modifier *getMediaCueModifier() override;
+	Common::WeakPtr<Modifier> getMediaCueTriggerSource() const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Media Cue Modifier"; }

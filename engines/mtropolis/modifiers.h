@@ -575,6 +575,7 @@ private:
 		EvaluateAndSendTaskData() : runtime(nullptr) {}
 
 		Common::SharedPtr<MiniscriptThread> thread;
+		Common::WeakPtr<RuntimeObject> triggerSource;
 		Runtime *runtime;
 		DynamicValue incomingData;
 	};
@@ -626,6 +627,7 @@ private:
 	DynamicValue _incomingData;
 
 	Common::SharedPtr<ScheduledEvent> _scheduledEvent;
+	Common::WeakPtr<RuntimeObject> _triggerSource;
 };
 
 class BoundaryDetectionMessengerModifier : public Modifier, public IBoundaryDetector {
@@ -676,6 +678,7 @@ private:
 	Runtime *_runtime;
 	bool _isActive;
 	DynamicValue _incomingData;
+	Common::WeakPtr<RuntimeObject> _triggerSource;
 };
 
 class CollisionDetectionMessengerModifier : public Modifier, public ICollider {
@@ -725,6 +728,7 @@ private:
 	bool _isActive;
 
 	DynamicValue _incomingData;
+	Common::WeakPtr<RuntimeObject> _triggerSource;
 };
 
 class KeyboardMessengerModifier : public Modifier {
