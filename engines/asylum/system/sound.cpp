@@ -76,8 +76,24 @@ void Sound::playSound(ResourceId resourceId, bool looping, int32 volume, int32 p
 	// Original sets position back to 0
 	_mixer->stopHandle(item->handle);
 
+	Audio::Mixer::SoundType soundType;
+	switch (RESOURCE_PACK(resourceId)) {
+	case kResourcePackShared:
+		soundType = Audio::Mixer::kPlainSoundType;
+		break;
+
+	case kResourcePackSpeech:
+	case kResourcePackSharedSound:
+		soundType = Audio::Mixer::kSpeechSoundType;
+		break;
+
+	default:
+		soundType = Audio::Mixer::kSFXSoundType;
+		break;
+	}
+
 	ResourceEntry *resource = getResource()->get(resourceId);
-	playSoundData(Audio::Mixer::kSFXSoundType, &item->handle, resource->data, resource->size, looping, volume, panning);
+	playSoundData(soundType, &item->handle, resource->data, resource->size, looping, volume, panning);
 }
 
 void Sound::playMusic(ResourceId resourceId, int32 volume) {
