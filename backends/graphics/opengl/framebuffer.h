@@ -148,7 +148,7 @@ public:
 	void setDimensions(uint width, uint height);
 
 protected:
-	virtual void activateInternal();
+	void activateInternal() override;
 };
 
 #if !USE_FORCED_GLES
@@ -163,7 +163,7 @@ class GLTexture;
 class TextureTarget : public Framebuffer {
 public:
 	TextureTarget();
-	virtual ~TextureTarget();
+	~TextureTarget() override;
 
 	/**
 	 * Notify that the GL context is about to be destroyed.
@@ -186,7 +186,7 @@ public:
 	GLTexture *getTexture() const { return _texture; }
 
 protected:
-	virtual void activateInternal();
+	void activateInternal() override;
 
 private:
 	GLTexture *_texture;
