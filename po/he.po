@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-30 11:34+0000\n"
+"POT-Creation-Date: 2022-10-31 01:44+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -5923,50 +5923,50 @@ msgstr ""
 "המשחק. ScummVM לא יכול לעשות זאת ו\n"
 "האתר כבר לא קיים."
 
-#: engines/mtropolis/detection.cpp:44
+#: engines/mtropolis/detection.cpp:45
 msgid "16:9 widescreen mod"
 msgstr "טלאי מסך רחב 16:9"
 
-#: engines/mtropolis/detection.cpp:45
+#: engines/mtropolis/detection.cpp:46
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
 msgstr ""
 "הסרת מעטפות והזזת אלמנטים תצוגתיים, כדי לשפר את הכיסוי עבור תצוגות מסך רחב"
 
-#: engines/mtropolis/detection.cpp:55
+#: engines/mtropolis/detection.cpp:56
 msgid "Improved music mixing"
 msgstr "עיבוד מוזיקה משופר"
 
-#: engines/mtropolis/detection.cpp:56
+#: engines/mtropolis/detection.cpp:57
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
 msgstr ""
 "הפעלת מערבל MIDI דינמי, האיכות משופרת, אך ההתנהגות פחות דומה לנגן mTropolis ."
 
-#: engines/mtropolis/detection.cpp:66
+#: engines/mtropolis/detection.cpp:67
 msgid "Autosave at progress points"
 msgstr "שמירה אוטומטית בנקודות התקדמות"
 
-#: engines/mtropolis/detection.cpp:67
+#: engines/mtropolis/detection.cpp:68
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr "שמירה אוטומטית בסיום חידות ופרקים."
 
-#: engines/mtropolis/detection.cpp:77
+#: engines/mtropolis/detection.cpp:78
 msgid "Enable short transitions"
 msgstr "הפעלת מעברים קצרים"
 
-#: engines/mtropolis/detection.cpp:78
+#: engines/mtropolis/detection.cpp:79
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr "הפעלת מעברים שנקבעו לקצב מרבי במקום דילוג עליהם."
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:89
 msgid "Enable subtitles for important sound effects"
 msgstr "הפעלת כתוביות עבור אפקטים קוליים חשובים"
 
-#: engines/mtropolis/detection.cpp:89
+#: engines/mtropolis/detection.cpp:90
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -5974,11 +5974,11 @@ msgstr ""
 "הפעלת כתוביות עבור אפקטים קוליים חשובים.  זה עשוי להפחית את רמת הקושי של "
 "חידות ומשחקונים שתלויים בזיהוי קולי."
 
-#: engines/mtropolis/detection.cpp:99
+#: engines/mtropolis/detection.cpp:100
 msgid "Start with debugger"
 msgstr "הפעלה עם ניפוי תקלים"
 
-#: engines/mtropolis/detection.cpp:100
+#: engines/mtropolis/detection.cpp:101
 msgid "Starts with the debugger dashboard active."
 msgstr "התחלה עם לוח ניפוי תקלים פעיל."
 

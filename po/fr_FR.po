@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.8.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-30 11:34+0000\n"
+"POT-Creation-Date: 2022-10-31 01:44+0000\n"
 "PO-Revision-Date: 2022-10-27 16:30+0000\n"
 "Last-Translator: Purple T <ZEONK@hotmail.com>\n"
 "Language-Team: French <https://translations.scummvm.org/projects/scummvm/"
@@ -6129,11 +6129,11 @@ msgstr ""
 "acheter le jeu. ScummVM ne peut pas faire ça \n"
 "et le site web n'existe plus."
 
-#: engines/mtropolis/detection.cpp:44
+#: engines/mtropolis/detection.cpp:45
 msgid "16:9 widescreen mod"
 msgstr "mode 16:9 écran large"
 
-#: engines/mtropolis/detection.cpp:45
+#: engines/mtropolis/detection.cpp:46
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
@@ -6141,11 +6141,11 @@ msgstr ""
 "Supprime le format Letterbox et déplace certains éléments affichés, "
 "améliorant ainsi la couverture sur les écrans larges"
 
-#: engines/mtropolis/detection.cpp:55
+#: engines/mtropolis/detection.cpp:56
 msgid "Improved music mixing"
 msgstr "Amélioration du mixage des musiques"
 
-#: engines/mtropolis/detection.cpp:56
+#: engines/mtropolis/detection.cpp:57
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
@@ -6153,32 +6153,32 @@ msgstr ""
 "Active le mélangeur MIDI dynamique, améliorant la qualité, mais se "
 "comportant moins comme le lecteur mTropolis."
 
-#: engines/mtropolis/detection.cpp:66
+#: engines/mtropolis/detection.cpp:67
 msgid "Autosave at progress points"
 msgstr "Sauvegarde auto aux stades de progression"
 
-#: engines/mtropolis/detection.cpp:67
+#: engines/mtropolis/detection.cpp:68
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 "Sauvegarde automatiquement la partie après avoir terminé les énigmes et les "
 "chapitres."
 
-#: engines/mtropolis/detection.cpp:77
+#: engines/mtropolis/detection.cpp:78
 msgid "Enable short transitions"
 msgstr "Activer les transitions courtes"
 
-#: engines/mtropolis/detection.cpp:78
+#: engines/mtropolis/detection.cpp:79
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 "Active les transitions qui sont réglées sur le rythme maximum au lieu de les "
 "ignorer."
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:89
 msgid "Enable subtitles for important sound effects"
 msgstr "Activer les sous-titres pour les effets sonores importants"
 
-#: engines/mtropolis/detection.cpp:89
+#: engines/mtropolis/detection.cpp:90
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -6187,11 +6187,11 @@ msgstr ""
 "réduire la difficulté des puzzles et mini-jeux basés sur la reconnaissance "
 "des sons."
 
-#: engines/mtropolis/detection.cpp:99
+#: engines/mtropolis/detection.cpp:100
 msgid "Start with debugger"
 msgstr "Démarrer avec le débogueur"
 
-#: engines/mtropolis/detection.cpp:100
+#: engines/mtropolis/detection.cpp:101
 msgid "Starts with the debugger dashboard active."
 msgstr "Démarre avec le panneau de débogage activé."
 
