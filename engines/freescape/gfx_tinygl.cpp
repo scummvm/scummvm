@@ -140,7 +140,7 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 
 void TinyGLRenderer::renderCrossair(byte color, const Common::Point position) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
+	readFromPalette(color, r, g, b); // TODO: should use opposite color
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();
@@ -167,7 +167,7 @@ void TinyGLRenderer::renderCrossair(byte color, const Common::Point position) {
 
 void TinyGLRenderer::renderShoot(byte color, const Common::Point position) {
 	uint8 r, g, b;
-	_palette->getRGBAt(color, r, g, b); // TODO: should use opposite color
+	readFromPalette(color, r, g, b); // TODO: should use opposite color
 
 	tglMatrixMode(TGL_PROJECTION);
 	tglLoadIdentity();

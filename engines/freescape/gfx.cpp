@@ -20,12 +20,9 @@
  */
 
 #include "common/config-manager.h"
+
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
-#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-#include "graphics/opengl/context.h"
-#endif
-
 #include "engines/util.h"
 #include "math/glmath.h"
 
@@ -49,12 +46,10 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH, Common::RenderMode
 
 Renderer::~Renderer() {}
 
-Graphics::Surface *Renderer::convertFromPalette(Graphics::PixelBuffer *rawsurf) {
-	Graphics::Surface *surf = new Graphics::Surface();
-	surf->create(_screenW, _screenH, _originalPixelFormat);
-	surf->copyRectToSurface(rawsurf->getRawBuffer(), surf->w, 0, 0, surf->w, surf->h);
-	surf->convertToInPlace(_currentPixelFormat, _palette->getRawBuffer());
-	return surf;
+void Renderer::readFromPalette(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
+	r = _palette[3 * index + 0];
+	g = _palette[3 * index + 1];
+	b = _palette[3 * index + 2];
 }
 
 bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
@@ -63,12 +58,12 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		return false;
 
 	if (index == 0) {
-		_palette->getRGBAt(0, r, g, b);
+		readFromPalette(0, r, g, b);
 		return true;
 	}
 
 	if (_renderMode == Common::kRenderAmiga || _renderMode == Common::kRenderAtariST) {
-		_palette->getRGBAt(index, r, g, b);
+		readFromPalette(index, r, g, b);
 		return true;
 	}
 
@@ -80,7 +75,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		byte be = *entry;
 		if (be != 0 && be != 0xff) {
 			// TODO: fix colors for non-DOS releases
-			_palette->getRGBAt(index, r, g, b);
+			readFromPalette(index, r, g, b);
 			return true;
 		}
 
@@ -91,7 +86,7 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 		entry++;
 	}
 	assert(color < 16);
-	_palette->getRGBAt(color, r, g, b);
+	readFromPalette(color, r, g, b);
 	return true;
 }
 
@@ -104,50 +99,19 @@ void Renderer::computeScreenViewport() {
 }
 
 Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
-	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL;  // Graphics::parseRendererTypeCode(rendererConfig);
-	Graphics::RendererType matchingRendererType = Graphics::kRendererTypeTinyGL; // Graphics::getBestMatchingAvailableRendererType(desiredRendererType);
+	// This code will allow different renderers, but right now, it only support TinyGL
+	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL;
 
-	bool isAccelerated = 0; // matchingRendererType != Graphics::kRendererTypeTinyGL;
+	initGraphics(screenW, screenH, &pixelFormat);
 
-	if (isAccelerated) {
-		initGraphics3d(screenW, screenH);
-	} else {
-		initGraphics(screenW, screenH, &pixelFormat);
-	}
-
-	/*#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
-		bool backendCapableOpenGL = g_system->hasFeature(OSystem::kFeatureOpenGLForGame);
-	#endif
-
-	#if defined(USE_OPENGL_GAME)
-		// Check the OpenGL context actually supports shaders
-		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders && !OpenGLContext.shadersSupported) {
-			matchingRendererType = Graphics::kRendererTypeOpenGL;
-		}
-	#endif*/
-
-	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
-		// Display a warning if unable to use the desired renderer
-		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
-	}
-	/*
-	#if defined(USE_GLES2) || defined(USE_OPENGL_SHADERS)
-		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGLShaders) {
-			return CreateGfxOpenGLShader(system);
-		}
-	#endif
-	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
-		if (backendCapableOpenGL && matchingRendererType == Graphics::kRendererTypeOpenGL) {
-			return CreateGfxOpenGL(system);
-		}
-	#endif*/
-	if (matchingRendererType == Graphics::kRendererTypeTinyGL) {
+	#if defined(USE_TINYGL)
+	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
 		return CreateGfxTinyGL(system, screenW, screenH, renderMode);
 	}
+	#endif
 
-	error("Unable to create a '%s' renderer", rendererConfig.c_str());
+	error("Unable to create a renderer");
 }
 
 } // End of namespace Freescape
