@@ -109,7 +109,7 @@ void Unlock::charSelected(uint charIndex) {
 
 		if (val < c._v6c) {
 			g_maps->_currentState =
-				g_maps->_currentMap->_walls[g_maps->_mapOffset] ^=
+				g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
 				g_maps->_forwardMask & 0x55;
 
 			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
@@ -120,7 +120,7 @@ void Unlock::charSelected(uint charIndex) {
 
 		} else {
 			g_maps->_currentState =
-				g_maps->_currentMap->_walls[g_maps->_mapOffset] ^=
+				g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
 				g_maps->_forwardMask & 0x55;
 			// TODO
 			warning("TODO: Darts triggered");
