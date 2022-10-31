@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef FREESCAPE_GFX_TINYGL_H_
-#define FREESCAPE_GFX_TINYGL_H_
+#ifndef FREESCAPE_GFX_TINYGL_H
+#define FREESCAPE_GFX_TINYGL_H
 
 #include "common/rect.h"
 #include "math/vector3d.h"
@@ -60,4 +60,4 @@ public:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_GFX_TINYGL_H

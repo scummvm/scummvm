@@ -66,4 +66,4 @@ private:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_GEOMETRICOBJECT_H

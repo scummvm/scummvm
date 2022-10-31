@@ -352,4 +352,4 @@ extern FreescapeEngine *g_freescape;
 
 } // namespace Freescape
 
-#endif
+#endif // FREESCAPE_H

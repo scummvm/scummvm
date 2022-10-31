@@ -85,4 +85,4 @@ public:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_OBJECT_H

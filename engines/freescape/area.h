@@ -82,4 +82,4 @@ private:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_AREA_H

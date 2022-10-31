@@ -46,4 +46,4 @@ public:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_SENSOR_H

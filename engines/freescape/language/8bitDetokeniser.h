@@ -42,4 +42,4 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_8BITDETOKENIZER_H

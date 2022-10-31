@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef FREESCAPE_GLOB_H
-#define FREESCAPE_GLOB_H
+#ifndef FREESCAPE_GLOBAL_H
+#define FREESCAPE_GLOBAL_H
 
 #include "freescape/objects/object.h"
 
@@ -36,4 +36,4 @@ public:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_GLOBAL_H
