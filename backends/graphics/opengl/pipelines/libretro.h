@@ -56,8 +56,6 @@ public:
 
 	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
 
-	void setOutputSize(uint outputWidth, uint outputHeight);
-
 	bool open(const Common::FSNode &shaderPreset);
 	void close();
 
@@ -88,7 +86,6 @@ private:
 	uint _inputWidth;
 	uint _inputHeight;
 
-	bool _outputSizeChanged;
 	uint _outputWidth;
 	uint _outputHeight;
 
