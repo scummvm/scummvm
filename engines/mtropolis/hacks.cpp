@@ -40,6 +40,7 @@ Hacks::Hacks() {
 	removeQuickTimeEdits = false;
 	midiVolumeScale = 256;
 	minTransitionDuration = 0;
+	ignoreMToonMaintainRateFlag = false;
 }
 
 Hacks::~Hacks() {
@@ -1016,6 +1017,17 @@ Common::SharedPtr<ISaveWriter> ObsidianSaveLoadMechanism::createSaveWriter(Runti
 void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks) {
 	Common::SharedPtr<ObsidianSaveLoadMechanism> mechanism(new ObsidianSaveLoadMechanism());
 	hacks.addSaveLoadMechanismHooks(mechanism);
+}
+
+void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks) {
+	// MTI uses a lot of "maintain rate" mToons at 10Hz.  This means their frame timer resets on every frame advance, and
+	// is supposed to ensure that the mToon plays back at a smooth rate regardless of clock jitter.  Unfortunately, it
+	// does this with mToons that are synchronized to sounds, which is bad!  Presumably the reason this wasn't a problem
+	// is because MacOS runs with a 60Hz tick clock so it always divides evenly into the frame rate, and Windows... not sure.
+	//
+	// Anyway, there are two possible solutions to this: Lock the clock to 60Hz, or ignore the flag.
+	// Given that the flag should not be set, we ignore the flag.
+	hacks.ignoreMToonMaintainRateFlag = true;
 }
 
 } // End of namespace HackSuites
