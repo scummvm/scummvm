@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef IMAGE_NEO_H
-#define IMAGE_NEO_H
+#ifndef FREESCAPE_NEO_H
+#define FREESCAPE_NEO_H
 
 #include "common/scummsys.h"
 #include "common/str.h"
@@ -56,4 +56,4 @@ private:
 };
 } // End of namespace Image
 
-#endif
+#endif // FREESCAPE_NEO_H

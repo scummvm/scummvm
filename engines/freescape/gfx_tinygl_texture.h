@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef GFX_TINYGL_TEXTURE_H
-#define GFX_TINYGL_TEXTURE_H
+#ifndef FREESCAPE_GFX_TINYGL_TEXTURE_H
+#define FREESCAPE_GFX_TINYGL_TEXTURE_H
 
 #include "graphics/surface.h"
 #include "graphics/tinygl/zgl.h"
@@ -50,4 +50,4 @@ private:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_GFX_TINYGL_TEXTURE_H

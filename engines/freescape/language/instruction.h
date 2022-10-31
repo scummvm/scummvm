@@ -56,4 +56,4 @@ private:
 
 } // End of namespace Freescape
 
-#endif
+#endif // FREESCAPE_INSTRUCTION_H
