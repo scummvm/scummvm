@@ -154,25 +154,25 @@ void Backbuffer::setDimensions(uint width, uint height) {
 	_viewport[3] = height;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / width;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix(0, 0) =  2.0f / width;
+	_projectionMatrix(0, 1) =  0.0f;
+	_projectionMatrix(0, 2) =  0.0f;
+	_projectionMatrix(0, 3) =  0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] = -2.0f / height;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix(1, 0) =  0.0f;
+	_projectionMatrix(1, 1) = -2.0f / height;
+	_projectionMatrix(1, 2) =  0.0f;
+	_projectionMatrix(1, 3) =  0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix(2, 0) =  0.0f;
+	_projectionMatrix(2, 1) =  0.0f;
+	_projectionMatrix(2, 2) =  0.0f;
+	_projectionMatrix(2, 3) =  0.0f;
 
-	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] =  1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix(3, 0) = -1.0f;
+	_projectionMatrix(3, 1) =  1.0f;
+	_projectionMatrix(3, 2) =  0.0f;
+	_projectionMatrix(3, 3) =  1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {
@@ -240,25 +240,25 @@ bool TextureTarget::setSize(uint width, uint height) {
 	_viewport[3] = texHeight;
 
 	// Setup orthogonal projection matrix.
-	_projectionMatrix[ 0] =  2.0f / texWidth;
-	_projectionMatrix[ 1] =  0.0f;
-	_projectionMatrix[ 2] =  0.0f;
-	_projectionMatrix[ 3] =  0.0f;
+	_projectionMatrix(0, 0) =  2.0f / texWidth;
+	_projectionMatrix(0, 1) =  0.0f;
+	_projectionMatrix(0, 2) =  0.0f;
+	_projectionMatrix(0, 3) =  0.0f;
 
-	_projectionMatrix[ 4] =  0.0f;
-	_projectionMatrix[ 5] =  2.0f / texHeight;
-	_projectionMatrix[ 6] =  0.0f;
-	_projectionMatrix[ 7] =  0.0f;
+	_projectionMatrix(1, 0) =  0.0f;
+	_projectionMatrix(1, 1) =  2.0f / texHeight;
+	_projectionMatrix(1, 2) =  0.0f;
+	_projectionMatrix(1, 3) =  0.0f;
 
-	_projectionMatrix[ 8] =  0.0f;
-	_projectionMatrix[ 9] =  0.0f;
-	_projectionMatrix[10] =  0.0f;
-	_projectionMatrix[11] =  0.0f;
+	_projectionMatrix(2, 0) =  0.0f;
+	_projectionMatrix(2, 1) =  0.0f;
+	_projectionMatrix(2, 2) =  0.0f;
+	_projectionMatrix(2, 3) =  0.0f;
 
-	_projectionMatrix[12] = -1.0f;
-	_projectionMatrix[13] = -1.0f;
-	_projectionMatrix[14] =  0.0f;
-	_projectionMatrix[15] =  1.0f;
+	_projectionMatrix(3, 0) = -1.0f;
+	_projectionMatrix(3, 1) = -1.0f;
+	_projectionMatrix(3, 2) =  0.0f;
+	_projectionMatrix(3, 3) =  1.0f;
 
 	// Directly apply changes when we are active.
 	if (isActive()) {

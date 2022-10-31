@@ -33,7 +33,7 @@ public:
 
 	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords);
 
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix);
+	virtual void setProjectionMatrix(const Math::Matrix4 &projectionMatrix);
 
 protected:
 	virtual void activateInternal();

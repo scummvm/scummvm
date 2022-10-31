@@ -87,10 +87,8 @@ void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordi
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
-void ShaderPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
-	Math::Matrix4 m4;
-	m4.setData(projectionMatrix);
-	_activeShader->setUniform("projection", m4);
+void ShaderPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
+	_activeShader->setUniform("projection", projectionMatrix);
 }
 #endif // !USE_FORCED_GLES
 
