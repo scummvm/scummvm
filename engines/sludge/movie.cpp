@@ -39,7 +39,7 @@ int initMovieSound(int f, ALenum format, int audioChannels, ALuint samplerate,
 		ALuint(*callback)(void *userdata, ALubyte *data, ALuint bytes));
 #endif
 
-MovieStates movieIsPlaying = nothing;
+MovieStates movieIsPlaying = kMovieNothing;
 
 int movieIsEnding = 0;
 
@@ -334,8 +334,8 @@ int playMovie(int fileNumber) {
 	Common::SeekableReadStream *stream = g_sludge->_resMan->getData();
 	Common::SeekableSubReadStream video(stream, stream->pos(), stream->pos() + fsize);
 
-	decoder.loadStream(&video);
-
+	if (decoder.loadStream(&video))
+		movieIsPlaying = kMoviePlaying;
 
 	while (movieIsPlaying) {
 		g_sludge->_evtMan->checkInput();
@@ -553,7 +553,7 @@ int playMovie(int fileNumber) {
 
 	setMovieViewport();
 
-	movieIsPlaying = playing;
+	movieIsPlaying = kMoviePlaying;
 	movieIsEnding = 0;
 
 	glDepthMask(GL_FALSE);
@@ -835,7 +835,7 @@ int playMovie(int fileNumber) {
 
 		bool videoUpdated = false;
 		// Get a video frame.
-		if (movieIsPlaying == playing) {
+		if (movieIsPlaying == kMoviePlaying) {
 
 			videoBuffers *vB;
 			// Do we have decoded video waiting?
@@ -892,12 +892,12 @@ int playMovie(int fileNumber) {
 				}
 			} else if (movieIsEnding) {
 				// We have reached the end of the movie.
-				movieIsPlaying = nothing;
+				movieIsPlaying = kMovieNothing;
 			}
 		}
 
 		// Update the screen if there's new video, or if we're paused
-		if (videoUpdated || movieIsPlaying == paused) {
+		if (videoUpdated || movieIsPlaying == kMoviePaused) {
 			// Clear The Screen
 			glClear(GL_COLOR_BUFFER_BIT);
 
@@ -919,7 +919,7 @@ int playMovie(int fileNumber) {
 
 			glUseProgram(0);
 
-			if (movieIsPlaying == paused) {
+			if (movieIsPlaying == kMoviePaused) {
 				pausefade -= 1.0 / 24;
 				if (pausefade < -1.0) pausefade = 1.0;
 
@@ -954,7 +954,7 @@ int playMovie(int fileNumber) {
 	// Cleanup
 	glBindFramebuffer(GL_FRAMEBUFFER, old_fbo);
 
-	movieIsPlaying = nothing;
+	movieIsPlaying = kMovieNothing;
 	for (int i = 0; i < 10; i++)
 		Wait_Frame();
 	huntKillFreeSound(fileNumber);
@@ -1002,22 +1002,22 @@ int playMovie(int fileNumber) {
 
 int stopMovie() {
 	int r = movieIsPlaying;
-	movieIsPlaying = nothing;
+	movieIsPlaying = kMovieNothing;
 	return r;
 }
 
 int pauseMovie() {
 #if 0
-	if (movieIsPlaying == playing) {
+	if (movieIsPlaying == kMoviePlaying) {
 		ALuint source = getSoundSource(movieAudioIndex);
 		if (source) {
 
 			alurePauseSource(source);
 
 		}
-		movieIsPlaying = paused;
+		movieIsPlaying = kMoviePaused;
 		fprintf(stderr, "** Pausing **\n");
-	} else if (movieIsPlaying == paused) {
+	} else if (movieIsPlaying == kMoviePaused) {
 		ALuint source = getSoundSource(movieAudioIndex);
 		if (source) {
 
@@ -1025,7 +1025,7 @@ int pauseMovie() {
 
 		}
 		fprintf(stderr, "** Restarted movie ** sound: %d source: %d\n", movieSoundPlaying, source);
-		movieIsPlaying = playing;
+		movieIsPlaying = kMoviePlaying;
 	}
 #endif
 	return movieIsPlaying;
