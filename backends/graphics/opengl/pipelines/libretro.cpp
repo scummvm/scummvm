@@ -180,7 +180,7 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	_frameCount++;
 }
 
-void LibRetroPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
+void LibRetroPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
 	if (_applyProjectionChanges) {
 		ShaderPipeline::setProjectionMatrix(projectionMatrix);
 	}
@@ -489,9 +489,7 @@ bool LibRetroPipeline::setupFBOs() {
 		pass.vertexCoord[7] = (uint)sourceH;
 
 		// Set projection matrix in passes's shader.
-		Math::Matrix4 m4;
-		m4.setData(pass.target->getProjectionMatrix());
-		pass.shader->setUniform("MVPMatrix", m4);
+		pass.shader->setUniform("MVPMatrix", pass.target->getProjectionMatrix());
 	}
 	return true;
 }

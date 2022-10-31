@@ -24,6 +24,8 @@
 
 #include "graphics/opengl/system_headers.h"
 
+#include "math/matrix4.h"
+
 namespace OpenGL {
 
 /**
@@ -82,14 +84,14 @@ public:
 	/**
 	 * Obtain projection matrix of the framebuffer.
 	 */
-	const GLfloat *getProjectionMatrix() const { return _projectionMatrix; }
+	const Math::Matrix4 &getProjectionMatrix() const { return _projectionMatrix; }
 protected:
 	bool isActive() const { return _isActive; }
 
 	GLint _viewport[4];
 	void applyViewport();
 
-	GLfloat _projectionMatrix[4*4];
+	Math::Matrix4 _projectionMatrix;
 	void applyProjectionMatrix();
 
 	/**

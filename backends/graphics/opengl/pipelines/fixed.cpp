@@ -54,13 +54,13 @@ void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordin
 	GL_CALL(glDrawArrays(GL_TRIANGLE_STRIP, 0, 4));
 }
 
-void FixedPipeline::setProjectionMatrix(const GLfloat *projectionMatrix) {
+void FixedPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix) {
 	if (!isActive()) {
 		return;
 	}
 
 	GL_CALL(glMatrixMode(GL_PROJECTION));
-	GL_CALL(glLoadMatrixf(projectionMatrix));
+	GL_CALL(glLoadMatrixf(projectionMatrix.getData()));
 
 	GL_CALL(glMatrixMode(GL_MODELVIEW));
 	GL_CALL(glLoadIdentity());

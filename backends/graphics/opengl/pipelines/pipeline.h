@@ -26,6 +26,8 @@
 
 #include "backends/graphics/opengl/texture.h"
 
+#include "math/matrix4.h"
+
 namespace OpenGL {
 
 class Framebuffer;
@@ -127,7 +129,7 @@ public:
 	 *
 	 * This is intended to be only ever be used by Framebuffer subclasses.
 	 */
-	virtual void setProjectionMatrix(const GLfloat *projectionMatrix) = 0;
+	virtual void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) = 0;
 
 protected:
 	/**
