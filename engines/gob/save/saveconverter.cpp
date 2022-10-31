@@ -217,7 +217,7 @@ SavePartVars *SaveConverter::readVars(Common::SeekableReadStream &stream,
 	SavePartVars *vars = new SavePartVars(_vm, count);
 
 	// Read variables into part
-	if (!vars->readFromRaw(data, count)) {
+	if (!vars->readFromRaw(data, 0, count)) {
 		delete[] data;
 		delete vars;
 		return nullptr;

@@ -775,6 +775,33 @@ bool SaveLoad_v7::SpriteHandler::save(int16 dataVar, int32 size, int32 offset)
 	return writer.writePart(0, _sprite);
 }
 
+bool SaveLoad_v7::SpriteHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveReader reader(1, 0, fileName);
+	if (!reader.load())
+		return false;
+
+	if (!reader.readPart(0, _sprite))
+		return false;
+
+	return TempSpriteHandler::loadToRaw(ptr, size, offset);
+}
+
+bool SaveLoad_v7::SpriteHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
+	if (!TempSpriteHandler::saveFromRaw(ptr, size, offset))
+		return false;
+
+	Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	SaveWriter writer(1, 0, fileName);
+	return writer.writePart(0, _sprite);
+}
+
 SaveLoad_v7::GameFileHandler::File::File(GobEngine *vm, const Common::String &base, const Common::String &ext) :
 SlotFileStatic(vm, base, ext) {
 }
@@ -842,7 +869,7 @@ bool SaveLoad_v7::GameFileHandler::load(int16 dataVar, int32 size, int32 offset)
 	return true;
 }
 
-bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset) {
+bool SaveLoad_v7::GameFileHandler::save(const byte *ptrRaw, int16 dataVar, int32 size, int32 offset) {
 	Common::String fileName = _file.build();
 	if (fileName.empty())
 		return false;
@@ -883,15 +910,63 @@ bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset)
 			}
 
 			// Copy data from temporary SavePartVars object to the real one
-			vars.partialReadFromRaw(vars_from_file.data(), fileSize);
+			vars.readFromRaw(vars_from_file.data(), 0, fileSize);
 		}
 	}
 
 	SaveWriter writer(1, 0, fileName);
-	if (!vars.readFrom((uint16) dataVar, offset, size))
-		return false;
+	if (ptrRaw) {
+		// Write data from raw pointer
+		vars.readFromRaw(ptrRaw, offset, size);
+	} else {
+		// Write data from variables
+		if (!vars.readFrom((uint16) dataVar, offset, size))
+			return false;
+	}
 
 	return writer.writePart(0, &vars);
+}
+
+bool SaveLoad_v7::GameFileHandler::save(int16 dataVar, int32 size, int32 offset) {
+	return save(nullptr, dataVar, size, offset);
+}
+
+bool SaveLoad_v7::GameFileHandler::loadToRaw(byte *ptr, int32 size, int32 offset) {
+Common::String fileName = _file.build();
+	if (fileName.empty())
+		return false;
+
+	if (size == 0) {
+		uint32 varSize = SaveHandler::getVarSize(_vm);
+		// Indicator to load all variables
+		size = (int32) varSize;
+	}
+
+	int32 fileSize = getSize();
+	if (fileSize < 0)
+		return false;
+
+	SaveReader reader(1, 0, fileName);
+	SavePartVars vars(_vm, fileSize);
+
+	if (!reader.load()) {
+		return false;
+	}
+
+	if (!reader.readPart(0, &vars)) {
+		return false;
+	}
+
+	if (!vars.writeIntoRaw(ptr, offset, size)) {
+		return false;
+	}
+
+	return true;
+}
+
+
+bool SaveLoad_v7::GameFileHandler::saveFromRaw(const byte *ptr, int32 size, int32 offset) {
+	return save(ptr, 0, size, offset);
 }
 
 SaveLoad_v7::SaveLoad_v7(GobEngine *vm, const char *targetName) :
