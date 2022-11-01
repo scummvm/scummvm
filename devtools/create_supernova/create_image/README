@@ -6,7 +6,7 @@ so it could easily generate nonsense without any warning if for example command 
 arguments aren't as expected.
 
 To use this tool create a folder named as the number of the datafile you want to
-create, it should be 3 characters long, add required numbers of zeros to the begining
+create, it should be 3 characters long, add required numbers of zeros to the beginning
 of the name (015 for ms2_data.015).
 
 Inside this folder should be:
@@ -77,7 +77,7 @@ The tool needs 3 comand line arguments when running it:
 -- Prefix of the file to be created (use "ms2_data" to create "ms2_data.###")
 -- Number of the file to be created and also the number of a folder to read all the
 files from (use "15" to create prefix.015)
--- Number of bytes to skip in each .bmp file. At the begining of each .bmp file is
+-- Number of bytes to skip in each .bmp file. At the beginning of each .bmp file is
 a header with information about the file and after that is stored the palette. This
 tool doesn't need these, so this number says how many bytes to skip to get to the pixel
 data. For example: use 1146 to generate ms2_data.015 from the files included.
