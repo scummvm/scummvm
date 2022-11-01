@@ -393,15 +393,22 @@ void GuiManager::redraw() {
 			// This case is an optimization to avoid redrawing the whole dialog
 			// stack when opening a new dialog.
 
-			_theme->drawToBackbuffer();
+			if (_displayTopDialogOnly) {
+				// When displaying only the top dialog clear the screen
+				if (_redrawStatus == kRedrawOpenDialog) {
+					_theme->clearAll();
+					_theme->drawToBackbuffer();
+				}
+			} else {
+				_theme->drawToBackbuffer();
 
-			if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
-				Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
-				previousDialog->drawDialog(kDrawLayerForeground);
-			}
+				if (_redrawStatus == kRedrawOpenDialog && _dialogStack.size() > 1) {
+					Dialog *previousDialog = _dialogStack[_dialogStack.size() - 2];
+					previousDialog->drawDialog(kDrawLayerForeground);
+				}
 
-			if (!_displayTopDialogOnly)
 				_theme->applyScreenShading(shading);
+			}
 
 			_dialogStack.top()->drawDialog(kDrawLayerBackground);
 
