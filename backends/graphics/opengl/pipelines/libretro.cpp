@@ -228,6 +228,8 @@ void LibRetroPipeline::close() {
 
 	delete _shaderPreset;
 	_shaderPreset = nullptr;
+
+	_isAnimated = false;
 }
 
 static Common::FSNode getChildRecursive(const Common::FSNode &basePath, const Common::String &fileName) {
