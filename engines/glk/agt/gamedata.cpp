@@ -323,8 +323,8 @@ const opdef illegal_def = a(ILLEGAL);
    The last table entry is now marked by a new value of -1.*/
 
 /* Versions of the command set:
-	v1.21 apparantly has a compatible command set w/ 1.7 (!)
-	  [except that their maxcmd is apparantly 22, not 30]
+	v1.21 apparently has a compatible command set w/ 1.7 (!)
+	  [except that their maxcmd is apparently 22, not 30]
 	1.0 doesn't; it seems to have an EOC code of 154, as opposed to
 	165 or so.
 	1.18 seems to be slightly different from 1.7, but seemingly only
