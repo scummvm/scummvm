@@ -281,7 +281,23 @@ void LibRetroPipeline::finishScaling() {
 	_outputPipeline.setFramebuffer(_activeFramebuffer);
 	_outputPipeline.activate();
 
-	_outputPipeline.drawTexture(*_passes[_passes.size() - 1].target->getTexture(), _outputRect.left, _outputRect.top, _outputRect.width(), _outputRect.height());
+	/* In retroarch, the shader directly draws on the backbuffer while we drew on a texture
+	 * so everything is flipped when we draw this texture.
+	 * Use custom coordinates to do the flipping. */
+	GLfloat coordinates[4*2];
+	coordinates[0] = _outputRect.left;
+	coordinates[1] = _outputRect.bottom;
+
+	coordinates[2] = _outputRect.right;
+	coordinates[3] = _outputRect.bottom;
+
+	coordinates[4] = _outputRect.left;
+	coordinates[5] = _outputRect.top;
+
+	coordinates[6] = _outputRect.right;
+	coordinates[7] = _outputRect.top;
+
+	_outputPipeline.drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates);
 
 	_needsScaling = false;
 }
@@ -612,17 +628,35 @@ bool LibRetroPipeline::setupFBOs() {
 		}
 
 		// Store draw coordinates.
-		pass.vertexCoord[0] = 0;
-		pass.vertexCoord[1] = 0;
+		/* RetroArch draws the last pass directly on FB0 and adapts its vertex coordinates for this.
+		 * We don't se we should not have to take this into account but some shaders (like metacrt) ignore
+		 * the vertex coordinates while drawing and everything gets upside down.
+		 * So we act like RetroArch here and flip the texture when rendering on the output pipeline. */
+		if (i != _passes.size() - 1) {
+			pass.vertexCoord[0] = 0;
+			pass.vertexCoord[1] = 0;
 
-		pass.vertexCoord[2] = (uint)sourceW;
-		pass.vertexCoord[3] = 0;
+			pass.vertexCoord[2] = (uint)sourceW;
+			pass.vertexCoord[3] = 0;
 
-		pass.vertexCoord[4] = 0;
-		pass.vertexCoord[5] = (uint)sourceH;
+			pass.vertexCoord[4] = 0;
+			pass.vertexCoord[5] = (uint)sourceH;
 
-		pass.vertexCoord[6] = (uint)sourceW;
-		pass.vertexCoord[7] = (uint)sourceH;
+			pass.vertexCoord[6] = (uint)sourceW;
+			pass.vertexCoord[7] = (uint)sourceH;
+		} else {
+			pass.vertexCoord[0] = 0;
+			pass.vertexCoord[1] = (uint)sourceH;
+
+			pass.vertexCoord[2] = (uint)sourceW;
+			pass.vertexCoord[3] = (uint)sourceH;
+
+			pass.vertexCoord[4] = 0;
+			pass.vertexCoord[5] = 0;
+
+			pass.vertexCoord[6] = (uint)sourceW;
+			pass.vertexCoord[7] = 0;
+		}
 
 		// Set projection matrix in passes's shader.
 		pass.shader->setUniform("MVPMatrix", pass.target->getProjectionMatrix());
