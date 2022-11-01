@@ -168,10 +168,10 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 		error("MKVDecoder::loadStream(): Segment::Load() failed (%lld).", ret);
 	}
 
-	_tracks = pSegment->GetTracks();
+	pTracks = pSegment->GetTracks();
 
 	unsigned long i = 0;
-	const unsigned long j = _tracks->GetTracksCount();
+	const unsigned long j = pTracks->GetTracksCount();
 
 	warning("Number of tracks: %ld", j);
 
@@ -184,7 +184,7 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	vorbis_comment vorbisComment;
 
 	while (i != j) {
-		const mkvparser::Track *const pTrack = _tracks->GetTrackByIndex(i++);
+		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
 
 		if (pTrack == NULL)
 			continue;
@@ -195,18 +195,16 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 		if (trackType == mkvparser::Track::kVideo && videoTrack < 0) {
 			videoTrack = pTrack->GetNumber();
-			const mkvparser::VideoTrack *const pVideoTrack = static_cast<const mkvparser::VideoTrack *>(pTrack);
 
-			const long long width = pVideoTrack->GetWidth();
-			const long long height = pVideoTrack->GetHeight();
+			_videoTrack = new VPXVideoTrack(pTrack);
 
-			const double rate = pVideoTrack->GetFrameRate();
+			addTrack(_videoTrack);
+			//setRate(_videoTrack->getFrameRate());
 
 #if 0
 			if (rate > 0)
 				Init_Special_Timer(rate); // TODO
 #endif
-			warning("VideoTrack: %lld x %lld @ %g fps", width, height, rate);
 		}
 
 		if (trackType == mkvparser::Track::kAudio && audioTrack < 0) {
@@ -351,7 +349,7 @@ void MKVDecoder::readNextPacket() {
 	const mkvparser::Block *pBlock = pBlockEntry->GetBlock();
 	long long trackNum = pBlock->GetTrackNumber();
 	unsigned long tn = static_cast<unsigned long>(trackNum);
-	const mkvparser::Track *pTrack = _tracks->GetTrackByNumber(tn);
+	const mkvparser::Track *pTrack = pTracks->GetTrackByNumber(tn);
 	long long trackType = pTrack->GetType();
 	int frameCount = pBlock->GetFrameCount();
 	long long time_ns = pBlock->GetTime(_cluster);
@@ -375,7 +373,7 @@ void MKVDecoder::readNextPacket() {
 			pBlock  = pBlockEntry->GetBlock();
 			trackNum = pBlock->GetTrackNumber();
 			tn = static_cast<unsigned long>(trackNum);
-			pTrack = _tracks->GetTrackByNumber(tn);
+			pTrack = pTracks->GetTrackByNumber(tn);
 			trackType = pTrack->GetType();
 			frameCount = pBlock->GetFrameCount();
 			time_ns = pBlock->GetTime(_cluster);
@@ -396,6 +394,8 @@ void MKVDecoder::readNextPacket() {
 		}
 
 		if (trackNum == videoTrack) {
+			warning("MKVDecoder::readNextPacket(): video track");
+
 			theFrame.Read(_reader, frame);
 
 			/* Decode the frame */
@@ -448,6 +448,8 @@ void MKVDecoder::readNextPacket() {
 
 			}
 		} else if (trackNum == audioTrack) {
+			warning("MKVDecoder::readNextPacket(): audio track");
+
 			// Use this Audio Track
 			if (size > 0) {
 				theFrame.Read(_reader, frame);
@@ -550,24 +552,17 @@ void MKVDecoder::readNextPacket() {
 	ensureAudioBufferSize();
 }
 
-MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, th_info &theoraInfo, th_setup_info *theoraSetup) {
-	_theoraDecode = th_decode_alloc(&theoraInfo, theoraSetup);
+MKVDecoder::VPXVideoTrack::VPXVideoTrack(const mkvparser::Track *const pTrack) {
+	const mkvparser::VideoTrack *const pVideoTrack = static_cast<const mkvparser::VideoTrack *>(pTrack);
 
-	if (theoraInfo.pixel_fmt != TH_PF_420)
-		error("Only theora YUV420 is supported");
+	const long long width = pVideoTrack->GetWidth();
+	const long long height = pVideoTrack->GetHeight();
 
-	int postProcessingMax;
-	th_decode_ctl(_theoraDecode, TH_DECCTL_GET_PPLEVEL_MAX, &postProcessingMax, sizeof(postProcessingMax));
-	th_decode_ctl(_theoraDecode, TH_DECCTL_SET_PPLEVEL, &postProcessingMax, sizeof(postProcessingMax));
+	const double rate = pVideoTrack->GetFrameRate();
 
-	_surface.create(theoraInfo.frame_width, theoraInfo.frame_height, format);
+	warning("VideoTrack: %lld x %lld @ %g fps", width, height, rate);
 
-	// Set up a display surface
-	_displaySurface.init(theoraInfo.pic_width, theoraInfo.pic_height, _surface.pitch,
-	                    _surface.getBasePtr(theoraInfo.pic_x, theoraInfo.pic_y), format);
-
-	// Set the frame rate
-	_frameRate = Common::Rational(theoraInfo.fps_numerator, theoraInfo.fps_denominator);
+	_frameRate = 10; // FIXME
 
 	_endOfVideo = false;
 	_nextFrameStartTime = 0.0;
@@ -575,8 +570,6 @@ MKVDecoder::VPXVideoTrack::VPXVideoTrack(const Graphics::PixelFormat &format, th
 }
 
 MKVDecoder::VPXVideoTrack::~VPXVideoTrack() {
-	th_decode_free(_theoraDecode);
-
 	_surface.free();
 	_displaySurface.setPixels(0);
 }
