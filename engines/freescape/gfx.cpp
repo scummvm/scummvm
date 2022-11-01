@@ -108,7 +108,7 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 	}
 	#endif
 
-	GUI::MessageDialog dialog("Unable to create a renderer. Please compile with support for TinyGL");
+	GUI::MessageDialog dialog("No available renderers enabled");
 	// TODO: improve message with other renders
 	dialog.runModal();
 	return nullptr;
