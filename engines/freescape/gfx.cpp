@@ -19,14 +19,11 @@
  *
  */
 
-#include "common/config-manager.h"
-
 #include "gui/message.h"
 #include "graphics/renderer.h"
-#include "graphics/surface.h"
 #include "engines/util.h"
 
-#include "engines/freescape/gfx.h"
+#include "freescape/gfx.h"
 
 namespace Freescape {
 

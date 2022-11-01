@@ -21,12 +21,10 @@
 
 // Based on Phantasma code by Thomas Harte (2013)
 
-#include "common/file.h"
 #include "image/bmp.h"
 
 #include "freescape/freescape.h"
 #include "freescape/language/8bitDetokeniser.h"
-#include "freescape/neo.h"
 #include "freescape/objects/global.h"
 #include "freescape/objects/sensor.h"
 

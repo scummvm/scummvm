@@ -24,8 +24,6 @@
 #ifndef FREESCAPE_TOKEN_H
 #define FREESCAPE_TOKEN_H
 
-#include "common/str.h"
-
 namespace Freescape {
 
 struct Token {

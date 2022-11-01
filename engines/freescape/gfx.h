@@ -25,9 +25,8 @@
 #include "common/rendermode.h"
 #include "common/rect.h"
 
-#include "graphics/tinygl/pixelbuffer.h"
+#include "graphics/pixelformat.h"
 #include "math/frustum.h"
-#include "math/matrix4.h"
 #include "math/vector3d.h"
 
 namespace Freescape {

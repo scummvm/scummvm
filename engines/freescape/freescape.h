@@ -23,13 +23,8 @@
 #define FREESCAPE_H
 
 #include "common/bitarray.h"
-#include "common/random.h"
-#include "common/rendermode.h"
 #include "engines/advancedDetector.h"
-#include "engines/engine.h"
-#include "graphics/palette.h"
 #include "graphics/surface.h"
-#include "graphics/tinygl/pixelbuffer.h"
 
 #include "audio/decoders/wave.h"
 #include "audio/mixer.h"
@@ -39,6 +34,10 @@
 #include "freescape/gfx.h"
 #include "freescape/objects/entrance.h"
 #include "freescape/objects/geometricobject.h"
+
+namespace Common {
+class RandomSource;
+}
 
 namespace Freescape {
 
@@ -252,7 +251,6 @@ public:
 	int _screenW, _screenH;
 	Renderer *_gfx;
 	Common::RenderMode _renderMode;
-	Graphics::PixelBuffer *getPalette(uint8 areaNumber, uint8 c1, uint8 c2, uint8 c3, uint8 c4, uint16 ncolors);
 	ColorMap _colorMap;
 	void drawFrame();
 	uint8 _colorNumber;

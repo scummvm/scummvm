@@ -19,8 +19,6 @@
  *
  */
 
-#include "common/array.h"
-
 #include "freescape/objects/global.h"
 
 namespace Freescape {

@@ -21,11 +21,10 @@
 
 // Based on Phantasma code by Thomas Harte (2013)
 
-#include "freescape/area.h"
 #include "common/algorithm.h"
+
 #include "freescape/freescape.h"
-#include "freescape/objects/entrance.h"
-#include "freescape/objects/geometricobject.h"
+#include "freescape/area.h"
 #include "freescape/objects/global.h"
 
 namespace Freescape {
@@ -65,7 +64,6 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 	_entrancesByID = entrancesByID_;
 
 	_scale = 0;
-	_palette = 0;
 	_skyColor = 255;
 	_groundColor = 255;
 	_gasPocketRadius = 0;

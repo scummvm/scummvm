@@ -67,7 +67,6 @@ public:
 	uint32 _gasPocketRadius;
 
 	uint8 _scale;
-	Graphics::PixelBuffer *_palette;
 	uint8 _skyColor;
 	uint8 _groundColor;
 
