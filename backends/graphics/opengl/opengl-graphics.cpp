@@ -77,7 +77,7 @@ OpenGLGraphicsManager::OpenGLGraphicsManager()
 	  _cursorHotspotXScaled(0), _cursorHotspotYScaled(0), _cursorWidthScaled(0), _cursorHeightScaled(0),
 	  _cursorKeyColor(0), _cursorDontScale(false), _cursorPaletteEnabled(false), _shakeOffsetScaled()
 #if !USE_FORCED_GLES
-	  , _libretroPipeline(nullptr), _gameScreenTarget(nullptr)
+	  , _libretroPipeline(nullptr)
 #endif
 #ifdef USE_OSD
 	  , _osdMessageChangeRequest(false), _osdMessageAlpha(0), _osdMessageFadeStartTime(0), _osdMessageSurface(nullptr),
@@ -100,7 +100,6 @@ OpenGLGraphicsManager::~OpenGLGraphicsManager() {
 	delete _osdIconSurface;
 #endif
 #if !USE_FORCED_GLES
-	delete _gameScreenTarget;
 	ShaderManager::destroy();
 #endif
 }
@@ -494,14 +493,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		delete _gameScreen;
 		_gameScreen = nullptr;
 
-#if !USE_FORCED_GLES
-		if (_gameScreenTarget != nullptr) {
-			_gameScreenTarget->destroy();
-			delete _gameScreenTarget;
-			_gameScreenTarget = nullptr;
-		}
-#endif
-
 		bool wantScaler = _currentState.scaleFactor > 1;
 
 #ifdef USE_RGB_COLOR
@@ -530,17 +521,6 @@ OSystem::TransactionError OpenGLGraphicsManager::endGFXTransaction() {
 		}
 #else
 		_gameScreen->fill(0);
-#endif
-
-#if !USE_FORCED_GLES
-		if (_libretroPipeline) {
-			_gameScreenTarget = new TextureTarget();
-			_gameScreenTarget->create();
-			// To take software scaler into account we need to create a framebuffer matching the size of the _gameScreen output texture
-			// We cheat a little because ScaledTexture does everything it can to hide the real size
-			const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
-			_gameScreenTarget->setSize(gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight());
-		}
 #endif
 	}
 
@@ -638,6 +618,12 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 	_overlay->updateGLTexture();
 
+#if !USE_FORCED_GLES
+	if (_libretroPipeline) {
+		_libretroPipeline->beginScaling();
+	}
+#endif
+
 	_pipeline->activate();
 
 	// Clear the screen buffer.
@@ -653,54 +639,17 @@ void OpenGLGraphicsManager::updateScreen() {
 	// Alpha blending is disabled when drawing the screen
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
 
-	bool needsCursor = _cursorVisible && _cursor;
-
 	// First step: Draw the (virtual) game screen.
-#if !USE_FORCED_GLES
-	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
-		// Use the ShaderPipeline to draw the game screen and game cursor
-		_pipeline->setFramebuffer(_gameScreenTarget);
-
-		_gameScreenTarget->enableBlend(Framebuffer::kBlendModeDisabled);
-
-		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
-		const uint retroWidth = gameScreenTexture.getLogicalWidth(),
-		           retroHeight = gameScreenTexture.getLogicalHeight();
-		_pipeline->drawTexture(gameScreenTexture, 0, 0, retroWidth, retroHeight);
-
-		// Draw the cursor if necessary.
-		// If overlay is visible we draw it later to have the cursor above overlay
-		if (needsCursor && !_overlayVisible) {
-			// Do all calculations in window coordinates
-			int gameScreenCursorX = _cursorX - _gameDrawRect.left - _cursorHotspotXScaled + _shakeOffsetScaled.x;
-			int gameScreenCursorY = _cursorY - _gameDrawRect.top - _cursorHotspotYScaled + _shakeOffsetScaled.y;
-			// Scale to come back to libretro input surface coordinates
-			gameScreenCursorX = gameScreenCursorX * retroWidth / _gameDrawRect.width();
-			gameScreenCursorY = gameScreenCursorY * retroHeight / _gameDrawRect.height();
-
-			const GLTexture &cursorTexture = _cursor->getGLTexture();
-			const uint cursorWidth = cursorTexture.getLogicalWidth(),
-					   cursorHeight = cursorTexture.getLogicalHeight();
-
-			_gameScreenTarget->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
-			_pipeline->drawTexture(cursorTexture, gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
-			needsCursor = false;
-		}
-
-		_libretroPipeline->activate();
-		_libretroPipeline->drawTexture(*_gameScreenTarget->getTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
-
-		// Restore ShaderPipeline for the next steps
-		_pipeline->setFramebuffer(&_backBuffer);
-		_pipeline->activate();
-	} else
-#endif
-	{
-		_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
-	}
+	_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
 	// Second step: Draw the overlay if visible.
 	if (_overlayVisible) {
+#if !USE_FORCED_GLES
+		// Overlay must not be scaled and its cursor won't be either
+		if (_libretroPipeline) {
+			_libretroPipeline->finishScaling();
+		}
+#endif
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
 		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
 		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
@@ -708,7 +657,7 @@ void OpenGLGraphicsManager::updateScreen() {
 	}
 
 	// Third step: Draw the cursor if necessary.
-	if (needsCursor) {
+	if (_cursorVisible && _cursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 		_pipeline->drawTexture(_cursor->getGLTexture(),
@@ -716,6 +665,12 @@ void OpenGLGraphicsManager::updateScreen() {
 		                         _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
+
+#if !USE_FORCED_GLES
+	if (_libretroPipeline) {
+		_libretroPipeline->finishScaling();
+	}
+#endif
 
 	if (!_overlayVisible) {
 		_backBuffer.enableScissorTest(false);
@@ -1176,26 +1131,37 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	_pipeline = nullptr;
 
 #if !USE_FORCED_GLES
-	if (_libretroPipeline) {
-		delete _libretroPipeline;
-		_libretroPipeline = nullptr;
-	}
+	// _libretroPipeline has just been destroyed as the pipeline
+	_libretroPipeline = nullptr;
 #endif
 
 	OpenGLContext.initialize(type);
 
+	// Try to setup LibRetro pipeline first if available.
 #if !USE_FORCED_GLES
-	if (OpenGLContext.shadersSupported) {
+	if (LibRetroPipeline::isSupportedByContext()) {
+		ShaderMan.notifyCreate();
+		_libretroPipeline = new LibRetroPipeline();
+		_pipeline = _libretroPipeline;
+	}
+#endif
+
+#if !USE_FORCED_GLES
+	if (!_pipeline && OpenGLContext.shadersSupported) {
 		ShaderMan.notifyCreate();
 		_pipeline = new ShaderPipeline(ShaderMan.query(ShaderManager::kDefault));
 	}
 #endif
 
 #if !USE_FORCED_GLES2
-	if (_pipeline == nullptr) {
+	if (!_pipeline) {
 		_pipeline = new FixedPipeline();
 	}
 #endif
+
+	if (!_pipeline) {
+		error("Can't initialize any pipeline");
+	}
 
 	// Disable 3D properties.
 	GL_CALL(glDisable(GL_CULL_FACE));
@@ -1210,16 +1176,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	_backBuffer.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 
 	_pipeline->setFramebuffer(&_backBuffer);
-
-	// Setup LibRetro pipeline.
-
-#if !USE_FORCED_GLES
-	if (LibRetroPipeline::isSupportedByContext()) {
-		_libretroPipeline = new LibRetroPipeline();
-		_libretroPipeline->setColor(1.0f, 1.0f, 1.0f, 1.0f);
-		_libretroPipeline->setFramebuffer(&_backBuffer);
-	}
-#endif
 
 	// We use a "pack" alignment (when reading from textures) to 4 here,
 	// since the only place where we really use it is the BMP screenshot
@@ -1240,12 +1196,6 @@ void OpenGLGraphicsManager::notifyContextCreate(ContextType type,
 	if (_gameScreen) {
 		_gameScreen->recreate();
 	}
-
-#if !USE_FORCED_GLES
-	if (_gameScreenTarget) {
-		_gameScreenTarget->create();
-	}
-#endif
 
 	if (_overlay) {
 		_overlay->recreate();
@@ -1270,12 +1220,6 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	if (_gameScreen) {
 		_gameScreen->destroy();
 	}
-
-#if !USE_FORCED_GLES
-	if (_gameScreenTarget) {
-		_gameScreenTarget->destroy();
-	}
-#endif
 
 	if (_overlay) {
 		_overlay->destroy();
@@ -1306,10 +1250,8 @@ void OpenGLGraphicsManager::notifyContextDestroy() {
 	_pipeline = nullptr;
 
 #if !USE_FORCED_GLES
-	if (_libretroPipeline) {
-		delete _libretroPipeline;
-		_libretroPipeline = nullptr;
-	}
+	// _libretroPipeline has just been destroyed as the pipeline
+	_libretroPipeline = nullptr;
 #endif
 
 	// Rest our context description since the context is gone soon.
@@ -1483,6 +1425,14 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 
 	WindowedGraphicsManager::recalculateDisplayAreas();
 
+#if !USE_FORCED_GLES
+	if (_libretroPipeline) {
+		const GLTexture &gameScreenTexture = _gameScreen->getGLTexture();
+		_libretroPipeline->setDisplaySizes(gameScreenTexture.getLogicalWidth(), gameScreenTexture.getLogicalHeight(),
+				_gameDrawRect);
+	}
+#endif
+
 	// Setup drawing limitation for game graphics.
 	// This involves some trickery because OpenGL's viewport coordinate system
 	// is upside down compared to ours.
@@ -1542,26 +1492,17 @@ void OpenGLGraphicsManager::recalculateCursorScaling() {
 
 void OpenGLGraphicsManager::updateLinearFiltering() {
 #if !USE_FORCED_GLES
-	if (_libretroPipeline && _libretroPipeline->isInitialized()) {
-		// Apply filtering in LibRetro first input texture which is _gameScreenTarget
-		if (_gameScreen) {
-			_gameScreen->enableLinearFiltering(false);
-			_gameScreenTarget->getTexture()->enableLinearFiltering(_currentState.filtering);
-		}
-
-		if (_cursor) {
-			_cursor->enableLinearFiltering(_currentState.filtering && _overlayVisible);
-		}
-	} else
+	if (_libretroPipeline) {
+		_libretroPipeline->enableLinearFiltering(_currentState.filtering);
+	}
 #endif
-	{
-		if (_gameScreen) {
-			_gameScreen->enableLinearFiltering(_currentState.filtering);
-		}
 
-		if (_cursor) {
-			_cursor->enableLinearFiltering(_currentState.filtering);
-		}
+	if (_gameScreen) {
+		_gameScreen->enableLinearFiltering(_currentState.filtering);
+	}
+
+	if (_cursor) {
+		_cursor->enableLinearFiltering(_currentState.filtering);
 	}
 
 	// The overlay UI should also obey the filtering choice (managed via the Filter Graphics checkbox in Graphics Tab).

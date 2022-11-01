@@ -42,22 +42,32 @@ struct ShaderPass;
 } // End of namespace LibRetro
 
 class TextureTarget;
+class LibRetroTextureTarget;
 
 /**
  * Pipeline implementation using Libretro shader presets.
  */
-class LibRetroPipeline : public ShaderPipeline {
+class LibRetroPipeline : public Pipeline {
 public:
 	LibRetroPipeline();
 	LibRetroPipeline(const Common::FSNode &shaderPreset);
 	~LibRetroPipeline() override;
 
+	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
 	bool open(const Common::FSNode &shaderPreset);
 	void close();
 
-	bool isInitialized() const { return _shaderPreset != nullptr; }
+	/* Called by OpenGLGraphicsManager */
+	void enableLinearFiltering(bool enabled) { _linearFiltering = enabled; }
+	/* Called by OpenGLGraphicsManager to setup the internal objects sizes */
+	void setDisplaySizes(uint inputWidth, uint inputHeight, const Common::Rect &outputRect);
+	/* Called by OpenGLGraphicsManager to indicate that next draws need to be scaled. */
+	void beginScaling();
+	/* Called by OpenGLGraphicsManager to indicate that next draws don't need to be scaled.
+	 * This must be called to execute scaling. */
+	void finishScaling();
 	bool isAnimated() const { return _isAnimated; }
 
 	static bool isSupportedByContext() {
@@ -78,19 +88,26 @@ private:
 	void setupPassUniforms(const uint id);
 	void setShaderTexUniforms(const Common::String &prefix, Shader *shader, const GLTexture &texture);
 
-	const LibRetro::ShaderPreset *_shaderPreset;
+	/* Pipelines used to draw all layers
+	 * First before the scaler then after it to draw on screen
+	 */
+	ShaderPipeline _inputPipeline;
+	ShaderPipeline _outputPipeline;
+	bool _needsScaling;
 
-	bool _applyProjectionChanges;
+	const LibRetro::ShaderPreset *_shaderPreset;
 
 	uint _inputWidth;
 	uint _inputHeight;
+	Common::Rect _outputRect;
 
-	uint _outputWidth;
-	uint _outputHeight;
+	bool _linearFiltering;
 
 	/* Determines if preset depends on frameCount or from previous frames */
 	bool _isAnimated;
 	uint _frameCount;
+
+	LibRetroTextureTarget *_inputTarget;
 
 	struct Texture {
 		Texture() : textureData(nullptr), glTexture(nullptr) {}
