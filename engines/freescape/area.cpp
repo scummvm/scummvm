@@ -104,9 +104,6 @@ Area::~Area() {
 
 	delete _entrancesByID;
 	delete _objectsByID;
-
-	for (auto &it : _conditionSources)
-		delete it;
 }
 
 void Area::show() {

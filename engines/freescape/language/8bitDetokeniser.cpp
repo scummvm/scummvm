@@ -33,7 +33,7 @@ uint8 k8bitMaxVariable = 64;
 uint8 k8bitMaxShield = 64;
 uint8 k8bitMaxEnergy = 64;
 
-Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
+Common::String detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition, FCLInstructionVector &instructions) {
 	Common::String detokenisedStream;
 	Common::Array<uint8>::size_type bytePointer = 0;
 	Common::Array<uint8>::size_type sizeOfTokenisedContent = tokenisedCondition.size();
@@ -408,7 +408,7 @@ Common::String *detokenise8bitCondition(Common::Array<uint8> &tokenisedCondition
 	branch.setBranches(conditionalInstructions, nullptr);
 	instructions.push_back(branch);
 
-	return (new Common::String(detokenisedStream));
+	return detokenisedStream;
 }
 
 } // End of namespace Freescape

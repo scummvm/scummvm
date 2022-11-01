@@ -118,7 +118,7 @@ GeometricObject::GeometricObject(
 	Common::Array<uint8> *colours_,
 	Common::Array<uint16> *ordinates_,
 	FCLInstructionVector conditionInstructions_,
-	Common::String *conditionSource_) {
+	Common::String conditionSource_) {
 	_type = type_;
 	_flags = flags_;
 
@@ -304,7 +304,6 @@ void GeometricObject::computeBoundingBox() {
 }
 
 GeometricObject::~GeometricObject() {
-	delete _conditionSource;
 	delete _colours;
 	delete _ordinates;
 }

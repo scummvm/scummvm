@@ -45,7 +45,7 @@ public:
 		Common::Array<uint8> *colours,
 		Common::Array<uint16> *ordinates,
 		FCLInstructionVector conditionInstructions,
-		Common::String *conditionSource = nullptr);
+		Common::String conditionSource = "");
 	virtual ~GeometricObject();
 	void setOrigin(Math::Vector3d origin) override;
 
@@ -56,7 +56,7 @@ public:
 	bool isDrawable() override;
 	bool isPlanar() override;
 
-	Common::String *_conditionSource;
+	Common::String _conditionSource;
 	FCLInstructionVector _condition;
 
 private:

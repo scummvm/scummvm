@@ -204,7 +204,7 @@ public:
 	uint16 _playerDepth;
 
 	// Effects
-	Common::Array<Common::String *> _conditionSources;
+	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
 	bool checkCollisions(bool executeCode);
