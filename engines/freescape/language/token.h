@@ -19,7 +19,8 @@
  *
  */
 
-// Based on Phantasma code by Thomas Harte (2013)
+// Based on Phantasma code by Thomas Harte (2013),
+// available at https://github.com/TomHarte/Phantasma/ (MIT)
 
 #ifndef FREESCAPE_TOKEN_H
 #define FREESCAPE_TOKEN_H

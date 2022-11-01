@@ -19,8 +19,6 @@
  *
  */
 
-// Based on Phantasma code by Thomas Harte (2013)
-
 #ifndef FREESCAPE_8BITDETOKENIZER_H
 #define FREESCAPE_8BITDETOKENIZER_H
 
