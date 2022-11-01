@@ -380,7 +380,7 @@ void Sound::convertVolumeFrom(int32 &vol) {
 }
 
 void Sound::convertVolumeTo(int32 &vol) {
-	vol = (int32)(log10(vol / (double)Audio::Mixer::kMaxChannelVolume) - 0.5) * 2000;
+	vol = vol ? (int32)log10((vol - 0.5) / Audio::Mixer::kMaxChannelVolume) * 2000 : -9999;
 }
 
 void Sound::convertPan(int32 &pan) {
