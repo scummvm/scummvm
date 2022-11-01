@@ -56,6 +56,7 @@ class QueuingAudioStream;
 namespace mkvparser {
 class MkvReader;
 class Cluster;
+class Track;
 class Tracks;
 class BlockEntry;
 class Segment;
@@ -89,7 +90,7 @@ protected:
 private:
 	class VPXVideoTrack : public VideoTrack {
 	public:
-		VPXVideoTrack(const Graphics::PixelFormat &format, th_info &theoraInfo, th_setup_info *theoraSetup);
+		VPXVideoTrack(const mkvparser::Track *const pTrack);
 		~VPXVideoTrack();
 
 		bool endOfTrack() const { return _endOfVideo; }
@@ -160,14 +161,14 @@ private:
 
 	vorbis_info _vorbisInfo;
 
-	VPXVideoTrack *_videoTrack;
-	VorbisAudioTrack *_audioTrack;
+	VPXVideoTrack *_videoTrack = nullptr;
+	VorbisAudioTrack *_audioTrack = nullptr;
 
-	vpx_codec_ctx_t *_codec;
-	mkvparser::MkvReader *_reader;
+	vpx_codec_ctx_t *_codec = nullptr;
+	mkvparser::MkvReader *_reader = nullptr;
 
 	const mkvparser::Cluster *_cluster = nullptr;
-	const mkvparser::Tracks *_tracks = nullptr;
+	const mkvparser::Tracks *pTracks = nullptr;
 	const mkvparser::BlockEntry *pBlockEntry = nullptr;
 	mkvparser::Segment *pSegment = nullptr;
 
