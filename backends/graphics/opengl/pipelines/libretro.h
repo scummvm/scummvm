@@ -107,7 +107,8 @@ private:
 	bool _isAnimated;
 	uint _frameCount;
 
-	LibRetroTextureTarget *_inputTarget;
+	Common::Array<LibRetroTextureTarget> _inputTargets;
+	uint _currentTarget;
 
 	struct Texture {
 		Texture() : textureData(nullptr), glTexture(nullptr) {}
@@ -124,11 +125,11 @@ private:
 
 	struct Pass {
 		Pass()
-			: shaderPass(nullptr), shader(nullptr), target(nullptr),
-			  texCoords(), texSamplers(), inputTexture(nullptr), vertexCoord(), hasFrameCount(false) {}
+			: shaderPass(nullptr), shader(nullptr), target(nullptr), texCoords(), texSamplers(),
+			inputTexture(nullptr), vertexCoord(), hasFrameCount(false), prevCount(0) {}
 		Pass(const LibRetro::ShaderPass *sP, Shader *s, TextureTarget *t)
-			: shaderPass(sP), shader(s), target(t), texCoords(),
-			  texSamplers(), inputTexture(nullptr), vertexCoord(), hasFrameCount(false) {}
+			: shaderPass(sP), shader(s), target(t), texCoords(), texSamplers(),
+			inputTexture(nullptr), vertexCoord(), hasFrameCount(false), prevCount(0) {}
 
 		const LibRetro::ShaderPass *shaderPass;
 		Shader *shader;
@@ -237,7 +238,7 @@ private:
 		 */
 		void buildTexSamplers(const uint id, const TextureArray &textures, const Common::StringArray &aliases);
 
-		void addTexSampler(const Common::String &name, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId = false);
+		bool addTexSampler(const Common::String &name, uint *unit, const TextureSampler::Type type, const uint index, const bool prefixIsId = false);
 
 		/**
 		 * Input texture of the pass.
@@ -254,6 +255,11 @@ private:
 		 * Allows to speed up if it is not here
 		 */
 		bool hasFrameCount;
+
+		/**
+		 * The number of previous frames this pass needs
+		 */
+		uint prevCount;
 	};
 
 	typedef Common::Array<Pass> PassArray;
