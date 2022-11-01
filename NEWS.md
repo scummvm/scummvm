@@ -2804,7 +2804,7 @@ For a more comprehensive changelog of the latest experimental code, see:
 
  Simon:
    - Improved Hebrew support.
-   - Lots of long-overdue cleanups and re-structuring were made to accomodate
+   - Lots of long-overdue cleanups and re-structuring were made to accommodate
      for The Feeble Files.
    - Fixed a rare MIDI bug that would cause a channel to change volume without
      adjusting it to the master volume.
