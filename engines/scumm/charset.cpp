@@ -456,6 +456,7 @@ int CharsetRendererClassic::getCharWidth(uint16 chr) const {
 
 int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int pos = 0;
+	bool isV3Towns = _vm->_game.version == 3 && _vm->_game.platform == Common::kPlatformFMTowns;
 
 	// I have confirmed from disasm that neither LOOM EGA and FM-TOWNS (EN/JP) nor any other games withing the
 	// v0-v3 version range add 1 to the width. There isn't even a getStringWidth method. And the v0-2 games don't
@@ -468,6 +469,12 @@ int CharsetRenderer::getStringWidth(int arg, const byte *text) {
 	int code = (_vm->_game.heversion >= 80) ? 127 : 64;
 
 	while ((chr = text[pos++]) != 0) {
+		// Given that the loop increments pos two times per loop in Towns games,
+		// we risk missing the termination character. Let's catch it and break the loop.
+		// This happens at least for the restart prompt message on INDY3 Towns JAP.
+		if (isV3Towns && pos > 1 && text[pos - 2] == 0)
+			break;
+
 		if (chr == '\n' || chr == '\r' || chr == _vm->_newLineCharacter)
 			break;
 
