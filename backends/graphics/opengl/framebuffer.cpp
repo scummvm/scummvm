@@ -136,6 +136,28 @@ void Framebuffer::applyScissorBox() {
 	GL_CALL(glScissor(_scissorBox[0], _scissorBox[1], _scissorBox[2], _scissorBox[3]));
 }
 
+void Framebuffer::copyRenderStateFrom(const Framebuffer &other, uint copyMask) {
+	if (copyMask & kCopyMaskClearColor) {
+		memcpy(_clearColor, other._clearColor, sizeof(_clearColor));
+	}
+	if (copyMask & kCopyMaskBlendState) {
+		_blendState = other._blendState;
+	}
+	if (copyMask & kCopyMaskScissorState) {
+		_scissorTestState = other._scissorTestState;
+	}
+	if (copyMask & kCopyMaskScissorBox) {
+		memcpy(_scissorBox, other._scissorBox, sizeof(_scissorBox));
+	}
+
+	if (isActive()) {
+		applyClearColor();
+		applyBlendState();
+		applyScissorTestState();
+		applyScissorBox();
+	}
+}
+
 //
 // Backbuffer implementation
 //
