@@ -50,6 +50,8 @@ ShaderPipeline::~ShaderPipeline() {
 }
 
 void ShaderPipeline::activateInternal() {
+	Pipeline::activateInternal();
+
 	if (OpenGLContext.multitextureSupported) {
 		GL_CALL(glActiveTexture(GL_TEXTURE0));
 	}
@@ -63,6 +65,8 @@ void ShaderPipeline::activateInternal() {
 
 void ShaderPipeline::deactivateInternal() {
 	_activeShader->unbind();
+
+	Pipeline::deactivateInternal();
 }
 
 void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {

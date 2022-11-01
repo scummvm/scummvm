@@ -26,6 +26,8 @@ namespace OpenGL {
 
 #if !USE_FORCED_GLES2
 void FixedPipeline::activateInternal() {
+	Pipeline::activateInternal();
+
 	GL_CALL(glDisable(GL_LIGHTING));
 	GL_CALL(glDisable(GL_FOG));
 	GL_CALL(glShadeModel(GL_FLAT));
