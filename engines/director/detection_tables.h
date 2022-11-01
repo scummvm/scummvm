@@ -1829,7 +1829,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("alice2ocean", "", "From Alice to Ocean", "1ae45c23586b41997ba52e2e7c771c4c", 375210, 310),
 
-	MACGAME1("amandastories", "3.0", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353729, 300),
+	MACGAME1("amandastories", "3.0 B&W", "AmandaStories", "fdbf26d3796068ee4ae1a9b6cd052c4e", 195988, 300),
+	MACGAME1("amandastories", "3.0 Color", "AmandaStories", "1687f456d7f2bcf98e84fec6d3a03c17", 353729, 300),
 	MACDEMO1("amandastories", "Sampler", "AmandaStories Sampler", "60cc4ccbab898f1f444088fb5aad90c4", 1783259, 311),
 
 	// Uses audio tracks
