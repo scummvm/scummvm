@@ -1038,6 +1038,7 @@ void ScummEngine::drawString(int a, const byte *msg) {
 	byte fontHeight = 0;
 	uint color;
 	int code = (_game.heversion >= 80) ? 127 : 64;
+	bool isV3Towns = _game.version == 3 && _game.platform == Common::kPlatformFMTowns;
 
 	// drawString is not used in SCUMM v7 and v8
 	assert(_game.version < 7);
@@ -1198,6 +1199,12 @@ void ScummEngine::drawString(int a, const byte *msg) {
 				if (is2ByteCharacter(_language, c))
 					c += buf[i++] * 256;
 			}
+
+			// With the code above, we risk missing the termination character.
+			// This happens at least for the restart prompt message on INDY3 Towns JAP.
+			if (isV3Towns && i > 1 && buf[i - 1] == 0)
+				break;
+
 			_charset->printChar(c, true);
 			_charset->_blitAlso = false;
 		}
