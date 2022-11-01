@@ -41,11 +41,13 @@ void Pipeline::activate() {
 
 	activePipeline = this;
 
+	activateInternal();
+}
+
+void Pipeline::activateInternal() {
 	if (_activeFramebuffer) {
 		_activeFramebuffer->activate(this);
 	}
-
-	activateInternal();
 }
 
 void Pipeline::deactivate() {
@@ -53,11 +55,13 @@ void Pipeline::deactivate() {
 
 	deactivateInternal();
 
+	activePipeline = nullptr;
+}
+
+void Pipeline::deactivateInternal() {
 	if (_activeFramebuffer) {
 		_activeFramebuffer->deactivate();
 	}
-
-	activePipeline = nullptr;
 }
 
 Framebuffer *Pipeline::setFramebuffer(Framebuffer *framebuffer) {

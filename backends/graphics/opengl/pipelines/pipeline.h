@@ -141,12 +141,12 @@ protected:
 	 * This sets the OpenGL state to make use of drawing with the given
 	 * OpenGL pipeline.
 	 */
-	virtual void activateInternal() = 0;
+	virtual void activateInternal();
 
 	/**
 	 * Deactivate the pipeline.
 	 */
-	virtual void deactivateInternal() {}
+	virtual void deactivateInternal();
 
 	virtual void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
 

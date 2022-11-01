@@ -187,9 +187,11 @@ void LibRetroPipeline::setProjectionMatrix(const Math::Matrix4 &projectionMatrix
 }
 
 void LibRetroPipeline::activateInternal() {
+	// Don't call anything, we call ShaderPipeline::activateInternal in due time
 }
 
 void LibRetroPipeline::deactivateInternal() {
+	// Don't call anything, we call ShaderPipeline::deactivateInternal in due time
 }
 
 bool LibRetroPipeline::open(const Common::FSNode &shaderPreset) {
