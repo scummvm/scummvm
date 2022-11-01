@@ -19,7 +19,6 @@
  *
  */
 
-#include "engines/advancedDetector.h"
 #include "freescape/freescape.h"
 
 class FreescapeMetaEngine : public AdvancedMetaEngine {

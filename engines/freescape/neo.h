@@ -22,8 +22,6 @@
 #ifndef FREESCAPE_NEO_H
 #define FREESCAPE_NEO_H
 
-#include "common/scummsys.h"
-#include "common/str.h"
 #include "image/image_decoder.h"
 
 /*

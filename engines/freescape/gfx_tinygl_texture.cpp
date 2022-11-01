@@ -19,8 +19,9 @@
  *
  */
 
-#include "engines/freescape/gfx_tinygl_texture.h"
 #include "graphics/tinygl/zblit.h"
+
+#include "freescape/gfx_tinygl_texture.h"
 
 namespace Freescape {
 

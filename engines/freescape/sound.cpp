@@ -19,9 +19,9 @@
  *
  */
 
+#include "common/file.h"
 #include "audio/decoders/raw.h"
 #include "audio/decoders/vorbis.h"
-#include "common/file.h"
 
 #include "freescape/freescape.h"
 

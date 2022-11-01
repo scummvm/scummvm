@@ -19,12 +19,12 @@
  *
  */
 
-#include "neo.h"
-
 #include "common/stream.h"
 #include "common/textconsole.h"
 #include "graphics/pixelformat.h"
 #include "graphics/surface.h"
+
+#include "freescape/neo.h"
 
 namespace Image {
 

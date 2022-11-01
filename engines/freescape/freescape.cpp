@@ -21,9 +21,9 @@
 
 #include "common/config-manager.h"
 #include "common/events.h"
-#include "common/file.h"
 #include "common/math.h"
 #include "common/unzip.h"
+#include "common/random.h"
 #include "graphics/cursorman.h"
 
 #include "freescape/freescape.h"

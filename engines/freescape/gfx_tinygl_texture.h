@@ -22,11 +22,9 @@
 #ifndef FREESCAPE_GFX_TINYGL_TEXTURE_H
 #define FREESCAPE_GFX_TINYGL_TEXTURE_H
 
-#include "graphics/surface.h"
 #include "graphics/tinygl/zgl.h"
 
-#include "engines/freescape/gfx.h"
-#include "graphics/tinygl/zblit.h"
+#include "freescape/gfx.h"
 
 namespace Freescape {
 

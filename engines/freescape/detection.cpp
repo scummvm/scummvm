@@ -19,8 +19,6 @@
  *
  */
 
-#include "base/plugins.h"
-#include "engines/advancedDetector.h"
 #include "common/translation.h"
 
 #include "freescape/freescape.h"

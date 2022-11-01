@@ -22,10 +22,9 @@
 #ifndef FREESCAPE_GFX_TINYGL_H
 #define FREESCAPE_GFX_TINYGL_H
 
-#include "common/rect.h"
 #include "math/vector3d.h"
 
-#include "engines/freescape/gfx.h"
+#include "freescape/gfx.h"
 
 namespace Freescape {
 
