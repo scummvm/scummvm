@@ -448,12 +448,14 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 		if (_useCJKMode) {
 			textXPos -= _game.id == GID_INDY3 ? 34 : 8;
 		}
+
+		_bannerSaveYStart = startingPointY;
+	} else {
+		_bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
 	}
 
 	// Save the pixels which will be overwritten by the banner,
 	// so that we can restore them later...
-	_bannerSaveYStart = startingPointY - (_game.version == 4 ? 2 : _virtscr[kMainVirtScreen].topline);
-
 	if (!_bannerMem) {
 		int rowSize = _screenWidth + (_game.version == 4 ? 8 : 0);
 
