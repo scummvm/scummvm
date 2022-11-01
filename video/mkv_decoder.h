@@ -120,10 +120,10 @@ private:
 
 	class VorbisAudioTrack : public AudioTrack {
 	public:
-		VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo);
+		VorbisAudioTrack(const mkvparser::Track *const pTrack);
 		~VorbisAudioTrack();
 
-		bool decodeSamples();
+		bool decodeSamples(ogg_packet &oggPacket);
 		bool hasAudio() const;
 		bool needsAudio() const;
 		void synthesizePacket(ogg_packet &oggPacket);
@@ -139,7 +139,7 @@ private:
 
 		Audio::QueuingAudioStream *_audStream;
 
-		vorbis_block _vorbisBlock;
+		vorbis_block vorbisBlock;
 		vorbis_dsp_state _vorbisDSP;
 
 		bool _endOfAudio;
@@ -154,7 +154,6 @@ private:
 
 	ogg_sync_state _oggSync;
 	ogg_page _oggPage;
-	ogg_packet _oggPacket;
 
 	ogg_stream_state _theoraOut, _vorbisOut;
 	bool _hasVideo, _hasAudio;
@@ -177,8 +176,6 @@ private:
 
 	int videoTrack = -1;
 	int audioTrack = -1;
-
-	vorbis_block vorbisBlock;
 };
 
 } // End of namespace Video

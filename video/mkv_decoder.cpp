@@ -178,10 +178,6 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 	enum {VIDEO_TRACK = 1, AUDIO_TRACK = 2};
 	videoTrack = -1;
 	audioTrack = -1;
-	long long audioBitDepth;
-	double audioSampleRate;
-	vorbis_info vorbisInfo;
-	vorbis_comment vorbisComment;
 
 	while (i != j) {
 		const mkvparser::Track *const pTrack = pTracks->GetTrackByIndex(i++);
@@ -209,11 +205,8 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 
 		if (trackType == mkvparser::Track::kAudio && audioTrack < 0) {
 			audioTrack = pTrack->GetNumber();
-			const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
 
-			audioChannels = pAudioTrack->GetChannels();
-			audioBitDepth = pAudioTrack->GetBitDepth();
-			audioSampleRate = pAudioTrack->GetSamplingRate();
+			const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
 
 			size_t audioHeaderSize;
 			byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
@@ -233,57 +226,8 @@ bool MKVDecoder::loadStream(Common::SeekableReadStream *stream) {
 				continue;
 			}
 
-			uint64 sizes[3], total;
-
-			int l = 0;
-			total = 0;
-			while (--count) {
-				sizes[l] = xiph_lace_value(&p);
-				total += sizes[i];
-				l += 1;
-			}
-			sizes[l] = audioHeaderSize - total - (p - audioHeader);
-
-			// initialize vorbis
-			vorbis_info_init(&vorbisInfo);
-			vorbis_comment_init(&vorbisComment);
-			memset(&vorbisDspState, 0, sizeof(vorbisDspState));
-			memset(&vorbisBlock, 0, sizeof(vorbisBlock));
-
-			_oggPacket.e_o_s = false;
-			_oggPacket.granulepos = 0;
-			_oggPacket.packetno = 0;
-			int r;
-			for (int s = 0; s < 3; s++) {
-				_oggPacket.packet = p;
-				_oggPacket.bytes = sizes[s];
-				_oggPacket.b_o_s = _oggPacket.packetno == 0;
-				r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &_oggPacket);
-				if (r)
-					warning("vorbis_synthesis_headerin failed, error: %d", r);
-				_oggPacket.packetno++;
-				p += sizes[s];
-			}
-
-			r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
-			if (r)
-				warning("vorbis_synthesis_init failed, error: %d", r);
-			r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
-			if (r)
-				warning("vorbis_block_init failed, error: %d", r);
-
-#if 0
-			ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
-			movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
-#endif
-
-			debug(1, "Movie sound inited.");
-#if 0
-			audio_queue_init(&audioQ);
-#endif
-			audioNsPerByte = (1000000000 / audioSampleRate) / (audioChannels * 2);
-			audioNsBuffered = 0;
-			audioBufferLen = audioChannels * audioSampleRate;
+			_audioTrack = new VorbisAudioTrack(pTrack);
+			addTrack(_audioTrack);
 		}
 	}
 
@@ -450,99 +394,17 @@ void MKVDecoder::readNextPacket() {
 		} else if (trackNum == audioTrack) {
 			warning("MKVDecoder::readNextPacket(): audio track");
 
-			// Use this Audio Track
 			if (size > 0) {
+				ogg_packet oggPacket;
+
 				theFrame.Read(_reader, frame);
-				_oggPacket.packet = frame;
-				_oggPacket.bytes = size;
-				_oggPacket.b_o_s = false;
-				_oggPacket.packetno++;
-				_oggPacket.granulepos = -1;
-				if(!vorbis_synthesis(&vorbisBlock, &_oggPacket) ) {
-					if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
-						warning("Vorbis Synthesis block in error");
+				oggPacket.packet = frame;
+				oggPacket.bytes = size;
+				oggPacket.b_o_s = false;
+				oggPacket.packetno++;
+				oggPacket.granulepos = -1;
 
-				} else {
-					warning("Vorbis Synthesis error");
-				}
-
-				float **pcm;
-
-				int numSamples = vorbis_synthesis_pcmout(&vorbisDspState, &pcm);
-
-				if (numSamples > 0) {
-					int word = 2;
-					int sgned = 1;
-					int i, j;
-					long bytespersample=audioChannels * word;
-					//vorbis_fpu_control fpu;
-
-					char *buffer = new char[bytespersample * numSamples];
-					if (!buffer)
-						error("MKVDecoder::readNextPacket(): buffer allocation failed");
-
-					/* a tight loop to pack each size */
-					{
-						int val;
-						if (word == 1) {
-							int off = (sgned ? 0 : 128);
-							//vorbis_fpu_setround(&fpu);
-							for (j = 0; j < numSamples; j++)
-								for (i = 0;i < audioChannels; i++) {
-									val = (int)(pcm[i][j] * 128.f);
-									val = CLIP(val, -128, 127);
-
-									*buffer++ = val + off;
-								}
-							//vorbis_fpu_restore(fpu);
-						} else {
-							int off = (sgned ? 0 : 32768);
-
-							if (sgned) {
-								//vorbis_fpu_setround(&fpu);
-								for (i = 0; i < audioChannels; i++) { /* It's faster in this order */
-									float *src = pcm[i];
-									short *dest = ((short *)buffer) + i;
-									for (j = 0; j < numSamples; j++) {
-										val = (int)(src[j] * 32768.f);
-										val = CLIP(val, -32768, 32767);
-
-										*dest = val;
-										dest += audioChannels;
-									}
-								}
-								//vorbis_fpu_restore(fpu);
-							} else { // unsigned
-								//vorbis_fpu_setround(&fpu);
-
-								for (i = 0; i < audioChannels; i++) {
-									float *src = pcm[i];
-									short *dest = ((short *)buffer) + i;
-									for (j = 0; j < numSamples; j++) {
-										val = (int)(src[j] * 32768.f);
-										val = CLIP(val, -32768, 32767);
-
-										*dest = val + off;
-										dest += audioChannels;
-									}
-								}
-								//vorbis_fpu_restore(fpu);
-							}
-						}
-					}
-
-					vorbis_synthesis_read(&vorbisDspState, numSamples);
-					audioBufferLen = bytespersample * numSamples;
-					//audio_queue_put(&audioQ, buffer, audioBufferLen, time_ns / 1000000);
-
-					//warning("Audio buffered: %lld byte %lld ns",audioBufferLen, audioNsPerByte*audioBufferLen);
-
-					if (!movieSoundPlaying && size > 1) {
-						warning("** starting sound **");
-						//playMovieStream(movieAudioIndex);
-						movieSoundPlaying = true;
-					}
-				}
+				_audioTrack->decodeSamples(oggPacket);
 			}
 		}
 		++frameCounter;
@@ -624,11 +486,80 @@ void MKVDecoder::VPXVideoTrack::translateYUVtoRGBA(th_ycbcr_buffer &YUVBuffer) {
 
 static vorbis_info *info = 0;
 
-MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType, vorbis_info &vorbisInfo) :
-		AudioTrack(soundType) {
-	vorbis_synthesis_init(&_vorbisDSP, &vorbisInfo);
-	vorbis_block_init(&_vorbisDSP, &_vorbisBlock);
-	info = &vorbisInfo;
+MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(const mkvparser::Track *const pTrack) :
+		AudioTrack(Audio::Mixer::kPlainSoundType) {
+
+	long long audioBitDepth;
+	double audioSampleRate;
+	vorbis_info vorbisInfo;
+	vorbis_comment vorbisComment;
+
+	const mkvparser::AudioTrack *const pAudioTrack = static_cast<const mkvparser::AudioTrack *>(pTrack);
+
+	audioChannels = pAudioTrack->GetChannels();
+	audioBitDepth = pAudioTrack->GetBitDepth();
+	audioSampleRate = pAudioTrack->GetSamplingRate();
+
+	size_t audioHeaderSize;
+	byte *audioHeader = (byte *)pAudioTrack->GetCodecPrivate(audioHeaderSize);
+	byte *p = audioHeader;
+
+	uint count = *p++ + 1;
+
+	uint64 sizes[3], total;
+
+	int l = 0;
+	total = 0;
+	while (--count) {
+		sizes[l] = xiph_lace_value(&p);
+		total += sizes[l];
+		l += 1;
+	}
+	sizes[l] = audioHeaderSize - total - (p - audioHeader);
+
+	// initialize vorbis
+	vorbis_info_init(&vorbisInfo);
+	vorbis_comment_init(&vorbisComment);
+	memset(&vorbisDspState, 0, sizeof(vorbisDspState));
+	memset(&vorbisBlock, 0, sizeof(vorbisBlock));
+
+	ogg_packet oggPacket;
+
+	oggPacket.e_o_s = false;
+	oggPacket.granulepos = 0;
+	oggPacket.packetno = 0;
+	int r;
+	for (int s = 0; s < 3; s++) {
+		oggPacket.packet = p;
+		oggPacket.bytes = sizes[s];
+		oggPacket.b_o_s = oggPacket.packetno == 0;
+		r = vorbis_synthesis_headerin(&vorbisInfo, &vorbisComment, &oggPacket);
+		if (r)
+			warning("vorbis_synthesis_headerin failed, error: %d", r);
+		oggPacket.packetno++;
+		p += sizes[s];
+	}
+
+	r = vorbis_synthesis_init(&vorbisDspState, &vorbisInfo);
+	if (r)
+		warning("vorbis_synthesis_init failed, error: %d", r);
+	r = vorbis_block_init(&vorbisDspState, &vorbisBlock);
+	if (r)
+		warning("vorbis_block_init failed, error: %d", r);
+
+#if 0
+	ALenum audioFormat = alureGetSampleFormat(audioChannels, 16, 0);
+	movieAudioIndex = initMovieSound(fileNumber, audioFormat, audioChannels, (ALuint) audioSampleRate, feedAudio);
+#endif
+
+	debug(1, "Movie sound inited.");
+#if 0
+	audio_queue_init(&audioQ);
+#endif
+	audioNsPerByte = (1000000000 / audioSampleRate) / (audioChannels * 2);
+	audioNsBuffered = 0;
+	audioBufferLen = audioChannels * audioSampleRate;
+
 
 	_audStream = Audio::makeQueuingAudioStream(vorbisInfo.rate, vorbisInfo.channels != 1);
 
@@ -639,7 +570,7 @@ MKVDecoder::VorbisAudioTrack::VorbisAudioTrack(Audio::Mixer::SoundType soundType
 
 MKVDecoder::VorbisAudioTrack::~VorbisAudioTrack() {
 	vorbis_dsp_clear(&_vorbisDSP);
-	vorbis_block_clear(&_vorbisBlock);
+	vorbis_block_clear(&vorbisBlock);
 	delete _audStream;
 	free(_audioBuffer);
 }
@@ -656,63 +587,93 @@ static double rint(double v) {
 }
 #endif
 
-bool MKVDecoder::VorbisAudioTrack::decodeSamples() {
-#ifdef USE_TREMOR
-	ogg_int32_t **pcm;
-#else
+bool MKVDecoder::VorbisAudioTrack::decodeSamples(ogg_packet &oggPacket) {
+	if(!vorbis_synthesis(&vorbisBlock, &oggPacket) ) {
+		if (vorbis_synthesis_blockin(&vorbisDspState, &vorbisBlock))
+			warning("Vorbis Synthesis block in error");
+
+	} else {
+		warning("Vorbis Synthesis error");
+	}
+
 	float **pcm;
-#endif
 
-	// if there's pending, decoded audio, grab it
-	int ret = vorbis_synthesis_pcmout(&_vorbisDSP, &pcm);
+	int numSamples = vorbis_synthesis_pcmout(&vorbisDspState, &pcm);
 
-	if (ret > 0) {
-		if (!_audioBuffer) {
-			_audioBuffer = (ogg_int16_t *)malloc(AUDIOFD_FRAGSIZE * sizeof(ogg_int16_t));
-			assert(_audioBuffer);
-		}
+	if (numSamples > 0) {
+		int word = 2;
+		int sgned = 1;
+		int i, j;
+		long bytespersample=audioChannels * word;
+		//vorbis_fpu_control fpu;
 
-		int channels = _audStream->isStereo() ? 2 : 1;
-		int count = _audioBufferFill / 2;
-		int maxsamples = ((AUDIOFD_FRAGSIZE - _audioBufferFill) / channels) >> 1;
-		int i;
+		char *buffer = new char[bytespersample * numSamples];
+		if (!buffer)
+			error("MKVDecoder::readNextPacket(): buffer allocation failed");
 
-		for (i = 0; i < ret && i < maxsamples; i++) {
-			for (int j = 0; j < channels; j++) {
-#ifdef USE_TREMOR
-				int val = CLIP((int)pcm[j][i] >> 9, -32768, 32767);
-#else
-				int val = CLIP((int)rint(pcm[j][i] * 32767.f), -32768, 32767);
-#endif
-				_audioBuffer[count++] = val;
+		/* a tight loop to pack each size */
+		{
+			int val;
+			if (word == 1) {
+				int off = (sgned ? 0 : 128);
+				//vorbis_fpu_setround(&fpu);
+				for (j = 0; j < numSamples; j++)
+					for (i = 0;i < audioChannels; i++) {
+						val = (int)(pcm[i][j] * 128.f);
+						val = CLIP(val, -128, 127);
+
+						*buffer++ = val + off;
+					}
+				//vorbis_fpu_restore(fpu);
+			} else {
+				int off = (sgned ? 0 : 32768);
+
+				if (sgned) {
+					//vorbis_fpu_setround(&fpu);
+					for (i = 0; i < audioChannels; i++) { /* It's faster in this order */
+						float *src = pcm[i];
+						short *dest = ((short *)buffer) + i;
+						for (j = 0; j < numSamples; j++) {
+							val = (int)(src[j] * 32768.f);
+							val = CLIP(val, -32768, 32767);
+
+							*dest = val;
+							dest += audioChannels;
+						}
+					}
+					//vorbis_fpu_restore(fpu);
+				} else { // unsigned
+					//vorbis_fpu_setround(&fpu);
+
+					for (i = 0; i < audioChannels; i++) {
+						float *src = pcm[i];
+						short *dest = ((short *)buffer) + i;
+						for (j = 0; j < numSamples; j++) {
+							val = (int)(src[j] * 32768.f);
+							val = CLIP(val, -32768, 32767);
+
+							*dest = val + off;
+							dest += audioChannels;
+						}
+					}
+					//vorbis_fpu_restore(fpu);
+				}
 			}
 		}
 
-		vorbis_synthesis_read(&_vorbisDSP, i);
-		_audioBufferFill += (i * channels) << 1;
+		vorbis_synthesis_read(&vorbisDspState, numSamples);
+		audioBufferLen = bytespersample * numSamples;
+		//audio_queue_put(&audioQ, buffer, audioBufferLen, time_ns / 1000000);
 
-		if (_audioBufferFill == AUDIOFD_FRAGSIZE) {
-			byte flags = Audio::FLAG_16BITS;
+		//warning("Audio buffered: %lld byte %lld ns",audioBufferLen, audioNsPerByte*audioBufferLen);
 
-			if (_audStream->isStereo())
-				flags |= Audio::FLAG_STEREO;
-
-#ifdef SCUMM_LITTLE_ENDIAN
-			flags |= Audio::FLAG_LITTLE_ENDIAN;
-#endif
-
-			_audStream->queueBuffer((byte *)_audioBuffer, AUDIOFD_FRAGSIZE, DisposeAfterUse::YES, flags);
-
-			// The audio mixer is now responsible for the old audio buffer.
-			// We need to create a new one.
-			_audioBuffer = 0;
-			_audioBufferFill = 0;
+		if (!movieSoundPlaying) {
+			warning("** starting sound **");
+			//playMovieStream(movieAudioIndex);
+			movieSoundPlaying = true;
 		}
-
-		return true;
 	}
 
-	return false;
 }
 
 bool MKVDecoder::VorbisAudioTrack::hasAudio() const {
@@ -725,8 +686,8 @@ bool MKVDecoder::VorbisAudioTrack::needsAudio() const {
 }
 
 void MKVDecoder::VorbisAudioTrack::synthesizePacket(ogg_packet &_oggPacket) {
-	if (vorbis_synthesis(&_vorbisBlock, &_oggPacket) == 0) // test for success
-		vorbis_synthesis_blockin(&_vorbisDSP, &_vorbisBlock);
+	if (vorbis_synthesis(&vorbisBlock, &_oggPacket) == 0) // test for success
+		vorbis_synthesis_blockin(&_vorbisDSP, &vorbisBlock);
 }
 
 void MKVDecoder::queuePage(ogg_page *page) {
@@ -752,6 +713,7 @@ bool MKVDecoder::queueAudio() {
 
 	bool queuedAudio = false;
 
+#if 0
 	for (;;) {
 		if (_audioTrack->decodeSamples()) {
 			// we queued some pending audio
@@ -764,6 +726,7 @@ bool MKVDecoder::queueAudio() {
 			break;
 		}
 	}
+#endif
 
 	return queuedAudio;
 }
