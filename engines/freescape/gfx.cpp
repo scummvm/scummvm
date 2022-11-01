@@ -21,10 +21,10 @@
 
 #include "common/config-manager.h"
 
+#include "gui/message.h"
 #include "graphics/renderer.h"
 #include "graphics/surface.h"
 #include "engines/util.h"
-#include "math/glmath.h"
 
 #include "engines/freescape/gfx.h"
 
@@ -111,7 +111,10 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 	}
 	#endif
 
-	error("Unable to create a renderer");
+	GUI::MessageDialog dialog("Unable to create a renderer. Please compile with support for TinyGL");
+	// TODO: improve message with other renders
+	dialog.runModal();
+	return nullptr;
 }
 
 } // End of namespace Freescape
