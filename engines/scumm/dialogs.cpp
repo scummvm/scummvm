@@ -674,11 +674,20 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 		{0, "TANDY Graphics"}
 	};
 
-	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
-		stringno -= ARRAYSIZE(strMap1) - 1;
-		assert(stringno < ARRAYSIZE(strMap2));
-		return strMap2[stringno];
-	}
+	// V3 games (except LOOM) do not have a quit prompt message set in the scripts:
+	// we use this table to hardcode one for each language...
+	static const ResString hardcodedV3QuitPrompt[] = {
+		{0, "Are you sure you want to quit? (Y/N)Y"}, // EN
+		{0, "Etes vous s\x96r de vouloir quitter (O/N)O"}, // FR
+		{0, "Wollen Sie wirklich aufh\x94ren? (J/N)J"}, // DE
+		{0, "Sei sicuro di voler uscire? (S/N)S"}, // IT
+		{0, """\xc2\xa8""Est""\xc2\xa0""s seguro de querer abandonar? (S/N)S"}, // ES
+		{0, "(Y/N)Y"}, // RU - Placeholder: I don't know of any RU version of v3 games
+		{0, "(Y/N)Y"}, // SE - Placeholder: I don't know of any SE version of v3 games
+		{0, "\x96{\x93\x96\x82\xC9\x8FI\x97\xB9\x82\xB5\x82\xC4\x82\xE0\x82\xA2\x82\xA2\x82\xC5\x82\xB7\x82\xA9\x81H  (Y/N)Y"} // JA
+	};
+
+	bool useHardcodedV3QuitPrompt = stringno == 5 && _vm->_game.version == 3 && _vm->_game.id != GID_LOOM;
 
 	// I have added the langugages I found in scumm-md5.h for v1/2 games...
 	int langIndex = 0;
@@ -701,9 +710,22 @@ const ResString &InfoDialog::getStaticResString(Common::Language lang, int strin
 	case Common::SE_SWE:
 		langIndex = 6;
 		break;
+	case Common::JA_JPN:
+		langIndex = useHardcodedV3QuitPrompt ? 7 : 0;
+		break;
 	default:
 		// Just stick with English.
 		break;
+	}
+
+	if (useHardcodedV3QuitPrompt) {
+		return hardcodedV3QuitPrompt[langIndex];
+	}
+
+	if (stringno + 1 >= ARRAYSIZE(strMap1)) {
+		stringno -= ARRAYSIZE(strMap1) - 1;
+		assert(stringno < ARRAYSIZE(strMap2));
+		return strMap2[stringno];
 	}
 
 	// Special case for ZAK v2 ITA, which has a different string both for the pause
