@@ -1355,7 +1355,7 @@ void MToonElement::debugInspect(IDebugInspectionReport *report) const {
 	report->declareDynamic("assetID", Common::String::format("%i", static_cast<int>(_assetID)));
 	report->declareDynamic("isPlaying", Common::String::format("%s", _isPlaying ? "true" : "false"));
 	report->declareDynamic("renderedFrame", Common::String::format("%i", static_cast<int>(_renderedFrame)));
-	report->declareDynamic("playRange", Common::String::format("%i", static_cast<int>(_playRange.min), static_cast<int>(_playRange.max)));
+	report->declareDynamic("playRange", Common::String::format("%i-%i", static_cast<int>(_playRange.min), static_cast<int>(_playRange.max)));
 }
 #endif
 
