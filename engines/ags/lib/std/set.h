@@ -36,6 +36,11 @@ private:
 	static int ComparatorFn(const T &a, const T &b) {
 		return Comparitor().operator()(a, b) ? -1 : 0;
 	}
+
+	static bool CompareEq(const T &a, const T &b) {
+		return !ComparatorFn(a, b) && !ComparatorFn(b, a);
+	}
+
 public:
 	struct Entry {
 		const T &_value;
@@ -56,7 +61,7 @@ public:
 	 */
 	iterator find(const T &item) {
 		iterator it;
-		for (it = this->begin(); it != this->end() && *it != item; ++it) {
+		for (it = this->begin(); it != this->end() && !CompareEq(*it, item); ++it) {
 		}
 
 		return it;
@@ -76,7 +81,7 @@ public:
 	size_t count(const T item) const {
 		size_t total = 0;
 		for (const_iterator it = this->begin(); it != this->end(); ++it) {
-			if (*it == item)
+			if (CompareEq(*it, item))
 				++total;
 			else if (!ComparatorFn(item, *it))
 				// Passed beyond possibility of matches
