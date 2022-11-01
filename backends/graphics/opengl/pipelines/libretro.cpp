@@ -279,6 +279,11 @@ static void stripShaderParameters(char *source, UniformsMap &uniforms) {
 }
 
 bool LibRetroPipeline::loadPasses() {
+	// Error out if there are no passes
+	if (!_shaderPreset->passes.size()) {
+		return false;
+	}
+
 	// First of all, build the aliases list
 	Common::String aliasesDefines;
 	Common::StringArray aliases;
