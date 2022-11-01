@@ -167,12 +167,12 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 
 		// grab the object condition, if there is one
 		FCLInstructionVector instructions;
-		Common::String *conditionSource = nullptr;
+		Common::String conditionSource;
 		if (byteSizeOfObject) {
 			Common::Array<uint8> conditionArray = readArray(file, byteSizeOfObject);
 			conditionSource = detokenise8bitCondition(conditionArray, instructions);
 			// instructions = getInstructions(conditionSource);
-			debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
+			debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 		}
 		debugC(1, kFreescapeDebugParser, "End of object at %lx", file->pos());
 
@@ -382,10 +382,10 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 		debugC(1, kFreescapeDebugParser, "length of condition: %d", lengthOfCondition);
 		// get the condition
 		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
-		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
+		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		area->_conditions.push_back(instructions);
 		area->_conditionSources.push_back(conditionSource);
-		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
+		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 	}
 
 	debugC(1, kFreescapeDebugParser, "End of area at %lx", file->pos());
@@ -462,10 +462,10 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 		// get the condition
 		Common::Array<uint8> conditionArray = readArray(file, lengthOfCondition);
 		// debug("Global condition %d", numConditions + 1);
-		Common::String *conditionSource = detokenise8bitCondition(conditionArray, instructions);
+		Common::String conditionSource = detokenise8bitCondition(conditionArray, instructions);
 		_conditions.push_back(instructions);
 		_conditionSources.push_back(conditionSource);
-		debugC(1, kFreescapeDebugParser, "%s", conditionSource->c_str());
+		debugC(1, kFreescapeDebugParser, "%s", conditionSource.c_str());
 	}
 
 	if (isAmiga() || isAtariST())

@@ -55,7 +55,7 @@ public:
 	void addStructure(Area *global);
 	void removeObject(int16 id);
 
-	Common::Array<Common::String *> _conditionSources;
+	Common::Array<Common::String> _conditionSources;
 	Common::Array<FCLInstructionVector> _conditions;
 
 	// Serialization
