@@ -1502,10 +1502,10 @@ void ScummEngine::queryRestart() {
 		Common::KeyState ks;
 		if (_game.version > 4) {
 			ks = showBannerAndPause(0, -1, msgLabelPtr);
-		} else if (_game.version == 3) {
-			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
-		} else {
+		} else if (_game.version < 3) {
 			ks = printMessageAndPause(msgLabelPtr, 4, -1, false);
+		} else {
+			ks = showOldStyleBannerAndPause(msgLabelPtr, 12, -1);
 		}
 
 		_system->setFeatureState(OSystem::kFeatureVirtualKeyboard, false);
