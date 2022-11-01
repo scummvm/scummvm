@@ -351,14 +351,6 @@ protected:
 	 */
 	byte _gamePalette[3 * 256];
 
-#if !USE_FORCED_GLES
-	/**
-	 * The render target for the virtual game screen. Used when
-	 * LibRetro shaders are enabled.
-	 */
-	TextureTarget *_gameScreenTarget;
-#endif
-
 	//
 	// Overlay
 	//
