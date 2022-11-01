@@ -195,7 +195,7 @@ Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{
 
 [Icons]
 ; Optional desktop icon
-Name: "{userdesktop}\ScummVM"; Filename: "{app}\scummvm.exe"; Tasks: desktopicon
+Name: "{userdesktop}\ScummVM"; Filename: "{app}\scummvm.exe"; Parameters: "--no-console"; Tasks: desktopicon
 
 ; Start menu icons
 Name: {group}\ScummVM; Filename: {app}\scummvm.exe; Parameters: "--no-console"; WorkingDir: {app}; Comment: ScummVM; Flags: createonlyiffileexists; IconIndex: 0
@@ -205,7 +205,7 @@ Name: {group}\Saved Games\Saved Games; Filename: {userappdata}\ScummVM\Saved Gam
 Name: {group}\Spielstände\Spielstände; Filename: {userappdata}\ScummVM\Saved Games; WorkingDir: {userappdata}\ScummVM\Saved Games; Comment: Spielstände; IconIndex: 0; MinVersion: 0, 1; Languages: german
 
 [Run]
-Filename: {app}\ScummVM.exe; Flags: nowait skipifdoesntexist postinstall skipifsilent
+Filename: {app}\ScummVM.exe; Parameters: "--no-console"; Flags: nowait skipifdoesntexist postinstall skipifsilent
 
 ; Creates a symbolic link for standard save games area, under Windows Vista and higher
 ; Filename: {cmd}; Parameters: "/c ""mklink /d ""%userprofile%\Saved Games\ScummVM"" ""%appdata%\ScummVM\Saved games"" "" "; MinVersion: 0, 6.1
