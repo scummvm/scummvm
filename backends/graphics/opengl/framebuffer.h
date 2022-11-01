@@ -86,6 +86,22 @@ public:
 	 * Obtain projection matrix of the framebuffer.
 	 */
 	const Math::Matrix4 &getProjectionMatrix() const { return _projectionMatrix; }
+
+	enum CopyMask {
+		kCopyMaskClearColor   = (1 << 0),
+		kCopyMaskBlendState   = (1 << 1),
+		kCopyMaskScissorState = (1 << 2),
+		kCopyMaskScissorBox   = (1 << 4),
+
+		kCopyMaskAll          = kCopyMaskClearColor | kCopyMaskBlendState |
+		                        kCopyMaskScissorState | kCopyMaskScissorBox,
+	};
+
+	/**
+	 * Copy rendering state from another framebuffer
+	 */
+	void copyRenderStateFrom(const Framebuffer &other, uint copyMask);
+
 protected:
 	bool isActive() const { return _pipeline != nullptr; }
 
