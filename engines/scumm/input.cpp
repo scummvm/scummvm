@@ -926,10 +926,20 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 			return;
 		}
 
-		if ((VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))) ||
-			(_game.version == 2 && (lastKeyHit.keycode == Common::KEYCODE_F8)) ||
-			((_game.id == GID_CMI && !(_game.features & GF_DEMO))
-				&& lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0))) {
+		bool restartKeyPressed = false;
+
+		// Restart if we've hit the restart key or if there is none but F8 is pressed...
+		restartKeyPressed |= ((VAR_RESTART_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_RESTART_KEY))));
+
+		// ...or if this is a pre v3 or post v6, force the restart prompt on F8...
+		restartKeyPressed |= ((_game.version < 3 || _game.version > 6) &&
+			lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0));
+
+		// ...or if this is a v3 FM-Towns game, restart on F8 (the original accepted a key value of 0xFFFF8008)
+		restartKeyPressed |= _game.platform == Common::kPlatformFMTowns && _game.version == 3 &&
+			lastKeyHit.keycode == Common::KEYCODE_F8 && lastKeyHit.hasFlags(0);
+
+		if (restartKeyPressed) {
 			queryRestart();
 			return;
 		}

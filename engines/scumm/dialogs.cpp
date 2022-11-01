@@ -84,7 +84,8 @@ static const ResString string_map_table_v8[] = {
 	{0, "/NEW.24/Music Volume  Low  =========  High"},
 	{0, "/NEW.25/Voice Volume  Low  =========  High"},
 	{0, "/NEW.26/Sfx Volume  Low  =========  High"},
-	{0, "Heap %dK"} // Non-translatable string
+	{0, "Heap %dK"}, // Non-translatable string
+	{0, "Are you sure you want to restart?  (Y-N)Y"} // Not in the original
 };
 
 static const ResString string_map_table_v7[] = {

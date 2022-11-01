@@ -1001,7 +1001,7 @@ const char *ScummEngine_v8::getGUIString(int stringId) {
 		resStringId = 4;
 		break;
 	case gsRestart:
-		resStringId = 5;
+		resStringId = (_game.features & GF_DEMO) ? 36 : 5;
 		break;
 	case gsQuitPrompt:
 		resStringId = (_game.features & GF_DEMO) ? 30 : 22;
