@@ -337,6 +337,8 @@ void LibRetroPipeline::deactivateInternal() {
 }
 
 bool LibRetroPipeline::open(const Common::FSNode &shaderPreset) {
+	close();
+
 	_shaderPreset = LibRetro::parsePreset(shaderPreset);
 	if (!_shaderPreset)
 		return false;
