@@ -355,6 +355,8 @@ bool OpenGLGraphicsManager::loadShader(const Common::String &fileName) {
 			warning("Failed to load shader %s", fileName.c_str());
 			return false;
 		}
+	} else {
+		_libretroPipeline->close();
 	}
 #endif
 
