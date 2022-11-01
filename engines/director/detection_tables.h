@@ -59,6 +59,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "artofmagic",			"Learn the Art of Magic with Jay Alexander" },
 	{ "artrageous",			"ArtRageous!" },
 	{ "artus1",				"Artus against the Demon of the Museum" },
+	{ "atbat",				"At Bat" },
 	{ "atvrally",			"ATV Rally" },
 	{ "babarcoins",			"Babar and the Royal Coin Caper" },
 	{ "babesintoyland",		"Babes in Toyland: An Interactive Adventure" },
@@ -448,7 +449,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "wiggles1",			"A Day with the Wiggles" },
 	{ "winniewitch",		"Winnie the Witch" },
 	{ "wishbone", 			"Wishbone and the Amazing Odyssey" },
-	{ "wolfgang",			"Wolfgang the Cyberwolf" }, // According to developer Ugo Guidolin, an English version exists
 	{ "wrath",				"Wrath of the Gods" },
 	{ "xanthus",			"Xanthus" },
 	{ "xfools",				"The X-Fools: The Spoof is Out There" },
@@ -562,6 +562,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "mysteriousegypt",	"Mysterious Egypt" }, // aka Voyage in Egypt
 	{ "newslinks",			"ABC NewsLinks" },
 	{ "nia4",				"News in Action 4" },
+	{ "nightsky",			"Night Sky" },
 	{ "nixon",				"Nixon: Watergate" },
 	{ "nmm",				"Nine Month Miracle" },
 	{ "nobel100",			"The Nobel Prize: 100 Years of Creativity and Innovation" },
@@ -822,7 +823,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "lunes",				"I Lunes e la sfera di Lasifer" },					// Lunes & the sphere of Lasifer
 	{ "magicanti",			"I Magicanti e i 3 elementi" },						// The Magicanti & the 3 elements
 	{ "robidoc",			"Robi & Doc: L'isola della Scienza" },
-	{ "wolfgang",			"Wolfgang il Cyberlupo" },
+	{ "wolfgang",			"Wolfgang il Cyberlupo" },  // According to developer Ugo Guidolin, an English version exists ?
 
 	// Japanese games
 	{ "4sight",				"four-sight" },
@@ -1393,6 +1394,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "geoquery",			"Odesta GeoQuery" },
 	{ "greeneggs",			"Green Eggs and Ham" },
 	{ "hollywoodhigh",		"Hollywood High" },
+	{ "hoyle5",				"Hoyle Classic Games" },
 	{ "hyperblade",			"HyperBlade" },
 	{ "ideacomm",			"IDEAcomm Mac" },
 	{ "iliad",				"Iliad" },
