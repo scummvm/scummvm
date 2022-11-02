@@ -104,7 +104,7 @@ void Unlock::charSelected(uint charIndex) {
 		if (isFocused())
 			close();
 
-		int val = g_maps->_currentMap->dataByte(Maps::MAP_UNLOCK_THRESHOLD) * 4 +
+		int val = g_maps->_currentMap->dataByte(Maps::MAP_49) * 4 +
 			getRandomNumber(100);
 
 		if (val < c._v6c) {
