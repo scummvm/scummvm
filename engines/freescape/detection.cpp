@@ -251,11 +251,11 @@ public:
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_PRERECORDED_SOUNDS);
 	}
 
-	const char *getEngineId() const override {
+	const char *getName() const override {
 		return "freescape";
 	}
 
-	const char *getName() const override {
+	const char *getEngineName() const override {
 		return "Freescape";
 	}
 
