@@ -268,43 +268,64 @@ void FreescapeEngine::processInput() {
 
 		switch (event.type) {
 		case Common::EVENT_KEYDOWN:
-			if (event.kbd.keycode == Common::KEYCODE_o || event.kbd.keycode == Common::KEYCODE_UP)
+			switch (event.kbd.keycode) {
+			case Common::KEYCODE_o:
+			case Common::KEYCODE_UP:
 				move(kForwardMovement, _scaleVector.x(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_k || event.kbd.keycode == Common::KEYCODE_DOWN)
+				break;
+			case Common::KEYCODE_k:
+			case Common::KEYCODE_DOWN:
 				move(kBackwardMovement, _scaleVector.x(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_LEFT)
+				break;
+			case Common::KEYCODE_LEFT:
 				move(kLeftMovement, _scaleVector.y(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_RIGHT)
+				break;
+			case Common::KEYCODE_RIGHT:
 				move(kRightMovement, _scaleVector.y(), deltaTime);
-			else if (event.kbd.keycode == Common::KEYCODE_KP5 || event.kbd.keycode == Common::KEYCODE_KP0)
+				break;
+			case Common::KEYCODE_KP5:
+			case Common::KEYCODE_KP0:
 				shoot();
-			else if (event.kbd.keycode == Common::KEYCODE_p)
+				break;
+			case Common::KEYCODE_p:
 				rotate(0, 5);
-			else if (event.kbd.keycode == Common::KEYCODE_l)
+				break;
+			case Common::KEYCODE_l:
 				rotate(0, -5);
-			else if (event.kbd.keycode == Common::KEYCODE_u)
+				break;
+			case Common::KEYCODE_u:
 				rotate(180, 0);
-			else if (event.kbd.keycode == Common::KEYCODE_q)
+				break;
+			case Common::KEYCODE_q:
 				rotate(-_angleRotations[_angleRotationIndex], 0);
-			else if (event.kbd.keycode == Common::KEYCODE_w)
+				break;
+			case Common::KEYCODE_w:
 				rotate(_angleRotations[_angleRotationIndex], 0);
-			else if (event.kbd.keycode == Common::KEYCODE_r)
+				break;
+			case Common::KEYCODE_r:
 				rise();
-			else if (event.kbd.keycode == Common::KEYCODE_f)
+				break;
+			case Common::KEYCODE_f:
 				lower();
-			else if (event.kbd.keycode == Common::KEYCODE_n) {
+				break;
+			case Common::KEYCODE_n:
 				_noClipMode = !_noClipMode;
 				_flyMode = _noClipMode;
-			} else if (event.kbd.keycode == Common::KEYCODE_ESCAPE)
+				break;
+			case Common::KEYCODE_ESCAPE:
 				openMainMenuDialog();
-			else if (event.kbd.keycode == Common::KEYCODE_SPACE) {
+				break;
+			case Common::KEYCODE_SPACE:
 				_shootMode = !_shootMode;
 				if (!_shootMode) {
 					_crossairPosition.x = _screenW / 2;
 					_crossairPosition.y = _screenH / 2;
 				}
-			} else
+				break;
+			default:
 				pressedKey(event.kbd.keycode);
+				break;
+			}
 			break;
 
 		case Common::EVENT_QUIT:
