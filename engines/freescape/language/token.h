@@ -113,7 +113,6 @@ public:
 private:
 	Type _type;
 	int32 _value;
-	Common::String _string;
 };
 
 } // End of namespace Freescape
