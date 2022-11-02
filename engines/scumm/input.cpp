@@ -420,7 +420,7 @@ void ScummEngine::processInput() {
 	_leftBtnPressed &= ~msClicked;
 	_rightBtnPressed &= ~msClicked;
 
-	if (!lastKeyHit.ascii)
+	if (_mouseAndKeyboardStat || !lastKeyHit.ascii)
 		return;
 
 	processKeyboard(lastKeyHit);
