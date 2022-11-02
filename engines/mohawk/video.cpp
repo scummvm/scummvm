@@ -177,7 +177,12 @@ VideoEntryPtr VideoManager::playMovie(const Common::String &fileName, Audio::Mix
 
 
 	Common::String subtitlesName = Common::String::format("%s.srt", fileName.substr(0, fileName.size() - 4).c_str());
-	loadSubtitles(subtitlesName.c_str());
+
+	if (Common::File::exists(subtitlesName)) {
+		loadSubtitles(subtitlesName.c_str());
+		g_system->showOverlay();
+		g_system->clearOverlay();
+	}
 
 	ptr->start();
 	return ptr;
@@ -196,8 +201,6 @@ bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
-		g_system->showOverlay();
-		g_system->clearOverlay();
 
 		// Check of the video has reached the end
 		if ((*it)->endOfVideo()) {
