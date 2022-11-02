@@ -1597,8 +1597,10 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 
 	if (funcSym.nargs != -1) {
 		if (funcSym.type == HANDLER || funcSym.type == HBLTIN) {
+			// Lingo supports providing a different number of arguments than expected,
+			// and several games rely on this behaviour.
 			if (funcSym.maxArgs < nargs) {
-				warning("Incorrect number of arguments for handler %s (%d, expected %d to %d). Dropping extra %d",
+				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Dropping extra %d",
 							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs - funcSym.maxArgs);
 				while (nargs > funcSym.maxArgs) {
 					g_lingo->pop();
@@ -1606,7 +1608,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 				}
 			}
 			if (funcSym.nargs > nargs) {
-				warning("Incorrect number of arguments for handler %s (%d, expected %d to %d). Adding extra %d voids",
+				debugC(kDebugLingoExec, 1, "Incorrect number of arguments for handler '%s' (%d, expected %d to %d). Adding extra %d voids",
 							funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, funcSym.nargs - nargs);
 				while (nargs < funcSym.nargs) {
 					Datum d;
@@ -1617,7 +1619,7 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 				}
 			}
 		} else if (funcSym.nargs > nargs || funcSym.maxArgs < nargs) {
-			warning("Incorrect number of arguments for builtin %s (%d, expected %d to %d). Dropping %d stack items.",
+			warning("Incorrect number of arguments for builtin '%s' (%d, expected %d to %d). Dropping %d stack items.",
 						funcSym.name->c_str(), nargs, funcSym.nargs, funcSym.maxArgs, nargs);
 
 			for (int i = 0; i < nargs; i++)
@@ -1651,16 +1653,16 @@ void LC::call(const Symbol &funcSym, int nargs, bool allowRetVal) {
 		if (funcSym.u.bltin != LB::b_return && funcSym.u.bltin != LB::b_value) {
 			if (stackSize == stackSizeBefore + 1) {
 				if (!allowRetVal) {
-					warning("dropping return value");
-					g_lingo->pop();
+					Datum extra = g_lingo->pop();
+					warning("Builtin '%s' dropping return value: %s", funcSym.name->c_str(), extra.asString(true).c_str());
 				}
 			} else if (stackSize == stackSizeBefore) {
 				if (allowRetVal)
-					error("builtin function %s did not return value", funcSym.name->c_str());
+					error("Builtin '%s' did not return value", funcSym.name->c_str());
 			} else if (stackSize > stackSizeBefore) {
-				error("builtin %s returned extra %d values", funcSym.name->c_str(), stackSize - stackSizeBefore);
+				error("Builtin '%s' returned extra %d values", funcSym.name->c_str(), stackSize - stackSizeBefore);
 			} else {
-				error("builtin %s popped extra %d values", funcSym.name->c_str(), stackSizeBefore - stackSize);
+				error("Builtin '%s' popped extra %d values", funcSym.name->c_str(), stackSizeBefore - stackSize);
 			}
 		}
 		return;
