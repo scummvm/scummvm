@@ -910,6 +910,7 @@ const PlainGameDescriptor GAME_NAMES[] = {
 	{ "dannydreadisoncall", "Danny Dread is On Call" },
 	{ "dantesday", "Dante's Day" },
 	{ "darkblack", "Dark Black" },
+	{ "darkdenim", "Darkness and Denim" },
 	{ "darkforce", "DarkForce: Peace Among Nations" },
 	{ "darkofnight", "Dark of Night" },
 	{ "darktimesmerrychristmas", "Dark Times (Merry Christmas)" },
@@ -4886,6 +4887,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("dannydreadisoncall", "On Call.exe", "ef480ccb0831e452e55456e0ca24c761", 8791050),  //En-It
 	GAME_ENTRY_EN("dantesday", "Dante's Day.exe", "0500aacb6c176d47ac0f8158f055db83", 7504000),
 	GAME_ENTRY_EN("darkblack", "DarkBlack.exe", "e80586fdc2db32f65658b235d8cbc159", 8714374),
+	GAME_ENTRY_EN("darkdenim", "MAGS_10_22.exe", "d38b8cc442c00a319560244f54e10b85", 12662135),
 	GAME_ENTRY_EN("darkforce", "DarkForce.exe", "338fa79960d40689063af31c671b8729", 276608794),
 	GAME_ENTRY_EN("darkofnight", "D_o_N.exe", "3f7bb944e107f883d183f047d9d7f698", 10261961),
 	GAME_ENTRY_EN("darktimesmerrychristmas", "Dark Times (Merry Christmas).exe", "1b9f13d430bb15bf30d0fd044358db68", 49043355),
@@ -5066,6 +5068,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY("errand", "errand.exe", "2e6b104176f310e7fb507183c443edfe", 4404813),  // v1.2  Multilang
 	GAME_ENTRY("errand", "Errand.exe", "8212e96af620f6e02a37fdf583f79751", 4425035),  // v1.3  Windows Multilang
 	GAME_ENTRY("errand", "Errand.exe", "8212e96af620f6e02a37fdf583f79751", 4421187),  // v1.3  Alt/Linux Multiang
+	GAME_ENTRY("errand", "errand.exe", "8212e96af620f6e02a37fdf583f79751", 4425232),  // v1.5  Win/Linux Multilang
 	GAME_ENTRY_EN("escape", "Escape.exe", "9cf51833e787cc919837d9a8bd8fc14c", 2182153),
 	GAME_ENTRY_EN("escapefromasmallroom", "game1.exe", "0b7529a76f38283d6e850b8d56526fc1", 803029),
 	GAME_ENTRY_EN("escapefromevergreenforest", "EFEF.exe", "2e58934bbe98335f33c20a23a6c6135a", 23855632),
@@ -6195,6 +6198,7 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("osd3d", "OSD.3D.exe", "ade2e3bec80e9d26ef195e515cecc01e", 21843606),
 	GAME_ENTRY_EN_PLATFORM("osdanish", "OSDanish.exe", "4fdacfd1e49508d3b12f9414a375067f", 8551119, "MAGS"),  // v1.1
 	GAME_ENTRY("osdanish", "OSDanish.exe", "4fdacfd1e49508d3b12f9414a375067f", 8552024),  // v1.2.0 Eng-Esp
+	GAME_ENTRY("osdanish", "Oceanspirit Danish.exe", "4fdacfd1e49508d3b12f9414a375067f", 8555600),  // v1.2 Win/Linux En-De-Es
 	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6595789),
 	GAME_ENTRY_EN("osdarayofhope", "ray_of_hope.exe", "25976a689b0f4d73eac69b1728377ecb", 6596689),
 	GAME_ENTRY_EN("osdarchipelago", "OSD Archipelago.exe", "510be04e5eec2aa92bb78b060f138d64", 131491224),
@@ -7314,6 +7318,8 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_EN("whentimestops", "When Time Stops.exe", "c48d0beedcdc1b05e9e25dcd60de46a9", 142215901),
 	GAME_ENTRY_EN("wherebedragons", "Where Be Dragons.exe", "d8ccbb83c73ca8520b19412ce0d8de10", 2607599),
 	GAME_ENTRY_EN("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137412),
+	GAME_ENTRY("wheredidhumansgo", "AdvGameChallenge22.exe", "805aebfc9a02cd02f892de6cd2cb7c87", 34137817),  // Windows Eng-Ita
+	GAME_ENTRY("wheredidhumansgo", "AdvGameChallenge22.ags", "d8eefb1fd0d9132d413f3d977c9712f8", 31022789),  // Linux Eng-Ita
 	GAME_ENTRY_EN("wheredidsamgo", "WDSG.exe", "0710e2ec71042617f565c01824f0cf3c", 4921841),
 	GAME_ENTRY_EN_PLATFORM("wheresmhatma", "WMHM.exe", "3b7cceb3e4bdb031dc5d8f290936e94b", 50659613, "MAGS"),
 	GAME_ENTRY_EN("wheresmhatma", "WMHM.exe", "25f919423520b921a041ec854e3a0217", 51766424),  //v2.0
