@@ -77,6 +77,7 @@ private:
 	ObjectMap *_objectsByID;
 	ObjectMap *_entrancesByID;
 	Common::Array<Object *> _drawableObjects;
+	ObjectMap _addedObjects;
 	Object *objectWithIDFromMap(ObjectMap *map, uint16 objectID);
 };
 

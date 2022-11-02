@@ -92,13 +92,17 @@ Area::Area(uint16 areaID_, uint16 areaFlags_, ObjectMap *objectsByID_, ObjectMap
 
 Area::~Area() {
 	if (_entrancesByID) {
-		for (auto &it : *_entrancesByID)
-			delete it._value;
+		for (auto &it : *_entrancesByID) {
+			if (!_addedObjects.contains(it._value->getObjectID()))
+				delete it._value;
+		}
 	}
 
 	if (_objectsByID) {
-		for (auto &it : *_objectsByID)
-			delete it._value;
+		for (auto &it : *_objectsByID) {
+			if (!_addedObjects.contains(it._value->getObjectID()))
+				delete it._value;
+		}
 	}
 
 	delete _entrancesByID;
@@ -198,6 +202,8 @@ void Area::addObject(Object *obj) {
 	(*_objectsByID)[id] = obj;
 	if (obj->isDrawable())
 		_drawableObjects.insert_at(0, obj);
+
+	_addedObjects[id] = obj;
 }
 
 void Area::removeObject(int16 id) {
@@ -209,6 +215,7 @@ void Area::removeObject(int16 id) {
 		}
 	}
 	_objectsByID->erase(id);
+	_addedObjects.erase(id);
 }
 
 void Area::addObjectFromArea(int16 id, Area *global) {
@@ -216,9 +223,11 @@ void Area::addObjectFromArea(int16 id, Area *global) {
 	Object *obj = global->objectWithID(id);
 	if (!obj) {
 		assert(global->entranceWithID(id));
+		_addedObjects[id] = global->entranceWithID(id);
 		(*_entrancesByID)[id] = global->entranceWithID(id);
 	} else {
 		(*_objectsByID)[id] = global->objectWithID(id);
+		_addedObjects[id] = global->objectWithID(id);
 		if (obj->isDrawable())
 			_drawableObjects.insert_at(0, obj);
 	}
