@@ -7,7 +7,7 @@ msgstr ""
 "Project-Id-Version: ScummVM 1.10.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
 "POT-Creation-Date: 2022-10-31 01:44+0000\n"
-"PO-Revision-Date: 2022-10-10 14:47+0000\n"
+"PO-Revision-Date: 2022-11-02 09:44+0000\n"
 "Last-Translator: Antoniou Athanasios <a.antoniou79@gmail.com>\n"
 "Language-Team: Greek <https://translations.scummvm.org/projects/scummvm/"
 "scummvm/el/>\n"
@@ -9116,10 +9116,8 @@ msgid "Toggle subtitles"
 msgstr "Εναλλαγή υποτίτλων"
 
 #: engines/wintermute/keymapper_tables.h:1381
-#, fuzzy
-#| msgid "Hide Others"
 msgid "Hide hints"
-msgstr "Απόκρυψη Άλλων"
+msgstr "Απόκρυψη Υποδείξεων"
 
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
 #: engines/wintermute/keymapper_tables.h:1436
