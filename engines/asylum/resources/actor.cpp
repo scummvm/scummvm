@@ -1125,7 +1125,7 @@ Common::String Actor::toString(bool shortString) {
 // Unknown methods
 //////////////////////////////////////////////////////////////////////////
 
-void Actor::clearFields() {
+void Actor::clearReflectionData() {
 	_processNewDirection = false;
 	_invertPriority = false;
 	_nextDirection = kDirectionN;
