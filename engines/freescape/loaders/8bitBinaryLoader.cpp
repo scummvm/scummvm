@@ -100,18 +100,18 @@ Object *FreescapeEngine::load8bitObject(Common::SeekableReadStream *file) {
 	byteSizeOfObject = byteSizeOfObject - 9;
 	if (objectID == 255 && objectType == ObjectType::kEntranceType) {
 		debugC(1, kFreescapeDebugParser, "Found the room structure (objectID: 255 with size %d)", byteSizeOfObject + 6);
-		byte *structureData = (byte *)malloc(byteSizeOfObject + 6);
-		structureData[0] = int(position.x());
-		structureData[1] = int(position.y());
-		structureData[2] = int(position.z());
+		Common::Array<uint8> structureArray;
+		structureArray.push_back(uint8(position.x()));
+		structureArray.push_back(uint8(position.y()));
+		structureArray.push_back(uint8(position.z()));
 
-		structureData[3] = int(v.x());
-		structureData[4] = int(v.y());
-		structureData[5] = int(v.z());
+		structureArray.push_back(uint8(v.x()));
+		structureArray.push_back(uint8(v.y()));
+		structureArray.push_back(uint8(v.z()));
 
-		if (byteSizeOfObject > 0)
-			file->read(structureData + 6, byteSizeOfObject);
-		Common::Array<uint8> structureArray(structureData, byteSizeOfObject + 6);
+		byteSizeOfObject++;
+		while(--byteSizeOfObject > 0)
+			structureArray.push_back(file->readByte());
 		return new GlobalStructure(structureArray);
 	}
 
