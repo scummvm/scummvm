@@ -1200,8 +1200,13 @@ static const PlainGameDescriptor directorGames[] = {
 
 	// Russian titles
 	{ "engl",				"English for Beginners" },
-	{ "max1max2",			"Макс демонстрация" },                          // Max (Tivola) demos of the first two games
+	{ "max1max2",			"Макс демонстрация" },                         // Max (Tivola) demos of the first two games
 	{ "plcd",				"Подводная Лодка" },						   // Podvodnaya Lodka (Submarine) magazine
+	{ "pyatachok1",			"Пятачок и разные звери" },					   // Pong-Pong's Learning Adventure: The Animals
+	{ "pyatachok2",			"Пятачок в Волшебном Лесу" },				   // Pong-Pong's Learning Adventure: Insects and Plants
+	{ "pyatachok3",			"Пятачок в Затерянном мире" },				   // Pong-Pong's Learning Adventure: The Lost World
+	{ "pyatachok4",			"Пятачок: Назад в будущее" },				   // Pong-Pong's Learning Adventure: Back to the Future
+	{ "pyatachok5",			"Пятачок сдает экзамен по Анатомии" },		   // Pong-Pong's Learning Adventure: Mysteries of Human Body
 	{ "tchaik",				"Пётр Ильи́ч Чайко́вский: Жизнь и творчество" }, // Pyotr Ilyich Tchaikovsky: Life and Work
 	{ "tutti",				"Волшебные истории Тутти" },				   // Tutti's Magical Stories
 
@@ -5657,6 +5662,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("putlestory", "", "PutlestorY", "552992fb31c736ca67ffd403096596d6", 720654, Common::JA_JPN, 501),
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
 
+	// From Russian "Pyatachok Anthology" DVD
+	WINGAME1t_l("pyatachok1", "", "START.EXE", "97ecdb7aa731b30ba6b1715eab4e0e0d", 917671, Common::RU_RUS, 500),
+
 	// Disc contains an audio track, not used by the game
 	// Mac version requires installation, 'PYST Installer' / 'MACINTOSH/Installer PYST(MAC)' (FR) / 'MACINTOSH/Installieren PYST(MAC)' (DE), VISE
 	// Win version requires installation, 'HDINST/PROGRAM.Z' / 'PC_WIN95/HDINST/PROGRAM.Z' (FR, DE), InstallShield v3
@@ -6550,6 +6558,11 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("poporon", "", " PoPoRon", "68a0694e294e201c167feff1953eb8ce", 118587, Common::JA_JPN, 601),
 	WINGAME1t_l("poporon", "", "POPORON.EXE", "37c0c99d35e762a2f44ef93732bc9337", 1799789, Common::JA_JPN, 601),
 
+	// From Russian "Pyatachok Anthology" DVD, games are Eng/Rus
+	WINGAME1t("pyatachok2", "", "Pig2.exe", "60d9a1a113aff3c5481afdc445e00ac0", 1704003, 602),
+	WINGAME1t("pyatachok3", "", "Pongo 3.exe", "f1363e5fbef1e0450de9d1f74641f980", 1703971, 602),
+	WINGAME1t("pyatachok4", "", "Pig4.exe", "e267270ccb1f1c985cbbd02a3f4e3030", 1703949, 602),
+
 	// Original file name is RealPool™
 	MACGAME1("realpool", "", "xn--RealPool-on5d", "269b100b24bda808238eb6feb183781f", 114791, 600),
 
@@ -6987,6 +7000,9 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1("princerave", "", "The_Artist.exe", "7c18c9a6af2694156bf09ed195c1ab09", 2596022, 702),
 
 	WINGAME1_l("princessfashion", "", "Disney.exe", "7c18c9a6af2694156bf09ed195c1ab09", 172782, Common::ES_ESP, 702),
+
+	// From Russian "Pyatachok Anthology" DVD, game is Eng/Rus
+	WINGAME1t("pyatachok5", "", "Pong5.exe", "ca0e3da7559ca50807ad3c9eec9afdf2", 2365442, 702),
 
 	MACGAME1_l("rainbowfish1", "", "REGENBOOG", "dec72b4b6f8e97f1ea24361794bf0bdf", 116715, Common::NL_NLD, 702),
 	WINGAME1_l("rainbowfish1", "", "Regenboog.exe", "88d4c24f6d4b78a73ce5b07693eddbc8", 1820762, Common::NL_NLD, 702),
