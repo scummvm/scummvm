@@ -1,0 +1,25 @@
+in vec2 position;
+in vec2 texcoord;
+
+uniform vec2 texOffsetXY;
+uniform vec2 texSizeWH;
+uniform vec2 verOffsetXY;
+uniform vec2 verSizeWH;
+uniform UBOOL flipY;
+
+out vec2 Texcoord;
+
+void main() {
+	Texcoord = texOffsetXY + texcoord * texSizeWH;
+
+	// Coordinates are [0.0;1.0], transform to [-1.0; 1.0]
+	vec2 pos = verOffsetXY + position * verSizeWH;
+	pos.x = pos.x * 2.0 - 1.0;
+	pos.y = -1.0 * (pos.y * 2.0 - 1.0);
+
+	if (UBOOL_TEST(flipY)) {
+		pos.y *= -1.0;
+	}
+
+	gl_Position = vec4(pos, 0.0, 1.0);
+}

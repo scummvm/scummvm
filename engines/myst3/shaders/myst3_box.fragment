@@ -1,0 +1,13 @@
+in vec2 Texcoord;
+
+OUTPUT
+
+uniform UBOOL textured;
+uniform vec4 color;
+uniform sampler2D tex;
+
+void main() {
+	outColor = color;
+	if (UBOOL_TEST(textured))
+		outColor = outColor * texture(tex, Texcoord);
+}

@@ -1,0 +1,7 @@
+OUTPUT
+
+uniform float dim;
+
+void main() {
+	outColor = vec4(0.0, 0.0, 0.0, dim);
+}

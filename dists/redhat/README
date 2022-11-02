@@ -1,0 +1,35 @@
+How to build an RPM:
+
+
+0) Install dependencies:
+
+This assumes Fedora 24 or higher.
+
+dnf install gcc-c++ make git libmad-devel desktop-file-utils libogg-devel libvorbis-devel flac-devel zlib-devel nasm SDL2-devel freetype-devel fluidsynth-devel libtheora-devel libpng-devel libjpeg-turbo-devel alsa-lib-devel wxGTK3-devel boost-devel rpm-build
+
+1) Collect sources:
+
+Place scummvm-%{version}.tar.bz2, scummvm-tools-%{version}.tar.bz2,
+faad2-2.8.6.tar.gz, libmpeg2-0.5.1.tar.gz in ~/rpmbuild/SOURCES .
+
+This assumes that the RPM topdir is ~/rpmbuild/ . If you have set a different
+topdir, adapt appropriately.
+
+faad2 is available at https://sourceforge.net/projects/faac/files/faad2-src/faad2-2.8.0/faad2-2.8.6.tar.gz/download
+libmpeg2 at http://libmpeg2.sourceforge.net/files/libmpeg2-0.5.1.tar.gz
+
+
+2) Build the rpms:
+
+Run:
+
+rpmbuild -ba scummvm.spec
+rpmbuild -ba scummvm-tools.spec
+
+The RPMs should now be built and placed in ~/rpmbuild/RPMS/x86_64 and
+the source RPMs in ~/rpmbuild/SRPMS
+
+
+
+Note: faad2 and libmpeg2 are statically linked into the scummvm binary
+because Fedora do not carry the corresponding packages.

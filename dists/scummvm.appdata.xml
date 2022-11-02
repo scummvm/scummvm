@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Copyright 2020-2022 The ScummVM Team -->
+<component type="desktop">
+  <id>scummvm.desktop</id>
+  <metadata_license>CC0-1.0</metadata_license>
+  <project_license>GPL-2.0+</project_license>
+  <name>ScummVM</name>
+  <summary>Interpreter for numerous adventure games and role-playing games</summary>
+  <summary xml:lang="de">Interpreter für zahlreiche Adventure-Spiele und RPGs</summary>
+  <developer_name>The ScummVM Team</developer_name>
+  <provides>
+    <id>scummvm.desktop</id>
+  </provides>
+  <description>
+    <p>
+      ScummVM is a program which allows you to run a wide variety of classic
+      graphical point-and-click adventure games and role-playing games,
+      provided you already have their data files. The clever part about this:
+      ScummVM just replaces the executables shipped with the game,
+      allowing you to play them on systems for which they were never designed!
+    </p>
+    <p>
+      Currently, ScummVM supports a huge library of adventures with over 250 games in total.
+      It supports many classics published by legendary studios like LucasArts, Sierra On-Line,
+      Revolution Software, Cyan, Inc. and Westwood Studios.
+    </p>
+    <p>
+      Next to ground-breaking titles like the Monkey Island series, Broken Sword,
+      Myst, Blade Runner and countless other games you will find
+      some really obscure adventures and truly hidden gems to explore.
+    </p>
+  </description>
+  <screenshots>
+    <screenshot type="default">
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_1.png</image>
+      <caption>ScummVM Launcher</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_2.png</image>
+      <caption>ScummVM running 'Flight of the Amazon Queen'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_3.png</image>
+      <caption>ScummVM running 'Beneath a Steel Sky'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_4.png</image>
+      <caption>ScummVM running 'The Curse of Monkey Island'</caption>
+    </screenshot>
+    <screenshot>
+      <image>https://www.scummvm.org/frs/extras/storefront/screenshots/screenshot_5.png</image>
+      <caption>ScummVM running a demo of 'Myst'</caption>
+    </screenshot>
+  </screenshots>
+  <url type="homepage">https://www.scummvm.org</url>
+  <update_contact>scummvm-devel@lists.scummvm.org</update_contact>
+  <content_rating type="oars-1.1">
+    <content_attribute id="violence-cartoon">none</content_attribute>
+    <content_attribute id="violence-fantasy">none</content_attribute>
+    <content_attribute id="violence-realistic">none</content_attribute>
+    <content_attribute id="violence-bloodshed">none</content_attribute>
+    <content_attribute id="violence-sexual">none</content_attribute>
+    <content_attribute id="violence-desecration">none</content_attribute>
+    <content_attribute id="violence-slavery">none</content_attribute>
+    <content_attribute id="violence-worship">none</content_attribute>
+    <content_attribute id="drugs-alcohol">none</content_attribute>
+    <content_attribute id="drugs-narcotics">none</content_attribute>
+    <content_attribute id="drugs-tobacco">none</content_attribute>
+    <content_attribute id="sex-nudity">none</content_attribute>
+    <content_attribute id="sex-themes">none</content_attribute>
+    <content_attribute id="sex-homosexuality">none</content_attribute>
+    <content_attribute id="sex-prostitution">none</content_attribute>
+    <content_attribute id="sex-adultery">none</content_attribute>
+    <content_attribute id="sex-appearance">none</content_attribute>
+    <content_attribute id="language-profanity">none</content_attribute>
+    <content_attribute id="language-humor">none</content_attribute>
+    <content_attribute id="language-discrimination">none</content_attribute>
+    <content_attribute id="social-chat">none</content_attribute>
+    <content_attribute id="social-info">none</content_attribute>
+    <content_attribute id="social-audio">none</content_attribute>
+    <content_attribute id="social-location">none</content_attribute>
+    <content_attribute id="social-contacts">none</content_attribute>
+    <content_attribute id="money-purchasing">none</content_attribute>
+    <content_attribute id="money-gambling">none</content_attribute>
+  </content_rating>
+</component>

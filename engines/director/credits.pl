@@ -1,0 +1,12 @@
+begin_section("Director");
+	add_person("Eugene Sandulenko", "sev", "");
+	add_person("Crane Yang", "sheep", "GSoC Student");
+	add_person("Dmitry Iskrich", "", "");
+	add_person("Deborah Servilla", "djsrv", "GSoC Student");
+	add_person("Nathanael Gentry", "npjg", "GSoC Student");
+	add_person("Roland van Laar", "rvanlaar", "");
+	add_person("Scott Percival", "moralrecordings", "");
+	add_person("Steven Hoefel", "", "");
+	add_person("Tobia Tesan", "", "");
+	add_person("Misty De M&eacute;o", "mistydemeo", "");
+end_section();

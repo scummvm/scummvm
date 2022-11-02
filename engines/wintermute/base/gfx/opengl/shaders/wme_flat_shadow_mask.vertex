@@ -1,0 +1,22 @@
+in vec3 position;
+
+uniform highp mat4 projMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 worldMatrix;
+
+uniform highp mat4 lightProjMatrix;
+uniform highp mat4 lightViewMatrix;
+
+out vec3 Texcoord;
+
+void main() {
+	vec4 worldCoords = worldMatrix * vec4(position, 1.0);
+
+	vec4 textureCoords = lightProjMatrix * lightViewMatrix * worldCoords;
+
+	Texcoord.x = 0.5 * (textureCoords.x) + 0.5 * textureCoords.w;
+	Texcoord.y = 0.5 * (textureCoords.y) + 0.5 * textureCoords.w;
+	Texcoord.z = textureCoords.w;
+
+	gl_Position = projMatrix * viewMatrix * worldCoords;
+}

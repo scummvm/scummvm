@@ -1,0 +1,21 @@
+in vec2 position;
+in vec2 texcoord;
+
+uniform vec2 sizeWH;
+uniform vec2 offsetXY;
+
+uniform vec2 texOffsetXY;
+uniform vec2 texScale;
+
+out vec2 Texcoord;
+
+void main() {
+	vec2 tex = texcoord;
+	tex.y = 1.0 - tex.y;
+	tex *= texScale;
+	Texcoord = texOffsetXY + tex;
+	vec2 pos = offsetXY + position * sizeWH;
+	pos.x = pos.x * 2.0 - 1.0;
+	pos.y = -1.0 * (pos.y * 2.0 - 1.0);
+	gl_Position = vec4(pos, 0.0, 1.0);
+}

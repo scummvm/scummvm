@@ -1,0 +1,112 @@
+html {
+	background: rgb(204, 102, 0);
+	min-height: 100vh;
+}
+
+.container {
+	width: 80%;
+	margin: 0 auto;
+}
+
+.header {
+	padding: 10pt;
+	margin-bottom: 0;
+}
+
+.content {
+	padding: 8pt;
+	background: rgb(251, 241, 206);
+	font-family: Tahoma;
+	font-size: 16pt;
+}
+
+.content p { margin: 0 0 6pt 0; }
+
+.controls {
+	padding: 8pt;
+	background: #FFF;
+	font-family: Tahoma;
+	font-size: 16pt;
+}
+
+.controls .buttons {
+	width: 100%;
+	max-width: 500pt;
+	margin: -8pt auto;
+	border: 0;
+	border-spacing: 0;
+}
+
+.controls .buttons td {
+	width: 50%;
+	text-align: center;
+	margin: 0;
+	padding: 0;
+}
+
+.controls .buttons a {
+	display: block;
+	height: 40pt;
+	line-height: 38pt;
+	vertical-align: middle;
+	color: #000;
+	text-decoration: none;
+}
+
+.controls .buttons a:hover {
+	background: #F3F3F3;
+}
+
+.modal {
+	margin-top: 10pt;
+	display: none;
+}
+
+.modal p { margin: 0 0 6pt 0; }
+
+#create_directory input[type="text"], #upload_file input[type="file"] {
+	width: calc(100% - 2 * 5pt);
+}
+
+.modal input {
+	border: 1px solid #EEE;
+	padding: 5pt;
+	font-size: 12pt;
+}
+
+.modal input[type="submit"] {
+	display: block;
+	margin: 6pt auto;
+	background: #DDD;
+	border: 0;
+}
+
+.modal input[type="submit"]:hover {
+	background: #F3F3F3;
+	cursor: pointer;
+}
+
+td img { vertical-align: middle; height: 20px; }
+
+.directory_name {
+	display: block;
+	padding-bottom: 6px;
+}
+
+.directory_name a { color: black; }
+.directory_name a:hover { color: blue; }
+
+#loading_message, #error_message {
+	margin: -8pt;
+	margin-bottom: 5pt;
+	padding: 4pt;
+	text-align: center;
+}
+
+#loading_message {
+	background: #99FF99;
+}
+
+#error_message {
+	background: #FF9999;
+}

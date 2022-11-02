@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+	<channel>
+		<title>ScummVM Changelog</title>
+		<link>https://www.scummvm.org/appcasts/macosx/release.xml</link>
+		<description>Most recent changes with links to updates.</description>
+		<language>en</language>
+		<item>
+			<title>Version 2.6.1</title>
+			<sparkle:releaseNotesLink>
+				https://www.scummvm.org/frs/scummvm/2.6.1/ReleaseNotes.html
+			</sparkle:releaseNotesLink>
+			<pubDate>Mon, 31 Oct 2022 18:00:00 +0000</pubDate>
+			<enclosure url="https://downloads.scummvm.org/frs/scummvm/2.6.1/scummvm-2.6.1-macosx.dmg"
+						sparkle:version="2.6.1" length="103682770" type="application/octet-stream"
+						sparkle:dsaSignature="MC4CFQDQCIlMEG8J2P+uejjVvL4L7LrWqQIVAIDLkTU+pzZ9AgBLg6C2cYRr7nMU"/>
+
+			<enclosure sparkle:os="windows"
+						url="https://downloads.scummvm.org/frs/scummvm/2.6.1/scummvm-2.6.1-win32.exe"
+						sparkle:version="2.6.1" length="96354048" type="application/octet-stream"
+						sparkle:dsaSignature="MC0CFDu5pLDoT3o/fF16h21UIIOfTpW2AhUAqP160094s7v1XY1A+RBVv9C0oDw="/>
+		</item>
+	</channel>
+</rss>

@@ -1,0 +1,3 @@
+engines/agi/detection.cpp
+engines/agi/font.cpp
+engines/agi/saveload.cpp

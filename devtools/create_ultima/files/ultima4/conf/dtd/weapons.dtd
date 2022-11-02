@@ -1,0 +1,20 @@
+<!-- $Id: weapons.dtd 1953 2004-05-29 02:14:16Z dougday $ -->
+
+<!ELEMENT weapons ( weapon+ ) >
+
+<!ELEMENT weapon ( constraint* ) >
+<!ATTLIST weapon name                   CDATA   #REQUIRED
+                 abbr                   CDATA   #REQUIRED
+                 range                  NMTOKEN #IMPLIED
+                 absolute_range         NMTOKEN #IMPLIED
+                 damage                 NMTOKEN #REQUIRED
+                 attackthroughobjects   %bool;  #IMPLIED
+                 choosedistance         %bool;  #IMPLIED
+                 dontshowtravel         %bool;  #IMPLIED
+                 hittile                NMTOKEN #IMPLIED
+                 leavetile              NMTOKEN #IMPLIED
+                 lose                   %bool;  #IMPLIED
+                 losewhenranged         %bool;  #IMPLIED
+                 magic                  %bool;  #IMPLIED
+                 misstile               NMTOKEN #IMPLIED
+                 returns                %bool;  #IMPLIED>

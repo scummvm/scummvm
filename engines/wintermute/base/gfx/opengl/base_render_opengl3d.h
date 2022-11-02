@@ -1,0 +1,153 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#ifndef WINTERMUTE_BASE_RENDER_OPENGL3D_H
+#define WINTERMUTE_BASE_RENDER_OPENGL3D_H
+
+#include "engines/wintermute/base/gfx/base_renderer3d.h"
+#include "engines/wintermute/math/rect32.h"
+#include "engines/wintermute/math/vector2.h"
+#include "engines/wintermute/dctypes.h"
+
+#include "graphics/transform_struct.h"
+
+#include "math/matrix4.h"
+#include "math/ray.h"
+
+#if defined(USE_OPENGL_GAME)
+
+#include "graphics/opengl/system_headers.h"
+
+namespace Wintermute {
+
+class BaseSurfaceOpenGL3D;
+
+struct SimpleShadowVertex {
+	float u;
+	float v;
+	float nx;
+	float ny;
+	float nz;
+	float x;
+	float y;
+	float z;
+};
+
+class BaseRenderOpenGL3D : public BaseRenderer3D {
+public:
+	BaseRenderOpenGL3D(BaseGame *inGame = nullptr);
+	~BaseRenderOpenGL3D() override;
+
+	void setSpriteBlendMode(Graphics::TSpriteBlendMode blendMode) override;
+
+	void setAmbientLight() override;
+
+	int maximumLightsCount() override;
+	void enableLight(int index) override;
+	void disableLight(int index) override;
+	void setLightParameters(int index, const Math::Vector3d &position, const Math::Vector3d &direction, const Math::Vector4d &diffuse, bool spotlight) override;
+
+	void enableCulling() override;
+	void disableCulling() override;
+
+	bool enableShadows() override;
+	bool disableShadows() override;
+	void displayShadow(BaseObject *object, const Math::Vector3d &lightPos, bool lightPosRelative) override;
+	bool stencilSupported() override;
+
+	void dumpData(const char *filename) override {}
+	BaseImage *takeScreenshot() override;
+	void setWindowed(bool windowed) override;
+	void fadeToColor(byte r, byte g, byte b, byte a) override;
+
+	bool fill(byte r, byte g, byte b, Common::Rect *rect = nullptr) override;
+
+	bool setViewport(int left, int top, int right, int bottom) override;
+	bool drawLine(int x1, int y1, int x2, int y2, uint32 color) override;
+
+	bool setProjection() override;
+	bool setProjection2D() override;
+	void setWorldTransform(const Math::Matrix4 &transform) override;
+
+	bool windowedBlt() override;
+
+	void onWindowChange() override;
+	bool initRenderer(int width, int height, bool windowed) override;
+	bool flip() override;
+	bool indicatorFlip() override;
+	bool forcedFlip() override;
+	bool setup2D(bool force = false) override;
+	bool setup3D(Camera3D *camera, bool force = false) override;
+	bool setupLines() override;
+
+	Common::String getName() const override {
+		return "OpenGL 3D renderer";
+	};
+	bool displayDebugInfo() override {
+		return STATUS_FAILED;
+	};
+	bool drawShaderQuad() override {
+		return STATUS_FAILED;
+	}
+
+	float getScaleRatioX() const override {
+		return 1.0f;
+	}
+	float getScaleRatioY() const override {
+		return 1.0f;
+	}
+
+	BaseSurface *createSurface() override;
+
+	bool startSpriteBatch() override {
+		return STATUS_OK;
+	};
+	bool endSpriteBatch() override {
+		return STATUS_OK;
+	};
+
+	bool drawSpriteEx(BaseSurfaceOpenGL3D &tex, const Rect32 &rect, const Vector2 &pos, const Vector2 &rot, const Vector2 &scale,
+					  float angle, uint32 color, bool alphaDisable, Graphics::TSpriteBlendMode blendMode, bool mirrorX, bool mirrorY) override;
+
+	void renderSceneGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks,
+	                         const BaseArray<AdGeneric *> &generics, const BaseArray<Light3D *> &lights, Camera3D *camera) override;
+	void renderShadowGeometry(const BaseArray<AdWalkplane *> &planes, const BaseArray<AdBlock *> &blocks, const BaseArray<AdGeneric *> &generics, Camera3D *camera) override;
+
+	Mesh3DS *createMesh3DS() override;
+	XMesh *createXMesh() override;
+	ShadowVolume *createShadowVolume() override;
+
+private:
+	SimpleShadowVertex _simpleShadow[4];
+	Common::Array<Math::Vector4d> _lightPositions;
+	Common::Array<Math::Vector3d> _lightDirections;
+	float _fov;
+	float _nearPlane;
+	float _farPlane;
+	TRendererState _renderState;
+	bool _spriteBatchMode;
+};
+
+} // wintermute namespace
+
+#endif // defined(USE_OPENGL_GAME)
+
+#endif

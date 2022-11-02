@@ -1,0 +1,235 @@
+List of fixed bugs in GF scripts:
+
++Various bugs
+	-Issues with CD check:
+	The CD check function doesn't work correctly, so we skip it.
+
+	-Fix the behaviour of dofile statement
+	In _system.lua there is a re-definition of dofile, used to load
+	scripts from some others positions ("Scripts\" and "d:\\grimFandango\\Scripts\\").
+	This cause a lot of warnings when an non-existent file is required.
+	Moreover this function is bugged: it always returns nil, even if the
+	file has correctly loaded. So it's has been modified to load scripts
+	only from the main path and it returns nil when the file has
+	successfully loaded, otherwise the number one (which is a boolean
+	true). The last modification is required, since the others scripts
+	expect this behavior.
+
+	-Fix bug #312 "Manny disappears while holding and examining the sign the Ruba."
+	In sg and na sets, if Manny examine the sign of Ruba, it zoom the
+	visual near the sign, by changing the setup and putting Manny and the
+	sign in it. The code that translate the coordinates of Manny is
+	bugged, since it doesn't distinguish the case when the sign is
+	planted or not; in particular, it's right when it's planted. This
+	patch add a check of state of sign, and set Manny in a fixed position
+	(in the centre of the scene) when he is holding the sign. It also
+	corrects the behaviour of Manny's head, since he doesn't look at the
+	sign, when he is examining it. This is caused by the lacks of
+	"enable_head_control(FALSE/TRUE)" before and after
+	"START/END_CUT_SCENE()" and by a call at "manny:head_look_at_point"
+	with the wrong arguments (a table instead of the coordinates instead
+	of single coordinates).
+
+	-Fix bug #397 "Keyboard jams in inventory in beaver dam."
+	The function bd.fake_beaver animates a beaver when another one has jumped
+	into the dam. This animation is performed into a cutscene block (between
+	START/END_CUT_SCENE()), so if the user opens the inventory a bit before
+	this function is called, the interface will froze, since in
+	cutscenes the keyboard is locked. This patch check if the inventory is open
+	(with inInventorySet()) before bd.fake_beaver and MakeSectorActive
+	are called (in bd.throw_bone_in_tar) and wait until it's closed,
+	then performs the animation.
+
+	-Fix bug #539 "Early access to Domino's office" - ha.lua.patchr
+	ha.enter() locks the door ha.do_door, which goes to Dom's office if Bruno was
+	reaped but not Meche, but locking the door isn't enough. It must be explicitly
+	closed - calling ha.do_door:close() - otherwise manny will just pass through it.
+	As Manny shows, you can lock an open door, and while it is symbolically compelling,
+	it doesn't close it. :)
+
+	-Fix bug #672 "Meche's line "I'm sorry I let you down Manny" is played as Manny
+	walks into the hallway." - mo.lua.patchr
+	mo.ha_door.walkOut doesn't wait for Meche has finished speaking to move Manny outside
+	his office. This patch adds a wait_for_message() to prevent this.
+
+	-Fix bug #687 "GRIM: Getting down the conveyour-belt is very difficult." - cy.lua.patchr
+	The function cy.climb_chain_box.walkOut checks if the chain is down and makes manny float
+	if it is. But the chain may be down but not on the belt if the direction of movement
+	of it is from the sea to the crane. This patch adds that missing check.
+
+	-Fix bug #688 "GRIM: If Charlie removes sheet while in inventory, Manny gets stuck" - ly.lua.patchr
+	The function ly.charlie_get_up_timer checks if the game is playing a cutscene,
+	before launching the scene when Charlie removes the sheet, but it doesn't check if
+	the inventory is open. This patch adds another check (with inInventorySet()) and waits
+	the close of the inventory before starting the cutscene.
+
+	-Fix bug #81 "Year 1 - Bone disappears from spider web - Glitch" - sp.lua.patchr
+	In the sp set, the variable sp.web.has_bone is used to signal if there is a bone in the web,
+	but it's not cleaned after that the Glottis' hearts has been launched.
+	This patch set this variable to FALSE after that event (in the function sp.manny_hook_n_fling_web)
+
+	-Fix the disappearing hat when opening the inventory with the nautical suit. -
+		_inventory.lua.patchr
+	The function open_inventory() stops the chore 'manny.hold_chore'. But that variable sometimes
+	is nil, and that causes all the chores to be stopped, included the chore which shows the hat.
+	This patch checks if 'manny.hold_chore' is not nil and only in that cases it stops it.
+	In addition to this now we must also stop the chore 'ms_putback_deck' of ms.cos when putting back
+	the cards deck, since that chore before this patch is stopped by stopping 'manny.hold_chore', being
+	it nil. Not stopping it results in broken animation when getting the card from the deck.
+	We must also stop the chore 'ms_putback_card' when putting the card for the same reason.
+
+	-Fix a Lua error when speaking to Lupe with all the dialog options expired (#198) - dlg_lupe.lua.patchr
+	When there are no more dialog options the dialog system calls a 'abort' line (Dialog.display_lines,
+	in _dialog.lua) which should end the dialog, by setting the value of the 'node' variable to "exit_dialog".
+	The other way of ending a dialog is to choose an exit line which is not an abort line but which
+	also sets that variable.
+	The line 'lu1.aborts.lun1' was making the dialog system call the exit line, instead of just calling
+	the say_line() needed, and that in turn resulted in the function Dialog.display_lines be called two
+	times with the node set as 'exit_dialog', and so the outro (lu1.outro) was called two times.
+	More importantly the function 'start_script(lupe.new_run_idle, lupe, "jump_back")' was called two times,
+	and that resulted in broken animation the next time Manny talked to Lupe.
+	This patch modifies 'lu1.aborts.lun1', by not relying on the exit line anymore.
+
+	Fix bug #237 "GRIM: The animation of when glottis gives manny the work order does not play correctly."
+		- dlg_glottis.lua.patchr
+	gl1[220].response calls the function 'glottis.hand_work_order', which manages the animation and then
+	calls 'glottis:flip_ears(5)' after a 'wait_for_message()'. The flip_ears() call causes the chore
+	'default_keys' of 'gl_akimbo_idles.cos' to be completed (Chore::setLastFrame), and that stops any
+	keyframe component that costume has, including 'give_workorder.key'. This patch moves the flip_ears()
+	call before the wait_for_message(), so that 'default_keys' is completed before 'give_workorder.key' starts.
+
+	Fix the sequence of Bowlsley pointing the gun at Manny - fi.lua.patchr
+	That sequence is broken in many ways: Bowlsley points the gun at the wall instead of at Manny; when Manny
+	reaches for the cases he is too far from them and when Bowlsley sneaks out Manny turns too early,
+	giving the impression he is moving one case to the floor, except thare's no case.
+	This patch fixes all these issue, resulting in a much more good looking sequence.
+
+	Fix bug #707 "Grim: Upper part of forklift not visible in the wc set" - forklift.cos.patchr
+	The costume chores hide the meshes 17 (cage) and 12 (spout). This patch changes the values from 0 to 1
+	in the chore keys.
+
+	Fix bug #351 "GRIM: Sound of punching bag in Dom's office occurs before animation" - do.lua.patchr
+	This patch modifies the function dom.bag.use, modifying some sleep_for() with better values.
+	It does also remove some sleep_for() to improve the animation when punching the bag when it is still
+	oscillating.
+
+	Fix bug #300 "GRIM: Animation glitch upon breaking the Neon-Lady" - nl.lua.patchr
+	The function nl.gargoyle.use_sproutella, after the call to play_movie("nl_crush.snm", 272, 0), waits for
+	Manny's chore 'md_sproutella_sproutella' to finish, and that delays the start of the fullscreen movie.
+	This patch just removes that wait.
+
+	Fix bug #691 "GRIM: When Glottis starts driving in the Petrified Forest, the car pops into place." - sg.lua.patchr
+	The function sg.get_in_BW calls 'sg:enable_bonewagon_boxes(TRUE)' to disable some sectors where the
+	bone wagon cannot go, but it calls it only after the cut scene finishes. This patch moves that call
+	at the start of the function.
+
+	Fix bug #680 "GRIM: When emptying the turkey-baster into Naranja's drink it's full again." - ma_use_baster.cos.patchr
+	The chore 0 (use_baster) of ma_use_baster.cos was hiding baster.3do (empty) and showing full_baster.3do (full)
+	at the end of the chore. This patch keeps baster.3do visible, and hides full_baster.3do. In addition, this
+	patch shows baster.3do and hides full_baster.3do after 600 ms instead of at time 0, so that the change actually
+	happens when Manny squeezes his hand.
+
+	Fix wrong sfx timing when emptying the turkey-baster into Naranja's drink - si.lua.patchr
+	This patch adds a sleep_for(600) before the call to "start_sfx("tkBstSqt.wav")" so that the squeezing
+	sound happens when Manny squeezes the baster.
+
+	Fix bonewagon popping when driving in and out set tr. - tr.lua.patchr
+	The function tr.drive_in() has a while loop that makes the bonewagon go forward until it's near the wanted
+	position. The problem is that 'near' is 1, which is quite a lot. This patch modifies the loop so that it
+	goes forward until, after the WalkActorForward call, he is nearer than before, so until it has not passed
+	the destination.
+	This patch also modifies tr.get_in_BW(), which is called only when the tree is still up, and adds a
+	bonewagon:ignore_boxes(), since the function bonewagon.default(), which get_in_BW calls, enables the boxes for
+	the bonewagon.
+
+	Fix the DOD door animation and sound - lo.lua.patchr, os.lua.patchr, lo_os_door.cos.patchr, os_lo_door.cos.patchr
+	When exiting the DOD the door is closed, then it plays the close animation. lo.lua.patchr adds a complete_chore
+	call with the opening chore as argument before waiting for manny, and after which the close	chore is called.
+	By completing the open chore though, the open sound was executed two times: one when opening the door in lo
+	and one when completing the chore in os. The same happens when going from os to lo (and that happens with
+	original too, since os calls the complete_chore). So lo_os_door.cos.patchr and os_lo_door.cos.patchr add a
+	new chore 'open_fast' which just sets the open bitmap image. lo.lua.patchr and os.lua.patchr then call
+	complete_chore with the new chores as argument.
+
+	Fix bug #285 "GRIM: Showing the Lengua-card to the tattoo-guy, he faces wrong." - si.lua.patchr
+	When using some objects on Toto and he is at the phone, the function 'si.interrupt_toto' is called, but it
+	does not set Toto's head. This patch adds the needed call.
+
+	Fix Toto talking before he picks up the phone - si.lua.patchr
+	After interrupting Toto, the function 'si.toto_on_phone' is called, which restores the dialogue with Velasco.
+	The problem is that it does not wait for Toto to finish turning towards the phone, so he starts speaking with
+	Velasco before he has the phone. This patch adds some sleep_for calls before calling 'si.toto_on_phone'.
+
+	Fix Toto not talking to Velasco anymore after Manny screams to Velasco - si.lua.patchr
+	When Toto phones Velasco, Manny can 'use' Toto and he will scream to Velasco. After the sequence Toto does not
+	resume his dialogue with Velasco: the script 'si.toto_on_phone' is stopped and is not started anymore.
+	This patch adds the missing start_script call.
+
+	Fix bug #622 "GRIM: pick-up telephone in Toto's building" - si.lua.patchr
+	This patch hides the actor 'si.phone_actor' when Manny or Toto pick up the phone, since the costumes they use
+	have a phone model which gets animated. This patch adds some 'si.phone_actor:set_visibility(TRUE/FALSE)' calls
+	in a few places.
+
+	Fix Manny's animations becoming stuck when he speaks to the woman at the phone while skipping dialogue lines
+		- si.lua.patchr
+	The function 'si.phone.use' handles the dialogue with the woman. It calls some gesture functions
+	(e.g. manny:hand_gesture) which push a costume. If the dialogue lines are skipped that costume may not get
+	popped out because meanwhile another one is pushed and popped. This patch adds a while loop which blocks
+	the script until the gesture is finished.
+
+	Fix walk sectors in set cf - cf.set.patchr
+	It can be difficult to walk from behind Manny's desk to the center of the room, passing on the right,
+	because of a narrow corridor, and a 'hole' in the walkable sectors. This patch resizes the sector "sect_66"
+	to make more room and to fill the hole.
+
+	Fix wrong Manny positioning when going from set ts to set tx - ts.lua.patchr
+	The function ts.tx_door.walkOut calls 'tx:come_out_door' with the wrong door argument. This patch replaces
+	it with the right door.
+
+	Fix broken Manny's walk animation after opening Domino's safe - vd.lua.patchr
+	The function 'vd.open_safe' plays the chore 50 (bend_get_scythe) of mn2.cos which starts some keyframes with
+	the key '2' which means "play and endpause". This patch adds a 'manny:stop_chore' call after the chore has
+	done.
+
+	Fix Manny's walking backwards animation - ma_back_off.key.patchr
+	The animation has 16 frames, but the 16th frame looks the same at the 15th one so we just say that it only
+	has 15 frames.
+
+	Fix #861 "GRIM: Year 4 - Character stuck on Aztec Temple" - tg.lua.patchr
+	If the user hits the override key while manny is talking about the note, the override is never disabled, so
+	we add the disable call.
+
+	Fix #356 "GRIM: Velasco's reminiscences are cut off" - dlg_velasco.lua.patchr
+	The function 're.fake_conversation' (re.lua) might possibly call out 'velasco:shut_up()' during Velasco's
+	final line, causing it to get cut off.  Adding an additional 'wait_for_message()' in the dialog script removes
+	that possibility.
+
++Untriggered contents:
+	-Fix the missing dialogue with Domino at third year
+	In dlg_dom2.lua, the argument of CheckFirstTime is wrong; this
+	prevents the correct load of this script.
+	See https://forums.scummvm.org/viewtopic.php?t=108
+
++Others modifications:
+	-The function si.set_up_actors (si.lua), calls "start_script(si.naranja_drinking)",
+	which doesn't exist. The problem with that is that lua_error ends the function that
+	was going on, breaking si.set really badly. The bad call is removed, instead of being replaced
+	with "start_script(si.naranja_drink)", which does exists, but which can cause Naranja to stutter
+	when entering the set.
+
+Contents of grim-patches.lab and its rebuild:
+
+grim-patches.lab contains all .patchr files in the
+dists/engine-data/patches/grim/ directory.
+If you add a new patch in that directory, you have to update this file
+with a detailed description of what that patch does.
+Then you have to rebuild residualvm-grim-patches.lab with mklab from the
+scummvm-tools repo. The rebuild command is (assuming that you are
+launching it in dists/engine-data/):
+
+ $ mklab --grim patches/grim grim-patch.lab
+
+Please check that there aren't any files different from .patchr inside
+that directory before the rebuild, so delete all junk, backup and system
+files, like namepatch.patchr~, namepatch.patchr.bak, .DS_Store, Thumbs.db
+and so on.

@@ -1,0 +1,11 @@
+in vec2 Texcoord;
+
+OUTPUT
+
+uniform float fadeLevel;
+uniform sampler2D tex;
+
+void main() {
+	vec4 texColor = texture(tex, Texcoord);
+	outColor = texColor + vec4(fadeLevel, fadeLevel, fadeLevel, 0) * texColor.a;
+}

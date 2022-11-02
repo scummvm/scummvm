@@ -1,0 +1,233 @@
+#include "winresrc.h"
+
+#ifdef HAVE_CONFIG_H
+#include "config.h"
+#endif
+
+#include "base/internal_plugins.h" // for PLUGIN_ENABLED_STATIC
+#include "base/internal_version.h"
+
+#define FILE 256
+#define IDI_ICON  1001
+#define IDI_COUNT 1002
+#define ID_GDF_XML __GDF_XML
+
+CREATEPROCESS_MANIFEST_RESOURCE_ID RT_MANIFEST "dists/win32/scummvm.exe.manifest"
+
+// Common resources
+IDI_ICON               ICON    "icons/scummvm.ico"
+IDI_COUNT              ICON    "icons/count.ico"
+
+ID_GDF_XML             DATA    "dists/win32/scummvm.gdf.xml"
+
+scummclassic.zip       FILE    "gui/themes/scummclassic.zip"
+scummmodern.zip        FILE    "gui/themes/scummmodern.zip"
+scummremastered.zip    FILE    "gui/themes/scummremastered.zip"
+residualvm.zip         FILE    "gui/themes/residualvm.zip"
+gui-icons.dat          FILE    "gui/themes/gui-icons.dat"
+achievements.dat       FILE    "dists/engine-data/achievements.dat"
+encoding.dat           FILE    "dists/engine-data/encoding.dat"
+
+// Engine or feature specific resources
+#ifdef BUILTIN_RESOURCES
+#if PLUGIN_ENABLED_STATIC(GRIM)
+grim-patch.lab         FILE    "dists/engine-data/grim-patch.lab"
+monkey4-patch.m4b      FILE    "dists/engine-data/monkey4-patch.m4b"
+#endif
+#if PLUGIN_ENABLED_STATIC(MYST3)
+myst3.dat              FILE    "dists/engine-data/myst3.dat"
+#endif
+#ifdef USE_TRANSLATION
+translations.dat       FILE    "gui/themes/translations.dat"
+#endif
+#ifdef USE_SDL_NET
+wwwroot.zip            FILE    "dists/networking/wwwroot.zip"
+#endif
+#ifdef USE_FREETYPE2
+fonts.dat              FILE    "dists/engine-data/fonts.dat"
+#endif
+macgui.dat             FILE    "dists/engine-data/macgui.dat"
+
+#if PLUGIN_ENABLED_STATIC(ACCESS)
+access.dat             FILE    "dists/engine-data/access.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(CRYO)
+cryo.dat               FILE    "dists/engine-data/cryo.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(CRYOMNI3D)
+cryomni3d.dat          FILE    "dists/engine-data/cryomni3d.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(DRASCULA)
+drascula.dat           FILE    "dists/engine-data/drascula.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(HADESCH)
+hadesch_translations.dat          FILE    "dists/engine-data/hadesch_translations.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(HUGO)
+hugo.dat               FILE    "dists/engine-data/hugo.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(KYRA)
+kyra.dat               FILE    "dists/engine-data/kyra.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(LURE)
+lure.dat               FILE    "dists/engine-data/lure.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(MACVENTURE)
+macventure.dat         FILE    "dists/engine-data/macventure.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(MORTEVIELLE)
+mort.dat               FILE    "dists/engine-data/mort.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(NEVERHOOD)
+neverhood.dat          FILE    "dists/engine-data/neverhood.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(QUEEN)
+queen.tbl              FILE    "dists/engine-data/queen.tbl"
+#endif
+#if PLUGIN_ENABLED_STATIC(SKY)
+sky.cpt                FILE    "dists/engine-data/sky.cpt"
+#endif
+#if PLUGIN_ENABLED_STATIC(SUPERNOVA)
+supernova.dat          FILE    "dists/engine-data/supernova.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TEENAGENT)
+teenagent.dat          FILE    "dists/engine-data/teenagent.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TITANIC)
+titanic.dat            FILE    "dists/engine-data/titanic.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TONY)
+tony.dat               FILE    "dists/engine-data/tony.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(TOON)
+toon.dat               FILE    "dists/engine-data/toon.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(ULTIMA)
+ultima.dat             FILE    "dists/engine-data/ultima.dat"
+#endif
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+wintermute.zip         FILE    "dists/engine-data/wintermute.zip"
+#endif
+#if PLUGIN_ENABLED_STATIC(XEEN)
+xeen.ccs               FILE    "dists/engine-data/xeen.ccs"
+#endif
+#if PLUGIN_ENABLED_STATIC(AGI)
+pred.dic               FILE    "dists/pred.dic"
+#endif
+#if defined(USE_OPENGL_SHADERS)
+#if PLUGIN_ENABLED_STATIC(GRIM)
+shaders/grim_dim.fragment            FILE    "engines/grim/shaders/grim_dim.fragment"
+shaders/grim_dim.vertex              FILE    "engines/grim/shaders/grim_dim.vertex"
+shaders/grim_emerg.fragment          FILE    "engines/grim/shaders/grim_emerg.fragment"
+shaders/grim_emerg.vertex            FILE    "engines/grim/shaders/grim_emerg.vertex"
+shaders/emi_actor.fragment           FILE    "engines/grim/shaders/emi_actor.fragment"
+shaders/emi_actor.vertex             FILE    "engines/grim/shaders/emi_actor.vertex"
+shaders/emi_actorlights.fragment     FILE    "engines/grim/shaders/emi_actorlights.fragment"
+shaders/emi_actorlights.vertex       FILE    "engines/grim/shaders/emi_actorlights.vertex"
+shaders/emi_background.fragment      FILE    "engines/grim/shaders/emi_background.fragment"
+shaders/emi_background.vertex        FILE    "engines/grim/shaders/emi_background.vertex"
+shaders/emi_dimplane.fragment        FILE    "engines/grim/shaders/emi_dimplane.fragment"
+shaders/emi_dimplane.vertex          FILE    "engines/grim/shaders/emi_dimplane.vertex"
+shaders/emi_sprite.fragment          FILE    "engines/grim/shaders/emi_sprite.fragment"
+shaders/emi_sprite.vertex            FILE    "engines/grim/shaders/emi_sprite.vertex"
+shaders/grim_actor.fragment          FILE    "engines/grim/shaders/grim_actor.fragment"
+shaders/grim_actor.vertex            FILE    "engines/grim/shaders/grim_actor.vertex"
+shaders/grim_actorlights.fragment    FILE    "engines/grim/shaders/grim_actorlights.fragment"
+shaders/grim_actorlights.vertex      FILE    "engines/grim/shaders/grim_actorlights.vertex"
+shaders/grim_background.fragment     FILE    "engines/grim/shaders/grim_background.fragment"
+shaders/grim_background.vertex       FILE    "engines/grim/shaders/grim_background.vertex"
+shaders/grim_primitive.fragment      FILE    "engines/grim/shaders/grim_primitive.fragment"
+shaders/grim_primitive.vertex        FILE    "engines/grim/shaders/grim_primitive.vertex"
+shaders/grim_shadowplane.fragment    FILE    "engines/grim/shaders/grim_shadowplane.fragment"
+shaders/grim_shadowplane.vertex      FILE    "engines/grim/shaders/grim_shadowplane.vertex"
+shaders/grim_smush.fragment          FILE    "engines/grim/shaders/grim_smush.fragment"
+shaders/grim_smush.vertex            FILE    "engines/grim/shaders/grim_smush.vertex"
+shaders/grim_text.fragment           FILE    "engines/grim/shaders/grim_text.fragment"
+shaders/grim_text.vertex             FILE    "engines/grim/shaders/grim_text.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(MYST3)
+shaders/myst3_box.fragment           FILE    "engines/myst3/shaders/myst3_box.fragment"
+shaders/myst3_box.vertex             FILE    "engines/myst3/shaders/myst3_box.vertex"
+shaders/myst3_cube.fragment          FILE    "engines/myst3/shaders/myst3_cube.fragment"
+shaders/myst3_cube.vertex            FILE    "engines/myst3/shaders/myst3_cube.vertex"
+shaders/myst3_text.fragment          FILE    "engines/myst3/shaders/myst3_text.fragment"
+shaders/myst3_text.vertex            FILE    "engines/myst3/shaders/myst3_text.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(STARK)
+shaders/stark_actor.fragment         FILE    "engines/stark/shaders/stark_actor.fragment"
+shaders/stark_actor.vertex           FILE    "engines/stark/shaders/stark_actor.vertex"
+shaders/stark_prop.fragment          FILE    "engines/stark/shaders/stark_prop.fragment"
+shaders/stark_prop.vertex            FILE    "engines/stark/shaders/stark_prop.vertex"
+shaders/stark_surface.fragment       FILE    "engines/stark/shaders/stark_surface.fragment"
+shaders/stark_surface.vertex         FILE    "engines/stark/shaders/stark_surface.vertex"
+shaders/stark_fade.fragment          FILE    "engines/stark/shaders/stark_fade.fragment"
+shaders/stark_fade.vertex            FILE    "engines/stark/shaders/stark_fade.vertex"
+shaders/stark_shadow.fragment        FILE    "engines/stark/shaders/stark_shadow.fragment"
+shaders/stark_shadow.vertex          FILE    "engines/stark/shaders/stark_shadow.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(WINTERMUTE)
+shaders/wme_fade.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.fragment"
+shaders/wme_fade.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_fade.vertex"
+shaders/wme_flat_shadow_mask.fragment   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.fragment"
+shaders/wme_flat_shadow_mask.vertex     FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_mask.vertex"
+shaders/wme_flat_shadow_modelx.fragment FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.fragment"
+shaders/wme_flat_shadow_modelx.vertex   FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_flat_shadow_modelx.vertex"
+shaders/wme_geometry.fragment           FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.fragment"
+shaders/wme_geometry.vertex             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_geometry.vertex"
+shaders/wme_line.fragment               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.fragment"
+shaders/wme_line.vertex                 FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_line.vertex"
+shaders/wme_modelx.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.fragment"
+shaders/wme_modelx.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_modelx.vertex"
+shaders/wme_shadow_mask.fragment        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.fragment"
+shaders/wme_shadow_mask.vertex          FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_mask.vertex"
+shaders/wme_shadow_volume.fragment      FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.fragment"
+shaders/wme_shadow_volume.vertex        FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_shadow_volume.vertex"
+shaders/wme_sprite.fragment             FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.fragment"
+shaders/wme_sprite.vertex               FILE    "engines/wintermute/base/gfx/opengl/shaders/wme_sprite.vertex"
+#endif
+#if PLUGIN_ENABLED_STATIC(PLAYGROUND3D)
+shaders/playground3d_bitmap.fragment    FILE    "engines/playground3d/shaders/playground3d_bitmap.fragment"
+shaders/playground3d_bitmap.vertex      FILE    "engines/playground3d/shaders/playground3d_bitmap.vertex"
+shaders/playground3d_cube.fragment      FILE    "engines/playground3d/shaders/playground3d_cube.fragment"
+shaders/playground3d_cube.vertex        FILE    "engines/playground3d/shaders/playground3d_cube.vertex"
+shaders/playground3d_fade.fragment      FILE    "engines/playground3d/shaders/playground3d_fade.fragment"
+shaders/playground3d_fade.vertex        FILE    "engines/playground3d/shaders/playground3d_fade.vertex"
+#endif
+#endif
+#endif
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION     SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
+ PRODUCTVERSION  SCUMMVM_VER_MAJOR,SCUMMVM_VER_MINOR,SCUMMVM_VER_PATCH,0
+ FILEFLAGSMASK   VS_FFI_FILEFLAGSMASK
+#ifdef _DEBUG
+ FILEFLAGS       VS_FF_DEBUG
+#else
+ FILEFLAGS       0
+#endif
+ FILEOS          VOS_NT_WINDOWS32
+ FILETYPE        VFT_APP
+ FILESUBTYPE     VFT2_UNKNOWN
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0" // US English, Unicode
+        BEGIN
+            VALUE "Comments", "Look! A three headed monkey (TM)! .. Nice use of the TM!\0"
+            VALUE "CompanyName", "scummvm.org\0"
+            VALUE "FileDescription", "ScummVM: A free interpreter for numerous adventure games and role-playing games\0"
+            VALUE "FileVersion", SCUMMVM_VERSION "\0"
+            VALUE "InternalName", "scummvm\0"
+            VALUE "LegalCopyright", "Copyright \xA9 2001-2022 The ScummVM Team\0"
+            VALUE "LegalTrademarks", "'SCUMM', and all SCUMM games are a TM of LucasArts. Simon The Sorcerer is a TM of AdventureSoft. Beneath a Steel Sky and Broken Sword are a TM of Revolution. Flight of the Amazon Queen is a TM of John Passfield and Steve Stamatiadis. \0"
+            VALUE "OriginalFilename", "scummvm.exe\0"
+            VALUE "ProductName", "ScummVM\0"
+            VALUE "ProductVersion", SCUMMVM_VERSION "\0"
+        END
+    END
+
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200 // US English, Unicode
+    END
+END

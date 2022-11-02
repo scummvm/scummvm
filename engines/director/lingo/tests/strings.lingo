@@ -1,0 +1,96 @@
+set z = "foo bar baz"
+set z1 = z & " meow"
+set z1 = z1 && "woof"
+scummvmAssert(z1 contains "bar")
+
+set c = chars("Macromedia", 6, 6)
+scummvmAssertEqual(c, "m")
+set c = chars("Macromedia", 6, 10)
+scummvmAssertEqual(c, "media")
+set c = chars("Macromedia", -1, 15)
+scummvmAssertEqual(c, "Macromedia")
+set save to the scummvmVersion
+set the scummvmVersion to 300
+set c = chars("Macromedia", 1, 1.1)
+scummvmAssertEqual(c, 0)
+set the scummvmVersion to save
+
+put "That is the last line of the file." & return & "Click Done to exit." && return && "foo"
+
+if the key = Return then
+	dontPassEvent
+end if
+
+when keydown then if the key=return then set the stagecolor to random (256)
+
+put return
+
+put "foo" into test
+put return after test
+put test
+scummvmAssertEqual(test, "foo" & return)
+
+put return before test
+scummvmAssertEqual(test, return & "foo" & return)
+
+put return into test
+scummvmAssertEqual(test, return)
+
+-- LC::charOF
+set string to "Macromedia"
+set res to char 6 of string
+scummvmAssertEqual(res, "m")
+
+-- error and bounds checks
+set res to  char 60 of string
+scummvmAssertEqual(res, EMPTY)
+set res to char 0 of string
+scummvmAssertEqual(res, string)
+-- Test D4, it does a floor
+set res to char 5.49 of string
+scummvmAssertEqual(res, "o")
+set res to char 5.5 of string
+scummvmAssertEqual(res, "o")
+-- Test D3, it does a round
+set save to the scummvmVersion
+set the scummvmVersion to 300
+set res to char 5.49 of string
+scummvmAssertEqual(res, "o")
+set res to char 5.5 of string
+scummvmAssertEqual(res, "m")
+set the scummvmVersion to save
+
+-- LC::charToOf
+set string to "Macromedia"
+set res to char 6 to 9 of string
+scummvmAssertEqual(res, "medi")
+
+-- error and bounds checks
+set res to char 5.4 to 7.9 of string
+scummvmAssertEqual(res, "ome")
+
+set res to char 6 to 5 of string
+scummvmAssertEqual(res, "")
+
+set res to char 6 to 60 of string
+scummvmAssertEqual(res, "media")
+
+set res to char -1 to -2 of string
+scummvmAssertEqual(res, string)
+
+set res to char 50 to 60 of string
+scummvmAssertEqual(res, "")
+
+-- LB::b_lastcharof
+scummvmAssertEqual(the last char of "", "")
+scummvmAssertEqual(the last char of "hello", "o")
+
+-- LB::b_lastitemof
+scummvmAssertEqual(the last item of "", "")
+scummvmAssertEqual(the last item of "onetwo", "onetwo")
+scummvmAssertEqual(the last item of "one,two", "two")
+set save to the itemDelimiter
+set the itemDelimiter to ":"
+scummvmAssertEqual(the last item of "one:two", "two")
+set the itemDelimiter to save
+scummvmAssertEqual(the last item of "onetwo", "onetwo")

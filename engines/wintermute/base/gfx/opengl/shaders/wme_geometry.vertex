@@ -1,0 +1,13 @@
+in vec3 position;
+
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+
+uniform vec4 color;
+
+out vec4 Color;
+
+void main() {
+	gl_Position = projMatrix * viewMatrix * vec4(position, 1.0);
+	Color = color;
+}

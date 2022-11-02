@@ -1,0 +1,9 @@
+/**
+
+@mainpage ScummVM API reference
+
+These pages contain cross-referenced documentation for the ScummVM source code, generated with @linkDoxygen directly from the source.
+
+Currently, not everything is properly documented but it is work in progress.
+
+*/

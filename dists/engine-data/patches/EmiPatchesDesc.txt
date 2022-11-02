@@ -1,0 +1,32 @@
+List of fixed bugs in EMI scripts:
+
++Others modifications:
+	-Differently from Grim Fandango, global preferences (such as volume, subtitles, ...)
+	in EMI are saved in a text file (at least in Windows reatil version and demo).
+	Patches to _options.lua modifies this behaviour and hooks directly into ScummVM
+	configuration manager through GetResidualVMPreference and SetResidualVMPreference
+	opcodes. For simplicity, these patches patches only load the file residualvm-prefs.lua,
+	(they add a 'dofile("residualvm-prefs.lua")' at the end of _options.lua) see it for
+	further details. At the moment, these modifications applies only to the demo
+	and the Windows retail versions.
+
+	-Fix the way that Guybrush stands on the raft when using his inventory in mot - mot.lua.patch
+	There is a varible that is never declared in mot.lua which positions Guybrush on
+	the raft. Instead of using that one, just use the other variable they probably meant to use.
+
+Contents of monkey4-patch.m4b and its rebuild:
+
+monkey4-patch.m4b contains all .patchr files in the
+dists/engine-data/patches/monkey4/ directory.
+If you add a new patch in that directory, you have to update this file
+with a detailed description of what that patch does.
+Then you have to rebuild monkey4-patch.m4b with mklab from the
+residualvm-tools repo. The rebuild command is (assuming that you are
+launching it in dists/engine-data/):
+
+ $ mklab --emi patches/monkey4 monkey4-patch.m4b
+
+Please check that there aren't any files different from .patchr inside
+that directory before the rebuild, so delete all junk, backup and system
+files, like namepatch.patchr~, namepatch.patchr.bak, .DS_Store, Thumbs.db
+and so on.

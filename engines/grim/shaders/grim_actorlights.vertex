@@ -1,0 +1,96 @@
+const float CONSTANT_ATTENUATION = 1.0;
+const float LINEAR_ATTENUATION = 0.0;
+const float QUADRATIC_ATTENUATION = 1.0;
+
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
+in vec3 normal;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+uniform highp mat4 extraMatrix;
+uniform UBOOL textured;
+uniform UBOOL lightsEnabled;
+uniform highp vec2 texScale;
+
+const int maxLights = 8;
+uniform vec4 lightsPosition[maxLights];
+uniform vec4 lightsDirection[maxLights];
+uniform vec4 lightsColor[maxLights];
+uniform vec4 lightsParams[maxLights];
+
+struct shadow_info {
+	UBOOL _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main() {
+	vec4 pos = modelMatrix * extraMatrix * vec4(position, 1.0);
+
+	// See http://en.wikipedia.org/wiki/Line-plane_intersection
+	if (UBOOL_TEST(shadow._active)) {
+		pos /= pos.w;
+		vec3 l = pos.xyz - shadow._light;
+		float d = dot(shadow._point - shadow._light, shadow._normal) / dot(l, shadow._normal);
+		vec3 p = shadow._light + d * l;
+		pos = vec4(p, 1.0);
+	}
+
+	vec4 positionView = viewMatrix * pos;
+	gl_Position = projMatrix * positionView;
+
+	if (UBOOL_TEST(shadow._active)) {
+		Color = vec4(shadow._color, 1.0);
+	} else {
+		Color = color;
+	}
+
+	if (UBOOL_TEST(textured)) {
+		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+
+	vec3 light = vec3(0.0, 0.0, 0.0);
+	vec3 normalEye = normalize((viewMatrix * (modelMatrix * extraMatrix * vec4(normal, 0.0))).xyz);
+
+	for (int i = 0; i < maxLights; ++i) {
+		float intensity = lightsColor[i].w;
+		float light_type = lightsPosition[i].w;
+		if (light_type >= 0.0) { // Not ambient
+			vec3 vertexToLight = lightsPosition[i].xyz;
+			if (light_type > 0.0) { // positional light
+				vertexToLight -= positionView.xyz;
+				float dist = length(vertexToLight);
+				intensity /= CONSTANT_ATTENUATION + dist * (LINEAR_ATTENUATION + dist * QUADRATIC_ATTENUATION);
+				if (lightsDirection[i].w > -1.0) { // Spotlight
+					// See DirectX spotlight documentation
+					float cosAngle = -dot(normalize(vertexToLight), normalize(lightsDirection[i].xyz)); // rho
+					float cosPenumbra = clamp(lightsParams[i].w, 0.0, 1.0); // cos(theta / 2)
+					float cosUmbra = clamp(lightsParams[i].z, 0.0, cosPenumbra); // cos(phi / 2)
+					if (cosAngle <= cosPenumbra) {
+						if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+							intensity = 0.0;
+						} else {
+							intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+						}
+					}
+				}
+			}
+			intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
+		}
+		light += lightsColor[i].xyz * intensity;
+	}
+	light /= max(1.0, max(max(light.x, light.y), light.z));
+	Color *= vec4(light, 1.0);
+}

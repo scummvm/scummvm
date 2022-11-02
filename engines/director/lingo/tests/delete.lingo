@@ -1,0 +1,67 @@
+put "qwertyuiop" into test
+delete char 2 of test
+scummvmAssertEqual(test, "qertyuiop")
+
+put "qwertyuiop" into test
+delete char 2 to 9 of test
+scummvmAssertEqual(test, "qp")
+
+put "qwertyuiop" into test
+delete char 2 to 1000 of test
+scummvmAssertEqual(test, "q")
+
+put "qwertyuiop" into test
+delete char 0 of test
+scummvmAssertEqual(test, "")
+
+put "qwertyuiop" into test
+delete the last char of test
+scummvmAssertEqual(test, "qwertyuio")
+
+put "lorem  ipsum    dolor" into test
+delete word 2 of test
+scummvmAssertEqual(test, "lorem  dolor")
+
+put "lorem  ipsum    dolor" into test
+delete word 2 to 3 of test
+scummvmAssertEqual(test, "lorem  ")
+
+put "lorem  ipsum    dolor" into test
+delete word 2 to 1000 of test
+scummvmAssertEqual(test, "lorem  ")
+
+put "lorem  ipsum    dolor" into test
+delete the last word of test
+scummvmAssertEqual(test, "lorem  ipsum    ")
+
+put "lorem,ipsum,dolor,sit,amet" into test
+delete item 3 of test
+scummvmAssertEqual(test, "lorem,ipsum,sit,amet")
+
+put "lorem,ipsum,dolor,sit,amet" into test
+delete item 2 to 5 of test
+scummvmAssertEqual(test, "lorem")
+
+put "lorem,ipsum,dolor,sit,amet" into test
+delete item 1 of test
+scummvmAssertEqual(test, "ipsum,dolor,sit,amet")
+
+put "lorem,ipsum,dolor,sit,amet" into test
+delete the last item of test
+scummvmAssertEqual(test, "lorem,ipsum,dolor,sit")
+
+put "lorem" & RETURN & "ipsum" & RETURN & "dolor" & RETURN & "sit" & RETURN & "amet" into test
+delete line 3 of test
+scummvmAssertEqual(test, "lorem" & RETURN & "ipsum" & RETURN & "sit" & RETURN & "amet")
+
+put "lorem" & RETURN & "ipsum" & RETURN & "dolor" & RETURN & "sit" & RETURN & "amet" into test
+delete line 2 to 5 of test
+scummvmAssertEqual(test, "lorem")
+
+put "lorem" & RETURN & "ipsum" & RETURN & "dolor" & RETURN & "sit" & RETURN & "amet" into test
+delete the last line of test
+scummvmAssertEqual(test, "lorem" & RETURN & "ipsum" & RETURN & "dolor" & RETURN & "sit")
+
+put "foo" & RETURN & "lorem ipsum" into test
+delete char 3 of word 2 of line 2 of test
+scummvmAssertEqual(test, "foo" & RETURN & "lorem ipum")

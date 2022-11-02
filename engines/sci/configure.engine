@@ -1,0 +1,4 @@
+# This file is included from the main "configure" script
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+add_engine sci "SCI" yes "sci32" "SCI 0-1.1 games"
+add_engine sci32 "SCI32 games" yes "" "" "highres"

@@ -1,0 +1,506 @@
+# This file is used by Makefile and declares common build rules,
+# a list of common object files etc.
+#
+
+######################################################################
+# The default build target: just build the scummvm executable
+######################################################################
+
+all: $(EXECUTABLE) plugins
+
+ifdef SPLIT_DWARF
+all: $(EXECUTABLE).dwp
+endif
+
+ifdef USE_PANDOC
+all: PANDOC_CONVERT
+endif
+
+######################################################################
+# Module settings
+######################################################################
+
+PLUGINS :=
+MODULES := test devtools base $(MODULES)
+
+-include engines/engines.mk
+
+# After the game specific modules follow the shared modules
+MODULES += \
+	engines \
+	gui \
+	backends \
+	video \
+	image \
+	graphics \
+	audio \
+	math \
+	common \
+	po \
+	doc
+
+ifdef USE_MT32EMU
+MODULES += audio/softsynth/mt32
+endif
+
+######################################################################
+# The build rules follow - normally you should have no need to
+# touch whatever comes after here.
+######################################################################
+
+# Concat DEFINES and INCLUDES to form the CPPFLAGS
+CPPFLAGS := $(DEFINES) $(INCLUDES)
+
+# Include the build instructions for all modules
+-include $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES)))
+
+# Store original info
+MODULES_ORIG:= $(MODULES)
+MODULE_DIRS_ORIG := $(MODULE_DIRS)
+KYRARPG_COMMON_OBJ_ORIG := $(KYRARPG_COMMON_OBJ)
+
+# Skip rules for these files, by resetting the LOAD_RULES_MK
+LOAD_RULES_MK :=
+
+ifdef DETECTION_FULL
+# Reset detection objects, which uptill now are filled with only
+# enabled engines.
+DETECT_OBJS :=
+
+# Include all engine's module files, which populate DETECT_OBJS
+-include $(srcdir)/engines/*/module.mk
+endif
+
+# Reset stuff
+MODULES := $(MODULES_ORIG)
+MODULE :=
+MODULE_OBJS :=
+MODULE_DIRS := $(MODULE_DIRS_ORIG)
+PLUGIN :=
+KYRARPG_COMMON_OBJ := $(KYRARPG_COMMON_OBJ_ORIG)
+
+# Enable-rules again
+LOAD_RULES_MK := 1
+
+ifneq ($(DETECTION_STATIC), 1)
+-include $(srcdir)/base/detection/module.mk
+else
+MODULE_DIRS += $(sort $(dir $(DETECT_OBJS)))
+endif
+
+# Depdir information
+DEPDIRS = $(addsuffix $(DEPDIR),$(MODULE_DIRS)) dists/$(DEPDIR)
+DEPFILES =
+
+# Make base/version.o depend on all other object files. This way if anything is
+# changed, it causes version.cpp to be recompiled. This in turn ensures that
+# the build date in gScummVMBuildDate is correct.
+base/version.o: $(filter-out base/libbase.a,$(OBJS))
+
+ifdef USE_ELF_LOADER
+backends/plugins/elf/version.o: $(filter-out base/libbase.a,$(filter-out backends/libbackends.a,$(OBJS)))
+endif
+
+# Replace regular output with quiet messages
+ifneq ($(findstring $(MAKEFLAGS),s),s)
+ifneq ($(VERBOSE_BUILD),1)
+ifneq ($(VERBOSE_BUILD),yes)
+QUIET_CC      = @echo '   ' C '      ' $@;
+QUIET_CXX     = @echo '   ' C++ '    ' $@;
+QUIET_AS      = @echo '   ' AS '     ' $@;
+QUIET_NASM    = @echo '   ' NASM '   ' $@;
+QUIET_PANDOC  = @echo '   ' PANDOC ' ' $@;
+QUIET_AR      = @echo '   ' AR '     ' $@;
+QUIET_RANLIB  = @echo '   ' RANLIB ' ' $@;
+QUIET_PLUGIN  = @echo '   ' PLUGIN ' ' $@;
+QUIET_LINK    = @echo '   ' LINK '   ' $@;
+QUIET_DWP     = @echo '   ' DWP '    ' $@;
+QUIET_WINDRES = @echo '   ' WINDRES '' $@;
+QUIET_CURL		= @echo '   ' CURL '   ' $@;
+QUIET         = @
+endif
+endif
+endif
+
+# The build rule for the ScummVM executable
+$(EXECUTABLE): $(DETECT_OBJS) $(OBJS)
+	+$(QUIET_LINK)$(LD) $(LDFLAGS) $(PRE_OBJS_FLAGS) $+ $(POST_OBJS_FLAGS) $(LIBS) -o $@
+	+$(QUIET)$(LS) $@
+
+ifdef SPLIT_DWARF
+$(EXECUTABLE).dwp: $(EXECUTABLE)
+	$(QUIET_DWP)$(DWP) -e $(EXECUTABLE)
+endif
+
+# Grab the ScummVM Manual from Read the Docs
+ifdef USE_CURL
+DIST_FILES_MANUAL := ScummVM\ Manual\ $(MANUALVERSION).pdf
+manual:
+	$(QUIET_CURL)$(CURL) -s https://docs.scummvm.org/_/downloads/en/$(MANUALVERSION)/pdf/ --output $(DIST_FILES_MANUAL)
+else
+manual:
+endif
+
+distclean: clean clean-devtools clean-test
+	$(RM) config.h config.mk config.log configure.stamp engines/engines.mk engines/detection_table.h engines/plugins_table.h "ScummVM Manual"*.pdf
+
+clean: clean-toplevel
+clean-toplevel:
+	$(RM_REC) $(DEPDIRS)
+	$(RM) $(OBJS) $(DETECT_OBJS) $(EXECUTABLE)
+ifdef SPLIT_DWARF
+	$(RM) $(OBJS:.o=.dwo) $(DETECT_OBJS:.o=.dwo)
+	$(RM) $(EXECUTABLE).dwp
+endif
+
+
+#
+# The build rules for object files.
+#
+
+base/plugins.o: config.mk
+
+ifdef CXX_UPDATE_DEP_FLAG
+
+# Build rule for C++ files. Makes use of CXX_UPDATE_DEP_FLAG for advanced
+# dependency tracking.
+%.o: %.c
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CC)$(CC) $(CXX_UPDATE_DEP_FLAG) $(CFLAGS) $(CPPFLAGS) -c $(<) -o $@
+%.o: %.cpp
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@
+
+
+# Build rules for Objective-C and Objective-C++ files. Strictly speaking, this is for macOS only.
+%.o: %.mm
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@
+
+%.o: %.m
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CPPFLAGS) $(OBJCFLAGS) -c $(<) -o $@
+
+# Build rule for assembler files with preprocessing
+%.o: %.S
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_AS)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(ASFLAGS) -c $(<) -o $@
+
+base/version.o: base/version.cpp
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET_CXX)$(CXX) $(CXX_UPDATE_DEP_FLAG) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -c $(<) -o $@
+
+else
+
+# Dumb compile rule, for C++ compilers that don't allow dependency tracking or
+# where it is broken
+%.o: %.cpp
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c $(<) -o $@
+
+# Build rule for assembler files with preprocessing
+%.o: %.S
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_AS)$(CXX) $(ASFLAGS) -c $(<) -o $@
+
+base/version.o: base/version.cpp
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_CXX)$(CXX) $(CXXFLAGS) $(VERFLAGS) $(CPPFLAGS) -c $(<) -o $@
+endif
+
+# Build rule for assembler files
+%.o: %.s
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_AS)$(AS) $(ASFLAGS) $(<) -o $@
+
+# Build rule for Windows resource files
+# The regular expression is a portable form of ^(.*\s(FILE|ICON|RT_MANIFEST|DATA)|#include)\s+"([^"]*)".*$
+# This finds lines in the form '... FILE "path/file.ext" ...' (and also ICON and #include)
+# and replaces them with the $(srcdir)/path/file.ext \
+# The second sed removes winresrc.h (system include) and config.h (not in srcdir, printed
+# by the echo before sed), and strips the trailing backslash on the last line.
+%.o: %.rc
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET)$(MKDIR) $(*D)/$(DEPDIR)
+	$(QUIET)echo "$@: $< config.h config.mk \\" > $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET)sed -n 's:^\(.*[[:space:]]\(FILE\|ICON\|RT_MANIFEST\|DATA\)\|#include\)[[:space:]][[:space:]]*"\([^"]*\)".*$$:    $(srcdir)/\3 \\:p; ' $(<) | \
+		sed '/winresrc\.h\|config\.h/d; $$ s/ \\//' >> $(*D)/$(DEPDIR)/scummvm.d
+	$(QUIET_WINDRES)$(WINDRES) $(WINDRESFLAGS) $(CPPFLAGS) $(<) -o $@
+
+ifdef USE_NASM
+# Build rule for NASM assembler files
+%.o: %.asm
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_NASM)$(NASM) $(NASMFLAGS) -o $@ $(<)
+endif
+
+# Include the dependency tracking files.
+-include $(wildcard $(addsuffix /*.d,$(DEPDIRS)))
+
+# Mark *.d files and most *.mk files as PHONY. This stops make from trying to
+# recreate them (which it can't), and in particular from looking for potential
+# source files. This can save quite a bit of disk access time.
+.PHONY: $(wildcard $(addsuffix /*.d,$(DEPDIRS))) $(addprefix $(srcdir)/, $(addsuffix /module.mk,$(MODULES))) \
+	$(srcdir)/$(port_mk) $(srcdir)/rules.mk
+
+######################################################################
+# Get the current version information
+######################################################################
+
+# AmigaOS grep command has a problem with "./" in pathnames, so use cat piped into grep instead.
+VERSION = $(shell cat "${srcdir}/base/internal_version.h" | grep SCUMMVM_VERSION | cut -d\" -f2)
+VER_MAJOR = $(shell echo $(VERSION) | cut -d. -f 1)
+VER_MINOR = $(shell echo $(VERSION) | cut -d. -f 2)
+VER_PATCH = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c1)
+VER_EXTRA = $(shell echo $(VERSION) | cut -d. -f 3 | cut -c2-)
+
+ifdef AMIGAOS
+# AmigaOS needs the date in a specific format for the version cookie.
+AMIGA_DATE = $(shell gdate '+%d.%m.%Y')
+VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
+ifdef MORPHOS
+# MorphOS needs the date in a specific format for the version cookie.
+AMIGA_DATE = $(shell date +"%-d.%-m.%Y")
+VERFLAGS += -DAMIGA_DATE=\"$(AMIGA_DATE)\"
+endif
+
+######################################################################
+# Get git's working copy information
+######################################################################
+
+ifneq ($(shell cd $(srcdir); git rev-parse --verify HEAD 1>/dev/null 2>&1 || echo "error"),error)
+GITROOT := $(srcdir)
+ifeq ($(origin VER_REV), undefined)
+GIT_VER_MAJOR = $(shell git --version | sed 's/^git version //' | cut -d. -f 1)
+# Are there uncommitted changes? (describe --dirty is only available since 1.6.6)
+ifeq ($(GIT_VER_MAJOR),1)
+VER_DIRTY := $(shell cd $(srcdir); git update-index --refresh --unmerged 1>/dev/null 2>&1; git diff-index --quiet HEAD || echo "-dirty")
+else
+GIT_DIRTY_FLAG = --dirty
+endif
+# Get the working copy base revision
+VER_REV := $(shell cd $(srcdir); git describe $(GIT_DIRTY_FLAG) --long --match desc/\* | cut -d '-' -f 2-)$(VER_DIRTY)
+endif
+else
+GITROOT := git://github.com/scummvm/scummvm.git
+endif
+
+# Define the Subversion revision if available, either autodetected or
+# specified by the user, but only for base/version.cpp.
+ifneq ($(origin VER_REV), undefined)
+VERFLAGS += -DSCUMMVM_REVISION=\"$(VER_REV)\"
+endif
+
+######################################################################
+# Distribution settings
+######################################################################
+
+ifeq ($(VER_EXTRA),git)
+ifeq ($(origin VER_REV), undefined)
+DISTVERSION = $(shell date '+%Y-%m-%d')
+else
+DISTVERSION = git$(VER_REV)
+endif
+else
+DISTVERSION = $(VERSION)
+# Set the manual version to the release tag, unless a manual value was provided
+ifeq ($(MANUALVERSION),latest)
+MANUALVERSION = v$(VERSION)
+endif
+endif
+
+DISTNAME := scummvm-$(DISTVERSION)
+DISTDIR := dist
+VERFILE := $(DISTDIR)/$(DISTNAME)/base/internal_version.h
+
+ifdef USE_PANDOC
+# Convert README.md and NEWS.md to plain text for any platform that might require it
+PANDOC_CONVERT: README$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT) NEWS$(PANDOCEXT) doc/de/NEUES$(PANDOCEXT)
+	@sed -i'' -e "s/NEWS.md/NEWS$(PANDOCEXT)/g" README$(PANDOCEXT)
+	@sed -i'' -e "s/CONTRIBUTING.md/CONTRIBUTING$(PANDOCEXT)/g" README$(PANDOCEXT)
+
+%$(PANDOCEXT): %.md
+	$(QUIET)$(MKDIR) $(*D)
+	$(QUIET_PANDOC)$(PANDOC) -f gfm -t $(PANDOCFORMAT) --metadata pagetitle=$(basename $(notdir $@)) -s -o $@ $<
+endif
+
+# TODO git via $(GITROOT)
+$(VERFILE): $(srcdir)/base/internal_version.h
+	@$(RM_REC) $(DISTDIR)
+	@$(MKDIR) $(DISTDIR)
+	svn export $(SVNROOT) $(DISTDIR)/$(DISTNAME)
+ifneq ($(origin VER_REV), undefined)
+	@# Use the current SVN revision as a default for the snapshot sources
+	@svn cat $(SVNROOT)/base/internal_version.h | sed -e \
+		"s/^#define SCUMMVM_REVISION$$/#define SCUMMVM_REVISION \"$(VER_REV)\"/g" \
+		> $(VERFILE)
+endif
+
+$(DISTDIR)/$(DISTNAME).tar.gz: $(VERFILE)
+	cd $(DISTDIR); tar zcf $(DISTNAME).tar.gz $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).tar.bz2: $(VERFILE)
+	cd $(DISTDIR); tar jcf $(DISTNAME).tar.bz2 $(DISTNAME)
+
+$(DISTDIR)/$(DISTNAME).zip: $(VERFILE)
+	cd $(DISTDIR); zip -qr9 $(DISTNAME).zip $(DISTNAME)
+
+dist-src: \
+	$(DISTDIR)/$(DISTNAME).tar.gz \
+	$(DISTDIR)/$(DISTNAME).tar.bz2 \
+	$(DISTDIR)/$(DISTNAME).zip
+	@#RPM-src?
+	@#DEB-src?
+
+# Common files
+DIST_FILES_DOCS:=$(addprefix $(srcdir)/,AUTHORS COPYING LICENSES/COPYING.BSD LICENSES/COPYING.LGPL LICENSES/COPYING.FREEFONT LICENSES/COPYING.OFL LICENSES/COPYING.ISC LICENSES/COPYING.LUA LICENSES/COPYING.MIT LICENSES/COPYING.TINYGL LICENSES/COPYING.GLAD COPYRIGHT NEWS.md README.md CONTRIBUTING.md)
+ifdef USE_PANDOC
+DIST_FILES_DOCS+=README$(PANDOCEXT) NEWS$(PANDOCEXT) CONTRIBUTING$(PANDOCEXT)
+endif
+ifdef DIST_FILES_MANUAL
+ifneq ("$(wildcard $(DIST_FILES_MANUAL))","")
+DIST_FILES_DOCS+=$(DIST_FILES_MANUAL)
+endif
+endif
+
+DIST_FILES_DOCS_languages=cz da de es fr it no-nb se
+DIST_FILES_DOCS_cz:=$(addprefix $(srcdir)/doc/cz/,PrectiMe)
+DIST_FILES_DOCS_da:=$(addprefix $(srcdir)/doc/da/,HurtigStart)
+DIST_FILES_DOCS_de:=$(addprefix $(srcdir)/doc/de/,LIESMICH NEUES.md Schnellstart)
+ifdef USE_PANDOC
+DIST_FILES_DOCS_de+=doc/de/NEUES$(PANDOCEXT)
+endif
+DIST_FILES_DOCS_es:=$(addprefix $(srcdir)/doc/es/,InicioRapido)
+DIST_FILES_DOCS_fr:=$(addprefix $(srcdir)/doc/fr/,DemarrageRapide)
+DIST_FILES_DOCS_it:=$(addprefix $(srcdir)/doc/it/,GuidaRapida)
+DIST_FILES_DOCS_no-nb:=$(addprefix $(srcdir)/doc/no-nb/,HurtigStart)
+DIST_FILES_DOCS_se:=$(addprefix $(srcdir)/doc/se/,LasMig Snabbstart)
+
+# Themes files
+DIST_FILES_THEMES=scummmodern.zip scummclassic.zip scummremastered.zip residualvm.zip gui-icons.dat
+ifdef USE_TRANSLATION
+DIST_FILES_THEMES+=translations.dat
+endif
+DIST_FILES_THEMES:=$(addprefix $(srcdir)/gui/themes/,$(DIST_FILES_THEMES))
+
+# Networking files
+DIST_FILES_NETWORKING=
+ifdef USE_SDL_NET
+DIST_FILES_NETWORKING:=$(addprefix $(srcdir)/dists/networking/,wwwroot.zip)
+endif
+
+# Virtual keyboard files
+DIST_FILES_VKEYBD=
+ifdef ENABLE_VKEYBD
+DIST_FILES_VKEYBD:=$(addprefix $(srcdir)/backends/vkeybd/packs/,vkeybd_default.zip vkeybd_small.zip)
+endif
+
+# Engine data files
+DIST_FILES_ENGINEDATA=
+ifdef ENABLE_ACCESS
+DIST_FILES_ENGINEDATA+=access.dat
+endif
+ifdef ENABLE_CRYO
+DIST_FILES_ENGINEDATA+=cryo.dat
+endif
+ifdef ENABLE_CRYOMNI3D
+DIST_FILES_ENGINEDATA+=cryomni3d.dat
+endif
+ifdef ENABLE_DRASCULA
+DIST_FILES_ENGINEDATA+=drascula.dat
+endif
+ifdef ENABLE_HADESCH
+DIST_FILES_ENGINEDATA+=hadesch_translations.dat
+endif
+ifdef ENABLE_HUGO
+DIST_FILES_ENGINEDATA+=hugo.dat
+endif
+ifdef ENABLE_KYRA
+DIST_FILES_ENGINEDATA+=kyra.dat
+endif
+ifdef ENABLE_LURE
+DIST_FILES_ENGINEDATA+=lure.dat
+endif
+ifdef ENABLE_MACVENTURE
+DIST_FILES_ENGINEDATA+=macventure.dat
+endif
+ifdef ENABLE_MORTEVIELLE
+DIST_FILES_ENGINEDATA+=mort.dat
+endif
+ifdef ENABLE_NEVERHOOD
+DIST_FILES_ENGINEDATA+=neverhood.dat
+endif
+ifdef ENABLE_QUEEN
+DIST_FILES_ENGINEDATA+=queen.tbl
+endif
+ifdef ENABLE_SKY
+DIST_FILES_ENGINEDATA+=sky.cpt
+endif
+ifdef ENABLE_SUPERNOVA
+DIST_FILES_ENGINEDATA+=supernova.dat
+endif
+ifdef ENABLE_TEENAGENT
+DIST_FILES_ENGINEDATA+=teenagent.dat
+endif
+ifdef ENABLE_TITANIC
+DIST_FILES_ENGINEDATA+=titanic.dat
+endif
+ifdef ENABLE_TONY
+DIST_FILES_ENGINEDATA+=tony.dat
+endif
+ifdef ENABLE_TOON
+DIST_FILES_ENGINEDATA+=toon.dat
+endif
+ifdef ENABLE_ULTIMA
+DIST_FILES_ENGINEDATA+=ultima.dat
+endif
+ifdef ENABLE_WINTERMUTE
+DIST_FILES_ENGINEDATA+=wintermute.zip
+endif
+ifdef ENABLE_XEEN
+DIST_FILES_ENGINEDATA+=xeen.ccs
+endif
+ifdef USE_FREETYPE2
+DIST_FILES_ENGINEDATA+=fonts.dat
+endif
+DIST_FILES_ENGINEDATA+=macgui.dat
+ifdef ENABLE_GRIM
+DIST_FILES_ENGINEDATA+=grim-patch.lab
+endif
+ifdef ENABLE_MONKEY4
+DIST_FILES_ENGINEDATA+=monkey4-patch.m4b
+endif
+ifdef ENABLE_MYST3
+DIST_FILES_ENGINEDATA+=myst3.dat
+endif
+DIST_FILES_ENGINEDATA+=achievements.dat
+DIST_FILES_ENGINEDATA+=encoding.dat
+DIST_FILES_ENGINEDATA:=$(addprefix $(srcdir)/dists/engine-data/,$(DIST_FILES_ENGINEDATA))
+
+# pred.dic is currently only used for the AGI engine
+ifdef ENABLE_AGI
+DIST_FILES_ENGINEDATA+=$(srcdir)/dists/pred.dic
+endif
+
+# Shaders: install if USE_OPENGL_SHADERS is defined
+DIST_FILES_SHADERS=
+ifneq ($(USE_OPENGL_SHADERS),)
+ifdef ENABLE_GRIM
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/grim/shaders/*)
+endif
+ifdef ENABLE_MYST3
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/myst3/shaders/*)
+endif
+ifdef ENABLE_STARK
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/stark/shaders/*)
+endif
+ifdef ENABLE_WINTERMUTE
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/wintermute/base/gfx/opengl/shaders/*)
+endif
+ifdef ENABLE_PLAYGROUND3D
+DIST_FILES_SHADERS+=$(wildcard $(srcdir)/engines/playground3d/shaders/*)
+endif
+endif
+
+.PHONY: all clean distclean plugins dist-src clean-toplevel manual

@@ -1,0 +1,57 @@
+const float CONSTANT_ATTENUATION = 1.0;
+const float LINEAR_ATTENUATION = 0.0;
+const float QUADRATIC_ATTENUATION = 1.0;
+
+in vec3 position;
+in vec2 texcoord;
+in vec4 color;
+in vec3 normal;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+uniform highp mat4 extraMatrix;
+uniform UBOOL textured;
+uniform UBOOL lightsEnabled;
+uniform highp vec2 texScale;
+
+struct shadow_info {
+	UBOOL _active;
+	vec3 _color;
+	vec3 _light;
+	vec3 _point;
+	vec3 _normal;
+};
+
+uniform shadow_info shadow;
+
+out vec2 Texcoord;
+out vec4 Color;
+
+void main() {
+	vec4 pos = modelMatrix * extraMatrix * vec4(position, 1.0);
+
+	// See http://en.wikipedia.org/wiki/Line-plane_intersection
+	if (UBOOL_TEST(shadow._active)) {
+		pos /= pos.w;
+		vec3 l = pos.xyz - shadow._light;
+		float d = dot(shadow._point - shadow._light, shadow._normal) / dot(l, shadow._normal);
+		vec3 p = shadow._light + d * l;
+		pos = vec4(p, 1.0);
+	}
+
+	vec4 positionView = viewMatrix * pos;
+	gl_Position = projMatrix * positionView;
+
+	if (UBOOL_TEST(shadow._active)) {
+		Color = vec4(shadow._color, 1.0);
+	} else {
+		Color = color;
+	}
+
+	if (UBOOL_TEST(textured)) {
+		Texcoord = vec2(0.0, 1.0) + (texcoord / texScale);
+	} else {
+		Texcoord = vec2(0.0, 0.0);
+	}
+}

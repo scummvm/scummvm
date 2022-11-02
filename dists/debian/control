@@ -1,0 +1,94 @@
+Source: scummvm
+Section: games
+Priority: optional
+Maintainer: Debian Games Team <pkg-games-devel@lists.alioth.debian.org>
+Uploaders: David Weinehall <tao@debian.org>
+          ,Moritz Muehlenhoff <jmm@debian.org>
+          ,Dmitry Smirnov <onlyjob@debian.org>
+Build-Depends: debhelper (>= 9), autotools-dev
+              ,fonts-freefont-ttf
+              ,libasound2-dev [linux-any]
+              ,libfaad-dev
+              ,libflac-dev
+              ,libfluidsynth-dev
+              ,libfreetype6-dev
+              ,libjpeg-dev
+              ,libmad0-dev
+              ,libmpeg2-4-dev
+              ,libpng-dev
+              ,libsdl2-dev | libsdl1.2-dev
+              ,libtheora-dev
+              ,libvorbis-dev
+              ,libz-dev
+              ,nasm [i386]
+              ,python
+              ,zip
+# Cloud integration:
+#    ,libsdl2-net-dev
+#    ,libcurl4-gnutls-dev
+Standards-Version: 3.9.8
+Homepage: https://www.scummvm.org
+Vcs-Git: https://anonscm.debian.org/git/pkg-games/scummvm.git
+Vcs-Browser: https://anonscm.debian.org/cgit/pkg-games/scummvm.git
+
+Package: scummvm
+Architecture: any
+Depends: ${misc:Depends}, ${shlibs:Depends}, scummvm-data (= ${source:Version})
+Suggests: fluidsynth | timidity
+         ,beneath-a-steel-sky
+         ,drascula
+         ,flight-of-the-amazon-queen
+         ,lure-of-the-temptress
+Replaces: scummvm-data (<< 1.5.0-1)
+Breaks: scummvm-data (<< 1.5.0-1)
+Description: engine for several graphical adventure games
+ ScummVM is a `virtual machine' for several classic graphical
+ point-and-click adventure games.  It is designed to run Adventure Soft's
+ Simon the Sorcerer 1 and 2, Revolution's Beneath A Steel Sky, and games
+ based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion)
+ system.  SCUMM is used for many games, including Monkey Island,
+ Day of the Tentacle, Sam and Max and more.  See the official compatibility
+ list at <https://www.scummvm.org/compatibility/> for a full list
+ of supported games.
+ .
+ The game data of four games compatible with ScummVM is included in Debian.
+ These are:
+ .
+  - Beneath a Steel Sky                 (package: beneath-a-steel-sky)
+  - Drascula: The Vampire Strikes Back  (package: drascula)
+  - Flight of the Amazon Queen          (package: flight-of-the-amazon-queen)
+  - Lure of the Temptress               (package: lure-of-the-temptress)
+ .
+ To actually make use of ScummVM, you'll have to install one of these, or
+ obtain the proprietary game data for another supported game from somewhere
+ else.
+
+Package: scummvm-data
+Architecture: all
+Built-Using: ${my:Built-Using}
+Depends: ${misc:Depends}
+Replaces: scummvm (<< 1.0.0-3)
+Description: engine for several graphical adventure games (data files)
+ ScummVM is a `virtual machine' for several classic graphical
+ point-and-click adventure games.  It is designed to run Adventure Soft's
+ Simon the Sorcerer 1 and 2, Revolution's Beneath A Steel Sky, and games
+ based on LucasArts' SCUMM (Script Creation Utility for Maniac Mansion)
+ system.  SCUMM is used for many games, including Monkey Island,
+ Day of the Tentacle, Sam and Max and more.  See the official compatibility
+ list at <https://www.scummvm.org/compatibility/> for a full list
+ of supported games.
+ .
+ The game data of four games compatible with ScummVM is included in Debian.
+ These are:
+ .
+  - Beneath a Steel Sky                 (package: beneath-a-steel-sky)
+  - Drascula: The Vampire Strikes Back  (package: drascula)
+  - Flight of the Amazon Queen          (package: flight-of-the-amazon-queen)
+  - Lure of the Temptress               (package: lure-of-the-temptress)
+ .
+ To actually make use of ScummVM, you'll have to install one of these, or
+ obtain the proprietary game data for another supported game from somewhere
+ else.
+ .
+ These packages provides data files needed to run some engines supported by
+ ScummVM.

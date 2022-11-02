@@ -1,0 +1,3 @@
+engines/twine/detection.cpp
+engines/twine/metaengine.cpp
+engines/twine/parser/text.cpp

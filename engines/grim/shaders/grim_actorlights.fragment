@@ -1,0 +1,35 @@
+in vec2 Texcoord;
+in vec4 Color;
+
+uniform sampler2D tex;
+uniform sampler2D texZBuf;
+uniform UBOOL textured;
+uniform UBOOL hasZBuffer;
+uniform vec2 texcropZBuf;
+uniform vec2 screenSize;
+uniform float alphaRef;
+
+const float offsetY = 0.0;
+
+OUTPUT
+
+void checkZBuffer() {
+	vec2 zCoord = vec2((gl_FragCoord.x - 0.5) / screenSize.x, 1.0 - (gl_FragCoord.y - offsetY - 0.5) / screenSize.y);
+	vec2 sampled = texture(texZBuf, zCoord * texcropZBuf).ra;
+	float sceneZ = sampled.y + sampled.x / 256.0;
+
+	if (gl_FragCoord.z * 1.0039 > sceneZ)
+		discard;
+}
+
+void main() {
+	if (UBOOL_TEST(hasZBuffer))
+		checkZBuffer();
+	outColor = Color;
+	if (UBOOL_TEST(textured)) {
+		outColor *= texture(tex, Texcoord);
+	}
+
+	if (outColor.a < alphaRef)
+		discard;
+}

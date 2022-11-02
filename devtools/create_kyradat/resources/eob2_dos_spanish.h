@@ -1,0 +1,1361 @@
+static const char *const kEoB2ChargenStrings1DOSSpanish[9] = {
+	"Tu grupo esta\rpreparado. Pulsa\rJUGAR o la tecla\r'P' para comenzar.",
+	"          ",
+	"AC\rPV\rNIV",
+	"%s\r%d\r%d\r%d\r%d\r%d",
+	"%d\r%d",
+	"%d",
+	"%d/%d",
+	"%d/%d/%d",
+	"Selecciona la caja\rdel personaje que\rquieres ver\ro crear."
+};
+
+static const StringListProvider kEoB2ChargenStrings1DOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenStrings1DOSSpanish), kEoB2ChargenStrings1DOSSpanish };
+
+static const char *const kEoB2ChargenStrings2DOSSpanish[12] = {
+	"%s",
+	"%d",
+	"%s",
+	"%d",
+	"%d",
+	"%d",
+	"%s",
+	"%d",
+	"SELECCIONA RAZA:",
+	"SELECCIONA CLASE:",
+	"SELECCIONA CARACTER:",
+	"Nomb:"
+};
+
+static const StringListProvider kEoB2ChargenStrings2DOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenStrings2DOSSpanish), kEoB2ChargenStrings2DOSSpanish };
+
+static const char *const kEoB2ChargenStatStringsDOSSpanish[12] = {
+	"FUE",
+	"INT",
+	"SAB",
+	"DES",
+	"CON",
+	"CAR",
+	"FUERZA",
+	"INTELIGENCIA",
+	"SABIDURIA",
+	"DESTREZA",
+	"CONSTITUCION",
+	"CARISMA"
+};
+
+static const StringListProvider kEoB2ChargenStatStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenStatStringsDOSSpanish), kEoB2ChargenStatStringsDOSSpanish };
+
+static const char *const kEoB2ChargenRaceSexStringsDOSSpanish[12] = {
+	"HUMANO VARON",
+	"HUMANO HEMBRA",
+	"ELFO VARON",
+	"ELFO HEMBRA",
+	"MEDIO-ELFO VARON",
+	"MEDIO-ELFO HEMBRA",
+	"ENANO VARON",
+	"ENANO HEMBRA",
+	"GNOMO VARON",
+	"GNOMO HEMBRA",
+	"HALFLING VARON",
+	"HALFLING HEMBRA"
+};
+
+static const StringListProvider kEoB2ChargenRaceSexStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenRaceSexStringsDOSSpanish), kEoB2ChargenRaceSexStringsDOSSpanish };
+
+static const char *const kEoB2ChargenClassStringsDOSSpanish[21] = {
+	"GUERRERO",
+	"EXPLORADOR",
+	"PALADIN",
+	"MAGO",
+	"CLERIGO",
+	"LADRON",
+	"GUERRERO/CLERIGO",
+	"GUERRERO/LADRON",
+	"GUERRERO/MAGO",
+	"GUERR./MAGO/LADRON",
+	"LADRON/MAGO",
+	"CLERIGO/LADRON",
+	"GUERR./CLERIGO/MAGO",
+	"EXPLORADOR/CLERIGO",
+	"CLERIGO/MAGO",
+	"GUERRERO",
+	"MAGO",
+	"CLERIGO",
+	"LADRON",
+	"PALADIN",
+	"EXPLORADOR"
+};
+
+static const StringListProvider kEoB2ChargenClassStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenClassStringsDOSSpanish), kEoB2ChargenClassStringsDOSSpanish };
+
+static const char *const kEoB2ChargenAlignmentStringsDOSSpanish[9] = {
+	"LEGAL BUENO",
+	"NEUTRAL BUENO",
+	"CAOTICO BUENO",
+	"LEGAL NEUTRAL",
+	"NEUTRAL PURO",
+	"CAOTICO NEUTRAL",
+	"LEGAL MALVADO",
+	"NEUTRAL MALVADO",
+	"CAOTICO MALVADO"
+};
+
+static const StringListProvider kEoB2ChargenAlignmentStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenAlignmentStringsDOSSpanish), kEoB2ChargenAlignmentStringsDOSSpanish };
+
+static const char *const kEoB2ChargenEnterGameStringsDOSSpanish[1] = {
+	"ENTRANDO AL JUEGO\rPOR FAVOR ESPERA."
+};
+
+static const StringListProvider kEoB2ChargenEnterGameStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ChargenEnterGameStringsDOSSpanish), kEoB2ChargenEnterGameStringsDOSSpanish };
+
+static const char *const kEoB2PryDoorStringsDOSSpanish[8] = {
+	"\r",
+	"No eres capaz de forzar la puerta.\r",
+	"\x06\x04""Fuerzas la puerta.\r",
+	"\x06\x06""Intentas forzar la puerta, pero fallas.\r",
+	"No puedes poner ese objeto alli.\r",
+	"El objeto es demasiado grande.\r",
+	"Nadie puede abrir esta puerta.\r",
+	"\r"
+};
+
+static const StringListProvider kEoB2PryDoorStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2PryDoorStringsDOSSpanish), kEoB2PryDoorStringsDOSSpanish };
+
+static const char *const kEoB2WarningStringsDOSSpanish[4] = {
+	"No puedes ir por ahi.\r",
+	"%s no es capaz de alimentarse!\r",
+	"Esta comida esta podrida! No te la iras a comer!\r",
+	"Solo puedes comer alimentos!\r"
+};
+
+static const StringListProvider kEoB2WarningStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2WarningStringsDOSSpanish), kEoB2WarningStringsDOSSpanish };
+
+static const char *const kEoB2ItemSuffixStringsRingsDOSSpanish[4] = {
+	"Ornamento",
+	"Hechiceria",
+	"Sustento",
+	"Caida Suave"
+};
+
+static const StringListProvider kEoB2ItemSuffixStringsRingsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsRingsDOSSpanish), kEoB2ItemSuffixStringsRingsDOSSpanish };
+
+static const char *const kEoB2ItemSuffixStringsPotionsDOSSpanish[8] = {
+	"Fuerza Gigante",
+	"Curacion",
+	"Sanacion",
+	"Veneno",
+	"Vitalidad",
+	"Velocidad",
+	"Invisibilidad",
+	"Curar Veneno"
+};
+
+static const StringListProvider kEoB2ItemSuffixStringsPotionsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsPotionsDOSSpanish), kEoB2ItemSuffixStringsPotionsDOSSpanish };
+
+static const char *const kEoB2ItemSuffixStringsWandsDOSSpanish[8] = {
+	"Varita",
+	"Relampagos",
+	"Congelacion",
+	"Curacion",
+	"Bolas de Fuego",
+	"Starfire",
+	"Dardos Magicos",
+	"Disipar Magia"
+};
+
+static const StringListProvider kEoB2ItemSuffixStringsWandsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemSuffixStringsWandsDOSSpanish), kEoB2ItemSuffixStringsWandsDOSSpanish };
+
+static const char *const kEoB2RipItemStringsDOSSpanish[3] = {
+	"%s ha perdido su ",
+	"%s ha perdido su ",
+	".\r"
+};
+
+static const StringListProvider kEoB2RipItemStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2RipItemStringsDOSSpanish), kEoB2RipItemStringsDOSSpanish };
+
+static const char *const kEoB2CursedStringDOSSpanish[1] = {
+	"%d Maldice a %s"
+};
+
+static const StringListProvider kEoB2CursedStringDOSSpanishProvider = { ARRAYSIZE(kEoB2CursedStringDOSSpanish), kEoB2CursedStringDOSSpanish };
+
+static const char *const kEoB2MagicObjectStringsDOSSpanish[5] = {
+	"Pergamino de Mago",
+	"Pergamino de Clerigo",
+	"Anillo",
+	"Pocion",
+	"Varita"
+};
+
+static const StringListProvider kEoB2MagicObjectStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MagicObjectStringsDOSSpanish), kEoB2MagicObjectStringsDOSSpanish };
+
+static const char *const kEoB2MagicObjectString5DOSSpanish[1] = {
+	"Vara"
+};
+
+static const StringListProvider kEoB2MagicObjectString5DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicObjectString5DOSSpanish), kEoB2MagicObjectString5DOSSpanish };
+
+static const char *const kEoB2PatternSuffixDOSSpanish[1] = {
+	"%s de %s"
+};
+
+static const StringListProvider kEoB2PatternSuffixDOSSpanishProvider = { ARRAYSIZE(kEoB2PatternSuffixDOSSpanish), kEoB2PatternSuffixDOSSpanish };
+
+static const char *const kEoB2PatternGrFix1DOSSpanish[1] = {
+	"%s de %s"
+};
+
+static const StringListProvider kEoB2PatternGrFix1DOSSpanishProvider = { ARRAYSIZE(kEoB2PatternGrFix1DOSSpanish), kEoB2PatternGrFix1DOSSpanish };
+
+static const char *const kEoB2PatternGrFix2DOSSpanish[1] = {
+	"%s de %s"
+};
+
+static const StringListProvider kEoB2PatternGrFix2DOSSpanishProvider = { ARRAYSIZE(kEoB2PatternGrFix2DOSSpanish), kEoB2PatternGrFix2DOSSpanish };
+
+static const char *const kEoB2ValidateArmorStringDOSSpanish[1] = {
+	"%s no puede llevar este tipo de armadura.\r"
+};
+
+static const StringListProvider kEoB2ValidateArmorStringDOSSpanishProvider = { ARRAYSIZE(kEoB2ValidateArmorStringDOSSpanish), kEoB2ValidateArmorStringDOSSpanish };
+
+static const char *const kEoB2ValidateCursedStringDOSSpanish[1] = {
+	"%s no puede soltar el arma! Esta maldecida!\r"
+};
+
+static const StringListProvider kEoB2ValidateCursedStringDOSSpanishProvider = { ARRAYSIZE(kEoB2ValidateCursedStringDOSSpanish), kEoB2ValidateCursedStringDOSSpanish };
+
+static const char *const kEoB2ValidateNoDropStringDOSSpanish[1] = {
+	"No puedes poner ese objeto alli.\r"
+};
+
+static const StringListProvider kEoB2ValidateNoDropStringDOSSpanishProvider = { ARRAYSIZE(kEoB2ValidateNoDropStringDOSSpanish), kEoB2ValidateNoDropStringDOSSpanish };
+
+static const char *const kEoB2PotionStringsDOSSpanish[2] = {
+	"envenenado",
+	"%s siente %s!\r"
+};
+
+static const StringListProvider kEoB2PotionStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2PotionStringsDOSSpanish), kEoB2PotionStringsDOSSpanish };
+
+static const char *const kEoB2WandStringsDOSSpanish[1] = {
+	"La varita no parece tener magia\r"
+};
+
+static const StringListProvider kEoB2WandStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2WandStringsDOSSpanish), kEoB2WandStringsDOSSpanish };
+
+static const char *const kEoB2ItemMisuseStringsDOSSpanish[3] = {
+	"%s no puede usar este objeto.\r",
+	"Este objeto se activa automaticamente cuando se usa.\r",
+	"Este objeto no se utiliza de esa forma.\r"
+};
+
+static const StringListProvider kEoB2ItemMisuseStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2ItemMisuseStringsDOSSpanish), kEoB2ItemMisuseStringsDOSSpanish };
+
+static const char *const kEoB2TakenStringsDOSSpanish[1] = {
+	".\r"
+};
+
+static const StringListProvider kEoB2TakenStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2TakenStringsDOSSpanish), kEoB2TakenStringsDOSSpanish };
+
+static const char *const kEoB2PotionEffectStringsDOSSpanish[8] = {
+	"mas fuerte",
+	"mejor",
+	"mucho mejor",
+	"debil",
+	"saciado",
+	"rapido y agil",
+	"transparente",
+	"mejor"
+};
+
+static const StringListProvider kEoB2PotionEffectStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2PotionEffectStringsDOSSpanish), kEoB2PotionEffectStringsDOSSpanish };
+
+static const char *const kEoB2YesNoStringsDOSSpanish[2] = {
+	"si",
+	"no"
+};
+
+static const StringListProvider kEoB2YesNoStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2YesNoStringsDOSSpanish), kEoB2YesNoStringsDOSSpanish };
+
+static const char *const kEoB2MoreStringsDOSSpanish[1] = {
+	"MAS"
+};
+
+static const StringListProvider kEoB2MoreStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MoreStringsDOSSpanish), kEoB2MoreStringsDOSSpanish };
+
+static const char *const kEoB2NpcMaxStringsDOSSpanish[1] = {
+	"Solo puedes tener seis personajes en tu grupo.  Selecciona el que quieres abandonar."
+};
+
+static const StringListProvider kEoB2NpcMaxStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2NpcMaxStringsDOSSpanish), kEoB2NpcMaxStringsDOSSpanish };
+
+static const char *const kEoB2OkStringsDOSSpanish[1] = {
+	"OK"
+};
+
+static const StringListProvider kEoB2OkStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2OkStringsDOSSpanish), kEoB2OkStringsDOSSpanish };
+
+static const char *const kEoB2NpcJoinStringsDOSSpanish[1] = {
+	"%s se une al grupo.\r"
+};
+
+static const StringListProvider kEoB2NpcJoinStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2NpcJoinStringsDOSSpanish), kEoB2NpcJoinStringsDOSSpanish };
+
+static const char *const kEoB2CancelStringsDOSSpanish[1] = {
+	"CANCELAR"
+};
+
+static const StringListProvider kEoB2CancelStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2CancelStringsDOSSpanish), kEoB2CancelStringsDOSSpanish };
+
+static const char *const kEoB2AbortStringsDOSSpanish[1] = {
+	"ABORTAR"
+};
+
+static const StringListProvider kEoB2AbortStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2AbortStringsDOSSpanish), kEoB2AbortStringsDOSSpanish };
+
+static const char *const kEoB2MenuStringsMainDOSSpanish[8] = {
+	"Selecciona:",
+	"Descansar Grupo",
+	"Memorizar Conjuros",
+	"Orar Conjuros",
+	"Utilizar Pergaminos",
+	"Preferencias",
+	"Opciones",
+	"Salir"
+};
+
+static const StringListProvider kEoB2MenuStringsMainDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsMainDOSSpanish), kEoB2MenuStringsMainDOSSpanish };
+
+static const char *const kEoB2MenuStringsSaveLoadDOSSpanish[8] = {
+	"Cargar Partida",
+	"Guardar Partida",
+	"Dejar Personaje",
+	"Abandonar Partida",
+	"Opciones:",
+	"\rJuego Guardado.",
+	"La grabacion\rha fallado!",
+	"No puedo cargar\rla partida.\rFichero corrupto!"
+};
+
+static const StringListProvider kEoB2MenuStringsSaveLoadDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsSaveLoadDOSSpanish), kEoB2MenuStringsSaveLoadDOSSpanish };
+
+static const char *const kEoB2MenuStringsOnOffDOSSpanish[2] = {
+	"ON",
+	"OFF"
+};
+
+static const StringListProvider kEoB2MenuStringsOnOffDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsOnOffDOSSpanish), kEoB2MenuStringsOnOffDOSSpanish };
+
+static const char *const kEoB2MenuStringsSpellsDOSSpanish[17] = {
+	"\r\r Selecciona un\r personaje de tu\r grupo para\r memorizar conjuros.",
+	"\r Tu Paladin es de\r poco nivel para\r poder conjurar.",
+	"\r\r El Mago no tiene\r Libro de Conjuros!",
+	"\r\r\r Selecciona un\r personaje de tu\r grupo para\r aprender conjuros.",
+	"\r Nadie del grupo\r es capaz de\r aprender los\r conjuros.",
+	"\r Nadie del grupo\r es capaz de\r memorizar los\r conjuros.",
+	" Un Mago\r inconsciente o\r muerto no puede\r memorizar conjuros.",
+	" Un Clerigo\r inconsciente o\r muerto no puede\r aprender conjuros.",
+	"1",
+	"2",
+	"3",
+	"4",
+	"5",
+	"Borrar",
+	"Conjuros Disponibles:",
+	"Si",
+	"No"
+};
+
+static const StringListProvider kEoB2MenuStringsSpellsDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsSpellsDOSSpanish), kEoB2MenuStringsSpellsDOSSpanish };
+
+static const char *const kEoB2MenuStringsRestDOSSpanish[5] = {
+	"\rQuieres sanar a\rtodo tu grupo?",
+	" Hay quien aun\r sigue herido.\r Continar sanando?",
+	"Grupo descansando.",
+	"\r Todo tu grupo\r esta totalmente\r repuesto.",
+	" Tu grupo necesita\r descansar para\r obtener conjuros."
+};
+
+static const StringListProvider kEoB2MenuStringsRestDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsRestDOSSpanish), kEoB2MenuStringsRestDOSSpanish };
+
+static const char *const kEoB2MenuStringsDropDOSSpanish[1] = {
+	" No puedes tener\r menos de cuatro\r personajes."
+};
+
+static const StringListProvider kEoB2MenuStringsDropDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsDropDOSSpanish), kEoB2MenuStringsDropDOSSpanish };
+
+static const char *const kEoB2MenuStringsExitDOSSpanish[1] = {
+	" Seguro que quieres \r abandonar la\r partida?"
+};
+
+static const StringListProvider kEoB2MenuStringsExitDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsExitDOSSpanish), kEoB2MenuStringsExitDOSSpanish };
+
+static const char *const kEoB2MenuStringsStarveDOSSpanish[1] = {
+	" Tu grupo esta\r hambriento.\r quieres seguir\r descansando?"
+};
+
+static const StringListProvider kEoB2MenuStringsStarveDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsStarveDOSSpanish), kEoB2MenuStringsStarveDOSSpanish };
+
+static const char *const kEoB2MenuStringsScribeDOSSpanish[5] = {
+	"Selecciona el\rpergamino a\rtranscribir.",
+	"\r\r\r Selecciona un\r Mago de tu grupo\r para transcribir\r conjuros.",
+	" No tienes \r pergaminos para\r ser transcritos.",
+	" No tienes \r ningun pergamino\r que este Mago\r necesite.",
+	"\r No tienes ningun\r Mago que pueda\r transcribir pergaminos."
+};
+
+static const StringListProvider kEoB2MenuStringsScribeDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsScribeDOSSpanish), kEoB2MenuStringsScribeDOSSpanish };
+
+static const char *const kEoB2MenuStringsDrop2DOSSpanish[3] = {
+	" Selecciona el\r personaje a\r abandonar.",
+	" Debes poner\r un nombre al\r fichero!",
+	" Seguro que\r quieres remplazar\r la partida?"
+};
+
+static const StringListProvider kEoB2MenuStringsDrop2DOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsDrop2DOSSpanish), kEoB2MenuStringsDrop2DOSSpanish };
+
+static const char *const kEoB2MenuStringsHeadDOSSpanish[3] = {
+	"Campamento:",
+	"Preferencias:",
+	"Opciones:"
+};
+
+static const StringListProvider kEoB2MenuStringsHeadDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsHeadDOSSpanish), kEoB2MenuStringsHeadDOSSpanish };
+
+static const char *const kEoB2MenuStringsPoisonDOSSpanish[1] = {
+	"Los personajes\renvenenados moriran!\rDescansar igualmente?"
+};
+
+static const StringListProvider kEoB2MenuStringsPoisonDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsPoisonDOSSpanish), kEoB2MenuStringsPoisonDOSSpanish };
+
+static const char *const kEoB2MenuStringsMgcDOSSpanish[2] = {
+	"%-18s %1d",
+	"Quedan %d de %d"
+};
+
+static const StringListProvider kEoB2MenuStringsMgcDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsMgcDOSSpanish), kEoB2MenuStringsMgcDOSSpanish };
+
+static const char *const kEoB2MenuStringsPrefsDOSSpanish[4] = {
+	"Musica %-3s",
+	"Sonido %-3s",
+	"Barra energia %-3s",
+	"Raton %-3s"
+};
+
+static const StringListProvider kEoB2MenuStringsPrefsDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsPrefsDOSSpanish), kEoB2MenuStringsPrefsDOSSpanish };
+
+static const char *const kEoB2MenuStringsRest2DOSSpanish[5] = {
+	"%s obtiene %s.\r",
+	"%s memoriza %s.\r",
+	"%s cura a %s.\r",
+	"Horas pasadas: %-4d",
+	"\r%s\r"
+};
+
+static const StringListProvider kEoB2MenuStringsRest2DOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsRest2DOSSpanish), kEoB2MenuStringsRest2DOSSpanish };
+
+static const char *const kEoB2MenuStringsRest3DOSSpanish[1] = {
+	"\x06\x06""Este no es un sitio seguro para descansar."
+};
+
+static const StringListProvider kEoB2MenuStringsRest3DOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsRest3DOSSpanish), kEoB2MenuStringsRest3DOSSpanish };
+
+static const char *const kEoB2MenuStringsRest4DOSSpanish[1] = {
+	"\x06\x06""No puedes descansar aqui, hay monstruos cerca."
+};
+
+static const StringListProvider kEoB2MenuStringsRest4DOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsRest4DOSSpanish), kEoB2MenuStringsRest4DOSSpanish };
+
+static const char *const kEoB2MenuStringsDefeatDOSSpanish[1] = {
+	"\rTodo tu grupo\rha sido eliminado!\rQuieres cargar\runa partida\rgrabada?"
+};
+
+static const StringListProvider kEoB2MenuStringsDefeatDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsDefeatDOSSpanish), kEoB2MenuStringsDefeatDOSSpanish };
+
+static const char *const kEoB2MenuStringsTransferDOSSpanish[5] = {
+	"Debes transferir\rquatro personajes\rantes de jugar!",
+	"Debes transferir\rsolo quatro personajes\ra EOB II!",
+	"Los objetos sin \rutilidad, seran\rborrados.",
+	" \r No tienes un\r mago en tu grupo.",
+	" \r No tienes ni\r un clerigo ni\r un paladin en\r tu grupo."
+};
+
+static const StringListProvider kEoB2MenuStringsTransferDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsTransferDOSSpanish), kEoB2MenuStringsTransferDOSSpanish };
+
+static const char *const kEoB2MenuStringsSpecDOSSpanish[2] = {
+	"Al despertar,\rdescubres que Insal\rel ladron se ha ido!",
+	"Un inventario\rrevela que te\rhan robado!"
+};
+
+static const StringListProvider kEoB2MenuStringsSpecDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuStringsSpecDOSSpanish), kEoB2MenuStringsSpecDOSSpanish };
+
+static const char *const kEoB2MenuYesNoStringsDOSSpanish[2] = {
+	"Si",
+	"No"
+};
+
+static const StringListProvider kEoB2MenuYesNoStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MenuYesNoStringsDOSSpanish), kEoB2MenuYesNoStringsDOSSpanish };
+
+static const char *const kEoB2CharGuiStringsHpDOSSpanish[2] = {
+	"PV",
+	"%3d de %-3d"
+};
+
+static const StringListProvider kEoB2CharGuiStringsHpDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsHpDOSSpanish), kEoB2CharGuiStringsHpDOSSpanish };
+
+static const char *const kEoB2CharGuiStringsWp2DOSSpanish[3] = {
+	"FALLA",
+	"HACK",
+	"GOLPE"
+};
+
+static const StringListProvider kEoB2CharGuiStringsWp2DOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWp2DOSSpanish), kEoB2CharGuiStringsWp2DOSSpanish };
+
+static const char *const kEoB2CharGuiStringsWrDOSSpanish[4] = {
+	" NO  ",
+	"LLEGA",
+	" SIN",
+	"MUNI"
+};
+
+static const StringListProvider kEoB2CharGuiStringsWrDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsWrDOSSpanish), kEoB2CharGuiStringsWrDOSSpanish };
+
+static const char *const kEoB2CharGuiStringsSt2DOSSpanish[7] = {
+	"Cambiando",
+	"MUERTO",
+	"INCONSCIENTE",
+	"RALENTIZADO",
+	"ENVENENADO",
+	"PARALIZADO",
+	"PETRIFICADO"
+};
+
+static const StringListProvider kEoB2CharGuiStringsSt2DOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsSt2DOSSpanish), kEoB2CharGuiStringsSt2DOSSpanish };
+
+static const char *const kEoB2CharGuiStringsInDOSSpanish[4] = {
+	"INFORMACION",
+	"ARMADURA",
+	"EXP",
+	"NIV"
+};
+
+static const StringListProvider kEoB2CharGuiStringsInDOSSpanishProvider = { ARRAYSIZE(kEoB2CharGuiStringsInDOSSpanish), kEoB2CharGuiStringsInDOSSpanish };
+
+static const char *const kEoB2CharStatusStrings7DOSSpanish[1] = {
+	"%s sin los efectos de fuerza gigante.\r"
+};
+
+static const StringListProvider kEoB2CharStatusStrings7DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings7DOSSpanish), kEoB2CharStatusStrings7DOSSpanish };
+
+static const char *const kEoB2CharStatusStrings82DOSSpanish[1] = {
+	"\x06\x06""%s sufre los efectos del veneno!\r"
+};
+
+static const StringListProvider kEoB2CharStatusStrings82DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings82DOSSpanish), kEoB2CharStatusStrings82DOSSpanish };
+
+static const char *const kEoB2CharStatusStrings9DOSSpanish[1] = {
+	"\x06\x04""%s ya no esta paralizado!\r"
+};
+
+static const StringListProvider kEoB2CharStatusStrings9DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings9DOSSpanish), kEoB2CharStatusStrings9DOSSpanish };
+
+static const char *const kEoB2CharStatusStrings12DOSSpanish[1] = {
+	"%s se ralentiza.\r"
+};
+
+static const StringListProvider kEoB2CharStatusStrings12DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings12DOSSpanish), kEoB2CharStatusStrings12DOSSpanish };
+
+static const char *const kEoB2CharStatusStrings132DOSSpanish[1] = {
+	"\x06\x06""%s es %s!\r"
+};
+
+static const StringListProvider kEoB2CharStatusStrings132DOSSpanishProvider = { ARRAYSIZE(kEoB2CharStatusStrings132DOSSpanish), kEoB2CharStatusStrings132DOSSpanish };
+
+static const char *const kEoB2LevelGainStringsDOSSpanish[1] = {
+	"\x06\x01""%s ha ganado un nivel.""\x06\x0F""\r"
+};
+
+static const StringListProvider kEoB2LevelGainStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2LevelGainStringsDOSSpanish), kEoB2LevelGainStringsDOSSpanish };
+
+static const char *const kEoB2BookNumbersDOSSpanish[5] = {
+	"Primero",
+	"Segundo",
+	"Tercero",
+	"Cuarto",
+	"Quinto"
+};
+
+static const StringListProvider kEoB2BookNumbersDOSSpanishProvider = { ARRAYSIZE(kEoB2BookNumbersDOSSpanish), kEoB2BookNumbersDOSSpanish };
+
+static const char *const kEoB2MageSpellsListDOSSpanish[33] = {
+	"",
+	"Armadura",
+	"Manos Ardientes",
+	"Detectar Magia",
+	"Dardo Magico",
+	"Escudo",
+	"Golpe Electrico",
+	"Difuminar",
+	"Detectar Invisible",
+	"Identificar Magia",
+	"Invisibilidad",
+	"Flecha Acida M.",
+	"Disolver Magia",
+	"Bola de Fuego",
+	"Velocidad",
+	"Paralizar",
+	"Invisibilidad 3m'",
+	"Rayo Electrico",
+	"Toque Vampirico",
+	"Terror",
+	"Tormenta de Hielo",
+	"Invisib. Mejorada",
+	"Anular Maldicion",
+	"Cono Helado",
+	"Paralizar Monstruo",
+	"Muro de Fuerza",
+	"Desintegrar",
+	"Petrificar",
+	"Despetrificar",
+	"Vision Verdadera",
+	"Dedo Mortal",
+	"Palabra de Poder",
+	"Puno de Bigby"
+};
+
+static const StringListProvider kEoB2MageSpellsListDOSSpanishProvider = { ARRAYSIZE(kEoB2MageSpellsListDOSSpanish), kEoB2MageSpellsListDOSSpanish };
+
+static const char *const kEoB2ClericSpellsListDOSSpanish[30] = {
+	"",
+	"Bendecir",
+	"Herida Leve",
+	"Curacion Leve",
+	"Detectar Magia",
+	"Proteccion al Mal",
+	"Auxiliar",
+	"Hoja Llameante",
+	"Paralizar",
+	"Retrasar Veneno",
+	"Crear Comida",
+	"Disipar Magia",
+	"Atuendo Magico",
+	"Oracion",
+	"Quitar Paralisis",
+	"Herida Grave",
+	"Curacion Grave",
+	"Neutralizar Veneno",
+	"Proteccion Mal 3m",
+	"Herida Critica",
+	"Curacion Critica",
+	"Columna de Fuego",
+	"Alzar Muertos",
+	"Quitar Vida",
+	"Vision Verdadera",
+	"Danar",
+	"Sanacion",
+	"Resurreccion",
+	"Imponer Manos",
+	"Alejar Muertos"
+};
+
+static const StringListProvider kEoB2ClericSpellsListDOSSpanishProvider = { ARRAYSIZE(kEoB2ClericSpellsListDOSSpanish), kEoB2ClericSpellsListDOSSpanish };
+
+static const char *const kEoB2SpellNamesDOSSpanish[68] = {
+	"armadura",
+	"manos ardientes",
+	"detectar magia",
+	"dardo magico",
+	"escudo",
+	"golpe electrico",
+	"difuminar",
+	"detectar invisibilidad",
+	"identificar magia",
+	"invisibilidad",
+	"flecha acida de Melf",
+	"disolver magia",
+	"bola de fuego",
+	"velocidad",
+	"paralizar",
+	"invisibilidad 3m radio",
+	"rayo electrico",
+	"toque vampirico",
+	"terror",
+	"tormenta de hielo",
+	"invisibilidad mejorada",
+	"anular maldicion",
+	"cono helado",
+	"paralizar monstruo",
+	"muro de fuerza",
+	"desintegrar",
+	"petrificar",
+	"despetrificar",
+	"true seeing",
+	"dedo mortal",
+	"palabra de poder",
+	"puno de Bigby",
+	"bendecir",
+	"herida leve",
+	"cura leve",
+	"detectar magia",
+	"proteccion contra el mal",
+	"auxiliar",
+	"hoja llameante",
+	"paralizar",
+	"retrasar veneno",
+	"crear comida",
+	"disipar magia",
+	"atuendo magico",
+	"oracion",
+	"quitar paralisis",
+	"herida grave",
+	"cura grave",
+	"neutralizar veneno",
+	"proteccion contra el mal 3m radio",
+	"herida critica",
+	"cura critica",
+	"columna de fuego",
+	"alzar muertos",
+	"quitar vida",
+	"vision verdadera",
+	"danar",
+	"sanacion",
+	"resureccion",
+	"imponer manos",
+	"alejar muertos",
+	"",
+	"defensa mistica",
+	"",
+	"",
+	"",
+	"",
+	""
+};
+
+static const StringListProvider kEoB2SpellNamesDOSSpanishProvider = { ARRAYSIZE(kEoB2SpellNamesDOSSpanish), kEoB2SpellNamesDOSSpanish };
+
+static const char *const kEoB2MagicStrings1DOSSpanish[6] = {
+	"SIN CONJURO",
+	"SIN CONJURO",
+	"Debes tener una mano libre para el conjuro.\r",
+	"No puedes tener dos conjuros del mismo tipo activos.\r",
+	"%s conjura %s.\r",
+	"\rok\r"
+};
+
+static const StringListProvider kEoB2MagicStrings1DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings1DOSSpanish), kEoB2MagicStrings1DOSSpanish };
+
+static const char *const kEoB2MagicStrings2DOSSpanish[5] = {
+	"El conjuro falla!\r",
+	"%s ha sido desintegrado!\r",
+	"\x06\x06""Golpean al grupo con un conjuro mortal!\r",
+	"\x06\x06""%s Ha sido alcanzado por 'Heridas Graves'.\r",
+	"PETRIFICADO"
+};
+
+static const StringListProvider kEoB2MagicStrings2DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings2DOSSpanish), kEoB2MagicStrings2DOSSpanish };
+
+static const char *const kEoB2MagicStrings3DOSSpanish[5] = {
+	"Utilizar conjuro en quien? ",
+	"\rConjuro abortado.\r",
+	"El conjuro de %s, %s expira.\r",
+	"%s pierde al monstruo.\r",
+	"%s debe estar delante para golpear!\r"
+};
+
+static const StringListProvider kEoB2MagicStrings3DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings3DOSSpanish), kEoB2MagicStrings3DOSSpanish };
+
+static const char *const kEoB2MagicStrings4DOSSpanish[1] = {
+	"sin efecto.\r"
+};
+
+static const StringListProvider kEoB2MagicStrings4DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings4DOSSpanish), kEoB2MagicStrings4DOSSpanish };
+
+static const char *const kEoB2MagicStrings6DOSSpanish[1] = {
+	"%s ya tiene una armadura mejor que la AC 6."
+};
+
+static const StringListProvider kEoB2MagicStrings6DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings6DOSSpanish), kEoB2MagicStrings6DOSSpanish };
+
+static const char *const kEoB2MagicStrings7DOSSpanish[2] = {
+	"%s esta ya bajo los efectos del conjuro %s.\r",
+	"El grupo esta ya bajo los efectos del conjuro %s.\r"
+};
+
+static const StringListProvider kEoB2MagicStrings7DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings7DOSSpanish), kEoB2MagicStrings7DOSSpanish };
+
+static const char *const kEoB2MagicStrings8DOSSpanish[6] = {
+	"El conjuro falla!\r",
+	"retenido",
+	"El conjuro falla!\r",
+	"El conjuro falla\r",
+	"Ningun monstruo al alcance!\r",
+	"%s esta ya bajo los efectos de un conjuro de auxilio.\r"
+};
+
+static const StringListProvider kEoB2MagicStrings8DOSSpanishProvider = { ARRAYSIZE(kEoB2MagicStrings8DOSSpanish), kEoB2MagicStrings8DOSSpanish };
+
+static const byte kEoB2ManDefDOSSpanish[200] = {
+	0x09, 0x03, 0x07, 0x00, 0x09, 0x03, 0x04, 0x00,
+	0x09, 0x07, 0x0A, 0x00, 0x14, 0x05, 0x05, 0x00,
+	0x14, 0x09, 0x02, 0x00, 0x14, 0x10, 0x05, 0x00,
+	0x1A, 0x03, 0x04, 0x00, 0x1A, 0x06, 0x06, 0x00,
+	0x1A, 0x07, 0x06, 0x00, 0x15, 0x12, 0x07, 0x00,
+	0x15, 0x12, 0x07, 0x00, 0x15, 0x02, 0x05, 0x00,
+	0x15, 0x02, 0x01, 0x00, 0x15, 0x0B, 0x05, 0x00,
+	0x15, 0x07, 0x01, 0x00, 0x23, 0x02, 0x07, 0x00,
+	0x23, 0x0C, 0x03, 0x00, 0x23, 0x01, 0x03, 0x00,
+	0x23, 0x01, 0x02, 0x00, 0x23, 0x01, 0x08, 0x00,
+	0x23, 0x06, 0x08, 0x00, 0x26, 0x01, 0x01, 0x00,
+	0x26, 0x0E, 0x08, 0x00, 0x26, 0x03, 0x04, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x26, 0x03, 0x08, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x17, 0x02, 0x01, 0x00,
+	0x17, 0x02, 0x03, 0x00, 0x17, 0x01, 0x02, 0x00,
+	0x17, 0x04, 0x01, 0x00, 0x17, 0x06, 0x07, 0x00,
+	0x17, 0x01, 0x03, 0x00, 0x09, 0x07, 0x0A, 0x00,
+	0x14, 0x10, 0x05, 0x00, 0x15, 0x02, 0x05, 0x00,
+	0x15, 0x02, 0x01, 0x00, 0x23, 0x01, 0x03, 0x00,
+	0x23, 0x01, 0x02, 0x00, 0x23, 0x01, 0x08, 0x00,
+	0x26, 0x01, 0x07, 0x00, 0x26, 0x03, 0x08, 0x00,
+	0x26, 0x01, 0x03, 0x00, 0x17, 0x02, 0x01, 0x00,
+	0x17, 0x02, 0x03, 0x00, 0x17, 0x04, 0x01, 0x00,
+	0x17, 0x01, 0x03, 0x00, 0x15, 0x07, 0x01, 0x00,
+	0x26, 0x01, 0x01, 0x00, 0x26, 0x03, 0x01, 0x00
+};
+
+static const ByteProvider kEoB2ManDefDOSSpanishProvider = { ARRAYSIZE(kEoB2ManDefDOSSpanish), kEoB2ManDefDOSSpanish };
+
+static const char *const kEoB2ManWordDOSSpanish[51] = {
+	"legend",
+	"beholder",
+	"desde",
+	"aventura",
+	"lanzar",
+	"pagina",
+	"movimientos",
+	"pantalla",
+	"personajes",
+	"grabados",
+
+	"grabados",
+	"activar",
+	"marca",
+	"anterioridad",
+	"marca",
+	"inteligencia",
+	"disponer",
+	"tienen",
+	"gnomos",
+	"magia",
+
+	"parentesco",
+	"razas",
+	"resucitar",
+	"guerreros",
+	"humanos",
+	"luchan",
+	"humanos",
+	"asumir",
+	"mando",
+	"carisma",
+
+	"ademas",
+	"golpear",
+	"mide",
+	"desde",
+	"pagina",
+	"activar",
+	"marca",
+	"tienen",
+	"gnomes",
+	"magia",
+
+	"razas",
+	"luchar",
+	"humanos",
+	"asumir",
+	"mando",
+	"ademas",
+	"mide",
+	"marca",
+	"razas",
+	"los",
+	""
+};
+
+static const StringListProvider kEoB2ManWordDOSSpanishProvider = { ARRAYSIZE(kEoB2ManWordDOSSpanish), kEoB2ManWordDOSSpanish };
+
+static const char *const kEoB2ManPromptDOSSpanish[1] = {
+	"\r\r\r\rEn la pagina con este simbolo...\r\rLinea... %d\rPalabra... %d\r"
+};
+
+static const StringListProvider kEoB2ManPromptDOSSpanishProvider = { ARRAYSIZE(kEoB2ManPromptDOSSpanish), kEoB2ManPromptDOSSpanish };
+
+static const char *const kEoB2MainMenuStringsDOSSpanish[5] = {
+	"   PARTIDA GRABADA\r",
+	"    PARTIDA NUEVA\r",
+	"    PARTIDA EOB I\r",
+	"    INTRODUCCION\r",
+	"    SALIR AL DOS\r"
+};
+
+static const StringListProvider kEoB2MainMenuStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MainMenuStringsDOSSpanish), kEoB2MainMenuStringsDOSSpanish };
+
+static const char *const kEoB2TransferStrings1DOSSpanish[2] = {
+	"Nivel: %d",
+	" / %d"
+};
+
+static const StringListProvider kEoB2TransferStrings1DOSSpanishProvider = { ARRAYSIZE(kEoB2TransferStrings1DOSSpanish), kEoB2TransferStrings1DOSSpanish };
+
+static const char *const kEoB2TransferStrings2DOSSpanish[2] = {
+	"Solo puedes seleccionar cuatro personajes.",
+	"Pulsa OK cuando hayas seleccionado tu grupo."
+};
+
+static const StringListProvider kEoB2TransferStrings2DOSSpanishProvider = { ARRAYSIZE(kEoB2TransferStrings2DOSSpanish), kEoB2TransferStrings2DOSSpanish };
+
+static const char *const kEoB2TransferLabelsDOSSpanish[2] = {
+	"VOLVER",
+	"OK"
+};
+
+static const StringListProvider kEoB2TransferLabelsDOSSpanishProvider = { ARRAYSIZE(kEoB2TransferLabelsDOSSpanish), kEoB2TransferLabelsDOSSpanish };
+
+static const char *const kEoB2IntroStringsDOSSpanish[20] = {
+	"En una tenebrosa noche de tormenta..",
+	"Recibiste una misteriosa carta.",
+	"Era de tu viejo amigo Khelben\rBlackstaff, Archimago de la ciudad.",
+	"El mensaje era muy urgente.",
+	"  Que querria Khelben?",
+	"Bienvenido, sigueme.",
+	"Khelben te espera en su estudio.",
+	"Gracias por acudir tan aprisa.",
+	"Tenemos problemas.......",
+	"Antiguos demonios permanecen aun en \rel Templo Darkmoon",
+	"Temo por la seguridad de la ciudad",
+	"Necesito tu ayuda",
+	"Hace tres noches \rmande una exploradora,",
+	"y aun no ha regresado...",
+	"Temo por su seguridad.",
+	"Ten esta moneda",
+	"La usare para contactar contigo",
+	"Debes actuar deprisa.",
+	"Te teletransportare cerca de Darkmoon.",
+	"Que la suerte este contigo, amigo mio."
+};
+
+static const StringListProvider kEoB2IntroStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2IntroStringsDOSSpanish), kEoB2IntroStringsDOSSpanish };
+
+static const char *const kEoB2IntroCPSFilesDOSSpanish[13] = {
+	"S1.X", //"STREET1.CPS",
+	"S2.X", //"STREET2.CPS",
+	"DO1.X", //"DOORWAY1.CPS",
+	"DO2.X", //"DOORWAY2.CPS",
+	"X.X", //"WESTWOOD.CPS",
+	"W.X", //"WINDING.CPS",
+	"K2.X", //"KHELBAN2.CPS",
+	"K1.X", //"KHELBAN1.CPS",
+	"K3.X", //"KHELBAN3.CPS",
+	"K4.X", //"KHELBAN4.CPS",
+	"C.X", //"COIN.CPS",
+	"K5.X", //"KHELBAN5.CPS",
+	"K6.X", //"KHELBAN6.CPS"
+};
+
+static const StringListProvider kEoB2IntroCPSFilesDOSSpanishProvider = { ARRAYSIZE(kEoB2IntroCPSFilesDOSSpanish), kEoB2IntroCPSFilesDOSSpanish };
+
+static const char *const kEoB2FinaleStringsDOSSpanish[20] = {
+	"Finalmente Dran ha sucumbido.",
+	"Sorprendentemente, Khelben aparece.",
+	"Gracias, mis victoriosos amigos.",
+	"Habeis derrotado a Dran!",
+	"No sabia que Dran fuese un dragon.",
+	"Debe tener mas de 300 anos!",
+	"Su poder ha desaparecido.",
+	"Pero Darkmoon es aun un lugar\rde demonios.",
+	"Y muchos de los suyos aun permanecen.",
+	"Ahora debemos dejar este lugar.",
+	"Y que mis hombres acaben\rcon todos ellos.",
+	"Seguidme.",
+	"Poderosos magos esperan\rpara el asalto final\r a Darkmoon.",
+	"Los demonios del templo son fuertes.",
+	"No puede haber supervivientes!",
+	"El templo dejara de existir.",
+	"Mis amigos, ya hemos cumplido.",
+	"Gracias.",
+	"Os habeis ganado todo mi respeto.",
+	"Os recordaremos por siempre."
+};
+
+static const StringListProvider kEoB2FinaleStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2FinaleStringsDOSSpanish), kEoB2FinaleStringsDOSSpanish };
+
+static const byte kEoB2CreditsDataDOSSpanish[2316] = {
+	0x02, 0x05, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x02, 0x10, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x02, 0x03, 0x0D, 0x02, 0x04, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x02,
+	0x06, 0x0D, 0x0D, 0x0D, 0x02, 0x01, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x44, 0x69, 0x72, 0x65,
+	0x63, 0x74, 0x6F, 0x72, 0x3A, 0x20, 0x42, 0x72,
+	0x65, 0x74, 0x74, 0x20, 0x57, 0x2E, 0x20, 0x53,
+	0x70, 0x65, 0x72, 0x72, 0x79, 0x20, 0x20, 0x20,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20, 0x4F, 0x72,
+	0x69, 0x67, 0x69, 0x6E, 0x61, 0x6C, 0x20, 0x43,
+	0x6F, 0x6E, 0x63, 0x65, 0x70, 0x74, 0x3A, 0x20,
+	0x50, 0x68, 0x69, 0x6C, 0x69, 0x70, 0x20, 0x57,
+	0x2E, 0x20, 0x47, 0x6F, 0x72, 0x72, 0x6F, 0x77,
+	0x20, 0x20, 0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x42, 0x72, 0x65, 0x74, 0x74, 0x20, 0x57, 0x2E,
+	0x20, 0x53, 0x70, 0x65, 0x72, 0x72, 0x79, 0x20,
+	0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x47, 0x61, 0x6D,
+	0x65, 0x20, 0x44, 0x65, 0x73, 0x69, 0x67, 0x6E,
+	0x3A, 0x20, 0x42, 0x72, 0x65, 0x74, 0x74, 0x20,
+	0x57, 0x2E, 0x20, 0x53, 0x70, 0x65, 0x72, 0x72,
+	0x79, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x50, 0x61, 0x75, 0x6C, 0x20, 0x53,
+	0x2E, 0x20, 0x4D, 0x75, 0x64, 0x72, 0x61, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x42, 0x69, 0x6C, 0x6C, 0x20, 0x53,
+	0x74, 0x6F, 0x6B, 0x65, 0x73, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x4C, 0x65, 0x61, 0x64, 0x20,
+	0x50, 0x72, 0x6F, 0x67, 0x72, 0x61, 0x6D, 0x6D,
+	0x65, 0x72, 0x3A, 0x20, 0x50, 0x68, 0x69, 0x6C,
+	0x69, 0x70, 0x20, 0x57, 0x2E, 0x20, 0x47, 0x6F,
+	0x72, 0x72, 0x6F, 0x77, 0x20, 0x20, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x20, 0x20, 0x4C, 0x65, 0x76, 0x65,
+	0x6C, 0x20, 0x50, 0x72, 0x6F, 0x67, 0x72, 0x61,
+	0x6D, 0x6D, 0x65, 0x72, 0x3A, 0x20, 0x42, 0x69,
+	0x6C, 0x6C, 0x20, 0x53, 0x74, 0x6F, 0x6B, 0x65,
+	0x73, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20, 0x41, 0x6D,
+	0x69, 0x67, 0x61, 0x20, 0x50, 0x72, 0x6F, 0x67,
+	0x72, 0x61, 0x6D, 0x6D, 0x65, 0x72, 0x3A, 0x20,
+	0x42, 0x69, 0x6C, 0x6C, 0x20, 0x53, 0x74, 0x6F,
+	0x6B, 0x65, 0x73, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x49,
+	0x6E, 0x74, 0x72, 0x6F, 0x20, 0x26, 0x20, 0x46,
+	0x69, 0x6E, 0x61, 0x6C, 0x65, 0x20, 0x62, 0x79,
+	0x3A, 0x20, 0x4A, 0x6F, 0x65, 0x20, 0x42, 0x6F,
+	0x73, 0x74, 0x69, 0x63, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x41, 0x72, 0x74, 0x20,
+	0x26, 0x20, 0x47, 0x72, 0x61, 0x70, 0x68, 0x69,
+	0x63, 0x73, 0x3A, 0x20, 0x52, 0x69, 0x63, 0x6B,
+	0x20, 0x50, 0x61, 0x72, 0x6B, 0x73, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x41, 0x61, 0x72, 0x6F,
+	0x6E, 0x20, 0x50, 0x6F, 0x77, 0x65, 0x6C, 0x6C,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4A, 0x6F, 0x73, 0x65,
+	0x70, 0x68, 0x20, 0x48, 0x65, 0x77, 0x69, 0x74,
+	0x74, 0x20, 0x49, 0x56, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x52, 0x65, 0x6E, 0x20,
+	0x4F, 0x6C, 0x73, 0x65, 0x6E, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4C, 0x6F, 0x75, 0x69,
+	0x73, 0x65, 0x20, 0x53, 0x61, 0x6E, 0x64, 0x6F,
+	0x76, 0x61, 0x6C, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4A, 0x75, 0x64, 0x69,
+	0x74, 0x68, 0x20, 0x50, 0x65, 0x74, 0x65, 0x72,
+	0x73, 0x6F, 0x6E, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x4D,
+	0x75, 0x73, 0x69, 0x63, 0x3A, 0x20, 0x46, 0x72,
+	0x61, 0x6E, 0x6B, 0x20, 0x4B, 0x6C, 0x65, 0x70,
+	0x61, 0x63, 0x6B, 0x69, 0x20, 0x20, 0x20, 0x20,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x53, 0x6F, 0x75, 0x6E, 0x64, 0x20, 0x45,
+	0x66, 0x66, 0x65, 0x63, 0x74, 0x73, 0x3A, 0x20,
+	0x50, 0x61, 0x75, 0x6C, 0x20, 0x53, 0x2E, 0x20,
+	0x4D, 0x75, 0x64, 0x72, 0x61, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x44, 0x77, 0x69, 0x67, 0x68, 0x74, 0x20, 0x4F,
+	0x6B, 0x61, 0x68, 0x61, 0x72, 0x61, 0x20, 0x20,
+	0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x57, 0x72, 0x69, 0x74, 0x65, 0x72,
+	0x3A, 0x20, 0x4D, 0x61, 0x72, 0x63, 0x20, 0x43,
+	0x72, 0x61, 0x6D, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x20, 0x51, 0x75, 0x61, 0x6C, 0x69, 0x74, 0x79,
+	0x20, 0x41, 0x73, 0x73, 0x75, 0x72, 0x61, 0x6E,
+	0x63, 0x65, 0x3A, 0x20, 0x47, 0x6C, 0x65, 0x6E,
+	0x6E, 0x20, 0x53, 0x70, 0x65, 0x72, 0x72, 0x79,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x53, 0x70, 0x65, 0x63,
+	0x69, 0x61, 0x6C, 0x20, 0x54, 0x68, 0x61, 0x6E,
+	0x6B, 0x73, 0x20, 0x74, 0x6F, 0x0D, 0x0D, 0x0D,
+	0x43, 0x68, 0x75, 0x63, 0x6B, 0x20, 0x4B, 0x72,
+	0x6F, 0x65, 0x67, 0x65, 0x6C, 0x0D, 0x0D, 0x58,
+	0x61, 0x6E, 0x61, 0x74, 0x68, 0x61, 0x72, 0x20,
+	0x74, 0x68, 0x65, 0x20, 0x42, 0x65, 0x68, 0x6F,
+	0x6C, 0x64, 0x65, 0x72, 0x0D, 0x0D, 0x61, 0x6E,
+	0x64, 0x0D, 0x0D, 0x4D, 0x69, 0x6B, 0x65, 0x27,
+	0x73, 0x20, 0x63, 0x61, 0x74, 0x2C, 0x20, 0x53,
+	0x70, 0x61, 0x72, 0x6B, 0x79, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x50, 0x75, 0x62,
+	0x6C, 0x69, 0x73, 0x68, 0x65, 0x64, 0x20, 0x62,
+	0x79, 0x0D, 0x0D, 0x02, 0x02, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x50, 0x72, 0x6F,
+	0x64, 0x75, 0x63, 0x65, 0x72, 0x73, 0x3A, 0x20,
+	0x44, 0x61, 0x6E, 0x20, 0x43, 0x65, 0x72, 0x6D,
+	0x61, 0x6B, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x47, 0x65, 0x6F, 0x72, 0x67, 0x65, 0x20, 0x4D,
+	0x61, 0x63, 0x44, 0x6F, 0x6E, 0x61, 0x6C, 0x64,
+	0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D, 0x20, 0x20,
+	0x47, 0x61, 0x6D, 0x65, 0x20, 0x44, 0x65, 0x76,
+	0x65, 0x6C, 0x6F, 0x70, 0x6D, 0x65, 0x6E, 0x74,
+	0x3A, 0x20, 0x4E, 0x69, 0x63, 0x68, 0x6F, 0x6C,
+	0x61, 0x73, 0x20, 0x42, 0x65, 0x6C, 0x69, 0x61,
+	0x65, 0x66, 0x66, 0x20, 0x0D, 0x0D, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x44, 0x61, 0x76, 0x69, 0x64, 0x20,
+	0x41, 0x2E, 0x20, 0x4C, 0x75, 0x63, 0x63, 0x61,
+	0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x50, 0x6C,
+	0x61, 0x79, 0x20, 0x54, 0x65, 0x73, 0x74, 0x65,
+	0x72, 0x73, 0x3A, 0x20, 0x50, 0x68, 0x69, 0x6C,
+	0x20, 0x41, 0x6C, 0x6E, 0x65, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4A, 0x6F, 0x68, 0x6E,
+	0x20, 0x42, 0x6F, 0x6F, 0x63, 0x6B, 0x68, 0x6F,
+	0x6C, 0x64, 0x74, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x47, 0x6C, 0x65, 0x6E,
+	0x20, 0x43, 0x75, 0x72, 0x65, 0x74, 0x6F, 0x6E,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4D, 0x61, 0x72, 0x6B,
+	0x20, 0x48, 0x61, 0x6C, 0x6C, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x42, 0x72, 0x69, 0x61,
+	0x6E, 0x20, 0x4C, 0x6F, 0x77, 0x65, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x52, 0x6F, 0x62, 0x65,
+	0x72, 0x74, 0x20, 0x4C, 0x75, 0x70, 0x6F, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x41, 0x6C, 0x61, 0x6E,
+	0x20, 0x4D, 0x61, 0x72, 0x65, 0x6E, 0x63, 0x6F,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4A, 0x61, 0x73, 0x6F,
+	0x6E, 0x20, 0x52, 0x61, 0x79, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x4A, 0x65, 0x66, 0x66,
+	0x20, 0x53, 0x68, 0x6F, 0x74, 0x77, 0x65, 0x6C,
+	0x6C, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x41, 0x6E, 0x64, 0x72,
+	0x65, 0x20, 0x56, 0x72, 0x69, 0x67, 0x6E, 0x61,
+	0x75, 0x64, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x43, 0x68, 0x72, 0x69,
+	0x73, 0x20, 0x57, 0x61, 0x72, 0x73, 0x68, 0x61,
+	0x75, 0x65, 0x72, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x61, 0x6E, 0x64, 0x20,
+	0x54, 0x53, 0x43, 0x53, 0x2C, 0x20, 0x49, 0x6E,
+	0x63, 0x20, 0x20, 0x20, 0x20, 0x20, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x54, 0x65, 0x73, 0x74, 0x20, 0x53, 0x75, 0x70,
+	0x70, 0x6F, 0x72, 0x74, 0x3A, 0x20, 0x4B, 0x79,
+	0x6D, 0x20, 0x47, 0x6F, 0x79, 0x65, 0x72, 0x20,
+	0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20, 0x20,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x43, 0x61, 0x73, 0x74, 0x20,
+	0x6F, 0x66, 0x20, 0x43, 0x68, 0x61, 0x72, 0x61,
+	0x63, 0x74, 0x65, 0x72, 0x73, 0x0D, 0x0D, 0x0D,
+	0x54, 0x68, 0x65, 0x20, 0x46, 0x6F, 0x72, 0x63,
+	0x65, 0x73, 0x20, 0x6F, 0x66, 0x20, 0x44, 0x61,
+	0x72, 0x6B, 0x6E, 0x65, 0x73, 0x73, 0x0D, 0x0D,
+	0x0D, 0x44, 0x72, 0x61, 0x6E, 0x20, 0x44, 0x72,
+	0x61, 0x67, 0x67, 0x6F, 0x72, 0x65, 0x20, 0x28,
+	0x54, 0x68, 0x65, 0x20, 0x42, 0x69, 0x67, 0x20,
+	0x42, 0x61, 0x64, 0x20, 0x44, 0x72, 0x61, 0x67,
+	0x6F, 0x6E, 0x29, 0x0D, 0x0D, 0x4E, 0x61, 0x64,
+	0x69, 0x61, 0x20, 0x26, 0x20, 0x4A, 0x6F, 0x72,
+	0x69, 0x6C, 0x20, 0x28, 0x54, 0x68, 0x65, 0x20,
+	0x54, 0x77, 0x6F, 0x2D, 0x46, 0x61, 0x63, 0x65,
+	0x64, 0x20, 0x43, 0x6C, 0x65, 0x72, 0x69, 0x63,
+	0x73, 0x29, 0x0D, 0x0D, 0x44, 0x79, 0x69, 0x6E,
+	0x67, 0x20, 0x53, 0x65, 0x72, 0x76, 0x61, 0x6E,
+	0x74, 0x20, 0x28, 0x44, 0x72, 0x61, 0x6E, 0x27,
+	0x73, 0x20, 0x52, 0x69, 0x67, 0x68, 0x74, 0x20,
+	0x48, 0x61, 0x6E, 0x64, 0x20, 0x4D, 0x61, 0x6E,
+	0x29, 0x0D, 0x0D, 0x54, 0x72, 0x61, 0x70, 0x70,
+	0x65, 0x64, 0x20, 0x43, 0x6C, 0x65, 0x72, 0x69,
+	0x63, 0x20, 0x28, 0x54, 0x68, 0x65, 0x20, 0x52,
+	0x65, 0x64, 0x20, 0x48, 0x65, 0x72, 0x72, 0x69,
+	0x6E, 0x67, 0x29, 0x0D, 0x0D, 0x4B, 0x69, 0x6E,
+	0x67, 0x20, 0x6F, 0x66, 0x20, 0x74, 0x68, 0x65,
+	0x20, 0x46, 0x72, 0x6F, 0x73, 0x74, 0x20, 0x47,
+	0x69, 0x61, 0x6E, 0x74, 0x73, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x54, 0x68, 0x65, 0x20, 0x46, 0x6F, 0x72,
+	0x63, 0x65, 0x73, 0x20, 0x6F, 0x66, 0x20, 0x47,
+	0x6F, 0x6F, 0x64, 0x0D, 0x0D, 0x0D, 0x4B, 0x68,
+	0x65, 0x6C, 0x62, 0x65, 0x6E, 0x20, 0x42, 0x6C,
+	0x61, 0x63, 0x6B, 0x73, 0x74, 0x61, 0x66, 0x66,
+	0x0D, 0x0D, 0x41, 0x6D, 0x62, 0x65, 0x72, 0x20,
+	0x28, 0x4B, 0x68, 0x65, 0x6C, 0x62, 0x65, 0x6E,
+	0x27, 0x73, 0x20, 0x53, 0x63, 0x6F, 0x75, 0x74,
+	0x29, 0x0D, 0x0D, 0x53, 0x68, 0x6F, 0x72, 0x6E,
+	0x20, 0x44, 0x69, 0x65, 0x72, 0x67, 0x61, 0x72,
+	0x20, 0x28, 0x50, 0x65, 0x73, 0x6B, 0x79, 0x20,
+	0x44, 0x77, 0x61, 0x72, 0x66, 0x29, 0x0D, 0x0D,
+	0x49, 0x6E, 0x73, 0x61, 0x6C, 0x20, 0x74, 0x68,
+	0x65, 0x20, 0x54, 0x68, 0x69, 0x65, 0x66, 0x20,
+	0x28, 0x54, 0x68, 0x65, 0x20, 0x4E, 0x75, 0x69,
+	0x73, 0x61, 0x6E, 0x63, 0x65, 0x29, 0x0D, 0x0D,
+	0x43, 0x61, 0x6C, 0x61, 0x6E, 0x64, 0x72, 0x61,
+	0x20, 0x28, 0x49, 0x72, 0x61, 0x27, 0x73, 0x20,
+	0x4C, 0x6F, 0x73, 0x74, 0x20, 0x53, 0x69, 0x73,
+	0x74, 0x65, 0x72, 0x29, 0x0D, 0x0D, 0x41, 0x6C,
+	0x61, 0x69, 0x6E, 0x20, 0x28, 0x54, 0x68, 0x65,
+	0x20, 0x41, 0x6E, 0x63, 0x69, 0x65, 0x6E, 0x74,
+	0x20, 0x4F, 0x6E, 0x65, 0x29, 0x0D, 0x0D, 0x53,
+	0x61, 0x6E, 0x2D, 0x52, 0x61, 0x61, 0x6C, 0x20,
+	0x28, 0x44, 0x72, 0x6F, 0x77, 0x20, 0x4D, 0x61,
+	0x67, 0x65, 0x29, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x01, 0x45, 0x6C, 0x20, 0x70, 0x61,
+	0x72, 0x65, 0x63, 0x69, 0x64, 0x6F, 0x20, 0x64,
+	0x65, 0x20, 0x6C, 0x6F, 0x73, 0x20, 0x70, 0x65,
+	0x72, 0x73, 0x6F, 0x6E, 0x61, 0x6A, 0x65, 0x73,
+	0x20, 0x64, 0x65, 0x20, 0x20, 0x20, 0x20, 0x0D,
+	0x01, 0x65, 0x73, 0x74, 0x65, 0x20, 0x6A, 0x75,
+	0x65, 0x67, 0x6F, 0x20, 0x63, 0x6F, 0x6E, 0x20,
+	0x61, 0x6C, 0x67, 0x75, 0x6E, 0x61, 0x20, 0x70,
+	0x65, 0x72, 0x73, 0x6F, 0x6E, 0x61, 0x20, 0x20,
+	0x20, 0x0D, 0x01, 0x72, 0x65, 0x61, 0x6C, 0x20,
+	0x65, 0x73, 0x20, 0x70, 0x75, 0x72, 0x61, 0x20,
+	0x63, 0x6F, 0x69, 0x6E, 0x63, 0x69, 0x64, 0x65,
+	0x6E, 0x63, 0x69, 0x61, 0x2E, 0x20, 0x20, 0x20,
+	0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x02, 0x11, 0x0D, 0x0D, 0x0D,
+	0x0D, 0x0D, 0x0D, 0x00
+};
+
+static const ByteProvider kEoB2CreditsDataDOSSpanishProvider = { ARRAYSIZE(kEoB2CreditsDataDOSSpanish), kEoB2CreditsDataDOSSpanish };
+
+static const char *const kEoB2FinaleCPSFilesDOSSpanish[13] = {
+	"DR1.X", //"DRAGON1.CPS",
+	"DR2.X", //"DRAGON2.CPS",
+	"H1.X", //"HURRY1.CPS",
+	"H2.X", //"HURRY2.CPS",
+	"D0.X", //"DESTROY0.CPS",
+	"D1.X", //"DESTROY1.CPS",
+	"D2.X", //"DESTROY2.CPS",
+	"M.X", //"MAGIC.CPS",
+	"D3.X", //"DESTROY3.CPS",
+	"C2.X", //"CREDITS2.CPS",
+	"C3.X", //"CREDITS3.CPS",
+	"H.X", //"HEROES.CPS",
+	"T.X", //"THANKS.CPS"
+};
+
+static const StringListProvider kEoB2FinaleCPSFilesDOSSpanishProvider = { ARRAYSIZE(kEoB2FinaleCPSFilesDOSSpanish), kEoB2FinaleCPSFilesDOSSpanish };
+
+static const char *const kEoB2MonsterDistAttStringsDOSSpanish[5] = {
+	"EL grupo es alcanzado por 'Azote Mental'!\r",
+	"paralizado",
+	"envenenado",
+	"paralizado",
+	"PETRIFICADO"
+};
+
+static const StringListProvider kEoB2MonsterDistAttStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MonsterDistAttStringsDOSSpanish), kEoB2MonsterDistAttStringsDOSSpanish };
+
+static const char *const kEoB2Npc1StringsDOSSpanish[2] = {
+	"hablar",
+	"dejar"
+};
+
+static const StringListProvider kEoB2Npc1StringsDOSSpanishProvider = { ARRAYSIZE(kEoB2Npc1StringsDOSSpanish), kEoB2Npc1StringsDOSSpanish };
+
+static const char *const kEoB2Npc2StringsDOSSpanish[2] = {
+	"liberar",
+	"dejar"
+};
+
+static const StringListProvider kEoB2Npc2StringsDOSSpanishProvider = { ARRAYSIZE(kEoB2Npc2StringsDOSSpanish), kEoB2Npc2StringsDOSSpanish };
+
+static const char *const kEoB2MonsterDustStringsDOSSpanish[1] = {
+	"El monstruo se convierte en polvo!\r"
+};
+
+static const StringListProvider kEoB2MonsterDustStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2MonsterDustStringsDOSSpanish), kEoB2MonsterDustStringsDOSSpanish };
+
+static const char *const kEoB2KheldranStringsDOSSpanish[1] = {
+	"   Tan confiado cachorro!"
+};
+
+static const StringListProvider kEoB2KheldranStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2KheldranStringsDOSSpanish), kEoB2KheldranStringsDOSSpanish };
+
+static const char *const kEoB2HornStringsDOSSpanish[4] = {
+	"Un estremecedor sonido sale del cuerno.\r",
+	"Un profundo sonido sale del cuerno.\r",
+	"Un melodioso sonido sale del cuerno.\r",
+	"Un estridente sonido sale del cuerno.\r"
+};
+
+static const StringListProvider kEoB2HornStringsDOSSpanishProvider = { ARRAYSIZE(kEoB2HornStringsDOSSpanish), kEoB2HornStringsDOSSpanish };
+
+static const char *const kEoB2NpcPresetsNamesDOSSpanish[6] = {
+	"Insal",
+	"Calandra",
+	"Shorn",
+	"San-raal",
+	"Tanglor",
+	"Amber"
+};
+
+static const StringListProvider kEoB2NpcPresetsNamesDOSSpanishProvider = { ARRAYSIZE(kEoB2NpcPresetsNamesDOSSpanish), kEoB2NpcPresetsNamesDOSSpanish };

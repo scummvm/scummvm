@@ -1,0 +1,4 @@
+engines/lab/engine.cpp
+engines/lab/processroom.cpp
+engines/lab/savegame.cpp
+engines/lab/speciallocks.cpp

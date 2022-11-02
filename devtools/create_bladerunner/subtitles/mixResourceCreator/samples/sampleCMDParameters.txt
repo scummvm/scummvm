@@ -1,0 +1,9 @@
+python2.7 mixResourceCreator.py -x ../sampleInput/englishTranscript.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld EN_ANY --trace
+
+python2.7 mixResourceCreator.py -x ../sampleInput/out-GermanFull.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld DE_DEU
+
+python2.7 mixResourceCreator.py -x ../sampleInput/out-FrenchFull.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld FR_FRA
+
+python2.7 mixResourceCreator.py -x ../sampleInput/out-ItalianFull.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld IT_ITA
+
+python2.7 mixResourceCreator.py -x ../sampleInput/out-SpanishFull.xls -ian ../common/actornames.txt -cft ../sampleInput/configureFontsTranslation.txt -ld ES_ESP

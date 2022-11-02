@@ -1,0 +1,14 @@
+put "ONE"
+
+on two
+	put "TWO"
+end two
+
+put "THREE"
+
+on four
+	put "FOUR"
+end FOUR
+
+four
+two

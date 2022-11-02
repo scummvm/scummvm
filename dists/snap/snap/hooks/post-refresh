@@ -1,0 +1,6 @@
+#!/bin/sh
+set -x
+
+# we install with the daemon disabled, the configure hook
+# will start it if appropriate
+snapctl stop --disable $SNAP_NAME.daemon

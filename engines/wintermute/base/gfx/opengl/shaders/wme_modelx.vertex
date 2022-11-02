@@ -1,0 +1,75 @@
+in vec3 position;
+in vec2 texcoord;
+in vec3 normal;
+
+uniform highp mat4 modelMatrix;
+uniform highp mat4 viewMatrix;
+uniform highp mat4 projMatrix;
+uniform highp mat4 normalMatrix;
+
+uniform vec4 ambientLight;
+
+uniform vec4 diffuse;
+uniform vec4 ambient;
+
+struct Light {
+	vec4 _position;
+	vec4 _direction;
+	vec4 _color;
+	float enabled;
+};
+
+const int maxLights = 8;
+uniform Light lights[maxLights];
+
+out vec2 Texcoord;
+out vec4 Color;
+out vec3 Normal;
+
+void main() {
+	vec4 viewCoords = viewMatrix * modelMatrix * vec4(position, 1.0);
+	gl_Position = projMatrix * viewCoords;
+
+	Texcoord = texcoord;
+	Color = diffuse;
+
+	vec3 light = vec3(0.0, 0.0, 0.0);
+	vec3 normalEye = normalize((normalMatrix * vec4(normal, 0.0)).xyz);
+
+	for (int i = 0; i < maxLights; ++i) {
+		if (lights[i].enabled < 0.0) {
+			continue;
+		}
+
+		float intensity = 1.0;
+		vec4 lightPosition = viewMatrix * lights[i]._position;
+		vec3 vertexToLight = lightPosition.xyz - viewCoords.xyz;
+		float dist = length(vertexToLight);
+
+		if (lights[i]._direction.w < 0.0) { // Spotlight
+			vec4 lightDirection = viewMatrix * vec4(lights[i]._direction.xyz, 0.0);
+			// See DirectX spotlight documentation
+			float cosAngle = -dot(normalize(vertexToLight), normalize(lightDirection.xyz)); // rho
+			float cosPenumbra = 0.968912; // cos(1 / 4)
+			float cosUmbra = 0.877582; // cos(1 / 2)
+
+			if (cosAngle <= cosPenumbra) {
+				if (cosAngle < cosUmbra || cosPenumbra == cosUmbra) {
+					intensity = 0.0;
+				} else {
+					intensity *= (cosAngle - cosUmbra) / (cosPenumbra - cosUmbra);
+				}
+			}
+		}
+
+		intensity *= max(0.0, dot(normalEye, normalize(vertexToLight)));
+		light.rgb += lights[i]._color.rgb * intensity;
+	}
+
+	Color.rgba *= vec4(light.rgb, 1.0);
+	Color.rgba += vec4(ambient.rgb * ambientLight.rgb, 1.0);
+
+	Color.r = min(Color.r, 1.0);
+	Color.g = min(Color.g, 1.0);
+	Color.b = min(Color.b, 1.0);
+}

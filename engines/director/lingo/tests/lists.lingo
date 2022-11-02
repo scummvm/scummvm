@@ -1,0 +1,141 @@
+set x = []
+set y = [:]
+set machinery = [#gears:6, #balls:3, #ramps:8]
+set nested = [1, 2, [3, 4], 5]
+set gList = ["car":1, "boat": 20]
+
+set a to [1, 2, 3]
+put a
+
+set gList = [point(70, 190), point(217, 66), point(364, 185)]
+
+set gBugList = [[energy: 10, mood: "Happy"], [energy: -10, mood: "Sad"], [energy: 60, mood: "Hungry"], [energy: 20, mood: "Sad"]]
+
+set b to [4, 5, 6, 7]
+set res to a + b
+set res to a - b
+set res to a * b
+set res to b / a
+set res to b mod a
+set res to -a
+
+set floats to [4.0, 5.0, 6.0, 7.0]
+set strings to ["4", "5", "6", "7"]
+
+set res to a + floats
+set res to a + strings
+set res to a + 1
+set res to 1 + b
+
+set res to a = a
+set res to a = b
+set res to a < b
+
+set a to [0, 0]
+set b to [0]
+set res to a = b
+set res to a >= b
+set res to b = a
+set res to b >= a
+set b to [1]
+set res to a = b
+set res to a <> b
+
+set a to [#a:6, #b:3, #c:8, #d:5]
+set res to a = machinery
+set res to a >= machinery
+set res to machinery = a
+set res to machinery >= a
+
+-- property Array tests
+set propArray to [501: "cast", 502: "value", 1.5: "script", a: "score", #b: "member"]
+set var to getPropAt(propArray, 1)
+scummvmAssertEqual(var, 501)
+set var to getAt(propArray, 1)
+scummvmAssertEqual(var, "cast")
+
+set var to getProp(propArray, 1.5)
+scummvmAssertEqual(var, "script")
+set var to getProp(propArray, #a)
+scummvmAssertEqual(var, "score")
+set var to getProp(propArray, #b)
+scummvmAssertEqual(var, "member")
+
+-- itemOf
+set string_array to "one,, three, four"
+set res to item 2 of string_array
+scummvmAssert(res="")
+set res to item 3 of string_array
+scummvmAssert(res=" three")
+set res to item 4 of string_array
+scummvmAssert(res=" four")
+
+-- itemOf check for float
+set res to item 3.4 of string_array
+scummvmAssert(res=" three")
+
+-- itemOf out of bounds checks
+set res to item 5 of string_array
+scummvmAssert(res="")
+
+set res to item -1 of string_array
+scummvmAssert(res=string_array)
+
+-- itemOf: test delimiter
+set save = the itemDelimiter
+set the itemDelimiter = ":"
+set delim_array to "one: two: three: four"
+set res to item 3 of delim_array
+scummvmAssert(res=" three")
+set the itemDelimiter = save
+
+-- setAt
+set lst to []
+setAt lst,1,5
+scummvmAssert(lst = [5])
+set lst to []
+setAt lst,3,5
+scummvmAssert(lst = [0,0,5])
+setAt lst,2,5
+scummvmAssert(lst = [0,5,5])
+
+-- rects
+set rct to rect(0, 0, 100, 100)
+set gA to getAt(rct, 2)
+scummvmAssertEqual(gA, 0)
+set gA to getAt(rct, 3)
+scummvmAssertEqual(gA, 100)
+setAt rct, 2, 20
+scummvmAssertEqual(getAt(rct, 2), 20)
+
+-- array conversions
+set a to point(10, 10)
+set b to rect(20, 20, 20, 20)
+set c to [30]
+set d to [40, 40]
+set e to [50, 50, 50]
+set f to [60, 60, 60, 60]
+set g to [70, 70, 70, 70]
+put a + d -- point(50, 50)
+put d + a -- [50, 50]
+put b + f -- rect(80, 80, 80, 80)
+put f + b -- [80, 80, 80, 80]
+put a + c -- [40.0000f]
+put a + d -- point(50, 50)
+put a + e -- point(60, 60)
+put a + f -- point(70, 70)
+put f + a -- [70, 70]
+put b + a -- [30, 30]
+put b + c -- [50]
+put b + e -- [70, 70, 70]
+put b + f -- rect(80, 80, 80, 80)
+put b + g -- rect(90, 90, 90, 90)
+put a + 5 -- point(15, 15)
+put 5 + a -- point(15, 15)
+put b + 5 -- rect(25, 25, 25, 25)
+put 5 + b -- rect(25, 25, 25, 25)
+
+-- proplist with missing keys
+set proplist_without_keys = ["key": "value", "keyless expr 1", "keyless expr 2"]
+set proplist_with_keys = ["key": "value", 2: "keyless expr 1", 3: "keyless expr 2"]
+scummvmAssert(proplist_without_keys = proplist_with_keys)

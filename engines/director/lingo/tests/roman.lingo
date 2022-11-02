@@ -1,0 +1,6 @@
+set z = "foo bar baz"
+set z1 = z & " meow"
+set z1 = z1 && "woof"
+scummvmAssert(z1 contains "MeÍW")
+
+scummvmAssert("meow" = "MeÍW")

@@ -1,0 +1,37 @@
+openXLib("FlushXObj")
+set flush = FlushXObj(mNew)
+flush(mClearMask)
+flush(mAddToMask, 0, 0)
+flush(mFlush)
+flush(mFlushEvents, 0, 0)
+
+openXLib("PalXObj")
+set fixpal = FixPalette(mNew, 0, 20, 512, 20)
+fixpal(mPatchIt)
+
+openXLib("winXOBJ")
+set winxobj = RearWindow(mNew, "M")
+scummVMAssert(winxobj(mGetMemoryNeeded) = 0)
+
+-- test closing XObject
+scummVMAssert(objectp(FlushXObj) = 1)
+closeXlib "FlushXObj"
+scummVMAssert(objectp(FlushXObj) = 0)
+
+scummVMAssert(objectp(RearWindow) = 1)
+closeXlib()
+scummVMAssert(objectp(RearWindow) = 0)
+
+-- test showGlobals and clearGlobals on XObjects
+clearGlobals()
+openXLib("FileIO")
+scummVMAssert(objectp(FileIO))
+
+showGlobals() -- FileIO should not be listed
+clearGlobals()
+scummVMAssert(objectp(FileIO)) -- FileIO should not be cleared
+
+set FileIO = "test"
+showGlobals() -- FileIO should be listed
+clearGlobals()
+scummVMAssert(voidp(FileIO)) -- FileIO should be cleared

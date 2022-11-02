@@ -1,0 +1,3 @@
+p	use_item	102	#use pry bar
+r	use_item	106	#use tent
+w	use_item	98	#use watch

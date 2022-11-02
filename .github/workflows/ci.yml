@@ -1,0 +1,198 @@
+name: CI
+on: [push, pull_request]
+#  schedule:
+#    - cron: '0 0-23/4 * * *'
+permissions:
+  contents: read
+jobs:
+  windows:
+    name: Windows
+    runs-on: windows-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: win32
+            triplet: x86-windows
+            arch: x86
+            configFlags: --enable-faad --enable-mpeg2 --enable-discord
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+            useNasm: 'true'
+          - platform: x64
+            arch: x64
+            triplet: x64-windows
+            configFlags: --enable-faad --enable-mpeg2 --enable-discord
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib fribidi'
+          - platform: arm64
+            arch: arm64
+            triplet: arm64-windows
+            # fribidi is disabled due to https://github.com/microsoft/vcpkg/issues/11248 [fribidi] Fribidi doesn't cross-compile on x86-64 to target arm/arm64
+            # Note that fribidi is also disabled on arm64 in devtools/create_project/msvc.cpp
+            configFlags: --enable-faad --enable-mpeg2 --enable-discord --disable-fribidi --disable-opengl
+            vcpkgPackages: 'curl discord-rpc faad2 fluidsynth freetype libflac libjpeg-turbo libmad libmpeg2 libogg libpng libtheora libvorbis sdl2 sdl2-net zlib giflib'
+    env:
+      CONFIGURATION: Debug
+      PLATFORM: ${{ matrix.platform }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - uses: ilammy/setup-nasm@v1
+        if: ${{ matrix.useNasm }} == 'true'
+      - name: Install vcpkg and packages
+        uses: lukka/run-vcpkg@v7
+        id: runvcpkg
+        with:
+          vcpkgGitCommitId: be5c4ef68b51142ba705f0678b45d284977de677
+          vcpkgTriplet: '${{ matrix.triplet }}'
+          vcpkgArguments: '${{ matrix.vcpkgPackages }}'
+#      - name: Upload libs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: libs-${{ matrix.triplet }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}
+      - name: Build create_project
+        run: |
+          cd devtools/create_project/cmake
+          cmake .
+          cmake --build . -j 2
+          ls
+          cd ../../../
+      - name: Call create_project
+        run: |
+          mkdir build-scummvm
+          cd build-scummvm
+          ../devtools/create_project/cmake/Debug/create_project.exe .. --msvc --enable-all-engines ${{ matrix.configflags }} --use-canonical-lib-names
+          ls
+      - name: set SCUMMVM_LIBS env variable
+        run: |
+          echo "SCUMMVM_LIBS=${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\debug" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          Copy-Item "${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\include" -Destination "${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\debug" -Recurse
+      - name: Add msbuild to PATH
+        uses: microsoft/setup-msbuild@v1.0.2
+      - name: Build scummvm
+        run: |
+          cd build-scummvm
+          ls
+          msbuild scummvm.sln /m /p:BuildInParallel=true /p:Configuration=${{ env.CONFIGURATION }} /p:PreferredToolArchitecture=x64 /p:Platform=${{ matrix.platform }}
+#      - name: Upload scummvm
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: scummvm-${{ matrix.arch }}
+#          path: build-scummvm/${{ env.CONFIGURATION }}${{ matrix.arch }}/*.exe
+#      - name: Upload scummvm libs
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: scummvm-${{ matrix.arch }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.dll
+#      - name: Upload scummvm symbols
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: symbols-${{ matrix.arch }}
+#          path: build-scummvm/${{ env.CONFIGURATION }}${{ matrix.arch }}/*.pdb
+#      - name: Upload scummvm libs symbols
+#        uses: actions/upload-artifact@v2
+#        with:
+#          name: symbols-${{ matrix.arch }}
+#          path: ${{ steps.runvcpkg.outputs.RUNVCPKG_VCPKG_ROOT_OUT }}\\installed\\${{ matrix.triplet }}\\bin\\*.pdb
+  xcode:
+    name: Xcode
+    runs-on: macos-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: macosx
+            buildFlags: -scheme ScummVM-macOS
+            configFlags: --disable-nasm --enable-faad --enable-mpeg2
+            brewPackages: a52dec faad2 flac fluid-synth freetype fribidi jpeg mad libmpeg2 libogg libpng libvorbis sdl2 sdl2_net theora giflib
+          - platform: ios7
+            buildFlags: -scheme ScummVM-iOS CODE_SIGN_IDENTITY="" CODE_SIGNING_ALLOWED=NO
+            configFlags: --disable-nasm --disable-opengl --disable-theoradec --disable-mpeg2 --disable-taskbar --disable-tts --disable-fribidi
+            packagesUrl: https://downloads.scummvm.org/frs/build/scummvm-ios7-libs-v2.zip
+    env:
+      BUILDCACHE_MAX_CACHE_SIZE: 2000000000
+      BUILDCACHE_HARD_LINKS: true
+    defaults:
+      run:
+        # Must be explicit for proper pipefail support
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Install packages
+        if: ${{ matrix.brewPackages }}
+        run: brew install ${{ matrix.brewPackages }}
+      - name: Download libraries
+        if: ${{ matrix.packagesUrl }}
+        run: |
+          curl -L -o libs.zip ${{ matrix.packagesUrl }}
+          unzip libs.zip
+          ls
+      - name: Build create_project
+        run: |
+          cd devtools/create_project/xcode
+          xcodebuild
+          ls
+          cd ../../../
+      - name: Call create_project
+        run: |
+          ./devtools/create_project/xcode/build/Release/create_project . --xcode --enable-all-engines ${{ matrix.configflags }}
+          ls
+      - name: Build cache
+        uses: mikehardy/buildcache-action@v1
+        with:
+          cache_key: ${{ matrix.platform }}
+      - name: Build scummvm
+        run: |
+          xcodebuild CC=clang CPLUSPLUS=clang++ LD=clang LDPLUSPLUS=clang++ build -project scummvm.xcodeproj ${{ matrix.buildFlags }} | awk '$1 !~ /^(export|cd|clang++)/'
+          ls
+  ubuntu:
+    name: Ubuntu
+    runs-on: ${{ matrix.platform }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - platform: ubuntu-latest
+            sdlConfig: sdl2-config
+            cxx: ccache g++
+            aptPackages: 'libsdl2-dev libsdl2-net-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+          - platform: ubuntu-20.04
+            sdlConfig: sdl-config
+            cxx: ccache g++-4.8
+            aptPackages: 'g++-4.8 libsdl1.2-dev libsdl-net1.2-dev liba52-dev libjpeg-turbo8-dev libmpeg2-4-dev libogg-dev libvorbis-dev libflac-dev libmad0-dev libpng-dev libtheora-dev libfaad-dev libfluidsynth-dev libfreetype6-dev zlib1g-dev libfribidi-dev libcurl4-openssl-dev libgtk-3-dev libspeechd-dev libsndio-dev libunity-dev'
+    env:
+      SDL_CONFIG: ${{ matrix.sdlConfig }}
+    defaults:
+      run:
+        # Must be explicit for proper pipefail support
+        shell: bash
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Add Ubuntu Xenial package sources
+        if: matrix.platform == 'ubuntu-20.04'
+        run: |
+          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial main'
+          sudo apt-add-repository 'deb http://archive.ubuntu.com/ubuntu/ xenial universe'
+      - name: Install packages
+        run: |
+          sudo apt-get update
+          sudo apt-get install ${{ matrix.aptPackages }}
+      - name: ccache
+        uses: hendrikmuhs/ccache-action@v1
+        with:
+          key: ${{ matrix.platform }}
+          max-size: 1G
+      - name: Call configure
+        run: |
+          CXX='${{ matrix.cxx }}' ./configure --enable-all-engines ${{ matrix.configflags }}
+      - name: Build scummvm
+        run: |
+          make -j2
+      - name: Build tests
+        run: |
+          make test
+      - name: Build devtools
+        run: |
+          make devtools

@@ -1,0 +1,44 @@
+-- basic references
+set a = cast 1
+set a = cast "castname"
+set a = field 1
+set a = field "castname"
+set a = script "scriptname"
+set a = window "windowname"
+
+-- assign to field reference
+put "asdf" into field 1
+put "lorem ipsum" into cast 1
+
+-- the property of reference
+put the text of cast 1
+put line 1 to 5 of field the number of cast "MasterList" into field the number of cast "InventoryList"
+
+-- the loaded of cast
+
+-- real casts
+scummvmAssert(the loaded of cast 1)
+set test to cast 1
+scummvmAssert(the loaded of test)
+
+-- nonexistent casts
+scummvmAssert(not the loaded of cast 500)
+set test to cast 500
+scummvmAssert(not the loaded of test)
+
+scummvmAssertError put the loaded of cast "fake"
+scummvmAssertError set test to cast "fake"
+
+-- user-defined handlers/factories w/ reference name
+-- (mainly to test grammar, so no factory definition)
+set theWindow = Window(mNew,#noGrowDoc,"Window " & windowNumber)
+
+-- other weird stuff with reference name
+-- FIXME: We need to find a way of clean execution of these
+--put window("test")
+--set window = 1
+--put window
+--window("test")
+--window "test"
+--window cast
+put cast cast

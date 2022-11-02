@@ -1,0 +1,71 @@
+ScummVM-Switch README
+==============================================================================
+
+Installation
+============
+ - The latest daily version of ScummVM for Switch is [here](https://buildbot.scummvm.org/snapshots/master/switch-master-latest.zip) (needs to be unzipped).
+ - Copy the scummvm folder to your SD card into the folder /switch/ so that you have a folder `/switch/scummvm` with `scummvm.nro` and other folders inside.
+ - Launch ScummVM using your favorite method to launch homebrew on the Switch
+
+Notes
+=====
+ - This README may be outdated, for more up-to-date instructions and notes see
+   the Switch Port Wiki: https://wiki.scummvm.org/index.php/Nintendo_Switch
+
+Building the source code
+========================
+This port of ScummVM to the Switch is based on SDL2. It uses the open source SDK provided by devkitPro.
+
+To build ScummVM for Switch:
+
+ - Obtain the ScummVM source code (https://github.com/scummvm/scummvm)
+
+ - Install the development tools for Switch following the official instructions (https://devkitpro.org/wiki/Getting_Started)
+
+ - Install libraries via
+```
+sudo dkp-pacman -S \
+switch-sdl2 \
+switch-libmad \
+switch-libogg \
+switch-libvorbis \
+switch-flac \
+switch-libtheora \
+switch-libpng \
+switch-libjpeg-turbo \
+switch-zlib \
+switch-freetype \
+switch-sdl2_net \
+switch-curl \
+switch-libtimidity \
+switch-pkg-config
+```
+
+ - Optional: To enable fluidsynth support, download and install the unofficial fluidsynth-lite switch port via
+```
+git clone https://github.com/rsn8887/fluidsynth-lite
+cd fluidsynth-lite
+make -f Makefile.nx
+make -f Makefile.nx install
+```
+
+ - Create a subdirectory somewhere outside the source folder for your ScummVM build and cd into it
+
+ - Execute the command
+```
+../scummvm/configure --host=switch
+```
+
+ - Execute the command
+```
+make scummvm_switch.zip
+```
+
+Port Authors
+============
+cpasjuste
+rsn8887
+
+Thanks
+======
+[devkitPro](https://devkitpro.org devkitPro) and [Switchbrew](https://switchbrew.org/) teams

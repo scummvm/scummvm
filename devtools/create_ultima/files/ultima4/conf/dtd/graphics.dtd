@@ -1,0 +1,69 @@
+<!-- $Id: graphics.dtd 2926 2011-06-24 21:48:05Z darren_janeczek $ -->
+
+<!ENTITY % bool '( true | false )'>
+<!ENTITY % fixup '( none | intro | abyss | abacus | dungns | blackTransparencyHack | fmtownsscreen )'>
+<!ENTITY % layouttype '( standard | gem | dungeon_gem )'>
+<!ENTITY % transformtype '( invert | pixel | scroll | frame | pixel_color )'>
+<!ENTITY % context '( frame | dir )'>
+
+<!ELEMENT graphics ( imageset | layout | tileanimset )+ >
+
+<!ELEMENT imageset ( image+ ) >
+<!ATTLIST imageset name           NMTOKEN  #REQUIRED
+                   extends        NMTOKEN  #IMPLIED>
+
+<!ELEMENT image ( subimage* ) >
+<!ATTLIST image name              NMTOKEN  #REQUIRED
+                filename          CDATA    #REQUIRED
+                width             NMTOKEN  #IMPLIED
+                height            NMTOKEN  #IMPLIED
+                depth             NMTOKEN  #IMPLIED
+                prescale          NMTOKEN  #IMPLIED
+                filetype          CDATA    #IMPLIED
+                tiles             NMTOKEN  #IMPLIED
+                introOnly         %bool;   #IMPLIED
+                transparentIndex  NMTOKEN  #IMPLIED
+                xu4Graphic        %bool;   #IMPLIED
+                fixup             %fixup;  #IMPLIED>
+
+<!ELEMENT subimage EMPTY >
+<!ATTLIST subimage name           NMTOKEN  #REQUIRED
+                   x              NMTOKEN  #IMPLIED
+                   y              NMTOKEN  #IMPLIED
+                   width          NMTOKEN  #REQUIRED
+                   height         NMTOKEN  #REQUIRED>
+
+<!ELEMENT layout ( tileshape, viewport ) >
+<!ATTLIST layout name             CDATA    #REQUIRED
+                 type             %layouttype; #REQUIRED>
+
+<!ELEMENT tileshape EMPTY >
+<!ATTLIST tileshape width         NMTOKEN  #REQUIRED
+                    height        NMTOKEN  #REQUIRED>
+
+<!ELEMENT viewport EMPTY >
+<!ATTLIST viewport x              NMTOKEN  #REQUIRED
+                   y              NMTOKEN  #REQUIRED
+                   width          NMTOKEN  #REQUIRED
+                   height         NMTOKEN  #REQUIRED>
+
+<!ELEMENT tileanimset ( tileanim+ ) >
+<!ATTLIST tileanimset name        NMTOKEN  #REQUIRED>
+
+<!ELEMENT tileanim ( transform+ | context+ ) >
+<!ATTLIST tileanim name           NMTOKEN  #REQUIRED
+                   random         NMTOKEN  #IMPLIED>
+
+<!ELEMENT context ( transform+ ) >
+<!ATTLIST context type            %context; #REQUIRED
+                  frame           NMTOKEN   #IMPLIED
+                  dir             NMTOKEN   #IMPLIED>
+
+<!ELEMENT transform ( color* ) >
+<!ATTLIST transform type          %transformtype; #REQUIRED
+                    x             NMTOKEN  #IMPLIED
+                    y             NMTOKEN  #IMPLIED
+                    width         NMTOKEN  #IMPLIED
+                    height        NMTOKEN  #IMPLIED
+                    random        NMTOKEN  #IMPLIED
+                    increment     NMTOKEN  #IMPLIED>  <!-- If not provided, equals scale -->

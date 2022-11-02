@@ -1,0 +1,46 @@
+** de-DE:
+
+*** App name:
+
+ScummVM
+
+*** Short description:
+
+Erlaubt viele klassische Point-and-Click-Adventures und RPGs zu spielen
+
+*** Full description:
+
+SPIELDATEIEN SIND NICHT ENTHALTEN.
+
+ScummVM bietet die Möglichkeit, viele klassische Point-and-Click-Adventures und RPGs zu spielen - wie etwa die auf SCUMM basierenden Spiele Monkey Island und Day of the Tentacle, Beneath A Steel Sky von Revolution Software und viele weitere. ES SIND KEINE SPIELDATEIEN ENTHALTEN, du musst diese selbst bereitstellen.
+
+Weitere Informationen hierzu sowie einige kostenfreie Spiele findest du auf unserer Website. Eine aktuelle Liste mit Bezugsquellen findest du auch in unserem Wiki unter https://wiki.scummvm.org/index.php/Where_to_get_the_games.
+
+Ebenfalls auf unserer Website findest du unter der URL https://docs.scummvm.org/en/v2.5.0/other_platforms/android.html weitere Informationen bezüglich der Einrichtung und Nutzung einiger Android-spezifischer Optionen.
+
+https://forums.scummvm.org/viewforum.php?f=17 ist unser Forum, wo du dich mit anderen Nutzern über die Android-Version austauschen kannst.
+
+*** Current release:
+2.5.0
+
+*** Release notes:
+- Unterstützung für 12 weitere Engines - AGS, Little Big Adventure, Red Comrades, Director. Bisher KEINE 3D-Spiele
+- Unterstützung für HiDPI-Displays
+- Unicode-Benutzeroberfläche
+
+Eine vollständige Aufstellung aller Änderungen findest Du unter https://scummvm.org/frs/scummvm/2.5.0/ReleaseNotes.html
+
+*** Beta release name:
+
+2.2.1c (beta)
+
+*** Beta release notes:
+<de-DE>
+- Verbesserte Behandlung von Installationen auf einer SD-Karte
+- Halbtransparente In-App-Tastatur hinzugefügt
+- Die bilineare Filterung ist standardmäßig deaktiviert
+- Die Korrektur des Seitenverhältnisses ist jetzt standardmäßig aktiviert
+- Die ScummVM-Grafikoptionen geben nun den aktuellen Status der Einstellungen korrekt wieder
+- Fehler in der Upload-Funktion des LAN-Server-Modus behoben
+- Die Zurück-Taste fungiert nun als standardmäßig aktive "Überspringen"-Taste in einem Spiel
+</de-DE>

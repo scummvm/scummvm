@@ -1,0 +1,10 @@
+<!-- $Id: tilemap.dtd 2553 2005-09-26 07:44:29Z andrewtaylor $ -->
+
+<!ELEMENT tilemap ( mapping+ ) >
+<!ATTLIST tilemap name             CDATA    #REQUIRED
+                  tileset          CDATA    #REQUIRED>
+
+<!ELEMENT mapping EMPTY >
+<!ATTLIST mapping tile                 CDATA    #REQUIRED
+                  index                NMTOKEN  #IMPLIED
+                  frames               NMTOKEN  #IMPLIED>

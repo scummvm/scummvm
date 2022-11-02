@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+	<string name="app_name">ScummVM</string>
+	<string name="app_desc">Graphic adventure game engine</string>
+	<string name="ok">OK</string>
+	<string name="quit">Quit</string>
+	<!-- <string name="scummvm_perm_plugin_label">ScummVM plugin</string> -->
+	<!-- <string name="scummvm_perm_plugin_desc">Allows the application to
+		provide a ScummVM loadable plugin: code that will be executed in the
+		ScummVM application. Malicious plugins may do anything ScummVM
+		itself could do: write to your SD card, delete your savegames,
+		change the ScummVM background to puce, replace menu labels with rude
+		words, etc.</string> -->
+	<!-- <string name="no_sdcard_title">No SD card?</string> -->
+	<!-- <string name="no_sdcard">Unable to read your SD card. This usually means
+		you still have it mounted on your PC. Unmount, reinsert,
+		whatever and then try again.</string> -->
+	<!-- <string name="no_external_files_dir_access_title">External storage error</string> -->
+	<!-- <string name="no_external_files_dir_access">Unable to access external storage
+		to retrieve ScummVM config info! Please grant storage access permissions to
+		the ScummVM app, in order to function properly!</string> -->
+	<!-- <string name="no_log_file_title">Log File Error</string> -->
+	<!-- <string name="no_log_file">Unable to read ScummVM log file or create a new one!</string> -->
+	<string name="no_config_file_title">Config File Error</string>
+	<string name="no_config_file">Unable to read ScummVM config file or create a new one!</string>
+	<string name="no_save_path_title">Save Path Error</string>
+	<string name="no_save_path_configured">Unable to create or access default save path!</string>
+	<string name="bad_explicit_save_path_configured">Unable to access the globally set save path! Please revert to default from ScummVM Options</string>
+	<!-- <string name="no_plugins_title">No plugins found</string> -->
+	<!-- <string name="no_plugins_found">ScummVM requires at least one <i>game
+		engine</i> to be useful. Engines are available as separate plugin
+		packages, from wherever you found ScummVM.</string> -->
+	<!-- <string name="to_market">To Market</string> -->
+	<string name="keyboard_toggle_btn_desc">Toggle virtual keyboard</string>
+	<!-- <string name="title_activity_splash">ScummVM Logo Activity</string> -->
+	<!-- <string name="title_activity_main">ScummVM Main Activity</string> -->
+
+	<!-- Copy from AOSP (Android Open Source Project) -->
+	<!-- CustomKeyboardView - accessibility support -->
+	<!-- Description of the Alt button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_alt">Alt</string>
+	<!-- Description of the Cancel button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_cancel">Cancel</string>
+	<!-- Description of the Delete button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_delete">Delete</string>
+	<!-- Description of the Done button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_done">Done</string>
+	<!-- Description of the Mode change button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_mode_change">Mode change</string>
+	<!-- Description of the Shift button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_shift">Shift</string>
+	<!-- Description of the Enter button in a KeyboardView. [CHAR LIMIT=NONE] -->
+	<string name="customkeyboardview_keycode_enter">Enter</string>
+	<!-- End of copy from AOSP -->
+	<string name="customkeyboardview_popup_close">Close popup</string>
+
+	<string name="saf_request_prompt">Please select the *root* of your external (physical) SD card. This is required for ScummVM to access this path: </string>
+	<string name="saf_revoke_done">Storage Access Framework Permissions for ScummVM were revoked!</string>
+	<string name="preference_saf_tree_key" translatable="false">pref_key__saf_tree_uri</string>
+</resources>

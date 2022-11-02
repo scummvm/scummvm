@@ -1,0 +1,6 @@
+<!-- $Id: color.dtd 1941 2004-05-26 05:47:34Z andrewtaylor $ -->
+
+<!ELEMENT color EMPTY >
+<!ATTLIST color red               NMTOKEN  #REQUIRED
+                green             NMTOKEN  #REQUIRED
+                blue              NMTOKEN  #REQUIRED>

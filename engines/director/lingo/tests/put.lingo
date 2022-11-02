@@ -1,0 +1,43 @@
+put "qwertyuiop" into test
+put "a" before char 3 of test
+scummvmAssertEqual(test, "qwaertyuiop")
+
+put "qwertyuiop" into test
+put "a" into char 3 of test
+scummvmAssertEqual(test, "qwartyuiop")
+
+put "qwertyuiop" into test
+put "a" after char 3 of test
+scummvmAssertEqual(test, "qweartyuiop")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" before word 3 of test
+scummvmAssertEqual(test, "lorem ipsum asdfdolor sit amet")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" into word 3 of test
+scummvmAssertEqual(test, "lorem ipsum asdf sit amet")
+
+put "lorem ipsum dolor sit amet" into test
+put "asdf" after word 3 of test
+scummvmAssertEqual(test, "lorem ipsum dolorasdf sit amet")
+
+put "123456789" into test
+put "foo" into char 20 of test
+scummvmAssertEqual(test, "123456789          foo")
+
+put "foo" into test
+put "bar" into word 10000 of test
+scummvmAssertEqual(test, "foobar")
+
+put "foo" into test
+put "bar" into item 10 of test
+scummvmAssertEqual(test, "foo,,,,,,,,,bar")
+
+put "foo" into test"
+put "bar" into line 10 of test
+scummvmAssertEqual(test, "foo" & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & RETURN & "bar")
+
+put "foo" & RETURN & "lorem ipsum" into test
+put "bar" into char 3 of word 2 of line 2 of test
+scummvmAssertEqual(test, "foo" & RETURN & "lorem ipbarum")

@@ -1,0 +1,47 @@
+/**
+
+@defgroup common Common API
+@brief Common classes, functions, and structures.
+
+*/
+
+/**
+@defgroup lua Lua
+@ingroup common
+@brief Functions for the Lua programming language. See @linkLua.
+*/
+
+/**
+
+@defgroup audio Audio API
+@brief APIs for managing in-game audio.
+
+*/
+
+/**
+
+@defgroup engines Engine API
+@brief API related to engines.
+
+*/
+
+/**
+
+@defgroup engines_engines Specific engines
+@ingroup engines
+
+*/
+
+/**
+
+@defgroup graphics Graphics API
+@brief API related to on-screen graphics - surfaces, pixels, cursors, fonts, palettes, and renderers.
+
+*/
+
+/**
+
+@defgroup image Image API
+@brief API of various image decoders used in engines.
+
+*/

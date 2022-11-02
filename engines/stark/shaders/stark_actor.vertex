@@ -1,0 +1,118 @@
+in vec3 position1;
+in vec3 position2;
+in float bone1; // No ints as shader attributes in GLSL 1.20
+in float bone2; // No ints as shader attributes in GLSL 1.20
+in float boneWeight;
+in vec3 normal;
+in vec2 texcoord;
+
+out vec2 Texcoord;
+out vec3 Color;
+
+struct Light {
+	vec4 position;
+	vec3 direction;
+	vec3 color;
+	vec4 params;
+};
+
+const int lightTypePoint       = 1;
+const int lightTypeDirectional = 2;
+const int lightTypeSpot        = 4;
+
+const int maxLights = 10;
+const int maxBones = 70;
+
+uniform mat4 modelViewMatrix;
+uniform mat4 projectionMatrix;
+uniform mat3 normalMatrix;
+uniform vec4 boneRotation[maxBones];
+uniform vec3 bonePosition[maxBones];
+uniform Light lights[maxLights];
+uniform vec3 ambientColor;
+uniform vec3 color;
+uniform UBOOL textured;
+
+vec4 eyePosition;
+vec3 eyeNormal;
+
+vec3 qrot(vec4 q, vec3 v) {
+	return v + 2.0 * cross(q.xyz, cross(q.xyz, v) + q.w * v);
+}
+
+vec3 pointLight(vec3 position, vec3 color, float falloffNear, float falloffFar) {
+	vec3 vertexToLight = position - eyePosition.xyz;
+
+	float dist = length(vertexToLight);
+	float attn = clamp((falloffFar - dist) / max(0.001, falloffFar - falloffNear), 0.0, 1.0);
+
+	vertexToLight = normalize(vertexToLight);
+	float incidence = max(0.0, dot(eyeNormal, vertexToLight));
+
+	return color * attn * incidence;
+}
+
+vec3 directionalLight(vec3 direction, vec3 color) {
+	float incidence = max(0.0, dot(eyeNormal, -direction));
+
+	return color * incidence;
+}
+
+vec3 spotLight(vec3 position, vec3 color, float falloffNear, float falloffFar, vec3 direction, float cosInnerAngle, float cosOuterAngle) {
+	vec3 vertexToLight = position - eyePosition.xyz;
+
+	float dist = length(vertexToLight);
+	float attn = clamp((falloffFar - dist) / max(0.001, falloffFar - falloffNear), 0.0, 1.0);
+
+	vertexToLight = normalize(vertexToLight);
+	float incidence = max(0.0, dot(eyeNormal, vertexToLight));
+
+	float cosAngle = max(0.0, dot(vertexToLight, -direction));
+	float cone = clamp((cosAngle - cosInnerAngle) / max(0.001, cosOuterAngle - cosInnerAngle), 0.0, 1.0);
+
+	return color * attn * incidence * cone;
+}
+
+void main()
+{
+	Texcoord = texcoord;
+
+	// Compute the vertex position in eye-space
+	vec3 b1 = qrot(boneRotation[int(bone1)], position1) + bonePosition[int(bone1)];
+	vec3 b2 = qrot(boneRotation[int(bone2)], position2) + bonePosition[int(bone2)];
+	vec3 modelPosition = mix(b2, b1, boneWeight);
+	eyePosition = modelViewMatrix * vec4(modelPosition.xyz, 1.0);
+
+	// Compute the vertex normal in eye-space
+	vec3 n1 = qrot(boneRotation[int(bone1)], normal);
+	vec3 n2 = qrot(boneRotation[int(bone2)], normal);
+	vec3 modelNormal = normalize(mix(n2, n1, boneWeight));
+	eyeNormal = normalMatrix * modelNormal;
+	eyeNormal = normalize(eyeNormal);
+
+	// Compute the vertex position in screen-space
+	gl_Position = projectionMatrix * eyePosition;
+
+	// Set the initial vertex color
+	if (UBOOL_TEST(textured)) {
+		Color = vec3(1.0);
+	} else {
+		Color = color;
+	}
+
+	// Shade the vertex color according to the lights
+	vec3 lightColor = ambientColor;
+	for (int i = 0; i < maxLights; i++) {
+		int type = int(lights[i].position.w);
+		if (type == lightTypePoint) {
+			lightColor += pointLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y);
+		} else if (type == lightTypeDirectional) {
+			lightColor += directionalLight(lights[i].direction, lights[i].color);
+		} else if (type == lightTypeSpot) {
+			lightColor += spotLight(lights[i].position.xyz, lights[i].color, lights[i].params.x, lights[i].params.y,
+			                        lights[i].direction, lights[i].params.z, lights[i].params.w);
+		}
+	}
+
+	Color *= clamp(lightColor, 0.0, 1.0);
+}

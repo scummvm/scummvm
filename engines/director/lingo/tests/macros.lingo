@@ -1,0 +1,44 @@
+global x, y
+set y = 8
+shipx
+put x
+zipx
+put x
+put y
+
+test
+test()
+put test
+put test()
+if test then test
+
+--
+macro SHIPX
+global x, y
+set x = Random(5)
+if x = 1 then
+go "Zoom"
+exit
+end if
+if x >1 then
+set y = 10
+exit
+end if
+put 100
+
+--
+macro ZIPX
+set x = Random(5)
+if x = 1 then
+go "ZIP"
+exit
+end if
+if x >1 then
+put x
+check x, 5
+exit
+end if
+
+--
+macro test
+return "a"

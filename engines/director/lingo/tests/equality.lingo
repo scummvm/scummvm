@@ -1,0 +1,21 @@
+scummvmAssert(1 = 1)
+scummvmAssert(1 = "1")
+scummvmAssert(1 = 1.0)
+scummvmAssert(cast 1  = cast 1)
+scummvmAssert("test" = "test")
+scummvmAssert(#test = #test)
+set string = the text of field 1
+scummvmAssert(field 1 = string)
+scummvmAssert(0 <> "")
+scummvmAssert(1 <> cast 1)
+scummvmAssert("test" <> #test)
+
+-- Comparison between string and ints parses the int as string
+scummvmAssert("string" > 0)
+scummvmAssert("1string" < 2)
+
+-- Mimic an object
+scummvmAssert("<Object:#FileIO" > 0)
+
+-- Invalid comparisons should return FALSE
+scummvmAssert(not (#test <= 0))

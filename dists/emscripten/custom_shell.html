@@ -1,0 +1,364 @@
+<!doctype html>
+<html lang="en-us">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta content="width=device-width,initial-scale=1,viewport-fit=cover" name=viewport>
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="scummvm-192.png">
+  <title>ScummVM</title>
+
+  <style>
+    body {
+      margin: 0;
+      padding: none;
+      background-color: #000;
+    }
+
+    .emscripten {
+      padding-right: 0;
+      margin-left: auto;
+      margin-right: auto;
+      display: block;
+    }
+
+    textarea.emscripten {
+      font-family: monospace;
+      width: 80%;
+    }
+
+    div.emscripten {
+      text-align: center;
+    }
+
+    div.emscripten_border {
+      border: 1px solid black;
+      padding: env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+    }
+
+    /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+    canvas.emscripten {
+      border: 0px none;
+      background: url("logo.svg");
+      background-position: center;
+      background-repeat: no-repeat;
+      background-color: #cc6600;
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      margin: 0px;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: block;
+    }
+
+    @media (orientation: landscape) {
+      canvas.emscripten {
+        background-size: auto 33%;
+      }
+    }
+
+    @media (orientation: portrait) {
+      canvas.emscripten {
+        background-size: 80% auto;
+      }
+    }
+
+    #progress {
+      top: 0px;
+      left: 0px;
+      height: 10px;
+      width: 100%;
+      overflow: hidden;
+      display: block;
+      position: absolute;
+      z-index: 2;
+      border: 0px;
+      background: #c60
+    }
+
+    progress::-moz-progress-bar {
+      background: #f6e08a;
+    }
+
+    progress::-webkit-progress-value {
+      background: #f6e08a;
+    }
+
+    progress {
+      color: #f6e08a;
+    }
+
+    #status {
+      position: absolute;
+      bottom: 5em;
+      right: 0px;
+      padding: 5px;
+      text-align: right;
+      border-top-left-radius: 1em;
+      border-bottom-left-radius: 1em;
+      padding-left: 1em;
+      padding-right: 1em;
+      z-index: 3;
+      border: 3px solid black;
+      border-right: none;
+      background: #f6e08a;
+      font: bold large/1.4 "Trebuchet MS", Verdana, Tahoma, Sans-Serif;
+    }
+
+    #status.error {
+      background: red
+    }
+  </style>
+</head>
+
+<body>
+  <div class=emscripten>
+    <progress hidden id=progress max=100 value=0></progress>
+  </div>
+  <div class="emscripten" id="status">Downloading ScummVM...</div>
+
+  <div class=emscripten_border>
+    <canvas class=emscripten id=canvas oncontextmenu=event.preventDefault() tabindex=-1></canvas>
+  </div>
+
+  <hr>
+  <textarea class="emscripten" id="output" rows="8"></textarea>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/BrowserFS/2.0.0/browserfs.min.js"
+    integrity="sha512-mz0EI+Ay1uIJP7rZEX8C/JlTAcHRIQ8Sny4vxmmj8MSzDJgG9NxxY2pUmOGv1lO7imFIFMyjjCzEXEywNgaUdQ=="
+    crossorigin="anonymous"></script>
+  <script type="module">
+    import { ScummvmFS } from './scummvm_fs.js'
+    window.ScummvmFS = ScummvmFS
+  </script>
+  <script type='text/javascript'>
+
+    var statusElement = document.getElementById('status');
+    var progressElement = document.getElementById('progress');
+
+    function loadingDoneMessage() {
+      document.getElementById("progress").style.zIndex = 0;
+      return "All downloads complete."
+    }
+
+    function decodeInode(base64str) {
+      _readUInt16LE = function readUInt16LE(byteArray, offset) {
+        offset = offset >>> 0
+        return byteArray[offset] | (byteArray[offset + 1] << 8)
+      }
+      _readUInt32LE = function (byteArray, offset) {
+        return ((byteArray[offset]) |
+          (byteArray[offset + 1] << 8) |
+          (byteArray[offset + 2] << 16)) +
+          (byteArray[offset + 3] * 0x1000000)
+      }
+      var binary_string = window.atob(base64str);
+      var bytes = new Uint8Array(binary_string.length);
+      for (var i = 0; i < binary_string.length; i++) {
+        bytes[i] = binary_string.charCodeAt(i);
+      }
+      return {
+        'id': binary_string.substr(30),
+        'size': _readUInt32LE(bytes, 0),
+        'mode': _readUInt16LE(bytes, 4),
+        'atime': 0, // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+        'mtime': 0, // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+        'ctime': 0 // don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+      }
+    }
+
+    function encodeInode(id, size, mode, atime, mtime, ctime) {
+      _writeUInt16LE = function (byteArray, value, offset) {
+        value = +value
+        offset = offset >>> 0
+        byteArray[offset] = (value & 0xff)
+        byteArray[offset + 1] = (value >>> 8)
+        return offset + 2
+      }
+      _writeUInt32LE = function (byteArray, value, offset) {
+        value = +value
+        offset = offset >>> 0
+        byteArray[offset + 3] = (value >>> 24)
+        byteArray[offset + 2] = (value >>> 16)
+        byteArray[offset + 1] = (value >>> 8)
+        byteArray[offset] = (value & 0xff)
+        return offset + 4
+      }
+      var bytes = new Uint8Array(30 + id.length);
+      _writeUInt32LE(bytes, size, 0);
+      _writeUInt16LE(bytes, mode, 4);
+      //buff.writeDoubleLE(this.atime, 6);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+      //buff.writeDoubleLE(this.mtime, 14);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+      //.writeDoubleLE(this.ctime, 22);  don't feel like implementing ieee754 (maybe we could piggyback on BrowserFS here?)
+      for (var i = 0; i < id.length; i++) {
+        bytes[30 + i] = id.charCodeAt(i);
+      }
+      var binary_string = ""
+      for (var i = 0; i < bytes.length; i++) {
+        binary_string += String.fromCharCode(bytes[i]);
+      }
+      return btoa(binary_string)
+    }
+    function setupDefaultLocalData() {
+      if (localStorage.getItem("/") === null) {
+        return fetch("scummvm.ini").then((response) => {
+          return response.text().then(function (text) {
+            // default values, created by running scummvm with --add --recursive --path=/data/games
+            //var req = new XMLHttpRequest(); // a new request
+            //req.open("GET", , false);
+            //req.send(null);
+            ini_data = btoa(text)
+
+            folder_inode_id = "b3da6754-64c0-40f0-92ad-83b6ca6ffec9"
+            folder_inode = {
+              "id": folder_inode_id,
+              "size": 4096,
+              "mode": 16895
+            }
+            ini_inode_id = "1b4a97d1-4ce0-417f-985c-e0f22ca21aef"
+            ini_inode = {
+              "id": ini_inode_id,
+              "size": atob(ini_data).length,
+              "mode": 33206
+            }
+            folder_entry_id = "70879b79-8d58-400c-8143-332242320b34"
+            folder_listing = { "scummvm.ini": folder_entry_id }
+            defaultLocalStorage = {}
+            defaultLocalStorage["/"] = encodeInode(folder_inode['id'], folder_inode['size'], folder_inode['mode'], 0, 0, 0)
+            defaultLocalStorage[folder_inode_id] = btoa(JSON.stringify(folder_listing))
+            defaultLocalStorage[folder_entry_id] = encodeInode(ini_inode['id'], ini_inode['size'], ini_inode['mode'], 0, 0, 0)
+            defaultLocalStorage[ini_inode_id] = ini_data
+            for (key in defaultLocalStorage) {
+              localStorage.setItem(key, defaultLocalStorage[key]);
+            }
+          })
+        })
+      }
+      return Promise.resolve()
+    }
+
+    function setupLocalFilesystem() {
+      return setupDefaultLocalData().then(() => {
+        return new Promise((resolve, reject) => {
+          BrowserFS.FileSystem.LocalStorage.Create(function (err, lsfs) {
+            if (err) return reject(err)
+            BrowserFS.FileSystem.MountableFileSystem.Create({
+              '/': lsfs
+            }, function (err, mfs) {
+              if (err) return reject(err)
+              BrowserFS.initialize(mfs);
+              // BrowserFS is now ready to use!
+              var BFS = new BrowserFS.EmscriptenFS();
+              // Mount the file systems into Emscripten.
+              FS.mkdir('/local');
+              FS.mount(BFS, { root: '/' }, '/local');
+              return resolve()
+            })
+          })
+        });
+      });
+    }
+    function setupHTTPFilesystem(folder_name) {
+
+      FS.mkdir("/" + folder_name)
+      FS.mount(new ScummvmFS(FS, folder_name), {}, "/" + folder_name + "/");
+    }
+    function setupFilesystem() {
+      addRunDependency('scummvm-fs-setup');
+      setupLocalFilesystem().then(() => {
+
+        setupHTTPFilesystem("games")
+        setupHTTPFilesystem("plugins")
+        setupHTTPFilesystem("data")
+
+        removeRunDependency('scummvm-fs-setup');
+
+      });
+    }
+
+    var Module = {
+      preRun: [setupFilesystem],
+      postRun: [],
+      print: (function () {
+        var element = document.getElementById('output');
+        if (element) element.value = ''; // clear browser cache
+        return function (text) {
+          if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+          // These replacements are necessary if you render to raw HTML
+          //text = text.replace(/&/g, "&amp;");
+          //text = text.replace(/</g, "&lt;");
+          //text = text.replace(/>/g, "&gt;");
+          //text = text.replace('\n', '<br>', 'g');
+          console.log(text);
+          if (element) {
+            element.value += text + "\n";
+            element.scrollTop = element.scrollHeight; // focus on bottom
+          }
+        };
+      })(),
+      printErr: function (text) {
+        if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(' ');
+        console.error(text);
+      },
+      canvas: (function () {
+        var canvas = document.getElementById('canvas');
+
+        // As a default initial behavior, pop up an alert when webgl context is lost. To make your
+        // application robust, you may want to override this behavior before shipping!
+        // See http://www.khronos.org/registry/webgl/specs/latest/1.0/#5.15.2
+        canvas.addEventListener("webglcontextlost", function (e) { alert('WebGL context lost. You will need to reload the page.'); e.preventDefault(); }, false);
+
+        return canvas;
+      })(),
+      setStatus: function (text) {
+        console.log((new Date()).toLocaleTimeString() + " " + text)
+        if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+        if (text === Module.setStatus.last.text) return;
+        var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+        var now = Date.now();
+        if (m && now - Module.setStatus.last.time < 30) return; // if this is a progress update, skip it if too soon
+        Module.setStatus.last.time = now;
+        Module.setStatus.last.text = text;
+        if (m) {
+          text = m[1];
+          progressElement.value = parseInt(m[2]) * 100;
+          progressElement.max = parseInt(m[4]) * 100;
+          progressElement.hidden = false;
+
+        } else {
+          progressElement.value = null;
+          progressElement.max = null;
+          progressElement.hidden = true;
+        }
+        if (text && text.length > 0) {
+          text += "⚡️"
+          statusElement.style.display = "block";
+        } else {
+          statusElement.style.display = "none";
+        }
+        statusElement.innerHTML = text;
+      },
+      totalDependencies: 0,
+      monitorRunDependencies: function (left) {
+        this.totalDependencies = Math.max(this.totalDependencies, left);
+        Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies - left) + '/' + this.totalDependencies + ')' : loadingDoneMessage());
+      }
+    };
+    Module.setStatus('Downloading ScummVM...');
+    window.onerror = function () {
+      statusElement.classList.add("error")
+      Module.setStatus('Exception thrown, see JavaScript console');
+      Module.setStatus = function (text) {
+        if (text) Module.printErr('[post-exception status] ' + text);
+      };
+    };
+
+  </script>
+
+  {{{ SCRIPT }}}
+</body>
+
+</html>

@@ -1,0 +1,15 @@
+engines/glk/detection.cpp
+engines/glk/glk_api.cpp
+engines/glk/quetzal.cpp
+engines/glk/streams.cpp
+engines/glk/adrift/os_glk.cpp
+engines/glk/advsys/advsys.cpp
+engines/glk/advsys/vm.cpp
+engines/glk/alan2/alan2.cpp
+engines/glk/comprehend/game.cpp
+engines/glk/glulx/glulx.cpp
+engines/glk/quest/quest.cpp
+engines/glk/scott/scott.cpp
+engines/glk/zcode/detection.cpp
+engines/glk/zcode/zcode.cpp
+engines/glk/hugo/hugo.cpp

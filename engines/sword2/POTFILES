@@ -1,0 +1,3 @@
+engines/sword2/animation.cpp
+engines/sword2/detection.cpp
+engines/sword2/sword2.cpp

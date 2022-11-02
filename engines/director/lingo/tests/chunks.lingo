@@ -1,0 +1,45 @@
+-- put randomName() into item i of field "In"
+
+-- put the last word of field 1 into field 3
+
+scummvmAssertEqual(the last char of "Macromedia, the multimedia company", "y")
+scummvmAssertEqual(the last word of "Macromedia, the multimedia company", "company")
+scummvmAssertEqual(the last word of "Macromedia, the multimedia company" && "man", "company man")
+scummvmAssertEqual(word -30000 of "Macromedia, the multimedia company", "company")
+scummvmAssertEqual(word -30000 of "Macromedia, the multimedia company" && "man", "company man")
+
+set src = "abcdefghijklmnopqrstuvwxyz"
+scummvmAssertEqual(char 2 of src, "b")
+scummvmAssertEqual(char 2 to 0 of src, "b")
+scummvmAssertEqual(char 2 to 4 of src, "bcd")
+scummvmAssertEqual(char 2 to 1000 of src, "bcdefghijklmnopqrstuvwxyz")
+scummvmAssertEqual(word 1000 of src, "")
+
+set src = "    the quick brown fox    jumped over the lazy    dog"
+scummvmAssertEqual(word 2 of src, "quick")
+scummvmAssertEqual(word 2 to 4 of src, "quick brown fox")
+scummvmAssertEqual(word 2 to 1000 of src, "quick brown fox    jumped over the lazy    dog")
+scummvmAssertEqual(word 1000 of src, "")
+
+set src = "the,quick,brown,fox,jumped,over,the,lazy,dog"
+scummvmAssertEqual(item 2 of src, "quick")
+scummvmAssertEqual(item 2 to 4 of src, "quick,brown,fox")
+scummvmAssertEqual(item 2 to 1000 of src, "quick,brown,fox,jumped,over,the,lazy,dog")
+scummvmAssertEqual(item 1000 of src, "")
+
+set src = "the quick" & RETURN & "brown fox" & RETURN & "jumped over" & RETURN & "the lazy dog"
+scummvmAssertEqual(line 2 of src, "brown fox")
+scummvmAssertEqual(line 2 to 4 of src, "brown fox" & RETURN & "jumped over" & RETURN & "the lazy dog")
+scummvmAssertEqual(line 2 to 1000 of src, "brown fox" & RETURN & "jumped over" & RETURN & "the lazy dog")
+scummvmAssertEqual(line 1000 of src, "")
+
+put "abcdefghijklmnopqrstuvwxyz" into field 1
+scummvmAssertEqual(char 2 of field 1, "b")
+scummvmAssertEqual(char 2 to 0 of field 1, "b")
+scummvmAssertEqual(char 2 to 4 of field 1, "bcd")
+scummvmAssertEqual(char 2 to 1000 of field 1, "bcdefghijklmnopqrstuvwxyz")
+scummvmAssertEqual(word 1000 of field 1, "")
+
+put "lorem ipsum dolor sit amet" into field 1
+set the foreColor of word 2 of field 1 to 10
+put the foreColor of word 2 of field 1

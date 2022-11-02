@@ -1,0 +1,59 @@
+<?xml version="1.0"?>
+<!-- When creating new keyboard layout, add it to TextInputKeyboardList array in ScummVMActivity.java -->
+<CustomKeyboard xmlns:scummvm="http://schemas.android.com/apk/res-auto"
+	scummvm:keyWidth="10%p"
+	scummvm:horizontalGap="0px"
+	scummvm:verticalGap="0px"
+	scummvm:keyHeight="10%p">
+	<CustomRow>
+		<CustomKey scummvm:codes="8"  scummvm:keyLabel="1" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="9"  scummvm:keyLabel="2" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="10" scummvm:keyLabel="3" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="11" scummvm:keyLabel="4" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="12" scummvm:keyLabel="5" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="13" scummvm:keyLabel="6" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="14" scummvm:keyLabel="7" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="15" scummvm:keyLabel="8" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="16" scummvm:keyLabel="9" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="7"  scummvm:keyLabel="0" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+	<CustomRow>
+		<CustomKey scummvm:codes="111" scummvm:keyLabel="Esc"  scummvm:isRepeatable="true" scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="68"  scummvm:keyLabel="`"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="69"  scummvm:keyLabel="-"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="70"  scummvm:keyLabel="="    scummvm:isRepeatable="true"/>
+		<!-- The "\" character is used as a special key to fix a bug with backspace usage,
+			so it's ignored in the input and thus we don't show it on the virtual keyboard either -->
+<!--		<CustomKey scummvm:codes="73"  scummvm:keyLabel="\\"   scummvm:isRepeatable="true"/>  -->
+		<CustomKey scummvm:codes="76"  scummvm:keyLabel="/"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="124" scummvm:keyLabel="Ins"  scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="92"  scummvm:keyLabel="PgUp" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="122" scummvm:keyLabel="Home" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="19"  scummvm:keyLabel="↑"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="123" scummvm:keyLabel="End"  scummvm:isRepeatable="true" scummvm:keyEdgeFlags="right" />
+	</CustomRow>
+	<CustomRow>
+		<CustomKey scummvm:codes="-1"     scummvm:keyLabel="!@#…"   scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="75"     scummvm:keyLabel="'"      scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="100075" scummvm:keyLabel="&quot;" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="61"     scummvm:keyLabel="Tab"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="115"    scummvm:keyLabel="CapsLk" scummvm:isSticky="true" />
+		<CustomKey scummvm:codes="112"    scummvm:keyLabel="Del"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="93"     scummvm:keyLabel="PgDn"   scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="21"     scummvm:keyLabel="←"      scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="20"     scummvm:keyLabel="↓"      scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="22"     scummvm:keyLabel="→"      scummvm:isRepeatable="true" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+	<CustomRow rowEdgeFlags="bottom">
+		<CustomKey scummvm:codes="-6"  scummvm:keyLabel="abc…"  scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="59"  scummvm:keyLabel="Shift" scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="113" scummvm:keyLabel="Ctrl"  scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="117" scummvm:keyLabel="Meta"  scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="57"  scummvm:keyLabel="Alt"   scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="58"  scummvm:keyLabel="Alt"   scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="118" scummvm:keyLabel="Meta"  scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="82"  scummvm:keyLabel="Menu"  scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="114" scummvm:keyLabel="Ctrl"  scummvm:isSticky="true"/>
+		<CustomKey scummvm:codes="60"  scummvm:keyLabel="Shift" scummvm:isSticky="true"/>
+	</CustomRow>
+</CustomKeyboard>

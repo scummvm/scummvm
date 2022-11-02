@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<style name="AppTheme" parent="@android:style/Theme.NoTitleBar.Fullscreen">
+		<item name="android:colorBackground">@color/colorBackground</item>
+		<item name="keyboardViewStyle">@style/View.CustomKeyboard</item>
+	</style>
+
+	<style name="SplashTheme" parent="AppTheme">
+		<item name="android:windowBackground">@drawable/splash</item>
+	</style>
+
+</resources>

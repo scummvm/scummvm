@@ -1,0 +1,65 @@
+set x = 5
+if x <= 5 then set x = 6
+if (x = 5) then
+set x = 7 -- this is comment
+else
+set x = 8
+-- this is another comment
+end if
+put x
+-- this is more comment
+set y = 1
+repeat while (y < 5)
+set y = y + 1
+put y
+end repeat
+
+repeat with z = 10 to 15
+put z
+end repeat
+repeat with y = 5 down to 1
+put y
+end repeat
+
+repeat while y < 5
+set y = y + 1
+put y
+end repeat
+
+
+repeat while y < 5
+  set y = y + 1
+  if y = 3 then next repeat
+  put y
+end repeat
+
+-- tests for repeat with
+
+on exitRepeatWith
+  set aList = [1,2,3,4]
+  repeat with a in aList
+    if a = 3 then
+      exit repeat
+    end if
+  end repeat
+  return a
+end exitRepeatWith
+
+on returnRepeatWith
+  set aList = [1,2,3,4]
+  repeat with a in aList
+    if a = 3 then
+      return a
+    end if
+  end repeat
+end returnRepeatWith
+
+on directListRepeatWith
+  repeat with a in [1,2,3,4]
+    put a
+  end repeat
+end directListRepeatWith
+
+put exitRepeatWith()
+put returnRepeatWith()
+directListRepeatWith()

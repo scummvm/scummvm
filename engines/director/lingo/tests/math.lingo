@@ -1,0 +1,49 @@
+if random(4) > 2 then put 1000
+set z = 5.5
+set z1 = 2
+set z2 = z / z1
+put z
+put z1
+put z2
+put integer(z2)
+put cos(z2)
+
+set x = 2 + 3 * (4 / 2)
+put x
+
+put power(2, 8)
+put power(2, 8, 0)
+put power(2)
+updatestage
+
+-- Type conversion
+put (1024/4096)*100         -- 0
+put (1024/4096)*100.0       -- 0.0
+put ((1024*1.0)/4096)*100.0 -- 25.0
+
+put the sqrt of 9
+
+-- Testing rounding
+set save to the scummvmVersion
+set the scummvmVersion to 300
+scummvmAssertEqual(integer(2.5), 3)
+scummvmAssertEqual(integer(2.49), 2)
+scummvmAssertEqual(integer(2.1), 2)
+scummvmAssertEqual(integer(2.0), 2)
+scummvmAssertEqual(integer(1.9), 2)
+scummvmAssertEqual(integer(1.5), 2)
+scummvmAssertEqual(integer(1.49), 1)
+scummvmAssertEqual(integer(1.0), 1)
+scummvmAssertEqual(integer(0.0), 0)
+scummvmAssertEqual(integer(-0.49), 0)
+scummvmAssertEqual(integer(-0.5), 0)
+scummvmAssertEqual(integer(-1.0), 0)
+scummvmAssertEqual(integer(-1.49), 0)
+scummvmAssertEqual(integer(-1.5), -1)
+scummvmAssertEqual(integer(-1.9), -1)
+scummvmAssertEqual(integer(-2.0), -1)
+scummvmAssertEqual(integer(-2.1), -1)
+scummvmAssertEqual(integer(-2.49), -1)
+scummvmAssertEqual(integer(-2.5), -2)
+
+set the scummvmVersion to save

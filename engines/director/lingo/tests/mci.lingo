@@ -1,0 +1,13 @@
+mci "open MM\T005045a.wav type WaveAudio alias T005045a"
+mci "play T005045a from 22710 to 32872"
+
+sound playFile 1, "Jet Blast"
+sound fadeOut 1
+sound fadeOut 1, 20
+sound fadeIn 1
+sound fadeIn 1, 15
+sound stop 1
+
+playAccel "globe.mma", repeat, 5, noFlush, clickStop
+playAccel "globe.mma", tempo, 100, repeat, 10, noFlush, clickStop
+playAccel "globe.mma", tempo, 10, repeat, 4, noFlush, clickStop

@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<!-- $Id: old_music.xml 2741 2010-12-30 02:03:50Z darren_janeczek $ -->
+<music>
+    <track file="Wanderer.mid"/>
+    <track file="Towns.mid"/>
+    <track file="Shrines.mid"/>
+    <track file="Shopping.mid"/>
+    <track file="Rule_Britannia.mid"/>
+    <track file="Fanfare_Of_Lord_British.mid"/>
+    <track file="Dungeon.mid"/>
+    <track file="Combat.mid"/>
+    <track file="Castles.mid"/>
+</music>

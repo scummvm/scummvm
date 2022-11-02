@@ -1,0 +1,53 @@
+<?xml version="1.0"?>
+<!-- When creating new keyboard layout, add it to TextInputKeyboardList array in ScummVMActivity.java -->
+<CustomKeyboard xmlns:scummvm="http://schemas.android.com/apk/res-auto"
+	scummvm:keyWidth="10%p"
+	scummvm:horizontalGap="0px"
+	scummvm:verticalGap="0px"
+	scummvm:keyHeight="10%p">
+	<CustomRow>
+		<CustomKey scummvm:codes="45" scummvm:keyLabel="Q" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="51" scummvm:keyLabel="W" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="33" scummvm:keyLabel="E" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="46" scummvm:keyLabel="R" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="48" scummvm:keyLabel="T" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="53" scummvm:keyLabel="Y" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="49" scummvm:keyLabel="U" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="37" scummvm:keyLabel="I" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="43" scummvm:keyLabel="O" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="44" scummvm:keyLabel="P" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+	<CustomRow>
+		<CustomKey scummvm:codes="29" scummvm:keyLabel="A" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="47" scummvm:keyLabel="S" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="32" scummvm:keyLabel="D" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="34" scummvm:keyLabel="F" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="35" scummvm:keyLabel="G" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="36" scummvm:keyLabel="H" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="38" scummvm:keyLabel="J" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="39" scummvm:keyLabel="K" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="40" scummvm:keyLabel="L" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="74" scummvm:keyLabel=":" scummvm:isRepeatable="true" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+	<CustomRow>
+		<CustomKey scummvm:codes="-1" scummvm:keyLabel="⇫" scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="54" scummvm:keyLabel="Z" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="52" scummvm:keyLabel="X" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="31" scummvm:keyLabel="C" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="50" scummvm:keyLabel="V" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="30" scummvm:keyLabel="B" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="42" scummvm:keyLabel="N" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="41" scummvm:keyLabel="M" scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="67" scummvm:keyLabel="⬅" scummvm:isRepeatable="true" scummvm:keyWidth="20%p" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+	<CustomRow rowEdgeFlags="bottom">
+		<CustomKey scummvm:codes="-6" scummvm:keyLabel="!@#…"  scummvm:keyEdgeFlags="left"/>
+		<CustomKey scummvm:codes="71" scummvm:keyLabel="{"     scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="72" scummvm:keyLabel="}"     scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="76" scummvm:keyLabel="\?"    scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="62" scummvm:keyLabel="Space" scummvm:isRepeatable="true" scummvm:keyWidth="20%p"/>
+		<CustomKey scummvm:codes="55" scummvm:keyLabel="&lt;"  scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="56" scummvm:keyLabel="&gt;"  scummvm:isRepeatable="true"/>
+		<CustomKey scummvm:codes="66" scummvm:keyLabel="Enter" scummvm:isRepeatable="true" scummvm:keyWidth="20%p" scummvm:keyEdgeFlags="right"/>
+	</CustomRow>
+</CustomKeyboard>

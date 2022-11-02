@@ -1,0 +1,4 @@
+fontNameAndOutOfOrderGlyphs=SUBTLS_E#windows-1252#ÿ:€
+fontNameAndOutOfOrderGlyphs=KIA6PT#cp437#
+fontNameAndOutOfOrderGlyphs=TAHOMA#cp437#
+fontNameAndOutOfOrderGlyphs=SYSTEM#latin-1#

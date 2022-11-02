@@ -1,0 +1,5 @@
+# This file is included from the main "configure" script
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+add_engine kyra "Kyra" yes "lol eob" "Legend of Kyrandia 1-3"
+add_engine lol "Lands of Lore" yes
+add_engine eob "Eye of the Beholder" yes

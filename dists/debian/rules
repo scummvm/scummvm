@@ -1,0 +1,71 @@
+#!/usr/bin/make -f
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+export DEB_BUILD_MAINT_OPTIONS=hardening=+all
+
+# #827145:
+# When building for i386 on an amd64 system/kernel, the host
+# architecture is misdetected as x86_64, which causes USE_NASM to be
+# unset and prevents the object files hq2x_i386.o and hq3x_i386.o from
+# being built.
+# This is fixed by passing the host architecture explicitely to
+# configure.
+DEB_HOST_GNU_TYPE ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+
+%:
+	dh $@ --parallel --max-parallel=4 --with autotools_dev
+
+ifeq ($(DEB_BUILD_ARCH_OS),hurd)
+OPTARGS:= --disable-alsa
+endif
+ifeq ($(DEB_BUILD_ARCH_OS),kfreebsd)
+OPTARGS:= --disable-alsa
+endif
+
+override_dh_auto_clean:
+	##718164 "FTBFS: Makefile:87: *** You need to run ./configure before you can run make".
+	[ -f config.mk ] || touch config.mk
+	dh_auto_clean
+
+override_dh_auto_configure:
+	./configure \
+            --host=$(DEB_HOST_GNU_TYPE) \
+            --datadir=/usr/share/scummvm \
+            --disable-eventrecorder \
+            --enable-release \
+            --enable-verbose-build \
+            --prefix=/usr $(OPTARGS)
+
+FPATH=gui/themes/scummmodern
+override_dh_auto_build:
+	## replacing bundled fonts...
+	for F in $(FPATH)/Free*.ttf; do cp -v /usr/share/fonts/truetype/freefont/$$(basename $${F}) $(FPATH)/ ;done
+	## re-compressing "modern" theme...
+	cd $(FPATH) && zip -9 -X ../scummmodern.zip -r .
+	## re-compressing "remastered" theme...
+	cd gui/themes/scummremastered && zip -9 -X ../scummremastered.zip -r .
+	## re-compressing "classic" theme...
+	cd gui/themes/scummclassic && zip -9 -X ../scummclassic.zip -r .
+	## build executable(s)...
+	dh_auto_build
+
+override_dh_installchangelogs:
+	dh_installchangelogs NEWS
+
+override_dh_gencontrol:
+	dh_gencontrol -- -Vmy:Built-Using="$(foreach pkg,fonts-freefont-ttf,$(word 2,$(shell dpkg --status $(pkg) | grep Source)) (=$(word 2,$(shell dpkg --status $(pkg) | grep Version))),)"
+
+# get-orig-source
+PKD  = $(abspath $(dir $(MAKEFILE_LIST)))
+PKG  = $(word 2,$(shell dpkg-parsechangelog -l$(PKD)/changelog | grep ^Source))
+VER ?= $(shell dpkg-parsechangelog -l$(PKD)/changelog | perl -ne 'print $$1 if m{^Version:\s*([\d\.]+)}')
+DTYPE := +dfsg
+.PHONY: get-orig-source
+get-orig-source: $(PKG)_$(VER)$(DTYPE).orig.tar.xz
+	@
+
+$(PKG)_$(VER)$(DTYPE).orig.tar.xz:
+	@echo "# Downloading..."
+	uscan --noconf --verbose --rename --destdir=$(CURDIR) --check-dirname-level=0 --force-download --download-version $(VER) $(PKD)

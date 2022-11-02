@@ -1,0 +1,92 @@
+engine-data README
+-------------------------------------------------------------------------------
+
+access.dat:
+This file contains game resource data used by Access engine.
+
+achievements.dat:
+This file contains Achievements and Statistics IDs and localization from Steam and GOG.
+
+cryo.dat:
+This file contains a lot of hardcoded tables used by the Cryo engine.
+
+cryomni3d.dat:
+This file contains all strings and some file names depending only on platform/localization.
+Some filenames depend on the edition, these are handled by game flags in engine code.
+Those informations were stored in the original executables.
+
+drascula.dat:
+This file contains essential game data used by Drascula engine.
+
+encoding.dat:
+This file contains character mapping for CJK encodings to unicode.
+
+fonts.dat:
+This file contains set of free TTF fonts used by Glk, ZVision, Wintermute engines and
+our GUI.
+
+hugo.dat:
+This file contains all the hardcoded logic, strings and fonts used by Hugo
+engine. Those information were stored in the original executables.
+
+kyra.dat:
+The 'kyra.dat' file is created by extracting hardcoded data, like the
+roomtable, inventory names, various strings, tables for shapes and sequence
+scripts, from.
+
+lure.dat:
+This file contains essential game data used by Lure of the Temptress game.
+
+macgui.dat:
+The file contains set of offsets for recreation of Classic Mac OS GUI, used
+by Director, MacVenture and WAGE engines.
+
+macventure.dat
+This file contains additional GUI elements used by MacVenture engine.
+
+mort.dat:
+File created partially by extracting font data from the French executable. It
+also contains the French and German translation, as well as a custom-made
+English translation.
+
+neverhood.dat:
+This file contains hardcoded game data used by The Neverhood game.
+
+prince_translation.dat:
+The file contains translated game texts for Prince and the Coward game.
+
+queen.tbl:
+'queen.tbl' contains a list of filenames, filesizes and offsets for the
+individual files saved in QUEEN.1. This data was originally included in the
+executable. The compress_queen tool adds the information contained in queen.tbl
+to QUEEN.1; for this reason neither the freeware FOTAQ floppy version nor the
+mp3/ogg/flac encoded need the datafile.
+
+sky.cpt:
+This file contains game tables required for playing Beneath a Steel Sky game.
+
+supernova.dat:
+File created partially by extracting the German text from the original source
+code. It also contains the custom-made English translation.
+
+teenagent.dat:
+This file contains essential data used by Teen Agent game.
+
+titanic.dat:
+This file contains data, hardcoded in the original executable of Starship
+Titanic game.
+
+tony.dat:
+This file contains the font table used by the different versions of the game.
+
+toon.dat:
+This file contains all the strings hardcoded in the original executables.
+
+ultima.dat:
+This file contains scripts and game data used by Ultima engine.
+
+wintermute.zip:
+This file contains additional graphics resources used by Wintermute engine.
+
+xeen.ccs:
+This file contains all the various strings and figures needed for the games.

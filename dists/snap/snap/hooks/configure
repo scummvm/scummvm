@@ -1,0 +1,15 @@
+#!/bin/sh
+
+if [ "$(snapctl get daemon)" = "" ]; then
+  # By default, we run as a daemon on core, otherwise configure the daemon to stop
+  if grep -q -e snap_core= -e snapd_recovery_mode= /proc/cmdline
+  then snapctl set daemon=true
+  else snapctl set daemon=false
+  fi
+fi
+
+if [ "$(snapctl get daemon)" = "true" ]; then
+  snapctl start --enable $SNAP_NAME.daemon 2>&1 || true
+else
+  snapctl stop --disable $SNAP_NAME.daemon 2>&1 || true
+fi

@@ -1,0 +1,7 @@
+c	cast
+Alt-c	select_command_bar	1	# select cast on the command bar
+r	rest
+Alt-r	select_command_bar	8	# select rest on the command bar
+o	use_item	87	# use orb of moons
+p	use_item	63	# use lock pick
+Alt-w	toggle_unlimited_casting

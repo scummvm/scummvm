@@ -1,0 +1,1186 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * Plays films within a scene, takes into account the actor in each 'column'.								|
+ */
+
+#include "common/coroutines.h"
+#include "tinsel/actors.h"
+#include "tinsel/background.h"
+#include "tinsel/dw.h"
+#include "tinsel/film.h"
+#include "tinsel/handle.h"
+#include "tinsel/multiobj.h"
+#include "tinsel/object.h"
+#include "tinsel/pid.h"
+#include "tinsel/play.h"
+#include "tinsel/polygons.h"
+#include "tinsel/movers.h"
+#include "tinsel/sched.h"
+#include "tinsel/scn.h"
+#include "tinsel/sound.h"
+#include "tinsel/timers.h"
+#include "tinsel/tinlib.h"	// Stand()
+
+namespace Tinsel {
+
+struct PPINIT {
+	SCNHANDLE hFilm;	// The 'film'
+	int16	x;			// } Co-ordinates from the play()
+	int16	y;			// } - set to (-1, -1) if none.
+	int16	z;			// normally 0, set if from restore
+	int16	speed;		// Film speed
+	int16	actorid;	// Set if called from an actor code block
+	uint8	splay;		// Set if called from splay()
+	uint8	bTop;		// Set if called from topplay()
+	uint8	bRestore;
+	int16	sf;			// SlowFactor - only used for moving actors
+	int16	column;		// Column number, first column = 0
+
+	uint8	escOn;
+	int32	myescEvent;
+
+	OBJECT** playfield;	// TinselVersion == 3, the playfield to insert the film
+};
+
+//----------------- LOCAL GLOBAL DATA --------------------
+
+// These vars are reset upon engine destruction
+
+static SOUNDREELS g_soundReels[MAX_SOUNDREELS];
+static int g_soundReelNumbers[MAX_SOUNDREELS];
+
+static int g_soundReelWait;
+static int firstColZ = 0;     // Z-position of column zero
+static int32 fColZfactor = 0; // Z-factor of column zero's actor
+static int baseZposn;         // Z-position of column zero
+static uint32 baseZfact;      // Z-factor of column zero's actor
+
+//-------------------- METHODS ----------------------
+
+void ResetVarsPlay() {
+	memset(g_soundReels, 0, sizeof(g_soundReels));
+	memset(g_soundReelNumbers, 0, sizeof(g_soundReelNumbers));
+	g_soundReelWait = 0;
+	firstColZ = 0;
+	fColZfactor = 0;
+	baseZposn = 0;
+	baseZfact = 0;
+}
+
+/**
+ * Poke the background palette into an image.
+ */
+static void PokeInPalette(SCNHANDLE hMulFrame) {
+	// Could be an empty column
+	if (hMulFrame) {
+		const FRAME *pFrame = (const FRAME *)_vm->_handle->LockMem(hMulFrame);
+		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
+	}
+}
+
+/**
+ * Poke the background palette into an image.
+ */
+void PokeInPalette(const MULTI_INIT *pmi) {
+	// Could be an empty column
+	if (pmi->hMulFrame) {
+		const FRAME *pFrame = pmi->GetFrame();
+		_vm->_handle->SetImagePalette(READ_32(pFrame), _vm->_bg->BgPal());
+	}
+}
+
+int32 NoNameFunc(int actorID, bool bNewMover) {
+	MOVER   *pActor;
+	int32	retval;
+
+	pActor = GetMover(actorID);
+
+	if (pActor != NULL && !bNewMover) {
+		// If no path, just use first path in the scene
+		if (pActor->hCpath == NOPOLY)
+			retval = GetPolyZfactor(FirstPathPoly());
+		else
+			retval = GetPolyZfactor(pActor->hCpath);
+	} else {
+		switch (_vm->_actor->actorMaskType(actorID)) {
+		case ACT_DEFAULT:
+			retval = 0;
+			break;
+		case ACT_MASK:
+			retval = 0;
+			break;
+		case ACT_ALWAYS:
+			retval = 10;
+			break;
+		default:
+			retval = _vm->_actor->actorMaskType(actorID);
+			break;
+		}
+	}
+
+	return retval;
+}
+
+static FREEL *GetReel(SCNHANDLE hFilm, int column) {
+	FILM *pFilm = (FILM *)_vm->_handle->LockMem(hFilm);
+
+	return &pFilm->reels[column];
+}
+
+static int RegisterSoundReel(SCNHANDLE hFilm, int column, int actorCol) {
+	int i;
+
+	for (i = 0; i < MAX_SOUNDREELS; i++) {
+		// Should assert this doesn't happen, but let's be tolerant
+		if (g_soundReels[i].hFilm == hFilm && g_soundReels[i].column == column)
+			break;
+
+		if (!g_soundReels[i].hFilm) {
+			g_soundReels[i].hFilm = hFilm;
+			g_soundReels[i].column = column;
+			g_soundReels[i].actorCol = actorCol;
+			break;
+		}
+	}
+
+	if (i == MAX_SOUNDREELS)
+		error("Out of sound reels in RegisterSoundReel()");
+
+	g_soundReelNumbers[i]++;
+	return i;
+}
+
+void NoSoundReels() {
+	memset(g_soundReels, 0, sizeof(g_soundReels));
+	g_soundReelWait = 0;
+}
+
+static void DeRegisterSoundReel(SCNHANDLE hFilm, int column) {
+	for (int i = 0; i < MAX_SOUNDREELS; i++) {
+		// Should assert this doesn't happen, but let's be tolerant
+		if (g_soundReels[i].hFilm == hFilm && g_soundReels[i].column == column) {
+			g_soundReels[i].hFilm = 0;
+			break;
+		}
+	}
+}
+
+void SaveSoundReels(SOUNDREELS *psr) {
+	for (int i = 0; i < MAX_SOUNDREELS; i++) {
+		if (_vm->_handle->IsCdPlayHandle(g_soundReels[i].hFilm))
+			g_soundReels[i].hFilm = 0;
+	}
+
+	memcpy(psr, g_soundReels, sizeof(g_soundReels));
+}
+
+void RestoreSoundReels(SOUNDREELS *psr) {
+	memcpy(g_soundReels, psr, sizeof(g_soundReels));
+}
+
+static uint32 GetZfactor(int actorID, MOVER *pMover, bool bNewMover) {
+	if (pMover != NULL && bNewMover == false) {
+		// If no path, just use first path in the scene
+		if (pMover->hCpath == NOPOLY)
+			return GetPolyZfactor(FirstPathPoly());
+		else
+			return GetPolyZfactor(pMover->hCpath);
+	} else {
+		return _vm->_actor->GetActorZfactor(actorID);
+	}
+}
+
+/**
+ * Handles reels with sound id.
+ * @param hFilm				The 'film'
+ * @param column			Column number, first column = 0
+ * @param speed				Film speed
+ */
+static void SoundReel(CORO_PARAM, SCNHANDLE hFilm, int column, int speed,
+					int myescEvent, int actorCol) {
+	FILM *pFilm;
+	FREEL *pReel;
+	ANI_SCRIPT *pAni;
+
+	short x, y;
+
+	CORO_BEGIN_CONTEXT;
+		int myId;
+		int myNum;
+		int frameNumber;
+		int speed;
+		int sampleNumber;
+		bool bFinished;
+		bool bLooped;
+		int reelActor;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	if (actorCol) {
+		pReel = GetReel(hFilm, actorCol - 1);
+		const MULTI_INIT *pmi = pReel->GetMultiInit();
+		_ctx->reelActor = (int32)FROM_32(pmi->mulID);
+	} else
+		_ctx->reelActor = 0;
+
+	_ctx->frameNumber = 0;
+	_ctx->speed = speed;
+	_ctx->sampleNumber = 0;
+	_ctx->bFinished = false;
+	_ctx->bLooped = false;
+	_ctx->myId = RegisterSoundReel(hFilm, column, actorCol);
+	_ctx->myNum = g_soundReelNumbers[_ctx->myId];
+
+	do {
+		pFilm = (FILM *)_vm->_handle->LockMem(hFilm);
+		pReel = &pFilm->reels[column];
+
+		pAni = (ANI_SCRIPT *)_vm->_handle->LockMem(FROM_32(pReel->script));
+
+		if (_ctx->speed == -1) {
+			_ctx->speed = (ONE_SECOND/FROM_32(pFilm->frate));
+
+			// Restored reel
+			for (;;) {
+				if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_END)
+					break;
+				else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_JUMP) {
+					_ctx->frameNumber++;
+					_ctx->frameNumber += FROM_32(pAni[_ctx->frameNumber].op);
+					break;
+				}
+				// Could check for the other stuff here
+				// but they really dont happen
+				// OH YES THEY DO
+				else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTX
+					||	 FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTY) {
+					_ctx->frameNumber += 2;
+				} else if (FROM_32(pAni[_ctx->frameNumber].op) == ANI_ADJUSTXY) {
+					_ctx->frameNumber += 3;
+				} else {
+					// ANI_STOP, ANI_HIDE, ANI_HFLIP,
+					// ANI_VFLIP, ANI_HVFLIP, default
+					_ctx->frameNumber++;
+				}
+			}
+		}
+
+		switch (FROM_32(pAni[_ctx->frameNumber].op)) {
+		case ANI_END:
+			// Stop this sample if repeating
+			if (_ctx->sampleNumber && _ctx->bLooped)
+				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
+			_ctx->bFinished = true;
+			break;
+
+		case ANI_JUMP:
+			_ctx->frameNumber++;
+
+			assert((int32)FROM_32(pAni[_ctx->frameNumber].op) < 0);
+
+			_ctx->frameNumber += FROM_32(pAni[_ctx->frameNumber].op);
+
+			assert(_ctx->frameNumber >= 0);
+			continue;
+
+		case ANI_STOP:
+			// Stop this sample
+			if (_ctx->sampleNumber)
+				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
+			break;
+
+		case ANI_HIDE:
+			// No op
+			break;
+
+		case ANI_HFLIP:
+		case ANI_VFLIP:
+		case ANI_HVFLIP:
+			_ctx->frameNumber++;
+			continue;
+
+		case ANI_ADJUSTX:
+		case ANI_ADJUSTY:
+			_ctx->frameNumber += 2;
+			continue;
+
+		case ANI_ADJUSTXY:
+			_ctx->frameNumber += 3;
+			continue;
+
+		default:
+			// Stop this sample
+			if (_ctx->sampleNumber)
+				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
+
+			_ctx->sampleNumber = FROM_32(pAni[_ctx->frameNumber++].op);
+			if (_ctx->sampleNumber > 0)
+				_ctx->bLooped = false;
+			else {
+				_ctx->sampleNumber = ~_ctx->sampleNumber;
+				_ctx->bLooped = true;
+			}
+			x = (short)(FROM_32(pAni[_ctx->frameNumber].op) >> 16);
+			y = (short)(FROM_32(pAni[_ctx->frameNumber].op) & 0xffff);
+
+			if (x == 0)
+				x = -1;
+
+			_vm->_sound->playSample(_ctx->sampleNumber, 0, _ctx->bLooped, x, y, PRIORITY_SCRIPT,
+					Audio::Mixer::kSFXSoundType);
+
+			break;
+		}
+
+		CORO_SLEEP(_ctx->speed);
+		_ctx->frameNumber++;
+
+		if (_ctx->reelActor && _vm->_actor->GetActorPresFilm(_ctx->reelActor) != hFilm) {
+			// Stop this sample if repeating
+			if (_ctx->sampleNumber && _ctx->bLooped)
+				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
+
+			_ctx->bFinished = true;
+		}
+
+		if (myescEvent && myescEvent != GetEscEvents()) {
+			// Stop this sample
+			if (_ctx->sampleNumber)
+				_vm->_sound->stopSpecSample(_ctx->sampleNumber, 0);
+
+			_ctx->bFinished = true;
+		}
+	} while (!_ctx->bFinished && _ctx->myNum == g_soundReelNumbers[_ctx->myId]);
+
+	// De-register - if not been replaced
+	if (_ctx->myNum == g_soundReelNumbers[_ctx->myId])
+		DeRegisterSoundReel(hFilm, column);
+
+	CORO_END_CODE;
+}
+
+static void ResSoundReel(CORO_PARAM, const void *param) {
+	// get the stuff copied to process when it was created
+	int i = *(const int *)param;
+
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, g_soundReels[i].hFilm, g_soundReels[i].column,
+		-1, 0, g_soundReels[i].actorCol));
+
+	CORO_KILL_SELF();
+	CORO_END_CODE;
+}
+
+static void SoundReelWaitCheck() {
+	if (--g_soundReelWait == 0) {
+		for (int i = 0; i < MAX_SOUNDREELS; i++) {
+			if (g_soundReels[i].hFilm) {
+				CoroScheduler.createProcess(PID_REEL, ResSoundReel, &i, sizeof(i));
+			}
+		}
+	}
+}
+
+/**
+ * - Don't bother if this reel is already playing for this actor.
+ * - If explicit co-ordinates, use these, If embedded co-ordinates,
+ * leave alone, otherwise use actor's current position.
+ * - Moving actors get hidden during this play, other actors get
+ * _ctx->replaced by this play.
+ * - Column 0 of a film gets its appropriate Z-position, slave columns
+ * get slightly bigger Z-positions, in column order.
+ * - Play proceeds until the script finishes, another reel starts up for
+ * this actor, or the actor gets killed.
+ * - If called from an splay(), moving actor's co-ordinates are updated
+ * after the play, any walk still in progress will go on from there.
+ */
+static void t1PlayReel(CORO_PARAM, const PPINIT *ppi) {
+	CORO_BEGIN_CONTEXT;
+		OBJECT	*pPlayObj;	// Object
+		ANIM	thisAnim;	// Animation structure
+
+		bool	mActor;		// Gets set if this is a moving actor
+		bool	lifeNoMatter;
+		bool	replaced;
+
+		const FREEL *pfreel;	// The 'column' to play
+		int		stepCount;
+		int		frameCount;
+		int		reelActor;
+		MOVER   *pActor;
+		int tmpX, tmpY;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	const MULTI_INIT *pmi;		// MULTI_INIT structure
+	bool	bNewMover;	// Gets set if a moving actor that isn't in scene yet
+
+	const FILM *pfilm;
+
+	_ctx->lifeNoMatter = false;
+	_ctx->replaced = false;
+	_ctx->pActor= nullptr;
+	bNewMover = false;
+
+	pfilm = (const FILM *)_vm->_handle->LockMem(ppi->hFilm);
+	_ctx->pfreel = &pfilm->reels[ppi->column];
+
+	// Get the MULTI_INIT structure
+	pmi = _ctx->pfreel->GetMultiInit();
+
+	// Save actor's ID
+	_ctx->reelActor = (int32)FROM_32(pmi->mulID);
+
+	/**** New (experimental? bit 5/1/95 ****/
+	if ((TinselVersion != 0) && !_vm->_actor->actorAlive(_ctx->reelActor))
+		return;
+	/**** Delete a bit down there if this stays ****/
+
+	_vm->_actor->UpdateActorEsc(_ctx->reelActor, ppi->escOn, ppi->myescEvent);
+
+	// To handle the play()-talk(), talk()-play(), talk()-talk() and play()-play() scenarios
+	if (ppi->hFilm != _vm->_actor->GetActorLatestFilm(_ctx->reelActor)) {
+		// This in not the last film scheduled for this actor
+
+		// It may be the last non-talk film though
+		if (_vm->_actor->ActorIsTalking(_ctx->reelActor))
+			_vm->_actor->SetActorPlayFilm(_ctx->reelActor, ppi->hFilm); // Revert to this film after talk
+
+		return;
+	}
+	if (_vm->_actor->ActorIsTalking(_ctx->reelActor)) {
+		// Note: will delete this and there'll be no need to store the talk film!
+		if (ppi->hFilm != _vm->_actor->GetActorTalkFilm(_ctx->reelActor)) {
+			_vm->_actor->SetActorPlayFilm(_ctx->reelActor, ppi->hFilm); // Revert to this film after talk
+			return;
+		}
+	} else {
+		_vm->_actor->SetActorPlayFilm(_ctx->reelActor, ppi->hFilm);
+	}
+
+	// If this reel is already playing for this actor, just forget it.
+	if (_vm->_actor->actorReel(_ctx->reelActor) == _ctx->pfreel)
+		return;
+
+	// Poke in the background palette
+	PokeInPalette(FROM_32(pmi->hMulFrame));
+
+	// Set up and insert the multi-object
+	_ctx->pPlayObj = MultiInitObject(pmi);
+	if (!ppi->bTop)
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+	else
+		MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+
+	// If co-ordinates are specified, use specified.
+	// Otherwise, use actor's position if there are not embedded co-ords.
+	// Add this first test for nth columns with offsets
+	// in plays with (x,y)
+	_ctx->tmpX = ppi->x;
+	_ctx->tmpY = ppi->y;
+	if (ppi->column != 0 && (pmi->mulX || pmi->mulY)) {
+	} else if (_ctx->tmpX != -1 || _ctx->tmpY != -1) {
+		MultiSetAniXY(_ctx->pPlayObj, _ctx->tmpX, _ctx->tmpY);
+	} else if (!pmi->mulX && !pmi->mulY) {
+		_vm->_actor->GetActorPos(_ctx->reelActor, &_ctx->tmpX, &_ctx->tmpY);
+		MultiSetAniXY(_ctx->pPlayObj, _ctx->tmpX, _ctx->tmpY);
+	}
+
+	// If it's a moving actor, this hides the moving actor
+	// used to do this only if (actorid == 0) - I don't know why
+	_ctx->mActor = _vm->_actor->HideMovingActor(_ctx->reelActor, ppi->sf);
+
+	// If it's a moving actor, get its MOVER structure.
+	// If it isn't in the scene yet, get its task running - using
+	// Stand() - to prevent a glitch at the end of the play.
+	if (_ctx->mActor) {
+		_ctx->pActor = GetMover(_ctx->reelActor);
+		if (!getMActorState(_ctx->pActor)) {
+			CORO_INVOKE_ARGS(Stand, (CORO_SUBCTX, _ctx->reelActor, MAGICX, MAGICY, 0));
+			bNewMover = true;
+		}
+	}
+
+	// Register the fact that we're playing this for this actor
+	_vm->_actor->storeActorReel(_ctx->reelActor, _ctx->pfreel, ppi->hFilm, _ctx->pPlayObj, ppi->column, _ctx->tmpX, _ctx->tmpY);
+
+	/**** Will get rid of this if the above is kept ****/
+	// We may be temporarily resuscitating a dead actor
+	if (ppi->actorid == 0 && !_vm->_actor->actorAlive(_ctx->reelActor))
+		_ctx->lifeNoMatter = true;
+
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj,  FROM_32(_ctx->pfreel->script), ppi->speed);
+
+	// If first column, set Z position as per
+	// Otherwise, column 0's + column number
+	// N.B. It HAS been ensured that the first column gets here first
+	if (ppi->z != 0) {
+		MultiSetZPosition(_ctx->pPlayObj, ppi->z);
+		_vm->_actor->StoreActorZpos(_ctx->reelActor, ppi->z);
+	} else if (ppi->bTop) {
+		if (ppi->column == 0) {
+			firstColZ = Z_TOPPLAY + _vm->_actor->actorMaskType(_ctx->reelActor);
+			MultiSetZPosition(_ctx->pPlayObj, firstColZ);
+			_vm->_actor->StoreActorZpos(_ctx->reelActor, firstColZ);
+		} else {
+			MultiSetZPosition(_ctx->pPlayObj, firstColZ + ppi->column);
+			_vm->_actor->StoreActorZpos(_ctx->reelActor, firstColZ + ppi->column);
+		}
+	} else if (ppi->column == 0) {
+		if (_ctx->mActor && !bNewMover) {
+			// If no path, just use first path in the scene
+			if (_ctx->pActor->hCpath == NOPOLY)
+				fColZfactor = GetPolyZfactor(FirstPathPoly());
+			else
+				fColZfactor = GetPolyZfactor(_ctx->pActor->hCpath);
+			firstColZ = _vm->_actor->AsetZPos(_ctx->pPlayObj, MultiLowest(_ctx->pPlayObj), fColZfactor);
+		} else {
+			switch (_vm->_actor->actorMaskType(_ctx->reelActor)) {
+			case ACT_DEFAULT:
+				fColZfactor = 0;
+				firstColZ = 2;
+				MultiSetZPosition(_ctx->pPlayObj, firstColZ);
+				break;
+			case ACT_MASK:
+				fColZfactor = 0;
+				firstColZ = MultiLowest(_ctx->pPlayObj);
+				MultiSetZPosition(_ctx->pPlayObj, firstColZ);
+				break;
+			case ACT_ALWAYS:
+				fColZfactor = 10;
+				firstColZ = 10000;
+				MultiSetZPosition(_ctx->pPlayObj, firstColZ);
+				break;
+			default:
+				fColZfactor = _vm->_actor->actorMaskType(_ctx->reelActor);
+				firstColZ = _vm->_actor->AsetZPos(_ctx->pPlayObj, MultiLowest(_ctx->pPlayObj), fColZfactor);
+				if (firstColZ < 2) {
+					// This is an experiment!
+					firstColZ = 2;
+					MultiSetZPosition(_ctx->pPlayObj, firstColZ);
+				}
+				break;
+			}
+		}
+		_vm->_actor->StoreActorZpos(_ctx->reelActor, firstColZ);
+	} else {
+		if (NoNameFunc(_ctx->reelActor, bNewMover) > fColZfactor) {
+			fColZfactor = NoNameFunc(_ctx->reelActor, bNewMover);
+			firstColZ = fColZfactor << 10;
+		}
+		MultiSetZPosition(_ctx->pPlayObj, firstColZ + ppi->column);
+		_vm->_actor->StoreActorZpos(_ctx->reelActor, firstColZ + ppi->column);
+	}
+
+	/*
+	 * Play until the script finishes,
+	 * another reel starts up for this actor,
+	 * or the actor gets killed.
+	 */
+	_ctx->stepCount = 0;
+	_ctx->frameCount = 0;
+	do {
+		if (_ctx->stepCount++ == 0) {
+			_ctx->frameCount++;
+			_vm->_actor->StoreActorSteps(_ctx->reelActor, _ctx->frameCount);
+		}
+		if (_ctx->stepCount == ppi->speed)
+			_ctx->stepCount = 0;
+
+		if (StepAnimScript(&_ctx->thisAnim) == ScriptFinished)
+			break;
+
+		int x, y;
+		GetAniPosition(_ctx->pPlayObj, &x, &y);
+		_vm->_actor->StoreActorPos(_ctx->reelActor, x, y);
+
+		CORO_SLEEP(1);
+
+		if (_vm->_actor->actorReel(_ctx->reelActor) != _ctx->pfreel) {
+			_ctx->replaced = true;
+			break;
+		}
+
+		if (_vm->_actor->ActorEsc(_ctx->reelActor) && _vm->_actor->ActorEev(_ctx->reelActor) != GetEscEvents())
+			break;
+
+	} while (_ctx->lifeNoMatter || _vm->_actor->actorAlive(_ctx->reelActor));
+
+	// Register the fact that we're NOT playing this for this actor
+	if (_vm->_actor->actorReel(_ctx->reelActor) == _ctx->pfreel)
+		_vm->_actor->storeActorReel(_ctx->reelActor, NULL, 0, NULL, 0, 0, 0);
+
+	// Ditch the object
+	if (!ppi->bTop)
+		MultiDeleteObjectIfExists(FIELD_WORLD, &_ctx->pPlayObj);
+	else
+		MultiDeleteObjectIfExists(FIELD_STATUS, &_ctx->pPlayObj);
+
+	if (_ctx->mActor) {
+		if (!_ctx->replaced)
+			_vm->_actor->unHideMovingActor(_ctx->reelActor); // Restore moving actor
+
+		// Update it's co-ordinates if this is an splay()
+		if (ppi->splay)
+			_vm->_actor->restoreMovement(_ctx->reelActor);
+	}
+	CORO_END_CODE;
+}
+
+/**
+ * - Don't bother if this reel is already playing for this actor.
+ * - If explicit co-ordinates, use these, If embedded co-ordinates,
+ * leave alone, otherwise use actor's current position.
+ * - Moving actors get hidden during this play, other actors get
+ * replaced by this play.
+ * - Column 0 of a film gets its appropriate Z-position, slave columns
+ * get slightly bigger Z-positions, in column order.
+ * - Play proceeds until the script finishes, another reel starts up for
+ * this actor, or the actor gets killed.
+ * - If called from an splay(), moving actor's co-ordinates are updated
+ * after the play, any walk still in progress will go on from there.
+ * @param x				Co-ordinates from the play(), set to (-1, -1) if none
+ * @param y				Co-ordinates from the play(), set to (-1, -1) if none
+ * @param bRestore		Normally False, set if from restore
+ * @param speed			Film speed
+ * @param hFilm			The 'film'
+ * @param column		Column number, first column = 0
+ */
+static void t2PlayReel(CORO_PARAM, int x, int y, bool bRestore, int speed, SCNHANDLE hFilm, int column, int myescEvent, bool bTop, OBJECT** playfield) {
+	CORO_BEGIN_CONTEXT;
+		bool bReplaced;
+		bool bGotHidden;
+		int	stepCount;
+		int	frameCount;
+		bool bEscapedAlready;
+		bool	bPrinciple;	// true if this is the first column in a film for one actor
+		bool	bRelative;	// true if relative specified in script
+
+		FREEL		*pFreel;
+		MULTI_INIT	*pmi;	// MULTI_INIT structure
+		OBJECT		*pPlayObj;	// Object
+		ANIM		thisAnim;	// Animation structure
+
+		int	reelActor;			// Which actor this reel belongs to
+		MOVER   *pMover;		// set if it's a moving actor
+		bool	bNewMover;		// Gets set if a moving actor that isn't in scene yet
+
+		int	filmNumber;
+		int	myZ;				// Remember for hide/unhide
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	_ctx->bReplaced = false;
+	_ctx->bGotHidden = false;
+	_ctx->stepCount = 0;
+	_ctx->frameCount = 0;
+
+	_ctx->bEscapedAlready = false;
+
+	// Get the reel and MULTI_INIT structure
+	_ctx->pFreel = GetReel(hFilm, column);
+	_ctx->pmi = _ctx->pFreel->GetMultiInit();
+
+	if ((int32)FROM_32(_ctx->pmi->mulID) == -2) {
+		CORO_INVOKE_ARGS(SoundReel, (CORO_SUBCTX, hFilm, column, speed, myescEvent,
+			FROM_32(_ctx->pmi->otherFlags) & OTH_RELATEDACTOR));
+		return;
+	}
+
+	// Save actor's ID
+	_ctx->reelActor = FROM_32(_ctx->pmi->mulID);
+
+	_vm->_actor->UpdateActorEsc(_ctx->reelActor, myescEvent);
+
+	// To handle the play()-talk(), talk()-play(), talk()-talk() and play()-play() scenarios
+	if (hFilm != _vm->_actor->GetActorLatestFilm(_ctx->reelActor)) {
+		// This in not the last film scheduled for this actor
+
+		// It may be the last non-talk film though
+		if (_vm->_actor->ActorIsTalking(_ctx->reelActor))
+			_vm->_actor->SetActorPlayFilm(_ctx->reelActor, hFilm); // Revert to this film after talk
+
+		return;
+	}
+	if (_vm->_actor->ActorIsTalking(_ctx->reelActor)) {
+		// Note: will delete this and there'll be no need to store the talk film!
+		if (hFilm != _vm->_actor->GetActorTalkFilm(_ctx->reelActor)) {
+			_vm->_actor->SetActorPlayFilm(_ctx->reelActor, hFilm); // Revert to this film after talk
+			return;
+		}
+	} else {
+		_vm->_actor->SetActorPlayFilm(_ctx->reelActor, hFilm);
+	}
+
+	// Register the film for this actor
+	if (hFilm != _vm->_actor->GetActorPresFilm(_ctx->reelActor)) {
+		_ctx->bPrinciple = true;
+		_vm->_actor->StoreActorPresFilm(_ctx->reelActor, hFilm, x, y);
+	} else {
+		_ctx->bPrinciple = false;
+
+		// If this reel is already playing for this actor, just forget it.
+		if (_vm->_actor->ActorReelPlaying(_ctx->reelActor, column))
+			return;
+	}
+
+	/*
+	 * Insert the object
+	 */
+	if (TinselVersion != 3) {
+		// Poke in the background palette
+		PokeInPalette(_ctx->pmi);
+	}
+
+	// Set ghost bit if wanted
+	if (_vm->_actor->ActorIsGhost(_ctx->reelActor)) {
+		assert(FROM_32(_ctx->pmi->mulFlags) == DMA_WNZ || FROM_32(_ctx->pmi->mulFlags) == (DMA_WNZ | DMA_GHOST));
+		_ctx->pmi->mulFlags = TO_32(FROM_32(_ctx->pmi->mulFlags) | DMA_GHOST);
+	}
+
+	// Set up and insert the multi-object
+	_ctx->pPlayObj = MultiInitObject(_ctx->pmi);
+	if (TinselVersion == 3) {
+		MultiInsertObject(playfield, _ctx->pPlayObj);
+	} else {
+		if (!bTop)
+			MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		else
+			MultiInsertObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+	}
+
+	/*
+	 * More action for moving actors
+	*/
+	_ctx->pMover = GetMover(_ctx->reelActor);
+	if (_ctx->pMover != NULL) {
+		HideMover(_ctx->pMover);
+
+		if (!MoverIs(_ctx->pMover)) {
+			// Used to do a Stand here to prevent glitches
+
+			_ctx->bNewMover = true;
+		} else
+			_ctx->bNewMover = false;
+	}
+
+	// Register the reel for this actor
+	_vm->_actor->StoreActorReel(_ctx->reelActor, column, _ctx->pPlayObj);
+
+	_ctx->filmNumber = _vm->_actor->GetActorFilmNumber(_ctx->reelActor);
+
+	/*
+	 * Sort out x and y
+	 */
+	assert( ((FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE))
+		|| ((FROM_32(_ctx->pmi->otherFlags) & OTH_ABSOLUTE) && !(FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE)) );
+
+	_ctx->bRelative = FROM_32(_ctx->pmi->otherFlags) & OTH_RELATIVE;
+
+	if (_ctx->bRelative) {
+		// Use actor's position. If (x, y) specified, move the actor.
+		if (x == -1 && y == -1)
+			_vm->_actor->GetActorPos(_ctx->reelActor, &x, &y);
+		else
+			_vm->_actor->StoreActorPos(_ctx->reelActor, x, y);
+	} else if (x == -1 && y == -1)
+		x = y = 0;		// Use (0,0) if no specified
+
+	// Add embedded co-ords
+	MultiSetAniXY(_ctx->pPlayObj, x + FROM_32(_ctx->pmi->mulX), y + FROM_32(_ctx->pmi->mulY));
+
+	/*
+	 * Sort out z
+	 */
+	if (bRestore) {
+		_ctx->myZ = _vm->_actor->GetActorZpos(_ctx->reelActor, column);
+
+		SoundReelWaitCheck();
+	} else {
+		// N.B. It HAS been ensured that the first column gets here first
+
+		if ((int32)FROM_32(_ctx->pmi->mulZ) != -1) {
+			// Z override in script
+
+			baseZfact = FROM_32(_ctx->pmi->mulZ);
+			baseZposn = (baseZfact << ZSHIFT) + MultiLowest(_ctx->pPlayObj);
+			if (bTop)
+				baseZposn += Z_TOPPLAY;
+		} else if (column == 0
+				|| GetZfactor(_ctx->reelActor, _ctx->pMover, _ctx->bNewMover) > baseZfact) {
+			// Subsequent columns are based on this one
+
+			baseZfact = GetZfactor(_ctx->reelActor, _ctx->pMover, _ctx->bNewMover);
+			baseZposn = (baseZfact << ZSHIFT) + MultiLowest(_ctx->pPlayObj);
+			if (bTop)
+				baseZposn += Z_TOPPLAY;
+		}
+		_ctx->myZ = baseZposn + column;
+	}
+	MultiSetZPosition(_ctx->pPlayObj, _ctx->myZ);
+	_vm->_actor->StoreActorZpos(_ctx->reelActor, _ctx->myZ, column);
+
+	/*
+	 * Play until the script finishes,
+	 * another reel starts up for this actor,
+	 * or the actor gets killed.
+	 */
+	InitStepAnimScript(&_ctx->thisAnim, _ctx->pPlayObj, FROM_32(_ctx->pFreel->script), speed);
+
+	if (bRestore || (_vm->_actor->ActorEsc(_ctx->reelActor) == true &&
+	                 _vm->_actor->ActorEev(_ctx->reelActor) != GetEscEvents())) {
+		// From restore, step to jump or end
+		SkipFrames(&_ctx->thisAnim, -1);
+	}
+
+	for (;;) {
+		if (_ctx->stepCount++ == 0) {
+			_ctx->frameCount++;
+			_vm->_actor->StoreActorSteps(_ctx->reelActor, _ctx->frameCount);
+		}
+		if (_ctx->stepCount == speed)
+			_ctx->stepCount = 0;
+
+		if (_ctx->bPrinciple && AboutToJumpOrEnd(&_ctx->thisAnim))
+			_vm->_actor->IncLoopCount(_ctx->reelActor);
+
+		if (StepAnimScript(&_ctx->thisAnim) == ScriptFinished)
+			break;
+
+		if (_ctx->bRelative) {
+			GetAniPosition(_ctx->pPlayObj, &x, &y);
+			_vm->_actor->StoreActorPos(_ctx->reelActor, x, y);
+		}
+
+		if (_ctx->bGotHidden) {
+			if (!_vm->_actor->ActorHidden(_ctx->reelActor)) {
+				MultiSetZPosition(_ctx->pPlayObj, _ctx->myZ);
+				_ctx->bGotHidden = false;
+			}
+		} else {
+			if (_vm->_actor->ActorHidden(_ctx->reelActor)) {
+				MultiSetZPosition(_ctx->pPlayObj, -1);
+				_ctx->bGotHidden = true;
+			}
+		}
+
+		CORO_SLEEP(1);
+
+		if (_vm->_actor->GetActorFilmNumber(_ctx->reelActor) != _ctx->filmNumber) {
+			_ctx->bReplaced = true;
+			break;
+		}
+
+		if (_vm->_actor->ActorEsc(_ctx->reelActor) == true && _vm->_actor->ActorEev(_ctx->reelActor) != GetEscEvents()) {
+			if (!_ctx->bEscapedAlready) {
+				SkipFrames(&_ctx->thisAnim, -1);
+				_ctx->bEscapedAlready = true;
+			}
+
+//WHY???		UpdateActorEsc(reelActor, GetEscEvents());
+// The above line of code, not commented out would fix the coffee pot flash
+// but why was it commented out?
+// The extra boolean is used instead, 'cos it's release week and I want to play it safe!
+		}
+	}
+
+	// Register the fact that we're NOT playing this for this actor
+	_vm->_actor->NotPlayingReel(_ctx->reelActor, _ctx->filmNumber, column);
+
+	// Ditch the object
+	if (TinselVersion == 3) {
+		MultiDeleteObject(playfield, _ctx->pPlayObj);
+	} else {
+		if (!bTop) {
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_WORLD), _ctx->pPlayObj);
+		} else {
+			MultiDeleteObject(_vm->_bg->GetPlayfieldList(FIELD_STATUS), _ctx->pPlayObj);
+		}
+	}
+
+	// Restore moving actor is nessesary
+	if (_ctx->pMover != NULL && _ctx->bPrinciple && !_ctx->bReplaced)
+		UnHideMover(_ctx->pMover);
+
+	CORO_END_CODE;
+}
+
+/**
+ * Run all animations that comprise the play film.
+ */
+static void PlayProcess(CORO_PARAM, const void *param) {
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	const PPINIT *ppi = (const PPINIT *)param;
+	CORO_BEGIN_CODE(_ctx);
+
+	if (TinselVersion >= 2)
+		CORO_INVOKE_ARGS(t2PlayReel, (CORO_SUBCTX, ppi->x, ppi->y, ppi->bRestore, ppi->speed,
+			ppi->hFilm, ppi->column, ppi->myescEvent, ppi->bTop, ppi->playfield));
+	else
+		CORO_INVOKE_1(t1PlayReel, ppi);
+
+	CORO_END_CODE;
+}
+
+// *******************************************************
+
+
+// To handle the play()-talk(), talk()-play(), talk()-talk() and play()-play() scenarios
+void NewestFilm(SCNHANDLE film, const FREEL *reel) {
+	const MULTI_INIT *pmi;		// MULTI_INIT structure
+
+	// Get the MULTI_INIT structure
+	pmi = reel->GetMultiInit();
+
+	if ((TinselVersion <= 1) || ((int32)FROM_32(pmi->mulID) != -2))
+		_vm->_actor->SetActorLatestFilm((int32)FROM_32(pmi->mulID), film);
+}
+
+// *******************************************************
+
+/**
+ * Start up a play process for each column in a film.
+ *
+ * NOTE: The processes are started in reverse order so that the first
+ *   column's process kicks in first.
+ */
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield) {
+	assert(hFilm != 0); // Trying to play NULL film
+	const FILM *pFilm;
+
+	CORO_BEGIN_CONTEXT;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	pFilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	PPINIT ppi;
+
+	// Now allowed empty films!
+	if (pFilm->numreels == 0)
+		return;                 // Nothing to do!
+
+	ppi.hFilm = hFilm;
+	ppi.x = x;
+	ppi.y = y;
+	ppi.z = 0;
+	ppi.bRestore = false;
+	ppi.speed = (ONE_SECOND / FROM_32(pFilm->frate));
+	ppi.actorid = actorid;
+	ppi.splay = splay;
+	ppi.bTop = bTop;
+	ppi.sf = sfact;
+	ppi.escOn = escOn;
+	ppi.myescEvent = myescEvent;
+	ppi.playfield = playfield;
+
+	// Start display process for each reel in the film
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
+		NewestFilm(hFilm, &pFilm->reels[i]);
+
+		ppi.column = i;
+		CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(PPINIT));
+	}
+
+	if (TinselVersion >= 2) {
+		// Let it all kick in and position this process
+		// down the process list from the playing process(es)
+		// This ensures something
+		CORO_GIVE_WAY;
+
+		if (myescEvent && myescEvent != GetEscEvents())
+			CoroScheduler.rescheduleAll();
+	}
+
+	CORO_END_CODE;
+}
+
+void PlayFilm(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int myescEvent, bool bTop, OBJECT** playfield) {
+	PlayFilm(coroParam, hFilm, x, y, 0, false, false, false, myescEvent, bTop, playfield);
+}
+
+/**
+ * Start up a play process for each slave column in a film.
+ * Play the first column directly from the parent process.
+ */
+void PlayFilmc(CORO_PARAM, SCNHANDLE hFilm, int x, int y, int actorid, bool splay, bool sfact, bool escOn, int myescEvent, bool bTop, OBJECT** playfield) {
+	CORO_BEGIN_CONTEXT;
+		PPINIT ppi;
+		int i;
+		int loopCount;
+	CORO_END_CONTEXT(_ctx);
+
+	CORO_BEGIN_CODE(_ctx);
+
+	assert(hFilm != 0); // Trying to play NULL film
+	const FILM *pFilm;
+	int lowestReel;
+
+	pFilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+
+	// Now allowed empty films!
+	if (pFilm->numreels == 0)
+		return;                 //  Already played to completion!
+
+	_ctx->ppi.hFilm = hFilm;
+	_ctx->ppi.x = x;
+	_ctx->ppi.y = y;
+	_ctx->ppi.z = 0;
+	_ctx->ppi.bRestore = false;
+	_ctx->ppi.speed = (ONE_SECOND / FROM_32(pFilm->frate));
+	_ctx->ppi.actorid = actorid;
+	_ctx->ppi.splay = splay;
+	_ctx->ppi.bTop = bTop;
+	_ctx->ppi.sf = sfact;
+	_ctx->ppi.escOn = escOn;
+	_ctx->ppi.myescEvent = myescEvent;
+	_ctx->ppi.playfield = playfield;
+
+	// Start display process for each secondary reel in the film in Tinsel 1,
+	// or all of them in Tinsel 2
+	lowestReel = (TinselVersion >= 2) ? 0 : 1;
+	for (int i = FROM_32(pFilm->numreels) - 1; i >= lowestReel; i--) {
+		NewestFilm(hFilm, &pFilm->reels[i]);
+
+		_ctx->ppi.column = i;
+		CoroScheduler.createProcess(PID_REEL, PlayProcess, &_ctx->ppi, sizeof(PPINIT));
+	}
+
+	if (TinselVersion >= 2) {
+		// Let it all kick in and position this 'waiting' process
+		// down the process list from the playing process(es)
+		// This ensures immediate return when the reel finishes
+		CORO_GIVE_WAY;
+
+		_ctx->i = ExtractActor(hFilm);
+		_ctx->loopCount = _vm->_actor->GetLoopCount(_ctx->i);
+
+		// Wait until film changes or loop count increases
+		while (_vm->_actor->GetActorPresFilm(_ctx->i) == hFilm && _vm->_actor->GetLoopCount(_ctx->i) == _ctx->loopCount) {
+			if (myescEvent && myescEvent != GetEscEvents()) {
+				CoroScheduler.rescheduleAll();
+				break;
+			}
+
+			CORO_SLEEP(1);
+		}
+	} else {
+		// For Tinsel 1, launch the primary reel
+		NewestFilm(hFilm, &pFilm->reels[0]);
+
+		_ctx->ppi.column = 0;
+		CORO_INVOKE_1(t1PlayReel, &_ctx->ppi);
+	}
+
+	CORO_END_CODE;
+}
+
+/**
+ * Start up a play process for a particular column in a film.
+ *
+ * NOTE: This is specifically for actors during a Tinsel 1 restore scene.
+ */
+void RestoreActorReels(SCNHANDLE hFilm, short reelnum, short z, int x, int y) {
+	assert(TinselVersion <= 1);
+	const FILM *pfilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	PPINIT ppi;
+
+	ppi.hFilm = hFilm;
+	ppi.x = x;
+	ppi.y = y;
+	ppi.z = z;
+	ppi.speed = (ONE_SECOND / FROM_32(pfilm->frate));
+	ppi.actorid = 0;
+	ppi.splay = false;
+	ppi.bTop = false;
+	ppi.bRestore = true;
+	ppi.sf = 0;
+	ppi.column = reelnum;
+	ppi.myescEvent = 0;
+
+	ppi.escOn = false;
+	ppi.myescEvent = GetEscEvents();
+
+	assert(pfilm->numreels);
+
+	NewestFilm(hFilm, &pfilm->reels[reelnum]);
+
+	// Start display process for the reel
+	CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
+}
+
+/**
+ * Start up a play process for a particular column in a film.
+ *
+ * NOTE: This is specifically for actors during a Tinsel 2 restore scene.
+ */
+void RestoreActorReels(SCNHANDLE hFilm, int actor, int x, int y) {
+	assert(TinselVersion >= 2);
+	FILM *pFilm = (FILM *)_vm->_handle->LockMem(hFilm);
+	PPINIT ppi;
+
+	int i;
+	FREEL *pFreel;
+	MULTI_INIT *pmi;		// MULTI_INIT structure
+
+	ppi.hFilm = hFilm;
+	ppi.x = (short)x;
+	ppi.y = (short)y;
+	ppi.bRestore = true;
+	ppi.speed = (short)(ONE_SECOND/FROM_32(pFilm->frate));
+	ppi.bTop = false;
+	ppi.myescEvent = 0;
+
+	// Search backwards for now as later column will be the one
+	for (i = (int)FROM_32(pFilm->numreels) - 1; i >= 0; i--) {
+		pFreel = &pFilm->reels[i];
+		pmi = pFreel->GetMultiInit();
+		if ((int32)FROM_32(pmi->mulID) == actor) {
+			ppi.column = (short)i;
+			NewestFilm(hFilm, &pFilm->reels[i]);
+
+			// Start display process for the reel
+			CoroScheduler.createProcess(PID_REEL, PlayProcess, &ppi, sizeof(ppi));
+
+			g_soundReelWait++;
+		}
+	}
+}
+
+/**
+ * Get the actor id from a film (column 0)
+ */
+int ExtractActor(SCNHANDLE hFilm) {
+	const FILM *pFilm = (const FILM *)_vm->_handle->LockMem(hFilm);
+	const FREEL *pReel = &pFilm->reels[0];
+	const MULTI_INIT *pmi = pReel->GetMultiInit();
+	return (int)FROM_32(pmi->mulID);
+}
+
+} // End of namespace Tinsel

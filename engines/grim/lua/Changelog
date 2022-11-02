@@ -1,0 +1,14 @@
+This is a modified version of Lua 3.1 intended for use with ResidualVM.
+The major changes made from the original version of Lua 3.1 are:
+
+* Applied differences from RCS labeled 3.1-alpha from lua.org.
+* Changed the binary file loader to allow read GrimE lua files.
+* Revamped the way function calls and returns are handled in order to
+  facilitate implementing GrimE's cooperative multithreading model.
+* Added several internal functions which implement this multithreading.
+* Added save/restore Lua state in the files: lsave.cpp and lrestore.cpp.
+* Unified types like int -> int32 and similiars.
+* Removed few library functions not used by game engine.
+* Formatting code.
+* Replace FILE usage code with File class code.
+* Remove union from TaggedString, that simplify things.

@@ -1,0 +1,135 @@
+/* ScummVM - Graphic Adventure Engine
+ *
+ * ScummVM is the legal property of its developers, whose names
+ * are too numerous to list here. Please refer to the COPYRIGHT
+ * file distributed with this source distribution.
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+#include "common/platform.h"
+#include "common/str.h"
+#include "common/algorithm.h"
+
+namespace Common {
+
+const PlatformDescription g_platforms[] = {
+	{ "2gs", "2gs", "2gs", "Apple IIgs", kPlatformApple2GS },
+	{ "apple2", "apple2", "apple2", "Apple II", kPlatformApple2 },
+	{ "3do", "3do", "3do", "3DO", kPlatform3DO },
+	{ "acorn", "acorn", "acorn", "Acorn", kPlatformAcorn },
+	{ "amiga", "ami", "amiga", "Amiga", kPlatformAmiga },
+	{ "atari8", "atari8", "atari8", "Atari 8-bit", kPlatformAtari8Bit },
+	{ "atari", "atari-st", "st", "Atari ST", kPlatformAtariST },
+	{ "c64", "c64", "c64", "Commodore 64", kPlatformC64 },
+	{ "pc", "dos", "ibm", "DOS", kPlatformDOS },
+	{ "pc98", "pc98", "pc98", "PC-98", kPlatformPC98 },
+	{ "wii", "wii", "wii", "Nintendo Wii", kPlatformWii },
+	{ "coco", "coco", "coco", "CoCo", kPlatformCoCo },		// CoCo 1/2
+	{ "coco3", "coco3", "coco3", "CoCo3", kPlatformCoCo3 },	// CoCo 3 only
+
+	// The 'official' spelling seems to be "FM-TOWNS" (e.g. in the Indy4 demo).
+	// However, on the net many variations can be seen, like "FMTOWNS",
+	// "FM TOWNS", "FmTowns", etc.
+	{ "fmtowns", "towns", "fm", "FM-TOWNS", kPlatformFMTowns },
+
+	{ "linux", "linux", "linux", "Linux", kPlatformLinux },
+	{ "macintosh", "mac", "mac", "Macintosh", kPlatformMacintosh },
+	{ "pce", "pce", "pce", "PC-Engine", kPlatformPCEngine },
+	{ "nes", "nes", "nes", "NES", kPlatformNES },
+	{ "segacd", "segacd", "sega", "SegaCD", kPlatformSegaCD },
+	{ "windows", "win", "win", "Windows", kPlatformWindows },
+	{ "playstation", "psx", "psx", "Sony PlayStation", kPlatformPSX },
+	{ "playstation2", "ps2", "ps2", "Sony PlayStation 2", kPlatformPS2 },
+	{ "xbox", "xbox", "xbox", "Microsoft Xbox", kPlatformXbox },
+	{ "cdi", "cdi", "cdi", "Philips CD-i", kPlatformCDi },
+	{ "ios", "ios", "ios", "Apple iOS", kPlatformIOS },
+	{ "android", "android", "android", "Android", kPlatformAndroid },
+	{ "os2", "os2", "os2", "OS/2", kPlatformOS2 },
+	{ "beos", "beos", "beos", "BeOS", kPlatformBeOS },
+	{ "ppc", "ppc", "ppc", "PocketPC", kPlatformPocketPC },
+	{ "megadrive", "genesis", "md", "Mega Drive/Genesis", kPlatformMegaDrive },
+	{ "saturn", "saturn", "saturn", "Sega Saturn", kPlatformSaturn },
+	{ "pippin", "pippin", "pippin", "Pippin", kPlatformPippin },
+	{ "macintosh2", "macintosh2", "mac2", "Macintosh II", kPlatformMacintoshII },
+	{ "shockwave", "shockwave", "shock", "Shockwave", kPlatformShockwave },
+	{ "zx", "zx", "zx", "ZX Spectrum", kPlatformZX },
+	{ "ti994", "ti994", "ti994", "TI-99/4A", kPlatformTI994 },
+
+	{ nullptr, nullptr, nullptr, "Default", kPlatformUnknown }
+};
+
+Platform parsePlatform(const String &str) {
+	if (str.empty())
+		return kPlatformUnknown;
+
+	// Handle some special case separately, for compatibility with old config
+	// files.
+	if (str == "1")
+		return kPlatformAmiga;
+	else if (str == "2")
+		return kPlatformAtariST;
+	else if (str == "3")
+		return kPlatformMacintosh;
+
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (str.equalsIgnoreCase(l->code) || str.equalsIgnoreCase(l->code2) || str.equalsIgnoreCase(l->abbrev))
+			return l->id;
+	}
+
+	return kPlatformUnknown;
+}
+
+
+const char *getPlatformCode(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->code;
+	}
+	return nullptr;
+}
+
+const char *getPlatformAbbrev(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->abbrev;
+	}
+	return nullptr;
+}
+
+const char *getPlatformDescription(Platform id) {
+	const PlatformDescription *l = g_platforms;
+	for (; l->code; ++l) {
+		if (l->id == id)
+			return l->description;
+	}
+	return l->description;
+}
+
+List<String> getPlatformList() {
+	List<String> list;
+
+	for (const PlatformDescription *l = g_platforms; l->code; ++l)
+		list.push_back(l->code2);
+
+	 Common::sort(list.begin(), list.end());
+
+	 return list;
+}
+
+} // End of namespace Common

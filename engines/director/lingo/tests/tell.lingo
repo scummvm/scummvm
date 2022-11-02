@@ -1,0 +1,9 @@
+tell window "ball" to puppettempo 5
+
+tell window "hello" to continue
+
+tell window childMovie
+	go to frame 50
+	set the stageColor to 100
+	updateStage
+end tell

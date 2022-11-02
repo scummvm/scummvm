@@ -1,0 +1,67 @@
+<?xml version="1.0"?>
+<!DOCTYPE weapons SYSTEM "dtd/weapons.dtd" [
+  <!ENTITY % common SYSTEM "dtd/common.dtd">
+  %common;
+  <!ENTITY % constraint SYSTEM "dtd/constraint.dtd">
+  %constraint;
+]>
+
+<!-- $Id: weapons.xml 1953 2004-05-29 02:14:16Z dougday $ -->
+<weapons>
+    <weapon name="Hands" abbr="HND" range="1" damage="8"/>
+    <weapon name="Staff" abbr="STF" range="1" damage="16"/>
+    <weapon name="Dagger" abbr="DAG" range="10" damage="24" losewhenranged="true"/>
+    <weapon name="Sling" abbr="SLN" range="10" damage="32"/>
+    <weapon name="Mace" abbr="MAC" range="1" damage="40">
+        <constraint canuse="false" class="mage"/>
+    </weapon>
+    <weapon name="Axe" abbr="AXE" range="1" damage="48">
+        <constraint canuse="false" class="mage"/>
+        <constraint canuse="false" class="druid"/>
+    </weapon>
+    <weapon name="Sword" abbr="SWD" range="1" damage="64">
+        <constraint canuse="false" class="mage"/>
+        <constraint canuse="false" class="druid"/>
+    </weapon>
+    <weapon name="Bow" abbr="BOW" range="10" damage="40">
+        <constraint canuse="false" class="mage"/>
+        <constraint canuse="false" class="shepherd"/>
+    </weapon>
+    <weapon name="Crossbow" abbr="XBO" range="10" damage="56">
+        <constraint canuse="false" class="mage"/>
+        <constraint canuse="false" class="shepherd"/>
+    </weapon>
+    <weapon name="Flaming Oil" abbr="OIL" range="9" damage="64" lose="true" choosedistance="true"
+        leavetile="fire_field"/>
+    <weapon name="Halberd" abbr="HAL" absolute_range="2" attackthroughobjects="true" damage="96"
+        dontshowtravel="true">
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="fighter"/>
+        <constraint canuse="true" class="tinker"/>
+        <constraint canuse="true" class="paladin"/>
+    </weapon>
+    <weapon name="Magic Axe" abbr="+AX" range="10" returns="true" damage="96" magic="true">
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="tinker"/>
+        <constraint canuse="true" class="paladin"/>
+    </weapon>
+    <weapon name="Magic Sword" abbr="+SW" range="1" damage="128" magic="true">
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="fighter"/>
+        <constraint canuse="true" class="tinker"/>
+        <constraint canuse="true" class="paladin"/>
+        <constraint canuse="true" class="ranger"/>
+    </weapon>
+    <weapon name="Magic Bow" abbr="+BO" range="10" damage="80" magic="true">
+        <constraint canuse="false" class="mage"/>
+        <constraint canuse="false" class="fighter"/>
+        <constraint canuse="false" class="shepherd"/>
+    </weapon>
+    <weapon name="Magic Wand" abbr="WND" range="10" damage="160" magic="true" hittile="magic_flash" misstile="magic_flash">
+        <constraint canuse="false" class="all"/>
+        <constraint canuse="true" class="mage"/>
+        <constraint canuse="true" class="bard"/>
+        <constraint canuse="true" class="druid"/>
+    </weapon>
+    <weapon name="Mystic Sword" abbr="^SW" range="1" damage="255" magic="true"/>
+</weapons>

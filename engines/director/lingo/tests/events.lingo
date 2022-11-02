@@ -1,0 +1,21 @@
+on exitFrame
+  beep
+end exitFrame
+
+on enterFrame me
+  beep
+end
+
+on annoy howMuch
+	beep random(howMuch)
+	alert "Aren't handlers fun?"
+end annoy
+
+on annoy2 howMuch
+	beep random(howMuch)
+	alert "Aren't handlers fun?"
+end annoy2 howMuch
+
+on move me
+  set h = the locH of sprite pSprite + pChangeH
+end

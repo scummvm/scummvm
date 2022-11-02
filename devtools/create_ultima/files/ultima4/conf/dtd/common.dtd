@@ -1,0 +1,4 @@
+<!-- $Id: common.dtd 2544 2005-09-20 05:10:07Z andrewtaylor $ -->
+<!ENTITY % bool '( true | false )'>
+<!ENTITY % class '( mage | bard | fighter | druid | tinker | paladin | ranger | shepherd | all )'>
+<!ENTITY % effect '( fire | sleep | poison | poisonField | electricity | lava )'>

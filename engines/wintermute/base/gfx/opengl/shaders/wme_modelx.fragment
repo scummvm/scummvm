@@ -1,0 +1,16 @@
+in vec2 Texcoord;
+in vec4 Color;
+
+uniform sampler2D tex;
+uniform float alphaRef;
+
+OUTPUT
+
+void main() {
+	vec4 texColor = texture(tex, Texcoord);
+	outColor.rgba = texColor.rgba * Color.rgba;
+
+	if (outColor.a < alphaRef) {
+		discard;
+	}
+}

@@ -1,0 +1,4 @@
+engines/sword1/animation.cpp
+engines/sword1/control.cpp
+engines/sword1/logic.cpp
+

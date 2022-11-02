@@ -1,0 +1,10 @@
+engines/scumm/detection.cpp
+engines/scumm/detection_internal.h
+engines/scumm/dialogs.cpp
+engines/scumm/help.cpp
+engines/scumm/input.cpp
+engines/scumm/metaengine.cpp
+engines/scumm/scumm.cpp
+engines/scumm/players/player_v3m.cpp
+engines/scumm/players/player_v5m.cpp
+engines/scumm/imuse/drivers/amiga.cpp

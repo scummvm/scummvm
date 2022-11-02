@@ -1,0 +1,5 @@
+# This file is included from the main "configure" script
+# add_engine [name] [desc] [build-by-default] [subengines] [base games] [deps]
+add_engine scumm "SCUMM" yes "scumm_7_8 he" "v0-v6 games"
+add_engine scumm_7_8 "v7 & v8 games" yes
+add_engine he "HE71+ games" yes "" "" "highres bink"
