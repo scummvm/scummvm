@@ -25,16 +25,21 @@
 namespace MM {
 namespace MM1 {
 
-byte TrapData::ARRAY1[11] = {
-	0,  0,  0,  0,  0,  0, 91, 95, 97, 93, 89
+int8 TrapData::RESISTANCE_INDEXES[11] = {
+	-1, -1, -1, -1, -1, -1,
+	1,		// Fire
+	3,		// Electricity
+	4,		// Acid
+	2,		// Cold
+	0		// Magic
 };
-byte TrapData::ARRAY2[11] = {
+byte TrapData::CONDITIONS1[11] = {
 	16, 32, 16, 16, 2, 1, 2, 32, 2, 2, 2
 };
-byte TrapData::ARRAY3[11] = {
+byte TrapData::CONDITIONS2[11] = {
 	16, 16, 16, 32, 2, 16, 64, 64, 2, 32, 32
 };
-byte TrapData::ARRAY4[11] = {
+byte TrapData::CONDITIONS3[11] = {
 	64, 64, 64, 64, 64, 192, 192, 192, 255, 64, 224
 };
 byte TrapData::DAMAGE_TYPE[7] = {
@@ -51,46 +56,85 @@ void TrapData::trap() {
 	}
 	maxVal += getRandomNumber(maxVal);
 
-	_value3 = ARRAY1[_trapType];
+	_resistanceIndex = RESISTANCE_INDEXES[_trapType];
 
-	int val2;
 	if (g_globals->_treasure._container < WOODEN_BOX)
-		val2 = 0;
+		_condition = 0;
 	else if (g_globals->_treasure._container < SILVER_BOX)
-		val2 = ARRAY2[_trapType];
+		_condition = CONDITIONS1[_trapType];
 	else if (g_globals->_treasure._container < BLACK_BOX)
-		val2 = ARRAY3[_trapType];
+		_condition = CONDITIONS2[_trapType];
 	else
-		val2 = ARRAY4[_trapType];
+		_condition = CONDITIONS3[_trapType];
 
 	int idx = _trapType;
 	if (idx >= 7)
 		idx -= 5;
-	else if (val2 == 16)
+	else if (_condition == POISONED)
 		idx = 0;
-	else if (val2 == 32)
+	else if (_condition == PARALYZED)
 		idx = 1;
 	else
 		idx = -1;
 
 	int val4 = 0;
-	_value2 = 0;
+	_reduced = 0;
 	if (idx >= 0) {
 		int spellCount = g_globals->_activeSpells._arr[DAMAGE_TYPE[idx]];
 		if (spellCount > 0 && getRandomNumber(100) < spellCount) {
-			_value2 = val4 = 1;
+			_reduced = val4 = 1;
 			maxVal = 1;
 		}
 	}
 
-	for (uint i = 0; i < g_globals->_party.size(); ++i, _value2 = val4) {
-		_value1 = maxVal;
+	for (uint i = 0; i < g_globals->_party.size(); ++i, _reduced = val4) {
+		_hp = maxVal;
 		damageChar(i);
 	}
 }
 
 void TrapData::damageChar(uint partyIndex) {
+	Character &c = g_globals->_party[partyIndex];
+	if (&c != g_globals->_currCharacter)
+		_hp >>= 1;
 
+	if (_resistanceIndex != -1 &&
+			c._resistances._arr[_resistanceIndex] != 0 &&
+			getRandomNumber(100) < c._resistances._arr[_resistanceIndex]) {
+		_hp >>= 1;
+		++_reduced;
+	}
+
+	int luckLevel1 = c._luck + c._level;
+	int luckLevel2 = getRandomNumber(luckLevel1 + 20);
+
+	if (getRandomNumber(luckLevel2) < luckLevel1) {
+		_hp >>= 1;
+		++_reduced;
+	}
+
+	if (c._condition & BAD_CONDITION) {
+		c._hpBase = 0;
+
+	} else if (c._condition & UNCONSCIOUS) {
+		c._condition = BAD_CONDITION | DEAD;
+		c._hpBase = 0;
+
+	} else {
+		c._hpBase = MAX((int)c._hpBase - _hp, 0);
+
+		if (c._hpBase == 0) {
+			c._condition |= UNCONSCIOUS;
+
+		} else if (!_reduced && _condition &&
+				getRandomNumber(luckLevel1 + 20) >= luckLevel1) {
+			if (_condition >= UNCONSCIOUS)
+				c._hpBase = 0;
+
+			if (!(c._condition & BAD_CONDITION))
+				c._condition = _condition;
+		}
+	}
 }
 
 } // namespace MM1

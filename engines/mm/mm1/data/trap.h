@@ -36,16 +36,17 @@ private:
 	void damageChar(uint partyIndex);
 
 protected:
-	static byte ARRAY1[11];
-	static byte ARRAY2[11];
-	static byte ARRAY3[11];
-	static byte ARRAY4[11];
+	static int8 RESISTANCE_INDEXES[11];
+	static byte CONDITIONS1[11];
+	static byte CONDITIONS2[11];
+	static byte CONDITIONS3[11];
 	static byte DAMAGE_TYPE[7];
 
 	int _trapType = 0;
-	int _value1 = 0;
-	int _value2 = 0;
-	int _value3 = 0;
+	int _hp = 0;
+	int _reduced = 0;
+	int _resistanceIndex = 0;
+	byte _condition = 0;
 
 	virtual void trap();
 };
