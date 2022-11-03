@@ -28,6 +28,11 @@ struct DreamWebGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS1
+#define GAMEOPTION_BRIGHTPALETTE     GUIO_GAMEOPTIONS2
+#define GAMEOPTION_TTS_THINGS        GUIO_GAMEOPTIONS3
+#define GAMEOPTION_TTS_SPEECH        GUIO_GAMEOPTIONS4
+
 } // End of namespace DreamWeb
 
 #endif // DREAMWEB_DETECTION_H
