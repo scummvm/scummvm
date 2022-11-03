@@ -72,6 +72,11 @@ struct Party : public Common::Array<Character> {
 	bool hasItem(byte itemId) const;
 
 	/**
+	 * Returns true if the party is dead or out of action
+	 */
+	bool isPartyDead() const;
+
+	/**
 	 * Checks whether the party is dead or out of action,
 	 * and if so, switches to the death screen
 	 */

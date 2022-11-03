@@ -102,17 +102,26 @@ bool Party::hasItem(byte itemId) const {
 	return false;
 }
 
-bool Party::checkPartyDead() const {
+bool Party::isPartyDead() const {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		if (!(c._condition & (ASLEEP | STONE | DEAD | BAD_CONDITION)))
+		if (!(c._condition & (ASLEEP | PARALYZED | UNCONSCIOUS | BAD_CONDITION)))
 			return false;
 	}
 
-	// At this point, there's no good characters.
-	// So redirect to the death screen
-	g_events->replaceView("Dead");
 	return true;
+}
+
+bool Party::checkPartyDead() const {
+	if (isPartyDead()) {
+		// At this point, there's no good characters.
+		// So redirect to the death screen
+		g_events->clearViews();
+		g_events->addView("Dead");
+		return true;
+	} else {
+		return false;
+	}
 }
 
 } // namespace MM1
