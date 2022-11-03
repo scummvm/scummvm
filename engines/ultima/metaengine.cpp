@@ -37,8 +37,138 @@
 
 #include "ultima/metaengine.h"
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FRAME_SKIPPING,
+		{
+			_s("Enable frame skipping"),
+			_s("Allow the game to skip animation frames when running too slow."),
+			"frameSkip",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FRAME_LIMITING,
+		{
+			_s("Enable frame limiting"),
+			_s("Limits the speed of the game to prevent running too fast."),
+			"frameLimit",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_CHEATS,
+		{
+			_s("Enable cheats"),
+			_s("Allow cheats by commands and a menu when player is clicked."),
+			"cheat",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_HIGH_RESOLUTION,
+		{
+			_s("Enable high resolution"),
+			_s("Enable a higher resolution for the game"),
+			"usehighres",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FOOTSTEP_SOUNDS,
+		{
+			_s("Play foot step sounds"),
+			_s("Plays sound when the player moves."),
+			"footsteps",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_JUMP_TO_MOUSE,
+		{
+			_s("Enable jump to mouse position"),
+			_s("Jumping while not moving targets the mouse cursor rather than direction only."),
+			"targetedjump",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FONT_REPLACEMENT,
+		{
+			_s("Enable font replacement"),
+			_s("Replaces game fonts with rendered fonts"),
+			"font_override",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FONT_ANTIALIASING,
+		{
+			_s("Enable font anti-aliasing"),
+			_s("When font anti-aliasing is enabled, the text is smoother."),
+			"font_antialiasing",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_CAMERA_WITH_SILENCER,
+		{
+			// I18N: Silencer is the player-character in Crusader games, known as the Avatar in Ultima series.
+			_s("Camera moves with Silencer"),
+			_s("Camera tracks the player movement rather than snapping to defined positions."),
+			"camera_on_player",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ALWAYS_CHRISTMAS,
+		{
+			_s("Always enable Christmas easter-egg"),
+			_s("Enable the Christmas music at any time of year."),
+			"always_christmas",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 const char *UltimaMetaEngine::getName() const {
 	return "ultima";
+}
+
+const ADExtraGuiOptionsMap *UltimaMetaEngine::getAdvancedExtraGuiOptions() const {
+	return optionsList;
 }
 
 Common::Error UltimaMetaEngine::createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const {
