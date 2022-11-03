@@ -23,8 +23,6 @@
 
 #include "engines/advancedDetector.h"
 
-#include "common/translation.h"
-
 #include "cine/detection.h"
 #include "cine/cine.h"
 
@@ -44,36 +42,9 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_TRANSPARENT_DIALOG_BOXES,
-		{
-			_s("Use transparent dialog boxes in 16 color scenes"),
-			_s("Use transparent dialog boxes in 16 color scenes even if the original game version did not support them"),
-			"transparentdialogboxes",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class CineMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames, optionsList) {
+	CineMetaEngineDetection() : AdvancedMetaEngineDetection(Cine::gameDescriptions, sizeof(Cine::CINEGameDescription), cineGames) {
 		_guiOptions = GUIO3(GUIO_NOSPEECH, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_TRANSPARENT_DIALOG_BOXES);
 	}
 

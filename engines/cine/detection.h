@@ -45,6 +45,9 @@ struct CINEGameDescription {
 	uint32 features;
 };
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD   GUIO_GAMEOPTIONS1
+#define GAMEOPTION_TRANSPARENT_DIALOG_BOXES   GUIO_GAMEOPTIONS2
+
 } // End of namespace Cine
 
 #endif // CINE_DETECTION_H
