@@ -52,7 +52,8 @@ void GameMessages::draw() {
 }
 
 bool GameMessages::msgInfo(const InfoMessage &msg) {
-	if (msg._ynCallback || msg._keyCallback) {
+	if (msg._ynCallback || msg._keyCallback ||
+			g_globals->_party.isPartyDead()) {
 		// Do a first draw to show 3d view at new position
 		g_events->redraw();
 		g_events->drawElements();
@@ -81,7 +82,13 @@ bool GameMessages::msgInfo(const InfoMessage &msg) {
 }
 
 bool GameMessages::msgKeypress(const KeypressMessage &msg) {
-	if (g_events->focusedView() == this && !isDelayActive()) {
+	if (g_globals->_party.isPartyDead()) {
+		// Party is dead, so now that players have read whatever
+		// message was displayed, switch to the Dead screen
+		g_events->clearViews();
+		addView("Dead");
+
+	} else if (g_events->focusedView() == this && !isDelayActive()) {
 		if (_keyCallback) {
 			_keyCallback(msg);
 		} else if (msg.keycode == Common::KEYCODE_n) {
