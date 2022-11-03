@@ -132,6 +132,6 @@ bool AGSOptionsWidget::save() {
 
 } // namespace AGS3
 
-GUI::OptionsContainerWidget *AGSMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *AGSMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new AGS3::AGSOptionsWidget(boss, name, target);
 }

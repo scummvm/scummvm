@@ -176,15 +176,9 @@ EditGameDialog::EditGameDialog(const Common::String &domain)
 	// 2) The engine's game settings (shown only if the engine implements one or there are custom engine options)
 	//
 
-	if (metaEnginePlugin) {
-		const MetaEngineDetection &metaEngineDetection = metaEnginePlugin->get<MetaEngineDetection>();
-		metaEngineDetection.registerDefaultSettings(_domain);
-		if (enginePlugin) {
-			enginePlugin->get<MetaEngine>().registerDefaultSettings(_domain);
-			_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidgetDynamic(tab, "GameOptions_Game.Container", _domain);
-		}
-		if (!_engineOptions)
-			_engineOptions = metaEngineDetection.buildEngineOptionsWidgetStatic(tab, "GameOptions_Game.Container", _domain);
+	if (enginePlugin) {
+		enginePlugin->get<MetaEngine>().registerDefaultSettings(_domain);
+		_engineOptions = enginePlugin->get<MetaEngine>().buildEngineOptionsWidget(tab, "GameOptions_Game.Container", _domain);
 
 		if (_engineOptions) {
 			_engineOptions->setParentDialog(this);

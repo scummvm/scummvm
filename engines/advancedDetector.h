@@ -284,11 +284,6 @@ protected:
 	const PlainGameDescriptor *_gameIds;
 
 	/**
-	 * A map containing all the extra game GUI options the engine supports.
-	 */
-	const ADExtraGuiOptionsMap * const _extraGuiOptions;
-
-	/**
 	 * The number of bytes to compute the MD5 checksum for.
 	 *
 	 * The Advanced Detector is primarily based on computing and matching
@@ -343,7 +338,7 @@ public:
 	/**
 	 * Initialize game detection using AdvancedMetaEngineDetection.
 	 */
-	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions = 0);
+	AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds);
 
 	/**
 	 * Return a list of targets supported by the engine.
@@ -369,22 +364,6 @@ public:
 	 * and then the subclass implemented createInstance is called from within.
 	 */
 	Common::Error createInstance(OSystem *syst, Engine **engine);
-
-	/**
-	 * Return a list of extra GUI options for the specified target.
-	 *
-	 * If no target is specified, all of the available custom GUI options are
-	 * returned for the plugin (used to set default values).
-	 *
-	 * Currently, this only supports options with checkboxes.
-	 *
-	 * The default implementation returns an empty list.
-	 *
-	 * @param target    Name of a config manager target.
-	 *
-	 * @return A list of extra GUI options for an engine plugin and target.
-	 */
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override final;
 
 	static Common::StringArray getPathsFromEntry(const ADGameDescription *g);
 

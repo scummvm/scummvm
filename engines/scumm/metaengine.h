@@ -37,7 +37,7 @@ class ScummMetaEngine : public MetaEngine {
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 
 	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
-	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 #endif // SCUMM_METAENGINE_H

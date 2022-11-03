@@ -186,12 +186,6 @@ static Common::Error runGame(const Plugin *plugin, const Plugin *enginePlugin, O
 
 	// Create the game's MetaEngineDetection.
 	const MetaEngineDetection &metaEngineDetection = plugin->get<MetaEngineDetection>();
-	if (err.getCode() == Common::kNoError) {
-		// Set default values for all of the custom engine options
-		// Apparently some engines query them in their constructor, thus we
-		// need to set this up before instance creation.
-		metaEngineDetection.registerDefaultSettings(target);
-	}
 
 	// before we instantiate the engine, we register debug channels for it
 	DebugMan.addAllDebugChannels(metaEngineDetection.getDebugChannels());
