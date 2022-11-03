@@ -39,114 +39,12 @@ static const DebugChannelDef debugFlagList[] = {
 	DEBUG_CHANNEL_END
 };
 
-
-#define GAMEOPTION_ORIGINAL_SAVES	GUIO_GAMEOPTIONS1
-#define GAMEOPTION_FADE_STYLE		GUIO_GAMEOPTIONS2
-#define GAMEOPTION_HELP_STYLE		GUIO_GAMEOPTIONS3
-#define GAMEOPTION_PORTRAITS_ON		GUIO_GAMEOPTIONS4
-#define GAMEOPTION_WINDOW_STYLE		GUIO_GAMEOPTIONS5
-#define GAMEOPTION_TRANSPARENT_WINDOWS	GUIO_GAMEOPTIONS6
-
-#ifdef USE_TTS
-#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS7
-#endif
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVES,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_FADE_STYLE,
-		{
-			_s("Pixellated scene transitions"),
-			_s("When changing scenes, a randomized pixel transition is done"),
-			"fade_style",
-			true,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_HELP_STYLE,
-		{
-			_s("Don't show hotspots when moving mouse"),
-			_s("Only show hotspot names after you actually click on a hotspot or action button"),
-			"help_style",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_PORTRAITS_ON,
-		{
-			_s("Show character portraits"),
-			_s("Show portraits for the characters when conversing"),
-			"portraits_on",
-			true,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_WINDOW_STYLE,
-		{
-			_s("Slide dialogs into view"),
-			_s("Slide UI dialogs into view, rather than simply showing them immediately"),
-			"window_style",
-			true,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_TRANSPARENT_WINDOWS,
-		{
-			_s("Transparent windows"),
-			_s("Show windows with a partially transparent background"),
-			"transparent_windows",
-			true,
-			0,
-			0
-		}
-	},
-
-#ifdef USE_TTS
-	{
-		GAMEOPTION_TTS_NARRATOR,
-		{
-			_s("TTS Narrator"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_narrator",
-			false,
-			0,
-			0
-		}
-	},
-#endif
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-
 #include "sherlock/detection_tables.h"
 
 class SherlockMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
 	SherlockMetaEngineDetection() : AdvancedMetaEngineDetection(Sherlock::gameDescriptions, sizeof(Sherlock::SherlockGameDescription),
-		sherlockGames, optionsList) {}
+		sherlockGames) {}
 
 	const char *getName() const override {
 		return "sherlock";
