@@ -26,13 +26,56 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 namespace Stark {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ASSETS_MOD,
+		{
+			_s("Load modded assets"),
+			_s("Enable loading of external replacement assets."),
+			"enable_assets_mod",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LINEAR_FILTERING,
+		{
+			_s("Enable linear filtering of the backgrounds images"),
+			_s("When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details."),
+			"use_linear_filtering",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FONT_ANTIALIASING,
+		{
+			_s("Enable font anti-aliasing"),
+			_s("When font anti-aliasing is enabled, the text is smoother."),
+			"enable_font_antialiasing",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class StarkMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "stark";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override {
