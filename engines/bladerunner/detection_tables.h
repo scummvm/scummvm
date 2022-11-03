@@ -24,13 +24,7 @@
 
 #include "common/translation.h"
 #include "engines/advancedDetector.h"
-
-#define GAMEOPTION_SITCOM                     GUIO_GAMEOPTIONS1
-#define GAMEOPTION_SHORTY                     GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FRAMELIMITER_NODELAYMILLIS GUIO_GAMEOPTIONS3
-#define GAMEOPTION_FRAMELIMITER_FPS           GUIO_GAMEOPTIONS4
-#define GAMEOPTION_DISABLE_STAMINA_DRAIN      GUIO_GAMEOPTIONS5
-#define GAMEOPTION_SHOW_SUBS_IN_CRAWL         GUIO_GAMEOPTIONS6
+#include "bladerunner/detection.h"
 
 namespace BladeRunner {
 

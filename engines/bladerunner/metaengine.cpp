@@ -21,6 +21,7 @@
 
 
 #include "bladerunner/bladerunner.h"
+#include "bladerunner/detection.h"
 #include "bladerunner/savefile.h"
 
 #include "backends/keymapper/action.h"
@@ -35,9 +36,87 @@
 
 #include "engines/advancedDetector.h"
 
+namespace BladeRunner {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_SITCOM,
+		{
+			_s("Sitcom mode"),
+			_s("Game will add laughter after actor's line or narration"),
+			"sitcom",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SHORTY,
+		{
+			_s("Shorty mode"),
+			_s("Game will shrink the actors and make their voices high pitched"),
+			"shorty",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FRAMELIMITER_NODELAYMILLIS,
+		{
+			_s("Frame limiter high performance mode"),
+			_s("This mode may result in high CPU usage! It avoids use of delayMillis() function."),
+			"nodelaymillisfl",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_FRAMELIMITER_FPS,
+		{
+			_s("Max frames per second limit"),
+			_s("This mode targets a maximum of 120 fps. When disabled, the game targets 60 fps"),
+			"frames_per_secondfl",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DISABLE_STAMINA_DRAIN,
+		{
+			_s("Disable McCoy's quick stamina drain"),
+			_s("When running, McCoy won't start slowing down as soon as the player stops clicking the mouse"),
+			"disable_stamina_drain",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SHOW_SUBS_IN_CRAWL,
+		{
+			_s("Show subtitles during text crawl"),
+			_s("During the intro cutscene, show subtitles during the text crawl"),
+			"use_crawl_subs",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace BladeRunner
+
 class BladeRunnerMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override;
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return BladeRunner::optionsList;
+	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
 	bool hasFeature(MetaEngineFeature f) const override;
