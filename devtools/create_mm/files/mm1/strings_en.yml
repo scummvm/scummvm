@@ -82,6 +82,13 @@
 		reroll: "'ENT' TO RE-ROLL"
 		start_over: "'ESC' START OVER"
 		name: "NAME:"
+	dead:
+		1: "THE SHADOW OF DEATH"
+		2: "HAS FALLEN UPON YOUR PARTY!"
+		3: "FORTUNATELY, YOU MAY RENEW"
+		4: "YOUR QUEST FROM THE LAST"
+		5: "INN IN WHICH YOU STAYED"
+		6: "BY PRESSING 'ENTER'"	
 	inn:
 		title: "(%c) INN OF "
 		to_view: "TO VIEW"

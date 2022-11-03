@@ -19,23 +19,53 @@
  *
  */
 
-#include "common/textconsole.h"
+#include "mm/mm1/views/dead.h"
+#include "mm/mm1/globals.h"
 #include "mm/mm1/sound.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-void Sound::sound(SoundId soundNum) {
-	warning("TODO: sound %d", (int)soundNum);
+bool Dead::msgFocus(const FocusMessage &msg) {
+	TextView::msgFocus(msg);
+	Sound::sound2(SOUND_4);
+
+	g_globals->_party.clear();
+	g_globals->_roster.load();
+	g_globals->_activeSpells.clear();
+
+	return true;
 }
 
-void Sound::sound2(SoundId soundNum) {
-	warning("TODO: sound2 %d", (int)soundNum);
+void Dead::draw() {
+	clearSurface();
+	writeLine(4);
+	writeString(6, 10, STRING["dialogs.dead.1"]);
+	writeString(7, 8, STRING["dialogs.dead.2"]);
+	writeString(7, 10, STRING["dialogs.dead.3"]);
+	writeString(8, 12, STRING["dialogs.dead.4"]);
+	writeString(8, 14, STRING["dialogs.dead.5"]);
+	writeString(10, 16, STRING["dialogs.dead.6"]);
+	writeLine(18);
 }
 
-void Sound::stopSound() {
-	warning("TODO: stopSound");
+void Dead::writeLine(int y) {
+	_textPos = Common::Point(0, y);
+
+	for (int i = 0; i < 40; ++i)
+		writeChar(i == 0 || i == 39 ? '+' : '-');
 }
 
+bool Dead::msgKeypress(const KeypressMessage &msg) {
+	if (msg.keycode == Common::KEYCODE_RETURN) {
+		replaceView("MainMenu");
+		return true;
+	}
+
+	return false;
+}
+
+} // namespace Views
 } // namespace MM1
 } // namespace MM

@@ -90,6 +90,7 @@ MODULE_OBJS := \
 	mm1/views/characters.o \
 	mm1/views/combat.o \
 	mm1/views/create_characters.o \
+	mm1/views/dead.o \
 	mm1/views/encounter.o \
 	mm1/views/game.o \
 	mm1/views/game_commands.o \

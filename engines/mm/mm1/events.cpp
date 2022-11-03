@@ -103,9 +103,12 @@ void Events::processEvent(Common::Event &ev) {
 	}
 }
 
-void Events::replaceView(UIElement *ui) {
+void Events::replaceView(UIElement *ui, bool replaceAllViews) {
 	assert(ui);
-	if (!_views.empty()) {
+	if (replaceAllViews) {
+		clearViews();
+
+	} else if (!_views.empty()) {
 		focusedView()->msgUnfocus(UnfocusMessage());
 		_views.pop();
 	}
@@ -115,7 +118,7 @@ void Events::replaceView(UIElement *ui) {
 	ui->msgFocus(FocusMessage());
 }
 
-void Events::replaceView(const Common::String &name) {
+void Events::replaceView(const Common::String &name, bool replaceAllViews) {
 	replaceView(findView(name));
 }
 
@@ -273,12 +276,12 @@ UIElement *UIElement::findView(const Common::String &name) {
 	return nullptr;
 }
 
-void UIElement::replaceView(UIElement *ui) {
-	g_events->replaceView(ui);
+void UIElement::replaceView(UIElement *ui, bool replaceAllViews) {
+	g_events->replaceView(ui, replaceAllViews);
 }
 
-void UIElement::replaceView(const Common::String &name) {
-	g_events->replaceView(name);
+void UIElement::replaceView(const Common::String &name, bool replaceAllViews) {
+	g_events->replaceView(name, replaceAllViews);
 }
 
 void UIElement::addView(UIElement *ui) {
