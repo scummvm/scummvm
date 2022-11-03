@@ -19,12 +19,29 @@
  *
  */
 
+#include "common/translation.h"
+
 #include "engines/advancedDetector.h"
 
 #include "sword25/sword25.h"
 #include "sword25/kernel/persistenceservice.h"
 
 namespace Sword25 {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ENGLISH_SPEECH,
+		{
+			_s("Use English speech"),
+			_s("Use English speech instead of German for every language other than German"),
+			"english_speech",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 Sword25Engine::getGameFlags() const { return _gameDescription->flags; }
 
@@ -34,6 +51,10 @@ class Sword25MetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sword25";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Sword25::optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
