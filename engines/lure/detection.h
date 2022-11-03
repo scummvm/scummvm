@@ -39,6 +39,8 @@ struct LureGameDescription {
 	uint32 features;
 };
 
+#define GAMEOPTION_TTS_NARRATOR 	GUIO_GAMEOPTIONS1
+
 } // End of namespace Lure
 
 #endif // LURE_DETECTION_H
