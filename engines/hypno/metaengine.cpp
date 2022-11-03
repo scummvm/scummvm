@@ -21,12 +21,78 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
 #include "hypno/hypno.h"
+#include "hypno/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_CHEATS,
+		{
+			_s("Enable original cheats"),
+			_s("Allow cheats using the C key."),
+			"cheats",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_INFINITE_HEALTH,
+		{
+			_s("Enable infinite health cheat"),
+			_s("Player health will never decrease (except for game over scenes)."),
+			"infiniteHealth",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_INFINITE_AMMO,
+		{
+			_s("Enable infinite ammo cheat"),
+			_s("Player ammo will never decrease."),
+			"infiniteAmmo",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_UNLOCK_ALL_LEVELS,
+		{
+			_s("Unlock all levels"),
+			_s("All levels will be available to play."),
+			"unlockAllLevels",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_RESTORED_CONTENT,
+		{
+			_s("Enable restored content"),
+			_s("Add additional content that is not enabled the original implementation."),
+			"restored",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class HypnoMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hypno";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
