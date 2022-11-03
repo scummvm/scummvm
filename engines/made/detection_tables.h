@@ -25,8 +25,6 @@
 #include "engines/advancedDetector.h"
 #include "common/translation.h"
 
-#define GAMEOPTION_INTRO_MUSIC_DIGITAL GUIO_GAMEOPTIONS1
-
 namespace Made {
 
 static const MadeGameDescription gameDescriptions[] = {
