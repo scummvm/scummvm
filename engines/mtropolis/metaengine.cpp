@@ -45,6 +45,76 @@ struct Surface;
 
 namespace MTropolis {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_WIDESCREEN_MOD,
+		{
+			_s("16:9 widescreen mod"),
+			_s("Removes letterboxing and moves some display elements, improving coverage on widescreen displays"),
+			"mtropolis_mod_obsidian_widescreen",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DYNAMIC_MIDI,
+		{
+			_s("Improved music mixing"),
+			_s("Enables dynamic MIDI mixer, improving quality, but behaving less like mTropolis Player."),
+			"mtropolis_mod_dynamic_midi",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_AUTO_SAVE_AT_CHECKPOINTS,
+		{
+			_s("Autosave at progress points"),
+			_s("Automatically saves the game after completing puzzles and chapters."),
+			"mtropolis_mod_auto_save_at_checkpoints",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ENABLE_SHORT_TRANSITIONS,
+		{
+			_s("Enable short transitions"),
+			_s("Enables transitions that are set to maximum rate instead of skipping them."),
+			"mtropolis_mod_minimum_transition_duration",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_SOUND_EFFECT_SUBTITLES,
+		{
+			_s("Enable subtitles for important sound effects"),
+			_s("Enables subtitles for important sound effects.  This may reduce the difficulty of sound recognition puzzles and minigames."),
+			"mtropolis_mod_sound_gameplay_subtitles",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_LAUNCH_DEBUG,
+		{
+			_s("Start with debugger"),
+			_s("Starts with the debugger dashboard active."),
+			"mtropolis_debug_at_start",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 uint32 MTropolisEngine::getGameID() const {
 	return _gameDescription->gameID;
 }
@@ -59,6 +129,10 @@ class MTropolisMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "mtropolis";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return MTropolis::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
