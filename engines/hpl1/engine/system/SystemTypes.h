@@ -28,9 +28,6 @@
 #ifndef HPL_SYSTEM_TYPES_H
 #define HPL_SYSTEM_TYPES_H
 
-#include <stdio.h>
-#include <string>
-
 #include "hpl1/engine/system/Container.h"
 #include "common/list.h"
 #include "common/str.h"

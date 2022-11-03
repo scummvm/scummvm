@@ -25,8 +25,6 @@
  * This file is part of HPL1 Engine.
  */
 
-#include <assert.h>
-
 #include "hpl1/engine/graphics/font_data.h"
 #include "hpl1/engine/impl/LowLevelGraphicsSDL.h"
 

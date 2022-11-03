@@ -28,8 +28,7 @@
 #ifndef HPL_MATRIX_H
 #define HPL_MATRIX_H
 
-#include "Vector3.h"
-#include <math.h>
+#include "hpl1/engine/math/Vector3.h"
 
 namespace hpl {
 

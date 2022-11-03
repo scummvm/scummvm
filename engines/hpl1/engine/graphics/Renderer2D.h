@@ -28,8 +28,6 @@
 #ifndef HPL_RENDERER2D_H
 #define HPL_RENDERER2D_H
 
-#include <math.h>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/graphics/Mesh2d.h"

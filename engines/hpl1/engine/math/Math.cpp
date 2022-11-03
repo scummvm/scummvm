@@ -25,14 +25,8 @@
  * This file is part of HPL1 Engine.
  */
 
-#include <stdlib.h>
-
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/low_level_system.h"
-#include <map>
-#include <math.h>
-#include <stdlib.h>
-#include <limits>
 #include "hpl1/hpl1.h"
 
 namespace hpl {

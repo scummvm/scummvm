@@ -1,7 +1,6 @@
 #ifndef SCRIPTHELPER_H
 #define SCRIPTHELPER_H
 
-#include <sstream>
 #include <string>
 
 #ifndef ANGELSCRIPT_H

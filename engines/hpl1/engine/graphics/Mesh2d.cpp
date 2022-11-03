@@ -29,7 +29,6 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/math/MathTypes.h"
 #include "hpl1/engine/system/MemoryManager.h"
-#include <math.h>
 
 namespace hpl {
 

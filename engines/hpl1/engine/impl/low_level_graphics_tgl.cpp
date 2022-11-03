@@ -19,8 +19,6 @@
  *
  */
 
-#include <assert.h>
-
 #include "hpl1/engine/impl/low_level_graphics_tgl.h"
 
 #include "hpl1/engine/graphics/bitmap2D.h"

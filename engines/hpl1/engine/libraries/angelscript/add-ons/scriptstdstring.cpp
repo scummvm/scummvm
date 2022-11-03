@@ -1,9 +1,5 @@
 #include "hpl1/engine/libraries/angelscript/add-ons/scriptstdstring.h"
-#include <assert.h> // assert()
 #include <sstream>  // std::stringstream
-#include <string.h> // strstr()
-#include <stdio.h>	// sprintf()
-#include <stdlib.h> // strtod()
 #ifndef __psp2__
 	#include <locale.h> // setlocale()
 #endif

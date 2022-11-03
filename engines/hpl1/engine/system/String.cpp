@@ -26,7 +26,6 @@
  */
 
 #include "hpl1/engine/system/String.h"
-#include <stdlib.h>
 
 #include "hpl1/engine/system/low_level_system.h"
 
