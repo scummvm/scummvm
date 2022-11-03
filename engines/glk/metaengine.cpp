@@ -65,6 +65,7 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/surface.h"
 #include "common/config-manager.h"
 #include "common/file.h"
@@ -81,6 +82,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -231,6 +234,31 @@ Common::Error GlkMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	}
 
 	return *engine ? Common::kNoError : Common::kUserCanceled;
+}
+
+const ExtraGuiOptions GlkMetaEngine::getExtraGuiOptions(const Common::String &) const {
+	ExtraGuiOptions  options;
+#if defined(USE_TTS)
+	static const ExtraGuiOption ttsSpeakOptions = {
+		_s("Enable Text to Speech"),
+		_s("Use TTS to read the text"),
+		"speak",
+		false,
+	        0,
+		0
+	};
+	static const ExtraGuiOption ttsSpeakInputOptions = {
+		_s("Also read input text"),
+		_s("Use TTS to read the input text"),
+		"speak_input",
+		false,
+		0,
+		0
+	};
+	options.push_back(ttsSpeakOptions);
+	options.push_back(ttsSpeakInputOptions);
+#endif
+	return options;
 }
 
 SaveStateList GlkMetaEngine::listSaves(const char *target) const {

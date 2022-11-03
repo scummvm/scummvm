@@ -67,11 +67,6 @@ public:
 	 * Calls each sub-engine in turn to ensure no game Id accidentally shares the same Id
 	 */
 	void detectClashes() const;
-
-	/**
-	 * Return a list of extra GUI options for the specified target.
-	 */
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 };
 
 namespace Glk {

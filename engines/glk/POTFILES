@@ -1,6 +1,6 @@
-engines/glk/detection.cpp
 engines/glk/glk_api.cpp
 engines/glk/quetzal.cpp
+engines/glk/metaengine.cpp
 engines/glk/streams.cpp
 engines/glk/adrift/os_glk.cpp
 engines/glk/advsys/advsys.cpp
