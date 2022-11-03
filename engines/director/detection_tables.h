@@ -7866,8 +7866,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("dancinggals", "", "DANCING GALS", "f5277c53bacd27936158dd3867e587e2", 392229, Common::JA_JPN, 311),
 	WINGAME1t_l("dancinggals", "", "DANCING.EXE", "3d061123bdcb50637ee792fd5322ad8e", 375294, Common::JA_JPN, 300),
 
-	MACGAME1_l("asshall", "", "ASSHALL", "7f443f2e63fd497a9ad85b10dc880a91", 843334, Common::JA_JPN, 313),
-
 	// Found on NeuroDancer, #3 is D4
 	WINGAME1t("digerotica", "#2", "CATALOG.EXE", "3efa3f7d66cc81dd7170354305c24726", 2576067, 300),
 
@@ -7915,31 +7913,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("vpeepshow", "Demo", "Virtual PeepShow", "f5277c53bacd27936158dd3867e587e2", 425489, 311),
 
 // Macromedia Director v4
-	MACGAME2_l("bigcock1", "", "BIG COCK", "3932917741b888f4a112e3d76f36e225", 484075,
-							   "MOVIE/AMAZO.MOV", "393fa4ff918904ff62c5b386089acf33", 21351, Common::JA_JPN, 400),
-	WINGAME2t_l("bigcock1", "", "BIGCOCK.EXE", "48ebcc298c2972e056a27710050fe13e", 749221,
-								"MOVIE/AMAZO.MOV", "c9e67d19b6e7f708d661597e6d439d83", 30303272, Common::JA_JPN, 404),
-
-	MACGAME2_l("bigcock2", "", "BIGCOCK2", "ca6acce404fea312d146cc9a94456375", 483030,
-							   "MOVIE/BLOGO.MOV", "d885f4dcd5d31ead2f546b1c98b9997a", 4012438, Common::JA_JPN, 404),
-	WINGAME2t_l("bigcock2", "", "BIGCOCK2.EXE", "46a12a665f6a058eb729b8260b16b725", 748641,
-								"MOVIE/BLOGO.MOV", "96274dd7f722a9f2cbd65ac83b18a2fe", 4012438, Common::JA_JPN, 404),
-
-	MACGAME2_l("bigcock3", "", "BIGCOCK3", "51ec8c731efe999de77c95db1a579f91", 483030,
-							   "MOVIE/BX.MOV", "d0666e9d05dfbf01b8d35ce437836f85", 1119557, Common::JA_JPN, 404),
-	WINGAME2t_l("bigcock3", "", "BIGCOCK3.EXE", "46a12a665f6a058eb729b8260b16b725", 748641,
-								"MOVIE/BX.MOV", "d8c9e19f1c50e38c834a4c498d24ba57", 1119557, Common::JA_JPN, 404),
-
-	MACGAME2_l("bigcock5", "", "BigCock5", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484095,
-							   "AS BigCock5", "4ea78c5136f20d865292934af5df5619", 235552, Common::JA_JPN, 404),
-	WINGAME2t_l("bigcock5", "", "BIGCOCK5.EXE", "b7e61b448b7e8b1c202126c053e5a00d", 741583,
-								"A/A0000.DXR", "4f7aadc40879e61ef0e0229c4284650e", 5292, Common::JA_JPN, 404),
-
-	MACGAME2_l("bigcock6", "", "BIGCOCK6", "0c7bbb4b24823e5ab871cb4c1d6f3710", 484095,
-							   "AS bigcock", "77e39fa41c7e5043afaef58277c54c5c", 104463, Common::JA_JPN, 404),
-	WINGAME2t_l("bigcock6", "", "BIGCOCK6.EXE", "b7e61b448b7e8b1c202126c053e5a00d", 741583,
-								"B/B1200.DXR", "bc440fbb7953feaf6900e71f4196e6ca", 1197082, Common::JA_JPN, 404),
-
 	MACGAME1("busty3", "", "Busty III Slide Viewer", "1682231de376e5465240f6e4a7952072", 289980, 400),
 	WINGAME1("busty3", "", "BUSTY3.EXE",			   "07c20a266c2fd9d35960a7ce413cfedf", 4293647, 400),
 
@@ -7956,9 +7929,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACGAME1("isswim98", "", "Inside Sports Swimsuit 98", "4577dd3eadc467a986ab172d90871b22", 304156, 404),
 	WINGAME1("isswim98", "", "ISSWIM98.EXE",			  "24de9da2e30d07ba98d2fd6259afd16c", 753801, 404),
-
-	MACGAME1_l("pinkmouse", "", "P_mouse", "bcd3c718db258701496b3c5bcb827ef2", 483159, Common::JA_JPN, 404),
-	WINGAME1t_l("pinkmouse", "", "PMOUSE.EXE", "63174044115d74712ca7454bfff98afd", 684149, Common::JA_JPN, 404),
 
 	WINGAME1t_l("historiapoca", "", "POCA.EXE", "ec6b23cf02a45199f6b5287fcff935fb", 13881713, Common::PT_BRA, 400),
 
@@ -8001,16 +7971,6 @@ static const DirectorGameDescription gameDescriptions[] = {
 								"pc/nurses.Dxr", "00ec56fe938980c739a661b3f723b3b1", 91178, 501),
 	WINGAME2t("nightnurses", "", "32bits.exe", "e043dc8ad875ea72fee9664922574d88", 1849567,
 								 "nurses.Dxr", "a9285ccae77711201d1f2b389a06dd07", 91178, 501),
-
-	MACGAME2_l("bigcock7", "", "BIGCOCK", "06ed90580400cd9e263525f84c8075fd", 705417,
-							   "AS BIGCOCK", "ab31f405fb7cdd5a8d90628740a0d409", 105528, Common::JA_JPN, 505),
-	WINGAME2t_l("bigcock7", "", "BC7_95.EXE", "89714fff29e2c8aae2a1ebe8a7ba2d7d", 1410912,
-								"BC7_31.EXE", "6a1ac15f34cc0fac822f6dddd789df3d", 932878, Common::JA_JPN, 501),
-
-	MACGAME2_l("bigcock8", "", "BIGCOCK", "06ed90580400cd9e263525f84c8075fd", 705417,
-							   "main.dxr", "f939a51f59d313a3d6eef2e5ac14331e", 3690656, Common::JA_JPN, 505),
-	WINGAME2t_l("bigcock8", "", "BIGCOCK.EXE", "89714fff29e2c8aae2a1ebe8a7ba2d7d", 1410912,
-								"MAIN.DXR", "7995e1c03fb763e1b4d766f142b88a8b", 3690656, Common::JA_JPN, 501),
 
 	WINGAME1t("sadowar", "v1.1", "RSP.EXE", "bc4b1010bb4f05d2d4789f6eb3e13b04", 1393989, 500),
 
