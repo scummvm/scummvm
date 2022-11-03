@@ -236,12 +236,10 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		drawLine(startingPointX, 81, startingPointX, 90, leftLineColor);
 		drawLine(startingPointY, 81, startingPointY, 90, rightLineColor);
 
-		int textXPos = 160;
-		int textYPos = 82;
 		int tmpRight = _string[5].right;
 		_string[5].right = _screenWidth - 1;
 
-		drawGUIText(bannerMsg, nullptr, textXPos, textYPos, normalTextColor, true);
+		drawGUIText(bannerMsg, nullptr, 160, 82, normalTextColor, true);
 		_string[5].right = tmpRight;
 	} else {
 		// Set up the GUI control, specifying all the related colors, the message and the position...
