@@ -37,8 +37,6 @@
 
 #include "hpl1/engine/system/MemoryManager.h"
 
-#include <string.h>
-
 namespace hpl {
 
 //////////////////////////////////////////////////////////////////////////
