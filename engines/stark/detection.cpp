@@ -376,51 +376,9 @@ static const ADGameDescription gameDescriptions[] = {
 	AD_TABLE_END_MARKER
 };
 
-#define GAMEOPTION_ASSETS_MOD        GUIO_GAMEOPTIONS1
-#define GAMEOPTION_LINEAR_FILTERING  GUIO_GAMEOPTIONS2
-#define GAMEOPTION_FONT_ANTIALIASING GUIO_GAMEOPTIONS3
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ASSETS_MOD,
-		{
-			_s("Load modded assets"),
-			_s("Enable loading of external replacement assets."),
-			"enable_assets_mod",
-			true,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_LINEAR_FILTERING,
-		{
-			_s("Enable linear filtering of the backgrounds images"),
-			_s("When linear filtering is enabled the background graphics are smoother in full screen mode, at the cost of some details."),
-			"use_linear_filtering",
-			true,
-			0,
-			0
-		}
-	},
-	{
-		GAMEOPTION_FONT_ANTIALIASING,
-		{
-			_s("Enable font anti-aliasing"),
-			_s("When font anti-aliasing is enabled, the text is smoother."),
-			"enable_font_antialiasing",
-			true,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class StarkMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames, optionsList) {
+	StarkMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), starkGames) {
 		_guiOptions = GUIO4(GUIO_NOMIDI, GAMEOPTION_ASSETS_MOD, GAMEOPTION_LINEAR_FILTERING, GAMEOPTION_FONT_ANTIALIASING);
 	}
 
