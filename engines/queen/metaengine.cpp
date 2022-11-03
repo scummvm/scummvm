@@ -23,15 +23,47 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "queen/queen.h"
 #include "queen/resource.h"
 #include "queen/detection.h"
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ALT_INTRO,
+		{
+			_s("Alternative intro"),
+			_s("Use an alternative game intro (CD version only)"),
+			"alt_intro",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_ALT_FONT,
+		{
+			_s("Improved font"),
+			_s("Use an easier to read custom font"),
+			"alt_font",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class QueenMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "queen";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
