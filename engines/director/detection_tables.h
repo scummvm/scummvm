@@ -4990,12 +4990,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Developed by TATI Mixedia, Gothenburg, Sweden (1999); published locally by IQ Media Nordic, Stockholm
 	WINDEMO1("backpackerjr", "Demo", "BPJDEMO.EXE", "1a7acbba10a7246ba58c1d53fc7203f5", 1418681, 501),
 
+	WINDEMO1t("backpackerjr", "Demo", "BPJDEMO.EXE", "8320e90992dffe88d21d39743ed7b89e", 1418643, 501),
+	WINDEMO1t("backpackerjr", "Demo", "BPJDEMO.EXE", "8320e90992dffe88d21d39743ed7b89e", 1418681, 501),
+
 	// Requires installation, installer is also Director
 	WINGAME1_l("backpacker2", "", "BP2NEW.EXE", "842014a812b454620f64b860fd7211f0", 940821, Common::NB_NOR, 501),
 	WINGAME1t_l("backpacker2", "", "BP2NEW.EXE", "8320e90992dffe88d21d39743ed7b89e", 1418983, Common::SE_SWE, 501),
 
-	WINDEMO1t("backpackjr", "", "BPJDEMO.EXE", "8320e90992dffe88d21d39743ed7b89e", 1418643, 501),
-	WINDEMO1t("backpackjr", "", "BPJDEMO.EXE", "8320e90992dffe88d21d39743ed7b89e", 1418681, 501),
 	// BackPacker Junior - Multilingual version
 	// Swedish, Norwegian, Danish, English
 	MACGAME1_l("backpackerjr", "v1.1", "BackPacker Junior", "6e7e31d05709e1d38d63f4df6a59eec0", 718125, Common::EN_ANY, 501),
