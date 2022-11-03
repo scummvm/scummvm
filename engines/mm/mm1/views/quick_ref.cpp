@@ -26,6 +26,16 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
+bool QuickRef::msgFocus(const FocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_PARTY_MENUS);
+	return TextView::msgFocus(msg);
+}
+
+bool QuickRef::msgUnfocus(const UnfocusMessage &msg) {
+	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
+	return TextView::msgUnfocus(msg);
+}
+
 void QuickRef::draw() {
 	clearSurface();
 	writeString(STRING["dialogs.quick_ref.title"]);
