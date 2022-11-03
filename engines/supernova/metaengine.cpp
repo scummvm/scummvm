@@ -24,15 +24,49 @@
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/thumbnail.h"
 #include "engines/advancedDetector.h"
 
 #include "supernova/supernova.h"
+#include "supernova/detection.h"
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_IMPROVED,
+		{
+			_s("Improved mode"),
+			_s("Removes some repetitive actions, adds possibility to change verbs by keyboard"),
+			"improved",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS,
+		{
+			_s("Enable Text to Speech"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class SupernovaMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "supernova";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
