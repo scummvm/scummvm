@@ -147,7 +147,7 @@ void Search::timeout() {
 		}
 
 		// Show the name of the container type in the game view
-		send("View", GameMessage(
+		send("View", HeaderMessage(
 			STRING[Common::String::format("dialogs.search.containers.%d",
 				g_globals->_treasure._container)]
 		));

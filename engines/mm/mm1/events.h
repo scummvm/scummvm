@@ -239,6 +239,7 @@ public:
 	MESSAGE(MouseUp);
 	MESSAGE(Action);
 	MESSAGE(Game);
+	MESSAGE(Header);
 	MESSAGE(Info);
 	MESSAGE(Value);
 	MESSAGE(DrawGraphic);
