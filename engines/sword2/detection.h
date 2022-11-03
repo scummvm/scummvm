@@ -39,6 +39,8 @@ struct Sword2GameDescription {
 	uint32 features;
 };
 
+#define GAMEOPTION_OBJECT_LABELS GUIO_GAMEOPTIONS1
+
 } // End of namespace Sword2
 
 #endif // SWORD2_DETECTION_H

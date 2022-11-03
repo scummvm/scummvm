@@ -21,8 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "common/translation.h"
-
 #include "engines/advancedDetector.h"
 #include "engines/obsolete.h"
 
@@ -43,28 +41,9 @@ static const char *const directoryGlobs[] = {
 	nullptr
 };
 
-namespace Sword2 {
-
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_OBJECT_LABELS,
-		{
-			_s("Show object labels"),
-			_s("Show labels for objects on mouse hover"),
-			"object_labels",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
-} // End of namespace Sword2
-
 class Sword2MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sizeof(Sword2::Sword2GameDescription), sword2Games, Sword2::optionsList) {
+	Sword2MetaEngineDetection() : AdvancedMetaEngineDetection(Sword2::gameDescriptions, sizeof(Sword2::Sword2GameDescription), sword2Games) {
 		_guiOptions = GUIO3(GUIO_NOMIDI, GUIO_NOASPECT, GAMEOPTION_OBJECT_LABELS);
 		_maxScanDepth = 2;
 		_directoryGlobs = directoryGlobs;

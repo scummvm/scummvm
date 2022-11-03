@@ -21,8 +21,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#define GAMEOPTION_OBJECT_LABELS GUIO_GAMEOPTIONS1
-
 namespace Sword2 {
 
 static const Sword2GameDescription gameDescriptions[] = {
