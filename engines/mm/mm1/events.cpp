@@ -154,24 +154,16 @@ void Events::clearViews() {
 }
 
 void Events::addKeypress(const Common::KeyCode kc) {
-	Common::Event e;
-	e.type = Common::EVENT_KEYDOWN;
-	e.kbd.keycode = kc;
-	e.kbd.ascii = kc <= 127 ? kc : 0;
-	g_system->getEventManager()->pushEvent(e);
+	Common::KeyState ks;
+	ks.keycode = kc;
+	if (kc >= Common::KEYCODE_SPACE && kc <= Common::KEYCODE_TILDE)
+		ks.ascii = kc;
 
-	e.type = Common::EVENT_KEYUP;
-	g_system->getEventManager()->pushEvent(e);
+	focusedView()->msgKeypress(KeypressMessage(ks));
 }
 
 void Events::addAction(KeybindingAction action) {
-	Common::Event e;
-	e.type = Common::EVENT_CUSTOM_BACKEND_ACTION_START;
-	e.customType = action;
-	g_system->getEventManager()->pushEvent(e);
-
-	e.type = Common::EVENT_CUSTOM_BACKEND_ACTION_END;
-	g_system->getEventManager()->pushEvent(e);
+	focusedView()->msgAction(ActionMessage(action));
 }
 
 /*------------------------------------------------------------------------*/
