@@ -33,10 +33,77 @@
 #include "agos/detection.h"
 #include "agos/obsolete.h"
 
+namespace AGOS {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_OPL3_MODE,
+		{
+			_s("AdLib OPL3 mode"),
+			_s("When AdLib is selected, OPL3 features will be used. Depending on the game, this will prevent cut-off notes, add extra notes or instruments and/or add stereo."),
+			"opl3_mode",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DOS_TEMPOS,
+		{
+			_s("Use DOS version music tempos"),
+			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
+			"dos_music_tempos",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_WINDOWS_TEMPOS,
+		{
+			_s("Use DOS version music tempos"),
+			_s("Selecting this option will play the music using the tempos used by the DOS version of the game. Otherwise, the faster tempos of the Windows version will be used."),
+			"dos_music_tempos",
+			false,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_PREFER_DIGITAL_SFX,
+		{
+			_s("Prefer digital sound effects"),
+			_s("Prefer digital sound effects instead of synthesized ones"),
+			"prefer_digitalsfx",
+			true,
+			0,
+			0
+		}
+	},
+	{
+		GAMEOPTION_DISABLE_FADE_EFFECTS,
+		{
+			_s("Disable fade-out effects"),
+			_s("Don't fade every screen to black when leaving a room."),
+			"disable_fade_effects",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace AGOS
+
 class AgosMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "agos";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return AGOS::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
