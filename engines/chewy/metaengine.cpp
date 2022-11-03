@@ -21,12 +21,28 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "base/plugins.h"
 #include "engines/advancedDetector.h"
 #include "chewy/chewy.h"
 #include "chewy/detection.h"
 
 namespace Chewy {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"original_menus",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 ChewyEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -42,6 +58,10 @@ class ChewyMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "chewy";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Chewy::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
