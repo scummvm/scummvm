@@ -81,82 +81,6 @@ static const PlainGameDescriptor agiGames[] = {
 
 #include "agi/detection_tables.h"
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_AMIGA_ALTERNATIVE_PALETTE,
-		{
-			_s("Use an alternative palette"),
-			_s("Use an alternative palette, common for all Amiga games. This was the old behavior"),
-			"altamigapalette",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_DISABLE_MOUSE,
-		{
-			_s("Mouse support"),
-			_s("Enables mouse support. Allows to use mouse for movement and in game menus."),
-			"mousesupport",
-			true,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_USE_HERCULES_FONT,
-		{
-			_s("Use Hercules hires font"),
-			_s("Uses Hercules hires font, when font file is available."),
-			"herculesfont",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_COMMAND_PROMPT_WINDOW,
-		{
-			_s("Pause when entering commands"),
-			_s("Shows a command prompt window and pauses the game (like in SCI) instead of a real-time prompt."),
-			"commandpromptwindow",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_APPLE2GS_ADD_SPEED_MENU,
-		{
-			_s("Add speed menu"),
-			_s("Add game speed menu (similar to PC version)"),
-			"apple2gs_speedmenu",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 using namespace Agi;
 
 class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
@@ -164,7 +88,7 @@ class AgiMetaEngineDetection : public AdvancedMetaEngineDetection {
 	mutable Common::String _extra;
 
 public:
-	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames, optionsList) {
+	AgiMetaEngineDetection() : AdvancedMetaEngineDetection(Agi::gameDescriptions, sizeof(Agi::AGIGameDescription), agiGames) {
 		_guiOptions = GUIO1(GUIO_NOSPEECH);
 		_maxScanDepth = 2;
 		_flags = kADFlagMatchFullPaths;
