@@ -221,14 +221,14 @@ public:
 
 	tString ToString() const {
 		char buf[512];
-		sprintf(buf, "%f : %f", x, y);
+		snprintf(buf, 512, "%f : %f", x, y);
 		tString str = buf;
 		return str;
 	}
 
 	tString ToFileString() const {
 		char buf[512];
-		sprintf(buf, "%g %g", x, y);
+		snprintf(buf, 512, "%g %g", x, y);
 		tString str = buf;
 		return str;
 	}

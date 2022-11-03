@@ -94,7 +94,7 @@ void LogUpdate(const char *fmt, ...) {
 	if (fmt == NULL)
 		return;
 	va_start(ap, fmt);
-	vsprintf(text, fmt, ap);
+	vsnprintf(text, 2048, fmt, ap);
 	va_end(ap);
 
 	tString sMess = "";

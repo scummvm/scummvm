@@ -171,7 +171,7 @@ void cScriptOutput::AddMessage(const asSMessageInfo *msg) {
 	else if (msg->type == asMSGTYPE_INFORMATION)
 		type = "INFO";
 
-	sprintf(sMess, "%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
+	snprintf(sMess, 1024, "%s (%d, %d) : %s : %s\n", msg->section, msg->row, msg->col, type.c_str(), msg->message);
 
 	msMessage += sMess;
 }

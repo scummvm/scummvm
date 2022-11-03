@@ -826,7 +826,7 @@ void iGameEnemy::ChangeState(int alId) {
 	tString sStateName2 = "NONE";
 	if(mlCurrentState >=0) sStateName2 = gvStateName[alId];
 
-	sprintf(sStr,"%s State %s -> %s",msName.c_str(),sStateName1.c_str(),sStateName2.c_str());
+	snprintf(sStr, 512, "%s State %s -> %s",msName.c_str(),sStateName1.c_str(),sStateName2.c_str());
 	//mpInit->mpEffectHandler->GetSubTitle()->Add(cString::To16Char(sStr),1.2f,false);
 	Log("%s\n",sStr);*/
 

@@ -364,12 +364,12 @@ dgInt32 dgWorld::GetHardwareMode(char *description) {
 	if (m_cpu == dgNoSimdPresent) {
 		mode = 0;
 		if (description) {
-			sprintf(description, "x87");
+			snprintf(description, 5, "x87");
 		}
 	} else {
 		mode = 1;
 		if (description) {
-			sprintf(description, "simd");
+			snprintf(description, 5, "simd");
 		}
 	}
 	//	}

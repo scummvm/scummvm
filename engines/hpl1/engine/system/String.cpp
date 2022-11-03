@@ -491,7 +491,7 @@ tFloatVec &cString::GetFloatVec(const tString &asData, tFloatVec &avVec, tString
 tString cString::ToString(int alX) {
 	char buff[256];
 
-	sprintf(buff, "%d", alX);
+	snprintf(buff, 256, "%d", alX);
 
 	return buff;
 }
@@ -499,7 +499,7 @@ tString cString::ToString(int alX) {
 tString cString::ToString(float afX) {
 	char buff[256];
 
-	sprintf(buff, "%f", afX);
+	snprintf(buff, 256, "%f", afX);
 
 	return buff;
 }
