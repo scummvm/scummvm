@@ -26,6 +26,7 @@
 #include "mm/mm1/views/are_you_ready.h"
 #include "mm/mm1/views/combat.h"
 #include "mm/mm1/views/create_characters.h"
+#include "mm/mm1/views/dead.h"
 #include "mm/mm1/views/encounter.h"
 #include "mm/mm1/views/game.h"
 #include "mm/mm1/views/main_menu.h"
@@ -83,6 +84,7 @@ private:
 	Views::AreYouReady _areYouReady;
 	Views::Combat _combat;
 	Views::CreateCharacters _createCharacters;
+	Views::Dead _dead;
 	Views::Encounter _encounter;
 	Views::Game _game;
 	Views::MainMenu _mainMenu;

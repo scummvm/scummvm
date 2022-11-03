@@ -19,23 +19,32 @@
  *
  */
 
-#include "common/textconsole.h"
-#include "mm/mm1/sound.h"
+#ifndef MM1_VIEWS_DEAD_H
+#define MM1_VIEWS_DEAD_H
+
+#include "mm/mm1/views/text_view.h"
 
 namespace MM {
 namespace MM1 {
+namespace Views {
 
-void Sound::sound(SoundId soundNum) {
-	warning("TODO: sound %d", (int)soundNum);
-}
+class Dead : public TextView {
+private:
+	/**
+	 * Writes a horizontal text line
+	 */
+	void writeLine(int y);
+public:
+	Dead() : TextView("Dead") {}
+	virtual ~Dead() {}
 
-void Sound::sound2(SoundId soundNum) {
-	warning("TODO: sound2 %d", (int)soundNum);
-}
+	bool msgFocus(const FocusMessage &msg) override;
+	void draw() override;
+	bool msgKeypress(const KeypressMessage &msg) override;
+};
 
-void Sound::stopSound() {
-	warning("TODO: stopSound");
-}
-
+} // namespace Views
 } // namespace MM1
 } // namespace MM
+
+#endif

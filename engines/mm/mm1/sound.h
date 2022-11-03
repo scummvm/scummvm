@@ -25,12 +25,15 @@
 namespace MM {
 namespace MM1 {
 
-enum SoundId { SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3, SOUND_8 = 8 };
+enum SoundId {
+	SOUND_1 = 1, SOUND_2 = 2, SOUND_3 = 3, SOUND_4 = 4, SOUND_8 = 8
+};
 
 class Sound {
 public:
 	static void sound(SoundId soundNum);
 	static void sound2(SoundId soundNum);
+	static void stopSound();
 };
 
 } // namespace MM1
