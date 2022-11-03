@@ -313,51 +313,6 @@ void BitmapCastMember::copyStretchImg(Graphics::Surface *surface, const Common::
 	}
 }
 
-void BitmapCastMember::ditherImage() {
-	// If palette did not change, do not re-dither
-	if (!_paletteLookup.setPalette(g_director->_wm->getPalette(), g_director->_wm->getPaletteSize()))
-		return;
-
-	int bpp = _img->getSurface()->format.bytesPerPixel;
-	int w = _initialRect.width();
-	int h = _initialRect.height();
-
-	_ditheredImg = new Graphics::Surface;
-	_ditheredImg->create(w, h, Graphics::PixelFormat::createFormatCLUT8());
-
-	for (int y = 0; y < h; y++) {
-		const byte *src = (const byte *)_img->getSurface()->getBasePtr(0, y);
-		byte *dst = (byte *)_ditheredImg->getBasePtr(0, y);
-
-		for (int x = 0; x < w; x++) {
-			uint32 color;
-
-			switch (bpp) {
-			case 1:
-				color = *((const byte *)src);
-				src += 1;
-				break;
-			case 2:
-				color = *((const uint16 *)src);
-				src += 2;
-				break;
-			case 4:
-				color = *((const uint32 *)src);
-				src += 4;
-				break;
-			default:
-				error("BitmapCastMember::ditherImage(): Unsupported bit depth: %d", bpp);
-			}
-
-			byte r, g, b;
-			_img->getSurface()->format.colorToRGB(color, r, g, b);
-
-			*dst = _paletteLookup.findBestColor(r, g, b);
-			dst++;
-		}
-	}
-}
-
 void BitmapCastMember::createMatte(Common::Rect &bbox) {
 	// Like background trans, but all white pixels NOT ENCLOSED by coloured pixels
 	// are transparent
