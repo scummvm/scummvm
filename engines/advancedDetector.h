@@ -531,6 +531,28 @@ public:
 	 * Based on @ref MetaEngine::getFileProperties.
 	 */
 	bool getFilePropertiesExtern(uint md5Bytes, const FileMap &allFiles, const ADGameDescription &game, const Common::String &fname, FileProperties &fileProps) const;
+
+protected:
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 *
+	 * If no target is specified, all of the available custom GUI options are
+	 * returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target    Name of a config manager target.
+	 *
+	 * @return A list of extra GUI options for an engine plugin and target.
+	 */
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override final;
+
+	/**
+	 * Returns a map containing all the extra game GUI options the engine supports.
+	 */
+	virtual const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const { return nullptr; }
 };
 
 /**

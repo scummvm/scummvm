@@ -337,6 +337,35 @@ const ExtraGuiOptions AdvancedMetaEngineDetection::getExtraGuiOptions(const Comm
 	return options;
 }
 
+const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	const ADExtraGuiOptionsMap *extraGuiOptions = getAdvancedExtraGuiOptions();
+	if (!extraGuiOptions)
+		return ExtraGuiOptions();
+
+	ExtraGuiOptions options;
+
+	// If there isn't any target specified, return all available GUI options.
+	// Only used when an engine starts in order to set option defaults.
+	if (target.empty()) {
+		for (const ADExtraGuiOptionsMap *entry = extraGuiOptions; entry->guioFlag; ++entry)
+			options.push_back(entry->option);
+
+		return options;
+	}
+
+	// Query the GUI options
+	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+
+	// Add all the applying extra GUI options.
+	for (const ADExtraGuiOptionsMap *entry = extraGuiOptions; entry->guioFlag; ++entry) {
+		if (guiOptions.contains(entry->guioFlag))
+			options.push_back(entry->option);
+	}
+
+	return options;
+}
+
 Common::Error AdvancedMetaEngineDetection::createInstance(OSystem *syst, Engine **engine) {
 	assert(engine);
 

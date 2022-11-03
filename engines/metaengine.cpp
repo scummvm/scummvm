@@ -384,6 +384,17 @@ SaveStateList MetaEngine::listSaves(const char *target, bool saveMode) const {
 	return saveList;
 }
 
+void MetaEngine::registerDefaultSettings(const Common::String &) const {
+	// Note that as we don't pass the target to getExtraGuiOptions
+	//  we get all the options, even those not relevant for the current
+	//  game. This is necessary because some engines unconditionally
+	//  access the configuration.
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions("");
+	for (uint i = 0; i < engineOptions.size(); i++) {
+		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
+	}
+}
+
 void MetaEngineDetection::registerDefaultSettings(const Common::String &) const {
 	// Note that as we don't pass the target to getExtraGuiOptions
 	//  we get all the options, even those not relevant for the current
@@ -393,6 +404,15 @@ void MetaEngineDetection::registerDefaultSettings(const Common::String &) const 
 	for (uint i = 0; i < engineOptions.size(); i++) {
 		ConfMan.registerDefault(engineOptions[i].configOption, engineOptions[i].defaultState);
 	}
+}
+
+GUI::OptionsContainerWidget *MetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+	const ExtraGuiOptions engineOptions = getExtraGuiOptions(target);
+	if (engineOptions.empty()) {
+		return nullptr;
+	}
+
+	return new GUI::ExtraGuiOptionsWidget(boss, name, target, engineOptions);
 }
 
 GUI::OptionsContainerWidget *MetaEngineDetection::buildEngineOptionsWidgetStatic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
