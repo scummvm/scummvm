@@ -32,8 +32,6 @@
 #include "toltecs/toltecs.h"
 #include "toltecs/detection.h"
 
-#define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
-
 static const PlainGameDescriptor toltecsGames[] = {
 	{"toltecs", "3 Skulls of the Toltecs"},
 	{0, 0}
@@ -221,26 +219,11 @@ static const ToltecsGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 } // End of namespace Toltecs
 
 class ToltecsMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames, Toltecs::optionsList) {
+	ToltecsMetaEngineDetection() : AdvancedMetaEngineDetection(Toltecs::gameDescriptions, sizeof(Toltecs::ToltecsGameDescription), toltecsGames) {
 	}
 
 	const char *getName() const override {

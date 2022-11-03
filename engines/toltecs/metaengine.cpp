@@ -26,11 +26,27 @@
 #include "common/savefile.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "toltecs/toltecs.h"
 #include "toltecs/detection.h"
 
 namespace Toltecs {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 ToltecsEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -46,6 +62,10 @@ class ToltecsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "toltecs";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Toltecs::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
