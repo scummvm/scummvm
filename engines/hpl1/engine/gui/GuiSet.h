@@ -28,11 +28,11 @@
 #ifndef HPL_GUI_SET_H
 #define HPL_GUI_SET_H
 
-#include <set>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/gui/GuiTypes.h"
 #include "common/list.h"
+#include "hpl1/std/set.h"
+#include "hpl1/std/multiset.h"
 
 namespace hpl {
 
@@ -85,7 +85,7 @@ public:
 	bool operator()(const cGuiRenderObject &aObjectA, const cGuiRenderObject &aObjectB) const;
 };
 
-typedef std::multiset<cGuiRenderObject, cGuiRenderObjectCompare> tGuiRenderObjectSet;
+typedef Hpl1::std::multiset<cGuiRenderObject, cGuiRenderObjectCompare> tGuiRenderObjectSet;
 typedef tGuiRenderObjectSet::iterator tGuiRenderObjectSetIt;
 
 //-----------------------------------------------

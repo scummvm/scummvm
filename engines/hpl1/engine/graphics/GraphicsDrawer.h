@@ -28,11 +28,11 @@
 #ifndef HPL_GRAPHICSDRAWER_H
 #define HPL_GRAPHICSDRAWER_H
 
-#include <set>
 #include "hpl1/engine/graphics/BackgroundImage.h"
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "common/list.h"
 #include "common/array.h"
+#include "hpl1/std/multiset.h"
 
 namespace hpl {
 
@@ -66,7 +66,7 @@ public:
 	bool operator()(const cGfxBufferObject &aObjectA, const cGfxBufferObject &aObjectB) const;
 };
 
-typedef std::multiset<cGfxBufferObject, cGfxBufferCompare> tGfxBufferSet;
+typedef Hpl1::std::multiset<cGfxBufferObject, cGfxBufferCompare> tGfxBufferSet;
 typedef tGfxBufferSet::iterator tGfxBufferSetIt;
 
 class cResources;
