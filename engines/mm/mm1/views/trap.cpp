@@ -33,8 +33,7 @@ Trap::Trap() : TextView("Trap") {
 
 bool Trap::msgGame(const GameMessage &msg) {
 	if (msg._name == "TRIGGER") {
-		replaceView(this);
-		_mode = OOPS;
+		open();
 		g_globals->_treasure._container =
 			g_maps->_currentMap->dataByte(Maps::MAP_49);
 		g_globals->_currCharacter = &g_globals->_party[0];
@@ -43,7 +42,6 @@ bool Trap::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else if (msg._name == "TRAP") {
-		replaceView(this);
 		trap();
 		return true;
 	}
@@ -54,19 +52,8 @@ bool Trap::msgGame(const GameMessage &msg) {
 void Trap::draw() {
 	clearSurface();
 
-	switch (_mode) {
-	case OOPS:
-		writeString(9, 1, STRING["dialogs.trap.oops"]);
-		delaySeconds(3);
-		break;
-
-	case TRAP:
-		writeString(0, 1, STRING[
-			Common::String::format("dialogs.trap.%d", _trapType)
-		]);
-		delaySeconds(8);
-		break;
-	}
+	writeString(9, 1, STRING["dialogs.trap.oops"]);
+	delaySeconds(3);
 }
 
 bool Trap::msgKeypress(const KeypressMessage &msg) {
@@ -77,21 +64,16 @@ bool Trap::msgKeypress(const KeypressMessage &msg) {
 }
 
 void Trap::timeout() {
-	switch (_mode) {
-	case OOPS:
-		trap();
-		draw();
-		break;
-	case TRAP:
+	if (isFocused())
 		close();
-		break;
-	}
+	trap();
 }
 
 void Trap::trap() {
 	TrapData::trap();
-	_mode = TRAP;
-	draw();
+
+	send(InfoMessage(0, 1,
+		STRING[Common::String::format("dialogs.trap.%d", _trapType)]));
 }
 
 } // namespace Views

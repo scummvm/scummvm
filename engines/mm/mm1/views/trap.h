@@ -30,10 +30,6 @@ namespace MM1 {
 namespace Views {
 
 class Trap : public TextView, public TrapData {
-private:
-	enum Mode { OOPS, TRAP };
-	Mode _mode = OOPS;
-
 protected:
 	void trap() override;
 
