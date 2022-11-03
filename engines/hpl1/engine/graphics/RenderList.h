@@ -28,8 +28,6 @@
 #ifndef HPL_RENDER_LIST_H
 #define HPL_RENDER_LIST_H
 
-#include <set>
-
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
 #include "hpl1/engine/graphics/OcclusionQuery.h"
@@ -38,6 +36,7 @@
 #include "hpl1/engine/scene/Light3D.h"
 #include "hpl1/engine/system/SystemTypes.h"
 #include "hpl1/std/set.h"
+#include "hpl1/std/multiset.h"
 
 namespace hpl {
 
@@ -87,7 +86,7 @@ public:
 	bool operator()(iRenderable *pObjectA, iRenderable *pObjectB) const;
 };
 
-typedef std::multiset<iRenderable *, cMotionBlurObject_Compare> tMotionBlurObjectSet;
+typedef Hpl1::std::multiset<iRenderable *, cMotionBlurObject_Compare> tMotionBlurObjectSet;
 typedef tMotionBlurObjectSet::iterator tMotionBlurObjectSetIt;
 
 typedef cSTLIterator<iRenderable *, tMotionBlurObjectSet,
@@ -101,7 +100,7 @@ public:
 	bool operator()(iRenderable *pObjectA, iRenderable *pObjectB) const;
 };
 
-typedef std::multiset<iRenderable *, cTransperantObject_Compare> tTransperantObjectSet;
+typedef Hpl1::std::multiset<iRenderable *, cTransperantObject_Compare> tTransperantObjectSet;
 typedef tTransperantObjectSet::iterator tTransperantObjectSetIt;
 
 typedef cSTLIterator<iRenderable *, tTransperantObjectSet, tTransperantObjectSetIt> cTransperantObjectIterator;

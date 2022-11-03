@@ -29,7 +29,6 @@
 #define HPL_RENDERER2D_H
 
 #include <math.h>
-#include <set>
 
 #include "hpl1/engine/graphics/GraphicsTypes.h"
 #include "hpl1/engine/graphics/Material.h"
@@ -38,6 +37,7 @@
 #include "hpl1/engine/scene/Light2D.h"
 #include "common/list.h"
 #include "hpl1/std/set.h"
+#include "hpl1/std/multiset.h"
 
 namespace hpl {
 
@@ -66,10 +66,10 @@ public:
 	bool operator()(const cRenderObject2D &aObjectA, const cRenderObject2D &aObjectB) const;
 };
 
-typedef std::multiset<cRenderObject2D, cRenderObject2DCompare> tRenderObjectSet;
+typedef Hpl1::std::multiset<cRenderObject2D, cRenderObject2DCompare> tRenderObjectSet;
 typedef tRenderObjectSet::iterator tRenderObjectSetIt;
 
-typedef std::multiset<cRenderObject2D, cRenderTransObjectCompare> tRenderTransObjectSet;
+typedef Hpl1::std::multiset<cRenderObject2D, cRenderTransObjectCompare> tRenderTransObjectSet;
 typedef tRenderTransObjectSet::iterator tRenderTransObjectSetIt;
 
 typedef Common::List<cRenderObject2D> tRenderObjectList;
