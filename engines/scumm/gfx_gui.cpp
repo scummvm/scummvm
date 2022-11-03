@@ -227,14 +227,33 @@ Common::KeyState ScummEngine::showBannerAndPause(int bannerId, int32 waitTime, c
 		}
 	}
 
-	// Set up the GUI control, specifying all the related colors, the message and the position...
-	setUpInternalGUIControl(0, normalFillColor, normalTextColor,
-							topLineColor, bottomLineColor, leftLineColor, rightLineColor, 0, 0,
-							startingPointX, startingPointY, xPos, yPos,
-							bannerMsg, true, true);
+	if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
+		// MI1 for FMTowns does its own thing with hardcoded values here...
+		drawBox(startingPointX + 1, 81, startingPointY - 1, 90, normalFillColor);
 
-	// Draw it!
-	drawInternalGUIControl(0, 0);
+		drawLine(startingPointX + 1, 80, startingPointY - 1, 80, topLineColor);
+		drawLine(startingPointX + 1, 91, startingPointY - 1, 91, bottomLineColor);
+		drawLine(startingPointX, 81, startingPointX, 90, leftLineColor);
+		drawLine(startingPointY, 81, startingPointY, 90, rightLineColor);
+
+		int textXPos = 160;
+		int textYPos = 82;
+		int tmpRight = _string[5].right;
+		_string[5].right = _screenWidth - 1;
+
+		drawGUIText(bannerMsg, nullptr, textXPos, textYPos, normalTextColor, true);
+		_string[5].right = tmpRight;
+	} else {
+		// Set up the GUI control, specifying all the related colors, the message and the position...
+		setUpInternalGUIControl(0, normalFillColor, normalTextColor,
+								topLineColor, bottomLineColor, leftLineColor, rightLineColor, 0, 0,
+								startingPointX, startingPointY, xPos, yPos,
+								bannerMsg, true, true);
+
+		// Draw it!
+		drawInternalGUIControl(0, 0);
+	}
+
 	ScummEngine::drawDirtyScreenParts();
 
 	// Wait until the engine receives a new Keyboard or Mouse input,
@@ -495,7 +514,7 @@ Common::KeyState ScummEngine::showOldStyleBannerAndPause(const char *msg, int co
 	drawBox(0, startingPointY, _screenWidth - 1, startingPointY, color);
 	drawBox(0, startingPointY + bannerMsgHeight, _screenWidth - 1, startingPointY + bannerMsgHeight, color);
 
-	drawGUIText(bannerMsg, 0, textXPos, textYPos, color, !isV3Towns);
+	drawGUIText(bannerMsg, nullptr, textXPos, textYPos, color, !isV3Towns);
 
 	ScummEngine::drawDirtyScreenParts();
 
@@ -644,60 +663,50 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 
 		fillColor = highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor;
 
-		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-			// MI1 for FMTowns does its own thing with hardcoded values here...
-			drawBox(relCentX + 1, 81, relCentY - 1, 90, fillColor);
+		if (ctrl->doubleLinesFlag) {
+			// Draw the main box...
+			drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
 
-			drawLine(relCentX + 1, 80, relCentY - 1, 80, ctrl->topLineColor);
-			drawLine(relCentX + 1, 91, relCentY - 1, 91, ctrl->bottomLineColor);
-			drawLine(relCentX, 81, relCentX, 90, ctrl->leftLineColor);
-			drawLine(relCentY, 81, relCentY, 90, ctrl->rightLineColor);
-		} else {
-			if (ctrl->doubleLinesFlag) {
-				// Draw the main box...
-				drawBox(relCentX + 1, relCentY + 1 + topComp, boxSizeX - offset, boxSizeY - offset + topComp, fillColor);
+			if (_game.version == 4 && _game.id != GID_LOOM) {
+				// This is for MI1 v4 (EGA and VGA floppy versions) and the Passport to Adventure demo;
+				// these games use a very early version of this GUI system, with only
+				// one line color; we will use the topLineColor to mimick that.
 
-				if (_game.version == 4 && _game.id != GID_LOOM) {
-					// This is for MI1 v4 (EGA and VGA floppy versions) and the Passport to Adventure demo;
-					// these games use a very early version of this GUI system, with only
-					// one line color; we will use the topLineColor to mimick that.
+				// Draw the contour lines...
+				drawBox(relCentX + 2, relCentY, x - 2, relCentY, ctrl->topLineColor);
+				drawBox(relCentX + 2, y, x - 2, y, ctrl->topLineColor);
+				drawBox(relCentX, relCentY + 2, relCentX, y - 2, ctrl->topLineColor);
+				drawBox(x, relCentY + 2, x, y - 2, ctrl->topLineColor);
 
-					// Draw the contour lines...
-					drawBox(relCentX + 2, relCentY, x - 2, relCentY, ctrl->topLineColor);
-					drawBox(relCentX + 2, y, x - 2, y, ctrl->topLineColor);
-					drawBox(relCentX, relCentY + 2, relCentX, y - 2, ctrl->topLineColor);
-					drawBox(x, relCentY + 2, x, y - 2, ctrl->topLineColor);
-
-					// Draw single pixels for the button roundness effect...
-					drawBox(relCentX + 1, relCentY + 1, relCentX + 1, relCentY + 1, ctrl->topLineColor);
-					drawBox(x - 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
-					drawBox(relCentX + 1, y - 1, relCentX + 1, y - 1, ctrl->topLineColor);
-					drawBox(x - 1, y - 1, x - 1, y - 1, ctrl->topLineColor);
-				} else {
-					// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
-					drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
-					drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
-					drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
-					drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
-
-					drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
-					drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
-					drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
-					drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
-				}
+				// Draw single pixels for the button roundness effect...
+				drawBox(relCentX + 1, relCentY + 1, relCentX + 1, relCentY + 1, ctrl->topLineColor);
+				drawBox(x - 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+				drawBox(relCentX + 1, y - 1, relCentX + 1, y - 1, ctrl->topLineColor);
+				drawBox(x - 1, y - 1, x - 1, y - 1, ctrl->topLineColor);
 			} else {
-				drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
-				if (_game.version == 4 && _game.id != GID_LOOM) {
-					drawBox(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
-					drawBox(relCentX, y, x, y, ctrl->bottomLineColor);
-					drawBox(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
-					drawBox(x, relCentY, x, y, ctrl->rightLineColor);
-				} else {
-					drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
-					drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
-					drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
-					drawLine(x, relCentY, x, y, ctrl->rightLineColor);
-				}
+				// Draw the contour lines for the box; each of the lines is doubled to give a 3D effect.
+				drawLine(relCentX + 1, relCentY, x - 1, relCentY, ctrl->topLineColor);
+				drawLine(relCentX + 1, y, x - 1, y, ctrl->bottomLineColor);
+				drawLine(relCentX, relCentY + 1, relCentX, y - 1, ctrl->leftLineColor);
+				drawLine(x, relCentY + 1, x, y - 1, ctrl->rightLineColor);
+
+				drawLine(relCentX + 1, relCentY + 1, x - 1, relCentY + 1, ctrl->topLineColor);
+				drawLine(relCentX + 1, y - 1, x - 1, y - 1, ctrl->bottomLineColor);
+				drawLine(relCentX + 1, relCentY + 1, relCentX + 1, y - 1, ctrl->leftLineColor);
+				drawLine(x - 1, relCentY + 1, x - 1, y - 1, ctrl->rightLineColor);
+			}
+		} else {
+			drawBox(relCentX, relCentY + topComp, x, y + topComp, (highlightColor ? ctrl->highlightedFillColor : ctrl->normalFillColor));
+			if (_game.version == 4 && _game.id != GID_LOOM) {
+				drawBox(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+				drawBox(relCentX, y, x, y, ctrl->bottomLineColor);
+				drawBox(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+				drawBox(x, relCentY, x, y, ctrl->rightLineColor);
+			} else {
+				drawLine(relCentX, relCentY, x, relCentY, ctrl->topLineColor);
+				drawLine(relCentX, y, x, y, ctrl->bottomLineColor);
+				drawLine(relCentX, relCentY, relCentX, y, ctrl->leftLineColor);
+				drawLine(x, relCentY, x, y, ctrl->rightLineColor);
 			}
 		}
 
@@ -706,23 +715,18 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 		_charset->setCurID(1);
 
 		centerFlag = ctrl->centerText;
-		if (_game.id == GID_MONKEY && _game.platform == Common::kPlatformFMTowns) {
-			// Again, MI1 for FMTowns hardcodes the values...
-			textXPos = 160;
-			textYPos = 82;
-		} else {
-			textHeight = getGUIStringHeight(ctrl->label.c_str());
 
-			if (centerFlag)
-				textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
-			else
-				textXPos = relCentX + 2;
+		textHeight = getGUIStringHeight(ctrl->label.c_str());
 
-			if (_game.version == 8 || _game.id == GID_DIG)
-				textYPos = relCentY + (y - relCentY - textHeight) / 2 + 1;
-			else
-				textYPos = relCentY + (y - 8 - relCentY + 2) / 2;
-		}
+		if (centerFlag)
+			textXPos = relCentX + (x - ctrl->relativeCenterX) / 2;
+		else
+			textXPos = relCentX + 2;
+
+		if (_game.version == 8 || _game.id == GID_DIG)
+			textYPos = relCentY + (y - relCentY - textHeight) / 2 + 1;
+		else
+			textYPos = relCentY + (y - 8 - relCentY + 2) / 2;
 
 		// Finally, choose the color and draw the text message
 		if (highlightColor)
@@ -757,7 +761,7 @@ void ScummEngine::drawInternalGUIControl(int id, bool highlightColor) {
 			// seem to (theoretically) be allowed to draw text wherever they want...
 			bool isSaveSlot = (id >= GUI_CTRL_FIRST_SG && id <= GUI_CTRL_LAST_SG);
 			Common::Rect clipRect(relCentX, relCentY, x, y);
-			drawGUIText(buttonString, isSaveSlot ? &clipRect : 0, textXPos, textYPos, textColor, centerFlag);
+			drawGUIText(buttonString, isSaveSlot ? &clipRect : nullptr, textXPos, textYPos, textColor, centerFlag);
 			_string[5].right = tmpRight;
 		}
 
@@ -1332,7 +1336,8 @@ void ScummEngine::saveSurfacesPreGUI() {
 		// and stamp it on top of the main screen: this is done to ensure that the GUI is drawn on top
 		// of possible subtitle texts instead of having the latters being deleted or being drawn on top
 		// of the GUI...
-		if (!(_game.version == 4 && _game.id == GID_LOOM)) {
+		if (!(_game.version == 4 && _game.id == GID_LOOM) &&
+			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns)) {
 			for (int y = 0; y < _screenHeight; y++) {
 				for (int x = 0; x < _screenWidth; x++) {
 					// Only draw non transparent pixels
@@ -1742,7 +1747,8 @@ void ScummEngine::showMainMenu() {
 
 		// V6 games should call for stopTalk() instead, but that's a bit too drastic;
 		// this ensures that we can at least hear the speech after the menu is closed.
-		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM))
+		if (_charset->_textScreenID == kMainVirtScreen && !(_game.version == 4 && _game.id == GID_LOOM) &&
+			!(_game.version == 5 && _game.platform == Common::kPlatformFMTowns))
 			restoreCharsetBg();
 	}
 
@@ -3053,7 +3059,7 @@ void ScummEngine::updateMainMenuControls() {
 		// not rendered in the other games, so adjust that...
 		if (_game.id == GID_FT) {
 			convertMessageToString((const byte *)getGUIString(gsSpooledMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
 			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);

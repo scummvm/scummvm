@@ -1075,7 +1075,7 @@ void ScummEngine::processKeyboard(Common::KeyState lastKeyHit) {
 		}
 
 		if (VAR_MAINMENU_KEY != 0xFF && (lastKeyHit.ascii == VAR(VAR_MAINMENU_KEY) && lastKeyHit.hasFlags(0))
-			&& _game.platform != Common::kPlatformFMTowns && _game.version > 3) {
+			&& _game.version > 3) {
 			showMainMenu();
 			return;
 		} else if (lastKeyHit.keycode == Common::KEYCODE_F5 && _game.version == 3 && _game.platform == Common::kPlatformMacintosh) {
