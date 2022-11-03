@@ -3062,26 +3062,26 @@ void ScummEngine::updateMainMenuControls() {
 			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 19, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 33, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 47, textColor, false);
 		} else {
 			convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 25, textColor, false);
 
 			convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-			drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
+			drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 43, textColor, false);
 		}
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 61, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 88, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
+		drawGUIText(msg, nullptr, 29, yCntr - calculatedHeight - yOffset + 102, textColor, false);
 
 		drawLine(23, yCntr - calculatedHeight - yOffset + 77, 204, yCntr - calculatedHeight - yOffset + 77, getBannerColor(17));
 		drawLine(23, yCntr - calculatedHeight - yOffset + 78, 204, yCntr - calculatedHeight - yOffset + 78, getBannerColor(4));
@@ -3094,19 +3094,19 @@ void ScummEngine::updateMainMenuControls() {
 		// drawLine(24, yCntr - calculatedHeight + 81, 204, yCntr - calculatedHeight + 81, getBannerColor(4));
 	} else {
 		convertMessageToString((const byte *)getGUIString(gsMusic), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 36, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 36, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsVoice), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 22, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 22, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsSfx), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 - 8, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 - 8, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsDisplayText), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 + 19, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 + 19, textColor, false);
 
 		convertMessageToString((const byte *)getGUIString(gsTextSpeed), (byte *)msg, sizeof(msg));
-		drawGUIText(msg, 0, 33, yConstantV6 + 34, textColor, false);
+		drawGUIText(msg, nullptr, 33, yConstantV6 + 34, textColor, false);
 
 		drawLine(27, yConstantV6 + 8,  201, yConstantV6 + 8,  getBannerColor(17));
 		drawLine(27, yConstantV6 + 9,  201, yConstantV6 + 9,  getBannerColor(4));
@@ -3150,25 +3150,25 @@ void ScummEngine::drawMainMenuTitle(const char *title) {
 			yCntr - calculatedHeight + _screenTop - yOffset + 3 + lh,
 			boxColor);
 
-		drawGUIText(title, 0,
+		drawGUIText(title, nullptr,
 			159,
 			yCntr - calculatedHeight - yOffset + 4,
 			stringColor,
 			true);
 	} else if (_game.version == 7) {
 		drawBox(18, _screenTop + 44, 301, _screenTop + 52, boxColor);
-		drawGUIText(title, 0, 159, 44, stringColor, true);
+		drawGUIText(title, nullptr, 159, 44, stringColor, true);
 	} else if (_game.version == 4) {
 		if (_game.id == GID_LOOM) {
 			drawBox(22, yConstantV6 - 57, 298, yConstantV6 - 49, boxColor);
-			drawGUIText(title, 0, 160, yConstantV6 - 57, stringColor, true);
+			drawGUIText(title, nullptr, 160, yConstantV6 - 57, stringColor, true);
 		} else {
 			drawBox(21, yConstantV6 - 55, 299, yConstantV6 - 47, boxColor);
-			drawGUIText(title, 0, 160, yConstantV6 - 55, stringColor, true);
+			drawGUIText(title, nullptr, 160, yConstantV6 - 55, stringColor, true);
 		}
 	} else {
 		drawBox(22, yConstantV6 - 56, 298, yConstantV6 - 48, boxColor);
-		drawGUIText(title, 0, 160, yConstantV6 - 56, stringColor, true);
+		drawGUIText(title, nullptr, 160, yConstantV6 - 56, stringColor, true);
 	}
 
 	ScummEngine::drawDirtyScreenParts();
