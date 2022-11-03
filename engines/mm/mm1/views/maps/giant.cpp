@@ -40,7 +40,7 @@ bool Giant::msgFocus(const FocusMessage &msg) {
 
 bool Giant::msgUnfocus(const UnfocusMessage &msg) {
 	MetaEngine::setKeybindingMode(KeybindingMode::KBMODE_MENUS);
-	return msgUnfocus(msg);
+	return TextView::msgUnfocus(msg);
 }
 
 void Giant::draw() {
