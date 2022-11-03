@@ -60,7 +60,7 @@ void CastleEngine::loadAssets() {
 	Common::SeekableReadStream *stream = nullptr;
 
 	stream = decryptFile("CMLE");
-	loadMessagesVariableSize(stream, 0, 172);
+	loadMessagesVariableSize(stream, 0x11, 164);
 	delete stream;
 
 	stream = decryptFile("CMEDF");

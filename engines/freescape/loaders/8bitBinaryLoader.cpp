@@ -333,9 +333,15 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 			name = name + char(readField(file, 8));
 			i++;
 		}
-		debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
-	} else if (isCastle())
-		file->seek(5, SEEK_CUR);
+	} else if (isCastle()) {
+		byte idx = file->readByte();
+		name = _messagesList[idx + 41];
+		debug("byte: %d", file->readByte());
+		debug("byte: %d", file->readByte());
+		debug("byte: %d", file->readByte());
+		debug("byte: %d", file->readByte());
+	}
+	debugC(1, kFreescapeDebugParser, "Area name: %s", name.c_str());
 
 	ObjectMap *objectsByID = new ObjectMap;
 	ObjectMap *entrancesByID = new ObjectMap;
