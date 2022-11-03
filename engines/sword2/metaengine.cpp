@@ -31,15 +31,39 @@
 #include "common/gui_options.h"
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "sword2/sword2.h"
 #include "sword2/saveload.h"
 #include "sword2/obsolete.h"
 
+namespace Sword2 {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_OBJECT_LABELS,
+		{
+			_s("Show object labels"),
+			_s("Show labels for objects on mouse hover"),
+			"object_labels",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
+} // End of namespace Sword2
+
 class Sword2MetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "sword2";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Sword2::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
