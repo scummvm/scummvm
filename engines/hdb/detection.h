@@ -28,6 +28,8 @@ enum HDBGameFeatures {
 	GF_HANDANGO = (1 << 0)
 };
 
+#define GAMEOPTION_CHEATMODE GUIO_GAMEOPTIONS1
+
 } // End of namespace HDB
 
 #endif // HDB_DETECTION_H
