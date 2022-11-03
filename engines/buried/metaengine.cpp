@@ -23,12 +23,30 @@
 
 #include "common/savefile.h"
 #include "common/system.h"
+#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
 #include "buried/buried.h"
+#include "buried/detection.h"
 
 namespace Buried {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ALLOW_SKIP,
+		{
+			// I18N: This option allows the user to skip cutscenes.
+			_s("Skip support"),
+			_s("Allow cutscenes to be skipped"),
+			"skip_support",
+			true,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 bool BuriedEngine::hasFeature(EngineFeature f) const {
 	return
@@ -76,6 +94,10 @@ class BuriedMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "buried";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Buried::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
