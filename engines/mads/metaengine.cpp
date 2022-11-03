@@ -29,6 +29,7 @@
 #include "common/str-array.h"
 #include "common/memstream.h"
 #include "common/system.h"
+#include "common/translation.h"
 #include "graphics/surface.h"
 
 #include "mads/events.h"
@@ -38,6 +39,84 @@
 #define MAX_SAVES 99
 
 namespace MADS {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_EASY_MOUSE,
+		{
+			_s("Easy mouse interface"),
+			_s("Shows object names when hovering the mouse over them"),
+			"EasyMouse",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_ANIMATED_INVENTORY,
+		{
+			_s("Animated inventory items"),
+			_s("Animated inventory items"),
+			"InvObjectsAnimated",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_ANIMATED_INTERFACE,
+		{
+			_s("Animated game interface"),
+			_s("Animated game interface"),
+			"TextWindowAnimated",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_NAUGHTY_MODE,
+		{
+			_s("Naughty game mode"),
+			_s("Naughty game mode"),
+			"NaughtyMode",
+			true,
+			0,
+			0
+		}
+	},
+
+	/*{
+		GAMEOPTION_GRAPHICS_DITHERING,
+		{
+			_s("Graphics dithering"),
+			_s("Graphics dithering"),
+			"GraphicsDithering",
+			true,
+			0,
+			0
+		}
+	},*/
+
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS_NARRATOR,
+		{
+			_s("TTS Narrator"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_narrator",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 MADSEngine::getGameID() const {
 	return _gameDescription->gameID;
@@ -65,6 +144,10 @@ class MADSMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "mads";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return MADS::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
