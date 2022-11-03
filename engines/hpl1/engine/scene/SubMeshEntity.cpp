@@ -48,8 +48,6 @@
 
 #include "hpl1/engine/math/Math.h"
 
-#include <string.h>
-
 namespace hpl {
 //////////////////////////////////////////////////////////////////////////
 // CONSTRUCTORS

@@ -32,9 +32,6 @@
 #include "hpl1/engine/math/Math.h"
 #include "hpl1/engine/system/LowLevelSystem.h"
 
-#include <stdio.h>
-#include <string.h>
-
 #pragma comment(lib, "libogg.lib")
 #pragma comment(lib, "libtheora.lib")
 
