@@ -63,6 +63,17 @@ static const ADGameDescription gameDescriptions[] = {
 	 Common::kPlatformAtariST,
 	 ADGF_UNSTABLE,
 	 GUIO1(GUIO_NOMIDI)},
+	{"spacestationoblivion",
+	 "",
+	 {
+		{"x.prg", 0, "bf546ee243c38f51d9beb25c203ccb93", 292624},
+		{"al_intr4.prg", 0, "4f50f281c9ae9c1b6b95ee5270d246ab", 28726},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAtariST,
+	 ADGF_UNSUPPORTED,
+	 GUIO1(GUIO_NOMIDI)},
 	{"driller",
 	 "",
 	 {
