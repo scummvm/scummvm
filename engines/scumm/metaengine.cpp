@@ -563,7 +563,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 	if (gameid == "loom") {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 		if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
-			return nullptr;
+			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
 
 		// The VGA Loom settings are only relevant for the DOS CD
 		// version, not the Steam version (which is assumed to be well
@@ -573,7 +573,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 			return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
 
 		if (extra == "Steam")
-			return nullptr;
+			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
 
 		// These EGA Loom settings are only relevant for the EGA
 		// version, since that is the only one that has an overture.
@@ -581,12 +581,139 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
 	} else if (gameid == "monkey") {
 		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
-			return nullptr;
+			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
 
 		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
 	}
 
-	return nullptr;
+	return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+}
+
+static const ExtraGuiOption comiObjectLabelsOption = {
+	_s("Show Object Line"),
+	_s("Show the names of objects at the bottom of the screen"),
+	"object_labels",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption mmnesObjectLabelsOption = {
+	_s("Use NES Classic Palette"),
+	_s("Use a more neutral color palette that closely emulates the NES Classic"),
+	"mm_nes_classic_palette",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption fmtownsTrimTo200 = {
+	_s("Trim FM-TOWNS games to 200 pixels height"),
+	_s("Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 pixels height, allowing using 'aspect ratio correction'"),
+	"trim_fmtowns_to_200_pixels",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption macV3LowQualityMusic = {
+	_s("Play simplified music"),
+	_s("This music was presumably intended for low-end Macs, and uses only one channel."),
+	"mac_v3_low_quality_music",
+	false,
+	0,
+	0
+};
+
+static const ExtraGuiOption smoothScrolling = {
+	_s("Enable smooth scrolling"),
+	_s("(instead of the normal 8-pixels steps scrolling)"),
+	"smooth_scroll",
+	true,
+	0,
+	1
+};
+
+static const ExtraGuiOption semiSmoothScrolling = {
+	_s("Allow semi-smooth scrolling"),
+	_s("Allow scrolling to be less smooth during the fast camera movement in the intro."),
+	"semi_smooth_scroll",
+	false,
+	1,
+	0
+};
+
+static const ExtraGuiOption enableEnhancements {
+	_s("Enable game-specific enhancements"),
+	_s("Allow ScummVM to make small enhancements to the game, usually based on other versions of the same game."),
+	"enable_enhancements",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption audioOverride {
+	_s("Load modded audio"),
+	_s("Replace music, sound effects, and speech clips with modded audio files, if available."),
+	"audio_override",
+	true,
+	0,
+	0
+};
+
+static const ExtraGuiOption enableOriginalGUI = {
+	_s("Enable the original GUI and Menu"),
+	_s("Allow the game to use the in-engine graphical interface and the original save/load menu."),
+	"original_gui",
+	true,
+	0,
+	0
+};
+
+const ExtraGuiOptions ScummMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	ExtraGuiOptions options;
+	// Query the GUI options
+	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
+	const Common::String gameid = ConfMan.get("gameid", target);
+	const Common::String extra = ConfMan.get("extra", target);
+	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
+	const Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
+
+	if (target.empty() || guiOptions.contains(GUIO_ORIGINALGUI)) {
+		options.push_back(enableOriginalGUI);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_ENHANCEMENTS)) {
+		options.push_back(enableEnhancements);
+	}
+	if (target.empty() || guiOptions.contains(GUIO_AUDIO_OVERRIDE)) {
+		options.push_back(audioOverride);
+	}
+	if (target.empty() || gameid == "comi") {
+		options.push_back(comiObjectLabelsOption);
+	}
+	if (target.empty() || platform == Common::kPlatformNES) {
+		options.push_back(mmnesObjectLabelsOption);
+	}
+	if (target.empty() || platform == Common::kPlatformFMTowns) {
+		options.push_back(smoothScrolling);
+		if (target.empty() || gameid == "loom")
+			options.push_back(semiSmoothScrolling);
+		if (guiOptions.contains(GUIO_TRIM_FMTOWNS_TO_200_PIXELS))
+			options.push_back(fmtownsTrimTo200);
+	}
+
+	// The Steam Mac versions of Loom and Indy 3 are more akin to the VGA
+	// DOS versions, and that's how ScummVM usually sees them. But that
+	// rebranding does not happen until later.
+
+	// The low quality music in Loom was probably intended for low-end
+	// Macs. It plays only one channel, instead of three.
+
+	if (target.empty() || (gameid == "loom" && platform == Common::kPlatformMacintosh && extra != "Steam")) {
+		options.push_back(macV3LowQualityMusic);
+	}
+
+	return options;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(SCUMM)
