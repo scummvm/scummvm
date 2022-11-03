@@ -291,9 +291,8 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 	bool isSameFormat = (destFormat == srcFormat);
 	if (!isSameFormat) {
 		// When the pixel format differs, the destination must be non-paletted
-		assert(destFormat.bytesPerPixel == 2 || destFormat.bytesPerPixel == 3
-			|| destFormat.bytesPerPixel == 4);
-		assert(srcFormat.bytesPerPixel == 2 || srcFormat.bytesPerPixel == 4
+		assert(destFormat.bytesPerPixel == 2 || destFormat.bytesPerPixel == 3 || destFormat.bytesPerPixel == 4);
+		assert(srcFormat.bytesPerPixel == 2 || srcFormat.bytesPerPixel == 3 || srcFormat.bytesPerPixel == 4
 			|| (srcFormat.bytesPerPixel == 1 && srcPalette));
 	}
 
@@ -350,8 +349,10 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 				// Use the src's pixel format to split up the source pixel
 				if (srcFormat.bytesPerPixel == 2)
 					col = *reinterpret_cast<const uint16 *>(srcVal);
-				else
+				else if (srcFormat.bytesPerPixel == 4)
 					col = *reinterpret_cast<const uint32 *>(srcVal);
+				else
+					col = READ_UINT24(srcVal);
 			}
 
 			const bool isOpaque = ((col & alphaMask) == alphaMask);
@@ -386,18 +387,15 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 					bDest = bSrc;
 				} else {
 					// Partially transparent, so calculate new pixel colors
-					if (destFormat.bytesPerPixel == 2) {
-						uint32 destColor = *reinterpret_cast<uint16 *>(destVal);
-						destFormat.colorToARGB(destColor, aDest, rDest, gDest, bDest);
-					} else if (format.bytesPerPixel == 4) {
-						uint32 destColor = *reinterpret_cast<uint32 *>(destVal);
-						destFormat.colorToARGB(destColor, aDest, rDest, gDest, bDest);
-					} else {
-						aDest = 0xFF;
-						rDest = destVal[0];
-						gDest = destVal[1];
-						bDest = destVal[2];
-					}
+					uint32 destColor;
+					if (destFormat.bytesPerPixel == 2)
+						destColor = *reinterpret_cast<uint16 *>(destVal);
+					else if (destFormat.bytesPerPixel == 4)
+						destColor = *reinterpret_cast<uint32 *>(destVal);
+					else
+						destColor = READ_UINT24(destVal);
+
+					destFormat.colorToARGB(destColor, aDest, rDest, gDest, bDest);
 
 					if (aDest == 0xff) {
 						// Opaque target
