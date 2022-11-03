@@ -39,7 +39,7 @@ public:
 	Common::KeymapArray initKeymaps(const char *target) const override;
 
 	void registerDefaultSettings(const Common::String &target) const override;
-	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 };
 
 Common::KeymapArray NancyMetaEngine::initKeymaps(const char *target) const {
@@ -82,7 +82,7 @@ void NancyMetaEngine::registerDefaultSettings(const Common::String &target) cons
 	ConfMan.setBool("subtitles", true, target);
 }
 
-GUI::OptionsContainerWidget *NancyMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *NancyMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	return new Nancy::NancyOptionsWidget(boss, name, target);
 }
 

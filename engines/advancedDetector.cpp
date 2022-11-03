@@ -309,34 +309,6 @@ DetectedGames AdvancedMetaEngineDetection::detectGames(const Common::FSList &fsl
 	return detectedGames;
 }
 
-const ExtraGuiOptions AdvancedMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	if (!_extraGuiOptions)
-		return ExtraGuiOptions();
-
-	ExtraGuiOptions options;
-
-	// If there isn't any target specified, return all available GUI options.
-	// Only used when an engine starts in order to set option defaults.
-	if (target.empty()) {
-		for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry)
-			options.push_back(entry->option);
-
-		return options;
-	}
-
-	// Query the GUI options
-	const Common::String guiOptionsString = ConfMan.get("guioptions", target);
-	const Common::String guiOptions = parseGameGUIOptions(guiOptionsString);
-
-	// Add all the applying extra GUI options.
-	for (const ADExtraGuiOptionsMap *entry = _extraGuiOptions; entry->guioFlag; ++entry) {
-		if (guiOptions.contains(entry->guioFlag))
-			options.push_back(entry->option);
-	}
-
-	return options;
-}
-
 const ExtraGuiOptions AdvancedMetaEngine::getExtraGuiOptions(const Common::String &target) const {
 	const ADExtraGuiOptionsMap *extraGuiOptions = getAdvancedExtraGuiOptions();
 	if (!extraGuiOptions)
@@ -828,9 +800,8 @@ static const char *grayList[] = {
 	0
 };
 
-AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds, const ADExtraGuiOptionsMap *extraGuiOptions)
-	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds),
-	  _extraGuiOptions(extraGuiOptions) {
+AdvancedMetaEngineDetection::AdvancedMetaEngineDetection(const void *descs, uint descItemSize, const PlainGameDescriptor *gameIds)
+	: _gameDescriptors((const byte *)descs), _descItemSize(descItemSize), _gameIds(gameIds) {
 
 	_md5Bytes = 5000;
 	_flags = 0;

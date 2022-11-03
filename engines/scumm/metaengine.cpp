@@ -556,14 +556,14 @@ SaveStateDescriptor ScummMetaEngine::querySaveMetaInfos(const char *target, int 
 	return desc;
 }
 
-GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameid = ConfMan.get("gameid", target);
 	Common::String extra = ConfMan.get("extra", target);
 
 	if (gameid == "loom") {
 		Common::Platform platform = Common::parsePlatform(ConfMan.get("platform", target));
 		if (platform != Common::kPlatformUnknown && platform != Common::kPlatformDOS)
-			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 
 		// The VGA Loom settings are only relevant for the DOS CD
 		// version, not the Steam version (which is assumed to be well
@@ -573,7 +573,7 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 			return new Scumm::LoomVgaGameOptionsWidget(boss, name, target);
 
 		if (extra == "Steam")
-			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 
 		// These EGA Loom settings are only relevant for the EGA
 		// version, since that is the only one that has an overture.
@@ -581,12 +581,12 @@ GUI::OptionsContainerWidget *ScummMetaEngine::buildEngineOptionsWidgetDynamic(GU
 		return new Scumm::LoomEgaGameOptionsWidget(boss, name, target);
 	} else if (gameid == "monkey") {
 		if (extra != "CD" && extra != "FM-TOWNS" && extra != "SEGA")
-			return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+			return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 
 		return new Scumm::MI1CdGameOptionsWidget(boss, name, target);
 	}
 
-	return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 }
 
 static const ExtraGuiOption comiObjectLabelsOption = {

@@ -140,7 +140,7 @@ public:
 
 
 	void registerDefaultSettings(const Common::String &target) const override;
-	GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
+	GUI::OptionsContainerWidget *buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const override;
 	Common::String getSavegameFile(int saveGameIdx, const char *target) const override {
 		if (!target)
 			target = getName();
@@ -338,7 +338,7 @@ void MohawkMetaEngine::registerDefaultSettings(const Common::String &target) con
 	return MetaEngine::registerDefaultSettings(target);
 }
 
-GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
+GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidget(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
 	Common::String gameId = ConfMan.get("gameid", target);
 
 #ifdef ENABLE_MYST
@@ -352,7 +352,7 @@ GUI::OptionsContainerWidget *MohawkMetaEngine::buildEngineOptionsWidgetDynamic(G
 	}
 #endif
 
-	return MetaEngine::buildEngineOptionsWidgetDynamic(boss, name, target);
+	return MetaEngine::buildEngineOptionsWidget(boss, name, target);
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MOHAWK)
