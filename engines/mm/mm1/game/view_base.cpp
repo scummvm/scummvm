@@ -115,12 +115,15 @@ bool ViewBase::msgGame(const GameMessage &msg) {
 		replaceView("Game");
 		update();
 		return true;
-	} else {
-		_descriptionLine = msg._name;
-		draw();
 	}
 
 	return TextView::msgGame(msg);
+}
+
+bool ViewBase::msgHeader(const HeaderMessage &msg) {
+	_descriptionLine = msg._name;
+	draw();
+	return true;
 }
 
 void ViewBase::turnLeft() {

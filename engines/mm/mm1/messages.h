@@ -78,6 +78,13 @@ struct GameMessage : public Message {
 		_name(name) {}
 };
 
+struct HeaderMessage : public Message {
+	Common::String _name;
+	HeaderMessage() : Message() {}
+	HeaderMessage(const Common::String &name) : Message(),
+		_name(name) {}
+};
+
 struct Line : public Common::Point {
 	Common::String _text;
 
