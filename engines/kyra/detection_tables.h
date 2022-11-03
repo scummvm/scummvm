@@ -67,17 +67,6 @@ namespace {
 #define EOB2_FLAGS FLAGS(false, false, false, false, false, false, false, false, false, Kyra::GI_EOB2)
 #define EOB2_FMTOWNS_FLAGS FLAGS(false, false, false, false, true, false, true, false, false, Kyra::GI_EOB2)
 
-#define GAMEOPTION_KYRA3_AUDIENCE GUIO_GAMEOPTIONS1
-#define GAMEOPTION_KYRA3_SKIP     GUIO_GAMEOPTIONS2
-#define GAMEOPTION_KYRA3_HELIUM   GUIO_GAMEOPTIONS3
-
-#define GAMEOPTION_LOL_SCROLLING  GUIO_GAMEOPTIONS4
-#define GAMEOPTION_LOL_CURSORS    GUIO_GAMEOPTIONS5
-#define GAMEOPTION_LOL_SAVENAMES  GUIO_GAMEOPTIONS8
-
-#define GAMEOPTION_EOB_HPGRAPHS   GUIO_GAMEOPTIONS6
-#define GAMEOPTION_EOB_MOUSESWAP  GUIO_GAMEOPTIONS7
-
 static const char msg_missingLangResources[]			= _s("Missing language specific game code and/or resources.");
 static const char msg_fanTrans_missingLangResources[]	= _s("Missing language specific game code and/or resources for this fan translation.");
 static const char msg_fanTrans_unsupportiveTranslator[]	= _s("The fan translator does not wish his translation to be incorporated into ScummVM.");
