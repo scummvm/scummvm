@@ -108,10 +108,7 @@ void Unlock::charSelected(uint charIndex) {
 			getRandomNumber(100);
 
 		if (val < c._v6c) {
-			g_maps->_currentState =
-				g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
-				g_maps->_forwardMask & 0x55;
-
+			unlockDoor();
 			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
 
 		} else if (getRandomNumber(100) <
@@ -119,13 +116,16 @@ void Unlock::charSelected(uint charIndex) {
 			send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
 
 		} else {
-			g_maps->_currentState =
-				g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
-				g_maps->_forwardMask & 0x55;
-			// TODO
-			warning("TODO: Darts triggered");
+			unlockDoor();
+			send("Trap", GameMessage("TRIGGER"));
 		}
 	}
+}
+
+void Unlock::unlockDoor() {
+	g_maps->_currentState =
+		g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
+		g_maps->_forwardMask & 0x55;
 }
 
 } // namespace Views

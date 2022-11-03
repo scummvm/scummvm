@@ -31,6 +31,7 @@ namespace Views {
 class Unlock : public TextView {
 private:
 	void charSelected(uint charIndex);
+	void unlockDoor();
 public:
 	Unlock();
 	virtual ~Unlock() {}

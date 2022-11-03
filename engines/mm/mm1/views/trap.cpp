@@ -43,9 +43,9 @@ bool Trap::msgGame(const GameMessage &msg) {
 		return true;
 
 	} else if (msg._name == "TRAP") {
+		replaceView(this);
 		trap();
 		return true;
-
 	}
 
 	return false;
