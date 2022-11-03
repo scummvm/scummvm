@@ -261,6 +261,24 @@ protected:
 	 */
 	int findEmptySaveSlot(const char *target);
 
+	/**
+	 * Return a list of extra GUI options for the specified target.
+	 *
+	 * If no target is specified, all of the available custom GUI options are
+	 * returned for the plugin (used to set default values).
+	 *
+	 * Currently, this only supports options with checkboxes.
+	 *
+	 * The default implementation returns an empty list.
+	 *
+	 * @param target  Name of a config manager target.
+	 *
+	 * @return A list of extra GUI options for an engine plugin and target.
+	 */
+	virtual const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const {
+		return ExtraGuiOptions();
+	}
+
 public:
 	virtual ~MetaEngine() {}
 
@@ -404,7 +422,7 @@ public:
 	 *
 	 * @param target  Name of a config manager target.
 	 */
-	virtual void registerDefaultSettings(const Common::String &target) const {}
+	virtual void registerDefaultSettings(const Common::String &target) const;
 
 	/**
 	 * Return a GUI widget container for configuring the specified target options.
@@ -418,9 +436,7 @@ public:
 	 * @param name    The name that the returned widget must use.
 	 * @param target  Name of a config manager target.
 	 */
-	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const {
-		return nullptr;
-	}
+	virtual GUI::OptionsContainerWidget *buildEngineOptionsWidgetDynamic(GUI::GuiObject *boss, const Common::String &name, const Common::String &target) const;
 
 	/**
 	 * MetaEngine feature flags.
