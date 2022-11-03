@@ -29,8 +29,6 @@
 #define HPL_VECTOR2_H
 
 #include "hpl1/engine/system/SystemTypes.h"
-#include <math.h>
-#include <stdio.h>
 
 namespace hpl {
 

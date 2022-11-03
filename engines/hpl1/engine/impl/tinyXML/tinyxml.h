@@ -31,7 +31,6 @@ distribution.
 #pragma warning(disable : 4786)
 #endif
 
-#include <assert.h>
 #include "common/file.h"
 #include "common/str.h"
 #include "common/util.h"

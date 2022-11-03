@@ -1,9 +1,4 @@
-#include <string.h>
 #include "scripthelper.h"
-#include <assert.h>
-#include <stdio.h>
-#include <fstream>
-#include <stdlib.h>
 
 #include "hpl1/std/set.h"
 
@@ -68,7 +63,7 @@ int ExecuteString(asIScriptEngine *engine, const char *code, void *ref, int refT
 			}
 			else if (refTypeId & asTYPEID_MASK_OBJECT)
 			{
-				// Use the registered assignment operator to do a value assign. 
+				// Use the registered assignment operator to do a value assign.
 				// This assumes that the ref is pointing to a valid object instance.
 				engine->AssignScriptObject(ref, execCtx->GetAddressOfReturnValue(), engine->GetTypeInfoById(refTypeId));
 			}

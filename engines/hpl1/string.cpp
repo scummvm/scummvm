@@ -19,7 +19,6 @@
  *
  */
 
-#include <stdlib.h>
 #include "hpl1/string.h"
 
 namespace Hpl1 {

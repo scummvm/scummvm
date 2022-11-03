@@ -40,7 +40,6 @@
 #include "hpl1/string.h"
 #include "common/savefile.h"
 #include "hpl1/debug.h"
-#include <stdio.h>
 
 //////////////////////////////////////////////////////////////////////////
 // SAVED WORLD

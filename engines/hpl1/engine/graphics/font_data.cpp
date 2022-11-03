@@ -26,8 +26,6 @@
  */
 
 #include "hpl1/engine/graphics/font_data.h"
-#include <stdarg.h>
-#include <stdlib.h>
 
 #include "hpl1/engine/system/low_level_system.h"
 

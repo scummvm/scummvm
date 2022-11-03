@@ -26,7 +26,6 @@
  */
 
 #include "hpl1/penumbra-overture/PlayerState_Interact.h"
-#include <math.h>
 #include "hpl1/engine/engine.h"
 
 #include "hpl1/penumbra-overture/GameStickArea.h"

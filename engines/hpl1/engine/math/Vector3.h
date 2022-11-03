@@ -28,8 +28,7 @@
 #ifndef HPL_VECTOR3_H
 #define HPL_VECTOR3_H
 
-#include "Vector2.h"
-#include <math.h>
+#include "hpl1/engine/math/Vector2.h"
 
 #define VEC3_CONST_ARRAY(name, vec) const float name[] = {vec.x, vec.y, vec.z}
 
