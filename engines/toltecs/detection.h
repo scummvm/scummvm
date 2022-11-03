@@ -28,6 +28,8 @@ struct ToltecsGameDescription {
 	ADGameDescription desc;
 };
 
+#define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
+
 } // End of namespace Toltecs
 
 #endif // TOLTECS_DETECTION_H
