@@ -89,9 +89,6 @@ bool ViewBase::msgAction(const ActionMessage &msg) {
 	case KEYBIND_TURN_RIGHT:
 		turnRight();
 		break;
-	case KEYBIND_BASH:
-		bash();
-		break;
 	default:
 		return TextView::msgAction(msg);
 	}
@@ -241,50 +238,6 @@ void ViewBase::obstructed(byte mask) {
 void ViewBase::barrier() {
 	_dialogMessage = STRING["movement.obstructed.barrier"];
 	Sound::sound(SOUND_1);
-}
-
-void ViewBase::bash() {
-	Maps::Maps &maps = g_globals->_maps;
-	Maps::Map &map = *maps._currentMap;
-
-	if (!(maps._currentState & 0x55 & maps._forwardMask) ||
-		!(maps._currentWalls & maps._forwardMask)) {
-		// No forward obstruction, so simply move forward
-		forward(KEYBIND_FORWARDS);
-	} else {
-		int index = Maps::MAP_32;
-		if (!(maps._currentWalls & maps._forwardMask & 0x55))
-			index = Maps::MAP_31;
-		else if (!(maps._currentWalls & maps._forwardMask & 0x55))
-			index = Maps::MAP_30;
-
-		if (map.dataByte(index) != 1) {
-			forward(KEYBIND_FORWARDS);
-		} else {
-			Sound::sound(SOUND_1);
-
-			uint might = g_engine->getRandomNumber(100);
-			for (uint i = 0; i < g_globals->_party.size(); ++i)
-				might += g_globals->_party[i]._might;
-			might = MIN(might, 255U);
-
-			// Check for busting
-			uint threshold = map[Maps::MAP_45];
-			if (threshold && might >= threshold) {
-				map._states[maps._mapOffset + maps._forwardMask] ^=
-					(maps._forwardMask & 0x55);
-				maps._currentState = map._states[maps._mapOffset + maps._forwardMask];
-			}
-
-			// Check for trap being triggered
-			if (g_engine->getRandomNumber(100) >= map[Maps::MAP_DARTS_THRESHOLD]) {
-				warning("TODO: trigger trap");
-
-			} else {
-				forward(KEYBIND_FORWARDS);
-			}
-		}
-	}
 }
 
 } // namespace Game

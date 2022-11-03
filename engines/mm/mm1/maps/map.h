@@ -80,7 +80,7 @@ enum DataOffset {
 	MAP_45 = 45,
 	MAP_FLAGS = 46,
 	MAP_47 = 47,
-	MAP_DARTS_THRESHOLD = 48,
+	MAP_TRAP_THRESHOLD = 48,
 	MAP_49 = 49
 };
 
@@ -200,6 +200,11 @@ public:
 	 * Redraw the game display
 	 */
 	static void redrawGame();
+
+	/**
+	 * Unlocks door
+	 */
+	void unlockDoor();
 };
 
 } // namespace Maps

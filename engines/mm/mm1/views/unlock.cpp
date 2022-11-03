@@ -108,24 +108,18 @@ void Unlock::charSelected(uint charIndex) {
 			getRandomNumber(100);
 
 		if (val < c._v6c) {
-			unlockDoor();
+			g_maps->_currentMap->unlockDoor();
 			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
 
 		} else if (getRandomNumber(100) <
-				g_maps->_currentMap->dataByte(Maps::MAP_DARTS_THRESHOLD)) {
+				g_maps->_currentMap->dataByte(Maps::MAP_TRAP_THRESHOLD)) {
 			send(InfoMessage(8, 1, STRING["dialogs.unlock.failed"]));
 
 		} else {
-			unlockDoor();
+			g_maps->_currentMap->unlockDoor();
 			send("Trap", GameMessage("TRIGGER"));
 		}
 	}
-}
-
-void Unlock::unlockDoor() {
-	g_maps->_currentState =
-		g_maps->_currentMap->_states[g_maps->_mapOffset] ^=
-		g_maps->_forwardMask & 0x55;
 }
 
 } // namespace Views

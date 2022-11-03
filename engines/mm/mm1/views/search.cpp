@@ -140,7 +140,7 @@ void Search::timeout() {
 	case INITIAL: {
 		Maps::Map &map = *g_maps->_currentMap;
 		_val1 = MIN(g_globals->_treasure._container * 8 +
-			map[Maps::MAP_DARTS_THRESHOLD], 255);
+			map[Maps::MAP_TRAP_THRESHOLD], 255);
 
 		if (!g_globals->_treasure[1]) {
 			g_globals->_treasure[1] = (getRandomNumber(100) < _val1) ? 1 : 2;
