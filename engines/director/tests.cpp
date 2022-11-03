@@ -109,7 +109,6 @@ void Window::testFontScaling() {
 		x += tile->getSurface()->w + 10;
 	}
 
-#if 0
 	Common::String path = pathMakeRelative("blend2.pic");
 	Common::File in;
 	in.open(path);
@@ -121,9 +120,12 @@ void Window::testFontScaling() {
 
 	Image::PICTDecoder *k = new Image::PICTDecoder();
 	k->loadStream(in);
-	surface.blitFrom(k->getSurface(), Common::Point(5, 280));
+
+	Graphics::Surface *res = k->getSurface()->convertTo(_wm->_pixelformat, k->getPalette(), k->getPaletteSize(), _wm->getPalette(), _wm->getPaletteSize(), Graphics::kDitherNaive);
+
+	surface.blitFrom(res, Common::Point(400, 280));
 	in.close();
-#endif
+
 	g_system->copyRectToScreen(surface.getPixels(), surface.pitch, 0, 0, w, h); // testing fonts
 
 	Common::Event event;
