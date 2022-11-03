@@ -26,8 +26,17 @@ namespace Director {
 
 namespace SpaceMgr {
 
+struct LLink {
+	Common::String payload;
+};
+
+struct View {
+	Common::String payload;
+	Common::HashMap<Common::String, LLink> llinks;
+};
+
 struct Node {
-	Common::HashMap<Common::String, Common::String> views;
+	Common::HashMap<Common::String, View> views;
 };
 
 struct Space {
