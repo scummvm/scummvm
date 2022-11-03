@@ -21,13 +21,10 @@
 
 #include "base/plugins.h"
 #include "common/file.h"
-#include "common/translation.h"
 
 #include "engines/advancedDetector.h"
 
 #include "drascula/detection.h"
-
-#define GAMEOPTION_ORIGINAL_SAVELOAD      GUIO_GAMEOPTIONS1
 
 static const PlainGameDescriptor drasculaGames[] = {
 	{"drascula", "Drascula: The Vampire Strikes Back"},
@@ -296,24 +293,9 @@ static const DrasculaGameDescription gameDescriptions[] = {
 	{ AD_TABLE_END_MARKER }
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class DrasculaMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	DrasculaMetaEngineDetection() : AdvancedMetaEngineDetection(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames, Drascula::optionsList) {
+	DrasculaMetaEngineDetection() : AdvancedMetaEngineDetection(Drascula::gameDescriptions, sizeof(Drascula::DrasculaGameDescription), drasculaGames) {
 		_guiOptions = GUIO2(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD);
 	}
 

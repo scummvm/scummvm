@@ -22,12 +22,29 @@
 #include "engines/savestate.h"
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
 #include "graphics/thumbnail.h"
 
 #include "drascula/drascula.h"
 #include "drascula/detection.h"
 
 namespace Drascula {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 DrasculaEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -61,6 +78,10 @@ class DrasculaMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "drascula";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Drascula::optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;
