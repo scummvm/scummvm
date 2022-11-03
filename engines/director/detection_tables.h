@@ -5664,7 +5664,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	WINGAME1t_l("putlestory", "", "PUTLE32.EXE", "74c72ab0fcdb4c69114047c74cef486e", 1403206, Common::JA_JPN, 501),
 
 	// From Russian "Pyatachok Anthology" DVD
-	WINGAME1t_l("pyatachok1", "", "START.EXE", "97ecdb7aa731b30ba6b1715eab4e0e0d", 917671, Common::RU_RUS, 500),
+	WINGAME2t_l("pyatachok1", "",	"START.EXE",	 "97ecdb7aa731b30ba6b1715eab4e0e0d", 917671,
+									"Data/Eorc.dir", "5c38097a92432551284a6540ee5a1159", 329642, Common::RU_RUS, 500),
 
 	// Disc contains an audio track, not used by the game
 	// Mac version requires installation, 'PYST Installer' / 'MACINTOSH/Installer PYST(MAC)' (FR) / 'MACINTOSH/Installieren PYST(MAC)' (DE), VISE
