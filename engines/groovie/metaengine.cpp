@@ -30,10 +30,78 @@
 
 namespace Groovie {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_T7G_FAST_MOVIE_SPEED,
+		{
+			_s("Fast movie speed"),
+			_s("Play movies at an increased speed"),
+			"fast_movie_speed",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_EASIER_AI,
+		{
+			_s("Easier AI"),
+			_s("Decrease the difficulty of AI puzzles"),
+			"easier_ai",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_FINAL_HOUR,
+		{
+			_s("Updated Credits Music"),
+			_s("Play the song The Final Hour during the credits instead of reusing MIDI songs"),
+			"credits_music",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_SPEEDRUN,
+		{
+			_s("Speedrun Mode"),
+			_s("Affects the controls for fast forwarding the game"),
+			"speedrun_mode",
+			false,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 class GroovieMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "groovie";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *gd) const override;

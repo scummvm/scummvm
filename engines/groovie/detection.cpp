@@ -30,12 +30,6 @@ using namespace Common;
 
 namespace Groovie {
 
-#define GAMEOPTION_T7G_FAST_MOVIE_SPEED GUIO_GAMEOPTIONS1
-#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS2
-#define GAMEOPTION_EASIER_AI GUIO_GAMEOPTIONS3
-#define GAMEOPTION_FINAL_HOUR GUIO_GAMEOPTIONS4
-#define GAMEOPTION_SPEEDRUN GUIO_GAMEOPTIONS5
-
 static const DebugChannelDef debugFlagList[] = {
 	{Groovie::kDebugVideo, "Video", "Debug video and audio playback"},
 	{Groovie::kDebugResource, "Resource", "Debug resource management"},
@@ -282,6 +276,7 @@ static const GroovieGameDescription gameDescriptions[] = {
 
 	{AD_TABLE_END_MARKER, kGroovieT7G}
 };
+// clang-format on
 
 static const char *directoryGlobs[] = {
 	"MIDI",
@@ -290,74 +285,9 @@ static const char *directoryGlobs[] = {
 	nullptr
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-	{
-		GAMEOPTION_T7G_FAST_MOVIE_SPEED,
-		{
-			_s("Fast movie speed"),
-			_s("Play movies at an increased speed"),
-			"fast_movie_speed",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_ORIGINAL_SAVELOAD,
-		{
-			_s("Use original save/load screens"),
-			_s("Use the original save/load screens instead of the ScummVM ones"),
-			"originalsaveload",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_EASIER_AI,
-		{
-			_s("Easier AI"),
-			_s("Decrease the difficulty of AI puzzles"),
-			"easier_ai",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_FINAL_HOUR,
-		{
-			_s("Updated Credits Music"),
-			_s("Play the song The Final Hour during the credits instead of reusing MIDI songs"),
-			"credits_music",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_SPEEDRUN,
-		{
-			_s("Speedrun Mode"),
-			_s("Affects the controls for fast forwarding the game"),
-			"speedrun_mode",
-			false,
-			0,
-			0
-		}
-	},
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-// clang-format on
-
 class GroovieMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	GroovieMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(GroovieGameDescription), groovieGames, optionsList) {
+	GroovieMetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(GroovieGameDescription), groovieGames) {
 		// Use kADFlagUseExtraAsHint in order to distinguish the 11th hour from
 		// its "Making of" as well as the Clandestiny Trailer; they all share
 		// the same MD5.
