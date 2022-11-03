@@ -33,19 +33,19 @@ class CStdStringFactory : public asIStringFactory
 {
 public:
 	CStdStringFactory() {}
-	~CStdStringFactory() 
+	~CStdStringFactory()
 	{
-		// The script engine must release each string 
+		// The script engine must release each string
 		// constant that it has requested
 		assert(stringCache.size() == 0);
 	}
 
 	const void *GetStringConstant(const char *data, asUINT length)
 	{
-		// The string factory might be modified from multiple 
+		// The string factory might be modified from multiple
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
-		
+
 		string str(data, length);
 		map_t::iterator it = stringCache.find(str);
 		if (it != stringCache.end())
@@ -54,7 +54,7 @@ public:
 			it = stringCache.insert(map_t::value_type(str, 1)).first;
 
 		asReleaseExclusiveLock();
-		
+
 		return reinterpret_cast<const void*>(&it->first);
 	}
 
@@ -64,11 +64,11 @@ public:
 			return asERROR;
 
 		int ret = asSUCCESS;
-		
-		// The string factory might be modified from multiple 
+
+		// The string factory might be modified from multiple
 		// threads, so it is necessary to use a mutex.
 		asAcquireExclusiveLock();
-		
+
 		map_t::iterator it = stringCache.find(*reinterpret_cast<const string*>(str));
 		if (it == stringCache.end())
 			ret = asERROR;
@@ -78,9 +78,9 @@ public:
 			if (it->second == 0)
 				stringCache.erase(it);
 		}
-		
+
 		asReleaseExclusiveLock();
-		
+
 		return ret;
 	}
 
@@ -104,14 +104,14 @@ public:
 
 static CStdStringFactory *stringFactory = 0;
 
-// TODO: Make this public so the application can also use the string 
+// TODO: Make this public so the application can also use the string
 //       factory and share the string constants if so desired, or to
 //       monitor the size of the string factory cache.
 CStdStringFactory *GetStdStringFactorySingleton()
 {
 	if( stringFactory == 0 )
 	{
-		// The following instance will be destroyed by the global 
+		// The following instance will be destroyed by the global
 		// CStdStringFactoryCleaner instance upon application shutdown
 		stringFactory = new CStdStringFactory();
 	}
@@ -495,7 +495,7 @@ static string formatInt(asINT64 value, const string &options, asUINT width)
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
 #else
-	sprintf(&buf[0], fmt.c_str(), width, value);
+	snprintf(&buf[0], width+30, fmt.c_str(), width, value);
 #endif
 	buf.resize(strlen(&buf[0]));
 
@@ -539,7 +539,7 @@ static string formatUInt(asQWORD value, const string &options, asUINT width)
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, value);
 #else
-	sprintf(&buf[0], fmt.c_str(), width, value);
+	snprintf(&buf[0], width+30, fmt.c_str(), width, value);
 #endif
 	buf.resize(strlen(&buf[0]));
 
@@ -575,7 +575,7 @@ static string formatFloat(double value, const string &options, asUINT width, asU
 	// MSVC 8.0 / 2005 or newer
 	sprintf_s(&buf[0], buf.size(), fmt.c_str(), width, precision, value);
 #else
-	sprintf(&buf[0], fmt.c_str(), width, precision, value);
+	snprintf(&buf[0], width+precision+50, fmt.c_str(), width, precision, value);
 #endif
 	buf.resize(strlen(&buf[0]));
 
@@ -1359,7 +1359,3 @@ void RegisterStdString(asIScriptEngine * engine)
 }
 
 END_AS_NAMESPACE
-
-
-
-

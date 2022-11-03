@@ -123,14 +123,14 @@ SCRIPT_DEFINE_FUNC_1(void, Print, string)
 
 static tString FloatToString(float afX) {
 	char sTemp[30];
-	sprintf(sTemp, "%f", afX);
+	snprintf(sTemp, 30, "%f", afX);
 	return (tString)sTemp;
 }
 SCRIPT_DEFINE_FUNC_1(string, FloatToString, float)
 
 static tString IntToString(int alX) {
 	char sTemp[30];
-	sprintf(sTemp, "%d", alX);
+	snprintf(sTemp, 30, "%d", alX);
 	return (tString)sTemp;
 }
 SCRIPT_DEFINE_FUNC_1(string, IntToString, int)

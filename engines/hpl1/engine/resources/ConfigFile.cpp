@@ -91,7 +91,7 @@ void cConfigFile::SetString(tString asLevel, tString asName, tString asVal) {
 
 void cConfigFile::SetInt(tString asLevel, tString asName, int alVal) {
 	char sBuffer[40];
-	sprintf(sBuffer, "%d", alVal);
+	snprintf(sBuffer, 40, "%d", alVal);
 
 	SetString(asLevel, asName, sBuffer);
 }
@@ -100,7 +100,7 @@ void cConfigFile::SetInt(tString asLevel, tString asName, int alVal) {
 
 void cConfigFile::SetFloat(tString asLevel, tString asName, float afVal) {
 	char sBuffer[40];
-	sprintf(sBuffer, "%f", afVal);
+	snprintf(sBuffer, 40, "%f", afVal);
 
 	SetString(asLevel, asName, sBuffer);
 }

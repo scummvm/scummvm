@@ -386,14 +386,14 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 
 	/////////// INT 32 ////////////////////////////////
 	case eSerializeType_Int32: {
-		sprintf(msTempCharArray, "%d", PointerValue(pVal, int));
+		snprintf(msTempCharArray, 2048, "%d", PointerValue(pVal, int));
 		return msTempCharArray;
 		break;
 	}
 
 	/////////// FLOAT 32 ////////////////////////////////
 	case eSerializeType_Float32: {
-		sprintf(msTempCharArray, "%f", PointerValue(pVal, float));
+		snprintf(msTempCharArray, 2048, "%f", PointerValue(pVal, float));
 		return msTempCharArray;
 		break;
 	}
@@ -408,7 +408,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// VECTOR 2L ////////////////////////////////
 	case eSerializeType_Vector2l: {
 		cVector2l &vVec = PointerValue(pVal, cVector2l);
-		sprintf(msTempCharArray, "%d %d", vVec.x, vVec.y);
+		snprintf(msTempCharArray, 2048, "%d %d", vVec.x, vVec.y);
 		return msTempCharArray;
 		break;
 	}
@@ -416,7 +416,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// VECTOR 2F ////////////////////////////////
 	case eSerializeType_Vector2f: {
 		cVector2f &vVec = PointerValue(pVal, cVector2f);
-		sprintf(msTempCharArray, "%f %f", vVec.x, vVec.y);
+		snprintf(msTempCharArray, 2048, "%f %f", vVec.x, vVec.y);
 		return msTempCharArray;
 		break;
 	}
@@ -424,7 +424,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// VECTOR 3L ////////////////////////////////
 	case eSerializeType_Vector3l: {
 		cVector3l &vVec = PointerValue(pVal, cVector3l);
-		sprintf(msTempCharArray, "%d %d %d", vVec.x, vVec.y, vVec.z);
+		snprintf(msTempCharArray, 2048, "%d %d %d", vVec.x, vVec.y, vVec.z);
 		return msTempCharArray;
 		break;
 	}
@@ -432,7 +432,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// VECTOR 3F ////////////////////////////////
 	case eSerializeType_Vector3f: {
 		cVector3f &vVec = PointerValue(pVal, cVector3f);
-		sprintf(msTempCharArray, "%f %f %f", vVec.x, vVec.y, vVec.z);
+		snprintf(msTempCharArray, 2048, "%f %f %f", vVec.x, vVec.y, vVec.z);
 		return msTempCharArray;
 		break;
 	}
@@ -440,7 +440,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// MATRIX F ////////////////////////////////
 	case eSerializeType_Matrixf: {
 		cMatrixf &Mtx = PointerValue(pVal, cMatrixf);
-		sprintf(msTempCharArray, "%f %f %f %f "
+		snprintf(msTempCharArray, 2048, "%f %f %f %f "
 								 "%f %f %f %f "
 								 "%f %f %f %f "
 								 "%f %f %f %f",
@@ -455,7 +455,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// COLOR ////////////////////////////////
 	case eSerializeType_Color: {
 		cColor Col = PointerValue(pVal, cColor);
-		sprintf(msTempCharArray, "%f %f %f %f", Col.r, Col.g, Col.b, Col.a);
+		snprintf(msTempCharArray, 2048, "%f %f %f %f", Col.r, Col.g, Col.b, Col.a);
 		return msTempCharArray;
 		break;
 	}
@@ -463,7 +463,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// RECT 2L ////////////////////////////////
 	case eSerializeType_Rect2l: {
 		cRect2l &vR = PointerValue(pVal, cRect2l);
-		sprintf(msTempCharArray, "%d %d %d %d", vR.x, vR.y, vR.w, vR.h);
+		snprintf(msTempCharArray, 2048, "%d %d %d %d", vR.x, vR.y, vR.w, vR.h);
 		return msTempCharArray;
 		break;
 	}
@@ -471,7 +471,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// RECT 2F ////////////////////////////////
 	case eSerializeType_Rect2f: {
 		cRect2f &vR = PointerValue(pVal, cRect2f);
-		sprintf(msTempCharArray, "%f %f %f %f", vR.x, vR.y, vR.w, vR.h);
+		snprintf(msTempCharArray, 2048, "%f %f %f %f", vR.x, vR.y, vR.w, vR.h);
 		return msTempCharArray;
 		break;
 	}
@@ -479,7 +479,7 @@ tString cSerializeClass::ValueToString(void *apData, size_t alOffset, eSerialize
 	/////////// PLANE F ////////////////////////////////
 	case eSerializeType_Planef: {
 		cPlanef &vP = PointerValue(pVal, cPlanef);
-		sprintf(msTempCharArray, "%f %f %f %f", vP.a, vP.b, vP.c, vP.d);
+		snprintf(msTempCharArray, 2048, "%f %f %f %f", vP.a, vP.b, vP.c, vP.d);
 		return msTempCharArray;
 		break;
 	}

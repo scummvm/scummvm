@@ -304,25 +304,25 @@ void cMeshLoaderMSH::SaveFloatData(TiXmlElement *apRoot, int alSize, const char 
 
 		switch (lDecimals) {
 		case 0:
-			sprintf(sTemp, "%.0f", apData[i]);
+			snprintf(sTemp, 20, "%.0f", apData[i]);
 			break;
 		case 1:
-			sprintf(sTemp, "%.1f", apData[i]);
+			snprintf(sTemp, 20, "%.1f", apData[i]);
 			break;
 		case 2:
-			sprintf(sTemp, "%.2f", apData[i]);
+			snprintf(sTemp, 20, "%.2f", apData[i]);
 			break;
 		case 3:
-			sprintf(sTemp, "%.3f", apData[i]);
+			snprintf(sTemp, 20, "%.3f", apData[i]);
 			break;
 		case 4:
-			sprintf(sTemp, "%.4f", apData[i]);
+			snprintf(sTemp, 20, "%.4f", apData[i]);
 			break;
 		case 5:
-			sprintf(sTemp, "%.5f", apData[i]);
+			snprintf(sTemp, 20, "%.5f", apData[i]);
 			break;
 		case 6:
-			sprintf(sTemp, "%.6f", apData[i]);
+			snprintf(sTemp, 20, "%.6f", apData[i]);
 			break;
 		}
 
@@ -360,7 +360,7 @@ void cMeshLoaderMSH::SaveIntData(TiXmlElement *apElem, int alSize, unsigned int 
 	char sTemp[10];
 
 	for (int i = 0; i < alSize; i++) {
-		sprintf(sTemp, "%d", apData[i]);
+		snprintf(sTemp, 10, "%d", apData[i]);
 		sData += sTemp;
 
 		if (i != alSize - 1)

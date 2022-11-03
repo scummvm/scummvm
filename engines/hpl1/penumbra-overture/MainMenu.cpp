@@ -845,7 +845,7 @@ public:
 		}
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%.1f", afX);
+		snprintf(sTempVec, 256, "%.1f", afX);
 		gpWidgetWeightForceScaleText->msText = cString::To16Char(sTempVec);
 
 		mpInit->mfHapticForceMul = afX;
@@ -872,7 +872,7 @@ public:
 		}
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%.1f", afX);
+		snprintf(sTempVec, 256, "%.1f", afX);
 		gpWidgetInteractModeCameraSpeedText->msText = cString::To16Char(sTempVec);
 
 		mpInit->mpPlayer->GetHapticCamera()->SetInteractModeCameraSpeed(afX);
@@ -899,7 +899,7 @@ public:
 		}
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%.1f", afX);
+		snprintf(sTempVec, 256, "%.1f", afX);
 		gpWidgetActionModeCameraSpeedText->msText = cString::To16Char(sTempVec);
 
 		mpInit->mpPlayer->GetHapticCamera()->SetActionModeCameraSpeed(afX);
@@ -942,7 +942,7 @@ public:
 		}
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%.1f", mpInit->mpButtonHandler->mfMouseSensitivity);
+		snprintf(sTempVec, 256, "%.1f", mpInit->mpButtonHandler->mfMouseSensitivity);
 		gpMouseSensitivityText->msText = cString::To16Char(sTempVec);
 	}
 };
@@ -1210,7 +1210,7 @@ public:
 		mpInit->mpGame->GetGraphics()->GetLowLevel()->SetGammaCorrection(mfGamma);
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%.1f", mfGamma);
+		snprintf(sTempVec, 256, "%.1f", mfGamma);
 
 		gpGammaText->msText = cString::To16Char(sTempVec);
 		if (mlGNum == 1)
@@ -1491,7 +1491,7 @@ public:
 		mpInit->mvScreenSize = gvResolutions[lCurrentNum];
 
 		char sTempVec[256];
-		sprintf(sTempVec, "%d x %d", mpInit->mvScreenSize.x, mpInit->mvScreenSize.y);
+		snprintf(sTempVec, 256, "%d x %d", mpInit->mvScreenSize.x, mpInit->mvScreenSize.y);
 		gpResolutionText->msText = cString::To16Char(sTempVec);
 
 		gbMustRestart = true;
@@ -2367,7 +2367,7 @@ void cMainMenu::CreateWidgets() {
 		cMainMenuWidget *pGammaFirstButton = hplNew(cMainMenuWidget_Gamma, (mpInit, vPos, kTranslate("MainMenu", "Gamma:"), 20, eFontAlign_Right, 1));
 		AddWidgetToState(eMainMenuState_FirstStart, pGammaFirstButton);
 		vPos.x = 405;
-		sprintf(sTempVec, "%.1f", mpInit->mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection());
+		snprintf(sTempVec, 256, "%.1f", mpInit->mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection());
 		sText = cString::To16Char(sTempVec);
 		gpGammaText2 = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
 		AddWidgetToState(eMainMenuState_FirstStart, gpGammaText2);
@@ -2632,7 +2632,7 @@ void cMainMenu::CreateWidgets() {
 	AddWidgetToState(eMainMenuState_OptionsControls, gpInvertMouseYText);
 
 	vPos.y += 29;
-	sprintf(sTempVec, "%.1f", mpInit->mpButtonHandler->mfMouseSensitivity);
+	snprintf(sTempVec, 256, "%.1f", mpInit->mpButtonHandler->mfMouseSensitivity);
 	sText = cString::To16Char(sTempVec);
 	gpMouseSensitivityText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left, pWidgetMouseSensitivity));
 	AddWidgetToState(eMainMenuState_OptionsControls, gpMouseSensitivityText);
@@ -2651,19 +2651,19 @@ void cMainMenu::CreateWidgets() {
 		gpUseHapticsText->SetExtraWidget(pWidgetUseHaptics);
 
 		vPos.y += 29;
-		sprintf(sTempVec, "%.1f", mpInit->mfHapticForceMul);
+		snprintf(sTempVec, 256, "%.1f", mpInit->mfHapticForceMul);
 		sText = cString::To16Char(sTempVec);
 		gpWidgetWeightForceScaleText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left, pWidgetWeightForceScale));
 		AddWidgetToState(eMainMenuState_OptionsControls, gpWidgetWeightForceScaleText);
 
 		vPos.y += 29;
-		sprintf(sTempVec, "%.1f", mpInit->mpPlayer->GetHapticCamera()->GetInteractModeCameraSpeed());
+		snprintf(sTempVec, 256, "%.1f", mpInit->mpPlayer->GetHapticCamera()->GetInteractModeCameraSpeed());
 		sText = cString::To16Char(sTempVec);
 		gpWidgetInteractModeCameraSpeedText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left, pWidgetInteractModeCameraSpeed));
 		AddWidgetToState(eMainMenuState_OptionsControls, gpWidgetInteractModeCameraSpeedText);
 
 		vPos.y += 29;
-		sprintf(sTempVec, "%.1f", mpInit->mpPlayer->GetHapticCamera()->GetActionModeCameraSpeed());
+		snprintf(sTempVec, 256, "%.1f", mpInit->mpPlayer->GetHapticCamera()->GetActionModeCameraSpeed());
 		sText = cString::To16Char(sTempVec);
 		gpWidgetActionModeCameraSpeedText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left, pWidgetActionModeCameraSpeed));
 		AddWidgetToState(eMainMenuState_OptionsControls, gpWidgetActionModeCameraSpeedText);
@@ -2978,7 +2978,7 @@ void cMainMenu::CreateWidgets() {
 	// Text
 	vPos = cVector3f(vTextStart.x + 12, vTextStart.y + 37, vTextStart.z);
 
-	sprintf(sTempVec, "%d x %d", mpInit->mvScreenSize.x, mpInit->mvScreenSize.y);
+	snprintf(sTempVec, 256, "%d x %d", mpInit->mvScreenSize.x, mpInit->mvScreenSize.y);
 	sText = cString::To16Char(sTempVec);
 	gpResolutionText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsGraphics, gpResolutionText);
@@ -2997,7 +2997,7 @@ void cMainMenu::CreateWidgets() {
 	gpBloomText->SetExtraWidget(pWidgetBloom);
 
 	vPos.y += 29;
-	sprintf(sTempVec, "%.1f", mpInit->mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection());
+	snprintf(sTempVec, 256, "%.1f", mpInit->mpGame->GetGraphics()->GetLowLevel()->GetGammaCorrection());
 	sText = cString::To16Char(sTempVec);
 	gpGammaText = hplNew(cMainMenuWidget_Text, (mpInit, vPos, sText, 20, eFontAlign_Left));
 	AddWidgetToState(eMainMenuState_OptionsGraphics, gpGammaText);
