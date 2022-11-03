@@ -33,7 +33,7 @@
 
 class ZVisionMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	ZVisionMetaEngineDetection() : AdvancedMetaEngineDetection(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames, ZVision::optionsList) {
+	ZVisionMetaEngineDetection() : AdvancedMetaEngineDetection(ZVision::gameDescriptions, sizeof(ZVision::ZVisionGameDescription), ZVision::zVisionGames) {
 		_maxScanDepth = 2;
 		_directoryGlobs = ZVision::directoryGlobs;
 	}

@@ -38,6 +38,71 @@
 
 namespace ZVision {
 
+static const ADExtraGuiOptionsMap optionsList[] = {
+
+	{
+		GAMEOPTION_ORIGINAL_SAVELOAD,
+		{
+			_s("Use original save/load screens"),
+			_s("Use the original save/load screens instead of the ScummVM ones"),
+			"originalsaveload",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_DOUBLE_FPS,
+		{
+			_s("Double FPS"),
+			_s("Increase framerate from 30 to 60 FPS"),
+			"doublefps",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_ENABLE_VENUS,
+		{
+			_s("Enable Venus"),
+			_s("Enable the Venus help system"),
+			"venusenabled",
+			true,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_DISABLE_ANIM_WHILE_TURNING,
+		{
+			_s("Disable animation while turning"),
+			_s("Disable animation while turning in panorama mode"),
+			"noanimwhileturning",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_USE_HIRES_MPEG_MOVIES,
+		{
+			_s("Use high resolution MPEG video"),
+			_s("Use MPEG video from the DVD version instead of lower resolution AVI"),
+			"mpegmovies",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
+
 ZVisionGameId ZVision::getGameId() const {
 	return _gameDescription->gameId;
 }
@@ -54,6 +119,10 @@ class ZVisionMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "zvision";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return ZVision::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;
