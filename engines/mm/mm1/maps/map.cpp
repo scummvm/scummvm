@@ -117,6 +117,11 @@ void Map::encounter(const byte *id1, const byte *id2) {
 	enc.execute();
 }
 
+void Map::unlockDoor() {
+	g_maps->_currentState = _states[g_maps->_mapOffset] ^=
+		g_maps->_forwardMask & 0x55;
+}
+
 } // namespace Maps
 } // namespace MM1
 } // namespace MM

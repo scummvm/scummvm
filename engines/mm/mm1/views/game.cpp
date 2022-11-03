@@ -48,8 +48,10 @@ void Game::draw() {
 
 bool Game::msgAction(const ActionMessage &msg) {
 	switch (msg._action) {
+	case KEYBIND_BASH:
+		send("Bash", GameMessage("SHOW"));
+		break;
 	case KEYBIND_ORDER:
-//		g_events->send("Game", GameMessage("ORDER"));
 		addView("Order");
 		return true;
 	case KEYBIND_PROTECT:

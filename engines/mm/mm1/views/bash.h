@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef MM1_VIEWS_UNLOCK_H
-#define MM1_VIEWS_UNLOCK_H
+#ifndef MM1_VIEWS_BASH_H
+#define MM1_VIEWS_BASH_H
 
 #include "mm/mm1/views/text_view.h"
 
@@ -28,18 +28,32 @@ namespace MM {
 namespace MM1 {
 namespace Views {
 
-class Unlock : public TextView {
+class Bash : public TextView {
 private:
-	void charSelected(uint charIndex);
+	/**
+	 * Handle bashing the door
+	 */
+	void bashDoor();
 
+	/**
+	 * When there's no door to bash, the bash action
+	 * is transformed into a simple forwards movement
+	 */
+	void forwards();
 public:
-	Unlock();
-	virtual ~Unlock() {}
+	Bash();
+	virtual ~Bash() {}
 
+	/**
+	 * Handles game messages
+	 */
 	bool msgGame(const GameMessage &msg) override;
-	bool msgFocus(const FocusMessage &msg) override;
-	void draw() override;
-	bool msgKeypress(const KeypressMessage &msg) override;
+
+	/**
+	 * The view doesn't actually have any rendering,
+	 * so the draw method has no implementation
+	 */
+	void draw() override {}
 };
 
 } // namespace Views
