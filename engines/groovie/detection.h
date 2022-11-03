@@ -40,6 +40,12 @@ struct GroovieGameDescription {
 	EngineVersion version; // Version of the engine
 };
 
+#define GAMEOPTION_T7G_FAST_MOVIE_SPEED GUIO_GAMEOPTIONS1
+#define GAMEOPTION_ORIGINAL_SAVELOAD GUIO_GAMEOPTIONS2
+#define GAMEOPTION_EASIER_AI GUIO_GAMEOPTIONS3
+#define GAMEOPTION_FINAL_HOUR GUIO_GAMEOPTIONS4
+#define GAMEOPTION_SPEEDRUN GUIO_GAMEOPTIONS5
+
 } // End of namespace Groovie
 
 #endif
