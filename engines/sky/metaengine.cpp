@@ -25,6 +25,7 @@
 #include "backends/keymapper/keymap.h"
 #include "backends/keymapper/standard-actions.h"
 
+#include "common/gui_options.h"
 #include "common/system.h"
 #include "common/savefile.h"
 #include "common/translation.h"
@@ -44,6 +45,8 @@ class SkyMetaEngine : public MetaEngine {
 	bool hasFeature(MetaEngineFeature f) const override;
 
 	Common::Error createInstance(OSystem *syst, Engine **engine) override;
+
+	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 
 	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
@@ -145,6 +148,34 @@ Common::Error SkyMetaEngine::createInstance(OSystem *syst, Engine **engine) {
 	assert(engine);
 	*engine = new Sky::SkyEngine(syst);
 	return Common::kNoError;
+}
+
+static const ExtraGuiOption skyExtraGuiOption = {
+	_s("Floppy intro"),
+	_s("Use the floppy version's intro (CD version only)"),
+	"alt_intro",
+	false,
+	0,
+	0
+};
+
+const ExtraGuiOptions SkyMetaEngine::getExtraGuiOptions(const Common::String &target) const {
+	Common::String guiOptions;
+	ExtraGuiOptions options;
+
+	if (target.empty()) {
+		options.push_back(skyExtraGuiOption);
+		return options;
+	}
+
+	if (ConfMan.hasKey("guioptions", target)) {
+		guiOptions = ConfMan.get("guioptions", target);
+		guiOptions = parseGameGUIOptions(guiOptions);
+	}
+
+	if (!guiOptions.contains(GUIO_NOSPEECH))
+		options.push_back(skyExtraGuiOption);
+	return options;
 }
 
 SaveStateList SkyMetaEngine::listSaves(const char *target) const {

@@ -27,19 +27,9 @@
 #include "common/system.h"
 #include "common/file.h"
 #include "common/textconsole.h"
-#include "common/translation.h"
 
 static const PlainGameDescriptor skySetting =
 	{"sky", "Beneath a Steel Sky" };
-
-static const ExtraGuiOption skyExtraGuiOption = {
-	_s("Floppy intro"),
-	_s("Use the floppy version's intro (CD version only)"),
-	"alt_intro",
-	false,
-	0,
-	0
-};
 
 struct SkyVersion {
 	int dinnerTableEntries;
@@ -74,7 +64,6 @@ public:
 	}
 
 	PlainGameList getSupportedGames() const override;
-	const ExtraGuiOptions getExtraGuiOptions(const Common::String &target) const override;
 	PlainGameDescriptor findGame(const char *gameid) const override;
 	DetectedGames detectGames(const Common::FSList &fslist, uint32 /*skipADFlags*/, bool /*skipIncomplete*/) override;
 };
@@ -91,25 +80,6 @@ PlainGameList SkyMetaEngineDetection::getSupportedGames() const {
 	PlainGameList games;
 	games.push_back(skySetting);
 	return games;
-}
-
-const ExtraGuiOptions SkyMetaEngineDetection::getExtraGuiOptions(const Common::String &target) const {
-	Common::String guiOptions;
-	ExtraGuiOptions options;
-
-	if (target.empty()) {
-		options.push_back(skyExtraGuiOption);
-		return options;
-	}
-
-	if (ConfMan.hasKey("guioptions", target)) {
-		guiOptions = ConfMan.get("guioptions", target);
-		guiOptions = parseGameGUIOptions(guiOptions);
-	}
-
-	if (!guiOptions.contains(GUIO_NOSPEECH))
-		options.push_back(skyExtraGuiOption);
-	return options;
 }
 
 PlainGameDescriptor SkyMetaEngineDetection::findGame(const char *gameid) const {
