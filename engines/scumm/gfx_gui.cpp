@@ -1754,7 +1754,7 @@ void ScummEngine::showMainMenu() {
 	setUpMainMenuControls();
 	drawMainMenuControls();
 
-	if (_game.platform == Common::kPlatformAmiga) {
+	if (_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 		convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 		drawMainMenuTitle(saveScreenTitle);
 	} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
@@ -2100,7 +2100,7 @@ bool ScummEngine::executeMainMenuOperation(int op, int mouseX, int mouseY, bool 
 		setUpMainMenuControls();
 		drawMainMenuControls();
 
-		if (_game.platform == Common::kPlatformAmiga) {
+		if (_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)saveScreenTitle, sizeof(saveScreenTitle));
 			drawMainMenuTitle(saveScreenTitle);
 		} else if (_game.version > 4 && _game.id != GID_MONKEY2 && _game.id != GID_MONKEY) {
@@ -2943,7 +2943,8 @@ void ScummEngine::drawMainMenuControls() {
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
 		}
 
-		if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) || _game.platform == Common::kPlatformAmiga) {
+		if ((VAR_FIXEDDISK != 0xFF && VAR(VAR_FIXEDDISK) == 0) ||
+			_game.platform == Common::kPlatformAmiga || _game.platform == Common::kPlatformFMTowns) {
 			convertMessageToString((const byte *)getGUIString(gsInsertSaveDisk), (byte *)insertDisk, sizeof(insertDisk));
 			drawMainMenuTitle(insertDisk);
 		}
