@@ -24,6 +24,7 @@
 #include "base/plugins.h"
 #include "common/savefile.h"
 #include "common/str-array.h"
+#include "common/translation.h"
 #include "common/memstream.h"
 #include "engines/advancedDetector.h"
 #include "common/system.h"
@@ -34,6 +35,34 @@
 #define MAX_SAVES 99
 
 namespace Hopkins {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+	{
+		GAMEOPTION_GORE_DEFAULT_OFF,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_GORE_DEFAULT_ON,
+		{
+			_s("Gore Mode"),
+			_s("Enable Gore Mode when available"),
+			"enable_gore",
+			true,
+			0,
+			0
+		}
+	},
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 uint32 HopkinsEngine::getFeatures() const {
 	return _gameDescription->desc.flags;
@@ -61,6 +90,10 @@ class HopkinsMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "hopkins";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return Hopkins::optionsList;
 	}
 
 	bool hasFeature(MetaEngineFeature f) const override;

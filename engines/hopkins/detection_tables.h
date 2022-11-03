@@ -21,9 +21,6 @@
 
 namespace Hopkins {
 
-#define GAMEOPTION_GORE_DEFAULT_ON  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_GORE_DEFAULT_OFF GUIO_GAMEOPTIONS2
-
 static const HopkinsGameDescription gameDescriptions[] = {
 	{
 		// Hopkins FBI Linux Demo UK 1.00 and 1.02
