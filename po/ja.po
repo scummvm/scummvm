@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-02 22:15+0000\n"
+"POT-Creation-Date: 2022-11-03 23:01+0000\n"
 "PO-Revision-Date: 2022-10-26 11:33+0000\n"
 "Last-Translator: VAN-Gluon <van.gluonp@gmail.com>\n"
 "Language-Team: Japanese <https://translations.scummvm.org/projects/scummvm/"
@@ -4108,7 +4108,7 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "テキストをNTSCコンポジットでエミュレートしない"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:51
 #: engines/groovie/detection.cpp:309 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
@@ -4117,7 +4117,7 @@ msgid "Use original save/load screens"
 msgstr "オリジナルのセーブ/ロード画面を使用する"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
-#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
+#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:52
 #: engines/groovie/detection.cpp:310 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
@@ -4818,30 +4818,30 @@ msgstr ""
 "OKを押すと、ただちに変換します。それ以外の場合は、次回起動時にもう一度尋ねら"
 "れます。\n"
 
-#: engines/dreamweb/detection.cpp:66
+#: engines/dreamweb/detection.cpp:63
 msgid "Use bright palette mode"
 msgstr "明るいパレットモードを使用する"
 
-#: engines/dreamweb/detection.cpp:67
+#: engines/dreamweb/detection.cpp:64
 msgid "Display graphics using the game's bright palette"
 msgstr "ゲームの明るいパレットモードを使用してグラフィックを表示する"
 
-#: engines/dreamweb/detection.cpp:79
+#: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "オブジェクト、オプション、聖書の引用の読み上げを有効化"
 
-#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
 #: engines/twine/detection.cpp:1138
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "音声合成を使用して詳細を読み上げる(利用可能な場合のみ)"
 
-#: engines/dreamweb/detection.cpp:91
+#: engines/dreamweb/detection.cpp:88
 msgid "Enable Text to Speech for Subtitles"
 msgstr "字幕の音声読み上げを有効化"
 
-#: engines/dreamweb/detection.cpp:92
+#: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "音声合成で字幕を読み上げる(利用可能な場合のみ)"
 

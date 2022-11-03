@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-02 22:15+0000\n"
+"POT-Creation-Date: 2022-11-03 23:01+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -4127,7 +4127,7 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr "텍스트에 대해서 NTSC 효과를 에뮬레이트하지 않습니다"
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:51
 #: engines/groovie/detection.cpp:309 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
@@ -4136,7 +4136,7 @@ msgid "Use original save/load screens"
 msgstr "원본 저장/불러오기 화면 사용"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
-#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
+#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:52
 #: engines/groovie/detection.cpp:310 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
@@ -4853,30 +4853,30 @@ msgstr ""
 "확인 버튼을 누르면 변환을 진행합니다. 그렇지 않으면 다음 번 게임을 시작 시 다"
 "시 이 창이 표시됩니다.\n"
 
-#: engines/dreamweb/detection.cpp:66
+#: engines/dreamweb/detection.cpp:63
 msgid "Use bright palette mode"
 msgstr "밝은 팔레트 모드 사용"
 
-#: engines/dreamweb/detection.cpp:67
+#: engines/dreamweb/detection.cpp:64
 msgid "Display graphics using the game's bright palette"
 msgstr "게임 그래픽을 밝은 팔레트로 표시"
 
-#: engines/dreamweb/detection.cpp:79
+#: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr "물체, 옵션 및 성경 인용문에 대해 TTS를 활성화"
 
-#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
 #: engines/twine/detection.cpp:1138
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "TTS를 사용하여 설명 읽기 (TTS를 사용할 수있는 경우)"
 
-#: engines/dreamweb/detection.cpp:91
+#: engines/dreamweb/detection.cpp:88
 msgid "Enable Text to Speech for Subtitles"
 msgstr "자막에 TTS를 활성화"
 
-#: engines/dreamweb/detection.cpp:92
+#: engines/dreamweb/detection.cpp:89
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "TTS를 사용하여 자막 읽기 (TTS를 사용할 수있는 경우)"
 
