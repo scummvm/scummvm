@@ -20,6 +20,7 @@
  */
 
 #include "common/achievements.h"
+#include "common/translation.h"
 
 #include "engines/wintermute/wintermute.h"
 #include "engines/wintermute/base/base_persistence_manager.h"
@@ -32,6 +33,48 @@
 #include "wintermute/detection_tables.h"
 
 namespace Wintermute {
+
+static const ADExtraGuiOptionsMap gameGuiOptions[] = {
+	{
+		GAMEOPTION_SHOW_FPS,
+		{
+			_s("Show FPS-counter"),
+			_s("Show the current number of frames per second in the upper left corner"),
+			"show_fps",
+			false,
+			0,
+			0
+		},
+	},
+
+	{
+		GAMEOPTION_BILINEAR,
+		{
+			_s("Sprite bilinear filtering (SLOW)"),
+			_s("Apply bilinear filtering to individual sprites"),
+			"bilinear_filtering",
+			false,
+			0,
+			0
+		}
+	},
+
+#ifdef ENABLE_WME3D
+	{
+		GAMEOPTION_FORCE_2D_RENDERER,
+		{
+			_s("Force to use 2D renderer (2D games only)"),
+			_s("This setting forces ScummVM to use 2D renderer while running 2D games"),
+			"force_2d_renderer",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+
+	AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 /**
  * The fallback game descriptor used by the Wintermute engine's fallbackDetector.
@@ -54,6 +97,10 @@ class WintermuteMetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "wintermute";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return gameGuiOptions;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override {

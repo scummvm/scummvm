@@ -25,7 +25,6 @@
 #include "common/error.h"
 #include "common/fs.h"
 #include "common/util.h"
-#include "common/translation.h"
 
 #include "engines/metaengine.h"
 
@@ -45,48 +44,6 @@ static const DebugChannelDef debugFlagList[] = {
 
 namespace Wintermute {
 
-static const ADExtraGuiOptionsMap gameGuiOptions[] = {
-	{
-		GAMEOPTION_SHOW_FPS,
-		{
-			_s("Show FPS-counter"),
-			_s("Show the current number of frames per second in the upper left corner"),
-			"show_fps",
-			false,
-			0,
-			0
-		},
-	},
-
-	{
-		GAMEOPTION_BILINEAR,
-		{
-			_s("Sprite bilinear filtering (SLOW)"),
-			_s("Apply bilinear filtering to individual sprites"),
-			"bilinear_filtering",
-			false,
-			0,
-			0
-		}
-	},
-
-#ifdef ENABLE_WME3D
-	{
-		GAMEOPTION_FORCE_2D_RENDERER,
-		{
-			_s("Force to use 2D renderer (2D games only)"),
-			_s("This setting forces ScummVM to use 2D renderer while running 2D games"),
-			"force_2d_renderer",
-			false,
-			0,
-			0
-		}
-	},
-#endif
-
-	AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 static const char *directoryGlobs[] = {
 	"language", // To detect the various languages
 	"languages", // To detect the various languages
@@ -96,7 +53,7 @@ static const char *directoryGlobs[] = {
 
 class WintermuteMetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	WintermuteMetaEngineDetection() : AdvancedMetaEngineDetection(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames, gameGuiOptions) {
+	WintermuteMetaEngineDetection() : AdvancedMetaEngineDetection(Wintermute::gameDescriptions, sizeof(WMEGameDescription), Wintermute::wintermuteGames) {
 		// Use kADFlagUseExtraAsHint to distinguish between SD and HD versions
 		// of J.U.L.I.A. when their datafiles sit in the same directory (e.g. in Steam distribution).
 		_flags = kADFlagUseExtraAsHint;
