@@ -2933,11 +2933,14 @@ void ScummEngine::drawMainMenuControls() {
 
 		if (_game.version > 4 &&
 			_game.id != GID_MONKEY2 && _game.id != GID_MONKEY &&
-			_game.platform != Common::kPlatformAmiga)
+			_game.platform != Common::kPlatformAmiga &&
+			_game.platform != Common::kPlatformFMTowns)
 			drawInternalGUIControl(GUI_CTRL_INNER_BOX, 0); // Inner box
 
 		if ((_game.version == 5 &&
-			(_game.id != GID_MONKEY2 && _game.id != GID_MONKEY && _game.platform != Common::kPlatformAmiga)) ||
+			(_game.id != GID_MONKEY2 && _game.id != GID_MONKEY &&
+			_game.platform != Common::kPlatformAmiga &&
+			_game.platform != Common::kPlatformFMTowns)) ||
 			_game.version == 6) {
 			drawInternalGUIControl(GUI_CTRL_ARROW_UP_BUTTON, 0);   // Arrow up button
 			drawInternalGUIControl(GUI_CTRL_ARROW_DOWN_BUTTON, 0); // Arrow down button
