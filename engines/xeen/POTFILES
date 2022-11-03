@@ -1,2 +1,2 @@
-engines/xeen/detection.cpp
+engines/xeen/metaengine.cpp
 engines/xeen/saves.cpp
