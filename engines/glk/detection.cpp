@@ -24,7 +24,6 @@
 #include "common/memstream.h"
 #include "common/str-array.h"
 #include "common/file.h"
-#include "common/translation.h"
 #include "common/config-manager.h"
 
 #include "glk/detection.h"
@@ -229,31 +228,6 @@ void GlkMetaEngineDetection::detectClashes() const {
 #ifndef RELEASE_BUILD
 	Glk::TADS::TADSMetaEngine::detectClashes(map);
 #endif
-}
-
-const ExtraGuiOptions GlkMetaEngineDetection::getExtraGuiOptions(const Common::String &) const {
-	ExtraGuiOptions  options;
-#if defined(USE_TTS)
-	static const ExtraGuiOption ttsSpeakOptions = {
-		_s("Enable Text to Speech"),
-		_s("Use TTS to read the text"),
-		"speak",
-		false,
-	        0,
-		0
-	};
-	static const ExtraGuiOption ttsSpeakInputOptions = {
-		_s("Also read input text"),
-		_s("Use TTS to read the input text"),
-		"speak_input",
-		false,
-		0,
-		0
-	};
-	options.push_back(ttsSpeakOptions);
-	options.push_back(ttsSpeakInputOptions);
-#endif
-	return options;
 }
 
 REGISTER_PLUGIN_STATIC(GLK_DETECTION, PLUGIN_TYPE_ENGINE_DETECTION, GlkMetaEngineDetection);
