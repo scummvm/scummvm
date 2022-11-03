@@ -290,7 +290,7 @@ void ReadDialogs(std::vector<DialogTopic> &dialog,
 		if (script_text_len > 1) {
 			// Originally in the Editor +20000 bytes more were allocated, with comment:
 			//   "add a large buffer because it will get added to if another option is added"
-			// which probably refered to this data used by old editor directly to edit dialogs
+			// which probably referred to this data used by old editor directly to edit dialogs
 			char *buffer = new char[script_text_len + 1];
 			in->Read(buffer, script_text_len);
 			if (data_ver > kGameVersion_260)

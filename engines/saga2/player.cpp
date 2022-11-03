@@ -103,15 +103,15 @@ void PlayerActor::recalcPortraitType() {
 
 	if (a->isDead())
 		pType = kPortraitDead;
-	else if (a->_enchantmentFlags & (1 << actorAsleep))
+	else if (a->_enchantmentFlags & (1 << kActorAsleep))
 		pType = kPortraitAsleep;
 	else if (stats.vitality >= a->_effectiveStats.vitality * 3)
 		pType = kPortraitWounded;
-	else if (a->_enchantmentFlags & ((1 << actorDiseased) | (1 << actorPoisoned)))
+	else if (a->_enchantmentFlags & ((1 << kActorDiseased) | (1 << kActorPoisoned)))
 		pType = kPortraitSick;
 	else if (stats.vitality * 2 > a->_effectiveStats.vitality * 3)
 		pType = kPortraitOuch;
-	else if (a->_enchantmentFlags & ((1 << actorParalyzed) | (1 << actorFear) | (1 << actorBlind)))
+	else if (a->_enchantmentFlags & ((1 << kActorParalyzed) | (1 << kActorFear) | (1 << kActorBlind)))
 		pType = kPortraitConfused;
 	else if (isAggressive())
 		pType = kPortraitAngry;
@@ -137,7 +137,7 @@ void PlayerActor::AttribUpdate() {
 	// get the effective stats for this player actor
 	ActorAttributes *effStats = &actor->_effectiveStats;
 
-	for (int16 i = 0; i < numSkills; i++) {
+	for (int16 i = 0; i < kNumSkills; i++) {
 		// go through each skill and update as needed
 		stdAttribUpdate(effStats->skill(i),
 		                _baseStats.skill(i),
@@ -154,16 +154,16 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 		int16 fractionRecover;
 
 		// get the whole number first
-		recover = attribPointsPerUpdate / attribPointsPerValue;
+		recover = kAttribPointsPerUpdate / kAttribPointsPerValue;
 
 		// get the fraction
-		fractionRecover = attribPointsPerUpdate % attribPointsPerValue;
+		fractionRecover = kAttribPointsPerUpdate % kAttribPointsPerValue;
 
 		// if there is an overrun
-		if (_attribRecPools[index] + fractionRecover > attribPointsPerValue) {
+		if (_attribRecPools[index] + fractionRecover > kAttribPointsPerValue) {
 			// add the overrun to the whole number
 			recover++;
-			_attribRecPools[index] = (_attribRecPools[index] + fractionRecover) - attribPointsPerValue;
+			_attribRecPools[index] = (_attribRecPools[index] + fractionRecover) - kAttribPointsPerValue;
 		} else {
 			_attribRecPools[index] += fractionRecover;
 		}
@@ -178,14 +178,14 @@ void PlayerActor::stdAttribUpdate(uint8 &stat, uint8 baseStat, int16 index) {
 }
 
 void PlayerActor::manaUpdate() {
-	const   int numManas        = 6;
+	const   int kNumManas        = 6;
 	const   int minMana         = 0;
 
 	// get the actor pointer for this character
 	Actor *actor = getActor();
 
 	// get indirections for each of the effective mana types
-	int16 *effectiveMana[numManas] = { &actor->_effectiveStats.redMana,
+	int16 *effectiveMana[kNumManas] = { &actor->_effectiveStats.redMana,
 	                                     &actor->_effectiveStats.orangeMana,
 	                                     &actor->_effectiveStats.yellowMana,
 	                                     &actor->_effectiveStats.greenMana,
@@ -194,7 +194,7 @@ void PlayerActor::manaUpdate() {
 	                                   };
 
 	// get indirections for each of the base mana types
-	int16 *baseMana[numManas] = { &_baseStats.redMana,
+	int16 *baseMana[kNumManas] = { &_baseStats.redMana,
 	                                &_baseStats.orangeMana,
 	                                &_baseStats.yellowMana,
 	                                &_baseStats.greenMana,
@@ -205,7 +205,7 @@ void PlayerActor::manaUpdate() {
 	uint16  diff;
 
 	// do each mana type
-	for (int16 i = 0; i < numManas; i++) {
+	for (int16 i = 0; i < kNumManas; i++) {
 		int     levelBump;
 		int     recRate;
 
@@ -272,7 +272,7 @@ void PlayerActor::skillAdvance(SkillProto *proto,
 	uint8 stat = getStatIndex(proto);
 
 	// get the percentile chance of advancing
-	uint8 advanceChance = ActorAttributes::skillBasePercent - skillLevel;
+	uint8 advanceChance = ActorAttributes::kSkillBasePercent - skillLevel;
 
 	// call the main body of code
 	skillAdvance(stat, advanceChance, points, useMult);
@@ -283,10 +283,10 @@ void PlayerActor::skillAdvance(ActorSkillID stat,
                                uint8 points,
                                uint8 useMult) { // useMult defaulted to 1
 	// get the skill level for the skill passed ( i.e. 1-100 )
-	uint8 skillLevel = clamp(0, _baseStats.skill(stat), ActorAttributes::skillMaxLevel);
+	uint8 skillLevel = clamp(0, _baseStats.skill(stat), ActorAttributes::kSkillMaxLevel);
 
 	// get the percentile chance of advancing
-	uint8 advanceChance = ActorAttributes::skillBasePercent - skillLevel;
+	uint8 advanceChance = ActorAttributes::kSkillBasePercent - skillLevel;
 
 	// call the main body of code
 	skillAdvance(stat, advanceChance, points, useMult);
@@ -302,27 +302,27 @@ void PlayerActor::skillAdvance(uint8 stat,
 	// roll percentile dice
 	if (g_vm->_rnd->getRandomNumber(99) < advanceChance) {
 		uint8 increase;
-		int16   oldValue = _baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel;
+		int16   oldValue = _baseStats.skill(stat) / ActorAttributes::kSkillFracPointsPerLevel;
 
 		// success, now apply the multiplyer
 		_attribMemPools[stat] += points * useMult;
 
 		// get the amout of whole increase points
-		increase = _attribMemPools[stat] / ActorAttributes::skillFracPointsPerLevel;
+		increase = _attribMemPools[stat] / ActorAttributes::kSkillFracPointsPerLevel;
 
 		// now set the pool with the fraction
 		_attribMemPools[stat] =
 		    _attribMemPools[stat]
 		    -       increase
-		    *   ActorAttributes::skillFracPointsPerLevel;
+		    *   ActorAttributes::kSkillFracPointsPerLevel;
 
 		// now apply changes to the _baseStats
 		_baseStats.skill(stat) = clamp(
 		                            0,
 		                            _baseStats.skill(stat) += increase,
-		                            ActorAttributes::skillMaxLevel);
+		                            ActorAttributes::kSkillMaxLevel);
 
-		if (_baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel != oldValue) {
+		if (_baseStats.skill(stat) / ActorAttributes::kSkillFracPointsPerLevel != oldValue) {
 			static const char *skillNames[] = {
 				ARCHERY_SKILL,
 				SWORD_SKILL,
@@ -343,16 +343,16 @@ void PlayerActor::skillAdvance(uint8 stat,
 
 void PlayerActor::vitalityAdvance(uint8 points) {
 	while (points-- > 0) {
-		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::vitalityLimit - 1) > _baseStats.vitality) {
-			if (++_vitalityMemory >= vitalityLevelBump) {
-				_vitalityMemory -= vitalityLevelBump;
+		if ((int16)g_vm->_rnd->getRandomNumber(ActorAttributes::kVitalityLimit - 1) > _baseStats.vitality) {
+			if (++_vitalityMemory >= kVitalityLevelBump) {
+				_vitalityMemory -= kVitalityLevelBump;
 				_baseStats.vitality++;
 				StatusMsg(VITALITY_STATUS, getActor()->objName());
 			}
 		}
 	}
 
-	assert(_baseStats.vitality < ActorAttributes::vitalityLimit);
+	assert(_baseStats.vitality < ActorAttributes::kVitalityLimit);
 }
 
 // this function will return a value of 0 - 4 to indicate
@@ -368,9 +368,9 @@ int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats def
 	ActorAttributes *effStats = getEffStats();
 
 	// check to see if this is a special case
-	if (skillID == skillVitality) {
-		return effStats->vitality / ActorAttributes::skillFracPointsPerLevel;
-	} else if (skillID == skillCartography) {
+	if (skillID == kSkillVitality) {
+		return effStats->vitality / ActorAttributes::kSkillFracPointsPerLevel;
+	} else if (skillID == kSkillCartography) {
 		// cartography has no levels
 		return 0;
 	}
@@ -380,16 +380,16 @@ int8 PlayerActor::getSkillLevel(SkillProto *skill, bool base) { // basestats def
 
 
 	// stat stored as skillLevel *
-	//                skillFracPointsPerLevel +
+	//                kSkillFracPointsPerLevel +
 	//                skillCurrentFracPoints
 	if (base) {
 		return clamp(0,
-		             _baseStats.skill(stat) / ActorAttributes::skillFracPointsPerLevel,
-		             ActorAttributes::skillLevels - 1);
+		             _baseStats.skill(stat) / ActorAttributes::kSkillFracPointsPerLevel,
+		             ActorAttributes::kSkillLevels - 1);
 	} else {
 		return clamp(0,
-		             effStats->skill(stat) / ActorAttributes::skillFracPointsPerLevel,
-		             ActorAttributes::skillLevels - 1);
+		             effStats->skill(stat) / ActorAttributes::kSkillFracPointsPerLevel,
+		             ActorAttributes::kSkillLevels - 1);
 	}
 }
 
@@ -401,56 +401,56 @@ uint8 PlayerActor::getStatIndex(SkillProto *proto) {
 	// now map the id gotten from spellid to the
 	// attributeskilll enum for the allSkills array
 	switch (skillID) {
-	case skillPickpocket:
-		stat = skillIDPilfer;
+	case kSkillPickpocket:
+		stat = kSkillIDPilfer;
 		break;
 
-	case skillSeeHidden:
-		stat = skillIDSpotHidden;
+	case kSkillSeeHidden:
+		stat = kSkillIDSpotHidden;
 		break;
 
-	case skillLockPick:
-		stat = skillIDLockpick;
+	case kSkillLockPick:
+		stat = kSkillIDLockpick;
 		break;
 
-	case skillFirstAid:
-		stat = skillIDFirstAid;
+	case kSkillFirstAid:
+		stat = kSkillIDFirstAid;
 		break;
 
-	case skillArchery:
-		stat = skillIDArchery;
+	case kSkillArchery:
+		stat = kSkillIDArchery;
 		break;
 
-	case skillSwordcraft:
-		stat = skillIDSwordcraft;
+	case kSkillSwordcraft:
+		stat = kSkillIDSwordcraft;
 		break;
 
-	case skillShieldcraft:
-		stat = skillIDShieldcraft;
+	case kSkillShieldcraft:
+		stat = kSkillIDShieldcraft;
 		break;
 
-	case skillBludgeon:
-		stat = skillIDBludgeon;
+	case kSkillBludgeon:
+		stat = kSkillIDBludgeon;
 		break;
 
-	case skillThrowing:
-		stat = skillIDThrowing;
+	case kSkillThrowing:
+		stat = kSkillIDThrowing;
 		break;
 
-	case skillSpellcraft:
-		stat = skillIDSpellcraft;
+	case kSkillSpellcraft:
+		stat = kSkillIDSpellcraft;
 		break;
 
-	case skillStealth:
-		stat = skillIDStealth;
+	case kSkillStealth:
+		stat = kSkillIDStealth;
 		break;
 
-	case skillAgility:
-		stat = skillIDAgility;
+	case kSkillAgility:
+		stat = kSkillIDAgility;
 		break;
 
-	case skillBrawn:
-		stat = skillIDBrawn;
+	case kSkillBrawn:
+		stat = kSkillIDBrawn;
 		break;
 
 	default:
@@ -459,7 +459,7 @@ uint8 PlayerActor::getStatIndex(SkillProto *proto) {
 	}
 
 	// make sure we have a good index
-	if (stat >= numSkills) {
+	if (stat >= kNumSkills) {
 		error("Invalid array index detected: Player.cpp-getSkillLevel()");
 	}
 
@@ -589,8 +589,8 @@ void setCenterActor(PlayerActorID newCenter) {
 //	Set a new center actor based upon an Actor address
 
 void setCenterActor(Actor *newCenter) {
-	assert(newCenter->_disposition >= dispositionPlayer);
-	setCenterActor(newCenter->_disposition - dispositionPlayer);
+	assert(newCenter->_disposition >= kDispositionPlayer);
+	setCenterActor(newCenter->_disposition - kDispositionPlayer);
 }
 
 //-----------------------------------------------------------------------
@@ -674,7 +674,7 @@ void autoAdjustAggression() {
 
 					a = (Actor *)obj;
 
-					if (a->_disposition == dispositionEnemy) {
+					if (a->_disposition == kDispositionEnemy) {
 						enemiesPresent = true;
 						break;
 					}
@@ -757,8 +757,8 @@ int16 getPortraitType(PlayerActorID id) {
 //	Given an actor, returns the corresponding player Actor ID
 
 bool actorToPlayerID(Actor *a, PlayerActorID &result) {
-	if (a->_disposition >= dispositionPlayer) {
-		result = a->_disposition - dispositionPlayer;
+	if (a->_disposition >= kDispositionPlayer) {
+		result = a->_disposition - kDispositionPlayer;
 		return true;
 	}
 
@@ -770,8 +770,8 @@ bool actorIDToPlayerID(ObjectID id, PlayerActorID &result) {
 
 	Actor       *a = (Actor *)GameObject::objectAddress(id);
 
-	if (a->_disposition >= dispositionPlayer) {
-		result = a->_disposition - dispositionPlayer;
+	if (a->_disposition >= kDispositionPlayer) {
+		result = a->_disposition - kDispositionPlayer;
 		return true;
 	}
 
@@ -885,9 +885,9 @@ struct PlayerActorArchive {
 	int16               _portraitType;
 	uint16              flags;
 	ActorAttributes     _baseStats;
-	int16               _manaMemory[numManas];
-	uint8               _attribRecPools[numSkills];
-	uint8               _attribMemPools[numSkills];
+	int16               _manaMemory[kNumManas];
+	uint8               _attribRecPools[kNumSkills];
+	uint8               _attribMemPools[kNumSkills];
 	uint8               _vitalityMemory;
 	bool                _notifiedOfAttack;
 };
@@ -932,7 +932,7 @@ void initPlayerActors() {
 
 		//  Set the actor's disposition field to reflect that that
 		//  actor is a player actor
-		a->_disposition = dispositionPlayer + i;
+		a->_disposition = kDispositionPlayer + i;
 
 		//  Turn on banding for player actors
 		setBanded(i, true);
@@ -961,13 +961,13 @@ void savePlayerActors(Common::OutSaveFile *outS) {
 		p->_baseStats.write(out);
 
 		//  Store accumulation arrays
-		for (int j = 0; j < numManas; ++j)
+		for (int j = 0; j < kNumManas; ++j)
 			out->writeSint16LE(p->_manaMemory[j]);
 
-		for (int j = 0; j < numSkills; ++j)
+		for (int j = 0; j < kNumSkills; ++j)
 			out->writeByte(p->_attribRecPools[j]);
 
-		for (int j = 0; j < numSkills; ++j)
+		for (int j = 0; j < kNumSkills; ++j)
 			out->writeByte(p->_attribMemPools[j]);
 
 		//  Store the vitality memory
@@ -1002,13 +1002,13 @@ void loadPlayerActors(Common::InSaveFile *in) {
 		p->_baseStats.read(in);
 
 		//  Restore the accumulation arrays
-		for (int j = 0; j < numManas; ++j)
+		for (int j = 0; j < kNumManas; ++j)
 			p->_manaMemory[j] = in->readSint16LE();
 
-		for (int j = 0; j < numSkills; ++j)
+		for (int j = 0; j < kNumSkills; ++j)
 			p->_attribRecPools[j] = in->readByte();
 
-		for (int j = 0; j < numSkills; ++j)
+		for (int j = 0; j < kNumSkills; ++j)
 			p->_attribMemPools[j] = in->readByte();
 
 		//  Restore the vitality memory

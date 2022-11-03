@@ -376,7 +376,7 @@ reg_t SoundCommandParser::kDoSoundPause(EngineState *s, int argc, reg_t *argv) {
 		(_soundVersion >= SCI_VERSION_2 && obj.isNull())
 	) {
 		// Don't unpause here, if the sound is already unpaused. The negative global pause counter
-		// that we introduced to accomodate our special needs during GMM save/load and autosave
+		// that we introduced to accommodate our special needs during GMM save/load and autosave
 		// operations is not meant to be used here and will cause glitches.
 		if (_music->isAllPaused() || shouldPause)
 			_music->pauseAll(shouldPause);

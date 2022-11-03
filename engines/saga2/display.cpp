@@ -48,7 +48,7 @@ bool                        paletteMayHaveChanged = false;
    Locals
  * ===================================================================== */
 
-static uint32 displayStatus = GraphicsInit;
+static uint32 displayStatus = kDisGraphicsInit;
 static bool paletteSuspendFlag = false;
 
 
@@ -68,7 +68,7 @@ static void switchOff();
 
 void endGame() {
 	blackOut();
-	displayDisable(GameEnded);
+	displayDisable(kDisGameEnded);
 	g_vm->_gameRunning = false;
 }
 
@@ -109,7 +109,7 @@ void niceScreenStartup() {
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
 	g_vm->_mouseInfo->setText(nullptr);
-	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 	resetInputDevices();
 }
 
@@ -121,7 +121,7 @@ void initBackPanel() {
 		return;
 
 	mainWindow = new BackWindow(
-	                 Rect16(0, 0, screenWidth, screenHeight),
+	                 Rect16(0, 0, kScreenWidth, kScreenHeight),
 	                 0,
 	                 cmdWindowFunc);
 	if (mainWindow == nullptr)
@@ -165,14 +165,14 @@ bool displayOkay() {
 // Main on/off swiotch for display
 
 void mainEnable() {
-	displayEnable(GameNotInitialized);
+	displayEnable(kDisGameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
 // This is a check to see if blitting is enabled
 
 void mainDisable() {
-	displayDisable(GameNotInitialized);
+	displayDisable(kDisGameNotInitialized);
 }
 
 // ------------------------------------------------------------------------
@@ -249,7 +249,7 @@ void reDrawScreen() {
  * ===================================================================== */
 
 void blackOut() {
-	g_vm->_mainPort._drawMode = drawModeReplace;
+	g_vm->_mainPort._drawMode = kDrawModeReplace;
 	g_vm->_mainPort.setColor(0);            //  fill screen with color
 	g_vm->_mainPort.fillRect(Rect16(0, 0, 640, 480));
 	g_vm->_pal->lightsOut();

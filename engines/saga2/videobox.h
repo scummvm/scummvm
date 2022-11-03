@@ -35,26 +35,26 @@ namespace Saga2 {
 class CVideoBox : public ModalWindow {
 public:
 	enum {
-		xSize   = 340,
-		ySize   = 220,
-		x       = (640 - xSize) / 2,
-		y       = (480 - ySize) / 3
+		kVBxSize   = 340,
+		kVBySize   = 220,
+		kVBx       = (640 - kVBxSize) / 2,
+		kVBy       = (480 - kVBySize) / 3
 	};
 
 private:
 	enum brush {
-		xBrushSize  = 340,  // size of each brush 'chunk'.
-		yBrushSize  = 110,
-		numBrushes  = 2     // number of chunks
+		kVBxBrushSize  = 340,  // size of each brush 'chunk'.
+		kVByBrushSize  = 110,
+		kVBnumBrushes  = 2     // number of chunks
 	};
 
 	enum borderWidth {
-		borderWidth = 6
+		kVBborderWidth = 6
 	};
 
 	enum {
-		vidPan1ResID = 0,
-		vidPan2ResID
+		kVBvidPan1ResID = 0,
+		kVBvidPan2ResID
 	};
 
 public:
@@ -69,11 +69,11 @@ public:
 	Rect16  _vidBoxRect;
 
 	// rect for the window panes
-	Rect16  _vidPanRects[numBrushes];
+	Rect16  _vidPanRects[kVBnumBrushes];
 
 public:
 	// decoration declarations
-	WindowDecoration _vidDec[numBrushes];
+	WindowDecoration _vidDec[kVBnumBrushes];
 
 
 protected:
@@ -101,7 +101,7 @@ public:
 
 	// returns the active area of this video box
 	static Rect16 getAreaRect() {
-		return Rect16(x, y, xSize, ySize);
+		return Rect16(kVBx, kVBy, kVBxSize, kVBySize);
 	}
 
 	// initializes the resources for this object

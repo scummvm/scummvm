@@ -720,7 +720,7 @@ static bool multipleAllowed(Aword flags) {
  *
  * 1) Player used ALL and it matched more than one
  *
- * 2) Player explicitly refered to multiple objects
+ * 2) Player explicitly referred to multiple objects
  *
  * 3) Player did a single (or multiple) reference that was ambiguous
  * in which case we need to disambiguate it (them). If we want to do

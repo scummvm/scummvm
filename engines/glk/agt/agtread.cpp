@@ -779,7 +779,7 @@ static void build_cmd_table(void) {
 
 	fixtbl = FIX_LIST[aver];
 	fp = 0; /* Pointer into fix table */
-	tnew = 0; /* This shouldn't be neccessary */
+	tnew = 0; /* This shouldn't be necessary */
 	for (told = 0; told < topcmd;) {
 		if (told == fixtbl[fp].told) tnew = fixtbl[fp++].tnew;
 		cmd_table[told++] = tnew++;
@@ -1201,7 +1201,7 @@ static int try_read_da1(fc_type fc, genfile fda1, rbool diag)
 */
 /* AVER values: see agility.h for the current values */
 /* NOTE:  This routine is allowed to set *ver*, but is not allowed to
-   change *aver*; should it be neccessary to change *aver*, then the routine
+   change *aver*; should it be necessary to change *aver*, then the routine
    should return the new *aver* value.
   (The only exception to this is in the very beginning-- and that may get
 	 changed)
@@ -1503,7 +1503,7 @@ static void set_da1_null(void)
 
 static void free_da1_stuff(void)
 /* Free all data structures malloc'd by try_read_da1 */
-/* (This is neccessary since try_read_da1 may have to restart) */
+/* (This is necessary since try_read_da1 may have to restart) */
 /* Note that if a pointer is NULL, rfree does nothing */
 /* Recall that rfree() is a macro that sets its argument to NULL */
 /* after freeing it */

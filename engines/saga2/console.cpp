@@ -43,55 +43,31 @@ Console::Console(Saga2Engine *vm) : GUI::Debugger() {
 	_vm = vm;
 
 	registerCmd("kill_protag", WRAP_METHOD(Console, cmdKillProtag));
-
 	registerCmd("kill", WRAP_METHOD(Console, cmdKill));
-
 	registerCmd("godmode", WRAP_METHOD(Console, cmdGodmode));
-
 	registerCmd("obj_name", WRAP_METHOD(Console, cmdObjName));
-
 	registerCmd("nid2id", WRAP_METHOD(Console, cmdObjNameIndexToID));
-
 	registerCmd("search", WRAP_METHOD(Console, cmdSearchObj));
-
 	registerCmd("add", WRAP_METHOD(Console, cmdAddObj));
-
 	registerCmd("position", WRAP_METHOD(Console, cmdPosition));
-
 	registerCmd("teleport_on_click", WRAP_METHOD(Console, cmdTeleportOnClick));
-
 	registerCmd("teleport_on_map", WRAP_METHOD(Console, cmdTeleportOnMap));
-
 	registerCmd("teleport", WRAP_METHOD(Console, cmdTeleport));
-
+	registerCmd("teleport_place", WRAP_METHOD(Console, cmdTeleportPlace));
 	registerCmd("teleport_to_npc", WRAP_METHOD(Console, cmdTeleportToNPC));
-
 	registerCmd("teleport_npc", WRAP_METHOD(Console, cmdTeleportNPC));
-
 	registerCmd("teleport_npc_here", WRAP_METHOD(Console, cmdTeleportNPCHere));
-
 	registerCmd("teleport_party_here", WRAP_METHOD(Console, cmdTeleportPartyHere));
-
 	registerCmd("save_loc", WRAP_METHOD(Console, cmdSaveLoc));
-
 	registerCmd("load_loc", WRAP_METHOD(Console, cmdLoadLoc));
-
 	registerCmd("goto_place", WRAP_METHOD(Console, cmdGotoPlace));
-
 	registerCmd("list_places", WRAP_METHOD(Console, cmdListPlaces));
-
 	registerCmd("stats", WRAP_METHOD(Console, cmdStats));
-
 	registerCmd("status_msg", WRAP_METHOD(Console, cmdStatusMsg));
-
 	registerCmd("dump_map", WRAP_METHOD(Console, cmdDumpMap));
-
 	registerCmd("play_music", WRAP_METHOD(Console, cmdPlayMusic));
-
 	registerCmd("play_voice", WRAP_METHOD(Console, cmdPlayVoice));
-
 	registerCmd("invis", WRAP_METHOD(Console, cmdInvisibility));
-
 	registerCmd("map_cheat", WRAP_METHOD(Console, cmdMapCheat));
 }
 
@@ -335,6 +311,41 @@ bool Console::cmdTeleportPartyHere(int argc, const char **argv) {
 	return true;
 }
 
+bool Console::cmdTeleportPlace(int argc, const char **argv) {
+	if (argc < 1)
+		debugPrintf("Usage: %s <place id>/<place name>\n", argv[0]);
+	else {
+		int placenum = -1;
+
+		if (!Common::isDigit(argv[1][0])) {
+			// First, assemble the name
+			Common::String place = argv[1];
+
+			for (int i = 2; i < argc; i++)
+				place += Common::String(" ") + argv[i];
+
+			for (uint i = 0; i < g_vm->_mapFeatures.size(); ++i) {
+				if (g_vm->_mapFeatures[i] && !place.compareToIgnoreCase(g_vm->_mapFeatures[i]->getText())) {
+					placenum = i;
+					break;
+				}
+			}
+		} else {
+			placenum = atoi(argv[1]);
+		}
+
+		if (placenum == -1) {
+			debugPrintf("Unknown place\n");
+			return true;
+		}
+
+		Actor *a = getCenterActor();
+		a->setLocation(g_vm->_mapFeatures[placenum]->getLocation());
+	}
+
+	return true;
+}
+
 bool Console::cmdSaveLoc(int argc, const char **argv) {
 	if (argc != 1)
 		debugPrintf("Usage: %s\n", argv[0]);
@@ -463,9 +474,9 @@ bool Console::cmdInvisibility(int argc, const char **argv) {
 		for (ObjectID id = ActorBaseID; id < ActorBaseID + kPlayerActors; ++id) {
 			Actor *p = (Actor *)GameObject::objectAddress(id);
 			if (inv)
-				p->setEffect(actorInvisible, true);
+				p->setEffect(kActorInvisible, true);
 			else
-				p->setEffect(actorInvisible, false);
+				p->setEffect(kActorInvisible, false);
 		}
 	}
 

@@ -61,16 +61,16 @@ int32 scatterer(int32 i, int32 m, int32 s);
 //	ctor
 
 SpellStuff::SpellStuff() {
-	_master = nullSpell;
-	_display = nullSpell;
+	_master = kNullSpell;
+	_display = kNullSpell;
 	_prototype = nullptr;
-	_targetableTypes = spellTargNone;
-	_targetTypes = spellApplyNone;
+	_targetableTypes = kSpellTargNone;
+	_targetTypes = kSpellApplyNone;
 	_effects = nullptr;
 	_targets = nullptr;
-	_manaType = sManaIDSkill;
+	_manaType = ksManaIDSkill;
 	_manaUse = 0;
-	_shape = eAreaInvisible;
+	_shape = keAreaInvisible;
 	_size = 0;
 	_range = 0;
 	_sound = 0;
@@ -82,8 +82,8 @@ SpellStuff::SpellStuff() {
 //	is this spell harmful
 
 bool SpellStuff::isOffensive() {
-	return (canTarget(spellTargActor) || canTarget(spellTargObject)) &&
-	       (!canTarget(spellTargCaster));
+	return (canTarget(kSpellTargActor) || canTarget(kSpellTargObject)) &&
+	       (!canTarget(kSpellTargCaster));
 }
 
 //-----------------------------------------------------------------------
@@ -91,21 +91,21 @@ bool SpellStuff::isOffensive() {
 
 bool SpellStuff::safe() {
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
-	case eAreaSquare:
-	case eAreaBall:
-	case eAreaWall:
-	case eAreaStorm:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
+	case keAreaSquare:
+	case keAreaBall:
+	case keAreaWall:
+	case keAreaStorm:
 		return false;
-	case eAreaBolt:
-	case eAreaBeam:
-	case eAreaCone:
-	case eAreaWave:
+	case keAreaBolt:
+	case keAreaBeam:
+	case keAreaCone:
+	case keAreaWave:
 		return true;
 	}
 	return false;
@@ -150,19 +150,19 @@ void SpellStuff::killEffects() {
 void SpellStuff::implement(GameObject *enactor, SpellTarget *target) {
 	assert(target);
 	switch (target->getType()) {
-	case SpellTarget::spellTargetPoint:
+	case SpellTarget::kSpellTargetPoint:
 		implement(enactor, Location(target->getPoint(), Nothing));
 		break;
-	case SpellTarget::spellTargetObjectPoint:
-		if (_targetTypes == spellApplyObject)
+	case SpellTarget::kSpellTargetObjectPoint:
+		if (_targetTypes == kSpellApplyObject)
 			implement(enactor, target->getObject());
 		else
 			implement(enactor, Location(target->getPoint(), Nothing));
 		break;
-	case SpellTarget::spellTargetObject:
+	case SpellTarget::kSpellTargetObject:
 		implement(enactor, target->getObject());
 		break;
-	case SpellTarget::spellTargetTAG:
+	case SpellTarget::kSpellTargetTAG:
 		implement(enactor, target->getTAG());
 		break;
 	default:
@@ -177,7 +177,7 @@ void SpellStuff::implement(GameObject *enactor, GameObject *target) {
 	SpellTarget st = SpellTarget(target);
 	if (safe() &&
 	        target->thisID() == enactor->thisID() &&
-	        !canTarget(spellTargCaster))
+	        !canTarget(kSpellTargCaster))
 		return;
 	if (_effects) {
 		for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
@@ -209,7 +209,7 @@ void SpellStuff::implement(GameObject *enactor, Location target) {
 			if (safe() &&
 			        t->getObject() != nullptr &&
 			        t->getObject()->thisID() == enactor->thisID() &&
-			        !canTarget(spellTargCaster))
+			        !canTarget(kSpellTargCaster))
 				continue;
 			for (ProtoEffect *pe = _effects; pe; pe = pe->_next)
 				if (pe->applicable(*t))
@@ -227,22 +227,22 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 	TilePoint tVect, orth, tBase;
 	show(caster, trg);
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		_targets = &trg;
 		break;
-	case eAreaSquare: {
+	case keAreaSquare: {
 		tVect = trg.getPoint();
-		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
+		orth = TilePoint(kSquareSpellSize / 2, kSquareSpellSize / 2, 0);
 
 		RectangularObjectIterator   it(currentWorld,
 		                               tVect - orth,
-		                               TilePoint(squareSpellSize, 0, 0),
-		                               TilePoint(0, squareSpellSize, 0));
+		                               TilePoint(kSquareSpellSize, 0, 0),
+		                               TilePoint(0, kSquareSpellSize, 0));
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -252,14 +252,14 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBolt: {
+	case keAreaBolt: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, boltSpellLength);
+		setMagnitude(tVect, kBoltSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, boltSpellWidth / 2);
+		setMagnitude(orth, kBoltSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
 		GameObject *go;
@@ -271,14 +271,14 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBeam: {
+	case keAreaBeam: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, beamSpellLength);
+		setMagnitude(tVect, kBeamSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, beamSpellWidth / 2);
+		setMagnitude(orth, kBeamSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
 		GameObject *go;
@@ -290,8 +290,8 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBall: {
-		radius = ballSpellRadius;
+	case keAreaBall: {
+		radius = kBallSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -301,9 +301,9 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWall: {
-		radius = wallSpellRadius;
-		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, wallInnerRadius);
+	case keAreaWall: {
+		radius = kWallSpellRadius;
+		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, kWallInnerRadius);
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -312,8 +312,8 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaStorm: {
-		radius = stormSpellRadius;
+	case keAreaStorm: {
+		radius = kStormSpellRadius;
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -323,14 +323,14 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaCone: {
+	case keAreaCone: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, coneSpellLength);
+		setMagnitude(tVect, kConeSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, coneSpellWidth / 2);
+		setMagnitude(orth, kConeSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
 		GameObject *go;
@@ -341,14 +341,14 @@ void SpellStuff::buildTargetList(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWave: {
+	case keAreaWave: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, waveSpellLength);
+		setMagnitude(tVect, kWaveSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, waveSpellWidth / 2);
+		setMagnitude(orth, kWaveSpellWidth / 2);
 		tBase = caster->getWorldLocation() + (isActor(caster) ? (tVect / 32) : TilePoint(0, 0, 0));
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
 		GameObject *go;
@@ -381,21 +381,21 @@ void SpellStuff::addTarget(SpellTarget *trg) {
 
 void SpellStuff::removeTargetList() {
 	switch (_shape) {
-	case eAreaInvisible:
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaInvisible:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		_targets = nullptr;
 		break;
-	case eAreaWall:
-	case eAreaCone:
-	case eAreaBeam:
-	case eAreaBolt:
-	case eAreaBall:
-	case eAreaStorm:
-	case eAreaSquare:
+	case keAreaWall:
+	case keAreaCone:
+	case keAreaBeam:
+	case keAreaBolt:
+	case keAreaBall:
+	case keAreaStorm:
+	case keAreaSquare:
 		if (_targets) delete _targets;
 		_targets = nullptr;
 		break;
@@ -421,30 +421,30 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 	int16 radius = _size;
 	TilePoint tVect, orth, tBase;
 	switch (_shape) {
-	case eAreaInvisible:
+	case keAreaInvisible:
 		showTarg(trg.getPoint());
 		break;
-	case eAreaAura:
-	case eAreaGlow:
-	case eAreaProjectile:
-	case eAreaExchange:
-	case eAreaMissle:
+	case keAreaAura:
+	case keAreaGlow:
+	case keAreaProjectile:
+	case keAreaExchange:
+	case keAreaMissle:
 		TPLine(caster->getWorldLocation(), trg.getPoint(), DSPELL_AREA_COLOR);
 		showTarg(trg.getPoint());
 		break;
-	case eAreaSquare: {
+	case keAreaSquare: {
 		tVect = trg.getPoint();
-		orth = TilePoint(squareSpellSize / 2, squareSpellSize / 2, 0);
+		orth = TilePoint(kSquareSpellSize / 2, kSquareSpellSize / 2, 0);
 
 		TPRectangle(tVect - orth,
-		            tBase + TilePoint(squareSpellSize, 0, 0),
-		            tBase + TilePoint(0, squareSpellSize, 0) + TilePoint(squareSpellSize, 0, 0),
-		            tBase + TilePoint(0, squareSpellSize, 0),
+		            tBase + TilePoint(kSquareSpellSize, 0, 0),
+		            tBase + TilePoint(0, kSquareSpellSize, 0) + TilePoint(kSquareSpellSize, 0, 0),
+		            tBase + TilePoint(0, kSquareSpellSize, 0),
 		            DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld,
 		                               tVect - orth,
-		                               TilePoint(squareSpellSize, 0, 0),
-		                               TilePoint(0, squareSpellSize, 0));
+		                               TilePoint(kSquareSpellSize, 0, 0),
+		                               TilePoint(0, kSquareSpellSize, 0));
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -454,14 +454,14 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBolt: {
+	case keAreaBolt: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, boltSpellLength);
+		setMagnitude(tVect, kBoltSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, boltSpellWidth / 2);
+		setMagnitude(orth, kBoltSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPRectangle(tBase - orth, tBase + orth, tBase + tVect + orth, tBase + tVect - orth, DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
@@ -474,14 +474,14 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBeam: {
+	case keAreaBeam: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, beamSpellLength);
+		setMagnitude(tVect, kBeamSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, beamSpellWidth / 2);
+		setMagnitude(orth, kBeamSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPRectangle(tBase - orth, tBase + orth, tBase + tVect + orth, tBase + tVect - orth, DSPELL_AREA_COLOR);
 		RectangularObjectIterator   it(currentWorld, tBase - orth, tVect, orth * 2);
@@ -494,9 +494,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		break;
 	}
 
-	case eAreaBall: {
-		radius = ballSpellRadius;
-		TPCircle(trg.getPoint(), ballSpellRadius, DSPELL_AREA_COLOR);
+	case keAreaBall: {
+		radius = kBallSpellRadius;
+		TPCircle(trg.getPoint(), kBallSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -506,11 +506,11 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWall: {
-		radius = wallSpellRadius;
+	case keAreaWall: {
+		radius = kWallSpellRadius;
 		TPCircle(trg.getPoint(), radius, DSPELL_AREA_COLOR);
 		TPCircle(trg.getPoint(), radius / 2, DSPELL_AREA_COLOR);
-		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, wallInnerRadius);
+		RingObjectIterator  it(currentWorld, trg.getPoint(), radius, kWallInnerRadius);
 		GameObject *go;
 		it.first(&go);
 		while (go) {
@@ -519,9 +519,9 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaStorm: {
-		radius = stormSpellRadius;
-		TPCircle(trg.getPoint(), stormSpellRadius, DSPELL_AREA_COLOR);
+	case keAreaStorm: {
+		radius = kStormSpellRadius;
+		TPCircle(trg.getPoint(), kStormSpellRadius, DSPELL_AREA_COLOR);
 		CircularObjectIterator  it(currentWorld, trg.getPoint(), radius);
 		GameObject *go;
 		it.first(&go);
@@ -531,14 +531,14 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaCone: {
+	case keAreaCone: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, coneSpellLength);
+		setMagnitude(tVect, kConeSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, coneSpellWidth / 2);
+		setMagnitude(orth, kConeSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPTriangle(tBase, tBase + tVect - orth, tBase + tVect + orth, DSPELL_AREA_COLOR);
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
@@ -550,14 +550,14 @@ void SpellStuff::show(GameObject *caster, SpellTarget &trg) {
 		}
 		break;
 	}
-	case eAreaWave: {
+	case keAreaWave: {
 		tVect = trg.getPoint() - caster->getWorldLocation();
 		while (tVect.magnitude() == 0) {
 			tVect = randomVector(TilePoint(-1, -1, 0), TilePoint(1, 1, 0));
 		}
-		setMagnitude(tVect, waveSpellLength);
+		setMagnitude(tVect, kWaveSpellLength);
 		orth = rightVector(tVect, 0);
-		setMagnitude(orth, waveSpellWidth / 2);
+		setMagnitude(orth, kWaveSpellWidth / 2);
 		tBase = caster->getWorldLocation();
 		TPTriangle(tBase, tBase + tVect - orth, tBase + tVect + orth, DSPELL_AREA_COLOR);
 		TriangularObjectIterator    it(currentWorld, tBase, tBase + tVect - orth, tBase + tVect + orth);
@@ -764,7 +764,7 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 	GameObject *bumpy;
 	blockageType bt = checkNontact(e, nloc, &bumpy);
 
-	if (bt == blockageTerrain) {
+	if (bt == kBlockageTerrain) {
 		e->bump();
 	}
 
@@ -781,7 +781,7 @@ TilePoint collideTo(Effectron *e, TilePoint nloc) {
 Effectron::Effectron() {
 	_age = 0;
 	_pos = 0;
-	_flags = effectronDead;
+	_flags = kEffectronDead;
 	_parent = nullptr;
 	_partno = 0;
 	_totalSteps = _stepNo = 0;
@@ -836,16 +836,16 @@ void Effectron::updateEffect(int32 deltaTime) {
 //-----------------------------------------------------------------------
 void Effectron::bump() {
 	switch (_parent->_dProto->_elasticity) {
-	case ecFlagBounce:
+	case kEcFlagBounce:
 		_velocity = -_velocity;
 		break;
-	case ecFlagDie:
+	case kEcFlagDie:
 		kill();
 		break;
-	case ecFlagStop:
+	case kEcFlagStop:
 		_velocity = TilePoint(0, 0, 0);
 		break;
-	case ecFlagNone:
+	case kEcFlagNone:
 		break;
 	}
 }
@@ -885,23 +885,23 @@ blockageType checkNontact(
 	                        obj->hgtCall());
 
 	//  Check for intersection with a wall or obstacle
-	if (terrain & terrainRaised)
-		return blockageTerrain;
+	if (terrain & kTerrainRaised)
+		return kBlockageTerrain;
 
 	//  Check for intersection with slope of the terrain.
-	if (((terrain & terrainSurface)
-	        || (!(terrain & terrainWater) && loc.z <= 0))
+	if (((terrain & kTerrainSurface)
+	        || (!(terrain & kTerrainWater) && loc.z <= 0))
 	        &&  loc.z < tileNopeHeight(loc, obj))
-		return blockageTerrain;
+		return kBlockageTerrain;
 
 	//  See if object collided with an object
 	blockObj = objectNollision(obj, loc);
 	if (blockObj) {
 		if (blockResultObj) *blockResultObj = blockObj;
-		return blockageObject;
+		return kBlockageObject;
 	}
 
-	return blockageNone;
+	return kBlockageNone;
 }
 
 int16 tileNopeHeight(
@@ -943,13 +943,13 @@ int16 tileNopeHeight(
 	//  Search each platform until we find a tile which is under
 	//  the character.
 
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		Platform    *p;
 
 		if ((p = metaPtr->fetchPlatform(mapNum, i)) == nullptr)
 			continue;
 
-		if (p->flags & plVisible) {
+		if (p->flags & kPlVisible) {
 			TileInfo        *ti;
 			StandingTileInfo sti;
 
@@ -964,13 +964,13 @@ int16 tileNopeHeight(
 				int32 subTileTerrain =
 				    ti->attrs.testTerrain(calcSubTileMask(subTile.u,
 				                          subTile.v));
-				if (subTileTerrain & terrainInsubstantial)
+				if (subTileTerrain & kTerrainInsubstantial)
 					continue;
-				else if (subTileTerrain & terrainRaised)
+				else if (subTileTerrain & kTerrainRaised)
 					// calculate height of raised surface
 					supportHeight = sti.surfaceHeight +
 					                ti->attrs.terrainHeight;
-				else if (subTileTerrain & terrainWater)
+				else if (subTileTerrain & kTerrainWater)
 					// calculate depth of water
 					supportHeight = sti.surfaceHeight -
 					                ti->attrs.terrainHeight;
@@ -986,13 +986,13 @@ int16 tileNopeHeight(
 				if (supportHeight <= pt.z + obj->hgtCall()
 				        &&  supportHeight >= highestSupportHeight
 				        && (ti->combinedTerrainMask() &
-				            (terrainSurface | terrainRaised))) {
+				            (kTerrainSurface | kTerrainRaised))) {
 					highestTile = sti;
 					highestSupportHeight = supportHeight;
 				} else if (highestTile.surfaceTile == nullptr &&
 				           supportHeight <= lowestSupportHeight &&
 				           (ti->combinedTerrainMask() &
-				            (terrainSurface | terrainRaised))) {
+				            (kTerrainSurface | kTerrainRaised))) {
 					lowestTile = sti;
 					lowestSupportHeight = supportHeight;
 				}

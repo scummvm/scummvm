@@ -657,7 +657,7 @@ void Router::slidyWalkAnimator(WalkData *walkAnim) {
 	int32 frames;
 	int32 frame;
 
-	// start at the begining for a change
+	// start at the beginning for a change
 	p = 0;
 	lastDir = _modularPath[0].dir;
 	currentDir = _modularPath[1].dir;
@@ -1067,7 +1067,7 @@ int32 Router::solidWalkAnimator(WalkData *walkAnim) {
 	int32 lastCount;
 	int32 frame;
 
-	// start at the begining for a change
+	// start at the beginning for a change
 	lastDir = _modularPath[0].dir;
 	currentDir = _modularPath[1].dir;
 	module =    _framesPerChar + lastDir;
@@ -1953,7 +1953,7 @@ int32 Router::LoadWalkResources(Object *megaObject, int32 x, int32 y, int32 dir)
 
 	// mega data ready
 
-	// finish setting grid by putting mega _node at begining
+	// finish setting grid by putting mega _node at beginning
 	// and target _node at end  and reset current values
 	_node[0].x = _startX;
 	_node[0].y = _startY;

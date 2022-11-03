@@ -68,7 +68,7 @@ struct SaveInfoSection {
 
 #define SaveInfoSectionSize (4+4+4 + 4+4 + 4+2)
 
-#define CURRENT_VER 106
+#define CURRENT_VER 107
 #define INFOSECTION_VERSION 2
 
 #pragma mark -
@@ -1349,9 +1349,34 @@ void ScummEngine::saveLoadWithSerializer(Common::Serializer &s) {
 	s.syncAsByte(_cursor.state, VER(8));
 	s.skip(1, VER(8), VER(20)); // _gdi->_cursorActive
 	s.syncAsByte(_currentCursor, VER(8));
-	// TODO: This seems wrong, _grabbedCursor is >8192 bytes and sometimes holds
-	// 16-bit values
-	s.syncBytes(_grabbedCursor, 8192, VER(20));
+
+	if (_outputPixelFormat.bytesPerPixel == 2) {
+		if (s.getVersion() >= VER(107)) {
+			uint16 *pos = (uint16*)_grabbedCursor;
+			for (i = 0; i < 4096; ++i)
+				s.syncAsUint16LE(*pos++, VER(20));
+		} else if (s.getVersion() >= VER(20)) {
+			s.syncBytes(_grabbedCursor, 8192, VER(20));
+			// Patch older savegames if they were saved on a system with a
+			// different endianness than the current system's endianness
+			// which is now used for loading. We just check the format of
+			// the transparency color and then swap bytes if needed.
+			// We read the transparent color from far back inside the buffer
+			// where actual cursor data would never get stored (at least not
+			// for the games concerned).
+			uint16 transCol = (_game.heversion >= 80) ? 5 : 255;
+			if (READ_UINT16(&_grabbedCursor[2046]) == (transCol << 8)) {
+				uint16 *pos = (uint16*)_grabbedCursor;
+				for (i = 0; i < 4096; ++i) {
+					*pos = SWAP_BYTES_16(*pos);
+					pos++;
+			}
+		}
+	}
+	} else {
+		s.syncBytes(_grabbedCursor, 8192, VER(20));
+	}
+
 	s.syncAsSint16LE(_cursor.width, VER(20));
 	s.syncAsSint16LE(_cursor.height, VER(20));
 	s.syncAsSint16LE(_cursor.hotspotX, VER(20));

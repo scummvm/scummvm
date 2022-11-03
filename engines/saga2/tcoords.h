@@ -32,16 +32,16 @@
 namespace Saga2 {
 
 enum facingDirections {
-	dirUp = 0,
-	dirUpLeft,
-	dirLeft,
-	dirDownLeft,
-	dirDown,
-	dirDownRight,
-	dirRight,
-	dirUpRight,
+	kDirUp = 0,
+	kDirUpLeft,
+	kDirLeft,
+	kDirDownLeft,
+	kDirDown,
+	kDirDownRight,
+	kDirRight,
+	kDirUpRight,
 
-	dirInvalid
+	kDirInvalid
 };
 typedef uint8 Direction;
 

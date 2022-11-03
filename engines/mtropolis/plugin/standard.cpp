@@ -1879,7 +1879,7 @@ VThreadState MediaCueMessengerModifier::consumeMessage(Runtime *runtime, const C
 					}
 
 					DynamicValue value;
-					static_cast<VariableModifier *>(modifier)->varGetValue(nullptr, value);
+					static_cast<VariableModifier *>(modifier)->varGetValue(value);
 
 					switch (value.getType()) {
 					case DynamicValueTypes::kInteger:
@@ -1922,6 +1922,14 @@ void MediaCueMessengerModifier::disable(Runtime *runtime) {
 
 		_isActive = false;
 	}
+}
+
+Modifier *MediaCueMessengerModifier::getMediaCueModifier() {
+	return this;
+}
+
+Common::WeakPtr<Modifier> MediaCueMessengerModifier::getMediaCueTriggerSource() const {
+	return _cueSourceModifier;
 }
 
 Common::SharedPtr<Modifier> MediaCueMessengerModifier::shallowClone() const {
@@ -2027,7 +2035,7 @@ bool ObjectReferenceVariableModifier::varSetValue(MiniscriptThread *thread, cons
 	}
 }
 
-void ObjectReferenceVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void ObjectReferenceVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setObject(this->getSelfReference());
 }
 
@@ -2759,7 +2767,7 @@ bool ListVariableModifier::load(const PlugInModifierLoaderContext &context, cons
 
 	for (size_t i = 0; i < data.numValues; i++) {
 		DynamicValue dynValue;
-		if (!dynValue.load(data.values[i]))
+		if (!dynValue.loadConstant(data.values[i]))
 			return false;
 
 		if (dynValue.getType() != expectedType) {
@@ -2794,7 +2802,7 @@ bool ListVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicVa
 	return true;
 }
 
-void ListVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void ListVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setList(_list);
 }
 
@@ -2875,12 +2883,6 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 			break;
 		case DynamicValueTypes::kEvent:
 			report->declareLoose(Common::String::format("[%i] = Event?", cardinal));
-			break;
-		case DynamicValueTypes::kVariableReference:
-			report->declareLoose(Common::String::format("[%i] = VarRef?", cardinal));
-			break;
-		case DynamicValueTypes::kIncomingData:
-			report->declareLoose(Common::String::format("[%i] = IncomingData??", cardinal));
 			break;
 		case DynamicValueTypes::kString:
 			report->declareLoose(Common::String::format("[%i] = ", cardinal) + _list->getString()[i]);

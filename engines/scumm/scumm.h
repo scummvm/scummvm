@@ -567,7 +567,7 @@ protected:
 	 * integer part as needed on subsequent function calls.
 	 */
 	uint32 getIntegralTime(double fMsecs);
-	double _msecFractParts;
+	double _msecFractParts = 0.0;
 
 	virtual void processInput();
 	virtual void processKeyboard(Common::KeyState lastKeyHit);

@@ -30,20 +30,20 @@ namespace Saga2 {
 
 struct StandingTileInfo;
 
-const   int     maxObjDist = kPlatformWidth * kTileUVSize * 8;
-const   int     maxTileDist = kPlatformWidth * kTileUVSize * 2;
-const   int     maxMetaDist = kPlatformWidth * kTileUVSize * 8;
+const   int     kMaxObjDist = kPlatformWidth * kTileUVSize * 8;
+const   int     kMaxTileDist = kPlatformWidth * kTileUVSize * 2;
+const   int     kMaxMetaDist = kPlatformWidth * kTileUVSize * 8;
 
 enum TargetType {
-	locationTarget,
-	specificTileTarget,
-	tilePropertyTarget,
-	specificMetaTileTarget,
-	metaTilePropertyTarget,
-	specificObjectTarget,
-	objectPropertyTarget,
-	specificActorTarget,
-	actorPropertyTarget
+	kLocationTarget,
+	kSpecificTileTarget,
+	kTilePropertyTarget,
+	kSpecificMetaTileTarget,
+	kMetaTilePropertyTarget,
+	kSpecificObjectTarget,
+	kObjectPropertyTarget,
+	kSpecificActorTarget,
+	kActorPropertyTarget
 };
 
 /* ===================================================================== *
@@ -641,9 +641,9 @@ public:
 //	to contain any target.  The sizeof( LocationTarget ) is used because
 //	the LocationTarget takes the most memory.
 
-const size_t    targetBytes = sizeof(LocationTarget);
+const size_t    kTargetBytes = sizeof(LocationTarget);
 
-typedef uint8 TargetPlaceHolder[targetBytes];
+typedef uint8 TargetPlaceHolder[kTargetBytes];
 
 } // end of namespace Saga2
 

@@ -387,15 +387,15 @@ bool gButton::activate(gEventType why) {
 	_selected = 1;
 	draw();
 
-	if (why == gEventKeyDown) {             // momentarily depress
+	if (why == kEventKeyDown) {             // momentarily depress
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	return false;
 }
 
 bool gButton::pointerHit(gPanelMessage &) {
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -404,7 +404,7 @@ void gButton::pointerRelease(gPanelMessage &) {
 
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
@@ -449,17 +449,17 @@ void gImageButton::drawClipped(gPort &port, const Point16 &offset, const Rect16 
  * ===================================================================== */
 
 bool gToggleButton::activate(gEventType why) {
-	if (why == gEventKeyDown || why == gEventMouseDown) {
+	if (why == kEventKeyDown || why == kEventMouseDown) {
 		_selected = !_selected;
 		draw();
 		gPanel::deactivate();
-		notify(gEventNewValue, _selected);    // notify App of successful hit
+		notify(kEventNewValue, _selected);    // notify App of successful hit
 	}
 	return false;
 }
 
 bool gToggleButton::pointerHit(gPanelMessage &) {
-	return activate(gEventMouseDown);
+	return activate(kEventMouseDown);
 }
 
 /* ===================================================================== *
@@ -508,13 +508,13 @@ void LabeledButton::drawClipped(
 	gImageButton::drawClipped(port, offset, r);
 
 	textOrigin.x = origin.x + ((_extent.width -
-	                            TextWidth(textFont, _title, -1, textStyleUnderBar)) >> 1);
+	                            TextWidth(textFont, _title, -1, kTextStyleUnderBar)) >> 1);
 	textOrigin.y = origin.y + ((_extent.height - textFont->height) >> 1);
 
 	port.setColor(2);
 	port.moveTo(textOrigin);
 	port.setFont(textFont);
-	port.setStyle(textStyleUnderBar);
+	port.setStyle(kTextStyleUnderBar);
 	port.drawText(_title, -1);
 }
 
@@ -592,7 +592,7 @@ bool FloatingWindow::open() {
 	g_vm->_mouseInfo->replaceObject();
 	g_vm->_mouseInfo->clearGauge();
 	g_vm->_mouseInfo->setText(nullptr);
-	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 
 	return gWindow::open();
 }
@@ -629,7 +629,7 @@ void updateWindowSection(const Rect16 &r) {
 	//  Since the floating windows can be dragged partly offscreen
 	//  we should make sure we're rendering only to on-screen pixels.
 
-	clip = intersect(r, Rect16(0, 0, screenWidth, screenHeight));
+	clip = intersect(r, Rect16(0, 0, kScreenWidth, kScreenHeight));
 
 	//  Allocate a temporary pixel map and gPort
 
@@ -640,7 +640,7 @@ void updateWindowSection(const Rect16 &r) {
 		return;
 
 	tempPort.setMap(&tempMap);
-	tempPort.setMode(drawModeReplace);
+	tempPort.setMode(kDrawModeReplace);
 
 	//  Compute the intersection of the animated area with the clip
 	//  rectangle. If they overlap, then copy part of the animated
@@ -686,13 +686,13 @@ void updateWindowSection(const Rect16 &r) {
 	}
 	//  Now, blit the temporary bitmap to the main screen.
 
-	g_vm->_mainPort.setMode(drawModeReplace);
+	g_vm->_mainPort.setMode(kDrawModeReplace);
 	g_vm->_pointer->hide(g_vm->_mainPort, clip);
 	g_vm->_mainPort.bltPixels(tempMap,
 	                   0, 0,
 	                   clip.x, clip.y, clip.width, clip.height);
 	g_vm->_pointer->show(g_vm->_mainPort, clip);
-	g_vm->_mainPort.setMode(drawModeMatte);
+	g_vm->_mainPort.setMode(kDrawModeMatte);
 	delete[] tempMap._data;
 }
 

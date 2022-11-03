@@ -234,6 +234,7 @@ public:
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "mToon Element"; }
 	SupportStatus debugGetSupportStatus() const override { return kSupportStatusDone; }
+	void debugInspect(IDebugInspectionReport *report) const override;
 #endif
 
 private:
@@ -378,6 +379,8 @@ public:
 	bool canAutoPlay() const override;
 
 	void playMedia(Runtime *runtime, Project *project) override;
+
+	bool resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const override;
 
 #ifdef MTROPOLIS_DEBUG_ENABLE
 	const char *debugGetTypeName() const override { return "Sound Element"; }

@@ -378,7 +378,7 @@ bool SaveAndRestoreModifier::respondsToEvent(const Event &evt) const {
 }
 
 VThreadState SaveAndRestoreModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
-	if (_saveOrRestoreValue.getType() != DynamicValueTypes::kVariableReference) {
+	if (_saveOrRestoreValue.getSourceType() != DynamicValueSourceTypes::kVariableReference) {
 		warning("Save/restore failed, don't know how to use something that isn't a var reference");
 		return kVThreadError;
 	}
@@ -465,7 +465,7 @@ bool MessengerModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState MessengerModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_when.respondsTo(msg->getEvent())) {
-		_sendSpec.sendFromMessenger(runtime, this, msg->getValue(), nullptr);
+		_sendSpec.sendFromMessenger(runtime, this, msg->getSource().lock().get(), msg->getValue(), nullptr);
 	}
 
 	return kVThreadReturn;
@@ -495,6 +495,61 @@ bool SetModifier::load(ModifierLoaderContext &context, const Data::SetModifier &
 		return false;
 
 	return true;
+}
+
+bool SetModifier::respondsToEvent(const Event &evt) const {
+	if (_executeWhen.respondsTo(evt))
+		return true;
+
+	return false;
+}
+
+VThreadState SetModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
+	if (_executeWhen.respondsTo(msg->getEvent())) {
+		if (_target.getSourceType() != DynamicValueSourceTypes::kVariableReference) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+			if (Debugger *debugger = runtime->debugGetDebugger())
+				debugger->notifyFmt(kDebugSeverityError, "Set modifier target isn't a variable reference");
+#endif
+			return kVThreadError;
+		} else {
+			Common::SharedPtr<Modifier> targetModifier = _target.getVarReference().resolution.lock();
+			if (!targetModifier) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Set modifier target was invalid");
+#endif
+				return kVThreadError;
+			} else if (!targetModifier->isVariable()) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+				if (Debugger *debugger = runtime->debugGetDebugger())
+					debugger->notifyFmt(kDebugSeverityError, "Set modifier target was invalid");
+#endif
+				return kVThreadError;
+			} else {
+				DynamicValue srcValue = _source.produceValue(msg->getValue());
+				VariableModifier *targetVar = static_cast<VariableModifier *>(targetModifier.get());
+				if (!targetVar->varSetValue(nullptr, srcValue)) {
+#ifdef MTROPOLIS_DEBUG_ENABLE
+					if (Debugger *debugger = runtime->debugGetDebugger())
+						debugger->notifyFmt(kDebugSeverityError, "Set modifier failed to set target value");
+#endif
+					return kVThreadError;
+				}
+			}
+		}
+	}
+	return kVThreadReturn;
+}
+
+void SetModifier::linkInternalReferences(ObjectLinkingScope *outerScope) {
+	_source.linkInternalReferences(outerScope);
+	_target.linkInternalReferences(outerScope);
+}
+
+void SetModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
+	_source.visitInternalReferences(visitor);
+	_target.visitInternalReferences(visitor);
 }
 
 Common::SharedPtr<Modifier> SetModifier::shallowClone() const {
@@ -945,29 +1000,7 @@ bool VectorMotionModifier::respondsToEvent(const Event &evt) const {
 
 VThreadState VectorMotionModifier::consumeMessage(Runtime *runtime, const Common::SharedPtr<MessageProperties> &msg) {
 	if (_enableWhen.respondsTo(msg->getEvent())) {
-		DynamicValue vec;
-		if (_vec.getType() == DynamicValueTypes::kIncomingData) {
-			vec = msg->getValue();
-		} else if (!_vecVar.expired()) {
-			Modifier *modifier = _vecVar.lock().get();
-
-			if (!modifier->isVariable()) {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-				if (Debugger *debugger = runtime->debugGetDebugger())
-					debugger->notify(kDebugSeverityError, "Vector variable reference was to a non-variable");
-#endif
-				return kVThreadError;
-			}
-
-			VariableModifier *varModifier = static_cast<VariableModifier *>(modifier);
-			varModifier->varGetValue(nullptr, vec);
-		} else {
-#ifdef MTROPOLIS_DEBUG_ENABLE
-			if (Debugger *debugger = runtime->debugGetDebugger())
-				debugger->notify(kDebugSeverityError, "Vector variable reference wasn't resolved");
-#endif
-			return kVThreadError;
-		}
+		DynamicValue vec = _vec.produceValue(msg->getValue());
 
 		if (vec.getType() != DynamicValueTypes::kVector) {
 #ifdef MTROPOLIS_DEBUG_ENABLE
@@ -1006,14 +1039,10 @@ void VectorMotionModifier::trigger(Runtime *runtime) {
 	uint64 currentTime = runtime->getPlayTime();
 	_scheduledEvent = runtime->getScheduler().scheduleMethod<VectorMotionModifier, &VectorMotionModifier::trigger>(currentTime + 1, this);
 
-	Modifier *vecSrcModifier = _vecVar.lock().get();
-
 	// Variable-sourced motion is continuously updated and doesn't need to be re-triggered.
 	// The Pong minigame in Obsidian's Bureau chapter depends on this.
-	if (vecSrcModifier && vecSrcModifier->isVariable()) {
-		DynamicValue vec;
-		VariableModifier *varModifier = static_cast<VariableModifier *>(vecSrcModifier);
-		varModifier->varGetValue(nullptr, vec);
+	if (_vec.getSourceType() == DynamicValueSourceTypes::kVariableReference) {
+		DynamicValue vec = _vec.produceValue(DynamicValue());
 
 		if (vec.getType() == DynamicValueTypes::kVector)
 			_resolvedVector = vec.getVector();
@@ -1062,21 +1091,11 @@ const char *VectorMotionModifier::getDefaultName() const {
 }
 
 void VectorMotionModifier::linkInternalReferences(ObjectLinkingScope *scope) {
-	if (_vec.getType() == DynamicValueTypes::kVariableReference) {
-		const VarReference &varRef = _vec.getVarReference();
-		Common::WeakPtr<RuntimeObject> objRef = scope->resolve(varRef.guid, varRef.source, false);
-
-		RuntimeObject *obj = objRef.lock().get();
-		if (obj == nullptr || !obj->isModifier()) {
-			warning("Vector motion modifier source was set to a variable, but the variable reference was invalid");
-		} else {
-			_vecVar = objRef.staticCast<Modifier>();
-		}
-	}
+	_vec.linkInternalReferences(scope);
 }
 
 void VectorMotionModifier::visitInternalReferences(IStructuralReferenceVisitor* visitor) {
-	visitor->visitWeakModifierRef(_vecVar);
+	_vec.visitInternalReferences(visitor);
 }
 
 bool SceneTransitionModifier::load(ModifierLoaderContext &context, const Data::SceneTransitionModifier &data) {
@@ -1420,6 +1439,7 @@ VThreadState IfMessengerModifier::consumeMessage(Runtime *runtime, const Common:
 		evalAndSendData->thread = thread;
 		evalAndSendData->runtime = runtime;
 		evalAndSendData->incomingData = msg->getValue();
+		evalAndSendData->triggerSource = msg->getSource();
 
 		MiniscriptThread::runOnVThread(runtime->getVThread(), thread);
 	}
@@ -1460,7 +1480,7 @@ VThreadState IfMessengerModifier::evaluateAndSendTask(const EvaluateAndSendTaskD
 		return kVThreadError;
 
 	if (isTrue)
-		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.incomingData, nullptr);
+		_sendSpec.sendFromMessenger(taskData.runtime, this, taskData.triggerSource.lock().get(), taskData.incomingData, nullptr);
 
 	return kVThreadReturn;
 }
@@ -1504,6 +1524,8 @@ VThreadState TimerMessengerModifier::consumeMessage(Runtime *runtime, const Comm
 		uint32 realMilliseconds = _milliseconds;
 		if (realMilliseconds == 0)
 			realMilliseconds = 1;
+
+		_triggerSource = msg->getSource();
 
 		debug(3, "Timer %x '%s' scheduled to execute in %i milliseconds", getStaticGUID(), getName().c_str(), realMilliseconds);
 
@@ -1559,7 +1581,7 @@ void TimerMessengerModifier::trigger(Runtime *runtime) {
 	} else
 		_scheduledEvent.reset();
 
-	_sendSpec.sendFromMessenger(runtime, this, _incomingData, nullptr);
+	_sendSpec.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, nullptr);
 }
 
 BoundaryDetectionMessengerModifier::BoundaryDetectionMessengerModifier()
@@ -1608,6 +1630,7 @@ VThreadState BoundaryDetectionMessengerModifier::consumeMessage(Runtime *runtime
 		_incomingData = msg->getValue();
 		if (_incomingData.getType() == DynamicValueTypes::kList)
 			_incomingData.setList(_incomingData.getList()->clone());
+		_triggerSource = msg->getSource();
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
 		disable(runtime);
@@ -1651,7 +1674,7 @@ void BoundaryDetectionMessengerModifier::getCollisionProperties(Modifier *&modif
 }
 
 void BoundaryDetectionMessengerModifier::triggerCollision(Runtime *runtime) {
-	_send.sendFromMessenger(runtime, this, _incomingData, nullptr);
+	_send.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, nullptr);
 }
 
 Common::SharedPtr<Modifier> BoundaryDetectionMessengerModifier::shallowClone() const {
@@ -1715,12 +1738,13 @@ VThreadState CollisionDetectionMessengerModifier::consumeMessage(Runtime *runtim
 		if (!_isActive) {
 			_isActive = true;
 			_runtime = runtime;
-			_incomingData = msg->getValue();
-			if (_incomingData.getType() == DynamicValueTypes::kList)
-				_incomingData.setList(_incomingData.getList()->clone());
 
 			runtime->addCollider(this);
 		}
+		_incomingData = msg->getValue();
+		if (_incomingData.getType() == DynamicValueTypes::kList)
+			_incomingData.setList(_incomingData.getList()->clone());
+		_triggerSource = msg->getSource();
 	}
 	if (_disableWhen.respondsTo(msg->getEvent())) {
 		disable(runtime);
@@ -1790,7 +1814,7 @@ void CollisionDetectionMessengerModifier::triggerCollision(Runtime *runtime, Str
 		customDestination = collidingElement;
 	}
 
-	_sendSpec.sendFromMessenger(runtime, this, _incomingData, customDestination);
+	_sendSpec.sendFromMessenger(runtime, this, _triggerSource.lock().get(), _incomingData, customDestination);
 }
 
 KeyboardMessengerModifier::~KeyboardMessengerModifier() {
@@ -2001,7 +2025,7 @@ void KeyboardMessengerModifier::dispatchMessage(Runtime *runtime, const Common::
 
 	DynamicValue charStrValue;
 	charStrValue.setString(charStr);
-	_sendSpec.sendFromMessenger(runtime, this, charStrValue, nullptr);
+	_sendSpec.sendFromMessenger(runtime, this, nullptr, charStrValue, nullptr);
 }
 
 void KeyboardMessengerModifier::visitInternalReferences(IStructuralReferenceVisitor *visitor) {
@@ -2388,7 +2412,7 @@ bool BooleanVariableModifier::varSetValue(MiniscriptThread *thread, const Dynami
 	return true;
 }
 
-void BooleanVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void BooleanVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setBool(_value);
 }
 
@@ -2462,7 +2486,7 @@ bool IntegerVariableModifier::varSetValue(MiniscriptThread *thread, const Dynami
 	return true;
 }
 
-void IntegerVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void IntegerVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setInt(_value);
 }
 
@@ -2526,7 +2550,7 @@ bool IntegerRangeVariableModifier::varSetValue(MiniscriptThread *thread, const D
 	return true;
 }
 
-void IntegerRangeVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void IntegerRangeVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setIntRange(_range);
 }
 
@@ -2616,7 +2640,7 @@ bool VectorVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 	return true;
 }
 
-void VectorVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void VectorVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setVector(_vector);
 }
 
@@ -2706,7 +2730,7 @@ bool PointVariableModifier::varSetValue(MiniscriptThread *thread, const DynamicV
 	return true;
 }
 
-void PointVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void PointVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setPoint(_value);
 }
 
@@ -2802,7 +2826,7 @@ bool FloatingPointVariableModifier::varSetValue(MiniscriptThread *thread, const 
 	return true;
 }
 
-void FloatingPointVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void FloatingPointVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setFloat(_value);
 }
 
@@ -2865,7 +2889,7 @@ bool StringVariableModifier::varSetValue(MiniscriptThread *thread, const Dynamic
 	return true;
 }
 
-void StringVariableModifier::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void StringVariableModifier::varGetValue(DynamicValue &dest) const {
 	dest.setString(_value);
 }
 
@@ -2957,7 +2981,7 @@ bool ObjectReferenceVariableModifierV1::varSetValue(MiniscriptThread *thread, co
 	return true;
 }
 
-void ObjectReferenceVariableModifierV1::varGetValue(MiniscriptThread *thread, DynamicValue &dest) const {
+void ObjectReferenceVariableModifierV1::varGetValue(DynamicValue &dest) const {
 	if (_value.expired())
 		dest.clear();
 	else

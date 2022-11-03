@@ -121,7 +121,7 @@ typedef struct fm_opl_f {
 	int	max_ch;			/* maximum channel                   */
 
 	/* Rythm sention */
-	uint8 rythm;		/* Rythm mode , key flag */
+	uint8 rhythm;		/* Rhythm mode , key flag */
 
 	/* time tables */
 	int AR_TABLE[76];	/* atttack rate tables				*/

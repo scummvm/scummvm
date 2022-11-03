@@ -78,7 +78,7 @@ void SaveFileHeader::write(Common::OutSaveFile *out) {
 //	The following resources are included in the save file
 //		GLOB -  miscellaneous globals
 //		TIME -  game timer
-//		CALE -  game calender
+//		CALE -  game calendar
 //		WRLD -  worlds
 //		ACTR -  actors
 //		OBJS -  objects
@@ -114,7 +114,7 @@ void initGameState() {
 	pauseTimer();
 
 	initGlobals();
-	initCalender();
+	initCalendar();
 	initWorlds();
 	initActors();
 	initObjects();
@@ -159,7 +159,7 @@ void saveGame(Common::OutSaveFile *out, Common::String saveName) {
 
 	saveGlobals(out);
 	saveTimer(out);
-	saveCalender(out);
+	saveCalendar(out);
 	saveWorlds(out);
 	saveActors(out);
 	saveObjects(out);
@@ -228,7 +228,7 @@ void loadSavedGameState(int16 saveNo) {
 	enum {
 		loadGlobalsFlag             = (1 << 0),
 		loadTimerFlag               = (1 << 1),
-		loadCalenderFlag            = (1 << 2),
+		loadCalendarFlag            = (1 << 2),
 		loadWorldsFlag              = (1 << 3),
 		loadActorsFlag              = (1 << 4),
 		loadObjectsFlag             = (1 << 5),
@@ -282,8 +282,8 @@ void loadSavedGameState(int16 saveNo) {
 			break;
 
 		case MKTAG('C', 'A', 'L', 'E'):
-			loadCalender(in);
-			loadFlags |= loadCalenderFlag;
+			loadCalendar(in);
+			loadFlags |= loadCalendarFlag;
 			break;
 
 		case MKTAG('W', 'R', 'L', 'D'):
@@ -472,8 +472,8 @@ void loadSavedGameState(int16 saveNo) {
 	if (!(loadFlags & loadTimerFlag))
 		error("Timer not loaded");
 
-	if (!(loadFlags & loadCalenderFlag))
-		error("Game calender not loaded");
+	if (!(loadFlags & loadCalendarFlag))
+		error("Game calendar not loaded");
 
 	if (!(loadFlags & loadWorldsFlag))
 		error("Worlds not loaded");

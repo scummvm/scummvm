@@ -330,6 +330,9 @@ void CMakeProvider::writeWarnings(std::ofstream &output) const {
 		output << ' ' << warning;
 	}
 	output << "\")\n";
+	output << "\tif(CMAKE_CXX_COMPILER_ID STREQUAL \"GNU\" AND CMAKE_CXX_COMPILER_VERSION VERSION_GREATER_EQUAL 12.0)\n";
+	output << "\t\tset(CMAKE_CXX_FLAGS \"${CMAKE_CXX_FLAGS} -Wno-address-of-packed-member\")\n";
+	output << "\tendif()\n";
 	output << "endif()\n";
 }
 

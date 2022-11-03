@@ -401,9 +401,9 @@ void ManagedSurface::blitFromInner(const Surface &src, const Common::Rect &srcRe
 
 					if (aDest == 0xff) {
 						// Opaque target
-						rDest = (((rDest * (255 - aSrc) + rSrc * aSrc) * (257 * 257)) >> 24) & 0xff;
-						gDest = (((gDest * (255 - aSrc) + gSrc * aSrc) * (257 * 257)) >> 24) & 0xff;
-						bDest = (((bDest * (255 - aSrc) + bSrc * aSrc) * (257 * 257)) >> 24) & 0xff;
+						rDest = static_cast<uint8>((((rDest * (255U - aSrc) + rSrc * aSrc) * (257U * 257U)) >> 24) & 0xff);
+						gDest = static_cast<uint8>((((gDest * (255U - aSrc) + gSrc * aSrc) * (257U * 257U)) >> 24) & 0xff);
+						bDest = static_cast<uint8>((((bDest * (255U - aSrc) + bSrc * aSrc) * (257U * 257U)) >> 24) & 0xff);
 					} else {
 						// Translucent target
 						double sAlpha = (double)aSrc / 255.0;

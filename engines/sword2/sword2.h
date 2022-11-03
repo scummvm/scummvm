@@ -248,7 +248,7 @@ public:
 	// This is a bit hackish, of course :-).
 	uint32 getMillis();
 
-	//Used to check wether we are running PSX version
+	// Used to check whether we are running PSX version
 	static bool isPsx() { return _platform == Common::kPlatformPSX; }
 };
 

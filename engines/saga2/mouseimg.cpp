@@ -311,11 +311,11 @@ void setNewText(char *text) {
 
 	//  Intialize the text image port
 	textImagePort.setMap(textImage);
-	textImagePort.setMode(drawModeReplace);
+	textImagePort.setMode(kDrawModeReplace);
 	textImagePort.setColor(11);
 	textImagePort.setOutlineColor(24);
 	textImagePort.setFont(mainFont);
-	textImagePort.setStyle(textStyleOutline);
+	textImagePort.setStyle(kTextStyleOutline);
 	textImagePort.moveTo(1, 1);
 
 	//  Draw the text
@@ -329,8 +329,8 @@ void setNewText(char *text) {
 	textImageCenteredCol = textImage->_size.x / 2;
 	if (mouseImageCenter - textImageCenteredCol < 5) {
 		textImageCenteredCol = mouseImageCenter - 5;
-	} else if (mouseImageCenter + (textImage->_size.x - textImageCenteredCol) >= screenWidth - 5) {
-		textImageCenteredCol = textImage->_size.x - ((screenWidth - 5) - mouseImageCenter);
+	} else if (mouseImageCenter + (textImage->_size.x - textImageCenteredCol) >= kScreenWidth - 5) {
+		textImageCenteredCol = textImage->_size.x - ((kScreenWidth - 5) - mouseImageCenter);
 	}
 }
 

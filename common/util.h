@@ -23,7 +23,6 @@
 #define COMMON_UTIL_H
 
 #include "common/scummsys.h"
-#include "common/str.h"
 
 /**
  * @defgroup common_util Util
@@ -123,6 +122,9 @@ template<typename T, size_t N> inline void ARRAYCLEAR(T (&array) [N], const T &v
 
 namespace Common {
 
+class String;
+class U32String;
+
 /**
  * @addtogroup common_util
  * @{
@@ -141,6 +143,77 @@ struct Pair {
 	Pair(T1 first_, T2 second_) : first(first_), second(second_) {
 	}
 };
+
+/**
+ * A set of templates which remove const and/or volatile specifiers.
+ * Use the remove_*_t<T> variants.
+ */
+template<class T> struct remove_cv {
+	typedef T type;
+};
+template<class T> struct remove_cv<const T> {
+	typedef T type;
+};
+template<class T> struct remove_cv<volatile T> {
+	typedef T type;
+};
+template<class T> struct remove_cv<const volatile T> {
+	typedef T type;
+};
+
+template<class T> struct remove_const {
+	typedef T type;
+};
+template<class T> struct remove_const<const T> {
+	typedef T type;
+};
+
+template<class T> struct remove_volatile {
+	typedef T type;
+};
+template<class T> struct remove_volatile<volatile T> {
+	typedef T type;
+};
+
+/**
+ * A set of templates which removes the reference over types.
+ * Use remove_reference_t<T> for this.
+ */
+template<class T>
+struct remove_reference {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &> {
+	typedef T type;
+};
+template<class T>
+struct remove_reference<T &&> {
+	typedef T type;
+};
+
+template<class T>
+using remove_cv_t        = typename remove_cv<T>::type;
+template<class T>
+using remove_const_t     = typename remove_const<T>::type;
+template<class T>
+using remove_volatile_t  = typename remove_volatile<T>::type;
+
+template<class T>
+using remove_reference_t = typename remove_reference<T>::type;
+
+/**
+ * A reimplementation of std::move.
+ */
+template<class T>
+constexpr remove_reference_t<T> &&move(T &&t) noexcept {
+  return static_cast<remove_reference_t<T> &&>(t);
+}
+
+template<class T>
+constexpr T&& forward(remove_reference_t<T> &t) noexcept {
+	return static_cast<T &&>(t);
+}
 
 /**
  * Print a hexdump of the data passed in. The number of bytes per line is

@@ -1347,6 +1347,17 @@ Common::Rect MToonElement::getRelativeCollisionRect() const {
 	colRect.translate(_rect.left, _rect.top);
 	return colRect;
 }
+#ifdef MTROPOLIS_DEBUG_ENABLE
+void MToonElement::debugInspect(IDebugInspectionReport *report) const {
+	VisualElement::debugInspect(report);
+
+	report->declareDynamic("cel", Common::String::format("%i", static_cast<int>(_cel)));
+	report->declareDynamic("assetID", Common::String::format("%i", static_cast<int>(_assetID)));
+	report->declareDynamic("isPlaying", Common::String::format("%s", _isPlaying ? "true" : "false"));
+	report->declareDynamic("renderedFrame", Common::String::format("%i", static_cast<int>(_renderedFrame)));
+	report->declareDynamic("playRange", Common::String::format("%i-%i", static_cast<int>(_playRange.min), static_cast<int>(_playRange.max)));
+}
+#endif
 
 VThreadState MToonElement::startPlayingTask(const StartPlayingTaskData &taskData) {
 	if (_rateTimes100000 < 0)
@@ -1479,7 +1490,7 @@ void MToonElement::playMedia(Runtime *runtime, Project *project) {
 			runtime->queueMessage(dispatch);
 		}
 
-		if (_maintainRate)
+		if (_maintainRate && !runtime->getHacks().ignoreMToonMaintainRateFlag)
 			_celStartTimeMSec = playTime;
 		else
 			_celStartTimeMSec += (static_cast<uint64>(100000000) * framesAdvanced) / absRateTimes100000;
@@ -2166,14 +2177,14 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 				uint64 oldTimeRelative = _cueCheckTime - _startTime + _startTimestamp;
 				uint64 newTimeRelative = newTime - _startTime + _startTimestamp;
 
-				_cueCheckTime = newTime;
-
 				if (_subtitlePlayer)
 					_subtitlePlayer->update(oldTimeRelative, newTimeRelative);
 
-				// TODO: Check cue points and queue them here
-			}
+				for (MediaCueState *mediaCue : _mediaCues)
+					mediaCue->checkTimestampChange(runtime, oldTimeRelative * _metadata->sampleRate / 1000u, newTimeRelative * _metadata->sampleRate / 1000u, true, true);
 
+				_cueCheckTime = newTime;
+			}
 
 			if (!_loop && newTime >= _finishTime) {
 				// Don't throw out the handle - It can still be playing but we just treat it like it's not.
@@ -2194,6 +2205,19 @@ void SoundElement::playMedia(Runtime *runtime, Project *project) {
 		// Goal state is stopped
 		stopPlayer();
 	}
+}
+
+bool SoundElement::resolveMediaMarkerLabel(const Label &label, int32 &outResolution) const {
+	if (_metadata) {
+		for (const AudioMetadata::CuePoint &cuePoint : _metadata->cuePoints) {
+			if (cuePoint.cuePointID == label.id) {
+				outResolution = cuePoint.position;
+				return true;
+			}
+		}
+	}
+
+	return false;
 }
 
 void SoundElement::stopPlayer() {

@@ -139,7 +139,7 @@ public:
 
 	/**
 	 * Display the passed long description for an object. If the flag firstTime is set,
-	 * the window will be opened to accomodate the text. Otherwise, the remaining text
+	 * the window will be opened to accommodate the text. Otherwise, the remaining text
 	 * will be printed in an already open window
 	 */
 	void printObjectDesc(const Common::String &str, bool firstTime);

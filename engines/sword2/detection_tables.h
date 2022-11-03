@@ -83,7 +83,7 @@ static const Sword2GameDescription gameDescriptions[] = {
 			"sword2",
 			"",
 			AD_ENTRY3s("general.clu",  "31db8564f9187538f24d9fda0677f666", 7059728,
-			           "resource.tab", "ee4c0a8a2b8821ca113ea4176968b857", 16584,
+			           "text.clu",     "9b344d976ca8d19a1cf5aa4413397f6b", 304968,
 			           "speech1.clu",  "a403904a0e825356107d228f8f74092e", 176260048),
 			Common::EN_ANY,
 			Common::kPlatformWindows,
@@ -209,9 +209,23 @@ static const Sword2GameDescription gameDescriptions[] = {
 	{
 		{
 			"sword2",
-			"English speech",
+			"Fanmade/English speech/V1",
 			AD_ENTRY2s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
 			           "text.clu",    "93ea23ccf78dc746ed9a027fcf66d58d", 248692),
+			Common::HE_ISR,
+			Common::kPlatformWindows,
+			ADGF_NO_FLAGS,
+			GUIO0()
+		},
+		0
+	},
+
+	{
+		{
+			"sword2",
+			"Fanmade/English speech/V2",
+			AD_ENTRY2s("general.clu", "31db8564f9187538f24d9fda0677f666", 7059728,
+			           "text.clu",    "b5442676e958309bf1a4817dd3893aab", 248702),
 			Common::HE_ISR,
 			Common::kPlatformWindows,
 			ADGF_NO_FLAGS,

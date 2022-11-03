@@ -971,7 +971,7 @@ void _game_session::UpdateMegaFX() {
 	// if talking then update talking
 	if ((cur_id == (uint)speech_info[CONV_ID].current_talker) && // we are the one talking
 	    (speech_info[CONV_ID].total_subscribers > 1) &&          // not talking to myself
-	    (speech_info[CONV_ID].state == __SAYING)                 // are definately saying, not just getting ready to...
+	    (speech_info[CONV_ID].state == __SAYING)                 // are definitely saying, not just getting ready to...
 	    ) {
 		// get rap
 		RapAPI *pose = (RapAPI *)rs_anims->Res_open(I->get_pose_name(), I->pose_hash, I->base_path, I->base_path_hash);

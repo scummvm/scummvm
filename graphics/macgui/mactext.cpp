@@ -1592,7 +1592,7 @@ uint MacText::getSelectionIndex(bool start) {
 }
 
 void MacText::setSelection(int pos, bool start) {
-	// -1 for start represent the begining of text, i.e. 0
+	// -1 for start represent the beginning of text, i.e. 0
 	if (pos == -1 && start)
 		pos = 0;
 	int row = 0, col = 0;

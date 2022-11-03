@@ -66,12 +66,12 @@ extern gFont        *mainFont;
 *       that it is tab-selectable.
 *
 *   /h2/NOTIFICATIONS
-*       This class sends a gEventNewValue whenever the text box becomes
+*       This class sends a kEventNewValue whenever the text box becomes
 *       deactivated. If the deactivation occurred because of the user
 *       hitting return, then the value of the event will be 1; In all
 *       other cases it is zero.
 *
-*       In addition, a gEventAltValue is sent for each character
+*       In addition, a kEventAltValue is sent for each character
 *       typed. (Value is always 0). This is to allow other displays
 *       to be dynamically updated as the user types.
 *
@@ -120,16 +120,16 @@ extern gFont        *mainFont;
 *       flag        Various flags which control operation of the
 *                   text box:
 *
-*       /i/         textBoxAlignRight causes the text to
+*       /i/         kTextBoxAlignRight causes the text to
 *                   be right-justified within the box.
 *
-*       /i/         textBoxAlignCenter causes the text to be centered within the box.
+*       /i/         kTextBoxAlignCenter causes the text to be centered within the box.
 *
-*       /i/         textBoxNoFilter indicates that non-edit keys
+*       /i/         kTextBoxNoFilter indicates that non-edit keys
 *                   (such as ESC and TAB) should be passed on to the
 *                   application's AppFunc.
 *
-*       /i/         textBoxStayActive tells the text box not to
+*       /i/         kTextBoxStayActive tells the text box not to
 *                   deactivate when the user hits return.
 *
 *       id          A 16-bit Application-specific ID for this panel.
@@ -188,7 +188,7 @@ gTextBox::gTextBox(
 	_fontColorBackHilite     = BGHLColor;
 	_cursorColor             = CRColor;
 	_linesPerPage            = (box.height / _fontOffset);
-	_endLine                 = clamp(0, (_index + _linesPerPage), numEditLines);
+	_endLine                 = clamp(0, (_index + _linesPerPage), kNumEditLines);
 	_oldMark                 = -1;
 
 	_displayOnly             = noEditing;
@@ -210,10 +210,10 @@ gTextBox::gTextBox(
 	_fieldStrings = stringBufs;
 
 	// get the size of each string
-	for (i = 0; i < numEditLines; i++) {
+	for (i = 0; i < kNumEditLines; i++) {
 		_exists[i] = ((stringBufs[i][0] & 0x80) == 0);
 		stringBufs[i][0] &= 0x7F;
-		_currentLen[i] = MIN<int>(editLen, strlen(stringBufs[i]));
+		_currentLen[i] = MIN<int>(kEditLen, strlen(stringBufs[i]));
 	}
 
 	_internalBuffer = false;
@@ -347,7 +347,7 @@ void gTextBox::setEditExtent(const Rect16 &r) {
 //-----------------------------------------------------------------------
 
 bool gTextBox::activate(gEventType why) {
-	if (why == gEventAltValue) {            // momentarily depress
+	if (why == kEventAltValue) {            // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -359,7 +359,7 @@ bool gTextBox::activate(gEventType why) {
 	_selected = 1;
 	_fullRedraw = true;
 	draw();
-	if (why == gEventNone)
+	if (why == kEventNone)
 		return true;
 	return gPanel::activate(why);
 }
@@ -399,7 +399,7 @@ void gTextBox::commitEdit() {
 		memcpy(_undoBuffer, _fieldStrings[_index], _currentLen[_index] + 1);
 		_undoLen = _currentLen[_index];
 		_cursorPos = _anchorPos = _currentLen[_index];
-		notify(gEventNewValue, 1);       // tell app about new value
+		notify(kEventNewValue, 1);       // tell app about new value
 	}
 }
 
@@ -410,7 +410,7 @@ void gTextBox::revertEdit() {
 	if (_undoBuffer && changed()) {
 		_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 		memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
-		notify(gEventNewValue, 0);         // tell app about new value
+		notify(kEventNewValue, 0);         // tell app about new value
 	}
 }
 
@@ -427,7 +427,7 @@ void gTextBox::scroll(int8 req) {
 	int16   visBase = _endLine;
 	int16   visIndex;
 
-	indexReq        = clamp(0, indexReq, numEditLines);
+	indexReq        = clamp(0, indexReq, kNumEditLines);
 	visIndex = (indexReq - (visBase - _linesPerPage));
 	if (ABS(oldIndex - indexReq) < 2) {
 		if (visIndex < 0) {
@@ -439,11 +439,11 @@ void gTextBox::scroll(int8 req) {
 		}
 	} else {
 		while (visIndex >= _linesPerPage) {
-			visBase = clamp(_linesPerPage, visBase + _linesPerPage, numEditLines);
+			visBase = clamp(_linesPerPage, visBase + _linesPerPage, kNumEditLines);
 			visIndex = (indexReq - (visBase - _linesPerPage));
 		}
 		while (visIndex < 0) {
-			visBase = clamp(_linesPerPage, visBase - _linesPerPage, numEditLines);
+			visBase = clamp(_linesPerPage, visBase - _linesPerPage, kNumEditLines);
 			visIndex = (indexReq - (visBase - _linesPerPage));
 		}
 	}
@@ -509,12 +509,12 @@ void gTextBox::reSelect(int which) {
 void gTextBox::selectionMove(int howMany) {
 	int8    newIndex;
 
-	newIndex = clamp(0, _index + howMany, numEditLines - 1);
+	newIndex = clamp(0, _index + howMany, kNumEditLines - 1);
 #ifndef ALLOW_BAD_LOADS
 	if (_displayOnly) {
 		int i = newIndex;
 		if (howMany > 0) {
-			while (!_exists[i] && i < numEditLines - 1) i++;
+			while (!_exists[i] && i < kNumEditLines - 1) i++;
 			if (!_exists[i]) {
 				i = newIndex;
 				while (!_exists[i] && i > 0) i--;
@@ -525,7 +525,7 @@ void gTextBox::selectionMove(int howMany) {
 			while (!_exists[i] && i > 0) i--;
 			if (!_exists[i]) {
 				i = newIndex;
-				while (!_exists[i] && i < numEditLines - 1) i++;
+				while (!_exists[i] && i < kNumEditLines - 1) i++;
 			}
 			if (_exists[i])
 				newIndex = i;
@@ -541,7 +541,7 @@ void gTextBox::selectionMove(int howMany) {
 
 	draw();
 
-	//activate(gEventAltValue);
+	//activate(kEventAltValue);
 }
 
 
@@ -593,7 +593,7 @@ bool gTextBox::pointerHit(gPanelMessage &msg) {
 			makeActive();
 		}
 	}
-	return true; //gControl::activate( gEventMouseDown );
+	return true; //gControl::activate( kEventMouseDown );
 }
 
 
@@ -670,13 +670,13 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 	if (key == Common::ASCII_RETURN) { // return key
 		if (_editing) {
 			commitEdit();
-			if (!(_flags & textBoxStayActive))
+			if (!(_flags & kTextBoxStayActive))
 				deactivate();                       // deactivate the text box
 		}
 
 		if (_onEnter != nullptr) {
 			gEvent ev;
-			ev.eventType = gEventKeyDown ;
+			ev.eventType = kEventKeyDown ;
 			ev.value = 1;
 			ev.panel = _parent;
 			(*_onEnter)(ev);
@@ -688,14 +688,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		deactivate();                       // deactivate the text box
 		if (_onEscape != nullptr) {
 			gEvent ev;
-			ev.eventType = gEventKeyDown ;
+			ev.eventType = kEventKeyDown ;
 			ev.value = 1;
 			ev.value = 1;
 			ev.panel = this; //_parent;
 			(*_onEscape)(ev);
 		}
 
-		if (_flags & textBoxNoFilter)
+		if (_flags & kTextBoxNoFilter)
 			return false;
 		return true;
 	} else if (_editing) {
@@ -703,14 +703,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 		case Common::KEYCODE_LEFT:
 			if (_anchorPos > 0)
 				_anchorPos--;
-			if (!(msg._qualifier & qualifierShift))
+			if (!(msg._qualifier & kQualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
 		case Common::KEYCODE_RIGHT:
 			if (_anchorPos < _currentLen[_index])
 				_anchorPos++;
-			if (!(msg._qualifier & qualifierShift))
+			if (!(msg._qualifier & kQualifierShift))
 				_cursorPos = _anchorPos;
 			break;
 
@@ -725,18 +725,18 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 			break;
 
 		case Common::KEYCODE_z: // Alt-Z
-			if (msg._qualifier & (qualifierControl | qualifierAlt)) {
+			if (msg._qualifier & (kQualifierControl | kQualifierAlt)) {
 				if (_undoBuffer) {
 					_cursorPos = _anchorPos = _currentLen[_index] = _undoLen;
 					memcpy(_fieldStrings[_index], _undoBuffer, _currentLen[_index] + 1);
-					notify(gEventAltValue, 0);  // tell app about new value
+					notify(kEventAltValue, 0);  // tell app about new value
 				}
 			} else {
 				//  Insert text, if it will fit
 
 				if (insertText((char *)&key, 1) == false)
 					return false;
-				notify(gEventAltValue, 0);       // tell app about new value
+				notify(kEventAltValue, 0);       // tell app about new value
 			}
 			break;
 
@@ -753,7 +753,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 					_currentLen[_index] - (selStart + selWidth));
 			_cursorPos = _anchorPos = selStart;   // adjust cursor pos
 			_currentLen[_index] -= selWidth;                // adjust str len
-			notify(gEventAltValue, 0);       // tell app about new value
+			notify(kEventAltValue, 0);       // tell app about new value
 			break;
 
 		case Common::KEYCODE_DELETE:
@@ -769,14 +769,14 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 					_currentLen[_index] - (selStart + selWidth));
 			_cursorPos = _anchorPos = selStart;   // adjust cursor pos
 			_currentLen[_index] -= selWidth;    // adjust str len
-			notify(gEventAltValue, 0);       // tell app about new value
+			notify(kEventAltValue, 0);       // tell app about new value
 			break;
 
 		case Common::ASCII_TAB:
 			return false;
 
 		default:
-			if (_flags & textBoxNoFilter)
+			if (_flags & kTextBoxNoFilter)
 				return false;
 
 			if (key >= Common::KEYCODE_SPACE &&     // 32 (First printable character)
@@ -786,7 +786,7 @@ bool gTextBox::keyStroke(gPanelMessage &msg) {
 
 				if (insertText((char *)&key, 1) == false)
 					return false;
-				notify(gEventAltValue, 0);       // tell app about new value
+				notify(kEventAltValue, 0);       // tell app about new value
 			}
 
 			break;
@@ -850,15 +850,15 @@ void gTextBox::handleTimerTick(int32 tick) {
 			_blinkStart = tick;
 			return;
 		}
-		if (tick - _blinkStart > blinkTime) {
+		if (tick - _blinkStart > kBlinkTime) {
 			gPort   &port = _window._windowPort;
 			SAVE_GPORT_STATE(port);                  // save pen color, etc.
 			g_vm->_pointer->hide(port, _extent);              // hide mouse pointer
 
 			port.setPenMap(port._penMap);
 			port.setStyle(0);
-			port.setColor(_blinkState ? blinkColor0 : blinkColor1);
-			port.fillRect(_editRect.x + _blinkX - ((blinkWide + 1) / 2), _editRect.y + 1, blinkWide, _editRect.height - 1);
+			port.setColor(_blinkState ? kBlinkColor0 : kBlinkColor1);
+			port.fillRect(_editRect.x + _blinkX - ((kBlinkWide + 1) / 2), _editRect.y + 1, kBlinkWide, _editRect.height - 1);
 
 			g_vm->_pointer->show(port, _extent);              // show mouse pointer
 
@@ -898,10 +898,10 @@ void gTextBox::drawContents() {
 		            anchorX = 0,
 		            _hiliteX,
 		            _hiliteWidth,
-		            textHeight_;
+		            kTextHeight_;
 
 
-		textHeight_ = _fontHeight;
+		kTextHeight_ = _fontHeight;
 
 
 		if (_hilit || _editing) {
@@ -968,12 +968,12 @@ void gTextBox::drawContents() {
 		tPort.setFont(_textFont);
 		tPort.setColor(_fontColorHilite);
 
-		tPort.moveTo(-_scrollPixels, (_editRect.height - textHeight_ + 1) / 2);
+		tPort.moveTo(-_scrollPixels, (_editRect.height - kTextHeight_ + 1) / 2);
 		tPort.drawText(_fieldStrings[_index], _currentLen[_index]);
 
 		//  Blit the pixelmap to the main screen
 
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 		port.bltPixels(*tPort._map, 0, 0,
 		               _editRect.x + 1, _editRect.y + 1,
 		               _editRect.width, _editRect.height);
@@ -1010,7 +1010,7 @@ void gTextBox::drawClipped() {
 
 	if (_editing) {
 		drawContents();                         // draw the string
-		drawTitle(textPosLeft);                  // draw the title
+		drawTitle(kTextPosLeft);                  // draw the title
 	} else if (_displayOnly && _hilit) {
 		drawContents();
 	} else {
@@ -1047,14 +1047,14 @@ void gTextBox::drawAll(gPort &port,
 
 		if (_endLine != _oldMark  || _fullRedraw) {
 			// setup the tempPort
-			tempPort.setMode(drawModeMatte);
+			tempPort.setMode(kDrawModeMatte);
 
 			// if the text is going to change
 			tempPort.setColor(_fontColorBack);
 			tempPort.fillRect(workRect);
 
 			// draw as glyph
-			tempPort.setMode(drawModeMatte);
+			tempPort.setMode(kDrawModeMatte);
 
 			// pen color black
 			tempPort.setColor(_fontColorFore);
@@ -1066,13 +1066,13 @@ void gTextBox::drawAll(gPort &port,
 
 
 			for (i = (_endLine - _linesPerPage); i < _endLine; i++) {
-				assert(i >= 0 && i <= numEditLines);
+				assert(i >= 0 && i <= kNumEditLines);
 
 				// move to new text pos
 				tempPort.moveTo(workRect.x, workRect.y);
 
 				// pen color black
-				tempPort.setColor(((i != _index) && _exists[i]) ? _fontColorFore : textDisable);
+				tempPort.setColor(((i != _index) && _exists[i]) ? _fontColorFore : kTextDisable);
 
 				// draw the text
 				tempPort.drawText(_fieldStrings[i]);
@@ -1089,7 +1089,7 @@ void gTextBox::drawAll(gPort &port,
 
 			//  Blit the pixelmap to the main screen
 
-			port.setMode(drawModeMatte);
+			port.setMode(kDrawModeMatte);
 
 			port.bltPixels(*tempPort._map, 0, 0,
 			               _extent.x + 1, _extent.y + 1,

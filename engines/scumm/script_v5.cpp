@@ -3140,6 +3140,27 @@ void ScummEngine_v5::o5_walkActorTo() {
 		}
 	}
 
+	// WORKAROUND: In Indy4, in the Crete room where there's the gold box,
+	// Indy can get stuck if one clicks too quickly on the right and the
+	// "elevator" isn't there yet (also with the original interpreter).
+	// This is because the box matrix is initialized too late in the entry
+	// script for that room, so we have to do it a bit earlier.
+	//
+	// Intentionally not using `_enableEnhancements`, since you can get
+	// completely stuck.
+	if (_game.id == GID_INDY4 && vm.slot[_currentScript].number == 10002 &&
+		_currentRoom == (_game.platform == Common::kPlatformAmiga ? 58 : 60) &&
+		VAR(224) == 140 && a->_number == VAR(VAR_EGO) && x == 45 && y == 137) {
+		// If the elevator isn't on the current floor yet...
+		if (whereIsObject(829) == WIO_ROOM && getState(829) == 0 && getBoxFlags(7) != 128) {
+			// ...immediately set its box flags so that you can't walk on it
+			setBoxFlags(7, 128);
+			for (int i = 12; i <= 15; ++i)
+				setBoxFlags(i, 128);
+			createBoxMatrix();
+		}
+	}
+
 	a->startWalkActor(x, y, -1);
 }
 

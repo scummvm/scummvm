@@ -33,11 +33,11 @@ namespace Saga2 {
  * ===================================================================== */
 
 enum DisplayDisabledBecause {
-	GameNotInitialized      = 1 << 0,
-	PlayingVideo            = 1 << 1,
-	GraphicsInit            = 1 << 2,
-	GameSuspended           = 1 << 3,
-	GameEnded               = 1 << 4
+	kDisGameNotInitialized      = 1 << 0,
+	kDisPlayingVideo            = 1 << 1,
+	kDisGraphicsInit            = 1 << 2,
+	kDisGameSuspended           = 1 << 3,
+	kDisGameEnded               = 1 << 4
 };
 
 /* ===================================================================== *

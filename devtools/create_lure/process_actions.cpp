@@ -408,7 +408,7 @@ void read_action_sequence(byte *&data, uint16 &totalSize) {
 			offset += sizeof(uint16);
 		}
 
-		// Adjust the total size to accomodate random action data in the output
+		// Adjust the total size to accommodate random action data in the output
 		totalSize += sizeof(uint16)  * randomActions[roomIndex].numEntries +
 			(sizeof(uint16) * 2);
 	}

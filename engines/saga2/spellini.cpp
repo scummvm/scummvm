@@ -96,7 +96,7 @@ SPELLINITFUNCTION(wallSpellInit) {
 	else
 		effectron->_totalSteps = 20;
 	effectron->_current = effectron->_parent->_target->getPoint();
-	effectron->_velocity = WallVectors[effectron->_partno] * wallSpellRadius / 3;
+	effectron->_velocity = WallVectors[effectron->_partno] * kWallSpellRadius / 3;
 	effectron->_current = effectron->_parent->_target->getPoint() + effectron->_velocity;
 	effectron->_acceleration = TilePoint(0, 0, 0);
 }
@@ -108,7 +108,7 @@ SPELLINITFUNCTION(projectileSpellInit) {
 	effectron->_start = effectron->_current;
 	effectron->_finish = effectron->_parent->_target->getPoint();
 	TilePoint tp = (effectron->_finish - effectron->_start);
-	effectron->_totalSteps = 1 + (tp.magnitude() / (2 * SpellJumpiness));
+	effectron->_totalSteps = 1 + (tp.magnitude() / (2 * kSpellJumpiness));
 	effectron->_velocity = tp / effectron->_totalSteps;
 	effectron->_acceleration = TilePoint(0, 0, 0);
 }
@@ -125,7 +125,7 @@ SPELLINITFUNCTION(exchangeSpellInit) {
 		effectron->_finish = effectron->_parent->_target->getPoint();
 	}
 	TilePoint tp = (effectron->_finish - effectron->_start);
-	effectron->_totalSteps = 1 + (tp.magnitude() / (SpellJumpiness));
+	effectron->_totalSteps = 1 + (tp.magnitude() / (kSpellJumpiness));
 	effectron->_velocity = tp / effectron->_totalSteps;
 	effectron->_totalSteps += (effectron->_partno / 2);
 	effectron->_acceleration = TilePoint(0, 0, 0);
@@ -140,16 +140,16 @@ SPELLINITFUNCTION(boltSpellInit) {
 	if (effectron->_parent->_maxAge)
 		effectron->_totalSteps = effectron->_parent->_maxAge;
 	else
-		effectron->_totalSteps = 1 + (boltSpellLength / (SpellJumpiness * 3));
+		effectron->_totalSteps = 1 + (kBoltSpellLength / (kSpellJumpiness * 3));
 
 	effectron->_start = effectron->_current;
 	effectron->_finish = effectron->_parent->_target->getPoint();
 
 	TilePoint tVect = effectron->_finish - effectron->_start ;
-	setMagnitude(tVect, boltSpellLength);
+	setMagnitude(tVect, kBoltSpellLength);
 	TilePoint orth = rightVector(tVect, 0);
-	setMagnitude(orth, boltSpellWidth * (effectron->_partno % 3 - 1) / 6);
-	TilePoint offVect = tVect * ((effectron->_partno / 3) % 3) / (SpellJumpiness * 3);
+	setMagnitude(orth, kBoltSpellWidth * (effectron->_partno % 3 - 1) / 6);
+	TilePoint offVect = tVect * ((effectron->_partno / 3) % 3) / (kSpellJumpiness * 3);
 
 	effectron->_start += orth;
 	effectron->_finish += orth + offVect;
@@ -168,15 +168,15 @@ SPELLINITFUNCTION(beamSpellInit) {
 	if (effectron->_parent->_maxAge)
 		effectron->_totalSteps = effectron->_parent->_maxAge;
 	else
-		effectron->_totalSteps = 1 + (beamSpellLength / (SpellJumpiness));
+		effectron->_totalSteps = 1 + (kBeamSpellLength / (kSpellJumpiness));
 
 	effectron->_start = effectron->_current;
 	effectron->_finish = effectron->_parent->_target->getPoint();
 
 	TilePoint tVect = effectron->_finish - effectron->_start ;
-	setMagnitude(tVect, beamSpellLength);
+	setMagnitude(tVect, kBeamSpellLength);
 	TilePoint orth = rightVector(tVect, 0);
-	setMagnitude(orth, beamSpellWidth / 2);
+	setMagnitude(orth, kBeamSpellWidth / 2);
 
 	effectron->_start += (tVect * effectron->_partno) / effectron->_totalSteps;
 	effectron->_finish = effectron->_start;
@@ -192,15 +192,15 @@ SPELLINITFUNCTION(beamSpellInit) {
 
 SPELLINITFUNCTION(coneSpellInit) {
 	effectron->_stepNo = 0;
-	effectron->_totalSteps = 1 + (coneSpellLength / (SpellJumpiness * 3));
+	effectron->_totalSteps = 1 + (kConeSpellLength / (kSpellJumpiness * 3));
 
 	effectron->_start = effectron->_current;
 	effectron->_finish = effectron->_parent->_target->getPoint();
 
 	TilePoint tVect = effectron->_finish - effectron->_start ;
-	setMagnitude(tVect, coneSpellLength);
+	setMagnitude(tVect, kConeSpellLength);
 	TilePoint orth = rightVector(tVect, 0);
-	setMagnitude(orth, coneSpellWidth * (effectron->_partno % 9 - 4) / 8);
+	setMagnitude(orth, kConeSpellWidth * (effectron->_partno % 9 - 4) / 8);
 
 	effectron->_finish = effectron->_start + tVect + orth;
 
@@ -213,15 +213,15 @@ SPELLINITFUNCTION(coneSpellInit) {
 
 SPELLINITFUNCTION(waveSpellInit) {
 	effectron->_stepNo = 0;
-	effectron->_totalSteps = 1 + (coneSpellLength / (SpellJumpiness * 2));
+	effectron->_totalSteps = 1 + (kConeSpellLength / (kSpellJumpiness * 2));
 
 	effectron->_start = effectron->_current;
 	effectron->_finish = effectron->_parent->_target->getPoint();
 
 	TilePoint tVect = effectron->_finish - effectron->_start ;
-	setMagnitude(tVect, waveSpellLength);
+	setMagnitude(tVect, kWaveSpellLength);
 	TilePoint orth = rightVector(tVect, 0);
-	setMagnitude(orth, waveSpellWidth * (effectron->_partno % 17 - 8) / 8);
+	setMagnitude(orth, kWaveSpellWidth * (effectron->_partno % 17 - 8) / 8);
 
 	effectron->_finish = effectron->_start + tVect + orth;
 
@@ -236,13 +236,13 @@ SPELLINITFUNCTION(ballSpellInit) {
 	effectron->_stepNo = 0;
 	effectron->_start = effectron->_current;
 	effectron->_finish = FireballVectors[effectron->_partno];
-	setMagnitude(effectron->_finish, ballSpellRadius);
+	setMagnitude(effectron->_finish, kBallSpellRadius);
 	effectron->_finish = effectron->_finish + effectron->_start;
-	effectron->_totalSteps = 1 + (ballSpellRadius / SpellJumpiness);
+	effectron->_totalSteps = 1 + (kBallSpellRadius / kSpellJumpiness);
 	effectron->_acceleration = TilePoint(0, 0, 0);
 
 	TilePoint tp = (effectron->_finish - effectron->_start);
-	effectron->_totalSteps = 1 + (tp.magnitude() / SpellJumpiness);
+	effectron->_totalSteps = 1 + (tp.magnitude() / kSpellJumpiness);
 	effectron->_velocity = tp / effectron->_totalSteps;
 	effectron->_velocity.z = 0;
 	effectron->_acceleration = TilePoint(0, 0, 0);
@@ -255,13 +255,13 @@ SPELLINITFUNCTION(squareSpellInit) {
 	effectron->_stepNo = 0;
 	effectron->_start = effectron->_current;
 	effectron->_finish = SquareSpellVectors[effectron->_partno];
-	setMagnitude(effectron->_finish, effectron->_finish.magnitude()*squareSpellSize / 4);
+	setMagnitude(effectron->_finish, effectron->_finish.magnitude()*kSquareSpellSize / 4);
 	effectron->_finish = effectron->_finish + effectron->_start;
-	effectron->_totalSteps = 1 + (squareSpellSize / SpellJumpiness);
+	effectron->_totalSteps = 1 + (kSquareSpellSize / kSpellJumpiness);
 	effectron->_acceleration = TilePoint(0, 0, 0);
 
 	TilePoint tp = (effectron->_finish - effectron->_start);
-	effectron->_totalSteps = 1 + (tp.magnitude() / SpellJumpiness);
+	effectron->_totalSteps = 1 + (tp.magnitude() / kSpellJumpiness);
 	effectron->_velocity = tp / effectron->_totalSteps;
 	effectron->_velocity.z = 0;
 	effectron->_acceleration = TilePoint(0, 0, 0);
@@ -274,13 +274,13 @@ SPELLINITFUNCTION(stormSpellInit) {
 	effectron->_stepNo = 0;
 	effectron->_start = effectron->_current;
 	effectron->_finish = FireballVectors[effectron->_partno];
-	setMagnitude(effectron->_finish, ballSpellRadius);
+	setMagnitude(effectron->_finish, kBallSpellRadius);
 	effectron->_finish = effectron->_finish + effectron->_start;
-	effectron->_totalSteps = 1 + (ballSpellRadius / SpellJumpiness);
+	effectron->_totalSteps = 1 + (kBallSpellRadius / kSpellJumpiness);
 	effectron->_acceleration = TilePoint(0, 0, 0);
 
 	TilePoint tp = (effectron->_finish - effectron->_start);
-	effectron->_totalSteps = 1 + (2 * tp.magnitude() / SpellJumpiness);
+	effectron->_totalSteps = 1 + (2 * tp.magnitude() / kSpellJumpiness);
 	effectron->_velocity = tp / effectron->_totalSteps;
 	effectron->_velocity.z = 0;
 	effectron->_acceleration = TilePoint(0, 0, 0);

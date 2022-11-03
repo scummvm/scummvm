@@ -117,7 +117,7 @@ class EffectDisplayPrototype {
 		return 0;
 	}
 	static SPELLSTATUSFUNCTION(nullStatus) {
-		return effectronDead;
+		return kEffectronDead;
 	}
 	static SPELLHEIGHTFUNCTION(nullHeight) {
 		return 0;
@@ -205,19 +205,19 @@ public:
 //
 
 enum effectCollisionCont {
-	ecFlagNone = 0,
-	ecFlagBounce,
-	ecFlagDie,
-	ecFlagStop
+	kEcFlagNone = 0,
+	kEcFlagBounce,
+	kEcFlagDie,
+	kEcFlagStop
 };
 
 enum effectDirectionInit {
-	diFlagZero = 0,
-	diFlagInc = 1,
-	diFlagInc2 = 2,
-	diFlagInc3 = 3,
-	diFlagInc4 = 4,
-	diFlagRand = 5
+	kDiFlagZero = 0,
+	kDiFlagInc = 1,
+	kDiFlagInc2 = 2,
+	kDiFlagInc3 = 3,
+	kDiFlagInc4 = 4,
+	kDiFlagRand = 5
 };
 
 

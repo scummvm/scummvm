@@ -76,8 +76,8 @@ ObjectID EnchantObject(
 
 	//  Now, change the object base on enchantments
 	obj->evalEnchantments();
-	assert(enchProto->containmentSet() & ProtoObj::isEnchantment);
-	assert((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::isEnchantment);
+	assert(enchProto->containmentSet() & ProtoObj::kIsEnchantment);
+	assert((ench->protoAddress(ench->thisID()))->containmentSet() & ProtoObj::kIsEnchantment);
 	return ench->thisID();
 }
 
@@ -118,7 +118,7 @@ ObjectID FindObjectEnchantment(
 	while ((objID = iter.next(&containedObj)) != Nothing) {
 		ProtoObj *proto = containedObj->proto();
 
-		if ((proto->containmentSet() & ProtoObj::isEnchantment)
+		if ((proto->containmentSet() & ProtoObj::kIsEnchantment)
 		        && ((containedObj->getExtra() & 0xFF00) == (enchantmentType & 0xFF00))) {
 			return objID;
 		}
@@ -160,22 +160,22 @@ void addEnchantment(Actor *a, uint16 enchantmentID) {
 	int16  eAmount = getEnchantmentAmount(enchantmentID);
 
 	switch (eType) {
-	case effectAttrib:
+	case kEffectAttrib:
 		stats[eSubType] = clamp(0, stats[eSubType] + eAmount, 100);
 		break;
-	case effectResist:
+	case kEffectResist:
 		a->setResist((effectResistTypes) eSubType, eAmount);
 		break;
-	case effectImmune:
+	case kEffectImmune:
 		a->setImmune((effectImmuneTypes) eSubType, eAmount);
 		break;
-	case effectOthers:
+	case kEffectOthers:
 		a->setEffect((effectOthersTypes) eSubType, eAmount);
 		break;
-	case effectSpecial:           // damage shouldn't be an enchantment
+	case kEffectSpecial:           // damage shouldn't be an enchantment
 	// Special code needed
-	case effectDamage:           // damage shouldn't be an enchantment
-	case effectNone:
+	case kEffectDamage:           // damage shouldn't be an enchantment
+	case kEffectNone:
 		break;
 	}
 
@@ -196,7 +196,7 @@ void evalActorEnchantments(Actor *a) {
 	for (id = iter.first(&obj); id != Nothing; id = iter.next(&obj)) {
 		ProtoObj *proto = obj->proto();
 
-		if (proto->containmentSet() & ProtoObj::isEnchantment) {
+		if (proto->containmentSet() & ProtoObj::kIsEnchantment) {
 			uint16 enchantmentID = obj->getExtra();
 			addEnchantment(a, enchantmentID);
 		}
@@ -206,7 +206,7 @@ void evalActorEnchantments(Actor *a) {
 		ProtoObj        *proto = obj->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  proto->isObjectBeingUsed(obj)) {
 			a->_effectiveResistance  |= proto->resistance;
 			a->_effectiveImmunity    |= proto->immunity;
@@ -230,12 +230,12 @@ void evalObjectEnchantments(GameObject *obj) {
 	//  If more enchantment types are added, then we'll
 	//  have to do this a bit differently...
 
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectInvisible, true)))
-		obj->setFlags((uint8) - 1, objectInvisible);
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(kEffectNonActor, kObjectInvisible, true)))
+		obj->setFlags((uint8) - 1, kObjectInvisible);
 	else
-		obj->setFlags(0, objectInvisible);
-	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(effectNonActor, objectLocked, false)))
-		obj->setFlags((uint8) - 1, objectLocked);
+		obj->setFlags(0, kObjectInvisible);
+	if (FindObjectEnchantment(obj->thisID(), makeEnchantmentID(kEffectNonActor, kObjectLocked, false)))
+		obj->setFlags((uint8) - 1, kObjectLocked);
 }
 
 //-------------------------------------------------------------------
@@ -278,7 +278,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 		ProtoObj        *proto = object->proto();
 		uint16          cSet = proto->containmentSet();
 
-		if ((cSet & (ProtoObj::isArmor | ProtoObj::isWeapon | ProtoObj::isWearable))
+		if ((cSet & (ProtoObj::kIsArmor | ProtoObj::kIsWeapon | ProtoObj::kIsWearable))
 		        &&  _wornObject == nullptr
 		        &&  proto->isObjectBeingUsed(object)) {
 			_wornObject = object;
@@ -288,7 +288,7 @@ ObjectID EnchantmentIterator::next(GameObject **obj) {
 
 		_nextID = object->IDNext();
 
-		if (cSet & ProtoObj::isEnchantment) break;
+		if (cSet & ProtoObj::kIsEnchantment) break;
 	}
 
 	if (obj) *obj = object;

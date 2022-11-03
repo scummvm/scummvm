@@ -79,7 +79,7 @@ int StatusLineMessager::dumpit(char *s, size_t size) {
 	_textPort->fillRect(r);
 	_textPort->setColor(_atColor);
 	_textPort->setStyle(0);
-	_textPort->drawTextInBox(s, size, r, textPosLeft, Point16(2, 1));
+	_textPort->drawTextInBox(s, size, r, kTextPosLeft, Point16(2, 1));
 
 	return 0;
 }

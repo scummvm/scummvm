@@ -1916,7 +1916,7 @@ MiniscriptInstructionOutcome MiniscriptThread::dereferenceRValue(size_t offset, 
 			if (obj && obj->isModifier()) {
 				const Modifier *modifier = static_cast<const Modifier *>(obj.get());
 				if (modifier->isVariable()) {
-					static_cast<const VariableModifier *>(modifier)->varGetValue(this, stackValue.value);
+					static_cast<const VariableModifier *>(modifier)->varGetValue(stackValue.value);
 				}
 			}
 		} break;
@@ -2033,7 +2033,7 @@ MiniscriptInstructionOutcome MiniscriptThread::tryLoadVariable(MiniscriptStackVa
 		Common::SharedPtr<RuntimeObject> obj = stackValue.value.getObject().object.lock();
 		if (obj && obj->isModifier() && static_cast<Modifier *>(obj.get())->isVariable()) {
 			VariableModifier *varMod = static_cast<VariableModifier *>(obj.get());
-			varMod->varGetValue(this, stackValue.value);
+			varMod->varGetValue(stackValue.value);
 		}
 	}
 

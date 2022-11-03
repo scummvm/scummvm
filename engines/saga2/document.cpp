@@ -69,7 +69,7 @@ static uint8 scrollTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 66, 66, 67, 67, 
 CDocumentAppearance scrollAppearance = {
 	{202, 54, 236, 317},
 	1,
-	pageOrientVertical,
+	kPageOrientVertical,
 	scrollTextColors,
 	{ {50, 64, 131, 169}, {0, 0, 0, 0} },
 	{184, 206,  44,  42},
@@ -95,7 +95,7 @@ static uint8 bookTextColors[] = { 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65, 65
 CDocumentAppearance bookAppearance = {
 	{123, 76, 394, 252},
 	2,
-	pageOrientHorizontal,
+	kPageOrientHorizontal,
 	bookTextColors,
 	{ {40, 26, 135, 205}, {218, 26, 135, 205} },
 	{231, 217,  34,  27},
@@ -117,7 +117,7 @@ static StaticWindow parchDecorations[] = {
 CDocumentAppearance parchAppearance = {
 	{202, 54, 208, 256},
 	1,
-	pageOrientVertical,
+	kPageOrientVertical,
 	bookTextColors,
 	{ {27, 18, 149, 212}, {0, 0, 0, 0} },
 	{164, 229,  20,  20},
@@ -152,7 +152,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	_illustrationCon = nullptr;
 
 	// set the maxium string length
-	_maxSize = maxPages * maxLines * maxChars;
+	_maxSize = kMaxPages * kMaxLines * kMaxChars;
 
 	// get the org text size
 	_textSize = clamp(0, strlen(buffer), _maxSize);
@@ -179,7 +179,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 	_pageBreakSet    = true;
 
 	// null out the image pointer array
-	for (int16 i = 0; i < maxPages; i++) {
+	for (int16 i = 0; i < kMaxPages; i++) {
 		_images[i] = nullptr;
 	}
 
@@ -200,7 +200,7 @@ CDocument::CDocument(CDocumentAppearance &dApp,
 CDocument::~CDocument() {
 	int16   i;
 
-	for (i = 0; i < maxPages; i++) {
+	for (i = 0; i < kMaxPages; i++) {
 		if (_images[i]) {
 			free(_images[i]);
 		}
@@ -228,7 +228,7 @@ void CDocument::deactivate() {
 }
 
 bool CDocument::activate(gEventType why) {
-	if (why == gEventMouseDown) {           // momentarily depress
+	if (why == kEventMouseDown) {           // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -279,7 +279,7 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 	Point16 pos     = msg._pickPos;
 
 	if (msg._inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
-		if (_app.orientation == pageOrientVertical) {
+		if (_app.orientation == kPageOrientVertical) {
 			// find out which end of the book we're on
 			if (pos.y < _extent.height / 2)   setMouseImage(kMousePgUpImage,   -7, -7);
 			else                            setMouseImage(kMousePgDownImage, -7, -7);
@@ -292,12 +292,12 @@ void CDocument::pointerMove(gPanelMessage &msg) {
 		setMouseImage(kMouseArrowImage, 0, 0);
 	}
 
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 void CDocument::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
@@ -306,7 +306,7 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 
 	if (msg._inPanel && Rect16(0, 0, _extent.width, _extent.height).ptInside(pos)) {
 		gEvent ev;
-		if (_app.orientation == pageOrientVertical) {
+		if (_app.orientation == kPageOrientVertical) {
 			// find out which end of the book we're on
 			if (pos.y < _extent.height / 2)   cmdDocumentUp(ev); //gotoPage( _currentPage - _app.numPages );
 			else                            cmdDocumentDn(ev); //gotoPage( _currentPage + _app.numPages );
@@ -331,12 +331,12 @@ bool CDocument::pointerHit(gPanelMessage &msg) {
 		}
 	}
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void CDocument::gotoPage(int8 page) {
-	page = clamp(0, page, maxPages);
+	page = clamp(0, page, kMaxPages);
 
 	while (page % _app.numPages) page++;
 
@@ -347,7 +347,7 @@ void CDocument::gotoPage(int8 page) {
 }
 
 void CDocument::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -407,7 +407,7 @@ bool CDocument::checkForImage(char      *string,
 		_illustrationCon = resFile->newContext(MKTAG(argv[0], argv[1], argv[2], argv[3]),
 		                                      "book internal resources");
 		// set image for next page
-		if (offPageIndex < maxPages) {
+		if (offPageIndex < kMaxPages) {
 			// if the last entry is defined as a number
 			if (argv[7] == ':') {
 				// convert the text into a number
@@ -447,7 +447,7 @@ bool CDocument::checkForImage(char      *string,
 			// set the line offset
 			_lineOffset[offPageIndex] =
 				_imageSizes[offPageIndex].y / (_textHeight + 1) +
-				textPictureOffset;
+				kTextPictureOffset;
 		} else {
 			warning("CDocument: Document overflow");
 		}
@@ -475,7 +475,7 @@ void CDocument::makePages() {
 	bool    newPage         = false;
 
 
-	while (offset >= 0 && pageIndex < maxPages) {
+	while (offset >= 0 && pageIndex < kMaxPages) {
 		while (offset >= 0 &&
 		        lineIndex < linesPerPage &&
 		        !newPage) {
@@ -585,7 +585,7 @@ void CDocument::renderText() {
 			for (; lineIndex < _numLines[pageIndex]; lineIndex++) {
 				int16   temp = _lineLen[pageIndex][lineIndex];
 
-				assert(pageIndex < maxPages);
+				assert(pageIndex < kMaxPages);
 				assert(temp < 35);
 
 				str += _lineLen[pageIndex][lineIndex];
@@ -613,7 +613,7 @@ void CDocument::renderText() {
 			}
 
 			for (; lineIndex < _numLines[pageIndex]; lineIndex++) {
-				assert(pageIndex <= maxPages);
+				assert(pageIndex <= kMaxPages);
 
 				tPort.moveTo(pageRect->x, pageRect->y + (_textHeight * lineIndex) + 1);
 				tPort.setColor(_app.textColors[lineIndex]);
@@ -628,7 +628,7 @@ void CDocument::renderText() {
 			}
 		}
 
-		port.setMode(drawModeMatte);
+		port.setMode(kDrawModeMatte);
 
 		g_vm->_pointer->hide();
 
@@ -738,13 +738,13 @@ int16 openScroll(uint16 textScript) {
 	decRes = resFile->newContext(MKTAG('S', 'C', 'R', 'L'), "book resources");
 
 	// get the graphics associated with the buttons
-	closeBtnImage = loadButtonRes(decRes, buttonResID, numBtnImages);
+	closeBtnImage = loadButtonRes(decRes, buttonResID, kNumBtnImages);
 
 	// create the window
 	win = new CDocument(scrollAppearance, bookText, &Script10Font, 0, nullptr);
 
 	// make the quit button
-	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, numBtnImages, 0, cmdDocumentQuit);
+	closeScroll = new GfxCompButton(*win, scrollAppearance.closeRect, closeBtnImage, kNumBtnImages, 0, cmdDocumentQuit);
 
 	closeScroll->_accelKey = 0x1B;
 
@@ -759,7 +759,7 @@ int16 openScroll(uint16 textScript) {
 	delete  win;
 
 	// unload all image arrays
-	unloadImageRes(closeBtnImage, numBtnImages);
+	unloadImageRes(closeBtnImage, kNumBtnImages);
 
 	// remove the resource handle
 	if (decRes)
@@ -865,7 +865,7 @@ APPFUNC(cmdDocumentQuit) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 

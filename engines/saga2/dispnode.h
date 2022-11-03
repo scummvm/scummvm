@@ -38,8 +38,8 @@ struct StaticTilePoint;
 class Effectron;
 
 enum nodeType {
-	nodeTypeObject = 0,
-	nodeTypeEffect
+	kNodeTypeObject = 0,
+	kNodeTypeEffect
 };
 
 
@@ -58,7 +58,7 @@ private:
 	uint8                   _flags;                  // various flags
 
 	enum {
-		displayIndicator = (1 << 0)
+		kDisplayIndicator = (1 << 0)
 	};
 
 public:
@@ -81,7 +81,7 @@ public:
 //  This class is used to form a list of objects to display on
 //  the screen.
 
-const int           maxDisplayed = 100;
+const int           kMaxDisplayed = 100;
 
 class DisplayNodeList {
 	friend ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos);
@@ -97,8 +97,8 @@ public:
 		_count = 0;
 	}
 	DisplayNodeList() {
-		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * maxDisplayed);
-		init(maxDisplayed);
+		_displayList = (DisplayNode *)malloc(sizeof(DisplayNode) * kMaxDisplayed);
+		init(kMaxDisplayed);
 		_count = 0;
 	}
 	~DisplayNodeList() {

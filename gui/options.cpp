@@ -833,7 +833,7 @@ void OptionsDialog::apply() {
 				shader = ConfMan.get("shader", _domain);
 
 			// If shader was changed, show the test dialog
-			if (previousShader != shader && !shader.empty()) {
+			if (previousShader != shader && !shader.empty() && shader != "default") {
 				if (!testGraphicsSettings()) {
 					if (previousShader == _c("None", "shader"))
 						previousShader = "default";

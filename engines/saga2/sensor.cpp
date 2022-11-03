@@ -59,7 +59,7 @@ void deleteSensorList(SensorList *s) {
 void newSensor(Sensor *s) {
 	g_vm->_sensorList.push_back(s);
 
-	s->_checkCtr = sensorCheckRate;
+	s->_checkCtr = kSensorCheckRate;
 }
 
 //----------------------------------------------------------------------
@@ -88,27 +88,27 @@ void readSensor(int16 ctr, Common::InSaveFile *in) {
 	debugC(3, kDebugSaveload, "type = %d", type);
 
 	switch (type) {
-	case protaganistSensor:
+	case kProtaganistSensor:
 		sensor = new ProtaganistSensor(in, ctr);
 		break;
 
-	case specificObjectSensor:
+	case kSpecificObjectSensor:
 		sensor = new SpecificObjectSensor(in, ctr);
 		break;
 
-	case objectPropertySensor:
+	case kObjectPropertySensor:
 		sensor = new ObjectPropertySensor(in, ctr);
 		break;
 
-	case specificActorSensor:
+	case kSpecificActorSensor:
 		sensor = new SpecificActorSensor(in, ctr);
 		break;
 
-	case actorPropertySensor:
+	case kActorPropertySensor:
 		sensor = new ActorPropertySensor(in, ctr);
 		break;
 
-	case eventSensor:
+	case kEventSensor:
 		sensor = new EventSensor(in, ctr);
 		break;
 	}
@@ -153,7 +153,7 @@ void checkSensors() {
 
 			SenseInfo   info;
 			GameObject  *senseobj = sensor->getObject();
-			uint32      sFlags = nonActorSenseFlags;
+			uint32      sFlags = kNonActorSenseFlags;
 			if (isActor(senseobj)) {
 				Actor *a = (Actor *)senseobj;
 				sFlags = a->_enchantmentFlags;
@@ -166,7 +166,7 @@ void checkSensors() {
 				sensor->getObject()->senseObject(sensor->thisID(), info.sensedObject->thisID());
 			}
 
-			sensor->_checkCtr = sensorCheckRate;
+			sensor->_checkCtr = kSensorCheckRate;
 		}
 	}
 
@@ -200,12 +200,12 @@ void assertEvent(const GameEvent &ev) {
 
 void initSensors() {
 	//  Nothing to do
-	assert(sizeof(ProtaganistSensor) <= maxSensorSize);
-	assert(sizeof(SpecificObjectSensor) <= maxSensorSize);
-	assert(sizeof(ObjectPropertySensor) <= maxSensorSize);
-	assert(sizeof(SpecificActorSensor) <= maxSensorSize);
-	assert(sizeof(ActorPropertySensor) <= maxSensorSize);
-	assert(sizeof(EventSensor) <= maxSensorSize);
+	assert(sizeof(ProtaganistSensor) <= kMaxSensorSize);
+	assert(sizeof(SpecificObjectSensor) <= kMaxSensorSize);
+	assert(sizeof(ObjectPropertySensor) <= kMaxSensorSize);
+	assert(sizeof(SpecificActorSensor) <= kMaxSensorSize);
+	assert(sizeof(ActorPropertySensor) <= kMaxSensorSize);
+	assert(sizeof(EventSensor) <= kMaxSensorSize);
 }
 
 static int getSensorListID(SensorList *t) {
@@ -404,7 +404,7 @@ void Sensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ProtaganistSensor::getType() {
-	return protaganistSensor;
+	return kProtaganistSensor;
 }
 
 //----------------------------------------------------------------------
@@ -430,15 +430,15 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		if (protag->isDead())
 			continue;
 
-		if (senseFlags & (1 << actorBlind))
+		if (senseFlags & (1 << kActorBlind))
 			continue;
 
 		//  This extra test is a HACK to ensure that the center actor
 		//  will be able to sense a protaganist even if the protaganist
 		//  is invisible.
 		if (!objIsActor || getObject() != getCenterActor()) {
-			if (!(senseFlags & actorSeeInvis)
-			        &&  protag->hasEffect(actorInvisible))
+			if (!(senseFlags & kActorSeeInvis)
+			        &&  protag->hasEffect(kActorInvisible))
 				continue;
 		}
 
@@ -451,7 +451,7 @@ bool ProtaganistSensor::check(SenseInfo &info, uint32 senseFlags) {
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), protag)
-		            ||  !lineOfSight(getObject(), protag, terrainTransparent)))
+		            ||  !lineOfSight(getObject(), protag, kTerrainTransparent)))
 			continue;
 
 		info.sensedObject = protag;
@@ -487,7 +487,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	for (iter.first(&objToTest);
 	        objToTest != nullptr;
 	        iter.next(&objToTest)) {
-		if (senseFlags & (1 << actorBlind))
+		if (senseFlags & (1 << kActorBlind))
 			continue;
 		bool objToTestIsActor = isActor(objToTest);
 
@@ -499,7 +499,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		            ||  getObject() != getCenterActor()
 		            ||  !isPlayerActor((Actor *)objToTest))) {
 			Actor *a = (Actor *) objToTest;
-			if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
+			if (!(senseFlags & kActorSeeInvis) && a->hasEffect(kActorInvisible))
 				continue;
 		}
 		//  Skip if object is out of _range
@@ -515,7 +515,7 @@ bool ObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 		//  not in sight or not under the same roof
 		if (objIsActor
 		        && (!underSameRoof(getObject(), objToTest)
-		            ||  !lineOfSight(getObject(), objToTest, terrainTransparent)))
+		            ||  !lineOfSight(getObject(), objToTest, kTerrainTransparent)))
 			continue;
 
 		info.sensedObject = objToTest;
@@ -558,7 +558,7 @@ void SpecificObjectSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 SpecificObjectSensor::getType() {
-	return specificObjectSensor;
+	return kSpecificObjectSensor;
 }
 
 //----------------------------------------------------------------------
@@ -571,7 +571,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	GameObject      *soughtObject = GameObject::objectAddress(_soughtObjID);
 	bool            objIsActor = isActor(getObject());
 
-	if (senseFlags & (1 << actorBlind))
+	if (senseFlags & (1 << kActorBlind))
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
@@ -582,7 +582,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 	            ||  getObject() != getCenterActor()
 	            ||  !isPlayerActor((Actor *)soughtObject))) {
 		Actor *a = (Actor *) soughtObject;
-		if (!(senseFlags & actorSeeInvis) && a->hasEffect(actorInvisible))
+		if (!(senseFlags & kActorSeeInvis) && a->hasEffect(kActorInvisible))
 			return false;
 	}
 
@@ -592,7 +592,7 @@ bool SpecificObjectSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), soughtObject)
-	            ||  !lineOfSight(getObject(), soughtObject, terrainTransparent)))
+	            ||  !lineOfSight(getObject(), soughtObject, kTerrainTransparent)))
 		return false;
 
 	info.sensedObject = soughtObject;
@@ -636,7 +636,7 @@ void ObjectPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ObjectPropertySensor::getType() {
-	return objectPropertySensor;
+	return kObjectPropertySensor;
 }
 
 //----------------------------------------------------------------------
@@ -690,7 +690,7 @@ void SpecificActorSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 SpecificActorSensor::getType() {
-	return specificActorSensor;
+	return kSpecificActorSensor;
 }
 
 //----------------------------------------------------------------------
@@ -700,7 +700,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	assert(isActor(_soughtActor));
 	bool        objIsActor = isActor(getObject());
 
-	if (senseFlags & (1 << actorBlind))
+	if (senseFlags & (1 << kActorBlind))
 		return false;
 
 	//  This extra test is a HACK to ensure that the center actor
@@ -709,7 +709,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 	if (!objIsActor
 	        ||  getObject() != getCenterActor()
 	        ||  !isPlayerActor(_soughtActor)) {
-		if (!(senseFlags & actorSeeInvis) && _soughtActor->hasEffect(actorInvisible))
+		if (!(senseFlags & kActorSeeInvis) && _soughtActor->hasEffect(kActorInvisible))
 			return false;
 	}
 
@@ -719,7 +719,7 @@ bool SpecificActorSensor::check(SenseInfo &info, uint32 senseFlags) {
 
 	if (objIsActor
 	        && (!underSameRoof(getObject(), _soughtActor)
-	            ||  !lineOfSight(getObject(), _soughtActor, terrainTransparent)))
+	            ||  !lineOfSight(getObject(), _soughtActor, kTerrainTransparent)))
 		return false;
 
 	info.sensedObject = _soughtActor;
@@ -757,7 +757,7 @@ void ActorPropertySensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 ActorPropertySensor::getType() {
-	return actorPropertySensor;
+	return kActorPropertySensor;
 }
 
 //----------------------------------------------------------------------
@@ -806,7 +806,7 @@ void EventSensor::write(Common::MemoryWriteStreamDynamic *out) {
 //	Return an integer representing the type of this sensor
 
 int16 EventSensor::getType() {
-	return eventSensor;
+	return kEventSensor;
 }
 
 //----------------------------------------------------------------------
@@ -832,7 +832,7 @@ bool EventSensor::evaluateEvent(const GameEvent &event) {
 	                    &&  lineOfSight(
 	                        getObject(),
 	                        event.directObject,
-	                        terrainTransparent)));
+	                        kTerrainTransparent)));
 }
 
 } // end of namespace Saga2

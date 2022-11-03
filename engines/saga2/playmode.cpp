@@ -181,7 +181,7 @@ void PlayModeSetup() {
 
 	//  Create a control covering the map area.
 	speakButtonPanel = new gGenericControl(*speakButtonControls,
-	                   Rect16(0, 0, screenWidth, screenHeight),
+	                   Rect16(0, 0, kScreenWidth, kScreenHeight),
 	                   0,
 	                   cmdClickSpeech);
 	speakButtonControls->enable(false);
@@ -226,7 +226,7 @@ void PlayModeSetup() {
 
 	//  Set up mouse cursor
 	g_vm->_mouseInfo = new GrabInfo;
-	g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+	g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 
 	//  Start by displaying first frame stright off, no delay
 	frameAlarm.set(0);
@@ -316,7 +316,7 @@ void drawCompressedImage(gPort &port, const Point16 pos, void *image) {
 	} else
 		map._data = (uint8 *)hdr->data;
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
@@ -348,7 +348,7 @@ void drawCompressedImageGhosted(gPort &port, const Point16 pos, void *image) {
 		for (x = (y & 1); x < map._size.x; x += 2) row[x] = 0;
 	}
 
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(map, 0, 0,
 	               pos.x, pos.y,
 	               map._size.x, map._size.y);

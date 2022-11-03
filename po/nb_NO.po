@@ -7,8 +7,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-10-24 23:37+0000\n"
-"PO-Revision-Date: 2022-10-11 14:51+0000\n"
+"POT-Creation-Date: 2022-11-02 22:15+0000\n"
+"PO-Revision-Date: 2022-10-27 16:30+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
 "scummvm/scummvm/nb_NO/>\n"
@@ -58,7 +58,7 @@ msgid "Go up"
 msgstr "Oppover"
 
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:257
-#: gui/downloadiconsdialog.cpp:452 gui/editgamedialog.cpp:367
+#: gui/downloadiconsdialog.cpp:452 gui/editgamedialog.cpp:358
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
 #: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2245
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
@@ -96,7 +96,7 @@ msgstr "Velg"
 msgid "Select directory where to download game data"
 msgstr "Velg mappe for nedlasting av spilldata"
 
-#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:558 gui/launcher.cpp:279
+#: gui/downloaddialog.cpp:49 gui/editgamedialog.cpp:549 gui/launcher.cpp:279
 msgid "Select directory with game data"
 msgstr "Velg mappe med spilldata"
 
@@ -168,7 +168,7 @@ msgstr ""
 "Kan ikke opprette mappe for nedlasting. Den angitte mappen har en fil med "
 "samme navn."
 
-#: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:368
+#: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:359
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:534 gui/launcher.cpp:538 gui/massadd.cpp:90
 #: gui/options.cpp:2247 gui/predictivedialog.cpp:69
@@ -272,16 +272,16 @@ msgstr ""
 msgid "Proceed"
 msgstr "Fortsett"
 
-#: gui/editgamedialog.cpp:140 engines/dialogs.cpp:277
+#: gui/editgamedialog.cpp:131 engines/dialogs.cpp:277
 msgid "Game"
 msgstr "Spill"
 
-#: gui/editgamedialog.cpp:144
+#: gui/editgamedialog.cpp:135
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:144 gui/editgamedialog.cpp:146
-#: gui/editgamedialog.cpp:147
+#: gui/editgamedialog.cpp:135 gui/editgamedialog.cpp:137
+#: gui/editgamedialog.cpp:138
 msgid ""
 "Short game identifier used for referring to saved games and running the game "
 "from the command line"
@@ -289,31 +289,31 @@ msgstr ""
 "Kort spill-identifikator, brukt for å referere til lagrede spill, og å kjøre "
 "spillet fra kommandolinjen"
 
-#: gui/editgamedialog.cpp:146
+#: gui/editgamedialog.cpp:137
 msgctxt "lowres"
 msgid "ID:"
 msgstr "ID:"
 
-#: gui/editgamedialog.cpp:151 gui/editrecorddialog.cpp:58
+#: gui/editgamedialog.cpp:142 gui/editrecorddialog.cpp:58
 msgid "Name:"
 msgstr "Navn:"
 
-#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:153
-#: gui/editgamedialog.cpp:154
+#: gui/editgamedialog.cpp:142 gui/editgamedialog.cpp:144
+#: gui/editgamedialog.cpp:145
 msgid "Full title of the game"
 msgstr "Full spilltittel"
 
-#: gui/editgamedialog.cpp:153
+#: gui/editgamedialog.cpp:144
 msgctxt "lowres"
 msgid "Name:"
 msgstr "Navn:"
 
-#: gui/editgamedialog.cpp:160 engines/mohawk/dialogs.cpp:159
+#: gui/editgamedialog.cpp:151 engines/mohawk/dialogs.cpp:159
 #: engines/mohawk/dialogs.cpp:378
 msgid "Language:"
 msgstr "Språk:"
 
-#: gui/editgamedialog.cpp:160 gui/editgamedialog.cpp:161
+#: gui/editgamedialog.cpp:151 gui/editgamedialog.cpp:152
 msgid ""
 "Language of the game. This will not turn your Spanish game version into "
 "English"
@@ -321,7 +321,7 @@ msgstr ""
 "Spillets språk. Dette vil ikke gjøre din spanske spillversjon om til engelsk "
 "versjon"
 
-#: gui/editgamedialog.cpp:162 gui/editgamedialog.cpp:177 gui/options.cpp:1498
+#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1498
 #: gui/options.cpp:1513 gui/options.cpp:1529 gui/options.cpp:1541
 #: gui/options.cpp:1571 gui/options.cpp:1585 gui/options.cpp:1990
 #: gui/options.cpp:2390 gui/options.cpp:2464 gui/options.cpp:2644
@@ -331,168 +331,168 @@ msgstr ""
 msgid "<default>"
 msgstr "<standard>"
 
-#: gui/editgamedialog.cpp:173
+#: gui/editgamedialog.cpp:164
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/editgamedialog.cpp:173 gui/editgamedialog.cpp:175
-#: gui/editgamedialog.cpp:176
+#: gui/editgamedialog.cpp:164 gui/editgamedialog.cpp:166
+#: gui/editgamedialog.cpp:167
 msgid "Platform the game was originally designed for"
 msgstr "Plattform spillet opprinnelig ble designet for"
 
-#: gui/editgamedialog.cpp:175
+#: gui/editgamedialog.cpp:166
 msgctxt "lowres"
 msgid "Platform:"
 msgstr "Plattform:"
 
-#: gui/editgamedialog.cpp:206 gui/options.cpp:1920 gui/options.cpp:2102
+#: gui/editgamedialog.cpp:197 gui/options.cpp:1920 gui/options.cpp:2102
 #: backends/graphics/sdl/sdl-graphics.cpp:423
 msgid "Graphics"
 msgstr "Grafikk"
 
-#: gui/editgamedialog.cpp:206 gui/options.cpp:1920 gui/options.cpp:2102
+#: gui/editgamedialog.cpp:197 gui/options.cpp:1920 gui/options.cpp:2102
 msgid "GFX"
 msgstr "GFX"
 
-#: gui/editgamedialog.cpp:212
+#: gui/editgamedialog.cpp:203
 msgid "Override global graphic settings"
 msgstr "Overstyr globale grafikkinstillinger"
 
-#: gui/editgamedialog.cpp:214
+#: gui/editgamedialog.cpp:205
 msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Overstyr globale grafikkinstillinger"
 
-#: gui/editgamedialog.cpp:227 gui/options.cpp:2136 engines/dialogs.cpp:320
+#: gui/editgamedialog.cpp:218 gui/options.cpp:2136 engines/dialogs.cpp:320
 msgid "Keymaps"
 msgstr "Knappoppsett"
 
-#: gui/editgamedialog.cpp:234 gui/options.cpp:2143 engines/dialogs.cpp:327
+#: gui/editgamedialog.cpp:225 gui/options.cpp:2143 engines/dialogs.cpp:327
 msgid "Backend"
 msgstr "Backend"
 
-#: gui/editgamedialog.cpp:237
+#: gui/editgamedialog.cpp:228
 msgid "Override global backend settings"
 msgstr "Overstyr globale backend-instillinger"
 
-#: gui/editgamedialog.cpp:239
+#: gui/editgamedialog.cpp:230
 msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Overstyr globale backend-instillinger"
 
-#: gui/editgamedialog.cpp:253 gui/options.cpp:2157 engines/dialogs.cpp:295
+#: gui/editgamedialog.cpp:244 gui/options.cpp:2157 engines/dialogs.cpp:295
 msgid "Audio"
 msgstr "Lyd"
 
-#: gui/editgamedialog.cpp:256
+#: gui/editgamedialog.cpp:247
 msgid "Override global audio settings"
 msgstr "Overstyr globale lydinstillinger"
 
-#: gui/editgamedialog.cpp:258
+#: gui/editgamedialog.cpp:249
 msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Overstyr globale lydinstillinger"
 
-#: gui/editgamedialog.cpp:267 gui/options.cpp:2162
+#: gui/editgamedialog.cpp:258 gui/options.cpp:2162
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/editgamedialog.cpp:269 gui/options.cpp:2164
+#: gui/editgamedialog.cpp:260 gui/options.cpp:2164
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Volum"
 
-#: gui/editgamedialog.cpp:272
+#: gui/editgamedialog.cpp:263
 msgid "Override global volume settings"
 msgstr "Overstyr globale voluminstillinger"
 
-#: gui/editgamedialog.cpp:274
+#: gui/editgamedialog.cpp:265
 msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Overstyr globale voluminstillinger"
 
-#: gui/editgamedialog.cpp:285 gui/options.cpp:2172
+#: gui/editgamedialog.cpp:276 gui/options.cpp:2172
 msgid "MIDI"
 msgstr "MIDI"
 
-#: gui/editgamedialog.cpp:288
+#: gui/editgamedialog.cpp:279
 msgid "Override global MIDI settings"
 msgstr "Overstyr globale MIDI-instillinger"
 
-#: gui/editgamedialog.cpp:290
+#: gui/editgamedialog.cpp:281
 msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Overstyr globale MIDI-instillinger"
 
-#: gui/editgamedialog.cpp:300 gui/options.cpp:2178
+#: gui/editgamedialog.cpp:291 gui/options.cpp:2178
 msgid "MT-32"
 msgstr "MT-32"
 
-#: gui/editgamedialog.cpp:303
+#: gui/editgamedialog.cpp:294
 msgid "Override global MT-32 settings"
 msgstr "Overstyr globale MT-32-instillinger"
 
-#: gui/editgamedialog.cpp:305
+#: gui/editgamedialog.cpp:296
 msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Overstyr globale MT-32-instillinger"
 
-#: gui/editgamedialog.cpp:314 gui/options.cpp:2185
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2185
 msgid "Paths"
 msgstr "Baner"
 
-#: gui/editgamedialog.cpp:316 gui/options.cpp:2187
+#: gui/editgamedialog.cpp:307 gui/options.cpp:2187
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Baner"
 
-#: gui/editgamedialog.cpp:323
+#: gui/editgamedialog.cpp:314
 msgid "Game Path:"
 msgstr "Filbane for spill:"
 
-#: gui/editgamedialog.cpp:325
+#: gui/editgamedialog.cpp:316
 msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Filbane for spill:"
 
-#: gui/editgamedialog.cpp:330 gui/options.cpp:2364
+#: gui/editgamedialog.cpp:321 gui/options.cpp:2364
 msgid "Extra Path:"
 msgstr "Filbane for ekstrainnhold:"
 
-#: gui/editgamedialog.cpp:330 gui/editgamedialog.cpp:332
-#: gui/editgamedialog.cpp:333
+#: gui/editgamedialog.cpp:321 gui/editgamedialog.cpp:323
+#: gui/editgamedialog.cpp:324
 msgid "Specifies path to additional data used by the game"
 msgstr "Angir filbanen for tilleggsdata som brukes av spillet"
 
-#: gui/editgamedialog.cpp:332 gui/options.cpp:2366
+#: gui/editgamedialog.cpp:323 gui/options.cpp:2366
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Filbane for ekstrainnhold:"
 
-#: gui/editgamedialog.cpp:339 gui/options.cpp:2340
+#: gui/editgamedialog.cpp:330 gui/options.cpp:2340
 msgid "Save Path:"
 msgstr "Filbane for lagringsdata:"
 
-#: gui/editgamedialog.cpp:339 gui/editgamedialog.cpp:341
-#: gui/editgamedialog.cpp:342 gui/options.cpp:2340 gui/options.cpp:2342
+#: gui/editgamedialog.cpp:330 gui/editgamedialog.cpp:332
+#: gui/editgamedialog.cpp:333 gui/options.cpp:2340 gui/options.cpp:2342
 msgid "Specifies where your saved games are put"
 msgstr "Angir filbanen til lagrede spill"
 
-#: gui/editgamedialog.cpp:341 gui/options.cpp:2342
+#: gui/editgamedialog.cpp:332 gui/options.cpp:2342
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Filbane for lagringsdata:"
 
-#: gui/editgamedialog.cpp:353 engines/dialogs.cpp:342
+#: gui/editgamedialog.cpp:344 engines/dialogs.cpp:342
 msgid "Achievements"
 msgstr "Prestasjoner"
 
-#: gui/editgamedialog.cpp:357 engines/dialogs.cpp:346
+#: gui/editgamedialog.cpp:348 engines/dialogs.cpp:346
 msgid "Statistics"
 msgstr "Statistikk"
 
-#: gui/editgamedialog.cpp:381 gui/editgamedialog.cpp:483
-#: gui/editgamedialog.cpp:545 gui/editgamedialog.cpp:612 gui/options.cpp:1141
+#: gui/editgamedialog.cpp:372 gui/editgamedialog.cpp:474
+#: gui/editgamedialog.cpp:536 gui/editgamedialog.cpp:603 gui/options.cpp:1141
 #: gui/options.cpp:2270 gui/options.cpp:2272 gui/options.cpp:2277
 #: gui/options.cpp:2308 gui/options.cpp:2351 gui/options.cpp:2367
 #: gui/options.cpp:2376 gui/options.cpp:2763 gui/options.cpp:2765
@@ -503,30 +503,30 @@ msgctxt "path"
 msgid "None"
 msgstr "Ingen"
 
-#: gui/editgamedialog.cpp:386 gui/editgamedialog.cpp:489
-#: gui/editgamedialog.cpp:616 gui/options.cpp:2269 gui/options.cpp:2271
+#: gui/editgamedialog.cpp:377 gui/editgamedialog.cpp:480
+#: gui/editgamedialog.cpp:607 gui/options.cpp:2269 gui/options.cpp:2271
 #: gui/options.cpp:2762 gui/options.cpp:2764 gui/options.cpp:3056
 #: gui/options.cpp:3062 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Standard"
 
-#: gui/editgamedialog.cpp:538 gui/options.cpp:3083
+#: gui/editgamedialog.cpp:529 gui/options.cpp:3083
 msgid "Select SoundFont"
 msgstr "Velg SoundFont"
 
-#: gui/editgamedialog.cpp:577
+#: gui/editgamedialog.cpp:568
 msgid "Select additional game directory"
 msgstr "Velg mappe med ytterligere data"
 
-#: gui/editgamedialog.cpp:590 gui/options.cpp:2969
+#: gui/editgamedialog.cpp:581 gui/options.cpp:2969
 msgid "Select directory for saved games"
 msgstr "Velg mappe for lagrede spill"
 
-#: gui/editgamedialog.cpp:597 gui/options.cpp:2976
+#: gui/editgamedialog.cpp:588 gui/options.cpp:2976
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Den valgte mappen kan ikke skrives til. Vennligst velg en annen."
 
-#: gui/editgamedialog.cpp:602
+#: gui/editgamedialog.cpp:593
 msgid ""
 "Saved games sync feature doesn't work with non-default directories. If you "
 "want your saved games to sync, use default directory."
@@ -534,7 +534,7 @@ msgstr ""
 "Syncing av lagrede spill fungerer ikke med ikke-standard mapper. Hvis du vil "
 "at de lagrede spillene dine skal synce må du bruke standardmapper."
 
-#: gui/editgamedialog.cpp:628
+#: gui/editgamedialog.cpp:619
 msgid "This game ID is already taken. Please choose another one."
 msgstr "Denne spill-IDen er allerede i bruk. Vennligst velg en annen."
 
@@ -664,9 +664,10 @@ msgstr "Samhandle"
 #: engines/grim/grim.cpp:453 engines/grim/grim.cpp:534
 #: engines/twine/metaengine.cpp:329 engines/twine/metaengine.cpp:396
 #: engines/wintermute/keymapper_tables.h:1262
-#: engines/wintermute/keymapper_tables.h:1372
-#: engines/wintermute/keymapper_tables.h:1843
-#: engines/wintermute/keymapper_tables.h:2077
+#: engines/wintermute/keymapper_tables.h:1345
+#: engines/wintermute/keymapper_tables.h:1421
+#: engines/wintermute/keymapper_tables.h:1892
+#: engines/wintermute/keymapper_tables.h:2126
 msgid "Up"
 msgstr "Opp"
 
@@ -675,9 +676,10 @@ msgstr "Opp"
 #: engines/grim/grim.cpp:458 engines/grim/grim.cpp:539
 #: engines/twine/metaengine.cpp:336 engines/twine/metaengine.cpp:404
 #: engines/wintermute/keymapper_tables.h:1268
-#: engines/wintermute/keymapper_tables.h:1379
-#: engines/wintermute/keymapper_tables.h:1849
-#: engines/wintermute/keymapper_tables.h:2083
+#: engines/wintermute/keymapper_tables.h:1351
+#: engines/wintermute/keymapper_tables.h:1428
+#: engines/wintermute/keymapper_tables.h:1898
+#: engines/wintermute/keymapper_tables.h:2132
 msgid "Down"
 msgstr "Ned"
 
@@ -687,9 +689,10 @@ msgstr "Ned"
 #: engines/twine/metaengine.cpp:351 engines/twine/metaengine.cpp:419
 #: engines/wintermute/keymapper_tables.h:320
 #: engines/wintermute/keymapper_tables.h:1274
-#: engines/wintermute/keymapper_tables.h:1831
-#: engines/wintermute/keymapper_tables.h:1941
-#: engines/wintermute/keymapper_tables.h:2065
+#: engines/wintermute/keymapper_tables.h:1357
+#: engines/wintermute/keymapper_tables.h:1880
+#: engines/wintermute/keymapper_tables.h:1990
+#: engines/wintermute/keymapper_tables.h:2114
 msgid "Left"
 msgstr "Venstre"
 
@@ -699,9 +702,10 @@ msgstr "Venstre"
 #: engines/twine/metaengine.cpp:343 engines/twine/metaengine.cpp:412
 #: engines/wintermute/keymapper_tables.h:326
 #: engines/wintermute/keymapper_tables.h:1280
-#: engines/wintermute/keymapper_tables.h:1837
-#: engines/wintermute/keymapper_tables.h:1949
-#: engines/wintermute/keymapper_tables.h:2071
+#: engines/wintermute/keymapper_tables.h:1363
+#: engines/wintermute/keymapper_tables.h:1886
+#: engines/wintermute/keymapper_tables.h:1998
+#: engines/wintermute/keymapper_tables.h:2120
 msgid "Right"
 msgstr "Høyre"
 
@@ -718,12 +722,14 @@ msgstr "Høyre"
 #: engines/wintermute/keymapper_tables.h:986
 #: engines/wintermute/keymapper_tables.h:1194
 #: engines/wintermute/keymapper_tables.h:1241
-#: engines/wintermute/keymapper_tables.h:1497
-#: engines/wintermute/keymapper_tables.h:1707
-#: engines/wintermute/keymapper_tables.h:1761
-#: engines/wintermute/keymapper_tables.h:1812
-#: engines/wintermute/keymapper_tables.h:1867
-#: engines/wintermute/keymapper_tables.h:1925
+#: engines/wintermute/keymapper_tables.h:1369
+#: engines/wintermute/keymapper_tables.h:1375
+#: engines/wintermute/keymapper_tables.h:1546
+#: engines/wintermute/keymapper_tables.h:1756
+#: engines/wintermute/keymapper_tables.h:1810
+#: engines/wintermute/keymapper_tables.h:1861
+#: engines/wintermute/keymapper_tables.h:1916
+#: engines/wintermute/keymapper_tables.h:1974
 msgid "???"
 msgstr "???"
 
@@ -2262,7 +2268,7 @@ msgstr ""
 "Du kan endre denne innstillingen senere under Diverse-fanen i Innstillinger-"
 "dialogen."
 
-#: gui/widget.cpp:440 gui/widget.cpp:442 gui/widget.cpp:448 gui/widget.cpp:450
+#: gui/widget.cpp:437 gui/widget.cpp:439 gui/widget.cpp:445 gui/widget.cpp:447
 msgid "Clear value"
 msgstr "Tøm verdi"
 
@@ -2765,7 +2771,7 @@ msgstr "Venstreklikk"
 #: engines/metaengine.cpp:66 backends/platform/maemo/maemo.cpp:165
 #: engines/wintermute/keymapper_tables.h:256
 #: engines/wintermute/keymapper_tables.h:300
-#: engines/wintermute/keymapper_tables.h:2089
+#: engines/wintermute/keymapper_tables.h:2138
 msgid "Middle Click"
 msgstr "Midtklikk"
 
@@ -2778,7 +2784,7 @@ msgstr "Høyreklikk"
 #: engines/metaengine.cpp:77 engines/grim/grim.cpp:521
 #: engines/hdb/metaengine.cpp:238 engines/mohawk/myst.cpp:596
 #: engines/mohawk/riven.cpp:860 engines/sky/metaengine.cpp:122
-#: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1531
+#: engines/twine/metaengine.cpp:99 engines/wintermute/keymapper_tables.h:1580
 msgid "Pause"
 msgstr "Pause"
 
@@ -2791,9 +2797,9 @@ msgstr "Spillmeny"
 #: engines/mohawk/riven.cpp:831 engines/wintermute/keymapper_tables.h:220
 #: engines/wintermute/keymapper_tables.h:1092
 #: engines/wintermute/keymapper_tables.h:1248
-#: engines/wintermute/keymapper_tables.h:1524
-#: engines/wintermute/keymapper_tables.h:1639
-#: engines/wintermute/keymapper_tables.h:2033
+#: engines/wintermute/keymapper_tables.h:1573
+#: engines/wintermute/keymapper_tables.h:1688
+#: engines/wintermute/keymapper_tables.h:2082
 msgid "Skip"
 msgstr "Hopp over"
 
@@ -3129,32 +3135,32 @@ msgstr "Strekk til vinduet"
 msgid "Fit to window (4:3)"
 msgstr "Tilpass vinduet (4:3)"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:701
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:702
 #, c-format
 msgid "Resolution: %dx%d"
 msgstr "Oppløsning: %dx%d"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:716
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:717
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2450
 msgid "Enabled aspect ratio correction"
 msgstr "Bildeformatskorrigering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:718
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:719
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2456
 msgid "Disabled aspect ratio correction"
 msgstr "Bildeformatskorrigering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:731
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:732
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2472
 msgid "Filtering enabled"
 msgstr "Filtrering aktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:733
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:734
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2474
 msgid "Filtering disabled"
 msgstr "Filtrering deaktivert"
 
-#: backends/graphics/openglsdl/openglsdl-graphics.cpp:759
+#: backends/graphics/openglsdl/openglsdl-graphics.cpp:760
 #: backends/graphics/surfacesdl/surfacesdl-graphics.cpp:2501
 msgid "Stretch mode"
 msgstr "Strekkmodus"
@@ -3194,11 +3200,11 @@ msgstr "Veksle muslåsing"
 #: engines/wintermute/keymapper_tables.h:695
 #: engines/wintermute/keymapper_tables.h:1098
 #: engines/wintermute/keymapper_tables.h:1312
-#: engines/wintermute/keymapper_tables.h:1402
-#: engines/wintermute/keymapper_tables.h:1562
-#: engines/wintermute/keymapper_tables.h:1767
-#: engines/wintermute/keymapper_tables.h:1785
-#: engines/wintermute/keymapper_tables.h:1818
+#: engines/wintermute/keymapper_tables.h:1451
+#: engines/wintermute/keymapper_tables.h:1611
+#: engines/wintermute/keymapper_tables.h:1816
+#: engines/wintermute/keymapper_tables.h:1834
+#: engines/wintermute/keymapper_tables.h:1867
 msgid "Save screenshot"
 msgstr "Lagre skjermbilde"
 
@@ -5295,7 +5301,7 @@ msgstr "Gå til høyre"
 #: engines/scumm/help.cpp:197 engines/scumm/help.cpp:212
 #: engines/scumm/help.cpp:223 engines/scumm/help.cpp:249
 #: engines/sky/metaengine.cpp:91 engines/wintermute/keymapper_tables.h:140
-#: engines/wintermute/keymapper_tables.h:1475
+#: engines/wintermute/keymapper_tables.h:1524
 msgid "Use"
 msgstr "Bruk"
 
@@ -5921,12 +5927,12 @@ msgstr "Vis alternativsmeny"
 msgid "Drop page"
 msgstr "Dropp side"
 
-#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1449
-#: engines/wintermute/keymapper_tables.h:1596
+#: engines/mohawk/myst.cpp:607 engines/wintermute/keymapper_tables.h:1498
 #: engines/wintermute/keymapper_tables.h:1645
-#: engines/wintermute/keymapper_tables.h:1668
-#: engines/wintermute/keymapper_tables.h:1687
-#: engines/wintermute/keymapper_tables.h:1720
+#: engines/wintermute/keymapper_tables.h:1694
+#: engines/wintermute/keymapper_tables.h:1717
+#: engines/wintermute/keymapper_tables.h:1736
+#: engines/wintermute/keymapper_tables.h:1769
 msgid "Show map"
 msgstr "Vis kart"
 
@@ -6013,15 +6019,15 @@ msgstr "Gå bakover"
 
 #: engines/mohawk/riven.cpp:885 engines/wintermute/keymapper_tables.h:161
 #: engines/wintermute/keymapper_tables.h:741
-#: engines/wintermute/keymapper_tables.h:2045
-#: engines/wintermute/keymapper_tables.h:2146
+#: engines/wintermute/keymapper_tables.h:2094
+#: engines/wintermute/keymapper_tables.h:2195
 msgid "Turn left"
 msgstr "Snu mot venstre"
 
 #: engines/mohawk/riven.cpp:891 engines/wintermute/keymapper_tables.h:167
 #: engines/wintermute/keymapper_tables.h:746
-#: engines/wintermute/keymapper_tables.h:2051
-#: engines/wintermute/keymapper_tables.h:2153
+#: engines/wintermute/keymapper_tables.h:2100
+#: engines/wintermute/keymapper_tables.h:2202
 msgid "Turn right"
 msgstr "Snu mot høyre"
 
@@ -6059,11 +6065,11 @@ msgstr ""
 "ScummVM kan ikke gjøre dette\n"
 "og nettsiden har sluttet å eksistere."
 
-#: engines/mtropolis/detection.cpp:44
+#: engines/mtropolis/detection.cpp:45
 msgid "16:9 widescreen mod"
 msgstr "Bredskjermsformat-modifikasjon (16:9)"
 
-#: engines/mtropolis/detection.cpp:45
+#: engines/mtropolis/detection.cpp:46
 msgid ""
 "Removes letterboxing and moves some display elements, improving coverage on "
 "widescreen displays"
@@ -6071,11 +6077,11 @@ msgstr ""
 "Fjerner svarte stolper (letterboxing) og flytter enkelte skjermelementer, "
 "slik at skjermområdet utfylles bedre i bredskjermsformat."
 
-#: engines/mtropolis/detection.cpp:55
+#: engines/mtropolis/detection.cpp:56
 msgid "Improved music mixing"
 msgstr "Forbedret musikkmiksing"
 
-#: engines/mtropolis/detection.cpp:56
+#: engines/mtropolis/detection.cpp:57
 msgid ""
 "Enables dynamic MIDI mixer, improving quality, but behaving less like "
 "mTropolis Player."
@@ -6083,32 +6089,32 @@ msgstr ""
 "Aktiverer dynamisk MIDI-mikser, slik at kvaliteten blir bedre, men oppfører "
 "seg mindre som mTropolis Player."
 
-#: engines/mtropolis/detection.cpp:66
+#: engines/mtropolis/detection.cpp:67
 msgid "Autosave at progress points"
 msgstr "Automatisk lagring ved fremdriftspunkter"
 
-#: engines/mtropolis/detection.cpp:67
+#: engines/mtropolis/detection.cpp:68
 msgid "Automatically saves the game after completing puzzles and chapters."
 msgstr ""
 "Lagrer fremdriften din i spillet automatisk når du finner løsninger og "
 "fullfører kapitler."
 
-#: engines/mtropolis/detection.cpp:77
+#: engines/mtropolis/detection.cpp:78
 msgid "Enable short transitions"
 msgstr "Bruk korte overganger"
 
-#: engines/mtropolis/detection.cpp:78
+#: engines/mtropolis/detection.cpp:79
 msgid ""
 "Enables transitions that are set to maximum rate instead of skipping them."
 msgstr ""
 "Aktiverer overganger som er satt til maksimal hastighet fremfor å hoppe over "
 "dem."
 
-#: engines/mtropolis/detection.cpp:88
+#: engines/mtropolis/detection.cpp:89
 msgid "Enable subtitles for important sound effects"
 msgstr "Bruk undertekster på viktige lydeffekter"
 
-#: engines/mtropolis/detection.cpp:89
+#: engines/mtropolis/detection.cpp:90
 msgid ""
 "Enables subtitles for important sound effects.  This may reduce the "
 "difficulty of sound recognition puzzles and minigames."
@@ -6116,11 +6122,11 @@ msgstr ""
 "Aktiverer undertekster for viktige lydeffekter. Dette kan gjøre det enklere "
 "å gjenkjenne lyder i utfordringer og småspill som er avhengige av lyd."
 
-#: engines/mtropolis/detection.cpp:99
+#: engines/mtropolis/detection.cpp:100
 msgid "Start with debugger"
 msgstr "Start med debugger"
 
-#: engines/mtropolis/detection.cpp:100
+#: engines/mtropolis/detection.cpp:101
 msgid "Starts with the debugger dashboard active."
 msgstr "Start med debugger-kontrollpanlet aktivert."
 
@@ -7097,7 +7103,7 @@ msgstr "Hopp over tekstlinje"
 msgid "Esc"
 msgstr "Esc"
 
-#: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2059
+#: engines/scumm/help.cpp:77 engines/wintermute/keymapper_tables.h:2108
 msgid "Space"
 msgstr "Space"
 
@@ -7139,7 +7145,7 @@ msgstr "Tekstfart saktere/raskere"
 msgid "Simulate left mouse button"
 msgstr "Simuler venstre mustast"
 
-#: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2114
+#: engines/scumm/help.cpp:89 engines/wintermute/keymapper_tables.h:2163
 msgid "Tab"
 msgstr "Tab"
 
@@ -7256,14 +7262,14 @@ msgid "Turn off"
 msgstr "Slå av"
 
 #: engines/scumm/help.cpp:141 engines/scumm/help.cpp:166
-#: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1463
+#: engines/scumm/help.cpp:193 engines/wintermute/keymapper_tables.h:1512
 msgid "Walk to"
 msgstr "Gå til"
 
 #: engines/scumm/help.cpp:142 engines/scumm/help.cpp:167
 #: engines/scumm/help.cpp:194 engines/scumm/help.cpp:209
 #: engines/scumm/help.cpp:226 engines/wintermute/keymapper_tables.h:134
-#: engines/wintermute/keymapper_tables.h:1469
+#: engines/wintermute/keymapper_tables.h:1518
 msgid "Pick up"
 msgstr "Plukk opp"
 
@@ -7350,13 +7356,13 @@ msgstr "Dra"
 
 #: engines/scumm/help.cpp:195 engines/scumm/help.cpp:211
 #: engines/scumm/help.cpp:247 engines/wintermute/keymapper_tables.h:128
-#: engines/wintermute/keymapper_tables.h:1481
+#: engines/wintermute/keymapper_tables.h:1530
 msgid "Talk to"
 msgstr "Snakk til"
 
 #: engines/scumm/help.cpp:198 engines/scumm/help.cpp:210
 #: engines/wintermute/keymapper_tables.h:122
-#: engines/wintermute/keymapper_tables.h:1457
+#: engines/wintermute/keymapper_tables.h:1506
 msgid "Look at"
 msgstr "Se på"
 
@@ -8484,21 +8490,21 @@ msgstr ""
 
 #: engines/wintermute/keymapper_tables.h:149
 #: engines/wintermute/keymapper_tables.h:731
-#: engines/wintermute/keymapper_tables.h:2039
-#: engines/wintermute/keymapper_tables.h:2139
+#: engines/wintermute/keymapper_tables.h:2088
+#: engines/wintermute/keymapper_tables.h:2188
 msgid "Walk forward"
 msgstr "Gå fremover"
 
 #: engines/wintermute/keymapper_tables.h:155
 #: engines/wintermute/keymapper_tables.h:736
-#: engines/wintermute/keymapper_tables.h:2161
+#: engines/wintermute/keymapper_tables.h:2210
 msgid "Walk backward"
 msgstr "Gå bakover"
 
 #. I18N: Debug feature to draw lines of scene geometry: walls, walking areas, etc
 #: engines/wintermute/keymapper_tables.h:174
 #: engines/wintermute/keymapper_tables.h:685
-#: engines/wintermute/keymapper_tables.h:1778
+#: engines/wintermute/keymapper_tables.h:1827
 msgid "Show scene geometry"
 msgstr "Vis scenegeometri"
 
@@ -8535,15 +8541,15 @@ msgstr "Neste side"
 #: engines/wintermute/keymapper_tables.h:885
 #: engines/wintermute/keymapper_tables.h:1045
 #: engines/wintermute/keymapper_tables.h:1291
-#: engines/wintermute/keymapper_tables.h:1338
-#: engines/wintermute/keymapper_tables.h:1395
-#: engines/wintermute/keymapper_tables.h:1421
-#: engines/wintermute/keymapper_tables.h:1583
+#: engines/wintermute/keymapper_tables.h:1387
+#: engines/wintermute/keymapper_tables.h:1444
+#: engines/wintermute/keymapper_tables.h:1470
 #: engines/wintermute/keymapper_tables.h:1632
-#: engines/wintermute/keymapper_tables.h:1680
-#: engines/wintermute/keymapper_tables.h:1713
-#: engines/wintermute/keymapper_tables.h:1906
-#: engines/wintermute/keymapper_tables.h:2026
+#: engines/wintermute/keymapper_tables.h:1681
+#: engines/wintermute/keymapper_tables.h:1729
+#: engines/wintermute/keymapper_tables.h:1762
+#: engines/wintermute/keymapper_tables.h:1955
+#: engines/wintermute/keymapper_tables.h:2075
 msgid "Show hints"
 msgstr "Vis hint"
 
@@ -8551,12 +8557,12 @@ msgstr "Vis hint"
 #: engines/wintermute/keymapper_tables.h:396
 #: engines/wintermute/keymapper_tables.h:658
 #: engines/wintermute/keymapper_tables.h:864
-#: engines/wintermute/keymapper_tables.h:1365
-#: engines/wintermute/keymapper_tables.h:1442
-#: engines/wintermute/keymapper_tables.h:1590
-#: engines/wintermute/keymapper_tables.h:1602
-#: engines/wintermute/keymapper_tables.h:1611
-#: engines/wintermute/keymapper_tables.h:1873
+#: engines/wintermute/keymapper_tables.h:1414
+#: engines/wintermute/keymapper_tables.h:1491
+#: engines/wintermute/keymapper_tables.h:1639
+#: engines/wintermute/keymapper_tables.h:1651
+#: engines/wintermute/keymapper_tables.h:1660
+#: engines/wintermute/keymapper_tables.h:1922
 msgid "Show inventory"
 msgstr "Vis utstyrsliste"
 
@@ -8566,8 +8572,8 @@ msgstr "Vis utstyrsliste"
 #: engines/wintermute/keymapper_tables.h:402
 #: engines/wintermute/keymapper_tables.h:506
 #: engines/wintermute/keymapper_tables.h:533
-#: engines/wintermute/keymapper_tables.h:1855
-#: engines/wintermute/keymapper_tables.h:1913
+#: engines/wintermute/keymapper_tables.h:1904
+#: engines/wintermute/keymapper_tables.h:1962
 msgid "GUI variant A"
 msgstr "Grensesnittvariant A"
 
@@ -8577,8 +8583,8 @@ msgstr "Grensesnittvariant A"
 #: engines/wintermute/keymapper_tables.h:408
 #: engines/wintermute/keymapper_tables.h:513
 #: engines/wintermute/keymapper_tables.h:540
-#: engines/wintermute/keymapper_tables.h:1861
-#: engines/wintermute/keymapper_tables.h:1919
+#: engines/wintermute/keymapper_tables.h:1910
+#: engines/wintermute/keymapper_tables.h:1968
 msgid "GUI variant B"
 msgstr "Grensesnittvariant B"
 
@@ -8618,21 +8624,21 @@ msgstr "0-knapp for telefon"
 #: engines/wintermute/keymapper_tables.h:436
 #: engines/wintermute/keymapper_tables.h:569
 #: engines/wintermute/keymapper_tables.h:1139
-#: engines/wintermute/keymapper_tables.h:1740
+#: engines/wintermute/keymapper_tables.h:1789
 msgid "Phone 1 button"
 msgstr "1-knapp for telefon"
 
 #: engines/wintermute/keymapper_tables.h:441
 #: engines/wintermute/keymapper_tables.h:574
 #: engines/wintermute/keymapper_tables.h:1144
-#: engines/wintermute/keymapper_tables.h:1745
+#: engines/wintermute/keymapper_tables.h:1794
 msgid "Phone 2 button"
 msgstr "2-knapp for telefon"
 
 #: engines/wintermute/keymapper_tables.h:446
 #: engines/wintermute/keymapper_tables.h:579
 #: engines/wintermute/keymapper_tables.h:1149
-#: engines/wintermute/keymapper_tables.h:1750
+#: engines/wintermute/keymapper_tables.h:1799
 msgid "Phone 3 button"
 msgstr "3-knapp for telefon"
 
@@ -8685,7 +8691,8 @@ msgid "Phone # button"
 msgstr "Firkant-knapp for telefon"
 
 #: engines/wintermute/keymapper_tables.h:664
-#: engines/wintermute/keymapper_tables.h:1345
+#: engines/wintermute/keymapper_tables.h:1338
+#: engines/wintermute/keymapper_tables.h:1394
 msgid "Show help"
 msgstr "Vis hjelp"
 
@@ -8694,12 +8701,12 @@ msgstr "Vis hjelp"
 #: engines/wintermute/keymapper_tables.h:892
 #: engines/wintermute/keymapper_tables.h:1298
 #: engines/wintermute/keymapper_tables.h:1324
-#: engines/wintermute/keymapper_tables.h:1351
-#: engines/wintermute/keymapper_tables.h:1407
-#: engines/wintermute/keymapper_tables.h:1428
-#: engines/wintermute/keymapper_tables.h:1618
-#: engines/wintermute/keymapper_tables.h:1892
-#: engines/wintermute/keymapper_tables.h:2094
+#: engines/wintermute/keymapper_tables.h:1400
+#: engines/wintermute/keymapper_tables.h:1456
+#: engines/wintermute/keymapper_tables.h:1477
+#: engines/wintermute/keymapper_tables.h:1667
+#: engines/wintermute/keymapper_tables.h:1941
+#: engines/wintermute/keymapper_tables.h:2143
 msgid "Scroll up"
 msgstr "Bla opp"
 
@@ -8708,12 +8715,12 @@ msgstr "Bla opp"
 #: engines/wintermute/keymapper_tables.h:899
 #: engines/wintermute/keymapper_tables.h:1305
 #: engines/wintermute/keymapper_tables.h:1331
-#: engines/wintermute/keymapper_tables.h:1358
-#: engines/wintermute/keymapper_tables.h:1414
-#: engines/wintermute/keymapper_tables.h:1435
-#: engines/wintermute/keymapper_tables.h:1625
-#: engines/wintermute/keymapper_tables.h:1899
-#: engines/wintermute/keymapper_tables.h:2099
+#: engines/wintermute/keymapper_tables.h:1407
+#: engines/wintermute/keymapper_tables.h:1463
+#: engines/wintermute/keymapper_tables.h:1484
+#: engines/wintermute/keymapper_tables.h:1674
+#: engines/wintermute/keymapper_tables.h:1948
+#: engines/wintermute/keymapper_tables.h:2148
 msgid "Scroll down"
 msgstr "Bla ned"
 
@@ -8734,15 +8741,15 @@ msgstr "Vis debug-parser"
 #. I18N: Displays a debug text message
 #: engines/wintermute/keymapper_tables.h:714
 #: engines/wintermute/keymapper_tables.h:853
-#: engines/wintermute/keymapper_tables.h:1504
-#: engines/wintermute/keymapper_tables.h:1756
-#: engines/wintermute/keymapper_tables.h:1801
+#: engines/wintermute/keymapper_tables.h:1553
+#: engines/wintermute/keymapper_tables.h:1805
+#: engines/wintermute/keymapper_tables.h:1850
 msgid "Debug print"
 msgstr "Debug-utskrift"
 
 #. I18N: Exits the game
 #: engines/wintermute/keymapper_tables.h:720
-#: engines/wintermute/keymapper_tables.h:1772
+#: engines/wintermute/keymapper_tables.h:1821
 msgid "Exit"
 msgstr "Avslutt spillet"
 
@@ -8773,18 +8780,18 @@ msgid "Show blueprint"
 msgstr "Vis arbeidstegning"
 
 #: engines/wintermute/keymapper_tables.h:792
-#: engines/wintermute/keymapper_tables.h:1510
-#: engines/wintermute/keymapper_tables.h:1693
-#: engines/wintermute/keymapper_tables.h:1726
-#: engines/wintermute/keymapper_tables.h:2012
+#: engines/wintermute/keymapper_tables.h:1559
+#: engines/wintermute/keymapper_tables.h:1742
+#: engines/wintermute/keymapper_tables.h:1775
+#: engines/wintermute/keymapper_tables.h:2061
 msgid "Next action"
 msgstr "Neste handling"
 
 #: engines/wintermute/keymapper_tables.h:799
-#: engines/wintermute/keymapper_tables.h:1518
-#: engines/wintermute/keymapper_tables.h:1700
-#: engines/wintermute/keymapper_tables.h:1733
-#: engines/wintermute/keymapper_tables.h:2020
+#: engines/wintermute/keymapper_tables.h:1567
+#: engines/wintermute/keymapper_tables.h:1749
+#: engines/wintermute/keymapper_tables.h:1782
+#: engines/wintermute/keymapper_tables.h:2069
 msgid "Previous action"
 msgstr "Forrige handling"
 
@@ -8814,7 +8821,7 @@ msgstr "Gåtempo: Raskt"
 
 #: engines/wintermute/keymapper_tables.h:955
 #: engines/wintermute/keymapper_tables.h:1286
-#: engines/wintermute/keymapper_tables.h:1795
+#: engines/wintermute/keymapper_tables.h:1844
 msgid "Cancel waiting"
 msgstr "Avbryt venting"
 
@@ -8931,124 +8938,128 @@ msgstr "Avbryt inntasting"
 msgid "Toggle subtitles"
 msgstr "Skru undertekster av/på"
 
+#: engines/wintermute/keymapper_tables.h:1381
+msgid "Hide hints"
+msgstr "Skjul hint"
+
 #. I18N: At one of the puzzles game asks to press Up key / Shift key / Down key
-#: engines/wintermute/keymapper_tables.h:1387
+#: engines/wintermute/keymapper_tables.h:1436
 msgid "Shift key"
 msgstr "Shift-tast"
 
 #. I18N: Chapayev is the name of game character, Vasily Chapayev
 #. This action makes Chapayev interact with item instead of Petka
-#: engines/wintermute/keymapper_tables.h:1489
+#: engines/wintermute/keymapper_tables.h:1538
 msgid "Chapayev's action"
 msgstr "Chapayevs handling"
 
-#: engines/wintermute/keymapper_tables.h:1537
-#: engines/wintermute/keymapper_tables.h:1790
-#: engines/wintermute/keymapper_tables.h:1886
+#: engines/wintermute/keymapper_tables.h:1586
+#: engines/wintermute/keymapper_tables.h:1839
+#: engines/wintermute/keymapper_tables.h:1935
 msgid "Settings"
 msgstr "Innstillinger"
 
-#: engines/wintermute/keymapper_tables.h:1542
+#: engines/wintermute/keymapper_tables.h:1591
 msgid "Dialogue answer 1"
 msgstr "Svaralternativ 1"
 
-#: engines/wintermute/keymapper_tables.h:1547
+#: engines/wintermute/keymapper_tables.h:1596
 msgid "Dialogue answer 2"
 msgstr "Svaralternativ 2"
 
-#: engines/wintermute/keymapper_tables.h:1552
+#: engines/wintermute/keymapper_tables.h:1601
 msgid "Dialogue answer 3"
 msgstr "Svaralternativ 3"
 
-#: engines/wintermute/keymapper_tables.h:1557
+#: engines/wintermute/keymapper_tables.h:1606
 msgid "Dialogue answer 4"
 msgstr "Svaralternativ 4"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1568
+#: engines/wintermute/keymapper_tables.h:1617
 msgid "Spin wheel slower"
 msgstr "Spinn hjulet saktere"
 
 #. I18N: This game is called "Pole Chudes" and it features a wheel similar to "Wheel of Fortune" TV show
-#: engines/wintermute/keymapper_tables.h:1576
+#: engines/wintermute/keymapper_tables.h:1625
 msgid "Spin wheel faster"
 msgstr "Spinn hjulet raskere"
 
-#: engines/wintermute/keymapper_tables.h:1654
+#: engines/wintermute/keymapper_tables.h:1703
 msgid "Zoom out"
 msgstr "Zoom ut"
 
-#: engines/wintermute/keymapper_tables.h:1661
+#: engines/wintermute/keymapper_tables.h:1710
 msgid "Zoom in"
 msgstr "Zoom inn"
 
-#: engines/wintermute/keymapper_tables.h:1674
-#: engines/wintermute/keymapper_tables.h:1880
+#: engines/wintermute/keymapper_tables.h:1723
+#: engines/wintermute/keymapper_tables.h:1929
 msgid "Show journal"
 msgstr "Vis journal"
 
 #. I18N: Displays a debug interface with Bezier curves
-#: engines/wintermute/keymapper_tables.h:1807
+#: engines/wintermute/keymapper_tables.h:1856
 msgid "Bezier window"
 msgstr "Bezier-vindu"
 
 #. I18N: Use droid to perform an action
-#: engines/wintermute/keymapper_tables.h:1824
+#: engines/wintermute/keymapper_tables.h:1873
 msgid "Droid's action"
 msgstr "Droidehandling"
 
 #. I18N: It's a Tetris game clone, this action rotates current tetris item
-#: engines/wintermute/keymapper_tables.h:1932
+#: engines/wintermute/keymapper_tables.h:1981
 msgid "Rotate"
 msgstr "Roter"
 
 #. I18N: It's a Tetris game clone, this action drops current tetris item
-#: engines/wintermute/keymapper_tables.h:1958
+#: engines/wintermute/keymapper_tables.h:2007
 msgid "Drop"
 msgstr "Dropp"
 
-#: engines/wintermute/keymapper_tables.h:1966
+#: engines/wintermute/keymapper_tables.h:2015
 msgid "Player 1: Up"
 msgstr "Spiller 1: Opp"
 
-#: engines/wintermute/keymapper_tables.h:1971
+#: engines/wintermute/keymapper_tables.h:2020
 msgid "Player 1: Left"
 msgstr "Spiller 1: Venstre"
 
-#: engines/wintermute/keymapper_tables.h:1976
+#: engines/wintermute/keymapper_tables.h:2025
 msgid "Player 1: Down"
 msgstr "Spiller 1: Ned"
 
-#: engines/wintermute/keymapper_tables.h:1981
+#: engines/wintermute/keymapper_tables.h:2030
 msgid "Player 1: Right"
 msgstr "Spiller 1: Høyre"
 
-#: engines/wintermute/keymapper_tables.h:1986
+#: engines/wintermute/keymapper_tables.h:2035
 msgid "Player 2: Up"
 msgstr "Spiller 2: Opp"
 
-#: engines/wintermute/keymapper_tables.h:1991
+#: engines/wintermute/keymapper_tables.h:2040
 msgid "Player 2: Left"
 msgstr "Spiller 2: Venstre"
 
-#: engines/wintermute/keymapper_tables.h:1996
+#: engines/wintermute/keymapper_tables.h:2045
 msgid "Player 2: Down"
 msgstr "Spiller 2: Ned"
 
-#: engines/wintermute/keymapper_tables.h:2001
+#: engines/wintermute/keymapper_tables.h:2050
 msgid "Player 2: Right"
 msgstr "Spiller 2: Høyre"
 
 #. I18N: Displays a debug FPS counter
-#: engines/wintermute/keymapper_tables.h:2007
+#: engines/wintermute/keymapper_tables.h:2056
 msgid "Debug FPS"
 msgstr "Debug bildefrekvens (FPS)"
 
-#: engines/wintermute/keymapper_tables.h:2104
+#: engines/wintermute/keymapper_tables.h:2153
 msgid "F1"
 msgstr "F1"
 
-#: engines/wintermute/keymapper_tables.h:2109
+#: engines/wintermute/keymapper_tables.h:2158
 msgid "Key i"
 msgstr "i-tast"
 

@@ -1880,7 +1880,7 @@ IMPLEMENT_OPCODE(ClearActorFields)
 	Actor *actor = getScene()->getActor(cmd->param1);
 
 	// Clear fields starting from field_970
-	actor->clearFields();
+	actor->clearReflectionData();
 END_OPCODE
 
 //////////////////////////////////////////////////////////////////////////

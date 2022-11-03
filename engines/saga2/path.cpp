@@ -127,7 +127,7 @@ struct PathTileInfo {
 	PathTileInfo() : surfaceTile(nullptr), surfaceHeight(0) {}
 };
 
-typedef PathTileInfo        PathTilePosInfo[maxPlatforms];
+typedef PathTileInfo        PathTilePosInfo[kMaxPlatforms];
 
 typedef PathTilePosInfo     PathTilePosArray[searchDiameter + 4][searchDiameter + 4];
 
@@ -205,7 +205,7 @@ void PathTileRegion::init(
 	PathTilePosInfo *tiPtr = _array;
 	for (; _arraySize > 0; _arraySize--, tiPtr++) {
 		PathTilePosInfo &ptpi = *tiPtr;
-		for (int i = 0; i < maxPlatforms; i++)
+		for (int i = 0; i < kMaxPlatforms; i++)
 			ptpi[i].surfaceTile = nullptr;
 	}
 }
@@ -331,7 +331,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 		offset.u = ((subMeta.u >> 1) << kPlatShift) - _origin.u;
 		offset.v = ((subMeta.v >> 1) << kPlatShift) - _origin.v;
 
-		for (int i = 0; i < maxPlatforms; i++) {
+		for (int i = 0; i < kMaxPlatforms; i++) {
 			uint16      tpFlags = 0;
 			Platform    *p;
 			int       u, v;
@@ -341,7 +341,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 			if ((p = mt->fetchPlatform(_mapNum, i)) == nullptr)
 				continue;
 
-			if (!(p->flags & plVisible)) continue;
+			if (!(p->flags & kPlVisible)) continue;
 
 			for (u = tileReg.min.u; u < tileReg.max.u; u++) {
 				PathTilePosInfo *arrRow = &_array[(u + offset.u) * _area.v];
@@ -361,7 +361,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 						tr = &p->tiles[u][v];
 						height = tr->tileHeight << 3;
 
-						if (tr->flags & trTileTAG) {
+						if (tr->flags & kTrTileTAG) {
 							ActiveItem  *groupItem,
 							            *instanceItem;
 							int16       state = 0;
@@ -371,7 +371,7 @@ void PathTileRegion::fetchSubMeta(const TilePoint &subMeta) {
 							TileRegion  subMetaTag;
 							TileRef     *stateData;
 
-							assert((uint16)tr->tile <= activeItemIndexNullID);
+							assert((uint16)tr->tile <= kActiveItemIndexNullID);
 							groupItem = ActiveItem::activeItemAddress(
 							                ActiveItemID(_mapNum, tr->tile));
 
@@ -477,7 +477,7 @@ private:
 	};
 
 	//  Master array of chunk pointers
-	PathArrayChunk  *_array[maxPlatforms][regionChunkDiameter][regionChunkDiameter];
+	PathArrayChunk  *_array[kMaxPlatforms][regionChunkDiameter][regionChunkDiameter];
 public:
 
 	//  Exception class
@@ -510,7 +510,7 @@ public:
 PathArray::PathArray() {
 	int     plat, chunkU, chunkV;
 
-	for (plat = 0; plat < maxPlatforms; plat++) {
+	for (plat = 0; plat < kMaxPlatforms; plat++) {
 		for (chunkU = 0; chunkU < regionChunkDiameter; chunkU++) {
 			for (chunkV = 0; chunkV < regionChunkDiameter; chunkV++)
 				_array[plat][chunkU][chunkV] = nullptr;
@@ -529,7 +529,7 @@ PathArray::~PathArray() {
 //  be true.  If it fails to allocate a new cell it will throw
 //  a CellAllocationFailure.
 PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
-	assert(plat >= 0 && plat < maxPlatforms);
+	assert(plat >= 0 && plat < kMaxPlatforms);
 	assert(uCoord >= 0 && uCoord < searchDiameter);
 	assert(vCoord >= 0 && vCoord < searchDiameter);
 	assert(newCell != nullptr);
@@ -569,7 +569,7 @@ PathCell *PathArray::makeCell(int plat, int uCoord, int vCoord, bool *newCell) {
 //  Get a pointer to an existing cell.  If the specified cell has
 //  not been created, it will return nullptr.
 PathCell *PathArray::getCell(int plat, int uCoord, int vCoord) {
-	assert(plat >= 0 && plat < maxPlatforms);
+	assert(plat >= 0 && plat < kMaxPlatforms);
 	assert(uCoord >= 0 && uCoord < searchDiameter);
 	assert(vCoord >= 0 && vCoord < searchDiameter);
 
@@ -597,7 +597,7 @@ PathCell *PathArray::getCell(int plat, int uCoord, int vCoord) {
 }
 
 void PathArray::deleteCell(int plat, int uCoord, int vCoord) {
-	assert(plat >= 0 && plat < maxPlatforms);
+	assert(plat >= 0 && plat < kMaxPlatforms);
 	assert(uCoord >= 0 && uCoord < searchDiameter);
 	assert(vCoord >= 0 && vCoord < searchDiameter);
 
@@ -626,7 +626,7 @@ void PathArray::deleteCell(int plat, int uCoord, int vCoord) {
 void PathArray::reset() {
 	int     plat, chunkU, chunkV;
 
-	for (plat = 0; plat < maxPlatforms; plat++) {
+	for (plat = 0; plat < kMaxPlatforms; plat++) {
 		for (chunkU = 0; chunkU < regionChunkDiameter; chunkU++) {
 			for (chunkV = 0; chunkV < regionChunkDiameter; chunkV++) {
 				PathArrayChunk      **chunkPtrPtr;
@@ -894,7 +894,7 @@ uint32 tileTerrain(
     int16           maxZ) {
 	uint32          terrain = 0;
 
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		int32           height, tileMinZ, tileMaxZ;
 		TileInfo        *ti;
 
@@ -906,9 +906,9 @@ uint32 tileTerrain(
 			tileMinZ = tileMaxZ = height;
 			int32   combinedMask = ti->combinedTerrainMask();
 
-			if (combinedMask & terrainRaised)
+			if (combinedMask & kTerrainRaised)
 				tileMaxZ += attrs.terrainHeight;
-			if (combinedMask & terrainWater)
+			if (combinedMask & kTerrainWater)
 				tileMinZ -= attrs.terrainHeight;
 
 			if (tileMinZ <  maxZ
@@ -920,10 +920,10 @@ uint32 tileTerrain(
 				//  If only checking the top of raised terrain treat it
 				//  as if it were normal terrain.
 				if (minZ + kMaxStepHeight >= tileMaxZ) {
-					if (tileFgdTerrain & terrainSupportingRaised)
-						tileFgdTerrain = terrainNormal;
-					if (tileBgdTerrain & terrainSupportingRaised)
-						tileBgdTerrain = terrainNormal;
+					if (tileFgdTerrain & kTerrainSupportingRaised)
+						tileFgdTerrain = kTerrainNormal;
+					if (tileBgdTerrain & kTerrainSupportingRaised)
+						tileBgdTerrain = kTerrainNormal;
 				}
 
 				if (mask & attrs.terrainMask)
@@ -935,9 +935,9 @@ uint32 tileTerrain(
 				//  This prevents actors from walking through
 				//  catwalks and other surfaces which have no bottom.
 
-				if ((terrainResult & terrainSolidSurface)
+				if ((terrainResult & kTerrainSolidSurface)
 				        &&  height > minZ + kMaxStepHeight) {
-					terrainResult |= terrainStone;
+					terrainResult |= kTerrainStone;
 				}
 
 				terrain |= terrainResult;
@@ -948,7 +948,7 @@ uint32 tileTerrain(
 }
 
 
-const uint32 terrainSink = terrainInsubstantial | terrainSupportingRaised | terrainWater;
+const uint32 terrainSink = kTerrainInsubstantial | kTerrainSupportingRaised | kTerrainWater;
 
 int16 tileSlopeHeight(
     PathTileRegion  &tileArr,
@@ -984,7 +984,7 @@ int16 tileSlopeHeight(
 	//  Search each platform until we find a tile which is under
 	//  the character.
 
-	for (int i = 0; i < maxPlatforms; i++) {
+	for (int i = 0; i < kMaxPlatforms; i++) {
 		PathTileInfo    *pti = ((PathTileInfo *)(&tilePosInfo)) + i; // &tilePosInfo[i];
 		TileInfo        *ti = pti->surfaceTile;
 
@@ -996,9 +996,9 @@ int16 tileSlopeHeight(
 			    attrs.testTerrain(calcSubTileMask(subTile.u,
 			                                      subTile.v));
 			if (subTileTerrain & terrainSink) {
-				if (subTileTerrain & terrainInsubstantial)
+				if (subTileTerrain & kTerrainInsubstantial)
 					continue;
-				else if (subTileTerrain & terrainSupportingRaised)
+				else if (subTileTerrain & kTerrainSupportingRaised)
 					// calculate height of raised surface
 					supportHeight = height +
 					                attrs.terrainHeight;
@@ -1019,14 +1019,14 @@ int16 tileSlopeHeight(
 			//  See if the tile is a potential supporting surface
 			if (tileBase < pt.z + objProtHt
 			        &&  supportHeight >= highestSupportHeight
-			        && (ti->combinedTerrainMask() & (terrainSurface | terrainRaised))) {
+			        && (ti->combinedTerrainMask() & (kTerrainSurface | kTerrainRaised))) {
 				highestTileFlag = true;
 				highestTile = *pti;
 				highestSupportHeight = supportHeight;
 				highestSupportPlatform = i;
 			} else if (!highestTileFlag &&
 			           supportHeight <= lowestSupportHeight &&
-			           (ti->combinedTerrainMask() & (terrainSurface | terrainRaised))) {
+			           (ti->combinedTerrainMask() & (kTerrainSurface | kTerrainRaised))) {
 				lowestTileFlag = true;
 				lowestTile = *pti;
 				lowestSupportHeight = supportHeight;
@@ -1382,7 +1382,7 @@ PathRequest::PathRequest(Actor *a, int16 howSmart) {
 	_actor       = a;
 	_smartness   = howSmart;
 	_mTask       = _actor->_moveTask;
-	_flags       = _mTask->_flags & MotionTask::requestRun ? run : 0;
+	_flags       = _mTask->_flags & MotionTask::kMfRequestRun ? run : 0;
 
 	if (_path == nullptr)
 		_path = new TilePoint[kPathSize]();
@@ -1405,7 +1405,7 @@ void PathRequest::initialize() {
 	uint8 pCross = proto->crossSection;
 
 	_firstTick = gameTime,
-	_timeLimit = /*flags & run ? ticksPerSecond / 4 :*/ ticksPerSecond;
+	_timeLimit = /*flags & run ? kTicksPerSecond / 4 :*/ kTicksPerSecond;
 
 	_fetchRadius =
 	    ((kTileUVSize / 2 + pCross) >> kTileUVShift) + 1;
@@ -1472,7 +1472,7 @@ void PathRequest::initialize() {
 		//  obstacles.
 		if (isActor(obj)
 		        && (((Actor *)obj)->isDead()
-		            || ((Actor *)obj)->hasEffect(actorInvisible)))
+		            || ((Actor *)obj)->hasEffect(kActorInvisible)))
 			continue;
 
 		//  Compute the objects volume
@@ -1576,7 +1576,7 @@ big_break:
 			        quantizedCoords.z),
 			    platform,
 			    cost,
-			    dirInvalid,
+			    kDirInvalid,
 			    0);
 		}
 	}
@@ -1599,10 +1599,10 @@ void PathRequest::finish() {
 		cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 		assert(cell != nullptr);
 
-		if (cell->direction != dirInvalid) {
+		if (cell->direction != kDirInvalid) {
 			res = &tempResult[ARRAYSIZE(tempResult)];
 
-			prevDir = dirInvalid;
+			prevDir = kDirInvalid;
 
 			for (;;) {
 				int16       reverseDir;
@@ -1610,7 +1610,7 @@ void PathRequest::finish() {
 				cell = cellArray->getCell(_bestPlatform, _bestLoc.u, _bestLoc.v);
 				assert(cell != nullptr);
 
-				if (cell->direction != dirInvalid) {
+				if (cell->direction != kDirInvalid) {
 					if (cell->direction != prevDir
 					        ||  ABS(cell->height - prevHeight) > kMaxStepHeight) {
 						if (res <= tempResult) break;
@@ -1635,7 +1635,7 @@ void PathRequest::finish() {
 					assert(_bestLoc.u >= 0 && _bestLoc.u < searchDiameter);
 					assert(_bestLoc.v >= 0 && _bestLoc.v < searchDiameter);
 					_bestPlatform -= cell->platformDelta;
-					assert(_bestPlatform < maxPlatforms);
+					assert(_bestPlatform < kMaxPlatforms);
 				} else
 					break;
 			}
@@ -1658,8 +1658,8 @@ void PathRequest::finish() {
 		memcpy(_mTask->_pathList, _path, _pathLength * sizeof(_path[0]));
 		_mTask->_pathCount = _pathLength;
 		_mTask->_pathIndex = 0;
-		_mTask->_flags |= MotionTask::reset;
-		if (_flags & completed) _mTask->_flags |= MotionTask::finalPath;
+		_mTask->_flags |= MotionTask::kMfReset;
+		if (_flags & completed) _mTask->_flags |= MotionTask::kMfFinalPath;
 		_mTask->_pathFindTask = nullptr;
 	}
 }
@@ -1710,7 +1710,7 @@ PathResult PathRequest::findPath() {
 		centerTileCoords.v = qi.v + _baseTileCoords.v;
 		centerTileCoords.z = 0;
 
-		if (qi.direction == dirInvalid) {
+		if (qi.direction == kDirInvalid) {
 			//  If this is the starting position, check all directions
 			i = dir = 0;
 			tDir = tDirTable2;
@@ -1893,16 +1893,16 @@ PathResult PathRequest::findPath() {
 				}
 			}
 
-			if (terrain & (terrainImpassable | terrainRaised)) continue;
+			if (terrain & (kTerrainImpassable | kTerrainRaised)) continue;
 
 			//  determine the height of the center of the tile
 			//  that we're testing.
 
 			//  Assign costs based on the direction of travel
 
-			if (terrain & terrainSlow) {
+			if (terrain & kTerrainSlow) {
 				cost = dir & 1 ? straightHardCost : diagHardCost;
-			} else if (terrain & terrainAverage) {
+			} else if (terrain & kTerrainAverage) {
 				cost = dir & 1 ? straightNormalCost : diagNormalCost;
 			} else {
 				cost = dir & 1 ? straightEasyCost : diagEasyCost;
@@ -1911,7 +1911,7 @@ PathResult PathRequest::findPath() {
 			//  We must treat stairs as a special case
 
 			if (pti.surfaceTile != nullptr
-			        && (pti.surfaceTile->combinedTerrainMask() & terrainStair)) {
+			        && (pti.surfaceTile->combinedTerrainMask() & kTerrainStair)) {
 				uint8   *cornerHeight = pti.surfaceTile->attrs.cornerHeight;
 				uint8   stairDir;
 				int16   stairHeight;
@@ -1976,7 +1976,7 @@ PathResult PathRequest::findPath() {
 			cost += costTable[
 			            7
 			            +   dir
-			            - (qi.direction != dirInvalid
+			            - (qi.direction != kDirInvalid
 			               ?   qi.direction
 			               :   _actor->_currentFacing)];
 
@@ -2175,7 +2175,7 @@ WanderPathRequest::WanderPathRequest(
     Actor *a,
     int16 howSmart) :
 	PathRequest(a, howSmart) {
-	if (_mTask->_flags & MotionTask::tethered) {
+	if (_mTask->_flags & MotionTask::kMfTethered) {
 		_tethered = true;
 		_tetherMinU = _mTask->_tetherMinU;
 		_tetherMinV = _mTask->_tetherMinV;
@@ -2425,10 +2425,10 @@ posVMask = 0x0770,
 negVMask = 0x0ee0;
 
 uint16 sTerrainMasks[8] = {
-	posUMask, negUMask,             //  dirUpLeft (U+)
-	negVMask, posVMask,             //  dirDownLeft (V-)
-	negUMask, posUMask,             //  dirDownRight (U-)
-	posVMask, negVMask,             //  dirUpRight (V+)
+	posUMask, negUMask,             //  kDirUpLeft (U+)
+	negVMask, posVMask,             //  kDirDownLeft (V-)
+	negUMask, posUMask,             //  kDirDownRight (U-)
+	posVMask, negVMask,             //  kDirUpRight (V+)
 };
 
 TilePoint selectNearbySite(
@@ -2575,8 +2575,8 @@ TilePoint selectNearbySite(
 
 		if (distFromCenter >= maxDist) continue;
 
-		for (dir = dirUpLeft;
-		        dir <= dirUpRight;
+		for (dir = kDirUpLeft;
+		        dir <= kDirUpRight;
 		        dir += 2) {
 			uint32          terrain;
 			uint8           *cell;
@@ -2606,7 +2606,7 @@ TilePoint selectNearbySite(
 			                        _centerPt.z + 68);
 
 			//  Reject if we can't move
-			if (terrain & (terrainImpassable | terrainRaised)) {
+			if (terrain & (kTerrainImpassable | kTerrainRaised)) {
 				//  But only if this is isn't the center point
 				if (distFromCenter > 0) continue;
 			}
@@ -2646,7 +2646,7 @@ TilePoint selectNearbySite(
 			                        testPt.z + 68);
 
 			//  Reject if terrain allows no entry
-			if (terrain & (terrainImpassable | terrainRaised)) continue;
+			if (terrain & (kTerrainImpassable | kTerrainRaised)) continue;
 
 #if VISUAL6
 			TPLine(_centerPt, testPt);
@@ -2804,8 +2804,8 @@ bool checkPath(
 
 		centerDistFromDest = (_centerPt - destCoords).quickHDistance();
 
-		for (dir = dirUpLeft;
-		        dir <= dirUpRight;
+		for (dir = kDirUpLeft;
+		        dir <= kDirUpRight;
 		        dir += 2) {
 			uint32          terrain;
 			uint8           *cell;
@@ -2844,7 +2844,7 @@ bool checkPath(
 			                        _centerPt.z + height);
 
 			//  Reject if we can't move
-			if (terrain & (terrainImpassable | terrainRaised)) continue;
+			if (terrain & (kTerrainImpassable | kTerrainRaised)) continue;
 
 			//  Get the height of the terrain at the new point
 			testPt.z =  tileSlopeHeight(testPt, _mapNum, height, &sti);
@@ -2878,7 +2878,7 @@ bool checkPath(
 			                        testPt.z + height);
 
 			//  Reject if terrain allows no entry
-			if (terrain & (terrainImpassable | terrainRaised)) continue;
+			if (terrain & (kTerrainImpassable | kTerrainRaised)) continue;
 
 #if VISUAL7
 			TPLine(_centerPt, testPt);

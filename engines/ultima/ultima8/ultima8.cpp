@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/rational.h"
 #include "common/translation.h"
 #include "gui/saveload.h"
 #include "image/png.h"
@@ -1681,8 +1682,24 @@ void Ultima8Engine::showSplashScreen() {
 	Graphics::Screen *scr = Ultima8Engine::get_instance()->getScreen();
 	const Graphics::Surface *srcSurface = png.getSurface();
 
-	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h),
-		Common::Rect(0, 0, scr->w, scr->h));
+	Common::Rect dest(0, 0, scr->w, scr->h);
+
+	// Splash screen is expected to be 640x480.
+	// If the window has a different aspect ratio or corrected aspect ratio,
+	// then scale to appropriate size and center.
+	frac_t aspectRatio = Common::Rational(scr->w, scr->h).toFrac();
+	if (aspectRatio != Common::Rational(320, 240).toFrac() &&
+		aspectRatio != Common::Rational(320, 200).toFrac()) {
+		Common::Rational scaleFactorX(scr->w, srcSurface->w);
+		Common::Rational scaleFactorY(scr->h, srcSurface->h);
+		Common::Rational scale = scaleFactorX < scaleFactorY ? scaleFactorX : scaleFactorY;
+
+		dest.setWidth((srcSurface->w * scale).toInt());
+		dest.setHeight((srcSurface->h * scale).toInt());
+		dest.moveTo((scr->w - dest.width()) / 2, (scr->h - dest.height()) / 2);
+	}
+
+	scr->transBlitFrom(*srcSurface, Common::Rect(0, 0, srcSurface->w, srcSurface->h), dest);
 	scr->update();
 	// Handle a single event to get the splash screen shown
 	Common::Event event;

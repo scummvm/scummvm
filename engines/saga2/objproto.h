@@ -156,7 +156,7 @@ public:
  * ===================================================================== */
 
 inline bool isFlipped(Direction d) {
-	return (d > dirDown);
+	return (d > kDirDown);
 }
 
 /* ===================================================================== *
@@ -226,20 +226,20 @@ struct ResourceObjectPrototype {
 	//  Flag definitions
 
 	enum protoFlags {
-		objPropMergeable    = (1 << 0),     // merge with similar objects
-		objPropRound        = (1 << 1),     // rolls easily down stairs
-		objPropFlammable    = (1 << 2),     // object can burn
-		objPropWeapon       = (1 << 3),     // can be wielded as weapon
-		objPropThrownWpn    = (1 << 4),     // it's a throwable weapon
-		objPropMissileWpn   = (1 << 5),     // it's a missile weapon
-		objPropCharges      = (1 << 6),     // it's a missile weapon
-		objPropEdible       = (1 << 7),     // can be eaten
-		objPropFlipped      = (1 << 8),     // flipped left/right on ground
-		objPropVisOpen      = (1 << 9),     // Object has separate "visible" sprite
-		objPropHidden       = (1 << 10),    // "How not to be seen".
-		objPropGhosted      = (1 << 11),    // Object permanently ghosted
-		objPropHardSurface  = (1 << 12),    // Object makes hard sound when struck
-		objPropNoSurface    = (1 << 13)     // Object makes no sound when struck (may grunt however)
+		kObjPropMergeable    = (1 << 0),     // merge with similar objects
+		kObjPropRound        = (1 << 1),     // rolls easily down stairs
+		kObjPropFlammable    = (1 << 2),     // object can burn
+		kObjPropWeapon       = (1 << 3),     // can be wielded as weapon
+		kObjPropThrownWpn    = (1 << 4),     // it's a throwable weapon
+		kObjPropMissileWpn   = (1 << 5),     // it's a missile weapon
+		kObjPropCharges      = (1 << 6),     // it's a missile weapon
+		kObjPropEdible       = (1 << 7),     // can be eaten
+		kObjPropFlipped      = (1 << 8),     // flipped left/right on ground
+		kObjPropVisOpen      = (1 << 9),     // Object has separate "visible" sprite
+		kObjPropHidden       = (1 << 10),    // "How not to be seen".
+		kObjPropGhosted      = (1 << 11),    // Object permanently ghosted
+		kObjPropHardSurface  = (1 << 12),    // Object makes hard sound when struck
+		kObjPropNoSurface    = (1 << 13)     // Object makes no sound when struck (may grunt however)
 	};
 
 	int16           price;                  // object's price
@@ -378,41 +378,41 @@ class ProtoObj : public ResourceObjectPrototype {
 	// at appropriate subclasses
 private:
 	enum {
-		ViewableRows    = 6,
-		ViewableCols    = 4,
-		maxRows         = 8,
-		maxCols         = 4
+		kViewableRows    = 6,
+		kViewableCols    = 4,
+		kMaxRows         = 8,
+		kMaxCols         = 4
 	};
 
 public:
 
 	enum containmentType {
-		isTangible    = (1 << 0),
-		isContainer   = (1 << 1),
-		isBottle      = (1 << 2),
-		isFood        = (1 << 3),
-		isWearable    = (1 << 4),
-		isWeapon      = (1 << 5),
-		isArmor       = (1 << 6),
-		isDocument    = (1 << 7),
-		isIntangible  = (1 << 8),
-		isConcept     = (1 << 9),
-		isPsych       = (1 << 10),
-		isSpell       = (1 << 11),
-		isSkill       = (1 << 12),
-		isEnchantment = (1 << 13),
-		isTargetable  = (1 << 14)
+		kIsTangible    = (1 << 0),
+		kIsContainer   = (1 << 1),
+		kIsBottle      = (1 << 2),
+		kIsFood        = (1 << 3),
+		kIsWearable    = (1 << 4),
+		kIsWeapon      = (1 << 5),
+		kIsArmor       = (1 << 6),
+		kIsDocument    = (1 << 7),
+		kIsIntangible  = (1 << 8),
+		kIsConcept     = (1 << 9),
+		kIsPsych       = (1 << 10),
+		kIsSpell       = (1 << 11),
+		kIsSkill       = (1 << 12),
+		kIsEnchantment = (1 << 13),
+		kIsTargetable  = (1 << 14)
 	};
 
 //	kludge: define earlier, incorrectly spelled names to correct spelling
 //	REM: Later, do a global search and replace...
-#define isTangable      isTangible
-#define isIntangable    isIntangible
+#define isTangable      kIsTangible
+#define isIntangable    kIsIntangible
 
 	enum spriteTypes {
-		objOnGround = 0,
-		objInContainerView,
-		objAsMousePtr
+		kObjOnGround = 0,
+		kObjInContainerView,
+		kObjAsMousePtr
 	};
 
 	//  Memeber functions
@@ -647,7 +647,7 @@ public:
 	virtual void getColorTranslation(ColorTable map);
 
 	//  return the sprite data of amount 'count'
-	virtual ObjectSpriteInfo getSprite(GameObject *obj, enum spriteTypes spr, int16 count = -1);
+	virtual ObjectSpriteInfo getSprite(GameObject *obj, spriteTypes spr, int16 count = -1);
 
 	//  return the address of the sprite when held in hand
 	virtual Sprite *getOrientedSprite(GameObject *obj, int16 offset);
@@ -717,16 +717,16 @@ public:
 	// this is to determine size of containers
 public:
 	virtual uint16 getViewableRows() {
-		return ViewableRows;
+		return kViewableRows;
 	}
 	virtual uint16 getViewableCols() {
-		return ViewableCols;
+		return kViewableCols;
 	}
 	virtual uint16 getMaxRows() {
-		return maxRows;
+		return kMaxRows;
 	}
 	virtual uint16 getMaxCols() {
-		return maxCols;
+		return kMaxCols;
 	}
 
 	// this returns the type of charge an item can have
@@ -798,10 +798,10 @@ public:
 class PhysicalContainerProto : public InventoryProto {
 private:
 	enum {
-		ViewableRows    = 4,
-		ViewableCols    = 4,
-		maxRows         = 8,
-		maxCols         = 4
+		kViewableRows    = 4,
+		kViewableCols    = 4,
+		kMaxRows         = 8,
+		kMaxCols         = 4
 	};
 
 public:
@@ -850,16 +850,16 @@ public:
 
 public:
 	virtual uint16 getViewableRows() {
-		return ViewableRows;
+		return kViewableRows;
 	}
 	virtual uint16 getViewableCols() {
-		return ViewableCols;
+		return kViewableCols;
 	}
 	virtual uint16 getMaxRows() {
-		return maxRows;
+		return kMaxRows;
 	}
 	virtual uint16 getMaxCols() {
-		return maxCols;
+		return kMaxCols;
 	}
 
 	virtual bool canFitBulkwise(GameObject *container, GameObject *obj);
@@ -956,7 +956,7 @@ class WeaponProto : public InventoryProto {
 
 protected:
 	enum {
-		inRangeRatingBonus = 4
+		kInRangeRatingBonus = 4
 	};
 
 public:
@@ -1427,7 +1427,7 @@ public:
 	virtual void getColorTranslation(ColorTable map);
 
 	//  return the sprite data
-	virtual ObjectSpriteInfo getSprite(GameObject *obj, enum spriteTypes spr, int16);
+	virtual ObjectSpriteInfo getSprite(GameObject *obj, spriteTypes spr, int16);
 };
 
 /* ======================================================================== *

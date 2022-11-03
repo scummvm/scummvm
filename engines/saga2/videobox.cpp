@@ -41,12 +41,12 @@ CVideoBox::CVideoBox(const Rect16 &box,
                      uint16 ident,
                      AppFunc *cmd) : ModalWindow(box, ident, cmd) {
 	// set the size of the window panes
-	_vidPanRects[0] =  Rect16(x, y, xBrushSize, yBrushSize);
-	_vidPanRects[1] =  Rect16(x, y + yBrushSize, xBrushSize, yBrushSize);
+	_vidPanRects[0] =  Rect16(kVBx, kVBy, kVBxBrushSize, kVByBrushSize);
+	_vidPanRects[1] =  Rect16(kVBx, kVBy + kVByBrushSize, kVBxBrushSize, kVByBrushSize);
 
 	// options dialog window decorations
-	_vidDec[0].set(_vidPanRects[0], vidPan1ResID);
-	_vidDec[1].set(_vidPanRects[1], vidPan2ResID);
+	_vidDec[0].set(_vidPanRects[0], kVBvidPan1ResID);
+	_vidDec[1].set(_vidPanRects[1], kVBvidPan2ResID);
 
 	// null out the _decRes pointer
 	_decRes = nullptr;
@@ -71,7 +71,7 @@ void CVideoBox::deactivate() {
 }
 
 bool CVideoBox::activate(gEventType why) {
-	if (why == gEventMouseDown) {        // momentarily depress
+	if (why == kEventMouseDown) {        // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -80,7 +80,7 @@ bool CVideoBox::activate(gEventType why) {
 }
 
 void CVideoBox::pointerMove(gPanelMessage &) {
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 bool CVideoBox::pointerHit(gPanelMessage &) {
@@ -96,18 +96,18 @@ bool CVideoBox::pointerHit(gPanelMessage &) {
 		ri->result  = _id;
 	}
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void CVideoBox::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
 void CVideoBox::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);    // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);    // notify App of successful hit
 	deactivate();
 }
 
@@ -156,7 +156,7 @@ int16 CVideoBox::openVidBox(char *fileName) {
 	ModalWindow::open();
 
 	// start the video playback
-	g_vm->startVideo(fileName, x + borderWidth, y + borderWidth);
+	g_vm->startVideo(fileName, kVBx + kVBborderWidth, kVBy + kVBborderWidth);
 
 	// run this modal event loop
 	//EventLoop( _rInfo.running, true );
@@ -179,9 +179,6 @@ int16 openVidBox(char *fileName) {
 
 	// open this video box
 	int16 result = videoBox.openVidBox(fileName);
-
-	// get rid of the box when done
-	videoBox.~CVideoBox();
 
 	g_vm->_pal->quickRestorePalette();
 	// replace the damaged area

@@ -49,8 +49,8 @@ namespace Saga2 {
 
 const uint32                    spellSpriteID = MKTAG('S', 'P', 'F', 'X');
 
-const int32 maxSpells = totalSpellBookPages;
-const int32 maxSpellPrototypes = totalSpellBookPages;
+const int32 maxSpells = kTotalSpellBookPages;
+const int32 maxSpellPrototypes = kTotalSpellBookPages;
 const int32 maxEffectPrototypes = 16;
 
 const int32 maxSpellColorMaps = 32;
@@ -215,9 +215,9 @@ static void loadMagicData() {
 	if (spellRes == nullptr || !spellRes->_valid)
 		error("Error accessing spell resource group.\n");
 	i = 1;
-	ADD_SHOW(eAreaInvisible, 0, 0, 0, 0, diFlagInc, ecFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
+	ADD_SHOW(keAreaInvisible, 0, 0, 0, 0, kDiFlagInc, kEcFlagNone,  30, MKTAG('S', 'T', 'A', 0), 23, 24);
 
-	spellBook[0].setManaType(sManaIDSkill);
+	spellBook[0].setManaType(ksManaIDSkill);
 
 	while (spellRes->size(
 	            MKTAG('I', 'N', 'F', i)) > 0) {

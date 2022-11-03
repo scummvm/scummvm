@@ -699,7 +699,7 @@ bool AmigaSound::playSpecialSfx(int16 sfx) {
 	case 83: // splash
 		playSound("18SSSSSS");
 		break;
-	case 85: // agression enhancer
+	case 85: // aggression enhancer
 		playSound("138BSSSS");
 		break;
 	case 68: // dino ray

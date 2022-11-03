@@ -46,7 +46,7 @@ GrabInfo::GrabInfo() {
 	_grabId      = Nothing;
 	_grabObj     = nullptr;
 	_intentDoable = true;
-	_intention   = WalkTo;
+	_intention   = kIntWalkTo;
 
 	_textBuf[0] = '\0';
 	_displayGauge = false;
@@ -64,7 +64,7 @@ GrabInfo::~GrabInfo() {
 // mergeable or not.
 void GrabInfo::setMoveCount(int16 val) {
 	if (_grabObj) {
-		if (_grabObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_grabObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			_moveCount = val;
 		} else {
 			_moveCount = 1;
@@ -81,7 +81,7 @@ void GrabInfo::grabObject(ObjectID objid,  Intent in, int16 count) {
 
 //	Make the object pointer into the mouse pointer
 void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
-	char        objText[bufSize];
+	char        objText[kBufSize];
 
 	assert(!obj->isMoving());
 
@@ -105,7 +105,7 @@ void GrabInfo::grabObject(GameObject *obj,  Intent in, int16 count) {
 	setIntent(in);
 
 	//  Display the name of the grabbed object under the mouse cursor
-	_grabObj->objCursorText(objText, bufSize, _moveCount);
+	_grabObj->objCursorText(objText, kBufSize, _moveCount);
 	setMouseText(objText);
 
 	clearMouseGauge();
@@ -126,7 +126,7 @@ void GrabInfo::copyObject(ObjectID objid,  Intent in, int16 count) {
 //  it does not actually copy it
 //	Make the object pointer into the mouse pointer
 void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
-	char        objText[bufSize];
+	char        objText[kBufSize];
 
 	// set the number of items
 	setMoveCount(count);
@@ -145,7 +145,7 @@ void GrabInfo::copyObject(GameObject *obj,  Intent in, int16 count) {
 	setIntent(in);
 
 	//  Display the name of the grabbed object under the mouse cursor
-	_grabObj->objCursorText(objText, bufSize, _moveCount);
+	_grabObj->objCursorText(objText, kBufSize, _moveCount);
 	setMouseText(objText);
 
 	clearMouseGauge();
@@ -157,9 +157,9 @@ uint8 GrabInfo::setIntent(uint8 in) {
 	//  If intention isn't being changed, return immediately
 	if (_intention != (Intent)in) {
 		//  Intention has changed to None
-		if (in == (uint8)None && _intention != None) g_vm->_pointer->hide();
+		if (in == (uint8)kIntNone && _intention != kIntNone) g_vm->_pointer->hide();
 		//  Intention has changed from None
-		else if (in != (uint8)None && _intention == None) g_vm->_pointer->show();
+		else if (in != (uint8)kIntNone && _intention == kIntNone) g_vm->_pointer->show();
 
 		_intention = (Intent)in;
 		//  Set new cursor
@@ -189,7 +189,7 @@ void GrabInfo::setIcon() {
 	proto = _grabObj->proto();
 
 	//  Get address of sprite
-	spr = proto->getSprite(_grabObj, ProtoObj::objAsMousePtr, _moveCount).sp;
+	spr = proto->getSprite(_grabObj, ProtoObj::kObjAsMousePtr, _moveCount).sp;
 	mapBytes = spr->size.x * spr->size.y;
 
 	if ((mapData
@@ -229,29 +229,29 @@ void GrabInfo::clearIcon() {
 void GrabInfo::setCursor() {
 	if (_intentDoable) {
 		switch (_intention) {
-		case None:
+		case kIntNone:
 			//  If _intention has been changed to none then the
 			//  pointer has already been hidden.
 			break;
-		case WalkTo:
+		case kIntWalkTo:
 			setMouseImage(kMouseArrowImage, 0, 0);
 			break;
-		case Open:
+		case kIntOpen:
 			setMouseImage(kMouseArrowImage, 0, 0);
 			break;
-		case PickUp:
+		case kIntPickUp:
 			setMouseImage(kMouseGrabPtrImage, -7, -7);
 			break;
-		case Drop:
+		case kIntDrop:
 			setMouseImage(_pointerMap, _pointerOffset.x, _pointerOffset.y);
 			break;
-		case Use:
+		case kIntUse:
 			setMouseImage(kMouseUsePtrImage, -7, -7);
 			break;
-		case Attack:
+		case kIntAttack:
 			setMouseImage(kMouseAttakPtrImage, -11, -11);
 			break;
-		case Cast:
+		case kIntCast:
 			setMouseImage(kMouseAttakPtrImage, -11, -11);
 			break;
 		default:
@@ -270,7 +270,7 @@ void GrabInfo::placeObject(const Location &loc) {
 	_grabObj    = nullptr;
 	_grabId     = Nothing;
 	_intentDoable = true;
-	setIntent(WalkTo);
+	setIntent(kIntWalkTo);
 	clearIcon();
 
 	//  Display the saved text
@@ -305,7 +305,7 @@ void GrabInfo::replaceObject() {
 	_grabObj    = nullptr;
 	_grabId     = Nothing;
 	_intentDoable = true;
-	setIntent(WalkTo);
+	setIntent(kIntWalkTo);
 	clearIcon();
 
 	//  Display the saved text
@@ -324,7 +324,7 @@ void GrabInfo::replaceObject() {
 //  text pointer will simply be saved.
 void GrabInfo::setText(const char *txt) {
 	if ((txt != nullptr) && strlen(txt)) {
-		Common::strlcpy(_textBuf, txt, bufSize);
+		Common::strlcpy(_textBuf, txt, kBufSize);
 		if (_grabObj == nullptr)
 			setMouseText(_textBuf);
 	} else {

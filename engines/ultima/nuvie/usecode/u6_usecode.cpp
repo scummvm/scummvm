@@ -1584,7 +1584,7 @@ bool U6UseCode::use_food(Obj *obj, UseCodeEvent ev) {
 			        || obj->obj_n == OBJ_U6_ALE) {
 				scroll->display_string("\nYou drink it.\n");
 
-				player->add_alcohol(); // add to drunkeness
+				player->add_alcohol(); // add to drunkenness
 			} else
 				scroll->display_string("\nYou eat the food.\n");
 		}

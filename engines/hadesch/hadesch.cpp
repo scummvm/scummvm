@@ -174,9 +174,9 @@ Common::MemoryReadStream *readWiseFile(Common::File &setupFile, const struct Wis
 }
 #endif
 
-Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources *exe) {
+Common::ErrorCode HadeschEngine::loadWindowsCursors(const Common::ScopedPtr<Common::PEResources>& exe) {
 	for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
-		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe, cursorids[i]);
+		Graphics::WinCursorGroup *group = Graphics::WinCursorGroup::createCursorGroup(exe.get(), cursorids[i]);
 
 		if (!group) {
 			debug("Cannot find cursor group %d", cursorids[i]);
@@ -193,19 +193,22 @@ Common::ErrorCode HadeschEngine::loadWindowsCursors(Common::PEResources *exe) {
 Common::ErrorCode HadeschEngine::loadCursors() {
 	debug("HadeschEngine: loading cursors");
 
-	Common::PEResources *exe = new Common::PEResources();
-	if (exe->loadFromEXE("HADESCH.EXE")) {
-		Common::ErrorCode status = loadWindowsCursors(exe);
-		delete exe;
-		return status;
-	} else {
-		delete exe;
-	}
+	const char *const winPaths[] = {
+		"HADESCH.EXE",
+		"WIN95/HADESCH.EXE"
+	};
 
 	const char *const macPaths[] = {
 		"Hades_-_Copy_To_Hard_Drive/Hades_Challenge/Hades_Challenge_PPC",
 		"Hades - Copy To Hard Drive/Hades Challenge/Hades Challenge PPC"
 	};
+
+	for (uint j = 0; j < ARRAYSIZE(macPaths); ++j) {
+		Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
+		if (exe->loadFromEXE(winPaths[j])) {
+			return loadWindowsCursors(exe);
+		}
+	}
 
 	for (uint j = 0; j < ARRAYSIZE(macPaths); ++j) {
 	  	Common::MacResManager resMan = Common::MacResManager();
@@ -214,7 +217,8 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 		}
 
 		for (unsigned i = 0; i < ARRAYSIZE(cursorids); i++) {
-			Common::SeekableReadStream *stream = resMan.getResource(MKTAG('c','r','s','r'), cursorids[i]);
+			Common::ScopedPtr<Common::SeekableReadStream> stream = Common::ScopedPtr<Common::SeekableReadStream>(
+				resMan.getResource(MKTAG('c','r','s','r'), cursorids[i]));
 			if (!stream) {
 				debug("Couldn't load cursor %d", cursorids[i]);
 				return Common::kUnsupportedGameidError;
@@ -222,7 +226,6 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 			Graphics::MacCursor *macCursor = new Graphics::MacCursor();
 			macCursor->readFromStream(*stream);
 			_cursors.push_back(macCursor);
-			delete stream;
 			_macCursors.push_back(macCursor);
 		}
 		return Common::kNoError;
@@ -249,13 +252,10 @@ Common::ErrorCode HadeschEngine::loadCursors() {
 					return Common::kUnsupportedGameidError;
 				}
 
-				exe = new Common::PEResources();
+				Common::ScopedPtr<Common::PEResources> exe = Common::ScopedPtr<Common::PEResources>(new Common::PEResources());
 				if (exe->loadFromEXE(hadeschExe)) {
 					Common::ErrorCode status = loadWindowsCursors(exe);
-					delete exe;
 					return status;
-				} else {
-					delete exe;
 				}
 			}
 		}
@@ -489,9 +489,10 @@ Common::Error HadeschEngine::run() {
 
 	if (!_wdPodFile) {
 		const char *const wdpodpaths[] = {
-			"WIN9x/WORLD/WD.POD", "WD.POD",
+			"WIN9x/WORLD/WD.POD", "WIN95/WORLD/WD.POD", "WD.POD",
 			"Hades_-_Copy_To_Hard_Drive/Hades_Challenge/World/wd.pod",
-			"Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod"};
+			"Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod"
+		};
 		debug("HadeschEngine: loading wd.pod");
 		for (uint i = 0; i < ARRAYSIZE(wdpodpaths); ++i) {
 			Common::SharedPtr<Common::File> file(new Common::File());

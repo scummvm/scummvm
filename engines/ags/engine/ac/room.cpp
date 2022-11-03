@@ -844,7 +844,7 @@ void load_new_room(int newnum, CharacterInfo *forchar) {
 	generate_light_table();
 	update_music_volume();
 
-	// If we are not restoring a save, update cameras to accomodate for this
+	// If we are not restoring a save, update cameras to accommodate for this
 	// new room; otherwise this is done later when cameras are recreated.
 	if (forchar != nullptr) {
 		if (_GP(play).IsAutoRoomViewport())

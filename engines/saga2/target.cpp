@@ -46,39 +46,39 @@ void readTarget(void *mem, Common::InSaveFile *in) {
 	int16 type = in->readSint16LE();
 
 	switch (type) {
-	case locationTarget:
+	case kLocationTarget:
 		new (mem) LocationTarget(in);
 		break;
 
-	case specificTileTarget:
+	case kSpecificTileTarget:
 		new (mem) SpecificTileTarget(in);
 		break;
 
-	case tilePropertyTarget:
+	case kTilePropertyTarget:
 		new (mem) TilePropertyTarget(in);
 		break;
 
-	case specificMetaTileTarget:
+	case kSpecificMetaTileTarget:
 		new (mem) SpecificMetaTileTarget(in);
 		break;
 
-	case metaTilePropertyTarget:
+	case kMetaTilePropertyTarget:
 		new (mem) MetaTilePropertyTarget(in);
 		break;
 
-	case specificObjectTarget:
+	case kSpecificObjectTarget:
 		new (mem)  SpecificObjectTarget(in);
 		break;
 
-	case objectPropertyTarget:
+	case kObjectPropertyTarget:
 		new (mem)  ObjectPropertyTarget(in);
 		break;
 
-	case specificActorTarget:
+	case kSpecificActorTarget:
 		new (mem) SpecificActorTarget(in);
 		break;
 
-	case actorPropertyTarget:
+	case kActorPropertyTarget:
 		new (mem) ActorPropertyTarget(in);
 		break;
 	}
@@ -172,7 +172,7 @@ void LocationTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 LocationTarget::getType() const {
-	return locationTarget;
+	return kLocationTarget;
 }
 
 //----------------------------------------------------------------------
@@ -193,7 +193,7 @@ void LocationTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool LocationTarget::operator == (const Target &t) const {
-	if (t.getType() != locationTarget) return false;
+	if (t.getType() != kLocationTarget) return false;
 
 	const LocationTarget *targetPtr = (const LocationTarget *)&t;
 
@@ -229,11 +229,11 @@ TilePoint TileTarget::where(GameWorld *world, const TilePoint &tp) const {
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
 	TileIterator        tIter(world->_mapNum, tileReg);
@@ -284,11 +284,11 @@ int16 TileTarget::where(
 	StandingTileInfo    sti;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxTileDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxTileDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxTileDist - 1 + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxTileDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxTileDist - 1 + kTileUVMask)
 	                >>  kTileUVShift;
 
 	TileIterator        tIter(world->_mapNum, tileReg);
@@ -356,7 +356,7 @@ void SpecificTileTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 SpecificTileTarget::getType() const {
-	return specificTileTarget;
+	return kSpecificTileTarget;
 }
 
 //----------------------------------------------------------------------
@@ -377,7 +377,7 @@ void SpecificTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificTileTarget) return false;
+	if (t.getType() != kSpecificTileTarget) return false;
 
 	const SpecificTileTarget *targetPtr = (const SpecificTileTarget *)&t;
 
@@ -415,7 +415,7 @@ void TilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 TilePropertyTarget::getType() const {
-	return tilePropertyTarget;
+	return kTilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -436,7 +436,7 @@ void TilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool TilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != tilePropertyTarget) return false;
+	if (t.getType() != kTilePropertyTarget) return false;
 
 	const TilePropertyTarget  *targetPtr = (const TilePropertyTarget *)&t;
 
@@ -461,11 +461,11 @@ TilePoint MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Determine the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
 	MetaTileIterator    mIter(world->_mapNum, tileReg);
@@ -515,11 +515,11 @@ int16 MetaTileTarget::where(
 	TileRegion          tileReg;
 
 	//  Compute the tile region to search
-	tileReg.min.u = (tp.u - maxMetaDist) >> kTileUVShift;
-	tileReg.max.u = (tp.u + maxMetaDist + kTileUVMask)
+	tileReg.min.u = (tp.u - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.u = (tp.u + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
-	tileReg.min.v = (tp.v - maxMetaDist) >> kTileUVShift;
-	tileReg.max.v = (tp.v + maxMetaDist + kTileUVMask)
+	tileReg.min.v = (tp.v - kMaxMetaDist) >> kTileUVShift;
+	tileReg.max.v = (tp.v + kMaxMetaDist + kTileUVMask)
 	                >>  kTileUVShift;
 
 	MetaTileIterator    mIter(world->_mapNum, tileReg);
@@ -586,7 +586,7 @@ void SpecificMetaTileTarget::write(Common::MemoryWriteStreamDynamic *out) const 
 //	Return an integer representing the type of target
 
 int16 SpecificMetaTileTarget::getType() const {
-	return specificMetaTileTarget;
+	return kSpecificMetaTileTarget;
 }
 
 //----------------------------------------------------------------------
@@ -607,7 +607,7 @@ void SpecificMetaTileTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificMetaTileTarget::operator == (const Target &t) const {
-	if (t.getType() != specificMetaTileTarget) return false;
+	if (t.getType() != kSpecificMetaTileTarget) return false;
 
 	const SpecificMetaTileTarget  *targetPtr = (const SpecificMetaTileTarget *)&t;
 
@@ -649,7 +649,7 @@ void MetaTilePropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const 
 //	Return an integer representing the type of target
 
 int16 MetaTilePropertyTarget::getType() const {
-	return metaTilePropertyTarget;
+	return kMetaTilePropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -670,7 +670,7 @@ void MetaTilePropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool MetaTilePropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != metaTilePropertyTarget) return false;
+	if (t.getType() != kMetaTilePropertyTarget) return false;
 
 	const MetaTilePropertyTarget  *targetPtr = (const MetaTilePropertyTarget *)&t;
 
@@ -771,7 +771,7 @@ TilePoint ObjectTarget::where(GameWorld *world, const TilePoint &tp) const {
 	GameObject     *objPtr = nullptr;
 	TilePoint               objCoords,
 	                        bestOCoords = Nowhere;
-	CircularObjectIterator  iter(world, tp, maxObjDist);
+	CircularObjectIterator  iter(world, tp, kMaxObjDist);
 
 	//  Iterate through each object in the vicinity
 	for (iter.first(&objPtr, &dist);
@@ -813,7 +813,7 @@ int16 ObjectTarget::where(
     GameWorld *world,
     const TilePoint &tp,
     TargetLocationArray &tla) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr;
 	ObjectID                id;
@@ -833,7 +833,7 @@ int16 ObjectTarget::where(
 GameObject *ObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr,
 	               *bestObj = nullptr;
@@ -879,7 +879,7 @@ int16 ObjectTarget::object(
     GameWorld *world,
     const TilePoint &tp,
     TargetObjectArray &toa) const {
-	CircularObjectIterator  objIter(world, tp, maxObjDist);
+	CircularObjectIterator  objIter(world, tp, kMaxObjDist);
 
 	GameObject     *objPtr;
 	ObjectID                id;
@@ -924,7 +924,7 @@ void SpecificObjectTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 SpecificObjectTarget::getType() const {
-	return specificObjectTarget;
+	return kSpecificObjectTarget;
 }
 
 //----------------------------------------------------------------------
@@ -945,7 +945,7 @@ void SpecificObjectTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificObjectTarget::operator == (const Target &t) const {
-	if (t.getType() != specificObjectTarget) return false;
+	if (t.getType() != kSpecificObjectTarget) return false;
 
 	const SpecificObjectTarget    *targetPtr = (const SpecificObjectTarget *)&t;
 
@@ -972,7 +972,7 @@ TilePoint SpecificObjectTarget::where(
 	if (o->world() == world) {
 		TilePoint   objLoc = o->getLocation();
 
-		if ((tp - objLoc).quickHDistance() < maxObjDist)
+		if ((tp - objLoc).quickHDistance() < kMaxObjDist)
 			return objLoc;
 	}
 
@@ -993,7 +993,7 @@ int16 SpecificObjectTarget::where(
 		TilePoint   objLoc = o->getLocation();
 		int16       dist = (tp - objLoc).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			tla.locs = 1;
 			tla.locArray[0] = objLoc;
 			tla.distArray[0] = dist;
@@ -1015,7 +1015,7 @@ GameObject *SpecificObjectTarget::object(
 	GameObject *o = GameObject::objectAddress(_obj);
 
 	if (o->world() == world) {
-		if ((tp - o->getLocation()).quickHDistance() < maxObjDist)
+		if ((tp - o->getLocation()).quickHDistance() < kMaxObjDist)
 			return o;
 	}
 
@@ -1035,7 +1035,7 @@ int16 SpecificObjectTarget::object(
 	if (toa.size > 0 && o->world() == world) {
 		int16       dist = (tp - o->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			toa.objs = 1;
 			toa.objArray[0] = o;
 			toa.distArray[0] = dist;
@@ -1075,7 +1075,7 @@ void ObjectPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 ObjectPropertyTarget::getType() const {
-	return objectPropertyTarget;
+	return kObjectPropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1096,7 +1096,7 @@ void ObjectPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ObjectPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != objectPropertyTarget) return false;
+	if (t.getType() != kObjectPropertyTarget) return false;
 
 	const ObjectPropertyTarget *targetPtr = (const ObjectPropertyTarget *)&t;
 
@@ -1177,7 +1177,7 @@ void SpecificActorTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 SpecificActorTarget::getType() const {
-	return specificActorTarget;
+	return kSpecificActorTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1198,7 +1198,7 @@ void SpecificActorTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool SpecificActorTarget::operator == (const Target &t) const {
-	if (t.getType() != specificActorTarget) return false;
+	if (t.getType() != kSpecificActorTarget) return false;
 
 	const SpecificActorTarget *targetPtr = (const SpecificActorTarget *)&t;
 
@@ -1221,7 +1221,7 @@ TilePoint SpecificActorTarget::where(GameWorld *world, const TilePoint &tp) cons
 	if (_a->world() == world) {
 		TilePoint   actorLoc = _a->getLocation();
 
-		if ((tp - actorLoc).quickHDistance() < maxObjDist)
+		if ((tp - actorLoc).quickHDistance() < kMaxObjDist)
 			return actorLoc;
 	}
 
@@ -1237,7 +1237,7 @@ int16 SpecificActorTarget::where(GameWorld *world, const TilePoint &tp, TargetLo
 		TilePoint   actorLoc = _a->getLocation();
 		int16       dist = (tp - actorLoc).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			tla.locs = 1;
 			tla.locArray[0] = actorLoc;
 			tla.distArray[0] = dist;
@@ -1255,7 +1255,7 @@ int16 SpecificActorTarget::where(GameWorld *world, const TilePoint &tp, TargetLo
 
 GameObject *SpecificActorTarget::object(GameWorld *world, const TilePoint &tp) const {
 	if (_a->world() == world) {
-		if ((tp - _a->getLocation()).quickHDistance() < maxObjDist)
+		if ((tp - _a->getLocation()).quickHDistance() < kMaxObjDist)
 			return _a;
 	}
 
@@ -1270,7 +1270,7 @@ int16 SpecificActorTarget::object(GameWorld *world, const TilePoint &tp, TargetO
 	if (toa.size > 0 && _a->world() == world) {
 		int16       dist = (tp - _a->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			toa.objs = 1;
 			toa.objArray[0] = _a;
 			toa.distArray[0] = dist;
@@ -1288,7 +1288,7 @@ int16 SpecificActorTarget::object(GameWorld *world, const TilePoint &tp, TargetO
 
 Actor *SpecificActorTarget::actor(GameWorld *world, const TilePoint &tp) const {
 	if (_a->world() == world) {
-		if ((tp - _a->getLocation()).quickHDistance() < maxObjDist)
+		if ((tp - _a->getLocation()).quickHDistance() < kMaxObjDist)
 			return _a;
 	}
 
@@ -1303,7 +1303,7 @@ int16 SpecificActorTarget::actor(GameWorld *world, const TilePoint &tp, TargetAc
 	if (taa.size > 0 && _a->world() == world) {
 		int16       dist = (tp - _a->getLocation()).quickHDistance();
 
-		if (dist < maxObjDist) {
+		if (dist < kMaxObjDist) {
 			taa.actors = 1;
 			taa.actorArray[0] = _a;
 			taa.distArray[0] = dist;
@@ -1343,7 +1343,7 @@ void ActorPropertyTarget::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of target
 
 int16 ActorPropertyTarget::getType() const {
-	return actorPropertyTarget;
+	return kActorPropertyTarget;
 }
 
 //----------------------------------------------------------------------
@@ -1364,7 +1364,7 @@ void ActorPropertyTarget::clone(void *mem) const {
 //	Determine if the specified target is equivalent to this target
 
 bool ActorPropertyTarget::operator == (const Target &t) const {
-	if (t.getType() != actorPropertyTarget) return false;
+	if (t.getType() != kActorPropertyTarget) return false;
 
 	const ActorPropertyTarget *targetPtr = (const ActorPropertyTarget *)&t;
 

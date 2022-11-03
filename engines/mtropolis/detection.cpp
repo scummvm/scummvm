@@ -30,6 +30,7 @@
 static const PlainGameDescriptor mTropolisGames[] = {
 	{"obsidian", "Obsidian"},
 	{"mti", "Muppet Treasure Island"},
+	{"spqr", "SPQR: The Empire's Darkest Hour"},
 	{nullptr, nullptr}
 };
 
@@ -114,6 +115,7 @@ static const char *directoryGlobs[] = {
 	"RESOURCE",
 	"Saved Games",
 	"MTPLAY32",
+	"GAME",
 	nullptr
 };
 

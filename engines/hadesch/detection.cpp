@@ -47,12 +47,15 @@ static const PlainGameDescriptor hadeschGames[] = {
 // in pretty deep paths:
 // * Setup.exe [Russian-Windows]
 // * WIN9x/WORLD/wd.pod [English-Windows]
+// * WIN95/WORLD/wd.pod [English-Windows, alternative]
+// * WIN95/HADESCH.EXE [English-Windows]
 // * CDAssets/OLYMPUS/ol.pod [English-Windows]
 // * Scenes/OLYMPUS/ol.pod [English-Mac and Russian-Windows]
-// * Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod [English-Mac]
+// * Hades_-_Copy_To_Hard_Drive/Hades_Challenge/World/wd.pod [English-Mac]
 // * Hades - Copy To Hard Drive/Hades Challenge/World/wd.pod [English-Mac]
 // The difference between 2 last one is how the files were copied
 static const char *const directoryGlobs[] = {
+	"WIN95",
 	"WIN9x",
 	"WORLD",
 	"CDAssets",

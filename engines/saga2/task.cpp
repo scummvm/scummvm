@@ -295,7 +295,7 @@ void TaskStackList::updateTaskStacks() {
 			TaskResult  result;
 
 			//  Update the task stack and delete it if it is done
-			if ((result = ts->update()) != taskNotDone) {
+			if ((result = ts->update()) != kTaskNotDone) {
 				Actor *a = ts->getActor();
 				assert(a != nullptr);
 
@@ -651,75 +651,75 @@ void readTask(TaskID id, Common::InSaveFile *in) {
 
 	//  Reconstruct the Task based upon the type
 	switch (type) {
-	case wanderTask:
+	case kWanderTask:
 		new WanderTask(in, id);
 		break;
 
-	case tetheredWanderTask:
+	case kTetheredWanderTask:
 		new TetheredWanderTask(in, id);
 		break;
 
-	case gotoLocationTask:
+	case kGotoLocationTask:
 		new GotoLocationTask(in, id);
 		break;
 
-	case gotoRegionTask:
+	case kGotoRegionTask:
 		new GotoRegionTask(in, id);
 		break;
 
-	case gotoObjectTask:
+	case kGotoObjectTask:
 		new GotoObjectTask(in, id);
 		break;
 
-	case gotoActorTask:
+	case kGotoActorTask:
 		new GotoActorTask(in, id);
 		break;
 
-	case goAwayFromObjectTask:
+	case kGoAwayFromObjectTask:
 		new GoAwayFromObjectTask(in, id);
 		break;
 
-	case goAwayFromActorTask:
+	case kGoAwayFromActorTask:
 		new GoAwayFromActorTask(in, id);
 		break;
 
-	case huntToBeNearLocationTask:
+	case kHuntToBeNearLocationTask:
 		new HuntToBeNearLocationTask(in, id);
 		break;
 
-	case huntToBeNearObjectTask:
+	case kHuntToBeNearObjectTask:
 		new HuntToBeNearObjectTask(in, id);
 		break;
 
-	case huntToPossessTask:
+	case kHuntToPossessTask:
 		new HuntToPossessTask(in, id);
 		break;
 
-	case huntToBeNearActorTask:
+	case kHuntToBeNearActorTask:
 		new HuntToBeNearActorTask(in, id);
 		break;
 
-	case huntToKillTask:
+	case kHuntToKillTask:
 		new HuntToKillTask(in, id);
 		break;
 
-	case huntToGiveTask:
+	case kHuntToGiveTask:
 		new HuntToGiveTask(in, id);
 		break;
 
-	case bandTask:
+	case kBandTask:
 		new BandTask(in, id);
 		break;
 
-	case bandAndAvoidEnemiesTask:
+	case kBandAndAvoidEnemiesTask:
 		new BandAndAvoidEnemiesTask(in, id);
 		break;
 
-	case followPatrolRouteTask:
+	case kFollowPatrolRouteTask:
 		new FollowPatrolRouteTask(in, id);
 		break;
 
-	case attendTask:
+	case kAttendTask:
 		new AttendTask(in, id);
 		break;
 	}
@@ -810,7 +810,7 @@ void WanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 WanderTask::getType() const {
-	return wanderTask;
+	return kWanderTask;
 }
 
 //----------------------------------------------------------------------
@@ -827,7 +827,7 @@ void WanderTask::abortTask() {
 
 TaskResult WanderTask::evaluate() {
 	//  Wandering is never done.  It must be stopped manually.
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -848,7 +848,7 @@ TaskResult WanderTask::update() {
 //	Determine if the specified task is equivalent to this task
 
 bool WanderTask::operator == (const Task &t) const {
-	return t.getType() == wanderTask;
+	return t.getType() == kWanderTask;
 }
 
 //----------------------------------------------------------------------
@@ -863,7 +863,7 @@ TaskResult WanderTask::handleWander() {
 	        ||  !actorMotion->isWander())
 		MotionTask::wander(*_stack->getActor());
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -951,7 +951,7 @@ void TetheredWanderTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 TetheredWanderTask::getType() const {
-	return tetheredWanderTask;
+	return kTetheredWanderTask;
 }
 
 //----------------------------------------------------------------------
@@ -974,7 +974,7 @@ void TetheredWanderTask::abortTask() {
 //	Determine if the specified task is equivalent to this task
 
 bool TetheredWanderTask::operator == (const Task &t) const {
-	if (t.getType() != tetheredWanderTask) return false;
+	if (t.getType() != kTetheredWanderTask) return false;
 
 	const TetheredWanderTask *taskPtr = (const TetheredWanderTask *)&t;
 
@@ -1042,7 +1042,7 @@ TaskResult TetheredWanderTask::handleWander() {
 		}
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -1117,10 +1117,10 @@ TaskResult GotoTask::evaluate() {
 	//  Determine if we have reach the target.
 	if (_stack->getActor()->getLocation() == destination()) {
 		abortTask();
-		return taskSucceeded;
+		return kTaskSucceeded;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -1129,11 +1129,11 @@ TaskResult GotoTask::update() {
 	//  Check to see if we have reached the target
 	{
 		TaskResult  result = evaluate();
-		if (result != taskNotDone) return result;
+		if (result != kTaskNotDone) return result;
 	}
 
 	Actor *const   a = _stack->getActor();
-	//  Compute the immediate destination based upon wether or not the
+	//  Compute the immediate destination based upon whether or not the
 	//  actor has a line of sight to the target.
 	TilePoint       immediateDest = lineOfSight()
 	                                ?   destination()
@@ -1148,7 +1148,7 @@ TaskResult GotoTask::update() {
 		}
 
 		//  Determine if there is aready a motion task, and if so,
-		//  wether or not it needs to be modified.
+		//  whether or not it needs to be modified.
 		MotionTask  *actorMotion = a->_moveTask;
 		TilePoint   actorLoc = a->getLocation();
 
@@ -1198,10 +1198,10 @@ TaskResult GotoTask::update() {
 			if (_wander != nullptr)  _wander->update();
 		}
 
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -1245,14 +1245,14 @@ void GotoLocationTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GotoLocationTask::getType() const {
-	return gotoLocationTask;
+	return kGotoLocationTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GotoLocationTask::operator == (const Task &t) const {
-	if (t.getType() != gotoLocationTask) return false;
+	if (t.getType() != kGotoLocationTask) return false;
 
 	const GotoLocationTask *taskPtr = (const GotoLocationTask *)&t;
 
@@ -1335,14 +1335,14 @@ void GotoRegionTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GotoRegionTask::getType() const {
-	return gotoRegionTask;
+	return kGotoRegionTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GotoRegionTask::operator == (const Task &t) const {
-	if (t.getType() != gotoRegionTask) return false;
+	if (t.getType() != kGotoRegionTask) return false;
 
 	const GotoRegionTask *taskPtr = (const GotoRegionTask *)&t;
 
@@ -1443,8 +1443,8 @@ TilePoint GotoObjectTargetTask::intermediateDest() {
 //----------------------------------------------------------------------
 
 bool GotoObjectTargetTask::lineOfSight() {
-	if (_flags & track) {
-		_flags |= inSight;
+	if (_flags & kTrack) {
+		_flags |= kInSight;
 		_lastKnownLoc = getObject()->getLocation();
 	} else {
 		Actor       *a = _stack->getActor();
@@ -1454,7 +1454,7 @@ bool GotoObjectTargetTask::lineOfSight() {
 		SenseInfo   info;
 
 		//  Determine if we need to retest the line of sight
-		if (_flags & inSight) {
+		if (_flags & kInSight) {
 			//  If the object was previously in sight, retest the line of
 			//  sight if the target has moved beyond a certain range from
 			//  the last location it was tested at.
@@ -1462,39 +1462,39 @@ bool GotoObjectTargetTask::lineOfSight() {
 			        ||  ABS(_targetLoc.z - _lastTestedLoc.z) > 25) {
 				if (a->canSenseSpecificObject(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID)
 				        ||  a->canSenseSpecificObjectIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID))
-					_flags |= inSight;
+					_flags |= kInSight;
 				else
-					_flags &= ~inSight;
+					_flags &= ~kInSight;
 				_lastTestedLoc = _targetLoc;
 			}
 		} else {
 			//  If the object was not privously in sight, retest the line
 			//  of sight periodically
 			if (_sightCtr == 0) {
-				_sightCtr = sightRate;
+				_sightCtr = kSightRate;
 				if (a->canSenseSpecificObject(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID)
 				        ||  a->canSenseSpecificObjectIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            targetID))
-					_flags |= inSight;
+					_flags |= kInSight;
 				else
-					_flags &= ~inSight;
+					_flags &= ~kInSight;
 				_lastTestedLoc = _targetLoc;
 			}
 			_sightCtr--;
 		}
 
-		if (_flags & inSight) {
+		if (_flags & kInSight) {
 			//  If the target is in sight, the last known location is the
 			//  objects current location.
 			_lastKnownLoc = _targetLoc;
@@ -1508,7 +1508,7 @@ bool GotoObjectTargetTask::lineOfSight() {
 		}
 	}
 
-	return _flags & inSight;
+	return _flags & kInSight;
 }
 
 /* ===================================================================== *
@@ -1551,14 +1551,14 @@ void GotoObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GotoObjectTask::getType() const {
-	return gotoObjectTask;
+	return kGotoObjectTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GotoObjectTask::operator == (const Task &t) const {
-	if (t.getType() != gotoObjectTask) return false;
+	if (t.getType() != kGotoObjectTask) return false;
 
 	const GotoObjectTask *taskPtr = (const GotoObjectTask *)&t;
 
@@ -1618,14 +1618,14 @@ void GotoActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GotoActorTask::getType() const {
-	return gotoActorTask;
+	return kGotoActorTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GotoActorTask::operator == (const Task &t) const {
-	if (t.getType() != gotoActorTask) return false;
+	if (t.getType() != kGotoActorTask) return false;
 
 	const GotoActorTask *taskPtr = (const GotoActorTask *)&t;
 
@@ -1711,7 +1711,7 @@ void GoAwayFromTask::abortTask() {
 
 TaskResult GoAwayFromTask::evaluate() {
 	//  Going away is never done, it must be stopped manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -1749,14 +1749,14 @@ TaskResult GoAwayFromTask::update() {
 
 		_goTask->update();
 	} else {
-		if ((_goTask =   _flags & run
+		if ((_goTask =   _flags & kRun
 		                ?   new GotoLocationTask(_stack, dest, 0)
 		                :   new GotoLocationTask(_stack, dest))
 		        !=  nullptr)
 			_goTask->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -1801,14 +1801,14 @@ void GoAwayFromObjectTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GoAwayFromObjectTask::getType() const {
-	return goAwayFromObjectTask;
+	return kGoAwayFromObjectTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GoAwayFromObjectTask::operator == (const Task &t) const {
-	if (t.getType() != goAwayFromObjectTask) return false;
+	if (t.getType() != kGoAwayFromObjectTask) return false;
 
 	const GoAwayFromObjectTask *taskPtr = (const GoAwayFromObjectTask *)&t;
 
@@ -1879,14 +1879,14 @@ void GoAwayFromActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 GoAwayFromActorTask::getType() const {
-	return goAwayFromActorTask;
+	return kGoAwayFromActorTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool GoAwayFromActorTask::operator == (const Task &t) const {
-	if (t.getType() != goAwayFromActorTask) return false;
+	if (t.getType() != kGoAwayFromActorTask) return false;
 
 	const GoAwayFromActorTask *taskPtr = (const GoAwayFromActorTask *)&t;
 
@@ -1933,7 +1933,7 @@ HuntTask::HuntTask(Common::InSaveFile *in, TaskID id) : Task(in, id) {
 	_subTask = nullptr;
 
 	//  If the flags say we have a sub task, restore it too
-	if (_huntFlags & (huntGoto | huntWander))
+	if (_huntFlags & (kHuntGoto| kHuntWander))
 		_subTaskID = in->readSint16LE();
 	else
 		_subTaskID = NoTask;
@@ -1946,7 +1946,7 @@ void HuntTask::fixup( void ) {
 	//	Let the base class fixup its pointers
 	Task::fixup();
 
-	if (_huntFlags & (huntGoto | huntWander))
+	if (_huntFlags & (kHuntGoto| kHuntWander))
 		_subTask = getTaskAddress(_subTaskID);
 	else
 		_subTask = nullptr;
@@ -1960,7 +1960,7 @@ inline int32 HuntTask::archiveSize() const {
 	int32       size = 0;
 
 	size += Task::archiveSize() + sizeof(_huntFlags);
-	if (_huntFlags & (huntGoto | huntWander)) size += sizeof(TaskID);
+	if (_huntFlags & (kHuntGoto| kHuntWander)) size += sizeof(TaskID);
 
 	return size;
 }
@@ -1973,14 +1973,14 @@ void HuntTask::write(Common::MemoryWriteStreamDynamic *out) const {
 	out->writeByte(_huntFlags);
 
 	//  If the flags say we have a sub task, store it too
-	if (_huntFlags & (huntGoto | huntWander))
+	if (_huntFlags & (kHuntGoto| kHuntWander))
 		out->writeSint16LE(getTaskID(_subTask));
 }
 
 //----------------------------------------------------------------------
 
 void HuntTask::abortTask() {
-	if (_huntFlags & (huntWander | huntGoto)) {
+	if (_huntFlags & (kHuntWander| kHuntGoto)) {
 		_subTask->abortTask();
 		delete _subTask;
 	}
@@ -1994,15 +1994,15 @@ void HuntTask::abortTask() {
 TaskResult HuntTask::evaluate() {
 	if (atTarget()) {
 		//  If we've reached the target abort any sub tasks
-		if (_huntFlags & huntWander)
+		if (_huntFlags & kHuntWander)
 			removeWanderTask();
-		else if (_huntFlags & huntGoto)
+		else if (_huntFlags & kHuntGoto)
 			removeGotoTask();
 
 		return atTargetEvaluate();
 	} else
 		//  If we haven't reached the target, we know we're not done
-		return taskNotDone;
+		return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -2010,7 +2010,7 @@ TaskResult HuntTask::evaluate() {
 TaskResult HuntTask::update() {
 	Actor       *a = _stack->getActor();
 
-	if (a->_moveTask && a->_moveTask->isPrivledged()) return taskNotDone;
+	if (a->_moveTask && a->_moveTask->isPrivledged()) return kTaskNotDone;
 
 	//  Reevaluate the target
 	evaluateTarget();
@@ -2018,45 +2018,45 @@ TaskResult HuntTask::update() {
 	//  Determine if we have reached the target
 	if (atTarget()) {
 		//  If we've reached the target abort any sub tasks
-		if (_huntFlags & huntWander)
+		if (_huntFlags & kHuntWander)
 			removeWanderTask();
-		else if (_huntFlags & huntGoto)
+		else if (_huntFlags & kHuntGoto)
 			removeGotoTask();
 
 		return atTargetUpdate();
 	} else {
 		//  If we are going to a target, determine if the goto task
 		//  is still valid.  If not, abort it.
-		if ((_huntFlags & huntGoto)
+		if ((_huntFlags & kHuntGoto)
 		        &&  targetHasChanged((GotoTask *)_subTask))
 			removeGotoTask();
 
 		//  Determine if there is a goto subtask
-		if (!(_huntFlags & huntGoto)) {
+		if (!(_huntFlags & kHuntGoto)) {
 			GotoTask    *gotoResult;
 
 			//  Try to set up a goto subtask
 			if ((gotoResult = setupGoto()) != nullptr) {
-				if (_huntFlags & huntWander) removeWanderTask();
+				if (_huntFlags & kHuntWander) removeWanderTask();
 
 				_subTask = gotoResult;
-				_huntFlags |= huntGoto;
+				_huntFlags |= kHuntGoto;
 			} else {
 				//  If we couldn't setup a goto task, setup a wander task
-				if (!(_huntFlags & huntWander)) {
+				if (!(_huntFlags & kHuntWander)) {
 					if ((_subTask = new WanderTask(_stack)) != nullptr)
-						_huntFlags |= huntWander;
+						_huntFlags |= kHuntWander;
 				}
 			}
 		}
 
 		//  If there is a subtask, update it
-		if ((_huntFlags & (huntGoto | huntWander)) && _subTask)
+		if ((_huntFlags & (kHuntGoto| kHuntWander)) && _subTask)
 			_subTask->update();
 
 		//  If we're not at the target, we know the hunt task is not
 		//  done
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 }
 
@@ -2065,7 +2065,7 @@ TaskResult HuntTask::update() {
 void HuntTask::removeWanderTask() {
 	_subTask->abortTask();
 	delete _subTask;
-	_huntFlags &= ~huntWander;
+	_huntFlags &= ~kHuntWander;
 }
 
 //----------------------------------------------------------------------
@@ -2074,7 +2074,7 @@ void HuntTask::removeGotoTask() {
 	_subTask->abortTask();
 	delete _subTask;
 	_subTask = nullptr;
-	_huntFlags &= ~huntGoto;
+	_huntFlags &= ~kHuntGoto;
 }
 
 /* ===================================================================== *
@@ -2188,14 +2188,14 @@ void HuntToBeNearLocationTask::write(Common::MemoryWriteStreamDynamic *out) cons
 //	Return an integer representing the type of this task
 
 int16 HuntToBeNearLocationTask::getType() const {
-	return huntToBeNearLocationTask;
+	return kHuntToBeNearLocationTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearLocationTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearLocationTask) return false;
+	if (t.getType() != kHuntToBeNearLocationTask) return false;
 
 	const HuntToBeNearLocationTask *taskPtr = (const HuntToBeNearLocationTask *)&t;
 
@@ -2214,7 +2214,7 @@ void HuntToBeNearLocationTask::evaluateTarget() {
 		_currentTarget =
 		    getTarget()->where(a->world(), a->getLocation());
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 	_targetEvaluateCtr--;
 }
@@ -2237,14 +2237,14 @@ void HuntToBeNearLocationTask::atTargetabortTask() {}
 
 TaskResult HuntToBeNearLocationTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToBeNearLocationTask::atTargetUpdate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -2369,14 +2369,14 @@ void HuntToBeNearObjectTask::write(Common::MemoryWriteStreamDynamic *out) const 
 //	Return an integer representing the type of this task
 
 int16 HuntToBeNearObjectTask::getType() const {
-	return huntToBeNearObjectTask;
+	return kHuntToBeNearObjectTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearObjectTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearObjectTask) return false;
+	if (t.getType() != kHuntToBeNearObjectTask) return false;
 
 	const HuntToBeNearObjectTask *taskPtr = (const HuntToBeNearObjectTask *)&t;
 
@@ -2409,18 +2409,18 @@ void HuntToBeNearObjectTask::evaluateTarget() {
 
 			if (a->canSenseSpecificObject(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)
 			        ||  a->canSenseSpecificObjectIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)) {
 				_currentTarget = objArray[i];
 				break;
 			}
 		}
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 
 	//  Decrement the target reevaluate _counter
@@ -2446,14 +2446,14 @@ void HuntToBeNearObjectTask::atTargetabortTask() {}
 
 TaskResult HuntToBeNearObjectTask::atTargetEvaluate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToBeNearObjectTask::atTargetUpdate() {
 	//  If we're at the target, we're done
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -2499,14 +2499,14 @@ void HuntToPossessTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 HuntToPossessTask::getType() const {
-	return huntToPossessTask;
+	return kHuntToPossessTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToPossessTask::operator == (const Task &t) const {
-	if (t.getType() != huntToPossessTask) return false;
+	if (t.getType() != kHuntToPossessTask) return false;
 
 	const HuntToPossessTask *taskPtr = (const HuntToPossessTask *)&t;
 
@@ -2538,18 +2538,18 @@ void HuntToPossessTask::evaluateTarget() {
 
 			if (a->canSenseSpecificObject(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)
 			        ||  a->canSenseSpecificObjectIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            objID)) {
 				_currentTarget = objArray[i];
 				break;
 			}
 		}
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 
 	//  Decrement the target reevaluate _counter
@@ -2575,16 +2575,16 @@ void HuntToPossessTask::atTargetabortTask() {}
 
 TaskResult HuntToPossessTask::atTargetEvaluate() {
 	if (_currentTarget && _stack->getActor()->isContaining(_currentTarget))
-		return taskSucceeded;
+		return kTaskSucceeded;
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToPossessTask::atTargetUpdate() {
 	//  Hunt to possess in not implemented yet
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -2599,7 +2599,7 @@ HuntActorTask::HuntActorTask(
     const ActorTarget   &at,
     bool                trackFlag) :
 	HuntTask(ts),
-	_flags(trackFlag ? track : 0),
+	_flags(trackFlag ? kTrack : 0),
 	_currentTarget(nullptr) {
 	assert(at.size() <= sizeof(_targetMem));
 	debugC(2, kDebugTasks, " - HuntActorTask");
@@ -2666,14 +2666,14 @@ GotoTask *HuntActorTask::setupGoto() {
 	//  If there is an actor to goto, setup a GotoActorTask, else
 	//  return NULL
 	/*  return  _currentTarget
-	            ?   new GotoActorTask( stack, _currentTarget, flags & track )
+	            ?   new GotoActorTask( stack, _currentTarget, flags & kTrack )
 	            :   NULL;
 	*/
 	if (_currentTarget != nullptr) {
 		return new GotoActorTask(
 		           _stack,
 		           _currentTarget,
-		           _flags & track);
+		           _flags & kTrack);
 	}
 
 	return nullptr;
@@ -2753,14 +2753,14 @@ void HuntToBeNearActorTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 HuntToBeNearActorTask::getType() const {
-	return huntToBeNearActorTask;
+	return kHuntToBeNearActorTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToBeNearActorTask::operator == (const Task &t) const {
-	if (t.getType() != huntToBeNearActorTask) return false;
+	if (t.getType() != kHuntToBeNearActorTask) return false;
 
 	const HuntToBeNearActorTask *taskPtr = (const HuntToBeNearActorTask *)&t;
 
@@ -2793,11 +2793,11 @@ void HuntToBeNearActorTask::evaluateTarget() {
 			if (tracking()
 			        ||  a->canSenseSpecificActor(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            _actorArray[i])
 			        ||  a->canSenseSpecificActorIndirectly(
 			            info,
-			            maxSenseRange,
+			            kMaxSenseRange,
 			            _actorArray[i])) {
 				if (_currentTarget != _actorArray[i]) {
 					if (atTarget()) atTargetabortTask();
@@ -2808,7 +2808,7 @@ void HuntToBeNearActorTask::evaluateTarget() {
 			}
 		}
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 
 	//  Decrement the target reevaluation _counter.
@@ -2852,8 +2852,8 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 	TilePoint   _targetLoc = currentTargetLoc();
 
 	//  If we're not TOO close, we're done
-	if (_stack->getActor()->inRange(_targetLoc, tooClose))
-		return taskNotDone;
+	if (_stack->getActor()->inRange(_targetLoc, kTooClose))
+		return kTaskNotDone;
 
 	if (_goAway != nullptr) {
 		_goAway->abortTask();
@@ -2861,7 +2861,7 @@ TaskResult HuntToBeNearActorTask::atTargetEvaluate() {
 		_goAway = nullptr;
 	}
 
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 //----------------------------------------------------------------------
@@ -2871,7 +2871,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 	TilePoint   _targetLoc = currentTargetLoc();
 
 	//  Determine if we're TOO close
-	if (a->inRange(_targetLoc, tooClose)) {
+	if (a->inRange(_targetLoc, kTooClose)) {
 		//  Setup a go away task if necessary and update it
 		if (_goAway == nullptr) {
 			_goAway = new GoAwayFromObjectTask(_stack, _currentTarget);
@@ -2879,7 +2879,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 		} else
 			_goAway->update();
 
-		return taskNotDone;
+		return kTaskNotDone;
 	}
 
 	//  Delete the go away task if it exists
@@ -2889,7 +2889,7 @@ TaskResult HuntToBeNearActorTask::atTargetUpdate() {
 		_goAway = nullptr;
 	}
 
-	return taskSucceeded;
+	return kTaskSucceeded;
 }
 
 /* ===================================================================== *
@@ -2906,7 +2906,7 @@ HuntToKillTask::HuntToKillTask(
 	HuntActorTask(ts, at, trackFlag),
 	_targetEvaluateCtr(0),
 	_specialAttackCtr(10),
-	_flags(evalWeapon) {
+	_flags(kEvalWeapon) {
 	debugC(2, kDebugTasks, " - HuntToKillTask");
 	Actor       *a = _stack->getActor();
 
@@ -2952,14 +2952,14 @@ void HuntToKillTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 HuntToKillTask::getType() const {
-	return huntToKillTask;
+	return kHuntToKillTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToKillTask::operator == (const Task &t) const {
-	if (t.getType() != huntToKillTask) return false;
+	if (t.getType() != kHuntToKillTask) return false;
 
 	const HuntToKillTask *taskPtr = (const HuntToKillTask *)&t;
 
@@ -2974,7 +2974,7 @@ void HuntToKillTask::abortTask() {
 
 	Actor       *a = _stack->getActor();
 
-	a->_flags &= ~Actor::specialAttack;
+	a->_flags &= ~Actor::kAFSpecialAttack;
 
 	a->setFightStance(false);
 }
@@ -2983,7 +2983,7 @@ void HuntToKillTask::abortTask() {
 
 TaskResult HuntToKillTask::update() {
 	if (_specialAttackCtr == 0) {
-		_stack->getActor()->_flags |= Actor::specialAttack;
+		_stack->getActor()->_flags |= Actor::kAFSpecialAttack;
 		//  A little hack to make monsters with 99 spellcraft cast spells more often
 		if (_stack->getActor()->getStats()->spellcraft >= 99)
 			_specialAttackCtr = 3;
@@ -2999,9 +2999,9 @@ TaskResult HuntToKillTask::update() {
 void HuntToKillTask::evaluateTarget() {
 	Actor               *a = _stack->getActor();
 
-	if (_flags & evalWeapon && a->isInterruptable()) {
+	if (_flags & kEvalWeapon && a->isInterruptable()) {
 		evaluateWeapon();
-		_flags &= ~evalWeapon;
+		_flags &= ~kEvalWeapon;
 	}
 
 
@@ -3024,7 +3024,7 @@ void HuntToKillTask::evaluateTarget() {
 		getTarget()->actor(a->world(), a->getLocation(), taa);
 
 		switch (proto->combatBehavior) {
-		case behaviorHungry:
+		case kBehaviorHungry:
 			//  Iterate through each actor in the array and determine if
 			//  there is a line of sight to that actor
 			for (i = 0; i < taa.actors; i++) {
@@ -3033,11 +3033,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					bestTarget = _actorArray[i];
 					break;
@@ -3045,7 +3045,7 @@ void HuntToKillTask::evaluateTarget() {
 			}
 			break;
 
-		case behaviorCowardly: {
+		case kBehaviorCowardly: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
@@ -3054,11 +3054,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 
@@ -3074,7 +3074,7 @@ void HuntToKillTask::evaluateTarget() {
 		}
 		break;
 
-		case behaviorBerserk: {
+		case kBehaviorBerserk: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
@@ -3083,11 +3083,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 
@@ -3103,7 +3103,7 @@ void HuntToKillTask::evaluateTarget() {
 		}
 		break;
 
-		case behaviorSmart: {
+		case kBehaviorSmart: {
 			int16       bestScore = 0;
 
 			for (i = 0; i < taa.actors; i++) {
@@ -3112,11 +3112,11 @@ void HuntToKillTask::evaluateTarget() {
 				if (tracking()
 				        ||  a->canSenseSpecificActor(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])
 				        ||  a->canSenseSpecificActorIndirectly(
 				            info,
-				            maxSenseRange,
+				            kMaxSenseRange,
 				            _actorArray[i])) {
 					int16   score;
 
@@ -3142,9 +3142,9 @@ void HuntToKillTask::evaluateTarget() {
 			a->_currentTarget = _currentTarget;
 		}
 
-		_flags |= evalWeapon;
+		_flags |= kEvalWeapon;
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 
 	//  Decrement the target reevaluation _counter
@@ -3172,7 +3172,7 @@ void HuntToKillTask::atTargetabortTask() {
 
 TaskResult HuntToKillTask::atTargetEvaluate() {
 	//  This task is never done and must be aborted manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3185,10 +3185,10 @@ TaskResult HuntToKillTask::atTargetUpdate() {
 	//  If we're ready to attack, attack
 	if (a->isInterruptable() && g_vm->_rnd->getRandomNumber(7) == 0) {
 		a->attack(_currentTarget);
-		_flags |= evalWeapon;
+		_flags |= kEvalWeapon;
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3233,13 +3233,13 @@ void HuntToKillTask::evaluateWeapon() {
 		uint16          cSet = proto->containmentSet();
 
 		//  Simply use all armor objects
-		if (!isPlayerActor(a) && (cSet & ProtoObj::isArmor)) {
+		if (!isPlayerActor(a) && (cSet & ProtoObj::kIsArmor)) {
 			if (proto->useSlotAvailable(obj, a))
 				obj->use(actorID);
 			continue;
 		}
 
-		if (cSet & ProtoObj::isWeapon) {
+		if (cSet & ProtoObj::kIsWeapon) {
 			WeaponProto     *weaponProto = (WeaponProto *)proto;
 			int             weaponRating;
 
@@ -3255,7 +3255,7 @@ void HuntToKillTask::evaluateWeapon() {
 			if (weaponRating == 0) continue;
 
 			if (obj == currentWeapon)
-				weaponRating += currentWeaponBonus;
+				weaponRating += kCurrentWeaponBonus;
 
 			if (weaponRating > bestWeaponRating) {
 				bestWeaponRating = weaponRating;
@@ -3318,14 +3318,14 @@ void HuntToGiveTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 HuntToGiveTask::getType() const {
-	return huntToGiveTask;
+	return kHuntToGiveTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool HuntToGiveTask::operator == (const Task &t) const {
-	if (t.getType() != huntToGiveTask) return false;
+	if (t.getType() != kHuntToGiveTask) return false;
 
 	const HuntToGiveTask *taskPtr = (const HuntToGiveTask *)&t;
 
@@ -3351,13 +3351,13 @@ void HuntToGiveTask::atTargetabortTask() {}
 //----------------------------------------------------------------------
 
 TaskResult HuntToGiveTask::atTargetEvaluate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
 
 TaskResult HuntToGiveTask::atTargetUpdate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 /* ===================================================================== *
@@ -3476,14 +3476,14 @@ void BandTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 BandTask::getType() const {
-	return bandTask;
+	return kBandTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool BandTask::operator == (const Task &t) const {
-	return t.getType() == bandTask;
+	return t.getType() == kBandTask;
 }
 
 //----------------------------------------------------------------------
@@ -3561,7 +3561,7 @@ void BandTask::evaluateTarget() {
 		_currentTarget = actorLoc + movementVector;
 		_currentTarget.z = leader->getLocation().z;
 
-		_targetEvaluateCtr = targetEvaluateRate;
+		_targetEvaluateCtr = kTargetEvaluateRate;
 	}
 
 	_targetEvaluateCtr--;
@@ -3631,7 +3631,7 @@ void BandTask::atTargetabortTask() {
 //----------------------------------------------------------------------
 
 TaskResult BandTask::atTargetEvaluate() {
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3647,7 +3647,7 @@ TaskResult BandTask::atTargetUpdate() {
 			_attend->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3676,7 +3676,7 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::firstEnemyRepulsor(
 
 	int16                   actorDistArray[ARRAYSIZE(_actorArray)];
 	TargetActorArray        taa(ARRAYSIZE(_actorArray), _actorArray, actorDistArray);
-	ActorPropertyTarget     target(actorPropIDEnemy);
+	ActorPropertyTarget     target(kActorPropIDEnemy);
 
 	_numActors = target.actor(_a->world(), _a->getLocation(), taa);
 
@@ -3752,14 +3752,14 @@ bool BandTask::BandAndAvoidEnemiesRepulsorIterator::next(
 //	Return an integer representing the type of this task
 
 int16 BandAndAvoidEnemiesTask::getType() const {
-	return bandAndAvoidEnemiesTask;
+	return kBandAndAvoidEnemiesTask;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool BandAndAvoidEnemiesTask::operator == (const Task &t) const {
-	return t.getType() == bandAndAvoidEnemiesTask;
+	return t.getType() == kBandAndAvoidEnemiesTask;
 }
 
 //----------------------------------------------------------------------
@@ -3853,7 +3853,7 @@ void FollowPatrolRouteTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 FollowPatrolRouteTask::getType() const {
-	return followPatrolRouteTask;
+	return kFollowPatrolRouteTask;
 }
 
 //----------------------------------------------------------------------
@@ -3872,7 +3872,7 @@ void FollowPatrolRouteTask::abortTask() {
 TaskResult FollowPatrolRouteTask::evaluate() {
 	//  Simply check the patrol iterator to determine if there are
 	//  any more waypoints
-	return *_patrolIter == Nowhere ? taskSucceeded : taskNotDone;
+	return *_patrolIter == Nowhere ? kTaskSucceeded : kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3885,7 +3885,7 @@ TaskResult FollowPatrolRouteTask::update() {
 //	Determine if the specified task is equivalent to this task
 
 bool FollowPatrolRouteTask::operator == (const Task &t) const {
-	if (t.getType() != followPatrolRouteTask) return false;
+	if (t.getType() != kFollowPatrolRouteTask) return false;
 
 	const FollowPatrolRouteTask *taskPtr = (const FollowPatrolRouteTask *)&t;
 
@@ -3900,7 +3900,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 	TilePoint   currentWayPoint = *_patrolIter,
 	            actorLoc = _stack->getActor()->getLocation();
 
-	if (currentWayPoint == Nowhere) return taskSucceeded;
+	if (currentWayPoint == Nowhere) return kTaskSucceeded;
 
 	//  Determine if the actor has reached the waypoint tile position
 	if ((actorLoc.u >> kTileUVShift)
@@ -3919,18 +3919,18 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 		//  return success
 		if (_lastWayPointNum != -1
 		        &&  _patrolIter.wayPointNum() == _lastWayPointNum)
-			return taskSucceeded;
+			return kTaskSucceeded;
 
 		//  If there are no more way points in the patrol route, return
 		//  success
 		if ((currentWayPoint = *++_patrolIter) == Nowhere)
-			return taskSucceeded;
+			return kTaskSucceeded;
 
 		//  We are at a way point so randomly determine if we should
 		//  pause for a while.
 		if (g_vm->_rnd->getRandomNumber(3) == 0) {
 			pause();
-			return taskNotDone;
+			return kTaskNotDone;
 		}
 	}
 
@@ -3943,7 +3943,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 		if (_gotoWayPoint != nullptr) _gotoWayPoint->update();
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -3952,7 +3952,7 @@ TaskResult FollowPatrolRouteTask::handleFollowPatrolRoute() {
 TaskResult FollowPatrolRouteTask::handlePaused() {
 	TaskResult      result;
 
-	if ((result = evaluate()) == taskNotDone) {
+	if ((result = evaluate()) == kTaskNotDone) {
 		if (_counter == 0)
 			followPatrolRoute();
 		else
@@ -4012,7 +4012,7 @@ void AttendTask::write(Common::MemoryWriteStreamDynamic *out) const {
 //	Return an integer representing the type of this task
 
 int16 AttendTask::getType() const {
-	return attendTask;
+	return kAttendTask;
 }
 
 //----------------------------------------------------------------------
@@ -4029,7 +4029,7 @@ void AttendTask::abortTask() {
 
 TaskResult AttendTask::evaluate() {
 	//  Attending must be stopped manually
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -4045,14 +4045,14 @@ TaskResult AttendTask::update() {
 			MotionTask::turnTowards(*a, _attendLoc);
 	}
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
 //	Determine if the specified task is equivalent to this task
 
 bool AttendTask::operator == (const Task &t) const {
-	if (t.getType() != attendTask) return false;
+	if (t.getType() != kAttendTask) return false;
 
 	const AttendTask *taskPtr = (const AttendTask *)&t;
 
@@ -4137,7 +4137,7 @@ TaskResult TaskStack::evaluate() {
 
 		return stackBottom->evaluate();
 	} else
-		return taskNotDone;
+		return kTaskNotDone;
 }
 
 //----------------------------------------------------------------------
@@ -4148,14 +4148,14 @@ TaskResult TaskStack::update() {
 
 	//  If the actor is currently uniterruptable then this task is _paused
 	if (!_actor->isInterruptable())
-		return taskNotDone;
+		return kTaskNotDone;
 
 	if (_stackBottomID != NoTask) {
 		Task    *stackBottom = getTaskAddress(_stackBottomID);
 
 		//  Determine if it is time to reevaluate the tasks
 		if (--_evalCount == 0) {
-			if ((result = stackBottom->evaluate()) != taskNotDone) {
+			if ((result = stackBottom->evaluate()) != kTaskNotDone) {
 				delete stackBottom;
 				_stackBottomID = NoTask;
 
@@ -4165,16 +4165,16 @@ TaskResult TaskStack::update() {
 		}
 
 		//  Update the tasks
-		if ((result = stackBottom->update()) != taskNotDone) {
+		if ((result = stackBottom->update()) != kTaskNotDone) {
 			delete stackBottom;
 			_stackBottomID = NoTask;
 
 			return result;
 		}
 	} else
-		return taskFailed;
+		return kTaskFailed;
 
-	return taskNotDone;
+	return kTaskNotDone;
 }
 
 } // end of namespace Saga2

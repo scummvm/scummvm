@@ -231,7 +231,7 @@ int16 scriptActorTransfer(int16 *args) {
 	//  Move the object to a new location
 	if ((isObject(args[0])
 	        && (GameObject::protoAddress(args[0])->containmentSet()
-	            &   ProtoObj::isContainer))
+	            &   ProtoObj::kIsContainer))
 	        ||  isActor(args[0])) {
 		ObjectID        targetID = args[0];
 		GameObject      *target = GameObject::objectAddress(targetID);
@@ -243,8 +243,8 @@ int16 scriptActorTransfer(int16 *args) {
 			uint16      cSet = target->proto()->containmentSet();
 
 			obj->move(Location(targetSlot, targetID));
-			if ((cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))
-			        == (ProtoObj::isIntangible | ProtoObj::isContainer))
+			if ((cSet & (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))
+			        == (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))
 				g_vm->_cnm->setUpdate(targetID);
 		}
 	} else {
@@ -328,7 +328,7 @@ int16 scriptActorSetProto(int16 *args) {
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 	int16           oldProto = obj->getProtoNum();
 
-	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::temporary)) {
+	if (isActor(obj) && (((Actor *)obj)->_flags & Actor::kAFTemporary)) {
 		decTempActorCount(oldProto);
 		incTempActorCount(args[0]);
 	}
@@ -479,10 +479,10 @@ int16 scriptActorSay(int16 *args) {
 	//  Actor speech enums -- move these to include file
 	// MOVED TO SPEECH.H - EO
 //	enum {
-//		speakContinued  = (1<<0),           // Append next speech
-//		speakNoAnimate  = (1<<1),           // Don't animate speaking
-//		speakWait       = (1<<2),           // wait until speech finished
-//		speakLock       = (1<<3),           // LockUI while speaking
+//		kSpeakContinued  = (1<<0),           // Append next speech
+//		kSpeakNoAnimate  = (1<<1),           // Don't animate speaking
+//		kSpeakWait       = (1<<2),           // wait until speech finished
+//		kSpeakLock       = (1<<3),           // LockUI while speaking
 //	};
 
 	//  'obj' is the actor doing the speaking.
@@ -503,8 +503,8 @@ int16 scriptActorSay(int16 *args) {
 	if (sp == nullptr) {
 		uint16  spFlags = 0;
 
-		if (flags & speakNoAnimate) spFlags |= Speech::spNoAnimate;
-		if (flags & speakLock)      spFlags |= Speech::spLock;
+		if (flags & kSpeakNoAnimate) spFlags |= Speech::kSpNoAnimate;
+		if (flags & kSpeakLock)      spFlags |= Speech::kSpLock;
 
 		sp = speechList.newTask(obj->thisID(), spFlags);
 
@@ -522,10 +522,10 @@ int16 scriptActorSay(int16 *args) {
 	}
 
 	//  If we're ready to activate the speech
-	if (!(flags & speakContinued)) {
+	if (!(flags & kSpeakContinued)) {
 		//  If we're going to wait for it synchronously
-		if (flags & speakWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+		if (flags & kSpeakWait) {
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			sp->setWakeUp(getThreadID(thisThread));
 		}
 
@@ -618,7 +618,7 @@ int16 scriptActorSetOpen( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectOpen );
+        kObjectOpen );
     return 0;
 }
 
@@ -626,7 +626,7 @@ int16 scriptActorSetLocked( int16 *args )
 {
     (((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
         args[0] ? 0xffff : 0,
-        objectLocked );
+        kObjectLocked );
     return 0;
 }
 */
@@ -635,7 +635,7 @@ int16 scriptActorSetImportant(int16 *args) {
 	OBJLOG(SetImportant);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectImportant);
+	    kObjectImportant);
 	return 0;
 }
 
@@ -643,7 +643,7 @@ int16 scriptActorSetScavengable(int16 *args) {
 	OBJLOG(SetScavengable);
 	(((ObjectData *)thisThread->_thisObject)->obj)->setFlags(
 	    args[0] ? (int16) 0xffff : (int16) 0,
-	    objectScavengable);
+	    kObjectScavengable);
 	return 0;
 }
 
@@ -966,7 +966,7 @@ int16 scriptGameObjectGetMass(int16 *) {
 	OBJLOG(GetMass);
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 
-	return (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+	return (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 	       ? obj->getExtra() : 1;
 }
 
@@ -978,9 +978,9 @@ int16 scriptGameObjectSetMass(int16 *args) {
 	OBJLOG(SetMass);
 	GameObject      *obj = ((ObjectData *)thisThread->_thisObject)->obj;
 
-	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		obj->setExtra(args[0]);
-		if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			g_vm->_cnm->setUpdate(obj->IDParent());
 		}
 		return true;
@@ -1585,12 +1585,12 @@ int16 scriptActorTurn(int16 *args) {
 
 		uint16      flags = args[1];
 
-		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+		if (flags & kMoveWait) {
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, args[0] & 7);
 		} else {
 			MotionTask::turn(*a, args[0] & 7);
-			return motionStarted;
+			return kMotionStarted;
 		}
 	}
 
@@ -1616,12 +1616,12 @@ int16 scriptActorTurnTowards(int16 *args) {
 		dir = (GameObject::objectAddress(args[0])->getLocation()
 		       -   a->getLocation()).quickDir();
 
-		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+		if (flags & kMoveWait) {
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::turn(getThreadID(thisThread), *a, dir);
 		} else {
 			MotionTask::turn(*a, dir);
-			return motionStarted;
+			return kMotionStarted;
 		}
 	}
 
@@ -1641,13 +1641,13 @@ int16 scriptActorWalk(int16 *args) {
 		TilePoint   dest(args[0], args[1], args[2]);
 		uint16      flags = args[3];
 
-		if (flags & moveWait) {
-			thisThread->waitForEvent(Thread::waitOther, nullptr);
+		if (flags & kMoveWait) {
+			thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 			MotionTask::walkToDirect(
-			    getThreadID(thisThread), *a, dest, flags & moveRun);
+			    getThreadID(thisThread), *a, dest, flags & kMoveRun);
 		} else {
-			MotionTask::walkToDirect(*a, dest, flags & moveRun);
-			return motionStarted;
+			MotionTask::walkToDirect(*a, dest, flags & kMoveRun);
+			return kMotionStarted;
 		}
 	}
 
@@ -1673,7 +1673,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            thisThread->_argCount >= 4
@@ -1687,7 +1687,7 @@ int16 scriptActorAssignPatrolRoute(int16 *args) {
 }
 
 //-----------------------------------------------------------------------
-//	Assign a patrol route and specify the begining and ending waypoints
+//	Assign a patrol route and specify the beginning and ending waypoints
 //		int "c" assignPartialPatrolRoute(
 //			int untilHour,
 //			int routeNo,
@@ -1705,7 +1705,7 @@ int16 scriptActorAssignPartialPatrolRoute(int16 *args) {
 
 		if (new PatrolRouteAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            args[1],
 		            (uint8)args[2],
 		            args[3],
@@ -1849,7 +1849,7 @@ int16 scriptActorAssignTetheredWander(int16 *args) {
 
 		if (new TetheredWanderAssignment(a,
 		            (uint16)args[0]
-		            *   CalenderTime::kFramesPerHour,
+		            *   CalendarTime::kFramesPerHour,
 		            tetherReg)
 		        !=  nullptr)
 			return true;
@@ -1871,9 +1871,9 @@ int16 scriptActorAssignAttend(int16 *args) {
 		if (a->getAssignment() != nullptr) delete a->getAssignment();
 
 		if (new AttendAssignment(a,
-		            (g_vm->_calender->frameInDay()
+		            (g_vm->_calendar->frameInDay()
 		             + (uint16)args[0])
-		            %   CalenderTime::kFramesPerDay,
+		            %   CalendarTime::kFramesPerDay,
 		            GameObject::objectAddress(args[1]))
 		        !=  nullptr)
 			return true;
@@ -2068,7 +2068,7 @@ int16 scriptActorDeductPayment(int16 *args) {
 	GameObject  *obj, *delObj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
-	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;
+	    currencyProto->flags & ResourceObjectPrototype::kObjPropMergeable;
 
 	RecursiveContainerIterator  iter(a);
 
@@ -2145,7 +2145,7 @@ int16 scriptActorCountPayment(int16 *args) {
 	GameObject  *obj = nullptr;
 	ObjectID    id;
 	bool        mergeable =
-	    currencyProto->flags & ResourceObjectPrototype::objPropMergeable;
+	    currencyProto->flags & ResourceObjectPrototype::kObjPropMergeable;
 
 	RecursiveContainerIterator  iter(a);
 
@@ -2522,7 +2522,7 @@ int16 scriptTagSetAnimation(int16 *args) {
 	//  If we want to wait until finished
 	if (args[0] & tileAnimateWait) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, nullptr);
+		thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 
 		//  And start the tile animation
 		TileActivityTask::doScript(*ai, args[1], getThreadID(thisThread));
@@ -2545,7 +2545,7 @@ int16 scriptTagSetWait(int16 *args) {
 
 	if (TileActivityTask::setWait(ai, getThreadID(thisThread))) {
 		//  Wait for the animation
-		thisThread->waitForEvent(Thread::waitOther, nullptr);
+		thisThread->waitForEvent(Thread::kWaitOther, nullptr);
 	}
 
 	return 0;
@@ -2570,7 +2570,7 @@ int16 scriptTagObtainLock(int16 *) {
 		WriteStatusF(15, "Locked: %d\n", lockCount);
 #endif
 	} else {
-		thisThread->waitForEvent(Thread::waitTagSemaphore, ai);
+		thisThread->waitForEvent(Thread::kWaitTagSemaphore, ai);
 #if DEBUG*0
 		lockCount += 1;
 		WriteStatusF(15, "Locked: %d\n", lockCount);
@@ -2674,7 +2674,7 @@ int16 scriptMissionMakeActor(int16 *args) {
 
 	//  Call the regular make-actor function. Add in the "permanent"
 	//  flag, since actor will be deleted at mission end.
-	args[6] |= actorPermanent;
+	args[6] |= kActorPermanent;
 	id = scriptMakeActor(args);
 
 	//  And record it in the mission object
@@ -2851,7 +2851,7 @@ int16 scriptSetGameMode(int16 *args) {
 int16 scriptWait(int16 *args) {
 	MONOLOG(Wait);
 	thisThread->_waitAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitDelay, nullptr);
+	thisThread->waitForEvent(Thread::kWaitDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -2859,7 +2859,7 @@ int16 scriptWait(int16 *args) {
 int16 scriptWaitFrames(int16 *args) {
 	MONOLOG(WaitFrames);
 	thisThread->_waitFrameAlarm.set(args[0]);
-	thisThread->waitForEvent(Thread::waitFrameDelay, nullptr);
+	thisThread->waitForEvent(Thread::kWaitFrameDelay, nullptr);
 	thisThread->setExtended();
 	return 0;
 }
@@ -2923,7 +2923,7 @@ int16 scriptMakeObject(int16 *args) {
 	obj->setScript(args[2]);
 
 	//  If it's a mergeable object, have it's mass count default to 1.
-	if (obj->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+	if (obj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 		obj->setExtra(1);
 
 	return obj->thisID();
@@ -3079,7 +3079,7 @@ int16 scriptPlayVoice(int16 *args) {
 
 int16 scriptGetHour(int16 *) {
 	MONOLOG(GetHour);
-	return g_vm->_calender->_hour;
+	return g_vm->_calendar->_hour;
 }
 
 //-----------------------------------------------------------------------
@@ -3087,7 +3087,7 @@ int16 scriptGetHour(int16 *) {
 
 int16 scriptGetFrameInHour(int16 *) {
 	MONOLOG(GetFrameInHour);
-	return g_vm->_calender->_frameInHour;
+	return g_vm->_calendar->_frameInHour;
 }
 
 //-----------------------------------------------------------------------
@@ -3828,12 +3828,12 @@ int16 scriptFadeUp(int16 *) {
 int16 scriptSetSynchronous(int16 *args) {
 	MONOLOG(SetSynchronous);
 
-	int16       oldVal = (thisThread->_flags & Thread::synchronous) != 0;
+	int16       oldVal = (thisThread->_flags & Thread::kTFSynchronous) != 0;
 
 	if (args[0])
-		thisThread->_flags |= Thread::synchronous;
+		thisThread->_flags |= Thread::kTFSynchronous;
 	else
-		thisThread->_flags &= ~Thread::synchronous;
+		thisThread->_flags &= ~Thread::kTFSynchronous;
 
 	return oldVal;
 }

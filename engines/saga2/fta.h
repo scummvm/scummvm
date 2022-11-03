@@ -38,19 +38,19 @@ class hResource;
  * ===================================================================== */
 
 //  For GameMode Stack
-const int           Max_Modes   =   8,  //Max Game Mode Objects
-                    End_List    =   0;  //Variable To Indicate End Of Arg List
+const int           kMax_Modes   =   8,  //Max Game Mode Objects
+                    kEnd_List    =   0;  //Variable To Indicate End Of Arg List
 
 //  Width and height of full screen
-const int           screenWidth = 640,
-                    screenHeight = 480;
+const int           kScreenWidth = 640,
+                    kScreenHeight = 480;
 
 //  Number of ticks per second
-const int           ticksPerSecond = 72;    // 72 ticks per second
+const int           kTicksPerSecond = 72;    // 72 ticks per second
 
 //  Desired frame rate of game (fps)
-const int           frameRate = 10,
-                    framePeriod = ticksPerSecond / frameRate;
+const int           kFrameRate = 10,
+                    kFramePeriod = kTicksPerSecond / kFrameRate;
 
 /* ====================================================================== *
    Overall game modes
@@ -78,9 +78,9 @@ public:
 	GameMode        *_prev;                  // previous nested mode
 	int16           _nestable;               // true if mode nests
 
-	static  GameMode    *_modeStackPtr[Max_Modes]; // Array Of Current Mode Stack Pointers to Game Objects
+	static  GameMode    *_modeStackPtr[kMax_Modes]; // Array Of Current Mode Stack Pointers to Game Objects
 	static  int         _modeStackCtr;       // Counter For Array Of Mode Stack Pointers to Game Objects
-	static  GameMode    *_newmodeStackPtr[Max_Modes]; // Array Of New Mode Stack Pointers to Game Objects
+	static  GameMode    *_newmodeStackPtr[kMax_Modes]; // Array Of New Mode Stack Pointers to Game Objects
 	static  int         _newmodeStackCtr;        // Counter For Array Of Mode Stack Pointers to Game Objects
 	static  int         _newmodeFlag;        // Flag Telling EventLoop Theres A New Mode So Update
 	static GameMode *_currentMode,           // pointer to current mode.

@@ -2319,8 +2319,6 @@ DataReadErrorCode loadDataObject(const PlugInModifierRegistry &registry, DataRea
 		return kDataReadErrorReadFailed;
 	}
 
-	debug(4, "Loading data object type 0x%x", static_cast<int>(type));
-
 	DataObject *dataObject = nullptr;
 	switch (type) {
 	case DataObjectTypes::kProjectLabelMap:

@@ -673,11 +673,12 @@ void OpenGLGraphicsManager::updateScreen() {
 			gameScreenCursorX = gameScreenCursorX * retroWidth / _gameDrawRect.width();
 			gameScreenCursorY = gameScreenCursorY * retroHeight / _gameDrawRect.height();
 
-			int cursorWidth = _cursorWidthScaled * retroWidth / _gameDrawRect.width();
-			int cursorHeight = _cursorHeightScaled * retroHeight / _gameDrawRect.height();
+			const GLTexture &cursorTexture = _cursor->getGLTexture();
+			const uint cursorWidth = cursorTexture.getLogicalWidth(),
+					   cursorHeight = cursorTexture.getLogicalHeight();
 
 			_gameScreenTarget->enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
-			Pipeline::getActivePipeline()->drawTexture(_cursor->getGLTexture(), gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
+			Pipeline::getActivePipeline()->drawTexture(cursorTexture, gameScreenCursorX, gameScreenCursorY, cursorWidth, cursorHeight);
 			needsCursor = false;
 		}
 		Pipeline::getActivePipeline()->setFramebuffer(lastFramebuffer);

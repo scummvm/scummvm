@@ -242,8 +242,8 @@ void DrawCompositeMaskedSprite(
 	}
 
 	//  do terrain masking
-	if (effects & sprFXTerrainMask) {
-		if (!(effects & sprFXGhostIfObscured)) {
+	if (effects & kSprFXTerrainMask) {
+		if (!(effects & kSprFXGhostIfObscured)) {
 			drawTileMask(
 			    Point16(xMin, yMin),
 			    compMap,
@@ -275,7 +275,7 @@ void DrawCompositeMaskedSprite(
 			isObscured = visiblePixels <= 10;
 			if (isObscured) {
 				memcpy(compMap._data, tempMap._data, compMapBytes);
-				effects |= sprFXGhosted;
+				effects |= kSprFXGhosted;
 			}
 
 			if (obscured != nullptr) *obscured = isObscured;
@@ -298,7 +298,7 @@ void DrawCompositeMaskedSprite(
 	}
 
 	//  Add in "ghost" effects
-	if (effects & sprFXGhosted) {
+	if (effects & kSprFXGhosted) {
 		uint32  *dstRow = (uint32 *)compMap._data;
 
 		uint32  mask = (yMin & 1) ? 0xff00ff00 : 0x00ff00ff;
@@ -332,7 +332,7 @@ void DrawSprite(
 	unpackSprite(&sprMap, sp->data, sp->dataSize);
 
 	//  Blit to the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(sprMap,
 	               0, 0,
 	               destPoint.x + sp->offset.x,
@@ -372,7 +372,7 @@ void DrawColorMappedSprite(
 	    colorTable);
 
 	//  Blit to the port
-	port.setMode(drawModeMatte);
+	port.setMode(kDrawModeMatte);
 	port.bltPixels(sprReMap,
 	               0, 0,
 	               destPoint.x + sp->offset.x,
@@ -573,13 +573,13 @@ void ActorAppearance::loadSpriteBanks(int16 banksNeeded) {
 }
 
 ActorAnimation::ActorAnimation(Common::SeekableReadStream *stream) {
-	for (int i = 0; i < numPoseFacings; i++)
+	for (int i = 0; i < kNumPoseFacings; i++)
 		start[i] = stream->readUint16LE();
 
-	for (int i = 0; i < numPoseFacings; i++)
+	for (int i = 0; i < kNumPoseFacings; i++)
 		count[i] = stream->readUint16LE();
 
-	for (int i = 0; i < numPoseFacings; i++)
+	for (int i = 0; i < kNumPoseFacings; i++)
 		debugC(2, kDebugLoading, "anim%d: start: %d count: %d", i, start[i], count[i]);
 }
 

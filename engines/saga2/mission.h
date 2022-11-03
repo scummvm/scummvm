@@ -44,7 +44,7 @@ class ActiveMission;
 
 //  Mission flags
 enum missionFlags {
-	inUse = (1 << 0)               // this mission struct in use
+	kInUse = (1 << 0)               // this mission struct in use
 };
 
 struct ActiveMissionData {

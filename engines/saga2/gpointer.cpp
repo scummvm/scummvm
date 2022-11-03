@@ -43,7 +43,7 @@ gMousePointer::gMousePointer(gDisplayPort &port) {
 
 	//  set up the backsave port
 	_savePort.setMap(&_saveMap);
-	_savePort.setMode(drawModeReplace);
+	_savePort.setMode(kDrawModeReplace);
 
 	_videoPort = &port;
 

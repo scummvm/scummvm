@@ -133,7 +133,7 @@ void EditTextWidget::receivedFocusWidget() {
 }
 
 void EditTextWidget::lostFocusWidget() {
-	// If we loose focus, 'commit' the user changes
+	// If we lose focus, 'commit' the user changes
 	_backupString = _editString;
 	drawCaret(true);
 

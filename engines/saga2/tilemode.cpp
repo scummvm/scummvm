@@ -173,9 +173,9 @@ bool                tileLockFlag;           // true if tile mode is locked
 GameObject          *mouseObject = nullptr;    // object being dragged
 StaticPoint32       lastMousePos = {0, 0};           // Last mouse position over map
 static bool         mousePressed,           // State of mouse button
-       clickActionDone = true; // Flag indication wether current
+       clickActionDone = true; // Flag indication whether current
 // mouse click action is done
-static bool         runFlag = false;        // Reflexs wether the mouse is
+static bool         runFlag = false;        // Reflexs whether the mouse is
 // the run zone
 
 static bool         uiKeysEnabled = true;
@@ -196,7 +196,7 @@ extern uint32 frames;
 extern hResContext          *imageRes;              // image resource handle
 
 //  Combat related data
-static bool         aggressiveActFlag = false;  //  Indicates wether or not
+static bool         aggressiveActFlag = false;  //  Indicates whether or not
 static bool         inCombat,
        combatPaused;
 
@@ -206,12 +206,12 @@ static bool         inCombat,
 // inside a header.  GT 09/11/95
 
 static StaticWindow mainWindowDecorations[] = {
-	{{0,  0, 640, 20},     nullptr, MWTopBorder},       // top border
-	{{0, 440, 640, 40},    nullptr, MWBottomBorder},    // bottom border
-	{{0, 20, 20, 420},     nullptr, MWLeftBorder},      // left border
-	{{460, 20, 180, 142},  nullptr, MWRightBorder1},    // right border #1
-	{{460, 162, 180, 151}, nullptr, MWRightBorder2},    // right border #2
-	{{460, 313, 180, 127}, nullptr, MWRightBorder3},    // right border #3
+	{{0,  0, 640, 20},     nullptr, kMWTopBorder},       // top border
+	{{0, 440, 640, 40},    nullptr, kMWBottomBorder},    // bottom border
+	{{0, 20, 20, 420},     nullptr, kMWLeftBorder},      // left border
+	{{460, 20, 180, 142},  nullptr, kMWRightBorder1},    // right border #1
+	{{460, 162, 180, 151}, nullptr, kMWRightBorder2},    // right border #2
+	{{460, 313, 180, 127}, nullptr, kMWRightBorder3},    // right border #3
 };
 
 /* ===================================================================== *
@@ -242,7 +242,7 @@ char luckyKey(char *choices) {
 //	This function performs all combat pausing tasks
 
 static void pauseCombat() {
-	pauseCalender();
+	pauseCalendar();
 	pauseBackgroundSimulation();
 	pauseInterruptableMotions();
 	pauseObjectStates();
@@ -263,7 +263,7 @@ static void resumeCombat() {
 	resumeObjectStates();
 	resumeInterruptableMotions();
 	resumeBackgroundSimulation();
-	resumeCalender();
+	resumeCalendar();
 }
 
 //-----------------------------------------------------------------------
@@ -327,7 +327,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 			handlePlayerActorAttacked(playerID);
 
 		aggressiveActFlag = true;
-		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calender;
+		*g_vm->_tmm->_timeOfLastAggressiveAct = *g_vm->_calendar;
 	}
 }
 
@@ -336,7 +336,7 @@ void logAggressiveAct(ObjectID attackerID, ObjectID attackeeID) {
 //	involving a player actor
 
 uint16 timeSinceLastAggressiveAct() {
-	return aggressiveActFlag ? *g_vm->_calender - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
+	return aggressiveActFlag ? *g_vm->_calendar - *g_vm->_tmm->_timeOfLastAggressiveAct : maxuint16;
 }
 
 //-----------------------------------------------------------------------
@@ -349,7 +349,7 @@ bool areThereActiveEnemies() {
 	for (iter.first(&obj); obj != nullptr; iter.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->_disposition == dispositionEnemy)
+		        && ((Actor *)obj)->_disposition == kDispositionEnemy)
 			return true;
 	}
 
@@ -385,8 +385,8 @@ void CheckCombatMood() {
 	for (iter8.first(&obj); obj != nullptr; iter8.next(&obj)) {
 		if (isActor(obj)
 		        &&  !((Actor *)obj)->isDead()
-		        && ((Actor *)obj)->_disposition == dispositionEnemy) {
-			if (agress || !(((Actor *)obj)->_flags & Actor::afraid)) {
+		        && ((Actor *)obj)->_disposition == kDispositionEnemy) {
+			if (agress || !(((Actor *)obj)->_flags & Actor::kAFAfraid)) {
 				incrementActiveFaction((Actor *) obj);
 				wasHostile = true;
 			}
@@ -410,13 +410,13 @@ static void evalMouseState() {
 
 		//  If the mouse pointer has an object and the intention
 		//  is set to use, modify the doable setting depending
-		//  on wether the mouse is pointing at another object
-		//  and if so, wether the other object is within the
+		//  on whether the mouse is pointing at another object
+		//  and if so, whether the other object is within the
 		//  use range of the center actor
-		if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+		if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 			assert(obj != nullptr);
 
-			if (mObj->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+			if (mObj->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 				GameObject  *tob = pickedObject != Nothing ? obj : nullptr;
 				// If it's a spell we need to do more complex testing
 				//   to see if the current target is valid
@@ -436,14 +436,14 @@ static void evalMouseState() {
 				                obj->getLocation(),
 				                mObj)
 				            && (a->inRange(obj->getLocation(), 8)
-				                ||  lineOfSight(a, obj, terrainTransparent)))));
+				                ||  lineOfSight(a, obj, kTerrainTransparent)))));
 			}
 		}
 	} else {
 		//  Determine if the mouse is being dragged
 		if (mousePressed) {
 			//  Adjust the intention and doable settings based
-			//  factors such as center actor aggression, wether
+			//  factors such as center actor aggression, whether
 			//  the mouse is pointing at an object, etc...
 			//  Determine if the center actor is aggressive
 			if (isCenterActorAggressive()) {
@@ -456,10 +456,10 @@ static void evalMouseState() {
 					//  to the picked object
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
-					            ||  lineOfSight(a, obj, terrainTransparent)))
-						g_vm->_mouseInfo->setIntent(GrabInfo::Attack);
+					            ||  lineOfSight(a, obj, kTerrainTransparent)))
+						g_vm->_mouseInfo->setIntent(GrabInfo::kIntAttack);
 					else {
-						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 						walkToPos.set(obj->getLocation().u,
 						              obj->getLocation().v,
 						              obj->getLocation().z);
@@ -468,11 +468,11 @@ static void evalMouseState() {
 					//  The mouse is not pointing at an object
 				{
 					//  Since there is no picked object,
-					//  determine wether the center actor has
+					//  determine whether the center actor has
 					//  finished can initiate a new action, if so, set
 					//  the intention to walk to the mouse pointer
 					if (interruptable) {
-						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 						if (tileMapControl->isSticky())
 							setMouseImage(kMouseAutoWalkImage, -8, -8);
 						walkToPos = tilePickPos;
@@ -483,7 +483,7 @@ static void evalMouseState() {
 			{
 				//  Set the intention to walk to the mouse
 				//  pointer
-				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+				g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 				if (tileMapControl->isSticky())
 					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
@@ -502,11 +502,11 @@ static void evalMouseState() {
 					//  to the object
 					if (a->inAttackRange(obj->getLocation())
 					        && (a->inRange(obj->getLocation(), 8)
-					            ||  lineOfSight(a, obj, terrainTransparent))) {
-						g_vm->_mouseInfo->setIntent(GrabInfo::Attack);
+					            ||  lineOfSight(a, obj, kTerrainTransparent))) {
+						g_vm->_mouseInfo->setIntent(GrabInfo::kIntAttack);
 						g_vm->_mouseInfo->setDoable(true);
 					} else {
-						g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+						g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 						walkToPos.set(obj->getLocation().u,
 						              obj->getLocation().v,
 						              obj->getLocation().z);
@@ -522,20 +522,20 @@ static void evalMouseState() {
 
 						g_vm->_mouseInfo->setIntent(
 						    !a->isDead()
-						    ?   GrabInfo::WalkTo
-						    :   GrabInfo::Open);
+						    ?   GrabInfo::kIntWalkTo
+						    :   GrabInfo::kIntOpen);
 						walkToPos.set(obj->getLocation().u,
 						              obj->getLocation().v,
 						              obj->getLocation().z);
 					} else {
 						g_vm->_mouseInfo->setIntent(obj->isCarryable()
-						                    ? GrabInfo::PickUp
-						                    : GrabInfo::Open);
+						                    ? GrabInfo::kIntPickUp
+						                    : GrabInfo::kIntOpen);
 						g_vm->_mouseInfo->setDoable(
 						    interruptable
 						    &&  a->inReach(obj->getLocation())
 						    && (a->inRange(obj->getLocation(), 8)
-						        ||  lineOfSight(a, obj, terrainTransparent)));
+						        ||  lineOfSight(a, obj, kTerrainTransparent)));
 					}
 				}
 			} else
@@ -543,7 +543,7 @@ static void evalMouseState() {
 			{
 				//  Simply set the intention to walk to the mouse
 				//  pointer
-				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+				g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 				if (tileMapControl->isSticky())
 					setMouseImage(kMouseAutoWalkImage, -8, -8);
 				walkToPos = tilePickPos;
@@ -559,7 +559,7 @@ static void evalMouseState() {
 		//  Since the mouse is being dragged, initiate
 		//  the effects of the mouse drag
 
-		if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
+		if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntWalkTo) {
 			if (g_vm->_mouseInfo->getDoable()
 			        &&  !navigationDelayed) {
 				MotionTask  *mt = a->_moveTask;
@@ -570,10 +570,10 @@ static void evalMouseState() {
 					mt->changeDirectTarget(
 					    walkToPos,
 					    runFlag);
-					updateAlarm.set(ticksPerSecond / 2);
+					updateAlarm.set(kTicksPerSecond / 2);
 				}
 			}
-		} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Attack) {
+		} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntAttack) {
 			if (g_vm->_mouseInfo->getDoable())
 				a->attack(GameObject::objectAddress(pickedObject));
 		}
@@ -819,7 +819,7 @@ void TileModeHandleTask() {
 				//  If mouse in on object set alarm to determine when
 				//  to display the object's name
 				if (pickedObject != Nothing)
-					dispObjNameAlarm.set(ticksPerSecond / 2);
+					dispObjNameAlarm.set(kTicksPerSecond / 2);
 			}
 
 			if (pickedObject != Nothing) {
@@ -872,7 +872,7 @@ void TileModeHandleTask() {
 		moveActiveTerrain(0);            // for terrain with activity tasks.
 
 		//  Set the time of the next frame
-		frameAlarm.set(framePeriod);
+		frameAlarm.set(kFramePeriod);
 		updateMainDisplay();
 
 		if (inCombat || postDisplayFrame++ > 2)
@@ -934,11 +934,11 @@ void TileModeHandleKey(int16 key, int16 qual) {
 
 	case 'a':
 		if (uiKeysEnabled)
-			toggleAgression(getCenterActorPlayerID(), qual & qualifierShift);
+			toggleAgression(getCenterActorPlayerID(), qual & kQualifierShift);
 		break;
 	case 'b':
 		if (uiKeysEnabled)
-			toggleBanding(getCenterActorPlayerID(), qual & qualifierShift);
+			toggleBanding(getCenterActorPlayerID(), qual & kQualifierShift);
 		break;
 	case '\t':
 		if (uiKeysEnabled)
@@ -1006,7 +1006,7 @@ static APPFUNC(cmdClickTileMap) {
 	if (!uiKeysEnabled) return;
 
 	switch (ev.eventType) {
-	case gEventRMouseDown:
+	case kEventRMouseDown:
 
 #if CHEATMOVE
 		selectedObject = pickedObject;
@@ -1028,13 +1028,13 @@ static APPFUNC(cmdClickTileMap) {
 		}
 		break;
 
-	case gEventMouseMove:
-	case gEventMouseDrag:
-		if (ev.value & gGenericControl::leave) {
+	case kEventMouseMove:
+	case kEventMouseDrag:
+		if (ev.value & gGenericControl::kCVLeave) {
 			mousePressed = false;
 
 			if (g_vm->_mouseInfo->getObject() == nullptr)
-				g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+				g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 			g_vm->_mouseInfo->setDoable(true);
 
 			//  Remove any mouse text
@@ -1045,7 +1045,7 @@ static APPFUNC(cmdClickTileMap) {
 		lastMousePos.set(ev.mouse.x, ev.mouse.y);
 		break;
 
-	case gEventMouseDown:
+	case kEventMouseDown:
 
 		mousePressed = true;
 
@@ -1062,7 +1062,7 @@ static APPFUNC(cmdClickTileMap) {
 				//  If we are using an intangible object (spell) then consider
 				//  the owner of the spell to be the center actor for the rest
 				//  of this action.
-				if (mouseObject->proto()->containmentSet() & (ProtoObj::isIntangible | ProtoObj::isSpell | ProtoObj::isSkill)) {
+				if (mouseObject->proto()->containmentSet() & (ProtoObj::kIsIntangible | ProtoObj::kIsSpell | ProtoObj::kIsSkill)) {
 					ObjectID    possessor = mouseObject->possessor();
 
 					if (possessor != Nothing) {
@@ -1077,12 +1077,12 @@ static APPFUNC(cmdClickTileMap) {
 						int16   intent = g_vm->_mouseInfo->getIntent();
 
 						g_vm->_mouseInfo->replaceObject();
-						if (intent == GrabInfo::Use) {
+						if (intent == GrabInfo::kIntUse) {
 							MotionTask::useObjectOnObject(
 							    *centerActorPtr,
 							    *mouseObject,
 							    *GameObject::objectAddress(pickedObject));
-						} else if (intent == GrabInfo::Drop) {
+						} else if (intent == GrabInfo::kIntDrop) {
 							MotionTask::dropObjectOnObject(
 							    *centerActorPtr,
 							    *mouseObject,
@@ -1092,7 +1092,7 @@ static APPFUNC(cmdClickTileMap) {
 
 						((gGenericControl *)ev.panel)->disableDblClick();
 						clickActionDone = true;
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
@@ -1100,12 +1100,12 @@ static APPFUNC(cmdClickTileMap) {
 					//  we dropped the object onto active terrain
 
 					if (g_vm->_mouseInfo->getDoable()) {
-						if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop
-						        ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+						if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntDrop
+						        ||  g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 							int16   intent = g_vm->_mouseInfo->getIntent();
 
 							g_vm->_mouseInfo->replaceObject();
-							if (intent == GrabInfo::Drop) {
+							if (intent == GrabInfo::kIntDrop) {
 								MotionTask::dropObjectOnTAI(
 								    *centerActorPtr,
 								    *mouseObject,
@@ -1121,7 +1121,7 @@ static APPFUNC(cmdClickTileMap) {
 								            ||  lineOfSight(
 								                centerActorPtr,
 								                TAILoc,
-								                terrainTransparent)))
+								                kTerrainTransparent)))
 									MotionTask::useObjectOnTAI(
 									    *centerActorPtr,
 									    *mouseObject,
@@ -1131,14 +1131,14 @@ static APPFUNC(cmdClickTileMap) {
 							((gGenericControl *)ev.panel)->disableDblClick();
 							clickActionDone = true;
 						}
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
 				} else if (pickedObject == Nothing) {
 					//  we dropped the object on the ground
 
-					if (g_vm->_mouseInfo->getIntent() == GrabInfo::Drop
+					if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntDrop
 					        &&  g_vm->_mouseInfo->getDoable()) {
 						g_vm->_mouseInfo->replaceObject();
 						MotionTask::dropObject(
@@ -1148,7 +1148,7 @@ static APPFUNC(cmdClickTileMap) {
 						    g_vm->_mouseInfo->getMoveCount());
 						((gGenericControl *)ev.panel)->disableDblClick();
 						clickActionDone = true;
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse
 					           &&  g_vm->_mouseInfo->getDoable()) {
 						// New for spells - this enables objects to be used on a
 						//   general location (for area spells etc)
@@ -1158,7 +1158,7 @@ static APPFUNC(cmdClickTileMap) {
 						    *mouseObject,
 						    Location(tilePickPos, currentWorld->thisID()));
 						clickActionDone = true;
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Use) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntUse) {
 						g_vm->_mouseInfo->replaceObject();
 						clickActionDone = true;
 					}
@@ -1172,8 +1172,8 @@ static APPFUNC(cmdClickTileMap) {
 					if (actorIDToPlayerID(pickedObject, pID) && !isBrotherDead(pID)) {
 						setCenterBrother(pID);
 						clickActionDone = true;
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::PickUp
-					           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Open) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntPickUp
+					           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::kIntOpen) {
 						GameObject  *pickedObjPtr =
 						    GameObject::objectAddress(pickedObject);
 						int16       quantity = 1;
@@ -1182,12 +1182,12 @@ static APPFUNC(cmdClickTileMap) {
 						    *centerActorPtr,
 						    GameObject::objectAddress(pickedObject)->getLocation());
 
-						if (pickedObjPtr->proto()->flags & ResourceObjectPrototype::objPropMergeable)
+						if (pickedObjPtr->proto()->flags & ResourceObjectPrototype::kObjPropMergeable)
 							quantity = pickedObjPtr->getExtra();
 
 						if (pickedObjPtr->take(centerActorID, quantity))
 							clickActionDone = true;
-					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::Attack) {
+					} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntAttack) {
 						centerActorPtr->attack(
 						    GameObject::objectAddress(pickedObject));
 						((gGenericControl *)ev.panel)->disableDblClick();
@@ -1197,7 +1197,7 @@ static APPFUNC(cmdClickTileMap) {
 			//  We're not pointing at an object and the mouse cursor
 			//  does not have an object
 			else {
-				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo
+				if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntWalkTo
 				        &&  g_vm->_mouseInfo->getDoable()) {
 					if (pickedTAI == nullptr) {
 						navigateDirect(walkToPos, false);
@@ -1206,15 +1206,15 @@ static APPFUNC(cmdClickTileMap) {
 						navigationDelayed = true;
 						delayedNavigation.walkToPos = walkToPos;
 						delayedNavigation.pathFindFlag = false;
-						delayedNavigation.delay.set(ticksPerSecond / 2);
+						delayedNavigation.delay.set(kTicksPerSecond / 2);
 					}
-					pathFindAlarm.set(ticksPerSecond / 2);
+					pathFindAlarm.set(kTicksPerSecond / 2);
 				}
 			}
 		}
 		break;
 
-	case gEventMouseUp:
+	case kEventMouseUp:
 
 		mousePressed = false;
 
@@ -1222,7 +1222,7 @@ static APPFUNC(cmdClickTileMap) {
 			dblClick = false;
 		else {
 			if (pathFindAlarm.check()) { // mouse click was too long for path find
-				if (g_vm->_mouseInfo->getIntent() == GrabInfo::WalkTo) {
+				if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntWalkTo) {
 					Actor   *a = getCenterActor();
 
 					if (a->_moveTask && a->_moveTask->isWalk())
@@ -1233,7 +1233,7 @@ static APPFUNC(cmdClickTileMap) {
 				if (navigationDelayed) {
 					delayedNavigation.walkToPos = walkToPos;
 					delayedNavigation.pathFindFlag = true;
-					delayedNavigation.delay.set(ticksPerSecond / 2);
+					delayedNavigation.delay.set(kTicksPerSecond / 2);
 				} else {
 					Actor   *a = getCenterActor();
 
@@ -1246,7 +1246,7 @@ static APPFUNC(cmdClickTileMap) {
 		}
 		break;
 
-	case gEventDoubleClick:
+	case kEventDoubleClick:
 
 		dblClick = true;
 
@@ -1266,8 +1266,8 @@ static APPFUNC(cmdClickTileMap) {
 					ActorProto  *proto = (ActorProto *)obj->proto();
 
 					proto->greetActor(pickedObject, getCenterActorID());
-				} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::PickUp
-				           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::Open
+				} else if (g_vm->_mouseInfo->getIntent() == GrabInfo::kIntPickUp
+				           ||  g_vm->_mouseInfo->getIntent() == GrabInfo::kIntOpen
 				           || (isActor(pickedObject) && ((Actor *)obj)->isDead())) {
 					GameObject  *pickedObjPtr =
 					    GameObject::objectAddress(pickedObject);
@@ -1284,7 +1284,7 @@ static APPFUNC(cmdClickTileMap) {
 
 			if (a->inRange(TAILoc, 32)
 			        && (a->inRange(TAILoc, 8)
-			            ||  lineOfSight(a, TAILoc, terrainTransparent)))
+			            ||  lineOfSight(a, TAILoc, kTerrainTransparent)))
 				MotionTask::useTAI(*a, *pickedTAI);
 		} else {
 			tileMapControl->setSticky(true);
@@ -1305,7 +1305,7 @@ void navigateDirect(TilePoint pick, bool runFlag_) {
 	Actor   *a = getCenterActor();          // addr of actor we control
 
 	if (a) {
-		updateAlarm.set(ticksPerSecond / 2);
+		updateAlarm.set(kTicksPerSecond / 2);
 
 		//  REM: Do running here...
 
@@ -1418,7 +1418,7 @@ void gStickyDragControl::deactivate() {
 
 //void gStickyDragControl::pointerMove( gPanelMessage & )
 //{
-//	notify( gEventMouseMove, 0 );
+//	notify( kEventMouseMove, 0 );
 //}
 
 bool gStickyDragControl::pointerHit(gPanelMessage &msg) {
@@ -1438,7 +1438,7 @@ void noStickyMap() {
 }
 
 TileModeManager::TileModeManager() {
-	_timeOfLastAggressiveAct = new CalenderTime;
+	_timeOfLastAggressiveAct = new CalendarTime;
 }
 
 TileModeManager::~TileModeManager() {

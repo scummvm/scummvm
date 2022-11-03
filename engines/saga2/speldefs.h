@@ -114,7 +114,7 @@ typedef GameObject SpellCaster;
 
 inline TilePoint TAGPos(ActiveItem *ai) {
 	if (ai == NULL) return Nowhere;
-	assert(ai->_data.itemType == activeTypeInstance);
+	assert(ai->_data.itemType == kActiveTypeInstance);
 	return TilePoint(
 	           ai->_data.instance.u << kTileUVShift,
 	           ai->_data.instance.v << kTileUVShift,
@@ -141,11 +141,11 @@ class SpellTarget {
 
 public :
 	enum spellTargetType {
-		spellTargetNone         = 0,        // invalid
-		spellTargetPoint,                   // targeted on a particular point
-		spellTargetObjectPoint,             // targeted on an object's location
-		spellTargetObject,                  // targeted on an object (tracking)
-		spellTargetTAG                      // targeted on an object (tracking)
+		kSpellTargetNone         = 0,        // invalid
+		kSpellTargetPoint,                   // targeted on a particular point
+		kSpellTargetObjectPoint,             // targeted on an object's location
+		kSpellTargetObject,                  // targeted on an object (tracking)
+		kSpellTargetTAG                      // targeted on an object (tracking)
 	};
 
 private:
@@ -159,7 +159,7 @@ public:
 	SpellTarget     *_next;
 
 	SpellTarget() {
-		_type = spellTargetNone;
+		_type = kSpellTargetNone;
 		_obj = nullptr;
 		_loc.u = 0;
 		_loc.v = 0;
@@ -170,7 +170,7 @@ public:
 
 	// This constructor is for non-tracking targets
 	SpellTarget(GameObject &object) {
-		_type = spellTargetObjectPoint;
+		_type = kSpellTargetObjectPoint;
 		_loc = object.getWorldLocation();
 		_loc.z += object.proto()->height / 2;
 		_next = nullptr;
@@ -180,20 +180,20 @@ public:
 
 	// This constructor is for tracking targets
 	SpellTarget(GameObject *object) {
-		_type = spellTargetObject;
+		_type = kSpellTargetObject;
 		_obj = object;
 		_next = nullptr;
 		_tag = nullptr;
 	}
 	SpellTarget(TilePoint &tp) {
-		_type = spellTargetPoint;
+		_type = kSpellTargetPoint;
 		_loc = tp;
 		_next = nullptr;
 		_tag = nullptr;
 		_obj = nullptr;
 	}
 	SpellTarget(ActiveItem *ai) {
-		_type = spellTargetTAG;
+		_type = kSpellTargetTAG;
 		_tag = ai;
 		_next = nullptr;
 		_tag = nullptr;
@@ -225,14 +225,14 @@ public:
 
 	TilePoint getPoint() {
 		switch (_type) {
-		case spellTargetPoint       :
-		case spellTargetObjectPoint :
+		case kSpellTargetPoint       :
+		case kSpellTargetObjectPoint :
 			return _loc;
-		case spellTargetObject      :
+		case kSpellTargetObject      :
 			return objPos(_obj);
-		case spellTargetTAG         :
+		case kSpellTargetTAG         :
 			return TAGPos(_tag);
-		case spellTargetNone        :
+		case kSpellTargetNone        :
 		default                     :
 			return Nowhere;
 		}
@@ -243,12 +243,12 @@ public:
 	}
 
 	GameObject *getObject() {
-		assert(_type == spellTargetObject);
+		assert(_type == kSpellTargetObject);
 		return _obj;
 	}
 
 	ActiveItem *getTAG() {
-		assert(_type == spellTargetTAG);
+		assert(_type == kSpellTargetTAG);
 		return _tag;
 	}
 
@@ -258,10 +258,10 @@ public:
 //	Effectron flags
 
 enum EffectronFlagMasks {
-	effectronOK     = 0,
-	effectronHidden = (1 << 0),
-	effectronDead   = (1 << 1),
-	effectronBumped = (1 << 2)
+	kEffectronOK     = 0,
+	kEffectronHidden = (1 << 0),
+	kEffectronDead   = (1 << 1),
+	kEffectronBumped = (1 << 2)
 };
 
 typedef uint32 EffectronFlags;
@@ -320,23 +320,23 @@ public:
 	}
 
 	inline void hide()     {
-		_flags |= effectronHidden;
+		_flags |= kEffectronHidden;
 	}
 	inline void unhide()   {
-		_flags &= (~effectronHidden);
+		_flags &= (~kEffectronHidden);
 	}
 	inline bool isHidden() const {
-		return _flags & effectronHidden;
+		return _flags & kEffectronHidden;
 	}
 	inline void kill()     {
-		_flags |= effectronDead;
+		_flags |= kEffectronDead;
 	}
 	inline int isDead() const      {
-		return _flags & effectronDead;
+		return _flags & kEffectronDead;
 	}
 	inline void bump();
 	inline int isBumped() const        {
-		return _flags & effectronBumped;
+		return _flags & kEffectronBumped;
 	}
 
 	inline GameWorld *world() const;

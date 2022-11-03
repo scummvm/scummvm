@@ -80,23 +80,14 @@ enum {
 	kGraphicsTabContainerReflowCmd = 'gtcr'
 };
 
-/*
-* TODO: Clean up this ugly design: we subclass EditTextWidget to perform
-* input validation. It would be much more elegant to use a decorator pattern,
-* or a validation callback, or something like that.
-*/
 class DomainEditTextWidget : public EditTextWidget {
 public:
-	DomainEditTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip = Common::U32String())
+	DomainEditTextWidget(GuiObject *boss, const Common::String &name, const Common::U32String &text, const Common::U32String &tooltip)
 		: EditTextWidget(boss, name, text, tooltip) {}
 
 protected:
-	bool tryInsertChar(Common::u32char_type_t c, int pos) override {
-		if (Common::isAlnum(c) || c == '-' || c == '_') {
-			_editString.insertChar(c, pos);
-			return true;
-		}
-		return false;
+	bool isCharAllowed(Common::u32char_type_t c) const override {
+		return Common::isAlnum(c) || c == '-' || c == '_';
 	}
 };
 

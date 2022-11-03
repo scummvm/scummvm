@@ -1054,7 +1054,7 @@ static parse_rec *parse_a_noun(void)
 	/* If ip==oip is 0 (meaning no matches so far) or ip==oip+1
 	   (meaning we have a one-word match) then we need to check for
 	   flag nouns, global nouns, ALL, DOOR, pronouns, etc.
-	   and add them to the list if neccessary */
+	   and add them to the list if necessary */
 
 	if (ip == oip || ip == oip + 1) {
 
@@ -1433,7 +1433,7 @@ rbool parse(void)
 	/* We got rid of too much */
 	rfree(currnoun);
 
-	/* Next, expand ALL if neccessary */
+	/* Next, expand ALL if necessary */
 	if (!PURE_ALL && lnoun[0].info == D_ALL) {
 		lnoun = expand_all(lnoun);
 		if (lnoun[0].info == D_END) { /* ALL expands to nothing */

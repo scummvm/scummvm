@@ -4025,7 +4025,7 @@ static void Walked(CORO_PARAM, int actor, int x, int y, SCNHANDLE film, bool esc
 
 		assert(pMover->hCpath != NOPOLY); // moving actor not in path
 
-		// Briefly aquire token to kill off any other normal walk
+		// Briefly acquire token to kill off any other normal walk
 		GetToken(pMover->actorToken);
 		FreeToken(pMover->actorToken);
 	}

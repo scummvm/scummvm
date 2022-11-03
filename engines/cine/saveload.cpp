@@ -60,7 +60,7 @@ bool loadChunkHeader(Common::SeekableReadStream &in, ChunkHeader &header) {
  * @return Savegame format on success, ANIMSIZE_UNKNOWN on failure
  *
  * This function seeks through the savefile and tries to determine the
- * savegame format it uses. There's a miniscule chance that the detection
+ * savegame format it uses. There's a minuscule chance that the detection
  * algorithm could get confused and think that the file uses both the older
  * and the newer format but that is such a remote possibility that I wouldn't
  * worry about it at all.

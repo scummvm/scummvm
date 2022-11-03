@@ -28,27 +28,27 @@
 
 namespace Saga2 {
 
-const uint32 nonActorSenseFlags = actorSeeInvis;
+const uint32 kNonActorSenseFlags = kActorSeeInvis;
 
 //const size_t maxSensorSize = 24;
-const size_t maxSensorSize = 48;
+const size_t kMaxSensorSize = 48;
 
 //  This constant represents the maximum sense range for an object.
 //  Zero means an infinite range.
-const int16 maxSenseRange = 0;
+const int16 kMaxSenseRange = 0;
 
 //  Integers representing sensor types
 enum SensorType {
-	protaganistSensor,
-	specificObjectSensor,
-	objectPropertySensor,
-	specificActorSensor,
-	actorPropertySensor,
-	eventSensor
+	kProtaganistSensor,
+	kSpecificObjectSensor,
+	kObjectPropertySensor,
+	kSpecificActorSensor,
+	kActorPropertySensor,
+	kEventSensor
 };
 
 //  Sensors will be checked every 5 frames
-const int16 sensorCheckRate = 5;
+const int16 kSensorCheckRate = 5;
 
 /* ===================================================================== *
    Function prototypes

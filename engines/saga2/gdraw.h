@@ -148,31 +148,31 @@ struct gPenState {
    gPort: Facilitates redering operations on PixelMaps
  * ============================================================================ */
 
-enum draw_modes {
-	drawModeMatte = 0,                      // use transparency
-	drawModeColor,                          // solid color, use transparency
-	drawModeReplace,                        // don't use transparency
-	drawModeComplement,                     // blit in complement mode
+enum DrawModes {
+	kDrawModeMatte = 0,                      // use transparency
+	kDrawModeColor,                          // solid color, use transparency
+	kDrawModeReplace,                        // don't use transparency
+	kDrawModeComplement,                     // blit in complement mode
 
-	numDrawModes
+	kNumDrawModes
 };
 
-enum text_styles {
-	textStyleOutline    = (1 << 0),         // outline the characters
-	textStyleShadow     = (1 << 1),         // drop shadow the characters
-	textStyleUnderScore = (1 << 2),         // underscore all chars
-	textStyleUnderBar   = (1 << 3),         // underscore char after a '_'
-	textStyleHiLiteBar  = (1 << 4),         // highlight char after a '_'
-	textStyleThickOutline = (1 << 5),       // extra-thick outline
-	textStyleBold       = (1 << 6),         // bold
-	textStyleItalics    = (1 << 7)          // italic
+enum {
+	kTextStyleOutline    = (1 << 0),         // outline the characters
+	kTextStyleShadow     = (1 << 1),         // drop shadow the characters
+	kTextStyleUnderScore = (1 << 2),         // underscore all chars
+	kTextStyleUnderBar   = (1 << 3),         // underscore char after a '_'
+	kTextStyleHiLiteBar  = (1 << 4),         // highlight char after a '_'
+	kTextStyleThickOutline = (1 << 5),       // extra-thick outline
+	kTextStyleBold       = (1 << 6),         // bold
+	kTextStyleItalics    = (1 << 7)          // italic
 };
 
-enum text_positions {
-	textPosLeft         = (1 << 0),
-	textPosRight        = (1 << 1),
-	textPosHigh         = (1 << 2),
-	textPosLow          = (1 << 3)
+enum TextPositions {
+	kTextPosLeft         = (1 << 0),
+	kTextPosRight        = (1 << 1),
+	kTextPosHigh         = (1 << 2),
+	kTextPosLow          = (1 << 3)
 };
 
 class gPort {
@@ -192,7 +192,7 @@ public:
 	                _olPen,                  // text outline pen
 	                _shPen;                  // text shadow pen
 	gPen            *_penMap;                // indirect pen map
-	enum draw_modes _drawMode;               // current drawing mode
+	DrawModes       _drawMode;               // current drawing mode
 	Point16         _penPos;                 // current pen position
 	gFont           *_font;                  // current font
 	int16           _textSpacing;            // extra space between characters
@@ -205,7 +205,7 @@ public:
 
 		_rowMod = 0;
 		_penMap = nullptr;
-		_drawMode = drawModeMatte;
+		_drawMode = kDrawModeMatte;
 		_font = nullptr;
 		_textSpacing = 0;
 		_textStyles = 0;
@@ -253,7 +253,7 @@ public:
 
 	//  modes & styles
 
-	void setMode(enum draw_modes mode) {
+	void setMode(DrawModes mode) {
 		_drawMode = mode;
 	}
 	void setStyle(int style)               {

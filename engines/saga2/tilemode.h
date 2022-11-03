@@ -57,7 +57,7 @@ void noStickyMap();
 
 class TileModeManager {
 public:
-	CalenderTime *_timeOfLastAggressiveAct;    //  Used to determine the
+	CalendarTime *_timeOfLastAggressiveAct;
 
 	TileModeManager();
 	~TileModeManager();

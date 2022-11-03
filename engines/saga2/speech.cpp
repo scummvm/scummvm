@@ -169,7 +169,7 @@ void Speech::read(Common::InSaveFile *in) {
 	debugC(4, kDebugSaveload, "...... _speechBuffer = %s", _speechBuffer);
 
 	//  Requeue the speech if needed
-	if (_speechFlags & spQueued) {
+	if (_speechFlags & kSpQueued) {
 		//  Add to the active list
 		speechList.remove(this);
 		speechList._list.push_back(this);
@@ -212,7 +212,7 @@ void Speech::write(Common::MemoryWriteStreamDynamic *out) {
 
 	//  Store the flags.  NOTE:  Make sure this speech is not stored
 	//  as being active
-	out->writeSint16LE(_speechFlags & ~spActive);
+	out->writeSint16LE(_speechFlags & ~kSpActive);
 
 	debugC(4, kDebugSaveload, "...... _sampleCount = %d", _sampleCount);
 	debugC(4, kDebugSaveload, "...... _charCount = %d", _charCount);
@@ -268,7 +268,7 @@ bool Speech::activate() {
 	//  Add to the active list
 	speechList._list.push_back(this);
 
-	_speechFlags |= spQueued;
+	_speechFlags |= kSpQueued;
 
 	//  This routine can't fail
 	return true;
@@ -282,22 +282,22 @@ bool Speech::setupActive() {
 	int16           buttonNum = 0,
 	                buttonChars;
 
-	_speechFlags |= spActive;
+	_speechFlags |= kSpActive;
 
-	speechFinished.set((_charCount * 4 / 2) + ticksPerSecond);
+	speechFinished.set((_charCount * 4 / 2) + kTicksPerSecond);
 
 	//Turn Actor Towards Person They Are Talking To
 //	MotionTask::turnObject( *obj, GameObject::objectAddress(32794)->getLocation());
 //	Actor    *a = (Actor *)obj;
-//	if(!a->setAction( actionJumpUp, animateRandom ))
+//	if(!a->setAction( kActionJumpUp, kAnimateRandom ))
 //		throw gError( "Could Not Set Talk Animation");
 
 	// Set up temp gport for blitting to bitmap
-	_textPort.setStyle(textStyleThickOutline);    // extra Thick Outline
+	_textPort.setStyle(kTextStyleThickOutline);    // extra Thick Outline
 	_textPort.setOutlineColor(_outlineColor);      // outline black
 	_textPort.setFont(&Amber13Font);              // speech font
 	_textPort.setColor(_penColor);                 // color of letters
-	_textPort.setMode(drawModeMatte);             // insure transparency
+	_textPort.setMode(kDrawModeMatte);             // insure transparency
 
 	setWidth();
 
@@ -313,18 +313,18 @@ bool Speech::setupActive() {
 
 /// EO SEARCH ///
 		if (sayVoiceAt(_sampleID, loc))
-			_speechFlags |= spHasVoice;
+			_speechFlags |= kSpHasVoice;
 		else
-			_speechFlags &= ~spHasVoice;
+			_speechFlags &= ~kSpHasVoice;
 
-	} else _speechFlags &= ~spHasVoice;
+	} else _speechFlags &= ~kSpHasVoice;
 
 	speechLineCount = buttonWrap(speechLineList,
 	                             speechButtonList,
 	                             speechButtonCount,
 	                             _speechBuffer,
 	                             _bounds.width,
-	                             !g_vm->_speechText && (_speechFlags & spHasVoice),
+	                             !g_vm->_speechText && (_speechFlags & kSpHasVoice),
 	                             _textPort);
 
 	//  Compute height of bitmap based on number of lines of text.
@@ -397,16 +397,16 @@ bool Speech::setupActive() {
 
 	if (speechButtonCount > 0) {
 		//  REM: Also set pointer to arrow shape.
-		g_vm->_mouseInfo->setIntent(GrabInfo::WalkTo);
+		g_vm->_mouseInfo->setIntent(GrabInfo::kIntWalkTo);
 		speakButtonControls->enable(true);
 
 		speechList.SetLock(false);
 	} else {
 		//  If there is a lock flag on this speech, then LockUI()
-		speechList.SetLock(_speechFlags & spLock);
+		speechList.SetLock(_speechFlags & kSpLock);
 	}
 
-	if (!(_speechFlags & spNoAnimate) && isActor(_objID)) {
+	if (!(_speechFlags & kSpNoAnimate) && isActor(_objID)) {
 		Actor   *a = (Actor *)GameObject::objectAddress(_objID);
 
 		if (!a->isDead() && !a->isMoving()) MotionTask::talk(*a);
@@ -432,7 +432,7 @@ void Speech::setWidth() {
 	                             speechButtonCount_,
 	                             _speechBuffer,
 	                             defaultWidth,
-	                             !g_vm->_speechText && (_speechFlags & spHasVoice),
+	                             !g_vm->_speechText && (_speechFlags & kSpHasVoice),
 	                             _textPort);
 
 	//  If it's more than 3 lines, then use the max line width.
@@ -443,7 +443,7 @@ void Speech::setWidth() {
 		                             speechButtonCount_,
 		                             _speechBuffer,
 		                             maxWidth,
-		                             !g_vm->_speechText && (_speechFlags & spHasVoice),
+		                             !g_vm->_speechText && (_speechFlags & kSpHasVoice),
 		                             _textPort);
 	}
 
@@ -494,7 +494,7 @@ bool Speech::displayText() {
 		return false;
 
 	//  Blit to the port
-	g_vm->_backPort.setMode(drawModeMatte);
+	g_vm->_backPort.setMode(kDrawModeMatte);
 	g_vm->_backPort.bltPixels(_speechImage,
 	                   0, 0,
 	                   p.x + fineScroll.x,
@@ -511,8 +511,8 @@ bool Speech::displayText() {
 void Speech::dispose() {
 	if (speechList.currentActive() == this) {
 //		Actor   *a = (Actor *)sp->obj;
-//		a->animationFlags |= animateFinished;
-//		a->setAction( actionStand, animateRandom );
+//		a->animationFlags |= kAnimateFinished;
+//		a->setAction( kActionStand, kAnimateRandom );
 
 		if (!longEnough())
 			playVoice(0);
@@ -528,7 +528,7 @@ void Speech::dispose() {
 		speechLineCount = speechButtonCount = 0;
 		speakButtonControls->enable(false);
 
-		if (!(_speechFlags & spNoAnimate) && isActor(_objID)) {
+		if (!(_speechFlags & kSpNoAnimate) && isActor(_objID)) {
 			Actor   *a = (Actor *)GameObject::objectAddress(_objID);
 
 			if (a->_moveTask)
@@ -552,7 +552,7 @@ void updateSpeech() {
 	//  if there is a speech object
 	if ((sp = speechList.currentActive()) != nullptr) {
 		//  If there is no bitmap, then set one up.
-		if (!(sp->_speechFlags & Speech::spActive)) {
+		if (!(sp->_speechFlags & Speech::kSpActive)) {
 			sp->setupActive();
 
 			//  If speech failed to set up, then skip it
@@ -575,7 +575,7 @@ void updateSpeech() {
 }
 
 bool Speech::longEnough() {
-	if (_speechFlags & spHasVoice)
+	if (_speechFlags & kSpHasVoice)
 		return (!stillDoingVoice(_sampleID));
 	else
 		return (_selectedButton != 0 || speechFinished.check());
@@ -586,7 +586,7 @@ bool Speech::longEnough() {
 void Speech::abortSpeech() {
 	//  Start by displaying first frame straight off, no delay
 	speechFinished.set(0);
-	if (_speechFlags & spHasVoice) {
+	if (_speechFlags & kSpHasVoice) {
 		PlayVoice(nullptr);
 	}
 }
@@ -992,7 +992,7 @@ Speech *SpeechTaskList::newTask(ObjectID id, uint16 flags) {
 
 	sp->_sampleCount = sp->_charCount = 0;
 	sp->_objID       = id;
-	sp->_speechFlags = flags & (Speech::spNoAnimate | Speech::spLock);
+	sp->_speechFlags = flags & (Speech::kSpNoAnimate | Speech::kSpLock);
 	sp->_outlineColor = 15 + 9;
 	sp->_thread      = NoThread;
 	sp->_selectedButton = 0;
@@ -1056,13 +1056,13 @@ APPFUNC(cmdClickSpeech) {
 	Speech          *sp;
 
 	switch (ev.eventType) {
-	case gEventMouseMove:
-	case gEventMouseDrag:
+	case kEventMouseMove:
+	case kEventMouseDrag:
 
 		g_vm->_mouseInfo->setDoable(Rect16(kTileRectX, kTileRectY, kTileRectWidth, kTileRectHeight).ptInside(ev.mouse));
 		break;
 
-	case gEventMouseDown:
+	case kEventMouseDown:
 
 		if ((sp = speechList.currentActive()) != nullptr) {
 			sp->_selectedButton = pickSpeechButton(ev.mouse, sp->_speechImage._size.x, sp->_textPort);

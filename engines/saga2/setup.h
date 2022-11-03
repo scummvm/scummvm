@@ -45,9 +45,9 @@ struct WindowDecoration;
 
 // enum for the three levels in the trio view
 enum trioViews {
-	top,
-	mid,
-	bot
+	kTrioTop,
+	kTrioMid,
+	kTrioBot
 };
 
 struct ContainerInfo {
@@ -74,16 +74,13 @@ extern const ContainerInfo  indivReadyContInfoBot;
 //  List of decorations for main window
 
 enum borderIDs {
-	MWBottomBorder = 0,
-	MWTopBorder,
-	MWLeftBorder,
-	MWRightBorder1,
-	MWRightBorder2,
-	MWRightBorder3
+	kMWBottomBorder = 0,
+	kMWTopBorder,
+	kMWLeftBorder,
+	kMWRightBorder1,
+	kMWRightBorder2,
+	kMWRightBorder3
 };
-
-const int   extraObjects  = 512,
-            extraActors   = 64;
 
 } // end of namespace Saga2
 

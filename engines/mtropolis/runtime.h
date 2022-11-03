@@ -179,28 +179,38 @@ enum MouseInteractivityTestType {
 	kMouseInteractivityTestMouseClick,
 };
 
+namespace DynamicValueSourceTypes {
+	enum DynamicValueSourceType {
+		kInvalid,
+
+		kConstant,
+		kVariableReference,
+		kIncomingData,
+	};
+}
+
 namespace DynamicValueTypes {
 
+// These values are stored in the saved game format, so they must be stable
 enum DynamicValueType {
-	kInvalid,
+	kInvalid = 0,
 
-	kNull,
-	kInteger,
-	kFloat,
-	kPoint,
-	kIntegerRange,
-	kBoolean,
-	kVector,
-	kLabel,
-	kEvent,
-	kVariableReference,
-	kIncomingData,
-	kString,
-	kList,
-	kObject,
-	kWriteProxy,
+	kNull = 1,
+	kInteger = 2,
+	kFloat = 3,
+	kPoint = 4,
+	kIntegerRange = 5,
+	kBoolean = 6,
+	kVector = 7,
+	kLabel = 8,
+	kEvent = 9,
 
-	kEmpty,
+	kString = 12,
+	kList = 13,
+	kObject = 14,
+	kWriteProxy = 15,
+
+	kEmpty = 16,
 };
 
 } // End of namespace DynamicValuesTypes
@@ -387,6 +397,7 @@ struct VarReference {
 
 	uint32 guid;
 	Common::String source;
+	Common::WeakPtr<Modifier> resolution;
 
 	inline bool operator==(const VarReference &other) const {
 		return guid == other.guid && source == other.source;
@@ -398,6 +409,9 @@ struct VarReference {
 
 	bool resolve(Structural *structuralScope, Common::WeakPtr<RuntimeObject> &outObject) const;
 	bool resolve(Modifier *modifierScope, Common::WeakPtr<RuntimeObject> &outObject) const;
+
+	void linkInternalReferences(ObjectLinkingScope *scope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
 
 private:
 	bool resolveContainer(IModifierContainer *modifierContainer, Common::WeakPtr<RuntimeObject> &outObject) const;
@@ -647,26 +661,6 @@ public:
 	size_t _size;
 };
 
-template<>
-class DynamicListContainer<VarReference> : public DynamicListContainerBase {
-public:
-	bool setAtIndex(size_t index, const DynamicValue &dynValue) override;
-	bool getAtIndex(size_t index, DynamicValue &dynValue) const override;
-	void truncateToSize(size_t sz) override;
-	bool expandToMinimumSize(size_t sz) override;
-	void setFrom(const DynamicListContainerBase &other) override;
-	const void *getConstArrayPtr() const override;
-	void *getArrayPtr() override;
-	size_t getSize() const override;
-	bool compareEqual(const DynamicListContainerBase &other) const override;
-	DynamicListContainerBase *clone() const override;
-
-private:
-	void rebuildStringPointers();
-
-	Common::Array<VarReference> _array;
-};
-
 template<class T>
 bool DynamicListContainer<T>::setAtIndex(size_t index, const DynamicValue &dynValue) {
 	const typename DynamicListValueConverter<T>::DynamicValuePODType_t *valuePtr = nullptr;
@@ -764,7 +758,6 @@ struct DynamicList {
 	const Common::Array<AngleMagVector> &getVector() const;
 	const Common::Array<Label> &getLabel() const;
 	const Common::Array<Event> &getEvent() const;
-	const Common::Array<VarReference> &getVarReference() const;
 	const Common::Array<Common::String> &getString() const;
 	const Common::Array<bool> &getBool() const;
 	const Common::Array<Common::SharedPtr<DynamicList> > &getList() const;
@@ -777,7 +770,6 @@ struct DynamicList {
 	Common::Array<AngleMagVector> &getVector();
 	Common::Array<Label> &getLabel();
 	Common::Array<Event> &getEvent();
-	Common::Array<VarReference> &getVarReference();
 	Common::Array<Common::String> &getString();
 	Common::Array<bool> &getBool();
 	Common::Array<Common::SharedPtr<DynamicList> > &getList();
@@ -826,8 +818,8 @@ struct DynamicValue {
 	DynamicValue(const DynamicValue &other);
 	~DynamicValue();
 
-	bool load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString);
-	bool load(const Data::PlugInTypeTaggedValue &data);
+	bool loadConstant(const Data::InternalTypeTaggedValue &data, const Common::String &varString);
+	bool loadConstant(const Data::PlugInTypeTaggedValue &data);
 
 	DynamicValueTypes::DynamicValueType getType() const;
 
@@ -838,7 +830,6 @@ struct DynamicValue {
 	const AngleMagVector &getVector() const;
 	const Label &getLabel() const;
 	const Event &getEvent() const;
-	const VarReference &getVarReference() const;
 	const Common::String &getString() const;
 	const bool &getBool() const;
 	const Common::SharedPtr<DynamicList> &getList() const;
@@ -854,7 +845,6 @@ struct DynamicValue {
 	void setVector(const AngleMagVector &value);
 	void setLabel(const Label &value);
 	void setEvent(const Event &value);
-	void setVarReference(const VarReference &value);
 	void setString(const Common::String &value);
 	void setBool(bool value);
 	void setList(const Common::SharedPtr<DynamicList> &value);
@@ -883,7 +873,6 @@ private:
 		IntRange asIntRange;
 		AngleMagVector asVector;
 		Label asLabel;
-		VarReference asVarReference;
 		Event asEvent;
 		Common::Point asPoint;
 		bool asBool;
@@ -919,6 +908,44 @@ private:
 
 	DynamicValueTypes::DynamicValueType _type;
 	ValueUnion _value;
+};
+
+struct DynamicValueSource {
+	DynamicValueSource();
+	DynamicValueSource(const DynamicValueSource &other);
+	DynamicValueSource(DynamicValueSource &&other);
+	~DynamicValueSource();
+
+	DynamicValueSource &operator=(const DynamicValueSource &other);
+	DynamicValueSource &operator=(DynamicValueSource &&other);
+
+	DynamicValueSourceTypes::DynamicValueSourceType getSourceType() const;
+	const DynamicValue &getConstant() const;
+	const VarReference &getVarReference() const;
+
+	bool load(const Data::InternalTypeTaggedValue &data, const Common::String &varSource, const Common::String &varString);
+	bool load(const Data::PlugInTypeTaggedValue &data);
+
+	void linkInternalReferences(ObjectLinkingScope *scope);
+	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
+
+	DynamicValue produceValue(const DynamicValue &incomingData) const;
+
+private:
+	union ValueUnion {
+		ValueUnion();
+		~ValueUnion();
+
+		DynamicValue _constValue;
+		VarReference _varReference;
+	};
+
+	void destructValue();
+	void initFromOther(const DynamicValueSource &other);
+	void initFromOther(DynamicValueSource &&other);
+
+	DynamicValueSourceTypes::DynamicValueSourceType _sourceType;
+	ValueUnion _valueUnion;
 };
 
 template<class TFloat>
@@ -1065,12 +1092,13 @@ struct MessengerSendSpec {
 
 	void linkInternalReferences(ObjectLinkingScope *outerScope);
 	void visitInternalReferences(IStructuralReferenceVisitor *visitor);
-	void resolveDestination(Runtime *runtime, Modifier *sender, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const;
+
+	void resolveDestination(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest, RuntimeObject *customDestination) const;
 
 	static void resolveVariableObjectType(RuntimeObject *obj, Common::WeakPtr<Structural> &outStructuralDest, Common::WeakPtr<Modifier> &outModifierDest);
 
-	void sendFromMessenger(Runtime *runtime, Modifier *sender, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
-	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, const DynamicValue &data, RuntimeObject *customDestination) const;
+	void sendFromMessenger(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &incomingData, RuntimeObject *customDestination) const;
+	void sendFromMessengerWithCustomData(Runtime *runtime, Modifier *sender, RuntimeObject *triggerSource, const DynamicValue &data, RuntimeObject *customDestination) const;
 
 	enum LinkType {
 		kLinkTypeNotYetLinked,
@@ -1082,7 +1110,7 @@ struct MessengerSendSpec {
 
 	Event send;
 	MessageFlags messageFlags;
-	DynamicValue with;
+	DynamicValueSource with;
 	uint32 destination; // May be a MessageDestination or GUID
 
 	LinkType _linkType;
@@ -2245,6 +2273,11 @@ struct IPostEffect : public IInterfaceBase {
 	virtual void renderPostEffect(Graphics::ManagedSurface &surface) const = 0;
 };
 
+struct IMediaCueModifier : public IInterfaceBase {
+	virtual Modifier *getMediaCueModifier() = 0;
+	virtual Common::WeakPtr<Modifier> getMediaCueTriggerSource() const = 0;
+};
+
 struct MediaCueState {
 	enum TriggerTiming {
 		kTriggerTimingStart = 0,
@@ -2255,7 +2288,7 @@ struct MediaCueState {
 	int32 minTime;
 	int32 maxTime;
 
-	Modifier *sourceModifier;
+	IMediaCueModifier *sourceModifier;
 	TriggerTiming triggerTiming;
 	MessengerSendSpec send;
 	DynamicValue incomingData;
@@ -2828,7 +2861,7 @@ class VariableModifier : public Modifier {
 public:
 	virtual bool isVariable() const override;
 	virtual bool varSetValue(MiniscriptThread *thread, const DynamicValue &value) = 0;
-	virtual void varGetValue(MiniscriptThread *thread, DynamicValue &dest) const = 0;
+	virtual void varGetValue(DynamicValue &dest) const = 0;
 	virtual Common::SharedPtr<ModifierSaveLoad> getSaveLoad() override = 0;
 
 	bool readAttribute(MiniscriptThread *thread, DynamicValue &result, const Common::String &attrib) override;

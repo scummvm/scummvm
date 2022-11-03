@@ -757,7 +757,7 @@ static rbool fix_objrec(parse_rec **objrec, word match,
 }
 
 static void objcode_fix(cmd_rec *cmd)
-/* For $ strings. Fixes object redirection if neccessary */
+/* For $ strings. Fixes object redirection if necessary */
 {
 	int actorword;
 	word nounword, objword;
@@ -1081,7 +1081,7 @@ int scan_metacommand(integer m_actor, int vcode,
 
 				/* REDIRECT: Do the actual redirection, building the new command
 				   header and shuffling around nouns and verbs as
-				   neccessary */
+				   necessary */
 				redirect_exec(&command[i], &m_actor, &vcode,
 				              &m_dobj, &m_prep, &m_iobj);
 

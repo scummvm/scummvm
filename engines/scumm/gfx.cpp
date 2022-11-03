@@ -420,7 +420,7 @@ void ScummEngine::initVirtScreen(VirtScreenNumber slot, int top, int width, int 
 	vs->pitch = width * vs->format.bytesPerPixel;
 
 	if (_game.version >= 7) {
-		// Increase the pitch by one; needed to accomodate the extra screen
+		// Increase the pitch by one; needed to accommodate the extra screen
 		// strip which we use to implement smooth scrolling. See Gdi::init().
 		vs->pitch += 8;
 	}
@@ -1011,7 +1011,7 @@ void ScummEngine::initBGBuffers(int height) {
 	if (_game.version >= 7) {
 		// Resize main virtual screen in V7 games. This is necessary
 		// because in V7, rooms may be higher than one screen, so we have
-		// to accomodate for that.
+		// to accommodate for that.
 		initVirtScreen(kMainVirtScreen, _virtscr[kMainVirtScreen].topline, _screenWidth, height, true, true);
 	}
 

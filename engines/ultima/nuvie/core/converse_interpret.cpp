@@ -1111,7 +1111,7 @@ bool ConverseInterpret::evop(Common::Stack<converse_typed_value> &i) {
 		}
 		break;
 	default:
-		DEBUG(0, LEVEL_ERROR, "Converse: UNK EVOP=%02x\n", inVal);
+		DEBUG(0, LEVEL_ERROR, "Converse: UNK EVOP=%02x\n", inVal.val);
 		success = false;
 	}
 	i.push(out);

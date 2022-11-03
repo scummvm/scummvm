@@ -37,22 +37,22 @@ class GrabInfo {
 public:
 
 	enum Intent {
-		None,
-		WalkTo,
-		PickUp,
-		Open,
-		Drop,
-		Use,
-		Attack,
-		Cast,               // for spells
+		kIntNone,
+		kIntWalkTo,
+		kIntPickUp,
+		kIntOpen,
+		kIntDrop,
+		kIntUse,
+		kIntAttack,
+		kIntCast,               // for spells
 
-		IntentCounts        // dummy to count enum
+		kIntIntentCounts        // dummy to count enum
 	};
 
 private:
 
 	enum {
-		bufSize = 60
+		kBufSize = 60
 	};
 
 protected:
@@ -68,14 +68,14 @@ protected:
 	Intent      _intention;              // pickup state
 	bool        _intentDoable;           // is intention doable?
 	// (i.e. display red X cursor)
-	bool        _displayGauge;           // indicates wether or not to show
+	bool        _displayGauge;           // indicates whether or not to show
 	// the gauge
 	int16       _gaugeNumerator,         // values to be displayed on the
 	            _gaugeDenominator;       // gauge
 
 	int16       _moveCount;              // number of items being moved in cursor
 
-	char        _textBuf[bufSize];
+	char        _textBuf[kBufSize];
 
 	// internal grab commonality
 	void setIcon();
@@ -100,11 +100,11 @@ public:
 	}
 
 	// put object into mouse ptr
-	void    grabObject(ObjectID objid,  Intent in = Drop, int16 count = 1);
-	void    grabObject(GameObject *obj, Intent in = Drop, int16 count = 1);
+	void    grabObject(ObjectID objid,  Intent in = kIntDrop, int16 count = 1);
+	void    grabObject(GameObject *obj, Intent in = kIntDrop, int16 count = 1);
 
-	void    copyObject(ObjectID objid,  Intent in = Drop, int16 count = 1);
-	void    copyObject(GameObject *obj, Intent in = Drop, int16 count = 1);
+	void    copyObject(ObjectID objid,  Intent in = kIntDrop, int16 count = 1);
+	void    copyObject(GameObject *obj, Intent in = kIntDrop, int16 count = 1);
 
 	// non-destructive reads of the state
 	uint8       getIntent()       {

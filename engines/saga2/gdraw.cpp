@@ -61,7 +61,7 @@ void gPort::setMap(gPixelMap *newmap, bool inverted) {
 *       This function restores the state of a gPort from a gPenState
 *       record. The record should have been filled in by an earlier
 *       call to gPort::getState. These two functions are intended for
-*       situations where it is neccessary to save and restore the
+*       situations where it is necessary to save and restore the
 *       drawing state of a gPort.
 *
 *   INPUTS
@@ -81,7 +81,7 @@ void gPort::setState(gPenState &state) {
 	setBgColor(state.bgPen);
 	setOutlineColor(state.olPen);
 	setShadowColor(state.shPen);
-	setMode((enum draw_modes) state.drawMode);
+	setMode((DrawModes)state.drawMode);
 }
 
 /****** gdraw.cpp/gPort::getState *********************************
@@ -135,7 +135,7 @@ void gPort::getState(gPenState &state) {
 *
 *   FUNCTION
 *       Fill a rectangular area with a solid color.
-*       drawModeComplement is supported; All other draw modes cause
+*       kDrawModeComplement is supported; All other draw modes cause
 *       a solid filling of pixels.
 *
 *   INPUTS
@@ -170,7 +170,7 @@ void gPort::fillRect(const Rect16 r) {
 	if (!sect.empty()) {                    // if result is non-empty
 		uint8 *addr = _baseRow + sect.y * _rowMod + sect.x;
 
-		if (_drawMode == drawModeComplement) { // Complement drawing mode
+		if (_drawMode == kDrawModeComplement) { // Complement drawing mode
 			for (int h = sect.height;
 			        h > 0;
 			        h--,
@@ -258,7 +258,7 @@ void gPort::frameRect(const Rect16 r, int16 thick) {
 *   FUNCTION
 *       This function draws a 1-pixel-thick horizontal line starting
 *       from the coordinates at (x,y) and extending for "width" pixels.
-*       drawModeComplement is supported.
+*       kDrawModeComplement is supported.
 *
 *       Calling this function is faster that the general "line" routine.
 *       It is used in many of the GTools bevel-drawing functions.
@@ -292,7 +292,7 @@ void gPort::hLine(int16 x, int16 y, int16 width) {
 	sect.y += _origin.y;
 
 	if (!sect.empty()) {                        // if result is non-empty
-		if (_drawMode == drawModeComplement) {
+		if (_drawMode == kDrawModeComplement) {
 			uint8 *addr = _baseRow + (y + _origin.y) * _rowMod + x + _origin.x;
 
 			while (sect.width--) *addr++ ^= _fgPen;
@@ -320,7 +320,7 @@ void gPort::hLine(int16 x, int16 y, int16 width) {
 *   FUNCTION
 *       This function draws a 1-pixel-thick vertical line starting
 *       from the coordinates at (x,y) and extending downward for
-*       "height" pixels. drawModeComplement is supported.
+*       "height" pixels. kDrawModeComplement is supported.
 *
 *       Calling this function is faster that the general "line" routine.
 *       It is used in many of the GTools bevel-drawing functions.
@@ -355,7 +355,7 @@ void gPort::vLine(int16 x, int16 y, int16 height) {
 
 	//  And now, draw the line
 
-	if (_drawMode == drawModeComplement) {
+	if (_drawMode == kDrawModeComplement) {
 		for (addr = _baseRow + (y + _origin.y) * _rowMod + x + _origin.x;
 		        y < bottom;
 		        y++) {
@@ -393,7 +393,7 @@ void gPort::vLine(int16 x, int16 y, int16 height) {
 *   FUNCTION
 *       This is the general bresenham line-drawing function. It draws
 *       from a source point to a destination point. The pen position
-*       is not affected. Clipping and drawModeComplement are supported.
+*       is not affected. Clipping and kDrawModeComplement are supported.
 *
 *     INPUTS
 *       (first form)
@@ -483,7 +483,7 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			for (i = xAbs + 1; i > 0; i--) {
 				if (x1 >= _clip.x && x1 < clipRight
 				        && y1 >= _clip.y && y1 < clipBottom) {
-					if (_drawMode == drawModeComplement)
+					if (_drawMode == kDrawModeComplement)
 						*addr ^= _fgPen;
 					else *addr = _fgPen;
 				}
@@ -504,7 +504,7 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			for (i = yAbs + 1; i > 0; i--) {
 				if (x1 >= _clip.x && x1 < clipRight
 				        && y1 >= _clip.y && y1 < clipBottom) {
-					if (_drawMode == drawModeComplement)
+					if (_drawMode == kDrawModeComplement)
 						*addr ^= _fgPen;
 					else *addr = _fgPen;
 				}
@@ -525,7 +525,7 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = yAbs - (xAbs >> 1);
 
 			for (i = xAbs + 1; i > 0; i--) {
-				if (_drawMode == drawModeComplement)
+				if (_drawMode == kDrawModeComplement)
 					*addr ^= _fgPen;
 				else *addr = _fgPen;
 
@@ -543,7 +543,7 @@ void gPort::line(int16 x1, int16 y1, int16 x2, int16 y2) {
 			errTerm = xAbs - (yAbs >> 1);
 
 			for (i = yAbs + 1; i > 0; i--) {
-				if (_drawMode == drawModeComplement)
+				if (_drawMode == kDrawModeComplement)
 					*addr ^= _fgPen;
 				else *addr = _fgPen;
 
@@ -620,7 +620,7 @@ void gPort::bltPixels(
 		           + (sect.y + _origin.y) * _rowMod
 		           + sect.x + _origin.x;
 
-		if (_drawMode == drawModeMatte) {        // Matte drawing mode
+		if (_drawMode == kDrawModeMatte) {        // Matte drawing mode
 			for (int h = sect.height; h > 0; h--, src_line += src._size.x, dst_line += _rowMod) {
 				uint8   *src_ptr = src_line,
 				*dst_ptr = dst_line;
@@ -632,7 +632,7 @@ void gPort::bltPixels(
 						dst_ptr++, src_ptr++;
 				}
 			}
-		} else if (_drawMode == drawModeColor) { // Color drawing mode
+		} else if (_drawMode == kDrawModeColor) { // Color drawing mode
 			// Draws single color, except where
 			for (int h = sect.height;           // src pixels are transparent
 			        h > 0;
@@ -651,11 +651,11 @@ void gPort::bltPixels(
 						dst_ptr++;
 				}
 			}
-		} else if (_drawMode == drawModeReplace) { // Replacement drawing mode
+		} else if (_drawMode == kDrawModeReplace) { // Replacement drawing mode
             for (int h = sect.height; h > 0; h--, src_line += src._size.x, dst_line += _rowMod) {
 				memcpy(dst_line, src_line, sect.width);
             }
-		} else if (_drawMode == drawModeComplement) { // Complement drawing mode
+		} else if (_drawMode == kDrawModeComplement) { // Complement drawing mode
 			// Inverts pixels, except where
 			for (int h = sect.height;           // src is transparent
 			        h > 0;

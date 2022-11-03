@@ -115,7 +115,7 @@ int16               objectLimboCount,       // the number of objects in object l
                     actorLimboCount,        // the number of actors in actor limbo
                     importantLimboCount;    // the number of objects in important limbo
 
-//  Indicates wether object states should be paused
+//  Indicates whether object states should be paused
 bool                objectStatesPaused;
 
 ObjectSoundFXs      *objectSoundFXTable;    // the global object sound effects table
@@ -192,7 +192,7 @@ GameObject::GameObject() {
 	_data.hitPoints   = 0;
 	_data.bParam      = 0;
 	_data.massCount   = 0;
-	_data.missileFacing = missileRt;
+	_data.missileFacing = kMissileRt;
 	_data.currentTAG  = NoActiveItem;
 	_data.sightCtr    = 0;
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
@@ -219,7 +219,7 @@ GameObject::GameObject(const ResourceGameObject &res) {
 	_data.hitPoints           = res.hitPoints;
 	_data.bParam              = _prototype->getChargeType() ? _prototype->maxCharges : 0;
 	_data.massCount           = res.misc; //_prototype->getInitialItemCount();
-	_data.missileFacing       = missileRt;
+	_data.missileFacing       = kMissileRt;
 	_data.currentTAG          = NoActiveItem;
 	_data.sightCtr            = 0;
 	memset(&_data.reserved, 0, sizeof(_data.reserved));
@@ -616,7 +616,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 	// check to see if this item is a physical object
 	// if so, then give the count of the item ( if stacked )
-	if (_prototype->containmentSet() & ProtoObj::isTangible) {
+	if (_prototype->containmentSet() & ProtoObj::kIsTangible) {
 		// display charges if item is a chargeable item
 		if (_prototype->chargeType != 0
 		        &&  _prototype->maxCharges != Permanent
@@ -630,7 +630,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			}
 		}
 
-		if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			// make a buffer that contains the name of
 			// the object and it's count
 			// add only if a mergable item
@@ -649,7 +649,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 		int16 manaCost = 0;
 
 		// figure out if it's a skill or spell
-		if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+		if (_prototype->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 			// get skill proto for this spell or skill
 			SkillProto *sProto = skillProtoFromID(thisID());
 
@@ -658,7 +658,7 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 			manaCost  = spellBook[sProto->getSpellID()].getManaAmt();
 		}
 
-		if (manaColor == sManaIDSkill) {     //  It's a skill
+		if (manaColor == ksManaIDSkill) {     //  It's a skill
 			// get the level of the skill for the brother in question
 			uint16  brotherID = getCenterActor()->thisID();
 			uint16  level;
@@ -676,8 +676,8 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 				// normalize and output
 				Common::sprintf_s(nameBuf, size, "%s-%d", objName(), ++level);
 			}
-		} else if (manaColor >= sManaIDRed
-		           &&  manaColor <= sManaIDViolet  //  A spell
+		} else if (manaColor >= ksManaIDRed
+		           &&  manaColor <= ksManaIDViolet  //  A spell
 		           &&  manaCost > 0) {
 			ObjectID        aID = possessor();      //  Who owns the spell
 			PlayerActorID   pID;
@@ -698,12 +698,12 @@ void GameObject::objCursorText(char nameBuf[], const int8 size, int16 count) {
 
 bool GameObject::isTrueSkill() {
 	// figure out if it's a skill or spell
-	if (_prototype->containmentSet() & (ProtoObj::isSkill | ProtoObj::isSpell)) {
+	if (_prototype->containmentSet() & (ProtoObj::kIsSkill | ProtoObj::kIsSpell)) {
 		// get skill proto for this spell or skill
 		SkillProto *sProto = skillProtoFromID(thisID());
 
 		// determine if this is a skill icon
-		if (spellBook[sProto->getSpellID()].getManaType() == sManaIDSkill) {
+		if (spellBook[sProto->getSpellID()].getManaType() == ksManaIDSkill) {
 			return true;
 		}
 	}
@@ -766,7 +766,7 @@ int32 GameObject::getSprOffset(int16 num) {
 	}
 
 	// if this is a mergeable object
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		if (units >= spriteNumFew) {
 			value = 1;
 		}
@@ -798,7 +798,7 @@ bool GameObject::unstack() {
 	        ||  IDParent() == Nothing
 	        ||  _data.location.z == 1
 	        ||  _prototype == nullptr
-	        || (_prototype->containmentSet() & ProtoObj::isIntangible)) return false;
+	        || (_prototype->containmentSet() & ProtoObj::kIsIntangible)) return false;
 
 	ContainerIterator   iter(parent());
 
@@ -1046,9 +1046,9 @@ void GameObject::updateImage(ObjectID oldParentID) {
 
 		if (!isMoving()) {
 			if (objObscured(this)) {
-				_data.objectFlags |= objectObscured;
+				_data.objectFlags |= kObjectObscured;
 			} else {
-				_data.objectFlags &= ~objectObscured;
+				_data.objectFlags &= ~kObjectObscured;
 			}
 		}
 		int u = _data.location.u >> kSectorShift;
@@ -1062,7 +1062,7 @@ void GameObject::updateImage(ObjectID oldParentID) {
 		else
 			warning("GameObject::updateImage: Invalid Sector (%d, %d))", u, v);
 	} else {
-		_data.objectFlags &= ~objectObscured;
+		_data.objectFlags &= ~kObjectObscured;
 
 		if ((isActor(_data.parentID)
 		        &&  isPlayerActor((Actor *)parent))
@@ -1089,7 +1089,7 @@ ObjectID GameObject::extractMerged(const Location &loc, int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		// get the number requested or all that's there...
 		int16 moveCount = MIN<uint16>(num, _data.massCount);
 
@@ -1117,7 +1117,7 @@ GameObject *GameObject::extractMerged(int16 num) {
 
 	// determine whether this object can be merged
 	// with duplicates of it's kind
-	if (_prototype->flags & ResourceObjectPrototype::objPropMergeable) {
+	if (_prototype->flags & ResourceObjectPrototype::kObjPropMergeable) {
 		Location    loc(0, 0, 0, 0);
 
 		// get the number requested or all that's there...
@@ -1234,7 +1234,7 @@ ObjectID GameObject::makeAlias(const Location &l) {
 	if (newObjID != Nothing) {
 		GameObject  *newObject = objectAddress(newObjID);
 
-		newObject->_data.objectFlags |= objectAlias;
+		newObject->_data.objectFlags |= kObjectAlias;
 	}
 
 	return newObjID;
@@ -1336,11 +1336,11 @@ void GameObject::deleteObject() {
 
 	if (isActor(this))
 		((Actor *)this)->deleteActor();
-	else if (_data.objectFlags & objectImportant) {
+	else if (_data.objectFlags & kObjectImportant) {
 		append(ImportantLimbo);
 		_data.parentID = ImportantLimbo;
 		importantLimboCount++;
-	} else if (!(_data.objectFlags & objectNoRecycle)) {
+	} else if (!(_data.objectFlags & kObjectNoRecycle)) {
 		append(ObjectLimbo);
 		_data.parentID = ObjectLimbo;
 		objectLimboCount++;
@@ -1354,7 +1354,7 @@ void GameObject::deleteObjectRecursive() {
 	//  If this is an important object let's not delete it but try to drop
 	//  it on the ground instead.
 	if (isImportant()) {
-		assert((_prototype->containmentSet() & ProtoObj::isTangible) != 0);
+		assert((_prototype->containmentSet() & ProtoObj::kIsTangible) != 0);
 
 		//  If the object is already in a world there's nothing to do.
 		if (isWorld(_data.parentID))
@@ -1407,7 +1407,7 @@ void GameObject::deleteObjectRecursive() {
 //	Activate this object
 
 void GameObject::activate() {
-	if (_data.objectFlags & objectActivated)
+	if (_data.objectFlags & kObjectActivated)
 		return;
 
 	debugC(1, kDebugActors, "GameObject::activate %d (%s)", thisID(), objName());
@@ -1415,7 +1415,7 @@ void GameObject::activate() {
 	ObjectID        dObj = thisID();
 	scriptCallFrame scf;
 
-	_data.objectFlags |= objectActivated;
+	_data.objectFlags |= kObjectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1436,7 +1436,7 @@ void GameObject::activate() {
 //	Deactivate this object
 
 void GameObject::deactivate() {
-	if (!(_data.objectFlags & objectActivated))
+	if (!(_data.objectFlags & kObjectActivated))
 		return;
 
 	debugC(1, kDebugActors, "GameObject::deactivate %d (%s)", thisID(), objName());
@@ -1445,7 +1445,7 @@ void GameObject::deactivate() {
 	scriptCallFrame scf;
 
 	//  Clear activated flag
-	_data.objectFlags &= ~objectActivated;
+	_data.objectFlags &= ~kObjectActivated;
 
 	scf.invokedObject   = dObj;
 	scf.enactor         = dObj;
@@ -1494,7 +1494,7 @@ bool GameObject::isContaining(ObjectTarget *objTarget) {
 	return false;
 }
 
-const int32 harmfulTerrain = terrainHot | terrainCold | terrainIce | terrainSlash | terrainBash;
+const int32 harmfulTerrain = kTerrainHot | kTerrainCold | kTerrainIce | kTerrainSlash | kTerrainBash;
 
 void GameObject::updateState() {
 	int16            tHeight;
@@ -1518,26 +1518,26 @@ void GameObject::updateState() {
 	    :   0;
 
 	if (isActor(this) && 0 != (subTileTerrain & harmfulTerrain)) {
-		if (subTileTerrain & terrainHot)
+		if (subTileTerrain & kTerrainHot)
 			lavaDamage(this);
-		if (subTileTerrain & (terrainCold | terrainIce))
+		if (subTileTerrain & (kTerrainCold | kTerrainIce))
 			coldDamage(this);
-		if (subTileTerrain & terrainSlash)
+		if (subTileTerrain & kTerrainSlash)
 			terrainDamageSlash(this);
-		if (subTileTerrain & terrainBash)
+		if (subTileTerrain & kTerrainBash)
 			terrainDamageBash(this);
 	}
 	//  If terrain is HIGHER (or even sligtly lower) than we are
 	//  currently at, then raise us up a bit.
 	if (isMoving()) return;
 
-	if (_data.objectFlags & objectFloating) return;
+	if (_data.objectFlags & kObjectFloating) return;
 
 	if (tHeight > _data.location.z + kMaxStepHeight) {
 		unstickObject(this);
 		tHeight = tileSlopeHeight(_data.location, this, &sti);
 	}
-	if (tHeight >= _data.location.z - gravity * 4) {
+	if (tHeight >= _data.location.z - kGravity * 4) {
 		setObjectSurface(this, sti);
 		_data.location.z = tHeight;
 		return;
@@ -1558,7 +1558,7 @@ const char *GameObject::nameText(uint16 index) {
 	return g_vm->_nameList[index];
 }
 
-#define INTANGIBLE_MASK (ProtoObj::isEnchantment|ProtoObj::isSpell|ProtoObj::isSkill)
+#define INTANGIBLE_MASK (ProtoObj::kIsEnchantment|ProtoObj::kIsSpell|ProtoObj::kIsSkill)
 
 TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ObjectID        objID;
@@ -1577,7 +1577,7 @@ TilePoint GameObject::getFirstEmptySlot(GameObject *obj) {
 	ContainerIterator   iter(this);
 
 	//This Is The Largest The Row Column Can Be
-	static bool     slotTable[maxRow][maxCol];
+	static bool     slotTable[kMaxRow][kMaxCol];
 
 	memset(&slotTable, '\0', sizeof(slotTable));    //Initialize Table To false
 
@@ -1637,8 +1637,8 @@ bool GameObject::getAvailableSlot(
 
 	//  Determine if the specified object is an intagible container
 	if ((objProto->containmentSet()
-	        & (ProtoObj::isContainer | ProtoObj::isIntangible))
-	        == (ProtoObj::isContainer | ProtoObj::isIntangible)) {
+	        & (ProtoObj::kIsContainer | ProtoObj::kIsIntangible))
+	        == (ProtoObj::kIsContainer | ProtoObj::kIsIntangible)) {
 //		assert( isActor( obj ) );
 
 		//  Set intangible container _data.locations to -1, -1.
@@ -1649,7 +1649,7 @@ bool GameObject::getAvailableSlot(
 
 	//  Only actors or containers may contain other objects
 	if (isActor(this)
-	        || (_prototype->containmentSet() & ProtoObj::isContainer)) {
+	        || (_prototype->containmentSet() & ProtoObj::kIsContainer)) {
 		TilePoint       firstEmptySlot;
 
 		if (canMerge) {
@@ -1659,7 +1659,7 @@ bool GameObject::getAvailableSlot(
 			//  Iterate through the objects in this container
 			while (iter.next(&inventoryObj) != Nothing) {
 				if (canStackOrMerge(obj, inventoryObj)
-				        !=  cannotStackOrMerge) {
+				        !=  kCannotStackOrMerge) {
 					*tp = inventoryObj->getLocation();
 					*mergeObj = inventoryObj;
 					return true;
@@ -1733,7 +1733,7 @@ void GameObject::dropInventoryObject(GameObject *obj, int16 count) {
 			probeLoc.z = tileSlopeHeight(probeLoc, _mapNum, obj, &sti);
 
 			//  If _data.location is not blocked, drop the object
-			if (checkBlocked(obj, _mapNum, probeLoc) == blockageNone) {
+			if (checkBlocked(obj, _mapNum, probeLoc) == kBlockageNone) {
 				//  If we're dropping the object on a TAI, make sure
 				//  we call the correct drop function
 				if (sti.surfaceTAG == nullptr) {
@@ -1846,7 +1846,7 @@ void GameObject::senseEvent(
 //	Add a new timer to this objects's timer list
 
 bool GameObject::addTimer(TimerID id) {
-	return addTimer(id, sensorCheckRate);
+	return addTimer(id, kSensorCheckRate);
 }
 
 //-----------------------------------------------------------------------
@@ -2127,7 +2127,7 @@ bool GameObject::canSenseProtaganist(SenseInfo &info, int16 range) {
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2144,7 +2144,7 @@ bool GameObject::canSenseSpecificActor(
 		Actor *ac = (Actor *)this;
 		return sensor.check(info, ac->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2161,7 +2161,7 @@ bool GameObject::canSenseSpecificObject(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2178,7 +2178,7 @@ bool GameObject::canSenseActorProperty(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-----------------------------------------------------------------------
@@ -2195,7 +2195,7 @@ bool GameObject::canSenseObjectProperty(
 		Actor *a = (Actor *) this;
 		return sensor.check(info, a->_enchantmentFlags);
 	}
-	return sensor.check(info, nonActorSenseFlags);
+	return sensor.check(info, kNonActorSenseFlags);
 }
 
 //-------------------------------------------------------------------
@@ -2254,11 +2254,11 @@ void GameObject::evalEnchantments() {
 	}
 }
 
-#define noMergeFlags    (objectImportant|\
-                         objectGhosted|\
-                         objectInvisible|\
-                         objectFloating|\
-                         objectNoRecycle)
+#define noMergeFlags    (kObjectImportant|\
+                         kObjectGhosted|\
+                         kObjectInvisible|\
+                         kObjectFloating|\
+                         kObjectNoRecycle)
 
 int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 	int32       cSet = dropObj->proto()->containmentSet();
@@ -2269,25 +2269,25 @@ int32 GameObject::canStackOrMerge(GameObject *dropObj, GameObject *target) {
 
 	if (dropObj->getNameIndex() == target->getNameIndex()
 	        &&  dropObj->proto() == target->proto()
-	        &&  !(cSet & (ProtoObj::isIntangible | ProtoObj::isContainer))) {
+	        &&  !(cSet & (ProtoObj::kIsIntangible | ProtoObj::kIsContainer))) {
 		//  If it is a mergeable object
-		if (dropObj->proto()->flags & ResourceObjectPrototype::objPropMergeable) {
+		if (dropObj->proto()->flags & ResourceObjectPrototype::kObjPropMergeable) {
 			//  If the flags are the same, and neither object has children,
 			//  then we can merge
 			if (((dropObj->_data.objectFlags & noMergeFlags) == (target->_data.objectFlags & noMergeFlags))
 			        &&  dropObj->IDChild() == Nothing
 			        &&  target->IDChild() == Nothing) {
-				return canMerge;
+				return kCanMerge;
 			}
-		} else if (!(cSet & (ProtoObj::isWearable | ProtoObj::isWeapon | ProtoObj::isArmor))
+		} else if (!(cSet & (ProtoObj::kIsWearable | ProtoObj::kIsWeapon | ProtoObj::kIsArmor))
 		           ||  !isActor(target->IDParent())) {
 			//  We can stack if the pile we are stacking on is in a container.
 			if (!isWorld(target->IDParent())
 			        &&  target->getLocation().z != 0)
-				return canStack;
+				return kCanStack;
 		}
 	}
-	return cannotStackOrMerge;
+	return kCannotStackOrMerge;
 }
 
 void GameObject::mergeWith(GameObject *dropObj, GameObject *target, int16 count) {
@@ -2359,7 +2359,7 @@ uint16 GameObject::totalContainedMass() {
 	while (iter.next(&childObj) != Nothing) {
 		uint16          objMass;
 
-		if (!(childObj->containmentSet() & ProtoObj::isTangible))
+		if (!(childObj->containmentSet() & ProtoObj::kIsTangible))
 			continue;
 
 		objMass = childObj->_prototype->mass;
@@ -2385,7 +2385,7 @@ uint16 GameObject::totalContainedBulk() {
 	while (iter.next(&childObj) != Nothing) {
 		uint16          objBulk;
 
-		if (!(childObj->containmentSet() & ProtoObj::isTangible))
+		if (!(childObj->containmentSet() & ProtoObj::kIsTangible))
 			continue;
 
 		objBulk = childObj->_prototype->bulk;
@@ -4233,12 +4233,12 @@ bool lineOfSight(GameObject *obj1, GameObject *obj2, uint32 terrainMask) {
 #if 0
 	if (isActor(obj1)) {
 		Actor *a1 = (Actor *) obj1;
-		if (!a1->hasEffect(actorSeeInvis)) {
+		if (!a1->hasEffect(kActorSeeInvis)) {
 			if (!isActor(obj2) && obj2->isInvisible())
 				return false;
 			else if (isActor(obj2)) {
 				Actor *a2 = (Actor *) obj2;
-				if (a2->hasEffect(actorInvisible))
+				if (a2->hasEffect(kActorInvisible))
 					return false;
 			}
 		}
@@ -4328,7 +4328,7 @@ bool objObscured(GameObject *testObj) {
 		drawPos.x += fineScroll.x;
 		drawPos.y += fineScroll.y;
 
-		objSprInfo = proto->getSprite(testObj, ProtoObj::objOnGround);
+		objSprInfo = proto->getSprite(testObj, ProtoObj::kObjOnGround);
 
 		testObj->getColorTranslation(objColors);
 
@@ -4365,7 +4365,7 @@ APPFUNC(cmdBrain) {
 	if (!indivControls->getEnabled())
 		return;
 
-	if (ev.eventType == gEventNewValue) {
+	if (ev.eventType == kEventNewValue) {
 		//WriteStatusF( 4, "Brain Attempt " );
 
 		GameObject          *container = indivCviewTop->_containerObject;
@@ -4385,8 +4385,8 @@ APPFUNC(cmdBrain) {
 				break;
 			}
 		}
-	} else if (ev.eventType == gEventMouseMove) {
-		if (ev.value == GfxCompImage::leave) {
+	} else if (ev.eventType == kEventMouseMove) {
+		if (ev.value == GfxCompImage::kLeave) {
 			g_vm->_mouseInfo->setText(nullptr);
 		} else { //if (ev.value == gCompImage::enter)
 			// set the text in the cursor
@@ -4416,8 +4416,8 @@ void readyContainerSetup() {
 		                      *trioControls,
 		                      Rect16(trioReadyContInfo[i].xPos,
 		                             trioReadyContInfo[i].yPos + 8,
-		                             iconOriginX * 2 + iconWidth * trioReadyContInfo[i].cols + iconSpacingY * (trioReadyContInfo[i].cols - 1),
-		                             iconOriginY + (iconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * iconHeight) - 23),
+		                             kIconOriginX * 2 + kIconWidth * trioReadyContInfo[i].cols + kIconSpacingY * (trioReadyContInfo[i].cols - 1),
+		                             kIconOriginY + (kIconOriginY * trioReadyContInfo[i].rows) + (trioReadyContInfo[i].rows * kIconHeight) - 23),
 		                      *g_vm->_playerList[i]->_readyNode,
 		                      backImages,
 		                      numReadyContRes,
@@ -4432,8 +4432,8 @@ void readyContainerSetup() {
 	indivCviewTop   = new ReadyContainerView(*indivControls,
 	                  Rect16(indivReadyContInfoTop.xPos,
 	                         indivReadyContInfoTop.yPos + 8,
-	                         iconOriginX * 2 + iconWidth * indivReadyContInfoTop.cols + iconSpacingY * (indivReadyContInfoTop.cols - 1),
-	                         iconOriginY + (iconOriginY * indivReadyContInfoTop.rows) + (indivReadyContInfoTop.rows * iconHeight) - 23),
+	                         kIconOriginX * 2 + kIconWidth * indivReadyContInfoTop.cols + kIconSpacingY * (indivReadyContInfoTop.cols - 1),
+	                         kIconOriginY + (kIconOriginY * indivReadyContInfoTop.rows) + (indivReadyContInfoTop.rows * kIconHeight) - 23),
 	                  *indivReadyNode,
 	                  backImages,
 	                  numReadyContRes,
@@ -4447,8 +4447,8 @@ void readyContainerSetup() {
 	indivCviewBot   = new ReadyContainerView(*indivControls,
 	                  Rect16(indivReadyContInfoBot.xPos,
 	                         indivReadyContInfoBot.yPos + 8,
-	                         iconOriginX * 2 + iconWidth * indivReadyContInfoBot.cols + iconSpacingY * (indivReadyContInfoBot.cols - 1),
-	                         iconOriginY + (iconOriginY * indivReadyContInfoBot.rows) + (indivReadyContInfoBot.rows * iconHeight) - 24),
+	                         kIconOriginX * 2 + kIconWidth * indivReadyContInfoBot.cols + kIconSpacingY * (indivReadyContInfoBot.cols - 1),
+	                         kIconOriginY + (kIconOriginY * indivReadyContInfoBot.rows) + (indivReadyContInfoBot.rows * kIconHeight) - 24),
 	                  *indivReadyNode,
 	                  backImages,
 	                  numReadyContRes,
@@ -4502,7 +4502,7 @@ void objectTest() {
 APPFUNC(cmdControl) {
 	int newContainer = protoClassIdeaContainer;
 
-	if (ev.eventType == gEventMouseUp) {
+	if (ev.eventType == kEventMouseUp) {
 
 		GameObject *object = (GameObject *)getCenterActor();
 		ContainerIterator   iter(object);
@@ -4527,8 +4527,8 @@ APPFUNC(cmdControl) {
 //  actor or object to be visited
 //  Let's assume that we want each object and/or actor
 //  to be updated once every 10 seconds.
-const int32         objectCycleTime = (10 * frameRate),
-                    actorCycleTime = (5 * frameRate);
+const int32         objectCycleTime = (10 * kFrameRate),
+                    actorCycleTime = (5 * kFrameRate);
 
 //  Indexes into the array of actors and objects
 int32               objectIndex,

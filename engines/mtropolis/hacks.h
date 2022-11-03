@@ -50,6 +50,7 @@ struct Hacks {
 
 	bool ignoreMismatchedProjectNameInObjectLookups;
 	bool removeQuickTimeEdits;
+	bool ignoreMToonMaintainRateFlag;
 	uint midiVolumeScale;	// 256 = 1.0
 
 	uint32 minTransitionDuration;
@@ -72,6 +73,8 @@ void addObsidianBugFixes(const MTropolisGameDescription &desc, Hacks &hacks);
 void addObsidianAutoSaves(const MTropolisGameDescription &desc, Hacks &hacks, IAutoSaveProvider *autoSaveProvider);
 void addObsidianSaveMechanism(const MTropolisGameDescription &desc, Hacks &hacks);
 void addObsidianImprovedWidescreen(const MTropolisGameDescription &desc, Hacks &hacks);
+
+void addMTIQuirks(const MTropolisGameDescription &desc, Hacks &hacks);
 
 } // End of namespace HackSuites
 

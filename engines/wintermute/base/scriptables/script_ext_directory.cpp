@@ -25,10 +25,12 @@
  * Copyright (c) 2011 Jan Nedoma
  */
 
+#include "engines/wintermute/base/base_engine.h"
+#include "engines/wintermute/base/base_file_manager.h"
+#include "engines/wintermute/base/scriptables/script_ext_array.h"
 #include "engines/wintermute/base/scriptables/script_ext_directory.h"
 #include "engines/wintermute/base/scriptables/script_stack.h"
 #include "engines/wintermute/base/scriptables/script_value.h"
-#include "engines/wintermute/base/base_engine.h"
 #include "engines/wintermute/persistent.h"
 
 namespace Wintermute {
@@ -66,7 +68,7 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		const char *dirName = stack->pop()->getString();
 
 		if (strcmp(dirName, "saves") == 0) {
-			// Known games that do this: alphapolaris, hamlet, papasdaughters1, papasdaughters2, polechudes
+			// Known games that do this: alphapolaris, hamlet, lostbride, papasdaughters1, papasdaughters2, polechudes, etc
 			// No need to actually create anything, files will be stored at SavefileManager
 			stack->pushBool(true);
 		} else {
@@ -103,13 +105,28 @@ bool SXDirectory::scCallMethod(ScScript *script, ScStack *stack, ScStack *thisSt
 		stack->pushInt(0);
 		BaseScriptable *array = makeSXArray(_gameRef, stack);
 
-		// used in secret scene of "Art of Murder 1: FBI Confidential"
-		if (strcmp(dirName, "X:\\FBI\\data\\scenes\\17-magic\\") == 0 && strcmp(name, "GetDirectories") == 0) {
+		if (strcmp(dirName, "saves") == 0 && strcmp(name, "GetFiles") == 0) {
+			// used in "Tale of The Lost Bride and A Hidden Treasure"
+			// returns list of saves, removing "lostbride-win-ru.saves_" prefix
+
+			Common::StringArray fnames;
+			BaseFileManager::getEngineInstance()->listMatchingFiles(fnames, "*");
+			for (uint32 i = 0; i < fnames.size(); i++) {
+				stack->pushString(fnames[i].c_str());
+				((SXArray *)array)->push(stack->pop());
+			}
+
+		} else if (strcmp(dirName, "X:\\FBI\\data\\scenes\\17-magic\\") == 0 && strcmp(name, "GetDirectories") == 0) {
+			// used in secret scene of "Art of Murder 1: FBI Confidential"
 			// TODO: return list of "scenes\17-magic" subfolders from data.dcp
+
 			warning("FBI\\scenes\\17-magic Directory.%s is not implemented! Returning empty array...", name);
+
 		} else {
 			// No currently known games need this
+
 			warning("Directory.%s is not implemented! Returning empty array...", name);
+
 		}
 
  		stack->pushNative(array, false);

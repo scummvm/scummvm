@@ -61,10 +61,10 @@ extern int16        speechButtonCount;      // count of speech buttons
 //  Actor speech enums -- move these to include file
 
 enum {
-	speakContinued  = (1 << 0),         // Append next speech
-	speakNoAnimate  = (1 << 1),         // Don't animate speaking
-	speakWait       = (1 << 2),         // wait until speech finished
-	speakLock       = (1 << 3)          // lock UI while speech in progress
+	kSpeakContinued  = (1 << 0),         // Append next speech
+	kSpeakNoAnimate  = (1 << 1),         // Don't animate speaking
+	kSpeakWait       = (1 << 2),         // wait until speech finished
+	kSpeakLock       = (1 << 3)          // lock UI while speech in progress
 };
 
 class Speech {
@@ -122,11 +122,11 @@ private:
 public:
 
 	enum SpeechFlags {
-		spNoAnimate     = (1 << 0),         //  Don't animate actor
-		spHasVoice      = (1 << 1),         //  The audio interface is playing this voice
-		spQueued        = (1 << 2),         //  In active queue
-		spActive        = (1 << 3),         //  Is current active speech
-		spLock          = (1 << 4)          //  Lock UI while speaking
+		kSpNoAnimate     = (1 << 0),         //  Don't animate actor
+		kSpHasVoice      = (1 << 1),         //  The audio interface is playing this voice
+		kSpQueued        = (1 << 2),         //  In active queue
+		kSpActive        = (1 << 3),         //  Is current active speech
+		kSpLock          = (1 << 4)          //  Lock UI while speaking
 	};
 
 	// remove speech, dealloc resources

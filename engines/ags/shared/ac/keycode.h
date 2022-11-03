@@ -251,7 +251,7 @@ enum eAGSKeyCode {
 	*/
 
 	// Mask defines the key code position if packed in the int32;
-	// takes only 12 bits, as minimal necessary to accomodate historical codes.
+	// takes only 12 bits, as minimal necessary to accommodate historical codes.
 	eAGSKeyMask = 0x0FFF
 };
 

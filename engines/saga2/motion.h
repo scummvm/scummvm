@@ -37,28 +37,28 @@ extern const StaticTilePoint dirTable[];
 extern const StaticTilePoint incDirTable[];
 
 
-const int   gravity         = 2;
-const int   walkSpeed       = 4;
-const int   slowWalkSpeed   = 2;
-const int   runSpeed        = 8;
-const int   walkSpeedDiag   = 3;
-const int   runSpeedDiag    = 6;
-const int   angleThresh     = 24;
+const int   kGravity         = 2;
+const int   kWalkSpeed       = 4;
+const int   kSlowWalkSpeed   = 2;
+const int   kRunSpeed        = 8;
+const int   kWalkSpeedDiag   = 3;
+const int   kRunSpeedDiag    = 6;
+const int   kAngleThresh     = 24;
 
 enum MotionThreadReturnValues {
-	motionInterrupted,              //  MotionTask has been rudely
+	kMotionInterrupted,              //  MotionTask has been rudely
 	//  interrupted and recycled for a new
 	//  motion.
 
-	motionStarted,                  //  The actor started moving.
-	motionCompleted,                //  The actor motion completed
+	kMotionStarted,                  //  The actor started moving.
+	kMotionCompleted,                //  The actor motion completed
 	//  successfully.
-	motionWalkBlocked               //  The walk motion failed.
+	kMotionWalkBlocked               //  The walk motion failed.
 };
 
 enum {
-	moveWait            = (1 << 0),
-	moveRun             = (1 << 1)
+	kMoveWait            = (1 << 0),
+	kMoveRun             = (1 << 1)
 };
 
 /* ===================================================================== *
@@ -116,22 +116,22 @@ class MotionTask {
 	uint16          _flags;                  // various flags
 
 	enum motionFlags {
-		pathFind        = (1 << 0),         // walk is using path finding
-		finalPath       = (1 << 1),         // current path is final
-		inWater         = (1 << 2),         // handle motion as in water
-		reset           = (1 << 3),         // target has been reset
-		blocked         = (1 << 4),         // target was blocked
-		requestRun      = (1 << 5),         // caller has requested running
-		wandering       = (1 << 6),         // wander
-		tethered        = (1 << 7),         // stay within tether
-		nextAnim        = (1 << 8),         // update animation for this frame
-		turnDelay       = (1 << 9),         // Delay While Turning
-		TAGTarg         = (1 << 10),        // The target is not an object but a TAG
-		LocTarg         = (1 << 11),        // The target is not an object but a TAG
-		agitated        = (1 << 12),        // Walking around blockage
-		agitatable      = (1 << 13),        // Will agitate when blocked
-		onStairs        = (1 << 14),        // actor is climbing stairs
-		privledged      = (1 << 15)         // don't let AI interrupt this
+		kMfPathFind        = (1 << 0),         // walk is using path finding
+		kMfFinalPath       = (1 << 1),         // current path is final
+		kMfInWater         = (1 << 2),         // handle motion as in water
+		kMfReset           = (1 << 3),         // target has been reset
+		kMfBlocked         = (1 << 4),         // target was blocked
+		kMfRequestRun      = (1 << 5),         // caller has requested running
+		kMfWandering       = (1 << 6),         // wander
+		kMfTethered        = (1 << 7),         // stay within tether
+		kMfNextAnim        = (1 << 8),         // update animation for this frame
+		kMfTurnDelay       = (1 << 9),         // Delay While Turning
+		kMfTAGTarg         = (1 << 10),        // The target is not an object but a TAG
+		kMfLocTarg         = (1 << 11),        // The target is not an object but a TAG
+		kMfAgitated        = (1 << 12),        // Walking around blockage
+		kMfAgitatable      = (1 << 13),        // Will agitate when blocked
+		kMfOnStairs        = (1 << 14),        // actor is climbing stairs
+		kMfPrivledged      = (1 << 15)         // don't let AI interrupt this
 	};
 
 	Direction       _direction;              // direction of movement
@@ -161,7 +161,7 @@ class MotionTask {
 	};
 
 	enum defenseMotionFlags {
-		blocking    = (1 << 0)             // actor is blocking an attack
+		kDfBlocking    = (1 << 0)             // actor is blocking an attack
 	};
 
 	union {
@@ -186,74 +186,74 @@ class MotionTask {
 public:
 	//  Combat specific motion sub-types
 	enum TwoHandedSwingTypes {
-		twoHandedSwingHigh,
-		twoHandedSwingLow,
-		twoHandedSwingLeftHigh,
-		twoHandedSwingLeftLow,
-		twoHandedSwingRightHigh,
-		twoHandedSwingRightLow
+		kTwoHandedSwingHigh,
+		kTwoHandedSwingLow,
+		kTwoHandedSwingLeftHigh,
+		kTwoHandedSwingLeftLow,
+		kTwoHandedSwingRightHigh,
+		kTwoHandedSwingRightLow
 	};
 
 	enum OneHandedSwingTypes {
-		oneHandedSwingHigh,
-		oneHandedSwingLow,
-		oneHandedThrust
+		kOneHandedSwingHigh,
+		kOneHandedSwingLow,
+		kOneHandedThrust
 	};
 
 	enum OneHandedParryTypes {
-		oneHandedParryHigh,
-		oneHandedParryLow
+		kOneHandedParryHigh,
+		kOneHandedParryLow
 	};
 
 private:
 
 	enum motionTypes {
-		motionTypeNone,                     // no motion
+		kMotionTypeNone,                     // no motion
 
-		motionTypeThrown,                   // thrown in an arc
-		motionTypeShot,                     // shot in very shallow arc w/ cheat
-		motionTypeFall,                     // fall from a height
-		motionTypeWalk,                     // walk to a point
-		motionTypeStagger,                  // stagger to a point
-		motionTypeClimbUp,                  // climb up ladder to a point
-		motionTypeClimbDown,                // climb dowb ladder
-		motionTypeTalk,                     // talk and gesture
-		motionTypeLand,                     // land after falling
-		motionTypeLandBadly,                // land badly after falling
-		motionTypeJump,                     // get ready for jump
-		motionTypeTurn,                     // Turn Object
-		motionTypeGive,                     // Extend arm to give object
-		motionTypeRise,                     // Rise slowly in water
-		motionTypeHit,                      // For simple animations
+		kMotionTypeThrown,                   // thrown in an arc
+		kMotionTypeShot,                     // shot in very shallow arc w/ cheat
+		kMotionTypeFall,                     // fall from a height
+		kMotionTypeWalk,                     // walk to a point
+		kMotionTypeStagger,                  // stagger to a point
+		kMotionTypeClimbUp,                  // climb up ladder to a point
+		kMotionTypeClimbDown,                // climb dowb ladder
+		kMotionTypeTalk,                     // talk and gesture
+		kMotionTypeLand,                     // land after falling
+		kMotionTypeLandBadly,                // land badly after falling
+		kMotionTypeJump,                     // get ready for jump
+		kMotionTypeTurn,                     // Turn Object
+		kMotionTypeGive,                     // Extend arm to give object
+		kMotionTypeRise,                     // Rise slowly in water
+		kMotionTypeHit,                      // For simple animations
 
 		//  Immobile motions
-		motionTypeWait,                     // Don't move, simply eat some time
-		motionTypeUseObject,                // Use an object
-		motionTypeUseObjectOnObject,        // Use one object on another
-		motionTypeUseObjectOnTAI,           // Use an object on a TAI
-		motionTypeUseObjectOnLocation,      // Use an object on a TilePoint
-		motionTypeUseTAI,                   // Use a TAI
-		motionTypeDropObject,               // Drop an object at a location
-		motionTypeDropObjectOnObject,       // Drop one object on another
-		motionTypeDropObjectOnTAI,          // Drop an object on a TAI
+		kMotionTypeWait,                     // Don't move, simply eat some time
+		kMotionTypeUseObject,                // Use an object
+		kMotionTypeUseObjectOnObject,        // Use one object on another
+		kMotionTypeUseObjectOnTAI,           // Use an object on a TAI
+		kMotionTypeUseObjectOnLocation,      // Use an object on a TilePoint
+		kMotionTypeUseTAI,                   // Use a TAI
+		kMotionTypeDropObject,               // Drop an object at a location
+		kMotionTypeDropObjectOnObject,       // Drop one object on another
+		kMotionTypeDropObjectOnTAI,          // Drop an object on a TAI
 
 		//  Offensive combat actions
-		motionTypeTwoHandedSwing,           // swing two-handed weapon
-		motionTypeOneHandedSwing,           // swing one-handed weapon
-		motionTypeFireBow,                  // fire bow
-		motionTypeCastSpell,                // cast spell
-		motionTypeUseWand,                  // cast spell with wand
+		kMotionTypeTwoHandedSwing,           // swing two-handed weapon
+		kMotionTypeOneHandedSwing,           // swing one-handed weapon
+		kMotionTypeFireBow,                  // fire bow
+		kMotionTypeCastSpell,                // cast spell
+		kMotionTypeUseWand,                  // cast spell with wand
 
 		//  Defensive combat actions
-		motionTypeTwoHandedParry,           // parry with two-handed weapon
-		motionTypeOneHandedParry,           // parry with one-handed weapon
-		motionTypeShieldParry,              // parry with shield
-		motionTypeDodge,                    // dodge blow
+		kMotionTypeTwoHandedParry,           // parry with two-handed weapon
+		kMotionTypeOneHandedParry,           // parry with one-handed weapon
+		kMotionTypeShieldParry,              // parry with shield
+		kMotionTypeDodge,                    // dodge blow
 
 		//  Other combat actions
-		motionTypeAcceptHit,                // show effect of hit
-		motionTypeFallDown,                 // be knocked off feet
-		motionTypeDie                       // self-explanatory
+		kMotionTypeAcceptHit,                // show effect of hit
+		kMotionTypeFallDown,                 // be knocked off feet
+		kMotionTypeDie                       // self-explanatory
 
 	};
 
@@ -265,7 +265,7 @@ private:
 	void write(Common::MemoryWriteStreamDynamic *out);
 
 	// motion task is finished.
-	void remove(int16 returnVal = motionInterrupted);
+	void remove(int16 returnVal = kMotionInterrupted);
 
 	TilePoint getImmediateTarget();      // determine immediate target
 	// location
@@ -274,15 +274,15 @@ private:
 	void turnAction() {
 		Actor   *a = (Actor *)_object;
 
-		if (_flags & reset) {
-			a->setAction(actionStand, 0);
-			_flags &= ~reset;
+		if (_flags & kMfReset) {
+			a->setAction(kActionStand, 0);
+			_flags &= ~kMfReset;
 		}
 
 		if (a->_currentFacing != _direction)
 			a->turn(_direction);
 		else
-			remove(motionCompleted);
+			remove(kMotionCompleted);
 	}
 
 	void ballisticAction();
@@ -453,25 +453,25 @@ public:
 
 	//  Determine if the motion task is walking to a destination
 	bool isWalkToDest() {
-		return isWalk() && !(_flags & wandering);
+		return isWalk() && !(_flags & kMfWandering);
 	}
 
 	//  Determine if the motion task is a wandering motion
 	bool isWander() {
-		return isWalk() && (_flags & wandering);
+		return isWalk() && (_flags & kMfWandering);
 	}
 
 	//  Determine if the motion task is tethered
 	bool isTethered() {
-		return isWander() && (_flags & tethered);
+		return isWander() && (_flags & kMfTethered);
 	}
 
 	bool isRunning() {
-		return (_flags & requestRun) && _runCount == 0;
+		return (_flags & kMfRequestRun) && _runCount == 0;
 	}
 
 	bool isTurn() {
-		return _motionType == motionTypeTurn;
+		return _motionType == kMotionTypeTurn;
 	}
 
 	//  Return the wandering tether region
@@ -523,13 +523,13 @@ public:
 
 	//  Determine if this motion is a dodge motion
 	bool isDodging(Actor *thisAttacker) {
-		return _motionType == motionTypeDodge && thisAttacker == _d.attacker;
+		return _motionType == kMotionTypeDodge && thisAttacker == _d.attacker;
 	}
 
 	static void initMotionTasks();
 
 	bool isPrivledged() {
-		return _flags & privledged;
+		return _flags & kMfPrivledged;
 	}
 };
 

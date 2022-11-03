@@ -4221,7 +4221,7 @@ static const uint16 gk2InventoryScrollSpeedPatch[] = {
 //  up by 1 pixel. This patch fixes the send to scrollSelections by passing the
 //  button's delta instead of 1. The Italian version's vocab.997 is missing the
 //  scrollSelections selector so this patch avoids referencing it. Two versions
-//  are necessary to accomodate scripts compiled with and without line numbers.
+//  are necessary to accommodate scripts compiled with and without line numbers.
 //
 // Applies to: All versions
 // Responsible method: ScrollButon:track
@@ -6462,7 +6462,7 @@ static const uint16 kq6CDPatchAudioTextSupportAzureAriel[] = {
 };
 
 // Fixes Alexander's yell in dual mode when the Minotaur knocks him into the
-//  firey pit in room 440.
+//  fiery pit in room 440.
 //
 // Applies to: PC-CD
 // Patched method: hornSwaggled:changeState

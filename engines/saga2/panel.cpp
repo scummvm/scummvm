@@ -153,7 +153,7 @@ bool gPanel::isActive() {
 	return (this == g_vm->_toolBase->_activePanel);
 }
 
-void gPanel::notify(enum gEventType type, int32 value) {
+void gPanel::notify(gEventType type, int32 value) {
 	gEvent          ev;
 
 	ev.panel = this;
@@ -185,7 +185,7 @@ void gPanel::invalidate(Rect16 *) {
 }
 
 
-void gPanel::drawTitle(enum text_positions placement) {
+void gPanel::drawTitle(TextPositions placement) {
 	gPort           &port = _window._windowPort;
 	Rect16          r = _extent;
 	const gPixelMap *img = nullptr;
@@ -198,27 +198,27 @@ void gPanel::drawTitle(enum text_positions placement) {
 		r.width = img->_size.x;
 		r.height = img->_size.y;
 	} else {
-		r.width = TextWidth(mainFont, _title, -1, textStyleUnderBar);
+		r.width = TextWidth(mainFont, _title, -1, kTextStyleUnderBar);
 		r.height = mainFont->height;
 	}
 
 	switch (placement) {
-	case textPosLeft:
+	case kTextPosLeft:
 		r.x -= r.width + 2;
 		r.y += (_extent.height - r.height) / 2 + 1;
 		break;
 
-	case textPosRight:
+	case kTextPosRight:
 		r.x += _extent.width + 3;
 		r.y += (_extent.height - r.height) / 2 + 1;
 		break;
 
-	case textPosHigh:
+	case kTextPosHigh:
 		r.x += (_extent.width - r.width) / 2;
 		r.y -= r.height + 1;
 		break;
 
-	case textPosLow:
+	case kTextPosLow:
 		r.x += (_extent.width - r.width) / 2;
 		r.y += _extent.height + 2;
 		break;
@@ -232,13 +232,13 @@ void gPanel::drawTitle(enum text_positions placement) {
 	SAVE_GPORT_STATE(port);                  // save pen color, etc.
 
 	if (_imageLabel) {
-		port.setIndirectColor(blackPen);     // pen color black
-		port.setMode(drawModeColor);         // draw as glyph
+		port.setIndirectColor(kBlackPen);     // pen color black
+		port.setMode(kDrawModeColor);         // draw as glyph
 		port.bltPixels(*img, 0, 0, r.x, r.y, r.width, r.height);
 	} else {
-		port.setMode(drawModeMatte);         // draw as glyph
-		port.setIndirectColor(blackPen);     // pen color black
-		port.setStyle(textStyleUnderBar);    // set style to do underbars
+		port.setMode(kDrawModeMatte);         // draw as glyph
+		port.setIndirectColor(kBlackPen);     // pen color black
+		port.setStyle(kTextStyleUnderBar);    // set style to do underbars
 		port.moveTo(r.x, r.y);           // move to new text pos
 
 		g_vm->_pointer->hide(*globalPort, r);        // hide the pointer
@@ -535,7 +535,7 @@ void gWindow::deactivate() {
 }
 
 bool gWindow::activate(gEventType why) {
-	if (why == gEventMouseDown) {           // momentarily depress
+	if (why == kEventMouseDown) {           // momentarily depress
 		_selected = 1;
 		notify(why, 0);                      // notify App of successful hit
 		return true;
@@ -544,22 +544,22 @@ bool gWindow::activate(gEventType why) {
 }
 
 void gWindow::pointerMove(gPanelMessage &) {
-	notify(gEventMouseMove, 0);
+	notify(kEventMouseMove, 0);
 }
 
 bool gWindow::pointerHit(gPanelMessage &) {
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
 void gWindow::pointerDrag(gPanelMessage &) {
 	if (_selected) {
-		notify(gEventMouseDrag, 0);
+		notify(kEventMouseDrag, 0);
 	}
 }
 
 void gWindow::pointerRelease(gPanelMessage &) {
-	if (_selected) notify(gEventMouseUp, 0);   // notify App of successful hit
+	if (_selected) notify(kEventMouseUp, 0);   // notify App of successful hit
 	deactivate();
 }
 
@@ -699,29 +699,29 @@ void gGenericControl::deactivate() {
 }
 
 void gGenericControl::pointerMove(gPanelMessage &msg) {
-	notify(gEventMouseMove, (msg._pointerEnter ? enter : 0) | (msg._pointerLeave ? leave : 0));
+	notify(kEventMouseMove, (msg._pointerEnter ? kCVEnter : 0) | (msg._pointerLeave ? kCVLeave : 0));
 }
 
 bool gGenericControl::pointerHit(gPanelMessage &msg) {
 	if (msg._rightButton)
-		notify(gEventRMouseDown, 0);
+		notify(kEventRMouseDown, 0);
 	else if (msg._doubleClick && !_dblClickFlag) {
 		_dblClickFlag = true;
-		notify(gEventDoubleClick, 0);
+		notify(kEventDoubleClick, 0);
 	} else {
 		_dblClickFlag = false;
-		notify(gEventMouseDown, 0);
+		notify(kEventMouseDown, 0);
 	}
 
 	return true;
 }
 
 void gGenericControl::pointerDrag(gPanelMessage &) {
-	notify(gEventMouseDrag, 0);
+	notify(kEventMouseDrag, 0);
 }
 
 void gGenericControl::pointerRelease(gPanelMessage &) {
-	notify(gEventMouseUp, 0);
+	notify(kEventMouseUp, 0);
 	deactivate();
 }
 
@@ -736,7 +736,7 @@ void gGenericControl::draw() {
 void gToolBase::setActive(gPanel *ctl) {
 	if (_activePanel && _activePanel == ctl)  return;
 	if (_activePanel) _activePanel->deactivate();
-	if (ctl == nullptr || ctl->activate(gEventNone)) _activePanel = ctl;
+	if (ctl == nullptr || ctl->activate(kEventNone)) _activePanel = ctl;
 }
 
 void gToolBase::handleMouse(Common::Event &event, uint32 time) {
@@ -1008,13 +1008,13 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 	uint16 qualifier = 0;
 
 	if (event.kbd.flags & Common::KBD_SHIFT)
-		qualifier |= qualifierShift;
+		qualifier |= kQualifierShift;
 
 	if (event.kbd.flags & Common::KBD_CTRL)
-		qualifier |= qualifierControl;
+		qualifier |= kQualifierControl;
 
 	if (event.kbd.flags & Common::KBD_ALT)
-		qualifier |= qualifierAlt;
+		qualifier |= kQualifierAlt;
 
 	_msg._pickAbsPos  = _pickPos;
 	_msg._pointerEnter = 0;
@@ -1042,7 +1042,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 			if ((ctl = w->keyTest(k)) != nullptr) {
 				if (_activePanel == ctl) return;
 				if (_activePanel) _activePanel->deactivate();
-				if (ctl->activate(gEventKeyDown)) {
+				if (ctl->activate(kEventKeyDown)) {
 					_activePanel = ctl;
 					return;
 				}
@@ -1056,7 +1056,7 @@ void gToolBase::handleKeyStroke(Common::Event &event) {
 
 		// else send the message to the app.
 
-		w->notify(gEventKeyDown, (qualifier << 16) | key);
+		w->notify(kEventKeyDown, (qualifier << 16) | key);
 	}
 }
 

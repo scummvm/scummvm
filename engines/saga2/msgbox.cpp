@@ -104,7 +104,7 @@ APPFUNC(ErrorWindow::cmdMessageWindow) {
 	gWindow         *win;
 	requestInfo     *ri;
 
-	if (ev.panel && ev.eventType == gEventNewValue && ev.value) {
+	if (ev.panel && ev.eventType == kEventNewValue && ev.value) {
 		win = ev.panel->getWindow();        // get the window pointer
 		ri = win ? (requestInfo *)win->_userData : nullptr;
 
@@ -238,7 +238,7 @@ void SimpleWindow::drawClipped(
     const Rect16  &r) {
 	Rect16          box = _extent;
 	//gFont             *buttonFont=&Onyx10Font;
-	int16           textPos = textPosHigh;
+	int16           textPos = kTextPosHigh;
 	//textPallete       pal( 33+9, 36+9, 41+9, 34+9, 40+9, 43+9 );
 	textPallete     pal(33 + 9, 33 + 9, 41 + 9, 33 + 9, 33 + 9, 41 + 9);
 
@@ -309,18 +309,18 @@ void SimpleWindow::DrawOutlineFrame(gPort &port, const Rect16 &r, int16 fillColo
 		int16       bottom = r.y + r.height - 2,
 		            right  = r.x + r.width - 2;
 
-		port.setIndirectColor(whitePen);
+		port.setIndirectColor(kWhitePen);
 		port.vLine(r.x + 1, r.y + 1, r.height - 3);
 		port.hLine(r.x + 2, r.y + 1, r.width  - 3);
 
-		port.setIndirectColor(blackPen);
+		port.setIndirectColor(kBlackPen);
 		port.frameRect(r, 1);
 
-		port.setIndirectColor(buttonDkPen);
+		port.setIndirectColor(kButtonDkPen);
 		port.hLine(r.x + 1,   bottom, r.width - 2);
 		port.vLine(right, r.y + 1,    r.height - 2);
 
-		port.setIndirectColor(buttonPen);
+		port.setIndirectColor(kButtonPen);
 		port.setPixel(r.x + 1, bottom);
 		port.setPixel(right,   r.y + 1);
 
@@ -353,10 +353,10 @@ bool SimpleButton::activate(gEventType why) {
 	_selected = 1;
 	draw();
 
-	if (why == gEventKeyDown) {             // momentarily depress
+	if (why == kEventKeyDown) {             // momentarily depress
 		//delay( 200 );
 		deactivate();
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	}
 	return false;
 }
@@ -364,7 +364,7 @@ bool SimpleButton::activate(gEventType why) {
 bool SimpleButton::pointerHit(gPanelMessage &) {
 	//if (ghosted) return false;
 
-	activate(gEventMouseDown);
+	activate(kEventMouseDown);
 	return true;
 }
 
@@ -373,7 +373,7 @@ void SimpleButton::pointerRelease(gPanelMessage &) {
 
 	if (_selected) {
 		deactivate();                       // give back input focus
-		notify(gEventNewValue, 1);       // notify App of successful hit
+		notify(kEventNewValue, 1);       // notify App of successful hit
 	} else deactivate();
 }
 
@@ -416,7 +416,7 @@ void SimpleButton::drawClipped(
 	                               box,
 	                               buttonColor);
 
-	drawTitle((enum text_positions)0);
+	drawTitle((TextPositions)0);
 	g_vm->_pointer->show(port, _extent);              // show mouse pointer
 }
 

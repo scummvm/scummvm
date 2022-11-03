@@ -280,9 +280,9 @@ public:
 	Common::String toString(bool shortString = true);
 
 	/**
-	 * Clears actor data fields
+	 * Clears reflection-related data fields
 	 */
-	void clearFields();
+	void clearReflectionData();
 
 	bool canReach(const Common::Point &point);
 	void forceTo(int16 actorX, int16 actorY, bool doSpeech);

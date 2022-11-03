@@ -188,7 +188,7 @@ static const uint16 text16_shiftJIS_punctuation_SCI01[] = {
 //
 // Special cases in games:
 //  Laura Bow 2 - Credits in the game menu - all the text lines start with spaces (bug #5159)
-//                Act 6 Coroner questionaire - the text of all control buttons has trailing spaces
+//                Act 6 Coroner questionnaire - the text of all control buttons has trailing spaces
 //                                              "Detective Ryan Hanrahan O'Riley" contains even more spaces (bug #5334)
 //  Conquests of Camelot - talking with Cobb - one text box of the dialogue contains a longer word,
 //                                              that will be broken into 2 lines (bug #5159)

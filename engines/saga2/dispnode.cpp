@@ -112,7 +112,7 @@ void  DisplayNodeList::init(uint16 s) {
 		_displayList[i]._efx = nullptr;
 		_displayList[i]._nextDisplayed = nullptr;
 		_displayList[i]._object = nullptr;
-		_displayList[i]._type = nodeTypeObject;
+		_displayList[i]._type = kNodeTypeObject;
 	}
 }
 //-----------------------------------------------------------------------
@@ -123,7 +123,7 @@ DisplayNode::DisplayNode() {
 	_sortDepth = 0;
 	_object = nullptr;
 	_flags = 0;                  // various flags
-	_type = nodeTypeObject;
+	_type = kNodeTypeObject;
 	_efx = nullptr;
 }
 
@@ -172,7 +172,7 @@ void DisplayNodeList::draw() {
 	}
 
 	for (dn = DisplayNodeList::_head; dn; dn = dn->_nextDisplayed) {
-		if (dn->_type == nodeTypeEffect)
+		if (dn->_type == kNodeTypeEffect)
 			dn->drawEffect();
 		else
 			dn->drawObject();
@@ -184,8 +184,8 @@ void DisplayNodeList::draw() {
 //	objects or actors which are closest to the center view point.
 
 void DisplayNodeList::buildObjects(bool fromScratch) {
-	GameObject      *sortList[maxDisplayed + 1];
-	int16           distList[maxDisplayed + 1];
+	GameObject      *sortList[kMaxDisplayed + 1];
+	int16           distList[kMaxDisplayed + 1];
 	int16           sortCount = 0;
 	int16           i;
 	int16           viewSize = kTileRectHeight;
@@ -257,7 +257,7 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				//  actor's appearance.
 				if (a->_appearance == nullptr) {
 					a->_appearance =
-					    LoadActorAppearance(a->_appearanceID, sprStandBank);
+					    LoadActorAppearance(a->_appearanceID, kSprStandBank);
 				}
 			}
 
@@ -270,11 +270,11 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 				sortList[i + 1] = sortList[i];
 			}
 
-			if (i < maxDisplayed) {
+			if (i < kMaxDisplayed) {
 				distList[i] = dist;
 				sortList[i] = obj;
 
-				if (sortCount < maxDisplayed) sortCount++;
+				if (sortCount < kMaxDisplayed) sortCount++;
 			}
 		}
 	}
@@ -291,13 +291,13 @@ void DisplayNodeList::buildObjects(bool fromScratch) {
 		dn->_nextDisplayed = nullptr;
 		dn->_object = ob;
 
-		dn->_type = nodeTypeObject;
+		dn->_type = kNodeTypeObject;
 
 		dn->_flags = 0;
 		if (centerActorIndicatorEnabled
 		        &&  isActor(dn->_object)
 		        && ((Actor *)dn->_object) == centerActor)
-			dn->_flags |= DisplayNode::displayIndicator;
+			dn->_flags |= DisplayNode::kDisplayIndicator;
 
 		//  Various test data
 //		dn->spriteFrame = 0;
@@ -421,7 +421,7 @@ void DisplayNode::drawObject() {
 
 			obj->setOnScreen(true);
 
-			if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
+			if (getCenterActor()->canSenseSpecificObject(info, kMaxSenseRange, obj->thisID()))
 				obj->setSightedByCenter(true);
 			else {
 				obj->setSightedByCenter(false);
@@ -433,7 +433,7 @@ void DisplayNode::drawObject() {
 			if (--obj->_data.sightCtr == 0) {
 				SenseInfo   info;
 
-				if (getCenterActor()->canSenseSpecificObject(info, maxSenseRange, obj->thisID()))
+				if (getCenterActor()->canSenseSpecificObject(info, kMaxSenseRange, obj->thisID()))
 					obj->setSightedByCenter(true);
 				else {
 					obj->setSightedByCenter(false);
@@ -445,7 +445,7 @@ void DisplayNode::drawObject() {
 		}
 
 		//  Figure out which sprite to show
-		sprInfo = proto->getSprite(obj, ProtoObj::objOnGround);
+		sprInfo = proto->getSprite(obj, ProtoObj::kObjOnGround);
 
 		//  Build the color translation table for the object
 		obj->getColorTranslation(mainColors);
@@ -520,9 +520,9 @@ void DisplayNode::drawObject() {
 				return;
 			}
 
-			if (a->hasEffect(actorInvisible)) {
+			if (a->hasEffect(kActorInvisible)) {
 				if (!isPlayerActor(a)
-				        &&  !(getCenterActor()->hasEffect(actorSeeInvis))) {
+				        &&  !(getCenterActor()->hasEffect(kActorSeeInvis))) {
 					_hitBox.width = -1;
 					_hitBox.height = -1;
 					return;
@@ -535,7 +535,7 @@ void DisplayNode::drawObject() {
 
 				a->setOnScreen(true);
 
-				if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
+				if (getCenterActor()->canSenseSpecificActor(info, kMaxSenseRange, a))
 					a->setSightedByCenter(true);
 				else {
 					a->setSightedByCenter(false);
@@ -547,7 +547,7 @@ void DisplayNode::drawObject() {
 				if (--a->_data.sightCtr == 0) {
 					SenseInfo   info;
 
-					if (getCenterActor()->canSenseSpecificActor(info, maxSenseRange, a))
+					if (getCenterActor()->canSenseSpecificActor(info, kMaxSenseRange, a))
 						a->setSightedByCenter(true);
 					else {
 						a->setSightedByCenter(false);
@@ -608,13 +608,13 @@ void DisplayNode::drawObject() {
 				aa->requestBank(pose->actorFrameBank);
 
 				//  Indicate that animation is OK.
-				a->_animationFlags &= ~animateNotLoaded;
+				a->_animationFlags &= ~kAnimateNotLoaded;
 
 				//  Set up which bank and frame to use.
 				a->_poseInfo = pTemp;
 			} else {
 				//  Indicate that animation isn't loaded
-				a->_animationFlags |= animateNotLoaded;
+				a->_animationFlags |= kAnimateNotLoaded;
 
 				//  Initiate a load of the sprite bank needed.
 				/*  if (!RHandleLoading(
@@ -643,7 +643,7 @@ void DisplayNode::drawObject() {
 			if (a->_leftHandObject != Nothing) {
 				partCount++;
 
-				if (poseFlags & ActorPose::leftObjectInFront) {
+				if (poseFlags & ActorPose::kLeftObjectInFront) {
 					leftIndex = 1;
 				} else {
 					leftIndex = 0;
@@ -654,9 +654,9 @@ void DisplayNode::drawObject() {
 			if (a->_rightHandObject != Nothing) {
 				partCount++;
 
-				if (poseFlags & ActorPose::rightObjectInFront) {
+				if (poseFlags & ActorPose::kRightObjectInFront) {
 					if (leftIndex == 1
-					        &&  poseFlags & ActorPose::leftOverRight) {
+					        &&  poseFlags & ActorPose::kLeftOverRight) {
 						leftIndex = 2;
 						rightIndex = 1;
 					} else {
@@ -664,7 +664,7 @@ void DisplayNode::drawObject() {
 					}
 				} else {
 					if (leftIndex == 0
-					        &&  poseFlags & ActorPose::leftOverRight) {
+					        &&  poseFlags & ActorPose::kLeftOverRight) {
 						rightIndex = 0;
 						leftIndex = 1;
 						bodyIndex = 2;
@@ -693,7 +693,7 @@ void DisplayNode::drawObject() {
 			//  Color remapping info
 			sc->colorTable = mainColors;
 			//          sc->colorTable = aa->schemeList ? mainColors : identityColors;
-			sc->flipped = (poseFlags & ActorPose::actorFlipped);
+			sc->flipped = (poseFlags & ActorPose::kActorFlipped);
 
 			assert(sc->sp != nullptr);
 			assert(sc->sp->size.x > 0);
@@ -720,7 +720,7 @@ void DisplayNode::drawObject() {
 				assert(sc->offset.y < 1000);
 				assert(sc->offset.y > -1000);
 				sc->colorTable = leftColors;
-				sc->flipped = (poseFlags & ActorPose::leftObjectFlipped);
+				sc->flipped = (poseFlags & ActorPose::kLeftObjectFlipped);
 			}
 
 			//  If we were carrying something in the right hand,
@@ -746,7 +746,7 @@ void DisplayNode::drawObject() {
 				assert(sc->offset.y < 1000);
 				assert(sc->offset.y > -1000);
 				sc->colorTable = rightColors;
-				sc->flipped = (poseFlags & ActorPose::rightObjectFlipped);
+				sc->flipped = (poseFlags & ActorPose::kRightObjectFlipped);
 			}
 		}
 	}
@@ -757,12 +757,12 @@ void DisplayNode::drawObject() {
 	int16       effectFlags = 0;
 	bool        obscured;
 
-	if (ghostIt) effectFlags |= sprFXGhosted;
+	if (ghostIt) effectFlags |= kSprFXGhosted;
 
 	if (obj->isSightedByCenter() && objRoofRipped(obj))
-		effectFlags |= sprFXGhostIfObscured;
+		effectFlags |= kSprFXGhostIfObscured;
 
-	effectFlags |= sprFXTerrainMask;
+	effectFlags |= kSprFXTerrainMask;
 
 	DrawCompositeMaskedSprite(
 	    g_vm->_backPort,
@@ -773,7 +773,7 @@ void DisplayNode::drawObject() {
 	    effectFlags,
 	    &obscured);
 
-	if (effectFlags & sprFXGhostIfObscured)
+	if (effectFlags & kSprFXGhostIfObscured)
 		obj->setObscured(obscured);
 
 	//  Record the extent box that the sprite was drawn
@@ -789,7 +789,7 @@ void DisplayNode::drawObject() {
 	_hitBox.width = bodySprite->size.x;
 	_hitBox.height = bodySprite->size.y;
 
-	if (_flags & displayIndicator) {
+	if (_flags & kDisplayIndicator) {
 		Point16     indicatorCoords;
 		gPixelMap   &indicator = *mouseCursors[kMouseCenterActorIndicatorImage];
 
@@ -814,7 +814,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 		error("Object sprites have been dumped!");
 
 	for (dn = DisplayNodeList::_head; dn; dn = dn->_nextDisplayed) {
-		if (dn->_type == nodeTypeObject) {
+		if (dn->_type == kNodeTypeObject) {
 			GameObject  *obj = dn->_object;
 
 			if (obj->parent() == currentWorld && dn->_hitBox.ptInside(mouse.x, mouse.y)) {
@@ -837,7 +837,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 					if (isObject(obj)) {
 						ObjectSpriteInfo    sprInfo;
 
-						sprInfo = obj->proto()->getSprite(obj, ProtoObj::objOnGround);
+						sprInfo = obj->proto()->getSprite(obj, ProtoObj::kObjOnGround);
 						spr = sprInfo.sp;
 						flipped = sprInfo.flipped;
 					} else {
@@ -854,7 +854,7 @@ ObjectID pickObject(const StaticPoint32 &mouse, StaticTilePoint &objPos) {
 
 						spr = ss->sprite(a->_poseInfo.actorFrameIndex);
 						flipped =
-						    (a->_poseInfo.flags & ActorPose::actorFlipped) ? 1 : 0;
+						    (a->_poseInfo.flags & ActorPose::kActorFlipped) ? 1 : 0;
 					}
 
 					if (GetSpritePixel(spr, flipped, testPoint)) {
@@ -907,7 +907,7 @@ void DisplayNodeList::buildEffects(bool) {
 			if (_displayList[i]._efx->isHidden() || _displayList[i]._efx->isDead())
 				continue;
 			// make sure it knows it's not a real object
-			_displayList[i]._type = nodeTypeEffect;
+			_displayList[i]._type = kNodeTypeEffect;
 
 			_displayList[i]._sortDepth = _displayList[i]._efx->_screenCoords.y + _displayList[i]._efx->_current.z / 2;
 			if (dn) {
@@ -998,9 +998,9 @@ void Effectron::drawEffect() {
 	    1,
 	    drawPos,
 	    objCoords,
-	    ((obscured) &&    //objectFlags & GameObject::objectObscured ) &&
+	    ((obscured) &&    //objectFlags & GameObject::kObjectObscured ) &&
 	     0
-	     ? sprFXGhosted : sprFXTerrainMask));
+	     ? kSprFXGhosted : kSprFXTerrainMask));
 
 }
 

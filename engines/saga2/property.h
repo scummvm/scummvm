@@ -210,16 +210,16 @@ typedef PropertyOr< GameObject >        ObjectPropertyOr;
 typedef int16 ObjectPropertyID;
 
 enum {
-	objPropIDObject,
-	objPropIDActor,
-	objPropIDWorld,
-	objPropIDLocked,
-	objPropIDUnlocked,
-	objPropIDKey,
-	objPropIDPlayerActor,
-	objPropIDEnemy,
+	kObjPropIDObject,
+	kObjPropIDActor,
+	kObjPropIDWorld,
+	kObjPropIDLocked,
+	kObjPropIDUnlocked,
+	kObjPropIDKey,
+	kObjPropIDPlayerActor,
+	kObjPropIDEnemy,
 
-	objPropIDCount
+	kObjPropIDCount
 };
 
 /* ===================================================================== *
@@ -236,12 +236,12 @@ typedef PropertyOr< Actor >             ActorPropertyOr;
 typedef int16 ActorPropertyID;
 
 enum {
-	actorPropIDDead,
-	actorPropIDCenterActor,
-	actorPropIDPlayerActor,
-	actorPropIDEnemy,
+	kActorPropIDDead,
+	kActorPropIDCenterActor,
+	kActorPropIDPlayerActor,
+	kActorPropIDEnemy,
 
-	actorPropIDCount
+	kActorPropIDCount
 };
 
 /* ===================================================================== *
@@ -258,9 +258,9 @@ typedef PropertyOr< TileInfo >          TilePropertyOr;
 typedef int16 TilePropertyID;
 
 enum {
-	tilePropIDHasWater,
+	kTilePropIDHasWater,
 
-	tilePropIDCount
+	kTilePropIDCount
 };
 
 /* ===================================================================== *
@@ -367,9 +367,9 @@ public:
 typedef int16 MetaTilePropertyID;
 
 enum {
-	metaTilePropIDHasWater,
+	kMetaTilePropIDHasWater,
 
-	metaTilePropIDCount
+	kMetaTilePropIDCount
 };
 
 bool objIsObject(GameObject *obj);

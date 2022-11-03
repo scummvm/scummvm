@@ -203,7 +203,7 @@ public:
 	Std::vector<TileAnimTransform *> _transforms;
 	Std::vector<TileAnimContext *> _contexts;
 
-	/* returns the frame to set the mapTile to (only relevent if persistent) */
+	/* returns the frame to set the mapTile to (only relevant if persistent) */
 	void draw(Image *dest, Tile *tile, MapTile &mapTile, Direction dir);
 
 	int _random;   /* true if the tile animation occurs randomely */
