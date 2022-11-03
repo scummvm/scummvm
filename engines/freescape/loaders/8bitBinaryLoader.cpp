@@ -300,9 +300,6 @@ Area *FreescapeEngine::load8bitArea(Common::SeekableReadStream *file, uint16 nco
 	// debug("Condition Ptr: %x", cPtr);
 	debugC(1, kFreescapeDebugParser, "Pos before first object: %lx", file->pos());
 
-	if (areaNumber == 192)
-		return nullptr;
-
 	uint8 gasPocketX = 0;
 	uint8 gasPocketY = 0;
 	uint8 gasPocketRadius = 0;
@@ -402,6 +399,9 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 	uint8 numberOfAreas = readField(file, 8);
 	debugC(1, kFreescapeDebugParser, "Number of areas: %d", numberOfAreas);
 
+	if (isDOS() && isCastle()) // Castle Master for DOS has an invalid number of areas
+		numberOfAreas = 104;
+
 	uint32 dbSize = readField(file, 16);
 	debugC(1, kFreescapeDebugParser, "Database ends at %x", dbSize);
 
@@ -500,8 +500,7 @@ void FreescapeEngine::load8bitBinary(Common::SeekableReadStream *file, int offse
 			else
 				debugC(1, kFreescapeDebugParser, "WARNING: area ID repeated: %d", newArea->getAreaID());
 		} else {
-			debugC(1, kFreescapeDebugParser, "Invalid area %d?", area);
-			break;
+			error("Invalid area %d?", area);
 		}
 	}
 
