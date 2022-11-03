@@ -25,9 +25,9 @@
  */
 
 #include "engines/advancedDetector.h"
-#include "common/translation.h"
 #include "cge2/fileio.h"
 #include "cge2/cge2.h"
+#include "cge2/detection.h"
 
 static const DebugChannelDef debugFlagList[] = {
 	{CGE2::kCGE2DebugOpcode, "opcode", "CGE2 opcode debug channel"},
@@ -35,10 +35,6 @@ static const DebugChannelDef debugFlagList[] = {
 };
 
 namespace CGE2 {
-
-#define GAMEOPTION_COLOR_BLIND_DEFAULT_OFF  GUIO_GAMEOPTIONS1
-#define GAMEOPTION_TTS_OBJECTS				GUIO_GAMEOPTIONS2
-#define GAMEOPTION_TTS_SPEECH				GUIO_GAMEOPTIONS3
 
 static const PlainGameDescriptor CGE2Games[] = {
 		{ "sfinx", "Sfinx" },
@@ -98,51 +94,9 @@ static const ADGameDescription gameDescriptions[] = {
 		AD_TABLE_END_MARKER
 };
 
-static const ADExtraGuiOptionsMap optionsList[] = {
-		{
-			GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
-			{
-				_s("Color Blind Mode"),
-				_s("Enable Color Blind Mode by default"),
-				"enable_color_blind",
-				false,
-				0,
-				0
-			}
-		},
-
-#ifdef USE_TTS
-	{
-		GAMEOPTION_TTS_OBJECTS,
-		{
-			_s("Enable Text to Speech for Objects and Options"),
-			_s("Use TTS to read the descriptions (if TTS is available)"),
-			"tts_enabled_objects",
-			false,
-			0,
-			0
-		}
-	},
-
-	{
-		GAMEOPTION_TTS_SPEECH,
-		{
-			_s("Enable Text to Speech for Subtitles"),
-			_s("Use TTS to read the subtitles (if TTS is available)"),
-			"tts_enabled_speech",
-			false,
-			0,
-			0
-		}
-	},
-#endif
-
-		AD_EXTRA_GUI_OPTIONS_TERMINATOR
-};
-
 class CGE2MetaEngineDetection : public AdvancedMetaEngineDetection {
 public:
-	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), CGE2Games, optionsList) {
+	CGE2MetaEngineDetection() : AdvancedMetaEngineDetection(gameDescriptions, sizeof(ADGameDescription), CGE2Games) {
 	}
 
 	const char *getName() const override {

@@ -26,16 +26,65 @@
 
 #include "engines/advancedDetector.h"
 
+#include "common/translation.h"
+
 #include "graphics/surface.h"
 
 #include "cge2/cge2.h"
+#include "cge2/detection.h"
 
 namespace CGE2 {
+
+static const ADExtraGuiOptionsMap optionsList[] = {
+		{
+			GAMEOPTION_COLOR_BLIND_DEFAULT_OFF,
+			{
+				_s("Color Blind Mode"),
+				_s("Enable Color Blind Mode by default"),
+				"enable_color_blind",
+				false,
+				0,
+				0
+			}
+		},
+
+#ifdef USE_TTS
+	{
+		GAMEOPTION_TTS_OBJECTS,
+		{
+			_s("Enable Text to Speech for Objects and Options"),
+			_s("Use TTS to read the descriptions (if TTS is available)"),
+			"tts_enabled_objects",
+			false,
+			0,
+			0
+		}
+	},
+
+	{
+		GAMEOPTION_TTS_SPEECH,
+		{
+			_s("Enable Text to Speech for Subtitles"),
+			_s("Use TTS to read the subtitles (if TTS is available)"),
+			"tts_enabled_speech",
+			false,
+			0,
+			0
+		}
+	},
+#endif
+
+		AD_EXTRA_GUI_OPTIONS_TERMINATOR
+};
 
 class CGE2MetaEngine : public AdvancedMetaEngine {
 public:
 	const char *getName() const override {
 		return "cge2";
+	}
+
+	const ADExtraGuiOptionsMap *getAdvancedExtraGuiOptions() const override {
+		return optionsList;
 	}
 
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
