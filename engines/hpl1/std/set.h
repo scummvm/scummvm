@@ -60,11 +60,18 @@ public:
 	 * Locate an item in the set
 	 */
 	iterator find(const T &item) {
-		iterator it;
-		for (it = this->begin(); it != this->end() && !CompareEq(*it, item); ++it) {
+		iterator begin = this->begin();
+		iterator end = this->end();
+		while (begin < end) {
+			iterator mid = begin + (Common::distance(begin, end) / 2);
+			if (ComparatorFn(item, *mid))
+				end = mid;
+			else if (ComparatorFn(*mid, item))
+			 	begin = mid + 1;
+			else
+				return mid;
 		}
-
-		return it;
+		return this->end();
 	}
 
 	/**
