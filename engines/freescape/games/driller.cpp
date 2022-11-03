@@ -289,6 +289,26 @@ void DrillerEngine::loadAssetsFullGame() {
 		}
 		else
 			error("Invalid or unknown Amiga release");
+	} else if (isAtariST()) {
+		file.open("x.prg");
+
+		if (!file.isOpen())
+			error("Failed to open 'x.prg' executable for AtariST");
+
+		_border = loadAndConvertNeoImage(&file, 0x1371a);
+		byte *palette = (byte *)malloc(16 * 3);
+		for (int i = 0; i < 16; i++) { // gray scale palette
+			palette[i * 3 + 0] = i * (255 / 16);
+			palette[i * 3 + 1] = i * (255 / 16);
+			palette[i * 3 + 2] = i * (255 / 16);
+		}
+		_title = loadAndConvertNeoImage(&file, 0x10, palette);
+
+		//loadMessagesFixedSize(&file, 0xc66e, 14, 20);
+		//loadGlobalObjects(&file, 0xbd62);
+		load8bitBinary(&file, 0x29b3c, 16);
+		loadPalettes(&file, 0x296fa);
+		loadSoundsFx(&file, 0x30da6, 25);
 	} else if (_renderMode == Common::kRenderEGA) {
 		loadBundledImages();
 		_title = _border;

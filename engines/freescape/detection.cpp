@@ -55,6 +55,17 @@ static const ADGameDescription gameDescriptions[] = {
 	{"driller",
 	 "",
 	 {
+		{"x.prg", 0, "1a79e68e6c2c223c96de0ca2d65149ae", 293062},
+		{"playseq.prg", 0, "535e9f6baf132831aa7fa066a06f242e", 973},
+		AD_LISTEND
+	 },
+	 Common::EN_ANY,
+	 Common::kPlatformAtariST,
+	 ADGF_UNSTABLE,
+	 GUIO1(GUIO_NOMIDI)},
+	{"driller",
+	 "",
+	 {
 		{"driller", 0, "13dab2e10d8e8b9a364c94a660e0d42a", 282384},
 		{"title.seq", 0, "4dd1b3b45110b24e8240a6132241c973", 185296},
 		AD_LISTEND
