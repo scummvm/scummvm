@@ -267,7 +267,7 @@ bool CharacterInfo::msgAction(const ActionMessage &msg) {
 		if (_state == DISPLAY) {
 			g_globals->_currCharacter = &g_globals->_party[
 				msg._action - KEYBIND_VIEW_PARTY1];
-			addView();
+			redraw();
 			return true;
 		} else if (_state == TRADE_WITH) {
 			_state = TRADE_KIND;
