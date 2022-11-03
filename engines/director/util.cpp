@@ -22,6 +22,7 @@
 #include "common/file.h"
 #include "common/fs.h"
 #include "common/keyboard.h"
+#include "common/macresman.h"
 #include "common/memstream.h"
 #include "common/punycode.h"
 #include "common/tokenizer.h"
@@ -396,8 +397,13 @@ bool testPath(Common::String &path, bool directory) {
 	Common::FSNode d = Common::FSNode(*g_director->getGameDataDir());
 	Common::FSNode node;
 
-	// Test if we have it right in the SearchMan
-	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)))
+	// Test if we have it right in the SearchMan. Also accept MacBinary
+	// for Mac and Pippin
+	if (SearchMan.hasFile(Common::Path(path, g_director->_dirSeparator)) ||
+	    ((g_director->getPlatform() == Common::kPlatformMacintoshII
+	      || g_director->getPlatform() == Common::kPlatformMacintosh
+	      || g_director->getPlatform() == Common::kPlatformPippin) &&
+	     Common::MacResManager::exists(Common::Path(path, g_director->_dirSeparator))))
 		return true;
 
 	debug(9, "testPath: %s  dir: %d", path.c_str(), directory);
