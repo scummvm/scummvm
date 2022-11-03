@@ -40,6 +40,9 @@ struct XeenGameDescription {
 	uint32 features;
 };
 
+#define GAMEOPTION_SHOW_ITEM_COSTS	GUIO_GAMEOPTIONS1
+#define GAMEOPTION_DURABLE_ARMOR	GUIO_GAMEOPTIONS2
+
 } // End of namespace Xeen
 
 #endif // XEEN_DETECTION_H
