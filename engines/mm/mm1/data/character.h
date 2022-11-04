@@ -444,7 +444,7 @@ struct Character : public PrimaryAttributes {
 	byte _worthiness;
 	int _alignmentCtr;
 	byte _flags[14];
-	byte _lastField = 0;
+	byte _portrait = 0;
 
 	// Non persistent fields
 	byte _numDrinks = 0;

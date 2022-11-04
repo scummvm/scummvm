@@ -208,8 +208,7 @@ void Character::synchronize(Common::Serializer &s) {
 	s.syncAsByte(_worthiness);
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
-
-	s.skip(1);
+	s.syncAsByte(_portrait);
 }
 
 void Character::clear() {
