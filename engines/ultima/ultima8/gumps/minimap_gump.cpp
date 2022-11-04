@@ -49,27 +49,9 @@ MiniMapGump::MiniMapGump() : Gump() , _lastMapNum(0){
 MiniMapGump::~MiniMapGump(void) {
 }
 
-void MiniMapGump::setPixelAt(int x, int y, uint32 pixel) {
-	if (_minimap.format.bytesPerPixel == 2) {
-		uint16 *buf = (uint16 *)_minimap.getBasePtr(x, y);
-		*buf = pixel;
-	} else {
-		uint32 *buf = (uint32 *)_minimap.getBasePtr(x, y);
-		*buf = pixel;
-	}
-}
+void MiniMapGump::run() {
+	Gump::run();
 
-uint32 MiniMapGump::getPixelAt(int x, int y) const {
-	if (_minimap.format.bytesPerPixel == 2) {
-		const uint16 *buf = (const uint16 *)_minimap.getBasePtr(x, y);
-		return *buf;
-	} else {
-		const uint32 *buf = (const uint32 *)_minimap.getBasePtr(x, y);
-		return *buf;
-	}
-}
-
-void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
 	World *world = World::get_instance();
 	CurrentMap *currentmap = world->getCurrentMap();
 	int mapChunkSize = currentmap->getChunkSize();
@@ -79,29 +61,35 @@ void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled)
 		_lastMapNum = currentmap->getNum();
 	}
 
-	// Draw the yellow border
-	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 3, 1);
-	surf->Fill32(0xFFFFAF00, 0, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
-	surf->Fill32(0xFFFFAF00, 1, MAP_NUM_CHUNKS * 2 + 1, MAP_NUM_CHUNKS * 2 + 1, 1);
-	surf->Fill32(0xFFFFAF00, MAP_NUM_CHUNKS * 2 + 1, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
-
 	// Draw into the map surface
 	for (int yv = 0; yv < MAP_NUM_CHUNKS; yv++) {
 		for (int xv = 0; xv < MAP_NUM_CHUNKS; xv++) {
 			if (currentmap->isChunkFast(xv, yv)) {
 				for (int j = 0; j < MINMAPGUMP_SCALE; j++) for (int i = 0; i < MINMAPGUMP_SCALE; i++) {
-					uint32 val = getPixelAt(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j);
+					uint32 val = _minimap.getPixel(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j);
 					if (val == 0) {
 						val = sampleAtPoint(
 							xv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * i) / MINMAPGUMP_SCALE,
 							yv * mapChunkSize + mapChunkSize / (MINMAPGUMP_SCALE * 2) + (mapChunkSize * j) / MINMAPGUMP_SCALE,
 							currentmap);
-						setPixelAt(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j, val);
+						_minimap.setPixel(xv * MINMAPGUMP_SCALE + i, yv * MINMAPGUMP_SCALE + j, val);
 					}
 				}
 			}
 		}
 	}
+}
+
+void MiniMapGump::PaintThis(RenderSurface *surf, int32 lerp_factor, bool scaled) {
+	World *world = World::get_instance();
+	CurrentMap *currentmap = world->getCurrentMap();
+	int mapChunkSize = currentmap->getChunkSize();
+
+	// Draw the yellow border
+	surf->Fill32(0xFFFFAF00, 0, 0, MAP_NUM_CHUNKS * 2 + 3, 1);
+	surf->Fill32(0xFFFFAF00, 0, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
+	surf->Fill32(0xFFFFAF00, 1, MAP_NUM_CHUNKS * 2 + 1, MAP_NUM_CHUNKS * 2 + 1, 1);
+	surf->Fill32(0xFFFFAF00, MAP_NUM_CHUNKS * 2 + 1, 1, 1, MAP_NUM_CHUNKS * 2 + 1);
 
 	// Center on avatar
 	int sx = 0, sy = 0, ox = 0, oy = 0, lx = 0, ly = 0;

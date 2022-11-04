@@ -1797,8 +1797,10 @@ bool Debugger::cmdToggleMinimap(int argc, const char **argv) {
 		mmg = new MiniMapGump(4, 4);
 		mmg->InitGump(0);
 		mmg->setRelativePosition(Gump::TOP_LEFT, 4, 4);
+	} else if (mmg->IsHidden()) {
+		mmg->UnhideGump();
 	} else {
-		mmg->Close();
+		mmg->HideGump();
 	}
 
 	return false;
