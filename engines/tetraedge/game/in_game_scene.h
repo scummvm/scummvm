@@ -62,6 +62,8 @@ public:
 	struct AnchorZone {
 		Common::String _name;
 		bool _activated;
+		TeVector3f32 _loc;
+		float _radius;
 	};
 
 	struct Object {
@@ -82,64 +84,89 @@ public:
 	};
 
 	void activateAnchorZone(const Common::String &name, bool val);
-	void addAnchorZone(const Common::String &param_1, const Common::String &param_2, float param_3);
+	void addAnchorZone(const Common::String &s1, const Common::String &name, float radius);
 	void addBlockingObject(const Common::String &obj) {
 		_blockingObjects.push_back(obj);
 	}
 	void addCallbackAnimation2D(const Common::String &param_1, const Common::String &param_2, float param_3);
-	void addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal);
+	bool addMarker(const Common::String &name, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal);
 	static float angularDistance(float a1, float a2);
 	bool aroundAnchorZone(const AnchorZone *zone);
 	TeLayout *background();
-	virtual bool load(const Common::Path &path) override;
-	void loadBackground(const Common::Path &path);
-	void loadInteractions(const Common::Path &path);
-	void initScroll();
-	bool isObjectBlocking(const Common::String &name);
-	bool isMarker(const Common::String &name);
-	TeFreeMoveZone *pathZone(const Common::String &name);
-	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);
-	TeIntrusivePtr<TeBezierCurve> curve(const Common::String &curveName);
-	void setPositionCharacter(const Common::String &charName, const Common::String &freeMoveZoneName, const TeVector3f32 &position);
-	void setVisibleMarker(const Common::String &markerName, bool val);
-	void deleteMarker(const Common::String &markerName);
-
-	void draw();
-	void drawPath();
-	Character *character(const Common::String &name);
-	bool loadCharacter(const Common::String &name);
-	void loadBlockers();
-	bool loadPlayerCharacter(const Common::String &name);
-	bool loadLights(const Common::Path &path);
+	Billboard *billboard(const Common::String &name);
+	TeVector2f32 boundLayerSize();
 	bool changeBackground(const Common::String &name);
-	void unloadCharacter(const Common::String &name);
-
+	Character *character(const Common::String &name);
+	virtual void close() override;
 	// Original has a typo, "converPathToMesh", corrected.
 	void convertPathToMesh(TeFreeMoveZone *zone);
-	void onMainWindowSizeChanged();
-
+	TeIntrusivePtr<TeBezierCurve> curve(const Common::String &curveName);
+	void deleteAllCallback();
+	void deleteCallback(const Common::String &key, const Common::String &name, float f);
+	void deleteMarker(const Common::String &markerName);
 	// Original just calls these "deserialize" but that's a fairly vague name
 	// so renamed to be more meaningful.
 	void deserializeCam(Common::ReadStream &stream, TeIntrusivePtr<TeCamera> &cam);
 	void deserializeModel(Common::ReadStream &stream, TeIntrusivePtr<TeModel> &model, TePickMesh2 *pickmesh);
-
-	void close();
-	void reset();
+	virtual void draw() override;
+	void drawPath();
+	Dummy dummy(const Common::String &name);
+	bool findKate();
+	const TeMarker *findMarker(const Common::String &name);
+	const TeMarker *findMarkerByInt(const Common::String &name);
+	SoundStep findSoundStep(const Common::String &name);
+	void freeGeometry();
 	void freeSceneObjects();
-	void unloadSpriteLayouts();
-	void deleteAllCallback();
-
-	void setStep(const Common::String &scene, const Common::String &step1, const Common::String &step2);
-	TeLight *shadowLight();
-
 	Common::Path getActZoneFileName() const;
 	Common::Path getBlockersFileName() const;
 	Common::Path getLightsFileName() const;
+	float getHeadHorizontalRotation(Character *cter, const TeVector3f32 &vec);
+	float getHeadVerticalRotation(Character *cter, const TeVector3f32 &vec);
+	Common::String imagePathMarker(const Common::String &name);
+	void initScroll();
+	bool isMarker(const Common::String &name);
+	bool isObjectBlocking(const Common::String &name);
+	bool isVisibleMarker(const Common::String &name);
+	TeVector2f32 layerSize();
+
+	virtual bool load(const Common::Path &path) override;
+	void loadBackground(const Common::Path &path);
+	bool loadBillboard(const Common::String &name);
+	void loadBlockers();
+	bool loadCharacter(const Common::String &name);
+	void loadInteractions(const Common::Path &path);
+	bool loadLights(const Common::Path &path);
+	void loadMarkers(const Common::Path &path);
+	bool loadObject(const Common::String &name);
+	void loadObjectMaterials(const Common::String &name);
+	void loadObjectMaterials(const Common::String &path, const Common::String &name);
+	bool loadPlayerCharacter(const Common::String &name);
+
+	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);
+	int object(const Common::String &name);
+	Object3D *object3D(const Common::String &name);
+	void onMainWindowSizeChanged();
+	TeFreeMoveZone *pathZone(const Common::String &name);
+	TeVector3f32 positionMarker(const Common::String &name);
+	void removeBlockingObject(const Common::String &name);
+
+	void reset();
+	void setImagePathMarker(const Common::String &markerName, const Common::String &path);
+	void setPositionCharacter(const Common::String &charName, const Common::String &freeMoveZoneName, const TeVector3f32 &position);
+	void setPositionMarker(const Common::String &name, const TeVector3f32 &vec);
+	void setStep(const Common::String &scene, const Common::String &step1, const Common::String &step2);
+	void setVisibleMarker(const Common::String &markerName, bool val);
+	TeLight *shadowLight();
+	bool showAllObjects(const Common::String &name);
+	void unloadAllObjects();
+	void unloadCharacter(const Common::String &name);
+	void unloadObject(const Common::String &name);
+	void unloadSpriteLayouts();
+	void update() override;
 
 	// Does nothing, but to keep calls from original..
 	static void updateScroll() {};
-
-	bool findKate();
+	static void updateViewport() {};
 
 	Character *_character;
 	Common::Array<Character *> _characters;
@@ -159,6 +186,8 @@ public:
 	CharactersShadow *_charactersShadow;
 	TeIntrusivePtr<TeBezierCurve> curve() { return _curve; }
 	void setCurve(TeIntrusivePtr<TeBezierCurve> &c) { c = _curve; }
+	Common::Array<TeIntrusivePtr<TeModel>> &zoneModels() { return _zoneModels; }
+	Common::Array<TeRectBlocker> &rectBlockers() { return _rectBlockers; }
 
 private:
 	TeColor _shadowColor;
@@ -166,11 +195,14 @@ private:
 	float _shadowNearPlane;
 	float _shadowFov;
 
+	float _waitTime;
+	TeTimer _waitTimeTimer;
+
 	Common::Array<TeBlocker> _blockers;
 	Common::Array<TeRectBlocker> _rectBlockers;
 	Common::Array<TeActZone> _actZones;
 	Common::Array<TeFreeMoveZone*> _freeMoveZones;
-	Common::Array<TeMarker *> _markers;
+	Common::Array<TeMarker> _markers;
 	Common::Array<AnchorZone *> _anchorZones;
 	Common::Array<AnimObject *> _animObjects;
 	Common::Array<Object3D *> _object3Ds;
@@ -184,6 +216,7 @@ private:
 	Common::Array<Object> _objects;
 	Common::Array<TeIntrusivePtr<TeBezierCurve>> _bezierCurves;
 	Common::Array<Dummy> _dummies;
+	Common::Array<TeIntrusivePtr<TeModel>> _zoneModels;
 
 	TeIntrusivePtr<TeModel> _playerCharacterModel;
 	TeIntrusivePtr<TeBezierCurve> _curve;

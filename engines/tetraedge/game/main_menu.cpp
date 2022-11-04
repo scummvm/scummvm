@@ -123,6 +123,10 @@ void MainMenu::enter() {
 		const Common::String versionSectionStr("<section style=\"left\" /><color r=\"255\" g=\"255\" b=\"255\"/><font file=\"Common/Fonts/arial.ttf\" size=\"12\" />");
 		versionNum->setText(versionSectionStr + app->getVersionString());
 	}
+
+	if (ConfMan.get("skip_mainmenu") == "true") {
+		onNewGameConfirmed();
+	}
 }
 
 void MainMenu::leave() {
@@ -131,10 +135,9 @@ void MainMenu::leave() {
 
 	Application	*app = g_engine->getApplication();
 	app->captureFade();
-	warning("TODO: MainMenu::leave Stop some game sounds here.");
-	//Game *game = g_engine->getGame();
-	//game->stopSound("sounds/Ambiances/b_automatebike.ogg");
-	//game->stopSound("sounds/Ambiances/b_engrenagebg.ogg");
+	Game *game = g_engine->getGame();
+	game->stopSound("sounds/Ambiances/b_automatebike.ogg");
+	game->stopSound("sounds/Ambiances/b_engrenagebg.ogg");
 	TeLuaGUI::unload();
 	app->fade();
 	_entered= false;
@@ -164,11 +167,11 @@ bool MainMenu::onBFGRateItButtonValidated() {
 }
 
 bool MainMenu::onBFGRateItQuitButtonValidated() {
-	error("TODO: Implement MainMenu function");
+	error("TODO: Implement MainMenu::onBFGRateItQuitButtonValidated");
 }
 
 bool MainMenu::onBFGUnlockGameButtonValidated() {
-	error("TODO: Implement MainMenu function");
+	error("TODO: Implement MainMenu::onBFGUnlockGameButtonValidated");
 }
 
 void MainMenu::tryDisableButton(const Common::String &btnName) {
@@ -215,11 +218,11 @@ bool MainMenu::onDisabledTuto() {
 }
 
 bool MainMenu::onEnterGameRotateAnimFinished() {
-	error("TODO: Implement MainMenu function");
+	error("TODO: Implement MainMenu::onEnterGameRotateAnimFinished");
 }
 
 bool MainMenu::onGalleryButtonValidated() {
-	error("TODO: Implement MainMenu function");
+	error("TODO: Implement MainMenu::onGalleryButtonValidated");
 }
 
 bool MainMenu::onHowToButtonValidated() {
@@ -263,8 +266,8 @@ bool MainMenu::onQuit() {
 }
 
 bool MainMenu::onQuitButtonValidated() {
-	//Confirm::enter("menus/confirm/confirmQuit.lua", "");
-	error("TODO: Implement MainMenu::onQuitButtonValidated");
+	_quitConfirm.enter("menus/confirm/confirmQuit.lua", "");
+	return false;
 }
 
 bool MainMenu::onUnlockGameButtonValidated() {

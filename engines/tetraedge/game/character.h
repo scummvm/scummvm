@@ -154,9 +154,13 @@ public:
 	const Common::String &curAnimName() const { return _curAnimName; }
 	TeFreeMoveZone *freeMoveZone() { return _freeMoveZone; }
 	const Common::String &freeMoveZoneName() const { return _freeMoveZoneName; }
+	void setFreeMoveZoneName(const Common::String &val) { _freeMoveZoneName = val; }
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
 	void setNeedsSomeUpdate(bool val) { _needsSomeUpdate = val; }
 	void setCharLookingAt(Character *other) { _charLookingAt = other; }
+	void setPositionCharacter(const TeVector3f32 &val) { _positionCharacter = val; }
+	bool positionFlag() const { return _positionFlag; }
+	void setPositionFlag(bool val) { _positionFlag = val; }
 
 private:
 	float _curveOffset;
@@ -190,6 +194,9 @@ private:
 	bool _someRepeatFlag; // TODO: what is this?
 	bool _callbacksChanged;
 	bool _needsSomeUpdate; // TODO: what is this? Field 0x85.
+	bool _positionFlag;
+
+	TeVector3f32 _positionCharacter;
 
 	// TODO: work out how these are different
 	Common::String _setAnimName;

@@ -75,7 +75,6 @@ void CharactersShadow::createTexture(InGameScene *scene) {
 	glClearColor(0.0, 0.0, 0.0, 0.0);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-
 	for (Character *character : scene->_characters) {
 		character->_model->draw();
 	}
@@ -154,7 +153,7 @@ void CharactersShadow::draw(InGameScene *scene) {
 	glEnable(GL_BLEND);
 	renderer->setCurrentColor(scene->shadowColor());
 
-	for (TeIntrusivePtr<TeModel> model : scene->models()) {
+	for (TeIntrusivePtr<TeModel> model : scene->zoneModels()) {
 		if (model->_meshes.size() > 0 && model->_meshes[0].materials().empty()) {
 			model->_meshes[0].defaultMaterial(TeIntrusivePtr<Te3DTexture>());
 			model->_meshes[0].materials()[0]._enableSomethingDefault0 = true;

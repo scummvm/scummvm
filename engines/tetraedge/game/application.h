@@ -149,6 +149,7 @@ private:
 	bool _captureFade;
 	bool _created;
 	bool _tutoActivated;
+	bool _drawShadows;
 
 	int _difficulty;
 

@@ -43,6 +43,8 @@ public:
 	void position2(const TeVector3f32 &pos);
 	void size(const TeVector2f32 &size);
 
+	TeIntrusivePtr<TeModel> &model() { return _model; }
+
 private:
 	TeIntrusivePtr<TeModel> _model;
 	TeVector3f32 _pos;

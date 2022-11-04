@@ -41,6 +41,8 @@
 
 namespace Tetraedge {
 
+class TeLuaThread;
+
 class Game {
 public:
 	Game();
@@ -67,6 +69,13 @@ public:
 		byte onSoundFinished();
 	};
 
+	struct YieldedCallback {
+		TeLuaThread *_luaThread;
+		Common::String _luaParam;
+		Common::String _luaFnName;
+		// Note: original game has more String, long, and int fields.. seem unused.
+	};
+
 	//enum EGameScoreID {}; // Not needed?
 
 	bool addAnimToSet(const Common::String &path);
@@ -89,8 +98,8 @@ public:
 	void draw();
 	void enter(bool newgame);
 	// Note: game uses ILayouts here..
-	static TeI3DObject2 *findLayoutByName(TeLayout *layout, const Common::String &name);
-	static TeSpriteLayout *findSpriteLayoutByName(TeLayout *layout, const Common::String &name);
+	static TeI3DObject2 *findLayoutByName(TeLayout *parent, const Common::String &name);
+	static TeSpriteLayout *findSpriteLayoutByName(TeLayout *parent, const Common::String &name);
 
 	void finishFreemium();
 	void finishGame();
@@ -138,10 +147,10 @@ public:
 	void resumeMovie();
 	void resumeSounds() {}; // does nothing?
 	void saveBackup(const Common::String &saveName);
-	void setBackground(const Common::String &name);
+	bool setBackground(const Common::String &name);
 	void setCurrentObjectSprite(const Common::String &spritePath);
 	bool showMarkers(bool val);
-	bool startAnimation(const Common::String &animName, int param_2, bool param_3);
+	bool startAnimation(const Common::String &animName, int loopcount, bool reversed);
 	void startAnimationPart(const Common::String &param_1, int param_2, int param_3, int param_4, bool param_5) {};
 	void stopSound(const Common::String &name);
 	bool unloadCharacter(const Common::String &character);
@@ -167,6 +176,11 @@ public:
 	InGameScene &scene() { return _scene; }
 	Dialog2 &dialog2() { return _dialog2; }
 	Question2 &question2() { return _question2; }
+	TeLuaGUI &gui3() { return _gui3; }
+	Objectif &objectif() { return _objectif; }
+	Common::Array<YieldedCallback> yieldedCallbacks() { return _yieldedCallbacks; }
+	void setSaveRequested() { _saveRequested = true; }
+	bool markersVisible() const { return _markersVisible; }
 
 private:
 	bool _luaShowOwnerError;
@@ -174,10 +188,10 @@ private:
 	bool _entered;
 	bool _enteredFlag2;
 
-	TeLuaGUI _gui1;
+	TeLuaGUI _gui1; // TODO: get better names for these.
 	TeLuaGUI _gui2;
 	TeLuaGUI _gui3;
-	TeLuaGUI _gui4;
+	TeLuaGUI _inGameGui;
 
 	Inventory _inventory;
 	InventoryMenu _inventoryMenu;
@@ -207,6 +221,8 @@ private:
 
 	Common::Array<GameSound *> _gameSounds;
 	Common::Array<HitObject *> _gameHitObjects;
+	// These are static in original, but cleaner to keep here.
+	Common::Array<YieldedCallback> _yieldedCallbacks;
 
 	Common::HashMap<Common::String, bool> _unlockedArtwork;
 	Common::HashMap<Common::String, Common::Array<RandomSound*>> _randomSounds;
@@ -217,6 +233,7 @@ private:
 	TeTimer _walkTimer;
 	TeLuaScript _luaScript;
 	TeLuaContext _luaContext;
+	TeLuaScript _gameEnterScript;
 	TeMusic _music;
 	Notifier _notifier;
 	DocumentsBrowser _documentsBrowser;

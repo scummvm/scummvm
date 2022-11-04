@@ -37,11 +37,35 @@ public:
 	static TeQuaternion fromAxisAndAngle(const TeVector3f32 &axis, float angle) {
 		TeQuaternion ret;
 		float f = sinf(angle * 0.5);
-		ret.w() = axis.x() * f;
-		ret.x() = axis.y() * f;
-		ret.y() = axis.z() * f;
-		ret.z() = cosf(angle * 0.5);
+		ret.x() = axis.x() * f;
+		ret.y() = axis.y() * f;
+		ret.z() = axis.z() * f;
+		ret.w() = cosf(angle * 0.5);
 		return ret;
+	}
+
+	static TeQuaternion fromEuler(const TeVector3f32 &euler) {
+		TeQuaternion rot;
+
+		rot.x() = sinf(euler.x() / 2.0);
+		rot.y() = 0.0;
+		rot.z() = 0.0;
+		rot.w() = cosf(euler.x() / 2.0);
+		TeQuaternion retval = rot;
+
+		rot.x() = 0.0;
+		rot.y() = sinf(euler.y() / 2.0);
+		rot.z() = 0.0;
+		rot.w() = cosf(euler.y() / 2.0);
+		retval *= rot;
+
+		rot.x() = 0.0;
+		rot.y() = 0.0;
+		rot.z() = sinf(euler.z() / 2.0);
+		rot.w() = cosf(euler.z() / 2.0);
+		retval *= rot;
+
+		return retval;
 	}
 
 	static void deserialize(Common::ReadStream &stream, TeQuaternion &dest) {
@@ -58,6 +82,7 @@ public:
 		stream.writeFloatLE(src.value(3));
 	}
 
+	Common::String dump() const;
 };
 
 } // end namespace Tetraedge

@@ -66,6 +66,7 @@ void TeScene::draw() {
 
 	currentCamera()->apply();
 	for (auto &m : _models) {
+		//debug("Draw scene model %s", m->name().c_str());
 		m->draw();
 	}
 	TeCamera::restore();

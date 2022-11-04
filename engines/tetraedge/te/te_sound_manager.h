@@ -33,6 +33,7 @@ public:
 	TeSoundManager();
 
 	void playFreeSound(const Common::Path &path, float vol, const Common::String &channel);
+	void stopFreeSound(const Common::String &channel);
 
 private:
 	Common::HashMap<Common::String, Audio::SoundHandle> _handles;

@@ -39,6 +39,7 @@ public:
 	unsigned long getTimeFromStart();
 	void setAlarmIn(unsigned long offset);
 	unsigned long timeElapsed();
+	unsigned long timeFromLastTimeElapsed();
 	unsigned long time_();
 	void setTime(unsigned long time);
 

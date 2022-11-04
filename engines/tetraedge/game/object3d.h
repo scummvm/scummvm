@@ -47,6 +47,8 @@ public:
 
 	static bool loadSettings(const Common::String &path);
 
+	TeIntrusivePtr<TeModel> model() { return _modelPtr; }
+
 private:
 	static Common::HashMap<Common::String, ObjectSettings> *_objectSettings;
 

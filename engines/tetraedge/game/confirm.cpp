@@ -19,6 +19,8 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "tetraedge/game/confirm.h"
 #include "tetraedge/game/application.h"
 #include "tetraedge/tetraedge.h"
@@ -89,6 +91,10 @@ void Confirm::enter(const Common::String &guiPath, const Common::String &y) {
 	// Make sure the mouse cursor is back on top.
 	app->_frontOrientationLayout.removeChild(&app->mouseCursorLayout());
 	app->_frontOrientationLayout.addChild(&app->mouseCursorLayout());
+
+	if (ConfMan.get("skip_confirm") == "true") {
+		onButtonYes();
+	}
 }
 
 void Confirm::leave() {

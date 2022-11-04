@@ -41,7 +41,7 @@ public:
 
 	virtual int bufferSize() { return 1; } // unused?
 	void cont();
-	void draw();
+	void draw() override;
 	virtual void entry() {};
 	byte isLoaded();
 	bool load(const Common::Path &path);

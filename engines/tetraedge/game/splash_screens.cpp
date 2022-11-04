@@ -57,7 +57,7 @@ bool SplashScreens::onAlarm() {
 	const Common::String scriptName = Common::String::format("menus/splashes/splash%d.lua", _splashNo);
 	_splashNo++;
 
-	if (ConfMan.get("skipsplash") == "true") {
+	if (ConfMan.get("skip_splash") == "true") {
 		onQuitSplash();
 		return true;
 	}

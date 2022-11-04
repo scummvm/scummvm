@@ -108,6 +108,19 @@ bool Objectif::onHelpButtonValidated() {
 	return false;
 }
 
+void Objectif::pushObjectif(Common::String const &head, Common::String const &sub) {
+	for (const Task &t : _tasks) {
+		if (t._headTask == head && t._subTask == sub)
+			return;
+	}
+
+	_layoutsDirty = true;
+	_tasks.resize(_tasks.size() + 1);
+	_tasks.back()._headTask = head;
+	_tasks.back()._subTask = sub;
+	_tasks.back()._taskFlag = true;
+}
+
 void Objectif::reattachLayout(TeLayout *layout) {
 	TeButtonLayout *btn;
 

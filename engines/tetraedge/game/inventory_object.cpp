@@ -27,9 +27,25 @@ InventoryObject::InventoryObject() {
 }
 
 void InventoryObject::load(const Common::String &name) {
-	error("TODO: Implement InventoryObject::load");
+	setSizeType(RELATIVE_TO_PARENT);
+	setSize(TeVector3f32(1.0f, 1.0f, 1.0f));
+	_gui.load("Inventory/InventoryObject.lua");
+	addChild(_gui.layoutChecked("object"));
+	setName(name);
+	_gui.spriteLayoutChecked("upLayout")->load(spritePath());
+	TeButtonLayout *btn = _gui.buttonLayoutChecked("object");
+	btn->onMouseClickValidated().add(this, &InventoryObject::onButtonDown);
+	// TODO: btn->setDoubleValidationProtectionEnabled(false)
 }
 
-// TODO: Add more functions here.
+Common::Path InventoryObject::spritePath() {
+	return Common::Path("Inventory/Objects").join(name()).append(".png");
+}
+
+bool InventoryObject::onButtonDown() {
+	_selectedSignal.call(*this);
+	return false;
+}
+
 
 } // end namespace Tetraedge

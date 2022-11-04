@@ -30,7 +30,9 @@ TeXmlGui::TeXmlGui() {
 }
 
 Common::String TeXmlGui::value(const Common::String &key) {
-	error("TODO: TeXmlGui::value Implement me.");
+	if (_map.contains(key))
+		return _map.getVal(key);
+	return "";
 }
 
 void TeXmlGui::load(const Common::Path &path) {
@@ -44,9 +46,8 @@ void TeXmlGui::load(const Common::Path &path) {
 }
 
 void TeXmlGui::clear() {
-
+	_map.clear();
+	// TODO: probably more here.
 }
-
-// TODO: Add more functions here.
 
 } // end namespace Tetraedge

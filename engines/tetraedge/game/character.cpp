@@ -55,7 +55,8 @@ void Character::WalkSettings::clear() {
 }
 
 Character::Character() : _curveOffset(0), _lastFrame(-1), _callbacksChanged(false),
-_missingCurrentAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"), _needsSomeUpdate(false),
+_missingCurrentAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
+_needsSomeUpdate(false), _positionFlag(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
 _freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
@@ -235,9 +236,10 @@ int Character::rightStepFrame(enum Character::WalkPart walkpart) {
 	return -1;
 }
 
-bool Character::loadModel(const Common::String &name, bool param_2) {
+bool Character::loadModel(const Common::String &name, bool unused) {
 	assert(_globalCharacterSettings);
 	if (_model) {
+		//TODO
 		//_model->bonesUpdateSignal().remove(this, &Character::onBonesUpdate);
 	}
 	_model = new TeModel();
@@ -257,14 +259,16 @@ bool Character::loadModel(const Common::String &name, bool param_2) {
 	_model->setName(name);
 	_model->setScale(_characterSettings._defaultScale);
 
-	for (unsigned int i = 0; i < _model->_meshes.size(); i++)
-		_model->_meshes[i].setVisible(true);
+	for (auto &mesh : _model->_meshes)
+		mesh.setVisible(true);
 
 	_model->setVisibleByName("_B_", false);
 	_model->setVisibleByName("_Y_", false);
 
+	// Note: game loops through "faces" here, but it only ever uses the default ones.
 	_model->setVisibleByName(_characterSettings._defaultEyes, true);
 	_model->setVisibleByName(_characterSettings._defaultMouth, true);
+	_model->setVisibleByName(_characterSettings._defaultBody, true);
 
 	setAnimation(_characterSettings._walkFileName, true, false, false, -1, 9999);
 
@@ -304,12 +308,12 @@ bool Character::loadModel(const Common::String &name, bool param_2) {
 	Common::File xmlFile;
 	if (!xmlFile.open(path))
 		error("Character::loadSettings: Can't open %s", path.c_str());
-	const uint32 bufsize = xmlFile.size();
+	const int64 bufsize = xmlFile.size();
 	char *buf = new char[bufsize+1];
 	buf[bufsize] = '\0';
 	xmlFile.read(buf, bufsize);
 	Common::String fixedbuf(buf);
-	uint32 offset = fixedbuf.find("------------");
+	size_t offset = fixedbuf.find("------------");
 	while (offset != Common::String::npos) {
 		fixedbuf.replace(offset, 12, "--");
 		offset = fixedbuf.find("------------");
@@ -318,9 +322,9 @@ bool Character::loadModel(const Common::String &name, bool param_2) {
 	// Big HACK: Remove the embedded comment in this config.
 	offset = fixedbuf.find("<!--<walk>");
 	if (offset != Common::String::npos) {
-		uint32 endOffset = fixedbuf.find(" -->", offset);
+		size_t endOffset = fixedbuf.find(" -->", offset);
 		if (endOffset != Common::String::npos) {
-			uint32 realEndOffset = fixedbuf.find("walk>-->", endOffset);
+			size_t realEndOffset = fixedbuf.find("walk>-->", endOffset);
 			if (realEndOffset  != Common::String::npos && realEndOffset > endOffset) {
 				fixedbuf.replace(offset, endOffset - offset, "<!-- ");
 			}
@@ -455,11 +459,14 @@ void Character::updateAnimFrame() {
 	if (_model->anim()) {
 		_lastAnimFrame = _model->anim()->curFrame2();
 	}
-	error("TODO: Implement Character::updateAnimFrame");
 }
 
 void Character::updatePosition(float curveOffset) {
-	error("TODO: Implement Character::updatePosition");
+	if (!_curve->controlPoints().empty()) {
+		//TeVector3f32 pt = _curve->retrievePoint(curveOffset);
+		// add field 0x214
+		error("TODO: Implement Character::updatePosition");
+	}
 }
 
 Common::String Character::walkAnim(Character::WalkPart part) {

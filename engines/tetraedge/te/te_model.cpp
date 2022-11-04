@@ -104,6 +104,16 @@ void TeModel::draw() {
 		renderer->sendModelMatrix(transform);
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
+		if (name() == "Kate") {
+			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
+			debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
+			debug("   position   %s", position().dump().c_str());
+			debug("   worldPos   %s", worldPosition().dump().c_str());
+			debug("   scale      %s", scale().dump().c_str());
+			debug("   worldScale %s", worldScale().dump().c_str());
+			debug("   rotation   %s", rotation().dump().c_str());
+			debug("   worldRot   %s", worldRotation().dump().c_str());
+		}
 		for (TeMesh &mesh : _meshes) {
 			// TODO: Set some flag in the mesh here to this->field_0x158??
 			mesh.draw();
@@ -118,7 +128,7 @@ void TeModel::forceMatrix(const TeMatrix4x4 &matrix) {
 	_forcedMatrix = matrix;
 }
 
-TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned long num) {
+TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num) {
 	if (anim) {
 		int bone = anim->findBone(_bones[num]._name);
 		if (bone != -1)
@@ -154,8 +164,30 @@ void TeModel::update() {
 			matricies[i] = matricies[b._x] * matrix;
 		}
 	}
-	if (_bones.size()) {
-		//warning("TODO: Finish TeModel::update. (disasm 190 ~ 697)");
+	for (unsigned int b = 0; b < _bones.size(); b++) {
+		TeTRS startTRS = getBone(_modelAnim, b);
+		for (unsigned int i = 0; i < _boneBlenders.size(); i++) {
+			BonesBlender *blender = _boneBlenders[i];
+			float complete = MIN((blender->_timer.getTimeFromStart() / 1000000.0f) / blender->_seconds, 1.0f);
+			TeTRS trs;
+			TeTRS endTRS = getBone(blender->_anim, b);
+			if (complete == 1.0f) {
+				delete blender;
+				_boneBlenders.remove_at(i);
+				trs = endTRS;
+				i--;
+			} else {
+				trs = startTRS.lerp(endTRS, complete);
+			}
+			TeMatrix4x4 matrix;
+			if (!_matrixForced) {
+				matrix = TeMatrix4x4::fromTRS(trs);
+			} else {
+				matrix = _forcedMatrix;
+				_matrixForced = false;
+			}
+		}
+		//warning("TODO: Finish TeModel::update. (disasm 295 ~ 693)");
 	}
 	for (TeMesh &mesh : _meshes) {
 		if (!_modelVertexAnim) {
@@ -211,8 +243,14 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		error("[TeModel::load] Unsupported version %d", version);
 	}
 
-	_meshes.resize(stream.readUint32LE());
-	_weightElements.resize(stream.readUint32LE());
+	uint32 meshCount = stream.readUint32LE();
+	if (meshCount > 100000)
+		error("TeModel::load: Unexpected number of meshes %d", meshCount);
+	_meshes.resize(meshCount);
+	uint32 weightCount = stream.readUint32LE();
+	if (weightCount > 100000)
+		error("TeModel::load: Unexpected number of weights %d", weightCount);
+	_weightElements.resize(weightCount);
 	uint32 bonecount = stream.readUint32LE();
 	if (bonecount > 100000)
 		error("TeModel::load: Unexpected number of bones %d", bonecount);

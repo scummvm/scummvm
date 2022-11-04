@@ -23,6 +23,7 @@
 #include "common/path.h"
 #include "common/str-array.h"
 #include "common/system.h"
+#include "common/config-manager.h"
 
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
@@ -37,7 +38,9 @@
 #include "tetraedge/te/te_core.h"
 #include "tetraedge/te/te_input_mgr.h"
 #include "tetraedge/te/te_ray_intersection.h"
+#include "tetraedge/te/te_sound_manager.h"
 #include "tetraedge/te/te_variant.h"
+#include "tetraedge/te/te_lua_thread.h"
 
 namespace Tetraedge {
 
@@ -62,31 +65,26 @@ bool Game::addAnimToSet(const Common::String &anim) {
 	// Get path to lua script, eg scenes/ValVoralberg/14040/Set14040.lua
 	const Common::Path animPath(Common::String("scenes/") + anim + "/");
 
-	bool retval = false;
 	if (Common::File::exists(animPath)) {
 		Common::StringArray parts = TetraedgeEngine::splitString(anim, '/');
 		assert(parts.size() >= 2);
 
-		Common::String layoutName = parts[1];
-		Common::String path = Common::String("scenes/") + parts[0] + "/" + parts[1] + "/Set" + parts[1];
+		const Common::String layoutName = parts[1];
+		const Common::String path = Common::String("scenes/") + parts[0] + "/" + parts[1] + "/Set" + parts[1];
 
 		_gui2.load(path + ".lua");
-		/*
-		TeILayout *layout = _gui2.layout("root");
-		TeSpriteLayout *spriteLayout2 = findSpriteLayoutByName(layout, layoutName);
 
-		TeLayout *layout2 = TeLuaGUI::layout(&(this->scene).field_0x170,"root");
-		long lVar5 = 0;
-		if (spriteLayout2) {
-			lVar5 = (long)plVar3 + *(long *)(*plVar3 + -0x198);
-		}
-		(**(code **)(*(long *)((long)&pTVar2->vptr + (long)pTVar2->vptr[-0x33]) + 0x30))
-					((long)&pTVar2->vptr + (long)pTVar2->vptr[-0x33],lVar5);
-		 */
-	  retval = true;
+		// Note: game makes this here, but never uses it..
+		// it seems like a random memory leak??
+		// TeSpriteLayout *spritelayout = new TeSpriteLayout();
+
+		TeSpriteLayout *spritelayout = findSpriteLayoutByName(_gui2.layoutChecked("root"), layoutName);
+
+		_scene.bgGui().layoutChecked("root")->addChild(spritelayout);
+		return true;
 	}
 
-	return retval;
+	return false;
 }
 
 void Game::addArtworkUnlocked(const Common::String &name, bool notify) {
@@ -108,7 +106,7 @@ void Game::addNoScale2Children() {
 	if (!_noScaleLayout2)
 		return;
 
-	TeLayout *vidbtn = _gui4.layout("videoButtonLayout");
+	TeLayout *vidbtn = _inGameGui.layout("videoButtonLayout");
 	if (vidbtn)
 		_noScaleLayout2->addChild(vidbtn);
 
@@ -124,7 +122,7 @@ void Game::addNoScale2Children() {
 void Game::addNoScaleChildren() {
 	if (!_noScaleLayout)
 		return;
-	TeLayout *inGame = _gui4.layout("inGame");
+	TeLayout *inGame = _inGameGui.layout("inGame");
 	if (inGame)
 		_noScaleLayout->addChild(inGame);
 
@@ -309,7 +307,7 @@ void Game::enter(bool newgame) {
 	_luaContext.setGlobal("BUTTON_RS_LEFT", 0x800000);
 	_luaContext.setGlobal("BUTTON_RS_RIGHT", 0x1000000);
 
-	_luaScript.attachToContext(&_luaContext);
+	_gameEnterScript.attachToContext(&_luaContext);
 
 	if (!_objectif.gui1().loaded()) {
 		_objectif.load();
@@ -373,7 +371,9 @@ void Game::finishGame() {
 }
 
 void Game::initLoadedBackupData() {
+	bool warpFlag = true;
 	if (!_loadName.empty()) {
+		warpFlag = false;
 		error("TODO: Implemet Game::initLoadedBackupData loading part");
 	}
 	Application *app = g_engine->getApplication();
@@ -391,7 +391,7 @@ void Game::initLoadedBackupData() {
 	_gameLoadState = 0;
 	app->showLoadingIcon(false);
 	_loadName.clear();
-	initScene(true, firstWarpPath);
+	initScene(warpFlag, firstWarpPath);
 }
 
 void Game::initNoScale() {
@@ -423,12 +423,12 @@ void Game::initScene(bool fade, const Common::String &scenePath) {
 bool Game::initWarp(const Common::String &zone, const Common::String &scene, bool fadeFlag) {
 	debug("Game::initWarp(%s, %s, %s)", zone.c_str(), scene.c_str(), fadeFlag ? "true" : "false");
 	_inventoryMenu.unload();
-	_gui4.unload();
+	_inGameGui.unload();
 	_movePlayerCharacterDisabled = false;
 	_sceneCharacterVisibleFromLoad = true;
 
 	if (_scene._character) {
-		_scene._character->_model->setVisible(false);
+		_scene._character->_model->setVisible(true);
 		_scene._character->deleteAllCallback();
 		_scene._character->stop();
 		_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true, false, false, -1, 9999);
@@ -472,6 +472,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaContext.addBindings(LuaBinds::LuaOpenBinds);
 		_luaScript.attachToContext(&_luaContext);
 		_luaScript.load("menus/help/help.lua");
+		_luaScript.execute();
 		_luaScript.load(logicLuaPath);
 	}
 
@@ -516,25 +517,25 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	}
 
 	_inventoryMenu.load();
-	_gui4.load("InGame.lua");
+	_inGameGui.load("InGame.lua");
 
-	TeButtonLayout *skipbtn = _gui4.buttonLayout("skipVideoButton");
+	TeButtonLayout *skipbtn = _inGameGui.buttonLayout("skipVideoButton");
 	skipbtn->setVisible(false);
 	skipbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
 	skipbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
 
-	TeButtonLayout *vidbgbtn = _gui4.buttonLayout("videoBackgroundButton");
+	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayout("videoBackgroundButton");
 	vidbgbtn->setVisible(false);
 	/* TODO: Restore the original behavior here (onLockVideoButtonValidated) */
 	vidbgbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
 	vidbgbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
 
-	TeSpriteLayout *video = _gui4.spriteLayout("video");
+	TeSpriteLayout *video = _inGameGui.spriteLayout("video");
 	video->setVisible(false);
 	video->_tiledSurfacePtr->_frameAnim.onFinished().remove(this, &Game::onVideoFinished);
 	video->_tiledSurfacePtr->_frameAnim.onFinished().add(this, &Game::onVideoFinished);
 
-	TeButtonLayout *invbtn = _gui4.buttonLayout("inventoryButton");
+	TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
 	invbtn->setSizeType(TeILayout::RELATIVE_TO_PARENT); // TODO: Double-check if this is the right virt fn.
 	invbtn->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
 	invbtn->onMouseClickValidated().add(this, &Game::onInventoryButtonValidated);
@@ -546,7 +547,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		invbtn->setSize(TeVector3f32(0.08, (4.0 / ((winSize.y() / winSize.x()) * 4.0)) * 0.08, 0.0));
 	}
 
-	TeCheckboxLayout *markersCheckbox = _gui4.checkboxLayout("markersVisibleButton");
+	TeCheckboxLayout *markersCheckbox = _inGameGui.checkboxLayout("markersVisibleButton");
 	markersCheckbox->setVisible(!_markersVisible);
 	markersCheckbox->onStateChangedSignal().add(this, &Game::onMarkersVisible);
 
@@ -554,7 +555,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 	removeNoScale2Children();
 	app->_frontLayout.removeChild(_noScaleLayout2);
 
-	TeLayout *vidLayout = _gui4.layout("videoLayout");
+	TeLayout *vidLayout = _inGameGui.layout("videoLayout");
 	app->_frontLayout.removeChild(vidLayout);
 	removeNoScaleChildren();
 	app->_frontLayout.removeChild(_noScaleLayout);
@@ -627,15 +628,15 @@ bool Game::isDocumentOpened() {
 }
 
 bool Game::isMoviePlaying() {
-	TeButtonLayout *vidButton = _gui4.buttonLayout("videoBackgroundButton");
+	TeButtonLayout *vidButton = _inGameGui.buttonLayout("videoBackgroundButton");
 	if (vidButton)
 		return vidButton->visible();
 	return false;
 }
 
-bool Game::launchDialog(const Common::String &param_1, uint param_2, const Common::String &charname,
+bool Game::launchDialog(const Common::String &dname, uint param_2, const Common::String &charname,
 				  const Common::String &animfile, float param_5) {
-	error("TODO: Implemet Game::launchDialog %s %d %s %s %f", param_1.c_str(),
+	error("TODO: Implemet Game::launchDialog %s %d %s %s %f", dname.c_str(),
 			param_2, charname.c_str(), animfile.c_str(), param_5);
 }
 
@@ -673,11 +674,11 @@ void Game::leave(bool flag) {
 
 	_luaContext.destroy();
 	_running = false;
-	_gui4.buttonLayoutChecked("skipVideoButton")->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
-	_gui4.buttonLayoutChecked("videoBackgroundButton")->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
-	_gui4.spriteLayoutChecked("video")->_tiledSurfacePtr->_frameAnim.onFinished().remove(this, &Game::onSkipVideoButtonValidated);
-	_gui4.buttonLayoutChecked("inventoryButton")->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
-	_gui4.unload();
+	_inGameGui.buttonLayoutChecked("skipVideoButton")->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
+	_inGameGui.buttonLayoutChecked("videoBackgroundButton")->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
+	_inGameGui.spriteLayoutChecked("video")->_tiledSurfacePtr->_frameAnim.onFinished().remove(this, &Game::onSkipVideoButtonValidated);
+	_inGameGui.buttonLayoutChecked("inventoryButton")->onMouseClickValidated().remove(this, &Game::onInventoryButtonValidated);
+	_inGameGui.unload();
 	_playedTimer.stop();
 
 	Application *app = g_engine->getApplication();
@@ -695,9 +696,8 @@ bool Game::loadCharacter(const Common::String &name) {
 	bool result = true;
 	Character *character = _scene.character(name);
 	if (!character) {
-		result = false;
-		bool loaded = _scene.loadCharacter(name);
-		if (loaded) {
+		result = _scene.loadCharacter(name);
+		if (result) {
 			character = _scene.character(name);
 			character->_onCharacterAnimFinishedSignal.remove<Game>(this, &Game::onCharacterAnimationFinished);
 			character->_onCharacterAnimFinishedSignal.add<Game>(this, &Game::onCharacterAnimationFinished);
@@ -719,8 +719,8 @@ bool Game::loadPlayerCharacter(const Common::String &name) {
 }
 
 bool Game::loadScene(const Common::String &name) {
-	_luaScript.load("scenes/OnGameEnter.lua");
-	_luaScript.execute();
+	_gameEnterScript.load("scenes/OnGameEnter.lua");
+	_gameEnterScript.execute();
 	Character *character = _scene._character;
 	if (character && character->_model->visible()) {
 		_sceneCharacterVisibleFromLoad = true;
@@ -739,6 +739,9 @@ bool Game::onCallNumber(Common::String val) {
 }
 
 bool Game::onCharacterAnimationFinished(const Common::String &val) {
+	if (!_scene._character)
+		return false;
+
 	error("TODO: Implemet Game::onCharacterAnimationFinished %s", val.c_str());
 }
 
@@ -747,11 +750,54 @@ bool Game::onCharacterAnimationPlayerFinished(const Common::String &val) {
 }
 
 bool Game::onDialogFinished(const Common::String &val) {
-	error("TODO: Implemet Game::onDialogFinished %s", val.c_str());
+	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == "OnDialogFinished" && cb._luaParam == val) {
+			TeLuaThread *lua = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			if (lua) {
+				lua->resume();
+				return false;
+			}
+			break;
+		}
+	}
+
+	_luaScript.execute("OnDialogFinished", val);
+	_luaScript.execute("OnCellDialogFinished", val);
+	return false;
 }
 
 bool Game::onDisplacementFinished() {
-	error("TODO: Implemet Game::onDisplacementFinished");
+	_sceneCharacterVisibleFromLoad = true;
+	_scene._character->stop();
+	_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true, false, false, -1, 9999);
+
+	// TODO: Twiddle flags 0x424b and 0x4249
+	/*
+	if (!_field_0x424b) {
+		_field_0x4249 = false;
+	} else {
+		_field_0x424b = false;
+		_field_0x4249 = true;
+	}*/
+
+	TeLuaThread *thread = nullptr;
+
+	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == "OnDisplacementFinished") {
+			thread = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			break;
+		}
+	}
+	if (thread) {
+		thread->resume();
+	} else {
+		_luaScript.execute("OnDisplacementFinished");
+	}
+	return false;
 }
 
 bool Game::onFinishedCheckBackup(bool result) {
@@ -785,7 +831,7 @@ bool Game::onInventoryButtonValidated() {
 }
 
 bool Game::onLockVideoButtonValidated() {
-	TeButtonLayout *btn = _gui4.buttonLayoutChecked("skipVideoButton");
+	TeButtonLayout *btn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	btn->setVisible(!btn->visible());
 	return true;
 }
@@ -884,10 +930,10 @@ bool Game::onMouseClick(const Common::Point &pt) {
 
 	if (app->isLockCursor() || _movePlayerCharacterDisabled)
 		return false;
-	
+
 	Character *character = _scene._character;
 	const Common::String &charAnim = character->curAnimName();
-	
+
 	if (charAnim == character->characterSettings()._walkFileName
 		|| charAnim == character->walkAnim(Character::WalkPart_Start)
 		|| charAnim == character->walkAnim(Character::WalkPart_Loop)
@@ -935,7 +981,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 		// TODO: Set app field field_0x910b
 		_posPlayer = lastPoint;
 	}
-	
+
 	if (!_sceneCharacterVisibleFromLoad || (character->curAnimName() == character->characterSettings()._walkFileName)) {
 		_lastCharMoveMousePos = TeVector2s32(0, 0);
 		_movePlayerCharacterDisabled = true;
@@ -1041,48 +1087,61 @@ bool Game::onMouseMove() {
 }
 
 bool Game::onSkipVideoButtonValidated() {
-	TeSpriteLayout *sprite = _gui4.spriteLayoutChecked("video");
-	TeButtonLayout *btn = _gui4.buttonLayoutChecked("videoBackgroundButton");
+	TeSpriteLayout *sprite = _inGameGui.spriteLayoutChecked("video");
+	TeButtonLayout *btn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	sprite->stop();
 	btn->setVisible(false);
 	return false;
 }
 
 bool Game::onVideoFinished() {
-	if (!_gui4.loaded())
+	if (!_inGameGui.loaded())
 		return false;
 
 	Application *app = g_engine->getApplication();
 
 	app->captureFade();
 
-	TeSpriteLayout *video = _gui4.spriteLayoutChecked("video");
-	TeButtonLayout *btn = _gui4.buttonLayoutChecked("videoBackgroundButton");
+	TeSpriteLayout *video = _inGameGui.spriteLayoutChecked("video");
+	Common::String vidPath = video->_tiledSurfacePtr->path().toString();
+	TeButtonLayout *btn = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	btn->setVisible(false);
-	btn = _gui4.buttonLayoutChecked("skipVideoButton");
+	btn = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	btn->setVisible(false);
 	video->setVisible(false);
 	_music.stop();
 	_running = true;
-	warning("TODO: Game::onVideoFinished: update yieldedCallbacks %s", video->_tiledSurfacePtr->path().toString().c_str());
-	_luaScript.execute("OnMovieFinished", video->_tiledSurfacePtr->path().toString());
+	bool resumed = false;
+	for (unsigned int i = 0; i < _yieldedCallbacks.size(); i++) {
+		YieldedCallback &cb = _yieldedCallbacks[i];
+		if (cb._luaFnName == "OnMovieFinished" && cb._luaParam == vidPath) {
+			TeLuaThread *lua = cb._luaThread;
+			_yieldedCallbacks.remove_at(i);
+			resumed = true;
+			if (lua)
+				lua->resume();
+			break;
+		}
+	}
+	if (!resumed)
+		_luaScript.execute("OnMovieFinished", vidPath);
 	app->fade();
 	return false;
 }
 
 void Game::pauseMovie() {
 	_music.pause();
-	TeSpriteLayout *sprite = _gui4.spriteLayoutChecked("video");
+	TeSpriteLayout *sprite = _inGameGui.spriteLayoutChecked("video");
 	sprite->pause();
 }
 
 void Game::playMovie(const Common::String &vidPath, const Common::String &musicPath) {
 	Application *app = g_engine->getApplication();
 	app->captureFade();
-	TeButtonLayout *videoBackgroundButton = _gui4.buttonLayoutChecked("videoBackgroundButton");
+	TeButtonLayout *videoBackgroundButton = _inGameGui.buttonLayoutChecked("videoBackgroundButton");
 	videoBackgroundButton->setVisible(true);
 
-	TeButtonLayout *skipVideoButton = _gui4.buttonLayoutChecked("skipVideoButton");
+	TeButtonLayout *skipVideoButton = _inGameGui.buttonLayoutChecked("skipVideoButton");
 	skipVideoButton->setVisible(false);
 
 	TeMusic &music = app->music();
@@ -1094,15 +1153,17 @@ void Game::playMovie(const Common::String &vidPath, const Common::String &musicP
 
 	_running = false;
 
-	TeSpriteLayout *videoSpriteLayout = _gui4.spriteLayoutChecked("video");
+	TeSpriteLayout *videoSpriteLayout = _inGameGui.spriteLayoutChecked("video");
 	videoSpriteLayout->load(vidPath);
 	videoSpriteLayout->setVisible(true);
 	music.play();
 	videoSpriteLayout->play();
 
 	// FIXME TODO!! Stop the movie and soundearly for testing.
-	videoSpriteLayout->_tiledSurfacePtr->_frameAnim._nbFrames = 10;
-	music.stop();
+	if (ConfMan.get("skip_videos") == "true") {
+		videoSpriteLayout->_tiledSurfacePtr->_frameAnim._nbFrames = 10;
+		music.stop();
+	}
 
 	app->fade();
 }
@@ -1112,11 +1173,11 @@ void Game::playRandomSound(const Common::String &name) {
 		warning("Game::playRandomSound: can't find sound list %s", name.c_str());
 		return;
     }
-    error("TODO: Implemet Game::playRandomSound");
+    warning("TODO: Implemet Game::playRandomSound");
 }
 
 void Game::playSound(const Common::String &name, int param_2, float param_3) {
-	error("TODO: Implemet Game::playSound");
+	warning("TODO: Implemet Game::playSound");
 }
 
 void Game::removeNoScale2Child(TeLayout *layout) {
@@ -1129,7 +1190,7 @@ void Game::removeNoScale2Children() {
 	if (!_noScaleLayout2)
 		return;
 
-	TeLayout *vidbtn = _gui4.layout("videoButtonLayout");
+	TeLayout *vidbtn = _inGameGui.layout("videoButtonLayout");
 	if (vidbtn)
 		_noScaleLayout2->removeChild(vidbtn);
 
@@ -1164,19 +1225,19 @@ void Game::resetPreviousMousePos() {
 
 void Game::resumeMovie() {
 	_music.play();
-	_gui4.spriteLayout("video")->play();
+	_inGameGui.spriteLayout("video")->play();
 }
 
 void Game::saveBackup(const Common::String &saveName) {
-	error("TODO: Implemet me");
+	warning("TODO: Implemet Game::saveBackup %s", saveName.c_str());
 }
 
-void Game::setBackground(const Common::String &name) {
-	_scene.changeBackground(name);
+bool Game::setBackground(const Common::String &name) {
+	return _scene.changeBackground(name);
 }
 
 void Game::setCurrentObjectSprite(const Common::String &spritePath) {
-	TeSpriteLayout *currentSprite = _gui4.spriteLayout("currentObjectSprite");
+	TeSpriteLayout *currentSprite = _inGameGui.spriteLayout("currentObjectSprite");
 	if (currentSprite) {
 		if (!spritePath.empty()) {
 			currentSprite->unload();
@@ -1187,15 +1248,35 @@ void Game::setCurrentObjectSprite(const Common::String &spritePath) {
 }
 
 bool Game::showMarkers(bool val) {
-	error("TODO: Implemet me");
+	TeLayout *bg = _gui3.layoutChecked("background");
+	for (unsigned int i = 0; i < bg->childCount(); i++) {
+		const InGameScene::TeMarker *marker = _scene.findMarker(bg->child(i)->name());
+		if (marker)
+			bg->child(i)->setVisible(!val);
+	}
+	return false;
 }
 
-bool Game::startAnimation(const Common::String &animName, int param_2, bool param_3) {
-	error("TODO: Implemet me");
+bool Game::startAnimation(const Common::String &animName, int loopcount, bool reversed) {
+	TeSpriteLayout *layout = _scene.bgGui().spriteLayout(animName);
+	if (layout) {
+		layout->_tiledSurfacePtr->_frameAnim._loopCount = loopcount;
+		layout->_tiledSurfacePtr->_frameAnim._reversed = reversed;
+		layout->_tiledSurfacePtr->play();
+	}
+	return layout != nullptr;
 }
 
 void Game::stopSound(const Common::String &name) {
-	error("TODO: Implemet me");
+	for (unsigned int i = 0; i < _gameSounds.size(); i++) {
+		GameSound *sound = _gameSounds[i];
+		if (sound->getAccessName() == name) {
+			sound->stop();
+			sound->deleteLater();
+		}
+		_gameSounds.remove_at(i);
+	}
+	g_engine->getSoundManager()->stopFreeSound(name);
 }
 
 bool Game::unloadCharacter(const Common::String &charname) {
@@ -1234,7 +1315,7 @@ void Game::update() {
 	if (!_entered)
 		return;
 
-	TeTextLayout *debugTimeTextLayout = _gui4.textLayout("debugTimeText1");
+	TeTextLayout *debugTimeTextLayout = _inGameGui.textLayout("debugTimeText1");
 	if (debugTimeTextLayout) {
 		warning("TODO: Game::update: Fill out debugTimeTextLayout");
 	}
@@ -1254,7 +1335,7 @@ void Game::update() {
 				app->_lockCursorButton.setVisible(false);
 		}
 
-		TeButtonLayout *invbtn = _gui4.buttonLayout("inventoryButton");
+		TeButtonLayout *invbtn = _inGameGui.buttonLayout("inventoryButton");
 		if (invbtn)
 			invbtn->setVisible(!app->isLockCursor() && !_dialog2.isDialogPlaying());
 		else
@@ -1305,7 +1386,7 @@ void Game::update() {
 		}
 		if (_saveRequested) {
 			_saveRequested = false;
-			error("TODO: Game::update: Save game");
+			saveBackup("save.xml");
 		}
 
 		_luaScript.execute("Update");

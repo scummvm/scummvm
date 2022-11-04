@@ -45,6 +45,7 @@ public:
 	void leave();
 	void load();
 	bool onHelpButtonValidated();
+	void pushObjectif(Common::String const &head, Common::String const &sub);
 	void reattachLayout(TeLayout *layout);
 	void removeChildren();
 	// void save()
