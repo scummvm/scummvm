@@ -104,7 +104,7 @@ Umfangreichere Informationen über die Änderungen des aktuellen Codes findest D
    - Möglicher Absturz bei der Nutzung der Autosave-Funktion behoben.
 
  SCI:
-   - Mehrere Fehler und Skript-Probleme in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG4 und SQ5 behoben.
+   - Mehrere Fehler und Skript-Probleme in KQ4, KQ5, LB2, LONGBOW, PQ1, PQ3, QFG2, QFG3, QFG4 und SQ5 behoben.
    - Zahlreiche Verbesserungen an verschiedenen Stellen des Engine-Codes.
 
  SCUMM:

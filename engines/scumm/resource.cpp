@@ -1914,6 +1914,10 @@ bool ScummEngine::tryPatchMI1CannibalScript(byte *buf, int size) {
 		lang[1] = 'S';
 		lang[2] = 'P';
 		break;
+	// For some reason, those lines were already missing from the official
+	// French floppy EGA/VGA releases, and so there's no official content
+	// to restore for this language.
+	case Common::FR_FRA:
 	default:
 		return false;
 	}

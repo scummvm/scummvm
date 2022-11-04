@@ -31,9 +31,6 @@
 #include "dreamweb/detection.h"
 #include "dreamweb/dreamweb.h"
 
-#define GAMEOPTION_TTS_THINGS 	GUIO_GAMEOPTIONS1
-#define GAMEOPTION_TTS_SPEECH 	GUIO_GAMEOPTIONS2
-
 static const PlainGameDescriptor dreamWebGames[] = {
 	{ "dreamweb", "DreamWeb" },
 	{ nullptr, nullptr }
@@ -107,7 +104,7 @@ public:
 	AdvancedMetaEngineDetection(DreamWeb::gameDescriptions,
 	sizeof(DreamWeb::DreamWebGameDescription), dreamWebGames,
 	gameGuiOptions) {
-		_guiOptions = GUIO1(GUIO_NOMIDI);
+		_guiOptions = GUIO5(GUIO_NOMIDI, GAMEOPTION_ORIGINAL_SAVELOAD, GAMEOPTION_BRIGHTPALETTE, GAMEOPTION_TTS_THINGS, GAMEOPTION_TTS_SPEECH);
 	}
 
 	const char *getName() const override {

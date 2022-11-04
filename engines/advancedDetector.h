@@ -408,6 +408,7 @@ private:
 	void initSubSystems(const ADGameDescription *gameDesc) const;
 	void preprocessDescriptions();
 	bool isEntryGrayListed(const ADGameDescription *g) const;
+	void detectClashes() const;
 
 private:
 	Common::HashMap<Common::String, bool, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> _grayListMap;

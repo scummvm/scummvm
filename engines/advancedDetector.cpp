@@ -876,6 +876,11 @@ void AdvancedMetaEngineDetection::preprocessDescriptions() {
 				g->gameId, getName(), g->filesDescriptions[0].md5);
 		}
 	}
+
+#ifndef RELEASE_BUILD
+	// Check the provided tables for sanity
+	detectClashes();
+#endif
 }
 
 Common::StringArray AdvancedMetaEngineDetection::getPathsFromEntry(const ADGameDescription *g) {
@@ -923,4 +928,32 @@ Common::Error AdvancedMetaEngine::createInstance(OSystem *syst, Engine **engine)
 	}
 
 	return Common::Error();
+}
+
+void AdvancedMetaEngineDetection::detectClashes() const {
+	// First, check that we do not have duplicated entries in _gameIds
+	Common::HashMap<Common::String, int, Common::IgnoreCase_Hash, Common::IgnoreCase_EqualTo> idsMap;
+
+
+	for (const PlainGameDescriptor *g = _gameIds; g->gameId; g++) {
+		if (idsMap.contains(g->gameId))
+			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' has duplicates", g->gameId, getName());
+
+		idsMap[g->gameId] = 0;
+	}
+
+	for (const byte *descPtr = _gameDescriptors; ((const ADGameDescription *)descPtr)->gameId != nullptr; descPtr += _descItemSize) {
+		const ADGameDescription *g = (const ADGameDescription *)descPtr;
+
+		if (!idsMap.contains(g->gameId)) {
+			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' is not present in gameids", g->gameId, getName());
+		} else {
+			idsMap[g->gameId]++;
+		}
+	}
+
+	for (auto &k : idsMap) {
+		if (k._value == 0 && k._key != getName())
+			debug(0, "WARNING: Detection gameId for '%s' in engine '%s' has no games in the detection table", k._key.c_str(), getName());
+	}
 }

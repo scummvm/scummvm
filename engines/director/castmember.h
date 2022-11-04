@@ -146,12 +146,6 @@ public:
 
 	uint32 _tag;
 	bool _noMatte;
-
-private:
-	void ditherImage();
-	void ditherFloydImage();
-
-	Graphics::PaletteLookup _paletteLookup;
 };
 
 class DigitalVideoCastMember : public CastMember {

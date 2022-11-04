@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.5.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-02 22:15+0000\n"
+"POT-Creation-Date: 2022-11-03 23:01+0000\n"
 "PO-Revision-Date: 2021-01-02 18:37+0000\n"
 "Last-Translator: Eugene Sandulenko <sev@scummvm.org>\n"
 "Language-Team: Basque <https://translations.scummvm.org/projects/scummvm/"
@@ -4243,7 +4243,7 @@ msgid "Do not emulate NTSC artifacts for text"
 msgstr ""
 
 #: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
-#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:54
+#: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:51
 #: engines/groovie/detection.cpp:309 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
 #: engines/toltecs/detection.cpp:228 engines/trecision/detection.cpp:219
@@ -4252,7 +4252,7 @@ msgid "Use original save/load screens"
 msgstr "Erabili jatorrizko gorde/kargatu pantailak"
 
 #: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
-#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:55
+#: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:52
 #: engines/groovie/detection.cpp:310 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
 #: engines/toltecs/detection.cpp:229 engines/trecision/detection.cpp:220
@@ -4963,31 +4963,31 @@ msgstr ""
 "Sakatu Ados orain konbertitzeko, bestela berriz galdetuko dizut jokoa berriz "
 "martxan jartzen duzunean.\n"
 
-#: engines/dreamweb/detection.cpp:66
+#: engines/dreamweb/detection.cpp:63
 msgid "Use bright palette mode"
 msgstr "Erabili paleta argia"
 
-#: engines/dreamweb/detection.cpp:67
+#: engines/dreamweb/detection.cpp:64
 msgid "Display graphics using the game's bright palette"
 msgstr "Erakutsi grafikoak jokoaren paleta argia erabilita"
 
-#: engines/dreamweb/detection.cpp:79
+#: engines/dreamweb/detection.cpp:76
 msgid "Enable Text to Speech for Objects, Options, and the Bible Quote"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:80 engines/lure/detection.cpp:45
+#: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
 #: engines/twine/detection.cpp:1138
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 
-#: engines/dreamweb/detection.cpp:91
+#: engines/dreamweb/detection.cpp:88
 #, fuzzy
 msgid "Enable Text to Speech for Subtitles"
 msgstr "Testu eta ahotsa:"
 
-#: engines/dreamweb/detection.cpp:92
+#: engines/dreamweb/detection.cpp:89
 #, fuzzy
 msgid "Use TTS to read the subtitles (if TTS is available)"
 msgstr "Erabili CD-ko audioa jokokoa beharrean, eskurarri badago"
