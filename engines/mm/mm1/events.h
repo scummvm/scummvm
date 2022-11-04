@@ -340,6 +340,11 @@ public:
 	 */
 	void addAction(KeybindingAction action);
 
+	/**
+	 * Checks whether a keypress is pending
+	 */
+	bool isKeypressPending() const;
+
 	void draw() override {}
 
 	bool tick() override {

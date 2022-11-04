@@ -166,6 +166,14 @@ void Events::addAction(KeybindingAction action) {
 	focusedView()->msgAction(ActionMessage(action));
 }
 
+bool Events::isKeypressPending() const {
+	// TODO: Currently the engine doesn't cache keypresses, but rather
+	// processes them immediately after each is pulled from the
+	// SDL event queue. So for this to work, we'd need to rework
+	// the event handler code
+	return false;
+}
+
 /*------------------------------------------------------------------------*/
 
 Bounds::Bounds(Common::Rect &innerBounds) :
