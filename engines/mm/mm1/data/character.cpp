@@ -154,6 +154,10 @@ size_t Inventory::getPerformanceTotal() const {
 
 /*------------------------------------------------------------------------*/
 
+Character::Character() : PrimaryAttributes() {
+	Common::fill(&_flags[0], &_flags[14], 0);
+}
+
 void Character::synchronize(Common::Serializer &s) {
 	s.syncBytes((byte *)_name, 16);
 	s.syncAsByte(_sex);
