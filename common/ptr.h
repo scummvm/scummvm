@@ -560,6 +560,14 @@ struct DefaultDeleter {
 	}
 };
 
+template <typename T>
+struct ArrayDeleter {
+	inline void operator()(T *object) {
+		STATIC_ASSERT(sizeof(T) > 0, cannot_delete_incomplete_type);
+		delete[] object;
+	}
+};
+
 template<typename T, class DL = DefaultDeleter<T> >
 class ScopedPtr : private NonCopyable, public SafeBool<ScopedPtr<T, DL> > {
 public:
