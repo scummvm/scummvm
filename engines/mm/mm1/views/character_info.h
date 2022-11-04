@@ -71,12 +71,12 @@ private:
 	/**
 	 * Using an item during combat
 	 */
-	void combatUseItem(Inventory::Entry &invEntry, bool isEquipped);
+	void combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped);
 
 	/**
 	 * Using an item outside of combat
 	 */
-	void nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped);
+	void nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped);
 
 public:
 	CharacterInfo() : CharacterBase("CharacterInfo") {}

@@ -189,8 +189,6 @@ void CastSpell::performSpell(Character *chr) {
 	c._sp._current = MAX(c._sp._current - _requiredSp, 0);
 	c._gems = MAX(c._gems - _requiredGems, 0);
 
-	c.castUnknown();
-
 	if (!isMagicAllowed()) {
 		spellDone(STRING["dialogs.misc.magic_doesnt_work"], 5);
 	} else {
