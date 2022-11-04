@@ -129,13 +129,14 @@ void TinyGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint
 		tglBlendFunc(TGL_SRC_ALPHA, TGL_ONE_MINUS_SRC_ALPHA);
 	}
 
-	tglBegin(TGL_TRIANGLE_STRIP);
-	tglVertex3f(rect.left, rect.bottom, 0.0f);
-	tglVertex3f(rect.right, rect.bottom, 0.0f);
-	tglVertex3f(rect.left, rect.top, 0.0f);
-	tglVertex3f(rect.right, rect.top, 0.0f);
-	tglEnd();
-
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(rect.left, rect.bottom, 0.0));
+	copyToVertexArray(1, Math::Vector3d(rect.right, rect.bottom, 0.0));
+	copyToVertexArray(2, Math::Vector3d(rect.left, rect.top, 0.0));
+	copyToVertexArray(3, Math::Vector3d(rect.right, rect.top, 0.0));
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_TRIANGLE_STRIP, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
 	tglDisable(TGL_BLEND);
 }
 
