@@ -37,13 +37,13 @@ static const PlainGameDescriptor directorGames[] = {
 	// Commercially released games
 	{ "10plus2",			"10+2" },
 	{ "1stcdtoddler",		"My First CD-ROM: Toddler School" },
-	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
+//	{ "3bessones",			"Les Tres Bessones: Jugar i Aprendre" }, // Catalan title, English selectable in game
 	{ "abclunch",			"My Alphabet Lunch" },
 	{ "abcpacovska",		"Alphabet: Play with the ABCs"},
 	{ "abcpalsafety",		"Safety Scavenger Hunt" }, // Alphabet Pals
 	{ "abductthis",			"Abduct This!" },
 	{ "afiles",				"The A-Files" },
-	{ "agapito",			"Agapito's Crazy Adventure" },   // Not director?
+//	{ "agapito",			"Agapito's Crazy Adventure" },   // Not director?
 	{ "alice",				"Alice: An Interactive Museum" },
 	{ "alphabet",			"The Interactive Alphabet" },
 	{ "amandastories",		"AmandaStories" },
@@ -606,7 +606,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "trekship",			"Star Trek: Starship Creator"},
 	{ "trekshipaddon",		"Star Trek: Starship Creator Add-on Pack"},
 	{ "trektech",			"Star Trek: The Next Generation Interactive Technical Manual" },
-	{ "trekshipcreate",		"Star Trek: Starship Creator"},
 	{ "truthsfictions",		"Truths & Fictions: A Journey from Documentary to Digital Photography" },
 	{ "universe",			"Invisible Universe" },
 	{ "unwrap",				"Unwrap the Magic: Holiday 2000 Interactive CD-ROM" }, // J.C.Penney
@@ -5269,7 +5268,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	MACDEMO1("fplit", "Demo", "Toyland Preview", "9fbd2e99a6a23933083ba0934e4a7d01", 705417, 500),
 
-	WINDEMO1t("fpreadyk", "Demo", "FPRFS32.EXE", "b976d39fa7f7cf18a05149b5593f43e0", 2901579, 501),
+	WINDEMO1t("fpready", "Demo", "FPRFS32.EXE", "b976d39fa7f7cf18a05149b5593f43e0", 2901579, 501),
 
 	// ©1996 Davidson & Associates, Inc.
 	MACGAME1("fpreadyp", "", "Ready for Preschool", "231d3041df162be4a0ddd36a74eb03b6", 719022, 501),
