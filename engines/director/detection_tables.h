@@ -1853,13 +1853,13 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Original filename is Babylon 5 Interactive/Mac
 	MACGAME1("babylon5int", "", "Babylon 5 Interactive-Mac", "7f443f2e63fd497a9ad85b10dc880a91", 1262641, 313),
 
-	MACDEMO2_l("bakkunooni", "Wabi Demo", "Browser",	"7ba588d9fde9f714a42fec0a2c9d9655", 2835635,
-										  "Main-Help-J", "2358b56196b9d9148990f5f5e9c7fb43", 8521, Common::JA_JPN, 311),
+	MACDEMO2_l("bakkunooni", "Wabi Demo", "Browser",	"7ba588d9fde9f714a42fec0a2c9d9655", 2835379,
+										  "Main-Help-J", "2358b56196b9d9148990f5f5e9c7fb43", 8265, Common::JA_JPN, 311),
 
 	// Original filename is 'ﾀﾞﾌﾞﾙｸﾘｯｸしてちょんまげ!!'
 	MACGAME1_l("bakavideodrug", "", "xn--!!-l83ata4c3a3ovcsfp481v2cab5h2h5goa7fb", "f5277c53bacd27936158dd3867e587e2", 392249, Common::JA_JPN, 311),
 
-	MACGAME1("belcher", "", "The Belcher", "d0683b94f369d0d60ebd6c47d4d1ea76", 470776, 301),
+	MACGAME1("belcher", "", "The Belcher", "d0683b94f369d0d60ebd6c47d4d1ea76", 470520, 301),
 
 	// Also on the disk is the executable and resources for the 12" monitor version
 	// "BELZERION 12", "f5277c53bacd27936158dd3867e587e2", 392623, 311
@@ -1870,16 +1870,16 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("beyondthewall", "", "Beyond The Wall Of Stars", "107c6a6d3cce957eaa26d427e672000c", 465267, 300),
 	WINGAME1("beyondthewall", "", "WALL.EXE", "5c6862a40a48881913ee7c50d25cd984", 225253, 300),
 
-	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392521, Common::JA_JPN, 311),
+	MACDEMO1_l("bigtimemovie", "Demo", "BIG TIME MOVIE-Studios", "f5277c53bacd27936158dd3867e587e2", 392265, Common::JA_JPN, 311),
 
 	// Original filename is BioFlix©1993.Demo 1.0
-	MACDEMO1("bioflix", "v1.0 Demo", "BioFlix 1993.Demo 1.0", "1ae45c23586b41997ba52e2e7c771c4c", 1070691, 310),
+	MACDEMO1("bioflix", "v1.0 Demo", "BioFlix 1993.Demo 1.0", "1ae45c23586b41997ba52e2e7c771c4c", 1070435, 310),
 
-	MACGAME1("birdlife", "", "Click here to start (8mb)", "1ae45c23586b41997ba52e2e7c771c4c", 381058, 311),
+	MACGAME1("birdlife", "", "Click here to start (8mb)", "1ae45c23586b41997ba52e2e7c771c4c", 380802, 311),
 	WINGAME1("birdlife", "", "BIRDMPC/BIRDLIFE.EXE", "65d06b5fef155a2473434571aff5bc29", 783483, 310),
 
 	// Original filename is BOB©1991
-	MACGAME1("bob", "", "BOB 1991", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1209537, 300),
+	MACGAME1("bob", "", "BOB 1991", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1209281, 300),
 
 	// CD-ROM for Bomb! magazine focusing on "cyber idol" Reiko Chiba
 	MACGAME1_l("bombreikochiba", "", "CD-BOMB!", "276bee761e48a6fd709df77d5c2f60dd", 393879, Common::JA_JPN, 310),
@@ -1907,8 +1907,8 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1("biomorph", "", "Bio-Morph.Start", "f5277c53bacd27936158dd3867e587e2", 392223, 311),
 
 	// Original v3.5.1 demo filename is BusinessManager.デモ
-	MACDEMO1_l("businessmanager", "v3.5.1 Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 2102528, Common::JA_JPN, 311),
-	MACDEMO1_l("businessmanager", "Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 392603, Common::JA_JPN, 311),
+	MACDEMO1_l("businessmanager", "v3.5.1 Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 2102272, Common::JA_JPN, 311),
+	MACDEMO1_l("businessmanager", "Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 392347, Common::JA_JPN, 311),
 
 	MACDEMO1_l("calling", "Demo", "CallingPlayer", "276bee761e48a6fd709df77d5c2f60dd", 392676, Common::JA_JPN, 313),
 
