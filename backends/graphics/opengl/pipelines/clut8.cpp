@@ -31,7 +31,7 @@ CLUT8LookUpPipeline::CLUT8LookUpPipeline()
 	: ShaderPipeline(ShaderMan.query(ShaderManager::kCLUT8LookUp)), _paletteTexture(nullptr) {
 }
 
-void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void CLUT8LookUpPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	// Set the palette texture.
 	GL_CALL(glActiveTexture(GL_TEXTURE1));
 	if (_paletteTexture) {
@@ -39,7 +39,7 @@ void CLUT8LookUpPipeline::drawTexture(const GLTexture &texture, const GLfloat *c
 	}
 
 	GL_CALL(glActiveTexture(GL_TEXTURE0));
-	ShaderPipeline::drawTexture(texture, coordinates, texcoords);
+	ShaderPipeline::drawTextureInternal(texture, coordinates, texcoords);
 }
 #endif // !USE_FORCED_GLES
 

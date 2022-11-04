@@ -46,7 +46,7 @@ void FixedPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	GL_CALL(glColor4f(r, g, b, a));
 }
 
-void FixedPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void FixedPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	texture.bind();
 
 	GL_CALL(glTexCoordPointer(2, GL_FLOAT, 0, texcoords));

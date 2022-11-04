@@ -134,7 +134,7 @@ LibRetroPipeline::~LibRetroPipeline() {
 	close();
 }
 
-void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void LibRetroPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	Framebuffer *const targetBuffer = _activeFramebuffer;
 
 	// Set input texture for 1st pass to texture to draw.
@@ -174,7 +174,7 @@ void LibRetroPipeline::drawTexture(const GLTexture &texture, const GLfloat *coor
 	_applyProjectionChanges = false;
 
 	ShaderPipeline::activateInternal();
-	ShaderPipeline::drawTexture(*_passes[_passes.size() - 1].target->getTexture(), coordinates, texcoords);
+	ShaderPipeline::drawTextureInternal(*_passes[_passes.size() - 1].target->getTexture(), coordinates, texcoords);
 	ShaderPipeline::deactivateInternal();
 
 	_frameCount++;
