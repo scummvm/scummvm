@@ -60,11 +60,7 @@ void TextView::writeChar(int x, int y, unsigned char c) {
 
 void TextView::writeString(const Common::String &str) {
 	for (const unsigned char *s = (const unsigned char *)str.c_str(); *s; ++s) {
-		if (*s & 0x80)
-			warning("TODO: Unknown high-bit set in string character");
-
-		char c = (char)(*s & 0x7f);
-		writeChar(c);
+		writeChar(*s);
 	}
 }
 
