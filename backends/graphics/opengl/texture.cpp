@@ -99,6 +99,7 @@ void GLTexture::setWrapMode(WrapMode wrapMode) {
 #endif
 		// fall through
 		case kWrapModeRepeat:
+		default:
 			glwrapMode = GL_REPEAT;
 	}
 
