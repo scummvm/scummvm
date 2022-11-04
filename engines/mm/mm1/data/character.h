@@ -516,8 +516,6 @@ struct Character : public PrimaryAttributes {
 	 */
 	Common::String getConditionString() const;
 
-	void castUnknown();
-
 	/**
 	 * Rest the character
 	 */

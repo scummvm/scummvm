@@ -237,21 +237,24 @@ bool CharacterInfo::msgKeypress(const KeypressMessage &msg) {
 
 	case USE: {
 		Character &c = *g_globals->_currCharacter;
+		Inventory *inv;
 		Inventory::Entry *invEntry;
 		if (msg.keycode >= Common::KEYCODE_1 && msg.keycode <= Common::KEYCODE_6 &&
 			(msg.keycode - Common::KEYCODE_1) < (int)c._equipped.size()) {
+			inv = &c._equipped;
 			invEntry = &c._equipped[msg.keycode - Common::KEYCODE_1];
 		} else if (msg.keycode >= Common::KEYCODE_a && msg.keycode <= Common::KEYCODE_f &&
 				(msg.keycode - Common::KEYCODE_a) < (int)c._backpack.size()) {
+			inv = &c._backpack;
 			invEntry = &c._backpack[msg.keycode - Common::KEYCODE_a];
 		} else {
 			break;
 		}
 
 		if (dynamic_cast<Views::Combat *>(g_events->priorView()) != nullptr)
-			combatUseItem(*invEntry, msg.keycode >= Common::KEYCODE_a);
+			combatUseItem(*inv, *invEntry, msg.keycode >= Common::KEYCODE_a);
 		else
-			nonCombatUseItem(*invEntry, msg.keycode >= Common::KEYCODE_a);
+			nonCombatUseItem(*inv, *invEntry, msg.keycode >= Common::KEYCODE_a);
 		break;
 	}
 	default:
@@ -569,7 +572,7 @@ void CharacterInfo::tradeHowMuch() {
 	);
 }
 
-void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
+void CharacterInfo::combatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {
 	Item *item = g_globals->_items.getItem(invEntry._id);
 	Common::String msg;
 
@@ -579,6 +582,8 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
 			g_globals->_combatEffectCtr++;
+			inv.removeCharge(&invEntry);
+
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
 				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
@@ -612,7 +617,7 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 	delaySeconds(3);
 }
 
-void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
+void CharacterInfo::nonCombatUseItem(Inventory &inv, Inventory::Entry &invEntry, bool isEquipped) {
 	Item *item = g_globals->_items.getItem(invEntry._id);
 	Common::String msg;
 
@@ -622,6 +627,8 @@ void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped
 	} else if (item->_equipMode == IS_EQUIPPABLE || isEquipped) {
 		if (invEntry._charges) {
 			g_globals->_nonCombatEffectCtr++;
+			inv.removeCharge(&invEntry);
+
 			if (item->_effectId == 0xff) {
 				setSpell(item->_spellId, 0, 0);
 				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);

@@ -521,10 +521,6 @@ Common::String Character::getConditionString() const {
 	return result;
 }
 
-void Character::castUnknown() {
-	warning("TODO: castUnknown method");
-}
-
 void Character::rest() {
 	// Characters with a bad condition like
 	// being stoned can't rest
