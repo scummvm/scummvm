@@ -221,6 +221,7 @@ Common::Error DirectorEngine::run() {
 	_currentWindow = _stage;
 
 	_lingo = new Lingo(this);
+	_lingo->switchStateFromWindow();
 
 	if (getGameGID() == GID_TEST) {
 		_currentWindow->runTests();
@@ -248,9 +249,8 @@ Common::Error DirectorEngine::run() {
 			processEvents();
 
 		_currentWindow = _stage;
-		g_lingo->loadStateFromWindow();
+		g_lingo->switchStateFromWindow();
 		loop = _currentWindow->step();
-		g_lingo->saveStateToWindow();
 
 		if (loop) {
 			FArray *windowList = g_lingo->_windowList.u.farr;
@@ -259,9 +259,8 @@ Common::Error DirectorEngine::run() {
 					continue;
 
 				_currentWindow = static_cast<Window *>(windowList->arr[i].u.obj);
-				g_lingo->loadStateFromWindow();
+				g_lingo->switchStateFromWindow();
 				_currentWindow->step();
-				g_lingo->saveStateToWindow();
 			}
 		}
 

@@ -110,7 +110,7 @@ JITDraw3XObject::JITDraw3XObject(ObjectType ObjectType) :Object<JITDraw3XObject>
 }
 
 void JITDraw3XObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void JITDraw3XObj::m_dispose(int nargs) {

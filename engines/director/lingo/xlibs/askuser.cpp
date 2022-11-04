@@ -85,7 +85,7 @@ void AskUser::m_new(int nargs) {
 		warning("AskUser::m_new: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void AskUser::m_ask(int nargs) {

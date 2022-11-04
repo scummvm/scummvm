@@ -40,6 +40,7 @@ namespace Director {
 class Channel;
 class MacArchive;
 struct MacShape;
+struct LingoState;
 
 struct TransParams {
 	TransitionType type;
@@ -139,6 +140,7 @@ public:
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
 	bool isTitleVisible() { return _titleVisible; };
+	LingoState *getLingoState() { return _lingoState; };
 	Datum getStageRect();
 
 	void updateBorderType();
@@ -191,20 +193,12 @@ public:
 	Common::List<MovieReference> _movieStack;
 	bool _newMovieStarted;
 
-	// saved Lingo state
-	Common::Array<CFrame *> _callstack;
-	uint _retPC;
-	ScriptData *_retScript;
-	ScriptContext *_retContext;
-	bool _retFreezeContext;
-	DatumHash *_retLocalVars;
-	Datum _retMe;
-
 private:
 	uint32 _stageColor;
 
 	DirectorEngine *_vm;
 	DirectorSound *_soundManager;
+	LingoState *_lingoState;
 	bool _isStage;
 	Archive *_mainArchive;
 	Movie *_currentMovie;

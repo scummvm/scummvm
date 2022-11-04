@@ -269,11 +269,11 @@ void Lingo::reloadOpenXLibs() {
 void LM::m_new(int nargs) {
 	// This is usually overridden by a user-defined mNew
 	g_lingo->printSTUBWithArglist("m_new", nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void LM::m_dispose(int nargs) {
-	g_lingo->_currentMe.u.obj->dispose();
+	g_lingo->_state->me.u.obj->dispose();
 }
 
 /* ScriptContext */
@@ -418,7 +418,7 @@ Common::String ScriptContext::formatFunctionList(const char *prefix) {
 // Object array
 
 void LM::m_get(int nargs) {
-	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_state->me.u.obj);
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
 	if (me->_objArray.contains(index)) {
@@ -429,7 +429,7 @@ void LM::m_get(int nargs) {
 }
 
 void LM::m_put(int nargs) {
-	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_currentMe.u.obj);
+	ScriptContext *me = static_cast<ScriptContext *>(g_lingo->_state->me.u.obj);
 	Datum value = g_lingo->pop();
 	Datum indexD = g_lingo->pop();
 	uint index = MAX(0, indexD.asInt());
@@ -441,7 +441,7 @@ void LM::m_put(int nargs) {
 void LM::m_perform(int nargs) {
 	// Lingo doesn't seem to bother cloning the object when
 	// mNew is called with mPerform
-	Datum d(g_lingo->_currentMe);
+	Datum d(g_lingo->_state->me);
 	AbstractObject *me = d.u.obj;
 	Datum methodName = g_lingo->_stack.remove_at(g_lingo->_stack.size() - nargs); // Take method name out of stack
 	Symbol funcSym = me->getMethod(*methodName.u.s);
@@ -457,7 +457,7 @@ void LM::m_describe(int nargs) {
 }
 
 void LM::m_instanceRespondsTo(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
@@ -474,12 +474,12 @@ void LM::m_messageList(int nargs) {
 }
 
 void LM::m_name(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	g_lingo->push(me->getName());
 }
 
 void LM::m_respondsTo(int nargs) {
-	AbstractObject *me = g_lingo->_currentMe.u.obj;
+	AbstractObject *me = g_lingo->_state->me.u.obj;
 	Datum d = g_lingo->pop();
 	Common::String methodName = d.asString();
 
@@ -580,12 +580,12 @@ bool Window::setField(int field, const Datum &value) {
 }
 
 void LM::m_close(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->setVisible(false);
 }
 
 void LM::m_forget(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	FArray *windowList = g_lingo->_windowList.u.farr;
 
 	uint i;
@@ -613,7 +613,7 @@ void LM::m_forget(int nargs) {
 }
 
 void LM::m_open(int nargs) {
-	Window *me = static_cast<Window *>(g_lingo->_currentMe.u.obj);
+	Window *me = static_cast<Window *>(g_lingo->_state->me.u.obj);
 	me->setVisible(true);
 }
 

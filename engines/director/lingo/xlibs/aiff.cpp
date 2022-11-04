@@ -89,7 +89,7 @@ AiffXObject::AiffXObject(ObjectType ObjectType) :Object<AiffXObject>("AiffXObj")
 
 void AiffXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("AiffXObj::new", nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void AiffXObj::m_duration(int nargs) {

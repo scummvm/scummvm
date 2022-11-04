@@ -152,12 +152,9 @@ MenuReference::MenuReference() {
 Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	g_lingo = this;
 
-	_currentScript = nullptr;
-	_currentScriptContext = nullptr;
-
+	_state = nullptr;
 	_currentChannelId = -1;
 	_globalCounter = 0;
-	_pc = 0;
 	_freezeContext = false;
 	_abort = false;
 	_expectError = false;
@@ -165,8 +162,6 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 
 	_floatPrecision = 4;
 	_floatPrecisionFormat = "%.4f";
-
-	_localvars = nullptr;
 
 	//kTheEntities
 	_actorList.type = ARRAY;
@@ -293,8 +288,8 @@ Symbol Lingo::getHandler(const Common::String &name) {
 	Symbol sym;
 
 	// local functions
-	if (_currentScriptContext && _currentScriptContext->_functionHandlers.contains(name))
-		return _currentScriptContext->_functionHandlers[name];
+	if (_state->context && _state->context->_functionHandlers.contains(name))
+		return _state->context->_functionHandlers[name];
 
 	sym = g_director->getCurrentMovie()->getHandler(name);
 	if (sym.type != VOIDSYM)
@@ -366,7 +361,7 @@ void Lingo::printStack(const char *s, uint pc) {
 
 Common::String Lingo::formatCallStack(uint pc) {
 	Common::String result;
-	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+	Common::Array<CFrame *> &callstack = _state->callstack;
 	if (callstack.size() == 0) {
 		result += Common::String("End of execution\n");
 		return result;
@@ -402,26 +397,26 @@ void Lingo::printCallStack(uint pc) {
 
 Common::String Lingo::formatFrame() {
 	Common::String result;
-	Common::Array<CFrame *> &callstack = _vm->getCurrentWindow()->_callstack;
+	Common::Array<CFrame *> &callstack = _state->callstack;
 	if (callstack.size() == 0) {
 		return Common::String("End of execution");
 	}
-	if (_currentScriptContext->_id)
-		result += Common::String::format("%d:", _currentScriptContext->_id);
+	if (_state->context->_id)
+		result += Common::String::format("%d:", _state->context->_id);
 	CFrame *frame = callstack[callstack.size() - 1];
 	if (frame->sp.type == VOIDSYM || !frame->sp.name)
 		result += "[unknown]";
 	else
 		result += frame->sp.name->c_str();
-	result += Common::String::format(" at [%5d]", _pc);
+	result += Common::String::format(" at [%5d]", _state->pc);
 	return result;
 }
 
 Common::String Lingo::formatCurrentInstruction() {
-	Common::String instr = decodeInstruction(_currentScript, _pc);
+	Common::String instr = decodeInstruction(_state->script, _state->pc);
 	if (instr.empty())
 		return instr;
-	return Common::String::format("[%5d]: %s", _pc, instr.c_str());
+	return Common::String::format("[%5d]: %s", _state->pc, instr.c_str());
 }
 
 Common::String Lingo::decodeInstruction(ScriptData *sd, uint pc, uint *newPc) {
@@ -546,7 +541,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 void Lingo::execute() {
 	uint localCounter = 0;
 
-	while (!_abort && !_freezeContext && _currentScript && (*_currentScript)[_pc] != STOP) {
+	while (!_abort && !_freezeContext && _state->script && (*_state->script)[_state->pc] != STOP) {
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -561,7 +556,7 @@ void Lingo::execute() {
 				break;
 		}
 
-		uint current = _pc;
+		uint current = _state->pc;
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack before: ", current);
@@ -569,19 +564,19 @@ void Lingo::execute() {
 		if (debugChannelSet(9, kDebugLingoExec)) {
 			debug("Vars before");
 			printAllVars();
-			if (_currentMe.type == OBJECT)
-				debug("me: %s", _currentMe.asString(true).c_str());
+			if (_state->me.type == OBJECT)
+				debug("me: %s", _state->me.asString(true).c_str());
 		}
 
 		if (debugChannelSet(3, kDebugLingoExec)) {
-			Common::String instr = decodeInstruction(_currentScript, _pc);
+			Common::String instr = decodeInstruction(_state->script, _state->pc);
 			debugC(3, kDebugLingoExec, "[%5d]: %s", current, instr.c_str());
 		}
 
 		g_debugger->stepHook();
 
-		_pc++;
-		(*((*_currentScript)[_pc - 1]))();
+		_state->pc++;
+		(*((*_state->script)[_state->pc - 1]))();
 
 		if (debugChannelSet(5, kDebugLingoExec))
 			printStack("Stack after: ", current);
@@ -594,15 +589,15 @@ void Lingo::execute() {
 		_globalCounter++;
 		localCounter++;
 
-		if (!_abort && _pc >= (*_currentScript).size()) {
-			warning("Lingo::execute(): Bad PC (%d)", _pc);
+		if (!_abort && _state->pc >= (*_state->script).size()) {
+			warning("Lingo::execute(): Bad PC (%d)", _state->pc);
 			break;
 		}
 	}
 
 	if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
-		while (_vm->getCurrentWindow()->_callstack.size()) {
+		while (_state->callstack.size()) {
 			popContext(true);
 		}
 	}
@@ -672,7 +667,7 @@ void Lingo::resetLingo() {
 
 	g_director->_wm->removeMenu();
 
-	while (_vm->getCurrentWindow()->_callstack.size()) {
+	while (_state->callstack.size()) {
 		popContext(true);
 	}
 
@@ -1332,9 +1327,9 @@ void Lingo::executeImmediateScripts(Frame *frame) {
 			// From D5 only explicit event handlers are processed
 			// Before that you could specify commands which will be executed on mouse up
 			if (_vm->getVersion() < 500)
-				g_lingo->processEvent(kEventGeneric, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				processEvent(kEventGeneric, kScoreScript, frame->_sprites[i]->_scriptId, i);
 			else
-				g_lingo->processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
+				processEvent(kEventMouseUp, kScoreScript, frame->_sprites[i]->_scriptId, i);
 		}
 	}
 }
@@ -1366,20 +1361,20 @@ void Lingo::executePerFrameHook(int frame, int subframe) {
 
 void Lingo::cleanLocalVars() {
 	// Clean up current scope local variables and clean up memory
-	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _localvars->size());
+	debugC(3, kDebugLingoExec, "cleanLocalVars: have %d vars", _state->localVars->size());
 
-	g_lingo->_localvars->clear();
-	delete g_lingo->_localvars;
+	_state->localVars->clear();
+	delete _state->localVars;
 
-	g_lingo->_localvars = nullptr;
+	_state->localVars = nullptr;
 }
 
 Common::String Lingo::formatAllVars() {
 	Common::String result;
 
 	result += Common::String("  Local vars:\n");
-	if (_localvars) {
-		for (DatumHash::iterator i = _localvars->begin(); i != _localvars->end(); ++i) {
+	if (_state->localVars) {
+		for (DatumHash::iterator i = _state->localVars->begin(); i != _state->localVars->end(); ++i) {
 			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
 		}
 	} else {
@@ -1387,8 +1382,8 @@ Common::String Lingo::formatAllVars() {
 	}
 	result += Common::String("\n");
 
-	if (_currentMe.type == OBJECT && _currentMe.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
-		ScriptContext *script = static_cast<ScriptContext *>(_currentMe.u.obj);
+	if (_state->me.type == OBJECT && _state->me.u.obj->getObjType() & (kFactoryObj | kScriptObj)) {
+		ScriptContext *script = static_cast<ScriptContext *>(_state->me.u.obj);
 		result += Common::String("  Instance/property vars: \n");
 		for (DatumHash::iterator i = script->_properties.begin(); i != script->_properties.end(); ++i) {
 			result += Common::String::format("    %s - [%s] %s\n", (*i)._key.c_str(), (*i)._value.type2str(), (*i)._value.asString(true).c_str());
@@ -1409,7 +1404,7 @@ void Lingo::printAllVars() {
 }
 
 int Lingo::getInt(uint pc) {
-	return (int)READ_UINT32(&((*_currentScript)[pc]));
+	return (int)READ_UINT32(&((*_state->script)[pc]));
 }
 
 void Lingo::varAssign(const Datum &var, const Datum &value) {
@@ -1417,13 +1412,13 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 	case VARREF:
 		{
 			Common::String name = *var.u.s;
-			if (_localvars && _localvars->contains(name)) {
-				(*_localvars)[name] = value;
+			if (_state->localVars && _state->localVars->contains(name)) {
+				(*_state->localVars)[name] = value;
 				g_debugger->varWriteHook(name);
 				return;
 			}
-			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-				_currentMe.u.obj->setProp(name, value);
+			if (_state->me.type == OBJECT && _state->me.u.obj->hasProp(name)) {
+				_state->me.u.obj->setProp(name, value);
 				g_debugger->varWriteHook(name);
 				return;
 			}
@@ -1441,8 +1436,8 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 	case LOCALREF:
 		{
 			Common::String name = *var.u.s;
-			if (_localvars && _localvars->contains(name)) {
-				(*_localvars)[name] = value;
+			if (_state->localVars && _state->localVars->contains(name)) {
+				(*_state->localVars)[name] = value;
 				g_debugger->varWriteHook(name);
 			} else {
 				warning("varAssign: local variable %s not defined", name.c_str());
@@ -1452,8 +1447,8 @@ void Lingo::varAssign(const Datum &var, const Datum &value) {
 	case PROPREF:
 		{
 			Common::String name = *var.u.s;
-			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-				_currentMe.u.obj->setProp(name, value);
+			if (_state->me.type == OBJECT && _state->me.u.obj->hasProp(name)) {
+				_state->me.u.obj->setProp(name, value);
 				g_debugger->varWriteHook(name);
 			} else {
 				warning("varAssign: property %s not defined", name.c_str());
@@ -1536,11 +1531,11 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 			Common::String name = *var.u.s;
 			g_debugger->varReadHook(name);
 
-			if (_localvars && _localvars->contains(name)) {
-				return (*_localvars)[name];
+			if (_state->localVars && _state->localVars->contains(name)) {
+				return (*_state->localVars)[name];
 			}
-			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-				return _currentMe.u.obj->getProp(name);
+			if (_state->me.type == OBJECT && _state->me.u.obj->hasProp(name)) {
+				return _state->me.u.obj->getProp(name);
 			}
 			if (_globalvars.contains(name)) {
 				return _globalvars[name];
@@ -1566,8 +1561,8 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 		{
 			Common::String name = *var.u.s;
 			g_debugger->varReadHook(name);
-			if (_localvars && _localvars->contains(name)) {
-				return (*_localvars)[name];
+			if (_state->localVars && _state->localVars->contains(name)) {
+				return (*_state->localVars)[name];
 			}
 			warning("varFetch: local variable %s not defined", name.c_str());
 			return result;
@@ -1577,8 +1572,8 @@ Datum Lingo::varFetch(const Datum &var, bool silent) {
 		{
 			Common::String name = *var.u.s;
 			g_debugger->varReadHook(name);
-			if (_currentMe.type == OBJECT && _currentMe.u.obj->hasProp(name)) {
-				return _currentMe.u.obj->getProp(name);
+			if (_state->me.type == OBJECT && _state->me.u.obj->hasProp(name)) {
+				return _state->me.u.obj->getProp(name);
 			}
 			warning("varFetch: property %s not defined", name.c_str());
 			return result;

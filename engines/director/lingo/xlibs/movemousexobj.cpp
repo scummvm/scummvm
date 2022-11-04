@@ -72,7 +72,7 @@ void MoveMouseXObj::m_new(int nargs) {
 		warning("MoveMouse::m_new: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void MoveMouseXObj::m_setMouseLoc(int nargs) {

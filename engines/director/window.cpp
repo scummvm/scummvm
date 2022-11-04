@@ -48,6 +48,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_stageColor = _wm->_colorBlack;
 	_puppetTransition = nullptr;
 	_soundManager = new DirectorSound(this);
+	_lingoState = new LingoState;
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
@@ -60,15 +61,10 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_windowType = -1;
 	_titleVisible = true;
 	updateBorderType();
-
-	_retPC = 0;
-	_retScript = nullptr;
-	_retContext = nullptr;
-	_retFreezeContext = false;
-	_retLocalVars = nullptr;
 }
 
 Window::~Window() {
+	delete _lingoState;
 	delete _soundManager;
 	delete _currentMovie;
 	if (_puppetTransition)

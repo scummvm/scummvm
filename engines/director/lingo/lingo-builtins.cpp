@@ -1599,7 +1599,7 @@ void LB::b_quit(int nargs) {
 }
 
 void LB::b_return(int nargs) {
-	CFrame *fp = g_director->getCurrentWindow()->_callstack.back();
+	CFrame *fp = g_lingo->_state->callstack.back();
 
 	Datum retVal;
 	if (nargs > 0) {
@@ -1612,7 +1612,7 @@ void LB::b_return(int nargs) {
 		g_lingo->pop();
 
 	// Do not allow a factory's mNew method to return a value
-	if (nargs > 0 && !(g_lingo->_currentMe.type == OBJECT && g_lingo->_currentMe.u.obj->getObjType() == kFactoryObj
+	if (nargs > 0 && !(g_lingo->_state->me.type == OBJECT && g_lingo->_state->me.u.obj->getObjType() == kFactoryObj
 			&& fp->sp.name->equalsIgnoreCase("mNew"))) {
 		g_lingo->push(retVal);
 	}
@@ -1773,8 +1773,8 @@ void LB::b_showGlobals(int nargs) {
 
 void LB::b_showLocals(int nargs) {
 	Common::String local_out = "-- Local Variables --\n";
-	if (g_lingo->_localvars) {
-		for (auto it = g_lingo->_localvars->begin(); it != g_lingo->_localvars->end(); it++) {
+	if (g_lingo->_state->localVars) {
+		for (auto it = g_lingo->_state->localVars->begin(); it != g_lingo->_state->localVars->end(); it++) {
 			local_out += it->_key + " = " + it->_value.asString() + "\n";
 		}
 	}

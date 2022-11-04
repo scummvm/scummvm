@@ -291,6 +291,15 @@ struct LingoArchive {
 	void addNamesV4(Common::SeekableReadStreamEndian &stream);
 };
 
+struct LingoState {
+	Common::Array<CFrame *> callstack;
+	uint pc = 0;
+	ScriptData *script = nullptr;
+	ScriptContext *context = nullptr;
+	DatumHash *localVars = nullptr;
+	Datum me;
+};
+
 class Lingo {
 
 public:
@@ -348,8 +357,7 @@ public:
 
 public:
 	void execute();
-	void loadStateFromWindow();
-	void saveStateToWindow();
+	void switchStateFromWindow();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext(bool aborting = false);
 	bool hasFrozenContext();
@@ -366,14 +374,14 @@ public:
 	Common::String formatAllVars();
 	void printAllVars();
 
-	inst readInst() { return getInst(_pc++); }
-	inst getInst(uint pc) { return (*_currentScript)[pc]; }
-	int readInt() { return getInt(_pc++); }
+	inst readInst() { return getInst(_state->pc++); }
+	inst getInst(uint pc) { return (*_state->script)[pc]; }
+	int readInt() { return getInt(_state->pc++); }
 	int getInt(uint pc);
-	double readFloat() { double d = getFloat(_pc); _pc += calcCodeAlignment(sizeof(double)); return d; }
-	double getFloat(uint pc) { return *(double *)(&((*_currentScript)[pc])); }
-	char *readString() { char *s = getString(_pc); _pc += calcStringAlignment(s); return s; }
-	char *getString(uint pc) { return (char *)(&((*_currentScript)[pc])); }
+	double readFloat() { double d = getFloat(_state->pc); _state->pc += calcCodeAlignment(sizeof(double)); return d; }
+	double getFloat(uint pc) { return *(double *)(&((*_state->script)[_state->pc])); }
+	char *readString() { char *s = getString(_state->pc); _state->pc += calcStringAlignment(s); return s; }
+	char *getString(uint pc) { return (char *)(&((*_state->script)[_state->pc])); }
 
 	void pushVoid();
 
@@ -436,11 +444,9 @@ private:
 
 public:
 	LingoCompiler *_compiler;
+	LingoState *_state;
 
 	int _currentChannelId;
-	ScriptContext *_currentScriptContext;
-	ScriptData *_currentScript;
-	Datum _currentMe;
 
 	bool _freezeContext;
 	bool _abort;
@@ -474,7 +480,6 @@ public:
 	Common::HashMap<Common::String, Audio::AudioStream *> _audioAliases;
 
 	DatumHash _globalvars;
-	DatumHash *_localvars;
 
 	FuncHash _functions;
 
@@ -482,7 +487,6 @@ public:
 	Common::HashMap<int, LingoV4TheEntity *> _lingoV4TheEntity;
 
 	uint _globalCounter;
-	uint _pc;
 
 	StackData _stack;
 

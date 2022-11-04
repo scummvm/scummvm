@@ -101,7 +101,7 @@ MiscXObject::MiscXObject(ObjectType ObjectType) :Object<MiscXObject>("MiscX") {
 }
 
 void MiscX::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void MiscX::m_bootName(int nargs) {

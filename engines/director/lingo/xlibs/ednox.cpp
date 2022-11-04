@@ -114,7 +114,7 @@ EdnoxObject::EdnoxObject(ObjectType ObjectType) :Object<EdnoxObject>("Ednox") {
 }
 
 void Ednox::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void Ednox::m_dispose(int nargs) {

@@ -334,7 +334,7 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
 	Movie *movie = g_director->getCurrentMovie();
 	Score *score = movie->getScore();
-	ScriptContext *csc = lingo->_currentScriptContext;
+	ScriptContext *csc = lingo->_state->context;
 	if (csc) {
 		debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
 		debugPrintf("  %d:", csc->_id);
@@ -365,7 +365,7 @@ bool Debugger::cmdFuncs(int argc, const char **argv) {
 
 bool Debugger::cmdBacktrace(int argc, const char **argv) {
 	Lingo *lingo = g_director->getLingo();
-	debugPrintf("%s\n", lingo->formatCallStack(lingo->_pc).c_str());
+	debugPrintf("%s\n", lingo->formatCallStack(lingo->_state->pc).c_str());
 	return true;
 }
 
@@ -375,7 +375,7 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 		if (!strcmp(argv[1], "all")) {
 			Movie *movie = g_director->getCurrentMovie();
 			Score *score = movie->getScore();
-			ScriptContext *csc = lingo->_currentScriptContext;
+			ScriptContext *csc = lingo->_state->context;
 			if (csc) {
 				debugPrintf("Functions attached to frame %d:\n", score->getCurrentFrame());
 				for (auto &it : csc->_functionHandlers) {
@@ -459,7 +459,7 @@ bool Debugger::cmdDisasm(int argc, const char **argv) {
 		}
 
 	} else {
-		Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (callstack.size() == 0) {
 			debugPrintf("Lingo is not executing, nothing to disassemble.\n");
 			return true;
@@ -511,7 +511,7 @@ bool Debugger::cmdBpSet(int argc, const char **argv) {
 	bp.id = _bpNextId;
 	bp.type = kBreakpointFunction;
 	if (argc == 1) {
-		Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+		Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 		if (callstack.size() == 0) {
 			debugPrintf("Lingo is not executing, no current function to add breakpoint to.\n");
 			return true;
@@ -527,14 +527,14 @@ bool Debugger::cmdBpSet(int argc, const char **argv) {
 		}
 		bp.scriptId = frame->sp.ctx->_id;
 		bp.funcName = *frame->sp.name;
-		bp.funcOffset = g_lingo->_pc;
+		bp.funcOffset = g_lingo->_state->pc;
 	} else if (argc == 2 || argc == 3) {
 		Common::String target(argv[1]);
 		uint splitPoint = target.findFirstOf(":");
 		if (splitPoint == Common::String::npos) {
 			if (argc == 2 && atoi(argv[1]) > 0) {
 				// first and only argument is a number, use as an offset for the current function
-				Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+				Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 				if (callstack.size() == 0) {
 					debugPrintf("Lingo is not executing, no current function to add breakpoint to.\n");
 					return true;
@@ -780,7 +780,7 @@ void Debugger::bpUpdateState() {
 	_bpCheckEntityRead = false;
 	_bpCheckEntityWrite = false;
 	Movie *movie = g_director->getCurrentMovie();
-	Common::Array<CFrame *> &callstack = g_director->getCurrentWindow()->_callstack;
+	Common::Array<CFrame *> &callstack = g_lingo->_state->callstack;
 	for (auto &it : _breakpoints) {
 		if (!it.enabled)
 			continue;
@@ -829,7 +829,7 @@ void Debugger::bpTest(bool forceCheck) {
 
 	// Check if there's a funcName/offset or frame/movie match
 	bool stop = forceCheck;
-	uint funcOffset = g_lingo->_pc;
+	uint funcOffset = g_lingo->_state->pc;
 	Score *score = g_director->getCurrentMovie()->getScore();
 	uint frameOffset = score->getCurrentFrame();
 	if (_bpCheckFunc) {
