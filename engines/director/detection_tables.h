@@ -535,7 +535,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "hikaruhana",			"Shining Flower: Hikaruhana" },					// 光る花
 	{ "hirezaudio",			"Hi Rez Audio" },
 	{ "hunchback",			"The Secret of the Hunchback" },
-	{ "ibmcdextra",			"Sony Music CD Extra Sampler" },
+	{ "ibmcdextra",			"Sony Music CD Extra Sampler" },  // AKA IBM CD-Extra (CPDP 000350)
 	{ "iptr",				"I Photograph to Remember" },
 	{ "isscommerce",		"International Space Station: Space Commercialization" },
 	{ "itc",				"Internet the City: A Guided Tour Through the Internet" },
@@ -590,6 +590,7 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "sk8board",			"RIDE: An Interactive Skateboarding Experience" },
 	{ "skieurope96",		"Ski Europe '96" },
 	{ "smithamerica",		"Smithsonian's America" },
+	{ "sonysampler",		"Sony Music Sampler" },  // AKA "Sony CD Extra Sampler (CPDP-000310)"
 	{ "sourcesfaith",		"Sources of Faith: An Interactive Guide to Seven World Faiths" },
 	{ "supersonic",			"Supersonic: A Multimedia Guide to Modern Military Aircraft" },
 	{ "survive",			"How Would You Survive?" },
@@ -679,7 +680,6 @@ static const PlainGameDescriptor directorGames[] = {
 	{ "seinfeldondvd",		"Seinfeld on DVD" },
 	{ "sensei",				"Sensei" },
 	{ "simpsontrivia",		"The Simpsons Trivia" },
-	{ "sonysampler",		"Sony Music Sampler" },
 	{ "sorgato",			"Sylvain Sorgato's Drawings in variable color" },
 	{ "ssmorphclock",		"Morph Clock Screensaver" },
 	{ "summertime",			"Summertime" },
@@ -1876,7 +1876,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("bioflix", "v1.0 Demo", "BioFlix 1993.Demo 1.0", "1ae45c23586b41997ba52e2e7c771c4c", 1070691, 310),
 
 	MACGAME1("birdlife", "", "Click here to start (8mb)", "1ae45c23586b41997ba52e2e7c771c4c", 381058, 311),
-	WINGAME1("birdlife", "", "BIRDLIFE.EXE", "65d06b5fef155a2473434571aff5bc29", 783483, 310),
+	WINGAME1("birdlife", "", "BIRDMPC/BIRDLIFE.EXE", "65d06b5fef155a2473434571aff5bc29", 783483, 310),
 
 	// Original filename is BOB©1991
 	MACGAME1("bob", "", "BOB 1991", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 1209537, 300),
@@ -1885,7 +1885,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACGAME1_l("bombreikochiba", "", "CD-BOMB!", "276bee761e48a6fd709df77d5c2f60dd", 393879, Common::JA_JPN, 310),
 
 	// Full game uses audio tracks
-	MACGAME1("bodypark", "", "BodyPark ƒ/BodyPark", "7f443f2e63fd497a9ad85b10dc880a91", 503467, 313),
+	MACGAME1("bodypark", "", "xn--BodyPark -tic/BodyPark", "7f443f2e63fd497a9ad85b10dc880a91", 503467, 313),
 	WINGAME1t("bodypark", "", "BODYPARK.EXE", "36b7c7de5e7ee6cb8c1ec02a8b3de59c", 370005, 310),
 	WINDEMO1("bodypark", "Demo", "BODYPARK.EXE", "65d06b5fef155a2473434571aff5bc29", 1654314, 310),
 
@@ -5370,7 +5370,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Distributed with IBM Aptiva PCs
 	WINGAME2("ibmcdextra", "", "SAMPLER.EXE", "2e62abdad839e42068afdcd0644d7dcf", 929109,
-							   "SAMPMM.DIR",  "0a17bfdfbd2413932af9d1578419b4e3", 4642820, 500),
+							   "TOADMM.DIR",  "b67c1bd97094091404ed1cde88279880", 2573710, 500),
 
 	// Installers for both platforms also use Director
 	MACGAME1_l("incarnatia", "", "incarnatia_PowerMac", "2e7d373f75c014be20cfb04c5cd65dae", 108480, Common::JA_JPN, 501),
@@ -5819,6 +5819,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Polish version (Królewna Śnieżka i siedmiu Jaśków) is from the covermount of CyberMycha 07/2002
 	WINGAME1_l("snow7han", "", "Snw7han.exe", "65ef7246e9ab04aff59fb734e9551727", 941245, Common::PL_POL, 501),
+
+	// Almost the same as the "IBM CD-Extra Sampler" with different music
+	WINGAME2t("sonysampler", "", "SAMPLER.EXE", "262770f6b1b8f1c7f26de01999c98b8b", 978423,
+								 "KIRKMM.DIR",  "781b607854e4c69c1a18af15d9fcf37d", 1039698, 500),
 
 	// Original filename is 僐儗僋僔儑儞.exe
 	WINGAME1_l("spawncollection", "", "Spawn32.exe", "2535f11350bc1f2b7ca2dcc6c0cdddfd", 2768388, Common::JA_JPN, 501),

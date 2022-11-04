@@ -158,7 +158,6 @@ const char *directoryGlobs[] = {
 	"corel cd home",
 	"the cassandra galleries",		// Cassandra Galleries
 	"knights",						// Nikolai's Knights
-	"birdmpc",						// Bird's Life
 	"nemcina",						// Německá gramatika
 	"hdfiles",
 	"creator",						// Get a Head series
