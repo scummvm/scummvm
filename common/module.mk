@@ -13,6 +13,7 @@ MODULE_OBJS := \
 	file.o \
 	fs.o \
 	gui_options.o \
+	gzio.o \
 	hashmap.o \
 	iff_container.o \
 	ini-file.o \
