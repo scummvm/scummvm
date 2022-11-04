@@ -428,7 +428,7 @@ void CharacterInfo::equipItem(uint index) {
 			break;
 		}
 
-		warning("TODO: c field58");
+		c.updateResistances();
 		c.updateAttributes();
 		c.updateAC();
 
@@ -478,9 +478,9 @@ void CharacterInfo::removeItem(uint index) {
 	c._backpack.add(itemId, item14);
 
 	if (item._val10) {
-		// TODO: This block doesn't make sense in the original.
-		// It uses the item._equipMode as an arbitrary array
-		// index into the character data.
+		// TODO: _equipMode is used as a character offset. Need to
+		// find an example that calls it so I know what area of
+		// the character updates are being done to
 		error("TODO: item flag in remove item");
 	}
 
@@ -584,6 +584,7 @@ void CharacterInfo::combatUseItem(Inventory::Entry &invEntry, bool isEquipped) {
 				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
+				// TODO: find out area of Character _effectId is used as an offset for
 				error("TODO: _effectId used as a character offset to increase attribute?");
 
 				if (g_globals->_combatEffectCtr)
@@ -626,6 +627,7 @@ void CharacterInfo::nonCombatUseItem(Inventory::Entry &invEntry, bool isEquipped
 				Game::Spells::cast(_spellIndex, g_globals->_currCharacter);
 
 			} else {
+				// TODO: find out area of Character _effectId is used as an offset for
 				error("TODO: _effectId used as a character offset to increase attribute?");
 
 				if (g_globals->_nonCombatEffectCtr)
