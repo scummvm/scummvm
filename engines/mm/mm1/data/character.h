@@ -441,13 +441,15 @@ struct Character : public PrimaryAttributes {
 	AttributePair _physicalAttr, _missileAttr;
 	byte _trapCtr = 0;
 	byte _quest = 0;
-	byte _worthiness;
-	int _alignmentCtr;
+	byte _worthiness = 0;
+	byte _alignmentCtr = 0;
 	byte _flags[14];
 	byte _portrait = 0;
 
 	// Non persistent fields
 	byte _numDrinks = 0;
+
+	Character();
 
 	/**
 	 * Handles save/loading a character
