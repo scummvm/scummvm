@@ -67,8 +67,8 @@ void Map54::special00() {
 	// Check for flag
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
-		if ((c._flags[13] & (CHARFLAG13_1 or CHARFLAG13_2 or CHARFLAG13_4 or CHARFLAG13_8 or CHARFLAG13_10)) !=
-			(CHARFLAG13_1 or CHARFLAG13_2 or CHARFLAG13_4 or CHARFLAG13_8 or CHARFLAG13_10)) {
+		if ((c._flags[13] & (CHARFLAG13_1 | CHARFLAG13_2 | CHARFLAG13_4 | CHARFLAG13_8 | CHARFLAG13_10)) !=
+			(CHARFLAG13_1 | CHARFLAG13_2 | CHARFLAG13_4 | CHARFLAG13_8 | CHARFLAG13_10)) {
 			g_maps->_mapPos.y++;
 			updateGame();
 
