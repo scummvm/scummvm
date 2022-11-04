@@ -35,12 +35,12 @@ SaveStateDescriptor::SaveStateDescriptor()
 }
 
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d)
-	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0) {
+	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
 	initSaveType(metaEngine);
 }
 
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d)
-	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0) {
+	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
 	initSaveType(metaEngine);
 }
 
@@ -51,7 +51,6 @@ void SaveStateDescriptor::initSaveType(const MetaEngine *metaEngine) {
 	const bool autosave =
 			metaEngine && ConfMan.getInt("autosave_period") && _slot == metaEngine->getAutosaveSlot();
 	_isWriteProtected = autosave;
-	_saveType = autosave ? kSaveTypeAutosave : kSaveTypeRegular;
 	_isDeletable = !autosave;
 }
 
