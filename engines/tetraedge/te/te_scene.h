@@ -37,7 +37,7 @@ public:
 	TeScene();
 	virtual ~TeScene() {};
 
-	void close();
+	virtual void close();
 
 	TeIntrusivePtr<TeCamera> camera(const Common::String &name);
 	TeIntrusivePtr<TeModel> model(const Common::String &name);
@@ -46,7 +46,7 @@ public:
 	int currentCameraIndex() const { return _currentCameraIndex; }
 	Common::String currentCameraName() const;
 
-	void draw();
+	virtual void draw();
 	virtual bool load(const Common::Path &path) { return false; };
 
 	void removeModel(const Common::String &name);
@@ -55,7 +55,7 @@ public:
 		_currentCameraIndex = index;
 	}
 
-	void update();
+	virtual void update();
 
 	Common::Array<TeIntrusivePtr<TeModel>> &models() { return _models; }
 

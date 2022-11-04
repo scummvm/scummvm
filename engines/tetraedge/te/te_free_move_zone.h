@@ -93,7 +93,7 @@ public:
 	TeVector3f32 projectOnAStarGrid(const TeVector3f32 &pt);
 	Common::Array<TeVector3f32> &removeInsignificantPoints(const Common::Array<TeVector3f32> &points);
 	void setBordersDistance(float dist);
-	void setCamera(TeIntrusivePtr<TeCamera> &cam, bool recalcProjPoints);
+	void setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjPoints);
 	void setNbTriangles(unsigned long len);
 	void setPathFindingOccluder(const TeOBP &occluder);
 	void setVertex(unsigned long offset, const TeVector3f32 &vertex);
@@ -129,6 +129,8 @@ private:
 	float _someGridFloat;
 
 	TeOBP _obp;
+	TeIntrusivePtr<TeCamera> _camera;
+	//static TeIntrusivePtr<TeCamera> _globalCamera;
 
 	bool _gridDirty;
 	TeFreeMoveZoneGraph *_graph;

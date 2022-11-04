@@ -72,7 +72,7 @@ void TeMesh::draw() {
 	if (_matrixForced)
 		renderer->multiplyMatrix(_forceMatrix);
 	else
-		renderer->multiplyMatrix(transformationMatrix());
+		renderer->multiplyMatrix(worldTransformationMatrix());
 
 	Common::Array<TeVector3f32> &normals = (_updatedVerticies.empty() ? _normals : _updatedNormals);
 	Common::Array<TeVector3f32> &verticies = (_updatedVerticies.empty() ? _verticies : _updatedVerticies);
@@ -138,7 +138,8 @@ void TeMesh::draw() {
 	} else {
 		int totalfacecount = 0;
 		for (unsigned int i = 0; i < _materials.size(); i++) {
-			if (_faceCounts[i]) {
+			if (!_faceCounts[i])
+				continue;
 			if (!hasAlpha(i) || renderer->shadowMode() == TeRenderer::ShadowMode1 || !_shouldDraw) {
 				_materials[i].apply();
 				glDrawElements(_glMeshMode, _faceCounts[i] * 3, GL_UNSIGNED_SHORT, _indexes.data() + totalfacecount * 3);
@@ -146,7 +147,6 @@ void TeMesh::draw() {
 				renderer->disableTexture();
 			}
 			totalfacecount += _faceCounts[i];
-		  }
 		}
 	}
 
@@ -164,27 +164,11 @@ void TeMesh::draw() {
 		TeLight::disableAll();
 		glBegin(GL_LINES);
 		renderer->setCurrentColor(TeColor(255, 255, 255, 255));
-		if (!_verticies.empty()) {
-			error("TODO: Implement wire drawing here in TeMesh::draw..");
-			/*
-			offset1 = 1;
-			offset2 = 2;
-			do {
-			  i = (ulong)offset2;
-			  uVar5 = (ulong)(offset2 - 1);
-			  totalfacecount = (ulong)(offset2 - 2);
-			  glVertex3f
-						((&verticiesbuf->f1)[totalfacecount],(&verticiesbuf->f1)[uVar5],
-						 (&verticiesbuf->f1)[i]);
-			  glVertex3f
-						((&verticiesbuf->f1)[totalfacecount] + (&normalsbuf->f1)[totalfacecount],
-						 (&verticiesbuf->f1)[uVar5] + (&normalsbuf->f1)[uVar5],
-						 (&verticiesbuf->f1)[i] + (&normalsbuf->f1)[i]);
-			  offset2 = offset2 + 3;
-			  i = (ulong)offset1;
-			  offset1 = offset1 + 1;
-			} while (i < (this->verticiesArray).len);
-			 */
+		for (unsigned int i = 0; i < verticies.size(); i++) {
+			glVertex3f(verticies[i].x(), verticies[i].y(), verticies[i].z());
+			glVertex3f(verticies[i].x() + normals[i].x(),
+					verticies[i].y() + normals[i].y(),
+					verticies[i].z() + normals[i].z());
 		}
 		glEnd();
 	}
@@ -328,14 +312,17 @@ TeVector3f32 TeMesh::vertex(uint idx) const {
 		return _verticies[idx];
 }
 
-void TeMesh::attachMaterial(uint idx, const TeMaterial &material) {
-	TeMaterial &mat = _materials[idx];
-	mat._texture = material._texture;
-	mat._enableLights = material._enableLights;
-	mat._enableSomethingDefault0 = material._enableSomethingDefault0;
-	mat._emissionColor = material._emissionColor;
-	mat._diffuseColor = material._diffuseColor;
-	mat._mode = material._mode;
+void TeMesh::attachMaterial(uint idx, const TeMaterial &src) {
+	TeMaterial &dest = _materials[idx];
+	dest._texture = src._texture;
+	dest._enableLights = src._enableLights;
+	dest._enableSomethingDefault0 = src._enableSomethingDefault0;
+	dest._emissionColor = src._emissionColor;
+	dest._shininess = src._shininess;
+	dest._diffuseColor = src._diffuseColor;
+	dest._specularColor = src._specularColor;
+	dest._mode = src._mode;
+	dest._ambientColor = src._ambientColor;
 }
 
 void TeMesh::facesPerMaterial(uint idx, unsigned short value) {

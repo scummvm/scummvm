@@ -96,7 +96,7 @@ public:
 	int findModelBone(const Common::String &name);
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
-	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned long num);
+	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num);
 	TeMatrix4x4 lerpElementsMatrix(unsigned long num, Common::Array<TeMatrix4x4> &matricies);
 
 	/* Align the stream to the nearest 4 byte boudary*/

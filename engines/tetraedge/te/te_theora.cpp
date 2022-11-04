@@ -43,10 +43,6 @@ bool TeTheora::load(const Common::Path &path) {
 	return _decoder->loadFile(path);
 }
 
-bool TeTheora::load(Common::SeekableReadStream &stream) {
-	return _decoder->loadStream(&stream);
-}
-
 uint TeTheora::width() {
 	return _decoder->getWidth();
 }

@@ -112,6 +112,10 @@ unsigned long TeTimer::timeElapsed() {
 	return elapsed;
 }
 
+unsigned long TeTimer::timeFromLastTimeElapsed() {
+	return realTimer()->time_() - _lastTimeElapsed;
+}
+
 unsigned long TeTimer::time_() {
 	return realTimer()->time_();
 }

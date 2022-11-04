@@ -43,7 +43,7 @@ public:
 	void buildPerspectiveMatrix();
 	void buildPerspectiveMatrix2();
 	void buildPerspectiveMatrix3();
-	void draw();
+	void draw() override;
 
 	void getRay(const TeVector2s32 &param_1, TeVector3f32 &out1, TeVector3f32 &out2);
 
@@ -66,6 +66,8 @@ public:
 
 	void viewport(int x, int y, uint width, uint height);
 	TeVector2f32 viewportSize() const { return TeVector2f32(_viewportW, _viewportH); }
+
+	TeSignal0Param &onViewportChangedSignal() { return _onViewportChangedSignal; }
 
 	int _projectionMatrixType;
 	float _orthNearVal;

@@ -125,7 +125,7 @@ void TeLuaThread::execute(const Common::String &fname, const TeVariant &p1, cons
 	} else {
 		if (!fname.contains("Update"))
 			warning("[TeLuaThread::Execute3] La fonction : \"%s\" n'existe pas.", fname.c_str());
-		lua_settop(_luaThread, -2);
+		lua_settop(_luaThread, -4);
 	}
 }
 

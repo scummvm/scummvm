@@ -44,7 +44,7 @@ void TePickMesh2::draw() {
 
 	TeRenderer *renderer = g_engine->getRenderer();
 
-	TeColor prevCol = renderer->currentColor();
+	const TeColor prevCol = renderer->currentColor();
 
 	renderer->setCurrentColor(TeColor(0xff, 0, 0, 0xff));
 	renderer->pushMatrix();

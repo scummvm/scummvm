@@ -37,7 +37,6 @@ public:
 
 	virtual ~TeICodec() {};
 	virtual bool load(const Common::Path &path) = 0;
-	virtual bool load(Common::SeekableReadStream &stream) = 0;
 	virtual uint width() = 0;
 	virtual uint height() = 0;
 	virtual int nbFrames() = 0;

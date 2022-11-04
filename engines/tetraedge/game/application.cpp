@@ -19,6 +19,7 @@
  *
  */
 
+#include "common/config-manager.h"
 #include "common/textconsole.h"
 #include "common/file.h"
 #include "common/util.h"
@@ -43,7 +44,8 @@ namespace Tetraedge {
 bool Application::_dontUpdateWhenApplicationPaused = false;
 
 Application::Application() : _finishedGame(false), _finishedFremium(false),
-_captureFade(false), _difficulty(1), _created(false), _tutoActivated(false) {
+_captureFade(false), _difficulty(1), _created(false), _tutoActivated(false),
+_drawShadows(true) {
 	TeCore *core = g_engine->getCore();
 	core->_coreNotReady = true;
 	core->fileFlagSystemSetFlag("platform", "MacOSX");
@@ -271,6 +273,8 @@ void Application::create() {
 
 	onMainWindowSizeChanged();
 	_splashScreens.enter();
+
+	_drawShadows = (ConfMan.get("disable_shadows") != "true");
 	_created = true;
 }
 
@@ -386,7 +390,7 @@ void Application::performRender() {
 	Game *game = g_engine->getGame();
 	TeRenderer *renderer = g_engine->getRenderer();
 
-	if (game->running() && game->scene()._character
+	if (_drawShadows && game->running() && game->scene()._character
 			&& game->scene()._shadowLightNo != -1
 			&& game->scene()._charactersShadow != nullptr) {
 		renderer->shadowMode(TeRenderer::ShadowMode1);
@@ -399,7 +403,7 @@ void Application::performRender() {
 	renderer->renderTransparentMeshes();
 	renderer->clearBuffer(GL_ACCUM);
 	if (game->running()) {
-		if (game->scene()._character
+		if (_drawShadows && game->scene()._character
 			&& game->scene()._shadowLightNo != -1
 			&& game->scene()._charactersShadow != nullptr) {
 			TeIntrusivePtr<TeCamera> currentCamera = game->scene().currentCamera();
@@ -417,7 +421,6 @@ void Application::performRender() {
 	renderer->clearBuffer(GL_ACCUM);
 	drawFront();
 	renderer->renderTransparentMeshes();
-	// What gets called here??
 	game->scene().drawPath();
 	g_system->updateScreen();
 }

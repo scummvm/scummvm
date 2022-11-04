@@ -67,6 +67,13 @@ void TeSoundManager::playFreeSound(const Common::Path &path, float vol, const Co
 	mixer->playStream(Audio::Mixer::kMusicSoundType, &_handles[channel], stream, channelId, bvol);
 }
 
-// TODO: Add more functions here.
+void TeSoundManager::stopFreeSound(const Common::String &name) {
+	if (!_handles.contains(name))
+		return;
+	Audio::Mixer *mixer = g_system->getMixer();
+	mixer->stopHandle(_handles.getVal(name));
+	_handles.erase(name);
+}
+
 
 } // end namespace Tetraedge

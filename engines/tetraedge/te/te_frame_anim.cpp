@@ -30,8 +30,8 @@ _numFramesToShow(-1), _startTime(0), _endTime(FLT_MAX), _loopCount(0), _lastFram
 }
 
 void TeFrameAnim::update(double amount) {
-	int minFrame = MIN((long)_minFrame, _nbFrames);
-	int maxFrame = MIN((long)minFrame + _numFramesToShow, _nbFrames);
+	int minFrame = MIN(_minFrame, _nbFrames);
+	int maxFrame = MIN(_minFrame + _numFramesToShow, _nbFrames);
 	double frameNo = _frameRate * amount / 1000.0;
 
 	int loopsDone;

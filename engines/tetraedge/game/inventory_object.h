@@ -28,15 +28,20 @@
 
 namespace Tetraedge {
 
-class InventoryObject : TeLuaGUI {
+class InventoryObject : TeLayout {
 public:
 	InventoryObject();
 
 	void load(const Common::String &name);
+	Common::Path spritePath();
+	bool onButtonDown();
+	TeSignal1Param<InventoryObject&> &selectedSignal() { return _selectedSignal; };
+
 	const Common::String &name() const { return _name; }
 private:
 	Common::String _name;
-
+	TeLuaGUI _gui;
+	TeSignal1Param<InventoryObject&> _selectedSignal;
 };
 
 } // end namespace Tetraedge

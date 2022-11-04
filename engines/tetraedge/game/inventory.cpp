@@ -188,6 +188,8 @@ void Inventory::addObject(const Common::String &objId) {
 }
 
 bool Inventory::addObject(InventoryObject &obj) {
+	_invObjects.push_back(&obj);
+	obj.selectedSignal().add(this, &Inventory::onObjectSelected);
 	error("TODO: implement Inventory::addObject.");
 }
 
@@ -266,10 +268,18 @@ bool Inventory::onZoomed() {
 }
 
 void Inventory::pauseAnims() {
+	Game *game = g_engine->getGame();
+	if (game->scene()._character) {
+		
+	}
 	error("TODO: implement Inventory::pauseAnims");
 }
 
 void Inventory::unPauseAnims() {
+	Game *game = g_engine->getGame();
+	if (game->scene()._character) {
+		
+	}
 	error("TODO: implement Inventory::unPauseAnims");
 }
 

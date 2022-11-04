@@ -20,11 +20,14 @@
  */
 
 #include "common/file.h"
+#include "common/fs.h"
 #include "common/debug.h"
+#include "common/config-manager.h"
 
 #include "tetraedge/te/te_core.h"
 
 #include "tetraedge/te/te_png.h"
+#include "tetraedge/te/te_images_sequence.h"
 #include "tetraedge/te/te_jpeg.h"
 #include "tetraedge/te/te_theora.h"
 #include "tetraedge/te/te_tga.h"
@@ -66,6 +69,8 @@ TeICodec *TeCore::createVideoCodec(const Common::Path &path) {
 		return new TeTheora();
 	} else if (TeTga::matchExtension(extn)) {
 		return new TeTga();
+	} else if (TeImagesSequence::matchExtension(extn)) {
+		return new TeImagesSequence();
 	}
 	error("TTeCore::createVideoCodec: Unrecognised format %s", path.toString().c_str());
 }
@@ -111,6 +116,12 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 	if (Common::File::exists(path))
 		return path;
 
+	const Common::String gamePath = ConfMan.get("path");
+	const Common::Path resPath = Common::Path(gamePath).join("Resources");
+	const Common::Path absolutePath = resPath.join(path);
+	if (Common::FSNode(absolutePath).isDirectory())
+		return absolutePath;
+
 	const Common::Path fname = path.getLastComponent();
 	const Common::Path dir = path.getParent();
 
@@ -140,7 +151,7 @@ Common::Path TeCore::findFile(const Common::Path &path) {
 				testPath.joinInPlace(langs[langtype]);
 			}
 			testPath.joinInPlace(fname);
-			if (Common::File::exists(testPath)) {
+			if (Common::File::exists(testPath) || Common::FSNode(path).exists()) {
 				return testPath;
 			}
 		}

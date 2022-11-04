@@ -24,6 +24,9 @@
 #include "tetraedge/game/application.h"
 #include "tetraedge/game/owner_error_menu.h"
 
+#include "tetraedge/te/te_layout.h"
+#include "tetraedge/te/te_text_layout.h"
+
 namespace Tetraedge {
 
 OwnerErrorMenu::OwnerErrorMenu() : _entered(false) {
@@ -32,13 +35,13 @@ OwnerErrorMenu::OwnerErrorMenu() : _entered(false) {
 void OwnerErrorMenu::enter() {
 	_entered = true;
 	static const Common::Path luaPath("menus/ownerError/ownerError.lua");
-	load(luaPath.toString());
-	error("TODO: Finish implementation of OwnerErrorMenu::enter");
-	/*
+	load(luaPath);
 	Application *app = g_engine->getApplication();
-	TeLayout *menuLayout = TeLuaGUI::layout("menu");
-	 ...
-	 */
+	TeLayout *menuLayout = layoutChecked("menu");
+	app->_frontLayout.addChild(menuLayout);
+	TeTextLayout *txt = dynamic_cast<TeTextLayout*>(layoutChecked("ownerMenuText"));
+	const Common::String *locname = app->_loc.value(txt->name());
+	txt->setText(value("textAttributs").toString() + (locname ? *locname : txt->name()));
 }
 
 void OwnerErrorMenu::leave() {

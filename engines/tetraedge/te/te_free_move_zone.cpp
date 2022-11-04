@@ -27,6 +27,9 @@
 
 namespace Tetraedge {
 
+/*static*/
+//TeIntrusivePtr<TeCamera> TeFreeMoveZone::_globalCamera;
+
 class TeFreeMoveZoneGraph : micropather::Graph {
 	friend class TeFreeMoveZone;
 	TeVector2s32 _size;
@@ -57,7 +60,9 @@ _transformedVerticiesDirty(true), _bordersDirty(true), _pickMeshDirty(true), _pr
 }
 
 TeFreeMoveZone::~TeFreeMoveZone() {
-	// TODO: remove signal.
+	if (_camera) {
+		_camera->onViewportChangedSignal().remove(this, &TeFreeMoveZone::onViewportChanged);
+	}
 	delete _micropather;
 }
 
@@ -77,8 +82,10 @@ void TeFreeMoveZone::clear() {
 	setNbTriangles(0);
 	_pickMeshDirty = true;
 	_projectedPointsDirty = true;
-	// TODO: Clear 3 other point vectors here.
-	// TODO: _gridDirty = true;
+	_vectorArray.clear();
+	_uintArray2.clear();
+	// TODO: Some other point vector here.
+	_gridDirty = true;
 	_graph->_flags.clear();
 	_graph->_size = TeVector2s32(0, 0);
 	_micropather->Reset();
@@ -91,7 +98,9 @@ Common::Array<TeVector3f32> TeFreeMoveZone::collisions(const TeVector3f32 &v1, c
 }
 
 TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f) {
-	error("TODO: Implement TeFreeMoveZone::correctCharacterPosition");
+
+	warning("TODO: Implement TeFreeMoveZone::correctCharacterPosition");
+	return pos;
 }
 
 TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4, float param_5, bool findMeshFlag) {
@@ -185,8 +194,15 @@ void TeFreeMoveZone::setBordersDistance(float dist) {
 	_graph->_bordersDistance = dist;
 }
 
-void TeFreeMoveZone::setCamera(TeIntrusivePtr<TeCamera> &cam, bool recalcProjPoints) {
-	error("TODO: Implement TeFreeMoveZone::setCamera");
+void TeFreeMoveZone::setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjPoints) {
+	if (_camera) {
+		_camera->onViewportChangedSignal().remove(this, &TeFreeMoveZone::onViewportChanged);
+	}
+	//_globalCamera = camera;  // Seems like this is never used?
+	_camera = cam;
+	cam->onViewportChangedSignal().add(this, &TeFreeMoveZone::onViewportChanged);
+	if (!noRecalcProjPoints)
+		_projectedPointsDirty = true;
 }
 
 void TeFreeMoveZone::setNbTriangles(unsigned long len) {
