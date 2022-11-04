@@ -50,7 +50,7 @@ file_off_t ags_ftell(Common::Stream *stream) {
 	return rs ? rs->pos() : ws->pos();
 }
 
-Common::FSNode getFSNode(const char *path) {
+static Common::FSNode getFSNode(const char *path) {
 	Common::FSNode node;
 	Common::String filePath(path);
 	if (filePath.empty() || filePath == "." || filePath == "./")
@@ -98,6 +98,16 @@ Common::FSNode getFSNode(const char *path) {
 	// The files does not exist, but create the FSNode anyway so that
 	// the code using this can report the correct error rather than assert.
 	return dir->getFSNode().getChild(filePath);
+}
+
+Common::ArchiveMemberPtr getFile(const char *path) {
+	Common::ArchiveMemberPtr archMember = SearchMan.getMember(path);
+	if (archMember)
+		return archMember;
+	Common::FSNode node(getFSNode(path));
+	if (!node.exists())
+		return Common::ArchiveMemberPtr();
+	return Common::ArchiveMemberPtr(new Common::FSNode(node));
 }
 
 int  ags_file_exists(const char *path) {
