@@ -207,7 +207,7 @@ void Temple::donate() {
 			townNum = 1;
 		--townNum;
 
-		c._v6e |= DONATE_VALS[townNum];
+		c._worthiness |= DONATE_VALS[townNum];
 		draw();
 
 		if (g_engine->getRandomNumber(15) == 10) {

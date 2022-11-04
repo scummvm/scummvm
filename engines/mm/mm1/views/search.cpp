@@ -199,7 +199,7 @@ void Search::findRemoveTrap2() {
 	Character &c = *g_globals->_currCharacter;
 
 	if (g_globals->_treasure._trapType == 1) {
-		byte val = c._v6c;
+		byte val = c._trapCtr;
 		if (getRandomNumber(val >= 100 ? val + 5 : 100) >= val) {
 			// TODO
 		}

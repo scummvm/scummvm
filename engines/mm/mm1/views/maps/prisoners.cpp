@@ -74,7 +74,7 @@ bool Prisoner::msgKeypress(const KeypressMessage &msg) {
 		if (!(c._flags[1] & _flag)) {
 			c._flags[1] |= _flag;
 			if (align == c._alignment)
-				c._v6e += 32;
+				c._worthiness += 32;
 		}
 	}
 

@@ -107,7 +107,7 @@ void Unlock::charSelected(uint charIndex) {
 		int val = g_maps->_currentMap->dataByte(Maps::MAP_49) * 4 +
 			getRandomNumber(100);
 
-		if (val < c._v6c) {
+		if (val < c._trapCtr) {
 			g_maps->_currentMap->unlockDoor();
 			send(InfoMessage(11, 1, STRING["dialogs.unlock.success"]));
 

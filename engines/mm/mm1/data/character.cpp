@@ -203,9 +203,9 @@ void Character::synchronize(Common::Serializer &s) {
 	_physicalAttr.synchronize(s);
 	_missileAttr.synchronize(s);
 
-	s.syncAsByte(_v6c);
+	s.syncAsByte(_trapCtr);
 	s.syncAsByte(_quest);
-	s.syncAsByte(_v6e);
+	s.syncAsByte(_worthiness);
 	s.syncAsByte(_alignmentCtr);
 	s.syncBytes(_flags, 14);
 
@@ -242,7 +242,7 @@ void Character::clear() {
 	_resistances._s._fear.clear();
 	_resistances._s._poison.clear();
 	_resistances._s._psychic.clear();
-	_v6c = _alignmentCtr = 0;
+	_trapCtr = _alignmentCtr = 0;
 
 	Common::fill(&_flags[0], &_flags[8], 0);
 }
@@ -280,7 +280,7 @@ Character::LevelIncrease Character::increaseLevel() {
 	++_age;
 	if (_age._base > 220)
 		_age._base = 220;
-	_v6c += 2;
+	_trapCtr += 2;
 
 	int classNum = _class == NONE ? ROBBER : _class;
 	int newHP = g_engine->getRandomNumber(CLASS_HP_PER_LEVEL[classNum - 1]);
@@ -629,9 +629,9 @@ size_t Character::getPerformanceTotal() const {
 		+ _resistances.getPerformanceTotal()
 		+ _physicalAttr.getPerformanceTotal()
 		+ _missileAttr.getPerformanceTotal()
-		+ _v6c
+		+ _trapCtr
 		+ _quest
-		+ _v6e
+		+ _worthiness
 		+ _alignmentCtr
 		+ totalFlags;
 }
