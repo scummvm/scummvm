@@ -29,6 +29,7 @@ namespace Locations {
 
 bool Inn::msgFocus(const FocusMessage &msg) {
 	// Save the roster
+	g_globals->_roster.update(_partyChars);
 	g_globals->_roster.save();
 
 	// Get a list of characters in the town

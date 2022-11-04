@@ -24,6 +24,7 @@
 
 #include "common/serializer.h"
 #include "mm/mm1/data/character.h"
+#include "mm/mm1/data/int_array.h"
 #include "mm/mm1/maps/maps.h"
 
 namespace MM {
@@ -52,6 +53,11 @@ public:
 	 * Load the roster
 	 */
 	void load();
+
+	/**
+	 * Updates the roster from the party
+	 */
+	void update(const IntArray &charNums);
 
 	/**
 	 * Save the roster

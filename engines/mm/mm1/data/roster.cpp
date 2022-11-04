@@ -61,6 +61,45 @@ void Roster::load() {
 	}
 }
 
+void Roster::update(const IntArray &charNums) {
+	int fallbackIndex = ROSTER_COUNT - 1;
+
+	for (int i = (int)g_globals->_party.size() - 1; i >= 0; --i) {
+		const Character &c = g_globals->_party[i];
+
+		int destIndex;
+		if (charNums.size() == g_globals->_party.size() &&
+				charNums[i] < ROSTER_COUNT &&
+				_items[charNums[i]]._name == c._name) {
+			// Started game from title screen and set up party,
+			// so we known the correct roster index already
+			destIndex = charNums[i];
+
+		} else {
+			for (destIndex = 0; destIndex < ROSTER_COUNT; ++destIndex) {
+				if (_items[destIndex]._name == c._name)
+					break;
+			}
+
+			if (destIndex == ROSTER_COUNT) {
+				// Couldn't find a matching name in roster to update
+				for (destIndex = 0; destIndex < ROSTER_COUNT;  ++destIndex) {
+					if (!_towns[destIndex])
+						break;
+				}
+
+				if (destIndex == ROSTER_COUNT)
+					// Replace entries at the end of the roster
+					destIndex = fallbackIndex--;
+			}
+		}
+
+		// Copy the entry into the roster
+		_items[destIndex] = c;
+		_towns[destIndex] = (Maps::TownId)g_maps->_currentMap->dataByte(Maps::MAP_ID);
+	}
+}
+
 void Roster::save() {
 	Common::OutSaveFile *sf = g_system->getSavefileManager()->openForSaving(
 		rosterSaveName());
