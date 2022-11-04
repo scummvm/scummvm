@@ -121,6 +121,8 @@ int  ags_file_exists(const char *path) {
 
 		return result ? 1 : 0;
 	} else {
+		if (SearchMan.hasFile(path))
+			return 1;
 		Common::FSNode node = getFSNode(path);
 		return node.exists() && !node.isDirectory() ? 1 : 0;
 	}
@@ -132,15 +134,17 @@ int ags_directory_exists(const char *path) {
 }
 
 int ags_path_exists(const char *path) {
+	if (SearchMan.hasFile(path))
+		return 1;
 	Common::FSNode node = getFSNode(path);
 	return node.exists() ? 1 : 0;
 }
 
 file_off_t ags_file_size(const char *path) {
-	Common::FSNode node = getFSNode(path);
-	Common::File f;
+	Common::ArchiveMemberPtr file(getFile(path));
+	Common::ScopedPtr<Common::SeekableReadStream> stream(file->createReadStream());
 
-	return f.open(node) ? f.size() : (file_off_t)-1;
+	return stream ? stream->size() : (file_off_t)-1;
 }
 
 } // namespace AGS3
