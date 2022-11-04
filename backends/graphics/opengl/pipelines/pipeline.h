@@ -83,23 +83,25 @@ public:
 	 * @param texture     Texture to use for drawing.
 	 * @param coordinates x1, y1, x2, y2 coordinates where to draw the texture.
 	 */
-	virtual void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
-
-	void drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
-		drawTexture(texture, coordinates, texture.getTexCoords());
+	inline void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+		drawTextureInternal(texture, coordinates, texcoords);
 	}
 
-	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
+	inline void drawTexture(const GLTexture &texture, const GLfloat *coordinates) {
+		drawTextureInternal(texture, coordinates, texture.getTexCoords());
+	}
+
+	inline void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h) {
 		const GLfloat coordinates[4*2] = {
 			x,     y,
 			x + w, y,
 			x,     y + h,
 			x + w, y + h
 		};
-		drawTexture(texture, coordinates, texture.getTexCoords());
+		drawTextureInternal(texture, coordinates, texture.getTexCoords());
 	}
 
-	void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h, const Common::Rect &clip) {
+	inline void drawTexture(const GLTexture &texture, GLfloat x, GLfloat y, GLfloat w, GLfloat h, const Common::Rect &clip) {
 		const GLfloat coordinates[4*2] = {
 			x,     y,
 			x + w, y,
@@ -122,7 +124,7 @@ public:
 			(float)clip.right / tw, (float)clip.bottom / th
 		};
 
-		drawTexture(texture, coordinates, texcoords);
+		drawTextureInternal(texture, coordinates, texcoords);
 	}
 
 	/**
@@ -145,6 +147,8 @@ protected:
 	 * Deactivate the pipeline.
 	 */
 	virtual void deactivateInternal() {}
+
+	virtual void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) = 0;
 
 	bool isActive() const { return _isActive; }
 

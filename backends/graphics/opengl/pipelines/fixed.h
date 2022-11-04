@@ -31,12 +31,11 @@ class FixedPipeline : public Pipeline {
 public:
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 
-	void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
-
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
 protected:
 	void activateInternal() override;
+	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 };
 #endif // !USE_FORCED_GLES2
 

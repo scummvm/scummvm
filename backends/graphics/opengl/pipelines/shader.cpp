@@ -75,7 +75,7 @@ void ShaderPipeline::setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) {
 	}
 }
 
-void ShaderPipeline::drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
+void ShaderPipeline::drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) {
 	texture.bind();
 
 	GL_CALL(glBindBuffer(GL_ARRAY_BUFFER, _coordsVBO));

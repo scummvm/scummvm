@@ -52,8 +52,6 @@ public:
 	LibRetroPipeline(const Common::FSNode &shaderPreset);
 	~LibRetroPipeline() override;
 
-	void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
-
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
 	bool open(const Common::FSNode &shaderPreset);
@@ -70,6 +68,7 @@ public:
 private:
 	void activateInternal() override;
 	void deactivateInternal() override;
+	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
 	bool loadTextures();
 	bool loadPasses();

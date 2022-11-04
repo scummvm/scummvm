@@ -36,13 +36,12 @@ public:
 
 	void setColor(GLfloat r, GLfloat g, GLfloat b, GLfloat a) override;
 
-	void drawTexture(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
-
 	void setProjectionMatrix(const Math::Matrix4 &projectionMatrix) override;
 
 protected:
 	void activateInternal() override;
 	void deactivateInternal() override;
+	void drawTextureInternal(const GLTexture &texture, const GLfloat *coordinates, const GLfloat *texcoords) override;
 
 	GLuint _coordsVBO;
 	GLuint _texcoordsVBO;
