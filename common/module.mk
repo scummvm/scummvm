@@ -4,6 +4,7 @@ MODULE_OBJS := \
 	achievements.o \
 	archive.o \
 	base-str.o \
+	clickteam.o \
 	config-manager.o \
 	coroutines.o \
 	dcl.o \
