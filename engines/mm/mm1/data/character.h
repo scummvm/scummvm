@@ -438,11 +438,10 @@ struct Character : public PrimaryAttributes {
 	Inventory _backpack;
 	Resistances _resistances;
 
-	// TODO: Figure out what these are
 	AttributePair _physicalAttr, _missileAttr;
-	byte _v6c;
+	byte _trapCtr = 0;
 	byte _quest = 0;
-	byte _v6e;
+	byte _worthiness;
 	int _alignmentCtr;
 	byte _flags[14];
 	byte _lastField = 0;

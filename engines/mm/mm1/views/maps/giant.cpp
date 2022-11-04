@@ -95,15 +95,15 @@ void Giant::timeout() {
 
 void Giant::worthy() {
 	Character &c = *g_globals->_currCharacter;
-	int val = ((c._v6e + 1) / 2) * 256;
+	int val = ((c._worthiness + 1) / 2) * 256;
 	c._exp += val;
 
 	Common::String line = Common::String::format(
-		STRING["maps.map30.worthy"].c_str(), '0' + (c._v6e / 5));
+		STRING["maps.map30.worthy"].c_str(), '0' + (c._worthiness / 5));
 	line = Common::String::format("%s%d %s",
 		line.c_str(), val, STRING["maps.map30.experience"].c_str());
 
-	if (c._v6e & 0x80) {
+	if (c._worthiness & 0x80) {
 		int attrNum = getRandomNumber(7) - 1;
 		line += Common::String::format(", +3 %s",
 			STRING[Common::String::format("maps.map30.attributes.%d", attrNum)].c_str());
@@ -113,7 +113,7 @@ void Giant::worthy() {
 			attrib._current = attrib._base = attrib._base + 3;
 	}
 
-	c._v6e = 0;
+	c._worthiness = 0;
 
 	clearSurface();
 	writeString(0, 1, line);

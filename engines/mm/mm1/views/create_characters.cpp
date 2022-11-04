@@ -98,7 +98,7 @@ void CreateCharacters::NewCharacter::save() {
 		break;
 	case ROBBER:
 		setHP(8);
-		re._v6c = 50;
+		re._trapCtr = 50;
 		break;
 	default:
 		break;
