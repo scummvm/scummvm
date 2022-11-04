@@ -355,7 +355,8 @@ SaveStateList SciMetaEngine::listSaves(const char *target) const {
 				}
 				SaveStateDescriptor descriptor(this, slotNr, meta.name);
 
-				if (descriptor.isAutosave()) {
+				if (slotNr == 0) {
+					// ScummVM auto-save slot (note however, that autosave support is currently revoked)
 					hasAutosave = true;
 				}
 
