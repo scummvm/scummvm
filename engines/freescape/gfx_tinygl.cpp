@@ -551,12 +551,15 @@ void TinyGLRenderer::drawFloor(uint8 color) {
 	uint8 r, g, b;
 	assert(getRGBAt(color, r, g, b)); // TODO: move check inside this function
 	tglColor3ub(r, g, b);
-	tglBegin(TGL_QUADS);
-	tglVertex3f(-100000.f, 0.f, -100000.f);
-	tglVertex3f(100000.f, 0.f, -100000.f);
-	tglVertex3f(100000.f, 0.f, 100000.f);
-	tglVertex3f(-100000.f, 0.f, 100000.f);
-	tglEnd();
+
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	copyToVertexArray(0, Math::Vector3d(-100000.0, 0.0, -100000.0));
+	copyToVertexArray(1, Math::Vector3d(100000.0, 0.0, -100000.0));
+	copyToVertexArray(2, Math::Vector3d(100000.0, 0.0, 100000.0));
+	copyToVertexArray(3, Math::Vector3d(-100000.0, 0.0, 100000.0));
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_QUADS, 0, 4);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
 }
 
 void TinyGLRenderer::flipBuffer() {
