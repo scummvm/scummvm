@@ -38,10 +38,12 @@ Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::Ren
 }
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) : Renderer(system, screenW, screenH, renderMode) {
+	_verts = (Vertex*) malloc(sizeof(Vertex) * 20);
 }
 
 TinyGLRenderer::~TinyGLRenderer() {
 	TinyGL::destroyContext();
+	free(_verts);
 }
 
 Texture *TinyGLRenderer::createTexture(const Graphics::Surface *surface) {
@@ -209,22 +211,29 @@ void TinyGLRenderer::renderFace(const Common::Array<Math::Vector3d> &vertices) {
 		const Math::Vector3d &v1 = vertices[1];
 		if (v0 == v1)
 			return;
-		tglBegin(TGL_LINES);
-		tglVertex3f(v0.x(), v0.y(), v0.z());
-		tglVertex3f(v1.x(), v1.y(), v1.z());
-		tglEnd();
+
+		tglEnableClientState(TGL_VERTEX_ARRAY);
+		copyToVertexArray(0, v0);
+		copyToVertexArray(1, v1);
+		tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+		tglDrawArrays(TGL_LINES, 0, 2);
+		tglDisableClientState(TGL_VERTEX_ARRAY);
 		return;
 	}
 
-	tglBegin(TGL_TRIANGLES);
+	tglEnableClientState(TGL_VERTEX_ARRAY);
+	uint vi = 0;
 	for (uint i = 1; i < vertices.size() - 1; i++) { // no underflow since vertices.size() > 2
 		const Math::Vector3d &v1 = vertices[i];
 		const Math::Vector3d &v2 = vertices[i + 1];
-		tglVertex3f(v0.x(), v0.y(), v0.z());
-		tglVertex3f(v1.x(), v1.y(), v1.z());
-		tglVertex3f(v2.x(), v2.y(), v2.z());
+		vi = 3 * (i - 1); // no underflow since i >= 1
+		copyToVertexArray(vi + 0, v0);
+		copyToVertexArray(vi + 1, v1);
+		copyToVertexArray(vi + 2, v2);
 	}
-	tglEnd();
+	tglVertexPointer(3, TGL_FLOAT, 0, _verts);
+	tglDrawArrays(TGL_TRIANGLES, 0, vi + 3);
+	tglDisableClientState(TGL_VERTEX_ARRAY);
 }
 
 void TinyGLRenderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) {

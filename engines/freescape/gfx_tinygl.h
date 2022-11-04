@@ -33,6 +33,18 @@ public:
 	TinyGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 	virtual ~TinyGLRenderer();
 
+	struct Vertex {
+		TGLfloat x;
+		TGLfloat y;
+		TGLfloat z;
+	};
+
+	void copyToVertexArray(uint idx, const Math::Vector3d &src) {
+		_verts[idx].x = src.x(); _verts[idx].y = src.y(); _verts[idx].z = src.z();
+	}
+
+	Vertex *_verts;
+
 	virtual void init() override;
 	virtual void clear() override;
 	virtual void setViewport(const Common::Rect &rect) override;
