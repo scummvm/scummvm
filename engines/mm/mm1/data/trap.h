@@ -49,6 +49,8 @@ protected:
 	byte _condition = 0;
 
 	virtual void trap();
+public:
+	virtual ~TrapData() {}
 };
 
 } // namespace MM1

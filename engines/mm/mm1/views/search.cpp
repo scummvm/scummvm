@@ -74,6 +74,9 @@ void Search::draw() {
 		writeString(20, 3, STRING["dialogs.search.options3"]);
 		escToGoBack(0, 3);
 		break;
+
+	default:
+		break;
 	}
 }
 
@@ -97,6 +100,8 @@ bool Search::msgKeypress(const KeypressMessage &msg) {
 			break;
 		case Common::KEYCODE_3:
 			detectMagicTrap();
+			break;
+		default:
 			break;
 		}
 		break;
@@ -167,6 +172,9 @@ void Search::timeout() {
 
 	case WHO_WILL_TRY:
 		draw();
+		break;
+
+	default:
 		break;
 	}
 }
