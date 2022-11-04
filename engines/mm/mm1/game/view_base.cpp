@@ -52,7 +52,6 @@ void ViewBase::update() {
 
 	if ((map[Maps::MAP_FLAGS] & 1) && !g_globals->_activeSpells._s.light) {
 darkness:
-		// TODO
 		_isDark = true;
 	}
 

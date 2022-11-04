@@ -46,9 +46,9 @@ void Map37::special() {
 		}
 	}
 
-	// TODO: figure out unknown method that determines whether
-	// the floor spins or not
-	if (true) {
+	if (g_events->isKeypressPending()) {
+		send(InfoMessage());
+	} else {
 		send(SoundMessage(STRING["maps.map37.spins"]));
 		g_events->addAction(KEYBIND_TURN_LEFT);
 	}

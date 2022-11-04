@@ -172,7 +172,10 @@ void Map23::special12() {
 	_states[g_maps->_mapOffset] = 0xff;
 	_walls[g_maps->_mapOffset] = 162;
 
-	g_maps->clearSpecial();
+	if (g_events->isKeypressPending()) {
+		send(InfoMessage());
+		g_maps->clearSpecial();
+	}
 }
 
 void Map23::special13() {
