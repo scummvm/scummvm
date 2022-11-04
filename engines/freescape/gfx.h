@@ -67,6 +67,8 @@ public:
 	 *  Swap the buffers, making the drawn screen visible
 	 */
 	virtual void flipBuffer() {}
+	virtual void useColor(uint8 r, uint8 g, uint8 b) = 0;
+	virtual void polygonOffset(bool enabled) = 0;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
 	virtual void freeTexture(Texture *texture) = 0;
@@ -75,10 +77,10 @@ public:
 
 	virtual void renderCrossair(byte color, const Common::Point position) = 0;
 	virtual void renderShoot(byte color, const Common::Point position) = 0;
-	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
-	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours) = 0;
-	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours) = 0;
-	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) = 0;
+	virtual void renderCube(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
+	virtual void renderRectangle(const Math::Vector3d &position, const Math::Vector3d &size, Common::Array<uint8> *colours);
+	virtual void renderPolygon(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours);
+	virtual void renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type);
 	virtual void renderFace(const Common::Array<Math::Vector3d> &vertices) = 0;
 
 	virtual void setSkyColor(uint8 color) = 0;
