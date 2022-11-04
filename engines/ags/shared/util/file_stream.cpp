@@ -163,15 +163,8 @@ void FileStream::Open(const String &file_name, FileOpenMode open_mode, FileWorkM
 
 		} else {
 			// First try to open file in game folder
-			Common::File *f = new Common::File();
-			Common::FSNode fsNode = getFSNode(file_name.GetCStr());
-
-			if (fsNode.exists() && f->open(fsNode)) {
-				_file = f;
-			} else {
-				delete f;
-				_file = nullptr;
-			}
+			Common::ArchiveMemberPtr desc = getFile(file_name.GetCStr());
+			_file = desc ? desc->createReadStream() : nullptr;
 		}
 
 	} else {
