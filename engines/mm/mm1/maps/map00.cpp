@@ -222,27 +222,27 @@ void Map00::special17() {
 
 void Map00::special18() {
 	send(SoundMessage(
-		2, 0, STRING["maps.map00.sign"],
+		2, 0, STRING["maps.sign"],
 		6, 1, STRING["maps.map00.temple"]
 	));
 }
 
 void Map00::special19() {
 	send(SoundMessage(
-		2, 0, STRING["maps.map00.sign"],
+		2, 0, STRING["maps.sign"],
 		6, 1, STRING["maps.map00.jail"]
 	));
 }
 
 void Map00::special20() {
 	send(SoundMessage(
-		2, 0, STRING["maps.map00.sign"],
+		2, 0, STRING["maps.sign"],
 		6, 1, STRING["maps.map00.tavern"]
 	));
 }
 void Map00::special21() {
 	send(SoundMessage(
-		2, 0, STRING["maps.map00.sign"],
+		2, 0, STRING["maps.sign"],
 		6, 1, STRING["maps.map00.training"]
 	));
 }
