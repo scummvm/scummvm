@@ -480,7 +480,7 @@ Common::SeekableReadStream *SPQRGameDataHandler::FakeFileArchive::createReadStre
 	return new Common::MemoryReadStream(clonedData, forkData->size(), DisposeAfterUse::YES);
 }
 
-SPQRGameDataHandler::SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc), _isMac(gameDesc.desc.platform == kProjectPlatformMacintosh) {
+SPQRGameDataHandler::SPQRGameDataHandler(const Game &game, const MTropolisGameDescription &gameDesc) : GameDataHandler(game, gameDesc), _isMac(gameDesc.desc.platform == Common::kPlatformMacintosh) {
 }
 
 void SPQRGameDataHandler::unpackAdditionalFiles(Common::Array<Common::SharedPtr<ProjectPersistentResource> > &persistentResources, Common::Array<FileIdentification> &files) {
