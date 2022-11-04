@@ -106,12 +106,12 @@ MoovXObject::~MoovXObject() {
 }
 
 void MoovXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void MoovXObj::m_dispose(int nargs) {
 	debug(5, "MoovXObj::m_dispose");
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 	if (me->_video) {
 		delete me->_video;
 		me->_video = nullptr;
@@ -130,14 +130,14 @@ void MoovXObj::m_movieInit(int nargs) {
 
 void MoovXObj::m_movieKill(int nargs) {
 	debug(5, "MoovXObj::m_movieKill");
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	if (me->_video)
 		me->_video->stop();
 }
 
 void MoovXObj::m_fondler(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	debug(10, "MoovXObj::m_fondler");
 	Graphics::Surface const *frame;
@@ -152,7 +152,7 @@ void MoovXObj::m_fondler(int nargs) {
 }
 
 void MoovXObj::m_playMovie(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 
 	me->_y = g_lingo->pop().asInt();
 	me->_x = g_lingo->pop().asInt();
@@ -189,7 +189,7 @@ void MoovXObj::m_stopMovie(int nargs) {
 }
 
 void MoovXObj::m_movieDone(int nargs) {
-	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_currentMe.u.obj);
+	MoovXObject *me = static_cast<MoovXObject *>(g_lingo->_state->me.u.obj);
 	debug(10, "MoovXObj::m_movieDone");
 	bool result = (me->_video && !me->_video->endOfVideo());
 	g_lingo->push(result);

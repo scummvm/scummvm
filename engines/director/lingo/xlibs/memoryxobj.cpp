@@ -91,7 +91,7 @@ MemoryXObject::MemoryXObject(ObjectType ObjectType) :Object<MemoryXObject>("Memo
 }
 
 void MemoryXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void MemoryXObj::m_clear(int nargs) {

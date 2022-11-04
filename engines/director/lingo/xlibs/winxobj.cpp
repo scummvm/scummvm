@@ -260,7 +260,7 @@ RearWindowXObject::RearWindowXObject(ObjectType ObjectType) :Object<RearWindowXO
 
 void RearWindowXObj::m_new(int nargs) {
 	Datum d1 = g_lingo->pop();
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void RearWindowXObj::m_getMemoryNeeded(int nargs) {

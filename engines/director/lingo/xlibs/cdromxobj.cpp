@@ -234,7 +234,7 @@ void CDROMXObj::m_new(int nargs) {
 	g_director->_system->getAudioCDManager()->open();
 	g_lingo->printSTUBWithArglist("CDROMXObj::m_new", nargs);
 	g_lingo->dropStack(nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 // Returns the name of the XObj
@@ -243,7 +243,7 @@ void CDROMXObj::m_name(int nargs) {
 }
 
 void CDROMXObj::m_play(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	// This is a request to play the current track from the start,
 	// which we can't do if there's no track information.
@@ -255,7 +255,7 @@ void CDROMXObj::m_play(int nargs) {
 }
 
 void CDROMXObj::m_playTrack(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	int track = g_lingo->pop().asInt();
 	g_director->_system->getAudioCDManager()->play(track, -1, 0, 0);
@@ -264,7 +264,7 @@ void CDROMXObj::m_playTrack(int nargs) {
 
 // Name format is "TRACK NN", with one-digit tracks padded with a leading space
 void CDROMXObj::m_playName(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	Common::String track = g_lingo->pop().asString();
 	if (track.size() < 8) {
@@ -315,14 +315,14 @@ void CDROMXObj::m_askPlay(int nargs) {
 }
 
 void CDROMXObj::m_stepFwd(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	g_director->_system->getAudioCDManager()->play(me->_cdda_status.track + 1, -1, 0, 0);
 	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stepBwd(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	int track = me->_cdda_status.track - 1;
 	if (track < 1)
@@ -333,7 +333,7 @@ void CDROMXObj::m_stepBwd(int nargs) {
 }
 
 void CDROMXObj::m_pause(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	// Leaves a trace of the current position so we can resume from it
 	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
@@ -342,7 +342,7 @@ void CDROMXObj::m_pause(int nargs) {
 }
 
 void CDROMXObj::m_continue(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	// Can only resume if there's data to resume from
 	if (me->_cdda_status.track == 0)
@@ -353,14 +353,14 @@ void CDROMXObj::m_continue(int nargs) {
 }
 
 void CDROMXObj::m_stop(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	g_director->_system->getAudioCDManager()->stop();
 	me->_cdda_status = g_director->_system->getAudioCDManager()->getStatus();
 }
 
 void CDROMXObj::m_stopTrack(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	Datum track = g_lingo->pop();
 	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
@@ -387,7 +387,7 @@ void CDROMXObj::m_stopAbsTime(int nargs) {
 }
 
 void CDROMXObj::m_removeStop(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	Datum track = g_lingo->pop();
 	AudioCDManager::Status status = g_director->_system->getAudioCDManager()->getStatus();
@@ -459,7 +459,7 @@ void CDROMXObj::m_currentFormat(int nargs) {
 }
 
 void CDROMXObj::m_currentTrack(int nargs) {
-	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_currentMe.u.obj);
+	CDROMXObject *me = static_cast<CDROMXObject *>(g_lingo->_state->me.u.obj);
 
 	g_lingo->push(Datum(me->_cdda_status.track));
 }

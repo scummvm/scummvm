@@ -125,7 +125,7 @@ AppleCDXObject::AppleCDXObject(ObjectType ObjectType) :Object<AppleCDXObject>("A
 }
 
 void AppleCDXObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void AppleCDXObj::m_service(int nargs) {

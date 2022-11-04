@@ -79,7 +79,7 @@ PalXObject::PalXObject(ObjectType ObjectType) :Object<PalXObject>("PalXObj") {
 }
 
 void PalXObj::m_new(int nargs) {
-	PalXObject *me = static_cast<PalXObject *>(g_lingo->_currentMe.u.obj);
+	PalXObject *me = static_cast<PalXObject *>(g_lingo->_state->me.u.obj);
 
 	Common::Rect rect;
 	rect.bottom = g_lingo->pop().asInt();
@@ -88,7 +88,7 @@ void PalXObj::m_new(int nargs) {
 	rect.left  = g_lingo->pop().asInt();
 	me->_stageWindowCoordinates = rect;
 
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void PalXObj::m_patchIt(int nargs) {

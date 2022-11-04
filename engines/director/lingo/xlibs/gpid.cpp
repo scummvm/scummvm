@@ -84,7 +84,7 @@ ProductIdXObject::ProductIdXObject(ObjectType ObjectType) :Object<ProductIdXObje
 
 void GpidXObj::m_new(int nargs) {
 	g_lingo->printSTUBWithArglist("gpid::new", nargs);
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 } // End of namespace Director

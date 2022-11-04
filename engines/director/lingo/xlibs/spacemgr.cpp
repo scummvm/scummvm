@@ -156,7 +156,7 @@ void SpaceMgr::m_new(int nargs) {
 		warning("SpaceMgr::m_new: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void SpaceMgr::m_dispose(int nargs) {
@@ -202,7 +202,7 @@ void SpaceMgr::m_checkForDups(int nargs) {
 		return;
 	}
 
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 
 	me->_checkForDups = (arg.u.s->c_str()[0] == 't') || (arg.u.s->c_str()[0] == 'T');
 	g_lingo->push(Datum(0));
@@ -221,7 +221,7 @@ void SpaceMgr::m_parseText(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 
 	Common::String result = *text.u.s;
 	Common::String curSpaceCollection;
@@ -310,7 +310,7 @@ void SpaceMgr::m_getCurData(int nargs) {
 		warning("SpaceMgr::m_getCurData: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Common::String result;
 	if (me->_spaceCollections.contains(me->_curSpaceCollection)) {
 		result += "SPACECOLLECTION " + me->_curSpaceCollection;
@@ -351,7 +351,7 @@ void SpaceMgr::m_setCurData(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	g_lingo->printSTUBWithArglist("SpaceMgr::m_setCurData", nargs);
 	Datum view = g_lingo->pop();
 	Datum node = g_lingo->pop();
@@ -391,7 +391,7 @@ void SpaceMgr::m_setCurSpaceCollection(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Datum spaceCollection = g_lingo->pop();
 	if (spaceCollection.type != STRING) {
 		warning("SpaceMgr::m_setCurSpaceCollection: expected spaceCollection to be a string, not %s", spaceCollection.type2str());
@@ -410,7 +410,7 @@ void SpaceMgr::m_getCurSpaceCollection(int nargs) {
 		warning("SpaceMgr::m_getCurSpaceCollection: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Common::String result;
 	if (!me->_curSpaceCollection.empty()) {
 		if (me->_spaceCollections.contains(me->_curSpaceCollection)) {
@@ -447,7 +447,7 @@ void SpaceMgr::m_setCurSpace(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Datum space = g_lingo->pop();
 	if (space.type != STRING) {
 		warning("SpaceMgr::m_setCurSpace: expected space to be a string, not %s", space.type2str());
@@ -466,7 +466,7 @@ void SpaceMgr::m_getCurSpace(int nargs) {
 		warning("SpaceMgr::m_getCurSpace: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Common::String result;
 	if (!me->_curSpaceCollection.empty()) {
 		if (me->_spaceCollections.contains(me->_curSpaceCollection)) {
@@ -506,7 +506,7 @@ void SpaceMgr::m_setCurNode(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Datum node = g_lingo->pop();
 	if (node.type != STRING) {
 		warning("SpaceMgr::m_setCurNode: expected node to be a string, not %s", node.type2str());
@@ -525,7 +525,7 @@ void SpaceMgr::m_getCurNode(int nargs) {
 		warning("SpaceMgr::m_getCurNode: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Common::String result;
 	if (!me->_curView.empty()) {
 		if (me->_spaceCollections.contains(me->_curSpaceCollection)) {
@@ -567,7 +567,7 @@ void SpaceMgr::m_setCurView(int nargs) {
 		g_lingo->push(Datum(0));
 		return;
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Datum view = g_lingo->pop();
 	if (view.type != STRING) {
 		warning("SpaceMgr::m_setCurView: expected view to be a string, not %s", view.type2str());
@@ -586,7 +586,7 @@ void SpaceMgr::m_getCurView(int nargs) {
 		warning("SpaceMgr::m_getCurView: expected 0 arguments");
 		g_lingo->dropStack(nargs);
 	}
-	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_currentMe.u.obj);
+	SpaceMgrXObject *me = static_cast<SpaceMgrXObject *>(g_lingo->_state->me.u.obj);
 	Common::String result;
 	if (!me->_curView.empty()) {
 		if (me->_spaceCollections.contains(me->_curSpaceCollection)) {

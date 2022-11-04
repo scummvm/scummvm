@@ -77,7 +77,7 @@ BarakeObject::BarakeObject(ObjectType ObjectType) :Object<BarakeObject>("BarakeO
 }
 
 void BarakeObj::m_new(int nargs) {
-	g_lingo->push(g_lingo->_currentMe);
+	g_lingo->push(g_lingo->_state->me);
 }
 
 void BarakeObj::m_clear(int nargs) {
