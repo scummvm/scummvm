@@ -36,15 +36,15 @@ SaveStateDescriptor::SaveStateDescriptor()
 
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d)
 	: _slot(slot), _description(d), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
-	initSaveType(metaEngine);
+	initSaveSlot(metaEngine);
 }
 
 SaveStateDescriptor::SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::String &d)
 	: _slot(slot), _description(Common::U32String(d)), _isLocked(false), _playTimeMSecs(0), _saveType(kSaveTypeUndetermined) {
-	initSaveType(metaEngine);
+	initSaveSlot(metaEngine);
 }
 
-void SaveStateDescriptor::initSaveType(const MetaEngine *metaEngine) {
+void SaveStateDescriptor::initSaveSlot(const MetaEngine *metaEngine) {
 	// Do not allow auto-save slot to be deleted or overwritten.
 	if (!metaEngine && g_engine)
 		metaEngine = g_engine->getMetaEngine();

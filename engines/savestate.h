@@ -61,7 +61,7 @@ private:
 		kSaveTypeAutosave
 	};
 
-	void initSaveType(const MetaEngine *metaEngine);
+	void initSaveSlot(const MetaEngine *metaEngine);
 public:
 	SaveStateDescriptor();
 	SaveStateDescriptor(const MetaEngine *metaEngine, int slot, const Common::U32String &d);
