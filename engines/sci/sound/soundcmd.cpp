@@ -955,7 +955,7 @@ void SoundCommandParser::resetGlobalPauseCounter() {
 }
 
 bool SoundCommandParser::isGlobalPauseActive() const {
-	return _music->isGlobalPauseActive();
+	return _music->isAllPaused();
 }
 
 MusicType SoundCommandParser::getMusicType() const {
