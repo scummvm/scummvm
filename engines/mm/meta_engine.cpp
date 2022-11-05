@@ -31,10 +31,9 @@
 #include "mm/detection.h"
 #include "mm/mm1/mm1.h"
 #include "mm/xeen/xeen.h"
+#include "mm/xeen/meta_engine.h"
 #include "mm/xeen/worldofxeen/worldofxeen.h"
 #include "mm/xeen/swordsofxeen/swordsofxeen.h"
-
-#define MAX_SAVES 99
 
 class MMMetaEngine : public AdvancedMetaEngine {
 private:
@@ -42,6 +41,11 @@ private:
 	 * Gets the game Id given a target string
 	 */
 	static Common::String getGameId(const Common::String &target);
+
+	/**
+	 * Returns true if the game is a Xeen game
+	 */
+	static bool isXeenGame(const Common::String &target);
 public:
 	const char *getName() const override {
 		return "mm";
@@ -49,9 +53,8 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	SaveStateList listSaves(const char *target) const override;
 	int getMaximumSaveSlot() const override;
-	void removeSaveState(const char *target, int slot) const override;
+	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
 };
@@ -97,69 +100,24 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	return Common::kNoError;
 }
 
-SaveStateList MMMetaEngine::listSaves(const char *target) const {
-	Common::SaveFileManager *saveFileMan = g_system->getSavefileManager();
-	Common::StringArray filenames;
-	Common::String saveDesc;
-	Common::String pattern = Common::String::format("%s.###", target);
-	MM::Xeen::XeenSavegameHeader header;
-
-	filenames = saveFileMan->listSavefiles(pattern);
-
-	SaveStateList saveList;
-	for (Common::StringArray::const_iterator file = filenames.begin(); file != filenames.end(); ++file) {
-		const char *ext = strrchr(file->c_str(), '.');
-		int slot = ext ? atoi(ext + 1) : -1;
-
-		if (slot >= 0 && slot <= MAX_SAVES) {
-			Common::InSaveFile *in = g_system->getSavefileManager()->openForLoading(*file);
-
-			if (in) {
-				if (MM::Xeen::SavesManager::readSavegameHeader(in, header))
-					saveList.push_back(SaveStateDescriptor(this, slot, header._saveName));
-
-				delete in;
-			}
-		}
-	}
-
-	Common::sort(saveList.begin(), saveList.end(), SaveStateDescriptorSlotComparator());
-	return saveList;
-}
-
 int MMMetaEngine::getMaximumSaveSlot() const {
-	return MAX_SAVES;
+	return 999;
 }
 
-void MMMetaEngine::removeSaveState(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	g_system->getSavefileManager()->removeSavefile(filename);
+SaveStateList MMMetaEngine::listSaves(const char *target) const {
+	if (isXeenGame(target))
+		// Fallback original code for Xeen
+		return MM::Xeen::XeenMetaEngine::listSaves(this, target);
+
+	return AdvancedMetaEngine::listSaves(target);
 }
 
 SaveStateDescriptor MMMetaEngine::querySaveMetaInfos(const char *target, int slot) const {
-	Common::String filename = Common::String::format("%s.%03d", target, slot);
-	Common::InSaveFile *f = g_system->getSavefileManager()->openForLoading(filename);
+	if (isXeenGame(target))
+		// Fallback original code for Xeen
+		return MM::Xeen::XeenMetaEngine::querySaveMetaInfos(this, target, slot);
 
-	if (f) {
-		MM::Xeen::XeenSavegameHeader header;
-		if (!MM::Xeen::SavesManager::readSavegameHeader(f, header, false)) {
-			delete f;
-			return SaveStateDescriptor();
-		}
-
-		delete f;
-
-		// Create the return descriptor
-		SaveStateDescriptor desc(this, slot, header._saveName);
-		desc.setThumbnail(header._thumbnail);
-		desc.setSaveDate(header._year, header._month, header._day);
-		desc.setSaveTime(header._hour, header._minute);
-		desc.setPlayTime(header._totalFrames * GAME_FRAME_TIME);
-
-		return desc;
-	}
-
-	return SaveStateDescriptor();
+	return AdvancedMetaEngine::querySaveMetaInfos(target, slot);
 }
 
 Common::KeymapArray MMMetaEngine::initKeymaps(const char *target) const {
@@ -181,6 +139,14 @@ Common::String MMMetaEngine::getGameId(const Common::String &target) {
 	// Switch back to the original domain and return the game Id
 	ConfMan.setActiveDomain(currDomain);
 	return gameId;
+}
+
+bool MMMetaEngine::isXeenGame(const Common::String &target) {
+	Common::String gameId = getGameId(target);
+	if (gameId == "mm1" || gameId == "mm1_enh")
+		return false;
+
+	return true;
 }
 
 #if PLUGIN_ENABLED_DYNAMIC(MM)
