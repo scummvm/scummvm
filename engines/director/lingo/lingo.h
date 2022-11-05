@@ -241,7 +241,6 @@ struct CFrame {	/* proc/func call stack frame */
 	int				retPC;				/* where to resume after return */
 	ScriptData		*retScript;			/* which script to resume after return */
 	ScriptContext	*retContext;		/* which script context to use after return */
-	bool			retFreezeContext;	/* whether the context should be frozen after return */
 	DatumHash		*retLocalVars;
 	Datum			retMe;				/* which me obj to use after return */
 	uint			stackSizeBefore;
@@ -358,9 +357,10 @@ public:
 public:
 	void execute();
 	void switchStateFromWindow();
+	void freezeState();
+	bool hasFrozenState();
 	void pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRetVal);
 	void popContext(bool aborting = false);
-	bool hasFrozenContext();
 	void cleanLocalVars();
 	void varAssign(const Datum &var, const Datum &value);
 	Datum varFetch(const Datum &var, bool silent = false);
@@ -448,7 +448,7 @@ public:
 
 	int _currentChannelId;
 
-	bool _freezeContext;
+	bool _freezeState;
 	bool _abort;
 	bool _expectError;
 	bool _caughtError;

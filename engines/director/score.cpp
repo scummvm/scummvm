@@ -471,7 +471,11 @@ void Score::update() {
 	debugC(1, kDebugLoading, "******************************  Current frame: %d, time: %d", _currentFrame, g_system->getMillis(false));
 	g_debugger->frameHook();
 
-	uint initialCallStackSize = g_lingo->_state->callstack.size();
+	if (_window->hasFrozenLingoState()) {
+		_window->thawLingoState();
+		g_lingo->switchStateFromWindow();
+		g_lingo->execute();
+	}
 
 	_lingo->executeImmediateScripts(_frames[_currentFrame]);
 
@@ -504,18 +508,6 @@ void Score::update() {
 	if (_vm->getMacTicks() - _movie->_lastTimeOut >= _movie->_timeOutLength) {
 		_movie->processEvent(kEventTimeout);
 		_movie->_lastTimeOut = _vm->getMacTicks();
-	}
-
-	// If we have more call stack frames than we started with, then we have a newly
-	// added frozen context. We'll deal with that later.
-	if (g_lingo->_state->callstack.size() == initialCallStackSize) {
-		// We may have a frozen Lingo context from func_goto.
-		// Now that we've entered a new frame, let's unfreeze that context.
-		if (g_lingo->_freezeContext) {
-			debugC(1, kDebugLingoExec, "Score::update(): Unfreezing Lingo context");
-			g_lingo->_freezeContext = false;
-			g_lingo->execute();
-		}
 	}
 
 }
