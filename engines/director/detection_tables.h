@@ -1910,7 +1910,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1_l("businessmanager", "v3.5.1 Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 2102272, Common::JA_JPN, 311),
 	MACDEMO1_l("businessmanager", "Demo", "BusinessManager.Demo", "f5277c53bacd27936158dd3867e587e2", 392347, Common::JA_JPN, 311),
 
-	MACDEMO1_l("calling", "Demo", "CallingPlayer", "276bee761e48a6fd709df77d5c2f60dd", 392676, Common::JA_JPN, 313),
+	MACDEMO1_l("calling", "Demo", "CallingPlayer", "276bee761e48a6fd709df77d5c2f60dd", 392420, Common::JA_JPN, 313),
 
 	// From Sanctuary Woods Multimedia. Projectors for English, French, Spanish are included on the disc.
 	WINGAME1("catcameback", "",   "TITLEE.EXE", "65d06b5fef155a2473434571aff5bc29", 369998, 310),
@@ -1922,24 +1922,24 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Each movie has its own projector
 	WINGAME1("cdphysics", "", "CDINTRO.EXE", "65d06b5fef155a2473434571aff5bc29", 370004, 313),
 
-	MACDEMO1_l("cellofania", "Demo", "Cellofania.Demo", "f5277c53bacd27936158dd3867e587e2", 390226, Common::JA_JPN, 311),
+	MACDEMO1_l("cellofania", "Demo", "Cellofania.Demo", "f5277c53bacd27936158dd3867e587e2", 389970, Common::JA_JPN, 311),
 
 	// English Mac filename is The C.H.A.O.S. Continuum™
 	// Japanese Mac demo filename is CHAOS デモ and another file is called CHAOS Demo
 	// English Mac demo from The Family Doctor, 3rd Edition
-	MACGAME1("chaos", "", "The C.H.A.O.S. Continuum", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384481, 300),
+	MACGAME1("chaos", "", "xn--The C.H.A.O.S. Continuum-3r4o", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384225, 300),
 	WINGAME1t("chaos", "", "CHAOS.EXE", "5d1d9e1ff9a43e4d5b28441ce6d642fd", 375294, 310),
-	MACDEMO1_l("chaos", "Demo", "Start CHAOS Demo", "f5277c53bacd27936158dd3867e587e2", 394939, Common::JA_JPN, 311),
+	MACDEMO1_l("chaos", "Demo", "Start CHAOS Demo", "f5277c53bacd27936158dd3867e587e2", 394683, Common::JA_JPN, 311),
 	MACDEMO1("chaos", "Demo", "xn--CHAOS Continuum Demo-3h7l", "2ce360c9ea2da80a2c6d1040b0ad92dd", 384212, 313),
 
 	// Each section is on a separate disk with its own projector
 	// https://www.youtube.com/watch?v=iDr0x22zRvs
-	MACGAME1("childishgambino", "", "Donald Glover - Cut 1", "1ae45c23586b41997ba52e2e7c771c4c", 827858, 310),
+	MACGAME1("childishgambino", "", "Donald Glover - Cut 1", "1ae45c23586b41997ba52e2e7c771c4c", 827602, 310),
 
 	// Original filename is 小さな演奏家デモ
-	MACDEMO1_l("chisanaensoka", "Demo", "Chisana enso-ka Demo", "f5277c53bacd27936158dd3867e587e2", 1501224, Common::JA_JPN, 311),
+	MACDEMO1_l("chisanaensoka", "Demo", "Chisana enso-ka Demo", "f5277c53bacd27936158dd3867e587e2", 1500968, Common::JA_JPN, 311),
 
-	MACDEMO1_l("chuckletime", "Demo", "Chuckle Time", "f5277c53bacd27936158dd3867e587e2", 608416, Common::JA_JPN, 311),
+	MACDEMO1_l("chuckletime", "Demo", "Chuckle Time", "f5277c53bacd27936158dd3867e587e2", 608160, Common::JA_JPN, 311),
 
 	WINDEMO1("cinemania94", "Demo",		 "CINEOVR.EXE",	 "7c8230a804abf9353b05627a675b5ffb", 1426843, 310),
 	WINDEMO1("cinemania95", "1994 Demo", "CINEDEMO.EXE", "2b3543a9131a49f665982d26513a84f8", 373209, 310),
@@ -1960,10 +1960,10 @@ static const DirectorGameDescription gameDescriptions[] = {
 	// Found on CD-ROM Today, #4
 	WINGAME1t("coreltour", "", "PRODTOUR.EXE", "296661dda59fcc1a4980e72797aac158", 375291, 300),
 
-	MACDEMO1("cpu", "Demo", "CPU Demo Movie", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 533389, 300),
+	MACDEMO1("cpu", "Demo", "CPU Demo Movie", "9f0bb7ec7720e4f680ee3aa3d22c1c9d", 533133, 300),
 
-	MACDEMO1_l("creativeeye", "1994.02 Demo", "Creative EYE Demo", "f5277c53bacd27936158dd3867e587e2", 2355024, Common::JA_JPN, 311),
-	MACDEMO1_l("creativeeye", "1994.06 Demo", "Creative EYE Demo", "276bee761e48a6fd709df77d5c2f60dd", 3344169, Common::JA_JPN, 313),
+	MACDEMO1_l("creativeeye", "1994.02 Demo", "Creative EYE Demo", "f5277c53bacd27936158dd3867e587e2", 2354768, Common::JA_JPN, 311),
+	MACDEMO1_l("creativeeye", "1994.06 Demo", "Creative EYE Demo", "276bee761e48a6fd709df77d5c2f60dd", 3343913, Common::JA_JPN, 313),
 
 	// Windows version is not Director
 	MACGAME1("criticalpath", "", "Critical Path", "2ce360c9ea2da80a2c6d1040b0ad92dd", 4504005, 310),
@@ -1971,7 +1971,7 @@ static const DirectorGameDescription gameDescriptions[] = {
 	MACDEMO1("cricketdraw", "Demo", "CA-Cricket Draw III Demo", "16759602b41cb957c8f13dba7f3f1984", 2026407, 301),
 
 	// Original filename is キューティ１０デモ
-	MACDEMO1_l("cutie10", "Demo", "Cutie 10 demo", "f5277c53bacd27936158dd3867e587e2", 390315, Common::JA_JPN, 311),
+	MACDEMO1_l("cutie10", "Demo", "Cutie 10 demo", "f5277c53bacd27936158dd3867e587e2", 390059, Common::JA_JPN, 311),
 
 	// From the Police Quest Collection
 	WINGAME1("darylfgates", "", "INTERVEW.EXE", "351c9f2cf2c205eea7a9ce50e73974ee", 1059729, 311),
@@ -1983,15 +1983,15 @@ static const DirectorGameDescription gameDescriptions[] = {
 
 	// Original filename is 恐竜サファリアドベンチャー デモ
 	// Full version isn't Director
-	MACDEMO1_l("dinosafari", "Demo", "Dinosaur Safari Adventure Demo", "f5277c53bacd27936158dd3867e587e2", 394948, Common::JA_JPN, 311),
+	MACDEMO1_l("dinosafari", "Demo", "Dinosaur Safari Adventure Demo", "f5277c53bacd27936158dd3867e587e2", 394692, Common::JA_JPN, 311),
 
 	// Demo version of Director Studio is provided (runs on 68k only). Readme instructs to run the
 	// application and then open the Demo movie using the menu. However, the movie file is invisible,
 	// so first you will need to copy the folder to your hard drive then modify the file properties.
 	// The movie filename is 'Director Demo'.
-	MACDEMO1("dirmacromind", "v3.1 Demo", "MacroMind Director 3.1.1 (SD)", "bd7b96d6c0c372e77e65ed0707aa34ee", 1191942, 311),
+	MACDEMO1("dirmacromind", "v3.1 Demo", "MacroMind Director 3.1.1 (SD)", "bd7b96d6c0c372e77e65ed0707aa34ee", 1191686, 311),
 
-	MACDEMO1("donnamatrix", "Demo", "Donnamatrix Launch", "7f443f2e63fd497a9ad85b10dc880a91", 385692, 313),
+	MACDEMO1("donnamatrix", "Demo", "Donnamatrix Launch", "7f443f2e63fd497a9ad85b10dc880a91", 385436, 313),
 
 	// Original filename is 'どうぶつ紹介ﾌﾟﾛｼﾞｪｸﾀ'
 	MACGAME1_l("doubutsushokai", "", "xn--p8j0cn7c093vuh8c3p4khda8a5byithpbl", "1ed38b71d8d0f075483117f7fa559e7c", 440320, Common::JA_JPN, 300),
