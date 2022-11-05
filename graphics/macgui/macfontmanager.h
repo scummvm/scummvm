@@ -170,6 +170,8 @@ public:
 	void forceBuiltinFonts() { _builtInFonts = true; }
 	int parseSlantFromName(const Common::String &name);
 
+	const Common::Array<MacFontFamily *> &getFontFamilies() { return _fontFamilies; }
+
 private:
 	void loadFontsBDF();
 	void loadFonts();

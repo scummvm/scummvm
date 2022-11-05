@@ -33,7 +33,7 @@ namespace Graphics {
 
 class MacFontFamily {
 public:
-	MacFontFamily();
+	MacFontFamily(const Common::String &name);
 	~MacFontFamily();
 
 	bool load(Common::SeekableReadStream &stream);
@@ -46,9 +46,13 @@ public:
 		uint16 _fontID;
 	};
 
+	const Common::String &getName() { return _name; }
+	uint16 getFontFamilyId() { return _ffFamID; }
 	Common::Array<AsscEntry> *getAssocTable() { return &_ffAssocEntries; }
 
 private:
+	Common::String _name;
+
 	// FOND
 	uint16 _ffFlags;
 	uint16 _ffFamID;
