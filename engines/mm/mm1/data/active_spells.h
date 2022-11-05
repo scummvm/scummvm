@@ -55,7 +55,16 @@ union ActiveSpells {
 	byte _arr[ACTIVE_SPELLS_COUNT];
 
 	ActiveSpells() { clear(); }
+
+	/**
+	 * Clear the spells
+	 */
 	void clear();
+
+	/**
+	 * Synchronize spell data to/from savegames
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace MM1

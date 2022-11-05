@@ -124,5 +124,15 @@ bool Party::checkPartyDead() const {
 	}
 }
 
+void Party::synchronize(Common::Serializer &s) {
+	int partySize = size();
+	s.syncAsByte(partySize);
+	if (s.isLoading())
+		resize(partySize);
+
+	for (int i = 0; i < partySize; ++i)
+		(*this)[i].synchronize(s);
+}
+
 } // namespace MM1
 } // namespace MM

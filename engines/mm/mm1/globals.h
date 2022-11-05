@@ -83,7 +83,7 @@ public:
 	}
 
 	/**
-	 * Saves or loads global data to/from savegames
+	 * Saves global data to/from savegames
 	 */
 	void synchronize(Common::Serializer &s);
 };

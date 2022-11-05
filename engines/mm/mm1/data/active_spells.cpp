@@ -28,5 +28,9 @@ void ActiveSpells::clear() {
 	Common::fill(&_arr[0], &_arr[ACTIVE_SPELLS_COUNT], 0);
 }
 
+void ActiveSpells::synchronize(Common::Serializer &s) {
+	s.syncBytes(_arr, ACTIVE_SPELLS_COUNT);
+}
+
 } // namespace MM1
 } // namespace MM

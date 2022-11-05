@@ -208,11 +208,19 @@ void Maps::synchronizeCurrent(Common::Serializer &s) {
 	s.syncAsUint16LE(_id);
 	s.syncAsByte(_section);
 
-	if (s.isLoading())
-		changeMap(_id, _section);
-
 	s.syncAsByte(_mapPos.x);
 	s.syncAsByte(_mapPos.y);
+	s.syncAsByte(_forwardMask);
+	s.syncAsByte(_backwardsMask);
+	s.syncAsByte(_leftMask);
+	s.syncAsByte(_rightMask);
+	s.syncAsSByte(_forwardOffset);
+	s.syncAsSByte(_backwardsOffset);
+	s.syncAsSByte(_leftOffset);
+	s.syncAsSByte(_rightOffset);
+
+	if (s.isLoading())
+		changeMap(_id, _section);
 }
 
 void Maps::select(uint16 id, byte section) {
