@@ -150,8 +150,8 @@ private:
 	uint _startFrameTime;
 };
 
-Renderer *CreateGfxOpenGL(OSystem *system, Common::RenderMode renderMode);
-Renderer *CreateGfxOpenGLShader(OSystem *system, Common::RenderMode renderMode);
+Renderer *CreateGfxOpenGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
+Renderer *CreateGfxOpenGLShader(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 

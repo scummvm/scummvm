@@ -29,6 +29,13 @@ MODULE_OBJS += \
 	gfx_tinygl_texture.o
 endif
 
+ifdef USE_OPENGL
+MODULE_OBJS += \
+	gfx_opengl.o \
+	gfx_opengl_texture.o
+endif
+
+
 MODULE_DIRS += \
 	engines/freescape
 

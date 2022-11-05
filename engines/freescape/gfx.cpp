@@ -19,9 +19,15 @@
  *
  */
 
+#include "common/config-manager.h"
+
 #include "gui/message.h"
 #include "graphics/renderer.h"
 #include "engines/util.h"
+
+#if defined(USE_OPENGL_GAME) || defined(USE_OPENGL_SHADERS) || defined(USE_GLES2)
+#include "graphics/opengl/context.h"
+#endif
 
 #include "freescape/gfx.h"
 #include "freescape/objects/object.h"
@@ -400,11 +406,36 @@ void Renderer::renderPolygon(const Math::Vector3d &origin, const Math::Vector3d 
 
 
 Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
+	Common::String rendererConfig = ConfMan.get("renderer");
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	// This code will allow different renderers, but right now, it only support TinyGL
-	Graphics::RendererType desiredRendererType = Graphics::kRendererTypeTinyGL;
+	Graphics::RendererType desiredRendererType = Graphics::Renderer::parseTypeCode(rendererConfig);
+	Graphics::RendererType matchingRendererType = Graphics::Renderer::getBestMatchingAvailableType(desiredRendererType,
+#if defined(USE_OPENGL_GAME)
+						Graphics::kRendererTypeOpenGL |
+#endif
+#if defined(USE_TINYGL)
+						Graphics::kRendererTypeTinyGL |
+#endif
+						0);
 
-	initGraphics(screenW, screenH, &pixelFormat);
+	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
+
+	if (isAccelerated) {
+		initGraphics3d(screenW, screenH);
+	} else {
+		initGraphics(screenW, screenH, &pixelFormat);
+	}
+
+	if (matchingRendererType != desiredRendererType && desiredRendererType != Graphics::kRendererTypeDefault) {
+		// Display a warning if unable to use the desired renderer
+		warning("Unable to create a '%s' renderer", rendererConfig.c_str());
+	}
+
+	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
+		if (matchingRendererType == Graphics::kRendererTypeOpenGL) {
+			return CreateGfxOpenGL(system, screenW, screenH, renderMode);
+		}
+	#endif
 
 	#if defined(USE_TINYGL)
 	if (desiredRendererType == Graphics::kRendererTypeTinyGL) {
