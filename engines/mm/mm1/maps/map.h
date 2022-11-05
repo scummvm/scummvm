@@ -81,7 +81,8 @@ enum DataOffset {
 	MAP_FLAGS = 46,
 	MAP_47 = 47,
 	MAP_TRAP_THRESHOLD = 48,
-	MAP_49 = 49
+	MAP_49 = 49,
+	MAP_SPECIAL_COUNT = 50
 };
 
 enum WallType {

@@ -75,6 +75,11 @@ protected:
 	 */
 	bool cmdEncounter(int argc, const char **argv);
 
+	/**
+	 * List the special cells in the current map
+	 */
+	bool cmdSpecials(int argc, const char **argv);
+
 public:
 	Console();
 	~Console() override {}
