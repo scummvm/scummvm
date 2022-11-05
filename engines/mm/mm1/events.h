@@ -321,6 +321,12 @@ public:
 			_views[_views.size() - 2];
 	}
 
+	/**
+	 * Returns true if a view of a given name is present
+	 * at all in the visible view stack
+	 */
+	bool isPresent(const Common::String &name) const;
+
 	Graphics::Screen *getScreen() const {
 		return _screen;
 	}

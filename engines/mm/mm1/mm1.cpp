@@ -29,10 +29,14 @@
 #include "mm/mm1/mm1.h"
 #include "mm/mm1/console.h"
 #include "mm/mm1/gfx/gfx.h"
-#include "mm/xeen/files.h"
+//#include "mm/xeen/files.h"
+#include "mm/mm1/views/game.h"
+#include "mm/mm1/views_enh/game.h"
 
 namespace MM {
 namespace MM1 {
+
+#define SAVEGAME_VERSION 1
 
 MM1Engine *g_engine = nullptr;
 
@@ -126,16 +130,38 @@ bool MM1Engine::hasFeature(EngineFeature f) const {
 }
 
 bool MM1Engine::canSaveGameStateCurrently() {
-	return !g_globals->_inCombat;
+	if (!g_events)
+		return false;
+
+	UIElement *view = g_events->focusedView();
+	return dynamic_cast<Views::Game *>(view) != nullptr ||
+		dynamic_cast<ViewsEnh::Game *>(view) != nullptr;
 }
 
 bool MM1Engine::canLoadGameStateCurrently() {
+	if (!g_events)
+		return false;
+
+	// Loading savegames can be done in any view, since we can
+	// just remove them all and add the game view
 	return true;
 }
 
-Common::Error MM1Engine::loadGameStream(Common::SeekableReadStream *stream) {
-	// TODO: Loading savegames
-	g_globals->_inCombat = false;
+Common::Error MM1Engine::synchronizeSave(Common::Serializer &s) {
+	// Get/set the version
+	byte version = SAVEGAME_VERSION;
+	s.syncAsByte(version);
+	if (version > SAVEGAME_VERSION)
+		return Common::kReadingFailed;
+	s.setVersion(version);
+
+	// Sync globals
+	g_globals->synchronize(s);
+
+	// If we're loading a savegame, switch to the game view
+	if (s.isLoading())
+		g_events->replaceView("Game", true);
+
 	return Common::kNoError;
 }
 

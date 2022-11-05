@@ -34,7 +34,6 @@ Encounter::Encounter() : TextView("Encounter") {
 
 bool Encounter::msgFocus(const FocusMessage &msg) {
 	_mode = ALERT;
-	g_globals->_inCombat = true;
 	return true;
 }
 
@@ -247,7 +246,6 @@ bool Encounter::msgKeypress(const KeypressMessage &msg) {
 
 void Encounter::encounterEnded() {
 	close();
-	g_globals->_inCombat = false;
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
