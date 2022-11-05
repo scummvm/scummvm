@@ -26,39 +26,20 @@
 
 #ifdef MACOSX
 
-#include <AvailabilityMacros.h>
+#include "backends/platform/sdl/macosx/macosx-compat.h"
 
 // With the release of Mac OS X 10.5 in October 2007, Apple deprecated the
 // AUGraphNewNode & AUGraphGetNodeInfo APIs in favor of the new AUGraphAddNode &
 // AUGraphNodeInfo APIs. While it is easy to switch to those, it breaks
-// compatibility with all pre-10.5 systems.
-//
-// Since 10.5 was the last system to support PowerPC, we use the old, deprecated
-// APIs on PowerPC based systems by default. On all other systems (such as macOS
-// running on Intel hardware, or iOS running on ARM), we use the new API by
-// default.
-//
-// This leaves Mac OS X 10.4 running on x86 processors as the only system
-// combination that this code will not support by default. It seems quite
-// reasonable to assume that anybody with an Intel system has since then moved
-// on to a newer macOS release. But if for some reason you absolutely need to
-// build an x86 version of this code using the old, deprecated API, you can
-// simply do so by manually enable the USE_DEPRECATED_COREAUDIO_API switch (e.g.
-// by adding setting it suitably in CPPFLAGS).
-#if !defined(USE_DEPRECATED_COREAUDIO_API)
-	#if TARGET_CPU_PPC || TARGET_CPU_PPC64 || !defined(MAC_OS_X_VERSION_10_6)
-		#define USE_DEPRECATED_COREAUDIO_API 1
-	#else
-		#define USE_DEPRECATED_COREAUDIO_API 0
-	#endif
-#endif
-
-#if USE_DEPRECATED_COREAUDIO_API
+// compatibility with 10.4, for which we need to use the older APIs.
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_5
+	#define USE_DEPRECATED_COREAUDIO_API 1
 	// Try to silence warnings about use of deprecated APIs
 	#undef DEPRECATED_ATTRIBUTE
 	#define DEPRECATED_ATTRIBUTE
+#else
+	#define USE_DEPRECATED_COREAUDIO_API 0
 #endif
-
 
 #include "common/config-manager.h"
 #include "common/error.h"
@@ -129,7 +110,7 @@ int MidiDriver_CORE::open() {
 	RequireNoErr(NewAUGraph(&_auGraph));
 
 	AUNode outputNode, synthNode;
-#if USE_DEPRECATED_COREAUDIO_API
+#if MAC_OS_X_VERSION_MAX_ALLOWED < MAC_OS_X_VERSION_10_6
 	ComponentDescription desc;
 #else
 	AudioComponentDescription desc;
