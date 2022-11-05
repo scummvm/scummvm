@@ -109,6 +109,7 @@ void Globals::synchronize(Common::Serializer &s) {
 
 	// Sync map data and visited tiles
 	_maps.synchronize(s);
+	_maps.synchronizeCurrent(s);
 
 	// Sync treasure data
 	_treasure.synchronize(s);
