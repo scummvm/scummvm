@@ -196,7 +196,7 @@ bool VideoManager::updateMovies() {
 	bool updateScreen = false;
 
 	for (VideoList::iterator it = _videos.begin(); it != _videos.end(); ) {
-		g_system->showOverlay();
+		g_system->showOverlay(false);
 		g_system->clearOverlay();
 
 		// Check of the video has reached the end
