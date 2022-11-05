@@ -125,6 +125,7 @@ public:
 	void transMultiPass(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 	void transZoom(TransParams &t, Common::Rect &clipRect, Graphics::ManagedSurface *tmpSurface);
 
+	// window.cpp
 	Common::Point getMousePos();
 
 	DirectorEngine *getVM() const { return _vm; }
@@ -140,7 +141,6 @@ public:
 	int getWindowType() const { return _windowType; }
 	void setTitleVisible(bool titleVisible) { _titleVisible = titleVisible; updateBorderType(); };
 	bool isTitleVisible() { return _titleVisible; };
-	LingoState *getLingoState() { return _lingoState; };
 	Datum getStageRect();
 
 	void updateBorderType();
@@ -150,6 +150,11 @@ public:
 	void loadNewSharedCast(Cast *previousSharedCast);
 
 	Common::String getSharedCastPath();
+
+	LingoState *getLingoState() { return _lingoState; };
+	bool hasFrozenLingoState() { return _frozenLingoState != nullptr; };
+	void freezeLingoState();
+	void thawLingoState();
 
 	// events.cpp
 	bool processEvent(Common::Event &event) override;
@@ -199,6 +204,7 @@ private:
 	DirectorEngine *_vm;
 	DirectorSound *_soundManager;
 	LingoState *_lingoState;
+	LingoState *_frozenLingoState;
 	bool _isStage;
 	Archive *_mainArchive;
 	Movie *_currentMovie;

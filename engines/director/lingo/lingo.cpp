@@ -155,7 +155,7 @@ Lingo::Lingo(DirectorEngine *vm) : _vm(vm) {
 	_state = nullptr;
 	_currentChannelId = -1;
 	_globalCounter = 0;
-	_freezeContext = false;
+	_freezeState = false;
 	_abort = false;
 	_expectError = false;
 	_caughtError = false;
@@ -541,7 +541,7 @@ Common::String Lingo::formatFunctionBody(Symbol &sym) {
 void Lingo::execute() {
 	uint localCounter = 0;
 
-	while (!_abort && !_freezeContext && _state->script && (*_state->script)[_state->pc] != STOP) {
+	while (!_abort && !_freezeState && _state->script && (*_state->script)[_state->pc] != STOP) {
 		if (_globalCounter > 1000 && debugChannelSet(-1, kDebugFewFramesOnly)) {
 			warning("Lingo::execute(): Stopping due to debug few frames only");
 			_vm->getCurrentMovie()->getScore()->_playState = kPlayStopped;
@@ -595,17 +595,18 @@ void Lingo::execute() {
 		}
 	}
 
-	if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
+	if (_freezeState) {
+		debugC(5, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
+		freezeState();
+	} else if (_abort || _vm->getCurrentMovie()->getScore()->_playState == kPlayStopped) {
 		// Clean up call stack
 		while (_state->callstack.size()) {
 			popContext(true);
 		}
 	}
 	_abort = false;
+	_freezeState = false;
 
-	if (_freezeContext) {
-		debugC(1, kDebugLingoExec, "Lingo::execute(): Context is frozen, pausing execution");
-	}
 	g_debugger->stepHook();
 }
 

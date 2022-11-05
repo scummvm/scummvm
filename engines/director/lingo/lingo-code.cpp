@@ -233,7 +233,6 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 	fp->retPC = _state->pc;
 	fp->retScript = _state->script;
 	fp->retContext = _state->context;
-	fp->retFreezeContext = _freezeContext;
 	fp->retLocalVars = _state->localVars;
 	fp->retMe = _state->me;
 	fp->sp = funcSym;
@@ -249,7 +248,6 @@ void Lingo::pushContext(const Symbol funcSym, bool allowRetVal, Datum defaultRet
 		_state->context = funcSym.ctx;
 		*_state->context->_refCount += 1;
 	}
-	_freezeContext = false;
 
 	DatumHash *localvars = _state->localVars;
 	if (!funcSym.anonymous) {
@@ -345,7 +343,6 @@ void Lingo::popContext(bool aborting) {
 
 	_state->script = fp->retScript;
 	_state->context = fp->retContext;
-	_freezeContext = fp->retFreezeContext;
 	_state->pc = fp->retPC;
 	_state->me = fp->retMe;
 
@@ -364,17 +361,15 @@ void Lingo::popContext(bool aborting) {
 	g_debugger->popContextHook();
 }
 
-bool Lingo::hasFrozenContext() {
-	if (_freezeContext)
-		return true;
+bool Lingo::hasFrozenState() {
+	Window *window = _vm->getCurrentWindow();
+	return window->hasFrozenLingoState();
+}
 
-	Common::Array<CFrame *> &callstack = _state->callstack;
-	for (uint i = 0; i < callstack.size(); i++) {
-		if (callstack[i]->retFreezeContext)
-			return true;
-	}
-
-	return false;
+void Lingo::freezeState() {
+	Window *window = _vm->getCurrentWindow();
+	window->freezeLingoState();
+	switchStateFromWindow();
 }
 
 void LC::c_constpush() {

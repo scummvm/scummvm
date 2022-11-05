@@ -49,6 +49,7 @@ Window::Window(int id, bool scrollable, bool resizable, bool editable, Graphics:
 	_puppetTransition = nullptr;
 	_soundManager = new DirectorSound(this);
 	_lingoState = new LingoState;
+	_frozenLingoState = nullptr;
 
 	_currentMovie = nullptr;
 	_mainArchive = nullptr;
@@ -426,6 +427,31 @@ Common::String Window::getSharedCastPath() {
 	}
 
 	return Common::String();
+}
+
+void Window::freezeLingoState() {
+	if (_frozenLingoState) {
+		warning("State already frozen! Ditching callstack with %d frames", _frozenLingoState->callstack.size());
+		delete _frozenLingoState;
+	}
+	_frozenLingoState = _lingoState;
+	_lingoState = new LingoState;
+	debugC(kDebugLingoExec, 5, "Freezing Lingo state");
+}
+
+void Window::thawLingoState() {
+	if (!_frozenLingoState) {
+		warning("Tried to thaw when there's no frozen state, ignoring");
+		return;
+	}
+	if (!_lingoState->callstack.empty()) {
+		warning("Can't thaw a Lingo state in mid-execution, ignoring");
+		return;
+	}
+	delete _lingoState;
+	_lingoState = _frozenLingoState;
+	_frozenLingoState = nullptr;
+	debugC(kDebugLingoExec, 5, "Thawing Lingo state");
 }
 
 } // End of namespace Director
