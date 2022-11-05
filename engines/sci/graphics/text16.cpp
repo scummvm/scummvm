@@ -22,6 +22,7 @@
 #include "common/util.h"
 #include "common/stack.h"
 #include "common/unicode-bidi.h"
+#include "graphics/font.h"
 #include "graphics/primitives.h"
 
 #include "sci/sci.h"
@@ -29,6 +30,7 @@
 #include "sci/engine/state.h"
 #include "sci/graphics/cache.h"
 #include "sci/graphics/coordadjuster.h"
+#include "sci/graphics/macfont.h"
 #include "sci/graphics/ports.h"
 #include "sci/graphics/paint16.h"
 #include "sci/graphics/scifont.h"
@@ -37,8 +39,8 @@
 
 namespace Sci {
 
-GfxText16::GfxText16(GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen)
-	: _cache(cache), _ports(ports), _paint16(paint16), _screen(screen) {
+GfxText16::GfxText16(GfxCache *cache, GfxPorts *ports, GfxPaint16 *paint16, GfxScreen *screen, GfxMacFontManager *macFontManager)
+	: _cache(cache), _ports(ports), _paint16(paint16), _screen(screen), _macFontManager(macFontManager) {
 	init();
 }
 
@@ -822,6 +824,201 @@ void GfxText16::kernelTextColors(int argc, reg_t *argv) {
 	for (i = 0; i < argc; i++) {
 		_codeColors[i] = argv[i].toUint16();
 	}
+}
+
+// This function is roughly equivalent to RTextSizeMac.
+// (SCI1.1 Mac interpreters include function names.)
+// The results of this function determine the size of SCI message boxes over
+// which macDraw() is called later. Even though the Mac interpreter would use
+// one of three font sizes for drawing, depending on the window size the user
+// had selected, these calculations always use the small font. Otherwise, the
+// size of the window would affect the size of the message box within the game,
+// instead of just the text that was drawn within it.
+void GfxText16::macTextSize(const Common::String &text, GuiResourceId sciFontId, GuiResourceId origSciFontId, int16 maxWidth, int16 *textWidth, int16 *textHeight) {
+	if (sciFontId == -1) {
+		sciFontId = origSciFontId;
+	}
+
+	// Always use the small font for calculating text size
+	const Graphics::Font *font = _macFontManager->getSmallFont(sciFontId);
+
+	// If maxWidth is negative then return the size of all characters on the same line
+	if (maxWidth < 0) {
+		*textWidth = 0;
+		for (uint i = 0; i < text.size(); ++i) {
+			*textWidth += font->getCharWidth(text[i]);
+		}
+		*textHeight = font->getFontAscent();
+		return;
+	}
+
+	// Default max width is 193, otherwise increment the specified max
+	maxWidth = (maxWidth == 0) ? 193 : (maxWidth + 1);
+
+	// Build lists of lines and widths and calculate the largest line width. 
+	// The Mac interpreter did this by creating a hidden TEdit, settings its width
+	// and text, and then querying TEdit's internal structures to count the lines
+	// and find the largest. This means that Mac's own text wrapping algorithm
+	// determined kTextResult results and the resulting message box sizes.
+	// Due to the specifics of Mac's text-wrapping, it's possible for resulting
+	// lines to be larger than maxWidth. See macGetLongest().
+	Common::Array<Common::String> lines;
+	Common::Array<int16> lineWidths;
+	int16 maxLineCharCount = 0;
+	int16 maxLineWidth = 0;
+	int lineCount = 0;
+	for (uint i = 0; i < text.size(); ++i) {
+		int16 lineWidth;
+		int16 lineCharCount = macGetLongest(text, i, font, maxWidth, &lineWidth);
+
+		Common::String line;
+		for (int16 j = 0; j < lineCharCount; ++j) {
+			char ch = text[i + j];
+			if (ch == '\r' || ch == '\n') {
+				break;
+			}
+			if (ch == '\t') {
+				ch = ' ';
+			}
+			line += ch;
+		}
+		lines.push_back(line);
+		lineWidths.push_back(lineWidth);
+		maxLineCharCount = MAX(lineCharCount, maxLineCharCount);
+
+		if (lineCharCount == 0) {
+			break;
+		}
+		maxLineWidth = MAX(lineWidth, maxLineWidth);
+		lineCount++;
+		i += (lineCharCount - 1);
+	}
+
+	// Mac TEdit line widths are 1 pixel wider than the sum of their character widths.
+	// This extra pixel comes from the TEdit structure the Mac interpreter queries.
+	*textWidth = maxLineWidth + 1;
+	if (_macFontManager->usesSystemFonts()) {
+		// QFG1VGA and LSL6 add another pixel to returned widths.
+		*textWidth += 1;
+	}
+
+	// Mac TEdit height is the sum of font height and leading, which is space between lines.
+	// Leading can be zero for fonts that have spacing embedded in their glyphs.
+	*textHeight = lineCount * (font->getFontHeight() + font->getFontLeading());
+
+	if (_macFontManager->usesSystemFonts()) {
+		// QFG1VGA and LSL6 make this adjustment when the large font is used.
+		*textHeight -= (lineCount + 1);
+	}
+}
+
+// This function is roughly equivalent to RTextBoxMac.
+// (SCI1.1 Mac interpreters include function names.)
+// The main difference is that we draw each character ourselves.
+// RTextBoxMac just created a TEdit with a transparent background, set its
+// properties, and then had Mac render it on the window.
+void GfxText16::macDraw(const Common::String &text, Common::Rect rect, TextAlignment alignment, GuiResourceId sciFontId, GuiResourceId origSciFontId, int16 color) {
+	if (sciFontId == -1) {
+		sciFontId = origSciFontId;
+	}
+
+	// Always use the large font
+	const Graphics::Font *font = _macFontManager->getLargeFont(sciFontId);
+
+	if (color == -1) {
+		color = g_sci->_gfxPorts->_curPort->penClr;
+	}
+
+	// We are drawing in high resolution
+	rect.left *= 2;
+	rect.top *= 2;
+	rect.right *= 2;
+	rect.bottom *= 2;
+
+	// Draw each line of text
+	int16 maxWidth = rect.width();
+	int16 y = (g_sci->_gfxPorts->_curPort->top * 2) + rect.top;
+	for (uint i = 0; i < text.size(); ++i) {
+		int16 lineWidth;
+		int16 lineCharCount = macGetLongest(text, i, font, maxWidth, &lineWidth);
+		if (lineCharCount == 0) {
+			break;
+		}
+
+		int16 offset = 0;
+		if (alignment == SCI_TEXT16_ALIGNMENT_CENTER) {
+			offset = (maxWidth - lineWidth) / 2;
+		} else if (alignment == SCI_TEXT16_ALIGNMENT_RIGHT) {
+			offset = maxWidth - lineWidth;
+		}
+
+		// Draw each character in the line
+		int16 x = (g_sci->_gfxPorts->_curPort->left * 2) + rect.left + offset;
+		for (int16 j = 0; j < lineCharCount; ++j) {
+			char ch = text[i + j];
+			g_sci->_gfxScreen->putHiresChar(font, x, y, ch, color);
+			x += font->getCharWidth(ch);
+		}
+
+		y += font->getFontHeight() + font->getFontLeading();
+		i += (lineCharCount - 1);
+	}
+}
+
+// This function mimics classic Mac's TEdit text wrapping behavior in a style
+// similar to GfxText16::GetLongest() that we use for SCI text measurement.
+// This implementation is based on black-box reverse engineering System 7.5.5
+// behavior by inspecting the calculated TEdit widths and modding SCI games to
+// display the results of kTextSize and altering their strings to test various
+// inputs. It's possible that this Mac behavior was ROM or OS version dependent.
+// In general, line width calculations work as one would expect, except for the
+// oddity that space characters are applied to the current line and included
+// in the calculated width even if that results in widths larger than maxWidth.
+int16 GfxText16::macGetLongest(const Common::String &text, uint start, const Graphics::Font *font, int16 maxWidth, int16 *lineWidth) {
+	*lineWidth = 0;
+	int wordWidth = 0;
+	int wordStart = start;
+	char prevChar = '\0';
+	for (uint i = start; i < text.size(); ++i) {
+		char ch = text[i];
+		int charWidth = font->getCharWidth(ch);
+		if (ch == '\r') {
+			*lineWidth += wordWidth;
+			wordWidth = 0;
+			// ignore \n that follows \r
+			if (i + 1 < text.size() && text[i + 1] == '\n') {
+				++i;
+			}
+			wordStart = i + 1;
+			return wordStart - start;
+		} else if (ch == '\n') {
+			*lineWidth += wordWidth;
+			wordWidth = 0;
+			wordStart = i + 1;
+			return wordStart - start;
+		} else if (prevChar == ' ' && ch != ' ') {
+			// start new word once a non-space is reached
+			*lineWidth += wordWidth;
+			wordWidth = charWidth;
+			wordStart = i;
+		} else {
+			// add character to word width, including spaces
+			wordWidth += charWidth;
+		}
+
+		// If the line plus the current width has reached maxWidth then we are done,
+		// unless the current character is a space. Spaces continue to be applied
+		// to the line regardless of maxWidth. This means that a line's width can
+		// be larger than maxWidth due to whitespace, resulting in a larger text box
+		// than what was requested, but that is indeed what happens in classic Mac.
+		if (*lineWidth + wordWidth >= maxWidth && ch != ' ') {
+			return wordStart - start;
+		}
+
+		prevChar = ch;
+	}
+	*lineWidth += wordWidth;
+	return text.size() - start;
 }
 
 } // End of namespace Sci

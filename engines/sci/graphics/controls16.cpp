@@ -328,7 +328,11 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 		_paint16->frameRect(rect);
 		rect.grow(-2);
 		_ports->textGreyedOutput(!(style & SCI_CONTROLS_STYLE_ENABLED));
-		_text16->Box(text, languageSplitter, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+		if (!g_sci->hasMacFonts()) {
+			_text16->Box(text, languageSplitter, false, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId);
+		} else {
+			_text16->macDraw(text, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId, _text16->GetFontId(), 0);
+		}
 		_ports->textGreyedOutput(false);
 		rect.grow(1);
 		if (style & SCI_CONTROLS_STYLE_SELECTED)
@@ -347,6 +351,15 @@ void GfxControls16::kernelDrawButton(Common::Rect rect, reg_t obj, const char *t
 			_paint16->invertRectViaXOR(rect);
 		else
 			_paint16->invertRect(rect);
+		if (g_sci->hasMacFonts()) {
+			// Mac scripts set a flag to tell the interpreter to draw white text when inverted.
+			// Note that KQ6 does not do this because it includes the PC version of the script,
+			// causing button text to disappear when clicked in the original.
+			uint16 textColor = (style & SCI_CONTROLS_STYLE_MAC_INVERTED) ? 255 : 0;
+			rect.grow(-1);
+			_text16->macDraw(text, rect, SCI_TEXT16_ALIGNMENT_CENTER, fontId, _text16->GetFontId(), textColor);
+			rect.grow(1);
+		}
 		_paint16->bitsShow(rect);
 	}
 }
@@ -358,7 +371,11 @@ void GfxControls16::kernelDrawText(Common::Rect rect, reg_t obj, const char *tex
 		rect.grow(1);
 		_paint16->eraseRect(rect);
 		rect.grow(-1);
-		_text16->Box(text, languageSplitter, false, rect, alignment, fontId);
+		if (!g_sci->hasMacFonts()) {
+			_text16->Box(text, languageSplitter, false, rect, alignment, fontId);
+		} else {
+			_text16->macDraw(text, rect, alignment, fontId, _text16->GetFontId(), 0);
+		}
 		if (style & SCI_CONTROLS_STYLE_SELECTED) {
 			_paint16->frameRect(rect);
 		}

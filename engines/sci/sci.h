@@ -66,6 +66,7 @@ class GfxControls16;
 class GfxControls32;
 class GfxCoordAdjuster16;
 class GfxCursor;
+class GfxMacFontManager;
 class GfxMacIconBar;
 class GfxMenu;
 class GfxPaint16;
@@ -193,7 +194,18 @@ public:
 	bool isBE() const;
 
 	bool hasParser() const;
+
+	/** Returns true if the game supports native Mac fonts and the fonts are available. */
+	bool hasMacFonts() const;
+	
+	/** Returns true if the game is a Mac version with an icon bar on the bottom. */
 	bool hasMacIconBar() const;
+
+	/**
+	 * Returns true if the game is a Mac version that used native Mac file dialogs
+	 * for saving and restoring. These versions do not include resources for the
+	 * normal save and restore screens, so the ScummVM UI must always be used.
+	 */
 	bool hasMacSaveRestoreDialogs() const;
 
 	inline ResourceManager *getResMan() const { return _resMan; }
@@ -283,6 +295,7 @@ public:
 	GfxText16 *_gfxText16;
 	GfxTransitions *_gfxTransitions; // transitions between screens for 16-bit gfx
 	GfxMacIconBar *_gfxMacIconBar; // Mac Icon Bar manager
+	GfxMacFontManager *_gfxMacFontManager; // null when not applicable
 	SciTTS *_tts;
 
 #ifdef ENABLE_SCI32
@@ -339,9 +352,21 @@ private:
 	void exitGame();
 
 	/**
-	 * Loads the Mac executable for SCI1 games
+	 * Loads the Mac executable for SCI1/1.1 games.
+	 * This function should only be called on Mac games.
+	 * If the executable isn't used, or is missing but optional,
+	 * then this function does nothing.
 	 */
 	void loadMacExecutable();
+
+	/**
+	 * Loads Mac native fonts for SCI1/1.1 games that support them.
+	 * This function should only be called on Mac games after loadMacExecutable()
+	 * has been called. Depending on the game, fonts are loaded from either the
+	 * executable or from classicmacfonts.dat. If fonts are not present, then a
+	 * warning is logged and SCI fonts are used instead.
+	 */
+	void loadMacFonts();
 
 	void initStackBaseWithSelector(Selector selector);
 

@@ -47,8 +47,9 @@ MODULE_OBJS := \
 	graphics/controls16.o \
 	graphics/coordadjuster.o \
 	graphics/cursor.o \
-	graphics/fontsjis.o \
 	graphics/fontkorean.o \
+	graphics/fontsjis.o \
+	graphics/macfont.o \
 	graphics/maciconbar.o \
 	graphics/menu.o \
 	graphics/paint16.o \

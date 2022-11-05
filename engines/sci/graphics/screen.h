@@ -26,6 +26,7 @@
 #include "sci/graphics/helpers.h"
 #include "sci/graphics/view.h"
 
+#include "graphics/font.h"
 #include "graphics/sjis.h"
 #include "graphics/korfont.h"
 #include "graphics/pixelformat.h"
@@ -117,6 +118,7 @@ public:
 	}
 	void enableUndithering(bool flag);
 
+	void putHiresChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	void putKanjiChar(Graphics::FontSJIS *commonFont, int16 x, int16 y, uint16 chr, byte color);
 	void putHangulChar(Graphics::FontKorean *commonFont, int16 x, int16 y, uint16 chr, byte color);
 
@@ -196,6 +198,7 @@ private:
 	 * Only read from this buffer for Save/ShowBits usage.
 	 */
 	byte *_displayScreen;
+	Graphics::Surface _displayScreenSurface;
 
 	// Screens for RGB mode support
 	byte *_displayedScreen;

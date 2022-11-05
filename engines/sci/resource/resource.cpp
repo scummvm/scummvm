@@ -3122,6 +3122,28 @@ Common::String ResourceManager::findSierraGameId(const bool isBE) {
 	return heap->getStringAt(offset);
 }
 
+// Mac executables are currently used for icon bars and native fonts.
+// Eventually they should be used for native menus and possibly even splash screens.
+// For example, LSL6 can't function without native menus. (bug #11356)
+// Executables that we currently don't use are commented out.
+Common::String ResourceManager::getMacExecutableName() const {
+	switch (g_sci->getGameId()) {
+	case GID_CASTLEBRAIN: return "Castle of Dr. Brain"; // fonts, splash screen
+	case GID_FREDDYPHARKAS: return "Freddy Pharkas"; // fonts, icon bar, menu, splash screen
+	//case GID_HOYLE4: return "Hoyle"; // menu, splash screen
+	//case GID_KQ5: return "King's Quest V"; // fonts (not supported yet), splash screen
+	case GID_KQ6: return "King's Quest VI"; // fonts, icon bar, menu, splash screen
+	case GID_LSL1: return "Leisure Suit Larry 1"; // fonts, splash screen
+	case GID_LSL5: return "Leisure Suit Larry 5"; // fonts, splash screen
+	//case GID_LSL6: return "Leisure Suit Larry 6"; // menu, splash screen
+	//case GID_QFG1VGA: return "Quest for Glory"; // menu, splash screen
+	case GID_SQ1: return "Space Quest 1"; // fonts, splash screen
+	//case GID_SQ3: return "SQ3"; // menu, splash screen
+	//case GID_SQ4: return "Space Quest IV"; // splash screen
+	default: return "";
+	}
+}
+
 bool ResourceManager::isKoreanMessageMap(ResourceSource *source) {
 	return source->getLocationName() == "message.map" && g_sci && g_sci->getLanguage() == Common::KO_KOR;
 }
