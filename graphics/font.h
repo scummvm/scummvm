@@ -105,6 +105,24 @@ public:
 	virtual int getFontAscent() const;
 
 	/**
+	 * Return the descent of the font.
+	 *
+	 * @return Font descent in pixels. If it is unknown
+	 * a value of -1 is returned.
+	 */
+	virtual int getFontDescent() const;
+
+	/**
+	 * Return the leading of the font.
+	 * This is the distance between the descent line
+	 * and the ascent line below it.
+	 *
+	 * @return Font leading in pixels. If it is unknown
+	 * a value of -1 is returned.
+	 */
+	virtual int getFontLeading() const;
+
+	/**
 	 * Return the maximum width of the font.
 	 *
 	 * @return Maximum font width in pixels.
