@@ -47,6 +47,7 @@ public:
 	void setMasterVolume(int vol);
 	void pauseAll(bool pause);
 	void resetGlobalPauseCounter();
+	bool isGlobalPauseActive() const;
 #ifdef ENABLE_SCI32
 	void setVolume(const reg_t obj, const int vol);
 #endif

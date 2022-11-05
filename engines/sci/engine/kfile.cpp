@@ -1201,8 +1201,11 @@ reg_t kRestoreGame(EngineState *s, int argc, reg_t *argv) {
 	if (argv[0].isNull()) {
 		// Direct call, either from launcher or from a patched Game::restore
 		if (savegameId == -1) {
-			// we are supposed to show a dialog for the user and let him choose a saved game
-			g_sci->_soundCmd->pauseAll(true); // pause music
+			// We are supposed to show a dialog for the user and let him choose a saved game.
+			// Pause music if necessary. There are script situations where the pause does not
+			// get properly released. In that case we don't add another pause here.
+			if (!g_sci->_soundCmd->isGlobalPauseActive()) 
+				g_sci->_soundCmd->pauseAll(true); 
 			GUI::SaveLoadChooser *dialog = new GUI::SaveLoadChooser(_("Restore game:"), _("Restore"), false);
 			savegameId = dialog->runModalWithCurrentTarget();
 			delete dialog;
