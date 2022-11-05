@@ -327,47 +327,53 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 
 bool Console::cmdSpecials(int argc, const char **argv) {
 	int count = g_maps->_currentMap->dataByte(Maps::MAP_SPECIAL_COUNT);
-	int i, mapOffset;
 
+	// List specials that have code attached
+	for (int i = 0; i < count; ++i) {
+		int mapOffset = g_maps->_currentMap->dataByte(51 + i);
+		int x = mapOffset % MAP_W;
+		int y = mapOffset / MAP_W;
+		Common::String line = Common::String::format(
+			"Special #%.2d - %d, %d (", i, x, y);
+
+		int dirMask = g_maps->_currentMap->dataByte(51 + i);
+		if (dirMask & Maps::DIRMASK_N)
+			line += "N,";
+		if (dirMask & Maps::DIRMASK_S)
+			line += "S,";
+		if (dirMask & Maps::DIRMASK_E)
+			line += "E,";
+		if (dirMask & Maps::DIRMASK_W)
+			line += "W,";
+
+		line.deleteLastChar();
+		line += ')';
+		debugPrintf("%s\n", line.c_str());
+	}
+
+	// Iterate through the map to find special cells that are codeless
+	int mapOffset = 0, i;
 	for (int mapPos = 0; mapPos < (MAP_W * MAP_H); ++mapPos) {
-		// Check whether the map cell is flagged as special, and whether
-		// the cell, if special, has special handling code
 		bool isSpecial = (g_maps->_currentMap->_states[mapPos]
 			& Maps::CELL_SPECIAL) != 0;
+		if (!isSpecial)
+			continue;
+
+		int x = mapPos % MAP_W;
+		int y = mapPos / MAP_W;
 
 		for (i = 0; i < count; ++i) {
 			mapOffset = g_maps->_currentMap->dataByte(51 + i);
 			if (mapOffset == mapPos)
 				break;
 		}
-		bool isExtraSpecial = i < count;
-		if (!isSpecial && !isExtraSpecial)
-			continue;
 
-		int x = mapPos % MAP_W;
-		int y = mapPos / MAP_W;
-		Common::String specialIdx = !isExtraSpecial ? "--" :
-			Common::String::format("%.2d", i);
-		Common::String line = Common::String::format(
-			"Special #%s - %d, %d", specialIdx.c_str(), x, y);
-
-		if (isExtraSpecial) {
-			line += " (";
-			int dirMask = g_maps->_currentMap->dataByte(51 + count + i);
-			if (dirMask & Maps::DIRMASK_N)
-				line += "N,";
-			if (dirMask & Maps::DIRMASK_S)
-				line += "S,";
-			if (dirMask & Maps::DIRMASK_E)
-				line += "E,";
-			if (dirMask & Maps::DIRMASK_W)
-				line += "W,";
-
-			line.deleteLastChar();
-			line += ')';
+		// Add row for special if there's no code handling
+		if (i == count) {
+			Common::String line = Common::String::format(
+				"Special #-- - %d, %d", x, y);
+			debugPrintf("%s\n", line.c_str());
 		}
-
-		debugPrintf("%s\n", line.c_str());
 	}
 
 	return true;
