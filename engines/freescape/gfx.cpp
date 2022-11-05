@@ -20,6 +20,7 @@
  */
 
 #include "common/config-manager.h"
+#include "common/system.h"
 
 #include "gui/message.h"
 #include "graphics/renderer.h"
@@ -98,8 +99,31 @@ Common::Rect Renderer::viewport() const {
 	return _screenViewport;
 }
 
-void Renderer::computeScreenViewport() {
-	_screenViewport = Common::Rect(_screenW, _screenH);
+bool Renderer::computeScreenViewport() {
+	int32 screenWidth = g_system->getWidth();
+	int32 screenHeight = g_system->getHeight();
+
+	Common::Rect viewport;
+	if (g_system->getFeatureState(OSystem::kFeatureAspectRatioCorrection)) {
+			// Aspect ratio correction
+			int32 viewportWidth = MIN<int32>(screenWidth, screenHeight * float(_screenW) / _screenH);
+			int32 viewportHeight = MIN<int32>(screenHeight, screenWidth * float(_screenH) / _screenW);
+			viewport = Common::Rect(viewportWidth, viewportHeight);
+
+			// Pillarboxing
+			viewport.translate((screenWidth - viewportWidth) / 2,
+				(screenHeight - viewportHeight) / 2);
+	} else {
+			// Aspect ratio correction disabled, just stretch
+			viewport = Common::Rect(screenWidth, screenHeight);
+	}
+
+	if (viewport == _screenViewport) {
+		return false;
+	}
+
+	_screenViewport = viewport;
+	return true;
 }
 
 void Renderer::renderPyramid(const Math::Vector3d &origin, const Math::Vector3d &size, const Common::Array<uint16> *ordinates, Common::Array<uint8> *colours, int type) {

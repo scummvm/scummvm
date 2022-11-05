@@ -112,11 +112,13 @@ public:
 	int _screenH;
 	Common::RenderMode _renderMode;
 
-	void computeScreenViewport();
+	bool computeScreenViewport();
 
 protected:
 	OSystem *_system;
 	Common::Rect _screenViewport;
+	Common::Rect _viewport;
+	Common::Rect _unscaledViewport;
 
 	Math::Matrix4 _projectionMatrix;
 	Math::Matrix4 _modelViewMatrix;

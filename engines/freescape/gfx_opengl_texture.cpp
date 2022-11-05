@@ -41,13 +41,13 @@ static uint32 upperPowerOfTwo(uint32 v) {
 	return v;
 }
 
-/*const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
+const Graphics::PixelFormat Texture::getRGBAPixelFormat() {
 #ifdef SCUMM_BIG_ENDIAN
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 #else
 		return Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24);
 #endif
-}*/
+}
 
 OpenGLTexture::OpenGLTexture() :
 		_internalFormat(0),
@@ -73,9 +73,12 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 		_internalWidth = upperPowerOfTwo(_width);
 	}
 
+	Graphics::Surface *convertedSurface = nullptr;
 	if (_format.bytesPerPixel == 4) {
-		//assert(surface->format == getRGBAPixelFormat());
+		convertedSurface = surface->convertTo(getRGBAPixelFormat());
+		assert(convertedSurface->format == getRGBAPixelFormat());
 
+		_format = convertedSurface->format;
 		_internalFormat = GL_RGBA;
 		_sourceFormat = GL_UNSIGNED_BYTE;
 	} else if (_format.bytesPerPixel == 2) {
@@ -95,7 +98,12 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
-	update(surface);
+	if (convertedSurface) {
+		update(convertedSurface);
+		convertedSurface->free();
+		delete convertedSurface;
+	} else
+		update(surface);
 }
 
 OpenGLTexture::~OpenGLTexture() {
@@ -107,20 +115,21 @@ void OpenGLTexture::update(const Graphics::Surface *surface) {
 }
 
 void OpenGLTexture::updateTexture(const Graphics::Surface *surface, const Common::Rect &rect) {
-	assert(surface->format == _format);
+	Graphics::Surface *convertedSurface = surface->convertTo(getRGBAPixelFormat());
+	assert(convertedSurface->format == _format);
 
 	glBindTexture(GL_TEXTURE_2D, _id);
 
 	if (OpenGLContext.unpackSubImageSupported) {
-		const Graphics::Surface subArea = surface->getSubArea(rect);
+		const Graphics::Surface subArea = convertedSurface->getSubArea(rect);
 
-		glPixelStorei(GL_UNPACK_ROW_LENGTH, surface->pitch / surface->format.bytesPerPixel);
+		glPixelStorei(GL_UNPACK_ROW_LENGTH, convertedSurface->pitch / convertedSurface->format.bytesPerPixel);
 
 		glTexSubImage2D(GL_TEXTURE_2D, 0, rect.left, rect.top, subArea.w, subArea.h, _internalFormat, _sourceFormat, const_cast<void *>(subArea.getPixels()));
 		glPixelStorei(GL_UNPACK_ROW_LENGTH, 0);
 	} else {
 		// GL_UNPACK_ROW_LENGTH is not supported, don't bother and do a full texture update
-		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, surface->w, surface->h, _internalFormat, _sourceFormat, const_cast<void *>(surface->getPixels()));
+		glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, convertedSurface->w, convertedSurface->h, _internalFormat, _sourceFormat, const_cast<void *>(convertedSurface->getPixels()));
 	}
 }
 

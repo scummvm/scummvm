@@ -65,10 +65,24 @@ void OpenGLRenderer::init() {
 	glDisable(GL_LIGHTING);
 	glDisable(GL_TEXTURE_2D);
 	glEnable(GL_DEPTH_TEST);
+	glEnable(GL_SCISSOR_TEST);
+	setViewport(_viewport);
 }
 
 void OpenGLRenderer::setViewport(const Common::Rect &rect) {
-	glViewport(rect.left, g_system->getHeight() - rect.bottom, rect.width(), rect.height());
+	_viewport = Common::Rect(
+					_screenViewport.width() * rect.width() / _screenW,
+					_screenViewport.height() * rect.height() / _screenH
+					);
+
+	_viewport.translate(
+					_screenViewport.left + _screenViewport.width() * rect.left / _screenW,
+					_screenViewport.top + _screenViewport.height() * rect.top / _screenH
+					);
+
+	_unscaledViewport = rect;
+	glViewport(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
+	glScissor(_viewport.left, g_system->getHeight() - _viewport.bottom, _viewport.width(), _viewport.height());
 }
 
 void OpenGLRenderer::clear() {
@@ -89,12 +103,14 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	float sRight = sLeft + screenRect.width();
 	float sBottom = sTop + screenRect.height();
 
-	if (glTexture->_upsideDown) {
-		SWAP(sTop, sBottom);
-    }
+	SWAP(sTop, sBottom);
 
+	glMatrixMode(GL_PROJECTION);
+	glOrtho(0, _screenH, 0, _screenW, -1, 1);
+	glMatrixMode(GL_MODELVIEW);
 
-	//glEnable(GL_TEXTURE_2D);
+	glDisable(GL_DEPTH_TEST);
+	glEnable(GL_TEXTURE_2D);
 	glColor4f(1.0, 1.0, 1.0, 1.0);
 	glDepthMask(GL_FALSE);
 
@@ -115,6 +131,7 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 	glDisable(GL_BLEND);
 	glDepthMask(GL_TRUE);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void OpenGLRenderer::updateProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) {
