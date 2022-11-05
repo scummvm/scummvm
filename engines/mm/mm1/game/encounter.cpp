@@ -31,6 +31,9 @@ namespace MM1 {
 namespace Game {
 
 void Encounter::execute() {
+	if (!g_globals->_encountersOn)
+		return;
+
 	Maps::Map &map = *g_maps->_currentMap;
 	int comp, maxRand, maxVal;
 	const Monster *monsterP;

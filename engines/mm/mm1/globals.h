@@ -48,7 +48,6 @@ public:
 	ItemsArray _items;
 	Maps::TownId _startingTown = Maps::SORPIGAL;
 	Maps::Maps _maps;
-	bool _intangible = false; // Console flag
 	BitmapFont _font;
 	bool _heardRumor = false;
 	Game::Encounter _encounters;
@@ -56,6 +55,11 @@ public:
 	Treasure _treasure;
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
+
+	// Console flags
+	bool _intangible = false;
+	bool _encountersOn = true;
+
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;

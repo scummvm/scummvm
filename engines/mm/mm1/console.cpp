@@ -41,6 +41,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
 	registerCmd("cast", WRAP_METHOD(Console, cmdCast));
 	registerCmd("encounter", WRAP_METHOD(Console, cmdEncounter));
+	registerCmd("encounters", WRAP_METHOD(Console, cmdEncounters));
 	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
 }
 
@@ -323,6 +324,18 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 
 	g_globals->_encounters.execute();
 	return false;
+}
+
+bool Console::cmdEncounters(int argc, const char **argv) {
+	if (argc == 1) {
+		g_globals->_encountersOn = !g_globals->_encountersOn;
+	} else {
+		g_globals->_encountersOn = !scumm_stricmp(argv[1], "on");
+	}
+
+	debugPrintf("Encounters are %s\n",
+		g_globals->_encountersOn ? "on" : "off");
+	return true;
 }
 
 bool Console::cmdSpecials(int argc, const char **argv) {
