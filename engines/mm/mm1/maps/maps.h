@@ -52,6 +52,8 @@ class Maps {
 	friend class Map;
 private:
 	Common::Array<Map *> _maps;
+	uint16 _id = 0;
+	uint8 _section = 0;
 private:
 	/**
 	 * Gets the index of a map given the id values
@@ -112,6 +114,11 @@ public:
 	 * Loads or saves map data
 	 */
 	void synchronize(Common::Serializer &s);
+
+	/**
+	 * Loads or saves the current map info
+	 */
+	void synchronizeCurrent(Common::Serializer &s);
 
 	/**
 	 * Selects a map

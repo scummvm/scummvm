@@ -193,17 +193,32 @@ void Maps::load(uint mapId) {
 }
 
 void Maps::synchronize(Common::Serializer &s) {
-	// Store a count of the number of maps,
-	// just in case new ones are added in later
-	uint8 mapCount = _maps.size();
+	// Store a count of the number of maps, just in case new ones
+	// are added in later as easter eggs just for ScummVM
+	int mapCount = _maps.size();
 	s.syncAsByte(mapCount);
 
-	for (uint8 i = 0; i < mapCount; ++mapCount) {
+	for (int i = 0; i < mapCount; ++i) {
 		s.syncBytes(_maps[i]->_visited, MAP_SIZE);
 	}
 }
 
+void Maps::synchronizeCurrent(Common::Serializer &s) {
+	// Save current map
+	s.syncAsUint16LE(_id);
+	s.syncAsByte(_section);
+
+	if (s.isLoading())
+		changeMap(_id, _section);
+
+	s.syncAsByte(_mapPos.x);
+	s.syncAsByte(_mapPos.y);
+}
+
 void Maps::select(uint16 id, byte section) {
+	_id = id;
+	_section = section;
+
 	uint mapId = getIndex(id, section);
 	load(mapId);
 }

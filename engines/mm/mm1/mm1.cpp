@@ -155,12 +155,13 @@ Common::Error MM1Engine::synchronizeSave(Common::Serializer &s) {
 		return Common::kReadingFailed;
 	s.setVersion(version);
 
+	// If we're loading a savegame, switch to the game view
+	if (s.isLoading()) {
+		g_events->replaceView("Game", true);
+	}
+
 	// Sync globals
 	g_globals->synchronize(s);
-
-	// If we're loading a savegame, switch to the game view
-	if (s.isLoading())
-		g_events->replaceView("Game", true);
 
 	return Common::kNoError;
 }
