@@ -30,8 +30,6 @@ class TeListLayout : public TeLayout {
 public:
 	TeListLayout();
 
-	// TODO add public members
-
 	TeVector3f32 _minimumMargin;
 	TeVector3f32 _maximumMargin;
 	TeVector3f32 _direction;

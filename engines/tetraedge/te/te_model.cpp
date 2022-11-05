@@ -33,7 +33,7 @@
 
 namespace Tetraedge {
 
-TeModel::TeModel() : _enableLights(false), _skipBoneMatricies(false), _matrixForced(false) {
+TeModel::TeModel() : _enableLights(false), _skipSkinOffsets(false), _matrixForced(false) {
 	// TODO: set 0x17c to 1.0
 	// TODO: set 0x178, 0x170 to 0
 	_modelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
@@ -43,42 +43,6 @@ TeModel::TeModel() : _enableLights(false), _skipBoneMatricies(false), _matrixFor
 
 TeModel::~TeModel() {
 	destroy();
-}
-
-void TeModel::create() {
-	// TODO: set field_0x158 to 0
-	_modelAnim.release();
-	_modelVertexAnim.release();
-	_matrixForced = false;
-	_skipBoneMatricies = false;
-}
-
-void TeModel::destroy() {
-	_weightElements.clear();
-	// TODO: clear matrix array 0x148
-	_meshes.clear();
-	_bones.clear();
-	// TODO: clear matrix array 0x190
-	_boneMatrices.clear();
-	for (MeshBlender *blender : _meshBlenders)
-		delete blender;
-	_meshBlenders.clear();
-	for (BonesBlender *blender : _boneBlenders)
-		delete blender;
-	_boneBlenders.clear();
-}
-
-int TeModel::checkFileType(Common::SeekableReadStream &instream) {
-	char buf[4];
-	instream.seek(0);
-	int sz = instream.read(buf, 4);
-	instream.seek(0);
-	if (sz == 4 && strncmp("TEMD", buf, 4) == 0) {
-		return 1;
-	} else if (sz == 4 && strncmp("TEAN", buf, 4) == 0) {
-		return 2;
-	}
-	return 0;
 }
 
 void TeModel::blendAnim(TeIntrusivePtr<TeModelAnimation>& anim, float seconds, bool repeat) {
@@ -96,6 +60,42 @@ void TeModel::blendMesh(const Common::String &s1, const Common::String &s2, floa
 	_meshBlenders.push_back(new MeshBlender(s1, s2, amount, this));
 }
 
+int TeModel::checkFileType(Common::SeekableReadStream &instream) {
+	char buf[4];
+	instream.seek(0);
+	int sz = instream.read(buf, 4);
+	instream.seek(0);
+	if (sz == 4 && strncmp("TEMD", buf, 4) == 0) {
+		return 1;
+	} else if (sz == 4 && strncmp("TEAN", buf, 4) == 0) {
+		return 2;
+	}
+	return 0;
+}
+
+void TeModel::create() {
+	// TODO: set field_0x158 to 0
+	_modelAnim.release();
+	_modelVertexAnim.release();
+	_matrixForced = false;
+	_skipSkinOffsets = false;
+}
+
+void TeModel::destroy() {
+	_weightElements.clear();
+	// TODO: clear matrix array 0x148
+	_meshes.clear();
+	_bones.clear();
+	_boneMatricies.clear();
+	_skinOffsets.clear();
+	for (MeshBlender *blender : _meshBlenders)
+		delete blender;
+	_meshBlenders.clear();
+	for (BonesBlender *blender : _boneBlenders)
+		delete blender;
+	_boneBlenders.clear();
+}
+
 void TeModel::draw() {
 	TeRenderer *renderer = g_engine->getRenderer();
 
@@ -104,16 +104,16 @@ void TeModel::draw() {
 		renderer->sendModelMatrix(transform);
 		renderer->pushMatrix();
 		renderer->multiplyMatrix(transform);
-		if (name() == "Kate") {
+		/*if (name() == "Kate") {
 			debug("Draw model %p (%s, %d meshes)", this, name().empty() ? "no name" : name().c_str(), _meshes.size());
-			debug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
-			debug("   position   %s", position().dump().c_str());
+			//adebug("   renderMatrix %s", renderer->currentMatrix().toString().c_str());
+			//debug("   position   %s", position().dump().c_str());
 			debug("   worldPos   %s", worldPosition().dump().c_str());
-			debug("   scale      %s", scale().dump().c_str());
+			//debug("   scale      %s", scale().dump().c_str());
 			debug("   worldScale %s", worldScale().dump().c_str());
-			debug("   rotation   %s", rotation().dump().c_str());
+			//debug("   rotation   %s", rotation().dump().c_str());
 			debug("   worldRot   %s", worldRotation().dump().c_str());
-		}
+		}*/
 		for (TeMesh &mesh : _meshes) {
 			// TODO: Set some flag in the mesh here to this->field_0x158??
 			mesh.draw();
@@ -137,11 +137,18 @@ TeTRS TeModel::getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num) 
 	return _bones[num]._trs;
 }
 
-void TeModel::setColor(const TeColor &col) {
-	Te3DObject2::setColor(col);
-	for (TeMesh &mesh : _meshes) {
-		mesh.setColor(col);
+TeMatrix4x4 TeModel::lerpElementsMatrix(unsigned long weightsNum, Common::Array<TeMatrix4x4> &matricies) {
+	TeMatrix4x4 retval;
+	for (unsigned int i = 0; i < 4; i++)
+		retval.setValue(i, i, 0);
+
+	// TODO: Finish this.
+	for (auto &weights : _weightElements) {
+	
 	}
+
+
+	return retval;
 }
 
 void TeModel::removeAnim() {
@@ -152,51 +159,102 @@ void TeModel::removeAnim() {
 	_modelAnim.release();
 }
 
-void TeModel::update() {
-	Common::Array<TeMatrix4x4> matricies;
-	matricies.resize(_bones.size());
-	for (unsigned int i = 0; i < _bones.size(); i++) {
-		const bone &b = _bones[i];
-		TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
-		if (b._x == -1 || _bones.size() < 2) {
-			matricies[0] = matrix;
-		} else {
-			matricies[i] = matricies[b._x] * matrix;
-		}
+void TeModel::setColor(const TeColor &col) {
+	Te3DObject2::setColor(col);
+	for (TeMesh &mesh : _meshes) {
+		mesh.setColor(col);
 	}
-	for (unsigned int b = 0; b < _bones.size(); b++) {
-		TeTRS startTRS = getBone(_modelAnim, b);
-		for (unsigned int i = 0; i < _boneBlenders.size(); i++) {
-			BonesBlender *blender = _boneBlenders[i];
-			float complete = MIN((blender->_timer.getTimeFromStart() / 1000000.0f) / blender->_seconds, 1.0f);
-			TeTRS trs;
-			TeTRS endTRS = getBone(blender->_anim, b);
-			if (complete == 1.0f) {
-				delete blender;
-				_boneBlenders.remove_at(i);
-				trs = endTRS;
-				i--;
+}
+
+void TeModel::update() {
+	if (_bones.size()) {
+		Common::Array<TeMatrix4x4> matricies;
+		matricies.resize(_bones.size());
+		for (unsigned int i = 0; i < _bones.size(); i++) {
+			const bone &b = _bones[i];
+			TeMatrix4x4 matrix = TeMatrix4x4::fromTRS(b._trs);
+			if (b._x == -1 || _bones.size() < 2) {
+				matricies[0] = matrix;
 			} else {
-				trs = startTRS.lerp(endTRS, complete);
+				matricies[i] = matricies[b._x] * matrix;
+			}
+		}
+		
+		_boneMatricies.resize(_bones.size());
+		_lerpedElements.resize(_weightElements.size());
+
+		TeMatrix4x4 invertx;
+		invertx.scale(TeVector3f32(-1, 1, 1));
+		for (unsigned int b = 0; b < _bones.size(); b++) {
+			TeTRS trs = getBone(_modelAnim, b);
+			for (unsigned int i = 0; i < _boneBlenders.size(); i++) {
+				BonesBlender *blender = _boneBlenders[i];
+				float complete = MIN((blender->_timer.getTimeFromStart() / 1000000.0f) / blender->_seconds, 1.0f);
+				TeTRS trs;
+				TeTRS endTRS = getBone(blender->_anim, b);
+				if (complete == 1.0f) {
+					delete blender;
+					_boneBlenders.remove_at(i);
+					trs = endTRS;
+					i--;
+				} else {
+					trs = trs.lerp(endTRS, complete);
+				}
 			}
 			TeMatrix4x4 matrix;
 			if (!_matrixForced) {
 				matrix = TeMatrix4x4::fromTRS(trs);
 			} else {
-				matrix = _forcedMatrix;
+				matrix = invertx * _forcedMatrix;
 				_matrixForced = false;
 			}
+			if (_bones.size() < 2 || _bones[b]._x == -1) {
+				_boneMatricies[b] = matrix;
+				// TODO: Rotate by _field_0x170
+			} else {
+				_boneMatricies[b] = (invertx * _boneMatricies[_bones[b]._x]) * matrix;
+			}
+			_boneMatricies[b] = invertx * _boneMatricies[b];
+			// TODO: bonesUpdateSignal.call(_bones[b]._name, _boneMatricies[b]);
 		}
-		//warning("TODO: Finish TeModel::update. (disasm 295 ~ 693)");
-	}
-	for (TeMesh &mesh : _meshes) {
-		if (!_modelVertexAnim) {
-			mesh.update(nullptr, nullptr);
-		} else {
-			if (mesh.name() != _modelVertexAnim->head()) {
+		
+		if (!_skinOffsets.empty() && !_bones.empty()) {
+			for (unsigned int b = 0; b < _bones.size(); b++) {
+				_boneMatricies[b] = _boneMatricies[b] * _skinOffsets[b];
+			}
+		}
+		
+		if (_skipSkinOffsets == 0 && !_weightElements.empty()) {
+			for (unsigned int i = 0; i < _weightElements.size(); i++) {
+				_lerpedElements[i] = lerpElementsMatrix(i, _boneMatricies);
+			}
+		}
+		
+		for (unsigned int m = 0; m < _meshes.size(); m++) {
+			if (!_meshes[m].visible())
+				continue;
+			if (!_skipSkinOffsets && _bones.size() < 2 ) {
+				if (_meshes[m].name() == _modelVertexAnim->head()) {
+					_meshes[m].update(_modelVertexAnim);
+					// TODO: lines 440 - 443.. set some vals and goto LAB_doMeshBlends;
+				}
+				_meshes[m].update(&_boneMatricies, &_lerpedElements);
+				// TODO: Set some vals here..
+			} else {
+				//warning("TODO: Finish TeModel::update. (disasm 456 ~ 693)");
+			}
+		}
+	} else {
+		// No bones..
+		for (TeMesh &mesh : _meshes) {
+			if (!_modelVertexAnim) {
 				mesh.update(nullptr, nullptr);
 			} else {
-				mesh.update(_modelVertexAnim);
+				if (mesh.name() != _modelVertexAnim->head()) {
+					mesh.update(nullptr, nullptr);
+				} else {
+					mesh.update(_modelVertexAnim);
+				}
 			}
 		}
 	}
@@ -255,10 +313,10 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 	if (bonecount > 100000)
 		error("TeModel::load: Unexpected number of bones %d", bonecount);
 	_bones.resize(bonecount);
-	_boneMatrices.resize(bonecount);
+	_skinOffsets.resize(bonecount);
 
 	if (version == 13) {
-		_skipBoneMatricies = stream.readUint32LE();
+		_skipSkinOffsets = stream.readUint32LE();
 	}
 
 	if (!loadAndCheckFourCC(stream, "SKEL")) {
@@ -270,8 +328,8 @@ bool TeModel::load(Common::SeekableReadStream &stream) {
 		loadAlign(stream);
 		_bones[i]._x = stream.readUint32LE();
 		TeTRS::deserialize(stream, _bones[i]._trs);
-		if (!_skipBoneMatricies) {
-			_boneMatrices[i].deserialize(stream);
+		if (!_skipSkinOffsets) {
+			_skinOffsets[i].deserialize(stream);
 		}
 	}
 
@@ -474,7 +532,7 @@ void TeModel::setAnim(TeIntrusivePtr<TeModelAnimation> &anim, bool repeat) {
 		delete blender;
 	}
 	_boneBlenders.clear();
-	anim->_repeatCount = repeat ? -1 : 1;
+	anim->_repeatCount = (repeat ? -1 : 1);
 	_modelAnim = anim;
 }
 
@@ -492,9 +550,9 @@ void TeModel::setVisibleByName(const Common::String &name, bool vis) {
 }
 
 TeMatrix4x4 TeModel::skinOffset(unsigned long boneno) const {
-	if (boneno >= _boneMatrices.size())
+	if (boneno >= _skinOffsets.size())
 		return TeMatrix4x4();
-	return _boneMatrices[boneno];
+	return _skinOffsets[boneno];
 }
 
 TeModel::BonesBlender::BonesBlender(TeIntrusivePtr<TeModelAnimation> anim, float seconds) : _anim(anim), _seconds(seconds) {

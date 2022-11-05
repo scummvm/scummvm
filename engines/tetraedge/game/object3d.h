@@ -49,6 +49,16 @@ public:
 
 	TeIntrusivePtr<TeModel> model() { return _modelPtr; }
 
+	float _rotateTime;
+	TeTimer _rotateTimer;
+	TeVector3f32 _rotateStart;
+	TeVector3f32 _rotateAmount;
+	
+	float _translateTime;
+	TeTimer _translateTimer;
+	TeVector3f32 _translateStart;
+	TeVector3f32 _translateAmount;
+
 private:
 	static Common::HashMap<Common::String, ObjectSettings> *_objectSettings;
 

@@ -281,6 +281,4 @@ void TeTiledSurface::updateVideoProperties() {
 	}
 }
 
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

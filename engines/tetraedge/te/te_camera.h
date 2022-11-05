@@ -61,7 +61,7 @@ public:
 	static void restore();
 	TeMatrix4x4 transformationMatrix();
 	TeVector3f32 transformCoord(const TeVector3f32 &pt);
-	TeVector3f32 transformPoint2Dto3D(const TeVector2f32 &pt);
+	TeVector3f32 transformPoint2Dto3D(const TeVector3f32 &pt);
 	void updateProjectionMatrix();
 
 	void viewport(int x, int y, uint width, uint height);

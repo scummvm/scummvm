@@ -20,12 +20,37 @@
  */
 
 #include "tetraedge/game/game_sound.h"
+#include "tetraedge/game/game.h"
+#include "tetraedge/tetraedge.h"
+
+#include "tetraedge/te/te_lua_thread.h"
 
 namespace Tetraedge {
 
 GameSound::GameSound() {
 }
 
-// TODO: Add more functions here.
+bool GameSound::onSoundStopped() {
+	Game *game = g_engine->getGame();
+	if (!game->luaContext().isCreated())
+		return false;
+
+	Common::Array<Game::YieldedCallback> &callbacks = game->yieldedCallbacks();
+	for (unsigned int i = 0; i < callbacks.size(); i++) {
+		if (callbacks[i]._luaFnName == "OnFreeSoundFinished" && callbacks[i]._luaParam == _name) {
+			TeLuaThread *thread = callbacks[i]._luaThread;
+			callbacks.remove_at(i);
+			if (thread) {
+				thread->resume();
+				return false;
+			}
+			break;
+		}
+	}
+	game->luaScript().execute("OnFreeSoundFinished", _name);
+	game->luaScript().execute("OnCellFreeSoundFinished", _name);
+	return false;
+}
+
 
 } // end namespace Tetraedge

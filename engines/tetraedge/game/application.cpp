@@ -69,7 +69,7 @@ _drawShadows(true) {
 }
 
 void Application::create() {
-	warning("TODO: Move mainWindowCamera to mainWindow");
+	// TODO: Move mainWindowCamera to mainWindow?
 
 	const int winWidth = g_engine->getDefaultScreenWidth();
 	const int winHeight = g_engine->getDefaultScreenHeight();
@@ -284,7 +284,7 @@ void Application::destroy() {
 
 void Application::startGame(bool newGame, int difficulty) {
 	_appSpriteLayout.setVisible(false);
-	// TODO: there's another virtual call to appsprite surface here here.. not needed?
+	_appSpriteLayout.pause();
 	_appSpriteLayout.unload();
 	if (newGame)
 		_difficulty = difficulty;
@@ -299,8 +299,7 @@ bool Application::run() {
 	if (_created) {
 		TeTimer::updateAll();
 		if (!_dontUpdateWhenApplicationPaused) {
-			// TODO: finish commented-out bits??
-			// we run the inputmgr separately.. is that ok?
+			// Note: we run the inputmgr separately.. probably no need for this.
 			//_inputmgr->update();
 			TeAnimation::updateAll();
 			//TeVideo::updateAll();
@@ -505,7 +504,5 @@ Common::String Application::getHelpText(const Common::String &key) {
 const char *Application::inAppUnlockFullVersionID() {
 	error("TODO: Implement Application::inAppUnlockFullVersionID");
 }
-
-// TODO: Add more functions here.
 
 } // end namespace Tetraedge

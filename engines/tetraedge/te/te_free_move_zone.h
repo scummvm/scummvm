@@ -72,7 +72,7 @@ public:
 	TeVector3f32 correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f);
 
 	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4, float param_5, bool findMeshFlag);
-	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4);
+	TeIntrusivePtr<TeBezierCurve> curve(const TeVector3f32 &param_3, const TeVector3f32 &param_4);
 
 	void draw() override;
 	TeVector3f32 findNearestPointOnBorder(const TeVector2f32 &pt);
@@ -94,9 +94,9 @@ public:
 	Common::Array<TeVector3f32> &removeInsignificantPoints(const Common::Array<TeVector3f32> &points);
 	void setBordersDistance(float dist);
 	void setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjPoints);
-	void setNbTriangles(unsigned long len);
+	void setNbTriangles(unsigned int len);
 	void setPathFindingOccluder(const TeOBP &occluder);
-	void setVertex(unsigned long offset, const TeVector3f32 &vertex);
+	void setVertex(unsigned int offset, const TeVector3f32 &vertex);
 	TeVector2s32 transformAStarGridInWorldSpace(const TeVector2s32 &gridpt);
 	float transformHeightMin(float minval);
 	TeVector3f32 transformVectorInWorldSpace(float param_3,float param_4);

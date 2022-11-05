@@ -35,17 +35,17 @@ public:
 
 	void draw() override;
 
-	// bool intersect(TeVector3f32 const&, TeVector3f32 const&, TeVector3f32&, float&, bool flag, unsigned long *triangleHitOut);
+	bool intersect(const TeVector3f32 &v1, const TeVector3f32 v2, TeVector3f32 &v3, float &fout, bool useLastHit, unsigned long *triangleHitOut);
 	bool intersect2D(const TeVector2f32 &pt);
 	unsigned long lastTriangleHit() const;
 
 	bool pointInTriangle(const TeVector2f32 &p1, const TeVector2f32 &p2, const TeVector2f32 &p3, const TeVector2f32 &p4) const;
 
-	void setLastTriangleHit(unsigned long lastHit) { _lastTriangleHit = lastHit; }
-	void setNbTriangles(unsigned long num);
+	void setLastTriangleHit(unsigned int lastHit) { _lastTriangleHit = lastHit; }
+	void setNbTriangles(unsigned int num);
 
-	void setTriangle(unsigned long num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
-	void triangle(unsigned long num, TeVector3f32 &v1out, TeVector3f32 &v2out, TeVector3f32 &v3out) const;
+	void setTriangle(unsigned int num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3);
+	void triangle(unsigned int num, TeVector3f32 &v1out, TeVector3f32 &v2out, TeVector3f32 &v3out) const;
 
 	static void serialize(Common::WriteStream &stream, const TePickMesh2 &mesh);
 	static void deserialize(Common::ReadStream &stream, TePickMesh2 &mesh);
@@ -55,7 +55,7 @@ public:
 
 private:
 	Common::Array<TeVector3f32> _verticies;
-	unsigned long _lastTriangleHit;
+	unsigned int _lastTriangleHit;
 
 };
 

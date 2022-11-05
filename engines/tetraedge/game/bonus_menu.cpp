@@ -24,7 +24,7 @@
 #include "common/textconsole.h"
 #include "tetraedge/tetraedge.h"
 #include "tetraedge/game/application.h"
-//#include "tetraedge/te/te_input_manager"
+#include "tetraedge/te/te_input_mgr.h"
 
 namespace Tetraedge {
 
@@ -79,15 +79,11 @@ bool BonusMenu::onRightButton() {
 	return false;
 }
 
-bool BonusMenu::onSideButtonDown() {
-	/*
-	TeInputManager *inputmgr = g_engine->getInputManager();
-	 TeVector2s32 mousepos = inputmgr->getMousePos();
-	 _slideBtnStartMousePos = mousepos;
-	 buttonLayout("slideButton");
-	 // TODO set some flag in super (TeLuaGUI)
-	*/
-	error("TODO: implement me.");
+bool BonusMenu::onSlideButtonDown() {
+	TeInputMgr *inputmgr = g_engine->getInputMgr();
+	TeVector2s32 mousepos = inputmgr->lastMousePos();
+	_slideBtnStartMousePos = mousepos;
+	buttonLayoutChecked("slideButton")->setClickPassThrough(true);
 	return false;
 }
 

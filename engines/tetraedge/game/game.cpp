@@ -47,10 +47,16 @@ namespace Tetraedge {
 Game::Game() : _objectsTakenVal(0), _score(0), _entered(false), _gameLoadState(0),
 _noScaleLayout(nullptr), _noScaleLayout2(nullptr), _warped(false), _saveRequested(false),
 _firstInventory(true), _movePlayerCharacterDisabled(false), _enteredFlag2(false),
-_luaShowOwnerError(false), _markersVisible(true), _running(false), _loadName("save.xml") {
+_luaShowOwnerError(false), _markersVisible(true), _running(false), _loadName("save.xml"),
+_randomSoundFinished(false), _randomSource("SyberiaGameRandom") {
 	for (int i = 0; i < NUM_OBJECTS_TAKEN_IDS; i++) {
 		_objectsTakenBits[i] = false;
 	}
+	_randomSound = new RandomSound();
+}
+
+Game::~Game() {
+	delete _randomSound;
 }
 
 /*static*/ const char *Game::OBJECTS_TAKEN_IDS[5] = {
@@ -137,14 +143,14 @@ void Game::addNoScaleChildren() {
 	_noScaleLayout->addChild(&_documentsBrowser.zoomedLayout());
 }
 
-void Game::addRandomSound(const Common::String &name, const Common::String &path, float f1, float f2) {
+void Game::addRandomSound(const Common::String &name, const Common::String &path, float f1, float volume) {
 	if (!_randomSounds.contains(name)) {
 		_randomSounds[name] = Common::Array<RandomSound*>();
 	}
 	RandomSound *randsound = new RandomSound();
 	randsound->_path = path;
 	randsound->_f1 = f1;
-	randsound->_f2 = f2;
+	randsound->_volume = volume;
 	randsound->_name = name;
 	_randomSounds[name].push_back(randsound);
 }
@@ -431,7 +437,7 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_scene._character->_model->setVisible(true);
 		_scene._character->deleteAllCallback();
 		_scene._character->stop();
-		_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true, false, false, -1, 9999);
+		_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true);
 		if (!_scene.findKate()) {
 			_scene.models().push_back(_scene._character->_model);
 			_scene.models().push_back(_scene._character->_shadowModel[0]);
@@ -526,9 +532,8 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 
 	TeButtonLayout *vidbgbtn = _inGameGui.buttonLayout("videoBackgroundButton");
 	vidbgbtn->setVisible(false);
-	/* TODO: Restore the original behavior here (onLockVideoButtonValidated) */
-	vidbgbtn->onMouseClickValidated().remove(this, &Game::onSkipVideoButtonValidated);
-	vidbgbtn->onMouseClickValidated().add(this, &Game::onSkipVideoButtonValidated);
+	vidbgbtn->onMouseClickValidated().remove(this, &Game::onLockVideoButtonValidated);
+	vidbgbtn->onMouseClickValidated().add(this, &Game::onLockVideoButtonValidated);
 
 	TeSpriteLayout *video = _inGameGui.spriteLayout("video");
 	video->setVisible(false);
@@ -606,10 +611,11 @@ bool Game::initWarp(const Common::String &zone, const Common::String &scene, boo
 		_luaScript.execute("OnSelectedObject", _inventory.selectedObject());
 	}
 
-	if (!_gameSounds.empty()) {
-		//for (auto & sound : _gameSounds) {
-		warning("TODO: Game::initWarp: Do game sound stuff here");
+	for (GameSound *sound : _gameSounds) {
+		sound->stop();
+		sound->deleteLater();
 	}
+	_gameSounds.clear();
 
 	for (auto &randsoundlist : _randomSounds) {
 		for (auto *randsound : randsoundlist._value) {
@@ -771,7 +777,7 @@ bool Game::onDialogFinished(const Common::String &val) {
 bool Game::onDisplacementFinished() {
 	_sceneCharacterVisibleFromLoad = true;
 	_scene._character->stop();
-	_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true, false, false, -1, 9999);
+	_scene._character->setAnimation(_scene._character->characterSettings()._walkFileName, true);
 
 	// TODO: Twiddle flags 0x424b and 0x4249
 	/*
@@ -946,7 +952,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 				TeIntrusivePtr<TeBezierCurve> curve = character->freeMoveZone()->curve(charPos, TeVector2s32(pt), 8.0, true);
 				if (curve) {
 					_scene.setCurve(curve);
-					// TODO: set character field_0x214 to TeVector3f32(0,0,0)
+					character->setCurveStartLocation(TeVector3f32());
 					if (curve->controlPoints().size() == 1) {
 						character->endMove();
 					} else {
@@ -962,7 +968,7 @@ bool Game::onMouseClick(const Common::Point &pt) {
 						character->placeOnCurve(curve);
 						character->setCurveOffset(0.0);
 						if (charAnim != character->walkAnim(Character::WalkPart_Start)) {
-							character->setAnimation(character->walkAnim(Character::WalkPart_Start), false, false, false, -1, 9999);
+							character->setAnimation(character->walkAnim(Character::WalkPart_Start), false);
 						}
 						character->walkTo(1.0, false);
 						_sceneCharacterVisibleFromLoad = false;
@@ -972,13 +978,11 @@ bool Game::onMouseClick(const Common::Point &pt) {
 					return false;
 				}
 			}
-			// TOOD: Finis this (line ~180 onward)
-			warning("TODO: Finish Game::onMouseClick");
 		}
 		TeVector3f32 lastPoint = _scene.curve()->controlPoints().back();
-		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true, false, false, -1, 9999);
+		character->setAnimation(character->walkAnim(Character::WalkPart_Loop), true);
 		character->walkTo(1.0, false);
-		// TODO: Set app field field_0x910b
+		// TODO: Set app field field_0x424b to true
 		_posPlayer = lastPoint;
 	}
 
@@ -1173,11 +1177,86 @@ void Game::playRandomSound(const Common::String &name) {
 		warning("Game::playRandomSound: can't find sound list %s", name.c_str());
 		return;
     }
-    warning("TODO: Implemet Game::playRandomSound");
+    
+    if (!_randomSoundFinished) {
+		_randomSoundTimer.start();
+		int r = _randomSource.getRandomNumber(RAND_MAX);
+		float f = (r + 1 + (r / 100) * -100);
+		long time = 1000000;
+		if (f >= 25.0) {
+			time = f * 45000.0;
+		}
+		_randomSoundTimer.setAlarmIn(time);
+		_randomSoundTimer.alarmSignal().remove(_randomSound, &RandomSound::onSoundFinished);
+		_randomSoundTimer.alarmSignal().add(_randomSound, &RandomSound::onSoundFinished);
+		_randomSound->_name = name;
+	} else {
+		Common::Array<RandomSound *> &sndlist = _randomSounds[name];
+		float total = 0.0;
+		for (auto *snd : sndlist) {
+			total += snd->_f1;
+		}
+		int r = _randomSource.getRandomNumber(RAND_MAX);
+		float total2 = 0.0;
+		unsigned int i = 0;
+		while (i < sndlist.size() && total2 <= r * 4.656613e-10 * total) {
+			total2 += sndlist[i]->_f1;
+			i++;
+		}
+		assert(i > 0);
+		i--;
+		RandomSound *sound = sndlist[i];
+		sound->_music.volume(sound->_volume);
+		sound->_music.onStopSignal().remove(sound, &RandomSound::onSoundFinished);
+		sound->_music.onStopSignal().add(sound, &RandomSound::onSoundFinished);
+		sound->_music.load(sound->_path.toString());
+		sound->_music.repeat(false);
+		sound->_music.play();
+		// TODO: set a flag that it's playing?
+	}
 }
 
-void Game::playSound(const Common::String &name, int param_2, float param_3) {
-	warning("TODO: Implemet Game::playSound");
+void Game::playSound(const Common::String &name, int repeats, float volume) {
+	Game *game = g_engine->getGame();
+
+	assert(repeats == 1 || repeats == -1);
+	if (repeats == 1) {
+		GameSound *sound = new GameSound();
+		sound->setName(name);
+		sound->setChannelName("sfx");
+		sound->repeat(false);
+		sound->load(name);
+		sound->volume(volume);
+		if (!sound->play()) {
+			game->luaScript().execute("OnFreeSoundFinished", name);
+			game->luaScript().execute("OnCellFreeSoundFinished", name);
+			// TODO: original seems to leak sound here??
+		} else {
+			sound->onStopSignal().add(sound, &GameSound::onSoundStopped);
+			// TODO: set snd->field_0x201
+			_gameSounds.push_back(sound);
+		}
+	} else if (repeats == -1) {
+		for (GameSound *snd : _gameSounds) {
+			if (snd->getAccessName() == name) {
+				// TODO: set snd->field_0x201
+				return;
+			}
+		}
+		
+		GameSound *sound = new GameSound();
+		sound->setChannelName("sfx");
+		sound->load(name);
+		sound->volume(volume);
+		if (!sound->play()) {
+			game->luaScript().execute("OnFreeSoundFinished", name);
+			game->luaScript().execute("OnCellFreeSoundFinished", name);
+			delete sound;
+		} else {
+			// TODO: set snd->field_0x201
+			_gameSounds.push_back(sound);
+		}
+	}
 }
 
 void Game::removeNoScale2Child(TeLayout *layout) {
@@ -1341,26 +1420,34 @@ void Game::update() {
 		else
 			warning("Game::update: InventoryButton is null.");
 
-		if (_scene._character) {
-			TeIntrusivePtr<TeModel> model = _scene._character->_model;
+		Character *player = _scene._character;
+		if (player) {
+			TeIntrusivePtr<TeModel> model = player->_model;
 			bool modelVisible = model->visible();
 			if (!model->anim().get())
-				_scene._character->permanentUpdate();
+				player->permanentUpdate();
 			if (modelVisible) {
-				if (_scene._character->needsSomeUpdate()) {
+				if (player->needsSomeUpdate()) {
 					Game *game = g_engine->getGame();
 					game->_sceneCharacterVisibleFromLoad = false;
-					TeVector3f32 charPos = _scene._character->_model->position();
-					const Common::String charName = _scene._character->_model->name();
-					TeFreeMoveZone *zone = _scene.pathZone(_scene._character->freeMoveZoneName());
+					TeVector3f32 charPos = player->_model->position();
+					const Common::String charName = player->_model->name();
+					TeFreeMoveZone *zone = _scene.pathZone(player->freeMoveZoneName());
 					if (zone) {
 						TeIntrusivePtr<TeCamera> cam = _scene.currentCamera();
 						zone->setCamera(cam, false);
-						_scene._character->setFreeMoveZone(zone);
-						_scene.setPositionCharacter(charName, _scene._character->freeMoveZoneName(), charPos);
-						error("TODO: Game::update: Finish bit after permanentUpdate");
+						player->setFreeMoveZone(zone);
+						_scene.setPositionCharacter(charName, player->freeMoveZoneName(), charPos);
+						TeIntrusivePtr<TeBezierCurve> curve = zone->curve(model->position(), player->positionCharacter());
+						_scene.setCurve(curve);
+						player->setCurveStartLocation(TeVector3f32(0, 0, 0));
+						player->placeOnCurve(curve);
+						player->setCurveOffset(0.0f);
+						player->setAnimation(player->walkAnim(Character::WalkPart_Start), false);
+						player->walkTo(1.0f, false);
+						// TODO: Set app field field_0x424b
 					}
-					_scene._character->setNeedsSomeUpdate(false);
+					player->setNeedsSomeUpdate(false);
 				}
 
 				const Common::String &charAnim = _scene._character->curAnimName();
@@ -1407,22 +1494,37 @@ bool Game::HitObject::onChangeWarp() {
 
 bool Game::HitObject::onDown() {
 	_game->luaScript().execute("OnButtonDown", _name);
-	// TODO: set this field _game->field_0x4249 = 1;
+	// TODO: set this field _game->field_0x4249 = true;
 	return false;
 }
 
 bool Game::HitObject::onUp() {
 	_game->luaScript().execute("OnButtonUp", _name);
-	// TODO: set this field _game->field_0x4249 = 1;
+	// TODO: set this field _game->field_0x4249 = true;
 	return false;
 }
 
 bool Game::HitObject::onValidated() {
 	if (!g_engine->getApplication()->isLockCursor()) {
 		_game->luaScript().execute("OnWarpObjectHit", _name);
-		// TODO: set this field _game->field_0x4249 = 1;
+		// TODO: set this field _game->field_0x4249 = true;
 	}
 	return false;
 }
+
+bool Game::RandomSound::onSoundFinished() {
+	Game *game = g_engine->getGame();
+	_music.onStopSignal().remove(this, &RandomSound::onSoundFinished);
+	if (game->_randomSoundFinished) {
+		game->_randomSoundFinished = false;
+	} else {
+		game->_randomSoundFinished = true;
+		game->_randomSound->_music.onStopSignal().remove(this, &RandomSound::onSoundFinished);
+		game->_randomSoundTimer.stop();
+	}
+	game->playRandomSound(_name);
+	return false;
+}
+
 
 } // end namespace Tetraedge

@@ -75,7 +75,7 @@ TeVariant TeLuaContext::global(const Common::String &name) {
 		lua_settop(_luaState, -2);
 		return TeVariant(str);
 	}
-	warning("Unexpected type %d for global %s", type, name.c_str());
+	warning("TeLuaContext::global: Unexpected type %d for global %s", type, name.c_str());
 	return TeVariant();
 }
 

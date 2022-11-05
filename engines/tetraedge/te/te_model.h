@@ -93,11 +93,11 @@ public:
 
 	void draw() override;
 
-	int findModelBone(const Common::String &name);
+	int findModelBone(const Common::String &bname);
 	int findOrAddWeights(const Common::Array<weightElement> &weights);
 	void forceMatrix(const TeMatrix4x4 &matrix);
 	TeTRS getBone(TeIntrusivePtr<TeModelAnimation> anim, unsigned int num);
-	TeMatrix4x4 lerpElementsMatrix(unsigned long num, Common::Array<TeMatrix4x4> &matricies);
+	TeMatrix4x4 lerpElementsMatrix(unsigned long weightNum, Common::Array<TeMatrix4x4> &matricies);
 
 	/* Align the stream to the nearest 4 byte boudary*/
 	static void loadAlign(Common::SeekableReadStream &stream);
@@ -122,7 +122,7 @@ public:
 	virtual void setColor(const TeColor &col) override;
 	void setQuad(const TeIntrusivePtr<Te3DTexture> &tex, const Common::Array<TeVector3f32> &verts, const TeColor &col);
 	void setVertexAnim(TeIntrusivePtr<TeModelVertexAnimation> &anim, bool repeat);
-	void setVisibleByName(const Common::String &name, bool vis);
+	void setVisibleByName(const Common::String &mname, bool vis);
 
 	TeMatrix4x4 skinOffset(unsigned long boneno) const;
 
@@ -131,7 +131,7 @@ public:
 
 	Common::Path _texturePath;
 	bool _enableLights;
-	bool _skipBoneMatricies;
+	bool _skipSkinOffsets;
 
 	Common::Array<TeMesh> _meshes;
 
@@ -140,7 +140,9 @@ protected:
 	TeMatrix4x4 _forcedMatrix;
 	Common::Array<MeshBlender *> _meshBlenders;
 	Common::Array<bone> _bones;
-	Common::Array<TeMatrix4x4> _boneMatrices;
+	Common::Array<TeMatrix4x4> _skinOffsets;
+	Common::Array<TeMatrix4x4> _boneMatricies;
+	Common::Array<TeMatrix4x4> _lerpedElements;
 	Common::Array<Common::Array<weightElement>> _weightElements;
 	Common::Array<BonesBlender *> _boneBlenders;
 

@@ -97,17 +97,26 @@ Common::Array<TeVector3f32> TeFreeMoveZone::collisions(const TeVector3f32 &v1, c
 	error("TODO: Implement TeFreeMoveZone::collisions");
 }
 
-TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool f) {
-
-	warning("TODO: Implement TeFreeMoveZone::correctCharacterPosition");
-	return pos;
+TeVector3f32 TeFreeMoveZone::correctCharacterPosition(const TeVector3f32 &pos, bool *flagout, bool intersectFlag) {
+	float f = 0.0;
+	TeVector3f32 intersectPoint;
+	if (!intersect(pos, TeVector3f32(0, -1, 0), intersectPoint, f, intersectFlag, nullptr)) {
+		if (!intersect(pos, TeVector3f32(0, 1, 0), intersectPoint, f, intersectFlag, nullptr)) {
+			if (*flagout)
+				*flagout = false;
+			return pos;
+		}
+	}
+	if (flagout)
+		*flagout = true;
+	return intersectPoint;
 }
 
 TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4, float param_5, bool findMeshFlag) {
 	error("TODO: Implement TeFreeMoveZone::curve");
 }
 
-TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector2s32 &param_4) {
+TeIntrusivePtr<TeBezierCurve> TeFreeMoveZone::curve(const TeVector3f32 &param_3, const TeVector3f32 &param_4) {
 	error("TODO: Implement TeFreeMoveZone::curve");
 }
 
@@ -205,7 +214,7 @@ void TeFreeMoveZone::setCamera(TeIntrusivePtr<TeCamera> &cam, bool noRecalcProjP
 		_projectedPointsDirty = true;
 }
 
-void TeFreeMoveZone::setNbTriangles(unsigned long len) {
+void TeFreeMoveZone::setNbTriangles(unsigned int len) {
 	_freeMoveZoneVerticies.resize(len * 3);
 
 	_gridDirty = true;
@@ -219,7 +228,7 @@ void TeFreeMoveZone::setPathFindingOccluder(const TeOBP &occluder) {
 	error("TODO: Implement TeFreeMoveZone::setPathFindingOccluder");
 }
 
-void TeFreeMoveZone::setVertex(unsigned long offset, const TeVector3f32 &vertex) {
+void TeFreeMoveZone::setVertex(unsigned int offset, const TeVector3f32 &vertex) {
 	_freeMoveZoneVerticies[offset] = vertex;
 
 	_gridDirty = true;

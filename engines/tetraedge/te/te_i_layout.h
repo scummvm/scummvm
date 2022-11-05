@@ -45,9 +45,6 @@ public:
 		RATIO_MODE_PAN_SCAN
 	};
 
-private:
-	// TODO add private members
-
 };
 
 } // end namespace Tetraedge

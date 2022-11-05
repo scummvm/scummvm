@@ -31,7 +31,9 @@ class GameSound : public TeMusic {
 public:
 	GameSound();
 
-	void onSoundStopped();
+	bool onSoundStopped();
+	const Common::String &name() const { return _name; }
+	void setName(const Common::String &val) { _name = val; }
 
 private:
 	Common::String _name;
