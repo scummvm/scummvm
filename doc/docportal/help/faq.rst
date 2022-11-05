@@ -38,7 +38,7 @@ We outlined a more detailed response on `our Wiki <https://wiki.scummvm.org/inde
 
 And no, "abandonware" is not a proper legal concept in any country. Get the legally freewared games from `our Game downloads page <https://www.scummvm.org/games/>`.
 
-In addition, some versions of games downloaded from random websites may have been modified to include exploits that could compromise your computer.
+In addition, some versions of games downloaded from random websites may have been modified to include malware that could compromise your computer.
 
 1.2 Using ScummVM
 **********************
