@@ -36,7 +36,7 @@ Our project has a strict no-piracy policy. Hence, we do not provide any support 
 
 We outlined a more detailed response on `our Wiki <https://wiki.scummvm.org/index.php?title=Copyright_FAQ>`.
 
-And no, "abandonware" is not a proper legal concept in any country. Get the legally freewared games from `our Game downloads page <https://www.scummvm.org/games/>`.
+And no, "abandonware" is not a proper legal concept in any country. Just like how it's not legal to copy a book under copyright because it is out-of-print, it is not legal to copy a game under copyright because the company is no longer selling it.
 
 In addition, some versions of games downloaded from random websites may have been modified to include malware that could compromise your computer.
 
