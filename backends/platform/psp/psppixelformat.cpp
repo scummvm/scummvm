@@ -43,6 +43,9 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 		bitsPerPixel = 16;
 		break;
 	case Type_8888:
+	case Type_8888_RGBA:
+		bitsPerPixel = 32;
+		break;
 		bitsPerPixel = 32;
 		break;
 	case Type_Palette_8bit:
@@ -98,6 +101,8 @@ void PSPPixelFormat::convertFromScummvmPixelFormat(const Graphics::PixelFormat *
 			*target = Type_4444;
 		} else if (pf->gLoss == 0 && pf->gShift == 8) {
 			*target = Type_8888;
+		} else if (pf->gLoss == 0 && pf->gShift == 16) {
+			*target = Type_8888_RGBA;
 		} else if ((pf->gLoss == 0 && pf->gShift == 0) ||
 		           (pf->gLoss == 8 && pf->gShift == 0)) {	// Default CLUT8 can have weird values
 			*target = Type_5551;
@@ -154,6 +159,7 @@ Graphics::PixelFormat PSPPixelFormat::convertToScummvmPixelFormat(PSPPixelFormat
 		pf.bShift = 11;
 		break;
 	case Type_8888:
+	case Type_8888_RGBA:
 		pf.bytesPerPixel = 4;
 		pf.aLoss = 0;
 		pf.rLoss = 0;
