@@ -316,10 +316,6 @@ void SciMusic::resetGlobalPauseCounter() {
 	_globalPause = 0;
 }
 
-bool SciMusic::isGlobalPauseActive() const {
-	return (_globalPause > 0);
-}
-
 void SciMusic::stopAll() {
 	const MusicList::iterator end = _playList.end();
 	for (MusicList::iterator i = _playList.begin(); i != end; ++i) {

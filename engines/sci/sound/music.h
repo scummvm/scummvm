@@ -195,7 +195,6 @@ public:
 	void pauseAll(bool pause);
 	bool isAllPaused() const { return (_globalPause > 0); }
 	void resetGlobalPauseCounter();
-	bool isGlobalPauseActive() const;
 	void stopAll();
 	void stopAllSamples();
 
