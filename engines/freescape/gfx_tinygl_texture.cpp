@@ -25,6 +25,10 @@
 
 namespace Freescape {
 
+const Graphics::PixelFormat TinyGLTexture::getRGBAPixelFormat() {
+	return Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
+}
+
 TinyGLTexture::TinyGLTexture(const Graphics::Surface *surface) {
 	_width = surface->w;
 	_height = surface->h;
@@ -41,7 +45,8 @@ TinyGLTexture::~TinyGLTexture() {
 }
 
 void TinyGLTexture::update(const Graphics::Surface *surface) {
-	tglUploadBlitImage(_blitImage, *surface, 0xA0A0A0FF, true);
+	uint32 keyColor = getRGBAPixelFormat().RGBToColor(0xA0, 0xA0, 0xA0);
+	tglUploadBlitImage(_blitImage, *surface, keyColor, true);
 }
 
 void TinyGLTexture::updatePartial(const Graphics::Surface *surface, const Common::Rect &rect) {

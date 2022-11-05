@@ -403,6 +403,10 @@ Common::Error FreescapeEngine::run() {
 	initGameState();
 	loadColorPalette();
 
+
+	_title = _gfx->convertImageFormatIfNecessary(_title);
+	_border = _gfx->convertImageFormatIfNecessary(_border);
+
 	// Simple main event loop
 	int saveSlot = ConfMan.getInt("save_slot");
 

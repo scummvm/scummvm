@@ -33,6 +33,8 @@ public:
 	TinyGLTexture(const Graphics::Surface *surface);
 	virtual ~TinyGLTexture();
 
+	const static Graphics::PixelFormat getRGBAPixelFormat();
+
 	TinyGL::BlitImage *getBlitTexture() const;
 
 	void update(const Graphics::Surface *surface) override;
