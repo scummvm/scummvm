@@ -81,6 +81,11 @@ struct Party : public Common::Array<Character> {
 	 * and if so, switches to the death screen
 	 */
 	bool checkPartyDead() const;
+
+	/**
+	 * Synchronizes the party to/from savegames
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace MM1

@@ -111,10 +111,15 @@ void Globals::synchronize(Common::Serializer &s) {
 	_maps.synchronize(s);
 	_maps.synchronizeCurrent(s);
 
-	// Sync treasure data
+	// Sync miscellaneous data
 	_treasure.synchronize(s);
+	_activeSpells.synchronize(s);
 
-	_currCharacter = nullptr;
+	if (s.isLoading()) {
+		_currCharacter = nullptr;
+		_heardRumor = false;
+		_nonCombatEffectCtr = _combatEffectCtr = 0;
+	}
 }
 
 } // namespace MM1
