@@ -469,7 +469,7 @@ void MoviePlayerSMK::playVideo() {
 	while (!endOfVideo() && !_skipMovie && !_vm->shouldQuit()) {
 		_subtitles.drawSubtitle(getTime(), true);
 		handleNextFrame();
-		g_system->showOverlay();
+		g_system->showOverlay(false);
 		g_system->clearOverlay();
 	}
 }
