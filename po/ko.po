@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-03 23:01+0000\n"
+"POT-Creation-Date: 2022-11-05 09:13+0000\n"
 "PO-Revision-Date: 2022-04-06 04:44+0000\n"
 "Last-Translator: wonst719 <wonst719@gmail.com>\n"
 "Language-Team: Korean <https://translations.scummvm.org/projects/scummvm/"
@@ -3837,44 +3837,44 @@ msgstr "최소화"
 #. In Blade Runner's official localizations, there is a description of this keymap
 #. on the KIA Help Page, under Keyboard Shortcuts. In the English version it is
 #. ONLINE HELP
-#: backends/platform/sdl/macosx/appmenu_osx.mm:237
+#: backends/platform/sdl/macosx/appmenu_osx.mm:239
 #: engines/bladerunner/metaengine.cpp:231 engines/zvision/metaengine.cpp:157
 msgid "Help"
 msgstr "도움말"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:242
+#: backends/platform/sdl/macosx/appmenu_osx.mm:244
 msgid "User Manual"
 msgstr "사용자 매뉴얼"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:244
+#: backends/platform/sdl/macosx/appmenu_osx.mm:246
 msgid "General Information"
 msgstr "일반 정보"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:245
+#: backends/platform/sdl/macosx/appmenu_osx.mm:247
 msgid "What's New in ScummVM"
 msgstr "ScummVM의 새로운 기능"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:247
+#: backends/platform/sdl/macosx/appmenu_osx.mm:249
 msgid "Credits"
 msgstr "크레딧"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:248
+#: backends/platform/sdl/macosx/appmenu_osx.mm:250
 msgid "GPL License"
 msgstr "GPL 라이선스"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:249
+#: backends/platform/sdl/macosx/appmenu_osx.mm:251
 msgid "LGPL License"
 msgstr "LGPL 라이선스"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:250
+#: backends/platform/sdl/macosx/appmenu_osx.mm:252
 msgid "Freefont License"
 msgstr "Freefont 라이선스"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:251
+#: backends/platform/sdl/macosx/appmenu_osx.mm:253
 msgid "OFL License"
 msgstr "OFL 라이선스"
 
-#: backends/platform/sdl/macosx/appmenu_osx.mm:252
+#: backends/platform/sdl/macosx/appmenu_osx.mm:254
 msgid "BSD License"
 msgstr "BSD 라이선스"
 
