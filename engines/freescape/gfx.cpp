@@ -418,6 +418,11 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 #endif
 						0);
 
+	#if defined(USE_TINYGL) // Prefer TinyGL until OpenGL is good enough
+	if (desiredRendererType == Graphics::kRendererTypeDefault)
+		matchingRendererType = desiredRendererType = Graphics::kRendererTypeTinyGL;
+	#endif
+
 	bool isAccelerated = matchingRendererType != Graphics::kRendererTypeTinyGL;
 
 	if (isAccelerated) {
