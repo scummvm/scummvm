@@ -43,7 +43,7 @@
 typedef unsigned long NSUInteger;
 
 // Those are not defined in the 10.4 SDK, but they are defined when targeting
-// Mac OS X 10.4 or above in the 10.5 SDK. So hopefully that means it works with 10.4 as well.
+// Mac OS X 10.4 or above in the 10.5 SDK, and they do work with 10.4.
 #if MAC_OS_X_VERSION_MAX_ALLOWED >= MAC_OS_X_VERSION_10_4
 enum {
 	NSUTF32StringEncoding = 0x8c000100,
@@ -234,6 +234,8 @@ void replaceApplicationMenuItems() {
 		addMenuItem(_("Minimize"), nil, @selector(performMiniaturize:), @"m", windowMenu);
 	}
 
+	// Note: this part is expected not to work at run-time on 10.5 and earlier,
+	// because setHelpMenu is only available on 10.6+ (see Bug#11260).
 	NSMenu *helpMenu = addMenu(_("Help"), @"", @selector(setHelpMenu:));
 	if (helpMenu) {
 		if (!delegate) {

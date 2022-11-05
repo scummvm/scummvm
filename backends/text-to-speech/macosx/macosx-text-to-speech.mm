@@ -134,7 +134,7 @@ bool MacOSXTextToSpeechManager::startNextSpeech() {
 bool MacOSXTextToSpeechManager::stop() {
 	_messageQueue.clear();
 	if (isSpeaking()) {
-		_currentSpeech.clear(); // so that it immediately reports that it is no longer speeking
+		_currentSpeech.clear(); // so that it immediately reports that it is no longer speaking
 		// Stop as soon as possible
 		// Also tell the MacOSXTextToSpeechManagerDelegate to ignore the next finishedSpeaking as
 		// it has already been handled, but we might have started another speach by the time we
@@ -159,7 +159,7 @@ bool MacOSXTextToSpeechManager::resume() {
 }
 
 bool MacOSXTextToSpeechManager::isSpeaking() {
-	// Because the NSSpeechSynthesizer is asynchronous, it doesn't start speeking immediately
+	// Because the NSSpeechSynthesizer is asynchronous, it doesn't start speaking immediately
 	// and thus using [synthesizer isSpeaking] just after [synthesizer startSpeakingString:]] is
 	// likely to return NO. So instead we check the _currentSpeech string (set when calling
 	// startSpeakingString, and cleared when we receive the didFinishSpeaking message).
