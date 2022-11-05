@@ -54,10 +54,12 @@ private:
 	};
 
 	Common::Array<IconBarItem> _iconBarItems;
-	uint32 _lastX;
 	uint16 _inventoryIndex;
 	Graphics::Surface *_inventoryIcon;
 	bool _allDisabled;
+
+	bool _isUpscaled;
+	Common::SpanOwner<SciSpan<byte> > _upscaleBuffer;
 
 	Graphics::Surface *loadPict(ResourceId id);
 	Graphics::Surface *createImage(uint32 iconIndex, bool isSelected);
@@ -68,8 +70,8 @@ private:
 	void drawIcon(uint16 index, bool selected);
 	void drawSelectedImage(uint16 index);
 	bool isIconEnabled(uint16 index) const;
-	void drawEnabledImage(Graphics::Surface *surface, const Common::Rect &rect);
-	void drawDisabledImage(Graphics::Surface *surface, const Common::Rect &rect);
+	void drawDisabledPattern(Graphics::Surface &surface, const Common::Rect &rect);
+	void drawImage(Graphics::Surface *surface, const Common::Rect &rect, bool enabled);
 	bool pointOnIcon(uint32 iconIndex, Common::Point point);
 };
 
