@@ -64,7 +64,9 @@ static int getDepth(uint16 _fontType) {
 	return 1 << ((_fontType >> 2) & 3);
 }
 
-MacFontFamily::MacFontFamily() {
+MacFontFamily::MacFontFamily(const Common::String &name) {
+	_name = name;
+
 	_ffFlags = 0;
 	_ffFamID = 0;
 	_ffFirstChar = 0;

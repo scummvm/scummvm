@@ -154,7 +154,7 @@ void Window::testFonts() {
 
 			debug("Font: %s", name.c_str());
 
-			Graphics::MacFontFamily font;
+			Graphics::MacFontFamily font(name);
 			font.load(*stream);
 		}
 	}

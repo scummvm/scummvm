@@ -1551,7 +1551,7 @@ CharsetRendererMac::CharsetRendererMac(ScummEngine *vm, const Common::String &fo
 	if (!fond)
 		return;
 
-	Graphics::MacFontFamily fontFamily;
+	Graphics::MacFontFamily fontFamily(fontFamilyName);
 	if (!fontFamily.load(*fond)) {
 		delete fond;
 		return;
