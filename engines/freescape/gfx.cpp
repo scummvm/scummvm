@@ -41,7 +41,6 @@ Renderer::Renderer(OSystem *system, int screenW, int screenH, Common::RenderMode
 	_screenW = screenW;
 	_screenH = screenH;
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
-	_originalPixelFormat = Graphics::PixelFormat::createFormatCLUT8();
 	_palettePixelFormat = Graphics::PixelFormat(3, 8, 8, 8, 0, 0, 8, 16, 0);
 	_keyColor = -1;
 	_palette = nullptr;
@@ -93,6 +92,16 @@ bool Renderer::getRGBAt(uint8 index, uint8 &r, uint8 &g, uint8 &b) {
 	assert(color < 16);
 	readFromPalette(color, r, g, b);
 	return true;
+}
+
+Graphics::Surface *Renderer::convertImageFormatIfNecessary(Graphics::Surface *surface) {
+	if (!surface)
+		return surface;
+
+	if (surface->format != _texturePixelFormat)
+		return surface->convertTo(_texturePixelFormat);
+
+	return surface;
 }
 
 Common::Rect Renderer::viewport() const {

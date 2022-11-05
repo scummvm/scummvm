@@ -39,6 +39,7 @@ Renderer *CreateGfxTinyGL(OSystem *system, int screenW, int screenH, Common::Ren
 
 TinyGLRenderer::TinyGLRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) : Renderer(system, screenW, screenH, renderMode) {
 	_verts = (Vertex*) malloc(sizeof(Vertex) * 20);
+	_texturePixelFormat = TinyGLTexture::getRGBAPixelFormat();
 }
 
 TinyGLRenderer::~TinyGLRenderer() {

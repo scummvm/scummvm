@@ -56,8 +56,9 @@ public:
 	virtual ~Renderer();
 
 	Graphics::PixelFormat _currentPixelFormat;
-	Graphics::PixelFormat _originalPixelFormat;
 	Graphics::PixelFormat _palettePixelFormat;
+	Graphics::PixelFormat _texturePixelFormat;
+	bool _isAccelerated;
 
 	virtual void init() = 0;
 	virtual void clear() = 0;
@@ -71,6 +72,8 @@ public:
 	virtual void polygonOffset(bool enabled) = 0;
 
 	virtual Texture *createTexture(const Graphics::Surface *surface) = 0;
+	Graphics::Surface *convertImageFormatIfNecessary(Graphics::Surface *surface);
+
 	virtual void freeTexture(Texture *texture) = 0;
 	virtual void drawTexturedRect2D(const Common::Rect &screenRect, const Common::Rect &textureRect, Texture *texture) = 0;
 	virtual void drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) = 0;
