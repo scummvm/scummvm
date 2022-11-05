@@ -122,7 +122,6 @@ static const uint16 TILE_HEIGHTS[RESOURCE_TILES_COUNT] = {
 
 Maps::Maps() {
 	g_maps = this;
-	Common::fill(&_data1[0], &_data1[32], 0);
 
 	_maps.push_back(new Map00());
 	_maps.push_back(new Map01());
@@ -191,7 +190,6 @@ void Maps::load(uint mapId) {
 	_mapId = mapId;
 	_currentMap = _maps[mapId];
 	_currentMap->load();
-	Common::fill(&_data1[0], &_data1[32], 0);
 }
 
 void Maps::synchronize(Common::Serializer &s) {

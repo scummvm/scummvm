@@ -59,6 +59,11 @@ private:
 	uint getIndex(uint16 id, byte section);
 
 	/**
+	 * Load a map
+	 */
+	void load(uint mapId);
+
+	/**
 	 * Loads tile graphics needed for rendering the 3d view
 	 */
 	void loadTiles();
@@ -87,7 +92,6 @@ public:
 	Map *_currentMap = nullptr;
 	byte _currentWalls = 0;
 	byte _currentState = 0;
-	byte _data1[32];
 	int _colorOffset = 0;
 
 	DirMask _forwardMask = DIRMASK_N,
@@ -103,11 +107,6 @@ public:
 public:
 	Maps();
 	~Maps();
-
-	/**
-	 * Load a map
-	 */
-	void load(uint mapId);
 
 	/**
 	 * Loads or saves map data
