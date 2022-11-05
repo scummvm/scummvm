@@ -170,6 +170,8 @@ public:
 
 	virtual int getFontHeight() const { return _data._fRectHeight; }
 	virtual int getFontAscent() const { return _data._ascent; }
+	virtual int getFontDescent() const { return _data._descent; }
+	virtual int getFontLeading() const { return _data._leading; }
 	virtual int getMaxCharWidth() const { return _data._maxWidth; }
 	virtual int getCharWidth(uint32 chr) const;
 	virtual void drawChar(Surface *dst, uint32 chr, int x, int y, uint32 color) const;
