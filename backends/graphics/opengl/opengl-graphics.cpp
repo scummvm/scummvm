@@ -636,12 +636,15 @@ void OpenGLGraphicsManager::updateScreen() {
 	// Clear the screen buffer.
 	GL_CALL(glClear(GL_COLOR_BUFFER_BIT));
 
-	if (!_overlayVisible) {
+	if (!_overlayInGUI) {
 		// The scissor test is enabled to:
 		// - Clip the cursor to the game screen
 		// - Clip the game screen when the shake offset is non-zero
 		_backBuffer.enableScissorTest(true);
 	}
+
+	// Don't draw cursor if it's not visible or there is none
+	bool drawCursor = _cursorVisible && _cursor;
 
 	// Alpha blending is disabled when drawing the screen
 	_backBuffer.enableBlend(Framebuffer::kBlendModeDisabled);
@@ -649,22 +652,40 @@ void OpenGLGraphicsManager::updateScreen() {
 	// First step: Draw the (virtual) game screen.
 	_pipeline->drawTexture(_gameScreen->getGLTexture(), _gameDrawRect.left, _gameDrawRect.top, _gameDrawRect.width(), _gameDrawRect.height());
 
-	// Second step: Draw the overlay if visible.
-	if (_overlayVisible) {
+	// Second step: Draw the cursor if necessary and we are not in GUI and it
 #if !USE_FORCED_GLES
-		// Overlay must not be scaled and its cursor won't be either
-		if (_libretroPipeline) {
-			_libretroPipeline->finishScaling();
+	if (_libretroPipeline) {
+		// If we are in game, draw the cursor through scaler
+		// This has the disadvantage of having overlay (subtitles) drawn above it
+		// but the cursor will look nicer
+		if (!_overlayInGUI && drawCursor) {
+			_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
+
+			_pipeline->drawTexture(_cursor->getGLTexture(),
+									 _cursorX - _cursorHotspotXScaled + _shakeOffsetScaled.x,
+									 _cursorY - _cursorHotspotYScaled + _shakeOffsetScaled.y,
+									 _cursorWidthScaled, _cursorHeightScaled);
+			drawCursor = false;
+
+			// Everything we need to clip has been clipped
+			_backBuffer.enableScissorTest(false);
 		}
+
+		// Overlay must not be scaled and its cursor won't be either
+		_libretroPipeline->finishScaling();
+	}
 #endif
+
+	// Third step: Draw the overlay if visible.
+	if (_overlayVisible) {
 		int dstX = (_windowWidth - _overlayDrawRect.width()) / 2;
 		int dstY = (_windowHeight - _overlayDrawRect.height()) / 2;
 		_backBuffer.enableBlend(Framebuffer::kBlendModeTraditionalTransparency);
 		_pipeline->drawTexture(_overlay->getGLTexture(), dstX, dstY, _overlayDrawRect.width(), _overlayDrawRect.height());
 	}
 
-	// Third step: Draw the cursor if necessary.
-	if (_cursorVisible && _cursor) {
+	// Fourth step: Draw the cursor if we didn't before.
+	if (drawCursor) {
 		_backBuffer.enableBlend(Framebuffer::kBlendModePremultipliedTransparency);
 
 		_pipeline->drawTexture(_cursor->getGLTexture(),
@@ -673,13 +694,7 @@ void OpenGLGraphicsManager::updateScreen() {
 		                         _cursorWidthScaled, _cursorHeightScaled);
 	}
 
-#if !USE_FORCED_GLES
-	if (_libretroPipeline) {
-		_libretroPipeline->finishScaling();
-	}
-#endif
-
-	if (!_overlayVisible) {
+	if (!_overlayInGUI) {
 		_backBuffer.enableScissorTest(false);
 	}
 
@@ -1448,8 +1463,8 @@ void OpenGLGraphicsManager::recalculateDisplayAreas() {
 	                          _gameDrawRect.width(),
 	                          _gameDrawRect.height());
 
-	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _activeArea.drawRect.width() / _activeArea.width,
-		_gameScreenShakeYOffset * _activeArea.drawRect.height() / _activeArea.height);
+	_shakeOffsetScaled = Common::Point(_gameScreenShakeXOffset * _gameDrawRect.width() / _currentState.gameWidth,
+		_gameScreenShakeYOffset * _gameDrawRect.height() / _currentState.gameHeight);
 
 	// Update the cursor position to adjust for new display area.
 	setMousePosition(_cursorX, _cursorY);

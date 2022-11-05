@@ -355,9 +355,10 @@ void OSystem_iOS7::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_mouseDirty = true;
 }
 
-void OSystem_iOS7::showOverlay() {
+void OSystem_iOS7::showOverlay(bool inGUI) {
 	//printf("showOverlay()\n");
 	_videoContext->overlayVisible = true;
+	_videoContext->overlayInGUI = inGUI;
 	dirtyFullOverlayScreen();
 	updateScreen();
 	execute_on_main_thread(^ {
@@ -369,6 +370,7 @@ void OSystem_iOS7::showOverlay() {
 void OSystem_iOS7::hideOverlay() {
 	//printf("hideOverlay()\n");
 	_videoContext->overlayVisible = false;
+	_videoContext->overlayInGUI = false;
 	_dirtyOverlayRects.clear();
 	dirtyFullScreen();
 	execute_on_main_thread(^ {

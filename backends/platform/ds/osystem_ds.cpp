@@ -46,7 +46,7 @@ OSystem_DS *OSystem_DS::_instance = NULL;
 OSystem_DS::OSystem_DS()
 	: _eventSource(NULL), _disableCursorPalette(true),
 	_graphicsMode(GFX_HWSCALE), _stretchMode(100),
-	_paletteDirty(false), _cursorDirty(false),
+	_paletteDirty(false), _cursorDirty(false), _overlayInGUI(false),
 	_pfCLUT8(Graphics::PixelFormat::createFormatCLUT8()),
 	_pfABGR1555(Graphics::PixelFormat(2, 5, 5, 5, 1, 0, 5, 10, 15)),
 	_callbackTimer(10), _currentTimeMillis(0), _subScreenActive(true)

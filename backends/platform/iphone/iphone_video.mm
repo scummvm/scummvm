@@ -318,7 +318,7 @@ const char *iPhone_getDocumentsDir() {
 	CGRect *rect;
 	int maxWidth, maxHeight;
 
-	if (!_videoContext.overlayVisible) {
+	if (!_videoContext.overlayInGUI) {
 		rect = &_gameScreenRect;
 		maxWidth = _videoContext.screenWidth;
 		maxHeight = _videoContext.screenHeight;
@@ -329,7 +329,7 @@ const char *iPhone_getDocumentsDir() {
 	}
 
 	if (!maxWidth || !maxHeight) {
-		printf("WARNING: updateMouseCursorScaling called when screen was not ready (%d)!\n", _videoContext.overlayVisible);
+		printf("WARNING: updateMouseCursorScaling called when screen was not ready (%d)!\n", _videoContext.overlayInGUI);
 		return;
 	}
 
@@ -626,7 +626,7 @@ const char *iPhone_getDocumentsDir() {
 
 	CGRect *area;
 	int width, height, offsetX, offsetY;
-	if (_videoContext.overlayVisible) {
+	if (_videoContext.overlayInGUI) {
 		area = &_overlayRect;
 		width = _videoContext.overlayWidth;
 		height = _videoContext.overlayHeight;

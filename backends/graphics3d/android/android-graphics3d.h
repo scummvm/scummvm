@@ -70,7 +70,7 @@ public:
 	virtual void setFeatureState(OSystem::Feature f, bool enable) override;
 	virtual bool getFeatureState(OSystem::Feature f) const override;
 
-	virtual void showOverlay() override;
+	virtual void showOverlay(bool inGUI) override;
 	virtual void hideOverlay() override;
 	virtual void clearOverlay() override;
 	virtual void grabOverlay(Graphics::Surface &surface) const override;
@@ -172,6 +172,7 @@ private:
 	GLESTexture *_overlay_background;
 	GLESTexture *_overlay_texture;
 	bool _show_overlay;
+	bool _overlay_in_gui;
 
 	// Mouse layer
 	GLESBaseTexture *_mouse_texture;

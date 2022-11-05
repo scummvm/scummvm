@@ -198,8 +198,8 @@ void ModularGraphicsBackend::clearFocusRectangle() {
 	_graphicsManager->clearFocusRectangle();
 }
 
-void ModularGraphicsBackend::showOverlay() {
-	_graphicsManager->showOverlay();
+void ModularGraphicsBackend::showOverlay(bool inGUI) {
+	_graphicsManager->showOverlay(inGUI);
 }
 
 void ModularGraphicsBackend::hideOverlay() {

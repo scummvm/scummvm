@@ -69,7 +69,7 @@ enum UIViewTapDescription {
 
 struct VideoContext {
 	VideoContext() : asprectRatioCorrection(), screenWidth(), screenHeight(), overlayVisible(false),
-	                 overlayWidth(), overlayHeight(), mouseX(), mouseY(),
+	                 overlayInGUI(false), overlayWidth(), overlayHeight(), mouseX(), mouseY(),
 	                 mouseHotspotX(), mouseHotspotY(), mouseWidth(), mouseHeight(),
 	                 mouseIsVisible(), filtering(false), shakeXOffset(), shakeYOffset() {
 	}
@@ -81,6 +81,7 @@ struct VideoContext {
 
 	// Overlay state
 	bool overlayVisible;
+	bool overlayInGUI;
 	uint overlayWidth, overlayHeight;
 	Graphics::Surface overlayTexture;
 

@@ -229,12 +229,14 @@ void OSystem_PSP::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_screen.setShakePos(shakeXOffset, shakeYOffset);
 }
 
-void OSystem_PSP::showOverlay() {
+void OSystem_PSP::showOverlay(bool inGUI) {
 	DEBUG_ENTER_FUNC();
 	_pendingUpdate = false;
 	_overlay.setVisible(true);
-	_cursor.setLimits(_overlay.getWidth(), _overlay.getHeight());
-	_cursor.useGlobalScaler(false);	// mouse with overlay is 1:1
+	if (inGUI) {
+		_cursor.setLimits(_overlay.getWidth(), _overlay.getHeight());
+		_cursor.useGlobalScaler(false);	// mouse with overlay is 1:1
+	}
 }
 
 void OSystem_PSP::hideOverlay() {

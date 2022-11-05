@@ -59,6 +59,7 @@ protected:
 	int _cursorHotY;
 	uint32 _cursorKey;
 	bool _cursorVisible;
+	bool _overlayInGUI;
 
 	DSEventSource *_eventSource;
 	DS::Keyboard *_keyboard;
@@ -107,7 +108,7 @@ public:
 	virtual void updateScreen();
 	virtual void setShakePos(int shakeXOffset, int shakeYOffset);
 
-	virtual void showOverlay();
+	virtual void showOverlay(bool inGUI);
 	virtual void hideOverlay();
 	virtual bool isOverlayVisible() const;
 	virtual void clearOverlay();

@@ -101,7 +101,7 @@ public:
 	void setFocusRectangle(const Common::Rect& rect) override final;
 	void clearFocusRectangle() override final;
 
-	void showOverlay() override final;
+	void showOverlay(bool inGUI) override final;
 	void hideOverlay() override final;
 	bool isOverlayVisible() const override final;
 	Graphics::PixelFormat getOverlayFormat() const override final;

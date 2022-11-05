@@ -86,7 +86,7 @@ public:
 	virtual void setFocusRectangle(const Common::Rect& rect) = 0;
 	virtual void clearFocusRectangle() = 0;
 
-	virtual void showOverlay() = 0;
+	virtual void showOverlay(bool inGUI) = 0;
 	virtual void hideOverlay() = 0;
 	virtual bool isOverlayVisible() const = 0;
 	virtual Graphics::PixelFormat getOverlayFormat() const = 0;

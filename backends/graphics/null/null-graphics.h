@@ -71,7 +71,7 @@ public:
 	void setFocusRectangle(const Common::Rect& rect) override {}
 	void clearFocusRectangle() override {}
 
-	void showOverlay() override { _overlayVisible = true; }
+	void showOverlay(bool inGUI) override { _overlayVisible = true; }
 	void hideOverlay() override { _overlayVisible = false; }
 	bool isOverlayVisible() const override { return _overlayVisible; }
 	Graphics::PixelFormat getOverlayFormat() const override { return Graphics::PixelFormat(2, 5, 6, 5, 0, 11, 5, 0, 0); }
