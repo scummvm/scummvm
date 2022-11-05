@@ -53,7 +53,6 @@ public:
 
 	bool hasFeature(MetaEngineFeature f) const override;
 	Common::Error createInstance(OSystem *syst, Engine **engine, const ADGameDescription *desc) const override;
-	int getMaximumSaveSlot() const override;
 	SaveStateList listSaves(const char *target) const override;
 	SaveStateDescriptor querySaveMetaInfos(const char *target, int slot) const override;
 	Common::KeymapArray initKeymaps(const char *target) const override;
@@ -61,6 +60,7 @@ public:
 
 bool MMMetaEngine::hasFeature(MetaEngineFeature f) const {
 	return
+		(f == kSavesUseExtendedFormat) ||
 		(f == kSupportsListSaves) ||
 		(f == kSupportsLoadingDuringStartup) ||
 		(f == kSupportsDeleteSave) ||
@@ -98,10 +98,6 @@ Common::Error MMMetaEngine::createInstance(OSystem *syst, Engine **engine, const
 	}
 
 	return Common::kNoError;
-}
-
-int MMMetaEngine::getMaximumSaveSlot() const {
-	return 999;
 }
 
 SaveStateList MMMetaEngine::listSaves(const char *target) const {
