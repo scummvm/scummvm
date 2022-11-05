@@ -75,6 +75,7 @@ private:
 	gfx_screen_coords_t _coordsOverlay;
 	gfx_tex_t _texOverlay;
 	bool _overlayDirty;
+	bool _overlayInGUI;
 
 	u32 _lastScreenUpdate;
 	u16 _currentWidth, _currentHeight;
@@ -173,7 +174,7 @@ public:
 	void unlockScreen() override;
 	void setShakePos(int shakeXOffset, int shakeYOffset) override;
 
-	void showOverlay() override;
+	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	bool isOverlayVisible() const override { return _overlayVisible; }
 	void clearOverlay() override;

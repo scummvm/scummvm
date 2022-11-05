@@ -263,7 +263,7 @@ void OSystem_3DS::updateSize() {
 	_gameBottomTexture.setPosition(_gameBottomX, _gameBottomY);
 	_gameTopTexture.setOffset(0, 0);
 	_gameBottomTexture.setOffset(0, 0);
-	if (_overlayVisible) {
+	if (_overlayInGUI) {
 		_cursorTexture.setScale(1.f, 1.f);
 	} else if (config.screen == kScreenTop) {
 		_cursorTexture.setScale(_gameTopTexture.getScaleX(), _gameTopTexture.getScaleY());
@@ -329,7 +329,7 @@ OSystem::TransactionError OSystem_3DS::endGFXTransaction() {
 }
 
 float OSystem_3DS::getScaleRatio() const {
-	if (_overlayVisible) {
+	if (_overlayInGUI) {
 		return 1.0;
 	} else if (config.screen == kScreenTop) {
 		return _gameTopTexture.getScaleX();
@@ -457,7 +457,7 @@ void OSystem_3DS::updateScreen() {
 			}
 			if (_cursorVisible && config.showCursor && config.screen == kScreenTop) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.setFilteringMode(!_overlayVisible && _filteringEnabled);
+				_cursorTexture.setFilteringMode(!_overlayInGUI && _filteringEnabled);
 				_cursorTexture.render();
 			}
 		}
@@ -486,7 +486,7 @@ void OSystem_3DS::updateScreen() {
 			}
 			if (_cursorVisible && config.showCursor) {
 				C3D_FVUnifMtx4x4(GPU_VERTEX_SHADER, _modelviewLocation, _cursorTexture.getMatrix());
-				_cursorTexture.setFilteringMode(!_overlayVisible && _filteringEnabled);
+				_cursorTexture.setFilteringMode(!_overlayInGUI && _filteringEnabled);
 				_cursorTexture.render();
 			}
 		}
@@ -609,13 +609,15 @@ void OSystem_3DS::updateMagnify() {
 	}
 }
 
-void OSystem_3DS::showOverlay() {
+void OSystem_3DS::showOverlay(bool inGUI) {
+	_overlayInGUI = inGUI;
 	_overlayVisible = true;
 	updateSize();
 }
 
 void OSystem_3DS::hideOverlay() {
 	_overlayVisible = false;
+	_overlayInGUI = false;
 	updateSize();
 }
 

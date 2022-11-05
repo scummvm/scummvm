@@ -92,7 +92,7 @@ public:
 	void clearFocusRectangle() override {}
 
 	// GraphicsManager API - Overlay
-	void showOverlay() override;
+	void showOverlay(bool inGUI) override;
 	void hideOverlay() override;
 	Graphics::PixelFormat getOverlayFormat() const override { return _overlayFormat; }
 	void clearOverlay() override;

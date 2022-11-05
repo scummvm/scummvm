@@ -154,13 +154,19 @@ void AndroidGraphicsManager::displayMessageOnOSD(const Common::U32String &msg) {
 	JNI::displayMessageOnOSD(msg);
 }
 
-void AndroidGraphicsManager::showOverlay() {
-	if (_overlayVisible)
+void AndroidGraphicsManager::showOverlay(bool inGUI) {
+	if (_overlayVisible && inGUI == _overlayInGUI)
 		return;
 
-	_old_touch_mode = JNI::getTouchMode();
-	// not in 3D, in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+	// Don't change touch mode when not changing mouse coordinates
+	if (inGUI) {
+		_old_touch_mode = JNI::getTouchMode();
+		// not in 3D, in overlay
+		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(false, true);
+	} else if (_overlayInGUI) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
+	}
 
 	OpenGL::OpenGLGraphicsManager::showOverlay();
 }
@@ -169,8 +175,10 @@ void AndroidGraphicsManager::hideOverlay() {
 	if (!_overlayVisible)
 		return;
 
-	// Restore touch mode active before overlay was shown
-	JNI::setTouchMode(_old_touch_mode);
+	if (_overlayInGUI) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
+	}
 
 	OpenGL::OpenGLGraphicsManager::hideOverlay();
 }

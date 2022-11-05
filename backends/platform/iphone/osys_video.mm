@@ -279,9 +279,10 @@ void OSystem_IPHONE::setShakePos(int shakeXOffset, int shakeYOffset) {
 	_mouseDirty = true;
 }
 
-void OSystem_IPHONE::showOverlay() {
+void OSystem_IPHONE::showOverlay(bool inGUI) {
 	//printf("showOverlay()\n");
 	_videoContext->overlayVisible = true;
+	_videoContext->overlayInGUI = inGUI;
 	dirtyFullOverlayScreen();
 	updateScreen();
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];
@@ -291,6 +292,7 @@ void OSystem_IPHONE::showOverlay() {
 void OSystem_IPHONE::hideOverlay() {
 	//printf("hideOverlay()\n");
 	_videoContext->overlayVisible = false;
+	_videoContext->overlayInGUI = false;
 	_dirtyOverlayRects.clear();
 	dirtyFullScreen();
 	[g_iPhoneViewInstance performSelectorOnMainThread:@selector(updateMouseCursorScaling) withObject:nil waitUntilDone: YES];

@@ -215,7 +215,7 @@ bool OSystem_Dreamcast::pollEvent(Common::Event &event)
   if (_ms_cur_y>=_screen_h) _ms_cur_y=_screen_h-1;
   event.mouse.x = _ms_cur_x;
   event.mouse.y = _ms_cur_y;
-  if (_overlay_visible) {
+  if (_overlay_in_gui) {
 	event.mouse.x -= _overlay_x;
 	event.mouse.y -= _overlay_y;
   }

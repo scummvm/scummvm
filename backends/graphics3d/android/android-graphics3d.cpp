@@ -322,7 +322,8 @@ void AndroidGraphics3dManager::updateScreen() {
 	_game_texture->drawTextureRect();
 
 	if (_show_overlay) {
-		if (_overlay_background && _overlay_background->getTextureName() != 0) {
+		// If the overlay is in game we expect the game to continue drawing
+		if (_overlay_in_gui && _overlay_background && _overlay_background->getTextureName() != 0) {
 			GLCALL(_overlay_background->drawTextureRect());
 		}
 		GLCALL(_overlay_texture->drawTextureRect());
@@ -491,18 +492,24 @@ bool AndroidGraphics3dManager::getFeatureState(OSystem::Feature f) const {
 	}
 }
 
-void AndroidGraphics3dManager::showOverlay() {
+void AndroidGraphics3dManager::showOverlay(bool inGUI) {
 	ENTER();
 
-	if (_show_overlay) {
+	if (_show_overlay && inGUI == _overlay_in_gui) {
 		return;
 	}
 
-	_old_touch_mode = JNI::getTouchMode();
-	// in 3D, in overlay
-	dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
+	if (inGUI) {
+		_old_touch_mode = JNI::getTouchMode();
+		// in 3D, in overlay
+		dynamic_cast<OSystem_Android *>(g_system)->applyTouchSettings(true, true);
+	} else if (_overlay_in_gui) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
+	}
 
 	_show_overlay = true;
+	_overlay_in_gui = inGUI;
 	_force_redraw = true;
 
 	// If there is a game running capture the screen, so that it can be shown "below" the overlay.
@@ -546,10 +553,14 @@ void AndroidGraphics3dManager::hideOverlay() {
 
 	_overlay_background->release();
 
-	// Restore touch mode active before overlay was shown
-	JNI::setTouchMode(_old_touch_mode);
+	if (_overlay_in_gui) {
+		// Restore touch mode active before overlay was shown
+		JNI::setTouchMode(_old_touch_mode);
 
-	warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
+		warpMouse(_game_texture->width() / 2, _game_texture->height() / 2);
+	}
+
+	_overlay_in_gui = false;
 
 	// double buffered, flip twice
 	clearScreen(kClearUpdate, 2);

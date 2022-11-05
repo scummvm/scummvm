@@ -408,7 +408,9 @@ void OSystem_DS::updateScreen() {
 
 	if (_overlay.isVisible()) {
 		_overlay.update();
-	} else {
+	}
+
+	if (_framebuffer.isVisible()) {
 		if (_paletteDirty) {
 			dmaCopyHalfWords(3, _palette, BG_PALETTE, 256 * 2);
 #ifdef DISABLE_TEXT_CONSOLE
@@ -430,12 +432,14 @@ void OSystem_DS::setShakePos(int shakeXOffset, int shakeYOffset) {
 	DS::setShakePos(shakeXOffset, shakeYOffset);
 }
 
-void OSystem_DS::showOverlay() {
+void OSystem_DS::showOverlay(bool inGUI) {
+	_overlayInGUI = inGUI;
 	_overlay.reset();
 	_overlay.show();
 }
 
 void OSystem_DS::hideOverlay() {
+	_overlayInGUI = false;
 	_overlay.hide();
 }
 
@@ -471,7 +475,7 @@ Graphics::PixelFormat OSystem_DS::getOverlayFormat() const {
 }
 
 Common::Point OSystem_DS::transformPoint(int16 x, int16 y) {
-	if (_overlay.isVisible())
+	if (_overlayInGUI)
 		return Common::Point(x, y);
 	else
 		return _framebuffer.realToScaled(x, y);
@@ -484,7 +488,7 @@ bool OSystem_DS::showMouse(bool visible) {
 }
 
 void OSystem_DS::warpMouse(int x, int y) {
-	if (_overlay.isVisible())
+	if (_overlayInGUI)
 		_cursorPos = Common::Point(x, y);
 	else
 		_cursorPos = _framebuffer.scaledToReal(x, y);

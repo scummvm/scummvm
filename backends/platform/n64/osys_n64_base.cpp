@@ -90,6 +90,7 @@ OSystem_N64::OSystem_N64() {
 	_disableFpsLimit = false;
 
 	_overlayVisible = false;
+	_overlayInGUI = false;
 
 	_shakeXOffset = 0;
 	_shakeYOffset = 0;
@@ -613,27 +614,34 @@ void OSystem_N64::setShakePos(int shakeXOffset, int shakeYOffset) {
 	return;
 }
 
-void OSystem_N64::showOverlay() {
-	// Change min/max mouse coords
-	_mouseMaxX = _overlayWidth;
-	_mouseMaxY = _overlayHeight;
+void OSystem_N64::showOverlay(bool inGUI) {
+	_overlayInGUI = inGUI;
 
-	// Relocate the mouse cursor given the new limitations
-	warpMouse(_mouseX, _mouseY);
+	if (inGUI) {
+		// Change min/max mouse coords
+		_mouseMaxX = _overlayWidth;
+		_mouseMaxY = _overlayHeight;
+
+		// Relocate the mouse cursor given the new limitations
+		warpMouse(_mouseX, _mouseY);
+	}
 
 	_overlayVisible = true;
 	_dirtyOffscreen = true;
 }
 
 void OSystem_N64::hideOverlay() {
-	// Change min/max mouse coords
-	_mouseMaxX = _gameWidth;
-	_mouseMaxY = _gameHeight;
+	if (_overlayInGUI) {
+		// Change min/max mouse coords
+		_mouseMaxX = _gameWidth;
+		_mouseMaxY = _gameHeight;
 
-	// Relocate the mouse cursor given the new limitations
-	warpMouse(_mouseX, _mouseY);
+		// Relocate the mouse cursor given the new limitations
+		warpMouse(_mouseX, _mouseY);
+	}
 
 	_overlayVisible = false;
+	_overlayInGUI = false;
 
 	// Clear double buffered display
 	clearAllVideoBuffers();

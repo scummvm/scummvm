@@ -44,6 +44,7 @@ public:
 		_windowWidth(0),
 		_windowHeight(0),
 		_overlayVisible(false),
+		_overlayInGUI(false),
 		_gameScreenShakeXOffset(0),
 		_gameScreenShakeYOffset(0),
 		_forceRedraw(false),
@@ -53,13 +54,22 @@ public:
 		_cursorNeedsRedraw(false),
 		_cursorLastInActiveArea(true) {}
 
-	void showOverlay() override {
+	void showOverlay(bool inGUI) override {
+		_overlayInGUI = inGUI;
+
+		if (inGUI) {
+			_activeArea.drawRect = _overlayDrawRect;
+			_activeArea.width = getOverlayWidth();
+			_activeArea.height = getOverlayHeight();
+		} else {
+			_activeArea.drawRect = _gameDrawRect;
+			_activeArea.width = getWidth();
+			_activeArea.height = getHeight();
+		}
+
 		if (_overlayVisible)
 			return;
 
-		_activeArea.drawRect = _overlayDrawRect;
-		_activeArea.width = getOverlayWidth();
-		_activeArea.height = getOverlayHeight();
 		_overlayVisible = true;
 		_forceRedraw = true;
 		notifyActiveAreaChanged();
@@ -68,6 +78,8 @@ public:
 	void hideOverlay() override {
 		if (!_overlayVisible)
 			return;
+
+		_overlayInGUI = true;
 
 		_activeArea.drawRect = _gameDrawRect;
 		_activeArea.width = getWidth();
@@ -203,7 +215,7 @@ protected:
 			populateDisplayAreaDrawRect(overlayAspect, getOverlayWidth(), getOverlayHeight(), _overlayDrawRect);
 		}
 
-		if (_overlayVisible) {
+		if (_overlayInGUI) {
 			_activeArea.drawRect = _overlayDrawRect;
 			_activeArea.width = getOverlayWidth();
 			_activeArea.height = getOverlayHeight();
@@ -295,6 +307,11 @@ protected:
 	 * is visible or not.
 	 */
 	bool _overlayVisible;
+
+	/**
+	 * Whether when overlay is shown, mouse coordinates depend on window or game screen size
+	 */
+	bool _overlayInGUI;
 
 	/**
 	 * The offset by which the screen is moved horizontally.

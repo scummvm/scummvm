@@ -1092,7 +1092,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		(_cursorNeedsRedraw && _mouseBackup.x <= _currentShakeXOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_gameScreenShakeXOffset * _videoMode.scaleFactor), (Uint16)(_videoMode.screenHeight * _videoMode.scaleFactor)};
 
-		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
@@ -1105,7 +1105,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		(_cursorNeedsRedraw && _mouseBackup.y <= _currentShakeYOffset)) {
 		SDL_Rect blackrect = {0, 0, (Uint16)(_videoMode.screenWidth * _videoMode.scaleFactor), (Uint16)(_gameScreenShakeYOffset * _videoMode.scaleFactor)};
 
-		if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+		if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 			blackrect.h = real2Aspect(blackrect.h - 1) + 1;
 
 		SDL_FillRect(_hwScreen, &blackrect, 0);
@@ -1224,7 +1224,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				dst_x *= scale1;
 				dst_y *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 					dst_y = real2Aspect(dst_y);
 
 				_scaler->scale((byte *)srcSurf->pixels + (r->x + _maxExtraPixels) * 2 + (r->y + _maxExtraPixels) * srcPitch, srcPitch,
@@ -1237,7 +1237,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 			r->h = dst_h * scale1;
 
 #ifdef USE_ASPECT
-			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayVisible)
+			if (_videoMode.aspectRatioCorrection && orig_dst_y < height && !_overlayInGUI)
 				r->h = stretch200To240((uint8 *) _hwScreen->pixels, dstPitch, r->w, r->h, r->x, r->y, orig_dst_y * scale1, _videoMode.filtering, convertSDLPixelFormat(_hwScreen->format));
 #endif
 		}
@@ -1263,7 +1263,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 		// We draw the focus rectangle on top of everything, to assure it's easily visible.
 		// Of course when the overlay is visible we do not show it, since it is only for game
 		// specific focus.
-		if (_enableFocusRect && !_overlayVisible) {
+		if (_enableFocusRect && !_overlayInGUI) {
 			int x = _focusRect.left + _currentShakeXOffset;
 			int y = _focusRect.top + _currentShakeYOffset;
 
@@ -1281,7 +1281,7 @@ void SurfaceSdlGraphicsManager::internUpdateScreen() {
 				w *= scale1;
 				h *= scale1;
 
-				if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+				if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 					y = real2Aspect(y);
 
 				if (h > 0 && w > 0) {
@@ -1437,7 +1437,7 @@ void SurfaceSdlGraphicsManager::copyRectToScreen(const void *buf, int pitch, int
 	assert(h > 0 && y + h <= _videoMode.screenHeight);
 	assert(w > 0 && x + w <= _videoMode.screenWidth);
 
-	addDirtyRect(x, y, w, h);
+	addDirtyRect(x, y, w, h, false);
 
 	// Try to lock the screen surface
 	if (SDL_LockSurface(_screen) == -1)
@@ -1502,7 +1502,7 @@ void SurfaceSdlGraphicsManager::fillScreen(uint32 col) {
 	unlockScreen();
 }
 
-void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool realCoordinates) {
+void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool inOverlay, bool realCoordinates) {
 	if (_forceRedraw)
 		return;
 
@@ -1513,7 +1513,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 
 	int height, width;
 
-	if (!_overlayVisible && !realCoordinates) {
+	if (!inOverlay && !realCoordinates) {
 		width = _videoMode.screenWidth;
 		height = _videoMode.screenHeight;
 	} else {
@@ -1552,7 +1552,7 @@ void SurfaceSdlGraphicsManager::addDirtyRect(int x, int y, int w, int h, bool re
 	}
 
 #ifdef USE_ASPECT
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible && !realCoordinates)
+	if (_videoMode.aspectRatioCorrection && !_overlayInGUI && !realCoordinates)
 		makeRectStretchable(x, y, w, h, _videoMode.filtering);
 #endif
 
@@ -1662,7 +1662,7 @@ void SurfaceSdlGraphicsManager::setFocusRectangle(const Common::Rect &rect) {
 
 	// We just fake this as a dirty rect for now, to easily force an screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
 #endif
 }
 
@@ -1676,7 +1676,7 @@ void SurfaceSdlGraphicsManager::clearFocusRectangle() {
 
 	// We just fake this as a dirty rect for now, to easily force an screen update whenever
 	// the rect changes.
-	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height());
+	addDirtyRect(_focusRect.left, _focusRect.top, _focusRect.width(), _focusRect.height(), _overlayVisible);
 #endif
 }
 
@@ -1771,7 +1771,7 @@ void SurfaceSdlGraphicsManager::copyRectToOverlay(const void *buf, int pitch, in
 		return;
 
 	// Mark the modified region as dirty
-	addDirtyRect(x, y, w, h);
+	addDirtyRect(x, y, w, h, true);
 
 	if (SDL_LockSurface(_overlayscreen) == -1)
 		error("SDL_LockSurface failed: %s", SDL_GetError());
@@ -2106,11 +2106,11 @@ void SurfaceSdlGraphicsManager::undrawMouse() {
 
 	// When we switch bigger overlay off mouse jumps. Argh!
 	// This is intended to prevent undrawing offscreen mouse
-	if (!_overlayVisible && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
+	if (!_overlayInGUI && (x >= _videoMode.screenWidth || y >= _videoMode.screenHeight))
 		return;
 
 	if (_mouseBackup.w != 0 && _mouseBackup.h != 0)
-		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h);
+		addDirtyRect(x, y, _mouseBackup.w, _mouseBackup.h, _overlayInGUI);
 }
 
 void SurfaceSdlGraphicsManager::drawMouse() {
@@ -2128,7 +2128,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.x = virtualCursor.x;
 	dst.y = virtualCursor.y;
 
-	if (!_overlayVisible) {
+	if (!_overlayInGUI) {
 		scale = _videoMode.scaleFactor;
 		dst.w = _mouseCurState.vW;
 		dst.h = _mouseCurState.vH;
@@ -2161,7 +2161,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	dst.x += _currentShakeXOffset;
 	dst.y += _currentShakeYOffset;
 
-	if (_videoMode.aspectRatioCorrection && !_overlayVisible)
+	if (_videoMode.aspectRatioCorrection && !_overlayInGUI)
 		dst.y = real2Aspect(dst.y);
 
 	dst.x = scale * dst.x - _mouseCurState.rHotX;
@@ -2178,7 +2178,7 @@ void SurfaceSdlGraphicsManager::drawMouse() {
 	// The screen will be updated using real surface coordinates, i.e.
 	// they will not be scaled or aspect-ratio corrected.
 
-	addDirtyRect(dst.x, dst.y, dst.w, dst.h, true);
+	addDirtyRect(dst.x, dst.y, dst.w, dst.h, _overlayInGUI, true);
 }
 
 #pragma mark -
@@ -2643,10 +2643,12 @@ void SurfaceSdlGraphicsManager::SDL_UpdateRects(SDL_Surface *screen, int numrect
 	SDL_UpdateTexture(_screenTexture, nullptr, screen->pixels, screen->pitch);
 
 	SDL_Rect viewport;
-	viewport.x = _activeArea.drawRect.left;
-	viewport.y = _activeArea.drawRect.top;
-	viewport.w = _activeArea.drawRect.width();
-	viewport.h = _activeArea.drawRect.height();
+
+	Common::Rect &drawRect = (_overlayVisible) ? _overlayDrawRect : _gameDrawRect;
+	viewport.x = drawRect.left;
+	viewport.y = drawRect.top;
+	viewport.w = drawRect.width();
+	viewport.h = drawRect.height();
 
 	SDL_RenderClear(_renderer);
 	SDL_RenderCopy(_renderer, _screenTexture, nullptr, &viewport);

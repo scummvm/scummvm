@@ -81,6 +81,7 @@ OSystem_3DS::OSystem_3DS():
 	_gameTextureDirty(false),
 	_filteringEnabled(true),
 	_overlayVisible(false),
+	_overlayInGUI(false),
 	_screenChangeId(0),
 	_magnifyMode(MODE_MAGOFF),
 	exiting(false),

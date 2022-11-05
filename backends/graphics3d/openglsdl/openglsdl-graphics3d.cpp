@@ -649,7 +649,8 @@ void OpenGLSdlGraphics3dManager::updateScreen() {
 	if (_overlayVisible) {
 		_overlayScreen->update();
 
-		if (_overlayBackground) {
+		// If the overlay is in game we expect the game to continue calling OpenGL
+		if (_overlayBackground && _overlayInGUI) {
 			_overlayBackground->update();
 		}
 
@@ -685,11 +686,12 @@ int16 OpenGLSdlGraphics3dManager::getWidth() const {
 #pragma mark --- Overlays ---
 #pragma mark -
 
-void OpenGLSdlGraphics3dManager::showOverlay() {
-	if (_overlayVisible) {
+void OpenGLSdlGraphics3dManager::showOverlay(bool inGUI) {
+	if (_overlayVisible && _overlayInGUI == inGUI) {
 		return;
 	}
-	WindowedGraphicsManager::showOverlay();
+
+	WindowedGraphicsManager::showOverlay(inGUI);
 
 	delete _overlayBackground;
 	_overlayBackground = nullptr;

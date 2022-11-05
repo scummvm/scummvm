@@ -101,7 +101,7 @@ public:
 	void setShakePos(int shakeXOffset, int shakeYOffset);
 
 	// Overlay related
-	void showOverlay();
+	void showOverlay(bool inGUI);
 	void hideOverlay();
 	bool isOverlayVisible() const;
 	void clearOverlay();
