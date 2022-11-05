@@ -124,7 +124,7 @@ void VideoPlayer::waitFrame() {
 		_lastFrameTime = currTime;
 		_frameTimeDrift = 0.0f;
 
-		g_system->showOverlay();
+		g_system->showOverlay(false);
 		g_system->clearOverlay();
 	} else {
 		uint32 millisDiff = currTime - _lastFrameTime;
