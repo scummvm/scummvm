@@ -252,7 +252,7 @@ Graphics::MacWidget *BitmapCastMember::createWidget(Common::Rect &bbox, Channel 
 #endif
 			) {
 
-			_img->getSurface()->convertTo(g_director->_wm->_pixelformat, _img->getPalette(), srcBpp, g_director->_wm->getPalette(), dstBpp);
+			_ditheredImg = _img->getSurface()->convertTo(g_director->_wm->_pixelformat, _img->getPalette(), _img->getPaletteColorCount(), g_director->_wm->getPalette(), g_director->_wm->getPaletteSize());
 
 			pal = g_director->_wm->getPalette();
 		}
