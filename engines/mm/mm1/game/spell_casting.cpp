@@ -21,6 +21,7 @@
 
 #include "mm/mm1/game/spell_casting.h"
 #include "mm/mm1/maps/maps.h"
+#include "mm/mm1/views/combat.h"
 #include "mm/mm1/globals.h"
 
 namespace MM {
@@ -116,9 +117,9 @@ void SpellCasting::setSpell(int spellIndex, int requiredSp, int requiredGems) {
 
 	Maps::Map &map = *g_maps->_currentMap;
 
-	if (!g_globals->_inCombat && SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
+	if (!isInCombat() && SPELL_FLAGS[spellIndex] & SF_COMBAT_ONLY)
 		_spellState = SS_COMBAT_ONLY;
-	else if (g_globals->_inCombat && SPELL_FLAGS[spellIndex] & SF_NONCOMBAT_ONLY)
+	else if (isInCombat() && SPELL_FLAGS[spellIndex] & SF_NONCOMBAT_ONLY)
 		_spellState = SS_NONCOMBAT_ONLY;
 	else if ((SPELL_FLAGS[spellIndex] & SF_OUTDOORS_ONLY) &&
 			!(map[Maps::MAP_ID] & 0x80))
@@ -153,9 +154,13 @@ Common::String SpellCasting::getSpellError() const {
 		break;
 	}
 
-	if (!g_globals->_inCombat)
+	if (!isInCombat())
 		msg = Common::String::format("*** %s ***", msg.c_str());
 	return msg;
+}
+
+bool SpellCasting::isInCombat() const {
+	return g_events->isPresent("Combat");
 }
 
 } // namespace Game

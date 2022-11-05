@@ -22,6 +22,7 @@
 #ifndef MM1_GLOBALS_H
 #define MM1_GLOBALS_H
 
+#include "common/serializer.h"
 #include "graphics/font.h"
 #include "mm/utils/bitmap_font.h"
 #include "mm/utils/strings_data.h"
@@ -55,7 +56,6 @@ public:
 	Treasure _treasure;
 	byte _delay = 5;
 	int _nonCombatEffectCtr = 0, _combatEffectCtr = 0;
-	bool _inCombat = false;
 public:
 	// Enhanced mode globals
 	Xeen::SpriteResource _mainIcons;
@@ -81,6 +81,11 @@ public:
 		assert(_strings.contains(name));
 		return _strings[name];
 	}
+
+	/**
+	 * Saves or loads global data to/from savegames
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 extern Globals *g_globals;

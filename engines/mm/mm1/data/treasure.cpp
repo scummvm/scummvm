@@ -46,5 +46,9 @@ bool Treasure::present() const {
 	return false;
 }
 
+void Treasure::synchronize(Common::Serializer &s) {
+	s.syncBytes(_data, 9);
+}
+
 } // namespace MM1
 } // namespace MM

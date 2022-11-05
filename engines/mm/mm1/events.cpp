@@ -146,6 +146,15 @@ void Events::popView() {
 	}
 }
 
+bool Events::isPresent(const Common::String &name) const {
+	for (uint i = 0; i < _views.size(); ++i) {
+		if (_views[i]->_name == name)
+			return true;
+	}
+
+	return false;
+}
+
 void Events::clearViews() {
 	if (!_views.empty())
 		focusedView()->msgUnfocus(UnfocusMessage());

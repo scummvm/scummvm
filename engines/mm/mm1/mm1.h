@@ -23,6 +23,7 @@
 #define MM1_MM1_H
 
 #include "common/random.h"
+#include "common/serializer.h"
 #include "mm/detection.h"
 #include "mm/mm.h"
 #include "mm/mm1/events.h"
@@ -77,7 +78,26 @@ public:
 	 */
 	bool canLoadGameStateCurrently() override;
 
-	Common::Error loadGameStream(Common::SeekableReadStream *stream) override;
+	/**
+	 * Saves or loads a savegame
+	 */
+	Common::Error synchronizeSave(Common::Serializer &s);
+
+	/**
+	 * Load a savegame
+	 */
+	Common::Error loadGameStream(Common::SeekableReadStream *stream) override {
+		Common::Serializer s(stream, nullptr);
+		return synchronizeSave(s);
+	}
+
+	/**
+	 * Save a savegame
+	 */
+	Common::Error saveGameStream(Common::WriteStream *stream, bool isAutosave = false) override {
+		Common::Serializer s(nullptr, stream);
+		return synchronizeSave(s);
+	}
 };
 
 extern MM1Engine *g_engine;

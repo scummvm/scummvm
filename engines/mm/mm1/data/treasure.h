@@ -23,6 +23,7 @@
 #define MM1_DATA_TREASURE_H
 
 #include "common/scummsys.h"
+#include "common/serializer.h"
 
 namespace MM {
 namespace MM1 {
@@ -56,6 +57,11 @@ public:
 	 * Returns true if any treasure has been assigned
 	 */
 	bool present() const;
+
+	/**
+	 * Synchronize savegame data
+	 */
+	void synchronize(Common::Serializer &s);
 };
 
 } // namespace MM1

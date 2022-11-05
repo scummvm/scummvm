@@ -95,5 +95,26 @@ bool Globals::load(bool isEnhanced) {
 	return true;
 }
 
+void Globals::synchronize(Common::Serializer &s) {
+	s.syncAsByte(_startingTown);
+
+	// Sync the party
+	int partySize = _party.size();
+	s.syncAsByte(partySize);
+	if (s.isLoading())
+		_party.resize(partySize);
+
+	for (int i = 0; i < partySize; ++i)
+		_party[i].synchronize(s);
+
+	// Sync map data and visited tiles
+	_maps.synchronize(s);
+
+	// Sync treasure data
+	_treasure.synchronize(s);
+
+	_currCharacter = nullptr;
+}
+
 } // namespace MM1
 } // namespace MM
