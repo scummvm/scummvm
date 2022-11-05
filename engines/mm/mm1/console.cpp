@@ -41,6 +41,7 @@ Console::Console() : GUI::Debugger() {
 	registerCmd("intangible", WRAP_METHOD(Console, cmdIntangible));
 	registerCmd("cast", WRAP_METHOD(Console, cmdCast));
 	registerCmd("encounter", WRAP_METHOD(Console, cmdEncounter));
+	registerCmd("specials", WRAP_METHOD(Console, cmdSpecials));
 }
 
 bool Console::cmdDumpMap(int argc, const char **argv) {
@@ -322,6 +323,34 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 
 	g_globals->_encounters.execute();
 	return false;
+}
+
+bool Console::cmdSpecials(int argc, const char **argv) {
+	int count = g_maps->_currentMap->dataByte(Maps::MAP_SPECIAL_COUNT);
+
+	for (int i = 0; i < count; ++i) {
+		int mapOffset = g_maps->_currentMap->dataByte(51 + i);
+		int x = mapOffset % MAP_W;
+		int y = mapOffset / MAP_W;
+		Common::String line = Common::String::format(
+			"Special #%.2d - %d, %d (", i, x, y);
+
+		int dirMask = g_maps->_currentMap->dataByte(51 + i);
+		if (dirMask & Maps::DIRMASK_N)
+			line += "N,";
+		if (dirMask & Maps::DIRMASK_S)
+			line += "S,";
+		if (dirMask & Maps::DIRMASK_E)
+			line += "E,";
+		if (dirMask & Maps::DIRMASK_W)
+			line += "W,";
+
+		line.deleteLastChar();
+		line += ')';
+		debugPrintf("%s\n", line.c_str());
+	}
+
+	return true;
 }
 
 } // namespace MM1
