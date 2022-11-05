@@ -212,6 +212,7 @@ MODULE_OBJS := \
 	xeen/dialogs/dialogs_spells.o \
 	xeen/dialogs/dialogs_whowill.o \
 	xeen/dialogs/please_wait.o \
+	xeen/meta_engine.o \
 	xeen/character.o \
 	xeen/combat.o \
 	xeen/cutscenes.o \
