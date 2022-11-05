@@ -27,12 +27,19 @@ HowTo::HowTo() : _entered(false) {
 }
 
 void HowTo::leave()	{
-
+	error("TODO: Implement HowTo::leave");
 }
 
 void HowTo::enter()	{
-
+	error("TODO: Implement HowTo::enter");
 }
-// TODO: Add more functions here.
+
+bool HowTo::onDefaultPadButtonUp(uint32 flags) {
+	error("TODO: Implement HowTo::onDefaultPadButtonUp");
+}
+
+bool HowTo::updateDisplay(uint oldval, uint newval) {
+	error("TODO: Implement HowTo::updateDisplay");
+}
 
 } // end namespace Tetraedge

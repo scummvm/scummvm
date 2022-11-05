@@ -28,7 +28,7 @@ namespace Tetraedge {
 /*static*/ Common::HashMap<Common::String, Object3D::ObjectSettings> *Object3D::_objectSettings = nullptr;
 
 
-Object3D::Object3D() {
+Object3D::Object3D() : _translateTime(-1), _rotateTime(-1) {
 }
 
 bool Object3D::loadModel(const Common::String &name) {

@@ -76,9 +76,9 @@ void TeModelAnimation::destroy() {
 	_fbxArrays.clear();
 }
 
-int TeModelAnimation::findBone(const Common::String &name) {
+int TeModelAnimation::findBone(const Common::String &bname) {
 	for (unsigned int i = 0; i < _boneNames.size(); i++) {
-		if (_boneNames[i] == name)
+		if (_boneNames[i] == bname)
 			return i;
 	}
 	return -1;
@@ -90,7 +90,7 @@ int TeModelAnimation::firstFrame() const {
 	return _firstFrame;
 }
 
-//TeMatrix4x4 TeModelAnimation::getMatrix(const Common::String &name, unsigned long frame, bool param_5);
+//TeMatrix4x4 TeModelAnimation::getMatrix(const Common::String &mname, unsigned long frame, bool param_5);
 
 TeQuaternion TeModelAnimation::getNMORotation(unsigned long boneNo, float amount) const {
 	if (boneNo < _nmoRotArrays.size()) {
@@ -273,11 +273,11 @@ void TeModelAnimation::resizeNMOArrays(unsigned long len) {
 
 //void TeModelAnimation::saveBone(Common::SeekableWriteStream &stream, uint param_2);
 
-void TeModelAnimation::setBoneName(uint boneNo, const Common::String &name) {
+void TeModelAnimation::setBoneName(uint boneNo, const Common::String &bname) {
 	if (_boneNames.size() < boneNo + 1) {
 		_boneNames.resize(boneNo + 1);
 	}
-	_boneNames[boneNo] = name;
+	_boneNames[boneNo] = bname;
 }
 
 void TeModelAnimation::setRotation(unsigned long num, float amount, const TeQuaternion &rot) {

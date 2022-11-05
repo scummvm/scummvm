@@ -35,6 +35,5 @@ void TeExtendedTextLayout::setAutoScrollSpeed(float val) {
 	_scrollingLayout.setAutoScrollAnimation2Speed(val);
 }
 
-// TODO: Add more functions here.
 
 } // end namespace Tetraedge

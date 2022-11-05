@@ -62,7 +62,7 @@ private:
 	float _frameRate;
 	unsigned int _width;
 	unsigned int _height;
-	Common::Array<Common::Path> _files;
+	Common::Array<Common::FSNode> _files;
 	unsigned int _curFrame;
 };
 

@@ -31,17 +31,17 @@ void TeScene::close() {
 	_models.clear();
 }
 
-TeIntrusivePtr<TeCamera> TeScene::camera(const Common::String &name) {
+TeIntrusivePtr<TeCamera> TeScene::camera(const Common::String &cname) {
 	for (auto &c : _cameras) {
-		if (c->name() == name)
+		if (c->name() == cname)
 			return c;
 	}
 	return TeIntrusivePtr<TeCamera>();
 }
 
-TeIntrusivePtr<TeModel> TeScene::model(const Common::String &name) {
+TeIntrusivePtr<TeModel> TeScene::model(const Common::String &mname) {
 	for (auto &m : _models) {
-		if (m->name() == name)
+		if (m->name() == mname)
 			return m;
 	}
 	return TeIntrusivePtr<TeModel>();
@@ -72,32 +72,32 @@ void TeScene::draw() {
 	TeCamera::restore();
 }
 
-void TeScene::removeModel(const Common::String &name) {
+void TeScene::removeModel(const Common::String &mname) {
 	uint n = _models.size();
 	for (uint i = 0; i < n; i++) {
-		if (_models[i]->name() == name) {
+		if (_models[i]->name() == mname) {
 			_models.remove_at(i);
 			break;
 		}
 	}
 }
 
-void TeScene::setCurrentCamera(const Common::String &name) {
+void TeScene::setCurrentCamera(const Common::String &cname) {
 	uint n = _cameras.size();
 	uint i = 0;
 	for (; i < n; i++) {
-		if (_cameras[i]->name() == name) {
+		if (_cameras[i]->name() == cname) {
 			break;
 		}
 	}
 	if (i == n) {
-		debug("TeScene::setCurrentCamera: Couldn't find camera %s", name.c_str());
+		debug("TeScene::setCurrentCamera: Couldn't find camera %s", cname.c_str());
 		return;
 	}
 	_currentCameraIndex = i;
 	TeCamera *c = _cameras[i].get();
 	assert(c);
-	debug("TeScene::setCurrentCamera: Set %s", c->name().c_str());
+	// debug("TeScene::setCurrentCamera: Set %s", c->name().c_str());
 }
 
 void TeScene::update() {

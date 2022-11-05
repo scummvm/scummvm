@@ -75,29 +75,30 @@ bool TeImagesSequence::load(const Common::Path &path) {
 			continue;
 		}
 
-		Common::File file;
-		if (!file.open(filePath)) {
+		Common::SeekableReadStream *stream = child.createReadStream();
+		if (!stream) {
 			warning("TeImagesSequence::load can't open %s", filePath.toString().c_str());
 			continue;
 		}
 
-		// At first only do the deep check for the first file to get dimensions.
-		if (_width) {
-			_files.push_back(filePath);
-			continue;
+		// Only do the deep check for the first file to get dimensions.
+		if (!_width) {
+			Image::PNGDecoder png;
+			if (!png.loadStream(*stream)) {
+				warning("Image sequence failed to load png %s", filePath.toString().c_str());
+				delete stream;
+				return false;
+			}
+
+			const Graphics::Surface *surf = png.getSurface();
+			assert(surf);
+			_width = surf->w;
+			_height = surf->h;
+			_frameRate = fps;
 		}
 
-		Image::PNGDecoder png;
-		if (!png.loadStream(file)) {
-			warning("Image sequence failed to load png %s", filePath.toString().c_str());
-			return false;
-		}
-
-		const Graphics::Surface *surf = png.getSurface();
-		assert(surf);
-		_width = surf->w;
-		_height = surf->h;
-		_frameRate = fps;
+		_files.push_back(child);
+		delete stream;
 	}
 
 	return true;
@@ -110,23 +111,25 @@ bool TeImagesSequence::update(unsigned long i, TeImage &imgout) {
 	if (i >= _files.size())
 		return false;
 
-	Common::File file;
-	if (file.open(_files[_curFrame]))
-		error("Open %s failed.. it was ok before?", _files[_curFrame].toString().c_str());
+	Common::SeekableReadStream *stream = _files[_curFrame].createReadStream();
+	if (!stream)
+		error("Open %s failed.. it was ok before?", _files[_curFrame].getName().c_str());
 
 	Image::PNGDecoder png;
-	if (png.loadStream(file)) {
-		warning("Image sequence failed to load png %s", _files[_curFrame].toString().c_str());
+	if (!png.loadStream(*stream)) {
+		warning("Image sequence failed to load png %s", _files[_curFrame].getName().c_str());
+		delete stream;
 		return false;
 	}
 
 	const Graphics::Surface *surf = png.getSurface();
 	assert(surf);
 
-	imgout.setAccessName(_files[_curFrame]);
+	imgout.setAccessName(_files[_curFrame].getPath());
 
 	if (imgout.w == surf->w && imgout.h == surf->h && imgout.format == surf->format) {
 		imgout.copyFrom(*surf);
+		delete stream;
 		return true;
 	}
 

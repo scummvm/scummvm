@@ -60,7 +60,7 @@ public:
 	int calcCurrentFrame(double millis);
 	void cont() override;
 	void destroy();
-	int findBone(const Common::String &name);
+	int findBone(const Common::String &bname);
 	int firstFrame() const;
 	TeMatrix4x4 getMatrix(const Common::String &name, unsigned long frame, bool param_5);
 	TeQuaternion getNMORotation(unsigned long param_3, float param_4) const;
@@ -76,7 +76,7 @@ public:
 	void resizeNMOArrays(unsigned long len);
 	void save(Common::SeekableWriteStream &stream);
 	void saveBone(Common::SeekableWriteStream &stream, uint param_2);
-	void setBoneName(uint boneNo, const Common::String &name);
+	void setBoneName(uint boneNo, const Common::String &bname);
 	void setFrameLimits(int framemin, int framemax) {
 		_firstFrame = framemin;
 		_lastFrame = framemax;
@@ -105,7 +105,7 @@ private:
 	bool _curFrameValFresh;
 	int _repeatNum;
 	bool _finishedSignalPending;
-	int _useNMOArrays; // TODO: probably a bad name?
+	int _useNMOArrays;
 	int _numNMOFrames;
 	float _speed;
 

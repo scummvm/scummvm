@@ -179,7 +179,4 @@ void TeTiledTexture::update(const TeImage &image) {
 	//}
 }
 
-
-// TODO: Add more functions here.
-
 } // end namespace Tetraedge

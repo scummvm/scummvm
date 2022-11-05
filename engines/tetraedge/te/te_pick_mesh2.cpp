@@ -19,11 +19,14 @@
  *
  */
 
+#include "common/util.h"
+
 #include "tetraedge/tetraedge.h"
 
 #include "tetraedge/te/te_mesh.h"
 #include "tetraedge/te/te_pick_mesh2.h"
 #include "tetraedge/te/te_renderer.h"
+#include "tetraedge/te/te_ray_intersection.h"
 
 namespace Tetraedge {
 
@@ -53,6 +56,54 @@ void TePickMesh2::draw() {
 
 	renderer->popMatrix();
 	renderer->setCurrentColor(prevCol);
+}
+
+bool TePickMesh2::intersect(const TeVector3f32 &v1, const TeVector3f32 v2, TeVector3f32 &v3, float &fout, bool lastHitFirst, unsigned long *triangleHitOut) {
+	if (_verticies.size() / 3 == 0)
+		return false;
+
+	TeVector3f32 intersection;
+	float f;
+	const TeMatrix4x4 worldTrans = worldTransformationMatrix();
+	if (lastHitFirst) {
+		const TeVector3f32 triv1 = worldTrans * _verticies[_lastTriangleHit * 3 + 0];
+		const TeVector3f32 triv2 = worldTrans * _verticies[_lastTriangleHit * 3 + 1];
+		const TeVector3f32 triv3 = worldTrans * _verticies[_lastTriangleHit * 3 + 2];
+		int result = TeRayIntersection::intersect(v1, v2, triv1, triv2, triv3, intersection, f);
+		if (result == 1 && f >= 0.0 && f < FLT_MAX) {
+			v3 = v1 + v2 * f;
+			fout = f;
+			if (triangleHitOut)
+				*triangleHitOut = _lastTriangleHit;
+			return true;
+		}
+	}
+	
+	float hitf = FLT_MAX;
+	for (unsigned int i = 0; i < _verticies.size() / 3; i++) {
+		const TeVector3f32 triv1 = worldTrans * _verticies[i * 3 + 0];
+		const TeVector3f32 triv2 = worldTrans * _verticies[i * 3 + 1];
+		const TeVector3f32 triv3 = worldTrans * _verticies[i * 3 + 2];
+		int result = TeRayIntersection::intersect(v1, v2, triv1, triv2, triv3, intersection, f);
+		if (result == 1 && f >= 0.0 && f < FLT_MAX) {
+			_lastTriangleHit = i;
+			hitf = f;
+			if (lastHitFirst)
+				break;
+		}
+	}
+	if (hitf != FLT_MAX) {
+		v3 = v1 + v2 * hitf;
+		fout = hitf;
+		if (triangleHitOut)
+			*triangleHitOut = _lastTriangleHit;
+		return true;
+	}
+	return false;
+}
+
+bool TePickMesh2::intersect2D(const TeVector2f32 &pt) {
+	error("TODO: Implement TePickMesh2::intersect2D");
 }
 
 unsigned long TePickMesh2::lastTriangleHit() const {
@@ -85,12 +136,12 @@ bool TePickMesh2::pointInTriangle(const TeVector2f32 &p1, const TeVector2f32 &p2
 	return f1 != f2;
 }
 
-void TePickMesh2::setNbTriangles(unsigned long num) {
+void TePickMesh2::setNbTriangles(unsigned int num) {
 	_verticies.resize(num * 3);
 	_lastTriangleHit = 0;
 }
 
-void TePickMesh2::setTriangle(unsigned long num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3) {
+void TePickMesh2::setTriangle(unsigned int num, const TeVector3f32 &v1, const TeVector3f32 &v2, const TeVector3f32 &v3) {
 	assert(num <= _verticies.size() / 3);
 	_verticies[num * 3 + 0] = v1;
 	_verticies[num * 3 + 1] = v2;

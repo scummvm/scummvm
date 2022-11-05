@@ -24,6 +24,8 @@
 
 #include "common/types.h"
 #include "common/str.h"
+#include "common/random.h"
+
 #include "tetraedge/game/documents_browser.h"
 #include "tetraedge/game/inventory.h"
 #include "tetraedge/game/inventory_menu.h"
@@ -46,6 +48,7 @@ class TeLuaThread;
 class Game {
 public:
 	Game();
+	~Game();
 
 	struct HitObject {
 		bool onChangeWarp();
@@ -65,8 +68,8 @@ public:
 		Common::String _name;
 		TeMusic _music;
 		float _f1;
-		float _f2;
-		byte onSoundFinished();
+		float _volume;
+		bool onSoundFinished();
 	};
 
 	struct YieldedCallback {
@@ -139,7 +142,7 @@ public:
 	void pauseSounds() {}; // does nothing?
 	void playMovie(const Common::String &vidPath, const Common::String &musicPath);
 	void playRandomSound(const Common::String &name);
-	void playSound(const Common::String &name, int param_2, float param_3);
+	void playSound(const Common::String &name, int param_2, float volume);
 	void removeNoScale2Child(TeLayout *layout);
 	void removeNoScale2Children();
 	void removeNoScaleChildren();
@@ -173,12 +176,13 @@ public:
 	const Common::String &currentScene() { return _currentScene; }
 	const Common::Path &sceneZonePath() { return _sceneZonePath; }
 	TeLuaScript &luaScript() { return _luaScript; }
+	TeLuaContext &luaContext() { return _luaContext; }
 	InGameScene &scene() { return _scene; }
 	Dialog2 &dialog2() { return _dialog2; }
 	Question2 &question2() { return _question2; }
 	TeLuaGUI &gui3() { return _gui3; }
 	Objectif &objectif() { return _objectif; }
-	Common::Array<YieldedCallback> yieldedCallbacks() { return _yieldedCallbacks; }
+	Common::Array<YieldedCallback> &yieldedCallbacks() { return _yieldedCallbacks; }
 	void setSaveRequested() { _saveRequested = true; }
 	bool markersVisible() const { return _markersVisible; }
 
@@ -225,7 +229,7 @@ private:
 	Common::Array<YieldedCallback> _yieldedCallbacks;
 
 	Common::HashMap<Common::String, bool> _unlockedArtwork;
-	Common::HashMap<Common::String, Common::Array<RandomSound*>> _randomSounds;
+	Common::HashMap<Common::String, Common::Array<RandomSound *>> _randomSounds;
 
 	int _gameLoadState;
 
@@ -251,6 +255,11 @@ private:
 	bool _sceneCharacterVisibleFromLoad;
 	bool _markersVisible;
 	bool _saveRequested;
+	bool _randomSoundFinished;
+	
+	Common::RandomSource _randomSource;
+	RandomSound *_randomSound;
+	TeTimer _randomSoundTimer;
 
 	TeLayout *_noScaleLayout;
 	TeLayout *_noScaleLayout2;

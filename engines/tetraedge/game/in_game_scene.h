@@ -53,6 +53,11 @@ public:
 		Common::String _name;
 		TeSpriteLayout *_layout;
 	};
+	
+	struct Callback {
+		float _f;
+		Common::String _name;
+	};
 
 	struct SoundStep {
 		Common::String _stepSound1;
@@ -137,18 +142,18 @@ public:
 	void loadInteractions(const Common::Path &path);
 	bool loadLights(const Common::Path &path);
 	void loadMarkers(const Common::Path &path);
-	bool loadObject(const Common::String &name);
+	bool loadObject(const Common::String &oname);
 	void loadObjectMaterials(const Common::String &name);
 	void loadObjectMaterials(const Common::String &path, const Common::String &name);
-	bool loadPlayerCharacter(const Common::String &name);
+	bool loadPlayerCharacter(const Common::String &cname);
 
 	void moveCharacterTo(const Common::String &charName, const Common::String &curveName, float curveOffset, float curveEnd);
-	int object(const Common::String &name);
-	Object3D *object3D(const Common::String &name);
+	int object(const Common::String &oname);
+	Object3D *object3D(const Common::String &oname);
 	void onMainWindowSizeChanged();
-	TeFreeMoveZone *pathZone(const Common::String &name);
-	TeVector3f32 positionMarker(const Common::String &name);
-	void removeBlockingObject(const Common::String &name);
+	TeFreeMoveZone *pathZone(const Common::String &zname);
+	TeVector3f32 positionMarker(const Common::String &mname);
+	void removeBlockingObject(const Common::String &oname);
 
 	void reset();
 	void setImagePathMarker(const Common::String &markerName, const Common::String &path);
@@ -211,6 +216,7 @@ private:
 	Common::Array<TePickMesh2 *> _pickMeshes;
 
 	Common::HashMap<Common::String, SoundStep> _soundSteps;
+	Common::HashMap<Common::String, Common::Array<Callback*>> _callbacks;
 
 	Common::Array<TeIntrusivePtr<TeModel>> _hitObjects;
 	Common::Array<Object> _objects;

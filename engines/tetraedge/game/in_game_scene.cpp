@@ -64,7 +64,25 @@ void InGameScene::addAnchorZone(const Common::String &s1, const Common::String &
 			return;
 		}
 	}
-	warning("TODO: Finish InGameScene::addAnchorZone");
+
+	currentCamera()->apply();
+	AnchorZone *zone = new AnchorZone();
+	zone->_name = name;
+	zone->_radius = radius;
+	zone->_activated = true;
+
+	if (s1.contains("Int")) {
+		TeButtonLayout *btn = hitObjectGui().buttonLayout(name);
+		TeVector3f32 pos = btn->position();
+		pos.x() += g_engine->getDefaultScreenWidth() / 2.0f;
+		pos.y() += g_engine->getDefaultScreenHeight() / 2.0f;
+		zone->_loc = currentCamera()->worldTransformationMatrix() * currentCamera()->transformPoint2Dto3D(pos);
+	} else {
+		if (s1.contains("Dummy")) {
+			Dummy d = dummy(name);
+			zone->_loc = d._position;
+		}
+	}
 }
 
 bool InGameScene::addMarker(const Common::String &markerName, const Common::String &imgPath, float x, float y, const Common::String &locType, const Common::String &markerVal) {
@@ -219,7 +237,13 @@ TeIntrusivePtr<TeBezierCurve> InGameScene::curve(const Common::String &curveName
 }
 
 void InGameScene::deleteAllCallback() {
-	warning("TODO: implement InGameScene::deleteAllCallback");
+	for (auto &pair : _callbacks) {
+		for (auto *cb : pair._value) {
+			delete cb;
+		}
+		pair._value.clear();
+	}
+	_callbacks.clear();
 }
 
 void InGameScene::deleteMarker(const Common::String &markerName) {
@@ -530,11 +554,11 @@ bool InGameScene::load(const Common::Path &path) {
 		deserializeModel(scenefile, model, pickmesh);
 		if (modelname.contains("Clic")) {
 			_hitObjects.push_back(model);
-			// TODO: double-check this, probably right?
 			model->setVisible(false);
 			model->setColor(TeColor(0, 0xff, 0, 0xff));
 			models().push_back(model);
 			pickmesh->setName(modelname);
+			_pickMeshes.push_back(pickmesh);
 		} else {
 			delete pickmesh;
 			if (modelname.substr(0, 2) != "ZB") {
@@ -805,18 +829,17 @@ void InGameScene::moveCharacterTo(const Common::String &charName, const Common::
 	if (c != nullptr && c != _character) {
 		Game *game = g_engine->getGame();
 		if (!game->_movePlayerCharacterDisabled) {
-			// TODO: c->field_0x214 = c->characterSettings()._cutSceneCurveDemiPosition;
+			c->setCurveStartLocation(c->characterSettings()._cutSceneCurveDemiPosition);
 			TeIntrusivePtr<TeBezierCurve> crve = curve(curveName);
 			c->placeOnCurve(crve);
 			c->setCurveOffset(curveOffset);
 			const Common::String walkStartAnim = c->walkAnim(Character::WalkPart_Start);
 			if (walkStartAnim.empty()) {
-				c->setAnimation(c->walkAnim(Character::WalkPart_Loop), true, false, false, -1, 9999);
+				c->setAnimation(c->walkAnim(Character::WalkPart_Loop), true);
 			} else {
-				c->setAnimation(c->walkAnim(Character::WalkPart_Start), false, false, false, -1, 9999);
+				c->setAnimation(c->walkAnim(Character::WalkPart_Start), false);
 			}
 			c->walkTo(curveEnd, false);
-			error("TODO: Finish InGameScene::moveCharacterTo");
 		}
 	}
 }
@@ -965,12 +988,61 @@ void InGameScene::update() {
 		_bgGui.layoutChecked("background")->setZPosition(0.0f);
 	}
 	if (_character) {
-		// TODO: Do some stuff for character here.
+		_character->setHasAnchor(false);
+		for (AnchorZone *zone : _anchorZones) {
+			if (aroundAnchorZone(zone)) {
+				TeVector2f32 headRot(getHeadHorizontalRotation(_character, zone->_loc),
+					getHeadVerticalRotation(_character, zone->_loc));
+				if (headRot.getX() * 180.0 / M_PI > 90.0 || headRot.getY() * 180.0 / M_PI > 45.0) {
+					_character->setHasAnchor(false);
+					_character->setLastHeadRotation(_character->headRotation());
+				} else {
+					_character->setHeadRotation(headRot);
+					_character->setHasAnchor(true);
+				}
+			}
+		}
+		if (_character->charLookingAt()) {
+			TeVector3f32 targetpos = _character->charLookingAt()->_model->position();
+			if (_character->lookingAtTallThing())
+				targetpos.y() += 17;
+			TeVector2f32 headRot(getHeadHorizontalRotation(_character, targetpos),
+					getHeadVerticalRotation(_character, targetpos));
+			float hangle = headRot.getX() * 180.0 / M_PI;
+			if (hangle > 90)
+				headRot.setX(M_PI_2);
+			else if (hangle < -90)
+				headRot.setX(-M_PI_2);
+			_character->setHeadRotation(headRot);
+			_character->setHasAnchor(true);
+		}
 	}
 	for (Character *c : _characters) {
-		// TODO: Something with other characters.
+		if (c->charLookingAt()) {
+			TeVector3f32 targetpos = c->charLookingAt()->_model->position();
+			if (c->lookingAtTallThing())
+				targetpos.y() += 17;
+			TeVector2f32 headRot(getHeadHorizontalRotation(c, targetpos),
+					getHeadVerticalRotation(c, targetpos));
+			float hangle = headRot.getX() * 180.0 / M_PI;
+			if (hangle > 90)
+				headRot.setX(M_PI_2);
+			else if (hangle < -90)
+				headRot.setX(-M_PI_2);
+			c->setHeadRotation(headRot);
+			c->setHasAnchor(true);
+		}
 	}
+
 	// TODO: some other stuff with callbacks and spritelayouts here
+	for (auto &callback : _callbacks) {
+	
+	}
+
+	TeLuaGUI::StringMap<TeSpriteLayout *> &sprites = bgGui().spriteLayouts();
+	for (auto &sprite : sprites) {
+	
+	}
 
 	TeScene::update();
 
@@ -991,7 +1063,13 @@ void InGameScene::update() {
 	}
 
 	for (Object3D *obj : _object3Ds) {
-		// TODO: something with object3ds
+		// TODO: update object3ds if they are translating or rotating.
+		if (obj->_translateTime >= 0) {
+		
+		}
+		if (obj->_rotateTime >= 0) {
+		
+		}
 	}
 }
 

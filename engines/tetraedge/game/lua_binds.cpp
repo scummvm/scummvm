@@ -270,7 +270,28 @@ static int tolua_ExportedFunctions_RequestAutoSave00(lua_State *L) {
 }
 
 static void HideObject(const Common::String &objName) {
-	warning("TODO: HideObject");
+	Game *game = g_engine->getGame();
+	TeIntrusivePtr<TeModel> model = game->scene().model(objName);
+	if (model) {
+		model->setVisible(false);
+		return;
+	}
+
+	debug("[HideObject] Object 3D \"%s\" doesn't exist.", objName.c_str());
+	TeLayout *layout = game->scene().bgGui().layout(objName);
+	if (layout) {
+		layout->setVisible(false);
+		return;
+	}
+
+	debug("[HideObject] \"Set\" Object 2D \"%s\" doesn't exist.", objName.c_str());
+	layout = game->gui3().layout(objName);
+	if (layout) {
+		layout->setVisible(false);
+		return;
+	}
+
+	debug("[HideObject] \"For\" Object 2D \"%s\" doesn't exist.", objName.c_str());
 }
 
 static int tolua_ExportedFunctions_HideObject00(lua_State *L) {
@@ -284,7 +305,28 @@ static int tolua_ExportedFunctions_HideObject00(lua_State *L) {
 }
 
 static void ShowObject(const Common::String &objName) {
-	warning("TODO: ShowObject");
+	Game *game = g_engine->getGame();
+	TeIntrusivePtr<TeModel> model = game->scene().model(objName);
+	if (model) {
+		model->setVisible(true);
+		return;
+	}
+
+	debug("[ShowObject] Object 3D \"%s\" doesn't exist.", objName.c_str());
+	TeLayout *layout = game->scene().bgGui().layout(objName);
+	if (layout) {
+		layout->setVisible(true);
+		return;
+	}
+
+	debug("[ShowObject] \"Set\" Object 2D \"%s\" doesn't exist.", objName.c_str());
+	layout = game->gui3().layout(objName);
+	if (layout) {
+		layout->setVisible(true);
+		return;
+	}
+
+	debug("[ShowObject] \"For\" Object 2D \"%s\" doesn't exist.", objName.c_str());
 }
 
 static int tolua_ExportedFunctions_ShowObject00(lua_State *L) {
@@ -375,8 +417,15 @@ static int tolua_ExportedFunctions_SetCharacterPosition00(lua_State *L) {
 	error("#ferror in function 'SetCharacterPosition': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetGroundObjectPosition(const Common::String &objname, float f1, float f2, float f3) {
-	warning("TODO: Implement SetGroundObjectPosition");
+static void SetGroundObjectPosition(const Common::String &objname, float x, float y, float z) {
+	Game *game = g_engine->getGame();
+	Object3D *obj = game->scene().object3D(objname);
+	if (!obj) {
+		warning("[SetGroundObjectPosition] Object not found %s", objname.c_str());
+		return;
+	}
+	obj->model()->setPosition(TeVector3f32(x, y, z));
+	obj->model()->setVisible(true);
 }
 
 static int tolua_ExportedFunctions_SetGroundObjectPosition00(lua_State *L) {
@@ -394,8 +443,17 @@ static int tolua_ExportedFunctions_SetGroundObjectPosition00(lua_State *L) {
 	error("#ferror in function 'SetGroundObjectPosition': %d %d %s", err.index, err.array, err.type);
 }
 
-static void SetGroundObjectRotation(const Common::String &objname, float f1, float f2, float f3) {
-	warning("TODO: Implement SetGroundObjectRotation");
+static void SetGroundObjectRotation(const Common::String &objname, float x, float y, float z) {
+	Game *game = g_engine->getGame();
+	Object3D *obj = game->scene().object3D(objname);
+	if (!obj) {
+		warning("[SetGroundObjectRotation] Object not found %s", objname.c_str());
+		return;
+	}
+	
+	TeVector3f32 rotvec(x * M_PI / 180.0, y * M_PI / 180.0, z * M_PI / 180.0);
+	obj->model()->setRotation(TeQuaternion::fromEuler(rotvec));
+	obj->model()->setVisible(true);
 }
 
 static int tolua_ExportedFunctions_SetGroundObjectRotation00(lua_State *L) {

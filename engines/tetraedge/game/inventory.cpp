@@ -42,7 +42,7 @@ void Inventory::enter() {
 	Game *game = g_engine->getGame();
 	Character *character = game->scene()._character;
 	character->stop();
-	character->setAnimation(character->characterSettings()._walkFileName, true, false, false, -1, 9999);
+	character->setAnimation(character->characterSettings()._walkFileName, true);
 	_gui.layoutChecked("textObject")->setVisible(false);
 
 	if (!game->_firstInventory) {

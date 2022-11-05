@@ -39,8 +39,8 @@ public:
 
 	virtual void close();
 
-	TeIntrusivePtr<TeCamera> camera(const Common::String &name);
-	TeIntrusivePtr<TeModel> model(const Common::String &name);
+	TeIntrusivePtr<TeCamera> camera(const Common::String &cname);
+	TeIntrusivePtr<TeModel> model(const Common::String &mname);
 
 	TeIntrusivePtr<TeCamera> currentCamera();
 	int currentCameraIndex() const { return _currentCameraIndex; }
@@ -49,8 +49,8 @@ public:
 	virtual void draw();
 	virtual bool load(const Common::Path &path) { return false; };
 
-	void removeModel(const Common::String &name);
-	void setCurrentCamera(const Common::String &name);
+	void removeModel(const Common::String &mname);
+	void setCurrentCamera(const Common::String &cname);
 	void setCurrentCameraIndex(uint index) {
 		_currentCameraIndex = index;
 	}

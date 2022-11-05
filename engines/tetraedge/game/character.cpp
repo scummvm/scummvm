@@ -56,7 +56,7 @@ void Character::WalkSettings::clear() {
 
 Character::Character() : _curveOffset(0), _lastFrame(-1), _callbacksChanged(false),
 _missingCurrentAnim(false), _someRepeatFlag(false), _walkModeStr("Walk"),
-_needsSomeUpdate(false), _positionFlag(false),
+_needsSomeUpdate(false), _positionFlag(false), _lookingAtTallThing(false),
 _stepSound1("sounds/SFX/PAS_H_BOIS1.ogg"), _stepSound2("sounds/SFX/PAS_H_BOIS2.ogg"),
 _freeMoveZone(nullptr), _animSoundOffset(0), _lastAnimFrame(0), _charLookingAt(nullptr) {
 	_curModelAnim.setDeleteFn(&TeModelAnimation::deleteLater);
@@ -125,7 +125,6 @@ float Character::animLengthFromFile(const Common::String &animname, uint *pframe
 	int frameCount = anim->lastFrame() + 1 - anim->firstFrame();
 	*pframeCount = frameCount;
 
-	// TODO: Check this maths.. is this really what it does?
 	return animLen * _model->scale().z();
 }
 
@@ -236,7 +235,7 @@ int Character::rightStepFrame(enum Character::WalkPart walkpart) {
 	return -1;
 }
 
-bool Character::loadModel(const Common::String &name, bool unused) {
+bool Character::loadModel(const Common::String &mname, bool unused) {
 	assert(_globalCharacterSettings);
 	if (_model) {
 		//TODO
@@ -245,10 +244,10 @@ bool Character::loadModel(const Common::String &name, bool unused) {
 	_model = new TeModel();
 	//_model->bonesUpdateSignal().add(this, &Character::onBonesUpdate);
 
-	if (!_globalCharacterSettings->contains(name))
+	if (!_globalCharacterSettings->contains(mname))
 		return false;
 
-	_characterSettings = _globalCharacterSettings->getVal(name);
+	_characterSettings = _globalCharacterSettings->getVal(mname);
 	_model->_texturePath = Common::Path("models/Textures");
 	_model->_enableLights = true;
 	Common::Path modelPath("models");
@@ -256,7 +255,7 @@ bool Character::loadModel(const Common::String &name, bool unused) {
 	if (!_model->load(modelPath))
 		return false;
 
-	_model->setName(name);
+	_model->setName(mname);
 	_model->setScale(_characterSettings._defaultScale);
 
 	for (auto &mesh : _model->_meshes)
@@ -270,11 +269,11 @@ bool Character::loadModel(const Common::String &name, bool unused) {
 	_model->setVisibleByName(_characterSettings._defaultMouth, true);
 	_model->setVisibleByName(_characterSettings._defaultBody, true);
 
-	setAnimation(_characterSettings._walkFileName, true, false, false, -1, 9999);
+	setAnimation(_characterSettings._walkFileName, true);
 
-	_walkPart0AnimLen = animLengthFromFile(walkAnim(WalkPart_Start), &_walkPart0AnimFrameCount, 9999);
-	_walkPart3AnimLen = animLengthFromFile(walkAnim(WalkPart_EndG), &_walkPart3AnimFrameCount, 9999);
-	_walkPart1AnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkPart1AnimFrameCount, 9999);
+	_walkPart0AnimLen = animLengthFromFile(walkAnim(WalkPart_Start), &_walkPart0AnimFrameCount);
+	_walkPart3AnimLen = animLengthFromFile(walkAnim(WalkPart_EndG), &_walkPart3AnimFrameCount);
+	_walkPart1AnimLen = animLengthFromFile(walkAnim(WalkPart_Loop), &_walkPart1AnimFrameCount);
 
 	TeIntrusivePtr<Te3DTexture> shadow = new Te3DTexture();
 	shadow->load("models/Textures/simple_shadow_alpha.tga");
@@ -373,17 +372,17 @@ void Character::removeFromCurve() {
 	_curve.release();
 }
 
-bool Character::setAnimation(const Common::String &name, bool repeat, bool param_3, bool unused, int startFrame, int endFrame) {
-	if (name.empty())
+bool Character::setAnimation(const Common::String &aname, bool repeat, bool param_3, bool unused, int startFrame, int endFrame) {
+	if (aname.empty())
 		return false;
 
 	Common::Path animPath("models/Anims");
-	animPath.joinInPlace(name);
-	bool validAnim = (name.contains(_characterSettings._walkFileName) ||
-					  name.contains(walkAnim(WalkPart_Start)) ||
-					  name.contains(walkAnim(WalkPart_Loop)) ||
-					  name.contains(walkAnim(WalkPart_EndD)) ||
-					  name.contains(walkAnim(WalkPart_EndG)));
+	animPath.joinInPlace(aname);
+	bool validAnim = (aname.contains(_characterSettings._walkFileName) ||
+					  aname.contains(walkAnim(WalkPart_Start)) ||
+					  aname.contains(walkAnim(WalkPart_Loop)) ||
+					  aname.contains(walkAnim(WalkPart_EndD)) ||
+					  aname.contains(walkAnim(WalkPart_EndG)));
 	_missingCurrentAnim = !validAnim;
 
 	if (_curModelAnim) {
@@ -397,16 +396,16 @@ bool Character::setAnimation(const Common::String &name, bool repeat, bool param
 	_model->setAnim(_curModelAnim, repeat);
 	_lastFrame = -1;
 	_curModelAnim->play();
-	_setAnimName = name;
-	_curAnimName = name;
+	_setAnimName = aname;
+	_curAnimName = aname;
 	_someRepeatFlag = !(repeat | !param_3);
 
 	return true;
 }
 
-void Character::setAnimationSound(const Common::String &name, uint offset) {
+void Character::setAnimationSound(const Common::String &sname, uint offset) {
 	warning("TODO: Set field 0x2f8 to 0 in Character::setAnimationSound.");
-	_animSound = name;
+	_animSound = sname;
 	_animSoundOffset = offset;
 }
 
@@ -463,9 +462,12 @@ void Character::updateAnimFrame() {
 
 void Character::updatePosition(float curveOffset) {
 	if (!_curve->controlPoints().empty()) {
-		//TeVector3f32 pt = _curve->retrievePoint(curveOffset);
-		// add field 0x214
-		error("TODO: Implement Character::updatePosition");
+		TeVector3f32 pt = _curve->retrievePoint(curveOffset) + _curveStartLocation;
+		if (_freeMoveZone) {
+			bool flag;
+			pt = _freeMoveZone->correctCharacterPosition(pt, &flag, true);
+		}
+		_model->setPosition(pt);
 	}
 }
 

@@ -53,7 +53,7 @@ public:
 	bool onPictureButton();
 	bool onQuitButton();
 	bool onRightButton();
-	bool onSideButtonDown();
+	bool onSlideButtonDown();
 
 	// empty? bool onLoadGameConfirmed() { };
 

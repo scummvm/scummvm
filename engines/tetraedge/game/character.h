@@ -99,7 +99,7 @@ public:
 	static TeIntrusivePtr<TeModelAnimation> animCacheLoad(const Common::Path &path);
 
 	float animLength(const TeModelAnimation &modelanim, long bone, long lastframe);
-	float animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe);
+	float animLengthFromFile(const Common::String &animname, uint *pframeCount, uint lastframe = 9999);
 	bool blendAnimation(const Common::String &animname, float amount, bool repeat, bool param_4);
 	TeVector3f32 correctPosition(const TeVector3f32 &pos);
 	float curveOffset();
@@ -126,7 +126,7 @@ public:
 	void removeFromCurve();
 	static Common::String rootBone() { return "Pere"; }
 
-	bool setAnimation(const Common::String &name, bool repeat, bool param_3, bool param_4, int startFrame, int endFrame);
+	bool setAnimation(const Common::String &name, bool repeat, bool param_3 = false, bool param_4 = false, int startFrame = -1, int endFrame = 9999);
 	void setAnimationSound(const Common::String &name, uint offset);
 	void setCurveOffset(float offset);
 	void setFreeMoveZone(TeFreeMoveZone *zone);
@@ -158,13 +158,26 @@ public:
 	bool needsSomeUpdate() const { return _needsSomeUpdate; }
 	void setNeedsSomeUpdate(bool val) { _needsSomeUpdate = val; }
 	void setCharLookingAt(Character *other) { _charLookingAt = other; }
+	const TeVector3f32 &positionCharacter() const { return _positionCharacter; }
 	void setPositionCharacter(const TeVector3f32 &val) { _positionCharacter = val; }
 	bool positionFlag() const { return _positionFlag; }
 	void setPositionFlag(bool val) { _positionFlag = val; }
+	void setCurveStartLocation(const TeVector3f32 &val) { _curveStartLocation = val; }
+	bool hasAnchor() const { return _hasAnchor; }
+	void setHasAnchor(bool val) { _hasAnchor = val; }
+	const TeVector2f32 &headRotation() const { return _headRotation; }
+	void setHeadRotation(const TeVector2f32 &val) { _headRotation = val; }
+	void setLastHeadRotation(const TeVector2f32 &val) { _lastHeadRotation = val; }
+	Character *charLookingAt() { return _charLookingAt; }
+	bool lookingAtTallThing() const { return _lookingAtTallThing; }
+	void setLookingAtTallThing(bool val) { _lookingAtTallThing = val; }
+	
 
 private:
 	float _curveOffset;
 	TeIntrusivePtr<TeBezierCurve> _curve;
+	TeVector3f32 _curveStartLocation;
+
 	TeFreeMoveZone *_freeMoveZone;
 	Common::String _freeMoveZoneName;
 	Common::String _stepSound1;
@@ -193,8 +206,13 @@ private:
 	bool _missingCurrentAnim;
 	bool _someRepeatFlag; // TODO: what is this?
 	bool _callbacksChanged;
-	bool _needsSomeUpdate; // TODO: what is this? Field 0x85.
+	bool _needsSomeUpdate;
 	bool _positionFlag;
+	bool _lookingAtTallThing;
+	
+	bool _hasAnchor;
+	TeVector2f32 _headRotation;
+	TeVector2f32 _lastHeadRotation;
 
 	TeVector3f32 _positionCharacter;
 

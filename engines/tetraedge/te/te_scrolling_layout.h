@@ -80,8 +80,6 @@ public:
 	}
 	void setContentLayout(TeLayout *layout);
 
-	// TODO add public members
-
 private:
 	int _inertiaAnimationDuration;
 	Common::Array<float> _inertiaAnimationCurve;

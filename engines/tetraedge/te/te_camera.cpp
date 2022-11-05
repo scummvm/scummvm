@@ -36,9 +36,9 @@ TeCamera::TeCamera() : _projectionMatrixType(0), _orthogonalParamL(1.0f),
 }
 
 void TeCamera::apply() {
-	/*debug("TeCamera::apply %13s mtype %d fov %.2f persp %.2f orth(%.2f %.2f) pos %s scale %s", name().c_str(),
-			_projectionMatrixType, _fov, _somePerspectiveVal, _orthNearVal, _orthFarVal,
-			position().dump().c_str(), scale().dump().c_str());*/
+	//debug("TeCamera::apply %13s mtype %d fov %.2f persp %.2f orth(%.2f %.2f) pos %s scale %s rot %s", name().c_str(),
+	//		_projectionMatrixType, _fov, _somePerspectiveVal, _orthNearVal, _orthFarVal,
+	//		position().dump().c_str(), scale().dump().c_str(), rotation().dump().c_str());
 	applyProjection();
 	applyTransformations();
 }
@@ -105,7 +105,7 @@ void TeCamera::buildPerspectiveMatrix() {
 	_projectionMatrix.setValue(0, 0, (1.0 / f) / ((float)_viewportW / _viewportH));
 	_projectionMatrix.setValue(1, 1, 1.0 / f);
 	_projectionMatrix.setValue(2, 2, (_orthNearVal + _orthFarVal) / (_orthNearVal - _orthFarVal));
-	_projectionMatrix.setValue(2, 2, (_orthNearVal * _orthFarVal) / (_orthNearVal - _orthFarVal));
+	_projectionMatrix.setValue(3, 2, (_orthNearVal * _orthFarVal) / (_orthNearVal - _orthFarVal));
 	_projectionMatrix.setValue(2, 3, -1);
 	_projectionMatrix.setValue(3, 3, 0.0);
 }
@@ -219,11 +219,11 @@ TeVector3f32 TeCamera::transformCoord(const TeVector3f32 &pt) {
 	return pt;
 }
 
-TeVector3f32 TeCamera::transformPoint2Dto3D(const TeVector2f32 &pt) {
+TeVector3f32 TeCamera::transformPoint2Dto3D(const TeVector3f32 &pt) {
 	TeVector3f32 retval;
 	TeVector3f32 vp_br(_viewportX + _viewportW, _viewportY + _viewportH, 0.0f);
-	float x = (pt.getX() - _viewportX) / (vp_br.x() - _viewportX);
-	float y = (pt.getY() - _viewportY) / (vp_br.y() - _viewportY);
+	float x = (pt.x() - _viewportX) / (vp_br.x() - _viewportX);
+	float y = (pt.y() - _viewportY) / (vp_br.y() - _viewportY);
 	return TeVector3f32(x * 2 - 1.0f, -(y * 2 - 1.0f), 0.0);
 }
 

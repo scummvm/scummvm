@@ -143,14 +143,14 @@ void MainMenu::leave() {
 	_entered= false;
 }
 
-bool MainMenu::deleteFile(const Common::String &name) {
+bool MainMenu::deleteFile(const Common::String &fname) {
 	error("TODO: Implement MainMenu::deleteFile");
 }
 
 bool MainMenu::onActivedTuto() {
 	Application *app = g_engine->getApplication();
 	app->setTutoActivated(true);
-	// TODO: Set game val false too?
+	g_engine->getGame()->_firstInventory = true;
 	app->captureFade();
 	leave();
 	app->startGame(true, 1);
