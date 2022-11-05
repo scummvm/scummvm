@@ -327,26 +327,46 @@ bool Console::cmdEncounter(int argc, const char **argv) {
 
 bool Console::cmdSpecials(int argc, const char **argv) {
 	int count = g_maps->_currentMap->dataByte(Maps::MAP_SPECIAL_COUNT);
+	int i, mapOffset;
 
-	for (int i = 0; i < count; ++i) {
-		int mapOffset = g_maps->_currentMap->dataByte(51 + i);
-		int x = mapOffset % MAP_W;
-		int y = mapOffset / MAP_W;
+	for (int mapPos = 0; mapPos < (MAP_W * MAP_H); ++mapPos) {
+		// Check whether the map cell is flagged as special, and whether
+		// the cell, if special, has special handling code
+		bool isSpecial = (g_maps->_currentMap->_states[mapPos]
+			& Maps::CELL_SPECIAL) != 0;
+
+		for (i = 0; i < count; ++i) {
+			mapOffset = g_maps->_currentMap->dataByte(51 + i);
+			if (mapOffset == mapPos)
+				break;
+		}
+		bool isExtraSpecial = i < count;
+		if (!isSpecial && !isExtraSpecial)
+			continue;
+
+		int x = mapPos % MAP_W;
+		int y = mapPos / MAP_W;
+		Common::String specialIdx = !isExtraSpecial ? "--" :
+			Common::String::format("%.2d", i);
 		Common::String line = Common::String::format(
-			"Special #%.2d - %d, %d (", i, x, y);
+			"Special #%s - %d, %d", specialIdx.c_str(), x, y);
 
-		int dirMask = g_maps->_currentMap->dataByte(51 + i);
-		if (dirMask & Maps::DIRMASK_N)
-			line += "N,";
-		if (dirMask & Maps::DIRMASK_S)
-			line += "S,";
-		if (dirMask & Maps::DIRMASK_E)
-			line += "E,";
-		if (dirMask & Maps::DIRMASK_W)
-			line += "W,";
+		if (isExtraSpecial) {
+			line += " (";
+			int dirMask = g_maps->_currentMap->dataByte(51 + count + i);
+			if (dirMask & Maps::DIRMASK_N)
+				line += "N,";
+			if (dirMask & Maps::DIRMASK_S)
+				line += "S,";
+			if (dirMask & Maps::DIRMASK_E)
+				line += "E,";
+			if (dirMask & Maps::DIRMASK_W)
+				line += "W,";
 
-		line.deleteLastChar();
-		line += ')';
+			line.deleteLastChar();
+			line += ')';
+		}
+
 		debugPrintf("%s\n", line.c_str());
 	}
 
