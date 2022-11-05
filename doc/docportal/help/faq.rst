@@ -30,6 +30,16 @@ A few engines supported by ScummVM have publicly available authoring tools. See 
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 See the `Compiling ScummVM wiki page <https://wiki.scummvm.org/index.php?title=Compiling_ScummVM>`_.
 
+1.1.5 Can I run my pirated/Abandonware/Warez/Unauthorized copies of a game?
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Our project has a strict no-piracy policy. Hence, we do not provide any support when it becomes evident that you did not obtain your game copy legally.
+
+We outlined a more detailed response on `our Wiki <https://wiki.scummvm.org/index.php?title=Copyright_FAQ>`.
+
+And no, Abandonware is not a proper legal concept. Get the legally freewared games from `our Game downloads page <https://www.scummvm.org/games/>`.
+
+In addition, "warezed" versions of games downloaded from random websites may have been modified to include exploits that could compromise your computer.
+
 1.2 Using ScummVM
 **********************
 
