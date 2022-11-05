@@ -22,6 +22,7 @@
 #ifndef SCI_GRAPHICS_SCIFONT_H
 #define SCI_GRAPHICS_SCIFONT_H
 
+#include "sci/resource/resource.h"
 #include "sci/graphics/helpers.h"
 #include "sci/util.h"
 

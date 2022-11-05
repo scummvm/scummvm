@@ -363,21 +363,29 @@ reg_t kTextSize(EngineState *s, int argc, reg_t *argv) {
 
 	int16 textWidth;
 	int16 textHeight;
-	g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
-
-	// One of the game texts in LB2 German contains loads of spaces in
-	// its end. We trim the text here, otherwise the graphics code will
-	// attempt to draw a very large window (larger than the screen) to
-	// show the text, and crash.
-	// Fixes bug #5710.
-	if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() ||
-		textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
-		warning("kTextSize: string would be too big to fit on screen. Trimming it");
-		text.trim();
-		// Copy over the trimmed string...
-		s->_segMan->strcpy_(argv[1], text.c_str());
-		// ...and recalculate bounding box dimensions
+	const bool useMacFonts = g_sci->hasMacFonts() && (argc < 6);
+	if (!useMacFonts) {
 		g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
+
+		// One of the game texts in LB2 German contains loads of spaces in
+		// its end. We trim the text here, otherwise the graphics code will
+		// attempt to draw a very large window (larger than the screen) to
+		// show the text, and crash.
+		// Fixes bug #5710.
+		if (textWidth >= g_sci->_gfxScreen->getDisplayWidth() ||
+			textHeight >= g_sci->_gfxScreen->getDisplayHeight()) {
+			warning("kTextSize: string would be too big to fit on screen. Trimming it");
+			text.trim();
+			// Copy over the trimmed string...
+			s->_segMan->strcpy_(argv[1], text.c_str());
+			// ...and recalculate bounding box dimensions
+			g_sci->_gfxText16->kernelTextSize(splitText.c_str(), languageSplitter, font, maxWidth, &textWidth, &textHeight);
+		}
+	} else {
+		// Mac games with native fonts always use them for sizing unless a sixth
+		// parameter is passed to indicate that SCI font sizing should be used.
+		// Only LSL5 is known to pass this parameter in Dialog:setSize.
+		g_sci->_gfxText16->macTextSize(splitText, font, g_sci->_gfxText16->GetFontId(), maxWidth, &textWidth, &textHeight);
 	}
 
 	debugC(kDebugLevelStrings, "GetTextSize '%s' -> %dx%d", text.c_str(), textWidth, textHeight);

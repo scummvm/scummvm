@@ -67,12 +67,17 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	if ((g_sci->getLanguage() == Common::JA_JPN) && (getSciVersion() <= SCI_VERSION_1_1))
 		_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
 
-	// Macintosh SCI0 games used 480x300, while the scripts were running at 320x200
 	if (g_sci->getPlatform() == Common::kPlatformMacintosh) {
 		if (getSciVersion() <= SCI_VERSION_01) {
+			// Macintosh SCI0 games used 480x300, while the scripts were running at 320x200
 			_upscaledHires = GFX_SCREEN_UPSCALED_480x300;
 			_width = 480;
 			_height = 300; // regular visual, priority and control map are 480x300 (this is different than other upscaled SCI games)
+		} else {
+			// Macintosh SCI1/1.1 games use hi-res native fonts
+			if (g_sci->hasMacFonts()) {
+				_upscaledHires = GFX_SCREEN_UPSCALED_640x400;
+			}
 		}
 
 		// Some Mac SCI1/1.1 games only take up 190 rows and do not
@@ -112,8 +117,10 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 		break;
 	case GFX_SCREEN_UPSCALED_640x400:
 		// Police Quest 2 and Quest For Glory on PC9801 (Japanese)
-		_displayWidth = 640;
-		_displayHeight = 400;
+		// Mac SCI1/1.1 with hi-res Mac fonts
+		// Korean fan translations
+		_displayWidth = _scriptWidth * 2;
+		_displayHeight = _scriptHeight * 2;
 		for (int i = 0; i <= _scriptHeight; i++)
 			_upscaledHeightMapping[i] = i * 2;
 		for (int i = 0; i <= _scriptWidth; i++)
@@ -145,6 +152,11 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	_priorityScreen = (byte *)calloc(_pixels, 1);
 	_controlScreen = (byte *)calloc(_pixels, 1);
 	_displayScreen = (byte *)calloc(_displayPixels, 1);
+	
+	// Create a Surface for _displayPixels so that we can draw to it from interfaces
+	// that only draw to Surfaces. Currently that's just Graphics::Font.
+	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
+	_displayScreenSurface.init(_displayWidth, _displayHeight, _displayWidth, _displayScreen, format8);
 
 	memset(&_ditheredPicColors, 0, sizeof(_ditheredPicColors));
 
@@ -177,22 +189,32 @@ GfxScreen::GfxScreen(ResourceManager *resMan) : _resMan(resMan) {
 	}
 
 	// Initialize the actual screen
-	Graphics::PixelFormat format8 = Graphics::PixelFormat::createFormatCLUT8();
 	const Graphics::PixelFormat *format = &format8;
 	if (ConfMan.getBool("rgb_rendering"))
 		format = nullptr; // Backend's preferred mode; RGB if available
 
 	if (g_sci->hasMacIconBar()) {
 		// For SCI1.1 Mac games with the custom icon bar, we need to expand the screen
-		// to accommodate for the icon bar. Of course, both KQ6 and QFG1 VGA differ in size.
+		// to accommodate for the icon bar. Of course, both KQ6 and Freddy Pharkas differ in size.
 		// We add 2 to the height of the icon bar to add a buffer between the screen and the
 		// icon bar (as did the original interpreter).
-		if (g_sci->getGameId() == GID_KQ6)
-			initGraphics(_displayWidth, _displayHeight + 26 + 2, format);
-		else if (g_sci->getGameId() == GID_FREDDYPHARKAS)
-			initGraphics(_displayWidth, _displayHeight + 28 + 2, format);
-		else
+		int macIconBarBuffer = 0;
+		switch (g_sci->getGameId()) {
+		case GID_KQ6: 
+			macIconBarBuffer = 26 + 2;
+			break;
+		case GID_FREDDYPHARKAS:
+			macIconBarBuffer = 28 + 2;
+			break;
+		default:
 			error("Unknown SCI1.1 Mac game");
+		}
+
+		if (_upscaledHires == GFX_SCREEN_UPSCALED_640x400) {
+			macIconBarBuffer *= 2;
+		}
+
+		initGraphics(_displayWidth, _displayHeight + macIconBarBuffer, format);
 	} else
 		initGraphics(_displayWidth, _displayHeight, format);
 
@@ -616,6 +638,12 @@ void GfxScreen::drawLine(Common::Point startPoint, Common::Point endPoint, byte 
 			vectorPutLinePixel(left, top, drawMask, color, priority, control);
 		}
 	}
+}
+
+// We put hi-res native Mac fonts onto an upscaled background.
+// The incoming coordinates are already hi-res.
+void GfxScreen::putHiresChar(const Graphics::Font *commonFont, int16 x, int16 y, uint16 chr, byte color) {
+	commonFont->drawChar(&_displayScreenSurface, chr, x, y, color);
 }
 
 // We put hires hangul chars onto upscaled background, so we need to adjust

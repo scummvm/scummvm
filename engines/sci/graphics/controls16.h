@@ -25,9 +25,10 @@
 namespace Sci {
 
 enum controlStateFlags {
-	SCI_CONTROLS_STYLE_ENABLED  = 0x0001,  ///< 0001 - enabled buttons
-	SCI_CONTROLS_STYLE_DISABLED = 0x0004,  ///< 0010 - grayed out buttons
-	SCI_CONTROLS_STYLE_SELECTED = 0x0008   ///< 1000 - widgets surrounded by a frame
+	SCI_CONTROLS_STYLE_ENABLED      = 0x0001,  ///< enabled buttons
+	SCI_CONTROLS_STYLE_DISABLED     = 0x0004,  ///< grayed out buttons
+	SCI_CONTROLS_STYLE_SELECTED     = 0x0008,  ///< widgets surrounded by a frame
+	SCI_CONTROLS_STYLE_MAC_INVERTED = 0x0040   ///< control is inverted (mac-only for hi-res fonts)
 };
 
 // Control types and flags

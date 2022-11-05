@@ -644,6 +644,8 @@ protected:
 	void detectSciVersion();
 
 public:
+	/** Returns the file name of the game's Mac executable. */
+	Common::String getMacExecutableName() const;
 	bool isKoreanMessageMap(ResourceSource *source);
 
 private:
