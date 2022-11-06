@@ -38,7 +38,6 @@ struct gMaterial;
 struct WindowInfo {
 	unsigned int width;
 	unsigned int height;
-	unsigned int bpp;
 };
 
 class Fonts;
@@ -56,10 +55,10 @@ public:
 	void showFrame();
 
 	void setVirtualScreen(unsigned int dimX, unsigned int dimY);
-	void getScreenInfos(unsigned int &width, unsigned int &height, unsigned int &bpp) const;
+	void getScreenInfos(unsigned int &width, unsigned int &height) const;
 	WindowInfo getScreenInfos() const;
 	bool createScreenBuffer();
-	bool initBlitterViewPort();
+	void initBlitterViewPort();
 
 	void setCurCameraViewport(t3dF32 fov, uint8 sup);
 

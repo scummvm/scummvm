@@ -37,8 +37,6 @@ public:
 
 	void getWindowSize(unsigned int &width, unsigned int &height);
 
-	int getBitDepth() const;
-
 	void initWindow();
 
 	void pollSDL();

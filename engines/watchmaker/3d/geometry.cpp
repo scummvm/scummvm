@@ -200,7 +200,6 @@ uint8 t3dCheckBoundBox(t3dMESH &mesh) {
 void t3dCheckBlockMesh(Common::Array<t3dMESH> &mt, uint32 NumMeshes, t3dMESH *blockmesh) {
 	t3dF32  xa, za, xb, zb, xc, zc, xd, zd;
 	t3dF32  r, s, divisor;
-	t3dMESH *mesh;
 
 	uint32  i, j;
 	uint8   ref[4] = {2, 3, 6, 7};

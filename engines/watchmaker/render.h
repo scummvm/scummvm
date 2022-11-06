@@ -201,7 +201,7 @@ bool rInitialize3DEnvironment(WGame &game, char *cfg);
 char               *rGetRenderDllDesc();
 void                    rSetFlagsFullScreen();
 bool                    rGetFlagsFullScreen();
-bool                    rSetRenderMode(int state);
+void                    rSetRenderMode(int state);
 bool                    rClearBuffers(char flags);
 void                    rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b);
 void                    rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bpp);

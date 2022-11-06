@@ -41,8 +41,6 @@ namespace Watchmaker {
 
 // Bitmap list
 unsigned int    gNumBitmapList = 0;
-uint16          *gFonts[10];
-unsigned int    gNumFonts = 0;
 gTexture        gBitmapList[MAX_BITMAP_LIST];
 Rect            gBlitterExtends;
 int     gStencilBitDepth;
@@ -178,7 +176,7 @@ void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	bitmap.texture->bind();
+	bitmap._texture->bind();
 	glLoadIdentity();
 	glTranslatef(0, 0, 0.0);
 
@@ -215,7 +213,7 @@ void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 
 void gTexture::render(WGame &game, Rect src, Rect dst) {
 	// Render self
-	if (texture) {
+	if (_texture) {
 		renderTexture(game, *this, src, dst);
 	}
 	for (int i = 0; i < _blitsOnTop.size(); i++) {
@@ -361,8 +359,8 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 	auto surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);
 	applyColorKey(*surface, 0, 0, 0, false);
 	auto texData = createTextureFromSurface(*surface, GL_RGBA);
-	Texture->texture = createGLTexture();
-	Texture->texture->assignData(*texData);
+	Texture->_texture = createGLTexture();
+	Texture->_texture->assignData(*texData);
 	Texture->name = TextName;
 
 	if (flags & rSURFACESTRETCH) { // Also rSURFACEFLIP

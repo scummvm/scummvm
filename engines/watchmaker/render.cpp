@@ -65,7 +65,7 @@ unsigned int gGetTextureListPosition() {
 }
 #endif
 
-bool rSetRenderMode(int state) {
+void rSetRenderMode(int state) {
 	warning("STUBBED: rSetRenderMode");
 }
 
@@ -144,7 +144,7 @@ void rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bp
 	*bpp = 32;
 }
 
-gTexture *gLoadTexture(char *TextName, unsigned int LoaderFlags) {
+gTexture *gLoadTexture(char *TextName, unsigned int loaderFlags) {
 	error("STUBBED gLoadTexture");
 	return nullptr;
 }

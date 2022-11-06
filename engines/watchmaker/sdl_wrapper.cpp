@@ -31,16 +31,6 @@ void sdl_wrapper::getWindowSize(unsigned int &width, unsigned int &height) {
 	height = g_system->getHeight();
 }
 
-int sdl_wrapper::getBitDepth() const {
-#if 0
-	int pixelFormat = SDL_GetWindowPixelFormat(window);
-	int bpp;
-	uint32 rMask, gMask, bMask, aMask;
-	SDL_PixelFormatEnumToMasks(pixelFormat, &bpp, &rMask, &gMask, &bMask, &aMask);
-	return bpp;
-#endif
-}
-
 void sdl_wrapper::pollSDL() {
 	// Process events
 	Common::Event event;

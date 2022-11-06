@@ -36,7 +36,7 @@ class WGame;
 // Texture structs
 struct gTexture {
 	Common::String          name;
-	Texture                *texture = nullptr;
+	Texture                *_texture = nullptr;
 	int                     RealDimX = 0;               // original dimensions
 	int                     RealDimY = 0;               // original dimensions
 	int                     DimX = 0;                   // current dimensions
@@ -45,7 +45,7 @@ struct gTexture {
 	int                     Flags = 0;                  // Flags
 
 	bool isEmpty() {
-		return texture == nullptr;
+		return _texture == nullptr;
 	}
 	void clear() {
 		// TODO: This will only work for the back-surface
