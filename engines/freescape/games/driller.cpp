@@ -368,10 +368,10 @@ void DrillerEngine::drawUI() {
 		}
 
 		if (shield >= 0) {
-			Common::Rect back(20, 176, 88 - shield, 183);
+			Common::Rect back(20, 177, 88 - shield, 183);
 			surface->fillRect(back, black);
 
-			Common::Rect shieldBar(87 - shield, 176, 88, 183);
+			Common::Rect shieldBar(87 - shield, 177, 88, 183);
 			surface->fillRect(shieldBar, yellow);
 		}
 	}
