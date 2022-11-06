@@ -283,6 +283,11 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// 1 Jul 2022
 	TWINE_DETECTION_ENTRY("lba", "Classic Version (Steam)", AD_ENTRY1s("TLBA1C.exe", "58a7fba8a556196bb14d4f492017fb2b", 4416000), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
+	// Little Big Adventure - Steam Version (3.2.3)
+	// TLBA1C.exe
+	// 8 Sep 2022
+	TWINE_DETECTION_ENTRY("lba", "Classic Version (Steam)", AD_ENTRY1s("TLBA1C.exe", "01f38555eca4a5dd076a4599359de4eb", 4445696), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+
 	// Little Big Adventure - GOG Version 3.2.0 (56122)
 	// TLBA1C.exe
 	// 1st June 2022 02:18
