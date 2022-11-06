@@ -692,15 +692,30 @@ engine_enable() {
 		fi
 	fi
 
-	if test "$opt" = "static" -o "$opt" = "dynamic" -o "$opt" = "yes" ; then
-		if test "`get_engine_name ${engine}`" != "" ; then
-			set_var _engine_${engine}_build "$opt"
-		else
-			engine_option_error ${engine}
-		fi
-	else
+	if test "$opt" != "static" -a "$opt" != "dynamic" -a "$opt" != "yes" ; then
 		option_error
+		return
 	fi
+
+	subengines=
+	if test "${engine%_all}" != "${engine}" ; then
+		engine="${engine%_all}"
+		subengines=$(get_engine_subengines ${engine})
+		if test "$subengines" = "" ; then
+			engine_option_error "${engine}*"
+			return
+		fi
+	fi
+
+	if test "`get_engine_name ${engine}`" = "" ; then
+		engine_option_error ${engine}
+		return
+	fi
+
+	set_var _engine_${engine}_build "$opt"
+	for subengine in $subengines ; do
+		set_var _engine_${subengine}_build "$opt"
+	done
 }
 
 # Disable the given engine
