@@ -33,6 +33,10 @@ enum {
 	GType_Phantom = 2
 };
 
+enum {
+	GF_INSTALLER = 1
+};
+
 struct MADSGameDescription {
 	ADGameDescription desc;
 
