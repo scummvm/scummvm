@@ -25,8 +25,6 @@
 #include "watchmaker/render.h"
 #include "watchmaker/3d/render/opengl_3d.h"
 
-#define MAX_BITMAP_LIST 1024
-
 namespace Watchmaker {
 
 extern int      gStencilBitDepth;

@@ -70,6 +70,21 @@ public:
 	int rInvFitX(int x);
 	int rInvFitY(int y);
 
+	static const int MAX_BITMAP_LIST = 1024;
+	struct BitmapList {
+		unsigned int _numBitmaps = 0;
+		gTexture bitmaps[MAX_BITMAP_LIST];
+
+		unsigned int acquirePosition();
+	};
+	BitmapList _bitmapList;
+	void clearBitmap(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b);
+	void blitScreenBuffer();
+	unsigned int getBitmapDimX(int32 id) const;
+	unsigned int getBitmapDimY(int32 id) const;
+	unsigned int getBitmapRealDimX(int32 id) const;
+	unsigned int getBitmapRealDimY(int32 id) const;
+
 	bool setProjectionMatrix(float width, float height, float fAspect, float fNearPlane, float fFarPlane);
 	Math::Vector3d screenSpaceToCameraSpace(float x, float y);
 private:

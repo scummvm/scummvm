@@ -489,6 +489,7 @@ bool ComputerSearch(WGame &game) {
 	int OldDoc = computerCurrentDocument;
 	computerCurrentDocument = -1;
 	Init &init = game.init;
+	Renderer &renderer = *game._renderer;
 
 	Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_DOCLIST, 0, FALSE, nullptr, nullptr, nullptr);
 
@@ -639,7 +640,7 @@ bool ComputerSearch(WGame &game) {
 			game.init.Obj[o25FORNOAP].flags |= EXTRA2;
 
 		//Setta paramentri del nuovo documento
-		GetDDBitmapExtends(&t, &t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument]);
+		GetDDBitmapExtends(renderer, &t, &t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument]);
 		t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].px = game._renderer->rInvFitX(26);
 		t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].py = game._renderer->rInvFitY(66);
 		t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].ox = 0;
@@ -1305,10 +1306,10 @@ void doT2DMouse(WGame &game) {
 			d->py += (mouse_y - LinkWinY);
 			if (d->px < LinkLim.x1) d->px = LinkLim.x1;
 			if (d->py < LinkLim.y1) d->py = LinkLim.y1;
-			GetDDBitmapExtends(&b->lim, &w->bm[LinkBmToMouse]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[LinkBmToMouse]);
 			if (b->lim.x2 >= LinkLim.x2) d->px = LinkLim.x2 - (b->lim.x2 - b->lim.x1);
 			if (b->lim.y2 >= LinkLim.y2) d->py = LinkLim.y2 - (b->lim.y2 - b->lim.y1);
-			GetDDBitmapExtends(&b->lim, &w->bm[LinkBmToMouse]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[LinkBmToMouse]);
 		} else {
 			w->px += (mouse_x - LinkWinX);
 			w->py += (mouse_y - LinkWinY);
@@ -1356,7 +1357,7 @@ void doT2DMouse(WGame &game) {
 
 		if ((T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_DOCUMENT) |
 		        (T2DActualWindow(nullptr) == T2D_WIN_COMPUTER_EMAIL_VIEWER)) {
-			GetDDBitmapExtends(&t, &w->bm[a]);
+			GetDDBitmapExtends(renderer, &t, &w->bm[a]);
 
 			if (t.y2 - t.y1 > DimY) {
 				if (w->bm[a].oy - renderer.rInvFitY(mouse_y - ScrollWithMouseY) < 0) {
@@ -1476,7 +1477,7 @@ void doT2DMouse(WGame &game) {
 					LinkWinX = mouse_x;
 					LinkWinY = mouse_y;
 					CurMousePointer = 0;
-					GetDDBitmapExtends(&LinkLim, &w->bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW]);
+					GetDDBitmapExtends(renderer, &LinkLim, &w->bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW]);
 				}
 			} else if (CurButtonWin == T2D_WIN_SCANNER_TOOLBAR) {
 				if ((CurButton == T2D_BT_SCANNER_TOOLBAR_MOVE) && (bLPressed || bRPressed)) {
@@ -1562,11 +1563,11 @@ void doT2DMouse(WGame &game) {
 					d1 = &w->bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW];
 					d2 = &w->bm[T2D_BM_SCANNER_BACKGROUND_PIC_HI];
 
-					d2->ox = ((d->px - d1->px) * rGetBitmapRealDimX(d2->tnum & ~T2D_BM_OFF)) /
-					         rGetBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
-					d2->oy = ((d->py - d1->py) * rGetBitmapRealDimY(d2->tnum & ~T2D_BM_OFF)) /
-					         rGetBitmapRealDimY(d1->tnum & ~T2D_BM_OFF);
-					d2->dx = rGetBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
+					d2->ox = ((d->px - d1->px) * renderer.getBitmapRealDimX(d2->tnum & ~T2D_BM_OFF)) /
+					         renderer.getBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
+					d2->oy = ((d->py - d1->py) * renderer.getBitmapRealDimY(d2->tnum & ~T2D_BM_OFF)) /
+					         renderer.getBitmapRealDimY(d1->tnum & ~T2D_BM_OFF);
+					d2->dx = renderer.getBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
 					d2->px = d1->px - d2->ox;
 					d2->py = d1->py - d2->oy;
 					d1->tnum |= T2D_BM_OFF;
@@ -1590,7 +1591,7 @@ void doT2DMouse(WGame &game) {
 					w->bt[T2D_BT_SCANNER_TOOLBAR_SCAN_OFF].on = FALSE;
 
 					//Controllo posizione selettore per quest
-					GetDDBitmapExtends(&t, &t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
+					GetDDBitmapExtends(renderer, &t, &t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
 					t.x1 -= 108;
 					t.x2 -= 108;
 					t.y1 -= 118;
@@ -2074,7 +2075,7 @@ void doT2DMouse(WGame &game) {
 																											  0);
 
 						//Setta parametri nuovo documento
-						GetDDBitmapExtends(&t, &t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument]);
+						GetDDBitmapExtends(renderer, &t, &t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument]);
 						t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].px = renderer.rInvFitX(26);
 						t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].py = renderer.rInvFitY(66);
 						t2dWin[T2D_WIN_COMPUTER_DOCUMENT].bm[computerCurrentDocument].ox = 0;
@@ -2132,7 +2133,7 @@ void doT2DMouse(WGame &game) {
 					t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].tnum &= ~T2D_BM_OFF;
 
 					//Setta parametri
-					GetDDBitmapExtends(&t, &t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail]);
+					GetDDBitmapExtends(renderer, &t, &t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail]);
 					t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].px = renderer.rInvFitX(35);
 					t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].py = renderer.rInvFitY(59);
 					t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].ox = 0;
@@ -2187,7 +2188,7 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
-					GetDDBitmapExtends(&t, &w->bm[computerCurrentDocument]);
+					GetDDBitmapExtends(renderer, &t, &w->bm[computerCurrentDocument]);
 
 					if (t.y2 - t.y1 > 407) {
 						if (w->bm[computerCurrentDocument].oy - T2D_DOC_SCROLL_ADD < 0) {
@@ -2209,7 +2210,7 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
-					GetDDBitmapExtends(&t, &w->bm[computerCurrentDocument]);
+					GetDDBitmapExtends(renderer, &t, &w->bm[computerCurrentDocument]);
 
 					if (t.y2 - t.y1 > 407) {
 						if (w->bm[computerCurrentDocument].oy + w->bm[computerCurrentDocument].dy +
@@ -2266,7 +2267,7 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
-					GetDDBitmapExtends(&t, &w->bm[computerCurrentEMail]);
+					GetDDBitmapExtends(renderer, &t, &w->bm[computerCurrentEMail]);
 
 					if (t.y2 - t.y1 > 182) {
 						if (w->bm[computerCurrentEMail].oy - T2D_DOC_SCROLL_ADD < 0) {
@@ -2288,7 +2289,7 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
-					GetDDBitmapExtends(&t, &w->bm[computerCurrentEMail]);
+					GetDDBitmapExtends(renderer, &t, &w->bm[computerCurrentEMail]);
 
 					if (t.y2 - t.y1 > 182) {
 						if (w->bm[computerCurrentEMail].oy + w->bm[computerCurrentEMail].dy +
@@ -3198,10 +3199,10 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_SCANNER_BACKGROUND_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_EXIT]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_EXIT]);
 			b->tnum = EXTRALS_EXIT;
 			b = &w->bt[T2D_BT_SCANNER_BACKGROUND_SELECTOR];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR]);
 
 			w = &t2dWin[T2D_WIN_SCANNER_TOOLBAR];
 			w->NOTSTRETCHED = false;;
@@ -3249,22 +3250,22 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_SCANNER_TOOLBAR_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_WIN]);
 			b->lim.y2 = 29;
 			b->tnum = EXTRALS_SCANPROGRAM;
 			b = &w->bt[T2D_BT_SCANNER_TOOLBAR_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_EXIT]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_EXIT]);
 			b->tnum = EXTRALS_EXIT;
 			b = &w->bt[T2D_BT_SCANNER_TOOLBAR_PREVIEW_OFF];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_PREVIEW_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_PREVIEW_OFF]);
 			b->tnum = EXTRALS_PREVIEW;
 			b = &w->bt[T2D_BT_SCANNER_TOOLBAR_SELECTAREA_OFF];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_SELECTAREA_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_SELECTAREA_OFF]);
 			b->tnum = EXTRALS_SELECTAREA;
 			b = &w->bt[T2D_BT_SCANNER_TOOLBAR_SCAN_OFF];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_OFF]);
 			b->tnum = EXTRALS_SCAN;
 
 			w = &t2dWin[T2D_WIN_SCANNER_PROGRESSBAR];
@@ -3326,16 +3327,16 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_COMPUTER_QUIT_ON].tnum |= T2D_BM_OFF;
 
 			b = &w->bt[T2D_BT_COMPUTER_BACKGROUND_EMAIL];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ON]);
 			b->tnum = EXTRALS_NEWMAIL;
 
 			b = &w->bt[T2D_BT_COMPUTER_BACKGROUND_SEARCH];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ON]);
 			b->tnum = EXTRALS_SEARCH;
 
 			b = &w->bt[T2D_BT_COMPUTER_BACKGROUND_QUIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_QUIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_QUIT_ON]);
 			b->tnum = EXTRALS_QUIT;
 
 			//Gestione scritte
@@ -3428,22 +3429,22 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_COMERROR_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_COMERROR_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_COMERROR_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_COMERROR_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_COMQUIT];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_COMQUIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_COMQUIT_ON]);
 			b->tnum = EXTRALS_QUIT;
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_DIALQUIT];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_DIALQUIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_DIALQUIT_ON]);
 			b->tnum = EXTRALS_QUIT;
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_DIALUP];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_DIALUP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_DIALUP_ON]);
 			b->tnum = EXTRALS_DIAL;
 			b = &w->bt[T2D_BT_COMPUTER_ERROR_OK];
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_OK_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_ERROR_OK_ON]);
 			b->tnum = EXTRALS_OK;
 
 			//ExtraLS
@@ -3536,48 +3537,48 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_EXIT_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_1];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_1_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_1_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_2];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_2_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_2_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_3];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_3_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_3_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_4];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_4_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_4_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_5];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_5_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_5_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_6];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_6_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_6_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_7];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_7_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_7_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_8];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_8_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_8_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_9];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_9_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_9_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_0];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_0_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_0_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_ENTER];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_ENTER_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_ENTER_ON]);
 			b->tnum = EXTRALS_CLEAR;
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_C];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_C_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_C_ON]);
 			b->tnum = EXTRALS_CANCEL;
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_OK];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_OK_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DIALUP_OK_ON]);
 			b->tnum = EXTRALS_OK;
 			b = &w->bt[T2D_BT_COMPUTER_DIALUP_MOVE];
 			b->on = true;
@@ -3663,14 +3664,14 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_COMPUTER_SEARCH_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_SEARCH_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_ALPHABETICAL_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_SEARCH_SEARCH];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_SEARCH_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_SEARCH_ON]);
 			b->tnum = EXTRALS_SEARCH;
 			b = &w->bt[T2D_BT_COMPUTER_SEARCH_ALPHABETICAL];
 			b->on = true;
@@ -3712,7 +3713,7 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 172;
 			b = &w->bt[T2D_BT_COMPUTER_SEARCH_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_SEARCH_EXIT_ON]);
 
 			//Gestione Scritte
 			w->bm[T2D_BM_COMPUTER_SEARCH_NAME].tnum = (T2D_TEXT_COMPUTER_SEARCH_NAME << T2D_BM2TEXT_SHIFT);
@@ -3821,14 +3822,14 @@ void doT2D(WGame &game) {
 			//Gestione Tasti
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_EXIT_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_SCROLLUP];
 			b->on = true;
 			b->lim.x1 = 612;
@@ -3843,10 +3844,10 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 263;
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_ICON_1];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ICON_1]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ICON_1]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_ICON_2];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ICON_2]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_ICON_2]);
 
 			//Gestione Scritte
 			w->bm[T2D_BM_COMPUTER_EMAIL_TEXT_1].tnum = (T2D_TEXT_COMPUTER_EMAIL_1 << T2D_BM2TEXT_SHIFT);
@@ -3966,10 +3967,10 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_SCROLL];
 			b->on = true;
@@ -3979,13 +3980,13 @@ void doT2D(WGame &game) {
 			b->lim.y2 = renderer.rInvFitY(473);
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_EXIT_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_SCROLLUP];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLUP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLUP_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCUMENT_SCROLLDOWN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLDOWN_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLDOWN_ON]);
 
 			//ExtraLS
 			b = &w->bt[T2D_BT_Document_Win_TGA];
@@ -4021,20 +4022,20 @@ void doT2D(WGame &game) {
 			//Tasti
 			b = &w->bt[T2D_BT_COMPUTER_DOCLIST_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCLIST_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_DOCLIST_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_EXIT_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCLIST_SCROLLUP];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLUP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLUP_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_DOCLIST_SCROLLDOWN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLDOWN_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLDOWN_ON]);
 
 			for (i = 0; i <= T2D_TEXT_COMPUTER_DOCLIST_LINES_END - T2D_TEXT_COMPUTER_DOCLIST_LINES_START; i++) {
 				b = &w->bt[T2D_BT_COMPUTER_DOCLIST_LINES_START + i];
@@ -4092,10 +4093,10 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_WIN]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_WIN]);
 			b->lim.y2 = 30;
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_SCROLL];
 			b->on = true;
@@ -4105,13 +4106,13 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 240;
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_SCROLLUP];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLUP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLUP_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_SCROLLDOWN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLDOWN_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLDOWN_ON]);
 			b = &w->bt[T2D_BT_COMPUTER_EMAIL_VIEWER_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_EXIT_ON]);
 
 			//ExtraLS
 			b = &w->bt[T2D_BT_EMail_Viewer_Win_TGA];
@@ -4325,33 +4326,33 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_DIARIO_PAGE_LEFT];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_DIARIO_PAGE_LEFT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_DIARIO_PAGE_LEFT_ON]);
 			b = &w->bt[T2D_BT_DIARIO_PAGE_RIGHT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_DIARIO_PAGE_RIGHT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_DIARIO_PAGE_RIGHT_ON]);
 			b = &w->bt[T2D_BT_DIARIO_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_DIARIO_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_DIARIO_EXIT_ON]);
 			b->tnum = EXTRALS_EXIT;
 			for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++) {
 				b = &w->bt[i];
 				b->on = true;
-				GetDDBitmapExtends(&b->lim, &w->bm[i]);
+				GetDDBitmapExtends(renderer, &b->lim, &w->bm[i]);
 			}
 			for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++) {
 				b = &w->bt[i];
 				b->on = false;
-				GetDDBitmapExtends(&b->lim, &w->bm[i]);
+				GetDDBitmapExtends(renderer, &b->lim, &w->bm[i]);
 			}
 			for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++) {
 				b = &w->bt[i];
 				b->on = false;
-				GetDDBitmapExtends(&b->lim, &w->bm[i]);
+				GetDDBitmapExtends(renderer, &b->lim, &w->bm[i]);
 			}
 			for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++) {
 				b = &w->bt[i];
 				b->on = false;
-				GetDDBitmapExtends(&b->lim, &w->bm[i]);
+				GetDDBitmapExtends(renderer, &b->lim, &w->bm[i]);
 			}
 
 			PlayerSpeak(game, init.Obj[o34DIARIOAP].action[CurPlayer]);
@@ -4395,15 +4396,15 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_PDA_MAIN_TONE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_MAIN_TONE_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_MAIN_TONE_ON]);
 			b->tnum = EXTRALS_TONESEQUENCER;
 			b = &w->bt[T2D_BT_PDA_MAIN_LOG];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_MAIN_LOG_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_MAIN_LOG_ON]);
 			b->tnum = EXTRALS_LOG;
 			b = &w->bt[T2D_BT_PDA_MAIN_QUIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_MAIN_QUIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_MAIN_QUIT_ON]);
 			b->tnum = EXTRALS_QUIT;
 
 
@@ -4456,7 +4457,7 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_PDA_LOG_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
 			b = &w->bt[T2D_BT_PDA_LOG_SCROLL];
 			b->on = true;
 			b->lim.x1 = 23;
@@ -4465,10 +4466,10 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 345;
 			b = &w->bt[T2D_BT_PDA_LOG_SCROLLUP];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_SCROLLUP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_SCROLLUP_ON]);
 			b = &w->bt[T2D_BT_PDA_LOG_SCROLLDOWN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_SCROLLDOWN_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_SCROLLDOWN_ON]);
 			b = &w->bt[T2D_BT_PDA_LOG_SB];
 			b->on = false;
 			b->lim.x1 = 696;
@@ -4483,7 +4484,7 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 333;
 			b = &w->bt[T2D_BT_PDA_LOG_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_EXIT_ON]);
 
 			for (i = 0; i < T2D_BM_PDA_LOG_DATA_END - T2D_BM_PDA_LOG_DATA_START; i++) {
 				w->bm[T2D_BM_PDA_LOG_DATA_START + i].tnum = ((T2D_TEXT_PDA_LOG_DATA_START + i) << T2D_BM2TEXT_SHIFT);
@@ -4564,20 +4565,20 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_PDA_TONE_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_TONE_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_TONE_WIN]);
 			b = &w->bt[T2D_BT_PDA_TONE_HELP];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_TONE_HELP_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_TONE_HELP_ON]);
 			b = &w->bt[T2D_BT_PDA_TONE_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_TONE_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_TONE_EXIT_ON]);
 			b = &w->bt[T2D_BT_PDA_TONE_ACQUIRE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_TONE_ACQUIRE_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_TONE_ACQUIRE_ON]);
 			b->tnum = EXTRALS_ACQUIRE;
 			b = &w->bt[T2D_BT_PDA_TONE_PROCESS];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_TONE_PROCESS_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_TONE_PROCESS_ON]);
 			b->tnum = EXTRALS_PROCESS;
 
 			//ExtraLS
@@ -4616,10 +4617,10 @@ void doT2D(WGame &game) {
 
 			b = &w->bt[T2D_BT_PDA_HELP_WIN];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
 			b = &w->bt[T2D_BT_PDA_HELP_MOVE];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_LOG_WIN]);
 			b->lim.y2 = 20;
 			b = &w->bt[T2D_BT_PDA_HELP_SCROLL];
 			b->on = true;
@@ -4629,7 +4630,7 @@ void doT2D(WGame &game) {
 			b->lim.y2 = 335;
 			b = &w->bt[T2D_BT_PDA_HELP_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_PDA_HELP_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_PDA_HELP_EXIT_ON]);
 
 			for (i = 0; i < T2D_BM_PDA_HELP_TEXT_END - T2D_BM_PDA_HELP_TEXT_START; i++) {
 				w->bm[T2D_BM_PDA_HELP_TEXT_START + i].tnum = ((T2D_TEXT_PDA_HELP_START + i) << T2D_BM2TEXT_SHIFT);
@@ -4832,7 +4833,7 @@ void doT2D(WGame &game) {
 			if (bShowOnlyLoadWindow) {
 				b = &w->bt[T2D_BT_OPTIONS_MAINMENU];
 				b->on = true;
-				GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_MAINMENU_OFF]);
+				GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_MAINMENU_OFF]);
 				b->tnum = EXTRALS_MAINMENU;
 			} else {
 				//Tasti
@@ -4874,10 +4875,10 @@ void doT2D(WGame &game) {
 			}
 			b = &w->bt[T2D_BT_OPTIONS_FRECCIA_SU];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_FRECCIA_SU_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_FRECCIA_SU_ON]);
 			b = &w->bt[T2D_BT_OPTIONS_FRECCIA_GIU];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_ON]);
 			for (j = 0; j < 3; j++)
 				for (i = 0; i < 3; i++) {
 					b = &w->bt[T2D_BT_OPTIONS_SAVE_START + j * 3 + i];
@@ -4889,30 +4890,30 @@ void doT2D(WGame &game) {
 				}
 			b = &w->bt[T2D_BT_OPTIONS_SOUND];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_SOUND_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_SOUND_OFF]);
 			b->tnum = EXTRALS_SOUND;
 			b = &w->bt[T2D_BT_OPTIONS_MUSIC];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_MUSIC_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_MUSIC_OFF]);
 			b->tnum = EXTRALS_MUSIC;
 			b = &w->bt[T2D_BT_OPTIONS_SPEECH];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_SPEECH_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_SPEECH_OFF]);
 			b->tnum = EXTRALS_SPEECH;
 			b = &w->bt[T2D_BT_OPTIONS_SUBTITLES];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF]);
 			b->tnum = EXTRALS_SUBTITLES;
 
 			b = &w->bt[T2D_BT_OPTIONS_SOUND_BARRA];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_SOUND_BARRA]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_SOUND_BARRA]);
 			b = &w->bt[T2D_BT_OPTIONS_MUSIC_BARRA];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_MUSIC_BARRA]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_MUSIC_BARRA]);
 			b = &w->bt[T2D_BT_OPTIONS_SPEECH_BARRA];
 			b->on = false;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_OPTIONS_SPEECH_BARRA]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_OPTIONS_SPEECH_BARRA]);
 
 			//Gestione Scritte
 			for (j = 0; j < 3; j++)
@@ -4977,17 +4978,17 @@ void doT2D(WGame &game) {
 			w->bm[T2D_BM_MAINMENU_WIN].py = 0;
 			w->bm[T2D_BM_MAINMENU_WIN].tnum &= ~T2D_BM_OFF;
 
-			GetDDBitmapExtends(&tmp_rect, &w->bm[T2D_BM_MAINMENU_PLAY_ON]);
+			GetDDBitmapExtends(renderer, &tmp_rect, &w->bm[T2D_BM_MAINMENU_PLAY_ON]);
 			w->bm[T2D_BM_MAINMENU_PLAY_ON].px = w->bm[T2D_BM_MAINMENU_PLAY_OFF].px = (800 - (tmp_rect.x2 - tmp_rect.x1)) / 2;
 			w->bm[T2D_BM_MAINMENU_PLAY_ON].py = w->bm[T2D_BM_MAINMENU_PLAY_OFF].py = 146;
 			w->bm[T2D_BM_MAINMENU_PLAY_ON].tnum |= T2D_BM_OFF;
 
-			GetDDBitmapExtends(&tmp_rect, &w->bm[T2D_BM_MAINMENU_LOAD_ON]);
+			GetDDBitmapExtends(renderer, &tmp_rect, &w->bm[T2D_BM_MAINMENU_LOAD_ON]);
 			w->bm[T2D_BM_MAINMENU_LOAD_ON].px = w->bm[T2D_BM_MAINMENU_LOAD_OFF].px = (800 - (tmp_rect.x2 - tmp_rect.x1)) / 2;
 			w->bm[T2D_BM_MAINMENU_LOAD_ON].py = w->bm[T2D_BM_MAINMENU_LOAD_OFF].py = 278;
 			w->bm[T2D_BM_MAINMENU_LOAD_ON].tnum |= T2D_BM_OFF;
 
-			GetDDBitmapExtends(&tmp_rect, &w->bm[T2D_BM_MAINMENU_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &tmp_rect, &w->bm[T2D_BM_MAINMENU_EXIT_ON]);
 			w->bm[T2D_BM_MAINMENU_EXIT_ON].px = w->bm[T2D_BM_MAINMENU_EXIT_OFF].px = (800 - (tmp_rect.x2 - tmp_rect.x1)) / 2;
 			w->bm[T2D_BM_MAINMENU_EXIT_ON].py = w->bm[T2D_BM_MAINMENU_EXIT_OFF].py = 414;
 			w->bm[T2D_BM_MAINMENU_EXIT_ON].tnum |= T2D_BM_OFF;
@@ -5013,15 +5014,15 @@ void doT2D(WGame &game) {
 			//Tasti
 			b = &w->bt[T2D_BT_MAINMENU_PLAY];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_MAINMENU_PLAY_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_MAINMENU_PLAY_ON]);
 			b->tnum = EXTRALS_PLAYTHEGAME;
 			b = &w->bt[T2D_BT_MAINMENU_LOAD];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_MAINMENU_LOAD_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_MAINMENU_LOAD_ON]);
 			b->tnum = EXTRALS_LOADAGAME;
 			b = &w->bt[T2D_BT_MAINMENU_EXIT];
 			b->on = true;
-			GetDDBitmapExtends(&b->lim, &w->bm[T2D_BM_MAINMENU_EXIT_ON]);
+			GetDDBitmapExtends(renderer, &b->lim, &w->bm[T2D_BM_MAINMENU_EXIT_ON]);
 			b->tnum = EXTRALS_EXIT;
 
 			//Settaggi iniziali
@@ -5215,7 +5216,7 @@ void doT2D(WGame &game) {
 			if (TheMessage->wparam1-- <= 0) {
 				t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW].tnum |= T2D_BM_OFF;
 				t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_HI].tnum |= T2D_BM_OFF;
-				j = rGetBitmapRealDimY(t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW].tnum);
+				j = renderer.getBitmapRealDimY(t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW].tnum);
 				if (TheMessage->bparam == T2D_SCANNER_PREVIEWING)
 					d = &t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW];
 				else

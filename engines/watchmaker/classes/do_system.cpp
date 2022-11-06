@@ -262,7 +262,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			if (visibile && (c->tnum == -1)) {
 				//Crea una surface che la contenga
 				c->tnum = rCreateSurface(c->dx, c->dy, rBITMAPSURFACE);
-				rClear(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
+				game._renderer->clearBitmap(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
 
 				//Renderizza la scritta nella surface
 				game._renderer->printText(c->s, c->tnum, f, WHITE_FONT, 0, 0);
@@ -304,7 +304,7 @@ void TitoliCoda_ShowScrolling(WGame &game, char initialize) {
 			ye = 0;
 			if ((c->py + c->dy) > end_y) ye = (c->py + c->dy) - end_y;
 
-			DisplayDDBitmap_NoFit(c->tnum, c->px, c->py - TitoliCoda_Y, 0, ys, c->dx, c->dy - ys - ye);
+			DisplayDDBitmap_NoFit(*game._renderer, c->tnum, c->px, c->py - TitoliCoda_Y, 0, ys, c->dx, c->dy - ys - ye);
 		}
 	}//for
 
@@ -452,7 +452,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 		) {
 			//Crea una surface che la contenga
 			c->tnum = rCreateSurface(c->dx, c->dy, rBITMAPSURFACE);
-			rClear(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
+			game._renderer->clearBitmap(c->tnum, 0, 0, c->dx, c->dy, 0, 0, 0);
 
 			//Renderizza la scritta nella surface
 			game._renderer->printText(c->s, c->tnum, f, WHITE_FONT, 0, 0);
@@ -472,7 +472,7 @@ void TitoliCoda_ShowStatic(WGame &game, char initialize) {
 		}
 
 		if (c->tnum != -1)
-			DisplayDDBitmap_NoFit(c->tnum, c->px, c->py, 0, 0, c->dx, c->dy);
+			DisplayDDBitmap_NoFit(*game._renderer, c->tnum, c->px, c->py, 0, 0, c->dx, c->dy);
 	}//for
 
 	if (TitoliCoda_NumDeleted == TitoliCoda_NumEntries) {
@@ -900,7 +900,7 @@ void doSystem(WGame &game) {
 				DebugLogWindow("EFFECT_ROOMINFO: can't create surface");
 				break;
 			}
-			rClear(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
+			game._renderer->clearBitmap(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
 			rSetBitmapName(RoomInfo.tnum, "RoomInfo");
 
 			RoomInfo.letter_ptr = &RoomInfo.fullstring[0];
@@ -942,7 +942,7 @@ void doSystem(WGame &game) {
 					strcpy(name_backup, RoomInfo.fullstring);
 					*(RoomInfo.letter_ptr + 1) = '\0';
 
-					rClear(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
+					game._renderer->clearBitmap(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
 					game._renderer->printText(RoomInfo.fullstring, RoomInfo.tnum,  RoomInfo.f, FontColor::WHITE_FONT, 0, 0);
 					game._fonts.getTextDim(RoomInfo.fullstring, RoomInfo.f, &RoomInfo._dx, &RoomInfo._dy);
 
@@ -952,7 +952,7 @@ void doSystem(WGame &game) {
 					if (RoomInfo.t_next_letter < 0) RoomInfo.t_next_letter = 0;
 					RoomInfo.letter_ptr ++;
 				}
-				DisplayDDBitmap_NoFit(RoomInfo.tnum, RoomInfo.px, RoomInfo.py, 0, 0, RoomInfo._dx, RoomInfo._dy);
+				DisplayDDBitmap_NoFit(*game._renderer, RoomInfo.tnum, RoomInfo.px, RoomInfo.py, 0, 0, RoomInfo._dx, RoomInfo._dy);
 				break;
 			case EFFECT_FADEIN_T1:
 			case EFFECT_FADEOUT_T1:

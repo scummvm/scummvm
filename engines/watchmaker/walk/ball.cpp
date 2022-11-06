@@ -170,6 +170,7 @@ void UpdateBall(WGame &game, struct SPhys *p) {
 	int32 i;
 	t3dMESH *m;
 	Init &init = game.init;
+	auto &renderer = *game._renderer;
 	auto windowInfo = game._renderer->getScreenInfos();
 
 //	Se ha finito il tempo, cambia talpa
@@ -233,7 +234,7 @@ void UpdateBall(WGame &game, struct SPhys *p) {
 		}
 	}
 //	Aggiorna il cono visivo
-	p->ViewCone.x1 = 130 + (int32)(Player->Mesh->Trasl.x / 255.0f * 0.341f) + windowInfo.width - rGetBitmapRealDimX(GopherMap);
+	p->ViewCone.x1 = 130 + (int32)(Player->Mesh->Trasl.x / 255.0f * 0.341f) + windowInfo.width - renderer.getBitmapRealDimX(GopherMap);
 	p->ViewCone.y1 = 146 - (int32)(Player->Mesh->Trasl.z / 255.0f * 0.341f);
 	tmp = Player->Dir * 20.0f;
 	zero = Player->Dir * 10.0f;
@@ -244,15 +245,15 @@ void UpdateBall(WGame &game, struct SPhys *p) {
 	DisplayD3DTriangle(*game._renderer, p->ViewCone.x1, p->ViewCone.y1, p->ViewCone.x2, p->ViewCone.y2, p->ViewCone.x3, p->ViewCone.y3, 125, 125, 125, 125);
 
 //	Aggiorna la mappa e le scritte
-	DisplayDDBitmap(*game._renderer, GopherMap, windowInfo.width - rGetBitmapRealDimX(GopherMap), 0, 0, 0, 0, 0);
+	DisplayDDBitmap(*game._renderer, GopherMap, windowInfo.width - renderer.getBitmapRealDimX(GopherMap), 0, 0, 0, 0, 0);
 	for (i = 0; i < MAX_GOPHERS; i++)
-		DisplayDDBitmap(*game._renderer, GopherPos[i], windowInfo.width - rGetBitmapRealDimX(GopherMap) +
-		                130 + (int32)(Character[i + 1]->Mesh->Trasl.x / 255.0f * 0.341f) - rGetBitmapRealDimX(GopherPos[i]) / 2,
-		                146 - (int32)(Character[i + 1]->Mesh->Trasl.z / 255.0f * 0.341f) - rGetBitmapRealDimY(GopherPos[i]) / 2, 0, 0, 0, 0);
+		DisplayDDBitmap(*game._renderer, GopherPos[i], windowInfo.width - renderer.getBitmapRealDimX(GopherMap) +
+		                130 + (int32)(Character[i + 1]->Mesh->Trasl.x / 255.0f * 0.341f) - renderer.getBitmapRealDimX(GopherPos[i]) / 2,
+		                146 - (int32)(Character[i + 1]->Mesh->Trasl.z / 255.0f * 0.341f) - renderer.getBitmapRealDimY(GopherPos[i]) / 2, 0, 0, 0, 0);
 	if (bGolfMode)
-		DisplayDDBitmap(*game._renderer, GopherBall, windowInfo.width - rGetBitmapRealDimX(GopherMap) +
-		                130 + (int32)(Palla50->Mesh->Trasl.x / 255.0f * 0.341f) - rGetBitmapRealDimX(GopherBall) / 2,
-		                146 - (int32)(Palla50->Mesh->Trasl.z / 255.0f * 0.341f) - rGetBitmapRealDimY(GopherBall) / 2, 0, 0, 0, 0);
+		DisplayDDBitmap(*game._renderer, GopherBall, windowInfo.width - renderer.getBitmapRealDimX(GopherMap) +
+		                130 + (int32)(Palla50->Mesh->Trasl.x / 255.0f * 0.341f) - renderer.getBitmapRealDimX(GopherBall) / 2,
+		                146 - (int32)(Palla50->Mesh->Trasl.z / 255.0f * 0.341f) - renderer.getBitmapRealDimY(GopherBall) / 2, 0, 0, 0, 0);
 	if ((bGolfMode == 0) || (bGolfMode == 1)) {
 		DebugVideo(*game._renderer, 10, 32, "TimeLeft: %d", (int32)p->TimeLeft);
 		p->TimeLeft -= p->Td;
@@ -263,7 +264,7 @@ void UpdateBall(WGame &game, struct SPhys *p) {
 		DebugVideo(*game._renderer, 10, 48, "Angle: %d %d", 45 - (int)(Ball[CurGopher].Angle.x * 180.0f / T3D_PI), (int)(Ball[CurGopher].Angle.y * 180.0f / T3D_PI));
 		DebugVideo(*game._renderer, 10, 64, "Power: %d", (int)Ball[CurGopher].Angle.z);
 	}
-	DisplayDDBitmap(*game._renderer, EndPic, windowInfo.width - rGetBitmapRealDimX(EndPic) - 20, windowInfo.height - rGetBitmapRealDimY(EndPic) - 20, 0, 0, 0, 0);
+	DisplayDDBitmap(*game._renderer, EndPic, windowInfo.width - renderer.getBitmapRealDimX(EndPic) - 20, windowInfo.height - renderer.getBitmapRealDimY(EndPic) - 20, 0, 0, 0, 0);
 
 //	Aggiorna la camera
 	ProcessGopherCamera(game);

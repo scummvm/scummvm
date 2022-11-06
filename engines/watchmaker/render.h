@@ -153,12 +153,8 @@ void rReleaseBitmap(int i);
 void rReleaseBitmapDirect(gTexture *b);
 void rSetLoaderFlags(unsigned int NewLoaderFlags);
 int rCreateSurface(unsigned int dimx, unsigned int dimy, unsigned char flags);
-unsigned int rGetBitmapDimX(unsigned int id);
-unsigned int rGetBitmapDimY(unsigned int id);
 char   *rGetBitmapName(unsigned int id);
 void rSetBitmapName(unsigned int id, const char *s);
-unsigned int rGetBitmapRealDimX(unsigned int id);
-unsigned int  rGetBitmapRealDimY(unsigned int id);
 unsigned char *rLockSurface(int surf, unsigned int *pitch);
 unsigned char *rLockSurfaceDirect(gTexture *t, unsigned int *pitch);
 void    rUnlockSurface(int surf);
@@ -203,7 +199,6 @@ void                    rSetFlagsFullScreen();
 bool                    rGetFlagsFullScreen();
 void                    rSetRenderMode(int state);
 bool                    rClearBuffers(char flags);
-void                    rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b);
 void                    rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bpp);
 void                    rRelaseFontTable(unsigned short *ft);
 void                    rRelaseAllFontTable();
@@ -216,7 +211,6 @@ int                     DebugQuick(signed int StdPx, signed int StdPy, const cha
 bool                    rGetStencilBitDepth();
 
 //Misc functions
-void                    rBlitScreenBuffer(WGame &game);
 void                    rBlitter(WGame &game, int dst, int src, int dposx, int dposy, int sposx, int sposy, int sdimx, int sdimy);
 
 //D3d specific geometry trasf. functions
