@@ -868,7 +868,7 @@ void ScummEngine_v2::setSnailCursor() {
 		memcpy(_grabbedCursor, c64_dos_snail_cursor, sizeof(c64_dos_snail_cursor));
 
 		if (_game.version == 0) {
-			for (int i = 0; i < sizeof(c64_dos_snail_cursor); i++) {
+			for (uint i = 0; i < sizeof(c64_dos_snail_cursor); i++) {
 				if (_grabbedCursor[i] == 0x0F)
 					_grabbedCursor[i] = 0x01;
 			}
