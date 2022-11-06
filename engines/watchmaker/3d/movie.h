@@ -54,7 +54,7 @@ public:
 
 	bool _paused = false;
 
-	gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *texture, const Common::String& name);
+	gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *texture, const Common::String &name);
 
 	bool setFrame(uint32 newFrame);
 	void loadThisFrameData(uint32 frame);

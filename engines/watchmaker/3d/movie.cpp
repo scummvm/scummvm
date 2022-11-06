@@ -38,13 +38,13 @@ gMovie::gMovie(Common::SharedPtr<Common::SeekableReadStream> stream, Texture *te
 	_numBlocks = _width * _height / 16;
 	_curFrame = 0xFFFF;
 
-	_frameOffsets = new uint32[_numFrames]{};
+	_frameOffsets = new uint32[_numFrames] {};
 	if (!_frameOffsets) {
 		error("gLoadMovie FAILED: Can't alloc Movie->frameOffsets struct");
 	}
 
-	_buffer = new uint8[bufferSize()]{};
-	_surfaceBuffer = new uint8[_header.dataSize()]{};
+	_buffer = new uint8[bufferSize()] {};
+	_surfaceBuffer = new uint8[_header.dataSize()] {};
 	_frameStream = new Common::MemoryReadStream(_surfaceBuffer, _header.dataSize(), DisposeAfterUse::NO);
 	if (!_buffer) {
 		error("gLoadMovie FAILED: Can't alloc Movie->buffer struct");
@@ -72,19 +72,18 @@ Common::SharedPtr<gMovie> gLoadMovie(WorkDirs &workDirs, const char *TextName, T
 		return nullptr;
 	}
 
-	//	Movie->frameRate=240;
+	//  Movie->frameRate=240;
 	return Movie;
 }
 
-void gMovie::loadThisFrameData(uint32 frame)
-{
+void gMovie::loadThisFrameData(uint32 frame) {
 	_stream->seek(_frameOffsets[frame], SEEK_SET);
 	//read frame data
 	int size = 0;
-	if ((frame+1)==_numFrames) {
+	if ((frame + 1) == _numFrames) {
 		size = _stream->size() - _frameOffsets[frame];
 	} else {
-		size = _frameOffsets[frame+1] - _frameOffsets[frame];
+		size = _frameOffsets[frame + 1] - _frameOffsets[frame];
 	}
 	assert(size <= bufferSize());
 	_stream->read(_buffer, size);
@@ -94,20 +93,21 @@ void gMovie::loadThisFrameData(uint32 frame)
 void gMovie::buildNewFrame(byte *surf, uint32 frame) {
 	loadThisFrameData(frame);
 
-	DWORD bitArraySize=_numBlocks>>3;
-	byte *buf=&_buffer[bitArraySize];
-	WORD curBlock=0;
+	DWORD bitArraySize = _numBlocks >> 3;
+	byte *buf = &_buffer[bitArraySize];
+	WORD curBlock = 0;
 
-	for(int i=0; i<bitArraySize; i++) {
+	for (int i = 0; i < bitArraySize; i++) {
 		byte block = _buffer[i];
-		if(!block) {
+		if (!block) {
 			curBlock += 8;
-			continue;	//everything is equal
+			continue;   //everything is equal
 		}
 
-		for(int j=0; j<8; j++, curBlock++) {
-			if(block & (1<<j) ) {
-				memcpy(&surf[curBlock<<3],buf,8); buf+=8;
+		for (int j = 0; j < 8; j++, curBlock++) {
+			if (block & (1 << j)) {
+				memcpy(&surf[curBlock << 3], buf, 8);
+				buf += 8;
 			}
 		}//for j
 	}//for

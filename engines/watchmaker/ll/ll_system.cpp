@@ -183,7 +183,7 @@ Common::SharedPtr<Common::SeekableReadStream> openFile(const Common::String &fil
 	SearchMan.listMatchingMembers(files, adjustedPath);
 
 	for (Common::ArchiveMemberList::iterator it = files.begin(); it != files.end(); ++it) {
-		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath,'/'))) {
+		if ((*it)->getName().equalsIgnoreCase(lastPathComponent(adjustedPath, '/'))) {
 			file = (*it)->createReadStream();
 			break;
 		}

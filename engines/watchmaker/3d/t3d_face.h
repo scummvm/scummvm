@@ -50,9 +50,11 @@ public:
 
 	t3dFACE(t3dBODY *b, Common::SeekableReadStream &stream);
 
-	bool hasMaterialFlag(uint32 flag) { return getMaterial()->hasFlag(flag); }
+	bool hasMaterialFlag(uint32 flag) {
+		return getMaterial()->hasFlag(flag);
+	}
 	MaterialPtr getMaterial();
-	const gMaterial* getMaterial() const;
+	const gMaterial *getMaterial() const;
 	uint16 getMaterialIndex() const {
 		return _materialIndex;
 	}

@@ -329,7 +329,7 @@ void GetBoundaries(t3dBODY *b, t3dF32 *minx, t3dF32 *miny, t3dF32 *minz, t3dF32 
 
 t3dLIGHT::t3dLIGHT(WGame &game, t3dBODY *b, WorkDirs &workDirs, Common::SeekableReadStream &stream) {
 	Type = stream.readUint32LE();                                                        // Legge tipo
-	//		DebugFile("%d: SPOT %X ATTEN %X SHAD %X",light,Light[light].Type&T3D_LIGHT_SPOTLIGHT,Light[light].Type&T3D_LIGHT_ATTENUATION,Light[light].Type&T3D_LIGHT_CASTSHADOWS);
+	//      DebugFile("%d: SPOT %X ATTEN %X SHAD %X",light,Light[light].Type&T3D_LIGHT_SPOTLIGHT,Light[light].Type&T3D_LIGHT_ATTENUATION,Light[light].Type&T3D_LIGHT_CASTSHADOWS);
 	Source = t3dV3F(stream) * SCALEFACTOR;                                    // Legge Source
 	Target = t3dV3F(stream) * SCALEFACTOR;                                    // Legge Target
 
@@ -368,7 +368,7 @@ t3dLIGHT::t3dLIGHT(WGame &game, t3dBODY *b, WorkDirs &workDirs, Common::Seekable
 		}
 #else
 		strcpy(Appo, WmMapsDir);
-			strcat(Appo, Name);
+		strcat(Appo, Name);
 #endif
 
 #ifndef WMGEN

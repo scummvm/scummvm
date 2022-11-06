@@ -40,26 +40,38 @@ struct gMaterial {
 	gTexture                *Texture = nullptr;         // pointer to texture struct
 	Common::SharedPtr<gMovie> Movie;                      // pointer to movie struct
 	unsigned int            Flags = 0;                  // material flags
-	int NumFaces() { return FacesList.size(); };        // current number of faces to be processed
+	int NumFaces() {
+		return FacesList.size();
+	};        // current number of faces to be processed
 	void addFace(uint16 face) {
 		FacesList.push_back(face);
 	}
-	uint16 getFace(int index) const { return FacesList[index]; }
-	void clearFaceList() { FacesList.clear(); }
-	void emptyFacesList() { FacesList.resize(0); }
-	Common::Array<uint16> getFacesList() { return FacesList; }
+	uint16 getFace(int index) const {
+		return FacesList[index];
+	}
+	void clearFaceList() {
+		FacesList.clear();
+	}
+	void emptyFacesList() {
+		FacesList.resize(0);
+	}
+	Common::Array<uint16> getFacesList() {
+		return FacesList;
+	}
 private:
 	Common::Array<uint16>     FacesList;                  // list of verts indices
 public:
-	Common::Array<gVertex*> VertsList;                  // pointers to pointers to verts
-	int NumAllocatedVerts() { return this->VertsList.size(); };      // number of allocated vertex in mat VB
+	Common::Array<gVertex *> VertsList;                 // pointers to pointers to verts
+	int NumAllocatedVerts() {
+		return this->VertsList.size();
+	};      // number of allocated vertex in mat VB
 	Common::SharedPtr<VertexBuffer> VBO = nullptr;
 //	LPDIRECT3DVERTEXBUFFER7 VB;                         // mat VB struct
 	int                     NumAllocatedMesh = 0;       // num mesh to check for modifications
 	Common::Array<unsigned int *> FlagsList;              // vector of pointer to mesh flags
 	unsigned char           r, g, b;                    // default material color
 	int                     NumAddictionalMaterial = 0; // number of addictional material (lightmaps)
-	MaterialTable		    AddictionalMaterial;        // pointer to addictional material struct
+	MaterialTable           AddictionalMaterial;        // pointer to addictional material struct
 public:
 	gMaterial() : r(0), g(0), b(0) {
 

@@ -363,9 +363,8 @@ bool PlayMusic(int32 index, uint32 FadeOutTime, uint32 FadeInTime) {
 	return TRUE;
 }
 
-bool StopSounds()
-{
-	if( !sStopAllSounds() ) return false;
+bool StopSounds() {
+	if (!sStopAllSounds()) return false;
 	return true;
 }
 

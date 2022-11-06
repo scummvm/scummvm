@@ -218,7 +218,7 @@ int16 getRoomFromStr(Init &init, const Common::String &s) {
 	Common::String str = s.substr(start, end - start);
 
 	for (int a = 0; a < MAX_ROOMS; a++)
-		if (str.equalsIgnoreCase((const char*)init.Room[a].name))
+		if (str.equalsIgnoreCase((const char *)init.Room[a].name))
 			return a;
 
 	return (0);

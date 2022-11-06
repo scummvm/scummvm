@@ -59,32 +59,32 @@ public:
 	t3dV3F operator+(const t3dV3F &rhs) const {
 		return t3dV3F(
 			x + rhs.x,
-			y + rhs.y,
-			z + rhs.z
-		);
+		    y + rhs.y,
+		    z + rhs.z
+	    );
 	}
 	t3dV3F operator-(const t3dV3F &rhs) const {
 		return t3dV3F(
-			x + rhs.x,
-			y + rhs.y,
-			z + rhs.z
+		    x + rhs.x,
+		    y + rhs.y,
+		    z + rhs.z
 		);
 	}
 	t3dV3F operator-() const {
 		return t3dV3F(
-			-x,
-			-y,
-			-z
+		    -x,
+		    -y,
+		    -z
 		);
 	}
 	t3dV3F operator*(float scalar) const {
 		return t3dV3F(
-			x * scalar,
-			y * scalar,
-			z * scalar
+		    x * scalar,
+		    y * scalar,
+		    z * scalar
 		);
 	}
-	t3dV3F& operator*=(float scalar) {
+	t3dV3F &operator*=(float scalar) {
 		this->x *= scalar;
 		this->y *= scalar;
 		this->z *= scalar;

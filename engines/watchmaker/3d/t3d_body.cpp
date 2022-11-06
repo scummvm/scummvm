@@ -61,8 +61,8 @@ void t3dLoadMaterials(WGame &game, t3dBODY *b, Common::SeekableReadStream &strea
 #ifndef WMGEN
 		len = strlen(Name);
 		if (((Name[len - 1] == 'i') || (Name[len - 1] == 'I')) &&
-			((Name[len - 2] == 'v') || (Name[len - 2] == 'V')) &&
-			((Name[len - 3] == 'a') || (Name[len - 3] == 'A'))) {
+		        ((Name[len - 2] == 'v') || (Name[len - 2] == 'V')) &&
+		        ((Name[len - 3] == 'a') || (Name[len - 3] == 'A'))) {
 			strcpy(Appo, workdirs._moviesDir.c_str());                                                              // altrimenti prende quello di default
 		} else {
 			strcpy(Appo, workdirs._mapsDir.c_str());                                                            // altrimenti prende quello di default
@@ -368,10 +368,10 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 					if (f.n == b->NList[i]) {
 //						f->mat->Texture=f->mat->Lightmap;
 						if ((!(f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							alphaval1 = RGBA_GETALPHA(gv[f.VertexIndex[0]].diffuse);
 							alphaval2 = RGBA_GETALPHA(gv[f.VertexIndex[1]].diffuse);
 							alphaval3 = RGBA_GETALPHA(gv[f.VertexIndex[2]].diffuse);
@@ -381,10 +381,10 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 							f.lightmap = b->LightmapTable[Map];
 							f.getMaterial()->addNumFacesAdditionalMaterial(f.lightmap, 1);
 						} else if (((f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) ||
-								   ((f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) ||
-								   ((f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) ||
-								   ((f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) ||
-								   ((f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
+						           ((f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) ||
+						           ((f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) ||
+						           ((f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) ||
+						           ((f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							f.lightmap = nullptr;
 						}
 
@@ -424,10 +424,10 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 						f.lightmap = nullptr;
 //						if (Map==-1)
 						if ((!(f.hasMaterialFlag(T3D_MATERIAL_OPACITY))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
-							(!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_CLIPMAP))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_BOTTLE))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_ADDITIVE))) &&
+						        (!(f.hasMaterialFlag(T3D_MATERIAL_GLASS)))) {
 							alphaval1 = RGBA_GETALPHA(gv[f.VertexIndex[0]].diffuse);
 							alphaval2 = RGBA_GETALPHA(gv[f.VertexIndex[1]].diffuse);
 							alphaval3 = RGBA_GETALPHA(gv[f.VertexIndex[2]].diffuse);
@@ -453,8 +453,8 @@ void LoadLightmaps(WorkDirs &workDirs, t3dBODY *b) {
 			t3dF32  v = stream->readFloatLE();
 
 			if ((RGBA_GETRED(gv[j].diffuse) == 254) &&
-				(RGBA_GETGREEN(gv[j].diffuse) == 254) &&
-				(RGBA_GETBLUE(gv[j].diffuse) == 254)) {
+			        (RGBA_GETGREEN(gv[j].diffuse) == 254) &&
+			        (RGBA_GETBLUE(gv[j].diffuse) == 254)) {
 				gv[j].u2 = u;
 				gv[j].v2 = v;
 				gv[j].diffuse = RGBA_MAKE(255, 255, 255, RGBA_GETALPHA(gv[j].diffuse));
@@ -505,7 +505,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 //-------------------LOADING MESHES--------------------------------------
 	t3dMESH *ReceiveRipples = nullptr;
 	uint8   Mirror = 0;
-	t3dLoadMeshes(this,numMeshes, ReceiveRipples, Mirror, stream); // TODO: We probably don't need to pass ReceiveRipples, Mirror
+	t3dLoadMeshes(this, numMeshes, ReceiveRipples, Mirror, stream); // TODO: We probably don't need to pass ReceiveRipples, Mirror
 //-------------------END OF LOADING MESHES-------------------------------
 	this->initNormals(stream);
 
@@ -561,7 +561,7 @@ t3dBODY *t3dBODY::loadFromStream(WGame &game, const Common::String &pname, Commo
 	if (!(LoaderFlags & T3D_NOLIGHTMAPS)) {                                                     // Carica le Lightmaps
 		// TODO: This looks odd
 		if (!pname.equalsIgnoreCase("rxt.t3d") || !pname.equalsIgnoreCase("rxt-b.t3d") || !pname.equalsIgnoreCase("rxt-c.t3d") ||
-			!pname.equalsIgnoreCase("rxt-d.t3d") || !pname.equalsIgnoreCase("rxt-e.t3d") || !pname.equalsIgnoreCase("rxt.t3d-f"))
+		        !pname.equalsIgnoreCase("rxt-d.t3d") || !pname.equalsIgnoreCase("rxt-e.t3d") || !pname.equalsIgnoreCase("rxt.t3d-f"))
 			LoadLightmaps(workdirs, this);
 	}
 	if ((LoaderFlags & T3D_OUTDOORLIGHTS)) {                                                    // Carica le luci per l'esterno

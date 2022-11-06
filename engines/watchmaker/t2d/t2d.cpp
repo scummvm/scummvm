@@ -1236,7 +1236,7 @@ void doT2DMouseMainMenu(WGame &game, t2dWINDOW *w) {
 			} else {
 				//Inizia il gioco
 				Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, STOP_T2D__LAUNCH_NEWGAME, 0, tMAINMENU,
-					  nullptr, nullptr, nullptr);
+				      nullptr, nullptr, nullptr);
 			}
 		} else if (CurButton == T2D_BT_MAINMENU_LOAD) {
 			if (TheMessage->event == ME_MOUSEUPDATE) {
@@ -1246,7 +1246,7 @@ void doT2DMouseMainMenu(WGame &game, t2dWINDOW *w) {
 				//Va alla schermata di caricamento
 				LoadWindow_WhichBkg = 1;
 				Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, STOP_T2D__LAUNCH_LOAD, 0, tMAINMENU, nullptr,
-					  nullptr, nullptr);
+				      nullptr, nullptr);
 			}
 
 		} else if (CurButton == T2D_BT_MAINMENU_EXIT) {
@@ -1491,12 +1491,12 @@ void doT2DMouse(WGame &game) {
 					w->bm[T2D_BM_SCANNER_TOOLBAR_PREVIEW_ON].tnum &= ~T2D_BM_OFF;
 					// Aspetta 1 secondo
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_SCANNER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					// Riaccede tasto preview
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_PREVIEW_OFF, TRUE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_PREVIEW_OFF, TRUE, nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_PREVIEW_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_PREVIEW_ON, FALSE, nullptr, nullptr, nullptr);
 					// Spegne pic di preview
 					t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_PIC_LOW].tnum |= T2D_BM_OFF;
 					// Spegne selzionatoredi area
@@ -1509,7 +1509,7 @@ void doT2DMouse(WGame &game) {
 					WinActive[2] = T2D_WIN_SCANNER_PROGRESSBAR;
 					// Attiva gestione progress bar
 					Event(EventClass::MC_T2D, ME_T2DCONTINUE, MP_WAITA, T2D_SCANNER_SCANNING_DELAY,
-						  T2D_SCANNER_SCANNING_STEPS, T2D_SCANNER_PREVIEWING, nullptr, nullptr, nullptr);
+					      T2D_SCANNER_SCANNING_STEPS, T2D_SCANNER_PREVIEWING, nullptr, nullptr, nullptr);
 					// Spegne tutta la toolbar
 					w->bt[T2D_BT_SCANNER_TOOLBAR_MOVE].on = FALSE;
 					w->bt[T2D_BT_SCANNER_TOOLBAR_EXIT].on = FALSE;
@@ -1519,21 +1519,21 @@ void doT2DMouse(WGame &game) {
 					//Suono
 					StartSound(game, wSCANPULSANTE);
 				} else if ((CurButton == T2D_BT_SCANNER_TOOLBAR_SELECTAREA_OFF) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					// Spegne per un attimo bottone di select area
 					b->on = FALSE;
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SELECTAREA_OFF].tnum |= T2D_BM_OFF;
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SELECTAREA_ON].tnum &= ~T2D_BM_OFF;
 					// Aspetta 1 secondo
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_SCANNER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					// Riaccede tasto di select area
 					Event(EventClass::MC_T2D, ME_T2DSETBUTTON, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BT_SCANNER_TOOLBAR_SELECTAREA_OFF, TRUE, nullptr, nullptr, nullptr);
+					      T2D_BT_SCANNER_TOOLBAR_SELECTAREA_OFF, TRUE, nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_SELECTAREA_OFF, TRUE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_SELECTAREA_OFF, TRUE, nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_SELECTAREA_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_SELECTAREA_ON, FALSE, nullptr, nullptr, nullptr);
 					// Accende selezionatore di area
 					t2dWin[T2D_WIN_SCANNER_BACKGROUND].bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR].tnum &= ~T2D_BM_OFF;
 					t2dWin[T2D_WIN_SCANNER_BACKGROUND].bt[T2D_BT_SCANNER_BACKGROUND_SELECTOR].on = TRUE;
@@ -1551,11 +1551,11 @@ void doT2DMouse(WGame &game) {
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_OFF].tnum |= T2D_BM_OFF;
 					w->bm[T2D_BM_SCANNER_TOOLBAR_SCAN_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_SCANNER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_SCAN_FREEZE, TRUE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_SCAN_FREEZE, TRUE, nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_SCANNER_TOOLBAR,
-						  T2D_BM_SCANNER_TOOLBAR_SCAN_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_SCANNER_TOOLBAR_SCAN_ON, FALSE, nullptr, nullptr, nullptr);
 
 					w = &t2dWin[T2D_WIN_SCANNER_BACKGROUND];
 					d = &w->bm[T2D_BM_SCANNER_BACKGROUND_SELECTOR];
@@ -1563,9 +1563,9 @@ void doT2DMouse(WGame &game) {
 					d2 = &w->bm[T2D_BM_SCANNER_BACKGROUND_PIC_HI];
 
 					d2->ox = ((d->px - d1->px) * rGetBitmapRealDimX(d2->tnum & ~T2D_BM_OFF)) /
-							 rGetBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
+					         rGetBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
 					d2->oy = ((d->py - d1->py) * rGetBitmapRealDimY(d2->tnum & ~T2D_BM_OFF)) /
-							 rGetBitmapRealDimY(d1->tnum & ~T2D_BM_OFF);
+					         rGetBitmapRealDimY(d1->tnum & ~T2D_BM_OFF);
 					d2->dx = rGetBitmapRealDimX(d1->tnum & ~T2D_BM_OFF);
 					d2->px = d1->px - d2->ox;
 					d2->py = d1->py - d2->oy;
@@ -1580,7 +1580,7 @@ void doT2DMouse(WGame &game) {
 					t2dWin[T2D_WIN_SCANNER_BACKGROUND].bt[T2D_BT_SCANNER_BACKGROUND_SELECTOR].on = FALSE;
 					// Attiva gestione progress bar
 					Event(EventClass::MC_T2D, ME_T2DCONTINUE, MP_DEFAULT, T2D_SCANNER_SCANNING_DELAY,
-						  T2D_SCANNER_SCANNING_STEPS, T2D_SCANNER_SCANNING, nullptr, nullptr, nullptr);
+					      T2D_SCANNER_SCANNING_STEPS, T2D_SCANNER_SCANNING, nullptr, nullptr, nullptr);
 					// Spegne tutta la toolbar
 					w = &t2dWin[T2D_WIN_SCANNER_TOOLBAR];
 					w->bt[T2D_BT_SCANNER_TOOLBAR_MOVE].on = FALSE;
@@ -1615,7 +1615,7 @@ void doT2DMouse(WGame &game) {
 						StartSound(game, wCIAPULSANTE);
 						//Apre finestra EMail
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_EMAIL, 0, FALSE,
-							  nullptr, nullptr, nullptr);
+						      nullptr, nullptr, nullptr);
 						//Resetta dati
 						computerCurrentEMail = -1;
 					} else {
@@ -1625,7 +1625,7 @@ void doT2DMouse(WGame &game) {
 						StartSound(game, wCIAPULSANTE);
 						//Chiude finestra EMail
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_EMAIL, 0, TRUE, nullptr,
-							  nullptr, nullptr);
+						      nullptr, nullptr);
 					}
 				} else if ((CurButton == T2D_BT_COMPUTER_BACKGROUND_SEARCH) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					if (!(w->bm[T2D_BM_COMPUTER_SEARCH_ON].tnum & T2D_BM_OFF)) {
@@ -1635,7 +1635,7 @@ void doT2DMouse(WGame &game) {
 						StartSound(game, wCIAPULSANTE);
 						//Apre finestra Search
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_SEARCH, 0, FALSE,
-							  nullptr, nullptr, nullptr);
+						      nullptr, nullptr, nullptr);
 
 						//Riattiva DirectInput
 						//ResetDIKbd();
@@ -1660,7 +1660,7 @@ void doT2DMouse(WGame &game) {
 						StartSound(game, wCIAPULSANTE);
 						//Chiude finestra Search
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_SEARCH, 0, TRUE,
-							  nullptr, nullptr, nullptr);
+						      nullptr, nullptr, nullptr);
 					}
 				} else if ((CurButton == T2D_BT_COMPUTER_BACKGROUND_QUIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione Tasto
@@ -1669,9 +1669,9 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wCIAPULSANTE);
 					//Quitta
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_BACKGROUND,
-						  T2D_BM_COMPUTER_QUIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_QUIT_ON, FALSE, nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSTOP, MP_WAITA, 0, 0, tCOMPUTER, nullptr, nullptr, nullptr);
 				}
 
@@ -1684,17 +1684,17 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_ERROR_DIALUP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_ERROR_DIALUP_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_ERROR_DIALUP_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Disattiva finestra errore
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_ERROR, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 					//Attiva finestra DialUp
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_DIALUP, 0, TRUE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 					//Disattiva DirectInput
 					//bIngnoreDIKeyboard = TRUE;
 					//Azzera Numero Telefonico
@@ -1703,7 +1703,7 @@ void doT2DMouse(WGame &game) {
 
 					//Disattiva bitmap e pulsanti finestra errore
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_DIALERROR_WIN, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALERROR_WIN, FALSE, nullptr, nullptr, nullptr);
 					t2dWin[T2D_WIN_COMPUTER_ERROR].bt[T2D_BT_COMPUTER_ERROR_DIALUP].on = FALSE;
 					t2dWin[T2D_WIN_COMPUTER_ERROR].bt[T2D_BT_COMPUTER_ERROR_DIALQUIT].on = FALSE;
 					t2dWin[T2D_WIN_COMPUTER_ERROR].bt[T2D_BT_DialError_Win_TGA].on = FALSE;
@@ -1712,9 +1712,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_ERROR_DIALQUIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_ERROR_DIALQUIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_ERROR_DIALQUIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Spenge il computer
@@ -1723,9 +1723,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_ERROR_COMQUIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_ERROR_COMQUIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_ERROR_COMQUIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Spenge il computer
@@ -1734,18 +1734,18 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_ERROR_OK_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_ERROR_OK_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_ERROR_OK_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Distattiva finestra errore
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_ERROR, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 
 					//Distattiva bitmap e tasti finestra errore
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_ERROR,
-						  T2D_BM_COMPUTER_SEARCHERROR_WIN, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_SEARCHERROR_WIN, FALSE, nullptr, nullptr, nullptr);
 					t2dWin[T2D_WIN_COMPUTER_ERROR].bt[T2D_BT_COMPUTER_ERROR_OK].on = FALSE;
 					t2dWin[T2D_WIN_COMPUTER_ERROR].bt[T2D_BT_SearchError_Win_TGA].on = FALSE;
 					t2dWin[T2D_WIN_COMPUTER_ERROR].sy = 3;
@@ -1760,9 +1760,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_1_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_1_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_1_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_2) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1770,9 +1770,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_2_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_2_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_2_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_3) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1780,9 +1780,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_3_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_3_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_3_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_4) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1790,9 +1790,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_4_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_4_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_4_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_5) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1800,9 +1800,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_5_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_5_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_5_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_6) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1810,9 +1810,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_6_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_6_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_6_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_7) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1820,9 +1820,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_7_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_7_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_7_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_8) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1830,9 +1830,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_8_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_8_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_8_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_9) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1840,9 +1840,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_9_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_9_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_9_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_0) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1850,9 +1850,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_0_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_0_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_0_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_ENTER) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -1860,30 +1860,30 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_ENTER_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_ENTER_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_ENTER_ON, FALSE, nullptr, nullptr, nullptr);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_C) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					T2DAddKeyInput(VK_BACK);
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_C_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_C_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_C_ON, FALSE, nullptr, nullptr, nullptr);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_OK) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					T2DAddKeyInput(VK_RETURN);
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_OK_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DIALUP,
-						  T2D_BM_COMPUTER_DIALUP_OK_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DIALUP_OK_ON, FALSE, nullptr, nullptr, nullptr);
 				} else if ((CurButton == T2D_BT_COMPUTER_DIALUP_EXIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_DIALUP_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSTOP, MP_WAITA, 0, 0, tCOMPUTER, nullptr, nullptr, nullptr);
 				}
 			} else if (CurButtonWin == T2D_WIN_COMPUTER_SEARCH) {
@@ -1895,15 +1895,15 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_COMPUTER_SEARCH_SEARCH_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_SEARCH,
-						  T2D_BM_COMPUTER_SEARCH_SEARCH_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_SEARCH_SEARCH_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
 					ComputerSearch(game);
 				} else if ((CurButton == T2D_BT_COMPUTER_SEARCH_ALPHABETICAL) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Setta parametri della finestra Search per visualizzare la parte Alphabetical
@@ -1967,7 +1967,7 @@ void doT2DMouse(WGame &game) {
 					strcpy(w->text[WhatText].text, "");
 					searchName = "";
 				} else if ((CurButton == T2D_BT_COMPUTER_SEARCH_SURNAME_TEXT) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pone il cursore sulla casella testo Surname
 					ActivateCursor(FALSE, NULL);
 					WhatText = T2D_TEXT_COMPUTER_SEARCH_SURNAME;
@@ -1981,7 +1981,7 @@ void doT2DMouse(WGame &game) {
 					strcpy(w->text[WhatText].text, "");
 					searchSurName = "";
 				} else if ((CurButton == T2D_BT_COMPUTER_SEARCH_CASENAME_TEXT) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pone il cursore sulla casella testo Casename
 					ActivateCursor(FALSE, NULL);
 					WhatText = T2D_TEXT_COMPUTER_SEARCH_CASENAME;
@@ -2011,18 +2011,18 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_SEARCH_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_SEARCH,
-						  T2D_BM_COMPUTER_SEARCH_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_SEARCH_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Elimina finestra search
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_SEARCH, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 
 					//Disattiva tasto search
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_BACKGROUND,
-						  T2D_BM_COMPUTER_SEARCH_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_SEARCH_ON, FALSE, nullptr, nullptr, nullptr);
 				}
 			} else if (CurButtonWin == T2D_WIN_COMPUTER_DOCLIST) {
 				if ((CurButton == T2D_BT_COMPUTER_DOCLIST_MOVE) && (bLPressed || bRPressed)) {
@@ -2033,23 +2033,23 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLUP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCLIST,
-						  T2D_BM_COMPUTER_DOCLIST_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCLIST_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if ((CurButton == T2D_BT_COMPUTER_DOCLIST_SCROLLDOWN) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCLIST_SCROLLDOWN_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCLIST,
-						  T2D_BM_COMPUTER_DOCLIST_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCLIST_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 				} else if (((CurButton >= T2D_BT_COMPUTER_DOCLIST_LINES_START) &&
-							(CurButton <= T2D_BT_COMPUTER_DOCLIST_LINES_END)) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				            (CurButton <= T2D_BT_COMPUTER_DOCLIST_LINES_END)) &&
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					StartY = computerCurrentDocument;
 					computerCurrentDocument = -1;
 
@@ -2089,20 +2089,20 @@ void doT2DMouse(WGame &game) {
 						}
 
 						Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_DOCUMENT, 0, TRUE,
-							  nullptr, nullptr, nullptr);
+						      nullptr, nullptr, nullptr);
 					}
 				} else if ((CurButton == T2D_BT_COMPUTER_DOCLIST_EXIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCLIST_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCLIST,
-						  T2D_BM_COMPUTER_DOCLIST_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCLIST_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Disattiva finestra doclist
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_DOCLIST, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 				}
 			} else if (CurButtonWin == T2D_WIN_COMPUTER_EMAIL) {
 				if ((CurButton == T2D_BT_COMPUTER_EMAIL_MOVE) && (bLPressed || bRPressed)) {
@@ -2117,8 +2117,8 @@ void doT2DMouse(WGame &game) {
 					//Scroll Down
 					w->sy += 10;
 				} else if (
-						((CurButton == T2D_BT_COMPUTER_EMAIL_ICON_1) || (CurButton == T2D_BT_COMPUTER_EMAIL_ICON_2)) &&
-						(TheMessage->event != ME_MOUSEUPDATE)) {
+				    ((CurButton == T2D_BT_COMPUTER_EMAIL_ICON_1) || (CurButton == T2D_BT_COMPUTER_EMAIL_ICON_2)) &&
+				    (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Disattiva vecchia email
 					if (computerCurrentEMail != -1)
 						t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].tnum |= T2D_BM_OFF;
@@ -2141,28 +2141,28 @@ void doT2DMouse(WGame &game) {
 					t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].dy = 0;
 					if (t.y2 - t.y1 > 182)
 						t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].dy = renderer.rInvFitY(182);
-						//else  t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].dy = rInvFitY(t.y2-t.y1);
+					//else  t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].dy = rInvFitY(t.y2-t.y1);
 					else t2dWin[T2D_WIN_COMPUTER_EMAIL_VIEWER].bm[computerCurrentEMail].dy = 0;
 
 					//Apre finestra EMail_Viewer
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_COMPUTER_EMAIL_VIEWER, 0, TRUE,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 				} else if ((CurButton == T2D_BT_COMPUTER_EMAIL_EXIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_EMAIL_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_EMAIL,
-						  T2D_BM_COMPUTER_EMAIL_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_EMAIL_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Disattiva finestra email
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_EMAIL, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 
 					//Disattiva tasto email
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_BACKGROUND,
-						  T2D_BM_COMPUTER_EMAIL_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_EMAIL_ON, FALSE, nullptr, nullptr, nullptr);
 
 					//ResetDIKbd();
 					//bIngnoreDIKeyboard = FALSE;
@@ -2181,9 +2181,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLUP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCUMENT,
-						  T2D_BM_COMPUTER_DOCUMENT_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCUMENT_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
@@ -2199,13 +2199,13 @@ void doT2DMouse(WGame &game) {
 						}
 					}
 				} else if ((CurButton == T2D_BT_COMPUTER_DOCUMENT_SCROLLDOWN) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCUMENT_SCROLLDOWN_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCUMENT,
-						  T2D_BM_COMPUTER_DOCUMENT_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCUMENT_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
@@ -2213,14 +2213,14 @@ void doT2DMouse(WGame &game) {
 
 					if (t.y2 - t.y1 > 407) {
 						if (w->bm[computerCurrentDocument].oy + w->bm[computerCurrentDocument].dy +
-							T2D_DOC_SCROLL_ADD >= renderer.rInvFitY(t.y2 - t.y1)) {
+						        T2D_DOC_SCROLL_ADD >= renderer.rInvFitY(t.y2 - t.y1)) {
 							w->bm[computerCurrentDocument].oy =
-									renderer.rInvFitY(t.y2 - t.y1) - w->bm[computerCurrentDocument].dy;
+							    renderer.rInvFitY(t.y2 - t.y1) - w->bm[computerCurrentDocument].dy;
 							while (w->bm[computerCurrentDocument].oy + w->bm[computerCurrentDocument].dy >=
-								   renderer.rInvFitY(t.y2 - t.y1))
+							        renderer.rInvFitY(t.y2 - t.y1))
 								w->bm[computerCurrentDocument].oy--;
 							w->bm[computerCurrentDocument].py =
-									renderer.rInvFitY(66) - w->bm[computerCurrentDocument].oy;
+							    renderer.rInvFitY(66) - w->bm[computerCurrentDocument].oy;
 						} else {
 							w->bm[computerCurrentDocument].oy += T2D_DOC_SCROLL_ADD;
 							w->bm[computerCurrentDocument].py -= T2D_DOC_SCROLL_ADD;
@@ -2231,17 +2231,17 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_DOCUMENT_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCUMENT,
-						  T2D_BM_COMPUTER_DOCUMENT_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_DOCUMENT_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Disattiva documento
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_DOCUMENT,
-						  (short) computerCurrentDocument, FALSE, nullptr, nullptr, nullptr);
+					      (short) computerCurrentDocument, FALSE, nullptr, nullptr, nullptr);
 					//Disattiva finestra Document
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_DOCUMENT, 0, FALSE, nullptr,
-						  nullptr, nullptr);
+					      nullptr, nullptr);
 
 					computerCurrentDocument = -1;
 				}
@@ -2256,13 +2256,13 @@ void doT2DMouse(WGame &game) {
 					ScrollWithMouseX = mouse_x;
 					ScrollWithMouseY = mouse_y;
 				} else if ((CurButton == T2D_BT_COMPUTER_EMAIL_VIEWER_SCROLLUP) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLUP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_EMAIL_VIEWER,
-						  T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLUP_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
@@ -2278,13 +2278,13 @@ void doT2DMouse(WGame &game) {
 						}
 					}
 				} else if ((CurButton == T2D_BT_COMPUTER_EMAIL_VIEWER_SCROLLDOWN) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLDOWN_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_EMAIL_VIEWER,
-						  T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_EMAIL_VIEWER_SCROLLDOWN_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 
@@ -2292,11 +2292,11 @@ void doT2DMouse(WGame &game) {
 
 					if (t.y2 - t.y1 > 182) {
 						if (w->bm[computerCurrentEMail].oy + w->bm[computerCurrentEMail].dy +
-							T2D_DOC_SCROLL_ADD >= renderer.rInvFitY(t.y2 - t.y1)) {
+						        T2D_DOC_SCROLL_ADD >= renderer.rInvFitY(t.y2 - t.y1)) {
 							w->bm[computerCurrentEMail].oy =
-									renderer.rInvFitY(t.y2 - t.y1) - w->bm[computerCurrentEMail].dy;
+							    renderer.rInvFitY(t.y2 - t.y1) - w->bm[computerCurrentEMail].dy;
 							while (w->bm[computerCurrentEMail].oy + w->bm[computerCurrentEMail].dy >=
-								   renderer.rInvFitY(t.y2 - t.y1))
+							        renderer.rInvFitY(t.y2 - t.y1))
 								w->bm[computerCurrentEMail].oy--;
 							w->bm[computerCurrentEMail].py = renderer.rInvFitY(59) - w->bm[computerCurrentEMail].oy;
 						} else {
@@ -2309,14 +2309,14 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_COMPUTER_EMAIL_VIEWER_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_COMPUTER_EMAIL_VIEWER,
-						  T2D_BM_COMPUTER_EMAIL_VIEWER_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_COMPUTER_EMAIL_VIEWER_EXIT_ON, FALSE, nullptr, nullptr, nullptr);
 					//Suono
 					StartSound(game, wCIAPULSANTE);
 					//Disattiva finestra Email_Viewer
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_COMPUTER_EMAIL_VIEWER, 0, FALSE,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 				}
 			}
 			break;
@@ -2326,30 +2326,30 @@ void doT2DMouse(WGame &game) {
 				//Azzera parti selezionate
 				if (TheMessage->event == ME_MOUSEUPDATE) {
 					switch (diarioCurrentPage) {
-						case 1:
-							for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++) {
-								if (!(w->bm[i].tnum & T2D_BM_OFF))
-									w->bm[i].tnum |= T2D_BM_OFF;
-							}
-							break;
-						case 2:
-							for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++) {
-								if (!(w->bm[i].tnum & T2D_BM_OFF))
-									w->bm[i].tnum |= T2D_BM_OFF;
-							}
-							break;
-						case 3:
-							for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++) {
-								if (!(w->bm[i].tnum & T2D_BM_OFF))
-									w->bm[i].tnum |= T2D_BM_OFF;
-							}
-							break;
-						case 4:
-							for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++) {
-								if (!(w->bm[i].tnum & T2D_BM_OFF))
-									w->bm[i].tnum |= T2D_BM_OFF;
-							}
-							break;
+					case 1:
+						for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++) {
+							if (!(w->bm[i].tnum & T2D_BM_OFF))
+								w->bm[i].tnum |= T2D_BM_OFF;
+						}
+						break;
+					case 2:
+						for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++) {
+							if (!(w->bm[i].tnum & T2D_BM_OFF))
+								w->bm[i].tnum |= T2D_BM_OFF;
+						}
+						break;
+					case 3:
+						for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++) {
+							if (!(w->bm[i].tnum & T2D_BM_OFF))
+								w->bm[i].tnum |= T2D_BM_OFF;
+						}
+						break;
+					case 4:
+						for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++) {
+							if (!(w->bm[i].tnum & T2D_BM_OFF))
+								w->bm[i].tnum |= T2D_BM_OFF;
+						}
+						break;
 					}
 				}
 
@@ -2364,138 +2364,138 @@ void doT2DMouse(WGame &game) {
 					//Pressione tasto
 					w->bm[T2D_BM_DIARIO_PAGE_LEFT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_LEFT_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 
 					switch (diarioCurrentPage) {
-						case 1: //Pagina Iniziale, non puo andare a pagina precedente
-							break;
-						case 2:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_1,
-								  TRUE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
-								  FALSE, nullptr, nullptr, nullptr);
-							w->bt[T2D_BT_DIARIO_PAGE_LEFT].on = false;
-							for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++)
-								w->bt[i].on = TRUE;
-							for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
-								w->bt[i].on = false;
-							diarioCurrentPage = 1;
-							break;
-						case 3:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
-								  TRUE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
-								  FALSE, nullptr, nullptr, nullptr);
-							for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
-								w->bt[i].on = TRUE;
-							for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
-								w->bt[i].on = false;
-							diarioCurrentPage = 2;
-							break;
-						case 4:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
-								  TRUE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_4,
-								  FALSE, nullptr, nullptr, nullptr);
-							w->bt[T2D_BT_DIARIO_PAGE_RIGHT].on = TRUE;
-							for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
-								w->bt[i].on = TRUE;
-							for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++)
-								w->bt[i].on = false;
-							diarioCurrentPage = 3;
-							break;
+					case 1: //Pagina Iniziale, non puo andare a pagina precedente
+						break;
+					case 2:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_1,
+						      TRUE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
+						      FALSE, nullptr, nullptr, nullptr);
+						w->bt[T2D_BT_DIARIO_PAGE_LEFT].on = false;
+						for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++)
+							w->bt[i].on = TRUE;
+						for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
+							w->bt[i].on = false;
+						diarioCurrentPage = 1;
+						break;
+					case 3:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
+						      TRUE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
+						      FALSE, nullptr, nullptr, nullptr);
+						for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
+							w->bt[i].on = TRUE;
+						for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
+							w->bt[i].on = false;
+						diarioCurrentPage = 2;
+						break;
+					case 4:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
+						      TRUE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_4,
+						      FALSE, nullptr, nullptr, nullptr);
+						w->bt[T2D_BT_DIARIO_PAGE_RIGHT].on = TRUE;
+						for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
+							w->bt[i].on = TRUE;
+						for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++)
+							w->bt[i].on = false;
+						diarioCurrentPage = 3;
+						break;
 					}
 				} else if ((CurButton == T2D_BT_DIARIO_PAGE_RIGHT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_DIARIO_PAGE_RIGHT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_RIGHT_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 
 					switch (diarioCurrentPage) {
-						case 1:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_1,
-								  FALSE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
-								  TRUE, nullptr, nullptr, nullptr);
-							w->bt[T2D_BT_DIARIO_PAGE_LEFT].on = TRUE;
-							for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++)
-								w->bt[i].on = false;
-							for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
-								w->bt[i].on = TRUE;
-							diarioCurrentPage = 2;
-							break;
-						case 2:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
-								  FALSE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
-								  TRUE, nullptr, nullptr, nullptr);
-							for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
-								w->bt[i].on = false;
-							for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
-								w->bt[i].on = TRUE;
-							diarioCurrentPage = 3;
-							break;
-						case 3:
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
-								  FALSE, nullptr, nullptr, nullptr);
-							Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_4,
-								  TRUE, nullptr, nullptr, nullptr);
-							w->bt[T2D_BT_DIARIO_PAGE_RIGHT].on = false;
-							for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
-								w->bt[i].on = false;
-							for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++)
-								w->bt[i].on = TRUE;
-							diarioCurrentPage = 4;
-							break;
-						case 4: //Ultima Pagina
-							break;
+					case 1:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_1,
+						      FALSE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
+						      TRUE, nullptr, nullptr, nullptr);
+						w->bt[T2D_BT_DIARIO_PAGE_LEFT].on = TRUE;
+						for (i = T2D_BT_DIARIO_PAGE_1_TEXT_1; i <= T2D_BT_DIARIO_PAGE_1_TEXT_6; i++)
+							w->bt[i].on = false;
+						for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
+							w->bt[i].on = TRUE;
+						diarioCurrentPage = 2;
+						break;
+					case 2:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_2,
+						      FALSE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
+						      TRUE, nullptr, nullptr, nullptr);
+						for (i = T2D_BT_DIARIO_PAGE_2_TEXT_1; i <= T2D_BT_DIARIO_PAGE_2_TEXT_6; i++)
+							w->bt[i].on = false;
+						for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
+							w->bt[i].on = TRUE;
+						diarioCurrentPage = 3;
+						break;
+					case 3:
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_3,
+						      FALSE, nullptr, nullptr, nullptr);
+						Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_PAGE_4,
+						      TRUE, nullptr, nullptr, nullptr);
+						w->bt[T2D_BT_DIARIO_PAGE_RIGHT].on = false;
+						for (i = T2D_BT_DIARIO_PAGE_3_TEXT_1; i <= T2D_BT_DIARIO_PAGE_3_TEXT_4; i++)
+							w->bt[i].on = false;
+						for (i = T2D_BT_DIARIO_PAGE_4_TEXT_1; i <= T2D_BT_DIARIO_PAGE_4_TEXT_12; i++)
+							w->bt[i].on = TRUE;
+						diarioCurrentPage = 4;
+						break;
+					case 4: //Ultima Pagina
+						break;
 					}
 				} else if ((CurButton == T2D_BT_DIARIO_EXIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione tasto
 					w->bm[T2D_BM_DIARIO_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_DIALUP_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_DIARIO, T2D_BM_DIARIO_EXIT_ON, FALSE,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 
 					//Uscita
 					Event(EventClass::MC_T2D, ME_T2DSTOP, MP_WAITA, 0, 0, tDIARIO, nullptr, nullptr, nullptr);
 				} else if ((CurButton >= T2D_BT_DIARIO_PAGE_1_TEXT_1) && (CurButton <= T2D_BT_DIARIO_PAGE_1_TEXT_6) &&
-						   (diarioCurrentPage == 1)) {
+				           (diarioCurrentPage == 1)) {
 					if (TheMessage->event == ME_MOUSEUPDATE) {
 						w->bm[CurButton].tnum &= ~T2D_BM_OFF;
 					} else {
 						if (CurPlayer == DARRELL)
 							PlayerSpeak(game, init.Obj[o34DIARIOAP].action[CurPlayer]);
 						else PlayerSpeak(game, init.Obj[oDIARIOPAG1A +
-														(CurButton - T2D_BT_DIARIO_PAGE_1_TEXT_1)].examine[CurPlayer]);
+							                                (CurButton - T2D_BT_DIARIO_PAGE_1_TEXT_1)].examine[CurPlayer]);
 					}
 				} else if ((CurButton >= T2D_BT_DIARIO_PAGE_2_TEXT_1) && (CurButton <= T2D_BT_DIARIO_PAGE_2_TEXT_6) &&
-						   (diarioCurrentPage == 2)) {
+				           (diarioCurrentPage == 2)) {
 					if (TheMessage->event == ME_MOUSEUPDATE) {
 						w->bm[CurButton].tnum &= ~T2D_BM_OFF;
 					} else {
 						if (CurPlayer == DARRELL)
 							PlayerSpeak(game, init.Obj[o34DIARIOAP].action[CurPlayer]);
 						else PlayerSpeak(game, init.Obj[oDIARIOPAG2A +
-														(CurButton - T2D_BT_DIARIO_PAGE_2_TEXT_1)].examine[CurPlayer]);
+							                                (CurButton - T2D_BT_DIARIO_PAGE_2_TEXT_1)].examine[CurPlayer]);
 					}
 				} else if ((CurButton >= T2D_BT_DIARIO_PAGE_3_TEXT_1) && (CurButton <= T2D_BT_DIARIO_PAGE_3_TEXT_4) &&
-						   (diarioCurrentPage == 3)) {
+				           (diarioCurrentPage == 3)) {
 					if (TheMessage->event == ME_MOUSEUPDATE) {
 						w->bm[CurButton].tnum &= ~T2D_BM_OFF;
 					} else {
 						if (CurPlayer == DARRELL)
 							PlayerSpeak(game, init.Obj[o34DIARIOAP].action[CurPlayer]);
 						else PlayerSpeak(game, init.Obj[oDIARIOPAG3A +
-														(CurButton - T2D_BT_DIARIO_PAGE_3_TEXT_1)].examine[CurPlayer]);
+							                                (CurButton - T2D_BT_DIARIO_PAGE_3_TEXT_1)].examine[CurPlayer]);
 					}
 				} else if ((CurButton >= T2D_BT_DIARIO_PAGE_4_TEXT_1) && (CurButton <= T2D_BT_DIARIO_PAGE_4_TEXT_12) &&
-						   (diarioCurrentPage == 4)) {
+				           (diarioCurrentPage == 4)) {
 					if (TheMessage->event == ME_MOUSEUPDATE) {
 						w->bm[CurButton].tnum &= ~T2D_BM_OFF;
 					} else {
@@ -2503,10 +2503,10 @@ void doT2DMouse(WGame &game) {
 							PlayerSpeak(game, init.Obj[o34DIARIOAP].action[CurPlayer]);
 						else {
 							PlayerSpeak(game, init.Obj[oDIARIOPAG4A +
-													   (CurButton - T2D_BT_DIARIO_PAGE_4_TEXT_1)].examine[CurPlayer]);
+							                           (CurButton - T2D_BT_DIARIO_PAGE_4_TEXT_1)].examine[CurPlayer]);
 							Event(EventClass::MC_STRING, ME_PLAYERSPEAK, MP_WAIT_LINK,
-								  init.Obj[oDIARIOPAG4A + (CurButton - T2D_BT_DIARIO_PAGE_4_TEXT_1)].text[0], 0, 0,
-								  nullptr, nullptr, nullptr);
+							      init.Obj[oDIARIOPAG4A + (CurButton - T2D_BT_DIARIO_PAGE_4_TEXT_1)].text[0], 0, 0,
+							      nullptr, nullptr, nullptr);
 						}
 					}
 				}
@@ -2520,23 +2520,23 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_MAIN_TONE_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_MAIN, T2D_BM_PDA_MAIN_TONE_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Apre il Tone Sequencer
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_TONE, 0, TRUE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 				} else if ((CurButton == T2D_BT_PDA_MAIN_LOG) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione Tasto
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_MAIN_LOG_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_MAIN, T2D_BM_PDA_MAIN_LOG_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Apre il Log Viewer
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_LOG, 0, TRUE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 					//Resetta variabili
 					RefreshLog(game, RESTARTALL);
 					RefreshLog(game, REFRESH);
@@ -2545,9 +2545,9 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAOFF);
 					w->bm[T2D_BM_PDA_MAIN_QUIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_COMPUTER_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_MAIN, T2D_BM_PDA_MAIN_QUIT_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Esce dal PDA
 					Event(EventClass::MC_T2D, ME_T2DSTOP, MP_WAITA, 0, 0, tPDA, nullptr, nullptr, nullptr);
 				}
@@ -2573,9 +2573,9 @@ void doT2DMouse(WGame &game) {
 						break;
 					}
 
-					StartY = (int) ((double) (mouse_y - w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y1 - w->px) /
-									((double) (w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y2 -
-											   w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y1) / 20.0));
+					StartY = (int)((double)(mouse_y - w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y1 - w->px) /
+					               ((double)(w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y2 -
+					                         w->bt[T2D_BT_PDA_LOG_SCROLL].lim.y1) / 20.0));
 
 					/*if (NumMenus>0)   StartY-=NumMenus+2;
 
@@ -2612,9 +2612,9 @@ void doT2DMouse(WGame &game) {
 					//Gestione tasto
 					w->bm[T2D_BM_PDA_LOG_SCROLLUP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_LOG, T2D_BM_PDA_LOG_SCROLLUP_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 
 					//Riposiziona il log
 					RefreshLog(game, -1);
@@ -2622,9 +2622,9 @@ void doT2DMouse(WGame &game) {
 					//Gestione tasto
 					w->bm[T2D_BM_PDA_LOG_SCROLLDOWN_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_LOG, T2D_BM_PDA_LOG_SCROLLDOWN_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 
 					//Riposiziona il log
 					RefreshLog(game, +1);
@@ -2659,15 +2659,15 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_LOG_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_LOG, T2D_BM_PDA_LOG_EXIT_ON, FALSE,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					//Chiude finestra help se aperta
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_PDA_HELP, 0, FALSE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 					//Chiude finestra Log Viewer
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_LOG, 0, FALSE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 				}
 			} else if (CurButtonWin == T2D_WIN_PDA_TONE) {
 				if ((CurButton == T2D_BT_PDA_TONE_HELP) && (TheMessage->event != ME_MOUSEUPDATE)) {
@@ -2675,29 +2675,29 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_TONE_HELP_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_TONE, T2D_BM_PDA_TONE_HELP_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Setta e Apre finestra Help
 					SetHelpWin(game._fonts, nullptr, 5, Sentence[init.Obj[oTONERHELP].text[0]],
-							   Sentence[init.Obj[oTONERHELP].text[1]], Sentence[init.Obj[oTONERHELP].text[2]],
-							   Sentence[init.Obj[oTONERHELP].text[3]], Sentence[init.Obj[oTONERHELP].text[4]]);
+					           Sentence[init.Obj[oTONERHELP].text[1]], Sentence[init.Obj[oTONERHELP].text[2]],
+					           Sentence[init.Obj[oTONERHELP].text[3]], Sentence[init.Obj[oTONERHELP].text[4]]);
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_HELP, 0, TRUE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 				} else if ((CurButton == T2D_BT_PDA_TONE_EXIT) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione Tasto
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_TONE_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_TONE, T2D_BM_PDA_TONE_EXIT_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Chiude finestra help
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_DEFAULT, T2D_WIN_PDA_HELP, 0, FALSE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 					//Chiude finestra Tone
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_TONE, 0, FALSE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 				} else if ((CurButton == T2D_BT_PDA_TONE_ACQUIRE) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Disattiva tasto
 					w->bt[T2D_BT_PDA_TONE_ACQUIRE].on = FALSE;
@@ -2705,12 +2705,12 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_TONE_ACQUIRE_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_TONE, T2D_BM_PDA_TONE_ACQUIRE_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Fa partire sequenza di aquiring
 					Event(EventClass::MC_T2D, ME_T2DCONTINUE, MP_WAITA, 0, 0, T2D_PDA_TONE_AQUIRING, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 				} else if ((CurButton == T2D_BT_PDA_TONE_PROCESS) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Disattiva tasto
 					w->bt[T2D_BT_PDA_TONE_PROCESS].on = FALSE;
@@ -2718,12 +2718,12 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_TONE_PROCESS_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_TONE, T2D_BM_PDA_TONE_PROCESS_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Fa partire sequenza di processing
 					Event(EventClass::MC_T2D, ME_T2DCONTINUE, MP_WAITA, 0, 0, T2D_PDA_TONE_PROCESS, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 					if (!(init.InvObj[i28WALKMANOK].flags & EXTRA2))
 						IncCurTime(game, 5);
 					init.InvObj[i28WALKMANOK].flags |= EXTRA2;
@@ -2739,12 +2739,12 @@ void doT2DMouse(WGame &game) {
 					StartSound(game, wPDAPULSANTE);
 					w->bm[T2D_BM_PDA_HELP_EXIT_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_PDA_HELP, T2D_BM_PDA_HELP_EXIT_ON,
-						  FALSE, nullptr, nullptr, nullptr);
+					      FALSE, nullptr, nullptr, nullptr);
 					//Chiude finestra Tone
 					Event(EventClass::MC_T2D, ME_T2DSETWINDOW, MP_WAITA, T2D_WIN_PDA_HELP, 0, FALSE, nullptr, nullptr,
-						  nullptr);
+					      nullptr);
 					if (HelpFunc != NULL) HelpFunc();
 				}
 			}
@@ -2757,110 +2757,110 @@ void doT2DMouse(WGame &game) {
 			if (optionsSaveDescriptActive) break;
 			if (CurButtonWin == T2D_WIN_OPTIONS_MAIN) {
 				if ((
-							((CurButton == T2D_BT_OPTIONS_SAVE) && PlayerCanSave()) ||
-							(CurButton == T2D_BT_OPTIONS_LOAD) ||
-							(CurButton == T2D_BT_OPTIONS_OPTIONS)
-					) &&
-					(TheMessage->event != ME_MOUSEUPDATE)) {
+				            ((CurButton == T2D_BT_OPTIONS_SAVE) && PlayerCanSave()) ||
+				            (CurButton == T2D_BT_OPTIONS_LOAD) ||
+				            (CurButton == T2D_BT_OPTIONS_OPTIONS)
+				        ) &&
+				        (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Cambia finestra
 					if (optionsCurrent != CurButton) {
 						switch (optionsCurrent) {
-							case T2D_BT_OPTIONS_SAVE:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SAVE].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = FALSE;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = FALSE;
-								break;
-							case T2D_BT_OPTIONS_LOAD:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_LOAD].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = FALSE;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = FALSE;
-								break;
-							case T2D_BT_OPTIONS_OPTIONS:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SOUND_ON].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_MUSIC_ON].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SPEECH_ON].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SUBTITLES_ON].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SOUND_OFF].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_MUSIC_OFF].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SPEECH_OFF].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SOUND].on = false;
-								w->bt[T2D_BT_OPTIONS_MUSIC].on = false;
-								w->bt[T2D_BT_OPTIONS_SPEECH].on = false;
-								w->bt[T2D_BT_OPTIONS_SUBTITLES].on = false;
-								w->bm[T2D_BM_OPTIONS_SOUND_BARRA].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SOUND_PIROLO].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SOUND_BARRA].on = false;
-								w->bm[T2D_BM_OPTIONS_MUSIC_BARRA].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_MUSIC_BARRA].on = false;
-								w->bm[T2D_BM_OPTIONS_SPEECH_BARRA].tnum |= T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO].tnum |= T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SPEECH_BARRA].on = false;
-								break;
+						case T2D_BT_OPTIONS_SAVE:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SAVE].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = FALSE;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = FALSE;
+							break;
+						case T2D_BT_OPTIONS_LOAD:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_LOAD].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = FALSE;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = FALSE;
+							break;
+						case T2D_BT_OPTIONS_OPTIONS:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SOUND_ON].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_MUSIC_ON].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SPEECH_ON].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SUBTITLES_ON].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SOUND_OFF].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_MUSIC_OFF].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SPEECH_OFF].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SOUND].on = false;
+							w->bt[T2D_BT_OPTIONS_MUSIC].on = false;
+							w->bt[T2D_BT_OPTIONS_SPEECH].on = false;
+							w->bt[T2D_BT_OPTIONS_SUBTITLES].on = false;
+							w->bm[T2D_BM_OPTIONS_SOUND_BARRA].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SOUND_PIROLO].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SOUND_BARRA].on = false;
+							w->bm[T2D_BM_OPTIONS_MUSIC_BARRA].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_MUSIC_BARRA].on = false;
+							w->bm[T2D_BM_OPTIONS_SPEECH_BARRA].tnum |= T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO].tnum |= T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SPEECH_BARRA].on = false;
+							break;
 						}
 
 						switch (CurButton) {
-							case T2D_BT_OPTIONS_SAVE:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SAVE].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum &= ~T2D_BM_OFF;
-								RefreshSaveImg(game, 0, 0);
-								break;
-							case T2D_BT_OPTIONS_LOAD:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_LOAD].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum &= ~T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = TRUE;
-								w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = TRUE;
-								RefreshSaveImg(game, 0, 1);
-								break;
-							case T2D_BT_OPTIONS_OPTIONS:
-								w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
-								if (game.gameOptions.sound_on)
-									w->bm[T2D_BM_OPTIONS_SOUND_ON].tnum &= ~T2D_BM_OFF;
-								else w->bm[T2D_BM_OPTIONS_SOUND_OFF].tnum &= ~T2D_BM_OFF;
-								if (game.gameOptions.music_on)
-									w->bm[T2D_BM_OPTIONS_MUSIC_ON].tnum &= ~T2D_BM_OFF;
-								else w->bm[T2D_BM_OPTIONS_MUSIC_OFF].tnum &= ~T2D_BM_OFF;
-								if (game.gameOptions.speech_on)
-									w->bm[T2D_BM_OPTIONS_SPEECH_ON].tnum &= ~T2D_BM_OFF;
-								else w->bm[T2D_BM_OPTIONS_SPEECH_OFF].tnum &= ~T2D_BM_OFF;
-								if (game.gameOptions.subtitles_on)
-									w->bm[T2D_BM_OPTIONS_SUBTITLES_ON].tnum &= ~T2D_BM_OFF;
-								else w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF].tnum &= ~T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SOUND].on = TRUE;
-								w->bt[T2D_BT_OPTIONS_MUSIC].on = TRUE;
-								w->bt[T2D_BT_OPTIONS_SPEECH].on = TRUE;
-								w->bt[T2D_BT_OPTIONS_SUBTITLES].on = TRUE;
-								w->bm[T2D_BM_OPTIONS_SOUND_BARRA].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SOUND_PIROLO].tnum &= ~T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SOUND_BARRA].on = TRUE;
-								w->bm[T2D_BM_OPTIONS_MUSIC_BARRA].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO].tnum &= ~T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_MUSIC_BARRA].on = TRUE;
-								w->bm[T2D_BM_OPTIONS_SPEECH_BARRA].tnum &= ~T2D_BM_OFF;
-								w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO].tnum &= ~T2D_BM_OFF;
-								w->bt[T2D_BT_OPTIONS_SPEECH_BARRA].on = TRUE;
-								GestioneBarra(&w->bm[T2D_BM_OPTIONS_SOUND_BARRA], &w->bm[T2D_BM_OPTIONS_SOUND_PIROLO],
-											  -1, game.gameOptions.sound_volume);
-								GestioneBarra(&w->bm[T2D_BM_OPTIONS_MUSIC_BARRA], &w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO],
-											  -1, game.gameOptions.music_volume);
-								GestioneBarra(&w->bm[T2D_BM_OPTIONS_SPEECH_BARRA], &w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO],
-											  -1, game.gameOptions.speech_volume);
-								RefreshSaveImg(game, 0, 2);
-								break;
+						case T2D_BT_OPTIONS_SAVE:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SAVE].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum &= ~T2D_BM_OFF;
+							RefreshSaveImg(game, 0, 0);
+							break;
+						case T2D_BT_OPTIONS_LOAD:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_LOAD].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_GRIGLIA].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_SU_OFF].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_OFF].tnum &= ~T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_SU].on = TRUE;
+							w->bt[T2D_BT_OPTIONS_FRECCIA_GIU].on = TRUE;
+							RefreshSaveImg(game, 0, 1);
+							break;
+						case T2D_BT_OPTIONS_OPTIONS:
+							w->bm[T2D_BM_OPTIONS_CONTORNO].tnum &= ~T2D_BM_OFF;
+							if (game.gameOptions.sound_on)
+								w->bm[T2D_BM_OPTIONS_SOUND_ON].tnum &= ~T2D_BM_OFF;
+							else w->bm[T2D_BM_OPTIONS_SOUND_OFF].tnum &= ~T2D_BM_OFF;
+							if (game.gameOptions.music_on)
+								w->bm[T2D_BM_OPTIONS_MUSIC_ON].tnum &= ~T2D_BM_OFF;
+							else w->bm[T2D_BM_OPTIONS_MUSIC_OFF].tnum &= ~T2D_BM_OFF;
+							if (game.gameOptions.speech_on)
+								w->bm[T2D_BM_OPTIONS_SPEECH_ON].tnum &= ~T2D_BM_OFF;
+							else w->bm[T2D_BM_OPTIONS_SPEECH_OFF].tnum &= ~T2D_BM_OFF;
+							if (game.gameOptions.subtitles_on)
+								w->bm[T2D_BM_OPTIONS_SUBTITLES_ON].tnum &= ~T2D_BM_OFF;
+							else w->bm[T2D_BM_OPTIONS_SUBTITLES_OFF].tnum &= ~T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SOUND].on = TRUE;
+							w->bt[T2D_BT_OPTIONS_MUSIC].on = TRUE;
+							w->bt[T2D_BT_OPTIONS_SPEECH].on = TRUE;
+							w->bt[T2D_BT_OPTIONS_SUBTITLES].on = TRUE;
+							w->bm[T2D_BM_OPTIONS_SOUND_BARRA].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SOUND_PIROLO].tnum &= ~T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SOUND_BARRA].on = TRUE;
+							w->bm[T2D_BM_OPTIONS_MUSIC_BARRA].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO].tnum &= ~T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_MUSIC_BARRA].on = TRUE;
+							w->bm[T2D_BM_OPTIONS_SPEECH_BARRA].tnum &= ~T2D_BM_OFF;
+							w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO].tnum &= ~T2D_BM_OFF;
+							w->bt[T2D_BT_OPTIONS_SPEECH_BARRA].on = TRUE;
+							GestioneBarra(&w->bm[T2D_BM_OPTIONS_SOUND_BARRA], &w->bm[T2D_BM_OPTIONS_SOUND_PIROLO],
+							              -1, game.gameOptions.sound_volume);
+							GestioneBarra(&w->bm[T2D_BM_OPTIONS_MUSIC_BARRA], &w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO],
+							              -1, game.gameOptions.music_volume);
+							GestioneBarra(&w->bm[T2D_BM_OPTIONS_SPEECH_BARRA], &w->bm[T2D_BM_OPTIONS_SPEECH_PIROLO],
+							              -1, game.gameOptions.speech_volume);
+							RefreshSaveImg(game, 0, 2);
+							break;
 						}
 
 						if ((CurButton == T2D_BT_OPTIONS_SAVE) || (CurButton == T2D_BT_OPTIONS_LOAD)) {
@@ -2883,79 +2883,79 @@ void doT2DMouse(WGame &game) {
 						optionsCurrent = CurButton;
 					}
 				} else if ((CurButton >= T2D_BT_OPTIONS_SAVE_START) && (CurButton <= T2D_BT_OPTIONS_SAVE_END) &&
-						   (TheMessage->event != ME_MOUSEUPDATE)) {
+				           (TheMessage->event != ME_MOUSEUPDATE)) {
 					optionsWhat = CurButton - T2D_BT_OPTIONS_SAVE_START;
 					if (optionsSaves[optionsWhat][0] == 0) break;
 
 					switch (optionsCurrent) {
-						case T2D_BT_OPTIONS_SAVE:
-							optionsSlot = -1;
+					case T2D_BT_OPTIONS_SAVE:
+						optionsSlot = -1;
 
-							if (optionsCurPos + optionsWhat == 0) {
-								for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
-									int afret;
+						if (optionsCurPos + optionsWhat == 0) {
+							for (i = 0; i < T2D_OPTIONS_MAX_SAVES; i++) {
+								int afret;
 
-									sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
+								sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i + 1);
 
-									t3dForceNOFastFile(1);
-									afret = t3dAccessFile(Name);
-									t3dForceNOFastFile(0);
+								t3dForceNOFastFile(1);
+								afret = t3dAccessFile(Name);
+								t3dForceNOFastFile(0);
 
-									if (!afret) {
-										optionsSlot = i + 1;
-										break;
-									}
+								if (!afret) {
+									optionsSlot = i + 1;
+									break;
 								}
-							} else optionsSlot = Saves[optionsCurPos + optionsWhat - 1].NFile;
-
-							if (optionsSlot == -1) break; //Spazi finiti
-
-							GetLocalTime(&sysTime);
-							sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.hour, sysTime.minutes,
-									sysTime.seconds, sysTime.day, sysTime.month, sysTime.year);
-							if (DataSave(Text, (uint8) optionsSlot)) {
-								sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
-								sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
-								CopyFile(Text, Name, FALSE);
-							} else {
-								DebugLogFile("DataSave(slot %d) Failed. Quitting ...", optionsSlot);
-								CloseSys(game);
 							}
+						} else optionsSlot = Saves[optionsCurPos + optionsWhat - 1].NFile;
 
-							CaricaSaves(game);
-							SortSaves();
-							RefreshSaveImg(game, optionsCurPos, 0);
-							break;
-						case T2D_BT_OPTIONS_LOAD:
-							bShowOnlyLoadWindow = 0;
-							i = Saves[optionsCurPos + optionsWhat].NFile;
-							sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
-							if (!DataLoad(game, "", (uint8) i)) {
-								DebugLogFile("DataLoad(slot %d) Failed. Quitting ...", i);
-								CloseSys(game);
-							}
-							Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, 0, 0, tOPTIONS, nullptr, nullptr,
-								  nullptr);
-							break;
+						if (optionsSlot == -1) break; //Spazi finiti
+
+						GetLocalTime(&sysTime);
+						sprintf(Text, "%02d:%02d.%02d %02d/%02d/%02d", sysTime.hour, sysTime.minutes,
+						        sysTime.seconds, sysTime.day, sysTime.month, sysTime.year);
+						if (DataSave(Text, (uint8) optionsSlot)) {
+							sprintf(Text, "%stemp.tmp", game.workDirs._gameDir.c_str());
+							sprintf(Name, "%sWmSav%02d.tga", game.workDirs._savesDir.c_str(), optionsSlot);
+							CopyFile(Text, Name, FALSE);
+						} else {
+							DebugLogFile("DataSave(slot %d) Failed. Quitting ...", optionsSlot);
+							CloseSys(game);
+						}
+
+						CaricaSaves(game);
+						SortSaves();
+						RefreshSaveImg(game, optionsCurPos, 0);
+						break;
+					case T2D_BT_OPTIONS_LOAD:
+						bShowOnlyLoadWindow = 0;
+						i = Saves[optionsCurPos + optionsWhat].NFile;
+						sprintf(Name, "%sWm%02d.sav", game.workDirs._savesDir.c_str(), i);
+						if (!DataLoad(game, "", (uint8) i)) {
+							DebugLogFile("DataLoad(slot %d) Failed. Quitting ...", i);
+							CloseSys(game);
+						}
+						Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, 0, 0, tOPTIONS, nullptr, nullptr,
+						      nullptr);
+						break;
 					}
 				} else if ((CurButton == T2D_BT_OPTIONS_FRECCIA_SU) && (TheMessage->event != ME_MOUSEUPDATE)) {
 					//Pressione Tasto
 					w->bm[T2D_BM_OPTIONS_FRECCIA_SU_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_OPTIONS_MAIN,
-						  T2D_BM_OPTIONS_FRECCIA_SU_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_OPTIONS_FRECCIA_SU_ON, FALSE, nullptr, nullptr, nullptr);
 					//Scrolling Up
 					if (optionsCurPos > 0) {
 						optionsCurPos -= 3;
 						if (optionsCurPos < 0) optionsCurPos = 0;
 						switch (optionsCurrent) {
-							case T2D_BT_OPTIONS_SAVE:
-								RefreshSaveImg(game, optionsCurPos, 0);
-								break;
-							case T2D_BT_OPTIONS_LOAD:
-								RefreshSaveImg(game, optionsCurPos, 1);
-								break;
+						case T2D_BT_OPTIONS_SAVE:
+							RefreshSaveImg(game, optionsCurPos, 0);
+							break;
+						case T2D_BT_OPTIONS_LOAD:
+							RefreshSaveImg(game, optionsCurPos, 1);
+							break;
 						}
 					}
 
@@ -2977,9 +2977,9 @@ void doT2DMouse(WGame &game) {
 					//Pressione Tasto
 					w->bm[T2D_BM_OPTIONS_FRECCIA_GIU_ON].tnum &= ~T2D_BM_OFF;
 					Event(EventClass::MC_SYSTEM, ME_STARTEFFECT, MP_DEFAULT, T2D_PDA_BUTTON_DELAY, 0, EFFECT_WAIT,
-						  nullptr, nullptr, nullptr);
+					      nullptr, nullptr, nullptr);
 					Event(EventClass::MC_T2D, ME_T2DSETBITMAP, MP_WAITA, T2D_WIN_OPTIONS_MAIN,
-						  T2D_BM_OPTIONS_FRECCIA_GIU_ON, FALSE, nullptr, nullptr, nullptr);
+					      T2D_BM_OPTIONS_FRECCIA_GIU_ON, FALSE, nullptr, nullptr, nullptr);
 					if (optionsCurPos + 6 > NSaves) break;
 					if (optionsCurPos + 3 >= T2D_OPTIONS_MAX_SAVES) break;
 					//Scrolling Down
@@ -2987,12 +2987,12 @@ void doT2DMouse(WGame &game) {
 						optionsCurPos += 2;
 					else optionsCurPos += 3;
 					switch (optionsCurrent) {
-						case T2D_BT_OPTIONS_SAVE:
-							RefreshSaveImg(game, optionsCurPos, 0);
-							break;
-						case T2D_BT_OPTIONS_LOAD:
-							RefreshSaveImg(game, optionsCurPos, 1);
-							break;
+					case T2D_BT_OPTIONS_SAVE:
+						RefreshSaveImg(game, optionsCurPos, 0);
+						break;
+					case T2D_BT_OPTIONS_LOAD:
+						RefreshSaveImg(game, optionsCurPos, 1);
+						break;
 					}
 
 					if (optionsCurPos > 0) {
@@ -3019,7 +3019,7 @@ void doT2DMouse(WGame &game) {
 					if (TheMessage->event != ME_MOUSEUPDATE) {
 						bShowOnlyLoadWindow = 0;
 						Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, STOP_T2D__LAUNCH_MAINMENU, 0, tOPTIONS,
-							  nullptr, nullptr, nullptr);
+						      nullptr, nullptr, nullptr);
 					} else {
 						w->bm[T2D_BM_OPTIONS_MAINMENU_OFF].tnum |= T2D_BM_OFF;
 						w->bm[T2D_BM_OPTIONS_MAINMENU_ON].tnum &= ~T2D_BM_OFF;
@@ -3032,7 +3032,7 @@ void doT2DMouse(WGame &game) {
 							if (init.Room[i].flags & ROOM_VISIBLE) {
 								for (a = 0; a < MAX_SOUNDS_IN_ROOM; a++)
 									if ((init.Room[i].sounds[a]) &&
-										(init.Sound[init.Room[i].sounds[a]].flags & SOUND_ON))
+									        (init.Sound[init.Room[i].sounds[a]].flags & SOUND_ON))
 										StartSound(game, init.Room[i].sounds[a]);
 							}
 						}
@@ -3084,7 +3084,7 @@ void doT2DMouse(WGame &game) {
 					}
 				} else if (CurButton == T2D_BT_OPTIONS_SOUND_BARRA) {
 					if (bLPressed || bRPressed || (TheMessage->event == ME_MLEFT) ||
-						(TheMessage->event == ME_MRIGHT))
+					        (TheMessage->event == ME_MRIGHT))
 						PiroloGrab = 1;
 					if (PiroloGrab == 1) {
 						game.gameOptions.sound_volume = GestioneBarra(&w->bm[T2D_BM_OPTIONS_SOUND_BARRA],
@@ -3093,16 +3093,16 @@ void doT2DMouse(WGame &game) {
 					}
 				} else if (CurButton == T2D_BT_OPTIONS_MUSIC_BARRA) {
 					if (bLPressed || bRPressed || (TheMessage->event == ME_MLEFT) ||
-						(TheMessage->event == ME_MRIGHT))
+					        (TheMessage->event == ME_MRIGHT))
 						PiroloGrab = 2;
 					if (PiroloGrab == 2) {
 						game.gameOptions.music_volume = GestioneBarra(&w->bm[T2D_BM_OPTIONS_MUSIC_BARRA],
-																	  &w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO], mouse_x, -1);
+						                                &w->bm[T2D_BM_OPTIONS_MUSIC_PIROLO], mouse_x, -1);
 						mSetAllVolume(game.gameOptions.music_volume);
 					}
 				} else if (CurButton == T2D_BT_OPTIONS_SPEECH_BARRA) {
 					if (bLPressed || bRPressed || (TheMessage->event == ME_MLEFT) ||
-						(TheMessage->event == ME_MRIGHT))
+					        (TheMessage->event == ME_MRIGHT))
 						PiroloGrab = 3;
 					if (PiroloGrab == 3) {
 						game.gameOptions.speech_volume = GestioneBarra(&w->bm[T2D_BM_OPTIONS_SPEECH_BARRA],
@@ -3122,7 +3122,7 @@ void doT2DMouse(WGame &game) {
 			if (timeGetTime() >= (GameOverWindow_StartTime + GAMEOVER_WINDOW_NUM_MSECONDS)) {
 				LoadWindow_WhichBkg = 2;
 				Event(EventClass::MC_T2D, ME_T2DSTOP, MP_DEFAULT, STOP_T2D__LAUNCH_LOAD, 0, tMAINMENU, nullptr, nullptr,
-					  nullptr);
+				      nullptr);
 			}
 			break;
 		}

@@ -26,7 +26,7 @@
 namespace Watchmaker {
 
 WatchmakerGame::WatchmakerGame(OSystem *syst, const ADGameDescription *gameDesc) :
-		Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
+	Engine(syst), _gameDescription(gameDesc), _console(nullptr) {
 }
 
 WatchmakerGame::~WatchmakerGame() {

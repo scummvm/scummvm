@@ -29,11 +29,11 @@ namespace Watchmaker {
 
 enum class DxtCompression : uint32 {
 	UNCOMPRESSED = 0,
-	DXT1 = MKTAG('1','T','X','D'),
-	DXT2 = MKTAG('2','T','X','D'),
-	DXT3 = MKTAG('3','T','X','D'),
-	DXT4 = MKTAG('4','T','X','D'),
-	DXT5 = MKTAG('5','T','X','D')
+	DXT1 = MKTAG('1', 'T', 'X', 'D'),
+	DXT2 = MKTAG('2', 'T', 'X', 'D'),
+	DXT3 = MKTAG('3', 'T', 'X', 'D'),
+	DXT4 = MKTAG('4', 'T', 'X', 'D'),
+	DXT5 = MKTAG('5', 'T', 'X', 'D')
 };
 
 class TextureData {
@@ -65,8 +65,8 @@ struct DDSHeader {
 };
 
 //Common::SharedPtr<Texture> loadTgaTextureData(Common::SeekableReadStream &stream);
-Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream& stream, DDSHeader &header);
-Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream& stream);
+Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream &stream, DDSHeader &header);
+Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream &stream);
 
 } // End of namespace Watchmaker
 

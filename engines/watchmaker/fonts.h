@@ -35,13 +35,13 @@ enum class FontKind {
 };
 
 struct SFont {
-   uint16 *table = nullptr;
-   int32 color[MAX_FONT_COLORS] = {};
+	uint16 *table = nullptr;
+	int32 color[MAX_FONT_COLORS] = {};
 };
 
 class WGame;
 class Fonts {
-	Common::Array<uint16*> _tables;
+	Common::Array<uint16 *> _tables;
 	uint16 *setupFontTable(Common::SeekableReadStream &stream);
 	void loadFont(WGame &game, struct SFont *f, const Common::String &n);
 public:

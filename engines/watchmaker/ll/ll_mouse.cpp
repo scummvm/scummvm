@@ -143,29 +143,28 @@ void ProcessMouse(WGame &game) {
 /* -----------------19/10/98 15.18-------------------
  *      DInputMouseGetCoords
  * --------------------------------------------------*/
-void HandleMouseChanges()
-{
+void HandleMouseChanges() {
 	// Mouse movement will have been accumulated prior to calling this function.
 	// Button flags may also have been changed, this function then applies the button changes.
 	int curX, curY;
 
 	//warning("L: %d %d R: %d %d", bLPressed, bLPressedPrev, bRPressed, bRPressedPrev);
 	// Button 0 pressed or released
-	if( bLPressed != bLPressedPrev )
-	{
+	if (bLPressed != bLPressedPrev) {
 		// se ha rilasciato e non ha mosso il mouse
-		if( ( !bLPressed  ) && ( !bSkipped  ) && ( ( mMove < 10 ) || ( !( InvStatus & INV_MODE2 ) && !bFirstPerson && !bT2DActive ) ) )
-		{	Event(EventClass::MC_MOUSE, ME_MLEFT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bRPressed, NULL, NULL, NULL); bSkipped = FALSE; }
-		else if( bLPressed && ( mMove >= 10 ) && ( InvStatus & INV_MODE2 ) && ( bSomeOneSpeak ) )
-		{	bSkipTalk = TRUE; bSkipped = TRUE; }
-		else if( !bLPressed )
+		if ((!bLPressed) && (!bSkipped) && ((mMove < 10) || (!(InvStatus & INV_MODE2) && !bFirstPerson && !bT2DActive))) {
+			Event(EventClass::MC_MOUSE, ME_MLEFT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bRPressed, NULL, NULL, NULL);
+			bSkipped = FALSE;
+		} else if (bLPressed && (mMove >= 10) && (InvStatus & INV_MODE2) && (bSomeOneSpeak)) {
+			bSkipTalk = TRUE;
+			bSkipped = TRUE;
+		} else if (!bLPressed)
 			bSkipped = FALSE;
 		mMove = 0;
 	}
 	// Button 1 pressed or released
-	if( bRPressed != bRPressedPrev )
-	{
-		if( ( !bRPressed ) && ( ( mMove < 10 ) || ( !bFirstPerson && !bT2DActive  ) ) )
+	if (bRPressed != bRPressedPrev) {
+		if ((!bRPressed) && ((mMove < 10) || (!bFirstPerson && !bT2DActive)))
 			Event(EventClass::MC_MOUSE, ME_MRIGHT, MP_DEFAULT, (int16)mPosx, (int16)mPosy, bLPressed, NULL, NULL, NULL);
 		mMove = 0;
 	}

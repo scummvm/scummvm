@@ -82,9 +82,9 @@ void t3dSortMeshes();
 void QueueMaterialList(MaterialTable &MatList, unsigned int NumMat, signed short int ViewMatrixNum);
 void ProcessMaterialList();
 void t3dAddTriangle(t3dF32 x1, t3dF32 y1, t3dF32 x2, t3dF32 y2, t3dF32 x3, t3dF32 y3,
-					int32 r, int32 g, int32 b, int32 a);
+                    int32 r, int32 g, int32 b, int32 a);
 void t3dAddQuad(t3dF32 x1, t3dF32 y1, t3dF32 x2, t3dF32 y2, t3dF32 x3, t3dF32 y3, t3dF32 x4, t3dF32 y4,
-				int32 r, int32 g, int32 b, int32 a);
+                int32 r, int32 g, int32 b, int32 a);
 } // End of namespace Watchmaker
 
 #endif // WATCHMAKER_GEOMETRY_H

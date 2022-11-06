@@ -35,8 +35,8 @@ namespace Watchmaker {
 class WGame;
 // Texture structs
 struct gTexture {
-	Common::String			name;
-	Texture 			   *texture = nullptr;
+	Common::String          name;
+	Texture                *texture = nullptr;
 	int                     RealDimX = 0;               // original dimensions
 	int                     RealDimY = 0;               // original dimensions
 	int                     DimX = 0;                   // current dimensions

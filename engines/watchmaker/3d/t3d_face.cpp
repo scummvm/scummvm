@@ -54,7 +54,7 @@ MaterialPtr t3dFACE::getMaterial() {
 	}
 }
 
-const gMaterial* t3dFACE::getMaterial() const {
+const gMaterial *t3dFACE::getMaterial() const {
 	if (_mat) {
 		return _mat.get();
 	} else {

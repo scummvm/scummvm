@@ -186,7 +186,7 @@ void doMouseButton(WGame &game) {
 		CurObj = WhatObj(game, TheMessage->wparam1, TheMessage->wparam2, TheMessage->event);
 //				Se sono su albero e clicco fuori dal nido, simulo un cambio portale
 		if (bPlayerSuBasamento &&
-			(CurObj != oXT14ALBERO) && (CurObj != oXT14BASAMENTO) && (CurObj != oXT14NIDO_da_sopra_il_basamento) && (CurObj != oXT14OCCHIALI)) {
+		        (CurObj != oXT14ALBERO) && (CurObj != oXT14BASAMENTO) && (CurObj != oXT14NIDO_da_sopra_il_basamento) && (CurObj != oXT14OCCHIALI)) {
 			NextPortalObj = CurObj;
 			NextPortalAnim = a145;
 		}
@@ -283,7 +283,7 @@ void doMouseUpdate(WGame &game) {
 		if ((bLPressed) && (InvStatus & INV_MODE2)) {
 			t3dM3X3F t;
 			t3dMatRot(&t, ((t3dF32)(TheMessage->lparam[1]) / (t3dF32)(BigIconRect.y2 - BigIconRect.y1))*T3D_PI * 2.0f,
-					  ((t3dF32)(TheMessage->lparam[0]) / (t3dF32)(BigIconRect.x1 - BigIconRect.x2))*T3D_PI * 2.0f, 0.0f);
+			          ((t3dF32)(TheMessage->lparam[0]) / (t3dF32)(BigIconRect.x1 - BigIconRect.x2))*T3D_PI * 2.0f, 0.0f);
 			t3dMatMul(&BigIconM, &t, &BigIconM);
 			CurInvObj = BigInvObj;
 		} else {

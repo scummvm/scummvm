@@ -114,8 +114,13 @@ struct gBatchBlock {
 	signed short int        Texture1 = 0, Texture2 = 0; // texture ID
 	unsigned int            Flags1 = 0, Flags2 = 0;     // flags
 	signed short int        ViewMatrixNum = 0;              // view matrix num
-	unsigned short int      NumFaces() { return FacesList.size(); } // faces number
-	unsigned short int      NumVerts() { if (VBO) return VBO->_buffer.size(); else return 0; }                   // verts number
+	unsigned short int      NumFaces() {
+		return FacesList.size();    // faces number
+	}
+	unsigned short int      NumVerts() {
+		if (VBO) return VBO->_buffer.size();    // verts number
+		else return 0;
+	}
 	Common::Array<uint16>     FacesList;                 // pointer to faces list
 	Common::SharedPtr<VertexBuffer> VBO = nullptr;
 //	LPDIRECT3DVERTEXBUFFER7  VB;                         // block VB

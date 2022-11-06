@@ -192,9 +192,9 @@ bool rSetViewMatrix(float _00, float _01, float _02,
 
 void rSetViewMatrix(const t3dM3X3F &viewMatrix, const t3dV3F &translation) {
 	rSetViewMatrix(viewMatrix.M[0], viewMatrix.M[1], viewMatrix.M[2],
-				   viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
-				   viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
-				   translation.x, translation.y, -translation.z);
+	               viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
+	               viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
+	               translation.x, translation.y, -translation.z);
 }
 
 void rSaveViewMatrix() {
@@ -238,9 +238,9 @@ bool rBuildLinesViewMatrix(float _00, float _01, float _02,
 
 int rBuildLinesViewMatrix(const t3dM3X3F &viewMatrix, const t3dV3F &translation) {
 	return rBuildLinesViewMatrix(viewMatrix.M[0], viewMatrix.M[1], viewMatrix.M[2],
-								 viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
-								 viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
-								 translation.x, translation.y, translation.z);
+	                             viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
+	                             viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
+	                             translation.x, translation.y, translation.z);
 }
 
 //***********************************************************************************************
@@ -298,9 +298,9 @@ int rAddUserViewMatrix(float _00, float _01, float _02,
 
 int rAddUserViewMatrix(const t3dM3X3F &viewMatrix, const t3dV3F &translation) {
 	return rAddUserViewMatrix(viewMatrix.M[0], viewMatrix.M[1], viewMatrix.M[2],
-							  viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
-							  viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
-							  translation.x, translation.y, translation.z);
+	                          viewMatrix.M[3], viewMatrix.M[4], viewMatrix.M[5],
+	                          viewMatrix.M[6], viewMatrix.M[7], viewMatrix.M[8],
+	                          translation.x, translation.y, translation.z);
 }
 
 void rResetPipeline() {
@@ -590,14 +590,14 @@ public:
 
 		if (compressed) {
 			glCompressedTexImage2D(GL_TEXTURE_2D, // target
-								   0, // level
-								   texFormat, // internalFormat
-								   data.getWidth(), // width
-								   data.getHeight(), // height
-								   0, // border
-								   data.getDataSize(),
-								   data.getData()
-			);
+			                       0, // level
+			                       texFormat, // internalFormat
+			                       data.getWidth(), // width
+			                       data.getHeight(), // height
+			                       0, // border
+			                       data.getDataSize(),
+			                       data.getData()
+			                      );
 			checkGlError("glCompressedTexImage");
 		} else {
 			glTexImage2D(GL_TEXTURE_2D, 0, texFormat, data.getWidth(), data.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.getData());
@@ -621,10 +621,18 @@ public:
 			delete _surface;
 		}
 	}
-	int getWidth() const override { return _surface->w; }
-	int getHeight() const override { return _surface->h; }
-	int getDataSize() const override { return _surface->w * _surface->h * _surface->format.bytesPerPixel; }
-	const void *getData() const override { return _surface->getPixels(); }
+	int getWidth() const override {
+		return _surface->w;
+	}
+	int getHeight() const override {
+		return _surface->h;
+	}
+	int getDataSize() const override {
+		return _surface->w * _surface->h * _surface->format.bytesPerPixel;
+	}
+	const void *getData() const override {
+		return _surface->getPixels();
+	}
 };
 
 Texture *createGLTexture() {

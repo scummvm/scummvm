@@ -159,7 +159,7 @@ void Render3DEnvironment(WGame &game) {
 	int32 i;
 //	Cancella buffers
 	//if (!rClearBuffers(0, rCLEARBACKBUFFER | rCLEARZBUFFER))
-	//	DebugLogWindow("Unable to clear backbuffers\n");
+	//  DebugLogWindow("Unable to clear backbuffers\n");
 	t3dResetPipeline();
 	// Update mouse coordinates and project them in 3D
 	HandleMouseChanges();

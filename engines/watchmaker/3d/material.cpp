@@ -30,35 +30,32 @@ MaterialPtr rAddMaterial(gMaterial &Material, const Common::String &TextName, in
 	// TODO: This is duplicated in opengl_3d.cpp
 	warning("TODO: Fix rAddMaterial");
 #if 0
-	bool			AlreadyLoaded=FALSE;
-	int				len=strlen(TextName);
+	bool            AlreadyLoaded = FALSE;
+	int             len = strlen(TextName);
 
-	if (((TextName[len-1-0]=='i')|| (TextName[len-1-0]=='I')) &&
-		((TextName[len-1-1]=='v')|| (TextName[len-1-1]=='V')) &&
-		((TextName[len-1-2]=='a')|| (TextName[len-1-2]=='A')) )
-	{
-		if( (Material.Movie=gLoadMovie(TextName)) == NULL )
+	if (((TextName[len - 1 - 0] == 'i') || (TextName[len - 1 - 0] == 'I')) &&
+	        ((TextName[len - 1 - 1] == 'v') || (TextName[len - 1 - 1] == 'V')) &&
+	        ((TextName[len - 1 - 2] == 'a') || (TextName[len - 1 - 2] == 'A'))) {
+		if ((Material.Movie = gLoadMovie(TextName)) == NULL)
 			return NULL;
-		if( (Material.Texture=gUserTexture(	64,
-												128)) == NULL )
-//		if( (Material->Texture=gUserTexture(	Material->Movie->g_psiStreamInfo.rcFrame.right,
+		if ((Material.Texture = gUserTexture(64,
+		                                     128)) == NULL)
+//		if( (Material->Texture=gUserTexture(    Material->Movie->g_psiStreamInfo.rcFrame.right,
 //										Material->Movie->g_psiStreamInfo.rcFrame.bottom)) == NULL )
 			return NULL;
-		Material.Flags|=T3D_MATERIAL_MOVIE;
-	}
-	else
-	{
-		if( (Material.Texture=gLoadTexture(TextName,LoaderFlags)) == NULL )
+		Material.Flags |= T3D_MATERIAL_MOVIE;
+	} else {
+		if ((Material.Texture = gLoadTexture(TextName, LoaderFlags)) == NULL)
 			return NULL;
 	}
 
 //f
-//f	Material->FacesList=(WORD *)t3dRealloc(Material->FacesList,sizeof(WORD)*3*NumFaces+1);
-//f	Material->NumAllocatedFaces+=3*NumFaces+1;
-	Material.FacesList.resize(Material.FacesList.size() + NumFaces * 3 );
-	Material.NumAllocatedFaces+=NumFaces*3;
+//f Material->FacesList=(WORD *)t3dRealloc(Material->FacesList,sizeof(WORD)*3*NumFaces+1);
+//f Material->NumAllocatedFaces+=3*NumFaces+1;
+	Material.FacesList.resize(Material.FacesList.size() + NumFaces * 3);
+	Material.NumAllocatedFaces += NumFaces * 3;
 //f
-	Material.Flags|=T3D_MATERIAL_NOLIGHTMAP;
+	Material.Flags |= T3D_MATERIAL_NOLIGHTMAP;
 	return Material;
 #endif
 	return nullptr;
@@ -97,19 +94,18 @@ void gMaterial::addColor(unsigned char r_add, unsigned char g_add, unsigned char
 }
 
 bool gMaterial::addNumFacesAdditionalMaterial(MaterialPtr am, unsigned int num) {
-	if( !num || !am )
+	if (!num || !am)
 		return false;
 
 	Common::SharedPtr<gMaterial> cm;
 	int i;
-	for ( i=0; i<this->NumAddictionalMaterial; i++ ) {
+	for (i = 0; i < this->NumAddictionalMaterial; i++) {
 		cm = this->AddictionalMaterial[i];
 		if (cm->Texture->ID == am->Texture->ID)
 			break;
 	}
 
-	if( i == this->NumAddictionalMaterial )
-	{
+	if (i == this->NumAddictionalMaterial) {
 		this->AddictionalMaterial.push_back(Common::SharedPtr<gMaterial>(new gMaterial(*am)));
 		cm = this->AddictionalMaterial.back();
 		cm->FacesList.resize(0);
@@ -125,12 +121,12 @@ bool gMaterial::addNumFaces(unsigned int num) {
 
 
 MaterialPtr rMergeMaterial(MaterialPtr Mat1, MaterialPtr Mat2) {
-	if ( !Mat1 || !Mat2 )
+	if (!Mat1 || !Mat2)
 		return nullptr;
 
-	for ( int i=0; i<Mat2->NumAddictionalMaterial; i++ ) {
+	for (int i = 0; i < Mat2->NumAddictionalMaterial; i++) {
 		Mat1->addNumFacesAdditionalMaterial(Mat2->AddictionalMaterial[i],
-									   /*Mat2->AddictionalMaterial[i]->NumAllocatedFaces*/ Mat2->AddictionalMaterial[i]->NumFaces());
+		                                    /*Mat2->AddictionalMaterial[i]->NumAllocatedFaces*/ Mat2->AddictionalMaterial[i]->NumFaces());
 	}
 	//reset mat2
 	rRemoveMaterial(Mat2);
@@ -198,24 +194,22 @@ void gMaterial::clear() {
 	// TODO: This flag clearing doesn't happen in the original, but shouldn't matter as the class is instantiated again when used in Particles.
 	Flags = 0;
 
-	if (Movie)
-	{
+	if (Movie) {
 		Movie = nullptr;
 	}
 	FacesList.clear();
 	VertsList.clear();
 	FlagsList.clear();
-// 	rDeleteVertexBuffer(m->VB);
-	VBO=0;
+//  rDeleteVertexBuffer(m->VB);
+	VBO = 0;
 
-	for ( int j=0; j<NumAddictionalMaterial; j++)
-	{
+	for (int j = 0; j < NumAddictionalMaterial; j++) {
 		Common::SharedPtr<gMaterial> cm = AddictionalMaterial[j];
 		cm->FacesList.clear();
 		cm->VertsList.clear();
 		cm->FlagsList.clear();
-// 		rDeleteVertexBuffer(cm->VB);
-		cm->VBO=0;
+//      rDeleteVertexBuffer(cm->VB);
+		cm->VBO = 0;
 	}
 	AddictionalMaterial.clear();
 }
@@ -252,7 +246,7 @@ void rAddToMaterialList(gMaterial &mat, signed short int ViewMatrixNum) {
 				for (int o = 0; o < bb->FacesList.size(); o++) {
 					warning("%d", bb->FacesList[o]);
 				}
-				warning("%d > %d (%d)", bb->FacesList[f],bb->VBO->_buffer.size(), bb->NumVerts());
+				warning("%d > %d (%d)", bb->FacesList[f], bb->VBO->_buffer.size(), bb->NumVerts());
 			}
 		}
 		mat.emptyFacesList(); // We may want to keep the reservation to avoid the extra reallocs here.
@@ -302,7 +296,7 @@ void rBuildMaterialList(MaterialTable &MatList, unsigned int NumMat, signed shor
 	if (NumMat == 0)
 		return;
 
-	for (auto &mat: MatList) {
+	for (auto &mat : MatList) {
 		rAddToMaterialList(mat, ViewMatrixNum);
 	}
 }

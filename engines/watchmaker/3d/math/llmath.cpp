@@ -365,7 +365,7 @@ uint8 t3dVectPlaneIntersection(t3dV3F *inter, t3dV3F start, t3dV3F end, t3dNORMA
 }
 
 uint8 t3dVectTriangleIntersection(t3dV3F *inter, t3dV3F start, t3dV3F end,
-								  t3dV3F v1, t3dV3F v2, t3dV3F v3, t3dNORMAL n) {
+                                  t3dV3F v1, t3dV3F v2, t3dV3F v3, t3dNORMAL n) {
 	t3dV3F appo;
 	t3dNORMAL normal;
 

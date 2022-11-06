@@ -115,7 +115,7 @@ void InitMessageSystem() {
 		memset(&WaitingMsg[i], 0, sizeof(WaitingMsg[i]));
 }
 
-const char* eventToString(EventClass classe) {
+const char *eventToString(EventClass classe) {
 
 	switch (classe) {
 		case EventClass::MC_IDLE: return "MC_IDLE";
@@ -136,7 +136,7 @@ const char* eventToString(EventClass classe) {
  *                      Event
  * --------------------------------------------------*/
 void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
-		   uint8 bparam, void *p0, void *p1, void *p2) {
+           uint8 bparam, void *p0, void *p1, void *p2) {
 	pqueue *lq;
 	message *lm;
 

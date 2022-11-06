@@ -30,7 +30,9 @@ namespace Watchmaker {
 struct t3dMESH {
 	Common::String        name;          // mesh name
 	Common::String        portalName;    // dest room name (if portal)
-	uint16                NumFaces() { return FList.size(); };                   // faces number
+	uint16                NumFaces() {
+		return FList.size();
+	};                   // faces number
 	uint16                NumVerts = 0;                   // verts number
 	uint16                NumNormals = 0;                 // face normals number
 	uint16                NumVerticesNormals = 0;         // verts normals number
@@ -69,7 +71,7 @@ struct t3dMESH {
 
 	uint32                Flags;                      // Flags
 	t3dBODY              *PortalList;            // Pointer to portal connected
-	Common::Array<t3dMESH*> RejectedMeshes;       // rejected mesh from portal
+	Common::Array<t3dMESH *> RejectedMeshes;      // rejected mesh from portal
 
 	void saveVertexBuffer() { // Scorre le mesh
 		this->VBptr = this->VertexBuffer;
@@ -98,9 +100,9 @@ struct t3dMESH {
 				alphaval = 0xfe;
 				Face.flags |= T3D_MATERIAL_CLIPMAP;                                            // lo setta sulla faccia
 				/*              Face->flags&=~T3D_MATERIAL_OPACITY;
-								Face->flags&=~T3D_MATERIAL_GLASS;
-								Material->Flags&=~T3D_MATERIAL_OPACITY;
-								Material->Flags&=~T3D_MATERIAL_GLASS;*/
+				                Face->flags&=~T3D_MATERIAL_GLASS;
+				                Material->Flags&=~T3D_MATERIAL_OPACITY;
+				                Material->Flags&=~T3D_MATERIAL_GLASS;*/
 //				r=g=b=0;
 			}
 			if (Material->hasFlag(T3D_MATERIAL_OPACITY)) {                                       // Se il materiale e' opacity

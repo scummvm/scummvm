@@ -27,8 +27,12 @@
 
 namespace Watchmaker {
 
-const char *WatchmakerGame::getGameId() const { return _gameDescription->gameId; }
-Common::Platform WatchmakerGame::getPlatform() const { return _gameDescription->platform; }
+const char *WatchmakerGame::getGameId() const {
+	return _gameDescription->gameId;
+}
+Common::Platform WatchmakerGame::getPlatform() const {
+	return _gameDescription->platform;
+}
 } // End of namespace Watchmaker
 
 class WatchmakerMetaEngine : public AdvancedMetaEngine {

@@ -46,7 +46,7 @@ void ChangeHaloesStatus(t3dBODY *b, int8 op);
 uint8 t3dVectMeshInters(t3dMESH *m, t3dV3F start, t3dV3F end, t3dV3F *inters);
 void t3dLightRoom(Init &init, t3dBODY *b, t3dV3F *p, t3dF32 NearRange, t3dF32 FarRange, t3dF32 IperRange);
 void t3dUpdateExplosion(t3dMESH *m, t3dF32 scale);
-bool t3dMoveAndCheck1stCamera( t3dBODY *rr, t3dCAMERA *cc, t3dV3F *mm );
+bool t3dMoveAndCheck1stCamera(t3dBODY *rr, t3dCAMERA *cc, t3dV3F *mm);
 
 } // End of namespace Watchmaker
 

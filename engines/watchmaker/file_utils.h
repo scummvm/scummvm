@@ -24,7 +24,7 @@
 
 #include "common/stream.h"
 
-Common::String readT3dString(Common::SeekableReadStream& stream);
+Common::String readT3dString(Common::SeekableReadStream &stream);
 // TODO: This can probably just be replaced with .hasSuffixIgnoreCase
 bool hasFileExtension(const Common::String &str, const Common::String &extension);
 bool hasFileExtension(const char *str, Common::String extension);
