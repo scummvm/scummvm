@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 21:40+0000\n"
+"POT-Creation-Date: 2022-11-06 22:27+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -60,7 +60,7 @@ msgstr "Угару"
 #: gui/browser.cpp:81 gui/chooser.cpp:45 gui/downloadiconsdialog.cpp:257
 #: gui/downloadiconsdialog.cpp:452 gui/editgamedialog.cpp:358
 #: gui/editrecorddialog.cpp:66 gui/filebrowser-dialog.cpp:68
-#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2245
+#: gui/fluidsynth-dialog.cpp:152 gui/massadd.cpp:93 gui/options.cpp:2261
 #: gui/predictivedialog.cpp:68 gui/recorderdialog.cpp:73
 #: gui/recorderdialog.cpp:213 gui/remotebrowser.cpp:59
 #: gui/saveload-dialog.cpp:64 gui/saveload-dialog.cpp:457
@@ -134,7 +134,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:152
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
-#: gui/options.cpp:3185 gui/options.cpp:3223 gui/options.cpp:3647
+#: gui/options.cpp:3201 gui/options.cpp:3239 gui/options.cpp:3663
 #: backends/events/default/default-events.cpp:193 engines/buried/buried.cpp:580
 #: engines/director/events.cpp:91 engines/grim/grim.cpp:355
 #: engines/kyra/gui/saveload_eob.cpp:597 engines/kyra/gui/saveload_eob.cpp:630
@@ -146,7 +146,7 @@ msgstr "Так"
 #: gui/downloaddialog.cpp:118 gui/downloaddialog.cpp:153
 #: gui/filebrowser-dialog.cpp:136 gui/fluidsynth-dialog.cpp:217
 #: gui/launcher.cpp:406 gui/launcher.cpp:435 gui/launcher.cpp:478
-#: gui/options.cpp:3185 gui/options.cpp:3223 gui/options.cpp:3647
+#: gui/options.cpp:3201 gui/options.cpp:3239 gui/options.cpp:3663
 #: engines/buried/buried.cpp:580 engines/director/events.cpp:91
 #: engines/grim/grim.cpp:355 engines/kyra/gui/saveload_eob.cpp:597
 #: engines/kyra/gui/saveload_eob.cpp:630
@@ -170,7 +170,7 @@ msgstr ""
 #: gui/downloaddialog.cpp:146 gui/editgamedialog.cpp:359
 #: gui/editrecorddialog.cpp:67 gui/fluidsynth-dialog.cpp:153
 #: gui/launcher.cpp:534 gui/launcher.cpp:538 gui/massadd.cpp:90
-#: gui/options.cpp:2247 gui/predictivedialog.cpp:69
+#: gui/options.cpp:2263 gui/predictivedialog.cpp:69
 #: gui/saveload-dialog.cpp:1224 engines/engine.cpp:506 engines/engine.cpp:529
 #: backends/platform/wii/options.cpp:46 engines/agos/animation.cpp:572
 #: engines/buried/saveload.cpp:69
@@ -317,11 +317,11 @@ msgid ""
 "English"
 msgstr "Мова гульні. Гэта не ператворыць ангельскую мову гульні ў беларускую"
 
-#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1498
-#: gui/options.cpp:1513 gui/options.cpp:1529 gui/options.cpp:1541
-#: gui/options.cpp:1571 gui/options.cpp:1585 gui/options.cpp:1990
-#: gui/options.cpp:2390 gui/options.cpp:2464 gui/options.cpp:2644
-#: gui/options.cpp:3072 audio/null.cpp:40
+#: gui/editgamedialog.cpp:153 gui/editgamedialog.cpp:168 gui/options.cpp:1514
+#: gui/options.cpp:1529 gui/options.cpp:1545 gui/options.cpp:1557
+#: gui/options.cpp:1587 gui/options.cpp:1601 gui/options.cpp:2006
+#: gui/options.cpp:2406 gui/options.cpp:2480 gui/options.cpp:2660
+#: gui/options.cpp:3088 audio/null.cpp:40
 #: backends/platform/android/options.cpp:112
 #: backends/platform/android/options.cpp:113 engines/ags/dialogs.cpp:62
 msgid "<default>"
@@ -341,12 +341,12 @@ msgctxt "lowres"
 msgid "Platform:"
 msgstr "Пляцформа:"
 
-#: gui/editgamedialog.cpp:197 gui/options.cpp:1920 gui/options.cpp:2102
+#: gui/editgamedialog.cpp:197 gui/options.cpp:1936 gui/options.cpp:2118
 #: backends/graphics/sdl/sdl-graphics.cpp:423
 msgid "Graphics"
 msgstr "Графіка"
 
-#: gui/editgamedialog.cpp:197 gui/options.cpp:1920 gui/options.cpp:2102
+#: gui/editgamedialog.cpp:197 gui/options.cpp:1936 gui/options.cpp:2118
 msgid "GFX"
 msgstr "GFX"
 
@@ -359,11 +359,11 @@ msgctxt "lowres"
 msgid "Override global graphic settings"
 msgstr "Замяніць глябальныя налады графікі"
 
-#: gui/editgamedialog.cpp:218 gui/options.cpp:2136 engines/dialogs.cpp:320
+#: gui/editgamedialog.cpp:218 gui/options.cpp:2152 engines/dialogs.cpp:320
 msgid "Keymaps"
 msgstr "Клявішы"
 
-#: gui/editgamedialog.cpp:225 gui/options.cpp:2143 engines/dialogs.cpp:327
+#: gui/editgamedialog.cpp:225 gui/options.cpp:2159 engines/dialogs.cpp:327
 msgid "Backend"
 msgstr "Бэкэнд"
 
@@ -376,7 +376,7 @@ msgctxt "lowres"
 msgid "Override global backend settings"
 msgstr "Замяніць глябальныя налады бэкэнду"
 
-#: gui/editgamedialog.cpp:244 gui/options.cpp:2157 engines/dialogs.cpp:295
+#: gui/editgamedialog.cpp:244 gui/options.cpp:2173 engines/dialogs.cpp:295
 msgid "Audio"
 msgstr "Гук"
 
@@ -389,11 +389,11 @@ msgctxt "lowres"
 msgid "Override global audio settings"
 msgstr "Замяніць глябальныя налады гуку"
 
-#: gui/editgamedialog.cpp:258 gui/options.cpp:2162
+#: gui/editgamedialog.cpp:258 gui/options.cpp:2178
 msgid "Volume"
 msgstr "Гучнасьць"
 
-#: gui/editgamedialog.cpp:260 gui/options.cpp:2164
+#: gui/editgamedialog.cpp:260 gui/options.cpp:2180
 msgctxt "lowres"
 msgid "Volume"
 msgstr "Гучнасьць"
@@ -407,7 +407,7 @@ msgctxt "lowres"
 msgid "Override global volume settings"
 msgstr "Замяніць глябальныя налады гучнасьці"
 
-#: gui/editgamedialog.cpp:276 gui/options.cpp:2172
+#: gui/editgamedialog.cpp:276 gui/options.cpp:2188
 msgid "MIDI"
 msgstr "MIDI"
 
@@ -420,7 +420,7 @@ msgctxt "lowres"
 msgid "Override global MIDI settings"
 msgstr "Замяніць глябальныя налады MIDI"
 
-#: gui/editgamedialog.cpp:291 gui/options.cpp:2178
+#: gui/editgamedialog.cpp:291 gui/options.cpp:2194
 msgid "MT-32"
 msgstr "MT-32"
 
@@ -433,11 +433,11 @@ msgctxt "lowres"
 msgid "Override global MT-32 settings"
 msgstr "Замяніць глябальныя налады MT-32"
 
-#: gui/editgamedialog.cpp:305 gui/options.cpp:2185
+#: gui/editgamedialog.cpp:305 gui/options.cpp:2201
 msgid "Paths"
 msgstr "Шляхі"
 
-#: gui/editgamedialog.cpp:307 gui/options.cpp:2187
+#: gui/editgamedialog.cpp:307 gui/options.cpp:2203
 msgctxt "lowres"
 msgid "Paths"
 msgstr "Шляхі"
@@ -451,7 +451,7 @@ msgctxt "lowres"
 msgid "Game Path:"
 msgstr "Шлях да гульні:"
 
-#: gui/editgamedialog.cpp:321 gui/options.cpp:2364
+#: gui/editgamedialog.cpp:321 gui/options.cpp:2380
 msgid "Extra Path:"
 msgstr "Дад. шлях:"
 
@@ -460,21 +460,21 @@ msgstr "Дад. шлях:"
 msgid "Specifies path to additional data used by the game"
 msgstr "Шлях да дадатковых зьвестак гульні"
 
-#: gui/editgamedialog.cpp:323 gui/options.cpp:2366
+#: gui/editgamedialog.cpp:323 gui/options.cpp:2382
 msgctxt "lowres"
 msgid "Extra Path:"
 msgstr "Дад. шлях:"
 
-#: gui/editgamedialog.cpp:330 gui/options.cpp:2340
+#: gui/editgamedialog.cpp:330 gui/options.cpp:2356
 msgid "Save Path:"
 msgstr "Шлях заховаў:"
 
 #: gui/editgamedialog.cpp:330 gui/editgamedialog.cpp:332
-#: gui/editgamedialog.cpp:333 gui/options.cpp:2340 gui/options.cpp:2342
+#: gui/editgamedialog.cpp:333 gui/options.cpp:2356 gui/options.cpp:2358
 msgid "Specifies where your saved games are put"
 msgstr "Шлях да вашых захаваных гульняў"
 
-#: gui/editgamedialog.cpp:332 gui/options.cpp:2342
+#: gui/editgamedialog.cpp:332 gui/options.cpp:2358
 msgctxt "lowres"
 msgid "Save Path:"
 msgstr "Шлях заховаў:"
@@ -488,25 +488,25 @@ msgid "Statistics"
 msgstr "Статыстыка"
 
 #: gui/editgamedialog.cpp:372 gui/editgamedialog.cpp:474
-#: gui/editgamedialog.cpp:536 gui/editgamedialog.cpp:603 gui/options.cpp:1141
-#: gui/options.cpp:2270 gui/options.cpp:2272 gui/options.cpp:2277
-#: gui/options.cpp:2308 gui/options.cpp:2351 gui/options.cpp:2367
-#: gui/options.cpp:2376 gui/options.cpp:2763 gui/options.cpp:2765
-#: gui/options.cpp:2769 gui/options.cpp:2778 gui/options.cpp:3053
-#: gui/options.cpp:3059 gui/options.cpp:3066 gui/options.cpp:3078
-#: gui/options.cpp:3089
+#: gui/editgamedialog.cpp:536 gui/editgamedialog.cpp:603 gui/options.cpp:1157
+#: gui/options.cpp:2286 gui/options.cpp:2288 gui/options.cpp:2293
+#: gui/options.cpp:2324 gui/options.cpp:2367 gui/options.cpp:2383
+#: gui/options.cpp:2392 gui/options.cpp:2779 gui/options.cpp:2781
+#: gui/options.cpp:2785 gui/options.cpp:2794 gui/options.cpp:3069
+#: gui/options.cpp:3075 gui/options.cpp:3082 gui/options.cpp:3094
+#: gui/options.cpp:3105
 msgctxt "path"
 msgid "None"
 msgstr "Няма"
 
 #: gui/editgamedialog.cpp:377 gui/editgamedialog.cpp:480
-#: gui/editgamedialog.cpp:607 gui/options.cpp:2269 gui/options.cpp:2271
-#: gui/options.cpp:2762 gui/options.cpp:2764 gui/options.cpp:3056
-#: gui/options.cpp:3062 backends/platform/wii/options.cpp:55
+#: gui/editgamedialog.cpp:607 gui/options.cpp:2285 gui/options.cpp:2287
+#: gui/options.cpp:2778 gui/options.cpp:2780 gui/options.cpp:3072
+#: gui/options.cpp:3078 backends/platform/wii/options.cpp:55
 msgid "Default"
 msgstr "Стандартна"
 
-#: gui/editgamedialog.cpp:529 gui/options.cpp:3083
+#: gui/editgamedialog.cpp:529 gui/options.cpp:3099
 msgid "Select SoundFont"
 msgstr "Выбярыце SoundFont"
 
@@ -514,11 +514,11 @@ msgstr "Выбярыце SoundFont"
 msgid "Select additional game directory"
 msgstr "Выбярыце дадатковую тэчку гульні"
 
-#: gui/editgamedialog.cpp:581 gui/options.cpp:2969
+#: gui/editgamedialog.cpp:581 gui/options.cpp:2985
 msgid "Select directory for saved games"
 msgstr "Выбярыце тэчку для заховаў"
 
-#: gui/editgamedialog.cpp:588 gui/options.cpp:2976
+#: gui/editgamedialog.cpp:588 gui/options.cpp:2992
 msgid "The chosen directory cannot be written to. Please select another one."
 msgstr "Немажліва скарыстаць гэтую тэчку. Калі ласка, выбярыце іншую."
 
@@ -607,7 +607,7 @@ msgstr "Сінус"
 msgid "Triangle"
 msgstr "Трыкутнік"
 
-#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2194
+#: gui/fluidsynth-dialog.cpp:138 gui/options.cpp:2210
 msgid "Misc"
 msgstr "Рознае"
 
@@ -1020,7 +1020,7 @@ msgid "Discovered %d new games, ignored %d previously added games ..."
 msgstr ""
 "Знойдзена новых гульняў — %d. Праігнаравана даданых раней гульняў — %d..."
 
-#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2579
+#: gui/message.cpp:218 gui/message.cpp:222 gui/options.cpp:2595
 msgid "Open URL"
 msgstr "Адкрыць URL"
 
@@ -1080,145 +1080,145 @@ msgstr "Сярэдні"
 msgid "Small"
 msgstr "Малы"
 
-#: gui/options.cpp:429 gui/options.cpp:718 gui/options.cpp:810
-#: gui/options.cpp:815 gui/options.cpp:838 gui/options.cpp:843
-#: gui/options.cpp:1047 gui/options.cpp:1555
+#: gui/options.cpp:445 gui/options.cpp:734 gui/options.cpp:826
+#: gui/options.cpp:831 gui/options.cpp:854 gui/options.cpp:859
+#: gui/options.cpp:1063 gui/options.cpp:1571
 #, fuzzy
 #| msgid "None"
 msgctxt "shader"
 msgid "None"
 msgstr "Няма"
 
-#: gui/options.cpp:465 gui/options.cpp:949 gui/options.cpp:1115
-#: gui/options.cpp:1270 gui/options.cpp:1693
+#: gui/options.cpp:481 gui/options.cpp:965 gui/options.cpp:1131
+#: gui/options.cpp:1286 gui/options.cpp:1709
 msgctxt "soundfont"
 msgid "None"
 msgstr "Няма"
 
-#: gui/options.cpp:763
+#: gui/options.cpp:779
 msgid "Failed to apply some of the graphic options changes:"
 msgstr "Ня выйшла ўжыць нейкія зьмены наладаў графікі:"
 
-#: gui/options.cpp:775
+#: gui/options.cpp:791
 msgid "the video mode could not be changed"
 msgstr "немажліва зьмяніць відэарэжым"
 
-#: gui/options.cpp:788
+#: gui/options.cpp:804
 msgid "the stretch mode could not be changed"
 msgstr "немажліва зьмяніць рэжым расьцягу"
 
-#: gui/options.cpp:794
+#: gui/options.cpp:810
 msgid "the aspect ratio setting could not be changed"
 msgstr "немажліва зьмяніць прапорцыі экрану"
 
-#: gui/options.cpp:800
+#: gui/options.cpp:816
 msgid "the fullscreen setting could not be changed"
 msgstr "немажліва зьмяніць налады поўнага экрану"
 
-#: gui/options.cpp:806
+#: gui/options.cpp:822
 msgid "the filtering setting could not be changed"
 msgstr "немажліва зьмяніць налады фільтраваньня"
 
-#: gui/options.cpp:823
+#: gui/options.cpp:839
 #, fuzzy
 #| msgid "the stretch mode could not be changed"
 msgid "the shader could not be changed"
 msgstr "немажліва зьмяніць рэжым расьцягу"
 
-#: gui/options.cpp:1135
+#: gui/options.cpp:1151
 #, fuzzy
 #| msgid "Select a Theme"
 msgid "Select shader"
 msgstr "Выбярыце тэму"
 
-#: gui/options.cpp:1350
+#: gui/options.cpp:1366
 msgid "Touchpad mouse mode"
 msgstr "Рэжым тачпэду"
 
-#: gui/options.cpp:1355
+#: gui/options.cpp:1371
 msgid "Pointer Speed:"
 msgstr "Хуткасьць паказальніка:"
 
-#: gui/options.cpp:1355 gui/options.cpp:1357 gui/options.cpp:1358
+#: gui/options.cpp:1371 gui/options.cpp:1373 gui/options.cpp:1374
 msgid "Speed for keyboard/joystick mouse pointer control"
 msgstr "Хуткасьць паказальніка мышы, які кіруецца клявіятурай/джойстыкам"
 
-#: gui/options.cpp:1357
+#: gui/options.cpp:1373
 msgctxt "lowres"
 msgid "Pointer Speed:"
 msgstr "Хуткасьць паказальніка:"
 
-#: gui/options.cpp:1368
+#: gui/options.cpp:1384
 msgid "Joy Deadzone:"
 msgstr "„Мёртвая“ зона джойстыку:"
 
-#: gui/options.cpp:1368 gui/options.cpp:1370 gui/options.cpp:1371
+#: gui/options.cpp:1384 gui/options.cpp:1386 gui/options.cpp:1387
 msgid "Analog joystick Deadzone"
 msgstr "„Мёртвая“ зона аналягавага джойстыку"
 
-#: gui/options.cpp:1370
+#: gui/options.cpp:1386
 msgctxt "lowres"
 msgid "Joy Deadzone:"
 msgstr "„Мёртвая“ зона джойстыку:"
 
-#: gui/options.cpp:1442
+#: gui/options.cpp:1458
 #, c-format
 msgid "%d hidden achievements remaining"
 msgstr "Засталося таемных дасягненьняў — %d"
 
-#: gui/options.cpp:1447
+#: gui/options.cpp:1463
 #, c-format
 msgid "Achievements unlocked: %d/%d"
 msgstr "Дасягненьняў разблякавана: %d/%d"
 
-#: gui/options.cpp:1493
+#: gui/options.cpp:1509
 msgid "Graphics mode:"
 msgstr "Граф. рэжым:"
 
-#: gui/options.cpp:1509
+#: gui/options.cpp:1525
 msgid "Render mode:"
 msgstr "Рэжым рэндэру:"
 
-#: gui/options.cpp:1509 gui/options.cpp:1512
+#: gui/options.cpp:1525 gui/options.cpp:1528
 msgid "Special dithering modes supported by some games"
 msgstr "Спэцыяльныя рэжымы дызэрынґу, якія падтрымліваюць нейкія гульні"
 
-#: gui/options.cpp:1524
+#: gui/options.cpp:1540
 msgid "Stretch mode:"
 msgstr "Рэжым расьцягу:"
 
-#: gui/options.cpp:1538
+#: gui/options.cpp:1554
 msgid "Scaler:"
 msgstr "Павялічнік:"
 
-#: gui/options.cpp:1552
+#: gui/options.cpp:1568
 #, fuzzy
 #| msgid "Shader"
 msgid "Shader:"
 msgstr "Шэйдэр"
 
-#: gui/options.cpp:1552 gui/options.cpp:1554 gui/options.cpp:1555
+#: gui/options.cpp:1568 gui/options.cpp:1570 gui/options.cpp:1571
 #, fuzzy
 #| msgid "Specifies path to additional data used by the game"
 msgid "Specifies path to the shader used for scaling the game screen"
 msgstr "Шлях да дадатковых зьвестак гульні"
 
-#: gui/options.cpp:1554
+#: gui/options.cpp:1570
 #, fuzzy
 #| msgid "Save Path:"
 msgctxt "lowres"
 msgid "Shader Path:"
 msgstr "Шлях заховаў:"
 
-#: gui/options.cpp:1561 backends/graphics/sdl/sdl-graphics.cpp:414
+#: gui/options.cpp:1577 backends/graphics/sdl/sdl-graphics.cpp:414
 msgid "Fullscreen mode"
 msgstr "Рэжым поўнага экрану"
 
-#: gui/options.cpp:1563
+#: gui/options.cpp:1579
 msgid "V-Sync"
 msgstr "Вэрт. сынхранаваньне"
 
-#: gui/options.cpp:1563
+#: gui/options.cpp:1579
 msgid ""
 "Wait for the vertical sync to refresh the screen in order to prevent tearing "
 "artifacts"
@@ -1226,128 +1226,128 @@ msgstr ""
 "Чакаць пакуль вэртыкальнае сынхранаваньне абновіць экран, каб перадухіліць "
 "разрыў выявы"
 
-#: gui/options.cpp:1566
+#: gui/options.cpp:1582
 msgid "Game 3D Renderer:"
 msgstr "3D рэндэр:"
 
-#: gui/options.cpp:1568
+#: gui/options.cpp:1584
 msgctxt "lowres"
 msgid "Game 3D Renderer:"
 msgstr "3D рэндэр:"
 
-#: gui/options.cpp:1583
+#: gui/options.cpp:1599
 msgid "3D Anti-aliasing:"
 msgstr "Памякчэньне 3D:"
 
-#: gui/options.cpp:1587 engines/mohawk/dialogs.cpp:365
+#: gui/options.cpp:1603 engines/mohawk/dialogs.cpp:365
 msgid "Disabled"
 msgstr "Адлучана"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1616
 msgid "Filter graphics"
 msgstr "Фільтраваньне графікі"
 
-#: gui/options.cpp:1600
+#: gui/options.cpp:1616
 msgid "Use linear filtering when scaling graphics"
 msgstr "Ужывайце лінейнае фільтраваньне, калі павялічваеце графіку"
 
-#: gui/options.cpp:1603
+#: gui/options.cpp:1619
 msgid "Aspect ratio correction"
 msgstr "Карэкцыя прапорцый экрану"
 
-#: gui/options.cpp:1603
+#: gui/options.cpp:1619
 msgid "Correct aspect ratio for games"
 msgstr "Карэктаваць прапорцыі экрану пад гульні"
 
-#: gui/options.cpp:1611
+#: gui/options.cpp:1627
 msgid "Preferred device:"
 msgstr "Пераважная прылада:"
 
-#: gui/options.cpp:1611
+#: gui/options.cpp:1627
 msgid "Music device:"
 msgstr "Музычная прылада:"
 
-#: gui/options.cpp:1611 gui/options.cpp:1613
+#: gui/options.cpp:1627 gui/options.cpp:1629
 msgid "Specifies preferred sound device or sound card emulator"
 msgstr "Пераважная гукавая прылада або эмулятар гукавой карты"
 
-#: gui/options.cpp:1611 gui/options.cpp:1613 gui/options.cpp:1614
+#: gui/options.cpp:1627 gui/options.cpp:1629 gui/options.cpp:1630
 msgid "Specifies output sound device or sound card emulator"
 msgstr "Выходная гукавая прылада або эмулятар гукавой карты"
 
-#: gui/options.cpp:1613
+#: gui/options.cpp:1629
 msgctxt "lowres"
 msgid "Preferred dev.:"
 msgstr "Пераважн. прыл.:"
 
-#: gui/options.cpp:1613
+#: gui/options.cpp:1629
 msgctxt "lowres"
 msgid "Music device:"
 msgstr "Муз. прыл.:"
 
-#: gui/options.cpp:1640
+#: gui/options.cpp:1656
 msgid "AdLib emulator:"
 msgstr "Эмулятар AdLib:"
 
-#: gui/options.cpp:1640 gui/options.cpp:1643
+#: gui/options.cpp:1656 gui/options.cpp:1659
 msgid "AdLib is used for music in many games"
 msgstr "AdLib выкарыстоўваецца для музыкі ў многіх гульнях"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1672
 msgid "GM device:"
 msgstr "Прылада GM:"
 
-#: gui/options.cpp:1656
+#: gui/options.cpp:1672
 msgid "Specifies default sound device for General MIDI output"
 msgstr "Стандартная выходная гукавая прылада для General MIDI"
 
-#: gui/options.cpp:1667
+#: gui/options.cpp:1683
 msgid "Don't use General MIDI music"
 msgstr "Не выкарыстоўваць музыку General MIDI"
 
-#: gui/options.cpp:1678 gui/options.cpp:1740
+#: gui/options.cpp:1694 gui/options.cpp:1756
 msgid "Use first available device"
 msgstr "Выкарыстоўваць першую даступную прыладу"
 
-#: gui/options.cpp:1690
+#: gui/options.cpp:1706
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1690 gui/options.cpp:1692 gui/options.cpp:1693
+#: gui/options.cpp:1706 gui/options.cpp:1708 gui/options.cpp:1709
 msgid "SoundFont is supported by some audio cards, FluidSynth and Timidity"
 msgstr ""
 "SoundFont падтрымліваецца нейкімі гукавымі картамі, FluidSynth і Timidity"
 
-#: gui/options.cpp:1692
+#: gui/options.cpp:1708
 msgctxt "lowres"
 msgid "SoundFont:"
 msgstr "SoundFont:"
 
-#: gui/options.cpp:1698
+#: gui/options.cpp:1714
 msgid "Mixed AdLib/MIDI mode"
 msgstr "Рэжым мяшаных AdLib/MIDI"
 
-#: gui/options.cpp:1698
+#: gui/options.cpp:1714
 msgid "Use both MIDI and AdLib sound generation"
 msgstr "Выкарыстоўваць і MIDI, і AdLib для стварэньня гуку"
 
-#: gui/options.cpp:1701
+#: gui/options.cpp:1717
 msgid "MIDI gain:"
 msgstr "Узмацненьне MIDI:"
 
-#: gui/options.cpp:1711
+#: gui/options.cpp:1727
 msgid "MT-32 Device:"
 msgstr "Прылада MT-32:"
 
-#: gui/options.cpp:1711
+#: gui/options.cpp:1727
 msgid "Specifies default sound device for Roland MT-32/LAPC1/CM32l/CM64 output"
 msgstr "Стандартная выходная гукавая прылада для Roland MT-32/LAPC1/CM32l/CM64"
 
-#: gui/options.cpp:1716
+#: gui/options.cpp:1732
 msgid "True Roland MT-32 (disable GM emulation)"
 msgstr "Сапраўдны Roland MT-32 (адлучыць эмуляцыю GM)"
 
-#: gui/options.cpp:1716 gui/options.cpp:1718
+#: gui/options.cpp:1732 gui/options.cpp:1734
 msgid ""
 "Check if you want to use your real hardware Roland-compatible sound device "
 "connected to your computer"
@@ -1355,16 +1355,16 @@ msgstr ""
 "Адзначце, калі вы хочаце выкарыстоўваць гукавую прыладу, сумяшчальную з "
 "Roland, увамкнёную да вашага кампутара"
 
-#: gui/options.cpp:1718
+#: gui/options.cpp:1734
 msgctxt "lowres"
 msgid "True Roland MT-32 (no GM emulation)"
 msgstr "Сапраўдны Roland MT-32 (без эмуляцыі GM)"
 
-#: gui/options.cpp:1721
+#: gui/options.cpp:1737
 msgid "Roland GS device (enable MT-32 mappings)"
 msgstr "Прылада Roland GS (далучыць мапаваньне MT-32)"
 
-#: gui/options.cpp:1721
+#: gui/options.cpp:1737
 msgid ""
 "Check if you want to enable patch mappings to emulate an MT-32 on a Roland "
 "GS device"
@@ -1372,261 +1372,261 @@ msgstr ""
 "Адзначце, калі вы хочаце далучыць латкі мапаваньня для эмуляцыі MT-32 на "
 "прыладзе Roland GS"
 
-#: gui/options.cpp:1730
+#: gui/options.cpp:1746
 msgid "Don't use Roland MT-32 music"
 msgstr "Не выкарыстоўваць музыку Roland MT-32"
 
-#: gui/options.cpp:1757
+#: gui/options.cpp:1773
 msgid "Text and speech:"
 msgstr "Тэкст ды мова:"
 
-#: gui/options.cpp:1761 gui/options.cpp:1771
+#: gui/options.cpp:1777 gui/options.cpp:1787
 msgid "Speech"
 msgstr "Агучка"
 
-#: gui/options.cpp:1762 gui/options.cpp:1772
+#: gui/options.cpp:1778 gui/options.cpp:1788
 msgid "Subtitles"
 msgstr "Субтытры"
 
-#: gui/options.cpp:1763
+#: gui/options.cpp:1779
 msgid "Both"
 msgstr "Разам"
 
-#: gui/options.cpp:1765
+#: gui/options.cpp:1781
 msgid "Subtitle speed:"
 msgstr "Хуткасьць субтытраў:"
 
-#: gui/options.cpp:1767
+#: gui/options.cpp:1783
 msgctxt "lowres"
 msgid "Text and speech:"
 msgstr "Тэкст ды мова:"
 
-#: gui/options.cpp:1771
+#: gui/options.cpp:1787
 msgid "Spch"
 msgstr "Мова"
 
-#: gui/options.cpp:1772
+#: gui/options.cpp:1788
 msgid "Subs"
 msgstr "Тэкст"
 
-#: gui/options.cpp:1773
+#: gui/options.cpp:1789
 msgctxt "lowres"
 msgid "Both"
 msgstr "Разам"
 
-#: gui/options.cpp:1773
+#: gui/options.cpp:1789
 msgid "Show subtitles and play speech"
 msgstr "Паказваць субтытры й граць мову"
 
-#: gui/options.cpp:1775
+#: gui/options.cpp:1791
 msgctxt "lowres"
 msgid "Subtitle speed:"
 msgstr "Хутк. субтытраў:"
 
-#: gui/options.cpp:1797
+#: gui/options.cpp:1813
 msgid "Music volume:"
 msgstr "Гучнасьць музыкі:"
 
-#: gui/options.cpp:1799
+#: gui/options.cpp:1815
 msgctxt "lowres"
 msgid "Music volume:"
 msgstr "Гучн. музыкі:"
 
-#: gui/options.cpp:1808
+#: gui/options.cpp:1824
 msgid "Mute all"
 msgstr "Бяз гуку"
 
-#: gui/options.cpp:1811
+#: gui/options.cpp:1827
 msgid "SFX volume:"
 msgstr "Гучнасьць гук. эфэктаў:"
 
-#: gui/options.cpp:1811 gui/options.cpp:1813 gui/options.cpp:1816
+#: gui/options.cpp:1827 gui/options.cpp:1829 gui/options.cpp:1832
 msgid "Special sound effects volume"
 msgstr "Гучнасьць спэцыяльных гукавых эфэктаў"
 
-#: gui/options.cpp:1813
+#: gui/options.cpp:1829
 msgctxt "lowres"
 msgid "SFX volume:"
 msgstr "Гучнасьць гук. эф.:"
 
-#: gui/options.cpp:1823
+#: gui/options.cpp:1839
 msgid "Speech volume:"
 msgstr "Гучнасьць мовы:"
 
-#: gui/options.cpp:1825
+#: gui/options.cpp:1841
 msgctxt "lowres"
 msgid "Speech volume:"
 msgstr "Гучнасьць мовы:"
 
-#: gui/options.cpp:2114
+#: gui/options.cpp:2130
 msgid "Control"
 msgstr "Кіраваньне"
 
-#: gui/options.cpp:2196
+#: gui/options.cpp:2212
 msgctxt "lowres"
 msgid "Misc"
 msgstr "Рознае"
 
-#: gui/options.cpp:2208
-msgid "Cloud"
-msgstr "Воблака"
-
-#: gui/options.cpp:2210
-msgctxt "lowres"
-msgid "Cloud"
-msgstr "Воблака"
-
 #: gui/options.cpp:2224
-msgid "LAN"
-msgstr "LAN"
+msgid "Cloud"
+msgstr "Воблака"
 
 #: gui/options.cpp:2226
 msgctxt "lowres"
+msgid "Cloud"
+msgstr "Воблака"
+
+#: gui/options.cpp:2240
 msgid "LAN"
 msgstr "LAN"
 
-#: gui/options.cpp:2234
+#: gui/options.cpp:2242
+msgctxt "lowres"
+msgid "LAN"
+msgstr "LAN"
+
+#: gui/options.cpp:2250
 msgid "Accessibility"
 msgstr "Даступнасьць"
 
-#: gui/options.cpp:2236
+#: gui/options.cpp:2252
 msgctxt "lowres"
 msgid "Accessibility"
 msgstr "Даступнасьць"
 
-#: gui/options.cpp:2245
+#: gui/options.cpp:2261
 msgid "Discard changes and close the dialog"
 msgstr "Скасаваць зьмены й закрыць дыялёг"
 
-#: gui/options.cpp:2246
+#: gui/options.cpp:2262
 msgid "Apply"
 msgstr "Ужыць"
 
-#: gui/options.cpp:2246
+#: gui/options.cpp:2262
 msgid "Apply changes without closing the dialog"
 msgstr "Ужыць зьмены й не закрываць дыялёг"
 
-#: gui/options.cpp:2247
+#: gui/options.cpp:2263
 msgid "Apply changes and close the dialog"
 msgstr "Ужыць зьмены й закрыць дыялёг"
 
-#: gui/options.cpp:2329
+#: gui/options.cpp:2345
 msgid "FluidSynth Settings"
 msgstr "Налады FluidSynth"
 
-#: gui/options.cpp:2343
+#: gui/options.cpp:2359
 msgid ""
 "Specifies where your saved games are put. A red coloring indicates the value "
 "is temporary and will not get saved"
 msgstr ""
 
-#: gui/options.cpp:2348
+#: gui/options.cpp:2364
 msgid "Theme Path:"
 msgstr "Шлях да тэмаў:"
 
-#: gui/options.cpp:2350
+#: gui/options.cpp:2366
 msgctxt "lowres"
 msgid "Theme Path:"
 msgstr "Шлях да тэмаў:"
 
-#: gui/options.cpp:2356
+#: gui/options.cpp:2372
 msgid "Icon Path:"
 msgstr "Шлях да значкоў:"
 
-#: gui/options.cpp:2358
+#: gui/options.cpp:2374
 msgctxt "lowres"
 msgid "Icon Path:"
 msgstr "Шлях да значкоў:"
 
-#: gui/options.cpp:2359
+#: gui/options.cpp:2375
 msgctxt "path"
 msgid "Default"
 msgstr "Стандартна"
 
-#: gui/options.cpp:2364 gui/options.cpp:2366 gui/options.cpp:2367
+#: gui/options.cpp:2380 gui/options.cpp:2382 gui/options.cpp:2383
 msgid "Specifies path to additional data used by all games or ScummVM"
 msgstr "Шлях да дадатковых зьвестак усіх гульняў ці ScummVM"
 
-#: gui/options.cpp:2373
+#: gui/options.cpp:2389
 msgid "Plugins Path:"
 msgstr "Шлях да плаґінаў:"
 
-#: gui/options.cpp:2375
+#: gui/options.cpp:2391
 msgctxt "lowres"
 msgid "Plugins Path:"
 msgstr "Шлях да плаґінаў:"
 
-#: gui/options.cpp:2385
+#: gui/options.cpp:2401
 msgid "ScummVM config path: "
 msgstr "Шлях да наладаў ScummVM: "
 
 #. I18N: Referring to the last path memorized when adding a game
-#: gui/options.cpp:2395 gui/options.cpp:3072
+#: gui/options.cpp:2411 gui/options.cpp:3088
 msgid "Last browser path: "
 msgstr "Апошні шлях: "
 
-#: gui/options.cpp:2400
+#: gui/options.cpp:2416
 msgid "Theme:"
 msgstr "Тэма:"
 
-#: gui/options.cpp:2405
+#: gui/options.cpp:2421
 msgid "GUI scale:"
 msgstr "Памер інтэрфэйсу:"
 
-#: gui/options.cpp:2412
+#: gui/options.cpp:2428
 msgid "GUI renderer:"
 msgstr "Рэндэр інтэрфэйсу:"
 
-#: gui/options.cpp:2424
+#: gui/options.cpp:2440
 msgid "Autosave:"
 msgstr "Аўтазахаваньне:"
 
-#: gui/options.cpp:2426
+#: gui/options.cpp:2442
 msgctxt "lowres"
 msgid "Autosave:"
 msgstr "Аўтазахаваньне:"
 
-#: gui/options.cpp:2435
+#: gui/options.cpp:2451
 msgid "Always return to the launcher when leaving a game"
 msgstr "Заўжды вяртацца ў ScummVM пасьля выхаду з гульні"
 
-#: gui/options.cpp:2436
+#: gui/options.cpp:2452
 msgid ""
 "Always return to the launcher when leaving a game instead of closing ScummVM."
 msgstr ""
 "Не закрываць ScummVM, а заўжды вяртацца да яго пасьля выйсьця з гульні."
 
-#: gui/options.cpp:2443
+#: gui/options.cpp:2459
 msgid "Ask for confirmation on exit"
 msgstr "Запытваць падцьвярджэньне выйсьця"
 
-#: gui/options.cpp:2444
+#: gui/options.cpp:2460
 msgid "Ask for permission when closing ScummVM or leaving a game."
 msgstr "Запытваць падцьвярджэньне пры закрыцьці ScummVM ці выйсьці з гульні."
 
-#: gui/options.cpp:2451
+#: gui/options.cpp:2467
 msgid "Enable Discord integration"
 msgstr "Далучыць інтэґрацыю з Discord"
 
-#: gui/options.cpp:2452
+#: gui/options.cpp:2468
 msgid ""
 "Show information about the games you are playing on Discord if the Discord "
 "client is running."
 msgstr "Паказваць гульню, у якую вы гуляеце ў Discord, калі ён запушчаны."
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2477
 msgid "GUI language:"
 msgstr "Мова інтэрфэйсу:"
 
-#: gui/options.cpp:2461
+#: gui/options.cpp:2477
 msgid "Language of ScummVM GUI"
 msgstr "Мова графічнага інтэрфэйсу ScummVM"
 
-#: gui/options.cpp:2487
+#: gui/options.cpp:2503
 msgid "Switch the ScummVM GUI language to the game language"
 msgstr "Мяняць мову інтэрфэйсу ScummVM на мову гульні"
 
-#: gui/options.cpp:2488
+#: gui/options.cpp:2504
 msgid ""
 "When starting a game, change the ScummVM GUI language to the game language. "
 "That way, if a game uses the ScummVM save and load dialogs, they are in the "
@@ -1636,11 +1636,11 @@ msgstr ""
 "Такім чынам, калі гульня выкарыстоўвае дыялёгі захаваньня й заладаваньня ад "
 "ScummVM, яны будуць той жа моваю, што й гульня."
 
-#: gui/options.cpp:2500
+#: gui/options.cpp:2516
 msgid "Use native system file browser"
 msgstr "Выкарыстоўваць сістэмны файлавы аглядач"
 
-#: gui/options.cpp:2501
+#: gui/options.cpp:2517
 msgid ""
 "Use the native system file browser instead of the ScummVM one to select a "
 "file or directory."
@@ -1648,248 +1648,248 @@ msgstr ""
 "Выкарыстоўваць сістэмны файлавы аглядач для выбару файлаў і тэчак, замест "
 "аглядача ScummVM."
 
-#: gui/options.cpp:2509 gui/updates-dialog.cpp:85
+#: gui/options.cpp:2525 gui/updates-dialog.cpp:85
 msgid "Update check:"
 msgstr "Правяраць абновы:"
 
-#: gui/options.cpp:2509
+#: gui/options.cpp:2525
 msgid "How often to check ScummVM updates"
 msgstr "Як часта правяраць абновы ScummVM"
 
-#: gui/options.cpp:2520
+#: gui/options.cpp:2536
 msgid "Check now"
 msgstr "Праверыць зараз"
 
-#: gui/options.cpp:2526
+#: gui/options.cpp:2542
 msgid "Update Icons"
 msgstr "Абнавіць значкі"
 
-#: gui/options.cpp:2534
+#: gui/options.cpp:2550
 msgid "Active storage:"
 msgstr "Дзейнае сховішча:"
 
-#: gui/options.cpp:2534
+#: gui/options.cpp:2550
 msgid "Active cloud storage"
 msgstr "Дзейнае воблачнае сховішча"
 
-#: gui/options.cpp:2543
+#: gui/options.cpp:2559
 msgctxt "lowres"
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "4. Сховішча шчэ не далучана. Праверце, ці імя карыстача карэктнае й далучыце:"
 
-#: gui/options.cpp:2545
+#: gui/options.cpp:2561
 msgid ""
 "4. Storage is not yet enabled. Verify that username is correct and enable it:"
 msgstr ""
 "4. Сховішча шчэ не далучана. Праверце, ці імя карыстача карэктнае й далучыце:"
 
-#: gui/options.cpp:2546
+#: gui/options.cpp:2562
 msgid "Enable storage"
 msgstr "Далучыць сховішча"
 
-#: gui/options.cpp:2546
+#: gui/options.cpp:2562
 msgid "Confirm you want to use this account for this storage"
 msgstr "Пацьвердзіце, што хочаце выкарыстоўваць гэты конт для гэтага сховішча"
 
-#: gui/options.cpp:2548 backends/platform/wii/options.cpp:113
+#: gui/options.cpp:2564 backends/platform/wii/options.cpp:113
 msgid "Username:"
 msgstr "Карыстач:"
 
-#: gui/options.cpp:2548
+#: gui/options.cpp:2564
 msgid "Username used by this storage"
 msgstr "Імя карыстача для гэтага сховішча"
 
-#: gui/options.cpp:2549
+#: gui/options.cpp:2565
 msgid "<none>"
 msgstr "<няма>"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2567
 msgid "Used space:"
 msgstr "Выкарыстана месца:"
 
-#: gui/options.cpp:2551
+#: gui/options.cpp:2567
 msgid "Space used by ScummVM's saved games on this storage"
 msgstr "Месца, занятае захаванымі гульнямі ScummVM на гэтым сховішчы"
 
-#: gui/options.cpp:2554
+#: gui/options.cpp:2570
 msgid "Last sync:"
 msgstr "Апошняе сынхранаваньне:"
 
-#: gui/options.cpp:2554
+#: gui/options.cpp:2570
 msgid "When was the last time saved games were synced with this storage"
 msgstr "Калі было апошняе сынхранаваньне захаваных гульняў з гэтым сховішчам"
 
-#: gui/options.cpp:2555 gui/options.cpp:3430
+#: gui/options.cpp:2571 gui/options.cpp:3446
 msgid "<never>"
 msgstr "<аніколі>"
 
-#: gui/options.cpp:2557
+#: gui/options.cpp:2573
 msgctxt "lowres"
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Захаваныя гульні сынхрануюцца аўтаматычна падчас запуску, захаваньня й "
 "заладаваньня."
 
-#: gui/options.cpp:2559
+#: gui/options.cpp:2575
 msgid "Saved games sync automatically on launch, after saving and on loading."
 msgstr ""
 "Захаваныя гульні сынхрануюцца аўтаматычна падчас запуску, захаваньня й "
 "заладаваньня."
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2576
 msgid "Sync now"
 msgstr "Сынхранаваць зараз"
 
-#: gui/options.cpp:2560
+#: gui/options.cpp:2576
 msgid "Start saved games sync"
 msgstr "Пачаць сынхранаваньне захаваных гульняў"
 
-#: gui/options.cpp:2563
+#: gui/options.cpp:2579
 msgctxt "lowres"
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Вы можаце заладаваць гульнёвыя файлы з вашай воблачнай тэчкі ScummVM:"
 
-#: gui/options.cpp:2565
+#: gui/options.cpp:2581
 msgid "You can download game files from your cloud ScummVM folder:"
 msgstr "Вы можаце заладаваць гульнёвыя файлы з вашай воблачнай тэчкі ScummVM:"
 
-#: gui/options.cpp:2566
+#: gui/options.cpp:2582
 msgid "Download game files"
 msgstr "Заладаваць гульнёвыя файлы"
 
-#: gui/options.cpp:2566
+#: gui/options.cpp:2582
 msgid "Open downloads manager dialog"
 msgstr "Адкрыць кіраваньні заладаваньнямі"
 
-#: gui/options.cpp:2569
+#: gui/options.cpp:2585
 msgctxt "lowres"
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "Каб зьмяніць конт гэтага сховішча, адлучыцеся й далучыцеся зноўку:"
 
-#: gui/options.cpp:2571
+#: gui/options.cpp:2587
 msgid "To change account for this storage, disconnect and connect again:"
 msgstr "Каб зьмяніць конт гэтага сховішча, адлучыцеся й далучыцеся зноўку:"
 
-#: gui/options.cpp:2572
+#: gui/options.cpp:2588
 msgid "Disconnect"
 msgstr "Адлучыць"
 
-#: gui/options.cpp:2572
+#: gui/options.cpp:2588
 msgid "Stop using this storage on this device"
 msgstr "Спыніць карыстаньне гэтым сховішчам на гэтай прыладзе"
 
-#: gui/options.cpp:2575
+#: gui/options.cpp:2591
 msgctxt "lowres"
 msgid "This storage is not connected yet! To connect,"
 msgstr "Гэтае сховішча шчэ не далучана! Каб далучыць,"
 
-#: gui/options.cpp:2577
+#: gui/options.cpp:2593
 msgid "This storage is not connected yet! To connect,"
 msgstr "Гэтае сховішча шчэ не далучана! Каб далучыць,"
 
-#: gui/options.cpp:2578
+#: gui/options.cpp:2594
 msgid "1. Open this link:"
 msgstr "1. Адкрыйце спасылку:"
 
-#: gui/options.cpp:2581
+#: gui/options.cpp:2597
 msgctxt "lowres"
 msgid "2. Get the code and enter it here:"
 msgstr "2. Атрымайце код і напішыце яго тут:"
 
-#: gui/options.cpp:2583
+#: gui/options.cpp:2599
 msgid "2. Get the code and enter it here:"
 msgstr "2. Атрымайце код і напішыце яго тут:"
 
-#: gui/options.cpp:2585
+#: gui/options.cpp:2601
 msgid "Paste"
 msgstr "Уставіць"
 
-#: gui/options.cpp:2585
+#: gui/options.cpp:2601
 msgid "Paste code from clipboard"
 msgstr "Уставіць код з кішэні"
 
-#: gui/options.cpp:2586
+#: gui/options.cpp:2602
 msgid "3. Connect"
 msgstr "3. Далучыць"
 
-#: gui/options.cpp:2586
+#: gui/options.cpp:2602
 msgid "Connect your cloud storage account"
 msgstr "Далучыць конт вашага воблачнага сховішча"
 
-#: gui/options.cpp:2595
+#: gui/options.cpp:2611
 msgid "Run server"
 msgstr "Запусьціць сэрвэр"
 
-#: gui/options.cpp:2595
+#: gui/options.cpp:2611
 msgid "Run local webserver"
 msgstr "Запусьціць лякальны вэб-сэрвэр"
 
-#: gui/options.cpp:2596 gui/options.cpp:3545
+#: gui/options.cpp:2612 gui/options.cpp:3561
 msgid "Not running"
 msgstr "Не запушчаны"
 
-#: gui/options.cpp:2600
+#: gui/options.cpp:2616
 msgctxt "lowres"
 msgid "/root/ Path:"
 msgstr "Шлях да корню:"
 
-#: gui/options.cpp:2600 gui/options.cpp:2602 gui/options.cpp:2603
+#: gui/options.cpp:2616 gui/options.cpp:2618 gui/options.cpp:2619
 msgid "Select which directory will be shown as /root/ in the Files Manager"
 msgstr "Выбярыце, якая тэчка будзе паказвацца як каранёвая ў кіраваньні файлаў"
 
-#: gui/options.cpp:2602
+#: gui/options.cpp:2618
 msgid "/root/ Path:"
 msgstr "Шлях да корню:"
 
-#: gui/options.cpp:2608
+#: gui/options.cpp:2624
 msgid "Server's port:"
 msgstr "Порт сэрвэру:"
 
-#: gui/options.cpp:2608
+#: gui/options.cpp:2624
 msgid "Port for server to use"
 msgstr "Порт для выкарыстаньня сэрвэрам"
 
-#: gui/options.cpp:2613
-msgctxt "lowres"
-msgid "Run server to manage files with browser (in the same network)."
-msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
-
-#: gui/options.cpp:2614
-msgctxt "lowres"
-msgid "Closing options dialog will stop the server."
-msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
-
-#: gui/options.cpp:2616
-msgid "Run server to manage files with browser (in the same network)."
-msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
-
-#: gui/options.cpp:2617
-msgid "Closing options dialog will stop the server."
-msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
-
 #: gui/options.cpp:2629
+msgctxt "lowres"
+msgid "Run server to manage files with browser (in the same network)."
+msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
+
+#: gui/options.cpp:2630
+msgctxt "lowres"
+msgid "Closing options dialog will stop the server."
+msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
+
+#: gui/options.cpp:2632
+msgid "Run server to manage files with browser (in the same network)."
+msgstr "Запусьціце сэрвэр, каб кіраваць файламі ў агледачы (у адной сетцы)."
+
+#: gui/options.cpp:2633
+msgid "Closing options dialog will stop the server."
+msgstr "Закрыцьця дыялёгу з наладамі спыніць сэрвэр."
+
+#: gui/options.cpp:2645
 msgid "Use Text to speech"
 msgstr "Ператвараць тэкст у мову"
 
-#: gui/options.cpp:2629
+#: gui/options.cpp:2645
 msgid "Will read text in gui on mouse over."
 msgstr "Прачытае тэкст інтэрфэйсу пры навядзеньні мышы."
 
-#: gui/options.cpp:2642
+#: gui/options.cpp:2658
 msgid "None"
 msgstr "Няма"
 
-#: gui/options.cpp:2703
+#: gui/options.cpp:2719
 msgid "Ignore"
 msgstr "Ігнараваць"
 
-#: gui/options.cpp:2704
+#: gui/options.cpp:2720
 msgid "Disable autosave"
 msgstr "Адлучыць аўтазахаваньне"
 
-#: gui/options.cpp:2705
+#: gui/options.cpp:2721
 msgid ""
 "WARNING: Autosave was enabled. Some of your games have existing saved games "
 "on the autosave slot. You can either move the existing saves to new slots, "
@@ -1903,7 +1903,7 @@ msgstr ""
 "аўтазахаваньне захоча перазапісаць захоў).\n"
 "Сьпіс гульняў:\n"
 
-#: gui/options.cpp:2714
+#: gui/options.cpp:2730
 msgid ""
 "\n"
 "And more..."
@@ -1911,31 +1911,31 @@ msgstr ""
 "\n"
 "Ды іншыя…"
 
-#: gui/options.cpp:2715 engines/engine.cpp:559
+#: gui/options.cpp:2731 engines/engine.cpp:559
 msgid "Move"
 msgstr "Перамясьціць"
 
-#: gui/options.cpp:2728
+#: gui/options.cpp:2744
 msgid "ERROR: Failed to move the following saved games:\n"
 msgstr "ПАМЫЛКА: Ня выйшла перамясьціць гэтыя захаваныя гульні:\n"
 
-#: gui/options.cpp:2814
+#: gui/options.cpp:2830
 msgid "Failed to change cloud storage!"
 msgstr "Ня выйшла зьмяніць воблачнае сховішча!"
 
-#: gui/options.cpp:2817
+#: gui/options.cpp:2833
 msgid "Another cloud storage is already active."
 msgstr "Ужо дзейнае іншае воблачнае сховішча."
 
-#: gui/options.cpp:2907
+#: gui/options.cpp:2923
 msgid "Theme does not support selected language!"
 msgstr "Тэма не падтрымлівае выбраную мову!"
 
-#: gui/options.cpp:2910
+#: gui/options.cpp:2926
 msgid "Theme cannot be loaded!"
 msgstr "Немажліва заладаваць тэму!"
 
-#: gui/options.cpp:2913
+#: gui/options.cpp:2929
 msgid ""
 "\n"
 "Misc settings will be restored."
@@ -1943,27 +1943,27 @@ msgstr ""
 "\n"
 "Налады з „Рознае“ будуць адноўлены."
 
-#: gui/options.cpp:2985
+#: gui/options.cpp:3001
 msgid "Select directory for GUI themes"
 msgstr "Выбярыце тэчку для тэм інтэрфэйсу"
 
-#: gui/options.cpp:2995
+#: gui/options.cpp:3011
 msgid "Select directory for GUI launcher thumbnails"
 msgstr "Выбярыце тэчку для значкоў інтэрфэйсу"
 
-#: gui/options.cpp:3005
+#: gui/options.cpp:3021
 msgid "Select directory for extra files"
 msgstr "Выбярыце тэчку для дадатковых файлаў"
 
-#: gui/options.cpp:3016
+#: gui/options.cpp:3032
 msgid "Select directory for plugins"
 msgstr "Выбярыце тэчку для плаґінаў"
 
-#: gui/options.cpp:3029
+#: gui/options.cpp:3045
 msgid "Select directory for Files Manager /root/"
 msgstr "Выбярыце каранёвую тэчку для кіраваньняў файлаў"
 
-#: gui/options.cpp:3160
+#: gui/options.cpp:3176
 msgid ""
 "Failed to open URL!\n"
 "Please navigate to this page manually."
@@ -1971,48 +1971,48 @@ msgstr ""
 "Ня выйшла адкрыць URL!\n"
 "Калі ласка, зайдзіце на гэтую старонку самі."
 
-#: gui/options.cpp:3185
+#: gui/options.cpp:3201
 msgid "Another Storage is working now. Do you want to interrupt it?"
 msgstr "Іншае сховішча працуе цяпер. Ці хочаце вы адлучыць яго?"
 
-#: gui/options.cpp:3194 gui/options.cpp:3232
+#: gui/options.cpp:3210 gui/options.cpp:3248
 msgid "Wait until current Storage finishes up and try again."
 msgstr ""
 "Пачакайце, пакуль цяперашняе сховішча ня скончыць працу й паспрабуйце зноўку."
 
-#: gui/options.cpp:3207
+#: gui/options.cpp:3223
 msgid "Connecting..."
 msgstr "Далучэньне…"
 
-#: gui/options.cpp:3223
+#: gui/options.cpp:3239
 msgid "This Storage is working now. Do you want to interrupt it?"
 msgstr "Гэтае сховішча працуе цяпер. Ці хочаце вы адлучыць яго?"
 
-#: gui/options.cpp:3428 backends/cloud/cloudmanager.cpp:156
+#: gui/options.cpp:3444 backends/cloud/cloudmanager.cpp:156
 msgid "<right now>"
 msgstr "<цяпер>"
 
-#: gui/options.cpp:3537
+#: gui/options.cpp:3553
 msgid "Stop server"
 msgstr "Спыніць сэрвэр"
 
-#: gui/options.cpp:3538
+#: gui/options.cpp:3554
 msgid "Stop local webserver"
 msgstr "Гэта спыніць лякальны вэб-сэрвэр"
 
-#: gui/options.cpp:3590
+#: gui/options.cpp:3606
 msgid "Storage connected."
 msgstr "Сховішча далучана."
 
-#: gui/options.cpp:3592
+#: gui/options.cpp:3608
 msgid "Failed to connect storage."
 msgstr "Ня выйшла далучыць сховішча."
 
-#: gui/options.cpp:3594
+#: gui/options.cpp:3610
 msgid "Failed to connect storage: "
 msgstr "Ня выйшла далучыць сховішча: "
 
-#: gui/options.cpp:3614
+#: gui/options.cpp:3630
 msgid ""
 "Request failed.\n"
 "Check your Internet connection."
@@ -2020,13 +2020,13 @@ msgstr ""
 "Памылка запыту.\n"
 "Праверце вашае злучэньне з інтэрнэтам."
 
-#: gui/options.cpp:3645
+#: gui/options.cpp:3661
 msgid ""
 "A test pattern should be displayed.\n"
 "Do you want to keep these shader scaler settings?"
 msgstr ""
 
-#: gui/options.cpp:3648
+#: gui/options.cpp:3664
 #, c-format
 msgid "Reverting automatically in %d seconds"
 msgstr ""
@@ -4132,7 +4132,7 @@ msgstr "Заўжды выкарыстоўваць выразны манахро�
 msgid "Do not emulate NTSC artifacts for text"
 msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 
-#: engines/agi/detection.cpp:86 engines/cine/detection.cpp:51
+#: engines/agi/detection.cpp:88 engines/cine/detection.cpp:51
 #: engines/drascula/detection.cpp:303 engines/dreamweb/detection.cpp:51
 #: engines/groovie/detection.cpp:309 engines/neverhood/detection.cpp:139
 #: engines/sci/detection_options.h:105 engines/sherlock/detection.cpp:58
@@ -4141,7 +4141,7 @@ msgstr "Не эмуляваць артэфактаў NTSC для тэксту"
 msgid "Use original save/load screens"
 msgstr "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня"
 
-#: engines/agi/detection.cpp:87 engines/cine/detection.cpp:52
+#: engines/agi/detection.cpp:89 engines/cine/detection.cpp:52
 #: engines/drascula/detection.cpp:304 engines/dreamweb/detection.cpp:52
 #: engines/groovie/detection.cpp:310 engines/neverhood/detection.cpp:140
 #: engines/sci/detection_options.h:106 engines/sherlock/detection.cpp:59
@@ -4152,11 +4152,11 @@ msgstr ""
 "Выкарыстоўваць арыґінальныя экраны захаваньня/заладаваньня замест экранаў "
 "ScummVM"
 
-#: engines/agi/detection.cpp:98
+#: engines/agi/detection.cpp:100
 msgid "Use an alternative palette"
 msgstr "Выкарыстоўваць альтэрнатыўную палітру"
 
-#: engines/agi/detection.cpp:99
+#: engines/agi/detection.cpp:101
 msgid ""
 "Use an alternative palette, common for all Amiga games. This was the old "
 "behavior"
@@ -4164,31 +4164,31 @@ msgstr ""
 "Выкарыстоўваць альтэрнатыўную палітру для ўсіх гульняў Amiga. Гэта старая "
 "функцыя"
 
-#: engines/agi/detection.cpp:110
+#: engines/agi/detection.cpp:112
 msgid "Mouse support"
 msgstr "Падтрыманьне мышы"
 
-#: engines/agi/detection.cpp:111
+#: engines/agi/detection.cpp:113
 msgid ""
 "Enables mouse support. Allows to use mouse for movement and in game menus."
 msgstr ""
 "Далучае падтыманьне мышы. Дазваляе карыстаць мыш для руху ды ў мэню гульняў."
 
-#: engines/agi/detection.cpp:122
+#: engines/agi/detection.cpp:124
 msgid "Use Hercules hires font"
 msgstr "Выкарыстоўваць HD шрыфт Hercules"
 
-#: engines/agi/detection.cpp:123
+#: engines/agi/detection.cpp:125
 msgid "Uses Hercules hires font, when font file is available."
 msgstr ""
 "Выкарыстоўваецца шрыфт Hercules вялікай разрознасьці, калі ё даступны файл "
 "шрыфту."
 
-#: engines/agi/detection.cpp:134
+#: engines/agi/detection.cpp:136
 msgid "Pause when entering commands"
 msgstr "Перапынак падчас уводу загадаў"
 
-#: engines/agi/detection.cpp:135
+#: engines/agi/detection.cpp:137
 msgid ""
 "Shows a command prompt window and pauses the game (like in SCI) instead of a "
 "real-time prompt."
@@ -4196,11 +4196,11 @@ msgstr ""
 "Паказваць загаднае акно ўводу й перапыняць гульню (як у SCI) замест ўводу ў "
 "цяперашнім часе."
 
-#: engines/agi/detection.cpp:146
+#: engines/agi/detection.cpp:148
 msgid "Add speed menu"
 msgstr "Дадаць хуткае мэню"
 
-#: engines/agi/detection.cpp:147
+#: engines/agi/detection.cpp:149
 msgid "Add game speed menu (similar to PC version)"
 msgstr "Дадаць хуткае мэню (як у вэрсіі на ПК)"
 
@@ -6874,29 +6874,29 @@ msgstr ""
 "Тады, мажліва, вам прыдзецца ўжыць арыґінальную латку ад Sierra.\n"
 "\n"
 
-#: engines/scumm/detection.cpp:175
+#: engines/scumm/detection.cpp:176
 msgid "Show Object Line"
 msgstr "Паказваць аб’ектавы радок"
 
-#: engines/scumm/detection.cpp:176
+#: engines/scumm/detection.cpp:177
 msgid "Show the names of objects at the bottom of the screen"
 msgstr "Паказваць назвы аб’ектаў зьнізу экрану"
 
-#: engines/scumm/detection.cpp:184
+#: engines/scumm/detection.cpp:185
 msgid "Use NES Classic Palette"
 msgstr "Выкарыстоўваць клясічную палітру NES"
 
-#: engines/scumm/detection.cpp:185
+#: engines/scumm/detection.cpp:186
 msgid "Use a more neutral color palette that closely emulates the NES Classic"
 msgstr ""
 "Выкарыстоўваць болей нэўтральную колеравую палітру, якая бліжэй да NES "
 "Classic"
 
-#: engines/scumm/detection.cpp:193
+#: engines/scumm/detection.cpp:194
 msgid "Trim FM-TOWNS games to 200 pixels height"
 msgstr "Асякаць гульні FM-TOWNS да вышыні ў 200 піксэляў"
 
-#: engines/scumm/detection.cpp:194
+#: engines/scumm/detection.cpp:195
 msgid ""
 "Cut the extra 40 pixels at the bottom of the screen, to make it standard 200 "
 "pixels height, allowing using 'aspect ratio correction'"
@@ -6904,41 +6904,41 @@ msgstr ""
 "Адсячы непатрэбныя 40 піксэляў зьнізу экрану, каб зрабіць стандарт вышыні у "
 "200 піксэляў, дазваляючы выкарыстаць „карэкцыю прапорцыяў экрану“"
 
-#: engines/scumm/detection.cpp:202
+#: engines/scumm/detection.cpp:203
 msgid "Play simplified music"
 msgstr "Граць спрошчаную музыку"
 
-#: engines/scumm/detection.cpp:203
+#: engines/scumm/detection.cpp:204
 msgid ""
 "This music was presumably intended for low-end Macs, and uses only one "
 "channel."
 msgstr ""
 "Мажліва, гэтая музыка для слабых кампутараў Mac. Яна мае толькі адзін канал."
 
-#: engines/scumm/detection.cpp:211
+#: engines/scumm/detection.cpp:212
 msgid "Enable smooth scrolling"
 msgstr "Далучыць плыўнае прагортваньне"
 
-#: engines/scumm/detection.cpp:212
+#: engines/scumm/detection.cpp:213
 msgid "(instead of the normal 8-pixels steps scrolling)"
 msgstr "(замест звычайнага прагортваньня ў 8 піксэляў)"
 
-#: engines/scumm/detection.cpp:220
+#: engines/scumm/detection.cpp:221
 msgid "Allow semi-smooth scrolling"
 msgstr "Далучыць напалову плыўнае прагортваньне"
 
-#: engines/scumm/detection.cpp:221
+#: engines/scumm/detection.cpp:222
 msgid ""
 "Allow scrolling to be less smooth during the fast camera movement in the "
 "intro."
 msgstr ""
 "Далучыць меней плыўнае прагортваньне падчас хуткага руху камэры ва ўступе."
 
-#: engines/scumm/detection.cpp:229 engines/scumm/dialogs.cpp:921
+#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:921
 msgid "Enable game-specific enhancements"
 msgstr "Далучыць паляпшэньні для пэўных гульняў"
 
-#: engines/scumm/detection.cpp:230 engines/scumm/dialogs.cpp:921
+#: engines/scumm/detection.cpp:231 engines/scumm/dialogs.cpp:921
 msgid ""
 "Allow ScummVM to make small enhancements to the game, usually based on other "
 "versions of the same game."
@@ -6946,24 +6946,24 @@ msgstr ""
 "ScummVM далучыць невялічкія паляпшэньні ў гульні, якія звычайна ґрунтуюцца "
 "на іншых вэрсіях той жа гульні."
 
-#: engines/scumm/detection.cpp:238
+#: engines/scumm/detection.cpp:239
 #, fuzzy
 msgid "Load modded audio"
 msgstr "Заладаваць мадыфікаваныя рэсурсы"
 
-#: engines/scumm/detection.cpp:239
+#: engines/scumm/detection.cpp:240
 msgid ""
 "Replace music, sound effects, and speech clips with modded audio files, if "
 "available."
 msgstr ""
 
-#: engines/scumm/detection.cpp:247
+#: engines/scumm/detection.cpp:248
 #, fuzzy
 #| msgid "Enable the original audio cd track"
 msgid "Enable the original GUI and Menu"
 msgstr "Далучыць арыґінальную дарожку гукавых кампактных дыскаў"
 
-#: engines/scumm/detection.cpp:248
+#: engines/scumm/detection.cpp:249
 msgid ""
 "Allow the game to use the in-engine graphical interface and the original "
 "save/load menu."
