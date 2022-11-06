@@ -22,6 +22,7 @@
 #ifndef MM1_DATA_SPELLS_H
 #define MM1_DATA_SPELLS_H
 
+#include "common/serializer.h"
 #include "mm/mm1/data/character.h"
 
 namespace MM {
@@ -33,6 +34,18 @@ struct SpellsState {
 	int _mmVal7 = 0;
 	Resistance _resistanceType = RESISTANCE_MAGIC;
 	byte _newCondition = 0;
+
+	/**
+	 * Synchronize data to/from savegames
+	 */
+	void synchronize(Common::Serializer &s) {
+		s.syncAsByte(_mmVal1);
+		s.syncAsByte(_mmVal2);
+		s.syncAsByte(_mmVal5);
+		s.syncAsByte(_mmVal7);
+		s.syncAsByte(_resistanceType);
+		s.syncAsByte(_newCondition);
+	}
 };
 
 } // namespace MM1
