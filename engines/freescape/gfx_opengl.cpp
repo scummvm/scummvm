@@ -106,9 +106,14 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 
 	SWAP(sTop, sBottom);
 
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
+
 	glMatrixMode(GL_PROJECTION);
+	glLoadIdentity();
 	glOrtho(0, _screenW, 0, _screenH, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
+	glLoadIdentity();
 
 	glDisable(GL_DEPTH_TEST);
 	glEnable(GL_TEXTURE_2D);
