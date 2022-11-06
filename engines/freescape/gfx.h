@@ -132,29 +132,6 @@ protected:
 	Math::Matrix4 makeProjectionMatrix(float fov, float nearClipPlane, float farClipPlane) const;
 };
 
-/**
- * A framerate limiter
- *
- * Ensures the framerate does not exceed the specified value
- * by delaying until all of the timeslot allocated to the frame
- * is consumed.
- * Allows to curb CPU usage and have a stable framerate.
- */
-class FrameLimiter {
-public:
-	FrameLimiter(OSystem *system, const uint framerate);
-
-	void startFrame();
-	void delayBeforeSwap();
-
-private:
-	OSystem *_system;
-
-	bool _enabled;
-	uint _speedLimitMs;
-	uint _startFrameTime;
-};
-
 Graphics::RendererType determinateRenderType();
 Renderer *CreateGfxOpenGL(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
 Renderer *CreateGfxOpenGLShader(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode);
