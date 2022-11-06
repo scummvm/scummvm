@@ -561,7 +561,7 @@ void Scene::doAction() {
 	// Don't allow the player to move if a conversation is active
 	if (_vm->_gameConv->active()) {
 		_vm->_game->_scene._action._savedFields._lookFlag = false;
-		if (_vm->_gameConv->currentMode() == CONVMODE_2 || _vm->_gameConv->currentMode() == CONVMODE_3)
+		if (_vm->_gameConv->currentMode() == CONVMODE_WAIT_ENTRY || _vm->_gameConv->currentMode() == CONVMODE_EXECUTE)
 			_vm->_game->_player._stepEnabled = false;
 	}
 
@@ -605,8 +605,8 @@ void Scene::doAction() {
 	if (_vm->_game->_triggerMode == SEQUENCE_TRIGGER_PARSER)
 		_vm->_game->_trigger = 0;
 
-	if (_vm->_gameConv->active() && (_vm->_gameConv->currentMode() == CONVMODE_1 ||
-			_vm->_gameConv->currentMode() == CONVMODE_2))
+	if (_vm->_gameConv->active() && (_vm->_gameConv->currentMode() == CONVMODE_WAIT_AUTO ||
+			_vm->_gameConv->currentMode() == CONVMODE_WAIT_ENTRY))
 		_vm->_gameConv->update(true);
 }
 

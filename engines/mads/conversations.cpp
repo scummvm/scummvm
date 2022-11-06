@@ -105,7 +105,7 @@ void GameConversations::run(int id) {
 	_heroTrigger = 0;
 	_interlocutorTrigger = 0;
 	_popupVisible = false;
-	_currentMode = CONVMODE_0;
+	_currentMode = CONVMODE_NEXT;
 	_verbId = -1;
 	_speakerVal = 1;
 	_personSpeaking = 1;
@@ -297,7 +297,7 @@ void GameConversations::update(bool flag) {
 	ConversationVar &var0 = _runningConv->_cnd._vars[0];
 
 	switch (_currentMode) {
-	case CONVMODE_0:
+	case CONVMODE_NEXT:
 		assert(var0.isNumeric());
 		if (var0._val < 0) {
 			if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
@@ -320,19 +320,19 @@ void GameConversations::update(bool flag) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
 				_vm->_game->_scene._action._inProgress = true;
 				_vm->_game->_scene._action._savedFields._commandError = false;
-				_currentMode = CONVMODE_1;
+				_currentMode = CONVMODE_WAIT_AUTO;
 			} else {
 				_currentMode = generateMenu();
 			}
 		}
 		break;
 
-	case CONVMODE_1:
+	case CONVMODE_WAIT_AUTO:
 		if (flag)
-			_currentMode = CONVMODE_3;
+			_currentMode = CONVMODE_EXECUTE;
 		break;
 
-	case CONVMODE_2:
+	case CONVMODE_WAIT_ENTRY:
 		if (flag) {
 			_vm->_game->_player._stepEnabled = false;
 			_verbId = _vm->_game->_scene._action._activeAction._verbId;
@@ -353,7 +353,7 @@ void GameConversations::update(bool flag) {
 			}
 
 			generateText(dialog._textLineIndex, _runningConv->_cnd._messageList3);
-			_currentMode = CONVMODE_0;
+			_currentMode = CONVMODE_NEXT;
 
 			if (_heroTrigger) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
@@ -364,7 +364,7 @@ void GameConversations::update(bool flag) {
 		}
 		break;
 
-	case CONVMODE_3:
+	case CONVMODE_EXECUTE:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
 			_personSpeaking = 0;
@@ -378,16 +378,18 @@ void GameConversations::update(bool flag) {
 				_heroTrigger = 0;
 			}
 
-			_currentMode = CONVMODE_4;
+			_currentMode = CONVMODE_REPLY;
 		}
 		break;
 
-	case CONVMODE_4:
+	case CONVMODE_REPLY:
 		if (_vm->_game->_scene._frameStartTime >= _startFrameNumber) {
 			removeActiveWindow();
 			_personSpeaking = _speakerVal;
 
 			generateMessage(_runningConv->_cnd._messageList2, _runningConv->_cnd._messageList4);
+
+			_currentMode = CONVMODE_NEXT;
 
 			if (_interlocutorTrigger && _popupVisible) {
 				_vm->_game->_scene._action._activeAction._verbId = _verbId;
