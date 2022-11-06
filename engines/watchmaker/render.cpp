@@ -90,6 +90,7 @@ bool checkGlError(const char *when) {
 }
 
 bool rClearBuffers(char flags) {
+	checkGlError("Entering rClearBuffers");
 	bool clearStencil = rGetStencilBitDepth() != 0;
 	bool clearDepth = flags & rCLEARZBUFFER;
 	bool clearBack = flags & rCLEARBACKBUFFER;
@@ -144,12 +145,12 @@ void rGetScreenInfos(unsigned int *width, unsigned int *height, unsigned int *bp
 }
 
 gTexture *gLoadTexture(char *TextName, unsigned int LoaderFlags) {
-	warning("STUBBED gLoadTexture");
+	error("STUBBED gLoadTexture");
 	return nullptr;
 }
 
 bool rGrabVideo(const char *path, char flags) {
-	warning("STUBBED: rGrabVideo");
+	error("STUBBED: rGrabVideo");
 	return true;
 }
 
@@ -159,7 +160,7 @@ void rReleaseAllBitmaps(unsigned int NotFlags) {
 }
 
 void rReleaseBitmap(int i) {
-	warning("STUBBED: rReleaseBitmap");
+	error("STUBBED: rReleaseBitmap");
 	return;
 }
 
@@ -169,33 +170,24 @@ void rReleaseAllTextures(unsigned int NotFlags) {
 }
 
 void rSetBitmapName(unsigned int id, const char *s) {
-	warning("STUBBED: rSetBitmapName");
+	error("STUBBED: rSetBitmapName");
 	return;
 }
 
 uint32 rGetMovieFrame(MaterialPtr mat) {
-	warning("STUBBED: rGetMovieFrame");
+	error("STUBBED: rGetMovieFrame");
 	return 0;
 }
 
 
 void rPrintText(const char *s, unsigned int dst,  unsigned int src, unsigned short *FontTable, unsigned short x, unsigned short y) {
-	warning("STUBBED: rPrintText");
+	error("STUBBED: rPrintText");
 	return;
 }
 
 void rGetTextDim(const char *s, unsigned short *FontTable, int *x, int *y) {
-	warning("STUBBED: rGetTextDim");
+	error("STUBBED: rGetTextDim");
 	return;
-}
-
-void rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b) {
-	//warning("STUBBED: rClear(%d, %d, %d, %d, %d", dst, dposx, dposy, sdimx, sdimy);
-}
-
-
-void rBlitScreenBuffer(void) { // Should probably go to opengl_2d
-	//warning("STUBBED: rBlitScreenBuffer");
 }
 
 } // End of namespace Watchmaker

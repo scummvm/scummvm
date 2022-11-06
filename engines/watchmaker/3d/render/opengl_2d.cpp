@@ -156,12 +156,101 @@ bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
 	return true;
 }
 
+void enter2Dmode(WGame &game) {
+	glMatrixMode(GL_PROJECTION);
+	glPushMatrix();
+	glLoadIdentity();
+	glMatrixMode(GL_MODELVIEW);
+	glPushMatrix();
+	glLoadIdentity();
+	checkGlError("Exiting enter2Dmode");
+}
+
+void exit2Dmode() {
+	glPopMatrix();
+	glMatrixMode(GL_PROJECTION);
+	glPopMatrix();
+	glMatrixMode(GL_MODELVIEW);
+	checkGlError("exit2Dmode");
+}
+
+void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
+	checkGlError("Entering renderTexture");
+	glClearColor(0,0,1,0);
+	glEnable(GL_TEXTURE_2D);
+	glEnable(GL_ALPHA_TEST);
+	glDisable(GL_DEPTH_TEST);
+	glDepthFunc(GL_ALWAYS);
+
+	glEnable(GL_BLEND);
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	bitmap.texture->bind();
+	glLoadIdentity();
+	glTranslatef(0, 0, 0.0);
+
+	float bottomSrc = ((float)srcRect.bottom) / bitmap.RealDimY;
+	float topSrc =    ((float)srcRect.top) / bitmap.RealDimY;
+	float leftSrc =   ((float)srcRect.left) / bitmap.RealDimX;
+	float rightSrc =  ((float)srcRect.right) / bitmap.RealDimX;
+
+	Rect viewport = game._renderer->_viewport;
+	float bottomDst = 1.0 - ((dstRect.bottom == 0 ? 0 : ((double)dstRect.bottom) / viewport.height()) * 2.0);
+	float topDst = 1.0 - ((dstRect.top == 0 ? 0 : ((double)dstRect.top) / viewport.height()) * 2.0);
+	float leftDst = ((dstRect.left == 0 ? 0 : ((double)dstRect.left) / viewport.width()) * 2.0) - 1.0;
+	float rightDst = ((dstRect.right == 0 ? 0 : ((double)dstRect.right) / viewport.width()) * 2.0) - 1.0;
+
+	glBegin(GL_QUADS);
+	glColor3f(1.0, 1.0, 1.0);
+
+	glTexCoord2f(leftSrc, bottomSrc); // Bottom Left
+	glVertex3f(leftDst, bottomDst, 0.0f);
+
+	glTexCoord2f(rightSrc, bottomSrc); // Bottom Right
+	glVertex3f(rightDst, bottomDst, 0.0f);
+
+	glTexCoord2f(rightSrc, topSrc); // Top Right
+	glVertex3f(rightDst, topDst, 0.0f);
+
+	glTexCoord2f(leftSrc, topSrc); // Top Left
+	glVertex3f(leftDst, topDst, 0.0f);
+
+	glEnd();
+	glFlush();
+	checkGlError("Exiting renderTexture");
+}
+
+void gTexture::render(WGame &game, Rect src, Rect dst) {
+	// Render self
+	if (texture) {
+		renderTexture(game, *this, src, dst);
+	}
+	for (int i = 0; i < _blitsOnTop.size(); i++) {
+		_blitsOnTop[i].texture->render(game, _blitsOnTop[i].src, _blitsOnTop[i].dst);
+	}
+}
+
+void rBlitScreenBuffer(WGame &game) { // Should probably go to opengl_2d
+	checkGlError("Entering rBlitScreenBuffer");
+	enter2Dmode(game);
+	gBitmapList[BACK_BUFFER].render(game, game._renderer->_viewport, game._renderer->_viewport);
+	exit2Dmode();
+	checkGlError("Exiting rBlitScreenBuffer");
+}
+
+void rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b) {
+	warning("STUBBED: rClear(%d, %d, %d, %d, %d", dst, dposx, dposy, sdimx, sdimy);
+	gBitmapList[dst].clear();
+}
+
 //************************************************************************************************************************
 void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
               int sposx, int sposy, int sdimx, int sdimy) {
 	// TODO: This currently gets called a bit too much.
 	warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gBitmapList[src].name.c_str(), dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
 	auto &bitmap = gBitmapList[src];
+
+	assert(dst == 0);
+	auto &dstBitmap = gBitmapList[dst];
 
 	checkGlError("rBlitter Start");
 
@@ -179,38 +268,19 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	}
 
 	if ((dposx >= dwWidth) || (dposy >= dwHeight) || (sposx >= dwWidth) || (sposy >= dwHeight) ||
-		((dposx + sdimx) <= 0) || ((dposy + sdimy) <= 0) || ((sposx + sdimx) <= 0) || ((sposy + sdimy) <= 0))
+		((dposx + sdimx) <= 0) || ((dposy + sdimy) <= 0) || ((sposx + sdimx) <= 0) || ((sposy + sdimy) <= 0)) {
 		return;
+	}
 
 	if (dst == 0) {
-#if 0
 		if (!gClipToBlitterViewport(&sposx, &sposy, &sdimx, &sdimy, &dposx, &dposy)) {
-//			DebugLogFile("gClipToBlitterViewport report an error");
+			error("gClipToBlitterViewport report an error");
 			return;
 		}
-		d = gScreenBuffer.lpDDSurface;
-#endif
-		rUpdateExtends(dposx, dposy, dposx + sdimx, dposy + sdimy);
-#if 0
-		/*      //Update extends
-				if (dposx<gBlitterExtends.left)
-					gBlitterExtends.left=dposx;
-				if (dposy<gBlitterExtends.top)
-					gBlitterExtends.top=dposy;
-				if ((dposx+sdimx)>gBlitterExtends.right)
-					gBlitterExtends.right=dposx+sdimx;
-				if ((dposy+sdimy)>gBlitterExtends.bottom)
-					gBlitterExtends.bottom=dposy+sdimy;*/
-	} else
-		d = gBitmapList[dst].lpDDSurface;
 
-	if (src == 0) {
-		DebugLogFile("rBlitter error: src is an invalid surface");
-		return;
-	} else
-		s = gBitmapList[src].lpDDSurface;
-#endif
+		rUpdateExtends(dposx, dposy, dposx + sdimx, dposy + sdimy);
 	}
+
 	if ((sdimx == 0) && (sdimy == 0)) {
 		sdimx = gBitmapList[src].DimX;
 		sdimy = gBitmapList[src].DimY;
@@ -237,47 +307,7 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 //	   	DebugLogWindow("gBlitter: blit not needed: dimx:%d dimy:%d", ( sr.top-sr.bottom ),( sr.left-sr.right ));
 			return;
 		}
-		glClearColor(0,0,1,0);
-		glEnable(GL_TEXTURE_2D);
-		glEnable(GL_ALPHA_TEST);
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-		bitmap.texture->bind();
-		glLoadIdentity();
-		glTranslatef(0, 0, -1.0);
-		//glTranslatef((2.0 / dposx) - 1.0, (2.0 / dposy) - 1.0, 0.0f);
-
-		//glClear(GL_COLOR_BUFFER_BIT);
-
-
-		float bottomSrc = ((float)srcRect.bottom) / bitmap.RealDimY;
-		float topSrc =    ((float)srcRect.top) / bitmap.RealDimY;
-		float leftSrc =   ((float)srcRect.left) / bitmap.RealDimX;
-		float rightSrc =  ((float)srcRect.right) / bitmap.RealDimX;
-
-		Rect viewport = game._renderer->_viewport;
-		float bottomDst = 1.0 - ((dstRect.bottom == 0 ? 0 : ((double)dstRect.bottom) / viewport.height()) * 2.0);
-		float topDst = 1.0 - ((dstRect.top == 0 ? 0 : ((double)dstRect.top) / viewport.height()) * 2.0);
-		float leftDst = ((dstRect.left == 0 ? 0 : ((double)dstRect.left) / viewport.width()) * 2.0) - 1.0;
-		float rightDst = ((dstRect.right == 0 ? 0 : ((double)dstRect.right) / viewport.width()) * 2.0) - 1.0;
-
-		glBegin(GL_QUADS);
-		glColor3f(1.0, 1.0, 1.0);
-
-		glTexCoord2f(leftSrc, bottomSrc); // Bottom Left
-		glVertex3f(leftDst, bottomDst, 0.0f);
-
-		glTexCoord2f(rightSrc, bottomSrc); // Bottom Right
-		glVertex3f(rightDst, bottomDst, 0.0f);
-
-		glTexCoord2f(rightSrc, topSrc); // Top Right
-		glVertex3f(rightDst, topDst, 0.0f);
-
-		glTexCoord2f(leftSrc, topSrc); // Top Left
-		glVertex3f(leftDst, topDst, 0.0f);
-
-		glEnd();
-		glFlush();
+		dstBitmap.blitInto(&bitmap, srcRect, dstRect);
 	}
 	checkGlError("rBlitter End");
 

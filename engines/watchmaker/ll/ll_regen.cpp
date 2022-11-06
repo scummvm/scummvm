@@ -223,7 +223,7 @@ void Regen(WGame &game) {
 //	DebugLogWindow( "Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2-ext.x1, ext.y2-ext.y1 );
 #endif
 	rUpdateExtends(ext.x1, ext.y1, ext.x2, ext.y2);
-	rBlitScreenBuffer();
+	rBlitScreenBuffer(game);
 	rResetExtends();
 
 	// 5 - Copy PaintRect to OldPaintRect

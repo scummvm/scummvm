@@ -22,14 +22,17 @@
 #ifndef WATCHMAKER_TEXTURE_H
 #define WATCHMAKER_TEXTURE_H
 
+#include "common/array.h"
 #include "common/str.h"
 #include "common/textconsole.h"
 #include "watchmaker/3d/dds_header.h"
 #include "graphics/surface.h"
+#include "watchmaker/rect.h"
 #include "watchmaker/surface.h"
 
 namespace Watchmaker {
 
+class WGame;
 // Texture structs
 struct gTexture {
 	Common::String			name;
@@ -45,8 +48,21 @@ struct gTexture {
 		return texture == nullptr;
 	}
 	void clear() {
-		error("TODO: Clear texture");
+		// TODO: This will only work for the back-surface
+		warning("Clearing %d", _blitsOnTop.size());
+		_blitsOnTop.clear();
 	}
+	void render(WGame &game, Rect src, Rect dst);
+	void blitInto(gTexture *texture, Rect src, Rect dst) {
+		_blitsOnTop.push_back({texture, src, dst});
+	}
+private:
+	struct Blit {
+		gTexture *texture;
+		Rect src;
+		Rect dst;
+	};
+	Common::Array<Blit> _blitsOnTop;
 };
 
 } // End of namespace Watchmaker

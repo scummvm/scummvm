@@ -601,10 +601,12 @@ public:
 			checkGlError("glCompressedTexImage");
 		} else {
 			glTexImage2D(GL_TEXTURE_2D, 0, texFormat, data.getWidth(), data.getHeight(), 0, GL_RGBA, GL_UNSIGNED_BYTE, data.getData());
+			checkGlError("glTexImage2D");
 		}
 	}
 	void bind() override {
 		glBindTexture(GL_TEXTURE_2D, _texId);
+		checkGlError("OpenGLTexture::bind");
 	};
 };
 
