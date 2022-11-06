@@ -389,7 +389,7 @@ void FreescapeEngine::processInput() {
 
 Common::Error FreescapeEngine::run() {
 	// Initialize graphics
-	_gfx = createRenderer(_system, _screenW, _screenH, _renderMode);
+	_gfx = createRenderer(_screenW, _screenH, _renderMode);
 	// The following error code will force return to launcher
 	// but it will not force any other GUI message to be displayed
 	if (!_gfx)

@@ -34,9 +34,7 @@
 
 namespace Freescape {
 
-Renderer::Renderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode)
-	: _system(system) {
-
+Renderer::Renderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	_screenW = screenW;
 	_screenH = screenH;
 	_currentPixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
@@ -469,7 +467,7 @@ Graphics::RendererType determinateRenderType() {
 	return Graphics::kRendererTypeDefault;
 }
 
-Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::RenderMode renderMode) {
+Renderer *createRenderer(int screenW, int screenH, Common::RenderMode renderMode) {
 	Graphics::PixelFormat pixelFormat = Graphics::PixelFormat(4, 8, 8, 8, 8, 24, 16, 8, 0);
 	Graphics::RendererType rendererType = determinateRenderType();
 
@@ -483,13 +481,13 @@ Renderer *createRenderer(OSystem *system, int screenW, int screenH, Common::Rend
 
 	#if defined(USE_OPENGL_GAME) && !defined(USE_GLES2)
 		if (rendererType == Graphics::kRendererTypeOpenGL) {
-			return CreateGfxOpenGL(system, screenW, screenH, renderMode);
+			return CreateGfxOpenGL(screenW, screenH, renderMode);
 		}
 	#endif
 
 	#if defined(USE_TINYGL)
 	if (rendererType == Graphics::kRendererTypeTinyGL) {
-		return CreateGfxTinyGL(system, screenW, screenH, renderMode);
+		return CreateGfxTinyGL(screenW, screenH, renderMode);
 	}
 	#endif
 
