@@ -46,8 +46,6 @@ void PSPPixelFormat::set(Type type, bool swap /* = false */) {
 	case Type_8888_RGBA:
 		bitsPerPixel = 32;
 		break;
-		bitsPerPixel = 32;
-		break;
 	case Type_Palette_8bit:
 		bitsPerPixel = 8;
 		break;
