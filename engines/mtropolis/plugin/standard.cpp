@@ -2901,7 +2901,7 @@ void ListVariableModifier::debugInspect(IDebugInspectionReport *report) const {
 }
 #endif
 
-ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) : _preferredContentType(DynamicValueTypes::kNull) {
+ListVariableModifier::ListVariableModifier(const ListVariableModifier &other) : VariableModifier(other), _preferredContentType(DynamicValueTypes::kNull) {
 	if (other._list)
 		_list = other._list->clone();
 }

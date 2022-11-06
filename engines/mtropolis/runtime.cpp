@@ -222,7 +222,12 @@ void ModifierChildCloner::visitChildStructuralRef(Common::SharedPtr<Structural> 
 }
 
 void ModifierChildCloner::visitChildModifierRef(Common::SharedPtr<Modifier> &modifier) {
+	uint32 oldGUID = modifier->getStaticGUID();
 	modifier = modifier->shallowClone();
+	assert(modifier->getStaticGUID() == oldGUID);
+
+	(void)oldGUID;
+
 	modifier->setSelfReference(modifier);
 	modifier->setParent(_relinkParent);
 
@@ -7957,6 +7962,8 @@ const Common::SharedPtr<Palette> &VisualElement::getPalette() const {
 void VisualElement::debugInspect(IDebugInspectionReport *report) const {
 	report->declareDynamic("layer", Common::String::format("%i", static_cast<int>(_layer)));
 	report->declareDynamic("relRect", Common::String::format("(%i,%i)-(%i,%i)", static_cast<int>(_rect.left), static_cast<int>(_rect.top), static_cast<int>(_rect.right), static_cast<int>(_rect.bottom)));
+	report->declareDynamic("directToScreen", Common::String(_directToScreen ? "true" : "false"));
+	report->declareDynamic("visible", Common::String(_visible ? "true" : "false"));
 
 	Element::debugInspect(report);
 }
