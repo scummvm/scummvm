@@ -549,8 +549,6 @@ SPQRGameDataHandler::VISE3Archive::VISE3Archive(Common::SeekableReadStream *arch
 
 	uint16 numEntries = READ_BE_UINT16(vl3Catalog + 16);
 
-	Common::Array<VISE3FileDesc> archiveFiles;
-
 	for (uint16 i = 0; i < numEntries; i++) {
 		uint8 entryMagic[4];
 		if (archiveStream->read(entryMagic, 4) != 4 || memcmp(entryMagic + 1, "VCT", 3))
@@ -586,7 +584,7 @@ SPQRGameDataHandler::VISE3Archive::VISE3Archive(Common::SeekableReadStream *arch
 				desc.fileName = Common::String(fileNameChars, nameLength);
 			}
 
-			archiveFiles.push_back(desc);
+			_fileDescs.push_back(desc);
 		} else {
 			error("Unknown VISE 3 catalog entry item type");
 		}
@@ -594,12 +592,13 @@ SPQRGameDataHandler::VISE3Archive::VISE3Archive(Common::SeekableReadStream *arch
 }
 
 const SPQRGameDataHandler::VISE3FileDesc *SPQRGameDataHandler::VISE3Archive::getFileDesc(const Common::Path &path) const {
-	uint index = 0;
-	bool isResFork = false;
-	if (!getFileDescIndex(path, index, isResFork))
-		return nullptr;
+	Common::String convertedPath = path.toString(':');
+	for (const VISE3FileDesc &desc : _fileDescs) {
+		if (desc.fileName == convertedPath)
+			return &desc;
+	}
 
-	return &_fileDescs[index];
+	return nullptr;
 }
 
 bool SPQRGameDataHandler::VISE3Archive::hasFile(const Common::Path &path) const {
