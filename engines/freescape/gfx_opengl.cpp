@@ -179,6 +179,8 @@ void OpenGLRenderer::renderCrossair(byte color, const Common::Point position) {
 
 	glColor3ub(r, g, b);
 
+	glLineWidth(15); // It will not work in every OpenGL implementation since the
+					 // spec doesn't require support for line widths other than 1
 	glBegin(GL_LINES);
 	glVertex2f(position.x - 1, position.y);
 	glVertex2f(position.x + 3, position.y);
@@ -186,6 +188,7 @@ void OpenGLRenderer::renderCrossair(byte color, const Common::Point position) {
 	glVertex2f(position.x, position.y - 3);
 	glVertex2f(position.x, position.y + 3);
 	glEnd();
+	glLineWidth(1);
 
 	glDepthMask(GL_TRUE);
 	glEnable(GL_DEPTH_TEST);
@@ -209,6 +212,8 @@ void OpenGLRenderer::renderShoot(byte color, const Common::Point position) {
 	int viewPort[4];
 	glGetIntegerv(GL_VIEWPORT, viewPort);
 
+	glLineWidth(10); // It will not work in every OpenGL implementation since the
+					 // spec doesn't require support for line widths other than 1
 	glBegin(GL_LINES);
 	glVertex2f(0, _screenH - 2);
 	glVertex2f(position.x, position.y);
@@ -223,6 +228,7 @@ void OpenGLRenderer::renderShoot(byte color, const Common::Point position) {
 	glVertex2f(position.x, position.y);
 
 	glEnd();
+	glLineWidth(1);
 
 	glEnable(GL_DEPTH_TEST);
 	glDepthMask(GL_TRUE);
