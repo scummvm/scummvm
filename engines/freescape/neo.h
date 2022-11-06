@@ -32,9 +32,9 @@ namespace Common {
 class SeekableReadStream;
 }
 
-namespace Image {
+namespace Freescape {
 
-class NeoDecoder : public ImageDecoder {
+class NeoDecoder : public Image::ImageDecoder {
 public:
 	NeoDecoder(byte *palette = nullptr);
 	virtual ~NeoDecoder();
@@ -52,6 +52,6 @@ private:
 	byte *_palette;
 	uint16 _paletteColorCount;
 };
-} // End of namespace Image
+} // End of namespace Freescape
 
 #endif // FREESCAPE_NEO_H

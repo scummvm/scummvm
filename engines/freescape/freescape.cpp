@@ -624,7 +624,7 @@ void FreescapeEngine::loadDataBundle() {
 
 byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream, int offset) {
 	stream->seek(offset);
-	Image::NeoDecoder decoder;
+	NeoDecoder decoder;
 	decoder.loadStream(*stream);
 	byte *palette = (byte *)malloc(16 * 3 * sizeof(byte));
 	memcpy(palette, decoder.getPalette(), 16 * 3 * sizeof(byte));
@@ -633,7 +633,7 @@ byte *FreescapeEngine::getPaletteFromNeoImage(Common::SeekableReadStream *stream
 
 Graphics::Surface *FreescapeEngine::loadAndConvertNeoImage(Common::SeekableReadStream *stream, int offset, byte *palette) {
 	stream->seek(offset);
-	Image::NeoDecoder decoder(palette);
+	NeoDecoder decoder(palette);
 	decoder.loadStream(*stream);
 	Graphics::Surface *surface = new Graphics::Surface();
 	surface->copyFrom(*decoder.getSurface());
