@@ -922,20 +922,18 @@ void doSystem(WGame &game) {
 	case ME_CONTINUEEFFECT:
 		TheMessage->wparam1 --;
 		if (TheMessage->wparam1 > 0) {
-			warning("STUBBED: ME_CONTINUEEFFECT");
-#if 0
 			switch (TheMessage->bparam) {
 			case EFFECT_FADIN:
 				bDarkScreen = false;
-				DisplayD3DRect(0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, (t3dU8)((255 * (TheMessage->lparam[1] - TheMessage->wparam1)) / TheMessage->lparam[1]));
+				DisplayD3DRect(*game._renderer, 0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, (byte)((255 * (TheMessage->lparam[1] - TheMessage->wparam1)) / TheMessage->lparam[1]));
 				break;
 			case EFFECT_FADOUT:
-				DisplayD3DRect(0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, (t3dU8)((255 * (TheMessage->wparam1)) / TheMessage->lparam[1]));
+				DisplayD3DRect(*game._renderer, 0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, (byte)((255 * (TheMessage->wparam1)) / TheMessage->lparam[1]));
 				break;
 			case EFFECT_WAIT:
 				break;
 			case EFFECT_WAITDARK:
-				DisplayD3DRect(0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, 1);
+				DisplayD3DRect(*game._renderer, 0, 0, SCREEN_RES_X, SCREEN_RES_Y, 1, 1, 1, 1);
 				break;
 			case EFFECT_ROOMINFO:
 				if ((RoomInfo.t_next_letter > TheMessage->wparam1) && ((*RoomInfo.letter_ptr) != '\0')) {
@@ -945,8 +943,8 @@ void doSystem(WGame &game) {
 					*(RoomInfo.letter_ptr + 1) = '\0';
 
 					rClear(RoomInfo.tnum, 0, 0, RoomInfo.dx, RoomInfo.dy, 0, 0, 0);
-					rPrintText(RoomInfo.fullstring, RoomInfo.tnum,  RoomInfo.f->Color[WHITE_FONT], RoomInfo.f->Table, 0, 0);
-					rGetTextDim(RoomInfo.fullstring, RoomInfo.f->Table, &RoomInfo._dx, &RoomInfo._dy);
+					game._renderer->printText(RoomInfo.fullstring, RoomInfo.tnum,  RoomInfo.f, FontColor::WHITE_FONT, 0, 0);
+					game._fonts.getTextDim(RoomInfo.fullstring, RoomInfo.f, &RoomInfo._dx, &RoomInfo._dy);
 
 					strcpy(RoomInfo.fullstring, name_backup);
 
@@ -967,11 +965,10 @@ void doSystem(WGame &game) {
 				UpdateIntroText(TheMessage->bparam, TheMessage->wparam1, TheMessage->lparam[1], TheMessage->lparam[0]);
 				break;
 			case EFFECT_DISPLAY_NEWLOGIMG:
-				DisplayDDBitmap(NewLogImage, 800 - 60 - 8, 4,  0, 0, 0, 0);
+				DisplayDDBitmap(*game._renderer, NewLogImage, 800 - 60 - 8, 4,  0, 0, 0, 0);
 				break;
 
 			}
-#endif
 			TheMessage->flags |= MP_WAIT_RETRACE;
 			ReEvent();
 		} else if (TheMessage->wparam2) {
