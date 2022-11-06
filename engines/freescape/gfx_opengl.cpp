@@ -107,7 +107,7 @@ void OpenGLRenderer::drawTexturedRect2D(const Common::Rect &screenRect, const Co
 	SWAP(sTop, sBottom);
 
 	glMatrixMode(GL_PROJECTION);
-	glOrtho(0, _screenH, 0, _screenW, -1, 1);
+	glOrtho(0, _screenW, 0, _screenH, -1, 1);
 	glMatrixMode(GL_MODELVIEW);
 
 	glDisable(GL_DEPTH_TEST);
