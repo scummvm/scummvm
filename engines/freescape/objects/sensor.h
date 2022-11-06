@@ -32,13 +32,18 @@ namespace Freescape {
 class Sensor : public Object {
 public:
 	Sensor(
-		uint16 objectID,
-		const Math::Vector3d &origin,
-		const Math::Vector3d &rotation);
-	virtual ~Sensor();
+		uint16 objectID_,
+		const Math::Vector3d &origin_,
+		const Math::Vector3d &rotation_) {
+		_objectID = objectID_;
+		_origin = origin_;
+		_rotation = rotation_;
+		_flags = 0;
+	}
 
-	bool isDrawable() override;
-	bool isPlanar() override;
+	virtual ~Sensor() {}
+	bool isDrawable() { return false; }
+	bool isPlanar() { return true; }
 	ObjectType getType() override { return kSensorType; };
 	Math::Vector3d getRotation() { return _rotation; }
 
