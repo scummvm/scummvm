@@ -87,8 +87,8 @@ OpenGLTexture::OpenGLTexture(const Graphics::Surface *surface) {
 	glGenTextures(1, &_id);
 	glBindTexture(GL_TEXTURE_2D, _id);
 	glTexImage2D(GL_TEXTURE_2D, 0, _internalFormat, _internalWidth, _internalHeight, 0, _internalFormat, _sourceFormat, nullptr);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 	// TODO: If non power of two textures are unavailable this clamping
 	// has no effect on the padded sides (resulting in white lines on the edges)
