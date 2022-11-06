@@ -22,23 +22,25 @@
 namespace MADS {
 
 static const MADSGameDescription gameDescriptions[] = {
-#if 0
 	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English (compressed)
 		// Removed for now, until the original floppy compression is supported
 		{
 			"nebular",
 			0,
-			AD_ENTRY1s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354),
+			AD_ENTRY2s("mpslabs.001", "4df5c557b52abb5b661cf4befe5ae301", 1315354, "mpslabs.idx", "d74bed6513d0a5d514269750f574a23b", 5598),
 			Common::EN_ANY,
 			Common::kPlatformDOS,
-			ADGF_NO_FLAGS,
+			GF_INSTALLER,
+#ifdef USE_TTS
+			GUIO6(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE, GAMEOPTION_TTS_NARRATOR)
+#else
 			GUIO5(GUIO_NOSPEECH, GAMEOPTION_EASY_MOUSE, GAMEOPTION_ANIMATED_INVENTORY, GAMEOPTION_ANIMATED_INTERFACE, GAMEOPTION_NAUGHTY_MODE)
+#endif
 		},
 		GType_RexNebular,
 		0
 	},
-#endif
 
 	{
 		// Rex Nebular and the Cosmic Gender Bender DOS English
