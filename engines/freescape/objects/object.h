@@ -55,26 +55,27 @@ enum ObjectType {
 
 class Object {
 public:
-	virtual ObjectType getType();
-	uint16 getObjectID();
-	uint16 getObjectFlags();
-	void setObjectFlags(uint32 flags);
-	Math::Vector3d getOrigin();
-	virtual void setOrigin(Math::Vector3d origin);
-	Math::Vector3d getSize();
+	virtual ObjectType getType() { return _type; }
+	uint16 getObjectID() { return _objectID; }
+	uint16 getObjectFlags() { return _flags; }
+	void setObjectFlags(uint32 flags_) { _flags = flags_; }
+	Math::Vector3d getOrigin() { return _origin; }
+	virtual void setOrigin(Math::Vector3d origin_) { _origin = origin_; };
+	Math::Vector3d getSize() { return _size; }
+
+	virtual bool isDrawable() { return false; }
+	virtual bool isPlanar() { return false; }
+
+	bool isInvisible() { return _flags & 0x80; }
+	void makeInvisible() { _flags = _flags | 0x80; }
+	void makeVisible() { _flags = _flags & ~0x80; }
+	bool isDestroyed() { return _flags & 0x20; }
+	void destroy() { _flags = _flags | 0x20; }
+	void toggleVisibility() { _flags = _flags ^ 0x80; }
+
+	virtual ~Object() {}
 
 	virtual void draw(Freescape::Renderer *gfx) = 0;
-
-	virtual bool isDrawable();
-	virtual bool isPlanar();
-	bool isInvisible();
-	void makeInvisible();
-	void makeVisible();
-	void toggleVisibility();
-	bool isDestroyed();
-	void destroy();
-
-	virtual ~Object();
 
 	uint16 _flags;
 	ObjectType _type;
