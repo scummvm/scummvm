@@ -40,8 +40,16 @@ extern byte FLY_MAP_X[20];
 extern byte FLY_MAP_Y[20];
 
 class SpellsParty {
-	typedef SpellResult(*SpellFn)(Character *chr);
+	typedef SpellResult(*SpellFn)();
 private:
+	static Character *_destChar;
+	static int _destMonsterNum;
+private:
+	/**
+	 * Returns true if in combat
+	 */
+	static bool isInCombat();
+
 	/**
 	 * Restores an amount of Hp
 	 */
@@ -52,75 +60,75 @@ private:
 	 */
 	static void addLight(int amount);
 
-	static void iterateMonsters();
+	static void iterateMonsters1();
+	static void iterateMonsters2();
 
 private:
-	static SpellResult placeholder(Character *chr) {
+	static SpellResult placeholder() {
 		return SR_FAILED;
 	}
-	static SpellResult cleric11_awaken(Character *chr);
-	static SpellResult cleric12_bless(Character *chr);
-	static SpellResult cleric13_blind(Character *chr);
-	static SpellResult cleric14_firstAid(Character *chr);
-	static SpellResult cleric15_light(Character *chr);
-	static SpellResult cleric16_powerCure(Character *chr);
-	static SpellResult cleric17_protectionFromFear(Character *chr);
-	static SpellResult cleric21_cureWounds(Character *chr);
-	static SpellResult cleric24_protectionFromCold(Character *chr);
-	static SpellResult cleric25_protectionFromIce(Character *chr);
-	static SpellResult cleric26_protectionFromPoison(Character *chr);
-	static SpellResult cleric31_createFood(Character *chr);
-	static SpellResult cleric32_cureBlindness(Character *chr);
-	static SpellResult cleric33_cureParalysis(Character *chr);
-	static SpellResult cleric34_lastingLight(Character *chr);
-	static SpellResult cleric37_removeQuest(Character *chr);
-	static SpellResult cleric38_walkOnWater(Character *chr);
-	static SpellResult cleric41_cureDisease(Character *chr);
-	static SpellResult cleric42_neutralizePoison(Character *chr);
-	static SpellResult cleric43_protectionFromAcid(Character *chr);
-	static SpellResult cleric44_protectionFromElectricity(Character *chr);
-	static SpellResult cleric45_restoreAlignment(Character *chr);
-	static SpellResult cleric48_surface(Character *chr);
-	static SpellResult cleric52_dispelMagic(Character *chr);
-	static SpellResult cleric54_removeCondition(Character *chr);
-	static SpellResult cleric55_restoreEnergy(Character *chr);
-	static SpellResult cleric62_raiseDead(Character *chr);
-	static SpellResult cleric63_rejuvinate(Character *chr);
-	static SpellResult cleric64_stoneToFlesh(Character *chr);
-	static SpellResult cleric65_townPortal(Character *chr);
-	static SpellResult cleric73_protectionFromElements(Character *chr);
-	static SpellResult cleric74_resurrection(Character *chr);
+	static SpellResult cleric11_awaken();
+	static SpellResult cleric12_bless();
+	static SpellResult cleric13_blind();
+	static SpellResult cleric14_firstAid();
+	static SpellResult cleric15_light();
+	static SpellResult cleric16_powerCure();
+	static SpellResult cleric17_protectionFromFear();
+	static SpellResult cleric21_cureWounds();
+	static SpellResult cleric24_protectionFromCold();
+	static SpellResult cleric25_protectionFromIce();
+	static SpellResult cleric26_protectionFromPoison();
+	static SpellResult cleric31_createFood();
+	static SpellResult cleric32_cureBlindness();
+	static SpellResult cleric33_cureParalysis();
+	static SpellResult cleric34_lastingLight();
+	static SpellResult cleric37_removeQuest();
+	static SpellResult cleric38_walkOnWater();
+	static SpellResult cleric41_cureDisease();
+	static SpellResult cleric42_neutralizePoison();
+	static SpellResult cleric43_protectionFromAcid();
+	static SpellResult cleric44_protectionFromElectricity();
+	static SpellResult cleric45_restoreAlignment();
+	static SpellResult cleric48_surface();
+	static SpellResult cleric52_dispelMagic();
+	static SpellResult cleric54_removeCondition();
+	static SpellResult cleric55_restoreEnergy();
+	static SpellResult cleric62_raiseDead();
+	static SpellResult cleric63_rejuvinate();
+	static SpellResult cleric64_stoneToFlesh();
+	static SpellResult cleric65_townPortal();
+	static SpellResult cleric73_protectionFromElements();
+	static SpellResult cleric74_resurrection();
 
-	static SpellResult wizard12_detectMagic(Character *chr);
-	static SpellResult wizard15_leatherSkin(Character *chr);
-	static SpellResult wizard16_light(Character *chr) {
-		return cleric15_light(chr);
+	static SpellResult wizard12_detectMagic();
+	static SpellResult wizard15_leatherSkin();
+	static SpellResult wizard16_light() {
+		return cleric15_light();
 	}
-	static SpellResult wizard17_location(Character *chr);
-	static SpellResult wizard24_jump(Character *chr);
-	static SpellResult wizard25_levitate(Character *chr);
-	static SpellResult wizard32_fly(Character *chr);
-	static SpellResult wizard45_guardDog(Character *chr);
-	static SpellResult wizard46_psychicProtection(Character *chr);
-	static SpellResult wizard52_dispelMagic(Character *chr) {
-		return cleric52_dispelMagic(chr);
+	static SpellResult wizard17_location();
+	static SpellResult wizard24_jump();
+	static SpellResult wizard25_levitate();
+	static SpellResult wizard32_fly();
+	static SpellResult wizard45_guardDog();
+	static SpellResult wizard46_psychicProtection();
+	static SpellResult wizard52_dispelMagic() {
+		return cleric52_dispelMagic();
 	}
-	static SpellResult wizard54_shelter(Character *chr);
-	static SpellResult wizard55_teleport(Character *chr);
-	static SpellResult wizard63_etherialize(Character *chr);
-	static SpellResult wizard64_protectionFromMagic(Character *chr);
-	static SpellResult wizard65_rechargeItem(Character *chr);
-	static SpellResult wizard71_astralSpell(Character *chr);
-	static SpellResult wizard72_duplication(Character *chr);
+	static SpellResult wizard54_shelter();
+	static SpellResult wizard55_teleport();
+	static SpellResult wizard63_etherialize();
+	static SpellResult wizard64_protectionFromMagic();
+	static SpellResult wizard65_rechargeItem();
+	static SpellResult wizard71_astralSpell();
+	static SpellResult wizard72_duplication();
 
 	static SpellFn SPELLS[SPELLS_COUNT];
 public:
 	/**
 	 * Casts a spell
-	 * @returns If false, display a 'Done' message.
-	 * If true, spell has done it's own UI display
 	 */
-	static SpellResult cast(int spell, Character *chr);
+	static SpellResult cast(uint spell, Character *destChar);
+	static SpellResult cast(uint spell, int destMonsterIdx);
 };
 
 } // namespace Game
