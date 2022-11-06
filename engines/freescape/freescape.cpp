@@ -425,7 +425,7 @@ Common::Error FreescapeEngine::run() {
 
 	if (_border) {
 		_borderTexture = nullptr;
-		_border->fillRect(_viewArea, 0xA0A0A0FF);
+		_border->fillRect(_viewArea, _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xA0, 0xA0, 0xA0));
 	}
 	if (saveSlot >= 0) { // load the savegame
 		loadGameState(saveSlot);
