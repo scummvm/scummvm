@@ -164,26 +164,6 @@ void OpenGLRenderer::positionCamera(const Math::Vector3d &pos, const Math::Vecto
 	glTranslatef(-pos.x(), -pos.y(), -pos.z());
 }
 
-void OpenGLRenderer::drawRect2D(const Common::Rect &rect, uint8 a, uint8 r, uint8 g, uint8 b) {
-	glDisable(GL_TEXTURE_2D);
-	glColor4ub(r, g, b, a);
-
-	if (a != 255) {
-		glEnable(GL_BLEND);
-		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	}
-
-	glEnableClientState(GL_VERTEX_ARRAY);
-	copyToVertexArray(0, Math::Vector3d(rect.left, rect.bottom, 0.0));
-	copyToVertexArray(1, Math::Vector3d(rect.right, rect.bottom, 0.0));
-	copyToVertexArray(2, Math::Vector3d(rect.left, rect.top, 0.0));
-	copyToVertexArray(3, Math::Vector3d(rect.right, rect.top, 0.0));
-	glVertexPointer(3, GL_FLOAT, 0, _verts);
-	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-	glDisableClientState(GL_VERTEX_ARRAY);
-	glDisable(GL_BLEND);
-}
-
 void OpenGLRenderer::renderCrossair(byte color, const Common::Point position) {
 	uint8 r, g, b;
 	readFromPalette(color, r, g, b); // TODO: should use opposite color
