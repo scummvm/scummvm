@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.1.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 12:13+0000\n"
+"POT-Creation-Date: 2022-11-06 14:55+0000\n"
 "PO-Revision-Date: 2022-10-27 02:33+0000\n"
 "Last-Translator: Niv Baehr <bloop93@gmail.com>\n"
 "Language-Team: Hebrew <https://translations.scummvm.org/projects/scummvm/"
@@ -4791,7 +4791,7 @@ msgstr "הפעלת המרת טקסט לדיבור עבור עצמים, אפשר�
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:1138
+#: engines/twine/detection.cpp:552
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "שימוש בהמרת טקסט לדיבור לקריאת תיאורים (אם זמינה)"
 
@@ -5600,7 +5600,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "חידה זו אינה זמינה בגרסת הניסיון של המשחק"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:1137
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:551
 msgid "TTS Narrator"
 msgstr "קריין המרת טקסט לדיבור"
 
@@ -7826,96 +7826,96 @@ msgstr "האם לצאת?"
 msgid "Unable to locate the '%s' data file."
 msgstr "לא ניתן לאתר את קובץ נתוני המנוע '%s'."
 
-#: engines/twine/detection.cpp:272
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "גרסה זו דורשת את הספריה Giflib שלא נבנתה אל תוך ScummVM"
 
-#: engines/twine/detection.cpp:1014
+#: engines/twine/detection.cpp:428
 msgid "Enable wall collisions"
 msgstr "הפעלת התנגשות עם קירות"
 
-#: engines/twine/detection.cpp:1015
+#: engines/twine/detection.cpp:429
 msgid "Enable the original wall collision damage"
 msgstr "הפעלת הנזק המקורי בהתנגשות עם קירות"
 
-#: engines/twine/detection.cpp:1026
+#: engines/twine/detection.cpp:440
 msgid "Disable save menu"
 msgstr "כיבוי תפריט שמירה"
 
-#: engines/twine/detection.cpp:1027
+#: engines/twine/detection.cpp:441
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr "במקור היו רק שמירות אוטומטיות. אפשרות זו מאפשרת לשמור בכל עת."
 
-#: engines/twine/detection.cpp:1037
+#: engines/twine/detection.cpp:451
 msgid "Enable debug mode"
 msgstr "הפעלת מצב ניפוי תקלים"
 
-#: engines/twine/detection.cpp:1038
+#: engines/twine/detection.cpp:452
 msgid "Enable the debug mode"
 msgstr "הפעלת מצב ניפוי התקלים"
 
-#: engines/twine/detection.cpp:1048
+#: engines/twine/detection.cpp:462
 msgid "Enable audio CD"
 msgstr "הפעלת תקליטור שמע"
 
-#: engines/twine/detection.cpp:1049
+#: engines/twine/detection.cpp:463
 msgid "Enable the original audio cd track"
 msgstr "הפעלת רצועת השמע המקורית מהתקליטור"
 
-#: engines/twine/detection.cpp:1059
+#: engines/twine/detection.cpp:473
 msgid "Enable sound"
 msgstr "הפעלת צליל"
 
-#: engines/twine/detection.cpp:1060
+#: engines/twine/detection.cpp:474
 msgid "Enable the sound for the game"
 msgstr "הפעלת צליל עבור המשחק"
 
-#: engines/twine/detection.cpp:1070
+#: engines/twine/detection.cpp:484
 msgid "Enable voices"
 msgstr "הפעלת קולות"
 
-#: engines/twine/detection.cpp:1071
+#: engines/twine/detection.cpp:485
 msgid "Enable the voices for the game"
 msgstr "הפעלת קולות עבור המשחק"
 
-#: engines/twine/detection.cpp:1081
+#: engines/twine/detection.cpp:495
 msgid "Enable text"
 msgstr "הפעלת טקסט"
 
-#: engines/twine/detection.cpp:1082
+#: engines/twine/detection.cpp:496
 msgid "Enable the text for the game"
 msgstr "הפעלת טקסט עבור המשחק"
 
-#: engines/twine/detection.cpp:1092
+#: engines/twine/detection.cpp:506
 msgid "Enable movies"
 msgstr "הפעלת סרטים"
 
-#: engines/twine/detection.cpp:1093
+#: engines/twine/detection.cpp:507
 msgid "Enable the cutscenes for the game"
 msgstr "הפעלת סרטוני מעבר עבור המשחק"
 
-#: engines/twine/detection.cpp:1103
+#: engines/twine/detection.cpp:517
 msgid "Enable mouse"
 msgstr "הפעלת עכבר"
 
-#: engines/twine/detection.cpp:1104
+#: engines/twine/detection.cpp:518
 msgid "Enable the mouse for the UI"
 msgstr "הפעלת עכבר עבור הממשק"
 
-#: engines/twine/detection.cpp:1114
+#: engines/twine/detection.cpp:528
 msgid "Use the USA version"
 msgstr "שימוש בגרסה האמריקאית"
 
-#: engines/twine/detection.cpp:1115
+#: engines/twine/detection.cpp:529
 msgid "Enable the USA specific version flags"
 msgstr "הפעלת תכונות מסוימות עבור הגרסה האמריקאית"
 
-#: engines/twine/detection.cpp:1125 engines/ultima/detection.cpp:99
+#: engines/twine/detection.cpp:539 engines/ultima/detection.cpp:99
 msgid "Enable high resolution"
 msgstr "הפעלת הפרדה גבוהה"
 
-#: engines/twine/detection.cpp:1126 engines/ultima/detection.cpp:100
+#: engines/twine/detection.cpp:540 engines/ultima/detection.cpp:100
 msgid "Enable a higher resolution for the game"
 msgstr "הפעלת הפרדה גבוהה יותר עבור המשחק"
 

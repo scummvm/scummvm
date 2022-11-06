@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 2.3.0git\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 12:13+0000\n"
+"POT-Creation-Date: 2022-11-06 14:55+0000\n"
 "PO-Revision-Date: 2022-08-02 15:16+0000\n"
 "Last-Translator: Kastuś K. <oakum2334@gmail.com>\n"
 "Language-Team: Belarusian (Taraškievica) <https://translations.scummvm.org/"
@@ -4887,7 +4887,7 @@ msgstr ""
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:1138
+#: engines/twine/detection.cpp:552
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr "Ператвараць тэкст у мову ў апісаньнях (калі даступна)"
 
@@ -5727,7 +5727,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Гэтая загадка недаступная ў каштавальнай вэрсіі гульні"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:1137
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:551
 msgid "TTS Narrator"
 msgstr "Расказьнік TTS"
 
@@ -8014,98 +8014,98 @@ msgstr "Ці сапраўды вы хочаце выйсьці?"
 msgid "Unable to locate the '%s' data file."
 msgstr "Ня выйшла знайсьці зьвесткавы файл '%s' ."
 
-#: engines/twine/detection.cpp:272
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr "Для гэтай гульні патрэбна Giflib, якой няма ў зборы ScummVM"
 
-#: engines/twine/detection.cpp:1014
+#: engines/twine/detection.cpp:428
 msgid "Enable wall collisions"
 msgstr "Далучыць сутычку са сьценамі"
 
-#: engines/twine/detection.cpp:1015
+#: engines/twine/detection.cpp:429
 msgid "Enable the original wall collision damage"
 msgstr "Далучыць арыґінальнае пашкоджэньне ад сутычкі са сьценамі"
 
-#: engines/twine/detection.cpp:1026
+#: engines/twine/detection.cpp:440
 msgid "Disable save menu"
 msgstr "Адлучыць мэню захаваньня"
 
-#: engines/twine/detection.cpp:1027
+#: engines/twine/detection.cpp:441
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "У арыґінале былі толькі аўтазахаваньні. Гэта дазволіць вам захоўвацца, дзе "
 "вы захочаце."
 
-#: engines/twine/detection.cpp:1037
+#: engines/twine/detection.cpp:451
 msgid "Enable debug mode"
 msgstr "Далучыць рэжым наладжваньня хібаў"
 
-#: engines/twine/detection.cpp:1038
+#: engines/twine/detection.cpp:452
 msgid "Enable the debug mode"
 msgstr "Далучыць рэжым наладжваньня хібаў"
 
-#: engines/twine/detection.cpp:1048
+#: engines/twine/detection.cpp:462
 msgid "Enable audio CD"
 msgstr "Далучыць гукавыя кампактныя дыскі"
 
-#: engines/twine/detection.cpp:1049
+#: engines/twine/detection.cpp:463
 msgid "Enable the original audio cd track"
 msgstr "Далучыць арыґінальную дарожку гукавых кампактных дыскаў"
 
-#: engines/twine/detection.cpp:1059
+#: engines/twine/detection.cpp:473
 msgid "Enable sound"
 msgstr "Далучыць гук"
 
-#: engines/twine/detection.cpp:1060
+#: engines/twine/detection.cpp:474
 msgid "Enable the sound for the game"
 msgstr "Далучыць гук у гульні"
 
-#: engines/twine/detection.cpp:1070
+#: engines/twine/detection.cpp:484
 msgid "Enable voices"
 msgstr "Далучыць галасы"
 
-#: engines/twine/detection.cpp:1071
+#: engines/twine/detection.cpp:485
 msgid "Enable the voices for the game"
 msgstr "Далучыць галасы ў гульні"
 
-#: engines/twine/detection.cpp:1081
+#: engines/twine/detection.cpp:495
 msgid "Enable text"
 msgstr "Далучыць тэкст"
 
-#: engines/twine/detection.cpp:1082
+#: engines/twine/detection.cpp:496
 msgid "Enable the text for the game"
 msgstr "Далучыць тэкст у гульні"
 
-#: engines/twine/detection.cpp:1092
+#: engines/twine/detection.cpp:506
 msgid "Enable movies"
 msgstr "Далучыць відэа"
 
-#: engines/twine/detection.cpp:1093
+#: engines/twine/detection.cpp:507
 msgid "Enable the cutscenes for the game"
 msgstr "Далучыць сцэнкі ў гульні"
 
-#: engines/twine/detection.cpp:1103
+#: engines/twine/detection.cpp:517
 msgid "Enable mouse"
 msgstr "Далучыць мыш"
 
-#: engines/twine/detection.cpp:1104
+#: engines/twine/detection.cpp:518
 msgid "Enable the mouse for the UI"
 msgstr "Далучыць мыш для інтэрфэйсу"
 
-#: engines/twine/detection.cpp:1114
+#: engines/twine/detection.cpp:528
 msgid "Use the USA version"
 msgstr "Выкарыстоўваць вэрсію для ЗША"
 
-#: engines/twine/detection.cpp:1115
+#: engines/twine/detection.cpp:529
 msgid "Enable the USA specific version flags"
 msgstr "Далучыць сьцягі, уласьцівыя вэрсіі для ЗША"
 
-#: engines/twine/detection.cpp:1125 engines/ultima/detection.cpp:99
+#: engines/twine/detection.cpp:539 engines/ultima/detection.cpp:99
 msgid "Enable high resolution"
 msgstr "Далучыць высокую разрознасьць"
 
-#: engines/twine/detection.cpp:1126 engines/ultima/detection.cpp:100
+#: engines/twine/detection.cpp:540 engines/ultima/detection.cpp:100
 msgid "Enable a higher resolution for the game"
 msgstr "Далучыць высокую разрознасьць у гульні"
 

@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ScummVM 1.3.0svn\n"
 "Report-Msgid-Bugs-To: scummvm-devel@lists.scummvm.org\n"
-"POT-Creation-Date: 2022-11-06 12:13+0000\n"
+"POT-Creation-Date: 2022-11-06 14:55+0000\n"
 "PO-Revision-Date: 2022-10-27 16:30+0000\n"
 "Last-Translator: Stian Schultz <Stian.schultz@gmail.com>\n"
 "Language-Team: Norwegian Bokmål <https://translations.scummvm.org/projects/"
@@ -4899,7 +4899,7 @@ msgstr "Aktiver tekst til tale for gjenstander, innstillinger og bibelsitat"
 #: engines/dreamweb/detection.cpp:77 engines/lure/detection.cpp:45
 #: engines/mads/detection.cpp:124 engines/sci/detection_options.h:222
 #: engines/sherlock/detection.cpp:132 engines/supernova/detection.cpp:54
-#: engines/twine/detection.cpp:1138
+#: engines/twine/detection.cpp:552
 msgid "Use TTS to read the descriptions (if TTS is available)"
 msgstr ""
 "Bruk tekst til tale til å lese beskrivelser (hvis tekst til tale er "
@@ -5729,7 +5729,7 @@ msgid "This puzzle is not available in the trial version of the game"
 msgstr "Denne utfordringen er ikke tilgjengelig i prøveversjonen av spillet"
 
 #: engines/lure/detection.cpp:44 engines/mads/detection.cpp:123
-#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:1137
+#: engines/sherlock/detection.cpp:131 engines/twine/detection.cpp:551
 msgid "TTS Narrator"
 msgstr "Tekst til tale-forteller"
 
@@ -8052,98 +8052,98 @@ msgstr "Er du sikker på at du vil avslutte?"
 msgid "Unable to locate the '%s' data file."
 msgstr "Kunne ikke finne datafilen '%s'."
 
-#: engines/twine/detection.cpp:272
+#: engines/twine/detection.cpp:187
 msgid "This version requires Giflib which was not compiled into ScummVM"
 msgstr ""
 "Denne versjonen krever Giflib som ikke har blitt innkompilert i ScummVM"
 
-#: engines/twine/detection.cpp:1014
+#: engines/twine/detection.cpp:428
 msgid "Enable wall collisions"
 msgstr "Aktiver veggkollisjoner"
 
-#: engines/twine/detection.cpp:1015
+#: engines/twine/detection.cpp:429
 msgid "Enable the original wall collision damage"
 msgstr "Aktiver veggkollisjonsskade fra originalen"
 
-#: engines/twine/detection.cpp:1026
+#: engines/twine/detection.cpp:440
 msgid "Disable save menu"
 msgstr "Skru av lagringsmeny"
 
-#: engines/twine/detection.cpp:1027
+#: engines/twine/detection.cpp:441
 msgid ""
 "The original only had autosaves. This allows you to save whenever you want."
 msgstr ""
 "Originalen hadde kun automatisk lagring. Dette lar deg lagre når du vil."
 
-#: engines/twine/detection.cpp:1037
+#: engines/twine/detection.cpp:451
 msgid "Enable debug mode"
 msgstr "Aktiver debug-modus"
 
-#: engines/twine/detection.cpp:1038
+#: engines/twine/detection.cpp:452
 msgid "Enable the debug mode"
 msgstr "Aktiver debug-modusen"
 
-#: engines/twine/detection.cpp:1048
+#: engines/twine/detection.cpp:462
 msgid "Enable audio CD"
 msgstr "Tillat CD-lyd"
 
-#: engines/twine/detection.cpp:1049
+#: engines/twine/detection.cpp:463
 msgid "Enable the original audio cd track"
 msgstr "Aktiver det opprinnelige CD-lydsporet"
 
-#: engines/twine/detection.cpp:1059
+#: engines/twine/detection.cpp:473
 msgid "Enable sound"
 msgstr "Aktiver lyd"
 
-#: engines/twine/detection.cpp:1060
+#: engines/twine/detection.cpp:474
 msgid "Enable the sound for the game"
 msgstr "Aktiver lyden i spillet"
 
-#: engines/twine/detection.cpp:1070
+#: engines/twine/detection.cpp:484
 msgid "Enable voices"
 msgstr "Aktiver stemmer"
 
-#: engines/twine/detection.cpp:1071
+#: engines/twine/detection.cpp:485
 msgid "Enable the voices for the game"
 msgstr "Aktiver stemmene i spillet"
 
-#: engines/twine/detection.cpp:1081
+#: engines/twine/detection.cpp:495
 msgid "Enable text"
 msgstr "Aktiver tekst"
 
-#: engines/twine/detection.cpp:1082
+#: engines/twine/detection.cpp:496
 msgid "Enable the text for the game"
 msgstr "Aktiver teksten i spillet"
 
-#: engines/twine/detection.cpp:1092
+#: engines/twine/detection.cpp:506
 msgid "Enable movies"
 msgstr "Aktiver filmklipp"
 
-#: engines/twine/detection.cpp:1093
+#: engines/twine/detection.cpp:507
 msgid "Enable the cutscenes for the game"
 msgstr "Aktiver mellomsekvensene i spillet"
 
-#: engines/twine/detection.cpp:1103
+#: engines/twine/detection.cpp:517
 msgid "Enable mouse"
 msgstr "Aktiver mus"
 
-#: engines/twine/detection.cpp:1104
+#: engines/twine/detection.cpp:518
 msgid "Enable the mouse for the UI"
 msgstr "Aktiver mus for brukergrensesnittet"
 
-#: engines/twine/detection.cpp:1114
+#: engines/twine/detection.cpp:528
 msgid "Use the USA version"
 msgstr "Bruk den amerikanske utgaven"
 
-#: engines/twine/detection.cpp:1115
+#: engines/twine/detection.cpp:529
 msgid "Enable the USA specific version flags"
 msgstr "Bruk versjonsflaggene til den amerikanske utgaven"
 
-#: engines/twine/detection.cpp:1125 engines/ultima/detection.cpp:99
+#: engines/twine/detection.cpp:539 engines/ultima/detection.cpp:99
 msgid "Enable high resolution"
 msgstr "Aktiver høy oppløsning"
 
-#: engines/twine/detection.cpp:1126 engines/ultima/detection.cpp:100
+#: engines/twine/detection.cpp:540 engines/ultima/detection.cpp:100
 msgid "Enable a higher resolution for the game"
 msgstr "Aktiver en høyere oppløsning i spillet"
 
