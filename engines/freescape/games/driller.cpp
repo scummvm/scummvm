@@ -340,20 +340,20 @@ void DrillerEngine::drawUI() {
 	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 
 	Graphics::Surface *surface = nullptr;
-	if (_currentAreaMessages.size() == 2) {
+	if (_border) {
 		surface = new Graphics::Surface();
 		surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
 		surface->fillRect(_fullscreenViewArea, gray);
+	}
 
+	if (_currentAreaMessages.size() == 2) {
 		int score = _gameStateVars[k8bitVariableScore];
-
 		drawStringInSurface(_currentAreaMessages[0], 196, 177, yellow, black, surface);
 		drawStringInSurface(_currentAreaMessages[1], 196, 185, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.x())), 150, 145, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.z())), 150, 153, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%04d", 2 * int(_position.y())), 150, 161, yellow, black, surface);
 		drawStringInSurface(Common::String::format("%d", _playerHeightNumber), 57, 161, yellow, black, surface);
-
 		drawStringInSurface(Common::String::format("%07d", score), 240, 129, yellow, black, surface);
 	}
 
