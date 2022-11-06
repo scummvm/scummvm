@@ -30,26 +30,40 @@
 namespace Watchmaker {
 
 struct t3dBODY {
-	Common::String				 name; // room name
-	uint32                       NumMeshes() { return MeshTable.size(); };                    // num meshes
-	uint32                       NumCameras() const { return CameraTable.size(); }            // num cameras
-	uint16                       NumPaths() const { return CameraPath.size(); }               // num camera paths
-	uint32                       NumLights() const { return LightTable.size(); }              // num lights
+	Common::String               name; // room name
+	uint32                       NumMeshes() {
+		return MeshTable.size();
+	};                    // num meshes
+	uint32                       NumCameras() const {
+		return CameraTable.size();    // num cameras
+	}
+	uint16                       NumPaths() const {
+		return CameraPath.size();    // num camera paths
+	}
+	uint32                       NumLights() const {
+		return LightTable.size();    // num lights
+	}
 	uint16                       NumPanels[T3D_MAX_LEVELS] = {};  // num panels per level
 	uint16                       NumNormals = 0;          // num face normals
 	uint16                       NumVerticesNormals = 0;  // num vertex normals
-	uint16                       NumPosLights() const { return PosLightTable.size(); };           // num positional lights
+	uint16                       NumPosLights() const {
+		return PosLightTable.size();
+	};           // num positional lights
 	uint16                       NumLevels = 0;         // num panel levels
 	uint16                       CurLevel = 0;          // current level
 	uint32                       NumTotVerts = 0;       // total number of verts in room
 	t3dV3F                       AmbientLight;          // room ambient color
-	Common::Array<t3dMESH>         MeshTable;			    // meshes list
-	MaterialTable		         MatTable;              // materials list
-	uint32                       NumMaterials() const { return MatTable.size(); }           // num materials
-	MaterialTable		         LightmapTable;         // lightmap material list
+	Common::Array<t3dMESH>         MeshTable;               // meshes list
+	MaterialTable                MatTable;              // materials list
+	uint32                       NumMaterials() const {
+		return MatTable.size();    // num materials
+	}
+	MaterialTable                LightmapTable;         // lightmap material list
 	uint32                       NumLightmaps = 0;      // num lightmap materials
-	MaterialTable		         MirrorMatTable;        // material list (for mirrors)
-	uint32                       NumMirrorMaterials() const { return MirrorMatTable.size(); };     // num materials (for mirror)
+	MaterialTable                MirrorMatTable;        // material list (for mirrors)
+	uint32                       NumMirrorMaterials() const {
+		return MirrorMatTable.size();
+	};     // num materials (for mirror)
 private:
 	Common::Array<Common::SharedPtr<VertexBuffer>>    VBTable; // metrial vertex buffers list
 public:
@@ -63,19 +77,21 @@ public:
 		}
 		VBTable.clear();
 	}
-	uint32                       NumVB() { return VBTable.size(); };             // num vertex buffer
+	uint32                       NumVB() {
+		return VBTable.size();
+	};             // num vertex buffer
 public:
 	Common::Array<t3dCAMERA>       CameraTable;           // camera list
 	Common::Array<t3dLIGHT>        LightTable;            // light list
 	Common::Array<t3dPLIGHT>       PosLightTable;         // positional light list
-	NormalList				     NList;                 // normal list
+	NormalList                   NList;                 // normal list
 	t3dCAMERAGRID                CameraGrid;             // camera grid
 	Common::Array<t3dCAMERAPATH>   CameraPath;            // camer paths list
-	t3dPAN          			 *Panel[T3D_MAX_LEVELS] = {}; // room panels for level
-	t3dF32          			 PanelHeight[T3D_MAX_LEVELS] = {};        // panel height for levels
+	t3dPAN                       *Panel[T3D_MAX_LEVELS] = {}; // room panels for level
+	t3dF32                       PanelHeight[T3D_MAX_LEVELS] = {};        // panel height for levels
 	Common::SharedPtr<t3dVolLights> VolumetricLights;                  // volumetric lights
-	t3dMESH         			 *BlockMeshes[T3D_MAX_BLOCK_MESHES] = {}; // block mesh (for external rooms)
-	t3dV3F          			 MinPos;                             // min room position
+	t3dMESH                      *BlockMeshes[T3D_MAX_BLOCK_MESHES] = {}; // block mesh (for external rooms)
+	t3dV3F                       MinPos;                             // min room position
 private:
 	void allocateNormals();
 	void initNormals(Common::SeekableReadStream &stream);

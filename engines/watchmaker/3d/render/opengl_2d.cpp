@@ -119,37 +119,31 @@ void rResetExtends(void) {
 // TODO: Move this to Renderer
 extern Rect gBlitterViewport;
 bool gClipToBlitterViewport(int *sposx, int *sposy, int *sdimx, int *sdimy,
-							int *dposx, int *dposy )
-{
+                            int *dposx, int *dposy) {
 	int dwWidth, dwHeight;
 
-	dwWidth=(gBlitterViewport.right-gBlitterViewport.left);
-	dwHeight=(gBlitterViewport.bottom-gBlitterViewport.top);
+	dwWidth = (gBlitterViewport.right - gBlitterViewport.left);
+	dwHeight = (gBlitterViewport.bottom - gBlitterViewport.top);
 
-	if ( ((*dposx)+(*sdimx))>dwWidth)
-	{
-		(*sdimx)=(*sdimx)-((*dposx)+(*sdimx)-dwWidth);
+	if (((*dposx) + (*sdimx)) > dwWidth) {
+		(*sdimx) = (*sdimx) - ((*dposx) + (*sdimx) - dwWidth);
 	}
-	if ( ((*dposy)+(*sdimy))>dwHeight)
-	{
-		(*sdimy)=(*sdimy)-((*dposy)+(*sdimy)-dwHeight);
+	if (((*dposy) + (*sdimy)) > dwHeight) {
+		(*sdimy) = (*sdimy) - ((*dposy) + (*sdimy) - dwHeight);
 	}
 
-	if ( (*dposx)<gBlitterViewport.left)
-	{
-		(*sposx)+=gBlitterViewport.left-(*dposx);
-		(*sdimx)-=gBlitterViewport.left-(*dposx);
-		(*dposx)=gBlitterViewport.left;
+	if ((*dposx) < gBlitterViewport.left) {
+		(*sposx) += gBlitterViewport.left - (*dposx);
+		(*sdimx) -= gBlitterViewport.left - (*dposx);
+		(*dposx) = gBlitterViewport.left;
 	}
-	if ( (*dposy)<gBlitterViewport.top)
-	{
-		(*sposy)+=gBlitterViewport.top-(*dposy);
-		(*sdimy)-=gBlitterViewport.top-(*dposy);
-		(*dposy)=gBlitterViewport.top;
+	if ((*dposy) < gBlitterViewport.top) {
+		(*sposy) += gBlitterViewport.top - (*dposy);
+		(*sdimy) -= gBlitterViewport.top - (*dposy);
+		(*dposy) = gBlitterViewport.top;
 	}
 
-	if(((*sdimx)<=0) || ((*sdimy)<=0))
-	{
+	if (((*sdimx) <= 0) || ((*sdimy) <= 0)) {
 		return false;
 	}
 
@@ -176,7 +170,7 @@ void exit2Dmode() {
 
 void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 	checkGlError("Entering renderTexture");
-	glClearColor(0,0,1,0);
+	glClearColor(0, 0, 1, 0);
 	glEnable(GL_TEXTURE_2D);
 	glEnable(GL_ALPHA_TEST);
 	glDisable(GL_DEPTH_TEST);
@@ -189,9 +183,9 @@ void renderTexture(WGame &game, gTexture &bitmap, Rect srcRect, Rect dstRect) {
 	glTranslatef(0, 0, 0.0);
 
 	float bottomSrc = ((float)srcRect.bottom) / bitmap.RealDimY;
-	float topSrc =    ((float)srcRect.top) / bitmap.RealDimY;
-	float leftSrc =   ((float)srcRect.left) / bitmap.RealDimX;
-	float rightSrc =  ((float)srcRect.right) / bitmap.RealDimX;
+	float topSrc = ((float)srcRect.top) / bitmap.RealDimY;
+	float leftSrc = ((float)srcRect.left) / bitmap.RealDimX;
+	float rightSrc = ((float)srcRect.right) / bitmap.RealDimX;
 
 	Rect viewport = game._renderer->_viewport;
 	float bottomDst = 1.0 - ((dstRect.bottom == 0 ? 0 : ((double)dstRect.bottom) / viewport.height()) * 2.0);
@@ -268,7 +262,7 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	}
 
 	if ((dposx >= dwWidth) || (dposy >= dwHeight) || (sposx >= dwWidth) || (sposy >= dwHeight) ||
-		((dposx + sdimx) <= 0) || ((dposy + sdimy) <= 0) || ((sposx + sdimx) <= 0) || ((sposy + sdimy) <= 0)) {
+	        ((dposx + sdimx) <= 0) || ((dposy + sdimy) <= 0) || ((sposx + sdimx) <= 0) || ((sposy + sdimy) <= 0)) {
 		return;
 	}
 
@@ -289,22 +283,21 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	{
 		Rect srcRect;
 		// Source rect
-		srcRect.top=sposy;
-		srcRect.left=sposx;
-		srcRect.right= sposx + sdimx;
-		srcRect.bottom= sposy + sdimy;
+		srcRect.top = sposy;
+		srcRect.left = sposx;
+		srcRect.right = sposx + sdimx;
+		srcRect.bottom = sposy + sdimy;
 
 		Rect dstRect;
 		// Destination rect
 		// Convention in dpos is that 0,0 is upper left hand corner, increasing down the y-axis.
-		dstRect.top=dposy;
-		dstRect.left=dposx;
-		dstRect.right= dposx + sdimx;
-		dstRect.bottom= dposy + sdimy;
-		if(((dstRect.bottom - dstRect.top) <= 0) || ((dstRect.right - dstRect.left ) <= 0) || ((srcRect.bottom - srcRect.top) <= 0) || ((srcRect.right - srcRect.left ) <= 0) ||
-		   (dstRect.right <= 0) || (srcRect.right <= 0) || (dstRect.bottom < 0) || (srcRect.bottom < 0) )
-		{
-//	   	DebugLogWindow("gBlitter: blit not needed: dimx:%d dimy:%d", ( sr.top-sr.bottom ),( sr.left-sr.right ));
+		dstRect.top = dposy;
+		dstRect.left = dposx;
+		dstRect.right = dposx + sdimx;
+		dstRect.bottom = dposy + sdimy;
+		if (((dstRect.bottom - dstRect.top) <= 0) || ((dstRect.right - dstRect.left) <= 0) || ((srcRect.bottom - srcRect.top) <= 0) || ((srcRect.right - srcRect.left) <= 0) ||
+		        (dstRect.right <= 0) || (srcRect.right <= 0) || (dstRect.bottom < 0) || (srcRect.bottom < 0)) {
+//	     DebugLogWindow("gBlitter: blit not needed: dimx:%d dimy:%d", ( sr.top-sr.bottom ),( sr.left-sr.right ));
 			return;
 		}
 		dstBitmap.blitInto(&bitmap, srcRect, dstRect);

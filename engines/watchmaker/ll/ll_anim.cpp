@@ -1698,8 +1698,8 @@ void StopObjAnim(WGame &game, int32 obj) {
 //	Se esiste gia' un'animazione sullo stesso oggetto base, la termina
 	for (int32 b = 0; b < MAX_ACTIVE_ANIMS; b++)
 		if ((ActiveAnim[b].index) && (ActiveAnim[b].CurFrame >= 0)/* && !( ActiveAnim[b].flags & ANIM_PAUSED )*/ &&
-		        ((Common::String((const char*)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char*)init.Obj[obj].meshlink[0])) || (ActiveAnim[b].obj == obj) ||
-		         ((CurPlayer == obj - ocDARRELL) && (Common::String((const char*)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char*)init.Obj[ocCURPLAYER].meshlink[0]))
+		        ((Common::String((const char *)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char *)init.Obj[obj].meshlink[0])) || (ActiveAnim[b].obj == obj) ||
+		         ((CurPlayer == obj - ocDARRELL) && (Common::String((const char *)init.Anim[ActiveAnim[b].index].meshlink[0].rawArray()).equalsIgnoreCase((const char *)init.Obj[ocCURPLAYER].meshlink[0]))
 		          && (ActiveAnim[b].sub[0].ptr) && Player && Player->Mesh && (ActiveAnim[b].sub[0].ptr == Player->Mesh))))
 			StopAnim(game, ActiveAnim[b].index);
 }

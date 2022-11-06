@@ -98,10 +98,10 @@ void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, int V
 
 void OpenGLRenderer::drawIndexedPrimitivesVBO(PrimitiveType primitiveType, gBatchBlock &bb) {
 	drawIndexedPrimitivesVBO(primitiveType,
-		                         bb.VBO, 0, bb.NumVerts(),
-		                         bb.FacesList,
-		                         bb.NumFaces()/*, 0x0*/
-		                        );
+	                         bb.VBO, 0, bb.NumVerts(),
+	                         bb.FacesList,
+	                         bb.NumFaces()/*, 0x0*/
+	                        );
 }
 
 void OpenGLRenderer::setTransformMatrix(TransformMatrix which, const Matrix4x4 &matrix) {
@@ -132,14 +132,14 @@ void OpenGLRenderer::popModelView() {
 void OpenGLRenderer::setTextureWrapMode(int index, TextureWrapMode mode) {
 	GLint openGlWrapMode = 0;
 	switch (mode) {
-		case TextureWrapMode::WRAP:
-			openGlWrapMode = GL_REPEAT;
-			break;
-		case TextureWrapMode::CLAMP:
-			openGlWrapMode = GL_CLAMP;
-			break;
-		default:
-			assert(0);
+	case TextureWrapMode::WRAP:
+		openGlWrapMode = GL_REPEAT;
+		break;
+	case TextureWrapMode::CLAMP:
+		openGlWrapMode = GL_CLAMP;
+		break;
+	default:
+		assert(0);
 	}
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, openGlWrapMode);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, openGlWrapMode);
@@ -166,15 +166,17 @@ void setGlFeature(GLint feature, bool state) {
 
 void OpenGLRenderer::setRenderState(RenderState state, int value) {
 	switch (state) {
-		case RenderState::ZENABLE: {
-			glDepthFunc(GL_LEQUAL);
-			setGlFeature(GL_DEPTH_TEST, value);
-			break;
-		}
-		case RenderState::ALPHAREF: { // ALPHA-func is never changed.
-			glAlphaFunc(GL_ALWAYS, value);
-		}
-		case RenderState::ALPHABLEND: setGlFeature(GL_BLEND, value); break; // TODO
+	case RenderState::ZENABLE: {
+		glDepthFunc(GL_LEQUAL);
+		setGlFeature(GL_DEPTH_TEST, value);
+		break;
+	}
+	case RenderState::ALPHAREF: { // ALPHA-func is never changed.
+		glAlphaFunc(GL_ALWAYS, value);
+	}
+	case RenderState::ALPHABLEND:
+		setGlFeature(GL_BLEND, value);
+		break; // TODO
 
 	}
 	//warning("TODO: Implement setRenderState");
@@ -182,16 +184,24 @@ void OpenGLRenderer::setRenderState(RenderState state, int value) {
 
 GLenum translateBlendFactorToGL(BlendFactor factor) {
 	switch (factor) {
-		case BlendFactor::ONE: return GL_ONE;
-		case BlendFactor::ZERO: return GL_ZERO;
-		case BlendFactor::SRCALPHA: return GL_SRC_ALPHA;
-		case BlendFactor::INVSRCALPHA: return GL_ONE_MINUS_SRC_ALPHA;
-		case BlendFactor::INVSRCCOLOR: return GL_ONE_MINUS_SRC_COLOR;
-		case BlendFactor::SRCCOLOR: return GL_SRC_COLOR;
-		case BlendFactor::DESTCOLOR: return GL_DST_COLOR;
-		case BlendFactor::INVDESTCOLOR: return GL_ONE_MINUS_DST_COLOR;
-		default:
-			assert(false);
+	case BlendFactor::ONE:
+		return GL_ONE;
+	case BlendFactor::ZERO:
+		return GL_ZERO;
+	case BlendFactor::SRCALPHA:
+		return GL_SRC_ALPHA;
+	case BlendFactor::INVSRCALPHA:
+		return GL_ONE_MINUS_SRC_ALPHA;
+	case BlendFactor::INVSRCCOLOR:
+		return GL_ONE_MINUS_SRC_COLOR;
+	case BlendFactor::SRCCOLOR:
+		return GL_SRC_COLOR;
+	case BlendFactor::DESTCOLOR:
+		return GL_DST_COLOR;
+	case BlendFactor::INVDESTCOLOR:
+		return GL_ONE_MINUS_DST_COLOR;
+	default:
+		assert(false);
 	}
 }
 

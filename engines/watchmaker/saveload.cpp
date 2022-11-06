@@ -41,7 +41,7 @@
 #include "watchmaker/windows_hacks.h"
 #include <cstdlib>
 
-#define WM_SAVEFILE_VERSION		0x17 // Don't know what changed though.
+#define WM_SAVEFILE_VERSION     0x17 // Don't know what changed though.
 
 namespace Watchmaker {
 
@@ -322,7 +322,7 @@ bool DataLoad(WGame &game, const Common::String &FileName, uint8 slot) {
 	if (!FileName.equalsIgnoreCase("WmStart.dat"))
 		if (
 		    (bPlayerInAnim && (bT2DActive != tOPTIONS))
-			|| bUseWith || bDialogActive || bDialogMenuActive || bMovingCamera || bGolfActive || InvStatus
+		    || bUseWith || bDialogActive || bDialogMenuActive || bMovingCamera || bGolfActive || InvStatus
 		)
 			return FALSE;
 

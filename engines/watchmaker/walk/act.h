@@ -38,7 +38,7 @@ bool CharGotoPosition(WGame &game, int32 oc, uint8 pos, uint8 back, int32 anim);
 void FixPos(int32 oc);
 void UpdateLook(int32 oc);
 void BuildStepList(int32 oc, uint8 dp, uint8 back);
-void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot );
+void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot);
 
 } // End of namespace Watchmaker
 

@@ -31,11 +31,11 @@ Fonts::~Fonts() {
 	}
 }
 
-uint16* Fonts::setupFontTable(Common::SeekableReadStream &stream) {
+uint16 *Fonts::setupFontTable(Common::SeekableReadStream &stream) {
 	uint32 dim = stream.size();
-	uint16 *tab = new uint16[dim]{};
+	uint16 *tab = new uint16[dim] {};
 
-	for (int i=0; i<dim/sizeof(uint16); i++) {
+	for (int i = 0; i < dim / sizeof(uint16); i++) {
 		tab[i] = stream.readUint16LE();
 	}
 
@@ -98,7 +98,7 @@ void Fonts::getTextDim(char *s, FontKind font, int *x, int *y) {
 	int i = 0;
 	int nextx = 0, nexty = 0;
 	byte c = 0;
-	while ( (c=s[i]) != 0) {
+	while ((c = s[i]) != 0) {
 		i++;
 
 		nextx += fontTable->table[c * 4 + 2];

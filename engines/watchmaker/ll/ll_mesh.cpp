@@ -299,55 +299,48 @@ uint8 t3dVectMeshInters(t3dMESH *m, t3dV3F start, t3dV3F end, t3dV3F *inters) {
 
 
 /* -----------------19/05/00 12.43-------------------
- * 				t3dMoveAndCheck1stCamera
+ *              t3dMoveAndCheck1stCamera
  * --------------------------------------------------*/
-bool t3dMoveAndCheck1stCamera( t3dBODY *rr, t3dCAMERA *cc, t3dV3F *mm )
-{
+bool t3dMoveAndCheck1stCamera(t3dBODY *rr, t3dCAMERA *cc, t3dV3F *mm) {
 	t3dWALK *w;
 	t3dV3F tmp;
-	int32 i,j;
+	int32 i, j;
 
-	if ( !Character[ocCURPLAYER] ) return FALSE;
-	w=&Character[ocCURPLAYER]->Walk;
+	if (!Character[ocCURPLAYER]) return FALSE;
+	w = &Character[ocCURPLAYER]->Walk;
 
-	t3dVectAdd( &tmp, &cc->Source, mm );
+	t3dVectAdd(&tmp, &cc->Source, mm);
 //	Controlla che non sia dentro un Bounding Box
-	for ( i=0; i<(int32)rr->NumMeshes(); i++ )
-	{
+	for (i = 0; i < (int32)rr->NumMeshes(); i++) {
 		t3dMESH &mesh = rr->MeshTable[i];
-		if( !( mesh.Flags & T3D_MESH_HIDDEN ) )
-		{
+		if (!(mesh.Flags & T3D_MESH_HIDDEN)) {
 //			Se il punto di destinazione e' dentro il bound box (allargato dell'altezza del ginocchio)
-			for ( j=0; j<6; j++ )
-				if( t3dVectPlaneDistance( tmp, mesh.BBoxNormal[j] ) < -KNEE_HEIGHT )
+			for (j = 0; j < 6; j++)
+				if (t3dVectPlaneDistance(tmp, mesh.BBoxNormal[j]) < -KNEE_HEIGHT)
 					break;
 
-			if ( j >= 6 )
-			{
+			if (j >= 6) {
 //				Prima controlla che non sia dentro i bounds
-				for ( j=0; j<w->PanelNum; j++ )
-				{
-					if ( PointInside( ocCURPLAYER, j, (double)tmp.x, (double)tmp.z ) != 0 )
-					{
-						warning( "Inters %s", mesh.name.c_str() ); // TODO: Debug
+				for (j = 0; j < w->PanelNum; j++) {
+					if (PointInside(ocCURPLAYER, j, (double)tmp.x, (double)tmp.z) != 0) {
+						warning("Inters %s", mesh.name.c_str());   // TODO: Debug
 						return FALSE;
 					}
 				}
-				warning( "Saved by bounds" ); // TODO: Debug
+				warning("Saved by bounds");   // TODO: Debug
 			}
 		}
 	}
 
 //	evito che si entri nell'altro personaggio giocante
 	i = (CurPlayer ^ 1);
-	if ( Character[i+ocDARRELL] && Character[i+ocDARRELL]->Mesh && t3dCurRoom->name.equalsIgnoreCase(PlayerStand[i].roomName ) ) // Used to be stricmp
-	{
-		t3dF32 d=t3dVectDistance( &tmp, &Character[i+ocDARRELL]->Mesh->Trasl );
-		if( d < 435.f )	return FALSE;
+	if (Character[i + ocDARRELL] && Character[i + ocDARRELL]->Mesh && t3dCurRoom->name.equalsIgnoreCase(PlayerStand[i].roomName)) { // Used to be stricmp
+		t3dF32 d = t3dVectDistance(&tmp, &Character[i + ocDARRELL]->Mesh->Trasl);
+		if (d < 435.f)  return FALSE;
 	}
 
-	t3dVectAdd( &cc->Source, &cc->Source, mm );
-	t3dVectAdd( &cc->Target, &cc->Target, mm );
+	t3dVectAdd(&cc->Source, &cc->Source, mm);
+	t3dVectAdd(&cc->Target, &cc->Target, mm);
 	return TRUE;
 }
 
@@ -726,7 +719,7 @@ void AddMeshModifier(const Common::String &name, int16 com, void *p) {
 
 	case MM_ANIM_BLOCK:
 		if (mm->animName.empty())
-			mm->animName = (char*)p;
+			mm->animName = (char *)p;
 		else
 			mm->animName.clear();
 		break;

@@ -46,20 +46,19 @@
 
 namespace Watchmaker {
 
-t3dF32 AngleX,AngleY,AngleSpeed;
+t3dF32 AngleX, AngleY, AngleSpeed;
 char bFastAnim = 0;
-int32 PlayAnim=351;
-char bBilinear=1;
-char bForceDebug=0;
+int32 PlayAnim = 351;
+char bBilinear = 1;
+char bForceDebug = 0;
 unsigned char KeyTable[256];
 
 uint16 bnd_lev;
 
-extern int16 NextDlg;	//from doDialog.c
-extern uint8 tasti_per_sfx1;	//from main.c
+extern int16 NextDlg;   //from doDialog.c
+extern uint8 tasti_per_sfx1;    //from main.c
 
-void ProcessKBInput()
-{
+void ProcessKBInput() {
 	// TODO: Currently we're polling this in the PollEvent flow.
 	return;
 #if 0
@@ -70,11 +69,10 @@ void ProcessKBInput()
 		KeyTable[i] = keyState[i];
 	}
 
-	for (int i=0; i<numKeys; i++ )
-	{
-		if( keyState[i] )
+	for (int i = 0; i < numKeys; i++) {
+		if (keyState[i])
 			KeyTable[i] = 0x80;
-		else if( ( KeyTable[i] != 0 ) && ( !keyState[i] ) )
+		else if ((KeyTable[i] != 0) && (!keyState[i]))
 			KeyTable[i] = 0x10;
 		else
 			KeyTable[i] = 0x00;
@@ -82,37 +80,31 @@ void ProcessKBInput()
 #endif
 }
 
-bool KeyDown(unsigned char key)
-{
-	if(KeyTable[(key)] & 0x80)
+bool KeyDown(unsigned char key) {
+	if (KeyTable[(key)] & 0x80)
 		return TRUE;
 	else
 		return FALSE;
 }
 
-bool KeyUp(unsigned char key)
-{
-	if(KeyTable[(key)] & 0x10)
-	{
-		KeyTable[(key)]=0;
+bool KeyUp(unsigned char key) {
+	if (KeyTable[(key)] & 0x10) {
+		KeyTable[(key)] = 0;
 		return TRUE;
-	}
-	else
+	} else
 		return FALSE;
 }
 
-void KeyClear(unsigned char key)
-{
-	KeyTable[(key)]=0;
+void KeyClear(unsigned char key) {
+	KeyTable[(key)] = 0;
 }
 
-bool DInputExclusiveMouse()
-{
+bool DInputExclusiveMouse() {
 #if 0
-	HWND hwnd=GetForegroundWindow();
+	HWND hwnd = GetForegroundWindow();
 
 	g_pMouse->lpVtbl->Unacquire(g_pMouse);
-	if( FAILED( g_pMouse->lpVtbl->SetCooperativeLevel( g_pMouse, hwnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND) ) )
+	if (FAILED(g_pMouse->lpVtbl->SetCooperativeLevel(g_pMouse, hwnd, DISCL_EXCLUSIVE | DISCL_FOREGROUND)))
 		return FALSE;
 	g_pMouse->lpVtbl->Acquire(g_pMouse);
 #endif
@@ -121,13 +113,12 @@ bool DInputExclusiveMouse()
 	return TRUE;
 }
 
-bool DInputNonExclusiveMouse()
-{
+bool DInputNonExclusiveMouse() {
 #if 0
-	HWND hwnd=GetForegroundWindow();
+	HWND hwnd = GetForegroundWindow();
 
 	g_pMouse->lpVtbl->Unacquire(g_pMouse);
-	if( FAILED( g_pMouse->lpVtbl->SetCooperativeLevel( g_pMouse, hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND) ) )
+	if (FAILED(g_pMouse->lpVtbl->SetCooperativeLevel(g_pMouse, hwnd, DISCL_NONEXCLUSIVE | DISCL_FOREGROUND)))
 		return FALSE;
 	g_pMouse->lpVtbl->Acquire(g_pMouse);
 #endif
@@ -137,106 +128,99 @@ bool DInputNonExclusiveMouse()
 }
 
 /* -----------------25/08/98 10.42-------------------
- * 					HandleFirstPerson
+ *                  HandleFirstPerson
  * --------------------------------------------------*/
-void HandleFirstPersonView( void )
-{
+void HandleFirstPersonView(void) {
 	t3dF32 dist;
-	t3dV3F d,n;
+	t3dV3F d, n;
 
-	if( ( !Player ) || ( !t3dCurCamera ) || ( bLockCamera ) ) return;
+	if ((!Player) || (!t3dCurCamera) || (bLockCamera)) return;
 
-	if( KeyDown(Common::KEYCODE_a) )			// Alza testa
-	{
-		if( ( dist = CurFloorY+MAX_HEIGHT - ( t3dCurCamera->Source.y + 10*SCALEFACTOR ) ) > 0 )
-		{
-			if( dist > 10*SCALEFACTOR ) dist = 10*SCALEFACTOR;
-			t3dVectInit( &d, 0.0f, dist, 0.0f );
-			t3dMoveAndCheck1stCamera( t3dCurRoom, t3dCurCamera, &d );
+	if (KeyDown(Common::KEYCODE_a)) {        // Alza testa
+		if ((dist = CurFloorY + MAX_HEIGHT - (t3dCurCamera->Source.y + 10 * SCALEFACTOR)) > 0) {
+			if (dist > 10 * SCALEFACTOR) dist = 10 * SCALEFACTOR;
+			t3dVectInit(&d, 0.0f, dist, 0.0f);
+			t3dMoveAndCheck1stCamera(t3dCurRoom, t3dCurCamera, &d);
 		}
-	}
-	else if( KeyDown(Common::KEYCODE_z) )		// Abbassa Testa
-	{
-		if( ( dist = CurFloorY+KNEE_HEIGHT - ( t3dCurCamera->Source.y - 10*SCALEFACTOR ) ) < 0 )
-		{
-			if( dist < -10*SCALEFACTOR ) dist = -10*SCALEFACTOR;
-			t3dVectInit( &d, 0.0f, dist, 0.0f );
-			t3dMoveAndCheck1stCamera( t3dCurRoom, t3dCurCamera, &d );
+	} else if (KeyDown(Common::KEYCODE_z)) {     // Abbassa Testa
+		if ((dist = CurFloorY + KNEE_HEIGHT - (t3dCurCamera->Source.y - 10 * SCALEFACTOR)) < 0) {
+			if (dist < -10 * SCALEFACTOR) dist = -10 * SCALEFACTOR;
+			t3dVectInit(&d, 0.0f, dist, 0.0f);
+			t3dMoveAndCheck1stCamera(t3dCurRoom, t3dCurCamera, &d);
 		}
 	}
 
 //	Se tengo premuto lo shift o un tasto del mouse
-	if( KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT) || ( ( bLPressed || bRPressed ) && (mMove>10) ) )
-	{
-		t3dVectSub( &d, &t3dCurCamera->Target, &t3dCurCamera->Source );d.y = 0.0f;
-		t3dVectNormalize( &d );
-		n.x = -d.z;n.y = 0.0f;n.z = d.x;
+	if (KeyDown(Common::KEYCODE_LSHIFT) || KeyDown(Common::KEYCODE_RSHIFT) || ((bLPressed || bRPressed) && (mMove > 10))) {
+		t3dVectSub(&d, &t3dCurCamera->Target, &t3dCurCamera->Source);
+		d.y = 0.0f;
+		t3dVectNormalize(&d);
+		n.x = -d.z;
+		n.y = 0.0f;
+		n.z = d.x;
 
-		dist = (t3dF32)( (t3dF32)mMoveY / (t3dF32)( MainDy/2 ) )*100.0f;
-		if( KeyDown(Common::KEYCODE_UP) )
-			d *= (5*SCALEFACTOR );
-		else if( KeyDown(Common::KEYCODE_DOWN) )
-			d *= (-5*SCALEFACTOR );
-		else if( ( (bLPressed) || (bRPressed) ) && (mMoveY) && !bClock33 )
-			d *= (-dist*SCALEFACTOR );
+		dist = (t3dF32)((t3dF32)mMoveY / (t3dF32)(MainDy / 2)) * 100.0f;
+		if (KeyDown(Common::KEYCODE_UP))
+			d *= (5 * SCALEFACTOR);
+		else if (KeyDown(Common::KEYCODE_DOWN))
+			d *= (-5 * SCALEFACTOR);
+		else if (((bLPressed) || (bRPressed)) && (mMoveY) && !bClock33)
+			d *= (-dist * SCALEFACTOR);
 		else
-			t3dVectFill( &d, 0.0f );
+			t3dVectFill(&d, 0.0f);
 
-		dist = (t3dF32)( (t3dF32)mMoveX / (t3dF32)( MainDx/2 ) )*100.0f;
-		if( KeyDown(Common::KEYCODE_LEFT) )
-			n *= (5*SCALEFACTOR );
-		else if( KeyDown(Common::KEYCODE_RIGHT) )
-			n *= (-5*SCALEFACTOR );
-		else if( ( (bLPressed) || (bRPressed) ) && (mMoveX) && !bClock33 )
-			n *= (-dist*SCALEFACTOR );
+		dist = (t3dF32)((t3dF32)mMoveX / (t3dF32)(MainDx / 2)) * 100.0f;
+		if (KeyDown(Common::KEYCODE_LEFT))
+			n *= (5 * SCALEFACTOR);
+		else if (KeyDown(Common::KEYCODE_RIGHT))
+			n *= (-5 * SCALEFACTOR);
+		else if (((bLPressed) || (bRPressed)) && (mMoveX) && !bClock33)
+			n *= (-dist * SCALEFACTOR);
 		else
-			t3dVectFill( &n, 0.0f );
+			t3dVectFill(&n, 0.0f);
 
-		t3dVectAdd( &d, &d, &n );
-		t3dMoveAndCheck1stCamera( t3dCurRoom, t3dCurCamera, &d );
-	}
-	else
-	{
-		int32 x,y;
+		t3dVectAdd(&d, &d, &n);
+		t3dMoveAndCheck1stCamera(t3dCurRoom, t3dCurCamera, &d);
+	} else {
+		int32 x, y;
 		x = 0;
 		y = 0;
 
-		if( KeyDown(Common::KEYCODE_UP) )
+		if (KeyDown(Common::KEYCODE_UP))
 			y = -10;
-		else if( KeyDown(Common::KEYCODE_DOWN) )
-			y = MainDy+10;
-		if( KeyDown(Common::KEYCODE_LEFT) )
+		else if (KeyDown(Common::KEYCODE_DOWN))
+			y = MainDy + 10;
+		if (KeyDown(Common::KEYCODE_LEFT))
 			x = -10;
-		else if( KeyDown(Common::KEYCODE_RIGHT) )
-			x = MainDx+10;
+		else if (KeyDown(Common::KEYCODE_RIGHT))
+			x = MainDx + 10;
 
-		if( x || y )
-		{
-			t3dF32 diffx,diffy;
+		if (x || y) {
+			t3dF32 diffx, diffy;
 			diffx = 0.f;
 			diffy = 0.f;
 
-			if( x > MainDx ) diffx = (t3dF32)((t3dF32)( x-MainDx )/3.0f);
-			else if( x < 0 ) diffx = (t3dF32)((t3dF32)x / 3.0f );
-			if( y > MainDy ) diffy = (t3dF32)((t3dF32)( y-MainDy )/3.0f );
-			else if( y < 0 ) diffy = (t3dF32)((t3dF32)y / 3.0f );
+			if (x > MainDx) diffx = (t3dF32)((t3dF32)(x - MainDx) / 3.0f);
+			else if (x < 0) diffx = (t3dF32)((t3dF32)x / 3.0f);
+			if (y > MainDy) diffy = (t3dF32)((t3dF32)(y - MainDy) / 3.0f);
+			else if (y < 0) diffy = (t3dF32)((t3dF32)y / 3.0f);
 
-			MoveHeadAngles(diffx,diffy);
+			MoveHeadAngles(diffx, diffy);
 		}
 	}
 
 //	Corregge Camera
-	t3dVectCopy( &d, &Player->Mesh->Trasl );
+	t3dVectCopy(&d, &Player->Mesh->Trasl);
 	d.y = t3dCurCamera->Source.y;
-	dist = KNEE_HEIGHT - t3dVectDistance( &t3dCurCamera->Source, &d );
-	if( dist < 0.0f )
-	{
-		t3dVectSub( &d, &t3dCurCamera->Source, &d );d.y = 0.0f;
-		t3dVectNormalize( &d );
+	dist = KNEE_HEIGHT - t3dVectDistance(&t3dCurCamera->Source, &d);
+	if (dist < 0.0f) {
+		t3dVectSub(&d, &t3dCurCamera->Source, &d);
+		d.y = 0.0f;
+		t3dVectNormalize(&d);
 		d *= dist;
 
-		t3dVectAdd( &t3dCurCamera->Source, &t3dCurCamera->Source, &d );
-		t3dVectAdd( &t3dCurCamera->Target, &t3dCurCamera->Target, &d );
+		t3dVectAdd(&t3dCurCamera->Source, &t3dCurCamera->Source, &d);
+		t3dVectAdd(&t3dCurCamera->Target, &t3dCurCamera->Target, &d);
 	}
 }
 

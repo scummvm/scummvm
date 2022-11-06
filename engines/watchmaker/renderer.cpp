@@ -127,7 +127,7 @@ void Renderer::setCurCameraViewport(t3dF32 fov, uint8 sup) {
 	int32 sx = windowInfo.width;
 	int32 sy = windowInfo.height;
 
-	t3dF32 SuperView = 50.0f * (sup^1);
+	t3dF32 SuperView = 50.0f * (sup ^ 1);
 
 	t3dCurCamera->Center.x = (t3dF32)(cx);
 	t3dCurCamera->Center.y = (t3dF32)(cy);
@@ -137,24 +137,24 @@ void Renderer::setCurCameraViewport(t3dF32 fov, uint8 sup) {
 
 	warning("TODO: Set projection matrix");
 
-	setProjectionMatrix( (float)(sx),
-						 (float)(sy),
-						 fov,
-						 10.0f + SuperView, 90000.0f);
+	setProjectionMatrix((float)(sx),
+	                    (float)(sy),
+	                    fov,
+	                    10.0f + SuperView, 90000.0f);
 
 	//Set Clipplanes
 	t3dV3F c0;
-	t3dVectFill(&c0,0.0f);
+	t3dVectFill(&c0, 0.0f);
 	t3dV3F v1(screenSpaceToCameraSpace(0.0f,  0.0f));
 	t3dV3F v2(screenSpaceToCameraSpace((t3dF32)sx, 0.0f));
-	t3dV3F v3(screenSpaceToCameraSpace(0.0f,  (t3dF32)sy));
+	t3dV3F v3(screenSpaceToCameraSpace(0.0f, (t3dF32)sy));
 	t3dV3F v4(screenSpaceToCameraSpace((t3dF32)sx, (t3dF32)sy));
 
 #if 0
-	t3dPlaneNormal(&ClipPlanes[LEFTCLIP],	&c0, &v1, &v3);
-	t3dPlaneNormal(&ClipPlanes[RIGHTCLIP],	&c0, &v4, &v2);
-	t3dPlaneNormal(&ClipPlanes[TOPCLIP],	&c0, &v2, &v1);
-	t3dPlaneNormal(&ClipPlanes[BOTTOMCLIP],	&c0, &v3, &v4);
+	t3dPlaneNormal(&ClipPlanes[LEFTCLIP],   &c0, &v1, &v3);
+	t3dPlaneNormal(&ClipPlanes[RIGHTCLIP],  &c0, &v4, &v2);
+	t3dPlaneNormal(&ClipPlanes[TOPCLIP],    &c0, &v2, &v1);
+	t3dPlaneNormal(&ClipPlanes[BOTTOMCLIP], &c0, &v3, &v4);
 #endif
 }
 
@@ -176,21 +176,21 @@ int Renderer::rInvFitY(int y) {
 }
 
 void gPrintText(WGame &game, const char *s, uint32 d, uint32 src, uint16 *FontTable, short x, short y) {
-	int16 	i=0,nextx,nexty;
+	int16   i = 0, nextx, nexty;
 	unsigned char c;
 
-	uint32 AddFlag=0,NumRetries=0;
+	uint32 AddFlag = 0, NumRetries = 0;
 
 	nextx = nexty = 0;
-	while ( (c=s[i])!=0) {
+	while ((c = s[i]) != 0) {
 		i++;
 		int16 posx, posy, dimx, dimy;
-		posx = FontTable[c*4+0];
-		posy = FontTable[c*4+1];
-		dimx = FontTable[c*4+2];
-		dimy = FontTable[c*4+3];
+		posx = FontTable[c * 4 + 0];
+		posy = FontTable[c * 4 + 1];
+		dimx = FontTable[c * 4 + 2];
+		dimy = FontTable[c * 4 + 3];
 
-		rBlitter(game, d, src, x + nextx,y + nexty, posx, posy, dimx, dimy);
+		rBlitter(game, d, src, x + nextx, y + nexty, posx, posy, dimx, dimy);
 
 		nextx += dimx;
 	}
@@ -200,7 +200,7 @@ void Renderer::printText(const char *s, unsigned int dst, FontKind font, FontCol
 	auto f = _fonts->fontForKind(font);
 	uint32 src = f->color[color];
 
-	if (dst==0)
+	if (dst == 0)
 		gPrintText(*_game, s, NULL, src, f->table, x, y);
 	else
 		gPrintText(*_game, s, dst, src, f->table, x, y);
@@ -224,8 +224,8 @@ Math::Vector3d vector3Matrix4Mult(Math::Vector3d &vec, const Math::Matrix4 &m) {
 	// since the w component is un-interesting that would be 4 unneccesary mults.
 	const float *d = m.getData();
 	return Math::Vector3d(vec.x() * d[0] + vec.y() * d[3] + vec.z() * d[6],
-						  vec.x() * d[1] + vec.y() * d[4] + vec.z() * d[7],
-						  vec.x() * d[2] + vec.y() * d[5] + vec.z() * d[8]);
+	                      vec.x() * d[1] + vec.y() * d[4] + vec.z() * d[7],
+	                      vec.x() * d[2] + vec.y() * d[5] + vec.z() * d[8]);
 }
 
 Math::Vector3d Renderer::screenSpaceToCameraSpace(float x, float y) {

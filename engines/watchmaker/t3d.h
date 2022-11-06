@@ -185,7 +185,9 @@ struct t3dCAMERAGRID {
 };
 
 struct t3dCAMERAPATH {
-	uint16  NumPoints() { return PList.size(); }   // num points in path
+	uint16  NumPoints() {
+		return PList.size();    // num points in path
+	}
 	Common::Array<t3dV3F>  PList;                    // points list
 	uint32  CarrelloDist = 0;                      // if carrello: max distance from the target
 public:
@@ -201,7 +203,9 @@ struct t3dCAMERA {
 	t3dV2F      Center;                     // cam center
 	t3dM3X3F    Matrix;                     // cam view matrix
 	t3dF32      NearClipPlane = 0.0f, FarClipPlane = 0.0f; // camera planes
-	uint8       NumAvailablePaths() const { return CameraPaths.size(); }          // num camera paths
+	uint8       NumAvailablePaths() const {
+		return CameraPaths.size();    // num camera paths
+	}
 	uint8       Index = 0;                      // cam index 9in room
 	Common::Array<t3dPathCamera> CameraPaths;     // paths list
 public:
@@ -246,8 +250,10 @@ public:
 };
 
 struct t3dAnimLight {
-	Common::Array<gVertex*> VisVerts;         // pointer to visible vertices from lights
-	uint16      NumVisVerts() const { return VisVerts.size(); }  // num visible vertices from lights
+	Common::Array<gVertex *> VisVerts;        // pointer to visible vertices from lights
+	uint16      NumVisVerts() const {
+		return VisVerts.size();    // num visible vertices from lights
+	}
 	//t3dU32      *SavedLightColor;           // pointer to original vartex illumination
 	int8       LastRandomizer;             // randomizer for flicker effects
 };
@@ -275,7 +281,7 @@ private:
 	void setupVisibleVerticesFromLight(t3dBODY *b);
 	void SetVisibleFromLight(gVertex *v);
 };
-typedef t3dLIGHT* LightPtr;
+typedef t3dLIGHT *LightPtr;
 
 struct t3dPLIGHT {
 	uint8   Num = 0;                        // index positional light in room

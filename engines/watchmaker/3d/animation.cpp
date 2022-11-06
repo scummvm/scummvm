@@ -120,7 +120,7 @@ uint8 GetLightPosition(t3dV3F *dest, uint8 pos) {
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
 	dest->y = CurFloorY;
-	for (auto light: pLights) {
+	for (auto light : pLights) {
 		if (light.Pos.x && light.Pos.z) {
 			dest->x = light.Pos.x;
 			dest->z = light.Pos.z;
@@ -140,7 +140,7 @@ uint8 GetLightDirection(t3dV3F *dest, uint8 pos) {
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
 	dest->y = CurFloorY;
-	for (auto light: pLights) {
+	for (auto light : pLights) {
 		if (light.Dir.x && light.Dir.z) {
 			dest->x = light.Dir.x;
 			dest->z = light.Dir.x;
@@ -673,7 +673,7 @@ uint8 GetFullLightDirection(t3dV3F *dest, uint8 pos) {
 	if (!pos) return 0;
 
 	auto pLights = t3dCurRoom->getPositionalLight(pos);
-	for (auto light: pLights) {
+	for (auto light : pLights) {
 		if (light.Dir.x && light.Dir.z) {
 			*dest = light.Dir;
 			return pos;
@@ -725,7 +725,7 @@ uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acce
 
 	auto pLights = t->getPositionalLight(pos1);
 	bool foundLight = false;
-	for (auto light: pLights) {
+	for (auto light : pLights) {
 		if (light.Pos.x && light.Pos.z) {
 			p1.x = light.Pos.x;
 			p1.y = light.Pos.y;

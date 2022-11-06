@@ -79,7 +79,7 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 //		if( this->Flags&T3D_MESH_PORTAL)
 //			this->Flags|=T3D_MESH_PORTAL;
 	if ((this->Flags & T3D_MESH_RECEIVERIPPLES) ||                                      // Aggiunge buffer per le onde
-		(this->Flags & T3D_MESH_POOLWATER))
+	        (this->Flags & T3D_MESH_POOLWATER))
 		ReceiveRipples = this;
 	if (this->Flags & T3D_MESH_WAVESTEXTURE) {                                         // Legge informazioni sulle onde
 		this->WavesSpeed = (t3dF32)stream.readSint32LE() / 10000.0f;
@@ -155,9 +155,9 @@ t3dMESH::t3dMESH(t3dBODY *b, Common::SeekableReadStream &stream, t3dMESH *&Recei
 		this->BBox[normal].p = t3dV3F(stream) * SCALEFACTOR;
 	}//__for_normal
 	if ((this->BBox[0].p == this->BBox[4].p) &&                        // Se non ha spessore
-		(this->BBox[1].p == this->BBox[5].p) &&
-		(this->BBox[2].p == this->BBox[6].p) &&
-		(this->BBox[3].p == this->BBox[7].p)) {
+	        (this->BBox[1].p == this->BBox[5].p) &&
+	        (this->BBox[2].p == this->BBox[6].p) &&
+	        (this->BBox[3].p == this->BBox[7].p)) {
 		t3dV3F sub;
 		sub.x = sub.y = sub.z = 5.0f;
 		t3dVectSub(&this->BBox[0].p, &this->BBox[0].p, &sub);                     // Aggiunge 5 di spessore

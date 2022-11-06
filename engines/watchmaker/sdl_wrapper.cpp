@@ -73,37 +73,38 @@ void sdl_wrapper::pollSDL() {
 	SDL_Event event;
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
-			case SDL_QUIT:
-				shouldQuit = true;
+		case SDL_QUIT:
+			shouldQuit = true;
+			break;
+		case SDL_MOUSEBUTTONDOWN:
+			switch (event.button.button) {
+			case SDL_BUTTON_LEFT:
+				bLPressed = true;
+				warning("LEFT PRESSED");
 				break;
-			case SDL_MOUSEBUTTONDOWN:
-				switch (event.button.button) {
-					case SDL_BUTTON_LEFT:
-						bLPressed = true;
-						warning("LEFT PRESSED");
-						break;
-					case SDL_BUTTON_RIGHT:
-						bRPressed = true;
-						break;
-					default:
-						break;
-				}*/
-				/*
-			case SDL_MOUSEBUTTONUP:
-				switch (event.button.button) {
-					case SDL_BUTTON_LEFT:
-						bLPressed = false;
-						warning("LEFT RELEASED");
-						break;
-					case SDL_BUTTON_RIGHT:
-						bRPressed = false;
-						break;
-					default:
-						break;
-				}*/
-			case SDL_KEYUP:
-				KeyTable[event.key.keysym.scancode] = 0x10;
+			case SDL_BUTTON_RIGHT:
+				bRPressed = true;
 				break;
+			default:
+				break;
+			}
+			* /
+		/*
+		case SDL_MOUSEBUTTONUP:
+		switch (event.button.button) {
+		    case SDL_BUTTON_LEFT:
+		        bLPressed = false;
+		        warning("LEFT RELEASED");
+		        break;
+		    case SDL_BUTTON_RIGHT:
+		        bRPressed = false;
+		        break;
+		    default:
+		        break;
+		}*/
+		case SDL_KEYUP:
+			KeyTable[event.key.keysym.scancode] = 0x10;
+			break;
 
 		}
 	}

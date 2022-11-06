@@ -43,19 +43,17 @@ int32 NumCurve;
 void FixupCurAction(int32 oc);
 
 /* -----------------28/04/98 17.51-------------------
- * 					SlideChar
+ *                  SlideChar
  * --------------------------------------------------*/
-void SlideChar(int32 oc )
-{
-	t3dCHARACTER *Ch=Character[oc];
-	t3dWALK *w=&Ch->Walk;
-	t3dF32 r,len,x1,x2,z1,z2;
+void SlideChar(int32 oc) {
+	t3dCHARACTER *Ch = Character[oc];
+	t3dWALK *w = &Ch->Walk;
+	t3dF32 r, len, x1, x2, z1, z2;
 	int16 nf;
 	t3dV3F v;
 
-	if( /*!( w->Check & CLICKINTO ) &&*/ ( w->CurPanel < 0 ) )
-	{
-		CharStop( oc );
+	if (/*!( w->Check & CLICKINTO ) &&*/ (w->CurPanel < 0)) {
+		CharStop(oc);
 		return ;
 	}
 
@@ -67,46 +65,37 @@ void SlideChar(int32 oc )
 	z1 = w->Panel[w->CurPanel].z1;
 	x2 = w->Panel[w->CurPanel].x2;
 	z2 = w->Panel[w->CurPanel].z2;
-	if( ( len = (x1-x2)*(x1-x2) + (z1-z2)*(z1-z2) ) == 0 )
-	{
-		CharStop( oc );
+	if ((len = (x1 - x2) * (x1 - x2) + (z1 - z2) * (z1 - z2)) == 0) {
+		CharStop(oc);
 		return ;
 	}
 
-	r = ((z1-v.z)*(z1-z2)-(x1-v.x)*(x2-x1)) / len;
+	r = ((z1 - v.z) * (z1 - z2) - (x1 - v.x) * (x2 - x1)) / len;
 
-	if( r>1.0f )		// a destra di 2
-	{
+	if (r > 1.0f) {  // a destra di 2
 		x1 = x2;
 		z1 = z2;
-	}
-	else if( r>0.0f )	// dentro 1..2
-	{
-		x1 += r*(x2-x1);
-		z1 += r*(z2-z1);
+	} else if (r > 0.0f) { // dentro 1..2
+		x1 += r * (x2 - x1);
+		z1 += r * (z2 - z1);
 	}
 
-	nf = w->CurFrame+1;
-	if( ( w->CurAction == aWALK_START ) || ( w->CurAction == aWALK_LOOP ) || ( w->CurAction == aWALK_END ) )
-	{
-		if ( nf >= (ActionStart[aWALK_LOOP]+ActionLen[aWALK_LOOP]) )
+	nf = w->CurFrame + 1;
+	if ((w->CurAction == aWALK_START) || (w->CurAction == aWALK_LOOP) || (w->CurAction == aWALK_END)) {
+		if (nf >= (ActionStart[aWALK_LOOP] + ActionLen[aWALK_LOOP]))
 			nf = ActionStart[aWALK_LOOP];
-	}
-	else if( ( w->CurAction == aBACK_START ) || ( w->CurAction == aBACK_LOOP ) || ( w->CurAction == aBACK_END ) )
-	{
-		if ( nf >= (ActionStart[aBACK_LOOP]+ActionLen[aBACK_LOOP]) )
+	} else if ((w->CurAction == aBACK_START) || (w->CurAction == aBACK_LOOP) || (w->CurAction == aBACK_END)) {
+		if (nf >= (ActionStart[aBACK_LOOP] + ActionLen[aBACK_LOOP]))
 			nf = ActionStart[aBACK_LOOP];
-	}
-	else if( ( w->CurAction == aRUN_START ) || ( w->CurAction == aRUN_LOOP ) || ( w->CurAction == aRUN_END ) )
-	{
-		if ( nf >= (ActionStart[aRUN_LOOP]+ActionLen[aRUN_LOOP]) )
+	} else if ((w->CurAction == aRUN_START) || (w->CurAction == aRUN_LOOP) || (w->CurAction == aRUN_END)) {
+		if (nf >= (ActionStart[aRUN_LOOP] + ActionLen[aRUN_LOOP]))
 			nf = ActionStart[aRUN_LOOP];
 	}
 
 	w->NumPathNodes = w->CurrentStep = 0;
 
 	w->WalkSteps[0].curp = w->CurPanel;
-	w->WalkSteps[0].Angle = SinCosAngle( Ch->Dir.x, Ch->Dir.z );
+	w->WalkSteps[0].Angle = SinCosAngle(Ch->Dir.x, Ch->Dir.z);
 	w->WalkSteps[0].Frame = nf;
 
 	w->WalkSteps[0].Pos.x = x1;
@@ -119,79 +108,72 @@ void SlideChar(int32 oc )
 }
 
 /* -----------------07/05/98 11.15-------------------
- * 					UpdateChar
+ *                  UpdateChar
  * --------------------------------------------------*/
-void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot )
-{
-	t3dCHARACTER *Char=Character[oc];
-	t3dWALK *w=&Char->Walk;
-	t3dV3F Pos,tmp;
+void UpdateChar(WGame &game, int32 oc, t3dF32 Speed, t3dF32 Rot) {
+	t3dCHARACTER *Char = Character[oc];
+	t3dWALK *w = &Char->Walk;
+	t3dV3F Pos, tmp;
 	t3dM3X3F mx;
 
-	if( !Char ) return ;
+	if (!Char) return ;
 
-	if( ( Speed == 0.0f ) && ( w->NumSteps == 0 ) && ( ( w->CurAction != aROT_DX && w->CurAction != aROT_SX ) || ( Rot == 0.0f ) ) )
-	{
-		if( ( Char->Mesh->Flags & T3D_MESH_DEFAULTANIM ) )
-			CharStop( oc );
+	if ((Speed == 0.0f) && (w->NumSteps == 0) && ((w->CurAction != aROT_DX && w->CurAction != aROT_SX) || (Rot == 0.0f))) {
+		if ((Char->Mesh->Flags & T3D_MESH_DEFAULTANIM))
+			CharStop(oc);
 		return;
 	}
 
-	Event(EventClass::MC_MOUSE,ME_MOUSEHIDE,MP_DEFAULT,0,0,0,NULL,NULL,NULL);
-	if ( Char && Speed )
-		CharNextFrame( game, oc );
+	Event(EventClass::MC_MOUSE, ME_MOUSEHIDE, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
+	if (Char && Speed)
+		CharNextFrame(game, oc);
 
 //	Ruota l'omino
-	t3dVectCopy( &tmp, &Char->Dir );tmp.z = -tmp.z; tmp.y = 0.0f;
-	t3dVectAdd( &tmp, &Char->Pos, &tmp );
+	t3dVectCopy(&tmp, &Char->Dir);
+	tmp.z = -tmp.z;
+	tmp.y = 0.0f;
+	t3dVectAdd(&tmp, &Char->Pos, &tmp);
 	t3dMatView(&Char->Mesh->Matrix, &Char->Pos, &tmp);
-	t3dMatRot( &mx, 0.0f, Rot, 0.0f );
-	t3dMatMul( &Char->Mesh->Matrix, &mx, &Char->Mesh->Matrix );
+	t3dMatRot(&mx, 0.0f, Rot, 0.0f);
+	t3dMatMul(&Char->Mesh->Matrix, &mx, &Char->Mesh->Matrix);
 	Char->Mesh->Matrix.Flags &= ~T3D_MATRIX_IDENTITY;
 
-	t3dVectInit( &Char->Dir, 0.0f, 0.0f, -1.0f );
-	t3dVectTransform( &Char->Dir, &Char->Dir, &Char->Mesh->Matrix );	//rotate by Character angle
+	t3dVectInit(&Char->Dir, 0.0f, 0.0f, -1.0f);
+	t3dVectTransform(&Char->Dir, &Char->Dir, &Char->Mesh->Matrix);   //rotate by Character angle
 
-	if( Speed )
-	{
+	if (Speed) {
 		FloorHit = 1;
 		Pos.y = CurFloorY;
-		if( Speed > 0.0f )
-		{
-			if ( bFastWalk )
-			{
-				if( ( w->CurFrame >= ActionStart[aRUN_END] ) || ( w->CurFrame < ActionStart[aRUN_START] ) )
+		if (Speed > 0.0f) {
+			if (bFastWalk) {
+				if ((w->CurFrame >= ActionStart[aRUN_END]) || (w->CurFrame < ActionStart[aRUN_START]))
 					w->CurFrame = ActionStart[aRUN_START];
-			}
-			else if( ( w->CurFrame >= ActionStart[aWALK_END] ) || ( w->CurFrame < ActionStart[aWALK_START] ) )
+			} else if ((w->CurFrame >= ActionStart[aWALK_END]) || (w->CurFrame < ActionStart[aWALK_START]))
 				w->CurFrame = ActionStart[aWALK_START];
-		}
-		else if( ( Speed < 0.0f ) && ( ( w->CurFrame >= ActionStart[aBACK_END] ) || ( w->CurFrame < ActionStart[aBACK_START] ) ) )
+		} else if ((Speed < 0.0f) && ((w->CurFrame >= ActionStart[aBACK_END]) || (w->CurFrame < ActionStart[aBACK_START])))
 			w->CurFrame = ActionStart[aBACK_START];
-		Speed = - Char->Mesh->DefaultAnim.Dist[w->CurFrame+1] + Char->Mesh->DefaultAnim.Dist[w->CurFrame];
-		FixupCurAction( ocCURPLAYER );
+		Speed = - Char->Mesh->DefaultAnim.Dist[w->CurFrame + 1] + Char->Mesh->DefaultAnim.Dist[w->CurFrame];
+		FixupCurAction(ocCURPLAYER);
 
 		tmp = Char->Dir * Speed;
-		t3dVectAdd( &Pos, &Char->Pos, &tmp );
-		PlayerPos[CurPlayer+ocDARRELL] = 0;
-		PlayerGotoPos[CurPlayer+ocDARRELL] = 0;
-		CheckCharacterWithBounds( game, oc, &Pos, 0, (uint8)((Speed < 0.0f ) ? 2 : (bFastWalk ? 1 : 0) ) );
-		if( !( Char->Walk.Check & CLICKINTO ) && ( Char->Walk.NumSteps ) )
-		{
-// 		 	fa solo 2 frames: il primo come l'attuale
-			Char->Walk.WalkSteps[1].curp = Char->Walk.WalkSteps[Char->Walk.NumSteps-1].curp;
-			Char->Walk.WalkSteps[0].curp = Char->Walk.WalkSteps[Char->Walk.NumSteps-1].curp;
+		t3dVectAdd(&Pos, &Char->Pos, &tmp);
+		PlayerPos[CurPlayer + ocDARRELL] = 0;
+		PlayerGotoPos[CurPlayer + ocDARRELL] = 0;
+		CheckCharacterWithBounds(game, oc, &Pos, 0, (uint8)((Speed < 0.0f) ? 2 : (bFastWalk ? 1 : 0)));
+		if (!(Char->Walk.Check & CLICKINTO) && (Char->Walk.NumSteps)) {
+//          fa solo 2 frames: il primo come l'attuale
+			Char->Walk.WalkSteps[1].curp = Char->Walk.WalkSteps[Char->Walk.NumSteps - 1].curp;
+			Char->Walk.WalkSteps[0].curp = Char->Walk.WalkSteps[Char->Walk.NumSteps - 1].curp;
 			Char->Walk.WalkSteps[1].Angle = Char->Walk.WalkSteps[0].Angle;
 			Char->Walk.WalkSteps[0].Angle = Char->Walk.WalkSteps[0].Angle;
 			Char->Walk.WalkSteps[2].Act = 0;
 			Char->Walk.NumSteps = 2;
 			Char->Walk.CurrentStep = 0;
-		}
-		else
-			SlideChar( oc );
+		} else
+			SlideChar(oc);
 
-		RemoveEvent( &Game, EventClass::MC_PLAYER, ME_ALL );
-		Event(EventClass::MC_PLAYER,ME_PLAYERGOTO,MP_DEFAULT,0,0,0,NULL,NULL,NULL);
+		RemoveEvent(&Game, EventClass::MC_PLAYER, ME_ALL);
+		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, 0, NULL, NULL, NULL);
 	}
 }
 

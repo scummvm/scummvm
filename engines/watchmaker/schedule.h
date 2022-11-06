@@ -30,7 +30,7 @@
 namespace Watchmaker {
 
 void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wparam2,
-		   uint8 bparam, void *p0, void *p1, void *p2);
+           uint8 bparam, void *p0, void *p1, void *p2);
 
 void InitMessageSystem();
 void Scheduler();

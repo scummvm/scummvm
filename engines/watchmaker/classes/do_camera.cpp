@@ -652,8 +652,8 @@ void ProcessCamera(WGame &game) {
 
 //		Parte Morte Victoria se esce dalla r49 per andare nella r48 prima di aver attivato le leylines
 		if (
-				(game._gameVars.getCurRoomId() == r48) && (foxOldRoom == r49)
-				&& (!(init.Dialog[dR491].flags & DIALOG_DONE))
+		    (game._gameVars.getCurRoomId() == r48) && (foxOldRoom == r49)
+		    && (!(init.Dialog[dR491].flags & DIALOG_DONE))
 		    && (!(LoaderFlags & T3D_DEBUGMODE))
 		    && (!bDialogActive)
 		) {

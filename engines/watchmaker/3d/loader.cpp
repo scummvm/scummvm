@@ -219,7 +219,7 @@ t3dBODY *t3dLoadSingleRoom(WGame &game, const Common::String &_pname, t3dBODY *b
 		b = (t3dBODY *)t3dRealloc((uint32 *)b, sizeof(t3dBODY) * (++(*NumBody)));                         // Altrimenti, ridimensiona
 
 	//warning("Loading %s ...", name.c_str());
-	*b = t3dBODY();	// Azzera Body
+	*b = t3dBODY(); // Azzera Body
 
 	uint16 fileVersion = stream->readByte();
 	if (fileVersion != T3DFILEVERSION) {                                                   // Controlla la versione del file
@@ -322,8 +322,8 @@ t3dParticle::t3dParticle(Common::SeekableReadStream &stream) {
 
 #ifndef WMGEN
 	ParticleIndex = t3dCreateSmokeParticle(Num,
-										   Type,
-										   OR1);
+	                                       Type,
+	                                       OR1);
 #endif
 	difR1 = (R2 - R1) / (Seg1 / Speed1);
 	difG1 = (G2 - G1) / (Seg1 / Speed1);

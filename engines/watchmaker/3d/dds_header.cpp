@@ -27,7 +27,7 @@ namespace Watchmaker {
 
 DDSHeader::DDSHeader(Common::SeekableReadStream &stream) {
 	//warning("TODO: Implement DDS Header parsing");
-	uint32 retv = MKTAG( ' ','S','D','D' );
+	uint32 retv = MKTAG(' ', 'S', 'D', 'D');
 	uint32 magic = stream.readUint32LE();
 	if (magic != retv) {
 		error("parseDDSHeader: Wrong Magic, expected %08X, got %08X\n", retv, magic);
@@ -50,7 +50,7 @@ DDSHeader::DDSHeader(Common::SeekableReadStream &stream) {
 }
 
 uint32 blockSize(DxtCompression compression) {
-	switch(compression) {
+	switch (compression) {
 	case DxtCompression::DXT1:
 		return 8;
 	default:
@@ -70,25 +70,33 @@ private:
 	DDSHeader _header;
 public:
 	DDSTextureData(byte *data, uint32 dataSize, DDSHeader header) : TextureData(header.compression),
-																			  _data(data),
-																			  _dataSize(dataSize),
-																			  _header(header) {}
+		_data(data),
+		_dataSize(dataSize),
+		_header(header) {}
 	~DDSTextureData() override {
 		delete[] _data;
 	}
 	DxtCompression _compression;
-	int getWidth() const override { return _header.width; }
-	int getHeight() const override { return _header.height; }
-	int getDataSize() const override { return _dataSize; }
-	const void *getData() const override { return _data; }
+	int getWidth() const override {
+		return _header.width;
+	}
+	int getHeight() const override {
+		return _header.height;
+	}
+	int getDataSize() const override {
+		return _dataSize;
+	}
+	const void *getData() const override {
+		return _data;
+	}
 };
 
-Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream& stream) {
+Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream &stream) {
 	DDSHeader header(stream);
 	return loadDdsTexture(stream, header);
 }
 
-Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream& stream, DDSHeader &header) {
+Common::SharedPtr<TextureData> loadDdsTexture(Common::SeekableReadStream &stream, DDSHeader &header) {
 	assert(header.width > 0);
 	unsigned char *data = new unsigned char[header.dataSize()]();
 	stream.read(data, header.dataSize());
