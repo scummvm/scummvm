@@ -34,6 +34,9 @@ namespace MM {
 namespace MM1 {
 namespace Game {
 
+Character *SpellsParty::_destChar;
+int SpellsParty::_destMonsterNum;
+
 SpellsParty::SpellFn SpellsParty::SPELLS[SPELLS_COUNT] = {
 	// Cleric spells
 	placeholder,
@@ -161,12 +164,27 @@ byte FLY_MAP_Y[20] = {
 	14, 15, 15, 7, 15
 };
 
-SpellResult SpellsParty::cast(int spell, Character *chr) {
+SpellResult SpellsParty::cast(uint spell, Character *destChar) {
 	assert(spell < SPELLS_COUNT);
-	return SPELLS[spell](chr);
+	_destChar = destChar;
+	_destMonsterNum = -1;
+
+	return SPELLS[spell]();
 }
 
-SpellResult SpellsParty::cleric11_awaken(Character *chr) {
+SpellResult SpellsParty::cast(uint spell, int destMonsterIdx) {
+	assert(spell < SPELLS_COUNT);
+	_destChar = nullptr;
+	_destMonsterNum = destMonsterIdx;
+
+	return SPELLS[spell]();
+}
+
+bool SpellsParty::isInCombat() {
+	return g_events->isPresent("Combat");
+}
+
+SpellResult SpellsParty::cleric11_awaken() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i) {
 		Character &c = g_globals->_party[i];
 		if (!(c._condition & BAD_CONDITION))
@@ -176,150 +194,150 @@ SpellResult SpellsParty::cleric11_awaken(Character *chr) {
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric12_bless(Character *chr) {
+SpellResult SpellsParty::cleric12_bless() {
 	g_globals->_activeSpells._s.bless++;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric13_blind(Character *chr) {
+SpellResult SpellsParty::cleric13_blind() {
 	SpellsState &s = g_globals->_spellsState;
 	s._mmVal1++;
 	s._mmVal2 = 7;
 	s._newCondition = BLINDED;
 	s._resistanceType = static_cast<Resistance>((int)s._resistanceType + 1);
 
-	iterateMonsters();
+	iterateMonsters1();
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric14_firstAid(Character *chr) {
-	restoreHp(chr, 8);
+SpellResult SpellsParty::cleric14_firstAid() {
+	restoreHp(_destChar, 8);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric15_light(Character *chr) {
+SpellResult SpellsParty::cleric15_light() {
 	addLight(1);
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::cleric16_powerCure(Character *chr) {
+SpellResult SpellsParty::cleric16_powerCure() {
 	int totalHp = 0;
 	for (uint i = 0; i < g_globals->_currCharacter->_level._current; ++i)
 		totalHp += g_engine->getRandomNumber(10);
 
-	restoreHp(chr, MIN(totalHp, 250));
+	restoreHp(_destChar, MIN(totalHp, 250));
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric17_protectionFromFear(Character *chr) {
+SpellResult SpellsParty::cleric17_protectionFromFear() {
 	g_globals->_activeSpells._s.fear =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric21_cureWounds(Character *chr) {
-	restoreHp(chr, 16);
+SpellResult SpellsParty::cleric21_cureWounds() {
+	restoreHp(_destChar, 16);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric24_protectionFromCold(Character *chr) {
+SpellResult SpellsParty::cleric24_protectionFromCold() {
 	g_globals->_activeSpells._s.cold =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric25_protectionFromIce(Character *chr) {
+SpellResult SpellsParty::cleric25_protectionFromIce() {
 	g_globals->_activeSpells._s.fire =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric26_protectionFromPoison(Character *chr) {
+SpellResult SpellsParty::cleric26_protectionFromPoison() {
 	g_globals->_activeSpells._s.poison =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric31_createFood(Character *chr) {
-	if (chr->_food == MAX_FOOD) {
+SpellResult SpellsParty::cleric31_createFood() {
+	if (_destChar->_food == MAX_FOOD) {
 		return SR_FAILED;
 	} else {
-		chr->_food = MIN(chr->_food + 6, MAX_FOOD);
+		_destChar->_food = MIN(_destChar->_food + 6, MAX_FOOD);
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric32_cureBlindness(Character *chr) {
-	if (chr->_condition & BAD_CONDITION) {
+SpellResult SpellsParty::cleric32_cureBlindness() {
+	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
 	} else {
-		chr->_condition &= ~BLINDED;
+		_destChar->_condition &= ~BLINDED;
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric33_cureParalysis(Character *chr) {
-	if (chr->_condition & BAD_CONDITION) {
+SpellResult SpellsParty::cleric33_cureParalysis() {
+	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
 	} else {
-		chr->_condition &= ~PARALYZED;
+		_destChar->_condition &= ~PARALYZED;
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric34_lastingLight(Character *chr) {
+SpellResult SpellsParty::cleric34_lastingLight() {
 	addLight(19);
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::cleric37_removeQuest(Character *chr) {
+SpellResult SpellsParty::cleric37_removeQuest() {
 	for (uint i = 0; i < g_globals->_party.size(); ++i)
 		g_globals->_party[i]._quest = 0;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric38_walkOnWater(Character *chr) {
+SpellResult SpellsParty::cleric38_walkOnWater() {
 	g_globals->_activeSpells._s.walk_on_water = MIN(
 		(int)g_globals->_activeSpells._s.walk_on_water + 1, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric41_cureDisease(Character *chr) {
-	if (chr->_condition & BAD_CONDITION) {
+SpellResult SpellsParty::cleric41_cureDisease() {
+	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
 	} else {
-		chr->_condition &= ~DISEASED;
+		_destChar->_condition &= ~DISEASED;
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric42_neutralizePoison(Character *chr) {
-	if (chr->_condition & BAD_CONDITION) {
+SpellResult SpellsParty::cleric42_neutralizePoison() {
+	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
 	} else {
-		chr->_condition &= ~POISONED;
+		_destChar->_condition &= ~POISONED;
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric43_protectionFromAcid(Character *chr) {
+SpellResult SpellsParty::cleric43_protectionFromAcid() {
 	g_globals->_activeSpells._s.acid =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric44_protectionFromElectricity(Character *chr) {
+SpellResult SpellsParty::cleric44_protectionFromElectricity() {
 	g_globals->_activeSpells._s.electricity =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric45_restoreAlignment(Character *chr) {
-	chr->_alignment = chr->_alignmentInitial;
+SpellResult SpellsParty::cleric45_restoreAlignment() {
+	_destChar->_alignment = _destChar->_alignmentInitial;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric48_surface(Character *chr) {
+SpellResult SpellsParty::cleric48_surface() {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
 	if (map[Maps::MAP_FLAGS] & 4) {
@@ -334,7 +352,7 @@ SpellResult SpellsParty::cleric48_surface(Character *chr) {
 	}
 }
 
-SpellResult SpellsParty::cleric52_dispelMagic(Character *chr) {
+SpellResult SpellsParty::cleric52_dispelMagic() {
 	Maps::Map &map = *g_maps->_currentMap;
 	if (g_engine->getRandomNumber(100) >= map[Maps::MAP_DISPEL_THRESHOLD]) {
 		Common::fill(&g_globals->_activeSpells._arr[0],
@@ -354,25 +372,25 @@ SpellResult SpellsParty::cleric52_dispelMagic(Character *chr) {
 	}
 }
 
-SpellResult SpellsParty::cleric54_removeCondition(Character *chr) {
-	if (chr->_condition & BAD_CONDITION) {
+SpellResult SpellsParty::cleric54_removeCondition() {
+	if (_destChar->_condition & BAD_CONDITION) {
 		return SR_FAILED;
 	} else {
-		chr->_condition = FINE;
+		_destChar->_condition = FINE;
 
-		if (!chr->_hpBase)
-			chr->_hpBase = 1;
-		restoreHp(chr, 1);
+		if (!_destChar->_hpBase)
+			_destChar->_hpBase = 1;
+		restoreHp(_destChar, 1);
 
 		return SR_SUCCESS_DONE;
 	}
 }
 
-SpellResult SpellsParty::cleric55_restoreEnergy(Character *chr) {
-	if (chr->_level._current < chr->_level._base) {
-		chr->_level._current = MIN(
-			chr->_level._current + g_engine->getRandomNumber(5),
-			(int)chr->_level._base
+SpellResult SpellsParty::cleric55_restoreEnergy() {
+	if (_destChar->_level._current < _destChar->_level._base) {
+		_destChar->_level._current = MIN(
+			_destChar->_level._current + g_engine->getRandomNumber(5),
+			(int)_destChar->_level._base
 		);
 		return SR_SUCCESS_DONE;
 	} else {
@@ -380,9 +398,9 @@ SpellResult SpellsParty::cleric55_restoreEnergy(Character *chr) {
 	}
 }
 
-SpellResult SpellsParty::cleric62_raiseDead(Character *chr) {
-	if ((chr->_condition == ERADICATED) ||
-		(chr->_condition & (BAD_CONDITION | DEAD)) ==
+SpellResult SpellsParty::cleric62_raiseDead() {
+	if ((_destChar->_condition == ERADICATED) ||
+		(_destChar->_condition & (BAD_CONDITION | DEAD)) ==
 		(BAD_CONDITION | DEAD))
 		return SR_FAILED;
 	int rnd = g_engine->getRandomNumber(100);
@@ -394,43 +412,43 @@ SpellResult SpellsParty::cleric62_raiseDead(Character *chr) {
 		return SR_FAILED;
 	}
 
-	if (chr->_condition == (BAD_CONDITION | DEAD | STONE))
-		chr->_condition = BAD_CONDITION | STONE;
+	if (_destChar->_condition == (BAD_CONDITION | DEAD | STONE))
+		_destChar->_condition = BAD_CONDITION | STONE;
 	else
-		chr->_condition = FINE;
+		_destChar->_condition = FINE;
 
-	chr->_hpBase = 1;
+	_destChar->_hpBase = 1;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric63_rejuvinate(Character *chr) {
+SpellResult SpellsParty::cleric63_rejuvinate() {
 	if (g_engine->getRandomNumber(100) < 75) {
-		chr->_age._base = MIN(chr->_age._base - g_engine->getRandomNumber(10),
+		_destChar->_age._base = MIN(_destChar->_age._base - g_engine->getRandomNumber(10),
 			200);
 		return SR_FAILED;
 	} else {
 		// Failed, increase the user's age
-		chr->_age._base = MIN(chr->_age._base + 10, 200);
+		_destChar->_age._base = MIN(_destChar->_age._base + 10, 200);
 		return SR_FAILED;
 	}
 }
 
-SpellResult SpellsParty::cleric64_stoneToFlesh(Character *chr) {
-	if ((chr->_condition == ERADICATED) ||
-		(chr->_condition & (BAD_CONDITION | DEAD)) ==
+SpellResult SpellsParty::cleric64_stoneToFlesh() {
+	if ((_destChar->_condition == ERADICATED) ||
+		(_destChar->_condition & (BAD_CONDITION | DEAD)) ==
 		(BAD_CONDITION | DEAD))
 		return SR_FAILED;
 
-	if (chr->_condition == (BAD_CONDITION | DEAD | STONE))
-		chr->_condition = BAD_CONDITION | DEAD;
+	if (_destChar->_condition == (BAD_CONDITION | DEAD | STONE))
+		_destChar->_condition = BAD_CONDITION | DEAD;
 	else
-		chr->_condition = FINE;
+		_destChar->_condition = FINE;
 
-	chr->_hpBase = 1;
+	_destChar->_hpBase = 1;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric65_townPortal(Character *chr) {
+SpellResult SpellsParty::cleric65_townPortal() {
 	Sound::sound(SOUND_2);
 	InfoMessage msg(
 		STRING["spells.which_town"],
@@ -468,7 +486,7 @@ SpellResult SpellsParty::cleric65_townPortal(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::cleric73_protectionFromElements(Character *chr) {
+SpellResult SpellsParty::cleric73_protectionFromElements() {
 	int amount = g_globals->_currCharacter->_level._current + 25;
 
 	for (int i = 0; i < 6; ++i)
@@ -477,39 +495,39 @@ SpellResult SpellsParty::cleric73_protectionFromElements(Character *chr) {
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::cleric74_resurrection(Character *chr) {
-	if (chr->_condition == ERADICATED)
+SpellResult SpellsParty::cleric74_resurrection() {
+	if (_destChar->_condition == ERADICATED)
 		return SR_FAILED;
 
-	if (chr->_age._base < 10 || chr->_age._base > 200)
-		chr->_age._base = 200;
+	if (_destChar->_age._base < 10 || _destChar->_age._base > 200)
+		_destChar->_age._base = 200;
 
 	if (g_engine->getRandomNumber(100) > 75)
 		return SR_FAILED;
 
-	chr->_endurance._base = MAX((int)chr->_endurance._base - 1, 1);
-	chr->_condition = FINE;
-	restoreHp(chr, 1);
+	_destChar->_endurance._base = MAX((int)_destChar->_endurance._base - 1, 1);
+	_destChar->_condition = FINE;
+	restoreHp(_destChar, 1);
 
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard12_detectMagic(Character *chr) {
+SpellResult SpellsParty::wizard12_detectMagic() {
 	Views::Spells::DetectMagic::show();
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard15_leatherSkin(Character *chr) {
+SpellResult SpellsParty::wizard15_leatherSkin() {
 	g_globals->_activeSpells._s.leather_skin = g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard17_location(Character *chr) {
+SpellResult SpellsParty::wizard17_location() {
 	Views::Spells::Location::show();
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard24_jump(Character *chr) {
+SpellResult SpellsParty::wizard24_jump() {
 	Maps::Maps &maps = *g_maps;
 	Maps::Map &map = *maps._currentMap;
 
@@ -542,13 +560,13 @@ SpellResult SpellsParty::wizard24_jump(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard25_levitate(Character *chr) {
+SpellResult SpellsParty::wizard25_levitate() {
 	g_globals->_activeSpells._s.levitate =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard32_fly(Character *chr) {
+SpellResult SpellsParty::wizard32_fly() {
 	Views::Spells::Fly::show(
 		[](int mapIndex) {
 			if (mapIndex != -1) {
@@ -565,19 +583,19 @@ SpellResult SpellsParty::wizard32_fly(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard45_guardDog(Character *chr) {
+SpellResult SpellsParty::wizard45_guardDog() {
 	g_globals->_activeSpells._s.guard_dog =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard46_psychicProtection(Character *chr) {
+SpellResult SpellsParty::wizard46_psychicProtection() {
 	g_globals->_activeSpells._s.psychic_protection =
 		g_globals->_currCharacter->_level._current;
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard54_shelter(Character *chr) {
+SpellResult SpellsParty::wizard54_shelter() {
 	if (g_maps->_currentState & 8)
 		return SR_FAILED;
 
@@ -585,12 +603,12 @@ SpellResult SpellsParty::wizard54_shelter(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard55_teleport(Character *chr) {
+SpellResult SpellsParty::wizard55_teleport() {
 	Views::Spells::Teleport::show();
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard63_etherialize(Character *chr) {
+SpellResult SpellsParty::wizard63_etherialize() {
 	g_events->draw();
 	g_maps->_currentState = 0;
 	g_maps->step(Common::Point(1, 0));
@@ -598,17 +616,17 @@ SpellResult SpellsParty::wizard63_etherialize(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard64_protectionFromMagic(Character *chr) {
+SpellResult SpellsParty::wizard64_protectionFromMagic() {
 	g_globals->_activeSpells._s.magic =
 		MIN(g_globals->_currCharacter->_level._current + 20, 255);
 	return SR_SUCCESS_DONE;
 }
 
-SpellResult SpellsParty::wizard65_rechargeItem(Character *chr) {
+SpellResult SpellsParty::wizard65_rechargeItem() {
 	return SR_FAILED;
 }
 
-SpellResult SpellsParty::wizard71_astralSpell(Character *chr) {
+SpellResult SpellsParty::wizard71_astralSpell() {
 	Maps::Maps &maps = *g_maps;
 	maps._mapPos.x = 7;
 	maps._mapPos.y = 0;
@@ -617,12 +635,12 @@ SpellResult SpellsParty::wizard71_astralSpell(Character *chr) {
 	return SR_SUCCESS_SILENT;
 }
 
-SpellResult SpellsParty::wizard72_duplication(Character *chr) {
+SpellResult SpellsParty::wizard72_duplication() {
 	return SR_FAILED;
 }
 
-void SpellsParty::restoreHp(Character *chr, uint16 hp) {
-	chr->_hpBase = MIN((int)(chr->_hpBase + hp), (int)chr->_hpMax);
+void SpellsParty::restoreHp(Character *destChar, uint16 hp) {
+	destChar->_hpBase = MIN((int)(_destChar->_hpBase + hp), (int)_destChar->_hpMax);
 }
 
 void SpellsParty::addLight(int amount) {
@@ -630,8 +648,12 @@ void SpellsParty::addLight(int amount) {
 	g_events->send("Game", GameMessage("UPDATE"));
 }
 
-void SpellsParty::iterateMonsters() {
+void SpellsParty::iterateMonsters1() {
 	
+}
+
+void SpellsParty::iterateMonsters2() {
+
 }
 
 } // namespace Game
