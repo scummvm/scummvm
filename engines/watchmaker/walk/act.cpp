@@ -252,7 +252,7 @@ void CharSetPosition(int32 oc, uint8 pos, const char *room) {
 /* -----------------23/03/99 12.00-------------------
  *              CheckCharacterWithoutBounds
  * --------------------------------------------------*/
-void CheckCharacterWithoutBounds(WGame &game, int32 oc, uint8 *dpl, uint8 back) {
+void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 back) {
 	t3dCHARACTER *Char = Character[oc];
 	t3dWALK *w = &Char->Walk;
 	t3dV3F tmp;

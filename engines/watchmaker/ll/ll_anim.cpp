@@ -239,14 +239,14 @@ void ProcessATFDO(WGame &game, int32 in) {
 	case f23ENTRALIFT:
 		in = aTO1PERSON;
 		bLockCamera = true;
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\055\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\055\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
 		bNoFirstPersonSwitch = true;
 		bNoPlayerSwitch = true;
 		break;
 	case f23ESCELIFT:
 		bLockCamera = false;
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\057\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\057\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		bNoFirstPersonSwitch = false;
 		bNoPlayerSwitch = false;
@@ -275,25 +275,25 @@ void ProcessATFDO(WGame &game, int32 in) {
 	case f2OENTRALIFT:
 		in = aTO1PERSON;
 		bLockCamera = true;
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\051\052\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, &in, nullptr);
 		bNoFirstPersonSwitch = true;
 		bNoPlayerSwitch = true;
 		break;
 	case f2OESCELIFT:
 		bLockCamera = false;
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\054\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\054\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_DEFAULT, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		bNoFirstPersonSwitch = false;
 		bNoPlayerSwitch = false;
 		break;
 	case f2QENTRALAB:
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\051\052\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
 		break;
 	case f2QESCELAB:
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\051\052\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\051\052\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		Event(EventClass::MC_ANIM, ME_STARTANIM, MP_WAIT_PORTAL, a2Q14, 0, 0, nullptr, nullptr, nullptr);
 		break;
@@ -410,7 +410,7 @@ void ProcessATFDO(WGame &game, int32 in) {
 		break;
 
 	case f41WALK:
-		CheckCharacterWithoutBounds(game, ocCURPLAYER, (uint8 *)"\064\000", 0);
+		CheckCharacterWithoutBounds(game, ocCURPLAYER, (const uint8 *)"\064\000", 0);
 		Event(EventClass::MC_PLAYER, ME_PLAYERGOTO, MP_WAIT_ANIM, 0, 0, bFirstPerson, nullptr, nullptr, nullptr);
 		Event(EventClass::MC_DIALOG, ME_DIALOGSTART, MP_WAIT_ACT, dR411, 0, 0, nullptr, nullptr, nullptr);
 		break;

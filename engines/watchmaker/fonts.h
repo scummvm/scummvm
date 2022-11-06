@@ -52,7 +52,7 @@ public:
 	~Fonts();
 
 	void loadFonts(WGame &game, WindowInfo &windowInfo);
-	void getTextDim(char *s, FontKind font, int *x, int *y);
+	void getTextDim(const char *s, FontKind font, int *x, int *y);
 };
 
 } // End of namespace Watchmaker

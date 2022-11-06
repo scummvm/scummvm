@@ -29,7 +29,7 @@
 
 namespace Watchmaker {
 
-void CheckCharacterWithoutBounds(WGame &game, int32 oc, uint8 *dpl, uint8 back);
+void CheckCharacterWithoutBounds(WGame &game, int32 oc, const uint8 *dpl, uint8 back);
 bool CheckCharacterWithBounds(WGame &game, int32 oc, t3dV3F *Pos, uint8 dp, uint8 back);
 void CharSetPosition(int32 oc, uint8 pos, const char *room);
 void CharStop(int32 oc);

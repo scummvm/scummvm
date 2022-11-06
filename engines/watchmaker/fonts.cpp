@@ -89,7 +89,7 @@ SFont *Fonts::fontForKind(FontKind font) {
 	}
 }
 
-void Fonts::getTextDim(char *s, FontKind font, int *x, int *y) {
+void Fonts::getTextDim(const char *s, FontKind font, int *x, int *y) {
 	if (!s)
 		return;
 
