@@ -236,6 +236,10 @@ public:
 	void updateOldSettings();
 };
 
+namespace Common {
+DECLARE_SINGLETON(ScalerManager);
+}
+
 /** Convenience shortcut for accessing singleton */
 #define ScalerMan ScalerManager::instance()
 

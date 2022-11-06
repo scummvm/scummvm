@@ -685,6 +685,11 @@ public:
 	bool pop(Common::String &target, int &slot);
 };
 
+namespace Common {
+DECLARE_SINGLETON(ChainedGamesManager);
+}
+
+
 /** Convenience shortcut for accessing the chained games manager. */
 #define ChainedGamesMan ChainedGamesManager::instance()
 /** @} */

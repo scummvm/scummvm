@@ -52,4 +52,8 @@ public:
 
 } // End of namespace Sword25
 
+namespace Common {
+DECLARE_SINGLETON(Sword25::RegionRegistry);
+}
+
 #endif

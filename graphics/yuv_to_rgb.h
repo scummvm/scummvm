@@ -134,6 +134,10 @@ private:
  /** @} */
 } // End of namespace Graphics
 
+namespace Common {
+DECLARE_SINGLETON(Graphics::YUVToRGBManager);
+}
+
 #define YUVToRGBMan (::Graphics::YUVToRGBManager::instance())
 
 #endif

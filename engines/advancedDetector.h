@@ -583,6 +583,10 @@ private:
 	SizeHashMap sizeHashMap;
 };
 
+namespace Common {
+DECLARE_SINGLETON(MD5CacheManager);
+}
+
 /** Convenience shortcut for accessing the MD5CacheManager. */
 #define MD5Man MD5CacheManager::instance()
 /** @} */

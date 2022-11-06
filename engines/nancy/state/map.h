@@ -93,4 +93,8 @@ private:
 } // End of namespace State
 } // End of namespace Nancy
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Map);
+}
+
 #endif // NANCY_STATE_MAP_H

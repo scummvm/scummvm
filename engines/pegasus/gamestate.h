@@ -880,6 +880,10 @@ private:
 
 } // End of namespace Pegasus
 
+namespace Common {
+DECLARE_SINGLETON(Pegasus::GameStateManager);
+}
+
 #define GameState (::Pegasus::GameStateManager::instance())
 
 #endif

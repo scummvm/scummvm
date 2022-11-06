@@ -228,4 +228,8 @@ protected:
 
 } // End of namespace GUI
 
+namespace Common {
+DECLARE_SINGLETON(GUI::GuiManager);
+}
+
 #endif

@@ -251,6 +251,8 @@ private:
 
 /** @} */
 
+DECLARE_SINGLETON(ConfigManager);
+
 } // End of namespace Common
 
 /** Shortcut for accessing the configuration manager. */

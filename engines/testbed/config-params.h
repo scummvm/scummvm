@@ -105,4 +105,8 @@ public:
 
 } // End of Namespace Testbed
 
+namespace Common {
+DECLARE_SINGLETON(Testbed::ConfigParams);
+}
+
 #endif

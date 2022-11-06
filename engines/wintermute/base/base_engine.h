@@ -92,4 +92,8 @@ public:
 
 } // End of namespace Wintermute
 
+namespace Common {
+DECLARE_SINGLETON(Wintermute::BaseEngine);
+}
+
 #endif

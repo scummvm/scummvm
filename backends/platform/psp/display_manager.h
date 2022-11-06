@@ -65,6 +65,9 @@ private:
 	uint32 _bytesAllocated;
 };
 
+namespace Common {
+DECLARE_SINGLETON(VramAllocator);
+}
 
 /**
  *	Class used only by DisplayManager to start/stop GU rendering

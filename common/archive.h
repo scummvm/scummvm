@@ -320,6 +320,8 @@ private:
 	SearchManager();
 };
 
+DECLARE_SINGLETON(SearchManager);
+
 /** Shortcut for accessing the Search Manager. */
 #define SearchMan		Common::SearchManager::instance()
 

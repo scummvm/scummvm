@@ -254,6 +254,7 @@ public:
 	MainTranslationManager() : TranslationManager("translations.dat") {}
 	~MainTranslationManager() {}
 };
+DECLARE_SINGLETON(MainTranslationManager);
 
 /** @} */
 

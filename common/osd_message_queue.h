@@ -77,6 +77,8 @@ private:
 
 /** @} */
 
+DECLARE_SINGLETON(OSDMessageQueue);
+
 } // End of namespace Common
 
 #endif

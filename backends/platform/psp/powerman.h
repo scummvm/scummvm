@@ -128,6 +128,10 @@ public:
 
 };
 
+namespace Common {
+DECLARE_SINGLETON(PowerManager);
+}
+
 // For easy access
 #define PowerMan	PowerManager::instance()
 

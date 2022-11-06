@@ -253,6 +253,10 @@ private:
 
 } // End of namespace GUI
 
+namespace Common {
+DECLARE_SINGLETON(GUI::EventRecorder);
+}
+
 #endif // ENABLE_EVENTRECORDER
 
 #endif

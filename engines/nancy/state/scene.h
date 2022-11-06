@@ -266,4 +266,8 @@ private:
 } // End of namespace State
 } // End of namespace Nancy
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Scene);
+}
+
 #endif // NANCY_STATE_SCENE_H

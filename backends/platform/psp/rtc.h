@@ -43,4 +43,8 @@ public:
 	uint32 getMicros();
 };
 
+namespace Common {
+DECLARE_SINGLETON(PspRtc);
+}
+
 #endif

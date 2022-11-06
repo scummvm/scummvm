@@ -304,4 +304,8 @@ public:
 
 } // End of namespace Cloud
 
+namespace Common {
+DECLARE_SINGLETON(Cloud::CloudManager);
+}
+
 #endif

@@ -247,7 +247,12 @@ private:
 	bool _locked;
 };
 /** @} */
+
 } // End of namespace Graphics
+
+namespace Common {
+DECLARE_SINGLETON(Graphics::CursorManager);
+}
 
 #define CursorMan	(::Graphics::CursorManager::instance())
 

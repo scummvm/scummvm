@@ -80,6 +80,10 @@ private:
 	uint32 _bytesAllocated;
 };
 
+namespace Common {
+DECLARE_SINGLETON(ELFMemoryManager);
+}
+
 #endif /* defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) */
 
 #endif /* ELF_MEMORY_MANAGER_H */

@@ -130,6 +130,10 @@ public:
 	const PluginList &getPlugins() const;
 };
 
+namespace Common {
+DECLARE_SINGLETON(MusicManager);
+}
+
 /** Convenience shortcut for accessing the Music manager. */
 #define MusicMan MusicManager::instance()
 /** @} */

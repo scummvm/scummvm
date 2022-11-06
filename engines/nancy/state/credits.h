@@ -71,4 +71,8 @@ protected:
 } // End of namespace State
 } // End of namespace Nancy
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::Credits);
+}
+
 #endif // NANCY_STATE_CREDITS_H

@@ -107,6 +107,10 @@ private:
 	char *_highestAddress;
 };
 
+namespace Common {
+DECLARE_SINGLETON(ShortSegmentManager);
+}
+
 #endif // defined(DYNAMIC_MODULES) && defined(USE_ELF_LOADER) && defined(MIPS_TARGET)
 
 #endif /* SHORTS_SEGMENT_MANAGER_H */

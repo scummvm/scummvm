@@ -112,4 +112,8 @@ public:
 
 } // End of namespace Stark
 
+namespace Common {
+DECLARE_SINGLETON(Stark::StarkServices);
+}
+
 #endif // STARK_SERVICES_SERVICES_H

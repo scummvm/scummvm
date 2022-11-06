@@ -66,4 +66,8 @@ int fatal(const Common::String &str1, const Common::String &str2);
 
 } // End of namespace Sludge
 
+namespace Common {
+DECLARE_SINGLETON(Sludge::FatalMsgManager);
+}
+
 #endif

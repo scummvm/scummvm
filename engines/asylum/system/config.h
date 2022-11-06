@@ -105,4 +105,8 @@ private:
 
 } // end of namespace Asylum
 
+namespace Common {
+DECLARE_SINGLETON(Asylum::ConfigurationManager);
+}
+
 #endif // ASYLUM_SYSTEM_CONFIG_H

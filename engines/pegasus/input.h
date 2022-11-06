@@ -511,6 +511,10 @@ public:
 
 } // End of namespace Pegasus
 
+namespace Common {
+DECLARE_SINGLETON(Pegasus::InputDeviceManager);
+}
+
 #define InputDevice (::Pegasus::InputDeviceManager::instance())
 
 #endif

@@ -195,6 +195,10 @@ protected:
 
 } // End of namespace Lure
 
+namespace Common {
+DECLARE_SINGLETON(Lure::SoundManager);
+}
+
 #define Sound (::Lure::SoundManager::instance())
 
 #endif

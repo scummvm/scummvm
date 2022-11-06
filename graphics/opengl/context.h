@@ -127,6 +127,10 @@ private:
 
 } // End of namespace OpenGL
 
+namespace Common {
+DECLARE_SINGLETON(OpenGL::Context);
+}
+
 /** Shortcut for accessing the active OpenGL context. */
 #define OpenGLContext OpenGL::Context::instance()
 

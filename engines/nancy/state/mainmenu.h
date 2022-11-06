@@ -60,4 +60,8 @@ private:
 } // End of namespace State
 } // End of namespace Nancy
 
+namespace Common {
+DECLARE_SINGLETON(Nancy::State::MainMenu);
+}
+
 #endif // NANCY_STATE_MAINMENU_H

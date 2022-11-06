@@ -168,6 +168,8 @@ private:
 	void addDebugChannels(const DebugChannelDef *channels);
 };
 
+DECLARE_SINGLETON(DebugManager);
+
 /** Shortcut for accessing the Debug Manager. */
 #define DebugMan		Common::DebugManager::instance()
 

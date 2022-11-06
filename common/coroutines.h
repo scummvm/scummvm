@@ -560,6 +560,8 @@ public:
 
 /** @} */
 
+DECLARE_SINGLETON(CoroutineScheduler);
+
 } // end of namespace Common
 
 #endif // COMMON_COROUTINES_H

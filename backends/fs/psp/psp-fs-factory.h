@@ -43,4 +43,8 @@ private:
 	friend class Common::Singleton<SingletonBaseType>;
 };
 
+namespace Common {
+DECLARE_SINGLETON(PSPFilesystemFactory);
+}
+
 #endif /*PSP_FILESYSTEM_FACTORY_H*/

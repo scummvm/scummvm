@@ -111,4 +111,8 @@ public:
 
 } // End of namespace Networking
 
+namespace Common {
+DECLARE_SINGLETON(Networking::LocalWebserver);
+}
+
 #endif

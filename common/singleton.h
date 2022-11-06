@@ -97,6 +97,13 @@ protected:
 };
 
 /**
+ * This macro must be used in Common namespace everytime
+ * a Singleton class is declared.
+ */
+#define DECLARE_SINGLETON(T) \
+	template<> T *Singleton<T>::_singleton
+
+/**
  * Note that you need to use this macro from the Common namespace.
  *
  * This is because C++ requires initial explicit specialization

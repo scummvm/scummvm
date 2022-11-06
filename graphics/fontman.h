@@ -119,6 +119,10 @@ private:
 /** @} */
 } // End of namespace Graphics
 
+namespace Common {
+DECLARE_SINGLETON(Graphics::FontManager);
+}
+
 /** @addtogroup graphics_fontman
  *  @{
  */

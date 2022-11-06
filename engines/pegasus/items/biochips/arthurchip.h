@@ -216,6 +216,10 @@ extern ArthurChip *g_arthurChip;
 
 } // End of namespace Pegasus
 
+namespace Common {
+DECLARE_SINGLETON(Pegasus::ArthurManager);
+}
+
 #define Arthur (::Pegasus::ArthurManager::instance())
 
 #endif

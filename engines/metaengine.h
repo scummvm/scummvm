@@ -618,6 +618,10 @@ private:
 	void upgradeTargetForEngineId(const Common::String &target) const;
 };
 
+namespace Common {
+DECLARE_SINGLETON(EngineManager);
+}
+
 /** Convenience shortcut for accessing the engine manager. */
 #define EngineMan EngineManager::instance()
 /** @} */

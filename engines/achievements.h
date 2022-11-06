@@ -274,6 +274,8 @@ private:
 	Common::HashMap<String, Common::Array<AchievementDescription> > _achievements;
 };
 
+DECLARE_SINGLETON(AchievementsManager);
+
 /** Shortcut for accessing the Achievements Manager. */
 #define AchMan Common::AchievementsManager::instance()
 

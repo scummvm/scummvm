@@ -83,4 +83,8 @@ private:
 #endif
 };
 
+namespace Common {
+DECLARE_SINGLETON(WiiFilesystemFactory);
+}
+
 #endif /*Wii_FILESYSTEM_FACTORY_H*/

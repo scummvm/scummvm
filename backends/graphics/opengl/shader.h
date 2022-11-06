@@ -71,6 +71,10 @@ private:
 
 } // End of namespace OpenGL
 
+namespace Common {
+DECLARE_SINGLETON(OpenGL::ShaderManager);
+}
+
 /** Shortcut for accessing the font manager. */
 #define ShaderMan (OpenGL::ShaderManager::instance())
 
