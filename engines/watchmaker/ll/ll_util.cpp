@@ -244,8 +244,8 @@ int32 CreateTooltipBitmap(Renderer &renderer, char *tooltip, FontColor color, ui
 	strcpy(info, "tooltip: ");
 	strncat(info, tooltip, 15);
 	rSetBitmapName(surf, info);
-	rClear(surf, 0, 0, dimx, dimy, 18, 18, 18);                                                  // Bordino nero
-	rClear(surf, 1, 1, dimx - 2, dimy - 2, r, g, b);                                             // Sfondo colorato
+	renderer.clearBitmap(surf, 0, 0, dimx, dimy, 18, 18, 18);          // Bordino nero
+	renderer.clearBitmap(surf, 1, 1, dimx - 2, dimy - 2, r, g, b);     // Sfondo colorato
 	renderer.printText(tooltip, surf, font, color, (uint16)renderer.rFitX(enlarge), (uint16)renderer.rFitY(enlarge));
 	return surf;
 }
@@ -693,14 +693,14 @@ void DisplayDDBitmap(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 o
 	DDBitmapsList[a].oy    = renderer.rFitY(py + oy) - renderer.rFitY(py);
 	DDBitmapsList[a].dx    = renderer.rFitX(px + dx) - renderer.rFitX(px);
 	DDBitmapsList[a].dy    = renderer.rFitY(py + dy) - renderer.rFitY(py);
-	if (dx <= 0) DDBitmapsList[a].dx += rGetBitmapDimX(tnum) - DDBitmapsList[a].ox;
-	if (dy <= 0) DDBitmapsList[a].dy += rGetBitmapDimY(tnum) - DDBitmapsList[a].oy;
+	if (dx <= 0) DDBitmapsList[a].dx += renderer.getBitmapDimX(tnum) - DDBitmapsList[a].ox;
+	if (dy <= 0) DDBitmapsList[a].dy += renderer.getBitmapDimY(tnum) - DDBitmapsList[a].oy;
 }
 
 /* -----------------22/11/00 12.15-------------------
  *                  DisplayDDBitmap_NoFit
  * --------------------------------------------------*/
-void DisplayDDBitmap_NoFit(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
+void DisplayDDBitmap_NoFit(Renderer &renderer, int32 tnum, int32 px, int32 py, int32 ox, int32 oy, int32 dx, int32 dy) {
 	int32 a;
 	for (a = 0; a < MAX_DD_BITMAPS; a++)
 		if (!DDBitmapsList[a].tnum)
@@ -718,8 +718,8 @@ void DisplayDDBitmap_NoFit(int32 tnum, int32 px, int32 py, int32 ox, int32 oy, i
 	DDBitmapsList[a].oy    = (py + oy) - (py);
 	DDBitmapsList[a].dx    = (px + dx) - (px);
 	DDBitmapsList[a].dy    = (py + dy) - (py);
-	if (dx <= 0) DDBitmapsList[a].dx += rGetBitmapDimX(tnum) - DDBitmapsList[a].ox;
-	if (dy <= 0) DDBitmapsList[a].dy += rGetBitmapDimY(tnum) - DDBitmapsList[a].oy;
+	if (dx <= 0) DDBitmapsList[a].dx += renderer.getBitmapDimX(tnum) - DDBitmapsList[a].ox;
+	if (dy <= 0) DDBitmapsList[a].dy += renderer.getBitmapDimY(tnum) - DDBitmapsList[a].oy;
 }
 
 /* -----------------15/11/00 12.16-------------------
@@ -738,7 +738,7 @@ int32 RendDDText(Renderer &renderer, char *text, FontKind font, FontColor color)
 		renderer._fonts->getTextDim(text, font, &tdx, &tdy);
 //		Crea una surface che la contenga
 		r->tnum = rCreateSurface(tdx, tdy, rBITMAPSURFACE);
-		rClear(r->tnum, 0, 0, tdx, tdy, 0, 0, 0);
+		renderer.clearBitmap(r->tnum, 0, 0, tdx, tdy, 0, 0, 0);
 //		Renderizza la scritta nella surface
 //DebugLogWindow("Creo testo %s | %d %d",text,tdx,tdy );
 		renderer.printText(text, r->tnum,  font, color, 0, 0);
@@ -805,7 +805,7 @@ void DisplayDDText(Renderer &renderer, char *text, FontKind font, FontColor colo
 /* -----------------15/01/99 18.15-------------------
  *              GetDDBitmapExtends
  * --------------------------------------------------*/
-void GetDDBitmapExtends(struct SRect *r, struct SDDBitmap *b) {
+void GetDDBitmapExtends(Renderer &renderer, struct SRect *r, struct SDDBitmap *b) {
 	if (!r || !b) return ;
 	r->x1 = b->px;
 	r->y1 = b->py;
@@ -815,8 +815,8 @@ void GetDDBitmapExtends(struct SRect *r, struct SDDBitmap *b) {
 	// the upper bits for flagging. For now let's mask out
 	// the high-bit.
 	uint32 mask = T2D_BM_OFF ^ 0xFFFFFFFF;
-	r->x2 = r->x1 + rGetBitmapRealDimX(b->tnum & mask);
-	r->y2 = r->y1 + rGetBitmapRealDimY(b->tnum & mask);
+	r->x2 = r->x1 + renderer.getBitmapRealDimX(b->tnum & mask);
+	r->y2 = r->y1 + renderer.getBitmapRealDimY(b->tnum & mask);
 }
 
 /* -----------------05/11/98 10.36-------------------

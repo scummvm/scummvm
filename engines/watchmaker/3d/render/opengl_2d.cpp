@@ -39,9 +39,6 @@
 
 namespace Watchmaker {
 
-// Bitmap list
-unsigned int    gNumBitmapList = 0;
-gTexture        gBitmapList[MAX_BITMAP_LIST];
 Rect            gBlitterExtends;
 int     gStencilBitDepth;
 
@@ -52,38 +49,38 @@ int         NumLogosMaterials = 0, GlobalLogosDelay = 60 * 3;
 unsigned int CurLoaderFlags;
 
 //*********************************************************************************************
-unsigned int gGetBitmapListPosition() {
+unsigned int Renderer::BitmapList::acquirePosition() {
 	unsigned int pos = 1;
 
-	while (!gBitmapList[pos].isEmpty()) {
+	while (!bitmaps[pos].isEmpty()) {
 		pos++;
 	}
 
 	if (pos > MAX_BITMAP_LIST)
 		return 0;
 
-	if (pos > gNumBitmapList)
-		gNumBitmapList = pos;
+	if (pos > _numBitmaps)
+		_numBitmaps = pos;
 
 	return pos;
 }
 
-unsigned int rGetBitmapDimX(unsigned int id) {
-	return gBitmapList[id].DimX;
+unsigned int Renderer::getBitmapDimX(int32 id) const {
+	return _bitmapList.bitmaps[id].DimX;
 }
 
-//************************************************************************************************************************
-unsigned int rGetBitmapDimY(unsigned int id) {
-	return gBitmapList[id].DimY;
+unsigned int Renderer::getBitmapDimY(int32 id) const {
+	return _bitmapList.bitmaps[id].DimY;
 }
 
-unsigned int rGetBitmapRealDimX(unsigned int id) {
-	return gBitmapList[id].RealDimX;
+unsigned int Renderer::getBitmapRealDimX(int32 id) const {
+	return _bitmapList.bitmaps[id].RealDimX;
 }
 
-unsigned int  rGetBitmapRealDimY(unsigned int id) {
-	return gBitmapList[id].RealDimY;
+unsigned int Renderer::getBitmapRealDimY(int32 id) const {
+	return _bitmapList.bitmaps[id].RealDimY;
 }
+
 
 //************************************************************************************************************************
 void rUpdateExtends(int x1, int y1, int x2, int y2) {
@@ -221,28 +218,30 @@ void gTexture::render(WGame &game, Rect src, Rect dst) {
 	}
 }
 
-void rBlitScreenBuffer(WGame &game) { // Should probably go to opengl_2d
+void Renderer::blitScreenBuffer() {
 	checkGlError("Entering rBlitScreenBuffer");
-	enter2Dmode(game);
-	gBitmapList[BACK_BUFFER].render(game, game._renderer->_viewport, game._renderer->_viewport);
+	enter2Dmode(*_game);
+	_bitmapList.bitmaps[BACK_BUFFER].render(*_game, _game->_renderer->_viewport, _game->_renderer->_viewport);
 	exit2Dmode();
 	checkGlError("Exiting rBlitScreenBuffer");
 }
 
-void rClear(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b) {
+void Renderer::clearBitmap(int dst, int dposx, int dposy, int sdimx, int sdimy, unsigned char r, unsigned char g, unsigned char b) {
 	warning("STUBBED: rClear(%d, %d, %d, %d, %d", dst, dposx, dposy, sdimx, sdimy);
-	gBitmapList[dst].clear();
+	_bitmapList.bitmaps[dst].clear();
 }
 
 //************************************************************************************************************************
 void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
               int sposx, int sposy, int sdimx, int sdimy) {
+	auto &bitmapList = game._renderer->_bitmapList.bitmaps;
 	// TODO: This currently gets called a bit too much.
-	warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", gBitmapList[src].name.c_str(), dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
-	auto &bitmap = gBitmapList[src];
+	warning("TODO: Stubbed rBlitter(%s, %d, %d, %d, %d, %d, %d, %d, %d)", bitmapList[src].name.c_str(), dst, src, dposx, dposy, sposx, sposy, sdimx, sdimy);
+
+	auto &bitmap = bitmapList[src];
 
 	assert(dst == 0);
-	auto &dstBitmap = gBitmapList[dst];
+	auto &dstBitmap = bitmapList[dst];
 
 	checkGlError("rBlitter Start");
 
@@ -253,10 +252,10 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	dwHeight = game._renderer->_viewport.height();;
 
 	if ((sdimx <= 0)) {
-		sdimx = gBitmapList[src].DimX;
+		sdimx = bitmapList[src].DimX;
 	}
 	if ((sdimy <= 0)) {
-		sdimy = gBitmapList[src].DimY;
+		sdimy = bitmapList[src].DimY;
 	}
 
 	if ((dposx >= dwWidth) || (dposy >= dwHeight) || (sposx >= dwWidth) || (sposy >= dwHeight) ||
@@ -274,8 +273,8 @@ void rBlitter(WGame &game, int dst, int src, int dposx, int dposy,
 	}
 
 	if ((sdimx == 0) && (sdimy == 0)) {
-		sdimx = gBitmapList[src].DimX;
-		sdimy = gBitmapList[src].DimY;
+		sdimx = bitmapList[src].DimX;
+		sdimy = bitmapList[src].DimY;
 	}
 
 	{
@@ -348,12 +347,12 @@ int rLoadBitmapImage(WGame &game, const char *TextName, unsigned char flags) {
 
 	Graphics::PixelFormat RGBA8888(4, 8, 8, 8, 8, 0, 8, 16, 24);
 
-	unsigned int pos = gGetBitmapListPosition();
+	unsigned int pos = game._renderer->_bitmapList.acquirePosition();
 	if (pos == 0) {
 		warning("rLoadBitmap: Can't create more bitmaps");
 		return -1;
 	}
-	gTexture *Texture = &gBitmapList[pos];
+	gTexture *Texture = &game._renderer->_bitmapList.bitmaps[pos];
 	*Texture = gTexture();
 	Texture->Flags = CurLoaderFlags;
 	auto surface = ReadTgaImage(TextName, *stream, RGBA8888, Texture->Flags);

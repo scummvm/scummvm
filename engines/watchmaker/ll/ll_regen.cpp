@@ -159,7 +159,7 @@ void Regen(WGame &game) {
 			continue;
 
 		// Clear ScreenBuffer
-		rClear(BACK_BUFFER, (p->x1), (p->y1), (p->x2 - p->x1), (p->y2 - p->y1), 0, 0, 0);
+		game._renderer->clearBitmap(BACK_BUFFER, (p->x1), (p->y1), (p->x2 - p->x1), (p->y2 - p->y1), 0, 0, 0);
 	}
 
 	for (a = 0; a < upn; a++) {
@@ -223,7 +223,7 @@ void Regen(WGame &game) {
 //	DebugLogWindow( "Aggiorna video %d,%d %d,%d", ext.x1, ext.y1, ext.x2-ext.x1, ext.y2-ext.y1 );
 #endif
 	rUpdateExtends(ext.x1, ext.y1, ext.x2, ext.y2);
-	rBlitScreenBuffer(game);
+	game._renderer->blitScreenBuffer();
 	rResetExtends();
 
 	// 5 - Copy PaintRect to OldPaintRect
@@ -283,6 +283,7 @@ void Add2DStuff(WGame &game) {
 	struct SDDText *t, *r;
 	int32 cmx, cmy;
 	int32 a, c;
+	Renderer &renderer = *game._renderer;
 
 	// Reset paint structure
 	memset(PaintRect, 0, sizeof(PaintRect));
@@ -318,7 +319,7 @@ void Add2DStuff(WGame &game) {
 
 		// Draw the current mouse pointer
 		if (CurMousePointer > 0)
-			AddPaintRect(CurMousePointer, (cmx), (cmy), 0, 0, rGetBitmapDimX(CurMousePointer), rGetBitmapDimY(CurMousePointer));
+			AddPaintRect(CurMousePointer, (cmx), (cmy), 0, 0, renderer.getBitmapDimX(CurMousePointer), renderer.getBitmapDimY(CurMousePointer));
 	}
 
 	Regen(game);
