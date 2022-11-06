@@ -303,6 +303,10 @@ static const ADGameDescription twineGameDescriptions[] = {
 	// 1 Jul 2022
 	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "76b227e87038c17a3376b1c681f15474", 4402688), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
 
+	// Little Big Adventure - GOG Version 3.2.3.1 (58613)
+	// TLBA1C.exe
+	TWINE_DETECTION_ENTRY("lba", "GOG Classic Version", AD_ENTRY1s("TLBA1C.exe", "252216e83f83dc770fafc7fd787a6da5", 4432896), Common::kPlatformWindows, TwinE::TF_LBA1_CLASSIC),
+
 	// FAN Translations - http://lba.fishos.net/bit/index.html
 
 	// Portuguese by xesf (alexfont)
