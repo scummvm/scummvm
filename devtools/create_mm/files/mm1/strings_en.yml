@@ -800,8 +800,19 @@ spells:
 	failed: "SPELL FAILED"
 
 	enter_to_cast: "'ENTER' TO CAST"
-	cast_on: "CAST ON: '1'-'%d'?"
+	cast_on_char: "CAST ON: '1'-'%d'?"
+	cast_on_monster: "CAST ON: 'A'-'%c'?"
 	which_town: "WHICH TOWN (1-5)?"
+	monster_effects:
+		0: "IS SCARED"
+		1: "IS BLINDED"
+		2: "IS SILENCED"
+		3: "IS MINDLESS"
+		4: "IS SLEPT"
+		5: "IS HELD"
+		6: "IS WEBBED"
+		7: "IS PARALYZED"
+		8: "IS AFFECTED"
 monster_spells:
 	casts: "CASTS "
 	fails_to_cast: "FAILS TO CAST A SPELL"
