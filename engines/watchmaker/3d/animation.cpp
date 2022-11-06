@@ -707,7 +707,6 @@ void ReleasePreloadedAnims() {
  * --------------------------------------------------*/
 uint8 CompareLightPosition(char *roomname, uint8 pos1, t3dV3F *pos2, t3dF32 acceptable_dist) {
 	t3dV3F p1;
-	uint8 a;
 	t3dBODY *t;
 	int32 i;
 

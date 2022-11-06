@@ -549,7 +549,7 @@ gTexture *gUserTexture(Texture *texture, unsigned int dimx, unsigned int dimy) {
 #endif
 	}
 
-	Texture->texture = texture;
+	Texture->_texture = texture;
 	return Texture;
 }
 
@@ -710,7 +710,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 	}
 	texture = &gTextureList[pos];
 	*texture = gTexture();
-	texture->texture = new OpenGLTexture();
+	texture->_texture = new OpenGLTexture();
 
 	if (bUseAlternate) {
 		auto stream = workDirs.resolveFile(AlternateName);
@@ -719,7 +719,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 			return nullptr;
 		}
 		auto ddsTextureData = loadDdsTexture(*stream);
-		texture->texture->assignData(*ddsTextureData);
+		texture->_texture->assignData(*ddsTextureData);
 		dwWidth = ddsTextureData->getWidth();
 		dwHeight = ddsTextureData->getHeight();
 		lpSSource = nullptr;
@@ -760,7 +760,7 @@ gTexture *gLoadTexture(WorkDirs &workDirs, const char *TextName, unsigned int Lo
 		auto image = ReadTgaImage(TextName, *stream, Graphics::PixelFormat(4, 8, 8, 8, 8, 0, 8, 16, 24), 0); // TODO Flags
 		SurfaceBackedTextureData texData(image);
 
-		texture->texture->assignData(texData);
+		texture->_texture->assignData(texData);
 #if 0
 		//warning("TODO: Handle TGA");
 		if (!t3dOpenFile(TextName)) {

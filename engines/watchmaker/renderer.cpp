@@ -74,10 +74,10 @@ void Renderer::initGL() {
 }
 
 void Renderer::setVirtualScreen(unsigned int dimX, unsigned int dimY) {
-	unsigned int width, height, bpp;
+	unsigned int width, height;
 
 	//calculate aspect ratio
-	getScreenInfos(width, height, bpp);
+	getScreenInfos(width, height);
 
 	gAspectX = 1.0f / ((float)dimX / (float)width);
 	gAspectY = 1.0f / ((float)dimY / (float)height);
@@ -85,14 +85,13 @@ void Renderer::setVirtualScreen(unsigned int dimX, unsigned int dimY) {
 	gInvAspectY = (float)dimY / (float)height;
 }
 
-void Renderer::getScreenInfos(unsigned int &width, unsigned int &height, unsigned int &bpp) const {
+void Renderer::getScreenInfos(unsigned int &width, unsigned int &height) const {
 	sdl->getWindowSize(width, height);
-	bpp = sdl->getBitDepth();
 }
 
 WindowInfo Renderer::getScreenInfos() const {
 	WindowInfo info;
-	getScreenInfos(info.width, info.height, info.bpp);
+	getScreenInfos(info.width, info.height);
 	return info;
 }
 
@@ -105,7 +104,7 @@ bool Renderer::createScreenBuffer() {
 	return false;
 }
 
-bool Renderer::initBlitterViewPort() {
+void Renderer::initBlitterViewPort() {
 	auto info = getScreenInfos();
 	Rect viewport{0, 0, (int)info.width, (int)info.height};
 
@@ -178,8 +177,6 @@ int Renderer::rInvFitY(int y) {
 void gPrintText(WGame &game, const char *s, uint32 d, uint32 src, uint16 *FontTable, short x, short y) {
 	int16   i = 0, nextx, nexty;
 	unsigned char c;
-
-	uint32 AddFlag = 0, NumRetries = 0;
 
 	nextx = nexty = 0;
 	while ((c = s[i]) != 0) {

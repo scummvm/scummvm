@@ -35,10 +35,10 @@ DDSHeader::DDSHeader(Common::SeekableReadStream &stream) {
 	// The size counts the datastructure, which doesn't include the magic
 	int initialPos = stream.pos();
 	uint32 size = stream.readUint32LE();
-	uint32 flags = stream.readUint32LE();
+	/*uint32 flags = */ stream.readUint32LE();
 	this->height = stream.readUint32LE();
 	this->width = stream.readUint32LE();
-	uint32 dataSize = stream.readUint32LE();
+	/*uint32 dataSize = */ stream.readUint32LE();
 	stream.seek(13 * 4, SEEK_CUR);
 	stream.readUint32LE();
 	uint32 pfFlags = stream.readUint32LE();

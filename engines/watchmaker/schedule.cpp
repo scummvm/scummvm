@@ -140,7 +140,7 @@ void Event(EventClass classe, uint8 event, uint16 flags, int16 wparam1, int16 wp
 	pqueue *lq;
 	message *lm;
 
-	warning("Event(%s, event=%d, flags=%d, wparam1=%d, wparam2=%d, bparam=%d", eventToString(classe), event, flags, wparam1, wparam2);
+	warning("Event(%s, event=%d, flags=%d, wparam1=%d, wparam2=%d, bparam=%d", eventToString(classe), event, flags, wparam1, wparam2, bparam);
 	if (classe == EventClass::MC_IDLE && !event)
 		return ;
 

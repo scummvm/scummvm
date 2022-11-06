@@ -214,29 +214,29 @@ void Render3DEnvironment(WGame &game) {
 			for (i = 0; i < T3D_MAX_CHARACTERS; i++)
 				if (Character[i] && (i != ocBOTH) && (i != ocDARRELL))
 					if (!t3dTransformCharacter(Character[i]))                                        // Proietta personaggi
-						DebugLogWindow("Can't transform %s", Character[i]->Body);
+						DebugLogWindow("Can't transform %s", Character[i]->Body->name.c_str());
 		} else {
 			for (i = 0; i < T3D_MAX_CHARACTERS; i++)
 				if (Character[i] && (i != ocBOTH))
 					if (!t3dTransformCharacter(Character[i]))                                        // Proietta personaggi
-						DebugLogWindow("Can't transform %s", Character[i]->Body);
+						DebugLogWindow("Can't transform %s", Character[i]->Body->name.c_str());
 		}
 
 		if (game._gameVars.getCurRoomId() == r33) {
 			for (i = 0; i < 4; i++)                                                              // Proietta oggetti speciali
 				if (Lanc33[i] && !t3dTransformCharacter(Lanc33[i]))
-					DebugLogWindow("Can't transform %s", Lanc33[i]->Body);
+					DebugLogWindow("Can't transform %s", Lanc33[i]->Body->name.c_str());
 		}
 
 		for (i = 0; i < MAX_GOPHERS; i++)
 			if (GopherMark[i] && !t3dTransformCharacter(GopherMark[i]))
-				DebugLogWindow("Can't transform %s", GopherMark[i]->Body);
+				DebugLogWindow("Can't transform %s", GopherMark[i]->Body->name.c_str());
 		if (Freccia50 && !t3dTransformCharacter(Freccia50))
-			DebugLogWindow("Can't transform %s", Freccia50->Body);
+			DebugLogWindow("Can't transform %s", Freccia50->Body->name.c_str());
 		if (Palla50 && !t3dTransformCharacter(Palla50))
-			DebugLogWindow("Can't transform %s", Palla50->Body);
+			DebugLogWindow("Can't transform %s", Palla50->Body->name.c_str());
 		if (Explode50 && !t3dTransformCharacter(Explode50))
-			DebugLogWindow("Can't transform %s", Explode50->Body);
+			DebugLogWindow("Can't transform %s", Explode50->Body->name.c_str());
 
 		t3dSortMeshes();                                                                        // Ordian le mesh
 	}

@@ -156,10 +156,10 @@ int IntersLineLine(float xa, float ya, float xb, float yb, float xc, float yc, f
         Compara distanza percorso (qsort)
 --------------------------------------------------*/
 int PathCompare(const void *arg1, const void *arg2) {
-	t3dPATHNODE *p1, *p2;
+	const t3dPATHNODE *p1, *p2;
 
-	p1 = (t3dPATHNODE *)arg1;
-	p2 = (t3dPATHNODE *)arg2;
+	p1 = (const t3dPATHNODE *)arg1;
+	p2 = (const t3dPATHNODE *)arg2;
 
 	if (p1->dist < p2->dist)
 		return -1;

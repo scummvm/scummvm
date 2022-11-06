@@ -253,7 +253,6 @@ t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint1
 	warning("t3dLoadRoom(%s, b, %d, %d)", pname.c_str(), *NumBody, LoaderFlags);
 	struct _t3dLOADLIST *l;
 	t3dBODY *r, *rez;
-	t3dBODY *body;
 	uint16 num, i;
 
 //	azzera tutto quello che c'era prima nella load list
@@ -268,15 +267,15 @@ t3dBODY *t3dLoadRoom(WGame &game, const Common::String &pname, t3dBODY *b, uint1
 		num = 0;
 		if (l->m) {
 			if ((rez = CheckIfAlreadyLoaded(l->pname)))
-				body = l->m->PortalList = rez;
+				l->m->PortalList = rez;
 			else {
 //				if (l->m->Flags&T3D_MESH_PREPROCESSPORTAL)
 //					body=l->m->PortalList = t3dLoadSingleRoom( l->pname, l->m->PortalList, &num, (l->LoaderFlags|T3D_HALFTEXTURESIZE) );
 //				else
-				body = l->m->PortalList = t3dLoadSingleRoom(game, l->pname, l->m->PortalList, &num, l->LoaderFlags);
+				l->m->PortalList = t3dLoadSingleRoom(game, l->pname, l->m->PortalList, &num, l->LoaderFlags);
 			}
 		} else
-			body = r = t3dLoadSingleRoom(game, l->pname, b, NumBody, l->LoaderFlags);
+			r = t3dLoadSingleRoom(game, l->pname, b, NumBody, l->LoaderFlags);
 
 		*l = _t3dLOADLIST();
 	}

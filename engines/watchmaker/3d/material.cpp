@@ -142,8 +142,6 @@ void rRemoveMaterials(Common::Array<Common::SharedPtr<gMaterial>> &m) {
 }
 
 Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Common::SharedPtr<gMaterial> Mat2) {
-	int i;
-
 	if (!Mat1 || !Mat2)
 		return nullptr;
 
@@ -184,7 +182,7 @@ Common::SharedPtr<gMaterial> rCopyMaterial(Common::SharedPtr<gMaterial> Mat1, Co
 	if (Mat2->NumAddictionalMaterial)
 		Mat1->AddictionalMaterial.resize(Mat2->NumAddictionalMaterial); // TODO: Does this mean that we don't copy any extras?
 
-	for (i = 0; i < Mat2->NumAddictionalMaterial; i++)
+	for (int i = 0; i < Mat2->NumAddictionalMaterial; i++)
 		rCopyMaterial(Mat1->AddictionalMaterial[i], Mat2->AddictionalMaterial[i]);
 
 	return Mat1;
