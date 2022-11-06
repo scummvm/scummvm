@@ -93,7 +93,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 
 	// First thing, get a SortItem to use (first of unused)
 	if (!_itemsUnused)
-		_itemsUnused = new SortItem(0);
+		_itemsUnused = new SortItem(nullptr);
 	SortItem *si = _itemsUnused;
 
 	si->_itemNum = itemNum;
@@ -130,19 +130,19 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_zTop = si->_z + zd;
 
 	// Screenspace bounding box left extent    (LNT x coord)
-	si->_sxLeft = si->_xLeft / 4 - si->_y / 4 - _camSx;
+	si->_sxLeft = (si->_xLeft - si->_y) / 4 - _camSx;
 	// Screenspace bounding box right extent   (RFT x coord)
-	si->_sxRight = si->_x / 4 - si->_yFar / 4 - _camSx;
+	si->_sxRight = (si->_x - si->_yFar) / 4 - _camSx;
 
 	// Screenspace bounding box top x coord    (LFT x coord)
-	si->_sxTop = si->_xLeft / 4 - si->_yFar / 4 - _camSx;
+	si->_sxTop = (si->_xLeft - si->_yFar) / 4 - _camSx;
 	// Screenspace bounding box top extent     (LFT y coord)
-	si->_syTop = si->_xLeft / 8 + si->_yFar / 8 - si->_zTop - _camSy;
+	si->_syTop = (si->_xLeft + si->_yFar) / 8 - si->_zTop - _camSy;
 
 	// Screenspace bounding box bottom x coord (RNB x coord)
-	si->_sxBot = si->_x / 4 - si->_y / 4 - _camSx;
+	si->_sxBot = (si->_x - si->_y) / 4 - _camSx;
 	// Screenspace bounding box bottom extent  (RNB y coord)
-	si->_syBot = si->_x / 8 + si->_y / 8 - si->_z - _camSy;
+	si->_syBot = (si->_x + si->_y) / 8 - si->_z - _camSy;
 
 	// Real Screenspace coords
 	si->_sx = si->_sxBot - frame->_xoff;   // Left
@@ -151,7 +151,7 @@ void ItemSorter::AddItem(int32 x, int32 y, int32 z, uint32 shapeNum, uint32 fram
 	si->_sy2 = si->_sy + frame->_height;   // Bottom
 
 	// Do Clipping here
-	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx + frame->_width, si->_sy + frame->_height));
+	int16 clipped = _surf->CheckClipped(Rect(si->_sx, si->_sy, si->_sx2, si->_sy2));
 	if (clipped < 0)
 		// Clipped away entirely - don't add to the list.
 		return;
@@ -252,7 +252,7 @@ void ItemSorter::AddItem(const Item *add) {
 			add->getFlags(), add->getExtFlags(), add->getObjId());
 }
 
-SortItem *_prev = 0;
+SortItem *_prev = nullptr;
 
 void ItemSorter::PaintDisplayList(bool item_highlight) {
 	_prev = nullptr;
@@ -305,7 +305,7 @@ bool ItemSorter::PaintSortItem(SortItem *si) {
 			break;
 		}
 		else if ((*it)->_order == -1) {
-			if (PaintSortItem((*it)))
+			if (PaintSortItem(*it))
 				return true;
 		}
 		++it;
