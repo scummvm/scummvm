@@ -3786,6 +3786,9 @@ const AGSGameDescription GAME_DESCRIPTIONS[] = {
 	GAME_ENTRY_STEAM("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100040004),
 	GAME_ENTRY_GOG("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100046802),
 	GAME_ENTRY_GOG("zniwadventure", "ac2game.dat", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853), // macOS
+	GAME_ENTRY_GOG("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067853), // 1.3.4 Win
+	GAME_ENTRY_GOG("zniwadventure", "ctgame.ags", "8f52737244a78a7d1e6acace8ced67a5", 97019184), // 1.3.4 Linux
+	GAME_ENTRY_GOG("zniwadventure", "ac2game.dat", "8a2d48ee8d92bad3c5cacd8b883c5871", 100067140), // 1.3.4 macOS
 	GAME_ENTRY("zniwadventure", "ctgame.exe", "8a2d48ee8d92bad3c5cacd8b883c5871", 100010235),
 	// Commercial Italian games
 	GAME_ENTRY_LANG("onironauta", "Onironauta.exe", "5c8c0e3edae9b4fad276c136b2b48ce8", 69917110, Common::IT_ITA),
