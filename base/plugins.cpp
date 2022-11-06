@@ -655,7 +655,7 @@ void PluginManager::addToPluginsInMemList(Plugin *plugin) {
 #include "engines/metaengine.h"
 
 namespace Common {
-DECLARE_SINGLETON(EngineManager);
+DEFINE_SINGLETON(EngineManager);
 }
 
 /**
@@ -988,7 +988,7 @@ void EngineManager::upgradeTargetForEngineId(const Common::String &target) const
 #include "audio/musicplugin.h"
 
 namespace Common {
-DECLARE_SINGLETON(MusicManager);
+DEFINE_SINGLETON(MusicManager);
 }
 
 const PluginList &MusicManager::getPlugins() const {
@@ -1000,7 +1000,7 @@ const PluginList &MusicManager::getPlugins() const {
 #include "graphics/scalerplugin.h"
 
 namespace Common {
-DECLARE_SINGLETON(ScalerManager);
+DEFINE_SINGLETON(ScalerManager);
 }
 
 const PluginList &ScalerManager::getPlugins() const {

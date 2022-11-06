@@ -25,7 +25,7 @@
 #include "common/stack.h"
 
 namespace Common {
-DECLARE_SINGLETON(Graphics::CursorManager);
+DEFINE_SINGLETON(Graphics::CursorManager);
 }
 
 namespace Graphics {

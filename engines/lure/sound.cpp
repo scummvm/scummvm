@@ -34,7 +34,7 @@
 #include "audio/midiparser.h"
 
 namespace Common {
-DECLARE_SINGLETON(Lure::SoundManager);
+DEFINE_SINGLETON(Lure::SoundManager);
 }
 
 namespace Lure {

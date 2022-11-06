@@ -22,7 +22,7 @@
 #include "engines/stark/services/services.h"
 
 namespace Common {
-DECLARE_SINGLETON(Stark::StarkServices);
+DEFINE_SINGLETON(Stark::StarkServices);
 }
 
 namespace Stark {

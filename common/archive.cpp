@@ -301,6 +301,6 @@ void SearchManager::clear() {
 #endif
 }
 
-DECLARE_SINGLETON(SearchManager);
+DEFINE_SINGLETON(SearchManager);
 
 } // namespace Common

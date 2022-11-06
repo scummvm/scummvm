@@ -34,7 +34,7 @@
 
 // Class PspRtc ---------------------------------------------------------------
 namespace Common {
-DECLARE_SINGLETON(PspRtc);
+DEFINE_SINGLETON(PspRtc);
 }
 
 void PspRtc::init() {						// init our starting ticks

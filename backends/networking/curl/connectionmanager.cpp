@@ -31,7 +31,7 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(Networking::ConnectionManager);
+DEFINE_SINGLETON(Networking::ConnectionManager);
 
 }
 

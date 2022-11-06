@@ -33,7 +33,7 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(Cloud::CloudManager);
+DEFINE_SINGLETON(Cloud::CloudManager);
 
 }
 

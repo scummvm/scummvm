@@ -33,7 +33,7 @@ extern char __plugin_hole_end;		// Indicates end of hole in program file
 extern char _gp[];					// Value of gp register
 
 namespace Common {
-DECLARE_SINGLETON(ShortSegmentManager);	// For singleton
+DEFINE_SINGLETON(ShortSegmentManager);	// For singleton
 }
 
 ShortSegmentManager::ShortSegmentManager() {

@@ -30,7 +30,7 @@
 #include "backends/platform/psp/trace.h"
 
 namespace Common {
-DECLARE_SINGLETON(PowerManager);
+DEFINE_SINGLETON(PowerManager);
 }
 
 // Function to debug the Power Manager (we have no output to screen)

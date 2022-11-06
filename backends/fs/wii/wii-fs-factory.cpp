@@ -44,7 +44,7 @@
 #endif
 
 namespace Common {
-DECLARE_SINGLETON(WiiFilesystemFactory);
+DEFINE_SINGLETON(WiiFilesystemFactory);
 }
 
 WiiFilesystemFactory::WiiFilesystemFactory() :

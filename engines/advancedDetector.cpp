@@ -502,7 +502,7 @@ void AdvancedMetaEngineDetection::composeFileHashMap(FileMap &allFiles, const Co
 /* Singleton Cache Storage for MD5 */
 
 namespace Common {
-	DECLARE_SINGLETON(MD5CacheManager);
+DEFINE_SINGLETON(MD5CacheManager);
 }
 
 // Sync with engines/game.cpp

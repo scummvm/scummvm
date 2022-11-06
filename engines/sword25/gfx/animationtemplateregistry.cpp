@@ -34,7 +34,7 @@
 #include "sword25/gfx/animationtemplate.h"
 
 namespace Common {
-DECLARE_SINGLETON(Sword25::AnimationTemplateRegistry);
+DEFINE_SINGLETON(Sword25::AnimationTemplateRegistry);
 }
 
 namespace Sword25 {

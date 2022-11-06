@@ -32,7 +32,7 @@
 #include "pegasus/pegasus.h"
 
 namespace Common {
-DECLARE_SINGLETON(Pegasus::InputDeviceManager);
+DEFINE_SINGLETON(Pegasus::InputDeviceManager);
 }
 
 namespace Pegasus {

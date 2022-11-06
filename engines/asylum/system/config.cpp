@@ -24,7 +24,7 @@
 #include "asylum/system/sound.h"
 
 namespace Common {
-DECLARE_SINGLETON(Asylum::ConfigurationManager);
+DEFINE_SINGLETON(Asylum::ConfigurationManager);
 }
 
 namespace Asylum {

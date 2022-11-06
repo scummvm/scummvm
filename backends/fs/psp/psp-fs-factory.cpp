@@ -44,7 +44,7 @@
 #include <unistd.h>
 
 namespace Common {
-DECLARE_SINGLETON(PSPFilesystemFactory);
+DEFINE_SINGLETON(PSPFilesystemFactory);
 }
 
 AbstractFSNode *PSPFilesystemFactory::makeRootFileNode() const {

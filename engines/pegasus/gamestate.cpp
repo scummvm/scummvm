@@ -30,7 +30,7 @@
 #include "pegasus/scoring.h"
 
 namespace Common {
-DECLARE_SINGLETON(Pegasus::GameStateManager);
+DEFINE_SINGLETON(Pegasus::GameStateManager);
 }
 
 namespace Pegasus {

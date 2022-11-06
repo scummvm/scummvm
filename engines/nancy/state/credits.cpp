@@ -30,7 +30,7 @@
 #include "engines/nancy/state/credits.h"
 
 namespace Common {
-DECLARE_SINGLETON(Nancy::State::Credits);
+DEFINE_SINGLETON(Nancy::State::Credits);
 }
 
 namespace Nancy {

@@ -29,7 +29,7 @@
 #include <malloc.h>
 
 namespace Common {
-DECLARE_SINGLETON(ELFMemoryManager);
+DEFINE_SINGLETON(ELFMemoryManager);
 }
 
 ELFMemoryManager::ELFMemoryManager() :

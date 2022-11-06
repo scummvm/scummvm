@@ -35,7 +35,7 @@ static bool isValidDomainName(const Common::String &domName) {
 
 namespace Common {
 
-DECLARE_SINGLETON(ConfigManager);
+DEFINE_SINGLETON(ConfigManager);
 
 char const *const ConfigManager::kApplicationDomain = "scummvm";
 char const *const ConfigManager::kTransientDomain = "__TRANSIENT";

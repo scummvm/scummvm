@@ -30,7 +30,7 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(AchievementsManager);
+DEFINE_SINGLETON(AchievementsManager);
 
 
 AchievementsManager::AchievementsManager() {

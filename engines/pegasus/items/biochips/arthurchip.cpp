@@ -27,7 +27,7 @@
 #include "pegasus/items/biochips/arthurchip.h"
 
 namespace Common {
-DECLARE_SINGLETON(Pegasus::ArthurManager);
+DEFINE_SINGLETON(Pegasus::ArthurManager);
 }
 
 namespace Pegasus {

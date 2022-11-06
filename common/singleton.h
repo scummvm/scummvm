@@ -102,7 +102,7 @@ protected:
  * This is because C++ requires initial explicit specialization
  * to be placed in the same namespace as the template.
  */
-#define DECLARE_SINGLETON(T) \
+#define DEFINE_SINGLETON(T) \
 	template<> T *Singleton<T>::_singleton = 0
 
 /** @} */

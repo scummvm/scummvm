@@ -25,7 +25,7 @@
 #ifdef ENABLE_EVENTRECORDER
 
 namespace Common {
-DECLARE_SINGLETON(GUI::EventRecorder);
+DEFINE_SINGLETON(GUI::EventRecorder);
 }
 
 #include "common/debug-channels.h"

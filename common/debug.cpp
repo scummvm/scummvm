@@ -38,7 +38,7 @@ const DebugChannelDef gDebugChannels[] = {
 };
 namespace Common {
 
-DECLARE_SINGLETON(DebugManager);
+DEFINE_SINGLETON(DebugManager);
 
 namespace {
 

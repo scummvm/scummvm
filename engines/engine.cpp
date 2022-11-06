@@ -130,7 +130,7 @@ bool ChainedGamesManager::pop(Common::String &target, int &slot) {
 }
 
 namespace Common {
-DECLARE_SINGLETON(ChainedGamesManager);
+DEFINE_SINGLETON(ChainedGamesManager);
 }
 
 Engine::Engine(OSystem *syst)

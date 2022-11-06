@@ -24,7 +24,7 @@
 
 namespace Common {
 
-DECLARE_SINGLETON(OSDMessageQueue);
+DEFINE_SINGLETON(OSDMessageQueue);
 
 OSDMessageQueue::OSDMessageQueue() : _lastUpdate(0) {
 }

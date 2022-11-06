@@ -29,7 +29,7 @@
 #include "engines/nancy/state/scene.h"
 
 namespace Common {
-DECLARE_SINGLETON(Nancy::State::MainMenu);
+DEFINE_SINGLETON(Nancy::State::MainMenu);
 }
 
 namespace Nancy {

@@ -25,7 +25,7 @@
 #if !USE_FORCED_GLES
 
 namespace Common {
-DECLARE_SINGLETON(OpenGL::ShaderManager);
+DEFINE_SINGLETON(OpenGL::ShaderManager);
 }
 
 namespace OpenGL {
