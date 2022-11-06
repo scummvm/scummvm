@@ -171,14 +171,14 @@ void EclipseEngine::drawUI() {
 	_gfx->setViewport(_fullscreenViewArea);
 
 	Graphics::Surface *surface = new Graphics::Surface();
-	surface->create(_screenW, _screenH, _gfx->_currentPixelFormat);
-	uint32 gray = _gfx->_currentPixelFormat.RGBToColor(0xA0, 0xA0, 0xA0);
+	surface->create(_screenW, _screenH, _gfx->_texturePixelFormat);
+	uint32 gray = _gfx->_texturePixelFormat.ARGBToColor(0x00, 0xA0, 0xA0, 0xA0);
 	surface->fillRect(_fullscreenViewArea, gray);
 
 	int score = _gameStateVars[k8bitVariableScore];
-	uint32 yellow = _gfx->_currentPixelFormat.RGBToColor(0xFF, 0xFF, 0x55);
-	uint32 black = _gfx->_currentPixelFormat.RGBToColor(0x00, 0x00, 0x00);
-	uint32 white = _gfx->_currentPixelFormat.RGBToColor(0xFF, 0xFF, 0xFF);
+	uint32 yellow = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0x55);
+	uint32 black = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0x00, 0x00, 0x00);
+	uint32 white = _gfx->_texturePixelFormat.ARGBToColor(0xFF, 0xFF, 0xFF, 0xFF);
 
 	if (!_currentAreaMessages.empty())
 		drawStringInSurface(_currentAreaMessages[0], 102, 135, black, yellow, surface);
